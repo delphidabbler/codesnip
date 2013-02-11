@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -323,6 +323,11 @@ begin
     if Storage.ItemExists('Switches') then
       Compiler.SetSwitches(Storage.ItemValues['Switches']);
 
+    // Load namespaces to search for RTL units, if required
+    // (empty entry => use default)
+    if Compiler.RequiresRTLNamespaces and Storage.ItemExists('Namespaces') then
+      Compiler.SetRTLNamespaces(Storage.ItemValues['Namespaces']);
+
     // Load search directories
     SearchDirNames := Storage.GetStrings('SearchDirCount', 'SearchDir%d');
     Compiler.SetSearchDirs(TSearchDirs.Create(SearchDirNames.ToArray));
@@ -354,6 +359,9 @@ begin
         '"' + Prefixes[PrefixID] + '"';
     if Compiler.GetSwitches <> Compiler.GetDefaultSwitches then
       Storage.ItemValues['Switches'] := Compiler.GetSwitches;
+    if Compiler.RequiresRTLNamespaces
+      and (Compiler.GetRTLNamespaces <> Compiler.GetDefaultRTLNamespaces) then
+      Storage.ItemValues['Namespaces'] := Compiler.GetRTLNamespaces;
     SearchDirNames := TIStringList.Create(Compiler.GetSearchDirs.ToStrings);
     Storage.SetStrings('SearchDirCount', 'SearchDir%d', SearchDirNames);
     // save the data

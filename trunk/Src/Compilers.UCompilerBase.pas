@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -80,7 +80,7 @@ type
     procedure Initialize;
       {Initializes object.
       }
-  protected
+  strict protected
     function CompilerOutputEncoding: TEncodingType; virtual;
       {Encoding used for text output by compiler. Descendants can override.
         @return System default ANSI encoding type.
@@ -90,6 +90,12 @@ type
       to compiler on command line.
         @return Required space separated parameter(s).
       }
+    ///  <summary>Returns any namespace parameter to be passed to compiler on
+    ///  command line.</summary>
+    ///  <remarks>This version returns the empty string. Sub-classes that
+    ///  generate the parameter should override.</remarks>
+    function NamespaceParam: string; virtual;
+  protected
     { ICompiler methods }
     function GetName: string; virtual; abstract;
       {Provides the human readable name of the compiler.
@@ -129,6 +135,19 @@ type
       {Sets user defined switches.
         @param Switches [in] Required switches separated by commas.
       }
+    ///  <summary>Checks if compiler has RTL unit names that are prefixed by
+    ///  its namespace.</summary>
+    function RequiresRTLNamespaces: Boolean; virtual;
+    ///  <summary>Returns a space separated list of compiler's default RTL unit
+    ///  namespaces.</summary>
+    function GetDefaultRTLNamespaces: string; virtual;
+    ///  <summary>Returns a space separated list of user-defined RTL unit
+    ///  namespaces.</summary>
+    function GetRTLNamespaces: string; virtual;
+    ///  <summary>Sets user defined RTL unit namespaces.</summary>
+    ///  <remarks>Namespaces is expected to be a space separated list of valid
+    ///  Pascal identifers.</remarks>
+    procedure SetRTLNamespaces(const Namespaces: string); virtual;
     function GetSearchDirs: ISearchDirs;
       {Returns copy of list of search directories used by compiler.
         @return Required list of directories.
@@ -260,14 +279,15 @@ function TCompilerBase.BuildCommandLine(const Project, Path: string): string;
   }
 begin
   Result := Format(
-    '"%0:s" %1:s %2:s %3:s',
+    '"%0:s" %1:s %2:s %3:s %4:s',
     [
       fExecFile,                              // compiler exe
       LongToShortFilePath(
         IncludeTrailingPathDelimiter(Path)
       ) + Project,                            // path to project
       CommandLineSwitches,                    // command line switches
-      SearchDirParams                         // search directory param(s)
+      SearchDirParams,                        // search directory param(s)
+      NamespaceParam                          // namespace param
     ]
   );
 end;
@@ -305,27 +325,30 @@ function TCompilerBase.CommandLineSwitches: string;
   {Generate list of space separated switches for compiler command line.
     @return Required list.
   }
+
+  // Switch is enclosed in quotes if it contains spaces.
+  procedure AppendSwitch(const Switch: string);
+  begin
+    if Result <> '' then
+      Result := Result + ' ';
+    if StrContainsStr(' ', Switch) then
+      Result := Result + '"' + Switch + '"'
+    else
+      Result := Result + Switch;
+  end;
+
 var
-  Params: TStringList;    // list of parameters
-  Param: string;          // a parameter
-  Idx: Integer;           // loops thru parameters
+  Params: TStringList;  // list of parameters
+  Param: string;        // a parameter
 begin
   Result := '';
   // Get list of params from string
   Params := TStringList.Create;
   try
-    StrExplode(GetSwitches, ',', Params, False);
+    StrExplode(GetSwitches, ',', Params, False, True);
     // Process each param: any containing spaces get quoted
-    for Idx := 0 to Pred(Params.Count) do
-    begin
-      Param := Params[Idx];
-      if StrContainsStr(' ', Param) then
-        Param := '"' + Param + '"';
-      // params are space separated
-      if Result <> '' then
-        Result := Result + ' ';
-      Result := Result + Param;
-    end;
+    for Param in Params do
+      AppendSwitch(Param);
   finally
     Params.Free;
   end;
@@ -393,6 +416,7 @@ begin
   fCompileLog.Assign(Obj.fCompileLog);
   SetLogFilePrefixes(Obj.fPrefixes);
   fSwitches := Obj.fSwitches;
+  SetRTLNamespaces(Obj.GetRTLNamespaces);
   fExecFile := Obj.fExecFile;
   fLastCompileResult := Obj.fLastCompileResult;
   fSearchDirs := Obj.GetSearchDirs;
@@ -468,6 +492,11 @@ begin
   end;
 end;
 
+function TCompilerBase.GetDefaultRTLNamespaces: string;
+begin
+  Result := '';
+end;
+
 function TCompilerBase.GetDisplayable: Boolean;
   {Returns flag indicating if compiler is displayable, i.e. compile results for
   it are to be displayed in UI etc.
@@ -503,6 +532,11 @@ function TCompilerBase.GetLogFilePrefixes: TCompLogPrefixes;
   }
 begin
   Result := fPrefixes;
+end;
+
+function TCompilerBase.GetRTLNamespaces: string;
+begin
+  Result := '';
 end;
 
 function TCompilerBase.GetSearchDirs: ISearchDirs;
@@ -596,6 +630,16 @@ begin
   end;
 end;
 
+function TCompilerBase.NamespaceParam: string;
+begin
+  Result := '';
+end;
+
+function TCompilerBase.RequiresRTLNamespaces: Boolean;
+begin
+  Result := False;
+end;
+
 procedure TCompilerBase.SetDisplayable(const Flag: Boolean);
   {Sets a flag indicating if compiler is displayable, i.e. compile results for
   it are to be displayed in UI etc.
@@ -628,6 +672,11 @@ begin
     else
       // no prefix set: use default value
       fPrefixes[Idx] := cPrefixDefaults[Idx];
+end;
+
+procedure TCompilerBase.SetRTLNamespaces(const Namespaces: string);
+begin
+  // Do nothing
 end;
 
 procedure TCompilerBase.SetSearchDirs(Dirs: ISearchDirs);
