@@ -100,6 +100,7 @@ uses
   FmCompilersDlg.FrBase in 'FmCompilersDlg.FrBase.pas' {CompilersDlgBaseFrame: TFrame},
   FmCompilersDlg.FrCompiler in 'FmCompilersDlg.FrCompiler.pas' {CompilersDlgCompilerFrame: TFrame},
   FmCompilersDlg.FrLog in 'FmCompilersDlg.FrLog.pas' {CompilersDlgLogFrame: TFrame},
+  FmCompilersDlg.FrNamespaces in 'FmCompilersDlg.FrNamespaces.pas' {CompilersDlgNamespacesFrame: TFrame},
   FmCompilersDlg.FrSearchDirs in 'FmCompilersDlg.FrSearchDirs.pas' {CompilersDlgSearchDirsFrame: TFrame},
   FmCompilersDlg.FrSwitches in 'FmCompilersDlg.FrSwitches.pas' {CompilersDlgSwitchesFrame: TFrame},
   FmCompilersDlg.UBannerMgr in 'FmCompilersDlg.UBannerMgr.pas',
