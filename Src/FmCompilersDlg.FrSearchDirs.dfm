@@ -1,8 +1,6 @@
 inherited CompilersDlgSearchDirsFrame: TCompilersDlgSearchDirsFrame
-  Width = 313
-  ExplicitWidth = 313
   object lblPaths: TLabel
-    Left = 3
+    Left = 4
     Top = 3
     Width = 71
     Height = 13
@@ -10,7 +8,7 @@ inherited CompilersDlgSearchDirsFrame: TCompilersDlgSearchDirsFrame
     FocusControl = lbPaths
   end
   object lblPath: TLabel
-    Left = 3
+    Left = 4
     Top = 103
     Width = 82
     Height = 13
@@ -18,41 +16,50 @@ inherited CompilersDlgSearchDirsFrame: TCompilersDlgSearchDirsFrame
     FocusControl = edPath
   end
   object btnUp: TSpeedButton
-    Left = 284
+    Left = 335
     Top = 22
     Width = 23
     Height = 22
     Action = actUp
+    Anchors = [akTop, akRight]
+    ExplicitLeft = 284
   end
   object btnDown: TSpeedButton
-    Left = 284
+    Left = 335
     Top = 67
     Width = 23
     Height = 22
     Action = actDown
+    Anchors = [akTop, akRight]
+    ExplicitLeft = 284
   end
   object lbPaths: TListBox
-    Left = 3
+    Left = 4
     Top = 22
-    Width = 271
+    Width = 322
     Height = 67
+    Anchors = [akLeft, akTop, akRight]
     ItemHeight = 13
     TabOrder = 0
     OnClick = lbPathsClick
+    ExplicitWidth = 271
   end
   object edPath: TEdit
-    Left = 3
+    Left = 4
     Top = 122
-    Width = 271
+    Width = 322
     Height = 21
+    Anchors = [akLeft, akTop, akRight]
     TabOrder = 1
+    ExplicitWidth = 271
   end
   object btnBrowse: TButton
-    Left = 280
+    Left = 331
     Top = 122
     Width = 27
     Height = 21
     Action = actBrowse
+    Anchors = [akTop, akRight]
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
     Font.Height = -11
@@ -60,9 +67,10 @@ inherited CompilersDlgSearchDirsFrame: TCompilersDlgSearchDirsFrame
     Font.Style = [fsBold]
     ParentFont = False
     TabOrder = 2
+    ExplicitLeft = 280
   end
   object btnAdd: TButton
-    Left = 66
+    Left = 70
     Top = 149
     Width = 60
     Height = 25
@@ -70,7 +78,7 @@ inherited CompilersDlgSearchDirsFrame: TCompilersDlgSearchDirsFrame
     TabOrder = 4
   end
   object btnDelete: TButton
-    Left = 132
+    Left = 136
     Top = 149
     Width = 60
     Height = 25
@@ -78,7 +86,7 @@ inherited CompilersDlgSearchDirsFrame: TCompilersDlgSearchDirsFrame
     TabOrder = 5
   end
   object btnReplace: TButton
-    Left = 0
+    Left = 4
     Top = 149
     Width = 60
     Height = 25

@@ -1,20 +1,18 @@
 inherited CompilersDlg: TCompilersDlg
   Caption = 'Configure Compilers'
-  ClientHeight = 362
-  ClientWidth = 471
-  ExplicitWidth = 477
-  ExplicitHeight = 390
+  ClientHeight = 381
+  ClientWidth = 524
+  ExplicitWidth = 530
+  ExplicitHeight = 409
   PixelsPerInch = 96
   TextHeight = 13
   inherited pnlBody: TPanel
-    Width = 449
-    Height = 260
-    ExplicitWidth = 449
-    ExplicitHeight = 260
+    Width = 497
+    ExplicitWidth = 497
     object pbBanner: TPaintBox
       Left = 128
       Top = 0
-      Width = 321
+      Width = 369
       Height = 23
       Color = clActiveCaption
       Font.Charset = DEFAULT_CHARSET
@@ -29,7 +27,7 @@ inherited CompilersDlg: TCompilersDlg
       Left = 0
       Top = 0
       Width = 121
-      Height = 256
+      Height = 292
       Style = lbOwnerDrawFixed
       Ctl3D = True
       IntegralHeight = True
@@ -40,18 +38,20 @@ inherited CompilersDlg: TCompilersDlg
     object pcCompiler: TPageControl
       Left = 127
       Top = 29
-      Width = 321
-      Height = 227
+      Width = 370
+      Height = 263
       ActivePage = tsCompiler
       TabOrder = 1
       OnMouseDown = pcCompilerMouseDown
       object tsCompiler: TTabSheet
         Caption = 'Compiler'
+        ExplicitWidth = 313
+        ExplicitHeight = 199
         inline frmCompiler: TCompilersDlgCompilerFrame
           Left = 0
           Top = 0
-          Width = 313
-          Height = 199
+          Width = 362
+          Height = 235
           Align = alClient
           TabOrder = 0
           ExplicitHeight = 199
@@ -60,11 +60,13 @@ inherited CompilersDlg: TCompilersDlg
       object tsSwitches: TTabSheet
         Caption = 'Switches'
         ImageIndex = 2
+        ExplicitWidth = 313
+        ExplicitHeight = 199
         inline frmSwitches: TCompilersDlgSwitchesFrame
           Left = 0
           Top = 0
-          Width = 313
-          Height = 199
+          Width = 362
+          Height = 235
           Align = alClient
           TabOrder = 0
           ExplicitHeight = 199
@@ -73,11 +75,13 @@ inherited CompilersDlg: TCompilersDlg
       object tsNamespaces: TTabSheet
         Caption = 'Namespaces'
         ImageIndex = 4
+        ExplicitWidth = 313
+        ExplicitHeight = 199
         inline frmNamespaces: TCompilersDlgNamespacesFrame
           Left = 0
           Top = 0
-          Width = 313
-          Height = 199
+          Width = 362
+          Height = 235
           Align = alClient
           TabOrder = 0
           ExplicitWidth = 313
@@ -87,11 +91,13 @@ inherited CompilersDlg: TCompilersDlg
       object tsSearchDirs: TTabSheet
         Caption = 'Search Paths'
         ImageIndex = 3
+        ExplicitWidth = 313
+        ExplicitHeight = 199
         inline frmSearchDirs: TCompilersDlgSearchDirsFrame
           Left = 0
           Top = 0
-          Width = 313
-          Height = 199
+          Width = 362
+          Height = 235
           Align = alClient
           TabOrder = 0
           ExplicitHeight = 199
@@ -100,11 +106,13 @@ inherited CompilersDlg: TCompilersDlg
       object tsLog: TTabSheet
         Caption = 'Output Log'
         ImageIndex = 1
+        ExplicitWidth = 313
+        ExplicitHeight = 199
         inline frmLog: TCompilersDlgLogFrame
           Left = 0
           Top = 0
-          Width = 313
-          Height = 199
+          Width = 362
+          Height = 235
           Align = alClient
           TabOrder = 0
           ExplicitHeight = 199
