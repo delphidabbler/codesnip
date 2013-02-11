@@ -4,7 +4,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2008-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2008-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -273,23 +273,30 @@
           identifiers in the source code with the unit name, e.g.
           <code>Graphics.TBitmap</code>.
         </div>
-        <div class="bordered">
-          If you intend to test compile your snippet with Delphi XE2 or XE3 you
-          will need to make sure the compiler is configured to search the
-          namespaces containing the units you list here. Do this in the
-          <a href="dlg_configcompilers.htm">Configure Compilers</a> dialogue
-          box. Use the <em>Command Line</em> tab to enter an <code>-NS</code>
-          &quot;switch&quot; that has a semi-colon separated list of namespaces
-          appended to it, for example <code>-NSSystem;WinAPI</code>. You can see
-          a list of namespaces with the units they contain in the <a
-            href="http://docwiki.embarcadero.com/RADStudio/en/Unit_Scope_Names"
-            class="weblink"
-            target="_blank"
-          >Unit Scope Names</a> topic of the Embarcadero RADStudio
-          documentation.
-        </div>
-        <div>
-          <strong>Notes:</strong> <a href="snippet_unit.htm">Unit snippets</a>
+		<div>
+		  If you intend to test compile your snippet with Delphi XE2 or later
+		  you will need to make sure the appropriate compiler is configured to
+		  search the namespaces containing the units you list here. Do this in
+		  the <a href="dlg_configcompilers.htm">Configure Compilers</a> dialogue
+		  box. Use the <em>Namespaces</em> tab to enter the required namespaces.
+		  Click the <em>Defaults</em> button to use a set of namespaces that
+		  works with many of the commonly used units. You can see a list of
+		  namespaces with the units they contain in the <a
+			href="http://docwiki.embarcadero.com/RADStudio/en/Unit_Scope_Names"
+			class="weblink"
+			target="_blank"
+		  >Unit Scope Names</a> topic of the Embarcadero RADStudio
+		  documentation.
+		</div>
+		<div>
+		  If any unit is not part of the Delphi RTL or VCL you will need to let
+		  the compiler know where to find the unit. Use the <em>Search
+		  Paths</em> tab of the <a href="dlg_configcompilers.htm">Configure
+		  Compilers</a> dialogue box to specify the required path. You need to
+		  do this for each compiler separately.
+		</div>
+		<div>
+		  <strong>Notes:</strong> <a href="snippet_unit.htm">Unit snippets</a>
           must declare their used units in the unit source code, so this list
           box is disabled when the snippet kind is <em>unit</em>.
         </div>
@@ -329,7 +336,7 @@
         <em>Unknown</em>. To use the keyboard to modify compile results proceed
         as follows:
         <ol>
-          <li>
+		  <li>
             Move the keyboard focus to the list box using the
             <span class="smallcaps">Tab</span> key.
           </li>
