@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -169,6 +169,19 @@ type
       {Sets user defined switches.
         @param Switches [in] Required switches separated by commas.
       }
+    ///  <summary>Checks if compiler has RTL unit names that are prefixed by
+    ///  its namespace.</summary>
+    function RequiresRTLNamespaces: Boolean;
+    ///  <summary>Returns a space separated list of compiler's default RTL unit
+    ///  namespaces.</summary>
+    function GetDefaultRTLNamespaces: string;
+    ///  <summary>Returns a space separated list of user-defined RTL unit
+    ///  namespaces.</summary>
+    function GetRTLNamespaces: string;
+    ///  <summary>Sets user defined RTL unit namespaces.</summary>
+    ///  <remarks>Namespaces is expected to be a space separated list of valid
+    ///  Pascal identfiers.</remarks>
+    procedure SetRTLNamespaces(const Namespaces: string);
     function GetSearchDirs: ISearchDirs;
       {Returns copy of list of search directories used by compiler.
         @return Required list of directories.

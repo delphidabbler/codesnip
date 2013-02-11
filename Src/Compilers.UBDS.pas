@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2006-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2006-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -37,6 +37,10 @@ type
     ICompilerAutoDetect   // can auto detect compiler exec file path
   )
   strict private
+    var
+      ///  <summary>Space separated list of RTL namespaces to be passed to
+      ///  compiler.</summary>
+      fRTLNamespaces: string;
     function ProductVersion: Integer;
       {Delphi version number.
         @return Required major version number.
@@ -47,6 +51,9 @@ type
       is recorded.
         @return Name of key.
       }
+    ///  <summary>Returns any namespace parameter to be passed to compiler on
+    ///  command line.</summary>
+    function NamespaceParam: string; override;
   protected
     { IClonable }
     function Clone: IInterface;
@@ -62,6 +69,19 @@ type
       {Provides a non-localisable string that identifies the compiler.
         @return Compiler id string.
       }
+    ///  <summary>Checks if compiler has RTL unit names that are prefixed by
+    ///  its namespace.</summary>
+    function RequiresRTLNamespaces: Boolean; override;
+    ///  <summary>Returns a space separated list of compiler's default RTL unit
+    ///  namespaces.</summary>
+    function GetDefaultRTLNamespaces: string; override;
+    ///  <summary>Returns a space separated list of user-defined RTL unit
+    ///  namespaces.</summary>
+    function GetRTLNamespaces: string; override;
+    ///  <summary>Sets user defined RTL unit namespaces.</summary>
+    ///  <remarks>Namespaces is expected to be a space separated list of valid
+    ///  Pascal identfiers.</remarks>
+    procedure SetRTLNamespaces(const Namespaces: string); override;
   public
     constructor Create(const Id: TCompilerID);
       {Class constructor: creates object for a BDS compiler.
@@ -77,7 +97,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  UExceptions;
+  UExceptions, UIStringList;
 
 
 { TBDSCompiler }
@@ -97,6 +117,14 @@ constructor TBDSCompiler.Create(const Id: TCompilerID);
 begin
   Assert(Id in cBDSCompilers, ClassName + '.Create: Invalid Id');
   inherited Create(Id);
+  fRTLNamespaces := GetDefaultRTLNamespaces;
+end;
+
+function TBDSCompiler.GetDefaultRTLNamespaces: string;
+begin
+  if not RequiresRTLNamespaces then
+    Exit('');
+  Result := '';
 end;
 
 function TBDSCompiler.GetIDString: string;
@@ -141,6 +169,13 @@ begin
   end;
 end;
 
+function TBDSCompiler.GetRTLNamespaces: string;
+begin
+  if not RequiresRTLNamespaces then
+    Exit('');
+  Result := fRTLNamespaces;
+end;
+
 function TBDSCompiler.InstallationRegKey: string;
   {Returns name of registry key where records compiler's installation path
   is recorded.
@@ -160,6 +195,18 @@ begin
   end;
 end;
 
+function TBDSCompiler.NamespaceParam: string;
+var
+  Namespaces: IStringList;
+begin
+  if not RequiresRTLNamespaces then
+    Exit('');
+  Namespaces := TIStringList.Create(fRTLNamespaces, ' ', False, True);
+  if Namespaces.Count = 0 then
+    Exit('');
+  Result := '-NS' + Namespaces.GetText(';', False);
+end;
+
 function TBDSCompiler.ProductVersion: Integer;
   {Delphi version number.
     @return Required major version number.
@@ -176,6 +223,20 @@ begin
     ciDXE3:     Result := 2013;
     else raise EBug.Create(ClassName + '.ProductVersion: Invalid ID');
   end;
+end;
+
+function TBDSCompiler.RequiresRTLNamespaces: Boolean;
+begin
+  Result := not (
+    GetID in [ciD2005w32, ciD2006w32, ciD2007, ciD2009w32, ciD2010, ciDXE]
+  );
+end;
+
+procedure TBDSCompiler.SetRTLNamespaces(const Namespaces: string);
+begin
+  if not RequiresRTLNamespaces then
+    Exit;
+  fRTLNamespaces := Namespaces;
 end;
 
 end.
