@@ -42,7 +42,7 @@ inherited CompilersDlg: TCompilersDlg
       Top = 29
       Width = 321
       Height = 227
-      ActivePage = tsCompiler
+      ActivePage = tsNamespaces
       TabOrder = 1
       OnMouseDown = pcCompilerMouseDown
       object tsCompiler: TTabSheet
@@ -70,6 +70,20 @@ inherited CompilersDlg: TCompilersDlg
           ExplicitHeight = 199
         end
       end
+      object tsNamespaces: TTabSheet
+        Caption = 'Namespaces'
+        ImageIndex = 4
+        inline frmNamespaces: TCompilersDlgNamespacesFrame
+          Left = 0
+          Top = 0
+          Width = 313
+          Height = 199
+          Align = alClient
+          TabOrder = 0
+          ExplicitLeft = -7
+          ExplicitTop = -41
+        end
+      end
       object tsSearchDirs: TTabSheet
         Caption = 'Search Paths'
         ImageIndex = 3
@@ -86,6 +100,10 @@ inherited CompilersDlg: TCompilersDlg
       object tsLog: TTabSheet
         Caption = 'Output Log'
         ImageIndex = 1
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         inline frmLog: TCompilersDlgLogFrame
           Left = 0
           Top = 0
