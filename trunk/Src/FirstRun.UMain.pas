@@ -256,6 +256,9 @@ begin
   if fUserConfigFile.FileVer < 11 then
     fUserConfigFile.RenameMainWindowSection;
 
+  if fUserConfigFile.FileVer < 12 then
+    fUserConfigFile.UpdateNamespaces;
+
   fUserConfigFile.Stamp;
   // NOTE: strictly speaking we only need to stamp common config file in
   // portable version. Installer does this in normal version. However, it does
