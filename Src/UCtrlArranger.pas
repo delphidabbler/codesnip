@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2009-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2009-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -101,6 +101,9 @@ type
     class function AlignVCentres(const ATop: Integer;
       const Ctrls: array of TControl): Integer;
 
+    class procedure AlignHCentresTo(const RefCtrls: array of TControl;
+      const Ctrls: array of TControl);
+
     ///  <summary>Aligns tops of all controls in Ctrls array with top of first
     ///  control in array and returns that top position.</summary>
     ///  <remarks>Array of controls must not be empty.</remarks>
@@ -182,6 +185,18 @@ begin
   Assert(Length(Ctrls) > 0, ClassName + '.AlignBottoms: control array empty');
   Result := Ctrls[0].Top + Ctrls[0].Height;
   AlignBottoms(Ctrls, Result);
+end;
+
+class procedure TCtrlArranger.AlignHCentresTo(const RefCtrls,
+  Ctrls: array of TControl);
+var
+  Left, Right: Integer;
+  Ctrl: TControl;
+begin
+  Left := LeftOf(RefCtrls);
+  Right := RightOf(RefCtrls);
+  for Ctrl in Ctrls do
+    Ctrl.Left := (Right + Left - Ctrl.Width) div 2;
 end;
 
 class procedure TCtrlArranger.AlignBottoms(const Ctrls: array of TControl;
