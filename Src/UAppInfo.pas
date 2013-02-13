@@ -76,6 +76,15 @@ type
       {Returns the directory where CodeSnip stores the user's "database" files.
         @return Full path to database sub directory.
       }
+    class function DefaultUserDataDir: string;
+      {Returns the default directory where CodeSnip stores the uer's "database"
+      files.
+        @return Full path to required directory.
+      }
+    class procedure ChangeUserDataDir(const NewDir: string);
+      {Changes directory where CodeSnip stores the user's "database" files.
+        @param NewDir [in] New directory.
+      }
     class function AppExeFilePath: string;
       {Returns fully specified name of program's executable file.
         @return Name of file.
@@ -165,6 +174,25 @@ begin
   Result := ParamStr(0);
 end;
 
+class procedure TAppInfo.ChangeUserDataDir(const NewDir: string);
+  {Changes directory where CodeSnip stores the user's "database" files.
+    @param NewDir [in] New directory.
+  }
+{$IFNDEF PORTABLE}
+var
+  Section: ISettingsSection;
+{$ENDIF}
+begin
+  {$IFNDEF PORTABLE}
+  Section := Settings.ReadSection(ssDatabase);
+  if StrSameText(ExcludeTrailingPathDelimiter(NewDir), DefaultUserDataDir) then
+    Section.DeleteItem('UserDataDir')
+  else
+    Section.ItemValues['UserDataDir'] := ExcludeTrailingPathDelimiter(NewDir);
+  Section.Save;
+  {$ENDIF}
+end;
+
 class function TAppInfo.CommonAppDir: string;
   {Gets the CodeSnip data directory stored within the common application data
   directory.
@@ -175,6 +203,19 @@ begin
   Result := TSystemFolders.CommonAppData + '\DelphiDabbler\CodeSnip.4';
   {$ELSE}
   Result := AppExeDir + '\AppData';
+  {$ENDIF}
+end;
+
+class function TAppInfo.DefaultUserDataDir: string;
+  {Returns the default directory where CodeSnip stores the uer's "database"
+  files.
+    @return Full path to required directory.
+  }
+begin
+  {$IFNDEF PORTABLE}
+  Result := UserAppDir + '\UserDatabase';
+  {$ELSE}
+  Result := UserAppDir + '\UserDB';
   {$ENDIF}
 end;
 
@@ -310,11 +351,18 @@ class function TAppInfo.UserDataDir: string;
   {Returns the directory where CodeSnip stores the user's "database" files.
     @return Full path to database sub directory.
   }
+{$IFNDEF PORTABLE}
+var
+  Section: ISettingsSection;  // persistent storage where code is recorded
+{$ENDIF}
 begin
   {$IFNDEF PORTABLE}
-  Result := UserAppDir + '\UserDatabase';
+  Section := Settings.ReadSection(ssDatabase);
+  Result := Section.ItemValues['UserDataDir'];
+  if Result = '' then
+    Result := DefaultUserDataDir;
   {$ELSE}
-  Result := UserAppDir + '\UserDB';
+  Result := DefaultUserDataDir;
   {$ENDIF}
 end;
 
