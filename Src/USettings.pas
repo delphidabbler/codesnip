@@ -160,7 +160,8 @@ type
     ssUnits,              // list of default units
     ssDuplicateSnippet,   // persistent settings from Duplicate Snippets dlg
     ssFavourites,         // persistent settings from Favourites dlg
-    ssWindowState         // info about the size and state of various windows
+    ssWindowState,        // info about the size and state of various windows
+    ssDatabase            // database customisation info
   );
 
   {
@@ -433,7 +434,8 @@ const
     ssUser,     // ssUnits
     ssUser,     // ssDuplicateSnippet
     ssUser,     // ssFavourites
-    ssUser      // ssWindowState
+    ssUser,     // ssWindowState
+    ssUser      // ssDatabase
   );
 begin
   Result := cSectionStorageMap[Section];
@@ -544,7 +546,8 @@ const
     'UnitList',         // ssUnits
     'DuplicateSnippet', // ssDuplicateSnippet
     'Favourites',       // ssFavourites
-    'WindowState'       // ssWindowState
+    'WindowState',      // ssWindowState
+    'Database'          // ssDatabase
   );
 begin
   Result := cSectionNames[Id];
