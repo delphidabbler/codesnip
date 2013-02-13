@@ -239,6 +239,9 @@
 			<DCCReference Include="FmUserBugReportDlg.pas">
 				<Form>UserBugReportDlg</Form>
 			</DCCReference>
+			<DCCReference Include="FmUserDataPathDlg.pas">
+				<Form>UserDataPathDlg</Form>
+			</DCCReference>
 			<DCCReference Include="FmWaitDlg.pas">
 				<Form>WaitDlg</Form>
 			</DCCReference>

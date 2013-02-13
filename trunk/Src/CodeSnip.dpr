@@ -137,6 +137,7 @@ uses
   FmTrappedBugReportDlg in 'FmTrappedBugReportDlg.pas' {TrappedBugReportDlg},
   FmUpdateDlg in 'FmUpdateDlg.pas' {UpdateDlg},
   FmUserBugReportDlg in 'FmUserBugReportDlg.pas' {UserBugReportDlg},
+  FmUserDataPathDlg in 'FmUserDataPathDlg.pas' {UserDataPathDlg},
   FmWaitDlg in 'FmWaitDlg.pas' {WaitDlg},
   FmWizardDlg in 'FmWizardDlg.pas' {WizardDlg},
   FrBrowserBase in 'FrBrowserBase.pas' {BrowserBaseFrame: TFrame},
