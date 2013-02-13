@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2007-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2007-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -125,6 +125,9 @@ type
     procedure ShowProgramUpdatesDlg;
       {Displays dialogue box used to check for database and program updates.
       }
+    procedure ShowUserDataPathDlg;
+      {Displays dialogue box used to move user database to a new location.
+      }
   end;
 
 
@@ -138,7 +141,11 @@ uses
   FmAboutDlg, FmDependenciesDlg, FmDonateDlg, FmFindCompilerDlg, FmFindTextDlg,
   FmFindXRefsDlg, FmNewsDlg, FmPreferencesDlg, FmPrintDlg, FmProgramUpdatesDlg,
   FmProxyServerDlg, FmRegistrationDlg, FmSelectionSearchDlg, FmTestCompileDlg,
-  FmUpdateDlg, FmUserBugReportDlg, UPageSetupDlgMgr, UTestUnitDlgMgr;
+  FmUpdateDlg, FmUserBugReportDlg,
+  {$IFNDEF PORTABLE}
+  FmUserDataPathDlg,
+  {$ENDIF}
+  UPageSetupDlgMgr, UTestUnitDlgMgr;
 
 
 { TDialogMgr }
@@ -303,6 +310,14 @@ procedure TDialogMgr.ShowTestUnit(const Snippet: TSnippet);
   }
 begin
   TTestUnitDlgMgr.DisplayTestUnit(Owner, Snippet);
+end;
+
+procedure TDialogMgr.ShowUserDataPathDlg;
+begin
+  // This dialogue box not available in portable edition
+  {$IFNDEF PORTABLE}
+  TUserDataPathDlg.Execute(Owner);
+  {$ENDIF}
 end;
 
 end.
