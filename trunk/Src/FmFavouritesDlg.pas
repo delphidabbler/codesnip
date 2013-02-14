@@ -269,7 +269,8 @@ uses
   // Delphi
   SysUtils, DateUtils, Windows, Graphics,
   // Project
-  UCtrlArranger, UMessageBox, UPreferences, USettings, UStructs, UStrUtils;
+  DB.UMain, DB.USnippet, UCtrlArranger, UMessageBox, UPreferences, USettings,
+  UStructs, UStrUtils;
 
 {$R *.dfm}
 
@@ -354,9 +355,14 @@ end;
 procedure TFavouritesDlg.AddLVItem(const Favourite: TFavourite);
 var
   LI: TFavouriteListItem;
+  Snippet: TSnippet;
 begin
   LI := fLVFavs.Items.Add as TFavouriteListItem;
-  LI.Caption := Favourite.SnippetID.Name;
+  Snippet := Database.Snippets.Find(Favourite.SnippetID);
+  if Assigned(Snippet) then
+    LI.Caption := Snippet.DisplayName
+  else
+    LI.Caption := Favourite.SnippetID.Name;
   if IsToday(Favourite.LastAccessed) then
     LI.SubItems.Add(TimeToStr(Favourite.LastAccessed))
   else
@@ -600,13 +606,17 @@ procedure TFavouritesDlg.LVFavouritesCompare(Sender: TObject; Item1,
 var
   Fav1, Fav2: TFavourite;
 begin
-  Fav1 := (Item1 as TFavouriteListItem).Favourite;
-  Fav2 := (Item2 as TFavouriteListItem).Favourite;
   case fLVFavs.SortColumn of
     0:
-      Compare := Fav1.SnippetID.CompareTo(Fav2.SnippetID);
+      // use Cation heresince it has snippet display which is not present in
+      // favourite record
+      Compare := StrCompareText(Item1.Caption, Item2.Caption);
     1:
+    begin
+      Fav1 := (Item1 as TFavouriteListItem).Favourite;
+      Fav2 := (Item2 as TFavouriteListItem).Favourite;
       Compare := CompareDateTime(Fav1.LastAccessed, Fav2.LastAccessed);
+    end;
   end;
   if fLVFavs.SortOrder = soDown then
     Compare := -Compare;

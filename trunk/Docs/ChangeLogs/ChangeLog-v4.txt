@@ -11,6 +11,10 @@
 ; Change Log for CodeSnip Release 4
 ; ------------------------------------------------------------------------------
 
+Release v4.2.1 of 14 February 2013
++ Bug fix: changed Favourites dialogue to display snippet display names instead of unique names. Fixes bug #72 (http://bit.ly/Vj6ZCM).
++ Updated program copyright date in About box.
+
 Release v4.2.0 of 07 February 2013
 + Added support for "favourite" snippets. Implements feature request #37 (http://bit.ly/12unShW):
   - Any displayed snippet can be flagged as a favourite via a menu option or toolbar button.
