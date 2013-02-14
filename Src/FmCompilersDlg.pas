@@ -24,8 +24,7 @@ uses
   SysUtils, ComCtrls, Controls, StdCtrls, ExtCtrls, Classes, Forms,
   // Project
   Compilers.UGlobals, FmCompilersDlg.FrBase, FmCompilersDlg.FrCompiler,
-  FmCompilersDlg.FrSearchDirs, FmCompilersDlg.FrLog,
-  FmCompilersDlg.FrNamespaces, FmCompilersDlg.FrSwitches,
+  FmCompilersDlg.FrSearchDirs, FmCompilersDlg.FrLog, FmCompilersDlg.FrSwitches,
   FmCompilersDlg.UBannerMgr, FmCompilersDlg.UCompilerListMgr, FmGenericOKDlg,
   UBaseObjects;
 
@@ -49,8 +48,6 @@ type
     frmLog: TCompilersDlgLogFrame;
     tsSearchDirs: TTabSheet;
     frmSearchDirs: TCompilersDlgSearchDirsFrame;
-    tsNamespaces: TTabSheet;
-    frmNamespaces: TCompilersDlgNamespacesFrame;
     procedure btnDetectClick(Sender: TObject);
     procedure btnOKClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -281,7 +278,7 @@ begin
   fBannerMgr := TCompilerBannerMgr.Create(pbBanner);
 
   fFrames := TArray<TCompilersDlgBaseFrame>.Create(
-    frmCompiler, frmSwitches, frmNamespaces, frmSearchDirs, frmLog
+    frmCompiler, frmSwitches, frmSearchDirs, frmLog
   );
   IterateFrames(
     procedure (Frame: TCompilersDlgBaseFrame)
@@ -364,7 +361,6 @@ end;
 
 procedure TCompilersDlg.UpdateEditFrames;
 begin
-  tsNamespaces.TabVisible := fCurCompiler.RequiresRTLNamespaces;
   IterateFrames(
     procedure(Frame: TCompilersDlgBaseFrame)
     begin

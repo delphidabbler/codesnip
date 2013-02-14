@@ -887,12 +887,6 @@ inherited MainForm: TMainForm
       OnExecute = actAddFavouriteExecute
       OnUpdate = actAddFavouriteUpdate
     end
-    object actMoveUserDatabase: TAction
-      Category = 'Database'
-      Caption = 'Move User Database...'
-      Hint = 'Move User Database|Move the user database to a new directory'
-      OnExecute = actMoveUserDatabaseExecute
-    end
   end
   object mnuMain: TMainMenu
     Images = ilMain
@@ -1123,12 +1117,6 @@ inherited MainForm: TMainForm
       end
       object miUpdateDbase: TMenuItem
         Action = actUpdateDbase
-      end
-      object miSpacer20: TMenuItem
-        Caption = '-'
-      end
-      object miMoveUserDatabase: TMenuItem
-        Action = actMoveUserDatabase
       end
     end
     object miCompile: TMenuItem

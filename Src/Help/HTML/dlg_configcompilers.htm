@@ -4,7 +4,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2005-2012, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -94,7 +94,7 @@
       compiler results table. To switch off compiler results completely you
       should use  the <a href="dlg_prefs_snippetlayout.htm">Snippet Layout</a>
       tab of the <a href="dlg_preferences.htm">Preferences</a> dialogue box to
-      remove the <em>Compiler Results Table</em> component from the different
+      remove the <em>Compiler Results Table</em> component from the difference
       kinds of snippet pages.
     </p>
     <h2>
@@ -107,8 +107,8 @@
     </p>
     <ul>
       <li>
-        <em>Add a switch</em>. Enter its name in the edit box and click
-        <em>Add</em>.
+        <em>Add a switch</em>. Enter its name in the edit box and click <em>
+        Add</em>.
       </li>
       <li>
         <em>Delete a switch</em>. Select the switch in the list box the click
@@ -125,28 +125,6 @@
       </li>
     </ul>
     <p>
-      For an explanation of the purpose of the switches please see your
-      compiler's documentation.
-    </p>
-    <p>
-      <strong>Notes:</strong>
-    </p>
-    <ol>
-      <li>
-        There is no need to use this tab to provide switches to set the compiler
-        search path &ndash; that is very cumbersome. Instead you can use the
-        <em>Search Paths</em> tab to define your search paths and to generate
-        the correct switches automatically.
-      </li>
-      <li>
-        Similarly, when you have selected the Delphi XE2 or later compiler,
-        there is no need to set up the <code>-NS</code> switch to specify the
-        namespaces to search for various units. The <em>Namespaces</em> tab can
-        be used to make this task simpler and to generate the correct
-        <code>-NS</code> switch.
-      </li>
-    </ol>
-    <p>
       <strong
         class="warning"
       >Warning:</strong> You should not remove any switches that cause the
@@ -156,49 +134,9 @@
       compiler's output otherwise <em>CodeSnip</em> may fail to operate
       correctly.
     </p>
-    <h2>
-      Namespaces
-    </h2>
-    <p class="bordered">
-      <strong>Note:</strong> This tab appears only if the selected compiler is
-      Delphi XE2 or later.
-    </p>
     <p>
-      Delphi XE2 or later qualify units from the RTL and VCL are prefixed with
-      the name of the unit's namespace. Much of the code managed by
-      <em>CodeSnip</em> uses unqualified unit names for reasons of backward
-      compatibility. In order for the unqualifed units to be found on Delphi
-      XE2 and later the compiler has to be given a list of namespaces to search
-      for the units.
-    </p>
-    <p>
-      This tab enables you to configure such a namespace, as follows:
-    </p>
-    <ul>
-      <li>
-        <em>Add a namespace</em>. Enter its name in the edit box and click
-        <em>Add</em>.
-      </li>
-      <li>
-        <em>Delete a namespace</em>. Select the namespaces in the list box the
-        click the <em>Delete</em> button.
-      </li>
-      <li>
-        <em>Edit a namespace</em>. Select the namespace in the list box to copy
-        it to the edit box. Change the namespace name and click
-        <em>Replace</em>.
-      </li>
-      <li>
-        <em>Restore default namespaces</em>. Click the <em>Defaults</em> button.
-        This can be useful if you have made some changes to namespaces and
-        <em>CodeSnip</em> fails to compile snippets correctly. The default
-        namespaces have been chosen because they contain the most commonly used
-        units.
-      </li>
-    </ul>
-    <p>
-      For an list of RTL and VCL units, and the namespaces to which thet belong,
-      see your compiler's documentation.
+      For an explanation of the purpose of the switches please see your
+      compiler's documentation.
     </p>
     <h2>
       Search Paths
@@ -229,12 +167,12 @@
         click <em>Replace</em>.
       </li>
       <li>
-        <em>Delete a path</em>. Select the directory in the list box and press
+        <em>Delete a path</em>. Select it in the list box and press
         <em>Delete</em>.
       </li>
       <li>
         <em>Change the order of the search paths</em>. Select a directory in the
-        list box then move it up and down the list using the buttons that
+        list box then moving it up and down the list using the buttons that
         display the up and down arrows. <span class="smallcaps">Ctrl+Up</span>
         and <span class="smallcaps">Ctrl+Down</span> have the same effect.
       </li>

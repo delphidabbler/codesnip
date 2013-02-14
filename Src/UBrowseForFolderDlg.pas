@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2011-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2011-2012, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -41,6 +41,8 @@ type
       ///  aligned.</summary>
       fHost: TComponent;
   strict private
+    ///  <summary>Initialises properties and event handlers.</summary>
+    procedure InitProperties;
     ///  <summary>Handles dialog's OnInitialise event. Aligns dialog box over
     ///  parent form.</summary>
     procedure DlgInitHandler(Sender: TObject);
@@ -55,18 +57,15 @@ type
     function GetTitle: string;
     ///  <summary>Getter for HelpKeyword property.</summary>
     function GetHelpKeyword: string;
-    ///  <summary>Getter for MakeFolderBtnVisible property.</summary>
-    function GetMakeFolderBtnVisible: Boolean;
     ///  <summary>Setter for Headline property.</summary>
     procedure SetHeadline(const Value: string);
     ///  <summary>Setter for Title property.</summary>
     procedure SetTitle(const Value: string);
     ///  <summary>Setter for HelpKeyword property.</summary>
     procedure SetHelpKeyword(const Value: string);
-    ///  <summary>Setter for MakeFolderBtnVisible property.</summary>
-    procedure SetMakeFolderBtnVisible(const Value: Boolean);
   public
-    ///  <summary>Constructs object and initialise dialog box.</summary>
+    ///  <summary>Object constructor. Sets up object and initialise dialog box.
+    ///  </summary>
     ///  <param name="AHost">TComponent [in] Reference to component over which
     ///  the dialog box will be aligned.</param>
     constructor Create(AHost: TComponent);
@@ -81,13 +80,9 @@ type
     property Headline: string read GetHeadline write SetHeadline;
     ///  <summary>Name of folder selected in dialog box.</summary>
     property FolderName: string read GetFolderName;
-    ///  <summary>Help keyword. No help button is displayed: help topic is
-    ///  displayed if F1 key is pressed.</summary>
+    ///  <summary>Help keyword. If present dialog box displays a help button. If
+    ///  '' then no help button is displayed.</summary>
     property HelpKeyword: string read GetHelpKeyword write SetHelpKeyword;
-    ///  <summary>Determines whether "Make folder" button is displayed in
-    ///  dialogue box.</summary>
-    property MakeFolderBtnVisible: Boolean
-      read GetMakeFolderBtnVisible write SetMakeFolderBtnVisible;
   end;
 
 
@@ -106,10 +101,7 @@ begin
   inherited Create;
   fHost := AHost;
   fDialog := TPJBrowseDialog.Create(nil);
-  fDialog.OnInitialise := DlgInitHandler;
-  fDialog.OnHelp := DlgHelpHandler;
-  fDialog.Options := [boHideMakeFolderBtn, boDirsOnly, boNewDlgStyle];
-  fDialog.HelpType := htKeyword;
+  InitProperties;
 end;
 
 destructor TBrowseForFolderDlg.Destroy;
@@ -152,14 +144,17 @@ begin
   Result := fDialog.HelpKeyword;
 end;
 
-function TBrowseForFolderDlg.GetMakeFolderBtnVisible: Boolean;
-begin
-  Result := not (boHideMakeFolderBtn in fDialog.Options);
-end;
-
 function TBrowseForFolderDlg.GetTitle: string;
 begin
   Result := fDialog.Title;
+end;
+
+procedure TBrowseForFolderDlg.InitProperties;
+begin
+  fDialog.OnInitialise := DlgInitHandler;
+  fDialog.OnHelp := DlgHelpHandler;
+  fDialog.Options := [boDirsOnly];  // using old style dialog
+  fDialog.HelpType := htKeyword;
 end;
 
 procedure TBrowseForFolderDlg.SetHeadline(const Value: string);
@@ -174,16 +169,6 @@ begin
     fDialog.Options := fDialog.Options - [boShowHelp]
   else
     fDialog.Options := fDialog.Options + [boShowHelp];
-end;
-
-procedure TBrowseForFolderDlg.SetMakeFolderBtnVisible(const Value: Boolean);
-begin
-  if Value = GetMakeFolderBtnVisible then
-    Exit;
-  if Value then
-    fDialog.Options := fDialog.Options - [boHideMakeFolderBtn]
-  else
-    fDialog.Options := fDialog.Options + [boHideMakeFolderBtn];
 end;
 
 procedure TBrowseForFolderDlg.SetTitle(const Value: string);

@@ -1,4 +1,8 @@
 inherited CompilersDlgCompilerFrame: TCompilersDlgCompilerFrame
+  Width = 313
+  Height = 137
+  ExplicitWidth = 313
+  ExplicitHeight = 137
   object lblCompilerPath: TLabel
     Left = 4
     Top = 4
@@ -8,22 +12,20 @@ inherited CompilersDlgCompilerFrame: TCompilersDlgCompilerFrame
     FocusControl = edCompilerPath
   end
   object edCompilerPath: TEdit
-    Left = 4
+    Left = 5
     Top = 24
-    Width = 320
+    Width = 271
     Height = 21
-    Anchors = [akLeft, akTop, akRight]
     Ctl3D = True
     ParentCtl3D = False
     TabOrder = 0
     OnExit = edCompilerPathExit
   end
   object btnBrowse: TButton
-    Left = 331
+    Left = 282
     Top = 24
     Width = 27
     Height = 21
-    Anchors = [akTop, akRight]
     Caption = '...'
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -35,7 +37,7 @@ inherited CompilersDlgCompilerFrame: TCompilersDlgCompilerFrame
     OnClick = btnBrowseClick
   end
   object btnClear: TButton
-    Left = 4
+    Left = 3
     Top = 51
     Width = 75
     Height = 25
@@ -44,7 +46,7 @@ inherited CompilersDlgCompilerFrame: TCompilersDlgCompilerFrame
     OnClick = btnClearClick
   end
   object chkShowInMain: TCheckBox
-    Left = 4
+    Left = 3
     Top = 88
     Width = 273
     Height = 17

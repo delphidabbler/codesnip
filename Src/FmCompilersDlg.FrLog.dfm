@@ -1,4 +1,6 @@
 inherited CompilersDlgLogFrame: TCompilersDlgLogFrame
+  Width = 313
+  ExplicitWidth = 313
   object lblLogPrefixes: TLabel
     Left = 4
     Top = 4
@@ -8,11 +10,10 @@ inherited CompilersDlgLogFrame: TCompilersDlgLogFrame
     FocusControl = vleLogPrefixes
   end
   object vleLogPrefixes: TValueListEditor
-    Left = 4
-    Top = 22
-    Width = 354
+    Left = 3
+    Top = 23
+    Width = 304
     Height = 59
-    Anchors = [akLeft, akTop, akRight]
     Ctl3D = True
     DefaultColWidth = 20
     DefaultDrawing = False
@@ -32,7 +33,6 @@ inherited CompilersDlgLogFrame: TCompilersDlgLogFrame
       'Prefix')
     OnDrawCell = vleLogPrefixesDrawCell
     OnSelectCell = vleLogPrefixesSelectCell
-    ExplicitWidth = 304
     ColWidths = (
       20
       278)

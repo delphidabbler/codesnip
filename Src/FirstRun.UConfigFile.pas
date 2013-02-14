@@ -77,7 +77,7 @@ type
   strict private
     const
       ///  <summary>Current user config file version.</summary>
-      FileVersion = 12;
+      FileVersion = 11;
   strict protected
     ///  <summary>Returns current user config file version.</summary>
     class function GetFileVersion: Integer; override;
@@ -102,10 +102,6 @@ type
     ///  <summary>Effectively renames MainWindow section used prior to version
     ///  11 as WindowState:MainForm.</summary>
     procedure RenameMainWindowSection;
-    ///  <summary>Replaces any -NS switch in [Cmp:XXXX] sections' Switches value
-    ///  with an equivalent entry in new Namespaces value, only if compiler XXX
-    ///  is Delphi XE2 or later.</summary>
-    procedure UpdateNamespaces;
     ///  <summary>Adds Prefs:CodeGen section along with default data.</summary>
     procedure CreateDefaultCodeGenEntries;
     ///  <summary>Stamps config file with current program and file versions.
@@ -145,7 +141,7 @@ uses
   // Delphi
   SysUtils, Types, IOUtils,
   // Project
-  FirstRun.UIniFile, UAppInfo, UIOUtils, UIStringList, UStrUtils;
+  FirstRun.UIniFile, UAppInfo, UIOUtils, UStrUtils;
 
 
 { TConfigFileUpdater }
@@ -411,51 +407,6 @@ begin
   SetIniInt('MainWindow', 'OverviewTab', 0, CfgFileName);
 end;
 {$ENDIF}
-
-procedure TUserConfigFileUpdater.UpdateNamespaces;
-
-  // Extracts any namespace information from compiler's switches and moves it
-  // into Namespaces value.
-  procedure UpdateForCompiler(const CompilerID: string);
-  var
-    Section: string;
-    Switches: IStringList;
-    SwitchIdx: Integer;
-    Switch: string;
-    Namespaces: IStringList;
-  begin
-    Section := Format('Cmp:%s', [CompilerID]);
-    Namespaces := TIStringList.Create;
-    Switches := TIStringList.Create(
-      GetIniString(Section, 'Switches', '', CfgFileName), ',', False, True
-    );
-    for SwitchIdx := Pred(Switches.Count) downto 0 do
-    begin
-      Switch := Switches[SwitchIdx];
-      if StrStartsStr('-NS', Switch) then
-      begin
-        Namespaces.Add(
-          StrSliceRight(Switch, Length(Switch) - Length('-NS')),
-          ';',
-          False,
-          True
-        );
-        Switches.Delete(SwitchIdx);
-      end;
-    end;
-    SetIniString(
-      Section, 'Switches', Switches.GetText(',', False), CfgFileName
-    );
-    if Namespaces.Count > 0 then
-      SetIniString(
-        Section, 'Namespaces', Namespaces.GetText(' ', False), CfgFileName
-      );
-  end;
-
-begin
-  UpdateForCompiler('DXE2');
-  UpdateForCompiler('DXE3');
-end;
 
 { TCommonConfigFileUpdater }
 

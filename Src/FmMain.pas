@@ -240,9 +240,6 @@ type
     actAddFavourite: TAction;
     miAddFavourite: TMenuItem;
     tbFavourites: TToolButton;
-    actMoveUserDatabase: TAction;
-    miSpacer20: TMenuItem;
-    miMoveUserDatabase: TMenuItem;
     procedure actAboutExecute(Sender: TObject);
     procedure actAddCategoryExecute(Sender: TObject);
     procedure actAddSnippetExecute(Sender: TObject);
@@ -339,7 +336,6 @@ type
     procedure actFavouritesExecute(Sender: TObject);
     procedure actAddFavouriteExecute(Sender: TObject);
     procedure actAddFavouriteUpdate(Sender: TObject);
-    procedure actMoveUserDatabaseExecute(Sender: TObject);
   strict private
     fIsAppRegistered: Boolean;        // Flag noting if app is registered
     fNotifier: INotifier;             // Notififies app of user-initiated events
@@ -863,11 +859,6 @@ var
 begin
   if TSelectionIOMgr.LoadSelectionSearch(Search) then
     DoSearchFilter(Search);
-end;
-
-procedure TMainForm.actMoveUserDatabaseExecute(Sender: TObject);
-begin
-  fDialogMgr.ShowUserDataPathDlg;
 end;
 
 procedure TMainForm.actNewDetailsTabExecute(Sender: TObject);
@@ -1518,10 +1509,6 @@ begin
     actViewCategorised.Tag := cCategorisedTab;
     actViewAlphabetical.Tag := cAlphabeticTab;
     actViewSnippetKinds.Tag := cKindTab;
-    {$IFDEF PORTABLE}
-    // Move user database option not available in portable edition
-    actMoveUserDatabase.Visible := False;
-    {$ENDIF}
 
     // Create notifier object and assign actions triggered by its methods
     // note that actions created on fly are automatically freed
