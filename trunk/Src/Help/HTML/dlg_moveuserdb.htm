@@ -1,0 +1,89 @@
+<!--
+ * This Source Code Form is subject to the terms of the Mozilla Public License,
+ * v. 2.0. If a copy of the MPL was not distributed with this file, You can
+ * obtain one at http://mozilla.org/MPL/2.0/
+ *
+ * Copyright (C) 2013, Peter Johnson (www.delphidabbler.com).
+ *
+ * $Rev$
+ * $Date$
+ *
+ * Help topic for Move User Database dialogue box.
+-->
+<html>
+  <head>
+    <meta
+     http-equiv="Content-Type"
+     content="text-html; charset=Windows-1252">
+    <title>
+      Move User Database Dialogue Box
+    </title>
+    <link
+     rel="stylesheet"
+     href="../css/codesnip.css"
+     type="text/css">
+  </head>
+  <body>
+    <object
+     type="application/x-oleobject"
+     classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+      <param
+       name="ALink Name"
+       value="UserDataPathDlg">
+    </object>
+    <h1>
+      Move User Database Dialogue Box
+    </h1>
+    <p class="bordered">
+      <strong>Note:</strong> This dialogue box is not available in the portable
+      edition of <em>CodeSnip</em>.
+    </p>
+    <p>
+      The purpose of this dialogue box is to enable the user to move the user
+      defined snippets database from its default location to a new directory.
+      You may wish to do this to enable the database to be easily backed up.
+      For example you could move the database to a sub-directory of a
+      <em>Dropbox</em> or <em>GoogleDrive</em> directory.
+    </p>
+    <p class="bordered">
+      <strong>Important:</strong> You a strongly advised to make a backup of the
+      user defined snippets database before moving it so that it can be easily
+      restored if there is a problem. Use the <em>Database | Backup User
+      Database</em> menu option to do this.
+    </p>
+    <p>
+      To move the database enter the full path of the new directory in the
+      <em>New database path</em> edit box. Alternatively you can use a standard
+      <em>Browser For Folder</em> dialogue box to select the required directory.
+      To do that click the ellipsis button to the right of the edit control,
+      select the directory in the resultant dialogue box and click <em>OK</em>.
+      The chosen directory will be displayed in the edit box.
+    </p>
+    <p>
+      The directory where the database is to be copied <strong>must be
+      empty</strong> and must be on a valid drive.
+    </p>
+    <p>
+      Once a suitable path has been entered click the large <em>Move
+      Database</em> button. You will be prompted to confirm this action and then
+      the database files will be copied.
+    </p>
+    <p>
+      The new location of the database will be recorded in the per user config
+      file and it is important that this file is not modified or deleted
+      otherwise the database will not be found.
+    </p>
+    <p>
+      The database can be moved back to its default location by clicking the
+      <em>Restore Default Path</em> button. This copies the default directory
+      into the <em>New database path</em> edit control. Clicking the <em>Move
+      Database</em> button will now move the database back to its default
+      directory.
+    </p>
+    <p>
+      Note that the <em>Move Database</em> button will be disabled if the
+      directory entered in the <em>New database path</em> edit control is the
+      current database path or if the edit control is empty.
+    </p>
+  </body>
+</html>
