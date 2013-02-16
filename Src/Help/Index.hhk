@@ -276,6 +276,10 @@
     <param name="Local" value="HTML\dlg_prefs_general.htm">
     </OBJECT>
   <LI> <OBJECT type="text/sitemap">
+    <param name="Name" value="move user database dialogue">
+    <param name="Local" value="HTML\dlg_moveuserdb.htm">
+    </OBJECT>
+  <LI> <OBJECT type="text/sitemap">
     <param name="Name" value="navigation">
     <param name="Local" value="HTML\navigation.htm">
     </OBJECT>
