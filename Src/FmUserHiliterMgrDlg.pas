@@ -40,6 +40,7 @@ type
     procedure actDeleteExecute(Sender: TObject);
     procedure actUseUpdate(Sender: TObject);
     procedure actDeleteUpdate(Sender: TObject);
+    procedure lbNamesDblClick(Sender: TObject);
   strict private
     var
       fNamedAttrs: INamedHiliteAttrs;
@@ -91,6 +92,7 @@ end;
 procedure TUserHiliterMgrDlg.actUseExecute(Sender: TObject);
 begin
   fSelected := fNamedAttrs[SelectedName];
+  ModalResult := mrOk;
 end;
 
 procedure TUserHiliterMgrDlg.actUseUpdate(Sender: TObject);
@@ -147,6 +149,11 @@ begin
     Names.Free;
   end;
   lbNames.SetFocus;
+end;
+
+procedure TUserHiliterMgrDlg.lbNamesDblClick(Sender: TObject);
+begin
+  actUse.Execute;
 end;
 
 function TUserHiliterMgrDlg.SelectedName: string;
