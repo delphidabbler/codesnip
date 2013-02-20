@@ -23,6 +23,7 @@ inherited UserHiliterMgrDlg: TUserHiliterMgrDlg
       IntegralHeight = True
       ItemHeight = 13
       TabOrder = 0
+      OnDblClick = lbNamesDblClick
     end
     object btnUse: TButton
       Left = 223
@@ -31,7 +32,6 @@ inherited UserHiliterMgrDlg: TUserHiliterMgrDlg
       Height = 25
       Action = actUse
       Default = True
-      ModalResult = 1
       TabOrder = 1
     end
     object btnDelete: TButton
@@ -44,7 +44,7 @@ inherited UserHiliterMgrDlg: TUserHiliterMgrDlg
     end
   end
   inherited btnClose: TButton
-    Caption = 'Cancel'
+    Caption = 'Done'
     Default = False
     ModalResult = 2
   end
