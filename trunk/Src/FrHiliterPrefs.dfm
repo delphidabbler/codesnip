@@ -13,7 +13,7 @@ inherited HiliterPrefsFrame: THiliterPrefsFrame
     Height = 196
     Anchors = [akLeft, akTop, akRight]
     Caption = ' Syntactic elements '
-    TabOrder = 3
+    TabOrder = 4
     object lblElements: TLabel
       Left = 8
       Top = 20
@@ -143,7 +143,7 @@ inherited HiliterPrefsFrame: THiliterPrefsFrame
   end
   object btnReset: TButton
     Left = 247
-    Top = 46
+    Top = 32
     Width = 146
     Height = 25
     Anchors = [akTop, akRight]
@@ -157,7 +157,7 @@ inherited HiliterPrefsFrame: THiliterPrefsFrame
     Width = 146
     Height = 25
     Anchors = [akTop, akRight]
-    Caption = 'Use &Predefined Styles'
+    Caption = 'Use N&amed Style'
     DoubleBuffered = True
     Glyph.Data = {
       F6000000424DF600000000000000760000002800000010000000100000000100
@@ -172,6 +172,16 @@ inherited HiliterPrefsFrame: THiliterPrefsFrame
     ParentDoubleBuffered = False
     TabOrder = 1
     OnClick = btnStyleClick
+  end
+  object btnSaveStyle: TButton
+    Left = 247
+    Top = 63
+    Width = 146
+    Height = 25
+    Anchors = [akTop, akRight]
+    Caption = '&Save Style...'
+    TabOrder = 3
+    OnClick = btnSaveStyleClick
   end
   object mnuStyles: TPopupMenu
     Left = 304
@@ -192,7 +202,14 @@ inherited HiliterPrefsFrame: THiliterPrefsFrame
       Caption = 'Visual Studio'#8482
       OnClick = StyleMenuClick
     end
-    object miSpacer: TMenuItem
+    object miSpacer1: TMenuItem
+      Caption = '-'
+    end
+    object miNamedStyles: TMenuItem
+      Caption = 'User Defined Styles...'
+      OnClick = miNamedStylesClick
+    end
+    object miSpacer2: TMenuItem
       Caption = '-'
     end
     object miNoHilite: TMenuItem

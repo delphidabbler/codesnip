@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2006-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2006-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -58,8 +58,11 @@ type
     miDelphi2006: TMenuItem;
     miNoHilite: TMenuItem;
     miVisualStudio: TMenuItem;
-    miSpacer: TMenuItem;
+    miSpacer1: TMenuItem;
     mnuStyles: TPopupMenu;
+    btnSaveStyle: TButton;
+    miSpacer2: TMenuItem;
+    miNamedStyles: TMenuItem;
     procedure btnResetClick(Sender: TObject);
     procedure btnStyleClick(Sender: TObject);
     procedure cbColourChange(Sender: TObject);
@@ -68,10 +71,13 @@ type
     procedure ChkFontStyleClick(Sender: TObject);
     procedure lbElementsClick(Sender: TObject);
     procedure StyleMenuClick(Sender: TObject);
+    procedure btnSaveStyleClick(Sender: TObject);
+    procedure miNamedStylesClick(Sender: TObject);
   strict private
     fColorBox: TColorBoxEx;     // Custom colour combo box component
     fColorDlg: TColorDialogEx;  // Custom colour dialog box (use with combo)
     fAttrs: IHiliteAttrs;       // Loads and records user's hilite preferences
+    fNamedAttrs: INamedHiliteAttrs; // Loads and records named hilite prefs
     fChanged: Boolean;          // Flags if any preference has changed
     procedure PopulateElementsList;
       {Populates list box containing customisable highlighter attribute
@@ -98,6 +104,9 @@ type
       }
     procedure UpdatePreview;
       {Updates preview of highlighting of current highlighter element.
+      }
+    procedure UpdatePopupMenu;
+      {Updates state of items in styles popup menu.
       }
     function GenerateRTF: TRTF;
       {Generates RTF of example of current highlighter element.
@@ -151,8 +160,9 @@ uses
   // Delphi
   SysUtils, ExtCtrls, Windows, Graphics, Dialogs,
   // Project
-  FmPreferencesDlg, Hiliter.UAttrs, IntfCommon, UCtrlArranger, UFontHelper,
-  UIStringList, UMessageBox, URTFBuilder, URTFStyles, UUtils;
+  FmPreferencesDlg, FmNewHiliterNameDlg, FmUserHiliterMgrDlg, Hiliter.UAttrs,
+  IntfCommon, UCtrlArranger, UFontHelper, UIStringList, UMessageBox,
+  URTFBuilder, URTFStyles, UUtils;
 
 
 {$R *.dfm}
@@ -231,8 +241,10 @@ procedure THiliterPrefsFrame.Activate(const Prefs: IPreferences);
   }
 begin
   (fAttrs as IAssignable).Assign(Prefs.HiliteAttrs);
+  (fNamedAttrs as IAssignable).Assign(Prefs.NamedHiliteAttrs);
   Prefs.CustomHiliteColours.CopyTo(fColorDlg.CustomColors, True);
   UpdateControls;
+  UpdatePopupMenu;
 end;
 
 procedure THiliterPrefsFrame.ArrangeControls;
@@ -259,6 +271,8 @@ begin
   lbElements.Height := gbElements.ClientHeight - lbElements.Top - 12;
   frmExample.Top :=  TCtrlArranger.BottomOf(lblExample, 4);
   frmExample.Height := gbElements.ClientHeight - frmExample.Top - 12;
+  btnReset.Top := TCtrlArranger.BottomOf(btnStyle, 6);
+  btnSaveStyle.Top := TCtrlArranger.BottomOf(btnReset, 6);
   fColorBox.Top := TCtrlArranger.BottomOf(lblColour, 4);
 end;
 
@@ -271,6 +285,15 @@ begin
   fAttrs := THiliteAttrsFactory.CreateDefaultAttrs;
   UpdateControls;
   fChanged := True;
+end;
+
+procedure THiliterPrefsFrame.btnSaveStyleClick(Sender: TObject);
+var
+  NewName: string;
+begin
+  if not TNewHiliterNameDlg.Execute(Self, fNamedAttrs.Names, NewName) then
+    Exit;
+  fNamedAttrs[NewName] := fAttrs;
 end;
 
 procedure THiliterPrefsFrame.btnStyleClick(Sender: TObject);
@@ -371,6 +394,7 @@ begin
 
   // Create object used to store customised attributes
   fAttrs := THiliteAttrsFactory.CreateDefaultAttrs;
+  fNamedAttrs := THiliteAttrsFactory.CreateNamedAttrs;
 
   // Create and initialise custom color dialog box
   fColorDlg := TColorDialogEx.Create(ParentForm);
@@ -442,6 +466,7 @@ procedure THiliterPrefsFrame.Deactivate(const Prefs: IPreferences);
   }
 begin
   Prefs.HiliteAttrs := fAttrs;
+  Prefs.NamedHiliteAttrs := fNamedAttrs;
   Prefs.CustomHiliteColours.CopyFrom(fColorDlg.CustomColors, True);
 end;
 
@@ -520,6 +545,19 @@ procedure THiliterPrefsFrame.lbElementsClick(Sender: TObject);
   }
 begin
   UpdateControls;
+end;
+
+procedure THiliterPrefsFrame.miNamedStylesClick(Sender: TObject);
+var
+  SelectedAttrs: IHiliteAttrs;
+begin
+  if TUserHiliterMgrDlg.Execute(Self, fNamedAttrs, SelectedAttrs) then
+  begin
+    (fAttrs as IAssignable).Assign(SelectedAttrs);
+    fChanged := True;
+    UpdateControls;
+  end;
+  UpdatePopupMenu;
 end;
 
 function THiliterPrefsFrame.ParentForm: TForm;
@@ -618,6 +656,11 @@ begin
   SafeCheck(chkUnderline, fsUnderline in Elem.FontStyle);
   fColorBox.Selected := Elem.ForeColor;
   UpdatePreview;
+end;
+
+procedure THiliterPrefsFrame.UpdatePopupMenu;
+begin
+  miNamedStyles.Enabled := not fNamedAttrs.IsEmpty;
 end;
 
 procedure THiliterPrefsFrame.UpdatePreview;
