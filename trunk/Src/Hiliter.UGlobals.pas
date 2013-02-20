@@ -171,6 +171,7 @@ type
     procedure Delete(const Name: string);
     procedure Clear;
     function Contains(const Name: string): Boolean;
+    function IsEmpty: Boolean;
     property Hiliters[const Name: string]: IHiliteAttrs
       read GetHiliter write SetHiliter; default;
     property Names: TArray<string>
