@@ -348,6 +348,10 @@
     <param name="Local" value="HTML\task_savesnippet.htm">
     </OBJECT>
   <LI> <OBJECT type="text/sitemap">
+    <param name="Name" value="save highlighter snippets dialogue">
+    <param name="Local" value="HTML\dlg_savehiliter.htm>s
+    </OBJECT>
+  <LI> <OBJECT type="text/sitemap">
     <param name="Name" value="save snippet dialogue">
     <param name="Local" value="HTML\dlg_savesnippet.htm">
     </OBJECT>
@@ -401,6 +405,10 @@
     </OBJECT>
   <LI> <OBJECT type="text/sitemap">
     <param name="Name" value="update from web dialogue">
+    <param name="Local" value="HTML\dlg_update.htm">
+    </OBJECT>
+  <LI> <OBJECT type="text/sitemap">
+    <param name="Name" value="dlg_hilitemgr.htm dialogue">
     <param name="Local" value="HTML\dlg_update.htm">
     </OBJECT>
   <LI> <OBJECT type="text/sitemap">
