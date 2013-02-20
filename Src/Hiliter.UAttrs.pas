@@ -80,6 +80,7 @@ type
       {Creates a predefined highlighter object.
         @return Highlighter instance.
       }
+    class function CloneAttrs(Attrs: IHiliteAttrs): IHiliteAttrs;
     class function CreateNamedAttrs: INamedHiliteAttrs;
   end;
 
@@ -422,6 +423,13 @@ end;
 
 { THiliteAttrsFactory }
 
+class function THiliteAttrsFactory.CloneAttrs(
+  Attrs: IHiliteAttrs): IHiliteAttrs;
+begin
+  Result := THiliteAttrs.Create;
+  (Result as IAssignable).Assign(Attrs);
+end;
+
 class function THiliteAttrsFactory.CreateDefaultAttrs: IHiliteAttrs;
   {Creates a highlighter object that uses program's default highlighting style.
     @return Highlighter instance.
@@ -631,7 +639,7 @@ end;
 function TNamedHiliterAttrs.GetHiliter(const Name: string): IHiliteAttrs;
 begin
   Assert(fMap.ContainsKey(Name), ClassName + '.GetHiliter: Name not found');
-  Result := fMap[Name];
+  Result := THiliteAttrsFactory.CloneAttrs(fMap[Name]);
 end;
 
 function TNamedHiliterAttrs.GetNames: TArray<string>;
@@ -660,11 +668,14 @@ end;
 
 procedure TNamedHiliterAttrs.SetHiliter(const Name: string;
   Hiliter: IHiliteAttrs);
+var
+  Clone: IHiliteAttrs;
 begin
+  Clone := THiliteAttrsFactory.CloneAttrs(Hiliter);
   if fMap.ContainsKey(Name) then
-    fMap[Name] := Hiliter
+    fMap[Name] := Clone
   else
-    fMap.Add(Name, Hiliter);
+    fMap.Add(Name, Clone);
 end;
 
 end.
