@@ -294,6 +294,7 @@ begin
   if not TNewHiliterNameDlg.Execute(Self, fNamedAttrs.Names, NewName) then
     Exit;
   fNamedAttrs[NewName] := fAttrs;
+  UpdatePopupMenu;
 end;
 
 procedure THiliterPrefsFrame.btnStyleClick(Sender: TObject);
