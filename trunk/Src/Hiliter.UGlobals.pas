@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -160,6 +160,21 @@ type
     ///  <param name="Elem">THiliteElement [in] Type of element that has just
     ///  been output.</param>
     procedure AfterElem(Elem: THiliteElement);
+  end;
+
+type
+  INamedHiliteAttrs = interface(IInterface)
+    ['{6F18CD62-111A-4CE8-924C-88DE7D82A19F}']
+    function GetHiliter(const Name: string): IHiliteAttrs;
+    procedure SetHiliter(const Name: string; Hiliter: IHiliteAttrs);
+    function GetNames: TArray<string>;
+    procedure Delete(const Name: string);
+    procedure Clear;
+    function Contains(const Name: string): Boolean;
+    property Hiliters[const Name: string]: IHiliteAttrs
+      read GetHiliter write SetHiliter; default;
+    property Names: TArray<string>
+      read GetNames;
   end;
 
 

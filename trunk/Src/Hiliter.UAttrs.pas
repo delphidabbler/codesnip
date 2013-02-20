@@ -36,8 +36,10 @@ interface
 
 
 uses
+  // Delphi
+  Generics.Collections,
   // Project
-  Hiliter.UGlobals, UBaseObjects;
+  Hiliter.UGlobals, IntfCommon, UBaseObjects;
 
 
 type
@@ -78,6 +80,7 @@ type
       {Creates a predefined highlighter object.
         @return Highlighter instance.
       }
+    class function CreateNamedAttrs: INamedHiliteAttrs;
   end;
 
 
@@ -86,9 +89,9 @@ implementation
 
 uses
   // Delphi
-  Generics.Collections, SysUtils, Graphics,
+  SysUtils, Graphics,
   // Project
-  IntfCommon, UExceptions, UFontHelper, UPreferences;
+  UComparers, UExceptions, UFontHelper, UPreferences;
 
 
 type
@@ -201,6 +204,24 @@ type
       }
   end;
 
+type
+  TNamedHiliterAttrs = class(TInterfacedObject,
+    INamedHiliteAttrs, IAssignable
+  )
+  strict private
+    var
+      fMap: TDictionary<string,IHiliteAttrs>;
+  public
+    constructor Create;
+    destructor Destroy; override;
+    function Contains(const Name: string): Boolean;
+    procedure Delete(const Name: string);
+    procedure Clear;
+    function GetHiliter(const Name: string): IHiliteAttrs;
+    procedure SetHiliter(const Name: string; Hiliter: IHiliteAttrs);
+    function GetNames: TArray<string>;
+    procedure Assign(const Src: IInterface);
+  end;
 
 { THiliteAttrs }
 
@@ -408,6 +429,11 @@ begin
   Result := THiliteAttrsFactory.CreatePredefinedAttrs(hsDelphi2006);
 end;
 
+class function THiliteAttrsFactory.CreateNamedAttrs: INamedHiliteAttrs;
+begin
+  Result := TNamedHiliterAttrs.Create;
+end;
+
 class function THiliteAttrsFactory.CreateNulAttrs: IHiliteAttrs;
   {Creates a nul highlighter object: one that provides no additional formatting
   information other than default font and size.
@@ -555,6 +581,84 @@ class function THiliteAttrsFactory.CreateUserAttrs: IHiliteAttrs;
 begin
   Result := THiliteAttrs.Create;
   (Result as IAssignable).Assign(Preferences.HiliteAttrs);
+end;
+
+{ TNamedHiliterAttrs }
+
+procedure TNamedHiliterAttrs.Assign(const Src: IInterface);
+var
+  Name: string;
+  SrcHiliters: INamedHiliteAttrs;
+begin
+  Assert(Supports(Src, INamedHiliteAttrs), ClassName + '.Assign: Src is nil');
+  Clear;
+  SrcHiliters := Src as INamedHiliteAttrs;
+  for Name in SrcHiliters.Names do
+    fMap.Add(Name, SrcHiliters[Name]);
+end;
+
+procedure TNamedHiliterAttrs.Clear;
+begin
+  fMap.Clear;
+end;
+
+function TNamedHiliterAttrs.Contains(const Name: string): Boolean;
+begin
+  Result := fMap.ContainsKey(Name);
+end;
+
+constructor TNamedHiliterAttrs.Create;
+begin
+  inherited Create;
+  fMap := TDictionary<string,IHiliteAttrs>.Create(
+    TTextEqualityComparer.Create
+  );
+end;
+
+procedure TNamedHiliterAttrs.Delete(const Name: string);
+begin
+  if fMap.ContainsKey(Name) then
+    fMap.Remove(Name);
+end;
+
+destructor TNamedHiliterAttrs.Destroy;
+begin
+  fMap.Free;
+  inherited;
+end;
+
+function TNamedHiliterAttrs.GetHiliter(const Name: string): IHiliteAttrs;
+begin
+  Assert(fMap.ContainsKey(Name), ClassName + '.GetHiliter: Name not found');
+  Result := fMap[Name];
+end;
+
+function TNamedHiliterAttrs.GetNames: TArray<string>;
+var
+  Idx: Integer;
+  Enum: TEnumerator<string>;
+begin
+  SetLength(Result, fMap.Count);
+  Enum := fMap.Keys.GetEnumerator;
+  try
+    Idx := 0;
+    while Enum.MoveNext do
+    begin
+      Result[Idx] := Enum.Current;
+      Inc(Idx);
+    end;
+  finally
+    Enum.Free;
+  end;
+end;
+
+procedure TNamedHiliterAttrs.SetHiliter(const Name: string;
+  Hiliter: IHiliteAttrs);
+begin
+  if fMap.ContainsKey(Name) then
+    fMap[Name] := Hiliter
+  else
+    fMap.Add(Name, Hiliter);
 end;
 
 end.
