@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2006-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2006-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -32,6 +32,11 @@ type
     from persistent storage.
   }
   THiliterPersist = class(TNoConstructObject)
+  strict private
+    class procedure InternalSave(Storage: ISettingsSection;
+      Hiliter: IHiliteAttrs; const Prefix: string);
+    class procedure InternalLoad(Storage: ISettingsSection;
+      Hiliter: IHiliteAttrs; const Prefix: string);
   public
     class procedure Save(const Storage: ISettingsSection;
       const Hiliter: IHiliteAttrs);
@@ -45,6 +50,10 @@ type
         @param Storage [in] Storage containing highligher information.
         @param Hiliter [in] Highlighter attributes to load.
       }
+    class procedure SaveNamed(Storage: ISettingsSection;
+      NamedHiliters: INamedHiliteAttrs);
+    class procedure LoadNamed(Storage: ISettingsSection;
+      NamedHiliters: INamedHiliteAttrs);
   end;
 
 
@@ -55,7 +64,7 @@ uses
   // Delphi
   SysUtils, Graphics,
   // Project
-  Hiliter.UAttrs;
+  Hiliter.UAttrs, UIStringList;
 
 
 const
@@ -65,6 +74,9 @@ const
   cElemColorName = 'Color';
   cElemStyleName = 'Style';
   cElemCompoundName = 'Elem%d.%s';
+  cNamedHiliterCountName = 'NamedHiliterCount';
+  cNamedHilterName = 'HilterName%d';
+  cNamedHiliterPrefix = 'NamedHiliter%d.';
 
 
 function ElemValueName(const ElemId: THiliteElement;
@@ -131,12 +143,8 @@ end;
 
 { THiliterPersist }
 
-class procedure THiliterPersist.Load(const Storage: ISettingsSection;
-  const Hiliter: IHiliteAttrs);
-  {Loads a syntax highlighter's attributes from persistent storage.
-    @param Storage [in] Storage containing highligher information.
-    @param Hiliter [in] Highlighter attributes to load.
-  }
+class procedure THiliterPersist.InternalLoad(Storage: ISettingsSection;
+  Hiliter: IHiliteAttrs; const Prefix: string);
 var
   ElemId: THiliteElement; // loops thru all hiliter elements
   Elem: IHiliteElemAttrs; // reference to a hiliter element
@@ -146,9 +154,9 @@ begin
   DefAttrs := THiliteAttrsFactory.CreateDefaultAttrs;
   // Read font info main highlight output section
   Hiliter.FontSize := StrToIntDef(
-    Storage.ItemValues[cFontSizeName], DefAttrs.FontSize
+    Storage.ItemValues[Prefix + cFontSizeName], DefAttrs.FontSize
   );
-  Hiliter.FontName := Storage.ItemValues[cFontNameName];
+  Hiliter.FontName := Storage.ItemValues[Prefix + cFontNameName];
   if Hiliter.FontName = '' then
     Hiliter.FontName := DefAttrs.FontName;
   // Read each highlighter element from its own subsection
@@ -157,16 +165,69 @@ begin
     Elem := Hiliter.Elements[ElemId];
     Elem.ForeColor := TColor(
       StrToIntDef(
-        Storage.ItemValues[ElemValueName(ElemId, cElemColorName)],
+        Storage.ItemValues[Prefix + ElemValueName(ElemId, cElemColorName)],
         Integer(DefAttrs.Elements[ElemId].ForeColor)
       )
     );
     Elem.FontStyle := BitmaskToFontStyles(
       StrToIntDef(
-        Storage.ItemValues[ElemValueName(ElemId, cElemStyleName)],
+        Storage.ItemValues[Prefix + ElemValueName(ElemId, cElemStyleName)],
         FontStylesToBitmask(DefAttrs.Elements[ElemId].FontStyle)
       )
     );
+  end;
+end;
+
+class procedure THiliterPersist.InternalSave(Storage: ISettingsSection;
+  Hiliter: IHiliteAttrs; const Prefix: string);
+var
+  ElemId: THiliteElement; // loops thru all hiliter elements
+  Elem: IHiliteElemAttrs; // reference to a hiliter element
+begin
+  // Store font info
+  Storage.ItemValues[Prefix + cFontSizeName] := IntToStr(Hiliter.FontSize);
+  Storage.ItemValues[Prefix + cFontNameName] := Hiliter.FontName;
+  // Store each highlighter element
+  for ElemId := Low(THiliteElement) to High(THiliteElement) do
+  begin
+    Elem := Hiliter.Elements[ElemId];
+    Storage.ItemValues[Prefix + ElemValueName(ElemId, cElemColorName)] :=
+      IntToStr(Integer(Elem.ForeColor));
+    Storage.ItemValues[Prefix + ElemValueName(ElemId, cElemStyleName)] :=
+      IntToStr(FontStylesToBitmask(Elem.FontStyle));
+  end;
+  // Save the storage
+  Storage.Save;
+end;
+
+class procedure THiliterPersist.Load(const Storage: ISettingsSection;
+  const Hiliter: IHiliteAttrs);
+  {Loads a syntax highlighter's attributes from persistent storage.
+    @param Storage [in] Storage containing highligher information.
+    @param Hiliter [in] Highlighter attributes to load.
+  }
+begin
+  InternalLoad(Storage, Hiliter, '');
+end;
+
+class procedure THiliterPersist.LoadNamed(Storage: ISettingsSection;
+  NamedHiliters: INamedHiliteAttrs);
+var
+  Hiliter: IHiliteAttrs;
+  Names: IStringList;
+  Idx: Integer;
+begin
+  NamedHiliters.Clear;
+  Names := Storage.GetStrings(cNamedHiliterCountName, cNamedHilterName);
+  for Idx := 0 to Pred(Names.Count) do
+  begin
+    Hiliter := THiliteAttrsFactory.CreateNulAttrs;
+    InternalLoad(
+      Storage,
+      Hiliter,
+      Format(cNamedHiliterPrefix, [Idx])
+    );
+    NamedHiliters[Names[Idx]] := Hiliter;
   end;
 end;
 
@@ -176,24 +237,24 @@ class procedure THiliterPersist.Save(const Storage: ISettingsSection;
     @param Storage [in] Storage in which to save highligher information.
     @param Hiliter [in] Highlighter attributes to save.
   }
-var
-  ElemId: THiliteElement; // loops thru all hiliter elements
-  Elem: IHiliteElemAttrs; // reference to a hiliter element
 begin
-  // Store font info
-  Storage.ItemValues[cFontSizeName] := IntToStr(Hiliter.FontSize);
-  Storage.ItemValues[cFontNameName] := Hiliter.FontName;
-  // Store each highlighter element
-  for ElemId := Low(THiliteElement) to High(THiliteElement) do
-  begin
-    Elem := Hiliter.Elements[ElemId];
-    Storage.ItemValues[ElemValueName(ElemId, cElemColorName)] :=
-      IntToStr(Integer(Elem.ForeColor));
-    Storage.ItemValues[ElemValueName(ElemId, cElemStyleName)] :=
-      IntToStr(FontStylesToBitmask(Elem.FontStyle));
-  end;
-  // Save the storage
-  Storage.Save;
+  InternalSave(Storage, Hiliter, '');
+end;
+
+class procedure THiliterPersist.SaveNamed(Storage: ISettingsSection;
+  NamedHiliters: INamedHiliteAttrs);
+var
+  Names: IStringList;
+  Idx: Integer;
+begin
+  Names := TIStringList.Create(NamedHiliters.Names);
+  Storage.SetStrings(cNamedHiliterCountName, cNamedHilterName, Names);
+  for Idx := 0 to Pred(Names.Count) do
+    InternalSave(
+      Storage,
+      NamedHiliters[Names[Idx]],
+      Format(cNamedHiliterPrefix, [Idx])
+    );
 end;
 
 end.
