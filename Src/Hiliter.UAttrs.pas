@@ -215,6 +215,7 @@ type
     constructor Create;
     destructor Destroy; override;
     function Contains(const Name: string): Boolean;
+    function IsEmpty: Boolean;
     procedure Delete(const Name: string);
     procedure Clear;
     function GetHiliter(const Name: string): IHiliteAttrs;
@@ -650,6 +651,11 @@ begin
   finally
     Enum.Free;
   end;
+end;
+
+function TNamedHiliterAttrs.IsEmpty: Boolean;
+begin
+  Result := fMap.Count = 0;
 end;
 
 procedure TNamedHiliterAttrs.SetHiliter(const Name: string;
