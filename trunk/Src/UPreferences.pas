@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2006-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2006-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -205,16 +205,27 @@ type
       {Default page margins used in printing}
 
     function GetHiliteAttrs: IHiliteAttrs;
-      {Gets user defined syntax highlighter.
+      {Gets current user defined syntax highlighter.
         @return Current syntax highlighter attributes.
       }
     procedure SetHiliteAttrs(const Attrs: IHiliteAttrs);
-      {Sets new user defined syntax highlighter.
+      {Sets current user defined syntax highlighter.
         @param Attrs [in] New highlighter attributes.
       }
     property HiliteAttrs: IHiliteAttrs
       read GetHiliteAttrs write SetHiliteAttrs;
-      {Attributes of syntax highlighter}
+      {Attributes of current user defined syntax highlighter}
+
+    ///  <summary>Gets object containing the attributes of the named user
+    ///  defined syntax highlighters.</summary>
+    function GetNamedHiliteAttrs: INamedHiliteAttrs;
+    ///  <summary>Stores a copy of the given object containing the attributes of
+    ///  the named user defined syntax highlighters.</summary>
+    procedure SetNamedHiliteAttrs(NamedHiliteAttrs: INamedHiliteAttrs);
+    ///  <summary>Object containing attributes of all named user defined syntax
+    ///  highlighters.</summary>
+    property NamedHiliteAttrs: INamedHiliteAttrs
+      read GetNamedHiliteAttrs write SetNamedHiliteAttrs;
 
     function GetCustomHiliteColours: IStringList;
       {Gets custom syntax highlighter colours.
@@ -322,6 +333,7 @@ type
       {Default print page margins}
     fHiliteAttrs: IHiliteAttrs;
       {User defined syntax highlighter}
+    fNamedHiliteAttrs: INamedHiliteAttrs;
     fHiliteCustomColours: IStringList;
       {Custom highlighter colours}
     fWarnings: IWarnings;
@@ -462,6 +474,17 @@ type
       {Sets new user defined syntax highlighter.
         @param Attrs [in] New highlighter attributes.
       }
+
+    ///  <summary>Gets object containing the attributes of the named user
+    ///  defined syntax highlighters.</summary>
+    ///  <remarks>Method of IPreferences.</remarks>
+    function GetNamedHiliteAttrs: INamedHiliteAttrs;
+
+    ///  <summary>Stores a copy of the given object containing the attributes of
+    ///  the named user defined syntax highlighters.</summary>
+    ///  <remarks>Method of IPreferences.</remarks>
+    procedure SetNamedHiliteAttrs(NamedHiliteAttrs: INamedHiliteAttrs);
+
     function GetCustomHiliteColours: IStringList;
       {Gets custom syntax highlighter colours.
         @return String list containing custom colours.
@@ -598,6 +621,7 @@ begin
   Self.fPrinterOptions := SrcPref.PrinterOptions;
   Self.fPrinterPageMargins := SrcPref.PrinterPageMargins;
   Self.SetHiliteAttrs(SrcPref.HiliteAttrs);
+  Self.SetNamedHiliteAttrs(SrcPref.NamedHiliteAttrs);
   Self.SetCustomHiliteColours(SrcPref.CustomHiliteColours);
   Self.SetWarnings(SrcPref.Warnings);
   Self.SetNewsAge(SrcPref.NewsAge);
@@ -610,6 +634,7 @@ constructor TPreferences.Create;
 begin
   inherited Create;
   fHiliteAttrs := THiliteAttrsFactory.CreateDefaultAttrs;
+  fNamedHiliteAttrs := THiliteAttrsFactory.CreateNamedAttrs;
   fHiliteCustomColours := TIStringList.Create;
   fWarnings := TWarnings.Create;
   fDBHeadingCustomColours[False] := TIStringList.Create;
@@ -657,6 +682,11 @@ function TPreferences.GetMeasurementUnits: TMeasurementUnits;
   }
 begin
   Result := fMeasurementUnits;
+end;
+
+function TPreferences.GetNamedHiliteAttrs: INamedHiliteAttrs;
+begin
+  Result := fNamedHiliteAttrs;
 end;
 
 function TPreferences.GetNewsAge: Integer;
@@ -777,6 +807,11 @@ begin
   fMeasurementUnits := Value;
 end;
 
+procedure TPreferences.SetNamedHiliteAttrs(NamedHiliteAttrs: INamedHiliteAttrs);
+begin
+  (fNamedHiliteAttrs as IAssignable).Assign(NamedHiliteAttrs);
+end;
+
 procedure TPreferences.SetNewsAge(const Age: Integer);
   {Sets maximum age of news items to be displayed.
     @param Age [in] Required age in days.
@@ -888,6 +923,7 @@ begin
   NewPref.PrinterOptions := Self.fPrinterOptions;
   NewPref.PrinterPageMargins := Self.fPrinterPageMargins;
   NewPref.HiliteAttrs := Self.GetHiliteAttrs;
+  NewPref.NamedHiliteAttrs := Self.GetNamedHiliteAttrs;
   NewPref.CustomHiliteColours := Self.GetCustomHiliteColours;
   NewPref.Warnings := Self.GetWarnings;
   NewPref.NewsAge := Self.fNewsAge;
@@ -971,6 +1007,7 @@ begin
   Storage := Settings.ReadSection(ssPreferences, cHiliter);
   // syntax highlighter attributes
   THiliterPersist.Load(Storage, fHiliteAttrs);
+  THiliterPersist.LoadNamed(Storage, fNamedHiliteAttrs);
   // custom colours
   fHiliteCustomColours := Storage.GetStrings(
     'CustomColourCount', 'CustomColour%d'
@@ -1060,6 +1097,7 @@ begin
   Storage := Settings.EmptySection(ssPreferences, cHiliter);
   // syntax highlighter attributes
   THiliterPersist.Save(Storage, fHiliteAttrs);
+  THiliterPersist.SaveNamed(Storage, fNamedHiliteAttrs);
   // custom colours
   Storage.SetStrings(
     'CustomColourCount', 'CustomColour%d', fHiliteCustomColours
