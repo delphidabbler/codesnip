@@ -86,13 +86,19 @@ The installer makes the following changes to your system:
 
 + A %ProgramData%\DelphiDabbler\CodeSnip.4 folder is created. A configuration
   file is stored in the folder. If the online database is downloaded, it will be
-  stored in a "Database" sub-folder (see below).
+  stored in a "Database" sub-folder, unless you have changed the database
+  location (see below).
 
 + An %AppData%\DelphiDabbler\CodeSnip.4 folder is also created. This is used to
   hold a file that stores per-user configuration data and, sometimes, another
   file that records any favourite snippets. A "UserDatabase" sub-folder is used
   to store any user defined snippets. These folders are created when CodeSnip is
   first run.
+
+  Users can move the user defined snippets data from the "UserDatabase"
+  sub-folder to another location, in which case "UserDatabase" will not be
+  present. You might want to do this to place the snippets data in a folder that
+  will be backed up, e.g. a Dropbox or GoogleDrive sub-directory.
 
 If you are updating to CodeSnip 4 from version 3 or earlier, CodeSnip will give
 you the option of bringing forward your old settings and / or user defined
@@ -143,7 +149,8 @@ The uninstall program will delete any local copy of the online Code Snippets
 database but will leave any user defined database, configuration data and
 favourites intact. To remove user defined databases and configuration data,
 delete the %AppData%\DelphiDabbler\CodeSnip.4 directory and all its contents for
-each user who ran CodeSnip.
+each user who ran CodeSnip. If any user has moved the user database directory
+those directories also need to be deleted.
 
 Unistalling the Portable Edition
 --------------------------------
@@ -273,10 +280,15 @@ Known Installation and Upgrading Issues
   Register CodeSnip button the program is not registered. You can (re)register
   if you wish by clicking the button.
 
-+ If you have updated to CodeSnip v4.2 or later from any earlier v4 release, and
-  then run the earlier version of the program again, its saved main window
++ If you have updated to CodeSnip v4.2.0 or later from any earlier v4 release,
+  and then run the earlier version of the program again, its saved main window
   state, size, position and layout will have been lost and the program will
   display in its default size.
+
++ If you have updated to CodeSnip v4.3.0 or later from v4.2.x or earlier any -NS
+  command line options you have specified on the "Switches" (aka "Command Line")
+  tab of the Configure Compilers dialogue box for Delphi XE2 or later will be
+  removed and equivalent entries will have been made on the "Namespaces" tab.
 
 
 RSS News Feed
