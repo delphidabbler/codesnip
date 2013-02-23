@@ -665,7 +665,7 @@
       stamping config file with the correct version number.
     </div>
     <div class="half-spaced">
-      Current value is <strong>11</strong>.
+      Current value is <strong>12</strong>.
     </div>
   </dd>
   <dt>
@@ -869,9 +869,9 @@
 </h4>
 
 <p>
-  Stores preferences that configure the syntax highlighter and record some
-  information about the custom colours available when configuring the
-  highlighter.
+  Stores preferences that define the properties of one or more syntax
+  highlighters. Also records information about the custom colours available when
+  configuring the highlighters.
 </p>
 
 <p>
@@ -883,26 +883,26 @@
     <strong>FontSize</strong> (Integer)
   </dt>
   <dd>
-    Size of highlighter font in points.
+    Size of current highlighter font in points.
   </dd>
   <dt>
     <strong>FontName</strong> (String)
   </dt>
   <dd>
-    Name of highlighter font.
+    Name of current highlighter font.
   </dd>
   <dt>
     <strong>Elem<em>XXX</em>.Color</strong> (Integer)
   </dt>
   <dd>
     <div class="half-spaced">
-      One entry for each of the 12 source code elements recognised by the syntax
-      highlighter. <em>XXX</em> ranges from 0 to 11.
+      One entry for each of the 12 source code elements recognised by the
+      current syntax highlighter. <em>XXX</em> ranges from 0 to 11.
     </div>
     <div class="half-spaced">
-      Colour of highlight element. Integer representation of a Delphi
+      Colour of source code element. Integer representation of a Delphi
       <var>TColor</var> value. If the colour is not specified the value is the
-      integer representation of clNone.
+      integer representation of <var>clNone</var>.
     </div>
   </dd>
   <dt>
@@ -910,11 +910,91 @@
   </dt>
   <dd>
     <div class="half-spaced">
-      One entry for each of the 12 source code elements recognised by the syntax
-      highlighter. <em>XXX</em> ranges from 0 to 11.
+      One entry for each of the 12 source code elements recognised by the
+      current syntax highlighter. <em>XXX</em> ranges from 0 to 11.
     </div>
     <div class="half-spaced">
-      Bitmask representing the font styles used for the highlighter element.
+      Bitmask representing the font styles used for the source code element.
+    </div>
+  </dd>
+  <dt>
+    <strong>NamedHiliterCount</strong> (Integer)
+  </dt>
+  <dd>
+    Number of custom (or &quot;Named&quot;) syntax highlighters defined by user.
+  </dd>
+  <dt>
+    <strong>HilterName<em>XXX</em></strong> (String).
+  </dt>
+  <dd>
+    <div class="half-spaced">
+      One entry for each custom syntax highlighter, where <em>XXX</em> ranges
+      from 0 to <strong>NamedHiliterCount</strong> - 1.
+    </div>
+    <div class="half-spaced">
+      Each value is the name used to identify the syntax highlighter with the
+      same index. (See the various NamedHiliter<em>XXX</em> entries below.)
+    </div>
+  </dd>
+  <dt>
+    <strong>NamedHiliter<em>XXX</em>.FontSize</strong> (Integer)
+  </dt>
+  <dd>
+    <div class="half-spaced">
+      One entry for each custom syntax highlighter, where <em>XXX</em> ranges
+      from 0 to <strong>NamedHiliterCount</strong> - 1.
+    </div>
+    <div class="half-spaced">
+      Each value is the size of the corresponding syntax highlighter's font, in
+      points.
+    </div>
+  </dd>
+  <dt>
+    <strong>NamedHiliter<em>XXX</em>.FontName</strong>
+  </dt>
+  <dd>
+    <div class="half-spaced">
+      One entry for each custom syntax highlighter, where <em>XXX</em> ranges
+      from 0 to <strong>NamedHiliterCount</strong> - 1.
+    </div>
+    <div class="half-spaced">
+      Each value is the name of the corresponding syntax highlighter's font.
+    </div>
+  </dd>
+  <dt>
+    <strong>NamedHiliter<em>XXX</em>.Elem<em>YYY</em>.Color</strong> (Integer)
+  </dt>
+  <dd>
+    <div class="half-spaced">
+      There is an entry for each source code element of each custom synax
+      highliter. <em>XXX</em> represents the index of the corresponding syntax
+      highlighter and ranges from 0 to <strong>NamedHiliterCount</strong> - 1.
+      For each value of <em>XXX</em> there are 12
+      <strong>.Elem<em>YYY</em></strong>  values, with <em>YYY</em> ranging from
+      0 to 11.
+    </div>
+    <div class="half-spaced">
+      Each value specifies the colour of a source code element. The values are
+      integer representations of a Delphi <var>TColor</var> value. If the colour
+      is not specified the value is the integer representation of
+      <var>clNone</var>.
+    </div>
+  </dd>
+  <dt>
+    <strong>NamedHiliter<em>XXX</em>.Elem<em>YYY</em>.Style</strong> (Integer)
+  </dt>
+  <dd>
+    <div class="half-spaced">
+      There is an entry for each source code element of each custom synax
+      highliter. <em>XXX</em> represents the index of the corresponding syntax
+      highlighter and ranges from 0 to <strong>NamedHiliterCount</strong> - 1.
+      For each value of <em>XXX</em> there are 12
+      <strong>.Elem<em>YYY</em></strong>  values, with <em>YYY</em> ranging from
+      0 to 11.
+    </div>
+    <div class="half-spaced">
+      Each value contains a bitmask representing the font style of a source code
+      element.
     </div>
   </dd>
   <dt>
