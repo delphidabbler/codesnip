@@ -45,45 +45,62 @@
       For example you could move the database to a sub-directory of a
       <em>Dropbox</em> or <em>GoogleDrive</em> directory.
     </p>
+    <p>
+      You have the option to restore a previously moved database to its default
+      location. Both options are described below.
+    </p>
     <p class="bordered">
       <strong>Important:</strong> You a strongly advised to make a backup of the
       user defined snippets database before moving it so that it can be easily
       restored if there is a problem. Use the <em>Database | Backup User
       Database</em> menu option to do this.
     </p>
+    <h2>
+      Move the database to a new directory
+    </h2>
     <p>
-      To move the database enter the full path of the new directory in the
-      <em>New database path</em> edit box. Alternatively you can use a standard
-      <em>Browser For Folder</em> dialogue box to select the required directory.
-      To do that click the ellipsis button to the right of the edit control,
-      select the directory in the resultant dialogue box and click <em>OK</em>.
-      The chosen directory will be displayed in the edit box.
+      To move the database enter the <strong>full path</strong> of the new
+      directory in the edit box. Instead of typing the path you can choose it
+      from a standard <em>Browse For Folder</em> dialogue box by clicking the
+      ellipsis button to the right of the edit control.
     </p>
     <p>
-      The directory where the database is to be copied <strong>must be
-      empty</strong> and must be on a valid drive.
+      The directory where the database must meet the following conditions:
     </p>
+    <ul>
+      <li>
+        it directory must be empty;
+      </li>
+      <li>
+        it must not be a sub-directory of the current database location;
+      </li>
+      <li>
+        it must be on a drive on the current machine (removable drives are
+        permitted, but not recommended.
+      </li>
+    </ul>
     <p>
-      Once a suitable path has been entered click the large <em>Move
-      Database</em> button. You will be prompted to confirm this action and then
-      the database files will be copied.
+      Once a suitable path has been entered, click the large <em>Move</em>
+      button. You will be prompted to confirm this action and then the database
+      files will be copied. An error message will be displayed if the database
+      can't be copied.
     </p>
     <p>
       The new location of the database will be recorded in the per user config
       file and it is important that this file is not modified or deleted
       otherwise the database will not be found.
     </p>
+    <h2>
+      Restore database to default directory
+    </h2>
     <p>
-      The database can be moved back to its default location by clicking the
-      <em>Restore Default Path</em> button. This copies the default directory
-      into the <em>New database path</em> edit control. Clicking the <em>Move
-      Database</em> button will now move the database back to its default
-      directory.
+      The database can be moved back to its default directory simply by clicking
+      the <em>Restore Default Path</em> button. If the default directory is not
+      empty this action will fail and an error message will be displayed.
     </p>
     <p>
-      Note that the <em>Move Database</em> button will be disabled if the
-      directory entered in the <em>New database path</em> edit control is the
-      current database path or if the edit control is empty.
+      Yhe <em>Restore Default Path</em> button will be disabled if database is
+      already in its default location.
     </p>
   </body>
 </html>
