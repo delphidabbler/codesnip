@@ -53,12 +53,14 @@ type
       system.
         @param Font [in] Font to be set.
       }
+    class procedure SetDefaultFonts(const Fonts: array of TFont);
     class procedure SetDefaultBaseFont(const BaseFont: TFont);
       {Updates a font to use the face of the underlying operating system. Style,
       colour etc are preserved and point size may be adjusted to retain relative
       size to base font.
         @param Font [in] Font to be updated.
       }
+    class procedure SetDefaultBaseFonts(const Fonts: array of TFont);
     class procedure SetContentFont(const Font: TFont);
       {Sets a font to be the appropriate content font for the underlying
       operating system.
@@ -237,6 +239,14 @@ begin
   end;
 end;
 
+class procedure TFontHelper.SetDefaultBaseFonts(const Fonts: array of TFont);
+var
+  Font: TFont;
+begin
+  for Font in Fonts do
+    SetDefaultBaseFont(Font);
+end;
+
 class procedure TFontHelper.SetDefaultFont(const Font: TFont);
   {Sets a font to be the default UI font for the underlying operating system.
     @param Font [in] Font to be set.
@@ -264,6 +274,14 @@ begin
       Font.Size := XPFontSize;
     end;
   end;
+end;
+
+class procedure TFontHelper.SetDefaultFonts(const Fonts: array of TFont);
+var
+  Font: TFont;
+begin
+  for Font in Fonts do
+    SetDefaultFont(Font);
 end;
 
 class procedure TFontHelper.SetDefaultMonoFont(const Font: TFont);
