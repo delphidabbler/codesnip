@@ -32,12 +32,17 @@ type
     actDefaultPath: TAction;
     actMove: TAction;
     alDlg: TActionList;
-    btnBrowse: TButton;
-    btnMove: TButton;
-    btnDefaultPath: TButton;
-    edPath: TEdit;
     lblInstructions: TLabel;
+    gbMove: TGroupBox;
+    edPath: TEdit;
     lblPath: TLabel;
+    btnBrowse: TButton;
+    lblExplainMove: TLabel;
+    btnMove: TButton;
+    gbRestore: TGroupBox;
+    lblExplainDefaultPath: TLabel;
+    btnDefaultPath: TButton;
+    lblWarning: TLabel;
     procedure actBrowseExecute(Sender: TObject);
     procedure actDefaultPathExecute(Sender: TObject);
     procedure actDefaultPathUpdate(Sender: TObject);
@@ -45,11 +50,11 @@ type
     procedure actMoveUpdate(Sender: TObject);
   strict private
     function NewDirFromEditCtrl: string;
-    procedure DoMove;
+    procedure DoMove(const DestDir: string);
     procedure HandleException(const E: Exception);
   strict protected
+    procedure ConfigForm; override;
     procedure ArrangeForm; override;
-    procedure InitForm; override;
   public
     class procedure Execute(AOwner: TComponent);
   end;
@@ -62,8 +67,8 @@ uses
   // Delphi
   IOUtils, RTLConsts,
   // Project
-  UAppInfo, UBrowseForFolderDlg, UCtrlArranger, UExceptions, UMessageBox,
-  UStrUtils;
+  UAppInfo, UBrowseForFolderDlg, UColours, UConsts, UCtrlArranger, UExceptions,
+  UFontHelper, UMessageBox, UStrUtils;
 
 {$R *.dfm}
 
@@ -91,20 +96,38 @@ begin
 end;
 
 procedure TUserDataPathDlg.actDefaultPathExecute(Sender: TObject);
+resourcestring
+  sNonEmptyDir = 'Can''t restore the database to its default directory because '
+    + 'the directory it is not empty.'
+    + EOL2
+    + 'Please clear out all the contents of "%s" before re-trying.';
+  sConfirmMsg = 'Are you sure you want to restore the user database to its '
+    + 'default location?';
 begin
-  edPath.Text := TAppInfo.DefaultUserDataDir;
+  if TDirectory.Exists(TAppInfo.DefaultUserDataDir) and
+    not TDirectory.IsEmpty(TAppInfo.DefaultUserDataDir) then
+    raise ECodeSnip.CreateFmt(sNonEmptyDir, [TAppInfo.DefaultUserDataDir]);
+  if not TMessageBox.Confirm(Self, sConfirmMsg) then
+    Exit;
+  try
+    DoMove(TAppInfo.DefaultUserDataDir);
+    TAppInfo.ChangeUserDataDir(TAppInfo.DefaultUserDataDir);
+  except
+    on E: Exception do
+      HandleException(E);
+  end;
 end;
 
 procedure TUserDataPathDlg.actDefaultPathUpdate(Sender: TObject);
 begin
-  actDefaultPath.Enabled := (NewDirFromEditCtrl <> '')
-    and not StrSameText(NewDirFromEditCtrl, TAppInfo.DefaultUserDataDir);
+  actDefaultPath.Enabled :=
+    not StrSameText(TAppInfo.UserDataDir, TAppInfo.DefaultUserDataDir);
 end;
 
 procedure TUserDataPathDlg.actMoveExecute(Sender: TObject);
 resourcestring
   sNonEmptyDir = 'The specified directory is not empty';
-  sConfirmMsg = 'Are you sure you want to move the user database';
+  sConfirmMsg = 'Are you sure you want to move the user database?';
 begin
   if TDirectory.Exists(NewDirFromEditCtrl)
     and not TDirectory.IsEmpty(NewDirFromEditCtrl) then
@@ -112,7 +135,7 @@ begin
   if not TMessageBox.Confirm(Self, sConfirmMsg) then
     Exit;
   try
-    DoMove;
+    DoMove(NewDirFromEditCtrl);
     TAppInfo.ChangeUserDataDir(NewDirFromEditCtrl);
   except
     on E: Exception do
@@ -128,33 +151,59 @@ end;
 
 procedure TUserDataPathDlg.ArrangeForm;
 begin
-  TCtrlArranger.SetLabelHeight(lblInstructions);
-  TCtrlArranger.AlignLefts([lblInstructions, lblPath, edPath], 0);
-  TCtrlArranger.MoveToRightOf(edPath, btnBrowse, 4);
-  lblInstructions.Width := TCtrlArranger.RightOf(btnBrowse);
-  TCtrlArranger.AlignHCentresTo([edPath, btnBrowse], [btnDefaultPath, btnMove]);
+  TCtrlArranger.SetLabelHeights(Self);
+
   pnlBody.ClientWidth := TCtrlArranger.TotalControlWidth(pnlBody);
 
-  lblInstructions.Top := 0;
-  TCtrlArranger.MoveBelow(lblInstructions, lblPath, 12);
   TCtrlArranger.AlignVCentres(
     TCtrlArranger.BottomOf(lblPath, 4), [edPath, btnBrowse]
   );
-  TCtrlArranger.MoveBelow([edPath, btnBrowse], btnDefaultPath, 8);
-  TCtrlArranger.MoveBelow(btnDefaultPath, btnMove, 18);
-  pnlBody.ClientHeight := TCtrlArranger.TotalControlHeight(pnlBody) + 18;
+  TCtrlArranger.MoveBelow([edPath, btnBrowse], lblExplainMove, 8);
+  TCtrlArranger.MoveBelow(lblExplainMove, btnMove, 8);
+  gbMove.ClientHeight := TCtrlArranger.TotalControlHeight(gbMove) + 8;
 
+  TCtrlArranger.MoveBelow(lblExplainDefaultPath, btnDefaultPath, 12);
+  gbRestore.ClientHeight := TCtrlArranger.TotalControlHeight(gbRestore) + 12;
+
+  TCtrlArranger.MoveBelow(lblInstructions, lblWarning, 8);
+  TCtrlArranger.MoveBelow(lblWarning, gbMove, 12);
+  TCtrlArranger.MoveBelow(gbMove, gbRestore, 12);
+
+  pnlBody.ClientHeight := TCtrlArranger.TotalControlHeight(pnlBody) + 8;
   inherited;
 end;
 
-procedure TUserDataPathDlg.DoMove;
+procedure TUserDataPathDlg.ConfigForm;
+begin
+  inherited;
+  TFontHelper.SetDefaultBaseFonts([
+    gbMove.Font, gbRestore.Font, lblWarning.Font]
+  );
+  TFontHelper.SetDefaultFonts([
+    lblPath.Font, edPath.Font, lblExplainMove.Font,
+    btnBrowse.Font, btnMove.Font, lblExplainDefaultPath.Font,
+    btnDefaultPath.Font
+  ]);
+//  lblWarning.Font.Color := clWarningText;
+end;
+
+procedure TUserDataPathDlg.DoMove(const DestDir: string);
+resourcestring
+  sCantMoveToSubDir = 'Can''t move database into a sub-directory of the '
+    + 'existing database directory';
+  sMustBeRooted = 'A full path to the new database directory must be provided.';
 var
-  SourceDir, DestDir: string;
+  SourceDir: string;
 begin
   SourceDir := TAppInfo.UserDataDir;
-  DestDir := NewDirFromEditCtrl;
+  if not TPath.IsPathRooted(DestDir) then
+    raise EInOutError.Create(sMustBeRooted);
   if TDirectory.Exists(DestDir) and not TDirectory.IsEmpty(DestDir) then
     raise EInOutError.Create(SDirectoryNotEmpty);
+  if StrStartsText(
+    IncludeTrailingPathDelimiter(TAppInfo.UserDataDir), DestDir
+  ) then
+    raise EInOutError.Create(sCantMoveToSubDir);
   if not TDirectory.Exists(DestDir) then
     TDirectory.CreateDirectory(DestDir);
   TDirectory.Copy(SourceDir, DestDir);
@@ -183,15 +232,9 @@ begin
   raise E;
 end;
 
-procedure TUserDataPathDlg.InitForm;
-begin
-  inherited;
-  edPath.Text := TAppInfo.UserDataDir;
-end;
-
 function TUserDataPathDlg.NewDirFromEditCtrl: string;
 begin
-  Result := StrTrim(edPath.Text);
+  Result := ExcludeTrailingPathDelimiter(StrTrim(edPath.Text));
 end;
 
 end.
