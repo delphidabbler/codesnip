@@ -429,6 +429,8 @@ procedure TUserConfigFileUpdater.UpdateNamespaces;
     Switches := TIStringList.Create(
       GetIniString(Section, 'Switches', '', CfgFileName), ',', False, True
     );
+    if not IniKeyExists(Section, 'Switches', CfgFileName) then
+      Exit;
     for SwitchIdx := Pred(Switches.Count) downto 0 do
     begin
       Switch := Switches[SwitchIdx];
