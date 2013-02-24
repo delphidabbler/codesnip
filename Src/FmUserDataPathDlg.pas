@@ -27,35 +27,76 @@ uses
 
 
 type
+  ///  <summary>Dialogue box that is used to move the user database to a new
+  ///  directory or to restore a previously moved database to its default
+  ///  directory.</summary>
+  ///  <remarks>IMPORTANT: This dialogue box is for use only with the standard
+  ///  edition of CodeSnip. It MUST NOT be displayed from the portable edition.
+  ///  </remarks>
   TUserDataPathDlg = class(TGenericViewDlg, INoPublicConstruct)
     actBrowse: TAction;
     actDefaultPath: TAction;
     actMove: TAction;
     alDlg: TActionList;
-    lblInstructions: TLabel;
-    gbMove: TGroupBox;
-    edPath: TEdit;
-    lblPath: TLabel;
     btnBrowse: TButton;
-    lblExplainMove: TLabel;
+    btnDefaultPath: TButton;
     btnMove: TButton;
+    gbMove: TGroupBox;
     gbRestore: TGroupBox;
     lblExplainDefaultPath: TLabel;
-    btnDefaultPath: TButton;
+    lblExplainMove: TLabel;
+    lblInstructions: TLabel;
+    lblPath: TLabel;
     lblWarning: TLabel;
+    edPath: TEdit;
+    ///  <summary>Dispays Browse For Folder dialogue box and copies any chosen
+    ///  folder to the edPath edit control.</summary>
     procedure actBrowseExecute(Sender: TObject);
+    ///  <summary>Moves user database back to default directory and records the
+    ///  changed path.</summary>
+    ///  <exception>Raises exception if default path can't be used for any
+    ///  reason or if there was an error copying the database.</exception>
     procedure actDefaultPathExecute(Sender: TObject);
+    ///  <summary>Enables / disables Default Path action according to whether
+    ///  database is already in default path.</summary>
     procedure actDefaultPathUpdate(Sender: TObject);
+    ///  <summary>Moves user database to path entered by user and records the
+    ///  changed path.</summary>
+    ///  <exception>Raises exception given path can't be used for any reason or
+    ///  if there was an error copying the database.</exception>
     procedure actMoveExecute(Sender: TObject);
+    ///  <summary>Enables / disables Move action according to whether a suitable
+    ///  path has been entered by user.</summary>
     procedure actMoveUpdate(Sender: TObject);
   strict private
+    ///  <summary>Gets directory entered in edPath edit control.</summary>
+    ///  <remarks>Edit control contents are trimmed of spaces and any trailing
+    ///  path delimiter.</remarks>
     function NewDirFromEditCtrl: string;
+    ///  <summary>Move user database from its current location to the given
+    ///  directory.</summary>
+    ///  <exception>Raises an exception if DestDir is not a full path, if
+    ///  DestDir is a sub-directory of the current database directory or if an
+    ///  error occurs during the move operation.</exception>
     procedure DoMove(const DestDir: string);
+    ///  <summary>Handles given exception, converting expected exceptions into
+    ///  EDataEntry and re-raising all other unchanged.</summary>
+    ///  <exception>Always raises a new exception.</exception>
+    ///  <remarks>This method is designed to handle exception raised when the
+    ///  user database is moved.</remarks>
     procedure HandleException(const E: Exception);
   strict protected
+    ///  <summary>Sets controls with ParentFont=False to use system default
+    ///  fonts, preserving font styles for those fonts that need them.</summary>
     procedure ConfigForm; override;
+    ///  <summary>Arranges form's controls and sizes the dialogue box to fit.
+    ///  </summary>
     procedure ArrangeForm; override;
   public
+    ///  <summary>Displays the dialogue box aligned over the given owner
+    ///  control.</summary>
+    ///  <exception>Raise EBug if called by the portable edition of CodeSnip.
+    ///  </exception>
     class procedure Execute(AOwner: TComponent);
   end;
 
@@ -74,7 +115,6 @@ uses
 
 
 { TUserDataPathDlg }
-
 procedure TUserDataPathDlg.actBrowseExecute(Sender: TObject);
 var
   Dlg: TBrowseForFolderDlg; // browse for folder standard dialog box
