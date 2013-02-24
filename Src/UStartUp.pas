@@ -8,30 +8,49 @@
  * $Rev$
  * $Date$
  *
- * Encapsulates code executed at program's startup. Handles processing used on
- * the first run of the application and, for the portable version only, the
- * creation of a user data sub-directory of the program directory.
+ * Performs start-up processing that must be performed before the rest of the
+ * program is run.
 }
 
 
 unit UStartUp;
 
+
 interface
+
 
 uses
   // Delphi
   SysUtils;   // Ensure Exception class and handling are available
 
-type
 
+type
+  ///  <summary>Encapsulation of code executed at program startup.</summary>
   TStartUp = record
   strict private
+    ///  <summary>Displays an error message box informing the user that the
+    ///  program cannot start, using the given message as an explanation.
+    ///  </summary>
     class procedure ErrorMessage(const Msg: string); static;
   public
+    ///  <summary>Checks if the program can be run and, if so, performs the
+    ///  necessary start-up processing.</summary>
+    ///  <returns>Boolean. True if the program can be run or False if the
+    ///  program must not be allowed to continue.</returns>
+    ///  <remarks>
+    ///  <para>Displays a simple error message if the program cannot be run
+    ///  because the operating system or IE version is not supported.</para>
+    ///  <para>Performs special processing on first run of a new version of the
+    ///  program.</para>
+    ///  <para>For the portable edition only, ensures a user data directory has
+    ///  been created.</para>
+    ///  </remarks>
     class function Execute: Boolean; static;
   end;
 
+
 implementation
+
 
 uses
   // Delphi
@@ -44,6 +63,7 @@ uses
   {$ENDIF}
   // Project
   FirstRun.UMain, UConsts, USystemInfo;
+
 
 { TStartUp }
 
@@ -66,6 +86,7 @@ var
 {$ENDIF}
 begin
 
+  // Check if program can be run. Exit if not.
   if not TOSInfo.IsWinNT or not TOSInfo.CheckReportedOS(TOSInfo.Win2K) then
   begin
     ErrorMessage(sOSError);
@@ -79,6 +100,7 @@ begin
 
   Result := True;
 
+  // Do any required "first run" processing
   TFirstRunMgr.Execute;
 
   {$IFDEF PORTABLE}
@@ -92,3 +114,4 @@ begin
 end;
 
 end.
+
