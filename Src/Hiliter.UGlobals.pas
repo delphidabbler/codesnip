@@ -45,9 +45,8 @@ type
   );
 
 type
-  ///  <summary>
-  ///  Interface supported by objects that store style attributes applicable
-  ///  to various source code elements used in syntax highlighting.
+  ///  <summary>Interface supported by objects that store style attributes
+  ///  applicable to various source code elements used in syntax highlighting.
   ///  </summary>
   IHiliteElemAttrs = interface(IInterface)
     ['{297A2F3D-77A8-45F9-A147-22A53791F114}']
@@ -78,10 +77,8 @@ type
   end;
 
 type
-  ///  <summary>
-  ///  Interface implemented by objects that store style attributes that are
-  ///  used in a syntax highlighter.
-  ///  </summary>
+  ///  <summary>Interface implemented by objects that store style attributes
+  ///  that are used in a syntax highlighter.</summary>
   IHiliteAttrs = interface(IInterface)
     ['{25570AEE-3225-42A7-A534-3D27357EEA2E}']
     ///  <summary>Returns name of font to use for all source code.</summary>
@@ -163,17 +160,30 @@ type
   end;
 
 type
+  ///  <summary>Interface implemented by objects that manage a list of named
+  ///  syntax highlighter attributes.</summary>
   INamedHiliteAttrs = interface(IInterface)
     ['{6F18CD62-111A-4CE8-924C-88DE7D82A19F}']
+    ///  <summary>Getter for Hiliters property.</summary>
     function GetHiliter(const Name: string): IHiliteAttrs;
+    ///  <summary>Setter for Hiliters property.</summary>
     procedure SetHiliter(const Name: string; Hiliter: IHiliteAttrs);
+    ///  <summary>Getter for Names property.</summary>
     function GetNames: TArray<string>;
+    ///  <summary>Deletes highlighter attributes with given name.</summary>
     procedure Delete(const Name: string);
+    ///  <summary>Clears list of highlighter attributes.</summary>
     procedure Clear;
+    ///  <summary>Checks if highlighter attributes with given name exists.
+    ///  </summary>
     function Contains(const Name: string): Boolean;
+    ///  <summary>Checks if list is empty.</summary>
     function IsEmpty: Boolean;
+    ///  <summary>Map of highlighter names to associated highlighter attributes.
+    ///  </summary>
     property Hiliters[const Name: string]: IHiliteAttrs
       read GetHiliter write SetHiliter; default;
+    ///  <summary>Array of highlighter names.</summary>
     property Names: TArray<string>
       read GetNames;
   end;
