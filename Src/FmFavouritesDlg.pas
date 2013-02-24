@@ -26,15 +26,15 @@ uses
   // 3rd party
   LVEx,
   // Project
-  USnippetIDs,
-  FmGenericNonModalDlg, Favourites.UFavourites, IntfNotifier, UWindowSettings;
+  FmGenericNonModalDlg, Favourites.UFavourites, IntfNotifier, USnippetIDs,
+  UWindowSettings;
 
 
 type
   ///  <summary>Implements a non-modal dialogue box that displays and manages
   ///  the user's favourite snippets.</summary>
-  ///  <remarks>By default the dialog box fades to semi-transparency when it is
-  ///  not active and returns to full opacity when activated.</remarks>
+  ///  <remarks>By default the dialogue box fades to semi-transparency when it
+  ///  is not active and returns to full opacity when activated.</remarks>
   TFavouritesDlg = class(TGenericNonModalDlg)
     actDelete: TAction;
     actDeleteAll: TAction;
@@ -68,15 +68,15 @@ type
     ///  <summary>Causes form's object instance to be automatically freed when
     ///  closed.</summary>
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
-    ///  <summary>Sets default property values when form created.</summary>
+    ///  <summary>Sets default property values when form is created.</summary>
     procedure FormCreate(Sender: TObject);
     ///  <summary>Fades form to specified transparency when dialogue box is
     ///  de-activated.</summary>
     procedure FormDeactivate(Sender: TObject);
-    ///  <summary>Saves form's window state before it is destroyed.</summary>
+    ///  <summary>Saves form's window state before form is destroyed.</summary>
     procedure FormDestroy(Sender: TObject);
-    ///  <summary>Adjusts form transparency when transparency trackbar changes,
-    ///  per new trackbar position.</summary>
+    ///  <summary>Adjusts form transparency according to new trackbar position
+    ///  whenever it changes.</summary>
     procedure tbTransparencyChange(Sender: TObject);
     ///  <summary>Records that a key has been pressed over the transparency
     ///  trackbar and fades the form down to the transparency specified by the
@@ -84,13 +84,12 @@ type
     procedure tbTransparencyKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
     ///  <summary>Records that the currently depressed key has been released
-    ///  over trackbar and fades the form back up to full opacity.</summary>
+    ///  over the trackbar and fades the form back up to full opacity.</summary>
     procedure tbTransparencyKeyUp(Sender: TObject; var Key: Word;
       Shift: TShiftState);
   strict private
     type
-      ///  <summary>Class used to read and store persistent options in settings
-      ///  </summary>
+      ///  <summary>Reads and stores persistent options in settings.</summary>
       TPersistentOptions = class(TObject)
       strict private
         var
@@ -98,14 +97,21 @@ type
           fDisplayInNewTabs: Boolean;
           ///  <summary>Value of InactiveAlphaBlendValue property.</summary>
           fInactiveAlphaBlendValue: Byte;
+        const
+          ///  <summary>Name of settings key where DisplayInNewTabs property is
+          ///  stored.</summary>
+          DisplayInNewTabsKey = 'DisplayInNewTabs';
+          ///  <summary>Name of settings key where InactiveAlphaBlendValue
+          ///  property is stored.</summary>
+          InactiveAlphaBlendValueKey = 'InactiveAlphaBlendValue';
       public
         ///  <summary>Constructs object and reads options from settings.
         ///  </summary>
         constructor Create;
         ///  <summary>Writes options to settings then destroys object.</summary>
         destructor Destroy; override;
-        ///  <summary>Specifies whether selected favourites are to be displayed
-        ///  in new tabs in main window's detail pane or not.</summary>
+        ///  <summary>Specifies whether or not selected favourites are to be
+        ///  displayed in new tabs in main window's detail pane.</summary>
         property DisplayInNewTabs: Boolean
           read fDisplayInNewTabs write fDisplayInNewTabs;
         ///  <summary>Stores alpha blend value that determines transparency of
@@ -125,12 +131,13 @@ type
       fNotifier: INotifier;
       ///  <summary>Form's persistent options.</summary>
       fOptions: TPersistentOptions;
-      ///  <summary>Object used to read / write window position.</summary>
+      ///  <summary>Object used to read / write window position in settings.
+      ///  </summary>
       fWindowSettings: TDlgWindowSettings;
-      ///  <summary>Flag indicating if a key is currently pressed when
+      ///  <summary>Flag indicating if a key is currently pressed when the
       ///  transparency trackbar has keyboard focus.</summary>
       fTrackBarKeyDown: Boolean;
-      ///  <summary>Flag indicating if mouse is currently pressed over
+      ///  <summary>Flag indicating if the mouse is currently pressed over the
       ///  transparency trackbar.</summary>
       fTrackBarMouseDown: Boolean;
     class var
@@ -138,8 +145,8 @@ type
       ///  <remarks>Set to nil if there is no instance of the form.</remarks>
       fInstance: TFavouritesDlg;
   strict private
-    ///  <summary>Specifies list item class to be used to create list view items.
-    ///  </summary>
+    ///  <summary>Specifies class to be used to create favourites list view
+    ///  items.</summary>
     ///  <param name="Sender">TCustomListView [in] List view control for which
     ///  list item class is required.</param>
     ///  <param name="ItemClass">TListItemClass [in/out] Set to required class:
@@ -158,22 +165,23 @@ type
     ///  associated favourite's snippet to be displayed.</summary>
     procedure LVDoubleClick(Sender: TObject);
 
-    ///  <summary>Overrides default drawing of given list viewed item caption by
+    ///  <summary>Overrides default drawing of given list view item caption by
     ///  ensuring the associated favourite's snippet display name is rendered in
     ///  correct colour.</summary>
-    ///  <remarks>Colour used depends on if snippet is user defined.</remarks>
+    ///  <remarks>Colour used depends on whether snippet is user defined.
+    ///  </remarks>
     procedure LVCustomDrawItem(Sender: TCustomListView; Item: TListItem;
       State: TCustomDrawState; var DefaultDraw: Boolean);
 
     ///  <summary>Ensures that given list view sub item is drawn in correct
     ///  colour.</summary>
-    ///  <remarks>Colour is reverted to window text rather than colour set in
+    ///  <remarks>Colour is reverted to window text instead of colour set in
     ///  LVCustomDrawItem method.</remarks>
     procedure LVCustomDrawSubItem(Sender: TCustomListView; Item: TListItem;
       SubItem: Integer; State: TCustomDrawState; var DefaultDraw: Boolean);
 
     ///  <summary>Creates and initialises properties of custom list view control
-    ///  used for displaying favourites.</summary>
+    ///  that is used to display favourites.</summary>
     procedure CreateLV;
 
     ///  <summary>Displays all favourites in favourites list view.</summary>
@@ -196,27 +204,26 @@ type
     ///  triggered event.</param>
     ///  <param name="EvtInfo">IInterface [in] Reference to object that carries
     ///  information about the event.</param>
-    ///  <remarks>EvtInfo will always support the IFavouritesChangeEventInfo
-    ///  interface.</remarks>
+    ///  <remarks>EvtInfo must support IFavouritesChangeEventInfo.</remarks>
     procedure FavouritesListener(Sender: TObject; const EvtInfo: IInterface);
 
-    ///  <summary>Changes the transparency old the form from its current level
-    ///  to the given new transparency level.</summary>
-    ///  <remarks>The change in transparency is done in steps to make it appear
-    ///  animated.</remarks>
-    procedure FadeTo(const EndTransparency: Byte);
+    ///  <summary>Changes the transparency of the form from its current level to
+    ///  the given new transparency level.</summary>
+    ///  <remarks>The change in transparency is performed in small steps to make
+    ///  it appear animated.</remarks>
+    procedure FadeTo(const NewTransparency: Byte);
 
-    ///  <summary>Fades the form in from its transparent state to full opacity.
-    ///  </summary>
+    ///  <summary>Fades the form in from its current transparent state to full
+    ///  opacity.</summary>
     procedure FadeIn;
 
     ///  <summary>Fades the form from its current transparency to the level
     ///  indicated by the transparency trackbar.</summary>
     procedure FadeOut;
 
-    ///  <summary>Finds the list item associated with the favourite that has the
-    ///  given snippet ID.</summary>
-    ///  <remarks>Returns nil if no mathcing list item exists.</remarks>
+    ///  <summary>Finds the favourites list view item that is associated with
+    ///  the favourite with the given snippet ID.</summary>
+    ///  <remarks>Returns nil if no matching list item exists.</remarks>
     function FindListItem(const SnippetID: TSnippetID): TListItem;
 
     ///  <summary>Records that a mouse button has been pressed over the
@@ -243,12 +250,12 @@ type
     procedure InitForm; override;
 
   public
-    ///  <summary>Displays and intialises the dialogue box non-modally, or re-activates it if
-    ///  already displayed.</summary>
+    ///  <summary>Displays and intialises the dialogue box non-modally, or
+    ///  re-activates it if it is already displayed.</summary>
     ///  <param name="AOwner">TComponent [in] Reference to any owning component.
     ///  May be nil.</param>
     ///  <param name="Favourites">TFavourites [in] Reference to favourites
-    ///  object to be displayed or managed.</param>
+    ///  object to be displayed and managed.</param>
     ///  <param name="Notifier">INotifier [in] Reference to notifier object used
     ///  to cause a favourite snippet to be displayed in main window.</param>
     class procedure Display(AOwner: TComponent; const Favourites: TFavourites;
@@ -276,12 +283,12 @@ uses
 
 
 type
-  ///  <summary>Custom list item class that adds ability to store a TFavourite
-  ///  record with list item.</summary>
+  ///  <summary>Custom list item class that adds ability to associate a
+  ///  TFavourite record with list item.</summary>
   TFavouriteListItem = class(TListItem)
   strict private
     var
-      ///  <summary>Value of Warning property.</summary>
+      ///  <summary>Value of Favourite property.</summary>
       fFavourite: TFavourite;
   public
     ///  <summary>Favourite associated with list item.</summary>
@@ -461,14 +468,14 @@ begin
   FadeTo(tbTransparency.Position);
 end;
 
-procedure TFavouritesDlg.FadeTo(const EndTransparency: Byte);
+procedure TFavouritesDlg.FadeTo(const NewTransparency: Byte);
 var
   Step: Int8;
 begin
   Step := -1;
-  if AlphaBlendValue < EndTransparency then
+  if AlphaBlendValue < NewTransparency then
     Step := -Step;
-  while AlphaBlendValue <> EndTransparency do
+  while AlphaBlendValue <> NewTransparency do
   begin
     AlphaBlendValue := AlphaBlendValue + Step;
     Sleep(2);
@@ -586,7 +593,8 @@ procedure TFavouritesDlg.LVCustomDrawSubItem(Sender: TCustomListView;
   Item: TListItem; SubItem: Integer; State: TCustomDrawState;
   var DefaultDraw: Boolean);
 begin
-  fLVFavs.Canvas.Font.Color := clNone;  // required to force later colour change
+  // required to force colour change on following line
+  fLVFavs.Canvas.Font.Color := clNone;
   fLVFavs.Canvas.Font.Color := clWindowText;
 end;
 
@@ -608,8 +616,8 @@ var
 begin
   case fLVFavs.SortColumn of
     0:
-      // use Cation heresince it has snippet display which is not present in
-      // favourite record
+      // use item Caption here since it is set to snippet display name
+      // which is not recorded in the item's associated TFavourite record
       Compare := StrCompareText(Item1.Caption, Item2.Caption);
     1:
     begin
@@ -696,10 +704,10 @@ begin
   inherited Create;
   Section := Settings.ReadSection(ssFavourites);
   fDisplayInNewTabs := Boolean(
-    StrToIntDef(Section.ItemValues['DisplayInNewTabs'], Ord(False))
+    StrToIntDef(Section.ItemValues[DisplayInNewTabsKey], Ord(False))
   );
   fInactiveAlphaBlendValue := StrToIntDef(
-    Section.ItemValues['InactiveAlphaBlendValue'], 160)
+    Section.ItemValues[InactiveAlphaBlendValueKey], 160)
   ;
 end;
 
@@ -708,8 +716,8 @@ var
   Section: ISettingsSection;
 begin
   Section := Settings.EmptySection(ssFavourites);
-  Section.ItemValues['DisplayInNewTabs'] := IntToStr(Ord(fDisplayInNewTabs));
-  Section.ItemValues['InactiveAlphaBlendValue'] := IntToStr(
+  Section.ItemValues[DisplayInNewTabsKey] := IntToStr(Ord(fDisplayInNewTabs));
+  Section.ItemValues[InactiveAlphaBlendValueKey] := IntToStr(
     fInactiveAlphaBlendValue
   );
   Section.Save;
