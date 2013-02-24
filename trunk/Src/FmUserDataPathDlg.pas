@@ -108,16 +108,17 @@ uses
   // Delphi
   IOUtils, RTLConsts,
   // Project
-  UAppInfo, UBrowseForFolderDlg, UColours, UConsts, UCtrlArranger, UExceptions,
+  UAppInfo, UBrowseForFolderDlg, UConsts, UCtrlArranger, UExceptions,
   UFontHelper, UMessageBox, UStrUtils;
 
 {$R *.dfm}
 
 
 { TUserDataPathDlg }
+
 procedure TUserDataPathDlg.actBrowseExecute(Sender: TObject);
 var
-  Dlg: TBrowseForFolderDlg; // browse for folder standard dialog box
+  Dlg: TBrowseForFolderDlg; // browse for folder standard dialogue box
 resourcestring
   sDlgTitle = 'Choose Database Directory';
   sDlgHeading = 'Choose an empty directory or create a new one';
@@ -127,7 +128,6 @@ begin
     Dlg.Title := sDlgTitle;
     Dlg.Headline := sDlgHeading;
     Dlg.MakeFolderBtnVisible := True;
-    Dlg.HelpKeyword := 'ChooseUserDBDirDlg';
     if Dlg.Execute then
       edPath.Text := Dlg.FolderName;
   finally
@@ -166,7 +166,7 @@ end;
 
 procedure TUserDataPathDlg.actMoveExecute(Sender: TObject);
 resourcestring
-  sNonEmptyDir = 'The specified directory is not empty';
+  sNonEmptyDir = 'The specified directory is not empty.';
   sConfirmMsg = 'Are you sure you want to move the user database?';
 begin
   if TDirectory.Exists(NewDirFromEditCtrl)
@@ -224,7 +224,6 @@ begin
     btnBrowse.Font, btnMove.Font, lblExplainDefaultPath.Font,
     btnDefaultPath.Font
   ]);
-//  lblWarning.Font.Color := clWarningText;
 end;
 
 procedure TUserDataPathDlg.DoMove(const DestDir: string);
@@ -253,7 +252,7 @@ end;
 class procedure TUserDataPathDlg.Execute(AOwner: TComponent);
 begin
   {$IFDEF PORTABLE}
-  raise EBug.Create(ClassName + '.Execute: Call forbidden in portable version');
+  raise EBug.Create(ClassName + '.Execute: Call forbidden in portable edition');
   {$ENDIF}
   with InternalCreate(AOwner) do
     try
