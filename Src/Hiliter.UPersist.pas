@@ -25,33 +25,59 @@ uses
 
 
 type
-
-  {
-  THiliterPersist:
-    Static class that can save and load syntax highlighter attributes to and
-    from persistent storage.
-  }
+  ///  <summary>Static class that can save and load syntax highlighter
+  ///  attributes to and from persistent storage.</summary>
   THiliterPersist = class(TNoConstructObject)
   strict private
+    ///  <summary>Saves a syntax highlighter's attributes to a section of
+    ///  persistent storage.</summary>
+    ///  <param name="Storage">ISettingsSection [in] Storage section in which
+    ///  highlighter attributes are to be saved.</param>
+    ///  <param name="Hiliter">IHiliteAttrs [in] Highlighter attributes to be
+    ///  saved.</param>
+    ///  <param name="Prefix">string [in] Text to be prefixed to each value
+    ///  name in storage section. May be empty string if no prefix required.
+    ///  </param>
     class procedure InternalSave(Storage: ISettingsSection;
       Hiliter: IHiliteAttrs; const Prefix: string);
+
+    ///  <summary>Loads a syntax highlighter's attributes from a section of
+    ///  persistent storage.</summary>
+    ///  <param name="Storage">ISettingsSection [in] Storage section from which
+    ///  highlighter attributes are to be loaded.</param>
+    ///  <param name="Hiliter">IHiliteAttrs [in] Highlighter attributes object
+    ///  to be updated with loaded attributes.</param>
+    ///  <param name="Prefix">string [in] Text to be prefixed to each value
+    ///  name in storage section. May be empty string if no prefix required.
+    ///  </param>
     class procedure InternalLoad(Storage: ISettingsSection;
       Hiliter: IHiliteAttrs; const Prefix: string);
+
   public
+    ///  <summary>Saves the given un-named syntax highlighter's attributes to
+    ///  the given persistent storage section.</summary>
+    ///  <remarks>Any earlier attributes written using this method are
+    ///  overwritten.</remarks>
     class procedure Save(const Storage: ISettingsSection;
       const Hiliter: IHiliteAttrs);
-      {Saves a syntax highlighter's attributes to persistent storage.
-        @param Storage [in] Storage in which to save highligher information.
-        @param Hiliter [in] Highlighter attributes to save.
-      }
+
+    ///  <summary>Loads the given un-named highlighter attributes from the given
+    ///  storage section.</summary>
     class procedure Load(const Storage: ISettingsSection;
       const Hiliter: IHiliteAttrs);
-      {Loads a syntax highlighter's attributes from persistent storage.
-        @param Storage [in] Storage containing highligher information.
-        @param Hiliter [in] Highlighter attributes to load.
-      }
+
+    ///  <summary>Saves all the given named highlighter attributes to the given
+    ///  persistent storage section.</summary>
+    ///  <remarks>Value names for each highlighter's attributes are given a
+    ///  unique prefix in the storage section.</remarks>
     class procedure SaveNamed(Storage: ISettingsSection;
       NamedHiliters: INamedHiliteAttrs);
+
+    ///  <summary>Load all named highlighter attributes from the given
+    ///  persistent storage section into the given named highighter attributes
+    ///  list.</summary>
+    ///  <remarks>NamedHiliters is cleared before the persistent attributes are
+    ///  loaded.</remarks>
     class procedure LoadNamed(Storage: ISettingsSection;
       NamedHiliters: INamedHiliteAttrs);
   end;
@@ -79,32 +105,24 @@ const
   cNamedHiliterPrefix = 'NamedHiliter%d.';
 
 
+///  <summary>Returns a value name for the PropName property of source code
+///  element with id ElemId.</summary>
 function ElemValueName(const ElemId: THiliteElement;
   const PropName: string): string;
-  {Builds a value name for the property of a particular element.
-    @param ElemId [in] Id of element for which we want value name.
-    @param PropName [in] Name of property within element.
-    @return Required value name.
-  }
 begin
   Result := Format(cElemCompoundName, [Ord(ElemId), PropName]);
 end;
 
+///  <summary>Returns a bit flag that can uniquely represent the given font
+///  style in a bitmask.</summary>
 function FontStyleToBitFlag(const FontStyle: TFontStyle): Cardinal;
-  {Converts a font style ordinal into a bit flag that can uniquely represent
-  the font style in a bitmask.
-    @param FontStyle [in] Font style to convert.
-    @return Equivalent bitflag.
-  }
 begin
   Result := 1 shl Ord(FontStyle);
 end;
 
+///  <summary>Returns a bit mask representing all the given font styles.
+///  </summary>
 function FontStylesToBitmask(const FontStyles: TFontStyles): Cardinal;
-  {Converts a set of font styles into an equivalent 32 bit bitmask.
-    @param FontStyles [in] Set of font styles to be converted.
-    @return Equivalent bitmask.
-  }
 var
   FS: TFontStyle; // iterates thru all font styles
 begin
@@ -114,23 +132,18 @@ begin
       Result := Result or FontStyleToBitFlag(FS);
 end;
 
+///  <summary>Returns the set of font styles represent by the given bitmask.
+///  </summary>
+///  <remarks>The bit mask should be in the same format as originally generated
+///  by FontStylesToBitmask.</remarks>
 function BitmaskToFontStyles(const Bitmask: Cardinal): TFontStyles;
-  {Converts a bitmask representation of a set of font styles back into the
-  equivalent set.
-    @param Bitmask [in] Bitmask to be converted.
-    @return Equivalent set of font styles.
-  }
-  // ---------------------------------------------------------------------------
+
+  // Tests if a the given bit in the given bit mask is set.</summary>
   function IsBitSet(const Bit, Mask: Cardinal): Boolean;
-    {Tests if a bit in a bit mask is set.
-      @param Bit [in] Bit to set.
-      @param Mask [in] Bitmask to be tested.
-      @return True if bit in mask.
-    }
   begin
     Result := Bit and Bitmask = Bit;
   end;
-  // ---------------------------------------------------------------------------
+
 var
   FS: TFontStyle; // iterates thru all font styles
 begin
@@ -139,7 +152,6 @@ begin
     if IsBitSet(FontStyleToBitFlag(FS), Bitmask) then
       Include(Result, FS);
 end;
-
 
 { THiliterPersist }
 
@@ -202,10 +214,6 @@ end;
 
 class procedure THiliterPersist.Load(const Storage: ISettingsSection;
   const Hiliter: IHiliteAttrs);
-  {Loads a syntax highlighter's attributes from persistent storage.
-    @param Storage [in] Storage containing highligher information.
-    @param Hiliter [in] Highlighter attributes to load.
-  }
 begin
   InternalLoad(Storage, Hiliter, '');
 end;
@@ -233,10 +241,6 @@ end;
 
 class procedure THiliterPersist.Save(const Storage: ISettingsSection;
   const Hiliter: IHiliteAttrs);
-  {Saves a syntax highlighter's attributes to persistent storage.
-    @param Storage [in] Storage in which to save highligher information.
-    @param Hiliter [in] Highlighter attributes to save.
-  }
 begin
   InternalSave(Storage, Hiliter, '');
 end;
