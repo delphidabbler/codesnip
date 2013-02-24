@@ -8,7 +8,8 @@
  * $Rev$
  * $Date$
  *
- * Implements classes that define attributes of syntax highlighters.
+ * Implements classes that define syntax highlighter attributes along with an
+ * object that provides a list of named highlighter attributes.
 }
 
 
@@ -16,23 +17,6 @@ unit Hiliter.UAttrs;
 
 
 interface
-
-
-{
-  NOTES:
-
-  Syntax highlighter attribute objects are output-neutral objects that store the
-  attributes of various syntax highlighters. These objects are used by the
-  objects that format source code to determine the font and colour information
-  to use.
-
-  The objects define a font name and size used for the whole output. Each
-  different highlight element (e.g. reserved words, comments etc) can have its
-  own font colour and style (italic, bold, underline).
-
-  Therefore the highlighter object records a single font name and size along
-  with an array of objects that define the various highlight elements.
-}
 
 
 uses
@@ -43,44 +27,36 @@ uses
 
 
 type
-
-  {
-  THiliteAttrsFactory:
-    Factory class used to create various highlight attribute objects.
-  }
+  ///  <summary>Factory class used to create various highlight attributes
+  ///  objects.</summary>
   THiliteAttrsFactory = class(TNoConstructObject)
   public
+    ///  <summary>Creates and returns a null highlighter attributes object
+    ///  instance.</summary>
+    ///  <remarks>Null attributes use no styling other than default font name
+    ///  and size.</remarks>
     class function CreateNulAttrs: IHiliteAttrs;
-      {Creates a nul highlighter object: one that provides no additional
-      formatting information other than default font and size.
-        @return Highlighter instance.
-      }
+    ///  <summary>Creates and returns a highlighter attributes object instance
+    ///  that uses the program's default syntax highlighting style.</summary>
     class function CreateDefaultAttrs: IHiliteAttrs;
-      {Creates a highlighter object that uses program's default highlighting
-      style.
-        @return Highlighter instance.
-      }
+    ///  <summary>Creates and returns a highlighter attributes object instance
+    ///  that uses a syntax highlighting style defined by the user.</summary>
     class function CreateUserAttrs: IHiliteAttrs;
-      {Creates a highlighter object that uses highlighting style defined by
-      user.
-        @return Highlighter instance.
-      }
+    ///  <summary>Creates and returns a copy of the given highlighter attributes
+    ///  instance in a form suitable for printing. If UseColour is False, all
+    ///  colour information is removed from the highlighter. If Attrs is nil a
+    ///  null highlighter is returned.</summary>
     class function CreatePrintAttrs(const Attrs: IHiliteAttrs;
       const UseColour: Boolean): IHiliteAttrs;
-      {Creates a copy of a highlighter suitable for printing. Ensures font is
-      Courier New and removes colours if mono printing required.
-        @param Attrs [in] Highlighter attributes to be converted for printing.
-          If nul then the nul highlighter is used.
-        @param UseColour [in] Flag indicating whether colour required. When
-          False all colour information is removed.
-        @return New instance of highlighter adapted for printing.
-      }
-    class function CreatePredefinedAttrs(
-      const Style: TPredefinedHiliteStyle): IHiliteAttrs;
-      {Creates a predefined highlighter object.
-        @return Highlighter instance.
-      }
+    ///  <summary>Creates and returns a highlighter attributes object instance
+    ///  with the given predefined style.</summary>
+    class function CreatePredefinedAttrs(const Style: TPredefinedHiliteStyle):
+      IHiliteAttrs;
+    ///  <summary>Creates a returns a highlighter attributes object instance
+    ///  that is a clone of the given highlighter attributes.</summary>
     class function CloneAttrs(Attrs: IHiliteAttrs): IHiliteAttrs;
+    ///  <summary>Creates and returns named highlighter attributes object
+    ///  instance.</summary>
     class function CreateNamedAttrs: INamedHiliteAttrs;
   end;
 
@@ -96,143 +72,165 @@ uses
 
 
 type
-
-  {
-  THiliteAttrs:
-    Object that stores display attributes that are used in a syntax highlighter.
-    Supports assignment.
-  }
+  ///  <summary>Class that records display attributes for use when syntax
+  ///  highlighting source code.</summary>
+  ///  <remarks>The class records the font face and size used for the whole
+  ///  highighted along with font style and colour information of each
+  ///  recognised source code element.</remarks>
   THiliteAttrs = class(TInterfacedObject,
-    IHiliteAttrs, // defines highlight attributes and methods
-    IAssignable   // defines object assignment
+    IHiliteAttrs, IAssignable
   )
   strict private
     var
-      fElemAttrs: TList<IHiliteElemAttrs>;  // List of element attributes
-      fFontSize: Integer;                   // Size of font in points
-      fFontName: string;                    // Name of font
+      ///  <summary>List of highlight attributes for each source code element.
+      ///  </summary>
+      fElemAttrs: TList<IHiliteElemAttrs>;
+      ///  <summary>Size of font in points.</summary>
+      fFontSize: Integer;
+      ///  <summary>Name of font.</summary>
+      fFontName: string;
     const
-      cDefFontName = 'Courier New'; // Default font name
-      cDefFontSize = 9;             // Default font size
+      ///  <summary>Default font name.</summary>
+      cDefFontName = 'Courier New';
+      ///  <summary>Default font size.</summary>
+      cDefFontSize = 9;
   protected // do not make strict
-    { IHiliteAttrs methods }
+    ///  <summary>Gets name of highlighter font.</summary>
+    ///  <remarks>Method of IHiliteAttrs.</remarks>
     function GetFontName: string;
-      {Gets name of font to use for all output.
-        @return Name of font.
-      }
+    ///  <summary>Sets name of highlighter font.</summary>
+    ///  <remarks>Method of IHiliteAttrs.</remarks>
     procedure SetFontName(const AFontName: string);
-      {Sets name of font to use for all output.
-        @param AFontName [in] Required font name.
-      }
+    ///  <summary>Gets size of highlighter font.</summary>
+    ///  <remarks>Method of IHiliteAttrs.</remarks>
     function GetFontSize: Integer;
-      {Gets size of font to use for all output.
-        @return Size of font in points.
-      }
+    ///  <summary>Sets size of highlighter font.</summary>
+    ///  <remarks>Method of IHiliteAttrs.</remarks>
     procedure SetFontSize(const AFontSize: Integer);
-      {Sets size of font to use for all output.
-        @param AFontSize [in] Required font size in points.
-      }
+    ///  <summary>Resets highlighter font name and size to default values.
+    ///  </summary>
+    ///  <remarks>Method of IHiliteAttrs.</remarks>
     procedure ResetDefaultFont;
-      {Resets font name and size to default value.
-      }
+    ///  <summary>Returns the highlighter attributes for the given source code
+    ///  element.</summary>
+    ///  <remarks>Method of IHiliteAttrs.</remarks>
     function GetElement(const Elem: THiliteElement): IHiliteElemAttrs;
-      {Gets the attributes of a highlighter element.
-        @param Elem [in] Required element.
-        @return Highlight attributes for element.
-      }
-    { IAssignable method }
+    ///  <summary>Assigns the properties of the given highlighter attributes
+    ///  object to this instance.</summary>
+    ///  <remarks>
+    ///  <para>Src must either support IHiliteAttrs or be nil. If nil then this
+    ///  instance is reset to its default values.</para>
+    ///  <para>Method of IAssignable.</para>
+    ///  </remarks>
     procedure Assign(const Src: IInterface);
-      {Assigns properties of a given object to this object.
-        @param Src [in] Object whose properties are to be copied. If Src is nil
-          object is reset to default values.
-        @except EBug raised if Src is incompatible with this object.
-      }
   public
+    ///  <summary>Creates a new instance of the class with default values.
+    ///  </summary>
     constructor Create;
-      {Object constructor. Sets up and intialises object.
-      }
+    ///  <summary>Destroys this instance.</summary>
     destructor Destroy; override;
-      {Object destructor. Tears down object.
-      }
-  end;
-
-  {
-  THiliteElemAttrs:
-    Object that stores attributes applicable to various elements used in syntax
-    highlighting. Supports assignment.
-  }
-  THiliteElemAttrs = class(TInterfacedObject,
-    IHiliteElemAttrs, // defines element highlight attributes and methods
-    IAssignable       // defines object assignment
-  )
-  strict private
-    var fForeColor: TColor;       // Foreground (text) colour
-    var fFontStyle: TFontStyles;  // Font styles
-  protected // do not make strict
-    { IHiliteElemAttrs methods }
-    function IsNul: Boolean;
-      {Checks whether element's attributes are "nul" - i.e. all properties have
-      default values. Used to determine whether to output formatting information
-      for an element.
-        @return True if element's attributes are nul.
-      }
-    function GetFontStyle: TFontStyles;
-      {Gets the font style to use for element.
-        @return Set of font styles.
-      }
-    procedure SetFontStyle(const AFontStyle: TFontStyles);
-      {Sets font style to use for element.
-        @param AFontStyle [in] Required set of font styles.
-      }
-    function GetForeColor: TColor;
-      {Gets the foreground colour (i.e. text colour) to use for element.
-        @return Text colour.
-      }
-    procedure SetForeColor(const AColor: TColor);
-      {Sets foreground colour (i.e. text colour) to use for element.
-        @param AColor [in] Required colour.
-      }
-    { IAssignable methods }
-    procedure Assign(const Src: IInterface);
-      {Assigns properties of a given object to this object.
-        @param Src [in] Object whose properties are to be copied. If Src is nil
-          object is reset to default values.
-        @except EBug raised if Src is incompatible with this object.
-      }
-  public
-    constructor Create;
-      {Object constructor. Sets up and initialises object.
-      }
   end;
 
 type
+  ///  <summary>Class that records display attributes for use in highlighting a
+  ///  source code element.</summary>
+  ///  <remarks>The class records the font style and colour for a single source
+  ///  code element.</remarks>
+  THiliteElemAttrs = class(TInterfacedObject,
+    IHiliteElemAttrs, IAssignable
+  )
+  strict private
+    var
+      ///  <summary>Foreground (font) colour of the source code element.
+      ///  </summary>
+      fForeColor: TColor;
+      ///  <summary>Font style of the source code element.</summary>
+      fFontStyle: TFontStyles;
+  protected // do not make strict
+    ///  <summary>Checks if the element's attributes are "null", i.e. all
+    ///  properties default values.</summary>
+    ///  <remarks>
+    ///  <para>This method is used to determines whether to output formatting
+    ///  information for an element.</para>
+    ///  <para>Method of IHiliteElemAttrs.</para>
+    ///  </remarks>
+    function IsNul: Boolean;
+    ///  <summary>Returns the element's font style.</summary>
+    ///  <remarks>Method of IHiliteElemAttrs.</remarks>
+    function GetFontStyle: TFontStyles;
+    ///  <summary>Sets the element's font style to the given value.</summary>
+    ///  <remarks>Method of IHiliteElemAttrs.</remarks>
+    procedure SetFontStyle(const AFontStyle: TFontStyles);
+    ///  <summary>Gets the element's foreground (font) colour.</summary>
+    ///  <remarks>Method of IHiliteElemAttrs.</remarks>
+    function GetForeColor: TColor;
+    ///  <summary>Sets the element's foreground (font) colour to the given
+    ///  value.</summary>
+    ///  <remarks>Method of IHiliteElemAttrs.</remarks>
+    procedure SetForeColor(const AColor: TColor);
+    ///  <summary>Assigns the properties of the given element attributes
+    ///  object to this instance.</summary>
+    ///  <remarks>
+    ///  <para>Src must either support IHiliteElemAttrs or be nil. If nil then
+    ///  this instance is reset to its default values.</para>
+    ///  <para>Method of IAssignable.</para>
+    ///  </remarks>
+    procedure Assign(const Src: IInterface);
+  public
+    ///  <summary>Creates a new instance of the class with default values.
+    ///  </summary>
+    constructor Create;
+  end;
+
+type
+  ///  <summary>Implements a list of named syntax highlighter attributes where
+  ///  attributes are accessed by name.</summary>
   TNamedHiliterAttrs = class(TInterfacedObject,
     INamedHiliteAttrs, IAssignable
   )
   strict private
     var
+      ///  <summary>Map of names to syntax highlighter attributes.</summary>
       fMap: TDictionary<string,IHiliteAttrs>;
   public
+    ///  <summary>Creates new instance with empty list.</summary>
     constructor Create;
+    ///  <summary>Destroys instance.</summary>
     destructor Destroy; override;
+    ///  <summary>Checks if highlighter attributes with given name exists.
+    ///  </summary>
+    ///  <remarks>Method of INamedHiliteAttrs.</remarks>
     function Contains(const Name: string): Boolean;
+    ///  <summary>Checks if list is empty.</summary>
+    ///  <remarks>Method of INamedHiliteAttrs.</remarks>
     function IsEmpty: Boolean;
+    ///  <summary>Deletes highlighter attributes with given name.</summary>
+    ///  <remarks>Method of INamedHiliteAttrs.</remarks>
     procedure Delete(const Name: string);
+    ///  <summary>Clears list of highlighter attributes.</summary>
+    ///  <remarks>Method of INamedHiliteAttrs.</remarks>
     procedure Clear;
+    ///  <summary>Gets highlighter attributes with given name, which must exist.
+    ///  </summary>
+    ///  <remarks>Method of INamedHiliteAttrs.</remarks>
     function GetHiliter(const Name: string): IHiliteAttrs;
+    ///  <summary>Stores given highlighter attributes in list with given name.
+    ///  If name is already present its highighter attributes are overwritten.
+    ///  </summary>
+    ///  <remarks>Method of INamedHiliteAttrs.</remarks>
     procedure SetHiliter(const Name: string; Hiliter: IHiliteAttrs);
+    ///  <summary>Returns an array of highlighter attribute names.</summary>
+    ///  <remarks>Method of INamedHiliteAttrs.</remarks>
     function GetNames: TArray<string>;
+    ///  <summary>Assigns properties of given Src object to this instance. Src
+    ///  must support INamedHiliteAttrs.</summary>
+    ///  <remarks>Method of IAssignable.</remarks>
     procedure Assign(const Src: IInterface);
   end;
 
 { THiliteAttrs }
 
 procedure THiliteAttrs.Assign(const Src: IInterface);
-  {Assigns properties of a given object to this object.
-    @param Src [in] Object whose properties are to be copied. If Src is nil
-      object is reset to default values.
-    @except EBug raised if Src is incompatible with this object.
-  }
 var
   Elem: THiliteElement; // loops thru all highlight elements
 begin
@@ -263,8 +261,6 @@ begin
 end;
 
 constructor THiliteAttrs.Create;
-  {Object constructor. Sets up and intialises object.
-  }
 var
   Elem: THiliteElement; // loops thru all highlight elements
 begin
@@ -272,7 +268,7 @@ begin
   // Set default font values
   fFontName := cDefFontName;
   fFontSize := cDefFontSize;
-  // Create list that holds an nul object for each highlight element
+  // Create list that holds an null object for each highlight element
   // Low(THiliteElement) is at index 0 in list
   fElemAttrs := TList<IHiliteElemAttrs>.Create;
   for Elem := Low(THiliteElement) to High(THiliteElement) do
@@ -280,8 +276,6 @@ begin
 end;
 
 destructor THiliteAttrs.Destroy;
-  {Object destructor. Tears down object.
-  }
 begin
   fElemAttrs.Free;  // releases each object in list
   inherited;
@@ -289,10 +283,6 @@ end;
 
 function THiliteAttrs.GetElement(
   const Elem: THiliteElement): IHiliteElemAttrs;
-  {Gets the attributes of a highlighter element.
-    @param Elem [in] Required element.
-    @return Highlight attributes for element.
-  }
 begin
   // Note: Low(THiliteElement) is at index 0 in list. Following code does *not*
   // assume that Ord(Low(THiliteElement)) = 0.
@@ -300,41 +290,27 @@ begin
 end;
 
 function THiliteAttrs.GetFontName: string;
-  {Gets name of font to use for all output.
-    @return Name of font.
-  }
 begin
   Result := fFontName;
 end;
 
 function THiliteAttrs.GetFontSize: Integer;
-  {Gets size of font to use for all output.
-    @return Size of font in points.
-  }
 begin
   Result := fFontSize;
 end;
 
 procedure THiliteAttrs.ResetDefaultFont;
-  {Resets font name and size to default value.
-  }
 begin
   SetFontName(cDefFontName);
   SetFontSize(cDefFontSize);
 end;
 
 procedure THiliteAttrs.SetFontName(const AFontName: string);
-  {Sets name of font to use for all output.
-    @param AFontName [in] Required font name.
-  }
 begin
   fFontName := AFontName;
 end;
 
 procedure THiliteAttrs.SetFontSize(const AFontSize: Integer);
-  {Sets size of font to use for all output.
-    @param AFontSize [in] Required font size in points.
-  }
 begin
   fFontSize := AFontSize;
 end;
@@ -342,11 +318,6 @@ end;
 { THiliteElemAttrs }
 
 procedure THiliteElemAttrs.Assign(const Src: IInterface);
-  {Assigns properties of a given object to this object.
-    @param Src [in] Object whose properties are to be copied. If Src is nil
-      object is reset to default values.
-    @except EBug raised if Src is incompatible with this object.
-  }
 begin
   if Assigned(Src) then
   begin
@@ -363,60 +334,41 @@ begin
   end
   else
   begin
-    // Src is nil: reset properties to default (nul) values
+    // Src is nil: reset properties to default (null) values
     Self.SetForeColor(clNone);
     Self.SetFontStyle([]);
   end;
 end;
 
 constructor THiliteElemAttrs.Create;
-  {Object constructor. Sets up and initialises object.
-  }
 begin
   inherited;
-  // Intialise properties to default (nul) values
+  // Intialise properties to default (null) values
   fForeColor := clNone;
   fFontStyle := [];
 end;
 
 function THiliteElemAttrs.GetFontStyle: TFontStyles;
-  {Gets the font style to use for element.
-    @return Set of font styles.
-  }
 begin
   Result := fFontStyle;
 end;
 
 function THiliteElemAttrs.GetForeColor: TColor;
-  {Gets the foreground colour (i.e. text colour) to use for element.
-    @return Text colour.
-  }
 begin
   Result := fForeColor;
 end;
 
 function THiliteElemAttrs.IsNul: Boolean;
-  {Checks whether element's attributes are "nul" - i.e. all properties have
-  default values. Used to determine whether to output formatting information for
-  an element.
-    @return True if element's attributes are nul.
-  }
 begin
   Result := (fFontStyle = []) and (fForeColor = clNone);
 end;
 
 procedure THiliteElemAttrs.SetFontStyle(const AFontStyle: TFontStyles);
-  {Sets font style to use for element.
-    @param AFontStyle [in] Required set of font styles.
-  }
 begin
   fFontStyle := AFontStyle;
 end;
 
 procedure THiliteElemAttrs.SetForeColor(const AColor: TColor);
-  {Sets foreground colour (i.e. text colour) to use for element.
-    @param AColor [in] Required colour.
-  }
 begin
   fForeColor := AColor;
 end;
@@ -431,9 +383,6 @@ begin
 end;
 
 class function THiliteAttrsFactory.CreateDefaultAttrs: IHiliteAttrs;
-  {Creates a highlighter object that uses program's default highlighting style.
-    @return Highlighter instance.
-  }
 begin
   Result := THiliteAttrsFactory.CreatePredefinedAttrs(hsDelphi2006);
 end;
@@ -444,31 +393,21 @@ begin
 end;
 
 class function THiliteAttrsFactory.CreateNulAttrs: IHiliteAttrs;
-  {Creates a nul highlighter object: one that provides no additional formatting
-  information other than default font and size.
-    @return Highlighter instance.
-  }
 begin
-  // Just create highlighter object: nul values are defaults
+  // Just create highlighter object: null values are defaults
   Result := THiliteAttrs.Create;
 end;
 
 class function THiliteAttrsFactory.CreatePredefinedAttrs(
   const Style: TPredefinedHiliteStyle): IHiliteAttrs;
-  {Creates a predefined highlighter object.
-    @return Highlighter instance.
-  }
 type
-  {
-  TAttrsTable:
-    Table of highlighter attributes.
-  }
+  // Table of highlighter attributes.
   TAttrsTable = array[THiliteElement] of record
     ForeColor: TColor;        // foreground (text) colour
     FontStyle: TFontStyles;   // set of font styles
   end;
 const
-  // Defines predefined styles
+  // Map of predefined styles to source code element attributes.
   cPredefinedStyle: array[TPredefinedHiliteStyle] of TAttrsTable =  (
     ( // hsNul
       (ForeColor: clNone;     FontStyle: [];),          // heWhitespace
@@ -544,7 +483,7 @@ const
 var
   Elem: THiliteElement;   // loops thru highlighter elements
 begin
-  // Create highlighter with default (nul) values
+  // Create highlighter with default (null) values
   // (we accept default font name and size)
   Result := THiliteAttrs.Create;
   // Set required properties for highlight elements per table
@@ -557,19 +496,11 @@ end;
 
 class function THiliteAttrsFactory.CreatePrintAttrs(
   const Attrs: IHiliteAttrs; const UseColour: Boolean): IHiliteAttrs;
-  {Creates a copy of a highlighter suitable for printing. Ensures font is
-  Courier New and removes colours if mono printing required.
-    @param Attrs [in] Highlighter attributes to be converted for printing. If
-      nul then the nul highlighter is used.
-    @param UseColour [in] Flag indicating whether colour required. When False
-      all colour information is removed.
-    @return New instance of highlighter adapted for printing.
-  }
 var
   Elem: THiliteElement; // loops thru all highlighter elements
 begin
   if not Assigned(Attrs) then
-    // No highlighter: use nul
+    // No highlighter: use null
     Result := CreateNulAttrs
   else
   begin
@@ -584,9 +515,6 @@ begin
 end;
 
 class function THiliteAttrsFactory.CreateUserAttrs: IHiliteAttrs;
-  {Creates a highlighter object that uses highlighting style defined by user.
-    @return Highlighter instance.
-  }
 begin
   Result := THiliteAttrs.Create;
   (Result as IAssignable).Assign(Preferences.HiliteAttrs);
