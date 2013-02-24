@@ -27,6 +27,8 @@ uses
 
 
 type
+  ///  <summary>Frame used to edit search directories for the compiler being
+  ///  edited in TCompilersDlg.</summary>
   TCompilersDlgSearchDirsFrame = class(TCompilersDlgBaseFrame)
     lbPaths: TListBox;
     edPath: TEdit;
@@ -54,7 +56,7 @@ type
     procedure actDownExecute(Sender: TObject);
     ///  <summary>Enables / disables "down" (demote) action.</summary>
     procedure actDownUpdate(Sender: TObject);
-    ///  <summary>Gets a directory from user using "browse for folder" dialog
+    ///  <summary>Gets a directory from user using "browse for folder" dialogue
     ///  box.</summary>
     procedure actBrowseExecute(Sender: TObject);
     ///  <summary>Adds directory entered in edit control to list box.</summary>
@@ -132,7 +134,7 @@ end;
 
 procedure TCompilersDlgSearchDirsFrame.actBrowseExecute(Sender: TObject);
 var
-  Dlg: TBrowseForFolderDlg; // browse for folder standard dialog box
+  Dlg: TBrowseForFolderDlg; // browse for folder standard dialogue box
 resourcestring
   sDlgHeading = 'Choose search directory';
 begin
