@@ -137,49 +137,48 @@ type
 
     ///  <summary>Returns a non-localisable string that uniquely identifies the
     ///  compiler.</summary>
-
     function GetIDString: string;
+
     ///  <summary>Checks whether the compiler is both installed on this computer
     ///  and made available to CodeSnip.</summary>
-
     function IsAvailable: Boolean;
+
     ///  <summary>Returns the full path of the compiler's executable file.
     ///  </summary>
     ///  <remarks>Returns the empty string if the compiler is not known to
     ///  CodeSnip.</remarks>
-
     function GetExecFile: string;
+
     ///  <summary>Records the the full path of the compiler's executable file.
     ///  </summary>
     ///  <remarks>Passing the empty string to this method disassociates the
     ///  compiler from CodeSnip.</remarks>
-
     procedure SetExecFile(const Value: string);
+
     ///  <summary>Returns a comma separated list of the default command line
     ///  switches for use with the compiler.</summary>
     ///  <remarks>The default switches are used if the user has not provided any
     ///  switches.</remarks>
-
     function GetDefaultSwitches: string;
+
     ///  <summary>Returns a comma separated list of any user defined switches
     ///  for use with the compiler.</summary>
-
     function GetSwitches: string;
+
     ///  <summary>Records the given comma delimited list of user defined
     ///  switches to be used with the compiler.</summary>
-
     procedure SetSwitches(const Switches: string);
+
     ///  <summary>Checks if the compiler has RTL unit names that are prefixed by
     ///  its namespace.</summary>
-
     function RequiresRTLNamespaces: Boolean;
+
     ///  <summary>Returns a space separated list of the compiler's default RTL
     ///  unit namespaces.</summary>
-
     function GetDefaultRTLNamespaces: string;
+
     ///  <summary>Returns a space separated list of user-defined RTL unit
     ///  namespaces to be searched by the compiler.</summary>
-
     function GetRTLNamespaces: string;
 
     ///  <summary>Records a list of user defined RTL unit namespaces to be
