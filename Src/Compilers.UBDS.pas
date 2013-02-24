@@ -25,68 +25,68 @@ uses
 
 
 type
-
-  {
-  TBDSCompiler:
-    Class that controls and provides information about Borland Development
-    System Delphi Win32 compilers.
-  }
+  ///  <summary>Class that controls and provides information about BDS based
+  ///  Delphi compilers.</summary>
   TBDSCompiler = class(TBorlandCompiler,
-    IClonable,            // can clone this object
-    ICompiler,            // this is a compiler
-    ICompilerAutoDetect   // can auto detect compiler exec file path
+    IClonable, ICompiler, ICompilerAutoDetect
   )
   strict private
     var
       ///  <summary>Space separated list of RTL namespaces to be passed to
       ///  compiler.</summary>
       fRTLNamespaces: string;
+    ///  <summary>Returns major version number of compiler.</summary>
     function ProductVersion: Integer;
-      {Delphi version number.
-        @return Required major version number.
-      }
   strict protected
+    ///  <summary>Returns name of registry key where compiler's installation
+    ///  path is recorded.</summary>
     function InstallationRegKey: string; override;
-      {Returns name of registry key where records compiler's installation path
-      is recorded.
-        @return Name of key.
-      }
     ///  <summary>Returns any namespace parameter to be passed to compiler on
     ///  command line.</summary>
     function NamespaceParam: string; override;
   protected
-    { IClonable }
+
+    ///  <summary>Returns reference to a new instance of this object that is an
+    ///  exact copy of this instance.</summary>
+    ///  <remarks>Method of IClonable.</remarks>
     function Clone: IInterface;
-      {Create a new instance of the object that is an extact copy and return it.
-        @return New object's IInterface interface.
-      }
-    { ICompiler method overrides }
+
+    ///  <summary>Returns the human readable name of the compiler.</summary>
+    ///  <remarks>Method of ICompiler.</remarks>
     function GetName: string; override;
-      {Provides the human readable name of the compiler.
-        @return Name of the compiler.
-      }
+
+    ///  <summary>Returns the compiler's unique ID.</summary>
+    ///  <remarks>Method of ICompiler.</remarks>
     function GetIDString: string; override;
-      {Provides a non-localisable string that identifies the compiler.
-        @return Compiler id string.
-      }
-    ///  <summary>Checks if compiler has RTL unit names that are prefixed by
+
+    ///  <summary>Checks if the compiler has RTL unit names that are prefixed by
     ///  its namespace.</summary>
+    ///  <remarks>Method of ICompiler.</remarks>
     function RequiresRTLNamespaces: Boolean; override;
-    ///  <summary>Returns a space separated list of compiler's default RTL unit
-    ///  namespaces.</summary>
+
+    ///  <summary>Returns a space separated list of the compiler's default RTL
+    ///  unit namespaces.</summary>
+    ///  <remarks>Method of ICompiler.</remarks>
     function GetDefaultRTLNamespaces: string; override;
+
     ///  <summary>Returns a space separated list of user-defined RTL unit
-    ///  namespaces.</summary>
+    ///  namespaces to be searched by the compiler.</summary>
+    ///  <remarks>Method of ICompiler.</remarks>
     function GetRTLNamespaces: string; override;
-    ///  <summary>Sets user defined RTL unit namespaces.</summary>
-    ///  <remarks>Namespaces is expected to be a space separated list of valid
-    ///  Pascal identfiers.</remarks>
+
+    ///  <summary>Records a list of user defined RTL unit namespaces to be
+    ///  searched by the compiler.</summary>
+    ///  <remarks>
+    ///  <para>Namespaces is expected to be a space separated list of valid
+    ///  Pascal identfiers.</para>
+    ///  <para>Method of ICompiler.</para>
+    ///  </remarks>
     procedure SetRTLNamespaces(const Namespaces: string); override;
   public
+
+    ///  <summary>Constructs new compiler instance for given compiler ID.
+    ///  </summary>
     constructor Create(const Id: TCompilerID);
-      {Class constructor: creates object for a BDS compiler.
-        @param Id [in] Identifies compiler version.
-      }
   end;
 
 
@@ -103,17 +103,11 @@ uses
 { TBDSCompiler }
 
 function TBDSCompiler.Clone: IInterface;
-  {Create a new instance of the object that is an extact copy and return it.
-    @return New object's IInterface interface.
-  }
 begin
   Result := TBDSCompiler.CreateCopy(Self);
 end;
 
 constructor TBDSCompiler.Create(const Id: TCompilerID);
-  {Class constructor: creates object for a BDS compiler.
-    @param Id [in] Identifies compiler version.
-  }
 begin
   Assert(Id in cBDSCompilers, ClassName + '.Create: Invalid Id');
   inherited Create(Id);
@@ -128,9 +122,6 @@ begin
 end;
 
 function TBDSCompiler.GetIDString: string;
-  {Provides a non-localisable string that identifies the compiler.
-    @return Compiler id string.
-  }
 begin
   case GetID of
     ciD2005w32, ciD2006w32, ciD2009w32:
@@ -148,9 +139,6 @@ begin
 end;
 
 function TBDSCompiler.GetName: string;
-  {Provides the human readable name of the compiler.
-    @return Name of the compiler.
-  }
 resourcestring
   sCompilerName = 'Delphi %d';  // template for name of compiler
   sDelphiXE = 'Delphi XE';      // name of Delphi XE compiler
@@ -177,10 +165,6 @@ begin
 end;
 
 function TBDSCompiler.InstallationRegKey: string;
-  {Returns name of registry key where records compiler's installation path
-  is recorded.
-    @return Name of key.
-  }
 begin
   case GetID of
     ciD2005w32: Result := '\SOFTWARE\Borland\BDS\3.0';
@@ -208,9 +192,6 @@ begin
 end;
 
 function TBDSCompiler.ProductVersion: Integer;
-  {Delphi version number.
-    @return Required major version number.
-  }
 begin
   case GetID of
     ciD2005w32: Result := 2005;
