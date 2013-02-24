@@ -28,68 +28,67 @@ uses
 
 type
 
-  {
-  TCompilerBase:
-    Abstract base class for classes that control and provide information about
-    compilers. Provides common functionality.
-  }
+  ///  <summary>Abstract base class for classes that control and provide
+  ///  information about compilers.</summary>
+  ///  <remarks>Provides common implementation of some ICompilers methods.
+  ///  </remarks>
   TCompilerBase = class(TInterfacedObject)
   strict private
-    fExecFile: string;
-      {Path to compiler's executable file}
-    fCompileLog: TStringList;
-      {Stores raw log file from last compiler execution}
-    fPrefixes: TCompLogPrefixes;
-      {Stores compiler log prefix strings for parsing log file}
-    fLastCompileResult: TCompileResult;
-      {Result of last compilation}
-    fSwitches: string;
-      {User defined command line switches}
-    fSearchDirs: ISearchDirs;
-      {List of compiler search directories}
-    fDisplayable: Boolean;
-      {Indicates whether compiler's results are to be displayed in UI etc}
+    var
+      ///  <summary>Full path to compiler's executable file.</summary>
+      fExecFile: string;
+      ///  <summary>Stores raw log file from last compiler execution.</summary>
+      fCompileLog: TStringList;
+      ///  <summary>Stores compiler log prefix strings.</summary>
+      ///  <remarks>Used in parsing log file when looking for warnings and
+      ///  errors.</remarks>
+      fPrefixes: TCompLogPrefixes;
+      ///  <summary>Result of last compilation.</summary>
+      fLastCompileResult: TCompileResult;
+      ///  <summary>User defined command line switches.</summary>
+      fSwitches: string;
+      ///  <summary>List of compiler search directories.</summary>
+      fSearchDirs: ISearchDirs;
+      ///  <summary>Indicates whether compiler's results are to be displayed in
+      ///  UI etc.</summary>
+      fDisplayable: Boolean;
+    ///  <summary>Generates and returns a list of space separated switches for
+    ///  passing to a compiler on its command line.</summary>
     function CommandLineSwitches: string;
-      {Generate list of space separated switches for compiler command line.
-        @return Required list.
-      }
+    ///  <summary>Builds and returns command line required to execute compiler.
+    ///  </summary>
+    ///  <param name="Project">string [in] Name of project to be built.</param>
+    ///  <param name="Path">string [in] Full path to source code file.</param>
+    ///  <returns>string. Command line needed to execute compiler to build the
+    ///  source code.</returns>
     function BuildCommandLine(const Project, Path: string): string;
-      {Builds command line required to execute compiler.
-        @param Project [in] Name of project to build.
-        @param Path [in] Full path to project file.
-        @return Command line needed to execute compiler to build the project.
-      }
+    ///  <summary>Executes the compiler and captures output.</summary>
+    ///  <param name="Project">string [in] Command line to use to compile
+    ///  source code.</param>
+    ///  <param name="Path">string [in] Full path of source file to be compiled.
+    ///  </param>
+    ///  <returns>Integer. Compiler exit code.</returns>
+    ///  <exception>Raises ECompilerError if compiler fails to run.</exception>
     function ExecuteCompiler(const CommandLine, Path: string): Integer;
-      {Executes compiler and captures output.
-        @param CommandLine [in] Command line used to compile source code.
-        @param Path [in] Full path to the source file being compiled.
-        @return Exit code from compiler.
-        @except ECompilerError raised if compiler failed to run.
-      }
+    ///  <summary>Reads compiler output from given stream and records it in a
+    ///  string list, omitting any blank lines.</summary>
     procedure BuildCompileLog(const CompilerOutput: TStream);
-      {Reads compiler output from a stream and records in a string list field,
-      omitting any blank lines.
-        @param CompilerOutput [in] Stream containing compiler output.
-      }
+    ///  <summary>Filters compiler log, extracting only lines that contain
+    ///  message Msg, and storing them in string list Lines.</summary>
     procedure FilterLog(const Msg: string; const Lines: TStrings);
-      {Filters compiler log extracting only lines that contain required message.
-        @param Msg [in] Text required to be contained in matching lines of log
-          file.
-        @param Lines [in] String list that receives filtered lines.
-      }
+    ///  <summary>Initialises the object.</summary>
     procedure Initialize;
-      {Initializes object.
-      }
   strict protected
+    ///  <summary>Returns the type of encoding used by the compiler for text
+    ///  output.</summary>
+    ///  <returns>TEncodingType. System default ANSI encoding type.</returns>
+    ///  <remarks>Descendants should override if their compiler uses a different
+    ///  encoding.</remarks>
     function CompilerOutputEncoding: TEncodingType; virtual;
-      {Encoding used for text output by compiler. Descendants can override.
-        @return System default ANSI encoding type.
-      }
+    ///  <summary>Returns a space separated list of parameters that define any
+    ///  search directories to be passed to the compiler on the command line.
+    ///  </summary>
     function SearchDirParams: string; virtual; abstract;
-      {One of more parameters that define any search directories to be passed
-      to compiler on command line.
-        @return Required space separated parameter(s).
-      }
     ///  <summary>Returns any namespace parameter to be passed to compiler on
     ///  command line.</summary>
     ///  <remarks>This version returns the empty string. Sub-classes that
@@ -97,162 +96,234 @@ type
     function NamespaceParam: string; virtual;
   protected
     { ICompiler methods }
+
+    ///  <summary>Returns the human readable name of the compiler.</summary>
+    ///  <remarks>Method of ICompiler.</remarks>
     function GetName: string; virtual; abstract;
-      {Provides the human readable name of the compiler.
-        @return Name of the compiler.
-      }
+
+    ///  <summary>Returns the compiler's unique ID.</summary>
+    ///  <remarks>Method of ICompiler.</remarks>
     function GetID: TCompilerID; virtual; abstract;
-      {Provides the unique id of the compiler.
-        @return Compiler id.
-      }
+
+    ///  <summary>Returns a non-localisable string that uniquely identifies the
+    ///  compiler.</summary>
+    ///  <remarks>Method of ICompiler.</remarks>
     function GetIDString: string; virtual; abstract;
-      {Provides a non-localisable string that identifies the compiler.
-        @return Compiler id string.
-      }
+
+    ///  <summary>Checks whether the compiler is both installed on this computer
+    ///  and made available to CodeSnip.</summary>
+    ///  <remarks>Method of ICompiler.</remarks>
     function IsAvailable: Boolean;
-      {Tells whether the compiler is installed on this computer and made
-      available to CodeSnip.
-        @return True if compiler is available to CodeSnip.
-      }
+
+    ///  <summary>Returns the full path of the compiler's executable file.
+    ///  </summary>
+    ///  <remarks>
+    ///  <para>Returns the empty string if the compiler is not known to
+    ///  CodeSnip.</para>
+    ///  <para>Method of ICompiler.</para>
+    ///  </remarks>
     function GetExecFile: string;
-      {Returns full path to compiler's executable file.
-        @return Required path.
-      }
+
+    ///  <summary>Records the the full path of the compiler's executable file.
+    ///  </summary>
+    ///  <remarks>
+    ///  <para>Passing the empty string to this method disassociates the
+    ///  compiler from CodeSnip.</para>
+    ///  <para>Method of ICompiler.</para>
+    ///  </remarks>
     procedure SetExecFile(const Value: string);
-      {Stores full path to compiler's executable file.
-        @param Value [in] Path to compiler.
-      }
+
+    ///  <summary>Returns a comma separated list of the default command line
+    ///  switches for use with the compiler.</summary>
+    ///  <remarks>
+    ///  <para>The default switches are used if the user has not provided any
+    ///  switches.</para>
+    ///  <para>Method of ICompiler.</para>
+    ///  </remarks>
     function GetDefaultSwitches: string; virtual; abstract;
-      {Returns default command line switches for compiler.
-        @return Switches separated by commas.
-      }
+
+    ///  <summary>Returns a comma separated list of any user defined switches
+    ///  for use with the compiler.</summary>
+    ///  <remarks>Method of ICompiler.</remarks>
     function GetSwitches: string;
-      {Returns user-defined swtches to be used by compiler.
-        @return Required switches separated by commas. On creation these are
-          default switches.
-      }
+
+    ///  <summary>Records the given comma delimited list of user defined
+    ///  switches to be used with the compiler.</summary>
+    ///  <remarks>Method of ICompiler.</remarks>
     procedure SetSwitches(const Switches: string);
-      {Sets user defined switches.
-        @param Switches [in] Required switches separated by commas.
-      }
-    ///  <summary>Checks if compiler has RTL unit names that are prefixed by
+
+    ///  <summary>Checks if the compiler has RTL unit names that are prefixed by
     ///  its namespace.</summary>
+    ///  <remarks>
+    ///  <para>Always returns False in this default implementation.</para>
+    ///  <para>Method of ICompiler.</para>
+    ///  </remarks>
     function RequiresRTLNamespaces: Boolean; virtual;
-    ///  <summary>Returns a space separated list of compiler's default RTL unit
-    ///  namespaces.</summary>
+
+    ///  <summary>Returns a space separated list of the compiler's default RTL
+    ///  unit namespaces.</summary>
+    ///  <remarks>
+    ///  <para>Returns the empty string in this default implementation.</para>
+    ///  <para>Method of ICompiler.</para>
+    ///  </remarks>
     function GetDefaultRTLNamespaces: string; virtual;
+
     ///  <summary>Returns a space separated list of user-defined RTL unit
-    ///  namespaces.</summary>
+    ///  namespaces to be searched by the compiler.</summary>
+    ///  <remarks>
+    ///  <para>Returns the empty string in this default implementation.</para>
+    ///  <para>Method of ICompiler.</para>
+    ///  </remarks>
     function GetRTLNamespaces: string; virtual;
-    ///  <summary>Sets user defined RTL unit namespaces.</summary>
-    ///  <remarks>Namespaces is expected to be a space separated list of valid
-    ///  Pascal identifers.</remarks>
+
+    ///  <summary>Records a list of user defined RTL unit namespaces to be
+    ///  searched by the compiler.</summary>
+    ///  <remarks>
+    ///  <para>Namespaces is expected to be a space separated list of valid
+    ///  Pascal identfiers.</para>
+    ///  <para>Does nothing in this default implementation.</para>
+    ///  <para>Method of ICompiler.</para>
+    ///  </remarks>
     procedure SetRTLNamespaces(const Namespaces: string); virtual;
+
+    ///  <summary>Returns a copy of the list of search directories used by the
+    ///  compiler.</summary>
+    ///  <remarks>Method of ICompiler.</remarks>
     function GetSearchDirs: ISearchDirs;
-      {Returns copy of list of search directories used by compiler.
-        @return Required list of directories.
-      }
+
+    ///  <summary>Records a copy of the given list of search directories to be
+    ///  used by the compiler.</summary>
+    ///  <remarks>Method of ICompiler.</remarks>
     procedure SetSearchDirs(Dirs: ISearchDirs);
-      {Stores a copy of given list of search directories.
-        @param Dirs [in] List of search directories.
-      }
+
+    ///  <summary>Returns the prefixes used in interpreting error, fatal error
+    ///  and warning conditions in compiler log files.</summary>
+    ///  <remarks>Method of ICompiler.</remarks>
     function GetLogFilePrefixes: TCompLogPrefixes;
-      {Returns prefixes used in interpreting error, fatal error and warning
-      conditions in log files.
-        @return Array of prefix strings.
-      }
+
+    ///  <summary>Records the given prefixes to be used in interpreting error,
+    ///  fatal error and warning conditions in compiler log files.</summary>
+    ///  <remarks>Method of ICompiler.</remarks>
     procedure SetLogFilePrefixes(const Prefixes: TCompLogPrefixes);
-      {Records prefixes used in interpreting error, fatal error and warning
-      conditions in log files.
-        @param Prefixes [in] Array of required prefix strings.
-      }
+
+    ///  <summary>Returns a flag indicating if the compiler is displayable.
+    ///  </summary>
+    ///  <remarks>
+    ///  <para>A 'displayable' compiler has its compile results displayed in the
+    ///  UI etc.</para>
+    ///  <para>Method of ICompiler.</para>
+    ///  </remarks>
     function GetDisplayable: Boolean;
-      {Returns flag indicating if compiler is displayable, i.e. compile results
-      for it are to be displayed in UI etc.
-        @return Boolean flag.
-      }
+
+    ///  <summary>Sets the flag that determines if the compiler is displayable
+    ///  to the given value.</summary>
+    ///  <remarks>
+    ///  <para>A 'displayable' compiler has its compile results displayed in the
+    ///  UI etc.</para>
+    ///  <para>Method of ICompiler.</para>
+    ///  </remarks>
     procedure SetDisplayable(const Flag: Boolean);
-      {Sets a flag indicating if compiler is displayable, i.e. compile results
-      for it are to be displayed in UI etc.
-        @param Flag [in] Requried value.
-      }
+
+    ///  <summary>Compiles a project and returns the result of compilation.
+    ///  </summary>
+    ///  <param name="Path">string [in] The full path of the directory
+    ///  containing the project file.</param>
+    ///  <param name="Project">string [in] Name of project source file.</param>
+    ///  <returns>TCompileResult. Result of compilation (success, warning or
+    ///  error).</returns>
+    ///  <exception>An exception is raised if the compiler can't be executed.
+    ///  </exception>
+    ///  <remarks>
+    ///  <para>The result of the compilation and the compiler output log are
+    ///  stored: see the Log and GetLastCompileResult methods.</para>
+    ///  <para>Method of ICompiler.</para>
+    ///  </remarks>
     function Compile(const Path, Project: string): TCompileResult;
-      {Compiles a project and returns result of compilation. Records result of
-      compilation and compiler's output log.
-        @param Path [in] Path where the project is found.
-        @param Project [in] Name of project (source) file.
-        @return Result of compilation i.e. success, warnings or error.
-        @except ECompilerError raised if we can't execute the compiler.
-      }
+
+    ///  <summary>Deletes intermediate files created during a compilation of a.
+    ///  project.</summary>
+    ///  <param name="Path">string [in] The full path of the directory
+    ///  containing the project file.</param>
+    ///  <param name="Project">string [in] Name of project source file.</param>
+    ///  <remarks>
+    ///  <para>Does nothing if no project has been compiled.</para>
+    ///  <para>Method of ICompiler.</para>
+    ///  </remarks>
     procedure DeleteObjFiles(const Path, Project: string); virtual; abstract;
-      {Deletes binary intermdiates files created during a compilation. Does
-      nothing if there has been no compilation.
-        @param Path [in] Path where project file is found.
-        @param Project [in] Name of project (source file)
-      }
+
+    ///  <summary>Filters the compiler output log and copies the result into a
+    ///  string list.</summary>
+    ///  <param name="Filter">TCompLogFilter [in] Indicates how the compiler log
+    ///  is to be filtered.</param>
+    ///  <param name="Lines">TStrings [in] String list that receives the lines
+    ///  of the filtered log. May be empty.</param>
+    ///  <remarks>Method of ICompiler.</remarks>
     procedure Log(const Filter: TCompLogFilter; const Lines: TStrings);
       overload;
-      {Copies filtered compiler log to string list.
-        @param Filter [in] Indicates how log to be filtered i.e. return all log,
-          return warnings only or return errors only.
-        @param Lines [in] Lines of the log (cleared if no entries).
-      }
+
+    ///  <summary>Filters the ompiler output log using a filter of given type
+    ///  and returns the result as a string with lines delimited by CRLF.
+    ///  </summary>
+    ///  <remarks>Method of ICompiler.</remarks>
     function Log(const Filter: TCompLogFilter): string;
       overload;
-      {Returns compiler log as a CRLF delimited string using specified filter.
-        @param Filter [in] Indicates how log to be filtered i.e. return all log,
-          return warnings only or return errors only.
-        @return Text of the log, with lines separated by CRLF.
-      }
+
+    ///  <summary>Checks if the last compilation resulted in an error or a
+    ///  warning.</summary>
+    ///  <remarks>
+    ///  <para>Returns False if the Compile method has not been called.</para>
+    ///  <para>Method of ICompiler.</para>
+    ///  </remarks>
     function HasErrorsOrWarnings: Boolean;
-      {Checks if last compile result was an error or a warning.
-        @return True if there are errors or warning, False otherwise.
-      }
+
+    ///  <summary>Returns result of last compilation by this compiler.</summary>
+    ///  <remarks>
+    ///  <para>crQuery is returned if compiler is not available or if Compile
+    ///  method has not been called.</para>
+    ///  <para>Method of ICompiler.</para>
+    ///  </remarks>
     function GetLastCompileResult: TCompileResult;
-      {Informs of result of last compilation by this compiler.
-        @return Result of last compilation or crQuery of compiler not available.
-      }
   public
+
+    ///  <summary>Constructs and initialises an object instance.</summary>
     constructor Create;
-      {Object constructor. Sets up object.
-      }
+
+    ///  <summary>Constructs an object instance that is a clone of the given
+    ///  compiler object.</summary>
     constructor CreateCopy(const Obj: TCompilerBase);
-      {Copy constructor. Creates a new object that is copy of another object.
-        @param Obj [in] Compiler object to copy.
-      }
+
+    ///  <summary>Destroys an object instance.</summary>
     destructor Destroy; override;
-      {Object destructor. Tears down object.
-      }
   end;
 
-  {
-  ECompilerError:
-    Exception raised when compiler errors occur.
-  }
+type
+  ///  <summary>Class of exception raised when compiler errors occur.</summary>
   ECompilerError = class(ECodeSnip)
   strict private
-    fErrorCode: Integer;
-      {Value of ErrorCode property}
-    fCompiler: string;
-      {Value of Compiler property}
+    var
+      ///  <summary>Value of ErrorCode property.</summary>
+      fErrorCode: Integer;
+      ///  <summary>Value of Compiler property.</summary>
+      fCompiler: string;
   public
+
+    ///  <summary>Creates exception instance from another exception.</summary>
+    ///  <param name="E">ECompilerRunner [in] Instance of exception that
+    ///  provides information about why compiler failed to run.</param>
+    ///  <param name="Compiler">string [in] Name of compiler that failed to run.
+    ///  </param>
     constructor Create(const E: ECompilerRunner; const Compiler: string);
-      {Object constructor. Creates exception instance from another exception.
-        @param E [in] Instance of exception that provides information about why
-          compiler failed to run.
-        @param Compiler [in] Name of compiler that failed to run.
-      }
+
+    ///  <summary>Assigns properties of another exception to this one.</summary>
+    ///  <param name="E">Exception [in] Exception whose properties are to be
+    ///  copied. Must be an ECompilerError instance.</param>
     procedure Assign(const E: Exception); override;
-      {Assigns properties of another exception to this one.
-        @param E [in] Exception whose properties are to be copied. Must be an
-          ECompilerError instance.
-      }
-    property ErrorCode: Integer
-      read fErrorCode;
-      {Error code describing why compiler failed to run}
-    property Compiler: string
-      read fCompiler;
-      {Name of compiler that generated the error}
+
+    ///  <summary>Error code describing why compiler failed to run.</summary>
+    property ErrorCode: Integer read fErrorCode;
+
+    ///  <summary>Name of compiler that generated the error.</summary>
+    property Compiler: string read fCompiler;
   end;
 
 
@@ -272,11 +343,6 @@ const
 { TCompilerBase }
 
 function TCompilerBase.BuildCommandLine(const Project, Path: string): string;
-  {Builds command line required to execute compiler.
-    @param Project [in] Name of project to build.
-    @param Path [in] Full path to project file.
-    @return Command line needed to execute compiler to build the project.
-  }
 begin
   Result := Format(
     '"%0:s" %1:s %2:s %3:s %4:s',
@@ -293,10 +359,6 @@ begin
 end;
 
 procedure TCompilerBase.BuildCompileLog(const CompilerOutput: TStream);
-  {Reads compiler output from a stream and records in a string list field,
-  omitting any blank lines.
-    @param CompilerOutput [in] Stream containing compiler output.
-  }
 var
   Index: Integer;       // index into error string list
   Encoding: TEncoding;  // encoding used by compiler for its output
@@ -322,9 +384,6 @@ begin
 end;
 
 function TCompilerBase.CommandLineSwitches: string;
-  {Generate list of space separated switches for compiler command line.
-    @return Required list.
-  }
 
   // Switch is enclosed in quotes if it contains spaces.
   procedure AppendSwitch(const Switch: string);
@@ -355,13 +414,6 @@ begin
 end;
 
 function TCompilerBase.Compile(const Path, Project: string): TCompileResult;
-  {Compiles a project and returns result of compilation. Records result of
-  compilation and compiler's output log.
-    @param Path [in] Path where the project is found.
-    @param Project [in] Name of project (source) file.
-    @return Result of compilation i.e. success, warnings or error.
-    @except ECompilerError raised if we can't execute the compiler.
-  }
 var
   Res: Integer;   // compiler execution result code
 begin
@@ -383,9 +435,6 @@ begin
 end;
 
 function TCompilerBase.CompilerOutputEncoding: TEncodingType;
-  {Encoding used for text output by compiler. Descendants can override.
-    @return System default ANSI encoding type.
-  }
 begin
   // Best assumption for compiler output is ANSI default code page. Don't know
   // this for sure, but it seems reasonable.
@@ -393,8 +442,6 @@ begin
 end;
 
 constructor TCompilerBase.Create;
-  {Object constructor. Sets up object.
-  }
 begin
   inherited;
   Initialize;
@@ -407,9 +454,6 @@ begin
 end;
 
 constructor TCompilerBase.CreateCopy(const Obj: TCompilerBase);
-  {Copy constructor. Creates a new object that is copy of another object.
-    @param Obj [in] Compiler object to copy.
-  }
 begin
   inherited Create;
   Initialize;
@@ -424,8 +468,6 @@ begin
 end;
 
 destructor TCompilerBase.Destroy;
-  {Object destructor. Tears down object.
-  }
 begin
   fCompileLog.Free;
   inherited;
@@ -433,12 +475,6 @@ end;
 
 function TCompilerBase.ExecuteCompiler(const CommandLine,
   Path: string): Integer;
-  {Executes compiler and captures output.
-    @param CommandLine [in] Command line used to compile source code.
-    @param Path [in] Full path to the source file being compiled.
-    @return Exit code from compiler.
-    @except ECompilerError raised if compiler failed to run.
-  }
 var
   CompilerRunner: TCompilerRunner;  // object that executes compiler
   CompilerOutput: TStream;          // stream that captures compiler output
@@ -470,10 +506,6 @@ end;
 
 procedure TCompilerBase.FilterLog(const Msg: string;
   const Lines: TStrings);
-  {Filters compiler log extracting only lines that contain required message.
-    @param Msg [in] Text required to be contained in matching lines of log file.
-    @param Lines [in] String list that receives filtered lines.
-  }
 var
   Line: string; // line in compiler log
   Pos: Integer; // position of Msg in log line
@@ -498,26 +530,16 @@ begin
 end;
 
 function TCompilerBase.GetDisplayable: Boolean;
-  {Returns flag indicating if compiler is displayable, i.e. compile results for
-  it are to be displayed in UI etc.
-    @return Boolean flag.
-  }
 begin
   Result := fDisplayable;
 end;
 
 function TCompilerBase.GetExecFile: string;
-  {Returns full path to compiler's executable file.
-    @return Required path.
-  }
 begin
   Result := fExecFile;
 end;
 
 function TCompilerBase.GetLastCompileResult: TCompileResult;
-  {Informs of result of last compilation by this compiler.
-    @return Result of last compilation or crQuery of compiler not available.
-  }
 begin
   if IsAvailable then
     Result := fLastCompileResult
@@ -526,10 +548,6 @@ begin
 end;
 
 function TCompilerBase.GetLogFilePrefixes: TCompLogPrefixes;
-  {Returns prefixes used in interpreting error, fatal error and warning
-  conditions in log files.
-    @return Array of prefix strings.
-  }
 begin
   Result := fPrefixes;
 end;
@@ -540,54 +558,33 @@ begin
 end;
 
 function TCompilerBase.GetSearchDirs: ISearchDirs;
-  {Returns copy of list of search directories used by compiler.
-    @return Required list of directories.
-  }
 begin
   Result := (fSearchDirs as IClonable).Clone as ISearchDirs;
 end;
 
 function TCompilerBase.GetSwitches: string;
-  {Returns user-defined swtches to be used by compiler.
-    @return Required switches separated by commas. On creation these are default
-      switches.
-  }
 begin
   Result := fSwitches;
 end;
 
 function TCompilerBase.HasErrorsOrWarnings: Boolean;
-  {Checks if last compile result was an error or a warning.
-    @return True if there are errors or warning, False otherwise.
-  }
 begin
   Result := fLastCompileResult in [crError, crWarning];
 end;
 
 procedure TCompilerBase.Initialize;
-  {Initializes object.
-  }
 begin
   fCompileLog := TStringList.Create;
   fSearchDirs := TSearchDirs.Create;
 end;
 
 function TCompilerBase.IsAvailable: Boolean;
-  {Tells whether the compiler is installed on this computer and made available
-  to CodeSnip.
-    @return True if compiler is available to CodeSnip.
-  }
 begin
   Result := (fExecFile <> '') and (FileExists(fExecFile));
 end;
 
 procedure TCompilerBase.Log(const Filter: TCompLogFilter;
   const Lines: TStrings);
-  {Copies filtered compiler log to string list.
-    @param Filter [in] Indicates how log to be filtered i.e. return all log,
-      return warnings only or return errors only.
-    @param Lines [in] Lines of the log (cleared if no entries).
-  }
 begin
   // Filter the log file as required
   case Filter of
@@ -611,11 +608,6 @@ begin
 end;
 
 function TCompilerBase.Log(const Filter: TCompLogFilter): string;
-  {Returns compiler log as a CRLF delimited string using specified filter.
-    @param Filter [in] Indicates how log to be filtered i.e. return all log,
-      return warnings only or return errors only.
-    @return Text of the log, with lines separated by CRLF.
-  }
 var
   SL: TStringList;  // string list in which to store log
 begin
@@ -641,27 +633,16 @@ begin
 end;
 
 procedure TCompilerBase.SetDisplayable(const Flag: Boolean);
-  {Sets a flag indicating if compiler is displayable, i.e. compile results for
-  it are to be displayed in UI etc.
-    @param Flag [in] Requried value.
-  }
 begin
   fDisplayable := Flag;
 end;
 
 procedure TCompilerBase.SetExecFile(const Value: string);
-  {Stores full path to compiler's executable file.
-    @param Value [in] Path to compiler.
-  }
 begin
   fExecFile := Value;
 end;
 
 procedure TCompilerBase.SetLogFilePrefixes(const Prefixes: TCompLogPrefixes);
-  {Records prefixes used in interpreting error, fatal error and warning
-  conditions in log files.
-    @param Prefixes [in] Array of required prefix strings.
-  }
 var
   Idx: TCompLogPrefixID;  // loops thru all prefix IDs
 begin
@@ -680,17 +661,11 @@ begin
 end;
 
 procedure TCompilerBase.SetSearchDirs(Dirs: ISearchDirs);
-  {Stores a copy of given list of search directories.
-    @param Dirs [in] List of search directories.
-  }
 begin
   fSearchDirs := (Dirs as IClonable).Clone as ISearchDirs;
 end;
 
 procedure TCompilerBase.SetSwitches(const Switches: string);
-  {Sets user defined switches.
-    @param Switches [in] Required switches separated by commas.
-  }
 begin
   fSwitches := Switches;
 end;
@@ -698,10 +673,6 @@ end;
 { ECompilerError }
 
 procedure ECompilerError.Assign(const E: Exception);
-  {Assigns properties of another exception to this one.
-    @param E [in] Exception whose properties are to be copied. Must be an
-      ECompilerError instance.
-  }
 begin
   Assert(E is ECompilerError,
     ClassName + '.Assign: E is not a ECompilerError instance.'
@@ -714,11 +685,6 @@ end;
 
 constructor ECompilerError.Create(const E: ECompilerRunner;
   const Compiler: string);
-  {Object constructor. Creates exception instance from another exception.
-    @param E [in] Instance of exception that provides information about why
-      compiler failed to run.
-    @param Compiler [in] Name of compiler that failed to run.
-  }
 begin
   Assert(Assigned(E), ClassName + '.Create: E is nil');
   Assert(Compiler <> '', ClassName + '.Create: Compiler is empty string');
