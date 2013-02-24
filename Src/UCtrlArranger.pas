@@ -101,6 +101,9 @@ type
     class function AlignVCentres(const ATop: Integer;
       const Ctrls: array of TControl): Integer;
 
+    ///  <summary>Horizontally centres all controls in the Ctrls array within
+    ///  the range defined by the left-most and right-most co-ordinates of the
+    ///  controls in the RefCtrls array.</summary>
     class procedure AlignHCentresTo(const RefCtrls: array of TControl;
       const Ctrls: array of TControl);
 
