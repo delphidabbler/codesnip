@@ -25,11 +25,8 @@ uses
 
 
 type
-
-  {
-  TCompilerID:
-    Enumeration that identifies all compilers supported by the program.
-  }
+  ///  <summary>Enumeration that identifies all compilers supported by the
+  ///  program.</summary>
   TCompilerID = (
     ciD2, ciD3, ciD4, ciD5, ciD6, ciD7, // Delphi 2-7
     ciD2005w32, ciD2006w32,             // Delphi 2005/6 Win32 personality
@@ -43,23 +40,25 @@ type
   );
 
 const
-  // Sets grouping compiler ids into compiler types
-  cClassicDelphiCompilers =   // Classic Borland / Inprise Delphi
-    [ciD2, ciD3, ciD4, ciD5, ciD6, ciD7];
-  cBDSCompilers =             // BDS based compilers
-    [
-      ciD2005w32, ciD2006w32, ciD2007, ciD2009w32, ciD2010,
-      ciDXE, ciDXE2, ciDXE3
-    ];
-  cFreePascalCompilers =      // Free Pascal
-    [ciFPC];
+  ///  <summary>Set of classic Borland / Inprise Delphi compilers.</summary>
+  cClassicDelphiCompilers = [ciD2, ciD3, ciD4, ciD5, ciD6, ciD7];
+
+const
+  ///  <summary>Set of Borland / CodeGear / Embarcadero BDS based Delphi
+  ///  compilers.</summary>
+  cBDSCompilers = [
+    ciD2005w32, ciD2006w32, ciD2007, ciD2009w32, ciD2010, ciDXE, ciDXE2,
+    ciDXE3
+  ];
+
+const
+  ///  <summary>Set of Free Pascal compilers.</summary>
+  ///  <remarks>At present there is only the one compiler: no distinction is
+  ///  made between different versions.</remarks>
+  cFreePascalCompilers = [ciFPC];
 
 type
-
-  {
-  TCompileResult:
-    Enumeration of possible results of a compilation.
-  }
+  ///  <summary>Enumeration of possible results of a compilation.</summary>
   TCompileResult = (
     crSuccess,    // successful compilation without warnings
     crWarning,    // successful compilation with warnings
@@ -67,37 +66,33 @@ type
     crQuery       // compilation result not known
   );
 
-  {
-  TCompileResults:
-    Defines array of TCompileResult values with an entry for each supported
-    compiler.
-  }
+type
+  ///  <summary>Defines an array of TCompileResult values with an element for
+  ///  each supported compiler.</summary>
   TCompileResults = array[TCompilerID] of TCompileResult;
 
-  {
-  TCompLogPrefixID:
-    Enumeration of different prefixes compiler logs can recognise in a log file.
-    The values are used to map onto the prefix text used by for a specific
-    compiler.
-  }
+type
+  ///  <summary>Enumeration of different warning and error prefixes that can be
+  ///  recognised in a compiler log file.</summary>
+  ///  <remarks>These values are used to identify the prefix text used by a
+  ///  compiler.</remarks>
   TCompLogPrefixID = (
     cpFatal,      // identifies fatal error messages in log file
     cpError,      // identifies error messages in log file
     cpWarning     // identifies warnings in log file
   );
 
-  {
-  TCompLogPrefixes
-    Defines array used to record prefix text used to detect error and warning
-    lines in compiler log files.
-  }
+
+type
+  ///  <summary>Defines an array used to store prefix text of warning and error
+  ///  messages in compiler log files.</summary>
+  ///  <remarks>Prefixes may be different for each compiler and may change with
+  ///  the compiler's output language.</remarks>
   TCompLogPrefixes = array[TCompLogPrefixID] of string;
 
-  {
-  TCompLogFilter:
-    Enumeration of various filter types that can be applied to compiler output
-    logs.
-  }
+type
+  ///  <summary>Enumeration of various filter types that can be applied to
+  ///  compiler output logs.</summary>
   TCompLogFilter = (
     cfAll,        // no filtering: use all of log
     cfWarnings,   // filter out anything that is not a warning message
@@ -105,218 +100,225 @@ type
   );
 
 type
-  ///  <summary>
-  ///  Interface to list of directories to be searched by a compiler when
-  ///  looking for files.
-  ///  </summary>
+  ///  <summary>Interface to list of directories to be searched by a compiler
+  ///  when looking for files.</summary>
   ISearchDirs = interface(IInterface)
     ['{77CAFAC1-9B0F-4244-9FFF-A9FB4EBDEE8B}']
+
     ///  <summary>Creates and returns enumerator for directories list.</summary>
     function GetEnumerator: TEnumerator<string>;
+
     ///  <summary>Adds a new search directory to list.</summary>
     procedure Add(const DirName: string);
+
     ///  <summary>Clears list.</summary>
     procedure Clear;
+
     ///  <summary>Checks if list is empty.</summary>
     function IsEmpty: Boolean;
+
     ///  <summary>Returns an array containing the names of all directories in
     ///  the list.</summary>
     function ToStrings: TArray<string>;
   end;
 
-  {
-  ICompiler:
-    Interface that must be supported by any object that represents a compiler.
-    Exposes methods used to get information about the compiler, to execute the
-    compiler and to process the compiler's log file.
-  }
+type
+  ///  <summary>Interface that must be supported by any object that represents a
+  ///  compiler. Exposes methods used to get information about the compiler, to
+  ///  execute the compiler and to process the compiler's log file.</summary>
   ICompiler = interface(IInterface)
     ['{8D473D8A-3341-401C-B054-17E9334DF6A6}']
+
+    ///  <summary>Returns the human readable name of the compiler.</summary>
     function GetName: string;
-      {Provides the human readable name of the compiler.
-        @return Compiler name.
-      }
+
+    ///  <summary>Returns the compiler's unique ID.</summary>
     function GetID: TCompilerID;
-      {Provides the unique id of the compiler.
-        @return Compiler Id code.
-      }
+
+    ///  <summary>Returns a non-localisable string that uniquely identifies the
+    ///  compiler.</summary>
+
     function GetIDString: string;
-      {Provides a non-localisable string that identifies the compiler.
-        @return Compiler Id string.
-      }
+    ///  <summary>Checks whether the compiler is both installed on this computer
+    ///  and made available to CodeSnip.</summary>
+
     function IsAvailable: Boolean;
-      {Tells whether the compiler is installed on this computer and made
-      available to CodeSnip.
-        @return True if compiler is available to CodeSnip.
-      }
+    ///  <summary>Returns the full path of the compiler's executable file.
+    ///  </summary>
+    ///  <remarks>Returns the empty string if the compiler is not known to
+    ///  CodeSnip.</remarks>
+
     function GetExecFile: string;
-      {Gets full path to compiler's executable file.
-        @return Required path.
-      }
+    ///  <summary>Records the the full path of the compiler's executable file.
+    ///  </summary>
+    ///  <remarks>Passing the empty string to this method disassociates the
+    ///  compiler from CodeSnip.</remarks>
+
     procedure SetExecFile(const Value: string);
-      {Stores full path to compiler's executable file.
-        @param Value [in] Path to compiler.
-      }
+    ///  <summary>Returns a comma separated list of the default command line
+    ///  switches for use with the compiler.</summary>
+    ///  <remarks>The default switches are used if the user has not provided any
+    ///  switches.</remarks>
+
     function GetDefaultSwitches: string;
-      {Returns default command line switches for compiler.
-        @return Switches separated by commas.
-      }
+    ///  <summary>Returns a comma separated list of any user defined switches
+    ///  for use with the compiler.</summary>
+
     function GetSwitches: string;
-      {Returns user-defined swtches to be used by compiler.
-        @return Required switches separated by commas.
-      }
+    ///  <summary>Records the given comma delimited list of user defined
+    ///  switches to be used with the compiler.</summary>
+
     procedure SetSwitches(const Switches: string);
-      {Sets user defined switches.
-        @param Switches [in] Required switches separated by commas.
-      }
-    ///  <summary>Checks if compiler has RTL unit names that are prefixed by
+    ///  <summary>Checks if the compiler has RTL unit names that are prefixed by
     ///  its namespace.</summary>
+
     function RequiresRTLNamespaces: Boolean;
-    ///  <summary>Returns a space separated list of compiler's default RTL unit
-    ///  namespaces.</summary>
+    ///  <summary>Returns a space separated list of the compiler's default RTL
+    ///  unit namespaces.</summary>
+
     function GetDefaultRTLNamespaces: string;
     ///  <summary>Returns a space separated list of user-defined RTL unit
-    ///  namespaces.</summary>
+    ///  namespaces to be searched by the compiler.</summary>
+
     function GetRTLNamespaces: string;
-    ///  <summary>Sets user defined RTL unit namespaces.</summary>
+
+    ///  <summary>Records a list of user defined RTL unit namespaces to be
+    ///  searched by the compiler.</summary>
     ///  <remarks>Namespaces is expected to be a space separated list of valid
     ///  Pascal identfiers.</remarks>
     procedure SetRTLNamespaces(const Namespaces: string);
+
+    ///  <summary>Returns a copy of the list of search directories used by the
+    ///  compiler.</summary>
     function GetSearchDirs: ISearchDirs;
-      {Returns copy of list of search directories used by compiler.
-        @return Required list of directories.
-      }
+
+    ///  <summary>Records a copy of the given list of search directories to be
+    ///  used by the compiler.</summary>
     procedure SetSearchDirs(Dirs: ISearchDirs);
-      {Stores a copy of given list of search directories.
-        @param Dirs [in] List of search directories.
-      }
+
+    ///  <summary>Returns the prefixes used in interpreting error, fatal error
+    ///  and warning conditions in compiler log files.</summary>
     function GetLogFilePrefixes: TCompLogPrefixes;
-      {Returns prefixes used in interpreting error, fatal error and warning
-      conditions in log files.
-        @return Array of prefix strings.
-      }
+
+    ///  <summary>Records the given prefixes to be used in interpreting error,
+    ///  fatal error and warning conditions in compiler log files.</summary>
     procedure SetLogFilePrefixes(const Prefixes: TCompLogPrefixes);
-      {Records prefixes used in interpreting error, fatal error and warning
-      conditions in log files.
-        @param Prefixes [in] Array of required prefix strings.
-      }
+
+    ///  <summary>Returns a flag indicating if the compiler is displayable.
+    ///  </summary>
+    ///  <remarks>A 'displayable' compiler has its compile results displayed in
+    ///  the UI etc.</remarks>
     function GetDisplayable: Boolean;
-      {Returns flag indicating if compiler is displayable, i.e. compile results
-      for it are to be displayed in UI etc.
-        @return Boolean flag.
-      }
+
+    ///  <summary>Sets the flag that determines if the compiler is displayable
+    ///  to the given value.</summary>
+    ///  <remarks>A 'displayable' compiler has its compile results displayed in
+    ///  the UI etc.</remarks>
     procedure SetDisplayable(const Flag: Boolean);
-      {Sets a flag indicating if compiler is displayable, i.e. compile results
-      for it are to be displayed in UI etc.
-        @param Flag [in] Requried value.
-      }
+
+    ///  <summary>Compiles a project and returns the result of compilation.
+    ///  </summary>
+    ///  <param name="Path">string [in] The full path of the directory
+    ///  containing the project file.</param>
+    ///  <param name="Project">string [in] Name of project source file.</param>
+    ///  <returns>TCompileResult. Result of compilation (success, warning or
+    ///  error).</returns>
+    ///  <exception>An exception is raised if the compiler can't be executed.
+    ///  </exception>
+    ///  <remarks>The result of the compilation and the compiler output log are
+    ///  stored: see the Log and GetLastCompileResult methods.</remarks>
     function Compile(const Path, Project: string): TCompileResult;
-      {Compiles a project and returns result of compilation. Records result of
-      compilation and compiler's output log.
-        @param Path [in] Path where the project is found.
-        @param Project [in] Name of project (source) file.
-        @return Result of compilation i.e. success, warnings or error.
-        @except Exception raised if we can't execute the compiler.
-      }
+
+    ///  <summary>Deletes intermediate files created during a compilation of a.
+    ///  project.</summary>
+    ///  <param name="Path">string [in] The full path of the directory
+    ///  containing the project file.</param>
+    ///  <param name="Project">string [in] Name of project source file.</param>
+    ///  <remarks>Does nothing if no project has been compiled.</remarks>
     procedure DeleteObjFiles(const Path, Project: string);
-      {Delete binary intermdiates files created during a compilation. Does
-      nothing if there has been no compilation.
-        @param Path [in] Path where project file is found.
-        @param Project [in] Name of project (source file)
-      }
+
+    ///  <summary>Filters compiler output log and copies the result into a
+    ///  string list.</summary>
+    ///  <param name="Filter">TCompLogFilter [in] Indicates how the compiler log
+    ///  is to be filtered.</param>
+    ///  <param name="Lines">TStrings [in] String list that receives the lines
+    ///  of the filtered log. May be empty.</param>
     procedure Log(const Filter: TCompLogFilter; const Lines: TStrings);
       overload;
-      {Copies filtered compiler log to a string list.
-        @param Filter [in] Indicates how log to be filtered i.e. return all log,
-          return warnings only or return errors only.
-        @param Lines [in] List of string in filtered log (cleared if no
-          entries).
-      }
+
+    ///  <summary>Filters compiler output log using a filter of given type and
+    ///  returns the result as a string with lines delimited by CRLF.</summary>
     function Log(const Filter: TCompLogFilter): string;
       overload;
-      {Returns compiler log as a CRLF delimited string using a filter.
-        @param Filter [in] Indicates how log to be filtered i.e. return all log,
-          return warnings only or return errors only.
-        @return Text of log, with lines separated by CRLF.
-      }
+
+    ///  <summary>Checks if last compilation resulted in an error or a warning.
+    ///  </summary>
+    ///  <remarks>Returns False if Compile method has not been called.</remarks>
     function HasErrorsOrWarnings: Boolean;
-      {Checks if last compile result was an error or a warning.
-        @return True if there are errors or warning, False otherwise.
-      }
+
+    ///  <summary>Returns result of last compilation by this compiler.</summary>
+    ///  <remarks>crQuery is returned if compiler is not available or if Compile
+    ///  method has not been called.</remarks>
     function GetLastCompileResult: TCompileResult;
-      {Informs of result of last compilation by this compiler.
-        @return Result of last compilation or crQuery of compiler not available.
-      }
   end;
 
-  {
-  ICompilers:
-    Interface implemented by an object that maintans a list of all compilers
-    supported by the program.
-  }
+type
+  ///  <summary>Interface implemented by objects that maintain a list of all
+  ///  compilers supported by the program.</summary>
   ICompilers = interface(IInterface)
     ['{39083768-2479-4F39-8473-0BDA381E1E81}']
+
+    ///  <summary>Getter for Compilers property.</summary>
     function GetCompiler(CompID: TCompilerID): ICompiler;
-      {Read accessor for Compilers property. Returns requested compiler object.
-        @param CompID [in] Id of required compiler.
-        @return Requested compiler object.
-      }
+
+    ///  <summary>Getter for Count property.</summary>
     function GetCount: Integer;
-      {Read access method for Count property.
-        @return Number of compilers in list.
-      }
+
+    ///  <summary>Getter for AvailableCount property.</summary>
     function GetAvailableCount: Integer;
-      {Read access method for AvailableCount property
-        @return Number of installed compilers available to program.
-      }
+
+    ///  <summary>Creates and returns an enumerator for all compilers in this
+    ///  object.</summary>
     function GetEnumerator: TEnumerator<ICompiler>;
-      {Gets an enumerator that enumerates all compilers in this object.
-        @return Required enumerator.
-      }
+
+    ///  <summary>List of all compilers supported by the program.</summary>
+    ///  <remarks>Ths list is indexed by compiler ID.</remarks>
     property Compilers[Ver: TCompilerID]: ICompiler
       read GetCompiler; default;
       {List of all compilers supported by the program, indexed by compiler id}
-    property Count: Integer
-      read GetCount;
-      {Number of compilers in list}
-    property AvailableCount: Integer
-      read GetAvailableCount;
-      {Number of compilers installed on this computer and made available to
-      program}
+
+    ///  <summary>Number of compilers in list.</summary>
+    property Count: Integer read GetCount;
+
+    ///  <summary>Number of compilers installed on this computer and made
+    ///  available CodeSnip.</summary>
+    property AvailableCount: Integer read GetAvailableCount;
+
+    ///  <summary>Checks if any compilers in the list are displayable.</summary>
     function HaveDisplayable: Boolean;
-      {Checks if any compilers are displayable.
-        @return True if at least one compiler is displayable, False otherwise.
-      }
   end;
 
-  {
-  IPersistCompilers:
-    Iterface supported by objects that can save and load an ICompilers object to
-    and from persistent storage, e.g. the program's ini file.
-  }
+type
+  ///  <summary>Iterface supported by objects that can save and load an
+  ///  ICompilers object to and from persistent storage.</summary>
   IPersistCompilers = interface(IInterface)
     ['{76A78863-5B95-4ECA-9295-75A98994EFA5}']
+    ///  <summary>Saves the given list of compilers to persistent storage.
+    ///  </summary>
     procedure Save(const Compilers: ICompilers);
-      {Save a list of compilers to storage.
-        @param Compilers [in] List of compilers to save.
-      }
+    ///  <summary>Loads given list of compiler from storage, overwriting any
+    ///  existing previous content.</summary>
     procedure Load(const Compilers: ICompilers);
-      {Load a list of compilers from persistent storage.
-        @param Compilers [in] List of compilers to load.
-      }
   end;
 
-  {
-  ICompilerAutoDetect:
-    Interface supported by compiler objects that can detect their executable
-    file path as registered on the host computer.
-  }
+type
+  ///  <summary>Interface supported by compiler objects that can detect their
+  ///  own executable file path.</summary>
   ICompilerAutoDetect = interface(IInterface)
     ['{62FE97CE-4616-406B-A9C2-D4B3BC751936}']
+    ///  <summary>Detects and records the full path of the compiler's
+    ///  executable.</summary>
     function DetectExeFile: Boolean;
-      {Detects and records path to command line compiler if present.
-        @return True if compiler path found, false otherwise.
-      }
   end;
 
 
