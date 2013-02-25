@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -27,147 +27,126 @@ uses
 
 
 type
-
-  {
-  INotifier:
-    Interface that defines methods that trigger actions in response to user
-    intitiated events.
-  }
+  ///  <summary>Interface that defines methods that trigger actions in response
+  ///  to user intitiated events.</summary>
   INotifier = interface(IInterface)
     ['{13962DE4-784A-4B70-9D3F-FD434FAE4F4F}']
+    ///  <summary>Requests a database update.</summary>
     procedure UpdateDbase;
-      {Updates database.
-      }
+    ///  <summary>Displays a snippet.</summary>
+    ///  <param name="SnippetName">WideString [in] Name of required snippet.
+    ///  </param>
+    ///  <param name="UserDefined">WordBool [in] Indicates whether snippet is
+    ///  user defined.</param>
+    ///  <param name="NewTab">WordBool [in] Whether to display snippet in a new
+    ///  detail pane tab.</param>
     procedure DisplaySnippet(const SnippetName: WideString;
       UserDefined: WordBool; NewTab: WordBool);
-      {Displays a named snippey.
-        @param SnippetName [in] Name of snippet to display.
-        @param UserDefined [in] Whether snippet is user defined.
-        @param NewTab [in] Whether to display in new tab in detail pane.
-      }
+    ///  <summary>Displays a category.</summary>
+    ///  <param name="CatId">WideString [in] ID of required category.</param>
+    ///  <param name="NewTab">WordBool [in] Whether to display category in a new
+    ///  detail pane tab.</param>
     procedure DisplayCategory(const CatID: WideString; NewTab: WordBool);
-      {Displays an identified category.
-        @param CatID [in] Id of category to display.
-        @param NewTab [in] Whether to display in new tab in detail pane.
-      }
+    ///  <summary>Displays Configure Compilers dialogue box.</summary>
     procedure ConfigCompilers;
-      {Displays configure compilers dialog box.
-      }
+    ///  <summary>Displays a view item.</summary>
+    ///  <param name="View">IView [in] Required view item.</param>
+    ///  <param name="NewTab">Boolean [in] Whether to display view item in a new
+    ///  detail pane tab.</param>
     procedure ShowViewItem(View: IView; const NewTab: Boolean);
-      {Displays a view item.
-        @param ViewItem [in] View item to display.
-        @param NewTab [in] Flag indicates whether view is to be displayed in
-          new tab.
-      }
+    ///  <summary>Changes display style of overview pane.</summary>
+    ///  <param name="Style">Integer [in] Required display style.</param>
+    ///  <remarks>Style is index of an overview pane tab.</remarks>
     procedure ChangeOverviewStyle(const Style: Integer);
-      {Changes display style of overview pane.
-        @param Style [in] Required display style.
-      }
+    ///  <summary>Changes displayed pane in detail display area.</summary>
+    ///  <param name="Pane">Integer [in] Index of required pane.</param>
     procedure ChangeDetailPane(const Pane: Integer);
-      {Changes displayed pane in detail display area.
-        @param Pane [in] Required new pane.
-      }
+    ///  <summary>Edits a snippet in Snippets Editor.</summary>
+    ///  <param name="SnippetName">WideString [in] Name of snippet.</param>
+    ///  <remarks>Snippet must be user defined.</remarks>
     procedure EditSnippet(const SnippetName: WideString);
-      {Edits a snippet.
-        @param SnippetName [in] Name of snippet. Must be user defined.
-      }
+    ///  <summary>Displays Donate dialogue box.</summary>
     procedure Donate;
-      {Displays donate dialog box.
-      }
+    ///  <summary>Opens Snippets Editor ready to create a new snippet.</summary>
     procedure NewSnippet;
-      {Opens Snippets Editor ready to create a new snippet.
-      }
+    ///  <summary>Displays news items from the CodeSnip news feed.</summary>
     procedure ShowNews;
-      {Shows news items from CodeSnip news feed.
-      }
+    ///  <summary>Checks for program updates.</summary>
     procedure CheckForUpdates;
-      {Checks for program updates.
-      }
+    ///  <summary>Displays the program's About Box.</summary>
     procedure ShowAboutBox;
-      {Displays the program's About box.
-      }
   end;
 
-  {
-  ISetActions:
-    Interface used to associated action objects with the various methods of
-    INotifier. Any object that implements INotifies must also implement this
-    interface.
-  }
+type
+  ///  <summary>Interface that defines methods for associating action objects
+  ///  with the methods of INotifier.</summary>
+  ///  <remarks>Any object that implements INotifier must also implement this
+  ///  interface.</remarks>
   ISetActions = interface(IInterface)
     ['{A4B7AFE2-EE6C-4D39-BEA6-B52CC8AAC1DE}']
+    ///  <summary>Sets action used to request a database update.</summary>
+    ///  <param name="Action">TBasicAction [in] Required action.</param>
     procedure SetUpdateDbaseAction(const Action: TBasicAction);
-      {Sets action triggered when user requests database update.
-        @param Action [in] Required action.
-      }
+    ///  <summary>Sets action used to display a snippet.</summary>
+    ///  <param name="Action">TBasicAction [in] Required action.</param>
     procedure SetDisplaySnippetAction(const Action: TBasicAction);
-      {Sets action triggered when a named snippet is requested to be displayed.
-        @param Action [in] Required action.
-      }
+    ///  <summary>Sets action used to display Configure Compilers dialogue
+    ///  box.</summary>
+    ///  <param name="Action">TBasicAction [in] Required action.</param>
     procedure SetConfigCompilersAction(const Action: TBasicAction);
-      {Sets action triggered when user requests that configure compilers dialog
-      box is to be displayed.
-        @param Action [in] Required action.
-      }
+    ///  <summary>Sets action used to display a view item.</summary>
+    ///  <param name="Action">TBasicAction [in] Required action.</param>
     procedure SetShowViewItemAction(const Action: TBasicAction);
-      {Sets action triggered when user requests a view item is displayed.
-        @param Action [in] Required action.
-      }
+    ///  <summary>Sets actions used to change display style of overview pane.
+    ///  </summary>
+    ///  <param name="Actions">array of TBasicAction [in] Array of required
+    ///  actions.</param>
+    ///  <remarks>Actions array must have one action for each supported display
+    ///  style.</remarks>
     procedure SetOverviewStyleChangeActions(
       const Actions: array of TBasicAction);
-      {Sets actions that are triggered when different overview display styles
-      are requested.
-        @param Actions [in] Dynamic array of required actions: one per display
-          style.
-      }
+    ///  <summary>Sets action used to change displayed pane in detail display
+    ///  area.</summary>
+    ///  <param name="Action">TBasicAction [in] Required action.</param>
     procedure SetDetailPaneChangeAction(const Action: TBasicAction);
-      {Sets action that us triggered when different detail panes are required
-      to be shown.
-        @param Action [in] Required action.
-      }
+    ///  <summary>Sets action used to edit a snippet in Snippets Editor.
+    ///  </summary>
+    ///  <param name="Action">TBasicAction [in] Required action.</param>
     procedure SetEditSnippetAction(const Action: TBasicAction);
-      {Sets action triggered when user requests a user defined snippet is to be
-      edited.
-        @param Action [in] Required action.
-      }
+    ///  <summary>Sets action used to display Donate dialogue box.</summary>
+    ///  <param name="Action">TBasicAction [in] Required action.</param>
     procedure SetDonateAction(const Action: TBasicAction);
-      {Sets action triggered when user requests that the donate dialog box is
-      displayed.
-        @param Action [in] Required action.
-      }
+    ///  <summary>Sets action used to display a category.</summary>
+    ///  <param name="Action">TBasicAction [in] Required action.</param>
     procedure SetDisplayCategoryAction(const Action: TBasicAction);
-      {Sets actions triggered when a category is requested to be displayed.
-        @param Action [in] Required action.
-      }
+    ///  <summary>Sets action used to open snippets editor to create a new
+    ///  snippet.</summary>
+    ///  <param name="Action">TBasicAction [in] Required action.</param>
     procedure SetNewSnippetAction(const Action: TBasicAction);
-      {Sets action triggered when user requests that the Snippets Editor is
-      opened ready to create a new snippet.
-      }
+    ///  <summary>Sets action used to display news items from the CodeSnip news
+    ///  feed.</summary>
+    ///  <param name="Action">TBasicAction [in] Required action.</param>
     procedure SetNewsAction(const Action: TBasicAction);
-      {Sets action triggered when user requests that news items from CodeSnip
-      news feed are displayed.
-      }
+    ///  <summary>Sets action used to check for program updates.</summary>
+    ///  <param name="Action">TBasicAction [in] Required action.</param>
     procedure SetCheckForUpdatesAction(const Action: TBasicAction);
-      {Sets action triggered when user requests a check for program updates.
-      }
+    ///  <summary>Sets action used to display the program's About Box.</summary>
+    ///  <param name="Action">TBasicAction [in] Required action.</param>
     procedure SetAboutBoxAction(const Action: TBasicAction);
-      {Sets action triggered when user requests that the About box is displayed.
-      }
   end;
 
-  {
-  ISetNotifier:
-    Interface used to assign a notifier object to an object that needs to notify
-    the application of events. The interface must be supported by all UI objects
-    other than menus and buttons that initiate events. Such objects must call
-    relevant notifier methods to trigger the events.
-  }
+type
+  ///  <summary>Interface that provides a method used to assign a notifier
+  ///  object to an object that needs to notify the application of events.
+  ///  </summary>
+  ///  <remarks>The interface should be supported by all UI objects other than
+  ///  menus and buttons that initiate events. Such objects must call relevant
+  ///  notifier methods to trigger the events.</remarks>
   ISetNotifier = interface(IInterface)
     ['{83283DBB-A8E3-42CA-9840-B7E2AC4BC79A}']
+    ///  <summary>Sets the implementing object's notifier object.</summary>
+    ///  <param name="Notifier">INotifier [in] Required notifier object.</param>
     procedure SetNotifier(const Notifier: INotifier);
-      {Sets the object's notifier to be called in response to user input.
-        @param Notifier [in] Required notifier object.
-      }
   end;
 
 
