@@ -385,7 +385,6 @@
 			<DCCReference Include="IntfAligner.pas"/>
 			<DCCReference Include="IntfCommon.pas"/>
 			<DCCReference Include="IntfFrameMgrs.pas"/>
-			<DCCReference Include="IntfHTMLDocHostInfo.pas"/>
 			<DCCReference Include="IntfNotifier.pas"/>
 			<DCCReference Include="IntfPreview.pas"/>
 			<DCCReference Include="UActionFactory.pas"/>
