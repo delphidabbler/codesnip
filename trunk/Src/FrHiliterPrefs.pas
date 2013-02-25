@@ -8,8 +8,9 @@
  * $Rev$
  * $Date$
  *
- * Implements a frame that allows user to set syntax highlighter preferences.
- * Designed for use as one of the tabs in the Preferences dialogue box.
+ * Implements a frame that allows the user to set syntax highlighter
+ * preferences. Designed for use as one of the tabs in the Preferences dialogue
+ * box.
 }
 
 
@@ -28,15 +29,13 @@ uses
 
 
 type
-
-  {
-  THiliterPrefsFrame:
-    Frame that allows user to set syntax highlighter preferences. Can persist
-    preferences entered by user. Note: Designed for use in preferences dialog
-    box.
-  }
+  ///  <summary>Frame that allows the user to set syntax highlighter
+  ///  preferences. The frame can persist preferences entered by the user.
+  ///  </summary>
+  ///  <remarks>Designed for use in preferences dialogue box.</remarks>
   THiliterPrefsFrame = class(TPrefsBaseFrame)
     btnReset: TButton;
+    btnSaveStyle: TButton;
     btnStyle: TBitBtn;
     cbFontName: TComboBox;
     cbFontSize: TComboBox;
@@ -56,100 +55,122 @@ type
     miClassic: TMenuItem;
     miDelphi7: TMenuItem;
     miDelphi2006: TMenuItem;
-    miNoHilite: TMenuItem;
-    miVisualStudio: TMenuItem;
-    miSpacer1: TMenuItem;
-    mnuStyles: TPopupMenu;
-    btnSaveStyle: TButton;
-    miSpacer2: TMenuItem;
     miNamedStyles: TMenuItem;
+    miNoHilite: TMenuItem;
+    miSpacer1: TMenuItem;
+    miSpacer2: TMenuItem;
+    miVisualStudio: TMenuItem;
+    mnuStyles: TPopupMenu;
+    ///  <summary>Restores default highlighter when Restore Defaults button is
+    ///  clicked.</summary>
     procedure btnResetClick(Sender: TObject);
-    procedure btnStyleClick(Sender: TObject);
-    procedure cbColourChange(Sender: TObject);
-    procedure cbFontNameChange(Sender: TObject);
-    procedure cbFontSizeChange(Sender: TObject);
-    procedure ChkFontStyleClick(Sender: TObject);
-    procedure lbElementsClick(Sender: TObject);
-    procedure StyleMenuClick(Sender: TObject);
+    ///  <summary>Display dialogue box to get a style name from user when Save
+    ///  Style button is clicked. Current highlighter is saved with the style
+    ///  name if user confirms selection.</summary>
     procedure btnSaveStyleClick(Sender: TObject);
+    ///  <summary>Shows pop-up menu that displays pre-defined and named styles
+    ///  when Use Named Style button is clicked.</summary>
+    procedure btnStyleClick(Sender: TObject);
+    ///  <summary>Updates colour of current source code element when a colour is
+    ///  selected in Colour drop down list.</summary>
+    procedure cbColourChange(Sender: TObject);
+    ///  <summary>Updates highlighter's font face when a font name is selected
+    ///  in Font Name drop down list.</summary>
+    procedure cbFontNameChange(Sender: TObject);
+    ///  <summary>Updates highlighter's font size when a size is selected in
+    ///  Font Size combo box.</summary>
+    procedure cbFontSizeChange(Sender: TObject);
+    ///  <summary>Updates font style of current source code element when one of
+    ///  the Font Style check boxes is checked or cleared.</summary>
+    procedure ChkFontStyleClick(Sender: TObject);
+    ///  <summary>Updates Font Style and Colour controls when a source code
+    ///  element is selected in Elements list box.</summary>
+    procedure lbElementsClick(Sender: TObject);
+    ///  <summary>Displays User Defined Highlighters dialogue box when User
+    ///  Defined Styles menu item is clicked in the Use Named Styles popup menu.
+    ///  </summary>
+    ///  <remarks>Changes highlighter being edited to any named highlighter
+    ///  selected in dialogue box.</remarks>
     procedure miNamedStylesClick(Sender: TObject);
+    ///  <summary>Changes highlighter being edited when one of the pre-defined
+    ///  highlighters is selected in the Use Named Styles popup menu.</summary>
+    procedure StyleMenuClick(Sender: TObject);
   strict private
-    fColorBox: TColorBoxEx;     // Custom colour combo box component
-    fColorDlg: TColorDialogEx;  // Custom colour dialog box (use with combo)
-    fAttrs: IHiliteAttrs;       // Loads and records user's hilite preferences
-    fNamedAttrs: INamedHiliteAttrs; // Loads and records named hilite prefs
-    fChanged: Boolean;          // Flags if any preference has changed
+    var
+      ///  <summary>Custom colour combo box component.</summary>
+      fColorBox: TColorBoxEx;
+      ///  <summary>Custom colour dialogue box component.</summary>
+      fColorDlg: TColorDialogEx;
+      ///  <summary>Highlighter object edited by user.</summary>
+      fAttrs: IHiliteAttrs;
+      ///  <summary>Named highlighter object edited by user.</summary>
+      fNamedAttrs: INamedHiliteAttrs;
+      ///  <summary>Indicates if any preference has changed.</summary>
+      fChanged: Boolean;
+    ///  <summary>Populates Elements list box with all highlightable source code
+    ///  elements.</summary>
     procedure PopulateElementsList;
-      {Populates list box containing customisable highlighter attribute
-      elements.
-      }
+    ///  <summary>Populates Font Size combo box with common font sizes.
+    ///  </summary>
     procedure PopulateFontSizeCombo;
-      {Populates font size combo with common font sizes.
-      }
+    ///  <summary>Populates Font Name combo box with all supported monospace
+    ///  fonts.</summary>
     procedure PopulateFontNameCombo;
-      {Populates font name combo with all supported monospace fonts.
-      }
+    ///  <summary>Returns ID of highlighter element currently selected in
+    ///  Elements list box.</summary>
     function CurrentElementId: THiliteElement;
-      {Gets id of highlighter element currently selected in Elements list box.
-        @return Required element id.
-      }
+    ///  <summary>Returns reference to attributes of highlighter element
+    ///  currently selected in Elements list box.</summary>
     function CurrentElement: IHiliteElemAttrs;
-      {Gets reference to highlighter element currently selected in Elements list
-      box.
-        @return Required reference to element.
-      }
+    ///  <summary>Updates controls to reflect current state of highlighter being
+    ///  edited.</summary>
     procedure UpdateControls;
-      {Updates state of controls and preview to reflect currently selected
-      highlighter element.
-      }
+    ///  <summary>Updates preview of currently selected highlighter element.
+    ///  </summary>
     procedure UpdatePreview;
-      {Updates preview of highlighting of current highlighter element.
-      }
+    ///  <summary>Updates state of items in styles pop-up menu.</summary>
     procedure UpdatePopupMenu;
-      {Updates state of items in styles popup menu.
-      }
+    ///  <summary>Generates and returns RTF representation of currently selected
+    ///  highlighter element.</summary>
+    ///  <remarks>This RTF is used to display elememt in preview pane.</remarks>
     function GenerateRTF: TRTF;
-      {Generates RTF of example of current highlighter element.
-        @return Required RTF code.
-      }
+    ///  <summary>Returns reference to form that hosts the frame.</summary>
     function ParentForm: TForm;
-      {Gets reference to form that hosts the frame.
-        @return Reference to host form or nil if no such host.
-      }
   public
+    ///  <summary>Constructs frame instance and initialises controls.</summary>
+    ///  <param name="AOwner">TComponent [in] Component that owns the frame.
+    ///  </param>
     constructor Create(AOwner: TComponent); override;
-      {Class constructor. Creates custom control, populates and initialises
-      controls and sets up object.
-        @param AOwner [in] Not used.
-      }
+    ///  <summary>Destroy frame instance.</summary>
     destructor Destroy; override;
-      {Class destructor. Tears down object.
-      }
+    ///  <summary>Updates controls from given preferences object.</summary>
+    ///  <remarks>Called when the dialogue page containing the frame is
+    ///  activated.</remarks>
     procedure Activate(const Prefs: IPreferences); override;
-      {Called when page activated. Updates controls.
-        @param Prefs [in] Object that provides info used to update controls.
-      }
+    ///  <summary>Updates given preferences object with data entered in controls.
+    ///  </summary>
+    ///  <remarks>Called when the dialogue page containing the frame is
+    ///  deactivated.</remarks>
     procedure Deactivate(const Prefs: IPreferences); override;
-      {Called when page is deactivated. Stores information entered by user.
-        @param Prefs [in] Object used to store information.
-      }
-    ///  <summary>Checks if preference changes require that main window UI is
-    ///  updated.</summary>
-    ///  <remarks>Called when dialog box containing frame is closing.</remarks>
+    ///  <summary>Checks if preferences changed in this frame require that the
+    ///  main window UI is updated.</summary>
+    ///  <remarks>Called when the dialogue box containing the frame is closing.
+    ///  </remarks>
     function UIUpdated: Boolean; override;
+    ///  <summary>Arranges controls on frame.</summary>
+    ///  <remarks>Called after the frame has been sized.</remarks>
     procedure ArrangeControls; override;
-      {Arranges controls on frame. Called after frame has been sized.
-      }
+    ///  <summary>Returns the caption that is displayed in the tab of the
+    ///  dialogue page that contains the frame.</summary>
+    ///  <remarks>Called when the containing dialogue page is being created.
+    ///  </remarks>
     function DisplayName: string; override;
-      {Caption that is displayed in the tab sheet that contains this frame when
-      displayed in the preference dialog box.
-        @return Required display name.
-      }
+    ///  <summary>Returns an index number that determines the location of the
+    ///  page containing the frame when displayed in the Preferences dialogue
+    ///  box.</summary>
+    ///  <remarks>Called when the frame is being registered with the Preferences
+    ///  dialogue box.</remarks>
     class function Index: Byte; override;
-      {Index number that determines the location of the tab containing this
-      frame when displayed in the preferences dialog box.
-        @return Required index number.
-      }
   end;
 
 
@@ -200,7 +221,7 @@ resourcestring
   sErrBadFontSize       = 'Invalid font size';
 
 const
-  // Map of highlighter elements to descriptions
+  ///  <summary>Map of highlighter elements to descriptions.</summary>
   cElementDescs: array[THiliteElement] of string = (
     '',                 // heWhitespace: not displayed in list box
     sCommentDesc,       // heComment
@@ -216,7 +237,8 @@ const
     sErrorDesc          // heError
   );
 
-  // Map of highlighter elements to examples
+const
+  ///  <summary>Map of highlighter elements to examples.</summary>
   cElementEgs: array[THiliteElement] of string = (
     '',                 // heWhitespace: not displayed in list box
     sCommentEg,         // heComment
@@ -236,9 +258,6 @@ const
 { THiliterPrefsFrame }
 
 procedure THiliterPrefsFrame.Activate(const Prefs: IPreferences);
-  {Called when page activated. Updates controls.
-    @param Prefs [in] Object that provides info used to update controls.
-  }
 begin
   (fAttrs as IAssignable).Assign(Prefs.HiliteAttrs);
   (fNamedAttrs as IAssignable).Assign(Prefs.NamedHiliteAttrs);
@@ -248,8 +267,6 @@ begin
 end;
 
 procedure THiliterPrefsFrame.ArrangeControls;
-  {Arranges controls on frame. Called after frame has been sized.
-  }
 var
   AvailWidth: Integer;  // width available in element group box for controls
   CtrlWidth: Integer;   // width of side-by-side controls in element group box
@@ -277,10 +294,6 @@ begin
 end;
 
 procedure THiliterPrefsFrame.btnResetClick(Sender: TObject);
-  {Reset button click handler. Reset syntax highlighter attributes to default
-  values.
-    @param Sender [in] Not used.
-  }
 begin
   fAttrs := THiliteAttrsFactory.CreateDefaultAttrs;
   UpdateControls;
@@ -298,10 +311,6 @@ begin
 end;
 
 procedure THiliterPrefsFrame.btnStyleClick(Sender: TObject);
-  {Predefined styles button click event handler. Displays menu containing
-  available predefined styles.
-    @param Sender [in] Not used.
-  }
 var
   PopupPos: TPoint; // place where menu pops up
 begin
@@ -312,10 +321,6 @@ begin
 end;
 
 procedure THiliterPrefsFrame.cbColourChange(Sender: TObject);
-  {Colour combo box OnChange handler. Sets foreground colour of current
-  highlighter element to colour value selected by user.
-    @param Sender [in] Not used.
-  }
 begin
   CurrentElement.ForeColor := fColorBox.Selected;
   UpdatePreview;
@@ -323,10 +328,6 @@ begin
 end;
 
 procedure THiliterPrefsFrame.cbFontNameChange(Sender: TObject);
-  {Font name combo box OnChange hander. Sets font name used by highlighter to
-  value selected by user.
-    @param Sender [in] Not used.
-  }
 begin
   inherited;
   fAttrs.FontName := cbFontName.Text;
@@ -335,10 +336,6 @@ begin
 end;
 
 procedure THiliterPrefsFrame.cbFontSizeChange(Sender: TObject);
-  {Font size combo box OnChange handler. Sets font size used by highlighter to
-  value selected by user.
-    @param Sender [in] Not used.
-  }
 var
   Size: Integer;  // font size entered by user
 begin
@@ -362,10 +359,6 @@ begin
 end;
 
 procedure THiliterPrefsFrame.ChkFontStyleClick(Sender: TObject);
-  {Handles clicks on any of the font style check boxes. Updates current
-  highlighter element's font style accordingly.
-    @param Sender [in] Reference to check box that triggered event.
-  }
 var
   CB: TCheckBox;            // check box triggering event
   Elem: IHiliteElemAttrs;   // currently selected highlighter element
@@ -382,13 +375,9 @@ begin
 end;
 
 constructor THiliterPrefsFrame.Create(AOwner: TComponent);
-  {Class constructor. Creates custom components, populates and initialises
-  controls and sets up object.
-    @param AOwner [in] Not used.
-  }
 resourcestring
-  // Colour dialog style
-  sDlgTitle = 'Choose Element Colour';  // colour dialog title
+  // Colour dialogue style
+  sDlgTitle = 'Choose Element Colour';  // colour dialogue title
 begin
   inherited;
   HelpKeyword := 'HiliterPrefs';
@@ -397,7 +386,7 @@ begin
   fAttrs := THiliteAttrsFactory.CreateDefaultAttrs;
   fNamedAttrs := THiliteAttrsFactory.CreateNamedAttrs;
 
-  // Create and initialise custom color dialog box
+  // Create and initialise custom color dialogue box
   fColorDlg := TColorDialogEx.Create(ParentForm);
   fColorDlg.Title := sDlgTitle;
   // cdShowHelp not included in fColorDlg.Options since setting HelpKeyword
@@ -445,26 +434,16 @@ begin
 end;
 
 function THiliterPrefsFrame.CurrentElement: IHiliteElemAttrs;
-  {Gets reference to highlighter element currently selected in Elements list
-  box.
-    @return Required reference to element.
-  }
 begin
   Result := fAttrs.Elements[CurrentElementId];
 end;
 
 function THiliterPrefsFrame.CurrentElementId: THiliteElement;
-  {Gets id of highlighter element currently selected in Elements list box.
-    @return Required element id.
-  }
 begin
   Result := THiliteElement(lbElements.Items.Objects[lbElements.ItemIndex]);
 end;
 
 procedure THiliterPrefsFrame.Deactivate(const Prefs: IPreferences);
-  {Called when page is deactivated. Stores information entered by user.
-    @param Prefs [in] Object used to store information.
-  }
 begin
   Prefs.HiliteAttrs := fAttrs;
   Prefs.NamedHiliteAttrs := fNamedAttrs;
@@ -472,8 +451,6 @@ begin
 end;
 
 destructor THiliterPrefsFrame.Destroy;
-  {Class destructor. Tears down object.
-  }
 begin
   FreeAndNil(fColorDlg);
   FreeAndNil(fColorBox);
@@ -481,10 +458,6 @@ begin
 end;
 
 function THiliterPrefsFrame.DisplayName: string;
-  {Caption that is displayed in the tab sheet that contains this frame when
-  displayed in the preference dialog box.
-    @return Required display name.
-  }
 resourcestring
   sDisplayName = 'Syntax Highlighter';  // display name
 begin
@@ -492,9 +465,6 @@ begin
 end;
 
 function THiliterPrefsFrame.GenerateRTF: TRTF;
-  {Generates RTF of example of current highlighter element.
-    @return Required RTF code.
-  }
 var
   RTFBuilder: TRTFBuilder;  // object used to create and render RTFBuilder
   EgLines: IStringList;     // list of lines in the example
@@ -532,18 +502,11 @@ begin
 end;
 
 class function THiliterPrefsFrame.Index: Byte;
-  {Index number that determines the location of the tab containing this frame
-  when displayed in the preferences dialog box.
-    @return Required index number.
-  }
 begin
   Result := 30;
 end;
 
 procedure THiliterPrefsFrame.lbElementsClick(Sender: TObject);
-  {Handles click on Elements list box. Updates controls.
-    @param Sender [in] Not used.
-  }
 begin
   UpdateControls;
 end;
@@ -562,9 +525,6 @@ begin
 end;
 
 function THiliterPrefsFrame.ParentForm: TForm;
-  {Gets reference to form that hosts the frame.
-    @return Reference to host form or nil if no such host.
-  }
 var
   ParentCtrl: TWinControl;  // reference to parent controls
 begin
@@ -579,8 +539,6 @@ begin
 end;
 
 procedure THiliterPrefsFrame.PopulateElementsList;
-  {Populates list box containing customisable highlighter attribute elements.
-  }
 var
   ElemId: THiliteElement; // loops thru all highlighter elements
 begin
@@ -594,23 +552,16 @@ begin
 end;
 
 procedure THiliterPrefsFrame.PopulateFontNameCombo;
-  {Populates font name combo with all supported monospace fonts.
-  }
 begin
   TFontHelper.ListMonoSpaceFonts(cbFontName.Items);
 end;
 
 procedure THiliterPrefsFrame.PopulateFontSizeCombo;
-  {Populates font size combo with common font sizes.
-  }
 begin
   TFontHelper.ListCommonFontSizes(cbFontSize.Items);
 end;
 
 procedure THiliterPrefsFrame.StyleMenuClick(Sender: TObject);
-  {Click event handler for all predefined style menu item styles.
-    @param Sender [in] Menu item that triggered event.
-  }
 begin
   // Menu item's Tag property stores required style id
   fAttrs := THiliteAttrsFactory.CreatePredefinedAttrs(
@@ -626,9 +577,6 @@ begin
 end;
 
 procedure THiliterPrefsFrame.UpdateControls;
-  {Updates state of controls and preview to reflect currently selected
-  highlighter element.
-  }
 
   // Ticks or clears a check box without triggering an OnClick event. To fire
   // event would mean that frame would be marked as changed when it should not
@@ -665,15 +613,13 @@ begin
 end;
 
 procedure THiliterPrefsFrame.UpdatePreview;
-  {Updates preview of highlighting of current highlighter element.
-  }
 begin
   TRichEditHelper.Load(frmExample.RichEdit, GenerateRTF);
 end;
 
 initialization
 
-// Register frame with preferences dialog box
+// Register frame with preferences dialogue box
 TPreferencesDlg.RegisterPage(THiliterPrefsFrame);
 
 end.
