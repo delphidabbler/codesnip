@@ -183,7 +183,6 @@ uses
   IntfAligner in 'IntfAligner.pas',
   IntfCommon in 'IntfCommon.pas',
   IntfFrameMgrs in 'IntfFrameMgrs.pas',
-  IntfHTMLDocHostInfo in 'IntfHTMLDocHostInfo.pas',
   IntfNotifier in 'IntfNotifier.pas',
   IntfPreview in 'IntfPreview.pas',
   UActionFactory in 'UActionFactory.pas',

@@ -22,25 +22,20 @@ uses
   // Delphi
   OleCtrls, SHDocVw, Classes, Controls, ExtCtrls, Windows, ActiveX,
   // Project
-  FrBrowserBase, IntfFrameMgrs, IntfHTMLDocHostInfo, UCommandBars, UCSSBuilder,
-  UDetailPageLoader, USearch, UView, UWBPopupMenus;
+  FrBrowserBase, IntfFrameMgrs, UCommandBars, UCSSBuilder, UDetailPageLoader,
+  USearch, UView, UWBPopupMenus;
 
 type
 
-  ///  <summary>
-  ///  Implements a frame that can display detail views.
-  ///  </summary>
-  ///  <remarks>
-  ///  Uses a web browser control to display the views.
-  ///  </remarks>
+  ///  <summary>Implements a frame that can display detail views.</summary>
+  ///  <remarks>Uses a web browser control to display the views.</remarks>
   TDetailViewFrame = class {sealed}(TBrowserBaseFrame,
     IPaneInfo,                                // provides information about pane
     ICommandBarConfig,                              // command bar configuration
     IViewItemDisplayMgr,                                 // displays a view item
     IClipboardMgr,                     // clipboard manager (impl in base class)
     ISelectionMgr,                     // selection manager (impl in base class)
-    IWBCustomiser,                             // customises web browser control
-    IHTMLDocHostInfo                        // info for use in HTML manipulation
+    IWBCustomiser                              // customises web browser control
   )
   strict private
     var
@@ -114,10 +109,6 @@ type
     ///  drag-drop operations.</summary>
     ///  <remarks>Method of IWBCustomiser.</remarks>
     procedure SetDragDropHandler(Obj: IDropTarget);
-    ///  <summary>Gets a reference to the IDispatch interface of any HTML
-    ///  document loaded in browser control.</summary>
-    ///  <remarks>Method of IHTMLDocHostInfo.</remarks>
-    function HTMLDocument: IDispatch;
   end;
 
 
@@ -323,11 +314,6 @@ begin
   finally
     Highlighter.Free;
   end;
-end;
-
-function TDetailViewFrame.HTMLDocument: IDispatch;
-begin
-  GetIntf(wbBrowser.Document, IDispatch, Result);
 end;
 
 function TDetailViewFrame.IsInteractive: Boolean;
