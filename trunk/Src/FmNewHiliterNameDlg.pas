@@ -8,8 +8,8 @@
  * $Rev$
  * $Date$
  *
- * Implements a dialogue box that enables the user to enter a new name for a
- * named highlighter.
+ * Implements a dialogue box that enables the user to enter a syntax highlighter
+ * name.
 }
 
 
@@ -27,21 +27,44 @@ uses
 
 
 type
+  ///  <summary>Class that implements a dialogue box that enables the user to
+  ///  enter a syntax highlighter name.</summary>
   TNewHiliterNameDlg = class(TGenericOKDlg, INoPublicConstruct)
-    lblNames: TLabel;
     cbNames: TComboBox;
     lblHelp: TLabel;
-    procedure cbNamesChange(Sender: TObject);
+    lblNames: TLabel;
+    ///  <summary>Checks validity of chosen name and, if valid, records it and
+    ///  closes dialogue box.</summary>
     procedure btnOKClick(Sender: TObject);
+    ///  <summary>Updates dialogue box controls when selection in names combo
+    ///  box changes.</summary>
+    procedure cbNamesChange(Sender: TObject);
   strict private
     var
+      ///  <summary>Records chosen highlighter name.</summary>
       fNewName: string;
+      ///  <summary>List of existing highlighter names.</summary>
       fNames: IStringList;
+    ///  <summary>Updates control state based on current entries in dialogue
+    ///  box.</summary>
     procedure UpdateControls;
   strict protected
+    ///  <summary>Arranges controls on form and size dialogue box window to fit.
+    ///  </summary>
     procedure ArrangeForm; override;
+    ///  <summary>Initialises form's controls.</summary>
     procedure InitForm; override;
   public
+    ///  <summary>Displays dialogue box and passes any entered highlighter name
+    ///  back to caller.</summary>
+    ///  <param name="Owner">TComponent [in] Owning control. Dialogue box is
+    ///  aligned over it.</param>
+    ///  <param name="Names">array of string [in] Existing highlighter names.
+    ///  </param>
+    ///  <param name="NewName">string [out] Set to name entered by user if OK
+    ///  pressed or undefined if dialogue box is cancelled.</param>
+    ///  <returns>Boolean. True if OK button pressed or False if dialogue box
+    ///  cancelled.</returns>
     class function Execute(Owner: TComponent; const Names: array of string;
       out NewName: string): Boolean;
   end;
@@ -129,3 +152,4 @@ begin
 end;
 
 end.
+
