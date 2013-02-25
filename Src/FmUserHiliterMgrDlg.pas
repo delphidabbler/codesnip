@@ -28,28 +28,64 @@ uses
 
 
 type
+  ///  <summary>Class that implements a dialogue box that manages and accesses
+  ///  a list of named user defined syntax highlighters.</summary?
   TUserHiliterMgrDlg = class(TGenericViewDlg, INoPublicConstruct)
-    lbNames: TListBox;
-    btnUse: TButton;
-    btnDelete: TButton;
-    alDlg: TActionList;
-    lblNames: TLabel;
-    actUse: TAction;
     actDelete: TAction;
-    procedure actUseExecute(Sender: TObject);
+    actUse: TAction;
+    alDlg: TActionList;
+    btnDelete: TButton;
+    btnUse: TButton;
+    lblNames: TLabel;
+    lbNames: TListBox;
+    ///  <summary>Deletes the highlighter with the selected name from the list.
+    ///  </summary>
     procedure actDeleteExecute(Sender: TObject);
-    procedure actUseUpdate(Sender: TObject);
+    ///  <summary>Enables or disables the Delete action depending on whether a
+    ///  highlighter name is selected in the list.</summary>
     procedure actDeleteUpdate(Sender: TObject);
+    ///  <summary>Closes the dialogue box passing back the selected highlighter
+    ///  for use as the current highlighter.</summary>
+    ///  <remarks>The ASelected parameter of the Execute method is set to the
+    ///  selected highlighter highlighter.</remarks>
+    procedure actUseExecute(Sender: TObject);
+    ///  <summary>Enables or disables the Use action depending on whether a
+    ///  highlighter name is selected in the list.</summary>
+    procedure actUseUpdate(Sender: TObject);
+    ///  <summary>Selects the list item under the mouse then triggers the Use
+    ///  action, causing actUseExcute to be called.</summary>
     procedure lbNamesDblClick(Sender: TObject);
   strict private
     var
+      ///  <summary>List of named highlighters being managed.</summary>
       fNamedAttrs: INamedHiliteAttrs;
+      ///  <summary>Selected highlighter.</summary>
       fSelected: IHiliteAttrs;
+    ///  <summary>Returns the name of the highlighter selected in the list box.
+    ///  </summary>
     function SelectedName: string;
   strict protected
+    ///  <summary>Arranges controls and sets width and height of dialogue box.
+    ///  </summary>
     procedure ArrangeForm; override;
+    ///  <summary>Initialise form's controls.</summary>
     procedure InitForm; override;
   public
+    ///  <summary>Displays dialogue box and passes back any selected highlighter
+    ///  attributes.</summary>
+    ///  <param name="AOwner">TComponent [in] Owning control over which dialogue
+    ///  box is aligned.</param>
+    ///  <param name="ANamedAttrs">INamedHiliteAttrs [in] Object containing
+    ///  named attributes to be managed. Will be modified if user deletes one or
+    ///  more highlighters.</param>
+    ///  <param name="ASelected">IHiliteAttrs [out] Set to any highlighter
+    ///  selected for use by user. Undefined if user did not select a
+    ///  highlighter.</param>
+    ///  <returns>Boolean. True if user selected a highlighter for use or False
+    ///  if dialogue box was closed without selecting a highlighter for use.
+    ///  </returns>
+    ///  <remarks>Note that even if False is returned the content of ANamedAttrs
+    ///  may have been changed if user deleted a highlighter.</remarks>
     class function Execute(AOwner: TComponent; ANamedAttrs: INamedHiliteAttrs;
       out ASelected: IHiliteAttrs): Boolean;
   end;
@@ -163,3 +199,4 @@ begin
 end;
 
 end.
+
