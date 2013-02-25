@@ -3,12 +3,12 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2007-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2007-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
  *
- * Declares an interface to objects that can align a form on screen.
+ * Declares an interface supported by objects that can align a form on screen.
 }
 
 
@@ -24,17 +24,14 @@ uses
 
 
 type
-
-  {
-  IFormAligner:
-    Interface to object that can align a form on screen.
-  }
+  ///  <summary>Interface supported by objects that can align a form on screen.
+  ///  </summary>
   IFormAligner = interface(IInterface)
     ['{1B2EDAFC-487B-4F8A-9921-84483B78DBBF}']
+    ///  <summary>Aligns a form on screen in an implementation determined
+    ///  manner.</summary>
+    ///  <param name="AForm">TCustomForm [in] Form to be aligned.</param>
     procedure AlignForm(const AForm: TCustomForm);
-      {Aligns a form on screen in implementation determined manner.
-        @param AForm [in] Form to be aligned.
-      }
   end;
 
 
