@@ -8,8 +8,8 @@
  * $Rev$
  * $Date$
  *
- * Implements a dialogue box where the user can configure which Pascal compilers
- * installed on the local system can be used by CodeSnip.
+ * Implements a dialogue box where the user can configure the Pascal compilers
+ * that are to be used by CodeSnip.
 }
 
 
@@ -31,11 +31,8 @@ uses
 
 
 type
-  {
-  TCompilersDlg:
-    Implements a dialog box where the user can configure which Pascal compilers
-    installed on the local system can be used by CodeSnip.
-  }
+  ///  <summary>Class that implements a dialogue box where the user can
+  ///  configure the Pascal compilers that are to be used by CodeSnip.</summary>
   TCompilersDlg = class(TGenericOKDlg, INoPublicConstruct)
     btnDetect: TButton;
     lbCompilers: TListBox;
@@ -51,9 +48,16 @@ type
     frmSearchDirs: TCompilersDlgSearchDirsFrame;
     tsNamespaces: TTabSheet;
     frmNamespaces: TCompilersDlgNamespacesFrame;
+    ///  <summary>When Auto Detect Compilers button is clicked, sets executable
+    ///  program path for each installed compiler that can detect its own path.
+    ///  </summary>
     procedure btnDetectClick(Sender: TObject);
+    ///  <summary>When OK button clicked, updates compilers object ready to pass
+    ///  back to caller.</summary>
     procedure btnOKClick(Sender: TObject);
+    ///  <summary>Initialises form's fields and sets default fonts.</summary>
     procedure FormCreate(Sender: TObject);
+    ///  <summary>Tidies up form fields.</summary>
     procedure FormDestroy(Sender: TObject);
     ///  <summary>Handles event triggered when user clicks on one of page
     ///  control tabs. Ensures page control has focus.</summary>
@@ -63,46 +67,56 @@ type
       Shift: TShiftState; X, Y: Integer);
   strict private
     var
+      ///  <summary>Object that manages owner draw compiler list.</summary>
       fCompListMgr: TCompilerListMgr;
+      ///  <summary>Object that manages drawing of banner containing selected
+      ///  compiler name.</summary>
       fBannerMgr: TCompilerBannerMgr;
-      fCurCompiler: ICompiler;      // Reference to currently selected compiler
-      fLocalCompilers: ICompilers;  // Copy of Compilers that is edited
+      ///  <summary>Reference to currently selected compiler.</summary>
+      fCurCompiler: ICompiler;
+      ///  <summary>Local copy of given compilers list used for editing.
+      ///  </summary>
+      fLocalCompilers: ICompilers;
+      ///  <summary>Array of all frames displayed in dialogue box's tabbed
+      ///  pages.</summary>
       fFrames: TArray<TCompilersDlgBaseFrame>;
+    ///  <summary>Called when a new compiler is selected in list box. Updates
+    ///  previously selected compiler with any details from controls then copies
+    ///  details of newly selected compiler into controls.</summary>
     procedure CompilerSelectHandler(Sender: TObject);
+    ///  <summary>Called when information on a tab page changes. Updates
+    ///  selected compiler with information entered in controls.</summary>
     procedure CompilerChangeHandler(Sender: TObject);
+    ///  <summary>Iterates each of the form's frames, calling the given
+    ///  procedure for each frame.</summary>
     procedure IterateFrames(Proc: TProc<TCompilersDlgBaseFrame>);
+    ///  <summary>Stores reference to currently selected local compiler and
+    ///  updates dialogue box controls with details of the compiler.</summary>
     procedure SelectCompiler;
-      {Stores reference to currently selected local compiler and updates dialog
-      box controls with details of the compiler.
-      }
+    ///  <summary>Updates local copy of currently selected compiler from entries
+    ///  in dialogue box controls.</summary>
     procedure UpdateCurrentCompiler;
-      {Updates local copy of currently selected compiler with entries in dialog
-      box.
-      }
+    ///  <summary>Updates all the dialogue's frames with details of the
+    ///  currently selected compiler.</summary>
     procedure UpdateEditFrames;
+    ///  <summary>Checks that all entered paths to compiler executable files
+    ///  reference valid Windows 32 bit executables.</summary>
     function CheckCompilerExes: Boolean;
-      {Checks that all paths assigned as executable files for compilers are
-      valid Windows 32 executables.
-        @return True if all compiler exes are valid, False if an error is found.
-      }
   strict protected
+    ///  <summary>Initialises form's controls.</summary>
     procedure InitForm; override;
-      {Populates and initialises controls.
-      }
+    ///  <summary>Sizes and aligns controls and all of its frames.</summary>
     procedure ArrangeForm; override;
-      {Dynamically sizes and aligns controls to allow for Vista UI font. Also
-      adjusts position of "Auto Detect Compilers" button on bottom button line.
-      }
   public
+    ///  <summary>Displays the dialogue box and updates given compilers object
+    ///  if required.</summary>
+    ///  <param name="AOwner">TComponent [in] Control that owns this dialogue
+    ///  box. Dialogue box is aligned over the control if possible.</param>
+    ///  <param name="ACompilers">ICompilers [in] Compilers object to be edited.
+    ///  This object is modified only if the user presses the OK button.</param>
+    ///  <returns>Boolean. True if user OKs and False if user cancels.</returns>
     class function Execute(AOwner: TComponent;
       const ACompilers: ICompilers): Boolean;
-      {Displays the dialog box. The dialog updates a compilers object if user
-      OKs
-        @param AOwner [in] Control that owns this dialog.
-        @param ACompilers [in] Compilers object to be updated.
-        @return True if user OKs and compiler information is updated or False
-          if user cancels and compiler information is unchanged.
-      }
   end;
 
 
@@ -121,9 +135,6 @@ uses
 { TCompilersDlg }
 
 procedure TCompilersDlg.ArrangeForm;
-  {Dynamically sizes and aligns controls to allow for Vista UI font. Also
-  adjusts position of "Auto Detect Compilers" button on bottom button line.
-  }
 begin
   TCtrlArranger.SetLabelHeights(Self);
   IterateFrames(
@@ -132,7 +143,7 @@ begin
       Frame.ArrangeControls;
     end
   );
-  // size dialog and arrange inherited controls
+  // size dialogue and arrange inherited controls
   inherited;
   // arrange extra button in bottom button line
   btnDetect.Left := pnlBody.Left;
@@ -140,10 +151,6 @@ begin
 end;
 
 procedure TCompilersDlg.btnDetectClick(Sender: TObject);
-  {Handles click on Auto Detect Compilers button. Sets executbale program path
-  for each compiler present that can detect its own path.
-    @param Sender [in] Not used.
-  }
 var
   Compiler: ICompiler;  // refers to each compiler
 resourcestring
@@ -174,10 +181,6 @@ begin
 end;
 
 procedure TCompilersDlg.btnOKClick(Sender: TObject);
-  {Handles OK button click. Update globals Compilers object and saves details to
-  persistent storage.
-    @param Sender [in] Not used.
-  }
 begin
   inherited;
   // Ensure compiler object is up to date
@@ -192,10 +195,6 @@ begin
 end;
 
 function TCompilersDlg.CheckCompilerExes: Boolean;
-  {Checks that all paths assigned as executable files for compilers are valid
-  Windows 32 executables.
-    @return True if all compiler exes are valid, False if an error is found.
-  }
 var
   Compiler: ICompiler;  // refers to each compiler
 resourcestring
@@ -229,11 +228,6 @@ begin
 end;
 
 procedure TCompilersDlg.CompilerSelectHandler(Sender: TObject);
-  {Handles a compiler selection in list box. Updates compiler that is being
-  deselected with details in dialog box controls then displays details of newly
-  selected compiler.
-    @param Sender [in] Not used.
-  }
 begin
   UpdateCurrentCompiler;
   SelectCompiler;
@@ -241,12 +235,6 @@ end;
 
 class function TCompilersDlg.Execute(AOwner: TComponent;
   const ACompilers: ICompilers): Boolean;
-  {Displays the dialog box. The dialog updates a compilers object if user OKs
-    @param AOwner [in] Control that owns this dialog.
-    @param ACompilers [in] Compilers object to be updated.
-    @return True if user OKs and compiler information is updated or False if
-      user cancels and compiler information is unchanged.
-  }
 var
   Persister: IPersistCompilers; // object used to save object to storage
 begin
@@ -266,9 +254,6 @@ begin
 end;
 
 procedure TCompilersDlg.FormCreate(Sender: TObject);
-  {Initialises compiler information and creates owned objects.
-    @param Sender [in] Not used.
-  }
 begin
   inherited;
   // Take a copy of global compilers object: stores updates until OK clicked
@@ -292,9 +277,6 @@ begin
 end;
 
 procedure TCompilersDlg.FormDestroy(Sender: TObject);
-  {Frees owned objects.
-    @param Sender [in] Not used.
-  }
 begin
   SetLength(fFrames, 0);
   fBannerMgr.Free;
@@ -303,8 +285,6 @@ begin
 end;
 
 procedure TCompilersDlg.InitForm;
-  {Populates and initialises controls.
-  }
 begin
   inherited;
   fCompListMgr.Initialise;
@@ -326,9 +306,6 @@ begin
 end;
 
 procedure TCompilersDlg.SelectCompiler;
-  {Stores reference to currently selected local compiler and updates dialog box
-  controls with details of the compiler.
-  }
 begin
   fCurCompiler := fCompListMgr.Selected;
   fBannerMgr.Compiler := fCurCompiler;
@@ -336,8 +313,6 @@ begin
 end;
 
 procedure TCompilersDlg.UpdateCurrentCompiler;
-  {Updates local copy of currently selected compiler with entries in dialog box.
-  }
 var
   WasAvailable: Boolean;        // whether compiler was available before update
 begin
