@@ -27,194 +27,224 @@ uses
 
 
 type
-
-  {
-  TCommentStyle:
-    Different styles of commenting used when documenting snippets from database.
-  }
+  ///  <summary>Enumeration of different styles of commenting used when
+  ///  documenting snippets with their descriptions.</summary>
   TCommentStyle = (
     csNone,     // no documentation of snippets
     csAfter,    // description of snippet between prototype and body
     csBefore    // description of snippet immediatly preceeds code
   );
 
-  {
-  TSourceComments:
-    Static class that provides information about comment styles and formats
-    comments in appropriate style.
-  }
+type
+  ///  <summary>Static class that provides information about comment styles and
+  ///  which formats comments in the appropriate style.</summary>
   TSourceComments = class(TNoConstructObject)
   strict private
+    ///  <summary>Formats the given comment text into lines with a fixed
+    ///  maximum width indented by the given number of spaces on the left.
+    ///  </summary>
     class function FormatCommentLines(const Text: string;
       const Indent: Cardinal): string;
   public
+
+    ///  <summary>Returns a description of the given comment style.</summary>
+    ///  <remarks>The description is in a form uitable for use in the UI.
+    ///  </remarks>
     class function CommentStyleDesc(const Style: TCommentStyle): string;
-      {Gets description of a comment style for use in UI elements.
-        @param Style [in] Comment style for which description wanted.
-        @return Required description.
-      }
+
+    ///  <summary>Formats a snippet's descriptive comment as a Pascal comment
+    ///  with to a specified commenting style.</summary>
+    ///  <param name="Style">TCommentStyle [in] Required commenting style.
+    ///  </param>
+    ///  <param name="TruncateComments">Boolean [in] Flag indicating whether or
+    ///  not comment is to be truncated at the end of the first paragraph of
+    ///  multi-paragraph text.</param>
+    ///  <param name="Text">IActiveText [in] Active text of comment.</param>
+    ///  <returns>string.Formatted comment or empty string if Style = csNone.
+    ///  </returns>
     class function FormatSnippetComment(const Style: TCommentStyle;
       const TruncateComments: Boolean; const Text: IActiveText): string;
-      {Formats a snippet's comment text as Pascal comment according to
-      commenting style.
-        @param Style [in] Desired commenting style.
-        @param TruncateComments [in] Whether comments are to be truncated to
-          just first line of multi line snippet descriptions.
-        @param Text [in] Active text of comment. Ignored if Style = csNone.
-        @return Formatted comment. Empty string if Style = csNone.
-      }
+
+    ///  <summary>Formats document's header text as a Pascal comment.</summary>
+    ///  <param name="Comments">IStringList [in] List of paragraphs of header
+    ///  text.</param>
+    ///  <returns>string. Formatted comments.</returns>
     class function FormatHeaderComments(const Comments: IStringList): string;
-      {Formats header comment text as Pascal comments.
-        @param Comments [in] List of comments to format.
-        @return Formatted comments.
-      }
   end;
 
-  {
-  TSourceAnalyser:
-    Class that receives snippets for which source is to be generated and
-    analyses relationships, pulling in any required snippets. Creates data
-    structures that can be used to emit source code with all dependencies
-    resolved.
-  }
+type
+  ///  <summary>Class that receives snippets for which source is to be
+  ///  generated, determines dependencies and pulls in any required snippets.
+  ///  Data structures are created that can be used to emit source code with all
+  ///  dependencies resolved.</summary>
   TSourceAnalyser = class(TObject)
   strict private
     var
-      fTypesAndConsts: TObjectList<TSnippet>; // Value of TypesAndConsts prop
-      fIntfRoutines: TSnippetList;        // Value of IntfRoutines property
-      fAllRoutines: TSnippetList;         // Value of AllRoutines property
-      fForwardRoutines: TSnippetList;     // Value of ForwardRoutines property
-      fRequiredRoutines: TSnippetList;    // Value of RequiredRoutines property
-      fUnits: TStringList;                // Value of Units property
+      ///  <summary>Value of TypesAndConsts property.</summary>
+      fTypesAndConsts: TObjectList<TSnippet>;
+      ///  <summary>Value of IntfRoutines property.</summary>
+      fIntfRoutines: TSnippetList;
+      ///  <summary>Value of AllRoutines property.</summary>
+      fAllRoutines: TSnippetList;
+      ///  <summary>Value of ForwardRoutines property.</summary>
+      fForwardRoutines: TSnippetList;
+      ///  <summary>Value of RequiredRoutines property.</summary>
+      fRequiredRoutines: TSnippetList;
+      ///  <summary>Value of Units property.</summary>
+      fUnits: TStringList;
+
+    ///  <summary>Adds given user-specified routine to the analysis.</summary>
+    ///  <remarks>Duplicates are ignored.</remarks>
     procedure AddIntfRoutine(const Routine: TSnippet);
-      {Adds a user-specified routine to list of routines specified by user.
-      Duplicates ignored.
-        @param Routine [in] Routine to be added.
-      }
+
+    ///  <summary>Adds the given type or constant to the analysis.</summary>
+    ///  <remarks>Duplicates are ignored.</remarks>
     procedure AddTypeOrConst(const TypeOrConst: TSnippet);
-      {Adds a user specified or required type or constant to the analysis.
-        @param TypeOrConst [in] Type of constant snippet to be added.
-      }
+
+    ///  <summary>Adds all snippets in given list to a list of required
+    ///  snippets, according to type.</summary>
     procedure RequireSnippets(const Snips: TSnippetList);
-      {Process all snippets in a dependency list.
-        @param Snips [in] List of snippets to process.
-      }
+
+    ///  <summary>Adds given snippet to appropriate list of required snippets,
+    ///  according to type.</summary>
     procedure RequireSnippet(const Snippet: TSnippet);
-      {Process a snippet from a dependency list.
-        @param Snippet [in] Snippet to be processed.
-        @except Exception raised if attempt is made to require freeform snippet
-      }
+
+    ///  <summary>Adds each unit in given list to list of required units.
+    ///  </summary>
+    ///  <remarks>Duplicates are ignored.</remarks>
     procedure RequireUnits(const Units: TStringList);
-      {Adds a list of units to required units list. Duplicates ignored.
-        @param Units [in] List of units.
-      }
+
+    ///  <summary>Adds given unit to list of required units.</summary>
+    ///  <remarks>Duplicates are ignored.</remarks>
     procedure RequireUnit(const UnitName: string);
-      {Add a unit to list of required units. Duplicates ignored.
-        @param UnitName [in] Name of required unit.
-      }
+
+    ///  <summary>Adds given routine, that has not been directly required by
+    ///  user, to the analysis.</summary>
+    ///  <remarks>Duplicates are ignored.</remarks>
     procedure RequireRoutine(const Routine: TSnippet);
-      {Adds a routine from a dependency list to the analysis. Duplicates
-      ignored.
-        @param Routine [in] Routine to be added.
-      }
+
   public
+
+    ///  <summary>Constructs new object instance.</summary>
     constructor Create;
-      {Constructor. Sets up object.
-      }
+
+    ///  <summary>Destroys object instance.</summary>
     destructor Destroy; override;
-      {Destructor. Tears down object.
-      }
+
+    ///  <summary>Adds the given user-defined snippet to the analysis.</summary>
+    ///  <remarks>Freeform snippets are ignored.</remarks>
     procedure AddSnippet(const Snippet: TSnippet);
-      {Adds a user-specified snippet to the analysis. Freeform snippets are
-      ignored.
-        @param Snippet [in] Snippet to be added.
-      }
+
+    ///  <summary>Performs analysis and generates data structures that are
+    ///  exposed via the object's properties.</summary>
+    ///  <remarks>Must be called after last snippet has been added to the
+    ///  analysis.</remarks>
     procedure Generate;
-      {Generates the analysis.
-      }
+
+    ///  <summary>List of types and constants that have either been added by the
+    ///  user or required by other snippets.</summary>
     property TypesAndConsts: TObjectList<TSnippet> read fTypesAndConsts;
-      {List of both added and required Types and constants, in required order}
+
+    ///  <summary>List of routines added by the user.</summary>
+    ///  <remarks>These routines are those which would appear in a unit's
+    ///  interface section.</remarks>
     property IntfRoutines: TSnippetList read fIntfRoutines;
-      {List of routines added by user. These routines would appear in a unit's
-      interface section}
+
+    ///  <summary>List of routines that have been required by other snippets.
+    ///  </summary>
     property RequiredRoutines: TSnippetList read fRequiredRoutines;
-      {List of routines required by other snippets, i.e. that appear in
-      dependency lists}
+
+    ///  <summary>List of all routines, both added and required.</summary>
+    ///  <remarks>Not valid until Generate has been called. Invalidated if
+    ///  further snippets are added without calling Generate again.</remarks>
     property AllRoutines: TSnippetList read fAllRoutines;
-      {List of all routines, both added and required. Not valid until Generate
-      method called. Invalidated if further snippets added}
+
+    ///  <summary>List of required routines that have not also been added by the
+    ///  user.</summary>
+    ///  <remarks>
+    ///  <para>These routines are those that would appear as 'forward' routines
+    ///  in a unit's implementation section.</para>
+    ///  <para>Not valid until Generate has been called. Invalidated if further
+    ///  snippets are added without calling Generate again.</para>
+    ///  </remarks>
     property ForwardRoutines: TSnippetList read fForwardRoutines;
-      {List of required routines that are not also specified by user. These
-      routines would appear in forward section of a unit. Not valid until
-      Generate method called. Invalidated if further snippets added}
+
+    ///  <summary>List of required units.</summary>
     property Units: TStringList read fUnits;
-      {List of units required by any snippet}
   end;
 
-  {
-  TSourceGen:
-    Generates Pascal source containing specified snippets and any other snippets
-    that are required.
-  }
+type
+  ///  <summary>Generates Pascal source code containing all specified snippets
+  ///  along with any other snippets that are required by the specified
+  ///  snippets.</summary>
   TSourceGen = class(TObject)
   strict private
     var
-      fSourceAnalyser: TSourceAnalyser; // Analyses snippets and dependencies
+      ///  <summary>Object that analyses specified snippets and their
+      ///  dependencies.</summary>
+      fSourceAnalyser: TSourceAnalyser;
+
   public
+    ///  <summary>Constructs new object instance.</summary>
     constructor Create;
-      {Constructor. Sets up the object.
-      }
+
+    ///  <summary>Destroys object instance.</summary>
     destructor Destroy; override;
-      {Destructor. Tears down object.
-      }
+
+    ///  <summary>Includes the given snippet in the source code.</summary>
     procedure IncludeSnippet(const Snippet: TSnippet);
-      {Includes a snippet in the source code.
-        @param Routine [in] Snippet to be included.
-      }
+
+    ///  <summary>Includes all snippets from the given list in the source code.
+    ///  </summary>
     procedure IncludeSnippets(const Snips: TSnippetList);
-      {Includes a one or more snippets in the source code.
-        @param Routines [in] List of snippets to be included.
-      }
+
+    ///  <summary>Generates source code of a Pascal unit containing all the
+    ///  specified snippets along with any other snippets that are required to
+    ///  compile the code.</summary>
+    ///  <param name="UnitName">string [in] Name of unit.</param>
+    ///  <param name="CommentStyle">TCommentStyle [in] Style of commenting used
+    ///  in documenting snippets.</param>
+    ///  <param name="TruncateComments">Boolean [in] Flag indicating whether or
+    ///  not documentation comments are to be truncated at the end of the first
+    ///  paragraph of multi-paragraph text.</param>
+    ///  <param name="HeaderComments">IStringList [in] List of comments to be
+    ///  included at top of unit.</param>
+    ///  <returns>string. Unit source code.</returns>
     function UnitAsString(const UnitName: string;
       const CommentStyle: TCommentStyle = csNone;
       const TruncateComments: Boolean = False;
       const HeaderComments: IStringList = nil): string;
-      {Generates source code of a unit containing all specified snippets and
-      any additional snippets depended upon by the included snippets.
-        @param UnitName [in] Name of unit.
-        @param CommentStyle [in] Style of commenting used in documenting
-          snippets.
-        @param TruncateComments [in] Whether comments are to be truncated to
-          just first line of multi line snippet descriptions.
-        @param HeaderComments [in] List of comments to be included at top of
-          unit.
-        @return Unit source code.
-      }
+
+    ///  <summary>Generates source code of a Pascal include file containing all
+    ///  the specified snippets. Also writes comments that note which units,
+    ///  types, consts and other routines are required to compile the specified
+    ///  snippets.</summary>
+    ///  <param name="CommentStyle">TCommentStyle [in] Style of commenting used
+    ///  in documenting snippets.</param>
+    ///  <param name="TruncateComments">Boolean [in] Flag indicating whether or
+    ///  not documentation comments are to be truncated at the end of the first
+    ///  paragraph of multi-paragraph text.</param>
+    ///  <param name="HeaderComments">IStringList [in] List of comments to be
+    ///  included at top of unit.</param>
+    ///  <returns>string. Source code of include file.</returns>
     function IncFileAsString(const CommentStyle: TCommentStyle = csNone;
       const TruncateComments: Boolean = False;
       const HeaderComments: IStringList = nil): string;
-      {Generates source code of an include file containing all specified
-      routines and notes in comments which units, types, consts and other
-      routines are also required.
-        @param CommentStyle [in] Style of commenting used in documenting
-          snippets.
-        @param TruncateComments [in] Whether comments are to be truncated to
-          just first line of multi line snippet descriptions.
-        @param HeaderComments [in] List of comments to be included at top of
-          snippet.
-        @return Source code of include file.
-      }
+
+    ///  <summary>Creates and returns a unit name based on the given file name.
+    ///  </summary>
+    ///  <remarks>
+    ///  <para>The unit name is the base file name with any extension removed.
+    ///  </para>
+    ///  <para>NOTE: not all file names are suitable for creating unit names:
+    ///  use the IsFileNameValidUnitName method to check a file name for
+    ///  validity.</para>
+    ///  </remarks>
     class function UnitNameFromFileName(const FileName: string): string;
-      {Creates a unit name from a file name. The unit name is the base file name
-      with any extension removed.
-        @param FileName [in] Name of file.
-        @return Unit name.
-      }
+
+    ///  <summary>Checks if the given file name is valid as the basis for a
+    ///  unit name.</summary>
     class function IsFileNameValidUnitName(const FileName: string): Boolean;
-      {Checks if a file name is valid as basis for a unit name.
-        @param FileName [in] Name of file to be checked.
-        @return True if file name is valid for unit name, false if not.
-      }
   end;
 
 
@@ -230,146 +260,195 @@ uses
 
 
 const
-  cLineWidth = 80;  // max characters on line
-  cIndent = 2;      // indent size
+  ///  <summary>Maximum number of characters on a source code line.</summary>
+  cLineWidth = 80;
+const
+  ///  <summary>Size of indenting used for source code, in characters.</summary>
+  cIndent = 2;
 
 
 type
-
-  {
-  TRoutineFormatter:
-    Static class that can format a routine to include descriptive comments at
-    required position.
-  }
+  ///  <summary>Static class that can format a routine to include descriptive
+  ///  comments.</summary>
   TRoutineFormatter = class(TNoConstructObject)
   strict private
+
+    ///  <summary>Splits source code of a routine snippet into the head (routine
+    ///  prototype) and body.</summary>
+    ///  <param name="Routine">TSnippet [in] Routine whose source code is to be
+    ///  split.</param>
+    ///  <param name="Head">string [out] Set to routine prototype.</param>
+    ///  <param name="Body">string [out] Body of routine that follows the
+    ///  prototype.</param>
     class procedure Split(const Routine: TSnippet; out Head, Body: string);
-      {Splits source code of a routine into the head (routine prototype) and
-      body code.
-        @param Routine [in] Routine whose source code to be split.
-        @param Head [out] Routine prototype.
-        @param Body [out] Remainder of routine without prototype.
-      }
+
+    ///  <summary>Creates and returns a comment containing a routine's
+    ///  description.</summary>
+    ///  <param name="CommentStyle">TCommentStyle [in] Required commenting
+    ///  style.</param>
+    ///  <param name="TruncateComments">Boolean [in] Flag indicating whether or
+    ///  not comment is to be truncated at the end of the first paragraph of
+    ///  multi-paragraph text.</param>
+    ///  <param name="Routine">TSnippet [in] Routine for which comments are to
+    ///  be rendered. Snippet kind must be skRoutine.</param>
+    ///  <returns>string. Formatted comments.</returns>
     class function RenderDescComment(CommentStyle: TCommentStyle;
       const TruncateComments: Boolean; const Routine: TSnippet): string;
-      {Creates comment in required style that contains routine's description.
-        @param CommentStyle [in] Required commenting style.
-        @param TruncateComments [in] Whether comments are to be truncated to
-          just first line of multi line snippet descriptions.
-        @param Routine [in] Routine for which comments required.
-        @return Formatted comments.
-      }
+
   public
+    ///  <summary>Extracts and returns the given routine snippet's prototype
+    ///  from its source code.</summary>
     class function ExtractPrototype(const Routine: TSnippet): string;
-      {Extracts a routine's prototype from source code.
-        @param Routine [in] Routine whose source code to be processed.
-        @return Routine prototype.
-      }
+
+    ///  <summary>Format's a routine snippet's prototype, including a comment
+    ///  containing its description if required.</summary>
+    ///  <param name="Routine">TSnippet [in] Routine whose prototype is to be
+    ///  formatted. Snippet kind must be skRoutine.</param>
+    ///  <param name="CommentStyle">TCommentStyle [in] Style of commenting to
+    ///  be used for routine's description.</param>
+    ///  <param name="TruncateComments">Boolean [in] Flag indicating whether or
+    ///  not description comment is to be truncated at the end of the first
+    ///  paragraph of multi-paragraph text.</param>
+    ///  <returns>string. Formatted prototype.</returns>
     class function FormatRoutinePrototype(const Routine: TSnippet;
       CommentStyle: TCommentStyle; const TruncateComments: Boolean): string;
-      {Formats a routine's prototype, documented by the routine's description in
-      a comment.
-        @param Routine [in] Routine whose prototype is to be formatted.
-        @param CommentStyle [in] Style of commenting used in documenting
-          routine.
-        @param TruncateComments [in] Whether comments are to be truncated to
-          just first line of multi line snippet descriptions.
-        @return Formatted prototype.
-      }
+
+    ///  <summary>Formats the whole source code of a routine snippet, including
+    ///  a comment containing its description if required.</summary>
+    ///  <param name="CommentStyle">TCommentStyle [in] Style of commenting to
+    ///  be used for routine's description.</param>
+    ///  <param name="TruncateComments">Boolean [in] Flag indicating whether or
+    ///  not description comment is to be truncated at the end of the first
+    ///  paragraph of multi-paragraph text.</param>
+    ///  <param name="Routine">TSnippet [in] Routine whose source code is to be
+    ///  formatted.</param>
+    ///  <returns>string. Formatted source code.</returns>
     class function FormatRoutine(CommentStyle: TCommentStyle;
       const TruncateComments: Boolean; const Routine: TSnippet): string;
-      {Formats a routine's whole source code, documented by the routine's
-      description in a comment.
-        @param CommentStyle [in] Style of commenting used in documenting
-          routine.
-        @param TruncateComments [in] Whether comments are to be truncated to
-          just first line of multi line snippet descriptions.
-        @param Routine [in] Routine whose source code is to be formatted.
-        @return Formatted prototype.
-      }
   end;
 
-  {
-  TConstAndTypeFormatter:
-    Static class that can format a constant or type definition to include
-    descriptive comments at required position.
-  }
+type
+  ///  <summary>Static class that can format a constant or simple type
+  ///  definition to include descriptive comments.</summary>
   TConstAndTypeFormatter = class(TNoConstructObject)
   strict private
+    ///  <summary>Splits source code of a constant or simple type snippet into
+    ///  the prefix (text up to 'const' or 'type' and the following definition.
+    ///  </summary>
+    ///  <param name="ConstOrType">TSnippet [in] Constant or simple type snippet
+    ///  whose source code is to be split.</param>
+    ///  <param name="Prefix">string [out] Text up to 'const' or 'type' keyword.
+    ///  </param>
+    ///  <param name="Body">string [out] Remainder of source code without
+    ///  prefix.</param>
     class procedure Split(const ConstOrType: TSnippet; out Prefix,
       Body: string);
-      {Splits source code of a type or constant into the prefix (text up to
-      "const" or "type") and definition itself (body code).
-        @param ConstOrType [in] Constant or type whose source code to be split.
-        @param Prefix [out] Text up to "const" or "type" keyword.
-        @param Body [out] Remainder of constant or type without keyword.
-      }
+
+    ///  <summary>Creates and returns a comment containing a constant or simple
+    ///  type's description.</summary>
+    ///  <param name="CommentStyle">TCommentStyle [in] Required commenting
+    ///  style.</param>
+    ///  <param name="TruncateComments">Boolean [in] Flag indicating whether or
+    ///  not comment is to be truncated at the end of the first paragraph of
+    ///  multi-paragraph text.</param>
+    ///  <param name="ConstOrType">TSnippet [in] Constant or simple type for
+    ///  which comments are to be rendered. Snippet kind must be skConstant or
+    ///  skTypeDef.</param>
+    ///  <returns>string. Formatted comments.</returns>
     class function RenderDescComment(CommentStyle: TCommentStyle;
       const TruncateComments: Boolean; const ConstOrType: TSnippet): string;
-      {Creates comment in required style that contains constant or type's
-      description.
-        @param CommentStyle [in] Required commenting style.
-        @param TruncateComments [in] Whether comments are to be truncated to
-          just first line of multi line snippet descriptions.
-        @param ConstOrType [in] Constant or type for which comments required.
-        @return Formatted comments.
-      }
+
   public
+    ///  <summary>Formats the source code of a constant or simple type snippet,
+    ///  including a comment containing its description if required.</summary>
+    ///  <param name="CommentStyle">TCommentStyle [in] Style of commenting to
+    ///  be used for snippet's description.</param>
+    ///  <param name="TruncateComments">Boolean [in] Flag indicating whether or
+    ///  not description comment is to be truncated at the end of the first
+    ///  paragraph of multi-paragraph text.</param>
+    ///  <param name="ConstOrType">TSnippet [in] Constant or simple type whose
+    ///  source code is to be formatted.</param>
+    ///  <returns>string. Formatted source code.</returns>
     class function FormatConstOrType(CommentStyle: TCommentStyle;
       const TruncateComments: Boolean; const ConstOrType: TSnippet): string;
-      {Formats a constant or type's source code, documented by the snippet's
-      description in a comment.
-        @param CommentStyle [in] Style of commenting used in documenting
-          constant or type.
-        @param TruncateComments [in] Whether comments are to be truncated to
-          just first line of multi line snippet descriptions.
-        @param ConstOrType [in] Constant or type whose source code is to be
-          formatted.
-        @return Formatted prototype.
-      }
   end;
 
+type
+  ///  <summary>Static class that can format a class or advanced record type
+  ///  definition to include descriptive comments.</summary>
   TClassFormatter = class(TNoConstructObject)
   strict private
+    ///  <summary>Creates and returns a comment containing a class or advanced
+    ///  record type's description.</summary>
+    ///  <param name="CommentStyle">TCommentStyle [in] Required commenting
+    ///  style.</param>
+    ///  <param name="TruncateComments">Boolean [in] Flag indicating whether or
+    ///  not comment is to be truncated at the end of the first paragraph of
+    ///  multi-paragraph text.</param>
+    ///  <param name="Snippet">TSnippet [in] Class or advanced record type for
+    ///  which comments are to be rendered.</param>
+    ///  <returns>string. Formatted comments.</returns>
     class function RenderDescComment(CommentStyle: TCommentStyle;
       const TruncateComments: Boolean; const Snippet: TSnippet): string;
-      {Creates comment in required style that contains class' description.
-        @param CommentStyle [in] Required commenting style.
-        @param TruncateComments [in] Whether comments are to be truncated to
-          just first line of multi line snippet descriptions.
-        @param Snippet [in] Class for which comments required.
-        @return Formatted comments.
-      }
+
+    ///  <summary>Removes any introductory 'type' keyword from a class or
+    ///  advanced record type declaration, if possible.</summary>
+    ///  <param name="Decl">string [in] Type declaration to be processed.
+    ///  </param>
+    ///  <param name="DeclBody">string [out] Source code that follows 'type'
+    ///  keyword if found, otherwise set to Decl.</param>
+    ///  <returns>Boolean. True if 'type' keyword was removed, False if not.
+    ///  </returns>
     class function RemoveKeywordFromDecl(const Decl: string;
       out DeclBody: string): Boolean;
-      {Removes any introductory "type" keyword from a type declaration, if
-      possible.
-        @param Decl [in] Type declaration to be processed.
-        @param DeclBody [out] Source code that follows "type" keyword if
-          keyword is found, otherwise set to Decl.
-        @returns True if successful, False if not.
-      }
+
+    ///  <summary>Parses complete class or advanced record source code and
+    ///  splits declaration from definition.</summary>
+    ///  <param name="Source">string [in] Source code to be parsed.</param>
+    ///  <param name="Decl">string [out] Set to declaration section.</param>
+    ///  <param name="Defn">string [out] Set to definition section.</param>
     class procedure SplitDeclFromDefn(const Source: string; out Decl,
       Defn: string);
+
   public
+
+    ///  <summary>Formats source code of a class or advanced record snippet's
+    ///  declaration, including a comment containing its description if
+    ///  required.</summary>
+    ///  <param name="CommentStyle">TCommentStyle [in] Style of commenting to
+    ///  be used for snippet's description.</param>
+    ///  <param name="TruncateComments">Boolean [in] Flag indicating whether or
+    ///  not description comment is to be truncated at the end of the first
+    ///  paragraph of multi-paragraph text.</param>
+    ///  <param name="Snippet">TSnippet [in] Class or advanced record type whose
+    ///  declaration is to be formatted.</param>
+    ///  <returns>string. Formatted declaration source code.</returns>
     class function FormatClassDeclaration(CommentStyle: TCommentStyle;
       const TruncateComments: Boolean; const Snippet: TSnippet): string;
+
+    ///  <summary>Formats source code of a class or advanced record snippet's
+    ///  definition, including a comment containing its description if required.
+    ///  </summary>
+    ///  <param name="CommentStyle">TCommentStyle [in] Style of commenting to
+    ///  be used for snippet's description.</param>
+    ///  <param name="TruncateComments">Boolean [in] Flag indicating whether or
+    ///  not description comment is to be truncated at the end of the first
+    ///  paragraph of multi-paragraph text.</param>
+    ///  <param name="Snippet">TSnippet [in] Class or advanced record type whose
+    ///  definition is to be formatted.</param>
+    ///  <returns>string. Formatted definition source code.</returns>
     class function FormatClassDefinition(const Snippet: TSnippet): string;
   end;
 
 { TSourceGen }
 
 constructor TSourceGen.Create;
-  {Constructor. Sets up the object.
-  }
 begin
   inherited;
   fSourceAnalyser := TSourceAnalyser.Create;
 end;
 
 destructor TSourceGen.Destroy;
-  {Destructor. Tears down object.
-  }
 begin
   fSourceAnalyser.Free;
   inherited;
@@ -377,17 +456,6 @@ end;
 
 function TSourceGen.IncFileAsString(const CommentStyle: TCommentStyle;
   const TruncateComments: Boolean; const HeaderComments: IStringList): string;
-  {Generates source code of an include file containing all specified routines
-  and notes in comments which units, types, consts and other routines are also
-  required.
-    @param CommentStyle [in] Style of commenting used in documenting
-      snippets.
-    @param TruncateComments [in] Whether comments are to be truncated to just
-      first line of multi line snippet descriptions.
-    @param HeaderComments [in] List of comments to be included at top of
-      snippet.
-    @return Source code of include file.
-  }
 resourcestring
   // Comment text
   sReqUnits           = 'Required unit(s):';
@@ -489,17 +557,11 @@ begin
 end;
 
 procedure TSourceGen.IncludeSnippet(const Snippet: TSnippet);
-  {Includes a snippet in the source code.
-    @param Snippet [in] Snippet to be included.
-  }
 begin
   fSourceAnalyser.AddSnippet(Snippet);
 end;
 
 procedure TSourceGen.IncludeSnippets(const Snips: TSnippetList);
-  {Includes a one or more snippets in the source code.
-    @param Routines [in] List of snippets to be included.
-  }
 var
   Snippet: TSnippet;  // iterates through snippets to be added
 begin
@@ -507,12 +569,8 @@ begin
     IncludeSnippet(Snippet);
 end;
 
-class function TSourceGen.IsFileNameValidUnitName(
-  const FileName: string): Boolean;
-  {Checks if a file name is valid as basis for a unit name.
-    @param FileName [in] Name of file to be checked.
-    @return True if file name is valid for unit name, false if not.
-  }
+class function TSourceGen.IsFileNameValidUnitName(const FileName: string):
+  Boolean;
 begin
   Result := IsValidIdent(UnitNameFromFileName(FileName));
 end;
@@ -521,15 +579,6 @@ function TSourceGen.UnitAsString(const UnitName: string;
   const CommentStyle: TCommentStyle = csNone;
   const TruncateComments: Boolean = False;
   const HeaderComments: IStringList = nil): string;
-  {Generates source code of a unit containing all specified routines and
-  routines depended upon by the included routines.
-    @param UnitName [in] Name of unit.
-    @param CommentStyle [in] Style of commenting used in documenting routines.
-    @param TruncateComments [in] Whether comments are to be truncated to just
-      first line of multi line snippet descriptions.
-    @param HeaderComments [in] List of comments to be included at top of unit.
-    @return Unit source code.
-  }
 var
   Writer: TStringBuilder;   // used to build source code string
   Snippet: TSnippet;        // reference to a snippet object
@@ -650,11 +699,6 @@ begin
 end;
 
 class function TSourceGen.UnitNameFromFileName(const FileName: string): string;
-  {Creates a unit name from a file name. The unit name is the base file name
-  with any extension removed.
-    @param FileName [in] Name of file.
-    @return Unit name.
-  }
 var
   BaseFileName: string; // base file name (i.e. file name without path)
   Ext: string;          // file's extension
@@ -667,10 +711,6 @@ end;
 { TSourceAnalyser }
 
 procedure TSourceAnalyser.AddIntfRoutine(const Routine: TSnippet);
-  {Adds a user-specified routine to list of routines specified by user.
-  Duplicates ignored.
-    @param Routine [in] Routine to be added.
-  }
 begin
   Assert(Routine.Kind = skRoutine,
     ClassName + '.AddIntfRoutine: Routine must have kind skRoutine');
@@ -683,9 +723,6 @@ begin
 end;
 
 procedure TSourceAnalyser.AddSnippet(const Snippet: TSnippet);
-  {Adds a user-specified snippet to the analysis. Freeform snippets are ignored.
-    @param Snippet [in] Snippet to be added.
-  }
 var
   ErrorMsg: string;       // any error message
 begin
@@ -709,9 +746,6 @@ begin
 end;
 
 procedure TSourceAnalyser.AddTypeOrConst(const TypeOrConst: TSnippet);
-  {Adds a user specified or required type or constant to the analysis.
-    @param TypeOrConst [in] Type of constant snippet to be added.
-  }
 var
   ErrorMsg: string;       // any error message
 begin
@@ -732,8 +766,6 @@ begin
 end;
 
 constructor TSourceAnalyser.Create;
-  {Constructor. Sets up object.
-  }
 begin
   inherited;
   fTypesAndConsts := TObjectList<TSnippet>.Create(False);
@@ -745,8 +777,6 @@ begin
 end;
 
 destructor TSourceAnalyser.Destroy;
-  {Destructor. Tears down object.
-  }
 begin
   fTypesAndConsts.Free;
   fIntfRoutines.Free;
@@ -758,8 +788,6 @@ begin
 end;
 
 procedure TSourceAnalyser.Generate;
-  {Generates the analysis.
-  }
 var
   Routine: TSnippet;  // iterates through various routine lists
 begin
@@ -778,9 +806,6 @@ begin
 end;
 
 procedure TSourceAnalyser.RequireRoutine(const Routine: TSnippet);
-  {Adds a routine from a dependency list to the analysis. Duplicates ignored.
-    @param Routine [in] Routine to be added.
-  }
 begin
   if not fRequiredRoutines.Contains(Routine) then
   begin
@@ -791,10 +816,6 @@ begin
 end;
 
 procedure TSourceAnalyser.RequireSnippet(const Snippet: TSnippet);
-  {Process a snippet from a dependency list.
-    @param Snippet [in] Snippet to be processed.
-    @except Exception raised if attempt is made to require freeform snippet
-  }
 resourcestring
   // Error message
   sCantDependOnFreeform = 'Can''t depend on "%s" - it is freeform code';
@@ -810,9 +831,6 @@ begin
 end;
 
 procedure TSourceAnalyser.RequireSnippets(const Snips: TSnippetList);
-  {Process all snippets in a dependency list.
-    @param Snips [in] List of snippets to process.
-  }
 var
   Snippet: TSnippet;  // iterates through snippets list
 begin
@@ -821,18 +839,12 @@ begin
 end;
 
 procedure TSourceAnalyser.RequireUnit(const UnitName: string);
-  {Add a unit to list of required units. Duplicates ignored.
-    @param UnitName [in] Name of required unit.
-  }
 begin
   if fUnits.IndexOf(UnitName) = -1 then
     fUnits.Add(UnitName);
 end;
 
 procedure TSourceAnalyser.RequireUnits(const Units: TStringList);
-  {Adds a list of units to required units list. Duplicates ignored.
-    @param Units [in] List of units.
-  }
 var
   UnitName: string; // iterates through list of units.
 begin
@@ -844,10 +856,6 @@ end;
 
 class function TRoutineFormatter.ExtractPrototype(const
   Routine: TSnippet): string;
-  {Extracts a routine's prototype from source code.
-    @param Routine [in] Routine whose source code to be processed.
-    @return Routine prototype.
-  }
 var
   DummyBody: string;  // stores unused routine body retrieved from Split
 begin
@@ -857,14 +865,6 @@ end;
 
 class function TRoutineFormatter.FormatRoutine(CommentStyle: TCommentStyle;
   const TruncateComments: Boolean; const Routine: TSnippet): string;
-  {Formats a routine's whole source code, documented by the routine's
-  description in a comment.
-    @param CommentStyle [in] Style of commenting used in documenting routine.
-    @param TruncateComments [in] Whether comments are to be truncated to just
-      first line of multi line snippet descriptions.
-    @param Routine [in] Routine whose source code is to be formatted.
-    @return Formatted prototype.
-  }
 var
   Prototype, Body: string;  // prototype and body of routine
 begin
@@ -894,14 +894,6 @@ end;
 
 class function TRoutineFormatter.FormatRoutinePrototype(const Routine: TSnippet;
   CommentStyle: TCommentStyle; const TruncateComments: Boolean): string;
-  {Formats a routine's prototype, documented by the routine's description in a
-  comment.
-    @param Routine [in] Routine whose prototype is to be formatted.
-    @param CommentStyle [in] Style of commenting used in documenting routine.
-    @param TruncateComments [in] Whether comments are to be truncated to just
-      first line of multi line snippet descriptions.
-    @return Formatted prototype.
-  }
 var
   Prototype: string;  // prototype of given routine
 begin
@@ -930,13 +922,6 @@ end;
 class function TRoutineFormatter.RenderDescComment(
   CommentStyle: TCommentStyle; const TruncateComments: Boolean;
   const Routine: TSnippet): string;
-  {Creates comment in required style that contains routine's description.
-    @param CommentStyle [in] Required commenting style.
-    @param TruncateComments [in] Whether comments are to be truncated to just
-      first line of multi line snippet descriptions.
-    @param Routine [in] Routine for which comments required.
-    @return Formatted comments.
-  }
 begin
   Assert(Routine.Kind = skRoutine,
     ClassName + '.RenderDescComment: Routine must have kind skRoutine');
@@ -948,19 +933,9 @@ end;
 
 class procedure TRoutineFormatter.Split(const Routine: TSnippet; out Head,
   Body: string);
-  {Splits source code of a routine into the head (routine prototype) and body
-  code.
-    @param Routine [in] Routine whose source code to be split.
-    @param Head [out] Routine prototype.
-    @param Body [out] Remainder of routine without prototype.
-  }
 
-  // ---------------------------------------------------------------------------
+  // Checks if given symbol is a calling convention directive.
   function IsDirective(const Symbol: string): Boolean;
-    {Checks if a symbol is a calling convention directive.
-      @param Symbol [in] Symbol to be checked.
-      @return True if symbol is a calling convention, False otherwise.
-    }
   const
     // list of calling convention directives
     cCallConventions: array[0..4] of string = (
@@ -973,7 +948,6 @@ class procedure TRoutineFormatter.Split(const Routine: TSnippet; out Head,
     ConventionList.CaseSensitive := False;
     Result := ConventionList.Contains(Symbol);
   end;
-  // ---------------------------------------------------------------------------
 
 var
   SourceCode: string;         // routine's source code
@@ -1040,16 +1014,6 @@ end;
 class function TConstAndTypeFormatter.FormatConstOrType(
   CommentStyle: TCommentStyle; const TruncateComments: Boolean;
   const ConstOrType: TSnippet): string;
-  {Formats a constant or type's source code, documented by the snippet's
-  description in a comment.
-    @param CommentStyle [in] Style of commenting used in documenting constant or
-      type.
-    @param TruncateComments [in] Whether comments are to be truncated to just
-      first line of multi line snippet descriptions.
-    @param ConstOrType [in] Constant or type whose source code is to be
-      formatted.
-    @return Formatted prototype.
-  }
 var
   Keyword: string;  // keyword that preceeds source code body
   Body: string;     // source code that follows keyword
@@ -1083,14 +1047,6 @@ end;
 class function TConstAndTypeFormatter.RenderDescComment(
   CommentStyle: TCommentStyle; const TruncateComments: Boolean;
   const ConstOrType: TSnippet): string;
-  {Creates comment in required style that contains constant or type's
-  description.
-    @param CommentStyle [in] Required commenting style.
-    @param TruncateComments [in] Whether comments are to be truncated to just
-      first line of multi line snippet descriptions.
-    @param ConstOrType [in] Constant or type for which comments required.
-    @return Formatted comments.
-  }
 begin
   Assert(ConstOrType.Kind in [skConstant, skTypeDef],
     ClassName + '.RenderDescComment: ConstOrType must have kind skTypeDef or '
@@ -1102,23 +1058,13 @@ end;
 
 class procedure TConstAndTypeFormatter.Split(const ConstOrType: TSnippet;
   out Prefix, Body: string);
-  {Splits source code of a type or constant into the prefix (text up to "const"
-  or "type") and definition itself (body code).
-    @param ConstOrType [in] Constant or type whose source code to be split.
-    @param Prefix [out] Text up to "const" or "type" keyword.
-    @param Body [out] Remainder of constant or type without keyword.
-  }
 
-  // ---------------------------------------------------------------------------
+  // Splits the given source code and the first occurence of keyword KW,
+  // returning the code before the keyword in Prefix and the code following the
+  // keyword in Body. If KW is not found, Prefix is set to the empty string and
+  // Body is set to SourceCode.
   procedure SplitAtKeyword(const SourceCode, KW: string;
     out Prefix, Body: string);
-    {Splits an introductory prefix (up to KW) from following source code.
-      @param SourceCode [in] Source code to be split.
-      @param KW [in] Introductory keyord.
-      @param Prefix [out] Set to KW if KW is present, otherwise ''.
-      @param Body [out] Source code that follows prefix if KW is present,
-        otherwise set to SourceCode.
-    }
   var
     Lexer: THilitePasLexer;       // parses Pascal code
     PrefixCode: TStringBuilder;   // records prefix code
@@ -1159,7 +1105,6 @@ class procedure TConstAndTypeFormatter.Split(const ConstOrType: TSnippet;
       Lexer.Free;
     end;
   end;
-  // ---------------------------------------------------------------------------
 
 begin
   if ConstOrType.Kind = skConstant then
@@ -1172,10 +1117,6 @@ end;
 
 class function TSourceComments.CommentStyleDesc(
   const Style: TCommentStyle): string;
-  {Gets description of a comment style for use in UI elements.
-    @param Style [in] Comment style for which description wanted.
-    @return Required description.
-  }
 resourcestring
   // Comment style descriptions
   sCSNone = 'No descriptive comments';
@@ -1206,10 +1147,6 @@ end;
 
 class function TSourceComments.FormatHeaderComments(
   const Comments: IStringList): string;
-  {Formats header comment text as Pascal comments.
-    @param Comments [in] List of comments to format.
-    @return Formatted comments.
-  }
 var
   Line: string;         // loops thru each line of comments & exploded comments
   Lines: IStringList;   // comments after exploding multiple wrapped lines
@@ -1240,14 +1177,6 @@ end;
 
 class function TSourceComments.FormatSnippetComment(const Style: TCommentStyle;
   const TruncateComments: Boolean; const Text: IActiveText): string;
-  {Formats a snippet's comment text as Pascal comment according to commenting
-  style.
-    @param Style [in] Desired commenting style.
-    @param TruncateComments [in] Whether comments are to be truncated to just
-      first line of multi line snippet descriptions.
-    @param Text [in] Active text of comment. Ignored if Style = csNone.
-    @return Formatted comment. Empty string if Style = csNone.
-  }
 var
   Renderer: TActiveTextTextRenderer;
   PlainText: string;
