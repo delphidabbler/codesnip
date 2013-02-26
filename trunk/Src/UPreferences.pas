@@ -27,261 +27,221 @@ uses
 
 
 type
-  // Possible values for startup state of overview treeview.
+  ///  <summary>Possible values for startup state of overview treeview.
+  ///  </summary>
   TOverviewStartState = (
     ossExpanded,  // start treeview fully expanded
     ossCollapsed  // start treeview fully collapsed
   );
 
 type
-  {
-  IPreferences:
-    Interface to object that exposes and persists user preferences.
-  }
+  ///  <summary>Interface supported by objects that maintain user preferences.
+  ///  </summary>
   IPreferences = interface(IInterface)
     ['{381B9A92-B528-47E1-AC04-90E1FFFDADA7}']
+
+    ///  <summary>Gets style of commenting used to describe snippets in
+    ///  generated code.</summary>
     function GetSourceCommentStyle: TCommentStyle;
-      {Gets style of commenting used to describe snippets in generated code.
-        @return Current commenting style.
-      }
+    ///  <summary>Sets style of commenting to be used describe snippets in
+    ///  generated code.</summary>
     procedure SetSourceCommentStyle(const Value: TCommentStyle);
-      {Sets style of commenting to be used describe snippets in generated code.
-        @param Value [in] Required commenting style.
-      }
+    ///  <summary>Commenting style used to describe snippets in generated source
+    ///  code.</summary>
     property SourceCommentStyle: TCommentStyle
       read GetSourceCommentStyle write SetSourceCommentStyle;
-      {Commenting style used to describe snippets in generated source code}
 
-    ///  <summary>Gets flag that determines whether multi paragraph source code
+    ///  <summary>Gets flag that determines whether multi-paragraph source code
     ///  is truncated to first paragraph in source code comments.</summary>
     function GetTruncateSourceComments: Boolean;
-    ///  <summary>Sets flag that determines whether multi paragraph source code
+    ///  <summary>Sets flag that determines whether multi-paragraph source code
     ///  is truncated to first paragraph in source code comments.</summary>
     procedure SetTruncateSourceComments(const Value: Boolean);
-    ///  <summary>Flag determining whether multi paragraph source code is
+    ///  <summary>Flag determining whether multi-paragraph source code is
     ///  truncated to first paragraph in source code comments.</summary>
     property TruncateSourceComments: Boolean
       read GetTruncateSourceComments write SetTruncateSourceComments;
 
+    ///  <summary>Gets current default file extension / type used when writing
+    ///  code snippets to file.</summary>
     function GetSourceDefaultFileType: TSourceFileType;
-      {Gets current default file extension / type used when writing code
-      snippets to file.
-        @return Current default file extension.
-      }
+    ///  <summary>Sets default file extension / type to be used when writing
+    ///  code snippets to file.</summary>
     procedure SetSourceDefaultFileType(const Value: TSourceFileType);
-      {Sets default file extension / type to be used when writing code snippets
-      to file.
-        @param Value [in] Required default file extension.
-      }
+    ///  <summary>Default file extension / type used when writing code snippets
+    ///  to file.</summary>
     property SourceDefaultFileType: TSourceFileType
       read GetSourceDefaultFileType write SetSourceDefaultFileType;
-      {Default file extension / type used when writing code snippets to file}
 
+    ///  <summary>Gets current indicator of whether generated source is
+    ///  highlighted by default.</summary>
     function GetSourceSyntaxHilited: Boolean;
-      {Gets current indicator of whether generated source is highlighted by
-      default.
-        @return Current value indicating whether source is highlighted.
-      }
+    ///  <summary>Sets flag indicating whether generated source is highlighted
+    ///  by default.</summary>
     procedure SetSourceSyntaxHilited(const Value: Boolean);
-      {Sets flag indicating whether generated source is highlighted by default.
-        @param Value [in] Flag indicating whether source is highlighted.
-      }
+    ///  <summary>Indicates whether generated source is highlighted by default.
+    ///  </summary>
     property SourceSyntaxHilited: Boolean
       read GetSourceSyntaxHilited write SetSourceSyntaxHilited;
-      {Indicates whether generated source is highlighted by default}
 
+    ///  <summary>Gets measurement units used by application.</summary>
     function GetMeasurementUnits: TMeasurementUnits;
-      {Gets measurement units used by application.
-        @return Current measurement units.
-      }
+    ///  <summary>Sets measurement units to be used by application.</summary>
     procedure SetMeasurementUnits(const Value: TMeasurementUnits);
-      {Sets measurement units to be used by application.
-        @param Value [in] Required measurement units.
-      }
+    ///  <summary>Measurement units used by application.</summary>
     property MeasurementUnits: TMeasurementUnits
       read GetMeasurementUnits write SetMeasurementUnits;
-      {Measurement units used by application}
 
+    ///  <summary>Gets startup state of overview tree view.</summary>
     function GetOverviewStartState: TOverviewStartState;
-      {Gets startup state of overview tree view.
-        @return Current startup state.
-      }
+    ///  <summary>Sets startup state of overview tree view.</summary>
     procedure SetOverviewStartState(const Value: TOverviewStartState);
-      {Sets startup state of overview tree view.
-        @param Value [in] Required startup state.
-      }
+    ///  <summary>Startup state of overview treeview.</summary>
     property OverviewStartState: TOverviewStartState
       read GetOverviewStartState write SetOverviewStartState;
-      {Startup state of overview treeview}
 
+    ///  <summary>Gets flag that indicates whether empty sections are displayed
+    ///  in overview pane.</summary>
     function GetShowEmptySections: Boolean;
-      {Gets flag that indicates whether empty sections are displayed in overview
-      pane.
-        @returns Flag value.
-      }
+    ///  <summary>Sets flag that indicates whether empty sections are displayed
+    ///  in overview pane.</summary>
     procedure SetShowEmptySections(const Value: Boolean);
-      {Sets flag that indicates whether empty sections are displayed in overview
-      pane.
-        @param Value [in] New flag value.
-      }
+    ///  <summary>Indicates whether empty sections are displayed in overview
+    ///  pane.</summary>
     property ShowEmptySections: Boolean
       read GetShowEmptySections write SetShowEmptySections;
-      {Indicates whether empty sections are displayed in overview pane}
 
+    ///  <summary>Gets flag that indicates whether new snippets and categories
+    ///  are displayed in new tabs in details pane.</summary>
     function GetShowNewSnippetsInNewTabs: Boolean;
-      {Gets flag that indicates whether new snippets and categories are
-      displayed in new tabs in details pane.
-        @returns Flag value.
-      }
+    ///  <summary>Sets flag that indicates whether new snippets and categories
+    ///  are displayed in new tabs in details pane.</summary>
     procedure SetShowNewSnippetsInNewTabs(const Value: Boolean);
-      {Sets flag that indicates whether new snippets and categories are
-      displayed in new tabs in details pane.
-        @param Value [in] New flag value.
-      }
+    ///  <summary>Indicates whether new snippets and ca-tegories are displayed
+    ///  in new tabs in details pane.</summary>
     property ShowNewSnippetsInNewTabs: Boolean
       read GetShowNewSnippetsInNewTabs write SetShowNewSnippetsInNewTabs;
-      {Indicates whether new snippets and ca-tegories are displayed in new tabs
-      in details pane}
 
-    ///  <summary>Gets heading colour for specified database.</summary>
+    ///  <summary>Gets heading colour used for snippets from a specified
+    ///  database.</summary>
     ///  <param name="UserDefined">Boolean [in] Required database: True for user
-    ///  database and False for main database.</param>
+    ///  database and False for inline database.</param>
     ///  <returns>TColor. Required colour.</returns>
     function GetDBHeadingColour(UserDefined: Boolean): TColor;
-    ///  <summary>Sets heading colour for specified database.</summary>
+    ///  <summary>Sets heading colour used for snippets from a specified
+    ///  database.</summary>
     ///  <param name="UserDefined">Boolean [in] Required database: True for user
-    ///  database and False for main database.</param>
+    ///  database and False for online database.</param>
     ///  <param name="Value">TColor [in] Required heading colour.</param>
     procedure SetDBHeadingColour(UserDefined: Boolean;
       const Value: TColor);
     ///  <summary>Records colour to be used for headings of items from either
-    ///  main database (UserDefined=False) or user database (UserDefined=True).
-    ///  </summary>
+    ///  online database (UserDefined = False) or user database (UserDefined =
+    ///  True).</summary>
     property DBHeadingColours[UserDefined: Boolean]: TColor
       read GetDBHeadingColour write SetDBHeadingColour;
 
-    ///  <summary>Gets custom colours for headings for specified database.
-    ///  </summary>
+    ///  <summary>Gets custom colours available for headings for specified
+    ///  database.</summary>
     ///  <param name="UserDefined">Boolean [in] Required database: True for user
-    ///  database and False for main database.</param>
+    ///  database and False for online database.</param>
     ///  <returns>IStringList. String list containing custom colours.</returns>
     function GetDBHeadingCustomColours(UserDefined: Boolean): IStringList;
-    ///  <summary>Sets custom colours for headings for specified database.
-    ///  </summary>
+    ///  <summary>Sets custom colours available for headings for specified
+    ///  database.</summary>
     ///  <param name="UserDefined">Boolean [in] Required database: True for user
-    ///  database and False for main database.</param>
+    ///  database and False for online database.</param>
     ///  <param name="Value">IStringList [in] String list containing custom
-    ///  colours.</returns>
+    ///  colours.</param>
     procedure SetDBHeadingCustomColours(UserDefined: Boolean;
       Value: IStringList);
-    ///  <summary>Records custom colours for headings of items from either main
-    ///  database (UserDefined=False) or user database (UserDefined=True).
-    ///  </summary>
+    ///  <summary>Records custom colours available for headings of items from
+    ///  either online database (UserDefined = False) or user database
+    ///  (UserDefined = True).</summary>
     property DBHeadingCustomColours[UserDefined: Boolean]: IStringList
       read GetDBHeadingCustomColours write SetDBHeadingCustomColours;
 
+    ///  <summary>Gets default print options.</summary>
     function GetPrinterOptions: TPrintOptions;
-      {Gets print options.
-        @return Default print options.
-      }
+    ///  <summary>Sets default print options.</summary>
     procedure SetPrinterOptions(const Options: TPrintOptions);
-      {Sets default print options.
-        @param Options [in] New print options.
-      }
+    ///  <summary>Default print options.</summary>
     property PrinterOptions: TPrintOptions
       read GetPrinterOptions write SetPrinterOptions;
-      {Default print options}
 
+    ///  <summary>Gets default printer page margins.</summary>
     function GetPrinterPageMargins: TPageMargins;
-      {Gets default page margins.
-        @return Default page margins.
-      }
+    ///  <summary>Sets new default printer page margins.</summary>
     procedure SetPrinterPageMargins(const Margins: TPageMargins);
-      {Sets new default page margins.
-        @param Margins [in] New page margins.
-      }
+    ///  <summary>Default printer page margins.</summary>
     property PrinterPageMargins: TPageMargins
       read GetPrinterPageMargins write SetPrinterPageMargins;
-      {Default page margins used in printing}
 
+    ///  <summary>Gets current user defined syntax highlighter.</summary>
     function GetHiliteAttrs: IHiliteAttrs;
-      {Gets current user defined syntax highlighter.
-        @return Current syntax highlighter attributes.
-      }
+    ///  <summary>Sets current user defined syntax highlighter.</summary>
     procedure SetHiliteAttrs(const Attrs: IHiliteAttrs);
-      {Sets current user defined syntax highlighter.
-        @param Attrs [in] New highlighter attributes.
-      }
+    ///  <summary>Attributes of current user defined syntax highlighter.
+    ///  </summary>
     property HiliteAttrs: IHiliteAttrs
       read GetHiliteAttrs write SetHiliteAttrs;
-      {Attributes of current user defined syntax highlighter}
 
-    ///  <summary>Gets object containing the attributes of the named user
+    ///  <summary>Gets object containing the attributes of all the named user
     ///  defined syntax highlighters.</summary>
     function GetNamedHiliteAttrs: INamedHiliteAttrs;
     ///  <summary>Stores a copy of the given object containing the attributes of
-    ///  the named user defined syntax highlighters.</summary>
+    ///  all the 'named' user defined syntax highlighters.</summary>
     procedure SetNamedHiliteAttrs(NamedHiliteAttrs: INamedHiliteAttrs);
-    ///  <summary>Object containing attributes of all named user defined syntax
-    ///  highlighters.</summary>
+    ///  <summary>Reference tp object containing attributes of all the 'named'
+    ///  user defined syntax highlighters.</summary>
     property NamedHiliteAttrs: INamedHiliteAttrs
       read GetNamedHiliteAttrs write SetNamedHiliteAttrs;
 
+    ///  <summary>Gets custom colours available for syntax highlighter.
+    ///  </summary>
     function GetCustomHiliteColours: IStringList;
-      {Gets custom syntax highlighter colours.
-        @return String list containing custom colours.
-      }
+    ///  <summary>Sets custom colours available for syntax highlighter.
+    ///  </summary>
     procedure SetCustomHiliteColours(const Colours: IStringList);
-      {Sets new custom syntax highlighter colours.
-        @param Colours [in] String list defining new colours.
-      }
+    ///  <summary>Custom colours available for syntax highlighters.</summary>
     property CustomHiliteColours: IStringList
       read GetCustomHiliteColours write SetCustomHiliteColours;
-      {Custom syntax highlighter colours}
 
+    ///  <summary>Gets object containing information about warnings to be
+    ///  enabled or disabled by code generator.</summary>
     function GetWarnings: IWarnings;
-      {Gets information about warnings to be inhibited by code generator.
-        @return Interface to object containing information.
-      }
+    ///  <summary>Stores a copy of the object containing information about
+    ///  warnings to be enabled or disabled by code generator.</summary>
     procedure SetWarnings(Warnings: IWarnings);
-      {Updates object that provides information about warnings to be inhibited
-      by code generator.
-        @param New warnings object.
-    }
+    ///  <summary>Reference to object containing information about warnings to
+    ///  be enabled or disabled by code generator.</summary>
     property Warnings: IWarnings
       read GetWarnings write SetWarnings;
-      {Information about warnings to be inhibited by code generator}
 
+    ///  <summary>Gets maximum age of items to be read from news feed.</summary>
     function GetNewsAge: Integer;
-      {Gets maximum age of news items to be displayed.
-        @return Required age in days.
-      }
+    ///  <summary>Sets maximum age of items to be read from news feed.</summary>
     procedure SetNewsAge(const Age: Integer);
-      {Sets maximum age of news items to be displayed.
-        @param Age [in] Required age in days.
-      }
+    ///  <summary>Maximum age of items to be read from news feed.</summary>
     property NewsAge: Integer
       read GetNewsAge write SetNewsAge;
-      {Maximum age of news items to be displayed}
 
-    ///  <summary>Gets information about snippet detail page customisations.
-    ///  </summary>
+    ///  <summary>Gets information describing snippet detail page
+    ///  customisations.</summary>
     function GetPageStructures: TSnippetPageStructures;
     ///  <summary>Updates information describing snippet detail page
     ///  customisations.</summary>
     procedure SetPageStructures(PageStructures: TSnippetPageStructures);
-    ///  <summary>Information about snippet detail page customisations.
+    ///  <summary>Information describing snippet detail page customisations.
     ///  </summary>
     property PageStructures: TSnippetPageStructures
       read GetPageStructures write SetPageStructures;
   end;
 
 
+///  <summary>Provides access to a singleton implementation IPreferences that
+///  can also persist the preferences.</summary>
 function Preferences: IPreferences;
-  {Provides access to a singleton implementation a IPreferences, ensuring it
-  exists.
-    @return Singleton object instance.
-  }
 
 
 implementation
@@ -296,223 +256,248 @@ uses
 
 
 type
-
-  {
-  TPreferences:
-    Class that implements IPreferences interface and its property access
-    methods. Does not persist the data. Intended for use as a temporary local
-    copy of the singleton that cannot be saved. Data entered in this object is
-    assigned to singleton for saving. Objects should be created using
-    singleton's Clone method.
-  }
+  ///  <summary>Class that maintains a copy of the user preferences.</summary>
+  ///  <remarks>
+  ///  <para>This class does not persist the preferences. It is intended for
+  ///  use as a temporary local copy of the preferences singleton for
+  ///  modification.</para>
+  ///  <para>To save changes made to an instance of this class, assign the
+  ///  instance to the singleton.</para>
+  ///  <para>Instances should not be created directly: the singleton's Clone
+  ///  method must be used to do this.</para>
+  ///  </remarks>
   TPreferences = class(TInterfacedObject,
     IPreferences, IAssignable
   )
   strict protected
-    fSourceDefaultFileType: TSourceFileType;
-      {Default file extension / type used when writing code snippets to file}
-    fSourceCommentStyle: TCommentStyle;
-      {Commenting style used to describe snippets in generated source code}
-    fTruncateSourceComments: Boolean;
-    fSourceSyntaxHilited: Boolean;
-      {Indicates whether generated source is highlighted by default}
-    fMeasurementUnits: TMeasurementUnits;
-      {Measurement unit in use by application}
-    fOverviewStartState: TOverviewStartState;
-      {Startup state of overview treeview}
-    fShowEmptySections: Boolean;
-      {Indicates whether empty sections are displayed in overview pane}
-    fShowNewSnippetsInNewTabs: Boolean;
-      {Indicates whether new snippets and categories are displayed in new tabs
-      in details pane}
-    fDBHeadingColours: array[Boolean] of TColor;
-    fDBHeadingCustomColours: array[Boolean] of IStringList;
-    fPrinterOptions: TPrintOptions;
-      {Default print options}
-    fPrinterPageMargins: TPageMargins;
-      {Default print page margins}
-    fHiliteAttrs: IHiliteAttrs;
-      {User defined syntax highlighter}
-    fNamedHiliteAttrs: INamedHiliteAttrs;
-    fHiliteCustomColours: IStringList;
-      {Custom highlighter colours}
-    fWarnings: IWarnings;
-      {Information about warnings to be inhibited by code generator}
-    fNewsAge: Integer;
-      {Maximum age of news items in days}
-    fPageStructures: TSnippetPageStructures;
+    var
+      ///  <summary>Default file extension / type used when writing code
+      ///  snippets  file.</summary>
+      fSourceDefaultFileType: TSourceFileType;
+      ///  <summary>Commenting style used to describe snippets in generated
+      ///  source code.</summary>
+      fSourceCommentStyle: TCommentStyle;
+      ///  <summary>Flag determining whether multi-paragraph source code is
+      ///  truncated to first paragraph in source code comments.</summary>
+      fTruncateSourceComments: Boolean;
+      ///  <summary>Indicates whether generated source is highlighted by
+      ///  default.</summary>
+      fSourceSyntaxHilited: Boolean;
+      ///  <summary>Measurement units used by application.</summary>
+      fMeasurementUnits: TMeasurementUnits;
+      ///  <summary>Startup state of overview treeview.</summary>
+      fOverviewStartState: TOverviewStartState;
+      ///  <summary>Indicates whether empty sections are displayed in overview
+      ///  pane.</summary>
+      fShowEmptySections: Boolean;
+      ///  <summary>Indicates whether new snippets and ca-tegories are displayed
+      ///  in new tabs in details pane.</summary>
+      fShowNewSnippetsInNewTabs: Boolean;
+      ///  <summary>Records colour to be used for headings of items from either
+      ///  online database (UserDefined = False) or user database (UserDefined =
+      ///  True).</summary>
+      fDBHeadingColours: array[Boolean] of TColor;
+      ///  <summary>Records custom colours available for headings of items from
+      ///  either online database (UserDefined = False) or user database
+      ///  (UserDefined = True).</summary>
+      fDBHeadingCustomColours: array[Boolean] of IStringList;
+      ///  <summary>Default print options.</summary>
+      fPrinterOptions: TPrintOptions;
+      ///  <summary>Default printer page margins.</summary>
+      fPrinterPageMargins: TPageMargins;
+      ///  <summary>Attributes of current user defined syntax highlighter.
+      ///  </summary>
+      fHiliteAttrs: IHiliteAttrs;
+      ///  <summary>Reference tp object containing attributes of all the 'named'
+      ///  user defined syntax highlighters.</summary>
+      fNamedHiliteAttrs: INamedHiliteAttrs;
+      ///  <summary>Custom colours available for syntax highlighters.</summary>
+      fHiliteCustomColours: IStringList;
+      ///  <summary>Reference to object containing information about warnings to
+      ///  be enabled or disabled by code generator.</summary>
+      fWarnings: IWarnings;
+      ///  <summary>Maximum age of items to be read from news feed.</summary>
+      fNewsAge: Integer;
+      ///  <summary>Information describing snippet detail page customisations.
+      ///  </summary>
+      fPageStructures: TSnippetPageStructures;
   protected // do not make strict
-    { IPreferences methods }
-    function GetSourceCommentStyle: TCommentStyle;
-      {Gets style of commenting used to describe snippets in generated code.
-        @return Current commenting style.
-      }
-    procedure SetSourceCommentStyle(const Value: TCommentStyle);
-      {Sets style of commenting to be used describe snippets in generated code.
-        @param Value [in] Required commenting style.
-      }
 
-    ///  <summary>Gets flag that determines whether multi paragraph source code
+    ///  <summary>Gets style of commenting used to describe snippets in
+    ///  generated code.</summary>
+    ///  <remarks>Method of IPreferences.</remarks>
+    function GetSourceCommentStyle: TCommentStyle;
+
+    ///  <summary>Sets style of commenting to be used describe snippets in
+    ///  generated code.</summary>
+    ///  <remarks>Method of IPreferences.</remarks>
+    procedure SetSourceCommentStyle(const Value: TCommentStyle);
+
+    ///  <summary>Gets flag that determines whether multi-paragraph source code
     ///  is truncated to first paragraph in source code comments.</summary>
     ///  <remarks>Method of IPreferences.</remarks>
     function GetTruncateSourceComments: Boolean;
 
-    ///  <summary>Sets flag that determines whether multi paragraph source code
+    ///  <summary>Sets flag that determines whether multi-paragraph source code
     ///  is truncated to first paragraph in source code comments.</summary>
     ///  <remarks>Method of IPreferences.</remarks>
     procedure SetTruncateSourceComments(const Value: Boolean);
 
+    ///  <summary>Gets current default file extension / type used when writing
+    ///  code snippets to file.</summary>
+    ///  <remarks>Method of IPreferences.</remarks>
     function GetSourceDefaultFileType: TSourceFileType;
-      {Gets current default file extension / type used when writing code
-      snippets to file.
-        @return Current default file extension.
-      }
-    procedure SetSourceDefaultFileType(const Value: TSourceFileType);
-      {Sets default file extension / type to be used when writing code snippets
-      to file.
-        @param Value [in] Required default file extension.
-      }
-    function GetSourceSyntaxHilited: Boolean;
-      {Gets current indicator of whether generated source is highlighted by
-      default.
-        @return Current value indicating whether source is highlighted.
-      }
-    procedure SetSourceSyntaxHilited(const Value: Boolean);
-      {Sets flag indicating whether generated source is highlighted by default.
-        @param Value [in] Flag indicating whether source is highlighted.
-      }
-    function GetMeasurementUnits: TMeasurementUnits;
-      {Gets measurement units used by application.
-        @return Current measurement units.
-      }
-    procedure SetMeasurementUnits(const Value: TMeasurementUnits);
-      {Sets measurement units to be used by application.
-        @param Value [in] Required measurement units.
-      }
-    function GetOverviewStartState: TOverviewStartState;
-      {Gets startup state of overview tree view.
-        @return Current startup state.
-      }
-    procedure SetOverviewStartState(const Value: TOverviewStartState);
-      {Sets startup state of overview tree view.
-        @param Value [in] Required startup state.
-      }
-    function GetShowEmptySections: Boolean;
-      {Gets flag that indicates whether empty sections are displayed in overview
-      pane.
-        @returns Flag value.
-      }
-    procedure SetShowEmptySections(const Value: Boolean);
-      {Sets flag that indicates whether empty sections are displayed in overview
-      pane.
-        @param Value [in] New flag value.
-      }
-    function GetShowNewSnippetsInNewTabs: Boolean;
-      {Gets flag that indicates whether new snippets and categories are
-      displayed in new tabs in details pane.
-        @returns Flag value.
-      }
-    procedure SetShowNewSnippetsInNewTabs(const Value: Boolean);
-      {Sets flag that indicates whether new snippets and categories are
-      displayed in new tabs in details pane.
-        @param Value [in] New flag value.
-      }
 
-    ///  <summary>Gets heading colour for specified database.</summary>
+    ///  <summary>Sets default file extension / type to be used when writing
+    ///  code snippets to file.</summary>
+    ///  <remarks>Method of IPreferences.</remarks>
+    procedure SetSourceDefaultFileType(const Value: TSourceFileType);
+
+    ///  <summary>Gets current indicator of whether generated source is
+    ///  highlighted by default.</summary>
+    ///  <remarks>Method of IPreferences.</remarks>
+    function GetSourceSyntaxHilited: Boolean;
+
+    ///  <summary>Sets flag indicating whether generated source is highlighted
+    ///  by default.</summary>
+    ///  <remarks>Method of IPreferences.</remarks>
+    procedure SetSourceSyntaxHilited(const Value: Boolean);
+
+    ///  <summary>Gets measurement units used by application.</summary>
+    ///  <remarks>Method of IPreferences.</remarks>
+    function GetMeasurementUnits: TMeasurementUnits;
+
+    ///  <summary>Sets measurement units to be used by application.</summary>
+    ///  <remarks>Method of IPreferences.</remarks>
+    procedure SetMeasurementUnits(const Value: TMeasurementUnits);
+
+    ///  <summary>Gets startup state of overview tree view.</summary>
+    ///  <remarks>Method of IPreferences.</remarks>
+    function GetOverviewStartState: TOverviewStartState;
+
+    ///  <summary>Sets startup state of overview tree view.</summary>
+    ///  <remarks>Method of IPreferences.</remarks>
+    procedure SetOverviewStartState(const Value: TOverviewStartState);
+
+    ///  <summary>Gets flag that indicates whether empty sections are displayed
+    ///  in overview pane.</summary>
+    ///  <remarks>Method of IPreferences.</remarks>
+    function GetShowEmptySections: Boolean;
+
+    ///  <summary>Sets flag that indicates whether empty sections are displayed
+    ///  in overview pane.</summary>
+    ///  <remarks>Method of IPreferences.</remarks>
+    procedure SetShowEmptySections(const Value: Boolean);
+
+    ///  <summary>Gets flag that indicates whether new snippets and categories
+    ///  are displayed in new tabs in details pane.</summary>
+    ///  <remarks>Method of IPreferences.</remarks>
+    function GetShowNewSnippetsInNewTabs: Boolean;
+
+    ///  <summary>Sets flag that indicates whether new snippets and categories
+    ///  are displayed in new tabs in details pane.</summary>
+    ///  <remarks>Method of IPreferences.</remarks>
+    procedure SetShowNewSnippetsInNewTabs(const Value: Boolean);
+
+    ///  <summary>Gets heading colour used for snippets from a specified
+    ///  database.</summary>
     ///  <param name="UserDefined">Boolean [in] Required database: True for user
-    ///  database and False for main database.</param>
+    ///  database and False for inline database.</param>
     ///  <returns>TColor. Required colour.</returns>
     ///  <remarks>Method of IPreferences.</remarks>
     function GetDBHeadingColour(UserDefined: Boolean): TColor;
 
-    ///  <summary>Sets heading colour for specified database.</summary>
+    ///  <summary>Sets heading colour used for snippets from a specified
+    ///  database.</summary>
     ///  <param name="UserDefined">Boolean [in] Required database: True for user
-    ///  database and False for main database.</param>
+    ///  database and False for online database.</param>
     ///  <param name="Value">TColor [in] Required heading colour.</param>
     ///  <remarks>Method of IPreferences.</remarks>
     procedure SetDBHeadingColour(UserDefined: Boolean;
       const Value: TColor);
 
-    ///  <summary>Gets custom colours for headings for specified database.
-    ///  </summary>
+    ///  <summary>Gets custom colours available for headings for specified
+    ///  database.</summary>
     ///  <param name="UserDefined">Boolean [in] Required database: True for user
-    ///  database and False for main database.</param>
+    ///  database and False for online database.</param>
     ///  <returns>IStringList. String list containing custom colours.</returns>
     ///  <remarks>Method of IPreferences.</remarks>
     function GetDBHeadingCustomColours(UserDefined: Boolean): IStringList;
 
-    ///  <summary>Sets custom colours for headings for specified database.
-    ///  </summary>
+    ///  <summary>Sets custom colours available for headings for specified
+    ///  database.</summary>
     ///  <param name="UserDefined">Boolean [in] Required database: True for user
-    ///  database and False for main database.</param>
+    ///  database and False for online database.</param>
     ///  <param name="Value">IStringList [in] String list containing custom
-    ///  colours.</returns>
+    ///  colours.</param>
     ///  <remarks>Method of IPreferences.</remarks>
     procedure SetDBHeadingCustomColours(UserDefined: Boolean;
       Value: IStringList);
-    function GetPrinterOptions: TPrintOptions;
-      {Gets print options.
-        @return Print options.
-      }
-    procedure SetPrinterOptions(const Options: TPrintOptions);
-      {Sets default print options.
-        @param Options [in] New print options.
-      }
-    function GetPrinterPageMargins: TPageMargins;
-      {Gets default page margins.
-        @return Default page margins.
-      }
-    procedure SetPrinterPageMargins(const Margins: TPageMargins);
-      {Sets new default page margins.
-        @param Margins [in] New page margins.
-      }
-    function GetHiliteAttrs: IHiliteAttrs;
-      {Gets user defined syntax highlighter.
-        @return Current syntax highlighter attributes.
-      }
-    procedure SetHiliteAttrs(const Attrs: IHiliteAttrs);
-      {Sets new user defined syntax highlighter.
-        @param Attrs [in] New highlighter attributes.
-      }
 
-    ///  <summary>Gets object containing the attributes of the named user
+    ///  <summary>Gets default print options.</summary>
+    ///  <remarks>Method of IPreferences.</remarks>
+    function GetPrinterOptions: TPrintOptions;
+
+    ///  <summary>Sets default print options.</summary>
+    ///  <remarks>Method of IPreferences.</remarks>
+    procedure SetPrinterOptions(const Options: TPrintOptions);
+
+    ///  <summary>Gets default printer page margins.</summary>
+    ///  <remarks>Method of IPreferences.</remarks>
+    function GetPrinterPageMargins: TPageMargins;
+
+    ///  <summary>Sets new default printer page margins.</summary>
+    ///  <remarks>Method of IPreferences.</remarks>
+    procedure SetPrinterPageMargins(const Margins: TPageMargins);
+
+    ///  <summary>Gets current user defined syntax highlighter.</summary>
+    ///  <remarks>Method of IPreferences.</remarks>
+    function GetHiliteAttrs: IHiliteAttrs;
+
+    ///  <summary>Sets current user defined syntax highlighter.</summary>
+    ///  <remarks>Method of IPreferences.</remarks>
+    procedure SetHiliteAttrs(const Attrs: IHiliteAttrs);
+
+    ///  <summary>Gets object containing the attributes of all the named user
     ///  defined syntax highlighters.</summary>
     ///  <remarks>Method of IPreferences.</remarks>
     function GetNamedHiliteAttrs: INamedHiliteAttrs;
 
     ///  <summary>Stores a copy of the given object containing the attributes of
-    ///  the named user defined syntax highlighters.</summary>
+    ///  all the 'named' user defined syntax highlighters.</summary>
     ///  <remarks>Method of IPreferences.</remarks>
     procedure SetNamedHiliteAttrs(NamedHiliteAttrs: INamedHiliteAttrs);
 
-    function GetCustomHiliteColours: IStringList;
-      {Gets custom syntax highlighter colours.
-        @return String list containing custom colours.
-      }
-    procedure SetCustomHiliteColours(const Colours: IStringList);
-      {Sets new custom syntax highlighter colours.
-        @param Colours [in] String list defining new colours.
-      }
-    function GetWarnings: IWarnings;
-      {Gets information about warnings to be inhibited by code generator.
-        @return Interface to object containing information.
-      }
-    procedure SetWarnings(Warnings: IWarnings);
-      {Updates object that provides information about warnings to be inhibited
-      by code generator.
-        @param New warnings object.
-    }
-    function GetNewsAge: Integer;
-      {Gets maximum age of news items to be displayed.
-        @return Required age in days.
-      }
-    procedure SetNewsAge(const Age: Integer);
-      {Sets maximum age of news items to be displayed.
-        @param Age [in] Required age in days.
-      }
-
-    ///  <summary>Gets information about snippet detail page customisations.
+    ///  <summary>Gets custom colours available for syntax highlighter.
     ///  </summary>
+    ///  <remarks>Method of IPreferences.</remarks>
+    function GetCustomHiliteColours: IStringList;
+
+    ///  <summary>Sets custom colours available for syntax highlighter.
+    ///  </summary>
+    ///  <remarks>Method of IPreferences.</remarks>
+    procedure SetCustomHiliteColours(const Colours: IStringList);
+
+    ///  <summary>Gets object containing information about warnings to be
+    ///  enabled or disabled by code generator.</summary>
+    ///  <remarks>Method of IPreferences.</remarks>
+    function GetWarnings: IWarnings;
+
+    ///  <summary>Stores a copy of the object containing information about
+    ///  warnings to be enabled or disabled by code generator.</summary>
+    ///  <remarks>Method of IPreferences.</remarks>
+    procedure SetWarnings(Warnings: IWarnings);
+
+    ///  <summary>Gets maximum age of items to be read from news feed.</summary>
+    ///  <remarks>Method of IPreferences.</remarks>
+    function GetNewsAge: Integer;
+
+    ///  <summary>Sets maximum age of items to be read from news feed.</summary>
+    ///  <remarks>Method of IPreferences.</remarks>
+    procedure SetNewsAge(const Age: Integer);
+
+    ///  <summary>Gets information describing snippet detail page
+    ///  customisations.</summary>
     ///  <remarks>Method of IPreferences.</remarks>
     function GetPageStructures: TSnippetPageStructures;
 
@@ -521,27 +506,26 @@ type
     ///  <remarks>Method of IPreferences.</remarks>
     procedure SetPageStructures(PageStructures: TSnippetPageStructures);
 
-    { IAssignable method }
+    ///  <summary>Assigns the properties of the given object to this object.
+    ///  </summary>
+    ///  <exceptions>Raises EBug if Src does not support IPreferences.
+    ///  </exceptions>
+    ///  <remarks>Method of IAssignable</remarks>
     procedure Assign(const Src: IInterface);
-      {Assigns properties of a given object to this object.
-        @param Src [in] Object whose properties are to be copied.
-        @except Bug raised if Src does not support IPreferences.
-      }
+
   public
+    ///  <summary>Constructs a new object instance.</summary>
     constructor Create;
-      {Class constructor. Sets up object.
-      }
+    ///  <summary>Destroys object instance.</summary>
     destructor Destroy; override;
   end;
 
-  {
-  TPreferencesPersist:
-    Class that implements IPreferences interface and its property access
-    methods. Intended for use as a singleton that reads and writes preference
-    from and to persistent storage. Can clone itself as a non-persistent
-    temporary object containing all data. Can also copy data from such a cloned
-    object via Assign method.
-  }
+type
+  ///  <summary>Descendant class that adds the ability to persist preferences to
+  ///  storage.</summary>
+  ///  <remarks>Designed for use as a singleton with the ability to create
+  ///  non-persistent clones of itself that can be used for editing. Data from
+  ///  such clones can be assigned to the singleton.</remarks>
   TPreferencesPersist = class(TPreferences,
     IPreferences, IAssignable, IClonable
   )
@@ -556,38 +540,34 @@ type
       cNews = 'News';
       cDisplay = 'Display';
       cPageStructures = 'SnippetPageStructure';
-    class var fInstance: IPreferences;
-      {Stores reference to singleton instance of this class}
+    class var
+      ///  <summary>Stores reference to singleton instance of this class.
+      ///  </summary>
+      fInstance: IPreferences;
+  strict private
+    ///  <summary>Returns singleton instance initialised from persistent
+    ///  storage.</summary>
     class function GetInstance: IPreferences; static;
-      {Returns singleton IPreferences object initialised from persistent
-      storage.
-        @return Object instance.
-      }
   protected // do not make strict
-    { IClonable method }
+    ///  <summary>Creates a new non-persistent instance that is a copy of this
+    ///  object.</summary>
+    ///  <remarks>Method of IClonable.</remarks>
     function Clone: IInterface;
-      {Create a new instance of the object that is a non-persisting copy.
-        @return New object's IInterface interface.
-      }
   public
+    ///  <summary>Creates a new object instance and reads properties from
+    ///  persistent storage.</summary>
     constructor Create;
-      {Class constructor. Creates object and reads preferences from persistent
-      storage.
-      }
+    ///  <summary>Writes properties to persistent storage then destroys the
+    ///  instance.</summary>
     destructor Destroy; override;
-      {Class destructor. Saves preferences to persistent storage then tears down
-      object.
-      }
+    ///  <summary>Returns a reference to a singleton instance of the class.
+    ///  </summary>
     class property Instance: IPreferences
       read GetInstance;
-      {Reference to singleton instance of this class}
   end;
 
 
 function Preferences: IPreferences;
-  {Provides access to a singleton implementation a IPreferences.
-    @return Singleton object instance.
-  }
 begin
   Result := TPreferencesPersist.Instance;
 end;
@@ -595,10 +575,6 @@ end;
 { TPreferences }
 
 procedure TPreferences.Assign(const Src: IInterface);
-  {Assigns properties of a given object to this object.
-    @param Src [in] Object whose properties are to be copied.
-    @except Bug raised if Src does not support IPreferences.
-  }
 var
   SrcPref: IPreferences;  // IPreferences interface of Src
 begin
@@ -629,8 +605,6 @@ begin
 end;
 
 constructor TPreferences.Create;
-  {Class constructor. Sets up object.
-  }
 begin
   inherited Create;
   fHiliteAttrs := THiliteAttrsFactory.CreateDefaultAttrs;
@@ -650,9 +624,6 @@ begin
 end;
 
 function TPreferences.GetCustomHiliteColours: IStringList;
-  {Gets custom syntax highlighter colours.
-    @return String list containing custom colours.
-  }
 begin
   Result := fHiliteCustomColours;
 end;
@@ -669,17 +640,11 @@ begin
 end;
 
 function TPreferences.GetHiliteAttrs: IHiliteAttrs;
-  {Gets user defined syntax highlighter.
-    @return Current syntax highlighter attributes.
-  }
 begin
   Result := fHiliteAttrs;
 end;
 
 function TPreferences.GetMeasurementUnits: TMeasurementUnits;
-  {Gets measurement units used by application.
-    @return Current measurement units.
-  }
 begin
   Result := fMeasurementUnits;
 end;
@@ -690,17 +655,11 @@ begin
 end;
 
 function TPreferences.GetNewsAge: Integer;
-  {Gets maximum age of news items to be displayed.
-    @return Required age in days.
-  }
 begin
   Result := fNewsAge;
 end;
 
 function TPreferences.GetOverviewStartState: TOverviewStartState;
-  {Gets startup state of overview tree view.
-    @return Current startup state.
-  }
 begin
   Result := fOverviewStartState;
 end;
@@ -711,17 +670,11 @@ begin
 end;
 
 function TPreferences.GetPrinterOptions: TPrintOptions;
-  {Gets print options.
-    @return Print options.
-  }
 begin
   Result := fPrinterOptions;
 end;
 
 function TPreferences.GetPrinterPageMargins: TPageMargins;
-  {Gets default page margins.
-    @return Default page margins.
-  }
 begin
   Result := fPrinterPageMargins;
 end;
@@ -737,26 +690,16 @@ begin
 end;
 
 function TPreferences.GetSourceCommentStyle: TCommentStyle;
-  {Gets style of commenting used to describe snippets in generated code.
-    @return Current commenting style.
-  }
 begin
   Result := fSourceCommentStyle;
 end;
 
 function TPreferences.GetSourceDefaultFileType: TSourceFileType;
-  {Gets current default file extension / type used when writing code snippets to
-  file.
-    @return Current default file extension.
-  }
 begin
   Result := fSourceDefaultFileType;
 end;
 
 function TPreferences.GetSourceSyntaxHilited: Boolean;
-  {Gets current indicator of whether generated source is highlighted by default.
-    @return Current value indicating whether source is highlighted.
-  }
 begin
   Result := fSourceSyntaxHilited;
 end;
@@ -772,9 +715,6 @@ begin
 end;
 
 procedure TPreferences.SetCustomHiliteColours(const Colours: IStringList);
-  {Sets new custom syntax highlighter colours.
-    @param Colours [in] String list defining new colours.
-  }
 begin
   fHiliteCustomColours := Colours;
 end;
@@ -792,17 +732,11 @@ begin
 end;
 
 procedure TPreferences.SetHiliteAttrs(const Attrs: IHiliteAttrs);
-  {Sets new user defined syntax highlighter.
-    @param Attrs [in] New highlighter attributes.
-  }
 begin
   (fHiliteAttrs as IAssignable).Assign(Attrs);
 end;
 
 procedure TPreferences.SetMeasurementUnits(const Value: TMeasurementUnits);
-  {Sets measurement units to be used by application.
-    @param Value [in] Required measurement units.
-  }
 begin
   fMeasurementUnits := Value;
 end;
@@ -813,17 +747,11 @@ begin
 end;
 
 procedure TPreferences.SetNewsAge(const Age: Integer);
-  {Sets maximum age of news items to be displayed.
-    @param Age [in] Required age in days.
-  }
 begin
   fNewsAge := Age;
 end;
 
 procedure TPreferences.SetOverviewStartState(const Value: TOverviewStartState);
-  {Sets startup state of overview tree view.
-    @param Value [in] Required startup state.
-  }
 begin
   fOverviewStartState := Value;
 end;
@@ -835,17 +763,11 @@ begin
 end;
 
 procedure TPreferences.SetPrinterOptions(const Options: TPrintOptions);
-  {Sets default print options.
-    @param Options [in] New print options.
-  }
 begin
   fPrinterOptions := Options;
 end;
 
 procedure TPreferences.SetPrinterPageMargins(const Margins: TPageMargins);
-  {Sets new default page margins.
-    @param Margins [in] New page margins.
-  }
 begin
   fPrinterPageMargins := Margins;
 end;
@@ -861,26 +783,16 @@ begin
 end;
 
 procedure TPreferences.SetSourceCommentStyle(const Value: TCommentStyle);
-  {Sets style of commenting to be used describe snippets in generated code.
-    @param Value [in] Required commenting style.
-  }
 begin
   fSourceCommentStyle := Value;
 end;
 
 procedure TPreferences.SetSourceDefaultFileType(const Value: TSourceFileType);
-  {Sets default file extension / type to be used when writing code snippets to
-  file.
-    @param Value [in] Required default file extension.
-  }
 begin
   fSourceDefaultFileType := Value;
 end;
 
 procedure TPreferences.SetSourceSyntaxHilited(const Value: Boolean);
-  {Sets flag indicating whether generated source is highlighted by default.
-    @param Value [in] Flag indicating whether source is highlighted.
-  }
 begin
   fSourceSyntaxHilited := Value;
 end;
@@ -898,9 +810,6 @@ end;
 { TPreferencesPersist }
 
 function TPreferencesPersist.Clone: IInterface;
-  {Create a new instance of the object that is a non-persisting copy.
-    @return New object's IInterface interface.
-  }
 var
   NewPref: IPreferences;  // reference to new object's IPreferences interface
 begin
@@ -931,9 +840,6 @@ begin
 end;
 
 constructor TPreferencesPersist.Create;
-  {Class constructor. Creates object and reads preferences from persistent
-  storage.
-  }
 var
   Storage: ISettingsSection;  // object used to access persistent storage
 const
@@ -1027,9 +933,6 @@ begin
 end;
 
 destructor TPreferencesPersist.Destroy;
-  {Class destructor. Saves preferences to persistent storage then tears down
-  object.
-  }
 var
   Storage: ISettingsSection;  // object used to access persistent storage
 begin
@@ -1121,9 +1024,6 @@ begin
 end;
 
 class function TPreferencesPersist.GetInstance: IPreferences;
-  {Returns singleton IPreferences object initialised from persistent storage.
-    @return Object instance.
-  }
 begin
   if not Assigned(fInstance) then
     fInstance := TPreferencesPersist.Create;
