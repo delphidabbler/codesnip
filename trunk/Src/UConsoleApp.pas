@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2006-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2006-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -90,7 +90,7 @@ type
         @param Value Required time in miliseconds. If 0 then property's default
           value is used.
       }
-  protected
+  strict protected
     function StartProcess(const CmdLine, CurrentDir: string;
       out ProcessInfo: TProcessInformation): Boolean;
       {Starts a process and gets information about it from OS.
