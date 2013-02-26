@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2007-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2007-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -118,7 +118,11 @@ type
         @return Singleton instance.
       }
     function RunSearch(Search: ISearch): Boolean;
-  protected // do not make strict
+  strict protected
+    procedure Initialize; override;
+    procedure Finalize; override;
+  public
+    class property Instance: IQuery read GetInstance;
     { IQuery methods }
     function ApplySearch(Search: ISearch; const Refine: Boolean): Boolean;
       {Runs query by applying a search to the whole database. If search succeeds
@@ -161,11 +165,6 @@ type
         @param SnipList [in] Object to receive snippet list. List is emptied
           before snippets are copied in.
       }
-  strict protected
-    procedure Initialize; override;
-    procedure Finalize; override;
-  public
-    class property Instance: IQuery read GetInstance;
   end;
 
 function Query: IQuery;

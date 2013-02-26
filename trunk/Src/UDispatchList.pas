@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2007-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2007-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -64,7 +64,13 @@ type
   )
   strict private
     var fList: TList<IDispatch>;  // Dispatch object list
-  protected
+  public
+    constructor Create;
+      {Object constructor. Sets up object.
+      }
+    destructor Destroy; override;
+      {Object destructor. Tears down object.
+      }
     { IDispatchList methods }
     function Add(const Obj: IDispatch): Integer;
       {Adds an object to the list.
@@ -83,13 +89,6 @@ type
     function GetEnumerator: TEnumerator<IDispatch>;
       {Creates an enumerator for the dispatch list.
         @return Enumerator instance.
-      }
-  public
-    constructor Create;
-      {Object constructor. Sets up object.
-      }
-    destructor Destroy; override;
-      {Object destructor. Tears down object.
       }
   end;
 

@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -46,7 +46,7 @@ type
       {Loads document into memo control.
         @param DocContent [in] Plain text document to be displayed.
       }
-  protected
+  public
     { IPreview: Partially implemented in base class }
     procedure SetPopupMenu(const Menu: TPopupMenu);
       {Sets pop up menu to be displayed when memo control right clicked.

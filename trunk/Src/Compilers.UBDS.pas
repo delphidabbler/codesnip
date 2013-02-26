@@ -44,7 +44,11 @@ type
     ///  <summary>Returns any namespace parameter to be passed to compiler on
     ///  command line.</summary>
     function NamespaceParam: string; override;
-  protected
+
+  public
+    ///  <summary>Constructs new compiler instance for given compiler ID.
+    ///  </summary>
+    constructor Create(const Id: TCompilerID);
 
     ///  <summary>Returns reference to a new instance of this object that is an
     ///  exact copy of this instance.</summary>
@@ -82,11 +86,6 @@ type
     ///  <para>Method of ICompiler.</para>
     ///  </remarks>
     procedure SetRTLNamespaces(const Namespaces: string); override;
-  public
-
-    ///  <summary>Constructs new compiler instance for given compiler ID.
-    ///  </summary>
-    constructor Create(const Id: TCompilerID);
   end;
 
 

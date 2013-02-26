@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -67,8 +67,8 @@ type
       {Action that causes a check for program updates to be performed}
     fAboutBoxAction: TBasicAction;
       {Action that causes About box to be displayed}
-  protected // do not make strict
-    { INotifier }
+  public
+    { INotifier methods }
     procedure UpdateDbase;
       {Updates database.
       }
@@ -120,7 +120,7 @@ type
     procedure ShowAboutBox;
       {Displays the program's About box.
       }
-    { ISetActions }
+    { ISetActions methods }
     procedure SetUpdateDbaseAction(const Action: TBasicAction);
       {Sets action triggered when user requests database update.
         @param Action [in] Required action.

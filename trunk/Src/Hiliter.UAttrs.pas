@@ -94,7 +94,12 @@ type
       cDefFontName = 'Courier New';
       ///  <summary>Default font size.</summary>
       cDefFontSize = 9;
-  protected // do not make strict
+  public
+    ///  <summary>Creates a new instance of the class with default values.
+    ///  </summary>
+    constructor Create;
+    ///  <summary>Destroys this instance.</summary>
+    destructor Destroy; override;
     ///  <summary>Gets name of highlighter font.</summary>
     ///  <remarks>Method of IHiliteAttrs.</remarks>
     function GetFontName: string;
@@ -123,12 +128,6 @@ type
     ///  <para>Method of IAssignable.</para>
     ///  </remarks>
     procedure Assign(const Src: IInterface);
-  public
-    ///  <summary>Creates a new instance of the class with default values.
-    ///  </summary>
-    constructor Create;
-    ///  <summary>Destroys this instance.</summary>
-    destructor Destroy; override;
   end;
 
 type
@@ -146,7 +145,10 @@ type
       fForeColor: TColor;
       ///  <summary>Font style of the source code element.</summary>
       fFontStyle: TFontStyles;
-  protected // do not make strict
+  public
+    ///  <summary>Creates a new instance of the class with default values.
+    ///  </summary>
+    constructor Create;
     ///  <summary>Checks if the element's attributes are "null", i.e. all
     ///  properties default values.</summary>
     ///  <remarks>
@@ -176,10 +178,6 @@ type
     ///  <para>Method of IAssignable.</para>
     ///  </remarks>
     procedure Assign(const Src: IInterface);
-  public
-    ///  <summary>Creates a new instance of the class with default values.
-    ///  </summary>
-    constructor Create;
   end;
 
 type

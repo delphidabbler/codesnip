@@ -36,7 +36,7 @@ type
   TPersistCompilers = class(TInterfacedObject,
     IPersistCompilers
   )
-  protected
+  public
     { IPersistCompilers methods }
     procedure Save(const Compilers: ICompilers);
       {Saves a list of compilers to storage.
@@ -105,7 +105,14 @@ type
   strict private
     var
       fCompilers: TList<ICompiler>; // List of compiler objects
-  protected // do not make strict
+  public
+    constructor Create;
+      {Object constructor. Creates object containing compiler instances for all
+      supported compilers.
+      }
+    destructor Destroy; override;
+      {Object destructor. Tears down object.
+      }
     { IAssignable method }
     procedure Assign(const Src: IInterface);
       {Assigns properties of a given object to this object.
@@ -134,14 +141,6 @@ type
     function GetEnumerator: TEnumerator<ICompiler>;
       {Creates an enumerator for this object.
         @return Reference to new enumerator.
-      }
-  public
-    constructor Create;
-      {Object constructor. Creates object containing compiler instances for all
-      supported compilers.
-      }
-    destructor Destroy; override;
-      {Object destructor. Tears down object.
       }
   end;
 

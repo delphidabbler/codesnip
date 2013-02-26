@@ -334,7 +334,14 @@ type
       strict private
         fKind: TDatabaseChangeEventKind;  // Kind of event
         fInfo: TObject;                   // Extra info about event
-      protected // do not make strict
+      public
+        constructor Create(const Kind: TDatabaseChangeEventKind;
+          const Info: TObject = nil);
+          {Constructor. Creates an event information object.
+            @param Kind [in] Kind of event.
+            @param Info [in] Reference to further information about the event.
+               May be nil if event doesn't have additional information.
+          }
         { IDatabaseChangeEventInfo methods }
         function GetKind: TDatabaseChangeEventKind;
           {Gets kind (type) of event.
@@ -343,14 +350,6 @@ type
         function GetInfo: TObject;
           {Gets additional information about event.
             @return Object that provides required information.
-          }
-      public
-        constructor Create(const Kind: TDatabaseChangeEventKind;
-          const Info: TObject = nil);
-          {Constructor. Creates an event information object.
-            @param Kind [in] Kind of event.
-            @param Info [in] Reference to further information about the event.
-               May be nil if event doesn't have additional information.
           }
       end;
     procedure TriggerEvent(const Kind: TDatabaseChangeEventKind;
@@ -397,7 +396,13 @@ type
         @param ASnippet [in] The cross referenced snippet.
         @param List [in] Receives list of cross referencing snippets.
       }
-  protected
+  public
+    constructor Create;
+      {Constructor. Sets up new empty object.
+      }
+    destructor Destroy; override;
+      {Destructor. Tidies up and tears down object.
+      }
     { IDatabase methods }
     function GetCategories: TCategoryList;
       {Gets list of all categories in database.
@@ -511,13 +516,6 @@ type
       }
     procedure Save;
       {Saves user defined snippets and all categories to user database.
-      }
-  public
-    constructor Create;
-      {Constructor. Sets up new empty object.
-      }
-    destructor Destroy; override;
-      {Destructor. Tidies up and tears down object.
       }
   end;
 

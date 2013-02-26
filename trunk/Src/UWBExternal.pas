@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -47,8 +47,11 @@ type
     procedure HandleException;
       {Gets application to handle current exception.
       }
-  protected // do not make strict
-    { IWBExternal11: defined in type library }
+  public
+    constructor Create;
+      {Object constructor. Sets up object using embedded type library.
+      }
+    { IWBExternal11 methods: defined in type library }
     procedure UpdateDbase; safecall;
       {Updates database from internet.
       }
@@ -88,14 +91,10 @@ type
     procedure ShowAboutBox; safecall;
       {Displays the program's About box.
       }
-    { ISetNotifier }
+    { ISetNotifier methods }
     procedure SetNotifier(const Notifier: INotifier);
       {Records the notifier object that is called in response to user input.
         @param Notifier [in] Notifier object.
-      }
-  public
-    constructor Create;
-      {Class constructor. Sets up object using embedded type library.
       }
   end;
 
@@ -135,7 +134,7 @@ begin
 end;
 
 constructor TWBExternal.Create;
-  {Class constructor. Sets up object using embedded type library.
+  {Object constructor. Sets up object using embedded type library.
   }
 var
   TypeLib: ITypeLib;    // type library

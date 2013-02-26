@@ -93,7 +93,7 @@ type
         @param AForm [in] Form to be aligned.
         @return Required bounds rectangle.
       }
-  protected // do not make strict
+  public
     { IFormAligner method }
     procedure AlignForm(const AForm: TCustomForm);
       {Aligns splash form over main form.

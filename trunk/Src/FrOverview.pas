@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -159,7 +159,14 @@ type
       {Sends a notification that overview display style tab has changed as a
       result.
       }
-  protected // interface implementations - do not make strict
+  public
+    constructor Create(AOwner: TComponent); override;
+      {Class constructor. Sets up object.
+        @param AOwner [in] Component that owns frame.
+      }
+    destructor Destroy; override;
+      {Class destructor. Tears down object.
+      }
     { ITabbedDisplayMgr }
     procedure SelectTab(const TabIdx: Integer);
       {Selects tab with specified index.
@@ -223,14 +230,6 @@ type
     property CommandBars: TCommandBarMgr
       read fCommandBars implements ICommandBarConfig;
       {References contained object implementing ICommandBarConfig interfaces}
-  public
-    constructor Create(AOwner: TComponent); override;
-      {Class constructor. Sets up object.
-        @param AOwner [in] Component that owns frame.
-      }
-    destructor Destroy; override;
-      {Class destructor. Tears down object.
-      }
   end;
 
 

@@ -321,7 +321,13 @@ type
       ///  <summary>Information describing snippet detail page customisations.
       ///  </summary>
       fPageStructures: TSnippetPageStructures;
-  protected // do not make strict
+
+  public
+    ///  <summary>Constructs a new object instance.</summary>
+    constructor Create;
+
+    ///  <summary>Destroys object instance.</summary>
+    destructor Destroy; override;
 
     ///  <summary>Gets style of commenting used to describe snippets in
     ///  generated code.</summary>
@@ -513,11 +519,6 @@ type
     ///  <remarks>Method of IAssignable</remarks>
     procedure Assign(const Src: IInterface);
 
-  public
-    ///  <summary>Constructs a new object instance.</summary>
-    constructor Create;
-    ///  <summary>Destroys object instance.</summary>
-    destructor Destroy; override;
   end;
 
 type
@@ -548,11 +549,6 @@ type
     ///  <summary>Returns singleton instance initialised from persistent
     ///  storage.</summary>
     class function GetInstance: IPreferences; static;
-  protected // do not make strict
-    ///  <summary>Creates a new non-persistent instance that is a copy of this
-    ///  object.</summary>
-    ///  <remarks>Method of IClonable.</remarks>
-    function Clone: IInterface;
   public
     ///  <summary>Creates a new object instance and reads properties from
     ///  persistent storage.</summary>
@@ -560,6 +556,10 @@ type
     ///  <summary>Writes properties to persistent storage then destroys the
     ///  instance.</summary>
     destructor Destroy; override;
+    ///  <summary>Creates a new non-persistent instance that is a copy of this
+    ///  object.</summary>
+    ///  <remarks>Method of IClonable.</remarks>
+    function Clone: IInterface;
     ///  <summary>Returns a reference to a singleton instance of the class.
     ///  </summary>
     class property Instance: IPreferences

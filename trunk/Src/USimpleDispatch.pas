@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2007-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2007-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -89,6 +89,7 @@ type
           False if VType not varUnknowm or varDispatch, parameter is not
           required VType or parameter does not support the required interface.
       }
+  public
     { IDispatch methods }
     function GetIDsOfNames(const IID: TGUID; Names: Pointer;
       NameCount, LocaleID: Integer; DispIDs: Pointer): HResult; stdcall;
