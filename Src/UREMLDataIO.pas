@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2008-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2008-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -77,20 +77,19 @@ type
         @return True if entity information was provided or False to indicate no
           more entities.
       }
-  protected // do not make strict
-    { IActiveTextParser method }
-    procedure Parse(const Markup: string; const ActiveText: IActiveText);
-      {Parses markup and updates active text object with details.
-        @param Markup [in] Markup containing definition of active text. Must be
-          in format understood by parser.
-        @param ActiveText [in] Active text object updated by parser.
-      }
   public
     constructor Create;
       {Class constructor. Sets up object.
       }
     destructor Destroy; override;
       {Class destructor. Finalises object.
+      }
+    { IActiveTextParser method }
+    procedure Parse(const Markup: string; const ActiveText: IActiveText);
+      {Parses markup and updates active text object with details.
+        @param Markup [in] Markup containing definition of active text. Must be
+          in format understood by parser.
+        @param ActiveText [in] Active text object updated by parser.
       }
   end;
 

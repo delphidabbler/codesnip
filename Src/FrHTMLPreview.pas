@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -39,7 +39,7 @@ type
       {Adds body margin to default style sheet.
         @param CSSBuilder [in] Object used to construct the CSS.
       }
-  protected // do not make strict
+  public
     { IPreview }
     procedure Display(const DocContent: TEncodedData);
       {Displays document in preview dialog box.

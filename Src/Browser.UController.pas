@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -54,11 +54,6 @@ type
         @param Reference to object providing OLE container. May be Self to
           register this object as OLE container or nil to unregister.
       }
-  protected
-    { IOleClientSite }
-    property OleClientSite: TOleClientSite
-      read fOleClientSite implements IOleClientSite;
-      {References aggregated object implementing IOleClientSite interface}
   public
     constructor Create(const WebBrowser: TWebBrowser);
       {Object constructor. Sets up object as container for a browser control.
@@ -75,6 +70,10 @@ type
       read fUIMgr implements IDocHostUIHandler;
       {Object that customises UI and implement's object IDocHostUIHandler
       interface}
+    { IOleClientSite method}
+    property OleClientSite: TOleClientSite
+      read fOleClientSite implements IOleClientSite;
+      {References aggregated object implementing IOleClientSite interface}
   end;
 
 

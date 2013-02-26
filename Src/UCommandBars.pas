@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2009-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2009-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -172,7 +172,20 @@ type
     procedure UpdateImageLists;
       {Updates image list used by with all managed command bars.
       }
-  protected // do not make strict
+  public
+    constructor Create(const Controller: IInterface);
+      {Constructor. Creates contained object.
+        @param Controller [in] IInterface reference to containing object.
+      }
+    destructor Destroy; override;
+      {Destructor. Tears down object.
+      }
+    procedure AddCommandBar(const ID: TCommandBarID;
+      const CommandBar: TCommandBarWrapper);
+      {Adds a new command bar to command bar manager.
+        @param ID [in] ID of command bar.
+        @param CommandBar [in] command bar object to be added.
+      }
     { ICommandBarConfig methods }
     procedure AddAction(const Action: TCustomAction;
       const ID: TCommandBarID); overload;
@@ -190,20 +203,6 @@ type
     procedure SetImages(const Images: TCustomImageList); virtual;
       {Specifies image list to be used by all command bars.
         @param Images [in] Image list to be used.
-      }
-  public
-    constructor Create(const Controller: IInterface);
-      {Constructor. Creates contained object.
-        @param Controller [in] IInterface reference to containing object.
-      }
-    destructor Destroy; override;
-      {Destructor. Tears down object.
-      }
-    procedure AddCommandBar(const ID: TCommandBarID;
-      const CommandBar: TCommandBarWrapper);
-      {Adds a new command bar to command bar manager.
-        @param ID [in] ID of command bar.
-        @param CommandBar [in] command bar object to be added.
       }
   end;
 

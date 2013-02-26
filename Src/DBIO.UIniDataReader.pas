@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -127,7 +127,23 @@ type
     ///  comma separated list of references.</param>
     ///  <returns>IStringList containing names of referenced items.</returns>
     function GetSnippetReferences(const Snippet, RefName: string): IStringList;
-  protected // do not make strict
+  strict protected
+    ///  <summary>
+    ///  Extracts comma delimited text fields into a string list.
+    ///  </summary>
+    ///  <param name="CommaStr">string [in] Comma delimited text.</param>
+    ///  <returns>IStringList containing fields.</returns>
+    class function CommaStrToStrings(const CommaStr: string): IStringList;
+  public
+    ///  <summary>
+    ///  Object constructor. Checks if database exists and sets up indices.
+    ///  </summary>
+    ///  <param name="DBDir">string [in] Directory containing database.</param>
+    constructor Create(const DBDir: string);
+    ///  <summary>
+    ///  Object destructor. Tears down object.
+    ///  </summary>
+    destructor Destroy; override;
     { IDataReader methods }
     ///  <summary>
     ///  Checks if the database exists.
@@ -181,23 +197,6 @@ type
     ///  <param name="Snippet">string [in] Name of snippet.</param>
     ///  <returns>IStringList containing unit names.</returns>
     function GetSnippetUnits(const Snippet: string): IStringList;
-  strict protected
-    ///  <summary>
-    ///  Extracts comma delimited text fields into a string list.
-    ///  </summary>
-    ///  <param name="CommaStr">string [in] Comma delimited text.</param>
-    ///  <returns>IStringList containing fields.</returns>
-    class function CommaStrToStrings(const CommaStr: string): IStringList;
-  public
-    ///  <summary>
-    ///  Object constructor. Checks if database exists and sets up indices.
-    ///  </summary>
-    ///  <param name="DBDir">string [in] Directory containing database.</param>
-    constructor Create(const DBDir: string);
-    ///  <summary>
-    ///  Object destructor. Tears down object.
-    ///  </summary>
-    destructor Destroy; override;
   end;
 
 

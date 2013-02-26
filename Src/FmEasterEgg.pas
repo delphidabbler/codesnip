@@ -45,7 +45,8 @@ type
         Class that can centre this form over the owning control.
       }
       TAligner = class(TInterfacedObject, IFormAligner)
-      protected // do not make strict
+      public
+        { IFormAligner method }
         procedure AlignForm(const AForm: TCustomForm);
           {Aligns easter eff form over main form.
             @param AForm [in] Form to be aligned.

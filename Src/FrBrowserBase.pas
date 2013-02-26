@@ -129,25 +129,6 @@ type
       const Line: Integer; var Handled: Boolean); virtual;
     ///  <summary>Web browser controller object.</summary>
     property WBController: TWBController read fWBController;
-  protected // do not make strict
-    ///  <summary>Checks if browser control is currently active.</summary>
-    ///  <remarks>Implements a method of IWBInfo.</remarks>
-    function IsBrowserActive: Boolean;
-    ///  <summary>Checks whether text can be copied to clipboard from browser
-    ///  control.</summary>
-    ///  <remarks>Implements a method of IClipboardMgr</remarks>
-    function CanCopy: Boolean;
-    ///  <summary>Copies selected text from browser control to clipboard.
-    ///  </summary>
-    ///  <remarks>Implements a method of IClipboardMgr.</remarks>
-    procedure CopyToClipboard;
-    ///  <summary>Checks whether text can be selected in browser control.
-    ///  </summary>
-    ///  <remarks>Implements a method of ISelectionMgr.</remarks>
-    function CanSelectAll: Boolean;
-    ///  <summary>Selects all text in browser control.</summary>
-    ///  <remarks>Implements a method of ISelectionMgr.</remarks>
-    procedure SelectAll;
   public
     ///  <summary>Creates frame with given owner and creates and initialises
     ///  browser controller.</summary>
@@ -161,6 +142,24 @@ type
     ///  point.</summary>
     ///  <remarks>Method of IPopupMenu.</remarks>
     procedure Popup(const Pt: TPoint);
+    ///  <summary>Checks if browser control is currently active.</summary>
+    ///  <remarks>Method of IWBInfo.</remarks>
+    function IsBrowserActive: Boolean;
+    ///  <summary>Checks whether text can be copied to clipboard from browser
+    ///  control.</summary>
+    ///  <remarks>Method of IClipboardMgr</remarks>
+    function CanCopy: Boolean;
+    ///  <summary>Copies selected text from browser control to clipboard.
+    ///  </summary>
+    ///  <remarks>Method of IClipboardMgr.</remarks>
+    procedure CopyToClipboard;
+    ///  <summary>Checks whether text can be selected in browser control.
+    ///  </summary>
+    ///  <remarks>Method of ISelectionMgr.</remarks>
+    function CanSelectAll: Boolean;
+    ///  <summary>Selects all text in browser control.</summary>
+    ///  <remarks>Method of ISelectionMgr.</remarks>
+    procedure SelectAll;
     ///  <summary>Event triggerd when default CSS is required by browser
     ///  control.</summary>
     property OnBuildCSS: TBrowserBuildCSSEvent

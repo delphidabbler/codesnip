@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2007-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2007-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -36,7 +36,8 @@ type
   TNulAligner = class(TInterfacedObject,
     IFormAligner
   )
-  protected
+  public
+    {Method of IFormAligner}
     procedure AlignForm(const AForm: TCustomForm);
       {Does nothing.
         @param AForm [in] Not used.

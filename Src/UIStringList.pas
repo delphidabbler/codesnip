@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2007-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2007-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -166,7 +166,41 @@ type
     var
       fStrings: TStringList;
         {Stores string list}
-  protected
+  public
+    constructor Create; overload;
+      {Class constructor. Creates new empty list.
+      }
+    constructor Create(const Strs: TStrings); overload;
+      {Class constructor. Creates new list containing specified strings.
+        @param Strs [in] List of strings to be stored in list.
+      }
+    constructor Create(const Strs: IStringList); overload;
+      {Class constructor. Creates new list containing strings from another
+      IStringList instance.
+        @param Strs [in] List of strings to be stored in list.
+      }
+    constructor Create(const Str: string); overload;
+      {Class constructor. Creates new list containing a single string.
+        @param Str [in] String to be included in list.
+      }
+    constructor Create(const Str, Delim: string; const AllowEmpty: Boolean;
+      const Trim: Boolean = False); overload;
+      {Class constructor. Creates new list containing strings split at a
+      delimiter.
+        @param Str [in] String to be split.
+        @param Delim [in] String that delimits components of string.
+        @param AllowEmpty [in] Determines whether empty components are stored in
+          list (True) or ignored (False).
+        @param Trim [in] Determines whether strings are trimmed of trailing and
+          leading spaces before adding to list.
+      }
+    constructor Create(const Strs: array of string); overload;
+      {Class constructor. Creates new list containing strings from array.
+        @param Strs [in] Array of strings to be included in list.
+      }
+    destructor Destroy; override;
+      {Class destructor. Tears down object.
+      }
     { IStringList methods }
     function Add(const Str: string): Integer; overload;
       {Adds a string to end of list.
@@ -291,41 +325,6 @@ type
       {Creates a new instance of the object that is an extact copy of this
       instance.
         @return New object's IInterface interface.
-      }
-  public
-    constructor Create; overload;
-      {Class constructor. Creates new empty list.
-      }
-    constructor Create(const Strs: TStrings); overload;
-      {Class constructor. Creates new list containing specified strings.
-        @param Strs [in] List of strings to be stored in list.
-      }
-    constructor Create(const Strs: IStringList); overload;
-      {Class constructor. Creates new list containing strings from another
-      IStringList instance.
-        @param Strs [in] List of strings to be stored in list.
-      }
-    constructor Create(const Str: string); overload;
-      {Class constructor. Creates new list containing a single string.
-        @param Str [in] String to be included in list.
-      }
-    constructor Create(const Str, Delim: string; const AllowEmpty: Boolean;
-      const Trim: Boolean = False); overload;
-      {Class constructor. Creates new list containing strings split at a
-      delimiter.
-        @param Str [in] String to be split.
-        @param Delim [in] String that delimits components of string.
-        @param AllowEmpty [in] Determines whether empty components are stored in
-          list (True) or ignored (False).
-        @param Trim [in] Determines whether strings are trimmed of trailing and
-          leading spaces before adding to list.
-      }
-    constructor Create(const Strs: array of string); overload;
-      {Class constructor. Creates new list containing strings from array.
-        @param Strs [in] Array of strings to be included in list.
-      }
-    destructor Destroy; override;
-      {Class destructor. Tears down object.
       }
   end;
 

@@ -272,6 +272,7 @@ type
         @param SubSection [in] Name of any subsection ('' if none).
         @return Name of required section.
       }
+  public
     { ISettings methods }
     function ReadSection(const Section: TSettingsSectionId;
       const SubSection: string = ''): ISettingsSection;
@@ -302,7 +303,16 @@ type
     fSectionName: string;         // Name of section
     fStorage: TSettingsStorageId; // Id of storage to be used
     fValues: TStringList;         // Stores section's data as name=value pairs
-  protected
+  public
+    constructor Create(const Section: string;
+      const Storage: TSettingsStorageId);
+      {Class constructor. Creates object encapsulating empty section.
+        @param Section [in] Name of section.
+        @param Storage [in] Identifies storage to be used.
+      }
+    destructor Destroy; override;
+      {Class destructor. Tears down object.
+      }
     { ISettingsSection methods }
     function GetSectionName: string;
       {Gets name of section this object represents.
@@ -389,16 +399,6 @@ type
           of the string list entries. It must contain just one %d specifier that
           is replaced by the item number.
         @param Value [in] String list to be stored.
-      }
-  public
-    constructor Create(const Section: string;
-      const Storage: TSettingsStorageId);
-      {Class constructor. Creates object encapsulating empty section.
-        @param Section [in] Name of section.
-        @param Storage [in] Identifies storage to be used.
-      }
-    destructor Destroy; override;
-      {Class destructor. Tears down object.
       }
   end;
 

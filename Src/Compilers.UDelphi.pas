@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -47,6 +47,11 @@ type
       recorded.
         @return Name of key.
       }
+  public
+    constructor Create(const Ver: TCompilerID);
+      {Class constructor. Creates object for a classic Delphi version.
+        @param Ver [in] Version of Delphi.
+      }
     { IClonable }
     function Clone: IInterface;
       {Create a new instance of the object that is an extact copy and return it.
@@ -60,11 +65,6 @@ type
     function GetIDString: string; override;
       {Provides a non-localisable string that identifies the compiler.
         @return Compiler id string.
-      }
-  public
-    constructor Create(const Ver: TCompilerID);
-      {Class constructor. Creates object for a classic Delphi version.
-        @param Ver [in] Version of Delphi.
       }
   end;
 

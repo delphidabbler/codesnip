@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2008-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2008-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -27,33 +27,27 @@ uses
 
 type
 
-  ///  <summary>
-  ///  Class that parses markup used in Credits element read from snippets data
-  ///  files. Markup is translated into active text.
-  ///  </summary>
-  ///  <remarks>
-  ///  The Credits element may occur in main database files and v1 of the user
-  ///  database and export files.
-  ///  </remarks>
+  ///  <summary>Class that parses markup used in Credits element read from
+  ///  snippets data files. Markup is translated into active text.</summary>
+  ///  <remarks>The Credits element may occur in main database files and v1 of
+  ///  the user database and export files.</remarks>
   TSnippetCreditsParser = class(TInterfacedObject, IActiveTextParser)
   strict private
     var
       ///  <summary>URL to be used in any link contained in markup.</summary>
       fURL: string;
-  protected // do not make strict
-    ///  <summary>Parses markup and updates active text object.
-    ///  </summary>
+  public
+    ///  <summary>Object constructor. Sets up object.</summary>
+    ///  <param name="URL">string [in] URL to be used in any hyperlinks defined
+    ///  by Credit markup.</param>
+    constructor Create(const URL: string);
+    ///  <summary>Parses markup and updates active text object.</summary>
     ///  <param name="Markup">string [in] Markup containing definition of active
     ///  text. Must be valid Credits element markup.</param>
     ///  <param name="ActiveText">IActiveText [in] Active text object updated by
     ///  parser.</param>
     ///  <remarks>Implements IActiveTextParser.Parse.</remarks>
     procedure Parse(const Markup: string; const ActiveText: IActiveText);
-  public
-    ///  <summary>Object constructor. Sets up object.</summary>
-    ///  <param name="URL">string [in] URL to be used in any hyperlinks defined
-    ///  by Credit markup.</param>
-    constructor Create(const URL: string);
   end;
 
 

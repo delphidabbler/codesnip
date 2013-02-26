@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2007-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2007-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -40,16 +40,18 @@ type
     class var
       /// <summary>Static image list.</summary>
       fImages: TGIFImageList;
-  strict protected
-    ///  <summary>Sets image list to be used by all command bars to given image
-    ///  list.</summary>
-    ///  <remarks>Assigns images from Images to static image list.</remarks>
-    procedure SetImages(const Images: TCustomImageList); override;
   public
     ///  <summary>Creates empty static image list.</summary>
     class constructor Create;
     ///  <summary>Frees static image list.</summary>
     class destructor Destroy;
+    ///  <summary>Sets image list to be used by all command bars to given image
+    ///  list.</summary>
+    ///  <remarks>
+    ///  <para>Assigns images from Images to static image list.</para>
+    ///  <para>Method of ICommandBarConfig.</para>
+    ///  </remarks>
+    procedure SetImages(const Images: TCustomImageList); override;
   end;
 
 type

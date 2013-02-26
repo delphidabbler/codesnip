@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2007-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2007-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -123,7 +123,12 @@ type
       {Returns singletion IPrintInfo object initialised from persistent storage.
         @return Object instance.
       }
-  protected // do not make strict
+  strict protected
+    ///  <summary>Initialises singleton object on creation.</summary>
+    procedure Initialize; override;
+  public
+    class property Instance: IPrintInfo read GetInstance;
+      {Reference to singleton instance of this class}
     { IPrintInfo methods }
     procedure LoadDefaults;
       {Loads default property values from user preferences.
@@ -144,13 +149,6 @@ type
       {Sets print options.
         @param Options [in] New options.
       }
-  strict protected
-    ///  <summary>Initialises singleton object on creation.</summary>
-    procedure Initialize; override;
-  public
-    class property Instance: IPrintInfo
-      read GetInstance;
-      {Reference to singleton instance of this class}
   end;
 
 

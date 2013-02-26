@@ -94,8 +94,17 @@ type
     ///  <remarks>This version returns the empty string. Sub-classes that
     ///  generate the parameter should override.</remarks>
     function NamespaceParam: string; virtual;
-  protected
-    { ICompiler methods }
+
+  public
+    ///  <summary>Constructs and initialises an object instance.</summary>
+    constructor Create;
+
+    ///  <summary>Constructs an object instance that is a clone of the given
+    ///  compiler object.</summary>
+    constructor CreateCopy(const Obj: TCompilerBase);
+
+    ///  <summary>Destroys an object instance.</summary>
+    destructor Destroy; override;
 
     ///  <summary>Returns the human readable name of the compiler.</summary>
     ///  <remarks>Method of ICompiler.</remarks>
@@ -283,17 +292,6 @@ type
     ///  <para>Method of ICompiler.</para>
     ///  </remarks>
     function GetLastCompileResult: TCompileResult;
-  public
-
-    ///  <summary>Constructs and initialises an object instance.</summary>
-    constructor Create;
-
-    ///  <summary>Constructs an object instance that is a clone of the given
-    ///  compiler object.</summary>
-    constructor CreateCopy(const Obj: TCompilerBase);
-
-    ///  <summary>Destroys an object instance.</summary>
-    destructor Destroy; override;
   end;
 
 type

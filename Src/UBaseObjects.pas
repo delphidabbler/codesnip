@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -130,7 +130,7 @@ type
     code of TInterfacedObject is redundant when reference counting not used.
   }
   TNonRefCountedObject = class(TObject, IInterface)
-  protected
+  public
     { IInterface methods }
     function QueryInterface(const IID: TGUID; out Obj): HResult; stdcall;
       {Checks the specified interface is supported by this object. If so
@@ -172,7 +172,7 @@ type
         @return Required IInterface reference. This is the container object if
           aggregated or Self if stand-alone.
       }
-  protected
+  public
     { IInterface redefinitions }
     function QueryInterface(const IID: TGUID; out Obj): HResult; stdcall;
       {Checks whether the specified interface is supported. If so reference to
