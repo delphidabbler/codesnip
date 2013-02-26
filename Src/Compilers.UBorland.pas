@@ -43,7 +43,7 @@ type
         @param RootKey [in] Given registry root key.
         @return Required root path or '' if not compiler not installed.
       }
-  protected
+  strict protected
     function SearchDirParams: string; override;
       {One of more parameters that define any search directories to be passed
       to compiler on command line.

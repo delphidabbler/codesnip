@@ -35,7 +35,7 @@ type
     IClonable,      // can clone this object
     ICompiler       // this is a compiler
   )
-  protected
+  strict protected
     function SearchDirParams: string; override;
       {One of more parameters that define any search directories to be passed
       to compiler on command line.

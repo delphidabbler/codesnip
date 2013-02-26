@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -98,7 +98,7 @@ type
         @param Msg [in] Message to be displayed
         @param Kind [in] Style of message to be displayed.
       }
-  protected
+  strict protected
     procedure ArrangeForm; override;
       {Positions additional controls added to inherited form.
       }

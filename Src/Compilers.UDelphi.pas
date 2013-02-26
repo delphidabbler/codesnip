@@ -41,7 +41,7 @@ type
       number.
         @return Delphi version number.
       }
-  protected
+  strict protected
     function InstallationRegKey: string; override;
       {Returns name of registry key where compiler's installation path is
       recorded.

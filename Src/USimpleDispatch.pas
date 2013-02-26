@@ -51,7 +51,7 @@ type
   TSimpleDispatch = class(TNonRefCountedObject,
     IDispatch
   )
-  protected
+  strict protected
     procedure DoInvoke(var InvokeInfo: TInvokeInfo); virtual; abstract;
       {Abstract method to be implemented by sub-classes to invoke properties
       and methods.

@@ -216,7 +216,7 @@ type
     Base class for all settings classes, regardless of storage medium.
   }
   TSettingsBase = class(TInterfacedObject)
-  protected
+  strict protected
     function SectionStorage(
       const Section: TSettingsSectionId): TSettingsStorageId;
       {Determines which storage a section is stored in.
@@ -231,7 +231,7 @@ type
     storage. Implements core ini file functionality.
   }
   TIniSettingsBase = class(TSettingsBase)
-  protected
+  strict protected
     function StorageName(const Storage: TSettingsStorageId): string;
       {Maps storage id to name of storage.
         @param Storage [in] Storage id.
@@ -264,7 +264,7 @@ type
         @param SubSection [in] Name of any subsection ('' if none).
         @return Instance of object that represents section.
       }
-  protected
+  strict protected
     function SectionName(const Id: TSettingsSectionId;
       const SubSection: string = ''): string;
       {Gets name of a specified section in ini file.

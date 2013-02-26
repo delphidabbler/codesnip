@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -38,7 +38,7 @@ type
     fOwner: TForm;
       {Form that owns the frame. Used to set font and colours to display in
       frame's HTML }
-  protected
+  strict protected
     procedure BuildCSS(const CSSBuilder: TCSSBuilder); override;
       {Generates CSS classes specific to HTML dialog boxes. This CSS is added to
       that provided by parent class.
