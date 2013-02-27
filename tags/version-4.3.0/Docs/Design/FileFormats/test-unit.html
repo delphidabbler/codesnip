@@ -1,0 +1,96 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!--
+ * This Source Code Form is subject to the terms of the Mozilla Public License,
+ * v. 2.0. If a copy of the MPL was not distributed with this file, You can
+ * obtain one at http://mozilla.org/MPL/2.0/
+ *
+ * Copyright (C) 2012, Peter Johnson (www.delphidabbler.com).
+ *
+ * $Rev$
+ * $Date$
+ *
+ * CodeSnip File Format Documentation: Test Units
+-->
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+
+<head>
+
+<title>
+  CodeSnip File Format Documentation - Test Units
+</title>
+
+<link
+  rel="stylesheet"
+  type="text/css"
+  media="screen"
+  href="main.css"
+/>
+
+</head>
+
+<body>
+
+<div class="title">
+  <div>
+    DelphiDabbler CodeSnip
+  </div>
+  <div class="subtitle">
+    File Format Documentation
+  </div>
+</div>
+
+<h1>
+  Test Units
+</h1>
+
+<h2>
+  Introduction
+</h2>
+
+<p>
+  CodeSnip saves temporary test units that are valid Pascal unit. These units
+  are used to perform test compiles.
+</p>
+
+<p>
+  There is no specific file format for these files, other than they are valid
+  Object Pascal source code.
+</p>
+
+<h2>
+  Encoding
+</h2>
+
+<p>
+  The encoding used for test units depends on the content of the unit.
+</p>
+
+<p>
+  If the unit's source code contains only characters that are supported by the
+  system default ANSI code page the file is saved using the default ANSI
+  encoding.
+</p>
+
+<p>
+  If the source code contains one or more characters that cannot be represented
+  in the default ANSI code page then the file is saved as UTF-8, with byte order
+  mark.
+</p>
+
+<p class="pullout">
+  Note that files are saved using the ANSI default encoding if possible because
+  earlier versions of Delphi cannot read UTF-8 encoded files and do not support
+  Unicode characters in the source code. Versions of Delphi that permit Unicode
+  characters in source code can read UTF-8 source files.
+</p>
+
+<p class="pullout">
+  Unit filenames are limited to ANSI characters again for reasons of
+  compatibility with earlier Delphis because they will report Unicode file names
+  as &quot;not found&quot;.
+</p>
+
+</body>
+
+</html>
