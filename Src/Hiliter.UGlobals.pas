@@ -119,7 +119,7 @@ type
     hsNul,          // nul highlighter style
     hsCodeSnip,     // original codesnip default style
     hsDelphi7,      // Delphi 7 default style
-    hsDelphi2006,   // Delphi 2006 default style
+    hsRADStudio,    // RAD Studio default style
     hsVisualStudio  // Microsoft Visual Studio default style
   );
 

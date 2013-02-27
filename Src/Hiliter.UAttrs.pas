@@ -382,7 +382,7 @@ end;
 
 class function THiliteAttrsFactory.CreateDefaultAttrs: IHiliteAttrs;
 begin
-  Result := THiliteAttrsFactory.CreatePredefinedAttrs(hsDelphi2006);
+  Result := THiliteAttrsFactory.CreatePredefinedAttrs(hsRADStudio);
 end;
 
 class function THiliteAttrsFactory.CreateNamedAttrs: INamedHiliteAttrs;
@@ -449,7 +449,7 @@ const
       (ForeColor: clBlack;    FontStyle: [];),          // heAssembler
       (ForeColor: clRed;      FontStyle: [];)           // heError
     ),
-    ( // hsDelphi2006
+    ( // hsRADStudio
       (ForeColor: clNone;     FontStyle: [];),          // heWhitespace
       (ForeColor: clGreen;    FontStyle: [fsItalic];),  // heComment
       (ForeColor: clNavy;     FontStyle: [fsBold];),    // heReserved
