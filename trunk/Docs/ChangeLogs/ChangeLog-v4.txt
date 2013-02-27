@@ -11,6 +11,20 @@
 ; Change Log for CodeSnip Release 4
 ; ------------------------------------------------------------------------------
 
+Release v4.3.0 of 27 February 2013
++ Implemented feature request #40 "Add 'Namespaces' tab to Configure Compilers dialogue box" (http://bit.ly/12XsX32). The new tab appears only for Delphi XE2 and later and obviates the need to manually create -NS commands for passing to the compilers. Suitable default namespaces are provided if none have been configured.
++ Implemented feature request #70 "Let user specify location of user database" (http://bit.ly/13aNCQZ). This feature is accessed from the new "Move Use Database" option on the Database menu. NOTE: The feature is not available in the portable edition which is designed to keep the user database toegther with the program.
++ Implemented feature request #69 "Enable custom syntax highlighter styles to be saved" (http://bit.ly/XQHkOI). The Syntax Highlighter tab of the Preferences dialogue box has been modified to enable custom syntax highlighter attributes to be saved under a given name and existing named styles to be used or deleted.
++ Changed name of "Delphi 2006" predefined syntax highlighter to "RAD Studio". This remains the default highlighter.
++ A little refactoring.
++ Enlarged Configure Compilers dialogue box.
++ Updated help file:
+  - Updated and added help topics re all new features in the release.
+  - Updated "What's New" topic re new features.
+  - Removed help topic for "Browse For Folders" dialogue box accessed from Search Paths tab of Configure Compilers dialogue.
++ Per-user configuration file format changed to v12 which is not fully compatible with previous versions of CodeSnip.
++ Updated documentation.
+
 Release v4.2.1 of 14 February 2013
 + Bug fix: changed Favourites dialogue to display snippet display names instead of unique names. Fixes bug #72 (http://bit.ly/Vj6ZCM).
 + Updated program copyright date in About box.
