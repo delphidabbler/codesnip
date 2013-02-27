@@ -194,8 +194,8 @@ inherited HiliterPrefsFrame: THiliterPrefsFrame
       Caption = 'Delphi 7'
       OnClick = StyleMenuClick
     end
-    object miDelphi2006: TMenuItem
-      Caption = 'Delphi 2006'
+    object miRADStudio: TMenuItem
+      Caption = 'RAD Studio'
       OnClick = StyleMenuClick
     end
     object miVisualStudio: TMenuItem

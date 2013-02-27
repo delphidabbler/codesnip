@@ -54,9 +54,9 @@ type
     lblElements: TLabel;
     miClassic: TMenuItem;
     miDelphi7: TMenuItem;
-    miDelphi2006: TMenuItem;
     miNamedStyles: TMenuItem;
     miNoHilite: TMenuItem;
+    miRADStudio: TMenuItem;
     miSpacer1: TMenuItem;
     miSpacer2: TMenuItem;
     miVisualStudio: TMenuItem;
@@ -425,7 +425,7 @@ begin
   // Set up predefined style drop down menu
   miClassic.Tag := Ord(hsCodeSnip);
   miDelphi7.Tag := Ord(hsDelphi7);
-  miDelphi2006.Tag := Ord(hsDelphi2006);
+  miRADStudio.Tag := Ord(hsRADStudio);
   miVisualStudio.Tag := Ord(hsVisualStudio);
   miNoHilite.Tag := Ord(hsNul);
 
