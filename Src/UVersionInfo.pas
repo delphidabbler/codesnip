@@ -89,18 +89,24 @@ type
         @param Ver [in] Version number to be converted.
         @return Converted version number.
       }
-    class operator Explicit(Ver: TVersionNumber): TPJVersionNumber;
-      {Operator overload that performs an explicit conversion of a
-      TVersionNumber to a TPJVersionNumber (from PJVersionInfo unit).
-        @param Ver [in] Version number to be converted.
-        @return Converted version number.
-      }
     class operator Implicit(Str: string): TVersionNumber;
       {Operator overload that performs implicit conversion of a dotted quad
       string to a TVersionNumber.
         @param Str [in] String to be converted. Must be in dotted quad format.
         @return Converted version number.
         @except EConvertError. raised if string in wrong format.
+      }
+    class operator Explicit(Ver: TVersionNumber): TPJVersionNumber;
+      {Operator overload that performs an explicit conversion of a
+      TVersionNumber to a TPJVersionNumber (from PJVersionInfo unit).
+        @param Ver [in] Version number to be converted.
+        @return Converted version number.
+      }
+    class operator Explicit(Ver: TVersionNumber): string;
+      {Operator overload that performs explicit conversion of a version number
+      to a string in dotted quad format.
+        @param Ver [in] Version number to be converted.
+        @return Dotted quad string.
       }
   end;
 
@@ -242,6 +248,16 @@ begin
   Result.V2 := Ver.V2;
   Result.V3 := Ver.V3;
   Result.V4 := Ver.V4;
+end;
+
+class operator TVersionNumber.Explicit(Ver: TVersionNumber): string;
+  {Operator overload that performs explicit conversion of a version number to a
+  string in dotted quad format.
+    @param Ver [in] Version number to be converted.
+    @return Dotted quad string.
+  }
+begin
+  Result := Format('%d.%d.%d.%d', [Ver.V1, Ver.V2, Ver.V3, Ver.V4]);
 end;
 
 class operator TVersionNumber.GreaterThan(Ver1, Ver2: TVersionNumber): Boolean;
