@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2006-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2006-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -102,8 +102,8 @@ uses
 
 const
   // Web service info
-  cScriptName = 'register-app.php';           // script name
-  cUserAgent = 'DelphiDabbler-Registrar-v2';  // user agent string
+  cScriptURLTplt = 'http://%s/websvc/register-app';
+  cUserAgent = 'DelphiDabbler-Registrar-v2';
 
 
 { TRegistrar }
@@ -112,7 +112,7 @@ constructor TRegistrar.Create;
   {Class constructor. Initialises service.
   }
 begin
-  inherited Create(TWebServiceInfo.Create(cScriptName, cUserAgent));
+  inherited Create(TWebServiceInfo.Create(cScriptURLTplt, cUserAgent));
 end;
 
 function TRegistrar.Submit(const Data: TStrings): string;

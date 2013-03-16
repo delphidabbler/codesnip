@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -203,8 +203,8 @@ uses
 
 const
   // Web service info
-  cScriptName = 'codesnip-updt.php';                  // script name
-  cUserAgent = 'DelphiDabbler-CodeSnip-Updater-v5';   // user agent string
+  cScriptURLTplt = 'http://%s/websvc/codesnip-updt';
+  cUserAgent = 'DelphiDabbler-CodeSnip-Updater-v5';
 
 
 resourcestring
@@ -229,7 +229,7 @@ constructor TDBDownloadMgr.Create;
   {Class constructor. Initialises service.
   }
 begin
-  inherited Create(TWebServiceInfo.Create(cScriptName, cUserAgent));
+  inherited Create(TWebServiceInfo.Create(cScriptURLTplt, cUserAgent));
 end;
 
 function TDBDownloadMgr.FileCount(const WantProgress: Boolean): Integer;
