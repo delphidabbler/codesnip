@@ -31,6 +31,10 @@ uses
 ///  </summary>
 function StrContainsStr(const Needle, Haystack: UnicodeString): Boolean;
 
+///  <summary>Checks if string Haystack contains string Needle. Case
+///  insensitive.</summary>
+function StrContainsText(const Needle, Haystack: UnicodeString): Boolean;
+
 ///  <summary>Returns index of string Needle in string Haystack or 0 if Needle
 ///  is not in Haystack. Case sensitive.</summary>
 function StrPos(const Needle, Haystack: UnicodeString): Integer; overload;
@@ -372,6 +376,11 @@ end;
 function StrContainsStr(const Needle, Haystack: UnicodeString): Boolean;
 begin
   Result := StrUtils.AnsiContainsStr(Haystack, Needle);
+end;
+
+function StrContainsText(const Needle, Haystack: UnicodeString): Boolean;
+begin
+  Result := StrUtils.AnsiContainsText(Haystack, Needle);
 end;
 
 function StrContainsWhiteSpace(const Str: UnicodeString): Boolean;
