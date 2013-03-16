@@ -39,7 +39,10 @@ type
         @param E [in] EWebError or descendant exception to be converted.
         @except Raises EDBDownloadMgr exceptions based on given exception.
       }
-    procedure GetStdParams(const Params: TURIParams);
+    procedure IncludeStdParams(const Params: TURIParams);
+      {Includes standard parameters in a parameter list.
+        @param Params [in] Parameter list that receives standard parameters.
+      }
     procedure PostStdCommand(const Cmd: string; const Response: TStrings);
       {Sends command to server that includes standard parameters that are sent
       with all commands, i.e. "progid" and "version".
@@ -273,12 +276,6 @@ begin
   end;
 end;
 
-procedure TDBDownloadMgr.GetStdParams(const Params: TURIParams);
-begin
-  Params.Add('progid', TAppInfo.ProgramKey);
-  Params.Add('version', TAppInfo.ProgramReleaseVersion);
-end;
-
 procedure TDBDownloadMgr.HandleException(const E: EWebError);
   {Converts EWebError exceptions into EDBDownloadMgr exceptions with both
   a long and a short description.
@@ -305,6 +302,15 @@ begin
       sLongWebSvcError,
       [(E as EWebServiceError).ErrorCode, E.Message]
     );
+end;
+
+procedure TDBDownloadMgr.IncludeStdParams(const Params: TURIParams);
+  {Includes standard parameters in a parameter list.
+    @param Params [in] Parameter list that receives standard parameters.
+  }
+begin
+  Params.Add('progid', TAppInfo.ProgramKey);
+  Params.Add('version', TAppInfo.ProgramReleaseVersion);
 end;
 
 function TDBDownloadMgr.LastUpdate(const WantProgress: Boolean): string;
@@ -357,7 +363,7 @@ begin
   try
     Params := TURIParams.Create;
     try
-      GetStdParams(Params);
+      IncludeStdParams(Params);
       Params.Add('os', TOSInfo.Description);
       Params.Add('browser', IntToStr(TOSInfo.BrowserVer));
       SafePostCommand('logon', Params, Response);
@@ -382,7 +388,7 @@ var
 begin
   StdParams := TURIParams.Create;
   try
-    GetStdParams(StdParams);
+    IncludeStdParams(StdParams);
     SafePostCommand(Cmd, StdParams, Response);
   finally
     StdParams.Free;
