@@ -1,7 +1,7 @@
 inherited ProgramUpdatesDlg: TProgramUpdatesDlg
   Caption = 'Check For Program Updates'
   ExplicitWidth = 474
-  ExplicitHeight = 354
+  ExplicitHeight = 374
   PixelsPerInch = 96
   TextHeight = 13
   inherited pnlBody: TPanel
@@ -19,8 +19,8 @@ inherited ProgramUpdatesDlg: TProgramUpdatesDlg
       Height = 33
       AutoSize = False
       Caption = 
-        'Preview and beta releases are not reported here. They are announ' +
-        'ced in the CodeSnip news feed.'
+        'New preview and beta releases are not reported here - they are a' +
+        'nnounced in the CodeSnip news feed.'
       Visible = False
       WordWrap = True
     end
@@ -29,7 +29,7 @@ inherited ProgramUpdatesDlg: TProgramUpdatesDlg
       Top = 19
       Width = 129
       Height = 25
-      Caption = 'Go To &Download Page'
+      Caption = '&Download Now'
       TabOrder = 0
       Visible = False
       OnClick = btnProgUpdateClick
