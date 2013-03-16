@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2008-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2008-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -54,9 +54,9 @@ uses
 
 const
   // Web service info
-  cScriptName = 'codesnip-submitter.php';       // script name
-  cUserAgent = 'DelphiDabbler-CSSubmitter-v1';  // user agent string
-  cMediaType = 'text/xml';                      // media type
+  cScriptURLTplt = 'http://%s/websvc/codesnip-submitter';
+  cUserAgent = 'DelphiDabbler-CSSubmitter-v1';
+  cMediaType = 'text/xml';
 
 
 resourcestring
@@ -70,7 +70,9 @@ constructor TCodeSubmitter.Create;
   {Class constructor. Initialises service.
   }
 begin
-  inherited Create(TWebServiceInfo.Create(cScriptName, cUserAgent, cMediaType));
+  inherited Create(
+    TWebServiceInfo.Create(cScriptURLTplt, cUserAgent, cMediaType)
+  );
 end;
 
 procedure TCodeSubmitter.SubmitData(const Data: TBytes);

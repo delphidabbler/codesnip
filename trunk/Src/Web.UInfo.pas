@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2009-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2009-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -33,11 +33,11 @@ type
     ScriptURI: string;  // URI of web service script
     UserAgent: string;  // User agent string required by web service
     MediaType: string;  // MIME type of media used
-    constructor Create(const AScriptName, AUserAgent: string;
+    constructor Create(const AScriptURLTplt, AUserAgent: string;
       const AMediaType: string = 'text/*');
       {Record constructor. Sets all record fields.
-        @param AScriptName [in] Name of script on web server. Converted into
-          full URI.
+        @param AScriptURLTplt [in] Template of web service script name. Must
+          contain "%s" as a placeholder for host name.
         @param AUserAgent [in] User agent string.
         @param AMediaType [in] MIME type of media used.
       }
@@ -96,9 +96,10 @@ type
         @param Age [in] Maximum age of included news items in days.
         @return Required URL.
       }
-    class function WebServiceURL(const Script: string): string;
+    class function WebServiceURL(const URLTplt: string): string;
       {Builds the URL of a webservice.
-        @param Script [in] Base name of web service script.
+        @param URLTplt [in] Template of URL of web service script. Must contain
+          "%s" as a placeholder for host name.
         @return URL of required script on active host.
       }
     class function WebProxyInfo: TWebProxyInfo;
@@ -119,7 +120,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  USettings;
+  USettings, UStrUtils;
 
 
 { TWebInfo }
@@ -175,27 +176,32 @@ begin
   end;
 end;
 
-class function TWebInfo.WebServiceURL(const Script: string): string;
+class function TWebInfo.WebServiceURL(const URLTplt: string): string;
   {Builds the URL of a webservice.
-    @param Script [in] Base name of web service script.
+    @param URLTplt [in] Template of URL of web service script. Must contain "%s"
+      as a placeholder for host name.
     @return URL of required script on active host.
   }
 begin
-  Result := Format('http://%0:s/websvc/%1:s', [Host, Script]);
+  Assert(StrContainsText('%s', URLTplt),
+    ClassName + '.WebServiceURL: URLTplt contains no host placeholder');
+  Result := Format(URLTplt, [Host]);
 end;
 
 { TWebServiceInfo }
 
-constructor TWebServiceInfo.Create(const AScriptName, AUserAgent,
+constructor TWebServiceInfo.Create(const AScriptURLTplt, AUserAgent,
   AMediaType: string);
   {Record constructor. Sets all record fields.
+    @param AScriptURLTplt [in] Template of web service script name. Must contain
+      "%s" as a placeholder for host name.
     @param AScriptName [in] Name of script on web server. Converted into
       full URI.
     @param AUserAgent [in] User agent string.
     @param AMediaType [in] MIME type of media used.
   }
 begin
-  ScriptURI := TWebInfo.WebServiceURL(AScriptName); // URL of script on host
+  ScriptURI := TWebInfo.WebServiceURL(AScriptURLTplt); // URL of script on host
   UserAgent := AUserAgent;
   MediaType := AMediaType;
 end;

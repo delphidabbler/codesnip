@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2012-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -28,7 +28,7 @@ type
   TProgramUpdateMgr = class sealed(TStdWebService)
   strict private
     const
-      ScriptName = 'prog-updater';
+      ScriptURLTplt = 'http://%s/websvc/prog-updater';
       UserAgent = 'DelphiDabbler-Program-Updater-v1';
   public
     constructor Create;
@@ -51,7 +51,7 @@ uses
 
 constructor TProgramUpdateMgr.Create;
 begin
-  inherited Create(TWebServiceInfo.Create(ScriptName, UserAgent));
+  inherited Create(TWebServiceInfo.Create(ScriptURLTplt, UserAgent));
 end;
 
 function TProgramUpdateMgr.IsLatest: Boolean;
