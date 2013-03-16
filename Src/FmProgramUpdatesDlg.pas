@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2012-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -38,12 +38,14 @@ type
     var
       fDBUpdateMgr: TUpdateMgr;
       fProgUpdateMgr: TProgramUpdateMgr;
+      fDownloadURL: string;
     procedure CheckProgramUpdates;
   strict protected
     ///  <summary>Triggers checks for updates.</summary>
     ///  <remarks>Called from ancestor class.</remarks>
     procedure AfterShowForm; override;
     procedure ArrangeForm; override;
+    procedure InitForm; override;
   public
     class procedure Execute(AOwner: TComponent);
   end;
@@ -54,9 +56,9 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Forms, ExtActns,
+  SysUtils, Forms, ExtActns, Graphics,
   // Project
-  UAppInfo, UCtrlArranger, Web.UInfo;
+  UAppInfo, UCtrlArranger, UVersionInfo, Web.UInfo;
 
 {$R *.dfm}
 
@@ -65,8 +67,6 @@ uses
 
 resourcestring
   sChecking = 'Checking...';
-  sDBNeedsUpdating = 'An update to the online database is available.';
-  sDBUpToDate = 'The online database is up to date.';
   sProgNeedsUpdating = 'CodeSnip version %s is available.';
   sProgUpToDate = 'CodeSnip is up to date.';
 
@@ -97,7 +97,7 @@ var
 begin
   BrowseAction := TBrowseURL.Create(nil);
   try
-    BrowseAction.URL := TWebInfo.ProgramDownloadURL;
+    BrowseAction.URL := fDownloadURL;
     BrowseAction.Execute;
   finally
     BrowseAction.Free;
@@ -106,19 +106,24 @@ end;
 
 procedure TProgramUpdatesDlg.CheckProgramUpdates;
 var
-  Version: string;
+  LatestVersion: TVersionNumber;
+  ThisVersion: TVersionNumber;
 begin
   btnProgUpdate.Visible := False;
   lblProgram.Caption := sChecking;
   Application.ProcessMessages;
-  if not not fProgUpdateMgr.IsLatest then
+  fProgUpdateMgr.SignOn(Name);
+  LatestVersion := fProgUpdateMgr.LatestProgramVersion;
+  ThisVersion := TAppInfo.ProgramReleaseVersion;
+  if ThisVersion < LatestVersion then
   begin
-    Version := fProgUpdateMgr.LatestProgramVersion;
-    lblProgram.Caption := Format(sProgNeedsUpdating, [Version]);
+    fDownloadURL := fProgUpdateMgr.DownloadURL;
+    lblProgram.Caption := Format(sProgNeedsUpdating, [string(LatestVersion)]);
     btnProgUpdate.Visible := True;
   end
   else
   begin
+    fDownloadURL := '';
     lblProgram.Caption := sProgUpToDate;
     lblPreReleaseMsg.Visible := True;
   end;
@@ -146,6 +151,12 @@ begin
   fProgUpdateMgr.Free;
   fDBUpdateMgr.Free;
   inherited;
+end;
+
+procedure TProgramUpdatesDlg.InitForm;
+begin
+  inherited;
+  lblPreReleaseMsg.Font.Color := clGrayText;
 end;
 
 end.
