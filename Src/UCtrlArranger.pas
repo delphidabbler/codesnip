@@ -366,7 +366,10 @@ end;
 
 class function TCtrlArranger.SetLabelHeight(const Lbl: TLabel): Integer;
 begin
-  Lbl.Height := StringExtent(Lbl.Caption, Lbl.Font, Lbl.Width).cy;
+  if Lbl.WordWrap then
+    Lbl.Height := StringExtent(Lbl.Caption, Lbl.Font, Lbl.Width).cy
+  else
+    Lbl.Height := StringExtent(Lbl.Caption, Lbl.Font).cy;
   Result := Lbl.Height;
 end;
 
