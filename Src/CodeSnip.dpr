@@ -185,6 +185,7 @@ uses
   IntfFrameMgrs in 'IntfFrameMgrs.pas',
   IntfNotifier in 'IntfNotifier.pas',
   IntfPreview in 'IntfPreview.pas',
+  Notifications.UWindow in 'Notifications.UWindow.pas',
   UActionFactory in 'UActionFactory.pas',
   UAnchors in 'UAnchors.pas',
   UAppInfo in 'UAppInfo.pas',

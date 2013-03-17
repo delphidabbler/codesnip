@@ -387,6 +387,7 @@
 			<DCCReference Include="IntfFrameMgrs.pas"/>
 			<DCCReference Include="IntfNotifier.pas"/>
 			<DCCReference Include="IntfPreview.pas"/>
+			<DCCReference Include="Notifications.UWindow.pas"/>
 			<DCCReference Include="UActionFactory.pas"/>
 			<DCCReference Include="UAnchors.pas"/>
 			<DCCReference Include="UAppInfo.pas"/>
