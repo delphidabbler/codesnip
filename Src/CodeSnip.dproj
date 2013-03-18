@@ -553,7 +553,6 @@
 			<DCCReference Include="UTestUnitDlgMgr.pas"/>
 			<DCCReference Include="UTextSnippetDoc.pas"/>
 			<DCCReference Include="UThemesEx.pas"/>
-			<DCCReference Include="UThreadEx.pas"/>
 			<DCCReference Include="UToolButtonEx.pas"/>
 			<DCCReference Include="UTVCheckBoxes.pas"/>
 			<DCCReference Include="UUIWidgetImages.pas"/>
