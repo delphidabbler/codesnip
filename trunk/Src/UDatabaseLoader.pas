@@ -20,8 +20,10 @@ interface
 
 
 uses
+  // Delphi
+  Classes,
   // Project
-  UBaseObjects, UThreadEx;
+  UBaseObjects;
 
 
 type
@@ -41,7 +43,7 @@ type
   TDatabaseLoaderThread:
     Class that loads and resets database in a thread.
   }
-  TDatabaseLoaderThread = class(TThreadEx)
+  TDatabaseLoaderThread = class(TThread)
   strict protected
     procedure Execute; override;
       {Loads database in thread and selects all records.

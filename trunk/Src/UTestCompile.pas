@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -20,8 +20,10 @@ interface
 
 
 uses
+  // Delphi
+  Classes,
   // Project
-  Compilers.UGlobals, DB.USnippet, UBaseObjects, UThreadEx;
+  Compilers.UGlobals, DB.USnippet, UBaseObjects;
 
 
 type
@@ -76,7 +78,7 @@ type
   TTestCompileThread:
     Thread that performs a test compilation of a snippet.
   }
-  TTestCompileThread = class(TThreadEx)
+  TTestCompileThread = class(TThread)
   strict private
     var fCompilers: ICompilers; // Compilers used for test compilation
     var fSnippet: TSnippet;     // Snippet to be compiled
