@@ -26,12 +26,17 @@ type
   ///  <summary>Class that manages the lifetime of a group of thread objects.
   ///  </summary>
   ///  <remarks>
+  ///  <para>There may be no more than $80 threads in a group.</para>
   ///  <para>Threads should be created suspended (not enforced).</para>
   ///  <para>Threads must not automatically free themselves on termination. Each
   ///  thread's FreeOnTerminate property will be set False when it is added to
   ///  the group.</para>
   ///  </remarks>
   TThreadGroup = class(TObject)
+  public
+    const
+      ///  <summary>Maximum number of threads in group.</summary>
+      MaxCount = $80;
   strict private
     var
       ///  <summary>List if threads.</summary>
@@ -44,8 +49,17 @@ type
     ///  <summary>Destroys object instance.</summary>
     destructor Destroy; override;
     ///  <summary>Adds the given thread to the group.</summary>
+    ///  <remarks>
+    ///  <para>Must not be called if the group is already full.</para>
+    ///  <para>The thread's FreeOnTerminate property is set True.</para>
+    ///  </remarks>
     procedure Add(AThread: TThread); overload;
     ///  <summary>Adds each thread in the given array to the group.</summary>
+    ///  <remarks>
+    ///  <para>Must not be called if the number of threads in the array would
+    ///  cause the group's capacity to be exceeded.</para>
+    ///  <para>Each thread's FreeOnTerminate property is set True.</para>
+    ///  </remarks>
     procedure Add(const AThreads: array of TThread); overload;
     ///  <summary>Notifies all threads to terminate.</summary>
     ///  <remarks>Simply sets each thread's Terminate property True.</remarks>
@@ -69,9 +83,12 @@ type
     ///  success while values >= $80 are errors.</returns>
     ///  <remarks>Kill must not be called when the group is empty.</remarks>
     function Kill(Timeout: Cardinal): Cardinal;
-    ///  <summary>Checks of the group is empty, i.e. contains no threads.
+    ///  <summary>Checks if the group is empty, i.e. contains no threads.
     ///  </summary>
     function IsEmpty: Boolean;
+    ///  <summary>Checks if the group is full and cannot accept any more
+    ///  threads.</summary>
+    function IsFull: Boolean;
     ///  <summary>Returns the number of threads in the group.</summary>
     function Count: Integer;
     ///  <summary>Indexed array of threads in the group.</summary>
@@ -90,6 +107,7 @@ uses
 
 procedure TThreadGroup.Add(AThread: TThread);
 begin
+  Assert(not IsFull, ClassName + '.Add: Group is full');
   AThread.FreeOnTerminate := False;
   fThreads.Add(AThread);
 end;
@@ -98,6 +116,8 @@ procedure TThreadGroup.Add(const AThreads: array of TThread);
 var
   Thread: TThread;
 begin
+  Assert(Count + Length(AThreads) <= MaxCount,
+    ClassName + '.Add: Number of threads exceed group capacity.');
   for Thread in AThreads do
     Thread.FreeOnTerminate := False;
   fThreads.AddRange(AThreads);
@@ -132,6 +152,11 @@ end;
 function TThreadGroup.IsEmpty: Boolean;
 begin
   Result := fThreads.Count = 0;
+end;
+
+function TThreadGroup.IsFull: Boolean;
+begin
+  Result := Count = MaxCount;
 end;
 
 function TThreadGroup.Kill(Timeout: Cardinal): Cardinal;
