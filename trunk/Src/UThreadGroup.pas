@@ -19,6 +19,7 @@ interface
 
 
 uses
+  // Delphi
   Classes, Generics.Collections;
 
 
@@ -100,6 +101,7 @@ implementation
 
 
 uses
+  // Delphi
   Windows;
 
 
