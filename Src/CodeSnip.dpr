@@ -351,6 +351,7 @@ uses
   UTestUnitDlgMgr in 'UTestUnitDlgMgr.pas',
   UTextSnippetDoc in 'UTextSnippetDoc.pas',
   UThemesEx in 'UThemesEx.pas',
+  UThreadGroup in 'UThreadGroup.pas',
   UToolButtonEx in 'UToolButtonEx.pas',
   UTVCheckBoxes in 'UTVCheckBoxes.pas',
   UUIWidgetImages in 'UUIWidgetImages.pas',
