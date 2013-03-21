@@ -389,6 +389,7 @@
 			<DCCReference Include="IntfPreview.pas"/>
 			<DCCReference Include="Notifications.UData.pas"/>
 			<DCCReference Include="Notifications.UQueue.pas"/>
+			<DCCReference Include="Notifications.URecorderThread.pas"/>
 			<DCCReference Include="Notifications.UWindow.pas"/>
 			<DCCReference Include="UActionFactory.pas"/>
 			<DCCReference Include="UAnchors.pas"/>
