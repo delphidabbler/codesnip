@@ -236,6 +236,28 @@ type
     ///  </summary>
     property PageStructures: TSnippetPageStructures
       read GetPageStructures write SetPageStructures;
+
+    ///  <summary>Gets flag that indicates whether the program should
+    ///  automatically check for program updates.</summary>
+    function GetAutoCheckProgramUpdates: Boolean;
+    ///  <summary>Sets flag that indicates whether the program should
+    ///  automatically check for program updates.</summary>
+    procedure SetAutoCheckProgramUpdates(const Value: Boolean);
+    ///  <summary>Indicates whether the program should automatically check
+    ///  for program updates.</summary>
+    property AutoCheckProgramUpdates: Boolean
+      read GetAutoCheckProgramUpdates write SetAutoCheckProgramUpdates;
+
+    ///  <summary>Gets flag that indicates whether the program should
+    ///  automatically check for database updates.</summary>
+    function GetAutoCheckDatabaseUpdates: Boolean;
+    ///  <summary>Sets flag that indicates whether the program should
+    ///  automatically check for database updates.</summary>
+    procedure SetAutoCheckDatabaseUpdates(const Value: Boolean);
+    ///  <summary>Indicates whether the program should automatically check
+    ///  for database updates.</summary>
+    property AutoCheckDatabaseUpdates: Boolean
+      read GetAutoCheckDatabaseUpdates write SetAutoCheckDatabaseUpdates;
   end;
 
 
@@ -321,7 +343,12 @@ type
       ///  <summary>Information describing snippet detail page customisations.
       ///  </summary>
       fPageStructures: TSnippetPageStructures;
-
+      ///  <summary>Indicates whether the program should automatically check
+      ///  for program updates.</summary>
+      fAutoCheckProgramUpdates: Boolean;
+      ///  <summary>Indicates whether the program should automatically check
+      ///  for database updates.</summary>
+      fAutoCheckDatabaseUpdates: Boolean;
   public
     ///  <summary>Constructs a new object instance.</summary>
     constructor Create;
@@ -512,6 +539,26 @@ type
     ///  <remarks>Method of IPreferences.</remarks>
     procedure SetPageStructures(PageStructures: TSnippetPageStructures);
 
+    ///  <summary>Gets flag that indicates whether the program should
+    ///  automatically check for program updates.</summary>
+    ///  <remarks>Method of IPreferences.</remarks>
+    function GetAutoCheckProgramUpdates: Boolean;
+
+    ///  <summary>Sets flag that indicates whether the program should
+    ///  automatically check for program updates.</summary>
+    ///  <remarks>Method of IPreferences.</remarks>
+    procedure SetAutoCheckProgramUpdates(const Value: Boolean);
+
+    ///  <summary>Gets flag that indicates whether the program should
+    ///  automatically check for database updates.</summary>
+    ///  <remarks>Method of IPreferences.</remarks>
+    function GetAutoCheckDatabaseUpdates: Boolean;
+
+    ///  <summary>Sets flag that indicates whether the program should
+    ///  automatically check for database updates.</summary>
+    ///  <remarks>Method of IPreferences.</remarks>
+    procedure SetAutoCheckDatabaseUpdates(const Value: Boolean);
+
     ///  <summary>Assigns the properties of the given object to this object.
     ///  </summary>
     ///  <exceptions>Raises EBug if Src does not support IPreferences.
@@ -541,6 +588,7 @@ type
       cNews = 'News';
       cDisplay = 'Display';
       cPageStructures = 'SnippetPageStructure';
+      cUpdating = 'Updating';
     class var
       ///  <summary>Stores reference to singleton instance of this class.
       ///  </summary>
@@ -602,6 +650,9 @@ begin
   Self.SetWarnings(SrcPref.Warnings);
   Self.SetNewsAge(SrcPref.NewsAge);
   Self.SetPageStructures(SrcPref.PageStructures);
+  Self.fAutoCheckProgramUpdates := SrcPref.AutoCheckProgramUpdates;
+  Self.fAutoCheckDatabaseUpdates := SrcPref.AutoCheckDatabaseUpdates;
+
 end;
 
 constructor TPreferences.Create;
@@ -621,6 +672,16 @@ destructor TPreferences.Destroy;
 begin
   fPageStructures.Free;
   inherited;
+end;
+
+function TPreferences.GetAutoCheckDatabaseUpdates: Boolean;
+begin
+  Result := fAutoCheckDatabaseUpdates;
+end;
+
+function TPreferences.GetAutoCheckProgramUpdates: Boolean;
+begin
+  Result := fAutoCheckProgramUpdates;
 end;
 
 function TPreferences.GetCustomHiliteColours: IStringList;
@@ -712,6 +773,16 @@ end;
 function TPreferences.GetWarnings: IWarnings;
 begin
   Result := fWarnings;
+end;
+
+procedure TPreferences.SetAutoCheckDatabaseUpdates(const Value: Boolean);
+begin
+  fAutoCheckDatabaseUpdates := Value;
+end;
+
+procedure TPreferences.SetAutoCheckProgramUpdates(const Value: Boolean);
+begin
+  fAutoCheckProgramUpdates := Value;
 end;
 
 procedure TPreferences.SetCustomHiliteColours(const Colours: IStringList);
@@ -837,6 +908,8 @@ begin
   NewPref.Warnings := Self.GetWarnings;
   NewPref.NewsAge := Self.fNewsAge;
   NewPref.PageStructures := Self.fPageStructures;
+  NewPref.AutoCheckProgramUpdates := Self.fAutoCheckProgramUpdates;
+  NewPref.AutoCheckDatabaseUpdates := Self.fAutoCheckDatabaseUpdates;
 end;
 
 constructor TPreferencesPersist.Create;
@@ -930,6 +1003,16 @@ begin
   // Read page structure section
   Storage := Settings.ReadSection(ssPreferences, cPageStructures);
   TSnippetPageStructuresPersist.Load(Storage, fPageStructures);
+
+  // Read updating section
+  Storage := Settings.ReadSection(ssPreferences, cUpdating);
+  fAutoCheckProgramUpdates := Boolean(
+    StrToIntDef(Storage.ItemValues['AutoCheckProgram'], Ord(True))
+  );
+  fAutoCheckDatabaseUpdates := Boolean(
+    StrToIntDef(Storage.ItemValues['AutoCheckDatabase'], Ord(True))
+  );
+
 end;
 
 destructor TPreferencesPersist.Destroy;
@@ -1019,6 +1102,16 @@ begin
   // Write page structure section
   Storage := Settings.EmptySection(ssPreferences, cPageStructures);
   TSnippetPageStructuresPersist.Save(Storage, fPageStructures);
+
+  // Write updating section
+  Storage := Settings.EmptySection(ssPreferences, cUpdating);
+  Storage.ItemValues['AutoCheckProgram'] := IntToStr(
+    Ord(fAutoCheckProgramUpdates)
+  );
+  Storage.ItemValues['AutoCheckDatabase'] := IntToStr(
+    Ord(fAutoCheckDatabaseUpdates)
+  );
+  Storage.Save;
 
   inherited;
 end;
