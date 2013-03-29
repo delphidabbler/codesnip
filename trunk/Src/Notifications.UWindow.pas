@@ -24,7 +24,7 @@ uses
   Classes, StdCtrls, ExtCtrls, Controls, Buttons, Generics.Collections,
   Windows {must come before Graphics}, Graphics, Messages, SyncObjs, ActnList,
   // Project
-  UStructs;
+  Notifications.UData, UStructs;
 
 
 type
@@ -75,6 +75,8 @@ type
       fDisplayLock: TSimpleEvent;
       ///  <summary>Value of State property.</summary>
       fState: TState;
+      ///  <summary>Value of NotificationData property.</summary>
+      fNotificationData: TNotificationData;
       ///  <summary>Button used to close (hide) an open window.</summary>
       fCloseBtn: TSpeedButton;
       ///  <summary>Button used to display context sensitive help.</summary>
@@ -102,46 +104,22 @@ type
   strict private
     ///  <summary>Handles custom message sent when the window has been concealed
     ///  after sliding out.</summary>
-    ///  <remarks>The window display lock is opened.</remarks>
+    ///  <remarks>The window display lock is opened and any callback to inhibit
+    ///  future display of the current notification is called.</remarks>
     procedure WMConcealed(var Msg: TMessage); message WM_CONCEALED;
 
-    ///  <summary>Getter for Title property.</summary>
-    function GetTitle: string;
-    ///  <summary>Setter for Title property.</summary>
+    ///  <summary>Setter for NotificationData property.</summary>
     ///  <remarks>Causes window to be re-arranged.</remarks>
-    procedure SetTitle(const ATitle: string);
+    procedure SetNotificationData(const N: TNotificationData);
 
-    ///  <summary>Getter for Content property.</summary>
-    function GetContent: TArray<string>;
-    ///  <summary>Setter for Content property.</summary>
-    ///  <remarks>Causes window to be re-arranged.</remarks>
-    procedure SetContent(const AContent: TArray<string>);
-
-    ///  <summary>Getter for ButtonAction property.</summary>
-    function GetButtonAction: TCustomAction;
-    ///  <summary>Setter for ButtonAction property.</summary>
-    ///  <remarks>Causes window to be re-arranged.</remarks>
-    procedure SetButtonAction(const Action: TCustomAction);
-
-    ///  <summary>Getter for DontShow property.</summary>
-    function GetDontShow: Boolean;
-    ///  <summary>Setter for DontShow property.</summary>
-    procedure SetDontShow(const Flag: Boolean);
-
-    ///  <summary>Getter for DisplayDontShowChk property.</summary>
-    function GetDisplayDontShowChk: Boolean;
-    ///  <summary>Setter for DisplayDontShowChk property.</summary>
-    ///  <remarks>Causes window to be re-arranged.</remarks>
-    procedure SetDisplayDontShowChk(const Flag: Boolean);
-
-    ///  <summary>Getter for HelpKeyword property.</summary>
-    function GetHelpKeyword: string;
-    ///  <summary>Setter for HelpKeyword property.</summary>
-    ///  <remarks>Causes window to be re-arranged.</remarks>
-    procedure SetHelpKeyword(const Keyword: string);
+    ///  <summary>Creates labels required to display given content.</summary>
+    ///  <remarks>One label is created for each element of the given array.
+    ///  </remarks>
+    procedure CreateContentLabels(const AContent: TArray<string>);
 
     ///  <summary>Getter for DisplayTime property.</summary>
     function GetDisplayTime: Cardinal;
+
     ///  <summary>Setter for DisplayTime property.</summary>
     procedure SetDisplayTime(const MS: Cardinal);
 
@@ -217,46 +195,9 @@ type
     ///  is hidden by default.</remarks>
     property State: TState read fState;
 
-    ///  <summary>Title of window.</summary>
-    ///  <remarks>Defaults to 'Notification'.</remarks>
-    property Title: string read GetTitle write SetTitle;
-
-    ///  <summary>Array of paragraphs of text to display in window.</summary>
-    ///  <remarks>Defaults to empty array.</remarks>
-    property Content: TArray<string> read GetContent write SetContent;
-
-    ///  <summary>Action to be associated with the action button.</summary>
-    ///  <remarks>
-    ///  <para>The action button is only displayed if ButtonAction is not nil.
-    ///  </para>
-    ///  <para>The action button uses this ButtonActions's caption as its own
-    ///  caption.</para>
-    ///  <para>Clicking the action button executes ButtonAction.</para>
-    ///  </remarks>
-    property ButtonAction: TCustomAction
-      read GetButtonAction write SetButtonAction;
-
-    ///  <summary>Indicates whether this notification may be shown again.
-    ///  </summary>
-    ///  <remarks>
-    ///  <para>Defaults to False.</para>
-    ///  <para>Always returns False when DisplayDontShowChk is False.</para>
-    ///  </remarks>
-    property DontShow: Boolean read GetDontShow write SetDontShow;
-
-    ///  <summary>Indicates whether or not 'don't display notification' check
-    ///  box is displayed.</summary>
-    ///  <remarks>Defaults to True.</remarks>
-    property DisplayDontShowChk: Boolean
-      read GetDisplayDontShowChk write SetDisplayDontShowChk;
-
-    ///  <summary>A-link help keyword associated with notification.</summary>
-    ///  <remarks>
-    ///  <para>Defaults to empty string.</para>
-    ///  <para>A help button is displayed iff this property has a non-empty
-    ///  value.</para>
-    ///  </remarks>
-    property HelpKeyword: string read GetHelpKeyword write SetHelpKeyword;
+    ///  <summary>Details of current notification.</summary>
+    property NotificationData: TNotificationData
+      read fNotificationData write SetNotificationData;
 
     ///  <summary>Amount of time, in milliseconds, the notification is to be
     ///  displayed before being hidden automatically.</summary>
@@ -308,6 +249,25 @@ begin
   fDisplayLock := TSimpleEvent.Create;
   fDisplayLock.SetEvent;
   UpdateWindow;
+end;
+
+procedure TNotificationWindow.CreateContentLabels(
+  const AContent: TArray<string>);
+var
+  Para: string;
+  Lbl: TLabel;
+begin
+  fContentLblList.Clear;  // frees any existing labels
+  for Para in AContent do
+  begin
+    Lbl := TLabel.Create(nil);
+    Lbl.Parent := Self;
+    TFontHelper.SetDefaultFont(Lbl.Font);
+    Lbl.Caption := Para;
+    Lbl.AutoSize := False;
+    Lbl.WordWrap := True;
+    fContentLblList.Add(Lbl);
+  end;
 end;
 
 procedure TNotificationWindow.CreateCtrls;
@@ -384,43 +344,9 @@ begin
   inherited;
 end;
 
-function TNotificationWindow.GetButtonAction: TCustomAction;
-begin
-  Result := fActionBtn.Action as TCustomAction;
-end;
-
-function TNotificationWindow.GetContent: TArray<string>;
-var
-  I: Integer;
-begin
-  SetLength(Result, fContentLblList.Count);
-  for I := 0 to Pred(fContentLblList.Count) do
-    Result[I] := fContentLblList[I].Caption;
-end;
-
-function TNotificationWindow.GetDisplayDontShowChk: Boolean;
-begin
-  Result := fDontShowChk.Visible;
-end;
-
 function TNotificationWindow.GetDisplayTime: Cardinal;
 begin
   Result := fHideTimer.Interval;
-end;
-
-function TNotificationWindow.GetDontShow: Boolean;
-begin
-  Result := DisplayDontShowChk and fDontShowChk.Checked
-end;
-
-function TNotificationWindow.GetHelpKeyword: string;
-begin
-  Result := inherited HelpKeyword;
-end;
-
-function TNotificationWindow.GetTitle: string;
-begin
-  Result := fTitleLbl.Caption;
 end;
 
 procedure TNotificationWindow.HelpBtnClickHandler(Sender: TObject);
@@ -456,51 +382,20 @@ begin
   inherited SetBounds(ALeft, ATop, AWidth, AHeight);
 end;
 
-procedure TNotificationWindow.SetButtonAction(const Action: TCustomAction);
-begin
-  fActionBtn.Action := Action;
-  UpdateWindow;
-end;
-
-procedure TNotificationWindow.SetContent(const AContent: TArray<string>);
-var
-  Para: string;
-  Lbl: TLabel;
-begin
-  fContentLblList.Clear;  // frees any existing labels
-  for Para in AContent do
-  begin
-    Lbl := TLabel.Create(nil);
-    Lbl.Parent := Self;
-    TFontHelper.SetDefaultFont(Lbl.Font);
-    Lbl.Caption := Para;
-    Lbl.AutoSize := False;
-    Lbl.WordWrap := True;
-    fContentLblList.Add(Lbl);
-  end;
-  UpdateWindow;
-end;
-
-procedure TNotificationWindow.SetDisplayDontShowChk(const Flag: Boolean);
-begin
-  fDontShowChk.Visible := Flag;
-  UpdateWindow;
-end;
-
 procedure TNotificationWindow.SetDisplayTime(const MS: Cardinal);
 begin
   fHideTimer.Interval := MS;
 end;
 
-procedure TNotificationWindow.SetDontShow(const Flag: Boolean);
+procedure TNotificationWindow.SetNotificationData(const N: TNotificationData);
 begin
-  fDontShowChk.Checked := Flag;
-end;
-
-procedure TNotificationWindow.SetHelpKeyword(const Keyword: string);
-begin
-  inherited HelpKeyword := Keyword;
-  fHelpBtn.Visible := Keyword <> '';
+  fTitleLbl.Caption := N.Title;
+  CreateContentLabels(N.Content);
+  HelpKeyword := N.HelpKeyword;
+  fActionBtn.Action := N.Action;
+  fDontShowChk.Visible := Assigned(N.InhibitCallback);
+  fDontShowChk.Checked := False;
+  fNotificationData := N;
   UpdateWindow;
 end;
 
@@ -508,12 +403,6 @@ procedure TNotificationWindow.SetParent(AParent: TWinControl);
 begin
   inherited;
   SetBounds(0, 0, Width, Height);
-end;
-
-procedure TNotificationWindow.SetTitle(const ATitle: string);
-begin
-  fTitleLbl.Caption := ATitle;
-  UpdateWindow;
 end;
 
 procedure TNotificationWindow.SlideIn;
@@ -607,6 +496,7 @@ begin
   );
 
   // Set "close" and "help" button locations
+  fHelpBtn.Visible := HelpKeyword <> '';
   if fHelpBtn.Visible then
   begin
     fHelpBtn.Left := Width - MarginLR - fHelpBtn.Width;
@@ -664,6 +554,10 @@ end;
 
 procedure TNotificationWindow.WMConcealed(var Msg: TMessage);
 begin
+  if Assigned(fNotificationData.InhibitCallback)
+    and fDontShowChk.Visible
+    and fDontShowChk.Checked then
+    fNotificationData.InhibitCallback();
   fDisplayLock.SetEvent;
 end;
 
