@@ -22,7 +22,7 @@ interface
 uses
   // Delphi
   Classes, StdCtrls, ExtCtrls, Controls, Buttons, Generics.Collections,
-  Graphics,
+  Windows {must come before Graphics}, Graphics, Messages, SyncObjs,
   // Project
   UStructs;
 
@@ -46,6 +46,9 @@ type
       TState = (nwsOpen, nwsClosed, nwsOpening, nwsClosing);
   strict private
     const
+      ///  <summary>Custom window message used to indicate window has been
+      ///  concealed (i.e. slide-out has completed).</summary>
+      WM_CONCEALED = WM_USER + 234;
       ///  <summary>Colour that defines starting point (top) of window's
       ///  gradient fill.</summary>
       GradColour1 = clWhite;
@@ -68,6 +71,8 @@ type
       HelpButtonChar = #$73;
   strict private
     var
+      ///  <summary>Value of DisplayLock property.</summary>
+      fDisplayLock: TSimpleEvent;
       ///  <summary>References any OnAction event handler.</summary>
       fOnAction: TNotifyEvent;
       ///  <summary>Value of State property.</summary>
@@ -96,6 +101,11 @@ type
       fLightBulb: TBitmap;
 
   strict private
+    ///  <summary>Handles custom message sent when the window has been concealed
+    ///  after sliding out.</summary>
+    ///  <remarks>The window display lock is opened.</remarks>
+    procedure WMConcealed(var Msg: TMessage); message WM_CONCEALED;
+
     ///  <summary>Getter for Title property.</summary>
     function GetTitle: string;
     ///  <summary>Setter for Title property.</summary>
@@ -188,6 +198,8 @@ type
     ///  <para>Does nothing unless State = nwsClosed.</para>
     ///  <para>State = nwsOpening while window is sliding and changes to
     ///  nwsOpen when it is fully hidden.</para>
+    ///  <para>The window display lock is closed iff State = mwsClose when the
+    ///  method is called.</para>
     ///  </remarks>
     procedure SlideIn;
 
@@ -196,8 +208,16 @@ type
     ///  <para>Does nothing unless State = nwsOpen.</para>
     ///  <para>State = nwsClosing while window is sliding and changes to
     ///  nwsClosed when it is fully hidden.</para>
+    ///  <para>Posts a WM_CONCEALED message when the window is fully closed.
+    ///  </para>
     ///  </remarks>
     procedure SlideOut;
+
+      ///  <summary>Event object used as lock when window is displayed.
+      ///  </summary>
+      ///  <remarks>This lock is used by calling code to prevent them from
+      ///  trying to display the window until it is closed.</remarks>
+    property DisplayLock: TSimpleEvent read fDisplayLock;
 
     ///  <summary>Current state of window.</summary>
     ///  <remarks>State is always nwsClosed when the window is created, i.e. it
@@ -298,6 +318,8 @@ begin
   fTitleLbl.Caption := sDefaultTitle;
   fHideTimer.Interval := 10000;
   fActionBtn.Caption := sDefaultActionBtnCaption;
+  fDisplayLock := TSimpleEvent.Create;
+  fDisplayLock.SetEvent;
   UpdateWindow;
 end;
 
@@ -371,6 +393,8 @@ destructor TNotificationWindow.Destroy;
 begin
   fLightBulb.Free;
   fContentLblList.Free;
+  fDisplayLock.SetEvent;
+  fDisplayLock.Free;
   inherited;
 end;
 
@@ -515,6 +539,7 @@ var
 begin
   if State <> nwsClosed then
     Exit;
+  fDisplayLock.ResetEvent;
   fState := nwsOpening;
   ClosedTop := Parent.ClientRect.Bottom + 1;
   OpenedTop := Parent.ClientRect.Bottom - Height;// - 4;
@@ -560,6 +585,7 @@ begin
   Top := ClosedTop;
   Visible := False;
   fState := nwsClosed;
+  PostMessage(Handle, WM_CONCEALED, 0, 0);
 end;
 
 procedure TNotificationWindow.TimerTickHandler(Sender: TObject);
@@ -648,6 +674,11 @@ begin
 
   // Set required window height
   Height := NextTop - CtrlVSpacing + MarginTB;
+end;
+
+procedure TNotificationWindow.WMConcealed(var Msg: TMessage);
+begin
+  fDisplayLock.SetEvent;
 end;
 
 end.
