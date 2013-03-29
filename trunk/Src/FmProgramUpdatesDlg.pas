@@ -23,7 +23,7 @@ uses
   // Delphi
   StdCtrls, Controls, ExtCtrls, Classes,
   // Project
-  FmGenericViewDlg, UBaseObjects, UUpdateMgr, Web.UProgramUpdateMgr;
+  FmGenericViewDlg, UBaseObjects, Web.UProgramUpdateMgr;
 
 
 type
@@ -36,7 +36,6 @@ type
     procedure btnProgUpdateClick(Sender: TObject);
   strict private
     var
-      fDBUpdateMgr: TUpdateMgr;
       fProgUpdateMgr: TProgramUpdateMgr;
       fDownloadURL: string;
     procedure CheckProgramUpdates;
@@ -142,14 +141,12 @@ end;
 procedure TProgramUpdatesDlg.FormCreate(Sender: TObject);
 begin
   inherited;
-  fDBUpdateMgr := TUpdateMgr.Create(TAppInfo.AppDataDir);
   fProgUpdateMgr := TProgramUpdateMgr.Create;
 end;
 
 procedure TProgramUpdatesDlg.FormDestroy(Sender: TObject);
 begin
   fProgUpdateMgr.Free;
-  fDBUpdateMgr.Free;
   inherited;
 end;
 
