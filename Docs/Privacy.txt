@@ -69,7 +69,7 @@ hacked by some third party.
 CodeSnip Online Activity
 ================================================================================
 
-Various user-initiated actions cause CodeSnip to go online. They are:
+CodeSnip may go online for several reasons. They are:
 
    1. Updating the database.
    2. Registering the program.
@@ -93,10 +93,18 @@ Updating the Database
 --------------------------------------------------------------------------------
 
 This activity is started by displaying the "Update From Web" dialogue box and
-clicking its "Update from Web" button. CodeSnip then contacts the update web
-service and sends the following information:
+clicking its "Update from Web" button.
 
-    * Unique program key (see above for details).
+CodeSnip may also check automatically, behind the scenes, to see if database
+updates are available. This usually happens just after the program has started.
+You can disable this automatic checking by using the "Updates" tab of the
+"Preferences" dialogue box which is displayed via the "Tools | Preferences" menu
+option.
+
+When CodeSnip contacts the update web service it sends the following
+information:
+
+    * The unique 32 digit program key (see Common.config above for details).
     * Program version number.
     * Operating system description.
     * Internet Explorer version.
@@ -133,7 +141,7 @@ displays the data that is to be sent to the registration web service. The data
 is only sent if the user clicks the wizard's "Submit" button. The data is:
 
     * The program's id, name and version information.
-    * The unique program key (see above for details).
+    * The unique 32 digit program key (see Common.config above for details).
     * The user name or nickname.
     * A description of the operating system and version of Internet Explorer
       being used.
@@ -183,13 +191,36 @@ the DelphiDabbler website. No personal information is included in the request.
 Checking for program updates
 --------------------------------------------------------------------------------
 
-This action is started by when the "Tools | Check For Program Updates" menu
-option is selected. The resulting dialogue box connects to the DelphiDabbler
-program update web service and sends only the id "codesnip" and your program's
-version number.
+This action can be started manually by clicking the "Tools | Check For Program
+Updates" menu option. The resulting dialogue box connects to the DelphiDabbler
+program update web service.
 
-If you choose to download the program you are simply sent to the CodeSnip
-download web page which is displayed in your browser.
+CodeSnip may also check for updates automatically, behind the scenes. The same
+DelphiDabbler program update web is used in this case. The process usually
+happens just after the program has started. You can disable this automatic
+checking by using the "Updates" tab of the "Preferences" dialogue box which is
+displayed via the "Tools | Preferences" menu option.
+
+Whichever way the the web service is used the same information is sent, which
+is:
+
+    * An API key used permit access to the web service.
+    * The program's version information.
+    * The unique 32 digit program key (see Common.config above for details).
+    * A description of the operating system and version of Internet Explorer
+      being used.
+    * An indication of whether the service is being called automatically or
+      manually.
+
+This information is recorded in a log file on the DelphiDabbler web server. The
+log file is used to gather information about the operating systems and program
+versions currently in use and to monitor any web service errors.
+
+Regardless of the method used to contact the web service, if an update is
+available you are given the option to download it. To do this CodeSnip uses your
+default web browser to download a zip file containing the update from the
+SourceForge website. SourceForge may set cookies on your computer that are
+outside CodeSnip's control.
 
 
 Accessing Websites via Links and Menu Options
@@ -223,4 +254,3 @@ risk.
 $Rev$
 $Date$
 ================================================================================
-

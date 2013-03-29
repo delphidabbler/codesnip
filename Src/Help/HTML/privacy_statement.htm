@@ -116,8 +116,7 @@
       CodeSnip Online Activity
     </h2>
     <p>
-      Various user-initiated actions cause <em>CodeSnip</em> to go online. They
-      are:
+      <em>CodeSnip</em> may go online for several reasons. They are:
     </p>
     <ol class="unspaced">
       <li>
@@ -159,13 +158,22 @@
     </h3>
     <p>
       This activity is started by displaying the &quot;Update From Web&quot;
-      dialogue box and clicking its &quot;Update from Web&quot; button. <em>
-      CodeSnip</em> then contacts the update web service and sends the
+      dialogue box and clicking its &quot;Update from Web&quot; button.
+    </p>
+    <p>
+      <em>CodeSnip</em> may also check automatically, behind the scenes, to see
+      if database updates are available. This usually happens just after the
+      program has started. You can disable this automatic checking by using the
+      &quot;Updates&quot; tab of the &quot;Preferences&quot; dialogue box which
+      is displayed via the &quot;Tools | Preferences&quot; menu option.
+    </p>
+    <p>
+      When <em>CodeSnip</em> contacts the update web service it sends the
       following information:
     </p>
     <ul class="unspaced">
       <li>
-        Unique program key (see above for details).
+        The unique 32 digit program key (see Common.config above for details).
       </li>
       <li>
         Program version number.
@@ -229,14 +237,14 @@
       CodeSnip</em>. A wizard appears that guides the user through the
       registration process. The wizard displays the data that is to be sent to
       the registration web service. The data is only sent if the user clicks
-      the wizard&#39;s &quot;Submit&quot; button. The data is:
+      the wizard's &quot;Submit&quot; button. The data is:
     </p>
     <ul class="unspaced">
       <li>
-        The program&#39;s id, name and version information.
+        The program's id, name and version information.
       </li>
       <li>
-        The unique program key (see above for details).
+        The unique 32 digit program key (see Common.config above for details).
       </li>
       <li>
         The user name or nickname.
@@ -307,14 +315,53 @@
       Checking for program updates
     </h3>
     <p>
-      This action is started by when the <em>Tools | Check For Program
-      Updates</em> menu option is selected. The resulting dialogue box connects
-      to the <em>DelphiDabbler</em> program update web service and sends only
-      the id &quot;codesnip&quot; and your program's version number.
+      This action can be started manually by clicking the &quot;Tools | Check
+      For Program Updates&quot; menu option. The resulting dialogue box connects
+      to the DelphiDabbler program update web service.
     </p>
     <p>
-      If you choose to download the program you are simply sent to the
-      <em>CodeSnip</em> download web page which is displayed in your browser.
+      <em>CodeSnip</em> may also check for updates automatically, behind the
+      scenes. The same DelphiDabbler program update web is used in this case.
+      The process usually happens just after the program has started. You can
+      disable this automatic checking by using the &quot;Updates&quot; tab of
+      the &quot;Preferences&quot; dialogue box which is displayed via the
+      &quot;Tools | Preferences&quot; menu option.
+    </p>
+    <p>
+      Whichever way the the web service is used the same information is sent,
+      which is:
+    </p>
+    <ul>
+      <li>
+        An API key used permit access to the web service.
+      </li>
+      <li>
+        The program's version information.
+      </li>
+      <li>
+        The unique 32 digit program key (see Common.config above for details).
+      </li>
+      <li>
+        A description of the operating system and version of Internet Explorer
+        being used.
+      </li>
+      <li>
+        An indication of whether the service is being called automatically or
+        manually.
+      </li>
+    </ul>
+    <p>
+      This information is recorded in a log file on the DelphiDabbler web
+      server. The log file is used to gather information about the operating
+      systems and program versions currently in use and to monitor any web
+      service errors.
+    </p>
+    <p>
+      Regardless of the method used to contact the web service, if an update is
+      available you are given the option to download it. To do this CodeSnip
+      uses your default web browser to download a zip file containing the update
+      from the SourceForge website. SourceForge may set cookies on your computer
+      that are outside <em>CodeSnip</em>'s control.
     </p>
     <h3>
       Accessing Websites via Links and Menu Options
