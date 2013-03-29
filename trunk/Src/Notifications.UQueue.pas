@@ -33,19 +33,26 @@ type
   ///  different threads.</remarks>
   TNotificationQueue = class(TObject)
   strict private
+
     const
       ///  <summary>Maximum size of queue.</summary>
       MaxQueueSize = 20;
+
     class var
       ///  <summary>Queue of notifications.</summary>
       fQueue: TQueue<TNotificationData>;
       ///  <summary>Critical section that ensures queue is accessed by only one
       ///  thread at a time.</summary>
       fCriticalSection: TCriticalSection;
-      ///  <summary>Value of EmptyLock property.</summary>
+      ///  <summary>Event object that enables threads reading the queue to block
+      ///  while the queue is empty.</summary>
+      ///  <remarks>NOTE: This lock is designed for use with a single reading
+      ///  thread and is not guaranteed to work properly should more than one
+      ///  task block on the empty queue.</remarks>
       fEmptyLock: TSimpleEvent;
 
   strict private
+
     ///  <summary>Checks if the queue is full.</summary>
     function IsFull: Boolean; inline;
 
@@ -53,6 +60,7 @@ type
     function IsEmpty: Boolean; inline;
 
   public
+
     ///  <summary>Creates objects shared amongst all instances.</summary>
     class constructor Create;
 
@@ -76,12 +84,16 @@ type
     ///  <remarks>If False is returned, Value is undefined.</remarks>
     function Pop(out Value: TNotificationData): Boolean;
 
-    ///  <summary>Event object that enables threads reading the queue to block
-    ///  while the queue is empty.</summary>
-    ///  <remarks>NOTE: This lock is designed for use with a single reading
-    ///  thread and is not guaranteed to work properly should more than one
-    ///  task block on the empty queue.</remarks>
-    class property EmptyLock: TSimpleEvent read fEmptyLock;
+    ///  <summary>Waits for the empty lock event to enter a singalled state.
+    ///  </summary>
+    ///  <param name="Timeout">Cardinal [in] Maximum amount of time to wait.
+    ///  </param>
+    ///  <returns>TWaitResult. Indicates how the wait operation finished.
+    ///  </returns>
+    class function WaitForEmptyLock(Timeout: Cardinal): TWaitResult;
+
+    ///  <summary>Releases any locks on the queue.</summary>
+    class procedure ReleaseLocks;
   end;
 
 
@@ -150,4 +162,17 @@ begin
   end;
 end;
 
+class procedure TNotificationQueue.ReleaseLocks;
+begin
+  // only the one lock!
+  fEmptyLock.SetEvent;
+end;
+
+class function TNotificationQueue.WaitForEmptyLock(Timeout: Cardinal):
+  TWaitResult;
+begin
+  Result := fEmptyLock.WaitFor(Timeout);
+end;
+
 end.
+
