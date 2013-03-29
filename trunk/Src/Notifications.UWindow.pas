@@ -22,7 +22,7 @@ interface
 uses
   // Delphi
   Classes, StdCtrls, ExtCtrls, Controls, Buttons, Generics.Collections,
-  Windows {must come before Graphics}, Graphics, Messages, SyncObjs,
+  Windows {must come before Graphics}, Graphics, Messages, SyncObjs, ActnList,
   // Project
   UStructs;
 
@@ -73,15 +73,14 @@ type
     var
       ///  <summary>Value of DisplayLock property.</summary>
       fDisplayLock: TSimpleEvent;
-      ///  <summary>References any OnAction event handler.</summary>
-      fOnAction: TNotifyEvent;
       ///  <summary>Value of State property.</summary>
       fState: TState;
       ///  <summary>Button used to close (hide) an open window.</summary>
       fCloseBtn: TSpeedButton;
       ///  <summary>Button used to display context sensitive help.</summary>
       fHelpBtn: TSpeedButton;
-      ///  <summary>Button used to trigger OnAction event.</summary>
+      ///  <summary>Button used to trigger any action event referenced by
+      ///  ButtonAction property.</summary>
       fActionBtn: TButton;
       ///  <summary>Displays window's title text.</summary>
       fTitleLbl: TLabel;
@@ -118,11 +117,11 @@ type
     ///  <remarks>Causes window to be re-arranged.</remarks>
     procedure SetContent(const AContent: TArray<string>);
 
-    ///  <summary>Getter for ActionText property.</summary>
-    function GetActionText: string;
-    ///  <summary>Setter for ActionText property.</summary>
+    ///  <summary>Getter for ButtonAction property.</summary>
+    function GetButtonAction: TCustomAction;
+    ///  <summary>Setter for ButtonAction property.</summary>
     ///  <remarks>Causes window to be re-arranged.</remarks>
-    procedure SetActionText(const AActionText: string);
+    procedure SetButtonAction(const Action: TCustomAction);
 
     ///  <summary>Getter for DontShow property.</summary>
     function GetDontShow: Boolean;
@@ -162,12 +161,6 @@ type
     ///  specified by HelpKeyword property.</summary>
     ///  <remarks>Does nothing if HelpKeyword is empty string.</remarks>
     procedure HelpBtnClickHandler(Sender: TObject);
-
-    ///  <summary>Handles clicks on action button by triggering any OnAction
-    ///  event.</summary>
-    ///  <remarks>Does nothing if window is not fully open or if no event
-    ///  handler has been assigned to OnAction.</remarks>
-    procedure ActionClickHandler(Sender: TObject);
 
     ///  <summary>Closes (hides) window when timer's event fires.</summary>
     ///  <remarks>The event is ignored if the window is not fully open.
@@ -232,14 +225,16 @@ type
     ///  <remarks>Defaults to empty array.</remarks>
     property Content: TArray<string> read GetContent write SetContent;
 
-    ///  <summary>Text to be displayed on action button.</summary>
-    ///  <remarks>Defaults to 'Go'</remarks>
-    property ActionText: string read GetActionText write SetActionText;
-
-    ///  <summary>Event triggered when action button is clicked.</summary>
-    ///  <remarks>Action button is not displayed if this event handler is not
-    ///  set.</remarks>
-    property OnAction: TNotifyEvent read fOnAction write fOnAction;
+    ///  <summary>Action to be associated with the action button.</summary>
+    ///  <remarks>
+    ///  <para>The action button is only displayed if ButtonAction is not nil.
+    ///  </para>
+    ///  <para>The action button uses this ButtonActions's caption as its own
+    ///  caption.</para>
+    ///  <para>Clicking the action button executes ButtonAction.</para>
+    ///  </remarks>
+    property ButtonAction: TCustomAction
+      read GetButtonAction write SetButtonAction;
 
     ///  <summary>Indicates whether this notification may be shown again.
     ///  </summary>
@@ -286,12 +281,6 @@ uses
 
 { TNotificationWindow }
 
-procedure TNotificationWindow.ActionClickHandler(Sender: TObject);
-begin
-  if (State = nwsOpen) and Assigned(fOnAction) then
-    fOnAction(Self);
-end;
-
 procedure TNotificationWindow.CloseBtnClickHandler(Sender: TObject);
 begin
   SlideOut; // does nothing if State <> nwsOpen
@@ -300,7 +289,6 @@ end;
 constructor TNotificationWindow.Create(AOwner: TComponent);
 resourcestring
   sDefaultTitle = 'Notification';
-  sDefaultActionBtnCaption = 'Go';
 begin
   inherited Create(AOwner);
   fContentLblList := TObjectList<TLabel>.Create(True);
@@ -317,7 +305,6 @@ begin
   fDontShowChk.Checked := False;
   fTitleLbl.Caption := sDefaultTitle;
   fHideTimer.Interval := 10000;
-  fActionBtn.Caption := sDefaultActionBtnCaption;
   fDisplayLock := TSimpleEvent.Create;
   fDisplayLock.SetEvent;
   UpdateWindow;
@@ -361,7 +348,6 @@ begin
   // create action button with default size (width changed to suit text)
   fActionBtn := TButton.Create(Self);
   fActionBtn.Parent := Self;
-  fActionBtn.OnClick := ActionClickHandler;
   fActionBtn.Visible := False;
   fActionBtn.Enabled := False;    // enabled only when window displayed
 
@@ -398,9 +384,9 @@ begin
   inherited;
 end;
 
-function TNotificationWindow.GetActionText: string;
+function TNotificationWindow.GetButtonAction: TCustomAction;
 begin
-  Result := fActionBtn.Caption;
+  Result := fActionBtn.Action as TCustomAction;
 end;
 
 function TNotificationWindow.GetContent: TArray<string>;
@@ -457,12 +443,6 @@ begin
   );
 end;
 
-procedure TNotificationWindow.SetActionText(const AActionText: string);
-begin
-  fActionBtn.Caption := AActionText;
-  UpdateWindow;
-end;
-
 procedure TNotificationWindow.SetBounds(ALeft, ATop, AWidth, AHeight: Integer);
 var
   ParentBounds: TRectEx;
@@ -474,6 +454,12 @@ begin
     ALeft := ParentBounds.Right - AWidth - 6;
   end;
   inherited SetBounds(ALeft, ATop, AWidth, AHeight);
+end;
+
+procedure TNotificationWindow.SetButtonAction(const Action: TCustomAction);
+begin
+  fActionBtn.Action := Action;
+  UpdateWindow;
 end;
 
 procedure TNotificationWindow.SetContent(const AContent: TArray<string>);
@@ -653,7 +639,7 @@ begin
   NextTop := ParaTop - ParaSpacing + CtrlVSpacing;
 
   // Set location and size of action button
-  fActionBtn.Visible := Assigned(fOnAction);
+  fActionBtn.Visible := Assigned(fActionBtn.Action);
   if fActionBtn.Visible then
   begin
     fActionBtn.Left := TextLeftOffset;
