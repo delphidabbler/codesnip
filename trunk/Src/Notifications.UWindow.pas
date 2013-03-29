@@ -75,7 +75,10 @@ type
       fDisplayLock: TSimpleEvent;
       ///  <summary>Value of State property.</summary>
       fState: TState;
-      ///  <summary>Value of NotificationData property.</summary>
+      ///  <summary>Stores the properties and actions associated with the last
+      ///  window displayed.</summary>
+      ///  <remarks>This record is updated by every call to the SlideIn method.
+      ///  It is undefined until SlideIn is first called.</remarks>
       fNotificationData: TNotificationData;
       ///  <summary>Button used to close (hide) an open window.</summary>
       fCloseBtn: TSpeedButton;
@@ -102,15 +105,12 @@ type
       fLightBulb: TBitmap;
 
   strict private
-    ///  <summary>Handles custom message sent when the window has been concealed
-    ///  after sliding out.</summary>
+
+    ///  <summary>Handles the custom message sent when the window has been
+    ///  concealed after sliding off screen.</summary>
     ///  <remarks>The window display lock is opened and any callback to inhibit
     ///  future display of the current notification is called.</remarks>
     procedure WMConcealed(var Msg: TMessage); message WM_CONCEALED;
-
-    ///  <summary>Setter for NotificationData property.</summary>
-    ///  <remarks>Causes window to be re-arranged.</remarks>
-    procedure SetNotificationData(const N: TNotificationData);
 
     ///  <summary>Creates labels required to display given content.</summary>
     ///  <remarks>One label is created for each element of the given array.
@@ -123,8 +123,8 @@ type
     ///  <summary>Setter for DisplayTime property.</summary>
     procedure SetDisplayTime(const MS: Cardinal);
 
-    ///  <summary>Rearranges and sizes window according to current property
-    ///  values.</summary>
+    ///  <summary>Sets window property values for current notification and
+    ///  rearranges and sizes window accordingly.</summary>
     procedure UpdateWindow;
 
     ///  <summary>Creates and initialises all the window's controls.</summary>
@@ -136,35 +136,44 @@ type
     procedure CloseBtnClickHandler(Sender: TObject);
 
     ///  <summary>Handles clicks on Help button by displaying any help topic
-    ///  specified by HelpKeyword property.</summary>
-    ///  <remarks>Does nothing if HelpKeyword is empty string.</remarks>
+    ///  specified by the HelpKeyword field of the current notification data
+    ///  record.</summary>
+    ///  <remarks>Does nothing if the help keyword is the empty string.
+    ///  </remarks>
     procedure HelpBtnClickHandler(Sender: TObject);
 
-    ///  <summary>Closes (hides) window when timer's event fires.</summary>
+    ///  <summary>Closes (hides) the window when the timer's event fires.
+    ///  </summary>
     ///  <remarks>The event is ignored if the window is not fully open.
     ///  </remarks>
     procedure TimerTickHandler(Sender: TObject);
 
   strict protected
-    ///  <summary>Sets parent to given control. Ensures that this window is
-    ///  aligned at the bottom right of the parent window.</summary>
+
+    ///  <summary>Sets this control's parent to the given control. Ensures that
+    ///  this window is aligned at the bottom right of the parent window.
+    ///  </summary>
     procedure SetParent(AParent: TWinControl); override;
 
     ///  <summary>Paints window background and glyph.</summary>
     procedure Paint; override;
 
   public
+
     ///  <summary>Creates and initialises a new component instance.</summary>
     constructor Create(AOwner: TComponent); override;
 
-    ///  <summary>Destroys component instance.</summary>
+    ///  <summary>Destroys the current component instance.</summary>
     destructor Destroy; override;
 
-    ///  <summary>Sizes and locates window. ALeft is ignored and is always set
-    ///  so that window appears at right edge of parent window.</summary>
+    ///  <summary>Sizes and locates the window. ALeft is ignored and is always
+    ///  set so that the window appears at the right edge of the parent window.
+    ///  </summary>
     procedure SetBounds(ALeft, ATop, AWidth, AHeight: Integer); override;
 
-    ///  <summary>Opens (displays) the window by sliding it on-screen.</summary>
+    ///  <summary>Opens (displays) the window with the content and actions
+    ///  specified by the given notification data records. The window slides
+    ///  on-screen.</summary>
     ///  <remarks>
     ///  <para>Does nothing unless State = nwsClosed.</para>
     ///  <para>State = nwsOpening while window is sliding and changes to
@@ -172,7 +181,7 @@ type
     ///  <para>The window display lock is closed iff State = mwsClose when the
     ///  method is called.</para>
     ///  </remarks>
-    procedure SlideIn;
+    procedure SlideIn(const N: TNotificationData);
 
     ///  <summary>Closes (hides) the window by sliding it off-screen.</summary>
     ///  <remarks>
@@ -194,10 +203,6 @@ type
     ///  <remarks>State is always nwsClosed when the window is created, i.e. it
     ///  is hidden by default.</remarks>
     property State: TState read fState;
-
-    ///  <summary>Details of current notification.</summary>
-    property NotificationData: TNotificationData
-      read fNotificationData write SetNotificationData;
 
     ///  <summary>Amount of time, in milliseconds, the notification is to be
     ///  displayed before being hidden automatically.</summary>
@@ -351,8 +356,8 @@ end;
 
 procedure TNotificationWindow.HelpBtnClickHandler(Sender: TObject);
 begin
-  if HelpKeyword <> '' then
-    HelpMgr.ShowHelp(HelpKeyword);
+  if fNotificationData.HelpKeyword <> '' then
+    HelpMgr.ShowHelp(fNotificationData.HelpKeyword);
 end;
 
 procedure TNotificationWindow.Paint;
@@ -387,25 +392,13 @@ begin
   fHideTimer.Interval := MS;
 end;
 
-procedure TNotificationWindow.SetNotificationData(const N: TNotificationData);
-begin
-  fTitleLbl.Caption := N.Title;
-  CreateContentLabels(N.Content);
-  HelpKeyword := N.HelpKeyword;
-  fActionBtn.Action := N.Action;
-  fDontShowChk.Visible := Assigned(N.InhibitCallback);
-  fDontShowChk.Checked := False;
-  fNotificationData := N;
-  UpdateWindow;
-end;
-
 procedure TNotificationWindow.SetParent(AParent: TWinControl);
 begin
   inherited;
   SetBounds(0, 0, Width, Height);
 end;
 
-procedure TNotificationWindow.SlideIn;
+procedure TNotificationWindow.SlideIn(const N: TNotificationData);
 var
   ClosedTop: Integer;
   OpenedTop: Integer;
@@ -414,10 +407,12 @@ var
 begin
   if State <> nwsClosed then
     Exit;
+  fNotificationData := N;
+  UpdateWindow;
   fDisplayLock.ResetEvent;
   fState := nwsOpening;
   ClosedTop := Parent.ClientRect.Bottom + 1;
-  OpenedTop := Parent.ClientRect.Bottom - Height;// - 4;
+  OpenedTop := Parent.ClientRect.Bottom - Height;
   Range := ClosedTop - OpenedTop;
   Top := ClosedTop;
   Visible := True;
@@ -483,6 +478,15 @@ var
   TextWidth: Integer;
   TopRowHeight: Integer;
 begin
+  // Set control content and state for current notification data
+  fTitleLbl.Caption := fNotificationData.Title;
+  CreateContentLabels(fNotificationData.Content);
+  fActionBtn.Action := fNotificationData.Action;
+  fDontShowChk.Visible := Assigned(fNotificationData.InhibitCallback);
+  fDontShowChk.Checked := False;
+  fHelpBtn.Visible := fNotificationData.HelpKeyword <> '';
+  fActionBtn.Visible := Assigned(fActionBtn.Action);
+
   // Find height of "top row" of controls - title and close button plus help
   // button if visible: they are all centred in this row.
   TCtrlArranger.SetLabelHeight(fTitleLbl);
@@ -496,7 +500,6 @@ begin
   );
 
   // Set "close" and "help" button locations
-  fHelpBtn.Visible := HelpKeyword <> '';
   if fHelpBtn.Visible then
   begin
     fHelpBtn.Left := Width - MarginLR - fHelpBtn.Width;
@@ -529,7 +532,6 @@ begin
   NextTop := ParaTop - ParaSpacing + CtrlVSpacing;
 
   // Set location and size of action button
-  fActionBtn.Visible := Assigned(fActionBtn.Action);
   if fActionBtn.Visible then
   begin
     fActionBtn.Left := TextLeftOffset;
