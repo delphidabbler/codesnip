@@ -21,7 +21,7 @@ interface
 
 uses
   // Delphi
-  SysUtils, Classes;
+  SysUtils, ActnList;
 
 
 type
@@ -44,7 +44,7 @@ type
       ///  <summary>Value of HelpKeyword property.</summary>
       fHelpKeyword: string;
       ///  <summary>Value of Action property.</summary>
-      fAction: TBasicAction;
+      fAction: TCustomAction;
       ///  <summary>Value of InhibitCallback property.</summary>
       fInhibitCallback: TProc;
 
@@ -61,9 +61,9 @@ type
     property HelpKeyword: string read fHelpKeyword;
 
     ///  <summary>Action triggered by user from notification window.</summary>
-    ///  <remarks>Set to nil if no acction is associated with notification.
+    ///  <remarks>Set to nil if no action is associated with the notification.
     ///  </remarks>
-    property Action: TBasicAction read fAction;
+    property Action: TCustomAction read fAction;
 
     ///  <summary>Callback procedure called to inhibit future notifications of
     ///  this kind.</summary>
@@ -85,7 +85,7 @@ type
     ///  notification window if user chooses to inhibit similar messages in
     ///  future, or nil if message can't be inhibited.</param>
     constructor Create(const ATitle: string; const AContent: array of string;
-      const AHelpKeyord: string; const AAction: TBasicAction;
+      const AHelpKeyord: string; const AAction: TCustomAction;
       const AInhibitCallback: TProc);
   end;
 
@@ -95,7 +95,7 @@ implementation
 
 constructor TNotificationData.Create(const ATitle: string;
   const AContent: array of string; const AHelpKeyord: string;
-  const AAction: TBasicAction; const AInhibitCallback: TProc);
+  const AAction: TCustomAction; const AInhibitCallback: TProc);
 var
   I: Integer;
 begin
