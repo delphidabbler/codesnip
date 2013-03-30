@@ -22,7 +22,7 @@ interface
 uses
   // Delphi
   Classes, StdCtrls, ExtCtrls, Controls, Buttons, Generics.Collections,
-  Windows {must come before Graphics}, Graphics, Messages, SyncObjs, ActnList,
+  Windows {must come before Graphics}, Graphics, Messages, SyncObjs,
   // Project
   Notifications.UData, UStructs;
 
@@ -75,7 +75,7 @@ type
       fDisplayLock: TSimpleEvent;
       ///  <summary>Value of State property.</summary>
       fState: TState;
-      ///  <summary>Stores the properties and actions associated with the last
+      ///  <summary>Stores the properties and tasks associated with the last
       ///  window displayed.</summary>
       ///  <remarks>This record is updated by every call to the SlideIn method.
       ///  It is undefined until SlideIn is first called.</remarks>
@@ -84,9 +84,9 @@ type
       fCloseBtn: TSpeedButton;
       ///  <summary>Button used to display context sensitive help.</summary>
       fHelpBtn: TSpeedButton;
-      ///  <summary>Button used to trigger any action event referenced by
-      ///  ButtonAction property.</summary>
-      fActionBtn: TButton;
+      ///  <summary>Button used to perform any task associated with current
+      ///  notification.</summary>
+      fTaskBtn: TButton;
       ///  <summary>Displays window's title text.</summary>
       fTitleLbl: TLabel;
       ///  <summary>Check box used to indicate whether or not notification
@@ -111,6 +111,10 @@ type
     ///  <remarks>The window display lock is opened and any callback to inhibit
     ///  future display of the current notification is called.</remarks>
     procedure WMConcealed(var Msg: TMessage); message WM_CONCEALED;
+
+    ///  <summary>OnClick event handler for task button. Calls any callback
+    ///  procedure registered for the current task.</summary>
+    procedure TaskBtnClick(Sender: TObject);
 
     ///  <summary>Creates labels required to display given content.</summary>
     ///  <remarks>One label is created for each element of the given array.
@@ -171,7 +175,7 @@ type
     ///  </summary>
     procedure SetBounds(ALeft, ATop, AWidth, AHeight: Integer); override;
 
-    ///  <summary>Opens (displays) the window with the content and actions
+    ///  <summary>Opens (displays) the window with the content and tasks
     ///  specified by the given notification data records. The window slides
     ///  on-screen.</summary>
     ///  <remarks>
@@ -310,11 +314,12 @@ begin
   fTitleLbl.EllipsisPosition := epEndEllipsis;
   TFontHelper.SetDefaultBaseFont(fTitleLbl.Font);
 
-  // create action button with default size (width changed to suit text)
-  fActionBtn := TButton.Create(Self);
-  fActionBtn.Parent := Self;
-  fActionBtn.Visible := False;
-  fActionBtn.Enabled := False;    // enabled only when window displayed
+  // create task button with default size (width changed to suit text)
+  fTaskBtn := TButton.Create(Self);
+  fTaskBtn.Parent := Self;
+  fTaskBtn.Visible := False;
+  fTaskBtn.Enabled := False;    // enabled only when window displayed
+  fTaskBtn.OnClick := TaskBtnClick;
 
   // create close button with down arrow symbol
   fCloseBtn := CreateSymbolButton(
@@ -425,7 +430,7 @@ begin
   end;
   Top := OpenedTop;
   fState := nwsOpen;
-  fActionBtn.Enabled := True;
+  fTaskBtn.Enabled := True;
   fHideTimer.Enabled := DisplayTime > 0;
 end;
 
@@ -439,10 +444,10 @@ begin
   if State <> nwsOpen then
     Exit;
   fHideTimer.Enabled := False;
-  fActionBtn.Enabled := False;
+  fTaskBtn.Enabled := False;
   fState := nwsClosing;
   ClosedTop := Parent.ClientRect.Bottom + 1;
-  OpenedTop := Parent.ClientRect.Bottom - Height;// - 4;
+  OpenedTop := Parent.ClientRect.Bottom - Height;
   Range := ClosedTop - OpenedTop;
   Top := OpenedTop;
   Scale := SlideStep;
@@ -456,6 +461,12 @@ begin
   Visible := False;
   fState := nwsClosed;
   PostMessage(Handle, WM_CONCEALED, 0, 0);
+end;
+
+procedure TNotificationWindow.TaskBtnClick(Sender: TObject);
+begin
+  if Assigned(fNotificationData.TaskCallback) then
+    fNotificationData.TaskCallback();
 end;
 
 procedure TNotificationWindow.TimerTickHandler(Sender: TObject);
@@ -481,11 +492,19 @@ begin
   // Set control content and state for current notification data
   fTitleLbl.Caption := fNotificationData.Title;
   CreateContentLabels(fNotificationData.Content);
-  fActionBtn.Action := fNotificationData.Action;
+  if Assigned(fNotificationData.TaskCallback) then
+  begin
+    fTaskBtn.Caption := fNotificationData.TaskPrompt;
+    fTaskBtn.Visible := True;
+  end
+  else
+  begin
+    fTaskBtn.Caption := '';
+    fTaskBtn.Visible := False;
+  end;
   fDontShowChk.Visible := Assigned(fNotificationData.InhibitCallback);
   fDontShowChk.Checked := False;
   fHelpBtn.Visible := fNotificationData.HelpKeyword <> '';
-  fActionBtn.Visible := Assigned(fActionBtn.Action);
 
   // Find height of "top row" of controls - title and close button plus help
   // button if visible: they are all centred in this row.
@@ -531,14 +550,14 @@ begin
   end;
   NextTop := ParaTop - ParaSpacing + CtrlVSpacing;
 
-  // Set location and size of action button
-  if fActionBtn.Visible then
+  // Set location and size of task button
+  if fTaskBtn.Visible then
   begin
-    fActionBtn.Left := TextLeftOffset;
-    fActionBtn.Width := StringExtent(fActionBtn.Caption, fActionBtn.Font).cx
+    fTaskBtn.Left := TextLeftOffset;
+    fTaskBtn.Width := StringExtent(fTaskBtn.Caption, fTaskBtn.Font).cx
       + 28;
-    fActionBtn.Top := NextTop;
-    NextTop := TCtrlArranger.BottomOf(fActionBtn, CtrlVSpacing);
+    fTaskBtn.Top := NextTop;
+    NextTop := TCtrlArranger.BottomOf(fTaskBtn, CtrlVSpacing);
   end;
 
   // Set location and size of "don't show again" check box if visible
