@@ -43,11 +43,12 @@ type
       fContent: TArray<string>;
       ///  <summary>Value of HelpKeyword property.</summary>
       fHelpKeyword: string;
-      ///  <summary>Value of Action property.</summary>
-      fAction: TCustomAction;
       ///  <summary>Value of InhibitCallback property.</summary>
       fInhibitCallback: TProc;
-
+      ///  <summary>Valure of TaskCallback property.</summary>
+      fTaskCallback: TProc;
+      ///  <summary>Value of TaskPrompt property.</summary>
+      fTaskPrompt: string;
   public
     ///  <summary>Title of notification.</summary>
     property Title: string read fTitle;
@@ -60,10 +61,16 @@ type
     ///  <remarks>Set to the empty string to inhibit display of help.</remarks>
     property HelpKeyword: string read fHelpKeyword;
 
-    ///  <summary>Action triggered by user from notification window.</summary>
-    ///  <remarks>Set to nil if no action is associated with the notification.
+    ///  <summary>Callback procedure called from notification window when user
+    ///  clicks the task button.</summary>
+    ///  <remarks>Note that no task button will appear if this property is nil.
     ///  </remarks>
-    property Action: TCustomAction read fAction;
+    property TaskCallback: TProc read fTaskCallback;
+
+    ///  <summary>Prompt text that appears in notification window's task button.
+    ///  </summary>
+    ///  <remarks>This property is ignored if TaskCallback is nil.</remarks>
+    property TaskPrompt: string read fTaskPrompt;
 
     ///  <summary>Callback procedure called to inhibit future notifications of
     ///  this kind.</summary>
@@ -79,14 +86,17 @@ type
     ///  only white space are ignored.</param>
     ///  <param name="AHelpKeyword">string [in] A-link keyword of associated
     ///  help topic or empty string if there is no such help topic.</param>
-    ///  <param name="AAction">TBasicAction [in] Action that can be triggered
-    ///  from notification window or nil if there is no such action.</param>
+    ///  <param name="ATaskCallback">TProc [in] Procedure to be called from
+    ///  notification window if user clicks the task button, or nil if no
+    ///  such button is required.</param>
+    ///  <param name="ATaskPrompt">string [in] Prompt or caption to appear on
+    ///  any task button. May be empty string if ATaskCallback is nil.</param>
     ///  <param name="AInhibitCallback">TProc [in] Procedure to be called from
     ///  notification window if user chooses to inhibit similar messages in
     ///  future, or nil if message can't be inhibited.</param>
     constructor Create(const ATitle: string; const AContent: array of string;
-      const AHelpKeyord: string; const AAction: TCustomAction;
-      const AInhibitCallback: TProc);
+      const AHelpKeyord: string; const ATaskCallback: TProc;
+      const ATaskPrompt: string; const AInhibitCallback: TProc);
   end;
 
 implementation
@@ -95,7 +105,8 @@ implementation
 
 constructor TNotificationData.Create(const ATitle: string;
   const AContent: array of string; const AHelpKeyord: string;
-  const AAction: TCustomAction; const AInhibitCallback: TProc);
+  const ATaskCallback: TProc; const ATaskPrompt: string;
+  const AInhibitCallback: TProc);
 var
   I: Integer;
 begin
@@ -107,8 +118,10 @@ begin
   for I := 0 to Pred(Length(AContent)) do
     fContent[I] := AContent[I];
   fHelpKeyword := AHelpKeyord;
-  fAction := AAction;
+  fTaskCallback := ATaskCallback;
+  fTaskPrompt := ATaskPrompt;
   fInhibitCallback := AInhibitCallback;
 end;
 
 end.
+
