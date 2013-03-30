@@ -187,6 +187,7 @@ uses
   IntfNotifier in 'IntfNotifier.pas',
   IntfPreview in 'IntfPreview.pas',
   Notifications.UData in 'Notifications.UData.pas',
+  Notifications.UDisplayThread in 'Notifications.UDisplayThread.pas',
   Notifications.UQueue in 'Notifications.UQueue.pas',
   Notifications.URecorderThread in 'Notifications.URecorderThread.pas',
   Notifications.UWindow in 'Notifications.UWindow.pas',
