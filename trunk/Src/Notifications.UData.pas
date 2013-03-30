@@ -21,7 +21,7 @@ interface
 
 uses
   // Delphi
-  SysUtils, ActnList;
+  SysUtils;
 
 
 type
