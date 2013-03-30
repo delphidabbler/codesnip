@@ -27,24 +27,48 @@ uses
 
 
 type
+  ///  <summary>Dialogue box that checks if a program update is available and
+  ///  reports the result, providing a link to download any available update.
+  ///  </summary>
+  ///  <remarks>This dialogus box indirectly accesses the CodeSnip program
+  ///  update we service to get the update information.</remarks>
   TProgramUpdatesDlg = class(TGenericViewDlg, INoPublicConstruct)
     lblProgram: TLabel;
     btnProgUpdate: TButton;
     lblPreReleaseMsg: TLabel;
+    ///  <summary>Handles form creation event. Creates owned objects.</summary>
     procedure FormCreate(Sender: TObject);
+    ///  <summary>Handles form destruction event. Frees owned objects.</summary>
     procedure FormDestroy(Sender: TObject);
+    ///  <summary>Handles clicks on "Download Now" button by displaying, in the
+    ///  default browser, the web page from where the latest version of CodeSnip
+    ///  can be downloaded.</summary>
     procedure btnProgUpdateClick(Sender: TObject);
   strict private
     var
+      ///  <summary>Object that checks whether an update is available and
+      ///  provides information about it if so.</summary>
       fUpdateChecker: TProgramUpdateChecker;
+    ///  <summary>Checks if a program update is available and updates the UI
+    ///  according to the result.</summary>
     procedure CheckProgramUpdates;
   strict protected
-    ///  <summary>Triggers checks for updates.</summary>
+    ///  <summary>Triggers checks for updates after the forma is displayed.
+    ///  </summary>
     ///  <remarks>Called from ancestor class.</remarks>
     procedure AfterShowForm; override;
+    ///  <summary>Arranges the controls and sizes the dialogue box.</summary>
+    ///  <remarks>Called from ancestor class.</remarks>
     procedure ArrangeForm; override;
+    ///  <summary>Initialises form's controls.</summary>
+    ///  <remarks>Called from ancestor class.</remarks>
     procedure InitForm; override;
   public
+    ///  <summary>Displays the dialogue box, aligned over the given owner
+    ///  control.</summary>
+    ///  <remarks>The check for program updates begins as soon as the dialogue
+    ///  box appears on-screen, without any user interaction being required to
+    ///  start it.</remarks>
     class procedure Execute(AOwner: TComponent);
   end;
 
