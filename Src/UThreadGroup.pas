@@ -68,6 +68,9 @@ type
     ///  <summary>Starts all threads.</summary>
     ///  <remarks>Threads are started in the order they were added.</remarks>
     procedure Start;
+    ///  <summary>Sets priority of all threads in group to the given value.
+    ///  </summary>
+    procedure SetPriorities(const Priority: TThreadPriority);
     ///  <summary>Waits for each thread to terminate, subject to a timeout.
     ///  </summary>
     ///  <param name="Timeout">Cardinal [in] Timeout in ms.</param>
@@ -166,6 +169,14 @@ begin
   Assert(not IsEmpty, ClassName + '.Kill: Thread list empty');
   Terminate;
   Result := WaitFor(Timeout);
+end;
+
+procedure TThreadGroup.SetPriorities(const Priority: TThreadPriority);
+var
+  Thread: TThread;
+begin
+  for Thread in fThreads do
+    Thread.Priority := Priority;
 end;
 
 procedure TThreadGroup.Start;
