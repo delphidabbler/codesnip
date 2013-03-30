@@ -23,7 +23,7 @@ uses
   // Delphi
   StdCtrls, Controls, ExtCtrls, Classes,
   // Project
-  FmGenericViewDlg, UBaseObjects, Web.UProgramUpdateMgr;
+  FmGenericViewDlg, UBaseObjects, UProgramUpdateChecker;
 
 
 type
@@ -36,8 +36,7 @@ type
     procedure btnProgUpdateClick(Sender: TObject);
   strict private
     var
-      fProgUpdateMgr: TProgramUpdateMgr;
-      fDownloadURL: string;
+      fUpdateChecker: TProgramUpdateChecker;
     procedure CheckProgramUpdates;
   strict protected
     ///  <summary>Triggers checks for updates.</summary>
@@ -57,7 +56,7 @@ uses
   // Delphi
   SysUtils, Forms, ExtActns, Graphics,
   // Project
-  UAppInfo, UCtrlArranger, UVersionInfo, Web.UInfo;
+  UCtrlArranger;
 
 {$R *.dfm}
 
@@ -96,7 +95,7 @@ var
 begin
   BrowseAction := TBrowseURL.Create(nil);
   try
-    BrowseAction.URL := fDownloadURL;
+    BrowseAction.URL := fUpdateChecker.DownloadURL;
     BrowseAction.Execute;
   finally
     BrowseAction.Free;
@@ -104,25 +103,20 @@ begin
 end;
 
 procedure TProgramUpdatesDlg.CheckProgramUpdates;
-var
-  LatestVersion: TVersionNumber;
-  ThisVersion: TVersionNumber;
 begin
   btnProgUpdate.Visible := False;
   lblProgram.Caption := sChecking;
   Application.ProcessMessages;
-  fProgUpdateMgr.SignOn(Name);
-  LatestVersion := fProgUpdateMgr.LatestProgramVersion;
-  ThisVersion := TAppInfo.ProgramReleaseVersion;
-  if ThisVersion < LatestVersion then
+  fUpdateChecker.Execute('Manual');
+  if fUpdateChecker.IsUpdateAvailable then
   begin
-    fDownloadURL := fProgUpdateMgr.DownloadURL;
-    lblProgram.Caption := Format(sProgNeedsUpdating, [string(LatestVersion)]);
+    lblProgram.Caption := Format(
+      sProgNeedsUpdating, [string(fUpdateChecker.LatestVersion)]
+    );
     btnProgUpdate.Visible := True;
   end
   else
   begin
-    fDownloadURL := '';
     lblProgram.Caption := sProgUpToDate;
     lblPreReleaseMsg.Visible := True;
   end;
@@ -141,12 +135,12 @@ end;
 procedure TProgramUpdatesDlg.FormCreate(Sender: TObject);
 begin
   inherited;
-  fProgUpdateMgr := TProgramUpdateMgr.Create;
+  fUpdateChecker := TProgramUpdateChecker.Create;
 end;
 
 procedure TProgramUpdatesDlg.FormDestroy(Sender: TObject);
 begin
-  fProgUpdateMgr.Free;
+  fUpdateChecker.Free;
   inherited;
 end;
 
