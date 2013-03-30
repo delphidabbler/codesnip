@@ -186,6 +186,7 @@ uses
   IntfFrameMgrs in 'IntfFrameMgrs.pas',
   IntfNotifier in 'IntfNotifier.pas',
   IntfPreview in 'IntfPreview.pas',
+  Notifications.UDisplayMgr in 'Notifications.UDisplayMgr.pas',
   Notifications.UData in 'Notifications.UData.pas',
   Notifications.UDisplayThread in 'Notifications.UDisplayThread.pas',
   Notifications.UQueue in 'Notifications.UQueue.pas',

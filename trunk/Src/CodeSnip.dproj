@@ -391,6 +391,7 @@
 			<DCCReference Include="IntfFrameMgrs.pas"/>
 			<DCCReference Include="IntfNotifier.pas"/>
 			<DCCReference Include="IntfPreview.pas"/>
+			<DCCReference Include="Notifications.UDisplayMgr.pas"/>
 			<DCCReference Include="Notifications.UData.pas"/>
 			<DCCReference Include="Notifications.UDisplayThread.pas"/>
 			<DCCReference Include="Notifications.UQueue.pas"/>
