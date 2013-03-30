@@ -507,6 +507,7 @@
 			<DCCReference Include="UPrintEngine.pas"/>
 			<DCCReference Include="UPrintInfo.pas"/>
 			<DCCReference Include="UPrintMgr.pas"/>
+			<DCCReference Include="UProgramUpdateChecker.pas"/>
 			<DCCReference Include="UProtocols.pas"/>
 			<DCCReference Include="UQuery.pas"/>
 			<DCCReference Include="UREMLDataIO.pas"/>
