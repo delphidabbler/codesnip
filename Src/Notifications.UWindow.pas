@@ -542,10 +542,10 @@ begin
   ParaTop := MarginTB + TopRowHeight + CtrlVSpacing;
   for Lbl in fContentLblList do
   begin
-    TCtrlArranger.SetLabelHeight(Lbl);
     Lbl.Top := ParaTop;
     Lbl.Left := TextLeftOffset;
     Lbl.Width := TextWidth;
+    TCtrlArranger.SetLabelHeight(Lbl);
     Inc(ParaTop, Lbl.Height + ParaSpacing);
   end;
   NextTop := ParaTop - ParaSpacing + CtrlVSpacing;
