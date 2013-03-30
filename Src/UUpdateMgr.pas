@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -36,6 +36,16 @@ type
     urNoUpdate,         // no files were updated: up to date
     urCancelled,        // use cancelled download
     urError             // an error occurred
+  );
+
+  {
+  TUpdateQueryResult:
+    Possible results when checking if update available.
+  }
+  TUpdateQueryResult = (
+    uqUpToDate,
+    uqUpdateAvailable,
+    uqError
   );
 
   {
@@ -124,6 +134,9 @@ type
       {Logs on to web server.
         @return True if log on successful or false if user cancelled.
       }
+    procedure LogOff;
+      {Logs off web server.
+      }
     function DownloadDatabase(out Data: TEncodedData): Boolean;
       {Downloads database from web server.
         @param Data [out] Receives downloaded data.
@@ -162,6 +175,11 @@ type
         @return Value indicating whether successfully updated, no update needed,
           user cancelled or error.
       }
+    function CheckForUpdates: TUpdateQueryResult;
+      {Checks if updates to the local database are available.
+        @return Value indicating whether an update is needed or not or if an
+          error occurred.
+      }
     property LongError: string read fLongError;
       {Full description of last update error}
     property ShortError: string read fShortError;
@@ -197,6 +215,29 @@ resourcestring
 
 
 { TUpdateMgr }
+
+function TUpdateMgr.CheckForUpdates: TUpdateQueryResult;
+  {Checks if updates to the local database are available.
+    @return Value indicating whether an update is needed or not or if an error
+      occurred.
+  }
+begin
+  try
+    LogOn;
+    if UpdateNeeded then
+      Result := uqUpdateAvailable
+    else
+      Result := uqUpToDate;
+    LogOff;
+  except
+    on E: Exception do
+    begin
+      Result := uqError;
+      if not HandleException(E) then
+        raise;
+    end;
+  end;
+end;
 
 constructor TUpdateMgr.Create(const LocalDir: string);
   {Class constructor. Sets up object.
@@ -277,7 +318,7 @@ begin
       // Log off web server
       if not NotifyStatus(usLogOff) then
         Exit;
-      fDownloadMgr.LogOff;
+      LogOff;
       if not NotifyStatus(usCompleted) then
         Exit;
     except
@@ -342,6 +383,13 @@ begin
   finally
     LocalFiles.Free;
   end;
+end;
+
+procedure TUpdateMgr.LogOff;
+  {Logs off web server.
+  }
+begin
+  fDownloadMgr.LogOff;
 end;
 
 function TUpdateMgr.LogOn: Boolean;
