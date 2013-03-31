@@ -570,6 +570,7 @@
 			<DCCReference Include="UUniqueID.pas"/>
 			<DCCReference Include="UUnitAnalyser.pas"/>
 			<DCCReference Include="UUnitsChkListMgr.pas"/>
+			<DCCReference Include="UUpdateCheckers.pas"/>
 			<DCCReference Include="UUpdateMgr.pas"/>
 			<DCCReference Include="UURIEncode.pas"/>
 			<DCCReference Include="UURIParams.pas"/>

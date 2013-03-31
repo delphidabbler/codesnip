@@ -365,6 +365,7 @@ uses
   UUniqueID in 'UUniqueID.pas',
   UUnitAnalyser in 'UUnitAnalyser.pas',
   UUnitsChkListMgr in 'UUnitsChkListMgr.pas',
+  UUpdateCheckers in 'UUpdateCheckers.pas',
   UUpdateMgr in 'UUpdateMgr.pas',
   UURIEncode in 'UURIEncode.pas',
   UURIParams in 'UURIParams.pas',
