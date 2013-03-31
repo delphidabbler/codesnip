@@ -9,7 +9,7 @@
  * $Date$
  *
  * Defines a record that stores information to be displayed in a notification
- * window along with related actions that can be performed from the window.
+ * window along with a related task that can be performed from the window.
 }
 
 
@@ -26,13 +26,12 @@ uses
 
 type
   ///  <summary>Stores information to be displayed in a notification window
-  ///  along with related actions that can be performed from the window.
+  ///  along with a related task that can be performed from the window.
   ///  </summary>
   ///  <remarks>
   ///  <para>A notification always has a title and at least one paragraph of
   ///  content text.</para>
-  ///  <para> An associated action, help keyword and the facility to inhibit
-  ///  similar notifications in future are all optional.</para>
+  ///  <para>An associated task and help keyword are optional.</para>
   ///  </remarks>
   TNotificationData = record
   strict private
@@ -43,8 +42,6 @@ type
       fContent: TArray<string>;
       ///  <summary>Value of HelpKeyword property.</summary>
       fHelpKeyword: string;
-      ///  <summary>Value of InhibitCallback property.</summary>
-      fInhibitCallback: TProc;
       ///  <summary>Valure of TaskCallback property.</summary>
       fTaskCallback: TProc;
       ///  <summary>Value of TaskPrompt property.</summary>
@@ -72,11 +69,6 @@ type
     ///  <remarks>This property is ignored if TaskCallback is nil.</remarks>
     property TaskPrompt: string read fTaskPrompt;
 
-    ///  <summary>Callback procedure called to inhibit future notifications of
-    ///  this kind.</summary>
-    ///  <remarks>Set to nil if notification can't be inhibited.</remarks>
-    property InhibitCallback: TProc read fInhibitCallback;
-
     ///  <summary>Creates an initialised notification data record.</summary>
     ///  <param name="ATitle">string [in] Notification title. Must be empty
     ///  string or contain only white space.</param>
@@ -96,7 +88,7 @@ type
     ///  future, or nil if message can't be inhibited.</param>
     constructor Create(const ATitle: string; const AContent: array of string;
       const AHelpKeyord: string; const ATaskCallback: TProc;
-      const ATaskPrompt: string; const AInhibitCallback: TProc);
+      const ATaskPrompt: string);
   end;
 
 implementation
@@ -105,8 +97,7 @@ implementation
 
 constructor TNotificationData.Create(const ATitle: string;
   const AContent: array of string; const AHelpKeyord: string;
-  const ATaskCallback: TProc; const ATaskPrompt: string;
-  const AInhibitCallback: TProc);
+  const ATaskCallback: TProc; const ATaskPrompt: string);
 var
   I: Integer;
 begin
@@ -120,7 +111,6 @@ begin
   fHelpKeyword := AHelpKeyord;
   fTaskCallback := ATaskCallback;
   fTaskPrompt := ATaskPrompt;
-  fInhibitCallback := AInhibitCallback;
 end;
 
 end.

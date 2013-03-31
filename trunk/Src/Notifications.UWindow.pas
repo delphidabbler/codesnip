@@ -89,9 +89,6 @@ type
       fTaskBtn: TButton;
       ///  <summary>Displays window's title text.</summary>
       fTitleLbl: TLabel;
-      ///  <summary>Check box used to indicate whether or not notification
-      ///  should be displayed again.</summary>
-      fDontShowChk: TCheckBox;
       ///  <summary>Timer used to automatically close (hide) an open window
       ///  after a specified time.</summary>
       fHideTimer: TTimer;
@@ -108,8 +105,7 @@ type
 
     ///  <summary>Handles the custom message sent when the window has been
     ///  concealed after sliding off screen.</summary>
-    ///  <remarks>The window display lock is opened and any callback to inhibit
-    ///  future display of the current notification is called.</remarks>
+    ///  <remarks>The window display lock event is signalled.</remarks>
     procedure WMConcealed(var Msg: TMessage); message WM_CONCEALED;
 
     ///  <summary>OnClick event handler for task button. Calls any callback
@@ -252,7 +248,6 @@ begin
   fLightBulb := TBitmap.Create;
   fLightBulb.LoadFromResourceName(HInstance, 'NOTIFICATION');
   CreateCtrls;
-  fDontShowChk.Checked := False;
   fTitleLbl.Caption := sDefaultTitle;
   fHideTimer.Interval := 10000;
   fDisplayLock := TSimpleEvent.Create;
@@ -331,13 +326,6 @@ begin
     HelpButtonChar, HelpBtnClickHandler, sHelpBtnHint
   );
   fHelpBtn.Visible := False;
-
-  // create "don't show again" check box
-  fDontShowChk := TCheckBox.Create(Self);
-  fDontShowChk.Parent := Self;
-  fDontShowChk.Checked := False;
-  fDontShowChk.Visible := True;
-  fDontShowChk.Caption := sDontShowText;
 
   // create timer used to automatically hide window
   fHideTimer := TTimer.Create(Self);
@@ -502,8 +490,6 @@ begin
     fTaskBtn.Caption := '';
     fTaskBtn.Visible := False;
   end;
-  fDontShowChk.Visible := Assigned(fNotificationData.InhibitCallback);
-  fDontShowChk.Checked := False;
   fHelpBtn.Visible := fNotificationData.HelpKeyword <> '';
 
   // Find height of "top row" of controls - title and close button plus help
@@ -560,25 +546,12 @@ begin
     NextTop := TCtrlArranger.BottomOf(fTaskBtn, CtrlVSpacing);
   end;
 
-  // Set location and size of "don't show again" check box if visible
-  if fDontShowChk.Visible then
-  begin
-    fDontShowChk.Left := TextLeftOffset;
-    fDontShowChk.Width := TextWidth;
-    fDontShowChk.Top := NextTop;
-    NextTop := TCtrlArranger.BottomOf(fDontShowChk, CtrlVSpacing);
-  end;
-
   // Set required window height
   Height := NextTop - CtrlVSpacing + MarginTB;
 end;
 
 procedure TNotificationWindow.WMConcealed(var Msg: TMessage);
 begin
-  if Assigned(fNotificationData.InhibitCallback)
-    and fDontShowChk.Visible
-    and fDontShowChk.Checked then
-    fNotificationData.InhibitCallback();
   fDisplayLock.SetEvent;
 end;
 
