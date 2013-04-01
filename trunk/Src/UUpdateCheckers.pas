@@ -149,8 +149,6 @@ type
     ///  <exceptions>If S is not a valid config file date a fatal exception will
     ///  be raised.</exceptions>
     function ParseDate(const S: string): TDateTime;
-    ///  <summary>Returns the current date and time as GMT/UTC.</summary>
-    function NowAsGMT: TDateTime;
   public
     ///  <summary>Construct new object instance and reads last update check
     ///  times from storage.</summary>
@@ -175,7 +173,7 @@ uses
   Classes, Windows, DateUtils,
   // Project
   FmUpdateDlg, UAppInfo, UPreferences, UProgramUpdateChecker, USettings,
-  UStrUtils, UUpdateMgr;
+  UStrUtils, UUpdateMgr, UUtils;
 
 
 { TProgramUpdateCheckerThread }
@@ -326,7 +324,7 @@ end;
 
 function TUpdateCheckerConfig.CanCheck(Kind: TCheckKind): Boolean;
 begin
-  Result := DaysBetween(NowAsGMT, fLastUpdateCheck[Kind]) > 0;
+  Result := DaysBetween(NowGMT, fLastUpdateCheck[Kind]) > 0;
 end;
 
 constructor TUpdateCheckerConfig.Create;
@@ -365,14 +363,6 @@ begin
   Result := FormatDateTime('yyyy"-"mm"-"dd" "hh":"nn":"ss', DT);
 end;
 
-function TUpdateCheckerConfig.NowAsGMT: TDateTime;
-var
-  ST: TSystemTime;
-begin
-  GetSystemTime(ST);
-  Result := SystemTimeToDateTime(ST);
-end;
-
 function TUpdateCheckerConfig.ParseDate(const S: string): TDateTime;
 begin
   Result := EncodeDate(
@@ -391,7 +381,7 @@ end;
 
 procedure TUpdateCheckerConfig.RecordCheck(Kind: TCheckKind);
 begin
-  fLastUpdateCheck[Kind] := NowAsGMT;
+  fLastUpdateCheck[Kind] := NowGMT;
 end;
 
 function TUpdateCheckerConfig.ValueName(const Kind: TCheckKind): string;
