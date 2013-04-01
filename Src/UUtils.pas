@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -80,7 +80,10 @@ function FloatToInt(const F: Double): Int64;
 
 ///  <summary>Creates a date stamp for current date in RFC1123 format.</summary>
 ///  <returns>string. Required date and time as date stamp in UTC/GMT.</returns>
-function DateStamp: string;
+function DateStamp: string; inline;
+
+///  <summary>Returns the current date and time in GMT/UTC.</summary>
+function NowGMT: TDateTime;
 
 ///  <summary>Get a desired interface pointer to an object instance.</summary>
 ///  <param name="Instance">IInterface [in] Instance for which an interface is
@@ -248,18 +251,22 @@ begin
   Result := Round(SimpleRoundTo(F, 0));
 end;
 
-function DateStamp: string;
-const
-  // Pattern to create RFC1123 date formats
-  cRFC1123Pattern = 'ddd, dd mmm yyyy HH'':''nn'':''ss ''GMT''';
+function NowGMT: TDateTime;
 var
-  ST: TSystemTime;  // system time
+  ST: TSystemTime;
 begin
   // This Windows API function gets system time in UTC/GMT
   // see http://msdn.microsoft.com/en-us/library/ms724390
   GetSystemTime(ST);
-  // Format system time in RFC1123 format
-  Result := FormatDateTime(cRFC1123Pattern, SystemTimeToDateTime(ST));
+  Result := SystemTimeToDateTime(ST);
+end;
+
+function DateStamp: string;
+const
+  // Pattern to create RFC1123 date formats
+  cRFC1123Pattern = 'ddd, dd mmm yyyy HH'':''nn'':''ss ''GMT''';
+begin
+  Result := FormatDateTime(cRFC1123Pattern, NowGMT);
 end;
 
 procedure GetIntf(const Instance: IInterface; const IID: TGUID; out Intf);
