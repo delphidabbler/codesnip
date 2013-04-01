@@ -161,7 +161,8 @@ type
     ssDuplicateSnippet,   // persistent settings from Duplicate Snippets dlg
     ssFavourites,         // persistent settings from Favourites dlg
     ssWindowState,        // info about the size and state of various windows
-    ssDatabase            // database customisation info
+    ssDatabase,           // database customisation info
+    ssUpdateChecks        // info about update checks
   );
 
   {
@@ -435,7 +436,8 @@ const
     ssUser,     // ssDuplicateSnippet
     ssUser,     // ssFavourites
     ssUser,     // ssWindowState
-    ssUser      // ssDatabase
+    ssUser,     // ssDatabase
+    ssUser      // ssUpdateChecks
   );
 begin
   Result := cSectionStorageMap[Section];
@@ -547,7 +549,8 @@ const
     'DuplicateSnippet', // ssDuplicateSnippet
     'Favourites',       // ssFavourites
     'WindowState',      // ssWindowState
-    'Database'          // ssDatabase
+    'Database',         // ssDatabase
+    'UpdateChecks'      // ssUpdateChecks
   );
 begin
   Result := cSectionNames[Id];
