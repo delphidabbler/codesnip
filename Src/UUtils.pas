@@ -80,7 +80,7 @@ function FloatToInt(const F: Double): Int64;
 
 ///  <summary>Creates a date stamp for current date in RFC1123 format.</summary>
 ///  <returns>string. Required date and time as date stamp in UTC/GMT.</returns>
-function DateStamp: string; inline;
+function RFC1123DateStamp: string; inline;
 
 ///  <summary>Returns the current date and time in GMT/UTC.</summary>
 function NowGMT: TDateTime;
@@ -261,7 +261,7 @@ begin
   Result := SystemTimeToDateTime(ST);
 end;
 
-function DateStamp: string;
+function RFC1123DateStamp: string;
 const
   // Pattern to create RFC1123 date formats
   cRFC1123Pattern = 'ddd, dd mmm yyyy HH'':''nn'':''ss ''GMT''';
