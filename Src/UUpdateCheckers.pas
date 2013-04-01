@@ -22,7 +22,7 @@ interface
 
 uses
   // Delphi
-  ExtActns,
+  SysUtils, ExtActns,
   // Project
   Notifications.UData, Notifications.URecorderThread, UThreadGroup;
 
@@ -32,7 +32,8 @@ type
   ///  is available.</summary>
   ///  <remarks>
   ///  <para>No check is made if the user has switched the facility off in
-  ///  preferences.</para>
+  ///  preferences or if a check has been made within the preceding 24 hrs.
+  ///  </para>
   ///  <para>The thread fails silently as if no update is available if any
   ///  errors occur when accessing the internet or web service.</para>
   ///  <para>If an update is found a notification containing the details is
@@ -74,7 +75,8 @@ type
   ///  code snippets database is available.</summary>
   ///  <remarks>
   ///  <para>No check is made if the user has switched the facility off in
-  ///  preferences.</para>
+  ///  preferences or if a check has been made within the preceding 24 hrs.
+  ///  </para>
   ///  <para>The thread fails silently as if no update is available if any
   ///  errors occur when accessing the internet or web service.</para>
   ///  <para>If an update is found a notification containing the details is
@@ -120,15 +122,60 @@ type
     procedure StopThreads;
   end;
 
+type
+  ///  <summary>Wrapper around the 'UpdateChecks' section of the per-user
+  ///  config file that records information about when update availability was
+  ///  checked.</summary>
+  TUpdateCheckerConfig = class(TObject)
+  public
+    type
+      ///  <summary>
+      ///  <para>Enumeration of supported kinds of update check.</para>
+      ///  <para>- ukProgram - program update checks.</para>
+      ///  <para>- ukDatabase - database update checks.</para>
+      ///  </summary>
+      TCheckKind = (ckProgram, ckDatabase);
+  strict private
+    var
+      ///  <summary>Dates and times of last successful update check for each
+      ///  supported kind of update.<summary>
+      fLastUpdateCheck: array[TCheckKind] of TDateTime;
+    ///  <summary>Returns the config file name of the value that stores that
+    ///  stores the last upate check date for the given update check.</summary>
+    function ValueName(const Kind: TCheckKind): string;
+    ///  <summary>Formats the given TDateTime value as a string.</summary>
+    function FormatDate(const DT: TDateTime): string;
+    ///  <summary>Converts the given string as a TDateTime value.</summary>
+    ///  <exceptions>If S is not a valid config file date a fatal exception will
+    ///  be raised.</exceptions>
+    function ParseDate(const S: string): TDateTime;
+    ///  <summary>Returns the current date and time as GMT/UTC.</summary>
+    function NowAsGMT: TDateTime;
+  public
+    ///  <summary>Construct new object instance and reads last update check
+    ///  times from storage.</summary>
+    constructor Create;
+    ///  <summary>Writes the last update check times to storage then destroys
+    ///  the object.</summary>
+    destructor Destroy; override;
+    ///  <summary>Uses information from storage to determine if update
+    ///  availability should be checked for the given update kind.</summary>
+    function CanCheck(Kind: TCheckKind): Boolean;
+    ///  <summary>Update the last update check time for the given update kind.
+    ///  </summary>
+    procedure RecordCheck(Kind: TCheckKind);
+  end;
+
 
 implementation
 
 
 uses
   // Delphi
-  SysUtils, Classes,
+  Classes, Windows, DateUtils,
   // Project
-  FmUpdateDlg, UAppInfo, UPreferences, UProgramUpdateChecker, UUpdateMgr;
+  FmUpdateDlg, UAppInfo, UPreferences, UProgramUpdateChecker, USettings,
+  UStrUtils, UUpdateMgr;
 
 
 { TProgramUpdateCheckerThread }
@@ -157,10 +204,18 @@ var
   UpdateChecker: TProgramUpdateChecker;
   Content: TArray<string>;
   TaskCallback: TProc;
+  Config: TUpdateCheckerConfig;
 begin
   try
-    if not Preferences.AutoCheckProgramUpdates then
-      Exit(False);
+    Config := TUpdateCheckerConfig.Create;
+    try
+      if not Preferences.AutoCheckProgramUpdates
+        or not Config.CanCheck(ckProgram) then
+        Exit(False);
+      Config.RecordCheck(ckProgram);
+    finally
+      Config.Free;
+    end;
     UpdateChecker := TProgramUpdateChecker.Create;
     try
       if not UpdateChecker.Execute('Auto') then
@@ -203,10 +258,18 @@ var
   UpdateMgr: TUpdateMgr;
   Content: TArray<string>;
   TaskCallback: TProc;
+  Config: TUpdateCheckerConfig;
 begin
   try
-    if not Preferences.AutoCheckDatabaseUpdates then
-      Exit(False);
+    Config := TUpdateCheckerConfig.Create;
+    try
+      if not Preferences.AutoCheckDatabaseUpdates
+        or not Config.CanCheck(ckDatabase) then
+        Exit(False);
+      Config.RecordCheck(ckDatabase);
+    finally
+      Config.Free;
+    end;
     UpdateMgr := TUpdateMgr.Create(TAppInfo.AppDataDir);
     try
       if UpdateMgr.CheckForUpdates in [uqUpToDate, uqError] then
@@ -237,8 +300,8 @@ begin
   inherited Create;
   fThreads := TThreadGroup.Create;
   fThreads.Add([
-    TProgramUpdateCheckerThread.Create(10000),  // begins work after 10s delay
-    TDatabaseUpdateCheckerThread.Create(20000)  // begins work after 20s delay
+    TProgramUpdateCheckerThread.Create(1000),  // begins work after 10s delay
+    TDatabaseUpdateCheckerThread.Create(2000)  // begins work after 20s delay
   ]);
   fThreads.SetPriorities(tpLowest);
 end;
@@ -257,6 +320,88 @@ end;
 procedure TUpdateCheckerMgr.StopThreads;
 begin
   fThreads.Terminate;
+end;
+
+{ TUpdateCheckerConfig }
+
+function TUpdateCheckerConfig.CanCheck(Kind: TCheckKind): Boolean;
+begin
+  Result := DaysBetween(NowAsGMT, fLastUpdateCheck[Kind]) > 0;
+end;
+
+constructor TUpdateCheckerConfig.Create;
+var
+  Storage: ISettingsSection;
+  K: TCheckKind;
+  Value: string;
+begin
+  inherited Create;
+  Storage := Settings.ReadSection(ssUpdateChecks);
+  for K := Low(TCheckKind) to High(TCheckKind) do
+  begin
+    Value := Storage.ItemValues[ValueName(K)];
+    if Value <> '' then
+      fLastUpdateCheck[K] := ParseDate(Storage.ItemValues[ValueName(K)])
+    else
+      fLastUpdateCheck[K] := EncodeDate(1899, 12, 30);
+  end;
+end;
+
+destructor TUpdateCheckerConfig.Destroy;
+var
+  Storage: ISettingsSection;
+  K: TCheckKind;
+begin
+  Storage := Settings.EmptySection(ssUpdateChecks);
+  for K := Low(TCheckKind) to High(TCheckKind) do
+    Storage.ItemValues[ValueName(K)] := FormatDate(fLastUpdateCheck[K]);
+  Storage.Save;
+  inherited;
+end;
+
+function TUpdateCheckerConfig.FormatDate(const DT: TDateTime): string;
+begin
+  // In config file we store date in SQL date format
+  Result := FormatDateTime('yyyy"-"mm"-"dd" "hh":"nn":"ss', DT);
+end;
+
+function TUpdateCheckerConfig.NowAsGMT: TDateTime;
+var
+  ST: TSystemTime;
+begin
+  GetSystemTime(ST);
+  Result := SystemTimeToDateTime(ST);
+end;
+
+function TUpdateCheckerConfig.ParseDate(const S: string): TDateTime;
+begin
+  Result := EncodeDate(
+    StrToInt(StrSlice(S, 1, 4)),
+    StrToInt(StrSlice(S, 6, 2)),
+    StrToInt(StrSlice(S, 9, 2))
+  )
+  +
+  EncodeTime(
+    StrToInt(StrSlice(S, 12, 2)),
+    StrToInt(StrSlice(S, 15, 2)),
+    StrToInt(StrSlice(S, 18, 2)),
+    0
+  );
+end;
+
+procedure TUpdateCheckerConfig.RecordCheck(Kind: TCheckKind);
+begin
+  fLastUpdateCheck[Kind] := NowAsGMT;
+end;
+
+function TUpdateCheckerConfig.ValueName(const Kind: TCheckKind): string;
+const
+  NameMap: array[TCheckKind] of string = (
+    'Program', 'Database'
+  );
+  NameFmt = 'Last%sCheck';
+begin
+  Result := Format(NameFmt, [NameMap[Kind]]);
 end;
 
 end.
