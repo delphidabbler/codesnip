@@ -119,17 +119,17 @@ type
     ///  <remarks>The value must be stored in YYYY-MM-DD hh:mm:ss format
     ///  regardless of locale.</remarks>
     procedure SetDateTime(const Name: string; const Value: TDateTime);
-    function GetEncryptedItemValue(const Name: string): string;
-      {Gets an encrypted value by name and unencrypts it.
-        @param Name [in] Name of value.
-        @return Required unencrypted value.
-      }
-    procedure SetEncryptedItemValue(const Name, Value: string);
-      overload;
-      {Encrypts and sets a named value.
-        @param Name [in] Name of value.
-        @param Value [in] Unencryped value to be encrypted.
-      }
+    ///  <summary>Gets a named encrypted string value from settings and
+    ///  unencrypts it.</summary>
+    ///  <param name="Name">string [in] Name of item.</param>
+    ///  <returns>string. The unencrypted string.</returns>
+    function GetEncryptedString(const Name: string): string;
+    ///  <summary>Encrypts and records a named string value in settings.
+    ///  </summary>
+    ///  <param name="Name">string [in] Name of item.</param>
+    ///  <param name="Value">string [in] Value to be encrypted and recored.
+    ///  </param>
+    procedure SetEncryptedString(const Name, Value: string);
     function GetStrings(const CountName, ItemFmt: string): IStringList;
       {Reads a string list from storage. There must be a value containing number
       of elements and correct number of further elements containing each entry
@@ -386,16 +386,17 @@ type
     function GetDateTime(const Name: string; const Default: TDateTime = 0.0):
       TDateTime;
     procedure SetDateTime(const Name: string; const Value: TDateTime); inline;
-    function GetEncryptedItemValue(const Name: string): string; overload;
-      {Gets an encrypted value by name and unencrypts it.
-        @param Name [in] Name of value.
-        @return Required unencrypted value.
-      }
-    procedure SetEncryptedItemValue(const Name, Value: string);
-      {Encrypts and sets a named value.
-        @param Name [in] Name of value.
-        @param Value [in] Unencryped value to be encrypted.
-      }
+    ///  <summary>Gets a named encrypted string value from settings and
+    ///  unencrypts it.</summary>
+    ///  <param name="Name">string [in] Name of item.</param>
+    ///  <returns>string. The unencrypted string.</returns>
+    function GetEncryptedString(const Name: string): string;
+    ///  <summary>Encrypts and records a named string value in settings.
+    ///  </summary>
+    ///  <param name="Name">string [in] Name of item.</param>
+    ///  <param name="Value">string [in] Value to be encrypted and recored.
+    ///  </param>
+    procedure SetEncryptedString(const Name, Value: string);
     function GetStrings(const CountName, ItemFmt: string): IStringList;
       {Reads a string list from storage. There must be a value containing number
       of elements and correct number of further elements containing each entry
@@ -617,16 +618,12 @@ begin
   inherited;
 end;
 
-function TIniSettingsSection.GetEncryptedItemValue(const Name: string): string;
-  {Gets an encrypted value by name and unencrypts it.
-    @param Name [in] Name of value.
-    @return Required unencrypted value.
-  }
+function TIniSettingsSection.GetEncryptedString(const Name: string): string;
 var
   EncryptedBytes: TBytes; // encrypted value as array of bytes
 begin
   // NOTE:
-  // See SetEncryptedItemValue for details of how encrypted values are stored.
+  // See SetEncryptedString for details of how encrypted values are stored.
   if not TryHexToBytes(GetItemValue(Name), EncryptedBytes) then
     Exit('');
   Result := TEncoding.UTF8.GetString(TEncryptor.Decrypt(EncryptedBytes));
@@ -789,11 +786,7 @@ begin
   SetItemValue(Name, FormatDateTime('yyyy"-"mm"-"dd" "hh":"nn":"ss', Value));
 end;
 
-procedure TIniSettingsSection.SetEncryptedItemValue(const Name, Value: string);
-  {Encrypts and sets a named value.
-    @param Name [in] Name of value.
-    @param Value [in] Unencryped value to be encrypted.
-  }
+procedure TIniSettingsSection.SetEncryptedString(const Name, Value: string);
 begin
   // NOTE:
   // Encrypted values are stored as follows:

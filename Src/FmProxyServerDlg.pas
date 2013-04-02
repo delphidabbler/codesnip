@@ -212,7 +212,7 @@ begin
   edIPAddress.Text := Section.GetString('IPAddress');
   edPort.Text := Section.GetString('Port');
   edUserName.Text := Section.GetString('UserName');
-  edPassword1.Text := Section.GetEncryptedItemValue('Password');
+  edPassword1.Text := Section.GetEncryptedString('Password');
   edPassword2.Text := edPassword1.Text;
   // init control state
   SetProxyCtrlState(cbUseProxy.Checked);
@@ -229,7 +229,7 @@ begin
   Section.SetString('IPAddress', edIPAddress.Text);
   Section.SetString('Port', edPort.Text);
   Section.SetString('UserName', edUserName.Text);
-  Section.SetEncryptedItemValue('Password', edPassword1.Text);
+  Section.SetEncryptedString('Password', edPassword1.Text);
   Section.Save;
 end;
 
