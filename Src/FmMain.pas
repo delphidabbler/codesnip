@@ -26,7 +26,7 @@ uses
   // Project
   Favourites.UManager, FmHelpAware, FrDetail, FrOverview, FrTitled,
   IntfNotifier, UCompileMgr, UDialogMgr, UHistory, UMainDisplayMgr, USearch,
-  UStatusBarMgr, UWindowSettings;
+  UStatusBarMgr, UUpdateCheckers, UWindowSettings;
 
 
 type
@@ -532,6 +532,10 @@ type
       fCompileMgr: TMainCompileMgr;
       ///  <summary>Object that manages favourites.</summary>
       fFavouritesMgr: TFavouritesManager;
+      ///  <summary>Object that checks for program and database updates in a
+      ///  background thread.</summary>
+      fUpdateChecker: TUpdateCheckerMgr;
+
     ///  <summary>Displays view item given by TViewItemAction instance
     ///  referenced by Sender and adds to history list.</summary>
     procedure ActViewItemExecute(Sender: TObject);
@@ -591,12 +595,13 @@ uses
   Windows, Graphics,
   // Project
   DB.UCategory, DB.UMain, DB.USnippet, FmSplash, FmTrappedBugReportDlg,
-  FmWaitDlg, IntfFrameMgrs, UActionFactory, UAppInfo, UClassHelpers,
-  UCodeShareMgr, UCommandBars, UConsts, UCopyInfoMgr, UCopySourceMgr,
-  UDatabaseLoader, UDatabaseLoaderUI, UDetailTabAction, UEditSnippetAction,
-  UExceptions, UHelpMgr, UHistoryMenus, UKeysHelper, UMessageBox, UNotifier,
-  UNulDropTarget, UPrintMgr, UQuery, USaveSnippetMgr, USaveUnitMgr,
-  USelectionIOMgr, UUserDBMgr, UView, UViewItemAction, UWBExternal, Web.UInfo;
+  FmWaitDlg, IntfFrameMgrs, Notifications.UDisplayMgr, UActionFactory, UAppInfo,
+  UClassHelpers, UCodeShareMgr, UCommandBars, UConsts, UCopyInfoMgr,
+  UCopySourceMgr, UDatabaseLoader, UDatabaseLoaderUI, UDetailTabAction,
+  UEditSnippetAction, UExceptions, UHelpMgr, UHistoryMenus, UKeysHelper,
+  UMessageBox, UNotifier, UNulDropTarget, UPrintMgr, UQuery, USaveSnippetMgr,
+  USaveUnitMgr, USelectionIOMgr, UUserDBMgr, UView, UViewItemAction,
+  UWBExternal, Web.UInfo;
 
 
 {$R *.dfm}
@@ -1305,6 +1310,13 @@ end;
 procedure TMainForm.FormDestroy(Sender: TObject);
 begin
   inherited;
+  // Stop update checking threads
+  fUpdateChecker.StopThreads;
+  fUpdateChecker.Free;
+
+  // Stop notification display sub-system
+  TNotificationDisplayMgr.Stop;
+
   // Save any changes to user database
   with Database as IDatabaseEdit do
   begin
@@ -1317,6 +1329,7 @@ begin
   fWindowSettings.SplitterPos := pnlLeft.Width;
   fWindowSettings.OverviewTab := fMainDisplayMgr.SelectedOverviewTab;
   fWindowSettings.Save;
+
   // Free owned objects
   fHistory.Free;
   fMainDisplayMgr.Free;
@@ -1324,6 +1337,7 @@ begin
   // fStatusBarMgr MUST be nilled: otherwise it can be called after status bar
   // control has been freed and so cause AV when trying to use the control
   FreeAndNil(fStatusBarMgr);
+
 end;
 
 procedure TMainForm.FormResize(Sender: TObject);
@@ -1540,7 +1554,16 @@ begin
     // *** Must be done AFTER database has loaded ***
     fFavouritesMgr := TFavouritesManager.Create(fNotifier);
 
+    // Display welcome page in details pane
     fMainDisplayMgr.ShowWelcomePage;
+
+    // Start notification display sub-system
+    TNotificationDisplayMgr.Start(Self);
+
+    // Start update checking manager
+    // *** Should be done after notification window listener starts
+    fUpdateChecker := TUpdateCheckerMgr.Create;
+    fUpdateChecker.StartThreads;
   finally
     // Ready to start using app: request splash form closes and enable form
     SplashForm.RequestClose;
