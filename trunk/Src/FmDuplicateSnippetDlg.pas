@@ -263,9 +263,7 @@ var
 begin
   inherited Create;
   Section := Settings.ReadSection(ssDuplicateSnippet);
-  fEditSnippetOnClose := Boolean(
-    StrToIntDef(Section.ItemValues['EditSnippetOnClose'], Ord(False))
-  );
+  fEditSnippetOnClose := Section.GetBoolean('EditSnippetOnClose', False);
 end;
 
 destructor TDuplicateSnippetDlg.TPersistentOptions.Destroy;
@@ -273,9 +271,7 @@ var
   Section: ISettingsSection;
 begin
   Section := Settings.EmptySection(ssDuplicateSnippet);
-  Section.ItemValues['EditSnippetOnClose'] := IntToStr(
-    Ord(fEditSnippetOnClose)
-  );
+  Section.SetBoolean('EditSnippetOnClose', fEditSnippetOnClose);
   Section.Save;
   inherited;
 end;

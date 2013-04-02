@@ -926,25 +926,23 @@ begin
   // Read general section
   Storage := Settings.ReadSection(ssPreferences, cGeneral);
   fMeasurementUnits := TMeasurementUnits(
-    StrToIntDef(Storage.ItemValues['Units'], Ord(DefaultMeasurementUnits))
+    Storage.GetInteger('Units', Ord(DefaultMeasurementUnits))
   );
 
   // Read display section
   Storage := Settings.ReadSection(ssPreferences, cDisplay);
   fOverviewStartState := TOverviewStartState(
-    StrToIntDef(Storage.ItemValues['OverviewStartState'], Ord(ossExpanded))
+    Storage.GetInteger('OverviewStartState', Ord(ossExpanded))
   );
-  fShowEmptySections := Boolean(
-    StrToIntDef(Storage.ItemValues['ShowEmptySections'], Ord(False))
-  );
-  fShowNewSnippetsInNewTabs := Boolean(
-    StrToIntDef(Storage.ItemValues['ShowNewSnippetsInNewTabs'], Ord(False))
+  fShowEmptySections := Storage.GetBoolean('ShowEmptySections', False);
+  fShowNewSnippetsInNewTabs := Storage.GetBoolean(
+    'ShowNewSnippetsInNewTabs', False
   );
   fDBHeadingColours[False] := TColor(
-    StrToIntDef(Storage.ItemValues['MainDBHeadingColour'], clMainSnippet)
+    Storage.GetInteger('MainDBHeadingColour', clMainSnippet)
   );
   fDBHeadingColours[True] := TColor(
-    StrToIntDef(Storage.ItemValues['UserDBHeadingColour'], clUserSnippet)
+    Storage.GetInteger('UserDBHeadingColour', clUserSnippet)
   );
   fDBHeadingCustomColours[False] := Storage.GetStrings(
     'MainDBHeadingCustomColourCount', 'MainDBHeadingCustomColour%d'
@@ -956,30 +954,26 @@ begin
   // Read source code section
   Storage := Settings.ReadSection(ssPreferences, cSourceCode);
   fSourceDefaultFileType := TSourceFileType(
-    StrToIntDef(Storage.ItemValues['FileType'], Ord(sfPascal))
+    Storage.GetInteger('FileType', Ord(sfPascal))
   );
   fSourceCommentStyle := TCommentStyle(
-    StrToIntDef(Storage.ItemValues['CommentStyle'], Ord(csAfter))
+    Storage.GetInteger('CommentStyle', Ord(csAfter))
   );
-  fTruncateSourceComments := Boolean(
-    StrToIntDef(Storage.ItemValues['TruncateComments'], Ord(False))
-  );
-  fSourceSyntaxHilited := Boolean(
-    StrToIntDef(Storage.ItemValues['UseSyntaxHiliting'], Ord(False))
-  );
+  fTruncateSourceComments := Storage.GetBoolean('TruncateComments', False);
+  fSourceSyntaxHilited := Storage.GetBoolean('UseSyntaxHiliting', False);
 
   // Read printing section
   Storage := Settings.ReadSection(ssPreferences, cPrinting);
   fPrinterOptions := [];
-  if Boolean(StrToIntDef(Storage.ItemValues['UseColor'], Ord(True))) then
+  if Storage.GetBoolean('UseColor', True) then
     Include(fPrinterOptions, poUseColor);
-  if Boolean(StrToIntDef(Storage.ItemValues['SyntaxPrint'], Ord(True))) then
+  if Storage.GetBoolean('SyntaxPrint', True) then
     Include(fPrinterOptions, poSyntaxPrint);
   fPrinterPageMargins := TPageMargins.Create(
-    StrToFloatDef(Storage.ItemValues['LeftMargin'], cPrintPageMarginSizeMM),
-    StrToFloatDef(Storage.ItemValues['TopMargin'], cPrintPageMarginSizeMM),
-    StrToFloatDef(Storage.ItemValues['RightMargin'], cPrintPageMarginSizeMM),
-    StrToFloatDef(Storage.ItemValues['BottomMargin'], cPrintPageMarginSizeMM)
+    Storage.GetFloat('LeftMargin', cPrintPageMarginSizeMM),
+    Storage.GetFloat('TopMargin', cPrintPageMarginSizeMM),
+    Storage.GetFloat('RightMargin', cPrintPageMarginSizeMM),
+    Storage.GetFloat('BottomMargin', cPrintPageMarginSizeMM)
   );
 
   // Read syntax highlighter section
@@ -998,7 +992,7 @@ begin
 
   // Read news section
   Storage := Settings.ReadSection(ssPreferences, cNews);
-  fNewsAge := StrToIntDef(Storage.ItemValues['MaxAge'], cDefNewsAge);
+  fNewsAge := Storage.GetInteger('MaxAge', cDefNewsAge);
 
   // Read page structure section
   Storage := Settings.ReadSection(ssPreferences, cPageStructures);
@@ -1006,12 +1000,8 @@ begin
 
   // Read updating section
   Storage := Settings.ReadSection(ssPreferences, cUpdating);
-  fAutoCheckProgramUpdates := Boolean(
-    StrToIntDef(Storage.ItemValues['AutoCheckProgram'], Ord(True))
-  );
-  fAutoCheckDatabaseUpdates := Boolean(
-    StrToIntDef(Storage.ItemValues['AutoCheckDatabase'], Ord(True))
-  );
+  fAutoCheckProgramUpdates := Storage.GetBoolean('AutoCheckProgram', True);
+  fAutoCheckDatabaseUpdates := Storage.GetBoolean('AutoCheckDatabase', True);
 
 end;
 
@@ -1021,26 +1011,16 @@ var
 begin
   // Write general section
   Storage := Settings.EmptySection(ssPreferences, cGeneral);
-  Storage.ItemValues['Units'] := IntToStr(Ord(fMeasurementUnits));
+  Storage.SetInteger('Units', Ord(fMeasurementUnits));
   Storage.Save;
 
   // Write display section
   Storage := Settings.EmptySection(ssPreferences, cDisplay);
-  Storage.ItemValues['OverviewStartState'] := IntToStr(
-    Ord(fOverviewStartState)
-  );
-  Storage.ItemValues['ShowEmptySections'] := IntToStr(
-    Ord(fShowEmptySections)
-  );
-  Storage.ItemValues['ShowNewSnippetsInNewTabs'] := IntToStr(
-    Ord(fShowNewSnippetsInNewTabs)
-  );
-  Storage.ItemValues['MainDBHeadingColour'] := IntToStr(
-    fDBHeadingColours[False]
-  );
-  Storage.ItemValues['UserDBHeadingColour'] := IntToStr(
-    fDBHeadingColours[True]
-  );
+  Storage.SetInteger('OverviewStartState', Ord(fOverviewStartState));
+  Storage.SetBoolean('ShowEmptySections', fShowEmptySections);
+  Storage.SetBoolean('ShowNewSnippetsInNewTabs', fShowNewSnippetsInNewTabs);
+  Storage.SetInteger('MainDBHeadingColour', fDBHeadingColours[False]);
+  Storage.SetInteger('UserDBHeadingColour', fDBHeadingColours[True]);
   Storage.SetStrings(
     'MainDBHeadingCustomColourCount',
     'MainDBHeadingCustomColour%d',
@@ -1055,28 +1035,20 @@ begin
 
   // Write source code section
   Storage := Settings.EmptySection(ssPreferences, cSourceCode);
-  Storage.ItemValues['FileType'] := IntToStr(Ord(fSourceDefaultFileType));
-  Storage.ItemValues['CommentStyle'] := IntToStr(Ord(fSourceCommentStyle));
-  Storage.ItemValues['TruncateComments'] := IntToStr(
-    Ord(fTruncateSourceComments)
-  );
-  Storage.ItemValues['UseSyntaxHiliting'] := IntToStr(
-    Ord(fSourceSyntaxHilited)
-  );
+  Storage.SetInteger('FileType', Ord(fSourceDefaultFileType));
+  Storage.SetInteger('CommentStyle', Ord(fSourceCommentStyle));
+  Storage.SetBoolean('TruncateComments', fTruncateSourceComments);
+  Storage.SetBoolean('UseSyntaxHiliting', fSourceSyntaxHilited);
   Storage.Save;
 
   // Write printing section
   Storage := Settings.EmptySection(ssPreferences, cPrinting);
-  Storage.ItemValues['UseColor'] := IntToStr(
-    Ord(poUseColor in fPrinterOptions)
-  );
-  Storage.ItemValues['SyntaxPrint'] := IntToStr(
-    Ord(poSyntaxPrint in fPrinterOptions)
-  );
-  Storage.ItemValues['LeftMargin'] := FloatToStr(fPrinterPageMargins.Left);
-  Storage.ItemValues['TopMargin'] := FloatToStr(fPrinterPageMargins.Top);
-  Storage.ItemValues['RightMargin'] := FloatToStr(fPrinterPageMargins.Right);
-  Storage.ItemValues['BottomMargin'] := FloatToStr(fPrinterPageMargins.Bottom);
+  Storage.SetBoolean('UseColor', poUseColor in fPrinterOptions);
+  Storage.SetBoolean('SyntaxPrint', poSyntaxPrint in fPrinterOptions);
+  Storage.SetFloat('LeftMargin', fPrinterPageMargins.Left);
+  Storage.SetFloat('TopMargin', fPrinterPageMargins.Top);
+  Storage.SetFloat('RightMargin', fPrinterPageMargins.Right);
+  Storage.SetFloat('BottomMargin', fPrinterPageMargins.Bottom);
   Storage.Save;
 
   // Write syntax highlighter section
@@ -1096,7 +1068,7 @@ begin
 
   // Write news section
   Storage := Settings.EmptySection(ssPreferences, cNews);
-  Storage.ItemValues['MaxAge'] := IntToStr(fNewsAge);
+  Storage.SetInteger('MaxAge', fNewsAge);
   Storage.Save;
 
   // Write page structure section
@@ -1105,12 +1077,8 @@ begin
 
   // Write updating section
   Storage := Settings.EmptySection(ssPreferences, cUpdating);
-  Storage.ItemValues['AutoCheckProgram'] := IntToStr(
-    Ord(fAutoCheckProgramUpdates)
-  );
-  Storage.ItemValues['AutoCheckDatabase'] := IntToStr(
-    Ord(fAutoCheckDatabaseUpdates)
-  );
+  Storage.SetBoolean('AutoCheckProgram', fAutoCheckProgramUpdates);
+  Storage.SetBoolean('AutoCheckDatabase', fAutoCheckDatabaseUpdates);
   Storage.Save;
 
   inherited;

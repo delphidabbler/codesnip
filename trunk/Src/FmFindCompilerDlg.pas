@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -456,13 +456,13 @@ begin
   // compiler to see if it's value is '1'
   fCompilers := [];
   for Compiler in fCompilersObj do
-    if Storage.ItemValues[Compiler.GetIDString] = '1' then
+    if Storage.GetBoolean(Compiler.GetIDString) then
       Include(fCompilers, Compiler.GetID);
   // Get Option and Logic properties
   fOption := TCompilerSearchOption(
-    StrToIntDef(Storage.ItemValues['Option'], Ord(Low(TCompilerSearchOption)))
+    Storage.GetInteger('Option', Ord(Low(TCompilerSearchOption)))
   );
-  fLogic := TSearchLogic(StrToIntDef(Storage.ItemValues['Logic'], Ord(slOr)));
+  fLogic := TSearchLogic(Storage.GetInteger('Logic', Ord(slOr)));
 end;
 
 procedure TCompilerSearchParams.SetCompilers(
@@ -505,11 +505,10 @@ begin
   Storage := Settings.EmptySection(ssFindCompiler);
   // Record which compilers included in search
   for Compiler in fCompilersObj do
-    Storage.ItemValues[Compiler.GetIDString] :=
-      IntToStr(Ord(Compiler.GetID in fCompilers));
+    Storage.SetBoolean(Compiler.GetIDString, Compiler.GetID in fCompilers);
   // Record Option and Logic parameters
-  Storage.ItemValues['Option'] := IntToStr(Ord(fOption));
-  Storage.ItemValues['Logic'] := IntToStr(Ord(fLogic));
+  Storage.SetInteger('Option', Ord(fOption));
+  Storage.SetInteger('Logic', Ord(fLogic));
   // Store data
   Storage.Save;
 end;

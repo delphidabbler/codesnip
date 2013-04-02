@@ -208,10 +208,10 @@ begin
   inherited;
   // init control contents from proxy server settings
   Section := Settings.ReadSection(ssProxyServer);
-  cbUseProxy.Checked := Boolean(StrToIntDef(Section.ItemValues['UseProxy'], 0));
-  edIPAddress.Text := Section.ItemValues['IPAddress'];
-  edPort.Text := Section.ItemValues['Port'];
-  edUserName.Text := Section.ItemValues['UserName'];
+  cbUseProxy.Checked := Section.GetBoolean('UseProxy', False);
+  edIPAddress.Text := Section.GetString('IPAddress');
+  edPort.Text := Section.GetString('Port');
+  edUserName.Text := Section.GetString('UserName');
   edPassword1.Text := Section.GetEncryptedItemValue('Password');
   edPassword2.Text := edPassword1.Text;
   // init control state
@@ -225,10 +225,10 @@ var
   Section: ISettingsSection;  // settings section to receive data
 begin
   Section := Settings.EmptySection(ssProxyServer);
-  Section.ItemValues['UseProxy'] := IntToStr(Ord(cbUseProxy.Checked));
-  Section.ItemValues['IPAddress'] := edIPAddress.Text;
-  Section.ItemValues['Port'] := edPort.Text;
-  Section.ItemValues['UserName'] := edUserName.Text;
+  Section.SetBoolean('UseProxy', cbUseProxy.Checked);
+  Section.SetString('IPAddress', edIPAddress.Text);
+  Section.SetString('Port', edPort.Text);
+  Section.SetString('UserName', edUserName.Text);
   Section.SetEncryptedItemValue('Password', edPassword1.Text);
   Section.Save;
 end;

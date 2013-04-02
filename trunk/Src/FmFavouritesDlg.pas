@@ -703,12 +703,10 @@ var
 begin
   inherited Create;
   Section := Settings.ReadSection(ssFavourites);
-  fDisplayInNewTabs := Boolean(
-    StrToIntDef(Section.ItemValues[DisplayInNewTabsKey], Ord(False))
+  fDisplayInNewTabs := Section.GetBoolean(DisplayInNewTabsKey, False);
+  fInactiveAlphaBlendValue := Section.GetInteger(
+    InactiveAlphaBlendValueKey, 160
   );
-  fInactiveAlphaBlendValue := StrToIntDef(
-    Section.ItemValues[InactiveAlphaBlendValueKey], 160)
-  ;
 end;
 
 destructor TFavouritesDlg.TPersistentOptions.Destroy;
@@ -716,10 +714,8 @@ var
   Section: ISettingsSection;
 begin
   Section := Settings.EmptySection(ssFavourites);
-  Section.ItemValues[DisplayInNewTabsKey] := IntToStr(Ord(fDisplayInNewTabs));
-  Section.ItemValues[InactiveAlphaBlendValueKey] := IntToStr(
-    fInactiveAlphaBlendValue
-  );
+  Section.SetBoolean(DisplayInNewTabsKey, fDisplayInNewTabs);
+  Section.SetInteger(InactiveAlphaBlendValueKey, fInactiveAlphaBlendValue);
   Section.Save;
   inherited;
 end;

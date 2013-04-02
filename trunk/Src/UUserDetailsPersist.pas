@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2011-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2011-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -62,12 +62,12 @@ var
 begin
   inherited;
   UserData := Settings.ReadSection(ssUserInfo);
-  Name := StrTrim(UserData.ItemValues['Name']);
+  Name := StrTrim(UserData.GetString('Name'));
   if Name = '' then
     Name := StrTrim(TAppInfo.RegisteredUser);
   if Name = '' then
     Name := StrTrim(TComputerInfo.UserName);
-  Email := StrTrim(UserData.ItemValues['Email']);
+  Email := StrTrim(UserData.GetString('Email'));
   Result := TUserDetails.Create(Name, Email);
 end;
 
@@ -76,8 +76,8 @@ var
   UserData: ISettingsSection; // persistent user data settings
 begin
   UserData := Settings.EmptySection(ssUserInfo);
-  UserData.ItemValues['Name'] := StrTrim(Info.Name);
-  UserData.ItemValues['Email'] := StrTrim(Info.Email);
+  UserData.SetString('Name', StrTrim(Info.Name));
+  UserData.SetString('Email', StrTrim(Info.Email));
   UserData.Save;
 end;
 

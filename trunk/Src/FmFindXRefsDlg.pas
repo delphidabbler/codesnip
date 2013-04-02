@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2006-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2006-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -335,15 +335,15 @@ var
 begin
   Storage := Settings.ReadSection(ssFindXRefs);
   fOptions := [];
-  if Boolean(StrToIntDef(Storage.ItemValues['IncludeRoutine'], 1)) then
+  if Storage.GetBoolean('IncludeRoutine', True) then
     Include(fOptions, soIncludeSnippet);
-  if Boolean(StrToIntDef(Storage.ItemValues['Required'], 1)) then
+  if Storage.GetBoolean('Required', True) then
     Include(fOptions, soRequired);
-  if Boolean(StrToIntDef(Storage.ItemValues['RequiredRecurse'], 0)) then
+  if Storage.GetBoolean('RequiredRecurse', False) then
     Include(fOptions, soRequiredRecurse);
-  if Boolean(StrToIntDef(Storage.ItemValues['SeeAlso'], 0)) then
+  if Storage.GetBoolean('SeeAlso', False) then
     Include(fOptions, soSeeAlso);
-  if Boolean(StrToIntDef(Storage.ItemValues['SeeAlsoRecurse'], 0)) then
+  if Storage.GetBoolean('SeeAlsoRecurse', False) then
     Include(fOptions, soSeeAlsoRecurse);
 end;
 
@@ -377,7 +377,7 @@ var
     }
   begin
     // Store boolean flag as string for each option
-    Storage.ItemValues[Name] := IntToStr(Ord(Option in fOptions));
+    Storage.SetBoolean(Name, Option in fOptions);
   end;
   // ---------------------------------------------------------------------------
 
