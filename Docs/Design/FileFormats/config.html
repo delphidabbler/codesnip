@@ -60,6 +60,36 @@
   Windows API calls.
 </p>
 
+<p>
+  The following data types are supported:
+</p>
+
+<ul>
+  <li>
+    <em>String</em> &ndash; stored as a sequence of characters, optionally
+    enclosed in double quotes.
+  </li>
+  <li>
+    <em>Boolean</em> &ndash; stored as the text <code>False</code> and
+    <code>True</code> (although <code>0</code>, <code>No</code> and
+    <code>N</code> are all read as false.
+  </li>
+  <li>
+    <em>Integer</em> &ndash; stored as positive or negative whole numbers or
+    zero.
+  </li>
+  <li>
+    <em>Float</em> &ndash; stored as positive or negative floating point numbers
+    or zero. Floating point representations of whole numbers are stored as
+    integers.
+  </li>
+  <li>
+    <em>Date-Time</em> &ndash; stored in the <code>YYYY-MM-DD hh:mm:ss</code>
+    format in all locales (i.e. the date and time separators are always '-' and
+    ':' respectively.
+  </li>
+</ul>
+
 <h2>
   Encoding
 </h2>
@@ -1297,14 +1327,14 @@
 
 <dl class="indent">
   <dt>
-    <strong>LastProgramCheck</strong> (Date: YYYY-MM-SS hh:mm:ss)
+    <strong>LastProgramCheck</strong> (Date-Time)
   </dt>
   <dd>
     Date (in GMT) that the program last checked to see if a new version of
     CodeSnip is available.
   </dd>
   <dt>
-    <strong>LastDatabaseCheck</strong> (Date: YYYY-MM-SS hh:mm:ss)
+    <strong>LastDatabaseCheck</strong> (Date-Time)
   </dt>
   <dd>
     Date (in GMT) that the program last checked to see if the online version of
