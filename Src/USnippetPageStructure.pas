@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2012-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -313,7 +313,7 @@ begin
   for Page in PageStructs do
   begin
     Page.Clear;
-    PartIds := ParsePartsStr(Storage.ItemValues[KindValueName(Page)]);
+    PartIds := ParsePartsStr(Storage.GetString(KindValueName(Page)));
     Page.AppendParts(PartIds);
     if Page.IsEmpty then
       Page.AppendParts(TDefaultPageStructures.GetParts(Page.Kind));
@@ -338,7 +338,7 @@ var
 
 begin
   for Page in PageStructs do
-    Storage.ItemValues[KindValueName(Page)] := KindValues(Page);
+    Storage.SetString(KindValueName(Page), KindValues(Page));
   Storage.Save;
 end;
 

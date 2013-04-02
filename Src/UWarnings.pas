@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2010-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2010-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -457,25 +457,20 @@ var
   State: Boolean;       // state of a warning read from storage
 begin
   Warnings.Clear;
-  Warnings.Enabled := Boolean(
-    StrToIntDef(Storage.ItemValues[cWarningsEnabledName], Ord(False))
-  );
-  for Idx := 0 to Pred(StrToIntDef(Storage.ItemValues[cWarningCountName], 0)) do
+  Warnings.Enabled := Storage.GetBoolean(cWarningsEnabledName, False);
+  for Idx := 0 to Pred(Storage.GetInteger(cWarningCountName, 0)) do
   begin
-    Symbol := Storage.ItemValues[WarningCompoundName(Idx, cWarningSymbolProp)];
+    Symbol := Storage.GetString(WarningCompoundName(Idx, cWarningSymbolProp));
     if (Symbol = '') or Warnings.Contains(Symbol) then
       Continue;
-    CompilerVer := StrToFloatDef(
-      Storage.ItemValues[WarningCompoundName(Idx, cWarningSupportProp)],
+    CompilerVer := Storage.GetFloat(
+      WarningCompoundName(Idx, cWarningSupportProp),
       TWarning.MinSupportedCompiler
     );
     if CompilerVer < TWarning.MinSupportedCompiler then
       CompilerVer := TWarning.MinSupportedCompiler;
-    State := Boolean(
-      StrToIntDef(
-        Storage.ItemValues[WarningCompoundName(Idx, cWarningStateProp)],
-        Ord(False)
-      )
+    State := Storage.GetBoolean(
+      WarningCompoundName(Idx, cWarningStateProp), False
     );
     Warnings.Add(TWarning.Create(Symbol, CompilerVer, State));
   end;
@@ -486,16 +481,19 @@ class procedure TWarningsPersist.Save(Storage: ISettingsSection;
 var
   Idx: Integer; // loops through all warnings
 begin
-  Storage.ItemValues[cWarningsEnabledName] := IntToStr(Ord(Warnings.Enabled));
-  Storage.ItemValues[cWarningCountName] := IntToStr(Warnings.Count);
+  Storage.SetBoolean(cWarningsEnabledName, Warnings.Enabled);
+  Storage.SetInteger(cWarningCountName, Warnings.Count);
   for Idx := 0 to Pred(Warnings.Count) do
   begin
-    Storage.ItemValues[WarningCompoundName(Idx, cWarningSymbolProp)] :=
-      Warnings[Idx].Symbol;
-    Storage.ItemValues[WarningCompoundName(Idx, cWarningSupportProp)] :=
-      Format('%.2f', [Warnings[Idx].MinCompiler]);
-    Storage.ItemValues[WarningCompoundName(Idx, cWarningStateProp)] :=
-      IntToStr(Ord(Warnings[Idx].State));
+    Storage.SetString(
+      WarningCompoundName(Idx, cWarningSymbolProp), Warnings[Idx].Symbol
+    );
+    Storage.SetFloat(
+      WarningCompoundName(Idx, cWarningSupportProp), Warnings[Idx].MinCompiler
+    );
+    Storage.SetBoolean(
+      WarningCompoundName(Idx, cWarningStateProp), Warnings[Idx].State
+    );
   end;
   Storage.Save;
 end;

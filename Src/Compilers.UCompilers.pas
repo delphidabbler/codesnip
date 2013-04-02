@@ -1,3 +1,4 @@
+
 {
  * This Source Code Form is subject to the terms of the Mozilla Public License,
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
@@ -303,29 +304,28 @@ begin
     );
 
     // Get compiler path (if any) and store in compiler object if so
-    ExePath := Storage.ItemValues['ExePath'];
+    ExePath := Storage.GetString('ExePath');
     if ExePath <> '' then
       Compiler.SetExecFile(ExePath);
 
     // Get compiler visibility in UI
-    Compiler.SetDisplayable(
-      Boolean(StrToIntDef(Storage.ItemValues['Displayable'], Ord(True)))
-    );
+    Compiler.SetDisplayable(Storage.GetBoolean('Displayable', True));
 
     // Load compiler log prefixes (format PrefixX)
     for PrefixID := Low(TCompLogPrefixID) to High(TCompLogPrefixID) do
-      Prefixes[PrefixID] :=
-        Storage.ItemValues[Format('Prefix%d', [Ord(PrefixID)])];
+      Prefixes[PrefixID] := Storage.GetString(
+        Format('Prefix%d', [Ord(PrefixID)])
+      );
     Compiler.SetLogFilePrefixes(Prefixes);
 
     // Load command line switches (empty entry => use default)
     if Storage.ItemExists('Switches') then
-      Compiler.SetSwitches(Storage.ItemValues['Switches']);
+      Compiler.SetSwitches(Storage.GetString('Switches'));
 
     // Load namespaces to search for RTL units, if required
     // (empty entry => use default)
     if Compiler.RequiresRTLNamespaces and Storage.ItemExists('Namespaces') then
-      Compiler.SetRTLNamespaces(Storage.ItemValues['Namespaces']);
+      Compiler.SetRTLNamespaces(Storage.GetString('Namespaces'));
 
     // Load search directories
     SearchDirNames := Storage.GetStrings('SearchDirCount', 'SearchDir%d');
@@ -350,17 +350,18 @@ begin
     // get new empty storage object
     Storage := Settings.EmptySection(ssCompilerInfo, Compiler.GetIDString);
     // add required data to storage object
-    Storage.ItemValues['ExePath'] := Compiler.GetExecFile;
-    Storage.ItemValues['Displayable'] := IntToStr(Ord(Compiler.GetDisplayable));
+    Storage.SetString('ExePath', Compiler.GetExecFile);
+    Storage.SetBoolean('Displayable', Compiler.GetDisplayable);
     Prefixes := Compiler.GetLogFilePrefixes;
     for PrefixID := Low(TCompLogPrefixID) to High(TCompLogPrefixID) do
-      Storage.ItemValues[Format('Prefix%d', [Ord(PrefixID)])] :=
-        '"' + Prefixes[PrefixID] + '"';
+      Storage.SetString(
+        Format('Prefix%d', [Ord(PrefixID)]), '"' + Prefixes[PrefixID] + '"'
+      );
     if Compiler.GetSwitches <> Compiler.GetDefaultSwitches then
-      Storage.ItemValues['Switches'] := Compiler.GetSwitches;
+      Storage.SetString('Switches', Compiler.GetSwitches);
     if Compiler.RequiresRTLNamespaces
       and (Compiler.GetRTLNamespaces <> Compiler.GetDefaultRTLNamespaces) then
-      Storage.ItemValues['Namespaces'] := Compiler.GetRTLNamespaces;
+      Storage.SetString('Namespaces', Compiler.GetRTLNamespaces);
     SearchDirNames := TIStringList.Create(Compiler.GetSearchDirs.ToStrings);
     Storage.SetStrings('SearchDirCount', 'SearchDir%d', SearchDirNames);
     // save the data

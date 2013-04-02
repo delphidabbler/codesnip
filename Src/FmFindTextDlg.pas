@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -389,11 +389,11 @@ begin
   // Update data
   Storage.GetStrings('HistoryCount', 'History%d').CopyTo(fHistoryList, True);
   fOptions := [];
-  if Storage.ItemValues['MatchCase'] = '1' then
+  if Storage.GetBoolean('MatchCase') then
     Include(fOptions, soMatchCase);
-  if Storage.ItemValues['WholeWord'] = '1' then
+  if Storage.GetBoolean('WholeWord') then
     Include(fOptions, soWholeWord);
-  fLogic := TSearchLogic(StrToIntDef(Storage.ItemValues['Logic'], Ord(slOr)));
+  fLogic := TSearchLogic(Storage.GetInteger('Logic', Ord(slOr)));
 end;
 
 procedure TTextSearchParams.SetHistoryList(const Value: TStrings);
@@ -434,9 +434,9 @@ begin
   Storage.SetStrings(
     'HistoryCount', 'History%d', TIStringList.Create(fHistoryList)
   );
-  Storage.ItemValues['MatchCase'] := IntToStr(Ord(soMatchCase in fOptions));
-  Storage.ItemValues['WholeWord'] := IntToStr(Ord(soWholeWord in fOptions));
-  Storage.ItemValues['Logic'] := IntToStr(Ord(fLogic));
+  Storage.SetBoolean('MatchCase', soMatchCase in fOptions);
+  Storage.SetBoolean('WholeWord', soWholeWord in fOptions);
+  Storage.SetInteger('Logic', Ord(fLogic));
   // Write name=value pairs to appropriate ini file section
   Storage.Save;
 end;

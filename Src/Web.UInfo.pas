@@ -164,14 +164,12 @@ var
   ProxySection: ISettingsSection; // settings section containing proxy info
 begin
   ProxySection := Settings.ReadSection(ssProxyServer);
-  Result.UseProxy := Boolean(
-    StrToIntDef(ProxySection.ItemValues['UseProxy'], 0)
-  );
+  Result.UseProxy := ProxySection.GetBoolean('UseProxy', False);
   if Result.UseProxy then
   begin
-    Result.IPAddress := ProxySection.ItemValues['IPAddress'];
-    Result.Port := StrToIntDef(ProxySection.ItemValues['Port'], 80);
-    Result.UserName := ProxySection.ItemValues['UserName'];
+    Result.IPAddress := ProxySection.GetString('IPAddress');
+    Result.Port := ProxySection.GetInteger('Port', 80);
+    Result.UserName := ProxySection.GetString('UserName');
     Result.Password := ProxySection.GetEncryptedItemValue('Password');
   end;
 end;

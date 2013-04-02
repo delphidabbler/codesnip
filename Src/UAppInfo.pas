@@ -188,7 +188,7 @@ begin
   if StrSameText(ExcludeTrailingPathDelimiter(NewDir), DefaultUserDataDir) then
     Section.DeleteItem('UserDataDir')
   else
-    Section.ItemValues['UserDataDir'] := ExcludeTrailingPathDelimiter(NewDir);
+    Section.SetString('UserDataDir', NewDir);
   Section.Save;
   {$ENDIF}
 end;
@@ -268,12 +268,12 @@ var
 begin
   // Try to get key from storage
   Section := Settings.ReadSection(ssApplication);
-  Result := Section.ItemValues['Key'];
+  Result := Section.GetString('Key');
   if Result = '' then
   begin
     // Key not present: create and store it
     Result := GenerateKey;
-    Section.ItemValues['Key'] := Result;
+    Section.SetString('Key', Result);
     Section.Save;
   end;
 end;
@@ -305,7 +305,7 @@ var
   Section: ISettingsSection;  // persistent storage where name is recorded
 begin
   Section := Settings.ReadSection(ssApplication);
-  Result := Section.ItemValues['RegName'];
+  Result := Section.GetString('RegName');
 end;
 
 class procedure TAppInfo.RegisterProgram(const Code, Name: string);
@@ -318,8 +318,8 @@ var
   Section: ISettingsSection;  // persistent storage where code is to be recorded
 begin
   Section := Settings.ReadSection(ssApplication);
-  Section.ItemValues['RegCode'] := Code;
-  Section.ItemValues['RegName'] := Name;
+  Section.SetString('RegCode', Code);
+  Section.SetString('RegName', Name);
   Section.Save;
 end;
 
@@ -331,7 +331,7 @@ var
   Section: ISettingsSection;  // persistent storage where code is recorded
 begin
   Section := Settings.ReadSection(ssApplication);
-  Result := Section.ItemValues['RegCode'];
+  Result := Section.GetString('RegCode');
 end;
 
 class function TAppInfo.UserAppDir: string;
@@ -358,9 +358,7 @@ var
 begin
   {$IFNDEF PORTABLE}
   Section := Settings.ReadSection(ssDatabase);
-  Result := Section.ItemValues['UserDataDir'];
-  if Result = '' then
-    Result := DefaultUserDataDir;
+  Result := Section.GetString('UserDataDir', DefaultUserDataDir);
   {$ELSE}
   Result := DefaultUserDataDir;
   {$ENDIF}

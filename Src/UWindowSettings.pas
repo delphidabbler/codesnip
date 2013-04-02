@@ -207,15 +207,15 @@ begin
   // ** Don't use Owner.Name for sub-section: breaks sub-classed code that needs
   //    main form settings.
   Section := Settings.ReadSection(ssWindowState, 'MainForm');
-  Left := StrToIntDef(Section.ItemValues['Left'], Left);
-  Top := StrToIntDef(Section.ItemValues['Top'], Top);
-  Width := StrToIntDef(Section.ItemValues['Width'], Width);
-  Height := StrToIntDef(Section.ItemValues['Height'], Height);
-  State := StrToIntDef(Section.ItemValues['State'], State);
+  Left := Section.GetInteger('Left', Left);
+  Top := Section.GetInteger('Top', Top);
+  Width := Section.GetInteger('Width', Width);
+  Height := Section.GetInteger('Height', Height);
+  State := Section.GetInteger('State', State);
   if TWindowState(State) = wsMinimized then
     State := Ord(wsNormal);   // we don't allow minimized: use normal
-  fSplitterPos := StrToIntDef(Section.ItemValues['SplitterPos'], fSplitterPos);
-  fOverviewTab := StrToIntDef(Section.ItemValues['OverviewTab'], fOverviewTab);
+  fSplitterPos := Section.GetInteger('SplitterPos', fSplitterPos);
+  fOverviewTab := Section.GetInteger('OverviewTab', fOverviewTab);
 end;
 
 procedure TMainWindowSettings.SaveWdwState(const Left, Top, Width, Height,
@@ -226,13 +226,13 @@ begin
   // ** Don't use Owner.Name for sub-section: breaks sub-classed code that needs
   //    main form settings.
   Section := Settings.ReadSection(ssWindowState, 'MainForm');
-  Section.ItemValues['Left'] := IntToStr(Left);
-  Section.ItemValues['Top'] := IntToStr(Top);
-  Section.ItemValues['Width'] := IntToStr(Width);
-  Section.ItemValues['Height'] := IntToStr(Height);
-  Section.ItemValues['State'] := IntToStr(State);
-  Section.ItemValues['SplitterPos'] := IntToStr(fSplitterPos);
-  Section.ItemValues['OverviewTab'] := IntToStr(fOverviewTab);
+  Section.SetInteger('Left', Left);
+  Section.SetInteger('Top', Top);
+  Section.SetInteger('Width', Width);
+  Section.SetInteger('Height', Height);
+  Section.SetInteger('State', State);
+  Section.SetInteger('SplitterPos', fSplitterPos);
+  Section.SetInteger('OverviewTab', fOverviewTab);
   Section.Save;
 end;
 
@@ -256,12 +256,12 @@ begin
   // Assume that dialogue box has been aligned in default position when this
   // method called.
   Section := Settings.ReadSection(ssWindowState, Owner.Name);
-  Left := StrToIntDef(Section.ItemValues['Left'], Left);
-  Top := StrToIntDef(Section.ItemValues['Top'], Top);
+  Left := Section.GetInteger('Left', Left);
+  Top := Section.GetInteger('Top', Top);
   if not fFixedSize then
   begin
-    Width := StrToIntDef(Section.ItemValues['Width'], Width);
-    Height := StrToIntDef(Section.ItemValues['Height'], Height);
+    Width := Section.GetInteger('Width', Width);
+    Height := Section.GetInteger('Height', Height);
   end;
   State := Ord(wsNormal); // we don't allow minimized or maximized for dialogues
 end;
@@ -272,13 +272,13 @@ var
   Section: ISettingsSection;  // object used to access persistent storage
 begin
   Section := Settings.ReadSection(ssWindowState, Owner.Name);
-  Section.ItemValues['Left'] := IntToStr(Left);
-  Section.ItemValues['Top'] := IntToStr(Top);
+  Section.SetInteger('Left', Left);
+  Section.SetInteger('Top', Top);
   // Never save state and only save size if dialogue not fixed size
   if not fFixedSize then
   begin
-    Section.ItemValues['Width'] := IntToStr(Width);
-    Section.ItemValues['Height'] := IntToStr(Height);
+    Section.SetInteger('Width', Width);
+    Section.SetInteger('Height', Height);
   end;
   Section.Save;
 end;

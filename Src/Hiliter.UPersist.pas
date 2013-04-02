@@ -165,25 +165,25 @@ begin
   // Create default attributes object
   DefAttrs := THiliteAttrsFactory.CreateDefaultAttrs;
   // Read font info main highlight output section
-  Hiliter.FontSize := StrToIntDef(
-    Storage.ItemValues[Prefix + cFontSizeName], DefAttrs.FontSize
+  Hiliter.FontSize := Storage.GetInteger(
+    Prefix + cFontSizeName, DefAttrs.FontSize
   );
-  Hiliter.FontName := Storage.ItemValues[Prefix + cFontNameName];
-  if Hiliter.FontName = '' then
-    Hiliter.FontName := DefAttrs.FontName;
+  Hiliter.FontName := Storage.GetString(
+    Prefix + cFontNameName, DefAttrs.FontName
+  );
   // Read each highlighter element from its own subsection
   for ElemId := Low(THiliteElement) to High(THiliteElement) do
   begin
     Elem := Hiliter.Elements[ElemId];
     Elem.ForeColor := TColor(
-      StrToIntDef(
-        Storage.ItemValues[Prefix + ElemValueName(ElemId, cElemColorName)],
-        Integer(DefAttrs.Elements[ElemId].ForeColor)
+      Storage.GetInteger(
+        Prefix + ElemValueName(ElemId, cElemColorName),
+        DefAttrs.Elements[ElemId].ForeColor
       )
     );
     Elem.FontStyle := BitmaskToFontStyles(
-      StrToIntDef(
-        Storage.ItemValues[Prefix + ElemValueName(ElemId, cElemStyleName)],
+      Storage.GetInteger(
+        Prefix + ElemValueName(ElemId, cElemStyleName),
         FontStylesToBitmask(DefAttrs.Elements[ElemId].FontStyle)
       )
     );
@@ -197,16 +197,20 @@ var
   Elem: IHiliteElemAttrs; // reference to a hiliter element
 begin
   // Store font info
-  Storage.ItemValues[Prefix + cFontSizeName] := IntToStr(Hiliter.FontSize);
-  Storage.ItemValues[Prefix + cFontNameName] := Hiliter.FontName;
+  Storage.SetInteger(Prefix + cFontSizeName, Hiliter.FontSize);
+  Storage.SetString(Prefix + cFontNameName, Hiliter.FontName);
   // Store each highlighter element
   for ElemId := Low(THiliteElement) to High(THiliteElement) do
   begin
     Elem := Hiliter.Elements[ElemId];
-    Storage.ItemValues[Prefix + ElemValueName(ElemId, cElemColorName)] :=
-      IntToStr(Integer(Elem.ForeColor));
-    Storage.ItemValues[Prefix + ElemValueName(ElemId, cElemStyleName)] :=
-      IntToStr(FontStylesToBitmask(Elem.FontStyle));
+    Storage.SetInteger(
+      Prefix + ElemValueName(ElemId, cElemColorName),
+      Integer(Elem.ForeColor)
+    );
+    Storage.SetInteger(
+      Prefix + ElemValueName(ElemId, cElemStyleName),
+      FontStylesToBitmask(Elem.FontStyle)
+    );
   end;
   // Save the storage
   Storage.Save;

@@ -143,12 +143,6 @@ type
     ///  <summary>Returns the config file name of the value that stores that
     ///  stores the last upate check date for the given update check.</summary>
     function ValueName(const Kind: TCheckKind): string;
-    ///  <summary>Formats the given TDateTime value as a string.</summary>
-    function FormatDate(const DT: TDateTime): string;
-    ///  <summary>Converts the given string as a TDateTime value.</summary>
-    ///  <exceptions>If S is not a valid config file date a fatal exception will
-    ///  be raised.</exceptions>
-    function ParseDate(const S: string): TDateTime;
   public
     ///  <summary>Construct new object instance and reads last update check
     ///  times from storage.</summary>
@@ -298,8 +292,8 @@ begin
   inherited Create;
   fThreads := TThreadGroup.Create;
   fThreads.Add([
-    TProgramUpdateCheckerThread.Create(1000),  // begins work after 10s delay
-    TDatabaseUpdateCheckerThread.Create(2000)  // begins work after 20s delay
+    TProgramUpdateCheckerThread.Create(10000),  // begins work after 10s delay
+    TDatabaseUpdateCheckerThread.Create(20000)  // begins work after 20s delay
   ]);
   fThreads.SetPriorities(tpLowest);
 end;
@@ -331,18 +325,11 @@ constructor TUpdateCheckerConfig.Create;
 var
   Storage: ISettingsSection;
   K: TCheckKind;
-  Value: string;
 begin
   inherited Create;
   Storage := Settings.ReadSection(ssUpdateChecks);
   for K := Low(TCheckKind) to High(TCheckKind) do
-  begin
-    Value := Storage.ItemValues[ValueName(K)];
-    if Value <> '' then
-      fLastUpdateCheck[K] := ParseDate(Storage.ItemValues[ValueName(K)])
-    else
-      fLastUpdateCheck[K] := EncodeDate(1899, 12, 30);
-  end;
+    fLastUpdateCheck[K] := Storage.GetDateTime(ValueName(K));
 end;
 
 destructor TUpdateCheckerConfig.Destroy;
@@ -352,31 +339,9 @@ var
 begin
   Storage := Settings.EmptySection(ssUpdateChecks);
   for K := Low(TCheckKind) to High(TCheckKind) do
-    Storage.ItemValues[ValueName(K)] := FormatDate(fLastUpdateCheck[K]);
+    Storage.SetDateTime(ValueName(K), fLastUpdateCheck[K]);
   Storage.Save;
   inherited;
-end;
-
-function TUpdateCheckerConfig.FormatDate(const DT: TDateTime): string;
-begin
-  // In config file we store date in SQL date format
-  Result := FormatDateTime('yyyy"-"mm"-"dd" "hh":"nn":"ss', DT);
-end;
-
-function TUpdateCheckerConfig.ParseDate(const S: string): TDateTime;
-begin
-  Result := EncodeDate(
-    StrToInt(StrSlice(S, 1, 4)),
-    StrToInt(StrSlice(S, 6, 2)),
-    StrToInt(StrSlice(S, 9, 2))
-  )
-  +
-  EncodeTime(
-    StrToInt(StrSlice(S, 12, 2)),
-    StrToInt(StrSlice(S, 15, 2)),
-    StrToInt(StrSlice(S, 18, 2)),
-    0
-  );
 end;
 
 procedure TUpdateCheckerConfig.RecordCheck(Kind: TCheckKind);
