@@ -20,6 +20,8 @@ interface
 
 
 uses
+  // Delphi
+  SysUtils {in interface for inlining to work},
   // Project
   UIStringList;
 
@@ -34,33 +36,9 @@ type
   }
   ISettingsSection = interface(IInterface)
     ['{20D32E19-4780-4D72-A96E-C0A1D044C8FB}']
-    function GetSectionName: string;
-      {Gets name of section this object represents.
-        @return Name of section.
-      }
     function GetItemCount: Integer;
       {Gets number of data items in section.
         @return Number of data items.
-      }
-    function GetItemName(Idx: Integer): string;
-      {Gets name of a data item in section by index.
-        @param Idx [in] Index of data item.
-        @return Name of data item.
-      }
-    function GetItemValue(const Name: string): string;
-      {Gets value of a named data item in section.
-        @param Name [in] Name of data item.
-        @return Value of data item.
-      }
-    procedure SetItemValue(const Name, Value: string);
-      {Sets value of named data item in section.
-        @param Name [in] Name of data item.
-        @param Value [in] Value of data item.
-      }
-    function GetItemValueByIdx(Idx: Integer): string;
-      {Gets value a data item by index.
-        @param Idx [in] Index of data item.
-        @return Value of data item.
       }
     function ItemExists(const Name: string): Boolean;
       {Checks if a specified item in this list exists.
@@ -83,14 +61,67 @@ type
       {Loads section and all its data items from application's persistent
       storage.
       }
-    function GetEncryptedItemValue(const Name: string): string; overload;
+    ///  <summary>Gets a named Boolean value from settings.</summary>
+    ///  <param name="Name">string [in] Name of item.</param>
+    ///  <param name="Default">Boolean [in] Value to return if named item not
+    ///  present in storage.</param>
+    ///  <returns>Boolean. The required value.</returns>
+    function GetBoolean(const Name: string; const Default: Boolean = False):
+      Boolean;
+    ///  <summary>Records a named Boolean value in settings.</summary>
+    ///  <param name="Name">string [in] Name of item.</param>
+    ///  <param name="Value">Boolean [in] Value to be recored.</param>
+    procedure SetBoolean(const Name: string; const Value: Boolean);
+    ///  <summary>Gets a named integer value from settings.</summary>
+    ///  <param name="Name">string [in] Name of item.</param>
+    ///  <param name="Default">Integer [in] Value to return if named item not
+    ///  present in storage.</param>
+    ///  <returns>Integer. The required value.</returns>
+    function GetInteger(const Name: string; const Default: Integer = 0):
+      Integer;
+    ///  <summary>Records a named integer value in settings.</summary>
+    ///  <param name="Name">string [in] Name of item.</param>
+    ///  <param name="Value">Integer [in] Value to be recored.</param>
+    procedure SetInteger(const Name: string; const Value: Integer);
+    ///  <summary>Gets a named string value from settings.</summary>
+    ///  <param name="Name">string [in] Name of item.</param>
+    ///  <param name="Default">string [in] Value to return if named item not
+    ///  present in storage.</param>
+    ///  <returns>string. The required value.</returns>
+    function GetString(const Name: string; const Default: string = ''):
+      string;
+    ///  <summary>Records a named string value in settings.</summary>
+    ///  <param name="Name">string [in] Name of item.</param>
+    ///  <param name="Value">string [in] Value to be recored.</param>
+    procedure SetString(const Name, Value: string);
+    ///  <summary>Gets a floating point value from settings.</summary>
+    ///  <param name="Name">string [in] Name of item.</param>
+    ///  <param name="Default">Double [in] Value to return if named item not
+    ///  present in storage.</param>
+    ///  <returns>Double. The required value.</returns>
+    function GetFloat(const Name: string; const Default: Double = 0.0): Double;
+    ///  <summary>Records a named floating point value in settings.</summary>
+    ///  <param name="Name">string [in] Name of item.</param>
+    ///  <param name="Value">Double [in] Value to be recored.</param>
+    procedure SetFloat(const Name: string; const Value: Double);
+    ///  <summary>Gets a named date time value from settings.</summary>
+    ///  <param name="Name">string [in] Name of item.</param>
+    ///  <param name="Default">TDateTime [in] Value to return if named item not
+    ///  present in storage.</param>
+    ///  <returns>TDateTime. The required value.</returns>
+    ///  <remarks>The value is stored in YYYY-MM-DD hh:mm:ss format, regardless
+    ///  of locale.</remarks>
+    function GetDateTime(const Name: string; const Default: TDateTime = 0.0):
+      TDateTime;
+    ///  <summary>Records a named date time value in settings.</summary>
+    ///  <param name="Name">string [in] Name of item.</param>
+    ///  <param name="Value">TDateTime [in] Value to be recored.</param>
+    ///  <remarks>The value must be stored in YYYY-MM-DD hh:mm:ss format
+    ///  regardless of locale.</remarks>
+    procedure SetDateTime(const Name: string; const Value: TDateTime);
+    function GetEncryptedItemValue(const Name: string): string;
       {Gets an encrypted value by name and unencrypts it.
         @param Name [in] Name of value.
-        @return Required unencrypted value.
-      }
-    function GetEncryptedItemValue(const Idx: Integer): string; overload;
-      {Gets an encrypted value by index and unencrypts it.
-        @param Idx [in] Index of value.
         @return Required unencrypted value.
       }
     procedure SetEncryptedItemValue(const Name, Value: string);
@@ -120,19 +151,8 @@ type
           is replaced by the item number.
         @param Value [in] String list to be stored.
       }
-    property SectionName: string read GetSectionName;
-      {Name of section represented by this object}
     property ItemCount: Integer read GetItemCount;
       {Number of data items in section represented by object}
-    property ItemNames[Idx: Integer]: string read GetItemName;
-      {List of names of data items in section represented by object}
-    property ItemValues[const Name: string]: string
-      read GetItemValue write SetItemValue;
-      {List of data item values in section represented by object, indexed by
-      data item name}
-    property ItemValuesByIdx[Idx: Integer]: string read GetItemValueByIdx;
-      {List of data item values in section represented by object, indexed by
-      position in array}
   end;
 
   {
@@ -200,9 +220,9 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Classes, IniFiles, IOUtils,
+  Classes, IniFiles, IOUtils,
   // Project
-  UAppInfo, UEncryptor, UExceptions, UHexUtils, UIOUtils;
+  UAppInfo, UEncryptor, UExceptions, UHexUtils, UIOUtils, UStrUtils;
 
 
 var
@@ -304,6 +324,17 @@ type
     fSectionName: string;         // Name of section
     fStorage: TSettingsStorageId; // Id of storage to be used
     fValues: TStringList;         // Stores section's data as name=value pairs
+    function ParseConfigDate(const S: string): TDateTime;
+    function GetItemValue(const Name: string): string;
+      {Gets value of a named data item in section.
+        @param Name [in] Name of data item.
+        @return Value of data item.
+      }
+    procedure SetItemValue(const Name, Value: string);
+      {Sets value of named data item in section.
+        @param Name [in] Name of data item.
+        @param Value [in] Value of data item.
+      }
   public
     constructor Create(const Section: string;
       const Storage: TSettingsStorageId);
@@ -315,33 +346,9 @@ type
       {Class destructor. Tears down object.
       }
     { ISettingsSection methods }
-    function GetSectionName: string;
-      {Gets name of section this object represents.
-        @return Name of section.
-      }
     function GetItemCount: Integer;
       {Gets number of data items in section.
         @return Number of data items.
-      }
-    function GetItemName(Idx: Integer): string;
-      {Gets name of a data item in section by index.
-        @param Idx [in] Index of data item.
-        @return Name of data item.
-      }
-    function GetItemValue(const Name: string): string;
-      {Gets value of a named data item in section.
-        @param Name [in] Name of data item.
-        @return Value of data item.
-      }
-    procedure SetItemValue(const Name, Value: string);
-      {Sets value of named data item in section.
-        @param Name [in] Name of data item.
-        @param Value [in] Value of data item.
-      }
-    function GetItemValueByIdx(Idx: Integer): string;
-      {Gets value a data item by index.
-        @param Idx [in] Index of data item.
-        @return Value of data item.
       }
     function ItemExists(const Name: string): Boolean;
       {Checks if a specified item in this list exists.
@@ -364,18 +371,27 @@ type
       {Loads section and all its data items from application's persistent
       storage.
       }
+    function GetBoolean(const Name: string; const Default: Boolean = False):
+      Boolean;
+    procedure SetBoolean(const Name: string; const Value: Boolean); inline;
+    function GetInteger(const Name: string; const Default: Integer = 0):
+      Integer; inline;
+    procedure SetInteger(const Name: string; const Value: Integer); inline;
+    function GetString(const Name: string; const Default: string = ''):
+      string; inline;
+    procedure SetString(const Name, Value: string); inline;
+    function GetFloat(const Name: string; const Default: Double = 0.0): Double;
+      inline;
+    procedure SetFloat(const Name: string; const Value: Double); inline;
+    function GetDateTime(const Name: string; const Default: TDateTime = 0.0):
+      TDateTime;
+    procedure SetDateTime(const Name: string; const Value: TDateTime); inline;
     function GetEncryptedItemValue(const Name: string): string; overload;
       {Gets an encrypted value by name and unencrypts it.
         @param Name [in] Name of value.
         @return Required unencrypted value.
       }
-    function GetEncryptedItemValue(const Idx: Integer): string; overload;
-      {Gets an encrypted value by index and unencrypts it.
-        @param Idx [in] Index of value.
-        @return Required unencrypted value.
-      }
     procedure SetEncryptedItemValue(const Name, Value: string);
-      overload;
       {Encrypts and sets a named value.
         @param Name [in] Name of value.
         @param Value [in] Unencryped value to be encrypted.
@@ -536,7 +552,7 @@ function TIniSettings.SectionName(const Id: TSettingsSectionId;
   }
 const
   // Map of section ids to names
-  cSectionNames: array[TSettingsSectionId] of string = (   
+  cSectionNames: array[TSettingsSectionId] of string = (
     'FindText',         // ssFindText
     'FindCompiler',     // ssFindCompiler
     'FindXRefs',        // ssFindXRefs
@@ -616,15 +632,41 @@ begin
   Result := TEncoding.UTF8.GetString(TEncryptor.Decrypt(EncryptedBytes));
 end;
 
-function TIniSettingsSection.GetEncryptedItemValue(const Idx: Integer): string;
-  {Gets an encrypted value by index and unencrypts it.
-    @param Idx [in] Index of value.
-    @return Required unencrypted value.
-  }
+function TIniSettingsSection.GetBoolean(const Name: string;
+  const Default: Boolean): Boolean;
+var
+  ValStr: string;
 begin
-  // NOTE:
-  // See SetEncryptedItemValue for details of how encrypted values are stored.
-  Result := GetEncryptedItemValue(GetItemName(Idx));
+  ValStr := StrToLower(GetItemValue(Name));
+  if ValStr = '' then
+    Exit(Default);
+  if (ValStr = '0') or (ValStr = 'false') or (ValStr = 'no')
+    or (ValStr = 'n') then
+    Exit(False);
+  Result := True;
+end;
+
+function TIniSettingsSection.GetDateTime(const Name: string;
+  const Default: TDateTime): TDateTime;
+var
+  ValStr: string;
+begin
+  ValStr := GetItemValue(Name);
+  if ValStr = '' then
+    Exit(Default);
+  Result := ParseConfigDate(ValStr);
+end;
+
+function TIniSettingsSection.GetFloat(const Name: string;
+  const Default: Double): Double;
+begin
+  Result := StrToFloatDef(GetItemValue(Name), Default);
+end;
+
+function TIniSettingsSection.GetInteger(const Name: string;
+  const Default: Integer): Integer;
+begin
+  Result := StrToIntDef(GetItemValue(Name), Default);
 end;
 
 function TIniSettingsSection.GetItemCount: Integer;
@@ -633,15 +675,6 @@ function TIniSettingsSection.GetItemCount: Integer;
   }
 begin
   Result := fValues.Count;
-end;
-
-function TIniSettingsSection.GetItemName(Idx: Integer): string;
-  {Gets name of a data item in section by index.
-    @param Idx [in] Index of data item.
-    @return Name of data item.
-  }
-begin
-  Result := fValues.Names[Idx];
 end;
 
 function TIniSettingsSection.GetItemValue(const Name: string): string;
@@ -653,21 +686,11 @@ begin
   Result := fValues.Values[Name];
 end;
 
-function TIniSettingsSection.GetItemValueByIdx(Idx: Integer): string;
-  {Gets value a data item by index.
-    @param Idx [in] Index of data item.
-    @return Value of data item.
-  }
+function TIniSettingsSection.GetString(const Name, Default: string): string;
 begin
-  Result := fValues.ValueFromIndex[Idx];
-end;
-
-function TIniSettingsSection.GetSectionName: string;
-  {Gets name of section this object represents.
-    @return Name of section.
-  }
-begin
-  Result := fSectionName;
+  Result := GetItemValue(Name);
+  if Result = '' then
+    Result := Default;
 end;
 
 function TIniSettingsSection.GetStrings(const CountName,
@@ -713,6 +736,22 @@ begin
     end;
 end;
 
+function TIniSettingsSection.ParseConfigDate(const S: string): TDateTime;
+begin
+  Result := EncodeDate(
+    StrToInt(StrSlice(S, 1, 4)),
+    StrToInt(StrSlice(S, 6, 2)),
+    StrToInt(StrSlice(S, 9, 2))
+  )
+  +
+  EncodeTime(
+    StrToInt(StrSlice(S, 12, 2)),
+    StrToInt(StrSlice(S, 15, 2)),
+    StrToInt(StrSlice(S, 18, 2)),
+    0
+  );
+end;
+
 procedure TIniSettingsSection.Save;
   {Saves section with all its data items to application's persistent
   storage.
@@ -735,6 +774,21 @@ begin
     end;
 end;
 
+procedure TIniSettingsSection.SetBoolean(const Name: string;
+  const Value: Boolean);
+const
+  // do not localise these strings
+  BoolStrs: array[Boolean] of string = ('False', 'True');
+begin
+  SetItemValue(Name, BoolStrs[Value]);
+end;
+
+procedure TIniSettingsSection.SetDateTime(const Name: string;
+  const Value: TDateTime);
+begin
+  SetItemValue(Name, FormatDateTime('yyyy"-"mm"-"dd" "hh":"nn":"ss', Value));
+end;
+
 procedure TIniSettingsSection.SetEncryptedItemValue(const Name, Value: string);
   {Encrypts and sets a named value.
     @param Name [in] Name of value.
@@ -743,13 +797,24 @@ procedure TIniSettingsSection.SetEncryptedItemValue(const Name, Value: string);
 begin
   // NOTE:
   // Encrypted values are stored as follows:
-  // 1: Unicode Value is converted to an array of UTF-8 encoded bytes
-  // 2: The UTF-8 byte array is encrypted as another array bytes
+  // 1: Unicode Value string is converted to an array of UTF-8 encoded bytes
+  // 2: The UTF-8 byte array is encrypted into another array of bytes
   // 3: The encrypted byte array is converted to hexadecimal
   // 4: The hexadecimal character string is stored in storage
   SetItemValue(
     Name, BytesToHex(TEncryptor.Encrypt(TEncoding.UTF8.GetBytes(Value)))
   );
+end;
+
+procedure TIniSettingsSection.SetFloat(const Name: string; const Value: Double);
+begin
+  SetItemValue(Name, FloatToStr(Value));
+end;
+
+procedure TIniSettingsSection.SetInteger(const Name: string;
+  const Value: Integer);
+begin
+  SetItemValue(Name, IntToStr(Value));
 end;
 
 procedure TIniSettingsSection.SetItemValue(const Name, Value: string);
@@ -772,6 +837,11 @@ begin
     else
       fValues[Idx] := Name + '=';
   end;
+end;
+
+procedure TIniSettingsSection.SetString(const Name, Value: string);
+begin
+  SetItemValue(Name, Value);
 end;
 
 procedure TIniSettingsSection.SetStrings(const CountName, ItemFmt: string;
