@@ -170,7 +170,7 @@ begin
     Result.IPAddress := ProxySection.GetString('IPAddress');
     Result.Port := ProxySection.GetInteger('Port', 80);
     Result.UserName := ProxySection.GetString('UserName');
-    Result.Password := ProxySection.GetEncryptedItemValue('Password');
+    Result.Password := ProxySection.GetEncryptedString('Password');
   end;
 end;
 
