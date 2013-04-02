@@ -27,85 +27,86 @@ uses
 
 
 type
-
-  {
-  ISettingsSection:
-    Interface supported by objects that encapsulate a named data section in
-    application's persistent storage. Allows data items in section to be read
-    and written and section itelsf to be read or written to storage.
-  }
+  ///  <summary>Interface supported by objects that encapsulate a named settings
+  ///  section that contains named values.</summary>
   ISettingsSection = interface(IInterface)
     ['{20D32E19-4780-4D72-A96E-C0A1D044C8FB}']
+
+    ///  <summary>Returns the number of named values in the section.</summary>
     function GetItemCount: Integer;
-      {Gets number of data items in section.
-        @return Number of data items.
-      }
+
+    ///  <summary>Checks whether a value with a given name exists in the
+    ///  section.</summary>
     function ItemExists(const Name: string): Boolean;
-      {Checks if a specified item in this list exists.
-        @param Name [in] Name of item.
-        @return Whether Name exists in section.
-      }
+
+    ///  <summary>Deletes the value with the given name from the section.
+    ///  </summary>
     procedure DeleteItem(const Name: string);
-      {Deletes a named item from the list. If the item is not in the list no
-      action is taken.
-        @param Name [in] Name of item to delete.
-      }
+
+    ///  <summary>Deletes all the values from the section.</summary>
     procedure ClearItems;
-      {Clears all data items from a section.
-      }
+
+    ///  <summary>Saves the data and all its values to persistent storage.
+    ///  </summary>
     procedure Save;
-      {Saves section with all its data items to application's persistent
-      storage.
-      }
+
+    ///  <summary>Loads the section and all its values from persistent storage.
+    ///  </summary>
     procedure Load;
-      {Loads section and all its data items from application's persistent
-      storage.
-      }
+
     ///  <summary>Gets a named Boolean value from settings.</summary>
-    ///  <param name="Name">string [in] Name of item.</param>
+    ///  <param name="Name">string [in] Name of value.</param>
     ///  <param name="Default">Boolean [in] Value to return if named item not
     ///  present in storage.</param>
     ///  <returns>Boolean. The required value.</returns>
     function GetBoolean(const Name: string; const Default: Boolean = False):
       Boolean;
+
     ///  <summary>Records a named Boolean value in settings.</summary>
-    ///  <param name="Name">string [in] Name of item.</param>
+    ///  <param name="Name">string [in] Name of value.</param>
     ///  <param name="Value">Boolean [in] Value to be recored.</param>
     procedure SetBoolean(const Name: string; const Value: Boolean);
+
     ///  <summary>Gets a named integer value from settings.</summary>
-    ///  <param name="Name">string [in] Name of item.</param>
+    ///  <param name="Name">string [in] Name of value.</param>
     ///  <param name="Default">Integer [in] Value to return if named item not
     ///  present in storage.</param>
     ///  <returns>Integer. The required value.</returns>
     function GetInteger(const Name: string; const Default: Integer = 0):
       Integer;
+
     ///  <summary>Records a named integer value in settings.</summary>
-    ///  <param name="Name">string [in] Name of item.</param>
+    ///  <param name="Name">string [in] Name of value.</param>
     ///  <param name="Value">Integer [in] Value to be recored.</param>
     procedure SetInteger(const Name: string; const Value: Integer);
+
     ///  <summary>Gets a named string value from settings.</summary>
-    ///  <param name="Name">string [in] Name of item.</param>
+    ///  <param name="Name">string [in] Name of value.</param>
     ///  <param name="Default">string [in] Value to return if named item not
     ///  present in storage.</param>
     ///  <returns>string. The required value.</returns>
     function GetString(const Name: string; const Default: string = ''):
       string;
+
     ///  <summary>Records a named string value in settings.</summary>
-    ///  <param name="Name">string [in] Name of item.</param>
+    ///  <param name="Name">string [in] Name of value.</param>
     ///  <param name="Value">string [in] Value to be recored.</param>
     procedure SetString(const Name, Value: string);
+
     ///  <summary>Gets a floating point value from settings.</summary>
-    ///  <param name="Name">string [in] Name of item.</param>
+    ///  <param name="Name">string [in] Name of value.</param>
     ///  <param name="Default">Double [in] Value to return if named item not
     ///  present in storage.</param>
     ///  <returns>Double. The required value.</returns>
     function GetFloat(const Name: string; const Default: Double = 0.0): Double;
+
     ///  <summary>Records a named floating point value in settings.</summary>
-    ///  <param name="Name">string [in] Name of item.</param>
+    ///  <param name="Name">string [in] Name of value.</param>
     ///  <param name="Value">Double [in] Value to be recored.</param>
     procedure SetFloat(const Name: string; const Value: Double);
+
     ///  <summary>Gets a named date time value from settings.</summary>
-    ///  <param name="Name">string [in] Name of item.</param>
+    ///  <param name="Name">string [in] Name of value.</param>
     ///  <param name="Default">TDateTime [in] Value to return if named item not
     ///  present in storage.</param>
     ///  <returns>TDateTime. The required value.</returns>
@@ -113,106 +114,127 @@ type
     ///  of locale.</remarks>
     function GetDateTime(const Name: string; const Default: TDateTime = 0.0):
       TDateTime;
+
     ///  <summary>Records a named date time value in settings.</summary>
-    ///  <param name="Name">string [in] Name of item.</param>
+    ///  <param name="Name">string [in] Name of value.</param>
     ///  <param name="Value">TDateTime [in] Value to be recored.</param>
     ///  <remarks>The value must be stored in YYYY-MM-DD hh:mm:ss format
     ///  regardless of locale.</remarks>
     procedure SetDateTime(const Name: string; const Value: TDateTime);
+
     ///  <summary>Gets a named encrypted string value from settings and
     ///  unencrypts it.</summary>
-    ///  <param name="Name">string [in] Name of item.</param>
+    ///  <param name="Name">string [in] Name of value.</param>
     ///  <returns>string. The unencrypted string.</returns>
     function GetEncryptedString(const Name: string): string;
+
     ///  <summary>Encrypts and records a named string value in settings.
     ///  </summary>
-    ///  <param name="Name">string [in] Name of item.</param>
+    ///  <param name="Name">string [in] Name of value.</param>
     ///  <param name="Value">string [in] Value to be encrypted and recored.
     ///  </param>
     procedure SetEncryptedString(const Name, Value: string);
+
+    ///  <summary>Gets a list of related string values from the section.
+    ///  </summary>
+    ///  <param name="CountName">string [in] Name of an integer value that
+    ///  specifies the number of related value in the list.</param>
+    ///  <param name="ItemFmt">string [in] A format string that acts as a
+    ///  template for the names of the related string values. ItemFmt must
+    ///  contain a single %d specifier that represents the number of the value
+    ///  in the list.</param>
+    ///  <returns>IStringList [in] The list of strings from the list.</returns>
     function GetStrings(const CountName, ItemFmt: string): IStringList;
-      {Reads a string list from storage. There must be a value containing number
-      of elements and correct number of further elements containing each entry
-      in string list.
-        @param CountName [in] Name of value containing number of elements in
-          string list.
-        @param ItemFmt [in] Format string that provides a template names of
-          values of list items. ItemFmt must contain a single %d specifier that
-          is replaced by the item number.
-        @return Required string list.
-      }
+
+    ///  <summary>Stores a string list in the section as a set of values with
+    ///  related names.</summary>
+    ///  <param name="CountName">string [in] Name of an integer value that is
+    ///  used to record the number of related value in the list.</param>
+    ///  <param name="ItemFmt">string [in] A format string that acts as a
+    ///  template for the names of the related string values. ItemFmt must
+    ///  contain a single %d specifier that represents the number of the value
+    ///  in the list.</param>
+    ///  <param name="Value">IStringList [in] List of strings to be stored.
+    ///  </param>
     procedure SetStrings(const CountName, ItemFmt: string;
       Value: IStringList);
-      {Stores a string list in storage.
-        @param CountName [in] Name of value that stores number of elements in
-          string list.
-        @param ItemFmt [in] Format string that provides a template of the names
-          of the string list entries. It must contain just one %d specifier that
-          is replaced by the item number.
-        @param Value [in] String list to be stored.
-      }
+
+    ///  <summary>Number of named values in the section.</summary>
     property ItemCount: Integer read GetItemCount;
-      {Number of data items in section represented by object}
   end;
 
-  {
-  TSettingsStorageId:
-    Identifies a persisent storage used to persist settings.
-  }
-  TSettingsStorageId = (
-    ssUser,     // storage for per-user settings
-    ssCommon    // storage for common (application level) settings
-  );
+type
+  ///  <summary>
+  ///  <para>Enumeration of the different storage locations that can store
+  ///  settings.</para>
+  ///  <para>- ssUser - Storage for per-user settings.</para>
+  ///  <para>- ssCommon - Storage for common (application-wde) settings.</para>
+  ///  </summary>
+  TSettingsStorageId = (ssUser, ssCommon);
 
-  {
-  TSettingsSectionId:
-    Ids of valid sections within application's persistent storage.
-  }
+type
+  ///  <summary>
+  ///  <para>Enumeration of recognised sections within persistent storage.
+  ///  </para>
+  ///  <para>-ssFindText - info about last text search</para>
+  ///  <para>-ssFindCompiler - info about last compiler search</para>
+  ///  <para>-ssFindXRefs - info about last XRef search</para>
+  ///  <para>-ssCompilerInfo - info about each supported compiler</para>
+  ///  <para>-ssApplication - info about the application</para>
+  ///  <para>-ssPreferences - info about program preferences</para>
+  ///  <para>-ssUserInfo - info about user</para>
+  ///  <para>-ssProxyServer - info about any proxy server</para>
+  ///  <para>-ssUnits - list of default units</para>
+  ///  <para>-ssDuplicateSnippet - persistent settings from Duplicate Snippets
+  ///  dlg</para>
+  ///  <para>-ssFavourites - persistent settings from Favourites dlg</para>
+  ///  <para>-ssWindowState - info about the size and state of various
+  ///  windows</para>
+  ///  <para>-ssDatabase - database customisation info</para>
+  ///  <para>-ssUpdateChecks - info about update checks</para>
+  ///  </summary>
   TSettingsSectionId = (
-    ssFindText,           // info about last text search
-    ssFindCompiler,       // info about last compiler search
-    ssFindXRefs,          // info about last XRef search
-    ssCompilerInfo,       // info about each supported compiler
-    ssApplication,        // info about the application
-    ssPreferences,        // info about program preferences
-    ssUserInfo,           // info about user
-    ssProxyServer,        // info about any proxy server
-    ssUnits,              // list of default units
-    ssDuplicateSnippet,   // persistent settings from Duplicate Snippets dlg
-    ssFavourites,         // persistent settings from Favourites dlg
-    ssWindowState,        // info about the size and state of various windows
-    ssDatabase,           // database customisation info
-    ssUpdateChecks        // info about update checks
+    ssFindText, ssFindCompiler, ssFindXRefs, ssCompilerInfo, ssApplication,
+    ssPreferences, ssUserInfo, ssProxyServer, ssUnits, ssDuplicateSnippet,
+    ssFavourites, ssWindowState, ssDatabase, ssUpdateChecks
   );
 
-  {
-  ISettings:
-    Interface of object that manages program's persistant storage and returns
-    information about, and contents of, sections within storage.
-  }
+type
+  ///  <summary>Interface that defines top level operations on a settings
+  ///  object.</summary>
   ISettings = interface(IInterface)
     ['{6ADBEE7E-83A0-423A-AA7D-86C87D23C1C8}']
+
+    ///  <summary>Reads a given section, and optional sub-section, and all its
+    ///  values from persistent storage.</summary>
+    ///  <param name="Section">TSettingsSectionId [in] Id of section to be read.
+    ///  </param>
+    ///  <param name="SubSection">string [in] Optional. Name of subsection.
+    ///  </param>
+    ///  <returns>ISettingsSection. Reference to object encapsulating the
+    ///  section.</returns>
+    ///  <remarks>Clients can modify the values in the returned section and save
+    ///  it, overwriting the existing section.</remarks>
     function ReadSection(const Section: TSettingsSectionId;
       const SubSection: string = ''): ISettingsSection;
-      {Reads a named section from persistent storage.
-        @param Section [in] Id of section to be written to.
-        @param SubSection [in] Name of sub section ('' if not supplied).
-        @return Object that encapsulates section that was.
-      }
+
+    ///  <summary>Creates a new empty section and optional sub-section.
+    ///  </summary>
+    ///  <param name="Section">TSettingsSectionId [in] Id of section to be
+    ///  created.</param>
+    ///  <param name="SubSection">string [in] Optional. Name of subsection.
+    ///  </param>
+    ///  <returns>ISettingsSection. Reference to object encapsulating the
+    ///  section.</returns>
+    ///  <remarks>Clients can add values to the returned section and save it,
+    ///  overwriting the existing section.</remarks>
     function EmptySection(const Section: TSettingsSectionId;
       const SubSection: string = ''): ISettingsSection;
-      {Creates new empty section object to which data items can be written.
-        @param Section [in] Id of section to be written to.
-        @param SubSection [in] Name of sub section ('' if not supplied).
-        @return Object that encapsulates new empty section.
-      }
   end;
 
 
+///  <summary>Returns reference to Settings singleton object.</summary>
 function Settings: ISettings;
-  {Returns reference to Settings singleton.
-    @return Reference to singleton.
-  }
 
 
 implementation
@@ -231,199 +253,289 @@ var
 
 
 type
-
-  {
-  TSettingsBase:
-    Base class for all settings classes, regardless of storage medium.
-  }
+  ///  <summary>Base class for all settings classes, regardless of storage
+  ///  medium used.</summary>
   TSettingsBase = class(TInterfacedObject)
   strict protected
-    function SectionStorage(
-      const Section: TSettingsSectionId): TSettingsStorageId;
-      {Determines which storage a section is stored in.
-        @param Section [in] Id of section.
-        @return Id of required storage.
-      }
+    ///  <summary>Determines and returns identifier of the storage entity on
+    ///  which a section is stored.</summary>
+    ///  <param name="Section">TSettingsSectionId [in] Id of section.</param>
+    ///  <returns>Id of required storage.</returns>
+    function SectionStorage(const Section: TSettingsSectionId):
+      TSettingsStorageId;
   end;
 
-  {
-  TIniSettingsBase:
-    Base class for all settings classes that use ini files for persisent
-    storage. Implements core ini file functionality.
-  }
+type
+  ///  <summary>Base class for all settings classes that use ini files for
+  ///  persisent storage.</summary>
+  ///  <remarks>Implements core ini file functionality.</remarks>
   TIniSettingsBase = class(TSettingsBase)
   strict protected
+    ///  <summary>Maps the given storage id to the storage file name.</summary>
     function StorageName(const Storage: TSettingsStorageId): string;
-      {Maps storage id to name of storage.
-        @param Storage [in] Storage id.
-        @return Required storage name.
-      }
+    ///  <summary>Creates and returns a TIniFile instance onto the ini file
+    ///  for the given storage id.</summary>
+    ///  <remarks>The caller is responsible for freeing the returned instance.
+    ///  </remarks>
     function CreateIniFile(const Storage: TSettingsStorageId): TIniFile;
-      {Creates a TIniFile instance onto required storage ini file.
-        @param Id [in] Id of storage for which object is required.
-        @return TIniFile instance.
-      }
   public
+    ///  <summary>Constructs new object instance.</summary>
     constructor Create;
-      {Class constructor. Sets up object.
-      }
   end;
 
-  {
-  TIniSettings:
-    Class that manages program's persistant storage in ini files and returns
-    names of ini sections for access from other code.
-  }
-  TIniSettings = class(TIniSettingsBase,
-    ISettings
-  )
+type
+  ///  <summary>Class that manages access to ini-file based persistant storage.
+  ///  </summary>
+  TIniSettings = class(TIniSettingsBase, ISettings)
   strict private
+    ///  <summary>Creates and returns an object representing an ini file
+    ///  section or sub-section.</summary>
+    ///  <param name="SectionID">TSettingsSectionId [in] Id of required section.
+    ///  </param>
+    ///  <param name="SubSection">string [in] Name of any subsection or the
+    ///  empty section if no subsection is required.</param>
     function CreateSection(const SectionID: TSettingsSectionId;
       const SubSection: string): ISettingsSection;
-      {Creates object representing a section of the ini file.
-        @param SectionID [in] Id of required section.
-        @param SubSection [in] Name of any subsection ('' if none).
-        @return Instance of object that represents section.
-      }
   strict protected
+    ///  <summary>Returns the name of a given section in the ini file.</summary>
+    ///  <param name="Id">TSettingsSectionId [in] Id of required section.
+    ///  </param>
+    ///  <param name="SubSection">string [in] Name of any subsection or the
+    ///  empty section if no subsection is required.</param>
+    ///  <returns>string. Name of required section.</returns>
     function SectionName(const Id: TSettingsSectionId;
       const SubSection: string = ''): string;
-      {Gets name of a specified section in ini file.
-        @param Id [in] Id of required section.
-        @param SubSection [in] Name of any subsection ('' if none).
-        @return Name of required section.
-      }
   public
-    { ISettings methods }
+
+    ///  <summary>Reads a given section, and optional sub-section, and all its
+    ///  values from persistent storage.</summary>
+    ///  <param name="Section">TSettingsSectionId [in] Id of section to be read.
+    ///  </param>
+    ///  <param name="SubSection">string [in] Optional. Name of subsection.
+    ///  </param>
+    ///  <returns>ISettingsSection. Reference to object encapsulating the
+    ///  section.</returns>
+    ///  <remarks>
+    ///  <para>Clients can modify the values in the returned section and save
+    ///  it, overwriting the existing section.</para>
+    ///  <para>Method of ISettingsSection.</para>
+    ///  </remarks>
     function ReadSection(const Section: TSettingsSectionId;
       const SubSection: string = ''): ISettingsSection;
-      {Reads a named section from persistent storage.
-        @param Section [in] Id of section to be written to.
-        @param SubSection [in] Name of sub section ('' if not supplied).
-        @return Object that encapsulates section that was.
-      }
+
+    ///  <summary>Creates a new empty section and optional sub-section.
+    ///  </summary>
+    ///  <param name="Section">TSettingsSectionId [in] Id of section to be
+    ///  created.</param>
+    ///  <param name="SubSection">string [in] Optional. Name of subsection.
+    ///  </param>
+    ///  <returns>ISettingsSection. Reference to object encapsulating the
+    ///  section.</returns>
+    ///  <remarks>
+    ///  <para>Clients can add values to the returned section and save it,
+    ///  overwriting the existing section.</para>
+    ///  <para>Method of ISettingsSection.</para>
+    ///  </remarks>
     function EmptySection(const Section: TSettingsSectionId;
       const SubSection: string = ''): ISettingsSection;
-      {Creates new empty section object to which data items can be written.
-        @param Section [in] Id of section to be written to.
-        @param SubSection [in] Name of sub section ('' if not supplied).
-        @return Object that encapsulates new empty section.
-      }
   end;
 
-  {
-  TIniSettingsSection:
-    Encapsulates a named data section in one of application's ini files.
-    Allows data items in section to be read and written and section to be read
-    or written to ini file.
-  }
-  TIniSettingsSection = class(TIniSettingsBase,
-    ISettingsSection
-  )
+type
+  ///  <summary>Encapsulates a data section in settings ini files.</summary>
+  ///  <remarks>Data items can be read and updated and setting can updated.
+  ///  </remarks>
+  TIniSettingsSection = class(TIniSettingsBase, ISettingsSection)
   strict private
-    fSectionName: string;         // Name of section
-    fStorage: TSettingsStorageId; // Id of storage to be used
-    fValues: TStringList;         // Stores section's data as name=value pairs
+    var
+      ///  <summary>Name of section.</summary>
+      fSectionName: string;
+      ///  <summary>Id of storage to be used.</summary>
+      fStorage: TSettingsStorageId;
+      ///  <summary>Stores section's data as name=value pairs.</summary>
+      fValues: TStringList;
+
+    ///  <summary>Parses the given string representing a date in the config file
+    ///  into a TDateTime value that is returned.</summary>
     function ParseConfigDate(const S: string): TDateTime;
+
+    ///  <summary>Gets a named string value from settings.</summary>
+    ///  <param name="Name">string [in] Value name.</param>
+    ///  <returns>string. The required value.</returns>
+    ///  <remarks>Returns the empty string if there is no value with the given
+    ///  name.</remarks>
     function GetItemValue(const Name: string): string;
-      {Gets value of a named data item in section.
-        @param Name [in] Name of data item.
-        @return Value of data item.
-      }
+
+    ///  <summary>Records a named value in settings.</summary>
+    ///  <param name="Name">string [in] Name of value.</param>
+    ///  <param name="Value">string [in] Value to be recored.</param>
     procedure SetItemValue(const Name, Value: string);
-      {Sets value of named data item in section.
-        @param Name [in] Name of data item.
-        @param Value [in] Value of data item.
-      }
+
   public
+
+    ///  <summary>Construct a new object instance that encapsulates an empty
+    ///  section.</summary>
+    ///  <param name="Section">string [in] Name of section in ini file.</param>
+    ///  <param name="Storage">TSettingsStorageId [in] Identifies the storage
+    ///  (i.e. ini file) to be used.</param>
     constructor Create(const Section: string;
       const Storage: TSettingsStorageId);
-      {Class constructor. Creates object encapsulating empty section.
-        @param Section [in] Name of section.
-        @param Storage [in] Identifies storage to be used.
-      }
+
+    ///  <summary>Destroys object instance.</summary>
     destructor Destroy; override;
-      {Class destructor. Tears down object.
-      }
-    { ISettingsSection methods }
+
+    ///  <summary>Returns the number of named values in the section.</summary>
+    ///  <remarks>Method of ISettingsSection.</remarks>
     function GetItemCount: Integer;
-      {Gets number of data items in section.
-        @return Number of data items.
-      }
+
+    ///  <summary>Checks whether a value with a given name exists in the
+    ///  section.</summary>
+    ///  <remarks>Method of ISettingsSection.</remarks>
     function ItemExists(const Name: string): Boolean;
-      {Checks if a specified item in this list exists.
-        @param Name [in] Name of item.
-        @return Whether Name exists in section.
-      }
+
+    ///  <summary>Deletes the value with the given name from the section.
+    ///  </summary>
+    ///  <remarks>Method of ISettingsSection.</remarks>
     procedure DeleteItem(const Name: string);
-      {Deletes a named item from the list. If the item is not in the list no
-      action is taken.
-        @param Name [in] Name of item to delete.
-      }
+
+    ///  <summary>Deletes all the values from the section.</summary>
+    ///  <remarks>Method of ISettingsSection.</remarks>
     procedure ClearItems;
-      {Clears all data items from a section.
-      }
+
+    ///  <summary>Saves the data and all its values to persistent storage.
+    ///  </summary>
+    ///  <remarks>Method of ISettingsSection.</remarks>
     procedure Save;
-      {Saves section with all its data items to application's persistent
-      storage.
-      }
+
+    ///  <summary>Loads the section and all its values from persistent storage.
+    ///  </summary>
+    ///  <remarks>Method of ISettingsSection.</remarks>
     procedure Load;
-      {Loads section and all its data items from application's persistent
-      storage.
-      }
+
+    ///  <summary>Gets a named Boolean value from settings.</summary>
+    ///  <param name="Name">string [in] Name of value.</param>
+    ///  <param name="Default">Boolean [in] Value to return if named item not
+    ///  present in storage.</param>
+    ///  <returns>Boolean. The required value.</returns>
+    ///  <remarks>Method of ISettingsSection.</remarks>
     function GetBoolean(const Name: string; const Default: Boolean = False):
       Boolean;
-    procedure SetBoolean(const Name: string; const Value: Boolean); inline;
+
+    ///  <summary>Records a named Boolean value in settings.</summary>
+    ///  <param name="Name">string [in] Name of value.</param>
+    ///  <param name="Value">Boolean [in] Value to be recored.</param>
+    ///  <remarks>Method of ISettingsSection.</remarks>
+    procedure SetBoolean(const Name: string; const Value: Boolean);
+
+    ///  <summary>Gets a named integer value from settings.</summary>
+    ///  <param name="Name">string [in] Name of value.</param>
+    ///  <param name="Default">Integer [in] Value to return if named item not
+    ///  present in storage.</param>
+    ///  <returns>Integer. The required value.</returns>
+    ///  <remarks>Method of ISettingsSection.</remarks>
     function GetInteger(const Name: string; const Default: Integer = 0):
-      Integer; inline;
-    procedure SetInteger(const Name: string; const Value: Integer); inline;
+      Integer;
+
+    ///  <summary>Records a named integer value in settings.</summary>
+    ///  <param name="Name">string [in] Name of value.</param>
+    ///  <param name="Value">Integer [in] Value to be recored.</param>
+    ///  <remarks>Method of ISettingsSection.</remarks>
+    procedure SetInteger(const Name: string; const Value: Integer);
+
+    ///  <summary>Gets a named string value from settings.</summary>
+    ///  <param name="Name">string [in] Name of value.</param>
+    ///  <param name="Default">string [in] Value to return if named item not
+    ///  present in storage.</param>
+    ///  <returns>string. The required value.</returns>
+    ///  <remarks>Method of ISettingsSection.</remarks>
     function GetString(const Name: string; const Default: string = ''):
-      string; inline;
-    procedure SetString(const Name, Value: string); inline;
+      string;
+
+    ///  <summary>Records a named string value in settings.</summary>
+    ///  <param name="Name">string [in] Name of value.</param>
+    ///  <param name="Value">string [in] Value to be recored.</param>
+    ///  <remarks>Method of ISettingsSection.</remarks>
+    procedure SetString(const Name, Value: string);
+
+    ///  <summary>Gets a floating point value from settings.</summary>
+    ///  <param name="Name">string [in] Name of value.</param>
+    ///  <param name="Default">Double [in] Value to return if named item not
+    ///  present in storage.</param>
+    ///  <returns>Double. The required value.</returns>
+    ///  <remarks>Method of ISettingsSection.</remarks>
     function GetFloat(const Name: string; const Default: Double = 0.0): Double;
-      inline;
-    procedure SetFloat(const Name: string; const Value: Double); inline;
+
+    ///  <summary>Records a named floating point value in settings.</summary>
+    ///  <param name="Name">string [in] Name of value.</param>
+    ///  <param name="Value">Double [in] Value to be recored.</param>
+    ///  <remarks>Method of ISettingsSection.</remarks>
+    procedure SetFloat(const Name: string; const Value: Double);
+
+    ///  <summary>Gets a named date time value from settings.</summary>
+    ///  <param name="Name">string [in] Name of value.</param>
+    ///  <param name="Default">TDateTime [in] Value to return if named item not
+    ///  present in storage.</param>
+    ///  <returns>TDateTime. The required value.</returns>
+    ///  <remarks>
+    ///  <para>The value is stored in YYYY-MM-DD hh:mm:ss format, regardless of
+    ///  locale.</para>
+    ///  <para>Method of ISettingsSection.</para>
+    ///  </remarks>
     function GetDateTime(const Name: string; const Default: TDateTime = 0.0):
       TDateTime;
-    procedure SetDateTime(const Name: string; const Value: TDateTime); inline;
+
+    ///  <summary>Records a named date time value in settings.</summary>
+    ///  <param name="Name">string [in] Name of value.</param>
+    ///  <param name="Value">TDateTime [in] Value to be recored.</param>
+    ///  <remarks>
+    ///  <para>The value must be stored in YYYY-MM-DD hh:mm:ss format
+    ///  regardless of locale.</para>
+    ///  <para>Method of ISettingsSection.</para>
+    ///  </remarks>
+    procedure SetDateTime(const Name: string; const Value: TDateTime);
+
     ///  <summary>Gets a named encrypted string value from settings and
     ///  unencrypts it.</summary>
-    ///  <param name="Name">string [in] Name of item.</param>
+    ///  <param name="Name">string [in] Name of value.</param>
     ///  <returns>string. The unencrypted string.</returns>
+    ///  <remarks>Method of ISettingsSection.</remarks>
     function GetEncryptedString(const Name: string): string;
+
     ///  <summary>Encrypts and records a named string value in settings.
     ///  </summary>
-    ///  <param name="Name">string [in] Name of item.</param>
+    ///  <param name="Name">string [in] Name of value.</param>
     ///  <param name="Value">string [in] Value to be encrypted and recored.
     ///  </param>
+    ///  <remarks>Method of ISettingsSection.</remarks>
     procedure SetEncryptedString(const Name, Value: string);
+
+    ///  <summary>Gets a list of related string values from the section.
+    ///  </summary>
+    ///  <param name="CountName">string [in] Name of an integer value that
+    ///  specifies the number of related value in the list.</param>
+    ///  <param name="ItemFmt">string [in] A format string that acts as a
+    ///  template for the names of the related string values. ItemFmt must
+    ///  contain a single %d specifier that represents the number of the value
+    ///  in the list.</param>
+    ///  <returns>IStringList [in] The list of strings from the list.</returns>
+    ///  <remarks>Method of ISettingsSection.</remarks>
     function GetStrings(const CountName, ItemFmt: string): IStringList;
-      {Reads a string list from storage. There must be a value containing number
-      of elements and correct number of further elements containing each entry
-      in string list.
-        @param CountName [in] Name of value containing number of elements in
-          string list.
-        @param ItemFmt [in] Format string that provides a template names of
-          values of list items. ItemFmt must contain a single %d specifier that
-          is replaced by the item number.
-        @return Required string list.
-      }
+
+    ///  <summary>Stores a string list in the section as a set of values with
+    ///  related names.</summary>
+    ///  <param name="CountName">string [in] Name of an integer value that is
+    ///  used to record the number of related value in the list.</param>
+    ///  <param name="ItemFmt">string [in] A format string that acts as a
+    ///  template for the names of the related string values. ItemFmt must
+    ///  contain a single %d specifier that represents the number of the value
+    ///  in the list.</param>
+    ///  <param name="Value">IStringList [in] List of strings to be stored.
+    ///  </param>
+    ///  <remarks>Method of ISettingsSection.</remarks>
     procedure SetStrings(const CountName, ItemFmt: string;
       Value: IStringList);
-      {Stores a string list in storage.
-        @param CountName [in] Name of value that stores number of elements in
-          string list.
-        @param ItemFmt [in] Format string that provides a template of the names
-          of the string list entries. It must contain just one %d specifier that
-          is replaced by the item number.
-        @param Value [in] String list to be stored.
-      }
   end;
 
 function Settings: ISettings;
-  {Returns reference to Settings singleton.
-    @return Reference to singleton.
-  }
 begin
   if not Assigned(pvtSettings) then
     pvtSettings := TIniSettings.Create as ISettings;
@@ -434,10 +546,6 @@ end;
 
 function TSettingsBase.SectionStorage(
   const Section: TSettingsSectionId): TSettingsStorageId;
-  {Determines which storage a section is stored in.
-    @param Section [in] Id of section.
-    @return Id of required storage.
-  }
 const
   // Map of known sections onto storage that contains them
   cSectionStorageMap: array[TSettingsSectionId] of TSettingsStorageId = (
@@ -463,8 +571,6 @@ end;
 { TIniSettingsBase }
 
 constructor TIniSettingsBase.Create;
-  {Class constructor. Sets up object.
-  }
 begin
   inherited;
   // Ensure storage directories exist
@@ -474,10 +580,6 @@ end;
 
 function TIniSettingsBase.CreateIniFile(
   const Storage: TSettingsStorageId): TIniFile;
-  {Creates a TIniFile instance onto required storage ini file.
-    @param Id [in] Id of storage for which object is required.
-    @return TIniFile instance.
-  }
 var
   FileName: string; // name if ini file
 begin
@@ -490,10 +592,6 @@ end;
 
 function TIniSettingsBase.StorageName(
   const Storage: TSettingsStorageId): string;
-  {Maps storage id to name of storage.
-    @param Storage [in] Storage id.
-    @return Required storage name.
-  }
 begin
   case Storage of
     ssUser:
@@ -509,11 +607,6 @@ end;
 
 function TIniSettings.CreateSection(const SectionID: TSettingsSectionId;
   const SubSection: string): ISettingsSection;
-  {Creates object representing a section of the ini file.
-    @param SectionID [in] Id of required section.
-    @param SubSection [in] Name of any subsection ('' if none).
-    @return Instance of object that represents section.
-  }
 begin
   Result := TIniSettingsSection.Create(
     SectionName(SectionID, SubSection),
@@ -523,22 +616,12 @@ end;
 
 function TIniSettings.EmptySection(const Section: TSettingsSectionId;
   const SubSection: string): ISettingsSection;
-  {Creates new empty section object to which data items can be written.
-    @param Section [in] Id of section to be written to.
-    @param SubSection [in] Name of sub section ('' if not supplied).
-    @return Object that encapsulates new empty section.
-  }
 begin
   Result := CreateSection(Section, SubSection);
 end;
 
 function TIniSettings.ReadSection(const Section: TSettingsSectionId;
   const SubSection: string = ''): ISettingsSection;
-  {Reads a named section from persistent storage.
-    @param Section [in] Id of section to be written to.
-    @param SubSection [in] Name of sub section ('' if not supplied).
-    @return Object that encapsulates section that was.
-  }
 begin
   Result := CreateSection(Section, SubSection);
   Result.Load;
@@ -546,11 +629,6 @@ end;
 
 function TIniSettings.SectionName(const Id: TSettingsSectionId;
   const SubSection: string): string;
-  {Gets name of a specified section in ini file.
-    @param Id [in] Id of required section.
-    @param SubSection [in] Name of any subsection ('' if none).
-    @return Name of required section.
-  }
 const
   // Map of section ids to names
   cSectionNames: array[TSettingsSectionId] of string = (
@@ -578,18 +656,12 @@ end;
 { TIniSettingsSection }
 
 procedure TIniSettingsSection.ClearItems;
-  {Clears all data items from a section.
-  }
 begin
   fValues.Clear;
 end;
 
 constructor TIniSettingsSection.Create(const Section: string;
   const Storage: TSettingsStorageId);
-  {Class constructor. Creates object encapsulating empty section.
-    @param Section [in] Name of section.
-    @param Storage [in] Identifies storage to be used.
-  }
 begin
   inherited Create;
   fValues := TStringList.Create;
@@ -598,10 +670,6 @@ begin
 end;
 
 procedure TIniSettingsSection.DeleteItem(const Name: string);
-  {Deletes a named item from the list. If the item is not in the list no
-  action is taken.
-    @param Name [in] Name of item to delete.
-  }
 var
   Idx: Integer; // index of name in list
 begin
@@ -611,8 +679,6 @@ begin
 end;
 
 destructor TIniSettingsSection.Destroy;
-  {Class destructor. Tears down object.
-  }
 begin
   FreeAndNil(fValues);
   inherited;
@@ -667,18 +733,11 @@ begin
 end;
 
 function TIniSettingsSection.GetItemCount: Integer;
-  {Gets number of data items in section.
-    @return Number of data items.
-  }
 begin
   Result := fValues.Count;
 end;
 
 function TIniSettingsSection.GetItemValue(const Name: string): string;
-  {Gets value of a named data item in section.
-    @param Name [in] Name of data item.
-    @return Value of data item.
-  }
 begin
   Result := fValues.Values[Name];
 end;
@@ -692,16 +751,6 @@ end;
 
 function TIniSettingsSection.GetStrings(const CountName,
   ItemFmt: string): IStringList;
-  {Reads a string list from storage. There must be a value containing number of
-  elements and correct number of further elements containing each entry in
-  string list.
-    @param CountName [in] Name of value containing number of elements in string
-      list.
-    @param ItemFmt [in] Format string that provides a template names of values
-      of list items. ItemFmt must contain a single %d specifier that is replaced
-      by the item number.
-    @return Required string list.
-  }
 var
   Idx: Integer; // loops thru string list items
 begin
@@ -711,18 +760,11 @@ begin
 end;
 
 function TIniSettingsSection.ItemExists(const Name: string): Boolean;
-  {Checks if a specified item in this list exists.
-    @param Name [in] Name of item.
-    @return Whether Name exists in section.
-  }
 begin
   Result := fValues.IndexOfName(Name) >= 0;
 end;
 
 procedure TIniSettingsSection.Load;
-  {Loads section and all its data items from application's persistent
-  storage.
-  }
 begin
   // Read all values from section in app's ini file to data item storage
   with CreateIniFile(fStorage) do
@@ -750,9 +792,6 @@ begin
 end;
 
 procedure TIniSettingsSection.Save;
-  {Saves section with all its data items to application's persistent
-  storage.
-  }
 var
   Idx: Integer; // loops thru all data items in section
 begin
@@ -811,10 +850,6 @@ begin
 end;
 
 procedure TIniSettingsSection.SetItemValue(const Name, Value: string);
-  {Sets value of named data item in section.
-    @param Name [in] Name of data item.
-    @param Value [in] Value of data item.
-  }
 var
   Idx: Integer; // index of name in list
 begin
@@ -839,14 +874,6 @@ end;
 
 procedure TIniSettingsSection.SetStrings(const CountName, ItemFmt: string;
   Value: IStringList);
-  {Stores a string list in storage.
-    @param CountName [in] Name of value that stores number of elements in string
-      list.
-    @param ItemFmt [in] Format string that provides a template of the names of
-      the string list entries. It must contain just one %d specifier that is
-      replaced by the item number.
-    @param Value [in] String list to be stored.
-  }
 var
   Idx: Integer; // loops through string list items
 begin
