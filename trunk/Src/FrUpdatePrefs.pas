@@ -31,9 +31,24 @@ type
   ///  update preferences.</summary>
   ///  <remarks>Designed for use within the preferences dialog box.</remarks>
   TUpdatePrefsFrame = class(TPrefsBaseFrame)
-    chkAutoCheckProgramUpdates: TCheckBox;
-    chkAutoCheckDatabaseUpdates: TCheckBox;
+    lblProgAutoCheckFreq: TLabel;
+    lblDBAutoCheckFreq: TLabel;
+    cbProgAutoCheckFreq: TComboBox;
+    cbDBAutoCheckFreq: TComboBox;
+  strict private
+    ///  <summary>Populates the given combo box with values for each available
+    ///  auto update check frequency.</summary>
+    procedure PopulateFrequencyCB(const CB: TComboBox);
+    ///  <summary>Gets the currently selected auto-update frequency from the
+    ///  given combo box.</summary>
+    function GetFrequencyFromCB(const CB: TComboBox): Word;
+    ///  <summary>Selects the given combo box item that relates to the given
+    ///  auto-update check frequency.</summary>
+    procedure SelectFrequencyInCB(const CB: TComboBox; const Freq: Word);
   public
+    ///  <summary>Constructs new frame instance and initialises controls.
+    ///  </summary>
+    constructor Create(AOwner: TComponent); override;
     ///  <summary>Updates controls to reflect values recorded in given
     ///  preferences object.</summary>
     ///  <remarks>Called when the page is activated.</remarks>
@@ -63,8 +78,10 @@ implementation
 
 
 uses
+  // Delphi
+  Math,
   // Project
-  FmPreferencesDlg, UCtrlArranger;
+  FmPreferencesDlg, UCtrlArranger, UGraphicUtils;
 
 
 {$R *.dfm}
@@ -74,25 +91,40 @@ uses
 
 procedure TUpdatePrefsFrame.Activate(const Prefs: IPreferences);
 begin
-  chkAutoCheckProgramUpdates.Checked := Prefs.AutoCheckProgramUpdates;
-  chkAutoCheckDatabaseUpdates.Checked := Prefs.AutoCheckDatabaseUpdates;
+  SelectFrequencyInCB(cbProgAutoCheckFreq, Prefs.AutoCheckProgramFrequency);
+  SelectFrequencyInCB(cbDBAutoCheckFreq, Prefs.AutoCheckDatabaseFrequency);
 end;
 
 procedure TUpdatePrefsFrame.ArrangeControls;
 begin
   TCtrlArranger.AlignLefts(
-    [chkAutoCheckProgramUpdates, chkAutoCheckDatabaseUpdates], 0
+    [lblProgAutoCheckFreq, lblDBAutoCheckFreq], 0
   );
-  chkAutoCheckProgramUpdates.Top := 4;
-  TCtrlArranger.MoveBelow(
-    chkAutoCheckProgramUpdates, chkAutoCheckDatabaseUpdates, 12
+  TCtrlArranger.AlignLefts(
+    [cbProgAutoCheckFreq, cbDBAutoCheckFreq],
+    Max(
+      StringExtent(lblProgAutoCheckFreq.Caption, lblProgAutoCheckFreq.Font).cx,
+      StringExtent(lblDBAutoCheckFreq.Caption, lblDBAutoCheckFreq.Font).cx
+    ) + 12
   );
+  TCtrlArranger.AlignVCentres(0, [lblProgAutoCheckFreq, cbProgAutoCheckFreq]);
+  TCtrlArranger.AlignVCentres(
+    TCtrlArranger.BottomOf([lblProgAutoCheckFreq, cbProgAutoCheckFreq], 12),
+    [lblDBAutoCheckFreq, cbDBAutoCheckFreq]
+  );
+end;
+
+constructor TUpdatePrefsFrame.Create(AOwner: TComponent);
+begin
+  inherited;
+  PopulateFrequencyCB(cbProgAutoCheckFreq);
+  PopulateFrequencyCB(cbDBAutoCheckFreq);
 end;
 
 procedure TUpdatePrefsFrame.Deactivate(const Prefs: IPreferences);
 begin
-  Prefs.AutoCheckProgramUpdates := chkAutoCheckProgramUpdates.Checked;
-  Prefs.AutoCheckDatabaseUpdates := chkAutoCheckDatabaseUpdates.Checked;
+  Prefs.AutoCheckProgramFrequency := GetFrequencyFromCB(cbProgAutoCheckFreq);
+  Prefs.AutoCheckDatabaseFrequency := GetFrequencyFromCB(cbDBAutoCheckFreq);
 end;
 
 function TUpdatePrefsFrame.DisplayName: string;
@@ -102,9 +134,58 @@ begin
   Result := sDisplayName;
 end;
 
+function TUpdatePrefsFrame.GetFrequencyFromCB(const CB: TComboBox): Word;
+begin
+  if CB.ItemIndex = -1 then
+    Exit(0);
+  Result := Word(CB.Items.Objects[CB.ItemIndex]);
+end;
+
 class function TUpdatePrefsFrame.Index: Byte;
 begin
   Result := 60;
+end;
+
+procedure TUpdatePrefsFrame.PopulateFrequencyCB(const CB: TComboBox);
+resourcestring
+  s0 = 'Never';
+  s1 = 'Daily';
+  s7 = 'Weekly';
+  s14 = 'Fortnightly';
+  s28 = 'Monthly';
+const
+  FreqMap: array[0..4] of record
+    Text: string;
+    Value: Word;
+  end = (
+    (Text: s0; Value: 0),
+    (Text: s1; Value: 1),
+    (Text: s7; Value: 7),
+    (Text: s14; Value: 14),
+    (Text: s28; Value: 28)
+  );
+var
+  I: Integer;
+begin
+  CB.Clear;
+  for I := Low(FreqMap) to High(FreqMap) do
+    CB.Items.AddObject(FreqMap[I].Text, Pointer(FreqMap[I].Value));
+end;
+
+procedure TUpdatePrefsFrame.SelectFrequencyInCB(const CB: TComboBox;
+  const Freq: Word);
+var
+  I: Integer;
+begin
+  for I := 0 to Pred(CB.Items.Count) do
+  begin
+    if Word(CB.Items.Objects[I]) = Freq then
+    begin
+      CB.ItemIndex := I;
+      Exit;
+    end;
+  end;
+  CB.ItemIndex := -1;
 end;
 
 function TUpdatePrefsFrame.UIUpdated: Boolean;
@@ -118,3 +199,4 @@ initialization
 TPreferencesDlg.RegisterPage(TUpdatePrefsFrame);
 
 end.
+
