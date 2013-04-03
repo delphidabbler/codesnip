@@ -22,24 +22,65 @@ interface
 
 uses
   // Delphi
-  SysUtils, ExtActns,
+  ExtActns,
   // Project
   Notifications.UData, Notifications.URecorderThread, UThreadGroup;
 
 
 type
+  TUpdateCheckerThread = class abstract(TNotificationRecorderThread)
+  strict private
+    ///  <summary>Checks if it is OK to check for updates.</summary>
+    ///  <remarks>Result depends on user's setting and time since last update
+    ///  check.</remarks>
+    function CanUpdate: Boolean;
+    ///  <summary>Records date and time of latest update check.</summary>
+    ///  <remarks>The recorded date/time is used by future calls to CanUpdate.
+    ///  </remarks>
+    procedure RecordUpdate;
+  strict protected
+    ///  <summary>Returns the frequency of update checks, in days.</summary>
+    ///  <remarks>A return value of zero indicates that no checks should be
+    ///  made.</remarks>
+    function UpdateFrequency: Word; virtual; abstract;
+    ///  <summary>Returns the name of the value in the 'UpdateChecks' settings
+    ///  section that stores the date the last update check was made.</summary>
+    function LastUpdateSettingsName: string; virtual; abstract;
+    ///  <summary>Checks to see if an update is available and, if so, creates a
+    ///  notification record with details of how to obtain the update.</summary>
+    ///  <param name="N">TNotificationData [out] The required notification
+    ///  record if an update is available. Undefined otherwise.</param>
+    ///  <returns>Boolean. True if an update is available or False if not.
+    ///  </returns>
+    function DoCheck(out N: TNotificationData): Boolean; virtual; abstract;
+    ///  <summary>Finds if an update is available and creates a notification
+    ///  containing information about it if so.</summary>
+    ///  <param name="N">TNotificationData [out] If an update is available this
+    ///  parameter contains information about the update to be added to the
+    ///  notification queue. If no update is available this value is undefined.
+    ///  </param>
+    ///  <returns>Boolean. True if an update is a available and a notification
+    ///  record was created or False if no update is available.</returns>
+    ///  <remarks>False is also returned if an error was encountered, if
+    ///  automatic update check is disabled or if unsufficient time has
+    ///  ellapsed since the last check.</remarks>
+    function GetNotification(out N: TNotificationData): Boolean; override;
+  end;
+
+type
   ///  <summary>Thread that checks online to find if a new version of CodeSnip
   ///  is available.</summary>
   ///  <remarks>
-  ///  <para>No check is made if the user has switched the facility off in
-  ///  preferences or if a check has been made within the preceding 24 hrs.
+  ///  <para>No check is made if the user has switched the automatic program
+  ///  update checking facility off in preferences or if a check has been made
+  ///  within the time period specified by the user.
   ///  </para>
   ///  <para>The thread fails silently as if no update is available if any
   ///  errors occur when accessing the internet or web service.</para>
   ///  <para>If an update is found a notification containing the details is
   ///  placed in the notification queue to await display.</para>
   ///  </remarks>
-  TProgramUpdateCheckerThread = class(TNotificationRecorderThread)
+  TProgramUpdateCheckerThread = class sealed(TUpdateCheckerThread)
   strict private
     var
       ///  <summary>Action that causes a web page to be displayed from where
@@ -48,18 +89,21 @@ type
       ///  button' in any program update notification window.</remarks>
       fDownloadAction: TBrowseURL;
   strict protected
-    ///  <summary>Finds if an update of the CodeSnip program is available and
-    ///  creates a notification containing information about it if so.
+    ///  <summary>Returns the frequency of update checks, in days.</summary>
+    ///  <remarks>A return value of zero indicates that no checks should be
+    ///  made.</remarks>
+    function UpdateFrequency: Word; override;
+    ///  <summary>Returns the name of the value in the 'UpdateChecks' settings
+    ///  section that stores the date the last update check was made.</summary>
+    function LastUpdateSettingsName: string; override;
+    ///  <summary>Checks to see if a program update is available and, if so,
+    ///  creates a notification record with details of how to obtain the update.
     ///  </summary>
-    ///  <param name="N">TNotificationData [out] If an update is available this
-    ///  parameter contains information about the update to be added to the
-    ///  notification queue. If no update is available this value is undefined.
-    ///  </param>
-    ///  <returns>Boolean. True if an update is a available and a notification
-    ///  record was created or False if no update is available.</returns>
-    ///  <remarks>False is also returned if an error was encountered or if the
-    ///  user has disabled automatic checking for program updates.</remarks>
-    function GetNotification(out N: TNotificationData): Boolean; override;
+    ///  <param name="N">TNotificationData [out] The required notification
+    ///  record if an update is available. Undefined otherwise.</param>
+    ///  <returns>Boolean. True if an update is available or False if not.
+    ///  </returns>
+    function DoCheck(out N: TNotificationData): Boolean; override;
   public
     ///  <summary>Creates the and initialises the thread instance.</summary>
     ///  <param name="StartDelay">Cardinal [in] Number of milliseconds to delay
@@ -74,28 +118,32 @@ type
   ///  <summary>Thread that checks online to find if a new version of the online
   ///  code snippets database is available.</summary>
   ///  <remarks>
-  ///  <para>No check is made if the user has switched the facility off in
-  ///  preferences or if a check has been made within the preceding 24 hrs.
+  ///  <para>No check is made if the user has switched the automatic database
+  ///  update checking facility off in preferences or if a check has been made
+  ///  within the time period specified by the user.
   ///  </para>
   ///  <para>The thread fails silently as if no update is available if any
   ///  errors occur when accessing the internet or web service.</para>
   ///  <para>If an update is found a notification containing the details is
   ///  placed in the notification queue to await display.</para>
   ///  </remarks>
-  TDatabaseUpdateCheckerThread = class(TNotificationRecorderThread)
+  TDatabaseUpdateCheckerThread = class sealed(TUpdateCheckerThread)
   strict protected
-    ///  <summary>Checks if the local copy of the online database is up to date
-    ///  and creates a notification containing information about it if so.
+    ///  <summary>Returns the frequency of update checks, in days.</summary>
+    ///  <remarks>A return value of zero indicates that no checks should be
+    ///  made.</remarks>
+    function UpdateFrequency: Word; override;
+    ///  <summary>Returns the name of the value in the 'UpdateChecks' settings
+    ///  section that stores the date the last update check was made.</summary>
+    function LastUpdateSettingsName: string; override;
+    ///  <summary>Checks to see if a database update is available and, if so,
+    ///  creates a notification record with details of how to obtain the update.
     ///  </summary>
-    ///  <param name="N">TNotificationData [out] If an update is available this
-    ///  parameter contains information about the update to be added to the
-    ///  notification queue. If no update is available this value is undefined.
-    ///  </param>
-    ///  <returns>Boolean. True if an update is a available and a notification
-    ///  record was created or False if no update is available.</returns>
-    ///  <remarks>False is also returned if an error was encountered or if the
-    ///  user has disabled automatic checking for database updates.</remarks>
-    function GetNotification(out N: TNotificationData): Boolean; override;
+    ///  <param name="N">TNotificationData [out] The required notification
+    ///  record if an update is available. Undefined otherwise.</param>
+    ///  <returns>Boolean. True if an update is available or False if not.
+    ///  </returns>
+    function DoCheck(out N: TNotificationData): Boolean; override;
   end;
 
 type
@@ -122,53 +170,58 @@ type
     procedure StopThreads;
   end;
 
-type
-  ///  <summary>Wrapper around the 'UpdateChecks' section of the per-user
-  ///  config file that records information about when update availability was
-  ///  checked.</summary>
-  TUpdateCheckerConfig = class(TObject)
-  public
-    type
-      ///  <summary>
-      ///  <para>Enumeration of supported kinds of update check.</para>
-      ///  <para>- ukProgram - program update checks.</para>
-      ///  <para>- ukDatabase - database update checks.</para>
-      ///  </summary>
-      TCheckKind = (ckProgram, ckDatabase);
-  strict private
-    var
-      ///  <summary>Dates and times of last successful update check for each
-      ///  supported kind of update.<summary>
-      fLastUpdateCheck: array[TCheckKind] of TDateTime;
-    ///  <summary>Returns the config file name of the value that stores that
-    ///  stores the last upate check date for the given update check.</summary>
-    function ValueName(const Kind: TCheckKind): string;
-  public
-    ///  <summary>Construct new object instance and reads last update check
-    ///  times from storage.</summary>
-    constructor Create;
-    ///  <summary>Writes the last update check times to storage then destroys
-    ///  the object.</summary>
-    destructor Destroy; override;
-    ///  <summary>Uses information from storage to determine if update
-    ///  availability should be checked for the given update kind.</summary>
-    function CanCheck(Kind: TCheckKind): Boolean;
-    ///  <summary>Update the last update check time for the given update kind.
-    ///  </summary>
-    procedure RecordCheck(Kind: TCheckKind);
-  end;
-
 
 implementation
 
 
 uses
   // Delphi
-  Classes, Windows, DateUtils,
+  SysUtils, Classes, DateUtils,
   // Project
   FmUpdateDlg, UAppInfo, UPreferences, UProgramUpdateChecker, USettings,
-  UStrUtils, UUpdateMgr, UUtils;
+  UUpdateMgr, UUtils;
 
+
+{ TUpdateCheckerThread }
+
+function TUpdateCheckerThread.CanUpdate: Boolean;
+var
+  Frequency: Word;
+  Storage: ISettingsSection;
+  LastUpdateCheck: TDateTime;
+begin
+  Frequency := UpdateFrequency;
+  if Frequency = 0 then
+    Exit(False);
+  Storage := Settings.ReadSection(ssUpdateChecks);
+  LastUpdateCheck := Storage.GetDateTime(LastUpdateSettingsName);
+  Result := DaysBetween(NowGMT, LastUpdateCheck) >= Frequency;
+end;
+
+function TUpdateCheckerThread.GetNotification(out N: TNotificationData):
+  Boolean;
+begin
+  try
+    if not CanUpdate then
+      Exit(False);
+    if not DoCheck(N) then
+      Exit(False);
+    RecordUpdate;
+    Result := True;
+  except
+    // Swallow any exception and return false to indicate "no update"
+    Result := False;
+  end;
+end;
+
+procedure TUpdateCheckerThread.RecordUpdate;
+var
+  Storage: ISettingsSection;
+begin
+  Storage := Settings.ReadSection(ssUpdateChecks);
+  Storage.SetDateTime(LastUpdateSettingsName, NowGMT);
+  Storage.Save;
+end;
 
 { TProgramUpdateCheckerThread }
 
@@ -184,8 +237,7 @@ begin
   inherited;
 end;
 
-function TProgramUpdateCheckerThread.GetNotification(out N: TNotificationData):
-  Boolean;
+function TProgramUpdateCheckerThread.DoCheck(out N: TNotificationData): Boolean;
 resourcestring
   sTitle = 'Program Update Available';
   sContent = 'CodeSnip version %s is available for download.';
@@ -196,47 +248,42 @@ var
   UpdateChecker: TProgramUpdateChecker;
   Content: TArray<string>;
   TaskCallback: TProc;
-  Config: TUpdateCheckerConfig;
 begin
+  UpdateChecker := TProgramUpdateChecker.Create;
   try
-    Config := TUpdateCheckerConfig.Create;
-    try
-      if not Preferences.AutoCheckProgramUpdates
-        or not Config.CanCheck(ckProgram) then
-        Exit(False);
-      Config.RecordCheck(ckProgram);
-    finally
-      Config.Free;
-    end;
-    UpdateChecker := TProgramUpdateChecker.Create;
-    try
-      if not UpdateChecker.Execute('Auto') then
-        Exit(False);
-      fDownloadAction.URL := UpdateChecker.DownloadURL;
-      Content := TArray<string>.Create(
-        Format(sContent, [string(UpdateChecker.LatestVersion)])
-      );
-      TaskCallback :=
-        procedure
-        begin
-          fDownloadAction.Execute;
-        end;
-      N := TNotificationData.Create(
-        sTitle, Content, HelpKeyword, TaskCallback, sDownloadPrompt
-      );
-      Result := True;
-    finally
-      UpdateChecker.Free;
-    end;
-  except
-    // Swallow any exception and return false to indicate "no update"
-    Result := False;
+    if not UpdateChecker.Execute('Auto') then
+      Exit(False);
+    fDownloadAction.URL := UpdateChecker.DownloadURL;
+    Content := TArray<string>.Create(
+      Format(sContent, [string(UpdateChecker.LatestVersion)])
+    );
+    TaskCallback :=
+      procedure
+      begin
+        fDownloadAction.Execute;
+      end;
+    N := TNotificationData.Create(
+      sTitle, Content, HelpKeyword, TaskCallback, sDownloadPrompt
+    );
+    Result := True;
+  finally
+    UpdateChecker.Free;
   end;
+end;
+
+function TProgramUpdateCheckerThread.LastUpdateSettingsName: string;
+begin
+  Result := 'LastProgramCheck';
+end;
+
+function TProgramUpdateCheckerThread.UpdateFrequency: Word;
+begin
+  Result := Preferences.AutoCheckProgramFrequency;
 end;
 
 { TDatabaseUpdateCheckerThread }
 
-function TDatabaseUpdateCheckerThread.GetNotification(
+function TDatabaseUpdateCheckerThread.DoCheck(
   out N: TNotificationData): Boolean;
 resourcestring
   sTitle = 'Database Update Available';
@@ -250,39 +297,34 @@ var
   UpdateMgr: TUpdateMgr;
   Content: TArray<string>;
   TaskCallback: TProc;
-  Config: TUpdateCheckerConfig;
 begin
+  UpdateMgr := TUpdateMgr.Create(TAppInfo.AppDataDir);
   try
-    Config := TUpdateCheckerConfig.Create;
-    try
-      if not Preferences.AutoCheckDatabaseUpdates
-        or not Config.CanCheck(ckDatabase) then
-        Exit(False);
-      Config.RecordCheck(ckDatabase);
-    finally
-      Config.Free;
-    end;
-    UpdateMgr := TUpdateMgr.Create(TAppInfo.AppDataDir);
-    try
-      if UpdateMgr.CheckForUpdates in [uqUpToDate, uqError] then
-        Exit(False);
-      Content := TArray<string>.Create(sContent1, sContent2);
-      TaskCallback :=
-        procedure
-        begin
-          TUpdateDlg.Execute(nil);
-        end;
-      N := TNotificationData.Create(
-        sTitle, Content, HelpKeyword, TaskCallback, sUpdatePrompt
-      );
-      Result := True;
-    finally
-      UpdateMgr.Free;
-    end
-  except
-    // Swallow any exception and return false to indicate "no update"
-    Result := False;
-  end;
+    if UpdateMgr.CheckForUpdates in [uqUpToDate, uqError] then
+      Exit(False);
+    Content := TArray<string>.Create(sContent1, sContent2);
+    TaskCallback :=
+      procedure
+      begin
+        TUpdateDlg.Execute(nil);
+      end;
+    N := TNotificationData.Create(
+      sTitle, Content, HelpKeyword, TaskCallback, sUpdatePrompt
+    );
+    Result := True;
+  finally
+    UpdateMgr.Free;
+  end
+end;
+
+function TDatabaseUpdateCheckerThread.LastUpdateSettingsName: string;
+begin
+  Result := 'LastDatabaseCheck';
+end;
+
+function TDatabaseUpdateCheckerThread.UpdateFrequency: Word;
+begin
+  Result := Preferences.AutoCheckDatabaseFrequency;
 end;
 
 { TUpdateCheckerMgr }
@@ -312,51 +354,6 @@ end;
 procedure TUpdateCheckerMgr.StopThreads;
 begin
   fThreads.Terminate;
-end;
-
-{ TUpdateCheckerConfig }
-
-function TUpdateCheckerConfig.CanCheck(Kind: TCheckKind): Boolean;
-begin
-  Result := DaysBetween(NowGMT, fLastUpdateCheck[Kind]) > 0;
-end;
-
-constructor TUpdateCheckerConfig.Create;
-var
-  Storage: ISettingsSection;
-  K: TCheckKind;
-begin
-  inherited Create;
-  Storage := Settings.ReadSection(ssUpdateChecks);
-  for K := Low(TCheckKind) to High(TCheckKind) do
-    fLastUpdateCheck[K] := Storage.GetDateTime(ValueName(K));
-end;
-
-destructor TUpdateCheckerConfig.Destroy;
-var
-  Storage: ISettingsSection;
-  K: TCheckKind;
-begin
-  Storage := Settings.EmptySection(ssUpdateChecks);
-  for K := Low(TCheckKind) to High(TCheckKind) do
-    Storage.SetDateTime(ValueName(K), fLastUpdateCheck[K]);
-  Storage.Save;
-  inherited;
-end;
-
-procedure TUpdateCheckerConfig.RecordCheck(Kind: TCheckKind);
-begin
-  fLastUpdateCheck[Kind] := NowGMT;
-end;
-
-function TUpdateCheckerConfig.ValueName(const Kind: TCheckKind): string;
-const
-  NameMap: array[TCheckKind] of string = (
-    'Program', 'Database'
-  );
-  NameFmt = 'Last%sCheck';
-begin
-  Result := Format(NameFmt, [NameMap[Kind]]);
 end;
 
 end.
