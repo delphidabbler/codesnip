@@ -28,6 +28,9 @@ uses
 
 
 type
+  ///  <summary>Abstract base class for threads that check for some update
+  ///  and create a notification when an update is available that is added to
+  ///  the notification queue.</summary>
   TUpdateCheckerThread = class abstract(TNotificationRecorderThread)
   strict private
     ///  <summary>Checks if it is OK to check for updates.</summary>
