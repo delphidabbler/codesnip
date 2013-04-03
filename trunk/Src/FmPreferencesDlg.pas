@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2006-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2006-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -78,6 +78,11 @@ type
     ///  tab index.</summary>
     function MapTabSheetToPage(const TabIdx: Integer): TPrefsBaseFrame;
       overload;
+    ///  <summary>Gets reference to preferences page frame with given class
+    ///  name.</summary>
+    ///  <remarks>Returns nil if ClsName is not recognised.</remarks>
+    class function MapClassNameToPageClass(const ClsName: string):
+      TPrefsFrameClass;
     ///  <summary>Gets reference to preferences frame on currently selected tab.
     ///  </summary>
     function GetSelectedPage: TPrefsBaseFrame;
@@ -106,8 +111,8 @@ type
     ///  frames to be displayed.</param>
     ///  <param name="UpdateUI">Boolean [out] Indicates if main UI needs to
     ///  be updated as a result of preference changes.</param>
-    ///  <returns>True if user clicks OK to accept changes or False if user
-    ///  cancels and no changes made.</returns>
+    ///  <returns>Boolean. True if user clicks OK to accept changes or False if
+    ///  user cancels and no changes made.</returns>
     class function Execute(AOwner: TComponent;
       const Pages: array of TPrefsFrameClass; out UpdateUI: Boolean): Boolean;
       overload;
@@ -117,8 +122,8 @@ type
     ///  </param>
     ///  <param name="Pages">array of TPrefsFrameClass [in] Class references of
     ///  frames to be displayed.</param>
-    ///  <returns>True if user clicks OK to accept changes or False if user
-    ///  cancels and no changes made.</returns>
+    ///  <returns>Boolean. True if user clicks OK to accept changes or False if
+    ///  user cancels and no changes made.</returns>
     class function Execute(AOwner: TComponent;
       const Pages: array of TPrefsFrameClass): Boolean; overload;
     ///  <summary>Displays preferences dialog with all registered preference
@@ -127,10 +132,22 @@ type
     ///  </param>
     ///  <param name="UpdateUI">Boolean [out] Indicates if main UI needs to
     ///  be updated as a result of preference changes.</param>
-    ///  <returns>True if user clicks OK to accept changes or False if user
-    ///  cancels and no changes made.</returns>
+    ///  <returns>Boolean. True if user clicks OK to accept changes or False if
+    ///  user cancels and no changes made.</returns>
     class function Execute(AOwner: TComponent; out UpdateUI: Boolean): Boolean;
       overload;
+    ///  <summary>Displays dialogue with showing a single frame, specified by
+    ///  its class name.</summary>
+    ///  <param name="AOwner">TComponent [in] Component that owns dialog.
+    ///  </param>
+    ///  <param name="PageClsName">string [in] Class name of the frame to be
+    ///  displayed.</param>
+    ///  <param name="UpdateUI">Boolean [out] Indicates if main UI needs to
+    ///  be updated as a result of preference changes.</param>
+    ///  <returns>Boolean. True if user clicks OK to accept changes or False if
+    ///  user cancels and no changes made.</returns>
+    class function Execute(AOwner: TComponent; const PageClsName: string;
+      out UpdateUI: Boolean): Boolean; overload;
     ///  <summary>Registers given preferences frame class for inclusion in the
     ///  preferences dialog box.</summary>
     ///  <remarks>Registered frames are created when the dialog box is displayed
@@ -279,6 +296,16 @@ begin
   Result := Execute(AOwner, Pages, Dummy);
 end;
 
+class function TPreferencesDlg.Execute(AOwner: TComponent;
+  const PageClsName: string; out UpdateUI: Boolean): Boolean;
+var
+  FrameClass: TPrefsFrameClass;
+begin
+  FrameClass := MapClassNameToPageClass(PageClsName);
+  Assert(Assigned(FrameClass), ClassName + '.Execute: PageClsName not valid');
+  Result := Execute(AOwner, [FrameClass], UpdateUI);
+end;
+
 function TPreferencesDlg.GetSelectedPage: TPrefsBaseFrame;
 begin
   Result := MapTabSheetToPage(pcMain.ActivePage);
@@ -300,8 +327,19 @@ begin
   pcMain.ActivePageIndex := 0;
 end;
 
-function TPreferencesDlg.MapTabSheetToPage(
-  const TabIdx: Integer): TPrefsBaseFrame;
+class function TPreferencesDlg.MapClassNameToPageClass(const ClsName: string):
+  TPrefsFrameClass;
+var
+  Cls: TPrefsFrameClass;
+begin
+  for Cls in fPages do
+    if Cls.ClassNameIs(ClsName) then
+      Exit(Cls);
+  Result := nil;
+end;
+
+function TPreferencesDlg.MapTabSheetToPage(const TabIdx: Integer):
+  TPrefsBaseFrame;
 begin
   Result := MapTabSheetToPage(pcMain.Pages[TabIdx]);
 end;
