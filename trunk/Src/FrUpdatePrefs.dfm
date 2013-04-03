@@ -24,6 +24,7 @@ inherited UpdatePrefsFrame: TUpdatePrefsFrame
     Height = 21
     Style = csDropDownList
     TabOrder = 0
+    OnChange = CBAutoCheckFreqChanged
   end
   object cbDBAutoCheckFreq: TComboBox
     Left = 172
@@ -32,5 +33,6 @@ inherited UpdatePrefsFrame: TUpdatePrefsFrame
     Height = 21
     Style = csDropDownList
     TabOrder = 1
+    OnChange = CBAutoCheckFreqChanged
   end
 end

@@ -35,7 +35,14 @@ type
     lblDBAutoCheckFreq: TLabel;
     cbProgAutoCheckFreq: TComboBox;
     cbDBAutoCheckFreq: TComboBox;
+    ///  <summary>Handles OnChange events on auto-update frequency check boxes.
+    ///  Sets changed flag since display may need to be updated.</summary>
+    procedure CBAutoCheckFreqChanged(Sender: TObject);
   strict private
+    var
+      ///  <summary>Flag indicating if user has changed any update frequencies.
+      ///  </summary>
+      fChanged: Boolean;
     ///  <summary>Populates the given combo box with values for each available
     ///  auto update check frequency.</summary>
     procedure PopulateFrequencyCB(const CB: TComboBox);
@@ -114,6 +121,11 @@ begin
   );
 end;
 
+procedure TUpdatePrefsFrame.CBAutoCheckFreqChanged(Sender: TObject);
+begin
+  fChanged := True;
+end;
+
 constructor TUpdatePrefsFrame.Create(AOwner: TComponent);
 begin
   inherited;
@@ -190,7 +202,7 @@ end;
 
 function TUpdatePrefsFrame.UIUpdated: Boolean;
 begin
-  Result := False;
+  Result := fChanged;
 end;
 
 initialization
