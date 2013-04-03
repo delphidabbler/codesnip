@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2007-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2007-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -88,6 +88,14 @@ type
         @param OnExecHandler [in] Handler for action's OnExecute event.
         @return Reference to newly created action.
       }
+    class function CreateShowPrefsPageAction(const AOwner: TComponent;
+      const OnExecHandler: TNotifyEvent = nil): TBasicAction;
+      {Creates a Show Preferences Page action and sets OnExecute handler id
+      provided.
+        @param AOwner [in] Owner of action.
+        @param OnExecHandler [in] Handler for action's OnExecute event.
+        @return Reference to newly created action.
+      }
   end;
 
 
@@ -99,7 +107,7 @@ uses
   StdActns,
   // Project
   UCategoryAction, UDetailTabAction, UEditSnippetAction, ULinkAction,
-  USnippetAction, UViewItemAction;
+  UShowPrefsPageAction, USnippetAction, UViewItemAction;
 
 
 { TActionFactory }
@@ -161,6 +169,18 @@ class function TActionFactory.CreateLinkAction(const AOwner: TComponent;
   }
 begin
   Result := CreateAction(TLinkAction, AOwner, OnExecHandler) as TCustomAction;
+end;
+
+class function TActionFactory.CreateShowPrefsPageAction(
+  const AOwner: TComponent; const OnExecHandler: TNotifyEvent): TBasicAction;
+  {Creates a Show Preferences Page action and sets OnExecute handler id
+  provided.
+    @param AOwner [in] Owner of action.
+    @param OnExecHandler [in] Handler for action's OnExecute event.
+    @return Reference to newly created action.
+  }
+begin
+  Result := CreateAction(TShowPrefsPageAction, AOwner, OnExecHandler);
 end;
 
 class function TActionFactory.CreateSnippetAction(const AOwner: TComponent;
