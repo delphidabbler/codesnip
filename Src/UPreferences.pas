@@ -237,27 +237,31 @@ type
     property PageStructures: TSnippetPageStructures
       read GetPageStructures write SetPageStructures;
 
-    ///  <summary>Gets flag that indicates whether the program should
-    ///  automatically check for program updates.</summary>
-    function GetAutoCheckProgramUpdates: Boolean;
-    ///  <summary>Sets flag that indicates whether the program should
-    ///  automatically check for program updates.</summary>
-    procedure SetAutoCheckProgramUpdates(const Value: Boolean);
-    ///  <summary>Indicates whether the program should automatically check
-    ///  for program updates.</summary>
-    property AutoCheckProgramUpdates: Boolean
-      read GetAutoCheckProgramUpdates write SetAutoCheckProgramUpdates;
+    ///  <summary>Gets frequency, in days, that the program should automatically
+    ///  check for program updates.</summary>
+    function GetAutoCheckProgramFrequency: Word;
+    ///  <summary>Sets frequency, in days, that the program should automatically
+    ///  check for program updates.</summary>
+    procedure SetAutoCheckProgramFrequency(const Value: Word);
+    ///  <summary>Frequency, in days, that the program should automatically
+    ///  check for program updates.</summary>
+    ///  <remarks>A value of zero indicates that no update checking should
+    ///  take place.</remarks>
+    property AutoCheckProgramFrequency: Word
+      read GetAutoCheckProgramFrequency write SetAutoCheckProgramFrequency;
 
-    ///  <summary>Gets flag that indicates whether the program should
-    ///  automatically check for database updates.</summary>
-    function GetAutoCheckDatabaseUpdates: Boolean;
-    ///  <summary>Sets flag that indicates whether the program should
-    ///  automatically check for database updates.</summary>
-    procedure SetAutoCheckDatabaseUpdates(const Value: Boolean);
-    ///  <summary>Indicates whether the program should automatically check
-    ///  for database updates.</summary>
-    property AutoCheckDatabaseUpdates: Boolean
-      read GetAutoCheckDatabaseUpdates write SetAutoCheckDatabaseUpdates;
+    ///  <summary>Gets frequency, in days, that the program should automatically
+    ///  check for database updates.</summary>
+    function GetAutoCheckDatabaseFrequency: Word;
+    ///  <summary>Sets frequency, in days, that the program should automatically
+    ///  check for database updates.</summary>
+    procedure SetAutoCheckDatabaseFrequency(const Value: Word);
+    ///  <summary>Frequency, in days, that the program should automatically
+    ///  check for database updates.</summary>
+    ///  <remarks>A value of zero indicates that no update checking should
+    ///  take place.</remarks>
+    property AutoCheckDatabaseFrequency: Word
+      read GetAutoCheckDatabaseFrequency write SetAutoCheckDatabaseFrequency;
   end;
 
 
@@ -343,12 +347,16 @@ type
       ///  <summary>Information describing snippet detail page customisations.
       ///  </summary>
       fPageStructures: TSnippetPageStructures;
-      ///  <summary>Indicates whether the program should automatically check
-      ///  for program updates.</summary>
-      fAutoCheckProgramUpdates: Boolean;
-      ///  <summary>Indicates whether the program should automatically check
-      ///  for database updates.</summary>
-      fAutoCheckDatabaseUpdates: Boolean;
+      ///  <summary>Frequency, in days, that the program should automatically
+      ///  check for program updates.</summary>
+      ///  <remarks>A value of zero indicates that no update checking should
+      ///  take place.</remarks>
+      fAutoCheckProgramFrequency: Word;
+      ///  <summary>Frequency, in days, that the program should automatically
+      ///  check for database updates.</summary>
+      ///  <remarks>A value of zero indicates that no update checking should
+      ///  take place.</remarks>
+      fAutoCheckDatabaseFrequency: Word;
   public
     ///  <summary>Constructs a new object instance.</summary>
     constructor Create;
@@ -539,25 +547,25 @@ type
     ///  <remarks>Method of IPreferences.</remarks>
     procedure SetPageStructures(PageStructures: TSnippetPageStructures);
 
-    ///  <summary>Gets flag that indicates whether the program should
-    ///  automatically check for program updates.</summary>
+    ///  <summary>Gets frequency, in days, that the program should automatically
+    ///  check for program updates.</summary>
     ///  <remarks>Method of IPreferences.</remarks>
-    function GetAutoCheckProgramUpdates: Boolean;
+    function GetAutoCheckProgramFrequency: Word;
 
-    ///  <summary>Sets flag that indicates whether the program should
-    ///  automatically check for program updates.</summary>
+    ///  <summary>Sets frequency, in days, that the program should automatically
+    ///  check for program updates.</summary>
     ///  <remarks>Method of IPreferences.</remarks>
-    procedure SetAutoCheckProgramUpdates(const Value: Boolean);
+    procedure SetAutoCheckProgramFrequency(const Value: Word);
 
-    ///  <summary>Gets flag that indicates whether the program should
-    ///  automatically check for database updates.</summary>
+    ///  <summary>Gets frequency, in days, that the program should automatically
+    ///  check for database updates.</summary>
     ///  <remarks>Method of IPreferences.</remarks>
-    function GetAutoCheckDatabaseUpdates: Boolean;
+    function GetAutoCheckDatabaseFrequency: Word;
 
-    ///  <summary>Sets flag that indicates whether the program should
-    ///  automatically check for database updates.</summary>
+    ///  <summary>Sets frequency, in days, that the program should automatically
+    ///  check for database updates.</summary>
     ///  <remarks>Method of IPreferences.</remarks>
-    procedure SetAutoCheckDatabaseUpdates(const Value: Boolean);
+    procedure SetAutoCheckDatabaseFrequency(const Value: Word);
 
     ///  <summary>Assigns the properties of the given object to this object.
     ///  </summary>
@@ -650,9 +658,8 @@ begin
   Self.SetWarnings(SrcPref.Warnings);
   Self.SetNewsAge(SrcPref.NewsAge);
   Self.SetPageStructures(SrcPref.PageStructures);
-  Self.fAutoCheckProgramUpdates := SrcPref.AutoCheckProgramUpdates;
-  Self.fAutoCheckDatabaseUpdates := SrcPref.AutoCheckDatabaseUpdates;
-
+  Self.fAutoCheckProgramFrequency := SrcPref.AutoCheckProgramFrequency;
+  Self.fAutoCheckDatabaseFrequency := SrcPref.AutoCheckDatabaseFrequency;
 end;
 
 constructor TPreferences.Create;
@@ -674,14 +681,14 @@ begin
   inherited;
 end;
 
-function TPreferences.GetAutoCheckDatabaseUpdates: Boolean;
+function TPreferences.GetAutoCheckDatabaseFrequency: Word;
 begin
-  Result := fAutoCheckDatabaseUpdates;
+  Result := fAutoCheckDatabaseFrequency;
 end;
 
-function TPreferences.GetAutoCheckProgramUpdates: Boolean;
+function TPreferences.GetAutoCheckProgramFrequency: Word;
 begin
-  Result := fAutoCheckProgramUpdates;
+  Result := fAutoCheckProgramFrequency;
 end;
 
 function TPreferences.GetCustomHiliteColours: IStringList;
@@ -775,14 +782,14 @@ begin
   Result := fWarnings;
 end;
 
-procedure TPreferences.SetAutoCheckDatabaseUpdates(const Value: Boolean);
+procedure TPreferences.SetAutoCheckDatabaseFrequency(const Value: Word);
 begin
-  fAutoCheckDatabaseUpdates := Value;
+  fAutoCheckDatabaseFrequency := Value;
 end;
 
-procedure TPreferences.SetAutoCheckProgramUpdates(const Value: Boolean);
+procedure TPreferences.SetAutoCheckProgramFrequency(const Value: Word);
 begin
-  fAutoCheckProgramUpdates := Value;
+  fAutoCheckProgramFrequency := Value;
 end;
 
 procedure TPreferences.SetCustomHiliteColours(const Colours: IStringList);
@@ -908,8 +915,8 @@ begin
   NewPref.Warnings := Self.GetWarnings;
   NewPref.NewsAge := Self.fNewsAge;
   NewPref.PageStructures := Self.fPageStructures;
-  NewPref.AutoCheckProgramUpdates := Self.fAutoCheckProgramUpdates;
-  NewPref.AutoCheckDatabaseUpdates := Self.fAutoCheckDatabaseUpdates;
+  NewPref.AutoCheckProgramFrequency := Self.fAutoCheckProgramFrequency;
+  NewPref.AutoCheckDatabaseFrequency := Self.fAutoCheckDatabaseFrequency;
 end;
 
 constructor TPreferencesPersist.Create;
@@ -1000,9 +1007,12 @@ begin
 
   // Read updating section
   Storage := Settings.ReadSection(ssPreferences, cUpdating);
-  fAutoCheckProgramUpdates := Storage.GetBoolean('AutoCheckProgram', True);
-  fAutoCheckDatabaseUpdates := Storage.GetBoolean('AutoCheckDatabase', True);
-
+  fAutoCheckProgramFrequency := Storage.GetInteger(
+    'AutoCheckProgramFrequency', 1
+  );
+  fAutoCheckDatabaseFrequency := Storage.GetInteger(
+    'AutoCheckDatabaseFrequency', 1
+  );
 end;
 
 destructor TPreferencesPersist.Destroy;
@@ -1077,8 +1087,8 @@ begin
 
   // Write updating section
   Storage := Settings.EmptySection(ssPreferences, cUpdating);
-  Storage.SetBoolean('AutoCheckProgram', fAutoCheckProgramUpdates);
-  Storage.SetBoolean('AutoCheckDatabase', fAutoCheckDatabaseUpdates);
+  Storage.SetInteger('AutoCheckProgramFrequency', fAutoCheckProgramFrequency);
+  Storage.SetInteger('AutoCheckDatabaseFrequency', fAutoCheckDatabaseFrequency);
   Storage.Save;
 
   inherited;
