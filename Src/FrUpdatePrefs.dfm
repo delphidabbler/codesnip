@@ -1,22 +1,36 @@
 inherited UpdatePrefsFrame: TUpdatePrefsFrame
   HelpType = htKeyword
   HelpKeyword = 'UpdatePrefs'
-  object chkAutoCheckProgramUpdates: TCheckBox
+  object lblProgAutoCheckFreq: TLabel
     Left = 3
-    Top = 3
-    Width = 310
-    Height = 17
-    Anchors = [akLeft, akTop, akRight]
-    Caption = 'Check for &program updates on start-up'
+    Top = 12
+    Width = 135
+    Height = 13
+    Caption = 'Check for &program updates:'
+    FocusControl = cbProgAutoCheckFreq
+  end
+  object lblDBAutoCheckFreq: TLabel
+    Left = 3
+    Top = 52
+    Width = 140
+    Height = 13
+    Caption = 'Check for &database updates:'
+    FocusControl = cbDBAutoCheckFreq
+  end
+  object cbProgAutoCheckFreq: TComboBox
+    Left = 172
+    Top = 9
+    Width = 124
+    Height = 21
+    Style = csDropDownList
     TabOrder = 0
   end
-  object chkAutoCheckDatabaseUpdates: TCheckBox
-    Left = 3
-    Top = 26
-    Width = 310
-    Height = 17
-    Anchors = [akLeft, akTop, akRight]
-    Caption = 'Check for &database updates on start-up'
+  object cbDBAutoCheckFreq: TComboBox
+    Left = 172
+    Top = 49
+    Width = 124
+    Height = 21
+    Style = csDropDownList
     TabOrder = 1
   end
 end
