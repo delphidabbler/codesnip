@@ -32,52 +32,85 @@
     <p>
       Use this tab of the <a
         href="dlg_preferences.htm"
-      >Preferences</a> dialogue box to determine how <em>CodeSnip</em> checks
-      for updates. The tab is accessed by selecting the <em>Tools |
-      Preferences</em> menu item then clicking the <em>Updates</em> tab.
+      >Preferences</a> dialogue box to determine if and when <em>CodeSnip</em>
+      checks for program and database updates. The tab is accessed by selecting
+      the <em>Tools | Preferences</em> menu item then clicking the
+      <em>Updates</em> tab.
     </p>
     <p>
-      There are two check boxes:
+      There are two combo boxes, <em>Check for program updates</em> and
+      <em>Check for database updates</em>. They allow you to determine if, and
+      how often, <em>CodeSnip</em> checks to see if updates to the program and
+      the online Code Snippets Database are available, respectively.
+    </p>
+    <p>
+      The available choises are:
     </p>
     <ul class="spaced">
       <li>
         <div>
-          <em>Check for program updates on start-up</em>
+          <em>Never</em>
         </div>
         <div>
-          Tick this box if you want <em>CodeSnip</em> to check online for any
-          available updates to the program. If you clear the box
-          <em>CodeSnip</em> will not perform the checks. You can still do this
-          manually using the <em>Tools | Check For Program Updates</em> menu
-          option.
+          <em>CodeSnip</em> will never check for updates
+          automatically. You can still check for updates manually as follows:
+        </div>
+        <ul class="unspaced">
+          <li>
+            For program updates use the <em>Tools | Check For Program
+            Updates</em> menu option.
+          </li>
+          <li>
+            For database updates use the <em>Database | Update From Web</em>
+            menu option.
+          </li>
+        </ul>
+      </li>
+      <li>
+        <div>
+          <em>Daily</em>
+        </div>
+        <div>
+          <em>CodeSnip</em> will check for updates no more than once every 24
+          hrs.
         </div>
       </li>
       <li>
         <div>
-          <em>Check for database updates on start-up</em>
+          <em>Weekly</em>
         </div>
         <div>
-          When this box is ticked <em>CodeSnip</em> will check online to find
-          out if any updates to the Code Snippets Database are available for
-          download. If your clear the check box <em>CodeSnip</em> will not do
-          this, but you can still do it manually from the <em>Database | Update
-          From Web</em> menu option.
+          Update checking is performed no more than once every 7 days.
+        </div>
+      </li>
+      <li>
+        <div>
+          <em>Fornightly</em>
+        </div>
+        <div>
+          Update checking takes place no more than once every 14 days.
+        </div>
+      </li>
+      <li>
+        <div>
+          <em>Monthly</em>
+        </div>
+        <div>
+          Update checking is performed no more that once per lunar month (i.e.
+          28 days).
         </div>
       </li>
     </ul>
     <p>
-      <em>CodeSnip</em> checks for updates in a background thread shortly after
-      starting up. If there are no updates available you will see nothing. If
-      any updates are available a small notification window is displayed in the
-      bottom right hand side of the <a href="detail_pane.htm">Detail Pane</a>.
-      The notification window will be displayed for about 20 seconds or until
-      you close it.
+      <em>CodeSnip</em> performs update checking in a background thread shortly
+      after starting up. If there are no updates available you will see nothing.
+      If any updates are available a small notification window is displayed in
+      the bottom right hand side of the main window. The notification window
+      will be displayed for about 20 seconds or until you close it.
     </p>
     <p>
       The notification window will describe the available update and provide a
-      button to click to enable it to be downloaded. There will also be a check
-      box you can use to inhibit the display of further notifications. This has
-      the same effect as clearing the related check box in this preferences tab.
+      button to click to enable it to be downloaded.
     </p>
   </body>
 </html>
