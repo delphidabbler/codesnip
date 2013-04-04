@@ -128,12 +128,12 @@ type
     ///  <summary>Displays the Test Unit dialogue box.</summary>
     ///  <param name="Snippet">TSnippet [in] Snippet for which test unit is to
     ///  be generated.</param>
-    procedure ShowTestUnit(const Snippet: TSnippet);
+    procedure ShowTestUnitDlg(const Snippet: TSnippet);
 
     ///  <summary>Shows Dependencies dialogue box.</summary>
     ///  <param name="Snippet">TSnippets [in] Snippet for which dependencies are
     ///  to be displayed.</param>
-    procedure ShowDependencyTree(const Snippet: TSnippet);
+    procedure ShowDependenciesDlg(const Snippet: TSnippet);
 
     ///  <summary>Displays the Proxy Server configuration dialogue box.
     ///  </summary>
@@ -249,7 +249,7 @@ begin
   TUserBugReportDlg.Execute(Owner);
 end;
 
-procedure TDialogMgr.ShowDependencyTree(const Snippet: TSnippet);
+procedure TDialogMgr.ShowDependenciesDlg(const Snippet: TSnippet);
 begin
   TDependenciesDlg.Execute(Owner, Snippet, [tiDependsUpon, tiRequiredBy]);
 end;
@@ -275,7 +275,7 @@ begin
   TTestCompileDlg.Execute(Owner, CompileMgr, Snippet);
 end;
 
-procedure TDialogMgr.ShowTestUnit(const Snippet: TSnippet);
+procedure TDialogMgr.ShowTestUnitDlg(const Snippet: TSnippet);
 begin
   TTestUnitDlgMgr.DisplayTestUnit(Owner, Snippet);
 end;

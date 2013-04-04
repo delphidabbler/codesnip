@@ -1205,7 +1205,7 @@ procedure TMainForm.actViewDependenciesExecute(Sender: TObject);
 begin
   Assert(Supports(fMainDisplayMgr.CurrentView, ISnippetView),
     ClassName + '.actViewDependenciesExecute: Snippet view expected');
-  fDialogMgr.ShowDependencyTree(
+  fDialogMgr.ShowDependenciesDlg(
     (fMainDisplayMgr.CurrentView as ISnippetView).Snippet
   );
 end;
@@ -1240,7 +1240,7 @@ begin
   SelectedSnippet := (fMainDisplayMgr.CurrentView as ISnippetView).Snippet;
   Assert(SelectedSnippet.CanCompile,
     ClassName + '.actViewTestUnitExecute: Snippet is not compilable');
-  fDialogMgr.ShowTestUnit(SelectedSnippet);
+  fDialogMgr.ShowTestUnitDlg(SelectedSnippet);
 end;
 
 procedure TMainForm.actViewTestUnitUpdate(Sender: TObject);
