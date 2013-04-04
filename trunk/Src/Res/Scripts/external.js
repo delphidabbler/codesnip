@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2006-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2006-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -112,5 +112,17 @@ function checkForUpdates() {
  */
 function showAboutBox() {
   external.ShowAboutBox();
+  return false;
+}
+
+/*
+ * Calls external object to display the tab with the given frame class in the
+ * Preferences dialogue box.
+ *  @param string tabCls [in] Name of class of frame hosting required
+ *    preferences page.
+ *  @return False.
+ */
+function showPrefsPage(tabCls) {
+  external.ShowPrefsPage(tabCls);
   return false;
 }
