@@ -39,8 +39,8 @@ type
     events to application.
   }
   TWBExternal = class(TAutoIntfObject,
-    IWBExternal11,// browser external object's methods
-    ISetNotifier  // sets object used to notify app of events
+    IWBExternal12,  // browser external object's methods
+    ISetNotifier    // sets object used to notify app of events
     )
   strict private
     fNotifier: INotifier; // Notifies application of events triggered by user
@@ -51,7 +51,7 @@ type
     constructor Create;
       {Object constructor. Sets up object using embedded type library.
       }
-    { IWBExternal11 methods: defined in type library }
+    { IWBExternal12 methods: defined in type library }
     procedure UpdateDbase; safecall;
       {Updates database from internet.
       }
@@ -90,6 +90,12 @@ type
       }
     procedure ShowAboutBox; safecall;
       {Displays the program's About box.
+      }
+    procedure ShowPrefsPage(const ClsName: WideString); safecall;
+      {Displays Preferences dialogue box containing the page specified by
+      ClsName.
+        @param ClsName [in] Class name of frame the implements the required
+          preferences page.
       }
     { ISetNotifier methods }
     procedure SetNotifier(const Notifier: INotifier);
@@ -144,7 +150,7 @@ begin
   ExeName := TAppInfo.AppExeFilePath;
   OleCheck(LoadTypeLib(PWideChar(ExeName), TypeLib));
   // Create the object using type library
-  inherited Create(TypeLib, IWBExternal11);
+  inherited Create(TypeLib, IWBExternal12);
 end;
 
 procedure TWBExternal.DisplayCategory(const CatID: WideString;
@@ -244,6 +250,20 @@ begin
   try
     if Assigned(fNotifier) then
       fNotifier.ShowNews;
+  except
+    HandleException;
+  end;
+end;
+
+procedure TWBExternal.ShowPrefsPage(const ClsName: WideString); safecall;
+  {Displays Preferences dialogue box containing the page specified by ClsName.
+    @param ClsName [in] Class name of frame the implements the required
+      preferences page.
+  }
+begin
+  try
+    if Assigned(fNotifier) then
+      fNotifier.ShowPrefsPage(ClsName);
   except
     HandleException;
   end;
