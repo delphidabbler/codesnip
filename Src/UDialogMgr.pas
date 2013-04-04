@@ -65,8 +65,18 @@ type
         @param ASearch [out] Set to object recording search details if user OKs.
         @return True if user OKs or false if user cancels.
       }
-    function ExecPreferencesDlg(out UpdateUI: Boolean): Boolean;
+    function ExecPreferencesDlg(out UpdateUI: Boolean): Boolean; overload;
       {Display Preferences dialog box.
+        @param UpdateUI [out] Flag indicates if UI needs to be updated as a
+          result of changes to preferences.
+        @return True if user OKs and preferences are updated or False if
+          cancelled.
+      }
+    function ExecPreferencesDlg(const PageClassName: string;
+      out UpdateUI: Boolean): Boolean; overload;
+      {Display Preferences dialog box showing a single page.
+        @param PageClassName [in] Class name of frame that implements page to be
+          displayed.
         @param UpdateUI [out] Flag indicates if UI needs to be updated as a
           result of changes to preferences.
         @return True if user OKs and preferences are updated or False if
@@ -204,6 +214,19 @@ function TDialogMgr.ExecPreferencesDlg(out UpdateUI: Boolean): Boolean;
   }
 begin
   Result := TPreferencesDlg.Execute(Owner, UpdateUI);
+end;
+
+function TDialogMgr.ExecPreferencesDlg(const PageClassName: string;
+  out UpdateUI: Boolean): Boolean;
+  {Display Preferences dialog box showing a single page.
+    @param PageClassName [in] Class name of frame that implements page to be
+      displayed.
+    @param UpdateUI [out] Flag indicates if UI needs to be updated as a result
+      of changes to preferences.
+    @return True if user OKs and preferences are updated or False if cancelled.
+  }
+begin
+  Result := TPreferencesDlg.Execute(Owner, PageClassName, UpdateUI);
 end;
 
 function TDialogMgr.ExecPrintDlg: Boolean;
