@@ -26,172 +26,219 @@ uses
 
 
 type
-
-  {
-  TNotifier:
-    Notifies the main application of certain user-initiated events. Objects that
-    receive the user interaction call methods using this object's INotifier
-    interface which in turn trigger actions that have been registered with the
-    object via its ISetActions interface. In effect the object is a central
-    clearing house for user interaction with certain controls.
-  }
-  TNotifier = class(TInterfacedObject,
-    INotifier,    // provides methods that trigger notifications
-    ISetActions   // associates action objects with notifications
-  )
+  ///  <summary>Notifies the main application code of certain user-initiated
+  ///  events.</summary>
+  ///  <remarks>
+  ///  <para>Objects that receive user input call methods of this object's
+  ///  INotifier interface which in turn trigger actions that have been
+  ///  registered via its ISetAction interface.</para>
+  ///  <para>In effect this class is a central clearing house for user
+  ///  interaction with certain controls, including the browser control.</para>
+  ///  </remarks>
+  TNotifier = class(TInterfacedObject, INotifier, ISetActions)
   strict private
-    fUpdateDbaseAction: TBasicAction;
-      {Action that triggers database update}
-    fDisplaySnippetAction: TBasicAction;
-      {Action that causes a named snippet to be displayed}
-    fConfigCompilersAction: TBasicAction;
-      {Action that displays configure compiler dialog box}
-    fShowViewItemAction: TBasicAction;
-      {Action that causes a view item to be displayed}
-    fOverviewStyleChangeActions: array of TBasicAction;
-      {List of actions triggered when display style in overview pane changes}
-    fDisplayPaneChangeAction: TBasicAction;
-      {List of actions triggered when current pane in detail view changes}
-    fEditSnippetAction: TBasicAction;
-      {Action that causes a user defined snippet to be edited}
-    fDonateAction: TBasicAction;
-      {Action that displays donate dialog box}
-    fDisplayCategoryAction: TBasicAction;
-      {Action that causes a category to be displayed}
-    fNewSnippetAction: TBasicAction;
-      {Action that causes the Snippets Editor to be opened ready to create a new
-      snippet}
-    fNewsAction: TBasicAction;
-      {Action that causes news items from CodeSnip news feed to be displayed}
-    fCheckForUpdatesAction: TBasicAction;
-      {Action that causes a check for program updates to be performed}
-    fAboutBoxAction: TBasicAction;
-      {Action that causes About box to be displayed}
-    fShowPrefsPageAction: TBasicAction;
-      {Action that displays a specified page in the preferences dialogue box}
+    var
+      ///  <summary>Action that triggers a database update.</summary>
+      fUpdateDbaseAction: TBasicAction;
+      ///  <summary>Action that causes a named snippet to be displayed.
+      ///  </summary>
+      fDisplaySnippetAction: TBasicAction;
+      ///  <summary>Action that displays configure compiler dialogue box.
+      ///  </summary>
+      fConfigCompilersAction: TBasicAction;
+      ///  <summary>Action that causes a view item to be displayed.</summary>
+      fShowViewItemAction: TBasicAction;
+      ///  <summary>List of actions triggered when display style in overview
+      ///  pane changes.</summary>
+      fOverviewStyleChangeActions: array of TBasicAction;
+      ///  <summary>List of actions triggered when current pane in detail view
+      ///  changes.</summary>
+      fDisplayPaneChangeAction: TBasicAction;
+      ///  <summary>Action that causes a user defined snippet to be
+      ///  edited.</summary>
+      fEditSnippetAction: TBasicAction;
+      ///  <summary>Action that displays donate dialogue box.</summary>
+      fDonateAction: TBasicAction;
+      ///  <summary>Action that causes a category to be displayed.</summary>
+      fDisplayCategoryAction: TBasicAction;
+      ///  <summary>Action that causes the Snippets Editor to be opened ready to
+      ///  create a new snippet.</summary>
+      fNewSnippetAction: TBasicAction;
+      ///  <summary>Action that causes news items from CodeSnip news feed to be
+      ///  displayed.</summary>
+      fNewsAction: TBasicAction;
+      ///  <summary>Action that causes a check for program updates to be
+      ///  performed.</summary>
+      fCheckForUpdatesAction: TBasicAction;
+      ///  <summary>Action that causes About box to be displayed.</summary>
+      fAboutBoxAction: TBasicAction;
+      ///  <summary>Action that displays a specified page in the preferences
+      ///  dialogue box.</summary>
+      fShowPrefsPageAction: TBasicAction;
+
   public
-    { INotifier methods }
+
+    ///  <summary>Requests a database update.</summary>
+    ///  <remarks>Methods of INotifier.</remarks>
     procedure UpdateDbase;
-      {Updates database.
-      }
+
+    ///  <summary>Displays a snippet.</summary>
+    ///  <param name="SnippetName">WideString [in] Name of required snippet.
+    ///  </param>
+    ///  <param name="UserDefined">WordBool [in] Indicates whether snippet is
+    ///  user defined.</param>
+    ///  <param name="NewTab">WordBool [in] Whether to display snippet in a new
+    ///  detail pane tab.</param>
+    ///  <remarks>Methods of INotifier.</remarks>
     procedure DisplaySnippet(const SnippetName: WideString;
       UserDefined: WordBool; NewTab: WordBool);
-      {Displays a named snippey.
-        @param SnippetName [in] Name of snippet to display.
-        @param UserDefined [in] Whether snippet is user defined.
-        @param NewTab [in] Whether to display in new tab in detail pane.
-      }
+
+    ///  <summary>Displays a category.</summary>
+    ///  <param name="CatId">WideString [in] ID of required category.</param>
+    ///  <param name="NewTab">WordBool [in] Whether to display category in a new
+    ///  detail pane tab.</param>
+    ///  <remarks>Methods of INotifier.</remarks>
     procedure DisplayCategory(const CatID: WideString; NewTab: WordBool);
-      {Displays an identified category.
-        @param CatID [in] Id of category to display.
-        @param NewTab [in] Whether to display in new tab in detail pane.
-      }
+
+    ///  <summary>Displays Configure Compilers dialogue box.</summary>
+    ///  <remarks>Methods of INotifier.</remarks>
     procedure ConfigCompilers;
-      {Displays configure compilers dialog box.
-      }
+
+    ///  <summary>Displays a view item.</summary>
+    ///  <param name="View">IView [in] Required view item.</param>
+    ///  <param name="NewTab">Boolean [in] Whether to display view item in a new
+    ///  detail pane tab.</param>
+    ///  <remarks>Methods of INotifier.</remarks>
     procedure ShowViewItem(ViewItem: IView; const NewTab: Boolean);
-      {Displays a view item.
-        @param ViewItem [in] View item to display.
-        @param NewTab [in] Flag indicates whether view is to be displayed in
-          new tab.
-      }
+
+    ///  <summary>Changes display style of overview pane.</summary>
+    ///  <param name="Style">Integer [in] Required display style.</param>
+    ///  <remarks>
+    ///  <para>Style is index of an overview pane tab.</para>
+    ///  <para>Methods of INotifier.</para>
+    ///  </remarks>
     procedure ChangeOverviewStyle(const Style: Integer);
-      {Changes display style of overview pane.
-        @param Style [in] Required display style.
-      }
+
+    ///  <summary>Changes displayed pane in detail display area.</summary>
+    ///  <param name="Pane">Integer [in] Index of required pane.</param>
+    ///  <remarks>Methods of INotifier.</remarks>
     procedure ChangeDetailPane(const Pane: Integer);
-      {Changes displayed pane in detail display area.
-        @param Pane [in] Required new pane.
-      }
+
+    ///  <summary>Edits a snippet in Snippets Editor.</summary>
+    ///  <param name="SnippetName">WideString [in] Name of snippet.</param>
+    ///  <remarks>
+    ///  <para>Snippet must be user defined.</para>
+    ///  <para>Methods of INotifier.</para>
+    ///  </remarks>
     procedure EditSnippet(const SnippetName: WideString);
-      {Edits a snippet.
-        @param SnippetName [in] Name of snippet. Must be user defined.
-      }
+
+    ///  <summary>Displays Donate dialogue box.</summary>
+    ///  <remarks>Methods of INotifier.</remarks>
     procedure Donate;
-      {Displays donate dialog box.
-      }
+
+    ///  <summary>Opens Snippets Editor ready to create a new snippet.</summary>
+    ///  <remarks>Methods of INotifier.</remarks>
     procedure NewSnippet;
-      {Opens Snippets Editor ready to create a new snippet.
-      }
+
+    ///  <summary>Displays news items from the CodeSnip news feed.</summary>
+    ///  <remarks>Methods of INotifier.</remarks>
     procedure ShowNews;
-      {Shows news items from CodeSnip news feed.
-      }
+
+    ///  <summary>Checks for program updates.</summary>
+    ///  <remarks>Methods of INotifier.</remarks>
     procedure CheckForUpdates;
-      {Checks for program updates.
-      }
+
+    ///  <summary>Displays the program's About Box.</summary>
+    ///  <remarks>Methods of INotifier.</remarks>
     procedure ShowAboutBox;
-      {Displays the program's About box.
-      }
+
     ///  <summary>Displays the Preferences dialogue box containing the specified
     ///  page.</summary>
     ///  <param name="ClsName">string [in] Class name of the frame that
     ///  implements the required preferences page.</param>
     ///  <remarks>Method of INotifier.</remarks>
     procedure ShowPrefsPage(const ClsName: string);
-    { ISetActions methods }
+
+    ///  <summary>Sets action used to request a database update.</summary>
+    ///  <param name="Action">TBasicAction [in] Required action.</param>
+    ///  <remarks>Methods of ISetActions.</remarks>
     procedure SetUpdateDbaseAction(const Action: TBasicAction);
-      {Sets action triggered when user requests database update.
-        @param Action [in] Required action.
-      }
+
+    ///  <summary>Sets action used to display a snippet.</summary>
+    ///  <param name="Action">TBasicAction [in] Required action.</param>
+    ///  <remarks>Methods of ISetActions.</remarks>
     procedure SetDisplaySnippetAction(const Action: TBasicAction);
-      {Sets action triggered when a named snippet is requested to be displayed.
-        @param Action [in] Required action.
-      }
+
+    ///  <summary>Sets action used to display Configure Compilers dialogue
+    ///  box.</summary>
+    ///  <param name="Action">TBasicAction [in] Required action.</param>
+    ///  <remarks>Methods of ISetActions.</remarks>
     procedure SetConfigCompilersAction(const Action: TBasicAction);
-      {Sets action triggered when user requests that configure compilers dialog
-      box is to be displayed.
-        @param Action [in] Required action.
-      }
+
+    ///  <summary>Sets action used to display a view item.</summary>
+    ///  <param name="Action">TBasicAction [in] Required action.</param>
+    ///  <remarks>Methods of ISetActions.</remarks>
     procedure SetShowViewItemAction(const Action: TBasicAction);
-      {Sets action triggered when user requests a view item is displayed.
-        @param Action [in] Required action.
-      }
+
+    ///  <summary>Sets actions used to change display style of overview pane.
+    ///  </summary>
+    ///  <param name="Actions">array of TBasicAction [in] Array of required
+    ///  actions.</param>
+    ///  <remarks>
+    ///  <para>Actions array must have one action for each supported display
+    ///  style.</para>
+    ///  <para>Methods of ISetActions.</para>
+    ///  </remarks>
     procedure SetOverviewStyleChangeActions(
       const Actions: array of TBasicAction);
-      {Sets actions that are triggered when different overview display styles
-      are requested.
-        @param Actions [in] Dynamic array of required actions: one per display
-          style.
-      }
+
+    ///  <summary>Sets action used to change displayed pane in detail display
+    ///  area.</summary>
+    ///  <param name="Action">TBasicAction [in] Required action.</param>
+    ///  <remarks>Methods of ISetActions.</remarks>
     procedure SetDetailPaneChangeAction(const Action: TBasicAction);
-      {Sets action that us triggered when different detail panes are required
-      to be shown.
-        @param Action [in] Required action.
-      }
+
+    ///  <summary>Sets action used to edit a snippet in Snippets Editor.
+    ///  </summary>
+    ///  <param name="Action">TBasicAction [in] Required action.</param>
+    ///  <remarks>Methods of ISetActions.</remarks>
     procedure SetEditSnippetAction(const Action: TBasicAction);
-      {Sets action triggered when user requests a user defined snippet is to be
-      edited.
-        @param Action [in] Required action.
-      }
+
+    ///  <summary>Sets action used to display Donate dialogue box.</summary>
+    ///  <param name="Action">TBasicAction [in] Required action.</param>
+    ///  <remarks>Methods of ISetActions.</remarks>
     procedure SetDonateAction(const Action: TBasicAction);
-      {Sets action triggered when user request that the donate dialog box is
-      displays.
-        @param Action [in] Required action.
-      }
+
+    ///  <summary>Sets action used to display a category.</summary>
+    ///  <param name="Action">TBasicAction [in] Required action.</param>
+    ///  <remarks>Methods of ISetActions.</remarks>
     procedure SetDisplayCategoryAction(const Action: TBasicAction);
-      {Sets actions triggered when a category is requested to be displayed.
-        @param Action [in] Required action.
-      }
+
+    ///  <summary>Sets action used to open snippets editor to create a new
+    ///  snippet.</summary>
+    ///  <param name="Action">TBasicAction [in] Required action.</param>
+    ///  <remarks>Methods of ISetActions.</remarks>
     procedure SetNewSnippetAction(const Action: TBasicAction);
-      {Sets action triggered when user requests that the Snippets Editor is
-      opened ready to create a new snippet.
-        @param Action [in] Required action.
-      }
+
+    ///  <summary>Sets action used to display news items from the CodeSnip news
+    ///  feed.</summary>
+    ///  <param name="Action">TBasicAction [in] Required action.</param>
+    ///  <remarks>Methods of ISetActions.</remarks>
     procedure SetNewsAction(const Action: TBasicAction);
-      {Sets action triggered when user requests that news items from CodeSnip
-      news feed are displayed.
-        @param Action [in] Required action.
-      }
+
+    ///  <summary>Sets action used to check for program updates.</summary>
+    ///  <param name="Action">TBasicAction [in] Required action.</param>
+    ///  <remarks>Methods of ISetActions.</remarks>
     procedure SetCheckForUpdatesAction(const Action: TBasicAction);
-      {Sets action triggered when user requests a check for program updates.
-        @param Action [in] Required action.
-      }
+
+    ///  <summary>Sets action used to display the program's About Box.</summary>
+    ///  <param name="Action">TBasicAction [in] Required action.</param>
+    ///  <remarks>Methods of ISetActions.</remarks>
     procedure SetAboutBoxAction(const Action: TBasicAction);
-      {Sets action triggered when user requests that the About box is displayed.
-        @param Action [in] Required action.
-      }
+
     ///  <summary>Sets action used to display a given page of the Preferences
     ///  dialogue box.</summary>
+    ///  <param name="Action">TBasicAction [in] Required action.</param>
     ///  <remarks>Method of ISetActions.</remarks>
     procedure SetShowPrefsPageAction(const Action: TBasicAction);
   end;
@@ -211,9 +258,6 @@ uses
 { TNotifier }
 
 procedure TNotifier.ChangeDetailPane(const Pane: Integer);
-  {Changes displayed pane in detail display area.
-    @param Pane [in] Required new pane.
-  }
 begin
   if Assigned(fDisplayPaneChangeAction) then
   begin
@@ -223,9 +267,6 @@ begin
 end;
 
 procedure TNotifier.ChangeOverviewStyle(const Style: Integer);
-  {Changes display style of overview pane.
-    @param Style [in] Required display style.
-  }
 begin
   Assert((Style >= 0) and (Style < Length(fOverviewStyleChangeActions)),
     ClassName + '.ChangeOverviewStyle: Pane out of range');
@@ -240,18 +281,12 @@ begin
 end;
 
 procedure TNotifier.ConfigCompilers;
-  {Displays configure compilers dialog box.
-  }
 begin
   if Assigned(fConfigCompilersAction) then
     fConfigCompilersAction.Execute;
 end;
 
 procedure TNotifier.DisplayCategory(const CatID: WideString; NewTab: WordBool);
-  {Displays an identified category.
-    @param CatID [in] Id of category to display.
-    @param NewTab [in] Whether to display in new tab in detail pane.
-  }
 begin
   if Assigned(fDisplayCategoryAction) then
   begin
@@ -263,11 +298,6 @@ end;
 
 procedure TNotifier.DisplaySnippet(const SnippetName: WideString;
   UserDefined: WordBool; NewTab: WordBool);
-  {Displays a named snippet.
-    @param SnippetName [in] Name of snippet to display.
-    @param UserDefined [in] Whether snippet is user defined.
-    @param NewTab [in] Whether to display in new tab in detail pane.
-  }
 begin
   if Assigned(fDisplaySnippetAction) then
   begin
@@ -279,17 +309,12 @@ begin
 end;
 
 procedure TNotifier.Donate;
-  {Displays donate dialog box.
-  }
 begin
   if Assigned(fDonateAction) then
     fDonateAction.Execute;
 end;
 
 procedure TNotifier.EditSnippet(const SnippetName: WideString);
-  {Edits a snippet.
-    @param SnippetName [in] Name of snippet. Must be user defined.
-  }
 begin
   if Assigned(fEditSnippetAction) then
   begin
@@ -315,10 +340,6 @@ begin
 end;
 
 procedure TNotifier.SetConfigCompilersAction(const Action: TBasicAction);
-  {Sets action triggered when user requests that configure compilers dialog box
-  is to be displayed.
-    @param Action [in] Required action.
-  }
 begin
   fConfigCompilersAction := Action;
 end;
@@ -331,9 +352,6 @@ begin
 end;
 
 procedure TNotifier.SetDisplayCategoryAction(const Action: TBasicAction);
-  {Sets actions triggered when a category is requested to be displayed.
-    @param Action [in] Required action.
-  }
 begin
   Assert(Action is TCategoryAction,
     ClassName + '.SetDisplayCategoryAction: Action is not TCategoryAction');
@@ -345,9 +363,6 @@ end;
 
 procedure TNotifier.SetDisplaySnippetAction(
   const Action: TBasicAction);
-  {Sets action triggered when a named snippet is requested to be displayed.
-    @param Action [in] Required action.
-  }
 begin
   Assert(Action is TSnippetAction,
     ClassName + '.SetDisplaySnippetAction: Action is not TSnippetAction');
@@ -358,19 +373,11 @@ begin
 end;
 
 procedure TNotifier.SetDonateAction(const Action: TBasicAction);
-  {Sets action triggered when user request that the donate dialog box is
-  displays.
-    @param Action [in] Required action.
-  }
 begin
   fDonateAction := Action;
 end;
 
 procedure TNotifier.SetEditSnippetAction(const Action: TBasicAction);
-  {Sets action triggered when user requests a user defined snippet is to be
-  edited.
-    @param Action [in] Required action.
-  }
 begin
   Assert(Action is TEditSnippetAction,
     ClassName + '.SetEditSnippetAction: Action is not TEditSnippetAction');
@@ -389,11 +396,6 @@ end;
 
 procedure TNotifier.SetOverviewStyleChangeActions(
   const Actions: array of TBasicAction);
-  {Sets actions that are triggered when different overview display styles are
-  requested.
-    @param Actions [in] Dynamic array of required actions: one per display
-      style.
-  }
 var
   Idx: Integer; // loops thru actions
 begin
@@ -410,18 +412,12 @@ begin
 end;
 
 procedure TNotifier.SetShowViewItemAction(const Action: TBasicAction);
-  {Sets action triggered when user requests a view item is displayed.
-    @param Action [in] Required action.
-  }
 begin
   fShowViewItemAction := Action;
 end;
 
 procedure TNotifier.SetUpdateDbaseAction(
   const Action: TBasicAction);
-  {Sets action triggered when user requests database update.
-    @param Action [in] Required action.
-  }
 begin
   fUpdateDbaseAction := Action;
 end;
@@ -448,11 +444,6 @@ begin
 end;
 
 procedure TNotifier.ShowViewItem(ViewItem: IView; const NewTab: Boolean);
-  {Displays a view item.
-    @param ViewItem [in] View item to display.
-    @param NewTab [in] Flag indicates whether view is to be displayed in
-      new tab.
-  }
 begin
   if Assigned(fShowViewItemAction) then
   begin
@@ -463,8 +454,6 @@ begin
 end;
 
 procedure TNotifier.UpdateDbase;
-  {Updates database.
-  }
 begin
   if Assigned(fUpdateDbaseAction) then
     fUpdateDbaseAction.Execute;
