@@ -181,7 +181,7 @@ uses
   // Delphi
   SysUtils, Classes, DateUtils,
   // Project
-  FmUpdateDlg, UAppInfo, UPreferences, UProgramUpdateChecker, USettings,
+  FmDBUpdateDlg, UAppInfo, UPreferences, UProgramUpdateChecker, USettings,
   UDBUpdateMgr, UUtils;
 
 
@@ -309,7 +309,7 @@ begin
     TaskCallback :=
       procedure
       begin
-        TUpdateDlg.Execute(nil);
+        TDBUpdateDlg.Execute(nil);
       end;
     N := TNotificationData.Create(
       sTitle, Content, HelpKeyword, TaskCallback, sUpdatePrompt
