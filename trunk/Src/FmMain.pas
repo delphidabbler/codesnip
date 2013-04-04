@@ -1178,7 +1178,7 @@ resourcestring
     + 'before updating the database?' + EOL2 + 'Clicking No will cause all '
     + 'recent changes to be lost.';
 begin
-  if fDialogMgr.ExecUpdateDlg then
+  if fDialogMgr.ExecDBUpdateDlg then
   begin
     // Database was updated: check if user database needs saving
     if (Database as IDatabaseEdit).Updated

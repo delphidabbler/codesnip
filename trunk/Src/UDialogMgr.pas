@@ -93,7 +93,7 @@ type
         @param ASearch [out] Search to be performed if user OKs.
         @return True if user OKs or false if user cancels.
       }
-    function ExecUpdateDlg: Boolean;
+    function ExecDBUpdateDlg: Boolean;
       {Displays Update From Web dialog box.
         @return True if database updated succesfully or false if database up to
           date, update failed or user cancelled.
@@ -159,6 +159,15 @@ uses
 
 
 { TDialogMgr }
+
+function TDialogMgr.ExecDBUpdateDlg: Boolean;
+  {Displays Update From Web dialog box.
+    @return True if database updated succesfully or false if database up to
+      date, update failed or user cancelled.
+  }
+begin
+  Result := TDBUpdateDlg.Execute(Owner);
+end;
 
 function TDialogMgr.ExecFindCompilerDlg(out ASearch: ISearch;
   out RefineExisting: Boolean): Boolean;
@@ -262,15 +271,6 @@ function TDialogMgr.ExecSelectionSearchDlg(
   }
 begin
   Result := TSelectionSearchDlg.Execute(Owner, SelectedSnippets, ASearch);
-end;
-
-function TDialogMgr.ExecUpdateDlg: Boolean;
-  {Displays Update From Web dialog box.
-    @return True if database updated succesfully or false if database up to
-      date, update failed or user cancelled.
-  }
-begin
-  Result := TDBUpdateDlg.Execute(Owner);
 end;
 
 procedure TDialogMgr.ShowAboutDlg;
