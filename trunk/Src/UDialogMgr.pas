@@ -148,10 +148,10 @@ uses
   // Delphi
   Forms,
   // Project
-  FmAboutDlg, FmDependenciesDlg, FmDonateDlg, FmFindCompilerDlg, FmFindTextDlg,
-  FmFindXRefsDlg, FmNewsDlg, FmPreferencesDlg, FmPrintDlg, FmProgramUpdatesDlg,
-  FmProxyServerDlg, FmRegistrationDlg, FmSelectionSearchDlg, FmTestCompileDlg,
-  FmUpdateDlg, FmUserBugReportDlg,
+  FmAboutDlg, FmDBUpdateDlg, FmDependenciesDlg, FmDonateDlg, FmFindCompilerDlg,
+  FmFindTextDlg, FmFindXRefsDlg, FmNewsDlg, FmPreferencesDlg, FmPrintDlg,
+  FmProgramUpdatesDlg, FmProxyServerDlg, FmRegistrationDlg,
+  FmSelectionSearchDlg, FmTestCompileDlg, FmUserBugReportDlg,
   {$IFNDEF PORTABLE}
   FmUserDataPathDlg,
   {$ENDIF}
@@ -270,7 +270,7 @@ function TDialogMgr.ExecUpdateDlg: Boolean;
       date, update failed or user cancelled.
   }
 begin
-  Result := TUpdateDlg.Execute(Owner);
+  Result := TDBUpdateDlg.Execute(Owner);
 end;
 
 procedure TDialogMgr.ShowAboutDlg;

@@ -1,4 +1,4 @@
-inherited UpdateDlg: TUpdateDlg
+inherited DBUpdateDlg: TDBUpdateDlg
   Left = 350
   Top = 171
   BorderIcons = [biMinimize, biMaximize]

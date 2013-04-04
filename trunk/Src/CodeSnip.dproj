@@ -142,6 +142,9 @@
 			</DCCReference>
 			<DCCReference Include="FmCompilersDlg.UBannerMgr.pas"/>
 			<DCCReference Include="FmCompilersDlg.UCompilerListMgr.pas"/>
+			<DCCReference Include="FmDBUpdateDlg.pas">
+				<Form>DBUpdateDlg</Form>
+			</DCCReference>
 			<DCCReference Include="FmDeleteCategoryDlg.pas">
 				<Form>DeleteCategoryDlg</Form>
 			</DCCReference>
@@ -235,9 +238,6 @@
 			</DCCReference>
 			<DCCReference Include="FmTrappedBugReportDlg.pas">
 				<Form>TrappedBugReportDlg</Form>
-			</DCCReference>
-			<DCCReference Include="FmUpdateDlg.pas">
-				<Form>UpdateDlg</Form>
 			</DCCReference>
 			<DCCReference Include="FmUserBugReportDlg.pas">
 				<Form>UserBugReportDlg</Form>

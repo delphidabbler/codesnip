@@ -12,7 +12,7 @@
 }
 
 
-unit FmUpdateDlg;
+unit FmDBUpdateDlg;
 
 
 interface
@@ -29,20 +29,20 @@ uses
 type
 
   {
-  TUpdateHeadlineStyle:
+  TDBUpdateHeadlineStyle:
     Enumeration that specifies display style of "headline" text in dialog.
   }
-  TUpdateHeadlineStyle = (
+  TDBUpdateHeadlineStyle = (
     hsNormal,
     hsCancelled,
     hsError
   );
 
   {
-  TUpdateDlg:
+  TDBUpdateDlg:
     Implements dialog box that updates database from web.
   }
-  TUpdateDlg = class(TGenericViewDlg, INoPublicConstruct)
+  TDBUpdateDlg = class(TGenericViewDlg, INoPublicConstruct)
     btnCancel: TButton;
     btnDoUpdate: TButton;
     lblUpdateFromWeb: TLabel;
@@ -92,7 +92,7 @@ type
         @param Msg [in] Message to be written.
       }
     procedure HeadlineMsg(const Msg: string;
-      const Kind: TUpdateHeadlineStyle = hsNormal);
+      const Kind: TDBUpdateHeadlineStyle = hsNormal);
       {Displays messages in headline label. Display state depends on kind of
       headline display required.
         @param Msg [in] Message to be displayed
@@ -153,9 +153,9 @@ resourcestring
                       + EOL2 + '%1:s';
 
 
-{ TDownloadDlg }
+{ TDBUpdateDlg }
 
-procedure TUpdateDlg.ArrangeForm;
+procedure TDBUpdateDlg.ArrangeForm;
   {Positions additional controls added to inherited form.
   }
 begin
@@ -174,7 +174,7 @@ begin
   lblError.Left := (pnlBody.Width - lblError.Width) div 2;
 end;
 
-procedure TUpdateDlg.btnCancelClick(Sender: TObject);
+procedure TDBUpdateDlg.btnCancelClick(Sender: TObject);
   {Cancels database update.
     @param Sender [in] Not used.
   }
@@ -185,7 +185,7 @@ begin
   ProgressMsg(sCancelling);
 end;
 
-procedure TUpdateDlg.btnDoUpdateClick(Sender: TObject);
+procedure TDBUpdateDlg.btnDoUpdateClick(Sender: TObject);
   {Update button clicked. Updates database from web.
     @param Sender [in] Not used.
   }
@@ -245,7 +245,7 @@ begin
   end;
 end;
 
-procedure TUpdateDlg.btnNewsClick(Sender: TObject);
+procedure TDBUpdateDlg.btnNewsClick(Sender: TObject);
   {Displays latest CodeSnip news in dialog box.
     @param Sender [in] Not used.
   }
@@ -253,7 +253,7 @@ begin
   TNewsDlg.Execute(Self);
 end;
 
-procedure TUpdateDlg.DownloadProgressHandler(Sender: TObject;
+procedure TDBUpdateDlg.DownloadProgressHandler(Sender: TObject;
   const BytesReceived, BytesExpected: Int64; var Cancel: Boolean);
   {OnProgress event handler for update manager object. Displays download
   progress using a progress bar.
@@ -271,7 +271,7 @@ begin
   Application.ProcessMessages;
 end;
 
-class function TUpdateDlg.Execute(AOwner: TComponent): Boolean;
+class function TDBUpdateDlg.Execute(AOwner: TComponent): Boolean;
   {Displays dialog box and returns whether updated files were downloaded.
   true if files were updated and false if not.
     @param AOwner [in] Component that owns dialog box (and aligns it if a form).
@@ -288,7 +288,7 @@ begin
     end;
 end;
 
-procedure TUpdateDlg.FormCloseQuery(Sender: TObject;
+procedure TDBUpdateDlg.FormCloseQuery(Sender: TObject;
   var CanClose: Boolean);
   {Checks if form can close following click on Close or system menu button.
   Prevents closure while downloading.
@@ -306,7 +306,7 @@ begin
   end;
 end;
 
-procedure TUpdateDlg.FormCreate(Sender: TObject);
+procedure TDBUpdateDlg.FormCreate(Sender: TObject);
   {Creates owned objects and initialises flags when form is created.
     @param Sender [in] Not used.
   }
@@ -318,7 +318,7 @@ begin
   fProgressBarMgr := TMemoProgBarMgr.Create(edProgress);
 end;
 
-procedure TUpdateDlg.FormDestroy(Sender: TObject);
+procedure TDBUpdateDlg.FormDestroy(Sender: TObject);
   {Form destruction event handler. Destroys owned objects.
     @param Sender [in] Not used.
   }
@@ -327,7 +327,7 @@ begin
   FreeAndNil(fProgressBarMgr);
 end;
 
-function TUpdateDlg.GetDataDir: string;
+function TDBUpdateDlg.GetDataDir: string;
   {Returns directory where data files stored.
     @return Data directory.
   }
@@ -335,8 +335,8 @@ begin
   Result := TAppInfo.AppDataDir;
 end;
 
-procedure TUpdateDlg.HeadlineMsg(const Msg: string;
-  const Kind: TUpdateHeadlineStyle);
+procedure TDBUpdateDlg.HeadlineMsg(const Msg: string;
+  const Kind: TDBUpdateHeadlineStyle);
   {Displays messages in headline label. Display state depends on kind of
   headline display required.
     @param Msg [in] Message to be displayed
@@ -374,7 +374,7 @@ begin
   end;
 end;
 
-procedure TUpdateDlg.InitForm;
+procedure TDBUpdateDlg.InitForm;
   {Initialises controls.
   }
 begin
@@ -384,7 +384,7 @@ begin
   btnClose.Visible := True;
 end;
 
-procedure TUpdateDlg.ProgressMsg(const Msg: string);
+procedure TDBUpdateDlg.ProgressMsg(const Msg: string);
   {Writes a message to progress control.
     @param Msg [in] Message to be written.
   }
@@ -392,7 +392,7 @@ begin
   edProgress.Lines.Add(Msg);
 end;
 
-procedure TUpdateDlg.UpdateStatusHandler(Sender: TObject;
+procedure TDBUpdateDlg.UpdateStatusHandler(Sender: TObject;
   Status: TDBUpdateStatus; var Cancel: Boolean);
   {Event handler called by update manager to report progress and permit user
   to cancel update.
@@ -434,7 +434,7 @@ begin
   Cancel := fCancelled;
 end;
 
-procedure TUpdateDlg.WMActivateApp(var Msg: TMessage);
+procedure TDBUpdateDlg.WMActivateApp(var Msg: TMessage);
   {Responds to activation of application and this window. Refreshes display.
     @param Msg [in/out] Not used.
   }
