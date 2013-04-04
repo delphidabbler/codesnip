@@ -131,7 +131,7 @@ begin
   btnProgUpdate.Visible := False;
   lblProgram.Caption := sChecking;
   Application.ProcessMessages;
-  fUpdateChecker.Execute('Manual');
+  fUpdateChecker.Execute;
   if fUpdateChecker.IsUpdateAvailable then
   begin
     lblProgram.Caption := Format(
@@ -159,7 +159,7 @@ end;
 procedure TProgramUpdatesDlg.FormCreate(Sender: TObject);
 begin
   inherited;
-  fUpdateChecker := TProgramUpdateChecker.Create;
+  fUpdateChecker := TProgramUpdateChecker.Create('Manual');
 end;
 
 procedure TProgramUpdatesDlg.FormDestroy(Sender: TObject);
