@@ -27,17 +27,6 @@ uses
 
 
 type
-
-  {
-  TDBUpdateHeadlineStyle:
-    Enumeration that specifies display style of "headline" text in dialog.
-  }
-  TDBUpdateHeadlineStyle = (
-    hsNormal,
-    hsCancelled,
-    hsError
-  );
-
   {
   TDBUpdateDlg:
     Implements dialog box that updates database from web.
@@ -56,6 +45,10 @@ type
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure FormDestroy(Sender: TObject);
     procedure btnNewsClick(Sender: TObject);
+  strict private
+    type
+      // Enumeration that specifies display style of "headline" text in dialog.
+      THeadlineStyle = (hsNormal, hsCancelled, hsError);
   strict private
     fProgressBarMgr: TMemoProgBarMgr; // Displays progress bar in progress memo
     fDataUpdated: Boolean;            // Flag true if any data was updated
@@ -92,7 +85,7 @@ type
         @param Msg [in] Message to be written.
       }
     procedure HeadlineMsg(const Msg: string;
-      const Kind: TDBUpdateHeadlineStyle = hsNormal);
+      const Kind: THeadlineStyle = hsNormal);
       {Displays messages in headline label. Display state depends on kind of
       headline display required.
         @param Msg [in] Message to be displayed
@@ -336,7 +329,7 @@ begin
 end;
 
 procedure TDBUpdateDlg.HeadlineMsg(const Msg: string;
-  const Kind: TDBUpdateHeadlineStyle);
+  const Kind: THeadlineStyle);
   {Displays messages in headline label. Display state depends on kind of
   headline display required.
     @param Msg [in] Message to be displayed
