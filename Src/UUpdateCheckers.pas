@@ -182,7 +182,7 @@ uses
   SysUtils, Classes, DateUtils,
   // Project
   FmUpdateDlg, UAppInfo, UPreferences, UProgramUpdateChecker, USettings,
-  UUpdateMgr, UUtils;
+  UDBUpdateMgr, UUtils;
 
 
 { TUpdateCheckerThread }
@@ -297,11 +297,11 @@ resourcestring
 const
   HelpKeyword = 'DatabaseUpdateNotification';
 var
-  UpdateMgr: TUpdateMgr;
+  UpdateMgr: TDBUpdateMgr;
   Content: TArray<string>;
   TaskCallback: TProc;
 begin
-  UpdateMgr := TUpdateMgr.Create(TAppInfo.AppDataDir);
+  UpdateMgr := TDBUpdateMgr.Create(TAppInfo.AppDataDir);
   try
     if UpdateMgr.CheckForUpdates in [uqUpToDate, uqError] then
       Exit(False);
