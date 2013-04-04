@@ -22,7 +22,7 @@ uses
   // Project
   Forms, StdCtrls, Controls, ExtCtrls, Classes, Messages,
   // Delphi
-  FmGenericViewDlg, UBaseObjects, UMemoProgBarMgr, UUpdateMgr;
+  FmGenericViewDlg, UBaseObjects, UDBUpdateMgr, UMemoProgBarMgr;
 
 
 
@@ -60,7 +60,7 @@ type
     fProgressBarMgr: TMemoProgBarMgr; // Displays progress bar in progress memo
     fDataUpdated: Boolean;            // Flag true if any data was updated
     fCancelled: Boolean;              // Flag true if user cancelled update
-    fUpdateMgr: TUpdateMgr;           // Handles updating from web
+    fUpdateMgr: TDBUpdateMgr;         // Handles updating from web
     procedure WMActivateApp(var Msg: TMessage); message WM_ACTIVATEAPP;
       {Responds to activation of application and this window. Refreshes display.
         @param Msg [in/out] Not used.
@@ -69,7 +69,7 @@ type
       {Returns directory where data files stored.
         @return Data directory.
       }
-    procedure UpdateStatusHandler(Sender: TObject; Status: TUpdateStatus;
+    procedure UpdateStatusHandler(Sender: TObject; Status: TDBUpdateStatus;
       var Cancel: Boolean);
       {Event handler called by update manager to report progress and permit user
       to cancel update.
@@ -192,7 +192,7 @@ procedure TUpdateDlg.btnDoUpdateClick(Sender: TObject);
 begin
   inherited;
   // Create update manager
-  fUpdateMgr := TUpdateMgr.Create(GetDataDir);
+  fUpdateMgr := TDBUpdateMgr.Create(GetDataDir);
   try
     fUpdateMgr.OnStatus := UpdateStatusHandler;
     fUpdateMgr.OnDownloadProgress := DownloadProgressHandler;
@@ -393,7 +393,7 @@ begin
 end;
 
 procedure TUpdateDlg.UpdateStatusHandler(Sender: TObject;
-  Status: TUpdateStatus; var Cancel: Boolean);
+  Status: TDBUpdateStatus; var Cancel: Boolean);
   {Event handler called by update manager to report progress and permit user
   to cancel update.
     @param Sender [in] Not used.

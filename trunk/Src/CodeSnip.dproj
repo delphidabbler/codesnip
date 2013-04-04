@@ -435,6 +435,7 @@
 			<DCCReference Include="UDatabaseLoader.pas"/>
 			<DCCReference Include="UDatabaseLoaderUI.pas"/>
 			<DCCReference Include="UDataStreamIO.pas"/>
+			<DCCReference Include="UDBUpdateMgr.pas"/>
 			<DCCReference Include="UDetailPageHTML.pas"/>
 			<DCCReference Include="UDetailPageLoader.pas"/>
 			<DCCReference Include="UDetailTabAction.pas"/>
@@ -572,7 +573,6 @@
 			<DCCReference Include="UUnitAnalyser.pas"/>
 			<DCCReference Include="UUnitsChkListMgr.pas"/>
 			<DCCReference Include="UUpdateCheckers.pas"/>
-			<DCCReference Include="UUpdateMgr.pas"/>
 			<DCCReference Include="UURIEncode.pas"/>
 			<DCCReference Include="UURIParams.pas"/>
 			<DCCReference Include="UUrlMonEx.pas"/>
