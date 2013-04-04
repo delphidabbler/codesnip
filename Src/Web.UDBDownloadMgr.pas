@@ -65,8 +65,9 @@ type
           detected.
       }
   public
-    procedure LogOn(const WantProgress: Boolean = False);
+    procedure LogOn(const Caller: string; const WantProgress: Boolean = False);
       {Logs on to web service.
+        @param Caller [in] Specifies from where the web service is called.
         @param WantProgresss [in] Flag true if OnProgress event to be triggered
           for download.
       }
@@ -349,8 +350,10 @@ begin
   end;
 end;
 
-procedure TDBDownloadMgr.LogOn(const WantProgress: Boolean);
+procedure TDBDownloadMgr.LogOn(const Caller: string;
+  const WantProgress: Boolean);
   {Logs on to web service.
+    @param Caller [in] Specifies from where the web service is called.
     @param WantProgresss [in] Flag true if OnProgress event to be triggered for
       download.
   }
@@ -366,6 +369,7 @@ begin
       IncludeStdParams(Params);
       Params.Add('os', TOSInfo.Description);
       Params.Add('browser', IntToStr(TOSInfo.BrowserVer));
+      Params.Add('caller', Caller);
       SafePostCommand('logon', Params, Response);
     finally
       Params.Free;
