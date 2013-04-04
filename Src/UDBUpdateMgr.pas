@@ -25,71 +25,72 @@ uses
   UDOSDateTime, UEncodings, Web.UDBDownloadMgr;
 
 
+
 type
-
-  {
-  TDBUpdateResult:
-    Possible results of download.
-  }
-  TDBUpdateResult = (
-    urUpdated,          // files were updated: downloaded, deleted or both
-    urNoUpdate,         // no files were updated: up to date
-    urCancelled,        // use cancelled download
-    urError             // an error occurred
-  );
-
-  {
-  TDBUpdateQueryResult:
-    Possible results when checking if update available.
-  }
-  TDBUpdateQueryResult = (
-    uqUpToDate,
-    uqUpdateAvailable,
-    uqError
-  );
-
-  {
-  TDBUpdateStatus:
-    Possible states during download.
-  }
-  TDBUpdateStatus = (
-    usLogOn,            // logging on to web service
-    usCheckForUpdates,  // checking for updates
-    usDownloadStart,    // starting to download database
-    usDownloadEnd,      // finished downloading database
-    usUpdating,         // updating local files
-    usNoUpdate,         // no update required
-    usLogOff,           // logging off web service
-    usCompleted,        // completed update process: can display result
-    usCancelled         // cancelled update process
-  );
-
-  {
-  TDBUpdateStatusEvent:
-    Event triggered when update status changes.
-      @param Sender [in] Reference to object triggering event.
-      @param Status [in] Current download status
-      @param Cancel [in,out] Flag that handler can set true to abort the update.
-  }
-  TDBUpdateStatusEvent = procedure(Sender: TObject; Status: TDBUpdateStatus;
-    var Cancel: Boolean) of object;
-
-  {
-  TDBUpdateDownloadEvent:
-    Event triggered when downloading data to report progress.
-      @param Sender [in] Reference to object triggering event.
-      @param BytesHandled [in] Number of bytes downloaded to date.
-      @param TotalBytes [in] Total number of bytes to be downloaded.
-      @param Cancel [in/out] Flag that handler can set true to abort the update.
-  }
-  TDBUpdateDownloadEvent = procedure(Sender: TObject; const BytesHandled,
-    TotalBytes: Int64; var Cancel: Boolean) of object;
-
   {
   TDBUpdateMgr:
     Manages update of CodeSnip database from web.
   }
   TDBUpdateMgr = class(TObject)
+  public
+    type
+      {
+      TUpdateResult:
+        Possible results of download.
+      }
+      TUpdateResult = (
+        urUpdated,          // files were updated: downloaded, deleted or both
+        urNoUpdate,         // no files were updated: up to date
+        urCancelled,        // user cancelled download
+        urError             // an error occurred
+      );
+    type
+      {
+      TUpdateQueryResult:
+        Possible results when checking if update available.
+      }
+      TUpdateQueryResult = (
+        uqUpToDate,
+        uqUpdateAvailable,
+        uqError
+      );
+    type
+      {
+      TStatus:
+        Possible states during download.
+      }
+      TStatus = (
+        usLogOn,            // logging on to web service
+        usCheckForUpdates,  // checking for updates
+        usDownloadStart,    // starting to download database
+        usDownloadEnd,      // finished downloading database
+        usUpdating,         // updating local files
+        usNoUpdate,         // no update required
+        usLogOff,           // logging off web service
+        usCompleted,        // completed update process: can display result
+        usCancelled         // cancelled update process
+      );
+    type
+      {
+      TStatusEvent:
+        Event triggered when update status changes.
+          @param Sender [in] Reference to object triggering event.
+          @param Status [in] Current download status
+          @param Cancel [in,out] Flag that handler can set true to abort the update.
+      }
+      TStatusEvent = procedure(Sender: TObject; Status: TStatus;
+        var Cancel: Boolean) of object;
+    type
+      {
+      TDownloadEvent:
+        Event triggered when downloading data to report progress.
+          @param Sender [in] Reference to object triggering event.
+          @param BytesHandled [in] Number of bytes downloaded to date.
+          @param TotalBytes [in] Total number of bytes to be downloaded.
+          @param Cancel [in/out] Flag that handler can set true to abort the update.
+      }
+      TDownloadEvent = procedure(Sender: TObject; const BytesHandled,
+        TotalBytes: Int64; var Cancel: Boolean) of object;
   strict private
     fCancelled: Boolean;
       {Flag true if update is cancelled}
@@ -101,9 +102,9 @@ type
       {Value of LongError property}
     fShortError: string;
       {Value of ShortError property}
-    fOnStatus: TDBUpdateStatusEvent;
+    fOnStatus: TStatusEvent;
       {Event handler for OnStatus event}
-    fOnDownloadProgress: TDBUpdateDownloadEvent;
+    fOnDownloadProgress: TDownloadEvent;
       {Event handler for OnDownloadProgress event}
     procedure DownloadProgresshandler(Sender: TObject; const BytesToDate,
       ExpectedBytes: Int64);
@@ -155,7 +156,7 @@ type
         @return True if exception handled and false if not handled.
       }
   strict protected
-    function NotifyStatus(Status: TDBUpdateStatus): Boolean; virtual;
+    function NotifyStatus(Status: TStatus): Boolean; virtual;
       {Notifies change in download status by triggering OnStatus event. Checks
       if download was cancelled in event handler.
         @param Status [in] Status code to be notified.
@@ -170,12 +171,12 @@ type
     destructor Destroy; override;
       {Class destructor. Tears down object.
       }
-    function Execute: TDBUpdateResult;
+    function Execute: TUpdateResult;
       {Performs the update.
         @return Value indicating whether successfully updated, no update needed,
           user cancelled or error.
       }
-    function CheckForUpdates: TDBUpdateQueryResult;
+    function CheckForUpdates: TUpdateQueryResult;
       {Checks if updates to the local database are available.
         @return Value indicating whether an update is needed or not or if an
           error occurred.
@@ -184,10 +185,10 @@ type
       {Full description of last update error}
     property ShortError: string read fShortError;
       {Abbreviated description of last update error}
-    property OnStatus: TDBUpdateStatusEvent read fOnStatus write fOnStatus;
+    property OnStatus: TStatusEvent read fOnStatus write fOnStatus;
       {Event triggered when update status changes. Informs of current status and
       gives user a chance to cancel the update}
-    property OnDownloadProgress: TDBUpdateDownloadEvent
+    property OnDownloadProgress: TDownloadEvent
       read fOnDownloadProgress write fOnDownloadProgress;
       {Event triggered while downloading data from web server. Tracks download
       progress}
@@ -216,7 +217,7 @@ resourcestring
 
 { TDBUpdateMgr }
 
-function TDBUpdateMgr.CheckForUpdates: TDBUpdateQueryResult;
+function TDBUpdateMgr.CheckForUpdates: TUpdateQueryResult;
   {Checks if updates to the local database are available.
     @return Value indicating whether an update is needed or not or if an error
       occurred.
@@ -289,7 +290,7 @@ begin
     fOnDownloadProgress(Self, BytesToDate, ExpectedBytes, fCancelled);
 end;
 
-function TDBUpdateMgr.Execute: TDBUpdateResult;
+function TDBUpdateMgr.Execute: TUpdateResult;
   {Performs the update.
     @return Value indicating whether successfully updated, no update needed,
       user cancelled or error.
@@ -432,7 +433,7 @@ begin
   end;
 end;
 
-function TDBUpdateMgr.NotifyStatus(Status: TDBUpdateStatus): Boolean;
+function TDBUpdateMgr.NotifyStatus(Status: TStatus): Boolean;
   {Notifies change in download status by triggering OnStatus event. Checks if
   download was cancelled in event handler.
     @param Status [in] Status code to be notified.
