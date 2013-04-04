@@ -8,9 +8,8 @@
  * $Rev$
  * $Date$
  *
- * COM object that extends the "external" object accessible from JavaScript in a
- * browser control and notifies application of events triggered via JavaScript
- * calls to the external object's methods.
+ * Implements a COM object that extends a browser control's "external" object
+ * enabling application code to be called from JavaScript.
 }
 
 
@@ -30,78 +29,102 @@ uses
 
 
 type
-
-  {
-  TWBExternal:
-    COM object that extends the "external" object accessible from JavaScript in
-    a web browser and notifies application of events triggered via JavaScript
-    calls to the external object's methods. Uses notification object to pass
-    events to application.
-  }
-  TWBExternal = class(TAutoIntfObject,
-    IWBExternal12,  // browser external object's methods
-    ISetNotifier    // sets object used to notify app of events
-    )
+  ///  <summary>COM object that implements the methods of the IWBExternal12
+  ///  interface that extend the browser control's 'external' object.</summary>
+  ///  <remarks>
+  ///  <para>This class enables application code to be called from JavaScript
+  ///  running in the browser control.</para>
+  ///  <para>The methods a declared in the type library that is defined in
+  ///  External.idl.</para>
+  ///  </remarks>
+  TWBExternal = class(TAutoIntfObject, IWBExternal12, ISetNotifier)
   strict private
-    fNotifier: INotifier; // Notifies application of events triggered by user
+    var
+      ///  <summary>Object used to call application code in response to
+      ///  JavaScript calls.</summary>
+      fNotifier: INotifier;
+
+    ///  <summary>Handles exceptions raised by getting the application object to
+    ///  handle.</summary>
+    ///  <remarks>Exceptions must be handle by application objects to avoid them
+    ///  causing browser error messages.</remarks>
     procedure HandleException;
-      {Gets application to handle current exception.
-      }
+
   public
+
+    ///  <summary>Constructs a new object instance and connects it to the type
+    ///  library.</summary>
     constructor Create;
-      {Object constructor. Sets up object using embedded type library.
-      }
-    { IWBExternal12 methods: defined in type library }
+
+    ///  <summary>Updates database from internet.</summary>
+    ///  <remarks>Method of IWBExternal12.</remarks>
     procedure UpdateDbase; safecall;
-      {Updates database from internet.
-      }
+
+    ///  <summary>Displays a named snippet.</summary>
+    ///  <param name="SnippetName">WideString [in] Name of snippet to be
+    ///  displayed.</param>
+    ///  <param name="UserDefined">WordBool [in] Whether the snippet is user
+    ///  defined.</param>
+    ///  <param name="NewTab">WordBool [in] Whether to display snippet in a new
+    ///  tab.</param>
+    ///  <remarks>Method of IWBExternal12.</remarks>
     procedure DisplaySnippet(const SnippetName: WideString;
       UserDefined: WordBool; NewTab: WordBool); safecall;
-      {Displays a named snippet.
-        @param SnippetName [in] Name of snippet to display.
-        @param UserDefined [in] Whether snippet is user defined.
-        @param NewTab [in] Whether to display in new tab in detail pane.
-      }
+
+    ///  <summary>Displays the Configure Compilers dialogue box.</summary>
+    ///  <remarks>Method of IWBExternal12.</remarks>
     procedure ConfigCompilers; safecall;
-      {Displays the Configure Compilers dialog box.
-      }
+
+    ///  <summary>Edits a named snippet.</summary>
+    ///  <param name="SnippetName">WideString [in] Name of snippet to be edited.
+    ///  </param>
+    ///  <remarks>
+    ///  <para>The named snippet must be user defined.</para>
+    ///  <para>Method of IWBExternal12.</para>
+    ///  </remarks>
     procedure EditSnippet(const SnippetName: WideString); safecall;
-      {Edits a named snippet.
-        @param SnippetName [in] Name of snippet to be edited. Must be a user
-          defined snippet.
-      }
+
+    ///  <summary>Displays the Donate dialogue box.</summary>
+    ///  <remarks>Method of IWBExternal12.</remarks>
     procedure Donate; safecall;
-      {Displays the Donate dialog box.
-      }
+
+    ///  <summary>Displays a named category.</summary>
+    ///  <param name="CatID">WideString [in] ID of category to be displayed.
+    ///  </param>
+    ///  <param name="NewTab">WordBool [in] Whether to display category in a new
+    ///  tab.</param>
+    ///  <remarks>Method of IWBExternal12.</remarks>
     procedure DisplayCategory(const CatID: WideString; NewTab: WordBool);
       safecall;
-      {Displays a category.
-        @param CatID [in] ID of category to display.
-        @param NewTab [in] Whether to display in new tab in detail pane.
-      }
+
+    ///  <summary>Opens Snippet Editor ready to create a new snippet.</summary>
+    ///  <remarks>Method of IWBExternal12.</remarks>
     procedure NewSnippet; safecall;
-      {Opens Snippets Editor ready to create a new snippet.
-      }
+
+    ///  <summary>Shows latest news items from CodeSnip news feed.</summary>
+    ///  <remarks>Method of IWBExternal12.</remarks>
     procedure ShowNews; safecall;
-      {Shows news items from CodeSnip news feed.
-      }
+
+    ///  <summary>Checks for program updates.</summary>
+    ///  <remarks>Method of IWBExternal12.</remarks>
     procedure CheckForUpdates; safecall;
-      {Checks for program updates.
-      }
+
+    ///  <summary>Displays the program's About Box.</summary>
+    ///  <remarks>Method of IWBExternal12.</remarks>
     procedure ShowAboutBox; safecall;
-      {Displays the program's About box.
-      }
+
+    ///  <summary>Displays specified page of the Preferences dialogue.</summary>
+    ///  <param name="ClsName">WideString [in] Class name of the frame that
+    ///  implements the required preferences page.</param>
+    ///  <remarks>Method of IWBExternal12.</remarks>
     procedure ShowPrefsPage(const ClsName: WideString); safecall;
-      {Displays Preferences dialogue box containing the page specified by
-      ClsName.
-        @param ClsName [in] Class name of frame the implements the required
-          preferences page.
-      }
-    { ISetNotifier methods }
+
+    ///  <summary>Records the notifier object that is used to call application
+    ///  code in response to JavaScript calls running in browser documents.
+    ///  </summary>
+    ///  <param name="Notifier">INotifier [in] The notifier object.</param>
+    ///  <remarks>Method of ISetNotifier.</remarks>
     procedure SetNotifier(const Notifier: INotifier);
-      {Records the notifier object that is called in response to user input.
-        @param Notifier [in] Notifier object.
-      }
   end;
 
 
@@ -128,8 +151,6 @@ begin
 end;
 
 procedure TWBExternal.ConfigCompilers;
-  {Displays the Configure Compilers dialog box.
-  }
 begin
   try
     if Assigned(fNotifier) then
@@ -140,8 +161,6 @@ begin
 end;
 
 constructor TWBExternal.Create;
-  {Object constructor. Sets up object using embedded type library.
-  }
 var
   TypeLib: ITypeLib;    // type library
   ExeName: WideString;  // name of this executable file
@@ -155,10 +174,6 @@ end;
 
 procedure TWBExternal.DisplayCategory(const CatID: WideString;
   NewTab: WordBool);
-  {Displays a category.
-    @param CatID [in] ID of category to display.
-    @param NewTab [in] Whether to display in new tab in detail pane.
-  }
 begin
   try
     if Assigned(fNotifier) then
@@ -170,11 +185,6 @@ end;
 
 procedure TWBExternal.DisplaySnippet(const SnippetName: WideString;
   UserDefined: WordBool; NewTab: WordBool);
-  {Displays a named snippet.
-    @param SnippetName [in] Name of snippet to display.
-    @param UserDefined [in] Whether snippet is user defined.
-    @param NewTab [in] Whether to display in new tab in detail pane.
-  }
 begin
   try
     if Assigned(fNotifier) then
@@ -185,8 +195,6 @@ begin
 end;
 
 procedure TWBExternal.Donate;
-  {Displays the Donate dialog box.
-  }
 begin
   try
     if Assigned(fNotifier) then
@@ -197,10 +205,6 @@ begin
 end;
 
 procedure TWBExternal.EditSnippet(const SnippetName: WideString);
-  {Edits a named snippet.
-    @param SnippetName [in] Name of snippet to be edited. Must be a user defined
-      snippet.
-  }
 begin
   try
     if Assigned(fNotifier) then
@@ -211,8 +215,6 @@ begin
 end;
 
 procedure TWBExternal.HandleException;
-  {Gets application to handle current exception.
-  }
 begin
   Application.HandleException(ExceptObject);
 end;
@@ -228,9 +230,6 @@ begin
 end;
 
 procedure TWBExternal.SetNotifier(const Notifier: INotifier);
-  {Records the notifier object that is called in response to user input.
-    @param Notifier [in] Notifier object.
-  }
 begin
   fNotifier := Notifier;
 end;
@@ -256,10 +255,6 @@ begin
 end;
 
 procedure TWBExternal.ShowPrefsPage(const ClsName: WideString); safecall;
-  {Displays Preferences dialogue box containing the page specified by ClsName.
-    @param ClsName [in] Class name of frame the implements the required
-      preferences page.
-  }
 begin
   try
     if Assigned(fNotifier) then
@@ -270,8 +265,6 @@ begin
 end;
 
 procedure TWBExternal.UpdateDbase;
-  {Updates database from internet.
-  }
 begin
   try
     if Assigned(fNotifier) then
