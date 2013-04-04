@@ -168,6 +168,8 @@ uses
   |           |version|program version number|ERROR: CSUPDT_ERR_STDPARAMS if   |
   |           |os     |operating system info |required params not provided     |
   |           |browser|version of IE browser |                                 |
+  |           |caller |application defined   |                                 |
+  |           |       |string                |                                 |
   +-----------+-------+----------------------+---------------------------------+
   |filecount  |cmd    |"filecount"           |OK: Integer indication number of |
   |           |progid |unique id of program  |files in remote database         |
@@ -367,9 +369,9 @@ begin
     Params := TURIParams.Create;
     try
       IncludeStdParams(Params);
-      Params.Add('os', TOSInfo.Description);
+      Params.Add('os', SanitiseString(TOSInfo.Description));
       Params.Add('browser', IntToStr(TOSInfo.BrowserVer));
-      Params.Add('caller', Caller);
+      Params.Add('caller', SanitiseString(Caller));
       SafePostCommand('logon', Params, Response);
     finally
       Params.Free;
