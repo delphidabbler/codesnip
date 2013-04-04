@@ -45,9 +45,6 @@ type
       Edition = 'standard';
       {$ENDIF}
   strict private
-    ///  <summary>Converts string S into a form that is suitable for sending to
-    ///  the web service.</summary>
-    class function SanitiseString(const S: string): string;
     ///  <summary>Creates and returns a parameters object containing standard
     ///  parameters that are required on every call to the web service.
     ///  </summary>
@@ -136,18 +133,6 @@ begin
   finally
     Params.Free;
   end;
-end;
-
-class function TProgramUpdateMgr.SanitiseString(const S: string): string;
-const
-  IllegalChars = [#$00..#$1F, #$7F];
-var
-  Idx: Integer;
-begin
-  Result := S;
-  for Idx := 1 to Length(S) do
-    if CharInSet(Result[Idx], IllegalChars) then
-      Result[Idx] := ' ';
 end;
 
 procedure TProgramUpdateMgr.SignOn(const Caller: string);

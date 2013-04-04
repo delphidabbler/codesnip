@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -41,6 +41,9 @@ type
   }
   TStdWebService = class(TBaseWebService)
   strict protected
+    ///  <summary>Converts string S into a form that is suitable for sending to
+    ///  the a web service.</summary>
+    class function SanitiseString(const S: string): string;
     procedure ProcessResponse(const Response: TStrings);
       {Analyses lines of text returned from from web service and extracts data
       from successful responses. Raises exceptions based on error messages from
@@ -234,6 +237,18 @@ begin
       raise EWebServiceFailure.Create(sUnrecognizedError);
     raise EWebServiceError.Create(StrTrim(Response.Text), StatusCode);
   end
+end;
+
+class function TStdWebService.SanitiseString(const S: string): string;
+const
+  IllegalChars = [#$00..#$1F, #$7F];
+var
+  Idx: Integer;
+begin
+  Result := S;
+  for Idx := 1 to Length(S) do
+    if CharInSet(Result[Idx], IllegalChars) then
+      Result[Idx] := ' ';
 end;
 
 end.
