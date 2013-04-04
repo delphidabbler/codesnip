@@ -252,9 +252,9 @@ var
   Content: TArray<string>;
   TaskCallback: TProc;
 begin
-  UpdateChecker := TProgramUpdateChecker.Create;
+  UpdateChecker := TProgramUpdateChecker.Create('Auto');
   try
-    if not UpdateChecker.Execute('Auto') then
+    if not UpdateChecker.Execute then
       Exit(False);
     fDownloadAction.URL := UpdateChecker.DownloadURL;
     Content := TArray<string>.Create(
