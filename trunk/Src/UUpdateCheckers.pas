@@ -301,7 +301,7 @@ var
   Content: TArray<string>;
   TaskCallback: TProc;
 begin
-  UpdateMgr := TDBUpdateMgr.Create(TAppInfo.AppDataDir);
+  UpdateMgr := TDBUpdateMgr.Create(TAppInfo.AppDataDir, 'Auto');
   try
     if UpdateMgr.CheckForUpdates in [uqUpToDate, uqError] then
       Exit(False);

@@ -114,6 +114,9 @@ type
       fOnStatus: TStatusEvent;
       ///  <summary>Event handler for OnDownloadProgress event.</summary>
       fOnDownloadProgress: TDownloadEvent;
+      ///  <summary>Information specific to the code using this object.
+      ///  </summary>
+      fCallerInfo: string;
 
     ///  <summary>Handles database download manager's OnPregress event.
     ///  </summary>
@@ -191,7 +194,9 @@ type
     ///  <summary>Constructs and initialises a new object instance.</summary>
     ///  <param name="LocalDir">string [in] Directory that contains the local
     ///  copy of the Code Snippets database.</param>
-    constructor Create(const LocalDir: string);
+    ///  <param name="CallerInfo">string [in] Information about calling code.
+    ///  </param>
+    constructor Create(const LocalDir, CallerInfo: string);
 
     ///  <summary>Destroys object instance.</summary>
     destructor Destroy; override;
@@ -267,13 +272,13 @@ begin
   end;
 end;
 
-constructor TDBUpdateMgr.Create(const LocalDir: string);
+constructor TDBUpdateMgr.Create(const LocalDir, CallerInfo: string);
 begin
   inherited Create;
   // Create download manager to download from remote web server
   fDownloadMgr := TDBDownloadMgr.Create;
   fDownloadMgr.OnProgress := DownloadProgressHandler;
-  // Record local data directory & ensure it exists
+  fCallerInfo := CallerInfo;
   fLocalDir := LocalDir;
   EnsureFolders(fLocalDir);
 end;
@@ -396,7 +401,7 @@ begin
   Result := False;
   if not NotifyStatus(usLogOn) then
     Exit;
-  fDownloadMgr.LogOn;
+  fDownloadMgr.LogOn(fCallerInfo);
   Result := True;
 end;
 

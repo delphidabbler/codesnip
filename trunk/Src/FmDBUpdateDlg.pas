@@ -207,7 +207,7 @@ procedure TDBUpdateDlg.btnDoUpdateClick(Sender: TObject);
 begin
   inherited;
   // Create update manager
-  fUpdateMgr := TDBUpdateMgr.Create(GetDataDir);
+  fUpdateMgr := TDBUpdateMgr.Create(GetDataDir, 'Manual');
   try
     fUpdateMgr.OnStatus := UpdateStatusHandler;
     fUpdateMgr.OnDownloadProgress := DownloadProgressHandler;
