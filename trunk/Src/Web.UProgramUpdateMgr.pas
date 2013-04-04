@@ -25,27 +25,51 @@ uses
 
 
 type
+  ///  <summary>Provides an interface to the DelphiDabbler CodeSnip program
+  ///  update web service.</summary>
+  ///  <remarks>This class provides a public method for every command exposed by
+  ///  the web service.</remarks>
   TProgramUpdateMgr = class sealed(TStdWebService)
   strict private
     const
+      ///  <summary>Web service's URL template.</summary>
       ScriptURLTplt = 'http://codesnip.%s/websvc/prog-update';
+      ///  <summary>User agent sent to web service.</summary>
       UserAgent = 'CodeSnip';
+      ///  <summary>API key required for all calls to web service.</summary>
       ApiKey = '9EE3A4D85A2F46F79AE2AAB1012A7678';
+      ///  <summary>Program edition sent to web service.</summary>
       {$IFDEF PORTABLE}
       Edition = 'portable';
       {$ELSE}
       Edition = 'standard';
       {$ENDIF}
   strict private
+    ///  <summary>Converts string S into a form that is suitable for sending to
+    ///  the web service.</summary>
     class function SanitiseString(const S: string): string;
     ///  <summary>Creates and returns a parameters object containing standard
-    ///  parameters required on every call to web service.</summary>
+    ///  parameters that are required on every call to the web service.
+    ///  </summary>
     ///  <remarks>Callers must free the returned object.</remarks>
     function CreateParams: TURIParams;
   public
+    ///  <summary>Creates a new object instance with the correct URL and
+    ///  suitable user agent.</summary>
     constructor Create;
+    ///  <summary>Signs on the the web service.</summary>
+    ///  <param name="Caller">string [in] Specifies from where the web service
+    ///  is called.</param>
     procedure SignOn(const Caller: string);
+    ///  <summary>Gets the latest version of the program from the web service.
+    ///  </summary>
+    ///  <remarks>The version returned is the latest one for the program edition
+    ///  specified by the Edition constant.</remarks>
     function LatestProgramVersion: string;
+    ///  <summary>Gets the URL to use to download the latest version of the
+    ///  program.</summary>
+    ///  <remarks>The URL returned is the correct one for the program edition
+    ///  specified by the Edition constant.</remarks>
     function DownloadURL: string;
   end;
 
