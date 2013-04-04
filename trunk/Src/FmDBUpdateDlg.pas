@@ -27,10 +27,9 @@ uses
 
 
 type
-  {
-  TDBUpdateDlg:
-    Implements dialog box that updates database from web.
-  }
+  ///  <summary>Dialogue box that checks to see if an update to the local copy
+  ///  of the online Code Snippets database is available and downloads it if so.
+  ///  </summary>
   TDBUpdateDlg = class(TGenericViewDlg, INoPublicConstruct)
     btnCancel: TButton;
     btnDoUpdate: TButton;
@@ -39,74 +38,107 @@ type
     edProgress: TMemo;
     lblHeadline: TLabel;
     btnNews: TButton;
+    ///  <summary>Handles click on cancel button and cancels the update.
+    ///  </summary>
     procedure btnCancelClick(Sender: TObject);
+    ///  <summary>Handles click on update button and performs update process.
+    ///  </summary>
+    ///  <remarks>Database is only updated if updates are available.</remarks>
     procedure btnDoUpdateClick(Sender: TObject);
+    ///  <summary>Performs required initialisation on form creation.</summary>
     procedure FormCreate(Sender: TObject);
+    ///  <summary>Checks if form can close in response to user request.
+    ///  </summary>
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+    ///  <summary>Tidies up on form destruction.</summary>
     procedure FormDestroy(Sender: TObject);
+    ///  <summary>Handles click on News button by displaying News dialogue box.
+    ///  </summary>
     procedure btnNewsClick(Sender: TObject);
   strict private
     type
-      // Enumeration that specifies display style of "headline" text in dialog.
+      ///  <summary>Enumeration that specifies display style of 'headline' text
+      ///  in dialogue box.</summary>
       THeadlineStyle = (hsNormal, hsCancelled, hsError);
   strict private
-    fProgressBarMgr: TMemoProgBarMgr; // Displays progress bar in progress memo
-    fDataUpdated: Boolean;            // Flag true if any data was updated
-    fCancelled: Boolean;              // Flag true if user cancelled update
-    fUpdateMgr: TDBUpdateMgr;         // Handles updating from web
+    var
+      ///  <summary>Manages display of progress bar in prgress memo control.
+      ///  </summary>
+      fProgressBarMgr: TMemoProgBarMgr;
+      ///  <summary>Flag that indicates if local database was updated.</summary>
+      fDataUpdated: Boolean;
+      ///  <summary>Flag that indicates if user cancelled update.</summary>
+      fCancelled: Boolean;
+      ///  <summary>Object manages download and update process.</summary>
+      fUpdateMgr: TDBUpdateMgr;
+
+    ///  <summary>Handles activation of application by refreshing the display.
+    ///  </summary>
+    ///  <remarks>This is necessary since hiding the dialogue window by
+    ///  switching to another appliction then switching back causes some of the
+    ///  controls to be hidden. Additionally, some controls are not always
+    ///  displayed correctly when dialogue box is first displayed.</remarks>
     procedure WMActivateApp(var Msg: TMessage); message WM_ACTIVATEAPP;
-      {Responds to activation of application and this window. Refreshes display.
-        @param Msg [in/out] Not used.
-      }
+
+    ///  <summary>Returns the directory containing the local database files.
+    ///  </summary>
     function GetDataDir: string;
-      {Returns directory where data files stored.
-        @return Data directory.
-      }
+
+    ///  <summary>Handles events triggered by the update manager object to
+    ///  report current status.</summary>
+    ///  <param name="Sender">TObject [in] Object triggering event.</param>
+    ///  <param name="Status">TDBUpdateStatus [in] Current status of update
+    ///  manager.</param>
+    ///  <param name="Cancel">Boolean [in/out] Flag that can be set True to
+    ///  indicate that the update should be cancelled.</param>
     procedure UpdateStatusHandler(Sender: TObject; Status: TDBUpdateStatus;
       var Cancel: Boolean);
-      {Event handler called by update manager to report progress and permit user
-      to cancel update.
-        @param Sender [in] Not used.
-        @param Status [in] Current status of update manager.
-        @param Cancel [in/out] Flag that cancels update when set true.
-      }
+
+    ///  <summary>Handles OnProgress event triggered by the update manager when
+    ///  downloading the database. Displays progress in a progress bar.
+    ///  </summary>
+    ///  <param name="Sender">TObject [in] Object triggering event.</param>
+    ///  <param name="BytesReceived">Int64 [in] Total number of bytes received
+    ///  to date.</param>
+    ///  <param name="BytesExpected">Int64 [in] Total number of bytes to be
+    ///  downloaded.</param>
+    ///  <param name="Cancel">Boolean [in/out] Flag that can be set True to
+    ///  indicate that the update should be cancelled.</param>
+    ///  <remarks>NOTE: Setting cancel to True does not cancel the download,
+    ///  which runs to completion. Instead the update process is cancelled after
+    ///  the download completes.</remarks>
     procedure DownloadProgressHandler(Sender: TObject; const BytesReceived,
       BytesExpected: Int64; var Cancel: Boolean);
-      {OnProgress event handler for update manager object. Displays download
-      progress using a progress bar.
-        @param Sender [in] Not used.
-        @param BytesReceived [in] Number of bytes downloaded to date.
-        @param BytesExpected [in] Number of bytes expected in download.
-        @param Cancel [in/out] Set to true to cancel update. (This does not
-          cancel a download).
-      }
+
+    ///  <summary>Displays the given progress message.</summary>
     procedure ProgressMsg(const Msg: string);
-      {Writes a message to progress control.
-        @param Msg [in] Message to be written.
-      }
+
+    ///  <summary>Displays a 'headline' message.</summary>
+    ///  <param name="Msg">string [in] Message to display.</param>
+    ///  <param name="Kind">THeadlineStyle [in] Style of message to display.
+    ///  </param>
     procedure HeadlineMsg(const Msg: string;
       const Kind: THeadlineStyle = hsNormal);
-      {Displays messages in headline label. Display state depends on kind of
-      headline display required.
-        @param Msg [in] Message to be displayed
-        @param Kind [in] Style of message to be displayed.
-      }
+
   strict protected
+
+    ///  <summary>Positions this dialogue box's controls with the form.
+    ///  </summary>
     procedure ArrangeForm; override;
-      {Positions additional controls added to inherited form.
-      }
+
+    ///  <summary>Initialises the form's controls.</summary>
     procedure InitForm; override;
-      {Initialises controls.
-      }
+
   public
+    ///  <summary>Displays the dialogue box and performs any required database
+    ///  update.</summary>
+    ///  <param name="AOwner">TComponent [in] Component that owns the dialogue
+    ///  box. If the component has an associated window the dialogue box is
+    ///  aligned to it. May be nil.</param>
+    ///  <returns>Boolean. True if the local database was updated or False if no
+    ///  update was performed for any reason (i.e. cancelling, loca database is
+    ///  up to date or an error occurred.</returns>
     class function Execute(AOwner: TComponent): Boolean;
-      {Displays dialog box and returns whether updated files were downloaded.
-      true if files were updated and false if not.
-        @param AOwner [in] Component that owns dialog box (and aligns it if a
-          form).
-        @return True if files were actually downloaded or false if no update
-          needed, an error occurred or if user cancelled.
-      }
   end;
 
 
@@ -140,17 +172,13 @@ resourcestring
   sUpdtUpToDate     = 'Database is up to date';
   sUpdtCancelled    = 'Update cancelled';
   sUpdtError        = '%0:s:';
-
   // Detailed error message
   sErrorDetail      = 'Full details of "%0:s" error message are:'
                       + EOL2 + '%1:s';
 
-
 { TDBUpdateDlg }
 
 procedure TDBUpdateDlg.ArrangeForm;
-  {Positions additional controls added to inherited form.
-  }
 begin
   // Arrange inherited controls
   inherited;
@@ -168,9 +196,6 @@ begin
 end;
 
 procedure TDBUpdateDlg.btnCancelClick(Sender: TObject);
-  {Cancels database update.
-    @param Sender [in] Not used.
-  }
 begin
   inherited;
   // Sets cancelled flag checked during download
@@ -179,9 +204,6 @@ begin
 end;
 
 procedure TDBUpdateDlg.btnDoUpdateClick(Sender: TObject);
-  {Update button clicked. Updates database from web.
-    @param Sender [in] Not used.
-  }
 begin
   inherited;
   // Create update manager
@@ -239,23 +261,12 @@ begin
 end;
 
 procedure TDBUpdateDlg.btnNewsClick(Sender: TObject);
-  {Displays latest CodeSnip news in dialog box.
-    @param Sender [in] Not used.
-  }
 begin
   TNewsDlg.Execute(Self);
 end;
 
 procedure TDBUpdateDlg.DownloadProgressHandler(Sender: TObject;
   const BytesReceived, BytesExpected: Int64; var Cancel: Boolean);
-  {OnProgress event handler for update manager object. Displays download
-  progress using a progress bar.
-    @param Sender [in] Not used.
-    @param BytesReceived [in] Number of bytes downloaded to date.
-    @param BytesExpected [in] Number of bytes expected in download.
-    @param Cancel [in/out] Set to true to cancel update. (This does not
-      cancel a download).
-  }
 begin
   if BytesReceived = 0 then
     fProgressBarMgr.Max := BytesExpected;
@@ -265,12 +276,6 @@ begin
 end;
 
 class function TDBUpdateDlg.Execute(AOwner: TComponent): Boolean;
-  {Displays dialog box and returns whether updated files were downloaded.
-  true if files were updated and false if not.
-    @param AOwner [in] Component that owns dialog box (and aligns it if a form).
-    @return True if files were actually downloaded or false if no update needed,
-      an error occurred or if user cancelled.
-  }
 begin
   with InternalCreate(AOwner) do
     try
@@ -283,11 +288,6 @@ end;
 
 procedure TDBUpdateDlg.FormCloseQuery(Sender: TObject;
   var CanClose: Boolean);
-  {Checks if form can close following click on Close or system menu button.
-  Prevents closure while downloading.
-    @param Sender [in] Not used.
-    @param CanClose [in/out] Flag to be set false to prevent dialog closing.
-  }
 begin
   inherited;
   if btnClose.Visible then
@@ -300,9 +300,6 @@ begin
 end;
 
 procedure TDBUpdateDlg.FormCreate(Sender: TObject);
-  {Creates owned objects and initialises flags when form is created.
-    @param Sender [in] Not used.
-  }
 begin
   inherited;
   // Record that no update yet taken place
@@ -312,29 +309,18 @@ begin
 end;
 
 procedure TDBUpdateDlg.FormDestroy(Sender: TObject);
-  {Form destruction event handler. Destroys owned objects.
-    @param Sender [in] Not used.
-  }
 begin
   inherited;
   FreeAndNil(fProgressBarMgr);
 end;
 
 function TDBUpdateDlg.GetDataDir: string;
-  {Returns directory where data files stored.
-    @return Data directory.
-  }
 begin
   Result := TAppInfo.AppDataDir;
 end;
 
 procedure TDBUpdateDlg.HeadlineMsg(const Msg: string;
   const Kind: THeadlineStyle);
-  {Displays messages in headline label. Display state depends on kind of
-  headline display required.
-    @param Msg [in] Message to be displayed
-    @param Kind [in] Style of message to be displayed.
-  }
 begin
   // Display message
   lblHeadline.Caption := Msg;
@@ -368,31 +354,19 @@ begin
 end;
 
 procedure TDBUpdateDlg.InitForm;
-  {Initialises controls.
-  }
 begin
   inherited;
-  // Hide Cancel and show Close buttons
   btnCancel.Visible := False;
   btnClose.Visible := True;
 end;
 
 procedure TDBUpdateDlg.ProgressMsg(const Msg: string);
-  {Writes a message to progress control.
-    @param Msg [in] Message to be written.
-  }
 begin
   edProgress.Lines.Add(Msg);
 end;
 
 procedure TDBUpdateDlg.UpdateStatusHandler(Sender: TObject;
   Status: TDBUpdateStatus; var Cancel: Boolean);
-  {Event handler called by update manager to report progress and permit user
-  to cancel update.
-    @param Sender [in] Not used.
-    @param Status [in] Current status of update manager.
-    @param Cancel [in/out] Flag that cancels update when set true.
-  }
 begin
   // Update UI according to status
   case Status of
@@ -428,13 +402,7 @@ begin
 end;
 
 procedure TDBUpdateDlg.WMActivateApp(var Msg: TMessage);
-  {Responds to activation of application and this window. Refreshes display.
-    @param Msg [in/out] Not used.
-  }
 begin
-  // This is needed since hiding window and switching back causes some of frame
-  // controls to be hidden. Also sometimes the controls are not displayed
-  // correctly when dialog is first displayed.
   Refresh;
 end;
 
