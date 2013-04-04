@@ -87,11 +87,11 @@ type
     ///  <summary>Handles events triggered by the update manager object to
     ///  report current status.</summary>
     ///  <param name="Sender">TObject [in] Object triggering event.</param>
-    ///  <param name="Status">TDBUpdateStatus [in] Current status of update
+    ///  <param name="Status">TDBUpdateMgr.TStatus [in] Current status of update
     ///  manager.</param>
     ///  <param name="Cancel">Boolean [in/out] Flag that can be set True to
     ///  indicate that the update should be cancelled.</param>
-    procedure UpdateStatusHandler(Sender: TObject; Status: TDBUpdateStatus;
+    procedure UpdateStatusHandler(Sender: TObject; Status: TDBUpdateMgr.TStatus;
       var Cancel: Boolean);
 
     ///  <summary>Handles OnProgress event triggered by the update manager when
@@ -366,7 +366,7 @@ begin
 end;
 
 procedure TDBUpdateDlg.UpdateStatusHandler(Sender: TObject;
-  Status: TDBUpdateStatus; var Cancel: Boolean);
+  Status: TDBUpdateMgr.TStatus; var Cancel: Boolean);
 begin
   // Update UI according to status
   case Status of
