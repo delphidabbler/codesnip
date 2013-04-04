@@ -27,171 +27,202 @@ uses
 
 
 type
-  {
-  TDBUpdateMgr:
-    Manages update of CodeSnip database from web.
-  }
+  ///  <summary>Manages the process of checking update availability and perform
+  ///  updates of the local Code Snippets Database from the online version.
+  ///  </summary>
   TDBUpdateMgr = class(TObject)
   public
     type
-      {
-      TUpdateResult:
-        Possible results of download.
-      }
-      TUpdateResult = (
-        urUpdated,          // files were updated: downloaded, deleted or both
-        urNoUpdate,         // no files were updated: up to date
-        urCancelled,        // user cancelled download
-        urError             // an error occurred
-      );
+      ///  <summary>
+      ///  <para>Enumeration of possible results of a database update request.
+      ///  </para>
+      ///  <para>- urUpdated - local database was updated</para>
+      ///  <para>- urNoUpdate - no update available: local database up to date.
+      ///  </para>
+      ///  <para>- urCancelled - user cancelled request.</para>
+      ///  <para>- urError - an error occurred.</para>
+      ///  </summary>
+      TUpdateResult = (urUpdated, urNoUpdate, urCancelled, urError);
     type
-      {
-      TUpdateQueryResult:
-        Possible results when checking if update available.
-      }
-      TUpdateQueryResult = (
-        uqUpToDate,
-        uqUpdateAvailable,
-        uqError
-      );
+      ///  <summary>
+      ///  <para>Enumeration of possible result when querying if a database
+      ///  updated is available.</para>
+      ///  <para>- upUpToDate - local database is up to date.</para>
+      ///  <para>- uqUpdateAvailable - a database update is available.</para>
+      ///  <para>- uqError - an error occurred during the request.</para>
+      ///  </summary>
+      TUpdateQueryResult = (uqUpToDate, uqUpdateAvailable, uqError);
     type
-      {
-      TStatus:
-        Possible states during download.
-      }
+      ///  <summary>
+      ///  <para>Enumeration of different possible states of database update
+      ///  manager during an update request.</para>
+      ///  <para>-usLogon - logging on to update web service.</para>
+      ///  <para>-usCheckForUpdates - checking for availability of update.
+      ///  </para>
+      ///  <para>-usDownloadStart - starting to download online database.</para>
+      ///  <para>-usDownloadEnd - finished downloading online database.</para>
+      ///  <para>-usUpdating - updating local database.</para>
+      ///  <para>-usNoUpdate - no update available.</para>
+      ///  <para>-usLogOff - logging off web service.</para>
+      ///  <para>-usCompleted - completed update process.</para>
+      ///  <para>-usCancelled - update process was cancelled.</para>
+      ///  </summary>
       TStatus = (
-        usLogOn,            // logging on to web service
-        usCheckForUpdates,  // checking for updates
-        usDownloadStart,    // starting to download database
-        usDownloadEnd,      // finished downloading database
-        usUpdating,         // updating local files
-        usNoUpdate,         // no update required
-        usLogOff,           // logging off web service
-        usCompleted,        // completed update process: can display result
-        usCancelled         // cancelled update process
+        usLogOn, usCheckForUpdates, usDownloadStart, usDownloadEnd, usUpdating,
+        usNoUpdate, usLogOff, usCompleted, usCancelled
       );
     type
-      {
-      TStatusEvent:
-        Event triggered when update status changes.
-          @param Sender [in] Reference to object triggering event.
-          @param Status [in] Current download status
-          @param Cancel [in,out] Flag that handler can set true to abort the update.
-      }
+      ///  <summary>Type of event triggered when status changes during an update
+      ///  request.</summary>
+      ///  <param name="Sender">TObject [in] Object that triggered event.
+      ///  </param>
+      ///  <param name="Status">TDBUpdateMgr.TStatus [in] Current status.
+      ///  </param>
+      ///  <param name="Cancel">Boolean [in,out] Flag that event handler can set
+      ///  True to abort the update.</param>
       TStatusEvent = procedure(Sender: TObject; Status: TStatus;
         var Cancel: Boolean) of object;
     type
-      {
-      TDownloadEvent:
-        Event triggered when downloading data to report progress.
-          @param Sender [in] Reference to object triggering event.
-          @param BytesHandled [in] Number of bytes downloaded to date.
-          @param TotalBytes [in] Total number of bytes to be downloaded.
-          @param Cancel [in/out] Flag that handler can set true to abort the update.
-      }
+      ///  <summary>Type of event triggered to report progress when downloading
+      ///  the online database.</summary>.
+      ///  <param name="Sender">TObject [in] Object that triggered event.
+      ///  </param>
+      ///  <param name="BytesHandled">Int64 [in] Number of bytes downloaded so
+      ///  far.</param>
+      ///  <param name="TotalBytes">Int64 [in] Total number of bytes to be
+      ///  downloaded.</param>///////////
+      ///  <param name="Cancel">Boolean [in,out] Flag that event handler can set
+      ///  True to abort the update.</param>
       TDownloadEvent = procedure(Sender: TObject; const BytesHandled,
         TotalBytes: Int64; var Cancel: Boolean) of object;
   strict private
-    fCancelled: Boolean;
-      {Flag true if update is cancelled}
-    fDownloadMgr: TDBDownloadMgr;
-      {Object used to interact with web service}
-    fLocalDir: string;
-      {Directory where CodeSnip "database" files are stored on local machine}
-    fLongError: string;
-      {Value of LongError property}
-    fShortError: string;
-      {Value of ShortError property}
-    fOnStatus: TStatusEvent;
-      {Event handler for OnStatus event}
-    fOnDownloadProgress: TDownloadEvent;
-      {Event handler for OnDownloadProgress event}
+    var
+      ///  <summary>Flag that indicates if an update request was cancelled.
+      ///  </summary>
+      fCancelled: Boolean;
+      ///  <summary>Object that interacts with database download web service.
+      ///  </summary>
+      fDownloadMgr: TDBDownloadMgr;
+      ///  <summary>Directory when the local database files are stored.
+      ///  </summary>
+      fLocalDir: string;
+      ///  <summary>Value of LongError property.</summary>
+      fLongError: string;
+      ///  <summary>Value of ShortError property.</summary>
+      fShortError: string;
+      ///  <summary>Event handler for OnStatus event.</summary>
+      fOnStatus: TStatusEvent;
+      ///  <summary>Event handler for OnDownloadProgress event.</summary>
+      fOnDownloadProgress: TDownloadEvent;
+
+    ///  <summary>Handles database download manager's OnPregress event.
+    ///  </summary>
+    ///  <param name="Sender">TObject [in] Object that triggered event.</param>
+    ///  <param name="BytesToDate">Int64 [in] Number of bytes downloaded so
+    ///  far.</param>
+    ///  <param name="ExpectedBytes">Int64 [in] Total number of bytes to be
+    ///  downloaded.</param>
     procedure DownloadProgresshandler(Sender: TObject; const BytesToDate,
       ExpectedBytes: Int64);
-      {Handles download manager's OnProgress event by passing values to own
-      OnDownloadProgress event.
-        @param Sender [in] Not used.
-        @param BytesToDate [in] Bytes downloaded to date.
-        @param ExpectedBytes [in] Total number of bytes in download.
-      }
+
+    ///  <summary>Returns the number of files in the local copy of the Code
+    ///  Snippets database.</summary>
     function LocalFileCount: Integer;
-      {Counts files in local database.
-        @return Number of files in local database.
-      }
+
+    ///  <summary>Returns an object that encapsulate the last update date of
+    ///  the newest file in the local copy of the Code Snippets database.
+    ///  </summary>
     function NewestLocalFileDate: IDOSDateTime;
-      {Finds date of most recently updated file in local database.
-        @return Object representing DOS file date of newest file.
-      }
+
+    ///  <summary>Checks if the local Code Snippets database files need to be
+    ///  updated.</summary>
+    ///  <returns>Boolean. True if an update is required or False if not or if
+    ///  process was cancelled.</returns>
+    ///  <remarks>Compares date of newest local database file with last update
+    ///  date of online database.</remarks>
     function UpdateNeeded: Boolean;
-      {Checks if local files need to be updated. This is the case when there are
-      newer files on remote database than in local database.
-        @return True if update needed, false if not.
-      }
+
+    ///  <summary>Downloads database and updates local files.</summary>
+    ///  <returns>Boolean. True if download and update succeeded or False if
+    ///  the process was cancelled.</returns>
     function PerformUpdate: Boolean;
-      {Updates local files from remote database.
-        @return True if update succeeded or false if update was cancelled.
-      }
+
+    ///  <summary>Logs on to web server.</summary>
+    ///  <returns>Boolean. True if log-on succeeded or False if the process was
+    ///  cancelled.</returns>
     function LogOn: Boolean;
-      {Logs on to web server.
-        @return True if log on successful or false if user cancelled.
-      }
+
+    ///  <summary>Logs off web server.</summary>
     procedure LogOff;
-      {Logs off web server.
-      }
+
+    ///  <summary>Downloads a copy of the online database.</summary>
+    ///  <param name="Data">TEncodedData [out] Receives data containing the
+    ///  downloaded database.</param>
+    ///  <returns>Boolean. True on success or False if process is cancelled.
+    ///  </returns>
     function DownloadDatabase(out Data: TEncodedData): Boolean;
-      {Downloads database from web server.
-        @param Data [out] Receives downloaded data.
-        @return True on success or false if cancelled.
-      }
+
+    ///  <summary>Updates the files in the local database from the downloaded
+    ///  data.</summary>
+    ///  <param name="Data">TEncodedData [in] Data containing downloaded
+    ///  database.</param>
+    ///  <returns>Boolean. True on success or False if process is cancelled.
+    ///  </returns>
     function UpdateLocalDatabase(const Data: TEncodedData): Boolean;
-      {Udpates files in local database from stream of data that has been
-      downloaded from web server.
-        @param Data [in] Data containing updates.
-        @return True if successfully updated, false if cancelled.
-      }
+
+    ///  <summary>Handles various types of known exception, recording their
+    ///  messages.</summary>
+    ///  <param name="E">Exception [in] Exception to be handled.</param>
+    ///  <returns>True if exception was handled or False otherwise.</returns>
+    ///  <remarks>Supported exception messages are made available via the
+    ///  ShortError and LongError properties.</remarks>
     function HandleException(const E: Exception): Boolean;
-      {Handles various kinds of known exception, converting exceptions into long
-      and short messages that are stored in LongError and ShortError properties.
-        @param E [in] Exception to handle.
-        @return True if exception handled and false if not handled.
-      }
+
   strict protected
+    ///  <summary>Notifies a change in the status of an update request by
+    ///  triggering the OnStatus event.</summary>
+    ///  <param name="Status">TDBUpdateMgr.TStatus [in] New status.</param>
+    ///  <returns>Boolean. True if event handler did not set Cancelled flag,
+    ///  False otherwise.</returns>
     function NotifyStatus(Status: TStatus): Boolean; virtual;
-      {Notifies change in download status by triggering OnStatus event. Checks
-      if download was cancelled in event handler.
-        @param Status [in] Status code to be notified.
-        @return False if cancel flagged when event handler returns, true
-          otherwise.
-      }
+
   public
+
+    ///  <summary>Constructs and initialises a new object instance.</summary>
+    ///  <param name="LocalDir">string [in] Directory that contains the local
+    ///  copy of the Code Snippets database.</param>
     constructor Create(const LocalDir: string);
-      {Class constructor. Sets up object.
-        @param LocalDir [in] Directory storing data files on local machine.
-      }
+
+    ///  <summary>Destroys object instance.</summary>
     destructor Destroy; override;
-      {Class destructor. Tears down object.
-      }
+
+    ///  <summary>Performs a database update.</summary>
+    ///  <returns>TDBUpdateMgr.TUpdateResult. Value that indicates if database
+    ///  was updated, if process was cancelled or if there has been an error.
+    ///  </returns>
     function Execute: TUpdateResult;
-      {Performs the update.
-        @return Value indicating whether successfully updated, no update needed,
-          user cancelled or error.
-      }
+
+    ///  <summary>Queries whether updates to the local database are available.
+    ///  </summary>
+    ///  <returns>TDBUpdateMgr.TUpdateQueryResult. Value indicating whether a
+    ///  update is available or not of if and error occured with the query.
+    ///  </returns>
     function CheckForUpdates: TUpdateQueryResult;
-      {Checks if updates to the local database are available.
-        @return Value indicating whether an update is needed or not or if an
-          error occurred.
-      }
+
+    ///  <summary>Full description of last update error.</summary>
     property LongError: string read fLongError;
-      {Full description of last update error}
+
+    ///  <summary>Abbreviated description of last update error.</summary>
     property ShortError: string read fShortError;
-      {Abbreviated description of last update error}
+
+    ///  <summary>Event triggered when the status of an update request changes.
+    ///  </summary>
     property OnStatus: TStatusEvent read fOnStatus write fOnStatus;
-      {Event triggered when update status changes. Informs of current status and
-      gives user a chance to cancel the update}
+
+    ///  <summary>Event triggered to report progress when downloading a copy of
+    ///  the online database.</summary>
     property OnDownloadProgress: TDownloadEvent
       read fOnDownloadProgress write fOnDownloadProgress;
-      {Event triggered while downloading data from web server. Tracks download
-      progress}
   end;
 
 
@@ -218,10 +249,6 @@ resourcestring
 { TDBUpdateMgr }
 
 function TDBUpdateMgr.CheckForUpdates: TUpdateQueryResult;
-  {Checks if updates to the local database are available.
-    @return Value indicating whether an update is needed or not or if an error
-      occurred.
-  }
 begin
   try
     LogOn;
@@ -241,9 +268,6 @@ begin
 end;
 
 constructor TDBUpdateMgr.Create(const LocalDir: string);
-  {Class constructor. Sets up object.
-    @param LocalDir [in] Directory storing data files on local machine.
-  }
 begin
   inherited Create;
   // Create download manager to download from remote web server
@@ -255,18 +279,12 @@ begin
 end;
 
 destructor TDBUpdateMgr.Destroy;
-  {Class destructor. Tears down object.
-  }
 begin
   fDownloadMgr.Free;
   inherited;
 end;
 
 function TDBUpdateMgr.DownloadDatabase(out Data: TEncodedData): Boolean;
-  {Downloads database from web server.
-    @param Data [out] Receives downloaded data.
-    @return True on success or false if cancelled.
-  }
 begin
   Result := False;
   if not NotifyStatus(usDownloadStart) then
@@ -279,22 +297,12 @@ end;
 
 procedure TDBUpdateMgr.DownloadProgresshandler(Sender: TObject;
   const BytesToDate, ExpectedBytes: Int64);
-  {Handles download manager's OnProgress event by passing values to own
-  OnDownloadProgress event.
-    @param Sender [in] Not used.
-    @param BytesToDate [in] Bytes downloaded to date.
-    @param ExpectedBytes [in] Total number of bytes in download.
-  }
 begin
   if Assigned(fOnDownloadProgress) then
     fOnDownloadProgress(Self, BytesToDate, ExpectedBytes, fCancelled);
 end;
 
 function TDBUpdateMgr.Execute: TUpdateResult;
-  {Performs the update.
-    @return Value indicating whether successfully updated, no update needed,
-      user cancelled or error.
-  }
 begin
   // Assume user cancelled
   Result := urCancelled;
@@ -338,11 +346,6 @@ begin
 end;
 
 function TDBUpdateMgr.HandleException(const E: Exception): Boolean;
-  {Handles various kinds of known exception, converting exceptions into long and
-  short messages that are stored in LongError and ShortError properties.
-    @param E [in] Exception to handle.
-    @return True if exception handled and false if not handled.
-  }
 begin
   if E is EDBDownloadMgr then
   begin
@@ -371,9 +374,6 @@ begin
 end;
 
 function TDBUpdateMgr.LocalFileCount: Integer;
-  {Counts files in local database.
-    @return Number of files in local database.
-  }
 var
   LocalFiles: TStringList;  // list of files in local database directory
 begin
@@ -387,16 +387,11 @@ begin
 end;
 
 procedure TDBUpdateMgr.LogOff;
-  {Logs off web server.
-  }
 begin
   fDownloadMgr.LogOff;
 end;
 
 function TDBUpdateMgr.LogOn: Boolean;
-  {Logs on to web server.
-    @return True if log on successful or false if user cancelled.
-  }
 begin
   Result := False;
   if not NotifyStatus(usLogOn) then
@@ -406,9 +401,6 @@ begin
 end;
 
 function TDBUpdateMgr.NewestLocalFileDate: IDOSDateTime;
-  {Finds date of most recently updated file in local database.
-    @return Object representing DOS file date of newest file.
-  }
 var
   LocalFiles: TStringList;  // list of files in local data directory
   FileName: string;         // name of a file in local data directory
@@ -434,12 +426,6 @@ begin
 end;
 
 function TDBUpdateMgr.NotifyStatus(Status: TStatus): Boolean;
-  {Notifies change in download status by triggering OnStatus event. Checks if
-  download was cancelled in event handler.
-    @param Status [in] Status code to be notified.
-    @return False if cancel flagged when event handler returns, true
-      otherwise.
-  }
 begin
   if Assigned(fOnStatus) then
     fOnStatus(Self, Status, fCancelled);
@@ -447,9 +433,6 @@ begin
 end;
 
 function TDBUpdateMgr.PerformUpdate: Boolean;
-  {Updates local files from remote database.
-    @return True if update succeeded or false if update was cancelled.
-  }
 var
   Data: TEncodedData; // stores downloaded data
 begin
@@ -461,11 +444,6 @@ begin
 end;
 
 function TDBUpdateMgr.UpdateLocalDatabase(const Data: TEncodedData): Boolean;
-  {Udpates files in local database from stream of data that has been downloaded
-  from web server.
-    @param Data [in] Data containing updates.
-    @return True if successfully updated, false if cancelled.
-  }
 var
   Updater: TFileUpdater;  // object that performs file updates.
 begin
@@ -482,11 +460,6 @@ begin
 end;
 
 function TDBUpdateMgr.UpdateNeeded: Boolean;
-  {Checks if local files need to be updated. This is the case when there are
-  newer files on remote database than in local database, or if numbers of files
-  in local database and remote database differ.
-    @return True if update needed, false if not.
-  }
 var
   LastDatabaseUpdate: IDOSDateTime; // date of newest file in remote database
 begin
