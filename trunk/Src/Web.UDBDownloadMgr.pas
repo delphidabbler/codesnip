@@ -8,7 +8,8 @@
  * $Rev$
  * $Date$
  *
- * Implements a class that interfaces with a web service to update the database.
+ * Implements a class that interfaces with a web service to update the local
+ * copy of the Code Snippets Database.
 }
 
 
@@ -26,106 +27,131 @@ uses
 
 
 type
-
-  {
-  TDBDownloadMgr:
-    Manages downloads of updates to database from web service via HTTP.
-  }
+  ///  <summary>Provides an interface to the DelphiDabbler Code Snippets
+  ///  Database update web service.</summary>
+  ///  <remarks>This class provides a public method for every command exposed by
+  ///  the web service.</remarks>
   TDBDownloadMgr = class sealed(TStdWebService)
   strict private
+
+    ///  <summary>Converts EWebError exceptions into EDBDownloadMgr exceptions
+    ///  with both long and short descriptions.</summary>
+    ///  <param name="E">EWebError [in] Exception to be converted.</param>
+    ///  <exception>Raises an EDBDownloadMgr exception based on the information
+    ///  provided by exception E</exception>.
     procedure HandleException(const E: EWebError);
-      {Converts EWebError exceptions into EDBDownloadMgr exceptions with both
-      a long and a short description.
-        @param E [in] EWebError or descendant exception to be converted.
-        @except Raises EDBDownloadMgr exceptions based on given exception.
-      }
+
+    ///  <summary>Includes the standard parameters required by every call to the
+    ///  web service in the given parameter list.</summary>
     procedure IncludeStdParams(const Params: TURIParams);
-      {Includes standard parameters in a parameter list.
-        @param Params [in] Parameter list that receives standard parameters.
-      }
+
+    ///  <summary>Posts a command to the web service that includes the standard
+    ///  parameters and returns the web service's response in a string list.
+    ///  </summary>
+    ///  <param name="Cmd">string [in] Command to be sent to web service.
+    ///  </param>
+    ///  <param name="Response">TStrings [in] String list that receives the
+    ///  response from the web service as lines of text.</param>
+    ///  <exception>EDBDownloadMgr taised if an EWebError exception is
+    ///  encountered.</exception>
     procedure PostStdCommand(const Cmd: string; const Response: TStrings);
-      {Sends command to server that includes standard parameters that are sent
-      with all commands, i.e. "progid" and "version".
-        @param Cmd [in] Command to be sent.
-        @param Response [in] String list to receive web server response.
-        @except EDBDownloadMgr Raised if EWebError exception or sub class
-          detected.
-      }
+
+    ///  <summary>Posts a command to the web service and returns the data
+    ///  component of the web service's response in a string list.</summary>
+    ///  <param name="Cmd">string [in] Command to be sent to web service.
+    ///  </param>
+    ///  <param name="Params">TURIParams [in] Parameters to be posted to the
+    ///  web service.</param>
+    ///  <param name="Response">TStrings [in] String list that receives the
+    ///  response from the web service as lines of text.</param>
+    ///  <exception>EDBDownloadMgr raised if an EWebError exception is
+    ///  encountered.</exception>
     procedure SafePostCommand(const Cmd: string; const Params: TURIParams;
       const Response: TStrings);
-      {Sends a command to server and returns data component of response in a
-      string list. Converts recognised exceptions to EDBDownloadMgr.
-        @param Cmd [in] Command to be executed. Passed to server as Cmd=CmdName
-          parameter.
-        @param Params [in] List of parameters in form ParamName=ParamValue. []
-          if no parameters.
-        @param Response [in] Server's response as string list where each line of
-          response is a line of string list.
-        @except EDBDownloadMgr Raised if EWebError exception or sub class
-          detected.
-      }
+
   public
-    procedure LogOn(const Caller: string; const WantProgress: Boolean = False);
-      {Logs on to web service.
-        @param Caller [in] Specifies from where the web service is called.
-        @param WantProgresss [in] Flag true if OnProgress event to be triggered
-          for download.
-      }
-    procedure LogOff(const WantProgress: Boolean = False);
-      {Logs off from web server.
-        @param WantProgresss [in] Flag true if OnProgress event to be triggered
-          for download.
-      }
-    function LastUpdate(const WantProgress: Boolean = False): string;
-      {Gets date of last update to code snippets database on web server.
-        @param WantProgresss [in] Flag true if OnProgress event to be triggered
-          for download.
-        @return String containing last update date as a Unix date stamp.
-      }
-    function FileCount(const WantProgress: Boolean = False): Integer;
-      {Gets count of files in code snippets database on web server.
-        @param WantProgresss [in] Flag true if OnProgress event to be triggered
-          for download.
-        @return File count.
-      }
-    function GetDatabase(const WantProgress: Boolean = False): TEncodedData;
-      {Gets whole code snippets database from web server.
-        @param WantProgresss [in] Flag true if OnProgress event to be triggered
-          for download.
-        @return Downloaded data with encoding info.
-      }
+
+    ///  <summary>Creates a new object instance with the correct URL and
+    ///  suitable user agent.</summary>
     constructor Create;
-      {Class constructor. Initialises service.
-      }
+
+    ///  <summary>Logs on to the web service.</summary>
+    ///  <param name="Caller">string [in] Specifies from where the web service
+    ///  is called.</param>
+    ///  <param name="WantProgress">Boolean [in] Flag that indicates if an
+    ///  OnProgress event is to be triggered while the web service's response is
+    ///  being downloaded.</param>
+    ///  <exception>EDBDownloadMgr raised if an EWebError exception is
+    ///  encountered.</exception>
+    procedure LogOn(const Caller: string; const WantProgress: Boolean = False);
+
+    ///  <summary>Logs off from the web server.</summary>
+    ///  <exception>EDBDownloadMgr raised if an EWebError exception is
+    ///  encountered.</exception>
+    ///  <param name="WantProgress">Boolean [in] Flag that indicates if an
+    ///  OnProgress event is to be triggered while the web service's response is
+    ///  being downloaded.</param>
+    procedure LogOff(const WantProgress: Boolean = False);
+
+    ///  <summary>Gets the date of the last update to the online Code Snippets
+    ///  Database from the web service.</summary>
+    ///  <param name="WantProgress">Boolean [in] Flag that indicates if an
+    ///  OnProgress event is to be triggered while the web service's response is
+    ///  being downloaded.</param>
+    ///  <returns>string. Last update date as a Unix date stamp converted to a
+    ///  string.</returns>
+    ///  <exception>EDBDownloadMgr raised if an EWebError exception is
+    ///  encountered.</exception>
+    function LastUpdate(const WantProgress: Boolean = False): string;
+
+    ///  <summary>Gets the number of files on the online Code Snippets Database
+    ///  from the web service.</summary>
+    ///  <param name="WantProgress">Boolean [in] Flag that indicates if an
+    ///  OnProgress event is to be triggered while the web service's response is
+    ///  being downloaded.</param>
+    ///  <returns>Integer. Required file count.</returns>
+    ///  <exception>EDBDownloadMgr raised if an EWebError exception is
+    ///  encountered.</exception>
+    function FileCount(const WantProgress: Boolean = False): Integer;
+
+    ///  <summary>Gets a block of data containing the whole of the online Code
+    ///  Snippets Database from the web service.</summary>
+    ///  <param name="WantProgress">Boolean [in] Flag that indicates if an
+    ///  OnProgress event is to be triggered while the web service's response is
+    ///  being downloaded.</param>
+    ///  <returns>TEncodedData. The downloaded data as text in a specified
+    ///  encoding.</returns>
+    ///  <exception>EDBDownloadMgr raised if an EWebError exception is
+    ///  encountered.</exception>
+    function GetDatabase(const WantProgress: Boolean = False): TEncodedData;
   end;
 
-  {
-  EDBDownloadMgr:
-    Class of exception raised by TDBDownloadMgr. Contains standard full
-    description of exception and adds an abbreviated description in ShortMsg
-    property.
-  }
+type
+  ///  <summary>Class of exception raised by TDBDownloadMgr.</summary>
+  ///  <remarks>Contains both a full and abbreviated description of the
+  ///  exception. The full description is in the inherited Message property and
+  ///  the abbreviated version is in the ShortMsg property.</remarks>
   EDBDownloadMgr = class(EWebService)
   strict private
-    fShortMsg: string;
-      {Value of ShortMsg property}
+    var
+      ///  <summary>Value of ShortMsg property.</summary>
+      fShortMsg: string;
   public
+    ///  <summary>Constructs a new exception instance.</summary>
+    ///  <param name="ShortMsg">string [in] Abbreviated exception description.
+    ///  </param>
+    ///  <param name="Msg">string [in] Full exception description.</param>
     constructor Create(const ShortMsg, Msg: string); overload;
-      {Class constructor. Creates exception that records abbreviated and full
-      descriptions.
-        @param ShortMsg [in] Abbreviated message for ShortMsg property.
-        @param Msg [in] Standard exception Message property value.
-      }
+    ///  <summary>Constructs a new exception instance.</summary>
+    ///  <param name="ShortMsg">string [in] Abbreviated exception description.
+    ///  </param>
+    ///  <param name="Fmt">string [in] Format string for full exception
+    ///  description.</param>
+    ///  <param name="Args">array of const [in] Parameters for Fmt.</param>
     constructor CreateFmt(const ShortMsg, Fmt: string;
       const Args: array of const); overload;
-      {Class constructor. Creates exception that records abbreviated and full
-      descriptions. Builds full description from format string and parameters.
-        @param ShortMsg [in] Abbreviated message for ShortMsg property.
-        @param Fmt [in] Format string for standard Message property.
-        @param Args [in] Parameters for format string.
-      }
+    ///  <summary>Abbreviated description of exception.</summary>
     property ShortMsg: string read fShortMsg;
-      {Abbreviated description of exception}
   end;
 
 
@@ -232,18 +258,11 @@ resourcestring
 { TDBDownloadMgr }
 
 constructor TDBDownloadMgr.Create;
-  {Class constructor. Initialises service.
-  }
 begin
   inherited Create(TWebServiceInfo.Create(cScriptURLTplt, cUserAgent));
 end;
 
 function TDBDownloadMgr.FileCount(const WantProgress: Boolean): Integer;
-  {Gets count of files in code snippets database on web server.
-    @param WantProgresss [in] Flag true if OnProgress event to be triggered for
-      download.
-    @return File count.
-  }
 var
   Response: TStringList;  // response from server
 begin
@@ -259,11 +278,6 @@ begin
 end;
 
 function TDBDownloadMgr.GetDatabase(const WantProgress: Boolean): TEncodedData;
-  {Gets whole code snippets database from web server.
-    @param WantProgresss [in] Flag true if OnProgress event to be triggered for
-      download.
-    @return Downloaded data with encoding info.
-  }
 var
   Response: TStringList;  // response from server
 begin
@@ -280,11 +294,6 @@ begin
 end;
 
 procedure TDBDownloadMgr.HandleException(const E: EWebError);
-  {Converts EWebError exceptions into EDBDownloadMgr exceptions with both
-  a long and a short description.
-    @param E [in] EWebError or descendant exception to be converted.
-    @except Raises EDBDownloadMgr exceptions based on given exception.
-  }
 begin
   if E is EHTTPError then
     raise EDBDownloadMgr.CreateFmt(
@@ -308,20 +317,12 @@ begin
 end;
 
 procedure TDBDownloadMgr.IncludeStdParams(const Params: TURIParams);
-  {Includes standard parameters in a parameter list.
-    @param Params [in] Parameter list that receives standard parameters.
-  }
 begin
   Params.Add('progid', TAppInfo.ProgramKey);
   Params.Add('version', TAppInfo.ProgramReleaseVersion);
 end;
 
 function TDBDownloadMgr.LastUpdate(const WantProgress: Boolean): string;
-  {Gets date of last update to code snippets database on web server.
-    @param WantProgresss [in] Flag true if OnProgress event to be triggered for
-      download.
-    @return String containing last update date as a Unix date stamp.
-  }
 var
   Response: TStringList;  // response from server
 begin
@@ -336,10 +337,6 @@ begin
 end;
 
 procedure TDBDownloadMgr.LogOff(const WantProgress: Boolean);
-  {Logs off from web server.
-    @param WantProgresss [in] Flag true if OnProgress event to be triggered for
-      download.
-  }
 var
   Response: TStringList;  // response from server
 begin
@@ -354,11 +351,6 @@ end;
 
 procedure TDBDownloadMgr.LogOn(const Caller: string;
   const WantProgress: Boolean);
-  {Logs on to web service.
-    @param Caller [in] Specifies from where the web service is called.
-    @param WantProgresss [in] Flag true if OnProgress event to be triggered for
-      download.
-  }
 var
   Response: TStringList;  // response from server
   Params: TURIParams;     // parameters to send with command
@@ -383,12 +375,6 @@ end;
 
 procedure TDBDownloadMgr.PostStdCommand(const Cmd: string;
   const Response: TStrings);
-  {Sends command to server that includes standard parameters that are sent with
-  all commands, i.e. "progid" and "version".
-    @param Cmd [in] Command to be sent.
-    @param Response [in] String list to receive web server response.
-    @except EDBDownloadMgr Raised if EWebError exception or sub class detected.
-  }
 var
   StdParams: TURIParams;
 begin
@@ -403,16 +389,6 @@ end;
 
 procedure TDBDownloadMgr.SafePostCommand(const Cmd: string;
   const Params: TURIParams; const Response: TStrings);
-  {Sends a command to server and returns data component of response in a
-  string list. Converts recognised exceptions to EDBDownloadMgr.
-    @param Cmd [in] Command to be executed. Passed to server as Cmd=CmdName
-      parameter.
-    @param Params [in] List of parameters in form ParamName=ParamValue. [] if no
-      parameters.
-    @param Response [in] Server's response as string list where each line of
-      response is a line of string list.
-    @except EDBDownloadMgr Raised if EWebError exception or sub class detected.
-  }
 begin
   try
     PostCommand(Cmd, Params, Response);
@@ -425,11 +401,6 @@ end;
 { EDBDownloadMgr }
 
 constructor EDBDownloadMgr.Create(const ShortMsg, Msg: string);
-  {Class constructor. Creates exception that records abbreviated and full
-  descriptions.
-    @param ShortMsg [in] Abbreviated message for ShortMsg property.
-    @param Msg [in] Standard exception Message property value.
-  }
 begin
   inherited Create(Msg);
   fShortMsg := ShortMsg;
@@ -437,12 +408,6 @@ end;
 
 constructor EDBDownloadMgr.CreateFmt(const ShortMsg, Fmt: string;
   const Args: array of const);
-  {Class constructor: creates exception that records abbreviated and full
-  descriptions. Builds full description from format string and parameters.
-    @param ShortMsg [in] Abbreviated message for ShortMsg property.
-    @param Fmt [in] Format string for standard Message property.
-    @param Args [in] Parameters for format string.
-  }
 begin
   inherited CreateFmt(Fmt, Args);
   fShortMsg := ShortMsg;
