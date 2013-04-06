@@ -27,20 +27,18 @@ uses
 
 
 type
-
-  {
-  TCodeSubmitter:
-    Submits code to the Code Snippets Database using a web service via HTTP.
-  }
+  ///  <summary>Submits snippets to the Code Snippets Database code submission
+  ///  web service.</summary>
   TCodeSubmitter = class sealed(TStdWebService)
   public
+    ///  <summary>Creates a new object instance with correct URL and user agent
+    ///  for web service.</summary>
     constructor Create;
-      {Class constructor. Initialises service.
-      }
+    ///  <summary>Submits data describing the snippets being submitted to the
+    ///  cpde submission web service.</summary>
+    ///  <param name="Data">TBytes [in] Byte array containing code submission
+    ///  information.</param>
     procedure SubmitData(const Data: TBytes);
-      {Submits data describing code to web service.
-        @param Data [in] Byte array containing code submission information.
-      }
   end;
 
 
@@ -67,8 +65,6 @@ resourcestring
 { TCodeSubmitter }
 
 constructor TCodeSubmitter.Create;
-  {Class constructor. Initialises service.
-  }
 begin
   inherited Create(
     TWebServiceInfo.Create(cScriptURLTplt, cUserAgent, cMediaType)
@@ -76,14 +72,10 @@ begin
 end;
 
 procedure TCodeSubmitter.SubmitData(const Data: TBytes);
-  {Submits data describing code to web service.
-    @param Data [in] Byte array containing code submission information.
-  }
 var
-  Response: TStringList;  // valid response from web service
+  Response: TStringList;  // valid response from web service: content ignored
 begin
   Assert(Assigned(Data), ClassName + '.Subscribe: Data stream is nil');
-  // Send subscribe command to web service and gather response
   Response := TStringList.Create;
   try
     PostData(Data, Response);
