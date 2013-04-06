@@ -90,13 +90,8 @@ type
       DelphiDabblerHomeURL = WebsiteURL + '/';
       ///  <summary>URL of home page of the CodeSnip project.</summary>
       ProgramHomeURL = WebsiteURL + '/url/codesnip-home';
-      ///  <summary>URL of CodeSnip's download web page.</summary>
-      ProgramDownloadURL = WebsiteURL + '/url/codesnip-download';
       ///  <summary>URL of the online Code Snippets database.</summary>
       DatabaseURL = WebsiteURL + '/url/csdb';
-      ///  <summary>URL of the contact page of the DelphiDabbler website.
-      ///  </summary>
-      ContactPageURL = WebsiteURL + '/contact';
       ///  <summary>URL used to make donations towards the CodeSnip project.
       ///  </summary>
       ///  <summary>This URL redirects to the correct page on PayPal.</summary>
