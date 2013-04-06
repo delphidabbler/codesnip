@@ -173,12 +173,24 @@ CodeSnip's start-up screen shows details of any installed databases. If there is
 no copy of the online database a link is displayed that enables the database to
 be installed.
 
-From time to time you should check for updates to the online code snippets
-database. This is done by selecting the program's "Database | Update From Web"
-menu option.
+By default CodeSnip checks online periodically to find out whether the database
+has been updated. The checking process runs behind the scenes unless an update
+is available when CodeSnip will display a notification window at the bottom
+right of the main window. From the window you can display the "Update From Web"
+dialoge box which you can use to download the updated database.
 
-You can get to know about updates by subscribing to the CodeSnip RSS feed (see
-below).
+You can also check for updates manually by using the program's "Database |
+Update From Web" menu option. This displays the same "Update From Web" dialogue
+box mentioned above. You can get to know about what updates are available by
+subscribing to the CodeSnip RSS feed (see below).
+
+If you don't want CodeSnip to check for database updates automatically, or if
+you want to change the frequency with with it checks, you can do that from the
+"Updates" tab of the "Preferences" dialogue box. This dialogue box is accessed
+via the "Tools | Preferences" menu option.
+
+NOTE: You may need to configure your firewall to permit CodeSnip to access the
+internet otherwise the automatic updating may not work.
 
 Standard Edition Only
 ---------------------
@@ -240,14 +252,29 @@ copy must be registered separately.
 Updating the Program
 ================================================================================
 
-You can use the "Tools | Check For Program Updates" menu option to find out if
-an updated version of CodeSnip is available. If so you will be directed to a
-page on delphidabbler.com from where the updated program can be downloaded.
+CodeSnip automatically checks online for available program updates. If it finds
+that an update is available it displays a notification window at the bottom
+right of the main window. That window has a button you can click that opens your
+default browser at a web page that downloads the new version of the program.
 
-Beta and preview releases are not normally notified using this method. You will
-need to keep an eye of the CodeSnip news feed to find out when these programs
-are released. Use the "Help | CodeSnip News" menu option to see the news, or
-subscribe to the feed in your news reader - see below for details.
+Once the updated version is downloaded you must close CodeSnip install the
+program in the usual way.
+
+You can change the frequency with which CodeSnip checks for updates, or turn off
+the feature, from the "Updates" tab of the "Preferences" dialogue box. You can
+display this dialogue box from the "Tools | Preferences" menu option.
+
+You can also check for program updates manually at any time from the "Tools |
+Check For Program Updates" menu option. Once again you will be directed to a web
+page from where the updated program can be downloaded.
+
+Neither of the above methods will detect beta and preview releases of the
+program. To find out about those you should subscribe to the CodeSnip news feed
+(see below). Alternatively you can view the latest news from the feed from the
+"Help | CodeSnip News" menu option.
+
+NOTE: You may need to configure your firewall to permit CodeSnip to access the
+internet otherwise the automatic updating may not work.
 
 
 Known Installation and Upgrading Issues
