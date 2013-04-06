@@ -8,7 +8,8 @@
  * $Rev$
  * $Date$
  *
- * Record that provides information about URLs, web services and proxy servers.
+ * Provides records and static that provide information about URLs, web services
+ * and proxy servers.
 }
 
 
@@ -24,92 +25,111 @@ uses
 
 
 type
-
-  {
-  TWebServiceInfo:
-    Record that provides information about a web service.
-  }
+  ///  <summary>Record that contains information about a web service.</summary>
   TWebServiceInfo = record
-    ScriptURI: string;  // URI of web service script
-    UserAgent: string;  // User agent string required by web service
-    MediaType: string;  // MIME type of media used
+    ///  <summary>Template for web service's URI.</summary>
+    ///  <remarks>Must contain a single '%s' placeholder for web host</remarks>
+    ScriptURI: string;
+    ///  <summary>User agent to be used when accessing web service.</summary>
+    UserAgent: string;
+    ///  <summary>MIME type of media used by web service.</summary>
+    MediaType: string;
+    ///  <summary>Constructs a record with given field values.</summary>
+    ///  <param name="AScriptURLTplt">string [in] Template for web service's
+    ///  URI.</param>
+    ///  <param name="AUserAgent">string [in] User agent to use when accessing
+    ///  web service.</param>
+    ///  <param name="AMediaType">string [in] Optional. Media type used by web
+    ///  service.</param>
     constructor Create(const AScriptURLTplt, AUserAgent: string;
       const AMediaType: string = 'text/*');
-      {Record constructor. Sets all record fields.
-        @param AScriptURLTplt [in] Template of web service script name. Must
-          contain "%s" as a placeholder for host name.
-        @param AUserAgent [in] User agent string.
-        @param AMediaType [in] MIME type of media used.
-      }
   end;
 
-  {
-  TWebProxyInfo:
-    Record that provides informtion about a web proxy
-  }
+type
+  ///  <summary>Record that contains informtion about a web proxy server.
+  ///  </summary>
   TWebProxyInfo = record
-    UseProxy: Boolean;  // Whether to use a proxy server
-    IPAddress: string;  // IP address of server
-    Port: Word;         // Port of proxy server
-    UserName: string;   // Optional user name
-    Password: string;   // Optional password
+    ///  <summary>Whether to use a proxy server.</summary>
+    UseProxy: Boolean;
+    ///  <summary>IP address of proxy server.</summary>
+    IPAddress: string;
+    ///  <summary>Proxy server port.</summary>
+    Port: Word;
+    ///  <summary>User name: optional.</summary>
+    UserName: string;
+    ///  <summary>Password: optional.</summary>
+    Password: string;
   end;
 
-  {
-  TWebInfo:
-    Static class that provides information about URLs and any proxy server used
-    by CodeSnip.
-  }
+type
+  ///  <summary>Static class that provides information about URLs and any proxy
+  ///  server used by CodeSnip.</summary>
   TWebInfo = class(TNoConstructObject)
   strict private
-    const RemoteHost = 'www.delphidabbler.com'; // remote web server
-    const WebsiteURL = 'http://' + RemoteHost;  // delphidabbler website URL
-    const NewsFeedTplt = WebSiteURL +           // news feed url template
-      '/feeds/site-news-feed?id=codesnip&days=%d';
+    const
+      ///  <summary>Remote DelphiDabbler web server.</summary>
+      RemoteHost = 'www.delphidabbler.com';
+      ///  <summary>URL of DelphiDabbler website.</summary>
+      WebsiteURL = 'http://' + RemoteHost;
+      ///  <summary>Template for URL of Code Snippets news feed.</summary>
+      ///  <remarks>'%d' placeholder must be replaced by the required number of
+      ///  days into the past the news feed should cover.</remarks>
+      NewsFeedTplt = WebSiteURL + '/feeds/site-news-feed?id=codesnip&days=%d';
+  strict private
+    ///  <summary>Returns the name of the host server to be used.</summary>
+    ///  <remarks>This is the remote web server unless the '-localhost# switch
+    ///  was passed on the command line when localhost server is returned.
+    ///  </remarks>
     class function Host: string;
-      {Determines the host server. The server depends on whether the -localhost
-      switch was passed on the command line.
-        @return Required host server, either localhost or the remote server.
-      }
   public
-    const LocalHost = 'localhost';
-      {Local web server (for tests)}
-    const DelphiDabblerHomeURL = WebsiteURL + '/';
-      {DelphiDabbler site home page}
-    const ProgramHomeURL = WebsiteURL + '/url/codesnip-home';
-      {CodeSnip's home page on DelphiDabbler.com}
-    const ProgramDownloadURL = WebsiteURL + '/url/codesnip-download';
-      {CodeSnip's download page of DelphiDabbler.com}
-    const DatabaseURL = WebsiteURL + '/url/csdb';
-      {Online Code Snippets database on DelphiDabbler.com}
-    const ContactPageURL = WebsiteURL + '/contact';
-      {Contact page on DelphiDabbler.com}
-    const DonateURL = WebsiteURL + '/url/donate-cs';
-      {Donation page. Redirects to required page to permit URLs to change
-      without modifying this code}
-    const BugTrackerURL = WebsiteURL + '/url/codesnip-bugs';
-      {Bug tracker page}
-    const FAQsURL = WebsiteURL + '/url/codesnip-faq';
-      {CodeSnip FAQs page}
+    const
+      ///  <summary>Local web server.</summary>
+      ///  <remarks>Used for test purposes.</remarks>
+      LocalHost = 'localhost';
+      ///  <summary>URL of home page on DelphiDabbler website.</summary>
+      DelphiDabblerHomeURL = WebsiteURL + '/';
+      ///  <summary>URL of home page of the CodeSnip project.</summary>
+      ProgramHomeURL = WebsiteURL + '/url/codesnip-home';
+      ///  <summary>URL of CodeSnip's download web page.</summary>
+      ProgramDownloadURL = WebsiteURL + '/url/codesnip-download';
+      ///  <summary>URL of the online Code Snippets database.</summary>
+      DatabaseURL = WebsiteURL + '/url/csdb';
+      ///  <summary>URL of the contact page of the DelphiDabbler website.
+      ///  </summary>
+      ContactPageURL = WebsiteURL + '/contact';
+      ///  <summary>URL used to make donations towards the CodeSnip project.
+      ///  </summary>
+      ///  <summary>This URL redirects to the correct page on PayPal.</summary>
+      DonateURL = WebsiteURL + '/url/donate-cs';
+      ///  <summary>URL used to view and report CodeSnip bugs.</summary>
+      BugTrackerURL = WebsiteURL + '/url/codesnip-bugs';
+      ///  <summary>URL of CodeSnip's FAQ web page.</summary>
+      FAQsURL = WebsiteURL + '/url/codesnip-faq';
+  public
+    ///  <summary>Builds the URL of the CodeSnip news feed.</summary>
+    ///  <param name="Age">Word [in] Maximum age, in days, of news items to be
+    ///  included in the feed.</param>
+    ///  <returns>string. Required URL.</returns>
     class function NewsFeedURL(const Age: Word): string;
-      {Gets the URL of the CodeSnip news feed .
-        @param Age [in] Maximum age of included news items in days.
-        @return Required URL.
-      }
+    ///  <summary>Builds the URL of a web service.</summary>
+    ///  <param name="URLTplt">string. [in] Template of URL of web service
+    ///  script. Must contain a '%s' placeholder for host name.</param>
+    ///  <returns>string. Required URL.</returns>
     class function WebServiceURL(const URLTplt: string): string;
-      {Builds the URL of a webservice.
-        @param URLTplt [in] Template of URL of web service script. Must contain
-          "%s" as a placeholder for host name.
-        @return URL of required script on active host.
-      }
+    ///  <summary>Gets information about any required web proxy.</summary>
+    ///  <remarks>The web proxy information is read from settings.</remarks>
     class function WebProxyInfo: TWebProxyInfo;
-      {Gets information about any web proxy to be used from settings.
-        @return Required information.
-      }
+    ///  <summary>Checks if the program is using the web server on localhost.
+    ///  </summary>
+    ///  <returns>Boolean. True if localhost is being used, False if the remote,
+    ///  production, server is being used.</returns>
+    ///  <remarks>
+    ///  <para>True is returned iff the '-localhost' switch was passed on the
+    ///  command line.</para>
+    ///  <para>Localhost should only be used by developers with access to a
+    ///  suitable test server running as 'locahost'.</para>
+    ///  </remarks>
     class function UsingLocalHost: Boolean;
-      {Checks if program is using localhost web server.
-        @return True if localhost being used, False if not.
-      }
   end;
 
 
@@ -126,10 +146,6 @@ uses
 { TWebInfo }
 
 class function TWebInfo.Host: string;
-  {Determines the host server. The server depends on whether the -localhost
-  switch was passed on the command line.
-    @return Required host server, either localhost or the remote server.
-  }
 begin
   if UsingLocalHost then
     Result := LocalHost
@@ -138,28 +154,16 @@ begin
 end;
 
 class function TWebInfo.NewsFeedURL(const Age: Word): string;
-  {Gets the URL of the CodeSnip news feed .
-    @param Age [in] Maximum age of included news items in days.
-    @return Required URL.
-  }
 begin
   Result := Format(NewsFeedTplt, [Age]);
 end;
 
 class function TWebInfo.UsingLocalHost: Boolean;
-  {Checks if program is using localhost web server.
-    @return True if localhost being used, False if not.
-  }
 begin
-  // We are using local host if -localhost (or /localhost) command line switch
-  // provided.
   Result := FindCmdLineSwitch('localhost', True);
 end;
 
 class function TWebInfo.WebProxyInfo: TWebProxyInfo;
-  {Gets information about any web proxy to be used from settings.
-    @return Required information.
-  }
 var
   ProxySection: ISettingsSection; // settings section containing proxy info
 begin
@@ -175,11 +179,6 @@ begin
 end;
 
 class function TWebInfo.WebServiceURL(const URLTplt: string): string;
-  {Builds the URL of a webservice.
-    @param URLTplt [in] Template of URL of web service script. Must contain "%s"
-      as a placeholder for host name.
-    @return URL of required script on active host.
-  }
 begin
   Assert(StrContainsText('%s', URLTplt),
     ClassName + '.WebServiceURL: URLTplt contains no host placeholder');
@@ -190,14 +189,6 @@ end;
 
 constructor TWebServiceInfo.Create(const AScriptURLTplt, AUserAgent,
   AMediaType: string);
-  {Record constructor. Sets all record fields.
-    @param AScriptURLTplt [in] Template of web service script name. Must contain
-      "%s" as a placeholder for host name.
-    @param AScriptName [in] Name of script on web server. Converted into
-      full URI.
-    @param AUserAgent [in] User agent string.
-    @param AMediaType [in] MIME type of media used.
-  }
 begin
   ScriptURI := TWebInfo.WebServiceURL(AScriptURLTplt); // URL of script on host
   UserAgent := AUserAgent;
