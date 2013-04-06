@@ -8,8 +8,8 @@
  * $Rev$
  * $Date$
  *
- * Implements a class that interfaces with a web service to register the
- * application online.
+ * Implements a class that interfaces with the DelphiDabbler program
+ * registration web service.
 }
 
 
@@ -27,24 +27,20 @@ uses
 
 
 type
-
-  {
-  TRegistrar
-    Class that registers the application online by using the registration web
-    service.
-  }
+  ///  <summary>Provides an interface to the DelphiDabbler program registration
+  ///  web service.</summary>
   TRegistrar = class(TStdWebService)
   public
+    ///  <summary>Creates a new object instance with the correct URL and
+    ///  suitable user agent for accessing the web service.</summary>
     constructor Create;
-      {Class constructor. Initialises service.
-      }
+    ///  <summary>Sends regisration data to the web service and interprets its
+    ///  response.</summary>
+    ///  <param name="Data">TStrings [in] Registration information as a list of
+    ///  Name=Value data items.</param>
+    ///  <returns>string. Program's registration key returned from the web
+    ///  service.</returns>
     function Submit(const Data: TStrings): string;
-      {Sends application registration data to web service and interprets
-      response.
-        @param Data Application registration information as list of Name=Value
-          data.
-        @return Registration key.
-      }
   end;
 
 
@@ -109,20 +105,14 @@ const
 { TRegistrar }
 
 constructor TRegistrar.Create;
-  {Class constructor. Initialises service.
-  }
 begin
   inherited Create(TWebServiceInfo.Create(cScriptURLTplt, cUserAgent));
 end;
 
 function TRegistrar.Submit(const Data: TStrings): string;
-  {Sends application registration data to web service and interprets response.
-    @param Data Application registration information as list of Name=Value data.
-    @return Registration key.
-  }
 var
   Response: TStringList;  // response from server
-  Query: TURIParams;
+  Query: TURIParams;      // query made from Name=Value pairs in Data
 begin
   Query := nil;
   Response := TStringList.Create;
