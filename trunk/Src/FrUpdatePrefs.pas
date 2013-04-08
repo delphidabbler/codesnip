@@ -135,8 +135,10 @@ end;
 
 procedure TUpdatePrefsFrame.Deactivate(const Prefs: IPreferences);
 begin
-  Prefs.AutoCheckProgramFrequency := GetFrequencyFromCB(cbProgAutoCheckFreq);
-  Prefs.AutoCheckDatabaseFrequency := GetFrequencyFromCB(cbDBAutoCheckFreq);
+  if cbProgAutoCheckFreq.ItemIndex >= 0 then
+    Prefs.AutoCheckProgramFrequency := GetFrequencyFromCB(cbProgAutoCheckFreq);
+  if cbDBAutoCheckFreq.ItemIndex >= 0 then
+    Prefs.AutoCheckDatabaseFrequency := GetFrequencyFromCB(cbDBAutoCheckFreq);
 end;
 
 function TUpdatePrefsFrame.DisplayName: string;
@@ -162,16 +164,18 @@ procedure TUpdatePrefsFrame.PopulateFrequencyCB(const CB: TComboBox);
 resourcestring
   s0 = 'Never';
   s1 = 'Daily';
+  s3 = 'Every 3 days';
   s7 = 'Weekly';
   s14 = 'Fortnightly';
   s28 = 'Monthly';
 const
-  FreqMap: array[0..4] of record
+  FreqMap: array[0..5] of record
     Text: string;
     Value: Word;
   end = (
     (Text: s0; Value: 0),
     (Text: s1; Value: 1),
+    (Text: s3; Value: 3),
     (Text: s7; Value: 7),
     (Text: s14; Value: 14),
     (Text: s28; Value: 28)
