@@ -11,6 +11,25 @@
 ; Change Log for CodeSnip Release 4
 ; ------------------------------------------------------------------------------
 
+Release v4.4.0 of 08 April 2013
++ Implemented feature request #75 "Check for updates on start-up" (http://bit.ly/ZJ8OGH):
+  - CodeSnip checks for both program and Code Snippets Database updates in low priority background threads that run when the program is first started.
+  - Update checking takes place at intervals between once per day and once per month.
+  - A new "Updates" tab was added to the "Preferences" dialogue box where update frequencies can be chosen, or the auto-update feature switched off. Program and database update checking can be configured individually.
+  - Updates are notified via a new slide-in, slide-out notification window that is displayed for a fixed amount of time or until closed by the user. The notification window contains a button that can be used to initiate the appropriate update. For database updates the "Update From Web" dialogue box is opened while for program updates a suitable download web page is displayed in the default browser.
+  - Program checking is edition specific, i.e. the standard edition checks for standard edition updates and the portable edition behaves similarly.
++ A new "Update Checks" section was added the welcome screen that gives information about the current auto-update settings and provides a link to change them. Some other text on the screen was tweaked.
++ The "Check For Program Updates" dialogue box now opens the correct version and edition specific web page to download the latest version of CodeSnip instead of simply opening a general download page.
++ A new CodeSnip specific program update web service on the codesnip.delphidabbler.com sub-domain is now used to get information about CodeSnip updates instead of the generic update service on delphidabbler.com.
++ Additional usage information is now sent to the DelphiDabbler Code Snippets database update web service.
++ Some refactoring and code clean-up.
++ The installer may now display an information page that describes the new automatic update checking feature. This page is displayed only when updating from v4.3.0 or earlier to v4.4.0 (or later).
++ Updated help file:
+  - Updated and added help topics for all new features of the release.
+  - Updated "What's New" topic re new features.
++ Updated documentation, including privacy statement, with information about automatic update checking.
++ Per-user configuration file format changed to v13 which is incompatible with previous versions of CodeSnip.
+
 Release v4.3.0 of 27 February 2013
 + Implemented feature request #40 "Add 'Namespaces' tab to Configure Compilers dialogue box" (http://bit.ly/12XsX32). The new tab appears only for Delphi XE2 and later and obviates the need to manually create -NS commands for passing to the compilers. Suitable default namespaces are provided if none have been configured.
 + Implemented feature request #70 "Let user specify location of user database" (http://bit.ly/13aNCQZ). This feature is accessed from the new "Move Use Database" option on the Database menu. NOTE: The feature is not available in the portable edition which is designed to keep the user database toegther with the program.
