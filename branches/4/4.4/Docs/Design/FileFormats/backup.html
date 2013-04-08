@@ -1,0 +1,570 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!--
+ * This Source Code Form is subject to the terms of the Mozilla Public License,
+ * v. 2.0. If a copy of the MPL was not distributed with this file, You can
+ * obtain one at http://mozilla.org/MPL/2.0/
+ *
+ * Copyright (C) 2012, Peter Johnson (www.delphidabbler.com).
+ *
+ * $Rev$
+ * $Date$
+ *
+ * CodeSnip File Format Documentation: Backup Files.
+-->
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+
+<head>
+
+<title>
+  CodeSnip File Format Documentation - Backup Files
+</title>
+
+<link
+  rel="stylesheet"
+  type="text/css"
+  media="screen"
+  href="main.css"
+/>
+
+</head>
+
+<body>
+
+<div class="title">
+  <div>
+    DelphiDabbler CodeSnip
+  </div>
+  <div class="subtitle">
+    File Format Documentation
+  </div>
+</div>
+
+<h1>
+  Backup Files
+</h1>
+
+<h2>
+  Introduction
+</h2>
+
+<p>
+  The CodeSnip backup file format is a general format that can store all the
+  files from a single directory, excluding sub-directories. It preserves file
+  dates and contents.
+</p>
+
+<p>
+  CodeSnip stores backups of both the main and user databases using this format.
+</p>
+
+<p>
+  A backup file is a single file containing a concatenation of all the backed up
+  files, along with some header and housekeeping information. Quite how the data
+  is stored and organised has varied over time. There have been four versions of
+  the file format to date:
+</p>
+
+<dl>
+  <dt>
+    Version 1
+  </dt>
+  <dd>
+    This first version of the file was used only to back up the user database in
+    a single text file. All housekeeping information and meta data was stored as
+    encoded text. The file size was limited to 32Kb. Only text files could be
+    stored in this format.
+  </dd>
+  <dt>
+    Version 2
+  </dt>
+  <dd>
+    Similar to version 1 except that the 32Kb size limit was lifted (now 2Gb).
+    Also only for backing up the user database.
+  </dd>
+  <dt>
+    Version 3
+  </dt>
+  <dd>
+    Similar to Versions 1 and 2. Nowused for backing up both the user database
+    and the main database. An file ID field was added to allows which database
+    was backed up. The file ID generalises to any file.
+  </dd>
+  <dt>
+    Version 4
+  </dt>
+  <dd>
+    Major changes in this version. The contents of the file are now binary
+    rather than text. Any file type can now be included in the backup. Maintains
+    the FileID from Version 3. Also has an ASCII text watermark to enable
+    earlier readers to detect it.
+  </dd>
+</dl>
+
+<h2>
+  Encoding
+</h2>
+
+<p>
+  The following encodings have been used for backup files:
+</p>
+
+<dl>
+  <dt>
+    Versions 1 and 2
+  </dt>
+  <dd>
+    The entire backup file is in the System Default ANSI code page. All backed
+    up files are expected to be text files with the same encoding. Meta data and
+    housekeeping data is stored as hex representation of integers. Note that hex
+    characters are the same in this code page as they are in the ASCII character
+    set.
+  </dd>
+  <dt>
+    Version 3
+  </dt>
+  <dd>
+    Up to and including CodeSnip 3.5.0 backup files used the same System Default
+    ANSI code page as versions 1 and 2. From CodeSnip 3.5.1 the code page was
+    changed to Windows-1252. Again hex characters are the same as they are in
+    the ASCII character set.
+  </dd>
+  <dt>
+    Version 4
+  </dt>
+  <dd>
+    This file format uses pure binary raw data. The watermark part of the file
+    header is written in ASCII. File names are stored as UTF-8. All other
+    information, including file contents is stored as raw binary.
+  </dd>
+</dl>
+
+<p>
+  File formats v1 to v3 required that hex characters were written using a single
+  byte, ruling out the use of Unicode formats such as UTF-16.
+</p>
+
+<h2>
+  File Formats
+</h2>
+
+<h3>
+  Version 1 Format
+</h3>
+
+<dl>
+  <dt>
+    <code>FileCount</code>
+  </dt>
+  <dd>
+    Number of files in backup file. SmallInt encoded as four hex digits.
+  </dd>
+</dl>
+
+<p>
+  Followed by <code>FileCount</code> records of:
+</p>
+
+<dl>
+  <dt>
+    <code>Name</code>
+  </dt>
+  <dd>
+    Name of file without path information. AnsiString preceded by its size as a
+    SmallInt encoded as four hex digits.
+  </dd>
+  <dt>
+    <code>FileDate</code>:
+  </dt>
+  <dd>
+    File's modification date as a DOS file stamp. LongInt encoded as eight hex
+    digits.
+  </dd>
+  <dt>
+    <code>Checksum</code>
+  </dt>
+  <dd>
+    MD5 checksum of backed up file. 16 Bytes, each encoded as two hex digits.
+  </dd>
+  <dt>
+    <code>Content</code>
+  </dt>
+  <dd>
+    File contents. AnsiString preceded by its size as a SmallInt encoded as
+    four hex digits.
+  </dd>
+</dl>
+
+<h3>
+  Version 2 Format
+</h3>
+
+<dl>
+  <dt>
+    <code>'FFFF'</code>
+  </dt>
+  <dd>
+    Indicates this is a post-v1 file format. SmallInt($FFFF) encoded as four
+    hex digits.
+  </dd>
+  <dt>
+    <code>'0002'</code>
+  </dt>
+  <dd>
+    Indicates this is the version 2 file format. SmallInt(2) encoded as four
+    hex digits.
+  </dd>
+  <dt>
+    <code>FileCount</code>
+  </dt>
+  <dd>
+    Number of files in backup file. SmallInt encoded as four hex digits.
+  </dd>
+</dl>
+
+<p>
+  Followed by <code>FileCount</code> records of:
+</p>
+
+<dl>
+  <dt>
+    <code>Name</code>
+  </dt>
+  <dd>
+    Name of file without path information. AnsiString preceded by its size as a
+    SmallInt encoded as four hex digits.
+  </dd>
+  <dt>
+    <code>FileDate</code>
+  </dt>
+  <dd>
+    File's modification date as a DOS file stamp. LongInt encoded as eight hex
+    digits.
+  </dd>
+  <dt>
+    <code>Checksum</code>
+  </dt>
+  <dd>
+    MD5 checksum of backed up file. 16 Bytes, each encoded as two hex digits.
+  </dd>
+  <dt>
+    <code>Content</code>
+  </dt>
+  <dd>
+    File contents. AnsiString preceded by its size as a LongInt encoded as eight
+    hex digits.
+  </dd>
+</dl>
+
+<h3>
+  Version 3 Format
+</h3>
+
+<dl>
+  <dt>
+    <code>'FFFF'</code>
+  </dt>
+  <dd>
+    Indicates this is a post-v1 file format. SmallInt($FFFF) encoded as four hex
+    digits.
+  </dd>
+  <dt>
+    <code>'0003'</code>
+  </dt>
+  <dd>
+    Indicates this is the version 3 file format. SmallInt(3) encoded as four hex
+    digits.
+  </dd>
+  <dt>
+    <code>FileID</code>
+  </dt>
+  <dd>
+    File type indicator. SmallInt encoded as four hex digits.
+    <ul class="squashed">
+      <li>
+        <code>'CBAC'</code> for main database backup.
+      </li>
+      <li>
+        <code>'DBAC'</code> for user database backup.
+      </li>
+    </ul>
+    Other IDs could be used for other backup types.
+  </dd>
+  <dt>
+    <code>FileCount</code>
+  </dt>
+  <dd>
+    Number of files in backup file. SmallInt encoded as four hex digits.
+  </dd>
+</dl>
+
+<p>
+  Followed by <code>FileCount</code> records of:
+</p>
+
+<dl>
+  <dt>
+    <code>Name</code>
+  </dt>
+  <dd>
+    Name of file without path information. AnsiString preceded by its size as
+    a SmallInt encoded as four hex digits.
+  </dd>
+  <dt>
+    <code>FileDate</code>
+  </dt>
+  <dd>
+    File's modification date as a DOS file stamp. LongInt encoded as eight hex
+    digits.
+  </dd>
+  <dt>
+    <code>Checksum</code>
+  </dt>
+  <dd>
+    MD5 checksum of backed up file. 16 Bytes, each encoded as two hex digits.
+  </dd>
+  <dt>
+    <code>Content</code>
+  </dt>
+  <dd>
+    File contents. AnsiString preceded by its size as a LongInt encoded as eight
+    hex digits.
+  </dd>
+</dl>
+
+<h3>
+  Version 4 Format
+</h3>
+
+<dl>
+  <dt>
+    <code>'FFFF'</code>
+  </dt>
+  <dd>
+    Indicates this is a post-v1 file format. SmallInt($FFFF) encoded as four
+    hex digits.
+  </dd>
+  <dt>
+    <code>'0004'</code>
+  </dt>
+  <dd>
+    Indicates this is the version 4 file format. SmallInt(4) encoded as four
+    hex digits.
+  </dd>
+  <dt>
+    <code>'00000000'</code>
+  </dt>
+  <dd>
+    Padding field. LongInt(0) encoded as eight hex digits. The first four
+    characters of this field are where v2 file readers look for the file count.
+    The second four characters are where v3 file reader for the same
+    information. Both readers interpret the appropriate value as meaning their
+    are no files in the backup and will not try to read any further in the file.
+  </dd>
+  <dt>
+    <code>FileID</code>
+  </dt>
+  <dd>
+    File type indicator. SmallInt in binary.
+    <ul class="squashed">
+      <li>
+        <code>'CBAC'</code> for main database backup.
+      </li>
+      <li>
+        <code>'DBAC'</code> for user database backup.
+      </li>
+    </ul>
+    Other IDs could be used for other backup types.
+  </dd>
+  <dt>
+    <code>FileCount</code>
+  </dt>
+  <dd>
+    Number of files in backup file. SmallInt in binary.
+  </dd>
+</dl>
+
+<p>
+  Followed by <code>FileCount</code> records of:
+</p>
+
+<dl>
+  <dt>
+    <code>Name</code>
+  </dt>
+  <dd>
+    Name of file without path information. Bytes of a UTF-8 string preceded by
+    number of bytes as a SmallInt in binary.
+  </dd>
+  <dt>
+    <code>FileDate</code>
+  </dt>
+  <dd>
+    File's modification date as a DOS file stamp. LongInt in binary.
+  </dd>
+  <dt>
+    <code>Checksum</code>
+  </dt>
+  <dd>
+    MD5 checksum of backed up file. 16 bytes in binary.
+  </dd>
+  <dt>
+    <code>Content</code>
+  </dt>
+  <dd>
+    File contents. Bytes of literal copy of file contents preceded by the
+    number of bytes as a LongInt in binary.
+  </dd>
+</dl>
+
+<h2>
+  File Reading &amp; Writing Notes
+</h2>
+
+<p>
+  Code that writes backup files should only ever write the latest available file
+  format at the time the code was written. It should never attempt to write
+  earlier versions.
+</p>
+
+<p>
+  Code that restores backup files be able to interpret all earlier formats in
+  addition to the current one because the program may to restore data from an
+  old backup file. If the code detects a later version than it was designed for
+  it should display an error message and terminate.
+</p>
+
+<h3>
+  Problems with Earlier Backup Restoration Code
+</h3>
+
+<p>
+  Some earlier versions of the backup restoration code have faults in that they
+  will attempt to read later backup file versions than thosethey were designed
+  for. By good fortune factors in the design of later file formats mean that the
+  reading code always abandons the reading, albeit with no error message. These
+  problems are:
+</p>
+
+<dl>
+  <dt>
+    File readers designed to work with file format v1
+  </dt>
+  <dd>
+    <div class="half-spaced">
+      At this time there was no concept there would be different versions of the
+      backup file format, so the code does not attempt to detect the file
+      version.
+    </div>
+    <div class="half-spaced">
+      The reading code expects backup files to begin with a file count as a text
+      hex representation of a SmallInt. In file version 2 and later the first
+      four ANSI chars of the file are <code>'FFFF'</code>, which decodes as
+      <code>-1</code>. The reader interprets this value as meaning there are no
+      files in the backup and does nothing, leaving the existing database
+      intact.
+    </div>
+  </dd>
+  <dt>
+    File readers designed to work with file format v2
+  </dt>
+  <dd>
+    <div class="half-spaced">
+      These readers interpret the v1 and v2 file formats correctly.
+    </div>
+    <div class="half-spaced">
+      In v3 files the file ID is recorded in the same location and same format
+      as the v2 file format expects to find the file count. Luckily the only two
+      values in use as File IDs are <code>'CBAC'</code> and <code>'DBAC'</code>,
+      both of which decode as negative integers. The reader software interprets
+      this as meaning there are no files in the backup.
+    </div>
+    <div class="helf-speed">
+      The v4 file format moved the file ID value to a new location and replaced
+      it with a padding value of <code>'0000'</code> in the v2 file count
+      location, again indicating there are no files in the backup to v2 file
+      format readers.
+    </div>
+  </dd>
+  <dt>
+    File readers designed to work with file format v3
+  </dt>
+  <dd>
+    <div class="half-spaced">
+      These readers interpret the v1, v2 and v3 file formats correctly.
+    </div>
+    <div class="half-spaced">
+      Up to, and including, CodeSnip v3.8.5, file reader software designed to
+      work with file format v3 will also try to read later file versions. It
+      looks for its file count in a hex encoded SmallInt value at position 12 in
+      the backup file. File format v4 was designed to have a padding value of
+      <code>'0000'</code> in this location. Agains this fools the reader software
+      into thinking there are no files in the backup.
+    </div>
+    <div class="half-spaced">
+      From CodeSnip v3.8.6 the file reader works correctly.
+    </div>
+  </dd>
+</dl>
+
+<p>
+  The file reader designed to work with the v4 file format does recognise newer
+  versions of the file format and <em>does not</em> try to read them. Instead it
+  raises an exception.
+</p>
+
+<p>
+  In summary, all future backup files should begin with these ANSI / ASCII
+  characters: <code>'FFFFxxxx00000000'</code> where xxxx is the file version
+  number as a SmallInt encoded as four hex characters. For example for file
+  format v4 we use <code>'FFFF000400000000'</code>.
+</p>
+
+<h3>
+  Identification of file format versions
+</h3>
+
+<p>
+  Each file version can be considered to have a unique "watermark" at the start
+  of the file if we consider an empty watermark to be valid. This is fine as
+  long as only one file version has the empty watermark. Here are the current
+  watermarks as strings of ASCII characters:
+</p>
+
+<dl>
+  <dt>
+    File format version 1
+  </dt>
+  <dd>
+    Watermark: <code>''</code>
+  </dd>
+  <dt>
+    File format version 2
+  </dt>
+  <dd>
+    Watermark: <code>'FFFF0002'</code>
+  </dd>
+  <dt>
+    File format version 3
+  </dt>
+  <dd>
+    Watermark: <code>'FFFF0003'</code>
+  </dd>
+  <dt>
+    File format version 4
+  </dt>
+  <dd>
+    Watermark: <code>'FFFF000400000000'</code>
+  </dd>
+</dl>
+
+<p>
+  It can be seen that the version number at byte offset 4 is not necessary for
+  identification if the watermark is made longer. However, it should always be
+  used because earlier versions of the file readers use it to determine which
+  format is to be read.
+</p>
+
+</body>
+
+</html>

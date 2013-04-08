@@ -1,0 +1,159 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public License,
+ * v. 2.0. If a copy of the MPL was not distributed with this file, You can
+ * obtain one at http://mozilla.org/MPL/2.0/
+ *
+ * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
+ *
+ * $Rev$
+ * $Date$
+ *
+ * Cascading style sheet used by HTML displayed in detail panes.
+ */
+
+body {
+  margin: 4px;
+  padding: 0px;
+}
+
+table {
+  margin: 4px 0 0 0;
+  border: 0;
+}
+
+td {
+  vertical-align: top;
+  text-align: left;
+}
+
+th {
+  vertical-align: top;
+  text-align: center;
+}
+
+.comptable td {
+  text-align: center;
+}
+
+table.snippet-list td {
+  padding: 4px;
+}
+
+table.snippet-list td.desc {
+  padding-top: 0;
+}
+
+h1 {
+  margin: 0 0 8px 0;
+  padding: 0 0 4px 0;
+}
+
+h2 {
+  margin: 8px 0 0 0;
+}
+
+.active-text h2 {
+  margin: 4px 0 0 0;
+}
+
+p {
+  margin: 4px 0 0 0;
+}
+
+pre {
+  margin: 4px 0;
+  padding: 4px;
+}
+
+.optionbox {
+  margin: 12px 0 0 0;
+  padding: 4px;
+}
+
+.option {
+  margin-top: 2px;
+  margin-bottom: 2px;
+}
+
+#newtab {
+  text-align: center;
+  position: fixed;
+  top: 30%;
+  width: 100%;
+  margin-left: -4px;
+}
+
+.smallcaps {
+  font-variant: small-caps;
+}
+
+.box {
+  margin: 8px 0;
+  border: 1px solid silver;
+  padding: 0;
+}
+.caption {
+  font-weight: bold;
+  padding: 4px;
+  border-bottom: 1px solid silver;
+}
+
+#user-db .caption {
+  background-color: #D5E0FF;
+}
+
+#main-db .caption {
+  background-color: #DBD1FF;
+}
+
+#compilers .caption {
+  background-color: #FCD9F3;
+}
+
+#auto-updates .caption {
+  background-color: #FFDFAF;
+}
+
+#donate .caption {
+  background-color: #FFF1A4;
+}
+
+#help .caption {
+  background-color: #D3FFB6;
+}
+
+.content {
+  margin: 4px;
+}
+
+.content ul {
+  margin: 4px 0 4px 24px;
+  padding: 0;
+}
+
+#footer {
+  margin-top: 8px;
+  color: gray;
+  text-align: right;
+  line-height: 150%;
+}
+
+#footer a {
+  color: gray;
+  text-decoration: none;
+  font-style: normal;
+  font-weight: normal;
+}
+
+#footer a:hover {
+  border-bottom: 1px dotted grey;
+}
+
+.testing-img {
+  float: right;
+  width: 16px;
+  height: 16px;
+  padding: 0;
+  margin: 2px 0 0 8px;
+}
+
