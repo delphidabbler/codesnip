@@ -2,7 +2,7 @@
 ; v. 2.0. If a copy of the MPL was not distributed with this file, You can
 ; obtain one at http://mozilla.org/MPL/2.0/
 ;
-; Copyright (C) 2006-2012, Peter Johnson (www.delphidabbler.com).
+; Copyright (C) 2006-2013, Peter Johnson (www.delphidabbler.com).
 ;
 ; $Rev$
 ; $Date$
@@ -96,6 +96,7 @@ Source: {#SrcDocsPath}{#LicenseTextFile}; DestDir: {app}; Flags: ignoreversion
 Source: {#SrcDocsPath}{#ReadMeFile}; DestDir: {app}; Flags: ignoreversion
 Source: {#SrcDocsPath}{#PrivacyFile}; DestDir: {app}; Flags: ignoreversion
 Source: {#SrcAssetsPath}UpdatingPreview.rtf; Flags: dontcopy
+Source: {#SrcAssetsPath}AutoUpdateChecks.rtf; Flags: dontcopy
 
 [Icons]
 Name: {group}\{#AppPublisher} {#AppName}; Filename: {app}\{#ExeFile}
@@ -115,6 +116,7 @@ Type: filesandordirs; Name: "{commonappdata}\{#AppPublisher}\{#ProgDataSubDir}"
 [Code]
 // DataLocations.ps must be declared first
 #include "DataLocations.ps"
+#include "VersionInfo.ps" 
 #include "Unicode.ps"
 #include "UpdateIni.ps"
 #include "UpdateDBase.ps"
