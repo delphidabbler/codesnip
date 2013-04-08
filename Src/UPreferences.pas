@@ -1008,10 +1008,10 @@ begin
   // Read updating section
   Storage := Settings.ReadSection(ssPreferences, cUpdating);
   fAutoCheckProgramFrequency := Storage.GetInteger(
-    'AutoCheckProgramFrequency', 1
+    'AutoCheckProgramFrequency', 7  // checks for updates every week
   );
   fAutoCheckDatabaseFrequency := Storage.GetInteger(
-    'AutoCheckDatabaseFrequency', 1
+    'AutoCheckDatabaseFrequency', 7 // checks for updates every week
   );
 end;
 
