@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2008-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2008-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -24,6 +24,10 @@ var
   // Reference to custom memo page that displays instructions for updating from
   // a v4 preview release.
   gUpdateFromPreviewPage: TOutputMsgMemoWizardPage;
+
+  // Reference to custom memo page that displays information about automatic
+  // update checking.
+  gAutoUpdateCheckPage: TOutputMsgMemoWizardPage;
 
   // Flag true if user wants to bring forward a copy of the main database
   gDatabaseCopyingRequested: Boolean;
@@ -64,7 +68,7 @@ begin
   gConfigPage.Add('Copy existing database');
   gConfigPage.Values[0] := True;
 
-  // page that displays notes about updating from vv preview release
+  // page that displays notes about updating from v4 preview release
   gUpdateFromPreviewPage := CreateOutputMsgMemoPage(
     wpWelcome,
     'Updating from v4 Preview Release',
@@ -76,7 +80,20 @@ begin
   ExtractTemporaryFile('UpdatingPreview.rtf');
   RTFFile := ExpandConstant('{tmp}\UpdatingPreview.rtf');
   if LoadStringFromFile(RTFFile, RTF) then
-    gUpdateFromPreviewPage.RichEditViewer.RTFText := RTF
+    gUpdateFromPreviewPage.RichEditViewer.RTFText := RTF;
+
+  // page that displays information about automatic updatw checking
+  gAutoUpdateCheckPage := CreateOutputMsgMemoPage(
+    wpLicense,
+    'Information',
+    'CodeSnip''s new Automatic Update Checking feature.',
+    '',
+    ''
+  );
+  ExtractTemporaryFile('AutoUpdateChecks.rtf');
+  RTFFile := ExpandConstant('{tmp}\AutoUpdateChecks.rtf');
+  if LoadStringFromFile(RTFFile, RTF) then
+    gAutoUpdateCheckPage.RichEditViewer.RTFText := RTF;
 end;
 
 // Called to determine whether page specified by PageID should be displayed.
@@ -100,6 +117,16 @@ begin
       'Application', 'Version', '', gCurrentCommonConfigFile
     );
     if Pos('alpha', ProgVer) = 0 then
+      Result := True;
+  end
+  else if PageId = gAutoUpdateCheckPage.ID then
+  begin
+    ProgVer := GetIniString(
+      'Application', 'Version', '', gCurrentCommonConfigFile
+    );
+    if CompareVerNums(
+      StrToVersionInfo(ProgVer), CreateVersionNumber(4, 4, 0, 0)
+    ) >= 0 then
       Result := True;
   end;
 end;
