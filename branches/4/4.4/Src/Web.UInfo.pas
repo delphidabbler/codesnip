@@ -68,7 +68,7 @@ type
   strict private
     const
       ///  <summary>Remote DelphiDabbler web server.</summary>
-      RemoteHost = 'www.delphidabbler.com';
+      RemoteHost = 'delphidabbler.com';
       ///  <summary>URL of DelphiDabbler website.</summary>
       WebsiteURL = 'http://' + RemoteHost;
       ///  <summary>Template for URL of Code Snippets news feed.</summary>
