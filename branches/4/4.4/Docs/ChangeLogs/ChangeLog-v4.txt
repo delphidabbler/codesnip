@@ -11,6 +11,9 @@
 ; Change Log for CodeSnip Release 4
 ; ------------------------------------------------------------------------------
 
+Release v4.4.1 of 09 April 2013
++ Fixed bug #73 "Attempting to check for program updates returns a 404 'Not found' error" (http://bit.ly/Yf3UGy) - this error happened only when using remote server, not localhost test server.
+
 Release v4.4.0 of 08 April 2013
 + Implemented feature request #75 "Check for updates on start-up" (http://bit.ly/ZJ8OGH):
   - CodeSnip checks for both program and Code Snippets Database updates in low priority background threads that run when the program is first started.
