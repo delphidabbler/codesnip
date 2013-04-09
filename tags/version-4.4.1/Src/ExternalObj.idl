@@ -1,0 +1,139 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public License,
+ * v. 2.0. If a copy of the MPL was not distributed with this file, You can
+ * obtain one at http://mozilla.org/MPL/2.0/
+ *
+ * Copyright (C) 2006-2013, Peter Johnson (www.delphidabbler.com).
+ *
+ * $Rev$
+ * $Date$
+ *
+ * Source for type library that defines the interface to extensions to the
+ * browser control DOM's "external object".
+ */
+
+
+[
+  uuid(DA95AEFB-3FB5-4A9E-9F9D-A53DD05CA7D4),
+  version(12.0),
+  helpstring("CodeSnip DOM External Object Extender Type Library"),
+  custom(DE77BA63-517C-11D1-A2DA-0000F8773CE9, 1219706147),
+  custom(DE77BA64-517C-11D1-A2DA-0000F8773CE9, 117441012)
+]
+
+library ExternalObj
+{
+
+  importlib("stdole2.tlb");
+
+  /*
+   * V12 interface of extension to browser DOM's "external" object.
+   */
+  [
+    uuid(BA971829-ED4D-4092-BCAE-4B5DB1A2D74A),
+    version(12.0),
+    helpstring("DOM external object extender"),
+    dual,
+    oleautomation
+  ]
+  interface IWBExternal12: IDispatch
+  {
+    /*
+     * Update database from internet.
+     */
+    [
+    id(0x00000065)
+    ]
+    HRESULT _stdcall UpdateDbase( void );
+
+    /*
+     * Display named snippet.
+     *    @param SnippetName [in] Name of snippet to display.
+     *    @param UserDefined [in] Whether snippet is user defined.
+     */
+    [
+    id(0x00000066)
+    ]
+    HRESULT _stdcall DisplaySnippet([in] BSTR SnippetName,
+      [in] VARIANT_BOOL UserDefined, [in] VARIANT_BOOL NewTab );
+
+    /*
+     * Displays configure compilers dialog box.
+     */
+    [
+    id(0x0000006A)
+    ]
+    HRESULT _stdcall ConfigCompilers( void );
+
+    /*
+     * Edits the named snippet.
+     *    @param SnippetName [in] Name of snippet to edit. Must be user defined.
+     */
+    [
+    id(0x0000006C)
+    ]
+    HRESULT _stdcall EditSnippet([in] BSTR SnippetName);
+
+    /*
+     * Displays Donate dialog box.
+     */
+    [
+    id(0x0000006D)
+    ]
+    HRESULT _stdcall Donate( void );
+
+    /*
+     * Display identified category.
+     *    @param CatID [in] ID of category to display.
+     */
+    [
+    id(0x0000006E)
+    ]
+    HRESULT _stdcall DisplayCategory([in] BSTR CatID, [in] VARIANT_BOOL NewTab);
+
+    /*
+     * Open Snippets Editor ready to create a new snippet.
+     */
+    [
+    id(0x0000006F)
+    ]
+    HRESULT _stdcall NewSnippet( void );
+
+    /*
+     * Show news items from CodeSnip news feed.
+     */
+    [
+    id(0x00000070)
+    ]
+    HRESULT _stdcall ShowNews( void );
+
+    /*
+     * Check for program updates.
+     */
+    [
+    id(0x00000071)
+    ]
+    HRESULT _stdcall CheckForUpdates( void );
+
+    /*
+     * Display the program's About box.
+     */
+    [
+    id(0x00000072)
+    ]
+    HRESULT _stdcall ShowAboutBox( void );
+
+    /*
+     * Displays a tab in the Preferences dialogue box.
+     *    @param TagCls [in] Class name of frame hosting required dialogue box
+     *      page.
+     */
+    [
+    id(0x00000073)
+    ]
+    HRESULT _stdcall ShowPrefsPage([in] BSTR ClsName);
+
+  };
+
+};
+
