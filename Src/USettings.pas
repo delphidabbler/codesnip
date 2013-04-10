@@ -700,13 +700,10 @@ function TIniSettingsSection.GetBoolean(const Name: string;
 var
   ValStr: string;
 begin
-  ValStr := StrToLower(GetItemValue(Name));
+  ValStr := GetItemValue(Name);
   if ValStr = '' then
     Exit(Default);
-  if (ValStr = '0') or (ValStr = 'false') or (ValStr = 'no')
-    or (ValStr = 'n') then
-    Exit(False);
-  Result := True;
+  Result := not StrMatchText(ValStr, ['0', 'false', 'no', 'n']);
 end;
 
 function TIniSettingsSection.GetDateTime(const Name: string;
