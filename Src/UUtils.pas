@@ -85,6 +85,14 @@ function RFC1123DateStamp: string; inline;
 ///  <summary>Returns the current date and time in GMT/UTC.</summary>
 function NowGMT: TDateTime;
 
+///  <summary>Converts a date-time value in SQL format into a TDateTime.
+///  </summary>
+///  <param name="SQLDate">string [in] SQL format date-time value to be
+///  converted.</param>
+///  <returns>TDateTime. Converted value.</returns>
+///  <remarks>SQLDate must be in YYYY-MM-DD hh:mm:ss format.</remarks>
+function ParseSQLDateTime(const SQLDate: string): TDateTime;
+
 ///  <summary>Get a desired interface pointer to an object instance.</summary>
 ///  <param name="Instance">IInterface [in] Instance for which an interface is
 ///  requested. May be nil.</param>
@@ -126,6 +134,13 @@ function IsHexDigit(C: Char): Boolean;
 ///  <param name="URI">string [in] Full URI.</param>
 ///  <returns>string. Name following last slash in URI.</returns>
 function URIBaseName(const URI: string): string;
+
+///  <summary>Attempts to convert string S into a Cardinal value.</summary>
+///  <param name="S">string [in] String to be converted.</param>
+///  <param name="Value">Cardinal [out] Value of converted string. Undefined if
+///  conversion fails.</param>
+///  <returns>Boolean. True if conversion succeeds, False if not.</returns>
+function TryStrToCardinal(const S: string; out Value: Cardinal): Boolean;
 
 
 implementation
@@ -269,6 +284,22 @@ begin
   Result := FormatDateTime(cRFC1123Pattern, NowGMT);
 end;
 
+function ParseSQLDateTime(const SQLDate: string): TDateTime;
+begin
+  Result := SysUtils.EncodeDate(
+    SysUtils.StrToInt(Copy(SQLDate, 1, 4)),
+    SysUtils.StrToInt(Copy(SQLDate, 6, 2)),
+    SysUtils.StrToInt(Copy(SQLDate, 9, 2))
+  )
+  +
+  SysUtils.EncodeTime(
+    SysUtils.StrToInt(Copy(SQLDate, 12, 2)),
+    SysUtils.StrToInt(Copy(SQLDate, 15, 2)),
+    SysUtils.StrToInt(Copy(SQLDate, 18, 2)),
+    0
+  );
+end;
+
 procedure GetIntf(const Instance: IInterface; const IID: TGUID; out Intf);
 begin
   if not Supports(Instance, IID, Intf) then
@@ -338,6 +369,16 @@ begin
   if LastSlashPos = 0 then
     Exit(URI);
   Result := StrSliceRight(URI, Length(URI) - LastSlashPos);
+end;
+
+function TryStrToCardinal(const S: string; out Value: Cardinal): Boolean;
+var
+  Value64: Int64; // receives 64 bit value of conversion
+begin
+  Result := TryStrToInt64(S, Value64)
+    and (Int64Rec(Value64).Hi = 0);
+  if Result then
+    Value := Int64Rec(Value64).Lo;
 end;
 
 end.
