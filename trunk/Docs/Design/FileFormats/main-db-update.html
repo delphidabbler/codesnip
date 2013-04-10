@@ -5,7 +5,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2012-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -84,8 +84,8 @@
 </h2>
 
 <p>
-  The data stream is received from the web server in a single syte or multi byte
-  ANSI encoding. The encoding must be such that characters from the ASCII
+  The data stream is received from the web server as single- or multi-byte ANSI
+  encoded text. The encoding must be such that characters from the ASCII
   character set occupy one byte each. Therefore encodings that use two bytes for
   such characters, such as UTF-16, cannot be used.
 </p>
@@ -114,8 +114,8 @@
 <p>
   The stream contains structured plain text comprising both numeric and string
   information. Variable length strings are preceded by numeric values that
-  indicate the length of the following string. Numeric values are encoded as hex
-  characters. The format is as follows:
+  indicate the length of the following string in bytes. Numeric values are
+  encoded as hexadecimal characters. The format is as follows:
 </p>
 
 <dl>
