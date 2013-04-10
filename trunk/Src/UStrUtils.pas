@@ -35,6 +35,11 @@ function StrContainsStr(const Needle, Haystack: UnicodeString): Boolean;
 ///  insensitive.</summary>
 function StrContainsText(const Needle, Haystack: UnicodeString): Boolean;
 
+///  <summary>Checks if string Str is present in string array Values. Case
+///  insensitive.</summary>
+function StrMatchText(const Str: string; const Values: array of string):
+  Boolean;
+
 ///  <summary>Returns index of string Needle in string Haystack or 0 if Needle
 ///  is not in Haystack. Case sensitive.</summary>
 function StrPos(const Needle, Haystack: UnicodeString): Integer; overload;
@@ -381,6 +386,12 @@ end;
 function StrContainsText(const Needle, Haystack: UnicodeString): Boolean;
 begin
   Result := StrUtils.AnsiContainsText(Haystack, Needle);
+end;
+
+function StrMatchText(const Str: string; const Values: array of string):
+  Boolean;
+begin
+  Result := StrUtils.MatchText(Str, Values);
 end;
 
 function StrContainsWhiteSpace(const Str: UnicodeString): Boolean;
