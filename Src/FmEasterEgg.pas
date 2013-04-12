@@ -20,7 +20,7 @@ interface
 
 uses
   // Delphi
-  ExtCtrls, Controls, Forms, Classes, Windows,
+  ExtCtrls, Controls, Forms, Classes,
   // Project
   Browser.UHTMLEvents, IntfAligner, FmBase, FrBrowserBase, FrEasterEgg;
 
@@ -39,19 +39,6 @@ type
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormCreate(Sender: TObject);
   strict private
-    type
-      {
-      TAligner:
-        Class that can centre this form over the owning control.
-      }
-      TAligner = class(TInterfacedObject, IFormAligner)
-      public
-        { IFormAligner method }
-        procedure AlignForm(const AForm: TCustomForm);
-          {Aligns easter eff form over main form.
-            @param AForm [in] Form to be aligned.
-          }
-      end;
     procedure RevealTick(Sender: TObject);
       {Timer event handler used to fade out the form when closing.
         @param Sender [in] Not used.
@@ -88,10 +75,8 @@ implementation
 
 
 uses
-  // Delphi
-  Graphics,
   // Project
-  UColours, UConsts, UGraphicUtils, UDlgHelper, UStructs, UUtils;
+  UConsts, UFormAligner, UDlgHelper, UUtils;
 
 
 {$R *.dfm}
@@ -175,7 +160,7 @@ function TEasterEggForm.GetAligner: IFormAligner;
     @return Required aligner.
   }
 begin
-  Result := TAligner.Create;
+  Result := TSimpleFormAligner.Create;
 end;
 
 procedure TEasterEggForm.HideTick(Sender: TObject);
@@ -225,57 +210,6 @@ begin
     AlphaBlendValue := AlphaBlendValue + cAlphaDelta
   else
     AlphaBlendValue := AlphaBlendValue + cAlphaDelta  div 2;
-end;
-
-{ TEasterEggForm.TAligner }
-
-procedure TEasterEggForm.TAligner.AlignForm(const AForm: TCustomForm);
-  {Aligns easter egg form over main form.
-    @param AForm [in] Form to be aligned.
-  }
-var
-  FormBounds: TRectEx;    // bounds of easter egg form
-  Owner: TWinControl;     // owner wincontrol
-  OwnerBounds: TRectEx;   // screen bounds of owner control
-  WorkArea: TRectEx;      // desktop work area
-begin
-  Assert(AForm.Owner is TWinControl,
-    ClassName + '.AlignForm: AForm.Owner must be a TWinControl');
-  // Get bounds of owner control
-  Owner := AForm.Owner as TWinControl;
-  if Owner.Parent = nil then
-    // no parent: bounds are already in screen coords
-    OwnerBounds := Owner.BoundsRect
-  else
-  begin
-    // parented control: bounds are relative to parent => map to screen coords
-    OwnerBounds.TopLeft := Owner.ClientToScreen(
-      Owner.BoundsRect.TopLeft
-    );
-    OwnerBounds.BottomRight := Owner.ClientToScreen(
-      Owner.BoundsRect.BottomRight
-    );
-  end;
-  // Calculate form bounds
-  FormBounds := AForm.BoundsRect;
-  FormBounds.OffsetBy(
-    OwnerBounds.Left - FormBounds.Left +
-      (OwnerBounds.Width - FormBounds.Width) div 2,
-    OwnerBounds.Top - FormBounds.Top +
-      (OwnerBounds.Height - FormBounds.Height) div 2
-  );
-  // Ensure form is in work area
-  WorkArea := Screen.MonitorFromRect(FormBounds).WorkareaRect;
-  if FormBounds.Right > WorkArea.Right then
-    FormBounds.OffsetBy(WorkArea.Right - FormBounds.Right, 0);
-  if FormBounds.Left < WorkArea.Left then
-    FormBounds.OffsetBy(WorkArea.Left - FormBounds.Left, 0);
-  if FormBounds.Bottom > WorkArea.Bottom then
-    FormBounds.OffsetBy(0, WorkArea.Bottom - FormBounds.Bottom);
-  if FormBounds.Top < WorkArea.Top then
-    FormBounds.OffsetBy(0, WorkArea.Top - FormBounds.Top);
-  // Place the form
-  AForm.BoundsRect := FormBounds;
 end;
 
 end.
