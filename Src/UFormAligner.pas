@@ -27,22 +27,15 @@ uses
 
 
 type
-
-  {
-  TFormAligner:
-    Class that can align a form over an owning control. Adopts different
-    alignment depending on type of owning control.
-  }
-  TFormAligner = class(TInterfacedObject,
-    IFormAligner
-  )
+  ///  <summary>Class that can align a form over an owning control. Adopts a
+  ///  different alignment style depending on the type of the owning control.
+  ///  </summary>
+  TFormAligner = class(TInterfacedObject, IFormAligner)
   public
-    { IAligner method }
+    ///  <summary>Aligns the given form over its owner, or, if the owner is nil,
+    ///  over either the active form or the application's main form.</summary>
+    ///  <remarks>Method of IAligner.</remarks>
     procedure AlignForm(const AForm: TCustomForm);
-      {Aligns a form relative to Owner, or, if owner is nil, to either active
-      form or application's main form.
-        @param AForm [in] Form to be aligned.
-      }
   end;
 
 type
@@ -50,9 +43,7 @@ type
   ///  </summary>
   ///  <remarks>Unlike TFormAligner, the form is always centralised, regardless
   ///  of the type of the owning control.</remarks>
-  TSimpleFormAligner = class(TInterfacedObject,
-    IFormAligner
-  )
+  TSimpleFormAligner = class(TInterfacedObject, IFormAligner)
   public
     ///  <summary>Aligns the given form over its owner, or, if the owner is nil,
     ///  over either the active form or the application's main form.</summary>
@@ -79,10 +70,6 @@ uses
 { TFormAligner }
 
 procedure TFormAligner.AlignForm(const AForm: TCustomForm);
-  {Aligns a form relative to Owner, or, if owner is nil, to either active form
-  or application's main form.
-    @param AForm [in] Form to be aligned.
-  }
 begin
   TDlgAligner.AlignToOwner(AForm);
 end;
