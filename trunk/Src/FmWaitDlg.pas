@@ -131,7 +131,7 @@ function TWaitDlg.GetAligner: IFormAligner;
     @return Required aligner object instance.
   }
 begin
-  Result := TFormAligner.Create;
+  Result := TSimpleFormAligner.Create;
 end;
 
 procedure TWaitDlg.InitForm;
