@@ -1,0 +1,122 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!--
+ * This Source Code Form is subject to the terms of the Mozilla Public License,
+ * v. 2.0. If a copy of the MPL was not distributed with this file, You can
+ * obtain one at http://mozilla.org/MPL/2.0/
+ *
+ * Copyright (C) 2013, Peter Johnson (www.delphidabbler.com).
+ *
+ * $Rev$
+ * $Date$
+ *
+ * CodeSnip File Format Documentation: Favourites Files
+-->
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; UTF-8" />
+
+<title>
+  CodeSnip File Format Documentation - Favourites Files
+</title>
+
+<link
+  rel="stylesheet"
+  type="text/css"
+  media="screen"
+  href="main.css"
+/>
+
+</head>
+
+<body>
+
+<div class="title">
+  <div>
+    DelphiDabbler CodeSnip
+  </div>
+  <div class="subtitle">
+    File Format Documentation
+  </div>
+</div>
+
+<h1>
+  Favourites Files
+</h1>
+
+<h2>
+  Introduction
+</h2>
+
+<p>
+  CodeSnip uses this file format when it saves the current user's favourite
+  snippets to disk. The files use a custom format.
+</p>
+
+<h2>
+  Encoding
+</h2>
+
+<p>
+  This is a simple plain text file format encoded as UTF-8 with byte order mark.
+</p>
+
+<h2>
+  File Format
+</h2>
+
+<p>
+  The file is introduced by a header line, which must occupy the first line.
+  This line must be:
+</p>
+
+<pre class="indent">► CodeSnip Favourites v1 ◄</pre>
+
+<p>
+  Immediately following the header line comes a list of information about the
+  user's favourite snippets. Information about each favourite occupies a single
+  line. The information comprises three fields, separated by TAB characters. The
+  fields are:
+</p>
+
+<ol>
+  <li>
+    Snippet name as a UTF-8 string.
+  </li>
+  <li>
+    A flag indicating whether the snippet is user defined or not. The text
+    &quot;True&quot; indicates a user defined snippet and &quot;False&quot;
+    signifies a snippet from the main database.
+  </li>
+  <li>
+    The date and time the snippet was last accessed. The date information is
+    formatted according to the current locale.
+  </li>
+</ol>
+
+<p>
+  Lines are separated by a CR / LF pair.
+</p>
+
+<p>
+  If there are no favourites then the file contains only the header line.
+</p>
+
+<p>
+  Blank lines are permitted anywhere except before the header line. Such lines
+  are ingored.
+</p>
+
+<p class="pullout">
+  <strong>NOTE:</strong>
+  The ► and ◄ characters were chosen for the header line because they encode in
+  a unique way in UTF-8 &ndash; ANSI files will not encode them correctly. This
+  provides a second check for the correct file format in addition to the byte
+  order mark.
+</p>
+
+</body>
+
+</html>
