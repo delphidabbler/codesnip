@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2010-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2010-2012, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -58,11 +58,8 @@ type
         @param PostProc [in] Anonymous method that performs POST request and
           processes response.
       }
-    function BuildURI(const ResourcePath: string;
-      const Params: TURIParams = nil): string;
+    function BuildURI(const Params: TURIParams = nil): string;
       {Builds a URI from web service name and any required parameters.
-        @param ResourcePath [in] Path to append to web service URI to specify
-          resource in REST APIs.
         @param Params [in] Parameters to append to URI as query string. May be
           empty or nil.
         @return Required URI.
@@ -76,38 +73,27 @@ type
       {Flag that indicates if progress reporting is required. When True the
       OnProgress event is triggered if assigned. The OnProgress event is not
       triggered if this property is False}
-    function GetRaw(const ResourcePath: string; const Params: TURIParams = nil):
-      TBytes;
+    function GetRaw(const Params: TURIParams = nil): TBytes;
       {Performs a GET request on web service with optional query string and
       returns response as raw data.
-        @param ResourcePath [in] Path to append to web service URI to specify
-          resource in REST APIs.
         @param Params [in] Optional parameters to include in query string.
         @return Response as raw byte array.
       }
-    function GetText(const ResourcePath: string;
-      const Params: TURIParams = nil): string;
+    function GetText(const Params: TURIParams = nil): string;
       {Performs a GET request on web service with optional query string and
       returns response as text.
-        @param ResourcePath [in] Path to append to web service URI to specify
-          resource in REST APIs.
         @param Params [in] Optional parameters to include in query string.
         @return Response as text, decoded according to response header.
       }
-    procedure GetStrings(const ResourcePath: string; const Params: TURIParams;
-      const Strings: TStrings); overload;
+    procedure GetStrings(const Params: TURIParams; const Strings: TStrings);
+      overload;
       {Performs a GET request on web service with query string and stores
       response in string list.
-        @param ResourcePath [in] Path to append to web service URI to specify
-          resource in REST APIs.
         @param Params [in] Parameters to include in query string. May be empty
           or nil.
       }
-    procedure GetStrings(const ResourcePath: string; const Strings: TStrings);
-      overload;
+    procedure GetStrings(const Strings: TStrings); overload;
       {Performs a GET request on web service and stores response in string list.
-        @param ResourcePath [in] Path to append to web service URI to specify
-          resource in REST APIs.
         @params Strings [in] String list that receives response.
       }
     function PostRaw(const Data: TStream): TBytes; overload;
@@ -188,21 +174,17 @@ uses
 
 { TBaseWebService }
 
-function TBaseWebService.BuildURI(const ResourcePath: string;
-  const Params: TURIParams): string;
+function TBaseWebService.BuildURI(const Params: TURIParams): string;
   {Builds a URI from web service name and any required parameters.
-    @param ResourcePath [in] Path to append to web service URI to specify
-      resource in REST APIs.
-    @param Params [in] Parameters to append to URI as query string. May be empty
-      or nil.
+    @param Params [in] Parameters to append to URI as query string. May be
+      empty or nil.
     @return Required URI.
   }
 begin
-  Result := fScriptURI;
-  if ResourcePath <> '' then
-    Result := Result + '\' + ResourcePath;
-  if Assigned(Params) and not Params.IsEmpty then
-    Result := Result + '?' + Params.EncodedQueryString;
+  if not Assigned(Params) or Params.IsEmpty then
+    Result := fScriptURI
+  else
+    Result := fScriptURI + '?' + Params.EncodedQueryString;
 end;
 
 constructor TBaseWebService.Create(const WebInfo: TWebServiceInfo);
@@ -264,17 +246,14 @@ begin
   end;
 end;
 
-function TBaseWebService.GetRaw(const ResourcePath: string;
-  const Params: TURIParams = nil): TBytes;
+function TBaseWebService.GetRaw(const Params: TURIParams = nil): TBytes;
   {Performs a GET request on web service with optional query string and returns
   response as raw data.
-    @param ResourcePath [in] Path to append to web service URI to specify
-      resource in REST APIs.
     @param Params [in] Optional parameters to include in query string.
     @return Response as raw byte array.
   }
 begin
-  Result := fHTTP.GetRaw(BuildURI(ResourcePath, Params));
+  Result := fHTTP.GetRaw(BuildURI(Params));
 end;
 
 function TBaseWebService.GetResponseCharSet: string;
@@ -285,41 +264,33 @@ begin
   Result := fHTTP.ResponseCharSet;
 end;
 
-procedure TBaseWebService.GetStrings(const ResourcePath: string;
-  const Strings: TStrings);
+procedure TBaseWebService.GetStrings(const Strings: TStrings);
   {Performs a GET request on web service and stores response in string list.
-    @param ResourcePath [in] Path to append to web service URI to specify
-      resource in REST APIs.
     @params Strings [in] String list that receives response.
   }
 begin
-  GetStrings(ResourcePath, nil, Strings);
+  GetStrings(nil, Strings);
 end;
 
-procedure TBaseWebService.GetStrings(const ResourcePath: string;
-  const Params: TURIParams; const Strings: TStrings);
+procedure TBaseWebService.GetStrings(const Params: TURIParams;
+  const Strings: TStrings);
   {Performs a GET request on web service with query string and stores response
   in string list.
-    @param ResourcePath [in] Path to append to web service URI to specify
-      resource in REST APIs.
     @param Params [in] Parameters to include in query string. May be empty or
       nil.
   }
 begin
-  Strings.Text := StrTrim(GetText(ResourcePath, Params));
+  Strings.Text := StrTrim(GetText(Params));
 end;
 
-function TBaseWebService.GetText(const ResourcePath: string;
-  const Params: TURIParams = nil): string;
+function TBaseWebService.GetText(const Params: TURIParams = nil): string;
   {Performs a GET request on web service with optional query string and returns
   response as text.
-    @param ResourcePath [in] Path to append to web service URI to specify
-      resource in REST APIs.
     @param Params [in] Optional parameters to include in query string.
     @return Response as text, decoded according to response header.
   }
 begin
-  Result := fHTTP.GetText(BuildURI(ResourcePath, Params));
+  Result := fHTTP.GetText(BuildURI(Params));
 end;
 
 function TBaseWebService.PostRaw(const Params: TURIParams): TBytes;

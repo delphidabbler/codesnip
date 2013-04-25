@@ -3,14 +3,14 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2007-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2007-2012, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
  *
- * Implements "static" classes that help to manipulate dialogue boxes:
- *  + TDlgHelper sets a dialogue box's parent window.
- *  + TDlgAligner aligns a dialogue box over a host window.
+ * Implements "static" classes that help to manipulate dialog boxes:
+ *  + TDlgHelper sets a dialpg box's parent window.
+ *  + TDlgAligner aligns a dialog box over a host window.
 }
 
 
@@ -28,17 +28,18 @@ uses
 
 
 type
-  ///  <summary>Static class that sets parent window of a dialogue box.
+  ///  <summary>
+  ///  Static class that sets parent window of a dialog box.
   ///  </summary>
   TDlgHelper = class(TNoConstructObject)
   public
-    ///  <summary>Sets parent window of dialogue Dlg to the window associated
-    ///  with Parent.</summary>
+    ///  <summary>Sets parent window of dialog Dlg to the window associated with
+    ///  Parent.</summary>
     ///  <remarks>If Parent is nil or is not recognised as a component that has
     ///  an associated window then either the active form or, failing that, the
     ///  application's main form are used.</remarks>
     class procedure SetDlgParent(const Dlg, Parent: TComponent);
-    ///  <summary>Makes the window associated with the owner of dialogue box Dlg
+    ///  <summary>Makes the window associated with the owner of dialog box Dlg
     ///  its parent window.</summary>
     ///  <remarks>If Dlg's owner is nil or is not recognised as a component that
     ///  has an associated window then either the active form or, failing that,
@@ -47,7 +48,9 @@ type
   end;
 
 type
-  ///  <summary>Class that aligns dialogue boxes over host windows.</summary>
+  ///  <summary>
+  ///  Class that aligns dialog boxes over host windows.
+  ///  </summary>
   TDlgAligner = class(TNoPublicConstructObject)
   strict private
     var
@@ -55,71 +58,68 @@ type
       fDialog: IInterface;
       ///  <summary>Object representing host window for alignment.</summary>
       fHostWdw: IInterface;
-    ///  <summary>Gets bounding rectangle of dialogue box to be aligned.
-    ///  </summary>
+    ///  <summary>Gets bounding rectangle of dialog box to be aligned.</summary>
     procedure GetDialogBounds(out DlgBounds: TRectEx);
-    ///  <summary>Offsets a dialogue's bounding rectangle relative to host
-    ///  window.</summary>
-    ///  <remarks>How rectangle is offset depends on whether host is a dialogue
+    ///  <summary>Offsets a dialog's bounding rectangle relative to host window.
+    ///  </summary>
+    ///  <remarks>How rectangle is offset depends on whether host is a dialog
     ///  box or not.</remarks>
     procedure OffsetDialog(var DlgBounds: TRectEx);
-    ///  <summary>Ensures that a bounding rectangle of a dialogue box fits
-    ///  within screen work area.</summary>
+    ///  <summary>Ensures that a bounding rectangle of a dialog box fits within
+    ///  screen work area.</summary>
     procedure FitToWorkArea(var DlgBounds: TRectEx);
-    ///  <summary>Adjusts position (and possibly size) of dialogue box being
+    ///  <summary>Adjusts position (and possibly size) of dialog box being
     ///  aligned according to bounding rectangle.</summary>
     procedure AdjustWindowPosition(const DlgBounds: TRectEx);
-    ///  <summary>Aligns dialogue box relative to host.</summary>
+    ///  <summary>Aligns dialog box relative to host.</summary>
     procedure PerformAlignment;
   strict protected
     ///  <summary>Parameterless constructor. Must not be called.</summary>
     ///  <remarks>Raises ENoConstructException if called.</remarks>
     constructor InternalCreate; overload;
-    ///  <summary>Constructs object for dialogue boxes and host windows that
-    ///  both descend from TComponent.</summary>
+    ///  <summary>Constructs object for dialog boxes and host windows that both
+    ///  descend from TComponent.</summary>
     ///  <remarks>Creates appropriate window and aligner instances.</remarks>
     constructor InternalCreate(const Dlg, Host: TComponent); overload;
-    ///  <summary>Constructs object for dialogue boxes defined by window handle
+    ///  <summary>Constructs object for dialog boxes defined by window handle
     ///  and hosts that descend from TComponent.</summary>
     ///  <remarks>Creates appropriate window and aligner instances.</remarks>
     constructor InternalCreate(const DlgHandle: THandle;
       const Host: TComponent); overload;
   public
-    ///  <summary>Aligns a dialogue box over a host window.</summary>
+    ///  <summary>Aligns a dialog box over a host window.</summary>
     ///  <remarks>
-    ///  <para>If host window is also a dialogue box then the dialogue box being
+    ///  <para>If host window is also a dialog box then the dialog box being
     ///  aligned is offset from top left corner of host. If host window is not
-    ///  a dialogue box then dialogue box is centred over the host window.
-    ///  </para>
+    ///  a dialog box then dialog box is centred over the host window.</para>
     ///  <para>If Host is nil or does not have an associated window then the
-    ///  dialogue box is aligned over the active form or, failing that the
+    ///  dialog box is aligned over the active form or, failing that the
     ///  application's main form.</para>
-    ///  <para>Both dialogue box and host must descend from TComponent.</para>
+    ///  <para>Both dialog box and host must descend from TComponent.</para>
     ///  </remarks>
     class procedure Align(const Dlg, Host: TComponent); overload;
-    ///  <summary>Aligns a dialogue box over a host window.</summary>
+    ///  <summary>Aligns a dialog box over a host window.</summary>
     ///  <remarks>
-    ///  <para>If host window is also a dialogue box then the dialogue box being
+    ///  <para>If host window is also a dialog box then the dialog box being
     ///  aligned is offset from top left corner of host. If host window is not
-    ///  a dialogue box then dialogue box is centred over the host window.
-    ///  </para>
+    ///  a dialog box then dialog box is centred over the host window.</para>
     ///  <para>If Host is nil or does not have an associated window then the
-    ///  dialogue box is aligned over the active form or, failing that the
+    ///  dialog box is aligned over the active form or, failing that the
     ///  application's main form.</para>
-    ///  <para>Dialogue box is identified by its window handle and host must be
-    ///  a TComponent descendant.</para>
+    ///  <para>Dialog box is identified by its window handle and host must be a
+    ///  TComponent descendant.</para>
     ///  </remarks>
     class procedure Align(const DlgHandle: THandle; const Host: TComponent);
       overload;
-    ///  <summary>Aligns a dialogue box window over the window associated with
-    ///  the dialogue's Owner component.</summary>
+    ///  <summary>Aligns a dialog box window over the window associated with the
+    ///  dialog's Owner component.</summary>
     ///  <remarks>
-    ///  <para>If owner window is also a dialogue box then the dialogue box
-    ///  being aligned is offset from top left corner of owner window. If owner
-    ///  window is not a dialogue box then dialogue box is centred over the
-    ///  owner window.</para>
-    ///  <para>If dialogue's Owner is nil or does not have an associated window
-    ///  then the dialogue box is aligned over the active form or, failing that
+    ///  <para>If owner window is also a dialog box then the dialog box being
+    ///  aligned is offset from top left corner of owner window. If owner window
+    ///  is not a dialog box then dialog box is centred over the owner window.
+    ///  </para>
+    ///  <para>If dialog's Owner is nil or does not have an associated window
+    ///  then the dialog box is aligned over the active form or, failing that
     ///  the application's main form.</para>
     ///  </remarks>
     class procedure AlignToOwner(const Dlg: TComponent);
@@ -137,34 +137,38 @@ uses
 
 
 type
-  ///  <summary>Abstraction of a window that provides information about the
-  ///  window.</summary>
+  ///  <summary>
+  ///  Abstraction of a window that provides information about the window.
+  ///  </summary>
   IWindowInfo = interface(IInterface)
     ['{8E0F5AA6-88AC-4734-99C0-2253E7CF665A}']
-    ///  <summary>Check if window is a dialogue box or not.</summary>
+    ///  <summary>Checks if window is a dialog box or not.</summary>
     function IsDialog: Boolean;
     ///  <summary>Get window's bounding rectangle.</summary>
     function BoundsRect: TRectEx;
-    ///  <summary>Get window's handle.</summary>
+    ///  <summary>Gets window's handle.</summary>
     function Handle: THandle;
   end;
 
 type
-  ///  <summary>Abstraction of a window that can be aligned above another
-  ///  window.</summary>
+  ///  <summary>
+  ///  Abstraction of a window that can be aligned above another window.
+  ///  </summary>
   IAlignableWindow = interface(IInterface)
     ['{E65CAAEE-F782-4489-B2DF-2B8C4121825F}']
-    ///  <summary>Get window's bounding rectangle.</summary>
+    ///  <summary>Gets window's bounding rectangle.</summary>
     function BoundsRect: TRectEx;
-    ///  <summary>Adjust window's bounding rectangle to given value, in screen
+    ///  <summary>Adjusts window's bounding rectangle to given value, in screen
     ///  co-ordinates.</summary>
     ///  <remarks>May ignore any change of size.</remarks>
     procedure AdjustWindow(const Bounds: TRectEx);
   end;
 
 type
-  ///  <summary>Factory class that creates IWindowInfo instances from
-  ///  appropriate classes.</summary>
+  ///  <summary>
+  ///  Factory class that creates IWindowInfo instances from appropriate
+  ///  classes.
+  ///  </summary>
   TWindowInfoFactory = class(TNoConstructObject)
   public
     ///  <summary>Creates a suitable IWindowInfo instance for given host
@@ -176,24 +180,27 @@ type
   end;
 
 type
-  ///  <summary>Factory class that creates IAlignableWindow instances from
-  ///  appropriate classes.</summary>
+  ///  <summary>
+  ///  Factory class that creates IAlignableWindow instances from appropriate
+  ///  classes.
+  ///  </summary>
   TAlignableDialogFactory = class(TNoConstructObject)
   public
-    ///  <summary>Creates a suitable IAlignableWindow instance for a dialogue
-    ///  box component.</summary>
+    ///  <summary>Creates a suitable IAlignableWindow instance for a dialog box
+    ///  component.</summary>
     ///  <remarks>Dlg must be either a TCustomForm or TCommonDialog descendant.
     ///  </remarks>
     class function Instance(const Dlg: TComponent): IAlignableWindow; overload;
-    ///  <summary>Creates a suitable IAlignableWindow instance for a dialogue
-    ///  box specified by its window handle.</summary>
+    ///  <summary>Creates a suitable IAlignableWindow instance for a dialog box
+    ///  specified by its window handle.</summary>
     ///  <remarks>Handle must be a valid window handle.</remarks>
     class function Instance(const Handle: THandle): IAlignableWindow; overload;
   end;
 
 type
-  ///  <summary>Class that implements IAlignableWindow and IWindowInfo
-  ///  interfaces for a form. Provides information about and positions the form.
+  ///  <summary>
+  ///  Class that implements IAlignableWindow and IWindowInfo interfaces for a
+  ///  form. Provides information about and positions the form.
   ///  </summary>
   TFormWindow = class(TInterfacedObject,
     IAlignableWindow, IWindowInfo
@@ -209,11 +216,11 @@ type
     ///  <remarks>Method of both IWindowInfo and IAlignableWindow.</remarks>
     function BoundsRect: TRectEx;
     ///  <summary>Adjusts form to have a new bounding rectangle. If form is a
-    ///  dialogue box then top left corner is moved to new position but size is
+    ///  dialog box then top left corner is moved to new position but size is
     ///  not changed.</summary>
     ///  <remarks>Method of IAlignableWindow.</remarks>
     procedure AdjustWindow(const Bounds: TRectEx);
-    ///  <summary>Checks if form is a dialogue box.</summary>
+    ///  <summary>Checks if form is a dialog box.</summary>
     ///  <remarks>Method of IWindowInfo.</remarks>
     function IsDialog: Boolean;
     ///  <summary>Gets form's window handle.</summary>
@@ -222,9 +229,10 @@ type
   end;
 
 type
-  ///  <summary>Class that implements IWindowInfo interface for a TWinControl
-  ///  and descendants (except TCustomForm). Provides information about the
-  ///  control.</summary>
+  ///  <summary>
+  ///  Class that implements IWindowInfo interface for a TWinControl and
+  ///  descendants (except TCustomForm). Provides information about the control.
+  ///  </summary>
   TWinControlWindow = class(TInterfacedObject,
     IWindowInfo
   )
@@ -235,14 +243,14 @@ type
   public
     ///  <summary>Sets up object for given TWinControl.</summary>
     constructor Create(const WinCtrl: TWinControl);
-    ///  <summary>Checks if control is a dialogue box.</summary>
+    ///  <summary>Checks if control is a dialog box.</summary>
     ///  <remarks>
-    ///  <para>Always returns False because a TWinControl is never a dialogue
-    ///  box.</para>
+    ///  <para>Always returns False because a TWinControl is never a dialog box.
+    ///  </para>
     ///  <para>Method of IWindowInfo.</para>
     ///  </remarks>
     function IsDialog: Boolean;
-    ///  <summary>Gets bounding rectangle of control.</summary>
+    ///  <summary>Gets bound rectangle rectangle of control.</summary>
     ///  <remarks>Method of IWindowInfo.</remarks>
     function BoundsRect: TRectEx;
     ///  <summary>Gets window handle associated with control.</summary>
@@ -251,51 +259,54 @@ type
   end;
 
 type
-  ///  <summary>Class that implements IAlignableWindow and IWindowInfo
-  ///  interfaces for a common dialogue box (except TOpenDialog). Provides
-  ///  information about and positions the dialogue.</summary>
+  ///  <summary>
+  ///  Class that implements IAlignableWindow and IWindowInfo interfaces for a
+  ///  common dialog box (except TOpenDialog). Provides information about and
+  ///  positions the dialog.
+  ///  </summary>
   TCommonDialogWindow = class(TInterfacedObject,
     IWindowInfo, IAlignableWindow
   )
   strict protected
     var
-      ///  <summary>Reference to common dialogue to be encapsulated.</summary>
+      ///  <summary>Reference to common dialog to be encapsulated.</summary>
       fDlg: TCommonDialog;
   public
-    ///  <summary>Sets up object for given common dialogue component.</summary>
+    ///  <summary>Sets up object for given common dialog component.</summary>
     constructor Create(const Dlg: TCommonDialog);
-    ///  <summary>Gets dialogue's bounding rectangle.</summary>
+    ///  <summary>Gets dialog's bounding rectangle.</summary>
     ///  <remarks>Method of both IWindowInfo and IAlignableWindow.</remarks>
     function BoundsRect: TRectEx;
-    ///  <summary>Adjust common dialogue to have same top corner as bounding
+    ///  <summary>Adjust common dialog to have same top corner as bounding
     ///  rectangle. Any change of size is ignored.</summary>
     ///  <remarks>Method of IAlignableWindow.</remarks>
     procedure AdjustWindow(const Bounds: TRectEx);
-    ///  <summary>Checks if component is a dialogue box.</summary>
+    ///  <summary>Checks if component is a dialog box.</summary>
     ///  <remarks>
-    ///  <para>Always returns True because a common dialogues are always
-    ///  dialogues.</para>
+    ///  <para>Always returns True because a common dialogs are always dialogs.
+    ///  </para>
     ///  <para>Method of IWindowInfo.</para>
     ///  </remarks>
     function IsDialog: Boolean;
-    ///  <summary>Gets dialogue box's window handle.</summary>
+    ///  <summary>Gets dialog box's window handle.</summary>
     ///  <remarks>Method of IWindowInfo.</remarks>
     function Handle: THandle; virtual;
   end;
 
 type
-  ///  <summary>Class that implements IAlignableWindow and IWindowInfo
-  ///  interfaces for a TOpenDialog. Provides information about and positions
-  ///  the dialogue.</summary>
+  ///  <summary>
+  ///  Class that implements IAlignableWindow and IWindowInfo interfaces for a
+  ///  TOpenDialog. Provides information about and positions the dialog.
+  ///  </summary>
   TOpenDialogWindow = class(TCommonDialogWindow,
     IWindowInfo, IAlignableWindow
   )
   public
-    ///  <summary>Sets up object for given open dialogue component.</summary>
+    ///  <summary>Sets up object for given open dialog component.</summary>
     constructor Create(const Dlg: TOpenDialog);
     ///  <summary>Gets dialog box's window handle.</summary>
     ///  <remarks>
-    ///  <para>Deals correctly with dialogues with explorer hooks and/or
+    ///  <para>Deals correctly with dialogs with explorer hooks and/or
     ///  customisation templates.</para>
     ///  <para>Method of IWindowInfo.</para>
     ///  </remarks>
@@ -303,14 +314,16 @@ type
   end;
 
 type
-  ///  <summary>Class that implements IAlignableWindow for a window specified by
-  ///  its window handle. Positions the dialogue.</summary>
+  ///  <summary>
+  ///  Class that implements IAlignableWindow for a window specified by its
+  ///  window handle. Positions the dialog.
+  ///  </summary>
   THandleWindow = class(TInterfacedObject,
     IAlignableWindow
   )
   strict private
     var
-      ///  <summary>Handle of dialogue box window.</summary>
+      ///  <summary>Handle of dialog box window.</summary>
       fHandle: THandle;
   public
     ///  <summary>Sets up object for given window handle.</summary>
@@ -326,21 +339,21 @@ type
   end;
 
 type
-  ///  <summary>Class that implements IWindowInfo for the Application object.
+  ///  <summary>
+  ///  Class that implements IWindowInfo for the Application object.
   ///  </summary>
   TApplicationWindow = class(TInterfacedObject,
     IWindowInfo
   )
   public
-    ///  <summary>Checks if application window is a dialogue box or not.
-    ///  </summary>
+    ///  <summary>Checks if application window is a dialog box or not.</summary>
     ///  <remarks>
     ///  <para>Always returns False because application window can't be a
     ///  dialogue box.</para>
     ///  <para>Method of IWindowInfo.</para>
     ///  </remarks>
     function IsDialog: Boolean;
-    ///  <summary>Gets window's bounding rectangle.</summary>
+    ///  <summary>Get window's bounding rectangle.</summary>
     ///  <remarks>
     ///  <para>Returns bounds of work area of primary monitor.</para>
     ///  <para>Method of IWindowInfo.</para>
@@ -360,7 +373,7 @@ type
 class procedure TDlgHelper.SetDlgParent(const Dlg, Parent: TComponent);
 var
   ParentWindow: IWindowInfo;  // encapsulates parent window
-  DlgWindow: IWindowInfo;     // encapsulates dialogue box window
+  DlgWindow: IWindowInfo;     // encapsulates dialog box window
 begin
   Assert(Assigned(Dlg), ClassName + '.SetDlgParent: Dlg is nil');
   DlgWindow := TWindowInfoFactory.Instance(Dlg);
@@ -452,20 +465,20 @@ end;
 
 procedure TDlgAligner.OffsetDialog(var DlgBounds: TRectEx);
 const
-  // Offsets used when aligning over a dialogue box
+  // Offsets used when aligning over a dialog box
   cDlgOffset: TPoint = (X: 40; Y: 40);
 var
   HostBounds: TRectEx;  // bounding rectangle of AlignCtrl in screen co-ords
 begin
   HostBounds := (fHostWdw as IWindowInfo).BoundsRect;
   if (fHostWdw as IWindowInfo).IsDialog then
-    // Aligning over dialogue box: offset down and to left
+    // Aligning over dialog box: offset down and to left
     DlgBounds.OffsetBy(
       HostBounds.Left - DlgBounds.Left + cDlgOffset.X,
       HostBounds.Top - DlgBounds.Top + cDlgOffset.Y
     )
   else
-    // Aligning over a main window: "centre" dialogue over window
+    // Aligning over a main window: "centre" dialog over window
     DlgBounds.OffsetBy(
       HostBounds.Left - DlgBounds.Left +
         (HostBounds.Width - DlgBounds.Width) div 2,
@@ -476,7 +489,7 @@ end;
 
 procedure TDlgAligner.PerformAlignment;
 var
-  DlgBounds: TRectEx; // bounding rectangle of dialogue box
+  DlgBounds: TRectEx; // bounding rectangle of dialog box
 begin
   GetDialogBounds(DlgBounds);
   OffsetDialog(DlgBounds);
@@ -617,10 +630,10 @@ function TOpenDialogWindow.Handle: THandle;
 begin
   if NewStyleControls and
     not (ofOldStyleDialog in (fDlg as TOpenDialog).Options)  then
-    // For explorer style dialogues with explorer hooks and / or customisation
+    // For explorer style dialogs with explorer hooks and / or customisation
     // templates the main window handle is the parent of the handle returned
-    // from dialogue's Handle property. Delphi always provides an explorer hook
-    // for new style dialogue boxes, so we can assume we need the parent handle
+    // from dialog's Handle property. Delphi always provides an explorer hook
+    // for new style dialog boxes, so we can assume we need the parent handle
     Result := GetParent(inherited Handle)
   else
     Result := inherited Handle;
@@ -630,10 +643,19 @@ end;
 
 function TWinControlWindow.BoundsRect: TRectEx;
 begin
-  Result.TopLeft := fWinCtrl.ClientToScreen(Point(0, 0));
-  Result.BottomRight := fWinCtrl.ClientToScreen(
-    Point(fWinCtrl.Width, fWinCtrl.Height)
-  );
+  if fWinCtrl.Parent = nil then
+    // No parent: bounds are already in screen coords
+    Result := fWinCtrl.BoundsRect
+  else
+  begin
+    // Parented control: bounds are relative to parent => map to screen coords
+    Result.TopLeft := fWinCtrl.ClientToScreen(
+      fWinCtrl.BoundsRect.TopLeft
+    );
+    Result.BottomRight := fWinCtrl.ClientToScreen(
+      fWinCtrl.BoundsRect.BottomRight
+    );
+  end;
 end;
 
 constructor TWinControlWindow.Create(const WinCtrl: TWinControl);

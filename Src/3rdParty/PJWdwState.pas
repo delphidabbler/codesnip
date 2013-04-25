@@ -1130,6 +1130,8 @@ var
   MonitorInfo: TMonitorInfo;  // receives info about a monitor
   MDIParent: TForm;           // reference to parent form of MDI child
   Scrollbars: TScrollStyle;   // scrollbars displayed by MDI child
+  WorkAreaWidth: Integer;     // width of work area
+  WorkAreaHeight: Integer;    // height of work area
 begin
   Assert(not (csDesigning in ComponentState));
 
@@ -1223,11 +1225,14 @@ begin
       GetMonitorInfo(AMonitor, @MonitorInfo);
       {$IFDEF WARNDIRS}{$WARN UNSAFE_CODE ON}{$ENDIF}
       WorkArea:= MonitorInfo.rcWork;
+      // offset work area so it has top left of (0,0): fix re issue#26
+      OffsetRect(WorkArea, -WorkArea.Left, -WorkArea.Top);
     end;
 
     // Adjust window if we have got a work area
     if not IsRectEmpty(WorkArea) then
     begin
+
       // Resize window if too wide or high if resizing permitted
       if Width > WorkArea.Right - WorkArea.Left then
         Width := WorkArea.Right - WorkArea.Left;
