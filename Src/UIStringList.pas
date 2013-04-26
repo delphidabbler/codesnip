@@ -152,6 +152,9 @@ type
       {Copies strings from string list into an array of strings.
         @return Array of strings.
       }
+    procedure Sort;
+      {Sorts the string list alphabetically.
+      }
   end;
 
   {
@@ -313,6 +316,9 @@ type
     function ToArray: TArray<string>;
       {Copies strings from string list into an array of strings.
         @return Array of strings.
+      }
+    procedure Sort;
+      {Sorts the string list alphabetically.
       }
     { IAssignable methods }
     procedure Assign(const Src: IInterface);
@@ -638,6 +644,13 @@ procedure TIStringList.SetText(const Text: string; const Delim: string;
 begin
   Clear;
   Add(Text, Delim, AllowEmpty, Trim);
+end;
+
+procedure TIStringList.Sort;
+  {Sorts the string list alphabetically.
+  }
+begin
+  fStrings.Sort;
 end;
 
 function TIStringList.ToArray: TArray<string>;
