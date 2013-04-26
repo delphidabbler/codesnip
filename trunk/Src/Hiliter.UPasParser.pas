@@ -39,6 +39,8 @@ type
     type
       ///  <summary>Set of possible states of parser.</summary>
       TParserStates = set of (
+        psPreamble,       // processing preamble white space / comments
+        psInPackage,      // processing a package source file
         psBetweenLines,   // start of a new line is pending
         psInASM,          // processing assembler code
         psInProperty,     // processing a property declaration
@@ -179,6 +181,9 @@ begin
   fContextDirs.Add('name', [psInExports, psInExternal]);
   fContextDirs.Add('resident', [psInExports]);
   fContextDirs.Add('delayed', [psInExternal]);
+  fContextDirs.Add('contains', [psInPackage]);
+  fContextDirs.Add('requires', [psInPackage]);
+  fContextDirs.Add('package', [psInPackage]);
   fContextDirs.Add('local', []); // Kylix directive: never reserved in Delphi
 end;
 
@@ -249,9 +254,19 @@ begin
   // Create new lexical analyser to tokenise source code
   fLexer.Free;
   fLexer := THilitePasLexer.Create(Source);
-  fState := [psBetweenLines];
+  fState := [psBetweenLines, psPreamble];
   while fLexer.NextToken <> tkEOF do
   begin
+    if psPreamble in fState then
+    begin
+      if not (
+        fLexer.Token in
+         [tkComment, tkCompilerDir, tkWhitespace, tkEOL, tkError]
+      ) then
+      Exclude(fState, psPreamble);
+      if IsTokenStr('package') then
+        Include(fState, psInPackage);
+    end;
     // We treat end of line separately from other tokens
     if fLexer.Token <> tkEOL then
     begin

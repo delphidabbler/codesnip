@@ -378,6 +378,11 @@ type
   ///  definition to include descriptive comments.</summary>
   TClassFormatter = class(TNoConstructObject)
   strict private
+    class var
+      ///  <summary>List of directive names that are valid for use as method
+      ///  names.</summary>
+      fValidDirsInMethodNames: IStringList;
+
     ///  <summary>Creates and returns a comment containing a class or advanced
     ///  record type's description.</summary>
     ///  <param name="CommentStyle">TCommentStyle [in] Required commenting
@@ -411,6 +416,9 @@ type
       Defn: string);
 
   public
+
+    ///  <summary>Instantiates class objects.</summary>
+    class constructor Create;
 
     ///  <summary>Formats source code of a class or advanced record snippet's
     ///  declaration, including a comment containing its description if
@@ -1214,6 +1222,23 @@ end;
 
 { TClassFormatter }
 
+class constructor TClassFormatter.Create;
+begin
+  // record names of directives that are valid for use as method names
+  fValidDirsInMethodNames := TIStringList.Create([
+    'absolute', 'abstract', 'assembler', 'cdecl', 'contains', 'default',
+    'delayed', 'deprecated', 'dispid', 'dynamic', 'experimental', 'export',
+    'external', 'far', 'final', 'forward', 'helper', 'implements', 'index',
+    'local', 'message', 'name', 'near', 'nodefault', 'overload', 'override',
+    'package', 'pascal', 'platform', 'read', 'readonly', 'reference',
+    'register', 'reintroduce', 'requires', 'resident', 'safecall', 'sealed',
+    'static', 'stdcall', 'stored', 'strict', 'unsafe', 'varargs', 'virtual',
+    'winapi', 'write', 'writeonly'
+  ]);
+  fValidDirsInMethodNames.CaseSensitive := False;
+  fValidDirsInMethodNames.Sort;
+end;
+
 class function TClassFormatter.FormatClassDeclaration(
   CommentStyle: TCommentStyle; const TruncateComments: Boolean;
   const Snippet: TSnippet): string;
@@ -1284,6 +1309,8 @@ var
 const
   WhiteSpaceTokens = [tkComment, tkCompilerDir, tkWhitespace, tkEOL];
 
+  ///  <summary>Checks if given token is one of the keywords used to introduce
+  ///  a method.</summary>
   function IsMethodKwd(const Tok: string): Boolean;
   begin
     Result := StrSameText(Lexer.TokenStr, 'function')
@@ -1293,12 +1320,24 @@ const
       or StrSameText(Lexer.TokenStr, 'operator');
   end;
 
+  ///  <summary>Checks if current lexer token can represent a method name.
+  ///  </summary>
+  function IsMethodName(const Lexer: THilitePasLexer): Boolean;
+  begin
+    // Either an identifier or one of a certain number of directives can be used
+    // as the name of a method.
+    if Lexer.Token = tkIdentifier then
+      Exit(True);
+    Result := (Lexer.Token = tkDirective)
+      and fValidDirsInMethodNames.Contains(Lexer.TokenStr);
+  end;
+
 resourcestring
   sTypeKwdError = '"type" must be first keyword in source code';
   sClassTypeNameError = 'Class type name expected in source code';
   sBadTypeError = 'Invalid class or advanced record type';
-  sImplementationKwdError = '"implementation" keyword not permitted in class or '
-    + 'advanced record snippets.';
+  sImplementationKwdError = '"implementation" keyword not permitted in class '
+    + 'or advanced record snippets.';
 begin
   Lexer := THilitePasLexer.Create(Source);
   try
@@ -1313,7 +1352,7 @@ begin
         raise ECodeSnip.Create(sTypeKwdError);
       SB.Append(Lexer.TokenStr);
 
-      // get name of class from following indentifier
+      // get name of class from following identifier
       while Lexer.NextToken in WhiteSpaceTokens do
         SB.Append(Lexer.TokenStr);
       if Lexer.Token <> tkIdentifier then
@@ -1362,7 +1401,7 @@ begin
           Temp := Temp + Lexer.TokenStr;
         // record pascal item after white space
         Temp := Temp + Lexer.TokenStr;
-        if (Lexer.Token <> tkIdentifier)
+        if not IsMethodName(Lexer)
           or not StrSameText(Lexer.TokenStr, ClassTypeName) then
         begin
           // not the required identifier: record text and go round again
@@ -1382,7 +1421,7 @@ begin
         while Lexer.NextToken in WhiteSpaceTokens do
           Temp := Temp + Lexer.TokenStr;
         Temp := Temp + Lexer.TokenStr;
-        if (Lexer.Token <> tkIdentifier) then
+        if not IsMethodName(Lexer) then
         begin
           SB.Append(Temp);
           Continue;
