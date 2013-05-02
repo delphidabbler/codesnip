@@ -1,0 +1,62 @@
+<!--
+ * This Source Code Form is subject to the terms of the Mozilla Public License,
+ * v. 2.0. If a copy of the MPL was not distributed with this file, You can
+ * obtain one at http://mozilla.org/MPL/2.0/
+ *
+ * Copyright (C) 2005-2012, Peter Johnson (www.delphidabbler.com).
+ *
+ * $Rev$
+ * $Date$
+ *
+ * Information pane template used to display details of currently selected
+ * snippet.
+ *
+ * Must be hosted within a complete HTML document.
+-->
+
+<div class="details">
+
+  <div>
+
+    <div style="<%TestingInfo%>">
+      <%TestingInfoImg%>
+    </div>
+
+    <div
+      id="editlink"
+      class="option"
+      style="<%EditLink%>
+        padding:0;margin:0 0 0 8px;position:relative;float:right;"
+    >
+      <a
+        id="editimglink"
+        class="command-link"
+        href="#"
+        onclick="<%EditEventHandler%>;return false;"
+      ><img
+        src="editsnippet.gif"
+        class="option-img"
+        style="width:16px;height:16px;vertical-align:middle;"
+        title="Edit Snippet"
+      ></a>
+      <a
+        id="edittextlink"
+        class="command-link menu-item"
+        style="line-height: 150%;";
+        href="#"
+        onclick="<%EditEventHandler%>;return false;"
+      >Edit Snippet</a>
+    </div>
+
+    <h1 id="snippetname" class="<%SnippetCSSClass%>">
+      <%SnippetName%>
+    </h1>
+
+  </div>
+
+  <div id="details">
+    <%SnippetPageFragments%>
+  </div>
+
+ </div>
+
