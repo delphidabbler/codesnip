@@ -27,7 +27,7 @@ DelphiDabbler Codesnip you are consenting to be bound by the agreement. If you
 do not agree to the terms and conditions of this agreement do not install or use
 any part of DelphiDabbler Codesnip.
 
-DelphiDabbler CodeSnip is copyright (c) 2005-2011 by Peter D Johnson,
+DelphiDabbler CodeSnip is copyright (c) 2005-2013 by Peter D Johnson,
 http://www.delphidabbler.com.
 
 
