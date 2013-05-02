@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2010-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2010-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -675,6 +675,7 @@ begin
   AddMenuItem('Delphi XE', 22.0);
   AddMenuItem('Delphi XE2', 23.0);
   AddMenuItem('Delphi XE3', 24.0);
+  AddMenuItem('Delphi XE4', 25.0);
 end;
 
 procedure TCodeGenPrefsFrame.PreDefCompilerMenuClick(Sender: TObject);

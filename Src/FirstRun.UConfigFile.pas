@@ -457,6 +457,7 @@ procedure TUserConfigFileUpdater.UpdateNamespaces;
 begin
   UpdateForCompiler('DXE2');
   UpdateForCompiler('DXE3');
+  UpdateForCompiler('DXE4');
 end;
 
 { TCommonConfigFileUpdater }
