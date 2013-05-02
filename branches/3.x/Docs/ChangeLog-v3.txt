@@ -4,11 +4,17 @@
 ; $Date$
 ; ------------------------------------------------------------------------------
 
+Release v3.12.0 of 02 May 2013
++ Added support for Delphi XE4 compiler. Implements feature request #78 (http://bit.ly/10uGhoD).
++ Fixed bug #78 (http://bit.ly/ZQl3T4) - CodeSnip doesn't restore window in correct position when task bar on left or top of screen.
++ Updated documentation re changes.
++ Updated help file re changes.
+
 Release v3.11.1 of 08 December 2012
 + Fixed bug #3578654 (http://bit.ly/T7fTxu): "Pre-processor directive errors in main db ini files" by removing support for problematic directives.
 + Hints are no longer displayed in status bar when user rolls mouse over a link in the display pane. This fixes bug #3577408 (http://bit.ly/WEzZGg): "Clicking detail pane snippet link leaves hint in status bar".
 + Windows no longer scale automatically when screen DPI differs from that on design system. This fixes bugs #3591818 (http://bit.ly/TvNaUL) "Strange window behaviour in Windows 7" and bug #3591820 (http://bit.ly/SEH6dO) "Incorrect font size used for some bold text".
-+ Update operating system detection code to detect W0ndows 8 & 2012 server.
++ Updated operating system detection code to detect W0ndows 8 & 2012 server.
 + Updated documentation
 
 Release v3.11.0 of 17 September 2012
