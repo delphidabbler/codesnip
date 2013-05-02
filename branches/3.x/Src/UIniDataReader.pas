@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2013 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -302,7 +302,7 @@ const
     array[TCompilerID] of string = (
     'Delphi2', 'Delphi3', 'Delphi4', 'Delphi5', 'Delphi6', 'Delphi7',
     'Delphi2005Win32', 'Delphi2006Win32', 'Delphi2007', 'Delphi2009Win32',
-    'Delphi2010', 'DelphiXE', 'DelphiXE2', 'DelphiXE3',
+    'Delphi2010', 'DelphiXE', 'DelphiXE2', 'DelphiXE3', 'DelphiXE4',
     'FPC'
   );
 

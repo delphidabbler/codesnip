@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2013 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -140,6 +140,8 @@ begin
       Result := 'DXE2';
     ciDXE3:
       Result := 'DXE3';
+    ciDXE4:
+      Result := 'DXE4';
     else raise EBug.Create(ClassName + '.GetIDString: Invalid ID');
   end;
 end;
@@ -153,6 +155,7 @@ resourcestring
   sDelphiXE = 'Delphi XE';      // name of Delphi XE compiler
   sDelphiXE2 = 'Delphi XE2';    // name of Delphi XE2 compiler
   sDelphiXE3 = 'Delphi XE3';    // name of Delphi XE3 compiler
+  sDelphiXE4 = 'Delphi XE4';    // name of Delphi XE4 compiler
 begin
   case GetID of
     ciDXE:
@@ -161,6 +164,8 @@ begin
       Result := sDelphiXE2;
     ciDXE3:
       Result := sDelphiXE3;
+    ciDXE4:
+      Result := sDelphiXE4;
     else
       Result := Format(sCompilerName, [ProductVersion]);
   end;
@@ -173,7 +178,7 @@ function TBDSCompiler.GlyphResourceName: string;
 begin
   case GetID of
     ciD2005w32, ciD2006w32, ciD2007, ciD2009w32: Result := 'BDS';
-    ciD2010, ciDXE, ciDXE2, ciDXE3: Result := 'EMBARCADERO';
+    ciD2010, ciDXE, ciDXE2, ciDXE3, ciDXE4: Result := 'EMBARCADERO';
     else raise EBug.Create(ClassName + '.GlyphResourceName: Invalid ID');
   end;
 end;
@@ -193,6 +198,7 @@ begin
     ciDXE     : Result := '\Software\Embarcadero\BDS\8.0';
     ciDXE2    : Result := '\Software\Embarcadero\BDS\9.0';
     ciDXE3    : Result := '\Software\Embarcadero\BDS\10.0';
+    ciDXE4    : Result := '\Software\Embarcadero\BDS\11.0';
     else raise EBug.Create(ClassName + '.InstallationRegKey: Invalid ID');
   end;
 end;
@@ -208,10 +214,7 @@ begin
     ciD2007:    Result := 2007;
     ciD2009w32: Result := 2009;
     ciD2010:    Result := 2010;
-    ciDXE:      Result := 2011;
-    ciDXE2:     Result := 2012;
-    ciDXE3:     Result := 2013;
-    else raise EBug.Create(ClassName + '.ProductVersion: Invalid ID');
+    else        Result := 0;  // not used for Delphi XE and later
   end;
 end;
 

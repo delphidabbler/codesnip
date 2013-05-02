@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2013 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -57,7 +57,7 @@ type
     ciD2007,                            // Delphi 2007 for Win32
     ciD2009w32,                         // Delphi 2009 Win32 personality
     ciD2010,                            // Delphi 2010
-    ciDXE, ciDXE2, ciDXE3,              // Delphi XE to XE3
+    ciDXE, ciDXE2, ciDXE3, ciDXE4,      // Delphi XE to XE4
     ciFPC                               // Free Pascal
   );
 
@@ -67,7 +67,8 @@ const
     ciD2, ciD3, ciD4, ciD5, ciD6, ciD7
   ];
   cBDSCompilers = [           // BDS based compilers
-    ciD2005w32, ciD2006w32, ciD2007, ciD2009w32, ciD2010, ciDXE, ciDXE2, ciDXE3
+    ciD2005w32, ciD2006w32, ciD2007, ciD2009w32, ciD2010,
+    ciDXE, ciDXE2, ciDXE3, ciDXE4
   ];
   cFreePascalCompilers = [    // Free Pascal
     ciFPC
