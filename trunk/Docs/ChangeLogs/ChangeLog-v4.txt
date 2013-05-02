@@ -11,6 +11,11 @@
 ; Change Log for CodeSnip Release 4
 ; ------------------------------------------------------------------------------
 
+Release v4.5.0 of 02 May 2013
++ Added support for Delphi XE4 compiler. Implements feature request #78 (http://bit.ly/10uGhoD).
++ Updated documentation re changes.
++ Updated help file re changes.
+
 Release v4.4.2 of 26 April 2013
 + Fixed bugs:
   - #76 (http://bit.ly/12Loz5o) - An advanced record snippet with a method name that clashes with a directive is not test compiling correctly.
