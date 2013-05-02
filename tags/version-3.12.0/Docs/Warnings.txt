@@ -1,0 +1,12 @@
+All the Delphi projects in the CodeSnip project group modify the default Delphi
+2010 warning options as follows:
+
+"Explicit string cast with potential data loss" warning is switched ON.
+"Platform Symbol" is switched OFF.
+"Widening given AnsiChar constant to WideChar lost information" is switched ON.
+"Widening given AnsiString constant lost information" is switched ON.
+
+--------------------------------------------------------------------------------
+$Rev$
+$Date$
+--------------------------------------------------------------------------------
