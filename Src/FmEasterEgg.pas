@@ -1,14 +1,35 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * FmEasterEgg.pas
  *
- * Copyright (C) 2009-2013, Peter Johnson (www.delphidabbler.com).
+ * Defines a form that hosts the program's easter egg.
  *
  * $Rev$
  * $Date$
  *
- * Defines a form that hosts the program's easter egg.
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is FmEasterEgg.pas
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2009-2010 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -20,9 +41,9 @@ interface
 
 uses
   // Delphi
-  ExtCtrls, Controls, Forms, Classes,
+  ExtCtrls, Controls, Forms, Classes, Windows,
   // Project
-  Browser.UHTMLEvents, IntfAligner, FmBase, FrBrowserBase, FrEasterEgg;
+  IntfAligner, FmBase, FrBrowserBase, FrEasterEgg, UHTMLEvents;
 
 
 type
@@ -38,7 +59,19 @@ type
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormCreate(Sender: TObject);
-  strict private
+  private
+    type
+      {
+      TAligner:
+        Class that can centre this form over the owning control.
+      }
+      TAligner = class(TInterfacedObject, IFormAligner)
+      protected // do not make strict
+        procedure AlignForm(const AForm: TCustomForm);
+          {Aligns splash form over main form.
+            @param AForm [in] Form to be aligned.
+          }
+      end;
     procedure RevealTick(Sender: TObject);
       {Timer event handler used to fade out the form when closing.
         @param Sender [in] Not used.
@@ -75,8 +108,10 @@ implementation
 
 
 uses
+  // Delphi
+  Graphics,
   // Project
-  UConsts, UFormAligner, UDlgHelper, UUtils;
+  UColours, UConsts, UGraphicUtils, UDlgHelper, UStructs, UUtils;
 
 
 {$R *.dfm}
@@ -93,11 +128,8 @@ procedure TEasterEggForm.BrowserEventHandler(Sender: TObject;
 const
   cCancelImgId = 'cancel-btn';  // id of cancel "button" image
 begin
-  if EventInfo.IsEvent(
-      THTMLDocumentEvents2Sink.EventIntf,
-      THTMLDocumentEvents2Sink.DISPID_OnClick
-    )
-    and EventInfo.ElemHasId(cCancelImgId) then
+  if (EventInfo.DispatchId = cDocEventOnClick) and
+    (EventInfo.Args.srcElement.id = cCancelImgId) then
   begin
     // Click on cancel image detected. Prevent event from bubbling up and close
     // dialog
@@ -160,7 +192,7 @@ function TEasterEggForm.GetAligner: IFormAligner;
     @return Required aligner.
   }
 begin
-  Result := TSimpleFormAligner.Create;
+  Result := TAligner.Create;
 end;
 
 procedure TEasterEggForm.HideTick(Sender: TObject);
@@ -198,7 +230,7 @@ procedure TEasterEggForm.RevealTick(Sender: TObject);
     @param Sender [in] Not used.
   }
 const
-  cAlphaDelta = 6;  // change made to alpha channel on each tick
+  cAlphaDelta = 4;  // change made to alpha channel on each tick
 begin
   if AlphaBlendValue >= 255 - cAlphaDelta then
   begin
@@ -210,6 +242,57 @@ begin
     AlphaBlendValue := AlphaBlendValue + cAlphaDelta
   else
     AlphaBlendValue := AlphaBlendValue + cAlphaDelta  div 2;
+end;
+
+{ TEasterEggForm.TAligner }
+
+procedure TEasterEggForm.TAligner.AlignForm(const AForm: TCustomForm);
+  {Aligns splash form over main form.
+    @param AForm [in] Form to be aligned.
+  }
+var
+  FormBounds: TRectEx;    // bounds of easter egg form
+  Owner: TWinControl;     // owner wincontrol
+  OwnerBounds: TRectEx;   // screen bounds of owner control
+  WorkArea: TRectEx;      // desktop work area
+begin
+  Assert(AForm.Owner is TWinControl,
+    ClassName + '.AlignForm: AForm.Owner must be a TWinControl');
+  // Get bounds of owner control
+  Owner := AForm.Owner as TWinControl;
+  if Owner.Parent = nil then
+    // no parent: bounds are already in screen coords
+    OwnerBounds := Owner.BoundsRect
+  else
+  begin
+    // parented control: bounds are relative to parent => map to screen coords
+    OwnerBounds.TopLeft := Owner.ClientToScreen(
+      Owner.BoundsRect.TopLeft
+    );
+    OwnerBounds.BottomRight := Owner.ClientToScreen(
+      Owner.BoundsRect.BottomRight
+    );
+  end;
+  // Calculate form bounds
+  FormBounds := AForm.BoundsRect;
+  FormBounds.OffsetBy(
+    OwnerBounds.Left - FormBounds.Left +
+      (OwnerBounds.Width - FormBounds.Width) div 2,
+    OwnerBounds.Top - FormBounds.Top +
+      (OwnerBounds.Height - FormBounds.Height) div 2
+  );
+  // Ensure form is in work area
+  WorkArea := Screen.MonitorFromRect(FormBounds).WorkareaRect;
+  if FormBounds.Right > WorkArea.Right then
+    FormBounds.OffsetBy(WorkArea.Right - FormBounds.Right, 0);
+  if FormBounds.Left < WorkArea.Left then
+    FormBounds.OffsetBy(WorkArea.Left - FormBounds.Left, 0);
+  if FormBounds.Bottom > WorkArea.Bottom then
+    FormBounds.OffsetBy(0, WorkArea.Bottom - FormBounds.Bottom);
+  if FormBounds.Top < WorkArea.Top then
+    FormBounds.OffsetBy(0, WorkArea.Top - FormBounds.Top);
+  // Place the form
+  AForm.BoundsRect := FormBounds;
 end;
 
 end.

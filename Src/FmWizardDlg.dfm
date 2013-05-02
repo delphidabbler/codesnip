@@ -4,8 +4,6 @@ inherited WizardDlg: TWizardDlg
   Caption = 'WizardDlg'
   ClientHeight = 407
   ClientWidth = 559
-  ExplicitWidth = 320
-  ExplicitHeight = 240
   PixelsPerInch = 96
   TextHeight = 13
   inherited pnlBody: TPanel
@@ -22,13 +20,13 @@ inherited WizardDlg: TWizardDlg
       object lblHead: TLabel
         Left = 8
         Top = 9
-        Width = 47
+        Width = 56
         Height = 16
         Caption = 'lblHead'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -13
-        Font.Name = 'Tahoma'
+        Font.Name = 'MS Sans Serif'
         Font.Style = [fsBold]
         ParentFont = False
       end

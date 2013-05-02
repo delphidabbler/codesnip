@@ -1,15 +1,29 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
 <!--
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
- *
- * Copyright (C) 2008-2012, Peter Johnson (www.delphidabbler.com).
- *
  * $Rev$
  * $Date$
  *
- * Help topic describing Database menu.
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is menu_database.htm
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2008-2009 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * ***** END LICENSE BLOCK *****
 -->
 <html>
   <head>
@@ -29,11 +43,81 @@
     <table class="menu" cellspacing="1" cellpadding="0">
       <tr>
         <td class="img">
-          <img alt="Menu icon" src="../images/SaveDatabase.png" class="glyph">
+          <img alt="Menu icon" src="../images/AddSnippet.gif" class="glyph">
         </td>
         <td class="item">
-          Save User Database<br>
-          [<span class="smallcaps">Ctrl+S</span>]
+          Add Snippet <span class="smallcaps">(Ctrl+Ins)</span>
+        </td>
+        <td class="desc">
+          Displays the <a href="dlg_editsnippet.htm">Add a Snippet</a> dialog
+          box to enable the user to enter a new user-defined snippet.
+        </td>
+      </tr>
+      <tr>
+        <td class="img">
+          <img alt="Menu icon" src="../images/EditSnippet.gif" class="glyph">
+        </td>
+        <td class="item">
+          Edit Snippet <span class="smallcaps">(Ctrl+F2)</span>
+        </td>
+        <td class="desc">
+          Edits the currently selected user defined snippet using the
+          <a href="dlg_editsnippet.htm">Edit Snippet</a> dialog box.
+        </td>
+      </tr>
+      <tr>
+        <td class="img">
+          <img alt="Menu icon" src="../images/DeleteSnippet.gif" class="glyph">
+        </td>
+        <td class="item">
+          Delete Snippet <span class="smallcaps">(Ctrl+Del)</span>
+        </td>
+        <td class="desc">
+          Deletes the currently selected user defined snippet.
+        </td>
+      </tr>
+      <tr>
+        <td class="img">
+          &nbsp;
+        </td>
+        <td class="item">
+          Add Category
+        </td>
+        <td class="desc">
+          Displays the <a href="dlg_addcategory.htm">Add Category</a> dialog
+          box to enable the user to enter a new user-defined category.
+        </td>
+      </tr>
+      <tr>
+        <td class="img">
+          &nbsp;
+        </td>
+        <td class="item">
+          Rename Category
+        </td>
+        <td class="desc">
+          Displays the <a href="dlg_renamecategory.htm">Rename Category</a>
+          dialog box which is used to rename any user-defined category,
+        </td>
+      </tr>
+      <tr>
+        <td class="img">
+          &nbsp;
+        </td>
+        <td class="item">
+          Delete Category
+        </td>
+        <td class="desc">
+          Displays the <a href="dlg_deletecategory.htm">Delete Category</a>
+          dialog box where a category can be selected and deleted.
+        </td>
+      </tr>
+      <tr>
+        <td class="img">
+          <img alt="Menu icon" src="../images/SaveDatabase.gif" class="glyph">
+        </td>
+        <td class="item">
+          Save User Database
         </td>
         <td class="desc">
           Saves the user defined database. Not available if the database has not
@@ -43,7 +127,7 @@
       <tr>
         <td class="img">
           <img
-            alt="Menu item" src="../images/BackupDatabase.png" class="gylph"
+            alt="Menu item" src="../images/BackupDatabase.gif" class="gylph"
           >
         </td>
         <td class="item">
@@ -52,13 +136,13 @@
         <td class="desc">
           Creates a backup of the user defined database. The backup is stored in
           a file specified by the user via the <a href="dlg_backup.htm">Save
-          Backup</a> dialogue box.
+          Backup</a> dialog box.
         </td>
       </tr>
       <tr>
         <td class="img">
           <img
-            alt="Menu item" src="../images/RestoreDatabase.png" class="gylph"
+            alt="Menu item" src="../images/RestoreDatabase.gif" class="gylph"
           >
         </td>
         <td class="item">
@@ -67,18 +151,18 @@
         <td class="desc">
           Restores the local database from a backup. The backup file to be
           restored is chosen by the user via the <a href="dlg_restore.htm">Open
-          Backup File</a> dialogue box.
+          Backup File</a> dialog box.
         </td>
       </tr>
       <tr>
         <td class="img">
-          <img alt="Menu icon" src="../images/Download.png" class="glyph">
+          <img alt="Menu icon" src="../images/Download.gif" class="glyph">
         </td>
         <td class="item">
           Update From Web
         </td>
         <td class="desc">
-          Displays the <a href="dlg_update.htm">Update from Web</a> dialogue box
+          Displays the <a href="dlg_update.htm">Update from Web</a> dialog box
           that enables the main code snippets database to be updated.
         </td>
       </tr>
@@ -87,21 +171,70 @@
           &nbsp;
         </td>
         <td class="item">
-          Move User Database&dagger;
+          Submit Snippets
         </td>
         <td class="desc">
-          Displays the <a href="dlg_moveuserdb.htm">Move User Database</a> 
-          dialogue box from where the user defined database files can be moved
-          to a diffent folder. The main reason for this option is so that the
-          user can locate the database in a suitable location for backing up, 
-          such as a <em>DropBox</em> or <em>Google Drive</em> sub-directory.
+          Opens the <a href="dlg_submit.htm">Code Submission Wizard</a> that is
+          used to submit user defined snippets for inclusion in the main
+          database.
+        </td>
+      </tr>
+      <tr>
+        <td class="img">
+          &nbsp;
+        </td>
+        <td class="item">
+          Export Snippets
+        </td>
+        <td class="desc">
+          Exports selected user defined snippets for importing into another
+          user's user defined database. The <a href="dlg_export.htm">Export
+          Snippets Dialog Box</a> is displayed where the snippets and export
+          file name are specified.
+        </td>
+      </tr>
+      <tr>
+        <td class="img">
+          &nbsp;
+        </td>
+        <td class="item">
+          Import Snippets
+        </td>
+        <td class="desc">
+          Imports user defined snippets into the user database. The
+          <a href="dlg_import.htm">Import Snippets Dialog Box</a> is displayed
+          where the import file name is specified.
+        </td>
+      </tr>
+      <tr>
+        <td class="img">
+          <img alt="Menu icon" src="../images/TestCompile.gif" class="glyph">
+        </td>
+        <td class="item">
+          Test Compile <span class="smallcaps">(F9)</span>
+        </td>
+        <td class="desc">
+          Attempts to compile the currently selected snippet with each available
+          compiler and displays the results in the
+          <a href="detail_compilerchecks.htm">Compiler Checks tab</a> of the
+          <a href="detail_pane.htm">Detail Pane</a>. See
+          <a href="about_compiler_checks.htm">About compiler checks</a> for more
+          information. If a test compilation takes longer than about one second
+          a message will pop up to indicate progress.
+        </td>
+      </tr>
+      <tr>
+        <td class="img">
+          <img alt="Menu icon" src="../images/ViewTestUnit.gif" class="glyph">
+        </td>
+        <td class="item">
+          View Compile Errors
+        </td>
+        <td class="desc">
+          Displays any test compilation errors or warnings in a dialog box.
         </td>
       </tr>
     </table>
-    <p>
-      &dagger; The <em>Move User Database</em> option is not available in the
-      portable edition of <em>CodeSnip</em>.
-    </p>
     <p>
       Return to the <a href="main_menu.htm">main menu</a>.
     </p>

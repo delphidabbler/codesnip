@@ -1,15 +1,36 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * UStatusBarMgr.pas
  *
- * Copyright (C) 2007-2013, Peter Johnson (www.delphidabbler.com).
+ * Implements class that manages display of status information and hints in a
+ * status bar.
  *
  * $Rev$
  * $Date$
  *
- * Implements class that manages display of status information and hints in a
- * status bar.
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is UStatusBarMgr.pas
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2007-2010 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -36,7 +57,7 @@ type
       fStatusBar: TStatusBar;
         {Reference to managed status bar}
       fSearchGlyph: TBitmap;
-        {Stores reference to glyph used to indicate kind of latest search}
+        {Stores reference to glyph used to indicate kind of current search}
       fModifiedGlyph: TBitmap;
         {Stores glyph displayed when user database has been modified}
       fSearchInfoVisible: Boolean;
@@ -103,13 +124,14 @@ implementation
   ------------------------------------------------------------------------------
   Status bar has three panels (indexed 0..2) used as follows:
 
-  + Panel[0]: Displays database statistics: total number of snippets in each
-    database.
-  + Panel[1]: Displays information about latest search. A glyph indicating
-    search type is displayed.
+  + Panel[0]: Displays database statistics or a simple prompt. Status bar
+    default drawing is used. When a simple prompty is displayed Panel[1] and
+    Panel[2] are hidden.
+  + Panel[1]: Displays information about current search. A glyph indicating
+    search type is displayed. The panel is owner-drawn.
   + Panel[2]: Displays a modification flag and glyph if user defined database
     has been modified since last save. Nothing is displayed when database is
-    not modified.
+    not modified. The panel is owner-drawn.
 
   The status bar is also used to display hints when the mouse passes over
   various UI elements. This is done by switching the status bar into SimplePanel
@@ -123,7 +145,7 @@ uses
   // Delphi
   SysUtils, Forms,
   // Project
-  DB.UMain, UQuery, USearch, UStructs;
+  UQuery, USearch, USnippets, UStructs;
 
 
 { TStatusBarMgr }
@@ -149,7 +171,6 @@ begin
   fStatusBar.AutoHint := False;
   // Enable owner drawing for second panel in status bar
   fStatusBar.OnDrawPanel := DrawPanel;
-  fStatusBar.Panels[cDBPanel].Style := psOwnerDraw;
   fStatusBar.Panels[cSearchPanel].Style := psOwnerDraw;
   fStatusBar.Panels[cUserPanel].Style := psOwnerDraw;
   fStatusBar.Panels[cUserPanel].Text := sModified;
@@ -226,8 +247,6 @@ begin
   // Clear the panel
   StatusBar.Canvas.FillRect(Rect);
   case Panel.ID of
-    cDBPanel:
-      DrawTextInPanel(2, 2, Panel.Text);
     cSearchPanel:
     begin
       // We do nothing else if there's no glyph or search info not to be shown
@@ -243,7 +262,9 @@ begin
         Exit;
       DrawGlyphInPanel(fModifiedGlyph, clWhite);
       DrawTextInPanel(fModifiedGlyph.Width + 6, 12, Panel.Text);
-    end;
+    end
+    else
+      // Do nothing: we only support drawing of second panel (Panel.ID=1)
   end;
 end;
 
@@ -301,28 +322,20 @@ procedure TStatusBarMgr.ShowSearchInfo;
 resourcestring
   // Text displayed in search panel
   sNoSearch = 'All snippets selected';
-  sSearchActiveS = '%d snippet selected';
-  sSearchActiveP = '%d snippets selected';
-const
-  SearchActiveStr: array[Boolean] of string = (sSearchActiveS, sSearchActiveP);
-var
-  SelectionCount: Integer;  // Number of snippets selected in query
+  sSearchActive = '%d snippets selected';
 begin
   // This method does not directly display the information, but records it and
   // causes the status bar to update itself using the stored data. The DrawPanel
   // method is called by the status bar to draw the panel.
 
   // Store text describing search result
-  if Query.LatestSearch.Filter.IsNull then
+  if Query.CurrentSearch.IsNul then
     fStatusBar.Panels[cSearchPanel].Text := sNoSearch
   else
-  begin
-    SelectionCount := Query.Selection.Count;
     fStatusBar.Panels[cSearchPanel].Text
-      := Format(SearchActiveStr[SelectionCount <> 1], [Query.Selection.Count]);
-  end;
-  // Store glyph that indicates latest search type
-  fSearchGlyph.Assign((Query.LatestSearch.Filter as ISearchUIInfo).Glyph);
+      := Format(sSearchActive, [Query.Selection.Count]);
+  // Store glyph that indicates current search type
+  fSearchGlyph.Assign((Query.CurrentSearch.Criteria as ISearchUIInfo).Glyph);
   // Ensure search info panel of status bar is displayed
   fSearchInfoVisible := True;
   // Force status bar to repaint itself
@@ -348,30 +361,26 @@ procedure TStatusBarMgr.ShowSnippetsInfo;
   }
 var
   TotalSnippets: Integer;     // number of snippets in database
-  TotalUserSnippets: Integer; // number of snippets in user database
-  TotalMainSnippets: Integer; // number of snippets in main database
+  TotalUserSnippets: Integer; // number of user-defined snippets in database
+  TotalCategories: Integer;   // total number of categories
+  DisplayText: string;        // text to display in database
 resourcestring
-  // status bar message strings
-  sSnippet = 'snippet';
-  sSnippets = 'snippets';
-  sStats = '%0:d %1:s (%2:d main / %3:d user defined)';
-const
-  SnippetsStr: array[Boolean] of string = (sSnippet, sSnippets);
+  // status bar messages
+  sNoUserInfo = '%0:d snippets in %1:d categories';
+  sWithUserInfo = '%0:d snippets (%2:d user defined) in %1:d categories';
 begin
   // Calculate database stats
-  TotalSnippets := Database.Snippets.Count;
-  TotalUserSnippets := Database.Snippets.Count(True);
-  TotalMainSnippets := TotalSnippets - TotalUserSnippets;
+  TotalSnippets := Snippets.Routines.Count;
+  TotalUserSnippets := Snippets.Routines.Count(True);
+  TotalCategories := Snippets.Categories.Count;
   // Build display text and display it
-  fStatusBar.Panels[cDBPanel].Text := Format(
-    sStats,
-    [
-      TotalSnippets,
-      SnippetsStr[TotalSnippets <> 1],
-      TotalMainSnippets,
-      TotalUserSnippets
-    ]
-  );
+  if TotalUserSnippets = 0 then
+    DisplayText := Format(sNoUserInfo, [TotalSnippets, TotalCategories])
+  else
+    DisplayText := Format(
+      sWithUserInfo, [TotalSnippets, TotalCategories, TotalUserSnippets]
+    );
+  fStatusBar.Panels[cDBPanel].Text := DisplayText;
 end;
 
 procedure TStatusBarMgr.ShowUserDBInfo;
@@ -383,7 +392,7 @@ begin
   // status bar to draw the panel.
 
   // We hide message if database not updated
-  fUserDBInfoVisible := (Database as IDatabaseEdit).Updated;
+  fUserDBInfoVisible := (Snippets as ISnippetsEdit).Updated;
   fStatusBar.Repaint;
 end;
 

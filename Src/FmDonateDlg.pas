@@ -1,16 +1,37 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * FmDonateDlg.pas
  *
- * Copyright (C) 2009-2013, Peter Johnson (www.delphidabbler.com).
+ * Implements a dialog box that displays information about donating to support
+ * CodeSnip along with button to access Paypal donation web page in default
+ * browser.
  *
  * $Rev$
  * $Date$
  *
- * Implements a dialogue box that displays information about donating to support
- * CodeSnip along with button to access Paypal donation web page in default
- * browser.
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is FmDonateDlg.pas
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2009-2010 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -24,7 +45,7 @@ uses
   // Delphi
   StdCtrls, Controls, ExtCtrls, Classes, Forms,
   // Project
-  FmGenericViewDlg, FrBrowserBase, FrFixedHTMLDlg, FrHTMLDlg, UCSSBuilder;
+  FmHTMLViewDlg, FrBrowserBase, FrFixedHTMLDlg, FrHTMLDlg, UCSSBuilder;
 
 
 type
@@ -33,7 +54,7 @@ type
     Dialog box that displays information about donating to support CodeSnip
     along with a button to display the Paypal donation web page.
   }
-  TDonateDlg = class(TGenericViewDlg)
+  TDonateDlg = class(THTMLViewDlg)
     btnDoDonate: TButton;
     frmContent: TFixedHTMLDlgFrame;
     procedure FormCreate(Sender: TObject);
@@ -46,12 +67,14 @@ type
       }
   strict protected
     procedure ConfigForm; override;
-      {Initialises HTML frame and sets UI font for emboldened Donate button.
-      Called from ancestor class.
+      {Sets UI font for emboldened Donate button.
       }
     procedure ArrangeForm; override;
       {Sizes dialog to fit content and adjusts position of donation button on
       bottom line. Called from ancestor class.
+      }
+    procedure InitHTMLFrame; override;
+      {Initialises HTML frame.
       }
   public
     class procedure Execute(const AOwner: TComponent);
@@ -88,13 +111,11 @@ begin
 end;
 
 procedure TDonateDlg.ConfigForm;
-  {Initialises HTML frame and sets UI font for emboldened Donate button.
+  {Sets UI font for emboldened Donate button.
   }
 begin
   inherited;
-  TFontHelper.SetDefaultBaseFont(btnDoDonate.Font);
-  frmContent.OnBuildCSS := UpdateCSS;
-  frmContent.Initialise('dlg-donate.html');
+  TFontHelper.SetDefaultBaseFont(btnDoDonate.Font, False);
 end;
 
 class procedure TDonateDlg.Execute(const AOwner: TComponent);
@@ -118,6 +139,16 @@ begin
   btnDoDonate.Action := TPaypalDonateAction.Create(Self);
 end;
 
+procedure TDonateDlg.InitHTMLFrame;
+  {Initialises HTML frame.
+  }
+begin
+  // Set event handler used to customise CSS
+  frmContent.OnBuildCSS := UpdateCSS;
+  // Load required HTML into frame
+  frmContent.Initialise('dlg-donate.html');
+end;
+
 procedure TDonateDlg.UpdateCSS(Sender: TObject; const CSSBuilder: TCSSBuilder);
   {Modifies CSS used to display dialog box body to achieve required appearance.
     @param Sender [in] Not used.
@@ -129,12 +160,12 @@ begin
   // Build content font and apply to HTML frame
   ContentFont := TFont.Create;
   try
-    TFontHelper.SetContentFont(ContentFont);
+    TFontHelper.SetContentFont(ContentFont, True);  // font must be true type
     with CSSBuilder.Selectors['body'] do
     begin
-      AddProperty(TCSS.FontProps(ContentFont));
-      AddProperty(TCSS.BackgroundColorProp(clWindow));
-      AddProperty(TCSS.PaddingProp(0, 6, 6, 6));
+      AddProperty(CSSFontProps(ContentFont));
+      AddProperty(CSSBackgroundColorProp(clWindow));
+      AddProperty(CSSPaddingProp(0, 6, 6, 6));
     end;
   finally
     FreeAndNil(ContentFont);

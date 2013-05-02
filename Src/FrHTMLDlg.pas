@@ -1,15 +1,36 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * FrHTMLDlg.pas
  *
- * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
+ * Frame containing a web browser control that displays HTML content that takes
+ * on the appearance of a dialog box.
  *
  * $Rev$
  * $Date$
  *
- * Implements a frame containing a web browser control that displays HTML
- * content that takes on the appearance of a dialogue box.
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is FrHTMLDlg.pas
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -34,11 +55,11 @@ type
     on the appearance of a dialog box.
   }
   THTMLDlgFrame = class(TBrowserBaseFrame)
-  strict private
+  private
     fOwner: TForm;
       {Form that owns the frame. Used to set font and colours to display in
       frame's HTML }
-  strict protected
+  protected
     procedure BuildCSS(const CSSBuilder: TCSSBuilder); override;
       {Generates CSS classes specific to HTML dialog boxes. This CSS is added to
       that provided by parent class.
@@ -85,9 +106,9 @@ begin
   try
     with CSSBuilder.AddSelector('body') do
     begin
-      AddProperty(TCSS.BackgroundColorProp(fOwner.Color));
-      AddProperty(TCSS.FontProps(fOwner.Font));
-      AddProperty(TCSS.MarginProp(0));
+      AddProperty(CSSBackgroundColorProp(fOwner.Color));
+      AddProperty(CSSFontProps(fOwner.Font));
+      AddProperty(CSSMarginProp(0));
     end;
     // Sets heading margins, padding and font size
     with CSSBuilder.AddSelector('h1') do
@@ -95,20 +116,20 @@ begin
       CSSFont.Assign(Self.Font);
       CSSFont.Size := CSSFont.Size + 2;
       CSSFont.Style := [fsBold];
-      AddProperty(TCSS.FontProps(CSSFont));
-      AddProperty(TCSS.MarginProp(0));
-      AddProperty(TCSS.PaddingProp(0));
+      AddProperty(CSSFontProps(CSSFont));
+      AddProperty(CSSMarginProp(0));
+      AddProperty(CSSPaddingProp(0));
     end;
     // Sets paragraph margins and padding
     with CSSBuilder.AddSelector('p') do
     begin
-      AddProperty(TCSS.MarginProp(cssTop, 6));
-      AddProperty(TCSS.MarginProp(cssBottom, 0));
-      AddProperty(TCSS.PaddingProp(0));
+      AddProperty(CSSMarginProp(cssTop, 6));
+      AddProperty(CSSMarginProp(cssBottom, 0));
+      AddProperty(CSSPaddingProp(0));
     end;
     // Sets table font info
     with CSSBuilder.AddSelector('table') do
-      AddProperty(TCSS.FontProps(fOwner.Font));
+      AddProperty(CSSFontProps(fOwner.Font));
   finally
     FreeAndNil(CSSFont);
   end;

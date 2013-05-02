@@ -1,15 +1,36 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * UHexUtils.pas
  *
- * Copyright (C) 2010-2012, Peter Johnson (www.delphidabbler.com).
+ * Routines that support conversion of hexadecimal strings to and from the
+ * corresponding binary data.
  *
  * $Rev$
  * $Date$
  *
- * Routines that support conversion of hexadecimal strings to and from the
- * corresponding binary data.
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is UHexUtils.pas
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2010 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -41,11 +62,6 @@ function TryHexToBytes(HexStr: string; out Bytes: TBytes): Boolean;
 
 
 implementation
-
-
-uses
-  // Project
-  UStrUtils;
 
 
 function StripHexPrefix(const HexStr: string): string;
@@ -117,9 +133,9 @@ function StripHexPrefix(const HexStr: string): string;
     @return HexStr without any hex prefix. Unchanged if HexStr has no prefix.
   }
 begin
-  if StrPos('$', HexStr) = 1 then
+  if Pos('$', HexStr) = 1 then
     Result := Copy(HexStr, 2, Length(HexStr) - 1)
-  else if StrPos('0x', StrToLower(HexStr)) = 1 then
+  else if Pos('0x', SysUtils.LowerCase(HexStr)) = 1 then
     Result := Copy(HexStr, 3, Length(HexStr) - 2)
   else
     Result := HexStr;

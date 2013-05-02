@@ -1,15 +1,36 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * FrRSSNews.pas
  *
- * Copyright (C) 2010-2013, Peter Johnson (www.delphidabbler.com).
+ * Frame containing a web browser control that is used to display the program's
+ * RSS news feed.
  *
  * $Rev$
  * $Date$
  *
- * Implements a frame containing a web browser control that is used to display
- * the program's RSS news feed.
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is FrRSSNews.pas
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2010 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -80,42 +101,42 @@ begin
   inherited;
   ContentFont := TFont.Create;
   try
-    TFontHelper.SetContentFont(ContentFont);
+    TFontHelper.SetContentFont(ContentFont, True);
     with CSSBuilder.AddSelector('body') do
     begin
-      AddProperty(TCSS.BackgroundColorProp(clWindow));
-      AddProperty(TCSS.FontProps(ContentFont));
-      AddProperty(TCSS.MarginProp(3));
+      AddProperty(CSSBackgroundColorProp(clWindow));
+      AddProperty(CSSFontProps(ContentFont));
+      AddProperty(CSSMarginProp(3));
     end;
     with CSSBuilder.AddSelector('p') do
     begin
-      AddProperty(TCSS.MarginProp(4, 0, 0, 0));
+      AddProperty(CSSMarginProp(4, 0, 0, 0));
     end;
     with CSSBuilder.AddSelector('dt') do
     begin
-      AddProperty(TCSS.MarginProp(0, 0, 4, 0));
-      AddProperty(TCSS.PaddingProp(4));
-      AddProperty(TCSS.BackgroundColorProp(clBtnFace));
-      AddProperty(TCSS.ColorProp(clBtnText));
+      AddProperty(CSSMarginProp(0, 0, 4, 0));
+      AddProperty(CSSPaddingProp(4));
+      AddProperty(CSSBackgroundColorProp(clBtnFace));
+      AddProperty(CSSColorProp(clBtnText));
     end;
     with CSSBuilder.AddSelector('dd') do
     begin
-      AddProperty(TCSS.MarginProp(0, 0, 8, 20));
+      AddProperty(CSSMarginProp(0, 0, 8, 20));
     end;
     with CSSBuilder.AddSelector('.message') do
     begin
-      AddProperty(TCSS.TextAlignProp(ctaCenter));
-      AddProperty(TCSS.MarginProp(cssTop, 30));
-      AddProperty(TCSS.FontWeightProp(cfwBold));
+      AddProperty(CSSTextAlignProp(ctaCenter));
+      AddProperty(CSSMarginProp(cssTop, 30));
+      AddProperty(CSSFontWeightProp(cfwBold));
     end;
     with CSSBuilder.AddSelector('.error-heading') do
     begin
-      AddProperty(TCSS.ColorProp(clWarningText));
-      AddProperty(TCSS.FontWeightProp(cfwBold));
+      AddProperty(CSSColorProp(clWarningText));
+      AddProperty(CSSFontWeightProp(cfwBold));
     end;
     with CSSBuilder.AddSelector('.error-message') do
     begin
-      AddProperty(TCSS.MarginProp(cssLeft, 20));
+      AddProperty(CSSMarginProp(cssLeft, 20));
     end;
   finally
     ContentFont.Free;

@@ -1,15 +1,36 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * USaveUnitMgr.pas
  *
- * Copyright (C) 2006-2013, Peter Johnson (www.delphidabbler.com).
+ * Defines a class that manages generation, previewing and saving of a pascal
+ * unit.
  *
  * $Rev$
  * $Date$
  *
- * Defines a class that manages generation, previewing and saving of a pascal
- * unit.
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is USaveUnitMgr.pas
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2006-2010 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -21,74 +42,77 @@ interface
 
 uses
   // Project
-  DB.USnippet, UIStringList, USourceFileInfo, USaveSourceMgr, USourceGen;
+  UBaseObjects, UIStringList, USourceFileOutputMgr, USourceGen, USnippets;
 
 
 type
-  ///  <summary>
-  ///  Manages generation, previewing and saving of a Pascal unit to disk.
-  ///  </summary>
-  ///  <remarks>
-  ///  Generated file can be a valid Pascal unit, a plain text file, an HTML
-  ///  file or a RTF file. The last two file types can optionally be syntax
-  ///  highlighted.
-  ///  </remarks>
-  TSaveUnitMgr = class(TSaveSourceMgr)
+
+  {
+  TSaveUnitMgr:
+    Manages generation, previewing and saving of a Pascal unit to disk.
+    Generated file can be a valid Pascal unit, a plain text file, an HTML file
+    or a RTF file. The last two files types can optionally be syntax
+    highlighted.
+  }
+  TSaveUnitMgr = class(TNoPublicConstructObject)
   strict private
-    var
-      ///  <summary>Used to generate source code unit.</summary>
-      fSourceGen: TSourceGen;
-      ///  <summary>Name of generated unit.</summary>
-      ///  <remarks>If empty string a default name is used.</remarks>
-      fUnitName: string;
-      ///  <summary>Flag true if unit contains at least one snippet from main
-      ///  database, False only if unit is completely user defined.</summary>
-      fContainsMainDBSnippets: Boolean;
-    ///  <summary>Gets name of unit to be used in generated code.</summary>
+    fSourceGen: TSourceGen;
+      {Generates source code unit}
+    fOutputMgr: TSourceFileOutputMgr;
+      {Gets file information from user and controls saving of snippers to disk}
+    fUnitName: string;
+      {Name of generated unit. Name is based on file when saving unit and has a
+      default fixed value when previewing}
+    fContainsMainDBSnippets: Boolean;
+      {Flag true if unit contains at least one snippet from main database, False
+      only if unit is completely user defined}
+    procedure SourceGenHandler(Sender: TObject;
+      const CommentStyle: TCommentStyle; out RawSourceCode, DocTitle: string);
+      {Handles output manager's OnGenerateOutput event by generating source code
+      of unit in required comment style.
+        @param Sender [in] Not used.
+        @param CommentStyle [in] Style of commenting to be used in source code.
+        @param SourceCode [out] Receives generated source code.
+        @param DocTitle [out] Receives document title.
+      }
+    procedure CheckFileNameHandler(Sender: TObject; const FileName: string;
+      var NameOK: Boolean; var ErrorMessage: string);
+      {Handler of output manager's OnCheckFileName event. Checks if file name is
+      suitable for use as basis of a unit name. If so unit name is recorded.
+        @param Sender [in] Not used.
+        @param FileName [in] File name to be checked.
+        @param NameOK [in/out] Defaults to true. Set to false if file name fails
+          check, i.e. is not valid as a unit name.
+        @param ErrorMessage [in/out] Default to ''. Set to error message if
+          NameOK is set false.
+      }
     function UnitName: string;
-    ///  <summary>Creates a string list containing comments to be written to
-    ///  head of unit.</summary>
+      {Gets name of unit to be used in generated code.
+        @return Name of unit.
+      }
     function CreateHeaderComments: IStringList;
+      {Creates and stores header comments to be written to head of unit.
+        @return String list containing comments.
+      }
   strict protected
-    ///  <summary>Object constuctor. Sets up object to save a unit containing
-    ///  all snippets in given list.</summary>
-    constructor InternalCreate(const Snips: TSnippetList);
-    ///  <summary>Gets description of given source code file type.</summary>
-    function GetFileTypeDesc(const FileType: TSourceFileType): string; override;
-    ///  <summary>Gets default file name to display in dialog box.</summary>
-    function GetDefaultFileName: string; override;
-    ///  <summary>Gets dialog box title.</summary>
-    function GetDlgTitle: string; override;
-    ///  <summary>Get dialog box's help keyword.</summary>
-    function GetDlgHelpKeyword: string; override;
-    ///  <summary>Gets title to be used for source document.</summary>
-    function GetDocTitle: string; override;
-    ///  <summary>Generates raw, un-highlighted, source code.</summary>
-    ///  <param name="CommentStyle">TCommentStyle [in] Style of commenting to be
-    ///  used in source code.</param>
-    ///  <param name="TruncateComments">Boolean [in] Indicates whether multi
-    ///  paragraph comments are to be truncated to first paragraph.</param>
-    ///  <returns>String containing generated source code.</returns>
-    function GenerateSource(const CommentStyle: TCommentStyle;
-      const TruncateComments: Boolean): string;
-      override;
-    ///  <summary>Checks if a file name is valid for the kind of file being
-    ///  saved.</summary>
-    ///  <param name="FileName">string [in] Name of file to check.</param>
-    ///  <param name="NameOK">Boolean [out] Set True if file name OK, False if
-    ///  not.</param>
-    ///  <param name="ErrorMessage">string [out] Error message describing
-    ///  problem with invalid file name. Undefined if NameOK is True.</param>
-    procedure CheckFileName(const FileName: string; out NameOK: Boolean;
-      out ErrorMessage: string); override;
+    constructor InternalCreate(const Snips: TRoutineList);
+      {Class constructor. Sets up object to save a unit containing all snippets
+      in a list.
+        @param Snips [in] List of snippets to include in unit.
+      }
+    procedure DoExecute;
+      {Gets information from user about name and format of required file and
+      saves unit to disk.
+      }
   public
-    ///  <summary>Object destructor. Tears down object.</summary>
     destructor Destroy; override;
-    ///  <summary>Creates and outputs a Pascal unit file containing specified
-    ///  snippets with name and format speficied by user.</summary>
-    ///  <param name="Snips">TSnippetList [in] List of snippets to include in
-    ///  unit.</param>
-    class procedure Execute(const Snips: TSnippetList);
+      {Class destructor. Tears down object.
+      }
+    class procedure Execute(const Snips: TRoutineList);
+      {Gets information from user about name and format of required file and
+      saves unit containing specified snippets to disk.
+        @param Snips [in] List of snippets to include in unit.
+      }
   end;
 
 
@@ -99,21 +123,24 @@ uses
   // Delphi
   SysUtils,
   // Project
-  UAppInfo, UUtils, Web.UInfo;
+  UAppInfo, USourceFileInfo, UUtils, Web.UInfo;
 
 
 resourcestring
-  // Dialog box title
+  // Dialog box strings
+  // title
   sSaveDlgTitle = 'Save Unit';
-  // File filter strings
+  // default file / unit name
+  sDefUnitName = 'Snippets';
+  // file filter strings
   sHTMLDesc = 'HTML file';
   sRTFDesc = 'Rich text file';
   sPascalDesc = 'Pascal unit';
   sTextDesc = 'Plain text file';
-  // Default file / unit name
-  sDefUnitName = 'Snippets';
+
   // Error message
   sErrorMsg = 'Filename is not valid for a Pascal unit';
+
   // Unit header comments
   sLicense = 'This unit may be freely distributed and used on the condition '
     + 'that this comment is not removed from the unit.';
@@ -127,14 +154,24 @@ resourcestring
   sAdvert = 'The latest version of %0:s is available from the %1:s website '
     + 'at %2:s.';
   sUserDescription = 'This unit was generated automatically.';
+
   // Output document title
-  sDocTitle = 'Pascal unit generated by %s';
+  sDocTitle = 'Unit "%0:s" generated by %1:s';
 
 
 { TSaveUnitMgr }
 
-procedure TSaveUnitMgr.CheckFileName(const FileName: string;
-  out NameOK: Boolean; out ErrorMessage: string);
+procedure TSaveUnitMgr.CheckFileNameHandler(Sender: TObject;
+  const FileName: string; var NameOK: Boolean; var ErrorMessage: string);
+  {Handler of output manager's OnCheckFileName event. Checks if file name is
+  suitable for use as basis of a unit name. If so unit name is recorded.
+    @param Sender [in] Not used.
+    @param FileName [in] File name to be checked.
+    @param NameOK [in/out] Defaults to true. Set to false if file name fails
+      check, i.e. is not valid as a unit name.
+    @param ErrorMessage [in/out] Default to ''. Set to error message if NameOK
+      is set false.
+  }
 begin
   NameOK := TSourceGen.IsFileNameValidUnitName(FileName);
   if NameOK then
@@ -147,6 +184,9 @@ begin
 end;
 
 function TSaveUnitMgr.CreateHeaderComments: IStringList;
+  {Creates and stores header comments to be written to head of unit.
+    @return String list containing comments.
+  }
 begin
   Result := TIStringList.Create;
   if fContainsMainDBSnippets then
@@ -158,7 +198,7 @@ begin
     Result.Add('');
     Result.Add(sDisclaimer);
     Result.Add('');
-    Result.Add(Format(sGenerated, [RFC1123DateStamp]));
+    Result.Add(Format(sGenerated, [DateStamp]));
     Result.Add(
       Format(
         sGenerator, [TAppInfo.FullProgramName, TAppInfo.ProgramReleaseInfo]
@@ -177,7 +217,7 @@ begin
     // Result used for units that contain only user defined snippets
     Result.Add(sUserDescription);
     Result.Add('');
-    Result.Add(Format(sGenerated, [RFC1123DateStamp]));
+    Result.Add(Format(sGenerated, [DateStamp]));
     Result.Add(
       Format(
         sGenerator, [TAppInfo.FullProgramName, TAppInfo.ProgramReleaseInfo]
@@ -187,12 +227,28 @@ begin
 end;
 
 destructor TSaveUnitMgr.Destroy;
+  {Class destructor. Tears down object.
+  }
 begin
-  fSourceGen.Free;
+  FreeAndNil(fOutputMgr);
+  FreeAndNil(fSourceGen);
   inherited;
 end;
 
-class procedure TSaveUnitMgr.Execute(const Snips: TSnippetList);
+procedure TSaveUnitMgr.DoExecute;
+  {Gets information from user about name and format of required file and saves
+  unit to disk.
+  }
+begin
+  // Hand off processing to output manager
+  fOutputMgr.Execute;
+end;
+
+class procedure TSaveUnitMgr.Execute(const Snips: TRoutineList);
+  {Gets information from user about name and format of required file and saves
+  unit containing specified snippets to disk.
+    @param Snips [in] List of snippets to include in unit.
+  }
 begin
   with InternalCreate(Snips) do
     try
@@ -202,46 +258,13 @@ begin
     end;
 end;
 
-function TSaveUnitMgr.GenerateSource(const CommentStyle: TCommentStyle;
-  const TruncateComments: Boolean): string;
-begin
-  Result := fSourceGen.UnitAsString(
-    UnitName, CommentStyle, TruncateComments, CreateHeaderComments
-  );
-end;
-
-function TSaveUnitMgr.GetDefaultFileName: string;
-begin
-  Result := sDefUnitName;
-end;
-
-function TSaveUnitMgr.GetDlgHelpKeyword: string;
-begin
-  Result := 'SaveUnitDlg';
-end;
-
-function TSaveUnitMgr.GetDlgTitle: string;
-begin
-  Result := sSaveDlgTitle;
-end;
-
-function TSaveUnitMgr.GetDocTitle: string;
-begin
-  Result := Format(sDocTitle, [TAppInfo.ProgramName]);
-end;
-
-function TSaveUnitMgr.GetFileTypeDesc(const FileType: TSourceFileType): string;
-const
-  Descriptions: array[TSourceFileType] of string = (
-    sTextDesc, sPascalDesc, sHTMLDesc, sRTFDesc
-  );
-begin
-  Result := Descriptions[FileType];
-end;
-
-constructor TSaveUnitMgr.InternalCreate(const Snips: TSnippetList);
+constructor TSaveUnitMgr.InternalCreate(const Snips: TRoutineList);
+  {Class constructor. Sets up object to save a unit containing all snippets in a
+  list.
+    @param Snips [in] List of snippets to include in unit.
+  }
 var
-  Snippet: TSnippet;  // references each snippet in list
+  Snippet: TRoutine;  // references each snippet in list
 begin
   Assert(Assigned(Snips), ClassName + '.InternalCreate: Snips is nil');
   inherited InternalCreate;
@@ -260,9 +283,47 @@ begin
       Break;
     end;
   end;
+
+  // Create and initialise output manager object
+  fOutputMgr := TSourceFileOutputMgr.Create;
+  fOutputMgr.DlgTitle := sSaveDlgTitle;
+  fOutputMgr.DlgHelpKeyword := 'SaveUnitDlg';
+  fOutputMgr.OnGenerateOutput := SourceGenHandler;
+  fOutputMgr.OnCheckFileName := CheckFileNameHandler;
+  with fOutputMgr.SourceFileInfo do
+  begin
+    Descriptions[sfText] := sTextDesc;
+    FileExtensions[sfText] := '.txt';
+    Descriptions[sfPascal] := sPascalDesc;
+    FileExtensions[sfPascal] := '.pas';
+    Descriptions[sfHTML] := sHTMLDesc;
+    FileExtensions[sfHTML] := '.html';
+    Descriptions[sfRTF] := sRTFDesc;
+    FileExtensions[sfRTF] := '.rtf';
+    FileName := sDefUnitName;
+  end;
+end;
+
+procedure TSaveUnitMgr.SourceGenHandler(Sender: TObject;
+  const CommentStyle: TCommentStyle; out RawSourceCode, DocTitle: string);
+  {Handles output manager's OnGenerateOutput event by generating source code of
+  unit in required comment style.
+    @param Sender [in] Not used.
+    @param CommentStyle [in] Style of commenting to be used in source code.
+    @param SourceCode [out] Receives generated source code.
+    @param DocTitle [out] Receives document title.
+  }
+begin
+  RawSourceCode := fSourceGen.UnitAsString(
+    UnitName, CommentStyle, CreateHeaderComments
+  );
+  DocTitle := Format(sDocTitle, [UnitName, TAppInfo.ProgramName]);
 end;
 
 function TSaveUnitMgr.UnitName: string;
+  {Gets name of unit to be used in generated code.
+    @return Name of unit.
+  }
 begin
   // If we have valid unit name based on file, use it, otherwise use default
   if fUnitName <> '' then

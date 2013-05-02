@@ -1,14 +1,37 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * FmGenericDlg.pas
  *
- * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
+ * Implements an abstract base class for dialog boxes. Displays and handles help
+ * button and sizes the dialog form and arranges controls. Also handles ESC key
+ * presses and provides a help button.
  *
  * $Rev$
  * $Date$
  *
- * Implements a base class for all the program's dialogue boxes.
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is FmGenericDlg.pas
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -29,16 +52,24 @@ type
 
   {
   TGenericDlg:
-    Implements a base class for all the program's dialogue boxes, whether modal
-    or mode-less. Displays and handles help button, sizes the dialogue form and
+    Generic abstract base class for dialog boxes. Displays and handles help
+    button and sizes the dialog form and arranges controls. Also handles ESC key
+    presses and provides a help button.
   }
   TGenericDlg = class(THelpAwareForm)
     bvlBottom: TBevel;
     btnHelp: TButton;
     pnlBody: TPanel;
     procedure btnHelpClick(Sender: TObject);
+    procedure FormKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
     procedure FormCreate(Sender: TObject);
-  strict protected
+  protected
+    function ModalResultOnEsc: Integer; virtual; abstract;
+      {Gets modal result returned from dialog when user presses ESC key. Set
+      to mrNone to disable special handling of ESC key.
+        @return Required modal result.
+      }
     procedure ArrangeForm; virtual;
       {Positions controls and sets form size according to body panel dimensions.
       }
@@ -128,6 +159,25 @@ procedure TGenericDlg.FormCreate(Sender: TObject);
 begin
   inherited;
   TDlgHelper.SetDlgParentToOwner(Self);
+end;
+
+procedure TGenericDlg.FormKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+  {Checks for escape key press, with no modifiers, and closes dialog with a
+  descendant supplied modal result. If modal result is mrNone then dialog is
+  not closed.
+    @param Sender [in] Not used.
+    @param Key [in/out] Key pressed.
+    @param Shift [in] Modifier keys pressed.
+  }
+begin
+  inherited;
+  if (Key = VK_ESCAPE) and (Shift = []) then
+  begin
+    // Setting ModalResult to a value <> mrNone closes the form. ShowModal
+    // returns the assigned value.
+    ModalResult := ModalResultOnEsc;
+  end
 end;
 
 function TGenericDlg.GetAligner: IFormAligner;

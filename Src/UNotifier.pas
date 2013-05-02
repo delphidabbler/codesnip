@@ -1,14 +1,35 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * UNotifier.pas
  *
- * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
+ * Object that notifies the main application of certain user-initiated events.
  *
  * $Rev$
  * $Date$
  *
- * Object that notifies the main application of certain user-initiated events.
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is UNotifier.pas
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -26,221 +47,162 @@ uses
 
 
 type
-  ///  <summary>Notifies the main application code of certain user-initiated
-  ///  events.</summary>
-  ///  <remarks>
-  ///  <para>Objects that receive user input call methods of this object's
-  ///  INotifier interface which in turn trigger actions that have been
-  ///  registered via its ISetAction interface.</para>
-  ///  <para>In effect this class is a central clearing house for user
-  ///  interaction with certain controls, including the browser control.</para>
-  ///  </remarks>
-  TNotifier = class(TInterfacedObject, INotifier, ISetActions)
+
+  {
+  TNotifier:
+    Notifies the main application of certain user-initiated events. Objects that
+    receive the user interaction call methods using this object's INotifier
+    interface which in turn trigger actions that have been registered with the
+    object via its ISetActions interface. In effect the object is a central
+    clearing house for user interaction with certain controls.
+  }
+  TNotifier = class(TInterfacedObject,
+    INotifier,    // provides methods that trigger notifications
+    ISetActions   // associates action objects with notifications
+  )
   strict private
-    var
-      ///  <summary>Action that triggers a database update.</summary>
-      fUpdateDbaseAction: TBasicAction;
-      ///  <summary>Action that causes a named snippet to be displayed.
-      ///  </summary>
-      fDisplaySnippetAction: TBasicAction;
-      ///  <summary>Action that displays configure compiler dialogue box.
-      ///  </summary>
-      fConfigCompilersAction: TBasicAction;
-      ///  <summary>Action that causes a view item to be displayed.</summary>
-      fShowViewItemAction: TBasicAction;
-      ///  <summary>List of actions triggered when display style in overview
-      ///  pane changes.</summary>
-      fOverviewStyleChangeActions: array of TBasicAction;
-      ///  <summary>List of actions triggered when current pane in detail view
-      ///  changes.</summary>
-      fDisplayPaneChangeAction: TBasicAction;
-      ///  <summary>Action that causes a user defined snippet to be
-      ///  edited.</summary>
-      fEditSnippetAction: TBasicAction;
-      ///  <summary>Action that displays donate dialogue box.</summary>
-      fDonateAction: TBasicAction;
-      ///  <summary>Action that causes a category to be displayed.</summary>
-      fDisplayCategoryAction: TBasicAction;
-      ///  <summary>Action that causes the Snippets Editor to be opened ready to
-      ///  create a new snippet.</summary>
-      fNewSnippetAction: TBasicAction;
-      ///  <summary>Action that causes news items from CodeSnip news feed to be
-      ///  displayed.</summary>
-      fNewsAction: TBasicAction;
-      ///  <summary>Action that causes a check for program updates to be
-      ///  performed.</summary>
-      fCheckForUpdatesAction: TBasicAction;
-      ///  <summary>Action that causes About box to be displayed.</summary>
-      fAboutBoxAction: TBasicAction;
-      ///  <summary>Action that displays a specified page in the preferences
-      ///  dialogue box.</summary>
-      fShowPrefsPageAction: TBasicAction;
-
-  public
-
-    ///  <summary>Requests a database update.</summary>
-    ///  <remarks>Methods of INotifier.</remarks>
+    fUpdateDbaseAction: TBasicAction;
+      {Action that triggers database update}
+    fDisplayRoutineAction: TBasicAction;
+      {Action that causes a named snippet to be displayed}
+    fCompileRoutineAction: TBasicAction;
+      {Action that causes current snippet to be compiled}
+    fViewCompilerLogAction: TBasicAction;
+      {Action that causes a compiler log to be displayed}
+    fShowHintAction: TBasicAction;
+      {Action that causes a hint to be displayed}
+    fConfigCompilersAction: TBasicAction;
+      {Action that displays configure compiler dialog box}
+    fShowViewItemAction: TBasicAction;
+      {Action that causes a view item to be displayed}
+    fOverviewStyleChangeActions: array of TBasicAction;
+      {List of actions triggered when display style in overview pane changes}
+    fDisplayPaneChangeActions: array of TBasicAction;
+      {List of actions triggered when current pane in detail view changes}
+    fShowTestUnitAction: TBasicAction;
+      {Action that causes a test unit to be displayed}
+    fEditRoutineAction: TBasicAction;
+      {Action that causes a user defined snippet to be edited}
+    fDonateAction: TBasicAction;
+      {Action that displays donate dialog box}
+    fDisplayCategoryAction: TBasicAction;
+      {Action that causes a category to be displayed}
+  protected // do not make strict
+    { INotifier }
     procedure UpdateDbase;
-
-    ///  <summary>Displays a snippet.</summary>
-    ///  <param name="SnippetName">WideString [in] Name of required snippet.
-    ///  </param>
-    ///  <param name="UserDefined">WordBool [in] Indicates whether snippet is
-    ///  user defined.</param>
-    ///  <param name="NewTab">WordBool [in] Whether to display snippet in a new
-    ///  detail pane tab.</param>
-    ///  <remarks>Methods of INotifier.</remarks>
-    procedure DisplaySnippet(const SnippetName: WideString;
-      UserDefined: WordBool; NewTab: WordBool);
-
-    ///  <summary>Displays a category.</summary>
-    ///  <param name="CatId">WideString [in] ID of required category.</param>
-    ///  <param name="NewTab">WordBool [in] Whether to display category in a new
-    ///  detail pane tab.</param>
-    ///  <remarks>Methods of INotifier.</remarks>
-    procedure DisplayCategory(const CatID: WideString; NewTab: WordBool);
-
-    ///  <summary>Displays Configure Compilers dialogue box.</summary>
-    ///  <remarks>Methods of INotifier.</remarks>
+      {Updates database.
+      }
+    procedure DisplayRoutine(const RoutineName: WideString;
+      UserDefined: WordBool);
+      {Displays a named snippet.
+        @param RoutineName [in] Name of snippet to display.
+        @param UserDefined [in] Whether snippet is user defined.
+      }
+    procedure DisplayCategory(const CatID: WideString);
+      {Displays an identified category.
+        @param CatID [in] Id of category to display.
+      }
+    procedure CompileRoutine;
+      {Compiles the current snippet.
+      }
+    procedure ViewCompilerLog(CompID: SYSINT);
+      {Displays a compiler log.
+        @param CompID [in] Version of Delphi for which we need to display log.
+          CompID is the ordinal value of the required compiler version
+          enumerated type.
+      }
+    procedure ShowHint(const Hint: WideString);
+      {Displays a hint.
+        @param Hint [in] Hint to be displayed.
+      }
     procedure ConfigCompilers;
-
-    ///  <summary>Displays a view item.</summary>
-    ///  <param name="View">IView [in] Required view item.</param>
-    ///  <param name="NewTab">Boolean [in] Whether to display view item in a new
-    ///  detail pane tab.</param>
-    ///  <remarks>Methods of INotifier.</remarks>
-    procedure ShowViewItem(ViewItem: IView; const NewTab: Boolean);
-
-    ///  <summary>Changes display style of overview pane.</summary>
-    ///  <param name="Style">Integer [in] Required display style.</param>
-    ///  <remarks>
-    ///  <para>Style is index of an overview pane tab.</para>
-    ///  <para>Methods of INotifier.</para>
-    ///  </remarks>
+      {Displays configure compilers dialog box.
+      }
+    procedure ShowViewItem(const ViewItem: TViewItem);
+      {Displays a view item.
+        @param ViewItem [in] View item to display.
+      }
     procedure ChangeOverviewStyle(const Style: Integer);
-
-    ///  <summary>Changes displayed pane in detail display area.</summary>
-    ///  <param name="Pane">Integer [in] Index of required pane.</param>
-    ///  <remarks>Methods of INotifier.</remarks>
+      {Changes display style of overview pane.
+        @param Style [in] Required display style.
+      }
     procedure ChangeDetailPane(const Pane: Integer);
-
-    ///  <summary>Edits a snippet in Snippets Editor.</summary>
-    ///  <param name="SnippetName">WideString [in] Name of snippet.</param>
-    ///  <remarks>
-    ///  <para>Snippet must be user defined.</para>
-    ///  <para>Methods of INotifier.</para>
-    ///  </remarks>
-    procedure EditSnippet(const SnippetName: WideString);
-
-    ///  <summary>Displays Donate dialogue box.</summary>
-    ///  <remarks>Methods of INotifier.</remarks>
+      {Changes displayed pane in detail display area.
+        @param Pane [in] Required new pane.
+      }
+    procedure ShowTestUnit;
+      {Displays test unit.
+      }
+    procedure EditRoutine(const RoutineName: WideString);
+      {Edits a snippet.
+        @param RoutineName [in] Name of snippet. Must be user defined.
+      }
     procedure Donate;
-
-    ///  <summary>Opens Snippets Editor ready to create a new snippet.</summary>
-    ///  <remarks>Methods of INotifier.</remarks>
-    procedure NewSnippet;
-
-    ///  <summary>Displays news items from the CodeSnip news feed.</summary>
-    ///  <remarks>Methods of INotifier.</remarks>
-    procedure ShowNews;
-
-    ///  <summary>Checks for program updates.</summary>
-    ///  <remarks>Methods of INotifier.</remarks>
-    procedure CheckForUpdates;
-
-    ///  <summary>Displays the program's About Box.</summary>
-    ///  <remarks>Methods of INotifier.</remarks>
-    procedure ShowAboutBox;
-
-    ///  <summary>Displays the Preferences dialogue box containing the specified
-    ///  page.</summary>
-    ///  <param name="ClsName">string [in] Class name of the frame that
-    ///  implements the required preferences page.</param>
-    ///  <remarks>Method of INotifier.</remarks>
-    procedure ShowPrefsPage(const ClsName: string);
-
-    ///  <summary>Sets action used to request a database update.</summary>
-    ///  <param name="Action">TBasicAction [in] Required action.</param>
-    ///  <remarks>Methods of ISetActions.</remarks>
+      {Displays donate dialog box.
+      }
+    { ISetActions }
     procedure SetUpdateDbaseAction(const Action: TBasicAction);
-
-    ///  <summary>Sets action used to display a snippet.</summary>
-    ///  <param name="Action">TBasicAction [in] Required action.</param>
-    ///  <remarks>Methods of ISetActions.</remarks>
-    procedure SetDisplaySnippetAction(const Action: TBasicAction);
-
-    ///  <summary>Sets action used to display Configure Compilers dialogue
-    ///  box.</summary>
-    ///  <param name="Action">TBasicAction [in] Required action.</param>
-    ///  <remarks>Methods of ISetActions.</remarks>
+      {Sets action triggered when user requests database update.
+        @param Action [in] Required action.
+      }
+    procedure SetDisplayRoutineAction(const Action: TBasicAction);
+      {Sets action triggered when a named snippet is requested to be displayed.
+        @param Action [in] Required action.
+      }
+    procedure SetCompileRoutineAction(const Action: TBasicAction);
+      {Sets action triggered when user wants to test-compile the current
+      snippet.
+        @param Action [in] Required action.
+      }
+    procedure SetViewCompilerLogAction(const Action: TBasicAction);
+      {Sets action triggered when user wants to view a compiler log.
+        @param Action [in] Required action.
+      }
+    procedure SetShowHintAction(const Action: TBasicAction);
+      {Sets action triggered when user moves mouse over hot links etc. that
+      cause hints to be displayed.
+        @param Action [in] Required action.
+      }
     procedure SetConfigCompilersAction(const Action: TBasicAction);
-
-    ///  <summary>Sets action used to display a view item.</summary>
-    ///  <param name="Action">TBasicAction [in] Required action.</param>
-    ///  <remarks>Methods of ISetActions.</remarks>
+      {Sets action triggered when user requests that configure compilers dialog
+      box is to be displayed.
+        @param Action [in] Required action.
+      }
     procedure SetShowViewItemAction(const Action: TBasicAction);
-
-    ///  <summary>Sets actions used to change display style of overview pane.
-    ///  </summary>
-    ///  <param name="Actions">array of TBasicAction [in] Array of required
-    ///  actions.</param>
-    ///  <remarks>
-    ///  <para>Actions array must have one action for each supported display
-    ///  style.</para>
-    ///  <para>Methods of ISetActions.</para>
-    ///  </remarks>
+      {Sets action triggered when user requests a view item is displayed.
+        @param Action [in] Required action.
+      }
     procedure SetOverviewStyleChangeActions(
       const Actions: array of TBasicAction);
-
-    ///  <summary>Sets action used to change displayed pane in detail display
-    ///  area.</summary>
-    ///  <param name="Action">TBasicAction [in] Required action.</param>
-    ///  <remarks>Methods of ISetActions.</remarks>
-    procedure SetDetailPaneChangeAction(const Action: TBasicAction);
-
-    ///  <summary>Sets action used to edit a snippet in Snippets Editor.
-    ///  </summary>
-    ///  <param name="Action">TBasicAction [in] Required action.</param>
-    ///  <remarks>Methods of ISetActions.</remarks>
-    procedure SetEditSnippetAction(const Action: TBasicAction);
-
-    ///  <summary>Sets action used to display Donate dialogue box.</summary>
-    ///  <param name="Action">TBasicAction [in] Required action.</param>
-    ///  <remarks>Methods of ISetActions.</remarks>
+      {Sets actions that are triggered when different overview display styles
+      are requested.
+        @param Actions [in] Dynamic array of required actions: one per display
+          style.
+      }
+    procedure SetDetailPaneChangeActions(const Actions: array of TBasicAction);
+      {Sets actions that are triggered when different detail panes are required
+      to be shown.
+        @param Actions [in] Dynamic array of required actions: one per detail
+          display tab.
+      }
+    procedure SetShowTestUnitAction(const Action: TBasicAction);
+      {Sets action triggered where displays a test unit.
+        @param Action [in] Required action.
+      }
+    procedure SetEditRoutineAction(const Action: TBasicAction);
+      {Sets action triggered when user requests a user defined snippet is to be
+      edited.
+        @param Action [in] Required action.
+      }
     procedure SetDonateAction(const Action: TBasicAction);
-
-    ///  <summary>Sets action used to display a category.</summary>
-    ///  <param name="Action">TBasicAction [in] Required action.</param>
-    ///  <remarks>Methods of ISetActions.</remarks>
+      {Sets action triggered when user request that the donate dialog box is
+      displays.
+        @param Action [in] Required action.
+      }
     procedure SetDisplayCategoryAction(const Action: TBasicAction);
-
-    ///  <summary>Sets action used to open snippets editor to create a new
-    ///  snippet.</summary>
-    ///  <param name="Action">TBasicAction [in] Required action.</param>
-    ///  <remarks>Methods of ISetActions.</remarks>
-    procedure SetNewSnippetAction(const Action: TBasicAction);
-
-    ///  <summary>Sets action used to display news items from the CodeSnip news
-    ///  feed.</summary>
-    ///  <param name="Action">TBasicAction [in] Required action.</param>
-    ///  <remarks>Methods of ISetActions.</remarks>
-    procedure SetNewsAction(const Action: TBasicAction);
-
-    ///  <summary>Sets action used to check for program updates.</summary>
-    ///  <param name="Action">TBasicAction [in] Required action.</param>
-    ///  <remarks>Methods of ISetActions.</remarks>
-    procedure SetCheckForUpdatesAction(const Action: TBasicAction);
-
-    ///  <summary>Sets action used to display the program's About Box.</summary>
-    ///  <param name="Action">TBasicAction [in] Required action.</param>
-    ///  <remarks>Methods of ISetActions.</remarks>
-    procedure SetAboutBoxAction(const Action: TBasicAction);
-
-    ///  <summary>Sets action used to display a given page of the Preferences
-    ///  dialogue box.</summary>
-    ///  <param name="Action">TBasicAction [in] Required action.</param>
-    ///  <remarks>Method of ISetActions.</remarks>
-    procedure SetShowPrefsPageAction(const Action: TBasicAction);
+      {Sets actions triggered when a category is requested to be displayed.
+        @param Action [in] Required action.
+      }
   end;
 
 
@@ -251,22 +213,27 @@ uses
   // Delphi
   SysUtils, StdActns,
   // Project
-  Compilers.UGlobals, UCategoryAction, UDetailTabAction, UEditSnippetAction,
-  UShowPrefsPageAction, USnippetAction, UViewItemAction;
+  Compilers.UGlobals, UCategoryAction, UCompLogAction, UEditRoutineAction,
+  URoutineAction, UViewItemAction;
 
 
 { TNotifier }
 
 procedure TNotifier.ChangeDetailPane(const Pane: Integer);
+  {Changes displayed pane in detail display area.
+    @param Pane [in] Required new pane.
+  }
 begin
-  if Assigned(fDisplayPaneChangeAction) then
-  begin
-    (fDisplayPaneChangeAction as TDetailTabAction).TabIndex := Pane;
-    fDisplayPaneChangeAction.Execute;
-  end;
+  Assert((Pane >= 0) and (Pane < Length(fDisplayPaneChangeActions)),
+    ClassName + '.ChangeDetailPane: Pane out of range');   
+  if Assigned(fDisplayPaneChangeActions[Pane]) then
+    fDisplayPaneChangeActions[Pane].Execute;
 end;
 
 procedure TNotifier.ChangeOverviewStyle(const Style: Integer);
+  {Changes display style of overview pane.
+    @param Style [in] Required display style.
+  }
 begin
   Assert((Style >= 0) and (Style < Length(fOverviewStyleChangeActions)),
     ClassName + '.ChangeOverviewStyle: Pane out of range');
@@ -274,84 +241,106 @@ begin
     fOverviewStyleChangeActions[Style].Execute;
 end;
 
-procedure TNotifier.CheckForUpdates;
+procedure TNotifier.CompileRoutine;
+  {Compiles the current snippet.
+  }
 begin
-  if Assigned(fCheckForUpdatesAction) then
-    fCheckForUpdatesAction.Execute;
+  if Assigned(fCompileRoutineAction) then
+    fCompileRoutineAction.Execute;
 end;
 
 procedure TNotifier.ConfigCompilers;
+  {Displays configure compilers dialog box.
+  }
 begin
   if Assigned(fConfigCompilersAction) then
     fConfigCompilersAction.Execute;
 end;
 
-procedure TNotifier.DisplayCategory(const CatID: WideString; NewTab: WordBool);
+procedure TNotifier.DisplayCategory(const CatID: WideString);
+  {Displays an identified category.
+    @param CatID [in] Id of category to display.
+  }
 begin
   if Assigned(fDisplayCategoryAction) then
   begin
     (fDisplayCategoryAction as TCategoryAction).CatID := CatID;
-    (fDisplayCategoryAction as TCategoryAction).NewTab := NewTab;
     fDisplayCategoryAction.Execute;
   end;
 end;
 
-procedure TNotifier.DisplaySnippet(const SnippetName: WideString;
-  UserDefined: WordBool; NewTab: WordBool);
+procedure TNotifier.DisplayRoutine(const RoutineName: WideString;
+  UserDefined: WordBool);
+  {Displays a named snippet.
+    @param RoutineName [in] Name of snippet to display.
+    @param UserDefined [in] Whether snippet is user defined.
+  }
 begin
-  if Assigned(fDisplaySnippetAction) then
+  if Assigned(fDisplayRoutineAction) then
   begin
-    (fDisplaySnippetAction as TSnippetAction).SnippetName := SnippetName;
-    (fDisplaySnippetAction as TSnippetAction).UserDefined := UserDefined;
-    (fDisplaySnippetAction as TSnippetAction).NewTab := NewTab;
-    fDisplaySnippetAction.Execute;
+    (fDisplayRoutineAction as TRoutineAction).RoutineName := RoutineName;
+    (fDisplayRoutineAction as TRoutineAction).UserDefined := UserDefined;
+    fDisplayRoutineAction.Execute;
   end;
 end;
 
 procedure TNotifier.Donate;
+  {Displays donate dialog box.
+  }
 begin
   if Assigned(fDonateAction) then
     fDonateAction.Execute;
 end;
 
-procedure TNotifier.EditSnippet(const SnippetName: WideString);
+procedure TNotifier.EditRoutine(const RoutineName: WideString);
+  {Edits a snippet.
+    @param RoutineName [in] Name of snippet. Must be user defined.
+  }
 begin
-  if Assigned(fEditSnippetAction) then
+  if Assigned(fEditRoutineAction) then
   begin
-    (fEditSnippetAction as TEditSnippetAction).SnippetName := SnippetName;
-    fEditSnippetAction.Execute;
+    (fEditRoutineAction as TEditRoutineAction).RoutineName := RoutineName;
+    fEditRoutineAction.Execute;
   end;
 end;
 
-procedure TNotifier.NewSnippet;
+procedure TNotifier.SetCompileRoutineAction(
+  const Action: TBasicAction);
+  {Sets action triggered when user wants to test-compile the current snippet.
+    @param Action [in] Required action.
+  }
 begin
-  if Assigned(fNewSnippetAction) then
-    fNewSnippetAction.Execute;
-end;
-
-procedure TNotifier.SetAboutBoxAction(const Action: TBasicAction);
-begin
-  fAboutBoxAction := Action;
-end;
-
-procedure TNotifier.SetCheckForUpdatesAction(const Action: TBasicAction);
-begin
-  fCheckForUpdatesAction := Action;
+  fCompileRoutineAction := Action;
 end;
 
 procedure TNotifier.SetConfigCompilersAction(const Action: TBasicAction);
+  {Sets action triggered when user requests that configure compilers dialog box
+  is to be displayed.
+    @param Action [in] Required action.
+  }
 begin
   fConfigCompilersAction := Action;
 end;
 
-procedure TNotifier.SetDetailPaneChangeAction(const Action: TBasicAction);
+procedure TNotifier.SetDetailPaneChangeActions(
+  const Actions: array of TBasicAction);
+  {Sets actions that are triggered when different detail panes are required to
+  be shown.
+    @param Actions [in] Dynamic array of required actions: one per detail
+      display tab.
+  }
+var
+  Idx: Integer; // loops thru actions
 begin
-  Assert(Action is TDetailTabAction,
-    ClassName + '.SetDetailPaneChangeAction: Action is not TDetailTabAction');
-  fDisplayPaneChangeAction := Action;
+  SetLength(fDisplayPaneChangeActions, Length(Actions));
+  for Idx := Low(Actions) to High(Actions) do
+    fDisplayPaneChangeActions[Idx] := Actions[Idx];
 end;
 
 procedure TNotifier.SetDisplayCategoryAction(const Action: TBasicAction);
+  {Sets actions triggered when a category is requested to be displayed.
+    @param Action [in] Required action.
+  }
 begin
   Assert(Action is TCategoryAction,
     ClassName + '.SetDisplayCategoryAction: Action is not TCategoryAction');
@@ -361,41 +350,47 @@ begin
   (fDisplayCategoryAction as ISetNotifier).SetNotifier(Self);
 end;
 
-procedure TNotifier.SetDisplaySnippetAction(
+procedure TNotifier.SetDisplayRoutineAction(
   const Action: TBasicAction);
+  {Sets action triggered when a named snippet is requested to be displayed.
+    @param Action [in] Required action.
+  }
 begin
-  Assert(Action is TSnippetAction,
-    ClassName + '.SetDisplaySnippetAction: Action is not TSnippetAction');
+  Assert(Action is TRoutineAction,
+    ClassName + '.SetDisplayRoutineAction: Action is not TRoutineAction');
   Assert(Supports(Action, ISetNotifier),
-    ClassName + '.SetDisplaySnippetAction: Action must support ISetNotifier');
-  fDisplaySnippetAction := Action;
-  (fDisplaySnippetAction as ISetNotifier).SetNotifier(Self);
+    ClassName + '.SetDisplayRoutineAction: Action must support ISetNotifier');
+  fDisplayRoutineAction := Action;
+  (fDisplayRoutineAction as ISetNotifier).SetNotifier(Self);
 end;
 
 procedure TNotifier.SetDonateAction(const Action: TBasicAction);
+  {Sets action triggered when user request that the donate dialog box is
+  displays.
+    @param Action [in] Required action.
+  }
 begin
   fDonateAction := Action;
 end;
 
-procedure TNotifier.SetEditSnippetAction(const Action: TBasicAction);
+procedure TNotifier.SetEditRoutineAction(const Action: TBasicAction);
+  {Sets action triggered when user requests a user defined snippet is to be
+  edited.
+    @param Action [in] Required action.
+  }
 begin
-  Assert(Action is TEditSnippetAction,
-    ClassName + '.SetEditSnippetAction: Action is not TEditSnippetAction');
-  fEditSnippetAction := Action;
-end;
-
-procedure TNotifier.SetNewsAction(const Action: TBasicAction);
-begin
-  fNewsAction := Action;
-end;
-
-procedure TNotifier.SetNewSnippetAction(const Action: TBasicAction);
-begin
-  fNewSnippetAction := Action;
+  Assert(Action is TEditRoutineAction,                     
+    ClassName + '.SetEditRoutineAction: Action is not TEditRoutineAction');
+  fEditRoutineAction := Action;
 end;
 
 procedure TNotifier.SetOverviewStyleChangeActions(
   const Actions: array of TBasicAction);
+  {Sets actions that are triggered when different overview display styles are
+  requested.
+    @param Actions [in] Dynamic array of required actions: one per display
+      style.
+  }
 var
   Idx: Integer; // loops thru actions
 begin
@@ -404,59 +399,102 @@ begin
     fOverviewStyleChangeActions[Idx] := Actions[Idx];
 end;
 
-procedure TNotifier.SetShowPrefsPageAction(const Action: TBasicAction);
+procedure TNotifier.SetShowHintAction(const Action: TBasicAction);
+  {Sets action triggered when user moves mouse over hot links etc. that cause
+  hints to be displayed.
+    @param Action [in] Required action.
+  }
 begin
-  Assert(Action is TShowPrefsPageAction, ClassName
-    + '.SetShowPreferencesAction: Action is not TShowPrefsPageAction');
-  fShowPrefsPageAction := Action;
+  Assert(Action is THintAction,                            
+    ClassName + '.SetShowHintAction: Action is not THintAction');
+  fShowHintAction := Action;
+end;
+
+procedure TNotifier.SetShowTestUnitAction(const Action: TBasicAction);
+begin
+  fShowTestUnitAction := Action;
 end;
 
 procedure TNotifier.SetShowViewItemAction(const Action: TBasicAction);
+  {Sets action triggered when user requests a view item is displayed.
+    @param Action [in] Required action.
+  }
 begin
   fShowViewItemAction := Action;
 end;
 
 procedure TNotifier.SetUpdateDbaseAction(
   const Action: TBasicAction);
+  {Sets action triggered when user requests database update.
+    @param Action [in] Required action.
+  }
 begin
   fUpdateDbaseAction := Action;
 end;
 
-procedure TNotifier.ShowAboutBox;
+procedure TNotifier.SetViewCompilerLogAction(
+  const Action: TBasicAction);
+  {Sets action triggered when user wants to view a compiler log.
+    @param Action [in] Required action.
+  }
 begin
-  if Assigned(fAboutBoxAction) then
-    fAboutBoxAction.Execute;
+  Assert(Action is TCompLogAction,
+    ClassName + '.SetViewCompilerLogAction: Action is not TCompLogAction');
+  fViewCompilerLogAction := Action;
 end;
 
-procedure TNotifier.ShowNews;
+procedure TNotifier.ShowHint(const Hint: WideString);
+  {Displays a hint.
+    @param Hint [in] Hint to be displayed.
+  }
 begin
-  if Assigned(fNewsAction) then
-    fNewsAction.Execute;
-end;
-
-procedure TNotifier.ShowPrefsPage(const ClsName: string);
-begin
-  if Assigned(fShowPrefsPageAction) then
+  if Assigned(fShowHintAction) then
   begin
-    (fShowPrefsPageAction as TShowPrefsPageAction).FrameClassName := ClsName;
-    fShowPrefsPageAction.Execute;
+    // record hint text in action
+    (fShowHintAction as THintAction).Hint := Hint;
+    fShowHintAction.Execute;
   end;
 end;
 
-procedure TNotifier.ShowViewItem(ViewItem: IView; const NewTab: Boolean);
+procedure TNotifier.ShowTestUnit;
+begin
+  if Assigned(fShowTestUnitAction) then
+    fShowTestUnitAction.Execute;
+end;
+
+procedure TNotifier.ShowViewItem(const ViewItem: TViewItem);
+  {Displays a view item.
+    @param ViewItem [in] View item to display.
+  }
 begin
   if Assigned(fShowViewItemAction) then
   begin
     (fShowViewItemAction as TViewItemAction).ViewItem := ViewItem;
-    (fShowViewItemAction as TViewItemAction).NewTab := NewTab;
     fShowViewItemAction.Execute;
   end;
 end;
 
 procedure TNotifier.UpdateDbase;
+  {Updates database.
+  }
 begin
   if Assigned(fUpdateDbaseAction) then
     fUpdateDbaseAction.Execute;
+end;
+
+procedure TNotifier.ViewCompilerLog(CompID: SYSINT);
+  {Displays a compiler log.
+    @param CompID [in] Version of Delphi for which we need to display log.
+      CompID is the ordinal value of the required compiler version enumerated
+      type.
+  }
+begin
+  if Assigned(fViewCompilerLogAction) then
+  begin
+    (fViewCompilerLogAction as TCompLogAction).CompilerID :=
+      TCompilerID(CompID);
+    fViewCompilerLogAction.Execute;
+  end;
 end;
 
 end.

@@ -1,16 +1,37 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
- *
- * Copyright (C) 2009-2013, Peter Johnson (www.delphidabbler.com).
- *
- * $Rev$
- * $Date$
+ * UCommandBars.pas
  *
  * Defines various classes used to configure one or more command bars owned by
  * a container. Command bars are UI elements used to issue commands, e.g. menus,
  * toolbars etc.
+ *
+ * $Rev$
+ * $Date$
+ *
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is UCommandBars.pas
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2009-2010 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -32,9 +53,7 @@ type
     Valid values for command bar IDs used to uniquely identify command bars
     within a container.
   }
-  TCommandBarID = type Byte;
-
-  TCommandBarIDs = set of TCommandBarID;
+  TCommandBarID = 0..High(SmallInt);
 
   {
   ICommandBarConfig:
@@ -44,18 +63,15 @@ type
   ICommandBarConfig = interface(IInterface)
     ['{B70EAC6F-F0AB-4318-B36A-CBC3C89DC9A5}']
     procedure AddAction(const Action: TCustomAction;
-      const ID: TCommandBarID); overload;
+      const ID: TCommandBarID);
       {Adds an new command action to a command bar.
         @param Action [in] Action to be added.
         @param Kind [in] Id of command bar to receive command bar item.
       }
-    procedure AddAction(const Action: TCustomAction;
-      const IDs: TCommandBarIDs); overload;
-    procedure AddSpacer(const ID: TCommandBarID); overload;
+    procedure AddSpacer(const ID: TCommandBarID);
       {Adds a spacer to a command bar.
         @param Kind [in] Id of command bar to receive spacer.
       }
-    procedure AddSpacer(const IDs: TCommandBarIDs); overload;
     procedure SetImages(const Images: TCustomImageList);
       {Specifies image list to be used by all command bars.
         @param Images [in] Image list to be used.
@@ -172,6 +188,22 @@ type
     procedure UpdateImageLists;
       {Updates image list used by with all managed command bars.
       }
+  protected // do not make strict
+    { ICommandBarConfig methods }
+    procedure AddAction(const Action: TCustomAction;
+      const ID: TCommandBarID);
+      {Adds an new command action to a command bar.
+        @param Action [in] Action to be added.
+        @param Kind [in] Id of command bar to receive command bar item.
+      }
+    procedure AddSpacer(const ID: TCommandBarID);
+      {Adds a spacer to a command bar.
+        @param Kind [in] Id of command bar to receive spacer.
+      }
+    procedure SetImages(const Images: TCustomImageList); virtual;
+      {Specifies image list to be used by all command bars.
+        @param Images [in] Image list to be used.
+      }
   public
     constructor Create(const Controller: IInterface);
       {Constructor. Creates contained object.
@@ -186,24 +218,6 @@ type
         @param ID [in] ID of command bar.
         @param CommandBar [in] command bar object to be added.
       }
-    { ICommandBarConfig methods }
-    procedure AddAction(const Action: TCustomAction;
-      const ID: TCommandBarID); overload;
-      {Adds an new command action to a command bar.
-        @param Action [in] Action to be added.
-        @param Kind [in] Id of command bar to receive command bar item.
-      }
-    procedure AddAction(const Action: TCustomAction;
-      const IDs: TCommandBarIDs); overload;
-    procedure AddSpacer(const ID: TCommandBarID); overload;
-      {Adds a spacer to a command bar.
-        @param Kind [in] Id of command bar to receive spacer.
-      }
-    procedure AddSpacer(const IDs: TCommandBarIDs); overload;
-    procedure SetImages(const Images: TCustomImageList); virtual;
-      {Specifies image list to be used by all command bars.
-        @param Images [in] Image list to be used.
-      }
   end;
 
 
@@ -212,7 +226,7 @@ implementation
 
 uses
   // Project
-  UMenus, UToolButtonEx;
+  UMenuHelper, UToolButtonEx;
 
 
 { TCommandBarMgr }
@@ -228,15 +242,6 @@ begin
   fCommandBars[ID].AddAction(Action);
 end;
 
-procedure TCommandBarMgr.AddAction(const Action: TCustomAction;
-  const IDs: TCommandBarIDs);
-var
-  ID: TCommandBarID;
-begin
-  for ID in IDs do
-    AddAction(Action, ID);
-end;
-
 procedure TCommandBarMgr.AddCommandBar(const ID: TCommandBarID;
   const CommandBar: TCommandBarWrapper);
   {Adds a new command bar to command bar manager.
@@ -246,14 +251,6 @@ procedure TCommandBarMgr.AddCommandBar(const ID: TCommandBarID;
 begin
   fCommandBars.Add(ID, CommandBar);
   CommandBar.SetImages(fImageList);
-end;
-
-procedure TCommandBarMgr.AddSpacer(const IDs: TCommandBarIDs);
-var
-  ID: TCommandBarID;
-begin
-  for ID in IDs do
-    AddSpacer(ID);
 end;
 
 procedure TCommandBarMgr.AddSpacer(const ID: TCommandBarID);

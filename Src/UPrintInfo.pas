@@ -1,16 +1,37 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
- *
- * Copyright (C) 2007-2013, Peter Johnson (www.delphidabbler.com).
- *
- * $Rev$
- * $Date$
+ * UPrintInfo.pas
  *
  * Implements a singleton object that maintains printer and page information for
  * lifetime of program. This object maintains information that is not maintained
  * by the Printer object.
+ *
+ * $Rev$
+ * $Date$
+ *
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is UPrintInfo.pas
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2007-2009 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -99,7 +120,7 @@ implementation
 
 uses
   // Delphi
-  UPreferences, USingleton;
+  UPreferences;
 
 
 type
@@ -110,25 +131,21 @@ type
     application. This class stores information that the Printer object doesn't
     maintain.
   }
-  TPrintInfo = class(TSingleton,
+  TPrintInfo = class(TInterfacedObject,
     IPrintInfo
   )
   strict private
-    var
-      fPageMargins: TPageMargins;
-        {Stores current page margins in millimeters}
-      fPrintOptions: TPrintOptions;
-        {Stores current print options}
+    fPageMargins: TPageMargins;
+      {Stores current page margins in millimeters}
+    fPrintOptions: TPrintOptions;
+      {Stores current print options}
+    class var fInstance: IPrintInfo;
+      {Stores reference to singleton instance of this class}
     class function GetInstance: IPrintInfo; static;
       {Returns singletion IPrintInfo object initialised from persistent storage.
         @return Object instance.
       }
-  strict protected
-    ///  <summary>Initialises singleton object on creation.</summary>
-    procedure Initialize; override;
-  public
-    class property Instance: IPrintInfo read GetInstance;
-      {Reference to singleton instance of this class}
+  protected // do not make strict
     { IPrintInfo methods }
     procedure LoadDefaults;
       {Loads default property values from user preferences.
@@ -149,6 +166,13 @@ type
       {Sets print options.
         @param Options [in] New options.
       }
+  public
+    constructor Create;
+      {Class constructor. Sets up and initialises properties to default values.
+      }
+    class property Instance: IPrintInfo
+      read GetInstance;
+      {Reference to singleton instance of this class}
   end;
 
 
@@ -163,12 +187,22 @@ end;
 
 { TPrintInfo }
 
+constructor TPrintInfo.Create;
+  {Class constructor. Sets up and initialises properties to default values.
+  }
+begin
+  inherited;
+  LoadDefaults;
+end;
+
 class function TPrintInfo.GetInstance: IPrintInfo;
   {Returns singletion IPrintInfo object initialised from persistent storage.
     @return Object instance.
   }
 begin
-  Result := TPrintInfo.Create;
+  if not Assigned(fInstance) then
+    fInstance := TPrintInfo.Create;
+  Result := fInstance;
 end;
 
 function TPrintInfo.GetPageMargins: TPageMargins;
@@ -185,12 +219,6 @@ function TPrintInfo.GetPrintOptions: TPrintOptions;
   }
 begin
   Result := fPrintOptions;
-end;
-
-procedure TPrintInfo.Initialize;
-begin
-  inherited;
-  LoadDefaults;
 end;
 
 procedure TPrintInfo.LoadDefaults;

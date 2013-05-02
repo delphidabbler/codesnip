@@ -1,15 +1,36 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * UMessageBox.pas
  *
- * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
+ * Implements a static class that can display message and confirmation dialog
+ * boxes at an appropriate position on screen.
  *
  * $Rev$
  * $Date$
  *
- * Implements a static class that can display message and confirmation dialogue
- * boxes.
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is UMessageBox.pas
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -35,156 +56,129 @@ resourcestring
 
 
 type
-  ///  <summary>Attributes of a TMessageBox button.</summary>
+
+  {
+  TMessageBoxButton:
+    Record that contains attributes of a button that appears in a TMessageBox
+    dialog box.
+  }
   TMessageBoxButton = record
-    ///  <summary>Button's caption.</summary>
-    Caption: TCaption;
-    ///  <summary>Button's modal result.</summary>
-    ///  <remarks>Set to 0 to prevent button from closing form.</remarks>
-    ModalResult: Integer;
-    ///  <summary>Determines if this is default button.</summary>
-    Default: Boolean;
-    ///  <summary>Determines if this is cancel button.</summary>
-    Cancel: Boolean;
-    ///  <summary>Creates record with given fields values.</summary>
+    Caption: TCaption;      // button's caption
+    ModalResult: Integer;   // button's modal result (0 to prevent form closure)
+    Default: Boolean;       // true if button is default
+    Cancel: Boolean;        // true if button is cancel button
     constructor Create(const ACaption: TCaption; const AModalResult: Integer;
       const ADefault: Boolean = False; const ACancel: Boolean = False);
+      {Initialises fields of record.
+        @param ACaption [in] Button's caption.
+        @param AModalResult [in] Modal result returned when button is clicked.
+        @param Default [in] Optional: value of button's Default property.
+        @param Cancel [in] Optional: value of button's Cancel property.
+      }
   end;
 
-type
-  ///  <summary>Static class that can display message and confirmation dialogue
-  ///  boxes at an appropriate position on screen.</summary>
+  {
+  TMessageBox:
+    Static class that can display message and confirmation dialog boxes at an
+    appropriate position on screen.
+  }
   TMessageBox = class sealed(TNoConstructObject)
   public
-    const
-      ///  <summary>Value used to request default dialogue box title.</summary>
-      ///  <remarks>For passing to methods that take a Title parameter when
-      ///  default title is required.</remarks>
-      DefaultTitle = '';
-
-      ///  <summary>Value used to request default dialogue box icon.</summary>
-      ///  <remarks>For passing to methods that take an IconRes parameter when
-      ///  default icon is required.</remarks>
-      DefaultIcon = nil;
-
+    // Constants to pass to methods that require Title or IconRes parameters to
+    // indicate default value is to be used.
+    const DefaultTitle = '';  // Indicates default title required
+    const DefaultIcon = nil;  // Indicates default icon required
   strict private
-
-    ///  <summary>Displays a message in a customised dialogue box aligned over
-    ///  the parent control.</summary>
-    ///  <param name="Parent">TComponent [in] Dialogue box's parent control,
-    ///  over which dialogue box is aligned. May be nil, when active form is
-    ///  used for alignment.</param>
-    ///  <param name="MsgLines">IStringList [in] Message displayed in dialogue
-    ///  box. Can store mulitple lines. Use empty lines to insert space between
-    ///  paragraphs.</param>
-    ///  <param name="DlgType">TMsgDlgType [in] Type of dialogue box.</param>
-    ///  <param name="Buttons">array of TMessageBoxButton [in] Describes buttons
-    ///  to be displayed.</param>
-    ///  <param name="Title">string [in] Title of dialogue box. If Title = ''
-    ///  the title used depends on DlgType.</param>
-    ///  <param name="IconRes">PChar [in] Icon resource identifier. If nil icon
-    ///  used depends on DlgType.</param>
-    ///  <param name="InhibitCancel">Boolean [in] Flag that, when true, removes
-    ///  close button from dialogue box and prevents it responding to the ESC
-    ///  key.</param>
-    ///  <returns>Word. Value indicating which button was pressed to close
-    ///  dialogue box. This will be value of ModalResult field of one of the
-    ///  buttons specified in Buttons, or mrCancel if close button in title bar
-    ///  was clicked.</returns>
     class function Display(const Parent: TComponent;
       MsgLines: IStringList; const DlgType: TMsgDlgType;
       const Buttons: array of TMessageBoxButton; const Title: string;
-      const IconRes: PChar; const InhibitCancel: Boolean): Word; overload;
-
-    ///  <summary>Displays a message in a customised dialogue box aligned over
-    ///  the parent control.</summary>
-    ///  <param name="Parent">TComponent [in] Dialogue box's parent control,
-    ///  over which dialogue box is aligned. May be nil, when active form is
-    ///  used for alignment.</param>
-    ///  <param name="Msg">string [in] Message displayed in dialogue box.
-    ///  Separate lines with LF or CRLF. Separate paragraphs with two line
-    ///  breaks.</param>
-    ///  <param name="DlgType">TMsgDlgType [in] Type of dialogue box.</param>
-    ///  <param name="Buttons">array of TMessageBoxButton [in] Describes buttons
-    ///  to be displayed.</param>
-    ///  <param name="Title">string [in] Title of dialogue box. If Title = ''
-    ///  the title used depends on DlgType.</param>
-    ///  <param name="IconRes">PChar [in] Icon resource identifier. If nil icon
-    ///  used depends on DlgType.</param>
-    ///  <param name="InhibitCancel">Boolean [in] Flag that, when true, removes
-    ///  close button from dialogue box and prevents it responding to the ESC
-    ///  key.</param>
-    ///  <returns>Word. Value indicating which button was pressed to close
-    ///  dialogue box. This will be value of ModalResult field of one of the
-    ///  buttons specified in Buttons, or mrCancel if close button in title bar
-    ///  was clicked.</returns>
+      const IconRes: PChar): Word; overload;
+      {Displays a message in a customised dialog box located over the calling
+      form.
+        @param Parent [in] Component that dialog box is aligned over and that
+          becomes parent of dialog box. If Parent is nil then current active
+          form is used.
+        @param MsgLines [in] Message displayed in dialog. Can store mulitple
+          lines. Use empty lines to insert space between paragraphs.
+        @param DlgType [in] Type of dialog box.
+        @param Buttons [in] Array of records decribing buttons to be displayed.
+        @param Title [in] Title of dialog box. If '' title used depends on
+          DlgType.
+        @param IconRes [in] Icon resource identifier. If nil icon used depends
+          on DlgType.
+        @return Value indicating which button was pressed to close dialog box.
+          This will be value of ModalResult field of one of the buttons
+          specified in Buttons.
+      }
     class function Display(const Parent: TComponent; const Msg: string;
       const DlgType: TMsgDlgType; const Buttons: array of TMessageBoxButton;
-      const Title: string; const IconRes: PChar; const InhibitCancel: Boolean):
-      Word; overload;
-
+      const Title: string; const IconRes: PChar): Word; overload;
+      {Displays a message in a customised dialog box located over the calling
+      form.
+        @param Parent [in] Component that dialog box is aligned over and that
+          becomes parent of dialog box. If Parent is nil then current active
+          form is used.
+        @param Msg [in] Message displayed in dialog. Separate lines with LF or
+          CRLF. Separate paragraphs with two line breaks.
+        @param DlgType [in] Type of dialog box.
+        @param Buttons [in] Array of records decribing buttons to be displayed.
+        @param Title [in] Title of dialog box. If '' title used depends on
+          DlgType.
+        @param IconRes [in] Icon resource identifier. If nil icon used depends
+          on DlgType.
+        @return Value indicating which button was pressed to close dialog box.
+          This will be value of ModalResult field of one of the buttons
+          specified in Buttons.
+      }
   public
-
-    ///  <summary>Displays a message in an information dialogue box aligned over
-    ///  the parent control.</summary>
-    ///  <param name="Parent">TComponent [in] Dialogue box's parent control,
-    ///  over which dialogue box is aligned. May be nil, when active form is
-    ///  used for alignment.</param>
-    ///  <param name="Msg">string [in] Message displayed in dialogue box.
-    ///  Separate lines with LF or CRLF. Separate paragraphs with two line
-    ///  breaks.</param>
     class procedure Information(const Parent: TComponent; const Msg: string);
-
-    ///  <summary>Displays a message in an error dialogue box aligned over the
-    ///  parent control.</summary>
-    ///  <param name="Parent">TComponent [in] Dialogue box's parent control,
-    ///  over which dialogue box is aligned. May be nil, when active form is
-    ///  used for alignment.</param>
-    ///  <param name="Msg">string [in] Message displayed in dialogue box.
-    ///  Separate lines with LF or CRLF. Separate paragraphs with two line
-    ///  breaks.</param>
+      {Displays a message in an information dialog box located relative to owner
+      form.
+        @param Parent [in] Component that dialog box is aligned over and that
+          becomes parent of dialog box. If Parent is nil then current active
+          form is used.
+        @param Msg [in] Message displayed in dialog. Multi-line messages should
+          be separated by LF or CRLF.
+      }
     class procedure Error(const Parent: TComponent; const Msg: string);
-
-    ///  <summary>Displays a message in a confirmation dialogue box aligned over
-    ///  the parent control.</summary>
-    ///  <param name="Parent">TComponent [in] Dialogue box's parent control,
-    ///  over which dialogue box is aligned. May be nil, when active form is
-    ///  used for alignment.</param>
-    ///  <param name="Msg">string [in] Message displayed in dialogue box.
-    ///  Separate lines with LF or CRLF. Separate paragraphs with two line
-    ///  breaks.</param>
-    ///  <returns>Boolean. True if user confirms by clicking Yes button and
-    ///  False if No is clicking or dialogue is cancelled.</returns>
+      {Displays a message in an error dialog box located relative to owner form.
+        @param Parent [in] Component that dialog box is aligned over and that
+          becomes parent of dialog box. If Parent is nil then current active
+          form is used.
+        @param Msg [in] Message displayed in dialog. Multi-line messages should
+          be separated by LF or CRLF.
+      }
     class function Confirm(const Parent: TComponent;
       const Msg: string): Boolean;
-
-    ///  <summary>Displays a message in a dialogue box with custom buttons,
-    ///  aligned over the parent control.</summary>
-    ///  <remarks>This dialogue box has no default icon.</remarks>
-    ///  <param name="Parent">TComponent [in] Dialogue box's parent control,
-    ///  over which dialogue box is aligned. May be nil, when active form is
-    ///  used for alignment.</param>
-    ///  <param name="Msg">string [in] Message displayed in dialogue box.
-    ///  Separate lines with LF or CRLF. Separate paragraphs with two line
-    ///  breaks.</param>
-    ///  <param name="Buttons">array of TMessageBoxButton [in] Describes buttons
-    ///  to be displayed.</param>
-    ///  <param name="Title">string [in] Title of dialogue box. If Title = ''
-    ///  the application's title is used.</param>
-    ///  <param name="IconRes">PChar [in] Icon resource identifier. If nil then
-    ///  no icon is displayed.</param>
-    ///  <param name="InhibitCancel">Boolean [in] Flag that, when true, removes
-    ///  close button from dialogue box and prevents it responding to the ESC
-    ///  key.</param>
-    ///  <returns>Word. Value indicating which button was pressed to close
-    ///  dialogue box. This will be value of ModalResult field of one of the
-    ///  buttons specified in Buttons, or mrCancel if close button in title bar
-    ///  was clicked.</returns>
+      {Displays a message in a confirmation dialog box located relative to owner
+      form.
+        @param Parent [in] Component that dialog box is aligned over and that
+          becomes parent of dialog box. If Parent is nil then current active
+          form is used.
+        @param Msg [in] Message displayed in dialog. Multi-line messages should
+          be separated by LF or CRLF.
+        @return True if user clicks Yes and false otherwise.
+      }
     class function Custom(const Parent: TComponent; const Msg: string;
       const Buttons: array of TMessageBoxButton;
-      const Title: string = DefaultTitle; const IconRes: PChar = DefaultIcon;
-      const InhibitCancel: Boolean = False):
+      const Title: string = DefaultTitle; const IconRes: PChar = DefaultIcon):
       Word;
+      {Displays a message in a dialog box with custom buttons and no icon that
+      is located relative to owner form.
+        @param Parent [in] Component that dialog box is aligned over and that
+          becomes parent of dialog box. If Parent is nil then current active
+          form is used.
+        @param Msg [in] Message displayed in dialog. Multi-line messages should
+          be separated by LF or CRLF.
+        @param Buttons [in] Array of records decribing buttons to be displayed.
+        @param Title [in] Optional title of dialog box. If Title='' then
+          application title is used.
+        @param IconRes [in] Optional icon resource. No icon is displayed if not
+          provided.
+        @return Value indicating which button was pressed to close dialog box.
+          This will be value of ModalResult field of one of the buttons
+          specified in the Buttons array.
+      }
   end;
 
 
@@ -195,115 +189,133 @@ uses
   // Delphi
   SysUtils, Windows, Forms, StdCtrls, ExtCtrls, Consts, Math,
   // Project
-  UConsts, UDlgHelper, UFontHelper, UGraphicUtils, UStructs, UStrUtils;
+  UConsts, UDlgHelper, UFontHelper, UGraphicUtils, UStructs, UUtils;
 
 
 type
-  ///  <summary>Implements a customisable message dialogue box.</summary>
+
+  {
+  TMessageBoxForm:
+    Implements a message dialog box that has configurable lines and paragraphs
+    of text, buttons and icon.
+  }
   TMessageBoxForm = class sealed(TForm)
   strict private
     var
-      ///  <summary>Image control used to display any icon.</summary>
-      fImage: TImage;
-      ///  <summary>Array of dialogue box's buttons.</summary>
-      fButtons: array of TButton;
-      ///  <summary>Array of lables that display dialogue box's text.</summary>
-      fLabels: array of TLabel;
+      fImage: TImage;             // Image control: displays any icon
+      fButtons: array of TButton; // Buttons displayed in dialog box
+      fLabels: array of TLabel;   // Labels that display text in dialog box.
     const
-      ///  <summary>Left and right dialogue box margins.</summary>
-      cXPadding = 16;
-      ///  <summary>Top and bottom dialogue box margins.</summary>
-      cYPadding = 16;
-      ///  <summary>Spacing between paragraphs.</summary>
-      cParaSpacing = 8;
-      ///  <summary>Spacing between buttons.</summary>
-      cBtnSpacing = 8;
-      ///  <summary>Margin above button strip.</summary>
-      cBtnStripTopMargin = 24;
-      ///  <summary>Maximum width of text in dialogue box.</summary>
-      cMaxTextWidth = 512;
-  strict private
-    ///  <summary>Calculates maximum horizontal space that can be occupied by
-    ///  the dialogue's text.</summary>
+      cXPadding = 16;             // Left and right dialog box margins
+      cYPadding = 16;             // Top and bottom dialog box margins
+      cParaSpacing = 8;           // Spacing between paragraphs
+      cBtnSpacing = 8;            // Spacing between buttons
+      cBtnStripTopMargin = 24;    // Margin above button strip
+      cMaxTextWidth = 512;        // Maximum width of text in dialog box
     function MaxTextWidth: Integer;
-    ///  <summary>Calculates height required to display all labels.</summary>
+      {Calculates maximum horizontal space that can be occupied by the dialog's
+      text.
+        @return Required width in pixels.
+      }
     function LabelsHeight: Integer;
-    ///  <summary>Calculates height of given label.</summary>
+      {Finds height required to display all labels.
+        @return Required height in pixels.
+      }
     function LabelHeight(const Lbl: TLabel): Integer;
-    ///  <summary>Calculates width of text in widest label.</summary>
+      {Calculates height of a label.
+        @param Lbl [in] Label for which height is required.
+        @return Label height in pixels.
+      }
     function LabelsWidth: Integer;
-    ///  <summary>Calculates vertical space required to display button strip.
-    ///  </summary>
+      {Finds width of text in widest label.
+        @return Required width in pixels.
+      }
     function ButtonsHeight: Integer;
-    ///  <summary>Calculates horizontal space required to display button strip.
-    ///  </summary>
+      {Calculates vertical space required to display button strip.
+        @return Required height in pixels.
+      }
     function ButtonsWidth: Integer;
-    ///  <summary>Calculates offset of text from dialogue box's left hand
-    ///  margin.</summary>
-    ///  <remarks>Depends on whether dialogue box displays an icon.</remarks>
+      {Calculates horizontal space required to display strip of all buttons.
+        @return Required width in pixels.
+      }
     function TextLeftMargin: Integer;
-    ///  <summary>Calculates vertical space required to accommodate text and any
-    ///  icon.</summary>
+      {Calculates offset of text from dialog box's left hand margin. Depends on
+      whether dialog box displays an icon.
+        @return Required margin in pixels.
+      }
     function TextAndIconHeight: Integer;
-    ///  <summary>Calculates horizontal spaces required to accommodate text and
-    ///  any icon.</summary>
+      {Calculates vertical space required to accommodate text and any icon.
+        @return Required height in pixels.
+      }
     function TextAndIconWidth: Integer;
-    ///  <summary>Sets text of dialogue box's caption.</summary>
-    ///  <param name="Title">string [in] Caption text. If '' then a default
-    ///  caption based on DlgType is used.</param>
-    ///  <param name="DlgType">TMsgDlgType [in] Type of dialogue box. Determines
-    ///  any default title.</param>
+      {Calculates horizontal spaces required to accommodate text and any icon.
+        @return Required width in pixels.
+      }
     procedure InitCaption(const Title: string; const DlgType: TMsgDlgType);
-    ///  <summary>Creates and initialises and locates image control that is
-    ///  required to display any icon.</summary>
-    ///  <param name="IconRes">PChar [in] Name of icon resource. If nil then
-    ///  icon is determined by DlgType.</param>
-    ///  <param name="DlgType">TMsgDlgType [in] Type of dialogue box. Used to
-    ///  determine default icon resource.</param>
-    ///  <remarks>If no icon resource is provided for custom dialogue boxes then
-    ///  no image control is created.</remarks>
+      {Sets text of dialog's caption.
+        @param Title [in] Title to display in dialog's caption. If '' a default
+          caption dependent on dialog type is used.
+        @param DlgType [in] Type of dialog box. Used to determine default
+          caption if Title is ''.
+      }
     procedure InitImage(const IconRes: PChar; const DlgType: TMsgDlgType);
-    ///  <summary>Creates and sizes dialogue's buttons.</summary>
-    ///  <param name="Buttons">array of TMessageBoxButton [in] Array of records
-    ///  that describe buttons to be displayed.</param>
+      {Creates and initialises and locates image control required to display any
+      icon. No image control is created if no icon is required.
+        @param IconRes [in] Icon resource. If nil then icon is determined by
+          DlgType.
+        @param DlgType [in] Type of dialog to be displayed. Determines which, if
+          any icon is required when IconRes is nil.
+      }
     procedure InitButtons(const Buttons: array of TMessageBoxButton);
-    ///  <summary>Creates and sizes labels used to display text in dialogue box.
-    ///  </summary>
-    ///  <param name="Lines">IStringList [in] List od lines of text to display.
-    ///  Blank lines indicate a paragraph break.</param>
+      {Creates and sizes dialog's buttons.
+        @param Buttons [in] Array of records describing buttons to display.
+      }
     procedure InitLabels(const Lines: IStringList);
-    ///  <summary>Sets size of dialogue box to accomodate text, optional icon
-    ///  and buttons.</summary>
+      {Creates and sizes labels used to display text in dialog box.
+        @param Lines [in] String list containing lines of text to display. Blank
+          lines indicate a paragraph break.
+      }
     procedure SizeDialogBox;
-    ///  <summary>Arranges all controls within dialogue box.</summary>
+      {Sets size of dialog box to accomodate text, optional icon and buttons.
+      }
     procedure ArrangeControls;
+      {Arranges all controls within dialog box.
+      }
   public
-    ///  <summary>Constructs form dialogue box form and all components required
-    ///  to display text, buttons and optional icon.</summary>
-    ///  <param name="Owner">TComponent [in] Control that owns this form.
-    ///  </param>
-    ///  <param name="Text">IStringList [in] List of lines of text to display.
-    ///  Blank lines indicate a paragraph spacer.</param>
-    ///  <param name="DlgType">TMsgDlgType [in] Type of dialogue box.</param>
-    ///  <param name="Buttons">array of TMessageBoxButton [in] Describes buttons
-    ///  to be displayed.</param>
-    ///  <param name="Title">string [in] Title of dialogue box. If Title = ''
-    ///  the title used depends on DlgType.</param>
-    ///  <param name="IconRes">PChar [in] Icon resource identifier. If nil icon
-    ///  used depends on DlgType.</param>
-    ///  <param name="InhibitCancel">Boolean [in] Flag that, when true, removes
-    ///  close button from dialogue box and prevents it responding to the ESC
-    ///  key.</param>
-    constructor Create(const Owner: TComponent; const Text: IStringList;
-      const Buttons: array of TMessageBoxButton; const DlgType: TMsgDlgType;
-      const Title: string; const IconRes: PChar; const InhibitCancel: Boolean);
-      reintroduce;
+    constructor Create(const Owner: TComponent;
+      const Text: IStringList;
+      const Buttons: array of TMessageBoxButton;
+      const DlgType: TMsgDlgType;
+      const Title: string;
+      const IconRes: PChar); reintroduce;
+      {Object constructor. Reintroduced constructor that creates dialog box form
+      with components required to display text, buttons and optional icon.
+        @param Owner [in] Control that owns this dialog box.
+        @param Text [in] List of lines of text to display. Blank lines indicate
+          a paragraph spacer.
+        @param Buttons [in] Array of records that define buttons to be
+          displayed.
+        @param DlgType [in] Type of dialog box to be displayed.
+        @param Title [in] Optional dialog box caption text. If Title='' caption
+          depends on DlgType.
+        @param IconRes [in] Resource to be used for icon displayed. If nil then
+          any icon displayed depends on DlgType.
+      }
   end;
 
 { TMessageBox }
 
 class function TMessageBox.Confirm(const Parent: TComponent;
   const Msg: string): Boolean;
+  {Displays a message in a confirmation dialog box located relative to owner
+  form.
+    @param Parent [in] Component that dialog box is aligned over and that
+      becomes parent of dialog box. If Parent is nil then current active form
+      is used.
+    @param Msg [in] Message displayed in dialog. Multi-line messages should be
+      separated by LF or CRLF.
+    @return True if user clicks Yes and false otherwise.
+  }
 begin
   Result := Display(
     Parent,
@@ -314,36 +326,64 @@ begin
       TMessageBoxButton.Create(sBtnNo, mrNo, False, True)
     ],
     DefaultTitle,
-    DefaultIcon,
-    False
+    DefaultIcon
   ) = mrYes;
 end;
 
 class function TMessageBox.Custom(const Parent: TComponent; const Msg: string;
   const Buttons: array of TMessageBoxButton; const Title: string;
-  const IconRes: PChar; const InhibitCancel: Boolean): Word;
+  const IconRes: PChar): Word;
+  {Displays a message in a dialog box with custom buttons and no icon that is
+  located relative to owner form.
+    @param Parent [in] Component that dialog box is aligned over and that
+      becomes parent of dialog box. If Parent is nil then current active form
+      is used.
+    @param Msg [in] Message displayed in dialog. Multi-line messages should be
+      separated by LF or CRLF.
+    @param Buttons [in] Array of records decribing buttons to be displayed.
+    @param Title [in] Optional title of dialog box. If Title='' then application
+      title is used.
+    @param IconRes [in] Optional icon resource. No icon is displayed if not
+      provided.
+    @return Value indicating which button was pressed to close dialog box. This
+      will be value of ModalResult field of one of the buttons specified in the
+      Buttons array.
+  }
 begin
-  Result := Display(
-    Parent, Msg, mtCustom, Buttons, Title, IconRes, InhibitCancel
-  );
+  Result := Display(Parent, Msg, mtCustom, Buttons, Title, IconRes);
 end;
 
 class function TMessageBox.Display(const Parent: TComponent;
   MsgLines: IStringList; const DlgType: TMsgDlgType;
   const Buttons: array of TMessageBoxButton; const Title: string;
-  const IconRes: PChar; const InhibitCancel: Boolean): Word;
+  const IconRes: PChar): Word;
+  {Displays a message in a customised dialog box located over the calling form.
+    @param Parent [in] Component that dialog box is aligned over and that
+      becomes parent of dialog box. If Parent is nil then current active form is
+      used.
+    @param MsgLines [in] Message displayed in dialog. Can store mulitple lines.
+      Use empty lines to insert space between paragraphs.
+    @param DlgType [in] Type of dialog box.
+    @param Buttons [in] Array of records decribing buttons to be displayed.
+    @param Title [in] Title of dialog box. If '' title used depends on DlgType.
+    @param IconRes [in] Icon resource identifier. If nil icon used depends on
+      DlgType.
+    @return Value indicating which button was pressed to close dialog box. This
+      will be value of ModalResult field of one of the buttons specified in
+      Buttons.
+  }
 var
-  Dlg: TForm; // dialogue box instance
+  Dlg: TForm; // dialog box instance
 begin
-  // Create a dialogue box of required type
+  // Create a dialog box of required type
   Dlg := TMessageBoxForm.Create(
-    Parent, MsgLines, Buttons, DlgType, Title, IconRes, InhibitCancel
+    Parent, MsgLines, Buttons, DlgType, Title, IconRes
   );
   try
-    // Make sure "Parent" control is parent of dialogue and align over it
+    // Make sure "Parent" control is parent of dialog and align over it
     TDlgHelper.SetDlgParent(Dlg, Parent);
     TDlgAligner.Align(Dlg, Parent);
-    // Display the dialogue and return result
+    // Display the dialog and return result
     Result := Dlg.ShowModal;
   finally
     FreeAndNil(Dlg);
@@ -352,27 +392,47 @@ end;
 
 class function TMessageBox.Display(const Parent: TComponent; const Msg: string;
   const DlgType: TMsgDlgType; const Buttons: array of TMessageBoxButton;
-  const Title: string; const IconRes: PChar; const InhibitCancel: Boolean):
-  Word;
+  const Title: string; const IconRes: PChar): Word;
+  {Displays a message in a customised dialog box located over the calling form.
+    @param Parent [in] Component that dialog box is aligned over and that
+      becomes parent of dialog box. If Parent is nil then current active form is
+      used.
+    @param Msg [in] Message displayed in dialog. Separate lines with LF or CRLF.
+      Separate paragraphs with two line breaks.
+    @param DlgType [in] Type of dialog box.
+    @param Buttons [in] Array of records decribing buttons to be displayed.
+    @param Title [in] Title of dialog box. If '' title used depends on DlgType.
+    @param IconRes [in] Icon resource identifier. If nil icon used depends on
+      DlgType.
+    @return Value indicating which button was pressed to close dialog box. This
+      will be value of ModalResult field of one of the buttons specified in
+      Buttons.
+  }
 begin
   Result := Display(
     Parent,
     // convert line breaks in Msg to LF only, remove leading and trailing LFs,
     // ensure proper sentence and then convert text string list.
     TIStringList.Create(
-      StrMakeSentence(StrTrimChars(StrUnixLineBreaks(Msg), LF)),
+      MakeSentence(TrimChar(UnixLineBreaks(Msg), LF)),
       LF,
       True
     ),
     DlgType,
     Buttons,
     Title,
-    IconRes,
-    InhibitCancel
+    IconRes
   );
 end;
 
 class procedure TMessageBox.Error(const Parent: TComponent; const Msg: string);
+  {Displays a message in an error dialog box located relative to owner form.
+    @param Parent [in] Component that dialog box is aligned over and that
+      becomes parent of dialog box. If Parent is nil then current active form
+      is used.
+    @param Msg [in] Message displayed in dialog. Multi-line messages should be
+      separated by LF or CRLF.
+  }
 begin
   MessageBeep(MB_ICONERROR);
   Display(
@@ -381,13 +441,20 @@ begin
     mtError,
     [TMessageBoxButton.Create(sBtnOK, mrOK, True, True)],
     DefaultTitle,
-    DefaultIcon,
-    False
+    DefaultIcon
   );
 end;
 
 class procedure TMessageBox.Information(const Parent: TComponent;
   const Msg: string);
+  {Displays a message in an information dialog box located relative to owner
+  form.
+    @param Parent [in] Component that dialog box is aligned over and that
+      becomes parent of dialog box. If Parent is nil then current active form
+      is used.
+    @param Msg [in] Message displayed in dialog. Multi-line messages should be
+      separated by LF or CRLF.
+  }
 begin
   Display(
     Parent,
@@ -395,8 +462,7 @@ begin
     mtInformation,
     [TMessageBoxButton.Create(sBtnOK, mrOK, True, True)],
     DefaultTitle,
-    DefaultIcon,
-    False
+    DefaultIcon
   );
 end;
 
@@ -404,6 +470,12 @@ end;
 
 constructor TMessageBoxButton.Create(const ACaption: TCaption;
   const AModalResult: Integer; const ADefault, ACancel: Boolean);
+  {Initialises fields of record.
+    @param ACaption [in] Button's caption.
+    @param AModalResult [in] Modal result returned when button is clicked.
+    @param Default [in] Optional: value of button's Default property.
+    @param Cancel [in] Optional: value of button's Cancel property.
+  }
 begin
   Caption := ACaption;
   ModalResult := AModalResult;
@@ -414,9 +486,15 @@ end;
 { TMessageBoxForm }
 
 procedure TMessageBoxForm.ArrangeControls;
+  {Arranges all controls within dialog box.
+  }
 
-  ///  Arranges labels within form offset from given top left co-ordinate.
+  // ---------------------------------------------------------------------------
   procedure ArrangeLabels(const Left, Top: Integer);
+    {Arranges labels within dialog box.
+      @param Left [in] Left margin for all labels.
+      @param Top [in] Vertical position of first label.
+    }
   var
     Idx: Integer;       // loops through all labels
     NextTop: Integer;   // vertical position of next label
@@ -430,8 +508,11 @@ procedure TMessageBoxForm.ArrangeControls;
     end;
   end;
 
-  ///  Centres buttons in a strip of given width with tops at given position.
   procedure ArrangeButtons(const Width, Top: Integer);
+    {Arranges buttons in a centred strip in dialog box.
+      @param Width [in] Width of button strip.
+      @param Top [in] Top of button strip.
+    }
   var
     Idx: Integer;       // loops through all buttons
     NextLeft: Integer;  // horizontal position of each button
@@ -444,6 +525,7 @@ procedure TMessageBoxForm.ArrangeControls;
       Inc(NextLeft, fButtons[Idx].Width + cBtnSpacing);
     end;
   end;
+  // ---------------------------------------------------------------------------
 
 begin
   ArrangeLabels(TextLeftMargin, cYPadding);
@@ -453,11 +535,17 @@ begin
 end;
 
 function TMessageBoxForm.ButtonsHeight: Integer;
+  {Calculates vertical space required to display button strip.
+    @return Required height in pixels.
+  }
 begin
   Result := fButtons[0].Height;
 end;
 
 function TMessageBoxForm.ButtonsWidth: Integer;
+  {Calculates horizontal space required to display strip of all buttons.
+    @return Required width in pixels.
+  }
 begin
   Result := Length(fButtons) * fButtons[0].Width
     + (Length(fButtons) - 1) * cBtnSpacing;
@@ -465,31 +553,49 @@ end;
 
 constructor TMessageBoxForm.Create(const Owner: TComponent;
   const Text: IStringList; const Buttons: array of TMessageBoxButton;
-  const DlgType: TMsgDlgType; const Title: string; const IconRes: PChar;
-  const InhibitCancel: Boolean);
+  const DlgType: TMsgDlgType; const Title: string; const IconRes: PChar);
+  {Object constructor. Reintroduced constructor that creates dialog box form
+  with components required to display text, buttons and optional icon.
+    @param Owner [in] Control that owns this dialog box.
+    @param Text [in] List of lines of text to display. Blank lines indicate a
+      paragraph spacer.
+    @param Buttons [in] Array of records that define buttons to be displayed.
+    @param DlgType [in] Type of dialog box to be displayed.
+    @param Title [in] Optional dialog box caption text. If Title='' caption
+      depends on DlgType.
+    @param IconRes [in] Resource to be used for icon displayed. If nil then any
+      icon displayed depends on DlgType.
+  }
 begin
   Assert(Length(Buttons) > 0, ClassName + '.Create: Buttons array is empty');
   Assert(Assigned(Text) and (Text.Count > 0),
     ClassName + '.Ctreate: No message text provided');
   inherited CreateNew(Owner);
   Position := poDesigned;   // must be poDesgined to enable alignment
-  BorderStyle := bsDialog;  // it's a dialogue box
-  if InhibitCancel then
-    BorderIcons := BorderIcons - [biSystemMenu];
-  TFontHelper.SetDefaultFont(Font);
+  BorderStyle := bsDialog;  // it's a dialog box
+  // Set font to OS default
+  TFontHelper.SetDefaultFont(Font, False);
+  // Initialise controls
   InitCaption(Title, DlgType);
   InitImage(IconRes, DlgType);
   InitButtons(Buttons);
   InitLabels(Text);
+  // Size the dialog box
   SizeDialogBox;
+  // Arrange controls within dialog box
   ArrangeControls;
 end;
 
 procedure TMessageBoxForm.InitButtons(
   const Buttons: array of TMessageBoxButton);
+  {Creates and sizes dialog's buttons.
+    @param Buttons [in] Array of records describing buttons to display.
+  }
 
-  ///  Creates each required button control and stores reference in fButtons.
+  // ---------------------------------------------------------------------------
   procedure CreateButtons;
+    {Creates each required button control and stores reference in fButtons.
+    }
   var
     Idx: Integer;   // loops through all button definition records
     Btn: TButton;   // reference to a created button control
@@ -509,9 +615,11 @@ procedure TMessageBoxForm.InitButtons(
     end;
   end;
 
-  ///  Calculates size of largest button caption text.
-  ///  MUST be called after CreateButtons
   function ButtonTextExtent: TSize;
+    {Calculates text size of largest button caption. MUST be called after
+    CreateButtons.
+      @return Size structure that can hold largest caption.
+    }
   var
     Idx: Integer;           // loops thru all buttons
     Btn: TButton;           // references each button
@@ -528,8 +636,6 @@ procedure TMessageBoxForm.InitButtons(
     end;
   end;
 
-  ///  Sets size of every button to given size.
-  ///  MUST be called after CreateButtons.
   procedure SizeButtons(const Size: TSize);
     {Sets size of every button to a specified size. MUST be called after
     CreateButtons.
@@ -544,6 +650,7 @@ procedure TMessageBoxForm.InitButtons(
       fButtons[Idx].Height := Size.cy;
     end;
   end;
+  // ---------------------------------------------------------------------------
 
 var
   TextExtent: TSize;  // size of largest button caption
@@ -555,15 +662,27 @@ begin
   TextExtent := ButtonTextExtent;
   // Size of each button to be large enough to hold largest caption, but ensure
   // buttons are no smaller than default size. All buttons have same size.
-  BtnSize.cx := Max(fButtons[0].Width, TextExtent.cx + 12);
-  BtnSize.cy := Max(fButtons[0].Height, TextExtent.cy + 10);
+  BtnSize.cx := Max(
+    fButtons[0].Width,
+    TextExtent.cx + fButtons[0].Margins.Left + fButtons[0].Margins.Right
+  );
+  BtnSize.cy := Max(
+    fButtons[0].Height,
+    TextExtent.cy + fButtons[0].Margins.Top + fButtons[0].Margins.Bottom
+  );
   SizeButtons(BtnSize);
 end;
 
 procedure TMessageBoxForm.InitCaption(const Title: string;
   const DlgType: TMsgDlgType);
+  {Sets text of dialog's caption.
+    @param Title [in] Title to display in dialog's caption. If '' a default
+      caption dependent on dialog type is used.
+    @param DlgType [in] Type of dialog box. Used to determine default caption
+      if Title is ''.
+  }
 const
-  // Map of dialogue types onto resource id of default caption
+  // Map of dialog types onto resource id of default caption
   cCaptions: array[TMsgDlgType] of Pointer = (
     @SMsgDlgWarning, @SMsgDlgError, @SMsgDlgInformation, @SMsgDlgConfirm, nil
   );
@@ -585,11 +704,21 @@ end;
 
 procedure TMessageBoxForm.InitImage(const IconRes: PChar;
   const DlgType: TMsgDlgType);
-
-  ///  Returns instance handle for given icon resource. If resource is a
-  ///  recognised system icon then instance is 0, otherwise resource is assumed
-  ///  to be in application's resources.
+  {Creates and initialises and locates image control required to display any
+  icon. No image control is created if no icon is required.
+    @param IconRes [in] Icon resource. If nil then icon is determined by
+      DlgType.
+    @param DlgType [in] Type of dialog to be displayed. Determines which, if any
+      icon is required when IconRes is nil.
+  }
+  // ---------------------------------------------------------------------------
   function ResourceInstance(const IconId: PChar): THandle;
+    {Returns instance handle for specified icon resource. If resource is a
+    recognised system icon then instance is 0, otherwise resource is assumed to
+    be in application's resources.
+      @param IconId [in] Icon resource identifier.
+      @return Required instance handle.
+    }
   var
     ID: PChar;
   const
@@ -605,9 +734,9 @@ procedure TMessageBoxForm.InitImage(const IconRes: PChar;
         Exit(0);
     Result := HInstance;
   end;
-
+  // ---------------------------------------------------------------------------
 const
-  // Map of dialogue types onto icon resources
+  // Map of dialog types onto icon resources
   cIconIDs: array[TMsgDlgType] of PChar = (
     IDI_EXCLAMATION, IDI_HAND, IDI_ASTERISK, IDI_QUESTION, nil
   );
@@ -624,7 +753,7 @@ begin
     fImage.Parent := Self;
     fImage.Name := 'Image';
     fImage.Picture.Icon.Handle := LoadIcon(ResourceInstance(IconID), IconID);
-    // icon is positioned at top left of dialogue box, inside dialogue's margins
+    // icon is positioned at top left of dialog box, inside dialog's margins
     fImage.BoundsRect := TRectEx.CreateBounds(
       cXPadding, cYPadding,
       fImage.Picture.Icon.Width, fImage.Picture.Icon.Height
@@ -633,9 +762,15 @@ begin
 end;
 
 procedure TMessageBoxForm.InitLabels(const Lines: IStringList);
+  {Creates and sizes labels used to display text in dialog box.
+    @param Lines [in] String list containing lines of text to display. Blank
+      lines indicate a paragraph break.
+  }
 
-  ///  Creates all required labels and stores reference in fLabels[].
+  // ---------------------------------------------------------------------------
   procedure CreateLabels;
+    {Creates all required labels and stores reference in fLabels[].
+    }
   var
     Idx: Integer; // loops through all lines of text
     Lbl: TLabel;  // reference to a label
@@ -656,9 +791,9 @@ procedure TMessageBoxForm.InitLabels(const Lines: IStringList);
     end;
   end;
 
-  ///  Sets the width and height of the labels.
-  ///  MUST be called after CreateLabels.
   procedure SizeLabels;
+    {Sets the width and height of the labels. MUST be called after CreateLabels.
+    }
   var
     Idx: Integer;       // loops through all labels
     TextRect: TRectEx;  // bounding rectangle of text in label
@@ -683,6 +818,7 @@ procedure TMessageBoxForm.InitLabels(const Lines: IStringList);
       fLabels[Idx].Height := TextRect.Height;
     end;
   end;
+  // ---------------------------------------------------------------------------
 
 begin
   CreateLabels;
@@ -690,6 +826,10 @@ begin
 end;
 
 function TMessageBoxForm.LabelHeight(const Lbl: TLabel): Integer;
+  {Calculates height of a label.
+    @param Lbl [in] Label for which height is required.
+    @return Label height in pixels.
+  }
 begin
   // We treat blank labels differently: they represent paragraph breaks
   if Lbl.Caption <> '' then
@@ -699,6 +839,9 @@ begin
 end;
 
 function TMessageBoxForm.LabelsHeight: Integer;
+  {Finds height required to display all labels.
+    @return Required height in pixels.
+  }
 var
   Idx: Integer; // loops thru all labels
 begin
@@ -708,6 +851,9 @@ begin
 end;
 
 function TMessageBoxForm.LabelsWidth: Integer;
+  {Finds width of text in widest label.
+    @return Required width in pixels.
+  }
 var
   Idx: Integer; // loops thru all labels
 begin
@@ -720,6 +866,10 @@ begin
 end;
 
 function TMessageBoxForm.MaxTextWidth: Integer;
+  {Calculates maximum horizontal space that can be occupied by the dialog's
+  text.
+    @return Required width in pixels.
+  }
 begin
   // For smaller screens, max space is half of screen width. For larger screens
   // max space is cMaxDlgWidth pixels.
@@ -727,6 +877,8 @@ begin
 end;
 
 procedure TMessageBoxForm.SizeDialogBox;
+  {Sets size of dialog box to accomodate text, optional icon and buttons.
+  }
 begin
   ClientWidth := Max(ButtonsWidth, TextAndIconWidth) + 2 * cXPadding;
   ClientHeight := TextAndIconHeight + ButtonsHeight
@@ -734,6 +886,9 @@ begin
 end;
 
 function TMessageBoxForm.TextAndIconHeight: Integer;
+  {Calculates vertical space required to accommodate text and any icon.
+    @return Required height in pixels.
+  }
 begin
   if Assigned(fImage) then
     Result := Max(LabelsHeight, fImage.Height)
@@ -742,6 +897,9 @@ begin
 end;
 
 function TMessageBoxForm.TextAndIconWidth: Integer;
+  {Calculates horizontal spaces required to accommodate text and any icon.
+    @return Required width in pixels.
+  }
 begin
   Result := LabelsWidth;
   if Assigned(fImage) then
@@ -749,6 +907,10 @@ begin
 end;
 
 function TMessageBoxForm.TextLeftMargin: Integer;
+  {Calculates offset of text from dialog box's left hand margin. Depends on
+  whether dialog box displays an icon.
+    @return Required margin in pixels.
+  }
 begin
   if Assigned(fImage) then
     Result := fImage.Width + 2 * cXPadding

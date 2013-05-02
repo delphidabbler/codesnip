@@ -1,14 +1,35 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * UContainers.pas
  *
- * Copyright (C) 2010-2012, Peter Johnson (www.delphidabbler.com).
+ * Provides various generic container classes.
  *
  * $Rev$
  * $Date$
  *
- * Provides various generic container classes and enumerators.
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is UContainers.pas
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2010 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -493,32 +514,6 @@ type
     property Ownerships: TDictionaryOwnerships read fOwnerships;
       {Specifies whether the dictionary owns the keys and/or values if they are
       objects}
-  end;
-
-type
-  ///  <summary>Generic enumerator for dynamic arrays.</summary>
-  TArrayEnumerator<T> = class(TEnumerator<T>)
-  strict private
-    var
-      ///  <summary>Array being enumerated.</summary>
-      fArray: TArray<T>;
-      ///  <summary>Index of current array element in enumeration.</summary>
-      fIndex: Integer;
-  strict protected
-    ///  <summary>Gets current array element in enumeration.</summary>
-    ///  <returns>T. Content of current array element.</returns>
-    function DoGetCurrent: T; override;
-    ///  <summary>Moves to next item in enumeration.</summary>
-    ///  <returns>Boolean. True if there is a next item, False if at end of
-    ///  enumeration.</returns>
-    function DoMoveNext: Boolean; override;
-  public
-    ///  <summary>Creates enumerator for given dynamic array.</summary>
-    ///  <param name="A">array of T [in] Array to be enumerated.</param>
-    ///  <remarks>Constructor makes a shallow copy of the given array: value
-    ///  type elements are copied but reference type elements are simply
-    ///  referenced.</remarks>
-    constructor Create(const A: array of T);
   end;
 
 
@@ -1233,32 +1228,6 @@ begin
   inherited;
   if (Action = cnRemoved) and (doOwnsValues in fOwnerships) then
     TObject(Value).Free;
-end;
-
-{ TArrayEnumerator<T> }
-
-constructor TArrayEnumerator<T>.Create(const A: array of T);
-var
-  Idx: Integer;
-begin
-  inherited Create;
-  SetLength(fArray, Length(A));
-  for Idx := Low(A) to High(A) do
-    fArray[Idx] := A[Idx];
-  fIndex := -1;
-end;
-
-function TArrayEnumerator<T>.DoGetCurrent: T;
-begin
-  Result := fArray[fIndex];
-end;
-
-function TArrayEnumerator<T>.DoMoveNext: Boolean;
-begin
-  if fIndex >= Length(fArray) then
-    Exit(False);
-  Inc(fIndex);
-  Result := fIndex < Length(fArray);
 end;
 
 end.

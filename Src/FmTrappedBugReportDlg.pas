@@ -1,15 +1,36 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * FmTrappedBugReportDlg.pas
  *
- * Copyright (C) 2009-2013, Peter Johnson (www.delphidabbler.com).
+ * Implements a bug report dialog box displayed when unexpected exceptions are
+ * detected.
  *
  * $Rev$
  * $Date$
  *
- * Implements a bug report dialogue box that is displayed when unexpected
- * exceptions are detected.
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is FmTrappedBugReportDlg.pas
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2009-2011 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -136,9 +157,9 @@ procedure TTrappedBugReportDlg.ConfigForm;
 begin
   inherited;
   // set required label fonts
-  TFontHelper.SetDefaultBaseFont(lblIntro.Font);
-  TFontHelper.SetDefaultBaseFont(lblBugInfo.Font);
-  TFontHelper.SetDefaultBaseFont(btnTerminate.Font);
+  TFontHelper.SetDefaultBaseFont(lblIntro.Font, False);
+  TFontHelper.SetDefaultBaseFont(lblBugInfo.Font, False);
+  TFontHelper.SetDefaultBaseFont(btnTerminate.Font, False);
   // display the exception's message
   lblBugInfo.Caption := fErrorObj.Message;
 end;

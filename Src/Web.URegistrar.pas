@@ -1,15 +1,37 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * Web.URegistrar.pas
  *
- * Copyright (C) 2006-2013, Peter Johnson (www.delphidabbler.com).
+ * Implements a class that interfaces with a web service to register the
+ * application online.
  *
  * $Rev$
  * $Date$
  *
- * Implements a class that interfaces with the DelphiDabbler program
- * registration web service.
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is Web.URegistrar.pas, formerly URegistrar.pas then
+ * NsWebServices.URegistrar.pas.
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2006-2010 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -27,20 +49,24 @@ uses
 
 
 type
-  ///  <summary>Provides an interface to the DelphiDabbler program registration
-  ///  web service.</summary>
+
+  {
+  TRegistrar
+    Class that registers the application online by using the registration web
+    service.
+  }
   TRegistrar = class(TStdWebService)
   public
-    ///  <summary>Creates a new object instance with the correct URL and
-    ///  suitable user agent for accessing the web service.</summary>
     constructor Create;
-    ///  <summary>Sends regisration data to the web service and interprets its
-    ///  response.</summary>
-    ///  <param name="Data">TStrings [in] Registration information as a list of
-    ///  Name=Value data items.</param>
-    ///  <returns>string. Program's registration key returned from the web
-    ///  service.</returns>
+      {Class constructor. Initialises service.
+      }
     function Submit(const Data: TStrings): string;
+      {Sends application registration data to web service and interprets
+      response.
+        @param Data Application registration information as list of Name=Value
+          data.
+        @return Registration key.
+      }
   end;
 
 
@@ -48,8 +74,10 @@ implementation
 
 
 uses
+  // Delphi
+  SysUtils,
   // Project
-  UStrUtils, UURIParams, Web.UInfo;
+  UURIParams, Web.UInfo;
 
 
 {
@@ -98,28 +126,34 @@ uses
 
 const
   // Web service info
-  cScriptURLTplt = 'http://%s/websvc/register-app';
-  cUserAgent = 'DelphiDabbler-Registrar-v2';
+  cScriptName = 'register-app.php';           // script name
+  cUserAgent = 'DelphiDabbler-Registrar-v2';  // user agent string
 
 
 { TRegistrar }
 
 constructor TRegistrar.Create;
+  {Class constructor. Initialises service.
+  }
 begin
-  inherited Create(TWebServiceInfo.Create(cScriptURLTplt, cUserAgent));
+  inherited Create(TWebServiceInfo.Create(cScriptName, cUserAgent));
 end;
 
 function TRegistrar.Submit(const Data: TStrings): string;
+  {Sends application registration data to web service and interprets response.
+    @param Data Application registration information as list of Name=Value data.
+    @return Registration key.
+  }
 var
   Response: TStringList;  // response from server
-  Query: TURIParams;      // query made from Name=Value pairs in Data
+  Query: TURIParams;
 begin
   Query := nil;
   Response := TStringList.Create;
   try
     Query := TURIParams.Create(Data);
     PostQuery(Query, Response);
-    Result := StrTrim(Response.Text);  // registration key
+    Result := Trim(Response.Text);  // registration key
   finally
     Query.Free;
     Response.Free;

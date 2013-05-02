@@ -1,0 +1,104 @@
+DELPHIDABBLER CODESNIP END-USER SOFTWARE LICENSE AGREEMENT
+==========================================================
+
+
+1. Definitions
+--------------
+
+In this document the following definitions apply:
+
+   a. "Product" means DelphiDabbler Codesnip and related documentation.
+   b. "Author" means the author and copyright holder of of the software, that is
+      Peter D Johnson, http://www.delphidabbler.com.
+
+
+2. Introduction
+---------------
+
+A source code version of some of DelphiDabbler CodeSnip's functionality that you
+may use, modify and distribute is available to you free of charge from
+http://www.delphidabbler.com under the Mozilla Public License and other open
+source software licenses. The Mozilla Public License can be found at
+http://www.mozilla.org/MPL/.
+
+The accompanying executable code version of the Product is made available to you
+under the terms of this end user license agreement. By installing or using
+DelphiDabbler Codesnip you are consenting to be bound by the agreement. If you
+do not agree to the terms and conditions of this agreement do not install or use
+any part of DelphiDabbler Codesnip.
+
+DelphiDabbler CodeSnip is copyright (c) 2005-2013 by Peter D Johnson,
+http://www.delphidabbler.com.
+
+
+3. License Grant
+----------------
+
+The Author grants you a non-exclusive license to use the executable code version
+of DelphiDabbler Codesnip. You may install as many copies of the program as you
+wish and may distribute the program providing this license agreement and any
+other copyright or legal notices are distributed with the Product.
+
+This agreement will also govern any software upgrades provided by the Author
+that replace and/or supplement the original Product, unless such upgrades are
+accompanied by a separate license, in which case the terms of that license will
+govern.
+
+
+4. Termination
+--------------
+
+If you breach this Agreement your right to use the Product will terminate
+immediately and without notice, but all provisions of this agreement except the
+License Grant (Section 3) will survive termination and continue in effect. Upon
+termination, you must destroy all copies of the Product.
+
+
+5. Proprietary Rights
+---------------------
+
+Portions of the Product are available in source code form under the terms of the
+Mozilla Public License and other open source licenses from
+http://www.delphidabbler.com. Nothing in this agreement will be construed to
+limit any rights granted under the Open Source Licenses. Subject to the
+foregoing, the Author, for himself and on behalf of his licensors, hereby
+reserves all intellectual property rights in the Product, except for the rights
+expressly granted in this agreement. You may not remove or alter any copyright
+or other proprietary notice in or on the Product.
+
+
+6. Disclaimer Of Warranty
+-------------------------
+
+THE PRODUCT IS PROVIDED "AS IS" WITH ALL FAULTS. TO THE EXTENT PERMITTED BY LAW,
+THE AUTHOR HEREBY DISCLAIMS ALL WARRANTIES, WHETHER EXPRESS OR IMPLIED,
+INCLUDING WITHOUT LIMITATION WARRANTIES THAT THE PRODUCT IS FREE OF DEFECTS,
+MERCHANTABLE, FIT FOR A PARTICULAR PURPOSE AND NON-INFRINGING. YOU BEAR ENTIRE
+RISK AS TO SELECTING THE PRODUCT FOR YOUR PURPOSES AND AS TO THE QUALITY AND
+PERFORMANCE OF THE PRODUCT. THIS LIMITATION WILL APPLY NOTWITHSTANDING THE
+FAILURE OF ESSENTIAL PURPOSE OF ANY REMEDY. SHOULD THE PRODUCT PROVE DEFECTIVE,
+YOU ASSUME THE COST OF ALL NECESSARY SERVICING, REPAIR OR CORRECTION.
+
+
+7. Limitation Of Liability
+--------------------------
+
+EXCEPT AS REQUIRED BY LAW, THE AUTHOR AND HIS LICENSORS, CONTRIBUTORS AND
+DISTRIBUTORS WILL NOT BE LIABLE FOR ANY GENERAL, INDIRECT, SPECIAL, INCIDENTAL,
+CONSEQUENTIAL OR EXEMPLARY DAMAGES ARISING OUT OF OR IN ANY WAY RELATING TO THIS
+AGREEMENT OR THE USE OF OR INABILITY TO USE THE PRODUCT, INCLUDING WITHOUT
+LIMITATION DAMAGES FOR LOSS OF GOODWILL, WORK STOPPAGE, LOST PROFITS, LOSS OF
+DATA, AND COMPUTER FAILURE OR MALFUNCTION, EVEN IF ADVISED OF THE POSSIBILITY OF
+SUCH DAMAGES AND REGARDLESS OF THE THEORY (CONTRACT, TORT OR OTHERWISE) UPON
+WHICH SUCH CLAIM IS BASED.
+
+
+8. Miscellaneous
+----------------
+
+This Agreement constitutes the entire agreement between the Author and you
+concerning the subject matter hereof, and it may only be modified by a written
+amendment signed by the Author.
+
+Except to the extent applicable law, if any, provides otherwise, this Agreement
+will be governed by the laws of the United Kingdom.

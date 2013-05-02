@@ -1,15 +1,36 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * UWaitForThreadUI.pas
  *
- * Copyright (C) 2006-2013, Peter Johnson (www.delphidabbler.com).
+ * Implements a class that executes a thread and displays a dialog box if thread
+ * takes more than a specified time to complete.
  *
  * $Rev$
  * $Date$
  *
- * Implements a class that executes a thread and displays a dialog box if thread
- * takes more than a specified time to complete.
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is UWaitForThreadUI.pas, formerly UWaitForActionUI.pas
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2006-2010 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -23,7 +44,7 @@ uses
   // Delphi
   Classes, ExtCtrls, Forms, SyncObjs,
   // Project
-  UBaseObjects;
+  UBaseObjects, UThreadEx;
 
 
 type
@@ -35,7 +56,7 @@ type
   }
   TWaitForThreadUI = class(TNoPublicConstructObject)
   strict private
-    var fThread: TThread;               // Thread to be executed
+    var fThread: TThreadEx;             // Thread to be executed
     var fForm: TForm;                   // Form to be displayed if required
     var fMinDisplayTimer: TTimer;       // Timer to delay closure of form
     var fSaveOnTerminate: TNotifyEvent; // Saves fThread.OnTerminate value
@@ -71,7 +92,7 @@ type
       {Delays execution by fPauseBeforeDisplay ms.
       }
   strict protected
-    constructor InternalCreate(const AThread: TThread;
+    constructor InternalCreate(const AThread: TThreadEx;
       const AForm: TForm; const APauseBeforeDisplay, AMinDisplayTime: Cardinal);
       {Object constructor. Sets up object.
         @param AThread [in] Thread to be executed.
@@ -93,7 +114,7 @@ type
     destructor Destroy; override;
       {Object destructor. Tears down object.
       }
-    class procedure Run(const AThread: TThread; const AForm: TForm;
+    class procedure Run(const AThread: TThreadEx; const AForm: TForm;
       const APauseBeforeDisplay: Cardinal = 50;
       const AMinDisplayTime: Cardinal = 1000);
       {Creates and executes a TWaitForThreadUI object that executes a thread,
@@ -174,7 +195,7 @@ begin
   fThread.Start;
   // Pause before displayng dialog by PauseBeforeDisplay ms
   Pause;
-  if not fThread.Finished then
+  if not fThread.Completed then
     // Show dialog if thread not completed. Dialog blocks until thread
     // terminates.
     ShowForm;
@@ -198,7 +219,7 @@ begin
     fForm.Close;
 end;
 
-constructor TWaitForThreadUI.InternalCreate(const AThread: TThread;
+constructor TWaitForThreadUI.InternalCreate(const AThread: TThreadEx;
   const AForm: TForm; const APauseBeforeDisplay, AMinDisplayTime: Cardinal);
   {Object constructor. Sets up object.
     @param AThread [in] Thread to be executed.
@@ -244,7 +265,7 @@ begin
   UUtils.Pause(fPauseBeforeDisplay);
 end;
 
-class procedure TWaitForThreadUI.Run(const AThread: TThread;
+class procedure TWaitForThreadUI.Run(const AThread: TThreadEx;
   const AForm: TForm; const APauseBeforeDisplay, AMinDisplayTime: Cardinal);
   {Creates and executes a TWaitForThreadUI object that executes a thread,
   displaying dialog box if necessary.

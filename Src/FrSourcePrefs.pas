@@ -1,15 +1,36 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * FrSourcePrefs.pas
  *
- * Copyright (C) 2006-2012, Peter Johnson (www.delphidabbler.com).
+ * Implements a frame that allows user to set source code preferences. Designed
+ * for use as one of the tabs in the preferences dialog box.
  *
  * $Rev$
  * $Date$
  *
- * Implements a frame that allows user to set source code preferences.
- * Designed for use as one of the tabs in the Preferences dialogue box.
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is FrSourcePrefs.pas
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2006-2010 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -44,7 +65,6 @@ type
     gbSourceCode: TGroupBox;
     lblCommentStyle: TLabel;
     lblSnippetFileType: TLabel;
-    chkTruncateComments: TCheckBox;
     procedure cbCommentStyleChange(Sender: TObject);
     procedure cbSnippetFileTypeChange(Sender: TObject);
   strict private
@@ -85,11 +105,6 @@ type
       {Called when page is deactivated. Stores information entered by user.
         @param Prefs [in] Object used to store information.
       }
-    ///  <summary>Checks if preference changes require that main window UI is
-    ///  updated.</summary>
-    ///  <remarks>Called when dialog box containing frame is closing. Always
-    ///  returns False because these preferences never affect UI.</remarks>
-    function UIUpdated: Boolean; override;
     procedure ArrangeControls; override;
       {Arranges controls on frame. Called after frame has been sized.
       }
@@ -114,7 +129,7 @@ uses
   SysUtils, Math,
   // Project
   FmPreferencesDlg, Hiliter.UAttrs, Hiliter.UFileHiliter, Hiliter.UHiliters,
-  IntfCommon, UConsts, UCtrlArranger, URTFUtils;
+  IntfCommon, UConsts, UEncodings, UGraphicUtils, URTFUtils;
 
 
 {$R *.dfm}
@@ -142,7 +157,7 @@ type
     frame.
   }
   TSourcePrefsPreview = class(TObject)
-  strict private
+  private
     fHiliteAttrs: IHiliteAttrs;
       {Attributes of syntax highlighter to use to render preview}
     fCommentStyle: TCommentStyle;
@@ -159,7 +174,7 @@ type
         @param HiliteAttrs [in] Attributes of highlighter used to render
           preview.
       }
-    function Generate: TRTF;
+    function Generate: ASCIIString;
       {Generate RTF code used to render preview.
         @return Required RTF code.
       }
@@ -176,10 +191,8 @@ begin
   // Update control values per settings
   SelectSourceFileType(Prefs.SourceDefaultFileType);
   SelectCommentStyle(Prefs.SourceCommentStyle);
-  chkTruncateComments.Checked := Prefs.TruncateSourceComments;
   chkSyntaxHighlighting.Checked := Prefs.SourceSyntaxHilited;
   (fHiliteAttrs as IAssignable).Assign(Prefs.HiliteAttrs);
-  fHiliteAttrs.ResetDefaultFont;
   // Update state of controls and preview
   UpdateControlState;
   UpdatePreview;
@@ -191,33 +204,14 @@ procedure TSourcePrefsFrame.ArrangeControls;
 var
   Col2Left: Integer;  // position of second column of controls
 begin
-  TCtrlArranger.AlignVCentres(20, [lblCommentStyle, cbCommentStyle]);
-  TCtrlArranger.MoveBelow([lblCommentStyle, cbCommentStyle], frmPreview, 8);
-  TCtrlArranger.MoveBelow(frmPreview, chkTruncateComments, 8);
-  gbSourceCode.ClientHeight := TCtrlArranger.TotalControlHeight(gbSourceCode)
-    + 10;
-
-  TCtrlArranger.AlignVCentres(20, [lblSnippetFileType, cbSnippetFileType]);
-  TCtrlArranger.MoveBelow(
-    [lblSnippetFileType, cbSnippetFileType], chkSyntaxHighlighting, 8
-  );
-  gbFileFormat.ClientHeight := TCtrlArranger.TotalControlHeight(gbFileFormat)
-    + 10;
-
-  TCtrlArranger.MoveBelow(gbSourceCode, gbFileFormat, 8);
-
-  TCtrlArranger.AlignLefts([lblCommentStyle, lblSnippetFileType], 8);
   Col2Left := Max(
-    TCtrlArranger.RightOf(lblCommentStyle),
-    TCtrlArranger.RightOf(lblSnippetFileType)
-  ) + 12;
-  TCtrlArranger.AlignLefts(
-    [
-      cbCommentStyle, frmPreview, cbSnippetFileType, chkSyntaxHighlighting,
-      chkTruncateComments
-    ],
-    Col2Left
-  );
+    StringExtent(lblCommentStyle.Caption, lblCommentStyle.Font).cx,
+    StringExtent(lblSnippetFileType.Caption, lblSnippetFileType.Font).cx
+  ) + 8;
+  cbCommentStyle.Left := Col2Left;
+  frmPreview.Left := Col2Left;
+  cbSnippetFileType.Left := Col2Left;
+  chkSyntaxHighlighting.Left := Col2Left;
 end;
 
 procedure TSourcePrefsFrame.cbCommentStyleChange(Sender: TObject);
@@ -225,7 +219,6 @@ procedure TSourcePrefsFrame.cbCommentStyleChange(Sender: TObject);
     @param Sender [in] Not used.
   }
 begin
-  UpdateControlState;
   UpdatePreview;
 end;
 
@@ -266,7 +259,6 @@ procedure TSourcePrefsFrame.Deactivate(const Prefs: IPreferences);
   }
 begin
   Prefs.SourceCommentStyle := GetCommentStyle;
-  Prefs.TruncateSourceComments := chkTruncateComments.Checked;
   Prefs.SourceDefaultFileType := GetSourceFileType;
   Prefs.SourceSyntaxHilited := chkSyntaxHighlighting.Checked;
 end;
@@ -332,18 +324,12 @@ begin
     cbSnippetFileType.Items.IndexOfObject(TObject(FT));
 end;
 
-function TSourcePrefsFrame.UIUpdated: Boolean;
-begin
-  Result := False;
-end;
-
 procedure TSourcePrefsFrame.UpdateControlState;
   {Updates state of dialog's controls depending on values entered.
   }
 begin
   chkSyntaxHighlighting.Enabled :=
     TFileHiliter.IsHilitingSupported(GetSourceFileType);
-  chkTruncateComments.Enabled := GetCommentStyle <> csNone;
 end;
 
 procedure TSourcePrefsFrame.UpdatePreview;
@@ -358,26 +344,26 @@ begin
   Preview := TSourcePrefsPreview.Create(GetCommentStyle, fHiliteAttrs);
   try
     // Display preview
-    TRichEditHelper.Load(frmPreview.RichEdit, Preview.Generate);
+    RTFLoadFromString(frmPreview.RichEdit, Preview.Generate);
   finally
-    Preview.Free;
+    FreeAndNil(Preview);
   end;
 end;
 
 { TSourcePrefsPreview }
 
 resourcestring
-  // Localisable source preview text
-  sPrevProcName = 'Example';              // name of example proc
-  sPrevDesc = 'Description goes here.';   // sample proc description
-  sPrevCalledProc = 'DoSomethingHere';    // name of proc called from example
+  // Preview routine names and description
+  sPrevProcName = 'Example';              // name of example routine
+  sPrevDesc = 'Description goes here.';   // sample routine description
+  sPrevCalledProc = 'DoSomethingHere';    // name of routine called from example
 
 const
-  // Example procedure prototype and body
-  cPrevProcProto = 'procedure %0:s;' + EOL;
-  cPrevProcBody = 'begin' + EOL +'  %1:s;'+ EOL + 'end;';
+  // Example routine prototype and body
+  cPrevProcProto = 'procedure %0:s;' + EOL;                 // routine prototype
+  cPrevProcBody = 'begin' + EOL +'  %1:s;'+ EOL + 'end;';   // routine body
 
-  // Map of comment style to sample code
+  // Map of comment style to sample routine using the style
   cPrevSamples: array[TCommentStyle] of string = (
     // no comments: just prototype followed by body
     cPrevProcProto + cPrevProcBody,
@@ -399,12 +385,15 @@ begin
   fHiliteAttrs := HiliteAttrs;
 end;
 
-function TSourcePrefsPreview.Generate: TRTF;
+function TSourcePrefsPreview.Generate: ASCIIString;
   {Generate RTF code used to render preview.
     @return Required RTF code.
   }
+var
+  Hiliter: ISyntaxHiliter;    // syntax highlighter
 begin
-  Result := TRTF.Create(TRTFDocumentHiliter.Hilite(SourceCode, fHiliteAttrs));
+  Hiliter := TSyntaxHiliterFactory.CreateHiliter(hkRTF);
+  Result := StringToASCIIString(Hiliter.Hilite(SourceCode, fHiliteAttrs));
 end;
 
 function TSourcePrefsPreview.SourceCode: string;

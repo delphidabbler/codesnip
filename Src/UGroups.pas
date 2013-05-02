@@ -1,14 +1,35 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * UGroups.pas
  *
- * Copyright (C) 2009-2012, Peter Johnson (www.delphidabbler.com).
+ * Defines classes that group snippets together in different ways.
  *
  * $Rev$
  * $Date$
  *
- * Defines classes that group snippets together in different ways.
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is UGroups.pas
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2009-2010 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -19,10 +40,8 @@ interface
 
 
 uses
-  // Delphi
-  Generics.Collections,
   // Project
-  DB.UCategory, DB.USnippet, DB.USnippetKind, UContainers, UInitialLetter;
+  UAlphabet, UContainers, USnippetKindInfo, USnippets, Generics.Collections;
 
 
 type
@@ -34,13 +53,7 @@ type
   }
   TGroupItem = class abstract(TObject)
   strict private
-    type
-      ///  <summary>Implements a sorted list of snippets.</summary>
-      TSortedSnippetList = TSortedObjectList<TSnippet>;
-    var
-      ///  <summary>List of snippets belonging to group, sorted on display name.
-      ///  </summary>
-      fSnippetList: TSortedSnippetList;
+    var fSnippetList: TRoutineList; // List of snippets in group
   strict protected
     function GetTitle: string; virtual; abstract;
       {Read accessor for Title property.
@@ -53,7 +66,7 @@ type
     destructor Destroy; override;
       {Object destructor. Tears down object.
       }
-    procedure AddSnippet(const Snippet: TSnippet);
+    procedure AddSnippet(const Snippet: TRoutine);
       {Adds a snippet to the group's list.
         @param Snippet [in] Snippet to add.
       }
@@ -67,8 +80,8 @@ type
         @return -ve if this item sorts before Item, 0 if same and +ve if this
           item sorts after Item.
       }
-    property SnippetList: TSortedSnippetList read fSnippetList;
-      {Sorted list of snippets associated with this group}
+    property SnippetList: TRoutineList read fSnippetList;
+      {List of snippets associated with this group}
     property Title: string read GetTitle;
       {Title of group. Used for display}
   end;
@@ -111,14 +124,14 @@ type
   }
   TAlphaGroupItem = class(TGroupItem)
   strict private
-    var fLetter: TInitialLetter; // Letter associated with group
+    var fLetter: TLetter; // Letter associated with group
   strict protected
     function GetTitle: string; override;
       {Gets group title as a letter.
         @return Required title.
       }
   public
-    constructor Create(const Letter: TInitialLetter);
+    constructor Create(const Letter: TLetter);
       {Object constructor. Sets up group for an initial letter of a snippet.
         @param Letter [in] Initial letter represented by the group.
       }
@@ -129,7 +142,7 @@ type
         @return -ve if this item sorts before Item, 0 if same and +ve if this
           item sorts after Item.
       }
-    property Letter: TInitialLetter read fLetter;
+    property Letter: TLetter read fLetter;
       {Initial letter of snippet represented by this group}
   end;
 
@@ -175,7 +188,7 @@ type
       // Sorted list of group item objects
       TGroupItemList = TSortedObjectList<TGroupItem>;
     var fItems: TGroupItemList;     // List of items
-    var fSnippetList: TSnippetList; // List of snippets to be grouped
+    var fSnippetList: TRoutineList; // List of snippets to be grouped
     function GetItem(Idx: Integer): TGroupItem;
       {Read accessor for Items[] property.
         @param Idx [in] Index of required object in list.
@@ -193,10 +206,10 @@ type
     procedure Populate; virtual; abstract;
       {Populates grouping with group items and associated snippets.
       }
-    property SnippetList: TSnippetList read fSnippetList;
+    property SnippetList: TRoutineList read fSnippetList;
       {List of snippets to be grouped}
   public
-    constructor Create(const SnippetList: TSnippetList);
+    constructor Create(const SnippetList: TRoutineList);
       {Object constructor. Sets up grouping object for a snippet list.
         @param SnippetList [in] List of snippets to be grouped.
       }
@@ -236,7 +249,7 @@ type
   strict private
     type
       // Sorted map of letter objects onto group items
-      TLetterGroupMap = TSortedObjectDictionary<TInitialLetter,TGroupItem>;
+      TLetterGroupMap = TSortedObjectDictionary<TLetter,TGroupItem>;
   strict protected
     procedure Populate; override;
       {Populates grouping with sorted alphabetic group items and associated
@@ -263,9 +276,7 @@ implementation
 
 uses
   // Delphi
-  Generics.Defaults,
-  // Project
-  DB.UMain, UStrUtils;
+  SysUtils, Windows {for inlining}, Character, Generics.Defaults;
 
 
 { TGrouping }
@@ -278,7 +289,7 @@ begin
   fItems.Add(Item);
 end;
 
-constructor TGrouping.Create(const SnippetList: TSnippetList);
+constructor TGrouping.Create(const SnippetList: TRoutineList);
   {Object constructor. Sets up grouping object for a snippet list.
     @param SnippetList [in] List of snippets to be grouped.
   }
@@ -301,7 +312,7 @@ destructor TGrouping.Destroy;
   {Object destructor. Tears down object.
   }
 begin
-  fItems.Free;  // frees owned objects
+  FreeAndNil(fItems);   // frees owned objects
   inherited;
 end;
 
@@ -333,7 +344,7 @@ end;
 
 { TGroupItem }
 
-procedure TGroupItem.AddSnippet(const Snippet: TSnippet);
+procedure TGroupItem.AddSnippet(const Snippet: TRoutine);
   {Adds a snippet to the group's list.
     @param Snippet [in] Snippet to add.
   }
@@ -347,24 +358,14 @@ constructor TGroupItem.Create;
   }
 begin
   inherited Create;
-  fSnippetList := TSortedSnippetList.Create(
-    TDelegatedComparer<TSnippet>.Create(
-      function (const Left, Right: TSnippet): Integer
-      begin
-        Result := StrCompareText(Left.DisplayName, Right.DisplayName);
-        if Result = 0 then
-          Result := Ord(Left.UserDefined) - Ord(Right.UserDefined);
-      end
-    )
-  );
-  fSnippetList.PermitDuplicates := True;
+  fSnippetList := TRoutineList.Create;
 end;
 
 destructor TGroupItem.Destroy;
   {Object destructor. Tears down object.
   }
 begin
-  fSnippetList.Free;
+  FreeAndNil(fSnippetList);
   inherited;
 end;
 
@@ -373,7 +374,7 @@ function TGroupItem.IsEmpty: Boolean;
     @return True if list is empty, False if not.
   }
 begin
-  Result := SnippetList.IsEmpty;
+  Result := SnippetList.Count = 0;
 end;
 
 { TCategoryGrouping }
@@ -383,14 +384,14 @@ procedure TCategoryGrouping.Populate;
   }
 var
   Cat: TCategory;           // each category in databases
-  Snippet: TSnippet;        // each snippet in a category
+  Snippet: TRoutine;        // each snippet in a category
   Item: TCategoryGroupItem; // group item for each category
 begin
-  for Cat in Database.Categories do
+  for Cat in Snippets.Categories do
   begin
     Item := TCategoryGroupItem.Create(Cat);
     AddItem(Item);
-    for Snippet in Cat.Snippets do
+    for Snippet in Cat.Routines do
       if SnippetList.Contains(Snippet) then
         Item.AddSnippet(Snippet);
   end;
@@ -410,7 +411,7 @@ var
   ItemCat: TCategory; // category which Item represents
 begin
   ItemCat := (Item as TCategoryGroupItem).fCategory;
-  Result := StrCompareText(fCategory.Description, ItemCat.Description);
+  Result := AnsiCompareText(fCategory.Description, ItemCat.Description);
   if Result = 0 then
     Result := Ord(fCategory.UserDefined) - Ord(ItemCat.UserDefined);
 end;
@@ -446,44 +447,52 @@ procedure TAlphaGrouping.Populate;
     }
   begin
     Assert(Name <> '', ClassName + '.Populate:FirstCharOfName: Name is empty');
-    Result := Name[1];
+    Result := TCharacter.ToUpper(Name[1]);
+    // must be 'A'..'Z' (not just any letter) or '_'
+    Assert(CharInSet(Result, ['A'..'Z', '_']),
+      ClassName +
+        '.Populate:FirstCharOfName: Name must begin with A..Z or underscore');
   end;
   // ---------------------------------------------------------------------------
 var
-  Letter: TInitialLetter;   // upper case initial letter of snippet name
-  GroupItem: TGroupItem;    // a group item
-  Snippet: TSnippet;        // each snippet in snippet list
-  Map: TLetterGroupMap;     // map of initial letters to group items
+  LetterObj: TLetter;               // each letter object in alphabet object
+  Item: TGroupItem;                 // found group item
+  Snippet: TRoutine;                // each snippet to be grouped
+  Lookup: TLetterGroupMap;  // lookup table of letters => group items
 begin
-  Map := TLetterGroupMap.Create(
-    TDelegatedComparer<TInitialLetter>.Create(
-      function (const Left, Right: TInitialLetter): Integer
+  Lookup := TLetterGroupMap.Create(
+    TDelegatedComparer<TLetter>.Create(
+      function (const Left, Right: TLetter): Integer
       begin
-        Result := TInitialLetter.Compare(Left, Right);
+        Result := Ord(Left.Letter) - Ord(Right.Letter);
       end
     ),
     []
   );
-  // NOTE: We have to read all snippets in database to get all possible initial
-  // letters in case user wants to display empty letter groups. We then add
-  // only those snippets in given snippet list to the grouping.
   try
-    for Snippet in Database.Snippets do
+    // Create all group items, one for each possible initial letter along with a
+    // lookup table to ease finding the required group item from a snippet's
+    // initial letter
+    TAlphabet.Instance.InitEnum;
+    while TAlphabet.Instance.NextLetter(LetterObj) do
     begin
-      Letter := TInitialLetter.Create(FirstCharOfName(Snippet.DisplayName));
-      if Map.Contains(Letter) then
-        GroupItem := Map[Letter]
-      else
-      begin
-        GroupItem := TAlphaGroupItem.Create(Letter);
-        AddItem(GroupItem);
-        Map.Add(Letter, GroupItem);
-      end;
-      if SnippetList.Contains(Snippet) then
-        GroupItem.AddSnippet(Snippet);
+      Item := TAlphaGroupItem.Create(LetterObj);
+      AddItem(Item);
+      Lookup.Add(LetterObj, Item);
+    end;
+    // Add each snippet to appropriate group
+    for Snippet in SnippetList do
+    begin
+      // find group item from lookup
+      Item := Lookup[
+        TAlphabet.Instance.Letters[FirstCharOfName(Snippet.Name)]
+      ];
+      Assert(Assigned(Item), ClassName + '.Populate: Item not found');
+      // add snippet to it
+      Item.AddSnippet(Snippet);
     end;
   finally
-    Map.Free;
+    FreeAndNil(Lookup);
   end;
 end;
 
@@ -497,10 +506,10 @@ function TAlphaGroupItem.CompareTo(const Item: TGroupItem): Integer;
       item sorts after Item.
   }
 begin
-  Result := TInitialLetter.Compare(fLetter, (Item as TAlphaGroupItem).fLetter);
+  Result := Ord(fLetter.Letter) - Ord((Item as TAlphaGroupItem).fLetter.Letter);
 end;
 
-constructor TAlphaGroupItem.Create(const Letter: TInitialLetter);
+constructor TAlphaGroupItem.Create(const Letter: TLetter);
   {Object constructor. Sets up group for an initial letter of a snippet.
     @param Letter [in] Initial letter represented by the group.
   }
@@ -526,7 +535,7 @@ procedure TSnipKindGrouping.Populate;
 var
   SnipKind: TSnippetKind;           // each snippet kind
   Item: TGroupItem;                 // group item for each snippet kind
-  Snippet: TSnippet;                // each snippet to be grouped
+  Snippet: TRoutine;                // each snippet to be grouped
   Lookup: array[TSnippetKind]
     of TGroupItem;                  // lookup table of group kinds for searching
 begin
@@ -534,7 +543,7 @@ begin
   // to ease finding the required group item from a snippet's kind
   for SnipKind := Low(TSnippetKind) to High(TSnippetKind) do
   begin
-    Item := TSnipKindGroupItem.Create(TSnippetKindInfoList.Items[SnipKind]);
+    Item := TSnipKindGroupItem.Create(TSnippetKindInfoList.Instance[SnipKind]);
     AddItem(Item);
     Lookup[SnipKind] := Item;
   end;
@@ -558,7 +567,7 @@ function TSnipKindGroupItem.CompareTo(const Item: TGroupItem): Integer;
       item sorts after Item.
   }
 begin
-  Result := StrCompareText(GetTitle, (Item as TSnipKindGroupItem).GetTitle);
+  Result := AnsiCompareText(GetTitle, (Item as TSnipKindGroupItem).GetTitle);
 end;
 
 constructor TSnipKindGroupItem.Create(const SnipKindInfo: TSnippetKindInfo);
@@ -576,7 +585,7 @@ function TSnipKindGroupItem.GetTitle: string;
     @return Required title.
   }
 begin
-  Result := fSnipKindInfo.DisplayName;
+  Result := fSnipKindInfo.Description;
 end;
 
 end.

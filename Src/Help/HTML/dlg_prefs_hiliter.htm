@@ -1,15 +1,32 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
 <!--
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
- *
- * Copyright (C) 2007-2013, Peter Johnson (www.delphidabbler.com).
- *
  * $Rev$
  * $Date$
  *
- * Help topic for Syntax Highlighter tab of Preferences dialogue box.
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is dlg_prefs_hiliter.htm
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2007-2009 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s):
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 -->
 <html>
   <head>
@@ -28,27 +45,31 @@
     </object>
     <h1>
       <a name="dlg_prefs_hiliter"></a>
-      Syntax Highlighter Preferences
+      <img alt="Menu icon" src="../images/Preferences.gif" class="glyph"> Syntax
+      Highlighter Preferences
     </h1>
     <p>
       The appearance of syntax highlighted source files can be customised using
-      this tab of the <a href="dlg_preferences.htm">Preferences</a> dialogue
-      box. The tab is accessed by selecting the <em>Tools | Preferences</em>
-      menu item then clicking the <em>Syntax Highlighter</em> tab.
+      this tab of the <a href="dlg_preferences.htm">Preferences</a> dialog box.
+      The tab is accessed by selecting the <em>Tools | Preferences</em> menu
+      item then clicking the <em>Syntax Highlighter</em> tab.
     </p>
     <h3>
-      Note
+      Notes
     </h3>
-    <p>
-      Syntax highlighter customisation applies to the
-      <a href="detail_pane.htm">Detail Pane</a>, exported files and source
-      code copied to the clipboard. Highlighting used in printed documents is
-      configured from the <a href="dlg_prefs_printing.htm">Printing</a> tab.
-    </p>
-    <p>
-      Different syntax highlighter styles can be saved and given identifying
-      names for later user.
-    </p>
+    <ol>
+      <li>
+        Syntax highlighter customisation applies to the
+        <a href="detail_information.htm">Information pane</a>, exported files
+        and source copied to the clipboard. Highlighting used in printed
+        documents is configured from the
+        <a href="dlg_prefs_printing.htm">Printing</a> tab.
+      </li>
+      <li>
+        Changes are only applied to the main display the next time the
+        application is started.
+      </li>
+    </ol>
     <h2>
       Highlighter Font
     </h2>
@@ -58,10 +79,8 @@
       specify the font size using the <em>Font size</em> combo box.
     </p>
     <p>
-      <strong>Note:</strong> The highlighter font is ignored in code previews in
-      other tabs in the <a href="dlg_preferences.htm">Preferences</a> dialogue
-      box to ensure that previews fit the available space.
-    </p>
+      The font is ignored for highlighted code displayed in the main interface.
+      It is also ignored when printing.
     <h2>
       Syntactic Elements
     </h2>
@@ -72,11 +91,11 @@
       <em>Colour</em> drop down list. A preview of the element is displayed.
     </p>
     <h2>
-      Named Styles
+      Predefined Styles
     </h2>
     <p>
       <em>CodeSnip</em> provides five pre-defined styles that are applied by
-      clicking the <em>Use Predefined Style</em> button and selecting the style
+      click the <em>Use Predefined Style</em> button and selecting the style
       from the drop-down menu that appears.
     </p>
     <p>
@@ -91,18 +110,12 @@
         <em>Delphi 7</em> &ndash; default highlighting style used in Delphi 7.
         </li>
       <li>
-        <em>RAD Studio</em> &ndash; default highlighting style used in Borland /
-        CodeGear / Embarcadero RAD Studio.
+        <em>Delphi 2006</em> &ndash; default highlighting style used in Delphi
+        2006.
       </li>
       <li>
         <em>Visual Studio&trade;</em> &ndash; default highlighting style used by
         Microsoft Visual Studio.
-      </li>
-      <li>
-        <em>User Defined Styles</em> &ndash; displays the
-        <a href="dlg_hilitemgr.htm">User Defined Highlighters</a> dialogue box
-        where any custom styles saved by the user can be selected. Saved
-        highlighters can also be deleted from this dialog box.
       </li>
       <li>
         <em>No Highlighter</em> &ndash; no syntax highlighting used. You might
@@ -116,28 +129,7 @@
     <p>
       The highlighter font and all the element styles can be reset to their
       default appearance by pressing the <em>Restore Defaults</em> button. The
-      default is the <em>RAD Studio</em> style.
-    </p>
-    <h2>
-      Saving Custom Highlighters
-    </h2>
-    <p>
-      If you want to regularly switch highlighter styles, for example for
-      printing, and don't want to confine yourself to the pre-defined styles,
-      <em>CodeSnip</em> lets you save the current style.
-    </p>
-    <p>
-      To do this click the <em>Save Style</em> button to display the
-      <a href="dlg_savehiliter.htm">Save Highlighter</a> dialogue box where you
-      can choose a name for the style.
-    </p>
-    <p>
-      Saved styles can be restored (or deleted) by clicking the <em>Use Named
-      Style</em> button and selecting the <em>User Defined Styles</em> option
-      (see above).
-    </p>
-    <p>
-      Any number of custom highlighter style can be saved.
+      default is the <em>Delphi 2006</em> style.
     </p>
   </body>
 </html>

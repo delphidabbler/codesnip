@@ -1,14 +1,35 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * FrHTMLPreview.pas
  *
- * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
+ * Frame used to display previews of HTML documents.
  *
  * $Rev$
  * $Date$
  *
- * Implements a frame used to display previews of HTML documents.
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is FrHTMLPreview.pas
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -22,7 +43,7 @@ uses
   // Delphi
   OleCtrls, SHDocVw, Classes, Controls, ExtCtrls, Menus,
   // Project
-  FrBrowserBase, IntfFrameMgrs, IntfPreview, UCSSBuilder, UEncodings;
+  FrBrowserBase, IntfFrameMgrs, IntfPreview, UCSSBuilder;
 
 
 type
@@ -39,11 +60,12 @@ type
       {Adds body margin to default style sheet.
         @param CSSBuilder [in] Object used to construct the CSS.
       }
-  public
+  protected // do not make strict
     { IPreview }
-    procedure Display(const DocContent: TEncodedData);
+    procedure Display(const DocContent: string; out Title: string);
       {Displays document in preview dialog box.
         @param DocContent [in] Content of document to be displayed.
+        @param Title [out] Title of document, if any.
       }
     procedure SetPopupMenu(const Menu: TPopupMenu);
       {Sets pop up menu to be displayed when browser control is right clicked.
@@ -59,7 +81,7 @@ implementation
 
 uses
   // Project
-  UCSSUtils;
+  UCSSUtils, UHTMLDocHelper;
 
 
 {$R *.dfm}
@@ -74,15 +96,18 @@ procedure THTMLPreviewFrame.BuildCSS(const CSSBuilder: TCSSBuilder);
 begin
   inherited;
   with CSSBuilder.AddSelector('body') do
-    AddProperty(TCSS.MarginProp(cPreviewMargin));
+    AddProperty(CSSMarginProp(cPreviewMargin));
 end;
 
-procedure THTMLPreviewFrame.Display(const DocContent: TEncodedData);
+procedure THTMLPreviewFrame.Display(const DocContent: string;
+  out Title: string);
   {Displays document in preview dialog box.
     @param DocContent [in] Content of document to be displayed.
+    @param Title [out] Title of document, if any.
   }
 begin
-  WBController.IOMgr.LoadFromString(DocContent.ToString);
+  WBController.IOMgr.LoadFromString(DocContent);
+  Title := THTMLDocHelper.GetDocTitle(wbBrowser.Document);
 end;
 
 procedure THTMLPreviewFrame.SetPopupMenu(const Menu: TPopupMenu);

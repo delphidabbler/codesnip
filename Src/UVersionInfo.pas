@@ -1,15 +1,36 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * UVersionInfo.pas
  *
- * Copyright (C) 2006-2013, Peter Johnson (www.delphidabbler.com).
+ * Provides details of the application's version information and provides a
+ * record used to manipulate version numbers.
  *
  * $Rev$
  * $Date$
  *
- * Provides details of the application's version information and provides a
- * record used to manipulate version numbers.
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is UVersionInfo.pas
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2006-2010 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -89,24 +110,18 @@ type
         @param Ver [in] Version number to be converted.
         @return Converted version number.
       }
-    class operator Implicit(Str: string): TVersionNumber;
-      {Operator overload that performs implicit conversion of a dotted quad
-      string to a TVersionNumber.
-        @param Str [in] String to be converted. Must be in dotted quad format.
-        @return Converted version number.
-        @except EConvertError. raised if string in wrong format.
-      }
     class operator Explicit(Ver: TVersionNumber): TPJVersionNumber;
       {Operator overload that performs an explicit conversion of a
       TVersionNumber to a TPJVersionNumber (from PJVersionInfo unit).
         @param Ver [in] Version number to be converted.
         @return Converted version number.
       }
-    class operator Explicit(Ver: TVersionNumber): string;
-      {Operator overload that performs explicit conversion of a version number
-      to a string in dotted quad format.
-        @param Ver [in] Version number to be converted.
-        @return Dotted quad string.
+    class operator Implicit(Str: string): TVersionNumber;
+      {Operator overload that performs implicit conversion of a dotted quad
+      string to a TVersionNumber.
+        @param Str [in] String to be converted. Must be in dotted quad format.
+        @return Converted version number.
+        @except EConvertError. raised if string in wrong format.
       }
   end;
 
@@ -135,6 +150,10 @@ type
       {Dotted quad representation of file version number from fixed file
       information.
         @return Version number string in form 9.9.9.9.
+      }
+    class function LegalCopyrightStr: string;
+      {Gets copyright information from string table.
+        @return Required copyright information.
       }
     class function SpecialBuildStr: string;
       {Gets special build information from string table.
@@ -165,6 +184,19 @@ begin
     try
       // casts TPJVersionNumber directly to string
       Result := FileVersionNumber;
+    finally
+      Free;
+    end;
+end;
+
+class function TVersionInfo.LegalCopyrightStr: string;
+  {Gets copyright information from string table.
+    @return Required copyright information.
+  }
+begin
+  with TPJVersionInfo.Create(nil) do
+    try
+      Result := LegalCopyright;
     finally
       Free;
     end;
@@ -248,16 +280,6 @@ begin
   Result.V2 := Ver.V2;
   Result.V3 := Ver.V3;
   Result.V4 := Ver.V4;
-end;
-
-class operator TVersionNumber.Explicit(Ver: TVersionNumber): string;
-  {Operator overload that performs explicit conversion of a version number to a
-  string in dotted quad format.
-    @param Ver [in] Version number to be converted.
-    @return Dotted quad string.
-  }
-begin
-  Result := Format('%d.%d.%d.%d', [Ver.V1, Ver.V2, Ver.V3, Ver.V4]);
 end;
 
 class operator TVersionNumber.GreaterThan(Ver1, Ver2: TVersionNumber): Boolean;

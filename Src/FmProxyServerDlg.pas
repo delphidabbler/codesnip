@@ -1,15 +1,36 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * FmProxyServerDlg.pas
  *
- * Copyright (C) 2009-2013, Peter Johnson (www.delphidabbler.com).
+ * Implements a dialog box that enables users to specify (or remove) a proxy
+ * server for use by CodeSnip's web services.
  *
  * $Rev$
  * $Date$
  *
- * Implements a dialogue box that enables users to configure a proxy server for
- * use by CodeSnip's web services.
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is FmProxyServerDlg.pas
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2009-2010 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -95,7 +116,7 @@ uses
   SysUtils, Windows, Character,
   // Project
   UConsts, UExceptions, UFontHelper, UMessageBox, USettings, UStructs,
-  USystemInfo, UStrUtils, UUtils;
+  USystemInfo, UUtils;
 
 
 {$R *.dfm}
@@ -140,9 +161,9 @@ procedure TProxyServerDlg.ConfigForm;
   }
 begin
   inherited;
-  TFontHelper.SetDefaultBaseFont(lblIPAddressReq.Font);
-  TFontHelper.SetDefaultBaseFont(lblPortReq.Font);
-  TFontHelper.SetDefaultBaseFont(lblReqSymbol.Font);
+  TFontHelper.SetDefaultBaseFont(lblIPAddressReq.Font, False);
+  TFontHelper.SetDefaultBaseFont(lblPortReq.Font, False);
+  TFontHelper.SetDefaultBaseFont(lblReqSymbol.Font, False);
   if TOSInfo.IsVistaOrLater then
   begin
     edPassword1.PasswordChar := '•';
@@ -167,7 +188,7 @@ begin
   if not TCharacter.IsDigit(Key) and (Key <> cDot) and (Key <> BACKSPACE) then
     Key := #0
   else if (Key = cDot) and (
-    (edIPAddress.SelStart = 0) or (StrCountDelims(cDot, edIPAddress.Text) = 3)
+    (edIPAddress.SelStart = 0) or (CountDelims(edIPAddress.Text, cDot) = 3)
   ) then
     Key := #0;
   if Key = #0 then
@@ -208,11 +229,11 @@ begin
   inherited;
   // init control contents from proxy server settings
   Section := Settings.ReadSection(ssProxyServer);
-  cbUseProxy.Checked := Section.GetBoolean('UseProxy', False);
-  edIPAddress.Text := Section.GetString('IPAddress');
-  edPort.Text := Section.GetString('Port');
-  edUserName.Text := Section.GetString('UserName');
-  edPassword1.Text := Section.GetEncryptedString('Password');
+  cbUseProxy.Checked := Boolean(StrToIntDef(Section.ItemValues['UseProxy'], 0));
+  edIPAddress.Text := Section.ItemValues['IPAddress'];
+  edPort.Text := Section.ItemValues['Port'];
+  edUserName.Text := Section.ItemValues['UserName'];
+  edPassword1.Text := Section.GetEncryptedItemValue('Password');
   edPassword2.Text := edPassword1.Text;
   // init control state
   SetProxyCtrlState(cbUseProxy.Checked);
@@ -225,11 +246,11 @@ var
   Section: ISettingsSection;  // settings section to receive data
 begin
   Section := Settings.EmptySection(ssProxyServer);
-  Section.SetBoolean('UseProxy', cbUseProxy.Checked);
-  Section.SetString('IPAddress', edIPAddress.Text);
-  Section.SetString('Port', edPort.Text);
-  Section.SetString('UserName', edUserName.Text);
-  Section.SetEncryptedString('Password', edPassword1.Text);
+  Section.ItemValues['UseProxy'] := IntToStr(Ord(cbUseProxy.Checked));
+  Section.ItemValues['IPAddress'] := edIPAddress.Text;
+  Section.ItemValues['Port'] := edPort.Text;
+  Section.ItemValues['UserName'] := edUserName.Text;
+  Section.SetEncryptedItemValue('Password', edPassword1.Text);
   Section.Save;
 end;
 
@@ -267,7 +288,7 @@ procedure TProxyServerDlg.Validate;
     Quads := TStringList.Create;
     try
       // split IP address into quads (they are separated by dots)
-      StrExplode(Addr, '.', Quads);
+      ExplodeStr(Addr, '.', Quads);
       if Quads.Count <> 4 then
         Exit;   // must be 4 quads
       for Quad in Quads do

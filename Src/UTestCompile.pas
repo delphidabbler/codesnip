@@ -1,15 +1,36 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * UTestCompile.pas
  *
- * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
+ * Class that performs a test compilation of a routine using all supported and
+ * installed versions of Delphi and returns details of success or failure.
  *
  * $Rev$
  * $Date$
  *
- * Class that performs a test compilation of a snippet using all supported and
- * installed versions of Delphi and returns details of success or failure.
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is UTestCompile.pas
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -20,27 +41,25 @@ interface
 
 
 uses
-  // Delphi
-  Classes,
   // Project
-  Compilers.UGlobals, DB.USnippet, UBaseObjects;
+  Compilers.UGlobals, UBaseObjects, USnippets, UThreadEx;
 
 
 type
 
   {
   TTestCompile:
-    Class that performs a test compilation of a snippet using all supported and
+    Class that performs a test compilation of a routine using all supported and
     installed compilers and returns details of success or failure.
   }
   TTestCompile = class(TNoPublicConstructObject)
   strict private
-    fSnippet: TSnippet;
-      {The snippet we are to compile}
+    fRoutine: TRoutine;
+      {The routine we are to compile}
     fCompilers: ICompilers;
       {Object used to perform compilation}
     procedure GenerateSourceFile(out FileName: string);
-      {Generates a source file for snippet under test.
+      {Generates a source file for routine under test.
         @param FileName [out] Name of the generated file.
       }
     class function CompileSourceFile(const SrcFile: string;
@@ -51,24 +70,24 @@ type
         @return Result of the compilation.
       }
     function DoCompile: TCompileResults;
-      {Compiles snippet under test with all installed and supported compiler
+      {Compiles routine under test with all installed and supported compiler
       versions.
         @return Compilation results for each supported compiler (crQuery is
           returned for each supported compiler that is not installed).
       }
   strict protected
     constructor InternalCreate(const ACompilers: ICompilers;
-      const ASnippet: TSnippet);
-      {Class constructor. Sets up object that can test compile a snippet.
+      const ARoutine: TRoutine);
+      {Class constructor. Sets up object that can test compile a routine.
         @param ACompilers [in] Compilers object used to perform compilation.
-        @param ASnippet [in] Snippet to be test compiled.
+        @param ARoutine [in] Routine to be test compiled.
       }
   public
     class function Compile(const ACompilers: ICompilers;
-      const ASnippet: TSnippet): TCompileResults;
-      {Compiles a specified snippet with all installed and supported compilers.
+      const ARoutine: TRoutine): TCompileResults;
+      {Compiles a specified routine with all installed and supported compilers.
         @param ACompilers [in] Compilers object used to perform compilation.
-        @param ASnippet [in] Snippet to be compiled.
+        @param ARoutine [in] Routine to be compiled.
         @return Compilation results for each supported compiler (crQuery is
           returned for each supported compiler that is not installed).
       }
@@ -78,16 +97,16 @@ type
   TTestCompileThread:
     Thread that performs a test compilation of a snippet.
   }
-  TTestCompileThread = class(TThread)
+  TTestCompileThread = class(TThreadEx)
   strict private
     var fCompilers: ICompilers; // Compilers used for test compilation
-    var fSnippet: TSnippet;     // Snippet to be compiled
+    var fSnippet: TRoutine;     // Snippet to be compiled
   strict protected
     procedure Execute; override;
       {Performs test compilation in a thread.
       }
   public
-    constructor Create(ACompilers: ICompilers; ASnippet: TSnippet);
+    constructor Create(ACompilers: ICompilers; ASnippet: TRoutine);
       {Object constructor. Sets up suspended thread.
         @param ACompilers [in] Compilers to be used for test compilation.
         @param ASnippet [in] Snippet to be compiled.
@@ -108,15 +127,15 @@ uses
 { TTestCompile }
 
 class function TTestCompile.Compile(const ACompilers: ICompilers;
-  const ASnippet: TSnippet): TCompileResults;
-  {Compiles a specified snippet with all installed and supported compilers.
+  const ARoutine: TRoutine): TCompileResults;
+  {Compiles a specified routine with all installed and supported compilers.
     @param ACompilers [in] Compilers object used to perform compilation.
-    @param ASnippet [in] Snippet to be compiled.
+    @param ARoutine [in] Routine to be compiled.
     @return Compilation results for each supported compiler (crQuery is returned
       for each supported compiler that is not installed).
   }
 begin
-  with InternalCreate(ACompilers, ASnippet) do
+  with InternalCreate(ACompilers, ARoutine) do
     try
       Result := DoCompile;
     finally
@@ -140,7 +159,7 @@ begin
 end;
 
 function TTestCompile.DoCompile: TCompileResults;
-  {Compiles snippet under test with all installed and supported compiler
+  {Compiles routine under test with all installed and supported compiler
   versions.
     @return Compilation results for each supported compiler (crQuery is returned
       for each supported compiler that is not installed).
@@ -162,11 +181,11 @@ begin
 end;
 
 procedure TTestCompile.GenerateSourceFile(out FileName: string);
-  {Generates a source file for snippet under test.
+  {Generates a source file for routine under test.
     @param FileName [out] Name of the generated file.
   }
 begin
-  with TTestUnit.Create(fSnippet) do
+  with TTestUnit.Create(fRoutine) do
     try
       SaveUnit(FileName);
     finally
@@ -175,24 +194,24 @@ begin
 end;
 
 constructor TTestCompile.InternalCreate(const ACompilers: ICompilers;
-  const ASnippet: TSnippet);
-  {Class constructor. Sets up object that can test compile a snippet.
+  const ARoutine: TRoutine);
+  {Class constructor. Sets up object that can test compile a routine.
     @param ACompilers [in] Compilers object used to perform compilation.
-    @param ASnippet [in] Snippet to be test compiled.
+    @param ARoutine [in] Routine to be test compiled.
   }
 begin
-  Assert(Assigned(ASnippet), ClassName + '.InternalCreate: ASnippet is nil');
+  Assert(Assigned(ARoutine), ClassName + '.InternalCreate: ARoutine is nil');
   Assert(Assigned(ACompilers),
     ClassName + '.InternalCreate: ACompilers is nil');
   inherited InternalCreate;
-  fSnippet := ASnippet;
+  fRoutine := ARoutine;
   fCompilers := ACompilers;
 end;
 
 { TTestCompileThread }
 
 constructor TTestCompileThread.Create(ACompilers: ICompilers;
-  ASnippet: TSnippet);
+  ASnippet: TRoutine);
   {Object constructor. Sets up suspended thread.
     @param ACompilers [in] Compilers to be used for test compilation.
     @param ASnippet [in] Snippet to be compiled.

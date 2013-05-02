@@ -1,14 +1,35 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * FmWizardDlg.pas
  *
- * Copyright (C) 2006-2013, Peter Johnson (www.delphidabbler.com).
+ * Base class for multi-page "wizard" dialog boxes.
  *
  * $Rev$
  * $Date$
  *
- * Base class for multi-page modal "wizard" dialogue boxes.
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is FmWizardDlg.pas
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2006-2011 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -22,16 +43,16 @@ uses
   // Delphi
   ComCtrls, StdCtrls, Controls, ExtCtrls, Classes,
   // Project
-  FmGenericModalDlg, FmGenericDlg;
+  FmGenericDlg;
 
 
 type
 
   {
   TWizardDlg:
-    Base class for multi-page modal "wizard" dialog boxes.
+    Base class for multi-page "wizard" dialog boxes.
   }
-  TWizardDlg = class(TGenericModalDlg)
+  TWizardDlg = class(TGenericDlg)
     btnBack: TButton;
     btnNext: TButton;
     btnCancel: TButton;
@@ -46,11 +67,13 @@ type
       BeginPage.
         @param PageIdx [in] Index of new page.
       }
-    procedure GoForward;
+    procedure GoForward(const NewPageIdx: Integer);
       {Attempts to move forward in wizard.
+        @param NewPageIdx [in] Index of page in wizard to display.
       }
-    procedure GoBackward;
+    procedure GoBackward(const NewPageIdx: Integer);
       {Attempts to move backward in wizard.
+        @param NewPageIdx [in] Index of page in wizard to display.
       }
   strict protected
     procedure ArrangeForm; override;
@@ -174,7 +197,7 @@ procedure TWizardDlg.btnBackClick(Sender: TObject);
   }
 begin
   if CurrentPage <> FirstPage then
-    GoBackward;
+    GoBackward(PrevPage(CurrentPage));
 end;
 
 procedure TWizardDlg.btnNextClick(Sender: TObject);
@@ -184,7 +207,7 @@ procedure TWizardDlg.btnNextClick(Sender: TObject);
   }
 begin
   if CurrentPage <> LastPage then
-    GoForward
+    GoForward(NextPage(CurrentPage))
   else
     Close;
 end;
@@ -194,7 +217,7 @@ procedure TWizardDlg.ConfigForm;
   }
 begin
   inherited;
-  TFontHelper.SetDefaultBaseFont(lblHead.Font);
+  TFontHelper.SetDefaultBaseFont(lblHead.Font, False);
 end;
 
 function TWizardDlg.CurrentPage: Integer;
@@ -213,7 +236,7 @@ begin
   Result := 0;
 end;
 
-procedure TWizardDlg.GoBackward;
+procedure TWizardDlg.GoBackward(const NewPageIdx: Integer);
   {Attempts to move backward in wizard.
     @param NewPageIdx [in] Index of page in wizard to display.
   }
@@ -223,11 +246,12 @@ begin
   CanLeave := True;
   MoveBackward(CurrentPage, CanLeave);
   if CanLeave then
-    InitPage(PrevPage(CurrentPage));
+    InitPage(NewPageIdx);
 end;
 
-procedure TWizardDlg.GoForward;
+procedure TWizardDlg.GoForward(const NewPageIdx: Integer);
   {Attempts to move forward in wizard.
+    @param NewPageIdx [in] Index of page in wizard to display.
   }
 var
   CanLeave: Boolean;  // Flag indicating whether we can leave current page
@@ -235,7 +259,7 @@ begin
   CanLeave := True;
   MoveForward(CurrentPage, CanLeave);
   if CanLeave then
-    InitPage(NextPage(CurrentPage));
+    InitPage(NewPageIdx);
 end;
 
 procedure TWizardDlg.InitForm;

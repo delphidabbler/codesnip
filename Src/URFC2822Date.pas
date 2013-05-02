@@ -1,15 +1,36 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * URFC2822Date.pas
  *
- * Copyright (C) 2010-2012, Peter Johnson (www.delphidabbler.com).
+ * Provides code for handling RFC2822 format dates. This version provides one
+ * function to convert a RFC2822 date into a TDateTime.
  *
  * $Rev$
  * $Date$
  *
- * Provides code for handling RFC2822 format dates. This version provides one
- * function to convert a RFC2822 date into a TDateTime.
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is URFC2822Date.pas
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2010 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -47,9 +68,9 @@ implementation
 
 uses
   // Delphi
-  SysUtils, DateUtils,
+  SysUtils, StrUtils, DateUtils,
   // Project
-  UIStringList, UStructs, UStrUtils;
+  UIStringList, UStructs, UUtils;
 
 
 function StrToWordInRange(const S: string; const Range: TRange;
@@ -322,7 +343,7 @@ const
 begin
   // Sun, 29 Aug 2010 13:06:03 +0000
   // Newlines allowed between fields: we compress to single white spaces
-  DateStr := StrCompressWhiteSpace(DateStr);
+  DateStr := UUtils.CompressWhiteSpace(DateStr);
   // Split date into constituent parts
   Parts := TIStringList.Create(DateStr, ' ', False, True);
   if Parts.Count <> 6 then

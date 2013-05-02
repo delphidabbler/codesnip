@@ -1,15 +1,38 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * Web.UStdWebService.pas
  *
- * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
+ * Implements a class that provides basic interaction with DelphiDabbler
+ * standard web services via HTTP.
  *
  * $Rev$
  * $Date$
  *
- * Implements a class that provides basic interaction with DelphiDabbler
- * standard web services via HTTP.
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is Web.UStdWebService.pas, formerly UWebService.pas then
+ * NsWebServices.UDDabStandard.pas.
+ * .
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -21,130 +44,79 @@ interface
 
 uses
   // Delphi
-  SysUtils, Classes,
+  Classes,
   // Project
   UURIParams, Web.UBaseWebService;
 
 
 type
-  ///  <summary>Base class for web services that interact with standard
-  ///  DelphiDabbler web services.</summary>
-  ///  <remarks>
-  ///  <para>Standard web services always place a numeric status code in first
-  ///  line of the response followed by any resulting data. The status code is
-  ///  zero for normal responses and non-zero when an error response is
-  ///  returned.</para>
-  ///  <para>This class outputs data for normal responses and generates
-  ///  EWebServiceError exceptions for error responses, using the response data
-  ///  as the error message. Malformed responses generate EWebServiceFailure
-  ///  exceptions.</para>
-  ///  </remarks>
+
+  {
+  TStdWebService:
+    Base class for web services that interact with standard DelphiDabbler web
+    services.
+    These web services always place a numeric status code in first line of the
+    response followed by any resulting data. The status code is zero for normal
+    responses and non-zero when an error response is returned. This class
+    outputs data for normal responses and generates EWebServiceError exceptions
+    for error responses, using the response data as the error message. Malformed
+    responses generate EWebServiceFailure exceptions.
+  }
   TStdWebService = class(TBaseWebService)
   strict protected
-
-    ///  <summary>Converts string S into a form that is suitable for sending to
-    ///  the a web service.</summary>
-    class function SanitiseString(const S: string): string;
-
-    ///  <summary>Analyses lines of text returned from web services and extracts
-    ///  the data component of successful responses. Exceptions are raised for
-    ///  error responses using the returned text as the exception message.
-    ///  </summary>
-    ///  <param name="Response">TStrings [in] When the method is called Response
-    ///  must contain the lines of text received from the web service. After
-    ///  processing the first line containing the status code is removed,
-    ///  leaving only 0 or more lines of data.</param>
-    ///  <exception>EWebServiceError raised on receipt of a valid error
-    ///  response.</exception>
-    ///  <exception>EWebServiceFailure raised if the format of the response is
-    ///  invalid.</exception>
     procedure ProcessResponse(const Response: TStrings);
-
-    ///  <summary>Posts a command to the web service and returns the data
-    ///  component of the response in a string list.</summary>
-    ///  <param name="Cmd">string [in] Command to be executed.</param>
-    ///  <param name="Params">TURIParams [in] Parameters associated with the
-    ///  command.</param>
-    ///  <param name="Response">TStrings [in] String list set to reponse from
-    ///  web service, stripped of the status code, where each line of the
-    ///  response is a line of the string list.</param>
-    ///  <exception>EWebServiceError raised on receipt of a valid error
-    ///  response.</exception>
-    ///  <exception>EWebServiceFailure raised if the web service returns an
-    ///  invalid response.</exception>
-    ///  <exception>EWebConnectionError raised if an EIdSocketError is
-    ///  encountered.</exception>
-    ///  <exception>EWebTransmissionError raised if response data is garbled in
-    ///  transmission.</exception>
-    ///  <exception>EHTTPError raised if an EIdHTTPProtocolException exception
-    ///  is encountered.</exception>
-    ///  <exception>Trapped EIdException or descendant exceptions are re-raised.
-    ///  </exception>
+      {Analyses lines of text returned from from web service and extracts data
+      from successful responses. Raises exceptions based on error messages from
+      error responses.
+        @param Response [in] Lines of text from response from web service. After
+          processing status code is removed from top of list, leaving only
+          returned data.
+        @except Raises EWebServiceError on receipt of valid error response.
+        @except Raises [in] EWebServiceFailure if response from web service has
+          invalid format.
+      }
     procedure PostCommand(const Cmd: string; const Params: TURIParams;
       const Response: TStrings);
-
-    ///  <summary>Posts a query string to the web service and returns the data
-    ///  component of the response in a string list.</summary>
-    ///  <param name="Params">TURIParams [in] Parameters for inclusion in query
-    ///  string.</param>
-    ///  <param name="Response">TStrings [in] String list set to reponse from
-    ///  web service, stripped of the status code, where each line of the
-    ///  response is a line of the string list.</param>
-    ///  <exception>EWebServiceError raised on receipt of a valid error
-    ///  response.</exception>
-    ///  <exception>EWebServiceFailure raised if the web service returns an
-    ///  invalid response.</exception>
-    ///  <exception>EWebConnectionError raised if an EIdSocketError is
-    ///  encountered.</exception>
-    ///  <exception>EWebTransmissionError raised if response data is garbled in
-    ///  transmission.</exception>
-    ///  <exception>EHTTPError raised if an EIdHTTPProtocolException exception
-    ///  is encountered.</exception>
-    ///  <exception>Trapped EIdException or descendant exceptions are re-raised.
-    ///  </exception>
+      {Sends command to server and returns data component of response in a
+      string list.
+        @param Cmd [in] Command to be executed. Passed to server as Cmd=CmdName
+          parameter.
+        @param Params [in] Query string parameters.
+        @param Response [in] Server's response as string list where each line of
+          response is a line of string list.
+        @except EWebServiceError raised on receipt of valid error response.
+        @except EWebServiceFailure raised if web service sends invalid response.
+        @except EWebConnectionError raised if EIdSocketError encoutered.
+        @except EWebTransmissionError raised if data is garbled in transmission.
+        @except EHTTPError raised if EIdHTTPProtocolException encountered.
+        @except EIdException or descendant re-raised for other exception types.
+      }
     procedure PostQuery(const Query: TURIParams; const Response: TStrings);
-
-    ///  <summary>Posts raw data to the web service and returns the data
-    ///  component of the response in a string list.</summary>
-    ///  <param name="Data">TStream [in] Stream containing data to be posted.
-    ///  </param>
-    ///  <param name="Response">TStrings [in] String list set to reponse from
-    ///  web service, stripped of the status code, where each line of the
-    ///  response is a line of the string list.</param>
-    ///  <exception>EWebServiceError raised on receipt of a valid error
-    ///  response.</exception>
-    ///  <exception>EWebServiceFailure raised if the web service returns an
-    ///  invalid response.</exception>
-    ///  <exception>EWebConnectionError raised if an EIdSocketError is
-    ///  encountered.</exception>
-    ///  <exception>EWebTransmissionError raised if response data is garbled in
-    ///  transmission.</exception>
-    ///  <exception>EHTTPError raised if an EIdHTTPProtocolException exception
-    ///  is encountered.</exception>
-    ///  <exception>Trapped EIdException or descendant exceptions are re-raised.
-    ///  </exception>
-    procedure PostData(const Data: TStream; const Response: TStrings); overload;
-
-    ///  <summary>Posts raw data to the web service and returns the data
-    ///  component of the response in a string list.</summary>
-    ///  <param name="Data">TBytes [in] Byte array containing data to be posted.
-    ///  </param>
-    ///  <param name="Response">TStrings [in] String list set to reponse from
-    ///  web service, stripped of the status code, where each line of the
-    ///  response is a line of the string list.</param>
-    ///  <exception>EWebServiceError raised on receipt of a valid error
-    ///  response.</exception>
-    ///  <exception>EWebServiceFailure raised if the web service returns an
-    ///  invalid response.</exception>
-    ///  <exception>EWebConnectionError raised if an EIdSocketError is
-    ///  encountered.</exception>
-    ///  <exception>EWebTransmissionError raised if response data is garbled in
-    ///  transmission.</exception>
-    ///  <exception>EHTTPError raised if an EIdHTTPProtocolException exception
-    ///  is encountered.</exception>
-    ///  <exception>Trapped EIdException or descendant exceptions are re-raised.
-    ///  </exception>
-    procedure PostData(const Data: TBytes; const Response: TStrings); overload;
+      {Sends a query string to server and returns data component of response in
+      a string list.
+        @param Query [in] Query string parameters.
+        @param Response [in] Server's response as string list where each line of
+          response is a line of string list.
+        @except EWebServiceError raised on receipt of valid error response.
+        @except EWebServiceFailure raised if web service sends invalid response.
+        @except EWebConnectionError raised if EIdSocketError encoutered.
+        @except EWebTransmissionError raised if data is garbled in transmission.
+        @except EHTTPError raised if EIdHTTPProtocolException encountered.
+        @except EIdException or descendant re-raised for other exception types.
+      }
+    procedure PostData(const Data: TStream; const Response: TStrings);
+      {Posts raw data to server and returns data component of response in a
+      string list.
+        @param Data [in] Stream containing raw data to be posted.
+        @param Response [in] Server's response as string list where each line of
+          response is a line of string list.
+        @except EWebServiceError raised on receipt of valid error response.
+        @except EWebServiceFailure raised if web service sends invalid response.
+        @except EWebConnectionError raised if EIdSocketError encoutered.
+        @except EWebTransmissionError raised if data is garbled in transmission.
+        @except EHTTPError raised if EIdHTTPProtocolException encountered.
+        @except EIdException or descendant re-raised for other exception types.
+      }
   end;
 
 
@@ -152,8 +124,10 @@ implementation
 
 
 uses
+  // Delphi
+  SysUtils,
   // Project
-  UStrUtils, Web.UExceptions;
+  Web.UExceptions;
 
 
 { TStdWebService }
@@ -166,19 +140,39 @@ resourcestring
 
 procedure TStdWebService.PostCommand(const Cmd: string;
   const Params: TURIParams; const Response: TStrings);
+  {Sends command to server and returns data component of response in a string
+  list.
+    @param Cmd [in] Command to be executed. Passed to server as Cmd=CmdName
+      parameter.
+    @param Params [in] Query string parameters.
+    @param Response [in] Server's response as string list where each line of
+      response is a line of string list.
+    @except EWebServiceError raised on receipt of valid error response.
+    @except EWebServiceFailure raised if web service sends invalid response.
+    @except EWebConnectionError raised if EIdSocketError encoutered.
+    @except EWebTransmissionError raised if data is garbled in transmission.
+    @except EHTTPError raised if EIdHTTPProtocolException encountered.
+    @except EIdException or descendant re-raised for other exception types.
+  }
 begin
   Params.Add('cmd', Cmd);
   PostQuery(Params, Response);
 end;
 
-procedure TStdWebService.PostData(const Data: TBytes; const Response: TStrings);
-begin
-  PostStrings(Data, Response);
-  ProcessResponse(Response);
-end;
-
 procedure TStdWebService.PostData(const Data: TStream;
   const Response: TStrings);
+  {Posts raw data to server and returns data component of response in a string
+  list.
+    @param Data [in] Stream containing raw data to be posted.
+    @param Response [in] Server's response as string list where each line of
+      response is a line of string list.
+    @except EWebServiceError raised on receipt of valid error response.
+    @except EWebServiceFailure raised if web service sends invalid response.
+    @except EWebConnectionError raised if EIdSocketError encoutered.
+    @except EWebTransmissionError raised if data is garbled in transmission.
+    @except EHTTPError raised if EIdHTTPProtocolException encountered.
+    @except EIdException or descendant re-raised for other exception types.
+  }
 begin
   PostStrings(Data, Response);
   ProcessResponse(Response);
@@ -186,12 +180,34 @@ end;
 
 procedure TStdWebService.PostQuery(const Query: TURIParams;
   const Response: TStrings);
+  {Sends a query string to server and returns data component of response in a
+  string list.
+    @param Query [in] Query string parameters.
+    @param Response [in] Server's response as string list where each line of
+      response is a line of string list.
+    @except EWebServiceError raised on receipt of valid error response.
+    @except EWebServiceFailure raised if web service sends invalid response.
+    @except EWebConnectionError raised if EIdSocketError encoutered.
+    @except EWebTransmissionError raised if data is garbled in transmission.
+    @except EHTTPError raised if EIdHTTPProtocolException encountered.
+    @except EIdException or descendant re-raised for other exception types.
+  }
 begin
   PostStrings(Query, Response);
   ProcessResponse(Response);
 end;
 
 procedure TStdWebService.ProcessResponse(const Response: TStrings);
+  {Analyses lines of text returned from from web service and extracts data from
+  successful responses. Raises exceptions based on error messages from error
+  responses.
+    @param Response [in] Lines of text from response from web service. After
+      processing status code is removed from top of list, leaving only returned
+      data.
+    @except Raises EWebServiceError on receipt of valid error response.
+    @except Raises [in] EWebServiceFailure if response from web service has
+      invalid format.
+  }
 var
   StatusCode: Integer; // status code from response
 begin
@@ -208,22 +224,10 @@ begin
   begin
     // Error response: raise web service error exception unless data doesn't
     // contain expected error message when failure exception is raised
-    if StrTrim(Response.Text) = '' then
+    if Trim(Response.Text) = '' then
       raise EWebServiceFailure.Create(sUnrecognizedError);
-    raise EWebServiceError.Create(StrTrim(Response.Text), StatusCode);
+    raise EWebServiceError.Create(Trim(Response.Text), StatusCode);
   end
-end;
-
-class function TStdWebService.SanitiseString(const S: string): string;
-const
-  IllegalChars = [#$00..#$1F, #$7F];
-var
-  Idx: Integer;
-begin
-  Result := S;
-  for Idx := 1 to Length(S) do
-    if CharInSet(Result[Idx], IllegalChars) then
-      Result[Idx] := ' ';
 end;
 
 end.

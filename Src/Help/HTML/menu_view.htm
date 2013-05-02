@@ -1,15 +1,26 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
 <!--
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * ***** BEGIN LICENSE BLOCK *****
  *
- * Copyright (C) 2005-2012, Peter Johnson (www.delphidabbler.com).
+ * Version: MPL 1.1
  *
- * $Rev$
- * $Date$
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
  *
- * Help topic describing View menu.
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is menu_view.htm
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * ***** END LICENSE BLOCK *****
 -->
 <html>
   <head>
@@ -29,11 +40,10 @@
     <table class="menu" cellspacing="1" cellpadding="0">
       <tr>
         <td class="img">
-          <img alt="Menu icon" src="../images/GoBack.png" class="glyph">
+          <img alt="Menu icon" src="../images/GoBack.gif" class="glyph">
         </td>
         <td class="item">
-          Previous<br>
-          [<span class="smallcaps">Alt+Left</span>]
+          Previous <span class="smallcaps">(Alt+Left)</span>
         </td>
         <td class="desc">
           Shows the previously displayed page (snippet, category etc.) in the
@@ -42,11 +52,10 @@
       </tr>
       <tr>
         <td class="img">
-          <img alt="Menu icon" src="../images/GoForward.png" class="glyph">
+          <img alt="Menu icon" src="../images/GoForward.gif" class="glyph">
         </td>
         <td class="item">
-          Next<br>
-          [<span class="smallcaps">Alt+Right</span>]
+          Next <span class="smallcaps">(Alt+Right)</span>
         </td>
         <td class="desc">
           Displays the next page in the <a href="detail_pane.htm">Detail
@@ -56,11 +65,10 @@
       </tr>
       <tr>
         <td class="img">
-          <img alt="Menu icon" src="../images/Welcome.png" class="glyph">
+          <img alt="Menu icon" src="../images/Welcome.gif" class="glyph">
         </td>
         <td class="item">
-          Welcome Page<br>
-          [<span class="smallcaps">Alt+Home</span>]
+          Welcome Page <span class="smallcaps">(Alt+Home)</span>
         </td>
         <td class="desc">
           Redisplays the &quot;welcome page&quot; that is shown at start-up.
@@ -105,29 +113,15 @@
       </tr>
       <tr>
         <td class="img">
-          <img alt="Menu icon" src="../images/NewTab.png" class="glyph">
+          &nbsp;
         </td>
         <td class="item">
-          New Tab<br>
-          [<span class="smallcaps">Ctrl+T</span>]
+          Detailed Information
         </td>
         <td class="desc">
-          Opens a new empty tab in the
-          <a href="detail_pane.htm">Detail Pane</a>.
-        </td>
-      </tr>
-      <tr>
-        <td class="img">
-          <img alt="Menu icon" src="../images/CloseTab.png" class="glyph">
-        </td>
-        <td class="item">
-          Close Tab<br>
-          [<span class="smallcaps">Ctrl+F4</span>] or
-          [<span class="smallcaps">Ctrl+W</span>]
-        </td>
-        <td class="desc">
-          Closes the current selected tab, if any, in the
-          <a href="detail_pane.htm">Detail Pane</a>.
+          Displays the <a href="detail_information.htm">Information Tab</a> in
+          the <a href="detail_pane.htm">Detail Pane</a>. This tab shows
+          information about the selected snippet or category.
         </td>
       </tr>
       <tr>
@@ -135,40 +129,53 @@
           &nbsp;
         </td>
         <td class="item">
-          Close All Tabs
+          Compiler Check
         </td>
         <td class="desc">
-          Closes all currently open tabs in the
-          <a href="detail_pane.htm">Detail Pane</a>.
+          Shows the <a href="detail_compilerchecks.htm">Compiler Checks Tab</a>
+          within the <a href="detail_pane.htm">Detail Pane</a>. This page
+          enables a selected snippet to be test compiled in all available
+          compilers.
+        </td>
+      </tr>
+      <tr>
+        <td class="img">
+          <img alt="Menu icon" src="../images/ViewUnit.gif" class="glyph">
+        </td>
+        <td class="item">
+          Test Unit
+        </td>
+        <td class="desc">
+          Displays a dialog box that shows source code of the unit used to test
+          compile the selected snippet. This option is not available if the
+          snippet is freeform.
         </td>
       </tr>
       <tr>
         <td class="img">
           <img
            alt="Menu icon"
-           src="../images/Dependencies.png"
+           src="../images/Dependencies.gif"
            class="glyph">
         </td>
         <td class="item">
-          Dependencies<br>
-          [<span class="smallcaps">Ctrl+D</span>]
+          Dependencies <span class="smallcaps">(Ctrl+D)</span>
         </td>
         <td class="desc">
-          Displays a tabbed <a href="dlg_dependencies.htm">dialogue box</a> that
+          Displays a <a href="dlg_dependencies.htm">dialog box</a> that
           recursively shows all the snippets on which the selected snippet
-          depends, along with all the snippets that directly depend on it.
+          depends.
         </td>
       </tr>
       <tr>
         <td class="img">
           <img
            alt="Menu icon"
-           src="../images/Collapse.png"
+           src="../images/Collapse.gif"
            class="glyph">
         </td>
         <td class="item">
-          Collapse Tree Node<br>
-          [<span class="smallcaps">Ctrl+Num&nbsp;Sub</span>]
+          Collapse Tree Node <span class="smallcaps">(Ctrl+Num Sub)</span>
         </td>
         <td class="desc">
           Collapses the selected tree node in the
@@ -179,12 +186,11 @@
         <td class="img">
           <img
            alt="Menu icon"
-           src="../images/Expand.png"
+           src="../images/Expand.gif"
            class="glyph">
         </td>
         <td class="item">
-          Expand Tree Node<br>
-          [<span class="smallcaps">Ctrl+Num&nbsp;Plus</span>]
+          Expand Tree Node <span class="smallcaps">(Ctrl+Num Plus)</span>
         </td>
         <td class="desc">
           Expands the selected tree node in the
@@ -193,11 +199,10 @@
       </tr>
       <tr>
         <td class="img">
-          <img alt="Menu icon" src="../images/CollapseAll.png" class="glyph">
+          &nbsp;
         </td>
         <td class="item">
-          Collapse All<br>
-          [<span class="smallcaps">Shift+Ctrl+Num&nbsp;Sub</span>]
+          Collapse All <span class="smallcaps">(Shift+Ctrl+Num Sub)</span>
         </td>
         <td class="desc">
           Collapses the whole tree in the
@@ -207,11 +212,10 @@
       </tr>
       <tr>
         <td class="img">
-          <img alt="Menu icon" src="../images/ExpandAll.png" class="glyph">
+          &nbsp;
         </td>
         <td class="item">
-          Expands All<br>
-          [<span class="smallcaps">Shift+Ctrl+Num&nbsp;Plus</span>]
+          Expands All <span class="smallcaps">(Shift+Ctrl+Num Plus)</span>
         </td>
         <td class="desc">
           Expands the whole tree in the

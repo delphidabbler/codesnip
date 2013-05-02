@@ -1,170 +1,193 @@
 /*
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * codesnip.css
  *
- * Copyright (C) 2005-2012, Peter Johnson (www.delphidabbler.com).
+ * CSS for the CodeSnip HTML help file.
  *
  * $Rev$
  * $Date$
  *
- * CSS for the CodeSnip HTML help file.
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is codesnip.css
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s):
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
  */
 
 
 body {
-  font-family: Arial;
-  font-size: 9pt;
-  margin: 0.5em;
+	font-family: Arial;
+	font-size: 9pt;
+	margin: 0.5em;
 }
 
 h1 {
-  font-size: 12pt;
-  font-weight: bold;
-  color: navy;
-  margin: 0 0 0.5em 0;
-  padding-bottom: 2px;
-  border-bottom: 1px silver solid;
+	font-size: 12pt;
+	font-weight: bold;
+	color: navy;
+	margin: 0 0 0.5em 0;
+	padding-bottom: 2px;
+	border-bottom: 1px silver solid;
 }
 
 h2 {
-  font-size: 10pt;
-  font-weight: bold;
-  margin: 0.8em 0 0 0;
+	font-size: 10pt;
+	font-weight: bold;
+	margin: 0.8em 0 0 0;
 }
 
 h3 {
-  font-size: 9pt;
-  font-weight: bold;
-  font-style: italic;
-  margin: 0.8em 0 0 0;
+	font-size: 9pt;
+	font-weight: bold;
+	font-style: italic;
+	margin: 0.8em 0 0 0;
 }
 
 p {
-  margin: 0.5em 0 0 0;
-  padding: 0;
+	margin: 0.5em 0 0 0;
+	padding: 0;
 }
 
 pre {
-  margin: 0.5em 0 0 0;
-  padding: 0;
-  font-family: "Courier New";
-  font-size: 8pt;
+	margin: 0.5em 0 0 0;
+	padding: 0;
+	font-family: "Courier New";
+	font-size: 8pt;
 }
 pre.source-code {
-  background-color: #eef;
-  border: 1px silver dotted;
-  padding: 0.5em;
+	background-color: #eef;
+	border: 1px silver dotted;
+	padding: 0.5em;
 }
 
 ul, ol {
-  margin: 0.5em 0 0 2em;
-  padding: 0;
+	margin: 0.5em 0 0 2em;
+	padding: 0;
 }
 ul {
-  list-style-type: square;
+	list-style-type: square;
 }
 ul li,
 ol li,
 ul.spaced li,
 ol.spaced li,
 li div {
-  margin-top: 0.5em;
+	margin-top: 0.5em;
 }
 ul.unspaced li,
 ol.unspaced li {
-  margin-top: 0;
+	margin-top: 0;
 }
 ul.unspaced li.first,
 ol.unspaced li.first {
-  margin-top: 0.5em;
+	margin-top: 0.5em;
 }
 
 a:link,
 a:active,
 a:visited,
 a:hover {
-  color: green;
-  text-decoration: underline;
+	color: green;
+	text-decoration: underline;
 }
 
 a:link.weblink,
 a:active.weblink,
 a:visited.weblink,
 a:hover.weblink {
-  color: blue;
-  text-decoration: underline;
+	color: blue;
+	text-decoration: underline;
 }
 
 img.glyph {
-  width: 16px;
-  height: 16px;
-  border: 0;
+	width: 16px;
+	height: 16px;
+	border: 0;
 }
 
 table {
-  font-family: Arial;
-  font-size: 9pt;
-  margin: 0.5em 0 0 0;
-  padding: 0;
+	font-family: Arial;
+	font-size: 9pt;
+	margin: 0.5em 0 0 0;
+	padding: 0;
 }
 
 tr {
-  vertical-align: top;
-  padding: 0;
-  margin: 0;
+	vertical-align: top;
+	padding: 0;
+	margin: 0;
 }
 
 td {
-  padding: 4px;
-  margin: 1px;
+	padding: 4px;
+	margin: 1px;
 }
 
 table.menu {
-  background-color: #ccc;
-  margin-left: 1em;
+	background-color: #ccc;
+	margin-left: 1em;
 }
 
 table.menu td.img {
-  width: 24px;
-  height: 24px;
-  background-color: white;
-  text-align: center;
+	width: 24px;
+	height: 24px;
+	background-color: white;
+	text-align: center;
 }
 
 table.menu td.item {
-  width: 6em;
-  font-style: italic;
-  background-color: #eee;
+	width: 6em;
+	font-style: italic;
+	background-color: #eee;
 }
 
 table.menu td.mainitem {
-  width: 5em;
-  font-weight: bold;
-  background-color: #eee;
+	width: 5em;
+	font-weight: bold;
+	background-color: #eee;
 }
 
 table.menu td.desc {
-  background-color: white;
+	background-color: white;
 }
 
 .indent {
-  margin-left: 2em;
+	margin-left: 2em;
 }
 
 .smallcaps {
-  font-variant: small-caps;
+	font-variant: small-caps;
+}
+
+.link {
+	color: red;
+	font-weight: bold;
 }
 
 .warning {
-  color: red;
+	color: red;
+	font-weight: bold;
 }
 
 .todo {
-  background-color: yellow;
+	background-color: yellow;
 }
 
-.bordered {
-  border: 1px silver solid;
-  padding: 0.25em;
-}

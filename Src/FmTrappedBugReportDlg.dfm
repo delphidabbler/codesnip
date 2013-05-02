@@ -1,19 +1,18 @@
 inherited TrappedBugReportDlg: TTrappedBugReportDlg
   Caption = 'Unexpected Error'
-  ExplicitHeight = 356
   PixelsPerInch = 96
   TextHeight = 13
   inherited pnlBody: TPanel
     object lblIntro: TLabel [0]
       Left = 4
       Top = 4
-      Width = 309
+      Width = 313
       Height = 13
       Caption = 'CodeSnip has detected the following unexpected error:'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
-      Font.Name = 'Tahoma'
+      Font.Name = 'MS Sans Serif'
       Font.Style = [fsBold]
       ParentFont = False
     end
@@ -33,7 +32,7 @@ inherited TrappedBugReportDlg: TTrappedBugReportDlg
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clPurple
       Font.Height = -11
-      Font.Name = 'Tahoma'
+      Font.Name = 'MS Sans Serif'
       Font.Style = []
       ParentFont = False
       WordWrap = True
@@ -97,7 +96,7 @@ inherited TrappedBugReportDlg: TTrappedBugReportDlg
     TabOrder = 3
   end
   inherited btnClose: TButton
-    Caption = '&Continue'
+    Caption = 'Continue'
     Default = False
     TabOrder = 2
   end
@@ -111,7 +110,7 @@ inherited TrappedBugReportDlg: TTrappedBugReportDlg
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
     Font.Height = -11
-    Font.Name = 'Tahoma'
+    Font.Name = 'MS Sans Serif'
     Font.Style = [fsBold]
     ParentFont = False
     TabOrder = 1

@@ -1,15 +1,36 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * UFileProtocol.pas
  *
- * Copyright (C) 2009-2013, Peter Johnson (www.delphidabbler.com).
+ * Implements a handler for the "file" URL protocol that displays a local file
+ * in the associated program.
  *
  * $Rev$
  * $Date$
  *
- * Implements a handler for the "file" URL protocol that displays a local file
- * in the associated program.
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is UFileProtocol.pas
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2009-2010 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributors:
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -24,9 +45,9 @@ implementation
 
 uses
   // Delphi
-  SysUtils, ExtActns,
+  SysUtils, StrUtils, ExtActns,
   // Project
-  UBrowseProtocol, UProtocols, UStrUtils, UUtils;
+  UBrowseProtocol, UProtocols, UUtils;
 
 
 {
@@ -82,7 +103,7 @@ type
     displayed by its associated program.
   }
   TFileProtocol = class sealed(TBrowseProtocol)
-  strict protected
+  protected
     class function NormaliseURL(const URL: string): string; override;
       {Converts URL into its normal form. If URL contains file:// protocol the
       URL is converted into a standard absolute or UNC file name as appropriate.
@@ -140,13 +161,13 @@ const
 begin
   Result := URL;
   // url doesn't start with file:// so assume a simple file name
-  if not StrStartsStr(cProtocol, Result) then
+  if not AnsiStartsStr(cProtocol, Result) then
     Exit;
   // replace C| with C:
-  Result := StrReplace(Result, '|', ':'); // change c| to c:
+  Result := ReplaceStr(Result, '|', ':'); // change c| to c:
   // make all delimiters in unix format for processing
-  Result := StrReplace(Result, '\', '/');
-  if StrStartsStr(cProtocol + '/', Result) then
+  Result := ReplaceStr(Result, '\', '/'); // change \ in path to /
+  if AnsiStartsStr(cProtocol + '/', Result) then
     // starts with "file:///" => remove "file:///"
     //   file:///C:/filename
     //     => C:/filename
@@ -159,7 +180,7 @@ begin
     //     => //servername/sharename/filename
     Delete(Result, 1, Length(cProtocol) - 2);
   // change to DOS path delimiters
-  Result := StrReplace(Result, '/', '\');
+  Result := ReplaceStr(Result, '/', '\');
 end;
 
 class function TFileProtocol.SupportsProtocol(const URL: string): Boolean;
@@ -167,38 +188,11 @@ class function TFileProtocol.SupportsProtocol(const URL: string): Boolean;
     @param URL [in] URL whose protocol is to be checked.
     @return True if URL's protocol is file:, False if not.
   }
-
-  // ---------------------------------------------------------------------------
-  function IsAbsoluteFileNameFormat(const FileName: string): Boolean;
-    {Checks if a filename is in absolute local file path format. Name is not
-    checked for valid characters.
-      @param FileName [in] File name to be checked.
-      @return True if file name is valid absolute file path, false if not.
-    }
-  begin
-    Result := (Length(FileName) > 3)
-      and IsValidDriveLetter(FileName[1])
-      and (FileName[2] = ':') and (FileName[3] = '\');
-  end;
-
-  function IsUNCFileNameFormat(const FileName: string): Boolean;
-    {Checks if a filename is in UNC file name format. Name is not checked for
-    valid characters.
-      @param FileName [in] File name to be checked.
-      @return True if file name is valid UNC name, false if not.
-    }
-  begin
-    Result := (Length(FileName) > 5)
-      and StrStartsStr('\\', FileName)
-      and (StrPos('\', FileName, 4) >= 4);
-  end;
-  // ---------------------------------------------------------------------------
-
 var
   FileName: string; // filename part of URL
 begin
   FileName := NormaliseURL(URL);
-  Result := IsAbsoluteFileNameFormat(FileName) or IsUNCFileNameFormat(FileName);
+  Result := IsValidAbsoluteFileName(FileName) or IsValidUNCFileName(FileName);
 end;
 
 initialization

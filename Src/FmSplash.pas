@@ -1,14 +1,35 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * FmSplash.pas
  *
- * Copyright (C) 2007-2013, Peter Johnson (www.delphidabbler.com).
+ * Implements a splash screen with timeout.
  *
  * $Rev$
  * $Date$
  *
- * Implements the program's splash screen.
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is FmSplash.pas
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2007-2009 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -93,7 +114,7 @@ type
         @param AForm [in] Form to be aligned.
         @return Required bounds rectangle.
       }
-  public
+  protected // do not make strict
     { IFormAligner method }
     procedure AlignForm(const AForm: TCustomForm);
       {Aligns splash form over main form.
@@ -105,7 +126,7 @@ type
   TOwnerWindowSettings:
     Class that gets bounds rectangle of main form from persistent storage.
   }
-  TOwnerWindowSettings = class(TMainWindowSettings)
+  TOwnerWindowSettings = class(TWindowSettings)
   public
     function GetWdwState(out BoundsRect: TRectEx;
       out State: TWindowState): Boolean;
@@ -147,7 +168,7 @@ procedure TSplashForm.pbMainPaint(Sender: TObject);
 var
   GIF: TGIFImage; // main splash image
 const
-  cVerPos: TPoint = (X: 34; Y: 118);  // position of version info text
+  cVerPos: TPoint = (X: 46; Y: 113);  // position of version info text
 begin
   // Load and display splash screen image
   GIF := TGIFImage.Create;
