@@ -77,7 +77,7 @@ type
   strict private
     const
       ///  <summary>Current user config file version.</summary>
-      FileVersion = 13;
+      FileVersion = 14;
   strict protected
     ///  <summary>Returns current user config file version.</summary>
     class function GetFileVersion: Integer; override;
