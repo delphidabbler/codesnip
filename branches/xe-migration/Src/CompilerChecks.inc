@@ -13,7 +13,7 @@
  *
  * CodeSnip can be complied only if the following conditions are met:
  *
- *   o Compiler is Delphi 2010 or later.
+ *   o Compiler is Delphi XE or later.
  *   o Target platform is Windows 32 bit.
  *   o Program is compiled as a native application, not .NET.
  *   o Program is not being compiled as a console application.
@@ -22,12 +22,12 @@
 // Check for supported compiler
 {$UNDEF SupportedCompiler}
 {$IFDEF CONDITIONALEXPRESSIONS}
-  {$IF CompilerVersion >= 21.0} // Delphi 2010 and later
+  {$IF CompilerVersion >= 22.0} // Delphi XE and later
     {$DEFINE SupportedCompiler}
   {$IFEND}
 {$ENDIF}
 {$IFNDEF SupportedCompiler}
-  {$MESSAGE FATAL 'CodeSnip requires Delphi 2010 or later to compile'}
+  {$MESSAGE FATAL 'CodeSnip requires Delphi XE or later to compile'}
 {$ENDIF}
 
 // Check for Windows 32 bit target platform
