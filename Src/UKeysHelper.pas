@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2009-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2009-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -120,10 +120,10 @@ function IsValidDecimalNumberKey(const Text: string; var Key: Char): Boolean;
   }
 begin
   Result := True;
-  if (Key = DecimalSeparator) then
+  if (Key = FormatSettings.DecimalSeparator) then
   begin
     // Only allow decimal point if not already entered: can't have more than one
-    if StrContainsStr(DecimalSeparator, Text) then
+    if StrContainsStr(FormatSettings.DecimalSeparator, Text) then
       Result := False;
   end
   else if not TCharacter.IsDigit(Key) and (Key <> BACKSPACE) then

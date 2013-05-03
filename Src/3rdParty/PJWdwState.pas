@@ -1130,8 +1130,6 @@ var
   MonitorInfo: TMonitorInfo;  // receives info about a monitor
   MDIParent: TForm;           // reference to parent form of MDI child
   Scrollbars: TScrollStyle;   // scrollbars displayed by MDI child
-  WorkAreaWidth: Integer;     // width of work area
-  WorkAreaHeight: Integer;    // height of work area
 begin
   Assert(not (csDesigning in ComponentState));
 

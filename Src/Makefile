@@ -2,7 +2,7 @@
 # v. 2.0. If a copy of the MPL was not distributed with this file, You can
 # obtain one at http://mozilla.org/MPL/2.0/
 #
-# Copyright (C) 2009-2012, Peter Johnson (www.delphidabbler.com).
+# Copyright (C) 2009-2013, Peter Johnson (www.delphidabbler.com).
 #
 # $Rev$
 # $Date$
@@ -17,11 +17,11 @@ EXE = ..\Exe
 
 # Check for required environment variables
 
-!ifdef DELPHI2010
-DELPHIROOT = $(DELPHI2010)
+!ifdef DELPHIXE
+DELPHIROOT = $(DELPHIXE)
 !endif
 !ifndef DELPHIROOT
-!error DELPHIROOT or DELPHI2010 environment variable required.
+!error DELPHIROOT or DELPHIXE environment variable required.
 !endif
 
 !ifndef INDY10

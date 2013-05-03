@@ -197,8 +197,22 @@ const
     '{', '(*'                                             // compiler directives
   );
 
-  // table of keywords per Delphi 2006
-  cKeywords: array[0..65] of string = (
+    // Notes about directives and symbols (from Delphi XE documentation)
+  // * the words "at" and "or" have special meaning and should be treated as
+  //   reserved words.
+  // * "private", "protected", "public", "published" and "automated" act as
+  //   reserved words within class type definitions but otherwise are treated as
+  //   directives.
+  // * "near", "far" and "resident" are obsolete.
+  // * "inline" is used directive-style, but became a keyword in Turbo Pascal.
+  // * "library" is a keyword when used as the 1st token in a project source
+  //   file.
+  // * "local" was a Kylix directive and is ignored by Delphi.
+  // * "package" when used as the first token in a project indicates a package.
+  //   Only in packages are "contains" and "requires" directives.
+
+  // Table of keywords per Delphi XE documentation
+  cKeywords: array[0..66] of string = (
     'and',            'array',          'as',             'asm',
     'at',             'begin',          'case',           'class',
     'const',          'constructor',    'destructor',     'dispinterface',
@@ -206,34 +220,34 @@ const
     'end',            'except',         'exports',        'file',
     'finalization',   'finally',        'for',            'function',
     'goto',           'if',             'implementation', 'in',
-    'inherited',      'initialization', 'interface',      'is',
-    'label',          'library',        'mod',            'nil',
-    'not',            'object',         'of',             'on',
-    'or',             'out',            'packed',         'procedure',
-    'program',        'property',       'raise',          'record',
-    'repeat',         'resourcestring', 'set',            'shl',
-    'shr',            'string',         'then',           'threadvar',
-    'to',             'try',            'type',           'unit',
-    'until',          'uses',           'var',            'while',
-    'with',           'xor'
+    'inherited',      'initialization', 'inline',         'interface',
+    'is',             'label',          'library',        'mod',
+    'nil',            'not',            'object',         'of',
+    'on',             'or',             'out',            'packed',
+    'procedure',      'program',        'property',       'raise',
+    'record',         'repeat',         'resourcestring', 'set',
+    'shl',            'shr',            'string',         'then',
+    'threadvar',      'to',             'try',            'type',
+    'unit',           'until',          'uses',           'var',
+    'while',          'with',           'xor'
   );
 
-  // table of directives per Delphi 2010
-  cDirectives: array[0..54] of string = (
+  // Table of directives per Delphi XE documentation
+  cDirectives: array[0..53] of string = (
     'absolute',       'abstract',       'assembler',      'automated',
     'cdecl',          'contains',       'default',        'delayed',
     'deprecated',     'dispid',         'dynamic',        'experimental',
     'export',         'external',       'far',            'final',
     'forward',        'helper',         'implements',     'index',
-    'inline',         'local',          'message',        'name',
-    'near',           'nodefault',      'operator',       'overload',
-    'override',       'package',        'pascal',         'platform',
-    'private',        'protected',      'public',         'published',
-    'read',           'readonly',       'reference',      'register',
-    'reintroduce',    'requires',       'resident',       'safecall',
-    'sealed',         'static',         'stdcall',        'stored',
-    'strict',         'unsafe',         'varargs',        'virtual',
-    'winapi',         'write',          'writeonly'
+    'local',          'message',        'name',           'near',
+    'nodefault',      'operator',       'overload',       'override',
+    'package',        'pascal',         'platform',       'private',
+    'protected',      'public',         'published',      'read',
+    'readonly',       'reference',      'register',       'reintroduce',
+    'requires',       'resident',       'safecall',       'sealed',
+    'static',         'stdcall',        'stored',         'strict',
+    'unsafe',         'varargs',        'virtual',        'winapi',
+    'write',          'writeonly'
   );
 
   // Maps symbols onto likely tokens or error if token shouldn't occur (eg

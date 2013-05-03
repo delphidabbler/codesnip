@@ -365,7 +365,9 @@ begin
   Assert(Assigned(Dlg), ClassName + '.SetDlgParent: Dlg is nil');
   DlgWindow := TWindowInfoFactory.Instance(Dlg);
   ParentWindow := TWindowInfoFactory.Instance(Parent);
-  SetWindowLong(DlgWindow.Handle, GWL_HWNDPARENT, ParentWindow.Handle);
+  SetWindowLongPtr(
+    DlgWindow.Handle, GWL_HWNDPARENT, LONG_PTR(ParentWindow.Handle)
+  );
 end;
 
 class procedure TDlgHelper.SetDlgParentToOwner(const Dlg: TComponent);
