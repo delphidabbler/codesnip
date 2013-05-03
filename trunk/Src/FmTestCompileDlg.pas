@@ -158,7 +158,7 @@ implementation
 
 uses
   // Delphi
-  Math, Windows, Graphics,
+  Math, Windows, Graphics, Types {for inlining},
   // Project
   UColours, UCtrlArranger, UFontHelper, UPreferences;
 
