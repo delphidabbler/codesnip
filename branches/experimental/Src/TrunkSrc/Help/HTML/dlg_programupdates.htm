@@ -1,0 +1,88 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<!--
+ * This Source Code Form is subject to the terms of the Mozilla Public License,
+ * v. 2.0. If a copy of the MPL was not distributed with this file, You can
+ * obtain one at http://mozilla.org/MPL/2.0/
+ *
+ * Copyright (C) 2012-2013, Peter Johnson (www.delphidabbler.com).
+ *
+ * $Rev$
+ * $Date$
+ *
+ * Help topic for Check For Program Updates dialogue box.
+-->
+<html>
+  <head>
+    <title>
+      Check For Program Updates Dialogue Box
+    </title>
+    <meta http-equiv="Content-Type" content="text-html; charset=Windows-1252">
+    <link rel="stylesheet" href="../css/codesnip.css" type="text/css">
+  </head>
+  <body>
+    <object
+      type="application/x-oleobject"
+      classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e"
+    >
+      <param name="ALink Name" value="ProgramUpdatesDlg">
+    </object>
+    <h1>
+      <a name="dlg_programupdates"></a>
+      Check For Program Updates Dialogue Box
+    </h1>
+    <p>
+      This dialogue box is displayed when the <em>Tools | Check For Program
+      Updates</em> menu option is selected.
+    </p>
+    <p>
+      As soon as the dialogue box appears the DelphiDabbler web site is
+      contacted to find out if any new versions of <em>CodeSnip</em> are
+      available. &quot;Checking...&quot; is displayed while this is in progress.
+    </p>
+    <p>
+      If a new version is available then a button is displayed that, when
+      clicked, uses your default web browser to download a zip file containing
+      the latest version of <em>CodeSnip</em><sup>&dagger;</sup>. You can then
+      close <em>CodeSnip</em> and install the updated program from the installer
+      contained in the zip file.
+    </p>
+    <p>
+      If there is no new version<sup>&Dagger;</sup>, a message is displayed to
+      that effect.
+    </p>
+    <p>
+      <strong>Notes:</strong>
+    </p>
+    <p class="indent">
+      &dagger; Should a download fail you can also get the latest version from
+      <em>CodeSnip</em>'s <a
+        href="http://delphidabbler.com/url/codesnip-download"
+        class="weblink"
+        target="_blank"
+      >download web page</a>.
+    </p>
+    <p class="indent">
+      &Dagger; Only stable releases of <em>CodeSnip</em> are made available via
+      this dialogue box. If you are interested trying any pre-release or beta
+      versions, please check the <a
+        href="http://delphidabbler.com//feeds/site-news-feed?id=codesnip"
+        class="weblink"
+        target="_blank"
+      >CodeSnip News Feed</a> which carries announcements of all such
+      releases.
+    </p>
+    <p class="bordered">
+      By default <em>CodeSnip</em> performs a check for program updates
+      automatically from time to time. A pop-up notification window is displayed
+      in the main window if an update is available. The notification includes
+      a button that causes the update to be downloaded via the default browser,
+      in an exactly similar way to this dialogue box. You can switch this
+      automatic checking feature off, or change the frequency with which checks
+      are made, by using the <a
+        href="dlg_prefs_updates.htm"
+      >Updates</a> tab of the <a
+        href="dlg_preferences.htm"
+      >Preferences</a> dialogue box.
+    </p>
+  </body>
+</html>
