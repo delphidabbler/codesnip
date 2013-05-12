@@ -73,12 +73,16 @@ type
     ///  <remarks>Edit control contents are trimmed of spaces and any trailing
     ///  path delimiter.</remarks>
     function NewDirFromEditCtrl: string;
-    ///  <summary>Move user database from its current location to the given
-    ///  directory.</summary>
+    ///  <summary>Copies all files from source directory SrcDir to destination
+    ///  directory DestDir.</summary>
+    ///  <remarks>Any sub-directories of SrcDir are not copied.</remarks>
+    procedure CopyFiles(const SrcDir, DestDir: string);
+    ///  <summary>Copies the user database from its current location to the
+    ///  given directory.</summary>
     ///  <exception>Raises an exception if DestDir is not a full path, if
     ///  DestDir is a sub-directory of the current database directory or if an
-    ///  error occurs during the move operation.</exception>
-    procedure DoMove(const DestDir: string);
+    ///  error occurs during the operation.</exception>
+    procedure DoCopy(const DestDir: string);
     ///  <summary>Handles given exception, converting expected exceptions into
     ///  EDataEntry and re-raising all other unchanged.</summary>
     ///  <exception>Always raises a new exception.</exception>
@@ -108,8 +112,8 @@ uses
   // Delphi
   IOUtils, RTLConsts,
   // Project
-  UAppInfo, UBrowseForFolderDlg, UConsts, UCtrlArranger, UExceptions,
-  UFontHelper, UMessageBox, UStrUtils;
+  UAppInfo, UBrowseForFolderDlg, UConsts, UCtrlArranger, UDOSDateTime,
+  UExceptions, UFontHelper, UIOUtils, UMessageBox, UStrUtils, UUtils;
 
 {$R *.dfm}
 
@@ -143,15 +147,22 @@ resourcestring
     + 'Please clear out all the contents of "%s" before re-trying.';
   sConfirmMsg = 'Are you sure you want to restore the user database to its '
     + 'default location?';
+var
+  SourceDir, DestDir: string;
 begin
-  if TDirectory.Exists(TAppInfo.DefaultUserDataDir) and
-    not TDirectory.IsEmpty(TAppInfo.DefaultUserDataDir) then
-    raise ECodeSnip.CreateFmt(sNonEmptyDir, [TAppInfo.DefaultUserDataDir]);
+  DestDir := TAppInfo.DefaultUserDataDir;
+  if TDirectory.Exists(DestDir) and
+    not TDirectory.IsEmpty(DestDir) then
+    raise ECodeSnip.CreateFmt(sNonEmptyDir, [DestDir]);
   if not TMessageBox.Confirm(Self, sConfirmMsg) then
     Exit;
   try
-    DoMove(TAppInfo.DefaultUserDataDir);
-    TAppInfo.ChangeUserDataDir(TAppInfo.DefaultUserDataDir);
+    // TODO: do extract method on this and identical code in actMoveExecute
+    SourceDir := TAppInfo.UserDataDir;
+    DoCopy(DestDir);
+    TAppInfo.ChangeUserDataDir(DestDir);
+    // Only delete old directory when new user dir created and recorded
+    TDirectory.Delete(SourceDir);
   except
     on E: Exception do
       HandleException(E);
@@ -168,15 +179,21 @@ procedure TUserDataPathDlg.actMoveExecute(Sender: TObject);
 resourcestring
   sNonEmptyDir = 'The specified directory is not empty.';
   sConfirmMsg = 'Are you sure you want to move the user database?';
+var
+  SourceDir, DestDir: string;
 begin
-  if TDirectory.Exists(NewDirFromEditCtrl)
-    and not TDirectory.IsEmpty(NewDirFromEditCtrl) then
+  DestDir := NewDirFromEditCtrl;
+  if TDirectory.Exists(DestDir)
+    and not TDirectory.IsEmpty(DestDir) then
     raise EDataEntry.Create(sNonEmptyDir, edPath);
   if not TMessageBox.Confirm(Self, sConfirmMsg) then
     Exit;
   try
-    DoMove(NewDirFromEditCtrl);
-    TAppInfo.ChangeUserDataDir(NewDirFromEditCtrl);
+    SourceDir := TAppInfo.UserDataDir;
+    DoCopy(DestDir);
+    TAppInfo.ChangeUserDataDir(DestDir);
+    // Only delete old directory when new user dir created and recorded
+    TDirectory.Delete(SourceDir, True);
   except
     on E: Exception do
       HandleException(E);
@@ -226,7 +243,30 @@ begin
   ]);
 end;
 
-procedure TUserDataPathDlg.DoMove(const DestDir: string);
+procedure TUserDataPathDlg.CopyFiles(const SrcDir, DestDir: string);
+var
+  Files: TStringList;
+  SrcFileName: string;
+  DestFileName: string;
+  DateStamp: IDOSDateTime;
+begin
+  Files := TStringList.Create;
+  try
+    ListFiles(SrcDir, '*.*', Files, False); // user database has no sub-dirs
+    for SrcFileName in Files do
+    begin
+      DestFileName := IncludeTrailingPathDelimiter(DestDir)
+        + ExtractFileName(SrcFileName);
+      DateStamp := TDOSDateTimeFactory.CreateFromFile(SrcFileName);
+      TFileIO.CopyFile(SrcFileName, DestFileName);
+      DateStamp.ApplyToFile(DestFileName);
+    end;
+  finally
+    Files.Free;
+  end;
+end;
+
+procedure TUserDataPathDlg.DoCopy(const DestDir: string);
 resourcestring
   sCantMoveToSubDir = 'Can''t move database into a sub-directory of the '
     + 'existing database directory';
@@ -243,10 +283,8 @@ begin
     IncludeTrailingPathDelimiter(TAppInfo.UserDataDir), DestDir
   ) then
     raise EInOutError.Create(sCantMoveToSubDir);
-  if not TDirectory.Exists(DestDir) then
-    TDirectory.CreateDirectory(DestDir);
-  TDirectory.Copy(SourceDir, DestDir);
-  TDirectory.Delete(SourceDir, True);
+  EnsureFolders(DestDir);
+  CopyFiles(SourceDir, DestDir);
 end;
 
 class procedure TUserDataPathDlg.Execute(AOwner: TComponent);
