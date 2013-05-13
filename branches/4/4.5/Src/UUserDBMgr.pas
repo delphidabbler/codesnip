@@ -25,93 +25,77 @@ uses
 
 type
 
-  {
-  TUserDBMgr:
-    Static class that manages user's interaction with user database.
-  }
+  ///  <summary>Static class that manages user's interaction with user database
+  ///  and performs move and backup operations on it.</summary>
   TUserDBMgr = class(TNoConstructObject)
   strict private
+    ///  <summary>OnClose event handler for open dialogue box. Checks if
+    ///  dialogue box can close.</summary>
+    ///  <param name="Sender">TObject [in] Reference to dialogue box in
+    ///  question.</param>
+    ///  <param name="CanClose">Boolean [in/out] Set to True to permit dialogue
+    ///  to close or False to inhibit closure.</param>
     class procedure CanOpenDialogClose(Sender: TObject; var CanClose: Boolean);
-      {OnClose event handler for open dialog box. Checks if dialog box can
-      close.
-        @param Sender [in] Reference to dialog box.
-        @param CanClose [in/out] Set to True to permit dialog to close or False
-          to inhibit closure.
-      }
+    ///  <summary>OnClose event handler for save dialogue box. Checks if
+    ///  dialogue box can close.</summary>
+    ///  <param name="Sender">TObject [in] Reference to dialogue box in
+    ///  question.</param>
+    ///  <param name="CanClose">Boolean [in/out] Set to True to permit dialogue
+    ///  to close or False to inhibit closure.</param>
     class procedure CanSaveDialogClose(Sender: TObject; var CanClose: Boolean);
-      {OnClose event handler for save dialog box. Checks if dialog box can
-      close.
-        @param Sender [in] Reference to dialog box.
-        @param CanClose [in/out] Set to True to permit dialog to close or False
-          to inhibit closure.
-      }
+    ///  <summary>Creates a list of user defined categories.</summary>
+    ///  <param name="IncludeSpecial">Boolean [in] Flag indicating whether list
+    ///  should include special, non-deletable, categories.</param>
+    ///  <returns>Required category list.</returns>
+    ///  <remarks>Caller must free the returned object.</remarks>
     class function CreateUserCatList(
       const IncludeSpecial: Boolean): TCategoryList;
-      {Creates a list of user defined categories.
-        @param IncludeSpecial [in] Flag indicating whether list should include
-          special, non-deletable, categories.
-        @return Required category list. Caller must free.
-      }
   public
+    ///  <summary>Enables user to adds a new user defined snippet to the
+    ///  database using the snippets editor.</summary>
     class procedure AddSnippet;
-      {Adds a new user defined snippet to database.
-      }
+    ///  <summary>Enables user to edit the snippet with the given name using the
+    ///  snippets editor.</summary>
+    ///  <remarks>The named snippet must be user defined.</remarks>
     class procedure EditSnippet(const SnippetName: string);
-      {Gets user to edit a named snippet using edit snippet dialog box.
-        @param SnippetName [in] Name of snippet to be edited. Must be user
-          defined.
-      }
-    ///  <summary>Duplicates snippet in given view as a user defined snippet
-    ///  with name specified by user.</summary>
+    ///  <summary>Duplicates the snippet specified by the given view as a user
+    ///  defined snippet with name specified by user.</summary>
     class procedure DuplicateSnippet(ViewItem: IView);
+    ///  <summary>Deletes the snippet specified by the given view from the
+    ///  database.</summary>
+    ///  <remarks>The given snippet must be user defined.</remarks>
     class procedure DeleteSnippet(ViewItem: IView);
-      {Deletes a snippet from the database if possible.
-        @param ViewItem [in] View item containing snippet to be deleted. Must be
-          a user defined snippet.
-      }
     ///  <summary>Checks if given view item can be duplicated.</summary>
     ///  <remarks>To be duplicated view must be a snippet.</summary>
     class function CanDuplicate(ViewItem: IView): Boolean;
-    class function CanEdit(ViewItem: IView): Boolean;
-      {Checks if a view item can be edited.
-        @param ViewItem [in] View item to check.
-        @return True if view item can be edited, i.e. if ViewItem is a snippet
-          and is user defined.
-      }
-    class procedure AddCategory;
-      {Adds a new category to user database.
-      }
-    class procedure DeleteACategory;
-      {Selects and deletes a category from database if possible.
-      }
-    class procedure RenameACategory;
-      {Selects and renames a category in database if possible.
-      }
-    class function CanRenameACategory: Boolean;
-      {Checks if it is possoble to rename any categories.
-        @return True if there are some user-defined categories, False if not.
-      }
-    class function CanDeleteACategory: Boolean;
-      {Checks if it is possoble to delete any categories.
-        @return True if there are some user-defined, deletable, categories,
-          False if not.
-      }
-    class procedure Save;
-      {Saves user database.
-      }
-    class function CanSave: Boolean;
-      {Checks if user database can be saved.
-        @return True if database can be saved, False if not.
-      }
-    class procedure BackupDatabase;
-      {Creates a backup of user database in a file specified by user.
-      }
-    class function RestoreDatabase: Boolean;
-      {Restores user database from a previously created backup file.
-        @return True if user OKs, False if not.
-      }
-    ///  <summary>Moves user database to a new location provided by the user.
+    ///  <summary>Checks if the given view item specifies an editable snippet.
     ///  </summary>
+    class function CanEdit(ViewItem: IView): Boolean;
+    ///  <summary>Adds a new category, specified by the user, to the database.
+    ///  </summary>
+    class procedure AddCategory;
+    ///  <summary>Deletes a user specified category from the database.</summary>
+    class procedure DeleteACategory;
+    ///  <summary>Renames a user specified category.</summary>
+    class procedure RenameACategory;
+    ///  <summary>Checks if it is possible for any categories to be renamed.
+    ///  </summary>
+    class function CanRenameACategory: Boolean;
+    ///  <summary>Checks if it is possible for any categories to be deleted.
+    ///  </summary>
+    class function CanDeleteACategory: Boolean;
+    ///  <summary>Saves the current user database to disk.</summary>
+    class procedure Save;
+    ///  <summary>Checks if the user database can be saved.</summary>
+    class function CanSave: Boolean;
+    ///  <summary>Creates a backup of the user database in a file specified by
+    ///  the user.</summary>
+    class procedure BackupDatabase;
+    ///  <summary>Restores the user database from a backup file specified by the
+    ///  user.</summary>
+    class function RestoreDatabase: Boolean;
+    ///  <summary>Moves the user database to a new location specified by the
+    ///  user.</summary>
     class procedure MoveDatabase;
   end;
 
@@ -137,24 +121,18 @@ uses
 { TUserDBMgr }
 
 class procedure TUserDBMgr.AddCategory;
-  {Adds a new category to user database.
-  }
 begin
   // all work takes place in dialog box
   TAddCategoryDlg.Execute(nil);
 end;
 
 class procedure TUserDBMgr.AddSnippet;
-  {Adds a new user defined snippet to database.
-  }
 begin
   // Display Add Snippet dialog box which performs update of database.
   TSnippetsEditorDlg.AddNewSnippet(nil);
 end;
 
 class procedure TUserDBMgr.BackupDatabase;
-  {Creates a backup of user database in a file specified by user.
-  }
 var
   FileName: string;             // name of backup file
   SaveDlg: TSaveDialogEx;       // save dialog box used to name backup file
@@ -170,7 +148,7 @@ begin
     SaveDlg.Title := sCaption;
     SaveDlg.Options := [ofShowHelp, ofExtensionDifferent, ofPathMustExist,
       ofNoTestFileCreate, ofEnableSizing];
-    SaveDlg.HelpKeyword := 'SaveBackupDlg';                
+    SaveDlg.HelpKeyword := 'SaveBackupDlg';
     if SaveDlg.Execute then
     begin
       // Perform backup
@@ -188,10 +166,6 @@ begin
 end;
 
 class function TUserDBMgr.CanDeleteACategory: Boolean;
-  {Checks if it is possoble to delete any categories.
-    @return True if there are some user-defined, deletable, categories, False if
-      not.
-  }
 var
   CatList: TCategoryList; // list of user deletable categories
 begin
@@ -209,11 +183,6 @@ begin
 end;
 
 class function TUserDBMgr.CanEdit(ViewItem: IView): Boolean;
-  {Checks if a view item can be edited.
-    @param ViewItem [in] View item to check.
-    @return True if view item can be edited, i.e. if ViewItem is a snippet and
-      is user defined.
-  }
 var
   SnippetView: ISnippetView;  // ViewItem as snippet view if supported
 begin
@@ -225,11 +194,6 @@ end;
 
 class procedure TUserDBMgr.CanOpenDialogClose(Sender: TObject;
   var CanClose: Boolean);
-  {OnClose event handler for open dialog box. Checks if dialog box can close.
-    @param Sender [in] Reference to dialog box.
-    @param CanClose [in/out] Set to True to permit dialog to close or False to
-      inhibit closure.
-  }
 var
   FileName: string;     // name of file entered in dialog box
 resourcestring
@@ -252,9 +216,6 @@ begin
 end;
 
 class function TUserDBMgr.CanRenameACategory: Boolean;
-  {Checks if it is possoble to rename any categories.
-    @return True if there are some user-defined categories, False if not.
-  }
 var
   CatList: TCategoryList; // list of user renamable categories
 begin
@@ -267,9 +228,6 @@ begin
 end;
 
 class function TUserDBMgr.CanSave: Boolean;
-  {Checks if user database can be saved.
-    @return True if database can be saved, False if not.
-  }
 begin
   // We can save database if it's been changed
   Result := (Database as IDatabaseEdit).Updated;
@@ -277,11 +235,6 @@ end;
 
 class procedure TUserDBMgr.CanSaveDialogClose(Sender: TObject;
   var CanClose: Boolean);
-  {OnClose event handler for save dialog box. Checks if dialog box can close.
-    @param Sender [in] Reference to dialog box.
-    @param CanClose [in/out] Set to True to permit dialog to close or False to
-      inhibit closure.
-  }
 var
   FileName: string;   // name of file entered in dialog box
 resourcestring
@@ -299,11 +252,6 @@ end;
 
 class function TUserDBMgr.CreateUserCatList(
   const IncludeSpecial: Boolean): TCategoryList;
-  {Creates a list of user defined categories.
-    @param IncludeSpecial [in] Flag indicating whether list should include
-      special, non-deletable, categories.
-    @return Required category list. Caller must free.
-  }
 var
   Cat: TCategory; // references each category in snippets database
 begin
@@ -315,8 +263,6 @@ begin
 end;
 
 class procedure TUserDBMgr.DeleteACategory;
-  {Selects and deletes a category from database if possible.
-  }
 var
   CatList: TCategoryList; // list of deletable categories
 begin
@@ -330,17 +276,9 @@ begin
 end;
 
 class procedure TUserDBMgr.DeleteSnippet(ViewItem: IView);
-  {Deletes a snippet from the database if possible.
-    @param ViewItem [in] View item containing snippet to be deleted. Must be a
-      user defined snippet.
-  }
 
-  // ---------------------------------------------------------------------------
+  // Builds a list of snippet names from a given snippet ID list.
   function SnippetNames(const IDList: ISnippetIDList): IStringList;
-    {Builds a list of snippet names from a snippet ID list.
-      @param IDList [in] List of snippet IDs.
-      @return List of snippet names.
-    }
   var
     ID: TSnippetID;     // loops through all IDs in list
     Snippet: TSnippet;  // snippet corresponding to ID
@@ -352,7 +290,6 @@ class procedure TUserDBMgr.DeleteSnippet(ViewItem: IView);
       Result.Add(Snippet.DisplayName);
     end;
   end;
-  // ---------------------------------------------------------------------------
 
 var
   Dependents: ISnippetIDList; // list of dependent snippet IDs
@@ -410,9 +347,6 @@ begin
 end;
 
 class procedure TUserDBMgr.EditSnippet(const SnippetName: string);
-  {Gets user to edit a named snippet using edit snippet dialog box.
-    @param SnippetName [in] Name of snippet to be edited. Must be user defined.
-  }
 var
   Snippet: TSnippet;    // reference to snippet to be edited
 begin
@@ -431,8 +365,6 @@ begin
 end;
 
 class procedure TUserDBMgr.RenameACategory;
-  {Selects and renames a category in database if possible.
-  }
 var
   CatList: TCategoryList; // list of user defined categories
 begin
@@ -446,9 +378,6 @@ begin
 end;
 
 class function TUserDBMgr.RestoreDatabase: Boolean;
-  {Restores user database from a previously created backup file.
-    @return True if user OKs, False if not.
-  }
 var
   FileName: string;               // name of backup file
   Dlg: TOpenDialogEx;             // open dialog box used to select backup file
@@ -482,8 +411,6 @@ begin
 end;
 
 class procedure TUserDBMgr.Save;
-  {Saves user database.
-  }
 begin
   (Database as IDatabaseEdit).Save;
 end;
