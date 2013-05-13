@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2008-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2008-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -110,6 +110,9 @@ type
       {Restores user database from a previously created backup file.
         @return True if user OKs, False if not.
       }
+    ///  <summary>Moves user database to a new location provided by the user.
+    ///  </summary>
+    class procedure MoveDatabase;
   end;
 
 
@@ -120,10 +123,15 @@ uses
   // Delphi
   SysUtils, Dialogs, Windows {for inlining},
   // Project
-  DB.UMain, DB.USnippet, FmAddCategoryDlg, FmDeleteCategoryDlg,
-  FmDuplicateSnippetDlg, FmRenameCategoryDlg, FmSnippetsEditorDlg, UConsts,
-  UExceptions, UIStringList, UMessageBox, UOpenDialogEx, UOpenDialogHelper,
-  UReservedCategories, USaveDialogEx, USnippetIDs, UUserDBBackup;
+  DB.UMain, DB.USnippet,
+  FmAddCategoryDlg, FmDeleteCategoryDlg, FmDuplicateSnippetDlg,
+  FmRenameCategoryDlg, FmSnippetsEditorDlg,
+  {$IFNDEF PORTABLE}
+  FmUserDataPathDlg,
+  {$ENDIF}
+  UConsts, UExceptions, UIStringList, UMessageBox, UOpenDialogEx,
+  UOpenDialogHelper, UReservedCategories, USaveDialogEx, USnippetIDs,
+  UUserDBBackup;
 
 
 { TUserDBMgr }
@@ -412,6 +420,14 @@ begin
   if not Assigned(Snippet) then
     raise EBug.Create(ClassName + '.EditSnippet: Snippet not in user database');
   TSnippetsEditorDlg.EditSnippet(nil, Snippet);
+end;
+
+class procedure TUserDBMgr.MoveDatabase;
+begin
+  // This dialogue box not available in portable edition
+  {$IFNDEF PORTABLE}
+  TUserDataPathDlg.Execute(nil);
+  {$ENDIF}
 end;
 
 class procedure TUserDBMgr.RenameACategory;

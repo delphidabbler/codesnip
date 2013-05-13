@@ -924,7 +924,7 @@ end;
 
 procedure TMainForm.actMoveUserDatabaseExecute(Sender: TObject);
 begin
-  fDialogMgr.ShowUserDataPathDlg;
+  TUserDBMgr.MoveDatabase;
 end;
 
 procedure TMainForm.actNewDetailsTabExecute(Sender: TObject);
