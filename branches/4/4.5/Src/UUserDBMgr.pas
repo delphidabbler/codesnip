@@ -120,14 +120,20 @@ uses
   UOpenDialogHelper, UReservedCategories, USaveDialogEx, USnippetIDs,
   UUserDBBackup, UWaitForThreadUI;
 
-
-
 type
-  TUserDBSaveUI = class(TNoConstructObject)
+  TUserDBWaitUI = class abstract(TNoConstructObject)
   strict private
     const
       PauseBeforeDisplay = 500; // time elapsed before dialogue is displayed
       MinDisplayTime = 1000;    // minimum time that dialogue is displayed
+  strict protected
+    class procedure RunThreadWithWaitDlg(const Thread: TThread;
+      const DlgOwner: TComponent; const WaitCaption: string);
+  end;
+
+type
+  TUserDBSaveUI = class sealed(TUserDBWaitUI)
+  strict private
     type
       TSaveThread = class(TThread)
       strict protected
@@ -140,11 +146,8 @@ type
   end;
 
 type
-  TUserDBRestoreUI = class(TNoConstructObject)
+  TUserDBRestoreUI = class sealed(TUserDBWaitUI)
   strict private
-    const
-      PauseBeforeDisplay = 500; // time elapsed before dialogue is displayed
-      MinDisplayTime = 1000;    // minimum time that dialogue is displayed
     type
       TRestoreThread = class(TThread)
       strict private
@@ -422,7 +425,6 @@ end;
 class function TUserDBMgr.RestoreDatabase(ParentCtrl: TComponent): Boolean;
 var
   Dlg: TOpenDialogEx;             // open dialog box used to select backup file
-  UserDBBackup: TUserDBBackup;    // object used to perform restoration
 resourcestring
   sCaption = 'Open Backup File';  // dialog box caption
 begin
@@ -450,23 +452,18 @@ begin
   TUserDBSaveUI.Execute(ParentCtrl);
 end;
 
-{ TUserDBSaveUI }
+{ TUserDBWaitUI }
 
-class procedure TUserDBSaveUI.Execute(AOwner: TComponent);
-resourcestring
-  // Caption for wait dialog
-  sWaitCaption = 'Saving user database...';
+class procedure TUserDBWaitUI.RunThreadWithWaitDlg(const Thread: TThread;
+  const DlgOwner: TComponent; const WaitCaption: string);
 var
-  WaitDlg: TWaitDlg;           // dialogue box to display while saving
-  Thread: TSaveThread;   // thread that performs save operation
+  WaitDlg: TWaitDlg;        // dialogue box to display while restoring
 begin
-  Thread := nil;
   // Set up dialog that may be displayed while compiling
-  WaitDlg := TWaitDlg.Create(AOwner);
+  WaitDlg := TWaitDlg.Create(DlgOwner);
   try
-    WaitDlg.Caption := sWaitCaption;
+    WaitDlg.Caption := WaitCaption;
     // Do the compilation
-    Thread := TSaveThread.Create;
     try
       TWaitForThreadUI.Run( // this blocks until thread completes
         Thread, WaitDlg, PauseBeforeDisplay, MinDisplayTime
@@ -475,8 +472,24 @@ begin
       raise TExceptionHelper.Clone(ExceptObject as Exception);
     end;
   finally
-    Thread.Free;
     WaitDlg.Free;
+  end;
+end;
+
+{ TUserDBSaveUI }
+
+class procedure TUserDBSaveUI.Execute(AOwner: TComponent);
+resourcestring
+  // Caption for wait dialog
+  sWaitCaption = 'Saving user database...';
+var
+  Thread: TSaveThread;   // thread that performs save operation
+begin
+  Thread := TSaveThread.Create;
+  try
+    RunThreadWithWaitDlg(Thread, AOwner, sWaitCaption);
+  finally
+    Thread.Free;
   end;
 end;
 
@@ -500,26 +513,13 @@ resourcestring
   // Caption for wait dialog
   sWaitCaption = 'Restoring database files...';
 var
-  WaitDlg: TWaitDlg;        // dialogue box to display while restoring
   Thread: TRestoreThread;   // thread that performs restore operation
 begin
-  Thread := nil;
-  // Set up dialog that may be displayed while compiling
-  WaitDlg := TWaitDlg.Create(AOwner);
+  Thread := TRestoreThread.Create(BakFileName);
   try
-    WaitDlg.Caption := sWaitCaption;
-    // Do the compilation
-    Thread := TRestoreThread.Create(BakFileName);
-    try
-      TWaitForThreadUI.Run( // this blocks until thread completes
-        Thread, WaitDlg, PauseBeforeDisplay, MinDisplayTime
-      );
-    except
-      raise TExceptionHelper.Clone(ExceptObject as Exception);
-    end;
+    RunThreadWithWaitDlg(Thread, AOwner, sWaitCaption);
   finally
     Thread.Free;
-    WaitDlg.Free;
   end;
 end;
 
