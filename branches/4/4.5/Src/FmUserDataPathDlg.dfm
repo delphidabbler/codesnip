@@ -170,6 +170,15 @@ inherited UserDataPathDlg: TUserDataPathDlg
         TabOrder = 0
       end
     end
+    inline frmProgress: TUserDataPathDlgProgressFrame
+      Left = 57
+      Top = 0
+      Width = 320
+      Height = 82
+      TabOrder = 2
+      Visible = False
+      ExplicitLeft = 57
+    end
   end
   object alDlg: TActionList
     Left = 152

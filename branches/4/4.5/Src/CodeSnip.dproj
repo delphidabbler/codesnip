@@ -245,6 +245,10 @@
 			<DCCReference Include="FmUserDataPathDlg.pas">
 				<Form>UserDataPathDlg</Form>
 			</DCCReference>
+			<DCCReference Include="FmUserDataPathDlg.FrProgress.pas">
+				<Form>UserDataPathDlgProgressFrame</Form>
+				<DesignClass>TFrame</DesignClass>
+			</DCCReference>
 			<DCCReference Include="FmUserHiliterMgrDlg.pas">
 				<Form>UserHiliterMgrDlg</Form>
 			</DCCReference>
@@ -578,6 +582,7 @@
 			<DCCReference Include="UUrlMonEx.pas"/>
 			<DCCReference Include="UUserDBBackup.pas"/>
 			<DCCReference Include="UUserDBMgr.pas"/>
+			<DCCReference Include="UUserDBMove.pas"/>
 			<DCCReference Include="UUserDetails.pas"/>
 			<DCCReference Include="UUserDetailsPersist.pas"/>
 			<DCCReference Include="UUtils.pas"/>
