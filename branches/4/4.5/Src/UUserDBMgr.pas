@@ -121,47 +121,86 @@ uses
   UUserDBBackup, UWaitForThreadUI;
 
 type
+  ///  <summary>Base class for classes that execute a user database management
+  ///  function in a thread while displaying a "wait" dialogue box if necessary.
+  ///  </summary>
+  ///  <remarks>The class is marked abstract because it cannot be used directly.
+  ///  </remarks>
   TUserDBWaitUI = class abstract(TNoConstructObject)
   strict private
     const
-      PauseBeforeDisplay = 500; // time elapsed before dialogue is displayed
-      MinDisplayTime = 1000;    // minimum time that dialogue is displayed
+      ///  <summary>Time to elapse before wait dialogue is displayed.</summary>
+      PauseBeforeDisplay = 500;
+      ///  <summary>Minimum time to display wait dialogue box.</summary>
+      MinDisplayTime = 1000;
   strict protected
+    ///  <summary>Runs a thread and displays a wait dialogue box if the
+    ///  thread takes more that a given time to execute. Blocks until the
+    ///  thread terminates.</summary>
+    ///  <param name="Thread">TThread [in] Thread to execute.</param>
+    ///  <param name="DlgOwner">TComponent [in] Component that owns the dialogue
+    ///  box, over which it is aligned.</param>
+    ///  <param name="WaitCaption">string [in] Caption to be displayed in wait
+    ///  dialogue box.</param>
     class procedure RunThreadWithWaitDlg(const Thread: TThread;
       const DlgOwner: TComponent; const WaitCaption: string);
   end;
 
 type
+  ///  <summary>Class that saves user database to disk in a thread while
+  ///  displaying a "wait" dialogue box if necessary.</summary>
   TUserDBSaveUI = class sealed(TUserDBWaitUI)
   strict private
     type
+      ///  <summary>Thread that performs user database save operation.</summary>
       TSaveThread = class(TThread)
       strict protected
+        ///  <summary>Saves the user database.</summary>
         procedure Execute; override;
       public
+        ///  <summary>Constructs a new, suspended, thread instance.</summary>
         constructor Create;
       end;
   public
+    ///  <summary>Performs the user database save operation in a background
+    ///  thread and displays a wait diaogue box if the operation takes more than
+    ///  a given time to execute. Blocks until the thread terminates.</summary>
+    ///  <param name="AOwner">TComponent [in] Component that owns the dialogue
+    ///  box, over which it is aligned.</param>
     class procedure Execute(AOwner: TComponent);
   end;
 
 type
+  ///  <summary>Class that restores a backup of the user database in a thread
+  ///  while displaying a "wait" dialogue box if necessary.</summary>
   TUserDBRestoreUI = class sealed(TUserDBWaitUI)
   strict private
     type
+      ///  <summary>Thread that performs restore operation.</summary>
       TRestoreThread = class(TThread)
       strict private
         var
+          ///  <summary>Name of backup file to be restored.</summary>
           fBakFileName: string;
       strict protected
+        ///  <summary>Restores the user database from a backup.</summary>
         procedure Execute; override;
       public
+        ///  <summary>Constructs a new, suspended, thread that can restore the
+        ///  database from the given backup file.</summary>
         constructor Create(const BakFileName: string);
       end;
   public
+    ///  <summary>Performs a user database restoration operation from in a
+    ///  background thread and displays a wait diaogue box if the operation
+    ///  takes more than a given time to execute. Blocks until the thread
+    ///  terminates.</summary>
+    ///  <param name="AOwner">TComponent [in] Component that owns the dialogue
+    ///  box, over which it is aligned.</param>
+    ///  <param name="BakFileName">string [in] Name of backup file to be
+    ///  restored.</param>
     class procedure Execute(AOwner: TComponent; const BakFileName: string);
   end;
-
 
 { TUserDBMgr }
 
