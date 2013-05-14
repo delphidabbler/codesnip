@@ -644,7 +644,7 @@ end;
 
 procedure TMainForm.actBackupDatabaseExecute(Sender: TObject);
 begin
-  TUserDBMgr.BackupDatabase;
+  TUserDBMgr.BackupDatabase(Self);
 end;
 
 procedure TMainForm.actBugReportExecute(Sender: TObject);

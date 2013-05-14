@@ -92,7 +92,7 @@ type
     class function CanSave: Boolean;
     ///  <summary>Creates a backup of the user database in a file specified by
     ///  the user.</summary>
-    class procedure BackupDatabase;
+    class procedure BackupDatabase(ParentCtrl: TComponent);
     ///  <summary>Restores the user database from a backup file specified by the
     ///  user.</summary>
     class function RestoreDatabase(ParentCtrl: TComponent): Boolean;
@@ -202,6 +202,37 @@ type
     class procedure Execute(AOwner: TComponent; const BakFileName: string);
   end;
 
+type
+  ///  <summary>Class that creates a backup of the user database in a thread
+  ///  while displaying a "wait" dialogue box if necessary.</summary>
+  TUserDBBackupUI = class sealed(TUserDBWaitUI)
+  strict private
+    type
+      ///  <summary>Thread that performs backup operation.</summary>
+      TBackupThread = class(TThread)
+      strict private
+        var
+          ///  <summary>Name of backup file to be created.</summary>
+          fBakFileName: string;
+      strict protected
+        ///  <summary>Backs up the user database.</summary>
+        procedure Execute; override;
+      public
+        ///  <summary>Constructs a new, suspended, thread that can backup the
+        ///  database to the given backup file.</summary>
+        constructor Create(const BakFileName: string);
+      end;
+  public
+    ///  <summary>Performs a user database backup operation from in a background
+    ///  thread and displays a wait diaogue box if the operation takes more than
+    ///  a given time to execute. Blocks until the thread terminates.</summary>
+    ///  <param name="AOwner">TComponent [in] Component that owns the dialogue
+    ///  box, over which it is aligned.</param>
+    ///  <param name="BakFileName">string [in] Name of backup file to be
+    ///  created.</param>
+    class procedure Execute(AOwner: TComponent; const BakFileName: string);
+  end;
+
 { TUserDBMgr }
 
 class procedure TUserDBMgr.AddCategory;
@@ -216,7 +247,7 @@ begin
   TSnippetsEditorDlg.AddNewSnippet(nil);
 end;
 
-class procedure TUserDBMgr.BackupDatabase;
+class procedure TUserDBMgr.BackupDatabase(ParentCtrl: TComponent);
 var
   FileName: string;             // name of backup file
   SaveDlg: TSaveDialogEx;       // save dialog box used to name backup file
@@ -234,16 +265,8 @@ begin
       ofNoTestFileCreate, ofEnableSizing];
     SaveDlg.HelpKeyword := 'SaveBackupDlg';
     if SaveDlg.Execute then
-    begin
       // Perform backup
-      FileName := SaveDlg.FileName;
-      UserDBBackup := TUserDBBackup.Create(FileName);
-      try
-        UserDBBackup.Backup;
-      finally
-        UserDBBackup.Free;
-      end;
-    end;
+      TUserDBBackupUI.Execute(ParentCtrl, SaveDlg.FileName);
   finally
     SaveDlg.Free;
   end;
@@ -477,10 +500,8 @@ begin
     Dlg.HelpKeyword := 'RestoreBackupDlg';
     Result := Dlg.Execute;
     if Result then
-    begin
       // Perform restoration
       TUserDBRestoreUI.Execute(ParentCtrl, Dlg.FileName);
-    end;
   finally
     Dlg.Free;
   end;
@@ -577,6 +598,47 @@ begin
   UserDBBackup := TUserDBBackup.Create(fBakFileName);
   try
     UserDBBackup.Restore;
+  finally
+    UserDBBackup.Free;
+  end;
+end;
+
+{ TUserDBBackupUI }
+
+class procedure TUserDBBackupUI.Execute(AOwner: TComponent;
+  const BakFileName: string);
+resourcestring
+  // Caption for wait dialog
+  sWaitCaption = 'Backing up database...';
+var
+  Thread: TBackupThread;   // thread that performs restore operation
+begin
+  Thread := TBackupThread.Create(BakFileName);
+  try
+    RunThreadWithWaitDlg(Thread, AOwner, sWaitCaption);
+  finally
+    Thread.Free;
+  end;
+end;
+
+{ TUserDBBackupUI.TBackupThread }
+
+constructor TUserDBBackupUI.TBackupThread.Create(const BakFileName: string);
+begin
+  inherited Create(True);
+  fBakFileName := BakFileName;
+end;
+
+procedure TUserDBBackupUI.TBackupThread.Execute;
+var
+  UserDBBackup: TUserDBBackup;  // object used to perform backup
+resourcestring
+  // Dialog box caption
+  sCaption = 'Save Backup';
+begin
+  UserDBBackup := TUserDBBackup.Create(fBakFileName);
+  try
+    UserDBBackup.Backup;
   finally
     UserDBBackup.Free;
   end;
