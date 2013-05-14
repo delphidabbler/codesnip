@@ -19,6 +19,8 @@ interface
 
 
 uses
+  // Delphi
+  Classes,
   // Project
   DB.UCategory, UBaseObjects, UView;
 
@@ -85,7 +87,7 @@ type
     ///  </summary>
     class function CanDeleteACategory: Boolean;
     ///  <summary>Saves the current user database to disk.</summary>
-    class procedure Save;
+    class procedure Save(ParentCtrl: TComponent);
     ///  <summary>Checks if the user database can be saved.</summary>
     class function CanSave: Boolean;
     ///  <summary>Creates a backup of the user database in a file specified by
@@ -113,10 +115,29 @@ uses
   {$IFNDEF PORTABLE}
   FmUserDataPathDlg,
   {$ENDIF}
+  FmWaitDlg,
   UConsts, UExceptions, UIStringList, UMessageBox, UOpenDialogEx,
   UOpenDialogHelper, UReservedCategories, USaveDialogEx, USnippetIDs,
-  UUserDBBackup;
+  UUserDBBackup, UWaitForThreadUI;
 
+
+
+type
+  TUserDBSaveUI = class(TNoConstructObject)
+  strict private
+    const
+      PauseBeforeDisplay = 500; // time elapsed before dialogue is displayed
+      MinDisplayTime = 1000;    // minimum time that dialogue is displayed
+    type
+      TSaveThread = class(TThread)
+      strict protected
+        procedure Execute; override;
+      public
+        constructor Create;
+      end;
+  public
+    class procedure Execute(AOwner: TComponent);
+  end;
 
 { TUserDBMgr }
 
@@ -410,7 +431,49 @@ begin
   end;
 end;
 
-class procedure TUserDBMgr.Save;
+class procedure TUserDBMgr.Save(ParentCtrl: TComponent);
+begin
+  TUserDBSaveUI.Execute(ParentCtrl);
+end;
+
+{ TUserDBSaveUI }
+
+class procedure TUserDBSaveUI.Execute(AOwner: TComponent);
+resourcestring
+  // Caption for wait dialog
+  sWaitCaption = 'Saving user database...';
+var
+  WaitDlg: TWaitDlg;           // dialogue box to display while saving
+  Thread: TSaveThread;   // thread that performs save operation
+begin
+  Thread := nil;
+  // Set up dialog that may be displayed while compiling
+  WaitDlg := TWaitDlg.Create(AOwner);
+  try
+    WaitDlg.Caption := sWaitCaption;
+    // Do the compilation
+    Thread := TSaveThread.Create;
+    try
+      TWaitForThreadUI.Run( // this blocks until thread completes
+        Thread, WaitDlg, PauseBeforeDisplay, MinDisplayTime
+      );
+    except
+      raise TExceptionHelper.Clone(ExceptObject as Exception);
+    end;
+  finally
+    Thread.Free;
+    WaitDlg.Free;
+  end;
+end;
+
+{ TUserDBSaveUI.TSaveThread }
+
+constructor TUserDBSaveUI.TSaveThread.Create;
+begin
+  inherited Create(True);
+end;
+
+procedure TUserDBSaveUI.TSaveThread.Execute;
 begin
   (Database as IDatabaseEdit).Save;
 end;

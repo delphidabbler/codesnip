@@ -1046,7 +1046,7 @@ end;
 
 procedure TMainForm.actSaveDatabaseExecute(Sender: TObject);
 begin
-  TUserDBMgr.Save;
+  TUserDBMgr.Save(Self);
   fStatusBarMgr.Update;
 end;
 
@@ -1183,7 +1183,7 @@ begin
     // Database was updated: check if user database needs saving
     if (Database as IDatabaseEdit).Updated
       and TMessageBox.Confirm(Self, sConfirmSave) then
-      (Database as IDatabaseEdit).Save;
+      TUserDBMgr.Save(Self);
     // Reload the databases
     ReloadDatabase;
   end;
