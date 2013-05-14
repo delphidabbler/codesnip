@@ -50,6 +50,8 @@ procedure EnsureFolders(const Folder: string);
 ///  <param name="List">TStrings [in] Receives directory listing.</param>
 ///  <param name="IncludeDirs">Boolean [in] Flag true if sub-directory names are
 ///  to be included in List, False if only files are required.</param>
+///  <param name="RelativeNames">Boolean [in] Flag true if file names are to be
+///  relative to Dir, False if full paths are to be recorded.</param>
 ///  <returns>Boolean. True if Dir is a valid directory, False otherwise.
 ///  </returns>
 ///  <remarks>
@@ -57,7 +59,7 @@ procedure EnsureFolders(const Folder: string);
 ///  <para>File names include the full file path.</para>
 ///  </remarks>
 function ListFiles(const Dir, Wildcard: string; const List: TStrings;
-  IncludeDirs: Boolean = True): Boolean;
+  IncludeDirs: Boolean = True; RelativeNames: Boolean = False): Boolean;
 
 ///  <summary>Converts a long file name to the equivalent shortened DOS style
 ///  8.3 path.</summary>
@@ -216,7 +218,7 @@ begin
 end;
 
 function ListFiles(const Dir, Wildcard: string; const List: TStrings;
-  IncludeDirs: Boolean = True): Boolean;
+  IncludeDirs: Boolean = True; RelativeNames: Boolean = False): Boolean;
 var
   FileSpec: string;   // full file spec of a wildcard
   Path: string;       // full path of directory, including training backslash
@@ -246,7 +248,10 @@ begin
       if (SR.Name <> '.') and (SR.Name <> '..')
         and (SR.Attr and faVolumeId = 0)
         and (IncludeDirs or not IsDirectory(Path + SR.Name)) then
-        List.Add(Path + SR.Name);
+        if RelativeNames then
+          List.Add(SR.Name)
+        else
+          List.Add(Path + SR.Name);
       Success := FindNext(SR);
     end;
   finally
