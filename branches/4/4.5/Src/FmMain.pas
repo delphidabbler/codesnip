@@ -1040,7 +1040,7 @@ end;
 
 procedure TMainForm.actRestoreDatabaseExecute(Sender: TObject);
 begin
-  if TUserDBMgr.RestoreDatabase then
+  if TUserDBMgr.RestoreDatabase(Self) then
     ReloadDatabase;
 end;
 

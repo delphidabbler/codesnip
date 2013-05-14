@@ -95,7 +95,7 @@ type
     class procedure BackupDatabase;
     ///  <summary>Restores the user database from a backup file specified by the
     ///  user.</summary>
-    class function RestoreDatabase: Boolean;
+    class function RestoreDatabase(ParentCtrl: TComponent): Boolean;
     ///  <summary>Moves the user database to a new location specified by the
     ///  user.</summary>
     class procedure MoveDatabase;
@@ -138,6 +138,27 @@ type
   public
     class procedure Execute(AOwner: TComponent);
   end;
+
+type
+  TUserDBRestoreUI = class(TNoConstructObject)
+  strict private
+    const
+      PauseBeforeDisplay = 500; // time elapsed before dialogue is displayed
+      MinDisplayTime = 1000;    // minimum time that dialogue is displayed
+    type
+      TRestoreThread = class(TThread)
+      strict private
+        var
+          fBakFileName: string;
+      strict protected
+        procedure Execute; override;
+      public
+        constructor Create(const BakFileName: string);
+      end;
+  public
+    class procedure Execute(AOwner: TComponent; const BakFileName: string);
+  end;
+
 
 { TUserDBMgr }
 
@@ -398,9 +419,8 @@ begin
   end;
 end;
 
-class function TUserDBMgr.RestoreDatabase: Boolean;
+class function TUserDBMgr.RestoreDatabase(ParentCtrl: TComponent): Boolean;
 var
-  FileName: string;               // name of backup file
   Dlg: TOpenDialogEx;             // open dialog box used to select backup file
   UserDBBackup: TUserDBBackup;    // object used to perform restoration
 resourcestring
@@ -418,13 +438,7 @@ begin
     if Result then
     begin
       // Perform restoration
-      FileName := Dlg.FileName;
-      UserDBBackup := TUserDBBackup.Create(FileName);
-      try
-        UserDBBackup.Restore;
-      finally
-        UserDBBackup.Free;
-      end;
+      TUserDBRestoreUI.Execute(ParentCtrl, Dlg.FileName);
     end;
   finally
     Dlg.Free;
@@ -476,6 +490,57 @@ end;
 procedure TUserDBSaveUI.TSaveThread.Execute;
 begin
   (Database as IDatabaseEdit).Save;
+end;
+
+{ TUserDBRestoreUI }
+
+class procedure TUserDBRestoreUI.Execute(AOwner: TComponent;
+  const BakFileName: string);
+resourcestring
+  // Caption for wait dialog
+  sWaitCaption = 'Restoring database files...';
+var
+  WaitDlg: TWaitDlg;        // dialogue box to display while restoring
+  Thread: TRestoreThread;   // thread that performs restore operation
+begin
+  Thread := nil;
+  // Set up dialog that may be displayed while compiling
+  WaitDlg := TWaitDlg.Create(AOwner);
+  try
+    WaitDlg.Caption := sWaitCaption;
+    // Do the compilation
+    Thread := TRestoreThread.Create(BakFileName);
+    try
+      TWaitForThreadUI.Run( // this blocks until thread completes
+        Thread, WaitDlg, PauseBeforeDisplay, MinDisplayTime
+      );
+    except
+      raise TExceptionHelper.Clone(ExceptObject as Exception);
+    end;
+  finally
+    Thread.Free;
+    WaitDlg.Free;
+  end;
+end;
+
+{ TUserDBRestoreUI.TRestoreThread }
+
+constructor TUserDBRestoreUI.TRestoreThread.Create(const BakFileName: string);
+begin
+  inherited Create(True);
+  fBakFileName := BakFileName;
+end;
+
+procedure TUserDBRestoreUI.TRestoreThread.Execute;
+var
+  UserDBBackup: TUserDBBackup;
+begin
+  UserDBBackup := TUserDBBackup.Create(fBakFileName);
+  try
+    UserDBBackup.Restore;
+  finally
+    UserDBBackup.Free;
+  end;
 end;
 
 end.
