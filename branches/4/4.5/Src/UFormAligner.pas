@@ -104,7 +104,10 @@ begin
     (Owner.Width - FormBounds.Width) div 2,
     (Owner.Height - FormBounds.Height) div 2
   );
-  OwnerAbsTopLeft := Owner.ClientToScreen(Point(0, 0));
+  if Assigned(Owner.Parent) then
+    OwnerAbsTopLeft := Owner.ClientToScreen(Point(0, 0))
+  else
+    OwnerAbsTopLeft := Point(Owner.Left, Owner.Top);
   FormBounds.OffsetBy(
     OwnerAbsTopLeft.X + RelOffset.X, OwnerAbsTopLeft.Y + RelOffset.Y
   );
