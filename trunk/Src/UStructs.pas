@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2008-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2008-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -151,6 +151,13 @@ type
       {Checks if a value is contained in range.
         @param Value [in] Value to be tested.
         @return True if Value is in range, False otherwise.
+      }
+    function Constrain(const Value: Integer): Integer;
+      {Adjusts the given value to ensure it falls within the range.
+        @param Value [in] Value to be constrained.
+        @returns Value is returned unchanged if it falls within the range.
+          Otherwise Min is returned if Value is less than Min or Max is returned
+          if Value is greater than max.
       }
   end;
 
@@ -377,6 +384,21 @@ begin
 end;
 
 { TRange }
+
+function TRange.Constrain(const Value: Integer): Integer;
+  {Adjusts the given value to ensure it falls within the range.
+    @param Value [in] Value to be constrained.
+    @returns Value is returned unchanged if it falls within the range. Otherwise
+      Min is returned if Value is less than Min or Max is returned if Value is
+      greater than max.
+  }
+begin
+  if Value < Min then
+    Exit(Min);
+  if Value > Max then
+    Exit(Max);
+  Result := Value;
+end;
 
 function TRange.Contains(const Value: Integer): Boolean;
   {Checks if a value is contained in range.

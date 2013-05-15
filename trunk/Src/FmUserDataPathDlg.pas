@@ -21,10 +21,10 @@ interface
 
 uses
   // Delphi
-  SysUtils, Classes, ActnList, StdCtrls, Controls, ExtCtrls,
+  SysUtils, Forms, Classes, ActnList, StdCtrls, Controls, ExtCtrls,
   // Project
-  FmGenericViewDlg, UBaseObjects;
-
+  FmGenericViewDlg, FmUserDataPathDlg.FrProgress, UBaseObjects, 
+  UControlStateMgr, UUserDBMove;
 
 type
   ///  <summary>Dialogue box that is used to move the user database to a new
@@ -49,6 +49,7 @@ type
     lblPath: TLabel;
     lblWarning: TLabel;
     edPath: TEdit;
+    frmProgress: TUserDataPathDlgProgressFrame;
     ///  <summary>Dispays Browse For Folder dialogue box and copies any chosen
     ///  folder to the edPath edit control.</summary>
     procedure actBrowseExecute(Sender: TObject);
@@ -68,21 +69,45 @@ type
     ///  <summary>Enables / disables Move action according to whether a suitable
     ///  path has been entered by user.</summary>
     procedure actMoveUpdate(Sender: TObject);
+    ///  <summary>Constructs and initialises form's owned object.</summary>
+    procedure FormCreate(Sender: TObject);
+    ///  <summary>Destroys form's owned objects.</summary>
+    procedure FormDestroy(Sender: TObject);
   strict private
+    var
+      ///  <summary>Object that moves the user database to a new location.
+      ///  </summary>
+      fMover: TUserDBMove;
+      ///  <summary>Object used to disable and enable all controls on the form.
+      ///  </summary>
+      fControlStateMgr: TControlStateMgr;
+    ///  <summary>Sets visibility of all child controls of a parent control.
+    ///  </summary>
+    ///  <param name="ParentCtrl">TWinControl [in] Parent of affected controls.
+    ///  </param>
+    ///  <param name="Show">Boolean [in] Flag indicating required visibility.
+    ///  Pass True to show the controls and False to hide them.</param>
+    procedure SetVisibility(const ParentCtrl: TWinControl; const Show: Boolean);
+    ///  <summary>Performs the database move to the directory given by NewDir,
+    ///  displaying a progress base located over the given host window.
+    ///  </summary>
+    ///  <remarks>The new directory is checked to be empty and the user is asked
+    ///  for confirmation.</remarks>
+    procedure DoMove(const NewDir: string; const ProgressHostCtrl: TWinControl);
+    ///  <summary>Handles the database mover object's OnCopyFile event by
+    ///  updating the progress frame.</summary>
+    procedure CopyFileHandler(Sender: TObject; const Percent: Byte);
+    ///  <summary>Handles the database mover object's OnDeleteFile event by
+    ///  updating the progress frame.</summary>
+    procedure DeleteFileHandler(Sender: TObject; const Percent: Byte);
     ///  <summary>Gets directory entered in edPath edit control.</summary>
     ///  <remarks>Edit control contents are trimmed of spaces and any trailing
     ///  path delimiter.</remarks>
     function NewDirFromEditCtrl: string;
-    ///  <summary>Move user database from its current location to the given
-    ///  directory.</summary>
-    ///  <exception>Raises an exception if DestDir is not a full path, if
-    ///  DestDir is a sub-directory of the current database directory or if an
-    ///  error occurs during the move operation.</exception>
-    procedure DoMove(const DestDir: string);
     ///  <summary>Handles given exception, converting expected exceptions into
-    ///  EDataEntry and re-raising all other unchanged.</summary>
+    ///  ECodeSnip and re-raising all other unchanged.</summary>
     ///  <exception>Always raises a new exception.</exception>
-    ///  <remarks>This method is designed to handle exception raised when the
+    ///  <remarks>This method is designed to handle exceptions raised when the
     ///  user database is moved.</remarks>
     procedure HandleException(const E: Exception);
   strict protected
@@ -95,7 +120,7 @@ type
   public
     ///  <summary>Displays the dialogue box aligned over the given owner
     ///  control.</summary>
-    ///  <exception>Raise EBug if called by the portable edition of CodeSnip.
+    ///  <exception>Raises EBug if called by the portable edition of CodeSnip.
     ///  </exception>
     class procedure Execute(AOwner: TComponent);
   end;
@@ -106,13 +131,12 @@ implementation
 
 uses
   // Delphi
-  IOUtils, RTLConsts,
+  IOUtils, 
   // Project
-  UAppInfo, UBrowseForFolderDlg, UConsts, UCtrlArranger, UExceptions,
-  UFontHelper, UMessageBox, UStrUtils;
+  UAppInfo, UBrowseForFolderDlg, UCtrlArranger, UExceptions, UFontHelper, 
+  UMessageBox, UStrUtils, UStructs;
 
 {$R *.dfm}
-
 
 { TUserDataPathDlg }
 
@@ -136,57 +160,27 @@ begin
 end;
 
 procedure TUserDataPathDlg.actDefaultPathExecute(Sender: TObject);
-resourcestring
-  sNonEmptyDir = 'Can''t restore the database to its default directory because '
-    + 'the directory it is not empty.'
-    + EOL2
-    + 'Please clear out all the contents of "%s" before re-trying.';
-  sConfirmMsg = 'Are you sure you want to restore the user database to its '
-    + 'default location?';
 begin
-  if TDirectory.Exists(TAppInfo.DefaultUserDataDir) and
-    not TDirectory.IsEmpty(TAppInfo.DefaultUserDataDir) then
-    raise ECodeSnip.CreateFmt(sNonEmptyDir, [TAppInfo.DefaultUserDataDir]);
-  if not TMessageBox.Confirm(Self, sConfirmMsg) then
-    Exit;
-  try
-    DoMove(TAppInfo.DefaultUserDataDir);
-    TAppInfo.ChangeUserDataDir(TAppInfo.DefaultUserDataDir);
-  except
-    on E: Exception do
-      HandleException(E);
-  end;
+  DoMove(TAppInfo.DefaultUserDataDir, gbRestore);
 end;
 
 procedure TUserDataPathDlg.actDefaultPathUpdate(Sender: TObject);
 begin
   actDefaultPath.Enabled :=
-    not StrSameText(TAppInfo.UserDataDir, TAppInfo.DefaultUserDataDir);
+    not StrSameText(TAppInfo.UserDataDir, TAppInfo.DefaultUserDataDir)
+    and Self.Enabled;
 end;
 
 procedure TUserDataPathDlg.actMoveExecute(Sender: TObject);
-resourcestring
-  sNonEmptyDir = 'The specified directory is not empty.';
-  sConfirmMsg = 'Are you sure you want to move the user database?';
 begin
-  if TDirectory.Exists(NewDirFromEditCtrl)
-    and not TDirectory.IsEmpty(NewDirFromEditCtrl) then
-    raise EDataEntry.Create(sNonEmptyDir, edPath);
-  if not TMessageBox.Confirm(Self, sConfirmMsg) then
-    Exit;
-  try
-    DoMove(NewDirFromEditCtrl);
-    TAppInfo.ChangeUserDataDir(NewDirFromEditCtrl);
-  except
-    on E: Exception do
-      HandleException(E);
-  end;
+  DoMove(NewDirFromEditCtrl, gbMove);
 end;
 
 procedure TUserDataPathDlg.actMoveUpdate(Sender: TObject);
 begin
   actMove.Enabled := (NewDirFromEditCtrl <> '')
-    and not StrSameText(NewDirFromEditCtrl, TAppInfo.UserDataDir);
+    and not StrSameText(NewDirFromEditCtrl, TAppInfo.UserDataDir)
+    and Self.Enabled;
 end;
 
 procedure TUserDataPathDlg.ArrangeForm;
@@ -224,29 +218,60 @@ begin
     btnBrowse.Font, btnMove.Font, lblExplainDefaultPath.Font,
     btnDefaultPath.Font
   ]);
+  frmProgress.Visible := False;
+  frmProgress.Range := TRange.Create(0, 100);
 end;
 
-procedure TUserDataPathDlg.DoMove(const DestDir: string);
+procedure TUserDataPathDlg.CopyFileHandler(Sender: TObject;
+  const Percent: Byte);
 resourcestring
-  sCantMoveToSubDir = 'Can''t move database into a sub-directory of the '
-    + 'existing database directory';
-  sMustBeRooted = 'A full path to the new database directory must be provided.';
-var
-  SourceDir: string;
+  sCopying = 'Copying files...';
 begin
-  SourceDir := TAppInfo.UserDataDir;
-  if not TPath.IsPathRooted(DestDir) then
-    raise EInOutError.Create(sMustBeRooted);
-  if TDirectory.Exists(DestDir) and not TDirectory.IsEmpty(DestDir) then
-    raise EInOutError.Create(SDirectoryNotEmpty);
-  if StrStartsText(
-    IncludeTrailingPathDelimiter(TAppInfo.UserDataDir), DestDir
-  ) then
-    raise EInOutError.Create(sCantMoveToSubDir);
-  if not TDirectory.Exists(DestDir) then
-    TDirectory.CreateDirectory(DestDir);
-  TDirectory.Copy(SourceDir, DestDir);
-  TDirectory.Delete(SourceDir, True);
+  if Percent = 0 then
+    frmProgress.Description := sCopying;
+  frmProgress.Progress := Percent;
+  Application.ProcessMessages;
+end;
+
+procedure TUserDataPathDlg.DeleteFileHandler(Sender: TObject;
+  const Percent: Byte);
+resourcestring
+  sDeleting = 'Deleting files...';
+begin
+  if Percent = 0 then
+    frmProgress.Description := sDeleting;
+  frmProgress.Progress := 100 - Percent;
+  Application.ProcessMessages;
+end;
+
+procedure TUserDataPathDlg.DoMove(const NewDir: string;
+  const ProgressHostCtrl: TWinControl);
+resourcestring
+  sNonEmptyDir = 'The specified directory is not empty.';
+  sConfirmMsg = 'Are you sure you want to move the database?';
+begin
+  if TDirectory.Exists(NewDir)
+    and not TDirectory.IsEmpty(NewDir) then
+    raise ECodeSnip.Create(sNonEmptyDir);
+  if not TMessageBox.Confirm(Self, sConfirmMsg) then
+    Exit;
+  try
+    Enabled := False;
+    fControlStateMgr.Update;
+    SetVisibility(ProgressHostCtrl, False);
+    frmProgress.Show(ProgressHostCtrl);
+    try
+      fMover.MoveTo(NewDir);
+    except
+      on E: Exception do
+        HandleException(E);
+    end;
+  finally
+    frmProgress.Hide;
+    SetVisibility(ProgressHostCtrl, True);
+    Enabled := True;
+    fControlStateMgr.Update;
+  end;
 end;
 
 class procedure TUserDataPathDlg.Execute(AOwner: TComponent);
@@ -262,18 +287,43 @@ begin
     end;
 end;
 
+procedure TUserDataPathDlg.FormCreate(Sender: TObject);
+begin
+  inherited;
+  fMover := TUserDBMove.Create;
+  fMover.OnCopyFile := CopyFileHandler;
+  fMover.OnDeleteFile := DeleteFileHandler;
+  fControlStateMgr := TControlStateMgr.Create(Self);
+end;
+
+procedure TUserDataPathDlg.FormDestroy(Sender: TObject);
+begin
+  fControlStateMgr.Free;
+  fMover.Free;
+  inherited;
+end;
+
 procedure TUserDataPathDlg.HandleException(const E: Exception);
 begin
   if (E is EInOutError) or (E is ENotSupportedException)
     or (E is EDirectoryNotFoundException) or (E is EPathTooLongException)
     or (E is EArgumentException) then
-    raise EDataEntry.Create(E.Message);
+    raise ECodeSnip.Create(E.Message);
   raise E;
 end;
 
 function TUserDataPathDlg.NewDirFromEditCtrl: string;
 begin
   Result := ExcludeTrailingPathDelimiter(StrTrim(edPath.Text));
+end;
+
+procedure TUserDataPathDlg.SetVisibility(const ParentCtrl: TWinControl;
+  const Show: Boolean);
+var
+  I: Integer;
+begin
+  for I := 0 to Pred(ParentCtrl.ControlCount) do
+    ParentCtrl.Controls[I].Visible := Show;
 end;
 
 end.
