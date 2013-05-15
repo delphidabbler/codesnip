@@ -110,8 +110,8 @@ function TMemoHelper.CaretPos: TPoint;
     @return Required cursor position.
   }
 begin
-  Result.X := fMemo.SelStart - fMemo.Perform(EM_LINEINDEX, WPARAM(-1), 0);
-  Result.Y := fMemo.Perform(EM_LINEFROMCHAR, WPARAM(-1), 0);
+  Result.X := fMemo.SelStart - fMemo.Perform(EM_LINEINDEX, -1, 0);
+  Result.Y := fMemo.Perform(EM_LINEFROMCHAR, -1, 0);
 end;
 
 constructor TMemoHelper.Create(const AMemo: TCustomMemo);

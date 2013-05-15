@@ -73,8 +73,10 @@
 
 <p>
   <em>CodeSnip</em> is written in Object Pascal and is targeted at Delphi
-  XE. Compilation with earlier compilers is not guaranteed. The code will
-  require some changes to compile on Delphi XE2 or later.
+  2010. It requires some language features introduced in this version so will
+  not compile with any earlier compilers. The code <em>may</em> compile with
+  Delphi XE or as a 32 bit application on Delphi XE2 or XE3, but none have been
+  tested.
 </p>
 
 <p>
@@ -85,8 +87,8 @@
 </p>
 
 <p>
-  The Delphi XE IDE can be used to modify the source and to perform test builds.
-  Final builds should be created using the provided makefile.
+  The Delphi 2010 IDE can be used to modify the source and to perform test
+  builds. Final builds should be created using the provided makefile.
 </p>
 
 <h2>
@@ -105,7 +107,7 @@
 </h3>
 
 <p>
-  The Indy 10 Internet components ship with Delphi XE.
+  The Indy 10 Internet components ship with Delphi 2010.
   If you prefer to work with the latest release you can download it from <a
     href="http://www.indyproject.org/"
   >http://www.indyproject.org/</a>. If you download a copy of Indy 10 you
@@ -167,7 +169,7 @@
 </h3>
 
 <p>
-  A copy of the Delphi XE command line compiler is required to build the
+  A copy of the Delphi 2010 command line compiler is required to build the
   object Pascal code from the provided makefile.
 </p>
 
@@ -206,7 +208,8 @@
 
 <dl>
   <dt class="spaced">
-    <code>DELPHIROOT</code> - required unless <code>DELPHIXE</code> is set.
+    <code>DELPHIROOT</code> - required unless <code>DELPHI2010</code> is
+        set.
   </dt>
   <dd>
     Should be set to the install directory of the version of Delphi being
@@ -215,13 +218,13 @@
     <code>DELPHIROOT</code>.
   </dd>
   <dt class="spaced">
-    <code>DELPHIXE</code> - optional
+    <code>DELPHI2010</code> - optional
   </dt>
   <dd>
-    This environment variable can be set to the Delphi XE install
-    directory. When <code>DELPHIXE</code> is defined
+    This environment variable can be set to the Delphi 2010 install
+    directory. When <code>DELPHI2010</code> is defined
     <code>DELPHIROOT</code> will be set to the value of
-    <code>DELPHIXE</code>.
+    <code>DELPHI2010</code>.
   </dd>
   <dt class="spaced">
     <code>INDY10</code> - required
@@ -469,7 +472,7 @@ set PATHSET=1
 
 <ul>
   <li>
-    <code>DELPHIROOT</code> <strong>or</strong> <code>DELPHIXE</code>
+    <code>DELPHIROOT</code> <strong>or</strong> <code>DELPHI2010</code>
   </li>
   <li>
     <code>INDY10</code>
@@ -678,7 +681,7 @@ set PATHSET=1
   or
 </p>
 
-<pre class="cmd"><span class="prompt">&gt;</span> %DELPHIXE%\Bin\Make config</pre>
+<pre class="cmd"><span class="prompt">&gt;</span> %DELPHI2010%\Bin\Make config</pre>
 
 <p>
   depending on which environment variable you have set.
@@ -1131,7 +1134,7 @@ set PATHSET=1
 
 <p>
   To compile the tests, open the <code>.\Src\CodeSnip.groupproj</code> group
-  project file in the Delphi XE IDE. Now select the <em>CodeSnipTests.exe</em>
+  project file in the Delphi 2010 IDE. Now select the <em>CodeSnipTests.exe</em>
   target in the project manager and compile.
 </p>
 

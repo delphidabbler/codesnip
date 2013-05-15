@@ -59,8 +59,8 @@ type
       @return 0 to pass message to dialog box procedure or non-zero to cause the
         dialog box procedure to ignore the message.
   }
-  TCommonDlgHookFn = function(Wnd: HWnd; Msg: UINT; WParam: WPARAM;
-    LParam: LPARAM): UINT_PTR; stdcall;
+  TCommonDlgHookFn = function(Wnd: HWnd; Msg: UINT; WParam: Integer;
+    LParam: Integer): UINT; stdcall;
 
   {
   TCommonDlgHook:
@@ -244,7 +244,7 @@ end;
 { TFileDlgHook }
 
 function NewExplorerHook(Wnd: HWnd; Msg: UINT; WParam: WPARAM;
-  LParam: LPARAM): UINT_PTR; stdcall;
+  LParam: LPARAM): UINT; stdcall;
   {Replacement explorer hook function called by Windows to process dialog box
   messages. Original hook handles only WM_INITDIALOG message and CDN_INITDONE
   notification. This replacement passes WM_INITDIALOG messages to original
@@ -318,7 +318,7 @@ end;
 { TColorDlgHook }
 
 function NewCCHook(Wnd: HWnd; Msg: UINT; WParam: WPARAM;
-  LParam: LPARAM): UINT_PTR; stdcall;
+  LParam: LPARAM): UINT; stdcall;
   {Replacement hook function called by Windows to process dialog box messages.
   Original hook handles only WM_INITDIALOG message. This replacement passes
   WM_INITDIALOG messages to original hook and then aligns dialog box as

@@ -90,11 +90,21 @@ type
       ///  <param name="BytesHandled">Int64 [in] Number of bytes downloaded so
       ///  far.</param>
       ///  <param name="TotalBytes">Int64 [in] Total number of bytes to be
-      ///  downloaded.</param>///////////
+      ///  downloaded.</param>
       ///  <param name="Cancel">Boolean [in,out] Flag that event handler can set
       ///  True to abort the update.</param>
       TDownloadEvent = procedure(Sender: TObject; const BytesHandled,
         TotalBytes: Int64; var Cancel: Boolean) of object;
+    type
+      ///  <summary>Type of event triggered to report progress when updating
+      ///  local database files.</summary>
+      ///  <param name="Sender">TObject [in] Object that triggered event.
+      ///  </param>
+      ///  <param name="Progress">Bytes [in] Pecentage progress to date.</param>
+      ///  <param name="Cancel">Boolean [in,out] Flag that event handler can set
+      ///  True to abort the update.</param>
+      TProgressEvent = procedure(Sender: TObject; const Progress: Byte;
+        var Cancel: Boolean) of object;
   strict private
     var
       ///  <summary>Flag that indicates if an update request was cancelled.
@@ -114,19 +124,30 @@ type
       fOnStatus: TStatusEvent;
       ///  <summary>Event handler for OnDownloadProgress event.</summary>
       fOnDownloadProgress: TDownloadEvent;
+      ///  <summary>Event handler for OnFileUpdateProgress event.</summary>
+      fOnFileUpdateProgress: TProgressEvent;
       ///  <summary>Information specific to the code using this object.
       ///  </summary>
       fCallerInfo: string;
 
-    ///  <summary>Handles database download manager's OnPregress event.
+    ///  <summary>Handles database download manager's OnProgress event.
     ///  </summary>
     ///  <param name="Sender">TObject [in] Object that triggered event.</param>
     ///  <param name="BytesToDate">Int64 [in] Number of bytes downloaded so
     ///  far.</param>
     ///  <param name="ExpectedBytes">Int64 [in] Total number of bytes to be
     ///  downloaded.</param>
-    procedure DownloadProgresshandler(Sender: TObject; const BytesToDate,
+    procedure DownloadProgressHandler(Sender: TObject; const BytesToDate,
       ExpectedBytes: Int64);
+
+    ///  <summary>Handles file updater's OnProgress event.</summary>
+    ///  <param name="Sender">TObject [in] Object that triggered event.</param>
+    ///  <param name="FilesHandled">Cardinal [in] Number of files updated to
+    ///  date.</param>
+    ///  <param name="TotalFiles">Cardinal [in] Total number of files to be
+    ///  updated.</param>
+    procedure FileUpdateProgressHandler(Sender: TObject; const AFilesHandled,
+      ATotalFiles: Cardinal);
 
     ///  <summary>Returns the number of files in the local copy of the Code
     ///  Snippets database.</summary>
@@ -228,6 +249,11 @@ type
     ///  the online database.</summary>
     property OnDownloadProgress: TDownloadEvent
       read fOnDownloadProgress write fOnDownloadProgress;
+
+    ///  <summary>Event triggered to report progress when updating local
+    ///  database files.</summary>
+    property OnFileUpdateProgress: TProgressEvent
+      read fOnFileUpdateProgress write fOnFileUpdateProgress;
   end;
 
 
@@ -236,7 +262,7 @@ implementation
 
 uses
   // Delphi
-  Classes,
+  Classes, Math,
   // Project
   IntfCommon, UConsts, UFileUpdater, UUtils, UExceptions;
 
@@ -350,6 +376,22 @@ begin
   end;
 end;
 
+procedure TDBUpdateMgr.FileUpdateProgressHandler(Sender: TObject;
+  const AFilesHandled, ATotalFiles: Cardinal);
+var
+  FilesHandled: Cardinal;
+  TotalFiles: Cardinal;
+  Percent: Byte;
+begin
+  if not Assigned(fOnFileUpdateProgress) then
+    Exit;
+  // Ensure TotalFiles > 0 and 0 <= FilesHandled <= TotalFiles
+  TotalFiles := Max(1, ATotalFiles);
+  FilesHandled := Min(AFilesHandled, ATotalFiles);
+  Percent := Round(100 * FilesHandled / TotalFiles);
+  fOnFileUpdateProgress(Self, Percent, fCancelled);
+end;
+
 function TDBUpdateMgr.HandleException(const E: Exception): Boolean;
 begin
   if E is EDBDownloadMgr then
@@ -457,6 +499,7 @@ begin
     Exit;
   Updater := TFileUpdater.Create(fLocalDir, Data);
   try
+    Updater.OnProgress := FileUpdateProgressHandler;
     Updater.Execute;
     Result := True;
   finally

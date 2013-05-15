@@ -154,9 +154,6 @@ type
 
     ///  <summary>Displays the Check For Program Updates dialogue box.</summary>
     procedure ShowProgramUpdatesDlg;
-
-    ///  <summary>Displays the Move User Database dialogue box.</summary>
-    procedure ShowUserDataPathDlg;
   end;
 
 
@@ -171,9 +168,6 @@ uses
   FmFindTextDlg, FmFindXRefsDlg, FmNewsDlg, FmPreferencesDlg, FmPrintDlg,
   FmProgramUpdatesDlg, FmProxyServerDlg, FmRegistrationDlg,
   FmSelectionSearchDlg, FmTestCompileDlg, FmUserBugReportDlg,
-  {$IFNDEF PORTABLE}
-  FmUserDataPathDlg,
-  {$ENDIF}
   UPageSetupDlgMgr, UTestUnitDlgMgr;
 
 
@@ -278,14 +272,6 @@ end;
 procedure TDialogMgr.ShowTestUnitDlg(const Snippet: TSnippet);
 begin
   TTestUnitDlgMgr.DisplayTestUnit(Owner, Snippet);
-end;
-
-procedure TDialogMgr.ShowUserDataPathDlg;
-begin
-  // This dialogue box not available in portable edition
-  {$IFNDEF PORTABLE}
-  TUserDataPathDlg.Execute(Owner);
-  {$ENDIF}
 end;
 
 end.

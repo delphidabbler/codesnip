@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2006-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2006-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -32,14 +32,28 @@ type
   ///  data.
   ///  </summary>
   TFileUpdater = class(TObject)
+  public
+    type
+      ///  <summary>Type of event triggered when reporting progress in updating
+      ///  data files.</summary>
+      ///  <param name="Sender">TObject [in] Object instance that triggered the
+      ///  event.</param>
+      ///  <param name="FilesHandled">Cardinal [in] Number of files updated to
+      ///  date.</param>
+      ///  <param name="TotalFiles">Cardinal [in] Total number of files to be
+      ///  updated.</param>
+      TProgressEvent = procedure(Sender: TObject; const FilesHandled,
+        TotalFiles: Cardinal) of object;
   strict private
     var
       ///  <summary>Used to read formatted text data stream.</summary>
       fReader: TTextStreamReader;
       ///  <summary>Local data directory.</summary>
       fLocalDir: string;
+      ///  <summary>Reference to any OnProgess event handler.</summary>
+      fOnProgress: TProgressEvent;
     ///  <summary>
-    ///  Reverts data file to state they were in before update.
+    ///  Reverts data files to state they were in before update.
     ///  </summary>
     procedure UndoUpdate;
     ///  <summary>
@@ -54,6 +68,15 @@ type
     ///  <param name="UnixDate">Int64 [in] Unix format GMT date stamp to be
     ///  applied to file.</param>
     procedure WriteFile(const Name, Content: string; const UnixDate: Int64);
+    ///  <summary>
+    ///  Triggers any assigned OnProgress event handler with information about
+    ///  file update progress to date.
+    ///  </summary>
+    ///  <param name="FilesHandled">Cardinal [in] Number of files updated to
+    ///  date.</param>
+    ///  <param name="TotalFiles">Cardinal [in] Total number of files to be
+    ///  updated.</param>
+    procedure ReportProgress(const FilesHandled, TotalFiles: Cardinal);
   public
     ///  <summary>Object constructor. Initialises object.</summary>
     ///  <param name="LocalDir">string [in] Directory storing local data files
@@ -64,6 +87,10 @@ type
     destructor Destroy; override;
     ///  <summary>Performs file updates.</summary>
     procedure Execute;
+    ///  <summary>Event that reports progress when updating local files.
+    ///  </summary>
+    ///  <remarks>Triggered once for each file processed.</remarks>
+    property OnProgress: TProgressEvent read fOnProgress write fOnProgress;
   end;
 
 type
@@ -140,6 +167,7 @@ end;
 procedure TFileUpdater.Execute;
 var
   FileCount: Integer;   // number of files to copy to local directory
+  CopiedCount: Integer; // number of files copied
 begin
   TDataBackupMgr.Backup;
   try
@@ -147,10 +175,12 @@ begin
     UUtils.DeleteFiles(fLocalDir, '*.*');
     // Copy in new files
     FileCount := fReader.ReadInt16;
-    while FileCount > 0 do
+    CopiedCount := 0;
+    while CopiedCount < FileCount do
     begin
       UpdateFile;
-      Dec(FileCount);
+      Inc(CopiedCount);
+      ReportProgress(CopiedCount, FileCount);
     end;
   except
     // Error: restore backup
@@ -159,6 +189,12 @@ begin
   end;
   // OK: delete backup
   TDataBackupMgr.DeleteBackup;
+end;
+
+procedure TFileUpdater.ReportProgress(const FilesHandled, TotalFiles: Cardinal);
+begin
+  if Assigned(fOnProgress) then
+    fOnProgress(Self, FilesHandled, TotalFiles);
 end;
 
 procedure TFileUpdater.UndoUpdate;

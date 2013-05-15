@@ -4,17 +4,12 @@
 			<MainSource>CodeSnip.dpr</MainSource>
 			<Config Condition="'$(Config)'==''">Base</Config>
 			<DCC_DCCCompiler>DCC32</DCC_DCCCompiler>
-			<ProjectVersion>12.3</ProjectVersion>
-			<Base>True</Base>
-			<Platform>Win32</Platform>
-			<AppType>Application</AppType>
-			<FrameworkType>VCL</FrameworkType>
+			<ProjectVersion>12.0</ProjectVersion>
 		</PropertyGroup>
 		<PropertyGroup Condition="'$(Config)'=='Base' or '$(Base)'!=''">
 			<Base>true</Base>
 		</PropertyGroup>
 		<PropertyGroup Condition="'$(Base)'!=''">
-			<DCC_UnitAlias>WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;$(DCC_UnitAlias)</DCC_UnitAlias>
 			<DCC_SYMBOL_PLATFORM>false</DCC_SYMBOL_PLATFORM>
 			<DCC_ExeOutput>..\Exe</DCC_ExeOutput>
 			<DCC_UnitSearchPath>..\Bin;3rdParty;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
@@ -249,6 +244,10 @@
 			</DCCReference>
 			<DCCReference Include="FmUserDataPathDlg.pas">
 				<Form>UserDataPathDlg</Form>
+			</DCCReference>
+			<DCCReference Include="FmUserDataPathDlg.FrProgress.pas">
+				<Form>UserDataPathDlgProgressFrame</Form>
+				<DesignClass>TFrame</DesignClass>
 			</DCCReference>
 			<DCCReference Include="FmUserHiliterMgrDlg.pas">
 				<Form>UserHiliterMgrDlg</Form>
@@ -583,6 +582,7 @@
 			<DCCReference Include="UUrlMonEx.pas"/>
 			<DCCReference Include="UUserDBBackup.pas"/>
 			<DCCReference Include="UUserDBMgr.pas"/>
+			<DCCReference Include="UUserDBMove.pas"/>
 			<DCCReference Include="UUserDetails.pas"/>
 			<DCCReference Include="UUserDetailsPersist.pas"/>
 			<DCCReference Include="UUtils.pas"/>
@@ -616,8 +616,7 @@
 				<Key>Base</Key>
 			</BuildConfiguration>
 		</ItemGroup>
-		<Import Condition="Exists('$(BDS)\Bin\CodeGear.Delphi.Targets')" Project="$(BDS)\Bin\CodeGear.Delphi.Targets"/>
-		<Import Condition="Exists('$(APPDATA)\Embarcadero\$(BDSAPPDATABASEDIR)\$(PRODUCTVERSION)\UserTools.proj')" Project="$(APPDATA)\Embarcadero\$(BDSAPPDATABASEDIR)\$(PRODUCTVERSION)\UserTools.proj"/>
+		<Import Project="$(BDS)\Bin\CodeGear.Delphi.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Delphi.Targets')"/>
 		<ProjectExtensions>
 			<Borland.Personality>Delphi.Personality.12</Borland.Personality>
 			<Borland.ProjectType>VCLApplication</Borland.ProjectType>
@@ -628,6 +627,9 @@
 					</Source>
 					<Parameters>
 						<Parameters Name="RunParams">-localhost</Parameters>
+						<Parameters Name="UseLauncher">False</Parameters>
+						<Parameters Name="LoadAllSymbols">True</Parameters>
+						<Parameters Name="LoadUnspecifiedSymbols">False</Parameters>
 					</Parameters>
 					<VersionInfo>
 						<VersionInfo Name="IncludeVerInfo">False</VersionInfo>
@@ -657,9 +659,6 @@
 						<VersionInfoKeys Name="Comments"/>
 					</VersionInfoKeys>
 				</Delphi.Personality>
-				<Platforms>
-					<Platform value="Win32">True</Platform>
-				</Platforms>
 			</BorlandProject>
 			<ProjectFileVersion>12</ProjectFileVersion>
 		</ProjectExtensions>

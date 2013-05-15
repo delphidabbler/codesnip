@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2012-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -20,7 +20,7 @@ interface
 
 uses
   // Delphi
-  Controls, Menus, ImgList, Graphics;
+  Controls, Menus, ImgList, Graphics, ActnList;
 
 
 type
@@ -61,6 +61,16 @@ type
     ///  </remarks>
     procedure LoadFromResource(ResType: PChar; const ResName: string;
       Size: Integer; MaskColour: TColor);
+  end;
+
+type
+  ///  <summary>Class helper that adds a method to TCustomActionList that can
+  ///  update all the actions in the list.</summary>
+  TActionListHelper = class helper for TCustomActionList
+  public
+    ///  <summary>Updates all actions in the action list by calling their Update
+    ///  methods.</summary>
+    procedure Update;
   end;
 
 
@@ -157,4 +167,15 @@ begin
   end;
 end;
 
+{ TActionListHelper }
+
+procedure TActionListHelper.Update;
+var
+  Action: TContainedAction; // each action in list
+begin
+  for Action in Self do
+    Action.Update;
+end;
+
 end.
+

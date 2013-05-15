@@ -185,7 +185,7 @@ var
 begin
   CB.Clear;
   for I := Low(FreqMap) to High(FreqMap) do
-    CB.Items.AddObject(FreqMap[I].Text, TObject(FreqMap[I].Value));
+    CB.Items.AddObject(FreqMap[I].Text, Pointer(FreqMap[I].Value));
 end;
 
 procedure TUpdatePrefsFrame.SelectFrequencyInCB(const CB: TComboBox;

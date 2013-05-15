@@ -644,7 +644,7 @@ end;
 
 procedure TMainForm.actBackupDatabaseExecute(Sender: TObject);
 begin
-  TUserDBMgr.BackupDatabase;
+  TUserDBMgr.BackupDatabase(Self);
 end;
 
 procedure TMainForm.actBugReportExecute(Sender: TObject);
@@ -924,7 +924,7 @@ end;
 
 procedure TMainForm.actMoveUserDatabaseExecute(Sender: TObject);
 begin
-  fDialogMgr.ShowUserDataPathDlg;
+  TUserDBMgr.MoveDatabase;
 end;
 
 procedure TMainForm.actNewDetailsTabExecute(Sender: TObject);
@@ -1040,13 +1040,13 @@ end;
 
 procedure TMainForm.actRestoreDatabaseExecute(Sender: TObject);
 begin
-  if TUserDBMgr.RestoreDatabase then
+  if TUserDBMgr.RestoreDatabase(Self) then
     ReloadDatabase;
 end;
 
 procedure TMainForm.actSaveDatabaseExecute(Sender: TObject);
 begin
-  TUserDBMgr.Save;
+  TUserDBMgr.Save(Self);
   fStatusBarMgr.Update;
 end;
 
@@ -1183,7 +1183,7 @@ begin
     // Database was updated: check if user database needs saving
     if (Database as IDatabaseEdit).Updated
       and TMessageBox.Confirm(Self, sConfirmSave) then
-      (Database as IDatabaseEdit).Save;
+      TUserDBMgr.Save(Self);
     // Reload the databases
     ReloadDatabase;
   end;
