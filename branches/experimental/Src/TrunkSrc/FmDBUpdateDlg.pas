@@ -94,9 +94,9 @@ type
     procedure UpdateStatusHandler(Sender: TObject; Status: TDBUpdateMgr.TStatus;
       var Cancel: Boolean);
 
-    ///  <summary>Handles OnProgress event triggered by the update manager when
-    ///  downloading the database. Displays progress in a progress bar.
-    ///  </summary>
+    ///  <summary>Handles OnProgress event triggered by the database update
+    ///  manager when downloading the database. Displays progress in a progress
+    ///  bar.</summary>
     ///  <param name="Sender">TObject [in] Object triggering event.</param>
     ///  <param name="BytesReceived">Int64 [in] Total number of bytes received
     ///  to date.</param>
@@ -109,6 +109,19 @@ type
     ///  the download completes.</remarks>
     procedure DownloadProgressHandler(Sender: TObject; const BytesReceived,
       BytesExpected: Int64; var Cancel: Boolean);
+
+    ///  <summary>Handles OnProgress event triggered by the file updater when
+    ///  when downloading the database. Displays progress in a progress bar.
+    ///  </summary>
+    ///  <param name="Sender">TObject [in] Object triggering event.</param>
+    ///  <param name="Progress">Bytes [in] Pecentage progress to date.</param>
+    ///  <param name="Cancel">Boolean [in,out] Flag that event handler can set
+    ///  True to abort the update.</param>
+    ///  <remarks>NOTE: Setting cancel to True does not cancel the file update,
+    ///  which runs to completion. Instead the update process is cancelled after
+    ///  the file update completes.</remarks>
+    procedure FileUpdateProgressHandler(Sender: TObject; const Percent: Byte;
+      var Cancel: Boolean);
 
     ///  <summary>Displays the given progress message.</summary>
     procedure ProgressMsg(const Msg: string);
@@ -211,6 +224,7 @@ begin
   try
     fUpdateMgr.OnStatus := UpdateStatusHandler;
     fUpdateMgr.OnDownloadProgress := DownloadProgressHandler;
+    fUpdateMgr.OnFileUpdateProgress := FileUpdateProgressHandler;
     // Update control visibility
     lblUpdateFromWeb.Visible := False;
     lblError.Visible := False;
@@ -284,6 +298,16 @@ begin
     finally
       Free;
     end;
+end;
+
+procedure TDBUpdateDlg.FileUpdateProgressHandler(Sender: TObject;
+  const Percent: Byte; var Cancel: Boolean);
+begin
+  if Percent = 0 then
+    fProgressBarMgr.Max := 100;
+  fProgressBarMgr.Position := Percent;
+  Cancel := fCancelled;
+  Application.ProcessMessages;
 end;
 
 procedure TDBUpdateDlg.FormCloseQuery(Sender: TObject;
@@ -385,13 +409,19 @@ begin
       ProgressMsg(sDownloaded);
     end;
     usUpdating:
-      ProgressMsg(sUpdating);
+    begin
+      ProgressMsg(sUpdating + '  ');
+      fProgressBarMgr.Show(edProgress.Lines.Count - 1);
+    end;
     usNoUpdate:
       ProgressMsg(sUpToDate);
     usLogOff:
       ProgressMsg(sLoggingOff);
     usCompleted:
+    begin
+      fProgressBarMgr.Hide;
       ProgressMsg(sCompleted);
+    end;
     usCancelled:
       ProgressMsg(sCancelled);
   end;
