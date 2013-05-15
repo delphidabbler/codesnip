@@ -1,0 +1,121 @@
+{
+ * This Source Code Form is subject to the terms of the Mozilla Public License,
+ * v. 2.0. If a copy of the MPL was not distributed with this file, You can
+ * obtain one at http://mozilla.org/MPL/2.0/
+ *
+ * Copyright (C) 2013, Peter Johnson (www.delphidabbler.com).
+ *
+ * $Rev$
+ * $Date$
+ *
+ * Pascal script for use in [Code] Section of CodeSnip's Install.iss.
+ *
+ * Provides types and routines for handling version numbers.
+}
+
+
+type
+  // Record encapsulation a version number.
+  TVersionNumber = record
+    V1, V2, V3, V4: Word;
+  end;
+
+// Function that constructs a TVersionNumber record from given fields.
+function CreateVersionNumber(V1, V2, V3, V4: Word): TVersionNumber;
+begin
+  Result.V1 := V1;
+  Result.V2 := V2;
+  Result.V3 := V3;
+  Result.V4 := V4;
+end;
+
+// Converts string S into a word value.
+// Conversion stops at first non digit character. Empty strings are taken to
+// represent 0.
+function StrToWord(const S: string): Word;
+var
+  I: Integer;
+begin
+  Result := 0;
+  for I := 1 to Length(S) do
+  begin
+    if Pos(S[I], '0123456789') = 0 then
+      Exit;
+    Result := 10 * Result + Ord(S[I]) - Ord('0');
+  end;
+end;
+
+// Splits string Str at the first occurence of Delim setting Left to the string
+// preceeding Delim and Right to the string following Delim. Returns True if
+// Delim was found in Str, False if not.
+// Slightly modified from StrSplit routine in UStrUtils unit.
+function StrSplit(const Str: string; const Delim: string;
+  out Left, Right: string): Boolean;
+var
+  DelimPos: Integer;  // position of delimiter in source string
+begin
+  // Find position of first occurence of delimiter in string
+  DelimPos := Pos(Delim, Str);
+  if DelimPos > 0 then
+  begin
+    // Delimiter found: split string at delimiter
+    Left := Copy(Str, 1, DelimPos - 1);
+    Right := Copy(Str, DelimPos + Length(Delim), MaxInt);
+    Result := True;
+  end
+  else
+  begin
+    // Delimiter not found: set Left to whole string
+    Left := Str;
+    Right := '';
+    Result := False;
+  end;
+end;
+
+// Converts dotted quad string S into a version number.
+// Any non digits included in S are ignored. At most four sections of S,
+// delimited by '.', are read.
+function StrToVersionInfo(S: string): TVersionNumber;
+var
+  VerStr: string;
+  VerNums: array[1..4] of string;
+  N: Integer;
+  X: string;
+begin
+  X := S;
+  VerNums[1] := '';
+  VerNums[2] := '';
+  VerNums[3] := '';
+  VerNums[4] := '';
+  N := 0;
+  while (N <= 4) and StrSplit(S, '.', VerStr, S) do
+  begin
+    N := N + 1;
+    VerNums[N] := VerStr;
+  end;
+  Result := CreateVersionNumber(
+    StrToWord(VerNums[1]),
+    StrToWord(VerNums[2]),
+    StrToWord(VerNums[3]),
+    StrToWord(VerNums[4])
+  );
+end;
+
+// Compares version numbers Ver1 and Ver2 and returns 0 if Ver1 = Ver2, -ve if
+// Ver1 < Ver2, +ve if Ver1 > Ver2.
+// Slightly modified versio of the routine of the same name in the PJVersionInfo
+// unit from the DelphiDabbler Version Information Component (see the project's
+// Src/3rdParty directory).
+function CompareVerNums(const Ver1, Ver2: TVersionNumber): Integer;
+begin
+  Result := Integer(Ver1.V1) - Integer(Ver2.V1);
+  if Result <> 0 then
+    Exit;
+  Result := Integer(Ver1.V2) - Integer(Ver2.V2);
+  if Result <> 0 then
+    Exit;
+  Result := Integer(Ver1.V3) - Integer(Ver2.V3);
+  if Result <> 0 then
+    Exit;
+  Result := Integer(Ver1.V4) - Integer(Ver2.V4);
+end;
