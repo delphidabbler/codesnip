@@ -3,31 +3,31 @@ inherited FindXRefsDlg: TFindXRefsDlg
   Top = 222
   Caption = 'Find Cross References'
   ExplicitWidth = 474
-  ExplicitHeight = 354
+  ExplicitHeight = 374
   PixelsPerInch = 96
   TextHeight = 13
   inherited pnlBody: TPanel
     Width = 305
-    Height = 177
+    Height = 249
     ExplicitWidth = 305
-    ExplicitHeight = 177
+    ExplicitHeight = 249
     object lblDesc: TLabel
       Left = 0
       Top = 0
-      Width = 119
+      Width = 123
       Height = 13
       Caption = 'Find cross references for '
     end
     object lblSnippetName: TLabel
       Left = 119
       Top = 0
-      Width = 74
+      Width = 73
       Height = 13
       Caption = 'lblSnippetName'
     end
     object lblOverwriteSearch: TLabel
       Left = 0
-      Top = 160
+      Top = 238
       Width = 220
       Height = 13
       AutoSize = False
@@ -47,20 +47,20 @@ inherited FindXRefsDlg: TFindXRefsDlg
     end
     object chkSeeAlso: TCheckBox
       Left = 0
-      Top = 76
+      Top = 114
       Width = 305
       Height = 17
       Caption = 'Search for "&see also" cross references'
-      TabOrder = 2
+      TabOrder = 3
       OnClick = SearchCheckClick
     end
     object chkIncludeSnippet: TCheckBox
       Left = 0
-      Top = 126
+      Top = 196
       Width = 600
       Height = 17
       Caption = '&Include "%s" in search'
-      TabOrder = 4
+      TabOrder = 6
     end
     object chkRequiredRecurse: TCheckBox
       Left = 24
@@ -72,11 +72,29 @@ inherited FindXRefsDlg: TFindXRefsDlg
     end
     object chkSeeAlsoRecurse: TCheckBox
       Left = 24
-      Top = 98
+      Top = 136
       Width = 281
       Height = 17
       Caption = 'Search rec&ursively'
-      TabOrder = 3
+      TabOrder = 4
+    end
+    object chkSeeAlsoReverse: TCheckBox
+      Left = 0
+      Top = 161
+      Width = 305
+      Height = 17
+      Caption = 'Search for snippets that cross-reference this one'
+      TabOrder = 5
+      OnClick = SearchCheckClick
+    end
+    object chkRequiredReverse: TCheckBox
+      Left = 0
+      Top = 74
+      Width = 305
+      Height = 17
+      Caption = 'Search for snippets that depend on this one'
+      TabOrder = 2
+      OnClick = SearchCheckClick
     end
   end
   inherited btnCancel: TButton
