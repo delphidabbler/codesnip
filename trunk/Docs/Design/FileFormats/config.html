@@ -214,7 +214,7 @@
 </p>
 
 <p>
-  There have been several versions of this file. The current one is version 14.
+  There have been several versions of this file. The current one is version 15.
  </p>
 
 <p>
@@ -643,7 +643,7 @@
 
 <dl class="indent">
   <dt>
-    <strong>IncludeRoutine</strong> (Boolean)
+    <strong>IncludeSnippet</strong> (Boolean)
   </dt>
   <dd>
     Indicates whether to include the snippet for which the search is being
@@ -665,6 +665,13 @@
     <strong>Required</strong> = False.
   </dd>
   <dt>
+    <strong>RequiredReverse</strong> (Boolean)
+  </dt>
+  <dd>
+    Indicates whether to include snippets that depend on the searched for
+    snippet.
+  </dd>
+  <dt>
     <strong>SeeAlso</strong> (Boolean)
   </dt>
   <dd>
@@ -677,6 +684,13 @@
   <dd>
     Indicates whether to recurse cross-referenced snippets to search for their
     own cross references and so on. Ignored if <strong>SeeAlso</strong> = False.
+  </dd>
+  <dt>
+    <strong>SeeAlsoReverse</strong> (Boolean)
+  </dt>
+  <dd>
+    Indicates whether to include snippets that cross-reference searched for
+    snippet.
   </dd>
 </dl>
 
@@ -704,7 +718,7 @@
       stamping config file with the correct version number.
     </div>
     <div class="half-spaced">
-      Current value is <strong>14</strong>.
+      Current value is <strong>15</strong>.
     </div>
   </dd>
   <dt>
