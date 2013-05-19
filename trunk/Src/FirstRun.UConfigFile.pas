@@ -77,7 +77,7 @@ type
   strict private
     const
       ///  <summary>Current user config file version.</summary>
-      FileVersion = 14;
+      FileVersion = 15;
   strict protected
     ///  <summary>Returns current user config file version.</summary>
     class function GetFileVersion: Integer; override;
@@ -106,6 +106,8 @@ type
     ///  with an equivalent entry in new Namespaces value, only if compiler XXX
     ///  is Delphi XE2 or later.</summary>
     procedure UpdateNamespaces;
+    ///  <summary>Updates value names in FindXRefs section.</summary>
+    procedure UpdateFindXRefs;
     ///  <summary>Adds Prefs:CodeGen section along with default data.</summary>
     procedure CreateDefaultCodeGenEntries;
     ///  <summary>Stamps config file with current program and file versions.
@@ -384,6 +386,24 @@ begin
     SetIniInt('Prefs:CodeGen', 'EmitWarnDirs', 0, CfgFileName);
 end;
 {$ENDIF}
+
+procedure TUserConfigFileUpdater.UpdateFindXRefs;
+begin
+  // From file ver 14, "IncludeRoutine" in FindXRefs was renamed as
+  // "IncludeSnippet"
+  if IniKeyExists('FindXRefs', 'IncludeRoutine', CfgFileName) then
+  begin
+    SetIniInt(
+      'FindXRefs',
+      'IncludeSnippet',
+      GetIniInt('FindXRefs', 'IncludeRoutine', 1, CfgFileName),
+      CfgFileName
+    );
+    DeleteIniKey('FindXRefs', 'IncludeRoutine', CfgFileName);
+  end
+  else
+    SetIniInt('FindXRefs', 'IncludeSnippet', 1, CfgFileName);
+end;
 
 {$IFNDEF PORTABLE}
 procedure TUserConfigFileUpdater.UpdateFromOriginal;
