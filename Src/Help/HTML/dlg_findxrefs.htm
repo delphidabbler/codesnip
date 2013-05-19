@@ -4,7 +4,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2006-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2006-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -31,8 +31,9 @@
     </h1>
     <p>
       Use this dialogue box to find snippets that are referenced by the
-      currently selected snippet. The dialogue is displayed from the <em>Search
-      | Find Cross Refs</em> menu option.
+      currently selected snippet and / or those snippets reference that snippet.
+      The dialogue is displayed from the <em>Search | Find Cross Refs</em> menu
+      option.
     </p>
     <p>
       The search can be customised by checking or clearing the following check
@@ -47,6 +48,11 @@
         snippets.
       </li>
       <li>
+        <em>Search for snippets that depend on this one</em>. Choose this option
+        to include in the search results all snippets that depend upon (i.e.
+        require) this one.
+      </li>
+      <li>
         <em>Search for &quot;see also&quot; cross references</em>. This option
         includes snippets referenced as &quot;see also&quot; to be included in
         the search result. These snippets are not necessarily needed to compile
@@ -54,6 +60,11 @@
         checking the related <em>Search recursively</em> check box causes the
         search to recurse through the found &quot;see also&quot; cross
         references.
+      </li>
+      <li>
+        <em>Search for snippets that cross-reference this one</em>. Choose this
+        option to include in the search results all snippets that
+        cross-reference this one.
       </li>
       <li>
         <em>Include &quot;xxxx&quot; in search</em> (where xxxx is the name of
