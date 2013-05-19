@@ -539,21 +539,28 @@ type
     ///  <summary>Adds given snippet to list of x-refs if snippet is not already
     ///  in the list. Returns True if snippet added, False if not.</summary>
     function AddToXRefs(const Snippet: TSnippet): Boolean; overload;
-
+    ///  <summary>Adds all snippets with all the given IDs to the x-ref list
+    ///  unless the snippet is already in the list.</summary>
     procedure AddToXRefs(SnippetIDs: ISnippetIDList); overload;
-    ///  <summary>Adds all a snippet's required snippets to the x-ref list.
-    ///  </summary>
+    ///  <summary>Adds all the given snippet's required snippets to the x-ref
+    ///  list.</summary>
     ///  <remarks>References are only added if appropriate search option is set.
     ///  </remarks>
     procedure ReferenceRequired(const Snippet: TSnippet);
-
+    ///  <summary>Adds all snippets that require (depend upon) the given snippet
+    ///  is selected.</summary>
+    ///  <remarks>References are only added if appropriate search option is set.
+    ///  </remarks>
     procedure ReferenceReverseRequired(const Snippet: TSnippet);
-    ///  <summary>Adds all a snippet's required snippets to x-ref list.
+    ///  <summary>Adds all the given snippet's required snippets to x-ref list.
     ///  </summary>
-    ///  <remarks>These references are only added if appropriate search option
-    ///  is set.</remarks>
+    ///  <remarks>References are only added if appropriate search option is set.
+    ///  </remarks>
     procedure ReferenceSeeAlso(const Snippet: TSnippet);
-
+    ///  <summary>Adds all snippets that cross-reference the given snippet is
+    ///  selected.</summary>
+    ///  <remarks>References are only added if appropriate search option is set.
+    ///  </remarks>
     procedure ReferenceReverseSeeAlso(const Snippet: TSnippet);
     ///  <summary>Adds a snippet to x-ref list if it is not already present.
     ///  Also recursively adds the snippet's all its cross-referenced snippets
