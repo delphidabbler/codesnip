@@ -259,6 +259,9 @@ begin
   if fUserConfigFile.FileVer < 12 then
     fUserConfigFile.UpdateNamespaces;
 
+  if fUserConfigFile.FileVer < 15 then
+    fUserConfigFile.UpdateFindXRefs;
+
   fUserConfigFile.Stamp;
   // NOTE: strictly speaking we only need to stamp common config file in
   // portable version. Installer does this in normal version. However, it does
