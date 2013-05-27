@@ -4,7 +4,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2009-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2009-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -30,42 +30,24 @@
       <a name="dlg_dependencies.htm"></a>Dependencies Dialogue Box
     </h1>
     <p>
-      This dialogue box contains two tabs. The first, labelled <em>Depends
-      Upon</em> displays all the other snippets that the selected snippet
-      depends upon (i.e. requires in order to compile). The <em>Required By</em>
-      tab displays all the snippets that directly require, or depend upon, the
-      selected snippet.
+      This dialogue box is displayed by choosing the <em>View |
+      Dependencies</em> main menu item. It has two tabs: <em>Depends Upon</em>
+      and <em>Required By</em>.
     </p>
-    <p>
-      Which tabs are displayed depends on how the dialogue box is accessed:
-    </p>
-    <ol>
-      <li>
-        Choosing the <em>View | Dependencies</em> menu item when it displays
-        both tabs of the dialogue box with information about the dependencies
-        for the currently selected snippet.
-      </li>
-      <li>
-        Clicking the <em>View Dependencies</em> button on the
-        <em>References</em> tab in the
-        <a href="dlg_editsnippet.htm">Snippets Editor</a> displays just the
-        <em>Depends Upon</em> tab.
-      </li>
-    </ol>
     <h2>
       <em>Depends Upon</em> Tab
     </h2>
     <p>
-      If the selected snippet has dependenciess a tree of snippets is displayed
-      that shows the direct and indirect dependencies. When there are no
-      dependencies a message is displayed to that effect.
+      If the selected snippet has dependenciess (i.e. snippets it requires in
+      order to compile) a tree of snippets is displayed that shows the direct
+      and indirect dependencies. When there are no dependencies a message is
+      displayed to that effect.
     </p>
     <p>
       If a circular reference is detected (i.e. the snippet depends directly or
       indirectly upon itself) the circular reference is displayed in red and an
-      error message is displayed. Circular references are not permitted and must
-      be corrected. This should only occur when the dialogue box is displayed
-      from the <a href="dlg_editsnippet.htm">Snippets Editor</a>.
+      error message is displayed. Such a dependency indicates there is an error
+      in the database.
     </p>
     <h2>
       <em>Required By</em> Tab
@@ -77,4 +59,3 @@
     </p>
   </body>
 </html>
-
