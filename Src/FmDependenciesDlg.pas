@@ -91,10 +91,13 @@ type
       fDisplayName: string;       // Display name of snippet
       fDependsList: TSnippetList; // List of dependencies to be displayed
       fTVDraw: TTVDraw;           // Customises appearance of tree view}
-      fTabs: TTabIDs;
-      fCanSelect: Boolean;
-      fSearch: ISearch;
+      fTabs: TTabIDs;             // Specifies tabs to be displayed
+      fCanSelect: Boolean;        // Specifies if dependencies can be selected
+      fSearch: ISearch;           // Search that can select dependencies
     procedure PopulateRequiredByList;
+      {Populates list box with items for each snippet required to compile the
+      specified snippet.
+      }
     procedure PopulateTreeView;
       {Populates treeview with nodes for each snippet in dependency list.
       }
@@ -123,7 +126,8 @@ type
   public
     class procedure Execute(const AOwner: TComponent;
       const SnippetID: TSnippetID; const DisplayName: string;
-      const DependsList: TSnippetList; const Tabs: TTabIDs); overload;
+      const DependsList: TSnippetList; const Tabs: TTabIDs;
+      const AHelpKeyword: string); overload;
       {Displays dialogue box containing details of a snippet's dependencies.
         @param AOwner [in] Component that owns the dialog box.
         @param SnippetID [in] ID of snippet for which dependencies are to be
@@ -132,16 +136,18 @@ type
           are to be displayed.
         @param DependsList [in] List of dependencies.
         @param Tabs [in] Tabs to be displayed in dialogue box.
+        @param AHelpKeyword [in] A-link help keyword ofrequired help topic.
       }
     class function Execute(const AOwner: TComponent; const Snippet: TSnippet;
-      const Tabs: TTabIDs; const PermitSelection: Boolean): ISearch;
-      overload;
+      const Tabs: TTabIDs; const PermitSelection: Boolean;
+      const AHelpKeyword: string): ISearch; overload;
       {Displays dialogue box containing details of a snippet's dependencies.
         @param AOwner [in] Component that owns the dialog box.
         @param Snippet [in] Snippet for which dependencies are to be displayed.
         @param Tabs [in] Tabs to be displayed in dialogue box.
         @param PermitSelection [in] Determines whether listed dependencies can
           be selected. When False this method always returns nil.
+        @param AHelpKeyword [in] A-link help keyword ofrequired help topic.
         @returns A search object that can be used to select the dependent
           snippets or nil if no snippets can be selected. The result is only non
           nil if PermitSelection is True and the user chooses to make a
@@ -316,10 +322,9 @@ begin
 end;
 
 class function TDependenciesDlg.Execute(const AOwner: TComponent;
-  const Snippet: TSnippet; const Tabs: TTabIDs; const PermitSelection: Boolean):
-  ISearch;
+  const Snippet: TSnippet; const Tabs: TTabIDs; const PermitSelection: Boolean;
+  const AHelpKeyword: string): ISearch;
 begin
-//  Execute(AOwner, Snippet.ID, Snippet.DisplayName, Snippet.Depends, Tabs);
   Assert(Tabs <> [], ClassName + '.Execute: Tabs is []');
   with InternalCreate(AOwner) do
     try
@@ -328,6 +333,7 @@ begin
       fDependsList := Snippet.Depends;
       fTabs := Tabs;
       fCanSelect := PermitSelection;
+      HelpKeyword := AHelpKeyword;
       if ShowModal = mrOK then
         Result := fSearch
       else
@@ -339,7 +345,8 @@ end;
 
 class procedure TDependenciesDlg.Execute(const AOwner: TComponent;
   const SnippetID: TSnippetID; const DisplayName: string;
-  const DependsList: TSnippetList; const Tabs: TTabIDs);
+  const DependsList: TSnippetList; const Tabs: TTabIDs;
+  const AHelpKeyword: string);
 begin
   Assert(Tabs <> [], ClassName + '.Execute: Tabs is []');
   with InternalCreate(AOwner) do
@@ -349,6 +356,7 @@ begin
       fDependsList := DependsList;
       fTabs := Tabs;
       fCanSelect := False;
+      HelpKeyword := AHelpKeyword;
       ShowModal;
     finally
       Free;
