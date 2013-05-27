@@ -1,7 +1,7 @@
 inherited DependenciesDlg: TDependenciesDlg
   Caption = 'DependenciesDlg'
   ExplicitWidth = 474
-  ExplicitHeight = 354
+  ExplicitHeight = 374
   PixelsPerInch = 96
   TextHeight = 13
   inherited pnlBody: TPanel
@@ -19,7 +19,7 @@ inherited DependenciesDlg: TDependenciesDlg
         object lblCircularRef: TLabel
           Left = 0
           Top = 240
-          Width = 135
+          Width = 136
           Height = 13
           Caption = 'Circular Reference Detected'
           Visible = False
@@ -65,6 +65,30 @@ inherited DependenciesDlg: TDependenciesDlg
           OnDrawItem = lbDependentsDrawItem
         end
       end
+    end
+  end
+  inherited btnHelp: TButton
+    TabOrder = 3
+  end
+  inherited btnClose: TButton
+    TabOrder = 2
+  end
+  object btnSelectAndClose: TButton
+    Left = 112
+    Top = 304
+    Width = 100
+    Height = 25
+    Action = actSelectAndClose
+    ModalResult = 1
+    TabOrder = 1
+  end
+  object alSelectAndClose: TActionList
+    Left = 224
+    Top = 176
+    object actSelectAndClose: TAction
+      Caption = '&Select && Close'
+      OnExecute = actSelectAndCloseExecute
+      OnUpdate = actSelectAndCloseUpdate
     end
   end
 end
