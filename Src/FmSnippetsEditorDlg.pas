@@ -430,7 +430,8 @@ begin
       TSnippetID.Create(StrTrim(edName.Text), True),
       StrTrim(edDisplayName.Text),
       DependsList,
-      [tiDependsUpon]
+      [tiDependsUpon],
+      'SnippetsEditorDependenciesDlg'
     );
   finally
     FreeAndNil(DependsList);
