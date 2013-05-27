@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2009-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2009-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -21,9 +21,10 @@ interface
 
 uses
   // Delphi
-  ComCtrls, StdCtrls, Controls, ExtCtrls, Classes, Windows,
+  ComCtrls, StdCtrls, Controls, ExtCtrls, Classes, Windows, ActnList,
   // Project
-  DB.USnippet, FmGenericViewDlg, UBaseObjects, USnippetIDs, USnippetsTVDraw;
+  DB.USnippet, FmGenericViewDlg, UBaseObjects, USearch, USnippetIDs,
+  USnippetsTVDraw;
 
 
 type
@@ -41,6 +42,9 @@ type
     tsDependsUpon: TTabSheet;
     tsRequiredBy: TTabSheet;
     tvDependencies: TTreeView;
+    btnSelectAndClose: TButton;
+    alSelectAndClose: TActionList;
+    actSelectAndClose: TAction;
     procedure FormDestroy(Sender: TObject);
     procedure lbDependentsDrawItem(Control: TWinControl; Index: Integer;
       Rect: TRect; State: TOwnerDrawState);
@@ -48,6 +52,8 @@ type
       Shift: TShiftState; X, Y: Integer);
     procedure tvDependenciesCollapsing(Sender: TObject; Node: TTreeNode;
       var AllowCollapse: Boolean);
+    procedure actSelectAndCloseExecute(Sender: TObject);
+    procedure actSelectAndCloseUpdate(Sender: TObject);
   public
     type
       TTabID = (tiDependsUpon, tiRequiredBy);
@@ -86,6 +92,8 @@ type
       fDependsList: TSnippetList; // List of dependencies to be displayed
       fTVDraw: TTVDraw;           // Customises appearance of tree view}
       fTabs: TTabIDs;
+      fCanSelect: Boolean;
+      fSearch: ISearch;
     procedure PopulateRequiredByList;
     procedure PopulateTreeView;
       {Populates treeview with nodes for each snippet in dependency list.
@@ -125,12 +133,19 @@ type
         @param DependsList [in] List of dependencies.
         @param Tabs [in] Tabs to be displayed in dialogue box.
       }
-    class procedure Execute(const AOwner: TComponent; const Snippet: TSnippet;
-      const Tabs: TTabIDs); overload;
+    class function Execute(const AOwner: TComponent; const Snippet: TSnippet;
+      const Tabs: TTabIDs; const PermitSelection: Boolean): ISearch;
+      overload;
       {Displays dialogue box containing details of a snippet's dependencies.
         @param AOwner [in] Component that owns the dialog box.
         @param Snippet [in] Snippet for which dependencies are to be displayed.
         @param Tabs [in] Tabs to be displayed in dialogue box.
+        @param PermitSelection [in] Determines whether listed dependencies can
+          be selected. When False this method always returns nil.
+        @returns A search object that can be used to select the dependent
+          snippets or nil if no snippets can be selected. The result is only non
+          nil if PermitSelection is True and the user chooses to make a
+          selection.
       }
   end;
 
@@ -142,12 +157,56 @@ uses
   // Delphi
   SysUtils, Graphics,
   // Project
-  DB.UMain, DB.USnippetKind, UBox, UColours, UFontHelper, UPreferences;
+  DB.UMain, DB.USnippetKind, UBox, UColours, UCtrlArranger, UFontHelper,
+  UPreferences;
 
 {$R *.dfm}
 
 
 { TDependenciesDlg }
+
+procedure TDependenciesDlg.actSelectAndCloseExecute(Sender: TObject);
+  {Creates a suitable search to select the snippets on the active tab when
+  the dialogue box is closed in response to the Select & Close button being
+  clicked.
+    @param Sender [in] Not used.
+  }
+var
+  Snippet: TSnippet;          // snippet for which dependencies required
+  Filter: IXRefSearchFilter;  // xref filter needed to select snippets
+begin
+  Snippet := Database.Snippets.Find(fSnippetID);
+  Assert(Assigned(Snippet),
+    ClassName + '.actSelectAndCloseExecute: Snippet id not found');
+  if pcBody.ActivePage = tsDependsUpon then
+  begin
+    Filter := TSearchFilterFactory.CreateXRefSearchFilter(
+      Snippet, [soRequired, soRequiredRecurse]
+    );
+  end
+  else {pcBody.ActivePage = tsRequiredBy}
+  begin
+    Filter := TSearchFilterFactory.CreateXRefSearchFilter(
+      Snippet, [soRequiredReverse]
+    );
+  end;
+  fSearch := TSearchFactory.CreateSearch(Filter);
+end;
+
+procedure TDependenciesDlg.actSelectAndCloseUpdate(Sender: TObject);
+  {Updates visibility and enabled state of select-and-close action.
+    @param Sender [in] Select-and-close action that triggered the event.
+  }
+begin
+  (Sender as TAction).Visible := fCanSelect;
+  if fCanSelect then
+  begin
+    if pcBody.ActivePage = tsDependsUpon then
+      (Sender as TAction).Enabled := tvDependencies.Items.Count > 0
+    else {pcBody.ActivePage = tsRequiredBy}
+      (Sender as TAction).Enabled := lbDependents.Count > 0;
+  end;
+end;
 
 procedure TDependenciesDlg.AddDependencies(const Parent: TTreeNode;
   const DependsList: TSnippetList);
@@ -181,6 +240,9 @@ procedure TDependenciesDlg.ArrangeForm;
   }
 begin
   inherited;
+  // Position extra button in bottom button line
+  TCtrlArranger.MoveToLeftOf(btnClose, btnSelectAndClose, 16);
+  btnSelectAndClose.Top := btnClose.Top;
   // Position "no dependencies" and "no dependents" message labels in form
   lblNoDependencies.Left :=
     (tsDependsUpon.ClientWidth - lblNoDependencies.Width) div 2;
@@ -242,6 +304,8 @@ begin
   // Hide list box, revealing "no dependents" label if no dependents
   if lbDependents.Count = 0 then
     lbDependents.Visible := False;
+  // Set default search result
+  fSearch := nil;
 end;
 
 procedure TDependenciesDlg.DisplayCircularRefWarning;
@@ -251,10 +315,26 @@ begin
   lblCircularRef.Visible := True;
 end;
 
-class procedure TDependenciesDlg.Execute(const AOwner: TComponent;
-  const Snippet: TSnippet; const Tabs: TTabIDs);
+class function TDependenciesDlg.Execute(const AOwner: TComponent;
+  const Snippet: TSnippet; const Tabs: TTabIDs; const PermitSelection: Boolean):
+  ISearch;
 begin
-  Execute(AOwner, Snippet.ID, Snippet.DisplayName, Snippet.Depends, Tabs);
+//  Execute(AOwner, Snippet.ID, Snippet.DisplayName, Snippet.Depends, Tabs);
+  Assert(Tabs <> [], ClassName + '.Execute: Tabs is []');
+  with InternalCreate(AOwner) do
+    try
+      fSnippetID := Snippet.ID;
+      fDisplayName := Snippet.DisplayName;
+      fDependsList := Snippet.Depends;
+      fTabs := Tabs;
+      fCanSelect := PermitSelection;
+      if ShowModal = mrOK then
+        Result := fSearch
+      else
+        Result := nil;
+    finally
+      Free;
+    end;
 end;
 
 class procedure TDependenciesDlg.Execute(const AOwner: TComponent;
@@ -268,6 +348,7 @@ begin
       fDisplayName := DisplayName;
       fDependsList := DependsList;
       fTabs := Tabs;
+      fCanSelect := False;
       ShowModal;
     finally
       Free;
