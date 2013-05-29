@@ -25,6 +25,13 @@ inherited DisplayPrefsFrame: TDisplayPrefsFrame
     Height = 13
     Caption = 'Heading colour for &user database items:'
   end
+  object lblSourceBGColour: TLabel
+    Left = 16
+    Top = 134
+    Width = 170
+    Height = 13
+    Caption = 'Background colour for &source code:'
+  end
   object cbOverviewTree: TComboBox
     Left = 192
     Top = -1
@@ -50,13 +57,13 @@ inherited DisplayPrefsFrame: TDisplayPrefsFrame
     Caption = 'Display newly added snippets && categories in new &tabs'
     TabOrder = 1
   end
-  object btnDefHeadingColours: TButton
+  object btnDefColours: TButton
     Left = 16
-    Top = 144
+    Top = 156
     Width = 192
     Height = 25
-    Caption = 'Use Default Heading &Colours'
+    Caption = 'Use Default &Colours'
     TabOrder = 3
-    OnClick = btnDefHeadingColoursClick
+    OnClick = btnDefColoursClick
   end
 end
