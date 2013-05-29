@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2012-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -35,9 +35,10 @@ type
     chkSnippetsInNewTab: TCheckBox;
     lblMainColour: TLabel;
     lblUserColour: TLabel;
-    btnDefHeadingColours: TButton;
+    btnDefColours: TButton;
+    lblSourceBGColour: TLabel;
     procedure chkHideEmptySectionsClick(Sender: TObject);
-    procedure btnDefHeadingColoursClick(Sender: TObject);
+    procedure btnDefColoursClick(Sender: TObject);
   strict private
     var
       ///  <summary>Flag indicating if changes affect UI.</summary>
@@ -46,6 +47,8 @@ type
       fMainColourDlg: TColorDialogEx;
       fUserColourBox: TColorBoxEx;
       fUserColourDlg: TColorDialogEx;
+      fSourceBGColourBox: TColorBoxEx;
+      fSourceBGColourDlg: TColorDialogEx;
     procedure SelectOverviewTreeState(const State: TOverviewStartState);
       {Selects combo box item associated with a overview treeview startup state.
         @param State [in] Startup state to be selected.
@@ -118,8 +121,10 @@ begin
   chkSnippetsInNewTab.Checked := Prefs.ShowNewSnippetsInNewTabs;
   fMainColourBox.Selected := Prefs.DBHeadingColours[False];
   fUserColourBox.Selected := Prefs.DBHeadingColours[True];
+  fSourceBGColourBox.Selected := Prefs.SourceCodeBGcolour;
   Prefs.DBHeadingCustomColours[False].CopyTo(fMainColourDlg.CustomColors, True);
   Prefs.DBHeadingCustomColours[True].CopyTo(fUserColourDlg.CustomColors, True);
+  Prefs.SourceCodeBGCustomColours.CopyTo(fSourceBGColourDlg.CustomColors, True);
 end;
 
 procedure TDisplayPrefsFrame.ArrangeControls;
@@ -129,14 +134,14 @@ begin
   TCtrlArranger.AlignLefts(
     [
       lblOverviewTree, chkHideEmptySections, chkSnippetsInNewTab,
-      lblMainColour, lblUserColour, btnDefHeadingColours
+      lblMainColour, lblUserColour, lblSourceBGColour, btnDefColours
     ],
     0
   );
   TCtrlArranger.AlignLefts(
-    [cbOverviewTree, fMainColourBox, fUserColourBox],
+    [cbOverviewTree, fMainColourBox, fUserColourBox, fSourceBGColourBox],
     TCtrlArranger.RightOf(
-      [lblOverviewTree, lblMainColour, lblUserColour],
+      [lblOverviewTree, lblMainColour, lblUserColour, lblSourceBGColour],
       8
     )
   );
@@ -153,18 +158,24 @@ begin
     TCtrlArranger.BottomOf([lblMainColour, fMainColourBox], 8),
     [lblUserColour, fUserColourBox]
   );
+  TCtrlArranger.AlignVCentres(
+    TCtrlArranger.BottomOf([lblUserColour, fUserColourBox], 8),
+    [lblSourceBGColour, fSourceBGColourBox]
+  );
   TCtrlArranger.MoveBelow(
-    [lblUserColour, fUserColourBox], btnDefHeadingColours, 12
+    [lblSourceBGColour, fSourceBGColourBox], btnDefColours, 12
   );
   chkHideEmptySections.Width := Self.Width - 16;
   chkSnippetsInNewTab.Width := Self.Width - 16;
 end;
 
-procedure TDisplayPrefsFrame.btnDefHeadingColoursClick(Sender: TObject);
+procedure TDisplayPrefsFrame.btnDefColoursClick(Sender: TObject);
 begin
-  // Restores default heading colours in colour combo boxes
+  // Restores default heading and source code background colours in colour
+  // combo boxes
   fMainColourBox.Selected := clMainSnippet;
   fUserColourBox.Selected := clUserSnippet;
+  fSourceBGColourBox.Selected := clSourceBg;
   fUIChanged := True;
 end;
 
@@ -187,7 +198,8 @@ constructor TDisplayPrefsFrame.Create(AOwner: TComponent);
     @param AOwner [in] Component that owns frame.
   }
 resourcestring
-  sColourDlgTitle = 'Heading Colour';
+  sHeadingColourDlgTitle = 'Heading Colour';
+  sSourceBGColourDlgTitle = 'Source Code Background Colour';
 var
   OTStateIdx: TOverviewStartState;  // loops thru each overview tree start state
 begin
@@ -200,9 +212,11 @@ begin
     );
   // Create colour dialogue boxes
   fMainColourDlg := TColorDialogEx.Create(Self);
-  fMainColourDlg.Title := sColourDlgTitle;
+  fMainColourDlg.Title := sHeadingColourDlgTitle;
   fUserColourDlg := TColorDialogEx.Create(Self);
-  fUserColourDlg.Title := sColourDlgTitle;
+  fUserColourDlg.Title := sHeadingColourDlgTitle;
+  fSourceBGColourDlg := TColorDialogEx.Create(Self);
+  fSourceBGColourDlg.Title := sSourceBGColourDlgTitle;
   // Create colour combo boxes
   fMainColourBox := CreateCustomColourBox(fMainColourDlg);
   fMainColourBox.TabOrder := 3;
@@ -210,6 +224,9 @@ begin
   fUserColourBox := CreateCustomColourBox(fUserColourDlg);
   fUserColourBox.TabOrder := 4;
   lblUserColour.FocusControl := fUserColourBox;
+  fSourceBGColourBox := CreateCustomColourBox(fSourceBGColourDlg);
+  fSourceBGColourBox.TabOrder := 5;
+  lblSourceBGColour.FocusControl := fSourceBGColourBox;
 end;
 
 function TDisplayPrefsFrame.CreateCustomColourBox(
@@ -242,11 +259,15 @@ begin
   );
   Prefs.DBHeadingColours[False] := fMainColourBox.Selected;
   Prefs.DBHeadingColours[True] := fUserColourBox.Selected;
+  Prefs.SourceCodeBGcolour := fSourceBGColourBox.Selected;
   Prefs.DBHeadingCustomColours[False].CopyFrom(
     fMainColourDlg.CustomColors, True
   );
   Prefs.DBHeadingCustomColours[True].CopyFrom(
     fUserColourDlg.CustomColors, True
+  );
+  Prefs.SourceCodeBGCustomColours.CopyFrom(
+    fSourceBGColourDlg.CustomColors, True
   );
 end;
 
