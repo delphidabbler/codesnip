@@ -212,7 +212,7 @@ begin
       end;
     // Adjust .pas-source class to use required background colour
     with CSSBuilder.Selectors['.' + THiliterCSS.GetMainCSSClassName] do
-      AddProperty(TCSS.BackgroundColorProp(clSourceBg));
+      AddProperty(TCSS.BackgroundColorProp(Preferences.SourceCodeBGcolour));
     with CSSBuilder.AddSelector('.comptable th') do
     begin
       AddProperty(TCSS.BackgroundColorProp(clCompTblHeadBg));
