@@ -5,15 +5,15 @@ CodeSnip: Historical update information from v0.1.0 to v3.0.0
 ================================================================================
 
 This file records known changes to files in CodeSnip from v0.1.0 and v3.0.0
-begore the project was placed was placed under version control with Subversion.
+before the project was placed was placed under version control with Subversion.
 
 There are three sections:
 
-  1: Releases: Lists all the releases of CodeSnip and notes which files were
-     added, updated or deleted in each release.
+  1: Releases: Lists the CodeSnip releases and notes which files were added,
+     updated or deleted in each release.
 
-  2: Files: Lists all source code and development tools and provides details of
-     changes to these files.
+  2: Files: Lists all source code files and development tools and provides
+     details of changes to these files.
 
   3: Compilers: Lists the compilers required to build each release.
 
@@ -31,7 +31,12 @@ release 3.0.0. For each release the following is noted:
 The Development tools, .bpg and .cfg files, test files and documentation are not
 included in this information.
 
-For details of changes to each release see ChangeLog.txt
+For details of changes in each release see the following change log files:
+
+  + ChangeLog-v0.txt for details of v0.1.0 to v0.11.1
+  + ChangeLog-v1.txt for details of v1.0 RC 1 to v1.9.4
+  + ChangeLog-v2.txt for details of v2.0.0 to v2.4.1
+  + ChangeLog-v3.txt for details of v3.0.0
 
 --------------------------------------------------------------------------------
 v0.1.0 (build 1) of 30 Jan 2005
@@ -3170,8 +3175,8 @@ Updated - Res\Misc\CodeSnip.manifest 1.2
 2: FILES
 ================================================================================
 
-This section lists all files for which update history is known between v0.1.0
-and v3.0.0, inclusive.
+This section lists all files for which the update history is known between
+v0.1.0 and v3.0.0, inclusive.
 
 --------------------------------------------------------------------------------
 DevTools\BuilAll.bat
