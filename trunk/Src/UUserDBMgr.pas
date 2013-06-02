@@ -249,9 +249,7 @@ end;
 
 class procedure TUserDBMgr.BackupDatabase(ParentCtrl: TComponent);
 var
-  FileName: string;             // name of backup file
   SaveDlg: TSaveDialogEx;       // save dialog box used to name backup file
-  UserDBBackup: TUserDBBackup;  // object used to perform backup
 resourcestring
   // Dialog box caption
   sCaption = 'Save Backup';
