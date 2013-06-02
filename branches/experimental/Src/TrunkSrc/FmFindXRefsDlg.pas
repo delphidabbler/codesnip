@@ -46,6 +46,8 @@ type
     chkRequiredRecurse: TCheckBox;
     chkSeeAlsoRecurse: TCheckBox;
     lblOverwriteSearch: TLabel;
+    chkSeeAlsoReverse: TCheckBox;
+    chkRequiredReverse: TCheckBox;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure SearchCheckClick(Sender: TObject);
@@ -85,7 +87,7 @@ type
   TXRefSearchParams:
     Object used to store persistent parameters for cross-reference search.
     Format in ini file is
-    + Whether to include base snippet in search in 'IncludeRoutine'
+    + Whether to include base snippet in search in 'IncludeSnippet'
     + Whether to include required snippets in search in 'Required'
     + Whether to recusively include required snippets in 'RequiredRecurse'
     + Whether to include "see also" snippets in search in 'SeeAlso'
@@ -145,7 +147,11 @@ begin
   // Horizontal alignment & sizing
   // Place snippet name after end of description label
   TCtrlArranger.AlignLefts(
-    [lblDesc, chkRequired, chkSeeAlso, chkIncludeSnippet, lblOverwriteSearch], 0
+    [
+      lblDesc, chkRequired, chkSeeAlso, chkIncludeSnippet, chkSeeAlsoReverse,
+      chkRequiredReverse, lblOverwriteSearch
+    ],
+    0
   );
   TCtrlArranger.AlignLefts([chkRequiredRecurse, chkSeeAlsoRecurse], 24);
   TCtrlArranger.MoveToRightOf(lblDesc, lblSnippetName);
@@ -161,14 +167,16 @@ begin
   TCtrlArranger.AlignVCentres(0, [lblDesc, lblSnippetName]);
   TCtrlArranger.MoveBelow([lblDesc, lblSnippetName], chkRequired, 12);
   TCtrlArranger.MoveBelow(chkRequired, chkRequiredRecurse, 6);
-  TCtrlArranger.MoveBelow(chkRequiredRecurse, chkSeeAlso, 12);
+  TCtrlArranger.MoveBelow(chkRequiredRecurse, chkRequiredReverse, 6);
+  TCtrlArranger.MoveBelow(chkRequiredReverse, chkSeeAlso, 16);
   TCtrlArranger.MoveBelow(chkSeeAlso, chkSeeAlsoRecurse, 6);
-  TCtrlArranger.MoveBelow(chkSeeAlsoRecurse, chkIncludeSnippet, 12);
+  TCtrlArranger.MoveBelow(chkSeeAlsoRecurse, chkSeeAlsoReverse, 6);
+  TCtrlArranger.MoveBelow(chkSeeAlsoReverse, chkIncludeSnippet, 16);
   if lblOverwriteSearch.Visible then
-    TCtrlArranger.MoveBelow(chkIncludeSnippet, lblOverwriteSearch, 12)
+    TCtrlArranger.MoveBelow(chkIncludeSnippet, lblOverwriteSearch, 16)
   else
     lblOverwriteSearch.SetBounds(0, 0, 0, 0); // hide from panel sizing
-  pnlBody.ClientHeight := TCtrlArranger.TotalControlHeight(pnlBody) + 4;
+  pnlBody.ClientHeight := TCtrlArranger.TotalControlHeight(pnlBody) + 8;
 
   // Inherited arrangement: will set dialog width based on body panel width
   inherited;
@@ -190,10 +198,14 @@ procedure TFindXRefsDlg.btnOKClick(Sender: TObject);
       Include(Result, soRequired);
     if chkRequiredRecurse.Checked then
       Include(Result, soRequiredRecurse);
+    if chkRequiredReverse.Checked then
+      Include(Result, soRequiredReverse);
     if chkSeeAlso.Checked then
       Include(Result, soSeeAlso);
     if chkSeeAlsoRecurse.Checked then
       Include(Result, soSeeAlsoRecurse);
+    if chkSeeAlsoReverse.Checked then
+      Include(Result, soSeeAlsoReverse);
     if chkIncludeSnippet.Checked then
       Include(Result, soIncludeSnippet);
   end;
@@ -280,8 +292,10 @@ begin
   // Check appropriate check boxes
   chkRequired.Checked := soRequired in fSearchParams.Options;
   chkRequiredRecurse.Checked := soRequiredRecurse in fSearchParams.Options;
+  chkRequiredReverse.Checked := soRequiredReverse in fSearchParams.Options;
   chkSeeAlso.Checked := soSeeAlso in fSearchParams.Options;
   chkSeeAlsoRecurse.Checked := soSeeAlsoRecurse in fSearchParams.Options;
+  chkSeeAlsoReverse.Checked := soSeeAlsoReverse in fSearchParams.Options;
   chkIncludeSnippet.Checked := soIncludeSnippet in fSearchParams.Options;
   // Update other controls per state of check boxes
   UpdateControls;
@@ -300,7 +314,8 @@ procedure TFindXRefsDlg.UpdateControls;
   {Updates state of controls.
   }
 begin
-  btnOK.Enabled := chkRequired.Checked or chkSeeAlso.Checked;
+  btnOK.Enabled := chkRequired.Checked or chkRequiredReverse.Checked
+    or chkSeeAlso.Checked or chkSeeAlsoReverse.Checked;
   chkRequiredRecurse.Enabled := chkRequired.Checked;
   chkSeeAlsoRecurse.Enabled := chkSeeAlso.Checked;
 end;
@@ -335,16 +350,20 @@ var
 begin
   Storage := Settings.ReadSection(ssFindXRefs);
   fOptions := [];
-  if Storage.GetBoolean('IncludeRoutine', True) then
+  if Storage.GetBoolean('IncludeSnippet', True) then
     Include(fOptions, soIncludeSnippet);
   if Storage.GetBoolean('Required', True) then
     Include(fOptions, soRequired);
   if Storage.GetBoolean('RequiredRecurse', False) then
     Include(fOptions, soRequiredRecurse);
+  if Storage.GetBoolean('RequiredReverse', False) then
+    Include(fOptions, soRequiredReverse);
   if Storage.GetBoolean('SeeAlso', False) then
     Include(fOptions, soSeeAlso);
   if Storage.GetBoolean('SeeAlsoRecurse', False) then
     Include(fOptions, soSeeAlsoRecurse);
+  if Storage.GetBoolean('SeeAlsoReverse', False) then
+    Include(fOptions, soSeeAlsoReverse);
 end;
 
 procedure TXRefSearchParams.SetOptions(const Value: TXRefSearchOptions);
@@ -385,11 +404,13 @@ begin
   // Create blank persistent storage object
   Storage := Settings.EmptySection(ssFindXRefs);
   // Record parameters
-  StoreOption('IncludeRoutine', soIncludeSnippet);
+  StoreOption('IncludeSnippet', soIncludeSnippet);
   StoreOption('Required', soRequired);
   StoreOption('RequiredRecurse', soRequiredRecurse);
+  StoreOption('RequiredReverse', soRequiredReverse);
   StoreOption('SeeAlso', soSeeAlso);
   StoreOption('SeeAlsoRecurse', soSeeAlsoRecurse);
+  StoreOption('SeeAlsoReverse', soSeeAlsoReverse);
   // Store data
   Storage.Save;
 end;

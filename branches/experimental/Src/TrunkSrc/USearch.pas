@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -164,8 +164,10 @@ type
   TXRefSearchOption = (
     soRequired,         // include required snippets in search results
     soRequiredRecurse,  // recursively find required snippets
+    soRequiredReverse,  // included snippets requiring original snippet
     soSeeAlso,          // include X-refs ("see also") in search results
     soSeeAlsoRecurse,   // recursively find X-refs
+    soSeeAlsoReverse,   // include snippets x-referencing original snippet
     soIncludeSnippet    // include original snippet in search results
   );
 
@@ -299,7 +301,7 @@ uses
   // Delphi
   SysUtils, Character,
   // Project
-  IntfCommon, UStrUtils;
+  DB.UMain, IntfCommon, UStrUtils;
 
 
 type
@@ -536,17 +538,30 @@ type
       fXRefs: TSnippetList;
     ///  <summary>Adds given snippet to list of x-refs if snippet is not already
     ///  in the list. Returns True if snippet added, False if not.</summary>
-    function AddToXRefs(const Snippet: TSnippet): Boolean;
-    ///  <summary>Adds all a snippet's required snippets to the x-ref list.
-    ///  </summary>
+    function AddToXRefs(const Snippet: TSnippet): Boolean; overload;
+    ///  <summary>Adds all snippets with all the given IDs to the x-ref list
+    ///  unless the snippet is already in the list.</summary>
+    procedure AddToXRefs(SnippetIDs: ISnippetIDList); overload;
+    ///  <summary>Adds all the given snippet's required snippets to the x-ref
+    ///  list.</summary>
     ///  <remarks>References are only added if appropriate search option is set.
     ///  </remarks>
     procedure ReferenceRequired(const Snippet: TSnippet);
-    ///  <summary>Adds all a snippet's required snippets to x-ref list.
+    ///  <summary>Adds all snippets that require (depend upon) the given snippet
+    ///  is selected.</summary>
+    ///  <remarks>References are only added if appropriate search option is set.
+    ///  </remarks>
+    procedure ReferenceReverseRequired(const Snippet: TSnippet);
+    ///  <summary>Adds all the given snippet's required snippets to x-ref list.
     ///  </summary>
-    ///  <remarks>These references are only added if appropriate search option
-    ///  is set.</remarks>
+    ///  <remarks>References are only added if appropriate search option is set.
+    ///  </remarks>
     procedure ReferenceSeeAlso(const Snippet: TSnippet);
+    ///  <summary>Adds all snippets that cross-reference the given snippet is
+    ///  selected.</summary>
+    ///  <remarks>References are only added if appropriate search option is set.
+    ///  </remarks>
+    procedure ReferenceReverseSeeAlso(const Snippet: TSnippet);
     ///  <summary>Adds a snippet to x-ref list if it is not already present.
     ///  Also recursively adds the snippet's all its cross-referenced snippets
     ///  if appropriate search options are set.</summary>
@@ -973,6 +988,19 @@ begin
     fXRefs.Add(Snippet);
 end;
 
+procedure TXRefSearchFilter.AddToXRefs(SnippetIDs: ISnippetIDList);
+var
+  SnippetID: TSnippetID;
+  Snippet: TSnippet;
+begin
+  for SnippetID in SnippetIDs do
+  begin
+    Snippet := Database.Snippets.Find(SnippetID);
+    if Assigned(Snippet) then
+      AddToXRefs(Snippet);
+  end;
+end;
+
 constructor TXRefSearchFilter.Create(const BaseSnippet: TSnippet;
   const Options: TXRefSearchOptions);
 begin
@@ -1014,7 +1042,9 @@ begin
   Assert(Assigned(fXRefs), ClassName + '.Initialise: fXRefs is nil');
   fXRefs.Clear;
   ReferenceRequired(fBaseSnippet);
+  ReferenceReverseRequired(fBaseSnippet);
   ReferenceSeeAlso(fBaseSnippet);
+  ReferenceReverseSeeAlso(fBaseSnippet);
   if soIncludeSnippet in fOptions then
     AddToXRefs(fBaseSnippet);
 end;
@@ -1044,6 +1074,20 @@ begin
   if soRequired in fOptions then
     for Idx := 0 to Pred(Snippet.Depends.Count) do
       ReferenceSnippet(Snippet.Depends[Idx]);
+end;
+
+procedure TXRefSearchFilter.ReferenceReverseRequired(const Snippet: TSnippet);
+begin
+  if not (soRequiredReverse in fOptions) then
+    Exit;
+  AddToXRefs((Database as IDatabaseEdit).GetDependents(Snippet));
+end;
+
+procedure TXRefSearchFilter.ReferenceReverseSeeAlso(const Snippet: TSnippet);
+begin
+  if not (soSeeAlsoReverse in fOptions) then
+    Exit;
+  AddToXRefs((Database as IDatabaseEdit).GetReferrers(Snippet));
 end;
 
 procedure TXRefSearchFilter.ReferenceSeeAlso(const Snippet: TSnippet);

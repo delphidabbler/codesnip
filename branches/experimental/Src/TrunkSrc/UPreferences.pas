@@ -161,6 +161,28 @@ type
     property DBHeadingCustomColours[UserDefined: Boolean]: IStringList
       read GetDBHeadingCustomColours write SetDBHeadingCustomColours;
 
+    ///  <summary>Gets colour used for background of source code in main
+    ///  display.</summary>
+    function GetSourceCodeBGColour: TColor;
+    ///  <summary>Sets colour used for background of source code in main
+    ///  display.</summary>
+    procedure SetSourceCodeBGColour(const Value: TColor);
+    ///  <summary>Colour used for background of source code in main display.
+    ///  </summary>
+    property SourceCodeBGColour: TColor
+      read GetSourceCodeBGColour write SetSourceCodeBGColour;
+
+    ///  <summary>Gets custom colours available for use as background colour of
+    ///  source code in main display as a string list.</summary>
+    function GetSourceCodeBGCustomColours: IStringList;
+    ///  <summary>Sets custom colours available for use as background colour of
+    ///  source code in main display from given string list.</summary>
+    procedure SetSourceCodeBGCustomColours(Value: IStringList);
+    ///  <summary>Records custom colours available for use as background colour
+    ///  of source code in main display as a string list.</summary>
+    property SourceCodeBGCustomColours: IStringList
+      read GetSourceCodeBGCustomColours write SetSourceCodeBGCustomColours;
+
     ///  <summary>Gets default print options.</summary>
     function GetPrinterOptions: TPrintOptions;
     ///  <summary>Sets default print options.</summary>
@@ -327,6 +349,12 @@ type
       ///  either online database (UserDefined = False) or user database
       ///  (UserDefined = True).</summary>
       fDBHeadingCustomColours: array[Boolean] of IStringList;
+      ///  <summary>Records colour used for background of source code in main
+      ///  display.</summary>
+      fSourceCodeBGColour: TColor;
+      ///  <summary>Records custom colours available for use as background
+      ///  colour of source code in main display.</summary>
+      fSourceCodeBGCustomColours: IStringList;
       ///  <summary>Default print options.</summary>
       fPrinterOptions: TPrintOptions;
       ///  <summary>Default printer page margins.</summary>
@@ -474,6 +502,26 @@ type
     ///  <remarks>Method of IPreferences.</remarks>
     procedure SetDBHeadingCustomColours(UserDefined: Boolean;
       Value: IStringList);
+
+    ///  <summary>Gets colour used for background of source code in main
+    ///  display.</summary>
+    ///  <remarks>Method of IPreferences.</remarks>
+    function GetSourceCodeBGColour: TColor;
+
+    ///  <summary>Sets colour used for background of source code in main
+    ///  display.</summary>
+    ///  <remarks>Method of IPreferences.</remarks>
+    procedure SetSourceCodeBGColour(const Value: TColor);
+
+    ///  <summary>Gets custom colours available for use as background colour of
+    ///  source code in main display as a string list.</summary>
+    ///  <remarks>Method of IPreferences.</remarks>
+    function GetSourceCodeBGCustomColours: IStringList;
+
+    ///  <summary>Sets custom colours available for use as background colour of
+    ///  source code in main display from given string list.</summary>
+    ///  <remarks>Method of IPreferences.</remarks>
+    procedure SetSourceCodeBGCustomColours(Value: IStringList);
 
     ///  <summary>Gets default print options.</summary>
     ///  <remarks>Method of IPreferences.</remarks>
@@ -650,6 +698,8 @@ begin
   Self.fDBHeadingCustomColours[False] := SrcPref.DBHeadingCustomColours[False];
   Self.fDBHeadingColours[True] := SrcPref.DBHeadingColours[True];
   Self.fDBHeadingCustomColours[True] := SrcPref.DBHeadingCustomColours[True];
+  Self.fSourceCodeBGColour := SrcPref.SourceCodeBGColour;
+  Self.fSourceCodeBGCustomColours := SrcPref.SourceCodeBGCustomColours;
   Self.fPrinterOptions := SrcPref.PrinterOptions;
   Self.fPrinterPageMargins := SrcPref.PrinterPageMargins;
   Self.SetHiliteAttrs(SrcPref.HiliteAttrs);
@@ -757,6 +807,16 @@ begin
   Result := fShowNewSnippetsInNewTabs;
 end;
 
+function TPreferences.GetSourceCodeBGColour: TColor;
+begin
+  Result := fSourceCodeBGColour;
+end;
+
+function TPreferences.GetSourceCodeBGCustomColours: IStringList;
+begin
+  Result := fSourceCodeBGCustomColours;
+end;
+
 function TPreferences.GetSourceCommentStyle: TCommentStyle;
 begin
   Result := fSourceCommentStyle;
@@ -860,6 +920,16 @@ begin
   fShowNewSnippetsInNewTabs := Value;
 end;
 
+procedure TPreferences.SetSourceCodeBGColour(const Value: TColor);
+begin
+  fSourceCodeBGColour := Value;
+end;
+
+procedure TPreferences.SetSourceCodeBGCustomColours(Value: IStringList);
+begin
+  fSourceCodeBGCustomColours := Value;
+end;
+
 procedure TPreferences.SetSourceCommentStyle(const Value: TCommentStyle);
 begin
   fSourceCommentStyle := Value;
@@ -907,6 +977,8 @@ begin
   NewPref.DBHeadingCustomColours[False] := Self.fDBHeadingCustomColours[False];
   NewPref.DBHeadingColours[True] := Self.fDBHeadingColours[True];
   NewPref.DBHeadingCustomColours[True] := Self.fDBHeadingCustomColours[True];
+  NewPref.SourceCodeBGColour := Self.fSourceCodeBGColour;
+  NewPref.SourceCodeBGCustomColours := Self.fSourceCodeBGCustomColours;
   NewPref.PrinterOptions := Self.fPrinterOptions;
   NewPref.PrinterPageMargins := Self.fPrinterPageMargins;
   NewPref.HiliteAttrs := Self.GetHiliteAttrs;
@@ -951,11 +1023,17 @@ begin
   fDBHeadingColours[True] := TColor(
     Storage.GetInteger('UserDBHeadingColour', clUserSnippet)
   );
+  fSourceCodeBGColour := TColor(
+    Storage.GetInteger('SourceCodeBGColour', clSourceBg)
+  );
   fDBHeadingCustomColours[False] := Storage.GetStrings(
     'MainDBHeadingCustomColourCount', 'MainDBHeadingCustomColour%d'
   );
   fDBHeadingCustomColours[True] := Storage.GetStrings(
     'UserDBHeadingCustomColourCount', 'UserDBHeadingCustomColour%d'
+  );
+  fSourceCodeBGCustomColours := Storage.GetStrings(
+    'SourceCodeBGCustomColourCount', 'SourceCodeBGCustomColour%d'
   );
 
   // Read source code section
@@ -1031,6 +1109,7 @@ begin
   Storage.SetBoolean('ShowNewSnippetsInNewTabs', fShowNewSnippetsInNewTabs);
   Storage.SetInteger('MainDBHeadingColour', fDBHeadingColours[False]);
   Storage.SetInteger('UserDBHeadingColour', fDBHeadingColours[True]);
+  Storage.SetInteger('SourceCodeBGColour', fSourceCodeBGColour);
   Storage.SetStrings(
     'MainDBHeadingCustomColourCount',
     'MainDBHeadingCustomColour%d',
@@ -1040,6 +1119,11 @@ begin
     'UserDBHeadingCustomColourCount',
     'UserDBHeadingCustomColour%d',
     fDBHeadingCustomColours[True]
+  );
+  Storage.SetStrings(
+    'SourceCodeBGCustomColourCount',
+    'SourceCodeBGCustomColour%d',
+    fSourceCodeBGCustomColours
   );
   Storage.Save;
 

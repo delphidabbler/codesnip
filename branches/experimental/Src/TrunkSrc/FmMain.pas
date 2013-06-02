@@ -1202,12 +1202,16 @@ begin
 end;
 
 procedure TMainForm.actViewDependenciesExecute(Sender: TObject);
+var
+  Search: ISearch;
 begin
   Assert(Supports(fMainDisplayMgr.CurrentView, ISnippetView),
     ClassName + '.actViewDependenciesExecute: Snippet view expected');
-  fDialogMgr.ShowDependenciesDlg(
-    (fMainDisplayMgr.CurrentView as ISnippetView).Snippet
+  Search := fDialogMgr.ShowDependenciesDlg(
+    (fMainDisplayMgr.CurrentView as ISnippetView).Snippet, 'DependenciesDlg'
   );
+  if Assigned(Search) then
+    DoSearchFilter(Search);
 end;
 
 procedure TMainForm.actViewDependenciesUpdate(Sender: TObject);

@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -20,77 +20,6 @@ unit DBIO.UFileIOIntf;
 interface
 
 
-{*******************************************************************************
-*                                                                              *
-* Conceptually we treat the codesnip database as having the following tables:  *
-*                                                                              *
-* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ *
-* Categories - details of each category of snippets                            *
-* ---------------------------------------------------------------------------- *
-* Category        | Name or ID of category (primary key)                       *
-* Description     | Description of category                                    *
-* UserDefined     | Indicates if snippet is user-defined                       *
-* ---------------------------------------------------------------------------- *
-* Note)   Categories has a one-many relationship with Snippets                 *
-* ============================================================================ *
-*                                                                              *
-* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ *
-* Snippets - details of each snippet                                           *
-* ---------------------------------------------------------------------------- *
-* Name            | Pascal Name of snippet (primary key)                       *
-* Category        | Name of category snippet belongs to                        *
-* Description     | Description of purpose of snippet                          *
-* SourceCode      | Snippet's source code                                      *
-* Comments        | Additional comments about snippets                         *
-* Credits         | Any credits - any URL link text delimited by [ ]           *
-* CreditsURL      | Any URL associated with credits                            *
-* Compatibility   | String of characters describing compiler compatibility     *
-* UserDefined     | Indicates if snippet is user-defined                       *
-* StandardFormat  | Indicates if snippet is in standard format                 *
-* ---------------------------------------------------------------------------- *
-* Note 1) Snippets have a many-many relationship with same table, both for     *
-*         dependency lists and cross-reference lists.                          *
-* Note 2) Snippets have a many-many relationship with units.                   *
-* ============================================================================ *
-*                                                                              *
-* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ *
-* Units - names of required units                                              *
-* ---------------------------------------------------------------------------- *
-* Unit             | Name of unit (primary key)                                *
-* ---------------------------------------------------------------------------- *
-* Note)   There is no other information in this table - so we may omit it      *
-* ============================================================================ *
-*                                                                              *
-* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ *
-* SnippetUnits - map of snippets to units                                      *
-* ---------------------------------------------------------------------------- *
-* SnippetName      | Name of snippet                                           *
-* UnitName         | Name of unit                                              *
-* ============================================================================ *
-*                                                                              *
-* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ *
-* SnippetXRef - map of snippets to cross-referenced snippets                   *
-* ---------------------------------------------------------------------------- *
-* SnippetName      | Name of snippet                                           *
-* XRefSnippetName  | Name of cross referenced snippet                          *
-* ============================================================================ *
-*                                                                              *
-* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ *
-* SnippetDepends - map of snippets to the snippets they depend upon            *
-* ---------------------------------------------------------------------------- *
-* SnippetName      | Name of snippet                                           *
-* RequiredSnippet  | Name of required snippet                                  *
-* ============================================================================ *
-*                                                                              *
-* Any object that is to be used to read a database must implement the          *
-* IDataReader interface.                                                       *
-*                                                                              *
-* Any object that is to be used to write the user database must implement the  *
-* IDataWriter interface.                                                       *
-*                                                                              *
-*******************************************************************************}
-
-
 uses
   // Project
   DB.UCategory, DB.USnippet, UExceptions, UIStringList;
@@ -101,6 +30,8 @@ type
   IDataReader:
     Interface that defines operations that must be implemented by objects that
     read the CodeSnip and/or user database.
+    NOTE: Any object that is to be used to read a database must implement this
+    interface.
   }
   IDataReader = interface(IInterface)
     ['{72A8EAD4-05CE-41BF-AE0F-33495757BBFC}']
@@ -152,6 +83,8 @@ type
   IDataWriter:
     Interface that defines operations that must be implemented by objects that
     write user database.
+    NOTE: Any object that is to be used to write the user database must
+    implement this interface.
   }
   IDataWriter = interface(IInterface)
     ['{71E892C4-6E0F-480A-9DF4-70835F83A0CA}']
