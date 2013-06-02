@@ -126,6 +126,12 @@ type
       {Checks if list contains any duplicate items.
         @return True if list contains duplicates, False if not.
       }
+
+    // TODO: comment this new method
+    // NOTE: implementing this saves interim creation of another TList<T> object
+    // as would happen in base class implementation in TEnumerable<T>
+    function ToArray: TArray<T>; override; final;
+
     property Count: Integer read GetCount;
       {Number of items in list}
     property PermitDuplicates: Boolean read fPermitDuplicates
@@ -719,6 +725,11 @@ begin
   if not Value and ContainsDuplicates then
     raise EListError.Create(sOrderedListPermitDuplicatesError);
   fPermitDuplicates := Value;
+end;
+
+function TSortedList<T>.ToArray: TArray<T>;
+begin
+  Result := fList.ToArray;
 end;
 
 { TSortedObjectList<T> }
