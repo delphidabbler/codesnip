@@ -15,6 +15,7 @@ Release v4.6.0 of 02 June 2013
 + Added new options to "Find Cross References" dialogue box to allow snippets that either cross reference or depend upon the selected snippet to be included in the search. This implements feature request #30 (http://bit.ly/13cYImA).
 + Added a new "Select and Close" button to the Dependencies dialogue box that causes the snippets displayed on the current tab to be selected in the main display. This implements feature request #77 (http://bit.ly/15s8fH2).
 + The background colour of source code displayed in the main display can now be customised via a new option on the Display tab of the Preferences dialogue box. This implements feature request #36 (http://bit.ly/17fxMGW).
++ CodeSnip now compiled with Delphi XE.
 + Per-user configuration file format changed to v15 which is not entirely compatible with previous versions of CodeSnip.
 + Updated help file re changes.
 
