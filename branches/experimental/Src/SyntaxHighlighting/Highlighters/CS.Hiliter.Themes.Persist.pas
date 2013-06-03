@@ -195,6 +195,7 @@ begin
   SB := TStringBuilder.Create;
   try
     SB.AppendLine(Watermark);
+    SB.AppendLine;
     for Theme in Themes do
     begin
       // Don't save built-in themes
@@ -245,7 +246,7 @@ var
     SL := TIStringList.Create;
     for FontStyle in FontStyles do
       SL.Add(FontStyleMap[FontStyle]);
-    Result := '{' + SL.GetText(',', False);
+    Result := '{' + SL.GetText(',', False) + '}';
   end;
 
 begin
