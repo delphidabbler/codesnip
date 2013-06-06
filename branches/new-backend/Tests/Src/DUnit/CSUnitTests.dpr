@@ -62,7 +62,6 @@ uses
   DB.UCookies in '..\..\..\Src\Experimental\DB.UCookies.pas',
   DB.UDataItem in '..\..\..\Src\Experimental\DB.UDataItem.pas',
   DB.UDataPool in '..\..\..\Src\Experimental\DB.UDataPool.pas',
-  UBaseObjects in '..\..\..\Src\UBaseObjects.pas',
   UExceptions in '..\..\..\Src\UExceptions.pas',
   DB.UDatabase in '..\..\..\Src\Experimental\DB.UDatabase.pas',
   TestDBUDatabase in 'TestDBUDatabase.pas',
@@ -81,7 +80,8 @@ uses
   DB.USnippetKindGroup in '..\..\..\Src\Experimental\DB.USnippetKindGroup.pas',
   TestDBUSnippetKindGroup in 'TestDBUSnippetKindGroup.pas',
   UStructs in '..\..\..\Src\UStructs.pas',
-  USingleton in '..\..\..\Src\USingleton.pas';
+  USingleton in '..\..\..\Src\USingleton.pas',
+  UBaseObjects in '..\..\..\Src\Experimental\UBaseObjects.pas';
 
 {$R *.RES}
 

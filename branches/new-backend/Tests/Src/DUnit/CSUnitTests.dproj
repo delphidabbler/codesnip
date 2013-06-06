@@ -34,7 +34,6 @@
 			<DCCReference Include="..\..\..\Src\Experimental\DB.UCookies.pas"/>
 			<DCCReference Include="..\..\..\Src\Experimental\DB.UDataItem.pas"/>
 			<DCCReference Include="..\..\..\Src\Experimental\DB.UDataPool.pas"/>
-			<DCCReference Include="..\..\..\Src\UBaseObjects.pas"/>
 			<DCCReference Include="..\..\..\Src\UExceptions.pas"/>
 			<DCCReference Include="..\..\..\Src\Experimental\DB.UDatabase.pas"/>
 			<DCCReference Include="TestDBUDatabase.pas"/>
@@ -54,6 +53,7 @@
 			<DCCReference Include="TestDBUSnippetKindGroup.pas"/>
 			<DCCReference Include="..\..\..\Src\UStructs.pas"/>
 			<DCCReference Include="..\..\..\Src\USingleton.pas"/>
+			<DCCReference Include="..\..\..\Src\Experimental\UBaseObjects.pas"/>
 			<BuildConfiguration Include="Base">
 				<Key>Base</Key>
 			</BuildConfiguration>
