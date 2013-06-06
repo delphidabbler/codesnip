@@ -39,7 +39,6 @@
 			<DCCReference Include="..\..\..\Src\Experimental\DB.UDatabase.pas"/>
 			<DCCReference Include="TestDBUDatabase.pas"/>
 			<DCCReference Include="..\..\..\Src\UContainers.pas"/>
-			<DCCReference Include="TestUContainers.pas"/>
 			<DCCReference Include="..\..\..\Src\Experimental\DB.UObjectDestructionMgr.pas"/>
 			<DCCReference Include="TestDBUObjectDestructionMgr.pas"/>
 			<DCCReference Include="..\..\..\Src\Experimental\DB.USnippet.pas"/>
