@@ -1,0 +1,70 @@
+﻿► CodeSnip Syntax Highlight Themes v1 ◄
+
+# ------------------------------------------------------------------------------
+# This Source Code Form is subject to the terms of the Mozilla Public License,
+# v. 2.0. If a copy of the MPL was not distributed with this file, You can
+# obtain one at http://mozilla.org/MPL/2.0/
+#
+# Copyright (C) 2013, Peter Johnson (www.delphidabbler.com).
+#
+# $Rev$
+# $Date$
+#
+# Defines built in syntax highlighter themes.
+#
+# Must be included in program resources in UTF-8 format.
+# ------------------------------------------------------------------------------
+
+
+Theme Test My Test Theme
+  
+  # this is the first test theme
+  Brush *
+    Attr Assembler          *,*,{}
+    Attr Comment            *,*,{italic}
+    Attr Preprocessor       *,*,{italic}
+    Attr Identifier         *,*,{}
+    Attr ReservedWord       *,*,{bold}
+    Attr Number             *,*,{}
+    Attr Float              *,*,{}
+    Attr Hexadecimal        *,*,{}
+    Attr Space              *,*,{}
+    Attr String             *,*,{}
+    Attr Character          *,*,{}
+    Attr Symbol             *,*,{}
+    # a bit weird this next one
+    Attr NonreservedKeyword *,*,{bold}
+    Attr Event              *,*,{}
+  Brush ObjectPascal
+    Attr Assembler          *,*,*
+    Attr Comment            *,008000,{italic}
+    Attr Preprocessor       *,808000,{}
+    Attr Identifier         *,*,{}
+    Attr ReservedWord       *,800000,{bold}
+    Attr Number             *,FF0000,{}
+    Attr Float              *,FF0000,{}
+    Attr Hexadecimal        *,FF0000,{}
+    Attr Space              *,*,*
+    Attr String             *,FF0000,{}
+    Attr Character          *,800080,{}
+    Attr Symbol             *,*,{}
+  Brush JavaScript
+    Attr Comment            *,008000,*
+    Attr Identifier         *,*,{}
+    Attr ReservedWord       *,800000,{bold}
+    Attr NonreservedKeyword *,8515C7,{bold}
+    Attr Event              AAE8EE,*,{}
+    Attr Number             *,FF0000,{}
+    Attr Space              *,*,{}
+    Attr String             *,FF0000,{}
+    Attr Symbol             *,*,{}
+
+Theme Test3 My Empty Theme
+    
+Theme Test2 My 2nd Test Theme 
+  Brush *
+    Attr Comment            FF00FF,*,{bold,italic,underline}
+  Brush ObjectPascal
+    Attr Comment            FFFF00,*,*
+    
+  Brush JavaScript  
