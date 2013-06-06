@@ -28,7 +28,6 @@
 				<MainSource>MainSource</MainSource>
 			</DelphiCompile>
 			<DCCReference Include="TestUBaseObjects.pas"/>
-			<DCCReference Include="TestUSingleton.pas"/>
 			<DCCReference Include="TestDBUCookies.pas"/>
 			<DCCReference Include="TestDBUDataItem.pas"/>
 			<DCCReference Include="TestDBUDataPool.pas"/>

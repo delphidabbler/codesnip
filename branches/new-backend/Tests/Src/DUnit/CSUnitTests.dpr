@@ -56,7 +56,6 @@ uses
   GUITestRunner,
   TextTestRunner,
   TestUBaseObjects in 'TestUBaseObjects.pas',
-  TestUSingleton in 'TestUSingleton.pas',
   TestDBUCookies in 'TestDBUCookies.pas',
   TestDBUDataItem in 'TestDBUDataItem.pas',
   TestDBUDataPool in 'TestDBUDataPool.pas',
