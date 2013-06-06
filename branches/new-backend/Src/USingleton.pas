@@ -1,5 +1,12 @@
 {
- * USingleton.pas
+ * This Source Code Form is subject to the terms of the Mozilla Public License,
+ * v. 2.0. If a copy of the MPL was not distributed with this file, You can
+ * obtain one at http://mozilla.org/MPL/2.0/
+ *
+ * Copyright (C) 2010-2012, Peter Johnson (www.delphidabbler.com).
+ *
+ * $Rev$
+ * $Date$
  *
  * Provides a base class for singleton objects along with a manager object that
  * records instances of each type of singleton.
@@ -9,34 +16,6 @@
  * constructor and destructor etc. Further updated to use class types instead of
  * class names as dictionary keys following suggestions made in comments on my
  * blog post at <URL:http://bit.ly/d8n9Hq>.
- *
- * $Rev$
- * $Date$
- *
- * ***** BEGIN LICENSE BLOCK *****
- *
- * Version: MPL 1.1
- *
- * The contents of this file are subject to the Mozilla Public License Version
- * 1.1 (the "License"); you may not use this file except in compliance with the
- * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
- *
- * Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
- * the specific language governing rights and limitations under the License.
- *
- * The Original Code is USingleton.pas
- *
- * The Initial Developer of the Original Code is Peter Johnson
- * (http://www.delphidabbler.com/).
- *
- * Portions created by the Initial Developer are Copyright (C) 2010 Peter
- * Johnson. All Rights Reserved.
- *
- * Contributor(s)
- *   NONE
- *
- * ***** END LICENSE BLOCK *****
 }
 
 
@@ -83,6 +62,24 @@ type
       {Creates a new instance of singleton if it doesn't exist. If singleton
       already exists returns existing instance.
         @return Singleton instance.
+      }
+    function QueryInterface(const IID: TGUID; out Obj): HResult; stdcall;
+      {Checks the specified interface is supported by this object. If so
+      reference to interface is passed out.
+        @param IID [in] Specifies interface being queried.
+        @param Obj [out] Reference to interface implementation or nil if not
+          supported.
+        @result S_OK if interface supported or E_NOINTERFACE if not supported.
+      }
+    function _AddRef: Integer; stdcall;
+      {Called by Delphi when interface is referenced. Reference count is not
+      updated.
+        @return -1.
+      }
+    function _Release: Integer; stdcall;
+      {Called by Delphi when interface reference goes out of scope. Reference
+      count is not updated and instance is never freed.
+        @return -1.
       }
   end;
 
@@ -211,6 +208,24 @@ begin
     end;
   end;
   Result := TSingletonManager.Lookup(Self);
+end;
+
+function TSingleton.QueryInterface(const IID: TGUID; out Obj): HResult;
+begin
+  if GetInterface(IID, Obj) then
+    Result := S_OK
+  else
+    Result := E_NOINTERFACE;
+end;
+
+function TSingleton._AddRef: Integer;
+begin
+  Result := -1;
+end;
+
+function TSingleton._Release: Integer;
+begin
+  Result := -1;
 end;
 
 { TSingletonManager }
