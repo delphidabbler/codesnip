@@ -64,7 +64,6 @@ uses
   DB.UDataPool in '..\..\..\Src\Experimental\DB.UDataPool.pas',
   UBaseObjects in '..\..\..\Src\UBaseObjects.pas',
   UExceptions in '..\..\..\Src\UExceptions.pas',
-  USingleton in '..\..\..\Src\Experimental\USingleton.pas',
   DB.UDatabase in '..\..\..\Src\Experimental\DB.UDatabase.pas',
   TestDBUDatabase in 'TestDBUDatabase.pas',
   UContainers in '..\..\..\Src\UContainers.pas',
@@ -82,7 +81,8 @@ uses
   DB.UInitialLetterGroup in '..\..\..\Src\Experimental\DB.UInitialLetterGroup.pas',
   DB.USnippetKindGroup in '..\..\..\Src\Experimental\DB.USnippetKindGroup.pas',
   TestDBUSnippetKindGroup in 'TestDBUSnippetKindGroup.pas',
-  UStructs in '..\..\..\Src\UStructs.pas';
+  UStructs in '..\..\..\Src\UStructs.pas',
+  USingleton in '..\..\..\Src\USingleton.pas';
 
 {$R *.RES}
 
