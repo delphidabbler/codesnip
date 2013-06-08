@@ -760,7 +760,7 @@ implementation
 uses
   // Delphi
   {$IFDEF RTLNameSpaces}
-  System.IniFiles, Winapi.MultiMon, Vcl.StdCtrls  Winapi.ActiveX, Winapi.ShlObj
+  System.IniFiles, Winapi.MultiMon, Vcl.StdCtrls, Winapi.ActiveX, Winapi.ShlObj
   {$IFDEF TScrollStyleMoved}
   , System.UITypes
   {$ENDIF}
@@ -1525,9 +1525,9 @@ function TPJWdwState.IniRootPath(const AIniRootDir: TPJWdwStateIniRootDir):
       @return Required directory.
     }
   begin
-    SetLength(Result, Windows.MAX_PATH);
+    SetLength(Result, MAX_PATH);
     SetLength(
-      Result, Windows.GetWindowsDirectory(PChar(Result), Windows.MAX_PATH)
+      Result, GetWindowsDirectory(PChar(Result), MAX_PATH)
     );
   end;
 
