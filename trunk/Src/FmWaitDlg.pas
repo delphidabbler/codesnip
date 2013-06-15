@@ -95,7 +95,7 @@ begin
   TFontHelper.SetDefaultBaseFont(lblCaption.Font);
   lblCaption.Height := StringExtent(lblCaption.Caption, lblCaption.Font).cy;
   // Create and locate marquee
-  fMarquee := TMarquee.Create(Self);
+  fMarquee := TMarquee.CreateInstance(Self);
   fMarquee.Parent := pnlMain;
   fMarquee.Left := 8;
   fMarquee.Width := pnlMain.ClientWidth - 16;
