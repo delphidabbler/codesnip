@@ -21,7 +21,7 @@ interface
 
 uses
   // Delphi
-  Classes, Controls, ComCtrls, ExtCtrls;
+  Classes, ComCtrls;
 
 
 type
@@ -64,7 +64,7 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Windows, Messages,
+  SysUtils, Messages, Controls, ExtCtrls,
   // Project
   USystemInfo, UThemesEx;
 
