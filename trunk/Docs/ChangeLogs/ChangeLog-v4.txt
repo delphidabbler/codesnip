@@ -11,6 +11,11 @@
 ; Change Log for CodeSnip Release 4
 ; ------------------------------------------------------------------------------
 
+Release v4.6.1 or 01 July 2013
++ Provided fix for un-reproduced bug #75 "Floating point error in 4.4.1" (http://bit.ly/12zAWSp) that apparently affects Windows 8, probably with IE 10 installed.
++ Fixed unreported bug where IE 10 browser was being reported as IE 9.
++ Fixed potential bug in code that processes class / advanced record snippet types ready for test compilation and inclusion in generated units.
+
 Release v4.6.0 of 02 June 2013
 + Added new options to "Find Cross References" dialogue box to allow snippets that either cross reference or depend upon the selected snippet to be included in the search. This implements feature request #30 (http://bit.ly/13cYImA).
 + Added a new "Select and Close" button to the Dependencies dialogue box that causes the snippets displayed on the current tab to be selected in the main display. This implements feature request #77 (http://bit.ly/15s8fH2).
