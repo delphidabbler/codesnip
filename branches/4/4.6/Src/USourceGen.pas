@@ -1380,12 +1380,19 @@ begin
         Temp := '';
         if not IsMethodKwd(Lexer.TokenStr) then
         begin
-          // must have tkKeyword of "class": record it and look for
+          // token is not method keyword - we're only interested if token is
+          // "class" so record token and go round again if not "class"
+          if not StrSameText(Lexer.TokenStr, 'class') then
+          begin
+            SB.Append(Lexer.TokenStr);
+            Continue;
+          end;
+          // must have "class" keyword: record it
           Temp := Lexer.TokenStr;
           // skip whitespace following "class"
           while Lexer.NextToken in WhiteSpaceTokens do
             Temp := Temp + Lexer.TokenStr;
-          // now look for one of method keywords "class" keyword
+          // now look for one of method keywords that can follow "class"
           if (Lexer.Token <> tkKeyword) and not IsMethodKwd(Lexer.TokenStr) then
           begin
             // didn't find method: record text read and go round again
@@ -1399,7 +1406,7 @@ begin
         // record following white space
         while Lexer.NextToken in WhiteSpaceTokens do
           Temp := Temp + Lexer.TokenStr;
-        // record pascal item after white space
+        // record item after white space
         Temp := Temp + Lexer.TokenStr;
         if not IsMethodName(Lexer)
           or not StrSameText(Lexer.TokenStr, ClassTypeName) then
