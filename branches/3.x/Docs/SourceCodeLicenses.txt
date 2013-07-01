@@ -58,19 +58,21 @@ license can be found in MPL.txt
 Third Party Source Code
 ================================================================================
 
-All third party and DelphiDabbler library code is stored in the "Src\3rdParty"
-directory. There are several such files:
+All third party code is stored in the "Src\3rdParty" directory. There are
+several such files:
 
 + GIFImage.pas
-  See below for license information
+  See below for license information.
+
 + PJMD5.pas
-  This is a DelphiDabbler library. The MPL 1.1 / GPL 2.0 / LGPL 2.1 tri license
-  applies. It derives from the RSA Data Security, Inc. MD5 Message-Digest
-  Algorithm. See below for the MD5 copyright notice.
-+ PJStreamWrapper.pas, PJVersionInfo.pas, PJWdwState.pas
-  These are DelphiDabbler libraries: the Mozilla Public License v1.1 applies.
-+ PJSysInfo.pas
   This is a DelphiDabbler library. The Mozilla Public License v2.0 applies.
+  The code derives from the RSA Data Security, Inc. MD5 Message-Digest
+  Algorithm. See below for the MD5 copyright statement.
+
++ PJStreamWrapper.pas, PJSysInfo.pas, PJVersionInfo.pas, PJWdwState.pas
+  These are all DelphiDabbler libraries. The Mozilla Public License v2.0
+  applies.
+
 + UEncrypt.pas
   Public domain.
 
