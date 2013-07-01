@@ -583,6 +583,9 @@ type
     ///  <remarks>Once initialisation is complete the splash window is cancelled
     ///  and the form is enabled.</remarks>
     procedure InitForm; override;
+    ///  <summary>Performs actions that need to run after the form is visible on
+    ///  screen.</summary>
+    procedure AfterShowForm; override;
   end;
 
 
@@ -1261,6 +1264,14 @@ begin
   fMainDisplayMgr.ShowWelcomePage;
 end;
 
+procedure TMainForm.AfterShowForm;
+begin
+  inherited;
+  // initialise display
+  fMainDisplayMgr.Initialise(fWindowSettings.OverviewTab);
+  fMainDisplayMgr.ShowWelcomePage;
+end;
+
 procedure TMainForm.appEventsHint(Sender: TObject);
 begin
   if Assigned(fStatusBarMgr) then
@@ -1470,9 +1481,10 @@ begin
     // Create dialogue box manager
     fDialogMgr := TDialogMgr.Create(Self);  // automatically freed
 
-    // Create and initialise display manager
+    // Create display manager
+    // NOTE: Don't display anything until after window has displayed (see
+    // AfterShowForm). This is to prevent any problems with IE 10 browser ctrl.
     fMainDisplayMgr := TMainDisplayMgr.Create(frmOverview, frmDetail);
-    fMainDisplayMgr.Initialise(fWindowSettings.OverviewTab);
 
     // Create status bar manager
     fStatusBarMgr := TStatusBarMgr.Create(sbStatusBar);
@@ -1575,9 +1587,6 @@ begin
     // Create favourites manager
     // *** Must be done AFTER database has loaded ***
     fFavouritesMgr := TFavouritesManager.Create(fNotifier);
-
-    // Display welcome page in details pane
-    fMainDisplayMgr.ShowWelcomePage;
 
     // Start notification display sub-system
     TNotificationDisplayMgr.Start(Self);
