@@ -1,0 +1,117 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<!--
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is snippet_routine.htm
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2009 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * ***** END LICENSE BLOCK *****
+-->
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text-html; charset=Windows-1252">
+    <title>
+      Routine Snippets
+    </title>
+    <link rel="stylesheet" href="../css/codesnip.css" type="text/css">
+  </head>
+  <body>
+    <object
+      type="application/x-oleobject"
+      classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e"
+    >
+      <param name="ALink Name" value="SnippetRoutine">
+    </object>
+    <h1>
+      <a name="snippet_routine"></a>Routine Snippets
+    </h1>
+    <p>
+      A routine snippet, defines exactly one Pascal procedure or function.
+      Methods are not permitted.
+    </p>
+    <p>
+      Each routine snippet begins with either the <strong>function</strong> or 
+      <strong>procedure</strong> keyword followed by a valid Pascal routine
+      prototype (see below). No source code or comments may not preceed the
+      <strong>function</strong> or <strong>procedure</strong> keywords. The
+      following directives may be included in the prototype.
+    </p>
+    <ul class="unspaced">
+      <li>
+        register
+      </li>
+      <li>
+        pascal
+      </li>
+      <li>
+        cdecl
+      </li>
+      <li>
+        stdcall
+      </li>
+      <li>
+        safecall
+      </li>
+      <li>
+        overload
+      </li>
+    </ul>
+    <p>
+      After the routine prototype there must be at least one space or newline
+      before the routine's implementation. Private functions, procedures, type
+      definitions, variables and constants are permitted.
+    </p>
+    <p>
+      A routine must be
+      fully implemented in Pascal &ndash; it can't be simply a DLL import.
+      Therefore the <strong>external</strong> and <strong>varargs</strong>
+      directives are not supported.
+    </p>
+    <p>
+      Here's an example of a valid routine snippet:
+    </p>
+<pre class="source-code">function MyFunc(const Param1, Param2: string): string; stdcall; 
+begin
+  Result := Param1 + ' - ' + Param2;
+end;</pre>
+    <p>
+      Routine snippets may refer to other routines,
+      <a href="snippet_type.htm">type definitions</a> or
+      <a href="snippet_constant.htm">constants</a>, providing they are defined
+      in Delphi units or elsewhere in the database. The snippet's units and
+      dependency references should indicate where to find referenced types,
+      constants and routines. Routine may not reference
+      <a href="snippet_freeform.htm">freeform</a> snippets.
+    </p>
+    <p>
+      It is important that the routine prototype is recognisable by
+      <em>CodeSnip</em> because it must be able to extract the prototype for
+      inclusion in a generated unit's interface section, amongst other things.
+    </p>
+    <h2>
+      Overloading
+    </h2>
+    <p>
+      You may use overloaded routines by creating a separate routine snippet for
+      each overloaded version of the routine. The <strong>overload</strong>
+      directive must be used. While the name of the routines used in the source
+      code must be the same for each overloaded routine, each snippet must be
+      given a unique name for use by the database.
+    </p>
+  </body>
+</html>

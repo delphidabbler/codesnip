@@ -1,0 +1,66 @@
+================================================================================
+
+Documentation of classes that access web-services on behalf of CodeSnip.
+
+================================================================================
+
+
+DelphiDabbler Standard Web Service
+--------------------------------------------------------------------------------
+
+A DelphiDabbler Standard Web Service object has the following attributes:
+
+* It connects to the web service over HTTP.
+
+* The correct user agent string for the service is used. Web services return
+  HTTP error 403 if the user agent is not valid. User agent strings *may* also
+  specify the version of the web service to be used.
+
+* Requests are made using HTTP Post. Information is POSTed to the web service
+  either in the form of URL encoded query strings or as raw post data. Which
+  format is used depends on web service.
+
+* Web services respond with plain text. The text is encoded as the default for
+  the server which defaults to ISO-8859-1.
+
+* The response text is split into lines by CRLF pairs. There is always at least
+  one line in a response. Any trailing CRLFs should be stripped from the
+  response text.
+
+* The first line of the response always contains a status code. A zero code
+  indicates success, while non-zero codes indicate an error. The meaning of the
+  error code is specific to the web service. Consult the documentation of the
+  service for details.
+
+* A successful response *may* include further information, starting from the
+  second line of the text. The meaning of this text depends on the web service.
+  Consult the documentation of the service for details.
+
+* An error response *must* include an error message starting from the second
+  line of the text. Error messages *may* have more than one line.
+
+The response format in ABNF is:
+
+  response = status_code [CRLF data] [CRLF]
+  status_code = success_code / error_code
+  success_code = "0"
+  error_code = ["-"] 1*DIGIT
+  data = data_line [CRLF data]
+  data_line = 0*[VCHAR | WSP]
+
+The class TDDabStdWebService provides core functionality for working with
+standard web services. In particular it:
+
+* Provides methods for posting data in the form of query strings to the web
+  service.
+
+* Handles the response, checking the status code. When an error code is received
+  an exception is raised using the error message from the response. In the case
+  of a successful response the status code line is stripped and the remaining
+  data made available for processing by descendant classes.
+
+
+--------------------------------------------------------------------------------
+$Rev$
+$Date$
+--------------------------------------------------------------------------------
