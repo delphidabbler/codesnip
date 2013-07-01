@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2012 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2013 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -397,6 +397,10 @@ type
     procedure InitForm; override;
       {Initialises form and creates and configures owned objects. Once
       initialisation is complete splash window is canclled and form enabled.
+      }
+    procedure AfterShowForm; override;
+      {Runs after form has been displayed. Used to select active tabs in
+      overview and detail panes.
       }
   end;
 
@@ -1269,6 +1273,15 @@ begin
   DisplayWelcomePage;
 end;
 
+procedure TMainForm.AfterShowForm;
+begin
+  inherited;
+    // select active tabs
+    // ** don't set fMainDisplayMgr.SelectedOverviewTab here: causes bug
+    fMainDisplayMgr.InitOverview(fWindowSettings.OverviewTab);
+    fMainDisplayMgr.SelectedDetailTab := fWindowSettings.DetailTab;
+end;
+
 procedure TMainForm.appEventsHint(Sender: TObject);
   {Handles hint events triggered when a control issues a hint. The hint is
   displayed in the status bar.
@@ -1478,10 +1491,8 @@ begin
 
     // Create display manager
     fMainDisplayMgr := TMainDisplayMgr.Create(frmOverview, frmDetail);
-    // select active tabs
-    // ** don't set fMainDisplayMgr.SelectedOverviewTab here: causes bug
-    fMainDisplayMgr.InitOverview(fWindowSettings.OverviewTab);
-    fMainDisplayMgr.SelectedDetailTab := fWindowSettings.DetailTab;
+    // ** NOTE: don't try to set active tab in detail pane here since it causes
+    //          a div by zero error in IE 10 browser control.
 
     // Create status bar manager
     fStatusBarMgr := TStatusBarMgr.Create(sbStatusBar);
