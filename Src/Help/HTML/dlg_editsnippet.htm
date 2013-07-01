@@ -1,21 +1,38 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
 <!--
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
- *
- * Copyright (C) 2008-2013, Peter Johnson (www.delphidabbler.com).
- *
  * $Rev$
  * $Date$
  *
- * Help topic for Snippets Editor.
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is dlg_editsnippet.htm
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2008-2013 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s):
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 -->
 <html>
   <head>
     <meta http-equiv="Content-Type" content="text-html; charset=Windows-1252">
     <title>
-      Add / Edit Snippet Dialogue Box
+      Add / Edit Snippet Dialog Box
     </title>
     <link rel="stylesheet" href="../css/codesnip.css" type="text/css">
   </head>
@@ -27,12 +44,15 @@
       <param name="ALink Name" value="SnippetsEditorDlg">
     </object>
     <h1>
-      <a name="dlg_editsnippet"></a>Add Snippet Dialogue Box<br>
-      Edit Snippet Dialogue Box
+      <a name="dlg_editsnippet"></a>
+      <img alt="Menu icon" src="../images/AddSnippet.gif" class="glyph">
+      Add Snippet Dialog Box<br>
+      <img alt="Menu icon" src="../images/EditSnippet.gif" class="glyph">
+      Edit Snippet Dialog Box
     </h1>
     <p>
-      This dialogue box is displayed when either the <em>Snippets | New
-      Snippet</em> or <em>Snippets | Edit Snippet</em> menu options are
+      This dialog box is displayed when either the <em>Database | Add
+      Snippet</em> or <em>Database | Edit Snippet</em> menu options are
       selected. It is used to enter details of a new user defined code snippet
       or to edit the details of an existing user-defined snippet.
     </p>
@@ -45,7 +65,7 @@
       Editing the snippet
     </h2>
     <p>
-      The dialogue has multiple tabs. All but the <em>Code</em> tab are optional
+      The dialog has multiple tabs. All but the <em>Code</em> tab are optional
       &ndash; others can be used to provide additional information about the
       snippet. However, if you plan to test compile the snippet you must ensure
       that the snippet's dependencies and units are properly set up on the
@@ -55,117 +75,64 @@
       Code Tab
     </h3>
     <p>
-      This tab gathers all the information needed to define a snippet. All the
+      This tab gathers all the information to uniquely define a snippet. All the
       fields are required. They are:
     </p>
     <ul>
       <li>
         <div>
-          <em>Name</em>
+          <em>Source code</em> text box.
         </div>
         <div>
-          Enter a name for the snippet in the edit box. The name must be a valid
-          Unicode Pascal identifier. It must also be unique within the user
-          database, it may duplicate names in the main database.
+          Enter the snippet's source code here. The format of the code is
+          important unless you are using the freeform snippet kind.
+        </div>
+      </li>
+      <li>
+        <div>
+          <em>Kind</em> drop down list.
+        </div>
+        <div>
+          Select the <a href="snippet_kinds.htm">kind of snippet</a> you are
+          editing.
+        </div>
+      </li>
+      <li>
+        <div>
+          <em>Description</em> edit box.
+        </div>
+        <div>
+          Enter a description of the code snippet here. This field should not
+          contain &quot;}&quot; characters since the field's text is used in
+          comments in exported Pascal code and the &quot;}&quot; character will
+          terminate the comment early.
+        </div>
+      </li>
+      <li>
+        <div>
+          <em>Name</em> edit box.
+        </div>
+        <div>
+          Give the code snippet a name here. Names must be valid Pascal
+          identifiers with the added restriction that they must start with one
+          of the English letters 'A'..'Z', 'a'..'z' or the underscore character.
+          Names must also be unique within the user database, although they may
+          duplicate names in the main database.
         </div>
         <div>
           It is customary to name functions or procedures using the routine's
           name. Overloaded routines are often named by suffixing the routine
-          name with '_A', '_B', '_C' and so on.
+          name with '_A', '_B' etc.
         </div>
       </li>
       <li>
         <div>
-          <em>Display Name</em>
+          <em>Category</em> drop down list.
         </div>
         <div>
-          Enter a display name for the snippet. When present this name will be
-          displayed in the main display instead of the snippet's name entered
-          above. This name may contain any characters and does not have to be
-          unique.
-        </div>
-        <div>
-          This is an optional entry. If it is not supplied the value of the
-          <em>Name</em> control is used as the display name.
-        </div>
-        <div>
-          The display name is useful where the entry in <em>Name</em> field does
-          not display well. For example overloaded snippets named
-          &quot;Foo&quot; may have names &quot;Foo_A&quot;, &quot;Foo_B&quot;,
-          &quot;Foo_C&quot; etc., which are not too friendly. To improve this
-          you could use display names like &quot;Foo (Integer overload)&quot;,
-          &quot;Foo (string overload)&quot;, &quot;Foo (Integer,string
-          overload)&quot; etc.
+          Select the category to which the snippet belongs.
         </div>
       </li>
-      <li>
-        <div>
-          <em>Description</em>
-        </div>
-        <div>
-          Enter a description of the code snippet in the
-          <a href="markup_editor.htm">markup editor</a>. You can use more than
-          one paragraph of text. You have the choice of styling the text and
-          using hyperlinks.
-        </div>
-        <div>
-          The description field should not contain &quot;}&quot; characters
-          since the field's text is used in comments in exported Pascal code and
-          the &quot;}&quot; character will terminate the comment early.
-        </div>
-        <div>
-          The description can be previewed using the <em>Preview</em> button.
-          Clicking this button also validates markup if you have used it.
-        </div>
-      </li>
-      <li>
-        <div>
-          <em>Kind</em>
-        </div>
-        <div>
-          Select the <a href="snippet_kinds.htm">kind of snippet</a> from the
-          drop down list.
-        </div>
-      </li>
-      <li>
-        <div>
-          <em>Category</em>
-        </div>
-        <div>
-          Select the category to which the snippet belongs from the drop down
-          list.
-        </div>
-      </li>
-      <li>
-        <div>
-          <em>Source code</em>
-        </div>
-        <div>
-          Enter the snippet's source code in this text box. The format of the
-          source code is important unless you are using the freeform snippet
-          kind. <a
-            href="snippet_kinds.htm"
-          >Learn more</a>.
-        </div>
-      </li>
-      <li>
-        <div>
-          <em>Syntax highlight this snippet as Pascal code</em>
-        </div>
-        <div>
-          Tick this box if your snippet is written in Pascal and you would like
-          the source to be syntax highlighted. Otherwise clear the box. Note
-          that the built in highlighter only understands Pascal code and will
-          not render code in other languages correctly.
-        </div>
-        <div>
-          If you prefer to turn off syntax highlighting completely go to the <a
-            href="dlg_prefs_hiliter.htm"
-          >Syntax Highlighter</a> tab of the <a
-            href="dlg_preferences.htm"
-          >Preferences</a> dialogue box, click the <em>Use Predefined
-          Styles</em> button and select the <em>No Highliter</em> option.
-        </div>
     </ul>
     <h3>
       References Tab
@@ -177,24 +144,15 @@
       completed if the snippet depends on a Delphi unit or if it uses another
       snippet from the database.
     </p>
-    <p>
-      The available controls are:
-    </p>
     <ul>
       <li>
         <div>
-          <em>Cross-references</em> list box
+          <em>Cross-references</em> check list box.
         </div>
         <div>
-          Use this list box to specify any other snippets to be cross-referenced
+          Use this list to specify any other snippets to be cross-referenced
           from this snippet. Check the boxes next to desired snippets. Cross
-          references are for information only. All snippets are listed, except
-          for the one being edited.
-        </div>
-        <div>
-          To deselect all cross-references right click the list box and select
-          the <em>Deselect All Cross-References</em> option from the context
-          menu.
+          references are for information only. All snippets are listed.
         </div>
         <div>
           User defined snippets are displayed in blue.
@@ -202,38 +160,21 @@
       </li>
       <li>
         <div>
-          <em>Dependencies</em> list box
+          <em>Dependencies</em> check list box.
         </div>
         <div>
           Specify any other snippets that this snippet depends upon by checking
-          the boxes next to the desired snippets in this list box. If this
-          snippet is to be test compiled then any other snippets it requires
-          must be specified here or the test compile will fail. The exception is
-          that <a href="snippet_unit.htm">unit snippets</a> never have any
-          dependencies.
+          the boxes next to the desired snippets. If this snippet is to be test
+          compiled then any other snippets it requires must be specified here or
+          the test compile will fail. The available entries in this list box
+          will vary according to the <a href="snippet_kinds.htm">snippet
+          kind</a>.
         </div>
         <div>
-          To deselect all dependencies right click the list box and select the
-          <em>Deselect All Dependencies</em> option from the context menu.
-        </div>
-        <div>
-          You can use the context menu to to see all dependencies for the
-          snippet being edited. This displayed the
-          <a href="dlg_dependencies_edit.htm">Dependencies dialogue box</a>.
-          All entries checked in the <em>Dependencies</em> list box are
-          included, along with all their own dependencies, and so on. You must
-          not create a circular dependency; the <em>Dependencies</em> dialogue
-          box will help you detect them.
-        </div>
-        <div>
-          The available entries in this list box will vary according to the
-          <a href="snippet_kinds.htm">snippet kind</a> and the kind of snippets
-          it can depend on. For example, <a href="snippet_constant.htm">constant
-          snippets</a> can't depend on <a href="snippet_routine.htm">routine</a>
-          snippets and <a href="snippet_unit.htm">unit snippets</a> can't depend
-          on anything, so the list is empty.
+          Routine snippets are not included in this list if the snippet being
+          edited is a constant or type definition.
           <a href="snippet_freeform.htm">Freeform</a> snippets are never
-          included.
+          included in this list.
         </div>
         <div>
           User defined snippets are displayed in blue.
@@ -241,31 +182,27 @@
       </li>
       <li>
         <div>
-          <em>Units</em> list box
+          <em>View Dependencies</em> button.
         </div>
         <div>
-          Select any units that this snippet requires in order to compile using
-          this list box. Required units must be specified if test compilation is
-          to be attempted. A selection of common units is provided, along with
-          any units already associated with the snippet.
+          Click this button to see all dependencies for the snippet being edited
+          in the <a href="dlg_dependencies.htm">Dependencies dialog box</a>. All
+          entries checked in the <em>Dependencies</em> list box are included,
+          along with all their dependencies, and so on. You must not create a
+          circular dependency; the <em>Dependencies</em> dialog box will help
+          you detect them.
+        </div>
+      </li>
+      <li>
+        <div>
+          <em>Units</em> check list box.
         </div>
         <div>
-          If the unit you need is not in the list box simply enter its name in
-          the edit box next to the <em>Add Unit</em> button and click the
-          button.
-        </div>
-        <div>
-          Each unit you use is remembered and will appear in the list box in
-          future. If the list box is getting too full you can remove most units
-          by right clicking them and selecting <em>Delete Selected Unit</em>
-          from the context menu. Note that the <code>SysUtils</code>,
-          <code>Classes</code>, <code>Windows</code> and <code>Graphics</code>
-          units cannot be deleted.
-        </div>
-        <div>
-          The list box's context menu also gives options to restore the unit
-          list to it's &quot;factory&quot; default and to deselect all the units
-          in the list.
+          Select any units that this snippet requires in order to compile.
+          Required units must be specified if test compilation is to be
+          attempted. A selection of common units is provided, along with any
+          units already associated with the snippet. More units can be added to
+          the list &ndash; see below.
         </div>
         <div>
           Units are &quot;used&quot; in the order they appear in the list. If
@@ -273,52 +210,43 @@
           identifiers in the source code with the unit name, e.g.
           <code>Graphics.TBitmap</code>.
         </div>
-		<div>
-		  If you intend to test compile your snippet with Delphi XE2 or later
-		  you will need to make sure the appropriate compiler is configured to
-		  search the namespaces containing the units you list here. Do this in
-		  the <a href="dlg_configcompilers.htm">Configure Compilers</a> dialogue
-		  box. Use the <em>Namespaces</em> tab to enter the required namespaces.
-		  Click the <em>Defaults</em> button to use a set of namespaces that
-		  works with many of the commonly used units. You can see a list of
-		  namespaces with the units they contain in the <a
-			href="http://docwiki.embarcadero.com/RADStudio/en/Unit_Scope_Names"
-			class="weblink"
-			target="_blank"
-		  >Unit Scope Names</a> topic of the Embarcadero RADStudio
-		  documentation.
-		</div>
-		<div>
-		  If any unit is not part of the Delphi RTL or VCL you will need to let
-		  the compiler know where to find the unit. Use the <em>Search
-		  Paths</em> tab of the <a href="dlg_configcompilers.htm">Configure
-		  Compilers</a> dialogue box to specify the required path. You need to
-		  do this for each compiler separately.
-		</div>
-		<div>
-		  <strong>Notes:</strong> <a href="snippet_unit.htm">Unit snippets</a>
-          must declare their used units in the unit source code, so this list
-          box is disabled when the snippet kind is <em>unit</em>.
+        <div>
+          <strong class="warning">NOTE:</strong> If you intend to test compile
+          your snippet with Delphi XE2, XE3 or XE4 you will need to make sure it
+          is configured to search the namespaces containing the units you list
+          here. Do this in the <a href="dlg_configcompilers.htm">Configure
+          Compilers</a> dialogue box. Use the <em>Command Line</em> tab to enter
+          an <code>-NS</code> &quot;switch&quot; that has a semi-colon separated
+          list of namespaces appended to it. For example
+          <code>-NSSystem;WinAPI</code> causes the compiler to search the
+          <var>System</var> and <var>WinAPI</var> namespaces. You can see a list
+          of namespaces with the units they contain in the <a
+            href="http://docwiki.embarcadero.com/RADStudio/en/Unit_Scope_Names"
+            class="weblink"
+            target="_blank"
+          >Unit Scope Names</a> topic of the Embarcadero RADStudio
+          documentation.
         </div>
       </li>
+      <li>
+        <div>
+          <em>Add Unit</em> edit box and button.
+        </div>
+        <div>
+          If additional units are required in the <em>Units</em> check list box
+          type the name of the unit in the edit box and click the <em>Add
+          Unit</em> button. The unit will be added to the <em>Units</em> check
+          list box and its check box will be checked.
+        </div>
+       </li>
     </ul>
-    <h3>
+   <h3>
       Extra Information Tab
     </h3>
     <p>
       This tab is used to provide additional descriptive information about the
-      snippet. Use it for information that supplements the snippet's
-      description or for crediting authors etc.
-    </p>
-    <p>
-      Enter the required information in the <em>Extra information</em>
-      <a href="markup_editor.htm">markup editor</a>. You can enter either plain
-      text of formatted text and hyperlinks using the custom
-      <a href="reml.htm">REML</a> markup language.
-    </p>
-    <p>
-      The information can be previewed using the <em>Preview</em> button.
-      Clicking this button also validates markup if you have used it.
+      snippet. Information can be specified using a simple markup language
+      called <a href="reml.htm">REML</a>.
     </p>
     <h3>
       Compile Results Tab
@@ -336,7 +264,7 @@
         <em>Unknown</em>. To use the keyboard to modify compile results proceed
         as follows:
         <ol>
-		  <li>
+          <li>
             Move the keyboard focus to the list box using the
             <span class="smallcaps">Tab</span> key.
           </li>
@@ -392,8 +320,8 @@
     <p>
       Clicking <em>OK</em> causes the edited snippet to be validated. If an
       error is found the control where the error is located is selected and an
-      error message is displayed. If the snippet is valid the dialogue box
-      closes and the user database is updated.
+      error message is displayed. If the snippet is valid the dialog box closes
+      and the user database is updated.
     </p>
     <p>
       Click <em>Cancel</em> to abort the edit.

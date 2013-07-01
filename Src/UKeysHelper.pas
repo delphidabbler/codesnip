@@ -1,14 +1,35 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * UKeysHelper.pas
  *
- * Copyright (C) 2009-2013, Peter Johnson (www.delphidabbler.com).
+ * Helper routines for working with key presses and shift states.
  *
  * $Rev$
  * $Date$
  *
- * Helper routines for working with key presses and shift states.
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is UKeysHelper.pas
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2009-2010 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -41,7 +62,7 @@ function ExtractShiftKeys(const Shift: TShiftState): TShiftState;
   }
 
 function HasShiftKeys(const Shift: TShiftState): Boolean;
-  {Checks if a shift state set contains one or more of the ssShift, ssCtrl or
+  {Checks if a shift state set contains one or more of the ssShoft, ssCtrl or
   ssAlt shift keys.
     @param Shift [in] Shift state set.
     @return True if Shift contains shift keys, False if not.
@@ -56,26 +77,15 @@ function IsValidDecimalNumberKey(const Text: string; var Key: Char): Boolean;
   }
 
 
-///  <summary>Returns set of any shift keys pressed when the function was
-///  called.</summary>
-///  <remarks>Shift keys are ssShift, ssCtrl and ssAlt.</remarks>
-function ShiftKeysPressed: TShiftState;
-
-
 implementation
 
 
 uses
   // Delphi
-  SysUtils, Character, Forms,
+  SysUtils, StrUtils, Character,
   // Project
-  UConsts, UStrUtils;
+  UConsts;
 
-
-function ShiftKeysPressed: TShiftState;
-begin
-  Result := ExtractShiftKeys(Forms.KeyboardStateToShiftState);
-end;
 
 function ExtractShiftKeys(const Shift: TShiftState): TShiftState;
   {Extracts any shift keys (ssShift, ssCtrl or ssAlt) from a shift state set.
@@ -120,10 +130,10 @@ function IsValidDecimalNumberKey(const Text: string; var Key: Char): Boolean;
   }
 begin
   Result := True;
-  if (Key = FormatSettings.DecimalSeparator) then
+  if (Key = DecimalSeparator) then
   begin
     // Only allow decimal point if not already entered: can't have more than one
-    if StrContainsStr(FormatSettings.DecimalSeparator, Text) then
+    if AnsiContainsStr(Text, DecimalSeparator) then
       Result := False;
   end
   else if not TCharacter.IsDigit(Key) and (Key <> BACKSPACE) then

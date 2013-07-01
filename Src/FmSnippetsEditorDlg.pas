@@ -1,15 +1,36 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * FmSnippetsEditorDlg.pas
  *
- * Copyright (C) 2008-2013, Peter Johnson (www.delphidabbler.com).
+ * Implements a dialog box that enables the user to create or edit a user
+ * defined snippet.
  *
  * $Rev$
  * $Date$
  *
- * Implements a dialogue box that enables the user to create or edit user
- * defined snippets.
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is FmSnippetsEditorDlg, formerly FmUserDBEditDlg.pas
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2008-2012 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributors:
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -24,11 +45,11 @@ uses
   SysUtils, Classes, ActnList, Buttons, StdCtrls, Forms, Controls, CheckLst,
   ComCtrls, ExtCtrls, StdActns, Menus, ImgList,
   // Project
-  ActiveText.UMain, Compilers.UGlobals, DB.USnippet, FmGenericOKDlg,
-  FrBrowserBase, FrFixedHTMLDlg, FrHTMLDlg, UBaseObjects, UCategoryListAdapter,
-  UCompileMgr, UCompileResultsLBMgr, UCSSBuilder, UMemoCaretPosDisplayMgr,
-  UMemoHelper, USnipKindListAdapter, USnippetsChkListMgr, UUnitsChkListMgr,
-  FmSnippetsEditorDlg.FrActiveTextEditor;
+  Compilers.UGlobals, FmGenericOKDlg, FrBrowserBase, FrFixedHTMLDlg, FrHTMLDlg,
+  UActiveText, UBaseObjects, UCategoryListAdapter, UCompileMgr,
+  UCompileResultsLBMgr, UCSSBuilder, ULEDImageList, UMemoCaretPosDisplayMgr,
+  UMemoHelper, USnipKindListAdapter, USnippets, USnippetsChkListMgr,
+  UUnitsChkListMgr;
 
 
 type
@@ -44,7 +65,7 @@ type
     actCompile: TAction;
     actCopy: TEditCopy;
     actCut: TEditCut;
-    actViewDependencies: TAction;
+    actDependencies: TAction;
     actPaste: TEditPaste;
     actSelectAll: TEditSelectAll;
     actSetAllQuery: TAction;
@@ -54,9 +75,10 @@ type
     actViewExtra: TAction;
     actViewTestUnit: TAction;
     btnAddUnit: TButton;
+    btnDependencies: TButton;
     btnCompile: TButton;
-    btnSetAllQuery: TButton;
-    btnSetAllSuccess: TButton;
+    btnSetAllQuery: TBitBtn;
+    btnSetAllSuccess: TBitBtn;
     btnViewExtra: TButton;
     btnViewTestUnit: TButton;
     cbCategories: TComboBox;
@@ -64,9 +86,13 @@ type
     clbDepends: TCheckListBox;
     clbUnits: TCheckListBox;
     clbXRefs: TCheckListBox;
+    edDescription: TEdit;
+    edExtra: TMemo;
     edName: TEdit;
     edSourceCode: TMemo;
     edUnit: TEdit;
+    frmExtraInstructions: TFixedHTMLDlgFrame;
+    ilMain: TImageList;
     lbCompilers: TListBox;
     lblCategories: TLabel;
     lblCompilers: TLabel;
@@ -99,33 +125,11 @@ type
     tsComments: TTabSheet;
     tsCompileResults: TTabSheet;
     tsReferences: TTabSheet;
-    frmDescription: TSnippetsActiveTextEdFrame;
-    btnViewDescription: TButton;
-    actViewDescription: TAction;
-    frmExtra: TSnippetsActiveTextEdFrame;
-    lblDisplayName: TLabel;
-    edDisplayName: TEdit;
-    chkUseHiliter: TCheckBox;
-    actClearDependencies: TAction;
-    actClearXRefs: TAction;
-    mnuDependencies: TPopupMenu;
-    mnuXRefs: TPopupMenu;
-    miClearXRefs: TMenuItem;
-    miClearDependencies: TMenuItem;
-    miViewDependencies: TMenuItem;
-    mnuUnits: TPopupMenu;
-    actDeleteUnit: TAction;
-    miDeleteUnit: TMenuItem;
-    actRestoreUnits: TAction;
-    miRestoreUnits: TMenuItem;
-    actClearUnits: TAction;
-    miClearUnits: TMenuItem;
-    miSpacer3: TMenuItem;
     procedure actAddUnitExecute(Sender: TObject);
     procedure actAddUnitUpdate(Sender: TObject);
     procedure actCompileExecute(Sender: TObject);
     procedure actCompileUpdate(Sender: TObject);
-    procedure actViewDependenciesExecute(Sender: TObject);
+    procedure actDependenciesExecute(Sender: TObject);
     procedure actSetAllQueryExecute(Sender: TObject);
     procedure actSetAllSuccessExecute(Sender: TObject);
     procedure actViewErrorsExecute(Sender: TObject);
@@ -141,25 +145,10 @@ type
     procedure lblSnippetKindHelpClick(Sender: TObject);
     procedure lblViewCompErrsClick(Sender: TObject);
     procedure pcMainChange(Sender: TObject);
-    ///  <summary>Handles event triggered when user clicks on one of page
-    ///  control tabs. Ensures page control has focus.</summary>
-    ///  <remarks>Without this fix, page control does not always get focus when
-    ///  a tab is clicked.</remarks>
     procedure pcMainMouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
-    procedure actViewDescriptionExecute(Sender: TObject);
-    procedure actViewDescriptionUpdate(Sender: TObject);
-    procedure actClearDependenciesExecute(Sender: TObject);
-    procedure actClearXRefsExecute(Sender: TObject);
-    procedure actClearDependenciesUpdate(Sender: TObject);
-    procedure actClearXRefsUpdate(Sender: TObject);
-    procedure actDeleteUnitUpdate(Sender: TObject);
-    procedure actDeleteUnitExecute(Sender: TObject);
-    procedure actRestoreUnitsExecute(Sender: TObject);
-    procedure actClearUnitsExecute(Sender: TObject);
-    procedure actClearUnitsUpdate(Sender: TObject);
   strict private
-    fSnippet: TSnippet;             // Snippet being edited: nil for new snippet
+    fSnippet: TRoutine;             // Snippet being edited: nil for new snippet
     fCatList: TCategoryListAdapter; // Accesses sorted list of categories
     fSnipKindList:
       TSnipKindListAdapter;         // Accesses sorted list of snippet kinds
@@ -173,9 +162,15 @@ type
     fUnitsCLBMgr: TUnitsChkListMgr; // Manages units check list box
     fCompilersLBMgr:
       TCompileResultsLBMgr;         // Manages compilers list box
+    fImages: TLEDImageList;         // Image list containing LEDs
     fSourceMemoHelper: TMemoHelper; // Helper for working with source code memo
     fMemoCaretPosDisplayMgr: TMemoCaretPosDisplayMgr;
                                     // Manages display of memo caret positions
+    procedure UpdateTabSheetCSS(Sender: TObject; const CSSBuilder: TCSSBuilder);
+      {Updates CSS used for HTML displayed in frames on tab sheets.
+        @param Sender [in] Not used.
+        @param CSSBuilder [in] Object used to update CSS.
+      }
     procedure PopulateControls;
       {Populates controls with dynamic data.
       }
@@ -194,6 +189,11 @@ type
         @param E [in] Exception to be handled.
         @except Exceptions re-raised if not EDataEntry.
       }
+    function BuildExtraActiveText: IActiveText;
+      {Creates an active text object from the REML text entered in the extra
+      information memo control.
+        @return Required active text object.
+      }
     procedure SetAllCompilerResults(const CompRes: TCompileResult);
       {Sets all compiler results to same value.
         @param CompRes [in] Required compiler result.
@@ -211,7 +211,7 @@ type
       {Updates dependencies and cross-references check lists for snippet being
       edited, depending on kind.
       }
-    function CreateTempSnippet: TSnippet;
+    function CreateTempSnippet: TRoutine;
       {Creates a temporary snippet from data entered in dialog box.
         @return Required snippet instance.
         @except EDataEntry raised if any of entered data is invalid.
@@ -220,6 +220,10 @@ type
       {Displays results of a test compilation. Used as callback method for
       compile manager.
         @param Compilers [in] Object containing compilation results.
+      }
+    procedure CheckExtra;
+      {Checks the REML text entered in the extra information memo control.
+        @except EDataEntry raised on error.
       }
   strict protected
     procedure ArrangeForm; override;
@@ -233,18 +237,18 @@ type
       {Performs initialisation of form fields and controls.
       }
   public
-    class function AddNewSnippet(AOwner: TComponent): Boolean;
+    class function AddNewRoutine(AOwner: TComponent): Boolean;
       {Displays dialog box to enable user to enter a new snippet.
         @param AOwner [in] Control that owns the dialog box, over which the
           dialog is aligned. May be nil.
         @return True if user OKs, False if cancels.
       }
-    class function EditSnippet(AOwner: TComponent;
-      const Snippet: TSnippet): Boolean;
+    class function EditRoutine(AOwner: TComponent;
+      const Routine: TRoutine): Boolean;
       {Displays dialog box to enable user to edit a snippet.
         @param AOwner [in] Control that owns the dialog box, over which the
           dialog is aligned. May be nil.
-        @param Snippet [in] Reference to snippet to be edited.
+        @param Routine [in] Reference to snippet to be edited.
         @return True if user OKs, False if cancels.
       }
   end;
@@ -255,12 +259,12 @@ implementation
 
 uses
   // Delphi
-  Windows {for inlining}, Graphics,
+  StrUtils, Windows {for inlining}, Graphics,
   // Project
-  DB.UMain, DB.USnippetKind, FmDependenciesDlg, IntfCommon, UColours, UConsts,
-  UCSSUtils, UCtrlArranger, UExceptions, UFontHelper, UIStringList,
-  UReservedCategories, USnippetExtraHelper, USnippetValidator, UMessageBox,
-  USnippetIDs, UStructs, UStrUtils, UTestUnitDlgMgr, UThemesEx, UUtils;
+  FmDependenciesDlg, FmViewExtraDlg, IntfCommon, UColours, UConsts, UCSSUtils,
+  UCtrlArranger, UExceptions, UFontHelper, UReservedCategories,
+  URoutineExtraHelper, USnippetValidator, UMessageBox, USnippetIDs, UStructs,
+  UTestUnitDlgMgr, UThemesEx, UUtils;
 
 
 {$R *.dfm}
@@ -279,7 +283,7 @@ resourcestring
   sBadUnitName = 'Unit name is not a valid Pascal identifier';
   sUnitNameExists = 'Unit name already in list';
 begin
-  UnitName := StrTrim(edUnit.Text);
+  UnitName := Trim(edUnit.Text);
   Assert(UnitName <> '',
     ClassName + '.actAddUnitExecute: UnitName is empty string');
   try
@@ -305,38 +309,7 @@ procedure TSnippetsEditorDlg.actAddUnitUpdate(Sender: TObject);
     @param Sender [in] Action triggering this event.
   }
 begin
-  (Sender as TAction).Enabled := (StrTrim(edUnit.Text) <> '')
-    and clbUnits.Enabled;
-end;
-
-procedure TSnippetsEditorDlg.actClearDependenciesExecute(Sender: TObject);
-begin
-  fDependsCLBMgr.ClearChecks;
-end;
-
-procedure TSnippetsEditorDlg.actClearDependenciesUpdate(Sender: TObject);
-begin
-  actClearDependencies.Enabled := fDependsCLBMgr.HasCheckedItems;
-end;
-
-procedure TSnippetsEditorDlg.actClearUnitsExecute(Sender: TObject);
-begin
-  fUnitsCLBMgr.ClearChecks;
-end;
-
-procedure TSnippetsEditorDlg.actClearUnitsUpdate(Sender: TObject);
-begin
-  actClearUnits.Enabled := fUnitsCLBMgr.HasCheckedItems;
-end;
-
-procedure TSnippetsEditorDlg.actClearXRefsExecute(Sender: TObject);
-begin
-  fXRefsCLBMgr.ClearChecks;
-end;
-
-procedure TSnippetsEditorDlg.actClearXRefsUpdate(Sender: TObject);
-begin
-  actClearXRefs.Enabled := fXRefsCLBMgr.HasCheckedItems;
+  (Sender as TAction).Enabled := Trim(edUnit.Text) <> '';
 end;
 
 procedure TSnippetsEditorDlg.actCompileExecute(Sender: TObject);
@@ -344,7 +317,7 @@ procedure TSnippetsEditorDlg.actCompileExecute(Sender: TObject);
     @param Sender [in] Not used.
   }
 var
-  TempSnippet: TSnippet;  // temp snippet object for compilation
+  TempSnippet: TRoutine;  // temp snippet object for compilation
 begin
   // Hide view compile errors link
   pnlViewCompErrs.Hide;
@@ -383,19 +356,23 @@ begin
     and (fSnipKindList.SnippetKind(cbKind.ItemIndex) <> skFreeform);
 end;
 
-procedure TSnippetsEditorDlg.actDeleteUnitExecute(Sender: TObject);
+procedure TSnippetsEditorDlg.actDependenciesExecute(Sender: TObject);
+  {Displays dependencies for currently edited snippet, per entries in
+  "Dependencies" check list box.
+    @param Sender [in] Not used.
+  }
+var
+  DependsList: TRoutineList;  // list of dependencies
 begin
-  fUnitsCLBMgr.DeleteSelectedItem;
-end;
-
-procedure TSnippetsEditorDlg.actDeleteUnitUpdate(Sender: TObject);
-begin
-  actDeleteUnit.Enabled := fUnitsCLBMgr.CanDeleteSelectedItem;
-end;
-
-procedure TSnippetsEditorDlg.actRestoreUnitsExecute(Sender: TObject);
-begin
-  fUnitsCLBMgr.RestoreDefaults;
+  DependsList := TRoutineList.Create;
+  try
+    fDependsCLBMgr.GetCheckedSnippets(DependsList);
+    TDependenciesDlg.Execute(
+      Self, TSnippetID.Create(Trim(edName.Text), True), DependsList
+    );
+  finally
+    FreeAndNil(DependsList);
+  end;
 end;
 
 procedure TSnippetsEditorDlg.actSetAllQueryExecute(Sender: TObject);
@@ -412,45 +389,6 @@ procedure TSnippetsEditorDlg.actSetAllSuccessExecute(Sender: TObject);
   }
 begin
   SetAllCompilerResults(crSuccess);
-end;
-
-procedure TSnippetsEditorDlg.actViewDependenciesExecute(Sender: TObject);
-  {Displays dependencies for currently edited snippet, per entries in
-  "Dependencies" check list box.
-    @param Sender [in] Not used.
-  }
-var
-  DependsList: TSnippetList;  // list of dependencies
-begin
-  DependsList := TSnippetList.Create;
-  try
-    fDependsCLBMgr.GetCheckedSnippets(DependsList);
-    TDependenciesDlg.Execute(
-      Self,
-      TSnippetID.Create(StrTrim(edName.Text), True),
-      StrTrim(edDisplayName.Text),
-      DependsList,
-      [tiDependsUpon],
-      'SnippetsEditorDependenciesDlg'
-    );
-  finally
-    FreeAndNil(DependsList);
-  end;
-end;
-
-procedure TSnippetsEditorDlg.actViewDescriptionExecute(Sender: TObject);
-begin
-  try
-    frmDescription.Preview;
-  except
-    on E: Exception do
-      HandleException(E);
-  end;
-end;
-
-procedure TSnippetsEditorDlg.actViewDescriptionUpdate(Sender: TObject);
-begin
-  (Sender as TAction).Enabled := frmDescription.CanPreview;
 end;
 
 procedure TSnippetsEditorDlg.actViewErrorsExecute(Sender: TObject);
@@ -477,7 +415,8 @@ procedure TSnippetsEditorDlg.actViewExtraExecute(Sender: TObject);
   }
 begin
   try
-    frmExtra.Preview;
+    CheckExtra;
+    TViewExtraDlg.Execute(Self, BuildExtraActiveText);
   except
     on E: Exception do
       HandleException(E);
@@ -490,7 +429,7 @@ procedure TSnippetsEditorDlg.actViewExtraUpdate(Sender: TObject);
     @param Sender [in] Reference to action to be updated.
   }
 begin
-  (Sender as TAction).Enabled := frmExtra.CanPreview;
+  (Sender as TAction).Enabled := Trim(edExtra.Text) <> '';
 end;
 
 procedure TSnippetsEditorDlg.actViewTestUnitExecute(Sender: TObject);
@@ -499,7 +438,7 @@ procedure TSnippetsEditorDlg.actViewTestUnitExecute(Sender: TObject);
     @param Sender [in] Not used.
   }
 var
-  TempSnippet: TSnippet;  // temp snippet object for compilation
+  TempSnippet: TRoutine;  // temp snippet object for compilation
 begin
   try
     TempSnippet := CreateTempSnippet;
@@ -528,7 +467,7 @@ begin
     fSnipKindList.SnippetKind(cbKind.ItemIndex) <> skFreeform;
 end;
 
-class function TSnippetsEditorDlg.AddNewSnippet(AOwner: TComponent): Boolean;
+class function TSnippetsEditorDlg.AddNewRoutine(AOwner: TComponent): Boolean;
   {Displays dialog box to enable user to enter a new snippet.
     @param AOwner [in] Control that owns the dialog box, over which the dialog
       is aligned. May be nil.
@@ -552,64 +491,36 @@ procedure TSnippetsEditorDlg.ArrangeForm;
   }
 begin
   // tsCode
-  edSourceCode.Width := tsCode.ClientWidth - 8;
-  TCtrlArranger.AlignLefts(
-    [
-      lblName, lblDisplayName, lblDescription, lblKind, lblCategories,
-      lblSourceCode, edSourceCode
-    ],
-    3
-  );
-  TCtrlArranger.AlignRights(
-    [edSourceCode, lblSourceCaretPos, btnViewDescription]
-  );
-  frmDescription.Width := btnViewDescription.Left - frmDescription.Left - 8;
-  TCtrlArranger.AlignVCentres(3, [lblName, edName]);
+  lblSourceCaretPos.Top := lblSourceCode.Top;
+  edSourceCode.Top := TCtrlArranger.BottomOf(lblSourceCode, 4);
   TCtrlArranger.AlignVCentres(
-    TCtrlArranger.BottomOf([lblName, edName], 8),
-    [lblDisplayName, edDisplayName]
-  );
-  TCtrlArranger.AlignTops(
-    [lblDescription, frmDescription, btnViewDescription],
-    TCtrlArranger.BottomOf([lblDisplayName, edDisplayName], 8)
+    TCtrlArranger.BottomOf(edSourceCode, 8),
+    [cbKind, lblKind, lblSnippetKindHelp]
   );
   TCtrlArranger.AlignVCentres(
-    TCtrlArranger.BottomOf(
-      [lblDescription, frmDescription, btnViewDescription], 8
-    ),
-    [lblKind, cbKind, lblSnippetKindHelp]
+    TCtrlArranger.BottomOf([cbKind, lblKind, lblSnippetKindHelp], 8),
+    [edDescription, lblDescription]
   );
   TCtrlArranger.AlignVCentres(
-    TCtrlArranger.BottomOf([lblKind, cbKind, lblSnippetKindHelp], 8),
-    [lblCategories, cbCategories]
+    TCtrlArranger.BottomOf([edDescription, lblDescription], 8),
+    [edName, lblName]
   );
-  TCtrlArranger.MoveToRightOf(cbKind, lblSnippetKindHelp, 12);
-  TCtrlArranger.AlignTops(
-    [lblSourceCode, lblSourceCaretPos],
-    TCtrlArranger.BottomOf([lblCategories, cbCategories], 8)
+  TCtrlArranger.AlignVCentres(
+    TCtrlArranger.BottomOf([edName, lblName], 8),
+    [cbCategories, lblCategories]
   );
-  TCtrlArranger.MoveBelow([lblSourceCode, lblSourceCaretPos], edSourceCode, 4);
-  TCtrlArranger.MoveBelow(edSourceCode, chkUseHiliter, 8);
-
   // tsReferences
   TCtrlArranger.AlignVCentres(
-    TCtrlArranger.BottomOf(clbXRefs, 8), [edUnit, btnAddUnit]
+    TCtrlArranger.BottomOf(clbXRefs, 6), [btnDependencies, edUnit, btnAddUnit]
   );
-
   // tsComments
-  frmExtra.Width := tsComments.ClientWidth - 8;
-  frmExtra.Height := clbDepends.Height;
-  TCtrlArranger.AlignLefts([lblExtra, frmExtra, btnViewExtra], 3);
-  TCtrlArranger.AlignVCentres(3, [lblExtra, lblExtraCaretPos]);
-  TCtrlArranger.AlignRights([frmExtra, lblExtraCaretPos]);
-  TCtrlArranger.MoveBelow([lblExtra, lblExtraCaretPos], frmExtra, 4);
-  TCtrlArranger.MoveBelow(frmExtra, btnViewExtra, 8);
-
+  lblExtraCaretPos.Top := lblExtra.Top;
+  frmExtraInstructions.Top := TCtrlArranger.BottomOf(edExtra, 4);
+  btnViewExtra.Top := TCtrlArranger.BottomOf(frmExtraInstructions);
   // tsCompileResults
   lblViewCompErrsKey.Top := TCtrlArranger.BottomOf(lblViewCompErrs);
   TCtrlArranger.SetLabelHeight(lblCompResDesc);
   lblCompResDesc.Top := TCtrlArranger.BottomOf(lbCompilers, 8);
-
   // set body panel size to accommodate controls
   pnlBody.ClientHeight := TCtrlArranger.MaxContainerHeight(
     [tsCode, tsComments, tsCompileResults, tsReferences]
@@ -623,29 +534,40 @@ procedure TSnippetsEditorDlg.btnOKClick(Sender: TObject);
     @param Sender [in] Not used.
   }
 var
-  SnippetName: string;  // name of snippet being edited / added
+  RoutineName: string;  // name of snippet being edited / added
 begin
   inherited;
   try
     // Validate and record entered data
     ValidateData;
     fEditData.Assign(UpdateData);
-    SnippetName := StrTrim(edName.Text);
+    RoutineName := Trim(edName.Text);
     // Add or update snippet
     if Assigned(fSnippet) then
-      fSnippet := (Database as IDatabaseEdit).UpdateSnippet(
-        fSnippet, fEditData, SnippetName
+      fSnippet := (Snippets as ISnippetsEdit).UpdateRoutine(
+        fSnippet, fEditData, RoutineName
       )
     else
     begin
-      fSnippet := (Database as IDatabaseEdit).AddSnippet(
-        SnippetName, fEditData
+      fSnippet := (Snippets as ISnippetsEdit).AddRoutine(
+        RoutineName, fEditData
       )
     end;
   except
     on E: Exception do
       HandleException(E);
   end;
+end;
+
+function TSnippetsEditorDlg.BuildExtraActiveText: IActiveText;
+  {Creates an active text object from the REML text entered in the extra
+  information memo control.
+    @return Required active text object.
+  }
+begin
+  Result := TRoutineExtraHelper.BuildActiveText(
+    Trim(CompressWhiteSpace(ReplaceStr(edExtra.Text, EOL, ' ')))
+  );
 end;
 
 procedure TSnippetsEditorDlg.cbKindChange(Sender: TObject);
@@ -657,6 +579,41 @@ begin
   UpdateReferences;
 end;
 
+procedure TSnippetsEditorDlg.CheckExtra;
+  {Checks the REML text entered in the extra information memo control.
+    @except EDataEntry raised on error.
+  }
+var
+  ActiveText: IActiveText;  // active text created from text
+  ErrorMsg: string;         // error message from validator
+  DataError: EDataEntry;    // data entry error exception raised on error
+resourcestring
+  // parse error message
+  sActiveTextErr = 'Error parsing extra information markup:' + EOL2 + '%s';
+begin
+  try
+    // Try to create active text: this parses the text and raises exception
+    // if there is an error in the REML markup
+    ActiveText := BuildExtraActiveText;
+  except
+    // Convert active text parser to data exception
+    on E: EActiveTextParserError do
+    begin
+      DataError := EDataEntry.CreateFmt(
+        sActiveTextErr, [E.Message], edExtra
+      );
+      if E.HasSelection then
+        DataError.Selection := E.Selection;
+      raise DataError;
+    end
+    else
+      raise;
+  end;
+  // Validate the active text
+  if not TSnippetValidator.ValidateExtra(ActiveText, ErrorMsg) then
+    raise EDataEntry.Create(ErrorMsg, edExtra); // no selection info available
+end;
+
 procedure TSnippetsEditorDlg.ConfigForm;
   {Configures form's controls. Sets font and colors of "link" labels. Also sets
   item height of owner draw check list boxes.
@@ -664,16 +621,16 @@ procedure TSnippetsEditorDlg.ConfigForm;
 begin
   inherited;
   // Set colour and actions of link labels
-  lblSnippetKindHelp.Font.Color := clHelpLink;
-  TFontHelper.SetDefaultBaseFont(lblSnippetKindHelp.Font);
-  lblViewCompErrs.Font.Color := clCommandLink;
-  TFontHelper.SetDefaultBaseFont(lblViewCompErrs.Font);
+  lblSnippetKindHelp.Font.Color := clHelpLinkText;
+  TFontHelper.SetDefaultBaseFont(lblSnippetKindHelp.Font, False);
+  lblViewCompErrs.Font.Color := clLinkText;
+  TFontHelper.SetDefaultBaseFont(lblViewCompErrs.Font, False);
   lblViewCompErrs.Caption := actViewErrors.Caption;
   lblViewCompErrsKey.Caption :=
     '(' + ShortcutToText(actViewErrors.ShortCut) + ')';
 end;
 
-function TSnippetsEditorDlg.CreateTempSnippet: TSnippet;
+function TSnippetsEditorDlg.CreateTempSnippet: TRoutine;
   {Creates a temporary snippet from data entered in dialog box.
     @return Required snippet instance.
     @except EDataEntry raised if any of entered data is invalid.
@@ -684,8 +641,8 @@ begin
   ValidateData;
   // Create snippet object from entered data
   EditData.Assign(UpdateData);
-  Result := (Database as IDatabaseEdit).CreateTempSnippet(
-    StrTrim(edName.Text), EditData
+  Result := (Snippets as ISnippetsEdit).CreateTempRoutine(
+    Trim(edName.Text), EditData
   );
 end;
 
@@ -705,21 +662,21 @@ begin
   pnlViewCompErrs.Visible := fCompileMgr.HaveErrors;
 end;
 
-class function TSnippetsEditorDlg.EditSnippet(AOwner: TComponent;
-  const Snippet: TSnippet): Boolean;
+class function TSnippetsEditorDlg.EditRoutine(AOwner: TComponent;
+  const Routine: TRoutine): Boolean;
   {Displays dialog box to enable user to edit a snippet.
     @param AOwner [in] Control that owns the dialog box, over which the dialog
       is aligned. May be nil.
-    @param Snippet [in] Reference to snippet to be edited.
+    @param Routine [in] Reference to snippet to be edited.
     @return True if user OKs, False if cancels.
   }
 resourcestring
-  sCaption = 'Edit Snippet';  // dialogue box caption
+  sCaption = 'Edit %s';   // dialog box caption
 begin
   with InternalCreate(AOwner) do
     try
-      Caption := sCaption;
-      fSnippet := Snippet;
+      Caption := Format(sCaption, [Routine.Name]);
+      fSnippet := Routine;
       Result := ShowModal = mrOK;
     finally
       Free;
@@ -754,7 +711,7 @@ procedure TSnippetsEditorDlg.FormCreate(Sender: TObject);
   }
 begin
   inherited;
-  fCatList := TCategoryListAdapter.Create(Database.Categories);
+  fCatList := TCategoryListAdapter.Create(Snippets.Categories);
   fSnipKindList := TSnipKindListAdapter.Create;
   fCompileMgr := TCompileMgr.Create(Self);  // auto-freed
   fMemoCaretPosDisplayMgr := TMemoCaretPosDisplayMgr.Create;
@@ -764,7 +721,9 @@ begin
   fCompilersLBMgr := TCompileResultsLBMgr.Create(
     lbCompilers, fCompileMgr.Compilers
   );
+  fImages := TLEDImageList.Create(Self);
   fSourceMemoHelper := TMemoHelper.Create(edSourceCode);
+  alMain.Images := fImages;
 end;
 
 procedure TSnippetsEditorDlg.FormDestroy(Sender: TObject);
@@ -817,17 +776,10 @@ begin
   begin
     // We are editing a snippet: initialise controls from snippet's properties
     edSourceCode.Text := fSnippet.SourceCode;
-    chkUseHiliter.Checked := fSnippet.HiliteSource;
-    frmDescription.DefaultEditMode := emAuto;
-    frmDescription.ActiveText := fSnippet.Description;
+    edDescription.Text := fSnippet.Description;
     edName.Text := fSnippet.Name;
-    if fSnippet.Name <> fSnippet.DisplayName then
-      edDisplayName.Text := fSnippet.DisplayName
-    else
-      edDisplayName.Text := '';
     cbCategories.ItemIndex := fCatList.IndexOf(fSnippet.Category);
-    frmExtra.DefaultEditMode := emAuto;
-    frmExtra.ActiveText := fSnippet.Extra;
+    edExtra.Text := TRoutineExtraHelper.BuildREMLMarkup(fSnippet.Extra);
     cbKind.ItemIndex := fSnipKindList.IndexOf(fSnippet.Kind);
     // check required items in references check list boxes
     UpdateReferences;
@@ -840,17 +792,13 @@ begin
   begin
     // We are adding a new snippet: clear all controls or set default values
     edSourceCode.Clear;
-    chkUseHiliter.Checked := True;
-    frmDescription.DefaultEditMode := emPlainText;
-    frmDescription.Clear;
+    edDescription.Clear;
     edName.Clear;
-    edDisplayName.Clear;
-    cbCategories.ItemIndex := fCatList.IndexOf(TReservedCategories.UserCatID);
+    cbCategories.ItemIndex := fCatList.IndexOf(TReservedCategories.UserCatName);
     if cbCategories.ItemIndex = -1 then
       cbCategories.ItemIndex := 0;
     cbKind.ItemIndex := fSnipKindList.IndexOf(skFreeform);
-    frmExtra.DefaultEditMode := emPlainText;
-    frmExtra.Clear;
+    edExtra.Clear;
     UpdateReferences;
   end;
   // Display all compiler results
@@ -861,7 +809,7 @@ begin
     ClassName + '.InitControls: no selection in cbCategories');
   // Auto-update caret position display for source and extra info memos
   fMemoCaretPosDisplayMgr.Manage(edSourceCode, lblSourceCaretPos);
-  fMemoCaretPosDisplayMgr.Manage(frmExtra, lblExtraCaretPos);
+  fMemoCaretPosDisplayMgr.Manage(edExtra, lblExtraCaretPos);
 end;
 
 procedure TSnippetsEditorDlg.InitForm;
@@ -871,7 +819,7 @@ begin
   inherited;
   // Get data associated with snippet, or blank / default data if adding a new
   // snippet
-  fEditData := (Database as IDatabaseEdit).GetEditableSnippetInfo(fSnippet);
+  fEditData := (Snippets as ISnippetsEdit).GetEditableRoutineInfo(fSnippet);
   // Record snippet's original name, if any
   if Assigned(fSnippet) then
     fOrigName := fSnippet.Name
@@ -881,6 +829,9 @@ begin
   PopulateControls;
   // Initialise controls to default values
   InitControls;
+  // Set up CSS builder for extra instructions frame (HTML loading is delayed
+  // until appropriate tab is displayed)
+  frmExtraInstructions.OnBuildCSS := UpdateTabSheetCSS;
   // Select first tab sheet
   pcMain.ActivePageIndex := 0;
 end;
@@ -910,6 +861,15 @@ procedure TSnippetsEditorDlg.pcMainChange(Sender: TObject);
   }
 begin
   inherited;
+  if pcMain.ActivePage = tsComments then
+  begin
+    // We have to load instructions here, since loading them when comments tab
+    // is hidden causes dialog box to freeze and not be displayed. We may only
+    // load the content when tab is visible. The HTML is loaded each time the
+    // tab is displayed, but there is no noticable lag as a result.
+    frmExtraInstructions.Initialise('dlg-userdb-extra.html');
+    frmExtraInstructions.Height := frmExtraInstructions.DocHeight;
+  end;
   // We always hide "view errors" link whenever page changes since snippet
   // properties may have changed since page was last accessed
   pnlViewCompErrs.Hide;
@@ -917,6 +877,14 @@ end;
 
 procedure TSnippetsEditorDlg.pcMainMouseDown(Sender: TObject;
   Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+  {Handles event triggered when user clicks on one of page control tabs. Ensures
+  page control has focus. This does always happen automatically.
+    @param Sender [in] Not used.
+    @param Button [in] Not used.
+    @param Shift [in] Not used.
+    @param X [in] X co-ordinate of mouse in client co-ordinates.
+    @param Y [in] Y co-ordinate of mouse in client co-ordinates.
+  }
 begin
   if htOnItem in pcMain.GetHitTestInfoAt(X, Y) then
     pcMain.SetFocus;
@@ -949,20 +917,15 @@ begin
   Result.Init;
   with Result do
   begin
-    if StrTrim(edName.Text) <> StrTrim(edDisplayName.Text) then
-      Props.DisplayName := StrTrim(edDisplayName.Text)
-    else
-      Props.DisplayName := '';
-    Props.Cat := fCatList.CatID(cbCategories.ItemIndex);
+    Props.Cat := fCatList.CatName(cbCategories.ItemIndex);
     Props.Kind := fSnipKindList.SnippetKind(cbKind.ItemIndex);
-    (Props.Desc as IAssignable).Assign(frmDescription.ActiveText);
-    Props.SourceCode := StrTrimRight(edSourceCode.Text);
-    Props.HiliteSource := chkUseHiliter.Checked;
-    (Props.Extra as IAssignable).Assign(frmExtra.ActiveText);
+    Props.Desc := Trim(edDescription.Text);
+    Props.SourceCode := TrimRight(edSourceCode.Text);
+    (Props.Extra as IAssignable).Assign(BuildExtraActiveText);
     Props.CompilerResults := fCompilersLBMgr.GetCompileResults;
-    Refs.Units := fUnitsCLBMgr.GetCheckedUnits;
-    Refs.Depends := fDependsCLBMgr.GetCheckedSnippets;
-    Refs.XRef := fXRefsCLBMgr.GetCheckedSnippets;
+    fUnitsCLBMgr.GetCheckedUnits(Refs.Units);
+    fDependsCLBMgr.GetCheckedSnippets(Refs.Depends);
+    fXRefsCLBMgr.GetCheckedSnippets(Refs.XRef);
   end;
 end;
 
@@ -972,7 +935,7 @@ procedure TSnippetsEditorDlg.UpdateReferences;
   }
 var
   EditSnippetID: TSnippetID;      // id of snippet being edited
-  Snippet: TSnippet;              // each snippet in database
+  Snippet: TRoutine;              // each snippet in database
   EditSnippetKind: TSnippetKind;  // kind of snippet being edited
 begin
   // Save state of dependencies and x-ref check list boxes and clear them
@@ -981,18 +944,18 @@ begin
   fXRefsCLBMgr.Save;
   fXRefsCLBMgr.Clear;
   EditSnippetID := TSnippetID.Create(fOrigName, True);
-  EditSnippetKind := fSnipKindList.SnippetKind(cbKind.ItemIndex);
-  for Snippet in Database.Snippets do
+  for Snippet in Snippets.Routines do
   begin
     // We ignore snippet being edited and main database snippets if there is
     // a user-defined one with same name
     if (Snippet.ID <> EditSnippetID) and
       (
         Snippet.UserDefined or
-        not Assigned(Database.Snippets.Find(Snippet.Name, True))
+        not Assigned(Snippets.Routines.Find(Snippet.Name, True))
       ) then
     begin
       // Decide if snippet can be added to depends list: must be correct kind
+      EditSnippetKind := fSnipKindList.SnippetKind(cbKind.ItemIndex);
       if Snippet.Kind in
         TSnippetValidator.ValidDependsKinds(EditSnippetKind) then
         fDependsCLBMgr.AddSnippet(Snippet);
@@ -1003,8 +966,41 @@ begin
   // Restore checks to any saved checked item that still exist in new list
   fDependsCLBMgr.Restore;
   fXRefsCLBMgr.Restore;
-  clbUnits.Enabled := EditSnippetKind <> skUnit;
-  edUnit.Enabled := EditSnippetKind <> skUnit;
+end;
+
+procedure TSnippetsEditorDlg.UpdateTabSheetCSS(Sender: TObject;
+  const CSSBuilder: TCSSBuilder);
+  {Updates CSS used for HTML displayed in frames on tab sheets.
+    @param Sender [in] Not used.
+    @param CSSBuilder [in] Object used to update CSS.
+  }
+var
+  DefaultFont: TFont; // font used for dialog box content (not controls)
+begin
+  // Build default font and apply to HTML frame
+  DefaultFont := TFont.Create;
+  try
+    TFontHelper.SetDefaultFont(DefaultFont, True);
+    with CSSBuilder.Selectors['body'] do
+    begin
+      AddProperty(CSSFontProps(DefaultFont));
+      if ThemeServicesEx.ThemesEnabled then
+        // For themed windows only, modify background colour to suit tab sheet
+        // background
+        AddProperty(CSSBackgroundColorProp(ThemeServicesEx.GetTabBodyColour));
+    end;
+    // Add definitions of custom classes used in extra info example frame
+    // font style of REML tags
+    with CSSBuilder.AddSelector('.elem') do
+    begin
+      AddProperty(CSSColorProp(clREMLTags));
+      AddProperty(
+        CSSFontFamilyProp(TFontHelper.DefaultMonoFontName, cfgMonoSpace)
+      );
+    end;
+  finally
+    FreeAndNil(DefaultFont);
+  end;
 end;
 
 procedure TSnippetsEditorDlg.ValidateData;
@@ -1012,30 +1008,34 @@ procedure TSnippetsEditorDlg.ValidateData;
     @except EDataEntry raised if data is not valid.
   }
 resourcestring
+  // Messages
   sDependencyPrompt = 'See the dependencies by clicking the View Dependencies '
     + 'button on the References tab.';
 var
   ErrorMessage: string;       // receives validation error messages
   ErrorSelection: TSelection; // receives selection containing errors
 begin
-  if not TSnippetValidator.ValidateName(
-    edName.Text,
-    not StrSameText(StrTrim(edName.Text), fOrigName),
-    ErrorMessage,
-    ErrorSelection
-  ) then
-    raise EDataEntry.Create(ErrorMessage, edName, ErrorSelection);
-  frmDescription.Validate;
   if not TSnippetValidator.ValidateSourceCode(
     edSourceCode.Text, ErrorMessage, ErrorSelection
   ) then
     raise EDataEntry.Create(ErrorMessage, edSourceCode, ErrorSelection);
-  frmExtra.Validate;
+  if not TSnippetValidator.ValidateDescription(
+    edDescription.Text, ErrorMessage, ErrorSelection
+  ) then
+    raise EDataEntry.Create(ErrorMessage, edDescription, ErrorSelection);
+  if not TSnippetValidator.ValidateName(
+    edName.Text,
+    not AnsiSameText(Trim(edName.Text), fOrigName),
+    ErrorMessage,
+    ErrorSelection
+  ) then
+    raise EDataEntry.Create(ErrorMessage, edName, ErrorSelection);
+  CheckExtra;
   if not TSnippetValidator.ValidateDependsList(
-    StrTrim(edName.Text), UpdateData, ErrorMessage
+    Trim(edName.Text), UpdateData, ErrorMessage
   ) then
     raise EDataEntry.Create(  // selection not applicable to list boxes
-      StrMakeSentence(ErrorMessage) + EOL2 + sDependencyPrompt, clbDepends
+      MakeSentence(ErrorMessage) + EOL2 + sDependencyPrompt, clbDepends
     );
 end;
 

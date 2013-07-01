@@ -1,14 +1,36 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * FmRegistrationDlg.pas
  *
- * Copyright (C) 2006-2013, Peter Johnson (www.delphidabbler.com).
+ * Wizard style dialog box that collects information and sends application
+ * registration to web server.
  *
  * $Rev$
  * $Date$
  *
- * Implements a wizard style dialogue box that registers the program online.
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is FmRegistrationDlg.pas
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2006-2010 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -115,8 +137,8 @@ uses
   // Delphi
   SysUtils, Forms,
   // Project
-  UAppInfo, UFontHelper, UCtrlArranger, UMessageBox, UStrUtils, USystemInfo,
-  UUserDetails, UUserDetailsPersist, Web.URegistrar;
+  UAppInfo, UFontHelper, UCtrlArranger, UMessageBox, USystemInfo, UUserDetails,
+  Web.URegistrar;
 
 
 {$R *.dfm}
@@ -200,7 +222,7 @@ begin
   Report.Values['ProgName'] := TAppInfo.ProgramName;
   Report.Values['ProgVer'] := TAppInfo.ProgramReleaseVersion;
   Report.Values['ProgKey'] := TAppInfo.ProgramKey;
-  Report.Values['UserName'] := StrTrim(edName.Text);
+  Report.Values['UserName'] := Trim(edName.Text);
   Report.Values['OSDesc'] :=
     Format('%0:s. IE Version %1:d.', [TOSInfo.Description, TOSInfo.BrowserVer]);
 end;
@@ -210,7 +232,7 @@ procedure TRegistrationDlg.ConfigForm;
   }
 begin
   inherited;
-  TFontHelper.SetDefaultMonoFont(edRegCode.Font);
+  TFontHelper.SetDefaultMonoFont(edRegCode.Font, False);
 end;
 
 procedure TRegistrationDlg.DoRegistration;
@@ -224,7 +246,7 @@ begin
     // register with server
     edRegCode.Text := RegisterWithWebServer;
     // record registration & user details
-    UserDetails := TUserDetails.Create(StrTrim(edName.Text), '');
+    UserDetails := TUserDetails.Create(Trim(edName.Text), '');
     TAppInfo.RegisterProgram(edRegCode.Text, UserDetails.Name);
     TUserDetailsPersist.Update(UserDetails);
     fRegistered := True;
@@ -331,7 +353,7 @@ function TRegistrationDlg.ValidateUserInfo: Boolean;
   }
 begin
   Result := True;
-  if StrTrim(edName.Text) = '' then
+  if Trim(edName.Text) = '' then
   begin
     Result := False;
     TMessageBox.Error(Self, sErrNameRequired);

@@ -1,15 +1,36 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * FrSelectSnippetsBase.pas
  *
- * Copyright (C) 2009-2012, Peter Johnson (www.delphidabbler.com).
+ * Provides an abstract base class for frames that enable categorised snippets
+ * to be selected by means of a tree view displaying check boxes.
  *
  * $Rev$
  * $Date$
  *
- * Provides an abstract base class for frames that enable categorised snippets
- * to be selected by means of a tree view displaying check boxes.
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is FrSelectSnippetsBase.pas
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2009 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -23,7 +44,7 @@ uses
   // Delphi
   ImgList, Controls, Classes, ComCtrls,
   // Project
-  DB.UCategory, DB.USnippet, FrCheckedTV, USnippetsTVDraw;
+  FrCheckedTV, USnippets, USnippetsTVDraw;
 
 
 type
@@ -59,9 +80,9 @@ type
       end;
     var
       fTVDraw: TTVDraw;                 // Object that renders tree view nodes
-      fSelectedSnippets: TSnippetList;  // Value of SelectedSnippets property
-    procedure SetSelectedSnippets(const Value: TSnippetList);
-      {Write access method for SelectedSnippets property. Updates state of items
+      fSelectedRoutines: TRoutineList;  // Value of SelectedRoutines property
+    procedure SetSelectedRoutines(const Value: TRoutineList);
+      {Write access method for SelectedRoutines property. Updates state of items
       in tree view and triggers OnChange event.
         @param Value [in] New list of snippets. If nil list is cleared.
       }
@@ -70,7 +91,7 @@ type
         @param Node [in] Node to be checked.
         @return True if node represents a snippet.
       }
-    function SnippetFromNode(const Node: TCheckedTreeNode): TSnippet;
+    function SnippetFromNode(const Node: TCheckedTreeNode): TRoutine;
       {Gets snippet object associated with a node.
         @param Node [in] Node associated with snippet. Must be a valid node.
         @return Reference to snippet.
@@ -94,7 +115,7 @@ type
         @param Cat [in] Category to be checked.
         @return True if category is to be added, False if not.
       }
-    function CanAddSnippetNode(const Snippet: TSnippet): Boolean;
+    function CanAddSnippetNode(const Snippet: TRoutine): Boolean;
       virtual; abstract;
       {Checks if a snippet node should be added to treeview.
         @param Snippet [in] Snippet to be checked.
@@ -108,8 +129,8 @@ type
     destructor Destroy; override;
       {Class destructor. Tears down object.
       }
-    property SelectedSnippets: TSnippetList
-      read fSelectedSnippets write SetSelectedSnippets;
+    property SelectedRoutines: TRoutineList
+      read fSelectedRoutines write SetSelectedRoutines;
       {List of selected snippets. When set all snippets in list are checked in
       tree view. When user toggles checked state of nodes snippet list is
       updated to include all checked snippets}
@@ -123,7 +144,7 @@ uses
   // Delphi
   SysUtils, StdCtrls,
   // Project
-  DB.UMain, UGroups;
+  UGroups;
 
 
 {$R *.dfm}
@@ -137,12 +158,12 @@ procedure TSelectSnippetsBaseFrame.AddNodes;
 var
   Cat: TCategory;               // reference to a category
   CatNode: TCheckedTreeNode;    // tree node representing a category
-  Snippet: TSnippet;            // reference to snippets in a category
+  Snippet: TRoutine;            // reference to snippets in a category
   Grouping: TGrouping;          // groups/sorts snippets by category
   Group: TGroupItem;            // group representing a category
 begin
   // Create grouping of all snippets by category, with categories alpha sorted
-  Grouping := TCategoryGrouping.Create(Database.Snippets);
+  Grouping := TCategoryGrouping.Create(Snippets.Routines);
   try
     for Group in Grouping do
     begin
@@ -152,7 +173,7 @@ begin
       CatNode := AddNode(nil, Group.Title, Cat);
       for Snippet in Group.SnippetList do
         if CanAddSnippetNode(Snippet) then
-          AddNode(CatNode, Snippet.DisplayName, Snippet);
+          AddNode(CatNode, Snippet.Name, Snippet);
     end;
   finally
     FreeAndNil(Grouping);
@@ -165,7 +186,7 @@ constructor TSelectSnippetsBaseFrame.Create(AOwner: TComponent);
   }
 begin
   inherited;
-  fSelectedSnippets := TSnippetList.Create;
+  fSelectedRoutines := TRoutineList.Create;
   fTVDraw := TTVDraw.Create;
   tvChecked.OnCustomDrawItem := fTVDraw.CustomDrawItem;
 end;
@@ -175,7 +196,7 @@ destructor TSelectSnippetsBaseFrame.Destroy;
   }
 begin
   FreeAndNil(fTVDraw);
-  FreeAndNil(fSelectedSnippets);
+  FreeAndNil(fSelectedRoutines);
   inherited;
 end;
 
@@ -187,7 +208,7 @@ function TSelectSnippetsBaseFrame.IsSnippetNode(
   }
 begin
   Result := Assigned(Node) and Assigned(Node.Data) and
-    (TObject(Node.Data) is TSnippet);
+    (TObject(Node.Data) is TRoutine);
 end;
 
 procedure TSelectSnippetsBaseFrame.RecordChanges;
@@ -197,7 +218,7 @@ var
   CatNode: TCheckedTreeNode;     // loops thru all category nodes
   SnippetNode: TCheckedTreeNode; // loops thru all snippet nodes in a category
 begin
-  fSelectedSnippets.Clear;
+  fSelectedRoutines.Clear;
   // Loop through all categories
   CatNode := FirstNode;
   while Assigned(CatNode) do
@@ -211,7 +232,7 @@ begin
       Assert(IsSnippetNode(SnippetNode),
         ClassName + 'RecordChanges: SnippetNode is not a snippet node');
       if SnippetNode.IsChecked then
-        fSelectedSnippets.Add(SnippetFromNode(SnippetNode));
+        fSelectedRoutines.Add(SnippetFromNode(SnippetNode));
       SnippetNode := SnippetNode.GetNextSibling;
     end;
     CatNode := CatNode.GetNextSibling;
@@ -228,29 +249,29 @@ begin
   Assert(IsSnippetNode(Node),
     ClassName + '.SetLeafNodeState: Node is not a snippet node');
   // check the snippet node if its snippet is in currently selected snippets
-  if fSelectedSnippets.Contains(SnippetFromNode(Node)) then
+  if fSelectedRoutines.Contains(SnippetFromNode(Node)) then
     Node.Check := cbChecked
   else
     Node.Check := cbUnchecked;
 end;
 
-procedure TSelectSnippetsBaseFrame.SetSelectedSnippets(
-  const Value: TSnippetList);
-  {Write access method for SelectedSnippets property. Updates state of items in
+procedure TSelectSnippetsBaseFrame.SetSelectedRoutines(
+  const Value: TRoutineList);
+  {Write access method for SelectedRoutines property. Updates state of items in
   tree view and triggers OnChange event.
     @param Value [in] New list of snippets. If nil list is cleared.
   }
 begin
   if Assigned(Value) then
-    fSelectedSnippets.Assign(Value)
+    fSelectedRoutines.Assign(Value)
   else
-    fSelectedSnippets.Clear;
+    fSelectedRoutines.Clear;
   // Refresh tree view state now ata has changed
   DataChanged;
 end;
 
 function TSelectSnippetsBaseFrame.SnippetFromNode(
-  const Node: TCheckedTreeNode): TSnippet;
+  const Node: TCheckedTreeNode): TRoutine;
   {Gets snippet object associated with a node.
     @param Node [in] Node associated with snippet. Must be a valid node.
     @return Reference to snippet.
@@ -258,7 +279,7 @@ function TSelectSnippetsBaseFrame.SnippetFromNode(
 begin
   Assert(IsSnippetNode(Node),
     ClassName + '.SnippetFromNode: Node is not a snippet node');
-  Result := TSnippet(Node.Data);
+  Result := TRoutine(Node.Data);
 end;
 
 { TSelectSnippetsBaseFrame.TTVDraw }
@@ -285,8 +306,8 @@ var
 begin
   SnipObj := TObject(Node.Data);
   Result := False;
-  if SnipObj is TSnippet then
-    Result := (SnipObj as TSnippet).UserDefined
+  if SnipObj is TRoutine then
+    Result := (SnipObj as TRoutine).UserDefined
   else if SnipObj is TCategory then
     Result := (SnipObj as TCategory).UserDefined;
 end;

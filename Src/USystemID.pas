@@ -1,14 +1,35 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * USystemID.pas
  *
- * Copyright (C) 2008-2013, Peter Johnson (www.delphidabbler.com).
+ * Exposes a routine that creates a serial number from system properties.
  *
  * $Rev$
  * $Date$
  *
- * Exposes a routine that creates a serial number from system properties.
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is USystemID.pas
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2008-2009 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -32,9 +53,6 @@ uses
   // Delphi
   SysUtils, Windows,
   // Project
-  {$IFDEF PORTABLE}
-  UAppInfo,
-  {$ENDIF}
   USystemInfo;
 
 
@@ -107,15 +125,8 @@ var
   Drive: Byte;    // loops through all drive numbers
   Serial: DWORD;  // serial number of a hard diak
 begin
-  {$IFDEF PORTABLE}
-  // Get serial for removable disk if possible. Fall thru and get hard disk if
-  // not.
-  Serial := HardDiskSerial(
-    IncludeTrailingPathDelimiter(ExtractFileDrive(TAppInfo.AppExeDir))
-  );
-  if Serial <> 0 then
-    Exit(TOSInfo.ProductID + IntToHex(Serial, 8));
-  {$ENDIF}
+  // Begin id string Windows product ID
+  Result := TOSInfo.ProductID;
   // Append serial number of first fixed hard drive as 8 digit hex string
   for Drive := 0 to 25 do
   begin
@@ -123,11 +134,14 @@ begin
     begin
       Serial := HardDiskSerial(DriveRootPath(Drive));
       if Serial <> 0 then
-        Exit(TOSInfo.ProductID + IntToHex(Serial, 8));
+      begin
+        Result := Result + IntToHex(Serial, 8);
+        Break;
+      end;
     end;
   end;
   // Couldn't find a drive serial number: use 0
-  Result := TOSInfo.ProductID + IntToHex(0, 8);
+  Result := Result + IntToHex(0, 8);
 end;
 
 end.

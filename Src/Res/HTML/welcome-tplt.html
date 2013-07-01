@@ -1,242 +1,251 @@
 <!--
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
- *
- * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
- *
- * $Rev$
- * $Date$
+ * welcome-tplt.html
  *
  * Template for welcome page displayed in any detail pane.
  *
  * Must be hosted within a complete HTML document.
+ *
+ * $Rev$
+ * $Date$
+ *
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is welcome-tplt.html
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributors:
+ *    NONE
+ *
+ * ***** END LICENSE BLOCK *****
 -->
 
+
 <h1>
-  <em>CodeSnip 4</em> by DelphiDabbler
+  Welcome to <em>CodeSnip</em> by DelphiDabbler
 </h1>
 
 <div class="details">
 
-  <div id="user-db" class="box">
-    <div class="caption">
-      Local User database
-    </div>
-    <div style="<%HaveUserDB%>">
-      <div class="content">
-        There are <em><%UserDBCount%></em> snippets in the local user
-        database.
-      </div>
-      <div class="content">
-        <a
-          href="#"
-          class="command-link"
-          onclick="newSnippet();return false;"
-        >Add another snippet</a>
-      </div>
-    </div>
-    <div style="<%NoUserDB%>">
-      <div class="content">
-        <em>No user defined snippets have been created yet.</em>
-      </div>
-      <div class="content">
-        <a
+  <!-- introductory text -->
+  <p>
+    <em>CodeSnip</em> maintains a repository of your source code snippets. It
+    can also access and display the Object Pascal routines, types and constants
+    stored in the online
+    <a
+      href="http://www.delphidabbler.com/codesnip"
+      class="external-link"
+      onmouseover="showHint(vOnlineDatabaseHint);"
+      onmouseout="clearHint();"
+    >DelphiDabbler CodeSnip Database</a>.
+  </p>
+
+  <div id="main-db-only" style="<%NoUserDB%>">
+    <p>
+      You have not yet created your own repository. Use the <em>Database</em>
+      menu to do this.
+      <a
         href="help:TaskAddSnippets"
         class="help-link"
-      >Learn how to create your own snippets</a>
-      </div>
-    </div>
+        onmouseover="showHint(vTaskAddSnippetsHint);"
+        onmouseout="clearHint();"
+      >More info</a>.
+    </p>
   </div>
 
-  <div id="main-db" class="box">
-    <div class="caption">
-      Code Snippets database
-    </div>
-    <div style="<%HaveMainDB%>">
-      <div class="content">
-        There are <em><%MainDBCount%></em> snippets in the Code Snippets
-        database.
-      </div>
-      <div class="content">
-        <a
-          href="#"
-          class="command-link"
-          onclick="updateDbase();return false;"
-        >Check for updates</a>
-      </div>
-    </div>
-    <div style="<%NoMainDB%>">
-      <div class="content">
-        <em>The <a
-          href="http://delphidabbler.com/url/csdb"
-          class="external-link"
-        >DelphiDabbler Code Snippets Database</a> has not been
-        installed.</em>
-      </div>
-      <div class="content">
-        <a
-          href="#"
-          class="command-link"
-          onclick="updateDbase();return false;"
-        >Download it now</a>
-      </div>
-    </div>
-
-  </div>
-
-  <div id="compilers" class="box">
-    <div class="caption">
-        <span
-          style="float:right"
-        ><a
-          href="help:CompChecks"
-          class="help-link"
-        ><img
-          src="help.gif"
-          class="option-img"
-          style="width:16px;height:16px;"
-          title="About compiler checks"
-        /></a></span> Compilers
-    </div>
-    <div style="<%HaveCompilers%>">
-      <div class="content">
-        The following compilers have been configured for running test
-        compilations within <em>CodeSnip</em>:
-      </div>
-      <div class="content">
-        <ul>
-          <%CompilerList%>
-        </ul>
-      </div>
-      <div class="content">
-        <a
-          href="#"
-          class="command-link"
-          onclick="configCompilers();return false;"
-        >Change compilers</a>
-      </div>
-    </div>
-    <div style="<%NoCompilers%>">
-      <div class="content">
-        <em>No Pascal compilers have yet been configured to perform test
-        compilations from within CodeSnip.</em>
-      </div>
-      <div class="content">
-        <a
-          href="#"
-          class="command-link"
-          onclick="configCompilers();return false;"
-        >Configure compilers</a>
-      </div>
-    </div>
-  </div>
-
-  <div id="auto-updates" class="box">
-    <div class="caption">
-      Update Checks
-    </div>
-    <div class="content">
-      <em>CodeSnip</em> can check automatically for program and Code Snippets
-      database updates. Your current settings are:
-      <ul>
-        <li>
-          Program updates:
-          <em><%ProgramAutoCheckFrequency%></em>
-        </li>
-        <li>
-          Code Snippets database updates:
-          <em><%DatabaseAutoCheckFrequency%></em>
-        </li>
-      </ul>
-    </div>
-    <div class="content">
+  <div id="user-db-only" style="<%NoMainDB%>">
+    <p>
+      You do not have a copy of the online database.
       <a
-        href="#"
+        href="javascript:void(0);"
         class="command-link"
-        onclick="showPrefsPage(&quot;TUpdatePrefsFrame&quot;);return false;"
-      >Change settings</a>
-    </div>
+        onclick="updateDbase();return false;"
+        onmouseover="showHint(vDownloadDatabaseHint);"
+        onmouseout="clearHint();"
+      >Download it</a>.
+    </p>
   </div>
 
-  <div id="help" class="box">
-    <div class="caption">
+  <!-- overview text -->
+  <div id="intro" style="<%Intro%>">
+
+    <h2>
+      Overview
+    </h2>
+
+    <p>
+      Code snippets are listed in the <em>Overview</em> pane on the left hand
+      side of the window. You can display the snippets either by category,
+      alphabetically or by type of snippet by using the pane's tabs. Colours
+      differentiate snippets from the online database and the local repository.
+    </p>
+
+    <p>
+      Selecting a snippet's name in the <em>Overview</em> pane causes the a
+      description of the snippet, its source code and other information to be
+      displayed in the <em>Information Tab</em> of the <em>Details</em> pane.
+    </p>
+
+    <p>
+      The <em>Detail</em> pane's <em>Compiler Check Tab</em> is used to test
+      compile a selected snippet in any supported Pascal compiler that is
+      installed on your computer. Use the
+      <!-- span has hidden image for pop-up menu -->
       <span
-        style="float:right"
-      ><a
-        href="help:#"
+        class="option"
+      ><img
+        src="configcomp.gif"
+        class="option-img"
+        style="width:16px;height:16px;display:none;"
+      /><a
+        href="javascript:void(0);"
+        class="command-link menu-item"
+        onclick="configCompilers();return false;"
+        onmouseover="showHint(vConfigCompilersHint);"
+        onmouseout="clearHint();"
+      >Configure Compilers</a></span> dialog box to tell <em>CodeSnip</em> about
+      the available compilers.
+    </p>
+
+  </div>
+  <!-- end of overview text -->
+
+  <!-- donate text and button -->
+  <div id="donate">
+
+    <h2>
+      Donate
+    </h2>
+
+    <div style="text-align:right;float:right;margin:4px 0 4px 8px;">
+      <a
+        href="javascript:void(0);"
+        class="command-link"
+        onclick="donate();return false;"
+        onmouseover="showHint(vDonateHint);"
+        onmouseout="clearHint();"
+      ><img
+        src="donate-btn.gif"
+        style="width:92px;height:26px;"
+        title="Make a donation"
+      /></a>
+    </div>
+
+    <p>
+      If you find <em>CodeSnip</em> useful, please consider making a donation
+      towards development costs. You can donate by
+      <strong>PayPal&trade;</strong>. To donate please click the button on the
+      right.
+    </p>
+
+  </div>
+  <!-- end of donate text and button -->
+
+  <!-- disclaimer -->
+  <div id="disclaimer" style="<%Disclaimer%>">
+
+    <h2 style="font-weight:bold;">
+      Disclaimer
+    </h2>
+
+    <p>
+      The source code contained in or generated from the <em>DelphiDabbler
+      CodeSnip Database</em> is made available on an &quot;AS IS&quot; basis,
+      WITHOUT WARRANTY OF ANY KIND, either express or implied. The code is used
+      entirely at your own risk.
+    </p>
+
+  </div>
+  <!-- end of disclaimer -->
+
+  <!-- options box -->
+  <div class="optionbox">
+
+    <!-- link to update database -->
+    <div class="option" id="update-db" style="<%UpdateDB%>">
+      <a
+        href="javascript:void(0);"
+        class="command-link"
+        onclick="updateDbase();return false;"
+        onmouseover="showHint(vUpdateDatabaseHint);"
+        onmouseout="clearHint();"
+      ><img
+        src="download.gif"
+        class="option-img"
+        style="width:16px;height:16px;"
+        title="Update the database"
+      /></a>
+      <a
+        href="javascript:void(0);"
+        class="command-link menu-item"
+        onclick="updateDbase();return false;"
+        onmouseover="showHint(vUpdateDatabaseHint);"
+        onmouseout="clearHint();"
+      >Update Database</a>
+    </div>
+    <!-- end of link -->
+
+    <!-- link to download database -->
+    <div class="option" id="download-db" style="<%DownloadDB%>">
+      <a
+        href="javascript:void(0);"
+        class="command-link"
+        onclick="updateDbase();return false;"
+        onmouseover="showHint(vDownloadDatabaseHint);"
+        onmouseout="clearHint();"
+      ><img
+        src="download.gif"
+        class="option-img"
+        style="width:16px;height:16px;"
+        title="Update the database"
+      /></a>
+      <a
+        href="javascript:void(0);"
+        class="command-link menu-item"
+        onclick="updateDbase();return false;"
+        onmouseover="showHint(vUpdateDatabaseHint);"
+        onmouseout="clearHint();"
+      >Download Database</a>
+    </div>
+    <!-- end of link -->
+
+    <!-- link to display quick start help -->
+    <div class="option">
+      <a
+        href="help:QuickStart"
         class="help-link"
+        onmouseover="showHint(vQuickStartHint);"
+        onmouseout="clearHint();"
       ><img
         src="help.gif"
         class="option-img"
         style="width:16px;height:16px;"
-        title="Help Contents"
-      /></a></span>
-      Help
-    </div>
-    <div class="content">
-      Choose a help topic:
-    </div>
-    <div class="content">
-      <ul>
-        <li>
-          <a
-            href="help:QuickStart"
-            class="help-link"
-          >Quick Start Guide</a>
-        </li>
-        <li>
-          <a
-            href="help:Tasks"
-            class="help-link"
-          >Common Tasks</a>
-        </li>
-        <li>
-          <a
-            href="help:FAQs"
-            class="help-link"
-          >FAQs</a>
-        </li>
-      </ul>
-    </div>
-  </div>
-
-  <div id="donate" class="box">
-    <div class="caption">
-      Donate
-    </div>
-    <div class="content" >
-      <em>CodeSnip</em> is free to use without any restriction, but if you find
-      the program useful donations via <em>PayPal&trade;</em> are always
-      welcome.
-    </div>
-    <div class="content">
+        title="View QuickStart help"
+      /></a>
       <a
-        href="#"
-        class="command-link"
-        onclick="donate(); return false;"
-      ><strong>Donate now!</strong></a>
+        href="help:QuickStart"
+        class="help-link menu-item"
+        onmouseover="showHint(vQuickStartHint);"
+        onmouseout="clearHint();"
+      >View QuickStart Help</a>
     </div>
-  </div>
+    <!-- end of link -->
 
-  <div id="footer">
-    <a
-      href="#"
-      class="command-link"
-      onclick="showNews();return false;"
-    >News</a>
-    |
-    <a
-      href="#"
-      class="command-link"
-      onclick="checkForUpdates();return false;"
-    >Check&nbsp;For&nbsp;Program&nbsp;Updates</a>
-    |
-    <a
-      href="#"
-      class="command-link"
-      onclick="showAboutBox();return false;"
-    >About&nbsp;CodeSnip</a>
   </div>
+  <!-- end of options box -->
 
 </div>

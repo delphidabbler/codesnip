@@ -1,16 +1,36 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * FmWaitDlg.pas
  *
- * Copyright (C) 2006-2013, Peter Johnson (www.delphidabbler.com).
+ * Implements a borderless dialog box that displays a message. Designed for
+ * display when application is waiting.
  *
  * $Rev$
  * $Date$
  *
- * Implements a borderless dialogue box that displays a message.
+ * ***** BEGIN LICENSE BLOCK *****
  *
- * Designed for display when the application is waiting.
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is FmWaitDlg.pas
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -92,10 +112,10 @@ begin
   inherited;
   // Update label font to use UI default font: it is set to have bold style,
   // which is preserved. We also have to ensure label is correct size
-  TFontHelper.SetDefaultBaseFont(lblCaption.Font);
+  TFontHelper.SetDefaultBaseFont(lblCaption.Font, False);
   lblCaption.Height := StringExtent(lblCaption.Caption, lblCaption.Font).cy;
   // Create and locate marquee
-  fMarquee := TMarquee.CreateInstance(Self);
+  fMarquee := TMarquee.Create(Self);
   fMarquee.Parent := pnlMain;
   fMarquee.Left := 8;
   fMarquee.Width := pnlMain.ClientWidth - 16;
@@ -131,7 +151,7 @@ function TWaitDlg.GetAligner: IFormAligner;
     @return Required aligner object instance.
   }
 begin
-  Result := TSimpleFormAligner.Create;
+  Result := TFormAligner.Create;
 end;
 
 procedure TWaitDlg.InitForm;

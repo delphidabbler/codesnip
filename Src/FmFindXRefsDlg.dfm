@@ -3,38 +3,27 @@ inherited FindXRefsDlg: TFindXRefsDlg
   Top = 222
   Caption = 'Find Cross References'
   ExplicitWidth = 474
-  ExplicitHeight = 374
+  ExplicitHeight = 354
   PixelsPerInch = 96
   TextHeight = 13
   inherited pnlBody: TPanel
     Width = 305
-    Height = 249
+    Height = 159
     ExplicitWidth = 305
-    ExplicitHeight = 249
+    ExplicitHeight = 159
     object lblDesc: TLabel
       Left = 0
       Top = 0
-      Width = 123
+      Width = 119
       Height = 13
       Caption = 'Find cross references for '
     end
-    object lblSnippetName: TLabel
+    object lblRoutineName: TLabel
       Left = 119
       Top = 0
-      Width = 73
+      Width = 75
       Height = 13
-      Caption = 'lblSnippetName'
-    end
-    object lblOverwriteSearch: TLabel
-      Left = 0
-      Top = 238
-      Width = 220
-      Height = 13
-      AutoSize = False
-      Caption = 
-        'NOTE: Running this cross reference search will override your exi' +
-        'sting search(es).'
-      WordWrap = True
+      Caption = 'lblRoutineName'
     end
     object chkRequired: TCheckBox
       Left = 0
@@ -47,20 +36,20 @@ inherited FindXRefsDlg: TFindXRefsDlg
     end
     object chkSeeAlso: TCheckBox
       Left = 0
-      Top = 114
+      Top = 76
       Width = 305
       Height = 17
       Caption = 'Search for "&see also" cross references'
-      TabOrder = 3
+      TabOrder = 2
       OnClick = SearchCheckClick
     end
-    object chkIncludeSnippet: TCheckBox
+    object chkIncludeRoutine: TCheckBox
       Left = 0
-      Top = 196
-      Width = 600
+      Top = 126
+      Width = 305
       Height = 17
       Caption = '&Include "%s" in search'
-      TabOrder = 6
+      TabOrder = 4
     end
     object chkRequiredRecurse: TCheckBox
       Left = 24
@@ -72,29 +61,11 @@ inherited FindXRefsDlg: TFindXRefsDlg
     end
     object chkSeeAlsoRecurse: TCheckBox
       Left = 24
-      Top = 136
+      Top = 98
       Width = 281
       Height = 17
       Caption = 'Search rec&ursively'
-      TabOrder = 4
-    end
-    object chkSeeAlsoReverse: TCheckBox
-      Left = 0
-      Top = 161
-      Width = 305
-      Height = 17
-      Caption = 'Search for snippets that cross-reference this one'
-      TabOrder = 5
-      OnClick = SearchCheckClick
-    end
-    object chkRequiredReverse: TCheckBox
-      Left = 0
-      Top = 74
-      Width = 305
-      Height = 17
-      Caption = 'Search for snippets that depend on this one'
-      TabOrder = 2
-      OnClick = SearchCheckClick
+      TabOrder = 3
     end
   end
   inherited btnCancel: TButton

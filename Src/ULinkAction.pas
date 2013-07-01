@@ -1,14 +1,35 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * ULinkAction.pas
  *
- * Copyright (C) 2007-2012, Peter Johnson (www.delphidabbler.com).
+ * Implements a custom action used to trigger an HTML anchor element.
  *
  * $Rev$
  * $Date$
  *
- * Implements a custom action used to trigger an HTML anchor element.
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is ULinkAction.pas
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2007-2009 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -53,8 +74,8 @@ type
         @return Returns True if OnExecute handler assigned or False if not.
       }
     function Update: Boolean; override;
-      {Calls OnUpdate handler if one is assigned, otherwise sets visibility and
-      enabled state of action.
+      {Calls OnUpdate handler if one is assigned, otherwise sets visibility of
+      action.
         @return Returns True if OnUpdate handler assigned or False if not.
       }
     property Link: IDispatch read fLink write SetLink;
@@ -85,7 +106,7 @@ const
   // Map of anchor kinds to action captions
   cCaptions: array[TAnchorKind] of string = (
     sOpenInBrowser,   // akExternal
-    sDisplaySnippet,  // akSnippet
+    sDisplaySnippet,  // akRoutine
     sDisplayCategory, // akCategory
     sExecCommand,     // akCommand
     sShowHelp,        // akHelp
@@ -132,18 +153,15 @@ begin
 end;
 
 function TLinkAction.Update: Boolean;
-  {Calls OnUpdate handler if one is assigned, otherwise sets visibility and
-  enabled state of action.
+  {Calls OnUpdate handler if one is assigned, otherwise sets visibility of
+  action.
     @return Returns True if OnUpdate handler assigned or False if not.
   }
 begin
   Result := inherited Update;
   if not Result then
-  begin
-    // set invisible and disabled if element is not an anchor
+    // set invisible if element is not an anchor
     Visible := Anchor <> nil;
-    Enabled := Visible;
-  end;
 end;
 
 end.

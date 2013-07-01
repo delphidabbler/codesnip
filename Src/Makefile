@@ -1,48 +1,47 @@
-# This Source Code Form is subject to the terms of the Mozilla Public License,
-# v. 2.0. If a copy of the MPL was not distributed with this file, You can
-# obtain one at http://mozilla.org/MPL/2.0/
+# ------------------------------------------------------------------------------
+# Makefile
 #
-# Copyright (C) 2009-2013, Peter Johnson (www.delphidabbler.com).
+# Makefile for the whole project.
 #
 # $Rev$
 # $Date$
 #
-# Makefile for the CodeSnip project.
+# ***** BEGIN LICENSE BLOCK *****
+#
+# Version: MPL 1.1
+#
+# The contents of this file are subject to the Mozilla Public License Version
+# 1.1 (the "License"); you may not use this file except in compliance with the
+# License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+#
+# Software distributed under the License is distributed on an "AS IS" basis,
+# WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+# the specific language governing rights and limitations under the License.
+#
+# The Original Code is Makefile
+#
+# The Initial Developer of the Original Code is Peter Johnson
+# (http://www.delphidabbler.com/).
+#
+# Portions created by the Initial Developer are Copyright (C) 2009 Peter
+# Johnson. All Rights Reserved.
+#
+# Contributors:
+#   NONE
+#
+# ***** END LICENSE BLOCK *****
+# ------------------------------------------------------------------------------
 
 
-# Define macros giving relative paths to other directories from location of
-# makefile
+# Set bin path: required by Common.mak
 BIN = ..\Bin
-EXE = ..\Exe
 
-# Check for required environment variables
 
-!ifdef DELPHIXE
-DELPHIROOT = $(DELPHIXE)
-!endif
-!ifndef DELPHIROOT
-!error DELPHIROOT or DELPHIXE environment variable required.
-!endif
+!include Common.mak
 
-!ifndef INDY10
-!error INDY10 environment variable required.
-!endif
-
-# Define macros for required tools
+# Define macros for all tools that are not common
 
 TLIBIMP = "$(DELPHIROOT)\Bin\TLibImp.exe"
-
-MAKE = "$(MAKEDIR)\Make.exe" -$(MAKEFLAGS)
-
-DCC32 = "$(DELPHIROOT)\Bin\DCC32.exe"
-
-BRCC32 = "$(DELPHIROOT)\Bin\BRCC32.exe"
-
-!ifdef VIEDROOT
-VIED = "$(VIEDROOT)\VIEd.exe" -makerc
-!else
-VIED = VIEd.exe -makerc
-!endif
 
 !ifdef HTMLRESROOT
 HTMLRES = "$(HTMLRESROOT)\HTMLRes.exe"
@@ -50,9 +49,6 @@ HTMLRES = "$(HTMLRESROOT)\HTMLRes.exe"
 HTMLRES = HTMLRes
 !endif
 
-!ifdef INNOSETUP_U
-INNOSETUP = $(INNOSETUP_U)
-!endif
 !ifdef INNOSETUP
 ISCC = "$(INNOSETUP)\ISCC.exe"
 !else
@@ -83,33 +79,11 @@ MIDL = "$(MSSDK)\Bin\MIDL.exe"
 MIDL = @echo *** IGNORING MIDL
 !endif
 
-# Command line options
-!ifdef PORTABLE
-DELPHIDEFINES = "-DPORTABLE"
-!else
-DELPHIDEFINES =
-!endif
-
-# Implicit rules
-
-# Resource files are compiled to the directory specified by BIN macro, which
-# must have been set by the caller.
-.rc.res:
-  @echo +++ Compiling Resource file $< +++
-  @$(BRCC32) $< -fo$(BIN)\$(@F)
-
-# Version info files are compiled by VIEd. A temporary .rc file is left behind
-.vi.rc:
-  @echo +++ Compiling Version Info file $< +++
-  @$(VIED) .\$<
-
-# Explicit rules
-
 # Default is to build everything and release
 everything: config exes setup release
 
-# Builds CodeSnip exe file + help
-exes: codesnip help
+# Builds all exe files + help
+exes: codesnip installhelper help
 
 # Build CodeSnip executable
 codesnip: typelib resources autogen pascal
@@ -122,41 +96,34 @@ config:
   # Create build folders
   @cd ..
   @if exist Bin rmdir /S /Q Bin
+  @if exist Exe rmdir /S /Q Exe
+  @if exist Release rmdir /S /Q Release
   @mkdir Bin
-  @if not exist Exe mkdir Exe
-  @if not exist Release mkdir Release
+  @mkdir Bin\InstallHelper
+  @mkdir Exe
+  @mkdir Release
   @cd Src
+  # Config install helper
+  @cd InstallHelper
+  @$(MAKE) config
+  @cd ..
+
+# Build install helper executable
+installhelper: 
+  @cd InstallHelper
+  @$(MAKE) exe
+  @cd ..
 
 # Builds CodeSnip pascal files and links program
 pascal: CodeSnip.exe
-
-# Delphi projects are assumed to contain required output and search path
-# locations in the project options .cfg file.
-CodeSnip.exe:
-  @echo +++ Compiling Pascal +++
-!ifdef PORTABLE
-  @if exist $(EXE)\$(@F) copy $(EXE)\$(@F) $(EXE)\$(@F).bak
-!endif
-  @$(DCC32) $(@B).dpr -B -U"$(INDY10)" $(DELPHIDEFINES)
-!ifdef PORTABLE
-  @copy $(EXE)\$(@F) $(EXE)\$(@B)-p.exe /Y
-  @del $(EXE)\$(@F)
-  @if exist $(EXE)\$(@F).bak copy $(EXE)\$(@F).bak $(EXE)\$(@F)
-  @if exist $(EXE)\$(@F).bak del $(EXE)\$(@F).bak
-!endif
 
 # Builds help file
 help:
   -1 @$(HHC) .\Help\CodeSnip.chm
 
 # Compiles the resources and deletes intermediate file created by VIED
-!ifndef PORTABLE
-VERINFOFILEBASE = VCodeSnip
-!else
-VERINFOFILEBASE = VCodeSnipPortable
-!endif
-resources: $(VERINFOFILEBASE).res Resources.res HTML.res
-  -@del $(VERINFOFILEBASE).rc
+resources: VCodeSnip.res Resources.res HTML.res
+  -@del VCodeSnip.rc
 
 # Compiles HTMLres from .hrc file
 HTML.res: HTML.hrc
@@ -164,29 +131,22 @@ HTML.res: HTML.hrc
   @$(HTMLRES) -mHTML.hrc -o$(BIN)\HTML.res -r -q
 
 # Compiles type library from IDL
-typelib:
+typelib:  
   @$(MIDL) .\ExternalObj.idl /tlb $(BIN)\ExternalObj.tlb /I "$(MSSDK)\Include"
 
 # Builds setup program
 setup:
-!ifndef PORTABLE
   @del ..\Exe\CodeSnip-Setup-*
   @$(ISCC) Install\CodeSnip.iss
-!else
-  @echo **** Portable build - no setup file created ****
-!endif
 
 # Creates auto generated files
-autogen:
+autogen: 
   @$(TLIBIMP) -P+ -Ps+ -D.\AutoGen -FtIntfExternalObj $(BIN)\ExternalObj.tlb
   @if exist .\AutoGen\IntfExternalObj.dcr del .\AutoGen\IntfExternalObj.dcr
 
 # Build release files (.zip)
 !ifndef RELEASEFILENAME
 RELEASEFILENAME = dd-codesnip
-!ifdef PORTABLE
-RELEASEFILENAME = $(RELEASEFILENAME)-portable
-!endif
 !endif
 OUTFILE = Release\$(RELEASEFILENAME).zip
 release:
@@ -195,15 +155,7 @@ release:
   @echo ---------------------
   @cd ..
   -@if exist $(OUTFILE) del $(OUTFILE)
-!ifndef PORTABLE
   @$(ZIP) -j -9 $(OUTFILE) Exe\CodeSnip-Setup-*.exe Docs\ReadMe.txt
-!else
-  @$(ZIP) -j -9 $(OUTFILE) Exe\CodeSnip-p.exe
-  @$(ZIP) -j -9 $(OUTFILE) Exe\CodeSnip.chm
-  @$(ZIP) -j -9 $(OUTFILE) Docs\ReadMe.txt
-  @$(ZIP) -j -9 $(OUTFILE) Docs\Privacy.txt
-  @$(ZIP) -j -9 $(OUTFILE) Docs\License.html
-!endif
   @cd Src
 
 # Clean up unwanted files

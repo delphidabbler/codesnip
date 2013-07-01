@@ -1,15 +1,36 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * UHTTPProtocol.pas
  *
- * Copyright (C) 2006-2012, Peter Johnson (www.delphidabbler.com).
+ * Implements a handlers for the "http" and "https:" URL protocols that displays
+ * the URL in the default browser.
  *
  * $Rev$
  * $Date$
  *
- * Implements a handlers for the "http" and "https:" URL protocols that displays
- * the URL in the default browser.
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is UHTTPProtocol.pas
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2006-2010 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -24,9 +45,9 @@ implementation
 
 uses
   // Delphi
-  ExtActns,
+  StrUtils, ExtActns,
   // Project
-  UBrowseProtocol, UProtocols, UStrUtils;
+  UBrowseProtocol, UProtocols;
 
 
 type
@@ -73,14 +94,14 @@ class function THTTPProtocol.SupportsProtocol(const URL: string): Boolean;
     @return True if URL's protocol is http:, False if not.
   }
 begin
-  Result := StrStartsStr(cHTTPProtocol, URL);
+  Result := AnsiStartsStr(cHTTPProtocol, URL);
 end;
 
 { THTTPSProtocol }
 
 class function THTTPSProtocol.SupportsProtocol(const URL: string): Boolean;
 begin
-  Result := StrStartsStr(cHTTPSProtocol, URL);
+  Result := AnsiStartsStr(cHTTPSProtocol, URL);
 end;
 
 initialization

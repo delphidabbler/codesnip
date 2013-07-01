@@ -1,16 +1,37 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
- *
- * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
- *
- * $Rev$
- * $Date$
+ * Browser.UController.pas
  *
  * Class that hosts the IE web browser control and enables both direct loading
  * and saving of browser's HTML and customisation of the user interface. Much of
  * the functionality of the class is handled by owned objects.
+ *
+ * $Rev$
+ * $Date$
+ *
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is Browser.UController.pas, formerly UWBController.pas
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -40,7 +61,7 @@ type
     IOleClientSite,     // notifies web browser that we provide an OLE container
     IDocHostUIHandler   // accessed web browser to customise UI
   )
-  strict private
+  private
     fWebBrowser: TWebBrowser;
       {Reference to controlled web browser control}
     fIOMgr: TWBIOMgr;
@@ -54,6 +75,11 @@ type
         @param Reference to object providing OLE container. May be Self to
           register this object as OLE container or nil to unregister.
       }
+  protected
+    { IOleClientSite }
+    property OleClientSite: TOleClientSite
+      read fOleClientSite implements IOleClientSite;
+      {References aggregated object implementing IOleClientSite interface}
   public
     constructor Create(const WebBrowser: TWebBrowser);
       {Object constructor. Sets up object as container for a browser control.
@@ -70,10 +96,6 @@ type
       read fUIMgr implements IDocHostUIHandler;
       {Object that customises UI and implement's object IDocHostUIHandler
       interface}
-    { IOleClientSite method}
-    property OleClientSite: TOleClientSite
-      read fOleClientSite implements IOleClientSite;
-      {References aggregated object implementing IOleClientSite interface}
   end;
 
 

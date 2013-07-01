@@ -1,17 +1,38 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
- *
- * Copyright (C) 2010-2012, Peter Johnson (www.delphidabbler.com).
- *
- * $Rev$
- * $Date$
+ * Web.UHTTPEx.pas
  *
  * Class that makes HTTP requests over the internet. Correctly decodes text
  * according to the character set defined in the HTTP response and validates
  * responses that include a checksum. Uses Indy components to make the actual
  * HTTP request.
+ *
+ * $Rev$
+ * $Date$
+ *
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is Web.UHTTPEx.pas
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2010 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -77,10 +98,6 @@ type
     procedure SetContentTtype(const Value: string);
       {Write accessor for ContentType property.
         @param Value [in] New property value.
-      }
-    function GetResponseCharSet: string;
-      {Read accessor for ResponseCharSet property.
-        @return String containing character set.
       }
   strict protected
     function DoRequestText(const Requestor: TProc<TBytesStream>): string;
@@ -164,8 +181,6 @@ type
       {Media type specified when making HTTP requests}
     property ContentType: string read GetContentType write SetContentTtype;
       {Content type specified when making HTTP requests}
-    property ResponseCharSet: string read GetResponseCharSet;
-      {Character set used for HTTP response}
   end;
 
 
@@ -178,7 +193,7 @@ uses
   // 3rd party
   PJMD5,
   // Project
-  UConsts, UStrUtils, Web.UCharEncodings, Web.UExceptions, Web.UInfo;
+  UConsts, Web.UCharEncodings, Web.UExceptions, Web.UInfo;
 
 
 resourcestring
@@ -330,11 +345,12 @@ begin
   // Perform request, getting raw content
   Content := DoRequestRaw(Requestor);
   // Get text from raw data, decoded according to HTTP response header
-  Encoding := TWebCharEncodings.GetEncoding(GetResponseCharSet);
+  Encoding := TWebCharEncodings.GetEncoding(fHTTP.Response.CharSet);
   try
     Result := Encoding.GetString(Content);
   finally
-    TWebCharEncodings.FreeEncoding(Encoding);
+    if not TEncoding.IsStandardEncoding(Encoding) then
+      Encoding.Free;
   end;
 end;
 
@@ -358,17 +374,6 @@ begin
       fHTTP.Get(URI, ResponseStream)
     end
   );
-end;
-
-function THTTPEx.GetResponseCharSet: string;
-  {Read accessor for ResponseCharSet property.
-    @return String containing character set.
-  }
-begin
-  if fHTTP.Response.CharSet <> '' then
-    Result := fHTTP.Response.CharSet
-  else
-    Result := TWebCharEncodings.DefaultCharSet;
 end;
 
 function THTTPEx.GetText(const URI: string): string;
@@ -404,9 +409,7 @@ begin
   if E is EIdHTTPProtocolException then
     raise EHTTPError.Create(E as EIdHTTPProtocolException)
   else if E is EIdSocketError then
-    raise EWebConnectionError.CreateFmt(
-      sWebConnectionError, [StrTrim(E.Message)]
-    )
+    raise EWebConnectionError.CreateFmt(sWebConnectionError, [Trim(E.Message)])
   else
     raise E;
 end;

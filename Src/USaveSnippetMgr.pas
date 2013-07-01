@@ -1,15 +1,36 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * USaveSnippetMgr.pas
  *
- * Copyright (C) 2005-2012, Peter Johnson (www.delphidabbler.com).
+ * Defines a class that manages generation, previewing and saving of a code
+ * snippet.
  *
  * $Rev$
  * $Date$
  *
- * Defines a class that manages generation, previewing and saving of a code
- * snippet.
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is USaveSnippetMgr.pas
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -21,65 +42,56 @@ interface
 
 uses
   // Project
-  USourceFileInfo, USaveSourceMgr, USourceGen, UView;
+  UBaseObjects, USourceFileOutputMgr, USourceGen, UView;
 
 
 type
-  ///  <summary>
-  ///  Manages generation, previewing and saving of a suitable code snippet or
-  ///  category to disk.
-  ///  </summary>
-  ///  <remarks>
-  ///  Generated file can be a Pascal include file, a plain text file, an HTML
-  ///  file or a RTF file. The last two file types can optionally be syntax
-  ///  highlighted.
-  ///  </remarks>
-  TSaveSnippetMgr = class(TSaveSourceMgr)
+
+  {
+  TSaveSnippetMgr:
+    Manages generation, previewing and saving of a suitable code snippet or
+    category to disk. Generated file can be a Pascal include file, a plain text
+    file, an HTML file or a RTF file. The last two files types can optionally be
+    syntax highlighted.
+  }
+  TSaveSnippetMgr = class(TNoPublicConstructObject)
   strict private
-    ///  <summary>View containing item for which source code to be output.
-    ///  </summary>
-    fView: IView;
+    fView: TViewItem;                 // View to be output
+    fDocTitle: string;                // Title of saved documents
+    fOutputMgr: TSourceFileOutputMgr; // Gets save info and manages output
+    procedure SourceGenHandler(Sender: TObject;
+      const CommentStyle: TCommentStyle; out RawSourceCode, DocTitle: string);
+      {Handles output manager's OnGenerateOutput event by generating source code
+      for snippet in required comment style.
+        @param Sender [in] Not used.
+        @param CommentStyle [in] Style of commenting to be used in source code.
+        @param SourceCode [out] Receives generated source code.
+        @param DocTitle [out] Receives document title.
+      }
   strict protected
-    ///  <summary>Object constructor. Sets up object to save source code
-    ///  encapsulated by a view.</summary>
-    constructor InternalCreate(View: IView);
-    ///  <summary>Gets description of given source code file type.</summary>
-    function GetFileTypeDesc(const FileType: TSourceFileType): string; override;
-    ///  <summary>Gets default file name to display in dialog box.</summary>
-    function GetDefaultFileName: string; override;
-    ///  <summary>Gets dialog box title.</summary>
-    function GetDlgTitle: string; override;
-    ///  <summary>Get dialog box's help keyword.</summary>
-    function GetDlgHelpKeyword: string; override;
-    ///  <summary>Gets title to be used for source document.</summary>
-    function GetDocTitle: string; override;
-    ///  <summary>Generates raw, un-highlighted, source code.</summary>
-    ///  <param name="CommentStyle">TCommentStyle [in] Style of commenting to be
-    ///  used in source code.</param>
-    ///  <param name="TruncateComments">Boolean [in] Indicates whether multi
-    ///  paragraph comments are to be truncated to first paragraph.</param>
-    ///  <returns>String containing generated source code.</returns>
-    function GenerateSource(const CommentStyle: TCommentStyle;
-      const TruncateComments: Boolean): string;
-      override;
-    ///  <summary>Checks if a file name is valid for the kind of file being
-    ///  saved.</summary>
-    ///  <param name="FileName">string [in] Name of file to check.</param>
-    ///  <param name="NameOK">Boolean [out] Set True if file name OK, False if
-    ///  not.</param>
-    ///  <param name="ErrorMessage">string [out] Error message describing
-    ///  problem with invalid file name. Undefined if NameOK is True.</param>
-    procedure CheckFileName(const FileName: string; out NameOK: Boolean;
-      out ErrorMessage: string); override;
+    constructor InternalCreate(const View: TViewItem);
+      {Class constructor. Sets up object for view.
+        @param View [in] View to be output.
+      }
+    procedure DoExecute;
+      {Gets information from user about name and format of required file and
+      saves generated source code to disk.
+      }
   public
-    ///  <summary>Creates and outputs a compilable include file generated from a
-    ///  view item with name and format speficied by user.</summary>
-    ///  <param name="View">IView [in] View from which source code is generated.
-    ///  CanHandleView must return True for this view.</param>
-    class procedure Execute(View: IView);
-    ///  <summary>Checks whether a snippet include file can be created from a
-    ///  given view.</summary>
-    class function CanHandleView(View: IView): Boolean;
+    destructor Destroy; override;
+      {Class destructor. Tears down object.
+      }
+    class procedure Execute(const View: TViewItem);
+      {Creates and outputs a compilable include file generated from a view item.
+        @param View [in] View from which source code is generated. CanHandleView
+          must return True for this view.
+      }
+    class function CanHandleView(const View: TViewItem): Boolean;
+      {Checks whether a snippet include file can be created from a view.
+        @param View [in] View to be checked.
+        @return True if view contains code that can be output as a compilable
+          snippet include file, False otherwise.
+      }
   end;
 
 
@@ -90,37 +102,59 @@ uses
   // Delphi
   SysUtils,
   // Project
-  USnippetSourceGen;
+  USnippetSourceGen, USourceFileInfo;
 
 
 resourcestring
-  // Dialog box title
+  // Dialog box strings
+  // title
   sSaveDlgTitle = 'Save %0:s Snippet';
-  // Output document title for snippets and categories
-  sDocTitle = '"%0:s" %1:s';
-  sCategory = 'category';
-  sSnippet = 'routine';
-  // File filter strings
+  // file filter strings
   sHtmExtDesc = 'HTML file';
   sRtfExtDesc = 'Rich text file';
   sIncExtDesc = 'Pascal include file';
   sTxtExtDesc = 'Plain text file';
 
+  // Output document title for routines and categories
+  sDocTitle = '"%0:s" %1:s';
+  sCategory = 'category';
+  sRoutine = 'routine';
+
 
 { TSaveSnippetMgr }
 
-class function TSaveSnippetMgr.CanHandleView(View: IView): Boolean;
+class function TSaveSnippetMgr.CanHandleView(const View: TViewItem): Boolean;
+  {Checks whether a snippet include file can be created from a view.
+    @param View [in] View to be checked.
+    @return True if view contains code that can be output as a compilable
+      snippet include file, False otherwise.
+  }
 begin
   Result := TSnippetSourceGen.CanGenerate(View);
 end;
 
-procedure TSaveSnippetMgr.CheckFileName(const FileName: string;
-  out NameOK: Boolean; out ErrorMessage: string);
+destructor TSaveSnippetMgr.Destroy;
+  {Class destructor. Tears down object.
+  }
 begin
-  NameOK := True;
+  FreeAndNil(fOutputMgr);
+  inherited;
 end;
 
-class procedure TSaveSnippetMgr.Execute(View: IView);
+procedure TSaveSnippetMgr.DoExecute;
+  {Gets information from user about name and format of required file and saves
+  generated source code to disk.
+  }
+begin
+  // Hand off processing to output manager
+  fOutputMgr.Execute;
+end;
+
+class procedure TSaveSnippetMgr.Execute(const View: TViewItem);
+  {Creates and outputs a compilable include file generated from a view item.
+    @param View [in] View from which source code is generated. CanHandleView
+      must return True for this view.
+  }
 begin
   with InternalCreate(View) do
     try
@@ -130,53 +164,50 @@ begin
     end;
 end;
 
-function TSaveSnippetMgr.GenerateSource(const CommentStyle: TCommentStyle;
-  const TruncateComments: Boolean): string;
+constructor TSaveSnippetMgr.InternalCreate(const View: TViewItem);
+  {Class constructor. Sets up object for view.
+    @param View [in] View to be output.
+  }
 begin
-  Result := TSnippetSourceGen.Generate(fView, CommentStyle, TruncateComments);
-end;
-
-function TSaveSnippetMgr.GetDefaultFileName: string;
-begin
-  Result := fView.Description;
-end;
-
-function TSaveSnippetMgr.GetDlgHelpKeyword: string;
-begin
-  Result := 'SaveSnippetDlg';
-end;
-
-function TSaveSnippetMgr.GetDlgTitle: string;
-begin
-  Result := Format(sSaveDlgTitle, [fView.Description]);
-end;
-
-function TSaveSnippetMgr.GetDocTitle: string;
-begin
-  if Supports(fView, ICategoryView) then
-    Result := Format(sDocTitle, [fView.Description, sCategory])
-  else if Supports(fView, ISnippetView) then
-    Result := Format(sDocTitle, [fView.Description, sSnippet])
-  else
-    Result := '';
-end;
-
-function TSaveSnippetMgr.GetFileTypeDesc(
-  const FileType: TSourceFileType): string;
-const
-  Descriptions: array[TSourceFileType] of string = (
-    sTxtExtDesc, sIncExtDesc, sHtmExtDesc, sRtfExtDesc
-  );
-begin
-  Result := Descriptions[FileType];
-end;
-
-constructor TSaveSnippetMgr.InternalCreate(View: IView);
-begin
-  // Record reference to view object: we do this here because overridden methods
-  // calls made in inherited constructor.
-  fView := View;
   inherited InternalCreate;
+  // Record reference to view object
+  fView := View;
+  // Create and initialise output manager object
+  fOutputMgr := TSourceFileOutputMgr.Create;
+  fOutputMgr.DlgTitle := Format(sSaveDlgTitle, [View.Description]);
+  fOutputMgr.DlgHelpKeyword := 'SaveSnippetDlg';
+  fOutputMgr.OnGenerateOutput := SourceGenHandler;
+  with fOutputMgr.SourceFileInfo do
+  begin
+    Descriptions[sfText] := sTxtExtDesc;
+    FileExtensions[sfText] := '.txt';
+    Descriptions[sfPascal] := sIncExtDesc;
+    FileExtensions[sfPascal] := '.inc';
+    Descriptions[sfHTML] := sHtmExtDesc;
+    FileExtensions[sfHTML] := '.html';
+    Descriptions[sfRTF] := sRtfExtDesc;
+    FileExtensions[sfRTF] := '.rtf';
+    FileName := View.Description;
+  end;
+  // Record document title
+  if View.Kind = vkCategory then
+    fDocTitle := Format(sDocTitle, [View.Description, sCategory])
+  else if View.Kind = vkRoutine then
+    fDocTitle := Format(sDocTitle, [View.Description, sRoutine]);
+end;
+
+procedure TSaveSnippetMgr.SourceGenHandler(Sender: TObject;
+  const CommentStyle: TCommentStyle; out RawSourceCode, DocTitle: string);
+  {Handles output manager's OnGenerateOutput event by generating source code for
+  snippet in required comment style.
+    @param Sender [in] Not used.
+    @param CommentStyle [in] Style of commenting to be used in source code.
+    @param SourceCode [out] Receives generated source code.
+    @param DocTitle [out] Receives document title.
+  }
+begin
+  RawSourceCode := TSnippetSourceGen.Generate(fView, CommentStyle);
+  DocTitle := fDocTitle;
 end;
 
 end.

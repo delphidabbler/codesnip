@@ -1,15 +1,36 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * IntfPreview.pas
  *
- * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
+ * Interface implemented by objects that can display a document of a certain
+ * type in a preview dialog box.
  *
  * $Rev$
  * $Date$
  *
- * Defines the interface implemented by objects that can display a document of a
- * certain type in a preview dialogue box.
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is IntfPreview.pas
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -21,30 +42,31 @@ interface
 
 uses
   // Delphi
-  Menus,
-  // Project
-  UEncodings;
+  Menus;
 
 
 type
-  ///  <summary>Interface implemented by objects that can display a document of
-  ///  a certain type in a preview dialogue box.</summary>
-  ///  <remarks>The supported document types are implementation dependant.
-  ///  </remarks>
+  {
+  IPreview:
+    Interface implemented by objects that can display a document of a certain
+    type in a preview dialog box.
+  }
   IPreview = interface(IInterface)
     ['{85070D46-EB65-4C59-BA60-AE6144037C83}']
-    ///  <summary>Displays a document in a preview dialogue box.</summary>
-    ///  <param name="DocContent">TEncodedData [in] Content of document to be
-    ///  displayed.</param>
-    procedure Display(const DocContent: TEncodedData);
-    ///  <summary>Provides a context menu that can be displayed by the control
-    ///  that is displaying the preview.</summary>
-    ///  <param name="Menu">TPopupMenu [in] Context menu.</param>
+    procedure Display(const DocContent: string; out Title: string);
+      {Displays document in preview dialog box.
+        @param DocContent [in] Content of document to be displayed.
+        @param Title [out] Title of document, if any.
+      }
     procedure SetPopupMenu(const Menu: TPopupMenu);
+      {Provides a popup menu to be displayed when control that is displaying
+      preview is right-clicked.
+        @param Menu [in] Popup menu to be displayed.
+      }
   end;
 
 const
-  ///  <summary>Size of margin to use in previews, in pixels.</summary>
+  // Size of margin to use in previews
   cPreviewMargin = 8;
 
 

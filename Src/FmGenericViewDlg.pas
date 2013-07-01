@@ -1,15 +1,36 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * FmGenericViewDlg.pas
  *
- * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
+ * Implements a dialog box base class derived from TGenericDlg that adds a Close
+ * button to the dialog.
  *
  * $Rev$
  * $Date$
  *
- * Implements a base class for modal dialogue boxes that have a single Close
- * button.
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is FmGenericViewDlg.pas
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -23,20 +44,20 @@ uses
   // Delphi
   StdCtrls, Controls, ExtCtrls, Classes,
   // Project
-  FmGenericModalDlg, FmGenericDlg;
+  FmGenericDlg;
 
 
 type
 
   {
   TGenericViewDlg:
-    Generic OK dialogue box used as a base class for modal dialogue boxes that
-    permit viewing rather then editing of data. Adds a Close button that closes
-    the dialogue box.
+    Generic OK dialog box used as a base class for dialog boxes that permit
+    viewing rather then editing of data. Adds a Close button that closes the
+    dialog box.
   }
-  TGenericViewDlg = class(TGenericModalDlg)
+  TGenericViewDlg = class(TGenericDlg)
     btnClose: TButton;
-  strict protected
+  protected
     procedure ArrangeForm; override;
       {Positions controls and sets form size according to body panel dimensions.
       }

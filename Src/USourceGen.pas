@@ -1,15 +1,38 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * USourceGen.pas
  *
- * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
+ * Implements a class that is used to generate Pascal source code containing
+ * specified database snippets.
+ *
+ * Originally named UUnitGen.pas. Renamed as USourceGen.pas as at v0.4.
  *
  * $Rev$
  * $Date$
  *
- * Implements a class that is used to generate Pascal source code containing
- * specified database snippets.
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is USourceGen.pas
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2005-2012 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -23,228 +46,243 @@ uses
   // Delphi
   Classes, Generics.Collections,
   // Project
-  ActiveText.UMain, DB.USnippet, UBaseObjects, UIStringList;
+  UBaseObjects, UIStringList, USnippets;
 
 
 type
-  ///  <summary>Enumeration of different styles of commenting used when
-  ///  documenting snippets with their descriptions.</summary>
+
+  {
+  TCommentStyle:
+    Different styles of commenting used when documenting snippets from database.
+  }
   TCommentStyle = (
     csNone,     // no documentation of snippets
     csAfter,    // description of snippet between prototype and body
     csBefore    // description of snippet immediatly preceeds code
   );
 
-type
-  ///  <summary>Static class that provides information about comment styles and
-  ///  which formats comments in the appropriate style.</summary>
+  {
+  TSourceComments:
+    Static class that provides information about comment styles and formats
+    comments in appropriate style.
+  }
   TSourceComments = class(TNoConstructObject)
-  strict private
-    ///  <summary>Formats the given comment text into lines with a fixed
-    ///  maximum width indented by the given number of spaces on the left.
-    ///  </summary>
-    class function FormatCommentLines(const Text: string;
-      const Indent: Cardinal): string;
   public
-
-    ///  <summary>Returns a description of the given comment style.</summary>
-    ///  <remarks>The description is in a form uitable for use in the UI.
-    ///  </remarks>
     class function CommentStyleDesc(const Style: TCommentStyle): string;
-
-    ///  <summary>Formats a snippet's descriptive comment as a Pascal comment
-    ///  with to a specified commenting style.</summary>
-    ///  <param name="Style">TCommentStyle [in] Required commenting style.
-    ///  </param>
-    ///  <param name="TruncateComments">Boolean [in] Flag indicating whether or
-    ///  not comment is to be truncated at the end of the first paragraph of
-    ///  multi-paragraph text.</param>
-    ///  <param name="Text">IActiveText [in] Active text of comment.</param>
-    ///  <returns>string.Formatted comment or empty string if Style = csNone.
-    ///  </returns>
+      {Gets description of a comment style for use in UI elements.
+        @param Style [in] Comment style for which description wanted.
+        @return Required description.
+      }
     class function FormatSnippetComment(const Style: TCommentStyle;
-      const TruncateComments: Boolean; const Text: IActiveText): string;
-
-    ///  <summary>Formats document's header text as a Pascal comment.</summary>
-    ///  <param name="Comments">IStringList [in] List of paragraphs of header
-    ///  text.</param>
-    ///  <returns>string. Formatted comments.</returns>
+      const Text: string): string;
+      {Formats a snippet's comment text as Pascal comment according to
+      commenting style.
+        @param Style [in] Desired commenting style.
+        @param Text [in] Text of comment. Ignored if Style = csNone.
+        @return Formatted comment. Empty string if Style = csNone.
+      }
     class function FormatHeaderComments(const Comments: IStringList): string;
+      {Formats header comment text as Pascal comments.
+        @param Comments [in] List of comments to format.
+        @return Formatted comments.
+      }
   end;
 
-type
-  ///  <summary>Class that receives snippets for which source is to be
-  ///  generated, determines dependencies and pulls in any required snippets.
-  ///  Data structures are created that can be used to emit source code with all
-  ///  dependencies resolved.</summary>
+  {
+  TConstAndTypeList:
+    Maintains a list of constant and type snippets and maintains order to
+    account for dependencies.
+  }
+  TConstAndTypeList = class(TObject)
+  strict private
+    type
+      {
+      TUnitRecorder:
+        Method that is called to record the units required by a constant or
+        type.
+          @param Units [in] String list containing list of units.
+      }
+      TUnitRecorder = procedure(const Units: TStringList) of object;
+    var
+      fItems: TObjectList<TRoutine>;  // List of consts or types
+    function GetCount: Integer;
+      {Read accessor for Count property.
+        @return Number of items in list.
+      }
+    function GetItem(Idx: Integer): TRoutine;
+      {Read access for Items[] property.
+        @param Idx [in] Index of required snippet in list.
+        @return Indexed snippet.
+      }
+    function Contains(const ConstOrType: TRoutine): Boolean;
+      {Checks if the list contains a constant or type snippet.
+        @param ConstOrType [in] Constant or type snippet being checked for.
+        @return True if snippet in list, False if not.
+      }
+  public
+    constructor Create;
+      {Constructor. Sets up list.
+      }
+    destructor Destroy; override;
+      {Destructor. Tears down object.
+      }
+    procedure Add(const ConstOrType: TRoutine;
+      const UnitRecorder: TUnitRecorder);
+      {Adds a constant or type snippet to the list, ignoring duplicates.
+        @param ConstOrType [in] Constant or type snippet to be added.
+        @param UnitRecorder [in] Method that records units required by
+          ConstOrType.
+        @except Exception raised if dependency list is not valid.
+      }
+    function GetEnumerator: TEnumerator<TRoutine>;
+      {Gets an intialised const and type list enumerator.
+        @return Required enumerator.
+      }
+    property Items[Idx: Integer]: TRoutine read GetItem; default;
+      {Array of items in list, in dependency oder}
+    property Count: Integer read GetCount;
+      {Number of items in list}
+  end;
+
+  {
+  TSourceAnalyser:
+    Class that receives snippets for which source is to be generated and
+    analyses relationships, pulling in any required snippets. Creates data
+    structures that can be used to emit source code with all dependencies
+    resolved.
+  }
   TSourceAnalyser = class(TObject)
   strict private
     var
-      ///  <summary>Value of TypesAndConsts property.</summary>
-      fTypesAndConsts: TObjectList<TSnippet>;
-      ///  <summary>Value of IntfRoutines property.</summary>
-      fIntfRoutines: TSnippetList;
-      ///  <summary>Value of AllRoutines property.</summary>
-      fAllRoutines: TSnippetList;
-      ///  <summary>Value of ForwardRoutines property.</summary>
-      fForwardRoutines: TSnippetList;
-      ///  <summary>Value of RequiredRoutines property.</summary>
-      fRequiredRoutines: TSnippetList;
-      ///  <summary>Value of Units property.</summary>
-      fUnits: TStringList;
-
-    ///  <summary>Adds given user-specified routine to the analysis.</summary>
-    ///  <remarks>Duplicates are ignored.</remarks>
-    procedure AddIntfRoutine(const Routine: TSnippet);
-
-    ///  <summary>Adds the given type or constant to the analysis.</summary>
-    ///  <remarks>Duplicates are ignored.</remarks>
-    procedure AddTypeOrConst(const TypeOrConst: TSnippet);
-
-    ///  <summary>Adds all snippets in given list to a list of required
-    ///  snippets, according to type.</summary>
-    procedure RequireSnippets(const Snips: TSnippetList);
-
-    ///  <summary>Adds given snippet to appropriate list of required snippets,
-    ///  according to type.</summary>
-    procedure RequireSnippet(const Snippet: TSnippet);
-
-    ///  <summary>Adds each unit in given list to list of required units.
-    ///  </summary>
-    ///  <remarks>Duplicates are ignored.</remarks>
+      fTypesAndConsts: TConstAndTypeList; // Value of TypesAndConsts property
+      fIntfRoutines: TRoutineList;        // Value of IntfRoutines property
+      fAllRoutines: TRoutineList;         // Value of AllRoutines property
+      fForwardRoutines: TRoutineList;     // Value of ForwardRoutines property
+      fRequiredRoutines: TRoutineList;    // Value of RequiredRoutines property
+      fUnits: TStringList;                // Value of Units property
+    procedure AddIntfRoutine(const Routine: TRoutine);
+      {Adds a user-specified routine to list of routines specified by user.
+      Duplicates ignored.
+        @param Routine [in] Routine to be added.
+      }
+    procedure AddTypeOrConst(const TypeOrConst: TRoutine);
+      {Adds a user specified or required type or constant to the analysis.
+        @param TypeOrConst [in] Type of constant snippet to be added.
+      }
+    procedure RequireSnippets(const Snips: TRoutineList);
+      {Process all snippets in a dependency list.
+        @param Snips [in] List of snippets to process.
+      }
+    procedure RequireSnippet(const Snippet: TRoutine);
+      {Process a snippet from a dependency list.
+        @param Snippet [in] Snippet to be processed.
+        @except Exception raised if attempt is made to require freeform snippet
+      }
     procedure RequireUnits(const Units: TStringList);
-
-    ///  <summary>Adds given unit to list of required units.</summary>
-    ///  <remarks>Duplicates are ignored.</remarks>
+      {Adds a list of units to required units list. Duplicates ignored.
+        @param Units [in] List of units.
+      }
     procedure RequireUnit(const UnitName: string);
-
-    ///  <summary>Adds given routine, that has not been directly required by
-    ///  user, to the analysis.</summary>
-    ///  <remarks>Duplicates are ignored.</remarks>
-    procedure RequireRoutine(const Routine: TSnippet);
-
+      {Add a unit to list of required units. Duplicates ignored.
+        @param UnitName [in] Name of required unit.
+      }
+    procedure RequireRoutine(const Routine: TRoutine);
+      {Adds a routine from a dependency list to the analysis. Duplicates
+      ignored.
+        @param Routine [in] Routine to be added.
+      }
   public
-
-    ///  <summary>Constructs new object instance.</summary>
     constructor Create;
-
-    ///  <summary>Destroys object instance.</summary>
+      {Constructor. Sets up object.
+      }
     destructor Destroy; override;
-
-    ///  <summary>Adds the given user-defined snippet to the analysis.</summary>
-    ///  <remarks>Freeform snippets are ignored.</remarks>
-    procedure AddSnippet(const Snippet: TSnippet);
-
-    ///  <summary>Performs analysis and generates data structures that are
-    ///  exposed via the object's properties.</summary>
-    ///  <remarks>Must be called after last snippet has been added to the
-    ///  analysis.</remarks>
+      {Destructor. Tears down object.
+      }
+    procedure AddSnippet(const Snippet: TRoutine);
+      {Adds a user-specified snippet to the analysis. Freeform snippets are
+      ignored.
+        @param Snippet [in] Snippet to be added.
+      }
     procedure Generate;
-
-    ///  <summary>List of types and constants that have either been added by the
-    ///  user or required by other snippets.</summary>
-    property TypesAndConsts: TObjectList<TSnippet> read fTypesAndConsts;
-
-    ///  <summary>List of routines added by the user.</summary>
-    ///  <remarks>These routines are those which would appear in a unit's
-    ///  interface section.</remarks>
-    property IntfRoutines: TSnippetList read fIntfRoutines;
-
-    ///  <summary>List of routines that have been required by other snippets.
-    ///  </summary>
-    property RequiredRoutines: TSnippetList read fRequiredRoutines;
-
-    ///  <summary>List of all routines, both added and required.</summary>
-    ///  <remarks>Not valid until Generate has been called. Invalidated if
-    ///  further snippets are added without calling Generate again.</remarks>
-    property AllRoutines: TSnippetList read fAllRoutines;
-
-    ///  <summary>List of required routines that have not also been added by the
-    ///  user.</summary>
-    ///  <remarks>
-    ///  <para>These routines are those that would appear as 'forward' routines
-    ///  in a unit's implementation section.</para>
-    ///  <para>Not valid until Generate has been called. Invalidated if further
-    ///  snippets are added without calling Generate again.</para>
-    ///  </remarks>
-    property ForwardRoutines: TSnippetList read fForwardRoutines;
-
-    ///  <summary>List of required units.</summary>
+      {Generates the analysis.
+      }
+    property TypesAndConsts: TConstAndTypeList read fTypesAndConsts;
+      {List of both added and required Types and constants, in required order}
+    property IntfRoutines: TRoutineList read fIntfRoutines;
+      {List of routines added by user. These routines would appear in a unit's
+      interface section}
+    property RequiredRoutines: TRoutineList read fRequiredRoutines;
+      {List of routines required by other snippets, i.e. that appear in
+      dependency lists}
+    property AllRoutines: TRoutineList read fAllRoutines;
+      {List of all routines, both added and required. Not valid until Generate
+      method called. Invalidated if further snippets added}
+    property ForwardRoutines: TRoutineList read fForwardRoutines;
+      {List of required routines that are not also specified by user. These
+      routines would appear in forward section of a unit. Not valid until
+      Generate method called. Invalidated if further snippets added}
     property Units: TStringList read fUnits;
+      {List of units required by any snippet}
   end;
 
-type
-  ///  <summary>Generates Pascal source code containing all specified snippets
-  ///  along with any other snippets that are required by the specified
-  ///  snippets.</summary>
+  {
+  TSourceGen:
+    Generates Pascal source containing specified snippets and any other snippets
+    that are required.
+  }
   TSourceGen = class(TObject)
   strict private
     var
-      ///  <summary>Object that analyses specified snippets and their
-      ///  dependencies.</summary>
-      fSourceAnalyser: TSourceAnalyser;
-
+      fSourceAnalyser: TSourceAnalyser; // Analyses snippets and dependencies
   public
-    ///  <summary>Constructs new object instance.</summary>
     constructor Create;
-
-    ///  <summary>Destroys object instance.</summary>
+      {Constructor. Sets up the object.
+      }
     destructor Destroy; override;
-
-    ///  <summary>Includes the given snippet in the source code.</summary>
-    procedure IncludeSnippet(const Snippet: TSnippet);
-
-    ///  <summary>Includes all snippets from the given list in the source code.
-    ///  </summary>
-    procedure IncludeSnippets(const Snips: TSnippetList);
-
-    ///  <summary>Generates source code of a Pascal unit containing all the
-    ///  specified snippets along with any other snippets that are required to
-    ///  compile the code.</summary>
-    ///  <param name="UnitName">string [in] Name of unit.</param>
-    ///  <param name="CommentStyle">TCommentStyle [in] Style of commenting used
-    ///  in documenting snippets.</param>
-    ///  <param name="TruncateComments">Boolean [in] Flag indicating whether or
-    ///  not documentation comments are to be truncated at the end of the first
-    ///  paragraph of multi-paragraph text.</param>
-    ///  <param name="HeaderComments">IStringList [in] List of comments to be
-    ///  included at top of unit.</param>
-    ///  <returns>string. Unit source code.</returns>
+      {Destructor. Tears down object.
+      }
+    procedure IncludeSnippet(const Snippet: TRoutine);
+      {Includes a snippet in the source code.
+        @param Routine [in] Snippet to be included.
+      }
+    procedure IncludeSnippets(const Snips: TRoutineList);
+      {Includes a one or more snippes in the source code.
+        @param Routines [in] List of snippets to be included.
+      }
     function UnitAsString(const UnitName: string;
       const CommentStyle: TCommentStyle = csNone;
-      const TruncateComments: Boolean = False;
       const HeaderComments: IStringList = nil): string;
-
-    ///  <summary>Generates source code of a Pascal include file containing all
-    ///  the specified snippets. Also writes comments that note which units,
-    ///  types, consts and other routines are required to compile the specified
-    ///  snippets.</summary>
-    ///  <param name="CommentStyle">TCommentStyle [in] Style of commenting used
-    ///  in documenting snippets.</param>
-    ///  <param name="TruncateComments">Boolean [in] Flag indicating whether or
-    ///  not documentation comments are to be truncated at the end of the first
-    ///  paragraph of multi-paragraph text.</param>
-    ///  <param name="HeaderComments">IStringList [in] List of comments to be
-    ///  included at top of unit.</param>
-    ///  <returns>string. Source code of include file.</returns>
+      {Generates source code of a unit containing all specified snippets and
+      any additional snippets depended upon by the included snippets.
+        @param UnitName [in] Name of unit.
+        @param CommentStyle [in] Style of commenting used in documenting
+          snippets.
+        @param HeaderComments [in] List of comments to be included at top of
+          unit.
+        @return Unit source code.
+      }
     function IncFileAsString(const CommentStyle: TCommentStyle = csNone;
-      const TruncateComments: Boolean = False;
       const HeaderComments: IStringList = nil): string;
-
-    ///  <summary>Creates and returns a unit name based on the given file name.
-    ///  </summary>
-    ///  <remarks>
-    ///  <para>The unit name is the base file name with any extension removed.
-    ///  </para>
-    ///  <para>NOTE: not all file names are suitable for creating unit names:
-    ///  use the IsFileNameValidUnitName method to check a file name for
-    ///  validity.</para>
-    ///  </remarks>
+      {Generates source code of an include file containing all specified
+      routines and notes in comments which units, types, consts and other
+      routines are also required.
+        @param CommentStyle [in] Style of commenting used in documenting
+          snippets.
+        @param HeaderComments [in] List of comments to be included at top of
+          snippet.
+        @return Source code of include file.
+      }
     class function UnitNameFromFileName(const FileName: string): string;
-
-    ///  <summary>Checks if the given file name is valid as the basis for a
-    ///  unit name.</summary>
+      {Creates a unit name from a file name. The unit name is the base file name
+      with any extension removed.
+        @param FileName [in] Name of file.
+        @return Unit name.
+      }
     class function IsFileNameValidUnitName(const FileName: string): Boolean;
+      {Checks if a file name is valid as basis for a unit name.
+        @param FileName [in] Name of file to be checked.
+        @return True if file name is valid for unit name, false if not.
+      }
   end;
 
 
@@ -253,217 +291,131 @@ implementation
 
 uses
   // Delphi
-  SysUtils,
+  SysUtils, StrUtils,
   // Project
-  ActiveText.UTextRenderer, DB.USnippetKind, UConsts, UExceptions, UPreferences,
-  USnippetValidator, UStrUtils, UWarnings, Hiliter.UPasLexer;
+  UConsts, UExceptions, UPreferences, USnippetValidator, UStrStreamWriter,
+  UStructs, UUtils, UWarnings;
 
 
 const
-  ///  <summary>Maximum number of characters on a source code line.</summary>
-  cLineWidth = 80;
-const
-  ///  <summary>Size of indenting used for source code, in characters.</summary>
-  cIndent = 2;
+  cLineWidth = 80;  // max characters on line
+  cIndent = 2;      // indent size
 
 
 type
-  ///  <summary>Static class that can format a routine to include descriptive
-  ///  comments.</summary>
+
+  {
+  TRoutineFormatter:
+    Static class that can format a routine to include descriptive comments at
+    required position.
+  }
   TRoutineFormatter = class(TNoConstructObject)
   strict private
-
-    ///  <summary>Splits source code of a routine snippet into the head (routine
-    ///  prototype) and body.</summary>
-    ///  <param name="Routine">TSnippet [in] Routine whose source code is to be
-    ///  split.</param>
-    ///  <param name="Head">string [out] Set to routine prototype.</param>
-    ///  <param name="Body">string [out] Body of routine that follows the
-    ///  prototype.</param>
-    class procedure Split(const Routine: TSnippet; out Head, Body: string);
-
-    ///  <summary>Creates and returns a comment containing a routine's
-    ///  description.</summary>
-    ///  <param name="CommentStyle">TCommentStyle [in] Required commenting
-    ///  style.</param>
-    ///  <param name="TruncateComments">Boolean [in] Flag indicating whether or
-    ///  not comment is to be truncated at the end of the first paragraph of
-    ///  multi-paragraph text.</param>
-    ///  <param name="Routine">TSnippet [in] Routine for which comments are to
-    ///  be rendered. Snippet kind must be skRoutine.</param>
-    ///  <returns>string. Formatted comments.</returns>
+    class procedure Split(const Routine: TRoutine; out Head, Body: string);
+      {Splits source code of a routine into the head (routine prototype) and
+      body code.
+        @param Routine [in] Routine whose source code to be split.
+        @param Head [out] Routine prototype.
+        @param Body [out] Remainder of routine without prototype.
+      }
     class function RenderDescComment(CommentStyle: TCommentStyle;
-      const TruncateComments: Boolean; const Routine: TSnippet): string;
-
+      const Routine: TRoutine): string;
+      {Creates comment in required style that contains routine's description.
+        @param CommentStyle [in] Required commenting style.
+        @param Routine [in] Routine for which comments required.
+        @return Formatted comments.
+      }
   public
-    ///  <summary>Extracts and returns the given routine snippet's prototype
-    ///  from its source code.</summary>
-    class function ExtractPrototype(const Routine: TSnippet): string;
-
-    ///  <summary>Format's a routine snippet's prototype, including a comment
-    ///  containing its description if required.</summary>
-    ///  <param name="Routine">TSnippet [in] Routine whose prototype is to be
-    ///  formatted. Snippet kind must be skRoutine.</param>
-    ///  <param name="CommentStyle">TCommentStyle [in] Style of commenting to
-    ///  be used for routine's description.</param>
-    ///  <param name="TruncateComments">Boolean [in] Flag indicating whether or
-    ///  not description comment is to be truncated at the end of the first
-    ///  paragraph of multi-paragraph text.</param>
-    ///  <returns>string. Formatted prototype.</returns>
-    class function FormatRoutinePrototype(const Routine: TSnippet;
-      CommentStyle: TCommentStyle; const TruncateComments: Boolean): string;
-
-    ///  <summary>Formats the whole source code of a routine snippet, including
-    ///  a comment containing its description if required.</summary>
-    ///  <param name="CommentStyle">TCommentStyle [in] Style of commenting to
-    ///  be used for routine's description.</param>
-    ///  <param name="TruncateComments">Boolean [in] Flag indicating whether or
-    ///  not description comment is to be truncated at the end of the first
-    ///  paragraph of multi-paragraph text.</param>
-    ///  <param name="Routine">TSnippet [in] Routine whose source code is to be
-    ///  formatted.</param>
-    ///  <returns>string. Formatted source code.</returns>
+    class function ExtractPrototype(const Routine: TRoutine): string;
+      {Extracts a routine's prototype from source code.
+        @param Routine [in] Routine whose source code to be processed.
+        @return Routine prototype.
+      }
+    class function FormatRoutinePrototype(const Routine: TRoutine;
+      CommentStyle: TCommentStyle = csNone): string;
+      {Formats a routine's prototype, documented by the routine's description in
+      a comment.
+        @param Routine [in] Routine whose prototype is to be formatted.
+        @param CommentStyle [in] Style of commenting used in documenting
+          routine.
+        @return Formatted prototype.
+      }
     class function FormatRoutine(CommentStyle: TCommentStyle;
-      const TruncateComments: Boolean; const Routine: TSnippet): string;
+      const Routine: TRoutine): string;
+      {Formats a routine's whole source code, documented by the routine's
+      description in a comment.
+        @param Routine [in] Routine whose source code is to be formatted.
+        @param CommentStyle [in] Style of commenting used in documenting
+          routine.
+        @return Formatted prototype.
+      }
   end;
 
-type
-  ///  <summary>Static class that can format a constant or simple type
-  ///  definition to include descriptive comments.</summary>
+  {
+  TConstAndTypeFormatter:
+    Static class that can format a constant or type definition to include
+    descriptive comments at required position.
+  }
   TConstAndTypeFormatter = class(TNoConstructObject)
   strict private
-    ///  <summary>Splits source code of a constant or simple type snippet into
-    ///  the prefix (text up to 'const' or 'type' and the following definition.
-    ///  </summary>
-    ///  <param name="ConstOrType">TSnippet [in] Constant or simple type snippet
-    ///  whose source code is to be split.</param>
-    ///  <param name="Prefix">string [out] Text up to 'const' or 'type' keyword.
-    ///  </param>
-    ///  <param name="Body">string [out] Remainder of source code without
-    ///  prefix.</param>
-    class procedure Split(const ConstOrType: TSnippet; out Prefix,
+    class procedure Split(const ConstOrType: TRoutine; out Keyword,
       Body: string);
-
-    ///  <summary>Creates and returns a comment containing a constant or simple
-    ///  type's description.</summary>
-    ///  <param name="CommentStyle">TCommentStyle [in] Required commenting
-    ///  style.</param>
-    ///  <param name="TruncateComments">Boolean [in] Flag indicating whether or
-    ///  not comment is to be truncated at the end of the first paragraph of
-    ///  multi-paragraph text.</param>
-    ///  <param name="ConstOrType">TSnippet [in] Constant or simple type for
-    ///  which comments are to be rendered. Snippet kind must be skConstant or
-    ///  skTypeDef.</param>
-    ///  <returns>string. Formatted comments.</returns>
+      {Splits source code of a type or constant into the keyword ("const" or
+      "type") and definition itself (body code).
+        @param ConstOrType [in] Constant or type whose source code to be split.
+        @param Keyword [out] "const" or "type" keyword.
+        @param Body [out] Remainder of constant or type without keyword.
+      }
     class function RenderDescComment(CommentStyle: TCommentStyle;
-      const TruncateComments: Boolean; const ConstOrType: TSnippet): string;
-
+      const ConstOrType: TRoutine): string;
+      {Creates comment in required style that contains constant or type's
+      description.
+        @param CommentStyle [in] Required commenting style.
+        @param ConstOrType [in] Constant or type for which comments required.
+        @return Formatted comments.
+      }
   public
-    ///  <summary>Formats the source code of a constant or simple type snippet,
-    ///  including a comment containing its description if required.</summary>
-    ///  <param name="CommentStyle">TCommentStyle [in] Style of commenting to
-    ///  be used for snippet's description.</param>
-    ///  <param name="TruncateComments">Boolean [in] Flag indicating whether or
-    ///  not description comment is to be truncated at the end of the first
-    ///  paragraph of multi-paragraph text.</param>
-    ///  <param name="ConstOrType">TSnippet [in] Constant or simple type whose
-    ///  source code is to be formatted.</param>
-    ///  <returns>string. Formatted source code.</returns>
     class function FormatConstOrType(CommentStyle: TCommentStyle;
-      const TruncateComments: Boolean; const ConstOrType: TSnippet): string;
-  end;
-
-type
-  ///  <summary>Static class that can format a class or advanced record type
-  ///  definition to include descriptive comments.</summary>
-  TClassFormatter = class(TNoConstructObject)
-  strict private
-    class var
-      ///  <summary>List of directive names that are valid for use as method
-      ///  names.</summary>
-      fValidDirsInMethodNames: IStringList;
-
-    ///  <summary>Creates and returns a comment containing a class or advanced
-    ///  record type's description.</summary>
-    ///  <param name="CommentStyle">TCommentStyle [in] Required commenting
-    ///  style.</param>
-    ///  <param name="TruncateComments">Boolean [in] Flag indicating whether or
-    ///  not comment is to be truncated at the end of the first paragraph of
-    ///  multi-paragraph text.</param>
-    ///  <param name="Snippet">TSnippet [in] Class or advanced record type for
-    ///  which comments are to be rendered.</param>
-    ///  <returns>string. Formatted comments.</returns>
-    class function RenderDescComment(CommentStyle: TCommentStyle;
-      const TruncateComments: Boolean; const Snippet: TSnippet): string;
-
-    ///  <summary>Removes any introductory 'type' keyword from a class or
-    ///  advanced record type declaration, if possible.</summary>
-    ///  <param name="Decl">string [in] Type declaration to be processed.
-    ///  </param>
-    ///  <param name="DeclBody">string [out] Source code that follows 'type'
-    ///  keyword if found, otherwise set to Decl.</param>
-    ///  <returns>Boolean. True if 'type' keyword was removed, False if not.
-    ///  </returns>
-    class function RemoveKeywordFromDecl(const Decl: string;
-      out DeclBody: string): Boolean;
-
-    ///  <summary>Parses complete class or advanced record source code and
-    ///  splits declaration from definition.</summary>
-    ///  <param name="Source">string [in] Source code to be parsed.</param>
-    ///  <param name="Decl">string [out] Set to declaration section.</param>
-    ///  <param name="Defn">string [out] Set to definition section.</param>
-    class procedure SplitDeclFromDefn(const Source: string; out Decl,
-      Defn: string);
-
-  public
-
-    ///  <summary>Instantiates class objects.</summary>
-    class constructor Create;
-
-    ///  <summary>Formats source code of a class or advanced record snippet's
-    ///  declaration, including a comment containing its description if
-    ///  required.</summary>
-    ///  <param name="CommentStyle">TCommentStyle [in] Style of commenting to
-    ///  be used for snippet's description.</param>
-    ///  <param name="TruncateComments">Boolean [in] Flag indicating whether or
-    ///  not description comment is to be truncated at the end of the first
-    ///  paragraph of multi-paragraph text.</param>
-    ///  <param name="Snippet">TSnippet [in] Class or advanced record type whose
-    ///  declaration is to be formatted.</param>
-    ///  <returns>string. Formatted declaration source code.</returns>
-    class function FormatClassDeclaration(CommentStyle: TCommentStyle;
-      const TruncateComments: Boolean; const Snippet: TSnippet): string;
-
-    ///  <summary>Formats source code of a class or advanced record snippet's
-    ///  definition, including a comment containing its description if required.
-    ///  </summary>
-    ///  <param name="CommentStyle">TCommentStyle [in] Style of commenting to
-    ///  be used for snippet's description.</param>
-    ///  <param name="TruncateComments">Boolean [in] Flag indicating whether or
-    ///  not description comment is to be truncated at the end of the first
-    ///  paragraph of multi-paragraph text.</param>
-    ///  <param name="Snippet">TSnippet [in] Class or advanced record type whose
-    ///  definition is to be formatted.</param>
-    ///  <returns>string. Formatted definition source code.</returns>
-    class function FormatClassDefinition(const Snippet: TSnippet): string;
+      const ConstOrType: TRoutine): string;
+      {Formats a constant or type's source code, documented by the snippet's
+      description in a comment.
+        @param ConstOrType [in] Constant or type whose source code is to be
+          formatted.
+        @param CommentStyle [in] Style of commenting used in documenting
+          constant or type.
+        @return Formatted prototype.
+      }
   end;
 
 { TSourceGen }
 
 constructor TSourceGen.Create;
+  {Constructor. Sets up the object.
+  }
 begin
   inherited;
   fSourceAnalyser := TSourceAnalyser.Create;
 end;
 
 destructor TSourceGen.Destroy;
+  {Destructor. Tears down object.
+  }
 begin
   fSourceAnalyser.Free;
   inherited;
 end;
 
 function TSourceGen.IncFileAsString(const CommentStyle: TCommentStyle;
-  const TruncateComments: Boolean; const HeaderComments: IStringList): string;
+  const HeaderComments: IStringList): string;
+  {Generates source code of an include file containing all specified routines
+  and notes in comments which units, types, consts and other routines are also
+  required.
+    @param CommentStyle [in] Style of commenting used in documenting
+      snippets.
+    @param HeaderComments [in] List of comments to be included at top of
+      snippet.
+    @return Source code of include file.
+  }
 resourcestring
   // Comment text
   sReqUnits           = 'Required unit(s):';
@@ -472,56 +424,59 @@ resourcestring
   sXRefRoutines       = 'Cross referenced routine(s):';
 var
   Idx: Integer;             // loops thru snippets list
-  Writer: TStringBuilder;   // used to build source code string
+  SS: TStringStream;        // string stream used to build unit output
+  Writer: TStrStreamWriter; // helper object used to write text to stream
   ForwardWritten: Boolean;  // flag true if forward decls have been written
   FirstForward: Boolean;    // flag true when first forward decl to be written
-  Snippet: TSnippet;        // accesses various snippet objects
+  Snippet: TRoutine;        // accesses various snippet objects
   UnitName: string;         // accesses unit names from a list
 begin
   // Generate the unit data
   fSourceAnalyser.Generate;
 
-  // Create writer used to build source code
-  Writer := TStringBuilder.Create;
+  // Create writer onto string stream to receive source code
+  Writer := nil;
+  SS := TStringStream.Create('', TEncoding.Unicode);
   try
+    Writer := TStrStreamWriter.Create(SS);
 
     // Write header comment
-    Writer.Append(TSourceComments.FormatHeaderComments(HeaderComments));
+    Writer.WriteStr(TSourceComments.FormatHeaderComments(HeaderComments));
 
     // Write required units, additional routines, types and consts
     if (fSourceAnalyser.Units.Count > 0) or
       (fSourceAnalyser.ForwardRoutines.Count > 0) or
       (fSourceAnalyser.TypesAndConsts.Count > 0) then
     begin
-      Writer.AppendLine('{');
+      Writer.WriteStrLn('{');
       if fSourceAnalyser.Units.Count > 0 then
       begin
         // list of required units
-        Writer.AppendLine('  ' + sReqUnits);
+        Writer.WriteStrLn('  ' + sReqUnits);
         for UnitName in fSourceAnalyser.Units do
-          Writer.AppendLine('    ' + UnitName);
+          Writer.WriteStrLn('    ' + UnitName);
       end;
       if fSourceAnalyser.TypesAndConsts.Count > 0 then
       begin
         // list of types and consts
         if (fSourceAnalyser.Units.Count > 0) then
-          Writer.AppendLine;
-        Writer.AppendLine('  ' + sReqConstsAndTypes);
+          Writer.WriteStrLn;
+        Writer.WriteStrLn('  ' + sReqConstsAndTypes);
         for Snippet in fSourceAnalyser.TypesAndConsts do
-          Writer.AppendLine('    ' + Snippet.DisplayName);
+          Writer.WriteStrLn('    ' + Snippet.Name);
       end;
       if fSourceAnalyser.ForwardRoutines.Count > 0 then
       begin
         // list of other routines required to compile
         if (fSourceAnalyser.Units.Count > 0) or
           (fSourceAnalyser.TypesAndConsts.Count > 0) then
-          Writer.AppendLine;
-        Writer.AppendLine('  ' + sReqRoutines);
+          Writer.WriteStrLn;
+        Writer.WriteStrLn('  ' + sReqRoutines);
         for Snippet in fSourceAnalyser.ForwardRoutines do
-          Writer.AppendLine('    ' + Snippet.DisplayName);
+          Writer.WriteStrLn('    ' + Snippet.Name);
       end;
-      Writer.AppendLine('}');
-      Writer.AppendLine;
+      Writer.WriteStrLn('}');
+      Writer.WriteStrLn;
     end;
 
     // Write out forward declarations for included routines required by others
@@ -533,192 +488,197 @@ begin
       begin
         if FirstForward then
         begin
-          Writer.AppendLine('// ' + sXRefRoutines);
+          Writer.WriteStrLn('// ' + sXRefRoutines);
           FirstForward := False;
         end;
-        Writer.AppendLine(
-          TRoutineFormatter.FormatRoutinePrototype(Snippet, csNone, False)
-        );
-        Writer.AppendLine('  forward;');
+        Writer.WriteStrLn(TRoutineFormatter.FormatRoutinePrototype(Snippet));
+        Writer.WriteStrLn('  forward;');
         ForwardWritten := True;
       end;
     end;
     if ForwardWritten then
-      Writer.AppendLine;
+      Writer.WriteStrLn;
 
     // Write routines
     for Idx := 0 to Pred(fSourceAnalyser.IntfRoutines.Count) do
     begin
       Snippet := fSourceAnalyser.IntfRoutines[Idx];
-      Writer.AppendLine(
-        TRoutineFormatter.FormatRoutine(CommentStyle, TruncateComments, Snippet)
+      Writer.WriteStrLn(
+        TRoutineFormatter.FormatRoutine(CommentStyle, Snippet)
       );
       if Idx < Pred(fSourceAnalyser.IntfRoutines.Count) then
-        Writer.AppendLine;
+        Writer.WriteStrLn;
     end;
 
     // Return string containing source code
-    Result := Writer.ToString;
+    Result := SS.DataString;
   finally
     Writer.Free;
+    SS.Free;
   end;
 end;
 
-procedure TSourceGen.IncludeSnippet(const Snippet: TSnippet);
+procedure TSourceGen.IncludeSnippet(const Snippet: TRoutine);
+  {Includes a snippet in the source code.
+    @param Snippet [in] Snippet to be included.
+  }
 begin
   fSourceAnalyser.AddSnippet(Snippet);
 end;
 
-procedure TSourceGen.IncludeSnippets(const Snips: TSnippetList);
+procedure TSourceGen.IncludeSnippets(const Snips: TRoutineList);
+  {Includes a one or more snippes in the source code.
+    @param Routines [in] List of snippets to be included.
+  }
 var
-  Snippet: TSnippet;  // iterates through snippets to be added
+  Snippet: TRoutine;  // iterates through snippets to be added
 begin
   for Snippet in Snips do
     IncludeSnippet(Snippet);
 end;
 
-class function TSourceGen.IsFileNameValidUnitName(const FileName: string):
-  Boolean;
+class function TSourceGen.IsFileNameValidUnitName(
+  const FileName: string): Boolean;
+  {Checks if a file name is valid as basis for a unit name.
+    @param FileName [in] Name of file to be checked.
+    @return True if file name is valid for unit name, false if not.
+  }
 begin
   Result := IsValidIdent(UnitNameFromFileName(FileName));
 end;
 
 function TSourceGen.UnitAsString(const UnitName: string;
   const CommentStyle: TCommentStyle = csNone;
-  const TruncateComments: Boolean = False;
   const HeaderComments: IStringList = nil): string;
+  {Generates source code of a unit containing all specified routines and
+  routines depended upon by the included routines.
+    @param UnitName [in] Name of unit.
+    @param CommentStyle [in] Style of commenting used in documenting routines.
+    @param HeaderComments [in] List of comments to be included at top of unit.
+    @return Unit source code.
+  }
 var
-  Writer: TStringBuilder;   // used to build source code string
-  Snippet: TSnippet;        // reference to a snippet object
+  SS: TStringStream;        // string stream used to build unit output
+  Writer: TStrStreamWriter; // helper object used to write text to stream
+  Snippet: TRoutine;        // reference to a snippet object
   Warnings: IWarnings;      // object giving info about any inhibited warnings
 begin
   // Generate the unit data
   fSourceAnalyser.Generate;
   // Create writer object onto string stream that receives output
-  Writer := TStringBuilder.Create;
+  Writer := nil;
+  SS := TStringStream.Create('', TEncoding.Unicode);
   try
+    Writer := TStrStreamWriter.Create(SS);
+
     // Write unit
 
     // heading comment
-    Writer.Append(TSourceComments.FormatHeaderComments(HeaderComments));
+    Writer.WriteStr(TSourceComments.FormatHeaderComments(HeaderComments));
 
     // unit name
-    Writer.AppendFormat('unit %s;', [UnitName]).AppendLine;
-    Writer.AppendLine;
+    Writer.WriteStrLn('unit %s;', [UnitName]);
+    Writer.WriteStrLn;
 
     // any conditional compilation symbols
     Warnings := Preferences.Warnings;
-    if Warnings.Enabled and not Warnings.IsEmpty then
+    if Warnings.SwitchOff and not Warnings.IsEmpty then
     begin
-      Writer.Append(Warnings.Render);
-      Writer.AppendLine;
+      Writer.WriteStr(Warnings.Render);
+      Writer.WriteStrLn;
     end;
 
     // open interface section
-    Writer.AppendLine('interface');
-    Writer.AppendLine;
+    Writer.WriteStrLn('interface');
+    Writer.WriteStrLn;
 
     // uses statement
     if fSourceAnalyser.Units.Count > 0 then
     begin
-      Writer.AppendLine('uses');
-      Writer.AppendLine(
-        StrWrap(
-          StrJoin(fSourceAnalyser.Units, ', ') + ';',
+      Writer.WriteStrLn('uses');
+      Writer.WriteStrLn(
+        TextWrap(
+          JoinStr(fSourceAnalyser.Units, ', ') + ';',
           cLineWidth - cIndent,
           cIndent
         )
       );
-      Writer.AppendLine;
+      Writer.WriteStrLn;
     end;
 
     // consts and types
     for Snippet in fSourceAnalyser.TypesAndConsts do
     begin
-      case Snippet.Kind of
-        skTypeDef, skConstant:
-          Writer.AppendLine(
-            TConstAndTypeFormatter.FormatConstOrType(
-              CommentStyle, TruncateComments, Snippet
-            )
-          );
-        skClass:
-          Writer.AppendLine(
-            TClassFormatter.FormatClassDeclaration(
-              CommentStyle, TruncateComments, Snippet
-            )
-          );
-      end;
-      Writer.AppendLine;
+      Writer.WriteStrLn(
+        TConstAndTypeFormatter.FormatConstOrType(CommentStyle, Snippet)
+      );
+      Writer.WriteStrLn;
     end;
 
     // routine prototypes
     for Snippet in fSourceAnalyser.IntfRoutines do
     begin
-      Writer.AppendLine(
-        TRoutineFormatter.FormatRoutinePrototype(
-          Snippet, CommentStyle, TruncateComments
-        )
+      Writer.WriteStrLn(
+        TRoutineFormatter.FormatRoutinePrototype(Snippet, CommentStyle)
       );
-      Writer.AppendLine;
+      Writer.WriteStrLn;
     end;
 
     // open implementation section
-    Writer.AppendLine('implementation');
-    Writer.AppendLine;
+    Writer.WriteStrLn('implementation');
+    Writer.WriteStrLn;
 
     // forward declarations
     if fSourceAnalyser.ForwardRoutines.Count > 0 then
     begin
       for Snippet in fSourceAnalyser.ForwardRoutines do
       begin
-        Writer.AppendLine(TRoutineFormatter.ExtractPrototype(Snippet));
-        Writer.AppendLine('  forward;');
+        Writer.WriteStrLn(TRoutineFormatter.ExtractPrototype(Snippet));
+        Writer.WriteStrLn('  forward;');
       end;
-      Writer.AppendLine;
+      Writer.WriteStrLn;
     end;
 
     // routine source code
     for Snippet in fSourceAnalyser.AllRoutines do
     begin
-      Writer.AppendLine(
-        TRoutineFormatter.FormatRoutine(CommentStyle, TruncateComments, Snippet)
-      );
-      Writer.AppendLine;
-    end;
-
-    for Snippet in fSourceAnalyser.TypesAndConsts do
-    begin
-      if Snippet.Kind = skClass then
-      begin
-        Writer.AppendLine(TClassFormatter.FormatClassDefinition(Snippet));
-        Writer.AppendLine;
-      end;
+      Writer.WriteStrLn(TRoutineFormatter.FormatRoutine(CommentStyle, Snippet));
+      Writer.WriteStrLn;
     end;
 
     // close unit
-    Writer.AppendLine('end.');
+    Writer.WriteStrLn('end.');
 
     // Return string built in string stream
-    Result := Writer.ToString;
+    Result := SS.DataString;
   finally
     Writer.Free;
+    SS.Free;
   end;
 end;
 
 class function TSourceGen.UnitNameFromFileName(const FileName: string): string;
+  {Creates a unit name from a file name. The unit name is the base file name
+  with any extension removed.
+    @param FileName [in] Name of file.
+    @return Unit name.
+  }
 var
   BaseFileName: string; // base file name (i.e. file name without path)
   Ext: string;          // file's extension
 begin
   BaseFileName := ExtractFileName(FileName);
   Ext := ExtractFileExt(FileName);
-  Result := StrSliceLeft(BaseFileName, Length(BaseFileName) - Length(Ext));
+  Result := AnsiLeftStr(BaseFileName, Length(BaseFileName) - Length(Ext));
 end;
 
 { TSourceAnalyser }
 
-procedure TSourceAnalyser.AddIntfRoutine(const Routine: TSnippet);
+procedure TSourceAnalyser.AddIntfRoutine(const Routine: TRoutine);
+  {Adds a user-specified routine to list of routines specified by user.
+  Duplicates ignored.
+    @param Routine [in] Routine to be added.
+  }
 begin
   Assert(Routine.Kind = skRoutine,
     ClassName + '.AddIntfRoutine: Routine must have kind skRoutine');
@@ -730,13 +690,17 @@ begin
   end;
 end;
 
-procedure TSourceAnalyser.AddSnippet(const Snippet: TSnippet);
+procedure TSourceAnalyser.AddSnippet(const Snippet: TRoutine);
+  {Adds a user-specified snippet to the analysis. Freeform snippets are ignored.
+    @param Snippet [in] Snippet to be added.
+  }
 var
   ErrorMsg: string;       // any error message
+  DummySel: TSelection;   // selection containing any error: not used
 begin
   // NOTE: this method must not be called from any other method of this class
   // Validate the snippet
-  if not TSnippetValidator.Validate(Snippet, ErrorMsg) then
+  if not TSnippetValidator.Validate(Snippet, ErrorMsg, DummySel) then
     raise ECodeSnip.Create(ErrorMsg);
   // Process the snippet
   case Snippet.Kind of
@@ -746,45 +710,33 @@ begin
       AddTypeOrConst(Snippet);
     skFreeform:
       {Ignore};
-    skUnit:
-      {Ignore};
-    skClass:
-      AddTypeOrConst(Snippet);
   end;
 end;
 
-procedure TSourceAnalyser.AddTypeOrConst(const TypeOrConst: TSnippet);
-var
-  ErrorMsg: string;       // any error message
+procedure TSourceAnalyser.AddTypeOrConst(const TypeOrConst: TRoutine);
+  {Adds a user specified or required type or constant to the analysis.
+    @param TypeOrConst [in] Type of constant snippet to be added.
+  }
 begin
-  Assert(Assigned(TypeOrConst), ClassName + '.Add: ConstOrType in nil');
-  Assert(TypeOrConst.Kind in [skTypeDef, skConstant, skClass],
-    ClassName + '.Add: ConstOrType.Kind is not valid');
-  // Ignore if already in list
-  if fTypesAndConsts.Contains(TypeOrConst) then
-    Exit;
-  // Validate dependency list
-  if not TSnippetValidator.ValidateDependsList(TypeOrConst, ErrorMsg) then
-    raise ECodeSnip.Create(ErrorMsg);
-  // Add all required snippets to list before adding this one: this ensures
-  // required snippets preceed those that depend on them
-  RequireSnippets(TypeOrConst.Depends);
-  RequireUnits(TypeOrConst.Units);
-  fTypesAndConsts.Add(TypeOrConst)
+  fTypesAndConsts.Add(TypeOrConst, RequireUnits);
 end;
 
 constructor TSourceAnalyser.Create;
+  {Constructor. Sets up object.
+  }
 begin
   inherited;
-  fTypesAndConsts := TObjectList<TSnippet>.Create(False);
-  fIntfRoutines := TSnippetList.Create;
-  fAllRoutines := TSnippetList.Create;
-  fForwardRoutines := TSnippetList.Create;
-  fRequiredRoutines := TSnippetList.Create;
+  fTypesAndConsts := TConstAndTypeList.Create;
+  fIntfRoutines := TRoutineList.Create;
+  fAllRoutines := TRoutineList.Create;
+  fForwardRoutines := TRoutineList.Create;
+  fRequiredRoutines := TRoutineList.Create;
   fUnits := TStringList.Create;
 end;
 
 destructor TSourceAnalyser.Destroy;
+  {Destructor. Tears down object.
+  }
 begin
   fTypesAndConsts.Free;
   fIntfRoutines.Free;
@@ -796,8 +748,10 @@ begin
 end;
 
 procedure TSourceAnalyser.Generate;
+  {Generates the analysis.
+  }
 var
-  Routine: TSnippet;  // iterates through various routine lists
+  Routine: TRoutine;  // iterates through various routine lists
 begin
   fForwardRoutines.Clear;
   fAllRoutines.Clear;
@@ -813,7 +767,10 @@ begin
     fAllRoutines.Add(Routine);
 end;
 
-procedure TSourceAnalyser.RequireRoutine(const Routine: TSnippet);
+procedure TSourceAnalyser.RequireRoutine(const Routine: TRoutine);
+  {Adds a routine from a dependency list to the analysis. Duplicates ignored.
+    @param Routine [in] Routine to be added.
+  }
 begin
   if not fRequiredRoutines.Contains(Routine) then
   begin
@@ -823,36 +780,49 @@ begin
   end;
 end;
 
-procedure TSourceAnalyser.RequireSnippet(const Snippet: TSnippet);
+procedure TSourceAnalyser.RequireSnippet(const Snippet: TRoutine);
+  {Process a snippet from a dependency list.
+    @param Snippet [in] Snippet to be processed.
+    @except Exception raised if attempt is made to require freeform snippet
+  }
 resourcestring
   // Error message
   sCantDependOnFreeform = 'Can''t depend on "%s" - it is freeform code';
 begin
   case Snippet.Kind of
-    skRoutine:                      // require routine
+    skRoutine:                    // require routine
       RequireRoutine(Snippet);
-    skConstant, skTypeDef, skClass: // add type/const allowing for dependencies
+    skConstant, skTypeDef:        // add type or const allowing for dependencies
       AddTypeOrConst(Snippet);
-    skFreeform:                     // can't require a freeform snippet
-      raise ECodeSnip.CreateFmt(sCantDependOnFreeform, [Snippet.DisplayName]);
+    skFreeform:                   // can't require a freeform snippet
+      raise ECodeSnip.CreateFmt(sCantDependOnFreeform, [Snippet.Name]);
   end;
 end;
 
-procedure TSourceAnalyser.RequireSnippets(const Snips: TSnippetList);
+procedure TSourceAnalyser.RequireSnippets(const Snips: TRoutineList);
+  {Process all snippets in a dependency list.
+    @param Snips [in] List of snippets to process.
+  }
 var
-  Snippet: TSnippet;  // iterates through snippets list
+  Snippet: TRoutine;  // iterates through snippets list
 begin
   for Snippet in Snips do
     RequireSnippet(Snippet);
 end;
 
 procedure TSourceAnalyser.RequireUnit(const UnitName: string);
+  {Add a unit to list of required units. Duplicates ignored.
+    @param UnitName [in] Name of required unit.
+  }
 begin
   if fUnits.IndexOf(UnitName) = -1 then
     fUnits.Add(UnitName);
 end;
 
 procedure TSourceAnalyser.RequireUnits(const Units: TStringList);
+  {Adds a list of units to required units list. Duplicates ignored.
+    @param Units [in] List of units.
+  }
 var
   UnitName: string; // iterates through list of units.
 begin
@@ -860,19 +830,109 @@ begin
     RequireUnit(UnitName);
 end;
 
+{ TConstAndTypeList }
+
+procedure TConstAndTypeList.Add(const ConstOrType: TRoutine;
+  const UnitRecorder: TUnitRecorder);
+  {Adds a constant or type snippet to the list, ignoring duplicates.
+    @param ConstOrType [in] Constant or type snippet to be added.
+    @param UnitRecorder [in] Method that records units required by ConstOrType.
+    @except Exception raised if dependency list is not valid.
+  }
+var
+  RequiredSnip: TRoutine; // reference snippets in depends list
+  ErrorMsg: string;       // any error message
+begin
+  Assert(Assigned(ConstOrType), ClassName + '.Add: ConstOrType in nil');
+  Assert(ConstOrType.Kind in [skTypeDef, skConstant],
+    ClassName + '.Add: ConstOrType must have kind skTypeDef or skConstant');
+  // Ignore if already in list
+  if Contains(ConstOrType) then
+    Exit;
+  // Validate dependency list
+  if not TSnippetValidator.ValidateDependsList(ConstOrType, ErrorMsg) then
+    raise ECodeSnip.Create(ErrorMsg);
+  // Add all required snippets to list before adding this one: this ensures
+  // required snippets preceed those that depend on them
+  for RequiredSnip in ConstOrType.Depends do
+    Add(RequiredSnip, UnitRecorder);
+  UnitRecorder(ConstOrType.Units);
+  fItems.Add(ConstOrType)
+end;
+
+function TConstAndTypeList.Contains(const ConstOrType: TRoutine): Boolean;
+  {Checks if the list contains a constant or type snippet.
+    @param ConstOrType [in] Constant or type snippet being checked for.
+    @return True if snippet in list, False if not.
+  }
+begin
+  Result := fItems.Contains(ConstOrType);
+end;
+
+constructor TConstAndTypeList.Create;
+  {Constructor. Sets up list.
+  }
+begin
+  inherited;
+  fItems := TObjectList<TRoutine>.Create(False);
+end;
+
+destructor TConstAndTypeList.Destroy;
+  {Destructor. Tears down object.
+  }
+begin
+  fItems.Free;
+  inherited;
+end;
+
+function TConstAndTypeList.GetCount: Integer;
+  {Read accessor for Count property.
+    @return Number of items in list.
+  }
+begin
+  Result := fItems.Count;
+end;
+
+function TConstAndTypeList.GetEnumerator: TEnumerator<TRoutine>;
+  {Gets an intialised const and type list enumerator.
+    @return Required enumerator.
+  }
+begin
+  Result := fItems.GetEnumerator;
+end;
+
+function TConstAndTypeList.GetItem(Idx: Integer): TRoutine;
+  {Read access for Items[] property.
+    @param Idx [in] Index of required snippet in list.
+    @return Indexed snippet.
+  }
+begin
+  Result := fItems[Idx];
+end;
+
 { TRoutineFormatter }
 
 class function TRoutineFormatter.ExtractPrototype(const
-  Routine: TSnippet): string;
+  Routine: TRoutine): string;
+  {Extracts a routine's prototype from source code.
+    @param Routine [in] Routine whose source code to be processed.
+    @return Routine prototype.
+  }
 var
   DummyBody: string;  // stores unused routine body retrieved from Split
 begin
   Split(Routine, Result, DummyBody);
-  Result := StrTrim(Result);
+  Result := Trim(Result);
 end;
 
-class function TRoutineFormatter.FormatRoutine(CommentStyle: TCommentStyle;
-  const TruncateComments: Boolean; const Routine: TSnippet): string;
+class function TRoutineFormatter.FormatRoutine(
+  CommentStyle: TCommentStyle; const Routine: TRoutine): string;
+  {Formats a routine's whole source code, documented by the routine's
+  description in a comment.
+    @param Routine [in] Routine whose source code is to be formatted.
+    @param CommentStyle [in] Style of commenting used in documenting routine.
+    @return Formatted prototype.
+  }
 var
   Prototype, Body: string;  // prototype and body of routine
 begin
@@ -883,25 +943,28 @@ begin
     begin
       // Format is: routine prototype - comment - routine body
       Split(Routine, Prototype, Body);
-      Result := StrTrim(Prototype)
-        + EOL
-        + RenderDescComment(CommentStyle, TruncateComments, Routine)
-        + EOL
-        + StrTrim(Body);
+      Result := Trim(Prototype) + EOL +
+        RenderDescComment(CommentStyle, Routine) + EOL +
+        Trim(Body);
     end;
     csBefore:
       // Format is: comment - routine
-      Result := RenderDescComment(CommentStyle, TruncateComments, Routine)
-        + EOL
-        + StrTrim(Routine.SourceCode);
+      Result := RenderDescComment(CommentStyle, Routine) + EOL +
+        Trim(Routine.SourceCode);
     else
       // No commenting: just return source code
-      Result := StrTrim(Routine.SourceCode);
+      Result := Trim(Routine.SourceCode);
   end;
 end;
 
-class function TRoutineFormatter.FormatRoutinePrototype(const Routine: TSnippet;
-  CommentStyle: TCommentStyle; const TruncateComments: Boolean): string;
+class function TRoutineFormatter.FormatRoutinePrototype(const Routine: TRoutine;
+  CommentStyle: TCommentStyle): string;
+  {Formats a routine's prototype, documented by the routine's description in a
+  comment.
+    @param Routine [in] Routine whose prototype is to be formatted.
+    @param CommentStyle [in] Style of commenting used in documenting routine.
+    @return Formatted prototype.
+  }
 var
   Prototype: string;  // prototype of given routine
 begin
@@ -913,14 +976,12 @@ begin
   case CommentStyle of
     csAfter:
       // comments follow prototype
-      Result := Prototype
-        + EOL
-        + RenderDescComment(CommentStyle, TruncateComments, Routine);
+      Result := Prototype + EOL +
+        RenderDescComment(CommentStyle, Routine);
     csBefore:
       // comments preceed prototype
-      Result := RenderDescComment(CommentStyle, TruncateComments, Routine)
-        + EOL
-        + Prototype;
+      Result := RenderDescComment(CommentStyle, Routine) + EOL +
+        Prototype;
     else
       // no comments: just return prototype
       Result := Prototype;
@@ -928,22 +989,36 @@ begin
 end;
 
 class function TRoutineFormatter.RenderDescComment(
-  CommentStyle: TCommentStyle; const TruncateComments: Boolean;
-  const Routine: TSnippet): string;
+  CommentStyle: TCommentStyle; const Routine: TRoutine): string;
+  {Creates comment in required style that contains routine's description.
+    @param CommentStyle [in] Required commenting style.
+    @param Routine [in] Routine for which comments required.
+    @return Formatted comments.
+  }
 begin
   Assert(Routine.Kind = skRoutine,
     ClassName + '.RenderDescComment: Routine must have kind skRoutine');
   // Format the output
   Result := TSourceComments.FormatSnippetComment(
-    CommentStyle, TruncateComments, Routine.Description
+    CommentStyle, Trim(Routine.Description)
   );
 end;
 
-class procedure TRoutineFormatter.Split(const Routine: TSnippet; out Head,
+class procedure TRoutineFormatter.Split(const Routine: TRoutine; out Head,
   Body: string);
+  {Splits source code of a routine into the head (routine prototype) and body
+  code.
+    @param Routine [in] Routine whose source code to be split.
+    @param Head [out] Routine prototype.
+    @param Body [out] Remainder of routine without prototype.
+  }
 
-  // Checks if given symbol is a calling convention directive.
+  // ---------------------------------------------------------------------------
   function IsDirective(const Symbol: string): Boolean;
+    {Checks if a symbol is a calling convention directive.
+      @param Symbol [in] Symbol to be checked.
+      @return True if symbol is a calling convention, False otherwise.
+    }
   const
     // list of calling convention directives
     cCallConventions: array[0..4] of string = (
@@ -956,6 +1031,7 @@ class procedure TRoutineFormatter.Split(const Routine: TSnippet; out Head,
     ConventionList.CaseSensitive := False;
     Result := ConventionList.Contains(Symbol);
   end;
+  // ---------------------------------------------------------------------------
 
 var
   SourceCode: string;         // routine's source code
@@ -969,17 +1045,17 @@ const
   cOverload = 'overload';     // overload directive
 begin
   // Record code without any surrounding white space
-  SourceCode := StrTrim(Routine.SourceCode);
+  SourceCode := Trim(Routine.SourceCode);
   // Find relative positions of first key characters
-  StartParam := StrPos('(', SourceCode);
-  AfterParams := StrPos(')', SourceCode) + 1;
-  SemiColonPos := StrPos(';', SourceCode);
+  StartParam := PosEx('(', SourceCode);
+  AfterParams := PosEx(')', SourceCode) + 1;
+  SemiColonPos := PosEx(';', SourceCode);
   // Determine end of head section
   if SemiColonPos > StartParam then
   begin
     // semi colon after param => we have params: skip them before looking for
     // ending ';'
-    EndDeclaration := StrPos(
+    EndDeclaration := PosEx(
       ';',
       Copy(SourceCode, AfterParams, Length(SourceCode) - AfterParams + 1)
     ) + AfterParams - 1;
@@ -991,37 +1067,44 @@ begin
   end;
   // Look for directives that are part of prototype
   // first look for calling conventions
-  SemiColonPos := StrPos(';', SourceCode, EndDeclaration + 1);
+  SemiColonPos := PosEx(';', SourceCode, EndDeclaration + 1);
   if SemiColonPos > 0 then
   begin
-    Fragment := StrTrim(
+    Fragment := Trim(
       Copy(SourceCode, EndDeclaration + 1, SemiColonPos - EndDeclaration - 1)
     );
     if IsDirective(Fragment) then
       EndDeclaration := SemiColonPos + 1;
   end;
   // now look for 'overload' directive
-  SemiColonPos := StrPos(';', SourceCode, EndDeclaration + 1);
+  SemiColonPos := PosEx(';', SourceCode, EndDeclaration + 1);
   if SemiColonPos > 0 then
   begin
-    Fragment := StrTrim(
+    Fragment := Trim(
       Copy(SourceCode, EndDeclaration + 1, SemiColonPos - EndDeclaration - 1)
     );
-    if StrToLower(Fragment) = cOverload then
+    if AnsiLowerCase(Fragment) = cOverload then
       EndDeclaration := SemiColonPos + 1;
   end;
   // Record declaration (i.e. prototype)
   Head := Copy(SourceCode, 1, EndDeclaration);
   // Get code body
   StartCodeBody := EndDeclaration + 1;
-  Body := StrTrim(Copy(SourceCode, StartCodeBody, MaxInt));
+  Body := Trim(Copy(SourceCode, StartCodeBody, MaxInt));
 end;
 
 { TConstAndTypeFormatter }
 
 class function TConstAndTypeFormatter.FormatConstOrType(
-  CommentStyle: TCommentStyle; const TruncateComments: Boolean;
-  const ConstOrType: TSnippet): string;
+  CommentStyle: TCommentStyle; const ConstOrType: TRoutine): string;
+  {Formats a constant or type's source code, documented by the snippet's
+  description in a comment.
+    @param ConstOrType [in] Constant or type whose source code is to be
+      formatted.
+    @param CommentStyle [in] Style of commenting used in documenting constant or
+      type.
+    @return Formatted prototype.
+  }
 var
   Keyword: string;  // keyword that preceeds source code body
   Body: string;     // source code that follows keyword
@@ -1029,21 +1112,21 @@ begin
   Assert(ConstOrType.Kind in [skConstant, skTypeDef],
     ClassName + '.FormatConstOrType: ConstOrType must have kind skTypeDef or '
     + 'skConstant');
-  Result := '';
+  Result := Trim(ConstOrType.Name);
   case CommentStyle of
     csNone:
-      Result := StrTrim(ConstOrType.SourceCode);
+      Result := Trim(ConstOrType.SourceCode);
     csBefore:
-      Result := RenderDescComment(CommentStyle, TruncateComments, ConstOrType)
+      Result := RenderDescComment(CommentStyle, ConstOrType)
         + EOL
-        + StrTrim(ConstOrType.SourceCode);
+        + Trim(ConstOrtype.SourceCode);
     csAfter:
     begin
       Split(ConstOrType, Keyword, Body);
       if Keyword <> '' then
         Result := Keyword
           + EOL
-          + RenderDescComment(CommentStyle, TruncateComments, ConstOrType)
+          + RenderDescComment(CommentStyle, ConstOrType)
           + EOL
           + Body
       else
@@ -1053,78 +1136,72 @@ begin
 end;
 
 class function TConstAndTypeFormatter.RenderDescComment(
-  CommentStyle: TCommentStyle; const TruncateComments: Boolean;
-  const ConstOrType: TSnippet): string;
+  CommentStyle: TCommentStyle; const ConstOrType: TRoutine): string;
+  {Creates comment in required style that contains constant or type's
+  description.
+    @param CommentStyle [in] Required commenting style.
+    @param ConstOrType [in] Constant or type for which comments required.
+    @return Formatted comments.
+  }
 begin
   Assert(ConstOrType.Kind in [skConstant, skTypeDef],
     ClassName + '.RenderDescComment: ConstOrType must have kind skTypeDef or '
       + 'skConstant');
   Result := TSourceComments.FormatSnippetComment(
-    CommentStyle, TruncateComments, ConstOrType.Description
+    CommentStyle, Trim(ConstOrType.Description)
   );
 end;
 
-class procedure TConstAndTypeFormatter.Split(const ConstOrType: TSnippet;
-  out Prefix, Body: string);
+class procedure TConstAndTypeFormatter.Split(const ConstOrType: TRoutine;
+  out Keyword, Body: string);
+  {Splits source code of a type or constant into the keyword ("const" or
+  "type") and definition itself (body code).
+    @param ConstOrType [in] Constant or type whose source code to be split.
+    @param Keyword [out] "const" or "type" keyword.
+    @param Body [out] Remainder of constant or type without keyword.
+  }
 
-  // Splits the given source code and the first occurence of keyword KW,
-  // returning the code before the keyword in Prefix and the code following the
-  // keyword in Body. If KW is not found, Prefix is set to the empty string and
-  // Body is set to SourceCode.
+  // ---------------------------------------------------------------------------
   procedure SplitAtKeyword(const SourceCode, KW: string;
-    out Prefix, Body: string);
-  var
-    Lexer: THilitePasLexer;       // parses Pascal code
-    PrefixCode: TStringBuilder;   // records prefix code
-  const
-    SkipTokens = [tkComment, tkCompilerDir, tkWhitespace, tkEOL];
-    WhiteSpaceTokens = [tkWhitespace, tkEOL];
-  resourcestring
-    sTypeKwdError = '"%s" must be first keyword in source code';
+    out Keyword, Body: string);
+    {Splits an introductory keyword from following source code.
+      @param SourceCode [in] Source code to be split.
+      @param KW [in] Introductory keyword.
+      @param Keyword [out] Set to KW if KW is present, otherwise ''.
+      @param Body [out] Source code that follows keyword if KW is present,
+        otherwise set to SourceCode.
+    }
   begin
-    Lexer := THilitePasLexer.Create(SourceCode);
-    try
-      PrefixCode := TStringBuilder.Create;
-      try
-        while Lexer.NextToken in SkipTokens do
-          PrefixCode.Append(Lexer.TokenStr);
-        if (Lexer.Token = tkKeyword) and StrSameText(Lexer.TokenStr, KW) then
-        begin
-          PrefixCode.Append(Lexer.TokenStr);
-          Prefix := StrTrimRight(PrefixCode.ToString);
-          while Lexer.NextToken in WhiteSpaceTokens do
-            PrefixCode.Append(Lexer.TokenStr);
-          Body := '  ' +
-            StrTrim(
-              StrSliceRight(
-                SourceCode, Length(SourceCode) - Length(PrefixCode.ToString)
-              )
-            );
-        end
-        else
-        begin
-          Prefix := '';
-          Body := SourceCode;
-        end;
-      finally
-        PrefixCode.Free;
-      end;
-    finally
-      Lexer.Free;
+    if AnsiStartsStr(KW, SourceCode) then
+    begin
+      // KW starts SourceCode - perform split
+      Keyword := KW;
+      Body := '  ' + Trim(Copy(SourceCode, Length(KW) + 1, MaxInt));
+    end
+    else
+    begin
+      // KW not present - can't split
+      Keyword := '';
+      Body := SourceCode;
     end;
   end;
+  // ---------------------------------------------------------------------------
 
 begin
   if ConstOrType.Kind = skConstant then
-    SplitAtKeyword(ConstOrType.SourceCode, 'const', Prefix, Body)
+    SplitAtKeyword(ConstOrType.SourceCode, 'const', Keyword, Body)
   else // if ConstOrType.Kind = skTypeDef
-    SplitAtKeyword(ConstOrType.SourceCode, 'type', Prefix, Body)
+    SplitAtKeyword(ConstOrType.SourceCode, 'type', Keyword, Body)
 end;
 
 { TSourceComments }
 
 class function TSourceComments.CommentStyleDesc(
   const Style: TCommentStyle): string;
+  {Gets description of a comment style for use in UI elements.
+    @param Style [in] Comment style for which description wanted.
+    @return Required description.
+  }
 resourcestring
   // Comment style descriptions
   sCSNone = 'No descriptive comments';
@@ -1139,22 +1216,12 @@ begin
   Result := sDescriptions[Style];
 end;
 
-class function TSourceComments.FormatCommentLines(const Text: string;
-  const Indent: Cardinal): string;
-var
-  Lines: TStringList;
-begin
-  Lines := TStringList.Create;
-  try
-    Lines.Text := Text;
-    Result := StrTrimRight(StrWrap(Lines, cLineWidth - Indent, Indent, False));
-  finally
-    Lines.Free;
-  end;
-end;
-
 class function TSourceComments.FormatHeaderComments(
   const Comments: IStringList): string;
+  {Formats header comment text as Pascal comments.
+    @param Comments [in] List of comments to format.
+    @return Formatted comments.
+  }
 var
   Line: string;         // loops thru each line of comments & exploded comments
   Lines: IStringList;   // comments after exploding multiple wrapped lines
@@ -1169,7 +1236,7 @@ begin
     for Line in Comments do
       if Length(Line) > 0 then
         Lines.Add(
-          StrWrap(Line, cLineWidth - Length(cLinePrefix), 0), EOL, True
+          TextWrap(Line, cLineWidth - Length(cLinePrefix), 0), EOL, True
         )
       else
         Lines.Add('');
@@ -1184,266 +1251,25 @@ begin
 end;
 
 class function TSourceComments.FormatSnippetComment(const Style: TCommentStyle;
-  const TruncateComments: Boolean; const Text: IActiveText): string;
-var
-  Renderer: TActiveTextTextRenderer;
-  PlainText: string;
-  Lines: IStringList;
+  const Text: string): string;
+  {Formats a snippet's comment text as Pascal comment according to commenting
+  style.
+    @param Style [in] Desired commenting style.
+    @param Text [in] Text of comment. Ignored if Style = csNone.
+    @return Formatted comment. Empty string if Style = csNone.
+  }
 begin
-  Renderer := TActiveTextTextRenderer.Create;
-  try
-    Renderer.DisplayURLs := False;
-    PlainText := Renderer.Render(Text);
-    if TruncateComments then
-    begin
-      // use first non-empty paragraph of Text as comment
-      Lines := TIStringList.Create(PlainText, string(sLineBreak), False);
-      if Lines.Count > 0 then
-        PlainText := Lines[0];
-    end;
-    case Style of
-      csNone:
-        Result := '';
-      csBefore:
-        Result := '{'
-          + EOL
-          + FormatCommentLines(PlainText, cIndent)
-          + EOL
-          + '}';
-      csAfter:
-        Result := FormatCommentLines(
-          '{' + PlainText + '}', cIndent
-        );
-    end;
-  finally
-    Renderer.Free;
-  end;
-end;
-
-{ TClassFormatter }
-
-class constructor TClassFormatter.Create;
-begin
-  // record names of directives that are valid for use as method names
-  fValidDirsInMethodNames := TIStringList.Create([
-    'absolute', 'abstract', 'assembler', 'cdecl', 'contains', 'default',
-    'delayed', 'deprecated', 'dispid', 'dynamic', 'experimental', 'export',
-    'external', 'far', 'final', 'forward', 'helper', 'implements', 'index',
-    'local', 'message', 'name', 'near', 'nodefault', 'overload', 'override',
-    'package', 'pascal', 'platform', 'read', 'readonly', 'reference',
-    'register', 'reintroduce', 'requires', 'resident', 'safecall', 'sealed',
-    'static', 'stdcall', 'stored', 'strict', 'unsafe', 'varargs', 'virtual',
-    'winapi', 'write', 'writeonly'
-  ]);
-  fValidDirsInMethodNames.CaseSensitive := False;
-  fValidDirsInMethodNames.Sort;
-end;
-
-class function TClassFormatter.FormatClassDeclaration(
-  CommentStyle: TCommentStyle; const TruncateComments: Boolean;
-  const Snippet: TSnippet): string;
-var
-  Dummy: string;
-  Decl: string;
-  DeclBody: string;
-begin
-  SplitDeclFromDefn(Snippet.SourceCode, Decl, Dummy);
-  Decl := StrTrim(Decl);
-  case CommentStyle of
+  case Style of
     csNone:
-      Result := StrTrim(Decl);
+      Result := '';
     csBefore:
-      Result := RenderDescComment(CommentStyle, TruncateComments, Snippet)
+      Result := '{'
         + EOL
-        + StrTrim(Decl);
+        + TextWrap(Text, cLineWidth - cIndent, cIndent)
+        + EOL
+        + '}';
     csAfter:
-    begin
-      if RemoveKeywordFromDecl(Decl, DeclBody) then
-        Result := 'type'
-          + EOL
-          + RenderDescComment(CommentStyle, TruncateComments, Snippet)
-          + EOL
-          + DeclBody
-      else
-        Result := Decl;
-    end;
-  end;
-end;
-
-class function TClassFormatter.FormatClassDefinition(const Snippet: TSnippet):
-  string;
-var
-  Dummy: string;
-begin
-  SplitDeclFromDefn(Snippet.SourceCode, Dummy, Result);
-end;
-
-class function TClassFormatter.RemoveKeywordFromDecl(const Decl: string;
-  out DeclBody: string): Boolean;
-const
-  Keyword = 'type';
-begin
-  Result := StrStartsStr(Keyword, Decl);
-  if Result then
-    DeclBody := '  ' + StrTrim(Copy(Decl, Length(Keyword) + 1, MaxInt))
-  else
-    // "type" not found - can't remove
-    DeclBody := Decl;
-end;
-
-class function TClassFormatter.RenderDescComment(CommentStyle: TCommentStyle;
-  const TruncateComments: Boolean; const Snippet: TSnippet): string;
-begin
-  Result := TSourceComments.FormatSnippetComment(
-    CommentStyle, TruncateComments, Snippet.Description
-  );
-end;
-
-class procedure TClassFormatter.SplitDeclFromDefn(const Source: string;
-  out Decl, Defn: string);
-var
-  Lexer: THilitePasLexer;
-  SB: TStringBuilder;
-  ClassTypeName: string;
-  Temp: string;
-const
-  WhiteSpaceTokens = [tkComment, tkCompilerDir, tkWhitespace, tkEOL];
-
-  ///  <summary>Checks if given token is one of the keywords used to introduce
-  ///  a method.</summary>
-  function IsMethodKwd(const Tok: string): Boolean;
-  begin
-    Result := StrSameText(Lexer.TokenStr, 'function')
-      or StrSameText(Lexer.TokenStr, 'procedure')
-      or StrSameText(Lexer.TokenStr, 'constructor')
-      or StrSameText(Lexer.TokenStr, 'destructor')
-      or StrSameText(Lexer.TokenStr, 'operator');
-  end;
-
-  ///  <summary>Checks if current lexer token can represent a method name.
-  ///  </summary>
-  function IsMethodName(const Lexer: THilitePasLexer): Boolean;
-  begin
-    // Either an identifier or one of a certain number of directives can be used
-    // as the name of a method.
-    if Lexer.Token = tkIdentifier then
-      Exit(True);
-    Result := (Lexer.Token = tkDirective)
-      and fValidDirsInMethodNames.Contains(Lexer.TokenStr);
-  end;
-
-resourcestring
-  sTypeKwdError = '"type" must be first keyword in source code';
-  sClassTypeNameError = 'Class type name expected in source code';
-  sBadTypeError = 'Invalid class or advanced record type';
-  sImplementationKwdError = '"implementation" keyword not permitted in class '
-    + 'or advanced record snippets.';
-begin
-  Lexer := THilitePasLexer.Create(Source);
-  try
-    SB := TStringBuilder.Create;
-    try
-      // skip any leading white space and comments to first Pascal token
-      // this must be "type" keyword
-      while Lexer.NextToken in WhiteSpaceTokens do
-        SB.Append(Lexer.TokenStr);
-      if (Lexer.Token <> tkKeyword)
-        and not StrSameText(Lexer.TokenStr, 'type') then
-        raise ECodeSnip.Create(sTypeKwdError);
-      SB.Append(Lexer.TokenStr);
-
-      // get name of class from following identifier
-      while Lexer.NextToken in WhiteSpaceTokens do
-        SB.Append(Lexer.TokenStr);
-      if Lexer.Token <> tkIdentifier then
-        raise ECodeSnip.Create(sClassTypeNameError);
-      ClassTypeName := Lexer.TokenStr;
-      SB.Append(Lexer.TokenStr);
-
-      while True do
-      begin
-        // look for methods
-        while not (Lexer.NextToken in [tkKeyword, tkEOF])
-          and not (
-            IsMethodKwd(Lexer.TokenStr)
-            or StrSameText(Lexer.TokenStr, 'class')
-            or StrSameText(Lexer.TokenStr, 'implementation')
-          ) do
-          SB.Append(Lexer.TokenStr);
-        if Lexer.Token = tkEOF then
-          raise ECodeSnip.Create(sBadTypeError);
-        if (Lexer.Token = tkKeyword)
-          and StrSameText(Lexer.TokenStr, 'implementation') then
-          raise ECodeSnip.Create(sImplementationKwdError);
-        // check if function is followed by ClassTypeName and a dot => start
-        // of declaration
-        Temp := '';
-        if not IsMethodKwd(Lexer.TokenStr) then
-        begin
-          // token is not method keyword - we're only interested if token is
-          // "class" so record token and go round again if not "class"
-          if not StrSameText(Lexer.TokenStr, 'class') then
-          begin
-            SB.Append(Lexer.TokenStr);
-            Continue;
-          end;
-          // must have "class" keyword: record it
-          Temp := Lexer.TokenStr;
-          // skip whitespace following "class"
-          while Lexer.NextToken in WhiteSpaceTokens do
-            Temp := Temp + Lexer.TokenStr;
-          // now look for one of method keywords that can follow "class"
-          if (Lexer.Token <> tkKeyword) and not IsMethodKwd(Lexer.TokenStr) then
-          begin
-            // didn't find method: record text read and go round again
-            SB.Append(Temp);            // "class" and whitespace
-            SB.Append(Lexer.TokenStr);  // token after whitespace
-            Continue;
-          end;
-        end;
-        // record method name
-        Temp := Temp + Lexer.TokenStr;
-        // record following white space
-        while Lexer.NextToken in WhiteSpaceTokens do
-          Temp := Temp + Lexer.TokenStr;
-        // record item after white space
-        Temp := Temp + Lexer.TokenStr;
-        if not IsMethodName(Lexer)
-          or not StrSameText(Lexer.TokenStr, ClassTypeName) then
-        begin
-          // not the required identifier: record text and go round again
-          SB.Append(Temp);
-          Continue;
-        end;
-        // check for following '.'
-        while Lexer.NextToken in WhiteSpaceTokens do
-          Temp := Temp + Lexer.TokenStr;
-        Temp := Temp + Lexer.TokenStr;
-        if (Lexer.Token <> tkSymbol) or (Lexer.TokenStr <> '.') then
-        begin
-          SB.Append(Temp);
-          Continue;
-        end;
-        // check for following identifier
-        while Lexer.NextToken in WhiteSpaceTokens do
-          Temp := Temp + Lexer.TokenStr;
-        Temp := Temp + Lexer.TokenStr;
-        if not IsMethodName(Lexer) then
-        begin
-          SB.Append(Temp);
-          Continue;
-        end;
-        Break;
-      end;
-      // Lexer replaces CRLF with LF, but we need CRLF to keep string length
-      // same as original so that string slice below works
-      Decl := StrReplace(SB.ToString, LF, CRLF);
-    finally
-      SB.Free;
-    end;
-    Defn := StrSliceRight(Source, Length(Source) - Length(Decl));
-  finally
-    Lexer.Free;
+      Result := TextWrap('{' + Text + '}', cLineWidth - cIndent, cIndent);
   end;
 end;
 

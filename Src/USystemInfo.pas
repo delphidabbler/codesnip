@@ -1,16 +1,37 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
- *
- * Copyright (C) 2006-2012, Peter Johnson (www.delphidabbler.com).
- *
- * $Rev$
- * $Date$
+ * USystemInfo.pas
  *
  * Static classes that provide information about the host system.
  *
  * Requires DelphiDabbler System information unit v3 or later.
+ *
+ * $Rev$
+ * $Date$
+ *
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is USystemInfo.pas
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2006-2013 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributors:
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -56,7 +77,7 @@ type
     causing and assertion failure when called.
   }
   TOSInfo = class(TPJOSInfo)
-  strict private
+  private
     class function CheckForKernelFn(const FnName: string): Boolean;
       {Checks if a specified function exists in OSs kernel.
         @param FnName [in] Name of required function.
@@ -193,10 +214,24 @@ class function TOSInfo.BrowserVer: Word;
   }
 var
   Reg: TRegistry;     // registry access object
-  Vers: IStringList;  // receives parts of version number string
 const
   cRegKey = 'Software\Microsoft\Internet Explorer'; // required registry key
-  cRegValue = 'Version';  // name of required registry value
+  cRegValue = 'Version';      // name of required registry value
+  cRegValue10 = 'svcVersion'; // name of required registry value for IE10
+
+  // Get major version number from named registry value
+  function GetVer(const ValName: string): Word;
+  var
+    Vers: IStringList;  // receives parts of version number string;
+    begin
+      Vers := TIStringList.Create(Reg.ReadString(ValName), '.', False, True);
+      // we want most significant version number
+      if (Vers.Count > 0) then
+        Result := StrToIntDef(Vers[0], 0)
+      else
+        Result := 0;
+    end;
+
 begin
   Result := 0;
   Reg := TRegistry.Create;
@@ -204,15 +239,10 @@ begin
     Reg.RootKey := HKEY_LOCAL_MACHINE;
     if Reg.OpenKeyReadOnly(cRegKey) then
     begin
-      if Reg.ValueExists(cRegValue) then
-      begin
-        Vers := TIStringList.Create(
-          Reg.ReadString(cRegValue), '.', False, True
-        );
-        // we want most significant version number
-        if (Vers.Count > 0) then
-          Result := StrToIntDef(Vers[0], 0);
-      end;
+      if Reg.ValueExists(cRegValue10) then
+        Result := GetVer(cRegValue10)
+      else if Reg.ValueExists(cRegValue) then
+        Result := GetVer(cRegValue);
     end;
   finally
     Reg.Free;

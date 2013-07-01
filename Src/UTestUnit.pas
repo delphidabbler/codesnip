@@ -1,15 +1,36 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * UTestUnit.pas
  *
- * Copyright (C) 2006-2012, Peter Johnson (www.delphidabbler.com).
+ * Implements a class that generates Pascal units for use in test compiling
+ * snippets.
  *
  * $Rev$
  * $Date$
  *
- * Implements a class that generates Pascal units for use in test compiling
- * snippets.
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is UTestUnit.pas
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2006-2010 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -21,43 +42,40 @@ interface
 
 uses
   // Project
-  DB.USnippet;
+  USnippets;
 
 
 type
 
-  ///  <summary>
-  ///  Class that generates Pascal units for use in test compiling snippets.
-  ///  </summary>
+  {
+  TTestUnit:
+    Class that generates Pascal units for use in test compiling snippets.
+  }
   TTestUnit = class(TObject)
   strict private
-    var
-      ///  <summary>Reference to snippet for which test unit is required.
-      ///  </summary>
-      fSnippet: TSnippet;
-    ///  <summary>Generates name of test unit, based on snippet being tested.
-    ///  </summary>
-    ///  <remarks>Returned unit name contains only valid ASCII characters. Any
-    ///  invalid characters are replaced with '_'.</remarks>
+    fSnippet: TRoutine; // Reference to snippet for which test unit is required
     function UnitName: string;
-    ///  <summary>Builds and returns fully specified unit file name.</summary>
+      {Generates name of test unit, based on snippet being tested.
+        @return Name of the unit.
+      }
     function UnitFileName: string;
+      {Calculates full file path to test.
+        @return Fully specified unit file name.
+      }
   public
-    ///  <summary>Sets up object to create test unit for given snippet.
-    ///  </summary>
-    constructor Create(const Snippet: TSnippet);
-    ///  <summary>Generates source code of test unit.</summary>
+    constructor Create(const Snippet: TRoutine);
+      {Class constructor. Sets up object to create test unit for a snippet.
+        @param Snippet [in] Snippet for which we want test unit.
+      }
     function GenerateUnitSource: string;
-    ///  <summary>Saves generated source to file.</summary>
-    ///  <param name="FileName">string [out] Set to name of unit file. Base name
-    ///  is name of unit.</param>
-    ///  <remarks>
-    ///  <para>Base file name contains only valid ASCII characters.</para>
-    ///  <para>File is saved in default ANSI encoding unless source code
-    ///  contains any characters not valid in default ANSI code page. In this
-    ///  case file is saved with UTF-8 encoding.</para>
-    ///  </remarks>
+      {Generates source code of test unit.
+        @return Required source code.
+      }
     procedure SaveUnit(out FileName: string);
+      {Generates source code of test unit and saves to file.
+        @param FileName [out] Set to name of unit file, which is based on
+          snippet under test.
+      }
   end;
 
 
@@ -68,13 +86,15 @@ uses
   // Delphi
   SysUtils,
   // Project
-  DB.USnippetKind, UEncodings, UIOUtils, USourceGen, USystemInfo, UUnitAnalyser,
-  UUtils;
+  USourceGen, USystemInfo, UUtils;
 
 
 { TTestUnit }
 
-constructor TTestUnit.Create(const Snippet: TSnippet);
+constructor TTestUnit.Create(const Snippet: TRoutine);
+  {Class constructor. Sets up object to create test unit for a snippet.
+    @param Snippet [in] Snippet for which we want test unit.
+  }
 begin
   Assert(Assigned(Snippet), ClassName + '.Create: Snippet is nil');
   inherited Create;
@@ -82,44 +102,35 @@ begin
 end;
 
 function TTestUnit.GenerateUnitSource: string;
+  {Generates source code of test unit.
+    @return Required source code.
+  }
 begin
-  if fSnippet.Kind <> skUnit then
-  begin
-    with TSourceGen.Create do
-      try
-        IncludeSnippet(fSnippet);
-        // Must use Self.UnitName below for Delphis that defined TObject.UnitName
-        // otherwise the TObject version is used.
-        Result := UnitAsString(Self.UnitName);
-      finally
-        Free;
-      end;
-  end
-  else
-    Result := fSnippet.SourceCode;
+  with TSourceGen.Create do
+    try
+      IncludeSnippet(fSnippet);
+      // Must use Self.UnitName below for Delphis that defined TObject.UnitName
+      // otherwise the TObject version is used.
+      Result := UnitAsString(Self.UnitName);
+    finally
+      Free;
+    end;
 end;
 
 procedure TTestUnit.SaveUnit(out FileName: string);
-var
-  SourceCode: string;
-  Encoding: TEncoding;
+  {Generates source code of test unit and saves to file.
+    @param FileName [out] Set to name of unit file, which is based on
+      snippet under test.
+  }
 begin
   FileName := UnitFileName;
-  SourceCode := GenerateUnitSource;
-  // If all of the source code is supported by default ANSI code page we use
-  // that to write file, otherwise we use UTF-8.
-  // Preference for default ANSI encoding is because early Delphis can only read
-  // source code files in this format. Later versions that can handle unicode
-  // characters in units also support UTF-8 format source code files.
-  Encoding := TUnitAnalyser.RequiredEncoding(SourceCode);
-  try
-    TFileIO.WriteAllText(FileName, SourceCode, Encoding, True);
-  finally
-    TEncodingHelper.FreeEncoding(Encoding);
-  end;
+  StringToFile(GenerateUnitSource, FileName);
 end;
 
 function TTestUnit.UnitFileName: string;
+  {Calculates full file path to test.
+    @return Fully specified unit file name.
+  }
 const
   cPasExt = '.pas'; // file extension for Pascal unit:
 begin
@@ -129,31 +140,14 @@ begin
 end;
 
 function TTestUnit.UnitName: string;
+  {Generates name of test unit, based on snippet being tested.
+    @return Name of the unit.
+  }
 const
   cUnitPrefix = 'U_'; // unit file name prefix
-var
-  I: Integer;
-  Ch: Char;
 begin
-  if fSnippet.Kind = skUnit then
-    Exit(TUnitAnalyser.UnitName(fSnippet.SourceCode));
   // Unit name is same as Snippet being tested, but with prefix to make unique
   Result := cUnitPrefix + fSnippet.Name;
-  // We ensure only ASCII characters are used in unit name. Any unsuitable
-  // characters are replaced by underscore.
-  // This is done because unit name is also used as unit file name. If we took
-  // no action would could have a Unicode file name. Earlier versions of Delphi
-  // can't cope with Unicode file names and claim the file can't be found. Some
-  // compilers like Delphi 2006 that can handle non-ANSI characters in source
-  // code still cannot handle those characters in the file name.
-  // Some valid ANSI characters are not handled by some compilers, hence we have
-  // fallen back to ASCII.
-  for I := 1 to Length(Result) do
-  begin
-    Ch := Result[I];
-    if not EncodingSupportsString(Ch, TEncoding.ASCII) then
-      Result[I] := '_';
-  end;
 end;
 
 end.

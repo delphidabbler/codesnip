@@ -1,16 +1,37 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
- *
- * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
- *
- * $Rev$
- * $Date$
+ * Browser.UUIMgr.pas
  *
  * Contains class that implements IDocHostUIHandler interface and allows
  * customisation of IE web browser control's user interface, message
  * translation, pop-up menu, external object and drag-drop handling.
+ *
+ * $Rev$
+ * $Date$
+ *
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is Browser.UUIMgr.pas, formerly UWBUIMgr.pas
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2005-2012 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -110,6 +131,9 @@ type
       {Determines whether text can be selected in browser}
     fCSS: string;
       {Records master cascading style sheet used by browser}
+    fUseDefaultContextMenu: Boolean;
+      {Records whether browser's default context menus are displayed or whether
+      program handles context menus}
     fExternScript: IDispatch;
       {Reference to object that implement's browser "external" object}
     fDropTarget: IDropTarget;
@@ -157,7 +181,7 @@ type
         @param MenuID [in] Describes type of menu required.
         @param Elem [in] HTML element for which menu is requested.
       }
-  public
+  protected // do not make strict
     { IDocHostUIHandler overrides }
     function ShowContextMenu(const dwID: DWORD; const ppt: PPOINT;
       const pcmdtReserved: IUnknown; const pdispReserved: IDispatch): HResult;
@@ -172,7 +196,8 @@ type
         @param pcmdtReserved [in] Not used.
         @param pdispReserved [in] IDispatch interface of HTML object under
           mouse.
-        @return S_OK to prevent IE displaying its default context menu.
+        @return S_OK to prevent IE displaying its menu or S_FALSE to enable the
+          IE menu.
       }
     function GetHostInfo(var pInfo: TDocHostUIInfo): HResult; stdcall;
       {Called by browser to get UI capabilities. We configure the required UI
@@ -274,6 +299,11 @@ type
       browser control, or for body element if no element active.
         @param Pt [in] Co-ordinates at which menu is displayed.
       }
+    property UseDefaultContextMenu: Boolean
+      read fUseDefaultContextMenu write fUseDefaultContextMenu default True;
+      {Determines if IE displays its default context menu (true) or if program
+      handles this (false). The value of this property can be selectively
+      overridden if the OnMenuPopup or OnMenuPopupEx events are handled}
     property ScrollbarStyle: TWBScrollbarStyle
       read fScrollbarStyle write fScrollbarStyle default sbsNormal;
       {Determines style of browser control's scroll bars, or hides them. See
@@ -319,11 +349,9 @@ type
       details}
     property OnMenuPopup: TWBMenuPopupEvent
       read fOnMenuPopup write fOnMenuPopup;
-      {Extended version of OnMenuPopup event triggered when the browser is ready
-      to display a popup menu. In addition to information made available in
-      OnMenuPopup the IDispatch interface of the object under the cursor when
-      the menu was summoned is made available. This event is only triggered if
-      OnMenuPopup has no event handler}
+      {Event triggered when the browser is ready to display a popup menu. Allows
+      the program to customise the menu or to display its own. See the
+      documentation of TWBMenuPopupEvent for more information}
     property OnUpdateCSS: TWBUpdateCSSEvent
       read fOnUpdateCSS write fOnUpdateCSS;
       {Event triggered when browser needs default CSS. Provides opportunity to
@@ -346,7 +374,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  Browser.UControlHelper, UHTMLDOMHelper, UThemesEx, UUrlMonEx;
+  Browser.UControlHelper, UHTMLDocHelper, UThemesEx;
 
 
 function TaskAllocWideString(const S: string): PWChar;
@@ -369,6 +397,7 @@ begin
   StringToWideChar(S, Result, StrLen);
 end;
 
+
 { TWBUIMgr }
 
 procedure TWBUIMgr.BrowserEnter(Sender: TObject);
@@ -378,7 +407,7 @@ procedure TWBUIMgr.BrowserEnter(Sender: TObject);
   }
 begin
   // Focus the <body> tag if it exists
-  THTMLDOMHelper.FocusElem(THTMLDOMHelper.GetBodyElem(fWebBrowser.Document));
+  THTMLDocHelper.FocusElem(THTMLDocHelper.GetBodyElem(fWebBrowser.Document));
   // Pass event on to any original handler
   if Assigned(fOldOnEnter) then
     fOldOnEnter(Sender);
@@ -437,6 +466,7 @@ begin
   Assert(Assigned(WebBrowser), ClassName + '.Create: WebBrowser is nil');
   inherited Create(Controller);
   fWebBrowser := WebBrowser;
+  fUseDefaultContextMenu := True;
   fScrollbarStyle := sbsNormal;
   fShow3dBorder := True;
   fAllowTextSelection := True;
@@ -474,8 +504,8 @@ function TWBUIMgr.DocHeight: Integer;
   }
 begin
   // Calculate height of HTML in browser control: this is height of <body> tag
-  Result := THTMLDOMHelper.GetScrollHeight(
-    THTMLDOMHelper.GetBodyElem(fWebBrowser.Document)
+  Result := THTMLDocHelper.GetScrollHeight(
+    THTMLDocHelper.GetBodyElem(fWebBrowser.Document)
   );
 end;
 
@@ -560,12 +590,6 @@ begin
   if CSS <> '' then
     pInfo.pchHostCss := TaskAllocWideString(CSS);
 
-  // Turn off the annoying click sound in browser control: it's not helpful in
-  // an application where interface does not appear to be a browser.
-  CoInternetSetFeatureEnabled(
-    FEATURE_DISABLE_NAVIGATION_SOUNDS, SET_FEATURE_ON_PROCESS, True
-  );
-
   Result := S_OK;
 end;
 
@@ -583,7 +607,7 @@ function TWBUIMgr.GetSelectedText: string;
     @return Selected text or '' if none.
   }
 begin
-  Result := THTMLDOMHelper.GetTextSelection(fWebBrowser.Document);
+  Result := THTMLDocHelper.GetTextSelection(fWebBrowser.Document);
 end;
 
 function TWBUIMgr.HideUI: HResult;
@@ -603,7 +627,7 @@ procedure TWBUIMgr.ScrollTo(const X, Y: Integer);
     @param Y [in] Y-coordinate.
   }
 begin
-  THTMLDOMHelper.ScrollTo(fWebBrowser.Document, X, Y);
+  THTMLDocHelper.ScrollTo(fWebBrowser.Document, X, Y);
 end;
 
 procedure TWBUIMgr.SelectAll;
@@ -650,7 +674,7 @@ procedure TWBUIMgr.ShowPopupMenu(const Pt: TPoint);
 var
   BodyElem: IDispatch;
 begin
-  BodyElem := THTMLDOMHelper.GetBodyElem(fWebBrowser.Document);
+  BodyElem := THTMLDocHelper.GetBodyElem(fWebBrowser.Document);
   if not Assigned(BodyElem) then
     Exit;
   DisplayPopupMenu(Pt, CONTEXT_MENU_DEFAULT, BodyElem);

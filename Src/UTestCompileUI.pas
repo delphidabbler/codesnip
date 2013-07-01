@@ -1,16 +1,37 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
- *
- * Copyright (C) 2008-2012, Peter Johnson (www.delphidabbler.com).
- *
- * $Rev$
- * $Date$
+ * UTestCompileUI.pas
  *
  * Defines a static class that test compiles a snippet in a thread and displays
  * a wait dialog if the compilation is taking more than a specified amount of
  * time.
+ *
+ * $Rev$
+ * $Date$
+ *
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is UTestCompileUI.pas
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2008-2010 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -24,7 +45,7 @@ uses
   // Delphi
   SysUtils, Classes,
   // Project
-  Compilers.UGlobals, DB.USnippet, UBaseObjects;
+  Compilers.UGlobals, UBaseObjects, USnippets;
 
 
 type
@@ -46,13 +67,13 @@ type
       }
   public
     class procedure Execute(const AOwner: TComponent;
-      const ACompilers: ICompilers; const ASnippet: TSnippet);
+      const ACompilers: ICompilers; const ARoutine: TRoutine);
       {Test compiles a snippet in a thread and displays a wait dialog if
       compilation takes some time.
         @param AOwner [in] Control that owns the wait dialog box. Dialog is
           aligned over this control.
         @param ACompilers [in] Compilers object used to perform compilation.
-        @param ASnippet [in] Snippet to be compiled.
+        @param ARoutine [in] Snippet to be compiled.
       }
   end;
 
@@ -71,13 +92,13 @@ uses
 { TTestCompileUI }
 
 class procedure TTestCompileUI.Execute(const AOwner: TComponent;
-  const ACompilers: ICompilers; const ASnippet: TSnippet);
+  const ACompilers: ICompilers; const ARoutine: TRoutine);
   {Test compiles a snippet in a thread and displays a wait dialog if compilation
   takes some time.
     @param AOwner [in] Control that owns the wait dialog box. Dialog is aligned
       over this control.
     @param ACompilers [in] Compilers object used to perform compilation.
-    @param ASnippet [in] Snippet to be compiled.
+    @param Routine [in] Snippet to be compiled.
   }
 resourcestring
   // Caption for wait dialog
@@ -92,7 +113,7 @@ begin
   try
     WaitDlg.Caption := sWaitCaption;
     // Do the compilation
-    CompThread := TTestCompileThread.Create(ACompilers, ASnippet);
+    CompThread := TTestCompileThread.Create(ACompilers, ARoutine);
     try
       TWaitForThreadUI.Run( // this blocks until thread completes
         CompThread, WaitDlg, PauseBeforeDisplay, MinDisplayTime

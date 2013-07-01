@@ -1,16 +1,40 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
- *
- * Copyright (C) 2005-2012, Peter Johnson (www.delphidabbler.com).
- *
- * $Rev$
- * $Date$
+ * USaveSourceDlg.pas
  *
  * Implements customised Save dialog box for source code. Dialog has additional
  * controls to allow user to choose output file format, commenting style and
  * syntax highlighting.
+ *
+ * Unit originally named USaveSnippetDlg.pas. Renamed as USaveSourceDlg.pas as
+ * at v1.1.
+ *
+ * $Rev$
+ * $Date$
+ *
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is USaveSourceDlg.pas
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -24,190 +48,145 @@ uses
   // Delphi
   Classes, StdCtrls, ExtCtrls,
   // Project
-  UEncodings, USaveDialogEx, USourceFileInfo, USourceGen;
+  USaveDialogEx, USourceGen;
+
 
 type
-  ///  <summary>Type of handler for events triggered by TSaveSourceDlg to check
-  ///  if a file type supports syntax highlighting.</summary>
-  ///  <param name="Sender">TObject [in] Object triggering event.</param>
-  ///  <param name="Ext">string [in] Extension that defines type of file being
-  ///  queried.</param>
-  ///  <param name="CanHilite">Boolean [in/out] Set to true if file type
-  ///  supports syntax highlighting.</param>
+
+  {
+  THiliteQuery:
+    Type of handler for event triggered by TSaveSourceDlg to check if a file
+    type supports syntax highlighting.
+      @param Sender [in] TSaveSourceDlg dialog object triggering event.
+      @param Ext [in] Extension of file type being checked.
+      @param CanHilite [in/out] Flag that handler sets true if syntax
+        highlighting supported (default value is False).
+  }
   THiliteQuery = procedure(Sender: TObject; const Ext: string;
     var CanHilite: Boolean) of object;
 
-type
-  ///  <summary>Type of handler for event triggered by TSaveSourceDlg to get
-  ///  list of encodings supported for a file type.</summary>
-  ///  <param name="Sender">TObject [in] Object triggering event.</param>
-  ///  <param name="Ext">string [in] Extension that defines type of file being
-  ///  queried.</param>
-  ///  <param name="Encodings">TSourceFileEncodings [in/out] Assigned an array
-  ///  of records that specify supported encodings.</param>
-  TEncodingQuery = procedure(Sender: TObject; const Ext: string;
-    var Encodings: TSourceFileEncodings) of object;
-
-type
-  ///  <summary>
-  ///  Extended save dialog box used when saving code snippets. It displays
-  ///  additional controls used to specify attributes of source code and which
-  ///  encoding to use to save file. SAVESNIPPETEXT dialog resource. Dialog also
-  ///  adjusts any file name entered without extension to include extension
-  ///  associated with any current filter.
-  ///  </summary>
+  {
+  TSaveSourceDlg:
+    Extended save dialog box used when saving code snippets. It displays
+    additional controls used to specify attributes of source code. Requires
+    SAVESNIPPETEXT dialog resource. Dialog also adjusts any file name entered
+    without extension to include extension associated with any current filter.
+  }
   TSaveSourceDlg = class(TSaveDialogEx)
   strict private
-    var
-      ///  <summary>Panel thats hold controls added to dialog.</summary>
-      fPanel: TPanel;
-      ///  <summary>Label for comment style combo.</summary>
-      fLblCommentStyle: TLabel;
-      ///  <summary>Combo box used to select commenting style.</summary>
-      fCmbCommentStyle: TComboBox;
-      ///  <summary>Check box that determines whether a snippet's comment is
-      ///  truncated to first paragraph of description or uses whole
-      ///  description.</summary>
-      fChkTruncateComment: TCheckBox;
-      ///  <summary>Check box that toggles syntax highlighting.</summary>
-      fChkSyntaxHilite: TCheckBox;
-      ///  <summary>Label for encoding combo box.</summary>
-      fLblEncoding: TLabel;
-      ///  <summary>Combo box used to select encoding.</summary>
-      fCmbEncoding: TComboBox;
-      ///  <summary>Custom Help button added to dialog.</summary>
-      fHelpBtn: TButton;
-      ///  <summary>Preview button added to dialog.</summary>
-      fPreviewBtn: TButton;
-      ///  <summary>Style of commenting to be used in source code.</summary>
-      fCommentStyle: TCommentStyle;
-      ///  <summary>Whether snippet comments are to be truncated to a single
-      ///  paragraph.</summary>
-      fTruncateComments: Boolean;
-      ///  <summary>Event handler for OnPreview event.</summary>
-      fOnPreview: TNotifyEvent;
-      ///  <summary>Event handler for OnHiliteQuery event.</summary>
-      fOnHiliteQuery: THiliteQuery;
-      ///  <summary>Event handler for OnEncodingQuery event.</summary>
-      fOnEncodingQuery: TEncodingQuery;
-      ///  <summary>Flags whether source is syntax highlighted.</summary>
-      fUseSyntaxHiliting: Boolean;
-      ///  <summary>Stores index of selected file type.</summary>
-      fSelectedFilterIdx: Integer;
-      ///  <summary>Stores type of selected encoding.</summary>
-      fSelectedEncoding: TEncodingType;
-    ///  <summary>Handles click on Help button.</summary>
-    ///  <remarks>Calls help with required keyword.</remarks>
+    fPanel: TPanel;               // Panel thats hold controls added to dialog
+    fLblCommentStyle: TLabel;     // Label for comment style combo
+    fCmbCommentStyle: TComboBox;  // Combo box used to select commenting style
+    fChkSyntaxHilite: TCheckBox;  // Check box that toggles syntax highlighting
+    fHelpBtn: TButton;            // Help button added to dialog
+    fPreviewBtn: TButton;         // Preview button added to dialog
+    fCommentStyle: TCommentStyle; // Style of commenting to be used source code
+    fOnPreview: TNotifyEvent;     // Event handler for OnPreview event
+    fOnHiliteQuery: THiliteQuery; // Event handler for OnHiliteQuery event
+    fUseSyntaxHiliting: Boolean;  // Flags whether source is syntax highlighted
+    fSelectedFilterIdx: Integer;  // Store index of selected file type.
     procedure HelpClickHandler(Sender: TObject);
-    ///  <summary>Handles click on preview button.</summary>
-    ///  <remarks>Triggers dialog's OnPreview event.</remarks>
+      {Handles click on help button. Calls help with required keyword.
+        @param Sender [in] Not used.
+      }
     procedure PreviewClickHandler(Sender: TObject);
-    ///  <summary>Handles style combo box's OnChange event.</summary>
-    ///  <remarks>Updates CommentStyle property per selected item in combo box.
-    ///  </remarks>
-    procedure CommentStyleChange(Sender: TObject);
-    ///  <summary>Handles encoding combo box's OnChange event.</summary>
-    ///  <remarks>Updates SelectedEncoding property per selected item in combo
-    ///  box.</remarks>
-    procedure EncodingChange(Sender: TObject);
-    ///  <summary>Updates value of UseSyntaxHiliting property per state of
-    ///  dialogue box controls.</summary>
-    procedure UpdateSyntaxHiliting;
-    ///  <summary>Updates value of TruncateComments property per state of
-    ///  dialogue box controls.</summary>
-    procedure UpdateCommentTruncation;
-    ///  <summary>Selects item in comment style combo box that matches value of
-    ///  CommentStyle property.</summary>
-    procedure UpdateCommentStyle;
-    ///  <summary>Adjusts any file name supplied without an extension by
-    ///  appending extension associated with the currently selected file type.
-    ///  </summary>
-    ///  <remarks>If file has an extension or if file type is *.* then file name
-    ///  is not changed.</remarks>
-    ///  <param name="AFileName">string [in] File name to be adjusted.</param>
-    ///  <returns>Adjusted file name.</returns>
-    function AdjustFileName(const AFileName: string): string;
-    ///  <summary>Returns index of a specified encoding type in the the encoding
-    ///  dialog box.</summary>
-    function IndexOfEncodingType(const EncType: TEncodingType): Integer;
-    ///  <summary>Write accessor for OnPreview event.</summary>
-    ///  <remarks>Enables / disables preview button depending on whether event
-    ///  handler assigned.</remarks>
+      {Handles click on preview button. Updates properties then triggers
+      dialog's OnPreview event.
+        @param Sender [in] Not used.
+      }
     procedure SetOnPreview(const Value: TNotifyEvent);
-    ///  <summary>Read accessor for SelectedExt property.</summary>
-    ///  <remarks>Extracts extension for selected file type from Filter
-    ///  property.</remarks>
+      {Write accessor for OnPreview event. Enables / disables preview button
+      depending on if event handler assigned.
+        @param Value [in] Required event handler.
+      }
+    procedure UpdateSyntaxHiliting;
+      {Updates value of UseSyntaxHiliting property per state of dialog box
+      controls.
+      }
+    procedure UpdateCommentStyle;
+      {Selects appropriate item in comment style combo box per current comment
+      style property.
+      }
+    procedure CommentStyleChange(Sender: TObject);
+      {Comment style combo box OnChange event handler. Updates CommentStyle
+      property.
+        @param Sender [in] Not used.
+      }
     function GetSelectedExt: string;
-    ///  <summary>Read accessor for FilterIndex property.</summary>
+      {Read accessor for SelectedExt property. Extracts extension for selected
+      file type from Filter property.
+        @return Selected extension with leading '.'.
+      }
+    function AdjustFileName(const AFileName: string): string;
+      {Adjusts any file name supplied without an extension by appending
+      extension associated with the currently selected file type. If the file
+      has an extension or if the file type is *.* then the file name is not
+      changed.
+        @param AFileName [in] File name to be adjusted.
+        @return Adjusted file name.
+      }
     function GetFilterIndex: Integer;
-    ///  <summary>Write accessor for FilterIndex property.</summary>
+      {Gets index of selected filter.
+        @return Selected filter index.
+      }
     procedure SetFilterIndex(const Value: Integer);
+      {Records index of selected file filter.
+        @param Value [in] New value of selected file filter.
+      }
   strict protected
-    ///  <summary>Tidies up and sets properties from controls when dialog is
-    ///  about to close.</summary>
     procedure DoClose; override;
-    ///  <summary>Called to check if dialog box can close. Returns True if so,
-    ///  False if not.</summary>
-    ///  <remarks>We check for existing file (after adding required extension)
-    ///  and inhibit closure if file exists and user doesn't want to overwrite.
-    ///  </remarks>
+      {Tidies up and sets properties from controls when dialog is about to
+      close.
+      }
     function DoCanClose: Boolean; override;
-    ///  <summary>Sets up dialog just before it is displayed.</summary>
+      {Called to check if dialog can close. We check for existing file (after
+      adding required extension) and inhibit closure if file exists and user
+      doesn't want to overwrite.
+        @return True if dialog can close and false otherwise.
+      }
     procedure DoShow; override;
-    ///  <summary>Notifies when a different file type is selected in file type
-    ///  combo box.</summary>
-    ///  <remarks>We store newly selected filter and updated related controls.
-    ///  </remarks>
+      {Sets up dialog just before it is displayed.
+      }
     procedure DoTypeChange; override;
-    ///  <summary>Notifies when a different encoding is selected in encoding
-    ///  combo box.</summary>
-    ///  <remarks>Records type of newly selected encoding.</remarks>
-    procedure DoEncodingChange; virtual;
+      {Notifies when a different file type is selected in file type combo box.
+      Checks if syntax highlighting supported for selected file type.
+      }
   public
-    ///  <summary>Creates dialog box and adds custom controls to it.</summary>
     constructor Create(AOwner: TComponent); override;
-    ///  <summary>Displays dialog box. Returns True if user OKs or False if user
-    ///  cancels.</summary>
-    ///  <remarks>Sets required dialog box template if new style dialogs being
-    ///  used. Adjusts any extension-less file name to have extension of
-    ///  selected file type.</remarks>
+      {Class constructor. Creates dialog box and adds custom controls to it.
+        @param AOwner [in] Owning component. Dialog box will be aligned over
+          AOwner.
+      }
     function Execute: Boolean; override;
-    ///  <summary>Extension relating to selected file type.</summary>
+      {Displays dialog box. Sets required dialog box template if new style
+      dialogs being used. Adjusts any extension-less file name to have extension
+      of selected file type.
+        @return True if user OKs and false if cancels.
+      }
     property SelectedExt: string
       read GetSelectedExt;
-    ///  <summary>Encoding type of selected encoding.</summary>
-    property SelectedEncoding: TEncodingType
-      read fSelectedEncoding;
-    ///  <summary>Gets and sets the selected commenting style.</summary>
+      {Extension relating to selected file type}
+  published
     property CommentStyle: TCommentStyle
       read fCommentStyle write fCommentStyle;
-    ///  <summary>Gets and sets the value of the comment truncation check box.
-    ///  </summary>
-    property TruncateComments: Boolean
-      read fTruncateComments write fTruncateComments;
-    ///  <summary>Flag true if syntax highlighting is to be used when saving /
-    ///  previewing source code. This is case when check box is checked and
-    ///  selected file type supports highlighting. Set the property to check the
-    ///  check box.</summary>
+      {Commenting style selected in dialog box. Determines default comment style
+      selection in dialog box when set}
     property UseSyntaxHiliting: Boolean
       read fUseSyntaxHiliting write fUseSyntaxHiliting;
-    ///  <summary>Event triggered when Preview button is clicked.</summary>
-    ///  <remarks>Handlers should display the file that will be generated when
-    ///  the Save button is clicked.</remarks>
+      {Flag true if syntax highlighting is to be used when saving / previewing
+      the source code. This is case when check box is checked and selected file
+      type supports highlighting. Set the property to check the box}
     property OnPreview: TNotifyEvent
       read fOnPreview write SetOnPreview;
-    ///  <summary>Event triggered when a file type is selected to determine
-    ///  whether syntax highlighting is supported for the file type.</summary>
+      {Event triggered when preview button clicked. Handlers should display file
+      that will be generated when Save button is clicked}
     property OnHiliteQuery: THiliteQuery
       read fOnHiliteQuery write fOnHiliteQuery;
-    ///  <summary>Event triggered when a file type is selected to get a list of
-    ///  encodings supported for the file type.</summary>
-    property OnEncodingQuery: TEncodingQuery
-      read fOnEncodingQuery write fOnEncodingQuery;
-    ///  <summary>Re-implementation of inherited property to overcome apparent
-    ///  bug where property forgets selected filter when dialog box is closed.
-    ///  </summary>
+      {Event triggered when a file type is selected. Handlers should determine
+      if the file type supports syntax highlighting}
     property FilterIndex: Integer read GetFilterIndex write SetFilterIndex;
+      {Re-implementation of inherited property. Used to overcome apparent bug
+      where property forgets selected filter when dialog box is closed}
   end;
 
 
@@ -224,15 +203,11 @@ uses
 resourcestring
   // Component captions
   sLblCommentStyle = 'Comment style:';
-  sLblEncoding = 'File Encoding:';
   sChkSyntaxHilite = 'Use syntax highlighting';
-  sChkTruncateComment = 'Truncate comments to 1st paragraph';
   sBtnPreview = '&Preview...';
   sBtnHelp = '&Help';
-  // Default encoding name
-  sANSIEncoding = 'ANSI (Default)';
 
-
+  
 const
   // Name of dialog box template resource
   cTemplateName = 'SAVESNIPPETEXT';
@@ -241,6 +216,12 @@ const
 { TSaveSourceDlg }
 
 function TSaveSourceDlg.AdjustFileName(const AFileName: string): string;
+  {Adjusts any file name supplied without an extension by appending extension
+  associated with the currently selected file type. If the file has an extension
+  or if the file type is *.* then the file name is not changed.
+    @param AFileName [in] File name to be adjusted.
+    @return Adjusted file name.
+  }
 begin
   Result := AFileName;
   if ExtractFileExt(Result) = '' then
@@ -251,6 +232,10 @@ begin
 end;
 
 procedure TSaveSourceDlg.CommentStyleChange(Sender: TObject);
+  {Comment style combo box OnChange event handler. Updates CommentStyle
+  property.
+    @param Sender [in] Not used.
+  }
 begin
   fCommentStyle := TCommentStyle(
     fCmbCommentStyle.Items.Objects[fCmbCommentStyle.ItemIndex]
@@ -258,6 +243,9 @@ begin
 end;
 
 constructor TSaveSourceDlg.Create(AOwner: TComponent);
+  {Class constructor. Creates dialog box and adds custom controls to it.
+    @param AOwner [in] Owning component. Dialog box will be aligned over AOwner.
+  }
 begin
   inherited Create(AOwner);
 
@@ -280,26 +268,10 @@ begin
   fPreviewBtn.Parent := fPanel;
   fPreviewBtn.OnClick := PreviewClickHandler;
 
-  // label for encoding combo box
-  fLblEncoding := TLabel.Create(Self);
-  fLblEncoding.Parent := fPanel;
-  fLblEncoding.Caption := sLblEncoding;
-
-  // combo box used to select encoding
-  fCmbEncoding := TComboBox.Create(Self);
-  fCmbEncoding.Parent := fPanel;
-  fCmbEncoding.Style := csDropDownList;
-  fCmbEncoding.OnChange := EncodingChange;
-
   // label for comment style combo
   fLblCommentStyle := TLabel.Create(Self);
   fLblCommentStyle.Parent := fPanel;
   fLblCommentStyle.Caption := sLblCommentStyle;
-
-  // check box that determines if comments are truncated to 1st paragraph
-  fChkTruncateComment := TCheckBox.Create(Self);
-  fChkTruncateComment.Parent := fPanel;
-  fChkTruncateComment.Caption := sChkTruncateComment;
 
   // combo box used to select commenting style
   fCmbCommentStyle := TComboBox.Create(Self);
@@ -325,11 +297,18 @@ begin
 end;
 
 function TSaveSourceDlg.DoCanClose: Boolean;
+  {Called to check if dialog can close. We check for existing file (after adding
+  required extension) and inhibit closure if file exists and user doesn't want
+  to overwrite.
+    @return True if dialog can close and false otherwise.
+  }
 
   // ---------------------------------------------------------------------------
-  ///  <summary>Displays a dialog box asking permission to overwrite a file.
-  ///  Returns True if user OKs, False if not.</summary>
   function QueryOverwrite(const FileName: string): Boolean;
+    {Displays a dialog box asking permission to overwrite a file.
+      @param FileName [in] Name of file to be overwritten.
+      @return True if user agrees that file can be overwritten, false if not.
+    }
   resourcestring
     // Text of query displayed in dialog box
     sQueryMsg = '%s already exists.' + EOL + 'Do you want to replace it?';
@@ -352,29 +331,25 @@ begin
 end;
 
 procedure TSaveSourceDlg.DoClose;
+  {Tidies up and sets properties from controls when dialog is about to close.
+  }
 begin
+  // Update value of SyntaxHiliting property
   UpdateSyntaxHiliting;
-  UpdateCommentTruncation;
   inherited DoClose;
   // Hide any hint left on screen
   Application.HideHint;
 end;
 
-procedure TSaveSourceDlg.DoEncodingChange;
-begin
-  if fCmbEncoding.ItemIndex >= 0 then
-    fSelectedEncoding := TEncodingType(
-      fCmbEncoding.Items.Objects[fCmbEncoding.ItemIndex]
-    )
-  else
-    fSelectedEncoding := etSysDefault;
-end;
-
 procedure TSaveSourceDlg.DoShow;
+  {Sets up dialog just before it is displayed.
+  }
 
   // ---------------------------------------------------------------------------
-  ///  <summary>Gets bounding rectangle of control with given id.</summary>
   function GetDlgCtrlRect(CtrlID: Integer): TRect;
+    {Get bounding rectangle of control with given id.
+      @return Bounding rectangle.
+    }
   begin
     // Get bounds in screen co-ords (controls are children of parent window)
     GetWindowRect(GetDlgItem(GetParent(Handle), CtrlID), Result);
@@ -400,16 +375,19 @@ begin
   // bounds of OK button (used to size buttons we add)
   ButtonBounds := GetDlgCtrlRect(IDOK);
 
+  // Set up TPanel that holds all newly added controls
   GetClientRect(Handle, PanelBounds);       // first size to whole client area
   PanelBounds.Top := StaticBounds.Bottom;   // set top to below hidden ctrl
   fPanel.BoundsRect := PanelBounds;
   fPanel.ParentWindow := Handle;            // make dlg parent of panel
 
+  // Align syntax highlight check box file type combo
   fChkSyntaxHilite.Left := FileTypeCmbBounds.Left;
   fChkSyntaxHilite.Top := 0;
   fChkSyntaxHilite.Width := FileTypeCmbBounds.Width;
   fChkSyntaxHilite.Checked := fUseSyntaxHiliting;
 
+  // Size and align comment style combo box with file type combo box
   fCmbCommentStyle.Left := FileTypeCmbBounds.Left;
   fCmbCommentStyle.Top := fChkSyntaxHilite.Top + fChkSyntaxHilite.Height + 6;
   fCmbCommentStyle.Width := FileTypeCmbBounds.Width;
@@ -425,22 +403,10 @@ begin
   end;
   UpdateCommentStyle;
 
-  fChkTruncateComment.Left := FileTypeCmbBounds.Left;
-  fChkTruncateComment.Top := fCmbCommentStyle.Top + fCmbCommentStyle.Height + 8;
-  fChkTruncateComment.Width := FileTypeCmbBounds.Width;
-  fChkTruncateComment.Checked := fTruncateComments;
-
-  fCmbEncoding.Left := FileTypeCmbBounds.Left;
-  fCmbEncoding.Top := fChkTruncateComment.Top + fChkTruncateComment.Height + 8;
-  fCmbEncoding.Width := FileTypeCmbBounds.Width * 3 div 4;
-
+  // Align comment style label within group box
   fLblCommentStyle.Left := FileTypeLblBounds.Left;
   fLblCommentStyle.Top := fCmbCommentStyle.Top +
     (fCmbCommentStyle.Height - fLblCommentStyle.Height) div 2;
-
-  fLblEncoding.Left := FileTypeLblBounds.Left;;
-  fLblEncoding.Top := fCmbEncoding.Top +
-    (fCmbEncoding.Height - fLblEncoding.Height) div 2;;
 
   // Size preview button and align under above buttons
   fPreviewBtn.BoundsRect := ButtonBounds;
@@ -460,50 +426,29 @@ begin
 end;
 
 procedure TSaveSourceDlg.DoTypeChange;
+  {Notifies when a different file type is selected in file type combo box.
+  Checks if syntax highlighting supported for selected file type.
+  }
 var
   CanHilite: Boolean; // flag true if syntax highlighting supported
-  Encodings: TSourceFileEncodings;
-  Encoding: TSourceFileEncoding;
 begin
-  // Update enabled state of syntax highlighter checkbox
+  // Assume highlighting not supported
   CanHilite := False;
+  // Trigger event where user specifies if highlighting supported
   if Assigned(fOnHiliteQuery) then
     fOnHiliteQuery(Self, SelectedExt, CanHilite);
+  // Enable / disable highlighting check box as required
   fChkSyntaxHilite.Enabled := CanHilite;
-
-  // Store selected type
   fSelectedFilterIdx := inherited FilterIndex;
-
-  // Update list of available encodings (just ANSI default if caller doesn't
-  // handle OnEncodingQuery)
-  SetLength(Encodings, 0);
-  if Assigned(fOnEncodingQuery) then
-    fOnEncodingQuery(Self, SelectedExt, Encodings);
-  if Length(Encodings) = 0 then
-    Encodings := TSourceFileEncodings.Create(
-      TSourceFileEncoding.Create(etSysDefault, sANSIEncoding)
-    );
-  fCmbEncoding.Clear;
-  for Encoding in Encodings do
-  begin
-    fCmbEncoding.Items.AddObject(
-      Encoding.DisplayName, TObject(Encoding.EncodingType)
-    );
-  end;
-  fCmbEncoding.ItemIndex := IndexOfEncodingType(fSelectedEncoding);
-  if fCmbEncoding.ItemIndex = -1 then
-    fCmbEncoding.ItemIndex := 0;
-  DoEncodingChange;
-
   inherited;
 end;
 
-procedure TSaveSourceDlg.EncodingChange(Sender: TObject);
-begin
-  DoEncodingChange;
-end;
-
 function TSaveSourceDlg.Execute: Boolean;
+  {Displays dialog box. Sets required dialog box template if new style dialogs
+  being used. Adjusts any extension-less file name to have extension of selected
+  file type.
+    @return True if user OKs and false if cancels.
+  }
 begin
   // Set up template for customisation
   if NewStyleControls and not (ofOldStyleDialog in Options) then
@@ -518,6 +463,9 @@ begin
 end;
 
 function TSaveSourceDlg.GetFilterIndex: Integer;
+  {Gets index of selected filter.
+    @return Selected filter index.
+  }
 begin
   if Handle <> 0 then
     // dialog box is open: use inherited FilterIndex property
@@ -528,37 +476,37 @@ begin
 end;
 
 function TSaveSourceDlg.GetSelectedExt: string;
+  {Read accessor for SelectedExt property. Extracts extension for selected file
+  type from Filter property.
+    @return Selected extension with leading '.'.
+  }
 begin
   Result := FilterIndexToExt(Self);
 end;
 
 procedure TSaveSourceDlg.HelpClickHandler(Sender: TObject);
+  {Handles click on help button. Calls help with required keyword.
+    @param Sender [in] Not used.
+  }
 begin
   DisplayHelp;
 end;
 
-function TSaveSourceDlg.IndexOfEncodingType(
-  const EncType: TEncodingType): Integer;
-var
-  Idx: Integer;
-begin
-  for Idx := 0 to Pred(fCmbEncoding.Items.Count) do
-  begin
-    if TEncodingType(fCmbEncoding.Items.Objects[Idx]) = EncType then
-      Exit(Idx);
-  end;
-  Result := -1;
-end;
-
 procedure TSaveSourceDlg.PreviewClickHandler(Sender: TObject);
+  {Handles click on preview button. Updates properties then triggers OnPreview
+  event.
+    @param Sender [in] Not used.
+  }
 begin
   UpdateSyntaxHiliting;
-  UpdateCommentTruncation;
   if Assigned(fOnPreview) then
     fOnPreview(Self);
 end;
 
 procedure TSaveSourceDlg.SetFilterIndex(const Value: Integer);
+  {Records index of selected file filter.
+    @param Value [in] New value of selected file filter.
+  }
 begin
   // record index in inherited property
   inherited FilterIndex := Value;
@@ -567,12 +515,19 @@ begin
 end;
 
 procedure TSaveSourceDlg.SetOnPreview(const Value: TNotifyEvent);
+  {Write accessor for OnPreview event. Enables / disables preview button
+  depending on if event handler assigned.
+    @param Value [in] Required event handler.
+  }
 begin
   fOnPreview := Value;
   fPreviewBtn.Enabled := Assigned(Value);
 end;
 
 procedure TSaveSourceDlg.UpdateCommentStyle;
+  {Selects appropriate item in comment style combo box per current comment style
+  property.
+  }
 var
   Idx: Integer; // loops thru combo box items
 begin
@@ -584,12 +539,9 @@ begin
   end;
 end;
 
-procedure TSaveSourceDlg.UpdateCommentTruncation;
-begin
-  fTruncateComments := fChkTruncateComment.Checked;
-end;
-
 procedure TSaveSourceDlg.UpdateSyntaxHiliting;
+  {Updates value of UseSyntaxHiliting property per state of dialog box controls.
+  }
 begin
   fUseSyntaxHiliting := fChkSyntaxHilite.Checked;
 end;

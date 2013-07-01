@@ -1,12 +1,5 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
- *
- * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
- *
- * $Rev$
- * $Date$
+ * UBaseObjects.pas
  *
  * Contains various common classes for use as base classes to other classes.
  * Classes are:
@@ -15,31 +8,53 @@
  *      Object that fails if its constructor is called. Provided as a base class
  *      for classes that contains only class methods and should never be
  *      constructed.
- *
  *   2) TNoPublicConstructObject:
  *      Object that provides a protected constructor but fails if the public
  *      constructor is called. For use as a base class for objects that are
  *      constructed via class methods but should not be constructed directly.
- *
  *   3) TNoPublicConstructIntfObject:
  *      Same as 2) except class descends from TInterfacedObject instead of
  *      TObject.
- *
  *   4) TNonRefCountedObject implements a non reference counted implementation
  *      of IInterface.
- *
  *   5) TAggregatedOrLoneObject is a base class for objects that can either
  *      exist as aggregated objects or as stand-alone reference counted objects.
  *      This implementation is based on code suggested by Hallvard VossBotn, as
  *      presented in Eric Harmon's book "Delphi COM programming".
  *
- *   6) TConditionalFreeObject:
- *      An abstract base class for objects that cannot be destroyed unless some
- *      condition is met.
- *
  * Also provides an interface - INoPublicConstruct - that can be supported by
  * objects that don't allow public construction but cannot inherited from
  * TNoPublicConstructObject, for example forms.
+ *
+ * Unit originally named UIntfObjects.pas. Changed to UBaseObjects.pas at v2.0.
+ *
+ * $Rev$
+ * $Date$
+ *
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is UBaseObjects.pas
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -130,7 +145,7 @@ type
     code of TInterfacedObject is redundant when reference counting not used.
   }
   TNonRefCountedObject = class(TObject, IInterface)
-  public
+  protected
     { IInterface methods }
     function QueryInterface(const IID: TGUID; out Obj): HResult; stdcall;
       {Checks the specified interface is supported by this object. If so
@@ -164,7 +179,7 @@ type
     implementation and handles its own reference counting.
   }
   TAggregatedOrLoneObject = class(TInterfacedObject, IInterface)
-  strict private
+  private
     fController: Pointer;
       {Weak reference to controlling object if aggregated or nil if stand-alone}
     function GetController: IInterface;
@@ -172,7 +187,7 @@ type
         @return Required IInterface reference. This is the container object if
           aggregated or Self if stand-alone.
       }
-  public
+  protected
     { IInterface redefinitions }
     function QueryInterface(const IID: TGUID; out Obj): HResult; stdcall;
       {Checks whether the specified interface is supported. If so reference to
@@ -211,39 +226,8 @@ type
       nil if stand-alone}
   end;
 
-  {
-  TConditionalFreeObject:
-    Abstract base class for objects that cannot be destroyed unless some
-    condition is met. Descendants must override CanDestroy which must return
-    True if the object can be freed. Attempts to free the object when CanDestroy
-    returns False fail and the object remains in existance.
-  }
-  TConditionalFreeObject = class abstract(TObject)
-  strict protected
-    procedure Finalize; virtual;
-      {Tidies up object. Descendants should override this method instead of
-      destructor.
-      }
-    function CanDestroy: Boolean; virtual; abstract;
-      {Determines if the object can be destroyed.
-        @return True if object can be destroyed.
-      }
-  public
-    destructor Destroy; override;
-      {Class destructor tidies up and tears down object only if object can be
-      freed.
-      }
-    procedure FreeInstance; override;
-      {Frees instance data only if object can be destroyed.
-      }
-  end;
-
 
 implementation
-
-uses
-  // Delphi
-  SysUtils;
 
 
 { TNoConstructObject }
@@ -253,9 +237,7 @@ constructor TNoConstructObject.Create;
   constructed.
   }
 begin
-  raise ENoConstructException.Create(
-    ClassName + '.Create: Constructor can''t be called'
-  );
+  Assert(False, ClassName + '.Create: Constructor can''t be called');
 end;
 
 { TNoPublicConstructObject }
@@ -265,9 +247,7 @@ constructor TNoPublicConstructObject.Create;
   never constructed.
   }
 begin
-  raise ENoConstructException.Create(
-    ClassName + '.Create: Public constructor can''t be called'
-  );
+  Assert(False, ClassName + '.Create: Public constructor can''t be called');
 end;
 
 constructor TNoPublicConstructObject.InternalCreate;
@@ -286,9 +266,7 @@ constructor TNoPublicConstructIntfObject.Create;
   constructed.
   }
 begin
-  raise ENoConstructException.Create(
-    ClassName + '.Create: Public constructor can''t be called'
-  );
+  Assert(False, ClassName + '.Create: Public constructor can''t be called');
 end;
 
 constructor TNoPublicConstructIntfObject.InternalCreate;
@@ -410,38 +388,6 @@ begin
     Result := IInterface(fController)._Release
   else
     Result := inherited _Release;
-end;
-
-{ TConditionalFreeObject }
-
-destructor TConditionalFreeObject.Destroy;
-  {Class destructor tidies up and tears down object only if object can be freed.
-  }
-begin
-  // Do not override to tidy up unless you first check CanDestroy and only tidy
-  // up if it returns true. Override Finalize instead.
-  if CanDestroy then
-  begin
-    Finalize;
-    inherited;
-  end;
-end;
-
-procedure TConditionalFreeObject.Finalize;
-  {Tidies up object. Descendants should override this method instead of
-  destructor.
-  }
-begin
-  // Override this to tidy up the object instead of overriding the destructor
-end;
-
-procedure TConditionalFreeObject.FreeInstance;
-  {Frees instance data only if object can be destroyed.
-  }
-begin
-  // Check if object can be destroyed
-  if CanDestroy then
-    inherited;
 end;
 
 end.
