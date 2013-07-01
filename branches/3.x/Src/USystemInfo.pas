@@ -25,7 +25,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2013 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributors:
@@ -214,10 +214,24 @@ class function TOSInfo.BrowserVer: Word;
   }
 var
   Reg: TRegistry;     // registry access object
-  Vers: IStringList;  // receives parts of version number string
 const
   cRegKey = 'Software\Microsoft\Internet Explorer'; // required registry key
-  cRegValue = 'Version';  // name of required registry value
+  cRegValue = 'Version';      // name of required registry value
+  cRegValue10 = 'svcVersion'; // name of required registry value for IE10
+
+  // Get major version number from named registry value
+  function GetVer(const ValName: string): Word;
+  var
+    Vers: IStringList;  // receives parts of version number string;
+    begin
+      Vers := TIStringList.Create(Reg.ReadString(ValName), '.', False, True);
+      // we want most significant version number
+      if (Vers.Count > 0) then
+        Result := StrToIntDef(Vers[0], 0)
+      else
+        Result := 0;
+    end;
+
 begin
   Result := 0;
   Reg := TRegistry.Create;
@@ -225,15 +239,10 @@ begin
     Reg.RootKey := HKEY_LOCAL_MACHINE;
     if Reg.OpenKeyReadOnly(cRegKey) then
     begin
-      if Reg.ValueExists(cRegValue) then
-      begin
-        Vers := TIStringList.Create(
-          Reg.ReadString(cRegValue), '.', False, True
-        );
-        // we want most significant version number
-        if (Vers.Count > 0) then
-          Result := StrToIntDef(Vers[0], 0);
-      end;
+      if Reg.ValueExists(cRegValue10) then
+        Result := GetVer(cRegValue10)
+      else if Reg.ValueExists(cRegValue) then
+        Result := GetVer(cRegValue);
     end;
   finally
     Reg.Free;
