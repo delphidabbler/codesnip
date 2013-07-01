@@ -11,12 +11,6 @@
 ; Change Log for CodeSnip Release 3
 ; ------------------------------------------------------------------------------
 
-Release v3.12.1 of 01 July 2013
-+ Fixed bug #82 "Fatal divide by zero exception on start-up" (http://bit.ly/15aIJqQ) that affected all v3.x versions when the IE 10 browser was installed.
-+ Fixed unreported bug where IE 10 browser was being reported as IE 9.
-+ Updated all third party DelphiDabbler code to latest available versions.
-+ Updated documentation re changes.
-
 Release v3.12.0 of 02 May 2013
 + Added support for Delphi XE4 compiler. Implements feature request #78 (http://bit.ly/10uGhoD).
 + Fixed bug #78 (http://bit.ly/ZQl3T4) - CodeSnip doesn't restore window in correct position when task bar on left or top of screen.

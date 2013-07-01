@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2006-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2006-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -61,6 +61,10 @@ type
       {Checks if a specified function exists in OSs kernel.
         @param FnName [in] Name of required function.
         @return True if function is present in kernel, false if not.
+      }
+    class function GetIEVersionStr: string;
+      {Returns version number of current Internet Explorer installation.
+        @return Required version string.
       }
   public
     const Win2K: TOSVer = (VerHi: 5; VerLo: 0);
@@ -192,31 +196,12 @@ class function TOSInfo.BrowserVer: Word;
     @return Browser version >=4 or 0 if earlier browser or on error.
   }
 var
-  Reg: TRegistry;     // registry access object
   Vers: IStringList;  // receives parts of version number string
-const
-  cRegKey = 'Software\Microsoft\Internet Explorer'; // required registry key
-  cRegValue = 'Version';  // name of required registry value
 begin
-  Result := 0;
-  Reg := TRegistry.Create;
-  try
-    Reg.RootKey := HKEY_LOCAL_MACHINE;
-    if Reg.OpenKeyReadOnly(cRegKey) then
-    begin
-      if Reg.ValueExists(cRegValue) then
-      begin
-        Vers := TIStringList.Create(
-          Reg.ReadString(cRegValue), '.', False, True
-        );
-        // we want most significant version number
-        if (Vers.Count > 0) then
-          Result := StrToIntDef(Vers[0], 0);
-      end;
-    end;
-  finally
-    Reg.Free;
-  end;
+  Vers := TIStringList.Create(GetIEVersionStr, '.', False, True);
+  if Vers.Count = 0 then
+    Exit(0);
+  Result := StrToIntDef(Vers[0], 0);
 end;
 
 class function TOSInfo.CheckForKernelFn(const FnName: string): Boolean;
@@ -251,6 +236,33 @@ constructor TOSInfo.Create;
   }
 begin
   Assert(False, ClassName + '.Create: Constructor can''t be called');
+end;
+
+class function TOSInfo.GetIEVersionStr: string;
+  {Returns version number of current Internet Explorer installation.
+    @return Required version string.
+  }
+var
+  Reg: TRegistry; // registry access object
+const
+  IERegKey = 'Software\Microsoft\Internet Explorer';
+  RegValName = 'Version';         // name of registry value for IE up to 9
+  RegValNameIE10 = 'svcVersion';  // name of registry value for IE 10
+begin
+  Result := '';
+  Reg := TRegistry.Create;
+  try
+    Reg.RootKey := HKEY_LOCAL_MACHINE;
+    if Reg.OpenKeyReadOnly(IERegKey) then
+    begin
+      if Reg.ValueExists(RegValNameIE10) then
+        Result := Reg.ReadString(RegValNameIE10)
+      else if Reg.ValueExists(RegValName) then
+        Result := Reg.ReadString(RegValName);
+    end;
+  finally
+    Reg.Free;
+  end;
 end;
 
 class function TOSInfo.IsVistaOrLater: Boolean;
