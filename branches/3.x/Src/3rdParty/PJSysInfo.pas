@@ -8,22 +8,20 @@
  * $Rev$
  * $Date$
  *
- * This unit contains various static classes, constant and type definitions and
- * global variables for use in providing information about the computer and the
+ * This unit contains various static classes, constants, type definitions and
+ * global variables for use in providing information about the host computer and
  * operating system.
  *
- * Also contains a deprecated component and some functions for backward
- * compatibility with older versions of the unit. The deprecated code is not
- * compiled by default, but compilation can be enabled by defining the
- * PJSYSINFO_COMPILE_DEPRECATED symbol.
+ * NOTES
  *
- * NOTE 1: When compiled with old versions of Delphi that do not support setting
- * registry access flags via the TRegistry object, some of this code may not
- * work correctly when running as a 32 bit process on 64 bit Windows.
+ *  1: When compiled with old versions of Delphi that do not support setting
+ *     registry access flags via the TRegistry object, some of this code may not
+ *     work correctly when running on 64 bit Windows.
  *
- * NOTE 2: The code has not been tested when compiled using the Delphi 64 bit
- * compiler, but is expected to require some changes before it will work
- * correctly.
+ *  2: The code has been tested with the Delphi 64 bit compiler (introduced
+ *     in Delphi XE2) and functions correctly.
+ *
+ * ACKNOWLEDGEMENTS
  *
  * Thanks to the following who have contributed to this project:
  *
@@ -41,20 +39,13 @@ unit PJSysInfo;
 
 // Conditional defines
 
-// NOTE: Deprecated code will not be compiled and no component will be
-// registered unless PJSYSINFO_COMPILE_DEPRECATED is defined before compiling.
-// You can either define the symbol in project options or on the command line,
-// or you can remove the '.' character before the '$' in the following line.
-{.$DEFINE PJSYSINFO_COMPILE_DEPRECATED}
-
 // Assume all required facilities available
 {$DEFINE REGOPENREADONLY}     // TRegistry.OpenKeyReadOnly available
 {$DEFINE REGACCESSFLAGS}      // TRegistry access flags available
 {$DEFINE WARNDIRS}            // $WARN compiler directives available
-{$DEFINE DEPRECATED}          // deprecated directive available
 {$DEFINE EXCLUDETRAILING}     // SysUtils.ExcludeTrailingPathDelimiter available
-{$DEFINE MESSAGEDIRS}         // $MESSAGE compiler directives available
 {$DEFINE HASLONGWORD}         // LongWord type defined
+{$UNDEF RTLNAMESPACES}        // No support for RTL namespaces in unit names
 
 // Undefine facilities not available in earlier compilers
 // Note: Delphi 1/2 is not included since the code will not compile on these
@@ -63,33 +54,32 @@ unit PJSysInfo;
   {$UNDEF REGOPENREADONLY}
   {$UNDEF REGACCESSFLAGS}
   {$UNDEF WARNDIRS}
-  {$UNDEF DEPRECATED}
   {$UNDEF EXCLUDETRAILING}
-  {$UNDEF MESSAGEDIRS}
   {$UNDEF HASLONGWORD}
 {$ENDIF}
 {$IFDEF VER120} // Delphi 4
   {$UNDEF REGACCESSFLAGS}
   {$UNDEF WARNDIRS}
-  {$UNDEF DEPRECATED}
   {$UNDEF EXCLUDETRAILING}
-  {$UNDEF MESSAGEDIRS}
 {$ENDIF}
 {$IFDEF VER130} // Delphi 5
   {$UNDEF REGACCESSFLAGS}
   {$UNDEF WARNDIRS}
-  {$UNDEF DEPRECATED}
   {$UNDEF EXCLUDETRAILING}  // ** fix by Rich Habedank
-  {$UNDEF MESSAGEDIRS}
 {$ENDIF}
 {$IFDEF VER140} // Delphi 6
   {$UNDEF WARNDIRS}
 {$ENDIF}
+{$IFDEF CONDITIONALEXPRESSIONS}
+  {$IF CompilerVersion >= 23.0} // Delphi XE2
+    {$DEFINE RTLNAMESPACES}
+  {$IFEND}
+{$ENDIF}
 
-{$IFDEF PJSYSINFO_COMPILE_DEPRECATED}
-  {$IFDEF MESSAGEDIRS}
-    {$MESSAGE Hint '*** Compiling deprecated functions and component ***'}
-  {$ENDIF}
+// Switch off "unsafe" warnings for this unit
+{$IFDEF WARNDIRS}
+  {$WARN UNSAFE_TYPE OFF}
+  {$WARN UNSAFE_CODE OFF}
 {$ENDIF}
 
 
@@ -98,14 +88,15 @@ interface
 
 uses
   // Delphi
+  {$IFNDEF RTLNAMESPACES}
   SysUtils, Classes, Windows;
+  {$ELSE}
+  System.SysUtils, System.Classes, Winapi.Windows;
+  {$ENDIF}
 
-
-// -----------------------------------------------------------------------------
-// Windows types and constants
-// -----------------------------------------------------------------------------
 
 type
+  // Windows types not defined in all supported Delphi VCLs
 
   // ANSI versions of the Win API OSVERSIONINFOEX structure and pointers
   _OSVERSIONINFOEXA = packed record
@@ -159,6 +150,8 @@ type
   {$ENDIF}
 
 const
+  // Windows constants possibly not defined in all supported Delphi VCLs
+
   // These Windows-defined constants are required for use with TOSVersionInfoEx
   // NT Product types
   VER_NT_WORKSTATION                          = 1;
@@ -329,7 +322,6 @@ const
 
 
 type
-
   ///  <summary>Enumeration of OS platforms.</summary>
   TPJOSPlatform = (
     ospWinNT,               // Windows NT platform
@@ -491,6 +483,12 @@ type
 
     ///  <summary>Returns the Windows product ID of the host OS.</summary>
     class function ProductID: string;
+
+    ///  <summary>Organisation to which Windows is registered, if any.</summary>
+    class function RegisteredOrganisation: string;
+
+    ///  <summary>Owner to which Windows is registered.</summary>
+    class function RegisteredOwner: string;
   end;
 
 type
@@ -514,8 +512,19 @@ type
     ///  <summary>Returns processor architecture of host computer.</summary>
     class function Processor: TPJProcessorArchitecture;
 
-    ///  <summary>Returns number of processors in host computer.</summary>
+    ///  <summary>Returns number of processors (or cores) in the host computer.
+    ///  </summary>
     class function ProcessorCount: Cardinal;
+
+    ///  <summary>Returns the identifier of the computer's processor.</summary>
+    ///  <remarks>On multi-processor systems this is the identifier of the 1st
+    ///  processor.</remarks>
+    class function ProcessorIdentifier: string;
+
+    ///  <summary>Returns the name of the computer's processor.</summary>
+    ///  <remarks>On multi-processor systems this is the name of the 1st
+    ///  processor.</remarks>
+    class function ProcessorName: string;
 
     ///  <summary>Checks if the host computer has a 64 bit processor.</summary>
     class function Is64Bit: Boolean;
@@ -526,6 +535,39 @@ type
     ///  <summary>Returns the OS mode used when host computer was last booted.
     ///  </summary>
     class function BootMode: TPJBootMode;
+
+    ///  <summary>Checks if the current user has administrator privileges.
+    ///  </summary>
+    ///  <remarks>
+    ///  <para>Always returns True on the Windows 9x platform.</para>
+    ///  <para>WARNING: True is also returned when running in Windows 9x
+    ///  compatibility mode on a Windows NT platform system, regardless of
+    ///  whether the user has admin privileges or not.</para>
+    ///  <para>Based on code at http://edn.embarcadero.com/article/26752</para>
+    ///  </remarks>
+    class function IsAdmin: Boolean;
+
+    ///  <summary>Checks if UAC is active on the computer.</summary>
+    ///  <remarks>
+    ///  <para>UAC requires Windows Vista or later. Returns False on earlier
+    ///  operating systems.</para>
+    ///  <para>WARNING: False is also returned when running in Windows XP or
+    ///  earlier compatibility mode on Windows Vista or later, regardless of
+    ///  whether UAC is enabled or not.</para>
+    ///  <para>Based on code on Stack Overflow, answer by norgepaul, at
+    ///  http://tinyurl.com/avlztmg</para>
+    ///  </remarks>
+    class function IsUACActive: Boolean;
+
+    ///  <summary>Returns the name of the computer's BIOS vendor.</summary>
+    class function BiosVendor: string;
+
+    ///  <summary>Returns the name of the computer's manufacturer.</summary>
+    class function SystemManufacturer: string;
+
+    ///  <summary>Returns the computer's product or model name.</summary>
+    class function SystemProductName: string;
+
   end;
 
 type
@@ -537,9 +579,47 @@ type
     ///  </summary>
     class function CommonFiles: string;
 
+    ///  <summary>Returns the fully qualified name of the Common Files x86
+    ///  folder.</summary>
+    ///  <remarks>
+    ///  <para>Returns the empty string on 32 bit Windows since there is no
+    ///  such folder.</para>
+    ///  <para>This folder is used common files for 32 bit programs on 64 bit
+    ///  Windows systems.</para>
+    ///  </remarks>
+    class function CommonFilesX86: string;
+
+    ///  <summary>Returns the fully qualified name of the Common Files folder
+    ///  according to whether the host program and operating system are 32 or 64
+    ///  bit.</summary>
+    ///  <remarks>For a 32 bit program on 32 bit Windows or 64 bit program on
+    ///  64 bit windows the return value is the same as CommonFiles. For a 32
+    ///  bit program running on 64 bit Windows the return value is the same as
+    ///  CommonFilesX86.</remarks>
+    class function CommonFilesRedirect: string;
+
     ///  <summary>Returns the fully qualified name of the Program Files folder.
     ///  </summary>
     class function ProgramFiles: string;
+
+    ///  <summary>Returns the fully qualified name of the Program Files x86
+    ///  folder, if present.</summary>
+    ///  <remarks>
+    ///  <para>Returns the empty string on 32 bit Windows since there is no
+    ///  such folder.</para>
+    ///  <para>This folder is used to install 32 bit programs on 64 bit
+    ///  Windows systems.</para>
+    ///  </remarks>
+    class function ProgramFilesX86: string;
+
+    ///  <summary>Returns the fully qualified name of the Program Files folder
+    ///  according to whether the host program and operating system are 32 or 64
+    ///  bit.</summary>
+    ///  <remarks>For a 32 bit program on 32 bit Windows or 64 bit program on
+    ///  64 bit windows the return value is the same as ProgramFiles. For a 32
+    ///  bit program running on 64 bit Windows the return value is the same as
+    ///  ProgramFilesX86.</remarks>
+    class function ProgramFilesRedirect: string;
 
     ///  <summary>Returns the fully qualified name of the Windows folder.
     ///  </summary>
@@ -557,152 +637,6 @@ type
     ///  folder.</summary>
     class function Temp: string;
   end;
-
-
-{$IFDEF PJSYSINFO_COMPILE_DEPRECATED}
-type
-  // Component that provides system information.
-  TPJSysInfo = class(TComponent)
-  private
-    // Read access method for ComputerName property.
-    function GetComputerName: string;
-    // Read access method for UserName property.
-    function GetUserName: string;
-    // Read access method for CommonFilesFolder property.
-    function GetCommonFilesFolder: string;
-    // Read access method for ProgramFilesFolder property.
-    function GetProgramFilesFolder: string;
-    // Read access method for SystemFolder property.
-    function GetSystemFolder: string;
-    // Read access method for TempFolder property.
-    function GetTempFolder: string;
-    // Read access method for WindowsFolder property.
-    function GetWindowsFolder: string;
-    // Read access method for OSDesc property.
-    function GetOSDesc: string;
-    // Read access method for OSBuildNumber property.
-    function GetOSBuildNumber: Integer;
-    // Read access method for OSMajorVersion property.
-    function GetOSMajorVersion: Integer;
-    // Read access method for OSMinorVersion property.
-    function GetOSMinorVersion: Integer;
-    // Read access method for OSPlatform property.
-    function GetOSPlatform: TPJOSPlatform;
-    // Read access method for OSProduct property.
-    function GetOSProduct: TPJOSProduct;
-    // Read access method for OSProductName property.
-    function GetOSProductName: string;
-    // Read access method for OSProductType property.
-    function GetOSProductType: string;
-    // Read access method for OSServicePack property.
-    function GetOSServicePack: string;
-  public
-    // Object constructor. Ensures only one instance of component can be placed
-    // on a form. Raises EPJSysInfo if there is already a component present.
-    constructor Create(AOwner: TComponent); override;
-    // Name of host computer.
-    property ComputerName: string read GetComputerName;
-    // Name of currently logged on user.
-    property UserName: string read GetUserName;
-    // Fully qualified name of Common Files folder.
-    property CommonFilesFolder: string read GetCommonFilesFolder;
-    // Fully qualified name of Program Files folder.
-    property ProgramFilesFolder: string read GetProgramFilesFolder;
-    // Fully qualified name of Windows system folder.
-    property SystemFolder: string read GetSystemFolder;
-    // Fully qualified name of current temporary folder.
-    property TempFolder: string read GetTempFolder;
-    // Fully qualified name of Windows folder.
-    property WindowsFolder: string read GetWindowsFolder;
-    // Host operating system build number.
-    property OSBuildNumber: Integer read GetOSBuildNumber;
-    // Full description of operating system: includes product name, suite and
-    // build numbers as applicable.
-    property OSDesc: string read GetOSDesc;
-    // Major version number of host operating system.
-    property OSMajorVersion: Integer read GetOSMajorVersion;
-    // Minor version number of host operating system.
-    property OSMinorVersion: Integer read GetOSMinorVersion;
-    // Host operating system platform identifier.
-    property OSPlatform: TPJOSPlatform read GetOSPlatform;
-    // Host operating system product identifier.
-    property OSProduct: TPJOSProduct read GetOSProduct;
-    // Name of host operating system.
-    property OSProductName: string read GetOSProductName;
-    // Type of operating system for NT. Always empty string for Win9x.
-    property OSProductType: string read GetOSProductType;
-    // Name of any service pack for NT or additional product info for Win9x.
-    property OSServicePack: string read GetOSServicePack;
-  end {$IFDEF DEPRECATED}deprecated{$ENDIF};
-{$ENDIF}
-
-{$IFDEF PJSYSINFO_COMPILE_DEPRECATED}
-
-// Gets name of computer.
-function SIGetComputerName: string;
-  {$IFDEF DEPRECATED}deprecated;{$ENDIF}
-
-// Gets name of current user.
-function SIGetUserName: string;
-  {$IFDEF DEPRECATED}deprecated;{$ENDIF}
-
-// Gets fully qualified name of Common Files folder.
-function SIGetCommonFilesFolder: string;
-  {$IFDEF DEPRECATED}deprecated;{$ENDIF}
-
-// Gets fully qualified name of Program Files folder.
-function SIGetProgramFilesFolder: string;
-  {$IFDEF DEPRECATED}deprecated;{$ENDIF}
-
-// Gets fully qualified name of Windows system folder.
-function SIGetSystemFolder: string;
-  {$IFDEF DEPRECATED}deprecated;{$ENDIF}
-
-// Gets fully qualified name of current temporary folder.
-function SIGetTempFolder: string;
-  {$IFDEF DEPRECATED}deprecated;{$ENDIF}
-
-// Gets fully qualified name of Windows folder.
-function SIGetWindowsFolder: string;
-  {$IFDEF DEPRECATED}deprecated;{$ENDIF}
-
-// Gets build number of operating system.
-function SIGetOSBuildNumber: Integer;
-  {$IFDEF DEPRECATED}deprecated;{$ENDIF}
-
-// Get full description of operating system.
-function SIGetOSDesc: string;
-  {$IFDEF DEPRECATED}deprecated;{$ENDIF}
-
-// Gets major version of OS.
-function SIGetOSMajorVersion: Integer;
-  {$IFDEF DEPRECATED}deprecated;{$ENDIF}
-
-// Gets minor version of OS.
-function SIGetOSMinorVersion: Integer;
-  {$IFDEF DEPRECATED}deprecated;{$ENDIF}
-
-// Gets code identifying OS platform.
-function SIGetOSPlatform: TPJOSPlatform;
-  {$IFDEF DEPRECATED}deprecated;{$ENDIF}
-
-// Gets code identifying OS product.
-function SIGetOSProduct: TPJOSProduct;
-  {$IFDEF DEPRECATED}deprecated;{$ENDIF}
-
-// Gets OS product name.
-function SIGetOSProductName: string;
-  {$IFDEF DEPRECATED}deprecated;{$ENDIF}
-
-// Gets type of OS product.
-function SIGetOSProductType: string;
-  {$IFDEF DEPRECATED}deprecated;{$ENDIF}
-
-// Gets OS service pack info for NT or additional release info for Win9x.
-function SIGetOSServicePack: string;
-  {$IFDEF DEPRECATED}deprecated;{$ENDIF}
-
-{$ENDIF}
 
 {$IFNDEF HASLONGWORD}
 type
@@ -738,28 +672,16 @@ var
   Win32ProductInfo: LongWord = 0;
 
 
-{$IFDEF PJSYSINFO_COMPILE_DEPRECATED}
-// Registers component.
-procedure Register;
-{$ENDIF}
-
-
 implementation
 
 
 uses
   // Delphi
+  {$IFNDEF RTLNAMESPACES}
   Registry, Nb30;
-
-
-{$IFDEF PJSYSINFO_COMPILE_DEPRECATED}
-procedure Register;
-begin
-  {$IFDEF WARNDIRS}{$WARN SYMBOL_DEPRECATED OFF}{$ENDIF}
-  RegisterComponents('DelphiDabbler', [TPJSysInfo]);
-  {$IFDEF WARNDIRS}{$WARN SYMBOL_DEPRECATED ON}{$ENDIF}
-end;
-{$ENDIF}
+  {$ELSE}
+  System.Win.Registry, Winapi.Nb30;
+  {$ENDIF}
 
 
 resourcestring
@@ -768,11 +690,6 @@ resourcestring
   sUnknownProduct = 'Unrecognised operating system product';
   sBadRegType =  'Unsupported registry type';
   sBadProcHandle = 'Bad process handle';
-  {$IFDEF PJSYSINFO_COMPILE_DEPRECATED}
-  sDupInstErr = 'Only one %0:s component is permitted on a form: '
-    + '%1:s is already present on %2:s';
-  {$ENDIF}
-
 
 const
   // Map of product codes per GetProductInfo API to product names
@@ -952,9 +869,26 @@ const
       Name: 'Unlicensed product';)
   );
 
+const
+  // Array of "current version" registry sub-keys that vary with platform.
+  // "False" value is for Window 9x and "True" value is for Windows NT.
+  CurrentVersionRegKeys: array[Boolean] of string = (
+    'Software\Microsoft\Windows\CurrentVersion',
+    'Software\Microsoft\Windows NT\CurrentVersion'
+  );
+
 var
   // Records processor architecture information
   pvtProcessorArchitecture: Word = 0;
+
+type
+  // Function type of the GetNativeSystemInfo and GetSystemInfo functions
+  TGetSystemInfo = procedure(var lpSystemInfo: TSystemInfo); stdcall;
+
+var
+  // Function used to get system info: initialised to GetNativeSystemInfo API
+  // function if available, otherwise set to GetSystemInfo API function.
+  GetSystemInfoFn: TGetSystemInfo;
 
 // Flag required when opening registry with specified access flags
 {$IFDEF REGACCESSFLAGS}
@@ -962,11 +896,6 @@ const
   KEY_WOW64_64KEY = $0100;  // registry access flag not defined in all Delphis
 {$ENDIF}
 
-// -----------------------------------------------------------------------------
-// Helper routines
-// -----------------------------------------------------------------------------
-
-{$IFDEF WARNDIRS}{$WARN UNSAFE_TYPE OFF}{$ENDIF}
 // Loads a function from the OS kernel.
 function LoadKernelFunc(const FuncName: string): Pointer;
 const
@@ -974,7 +903,6 @@ const
 begin
   Result := GetProcAddress(GetModuleHandle(cKernel), PChar(FuncName));
 end;
-{$IFDEF WARNDIRS}{$WARN UNSAFE_TYPE ON}{$ENDIF}
 
 // Initialise global variables with extended OS version information if possible.
 procedure InitPlatformIdEx;
@@ -982,13 +910,10 @@ type
   // Function type of the GetProductInfo API function
   TGetProductInfo = function(OSMajor, OSMinor, SPMajor, SPMinor: DWORD;
     out ProductType: DWORD): BOOL; stdcall;
-  // Function type of the GetNativeSystemInfo and GetSystemInfo functions
-  TGetSystemInfo = procedure(var lpSystemInfo: TSystemInfo); stdcall;
 var
   OSVI: TOSVersionInfoEx;           // extended OS version info structure
   POSVI: POSVersionInfo;            // pointer to OS version info structure
   GetProductInfo: TGetProductInfo;  // pointer to GetProductInfo API function
-  GetSystemInfoFn: TGetSystemInfo;  // function used to get system info
   SI: TSystemInfo;                  // structure from GetSystemInfo API call
 begin
   // Clear the structure
@@ -996,14 +921,12 @@ begin
   // Get pointer to structure of non-extended type (GetVersionEx
   // requires a non-extended structure and we need this pointer to get
   // it to accept our extended structure!!)
-  {$IFDEF WARNDIRS}{$WARN UNSAFE_CODE OFF}{$ENDIF}
   {$TYPEDADDRESS OFF}
   POSVI := @OSVI;
   {$TYPEDADDRESS ON}
   // Try to get exended information
   OSVI.dwOSVersionInfoSize := SizeOf(TOSVersionInfoEx);
   Win32HaveExInfo := GetVersionEx(POSVI^);
-  {$IFDEF WARNDIRS}{$WARN UNSAFE_CODE ON}{$ENDIF}
   if Win32HaveExInfo then
   begin
     // We have extended info: store details in global vars
@@ -1024,12 +947,13 @@ begin
         Win32ProductInfo := PRODUCT_UNDEFINED;
     end;
   end;
-  // Get processor architecture. Prefer to use GetNativeSystemInfo() API call if
-  // available, otherwise use GetSystemInfo()
+  // Set GetSystemInfoFn to GetNativeSystemInfo() API if available, otherwise
+  // use GetSystemInfo().
   GetSystemInfoFn := LoadKernelFunc('GetNativeSystemInfo');
   if not Assigned(GetSystemInfoFn) then
-    GetSystemInfoFn := Windows.GetSystemInfo;
+    GetSystemInfoFn := GetSystemInfo;
   GetSystemInfoFn(SI);
+  // Get processor architecture
   pvtProcessorArchitecture := SI.wProcessorArchitecture;
 end;
 
@@ -1044,44 +968,64 @@ begin
 end;
 {$ENDIF}
 
+// Returns the value of the given environment variable.
+function GetEnvVar(const VarName: string): string;
+var
+  BufSize: Integer;  // size (in chars) of value + terminal #0
+begin
+  BufSize := GetEnvironmentVariable(PChar(VarName), nil, 0);
+  if BufSize > 0 then
+  begin
+    SetLength(Result, BufSize - 1);
+    GetEnvironmentVariable(PChar(VarName), PChar(Result), BufSize);
+  end
+  else
+    Result := '';
+end;
+
+// Creates a read only TRegistry instance. On versions of Delphi that don't
+// support passing access flags to TRegistry constructor, registry is opened
+// normally for read/write access.
+function RegCreate: TRegistry;
+begin
+  {$IFDEF REGACCESSFLAGS}
+  //! fix for issue #14 (http://bit.ly/eWkw9X) suggested by Steffen Schaff
+  Result := TRegistry.Create(KEY_READ or KEY_WOW64_64KEY);
+  {$ELSE}
+  Result := TRegistry.Create;
+  {$ENDIF}
+end;
+
+// Uses registry object to open a key as read only. On versions of Delphi that
+// can't open keys as read only the key is opened normally.
+function RegOpenKeyReadOnly(const Reg: TRegistry; const Key: string): Boolean;
+begin
+  {$IFDEF REGACCESSFLAGS}
+  //! Fix for problem with OpenKeyReadOnly on 64 bit Windows
+  //! requires Reg has (KEY_READ or KEY_WOW64_64KEY) access flags
+  Result := Reg.OpenKey(Key, False);
+  {$ELSE}
+  // Can't fix Win 64 problem since this version of Delphi does not support
+  // customisation of registry access flags.
+  {$IFDEF REGOPENREADONLY}
+  Result := Reg.OpenKeyReadOnly(Key);
+  {$ELSE}
+  Result := Reg.OpenKey(Key, False);
+  {$ENDIF}
+  {$ENDIF}
+end;
+
 // Gets a string value from the given registry sub-key and value within the
 // given root key (hive).
 function GetRegistryString(const RootKey: HKEY;
   const SubKey, Name: string): string;
-
-  // ---------------------------------------------------------------------------
-  // Uses registry object to open a key as read only. On versions of Delphi that
-  // can't open keys as read only the key is opened normally.
-  function RegOpenKeyReadOnly(const Reg: TRegistry; const Key: string): Boolean;
-  begin
-    {$IFDEF REGACCESSFLAGS}
-    //! Fix for problem with OpenKeyReadOnly on 64 bit Windows
-    //! requires Reg has (KEY_READ or KEY_WOW64_64KEY) access flags
-    Result := Reg.OpenKey(Key, False);
-    {$ELSE}
-    // Can't fix Win 64 problem since this version of Delphi does not support
-    // customisation of registry access flags.
-    {$IFDEF REGOPENREADONLY}
-    Result := Reg.OpenKeyReadOnly(Key);
-    {$ELSE}
-    Result := Reg.OpenKey(Key, False);
-    {$ENDIF}
-    {$ENDIF}
-  end;
-  // ---------------------------------------------------------------------------
-
 var
   Reg: TRegistry;          // registry access object
   ValueInfo: TRegDataInfo; // info about registry value
 begin
   Result := '';
   // Open registry at required root key
-  {$IFDEF REGACCESSFLAGS}
-  //! fix for issue #14 (http://bit.ly/eWkw9X) suggested by Steffen Schaff
-  Reg := TRegistry.Create(KEY_READ or KEY_WOW64_64KEY);
-  {$ELSE}
-  Reg := TRegistry.Create;
-  {$ENDIF}
+  Reg := RegCreate;
   try
     Reg.RootKey := RootKey;
     // Open registry key and check value exists
@@ -1116,205 +1060,8 @@ const
   // required registry string
   cWdwCurrentVer = '\Software\Microsoft\Windows\CurrentVersion';
 begin
-  Result := GetRegistryString(
-    Windows.HKEY_LOCAL_MACHINE, cWdwCurrentVer, ValName
-  );
+  Result := GetRegistryString(HKEY_LOCAL_MACHINE, cWdwCurrentVer, ValName);
 end;
-
-
-{$IFDEF PJSYSINFO_COMPILE_DEPRECATED}
-// -----------------------------------------------------------------------------
-// Public routines
-// -----------------------------------------------------------------------------
-
-function SIGetCommonFilesFolder: string;
-begin
-  Result := TPJSystemFolders.CommonFiles;
-end;
-
-function SIGetComputerName: string;
-begin
-  Result := TPJComputerInfo.ComputerName;
-end;
-
-function SIGetOSBuildNumber: Integer;
-begin
-  Result := TPJOSInfo.BuildNumber;
-end;
-
-function SIGetOSDesc: string;
-begin
-  Result := TPJOSInfo.Description;
-end;
-
-function SIGetOSMajorVersion: Integer;
-begin
-  Result := TPJOSInfo.MajorVersion;
-end;
-
-function SIGetOSMinorVersion: Integer;
-begin
-  Result := TPJOSInfo.MinorVersion;
-end;
-
-function SIGetOSPlatform: TPJOSPlatform;
-begin
-  Result := TPJOSInfo.Platform;
-end;
-
-function SIGetOSProduct: TPJOSProduct;
-begin
-  Result := TPJOSInfo.Product;
-end;
-
-function SIGetOSProductName: string;
-begin
-  Result := TPJOSInfo.ProductName;
-end;
-
-function SIGetOSProductType: string;
-begin
-  Result := TPJOSInfo.Edition;
-end;
-
-function SIGetOSServicePack: string;
-begin
-  Result := TPJOSInfo.ServicePack;
-end;
-
-function SIGetProgramFilesFolder: string;
-begin
-  Result := TPJSystemFolders.ProgramFiles;
-end;
-
-function SIGetSystemFolder: string;
-begin
-  Result := TPJSystemFolders.System;
-end;
-
-function SIGetTempFolder: string;
-begin
-  Result := TPJSystemFolders.Temp;
-end;
-
-function SIGetUserName: string;
-begin
-  Result := TPJComputerInfo.UserName;
-end;
-
-function SIGetWindowsFolder: string;
-begin
-  Result := TPJSystemFolders.Windows;
-end;
-{$ENDIF}
-
-{$IFDEF PJSYSINFO_COMPILE_DEPRECATED}
-// -----------------------------------------------------------------------------
-// Component implementation
-// -----------------------------------------------------------------------------
-
-{ TPJSysInfo }
-
-constructor TPJSysInfo.Create(AOwner: TComponent);
-var
-  Idx: Integer; // loops thru components on Owner form
-begin
-  // Ensure that component is unique
-  for Idx := 0 to Pred(AOwner.ComponentCount) do
-    if AOwner.Components[Idx] is ClassType then
-      raise EPJSysInfo.CreateFmt(
-        sDupInstErr,
-        [ClassName, AOwner.Components[Idx].Name, AOwner.Name]
-      );
-  // All OK: go ahead and create component
-  inherited Create(AOwner);
-end;
-
-function TPJSysInfo.GetCommonFilesFolder: string;
-begin
-  Result := TPJSystemFolders.CommonFiles;
-end;
-
-function TPJSysInfo.GetComputerName: string;
-begin
-  Result := TPJComputerInfo.ComputerName;
-end;
-
-function TPJSysInfo.GetOSBuildNumber: Integer;
-begin
-  Result := TPJOSInfo.BuildNumber;
-end;
-
-function TPJSysInfo.GetOSDesc: string;
-begin
-  Result := TPJOSInfo.Description;
-end;
-
-function TPJSysInfo.GetOSMajorVersion: Integer;
-begin
-  Result := TPJOSInfo.MajorVersion;
-end;
-
-function TPJSysInfo.GetOSMinorVersion: Integer;
-begin
-  Result := TPJOSInfo.MinorVersion;
-end;
-
-function TPJSysInfo.GetOSPlatform: TPJOSPlatform;
-begin
-  Result := TPJOSInfo.Platform;
-end;
-
-function TPJSysInfo.GetOSProduct: TPJOSProduct;
-begin
-  Result := TPJOSInfo.Product;
-end;
-
-function TPJSysInfo.GetOSProductName: string;
-begin
-  Result := TPJOSInfo.ProductName;
-end;
-
-function TPJSysInfo.GetOSProductType: string;
-begin
-  Result := TPJOSInfo.Edition;
-end;
-
-function TPJSysInfo.GetOSServicePack: string;
-begin
-  Result := TPJOSInfo.ServicePack;
-end;
-
-function TPJSysInfo.GetProgramFilesFolder: string;
-begin
-  Result := TPJSystemFolders.ProgramFiles;
-end;
-
-function TPJSysInfo.GetSystemFolder: string;
-begin
-  Result :=  TPJSystemFolders.System;
-end;
-
-function TPJSysInfo.GetTempFolder: string;
-begin
-  Result := TPJSystemFolders.Temp;
-end;
-
-function TPJSysInfo.GetUserName: string;
-begin
-  Result := TPJComputerInfo.UserName;
-end;
-
-function TPJSysInfo.GetWindowsFolder: string;
-begin
-  Result := TPJSystemFolders.Windows;
-end;
-{$ENDIF}
-
-
-// -----------------------------------------------------------------------------
-// Static class implementations
-// -----------------------------------------------------------------------------
 
 { TPJOSInfo }
 
@@ -1330,14 +1077,12 @@ end;
 
 class function TPJOSInfo.Description: string;
 
-  // ---------------------------------------------------------------------------
   // Adds a non-empty string to end of result, preceeded by space.
   procedure AppendToResult(const Str: string);
   begin
     if Str <> '' then
       Result := Result + ' ' + Str;
   end;
-  // ---------------------------------------------------------------------------
 
 begin
   // Start with product name
@@ -1386,7 +1131,7 @@ begin
       if pvtProcessorArchitecture = PROCESSOR_ARCHITECTURE_AMD64 then
         Result := Result + ' (64-bit)';
       // can detect 32-bit if required by checking if
-      // pvtProcessorArchitecture = PROCESSOR_ARCHITECTURE_INTEL then
+      // pvtProcessorArchitecture = PROCESSOR_ARCHITECTURE_INTEL
     end;
     osWinSvr2003, osWinSvr2003R2:
     begin
@@ -1539,18 +1284,7 @@ begin
   begin
     // System is reporting NT4 SP6
     // we have SP 6a if particular registry key exists
-    {$IFDEF REGACCESSFLAGS}
-    // Prevent potential error on Win 64 in reading registry, which may cause
-    // following KeyExists method to return false even if key is present.
-    // Note though that this is academic because I don't think there was a 64
-    // bit version of NT4, so there won't be a hotfix key anyway, hence False
-    // will be returned regardless.
-    Reg := TRegistry.Create(KEY_READ or KEY_WOW64_64KEY);
-    {$ELSE}
-    // Can't fix potential Win 64 error since this version of Delphi does not
-    // support customisation of registry access flags.
-    Reg := TRegistry.Create;
-    {$ENDIF}
+    Reg := RegCreate;
     try
       Reg.RootKey := HKEY_LOCAL_MACHINE;
       Result := Reg.KeyExists(
@@ -1734,15 +1468,9 @@ begin
 end;
 
 class function TPJOSInfo.ProductID: string;
-const
-  // Registry keys for Win 9x/NT
-  cRegKey: array[Boolean] of string = (
-    'Software\Microsoft\Windows\CurrentVersion',
-    'Software\Microsoft\Windows NT\CurrentVersion'
-  );
 begin
   Result := GetRegistryString(
-    HKEY_LOCAL_MACHINE, cRegKey[IsWinNT], 'ProductID'
+    HKEY_LOCAL_MACHINE, CurrentVersionRegKeys[IsWinNT], 'ProductID'
   );
 end;
 
@@ -1778,6 +1506,20 @@ begin
     HKEY_LOCAL_MACHINE,
     'SYSTEM\CurrentControlSet\Control\ProductOptions',
     'ProductType'
+  );
+end;
+
+class function TPJOSInfo.RegisteredOrganisation: string;
+begin
+  Result := GetRegistryString(
+    HKEY_LOCAL_MACHINE, CurrentVersionRegKeys[IsWinNT], 'RegisteredOrganization'
+  );
+end;
+
+class function TPJOSInfo.RegisteredOwner: string;
+begin
+  Result := GetRegistryString(
+    HKEY_LOCAL_MACHINE, CurrentVersionRegKeys[IsWinNT], 'RegisteredOwner'
   );
 end;
 
@@ -1829,6 +1571,15 @@ end;
 
 { TPJComputerInfo }
 
+class function TPJComputerInfo.BiosVendor: string;
+begin
+  Result := GetRegistryString(
+    HKEY_LOCAL_MACHINE,
+    'HARDWARE\DESCRIPTION\System\Bios\',
+    'BIOSVendor'
+  );
+end;
+
 class function TPJComputerInfo.BootMode: TPJBootMode;
 begin
   case GetSystemMetrics(SM_CLEANBOOT) of
@@ -1846,7 +1597,7 @@ var
   Size: DWORD;    // size of name buffer
 begin
   Size := MAX_COMPUTERNAME_LENGTH;
-  if Windows.GetComputerName(PComputerName, Size) then
+  if GetComputerName(PComputerName, Size) then
     Result := PComputerName
   else
     Result := '';
@@ -1857,14 +1608,94 @@ begin
   Result := Processor in [paX64, paIA64];
 end;
 
+class function TPJComputerInfo.IsAdmin: Boolean;
+const
+  // SID related constants
+  SECURITY_NT_AUTHORITY: TSIDIdentifierAuthority = (Value: (0, 0, 0, 0, 0, 5));
+  SECURITY_BUILTIN_DOMAIN_RID = $00000020;
+  DOMAIN_ALIAS_RID_ADMINS = $00000220;
+var
+  AccessToken: THandle;           // process access token
+  TokenGroupsInfo: PTokenGroups;  // token groups
+  InfoBufferSize: DWORD;          // token info buffer size
+  AdmininstratorsSID: PSID;       // administrators SID
+  I: Integer;                     // loops thru token groups
+  Success: BOOL;                  // API function success results
+begin
+  if not TPJOSInfo.IsWinNT then
+  begin
+    // Admin mode is a foreign concept to Windows 9x - everyone is an admin
+    Result := True;
+    Exit;
+  end;
+  Result := False;
+  Success := OpenThreadToken(GetCurrentThread, TOKEN_QUERY, True, AccessToken);
+  if not Success then
+  begin
+    if GetLastError = ERROR_NO_TOKEN then
+      Success := OpenProcessToken(GetCurrentProcess, TOKEN_QUERY, AccessToken);
+  end;
+  if Success then
+  begin
+    GetMem(TokenGroupsInfo, 1024);
+    Success := GetTokenInformation(
+      AccessToken, TokenGroups, TokenGroupsInfo, 1024, InfoBufferSize
+    );
+    CloseHandle(AccessToken);
+    if Success then
+    begin
+      AllocateAndInitializeSid(
+        SECURITY_NT_AUTHORITY, 2, SECURITY_BUILTIN_DOMAIN_RID,
+        DOMAIN_ALIAS_RID_ADMINS, 0, 0, 0, 0, 0, 0, AdmininstratorsSID
+      );
+      {$IFOPT R+}
+        {$DEFINE RANGECHECKSWEREON}
+        {$R-}
+      {$ELSE}
+        {$UNDEF RANGECHECKSWEREON}
+      {$ENDIF}
+      for I := 0 to TokenGroupsInfo.GroupCount - 1 do
+        if EqualSid(AdmininstratorsSID, TokenGroupsInfo.Groups[I].Sid) then
+        begin
+          Result := True;
+          Break;
+        end;
+      {$IFDEF RANGECHECKSWEREON}
+        {$R+}
+      {$ENDIF}
+      FreeSid(AdmininstratorsSID);
+    end;
+    if Assigned(TokenGroupsInfo) then
+      FreeMem(TokenGroupsInfo);
+  end;
+end;
+
 class function TPJComputerInfo.IsNetworkPresent: Boolean;
 begin
   Result := GetSystemMetrics(SM_NETWORK) and 1 = 1;
 end;
 
+class function TPJComputerInfo.IsUACActive: Boolean;
+var
+  Reg: TRegistry;   // registry access object
+begin
+  Result := False;
+  if not TPJOSInfo.IsWinNT or (TPJOSInfo.MajorVersion < 6) then
+    // UAC only available on Vista or later
+    Exit;
+  Reg := RegCreate;
+  try
+    Reg.RootKey := HKEY_LOCAL_MACHINE;
+    if RegOpenKeyReadOnly(
+      Reg, 'SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System'
+    ) then
+      Result := Reg.ValueExists('EnableLUA') and Reg.ReadBool('EnableLUA');
+  finally
+    Reg.Free;
+  end;
+end;
+
 class function TPJComputerInfo.MACAddress: string;
-{$IFDEF WARNDIRS}{$WARN UNSAFE_CODE OFF}{$ENDIF}
-{$IFDEF WARNDIRS}{$WARN UNSAFE_TYPE OFF}{$ENDIF}
 type
   // Based on code at MSDN knowledge base Q118623 article at
   // http://support.microsoft.com/kb/q118623/}
@@ -1888,13 +1719,11 @@ var
   Ncb: TNCB;                // network control block descriptor
   I: Integer;               // loops thru all adapters in list
 
-  // ---------------------------------------------------------------------------
   // Examines given NetBios API call return value to check if call succeeded.
   function NetBiosSucceeded(const RetCode: AnsiChar): Boolean;
   begin
     Result := UCHAR(RetCode) = NRC_GOODRET;
   end;
-  // ---------------------------------------------------------------------------
 
 begin
   // Assume not adapter
@@ -1941,8 +1770,6 @@ begin
       Exit;
     end;
   end;
-{$IFDEF WARNDIRS}{$WARN UNSAFE_TYPE ON}{$ENDIF}
-{$IFDEF WARNDIRS}{$WARN UNSAFE_CODE ON}{$ENDIF}
 end;
 
 class function TPJComputerInfo.Processor: TPJProcessorArchitecture;
@@ -1959,8 +1786,44 @@ class function TPJComputerInfo.ProcessorCount: Cardinal;
 var
   SI: TSystemInfo;  // contains system information
 begin
-  GetSystemInfo(SI);
+  GetSystemInfoFn(SI);
   Result := SI.dwNumberOfProcessors;
+end;
+
+class function TPJComputerInfo.ProcessorIdentifier: string;
+begin
+  Result := GetRegistryString(
+    HKEY_LOCAL_MACHINE,
+    'HARDWARE\DESCRIPTION\System\CentralProcessor\0\',
+    'Identifier'
+  );
+end;
+
+class function TPJComputerInfo.ProcessorName: string;
+begin
+  Result := GetRegistryString(
+    HKEY_LOCAL_MACHINE,
+    'HARDWARE\DESCRIPTION\System\CentralProcessor\0\',
+    'ProcessorNameString'
+  );
+end;
+
+class function TPJComputerInfo.SystemManufacturer: string;
+begin
+  Result := GetRegistryString(
+    HKEY_LOCAL_MACHINE,
+    'HARDWARE\DESCRIPTION\System\Bios\',
+    'SystemManufacturer'
+  );
+end;
+
+class function TPJComputerInfo.SystemProductName: string;
+begin
+  Result := GetRegistryString(
+    HKEY_LOCAL_MACHINE,
+    'HARDWARE\DESCRIPTION\System\Bios\',
+    'SystemProductName'
+  );
 end;
 
 class function TPJComputerInfo.UserName: string;
@@ -1971,7 +1834,7 @@ var
   Size: DWORD;                        // size of name buffer
 begin
   Size := UNLEN;
-  if Windows.GetUserName(PUserName, Size) then
+  if GetUserName(PUserName, Size) then
     Result := PUserName
   else
     Result := '';
@@ -1986,10 +1849,34 @@ begin
   );
 end;
 
+class function TPJSystemFolders.CommonFilesRedirect: string;
+begin
+  Result := GetEnvVar('COMMONPROGRAMFILES');
+end;
+
+class function TPJSystemFolders.CommonFilesX86: string;
+begin
+  Result :=  ExcludeTrailingPathDelimiter(
+    GetCurrentVersionRegStr('CommonFilesDir (x86)')
+  );
+end;
+
 class function TPJSystemFolders.ProgramFiles: string;
 begin
   Result :=  ExcludeTrailingPathDelimiter(
     GetCurrentVersionRegStr('ProgramFilesDir')
+  );
+end;
+
+class function TPJSystemFolders.ProgramFilesRedirect: string;
+begin
+  Result := GetEnvVar('PROGRAMFILES');
+end;
+
+class function TPJSystemFolders.ProgramFilesX86: string;
+begin
+  Result :=  ExcludeTrailingPathDelimiter(
+    GetCurrentVersionRegStr('ProgramFilesDir (x86)')
   );
 end;
 
@@ -2005,11 +1892,9 @@ end;
 
 class function TPJSystemFolders.SystemWow64: string;
 type
-  {$IFDEF WARNDIRS}{$WARN UNSAFE_TYPE OFF}{$ENDIF}
   // type of GetSystemWow64DirectoryFn API function
   TGetSystemWow64Directory = function(lpBuffer: PChar; uSize: UINT): UINT;
     stdcall;
-  {$IFDEF WARNDIRS}{$WARN UNSAFE_TYPE ON}{$ENDIF}
 var
   PFolder: array[0..MAX_PATH] of Char;  // buffer to hold name returned from API
   GetSystemWow64Directory: TGetSystemWow64Directory;  // API function
