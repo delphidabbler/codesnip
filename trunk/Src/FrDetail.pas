@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -51,6 +51,9 @@ type
     procedure tcViewsChange(Sender: TObject);
     procedure tcViewsMouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
+    procedure tcViewsDragOver(Sender, Source: TObject; X, Y: Integer;
+      State: TDragState; var Accept: Boolean);
+    procedure tcViewsDragDrop(Sender, Source: TObject; X, Y: Integer);
   strict private
     var
       ///  <summary>Notification object used to notify other parts of program
@@ -228,7 +231,7 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Generics.Defaults,
+  SysUtils, Generics.Defaults, Windows, Types,
   // Project
   UExceptions;
 
@@ -508,6 +511,27 @@ begin
   NotifyTabChange;
 end;
 
+procedure TDetailFrame.tcViewsDragDrop(Sender, Source: TObject; X, Y: Integer);
+var
+  NewIdx: Integer;
+begin
+  if Sender <> tcViews then
+    Exit;
+  NewIdx := tcViews.IndexOfTabAt(X, Y);
+  if NewIdx <> SelectedTab then
+  begin
+    fViews.Move(SelectedTab, NewIdx);
+    tcViews.Tabs.Move(SelectedTab, NewIdx);
+  end;
+end;
+
+procedure TDetailFrame.tcViewsDragOver(Sender, Source: TObject; X, Y: Integer;
+  State: TDragState; var Accept: Boolean);
+begin
+  if (Sender = tcViews) then
+    Accept := TabCount > 1;
+end;
+
 procedure TDetailFrame.tcViewsMouseDown(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; X, Y: Integer);
 var
@@ -517,14 +541,18 @@ begin
   begin
     // ensure tab set has focus when a tab is clicked
     tcViews.SetFocus;
-    if Button = mbRight then
-    begin
-      // select tab when right clicked
-      TabIdx := tcViews.IndexOfTabAt(X, Y);
-      if (TabIdx >= 0) and (TabIdx < tcViews.Tabs.Count) then
+    case Button of
+      mbLeft:
+        tcViews.BeginDrag(False);
+      mbRight:
       begin
-        tcViews.TabIndex := TabIdx;
-        NotifyTabChange;
+        // select tab when right clicked
+        TabIdx := tcViews.IndexOfTabAt(X, Y);
+        if (TabIdx >= 0) and (TabIdx < tcViews.Tabs.Count) then
+        begin
+          tcViews.TabIndex := TabIdx;
+          NotifyTabChange;
+        end;
       end;
     end;
   end;

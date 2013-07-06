@@ -1,9 +1,9 @@
 inherited DetailFrame: TDetailFrame
   inherited pnlTitle: TPanel
     inherited lblTitle: TLabel
-      Width = 40
+      Width = 39
       Caption = 'Details'
-      ExplicitWidth = 40
+      ExplicitWidth = 39
     end
   end
   inline frmDetailView: TDetailViewFrame
@@ -45,6 +45,8 @@ inherited DetailFrame: TDetailFrame
     PopupMenu = mnuTabs
     TabOrder = 1
     OnChange = tcViewsChange
+    OnDragDrop = tcViewsDragDrop
+    OnDragOver = tcViewsDragOver
     OnMouseDown = tcViewsMouseDown
   end
   object mnuTabs: TPopupMenu
