@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -28,10 +28,8 @@ uses
 
 
 type
-  ///  <summary>
-  ///  Type of event triggered just before browser control navigates to a new
-  ///  document.
-  ///  </summary>
+  ///  <summary>Type of event triggered just before browser control navigates to
+  ///  a new document.</summary>
   ///  <param name="Sender">TObject [in] Object triggering event.</param>
   ///  <param name="URL">string [in] URL to be navigated to.</param>
   ///  <param name="Cancel">Boolean [in/out] False when called. Set to True to
@@ -42,11 +40,10 @@ type
     var Cancel: Boolean) of object;
 
 type
-  ///  <summary>
-  ///  Class that wraps the IE web browser control and provides ability to load
-  ///  and save HTML from files, streams or strings. Also simplifies navigation
-  ///  to documents stored locally or in resources and exposes some HTML events.
-  ///  </summary>
+  ///  <summary>Class that wraps the IE web browser control and provides ability
+  ///  to load and save HTML from files, streams or strings. Also simplifies
+  ///  navigation to documents stored locally or in resources and exposes some
+  ///  HTML events.</summary>
   TWBIOMgr = class(TObject)
   strict private
     ///  <summary>Reference to managed webbrowser.</summary>
@@ -61,6 +58,12 @@ type
     fDocEvents: THTMLDocumentEvents2Sink;
     ///  <summary>Event sink for HTMLWindowEvents2 events.</summary>
     fWdwEvents: THTMLWindowEvents2Sink;
+    ///  <summary>Flag that indicates if a document has been fully loaded into
+    ///  the browser control.</summary>
+    ///  <remarks>This flag is set false (1) before any documen has been loaded
+    ///  and (2) during the process of navigating to a new document. The flag
+    ///  is set True only when a document is fully loaded.</remarks>
+    fDocLoaded: Boolean;
     ///  <summary>Handles OnEvent events triggered by browser document and
     ///  window event sinks. Triggers OnHTMLEvent and passes parameters to it.
     ///  </summary>
@@ -80,6 +83,12 @@ type
     procedure NavigateHandler(Sender: TObject; const pDisp: IDispatch;
       var URL, Flags, TargetFrameName, PostData, Headers: OleVariant;
       var Cancel: WordBool);
+    ///  <summary>Handles web browser's OnDocumentComplete method to check that
+    ///  top level document has loaded.</summary>
+    ///  <remarks>Only pDisp parameter is used to check if frame firing event is
+    ///  top level.</remarks>
+    procedure DocCompleteHandler(Sender: TObject; const pDisp: IDispatch;
+      var URL: OleVariant);
     ///  <summary>Updates the web browser's current document from HTML read from
     ///  given stream.</summary>
     ///  <remarks>EBug raised if updated document is not valid.</remarks>
@@ -147,7 +156,7 @@ uses
   // Delphi
   SysUtils, ActiveX,
   // Project
-  Browser.UControlHelper, UHTMLDOMHelper, UResourceUtils;
+  Browser.UControlHelper, UHTMLDOMHelper, UResourceUtils, UUtils;
 
 
 { TWBIOMgr }
@@ -158,6 +167,7 @@ begin
   inherited Create;
   fWB := WB;
   fWB.OnBeforeNavigate2 := NavigateHandler;
+  fWB.OnDocumentComplete := DocCompleteHandler;
   // Create event sinks and set event handlers
   fDocEvents := THTMLDocumentEvents2Sink.Create;
   fDocEvents.OnEvent := HTMLEventHandler;
@@ -173,6 +183,16 @@ begin
   fDocEvents.Disconnect;
   FreeAndNil(fDocEvents);
   inherited;
+end;
+
+procedure TWBIOMgr.DocCompleteHandler(Sender: TObject; const pDisp: IDispatch;
+  var URL: OleVariant);
+begin
+  // Top level document has finished loading iff pDisp contains reference to
+  // browser control's default interface.
+  // See http://support.microsoft.com/kb/180366
+  if pDisp = (fWB.DefaultInterface as IDispatch) then
+    fDocLoaded := True;
 end;
 
 procedure TWBIOMgr.EmptyDocument;
@@ -263,6 +283,11 @@ begin
     fOnNavigate(Sender, URL, DoCancel);
     Cancel := DoCancel;
   end;
+  // Flag document as loading only if navigation was not cancelled. fDocLoaded
+  // is set back to true in browser control's OnDocumentComplete event handler
+  // which does not get fired if navigation was cancelled.
+  if not Cancel then
+    fDocLoaded := False;
 end;
 
 procedure TWBIOMgr.NavigateToResource(const Module: HMODULE; const ResName,
@@ -291,6 +316,11 @@ procedure TWBIOMgr.WaitForDocToLoad;
 begin
   // NOTE: do not call this method in a FormCreate event handler since the
   // browser will never reach this state - use a FormShow event handler instead
+  // Wait for OnDocumentComplete to fire
+  while not fDocLoaded do
+    Pause(20);
+  // Belt and braces - wait for browser's READYSTATE_COMPLETE state and then
+  // check we've actually got an HTML document loaded
   TWBControlHelper.WaitForValidDocToLoad(fWB);                 // can raise EBug
   // connect event sinks to browser document and window
   fDocEvents.Connect(fWB.Document);

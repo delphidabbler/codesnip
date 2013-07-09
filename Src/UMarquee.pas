@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2008-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2008-2012, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -21,55 +21,51 @@ interface
 
 uses
   // Delphi
-  Classes, ComCtrls;
+  Classes, Controls, ComCtrls, ExtCtrls;
 
 
 type
-  ///  <summary>Base class for a TProgressBar descendant component that can
-  ///  display a "marquee" that repeatedly cycles the progress bar display.
-  ///  </summary>
-  ///  <remarks>
-  ///  <para>Requires different concrete implementations depending on whether
-  ///  the underlying operating system supports the progress bar marquee
-  ///  natively.</para>
-  ///  <para>Callers must construct instances using the CreateInstance class
-  ///  method. The Create constructor must not be called.</para>
-  ///  </remarks>
-  TMarquee = class abstract(TProgressBar)
+
+  {
+  TMarquee:
+    TProgressBar descendant that displays a "marquee" that repeatedly cycles
+    a progress bar display. For use when a progress bar is required but the
+    length of time / maximum value to be displayed is not known. Emulates
+    marquee on older OSs and uses OS provided facilities on later OSs.
+  }
+  TMarquee = class(TProgressBar)
   strict private
-    ///  <summary>Checks if the underlying operating system supports the
-    ///  progress bar natively.</summary>
-    class function IsBuiltInMarqueeAvailable: Boolean;
-  strict protected
-    const
-      ///  <summary>Update interval for marquee in ms.</summary>
-      UpdateInterval = 20;
-
+    fTimer: TTimer;
+      {Timer object used to emulate marquee on older OSs}
+    procedure TickHandler(Sender: TObject);
+      {Event handler for timer OnTimer event. Updates position of progress bar.
+        @param Sender [in] Not used.
+      }
+    function IsBuiltInMarqueeAvailable: Boolean;
+      {Checks if were are to use OS's built in marquee.
+        @return True if built in marquee is to be used, False if we are to
+          emulate it.
+      }
   public
-    ///  <summary>Initialises a new component instance for sub-classes.
-    ///  </summary>
-    ///  <param name="AOwner">TComponent [in] Reference to owning component.
-    ///  </param>
-    ///  <remarks>This constructor must not be called directly, only by
-    ///  sub-classes. Users of TMarquee must call CreateInstance instead.
-    ///  </remarks>
     constructor Create(AOwner: TComponent); override;
-
-    ///  <summary>Constructs and returns a concrete instance of the component
-    ///  that implements the marquee in a manner suitable for the underlying
-    ///  operating system.</summary>
-    ///  <param name="AOwner">TComponent [in] Reference to owning component.
-    ///  </param>
-    ///  <remarks>On OSs that support the marquee progress bar natively the
-    ///  created instance uses the native support. On older OSs without native
-    ///  support the concrete instance emulates the marquee.</remarks>
-    class function CreateInstance(AOwner: TComponent): TMarquee;
-
-    ///  <summary>Start the marquee running.</summary>
-    procedure Start; virtual; abstract;
-
-    ///  <summary>Stop the marquee.</summary>
-    procedure Stop; virtual; abstract;
+      {Class constructor. Sets up object.
+        @param AOwner [in] Owning component.
+      }
+    destructor Destroy; override;
+      {Class destructor. Tears down object.
+      }
+    procedure CreateParams(var Params: TCreateParams); override;
+      {Sets window parameters. This overidden method sets the marquee style if
+      supported.
+        @param Params [in/out] In: current window parameters. Out: Modified
+          parameters if changed.
+      }
+    procedure Start;
+      {Starts marquee running.
+      }
+    procedure Stop;
+      {Stops marquee running.
+      }
   end;
 
 
@@ -78,135 +74,104 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Messages, Controls, ExtCtrls,
+  SysUtils, Windows, Messages,
   // Project
   USystemInfo, UThemesEx;
 
 
-type
-  ///  <summary>Progress bar component that can emulate a marquee.</summary>
-  ///  <remarks>For use on operating systems that do not have native support for
-  ///  marquees within the progress bar.</remarks>
-  TEmulatedMarquee = class sealed(TMarquee)
-  strict private
-    ///  <summary>Timer object used to update marquee display.</summary>
-    fTimer: TTimer;
-    ///  <summary>Handles timer events by updating the progress bar position.
-    ///  </summary>
-    procedure TickHandler(Sender: TObject);
-  public
-    ///  <summary>Destroys object instance. Ensures the timer has been stopped.
-    ///  </summary>
-    destructor Destroy; override;
-    ///  <summary>Starts the marquee emulation running.</summary>
-    procedure Start; override;
-    ///  <summary>Stops the marquee emulation.</summary>
-    procedure Stop; override;
-  end;
+const
+  // Constants defined in later versions on CommCtrl.h
+  PBS_MARQUEE = $08;              // progress bar marquee style
+  PBM_SETMARQUEE = WM_USER + 10;  // progress bar marquee message
+  // Other constants
+  cInterval = 20;                 // update interval for marquee
 
-  ///  <summary>Progress bar component that displays a marquee natively.
-  ///  </summary>
-  ///  <remarks>For use on operating systems that have native support for
-  ///  marquees within a progress bar.</remarks>
-  TNativeMarquee = class sealed(TMarquee)
-  strict private
-    const
-      ///  <summary>Progress bar marquee window style.</summary>
-      ///  <remarks>From CommCtrl.h.</remarks>
-      PBS_MARQUEE = $08;              // progress bar marquee style
-      ///  <summary>Progress bar marquee activation / deactivation message.
-      ///  </summary>
-      ///  <remarks>From CommCtrl.h.</remarks>
-      PBM_SETMARQUEE = WM_USER + 10;
-  public
-    ///  <summary>Modifies the progress bar's window style to enable use of the
-    ///  marquee.</summary>
-    procedure CreateParams(var Params: TCreateParams); override;
-    ///  <summary>Starts the marquee running.</summary>
-    procedure Start; override;
-    ///  <summary>Stops the marquee running.</summary>
-    procedure Stop; override;
-  end;
 
 { TMarquee }
 
 constructor TMarquee.Create(AOwner: TComponent);
+  {Class constructor. Sets up object.
+    @param AOwner [in] Owning component.
+  }
 begin
-  if ClassType = TMarquee then
-    raise ENoConstructException.CreateFmt(
-      '%s.Create can only be called by instantiating subclasses. '
-        + 'To create the required instance call CreateInstance instead.',
-      [ClassName]
-    );
-  inherited Create(AOwner);
+  inherited;
   Smooth := True;
 end;
 
-class function TMarquee.CreateInstance(AOwner: TComponent): TMarquee;
+procedure TMarquee.CreateParams(var Params: TCreateParams);
+  {Sets window parameters. This overidden method sets the marquee style if
+  supported.
+    @param Params [in/out] In: current window parameters. Out: Modified
+      parameters if changed.
+  }
 begin
+  inherited;
   if IsBuiltInMarqueeAvailable then
-    Result := TNativeMarquee.Create(AOwner)
-  else
-    Result := TEmulatedMarquee.Create(AOwner);
+    // tells progress bar to use marquee
+    Params.Style := Params.Style or PBS_MARQUEE;
 end;
 
-class function TMarquee.IsBuiltInMarqueeAvailable: Boolean;
+destructor TMarquee.Destroy;
+  {Class destructor. Tears down object.
+  }
+begin
+  FreeAndNil(fTimer);
+  inherited;
+end;
+
+function TMarquee.IsBuiltInMarqueeAvailable: Boolean;
+  {Checks if were are to use OS's built in marquee.
+    @return True if built in marquee is to be used, False if we are to emulate
+      it.
+  }
 begin
   // We only use built in marquee on Vista or later when themes are enabled
   Result := TOSInfo.IsVistaOrLater and ThemeServicesEx.ThemesEnabled;
 end;
 
-{ TEmulatedMarquee }
-
-destructor TEmulatedMarquee.Destroy;
+procedure TMarquee.Start;
+  {Starts marquee running.
+  }
 begin
-  Stop;   // ensure timer has been stopped
-  inherited;
-end;
-
-procedure TEmulatedMarquee.Start;
-begin
-  // timer used to move emulated marquee along
-  fTimer := TTimer.Create(nil);
-  fTimer.Interval := UpdateInterval;
-  fTimer.OnTimer := TickHandler;
-  fTimer.Enabled := True;
-  // initialise progress bar to suitable values for marquee
-  Position := 0;
-  Max := 48;
-end;
-
-procedure TEmulatedMarquee.Stop;
-begin
-  if Assigned(fTimer) then
+  if IsBuiltInMarqueeAvailable then
+    // using built in marquee: send message to activate it
+    Perform(PBM_SETMARQUEE, 1, cInterval)
+  else
   begin
-    fTimer.Enabled := False;
-    FreeAndNil(fTimer);
+    // emulating marquee: create and activate timer
+    fTimer := TTimer.Create(nil);
+    fTimer.Interval := cInterval;
+    fTimer.OnTimer := TickHandler;
+    fTimer.Enabled := True;
+    Position := 0;
+    Max := 48;
   end;
 end;
 
-procedure TEmulatedMarquee.TickHandler(Sender: TObject);
+procedure TMarquee.Stop;
+  {Stops marquee running.
+  }
+begin
+  if IsBuiltInMarqueeAvailable then
+    // using built in marquee: send message to deactivate it
+    Perform(PBM_SETMARQUEE, 0, 0)
+  else
+  begin
+    // emulating marquee: destroy timer
+    if Assigned(fTimer) then
+    begin
+      fTimer.Enabled := False;
+      FreeAndNil(fTimer);
+    end;
+  end;
+end;
+
+procedure TMarquee.TickHandler(Sender: TObject);
+  {Event handler for timer OnTimer event. Updates position of progress bar.
+    @param Sender [in] Not used.
+  }
 begin
   Position := (Position + 1) mod (Max + 1);
 end;
 
-{ TNativeMarquee }
-
-procedure TNativeMarquee.CreateParams(var Params: TCreateParams);
-begin
-  inherited;
-  Params.Style := Params.Style or PBS_MARQUEE;
-end;
-
-procedure TNativeMarquee.Start;
-begin
-  Perform(PBM_SETMARQUEE, 1, UpdateInterval); // activates marquee
-end;
-
-procedure TNativeMarquee.Stop;
-begin
-  Perform(PBM_SETMARQUEE, 0, 0);  // deactivates marquee
-end;
-
 end.
-
