@@ -11,7 +11,10 @@
 ; Change Log for CodeSnip Release 4
 ; ------------------------------------------------------------------------------
 
-Release v4.6.1 or 01 July 2013
+Release v4.6.2 of 09 July 2013
++ Tentative fix for bug #83 "Error when the main form is shown" (http://bit.ly/12eUV5Y) that has been reported on Windows 8. The fix is tentative because the bug hasn't been reproduced.
+
+Release v4.6.1 of 01 July 2013
 + Provided fix for un-reproduced bug #75 "Floating point error in 4.4.1" (http://bit.ly/12zAWSp) that apparently affects Windows 8, probably with IE 10 installed.
 + Fixed unreported bug where IE 10 browser was being reported as IE 9.
 + Fixed potential bug in code that processes class / advanced record snippet types ready for test compilation and inclusion in generated units.
