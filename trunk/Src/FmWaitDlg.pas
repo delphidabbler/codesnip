@@ -53,8 +53,8 @@ type
         @return Required aligner object instance.
       }
     procedure CustomiseForm; override;
-      {Sets required UI font for label and creates and locates custom marquee
-      component.
+      {Sizes window to fit caption text and creates and locates the marquee
+      control.
       }
     procedure InitForm; override;
       {Sets hourglass cursor and starts marquee when form is shown.
@@ -66,6 +66,8 @@ implementation
 
 
 uses
+  // Delphi
+  Types, Math,
   // Project
   UDlgHelper, UFontHelper, UFormAligner, UGraphicUtils;
 
@@ -85,20 +87,21 @@ begin
 end;
 
 procedure TWaitDlg.CustomiseForm;
-  {Sets required UI font for label and creates and locates custom marquee
-  component.
+  {Sizes window to fit caption text and creates and locates the marquee control.
   }
+const
+  MinFormWidth = 168;
 begin
   inherited;
-  // Update label font to use UI default font: it is set to have bold style,
-  // which is preserved. We also have to ensure label is correct size
   TFontHelper.SetDefaultBaseFont(lblCaption.Font);
-  lblCaption.Height := StringExtent(lblCaption.Caption, lblCaption.Font).cy;
+  // Size window and centre label in it (pnlMain auto-sizes to window)
+  Self.ClientWidth := Max(MinFormWidth, lblCaption.Width + 24);
+  lblCaption.Left := (pnlMain.ClientWidth - lblCaption.Width) div 2;
   // Create and locate marquee
   fMarquee := TMarquee.CreateInstance(Self);
   fMarquee.Parent := pnlMain;
-  fMarquee.Left := 8;
-  fMarquee.Width := pnlMain.ClientWidth - 16;
+  fMarquee.Left := 12;
+  fMarquee.Width := pnlMain.ClientWidth - 24;
   fMarquee.Top := lblCaption.Top + lblCaption.Height + 8;
   fMarquee.Height := 13;
 end;
