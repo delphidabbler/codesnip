@@ -40,6 +40,10 @@ Res\HTML\dlg-activetext-preview-tplt.html
 # news dialogue
 Res\HTML\dlg-rssnews.html
 
+# SWAG import dialogue
+Res\HTML\dlg-swag-import-intro.html
+Res\HTML\dlg-swag-import-outro-tplt.html
+
 
 # Detail pane pages, scripts and CSS
 # ==================================
