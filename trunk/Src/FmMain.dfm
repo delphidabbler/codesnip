@@ -893,6 +893,14 @@ inherited MainForm: TMainForm
       Hint = 'Move User Database|Move the user database to a new directory'
       OnExecute = actMoveUserDatabaseExecute
     end
+    object actSWAGImport: TAction
+      Category = 'Snippets'
+      Caption = 'Import Snippets From SWAG...'
+      Hint = 
+        'Import Snippets From SWAG|Import one or more snippets from the o' +
+        'nline SWAG database'
+      OnExecute = actSWAGImportExecute
+    end
   end
   object mnuMain: TMainMenu
     Images = ilMain
@@ -1071,6 +1079,9 @@ inherited MainForm: TMainForm
       end
       object miImportCode: TMenuItem
         Action = actImportCode
+      end
+      object miSWAGImport: TMenuItem
+        Action = actSWAGImport
       end
       object miSpacer14: TMenuItem
         Caption = '-'

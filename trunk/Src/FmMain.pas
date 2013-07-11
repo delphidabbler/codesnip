@@ -93,6 +93,7 @@ type
     actSelectAll: TAction;
     actSelectSnippets: TAction;
     actSubmit: TAction;
+    actSWAGImport: TAction;
     actTestBug: TAction;
     actTestCompile: TAction;
     actUpdateDbase: TAction;
@@ -195,6 +196,7 @@ type
     miSpacer19: TMenuItem;
     miSpacer20: TMenuItem;
     miSubmit: TMenuItem;
+    miSWAGImport: TMenuItem;
     miTestCompile: TMenuItem;
     miTools: TMenuItem;
     miUpdateDbase: TMenuItem;
@@ -448,6 +450,10 @@ type
     ///  <summary>Determines whether the Submit or ExportCode actions can be
     ///  enabled.</summary>
     procedure ActSubmitOrExportUpdate(Sender: TObject);
+    ///  <summary>Displays the SWAG import dialogue box that enables the user to
+    ///  import snippets from the SWAG database into the user-defined database.
+    ///  </summary>
+    procedure actSWAGImportExecute(Sender: TObject);
     ///  <summary>Generates an exception that simulates an uncaught exception.
     ///  </summary>
     ///  <exception>EBug exception always raised.</exception>
@@ -1129,6 +1135,11 @@ end;
 procedure TMainForm.ActSubmitOrExportUpdate(Sender: TObject);
 begin
   (Sender as TAction).Enabled := TCodeShareMgr.CanShare;
+end;
+
+procedure TMainForm.actSWAGImportExecute(Sender: TObject);
+begin
+  fDialogMgr.ShowSWAGImportDlg;
 end;
 
 procedure TMainForm.actTestBugExecute(Sender: TObject);
