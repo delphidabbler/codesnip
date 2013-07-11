@@ -21,7 +21,7 @@ interface
 
 uses
   // Delphi
-  Classes, ExtCtrls, Forms, SyncObjs,
+  SysUtils, Classes, ExtCtrls, Forms, SyncObjs,
   // Project
   UBaseObjects;
 
@@ -35,6 +35,8 @@ type
   }
   TWaitForThreadUI = class(TNoPublicConstructObject)
   strict private
+    const DefaultPauseBeforeDisplay = 50;
+    const DefaultMinDisplayTime = 1000;
     var fThread: TThread;               // Thread to be executed
     var fForm: TForm;                   // Form to be displayed if required
     var fMinDisplayTimer: TTimer;       // Timer to delay closure of form
@@ -94,11 +96,26 @@ type
       {Object destructor. Tears down object.
       }
     class procedure Run(const AThread: TThread; const AForm: TForm;
-      const APauseBeforeDisplay: Cardinal = 50;
-      const AMinDisplayTime: Cardinal = 1000);
+      const APauseBeforeDisplay: Cardinal = DefaultPauseBeforeDisplay;
+      const AMinDisplayTime: Cardinal = DefaultMinDisplayTime); overload;
       {Creates and executes a TWaitForThreadUI object that executes a thread,
       displaying dialog box if necessary.
         @param AThread [in] Thread to be executed.
+        @param AForm [in] Form to be displayed while thread executes.
+        @param APauseBeforeDisplay [in] Time thread given to execute before form
+          is displayed (optional)
+        @param AMinDisplayTime [in] Minimum time to display form (optional).
+      }
+    class procedure Run(const AProc: TProc; const AIsThreadSafe: Boolean;
+      const AForm: TForm;
+      const APauseBeforeDisplay: Cardinal = DefaultPauseBeforeDisplay;
+      const AMinDisplayTime: Cardinal = DefaultMinDisplayTime); overload;
+      {Creates and executes a TWaitForThreadUI object that executes a closure in
+      a thread, displaying dialog box if necessary.
+        @param AProc [in] Closure to be executed in thread.
+        @param AIsThreadSage [in] Indicates if AProc is thread safe. If True
+          AProc is excuted in context of thread. If False closure is executed
+          in context of main thread.
         @param AForm [in] Form to be displayed while thread executes.
         @param APauseBeforeDisplay [in] Time thread given to execute before form
           is displayed (optional)
@@ -111,10 +128,31 @@ implementation
 
 
 uses
-  // Delphi
-  SysUtils,
   // Project
   UExceptions, UUtils;
+
+
+type
+  ///  <summary>Thread class that executes a given closure.</summary>
+  TProcThread = class(TThread)
+  strict private
+    var
+      ///  <summary>Closure to executed.</summary>
+      fProc: TProc;
+      ///  <summary>Flag indicating if closure is thread safe.</summary>
+      fProcIsThreadSafe: Boolean;
+  strict protected
+    ///  <summary>Executes closure from thread.</summary>
+    procedure Execute; override;
+  public
+    ///  <summary>Constructs a new, suspended, thread instance.</summary>
+    ///  <param name="Proc">TProc [in] Closure to be executed by thread.</param>
+    ///  <param name="ProcIsThreadSafe">Boolean [in] Flag indicating if Proc is
+    ///  thread safe or not.</param>
+    ///  <remarks>If Proc is not thread safe it is executed in the context of
+    ///  the main thread.</remarks>
+    constructor Create(const Proc: TProc; const ProcIsThreadSafe: Boolean);
+  end;
 
 
 { TWaitForThreadUI }
@@ -244,6 +282,31 @@ begin
   UUtils.Pause(fPauseBeforeDisplay);
 end;
 
+class procedure TWaitForThreadUI.Run(const AProc: TProc;
+  const AIsThreadSafe: Boolean; const AForm: TForm;
+  const APauseBeforeDisplay, AMinDisplayTime: Cardinal);
+  {Creates and executes a TWaitForThreadUI object that executes a closure in a
+  thread, displaying dialog box if necessary.
+    @param AProc [in] Closure to be executed in thread.
+    @param AIsThreadSage [in] Indicates if AProc is thread safe. If True AProc
+      is excuted in context of thread. If False closure is executed in context
+      of main thread.
+    @param AForm [in] Form to be displayed while thread executes.
+    @param APauseBeforeDisplay [in] Time thread given to execute before form is
+      displayed (optional)
+    @param AMinDisplayTime [in] Minimum time to display form (optional).
+  }
+var
+  ProcThread: TProcThread;  // thread used to execute AProc
+begin
+  ProcThread := TProcThread.Create(AProc, AIsThreadSafe);
+  try
+    Run(ProcThread, AForm, APauseBeforeDisplay, AMinDisplayTime);
+  finally
+    ProcThread.Free;
+  end;
+end;
+
 class procedure TWaitForThreadUI.Run(const AThread: TThread;
   const AForm: TForm; const APauseBeforeDisplay, AMinDisplayTime: Cardinal);
   {Creates and executes a TWaitForThreadUI object that executes a thread,
@@ -305,6 +368,25 @@ begin
   CloseForm;
   if Assigned(fSaveOnTerminate) then
     fSaveOnTerminate(fThread);
+end;
+
+{ TProcThread }
+
+constructor TProcThread.Create(const Proc: TProc;
+  const ProcIsThreadSafe: Boolean);
+begin
+  Assert(Assigned(Proc), ClassName + '.Create: Proc is nil');
+  inherited Create(True);
+  fProc := Proc;
+  fProcIsThreadSafe := ProcIsThreadSafe;
+end;
+
+procedure TProcThread.Execute;
+begin
+  if fProcIsThreadSafe then
+    fProc
+  else
+    Synchronize(procedure begin fProc; end);
 end;
 
 end.
