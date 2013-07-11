@@ -25,6 +25,7 @@ uses
   // Project
   SWAG.UCommon,
   SWAG.USnippetCache,
+  UExceptions,
   Web.USWAGRESTMgr;
 
 
@@ -42,6 +43,10 @@ type
       fSWAGRESTMgr: TSWAGRESTMgr;
       fDefaultCallWrapper: TSWAGRESTCallWrapper;
       fSnippetCache: TSWAGSnippetCache;
+    procedure HandleException(E: Exception);
+    procedure DoFetchCategories(const Cats: TList<TSWAGCategory>);
+    procedure DoFetchSnippets(const CatID: string;
+      const SnipList: TList<TSWAGSnippet>);
     function DoFetchFullSnippet(const SnipID: Cardinal): TSWAGSnippet;
     procedure FetchCategories(CallWrapper: TSWAGRESTCallWrapper);
     procedure FetchSnippets(const CatID: string;
@@ -66,13 +71,18 @@ type
       Snippets: TList<TSWAGSnippet>; CallWrapper: TSWAGRESTCallWrapper = nil);
   end;
 
+type
+  ESWAGReader = class(ECodeSnip);
+
 
 implementation
 
 
 uses
   // Project
-  UComparers;
+  UComparers,
+  UConsts,
+  Web.UExceptions;
 
 
 { TSWAGReader }
@@ -100,16 +110,39 @@ begin
   inherited;
 end;
 
+procedure TSWAGReader.DoFetchCategories(const Cats: TList<TSWAGCategory>);
+begin
+  try
+    fSWAGRESTMgr.GetCategories(Cats);
+  except
+    HandleException(ExceptObject as Exception);
+  end;
+end;
+
 function TSWAGReader.DoFetchFullSnippet(const SnipID: Cardinal): TSWAGSnippet;
 begin
-  fSWAGRESTMgr.GetSnippet(
-    SnipID,
-    [
-      'id', 'category', 'file_name', 'datestamp', 'title', 'author',
-      'source_code', 'is_document'
-    ],
-    Result
-  );
+  try
+    fSWAGRESTMgr.GetSnippet(
+      SnipID,
+      [
+        'id', 'category', 'file_name', 'datestamp', 'title', 'author',
+        'source_code', 'is_document'
+      ],
+      Result
+    );
+  except
+    HandleException(ExceptObject as Exception);
+  end;
+end;
+
+procedure TSWAGReader.DoFetchSnippets(const CatID: string;
+  const SnipList: TList<TSWAGSnippet>);
+begin
+  try
+    fSWAGRESTMgr.GetSnippets(CatID, ['id', 'title'], SnipList);
+  except
+    HandleException(ExceptObject as Exception);
+  end;
 end;
 
 procedure TSWAGReader.FetchCategories(CallWrapper: TSWAGRESTCallWrapper);
@@ -125,7 +158,7 @@ begin
     begin
       CatList := TList<TSWAGCategory>.Create;
       try
-        fSWAGRESTMgr.GetCategories(CatList);
+        DoFetchCategories(CatList);
         for Cat in CatList do
           fCategories.Add(Cat);
       finally
@@ -182,7 +215,7 @@ begin
       SnipList: TList<TSWAGSnippet>;
     begin
       SnipList := TList<TSWAGSnippet>.Create;
-      fSWAGRESTMgr.GetSnippets(CatID, ['id', 'title'], SnipList);
+      DoFetchSnippets(CatID, SnipList);
       fSnippetsByCategory.Add(CatID, SnipList);
     end
   );
@@ -268,6 +301,34 @@ begin
     FetchSnippets(CatID, CallWrapper);
   for Snippet in fSnippetsByCategory[CatID] do
     Snippets.Add(Snippet);
+end;
+
+procedure TSWAGReader.HandleException(E: Exception);
+resourcestring
+  sHTTPError = 'The SWAG web server returned the following error:'
+    + EOL2
+    + '%s';
+  sWebTransmissionError = 'The data received from the SWAG web service was '
+    + 'corrupt';
+  sWebServiceFailure = 'The following error was detected in the response '
+    + 'received from the SWAG web service:'
+    + EOL2
+    + '%s';
+  sWebServiceError = 'The SWAG web service reported the following error:'
+    + EOL2
+    + '%s';
+begin
+  if E is EHTTPError then
+    raise ESWAGReader.CreateFmt(sHTTPError, [E.Message]);
+  if E is EWebConnectionError then
+    raise ESWAGReader.Create(E);
+  if E is EWebTransmissionError then
+    raise ESWAGReader.Create(sWebTransmissionError);
+  if E is EWebServiceFailure then
+    raise ESWAGReader.CreateFmt(sWebServiceFailure, [E.Message]);
+  if E is EWebServiceError then
+    raise ESWAGReader.CreateFmt(sWebServiceError, [E.Message]);
+  raise E;
 end;
 
 end.
