@@ -40,7 +40,8 @@ type
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormCreate(Sender: TObject);
   strict private
-    fMarquee: TMarquee; // Custom marquee component instance
+    fMarquee: TMarquee;     // Custom marquee component instance
+    fFreeOnClose: Boolean;  // Whether form should free itself on closure
     procedure CMTextChanged(var Msg: TMessage); message CM_TEXTCHANGED;
       {Triggered when form's caption is set. Displays form caption in
       lblCaption.
@@ -58,6 +59,14 @@ type
       }
     procedure InitForm; override;
       {Sets hourglass cursor and starts marquee when form is shown.
+      }
+  public
+    class function CreateAutoFree(AOwner: TComponent;
+      const ACaption: string): TWaitDlg;
+      {Creates an instance of the wait dialogue box with a given caption which
+      frees itself when the dialogue box is closed.
+        @param AOwner [in] Component that owns the dialogue box.
+        @param ACaption [in] Caption to be displayed in dialogue box.
       }
   end;
 
@@ -84,6 +93,19 @@ procedure TWaitDlg.CMTextChanged(var Msg: TMessage);
 begin
   inherited;
   lblCaption.Caption := Text;
+end;
+
+class function TWaitDlg.CreateAutoFree(AOwner: TComponent;
+  const ACaption: string): TWaitDlg;
+  {Creates an instance of the wait dialogue box with a given caption which frees
+  itself when the dialogue box is closed.
+    @param AOwner [in] Component that owns the dialogue box.
+    @param ACaption [in] Caption to be displayed in dialogue box.
+  }
+begin
+  Result := TWaitDlg.Create(AOwner);
+  Result.Caption := ACaption;
+  Result.fFreeOnClose := True;
 end;
 
 procedure TWaitDlg.CustomiseForm;
@@ -115,6 +137,8 @@ begin
   inherited;
   fMarquee.Stop;
   Screen.Cursor := crDefault;
+  if fFreeOnClose then
+    Action := caFree;
 end;
 
 procedure TWaitDlg.FormCreate(Sender: TObject);
