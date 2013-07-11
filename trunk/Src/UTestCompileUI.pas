@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2008-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2008-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -47,9 +47,9 @@ type
   public
     class procedure Execute(const AOwner: TComponent;
       const ACompilers: ICompilers; const ASnippet: TSnippet);
-      {Test compiles a snippet in a thread and displays a wait dialog if
+      {Test compiles a snippet in a thread and displays a wait dialogue if
       compilation takes some time.
-        @param AOwner [in] Control that owns the wait dialog box. Dialog is
+        @param AOwner [in] Control that owns the wait dialogue box. Dialogue is
           aligned over this control.
         @param ACompilers [in] Compilers object used to perform compilation.
         @param ASnippet [in] Snippet to be compiled.
@@ -72,37 +72,33 @@ uses
 
 class procedure TTestCompileUI.Execute(const AOwner: TComponent;
   const ACompilers: ICompilers; const ASnippet: TSnippet);
-  {Test compiles a snippet in a thread and displays a wait dialog if compilation
-  takes some time.
-    @param AOwner [in] Control that owns the wait dialog box. Dialog is aligned
-      over this control.
+  {Test compiles a snippet in a thread and displays a wait dialogue if
+  compilation takes some time.
+    @param AOwner [in] Control that owns the wait dialogue box. Dialogue is
+      aligned over this control.
     @param ACompilers [in] Compilers object used to perform compilation.
     @param ASnippet [in] Snippet to be compiled.
   }
 resourcestring
-  // Caption for wait dialog
+  // Caption for wait dialogue
   sWaitCaption = 'Compiling...';
 var
-  WaitDlg: TWaitDlg;                // dialog box to display while compiling
   CompThread: TTestCompileThread;   // thread that performs test compilation
 begin
-  CompThread := nil;
-  // Set up dialog that may be displayed while compiling
-  WaitDlg := TWaitDlg.Create(AOwner);
+  CompThread := TTestCompileThread.Create(ACompilers, ASnippet);
   try
-    WaitDlg.Caption := sWaitCaption;
-    // Do the compilation
-    CompThread := TTestCompileThread.Create(ACompilers, ASnippet);
     try
       TWaitForThreadUI.Run( // this blocks until thread completes
-        CompThread, WaitDlg, PauseBeforeDisplay, MinDisplayTime
+        CompThread,
+        TWaitDlg.CreateAutoFree(AOwner, sWaitCaption),
+        PauseBeforeDisplay,
+        MinDisplayTime
       );
     except
       HandleException(ExceptObject as Exception);
     end;
   finally
     CompThread.Free;
-    WaitDlg.Free;
   end;
 end;
 
