@@ -256,7 +256,6 @@ var
   Idx: Integer;
   N: Integer;
   Snippets: TList<TSWAGSnippet>;
-  Snippet: TSWAGSnippet;
 begin
   CatIdx := lbCategories.ItemIndex;
   if CatIdx = -1 then
@@ -275,12 +274,11 @@ begin
     try
       fCurrentCatSnippets.Clear;
       clbSelectSnippets.Clear;
-      // We use two loops here because fCurrentCatSnippets is a sorted list
-      // which means indices of new items added are not sequential, and we must
-      // have displayed title at same index in clbSelectSnippets as its snippet
-      // is in fCurrentCatSnippets.
-      for Snippet in Snippets do
-        fCurrentCatSnippets.Add(Snippet);
+      // We set fCurrentCatSnippets first because it is a sorted list which
+      // means indices of new items added are not sequential, and we must have
+      // displayed title at same index in clbSelectSnippets as its snippet is in
+      // fCurrentCatSnippets.
+      fCurrentCatSnippets.AddRange(Snippets);
       for Idx := 0 to Pred(fCurrentCatSnippets.Count) do
       begin
         N := clbSelectSnippets.Items.Add(fCurrentCatSnippets[Idx].Title);
@@ -324,7 +322,6 @@ end;
 
 procedure TSWAGImportDlg.InitSelectionPage;
 var
-  Cat: TSWAGCategory;
   Cats: TList<TSWAGCategory>;
   Idx: Integer;
 begin
@@ -337,14 +334,11 @@ begin
     fSWAGReader.GetCategories(Cats);
     lbCategories.Items.BeginUpdate;
     try
-      // We use two loops here because fSortedCategories is a sorted list which
-      // means indices of new items added are not sequential, and we must have
+      // We set fSortedCategories first because it is a sorted list which means
+      // indices of new items added are not sequential, and we must have
       // displayed title at same index in lbCategories as its category is in
       // fSortedCategories.
-      { TODO: Add method to add TEnumerable<T> to TSortedList<T> in UContainers
-              then refactor out a lot of loops like the following }
-      for Cat in Cats do
-        fSortedCategories.Add(Cat);
+      fSortedCategories.AddRange(Cats);
       for Idx := 0 to Pred(fSortedCategories.Count) do
         lbCategories.Items.Add(fSortedCategories[Idx].Title);
       lbCategories.ItemIndex := -1;
