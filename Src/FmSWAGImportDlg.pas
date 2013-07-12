@@ -228,7 +228,7 @@ begin
   pcWizard.ActivePage := tsFinish;
   frmOutro.Initialise(
     'dlg-swag-import-outro-tplt.html',
-    procedure(Tplt: THTMLTemplate)
+    procedure (Tplt: THTMLTemplate)
     begin
       Tplt.ResolvePlaceholderText(
         'SWAGCategory',
@@ -270,7 +270,7 @@ begin
   fCurrentCatID := fSortedCategories[CatIdx].ID;
   Snippets := TList<TSWAGSnippet>.Create;
   try
-    fSWAGReader.GetSnippets(fCurrentCatID, Snippets);
+    fSWAGReader.GetPartialSnippets(fCurrentCatID, Snippets);
     clbSelectSnippets.Items.BeginUpdate;
     try
       fCurrentCatSnippets.Clear;
@@ -373,13 +373,13 @@ begin
     for PartialSnippet in fSelectedSnippets do
       SnipIDs.Add(PartialSnippet.ID);
     FullSnippets := TList<TSWAGSnippet>.Create;
-    fSWAGReader.GetFullSnippets(
+    fSWAGReader.GetCompleteSnippets(
       SnipIDs,
       FullSnippets,
       procedure (CallProc: TProc)
-        begin
-          WaitWrapper(Self, CallProc, sWaitMsg);
-        end
+      begin
+        WaitWrapper(Self, CallProc, sWaitMsg);
+      end
     );
     fImporter.Reset;
     for Snippet in FullSnippets do
@@ -499,12 +499,12 @@ begin
   if SelIdx = -1 then
     Exit;
   PartialSnippet := fCurrentCatSnippets[SelIdx];
-  FullSnippet := fSWAGReader.GetSnippet(
+  FullSnippet := fSWAGReader.GetCompleteSnippet(
     PartialSnippet.ID,
     procedure (CallProc: TProc)
-      begin
-        WaitWrapper(Self, CallProc, sWaitMsg);
-      end
+    begin
+      WaitWrapper(Self, CallProc, sWaitMsg);
+    end
   );
   // TODO: Display snippet as HTML, highlighted if necessary
   Content := Format(
