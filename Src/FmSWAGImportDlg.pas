@@ -27,6 +27,7 @@ uses
   Forms,
   ExtCtrls,
   Classes,
+  Generics.Collections,
   // Project
   FmWizardDlg,
   FrBrowserBase,
@@ -88,6 +89,8 @@ type
 
     procedure PreviewSelectedSnippet;
 
+    procedure GetImportSnippets(const SnipList: TList<TSWAGSnippet>);
+
     procedure UpdateDatabase;
 
     procedure WaitWrapper(AOwner: TComponent; const CallProc: TProc;
@@ -134,7 +137,6 @@ implementation
 uses
   // Delphi
   Generics.Defaults,
-  Generics.Collections,
   Windows,
   // Project
   FmPreviewDlg,
@@ -305,6 +307,30 @@ begin
     end;
 end;
 
+procedure TSWAGImportDlg.GetImportSnippets(const SnipList: TList<TSWAGSnippet>);
+var
+  SnipIDs: TList<Cardinal>;
+  PartialSnippet: TSWAGSnippet;
+resourcestring
+  sWaitMsg = 'Downloading Snippets From SWAG...';
+begin
+  SnipIDs := TList<Cardinal>.Create;
+  try
+    for PartialSnippet in fSelectedSnippets do
+      SnipIDs.Add(PartialSnippet.ID);
+    fSWAGReader.GetCompleteSnippets(
+      SnipIDs,
+      SnipList,
+      procedure (CallProc: TProc)
+      begin
+        WaitWrapper(Self, CallProc, sWaitMsg);
+      end
+    );
+  finally
+    SnipIDs.Free;
+  end;
+end;
+
 function TSWAGImportDlg.HeadingText(const PageIdx: Integer): string;
 resourcestring
   sIntroPageHeading = 'Import snippets from SWAG';
@@ -352,8 +378,6 @@ end;
 
 procedure TSWAGImportDlg.InitUpdatePage;
 var
-  SnipIDs: TList<Cardinal>;
-  PartialSnippet: TSWAGSnippet;
   FullSnippets: TList<TSWAGSnippet>;
   Snippet: TSWAGSnippet;
 resourcestring
@@ -361,26 +385,14 @@ resourcestring
 begin
   // TODO: Refactor out into GetImportSnippets
   Application.ProcessMessages;
-  FullSnippets := nil;
-  SnipIDs := TList<Cardinal>.Create;
+  FullSnippets := TList<TSWAGSnippet>.Create;
   try
-    for PartialSnippet in fSelectedSnippets do
-      SnipIDs.Add(PartialSnippet.ID);
-    FullSnippets := TList<TSWAGSnippet>.Create;
-    fSWAGReader.GetCompleteSnippets(
-      SnipIDs,
-      FullSnippets,
-      procedure (CallProc: TProc)
-      begin
-        WaitWrapper(Self, CallProc, sWaitMsg);
-      end
-    );
+    GetImportSnippets(FullSnippets);
     fImporter.Reset;
     for Snippet in FullSnippets do
       fImporter.IncludeSnippet(Snippet);
   finally
     FullSnippets.Free;
-    SnipIDs.Free;
   end;
   PopulateImportsLV;
 end;
