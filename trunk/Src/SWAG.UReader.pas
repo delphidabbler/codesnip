@@ -152,14 +152,12 @@ begin
   CallWrapper(
     procedure
     var
-      Cat: TSWAGCategory;
       CatList: TList<TSWAGCategory>;
     begin
       CatList := TList<TSWAGCategory>.Create;
       try
         DownloadCategories(CatList);
-        for Cat in CatList do
-          fCategories.Add(Cat);
+        fCategories.AddRange(CatList);
       finally
         CatList.Free;
       end
@@ -222,13 +220,10 @@ end;
 
 procedure TSWAGReader.GetCategories(const Cats: TList<TSWAGCategory>;
   CallWrapper: TSWAGRESTCallWrapper);
-var
-  Cat: TSWAGCategory;
 begin
   if fCategories.Count = 0 then
     FetchCategories(CallWrapper);
-  for Cat in fCategories do
-    Cats.Add(Cat);
+  Cats.AddRange(fCategories);
 end;
 
 function TSWAGReader.GetCompleteSnippet(const ID: Cardinal;
@@ -281,13 +276,10 @@ end;
 
 procedure TSWAGReader.GetPartialSnippets(const CatID: string;
   const Snippets: TList<TSWAGSnippet>; CallWrapper: TSWAGRESTCallWrapper);
-var
-  Snippet: TSWAGSnippet;
 begin
   if not fSnippetsByCategory.ContainsKey(CatID) then
     FetchPartialSnippets(CatID, CallWrapper);
-  for Snippet in fSnippetsByCategory[CatID] do
-    Snippets.Add(Snippet);
+  Snippets.AddRange(fSnippetsByCategory[CatID]);
 end;
 
 procedure TSWAGReader.HandleException(E: Exception);
