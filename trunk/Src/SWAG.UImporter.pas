@@ -214,15 +214,13 @@ class function TSWAGImporter.MakeValidSnippetName(SWAGSnippetID: Cardinal):
 var
   Appendix: Integer;
   RootName: string;
-  Dummy: string;
 begin
   RootName := 'SWAG_' + IntToStr(SWAGSnippetID);
   Assert(IsValidIdent(RootName, False), ClassName
     + '.GetValidSnippetName: RootName is not a valid Pascal identifier');
   Result := RootName;
   Appendix := 0;
-  // TODO: Create TSnippetValidator.ValidateName overload with no error message
-  while not TSnippetValidator.ValidateName(Result, True, Dummy) do
+  while not TSnippetValidator.ValidateName(Result, True) do
   begin
     Inc(Appendix);
     Result := RootName + '_' + IntToStr(Appendix);
