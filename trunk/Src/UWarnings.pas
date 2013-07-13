@@ -381,8 +381,7 @@ begin
     )
   );
   try
-    for W in fItems do
-      SortedList.Add(W);
+    SortedList.AddRange(fItems);
     SortedList.Sort;
 
     // Generate the source code
