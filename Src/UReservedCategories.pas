@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2009-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2009-2012, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -57,8 +57,7 @@ type
       }
   public
     const UserCatID = 'user';       // default category for user snippets
-    const ImportsCatID = 'imports'; // category for imported user snippets
-    const SWAGCatID = '_swag_';     // category for imported SWAG snippets
+    const ImportsCatID = 'imports'; // category where imported snippets placed
     class function IsReserved(const Cat: TCategory): Boolean;
       {Checks if a category is reserved.
         @param Cat [in] Category to be checked.
@@ -90,14 +89,12 @@ resourcestring
   // Default reserved category descriptions
   sUserDesc = 'User Defined Snippets';
   sImportsDesc = 'Imported Snippets';
-  sSWAGDesc = 'SWAG Imports';
 
 const
   // Maps reserved category ids onto info that describes category
-  cReservedCats: array[0..2] of TReservedCategoryInfo = (
+  cReservedCats: array[0..1] of TReservedCategoryInfo = (
     (Name: TReservedCategories.UserCatID;     Data: (Desc: sUserDesc)),
-    (Name: TReservedCategories.ImportsCatID;  Data: (Desc: sImportsDesc)),
-    (Name: TReservedCategories.SWAGCatID;     Data: (Desc: sSWAGDesc))
+    (Name: TReservedCategories.ImportsCatID;  Data: (Desc: sImportsDesc))
   );
 
 { TReservedCategories }

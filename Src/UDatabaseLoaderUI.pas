@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2010-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2010-2012, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -64,20 +64,24 @@ class procedure TDatabaseLoaderUI.Execute(AOwner: TComponent);
       over this control.
   }
 resourcestring
-  sLoadingDatabase  = 'Loading database...';  // wait dialogue caption
+  sLoadingDatabase  = 'Loading database...';  // wait dialog caption
 var
+  WaitDlg: TWaitDlg;                  // dialog box to display while compiling
   LoadThread: TDatabaseLoaderThread;  // thread that loads database
 begin
-  LoadThread := TDatabaseLoaderThread.Create;
+  LoadThread := nil;
+  // Set up dialog that may be displayed while compiling
+  WaitDlg := TWaitDlg.Create(AOwner);
   try
+    WaitDlg.Caption := sLoadingDatabase;
+    // Load the database
+    LoadThread := TDatabaseLoaderThread.Create;
     TWaitForThreadUI.Run( // this blocks until thread completes
-      LoadThread,
-      TWaitDlg.CreateAutoFree(AOwner, sLoadingDatabase),
-      PauseBeforeDisplay,
-      MinDisplayTime
+      LoadThread, WaitDlg, PauseBeforeDisplay, MinDisplayTime
     );
   finally
     LoadThread.Free;
+    WaitDlg.Free;
   end;
 end;
 

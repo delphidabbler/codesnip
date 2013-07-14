@@ -238,9 +238,6 @@
 			<DCCReference Include="FmSplash.pas">
 				<Form>SplashForm</Form>
 			</DCCReference>
-			<DCCReference Include="FmSWAGImportDlg.pas">
-				<Form>SWAGImportDlg</Form>
-			</DCCReference>
 			<DCCReference Include="FmTestCompileDlg.pas">
 				<Form>TestCompileDlg</Form>
 			</DCCReference>
@@ -409,10 +406,6 @@
 			<DCCReference Include="Notifications.UQueue.pas"/>
 			<DCCReference Include="Notifications.URecorderThread.pas"/>
 			<DCCReference Include="Notifications.UWindow.pas"/>
-			<DCCReference Include="SWAG.UCommon.pas"/>
-			<DCCReference Include="SWAG.UImporter.pas"/>
-			<DCCReference Include="SWAG.UReader.pas"/>
-			<DCCReference Include="SWAG.USnippetCache.pas"/>
 			<DCCReference Include="UActionFactory.pas"/>
 			<DCCReference Include="UAnchors.pas"/>
 			<DCCReference Include="UAppInfo.pas"/>
@@ -622,7 +615,6 @@
 			<DCCReference Include="Web.UProgramUpdateMgr.pas"/>
 			<DCCReference Include="Web.URegistrar.pas"/>
 			<DCCReference Include="Web.UStdWebService.pas"/>
-			<DCCReference Include="Web.USWAGRESTMgr.pas"/>
 			<DCCReference Include="Web.UXMLRequestor.pas"/>
 			<None Include="CodeSnip.todo"/>
 			<BuildConfiguration Include="Base">

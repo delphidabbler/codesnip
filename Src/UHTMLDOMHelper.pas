@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2007-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2007-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -90,13 +90,6 @@ type
     class procedure FocusElem(const Elem: IDispatch);
       {Focusses an HTML element. Does nothing if element is not valid.
         @param Elem [in] IDispatch interface to HTML element to be focussed.
-      }
-    class procedure ScrollTo(const Doc: IDispatch; const X, Y: Integer);
-      {Scrolls an HTML document to specified co-ordinates. Does nothing if
-      document not valid or has no window.
-        @param Doc [in] IDispatch interface to HTML document.
-        @param X [in] X scroll co-ordinate.
-        @param Y [in] Y scroll co-ordinate.
       }
     class procedure SetInnerHTML(const Elem: IDispatch; const HTML: string);
       {Sets HTML contained by an HTML element. Does nothing if element is not
@@ -421,22 +414,6 @@ begin
     GetIntf((Doc as IHTMLDocument2).parentWindow, IHTMLWindow2, Result)
   else
     Result := nil;
-end;
-
-class procedure THTMLDOMHelper.ScrollTo(const Doc: IDispatch; const X,
-  Y: Integer);
-  {Scrolls an HTML document to specified co-ordinates. Does nothing if document
-  not valid or has no window.
-    @param Doc [in] IDispatch interface to HTML document.
-    @param X [in] X scroll co-ordinate.
-    @param Y [in] Y scroll co-ordinate.
-  }
-var
-  Wdw: IHTMLWindow2;  // reference to document's parent window
-begin
-  Wdw := ParentWindow(Doc);
-  if Assigned(Wdw) then
-    Wdw.scroll(X, Y);
 end;
 
 class procedure THTMLDOMHelper.SetInnerHTML(const Elem: IDispatch;

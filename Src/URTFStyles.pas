@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2012-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2012, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -174,14 +174,13 @@ end;
 class operator TRTFParaSpacing.Equal(const Left,
   Right: TRTFParaSpacing): Boolean;
 begin
-  Result := SameValue(Left.Before, Right.Before) and
-    SameValue(Left.After, Right.After);
+  Result := (Left.Before = Right.Before) and (Left.After = Right.After);
 end;
 
 class operator TRTFParaSpacing.NotEqual(const Left,
   Right: TRTFParaSpacing): Boolean;
 begin
-  Result := not (Left = Right);
+  Result := (Left.Before <> Right.Before) or (Left.After <> Right.After);
 end;
 
 { TRTFStyle }

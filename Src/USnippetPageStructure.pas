@@ -154,10 +154,13 @@ begin
 end;
 
 procedure TSnippetPageStructure.Assign(const Src: TSnippetPageStructure);
+var
+  Part: TSnippetPagePart;
 begin
   Assert(Assigned(Src), ClassName + '.Assign: Src is nil');
   Clear;
-  fParts.AddRange(Src.fParts);
+  for Part in Src.fParts do
+    fParts.Add(Part);
   fKind := Src.fKind;
 end;
 
@@ -185,8 +188,12 @@ begin
 end;
 
 function TSnippetPageStructure.GetParts: TArray<TSnippetPagePart>;
+var
+  Idx: Integer;
 begin
-  Result := fParts.ToArray;
+  SetLength(Result, fParts.Count);
+  for Idx := 0 to Pred(fParts.Count) do
+    Result[Idx] := fParts[Idx];
 end;
 
 function TSnippetPageStructure.HasPart(PartId: TSnippetPagePartId): Boolean;

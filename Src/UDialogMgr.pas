@@ -160,9 +160,6 @@ type
 
     ///  <summary>Displays the Check For Program Updates dialogue box.</summary>
     procedure ShowProgramUpdatesDlg;
-
-    ///  <summary>Displays the SWAG Import Wizard dialogue box.</summary>
-    procedure ShowSWAGImportDlg;
   end;
 
 
@@ -176,7 +173,7 @@ uses
   FmAboutDlg, FmDBUpdateDlg, FmDependenciesDlg, FmDonateDlg, FmFindCompilerDlg,
   FmFindTextDlg, FmFindXRefsDlg, FmNewsDlg, FmPreferencesDlg, FmPrintDlg,
   FmProgramUpdatesDlg, FmProxyServerDlg, FmRegistrationDlg,
-  FmSelectionSearchDlg, FmSWAGImportDlg, FmTestCompileDlg, FmUserBugReportDlg,
+  FmSelectionSearchDlg, FmTestCompileDlg, FmUserBugReportDlg,
   UPageSetupDlgMgr, UTestUnitDlgMgr;
 
 
@@ -273,11 +270,6 @@ end;
 procedure TDialogMgr.ShowProgramUpdatesDlg;
 begin
   TProgramUpdatesDlg.Execute(Owner);
-end;
-
-procedure TDialogMgr.ShowSWAGImportDlg;
-begin
-  TSWAGImportDlg.Execute(Owner);
 end;
 
 procedure TDialogMgr.ShowTestCompileDlg(const CompileMgr: TCompileMgr;

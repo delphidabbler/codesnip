@@ -514,16 +514,23 @@ end;
 
 class procedure TUserDBWaitUI.RunThreadWithWaitDlg(const Thread: TThread;
   const DlgOwner: TComponent; const WaitCaption: string);
+var
+  WaitDlg: TWaitDlg;        // dialogue box to display while restoring
 begin
+  // Set up dialog that may be displayed while compiling
+  WaitDlg := TWaitDlg.Create(DlgOwner);
   try
-    TWaitForThreadUI.Run( // this blocks until thread completes
-      Thread,
-      TWaitDlg.CreateAutoFree(DlgOwner, WaitCaption),
-      PauseBeforeDisplay,
-      MinDisplayTime
-    );
-  except
-    raise TExceptionHelper.Clone(ExceptObject as Exception);
+    WaitDlg.Caption := WaitCaption;
+    // Do the compilation
+    try
+      TWaitForThreadUI.Run( // this blocks until thread completes
+        Thread, WaitDlg, PauseBeforeDisplay, MinDisplayTime
+      );
+    except
+      raise TExceptionHelper.Clone(ExceptObject as Exception);
+    end;
+  finally
+    WaitDlg.Free;
   end;
 end;
 

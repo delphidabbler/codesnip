@@ -200,7 +200,7 @@ function TBaseWebService.BuildURI(const ResourcePath: string;
 begin
   Result := fScriptURI;
   if ResourcePath <> '' then
-    Result := Result + '/' + ResourcePath;
+    Result := Result + '\' + ResourcePath;
   if Assigned(Params) and not Params.IsEmpty then
     Result := Result + '?' + Params.EncodedQueryString;
 end;

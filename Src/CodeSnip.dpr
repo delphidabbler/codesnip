@@ -135,7 +135,6 @@ uses
   FmSnippetsEditorDlg in 'FmSnippetsEditorDlg.pas' {SnippetsEditorDlg},
   FmSnippetsEditorDlg.FrActiveTextEditor in 'FmSnippetsEditorDlg.FrActiveTextEditor.pas' {SnippetsActiveTextEdFrame: TFrame},
   FmSplash in 'FmSplash.pas' {SplashForm},
-  FmSWAGImportDlg in 'FmSWAGImportDlg.pas' {SWAGImportDlg},
   FmTestCompileDlg in 'FmTestCompileDlg.pas' {TestCompileDlg},
   FmTrappedBugReportDlg in 'FmTrappedBugReportDlg.pas' {TrappedBugReportDlg},
   FmUserBugReportDlg in 'FmUserBugReportDlg.pas' {UserBugReportDlg},
@@ -194,10 +193,6 @@ uses
   Notifications.UQueue in 'Notifications.UQueue.pas',
   Notifications.URecorderThread in 'Notifications.URecorderThread.pas',
   Notifications.UWindow in 'Notifications.UWindow.pas',
-  SWAG.UCommon in 'SWAG.UCommon.pas',
-  SWAG.UImporter in 'SWAG.UImporter.pas',
-  SWAG.UReader in 'SWAG.UReader.pas',
-  SWAG.USnippetCache in 'SWAG.USnippetCache.pas',
   UActionFactory in 'UActionFactory.pas',
   UAnchors in 'UAnchors.pas',
   UAppInfo in 'UAppInfo.pas',
@@ -407,7 +402,6 @@ uses
   Web.UProgramUpdateMgr in 'Web.UProgramUpdateMgr.pas',
   Web.URegistrar in 'Web.URegistrar.pas',
   Web.UStdWebService in 'Web.UStdWebService.pas',
-  Web.USWAGRESTMgr in 'Web.USWAGRESTMgr.pas',
   Web.UXMLRequestor in 'Web.UXMLRequestor.pas';
 
 // Include resources

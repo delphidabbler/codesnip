@@ -71,7 +71,7 @@ uses
   // Project
   Compilers.UGlobals, Compilers.UCompilers, DB.UMain, DB.USnippet, UCSSUtils,
   UHTMLTemplate, UHTMLUtils, UJavaScriptUtils, UPreferences, UQuery,
-  USnippetHTML, USnippetPageHTML, UStrUtils;
+  UResourceUtils, USnippetHTML, USnippetPageHTML, UStrUtils;
 
 
 type
@@ -369,6 +369,7 @@ var
 
 begin
   UserDBCount := Database.Snippets.Count(True);
+  Tplt.ResolvePlaceholderText('ResourcePath', MakeResourcePath(HInstance));
   Tplt.ResolvePlaceholderHTML(
     'HaveUserDB', TCSS.BlockDisplayProp(UserDBCount > 0)
   );
@@ -451,6 +452,7 @@ procedure TSnippetInfoPageHTML.ResolvePlaceholders(const Tplt: THTMLTemplate);
 var
   SnippetHTML: TSnippetHTML;  // object used to generate HTML for snippet
 begin
+  Tplt.ResolvePlaceholderText('ResourcePath', MakeResourcePath(HInstance));
   if GetSnippet.UserDefined then
     Tplt.ResolvePlaceholderHTML('SnippetCSSClass', 'userdb')
   else
