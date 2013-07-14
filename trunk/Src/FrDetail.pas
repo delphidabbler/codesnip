@@ -70,10 +70,8 @@ type
     ///  <summary>Selects tab at given index and displays its associated view.
     ///  </summary>
     procedure InternalSelectTab(TabIdx: Integer);
-    ///  <summary>Displays given view in deatil view pane. If ForceReload is
-    ///  True then view is totally reloaded, otherwise it is displayed normally.
-    ///  </summary>
-    procedure InternalDisplay(View: IView; ForceReload: Boolean);
+    ///  <summary>Displays given view in deatil view pane.</summary>
+    procedure InternalDisplay(View: IView);
     ///  <summary>Deletes a tab at given index along with its associated view.
     ///  </summary>
     procedure InternalDeleteTab(TabIdx: Integer);
@@ -285,7 +283,7 @@ end;
 
 procedure TDetailFrame.Clear;
 begin
-  InternalDisplay(TViewFactory.CreateNulView, False);
+  InternalDisplay(TViewFactory.CreateNulView);
 end;
 
 procedure TDetailFrame.CloseMultipleTabs(const KeepSelected: Boolean);
@@ -350,7 +348,7 @@ function TDetailFrame.CreateTab(View: IView): Integer;
 begin
   Result := tcViews.Tabs.Add(View.Description);
   fViews.Add(View);
-  InternalDisplay(View, False); // stores View in fViews again
+  InternalDisplay(View); // stores View in fViews again
 end;
 
 destructor TDetailFrame.Destroy;
@@ -366,7 +364,7 @@ begin
   fViews[TabIdx] := TViewFactory.Clone(View);
   tcViews.Tabs[TabIdx] := View.Description;
   if TabIdx = SelectedTab then
-    InternalDisplay(fViews[TabIdx], False);
+    InternalDisplay(fViews[TabIdx]);
 end;
 
 function TDetailFrame.FindTab(ViewKey: IViewKey): Integer;
@@ -385,15 +383,15 @@ begin
   fViews.Delete(TabIdx);
 end;
 
-procedure TDetailFrame.InternalDisplay(View: IView; ForceReload: Boolean);
+procedure TDetailFrame.InternalDisplay(View: IView);
 begin
-  (frmDetailView as IViewItemDisplayMgr).Display(View, ForceReload);
+  (frmDetailView as IViewItemDisplayMgr).Display(View);
 end;
 
 procedure TDetailFrame.InternalSelectTab(TabIdx: Integer);
 begin
   tcViews.TabIndex := TabIdx;
-  InternalDisplay(SelectedView, False);  // SelectedView allows for TabIdx = -1
+  InternalDisplay(SelectedView);  // SelectedView allows for TabIdx = -1
 end;
 
 function TDetailFrame.IsEmptyTabSet: Boolean;
@@ -444,7 +442,7 @@ end;
 
 procedure TDetailFrame.Reload;
 begin
-  InternalDisplay(SelectedView, True);  // SelectedView allows for TabIdx = -1
+  InternalDisplay(SelectedView);  // SelectedView allows for TabIdx = -1
 end;
 
 procedure TDetailFrame.SelectAll;

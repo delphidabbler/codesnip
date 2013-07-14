@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -155,9 +155,8 @@ type
   ///  display of a view item in detail.</summary>
   IViewItemDisplayMgr = interface(IInterface)
     ['{1FE68233-1AD7-44C3-A6C0-3974E0C0455E}']
-    ///  <summary>Display detailed information about given view. Set Reload to
-    ///  to force display to be re-loaded.</summary>
-    procedure Display(View: IView; Reload: Boolean);
+    ///  <summary>Display detailed information about given view.</summary>
+    procedure Display(View: IView);
   end;
 
 
