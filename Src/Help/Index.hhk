@@ -384,6 +384,14 @@
     <param name="Local" value="HTML\task_submit.htm">
     </OBJECT>
   <LI> <OBJECT type="text/sitemap">
+    <param name="Name" value="SWAG database">
+    <param name="Local" value="HTML\about_swag.htm">
+    </OBJECT>
+  <LI> <OBJECT type="text/sitemap">
+    <param name="Name" value="SWAG import wizard">
+    <param name="Local" value="HTML\dlg_swagimport.htm">
+    </OBJECT>
+  <LI> <OBJECT type="text/sitemap">
     <param name="Name" value="syntax highlighter preferences">
     <param name="Local" value="HTML\dlg_prefs_hiliter.htm">
     </OBJECT>
