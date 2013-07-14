@@ -255,11 +255,6 @@ type
     procedure ClearSelection;
       {Clears any selected text in browser control.
       }
-    procedure ScrollTo(const X, Y: Integer);
-      {Scrolls document displayed in browser control to given co-ordinates.
-        @param X [in] X-coordinate
-        @param Y [in] Y-coordinate.
-      }
     function DocHeight: Integer;
       {Gets height of currently displayed document.
         @return Required height in pixels.
@@ -595,15 +590,6 @@ begin
   Result := inherited HideUI;
   if Assigned(fOnBrowserDeactivate) then
     fOnBrowserDeactivate(Self);
-end;
-
-procedure TWBUIMgr.ScrollTo(const X, Y: Integer);
-  {Scrolls document displayed in browser control to given co-ordinates.
-    @param X [in] X-coordinate
-    @param Y [in] Y-coordinate.
-  }
-begin
-  THTMLDOMHelper.ScrollTo(fWebBrowser.Document, X, Y);
 end;
 
 procedure TWBUIMgr.SelectAll;
