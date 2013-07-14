@@ -47,10 +47,6 @@ type
       ///  <summary>Generates and loads HTML representing a view into browser
       ///  control.</summary>
       fPageLoader: TDetailPageLoader;
-    ///  <summary>Scrolls browser control to top.</summary>
-    ///  <remarks>This method is used to ensure that newly loaded documents are
-    ///  not partially scrolled.</remarks>
-    procedure MoveToDocTop;
     ///  <summary>Handles web browser UI manager's OnMenuPopup event. Pops up
     ///  relevant menu if appropriate.</summary>
     ///  <param name="Sender">TObject [in] Not used.</param>
@@ -287,8 +283,6 @@ begin
     Supports(Query.LatestSearch.Filter, ITextSearchFilter, Filter)
     then
     HighlightSearchResults(Filter);
-  // Ensure top of newly loaded document is displayed
-  MoveToDocTop;
 end;
 
 procedure TDetailViewFrame.HighlightSearchResults(
@@ -321,11 +315,6 @@ begin
   // This frame only contains a browser control. So, if frame is interactive
   // if and only if browser control is active.
   Result := IsBrowserActive;
-end;
-
-procedure TDetailViewFrame.MoveToDocTop;
-begin
-  WBController.UIMgr.ScrollTo(0, 0);
 end;
 
 procedure TDetailViewFrame.PopupMenuHandler(Sender: TObject;
