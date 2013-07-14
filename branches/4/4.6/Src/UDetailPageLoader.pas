@@ -44,10 +44,7 @@ type
     ///  <summary>Loads an HTML representation of a view into a web browser
     ///  control.</summary>
     ///  <param name="View">IView [in] View to be displayed.</param>
-    ///  <param name="Reload">Boolean [in] Flag indicating whether HTML document
-    ///  is to be reloaded (True) or any existing document is to be re-used
-    ///  (False).</param>
-    procedure LoadPage(View: IView; const Reload: Boolean);
+    procedure LoadPage(View: IView);
   end;
 
 
@@ -86,7 +83,7 @@ begin
   end;
 end;
 
-procedure TDetailPageLoader.LoadPage(View: IView; const Reload: Boolean);
+procedure TDetailPageLoader.LoadPage(View: IView);
 var
   Generator: TDetailPageHTML; // object used to generate body's inner HTML
 begin
