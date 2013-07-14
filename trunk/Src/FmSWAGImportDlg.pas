@@ -335,7 +335,7 @@ function TSWAGImportDlg.HeadingText(const PageIdx: Integer): string;
 resourcestring
   sIntroPageHeading = 'Import snippets from SWAG';
   sSelectionPageHeading = 'Select required snippets';
-  sUpdatePage = 'Edit import and update database';
+  sUpdatePage = 'Ready to import';
   sFinishPage = 'Import complete';
 begin
   case PageIdx of
