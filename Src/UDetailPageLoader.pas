@@ -53,7 +53,7 @@ implementation
 
 uses
   // Project
-  UHTMLTemplate, UResourceUtils;
+  UConsts, UEncodings, UHTMLTemplate, UResourceUtils;
 
 
 { TDetailPageLoader }
@@ -74,6 +74,14 @@ begin
   try
     MainTplt.ResolvePlaceholderText(
       'ResourcePath', MakeResourcePath(HInstance)
+    );
+    // Need to load script this way this since linking to external resource
+    // script from detail.html doesn't seem to work in IE 9 (see bug report
+    // https://sourceforge.net/p/codesnip/bugs/84/).
+    MainTplt.ResolvePlaceholderText(
+      'Script', LoadResourceAsString(
+        HInstance, 'external.js', RT_HTML, etWindows1252
+      )
     );
     MainTplt.ResolvePlaceholderHTML('BodyContent', Generator.Generate);
     HTML := MainTplt.HTML;
