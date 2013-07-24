@@ -54,11 +54,6 @@ function StrPos(const Needle, Haystack: UnicodeString; const Offset: Integer):
 ///  Haystack or 0 if Needle is not in Haystack. Case sensitive.</summary>
 function StrLastPos(const Needle, Haystack: UnicodeString): Integer;
 
-///  <summary>Compares Left and Right strings, taking case into account. Returns
-///  0 if both strings are the same, -ve if Left is less than Right or +ve if
-///  Left is greater than Right.</summary>
-function StrCompareStr(const Left, Right: UnicodeString): Integer;
-
 ///  <summary>Compares Left and Right strings, ignoring case. Returns 0 if both
 ///  strings are the same, -ve if Left is less than Right or +ve if Left is
 ///  greater than Right.</summary>
@@ -336,11 +331,6 @@ begin
     else
       WantCapital := TCharacter.IsWhiteSpace(Result[Idx]);
   end;
-end;
-
-function StrCompareStr(const Left, Right: UnicodeString): Integer;
-begin
-  Result := SysUtils.AnsiCompareStr(Left, Right);
 end;
 
 function StrCompareText(const Left, Right: UnicodeString): Integer;

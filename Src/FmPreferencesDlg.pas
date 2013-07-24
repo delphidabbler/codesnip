@@ -276,8 +276,16 @@ end;
 
 class function TPreferencesDlg.Execute(AOwner: TComponent;
   out UpdateUI: Boolean): Boolean;
+var
+  FrameClasses: array of TPrefsFrameClass;  // array of preference frame classes
+  Idx: Integer;                             // loops through registered frames
 begin
-  Result := Execute(AOwner, fPages.ToArray, UpdateUI);
+  // Copy registered frame classes into dynamic array and pass this to
+  // constructor that accepts a list of frames classes.
+  SetLength(FrameClasses, fPages.Count);
+  for Idx := 0 to Pred(fPages.Count) do
+    FrameClasses[Idx] := fPages[Idx];
+  Result := Execute(AOwner, FrameClasses, UpdateUI);
 end;
 
 class function TPreferencesDlg.Execute(AOwner: TComponent;

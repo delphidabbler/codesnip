@@ -11,6 +11,11 @@
 ; Change Log for CodeSnip Release 4
 ; ------------------------------------------------------------------------------
 
+Release v4.6.4 of 24 July 2013
++ Fix for IE 9 related browser control script bugs introduced in v4.6.3 when IE 10 bugs were fixed:
+  - Bug #84 "Script errors on startup " (http://bit.ly/13bfaAL).
+  - Bug #85 "Check For Updates link " (http://bit.ly/1656pgE).
+
 Release v4.6.3 of 14 July 2013
 + Further fix for IE 10 related bug #75 "Floating point error in 4.4.1" (http://bit.ly/12zAWSp). Re-implemented method used to display content in main window's detail pane using the IE web browser control.
 

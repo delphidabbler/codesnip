@@ -209,13 +209,12 @@ release:
 # Clean up unwanted files
 clean:
   @cd ..
-  # remove unwanted files
+  # remove unwanted files: temps (~ or .~*), .dsk, .local, .identcache
   -@del /S *.~* 2>nul
   -@del /S ~* 2>nul
   -@del /S *.dsk 2>nul
   -@del /S *.local 2>nul
   -@del /S *.identcache 2>nul
-  -@del /S *.tvsconfig 2>nul
   # remove __history folders
   -@for /F "usebackq" %i in (`dir /S /B /A:D ..\__history`) do @rmdir /S /Q %i
   @cd Src
