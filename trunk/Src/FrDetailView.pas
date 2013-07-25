@@ -114,7 +114,7 @@ uses
   // Project
   ActiveText.UHTMLRenderer, Browser.UHighlighter, Hiliter.UAttrs, Hiliter.UCSS,
   Hiliter.UGlobals, UColours, UCSSUtils, UFontHelper, UPreferences, UQuery,
-  UUtils, UWBCommandBars;
+  USystemInfo, UUtils, UWBCommandBars;
 
 {$R *.dfm}
 
@@ -205,7 +205,11 @@ begin
       end;
     // Adjust .pas-source class to use required background colour
     with CSSBuilder.Selectors['.' + THiliterCSS.GetMainCSSClassName] do
+    begin
       AddProperty(TCSS.BackgroundColorProp(Preferences.SourceCodeBGcolour));
+      if TIEInfo.SupportsCSSOverflowX then
+        AddProperty(TCSS.OverflowProp(covAuto, codX));
+    end;
     with CSSBuilder.AddSelector('.comptable th') do
     begin
       AddProperty(TCSS.BackgroundColorProp(clCompTblHeadBg));
