@@ -11,6 +11,18 @@
 ; Change Log for CodeSnip Release 4
 ; ------------------------------------------------------------------------------
 
+Release v4.7.0 of ?? ???? 2013
++ Implemented feature request #71 "Support importing of one or more snippets from the SWAG database" (http://bit.ly/18AFlGu):
+  - Uses DelphiDabbler SWAG web service to get SWAG data.
+  - New wizard to permit user to select required SWAG snippets. This is accessible from the new "Snippets | Import Snippets From SWAG" menu option.
+  - Snippets are imported into a new "SWAG Imports" category.
++ Implemented feature request #80 "Enable detail pane tabs to be re-ordered" (http://bit.ly/13cbjTZ).
++ Minor changes to dialogue box that appears during long operations.
++ Fixed a few code errors that could have surfaced as bugs.
++ Some refactoring.
++ Updated some 3rd party code to latest available versions.
++ Updated help file re changes.
+
 Release v4.6.4 of 24 July 2013
 + Fix for IE 9 related browser control script bugs introduced in v4.6.3 when IE 10 bugs were fixed:
   - Bug #84 "Script errors on startup " (http://bit.ly/13bfaAL).
