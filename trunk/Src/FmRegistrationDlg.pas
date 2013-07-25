@@ -202,7 +202,9 @@ begin
   Report.Values['ProgKey'] := TAppInfo.ProgramKey;
   Report.Values['UserName'] := StrTrim(edName.Text);
   Report.Values['OSDesc'] :=
-    Format('%0:s. IE Version %1:d.', [TOSInfo.Description, TOSInfo.BrowserVer]);
+    Format(
+      '%0:s. IE Version %1:d.', [TOSInfo.Description, TIEInfo.MajorVersion]
+    );
 end;
 
 procedure TRegistrationDlg.ConfigForm;
