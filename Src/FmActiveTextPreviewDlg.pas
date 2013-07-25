@@ -233,7 +233,7 @@ begin
       AddProperty(TCSS.OverflowProp(covAuto));
       AddProperty(TCSS.WidthProp(cluAuto, 0));
       // Use height instead of maxheight if IE 6 or lower
-      if TOSInfo.BrowserVer > 6 then
+      if TIEInfo.SupportsCSSMaxHeight then
         AddProperty(TCSS.MaxHeightProp(MaxHTMLHeight))
       else
         AddProperty(TCSS.HeightProp(MaxHTMLHeight));
