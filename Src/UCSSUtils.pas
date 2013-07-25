@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2006-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2006-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -147,6 +147,15 @@ type
     covScroll,      // overflow is clipped, scroll-bar is added
     covAuto,        // if overflow is clipped a scroll-bar is added
     covInherit      // value inherited from the parent element
+  );
+
+type
+  ///  <summary>Enumeration of different directions of overflow to be controlled
+  ///  by an "overflow" property.</summary>
+  TCSSOverflowDirection = (
+    codBoth,        // overflow in both directions: "overflow" property
+    codX,           // overflow in x direction only: "overflow-x" property
+    codY            // overflow in y direction only: "overflow-y" property
   );
 
 type
@@ -397,11 +406,17 @@ type
     ///  <returns>string. Required CSS property.</returns>
     class function BlockDisplayProp(const Show: Boolean): string; static;
 
-    ///  <summary>Creates a CSS "overflow" property.</summary>
+    ///  <summary>Creates a CSS "overflow", "overflow-x" or overflow-y"
+    ///  property.</summary>
     ///  <param name="Value">TCSSOverflowValue [in] Required overflow handling.
     ///  </param>
+    ///  <param name="Direction">TCSSOverflowDirection [in] "Direction" for
+    ///  which overflow is being set. Determines whether an "overflow"
+    ///  (codBoth), "overflow-x" (codX) or "overflow-y" (codY) property is
+    ///  created.</param>
     ///  <returns>string. Required CSS property.</returns>
-    class function OverflowProp(const Value: TCSSOverflowValue): string; static;
+    class function OverflowProp(const Value: TCSSOverflowValue;
+      const Direction: TCSSOverflowDirection = codBoth): string; static;
   end;
 
 
@@ -633,13 +648,17 @@ begin
   Result := Format('max-height: %s;', [LengthList([HeightPx])]);
 end;
 
-class function TCSS.OverflowProp(const Value: TCSSOverflowValue): string;
+class function TCSS.OverflowProp(const Value: TCSSOverflowValue;
+  const Direction: TCSSOverflowDirection): string;
 const
   Values: array[TCSSOverflowValue] of string = (
     'visible', 'hidden', 'scroll', 'auto', 'inherit'
   );
+  Props: array[TCSSOverflowDirection] of string = (
+    'overflow', 'overflow-x', 'overflow-y'
+  );
 begin
-  Result := Format('overflow: %s;', [Values[Value]]);
+  Result := Format('%0:s: %1:s;', [Props[Direction], Values[Value]]);
 end;
 
 class function TCSS.PaddingProp(const Padding: array of Integer): string;
