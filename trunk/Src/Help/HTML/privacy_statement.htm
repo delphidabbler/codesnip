@@ -133,7 +133,10 @@
         box.
       </li>
       <li>
-        Checking for program updates
+        Checking for program updates.
+      </li>
+      <li>
+        Importing snippets from the SWAG database.
       </li>
       <li>
         Accessing various websites via hyperlinks and menu options.
@@ -143,10 +146,10 @@
       </li>
     </ol>
     <p>
-      The first five actions are performed directly by <em>CodeSnip</em>,
+      The first six actions are performed directly by <em>CodeSnip</em>,
       which communicates with web services located on delphidabbler.com
-      using HTTP on port 80. The sixth action simply displays web pages in a
-      browser. The seventh passes user information to the proxy server.
+      using HTTP on port 80. The seventh action simply displays web pages in a
+      browser. The eighth passes user information to the proxy server.
     </p>
     <p>
       Personal data will neither be published on the DelphiDabbler website nor
@@ -362,6 +365,26 @@
       uses your default web browser to download a zip file containing the update
       from the SourceForge website. SourceForge may set cookies on your computer
       that are outside <em>CodeSnip</em>'s control.
+    </p>
+    <h3>
+      Importing snippets from the SWAG database
+    </h3>
+    <p>
+      Snippets are imported from the SWAG database (<a
+        href="http://swag.delphidabbler.com/"
+        class="weblink"
+        target="_blank"
+      >http://swag.delphidabbler.com</a>) using the <em>SWAG Import Wizard</em>
+      that is accessed from the <em>Snippets | Import Snippets From SWAG</em>
+      menu item.
+    </p>
+    <p>
+      The wizard gets the required snippets from the REST API at
+      swag.delphidabbler.com. This API is documented at <a
+        href="http://swag.delphidabbler.com/docs/api/"
+        class="weblink"
+        target="_blank"
+      >http://swag.delphidabbler.com/docs/api/</a>. No personal data is sent.
     </p>
     <h3>
       Accessing Websites via Links and Menu Options
