@@ -57,6 +57,9 @@ Res\CSS\detail.css
 # routines that call external object
 Res\Scripts\external.js
 
+# other scripts
+Res\Scripts\overflowXFix.js
+
 # Container document for all HTML displayed in detail panes
 Res\HTML\detail.html
 
