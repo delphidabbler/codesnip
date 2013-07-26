@@ -79,7 +79,7 @@ begin
     // script from detail.html doesn't seem to work in IE 9 (see bug report
     // https://sourceforge.net/p/codesnip/bugs/84/).
     MainTplt.ResolvePlaceholderHTML(
-      'Script',
+      'externalScript',
       LoadResourceAsString(
         HInstance, 'external.js', RT_HTML, etWindows1252
       )
