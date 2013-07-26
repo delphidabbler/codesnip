@@ -53,7 +53,7 @@ implementation
 
 uses
   // Project
-  UConsts, UEncodings, UHTMLTemplate, UResourceUtils;
+  UConsts, UEncodings, UHTMLTemplate, UResourceUtils, USystemInfo;
 
 
 { TDetailPageLoader }
@@ -72,17 +72,30 @@ var
 begin
   MainTplt := THTMLTemplate.Create(HInstance, 'detail.html');
   try
-    MainTplt.ResolvePlaceholderText(
+    MainTplt.ResolvePlaceholderHTML(
       'ResourcePath', MakeResourcePath(HInstance)
     );
     // Need to load script this way this since linking to external resource
     // script from detail.html doesn't seem to work in IE 9 (see bug report
     // https://sourceforge.net/p/codesnip/bugs/84/).
-    MainTplt.ResolvePlaceholderText(
-      'Script', LoadResourceAsString(
+    MainTplt.ResolvePlaceholderHTML(
+      'Script',
+      LoadResourceAsString(
         HInstance, 'external.js', RT_HTML, etWindows1252
       )
     );
+    if TIEInfo.RequiresCSSOverflowXFix then
+      MainTplt.ResolvePlaceholderHTML(
+        'overflowXFixScript',
+        LoadResourceAsString(
+          HInstance, 'overflowXFix.js', RT_HTML, etWindows1252
+        )
+      )
+    else
+      MainTplt.ResolvePlaceholderHTML(
+        'overflowXFixScript',
+        'window.onload = null;'
+      );
     MainTplt.ResolvePlaceholderHTML('BodyContent', Generator.Generate);
     HTML := MainTplt.HTML;
     fWBController.IOMgr.LoadFromString(HTML);
