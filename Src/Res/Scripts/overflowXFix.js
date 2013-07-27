@@ -71,7 +71,7 @@
             // if the scrollWidth (the real width) is greater than the visible
             // width, then apply style changes
             if (elems[i].props.scrollWidth > elems[i].props.offsetWidth) {
-                elems[i].props.style['paddingBottom'] = '20px';
+                elems[i].props.style['paddingBottom'] = '18px';
                 elems[i].props.style['overflowY'] = 'hidden';
             } else {
                 elems[i].props.style['paddingBottom'] = 
