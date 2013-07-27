@@ -75,4 +75,8 @@
         fixOverflow(elemsToFix);
     };
 
+    window.onresize = function () {
+        fixOverflow(elemsToFix);
+    };
+
 }());
