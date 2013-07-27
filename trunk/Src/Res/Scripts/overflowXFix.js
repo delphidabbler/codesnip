@@ -20,14 +20,23 @@
     function initElems() {
         var sourceCodeParent;
         var compileResultsElem;
+        var elemProps;
+        var i;
         sourceCodeParent = document.getElementById('sourcecode');
         if (sourceCodeParent)
-            elemsToFix = getElementsByClass('pas-source', sourceCodeParent);
+            elemProps = getElementsByClass('pas-source', sourceCodeParent);
         else
-            elemsToFix = [];
+            elemProps = [];
         compileResultsElem = document.getElementById('compile-results');
         if (compileResultsElem)
-            elemsToFix.push(compileResultsElem);
+            elemProps.push(compileResultsElem);
+        elemsToFix = [];
+        for (i = 0; i < elemProps.length; i += 1) {
+            elemsToFix.push({
+                props: elemProps[i],
+                oldPaddingBottom: elemProps[i].style['paddingBottom']
+            });
+        }
     }
 
     // Modification of function by Dustin Diaz:
@@ -61,11 +70,12 @@
         for (i = 0; i < elems.length; i += 1) {
             // if the scrollWidth (the real width) is greater than the visible
             // width, then apply style changes
-            if (elems[i].scrollWidth > elems[i].offsetWidth) {
-                elems[i].style['paddingBottom'] = '20px';
-                elems[i].style['overflowY'] = 'hidden';
+            if (elems[i].props.scrollWidth > elems[i].props.offsetWidth) {
+                elems[i].props.style['paddingBottom'] = '20px';
+                elems[i].props.style['overflowY'] = 'hidden';
             } else {
-                elems[i].style['paddingBottom'] = '0';
+                elems[i].props.style['paddingBottom'] = 
+                    elems[i].oldPaddingBottom;
             }
         }
     }
