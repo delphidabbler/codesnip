@@ -67,10 +67,10 @@ implementation
 
 uses
   // Delphi
-  SysUtils,
+  SysUtils, Generics.Defaults,
   // Project
-  Compilers.UGlobals, Compilers.UCompilers, DB.UMain, DB.USnippet, UCSSUtils,
-  UHTMLTemplate, UHTMLUtils, UJavaScriptUtils, UPreferences, UQuery,
+  Compilers.UGlobals, Compilers.UCompilers, DB.UMain, DB.USnippet, UContainers,
+  UCSSUtils, UHTMLTemplate, UHTMLUtils, UJavaScriptUtils, UPreferences, UQuery,
   UResourceUtils, USnippetHTML, USnippetPageHTML, UStrUtils;
 
 
@@ -174,8 +174,10 @@ type
   TSnippetListPageHTML = class abstract(TDetailPageTpltHTML)
   strict private
     var
-      ///  <summary>Value of Snippets property.</summary>
-      fSnippets: TSnippetList;
+      ///  <summary>Sorted list of snippets to be displayed.</summary>
+      fSnippetList: TSortedObjectList<TSnippet>;
+    ///  <summary>Constructs sorted list of snippets to be displayed.</summary>
+    procedure BuildSnippetList;
   strict protected
     ///  <summary>Creates and returns a sequence of HTML table rows each
     ///  containing a link to one of the snippets in the list, along with its
@@ -185,11 +187,6 @@ type
     ///  links to given snippet and another containing snippet's description.
     ///  </summary>
     function SnippetTableRow(const Snippet: TSnippet): string;
-    ///  <summary>Constructs a list of all snippets to be displayed and stores
-    ///  in in Snippets property.</summary>
-    procedure BuildSnippetList; virtual; abstract;
-    ///  <summary>List of all snippets to be displayed.</summary>
-    property Snippets: TSnippetList read fSnippets;
     ///  <summary>Returns name of template resource for either an empty or none-
     ///  empty list of snippets.</summary>
     function GetTemplateResName: string; override;
@@ -199,6 +196,10 @@ type
       abstract;
     ///  <summary>Checks if there are snippets in snippets list.</summary>
     function HaveSnippets: Boolean;
+    ///  <summary>Checks if the given snippet should be included in the list of
+    ///  snippets to be displayed.</summary>
+    function IsSnippetRequired(const Snippet: TSnippet): Boolean; virtual;
+      abstract;
   public
     ///  <summary>Object constructor. Sets up object to render snippet list
     ///  represented by given view.</summary>
@@ -222,9 +223,11 @@ type
     ///  <summary>Replaces place-holders in chosen template with suitable
     ///  values.</summary>
     procedure ResolvePlaceholders(const Tplt: THTMLTemplate); override;
-    ///  <summary>Stores all snippets in category grouping in Snippets
-    ///  property.</summary>
-    procedure BuildSnippetList; override;
+    ///  <summary>Checks if the given snippet should be included in the list of
+    ///  snippets to be displayed.</summary>
+    ///  <remarks>The snippet is to be displayed if it is in the category being
+    ///  displayed.</remarks>
+    function IsSnippetRequired(const Snippet: TSnippet): Boolean; override;
   end;
 
 type
@@ -240,9 +243,11 @@ type
     ///  <summary>Replaces place-holders in chosen template with suitable
     ///  values.</summary>
     procedure ResolvePlaceholders(const Tplt: THTMLTemplate); override;
-    ///  <summary>Stores all snippets in alphabetical grouping in Snippets
-    ///  property.</summary>
-    procedure BuildSnippetList; override;
+    ///  <summary>Checks if the given snippet should be included in the list of
+    ///  snippets to be displayed.</summary>
+    ///  <remarks>The snippet is to be displayed if its display name starts with
+    ///  the initial letter being displayed.</remarks>
+    function IsSnippetRequired(const Snippet: TSnippet): Boolean; override;
   end;
 
 type
@@ -258,9 +263,11 @@ type
     ///  <summary>Replaces place-holders in chosen template with suitable
     ///  values.</summary>
     procedure ResolvePlaceholders(const Tplt: THTMLTemplate); override;
-    ///  <summary>Stores all snippets in snippet kind grouping in Snippets
-    ///  property.</summary>
-    procedure BuildSnippetList; override;
+    ///  <summary>Checks if the given snippet should be included in the list of
+    ///  snippets to be displayed.</summary>
+    ///  <remarks>The snippet is to be displayed if its kind is the same as that
+    ///  being displayed.</remarks>
+    function IsSnippetRequired(const Snippet: TSnippet): Boolean; override;
   end;
 
 { TDetailPageHTMLFactory }
@@ -481,16 +488,36 @@ end;
 
 { TSnippetListPageHTML }
 
+procedure TSnippetListPageHTML.BuildSnippetList;
+var
+  Snippet: TSnippet;  // each snippet in current query
+begin
+  fSnippetList.Clear;
+  for Snippet in Query.Selection do
+  begin
+    if IsSnippetRequired(Snippet) then
+      fSnippetList.Add(Snippet);
+  end;
+end;
+
 constructor TSnippetListPageHTML.Create(View: IView);
 begin
   inherited;
-  fSnippets := TSnippetList.Create;
+  fSnippetList := TSortedObjectList<TSnippet>.Create(
+    TDelegatedComparer<TSnippet>.Create(
+      function (const Left, Right: TSnippet): Integer
+      begin
+        Result := StrCompareText(Left.DisplayName, Right.DisplayName);
+      end
+    ),
+    False
+  );
   BuildSnippetList;
 end;
 
 destructor TSnippetListPageHTML.Destroy;
 begin
-  fSnippets.Free;
+  fSnippetList.Free;
   inherited;
 end;
 
@@ -504,7 +531,7 @@ end;
 
 function TSnippetListPageHTML.HaveSnippets: Boolean;
 begin
-  Result := not Snippets.IsEmpty;
+  Result := not fSnippetList.IsEmpty;
 end;
 
 function TSnippetListPageHTML.SnippetTableInner: string;
@@ -512,7 +539,7 @@ var
   Snippet: TSnippet;  // each snippet in list
 begin
   Result := '';
-  for Snippet in Snippets do
+  for Snippet in fSnippetList do
     Result := Result + SnippetTableRow(Snippet);
 end;
 
@@ -542,9 +569,9 @@ end;
 
 { TCategoryPageHTML }
 
-procedure TCategoryPageHTML.BuildSnippetList;
+function TCategoryPageHTML.IsSnippetRequired(const Snippet: TSnippet): Boolean;
 begin
-  Query.GetCatSelection((View as ICategoryView).Category, Snippets);
+  Result := (View as ICategoryView).Category.Snippets.Contains(Snippet);
 end;
 
 procedure TCategoryPageHTML.ResolvePlaceholders(const Tplt: THTMLTemplate);
@@ -575,18 +602,11 @@ end;
 
 { TAlphaListPageHTML }
 
-procedure TAlphaListPageHTML.BuildSnippetList;
-var
-  Snippet: TSnippet;  // each snippet in current query
+function TAlphaListPageHTML.IsSnippetRequired(const Snippet: TSnippet): Boolean;
 begin
-  Snippets.Clear;
-  for Snippet in Query.Selection do
-  begin
-    Assert(Snippet.Name <> '',
-      ClassName + '.BuildSnippetList: Snippet name is empty string');
-    if Snippet.Name[1] = (View as IInitialLetterView).InitialLetter then
-      Snippets.Add(Snippet);
-  end;
+  Result := StrStartsText(
+    (View as IInitialLetterView).InitialLetter, Snippet.DisplayName
+  );
 end;
 
 procedure TAlphaListPageHTML.ResolvePlaceholders(const Tplt: THTMLTemplate);
@@ -613,16 +633,9 @@ end;
 
 { TSnipKindPageHTML }
 
-procedure TSnipKindPageHTML.BuildSnippetList;
-var
-  Snippet: TSnippet;  // each snippet in current query
+function TSnipKindPageHTML.IsSnippetRequired(const Snippet: TSnippet): Boolean;
 begin
-  Snippets.Clear;
-  for Snippet in Query.Selection do
-  begin
-    if Snippet.Kind = (View as ISnippetKindView).KindInfo.Kind then
-      Snippets.Add(Snippet);
-  end;
+  Result := (View as ISnippetKindView).KindInfo.Kind = Snippet.Kind;
 end;
 
 procedure TSnipKindPageHTML.ResolvePlaceholders(const Tplt: THTMLTemplate);
