@@ -14,10 +14,21 @@
  * horizontal scroll bar is displayed.
  */
 
-window.onload = function() {
-    var elems;
-    var compileResultsElem;
-    var parent;
+(function () {
+    var elemsToFix;
+
+    function initElems() {
+        var sourceCodeParent;
+        var compileResultsElem;
+        sourceCodeParent = document.getElementById('sourcecode');
+        if (sourceCodeParent)
+            elemsToFix = getElementsByClass('pas-source', sourceCodeParent);
+        else
+            elemsToFix = [];
+        compileResultsElem = document.getElementById('compile-results');
+        if (compileResultsElem)
+            elemsToFix.push(compileResultsElem);
+    }
 
     // Modification of function by Dustin Diaz:
     //   http://www.dustindiaz.com/getelementsbyclass
@@ -53,18 +64,15 @@ window.onload = function() {
             if (elems[i].scrollWidth > elems[i].offsetWidth) {
                 elems[i].style['paddingBottom'] = '20px';
                 elems[i].style['overflowY'] = 'hidden';
+            } else {
+                elems[i].style['paddingBottom'] = '0';
             }
         }
     }
 
-    parent = document.getElementById('sourcecode');
-    if (!parent) {
-        return;
-    }
+    window.onload = function () {
+        initElems();
+        fixOverflow(elemsToFix);
+    };
 
-    elems = getElementsByClass('pas-source', parent);
-    compileResultsElem = document.getElementById('compile-results');
-    if (compileResultsElem)
-        elems.push(compileResultsElem);
-    fixOverflow(elems);
-}
+}());
