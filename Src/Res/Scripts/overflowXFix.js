@@ -14,9 +14,9 @@
  * horizontal scroll bar is displayed.
  */
 
-
 window.onload = function() {
     var elems;
+    var compileResultsElem;
     var parent;
 
     // Modification of function by Dustin Diaz:
@@ -63,5 +63,8 @@ window.onload = function() {
     }
 
     elems = getElementsByClass('pas-source', parent);
+    compileResultsElem = document.getElementById('compile-results');
+    if (compileResultsElem)
+        elems.push(compileResultsElem);
     fixOverflow(elems);
 }

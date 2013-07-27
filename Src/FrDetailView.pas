@@ -210,6 +210,11 @@ begin
       if TIEInfo.SupportsCSSOverflowX then
         AddProperty(TCSS.OverflowProp(covAuto, codX));
     end;
+    if TIEInfo.SupportsCSSOverflowX then
+    begin
+      with CSSBuilder.AddSelector('#compile-results') do
+        AddProperty(TCSS.OverflowProp(covAuto, codX));
+    end;
     with CSSBuilder.AddSelector('.comptable th') do
     begin
       AddProperty(TCSS.BackgroundColorProp(clCompTblHeadBg));

@@ -283,15 +283,19 @@ end;
 function TSnippetCompileResultsHTMLFragment.ToString: string;
 begin
   Result := THTML.CompoundTag(
-    'table',
-    THTMLAttributes.Create(
-      [
-        THTMLAttribute.Create('class', 'comptable'),
-        THTMLAttribute.Create('cellspacing', '1'),
-        THTMLAttribute.Create('cellpadding', '4')
-      ]
-    ),
-    SnippetHTML.CompileResults
+    'div',
+    THTMLAttributes.Create('id', 'compile-results'),
+    THTML.CompoundTag(
+      'table',
+      THTMLAttributes.Create(
+        [
+          THTMLAttribute.Create('class', 'comptable'),
+          THTMLAttribute.Create('cellspacing', '1'),
+          THTMLAttribute.Create('cellpadding', '4')
+        ]
+      ),
+      SnippetHTML.CompileResults
+    )
   );
 end;
 
