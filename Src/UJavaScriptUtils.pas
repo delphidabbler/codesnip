@@ -68,57 +68,6 @@ uses
   UConsts, UExceptions, UStrUtils;
 
 
-///  <summary>Replaces specified characters in a string with escape characters
-///  in C format.</summary>
-///  <param name="S">string [in] String to be escaped.</param>
-///  <param name="EscapeChars">string [in] Escape characters to replace
-///  characters from EscapableChars.</param>
-///  <param name="EscapableChars">string [in] Characters to be escaped.</param>
-///  <returns>string. String with all relevant characters escaped.</returns>
-function CEscapeStr(const S: string; const EscapeChars,
-  EscapableChars: string): string;
-const
-  cEscChar = '\';       // the C escape character
-var
-  EscCount: Integer;    // count of escaped characters in string
-  Idx: Integer;         // loops thru string
-  PRes: PChar;          // points to chars in result string
-  EscCharPos: Integer;  // position of esc chars in EscapeChars & EscapableChars
-begin
-  // Check for empty string and treat specially (empty string crashes main code)
-  if S = '' then
-  begin
-    Result := '';
-    Exit;
-  end;
-  // Count escapable characters in string
-  EscCount := 0;
-  for Idx := 1 to Length(S) do
-  begin
-    if StrContainsStr(S[Idx], EscapableChars) then
-      Inc(EscCount);
-  end;
-  // Set size of result string and get pointer to it
-  SetLength(Result, Length(S) + EscCount);
-  PRes := PChar(Result);
-  // Replace escapable chars with the escaped version
-  for Idx := 1 to Length(S) do
-  begin
-    EscCharPos := StrPos(S[Idx], EscapableChars);
-    if EscCharPos > 0 then
-    begin
-      PRes^ := cEscChar;
-      Inc(PRes);
-      PRes^ := EscapeChars[EscCharPos];
-    end
-    else
-      PRes^ := S[Idx];
-    Inc(PRes);
-  end;
-  // copy last character (not processed in loop)
-  PRes^ := S[Length(S)];
-end;
-
 { TJavaScript }
 
 class function TJavaScript.LiteralFunc(const FnName: string;
@@ -186,10 +135,8 @@ const
     + BACKSPACE;  // characters to be escaped
   EscapeChars = DOUBLEQUOTE + SINGLEQUOTE + '\nrtfb'; // escape characters
 begin
-  Result := CEscapeStr(
-    StrUnixLineBreaks(S),   // convert CRLF to LF
-    EscapeChars,
-    EscapableChars
+  Result := StrBackslashEscape(
+    StrUnixLineBreaks(S), EscapableChars, EscapeChars
   );
 end;
 
