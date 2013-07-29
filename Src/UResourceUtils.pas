@@ -119,7 +119,7 @@ function MakeResourcePath(const ModuleName: string; const ResType: PChar = nil):
     @return Required res:// protocol path.
   }
 begin
-  Assert(ModuleName <> '', 'MakeResourcePath: ModuleName is ''''');
+  Assert(ModuleName <> '', 'MakeResourcePath: No ModuleName provided);
   // Resource starts with module name
   Result := 'res://' + URIEncode(ModuleName) + '/';
   // Resource type follows if specified
@@ -150,7 +150,7 @@ function MakeResourceURL(const ModuleName: string; const ResName: PChar;
     @return Required res:// protocol URL.
   }
 begin
-  Assert(ModuleName <> '', 'MakeResourceURL: ModuleName is ''''');
+  Assert(ModuleName <> '', 'MakeResourceURL: No ModuleName provided');
   Assert(Assigned(ResName), 'MakeResourceURL: ResName is nil');
   Result := MakeResourcePath(ModuleName, ResType)
     + URIEncode(ResNameOrTypeToString(ResName));
