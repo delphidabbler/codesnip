@@ -24,7 +24,9 @@ interface
 
 uses
   // Delphi
-  Classes;
+  Classes,
+  // Project
+  UConsts;
 
 
 ///  <summary>Checks if string Haystack contains string Needle. Case sensitive.
@@ -193,7 +195,7 @@ function StrContainsWhiteSpace(const Str: UnicodeString): Boolean;
 ///  white space.</summary>
 ///  <remarks>Opening and closing quote are the same character.</remarks>
 function StrQuoteSpaced(const Str: UnicodeString;
-  const Quote: Char = '"'): UnicodeString;
+  const Quote: Char = DOUBLEQUOTE): UnicodeString;
 
 ///  <summary>Joins all strings from a string list together into a single string
 ///  with each list element being separated by Delim. Empty string list elements
@@ -250,9 +252,7 @@ implementation
 
 uses
   // Delphi
-  SysUtils, StrUtils, Character,
-  // Project
-  UConsts;
+  SysUtils, StrUtils, Character;
 
 { Internal helper routines }
 
@@ -540,8 +540,8 @@ begin
   Result := StrUtils.PosEx(Needle, Haystack, Offset);
 end;
 
-function StrQuoteSpaced(const Str: UnicodeString;
-  const Quote: Char = '"'): UnicodeString;
+function StrQuoteSpaced(const Str: UnicodeString; const Quote: Char):
+  UnicodeString;
 begin
   if StrContainsWhiteSpace(Str) then
     Result := Quote + Str + Quote

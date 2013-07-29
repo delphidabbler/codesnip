@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2008-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2008-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -388,15 +388,13 @@ uses
   // Delphi
   SysUtils, Character,
   // Project
-  UComparers, UStructs, UStrUtils;
+  UComparers, UConsts, UStructs, UStrUtils;
 
 
 const
   // Character constants
   cEquals = '=';
-  cSingleQuote = '''';
-  cDoubleQuote = '"';
-  cQuotes = [cSingleQuote, cDoubleQuote];
+  cQuotes = [SINGLEQUOTE, DOUBLEQUOTE];
 
 
 resourcestring
@@ -489,7 +487,8 @@ var
   EntityVal: Int64;     // value of a numeric entity
   EntityValStr: string; // value of a numeric entity as a string
 begin
-  Assert(Entity <> '', ClassName + '.TranslateNumericEntity: Entity = ''''');
+  Assert(Entity <> '',
+    ClassName + '.TranslateNumericEntity: Entity is empty string');
   Assert(Entity[1] = '#',
     ClassName + '.TranslateNumericEntity: Entity[1] <> ''#''');
   if Entity = '#' then

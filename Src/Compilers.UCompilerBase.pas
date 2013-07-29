@@ -330,7 +330,7 @@ implementation
 
 uses
   // Project
-  Compilers.USearchDirs, IntfCommon, UStrUtils, UUtils;
+  Compilers.USearchDirs, IntfCommon, UConsts, UStrUtils, UUtils;
 
 
 const
@@ -389,7 +389,7 @@ function TCompilerBase.CommandLineSwitches: string;
     if Result <> '' then
       Result := Result + ' ';
     if StrContainsStr(' ', Switch) then
-      Result := Result + '"' + Switch + '"'
+      Result := Result + DOUBLEQUOTE + Switch + DOUBLEQUOTE
     else
       Result := Result + Switch;
   end;
