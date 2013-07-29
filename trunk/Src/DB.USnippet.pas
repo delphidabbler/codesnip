@@ -262,13 +262,6 @@ type
           method returns True.
         @return True if snippet found, False if not.
       }
-    class function CompareIDs(const SID1, SID2: TSnippetID): Integer;
-      {Compares IDS of two snippets.
-        @param SID1 [in] First ID to be compared.
-        @param SID2 [in] Second ID to be compared.
-        @return 0 if IDs are the same, -ve if SID1 < SID2 and +ve if
-          SID1 > SID2.
-      }
   strict protected
     var fList: TSortedObjectList<TSnippet>; // Sorted list of snippets
   public
@@ -620,17 +613,6 @@ begin
   fList.Clear;
 end;
 
-class function TSnippetList.CompareIDs(const SID1, SID2: TSnippetID): Integer;
-  {Compares IDS of two snippets.
-    @param SID1 [in] First ID to be compared.
-    @param SID2 [in] Second ID to be compared.
-    @return 0 if IDs are the same, -ve if SID1 < SID2 and +ve if
-      SID1 > SID2.
-  }
-begin
-  Result := SID1.CompareTo(SID2);
-end;
-
 function TSnippetList.Contains(const Snippet: TSnippet): Boolean;
   {Checks whether list contains a specified snippet.
     @param Snippet [in] Required snippet.
@@ -693,7 +675,7 @@ begin
     TDelegatedComparer<TSnippet>.Create(
       function (const Left, Right: TSnippet): Integer
       begin
-        Result := CompareIDs(Left.ID, Right.ID);
+        Result := Left.ID.CompareTo(Right.ID);
       end
     ),
     OwnsObjects
