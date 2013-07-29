@@ -23,6 +23,11 @@ type
   ///  </summary>
   TJavaScript = record
   strict private
+    ///  <summary>Converts the given string into a valid JavaScript string
+    ///  literal, escaping characters as necessary.</summary>
+    ///  <remarks>Both single quotes and double quotes are escaped, enabling the
+    ///  string literal to be enclosed in either type of quote.</remarks>
+    class function MakeSafeString(const S: string): string; static;
     ///  <summary>Converts the given integer into a literal numeric parameter
     ///  suitable for passing to a JavaScript function.</summary>
     class function LiteralParam(const I: Integer): string; overload; static;
@@ -143,7 +148,9 @@ begin
         vtWideChar:
           Param := LiteralParam(ParamVar.VWideChar);
         else
-          raise EBug.Create('JSLiteralFunc: Unsupported parameter type');
+          raise EBug.Create(
+            'TJavaScript.LiteralFunc: Unsupported parameter type'
+          );
       end;
       // Store param in list
       ParamList.Add(Param);
@@ -161,19 +168,8 @@ begin
 end;
 
 class function TJavaScript.LiteralParam(const S: string): string;
-const
-  cQuote = '"';                               // quote to delimit string literal
-  cEscapableChars = cQuote + '\' + LF + CR + TAB;    // characters to be escaped
-  cEscapeChars = cQuote + '\nrt';                           // escape characters
 begin
-  Result :=
-    cQuote +
-    CEscapeStr(
-      StrUnixLineBreaks(S),   // convert CRLF to LF
-      cEscapeChars,
-      cEscapableChars
-    ) +
-    cQuote;
+  Result := DOUBLEQUOTE + MakeSafeString(S) + DOUBLEQUOTE;
 end;
 
 class function TJavaScript.LiteralParam(const B: Boolean): string;
@@ -182,6 +178,19 @@ begin
     Result := 'true'
   else
     Result := 'false';
+end;
+
+class function TJavaScript.MakeSafeString(const S: string): string;
+const
+  EscapableChars = DOUBLEQUOTE + SINGLEQUOTE + '\' + LF + CR + TAB + FF
+    + BACKSPACE;  // characters to be escaped
+  EscapeChars = DOUBLEQUOTE + SINGLEQUOTE + '\nrtfb'; // escape characters
+begin
+  Result := CEscapeStr(
+    StrUnixLineBreaks(S),   // convert CRLF to LF
+    EscapeChars,
+    EscapableChars
+  );
 end;
 
 class function TJavaScript.LiteralParam(const F: Extended): string;
