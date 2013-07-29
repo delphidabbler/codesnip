@@ -32,9 +32,12 @@ type
     procedure TearDown; override;
   published
     procedure TestStrContainsStr;
+    procedure TestStrContainsText;
+    procedure TestStrMatchText;
     procedure TestStrPos_overload1;
     procedure TestStrPos_overload2;
     procedure TestStrLastPos;
+    procedure TestStrCompareStr;
     procedure TestStrCompareText;
     procedure TestStrSameStr;
     procedure TestStrSameText;
@@ -65,8 +68,10 @@ type
     procedure TestStrJoin;
     procedure TestStrExplode;
     procedure TestStrSplit;
-    procedure TestStrWrap;
+    procedure TestStrWrap_overload1;
+    procedure TestStrWrap_overload2;
     procedure TestStrMakeSentence;
+    procedure TestStrIf;
     procedure TestStrBackslashEscape;
   end;
 
@@ -152,6 +157,25 @@ begin
   CheckEquals(' ', StrCapitaliseWords(' '), 'Test 12');
 end;
 
+procedure TTestStrUtilsRoutines.TestStrCompareStr;
+begin
+  CheckTrue(StrCompareStr('Iñtërnâtiônàlizætiøn', 'IñtërnÂtiônàlizætiøn') <> 0,
+    'Test 1');
+  CheckTrue(StrCompareStr('Iñtërnâtiônàlizætiøn', 'Iñtërnâtiônàlizætiøn') = 0,
+    'Test 2');
+  CheckTrue(StrCompareStr('Foo', 'Bar') > 0, 'Test 3');
+  CheckTrue(StrCompareStr('Bar', 'Foo') < 0, 'Test 4');
+  CheckTrue(StrCompareStr('Foo', 'Fo') > 0, 'Test 5');
+  CheckTrue(StrCompareStr('Fo', 'Foo') < 0, 'Test 6');
+  CheckTrue(StrCompareStr('FO', 'Foo') < 0, 'Test 7');
+  CheckTrue(StrCompareStr('Fo', 'FOO') < 0, 'Test 8');
+  CheckTrue(StrCompareStr('foo', 'FOO') <> 0, 'Test 9');
+  CheckTrue(StrCompareStr('', '') = 0, 'Test 10');
+  CheckTrue(StrCompareStr('Foo', '') > 0, 'Test 11');
+  CheckTrue(StrCompareStr('', 'Bar') < 0, 'Test 12');
+  CheckTrue(StrCompareStr('foo', 'Bar') > 0, 'Test 13');
+end;
+
 procedure TTestStrUtilsRoutines.TestStrCompareText;
 begin
   CheckTrue(StrCompareText('Iñtërnâtiônàlizætiøn', 'IñtërnÂtiônàlizætiøn') = 0,
@@ -201,6 +225,23 @@ begin
   CheckFalse(StrContainsStr('nÂtiôn', 'Iñtërnâtiônàlizætiøn'), 'Test 10');
   CheckFalse(StrContainsStr('', 'Bar'), 'Test 11');
   CheckFalse(StrContainsStr('Bar', ''), 'Test 12');
+end;
+
+procedure TTestStrUtilsRoutines.TestStrContainsText;
+begin
+  CheckFalse(StrContainsText('Fo', 'Bar'), 'Test 1');
+  CheckTrue(StrContainsText('Ar', 'Bar'), 'Test 2');
+  CheckTrue(StrContainsText('Fo', 'Foo'), 'Test 3');
+  CheckTrue(StrContainsText('ar', 'Bar'), 'Test 4');
+  CheckTrue(StrContainsText('o', 'Foo'), 'Test 5');
+  CheckTrue(StrContainsText('Bar', 'Bar'), 'Test 6');
+  CheckTrue(StrContainsText('BAR', 'bar'), 'Test 7');
+  CheckTrue(StrContainsText('nâtiôn', 'Iñtërnâtiônàlizætiøn'), 'Test 8');
+  CheckTrue(StrContainsText('nâTiôn', 'Iñtërnâtiônàlizætiøn'), 'Test 9');
+  CheckTrue(StrContainsText('nÂtiôn', 'Iñtërnâtiônàlizætiøn'), 'Test 10');
+  CheckFalse(StrContainsText('nâtxiôn', 'Iñtërnâtiônàlizætiøn'), 'Test 11');
+  CheckFalse(StrContainsText('', 'Bar'), 'Test 12');
+  CheckFalse(StrContainsText('Bar', ''), 'Test 13');
 end;
 
 procedure TTestStrUtilsRoutines.TestStrContainsWhiteSpace;
@@ -459,6 +500,14 @@ begin
   CheckList(['Foo', 'Bar'], fStrings, 'Test 9');
 end;
 
+procedure TTestStrUtilsRoutines.TestStrIf;
+begin
+  CheckEquals('', StrIf(True, '', ''), 'Test 1');
+  CheckEquals('', StrIf(False, '', ''), 'Test 2');
+  CheckEquals('one', StrIf(True, 'one', 'two'), 'Test 3');
+  CheckEquals('two', StrIf(False, 'one', 'two'), 'Test 4');
+end;
+
 procedure TTestStrUtilsRoutines.TestStrIsDelimiter;
 const
   Delims = ':;,.';
@@ -591,6 +640,39 @@ begin
   CheckEquals('Foo.'#13#10, StrMakeSentence('Foo.'#13#10), 'Test 21');
   CheckEquals('Foo!'#13#10, StrMakeSentence('Foo!'#13#10), 'Test 22');
   CheckEquals('Foo?'#13#10, StrMakeSentence('Foo?'#13#10), 'Test 23');
+end;
+
+procedure TTestStrUtilsRoutines.TestStrMatchText;
+begin
+  CheckFalse(StrMatchText('test', []), 'Test 1');
+  CheckTrue(
+    StrMatchText('test', TArray<string>.Create('test')),
+    'Test 2'
+  );
+  CheckTrue(
+    StrMatchText('test', TArray<string>.Create('one', 'two', 'test')),
+    'Test 3'
+  );
+  CheckTrue(
+    StrMatchText('test', TArray<string>.Create('one', 'test', 'three')),
+    'Test 4'
+  );
+  CheckFalse(
+    StrMatchText('test', TArray<string>.Create('one', 'two', 'three')),
+    'Test 4'
+  );
+  CheckTrue(
+    StrMatchText('TEST', TArray<string>.Create('one', 'test', 'three')),
+    'Test 5'
+  );
+  CheckFalse(
+    StrMatchText('', TArray<string>.Create('one', 'two', 'three')),
+    'Test 6'
+  );
+  CheckFalse(
+    StrMatchText('', []),
+    'Test 7'
+  );
 end;
 
 procedure TTestStrUtilsRoutines.TestStrPos_overload1;
@@ -959,7 +1041,7 @@ begin
   CheckEquals(#13#10#13#10#13#10, StrWindowsLineBreaks(#10#13#13#10), 'Test 8');
 end;
 
-procedure TTestStrUtilsRoutines.TestStrWrap;
+procedure TTestStrUtilsRoutines.TestStrWrap_overload1;
 const
   Text = 'The quick brown fox jumped-over-the lazy dog.';
   //      123456789012345678901234567890123456789012345
@@ -995,6 +1077,62 @@ begin
   CheckEquals(ResD, StrWrap(Text, 1, 0), 'Test 9');
   CheckEquals(ResD, StrWrap(Text, 0, 0), 'Test 10');
   CheckEquals(ResD, StrWrap(Text, -1, 0), 'Test 11');
+end;
+
+procedure TTestStrUtilsRoutines.TestStrWrap_overload2;
+const
+  Para1 = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.';
+  //       123456789012345678901234567890123456789012345678901234567890
+  //                1         2         3         4         5         6
+  Para2 = 'Proin posuere condimentum tellus non iaculis.';
+  //       123456789012345678901234567890123456789012345678901234567890
+  //                1         2         3         4         5         6
+  Para3 = 'Nunc tempor posuere feugiat.';
+  //       123456789012345678901234567890123456789012345678901234567890
+  //                1         2         3         4         5         6
+  Res1_0 = 'Lorem ipsum dolor' + EOL +
+           'sit amet,' + EOL +
+           'consectetur' + EOL +
+           'adipiscing elit.' + EOL;
+  Res1_2 = '  Lorem ipsum dolor' + EOL +
+           '  sit amet,' + EOL +
+           '  consectetur' + EOL +
+           '  adipiscing elit.' + EOL;
+  Res2_0 = 'Proin posuere' + EOL +
+           'condimentum tellus' + EOL +
+           'non iaculis.' + EOL;
+  Res2_2 = '  Proin posuere' + EOL +
+           '  condimentum tellus' + EOL +
+           '  non iaculis.' + EOL;
+  Res3_0 = 'Nunc tempor posuere' + EOL +
+           'feugiat.' + EOL;
+  Res3_2 = '  Nunc tempor posuere' + EOL +
+           '  feugiat.' + EOL;
+  AllUnSpaced_0 = Res1_0 + Res2_0 + Res3_0;
+  AllUnSpaced_2 = Res1_2 + Res2_2 + Res3_2;
+  AllSpaced_0 = Res1_0 + EOL + Res2_0 + EOL + Res3_0 + EOL;
+  AllSpaced_2 = Res1_2 + EOL + Res2_2 + EOL + Res3_2 + EOL;
+  //        123456789012345678901234567890123456789012345678901234567890
+  //                 1         2         3         4         5         6
+var
+  Paras: TStrings;
+begin
+  Paras := TStringList.Create;
+  try
+    CheckEquals('', StrWrap(Paras, 10, 0, False), 'Test 1');
+    CheckEquals('', StrWrap(Paras, 10, 4, True), 'Test 2');
+    Paras.Add(Para1);
+    CheckEquals(Res1_0, StrWrap(Paras, 20, 0, False), 'Test 3');
+    CheckEquals(Res1_2 + EOL, StrWrap(Paras, 20, 2, True), 'Test 4');
+    Paras.Add(Para2);
+    Paras.Add(Para3);
+    CheckEquals(AllUnSpaced_0, StrWrap(Paras, 20, 0, False), 'Test 5');
+    CheckEquals(AllUnSpaced_2, StrWrap(Paras, 20, 2, False), 'Test 6');
+    CheckEquals(AllSpaced_0, StrWrap(Paras, 20, 0, True), 'Test 7');
+    CheckEquals(AllSpaced_2, StrWrap(Paras, 20, 2, True), 'Test 7');
+  finally
+    Paras.Free;
+  end;
 end;
 
 initialization
