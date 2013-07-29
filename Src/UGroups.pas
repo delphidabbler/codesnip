@@ -403,9 +403,7 @@ var
   ItemCat: TCategory; // category which Item represents
 begin
   ItemCat := (Item as TCategoryGroupItem).fCategory;
-  Result := StrCompareText(fCategory.Description, ItemCat.Description);
-  if Result = 0 then
-    Result := Ord(fCategory.UserDefined) - Ord(ItemCat.UserDefined);
+  Result := fCategory.CompareDescriptionTo(ItemCat);
 end;
 
 constructor TCategoryGroupItem.Create(const Category: TCategory);
