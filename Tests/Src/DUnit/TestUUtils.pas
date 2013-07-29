@@ -20,7 +20,7 @@ uses
 
 type
   // Test methods for some routines in interface of UUtils
-  TTestRoutines = class(TTestCase)
+  TTestUtilsRoutines = class(TTestCase)
   published
     procedure TestFloatToInt;
     procedure TestIsBaseFileName;
@@ -37,9 +37,9 @@ uses
   SysUtils;
 
 
-{ TTestRoutines }
+{ TTestUtilsRoutines }
 
-procedure TTestRoutines.TestFloatToInt;
+procedure TTestUtilsRoutines.TestFloatToInt;
 begin
   CheckEquals(42, FloatToInt(42.0), 'Test 1');
   CheckEquals(42, FloatToInt(41.9999999), 'Test 2');
@@ -69,7 +69,7 @@ begin
   CheckEquals(-1234568, FloatToInt(-1234567.5), 'Test 26');
 end;
 
-procedure TTestRoutines.TestIsBaseFileName;
+procedure TTestUtilsRoutines.TestIsBaseFileName;
 begin
   CheckTrue(IsBaseFileName('Foo'), 'Test 1');
   CheckTrue(IsBaseFileName('Foo.bar'), 'Test 2');
@@ -82,7 +82,7 @@ begin
   CheckFalse(IsBaseFileName(''), 'Test 9');
 end;
 
-procedure TTestRoutines.TestIsHexDigit;
+procedure TTestUtilsRoutines.TestIsHexDigit;
 const
   GoodChars = '1234567890ABCDEFabcdef';
   BadChars = 'ghijklmnopqrstuvwxyzGHIJKLMNOPQRSTUVWXYZ |-_=+][{}@:><'#13#10#0#9;
@@ -95,7 +95,7 @@ begin
     CheckFalse(IsHexDigit(BadChars[Idx]), 'Bad Test ' + IntToStr(Idx));
 end;
 
-procedure TTestRoutines.TestIsValidDriveLetter;
+procedure TTestUtilsRoutines.TestIsValidDriveLetter;
 const
   GoodChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
   BadChars = '1234567890 |-_=+][{}@:><'#13#10#0#9;
@@ -110,5 +110,5 @@ end;
 
 initialization
   // Register any test cases with the test runner
-  RegisterTest(TTestRoutines.Suite);
+  RegisterTest(TTestUtilsRoutines.Suite);
 end.
