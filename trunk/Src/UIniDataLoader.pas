@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2009-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2009-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -93,7 +93,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  UStrUtils, UVersionInfo;
+  UConsts, UStrUtils, UVersionInfo;
 
 
 type
@@ -297,14 +297,12 @@ end;
 
 function TDatabaseIniFile.ReadString(const Section, Ident,
   Default: string): string;
-const
-  cQuote = '"';   // quote character
 begin
   // Read string from ini
   Result := inherited ReadString(Section, Ident, Default);
   // Strip any leading and trailing quotes
-  if (Length(Result) > 1) and (Result[1] = cQuote)
-    and (Result[Length(Result)] = cQuote) then
+  if (Length(Result) > 1) and (Result[1] = DOUBLEQUOTE)
+    and (Result[Length(Result)] = DOUBLEQUOTE) then
     Result := Copy(Result, 2, Length(Result) - 2);
 end;
 
