@@ -652,14 +652,15 @@ constructor TSortedList<T>.Create(const AComparer: IComparer<T>;
   Collection: TEnumerable<T>);
 begin
   Create(AComparer);
-  AddRange(Collection);
+  if Assigned(Collection) then
+    AddRange(Collection);
 end;
 
 constructor TSortedList<T>.Create;
   {Constructs new list object that uses default comparer.
   }
 begin
-  Create(nil);
+  Create(nil, nil);
 end;
 
 constructor TSortedList<T>.Create(const AComparer: IComparer<T>);
