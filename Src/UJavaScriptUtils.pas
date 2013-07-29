@@ -19,46 +19,37 @@ interface
 
 
 type
+  ///  <summary>Container for methods that assist in generating JavaScript code.
+  ///  </summary>
   TJavaScript = record
   strict private
+    ///  <summary>Converts the given integer into a literal numeric parameter
+    ///  suitable for passing to a JavaScript function.</summary>
     class function LiteralParam(const I: Integer): string; overload; static;
-      {Converts an integer into a literal numeric parameter suitable for passing to
-      a JavaScript function.
-        @param I [in] Value of parameter.
-        @return Integer value as a string.
-      }
+    ///  <summary>Converts the given string into a literal string parameter
+    ///  suitable for passing to a JavaScript function.</summary>
+    ///  <remarks>The string is quoted and characters are escaped as necessary
+    ///  to make the result a valid JavaScript string.</remarks>
     class function LiteralParam(const S: string): string; overload; static;
-      {Converts a string into a literal string parameter suitable for passing to a
-      JavaScript function.
-        @param S [in] Value of parameter.
-        @return Quoted string with embedded quotes and other control characters
-          escaped.
-      }
+    ///  <summary>Converts the given floating point value into a literal numeric
+    ///  parameter suitable for passing to a JavaScript function.</summary>
     class function LiteralParam(const F: Extended): string; overload; static;
-      {Converts a floating point value into a literal numeric parameter suitable for
-      passing to a JavaScript function.
-        @param F [in] Value of parameter.
-        @return Floating point value as string.
-      }
+    ///  <summary>Converts the given boolean value into either "true" or "false"
+    ///  keyword suitable for passing to a JavaScript function.</summary>
     class function LiteralParam(const B: Boolean): string; overload; static;
-      {Converts a Boolean value into a literal boolean parameter suitable for
-      passing to a JavaScript function.
-        @param B [in] Value of parameter.
-        @return 'true' or 'false'.
-      }
   public
+    ///  <summary>Creates and returns a JavaScript function call with a
+    ///  parameter list comprising of literal values.</summary>
+    ///  <param name="FnName">string [in] Name of function.</param>
+    ///  <param name="Params">array of const [in] Dynamic array of literal
+    ///  parameter values to be passed to the function. [] indicates a
+    ///  parameterless function.</param>
+    ///  <returns>string. Required JavaScript function.</returns>
+    ///  <exception>EBug is raised if type of any value in Params has an
+    ///  unsupported type. Valid types are Integer, Boolean, Extended,
+    ///  UnicodeString and WideChar.</exception>
     class function LiteralFunc(const FnName: string;
       const Params: array of const): string; static;
-      {Creates a JavaScript function call with a parameter list comprising of
-      literal values.
-        @param FnName [in] Name of function.
-        @param Params [in] Dynamic array of literal parameter values. [] indicates a
-          parameterless function.
-        @except EBug raised if type of any value in Params has an unsupported type.
-          Valid types are Integer, Boolean, Extended and either AnsiString and
-          PAnsiChar or UnicodeString and WideChar, depending on if compiled with
-          Unicode support.
-      }
   end;
 
 
@@ -72,15 +63,15 @@ uses
   UConsts, UExceptions, UStrUtils;
 
 
+///  <summary>Replaces specified characters in a string with escape characters
+///  in C format.</summary>
+///  <param name="S">string [in] String to be escaped.</param>
+///  <param name="EscapeChars">string [in] Escape characters to replace
+///  characters from EscapableChars.</param>
+///  <param name="EscapableChars">string [in] Characters to be escaped.</param>
+///  <returns>string. String with all relevant characters escaped.</returns>
 function CEscapeStr(const S: string; const EscapeChars,
   EscapableChars: string): string;
-  {Replaces specified characters in a string with escape characters in C format.
-    @param S [in] String to be escaped.
-    @param EscapeChars [in] Escape characters to replace characters from
-      EscapableChars.
-    @param EscapableChars [in] Characters to be escaped.
-    @return String with all relevant characters escaped.
-  }
 const
   cEscChar = '\';       // the C escape character
 var
@@ -127,16 +118,6 @@ end;
 
 class function TJavaScript.LiteralFunc(const FnName: string;
   const Params: array of const): string;
-  {Creates a JavaScript function call with a parameter list comprising of
-  literal values.
-    @param FnName [in] Name of function.
-    @param Params [in] Dynamic array of literal parameter values. [] indicates a
-      parameterless function.
-    @except EBug raised if type of any value in Params has an unsupported type.
-      Valid types are Integer, Boolean, Extended and either AnsiString and
-      PAnsiChar or UnicodeString and WideChar, depending on if compiled with
-      Unicode support.
-  }
 var
   Idx: Integer;           // loops thru all provided parameters
   ParamVar: TVarRec;      // value of a parameter from array
@@ -175,23 +156,11 @@ begin
 end;
 
 class function TJavaScript.LiteralParam(const I: Integer): string;
-  {Converts an integer into a literal numeric parameter suitable for passing to
-  a JavaScript function.
-    @param I [in] Value of parameter.
-    @return Integer value as a string.
-  }
 begin
-  // Integer parameters are simply the number itself
   Result := IntToStr(I);
 end;
 
 class function TJavaScript.LiteralParam(const S: string): string;
-  {Converts a string into a literal string parameter suitable for passing to a
-  JavaScript function.
-    @param S [in] Value of parameter.
-    @return Quoted string with embedded quotes and other control characters
-      escaped.
-  }
 const
   cQuote = '"';                               // quote to delimit string literal
   cEscapableChars = cQuote + '\' + LF + CR + TAB;    // characters to be escaped
@@ -208,11 +177,6 @@ begin
 end;
 
 class function TJavaScript.LiteralParam(const B: Boolean): string;
-  {Converts a Boolean value into a literal boolean parameter suitable for
-  passing to a JavaScript function.
-    @param B [in] Value of parameter.
-    @return 'true' or 'false'.
-  }
 begin
   if B then
     Result := 'true'
@@ -221,11 +185,6 @@ begin
 end;
 
 class function TJavaScript.LiteralParam(const F: Extended): string;
-  {Converts a floating point value into a literal numeric parameter suitable for
-  passing to a JavaScript function.
-    @param F [in] Value of parameter.
-    @return Floating point value as string.
-  }
 begin
   Result := FloatToStr(F);
 end;
