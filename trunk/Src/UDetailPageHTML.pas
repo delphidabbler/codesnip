@@ -567,16 +567,7 @@ constructor TSnippetListPageHTML.Create(View: IView);
 begin
   inherited;
   fSnippetList := TSortedObjectList<TSnippet>.Create(
-    { TODO: create new comparer class for this comparison, which is duplicated
-            in UGripus.TGroupItem.Create. }
-    TDelegatedComparer<TSnippet>.Create(
-      function (const Left, Right: TSnippet): Integer
-      begin
-        Result := StrCompareText(Left.DisplayName, Right.DisplayName);
-        if Result = 0 then
-          Result := Left.ID.CompareTo(Right.ID);
-      end
-    ),
+    TSnippet.TDisplayNameComparer.Create,
     False
   );
   BuildSnippetList;

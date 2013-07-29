@@ -348,14 +348,7 @@ constructor TGroupItem.Create;
 begin
   inherited Create;
   fSnippetList := TSortedSnippetList.Create(
-    TDelegatedComparer<TSnippet>.Create(
-      function (const Left, Right: TSnippet): Integer
-      begin
-        Result := StrCompareText(Left.DisplayName, Right.DisplayName);
-        if Result = 0 then
-          Result := Left.ID.CompareTo(Right.ID);
-      end
-    )
+    TSnippet.TDisplayNameComparer.Create
   );
   fSnippetList.PermitDuplicates := True;
 end;

@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2011-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2011-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -21,7 +21,7 @@ interface
 
 uses
   // Delphi
-  Classes, Generics.Collections,
+  Classes, Generics.Collections, Generics.Defaults,
   // Project
   ActiveText.UMain, Compilers.UGlobals, DB.USnippetKind, UContainers,
   UIStringList, USnippetIDs;
@@ -101,6 +101,15 @@ type
     free-form.
   }
   TSnippet = class(TObject)
+  public
+    ///  <summary>Comparer for snippets by display name.</summary>
+    type TDisplayNameComparer = class(TComparer<TSnippet>)
+    public
+      ///  <summary>Compares snippets Left and Right. Returns -ve if Left's
+      ///  display name sorts before Right's, 0 if the same or +ve if Left's
+      ///  display name is greater than Right's.</summary>
+      function Compare(const Left, Right: TSnippet): Integer; override;
+    end;
   strict private
     fKind: TSnippetKind;                    // Kind of snippet this is
     fCategory: string;                      // Name of snippet's category
@@ -374,7 +383,7 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Generics.Defaults,
+  SysUtils,
   // Project
   IntfCommon, UExceptions, UStrUtils;
 
@@ -476,6 +485,16 @@ begin
   fExtra := TActiveTextFactory.CloneActiveText(Data.Extra);
   fCompatibility := Data.CompilerResults;
   fTestInfo := Data.TestInfo;
+end;
+
+{ TSnippet.TDisplayNameComparer }
+
+function TSnippet.TDisplayNameComparer.Compare(const Left,
+  Right: TSnippet): Integer;
+begin
+  Result := StrCompareText(Left.DisplayName, Right.DisplayName);
+  if Result = 0 then
+    Result := Left.ID.CompareTo(Right.ID);
 end;
 
 { TSnippetEx }
