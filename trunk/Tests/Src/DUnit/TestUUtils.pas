@@ -1,4 +1,4 @@
-{
+{                    \
   Delphi DUnit Test Case for the UUtils Unit
   ------------------------------------------
 
@@ -27,6 +27,7 @@ type
     procedure TestIsHexDigit;
     procedure TestIsValidDriveLetter;
     procedure TestURIBaseName;
+    procedure TestTryStrToCardinal;
   end;
 
 
@@ -109,6 +110,36 @@ begin
     CheckFalse(IsValidDriveLetter(BadChars[Idx]), 'Bad Test ' + IntToStr(Idx));
 end;
 
+procedure TTestUtilsRoutines.TestTryStrToCardinal;
+var
+  V: Cardinal;
+  I: Int64;
+  S: string;
+begin
+  CheckTrue(TryStrToCardinal('42', V), 'Test 1a');
+  CheckEquals(42, V, 'Test 1');
+  CheckTrue(TryStrToCardinal('$F', V), 'Test 2a');
+  CheckEquals($F, V, 'Test 2b');
+  CheckFalse(TryStrToCardinal('', V), 'Test 3');
+  CheckFalse(TryStrToCardinal('z42', V), 'Test 4');
+  CheckFalse(TryStrToCardinal('42.5', V), 'Test 5');
+  CheckFalse(TryStrToCardinal('42z', V), 'Test 6');
+  CheckTrue(TryStrToCardinal('0', V), 'Test 7a');
+  CheckEquals(0, V, 'Test 7b');
+  I := Int64(High(Cardinal));
+  S := IntToStr(I);
+  CheckTrue(TryStrToCardinal(S, V), 'Test 8a');
+  CheckEquals(I, V, 'Test 8b');
+  CheckFalse(TryStrToCardinal('-1', V), 'Test 9');
+  I := Int64(High(Cardinal)) + 2;
+  S := IntToStr(I);
+  CheckFalse(TryStrToCardinal(S, V), 'Test 10');
+  CheckTrue(TryStrToCardinal('x10', V), 'Test 11a');
+  CheckEquals($10, V, 'Test 11b');
+  CheckTrue(TryStrToCardinal('0xFFFF', V), 'Test 12a');
+  CheckEquals($FFFF, V, 'Test 12b');
+end;
+
 procedure TTestUtilsRoutines.TestURIBaseName;
 begin
   CheckEquals('', URIBaseName(''), 'Test 1');
@@ -116,13 +147,13 @@ begin
   CheckEquals('', URIBaseName('foo/'), 'Test 3');
   CheckEquals('bar', URIBaseName('foo/bar'), 'Test 4');
   CheckEquals(
-    'swag.php', 
-    URIBaseName('http://www.delphidabbler.com/swag.php'), 
+    'swag.php',
+    URIBaseName('http://www.delphidabbler.com/swag.php'),
     'Test 5'
   );
   CheckEquals(
-    'bar', 
-    URIBaseName('http://www.delphidabbler.com/foo/bar'), 
+    'bar',
+    URIBaseName('http://www.delphidabbler.com/foo/bar'),
     'Test 6'
   );
 end;
