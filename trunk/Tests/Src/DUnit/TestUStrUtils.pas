@@ -24,7 +24,7 @@ uses
 type
 
   // Test methods for each routine in interface of UStrUtils
-  TTestRoutines = class(TTestCase)
+  TTestStrUtilsRoutines = class(TTestCase)
   strict private
     fStrings: TStringList;
   public
@@ -79,19 +79,19 @@ uses
   UConsts;
 
 
-{ TTestRoutines }
+{ TTestStrUtilsRoutines }
 
-procedure TTestRoutines.SetUp;
+procedure TTestStrUtilsRoutines.SetUp;
 begin
   fStrings := TStringList.Create;
 end;
 
-procedure TTestRoutines.TearDown;
+procedure TTestStrUtilsRoutines.TearDown;
 begin
   fStrings.Free;
 end;
 
-procedure TTestRoutines.TestStrBackslashEscape;
+procedure TTestStrUtilsRoutines.TestStrBackslashEscape;
 var
   Orig, Expected, Res, Escapable, Escapes: string;
 begin
@@ -132,7 +132,7 @@ begin
   CheckEquals(Expected, Res, 'Test 6');
 end;
 
-procedure TTestRoutines.TestStrCapitaliseWords;
+procedure TTestStrUtilsRoutines.TestStrCapitaliseWords;
 begin
   CheckEquals('', StrCapitaliseWords(''), 'Test 1');
   CheckEquals('Hello', StrCapitaliseWords('hello'), 'Test 2');
@@ -152,7 +152,7 @@ begin
   CheckEquals(' ', StrCapitaliseWords(' '), 'Test 12');
 end;
 
-procedure TTestRoutines.TestStrCompareText;
+procedure TTestStrUtilsRoutines.TestStrCompareText;
 begin
   CheckTrue(StrCompareText('Iñtërnâtiônàlizætiøn', 'IñtërnÂtiônàlizætiøn') = 0,
     'Test 1');
@@ -170,7 +170,7 @@ begin
   CheckTrue(StrCompareText('', 'Bar') < 0, 'Test 12');
 end;
 
-procedure TTestRoutines.TestStrCompressWhiteSpace;
+procedure TTestStrUtilsRoutines.TestStrCompressWhiteSpace;
 begin
   CheckEquals('', StrCompressWhiteSpace(''), 'Test 1');
   CheckEquals(' ', StrCompressWhiteSpace(' '), 'Test 2');
@@ -187,7 +187,7 @@ begin
   CheckEquals('Foo Bar', StrCompressWhiteSpace('Foo'#9'Bar'), 'Test 13');
 end;
 
-procedure TTestRoutines.TestStrContainsStr;
+procedure TTestStrUtilsRoutines.TestStrContainsStr;
 begin
   CheckFalse(StrContainsStr('Fo', 'Bar'), 'Test 1');
   CheckFalse(StrContainsStr('Ar', 'Bar'), 'Test 2');
@@ -203,7 +203,7 @@ begin
   CheckFalse(StrContainsStr('Bar', ''), 'Test 12');
 end;
 
-procedure TTestRoutines.TestStrContainsWhiteSpace;
+procedure TTestStrUtilsRoutines.TestStrContainsWhiteSpace;
 begin
   CheckFalse(StrContainsWhiteSpace(''), 'Test 1');
   CheckFalse(StrContainsWhiteSpace('Foo'), 'Test 2');
@@ -216,7 +216,7 @@ begin
   CheckTrue(StrContainsWhiteSpace(#9'Foo'#9'Bar'#13#10), 'Test 9');
 end;
 
-procedure TTestRoutines.TestStrCountDelims;
+procedure TTestStrUtilsRoutines.TestStrCountDelims;
 const
   Str = 'foo,bar;42,56.';
 begin
@@ -236,7 +236,7 @@ begin
   CheckEquals(4, StrCountDelims(',;,.', Str), 'Test 14');
 end;
 
-procedure TTestRoutines.TestStrExplode;
+procedure TTestStrUtilsRoutines.TestStrExplode;
 
   function ArrayToStr(const A: array of string): string;
   var
@@ -459,7 +459,7 @@ begin
   CheckList(['Foo', 'Bar'], fStrings, 'Test 9');
 end;
 
-procedure TTestRoutines.TestStrIsDelimiter;
+procedure TTestStrUtilsRoutines.TestStrIsDelimiter;
 const
   Delims = ':;,.';
   Str = 'ab:;cd,.ef';
@@ -481,7 +481,7 @@ begin
   CheckTrue(StrIsDelimiter(Delims + Delims, Str, 8), 'Test 15');
 end;
 
-procedure TTestRoutines.TestStrJoin;
+procedure TTestStrUtilsRoutines.TestStrJoin;
 
   procedure SetStrings(const A: array of string);
   var
@@ -538,7 +538,7 @@ begin
     'Test 9b');
 end;
 
-procedure TTestRoutines.TestStrLastDelimiterPos;
+procedure TTestStrUtilsRoutines.TestStrLastDelimiterPos;
 const
   Str = 'foo,bar;42,56.';
 begin
@@ -554,7 +554,7 @@ begin
   CheckEquals(11, StrLastDelimiterPos(',;;,', Str), 'Test 10');
 end;
 
-procedure TTestRoutines.TestStrLastPos;
+procedure TTestStrUtilsRoutines.TestStrLastPos;
 begin
   CheckEquals(0, StrLastPos('Fo', 'Bar'), 'Test 1');
   CheckEquals(5, StrLastPos('a', 'FooBar'), 'Test 2');
@@ -566,7 +566,7 @@ begin
   CheckEquals(0, StrLastPos('Foo', ''), 'Test 8');
 end;
 
-procedure TTestRoutines.TestStrMakeSentence;
+procedure TTestStrUtilsRoutines.TestStrMakeSentence;
 begin
   CheckEquals('', StrMakeSentence(''), 'Test 1');
   CheckEquals('.', StrMakeSentence('.'), 'Test 2');
@@ -593,7 +593,7 @@ begin
   CheckEquals('Foo?'#13#10, StrMakeSentence('Foo?'#13#10), 'Test 23');
 end;
 
-procedure TTestRoutines.TestStrPos_overload1;
+procedure TTestStrUtilsRoutines.TestStrPos_overload1;
 begin
   CheckEquals(0, StrPos('Fo', 'Bar'), 'Test 1');
   CheckEquals(1, StrPos('Ba', 'Bar'), 'Test 2');
@@ -605,7 +605,7 @@ begin
   CheckEquals(0, StrPos('Foo', ''), 'Test 8');
 end;
 
-procedure TTestRoutines.TestStrPos_overload2;
+procedure TTestStrUtilsRoutines.TestStrPos_overload2;
 begin
   CheckEquals(0, StrPos('Fo', 'Bar', 1), 'Test 1');
   CheckEquals(0, StrPos('Fo', 'Bar', 3), 'Test 2');
@@ -623,7 +623,7 @@ begin
   CheckEquals(0, StrPos('Foo', '', 1), 'Test 14');
 end;
 
-procedure TTestRoutines.TestStrQuoteSpaced;
+procedure TTestStrUtilsRoutines.TestStrQuoteSpaced;
 begin
   CheckEquals('', StrQuoteSpaced(''), 'Test 1');
   CheckEquals('', StrQuoteSpaced('', ''''), 'Test 2');
@@ -637,7 +637,7 @@ begin
   CheckEquals('"Foo'#9'Bar"', StrQuoteSpaced('Foo'#9'Bar'), 'Test 10');
 end;
 
-procedure TTestRoutines.TestStrReplace;
+procedure TTestStrUtilsRoutines.TestStrReplace;
 begin
   CheckEquals('', StrReplace('', '', 'yyy'), 'Test 1');
   CheckEquals('', StrReplace('', 'xxx', 'yyy'), 'Test 2');
@@ -652,7 +652,7 @@ begin
   CheckEquals('bar', StrReplace('foo', 'foo', 'bar'), 'Test 7');
 end;
 
-procedure TTestRoutines.TestStrSameStr;
+procedure TTestStrUtilsRoutines.TestStrSameStr;
 begin
   CheckTrue(StrSameStr('', ''), 'Test 1');
   CheckFalse(StrSameStr('', 'Foo'), 'Test 2');
@@ -666,7 +666,7 @@ begin
   CheckTrue(StrSameStr('+=¶', '+=¶'), 'Test 8');
 end;
 
-procedure TTestRoutines.TestStrSameText;
+procedure TTestStrUtilsRoutines.TestStrSameText;
 begin
   CheckTrue(StrSameText('', ''), 'Test 1');
   CheckFalse(StrSameText('', 'Foo'), 'Test 2');
@@ -680,7 +680,7 @@ begin
   CheckTrue(StrSameText('+=¶', '+=¶'), 'Test 9');
 end;
 
-procedure TTestRoutines.TestStrSlice;
+procedure TTestStrUtilsRoutines.TestStrSlice;
 begin
   CheckEquals('', StrSlice('', 5, 8), 'Test 1');
   CheckEquals('Iñtërn', StrSlice('Iñtërnâtiônàlizætiøn', 1, 6), 'Test 2');
@@ -699,7 +699,7 @@ begin
   CheckEquals('Iñt', StrSlice('Iñtërnâtiônàlizætiøn', -4, 3), 'Test 12');
 end;
 
-procedure TTestRoutines.TestStrSliceLeft;
+procedure TTestStrUtilsRoutines.TestStrSliceLeft;
 begin
   CheckEquals('', StrSliceLeft('', 5), 'Test 1');
   CheckEquals('', StrSliceLeft('Iñtërnâtiônàlizætiøn', 0), 'Test 2');
@@ -713,7 +713,7 @@ begin
     'Test 7');
 end;
 
-procedure TTestRoutines.TestStrSliceRight;
+procedure TTestStrUtilsRoutines.TestStrSliceRight;
 begin
   CheckEquals('', StrSliceRight('', 5), 'Test 1');
   CheckEquals('', StrSliceRight('Iñtërnâtiônàlizætiøn', 0), 'Test 2');
@@ -727,7 +727,7 @@ begin
     'Test 7');
 end;
 
-procedure TTestRoutines.TestStrSplit;
+procedure TTestStrUtilsRoutines.TestStrSplit;
 var
   Left, Right: string;
 begin
@@ -772,7 +772,7 @@ begin
   CheckEquals('', Right, 'Test 10c');
 end;
 
-procedure TTestRoutines.TestStrStartsStr;
+procedure TTestStrUtilsRoutines.TestStrStartsStr;
 begin
   CheckFalse(StrStartsStr('Iñtërnâtiônàlizætiøn', ''), 'Test 1');
   CheckFalse(StrStartsStr('', 'Iñtërnâtiônàlizætiøn'), 'Test 2');
@@ -786,7 +786,7 @@ begin
     'Test 8');
 end;
 
-procedure TTestRoutines.TestStrStartsText;
+procedure TTestStrUtilsRoutines.TestStrStartsText;
 begin
   CheckFalse(StrStartsText('Iñtërnâtiônàlizætiøn', ''), 'Test 1');
   CheckFalse(StrStartsText('', 'Iñtërnâtiônàlizætiøn'), 'Test 2');
@@ -799,7 +799,7 @@ begin
   CheckFalse(StrStartsText('ñtërnâ', 'Iñtërnâtiônàlizætiøn'), 'Test 8');
 end;
 
-procedure TTestRoutines.TestStrStripWhiteSpace;
+procedure TTestStrUtilsRoutines.TestStrStripWhiteSpace;
 begin
   CheckEquals('', StrStripWhiteSpace(''), 'Test 1');
   CheckEquals('', StrStripWhiteSpace(' '), 'Test 2');
@@ -812,7 +812,7 @@ begin
     'Test 8');
 end;
 
-procedure TTestRoutines.TestStrToLower;
+procedure TTestStrUtilsRoutines.TestStrToLower;
 begin
   CheckEquals('', StrToLower(''), 'Test 1');
   CheckEquals('356', StrToLower('356'), 'Test 2');
@@ -825,7 +825,7 @@ begin
   CheckEquals('+=¶', StrToLower('+=¶'), 'Test 9');
 end;
 
-procedure TTestRoutines.TestStrToUpper;
+procedure TTestStrUtilsRoutines.TestStrToUpper;
 begin
   CheckEquals('', StrToUpper(''), 'Test 1');
   CheckEquals('356', StrToUpper('356'), 'Test 2');
@@ -838,7 +838,7 @@ begin
   CheckEquals('+=¶', StrToUpper('+=¶'), 'Test 9');
 end;
 
-procedure TTestRoutines.TestStrTrim;
+procedure TTestStrUtilsRoutines.TestStrTrim;
 begin
   CheckEquals('Foo', StrTrim('Foo'), 'Test 1');
   CheckEquals('Foo', StrTrim('  Foo'), 'Test 2');
@@ -852,7 +852,7 @@ begin
   CheckEquals(#$D834#$DD1E, StrTrim('  '#$D834#$DD1E'  '), 'Test 9');
 end;
 
-procedure TTestRoutines.TestStrTrimChars;
+procedure TTestStrUtilsRoutines.TestStrTrimChars;
 begin
   CheckEquals('', StrTrimChars('', 'X'), 'Test 1');
   CheckEquals('Foo', StrTrimChars('XXFooX', 'X'), 'Test 2');
@@ -868,7 +868,7 @@ begin
   CheckEquals('#$D834#$DD1E', StrTrimChars('XX#$D834#$DD1EXX', 'X'), 'Test 11');
 end;
 
-procedure TTestRoutines.TestStrTrimLeft;
+procedure TTestStrUtilsRoutines.TestStrTrimLeft;
 begin
   CheckEquals('Foo', StrTrimLeft('Foo'), 'Test 1');
   CheckEquals('Foo', StrTrimLeft('  Foo'), 'Test 2');
@@ -883,7 +883,7 @@ begin
   CheckEquals(#$D834#$DD1E'  ', StrTrimLeft('  '#$D834#$DD1E'  '), 'Test 9');
 end;
 
-procedure TTestRoutines.TestStrTrimLeftChars;
+procedure TTestStrUtilsRoutines.TestStrTrimLeftChars;
 begin
   CheckEquals('', StrTrimLeftChars('', 'X'), 'Test 1');
   CheckEquals('FooX', StrTrimLeftChars('XXFooX', 'X'), 'Test 2');
@@ -900,7 +900,7 @@ begin
     'Test 11');
 end;
 
-procedure TTestRoutines.TestStrTrimRight;
+procedure TTestStrUtilsRoutines.TestStrTrimRight;
 begin
   CheckEquals('Foo', StrTrimRight('Foo'), 'Test 1');
   CheckEquals('  Foo', StrTrimRight('  Foo'), 'Test 2');
@@ -915,7 +915,7 @@ begin
   CheckEquals('  '#$D834#$DD1E, StrTrimRight('  '#$D834#$DD1E'  '), 'Test 9');
 end;
 
-procedure TTestRoutines.TestStrTrimRightChars;
+procedure TTestStrUtilsRoutines.TestStrTrimRightChars;
 begin
   CheckEquals('', StrTrimRightChars('', 'X'), 'Test 1');
   CheckEquals('XXFoo', StrTrimRightChars('XXFooX', 'X'), 'Test 2');
@@ -932,7 +932,7 @@ begin
     'Test 11');
 end;
 
-procedure TTestRoutines.TestStrUnixLineBreaks;
+procedure TTestStrUtilsRoutines.TestStrUnixLineBreaks;
 begin
   CheckEquals('', StrUnixLineBreaks(''), 'Test 1');
   CheckEquals('xxx', StrUnixLineBreaks('xxx'), 'Test 2');
@@ -945,7 +945,7 @@ begin
   CheckEquals(#10#10#10, StrUnixLineBreaks(#10#13#13#10), 'Test 8');
 end;
 
-procedure TTestRoutines.TestStrWindowsLineBreaks;
+procedure TTestStrUtilsRoutines.TestStrWindowsLineBreaks;
 begin
   CheckEquals('', StrWindowsLineBreaks(''), 'Test 1');
   CheckEquals('xxx', StrWindowsLineBreaks('xxx'), 'Test 2');
@@ -959,7 +959,7 @@ begin
   CheckEquals(#13#10#13#10#13#10, StrWindowsLineBreaks(#10#13#13#10), 'Test 8');
 end;
 
-procedure TTestRoutines.TestStrWrap;
+procedure TTestStrUtilsRoutines.TestStrWrap;
 const
   Text = 'The quick brown fox jumped-over-the lazy dog.';
   //      123456789012345678901234567890123456789012345
@@ -999,6 +999,6 @@ end;
 
 initialization
   // Register any test cases with the test runner
-  RegisterTest(TTestRoutines.Suite);
+  RegisterTest(TTestStrUtilsRoutines.Suite);
 end.
 
