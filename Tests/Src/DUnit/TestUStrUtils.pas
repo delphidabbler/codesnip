@@ -67,6 +67,7 @@ type
     procedure TestStrSplit;
     procedure TestStrWrap;
     procedure TestStrMakeSentence;
+    procedure TestStrBackslashEscape;
   end;
 
 
@@ -88,6 +89,47 @@ end;
 procedure TTestRoutines.TearDown;
 begin
   fStrings.Free;
+end;
+
+procedure TTestRoutines.TestStrBackslashEscape;
+var
+  Orig, Expected, Res, Escapable, Escapes: string;
+begin
+  Escapable := '\"' + TAB + LF + FF;
+  Escapes := '\"tnf';
+  Orig := '';
+  Expected := '';
+  Res := StrBackslashEscape(Orig, Escapable, Escapes);
+  CheckEquals(Expected, Res, 'Test 1');
+
+  Orig := '"fred' + TAB + LF + 'blogg\s"';
+  Expected := '\"fred\t\nblogg\\s\"';
+  Res := StrBackslashEscape(Orig, Escapable, Escapes);
+  CheckEquals(Expected, Res, 'Test 2');
+
+  Orig := '"fred' + TAB + LF + 'blogg\s"';
+  Expected := '"fred\t\nblogg\s"';
+  Escapable := TAB + LF;
+  Escapes := 'tn';
+  Res := StrBackslashEscape(Orig, Escapable, Escapes);
+  CheckEquals(Expected, Res, 'Test 3');
+
+  Escapable := '\"' + TAB + LF + FF;
+  Escapes := '\"tnf';
+  Orig := '\\\\\';
+  Expected := '\\\\\\\\\\';
+  Res := StrBackslashEscape(Orig, Escapable, Escapes);
+  CheckEquals(Expected, Res, 'Test 4');
+
+  Orig := FF;
+  Expected := '\f';
+  Res := StrBackslashEscape(Orig, Escapable, Escapes);
+  CheckEquals(Expected, Res, 'Test 5');
+
+  Orig := 'No escaping here';
+  Expected := Orig;
+  Res := StrBackslashEscape(Orig, Escapable, Escapes);
+  CheckEquals(Expected, Res, 'Test 6');
 end;
 
 procedure TTestRoutines.TestStrCapitaliseWords;

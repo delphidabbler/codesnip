@@ -246,6 +246,11 @@ function StrMakeSentence(const Str: UnicodeString): UnicodeString;
 function StrIf(const Condition: Boolean; const TrueStr, FalseStr: string):
   string;
 
+///  <summary>Escapes all characters from string S that are included in
+///  Escapable with the backslash character followed by the matching character
+///  in Escapes.</summary>
+function StrBackslashEscape(const S, Escapable, Escapes: string): string;
+
 
 implementation
 
@@ -796,6 +801,47 @@ begin
     Result := TrueStr
   else
     Result := FalseStr;
+end;
+
+function StrBackslashEscape(const S, Escapable, Escapes: string): string;
+const
+  EscChar = '\';       // the C escape character
+var
+  EscCount: Integer;    // count of escaped characters in string
+  Ch: Char;             // each character in string
+  PRes: PChar;          // points to chars in result string
+  EscCharPos: Integer;  // position of esc chars in EscapeChars & EscapableChars
+begin
+  // Check for empty string and treat specially (empty string crashes main code)
+  if S = '' then
+  begin
+    Result := '';
+    Exit;
+  end;
+  // Count escapable characters in string
+  EscCount := 0;
+  for Ch in S do
+  begin
+    if StrContainsStr(Ch, Escapable) then
+      Inc(EscCount);
+  end;
+  // Set size of result string and get pointer to it
+  SetLength(Result, Length(S) + EscCount);
+  PRes := PChar(Result);
+  // Replace escapable chars with the escaped version
+  for Ch in S do
+  begin
+    EscCharPos := StrPos(Ch, Escapable);
+    if EscCharPos > 0 then
+    begin
+      PRes^ := EscChar;
+      Inc(PRes);
+      PRes^ := Escapes[EscCharPos];
+    end
+    else
+      PRes^ := Ch;
+    Inc(PRes);
+  end;
 end;
 
 end.
