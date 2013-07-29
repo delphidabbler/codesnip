@@ -26,6 +26,7 @@ type
     procedure TestIsBaseFileName;
     procedure TestIsHexDigit;
     procedure TestIsValidDriveLetter;
+    procedure TestURIBaseName;
   end;
 
 
@@ -106,6 +107,24 @@ begin
     CheckTrue(IsValidDriveLetter(GoodChars[Idx]), 'Good Test ' + IntToStr(Idx));
   for Idx := 1 to Length(BadChars) do
     CheckFalse(IsValidDriveLetter(BadChars[Idx]), 'Bad Test ' + IntToStr(Idx));
+end;
+
+procedure TTestUtilsRoutines.TestURIBaseName;
+begin
+  CheckEquals('', URIBaseName(''), 'Test 1');
+  CheckEquals('foo', URIBaseName('foo'), 'Test 2');
+  CheckEquals('', URIBaseName('foo/'), 'Test 3');
+  CheckEquals('bar', URIBaseName('foo/bar'), 'Test 4');
+  CheckEquals(
+    'swag.php', 
+    URIBaseName('http://www.delphidabbler.com/swag.php'), 
+    'Test 5'
+  );
+  CheckEquals(
+    'bar', 
+    URIBaseName('http://www.delphidabbler.com/foo/bar'), 
+    'Test 6'
+  );
 end;
 
 initialization
