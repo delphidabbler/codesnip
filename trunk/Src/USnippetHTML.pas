@@ -114,7 +114,7 @@ begin
   Assert(Assigned(Cat), ClassName + '.Category: Category not found');
   Result := StrMakeSentence(
     JSALink(
-      JSLiteralFunc('displayCategory', [Cat.ID]),
+      TJavaScript.LiteralFunc('displayCategory', [Cat.ID]),
       'category-link',
       Cat.Description
     )
@@ -209,7 +209,9 @@ class function TSnippetHTML.SnippetALink(const Snippet: TSnippet): string;
 begin
   // Create javascript link enclosing snippet name
   Result := JSALink(
-    JSLiteralFunc('displaySnippet', [Snippet.Name, Snippet.UserDefined]),
+    TJavaScript.LiteralFunc(
+      'displaySnippet', [Snippet.Name, Snippet.UserDefined]
+    ),
     'snippet-link',
     Snippet.DisplayName
   );

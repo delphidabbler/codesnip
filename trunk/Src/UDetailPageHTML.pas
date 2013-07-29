@@ -563,7 +563,8 @@ begin
     'EditLink', TCSS.BlockDisplayProp(GetSnippet.UserDefined)
   );
   Tplt.ResolvePlaceholderText(
-    'EditEventHandler', JSLiteralFunc('editSnippet', [GetSnippet.Name])
+    'EditEventHandler',
+    TJavaScript.LiteralFunc('editSnippet', [GetSnippet.Name])
   );
   SnippetHTML := TSnippetHTML.Create(GetSnippet);
   try
