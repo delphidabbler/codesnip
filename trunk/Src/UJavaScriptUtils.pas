@@ -18,6 +18,11 @@ unit UJavaScriptUtils;
 interface
 
 
+uses
+  // Project
+  UEncodings;
+
+
 type
   ///  <summary>Container for methods that assist in generating JavaScript code.
   ///  </summary>
@@ -55,6 +60,19 @@ type
     ///  UnicodeString and WideChar.</exception>
     class function LiteralFunc(const FnName: string;
       const Params: array of const): string; static;
+    ///  <summary>Loads JavaScript code for the script named in HTML resources
+    ///  and returns the script as string.</summary>
+    ///  <param name="ScriptName">string [in] Name of resource containing
+    ///  script.</param>
+    ///  <param name="EncType">TEncodingType [in] Denotes type of encoding used
+    ///  for requested script within resources.</param>
+    ///  <returns>string. Required JavaScript code.</returns>
+    ///  <remarks>We sometimes need to load scripts into strings and then embed
+    ///  in HTML document since linking to external resource script doesn't seem
+    ///  to work in IE 9 (see bug report
+    ///  https://sourceforge.net/p/codesnip/bugs/84/).</remarks>
+    class function LoadScript(const ScriptName: string;
+      const EncType: TEncodingType): string; static;
   end;
 
 
@@ -65,7 +83,7 @@ uses
   // Delphi
   SysUtils, Classes,
   // Project
-  UConsts, UExceptions, UStrUtils;
+  UConsts, UExceptions, UResourceUtils, UStrUtils;
 
 
 { TJavaScript }
@@ -129,6 +147,17 @@ begin
     Result := 'false';
 end;
 
+class function TJavaScript.LiteralParam(const F: Extended): string;
+begin
+  Result := FloatToStr(F);
+end;
+
+class function TJavaScript.LoadScript(const ScriptName: string;
+  const EncType: TEncodingType): string;
+begin
+  Result := LoadResourceAsString(HInstance, ScriptName, RT_HTML, EncType);
+end;
+
 class function TJavaScript.MakeSafeString(const S: string): string;
 const
   EscapableChars = DOUBLEQUOTE + SINGLEQUOTE + '\' + LF + CR + TAB + FF
@@ -138,11 +167,6 @@ begin
   Result := StrBackslashEscape(
     StrUnixLineBreaks(S), EscapableChars, EscapeChars
   );
-end;
-
-class function TJavaScript.LiteralParam(const F: Extended): string;
-begin
-  Result := FloatToStr(F);
 end;
 
 end.

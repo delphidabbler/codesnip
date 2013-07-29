@@ -437,14 +437,8 @@ var
 
 begin
   inherited;
-  // Need to load script this way this since linking to external resource
-  // script doesn't seem to work in IE 9 (see bug report
-  // https://sourceforge.net/p/codesnip/bugs/84/).
   Tplt.ResolvePlaceholderHTML(
-    'externalScript',
-    LoadResourceAsString(
-      HInstance, 'external.js', RT_HTML, etWindows1252
-    )
+    'externalScript', TJavaScript.LoadScript('external.js', etWindows1252)
   );
 
   UserDBCount := Database.Snippets.Count(True);
@@ -531,21 +525,13 @@ var
   SnippetHTML: TSnippetHTML;  // object used to generate HTML for snippet
 begin
   inherited;
-  // Need to load script this way this since linking to external resource
-  // script doesn't seem to work in IE 9 (see bug report
-  // https://sourceforge.net/p/codesnip/bugs/84/).
   Tplt.ResolvePlaceholderHTML(
-    'externalScript',
-    LoadResourceAsString(
-      HInstance, 'external.js', RT_HTML, etWindows1252
-    )
+    'externalScript',  TJavaScript.LoadScript('external.js', etWindows1252)
   );
   if TIEInfo.RequiresCSSOverflowXFix then
     Tplt.ResolvePlaceholderHTML(
       'overflowXFixScript',
-      LoadResourceAsString(
-        HInstance, 'overflowXFix.js', RT_HTML, etWindows1252
-      )
+      TJavaScript.LoadScript('overflowXFix.js', etWindows1252)
     )
   else
     Tplt.ResolvePlaceholderHTML(
@@ -639,16 +625,8 @@ begin
   Tplt.ResolvePlaceholderText('Heading', GetHeading);
   if HaveSnippets then
   begin
-    // Need to load script this way this since linking to external resource
-    // script doesn't seem to work in IE 9 (see bug report
-    // https://sourceforge.net/p/codesnip/bugs/84/).
-    { TODO: move this code, and code for other script, into a class that loads
-            the scripts from resources. }
     Tplt.ResolvePlaceholderHTML(
-      'externalScript',
-      LoadResourceAsString(
-        HInstance, 'external.js', RT_HTML, etWindows1252
-      )
+      'externalScript', TJavaScript.LoadScript('external.js', etWindows1252)
     );
     Tplt.ResolvePlaceholderText('Narrative', GetNarrative);
     Tplt.ResolvePlaceholderHTML('SnippetList', SnippetTableInner);
