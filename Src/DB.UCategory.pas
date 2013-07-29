@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2011-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2011-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -55,6 +55,13 @@ type
     fID: string;              // Category id
     fDescription: string;     // Category description
     fUserDefined: Boolean;    // Whether this is a user-defined snippet
+    function CompareIDTo(const Cat: TCategory): Integer;
+      {Compares this category's ID to that of a given category. The check is not
+      case sensitive.
+        @param Cat [in] Category being compared.
+        @return -1 if this category's ID is less than that of Cat, 0 if both IDs
+          are equal or +1 if this category's ID is greater than Cat's.
+      }
   public
     constructor Create(const CatID: string; const UserDefined: Boolean;
       const Data: TCategoryData);
@@ -69,6 +76,15 @@ type
       considered equal if they have the same ID.
         @param Cat [in] Category being compared.
         @return True if categories are equal, False if not.
+      }
+    function CompareDescriptionTo(const Cat: TCategory): Integer;
+      {Compares this category's description to that of a given category. The
+      check is not case sensitive. If both categories have the same description
+      the comparison uses the category ID to ensure that the result does
+      represent equality.
+        @param Cat [in] Category being compared.
+        @return -1 if this category's description is less than Cat's, 0 if they
+          are equal or +1 if this category's description is greater than Cat's.
       }
     function CanDelete: Boolean;
       {Checks if category can be deleted.
@@ -185,6 +201,32 @@ begin
     and not TReservedCategories.IsReserved(Self);
 end;
 
+function TCategory.CompareDescriptionTo(const Cat: TCategory): Integer;
+  {Compares this category's description to that of a given category. The check
+  is not case sensitive. If both categories have the same description the
+  comparison uses the category ID to ensure that the result does represent
+  equality.
+    @param Cat [in] Category being compared.
+    @return -1 if this category's description is less than Cat's, 0 if they
+      are equal or +1 if this category's description is greater than Cat's.
+  }
+begin
+  Result := StrCompareText(Self.fDescription, Cat.fDescription);
+  if Result = 0 then
+    Result := CompareIDTo(Cat);
+end;
+
+function TCategory.CompareIDTo(const Cat: TCategory): Integer;
+  {Compares this category's ID to that of a given category. The check is not
+  case sensitive.
+    @param Cat [in] Category being compared.
+    @return -1 if this category's ID is less than that of Cat, 0 if both IDs
+      are equal or +1 if this category's ID is greater than Cat's.
+  }
+begin
+  Result := StrCompareText(Self.ID, Cat.ID);
+end;
+
 constructor TCategory.Create(const CatID: string; const UserDefined: Boolean;
   const Data: TCategoryData);
   {Class contructor. Sets up category object with given property values.
@@ -216,7 +258,7 @@ function TCategory.IsEqual(const Cat: TCategory): Boolean;
     @return True if categories are equal, False if not.
   }
 begin
-  Result := StrSameText(Self.ID, Cat.ID);
+  Result := CompareIDTo(Cat) = 0;
 end;
 
 { TCategoryEx }
@@ -354,3 +396,4 @@ begin
 end;
 
 end.
+
