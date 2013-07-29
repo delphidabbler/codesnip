@@ -69,9 +69,10 @@ uses
   // Delphi
   SysUtils, Generics.Defaults,
   // Project
-  Compilers.UGlobals, Compilers.UCompilers, DB.UMain, DB.USnippet, UContainers,
-  UCSSUtils, UHTMLTemplate, UHTMLUtils, UJavaScriptUtils, UPreferences, UQuery,
-  UResourceUtils, USnippetHTML, USnippetPageHTML, UStrUtils;
+  Compilers.UGlobals, Compilers.UCompilers, DB.UMain, DB.USnippet, UConsts,
+  UContainers, UCSSUtils, UEncodings, UHTMLTemplate, UHTMLUtils,
+  UJavaScriptUtils, UPreferences, UQuery, UResourceUtils, USnippetHTML,
+  USnippetPageHTML, UStrUtils, USystemInfo;
 
 
 type
@@ -88,13 +89,14 @@ type
     ///  depending on view.</summary>
     ///  <param name="Tplt">THTMLTemplate [in] Object containing template to
     ///  be updated.</param>
-    ///  <remarks>Implementors must replace every placeholder in template with
-    ///  required values. This is done by manipulating Tplt object.</remarks>
-    procedure ResolvePlaceholders(const Tplt: THTMLTemplate); virtual; abstract;
+    ///  <remarks>This method resolves place-holders common to all templates.
+    ///  Descendants must replace every remaining place-holder in their
+    ///  templates with required values.</remarks>
+    procedure ResolvePlaceholders(const Tplt: THTMLTemplate); virtual;
   public
     ///  <summary>Generates and returns HTML representing view passed to
     ///  constructor.</summary>
-    function Generate: string; override;
+    function Generate: string; override; final;
   end;
 
 type
@@ -112,13 +114,49 @@ type
   end;
 
 type
+  ///  <summary>Abstract base class for HTML pages that rely on a simple HTML
+  ///  template that has no scripts.</summary>
+  ///  <remarks>Subclasses must provide the whole content of the HTML document
+  ///  body.</remarks>
+  TBasicPageTpltHTML = class abstract(TDetailPageTpltHTML)
+  strict protected
+    ///  <summary>Returns name of HTML resource containing the basic template.
+    ///  </summary>
+    function GetTemplateResName: string; override;
+    ///  <summary>Replaces place-holders in basic with suitable values.
+    ///  </summary>
+    ///  <param name="Tplt">THTMLTemplate [in] Object containing template to
+    ///  be updated.</param>
+    ///  <remarks>Sub classes must not override this method, but should instead
+    ///  provide the body HTML by overriding GetBodyHTML.</remarks>
+    procedure ResolvePlaceholders(const Tplt: THTMLTemplate); override; final;
+    ///  <summary>Returns HTML to be included within the body of the HTML
+    ///  document.</summary>
+    ///  <remarks>Implementors must ensure the returned HTML is valid. The body
+    ///  tag must not be included in the HTML.</remarks>
+    function GetBodyHTML: string; virtual; abstract;
+  end;
+
+type
   ///  <summary>
   ///  Generates HTML body for page displayed for a new, empty, detail pane tab.
   ///  </summary>
-  TNewTabPageHTML = class sealed(TDetailPageHTML)
-  public
-    ///  <summary>Returns fixed HTML informing of a new, empty tab.</summary>
-    function Generate: string; override;
+  TNewTabPageHTML = class sealed(TBasicPageTpltHTML)
+  strict protected
+    ///  <summary>Returns HTML that informs the user of a new, empty, tab.
+    ///  </summary>
+    function GetBodyHTML: string; override;
+  end;
+
+type
+  ///  <summary>
+  ///  Generates HTML body of page displayed after database has been updated.
+  ///  </summary>
+  TDBUpdatedPageHTML = class sealed(TBasicPageTpltHTML)
+  strict protected
+    ///  <summary>Returns HTML that informs the user that the database has been
+    ///  updated.</summary>
+    function GetBodyHTML: string; override;
   end;
 
 type
@@ -132,17 +170,6 @@ type
     ///  <summary>Replaces place-holders in welcome page template with suitable
     ///  values.</summary>
     procedure ResolvePlaceholders(const Tplt: THTMLTemplate); override;
-  end;
-
-type
-  ///  <summary>
-  ///  Generates HTML body of page displayed after database has been updated.
-  ///  </summary>
-  TDBUpdatedPageHTML = class sealed(TDetailPageHTML)
-  public
-    ///  <summary>Returns fixed HTML informaing that database has been updated.
-    ///  </summary>
-    function Generate: string; override;
   end;
 
 type
@@ -193,7 +220,6 @@ type
     ///  <summary>Replaces place-holders in chosen template with suitable
     ///  values.</summary>
     procedure ResolvePlaceholders(const Tplt: THTMLTemplate); override;
-      abstract;
     ///  <summary>Checks if there are snippets in snippets list.</summary>
     function HaveSnippets: Boolean;
     ///  <summary>Checks if the given snippet should be included in the list of
@@ -322,6 +348,12 @@ begin
   end;
 end;
 
+procedure TDetailPageTpltHTML.ResolvePlaceholders(const Tplt: THTMLTemplate);
+begin
+  // This placeholder is common to all templates
+  Tplt.ResolvePlaceholderHTML('ResourcePath', MakeResourcePath(HInstance));
+end;
+
 { TNulPageHTML }
 
 function TNulPageHTML.Generate: string;
@@ -331,7 +363,7 @@ end;
 
 { TNewTabPageHTML }
 
-function TNewTabPageHTML.Generate: string;
+function TNewTabPageHTML.GetBodyHTML: string;
 begin
   Result := THTML.CompoundTag(
     'div',
@@ -375,8 +407,18 @@ var
   end;
 
 begin
+  inherited;
+  // Need to load script this way this since linking to external resource
+  // script doesn't seem to work in IE 9 (see bug report
+  // https://sourceforge.net/p/codesnip/bugs/84/).
+  Tplt.ResolvePlaceholderHTML(
+    'externalScript',
+    LoadResourceAsString(
+      HInstance, 'external.js', RT_HTML, etWindows1252
+    )
+  );
+
   UserDBCount := Database.Snippets.Count(True);
-  Tplt.ResolvePlaceholderText('ResourcePath', MakeResourcePath(HInstance));
   Tplt.ResolvePlaceholderHTML(
     'HaveUserDB', TCSS.BlockDisplayProp(UserDBCount > 0)
   );
@@ -431,7 +473,7 @@ end;
 
 { TDBUpdatedPageHTML }
 
-function TDBUpdatedPageHTML.Generate: string;
+function TDBUpdatedPageHTML.GetBodyHTML: string;
 resourcestring
   sBody = 'The database has been updated successfully.';
 begin
@@ -459,7 +501,28 @@ procedure TSnippetInfoPageHTML.ResolvePlaceholders(const Tplt: THTMLTemplate);
 var
   SnippetHTML: TSnippetHTML;  // object used to generate HTML for snippet
 begin
-  Tplt.ResolvePlaceholderText('ResourcePath', MakeResourcePath(HInstance));
+  inherited;
+  // Need to load script this way this since linking to external resource
+  // script doesn't seem to work in IE 9 (see bug report
+  // https://sourceforge.net/p/codesnip/bugs/84/).
+  Tplt.ResolvePlaceholderHTML(
+    'externalScript',
+    LoadResourceAsString(
+      HInstance, 'external.js', RT_HTML, etWindows1252
+    )
+  );
+  if TIEInfo.RequiresCSSOverflowXFix then
+    Tplt.ResolvePlaceholderHTML(
+      'overflowXFixScript',
+      LoadResourceAsString(
+        HInstance, 'overflowXFix.js', RT_HTML, etWindows1252
+      )
+    )
+  else
+    Tplt.ResolvePlaceholderHTML(
+      'overflowXFixScript',
+      'window.onload = null;'
+    );
   if GetSnippet.UserDefined then
     Tplt.ResolvePlaceholderHTML('SnippetCSSClass', 'userdb')
   else
@@ -504,10 +567,14 @@ constructor TSnippetListPageHTML.Create(View: IView);
 begin
   inherited;
   fSnippetList := TSortedObjectList<TSnippet>.Create(
+    { TODO: create new comparer class for this comparison, which is duplicated
+            in UGripus.TGroupItem.Create. }
     TDelegatedComparer<TSnippet>.Create(
       function (const Left, Right: TSnippet): Integer
       begin
         Result := StrCompareText(Left.DisplayName, Right.DisplayName);
+        if Result = 0 then
+          Result := Left.ID.CompareTo(Right.ID);
       end
     ),
     False
@@ -532,6 +599,27 @@ end;
 function TSnippetListPageHTML.HaveSnippets: Boolean;
 begin
   Result := not fSnippetList.IsEmpty;
+end;
+
+procedure TSnippetListPageHTML.ResolvePlaceholders(const Tplt: THTMLTemplate);
+begin
+  // TODO: pull down common placeholders into this method
+  // TODO: eventually refactor using template method pattern
+  inherited;
+  if HaveSnippets then
+  begin
+    // Need to load script this way this since linking to external resource
+    // script doesn't seem to work in IE 9 (see bug report
+    // https://sourceforge.net/p/codesnip/bugs/84/).
+    { TODO: move this code, and code for other script, into a class that loads
+            the scripts from resources. }
+    Tplt.ResolvePlaceholderHTML(
+      'externalScript',
+      LoadResourceAsString(
+        HInstance, 'external.js', RT_HTML, etWindows1252
+      )
+    );
+  end;
 end;
 
 function TSnippetListPageHTML.SnippetTableInner: string;
@@ -589,6 +677,7 @@ resourcestring
   sNarrative = 'List of selected snippets in this category.';
   sNote = 'The current selection contains no snippets in this category.';
 begin
+  inherited;
   Tplt.ResolvePlaceholderHTML('H1Class', H1ClassName);
   Tplt.ResolvePlaceholderText('Heading', View.Description);
   if HaveSnippets then
@@ -615,6 +704,7 @@ resourcestring
   sNote = 'The are no snippets in the current selection that begin with the '
     + 'letter %s.';
 begin
+  inherited;
   Tplt.ResolvePlaceholderHTML('H1Class', 'maindb');
   Tplt.ResolvePlaceholderText('Heading', View.Description);
   if HaveSnippets then
@@ -644,9 +734,10 @@ resourcestring
   sNarrative = 'List of all %s snippets in the current selection.';
   sNote = 'There are no %s snippets in the current selection.';
 begin
+  inherited;
   Tplt.ResolvePlaceholderHTML('H1Class', 'maindb');
   Tplt.ResolvePlaceholderText(
-    'Heading', Format(sHeading, [View .Description])
+    'Heading', Format(sHeading, [View.Description])
   );
   if HaveSnippets then
   begin
@@ -660,6 +751,19 @@ begin
     Tplt.ResolvePlaceholderText(
       'Note', Format(sNote, [StrToLower(View.Description)])
     );
+end;
+
+{ TBasicPageTpltHTML }
+
+function TBasicPageTpltHTML.GetTemplateResName: string;
+begin
+  Result := 'info-basic-tplt.html';
+end;
+
+procedure TBasicPageTpltHTML.ResolvePlaceholders(const Tplt: THTMLTemplate);
+begin
+  inherited;
+  Tplt.ResolvePlaceholderHTML('BodyContent', GetBodyHTML);
 end;
 
 end.

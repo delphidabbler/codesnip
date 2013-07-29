@@ -66,42 +66,10 @@ begin
 end;
 
 procedure TDetailPageLoader.DisplayHTML(const Generator: TDetailPageHTML);
-var
-  HTML: string; // HTML to be displayed
-  MainTplt: THTMLTemplate;
 begin
-  MainTplt := THTMLTemplate.Create(HInstance, 'detail.html');
-  try
-    MainTplt.ResolvePlaceholderHTML(
-      'ResourcePath', MakeResourcePath(HInstance)
-    );
-    // Need to load script this way this since linking to external resource
-    // script from detail.html doesn't seem to work in IE 9 (see bug report
-    // https://sourceforge.net/p/codesnip/bugs/84/).
-    MainTplt.ResolvePlaceholderHTML(
-      'externalScript',
-      LoadResourceAsString(
-        HInstance, 'external.js', RT_HTML, etWindows1252
-      )
-    );
-    if TIEInfo.RequiresCSSOverflowXFix then
-      MainTplt.ResolvePlaceholderHTML(
-        'overflowXFixScript',
-        LoadResourceAsString(
-          HInstance, 'overflowXFix.js', RT_HTML, etWindows1252
-        )
-      )
-    else
-      MainTplt.ResolvePlaceholderHTML(
-        'overflowXFixScript',
-        'window.onload = null;'
-      );
-    MainTplt.ResolvePlaceholderHTML('BodyContent', Generator.Generate);
-    HTML := MainTplt.HTML;
-    fWBController.IOMgr.LoadFromString(HTML);
-  finally
-    MainTplt.Free;
-  end;
+  fWBController.IOMgr.LoadFromString(
+    Generator.Generate
+  );
 end;
 
 procedure TDetailPageLoader.LoadPage(View: IView);
