@@ -2,7 +2,7 @@
 # v. 2.0. If a copy of the MPL was not distributed with this file, You can
 # obtain one at http://mozilla.org/MPL/2.0/
 #
-# Copyright (C) 2005-2012, Peter Johnson (www.delphidabbler.com).
+# Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
 #
 # $Rev$
 # $Date$
@@ -60,9 +60,6 @@ Res\Scripts\external.js
 # other scripts
 Res\Scripts\overflowXFix.js
 
-# Container document for all HTML displayed in detail panes
-Res\HTML\detail.html
-
 # snippet information pages
 # -------------------------
 
@@ -79,6 +76,11 @@ Res\HTML\info-snippet-tplt.html
 # -------------
 
 Res\HTML\welcome-tplt.html
+
+# basic pages
+# -----------
+
+Res\HTML\info-basic-tplt.html
 
 
 # Images

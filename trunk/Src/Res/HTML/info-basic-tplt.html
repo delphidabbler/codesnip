@@ -9,30 +9,25 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2006-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
  *
- * Document used to host all HTML displayed in detail panes. References the
- * required style sheet and JavaScript code.
+ * Basic detail pane template that displays basic content within the body.
 -->
 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 
   <head>
-    <title>detail-info</title>
+    <title>Basic Detail Page</title>
     <link rel="stylesheet" href="<%ResourcePath%>detail.css" />
-    <script type="text/javascript" language="JavaScript">
-    <%externalScript%>
-    </script>
-    <script type="text/javascript" language="JavaScript">
-    <%overflowXFixScript%>
-    </script>
   </head>
 
   <body>
-    <div id="wrapper"><%BodyContent%></div>
+
+    <%BodyContent%>
+
   </body>
 
 </html>
