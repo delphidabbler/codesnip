@@ -29,7 +29,8 @@ uses
 
 
 type
-  ///  <summary>Class that imports given SWAG snippets into CodeSnip's user
+  ///  <summary>Class that converts snippets from the SWAG database into
+  ///  CodeSnip database format and imports them into the user defined
   ///  database.</summary>
   ///  <remarks>This class creates new user-defined snippets from records that
   ///  define a SWAF snippet. It is for the caller to acquire the required SWAG
