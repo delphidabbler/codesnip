@@ -26,20 +26,42 @@ uses
 
 
 type
+  ///  <summary>Class that implements a cache of SWAG snippets.</summary>
+  ///  <remarks>When the cache is full a snippet must be removed from the cache
+  ///  for each one added. The cache is implemented so that the snippets
+  ///  referenced the most are the least likely to be removed from the cache.
+  ///  </remarks>
   TSWAGSnippetCache = class(TObject)
   strict private
     const
+      ///  <summary>Minimum permitted size of cache.</summary>
       MinCacheSize = 10;
+      ///  <summary>Maximum permitted size of cache.</summary>
       MaxCachSize = 200;
     var
+      ///  <summary>Stores the cached snippets.</summary>
       fCache: TList<TSWAGSnippet>;
+      ///  <summary>Records size of cache.</summary>
       fCacheSize: Integer;
+    ///  <summary>Returns index of SWAG snippet with given ID in cache, or -1 if
+    ///  snippet not in cache.</summary>
     function IndexOfID(const SnippetID: Cardinal): Integer;
   public
+    ///  <summary>Creates a new cache instance with given size.</summary>
+    ///  <remarks>CacheSize may be adjusted to fall within valid range of cache
+    ///  sizes.</remarks>
     constructor Create(CacheSize: Integer);
+    ///  <summary>Destroys current object instance.</summary>
     destructor Destroy; override;
+    ///  <summary>Retrieves the SWAG snippet with the given ID from the cache.
+    ///  If the snippet is present it is stored in Snippet and True is returned.
+    ///  If the snippet is not present False is returned and Snippet is
+    ///  undefined.</summary>
     function Retrieve(const SnippetID: Cardinal; out Snippet: TSWAGSnippet):
       Boolean;
+    ///  <summary>Adds the given SWAG snippet to the cache.</summary>
+    ///  <remarks>If the cache is full a snippet will be removed from the cache
+    ///  to make way for the newly added snippet.</remarks>
     procedure Add(const Snippet: TSWAGSnippet);
   end;
 
