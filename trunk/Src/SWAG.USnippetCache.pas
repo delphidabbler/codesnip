@@ -37,7 +37,7 @@ type
       ///  <summary>Minimum permitted size of cache.</summary>
       MinCacheSize = 10;
       ///  <summary>Maximum permitted size of cache.</summary>
-      MaxCachSize = 200;
+      MaxCacheSize = 200;
     var
       ///  <summary>Stores the cached snippets.</summary>
       fCache: TList<TSWAGSnippet>;
@@ -88,7 +88,7 @@ var
   CacheSizeRange: TRange;
 begin
   inherited Create;
-  CacheSizeRange := TRange.Create(MinCacheSize, MaxCachSize);
+  CacheSizeRange := TRange.Create(MinCacheSize, MaxCacheSize);
   fCacheSize := CacheSizeRange.Constrain(CacheSize);
   fCache := TList<TSWAGSnippet>.Create;
 end;
