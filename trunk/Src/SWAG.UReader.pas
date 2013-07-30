@@ -30,10 +30,10 @@ uses
 
 
 type
-  TSWAGRESTCallWrapper = reference to procedure (CallProc: TProc);
-
-type
   TSWAGReader = class(TObject)
+  public
+    type
+      TRESTCallWrapper = reference to procedure (CallProc: TProc);
   strict private
     const
       MaxSnippetCacheSize = 50;
@@ -41,32 +41,31 @@ type
       fCategories: TList<TSWAGCategory>;
       fSnippetsByCategory: TDictionary<string,TList<TSWAGSnippet>>;
       fSWAGRESTMgr: TSWAGRESTMgr;
-      fDefaultCallWrapper: TSWAGRESTCallWrapper;
+      fDefaultCallWrapper: TRESTCallWrapper;
       fSnippetCache: TSWAGSnippetCache;
     procedure HandleException(E: Exception);
     procedure DownloadCategories(const Cats: TList<TSWAGCategory>);
     procedure DownloadPartialSnippets(const CatID: string;
       const SnipList: TList<TSWAGSnippet>);
     function DownloadCompleteSnippet(const SnipID: Cardinal): TSWAGSnippet;
-    procedure FetchCategories(CallWrapper: TSWAGRESTCallWrapper);
+    procedure FetchCategories(CallWrapper: TRESTCallWrapper);
     procedure FetchPartialSnippets(const CatID: string;
-      CallWrapper: TSWAGRESTCallWrapper);
+      CallWrapper: TRESTCallWrapper);
     function FetchCompleteSnippet(const SnippetID: Cardinal;
-      CallWrapper: TSWAGRESTCallWrapper): TSWAGSnippet;
+      CallWrapper: TRESTCallWrapper): TSWAGSnippet;
     procedure FetchCompleteSnippets(const SnipIDs: TList<Cardinal>;
-      Snippets: TList<TSWAGSnippet>; CallWrapper: TSWAGRESTCallWrapper);
+      Snippets: TList<TSWAGSnippet>; CallWrapper: TRESTCallWrapper);
   public
-    constructor Create(const DefaultRESTCallWrapper: TSWAGRESTCallWrapper);
+    constructor Create(const DefaultRESTCallWrapper: TRESTCallWrapper);
     destructor Destroy; override;
     procedure GetCategories(const Cats: TList<TSWAGCategory>;
-      CallWrapper: TSWAGRESTCallWrapper = nil);
+      CallWrapper: TRESTCallWrapper = nil);
     procedure GetPartialSnippets(const CatID: string;
-      const Snippets: TList<TSWAGSnippet>;
-      CallWrapper: TSWAGRESTCallWrapper = nil);
+      const Snippets: TList<TSWAGSnippet>; CallWrapper: TRESTCallWrapper = nil);
     function GetCompleteSnippet(const ID: Cardinal;
-      CallWrapper: TSWAGRESTCallWrapper = nil): TSWAGSnippet;
+      CallWrapper: TRESTCallWrapper = nil): TSWAGSnippet;
     procedure GetCompleteSnippets(SnipIDs: TList<Cardinal>;
-      Snippets: TList<TSWAGSnippet>; CallWrapper: TSWAGRESTCallWrapper = nil);
+      Snippets: TList<TSWAGSnippet>; CallWrapper: TRESTCallWrapper = nil);
   end;
 
 type
@@ -86,7 +85,7 @@ uses
 { TSWAGReader }
 
 constructor TSWAGReader.Create(
-  const DefaultRESTCallWrapper: TSWAGRESTCallWrapper);
+  const DefaultRESTCallWrapper: TRESTCallWrapper);
 begin
   inherited Create;
   fDefaultCallWrapper := DefaultRESTCallWrapper;
@@ -144,7 +143,7 @@ begin
   end;
 end;
 
-procedure TSWAGReader.FetchCategories(CallWrapper: TSWAGRESTCallWrapper);
+procedure TSWAGReader.FetchCategories(CallWrapper: TRESTCallWrapper);
 begin
   fCategories.Clear;
   if not Assigned(CallWrapper) then
@@ -166,7 +165,7 @@ begin
 end;
 
 function TSWAGReader.FetchCompleteSnippet(const SnippetID: Cardinal;
-  CallWrapper: TSWAGRESTCallWrapper): TSWAGSnippet;
+  CallWrapper: TRESTCallWrapper): TSWAGSnippet;
 var
   Snippet: TSWAGSnippet;
 begin
@@ -182,7 +181,7 @@ begin
 end;
 
 procedure TSWAGReader.FetchCompleteSnippets(const SnipIDs: TList<Cardinal>;
-  Snippets: TList<TSWAGSnippet>; CallWrapper: TSWAGRESTCallWrapper);
+  Snippets: TList<TSWAGSnippet>; CallWrapper: TRESTCallWrapper);
 begin
   if not Assigned(CallWrapper) then
     CallWrapper := fDefaultCallWrapper;
@@ -202,7 +201,7 @@ begin
 end;
 
 procedure TSWAGReader.FetchPartialSnippets(const CatID: string;
-  CallWrapper: TSWAGRESTCallWrapper);
+  CallWrapper: TRESTCallWrapper);
 begin
   if not Assigned(CallWrapper) then
     CallWrapper := fDefaultCallWrapper;
@@ -219,7 +218,7 @@ begin
 end;
 
 procedure TSWAGReader.GetCategories(const Cats: TList<TSWAGCategory>;
-  CallWrapper: TSWAGRESTCallWrapper);
+  CallWrapper: TRESTCallWrapper);
 begin
   if fCategories.Count = 0 then
     FetchCategories(CallWrapper);
@@ -227,7 +226,7 @@ begin
 end;
 
 function TSWAGReader.GetCompleteSnippet(const ID: Cardinal;
-  CallWrapper: TSWAGRESTCallWrapper): TSWAGSnippet;
+  CallWrapper: TRESTCallWrapper): TSWAGSnippet;
 begin
   if not fSnippetCache.Retrieve(ID, Result) then
   begin
@@ -237,7 +236,7 @@ begin
 end;
 
 procedure TSWAGReader.GetCompleteSnippets(SnipIDs: TList<Cardinal>;
-  Snippets: TList<TSWAGSnippet>; CallWrapper: TSWAGRESTCallWrapper);
+  Snippets: TList<TSWAGSnippet>; CallWrapper: TRESTCallWrapper);
 var
   RemoteSnippetIDs: TList<Cardinal>;
   DownloadedSnippets: TList<TSWAGSnippet>;
@@ -275,7 +274,7 @@ begin
 end;
 
 procedure TSWAGReader.GetPartialSnippets(const CatID: string;
-  const Snippets: TList<TSWAGSnippet>; CallWrapper: TSWAGRESTCallWrapper);
+  const Snippets: TList<TSWAGSnippet>; CallWrapper: TRESTCallWrapper);
 begin
   if not fSnippetsByCategory.ContainsKey(CatID) then
     FetchPartialSnippets(CatID, CallWrapper);
