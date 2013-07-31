@@ -11,17 +11,21 @@
 ; Change Log for CodeSnip Release 4
 ; ------------------------------------------------------------------------------
 
-Release v4.7.0 of ?? ???? 2013
+Release v4.7.0 of 31 July 2013
 + Implemented feature request #71 "Support importing of one or more snippets from the SWAG database" (http://bit.ly/18AFlGu):
   - Uses DelphiDabbler SWAG web service to get SWAG data.
   - New wizard to permit user to select required SWAG snippets. This is accessible from the new "Snippets | Import Snippets From SWAG" menu option.
   - Snippets are imported into a new "SWAG Imports" category.
 + Implemented feature request #80 "Enable detail pane tabs to be re-ordered" (http://bit.ly/13cbjTZ).
++ In detail pane source code and compiler table now display horizontal scroll bars if they do not fit within the width of the pane. This implements feature requests #60 (http://bit.ly/17iCzT4) and #61 (http://bit.ly/1coDJ5f).
 + Minor changes to dialogue box that appears during long operations.
++ Fixed bug #86 "Snippets are sorted by snippet name in snippet table listings in detail pane" (http://bit.ly/17iD27H).
 + Fixed a few code errors that could have surfaced as bugs.
++ Modified how HTML based detail pane display is generated and displayed.
 + Some refactoring.
 + Updated some 3rd party code to latest available versions.
 + Updated help file re changes.
++ Updated privacy statement.
 
 Release v4.6.4 of 24 July 2013
 + Fix for IE 9 related browser control script bugs introduced in v4.6.3 when IE 10 bugs were fixed:
