@@ -9,7 +9,7 @@
  * $Date$
  *
  * Defines a resource file containing a script that describes the program's
- * built-in syntax highliter themes.
+ * built-in syntax highlighter themes.
  *
  * NOTE: In production code this file should be merged into Resources.rc.
  */
