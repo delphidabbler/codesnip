@@ -79,6 +79,19 @@ type
         @param AComparer [in] Object used to compare list items. If nil, default
           comparer is used.
       }
+    constructor Create(Collection: TEnumerable<T>); overload;
+      {Constructs a new list object that uses the default comparer and adds all
+      the items from an enumerable collection to it.
+        @param Collection [in] Collection to be added.
+      }
+    constructor Create(const AComparer: IComparer<T>;
+      Collection: TEnumerable<T>); overload;
+      {Constructs a new list object that uses a specified comparer and adds all
+      the items from an enumerable collection to it.
+        @param AComparer [in] Object used to compare list items. If nil, default
+          comparer is used.
+        @param Collection [in] Collection to be added.
+      }
     destructor Destroy; override;
       {Destroys list object.
       }
@@ -88,6 +101,18 @@ type
         @return Index of new item in list.
         @except EListError raised if Item is already in list when duplicates are
           not permitted.
+      }
+    procedure AddRange(const Values: array of T); overload;
+      {Adds an array of values to the list.
+        @param Values [in] Array to be added.
+    }
+    procedure AddRange(const Collection: IEnumerable<T>); overload;
+      {Adds an enumerable collection to the list.
+        @param Collection [in] Interface to collection to be added.
+      }
+    procedure AddRange(Collection: TEnumerable<T>); overload;
+      {Adds an enumerable collection to the list.
+        @param Collection [in] Collection to be added.
       }
     procedure Clear;
       {Clears all items from list.
@@ -170,6 +195,15 @@ type
       {Constructs object list that owns objects in list and has user-specified
       comparer.
         @param AComparer [in] Object used to compare objects in list.
+        @param AOwnsObjects [in] Whether list owns contained objects.
+      }
+    constructor Create(const AComparer: IComparer<T>;
+      Collection: TEnumerable<T>; AOwnsObjects: Boolean); overload;
+      {Constructs object list that owns objects in list, has user-specified
+      comparer and adds all the items of an enumerable collection to the list.
+        @param AComparer [in] Object used to compare objects in list. Pass nil
+          to use default comparer
+        @param Collection [in] Collection of objects to be added.
         @param AOwnsObjects [in] Whether list owns contained objects.
       }
     property OwnsObjects: Boolean read fOwnsObjects;
@@ -560,6 +594,30 @@ begin
   fList.Insert(Result, Item);
 end;
 
+procedure TSortedList<T>.AddRange(const Values: array of T);
+var
+  Item: T;
+begin
+  for Item in Values do
+    Add(Item);
+end;
+
+procedure TSortedList<T>.AddRange(const Collection: IEnumerable<T>);
+var
+  Item: T;
+begin
+  for Item in Collection do
+    Add(Item);
+end;
+
+procedure TSortedList<T>.AddRange(Collection: TEnumerable<T>);
+var
+  Item: T;
+begin
+  for Item in Collection do
+    Add(Item);
+end;
+
 procedure TSortedList<T>.Clear;
   {Clears all items from list.
   }
@@ -591,11 +649,24 @@ begin
       Exit(True);
 end;
 
+constructor TSortedList<T>.Create(Collection: TEnumerable<T>);
+begin
+  Create(nil, Collection);
+end;
+
+constructor TSortedList<T>.Create(const AComparer: IComparer<T>;
+  Collection: TEnumerable<T>);
+begin
+  Create(AComparer);
+  if Assigned(Collection) then
+    AddRange(Collection);
+end;
+
 constructor TSortedList<T>.Create;
   {Constructs new list object that uses default comparer.
   }
 begin
-  Create(nil);
+  Create(nil, nil);
 end;
 
 constructor TSortedList<T>.Create(const AComparer: IComparer<T>);
@@ -752,6 +823,13 @@ constructor TSortedObjectList<T>.Create(const AComparer: IComparer<T>;
 begin
   fOwnsObjects := AOwnsObjects;
   Create(AComparer);
+end;
+
+constructor TSortedObjectList<T>.Create(const AComparer: IComparer<T>;
+  Collection: TEnumerable<T>; AOwnsObjects: Boolean);
+begin
+  Create(AComparer, AOwnsObjects);
+  Add(Collection);
 end;
 
 procedure TSortedObjectList<T>.Notify(const Item: T;

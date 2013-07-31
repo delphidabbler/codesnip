@@ -362,7 +362,7 @@ begin
     try
       IncludeStdParams(Params);
       Params.Add('os', SanitiseString(TOSInfo.Description));
-      Params.Add('browser', IntToStr(TOSInfo.BrowserVer));
+      Params.Add('browser', IntToStr(TIEInfo.MajorVersion));
       Params.Add('caller', SanitiseString(Caller));
       SafePostCommand('logon', Params, Response);
     finally

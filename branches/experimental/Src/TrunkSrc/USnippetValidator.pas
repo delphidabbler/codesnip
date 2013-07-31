@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2009-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2009-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -70,6 +70,14 @@ type
           returned.
         @param ErrorSel [out] Selection that can be used to highlight error.
         @return True if description is valid or False if not.
+      }
+    class function ValidateName(const Name: string;
+      const CheckForUniqueness: Boolean): Boolean; overload;
+      {Validates a snippet's name.
+        @param Name [in] Snippet name to be checked.
+        @param CheckForUniqueness [in] Flag indicating whether a check should
+          be made to see if snippet name is already in user database.
+        @return True if name is valid or False if not.
       }
     class function ValidateName(const Name: string;
       const CheckForUniqueness: Boolean; out ErrorMsg: string): Boolean;
@@ -387,6 +395,20 @@ begin
   Result := ValidateName(Name, CheckForUniqueness, ErrorMsg);
   if not Result then
     ErrorSel := TSelection.Create(0, Length(Name));
+end;
+
+class function TSnippetValidator.ValidateName(const Name: string;
+  const CheckForUniqueness: Boolean): Boolean;
+  {Validates a snippet's name.
+    @param Name [in] Snippet name to be checked.
+    @param CheckForUniqueness [in] Flag indicating whether a check should be
+      made to see if snippet name is already in user database.
+    @return True if name is valid or False if not.
+  }
+var
+  DummyErrMsg: string;
+begin
+  Result := ValidateName(Name, CheckForUniqueness, DummyErrMsg);
 end;
 
 class function TSnippetValidator.ValidateSourceCode(const Source: string;

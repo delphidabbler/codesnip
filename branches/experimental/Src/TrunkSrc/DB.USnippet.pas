@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2011-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2011-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -21,7 +21,7 @@ interface
 
 uses
   // Delphi
-  Classes, Generics.Collections,
+  Classes, Generics.Collections, Generics.Defaults,
   // Project
   ActiveText.UMain, Compilers.UGlobals, DB.USnippetKind, UContainers,
   UIStringList, USnippetIDs;
@@ -101,6 +101,15 @@ type
     free-form.
   }
   TSnippet = class(TObject)
+  public
+    ///  <summary>Comparer for snippets by display name.</summary>
+    type TDisplayNameComparer = class(TComparer<TSnippet>)
+    public
+      ///  <summary>Compares snippets Left and Right. Returns -ve if Left's
+      ///  display name sorts before Right's, 0 if the same or +ve if Left's
+      ///  display name is greater than Right's.</summary>
+      function Compare(const Left, Right: TSnippet): Integer; override;
+    end;
   strict private
     fKind: TSnippetKind;                    // Kind of snippet this is
     fCategory: string;                      // Name of snippet's category
@@ -253,13 +262,6 @@ type
           method returns True.
         @return True if snippet found, False if not.
       }
-    class function CompareIDs(const SID1, SID2: TSnippetID): Integer;
-      {Compares IDS of two snippets.
-        @param SID1 [in] First ID to be compared.
-        @param SID2 [in] Second ID to be compared.
-        @return 0 if IDs are the same, -ve if SID1 < SID2 and +ve if
-          SID1 > SID2.
-      }
   strict protected
     var fList: TSortedObjectList<TSnippet>; // Sorted list of snippets
   public
@@ -374,7 +376,7 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Generics.Defaults,
+  SysUtils,
   // Project
   IntfCommon, UExceptions, UStrUtils;
 
@@ -476,6 +478,16 @@ begin
   fExtra := TActiveTextFactory.CloneActiveText(Data.Extra);
   fCompatibility := Data.CompilerResults;
   fTestInfo := Data.TestInfo;
+end;
+
+{ TSnippet.TDisplayNameComparer }
+
+function TSnippet.TDisplayNameComparer.Compare(const Left,
+  Right: TSnippet): Integer;
+begin
+  Result := StrCompareText(Left.DisplayName, Right.DisplayName);
+  if Result = 0 then
+    Result := Left.ID.CompareTo(Right.ID);
 end;
 
 { TSnippetEx }
@@ -601,17 +613,6 @@ begin
   fList.Clear;
 end;
 
-class function TSnippetList.CompareIDs(const SID1, SID2: TSnippetID): Integer;
-  {Compares IDS of two snippets.
-    @param SID1 [in] First ID to be compared.
-    @param SID2 [in] Second ID to be compared.
-    @return 0 if IDs are the same, -ve if SID1 < SID2 and +ve if
-      SID1 > SID2.
-  }
-begin
-  Result := SID1.CompareTo(SID2);
-end;
-
 function TSnippetList.Contains(const Snippet: TSnippet): Boolean;
   {Checks whether list contains a specified snippet.
     @param Snippet [in] Required snippet.
@@ -674,7 +675,7 @@ begin
     TDelegatedComparer<TSnippet>.Create(
       function (const Left, Right: TSnippet): Integer
       begin
-        Result := CompareIDs(Left.ID, Right.ID);
+        Result := Left.ID.CompareTo(Right.ID);
       end
     ),
     OwnsObjects

@@ -24,7 +24,9 @@ interface
 
 uses
   // Delphi
-  Classes;
+  Classes,
+  // Project
+  UConsts;
 
 
 ///  <summary>Checks if string Haystack contains string Needle. Case sensitive.
@@ -53,6 +55,11 @@ function StrPos(const Needle, Haystack: UnicodeString; const Offset: Integer):
 ///  <summary>Returns index of last occurence of string Needle in string
 ///  Haystack or 0 if Needle is not in Haystack. Case sensitive.</summary>
 function StrLastPos(const Needle, Haystack: UnicodeString): Integer;
+
+///  <summary>Compares Left and Right strings, taking case into account. Returns
+///  0 if both strings are the same, -ve if Left is less than Right or +ve if
+///  Left is greater than Right.</summary>
+function StrCompareStr(const Left, Right: UnicodeString): Integer;
 
 ///  <summary>Compares Left and Right strings, ignoring case. Returns 0 if both
 ///  strings are the same, -ve if Left is less than Right or +ve if Left is
@@ -188,7 +195,7 @@ function StrContainsWhiteSpace(const Str: UnicodeString): Boolean;
 ///  white space.</summary>
 ///  <remarks>Opening and closing quote are the same character.</remarks>
 function StrQuoteSpaced(const Str: UnicodeString;
-  const Quote: Char = '"'): UnicodeString;
+  const Quote: Char = DOUBLEQUOTE): UnicodeString;
 
 ///  <summary>Joins all strings from a string list together into a single string
 ///  with each list element being separated by Delim. Empty string list elements
@@ -246,15 +253,18 @@ function StrMakeSentence(const Str: UnicodeString): UnicodeString;
 function StrIf(const Condition: Boolean; const TrueStr, FalseStr: string):
   string;
 
+///  <summary>Escapes all characters from string S that are included in
+///  Escapable with the backslash character followed by the matching character
+///  in Escapes.</summary>
+function StrBackslashEscape(const S, Escapable, Escapes: string): string;
+
 
 implementation
 
 
 uses
   // Delphi
-  SysUtils, StrUtils, Character,
-  // Project
-  UConsts;
+  SysUtils, StrUtils, Character;
 
 { Internal helper routines }
 
@@ -338,6 +348,11 @@ begin
     else
       WantCapital := TCharacter.IsWhiteSpace(Result[Idx]);
   end;
+end;
+
+function StrCompareStr(const Left, Right: UnicodeString): Integer;
+begin
+  Result := SysUtils.AnsiCompareStr(Left, Right);
 end;
 
 function StrCompareText(const Left, Right: UnicodeString): Integer;
@@ -537,8 +552,8 @@ begin
   Result := StrUtils.PosEx(Needle, Haystack, Offset);
 end;
 
-function StrQuoteSpaced(const Str: UnicodeString;
-  const Quote: Char = '"'): UnicodeString;
+function StrQuoteSpaced(const Str: UnicodeString; const Quote: Char):
+  UnicodeString;
 begin
   if StrContainsWhiteSpace(Str) then
     Result := Quote + Str + Quote
@@ -801,6 +816,47 @@ begin
     Result := TrueStr
   else
     Result := FalseStr;
+end;
+
+function StrBackslashEscape(const S, Escapable, Escapes: string): string;
+const
+  EscChar = '\';       // the C escape character
+var
+  EscCount: Integer;    // count of escaped characters in string
+  Ch: Char;             // each character in string
+  PRes: PChar;          // points to chars in result string
+  EscCharPos: Integer;  // position of esc chars in EscapeChars & EscapableChars
+begin
+  // Check for empty string and treat specially (empty string crashes main code)
+  if S = '' then
+  begin
+    Result := '';
+    Exit;
+  end;
+  // Count escapable characters in string
+  EscCount := 0;
+  for Ch in S do
+  begin
+    if StrContainsStr(Ch, Escapable) then
+      Inc(EscCount);
+  end;
+  // Set size of result string and get pointer to it
+  SetLength(Result, Length(S) + EscCount);
+  PRes := PChar(Result);
+  // Replace escapable chars with the escaped version
+  for Ch in S do
+  begin
+    EscCharPos := StrPos(Ch, Escapable);
+    if EscCharPos > 0 then
+    begin
+      PRes^ := EscChar;
+      Inc(PRes);
+      PRes^ := Escapes[EscCharPos];
+    end
+    else
+      PRes^ := Ch;
+    Inc(PRes);
+  end;
 end;
 
 end.

@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2012-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -283,15 +283,19 @@ end;
 function TSnippetCompileResultsHTMLFragment.ToString: string;
 begin
   Result := THTML.CompoundTag(
-    'table',
-    THTMLAttributes.Create(
-      [
-        THTMLAttribute.Create('class', 'comptable'),
-        THTMLAttribute.Create('cellspacing', '1'),
-        THTMLAttribute.Create('cellpadding', '4')
-      ]
-    ),
-    SnippetHTML.CompileResults
+    'div',
+    THTMLAttributes.Create('id', 'compile-results'),
+    THTML.CompoundTag(
+      'table',
+      THTMLAttributes.Create(
+        [
+          THTMLAttribute.Create('class', 'comptable'),
+          THTMLAttribute.Create('cellspacing', '1'),
+          THTMLAttribute.Create('cellpadding', '4')
+        ]
+      ),
+      SnippetHTML.CompileResults
+    )
   );
 end;
 

@@ -199,7 +199,7 @@ uses
   // Delphi
   SysUtils, Windows,
   // Project
-  UCSSUtils, UExceptions, UStrUtils, UURIEncode;
+  UConsts, UCSSUtils, UExceptions, UStrUtils, UURIEncode;
 
 
 { THTML }
@@ -236,7 +236,7 @@ begin
           SB.Append('&gt;');
         '&':
           SB.Append('&amp;');
-        '"':
+        DOUBLEQUOTE:
           SB.Append('&quot;');
         #0..#9, #11, #12, #14..#31:
           SB.Append('&#' + IntToStr(Ord(Ch)) + ';')

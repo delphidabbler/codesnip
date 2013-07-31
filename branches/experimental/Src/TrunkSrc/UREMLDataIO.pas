@@ -847,7 +847,7 @@ begin
   SetLength(fEntityMap, 5);
   // Record all supported character entities
   fEntityMap[0] := TREMLEntity.Create('amp',  '&');
-  fEntityMap[1] := TREMLEntity.Create('quot', '"');
+  fEntityMap[1] := TREMLEntity.Create('quot', DOUBLEQUOTE);
   fEntityMap[2] := TREMLEntity.Create('gt',   '>');
   fEntityMap[3] := TREMLEntity.Create('lt',   '<');
   fEntityMap[4] := TREMLEntity.Create('copy', '©');

@@ -40,7 +40,8 @@ type
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormCreate(Sender: TObject);
   strict private
-    fMarquee: TMarquee; // Custom marquee component instance
+    fMarquee: TMarquee;     // Custom marquee component instance
+    fFreeOnClose: Boolean;  // Whether form should free itself on closure
     procedure CMTextChanged(var Msg: TMessage); message CM_TEXTCHANGED;
       {Triggered when form's caption is set. Displays form caption in
       lblCaption.
@@ -53,11 +54,19 @@ type
         @return Required aligner object instance.
       }
     procedure CustomiseForm; override;
-      {Sets required UI font for label and creates and locates custom marquee
-      component.
+      {Sizes window to fit caption text and creates and locates the marquee
+      control.
       }
     procedure InitForm; override;
       {Sets hourglass cursor and starts marquee when form is shown.
+      }
+  public
+    class function CreateAutoFree(AOwner: TComponent;
+      const ACaption: string): TWaitDlg;
+      {Creates an instance of the wait dialogue box with a given caption which
+      frees itself when the dialogue box is closed.
+        @param AOwner [in] Component that owns the dialogue box.
+        @param ACaption [in] Caption to be displayed in dialogue box.
       }
   end;
 
@@ -66,6 +75,8 @@ implementation
 
 
 uses
+  // Delphi
+  Types, Math,
   // Project
   UDlgHelper, UFontHelper, UFormAligner, UGraphicUtils;
 
@@ -84,21 +95,35 @@ begin
   lblCaption.Caption := Text;
 end;
 
-procedure TWaitDlg.CustomiseForm;
-  {Sets required UI font for label and creates and locates custom marquee
-  component.
+class function TWaitDlg.CreateAutoFree(AOwner: TComponent;
+  const ACaption: string): TWaitDlg;
+  {Creates an instance of the wait dialogue box with a given caption which frees
+  itself when the dialogue box is closed.
+    @param AOwner [in] Component that owns the dialogue box.
+    @param ACaption [in] Caption to be displayed in dialogue box.
   }
 begin
+  Result := TWaitDlg.Create(AOwner);
+  Result.Caption := ACaption;
+  Result.fFreeOnClose := True;
+end;
+
+procedure TWaitDlg.CustomiseForm;
+  {Sizes window to fit caption text and creates and locates the marquee control.
+  }
+const
+  MinFormWidth = 168;
+begin
   inherited;
-  // Update label font to use UI default font: it is set to have bold style,
-  // which is preserved. We also have to ensure label is correct size
   TFontHelper.SetDefaultBaseFont(lblCaption.Font);
-  lblCaption.Height := StringExtent(lblCaption.Caption, lblCaption.Font).cy;
+  // Size window and centre label in it (pnlMain auto-sizes to window)
+  Self.ClientWidth := Max(MinFormWidth, lblCaption.Width + 24);
+  lblCaption.Left := (pnlMain.ClientWidth - lblCaption.Width) div 2;
   // Create and locate marquee
-  fMarquee := TMarquee.Create(Self);
+  fMarquee := TMarquee.CreateInstance(Self);
   fMarquee.Parent := pnlMain;
-  fMarquee.Left := 8;
-  fMarquee.Width := pnlMain.ClientWidth - 16;
+  fMarquee.Left := 12;
+  fMarquee.Width := pnlMain.ClientWidth - 24;
   fMarquee.Top := lblCaption.Top + lblCaption.Height + 8;
   fMarquee.Height := 13;
 end;
@@ -112,6 +137,8 @@ begin
   inherited;
   fMarquee.Stop;
   Screen.Cursor := crDefault;
+  if fFreeOnClose then
+    Action := caFree;
 end;
 
 procedure TWaitDlg.FormCreate(Sender: TObject);

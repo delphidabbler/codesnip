@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2009-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2009-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -348,14 +348,7 @@ constructor TGroupItem.Create;
 begin
   inherited Create;
   fSnippetList := TSortedSnippetList.Create(
-    TDelegatedComparer<TSnippet>.Create(
-      function (const Left, Right: TSnippet): Integer
-      begin
-        Result := StrCompareText(Left.DisplayName, Right.DisplayName);
-        if Result = 0 then
-          Result := Ord(Left.UserDefined) - Ord(Right.UserDefined);
-      end
-    )
+    TSnippet.TDisplayNameComparer.Create
   );
   fSnippetList.PermitDuplicates := True;
 end;
@@ -410,9 +403,7 @@ var
   ItemCat: TCategory; // category which Item represents
 begin
   ItemCat := (Item as TCategoryGroupItem).fCategory;
-  Result := StrCompareText(fCategory.Description, ItemCat.Description);
-  if Result = 0 then
-    Result := Ord(fCategory.UserDefined) - Ord(ItemCat.UserDefined);
+  Result := fCategory.CompareDescriptionTo(ItemCat);
 end;
 
 constructor TCategoryGroupItem.Create(const Category: TCategory);

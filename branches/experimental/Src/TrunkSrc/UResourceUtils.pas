@@ -23,6 +23,26 @@ uses
   UEncodings;
 
 
+function MakeResourcePath(const ModuleName: string; const ResType: PChar = nil):
+  string; overload;
+  {Returns the res:// protocol URL of the path where resource of a specified
+  type are located in a given module.
+    @param ModuleName [in] Name of module containing the resource.
+    @param ResType [in] Type of resource (omitted from URL if nil or not
+      specified).
+    @return Required res:// protocol path.
+  }
+
+function MakeResourcePath(const Module: HMODULE; const ResType: PChar = nil):
+  string; overload;
+  {Returns the res:// protocol URL of the path where resource of a specified
+  type are located in a given module.
+    @param Module [in] Handle of module containing resource.
+    @param ResType [in] Type of resource (omitted from URL if nil or not
+      specified).
+    @return Required res:// protocol path.
+  }
+
 function MakeResourceURL(const ModuleName: string; const ResName: PChar;
   const ResType: PChar = nil): string; overload;
   {Returns a res:// protocol URL that references a resource in a module.
@@ -74,6 +94,55 @@ uses
   UExceptions, UURIEncode;
 
 
+function ResNameOrTypeToString(R: PChar): string;
+  {Returns string representation of a resource name or type. If name or type
+  is already a string it is returned unchanged. If it is a numeric value its
+  value is returned as a string, preceeded by '#'.
+    @param R [in] Resource name or type.
+    @return String representation of the resource name or type.
+  }
+begin
+  if HiWord(LongWord(R)) = 0 then
+    // high word = 0 => numeric resource id
+    // numeric value is stored in low word
+    Result := Format('#%d', [LoWord(LongWord(R))])
+  else
+    // high word <> 0 => string value
+    // PChar is implicitly converted to string
+    Result := R;
+end;
+
+function MakeResourcePath(const ModuleName: string; const ResType: PChar = nil):
+  string; overload;
+  {Returns the res:// protocol URL of the path where resource of a specified
+  type are located in a given module.
+    @param ModuleName [in] Name of module containing the resource.
+    @param ResType [in] Type of resource (omitted from URL if nil or not
+      specified).
+    @return Required res:// protocol path.
+  }
+begin
+  Assert(ModuleName <> '', 'MakeResourcePath: No ModuleName provided');
+  // Resource starts with module name
+  Result := 'res://' + URIEncode(ModuleName) + '/';
+  // Resource type follows if specified
+  if Assigned(ResType) then
+    Result := Result + URIEncode(ResNameOrTypeToString(ResType)) + '/';
+end;
+
+function MakeResourcePath(const Module: HMODULE; const ResType: PChar = nil):
+  string; overload;
+  {Returns the res:// protocol URL of the path where resource of a specified
+  type are located in a given module.
+    @param Module [in] Handle of module containing resource.
+    @param ResType [in] Type of resource (omitted from URL if nil or not
+      specified).
+    @return Required res:// protocol path.
+  }
+begin
+  Result := MakeResourcePath(GetModuleName(Module), ResType);
+end;
+
 function MakeResourceURL(const ModuleName: string; const ResName: PChar;
   const ResType: PChar = nil): string; overload;
   {Returns a res:// protocol URL that references a resource in a module.
@@ -83,37 +152,11 @@ function MakeResourceURL(const ModuleName: string; const ResName: PChar;
       specified).
     @return Required res:// protocol URL.
   }
-
-  // ---------------------------------------------------------------------------
-  function ResNameOrTypeToString(R: PChar): string;
-    {Returns string representation of a resource name or type. If name or type
-    is already a string it is returned unchanged. If it is a numeric value its
-    value is returned as a string, preceeded by '#'.
-      @param R [in] Resource name or type.
-      @return String representation of the resource name or type.
-    }
-  begin
-    if HiWord(LongWord(R)) = 0 then
-      // high word = 0 => numeric resource id
-      // numeric value is stored in low word
-      Result := Format('#%d', [LoWord(LongWord(R))])
-    else
-      // high word <> 0 => string value
-      // PChar is implicitly converted to string
-      Result := R;
-  end;
-  // ---------------------------------------------------------------------------
-
 begin
-  Assert(ModuleName <> '', 'MakeResourceURL: ModuleName is ''''');
+  Assert(ModuleName <> '', 'MakeResourceURL: No ModuleName provided');
   Assert(Assigned(ResName), 'MakeResourceURL: ResName is nil');
-  // Resource starts with module name
-  Result := 'res://' + URIEncode(ModuleName);
-  // Resource type follows if specified
-  if Assigned(ResType) then
-    Result := Result + '/' + URIEncode(ResNameOrTypeToString(ResType));
-  // Resource name is last in URL
-  Result := Result + '/' + URIEncode(ResNameOrTypeToString(ResName));
+  Result := MakeResourcePath(ModuleName, ResType)
+    + URIEncode(ResNameOrTypeToString(ResName));
 end;
 
 function MakeResourceURL(const Module: HMODULE; const ResName: PChar;

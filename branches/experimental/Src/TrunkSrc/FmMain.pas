@@ -93,6 +93,7 @@ type
     actSelectAll: TAction;
     actSelectSnippets: TAction;
     actSubmit: TAction;
+    actSWAGImport: TAction;
     actTestBug: TAction;
     actTestCompile: TAction;
     actUpdateDbase: TAction;
@@ -195,6 +196,7 @@ type
     miSpacer19: TMenuItem;
     miSpacer20: TMenuItem;
     miSubmit: TMenuItem;
+    miSWAGImport: TMenuItem;
     miTestCompile: TMenuItem;
     miTools: TMenuItem;
     miUpdateDbase: TMenuItem;
@@ -448,6 +450,10 @@ type
     ///  <summary>Determines whether the Submit or ExportCode actions can be
     ///  enabled.</summary>
     procedure ActSubmitOrExportUpdate(Sender: TObject);
+    ///  <summary>Displays the SWAG import dialogue box that enables the user to
+    ///  import snippets from the SWAG database into the user-defined database.
+    ///  </summary>
+    procedure actSWAGImportExecute(Sender: TObject);
     ///  <summary>Generates an exception that simulates an uncaught exception.
     ///  </summary>
     ///  <exception>EBug exception always raised.</exception>
@@ -583,6 +589,9 @@ type
     ///  <remarks>Once initialisation is complete the splash window is cancelled
     ///  and the form is enabled.</remarks>
     procedure InitForm; override;
+    ///  <summary>Performs actions that need to run after the form is visible on
+    ///  screen.</summary>
+    procedure AfterShowForm; override;
   end;
 
 
@@ -1128,6 +1137,11 @@ begin
   (Sender as TAction).Enabled := TCodeShareMgr.CanShare;
 end;
 
+procedure TMainForm.actSWAGImportExecute(Sender: TObject);
+begin
+  fDialogMgr.ShowSWAGImportDlg;
+end;
+
 procedure TMainForm.actTestBugExecute(Sender: TObject);
 const
   // Bug error message
@@ -1258,6 +1272,14 @@ end;
 
 procedure TMainForm.actWelcomeExecute(Sender: TObject);
 begin
+  fMainDisplayMgr.ShowWelcomePage;
+end;
+
+procedure TMainForm.AfterShowForm;
+begin
+  inherited;
+  // initialise display
+  fMainDisplayMgr.Initialise(fWindowSettings.OverviewTab);
   fMainDisplayMgr.ShowWelcomePage;
 end;
 
@@ -1470,9 +1492,10 @@ begin
     // Create dialogue box manager
     fDialogMgr := TDialogMgr.Create(Self);  // automatically freed
 
-    // Create and initialise display manager
+    // Create display manager
+    // NOTE: Don't display anything until after window has displayed (see
+    // AfterShowForm). This is to prevent any problems with IE 10 browser ctrl.
     fMainDisplayMgr := TMainDisplayMgr.Create(frmOverview, frmDetail);
-    fMainDisplayMgr.Initialise(fWindowSettings.OverviewTab);
 
     // Create status bar manager
     fStatusBarMgr := TStatusBarMgr.Create(sbStatusBar);
@@ -1575,9 +1598,6 @@ begin
     // Create favourites manager
     // *** Must be done AFTER database has loaded ***
     fFavouritesMgr := TFavouritesManager.Create(fNotifier);
-
-    // Display welcome page in details pane
-    fMainDisplayMgr.ShowWelcomePage;
 
     // Start notification display sub-system
     TNotificationDisplayMgr.Start(Self);

@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -177,7 +177,7 @@ const
   // Character constants
   cDecimalPoint     = '.';
   cCompilerDirChar  = '$';
-  cStringDelim      = '''';
+  cStringDelim      = SINGLEQUOTE;
   cCloseParen       = ')';
   cEOL = TStringReader.EOL;
   cEOF = TStringReader.EOF;
@@ -259,7 +259,7 @@ const
     ( Symbol: '$';  Token: tkHex;     ),
     ( Symbol: '#';  Token: tkChar;    ),
     ( Symbol: '&';  Token: tkSymbol;  ),
-    ( Symbol: ''''; Token: tkString;  ),
+    ( Symbol: SINGLEQUOTE; Token: tkString;  ),
     ( Symbol: '(';  Token: tkSymbol;  ),
     ( Symbol: ')';  Token: tkSymbol;  ),
     ( Symbol: '*';  Token: tkSymbol;  ),
@@ -325,7 +325,7 @@ function IsSymbolChar(const C: Char): Boolean; inline;
 const
   // valid symbols
   cSymbols = [
-    '#', '$', '&', '''', '(', ')', '*', '+', ',', '-', '.',
+    '#', '$', '&', SINGLEQUOTE, '(', ')', '*', '+', ',', '-', '.',
     '/', ':', ';', '<', '=', '>', '@', '[', ']', '^', '{', '}'
   ];
 begin

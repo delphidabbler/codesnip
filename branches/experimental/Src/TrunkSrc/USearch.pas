@@ -301,7 +301,7 @@ uses
   // Delphi
   SysUtils, Character,
   // Project
-  DB.UMain, IntfCommon, UStrUtils;
+  DB.UMain, IntfCommon, UConsts, UStrUtils;
 
 
 type
@@ -845,10 +845,10 @@ function TTextSearchFilter.Match(const Snippet: TSnippet): Boolean;
     begin
       if S = '' then
         Exit;
-      if (S[1] = '''') or (S[1] = '"') then
+      if (S[1] = SINGLEQUOTE) or (S[1] = DOUBLEQUOTE) then
         Delete(S, 1, 1);
       if (S <> '') and
-        ((S[Length(S)] = '''') or (S[Length(S)] = '"')) then
+        ((S[Length(S)] = SINGLEQUOTE) or (S[Length(S)] = DOUBLEQUOTE)) then
         Delete(S, Length(S), 1);
     end;
 
@@ -860,9 +860,9 @@ function TTextSearchFilter.Match(const Snippet: TSnippet): Boolean;
   const
     // Characters that can end words
     cWordEnders = [
-      '!', '"', '%', '^', '&', '*', '(', ')', '-', '+', '=',
+      '!', DOUBLEQUOTE, '%', '^', '&', '*', '(', ')', '-', '+', '=',
       '{', '}', '[', ']', ':', ';', '~', '<', '>', ',', '.',
-      '?', '/', '|', '\', ''''
+      '?', '/', '|', '\', SINGLEQUOTE
     ];
   begin
     ExtraWords := nil;

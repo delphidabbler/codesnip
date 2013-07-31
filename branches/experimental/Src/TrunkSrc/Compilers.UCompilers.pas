@@ -76,7 +76,8 @@ uses
   Generics.Collections, SysUtils,
   // Project
   Compilers.UBDS, Compilers.UDelphi, Compilers.UFreePascal,
-  Compilers.USearchDirs, IntfCommon, UExceptions, UIStringList, USettings;
+  Compilers.USearchDirs, IntfCommon, UConsts, UExceptions, UIStringList,
+  USettings;
 
 
 type
@@ -355,7 +356,8 @@ begin
     Prefixes := Compiler.GetLogFilePrefixes;
     for PrefixID := Low(TCompLogPrefixID) to High(TCompLogPrefixID) do
       Storage.SetString(
-        Format('Prefix%d', [Ord(PrefixID)]), '"' + Prefixes[PrefixID] + '"'
+        Format('Prefix%d', [Ord(PrefixID)]),
+        DOUBLEQUOTE + Prefixes[PrefixID] + DOUBLEQUOTE
       );
     if Compiler.GetSwitches <> Compiler.GetDefaultSwitches then
       Storage.SetString('Switches', Compiler.GetSwitches);

@@ -22,10 +22,9 @@ inherited WaitDlg: TWaitDlg
     object lblCaption: TLabel
       Left = 4
       Top = 25
-      Width = 160
-      Height = 16
+      Width = 56
+      Height = 13
       Alignment = taCenter
-      AutoSize = False
       Caption = 'lblCaption'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
@@ -33,6 +32,7 @@ inherited WaitDlg: TWaitDlg
       Font.Name = 'Tahoma'
       Font.Style = [fsBold]
       ParentFont = False
+      Transparent = True
     end
   end
 end

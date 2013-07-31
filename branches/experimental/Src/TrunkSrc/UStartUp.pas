@@ -79,22 +79,21 @@ end;
 class function TStartUp.Execute: Boolean;
 resourcestring
   sOSError = 'Windows 2000 or later is required';
-  sIEError = 'Internet Explorer v6 or later is required.';
+  sIEError = 'Internet Explorer v%d or later is required.';
 {$IFDEF PORTABLE}
 var
   WorkingDir: string;
 {$ENDIF}
 begin
-
   // Check if program can be run. Exit if not.
   if not TOSInfo.IsWinNT or not TOSInfo.CheckReportedOS(TOSInfo.Win2K) then
   begin
     ErrorMessage(sOSError);
     Exit(False);
   end;
-  if TOSInfo.BrowserVer < 6 then
+  if not TIEInfo.IsSupportedBrowser then
   begin
-    ErrorMessage(sIEError);
+    ErrorMessage(Format(sIEError, [TIEInfo.MinSupportedVersion]));
     Exit(False);
   end;
 

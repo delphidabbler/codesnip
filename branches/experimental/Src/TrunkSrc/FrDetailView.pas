@@ -47,10 +47,6 @@ type
       ///  <summary>Generates and loads HTML representing a view into browser
       ///  control.</summary>
       fPageLoader: TDetailPageLoader;
-    ///  <summary>Scrolls browser control to top.</summary>
-    ///  <remarks>This method is used to ensure that newly loaded documents are
-    ///  not partially scrolled.</remarks>
-    procedure MoveToDocTop;
     ///  <summary>Handles web browser UI manager's OnMenuPopup event. Pops up
     ///  relevant menu if appropriate.</summary>
     ///  <param name="Sender">TObject [in] Not used.</param>
@@ -96,11 +92,8 @@ type
     ///  <summary>Displays a view in the frame.</summary>
     ///  <param name="View">IView [in] Information about view to be displayed.
     ///  </param>
-    ///  <param name="Reload">Boolean [in] Indicates whether view item is to
-    ///  be loaded into frame normally (False) or whether display is to be fully
-    ///  reloaded (True).</param>
     ///  <remarks>Method of IViewItemDisplayMgr.</remarks>
-    procedure Display(View: IView; Reload: Boolean);
+    procedure Display(View: IView);
     ///  <summary>Records the object used to extend the web browser control's
     ///  external object.</summary>
     ///  <remarks>Method of IWBCustomiser.</remarks>
@@ -121,7 +114,7 @@ uses
   // Project
   ActiveText.UHTMLRenderer, Browser.UHighlighter, Hiliter.UAttrs, Hiliter.UCSS,
   Hiliter.UGlobals, UColours, UCSSUtils, UFontHelper, UPreferences, UQuery,
-  UUtils, UWBCommandBars;
+  USystemInfo, UUtils, UWBCommandBars;
 
 {$R *.dfm}
 
@@ -212,7 +205,16 @@ begin
       end;
     // Adjust .pas-source class to use required background colour
     with CSSBuilder.Selectors['.' + THiliterCSS.GetMainCSSClassName] do
+    begin
       AddProperty(TCSS.BackgroundColorProp(Preferences.SourceCodeBGcolour));
+      if TIEInfo.SupportsCSSOverflowX then
+        AddProperty(TCSS.OverflowProp(covAuto, codX));
+    end;
+    if TIEInfo.SupportsCSSOverflowX then
+    begin
+      with CSSBuilder.AddSelector('#compile-results') do
+        AddProperty(TCSS.OverflowProp(covAuto, codX));
+    end;
     with CSSBuilder.AddSelector('.comptable th') do
     begin
       AddProperty(TCSS.BackgroundColorProp(clCompTblHeadBg));
@@ -273,12 +275,12 @@ begin
   inherited;
 end;
 
-procedure TDetailViewFrame.Display(View: IView; Reload: Boolean);
+procedure TDetailViewFrame.Display(View: IView);
 var
   Filter: ITextSearchFilter;  // text search filter containing criteria
 begin
   // Load view's HTML into browser control
-  fPageLoader.LoadPage(View, Reload);
+  fPageLoader.LoadPage(View);
   // Clear any existing text selection
   WBController.UIMgr.ClearSelection;
   // If we're viewing a snippet and there's an active text search, highlight
@@ -287,8 +289,6 @@ begin
     Supports(Query.LatestSearch.Filter, ITextSearchFilter, Filter)
     then
     HighlightSearchResults(Filter);
-  // Ensure top of newly loaded document is displayed
-  MoveToDocTop;
 end;
 
 procedure TDetailViewFrame.HighlightSearchResults(
@@ -321,11 +321,6 @@ begin
   // This frame only contains a browser control. So, if frame is interactive
   // if and only if browser control is active.
   Result := IsBrowserActive;
-end;
-
-procedure TDetailViewFrame.MoveToDocTop;
-begin
-  WBController.UIMgr.ScrollTo(0, 0);
 end;
 
 procedure TDetailViewFrame.PopupMenuHandler(Sender: TObject;

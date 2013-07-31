@@ -2,7 +2,7 @@
 # v. 2.0. If a copy of the MPL was not distributed with this file, You can
 # obtain one at http://mozilla.org/MPL/2.0/
 #
-# Copyright (C) 2005-2012, Peter Johnson (www.delphidabbler.com).
+# Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
 #
 # $Rev$
 # $Date$
@@ -40,6 +40,10 @@ Res\HTML\dlg-activetext-preview-tplt.html
 # news dialogue
 Res\HTML\dlg-rssnews.html
 
+# SWAG import dialogue
+Res\HTML\dlg-swag-import-intro.html
+Res\HTML\dlg-swag-import-outro-tplt.html
+
 
 # Detail pane pages, scripts and CSS
 # ==================================
@@ -53,8 +57,8 @@ Res\CSS\detail.css
 # routines that call external object
 Res\Scripts\external.js
 
-# Container document for all HTML displayed in detail panes
-Res\HTML\detail.html
+# other scripts
+Res\Scripts\overflowXFix.js
 
 # snippet information pages
 # -------------------------
@@ -72,6 +76,11 @@ Res\HTML\info-snippet-tplt.html
 # -------------
 
 Res\HTML\welcome-tplt.html
+
+# basic pages
+# -----------
+
+Res\HTML\info-basic-tplt.html
 
 
 # Images

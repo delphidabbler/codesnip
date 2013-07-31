@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2010-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2010-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -18,6 +18,11 @@ unit UURIEncode;
 interface
 
 
+uses
+  // Project
+  UConsts;
+
+
 const
   // Chars reserved for URIs: see RFC 3986 section 2.2
   // generic: reserved by generic URI syntax
@@ -26,7 +31,7 @@ const
   ];
   // may be reserved by different URI schemes
   cURISubReservedChars = [
-    '!', '$', '&', '''', '(', ')', '*', '+', ',', ';', '='
+    '!', '$', '&', SINGLEQUOTE, '(', ')', '*', '+', ',', ';', '='
   ];
   // % character treated as reserved because it is used in percent encoding and
   // must therefore be percent encoded if to be used literally in URI:

@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -51,6 +51,9 @@ type
     procedure tcViewsChange(Sender: TObject);
     procedure tcViewsMouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
+    procedure tcViewsDragOver(Sender, Source: TObject; X, Y: Integer;
+      State: TDragState; var Accept: Boolean);
+    procedure tcViewsDragDrop(Sender, Source: TObject; X, Y: Integer);
   strict private
     var
       ///  <summary>Notification object used to notify other parts of program
@@ -67,10 +70,8 @@ type
     ///  <summary>Selects tab at given index and displays its associated view.
     ///  </summary>
     procedure InternalSelectTab(TabIdx: Integer);
-    ///  <summary>Displays given view in deatil view pane. If ForceReload is
-    ///  True then view is totally reloaded, otherwise it is displayed normally.
-    ///  </summary>
-    procedure InternalDisplay(View: IView; ForceReload: Boolean);
+    ///  <summary>Displays given view in deatil view pane.</summary>
+    procedure InternalDisplay(View: IView);
     ///  <summary>Deletes a tab at given index along with its associated view.
     ///  </summary>
     procedure InternalDeleteTab(TabIdx: Integer);
@@ -228,7 +229,7 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Generics.Defaults,
+  SysUtils, Generics.Defaults, Windows, Types,
   // Project
   UExceptions;
 
@@ -282,7 +283,7 @@ end;
 
 procedure TDetailFrame.Clear;
 begin
-  InternalDisplay(TViewFactory.CreateNulView, False);
+  InternalDisplay(TViewFactory.CreateNulView);
 end;
 
 procedure TDetailFrame.CloseMultipleTabs(const KeepSelected: Boolean);
@@ -347,7 +348,7 @@ function TDetailFrame.CreateTab(View: IView): Integer;
 begin
   Result := tcViews.Tabs.Add(View.Description);
   fViews.Add(View);
-  InternalDisplay(View, False); // stores View in fViews again
+  InternalDisplay(View); // stores View in fViews again
 end;
 
 destructor TDetailFrame.Destroy;
@@ -363,7 +364,7 @@ begin
   fViews[TabIdx] := TViewFactory.Clone(View);
   tcViews.Tabs[TabIdx] := View.Description;
   if TabIdx = SelectedTab then
-    InternalDisplay(fViews[TabIdx], False);
+    InternalDisplay(fViews[TabIdx]);
 end;
 
 function TDetailFrame.FindTab(ViewKey: IViewKey): Integer;
@@ -382,15 +383,15 @@ begin
   fViews.Delete(TabIdx);
 end;
 
-procedure TDetailFrame.InternalDisplay(View: IView; ForceReload: Boolean);
+procedure TDetailFrame.InternalDisplay(View: IView);
 begin
-  (frmDetailView as IViewItemDisplayMgr).Display(View, ForceReload);
+  (frmDetailView as IViewItemDisplayMgr).Display(View);
 end;
 
 procedure TDetailFrame.InternalSelectTab(TabIdx: Integer);
 begin
   tcViews.TabIndex := TabIdx;
-  InternalDisplay(SelectedView, False);  // SelectedView allows for TabIdx = -1
+  InternalDisplay(SelectedView);  // SelectedView allows for TabIdx = -1
 end;
 
 function TDetailFrame.IsEmptyTabSet: Boolean;
@@ -441,7 +442,7 @@ end;
 
 procedure TDetailFrame.Reload;
 begin
-  InternalDisplay(SelectedView, True);  // SelectedView allows for TabIdx = -1
+  InternalDisplay(SelectedView);  // SelectedView allows for TabIdx = -1
 end;
 
 procedure TDetailFrame.SelectAll;
@@ -508,6 +509,27 @@ begin
   NotifyTabChange;
 end;
 
+procedure TDetailFrame.tcViewsDragDrop(Sender, Source: TObject; X, Y: Integer);
+var
+  NewIdx: Integer;
+begin
+  if Sender <> tcViews then
+    Exit;
+  NewIdx := tcViews.IndexOfTabAt(X, Y);
+  if NewIdx <> SelectedTab then
+  begin
+    fViews.Move(SelectedTab, NewIdx);
+    tcViews.Tabs.Move(SelectedTab, NewIdx);
+  end;
+end;
+
+procedure TDetailFrame.tcViewsDragOver(Sender, Source: TObject; X, Y: Integer;
+  State: TDragState; var Accept: Boolean);
+begin
+  if (Sender = tcViews) then
+    Accept := TabCount > 1;
+end;
+
 procedure TDetailFrame.tcViewsMouseDown(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; X, Y: Integer);
 var
@@ -517,14 +539,18 @@ begin
   begin
     // ensure tab set has focus when a tab is clicked
     tcViews.SetFocus;
-    if Button = mbRight then
-    begin
-      // select tab when right clicked
-      TabIdx := tcViews.IndexOfTabAt(X, Y);
-      if (TabIdx >= 0) and (TabIdx < tcViews.Tabs.Count) then
+    case Button of
+      mbLeft:
+        tcViews.BeginDrag(False);
+      mbRight:
       begin
-        tcViews.TabIndex := TabIdx;
-        NotifyTabChange;
+        // select tab when right clicked
+        TabIdx := tcViews.IndexOfTabAt(X, Y);
+        if (TabIdx >= 0) and (TabIdx < tcViews.Tabs.Count) then
+        begin
+          tcViews.TabIndex := TabIdx;
+          NotifyTabChange;
+        end;
       end;
     end;
   end;

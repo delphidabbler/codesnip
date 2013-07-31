@@ -144,7 +144,7 @@ begin
   try
     Params.Add('prog-ver', TAppInfo.ProgramReleaseVersion);
     Params.Add('os', SanitiseString(TOSInfo.Description));
-    Params.Add('ie-ver', IntToStr(TOSInfo.BrowserVer));
+    Params.Add('ie-ver', IntToStr(TIEInfo.MajorVersion));
     Params.Add('caller', SanitiseString(Caller));
     Response := TStringList.Create;
     try

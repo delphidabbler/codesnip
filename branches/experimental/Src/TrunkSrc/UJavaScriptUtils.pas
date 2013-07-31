@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2006-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2006-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -18,18 +18,62 @@ unit UJavaScriptUtils;
 interface
 
 
-function JSLiteralFunc(const FnName: string;
-  const Params: array of const): string;
-  {Creates a JavaScript function call with a parameter list comprising of
-  literal values.
-    @param FnName [in] Name of function.
-    @param Params [in] Dynamic array of literal parameter values. [] indicates a
-      parameterless function.
-    @except EBug raised if type of any value in Params has an unsupported type.
-      Valid types are Integer, Boolean, Extended and either AnsiString and
-      PAnsiChar or UnicodeString and WideChar, depending on if compiled with
-      Unicode support.
-  }
+uses
+  // Project
+  UEncodings;
+
+
+type
+  ///  <summary>Container for methods that assist in generating JavaScript code.
+  ///  </summary>
+  TJavaScript = record
+  strict private
+    ///  <summary>Converts the given string into a valid JavaScript string
+    ///  literal, escaping characters as necessary.</summary>
+    ///  <remarks>Both single quotes and double quotes are escaped, enabling the
+    ///  string literal to be enclosed in either type of quote.</remarks>
+    class function MakeSafeString(const S: string): string; static;
+    ///  <summary>Converts the given integer into a literal numeric parameter
+    ///  suitable for passing to a JavaScript function.</summary>
+    class function LiteralParam(const I: Integer): string; overload; static;
+    ///  <summary>Converts the given string into a literal string parameter
+    ///  suitable for passing to a JavaScript function.</summary>
+    ///  <remarks>The string is quoted and characters are escaped as necessary
+    ///  to make the result a valid JavaScript string.</remarks>
+    class function LiteralParam(const S: string): string; overload; static;
+    ///  <summary>Converts the given floating point value into a literal numeric
+    ///  parameter suitable for passing to a JavaScript function.</summary>
+    class function LiteralParam(const F: Extended): string; overload; static;
+    ///  <summary>Converts the given boolean value into either "true" or "false"
+    ///  keyword suitable for passing to a JavaScript function.</summary>
+    class function LiteralParam(const B: Boolean): string; overload; static;
+  public
+    ///  <summary>Creates and returns a JavaScript function call with a
+    ///  parameter list comprising of literal values.</summary>
+    ///  <param name="FnName">string [in] Name of function.</param>
+    ///  <param name="Params">array of const [in] Dynamic array of literal
+    ///  parameter values to be passed to the function. [] indicates a
+    ///  parameterless function.</param>
+    ///  <returns>string. Required JavaScript function.</returns>
+    ///  <exception>EBug is raised if type of any value in Params has an
+    ///  unsupported type. Valid types are Integer, Boolean, Extended,
+    ///  UnicodeString and WideChar.</exception>
+    class function LiteralFunc(const FnName: string;
+      const Params: array of const): string; static;
+    ///  <summary>Loads JavaScript code for the script named in HTML resources
+    ///  and returns the script as string.</summary>
+    ///  <param name="ScriptName">string [in] Name of resource containing
+    ///  script.</param>
+    ///  <param name="EncType">TEncodingType [in] Denotes type of encoding used
+    ///  for requested script within resources.</param>
+    ///  <returns>string. Required JavaScript code.</returns>
+    ///  <remarks>We sometimes need to load scripts into strings and then embed
+    ///  in HTML document since linking to external resource script doesn't seem
+    ///  to work in IE 9 (see bug report
+    ///  https://sourceforge.net/p/codesnip/bugs/84/).</remarks>
+    class function LoadScript(const ScriptName: string;
+      const EncType: TEncodingType): string; static;
+  end;
 
 
 implementation
@@ -39,128 +83,13 @@ uses
   // Delphi
   SysUtils, Classes,
   // Project
-  UConsts, UExceptions, UStrUtils;
+  UConsts, UExceptions, UResourceUtils, UStrUtils;
 
 
-function CEscapeStr(const S: string; const EscapeChars,
-  EscapableChars: string): string;
-  {Replaces specified characters in a string with escape characters in C format.
-    @param S [in] String to be escaped.
-    @param EscapeChars [in] Escape characters to replace characters from
-      EscapableChars.
-    @param EscapableChars [in] Characters to be escaped.
-    @return String with all relevant characters escaped.
-  }
-const
-  cEscChar = '\';       // the C escape character
-var
-  EscCount: Integer;    // count of escaped characters in string
-  Idx: Integer;         // loops thru string
-  PRes: PChar;          // points to chars in result string
-  EscCharPos: Integer;  // position of esc chars in EscapeChars & EscapableChars
-begin
-  // Check for empty string and treat specially (empty string crashes main code)
-  if S = '' then
-  begin
-    Result := '';
-    Exit;
-  end;
-  // Count escapable characters in string
-  EscCount := 0;
-  for Idx := 1 to Length(S) do
-  begin
-    if StrContainsStr(S[Idx], EscapableChars) then
-      Inc(EscCount);
-  end;
-  // Set size of result string and get pointer to it
-  SetLength(Result, Length(S) + EscCount);
-  PRes := PChar(Result);
-  // Replace escapable chars with the escaped version
-  for Idx := 1 to Length(S) do
-  begin
-    EscCharPos := StrPos(S[Idx], EscapableChars);
-    if EscCharPos > 0 then
-    begin
-      PRes^ := cEscChar;
-      Inc(PRes);
-      PRes^ := EscapeChars[EscCharPos];
-    end
-    else
-      PRes^ := S[Idx];
-    Inc(PRes);
-  end;
-  // copy last character (not processed in loop)
-  PRes^ := S[Length(S)];
-end;
+{ TJavaScript }
 
-function LiteralParam(const I: Integer): string; overload;
-  {Converts an integer into a literal numeric parameter suitable for passing to
-  a JavaScript function.
-    @param I [in] Value of parameter.
-    @return Integer value as a string.
-  }
-begin
-  // Integer parameters are simply the number itself
-  Result := IntToStr(I);
-end;
-
-function LiteralParam(const S: string): string; overload;
-  {Converts a string into a literal string parameter suitable for passing to a
-  JavaScript function.
-    @param S [in] Value of parameter.
-    @return Quoted string with embedded quotes and other control characters
-      escaped.
-  }
-const
-  cQuote = '"';                               // quote to delimit string literal
-  cEscapableChars = cQuote + '\' + LF + CR + TAB;    // characters to be escaped
-  cEscapeChars = cQuote + '\nrt';                           // escape characters
-begin
-  Result :=
-    cQuote +
-    CEscapeStr(
-      StrUnixLineBreaks(S),   // convert CRLF to LF
-      cEscapeChars,
-      cEscapableChars
-    ) +
-    cQuote;
-end;
-
-function LiteralParam(const F: Extended): string; overload;
-  {Converts a floating point value into a literal numeric parameter suitable for
-  passing to a JavaScript function.
-    @param F [in] Value of parameter.
-    @return Floating point value as string.
-  }
-begin
-  Result := FloatToStr(F);
-end;
-
-function LiteralParam(const B: Boolean): string; overload;
-  {Converts a Boolean value into a literal boolean parameter suitable for
-  passing to a JavaScript function.
-    @param B [in] Value of parameter.
-    @return 'true' or 'false'.
-  }
-begin
-  if B then
-    Result := 'true'
-  else
-    Result := 'false';
-end;
-
-function JSLiteralFunc(const FnName: string;
+class function TJavaScript.LiteralFunc(const FnName: string;
   const Params: array of const): string;
-  {Creates a JavaScript function call with a parameter list comprising of
-  literal values.
-    @param FnName [in] Name of function.
-    @param Params [in] Dynamic array of literal parameter values. [] indicates a
-      parameterless function.
-    @except EBug raised if type of any value in Params has an unsupported type.
-      Valid types are Integer, Boolean, Extended and either AnsiString and
-      PAnsiChar or UnicodeString and WideChar, depending on if compiled with
-      Unicode support.
-  }
 var
   Idx: Integer;           // loops thru all provided parameters
   ParamVar: TVarRec;      // value of a parameter from array
@@ -186,7 +115,9 @@ begin
         vtWideChar:
           Param := LiteralParam(ParamVar.VWideChar);
         else
-          raise EBug.Create('JSLiteralFunc: Unsupported parameter type');
+          raise EBug.Create(
+            'TJavaScript.LiteralFunc: Unsupported parameter type'
+          );
       end;
       // Store param in list
       ParamList.Add(Param);
@@ -196,6 +127,46 @@ begin
   finally
     FreeAndNil(ParamList);
   end;
+end;
+
+class function TJavaScript.LiteralParam(const I: Integer): string;
+begin
+  Result := IntToStr(I);
+end;
+
+class function TJavaScript.LiteralParam(const S: string): string;
+begin
+  Result := DOUBLEQUOTE + MakeSafeString(S) + DOUBLEQUOTE;
+end;
+
+class function TJavaScript.LiteralParam(const B: Boolean): string;
+begin
+  if B then
+    Result := 'true'
+  else
+    Result := 'false';
+end;
+
+class function TJavaScript.LiteralParam(const F: Extended): string;
+begin
+  Result := FloatToStr(F);
+end;
+
+class function TJavaScript.LoadScript(const ScriptName: string;
+  const EncType: TEncodingType): string;
+begin
+  Result := LoadResourceAsString(HInstance, ScriptName, RT_HTML, EncType);
+end;
+
+class function TJavaScript.MakeSafeString(const S: string): string;
+const
+  EscapableChars = DOUBLEQUOTE + SINGLEQUOTE + '\' + LF + CR + TAB + FF
+    + BACKSPACE;  // characters to be escaped
+  EscapeChars = DOUBLEQUOTE + SINGLEQUOTE + '\nrtfb'; // escape characters
+begin
+  Result := StrBackslashEscape(
+    StrUnixLineBreaks(S), EscapableChars, EscapeChars
+  );
 end;
 
 end.
