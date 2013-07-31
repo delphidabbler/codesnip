@@ -1,0 +1,121 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<!--
+ * This Source Code Form is subject to the terms of the Mozilla Public License,
+ * v. 2.0. If a copy of the MPL was not distributed with this file, You can
+ * obtain one at http://mozilla.org/MPL/2.0/
+ *
+ * Copyright (C) 2010-2012, Peter Johnson (www.delphidabbler.com).
+ *
+ * $Rev$
+ * $Date$
+ *
+ * Help topic for Code Generation tab of Preferences dialogue box.
+-->
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text-html; charset=Windows-1252">
+    <title>
+      Code Generation Preferences
+    </title>
+    <link rel="stylesheet" href="../css/codesnip.css" type="text/css">
+  </head>
+  <body>
+    <object
+      type="application/x-oleobject"
+      classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e"
+    >
+      <param name="ALink Name" value="CodeGenPrefs">
+    </object>
+    <h1>
+      <a name="dlg_prefs_codegen"></a>Code Generation Preferences
+    </h1>
+    <p>
+      This tab of the <a href="dlg_preferences.htm">Preferences</a> dialogue box
+      is used to customise the source code emitted by the code generator for
+      test compilations and generated units.
+    <p>
+      The tab is accessed by selecting the <em>Tools | Preferences</em> menu
+      item then clicking the <em>Code Generation</em> tab.
+      <strong>Note:</strong> This tab is not used to modify the <em>style</em>
+      of the source code: use the <a href="dlg_prefs_sourcecode.htm">Code
+      Formatting</a> tab for that.
+    </p>
+    <p>
+      The Code Generator can be configured to generate $WARN compiler directives
+      to switch specified warning messages on or off. These directives are
+      supported by Delphi 6 and later.
+    </p>
+    <p>
+      To enable this facility you must check the <em>Emit $WARN directives</em>
+      check box.
+    </p>
+    <p>
+      The warnings for which compiler directives are to be generated are those
+      listed in the list view control situated below the check box. Warnings
+      are identified by the text in the <em>Symbol</em> column. These symbols
+      must be valid parameters for Delphi's $WARN directive. Since new symbols
+      have been introduced in different versions of Delphi, the minimum version
+      of the compiler that supports the warning must also be specified. This is
+      shown in the <em>Min. Compiler</em> column of the list view. The version
+      number is that specified by the Delphi's <a
+        href="http://wiki.delphidabbler.com/index.php/Notes/VersionNumbers"
+        class="weblink"
+      ><var>CompilerVersion</var> constant.</a>. Finally, whether a warning is
+      switched on or off is shown in the <em>State</em> column.
+    </p>
+    <p>
+      The list view can be sorted on the contents of any of the columns by
+      clicking the appropriate column header. Clicking the same column header
+      again reverses the sort. The header of the sorted column displays an
+      indicator showing the sort direction.
+    </p>
+    <p>
+      New symbols can be added and existing symbols updated or deleted by using
+      the controls below the list view, as follows:
+    </p>
+    <ul class="spaced">
+      <li>
+        <strong>Add a symbol</strong><br>
+        Enter the symbol name in the <em>Symbol</em> edit control, specify the
+        earliest compiler version that supports it in the <em>Min. Compiler</em>
+        edit control and specify whether the $WARN directive will switch the
+        warning on or off by selecting the appropriate <em>Warning State</em>
+        radio button. Click the <em>Add</em> button to add the symbol to the
+        list. If the <em>Add</em> button remains disabled check that the
+        compiler version is valid and that the symbol name does not already
+        exist.
+      </li>
+      <li>
+        <strong>Delete a symbol</strong><br>
+        Select the required symbol in the list view then click the
+        <em>Delete</em> button. The symbol will be removed from the list.
+      </li>
+      <li>
+        <strong>Update a symbol</strong><br>
+        Select the symbol to be updated from the list view. It's details will be
+        copied into the <em>Symbol</em> and <em>Min. Compiler</em> edit
+        controls and the appropriate <em>Warning State</em> radio button will be
+        selected. Change the details as required then click the <em>Update</em>
+        button to modify the symbol. The changes will be reflected in the list
+        view. If the entered information is not valid then the <em>Update</em>
+        button will be disabled.
+      </li>
+    </ul>
+    <p>
+      The <em>Pre-defined</em> button next to the <em>Min. Compiler</em> edit
+      control is provided to make it easier to choose the minimum compiler
+      version. Clicking the button drops down a menu which displays the names
+      of some Delphi compilers. Choosing a compiler will enter the correct
+      version number in the edit control. <strong>Note:</strong> The earliest
+      supported compiler version is 14.0.
+    </p>
+    <p>
+      The <em>Preview</em> button at the top right of the tab displays the
+      source code that will be emitted by the code generator.
+    </p>
+    <p>
+      The <em>Restore Defaults</em> button discards the current list of $WARN
+      directives and replaces it with a default set.
+    </p>
+  </body>
+</html>
