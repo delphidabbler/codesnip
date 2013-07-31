@@ -9,7 +9,7 @@
  * $Date$
  *
  * Implements a wizard dialogue box that lets the user select and import
- * snippets from the DelphiDabbler implmentation of the SWAG database.
+ * snippets from the DelphiDabbler implementation of the SWAG Pascal archive.
 }
 
 
@@ -42,6 +42,9 @@ uses
 
 
 type
+  ///  <summary>Class that implements a wizard dialogue box that lets the user
+  ///  select and import snippets from the DelphiDabbler implementation of the
+  ///  SWAG Pascal archive.</summary>
   TSWAGImportDlg = class(TWizardDlg, INoPublicConstruct)
     tsIntro: TTabSheet;
     tsCategories: TTabSheet;
@@ -56,57 +59,112 @@ type
     lblUpdateDesc: TLabel;
     tsFinish: TTabSheet;
     frmOutro: THTMLTpltDlgFrame;
-    procedure lbCategoriesDblClick(Sender: TObject);
-    procedure lbCategoriesKeyDown(Sender: TObject; var Key: Word;
-      Shift: TShiftState);
+    ///  <summary>Handles clicks on the check boxes next to snippets in the
+    ///  snippet selection list box by selecting and deselecting snippets for
+    ///  inclusion in the import.</summary>
     procedure clbSelectSnippetsClickCheck(Sender: TObject);
+    ///  <summary>Handles double clicks on snippets in the snippet selection
+    ///  list box by causing the selected snippet to be previewed.</summary>
     procedure clbSelectSnippetsDblClick(Sender: TObject);
+    ///  <summary>Handles key down events on the snippet selection list box by
+    ///  causing the selected snippet to be previewed when the user presses
+    ///  Enter.</summary>
     procedure clbSelectSnippetsKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    ///  <summary>Handles double clicks on categories in the SWAG categories
+    ///  list box by displaying the category's snippets in the snippet selection
+    ///  list box.</summary>
+    procedure lbCategoriesDblClick(Sender: TObject);
+    ///  <summary>Handles key down events on categories in the SWAG categories
+    ///  list box by displaying the category's snippets in the snippet selection
+    ///  list box when the user presses enter.</summary>
+    procedure lbCategoriesKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
   strict private
     const
-      // Indices of wizard pages
+      ///  <summary>Index of introductory page in wizard.</summary>
       cIntroPage = 0;
+      ///  <summary>Index of snippet selection page in wizard.</summary>
       cSelectionPage = 1;
+      ///  <summary>Index of import page in wizard.</summary>
       cUpdatePage = 2;
+      ///  <summary>Index of finish page in wizard.</summary>
       cFinishPage = 3;
     var
+      ///  <summary>Object that provides cached access to the SWAG database.
+      ///  </summary>
       fSWAGReader: TSWAGReader;
+      ///  <summary>List of all categories in SWAG database, sorted by title.
+      ///  </summary>
       fSortedCategories: TSortedList<TSWAGCategory>;
+      ///  <summary>List of snippets in the current category, sorted by title.
+      ///  </summary>
       fCurrentCatSnippets: TSortedList<TSWAGSnippet>;
+      ///  <summary>List of snippets selected for import, sorted by ID.
+      ///  </summary>
       fSelectedSnippets: TSortedList<TSWAGSnippet>;
+      ///  <summary>Object that imports selected SWAG snippets into CodeSnip's
+      ///  user database.</summary>
       fImporter: TSWAGImporter;
+      ///  <summary>ID of currently selected category.</summary>
+      ///  <remarks>Set to empty string if no category is selected.</remarks>
       fCurrentCatID: string;
-    ///  <summary>Validates entries on wizard pages indentified by the page
-    ///  index.</summary>
+    ///  <summary>Validates entries on the wizard page identified by the given
+    ///  page index.</summary>
     procedure ValidatePage(const PageIdx: Integer);
-
+    ///  <summary>Displays snippets selected for import in list view on Update
+    ///  page.</summary>
     procedure PopulateImportsLV;
+    ///  <summary>Initialises Selection page by populating its list of SWAG
+    ///  categories, if necessary.</summary>
+    ///  <remarks>May display a wait dialogue box if the categories have to be
+    ///  downloaded from the SWAG database.</remarks>
     procedure InitSelectionPage;
+    ///  <summary>Initialises Update page by retrieving all the selected
+    ///  snippets, preparing them for import and displaying them in the page's
+    ///  list view.</summary>
+    ///  <remarks>May display a wait dialogue box if any of the snippets to be
+    ///  imported have to be downloaded from the SWAG database.</remarks>
     procedure InitUpdatePage;
-
+    ///  <summary>Gets the snippets contained is any selected category and
+    ///  displays them in the snippet selection list box on the Selection page.
+    ///  </summary>
+    ///  <remarks>May display a wait dialogue box if the snippets have to be
+    ///  downloaded from the SWAG database.</remarks>
     procedure DisplaySnippetsForCategory;
-
+    ///  <summary>Creates and displays a preview of the currently selected
+    ///  snippet in the Selection page's snippet selection list box.</summary>
+    ///  <remarks>May display a wait dialogue box if the selected snippet has to
+    ///  be downloaded from the SWAG database.</remarks>
     procedure PreviewSelectedSnippet;
-
+    ///  <summary>Gets the complete information for each snippet selected for
+    ///  import and stores in the given list.</summary>
     procedure GetImportSnippets(const SnipList: TList<TSWAGSnippet>);
-
+    ///  <summary>Performs the import of the selected snippets into CodeSnip's
+    ///  user database.</summary>
+    ///  <remarks>Displays a wait dialogue box while the import is proceeding.
+    ///  </remarks>
     procedure UpdateDatabase;
-
+    ///  <summary>Executes a given callback while displaying a wait dialogue
+    ///  box.</summary>
+    ///  <param name="AOwner">TComponent [in] Component that owns the wait
+    ///  dialogue box over which the dialogue is aligned.</param>
+    ///  <param name="CallProc">TProc [in] Callback closure to be executed while
+    ///  wait dialogue box is displayed.</param>
+    ///  <param name="WaitMsg">string [in] Message to be displayed in wait
+    ///  dialogue box.</param>
     procedure WaitWrapper(AOwner: TComponent; const CallProc: TProc;
       const WaitMsg: string);
-
   strict protected
     ///  <summary>Constructs and intialises a wizard instance.</summary>
     constructor InternalCreate(AOwner: TComponent); override;
-
     ///  <summary>Aligns and arranges controls in each tab sheet and sizes
     ///  dialog box to accomodate controls.</summary>
     ///  <remarks>Overridden method called from ancestor class.</remarks>
     procedure ArrangeForm; override;
-
+    ///  <summary>Initialises wizard pages that display HTML content.</summary>
+    ///  <remarks>Overridden method called from ancestor class.</remarks>
     procedure ConfigForm; override;
-
     ///  <summary>Returns text of heading on page indexed by PageIdx.</summary>
     ///  <remarks>Overridden method called from ancestor class.</remarks>
     function HeadingText(const PageIdx: Integer): string; override;
@@ -124,9 +182,11 @@ type
     procedure MoveForward(const PageIdx: Integer; var CanMove: Boolean);
       override;
   public
-
+    ///  <summary>Destroys wizard dialogue box instance.</summary>
     destructor Destroy; override;
-
+    ///  <summary>Displays SWAG import wizard aligned over given owner control
+    ///  and returns True if the user performs an import or False if the user
+    ///  cancels.</summary>
     class function Execute(const AOwner: TComponent): Boolean;
   end;
 
@@ -383,7 +443,6 @@ var
 resourcestring
   sWaitMsg = 'Downloading Snippets From SWAG...';
 begin
-  // TODO: Refactor out into GetImportSnippets
   Application.ProcessMessages;
   FullSnippets := TList<TSWAGSnippet>.Create;
   try
