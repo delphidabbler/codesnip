@@ -81,7 +81,6 @@ type
     function GetFriendlyName: string; override;
   public
     constructor Create(const HighlighterClass: TSynCustomHighlighterClass);
-    destructor Destroy; override;
     function CreateHighlighter: TSynCustomHighlighter; override;
     function SupportedAttrs: TArray<TSyntaxHiliterAttr>; override;
   end;
