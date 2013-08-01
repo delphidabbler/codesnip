@@ -54,6 +54,8 @@ type
     ///  <summary>Read accessor for the FriendlyName property.</summary>
     function GetFriendlyName: string; virtual; abstract;
   public
+    ///  <summary>Creates and returns a copy of this object.</summary<
+    function Clone: TSyntaxHiliterBrush; virtual; abstract;
     ///  <summary>Creates a SynEdit highlighter compatible highlighter object
     ///  suitable for use with the SynEdit control.</summary>
     function CreateHighlighter: TSynCustomHighlighter; virtual; abstract;
@@ -134,6 +136,8 @@ type
     ///  <remarks>Gets the value from the wrapper SynEdit highlighter.</remarks>
     function GetFriendlyName: string; override;
   public
+    ///  <summary>Creates and returns a copy of this object.</summary<
+    function Clone: TSyntaxHiliterBrush; override;
     ///  <summary>Constructs a new object instance that wraps the given SynEdit
     ///  highlighter component.</summary>
     constructor Create(const HighlighterClass: TSynCustomHighlighterClass);
@@ -160,6 +164,8 @@ type
     ///  <remarks>Always returns 'None'.</remarks>
     function GetFriendlyName: string; override;
   public
+    ///  <summary>Creates and returns a copy of this object.</summary<
+    function Clone: TSyntaxHiliterBrush; override;
     ///  <summary>Creates a SynEdit highlighter compatible highlighter object
     ///  suitable for use with the SynEdit control.</summary>
     ///  <remarks>Actually this class simply returns nil, which is valid for
@@ -239,6 +245,11 @@ end;
 
 { TSynEditBrush }
 
+function TSynEditBrush.Clone: TSyntaxHiliterBrush;
+begin
+  Result := TSynEditBrush.Create(fHighlighterClass);
+end;
+
 constructor TSynEditBrush.Create(
   const HighlighterClass: TSynCustomHighlighterClass);
 begin
@@ -280,6 +291,11 @@ begin
 end;
 
 { TNullBrush }
+
+function TNullBrush.Clone: TSyntaxHiliterBrush;
+begin
+  Result := TNullBrush.Create;
+end;
 
 function TNullBrush.CreateHighlighter: TSynCustomHighlighter;
 begin
