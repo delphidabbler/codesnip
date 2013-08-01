@@ -37,7 +37,13 @@ uses
   SynHighlighterHtml in '..\SynEditUnits\SynHighlighterHtml.pas',
   SynHighlighterJScript in '..\SynEditUnits\SynHighlighterJScript.pas',
   SynHighlighterPas in '..\SynEditUnits\SynHighlighterPas.pas',
-  SynHighlighterPHP in '..\SynEditUnits\SynHighlighterPHP.pas';
+  SynHighlighterPHP in '..\SynEditUnits\SynHighlighterPHP.pas',
+  CS.CodeEditor.Frame in '..\CodeEditor\CS.CodeEditor.Frame.pas' {TCodeEditorFrame: TFrame},
+  SynEdit in '..\SynEditUnits\SynEdit.pas',
+  SynTextDrawer in '..\SynEditUnits\SynTextDrawer.pas',
+  SynEditKeyCmds in '..\SynEditUnits\SynEditKeyCmds.pas',
+  SynEditKbdHandler in '..\SynEditUnits\SynEditKbdHandler.pas',
+  SynEditWordWrap in '..\SynEditUnits\SynEditWordWrap.pas';
 
 {$R *.res}
 

@@ -87,6 +87,15 @@
 			<DCCReference Include="..\SynEditUnits\SynHighlighterJScript.pas"/>
 			<DCCReference Include="..\SynEditUnits\SynHighlighterPas.pas"/>
 			<DCCReference Include="..\SynEditUnits\SynHighlighterPHP.pas"/>
+			<DCCReference Include="..\CodeEditor\CS.CodeEditor.Frame.pas">
+				<Form>TCodeEditorFrame</Form>
+				<DesignClass>TFrame</DesignClass>
+			</DCCReference>
+			<DCCReference Include="..\SynEditUnits\SynEdit.pas"/>
+			<DCCReference Include="..\SynEditUnits\SynTextDrawer.pas"/>
+			<DCCReference Include="..\SynEditUnits\SynEditKeyCmds.pas"/>
+			<DCCReference Include="..\SynEditUnits\SynEditKbdHandler.pas"/>
+			<DCCReference Include="..\SynEditUnits\SynEditWordWrap.pas"/>
 			<None Include="..\Highlighters\BuiltInHiliterThemes.txt"/>
 			<None Include="..\SynEditUnits\SynEdit.inc"/>
 			<None Include="..\SynEditUnits\SynEditJedi.inc"/>
