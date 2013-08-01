@@ -76,8 +76,8 @@ type
     procedure Assign(const Src: TSyntaxHiliteTheme);
     procedure SetStyles(const Src: TSyntaxHiliteTheme);
     function IsBrushSupported(const BrushID: string): Boolean;
-    // GetStyle => return Default style if no brush or attr found
-    //          => return null style if no default style
+    // GetStyle => replaces any "default" style place markers with actual values
+    //             from default or common style.
     function GetStyle(const BrushId, AttrId: string): TSyntaxHiliteAttrStyle;
     function GetEnumerator: TEnumerator<TPair<string,TSyntaxHiliteBrushStyle>>;
     property ID: string read fID;
@@ -251,13 +251,12 @@ begin
   inherited;
 end;
 
-function TSyntaxHiliteTheme.GetBrushStyle(
-  const BrushID: string): TSyntaxHiliteBrushStyle;
+function TSyntaxHiliteTheme.GetBrushStyle(const BrushID: string):
+  TSyntaxHiliteBrushStyle;
 begin
-  if fBrushStyles.ContainsKey(BrushID) then
-    Result := fBrushStyles[BrushID]
-  else
-    Result := fDefaultBrushStyle;
+  Assert(fBrushStyles.ContainsKey(BrushID),
+    ClassName + '.GetBrushStyle:: BrushID does not exist');
+  Result := fBrushStyles[BrushID];
 end;
 
 function TSyntaxHiliteTheme.GetEnumerator:
@@ -268,11 +267,37 @@ end;
 
 function TSyntaxHiliteTheme.GetStyle(const BrushId,
   AttrId: string): TSyntaxHiliteAttrStyle;
+
+  function Inherit(const ParentAttr, ChildAttr: TSyntaxHiliteAttrStyle):
+    TSyntaxHiliteAttrStyle;
+  begin
+    Result := ChildAttr;
+    if ChildAttr.Background = clDefault then
+      Result.Background := ParentAttr.Background;
+    if ChildAttr.Foreground = clDefault then
+      Result.Foreground := ParentAttr.Foreground;
+    if ChildAttr.FontStyles = [hfsDefault] then
+      Result.FontStyles := ParentAttr.FontStyles;
+  end;
+
 var
   BrushStyle: TSyntaxHiliteBrushStyle;
 begin
-  BrushStyle := GetBrushStyle(BrushId);
-  Result := BrushStyle.AttrStyles[AttrId];
+  Result := TSyntaxHiliteAttrStyle.CreateNull;
+  if fDefaultBrushStyle.IsAttrSupported(AttrId) then
+    Result := Inherit(Result, fDefaultBrushStyle.AttrStyles[AttrId]);
+  if not fBrushStyles.ContainsKey(BrushId) then
+    Exit;
+  BrushStyle := fBrushStyles[BrushId];
+  if not BrushStyle.IsAttrSupported(AttrId) then
+    Exit;
+  Result := Inherit(Result, BrushStyle.AttrStyles[AttrId]);
+  Assert(Result.Background <> clDefault,
+    ClassName + '.GetStyle: Background colour is still default');
+  Assert(Result.Foreground <> clDefault,
+    ClassName + '.GetStyle: Foreground colour is still default');
+  Assert(not (hfsDefault in Result.FontStyles),
+    ClassName + '.GetStyle: FontStyles are still default');
 end;
 
 function TSyntaxHiliteTheme.GetSupportedBrushes: TArray<string>;
