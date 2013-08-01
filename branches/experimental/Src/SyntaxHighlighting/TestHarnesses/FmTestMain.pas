@@ -90,14 +90,6 @@ var
   AttrStyle: TSyntaxHiliteAttrStyle;
   FS: TSyntaxHiliteFontStyle;
   FSParams: IStringList;
-
-  function ColourStr(C: TColor): string;
-  begin
-    if C = clNone then
-      Exit('*');
-    Result := ColorToString(C);
-  end;
-
 begin
   edBrushAttrs.Clear;
   Theme := fThemes[GetSelectedThemeID];
@@ -118,31 +110,26 @@ begin
     begin
       edBrushAttrs.Lines.Add(Attr.FriendlyName + ':');
       AttrStyle := Theme.GetStyle(Brush.ID, Attr.ID);
-      if AttrStyle.IsNull then
-        edBrushAttrs.Lines.Add('      * default')
+      edBrushAttrs.Lines.Add(
+        Format('      Background: %s', [ColorToString(AttrStyle.Background)])
+      );
+      edBrushAttrs.Lines.Add(
+        Format('      Foreground: %s', [ColorToString(AttrStyle.Foreground)])
+      );;
+      FSParams := TIStringList.Create;
+      for FS in AttrStyle.FontStyles do
+        FSParams.Add(FontStyleMap[FS]);
+      if FSParams.Count = 0 then
+        edBrushAttrs.Lines.Add('      Font Styles: {}')
+      else if AttrStyle.FontStyles = [hfsDefault] then
+        edBrushAttrs.Lines.Add(
+          '      Font Styles: *'
+        )
       else
-      begin
         edBrushAttrs.Lines.Add(
-          Format('      Background: %s', [ColourStr(AttrStyle.Background)])
+          '      Font Styles: {' + FSParams.GetText(',', False) + '}'
         );
-        edBrushAttrs.Lines.Add(
-          Format('      Foreground: %s', [ColourStr(AttrStyle.Foreground)])
-        );;
-        FSParams := TIStringList.Create;
-        for FS in AttrStyle.FontStyles do
-          FSParams.Add(FontStyleMap[FS]);
-        if FSParams.Count = 0 then
-          edBrushAttrs.Lines.Add('      Font Styles: *')
-        else if AttrStyle.FontStyles = [hfsDefault] then
-          edBrushAttrs.Lines.Add(
-            '      Font Styles: {}'
-          )
-        else
-          edBrushAttrs.Lines.Add(
-            '      Font Styles: {' + FSParams.GetText(',', False) + '}'
-          );
       end;
-    end;
   finally
     Brush.Free;
   end;
