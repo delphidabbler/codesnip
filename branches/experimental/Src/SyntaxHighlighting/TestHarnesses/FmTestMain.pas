@@ -71,6 +71,11 @@ const
     '*', 'bold', 'italic', 'underline'
   );
 
+  ///  <summary>Map of font styles to symbolic names.</summary>
+  UIFontStyleMap: array[TFontStyle] of string = (
+    'fsBold', 'fsItalic', 'fsUnderline', 'fsStrikeOut'
+  );
+
 procedure TMainTestForm.btnClearThemesClick(Sender: TObject);
 begin
   if not Assigned(fThemes) then
@@ -88,8 +93,9 @@ var
   Attrs: TArray<TSyntaxHiliterAttr>;
   Theme: TSyntaxHiliteTheme;
   AttrStyle: TSyntaxHiliteAttrStyle;
-  FS: TSyntaxHiliteFontStyle;
+  FS: TFontStyle;
   FSParams: IStringList;
+  FontStyles: TFontStyles;
 begin
   edBrushAttrs.Clear;
   Theme := fThemes[GetSelectedThemeID];
@@ -116,18 +122,17 @@ begin
       edBrushAttrs.Lines.Add(
         Format('      Foreground: %s', [ColorToString(AttrStyle.Foreground)])
       );;
+      FontStyles := AttrStyle.ConvertFontStyles;
       FSParams := TIStringList.Create;
-      for FS in AttrStyle.FontStyles do
-        FSParams.Add(FontStyleMap[FS]);
-      if FSParams.Count = 0 then
-        edBrushAttrs.Lines.Add('      Font Styles: {}')
-      else if AttrStyle.FontStyles = [hfsDefault] then
+      for FS in FontStyles do
+        FSParams.Add(UIFontStyleMap[FS]);
+      if AttrStyle.FontStyles = [hfsDefault] then
         edBrushAttrs.Lines.Add(
-          '      Font Styles: *'
+          '      Font Styles: ERROR - Shouldn''t have hfsDefault here'
         )
       else
         edBrushAttrs.Lines.Add(
-          '      Font Styles: {' + FSParams.GetText(',', False) + '}'
+          '      Font Styles: [' + FSParams.GetText(',', False) + ']'
         );
       end;
   finally
