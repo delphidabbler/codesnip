@@ -19,12 +19,14 @@ type
     btnLoadDefaultThemes: TButton;
     btnDisplayThemes: TButton;
     btnSaveAllThemes: TButton;
+    btnClearThemes: TButton;
     procedure btnLoadUserThemesClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure btnLoadDefaultThemesClick(Sender: TObject);
     procedure btnDisplayThemesClick(Sender: TObject);
     procedure btnSaveAllThemesClick(Sender: TObject);
+    procedure btnClearThemesClick(Sender: TObject);
   private
     fThemes: TSyntaxHiliteThemes;
   end;
@@ -38,6 +40,15 @@ uses
   CS.Hiliter.Themes.Persist;
 
 {$R *.dfm}
+
+procedure TMainTestForm.btnClearThemesClick(Sender: TObject);
+begin
+  if not Assigned(fThemes) then
+    Exit;
+  fThemes.Clear;
+  btnLoadDefaultThemes.Enabled := True;
+  btnLoadUserThemes.Enabled := True;
+end;
 
 procedure TMainTestForm.btnDisplayThemesClick(Sender: TObject);
 var
