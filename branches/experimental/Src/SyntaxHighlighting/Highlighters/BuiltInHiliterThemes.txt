@@ -69,7 +69,7 @@ Theme _RADStudio_ RAD Studio
 Theme _VisualStudio_ Visual Studio™
   Brush *
     Attr Space *,*,{}
-    Attr Comment *,008000,{italic}
+    Attr Comment *,008000,{}
     Attr ReservedWord *,FF0000,{bold}
     Attr NonreservedKeyword *,FF0000,{italic}
     Attr Event *,FF0000,{italic}
