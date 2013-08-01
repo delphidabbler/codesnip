@@ -9,7 +9,7 @@ uses
   Generics.Collections,
 
   CS.Hiliter.Themes,
-  CS.Hiliter.Brushes;
+  CS.Hiliter.Brushes, CS.CodeEditor.Frame;
 
 type
   TMainTestForm = class(TForm)
@@ -21,13 +21,16 @@ type
     btnDisplayThemes: TButton;
     btnSaveAllThemes: TButton;
     btnClearThemes: TButton;
-    tsBrushAttrs: TTabSheet;
+    tsCodeEditor: TTabSheet;
     cbChooseTheme: TComboBox;
     lblChooseTheme: TLabel;
     lblChooseBrush: TLabel;
     cbChooseBrush: TComboBox;
     btnDisplayBrushAttrs: TButton;
     edBrushAttrs: TMemo;
+    frmCodeEditor: TTCodeEditorFrame;
+    btnDisplaySource: TButton;
+    btnChangeTheme: TButton;
     procedure btnLoadUserThemesClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -37,6 +40,8 @@ type
     procedure btnClearThemesClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure btnDisplayBrushAttrsClick(Sender: TObject);
+    procedure btnDisplaySourceClick(Sender: TObject);
+    procedure btnChangeThemeClick(Sender: TObject);
   private
     fThemes: TSyntaxHiliteThemes;
     // Array of theme IDs with same index as theme's entry in cbChooseTheme
@@ -140,6 +145,22 @@ begin
   end;
 end;
 
+procedure TMainTestForm.btnDisplaySourceClick(Sender: TObject);
+var
+  Theme: TSyntaxHiliteTheme;
+  Brush: TSyntaxHiliterBrush;
+begin
+  Theme := fThemes.Themes[GetSelectedThemeID];
+  Brush := TSyntaxHiliterBrushes.CreateBrush(GetSelectedBrushID);
+  try
+    frmCodeEditor.Theme := Theme;
+    frmCodeEditor.Brush := Brush;
+    frmCodeEditor.SourceCode := Brush.SampleSourceCode;
+  finally
+    Brush.Free;
+  end;
+end;
+
 procedure TMainTestForm.btnDisplayThemesClick(Sender: TObject);
 var
   T: TSyntaxHiliteTheme;
@@ -217,6 +238,11 @@ begin
     ExtractFilePath(ParamStr(0)) +
       '..\Src\SyntaxHighlighting\Highlighters\SavedThemes.txt'
   );
+end;
+
+procedure TMainTestForm.btnChangeThemeClick(Sender: TObject);
+begin
+  frmCodeEditor.Theme := fThemes.Themes[GetSelectedThemeID];
 end;
 
 procedure TMainTestForm.FormCreate(Sender: TObject);

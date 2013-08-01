@@ -93,8 +93,8 @@ object MainTestForm: TMainTestForm
         OnClick = btnClearThemesClick
       end
     end
-    object tsBrushAttrs: TTabSheet
-      Caption = 'Brush Attributes'
+    object tsCodeEditor: TTabSheet
+      Caption = 'Code Editor && Brushes'
       ImageIndex = 1
       DesignSize = (
         898
@@ -109,7 +109,7 @@ object MainTestForm: TMainTestForm
       end
       object lblChooseBrush: TLabel
         Left = 3
-        Top = 58
+        Top = 56
         Width = 70
         Height = 13
         Caption = 'Choose brush:'
@@ -124,7 +124,7 @@ object MainTestForm: TMainTestForm
       end
       object cbChooseBrush: TComboBox
         Left = 3
-        Top = 77
+        Top = 75
         Width = 190
         Height = 21
         Style = csDropDownList
@@ -132,7 +132,7 @@ object MainTestForm: TMainTestForm
       end
       object btnDisplayBrushAttrs: TButton
         Left = 3
-        Top = 120
+        Top = 114
         Width = 190
         Height = 25
         Caption = 'Display Brush Attributes'
@@ -141,9 +141,9 @@ object MainTestForm: TMainTestForm
       end
       object edBrushAttrs: TMemo
         Left = 3
-        Top = 168
-        Width = 446
-        Height = 401
+        Top = 152
+        Width = 334
+        Height = 419
         Anchors = [akLeft, akTop, akBottom]
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
@@ -154,6 +154,36 @@ object MainTestForm: TMainTestForm
         ScrollBars = ssBoth
         TabOrder = 3
         WordWrap = False
+      end
+      inline frmCodeEditor: TTCodeEditorFrame
+        Left = 346
+        Top = 152
+        Width = 548
+        Height = 419
+        Anchors = [akLeft, akTop, akRight, akBottom]
+        TabOrder = 6
+        ExplicitLeft = 346
+        ExplicitTop = 152
+        ExplicitWidth = 548
+        ExplicitHeight = 419
+      end
+      object btnDisplaySource: TButton
+        Left = 346
+        Top = 114
+        Width = 231
+        Height = 25
+        Caption = 'Display Default Source Code For Brush'
+        TabOrder = 4
+        OnClick = btnDisplaySourceClick
+      end
+      object btnChangeTheme: TButton
+        Left = 583
+        Top = 114
+        Width = 90
+        Height = 25
+        Caption = 'Change Theme'
+        TabOrder = 5
+        OnClick = btnChangeThemeClick
       end
     end
   end
