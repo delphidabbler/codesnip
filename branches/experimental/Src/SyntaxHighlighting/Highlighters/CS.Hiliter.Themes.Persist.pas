@@ -19,8 +19,10 @@ interface
 
 
 uses
+  // Delphi
   SysUtils,
   Generics.Collections,
+  // Project
   UBaseObjects,
   UExceptions,
   UIStringList,
@@ -107,7 +109,12 @@ type
 implementation
 
 uses
-  Graphics, IOUtils, Classes,
+  // Delphi
+  Graphics,
+  IOUtils,
+  Classes,
+  Character,
+  // Project
   UConsts,
   UEncodings,
   UIOUtils,
@@ -318,7 +325,7 @@ var
 begin
   // An identifier contains only non-whitespace ASCII characters
   for C in S do
-    if not CharInSet(C, [#33..#126]) then
+    if TCharacter.IsWhiteSpace(C) then
       Exit(False);
   Result := True;
 end;
