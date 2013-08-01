@@ -22,6 +22,8 @@ uses
 
 type
 
+  { TODO: Consider replacing this enum with the Graphics.TFontStyles enum and
+          using a separate flag to indicate a default font value. }
   TSyntaxHiliteFontStyle = (hfsDefault, hfsBold, hfsItalic, hfsUnderline);
 
   TSyntaxHiliteFontStyles = set of TSyntaxHiliteFontStyle;
@@ -36,6 +38,12 @@ type
     function IsNull: Boolean;
     class operator Equal(const Left, Right: TSyntaxHiliteAttrStyle): Boolean;
     class operator NotEqual(const Left, Right: TSyntaxHiliteAttrStyle): Boolean;
+    ///  <summary>Convert FontStyles field into an equivalent TFontStyles value.
+    ///  </summary>
+    ///  <remarks>Callers must make sure that any default font styles have been
+    ///  resolved to actual values before calling this method: it assumes that
+    ///  hfsDefault it is not present in FontStyles.</remarks>
+    function ConvertFontStyles: TFontStyles;
   end;
 
   TSyntaxHiliteBrushStyle = class(TObject)
@@ -118,6 +126,17 @@ uses
   UComparers;
 
 { TSyntaxHiliteAttrStyle }
+
+function TSyntaxHiliteAttrStyle.ConvertFontStyles: TFontStyles;
+begin
+  Result := [];
+  if hfsBold in FontStyles then
+    Include(Result, fsBold);
+  if hfsItalic in FontStyles then
+    Include(Result, fsItalic);
+  if hfsUnderline in FontStyles then
+    Include(Result, fsUnderline);
+end;
 
 constructor TSyntaxHiliteAttrStyle.Create(ABackground, AForeground: TColor;
   AFontStyles: TSyntaxHiliteFontStyles);
