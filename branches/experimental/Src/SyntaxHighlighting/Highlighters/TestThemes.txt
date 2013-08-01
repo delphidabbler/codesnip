@@ -10,9 +10,7 @@
 # $Rev$
 # $Date$
 #
-# Defines built in syntax highlighter themes.
-#
-# Must be included in program resources in UTF-8 format.
+# This is a test user highlight themes file.
 # ------------------------------------------------------------------------------
 
 
@@ -20,7 +18,7 @@ Theme Test My Test Theme
   
   # this is the first test theme
   Brush *
-    Attr Assembler          *,*,{}
+    Attr Assembler          *,*,*
     Attr Comment            *,*,{italic}
     Attr Preprocessor       *,*,{italic}
     Attr Identifier         *,*,{}
