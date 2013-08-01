@@ -237,7 +237,7 @@ var
 
   function FormatAttrColour(const Colour: TColor): string;
   begin
-    if Colour = clNone then
+    if Colour = clDefault then
       Exit('*');
     Result := IntToHex(Integer(Colour), 8);
   end;
@@ -384,7 +384,7 @@ function TSyntaxHiliteThemesParser.ParseAttrStyle(const AttrID, Data: string):
     if Field = EmptyStr then
       raise ESyntaxHiliteThemesIO.CreateFmt(sBadAttrColour, [AttrID]);
     if Field = '*' then
-      Exit(clNone);
+      Exit(clDefault);
     if not TryStrToInt(HexDisplayPrefix + Field, ColourInt) then
       raise ESyntaxHiliteThemesIO.CreateFmt(sBadAttrColour, [AttrID]);
     Result := TColor(ColourInt);
