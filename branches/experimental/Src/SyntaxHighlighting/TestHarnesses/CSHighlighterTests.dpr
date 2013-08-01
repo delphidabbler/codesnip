@@ -21,7 +21,23 @@ uses
   PJSysInfo in '..\..\TrunkSrc\3rdParty\PJSysInfo.pas',
   UIOUtils in '..\..\TrunkSrc\UIOUtils.pas',
   UResourceUtils in '..\..\TrunkSrc\UResourceUtils.pas',
-  UURIEncode in '..\..\TrunkSrc\UURIEncode.pas';
+  UURIEncode in '..\..\TrunkSrc\UURIEncode.pas',
+  CS.Hiliter.Brushes in '..\Highlighters\CS.Hiliter.Brushes.pas',
+  SynEditHighlighter in '..\SynEditUnits\SynEditHighlighter.pas',
+  SynEditTypes in '..\SynEditUnits\SynEditTypes.pas',
+  SynEditMiscClasses in '..\SynEditUnits\SynEditMiscClasses.pas',
+  SynEditKeyConst in '..\SynEditUnits\SynEditKeyConst.pas',
+  SynUnicode in '..\SynEditUnits\SynUnicode.pas',
+  SynEditTextBuffer in '..\SynEditUnits\SynEditTextBuffer.pas',
+  SynEditMiscProcs in '..\SynEditUnits\SynEditMiscProcs.pas',
+  SynEditHighlighterOptions in '..\SynEditUnits\SynEditHighlighterOptions.pas',
+  SynHighlighterMulti in '..\SynEditUnits\SynHighlighterMulti.pas',
+  SynRegExpr in '..\SynEditUnits\SynRegExpr.pas',
+  SynEditStrConst in '..\SynEditUnits\SynEditStrConst.pas',
+  SynHighlighterHtml in '..\SynEditUnits\SynHighlighterHtml.pas',
+  SynHighlighterJScript in '..\SynEditUnits\SynHighlighterJScript.pas',
+  SynHighlighterPas in '..\SynEditUnits\SynHighlighterPas.pas',
+  SynHighlighterPHP in '..\SynEditUnits\SynHighlighterPHP.pas';
 
 {$R *.res}
 

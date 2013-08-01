@@ -30,6 +30,7 @@
 			<DCC_ExeOutput>.\$(Config)\$(Platform)</DCC_ExeOutput>
 		</PropertyGroup>
 		<PropertyGroup Condition="'$(Cfg_1)'!=''">
+			<DCC_UnitSearchPath>..\SynEditUnits;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
 			<DCC_ExeOutput>..\..\..\Exe</DCC_ExeOutput>
 			<BRCC_OutputDir>..\..\..\Bin\CSHighlighterTests</BRCC_OutputDir>
 			<DCC_DcuOutput>..\..\..\Bin\CSHighlighterTests</DCC_DcuOutput>
@@ -70,7 +71,25 @@
 			<DCCReference Include="..\..\TrunkSrc\UIOUtils.pas"/>
 			<DCCReference Include="..\..\TrunkSrc\UResourceUtils.pas"/>
 			<DCCReference Include="..\..\TrunkSrc\UURIEncode.pas"/>
+			<DCCReference Include="..\Highlighters\CS.Hiliter.Brushes.pas"/>
+			<DCCReference Include="..\SynEditUnits\SynEditHighlighter.pas"/>
+			<DCCReference Include="..\SynEditUnits\SynEditTypes.pas"/>
+			<DCCReference Include="..\SynEditUnits\SynEditMiscClasses.pas"/>
+			<DCCReference Include="..\SynEditUnits\SynEditKeyConst.pas"/>
+			<DCCReference Include="..\SynEditUnits\SynUnicode.pas"/>
+			<DCCReference Include="..\SynEditUnits\SynEditTextBuffer.pas"/>
+			<DCCReference Include="..\SynEditUnits\SynEditMiscProcs.pas"/>
+			<DCCReference Include="..\SynEditUnits\SynEditHighlighterOptions.pas"/>
+			<DCCReference Include="..\SynEditUnits\SynHighlighterMulti.pas"/>
+			<DCCReference Include="..\SynEditUnits\SynRegExpr.pas"/>
+			<DCCReference Include="..\SynEditUnits\SynEditStrConst.pas"/>
+			<DCCReference Include="..\SynEditUnits\SynHighlighterHtml.pas"/>
+			<DCCReference Include="..\SynEditUnits\SynHighlighterJScript.pas"/>
+			<DCCReference Include="..\SynEditUnits\SynHighlighterPas.pas"/>
+			<DCCReference Include="..\SynEditUnits\SynHighlighterPHP.pas"/>
 			<None Include="..\Highlighters\BuiltInHiliterThemes.txt"/>
+			<None Include="..\SynEditUnits\SynEdit.inc"/>
+			<None Include="..\SynEditUnits\SynEditJedi.inc"/>
 			<BuildConfiguration Include="Release">
 				<Key>Cfg_2</Key>
 				<CfgParent>Base</CfgParent>
