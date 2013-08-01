@@ -53,6 +53,8 @@ type
     function GetID: string; virtual; abstract;
     ///  <summary>Read accessor for the FriendlyName property.</summary>
     function GetFriendlyName: string; virtual; abstract;
+    ///  <summary>Read accessor for the SampleSourceCode property.</summary>
+    function GetSampleSourceCode: string; virtual; abstract;
   public
     ///  <summary>Creates and returns a copy of this object.</summary<
     function Clone: TSyntaxHiliterBrush; virtual; abstract;
@@ -67,6 +69,9 @@ type
     ///  <summary>Friendly name of brush, suitable for displaying to users.
     ///  </summary>
     property FriendlyName: string read GetFriendlyName;
+    ///  <summary>Sample source code for use in demonstrating the brush.
+    ///  </summary>
+    property SampleSourceCode: string read GetSampleSourceCode;
   end;
 
 type
@@ -135,6 +140,9 @@ type
     ///  <summary>Read accessor for FriendlyName property.</summary>
     ///  <remarks>Gets the value from the wrapper SynEdit highlighter.</remarks>
     function GetFriendlyName: string; override;
+    ///  <summary>Read accessor for the SampleSourceCode property.</summary>
+    ///  <remarks>Gets the value from the wrapper SynEdit highlighter.</remarks>
+    function GetSampleSourceCode: string; override;
   public
     ///  <summary>Creates and returns a copy of this object.</summary<
     function Clone: TSyntaxHiliterBrush; override;
@@ -163,6 +171,9 @@ type
     ///  <summary>Read accessor for FriendlyName property.</summary>
     ///  <remarks>Always returns 'None'.</remarks>
     function GetFriendlyName: string; override;
+    ///  <summary>Read accessor for the SampleSourceCode property.</summary>
+    ///  <remarks>Returns some "Lorem Ipsum" text.</remarks>
+    function GetSampleSourceCode: string; override;
   public
     ///  <summary>Creates and returns a copy of this object.</summary<
     function Clone: TSyntaxHiliterBrush; override;
@@ -272,6 +283,18 @@ begin
   Result := fHighlighterClass.GetLanguageName;
 end;
 
+function TSynEditBrush.GetSampleSourceCode: string;
+var
+  Highlighter: TSynCustomHighlighter;
+begin
+  Highlighter := CreateHighlighter;
+  try
+    Result := Highlighter.SampleSource;
+  finally
+    Highlighter.Free;
+  end;
+end;
+
 function TSynEditBrush.SupportedAttrs: TArray<TSyntaxHiliterAttr>;
 var
   Hiliter: TSynCustomHighlighter;
@@ -312,6 +335,11 @@ end;
 function TNullBrush.GetID: string;
 begin
   Result := 'Null';
+end;
+
+function TNullBrush.GetSampleSourceCode: string;
+begin
+  Result := 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.';
 end;
 
 function TNullBrush.SupportedAttrs: TArray<TSyntaxHiliterAttr>;
