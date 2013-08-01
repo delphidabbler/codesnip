@@ -36,7 +36,7 @@ Theme Test My Test Theme
   Brush ObjectPascal
     Attr Assembler          *,*,*
     Attr Comment            *,008000,{italic}
-    Attr Preprocessor       *,808000,{}
+    Attr Preprocessor       EEDDEE,808000,{}
     Attr Identifier         *,*,{}
     Attr ReservedWord       *,800000,{bold}
     Attr Number             *,FF0000,{}
