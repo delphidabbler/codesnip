@@ -22,6 +22,10 @@ uses
 
 type
 
+  { TODO: add support for font name and size with each brush style
+          - will need to add some statements to themes file and allow for
+          default font info in addition to default attrs. }
+
   { TODO: Consider replacing this enum with the Graphics.TFontStyles enum and
           using a separate flag to indicate a default font value. }
   TSyntaxHiliteFontStyle = (hfsDefault, hfsBold, hfsItalic, hfsUnderline);
