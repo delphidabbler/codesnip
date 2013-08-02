@@ -93,8 +93,8 @@ object MainTestForm: TMainTestForm
         OnClick = btnClearThemesClick
       end
     end
-    object tsCodeEditor: TTabSheet
-      Caption = 'Code Editor && Brushes'
+    object tsHighlighting: TTabSheet
+      Caption = 'Highlighting'
       ImageIndex = 1
       DesignSize = (
         898
@@ -102,17 +102,18 @@ object MainTestForm: TMainTestForm
       object lblChooseTheme: TLabel
         Left = 3
         Top = 5
-        Width = 328
+        Width = 117
         Height = 13
-        Caption = 'Choose theme (you must have loaded some on Themes Loader tab):'
+        Caption = 'Choose a loaded theme:'
         FocusControl = cbChooseTheme
       end
       object lblChooseBrush: TLabel
-        Left = 3
-        Top = 56
+        Left = 219
+        Top = 5
         Width = 70
         Height = 13
         Caption = 'Choose brush:'
+        FocusControl = cbChooseBrush
       end
       object cbChooseTheme: TComboBox
         Left = 3
@@ -123,67 +124,95 @@ object MainTestForm: TMainTestForm
         TabOrder = 0
       end
       object cbChooseBrush: TComboBox
-        Left = 3
-        Top = 75
+        Left = 243
+        Top = 24
         Width = 190
         Height = 21
         Style = csDropDownList
         TabOrder = 1
       end
-      object btnDisplayBrushAttrs: TButton
+      object pcHighlighting: TPageControl
         Left = 3
-        Top = 114
-        Width = 190
-        Height = 25
-        Caption = 'Display Brush Attributes'
-        TabOrder = 2
-        OnClick = btnDisplayBrushAttrsClick
-      end
-      object edBrushAttrs: TMemo
-        Left = 3
-        Top = 152
-        Width = 334
-        Height = 419
-        Anchors = [akLeft, akTop, akBottom]
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -12
-        Font.Name = 'Courier New'
-        Font.Style = []
-        ParentFont = False
-        ScrollBars = ssBoth
-        TabOrder = 3
-        WordWrap = False
-      end
-      inline frmCodeEditor: TTCodeEditorFrame
-        Left = 346
-        Top = 152
-        Width = 548
-        Height = 419
+        Top = 64
+        Width = 894
+        Height = 508
+        ActivePage = tsBrushAttrs
         Anchors = [akLeft, akTop, akRight, akBottom]
-        TabOrder = 6
-        ExplicitLeft = 346
-        ExplicitTop = 152
-        ExplicitWidth = 548
-        ExplicitHeight = 419
-      end
-      object btnDisplaySource: TButton
-        Left = 346
-        Top = 114
-        Width = 231
-        Height = 25
-        Caption = 'Display Default Source Code For Brush'
-        TabOrder = 4
-        OnClick = btnDisplaySourceClick
-      end
-      object btnChangeTheme: TButton
-        Left = 583
-        Top = 114
-        Width = 90
-        Height = 25
-        Caption = 'Change Theme'
-        TabOrder = 5
-        OnClick = btnChangeThemeClick
+        TabOrder = 2
+        object tsBrushAttrs: TTabSheet
+          Caption = 'Brush Attributes'
+          ExplicitWidth = 583
+          ExplicitHeight = 352
+          DesignSize = (
+            886
+            480)
+          object btnDisplayBrushAttrs: TButton
+            Left = 3
+            Top = 3
+            Width = 230
+            Height = 25
+            Caption = 'Display Resolved Brush Attributes'
+            TabOrder = 0
+            OnClick = btnDisplayBrushAttrsClick
+          end
+          object edBrushAttrs: TMemo
+            Left = 3
+            Top = 35
+            Width = 880
+            Height = 444
+            Anchors = [akLeft, akTop, akRight, akBottom]
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -12
+            Font.Name = 'Courier New'
+            Font.Style = []
+            ParentFont = False
+            ScrollBars = ssBoth
+            TabOrder = 1
+            WordWrap = False
+            ExplicitWidth = 577
+            ExplicitHeight = 316
+          end
+        end
+        object tsCodeEditor: TTabSheet
+          Caption = 'Code Editor'
+          ImageIndex = 1
+          ExplicitWidth = 583
+          ExplicitHeight = 352
+          DesignSize = (
+            886
+            480)
+          object btnDisplaySource: TButton
+            Left = 3
+            Top = 3
+            Width = 231
+            Height = 25
+            Caption = 'Display Default Source Code For Brush'
+            TabOrder = 0
+            OnClick = btnDisplaySourceClick
+          end
+          object btnChangeTheme: TButton
+            Left = 240
+            Top = 3
+            Width = 90
+            Height = 25
+            Caption = 'Change Theme'
+            TabOrder = 1
+            OnClick = btnChangeThemeClick
+          end
+          inline frmCodeEditor: TTCodeEditorFrame
+            Left = 3
+            Top = 35
+            Width = 880
+            Height = 444
+            Anchors = [akLeft, akTop, akRight, akBottom]
+            TabOrder = 2
+            ExplicitLeft = 3
+            ExplicitTop = 35
+            ExplicitWidth = 577
+            ExplicitHeight = 316
+          end
+        end
       end
     end
   end
