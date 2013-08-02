@@ -99,6 +99,14 @@
 			<DCCReference Include="..\Highlighters\CS.Hiliter.Parser.pas"/>
 			<DCCReference Include="..\Highlighters\CS.Hiliter.Renderers.Globals.pas"/>
 			<DCCReference Include="..\Highlighters\CS.Hiliter.Renderers.pas"/>
+			<DCCReference Include="..\..\TrunkSrc\UHTMLBuilder.pas"/>
+			<DCCReference Include="..\..\TrunkSrc\UHTMLUtils.pas"/>
+			<DCCReference Include="..\..\TrunkSrc\UCSSUtils.pas"/>
+			<DCCReference Include="..\..\TrunkSrc\URTFBuilder.pas"/>
+			<DCCReference Include="..\..\TrunkSrc\URTFStyles.pas"/>
+			<DCCReference Include="..\..\TrunkSrc\URTFUtils.pas"/>
+			<DCCReference Include="..\..\TrunkSrc\UUtils.pas"/>
+			<DCCReference Include="..\..\TrunkSrc\UCSSBuilder.pas"/>
 			<None Include="..\Highlighters\BuiltInHiliterThemes.txt"/>
 			<None Include="..\SynEditUnits\SynEdit.inc"/>
 			<None Include="..\SynEditUnits\SynEditJedi.inc"/>

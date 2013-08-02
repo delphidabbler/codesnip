@@ -46,7 +46,15 @@ uses
   SynEditWordWrap in '..\SynEditUnits\SynEditWordWrap.pas',
   CS.Hiliter.Parser in '..\Highlighters\CS.Hiliter.Parser.pas',
   CS.Hiliter.Renderers.Globals in '..\Highlighters\CS.Hiliter.Renderers.Globals.pas',
-  CS.Hiliter.Renderers in '..\Highlighters\CS.Hiliter.Renderers.pas';
+  CS.Hiliter.Renderers in '..\Highlighters\CS.Hiliter.Renderers.pas',
+  UHTMLBuilder in '..\..\TrunkSrc\UHTMLBuilder.pas',
+  UHTMLUtils in '..\..\TrunkSrc\UHTMLUtils.pas',
+  UCSSUtils in '..\..\TrunkSrc\UCSSUtils.pas',
+  URTFBuilder in '..\..\TrunkSrc\URTFBuilder.pas',
+  URTFStyles in '..\..\TrunkSrc\URTFStyles.pas',
+  URTFUtils in '..\..\TrunkSrc\URTFUtils.pas',
+  UUtils in '..\..\TrunkSrc\UUtils.pas',
+  UCSSBuilder in '..\..\TrunkSrc\UCSSBuilder.pas';
 
 {$R *.res}
 
