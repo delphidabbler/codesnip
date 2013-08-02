@@ -43,7 +43,8 @@ uses
   SynTextDrawer in '..\SynEditUnits\SynTextDrawer.pas',
   SynEditKeyCmds in '..\SynEditUnits\SynEditKeyCmds.pas',
   SynEditKbdHandler in '..\SynEditUnits\SynEditKbdHandler.pas',
-  SynEditWordWrap in '..\SynEditUnits\SynEditWordWrap.pas';
+  SynEditWordWrap in '..\SynEditUnits\SynEditWordWrap.pas',
+  CS.Hiliter.Parser in '..\Highlighters\CS.Hiliter.Parser.pas';
 
 {$R *.res}
 
