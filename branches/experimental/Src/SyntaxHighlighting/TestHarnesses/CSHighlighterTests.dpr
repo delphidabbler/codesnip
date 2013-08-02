@@ -54,7 +54,8 @@ uses
   URTFStyles in '..\..\TrunkSrc\URTFStyles.pas',
   URTFUtils in '..\..\TrunkSrc\URTFUtils.pas',
   UUtils in '..\..\TrunkSrc\UUtils.pas',
-  UCSSBuilder in '..\..\TrunkSrc\UCSSBuilder.pas';
+  UCSSBuilder in '..\..\TrunkSrc\UCSSBuilder.pas',
+  CS.Hiliter.Renderers.CSS in '..\Highlighters\CS.Hiliter.Renderers.CSS.pas';
 
 {$R *.res}
 

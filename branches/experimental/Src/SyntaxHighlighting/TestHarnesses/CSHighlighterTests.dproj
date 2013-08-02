@@ -107,6 +107,7 @@
 			<DCCReference Include="..\..\TrunkSrc\URTFUtils.pas"/>
 			<DCCReference Include="..\..\TrunkSrc\UUtils.pas"/>
 			<DCCReference Include="..\..\TrunkSrc\UCSSBuilder.pas"/>
+			<DCCReference Include="..\Highlighters\CS.Hiliter.Renderers.CSS.pas"/>
 			<None Include="..\Highlighters\BuiltInHiliterThemes.txt"/>
 			<None Include="..\SynEditUnits\SynEdit.inc"/>
 			<None Include="..\SynEditUnits\SynEditJedi.inc"/>
