@@ -89,6 +89,7 @@ type
     function GetBrushStyle(const BrushID: string): TSyntaxHiliteBrushStyle;
     function GetSupportedBrushes: TArray<string>;
     procedure SetDefaultBrushStyle(const Value: TSyntaxHiliteBrushStyle);
+    function GetBaseStyle: TSyntaxHiliteAttrStyle;
   public
     constructor Create(const ThemeID: string; const FriendlyName: string;
       const IsBuiltIn: Boolean);
@@ -100,6 +101,7 @@ type
     //             from default or common style.
     function GetStyle(const BrushId, AttrId: string): TSyntaxHiliteAttrStyle;
     function GetEnumerator: TEnumerator<TPair<string,TSyntaxHiliteBrushStyle>>;
+    function IsBaseStyle(const Style: TSyntaxHiliteAttrStyle): Boolean;
     property ID: string read fID;
     property FriendlyName: string read fFriendlyName write fFriendlyName;
     property FontName: string read fFontName write fFontName;
@@ -117,6 +119,7 @@ type
     property BrushStyles[const BrushID: string]: TSyntaxHiliteBrushStyle
       read GetBrushStyle; default;
     property BuiltIn: Boolean read fBuiltIn;
+    property BaseStyle: TSyntaxHiliteAttrStyle read GetBaseStyle;
   end;
 
   TSyntaxHiliteThemes = class(TObject)
@@ -172,7 +175,7 @@ class operator TSyntaxHiliteAttrStyle.Equal(const Left,
   Right: TSyntaxHiliteAttrStyle): Boolean;
 begin
   Result := (Left.Background = Right.Background)
-    and (Left.Foreground = Right.Background)
+    and (Left.Foreground = Right.Foreground)
     and (Left.FontStyles = Right.FontStyles);
 end;
 
@@ -291,6 +294,13 @@ begin
   inherited;
 end;
 
+function TSyntaxHiliteTheme.GetBaseStyle: TSyntaxHiliteAttrStyle;
+begin
+  Result := TSyntaxHiliteAttrStyle.Create(
+    fDefaultBackGround, fDefaultForegrond, []
+  );
+end;
+
 function TSyntaxHiliteTheme.GetBrushStyle(const BrushID: string):
   TSyntaxHiliteBrushStyle;
 begin
@@ -345,6 +355,12 @@ end;
 function TSyntaxHiliteTheme.GetSupportedBrushes: TArray<string>;
 begin
   Result := fBrushStyles.Keys.ToArray;
+end;
+
+function TSyntaxHiliteTheme.IsBaseStyle(const Style: TSyntaxHiliteAttrStyle):
+  Boolean;
+begin
+  Result := Style = GetBaseStyle;
 end;
 
 function TSyntaxHiliteTheme.IsBrushSupported(const BrushID: string): Boolean;
