@@ -97,6 +97,10 @@ begin
   begin
     AddProperty(TCSS.FontFamilyProp(fTheme.FontName, cfgMonoSpace));
     AddProperty(TCSS.FontSizeProp(fTheme.FontSize));
+    if fTheme.DefaultBackground <> clNone then
+      AddProperty(TCSS.BackgroundColorProp(fTheme.DefaultBackground));
+    if fTheme.DefaultForegrond <> clNone then
+      AddProperty(TCSS.BackgroundColorProp(fTheme.DefaultForegrond));
   end;
   Attrs := fBrush.SupportedAttrs;
   for Attr in Attrs do
@@ -118,9 +122,9 @@ begin
     Exit;
   with CSSBuilder.AddSelector('.' + GetElemCSSClassName(fBrush.ID, AttrID)) do
   begin
-    if AttrStyle.Background <> clNone then
+    if AttrStyle.Background <> fTheme.DefaultBackground then
       AddProperty(TCSS.BackgroundColorProp(AttrStyle.Background));
-    if AttrStyle.Foreground <> clNone then
+    if AttrStyle.Foreground <> fTheme.DefaultForegrond then
       AddProperty(TCSS.ColorProp(AttrStyle.Foreground));
     AddProperty(TCSS.FontWeightProp(AttrStyle.ConvertFontStyles));
     AddProperty(TCSS.FontStyleProp(AttrStyle.ConvertFontStyles));
