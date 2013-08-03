@@ -68,11 +68,19 @@ type
     ///  </remarks>
     procedure ParseThemes(const ThemeList: TThemeList;
       const IsBuiltIn: Boolean);
-    ///  <summary>Parses all brush styles within the given theme and adds them
-    ///  to the theme.</summary>
+
+    ///  <summary>Parses the given theme's properties and updates the theme
+    ///  accordingly.</summary>
+    ///  <remarks>Assumes the current line is one of the theme property
+    ///  statements.</remarks>
+    procedure ParseTheme(const Theme: TSyntaxHiliteTheme);
+
+    ///  <summary>Parses a consecutive sequence of brush styles within the given
+    ///  theme and adds them to the given theme.</summary>
     ///  <remarks>Assumes that the current line is a "Brush" statement.
     ///  </remarks>
     procedure ParseBrushStyles(const Theme: TSyntaxHiliteTheme);
+
     ///  <summary>Parses all attribute styles within the given brush style and
     ///  adds them to the brush style.</summary>
     ///  <remarks>Assumes that the current line is an "Attr" statement.
@@ -133,8 +141,17 @@ const
 
   // Names of themes file keywords
   KwdTheme = 'Theme';
+  KwdDefaultBackground = 'DefaultBackground';
+  KwdDefaultForeground = 'DefaultForeground';
+  KwdFontName = 'FontName';
+  KwdFontSize = 'FontSize';
   KwdBrush = 'Brush';
   KwdAttr = 'Attr';
+
+  ThemeKwds: array[0..4] of string = (
+    KwdBrush, KwdFontName, KwdFontSize,
+    KwdDefaultBackground, KwdDefaultForeground
+  );
 
 resourcestring
   // I/O and parsing error messages
@@ -147,6 +164,9 @@ resourcestring
   sBadFontStyle = 'Invalid font style in ATTR "%s"';
   sBadWatermark = 'Invalid or missing watermark line';
   sDuplicateID = 'Duplicate identifier "%0:s" in %1:s statement';
+  sBadDefaultColour = 'Invalid or missing colour in "%s" statement';
+  sBadThemeFontSize = 'Invalid or missing font size in FONTSIZE statement';
+  sMissingThemeFontName = 'Missing font name in FONTNAME statement';
 
 { TSyntaxHiliteThemesIO }
 
@@ -501,6 +521,61 @@ begin
   end;
 end;
 
+procedure TSyntaxHiliteThemesParser.ParseTheme(const Theme: TSyntaxHiliteTheme);
+
+  function ParseDefaultColour(const Field: string): TColor;
+  var
+    ColourInt: Integer;
+  begin
+    if (Field = EmptyStr) or (Field = '*') then
+      raise ESyntaxHiliteThemesIO.CreateFmt(
+        sBadDefaultColour, [CurrentStatement]
+      );
+    if Field = '-' then
+      Exit(clNone);
+    if not TryStrToInt(HexDisplayPrefix + Field, ColourInt) then
+      raise ESyntaxHiliteThemesIO.CreateFmt(
+        sBadDefaultColour, [CurrentStatement]
+      );
+    Result := TColor(ColourInt);
+  end;
+
+  function GetFontSize(const Field: string): Integer;
+  begin
+    if not TryStrToInt(StrTrim(Field), Result) then
+      raise ESyntaxHiliteThemesIO.Create(sBadThemeFontSize);
+  end;
+
+begin
+  while StrMatchText(CurrentStatement, ThemeKwds) do
+  begin
+    if StrSameText(CurrentStatement, KwdBrush) then
+      ParseBrushStyles(Theme)
+    else if StrSameText(CurrentStatement, KwdDefaultBackground) then
+    begin
+      Theme.DefaultBackground := ParseDefaultColour(CurrentParameter);
+      NextLine;
+    end
+    else if StrSameText(CurrentStatement, KwdDefaultForeground) then
+    begin
+      Theme.DefaultForegrond := ParseDefaultColour(CurrentParameter);
+      NextLine;
+    end
+    else if StrSameText(CurrentStatement, KwdFontName) then
+    begin
+      if CurrentParameter = EmptyStr then
+        raise ESyntaxHiliteThemesIO.Create(sMissingThemeFontName);
+      Theme.FontName := CurrentParameter;
+      NextLine;
+    end
+    else if StrSameText(CurrentStatement, KwdFontSize) then
+    begin
+      Theme.FontSize := GetFontSize(CurrentParameter);
+      NextLine;
+    end;
+  end;
+end;
+
 procedure TSyntaxHiliteThemesParser.ParseThemes(const ThemeList: TThemeList;
   const IsBuiltIn: Boolean);
 var
@@ -522,6 +597,7 @@ begin
     NextLine;
     Theme := TSyntaxHiliteTheme.Create(ThemeID, ThemeFriendlyName, IsBuiltIn);
     try
+      ParseTheme(Theme);
       ParseBrushStyles(Theme);
       ThemeList.Add(Theme);
     except
