@@ -218,6 +218,14 @@ var
   Theme: TSyntaxHiliteTheme;
   BrushID: string;
   SB: TStringBuilder;
+
+  function FormatDefaultColour(const Colour: TColor): string;
+  begin
+    if Colour = clNone then
+      Exit('-');
+    Result := IntToHex(Integer(Colour), 8);
+  end;
+
 begin
   SB := TStringBuilder.Create;
   try
@@ -228,7 +236,27 @@ begin
       // Don't save built-in themes
       if Theme.BuiltIn then
         Continue;
-      SB.AppendLine(Format('%s %s %s', [KwdTheme, Theme.ID, Theme.FriendlyName]));
+      SB.AppendLine(
+        Format('%s %s %s', [KwdTheme, Theme.ID, Theme.FriendlyName])
+      );
+      SB.AppendLine(
+        Format(
+          '  %s %s',
+          [KwdDefaultBackground, FormatDefaultColour(Theme.DefaultBackground)]
+        )
+      );
+      SB.AppendLine(
+        Format(
+          '  %s %s',
+          [KwdDefaultForeground, FormatDefaultColour(Theme.DefaultForegrond)]
+        )
+      );
+      SB.AppendLine(
+        Format('  %s %s', [KwdFontName, Theme.FontName])
+      );
+      SB.AppendLine(
+        Format('  %s %d', [KwdFontSize, Theme.FontSize])
+      );
       WriteBrushStyle(SB, '*', Theme.DefaultBrushStyle);
       for BrushID in Theme.SupportedBrushes do
         WriteBrushStyle(SB, BrushID, Theme.BrushStyles[BrushID]);
