@@ -15,6 +15,11 @@
 
 
 Theme Test My Test Theme
+
+  DefaultBackground 00FF00
+  DefaultForeground -
+  FontName Lucida Sans
+  FontSize 9
   
   # this is the first test theme
   Brush *
@@ -60,6 +65,8 @@ Theme Test My Test Theme
 Theme Test3 My Empty Theme
     
 Theme Test2 My 2nd Test Theme 
+  DefaultBackground F7F7F7
+  DefaultForeground 7F7F7F
   Brush *
     Attr Comment            FF00FF,*,{bold,italic,underline}
   Brush ObjectPascal
