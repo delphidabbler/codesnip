@@ -61,6 +61,9 @@ type
     ///  <summary>Creates a SynEdit highlighter compatible highlighter object
     ///  suitable for use with the SynEdit control.</summary>
     function CreateHighlighter: TSynCustomHighlighter; virtual; abstract;
+    ///  <summary>Checks if this brush is null, i.e. performs no highlighting.
+    ///  </summary>
+    function IsNull: Boolean; virtual; abstract;
     ///  <summary>Returns an array of highlighter attributes supported by the
     ///  brush.</summary>
     function SupportedAttrs: TArray<TSyntaxHiliterAttr>; virtual; abstract;
@@ -154,6 +157,10 @@ type
     ///  <remarks>This highlighter has no styling associated with it. It is up
     ///  to the caller to apply the required styling.</remarks>
     function CreateHighlighter: TSynCustomHighlighter; override;
+    ///  <summary>Checks if this brush is null, i.e. performs no highlighting.
+    ///  </summary>
+    ///  <returns>Boolean. False.</returns>
+    function IsNull: Boolean; override;
     ///  <summary>Returns an array of highlighter attributes supported by the
     ///  brush.</summary>
     function SupportedAttrs: TArray<TSyntaxHiliterAttr>; override;
@@ -183,6 +190,10 @@ type
     ///  assigning to a SynEdit control to force it to skip highlighting of its
     ///  content.</remarks>
     function CreateHighlighter: TSynCustomHighlighter; override;
+    ///  <summary>Checks if this brush is null, i.e. performs no highlighting.
+    ///  </summary>
+    ///  <returns>Boolean. True.</returns>
+    function IsNull: Boolean; override;
     ///  <summary>Returns an array of highlighter attributes supported by the
     ///  brush.</summary>
     ///  <remarks>Returns an empty array: a null brush supports no attributes.
@@ -295,6 +306,11 @@ begin
   end;
 end;
 
+function TSynEditBrush.IsNull: Boolean;
+begin
+  Result := False;
+end;
+
 function TSynEditBrush.SupportedAttrs: TArray<TSyntaxHiliterAttr>;
 var
   Hiliter: TSynCustomHighlighter;
@@ -340,6 +356,11 @@ end;
 function TNullBrush.GetSampleSourceCode: string;
 begin
   Result := 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.';
+end;
+
+function TNullBrush.IsNull: Boolean;
+begin
+  Result := True;
 end;
 
 function TNullBrush.SupportedAttrs: TArray<TSyntaxHiliterAttr>;
