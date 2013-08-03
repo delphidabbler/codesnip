@@ -355,7 +355,7 @@ end;
 
 function TNullBrush.GetSampleSourceCode: string;
 begin
-  Result := 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.';
+  Result := 'Lorem ipsum dolor sit amet,'#13#10'consectetur adipiscing elit.';
 end;
 
 function TNullBrush.IsNull: Boolean;
