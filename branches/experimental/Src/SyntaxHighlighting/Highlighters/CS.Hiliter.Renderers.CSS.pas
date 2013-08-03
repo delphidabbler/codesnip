@@ -95,9 +95,8 @@ begin
   // Add font definition in main class
   with CSSBuilder.AddSelector('.' + GetMainCSSClassName) do
   begin
-    // TODO: Get font name / size from theme once implemented there
-    AddProperty(TCSS.FontFamilyProp('Courier New', cfgMonoSpace));
-    AddProperty(TCSS.FontSizeProp(9));
+    AddProperty(TCSS.FontFamilyProp(fTheme.FontName, cfgMonoSpace));
+    AddProperty(TCSS.FontSizeProp(fTheme.FontSize));
   end;
   Attrs := fBrush.SupportedAttrs;
   for Attr in Attrs do
