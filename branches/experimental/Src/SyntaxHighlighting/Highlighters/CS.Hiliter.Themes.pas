@@ -72,9 +72,15 @@ type
 
   TSyntaxHiliteTheme = class(TObject)
   strict private
+    const
+      DefaultFontName = 'Courier New';
+      DefaultFontSize = 9;
+  strict private
     var
       fID: string;
       fFriendlyName: string;
+      fFontName: string;
+      fFontSize: Integer;
       fDefaultBrushStyle: TSyntaxHiliteBrushStyle;
       fBrushStyles: TObjectDictionary<string,TSyntaxHiliteBrushStyle>;
       fBuiltIn: Boolean;
@@ -94,13 +100,14 @@ type
     function GetEnumerator: TEnumerator<TPair<string,TSyntaxHiliteBrushStyle>>;
     property ID: string read fID;
     property FriendlyName: string read fFriendlyName write fFriendlyName;
+    property FontName: string read fFontName write fFontName;
+    property FontSize: Integer read fFontSize write fFontSize;
     property DefaultBrushStyle: TSyntaxHiliteBrushStyle
       read fDefaultBrushStyle write SetDefaultBrushStyle;
     // This makes copy of given style
     procedure AddBrushStyle(const BrushID: string;
       const Style: TSyntaxHiliteBrushStyle);
     property SupportedBrushes: TArray<string> read GetSupportedBrushes;
-    // BrushStyles => return Default brush style if BrushID not supported
     property BrushStyles[const BrushID: string]: TSyntaxHiliteBrushStyle
       read GetBrushStyle; default;
     property BuiltIn: Boolean read fBuiltIn;
@@ -264,6 +271,8 @@ begin
   fID := ThemeID;
   fFriendlyName := FriendlyName;
   fBuiltIn := IsBuiltIn;
+  fFontName := DefaultFontName;
+  fFontSize := DefaultFontSize;
   fDefaultBrushStyle := TSyntaxHiliteBrushStyle.Create;
 end;
 
