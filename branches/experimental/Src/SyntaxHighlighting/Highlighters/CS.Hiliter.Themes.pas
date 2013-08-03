@@ -81,6 +81,8 @@ type
       fFriendlyName: string;
       fFontName: string;
       fFontSize: Integer;
+      fDefaultForegrond: TColor;
+      fDefaultBackGround: TColor;
       fDefaultBrushStyle: TSyntaxHiliteBrushStyle;
       fBrushStyles: TObjectDictionary<string,TSyntaxHiliteBrushStyle>;
       fBuiltIn: Boolean;
@@ -102,6 +104,10 @@ type
     property FriendlyName: string read fFriendlyName write fFriendlyName;
     property FontName: string read fFontName write fFontName;
     property FontSize: Integer read fFontSize write fFontSize;
+    property DefaultBackground: TColor
+      read fDefaultBackground write fDefaultBackground;
+    property DefaultForegrond: TColor
+      read fDefaultForegrond write fDefaultForegrond;
     property DefaultBrushStyle: TSyntaxHiliteBrushStyle
       read fDefaultBrushStyle write SetDefaultBrushStyle;
     // This makes copy of given style
@@ -273,6 +279,8 @@ begin
   fBuiltIn := IsBuiltIn;
   fFontName := DefaultFontName;
   fFontSize := DefaultFontSize;
+  fDefaultForegrond := clNone;
+  fDefaultBackGround := clNone;
   fDefaultBrushStyle := TSyntaxHiliteBrushStyle.Create;
 end;
 
@@ -315,7 +323,9 @@ function TSyntaxHiliteTheme.GetStyle(const BrushId,
 var
   BrushStyle: TSyntaxHiliteBrushStyle;
 begin
-  Result := TSyntaxHiliteAttrStyle.CreateNull;
+  Result := TSyntaxHiliteAttrStyle.Create(
+    fDefaultBackGround, fDefaultForegrond, []
+  );
   if fDefaultBrushStyle.IsAttrSupported(AttrId) then
     Result := Inherit(Result, fDefaultBrushStyle.AttrStyles[AttrId]);
   if not fBrushStyles.ContainsKey(BrushId) then
