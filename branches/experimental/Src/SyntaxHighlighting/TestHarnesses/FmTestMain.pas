@@ -247,6 +247,14 @@ begin
   for T in fThemes do
   begin
     AddLineFmt('THEME: %s (%s)', [T.ID, T.FriendlyName]);
+    AddLineFmt('  FONT-NAME: %s', [T.FontName]);
+    AddLineFmt('  FONT-SIZE: %d', [T.FontSize]);
+    AddLineFmt(
+      '  DEFAULT-BACKGROUND: %s', [ColorToString(T.DefaultBackground)]
+    );
+    AddLineFmt(
+      '  DEFAULT-FOREGROUND: %s', [ColorToString(T.DefaultForegrond)]
+    );
     AddLine('  DEFAULT-BRUSH');
     DisplayBrushStyle(T.DefaultBrushStyle);
     for BS in T do
