@@ -1,0 +1,39 @@
+﻿► CodeSnip Source Code Languages v1 ◄
+
+# ------------------------------------------------------------------------------
+# This Source Code Form is subject to the terms of the Mozilla Public License,
+# v. 2.0. If a copy of the MPL was not distributed with this file, You can
+# obtain one at http://mozilla.org/MPL/2.0/
+#
+# Copyright (C) 2013, Peter Johnson (www.delphidabbler.com).
+#
+# $Rev$
+# $Date$
+#
+# Test user defined language file.
+#
+# Must be included in program resources in UTF-8 format.
+# ------------------------------------------------------------------------------
+
+Language XHTML (X)HTML
+  TabSize 4
+  Brush HTML
+  
+Language CPP C++
+  TabSize 4
+  
+Language CSS
+  
+Language PascalScript Pascal Script
+  TabSize 2
+  Brush ObjectPascal
+  
+Language JavaScript JScript
+  TabSize 4
+  Brush JavaScript
+  
+Language Text Plain Text
+  TabSize 2
+  
+Language Foo Impossible Foo Language
+  Brush Meanlingless
