@@ -67,6 +67,9 @@ type
     ///  <summary>Returns an array of highlighter attributes supported by the
     ///  brush.</summary>
     function SupportedAttrs: TArray<TSyntaxHiliterAttr>; virtual; abstract;
+    ///  <summary>Checks if the characters of the given brush ID are valid for
+    ///  use in a brush identifier.</summary>
+    class function IsValidBrushID(const ID: string): Boolean;
     ///  <summary>Brush's unique ID string.</summary>
     property ID: string read GetID;
     ///  <summary>Friendly name of brush, suitable for displaying to users.
@@ -123,6 +126,8 @@ implementation
 
 
 uses
+  SysUtils,
+
   SynHighlighterHtml,
   SynHighlighterJScript,
   SynHighlighterPas,
@@ -267,6 +272,22 @@ begin
   SetLength(Result, fSupportedHiliters.Count);
   for I := 0 to Pred(fSupportedHiliters.Count) do
     Result[I] := fSupportedHiliters[I].GetLanguageName;
+end;
+
+{ TSyntaxHiliterBrush }
+
+class function TSyntaxHiliterBrush.IsValidBrushID(const ID: string): Boolean;
+var
+  Ch: Char;
+begin
+  if ID = EmptyStr then
+    Exit(False);
+  for Ch in ID do
+    if not CharInSet(
+      Ch, ['A'..'Z', 'a'..'z', '0'..'9', '_', '-', '>', '<']
+    ) then
+      Exit(False);
+  Result := True;
 end;
 
 { TSynEditBrush }
