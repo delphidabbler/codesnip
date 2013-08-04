@@ -91,6 +91,10 @@ type
     class function FindHiliterClass(const ID: string):
       TSynCustomHighlighterClass; static;
   public
+    const
+      ///  <summary>Unique ID of Null brush.</summary>
+      NullBrushID = '_Null_';
+  public
     ///  <summary>Creates and initialises list of supported syntax highlighter
     ///  brushes.</summary>
     class constructor Create;
@@ -350,7 +354,7 @@ end;
 
 function TNullBrush.GetID: string;
 begin
-  Result := 'Null';
+  Result := TSyntaxHiliterBrushes.NullBrushID;
 end;
 
 function TNullBrush.GetSampleSourceCode: string;
