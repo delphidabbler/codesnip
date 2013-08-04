@@ -594,7 +594,7 @@ begin
   { TODO: if and when Style.Background is supported, replace this with test on
           Theme.IsBaseStyle }
   Result := (Style.Foreground = Theme.DefaultForeground)
-    and (Style.FontStyles = []);
+    and Style.FontStyles.IsNull;
 end;
 
 procedure TRTFHiliteRenderer.WriteElemText(const Text: string);

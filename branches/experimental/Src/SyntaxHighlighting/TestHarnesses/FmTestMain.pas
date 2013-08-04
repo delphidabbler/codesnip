@@ -101,8 +101,10 @@ uses
 const
   ///  <summary>Map of syntax highlighter font styles to identifiers used in a
   ///  themes file.</summary>
-  FontStyleMap: array[TSyntaxHiliteFontStyle] of string = (
-    '*', 'bold', 'italic', 'underline'
+  ///  <remarks>There is an empty entry for fsStrikeout since that style is not
+  ///  permitted in theme files.</remarks>
+  FontStyleMap: array[TFontStyle] of string = (
+    'bold', 'italic', 'underline', ''
   );
 
   ///  <summary>Map of font styles to symbolic names.</summary>
@@ -181,7 +183,7 @@ begin
       FSParams := TIStringList.Create;
       for FS in FontStyles do
         FSParams.Add(UIFontStyleMap[FS]);
-      if AttrStyle.FontStyles = [hfsDefault] then
+      if AttrStyle.FontStyles.IsDefault then
         edBrushAttrs.Lines.Add(
           '      Font Styles: ERROR - Shouldn''t have hfsDefault here'
         )
@@ -229,7 +231,7 @@ var
   procedure DisplayBrushStyle(const BS: TSyntaxHiliteBrushStyle);
   var
     Attr: TPair<string,TSyntaxHiliteAttrStyle>;
-    FS: TSyntaxHiliteFontStyle;
+    FS: TFontStyle;
   begin
     for Attr in BS do
     begin
@@ -237,8 +239,11 @@ var
       AddLineFmt('      BG Colour: %s', [ColorToString(Attr.Value.Background)]);
       AddLineFmt('      FG Colour: %s', [ColorToString(Attr.Value.Foreground)]);
       AddLine('      Font Styles');
-      for FS in Attr.Value.FontStyles do
-        AddLineFmt('        %s', [FontStyleMap[FS]]);
+      if Attr.Value.FontStyles.IsDefault then
+        AddLine('        *')
+      else
+        for FS in Attr.Value.FontStyles.Styles do
+          AddLineFmt('        %s', [FontStyleMap[FS]]);
     end;
   end;
 

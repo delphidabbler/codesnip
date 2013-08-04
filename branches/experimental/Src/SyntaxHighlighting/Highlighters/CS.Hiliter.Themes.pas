@@ -22,11 +22,21 @@ uses
 
 type
 
-  { TODO: Consider replacing this enum with the Graphics.TFontStyles enum and
-          using a separate flag to indicate a default font value. }
-  TSyntaxHiliteFontStyle = (hfsDefault, hfsBold, hfsItalic, hfsUnderline);
-
-  TSyntaxHiliteFontStyles = set of TSyntaxHiliteFontStyle;
+  TSyntaxHiliteFontStyles = record
+  strict private
+    var
+      fStyles: TFontStyles;
+      fIsDefault: Boolean;
+    function GetStyles: TFontStyles;
+  public
+    class function CreateStyles(const FS: TFontStyles): TSyntaxHiliteFontStyles;
+      static;
+    class function CreateDefault: TSyntaxHiliteFontStyles; static;
+    class function CreateNull: TSyntaxHiliteFontStyles; static;
+    function IsNull: Boolean;
+    property Styles: TFontStyles read GetStyles;
+    property IsDefault: Boolean read fIsDefault;
+  end;
 
   TSyntaxHiliteAttrStyle = record
     Background: TColor;
@@ -145,13 +155,9 @@ uses
 
 function TSyntaxHiliteAttrStyle.ConvertFontStyles: TFontStyles;
 begin
-  Result := [];
-  if hfsBold in FontStyles then
-    Include(Result, fsBold);
-  if hfsItalic in FontStyles then
-    Include(Result, fsItalic);
-  if hfsUnderline in FontStyles then
-    Include(Result, fsUnderline);
+  If FontStyles.IsDefault then
+    Exit([]);
+  Result := FontStyles.Styles;
 end;
 
 constructor TSyntaxHiliteAttrStyle.Create(ABackground, AForeground: TColor;
@@ -164,7 +170,9 @@ end;
 
 class function TSyntaxHiliteAttrStyle.CreateNull: TSyntaxHiliteAttrStyle;
 begin
-  Result := TSyntaxHiliteAttrStyle.Create(clNone, clNone, []);
+  Result := TSyntaxHiliteAttrStyle.Create(
+    clNone, clNone, TSyntaxHiliteFontStyles.CreateNull
+  );
 end;
 
 class operator TSyntaxHiliteAttrStyle.Equal(const Left,
@@ -172,14 +180,14 @@ class operator TSyntaxHiliteAttrStyle.Equal(const Left,
 begin
   Result := (Left.Background = Right.Background)
     and (Left.Foreground = Right.Foreground)
-    and (Left.FontStyles = Right.FontStyles);
+    and (Left.FontStyles.Styles = Right.FontStyles.Styles);
 end;
 
 function TSyntaxHiliteAttrStyle.IsNull: Boolean;
 begin
   Result := (Background = clNone)
     and (ForeGround = clNone)
-    and (FontStyles = []);
+    and FontStyles.IsNull;
 end;
 
 class operator TSyntaxHiliteAttrStyle.NotEqual(const Left,
@@ -293,7 +301,7 @@ end;
 function TSyntaxHiliteTheme.GetBaseStyle: TSyntaxHiliteAttrStyle;
 begin
   Result := TSyntaxHiliteAttrStyle.Create(
-    fDefaultBackground, fDefaultForeground, []
+    fDefaultBackground, fDefaultForeground, TSyntaxHiliteFontStyles.CreateNull
   );
 end;
 
@@ -322,7 +330,7 @@ function TSyntaxHiliteTheme.GetStyle(const BrushId,
       Result.Background := ParentAttr.Background;
     if ChildAttr.Foreground = clDefault then
       Result.Foreground := ParentAttr.Foreground;
-    if ChildAttr.FontStyles = [hfsDefault] then
+    if ChildAttr.FontStyles.IsDefault then
       Result.FontStyles := ParentAttr.FontStyles;
   end;
 
@@ -330,7 +338,7 @@ var
   BrushStyle: TSyntaxHiliteBrushStyle;
 begin
   Result := TSyntaxHiliteAttrStyle.Create(
-    fDefaultBackground, fDefaultForeground, []
+    fDefaultBackground, fDefaultForeground, TSyntaxHiliteFontStyles.CreateNull
   );
   if fDefaultBrushStyle.IsAttrSupported(AttrId) then
     Result := Inherit(Result, fDefaultBrushStyle.AttrStyles[AttrId]);
@@ -344,7 +352,7 @@ begin
     ClassName + '.GetStyle: Background colour is still default');
   Assert(Result.Foreground <> clDefault,
     ClassName + '.GetStyle: Foreground colour is still default');
-  Assert(not (hfsDefault in Result.FontStyles),
+  Assert(not (Result.FontStyles.IsDefault),
     ClassName + '.GetStyle: FontStyles are still default');
 end;
 
@@ -436,6 +444,39 @@ end;
 function TSyntaxHiliteThemes.SupportedThemes: TArray<string>;
 begin
   Result := fThemes.Keys.ToArray;
+end;
+
+{ TSyntaxHiliteFontStyles }
+
+class function TSyntaxHiliteFontStyles.CreateDefault: TSyntaxHiliteFontStyles;
+begin
+  Result.fIsDefault := True;
+  Result.fStyles := [];
+end;
+
+class function TSyntaxHiliteFontStyles.CreateNull: TSyntaxHiliteFontStyles;
+begin
+  Result := CreateStyles([]);
+end;
+
+class function TSyntaxHiliteFontStyles.CreateStyles(
+  const FS: TFontStyles): TSyntaxHiliteFontStyles;
+begin
+  Assert(not (fsStrikeout in FS),
+    'TSyntaxHiliteFontStyles.CreateStyles: Strikeout font style not allowed');
+  Result.fIsDefault := False;
+  Result.fStyles := FS;
+end;
+
+function TSyntaxHiliteFontStyles.GetStyles: TFontStyles;
+begin
+  Assert(not IsDefault, 'TSyntaxHiliteFontStyles.GetStyles: Style is default');
+  Result := fStyles;
+end;
+
+function TSyntaxHiliteFontStyles.IsNull: Boolean;
+begin
+  Result := not IsDefault and (Styles = []);
 end;
 
 end.

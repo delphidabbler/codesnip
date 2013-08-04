@@ -132,8 +132,10 @@ uses
 const
   ///  <summary>Map of syntax highlighter font styles to identifiers used in a
   ///  themes file.</summary>
-  FontStyleMap: array[TSyntaxHiliteFontStyle] of string = (
-    '*', 'bold', 'italic', 'underline'
+  ///  <remarks>There is an empty entry for fsStrikeout since that style is not
+  ///  permitted in theme files.</remarks>
+  FontStyleMap: array[TFontStyle] of string = (
+    'bold', 'italic', 'underline', ''
   );
   ///  <summary>Watermark that is present on the first line of a valid
   ///  themes file.</summary>
@@ -293,13 +295,13 @@ var
   function FormatAttrFontStyles(const FontStyles: TSyntaxHiliteFontStyles):
     string;
   var
-    FontStyle: TSyntaxHiliteFontStyle;
+    FontStyle: TFontStyle;
     SL: IStringList;
   begin
-    if hfsDefault in FontStyles then
-      Exit(FontStyleMap[hfsDefault]);
+    if FontStyles.IsDefault then
+      Exit('*');
     SL := TIStringList.Create;
-    for FontStyle in FontStyles do
+    for FontStyle in FontStyles.Styles do
       SL.Add(FontStyleMap[FontStyle]);
     Result := '{' + SL.GetText(',', False) + '}';
   end;
@@ -441,12 +443,14 @@ function TSyntaxHiliteThemesParser.ParseAttrStyle(const AttrID, Data: string):
   function ParseFontStyle(const Field: string): TSyntaxHiliteFontStyles;
 
     function LookupStyle(const StyleStr: string;
-      out Style: TSyntaxHiliteFontStyle): Boolean;
+      out Style: TFontStyle): Boolean;
     var
-      I: TSyntaxHiliteFontStyle;
+      I: TFontStyle;
     begin
       for I := Low(FontStyleMap) to High(FontStyleMap) do
       begin
+        if I = fsStrikeout then
+          Continue;   // we ignore strikeout: not permitted in themes
         if StrSameText(StyleStr, FontStyleMap[I]) then
         begin
           Style := I;
@@ -459,26 +463,27 @@ function TSyntaxHiliteThemesParser.ParseAttrStyle(const AttrID, Data: string):
   var
     StyleStrings: IStringList;
     StyleString: string;
-    FontStyle: TSyntaxHiliteFontStyle;
+    FontStyle: TFontStyle;
+    FontStyles: TFontStyles;
   begin
     if Field = EmptyStr then
       raise ESyntaxHiliteThemesIO.CreateFmt(sBadFontStyle, [AttrID]);
     if Field = '*' then
-      Exit([hfsDefault]);
+      Exit(TSyntaxHiliteFontStyles.CreateDefault);
     if (Length(Field) < 2)
       or (Field[1] <> '{') or (Field[Length(Field)] <> '}') then
       raise Exception.CreateFmt(sBadFontStyle, [AttrID]);
     StyleStrings := TIStringList.Create(
       StrSlice(Field, 2, Length(Field) - 2), ',', False, True
     );
-    Result := [];
+    FontStyles := [];
     for StyleString in StyleStrings do
     begin
-      if not LookupStyle(StyleString, FontStyle)
-        or (FontStyle = hfsDefault) then
+      if not LookupStyle(StyleString, FontStyle) then
         raise Exception.CreateFmt(sBadFontStyle, [AttrID]);
-      Include(Result, FontStyle);
+      Include(FontStyles, FontStyle);
     end;
+    Result := TSyntaxHiliteFontStyles.CreateStyles(FontStyles);
   end;
 
 var
