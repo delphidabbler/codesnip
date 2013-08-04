@@ -34,6 +34,18 @@ type
     btnDisplaySource: TButton;
     btnChangeTheme: TButton;
     frmCodeEditor: TTCodeEditorFrame;
+    tsRendering: TTabSheet;
+    pcRendering: TPageControl;
+    tsMockRendering: TTabSheet;
+    btnRenderSyntaxHilite: TButton;
+    btnRenderNull: TButton;
+    edMockRender: TMemo;
+    tsXHTMLFragSource: TTabSheet;
+    edXTHMLFragSource: TMemo;
+    tsXHTMLDocSource: TTabSheet;
+    edXHTMLDocSource: TMemo;
+    tsRTFDocSource: TTabSheet;
+    edRTFDocSource: TMemo;
     procedure btnLoadUserThemesClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -45,6 +57,8 @@ type
     procedure btnDisplayBrushAttrsClick(Sender: TObject);
     procedure btnDisplaySourceClick(Sender: TObject);
     procedure btnChangeThemeClick(Sender: TObject);
+    procedure btnRenderSyntaxHiliteClick(Sender: TObject);
+    procedure btnRenderNullClick(Sender: TObject);
   private
     fThemes: TSyntaxHiliteThemes;
     // Array of theme IDs with same index as theme's entry in cbChooseTheme
@@ -59,6 +73,14 @@ type
     function GetSelectedThemeID: string;
     // Gets ID of brush corresponding to that selected in cbChooseBrush
     function GetSelectedBrushID: string;
+
+    procedure DoRendering(Brush: TSyntaxHiliterBrush);
+    // Performs highlight rendering using a mock highlighter that shows each
+    // element
+    procedure DoMockRendering(Brush: TSyntaxHiliterBrush);
+    procedure DoXHTMLFragSourceRendering(Brush: TSyntaxHiliterBrush);
+    procedure DoXHTMLDocSourceRendering(Brush: TSyntaxHiliterBrush);
+    procedure DoRTFDocSourceRendering(Brush: TSyntaxHiliterBrush);
   end;
 
 var
@@ -67,8 +89,13 @@ var
 implementation
 
 uses
+  UStrUtils,
   UIStringList,
-  CS.Hiliter.Themes.Persist;
+  UHTMLBuilder,
+  CS.Hiliter.Themes.Persist,
+  CS.Hiliter.Parser,
+  CS.Hiliter.Renderers,
+  CS.Hiliter.Renderers.Globals;
 
 {$R *.dfm}
 
@@ -83,6 +110,27 @@ const
   UIFontStyleMap: array[TFontStyle] of string = (
     'fsBold', 'fsItalic', 'fsUnderline', 'fsStrikeOut'
   );
+
+type
+  TMockRenderer = class(TInterfacedObject, IHiliteRenderer2)
+  strict private
+    var
+      fMemo: TMemo;
+    procedure AddLine(const S: string); overload;
+    procedure AddLine(const Fmt: string; const Args: array of const); overload;
+  public
+    constructor Create(Memo: TMemo);
+    procedure Initialise;
+    procedure Finalise;
+    procedure BeginLine;
+    procedure EndLine;
+    procedure BeforeElem(const ElemInfo: TSyntaxHiliteElemInfo);
+    procedure WriteElemText(const Text: string);
+    procedure AfterElem(const ElemInfo: TSyntaxHiliteElemInfo);
+  end;
+
+
+{ TMainTestForm }
 
 procedure TMainTestForm.btnClearThemesClick(Sender: TObject);
 begin
@@ -234,6 +282,30 @@ begin
   PopulateChooseThemeCombo;
 end;
 
+procedure TMainTestForm.btnRenderNullClick(Sender: TObject);
+var
+  Brush: TSyntaxHiliterBrush;
+begin
+  Brush := TSyntaxHiliterBrushes.CreateNullBrush;
+  try
+    DoRendering(Brush);
+  finally
+    Brush.Free;
+  end;
+end;
+
+procedure TMainTestForm.btnRenderSyntaxHiliteClick(Sender: TObject);
+var
+  Brush: TSyntaxHiliterBrush;
+begin
+  Brush := TSyntaxHiliterBrushes.CreateBrush(GetSelectedBrushID);
+  try
+    DoRendering(Brush);
+  finally
+    Brush.Free;
+  end;
+end;
+
 procedure TMainTestForm.btnSaveAllThemesClick(Sender: TObject);
 begin
   TSyntaxHiliteThemesIO.SaveThemes(
@@ -241,6 +313,55 @@ begin
     ExtractFilePath(ParamStr(0)) +
       '..\Src\SyntaxHighlighting\Highlighters\SavedThemes.txt'
   );
+end;
+
+procedure TMainTestForm.DoMockRendering(Brush: TSyntaxHiliterBrush);
+var
+  M: IHiliteRenderer2;
+begin
+  M := TMockRenderer.Create(edMockRender);
+  TSyntaxHiliter.Hilite(Brush.SampleSourceCode, Brush, M);
+end;
+
+procedure TMainTestForm.DoRendering(Brush: TSyntaxHiliterBrush);
+begin
+  if pcRendering.ActivePage = tsMockRendering then
+    DoMockRendering(Brush)
+  else if pcRendering.ActivePage = tsXHTMLFragSource then
+    DoXHTMLFragSourceRendering(Brush)
+  else if pcRendering.ActivePage = tsXHTMLDocSource then
+    DoXHTMLDocSourceRendering(Brush)
+  else if pcRendering.ActivePage = tsRTFDocSource then
+    DoRTFDocSourceRendering(Brush);
+end;
+
+procedure TMainTestForm.DoRTFDocSourceRendering(Brush: TSyntaxHiliterBrush);
+begin
+  edRTFDocSource.Text := TRTFDocumentHiliter.Hilite(
+    Brush.SampleSourceCode, Brush, fThemes[GetSelectedThemeID], 'TEST TITLE'
+  ).ToString;
+end;
+
+procedure TMainTestForm.DoXHTMLDocSourceRendering(Brush: TSyntaxHiliterBrush);
+begin
+  edXHTMLDocSource.Text := TXHTMLDocumentHiliter.Hilite(
+    Brush.SampleSourceCode, Brush, fThemes[GetSelectedThemeID], 'TEST TITLE'
+  ).ToString;
+end;
+
+procedure TMainTestForm.DoXHTMLFragSourceRendering(Brush: TSyntaxHiliterBrush);
+var
+  M: IHiliteRenderer2;
+  B: THTMLBuilder;
+begin
+  B := THTMLBuilder.Create;
+  try
+    M := THTMLHiliteRenderer.Create(B, Brush, fThemes[GetSelectedThemeID]);
+    TSyntaxHiliter.Hilite(Brush.SampleSourceCode, Brush, M);
+    edXTHMLFragSource.Text := B.HTMLFragment;
+  finally
+    B.Free;
+  end;
 end;
 
 procedure TMainTestForm.btnChangeThemeClick(Sender: TObject);
@@ -318,4 +439,64 @@ begin
     cbChooseTheme.ItemIndex := 0;
 end;
 
+{ TMockRenderer }
+
+procedure TMockRenderer.AddLine(const S: string);
+begin
+  fMemo.Lines.Add(S);
+end;
+
+procedure TMockRenderer.AddLine(const Fmt: string; const Args: array of const);
+begin
+  AddLine(Format(Fmt, Args));
+end;
+
+procedure TMockRenderer.AfterElem(const ElemInfo: TSyntaxHiliteElemInfo);
+begin
+  AddLine('AFTER-ELEM [%s.%s]', [ElemInfo.BrushID, ElemInfo.AttrID]);
+end;
+
+procedure TMockRenderer.BeforeElem(const ElemInfo: TSyntaxHiliteElemInfo);
+begin
+  AddLine('BEFORE-ELEM [%s.%s]', [ElemInfo.BrushID, ElemInfo.AttrID]);
+end;
+
+procedure TMockRenderer.BeginLine;
+begin
+  AddLine('START-LINE');
+end;
+
+constructor TMockRenderer.Create(Memo: TMemo);
+begin
+  inherited Create;
+  fMemo := Memo;
+end;
+
+procedure TMockRenderer.EndLine;
+begin
+  AddLine('END-LINE');
+end;
+
+procedure TMockRenderer.Finalise;
+begin
+  AddLine('FINALISE');
+end;
+
+procedure TMockRenderer.Initialise;
+begin
+  fMemo.Clear;
+  AddLine('INITIALISE');
+end;
+
+procedure TMockRenderer.WriteElemText(const Text: string);
+var
+  S: string;
+begin
+  S := StrReplace(Text, #13, '<CR>');
+  S := StrReplace(S, #10, '<LF>');
+  S := StrReplace(S, #9, '<TAB>');
+  AddLine('ELEM-TEXT "%s"', [Text]);
+end;
+
 end.
+

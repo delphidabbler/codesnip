@@ -136,13 +136,11 @@ object MainTestForm: TMainTestForm
         Top = 64
         Width = 894
         Height = 508
-        ActivePage = tsBrushAttrs
+        ActivePage = tsRendering
         Anchors = [akLeft, akTop, akRight, akBottom]
         TabOrder = 2
         object tsBrushAttrs: TTabSheet
           Caption = 'Brush Attributes'
-          ExplicitWidth = 583
-          ExplicitHeight = 352
           DesignSize = (
             886
             480)
@@ -170,15 +168,11 @@ object MainTestForm: TMainTestForm
             ScrollBars = ssBoth
             TabOrder = 1
             WordWrap = False
-            ExplicitWidth = 577
-            ExplicitHeight = 316
           end
         end
         object tsCodeEditor: TTabSheet
           Caption = 'Code Editor'
           ImageIndex = 1
-          ExplicitWidth = 583
-          ExplicitHeight = 352
           DesignSize = (
             886
             480)
@@ -209,8 +203,122 @@ object MainTestForm: TMainTestForm
             TabOrder = 2
             ExplicitLeft = 3
             ExplicitTop = 35
-            ExplicitWidth = 577
-            ExplicitHeight = 316
+            ExplicitWidth = 880
+            ExplicitHeight = 444
+          end
+        end
+        object tsRendering: TTabSheet
+          Caption = 'Rendering'
+          ImageIndex = 2
+          DesignSize = (
+            886
+            480)
+          object pcRendering: TPageControl
+            Left = 3
+            Top = 40
+            Width = 880
+            Height = 437
+            ActivePage = tsMockRendering
+            Anchors = [akLeft, akTop, akRight, akBottom]
+            TabOrder = 0
+            object tsMockRendering: TTabSheet
+              Caption = 'Mock Rendering'
+              ExplicitHeight = 401
+              object edMockRender: TMemo
+                Left = 0
+                Top = 0
+                Width = 872
+                Height = 409
+                Align = alClient
+                Font.Charset = DEFAULT_CHARSET
+                Font.Color = clWindowText
+                Font.Height = -12
+                Font.Name = 'Courier New'
+                Font.Style = []
+                ParentFont = False
+                ScrollBars = ssBoth
+                TabOrder = 0
+                WordWrap = False
+              end
+            end
+            object tsXHTMLFragSource: TTabSheet
+              Caption = 'XHTML Fragment Source'
+              ImageIndex = 1
+              object edXTHMLFragSource: TMemo
+                Left = 0
+                Top = 0
+                Width = 872
+                Height = 409
+                Align = alClient
+                Font.Charset = DEFAULT_CHARSET
+                Font.Color = clWindowText
+                Font.Height = -12
+                Font.Name = 'Courier New'
+                Font.Style = []
+                ParentFont = False
+                ScrollBars = ssBoth
+                TabOrder = 0
+                WordWrap = False
+              end
+            end
+            object tsXHTMLDocSource: TTabSheet
+              Caption = 'XHTML Document Source'
+              ImageIndex = 2
+              object edXHTMLDocSource: TMemo
+                Left = 0
+                Top = 0
+                Width = 872
+                Height = 409
+                Align = alClient
+                Font.Charset = DEFAULT_CHARSET
+                Font.Color = clWindowText
+                Font.Height = -12
+                Font.Name = 'Courier New'
+                Font.Style = []
+                ParentFont = False
+                ScrollBars = ssBoth
+                TabOrder = 0
+                WordWrap = False
+              end
+            end
+            object tsRTFDocSource: TTabSheet
+              Caption = 'RTF Document Source'
+              ImageIndex = 3
+              object edRTFDocSource: TMemo
+                Left = 0
+                Top = 0
+                Width = 872
+                Height = 409
+                Align = alClient
+                Font.Charset = DEFAULT_CHARSET
+                Font.Color = clWindowText
+                Font.Height = -12
+                Font.Name = 'Courier New'
+                Font.Style = []
+                ParentFont = False
+                ScrollBars = ssBoth
+                TabOrder = 0
+                WordWrap = False
+              end
+            end
+          end
+          object btnRenderSyntaxHilite: TButton
+            Left = 3
+            Top = 9
+            Width = 194
+            Height = 25
+            Caption = 'Render With Brush'
+            TabOrder = 1
+            OnClick = btnRenderSyntaxHiliteClick
+          end
+          object btnRenderNull: TButton
+            Left = 232
+            Top = 9
+            Width = 194
+            Height = 25
+            Caption = 'Render With Null Highlighter'
+            TabOrder = 2
+            OnClick = btnRenderNullClick
           end
         end
       end
