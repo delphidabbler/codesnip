@@ -10,6 +10,9 @@ There are the following folders:
 * Highlighters
   Code for new syntax highlighters.
 
+* Languages
+  Code for new source code language class(es).
+
 * SynEditUnits
   Stores the required 3rd party units from the SynEdit project.
 
