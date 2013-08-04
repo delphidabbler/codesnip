@@ -136,7 +136,7 @@ object MainTestForm: TMainTestForm
         Top = 64
         Width = 894
         Height = 508
-        ActivePage = tsRendering
+        ActivePage = tsBrushAttrs
         Anchors = [akLeft, akTop, akRight, akBottom]
         TabOrder = 2
         object tsBrushAttrs: TTabSheet
@@ -173,6 +173,10 @@ object MainTestForm: TMainTestForm
         object tsCodeEditor: TTabSheet
           Caption = 'Code Editor'
           ImageIndex = 1
+          ExplicitLeft = 0
+          ExplicitTop = 0
+          ExplicitWidth = 0
+          ExplicitHeight = 0
           DesignSize = (
             886
             480)
@@ -223,7 +227,6 @@ object MainTestForm: TMainTestForm
             TabOrder = 0
             object tsMockRendering: TTabSheet
               Caption = 'Mock Rendering'
-              ExplicitHeight = 401
               object edMockRender: TMemo
                 Left = 0
                 Top = 0
@@ -244,6 +247,10 @@ object MainTestForm: TMainTestForm
             object tsXHTMLFragSource: TTabSheet
               Caption = 'XHTML Fragment Source'
               ImageIndex = 1
+              ExplicitLeft = 0
+              ExplicitTop = 0
+              ExplicitWidth = 0
+              ExplicitHeight = 0
               object edXTHMLFragSource: TMemo
                 Left = 0
                 Top = 0
@@ -264,6 +271,10 @@ object MainTestForm: TMainTestForm
             object tsXHTMLDocSource: TTabSheet
               Caption = 'XHTML Document Source'
               ImageIndex = 2
+              ExplicitLeft = 0
+              ExplicitTop = 0
+              ExplicitWidth = 0
+              ExplicitHeight = 0
               object edXHTMLDocSource: TMemo
                 Left = 0
                 Top = 0
@@ -284,6 +295,10 @@ object MainTestForm: TMainTestForm
             object tsRTFDocSource: TTabSheet
               Caption = 'RTF Document Source'
               ImageIndex = 3
+              ExplicitLeft = 0
+              ExplicitTop = 0
+              ExplicitWidth = 0
+              ExplicitHeight = 0
               object edRTFDocSource: TMemo
                 Left = 0
                 Top = 0
