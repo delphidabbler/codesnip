@@ -23,6 +23,7 @@ uses
   // Delphi
   Classes, Graphics,
   // Project
+  CS.Hiliter.Parser,
   UEncodings;
 
 
@@ -128,8 +129,10 @@ type
   ///  code elements on behalf of syntax highlighter.</summary>
   ///  <remarks>Implement this interface for each required output format.
   ///  Syntax highlighter calls the methods of this interface.</remarks>
-  IHiliteRenderer = interface(IInterface)
-    ['{791CE200-C614-40FC-B93D-744ED2984755}']
+  IHiliteRenderer2 = interface(IInterface)
+  { TODO: rename IHiliteRenderer2 back to IHiliteRenderer when original
+          removed. }
+    ['{20ED37E9-DE80-42B5-A920-2A62F1753866}']
     ///  <summary>Called by syntax highlighter before any source code is
     ///  processed.</summary>
     procedure Initialise;
@@ -146,7 +149,8 @@ type
     ///  element is to be output.</summary>
     ///  <param name="Elem">THiliteElement [in] Type of element to be output.
     ///  </param>
-    procedure BeforeElem(Elem: THiliteElement);
+    procedure BeforeElem(const ElemInfo: TSyntaxHiliteElemInfo);
+    // TODO: revise comment for BeforeElem
     ///  <summary>Called by syntax highlighter for each element of source code
     ///  read. All the given text should be formatted in same style.</summary>
     ///  <remarks>Type of the element will have been specified in prior call to
@@ -156,7 +160,8 @@ type
     ///  code has been written.</summary>
     ///  <param name="Elem">THiliteElement [in] Type of element that has just
     ///  been output.</param>
-    procedure AfterElem(Elem: THiliteElement);
+    procedure AfterElem(const ElemInfo: TSyntaxHiliteElemInfo);
+    // TODO: revise comment for AfterElem
   end;
 
 type
