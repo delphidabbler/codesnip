@@ -18,9 +18,9 @@ Theme Test My Test Theme
 
   DefaultBackground 00FF00
   DefaultForeground -
-  FontName Lucida Sans
+  FontName Lucida Console
   FontSize 9
-  
+
   # this is the first test theme
   Brush *
     Attr Assembler          *,*,*
@@ -63,8 +63,9 @@ Theme Test My Test Theme
     Attr Symbol             *,*,{}
 
 Theme Test3 My Empty Theme
-    
-Theme Test2 My 2nd Test Theme 
+
+Theme Test2 My 2nd Test Theme
+  FontSize 14
   DefaultBackground F7F7F7
   DefaultForeground 7F7F7F
   Brush *
@@ -72,5 +73,5 @@ Theme Test2 My 2nd Test Theme
   Brush ObjectPascal
     Attr Comment            FFFF00,*,*
     Attr ReservedWord       *,*,{bold}
-    
-  Brush JavaScript  
+
+  Brush JavaScript
