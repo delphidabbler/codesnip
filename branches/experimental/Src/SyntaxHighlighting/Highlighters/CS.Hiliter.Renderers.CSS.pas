@@ -99,8 +99,8 @@ begin
     AddProperty(TCSS.FontSizeProp(fTheme.FontSize));
     if fTheme.DefaultBackground <> clNone then
       AddProperty(TCSS.BackgroundColorProp(fTheme.DefaultBackground));
-    if fTheme.DefaultForegrond <> clNone then
-      AddProperty(TCSS.BackgroundColorProp(fTheme.DefaultForegrond));
+    if fTheme.DefaultForeground <> clNone then
+      AddProperty(TCSS.BackgroundColorProp(fTheme.DefaultForeground));
   end;
   Attrs := fBrush.SupportedAttrs;
   for Attr in Attrs do
@@ -124,7 +124,7 @@ begin
   begin
     if AttrStyle.Background <> fTheme.DefaultBackground then
       AddProperty(TCSS.BackgroundColorProp(AttrStyle.Background));
-    if AttrStyle.Foreground <> fTheme.DefaultForegrond then
+    if AttrStyle.Foreground <> fTheme.DefaultForeground then
       AddProperty(TCSS.ColorProp(AttrStyle.Foreground));
     AddProperty(TCSS.FontWeightProp(AttrStyle.ConvertFontStyles));
     AddProperty(TCSS.FontStyleProp(AttrStyle.ConvertFontStyles));

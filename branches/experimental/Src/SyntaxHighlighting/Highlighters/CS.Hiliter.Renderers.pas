@@ -533,7 +533,7 @@ begin
     // TODO: Find a way of displaying background colour in RTF
     //    if AttrStyle.Background <> clNone then
     //      fBuilder.SetColour(AttrStyle.Foreground);
-    if AttrStyle.Foreground <> Theme.DefaultForegrond then
+    if AttrStyle.Foreground <> Theme.DefaultForeground then
       fBuilder.SetColour(AttrStyle.Foreground);
     if AttrStyle.ConvertFontStyles <> [] then
       fBuilder.SetFontStyle(AttrStyle.ConvertFontStyles);
@@ -545,7 +545,7 @@ begin
   fBuilder.ResetCharStyle;
   fBuilder.SetFont(Theme.FontName);
   fBuilder.SetFontSize(Theme.FontSize);
-  fBuilder.SetColour(Theme.DefaultForegrond);
+  fBuilder.SetColour(Theme.DefaultForeground);
 end;
 
 constructor TRTFHiliteRenderer.Create(const Builder: TRTFBuilder;
@@ -593,7 +593,7 @@ function TRTFHiliteRenderer.IsEmptyGroup(
 begin
   { TODO: if and when Style.Background is supported, replace this with test on
           Theme.IsBaseStyle }
-  Result := (Style.Foreground = Theme.DefaultForegrond)
+  Result := (Style.Foreground = Theme.DefaultForeground)
     and (Style.FontStyles = []);
 end;
 

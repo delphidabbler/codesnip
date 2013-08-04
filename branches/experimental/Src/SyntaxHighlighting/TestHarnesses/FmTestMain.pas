@@ -253,7 +253,7 @@ begin
       '  DEFAULT-BACKGROUND: %s', [ColorToString(T.DefaultBackground)]
     );
     AddLineFmt(
-      '  DEFAULT-FOREGROUND: %s', [ColorToString(T.DefaultForegrond)]
+      '  DEFAULT-FOREGROUND: %s', [ColorToString(T.DefaultForeground)]
     );
     AddLine('  DEFAULT-BRUSH');
     DisplayBrushStyle(T.DefaultBrushStyle);

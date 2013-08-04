@@ -248,7 +248,7 @@ begin
       SB.AppendLine(
         Format(
           '  %s %s',
-          [KwdDefaultForeground, FormatDefaultColour(Theme.DefaultForegrond)]
+          [KwdDefaultForeground, FormatDefaultColour(Theme.DefaultForeground)]
         )
       );
       SB.AppendLine(
@@ -586,7 +586,7 @@ begin
     end
     else if StrSameText(CurrentStatement, KwdDefaultForeground) then
     begin
-      Theme.DefaultForegrond := ParseDefaultColour(CurrentParameter);
+      Theme.DefaultForeground := ParseDefaultColour(CurrentParameter);
       NextLine;
     end
     else if StrSameText(CurrentStatement, KwdFontName) then
