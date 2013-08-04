@@ -26,7 +26,6 @@ uses
   // Project
   CS.Hiliter.Brushes,
   CS.Hiliter.Parser,
-  CS.Hiliter.Renderers.Globals,
   CS.Hiliter.Themes,
   UBaseObjects,
   UEncodings,
@@ -34,6 +33,46 @@ uses
   URTFBuilder;
 
 // TODO: fix documentation comments re changes
+
+type
+  ///  <summary>Interface implemented by objects that format different source
+  ///  code elements on behalf of syntax highlighter.</summary>
+  ///  <remarks>Implement this interface for each required output format.
+  ///  Syntax highlighter calls the methods of this interface.</remarks>
+  IHiliteRenderer2 = interface(IInterface)
+  { TODO: rename IHiliteRenderer2 back to IHiliteRenderer when original
+          removed. }
+    ['{20ED37E9-DE80-42B5-A920-2A62F1753866}']
+    ///  <summary>Called by syntax highlighter before any source code is
+    ///  processed.</summary>
+    procedure Initialise;
+    ///  <summary>Called by syntax highlighter after all source code has been
+    ///  processed.</summary>
+    procedure Finalise;
+    ///  <summary>Called by syntax highlighter when a new line of source code
+    ///  is started.</summary>
+    procedure BeginLine;
+    ///  <summary>Called by syntax highlighter after a line of souce code is
+    ///  complete.</summary>
+    procedure EndLine;
+    ///  <summary>Called by syntax highlighter just before a source code
+    ///  element is to be output.</summary>
+    ///  <param name="Elem">THiliteElement [in] Type of element to be output.
+    ///  </param>
+    procedure BeforeElem(const ElemInfo: TSyntaxHiliteElemInfo);
+    // TODO: revise comment for BeforeElem
+    ///  <summary>Called by syntax highlighter for each element of source code
+    ///  read. All the given text should be formatted in same style.</summary>
+    ///  <remarks>Type of the element will have been specified in prior call to
+    ///  BeforeElem.</remarks>
+    procedure WriteElemText(const Text: string);
+    ///  <summary>Called by syntax highlighter just after an element of source
+    ///  code has been written.</summary>
+    ///  <param name="Elem">THiliteElement [in] Type of element that has just
+    ///  been output.</param>
+    procedure AfterElem(const ElemInfo: TSyntaxHiliteElemInfo);
+    // TODO: revise comment for AfterElem
+  end;
 
 type
   ///  <summary>

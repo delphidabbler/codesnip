@@ -97,7 +97,6 @@
 			<DCCReference Include="..\SynEditUnits\SynEditKbdHandler.pas"/>
 			<DCCReference Include="..\SynEditUnits\SynEditWordWrap.pas"/>
 			<DCCReference Include="..\Highlighters\CS.Hiliter.Parser.pas"/>
-			<DCCReference Include="..\Highlighters\CS.Hiliter.Renderers.Globals.pas"/>
 			<DCCReference Include="..\Highlighters\CS.Hiliter.Renderers.pas"/>
 			<DCCReference Include="..\..\TrunkSrc\UHTMLBuilder.pas"/>
 			<DCCReference Include="..\..\TrunkSrc\UHTMLUtils.pas"/>

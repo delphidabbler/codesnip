@@ -45,7 +45,6 @@ uses
   SynEditKbdHandler in '..\SynEditUnits\SynEditKbdHandler.pas',
   SynEditWordWrap in '..\SynEditUnits\SynEditWordWrap.pas',
   CS.Hiliter.Parser in '..\Highlighters\CS.Hiliter.Parser.pas',
-  CS.Hiliter.Renderers.Globals in '..\Highlighters\CS.Hiliter.Renderers.Globals.pas',
   CS.Hiliter.Renderers in '..\Highlighters\CS.Hiliter.Renderers.pas',
   UHTMLBuilder in '..\..\TrunkSrc\UHTMLBuilder.pas',
   UHTMLUtils in '..\..\TrunkSrc\UHTMLUtils.pas',
