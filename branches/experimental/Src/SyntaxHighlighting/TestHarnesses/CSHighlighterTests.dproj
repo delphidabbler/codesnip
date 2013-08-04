@@ -56,8 +56,8 @@
 			<DCCReference Include="FmTestMain.pas">
 				<Form>MainTestForm</Form>
 			</DCCReference>
-			<DCCReference Include="..\Highlighters\CS.Hiliter.Themes.pas"/>
-			<DCCReference Include="..\Highlighters\CS.Hiliter.Themes.Persist.pas"/>
+			<DCCReference Include="..\Highlighters\CS.SourceCode.Hiliter.Themes.pas"/>
+			<DCCReference Include="..\Highlighters\CS.SourceCode.Hiliter.Themes.Persist.pas"/>
 			<DCCReference Include="..\..\TrunkSrc\UExceptions.pas"/>
 			<DCCReference Include="..\..\TrunkSrc\UComparers.pas"/>
 			<DCCReference Include="..\..\TrunkSrc\UStrUtils.pas"/>
@@ -73,7 +73,7 @@
 			<DCCReference Include="..\..\TrunkSrc\UIOUtils.pas"/>
 			<DCCReference Include="..\..\TrunkSrc\UResourceUtils.pas"/>
 			<DCCReference Include="..\..\TrunkSrc\UURIEncode.pas"/>
-			<DCCReference Include="..\Highlighters\CS.Hiliter.Brushes.pas"/>
+			<DCCReference Include="..\Highlighters\CS.SourceCode.Hiliter.Brushes.pas"/>
 			<DCCReference Include="..\SynEditUnits\SynEditHighlighter.pas"/>
 			<DCCReference Include="..\SynEditUnits\SynEditTypes.pas"/>
 			<DCCReference Include="..\SynEditUnits\SynEditMiscClasses.pas"/>
@@ -89,7 +89,7 @@
 			<DCCReference Include="..\SynEditUnits\SynHighlighterJScript.pas"/>
 			<DCCReference Include="..\SynEditUnits\SynHighlighterPas.pas"/>
 			<DCCReference Include="..\SynEditUnits\SynHighlighterPHP.pas"/>
-			<DCCReference Include="..\CodeEditor\CS.CodeEditor.Frame.pas">
+			<DCCReference Include="..\CodeEditor\CS.SourceCode.Editor.Frame.pas">
 				<Form>TCodeEditorFrame</Form>
 				<DesignClass>TFrame</DesignClass>
 			</DCCReference>
@@ -98,8 +98,8 @@
 			<DCCReference Include="..\SynEditUnits\SynEditKeyCmds.pas"/>
 			<DCCReference Include="..\SynEditUnits\SynEditKbdHandler.pas"/>
 			<DCCReference Include="..\SynEditUnits\SynEditWordWrap.pas"/>
-			<DCCReference Include="..\Highlighters\CS.Hiliter.Parser.pas"/>
-			<DCCReference Include="..\Highlighters\CS.Hiliter.Renderers.pas"/>
+			<DCCReference Include="..\Highlighters\CS.SourceCode.Hiliter.Parser.pas"/>
+			<DCCReference Include="..\Highlighters\CS.SourceCode.Hiliter.Renderers.pas"/>
 			<DCCReference Include="..\..\TrunkSrc\UHTMLBuilder.pas"/>
 			<DCCReference Include="..\..\TrunkSrc\UHTMLUtils.pas"/>
 			<DCCReference Include="..\..\TrunkSrc\UCSSUtils.pas"/>
@@ -108,7 +108,7 @@
 			<DCCReference Include="..\..\TrunkSrc\URTFUtils.pas"/>
 			<DCCReference Include="..\..\TrunkSrc\UUtils.pas"/>
 			<DCCReference Include="..\..\TrunkSrc\UCSSBuilder.pas"/>
-			<DCCReference Include="..\Highlighters\CS.Hiliter.Renderers.CSS.pas"/>
+			<DCCReference Include="..\Highlighters\CS.SourceCode.Hiliter.Renderers.CSS.pas"/>
 			<None Include="..\Highlighters\BuiltInHiliterThemes.txt"/>
 			<None Include="..\SynEditUnits\SynEdit.inc"/>
 			<None Include="..\SynEditUnits\SynEditJedi.inc"/>

@@ -8,8 +8,9 @@ uses
 
   Generics.Collections,
 
-  CS.Hiliter.Themes,
-  CS.Hiliter.Brushes, CS.CodeEditor.Frame;
+  CS.SourceCode.Hiliter.Themes,
+  CS.SourceCode.Hiliter.Brushes,
+  CS.SourceCode.Editor.Frame;
 
 type
   TMainTestForm = class(TForm)
@@ -92,9 +93,9 @@ uses
   UStrUtils,
   UIStringList,
   UHTMLBuilder,
-  CS.Hiliter.Themes.Persist,
-  CS.Hiliter.Parser,
-  CS.Hiliter.Renderers;
+  CS.SourceCode.Hiliter.Themes.Persist,
+  CS.SourceCode.Hiliter.Parser,
+  CS.SourceCode.Hiliter.Renderers;
 
 {$R *.dfm}
 

@@ -14,7 +14,7 @@
 }
 
 
-unit CS.Hiliter.Renderers.CSS;
+unit CS.SourceCode.Hiliter.Renderers.CSS;
 
 
 interface
@@ -22,8 +22,8 @@ interface
 
 uses
   // Project
-  CS.Hiliter.Brushes,
-  CS.Hiliter.Themes,
+  CS.SourceCode.Hiliter.Brushes,
+  CS.SourceCode.Hiliter.Themes,
   UCSSBuilder;
 
 // TODO: fix documentation comments

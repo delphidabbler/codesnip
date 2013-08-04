@@ -12,7 +12,7 @@
 }
 
 
-unit CS.Hiliter.Themes;
+unit CS.SourceCode.Hiliter.Themes;
 
 interface
 

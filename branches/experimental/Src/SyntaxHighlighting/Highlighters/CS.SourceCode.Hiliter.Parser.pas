@@ -13,7 +13,7 @@
 }
 
 
-unit CS.Hiliter.Parser;
+unit CS.SourceCode.Hiliter.Parser;
 
 
 interface
@@ -25,7 +25,7 @@ uses
   // 3rd party
   SynEditHighlighter,
   // Project
-  CS.Hiliter.Brushes;
+  CS.SourceCode.Hiliter.Brushes;
 
 
 type

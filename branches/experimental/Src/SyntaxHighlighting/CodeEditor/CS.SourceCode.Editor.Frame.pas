@@ -12,7 +12,7 @@
 }
 
 
-unit CS.CodeEditor.Frame;
+unit CS.SourceCode.Editor.Frame;
 
 interface
 
@@ -20,10 +20,11 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs,
 
-  SynEdit, SynEditHighlighter,
+  SynEdit,
+  SynEditHighlighter,
 
-  CS.Hiliter.Brushes,
-  CS.Hiliter.Themes;
+  CS.SourceCode.Hiliter.Brushes,
+  CS.SourceCode.Hiliter.Themes;
 
 type
   TTCodeEditorFrame = class(TFrame)

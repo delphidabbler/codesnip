@@ -14,7 +14,7 @@
 }
 
 
-unit CS.Hiliter.Renderers;
+unit CS.SourceCode.Hiliter.Renderers;
 
 
 interface
@@ -24,9 +24,9 @@ uses
   // Delphi
   Generics.Collections,
   // Project
-  CS.Hiliter.Brushes,
-  CS.Hiliter.Parser,
-  CS.Hiliter.Themes,
+  CS.SourceCode.Hiliter.Brushes,
+  CS.SourceCode.Hiliter.Parser,
+  CS.SourceCode.Hiliter.Themes,
   UBaseObjects,
   UEncodings,
   UHTMLBuilder,
@@ -362,7 +362,7 @@ uses
   SysUtils, Graphics,
   // Project
   {Hiliter.UAttrs, }
-  CS.Hiliter.Renderers.CSS,
+  CS.SourceCode.Hiliter.Renderers.CSS,
   IntfCommon,
   UComparers,
   UCSSBuilder,

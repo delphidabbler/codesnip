@@ -12,7 +12,7 @@
 }
 
 
-unit CS.Hiliter.Themes.Persist;
+unit CS.SourceCode.Hiliter.Themes.Persist;
 
 
 interface
@@ -26,7 +26,7 @@ uses
   UBaseObjects,
   UExceptions,
   UIStringList,
-  CS.Hiliter.Themes;
+  CS.SourceCode.Hiliter.Themes;
 
 type
 

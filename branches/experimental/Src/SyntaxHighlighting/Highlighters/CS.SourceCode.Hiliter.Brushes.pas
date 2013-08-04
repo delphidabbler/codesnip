@@ -12,7 +12,7 @@
 }
 
 
-unit CS.Hiliter.Brushes;
+unit CS.SourceCode.Hiliter.Brushes;
 
 
 interface

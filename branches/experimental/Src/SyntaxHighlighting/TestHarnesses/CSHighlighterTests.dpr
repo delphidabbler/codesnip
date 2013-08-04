@@ -5,8 +5,8 @@ program CSHighlighterTests;
 uses
   Forms,
   FmTestMain in 'FmTestMain.pas' {MainTestForm},
-  CS.Hiliter.Themes in '..\Highlighters\CS.Hiliter.Themes.pas',
-  CS.Hiliter.Themes.Persist in '..\Highlighters\CS.Hiliter.Themes.Persist.pas',
+  CS.SourceCode.Hiliter.Themes in '..\Highlighters\CS.SourceCode.Hiliter.Themes.pas',
+  CS.SourceCode.Hiliter.Themes.Persist in '..\Highlighters\CS.SourceCode.Hiliter.Themes.Persist.pas',
   UExceptions in '..\..\TrunkSrc\UExceptions.pas',
   UComparers in '..\..\TrunkSrc\UComparers.pas',
   UStrUtils in '..\..\TrunkSrc\UStrUtils.pas',
@@ -22,7 +22,7 @@ uses
   UIOUtils in '..\..\TrunkSrc\UIOUtils.pas',
   UResourceUtils in '..\..\TrunkSrc\UResourceUtils.pas',
   UURIEncode in '..\..\TrunkSrc\UURIEncode.pas',
-  CS.Hiliter.Brushes in '..\Highlighters\CS.Hiliter.Brushes.pas',
+  CS.SourceCode.Hiliter.Brushes in '..\Highlighters\CS.SourceCode.Hiliter.Brushes.pas',
   SynEditHighlighter in '..\SynEditUnits\SynEditHighlighter.pas',
   SynEditTypes in '..\SynEditUnits\SynEditTypes.pas',
   SynEditMiscClasses in '..\SynEditUnits\SynEditMiscClasses.pas',
@@ -38,14 +38,14 @@ uses
   SynHighlighterJScript in '..\SynEditUnits\SynHighlighterJScript.pas',
   SynHighlighterPas in '..\SynEditUnits\SynHighlighterPas.pas',
   SynHighlighterPHP in '..\SynEditUnits\SynHighlighterPHP.pas',
-  CS.CodeEditor.Frame in '..\CodeEditor\CS.CodeEditor.Frame.pas' {TCodeEditorFrame: TFrame},
+  CS.SourceCode.Editor.Frame in '..\CodeEditor\CS.SourceCode.Editor.Frame.pas' {TCodeEditorFrame: TFrame},
   SynEdit in '..\SynEditUnits\SynEdit.pas',
   SynTextDrawer in '..\SynEditUnits\SynTextDrawer.pas',
   SynEditKeyCmds in '..\SynEditUnits\SynEditKeyCmds.pas',
   SynEditKbdHandler in '..\SynEditUnits\SynEditKbdHandler.pas',
   SynEditWordWrap in '..\SynEditUnits\SynEditWordWrap.pas',
-  CS.Hiliter.Parser in '..\Highlighters\CS.Hiliter.Parser.pas',
-  CS.Hiliter.Renderers in '..\Highlighters\CS.Hiliter.Renderers.pas',
+  CS.SourceCode.Hiliter.Parser in '..\Highlighters\CS.SourceCode.Hiliter.Parser.pas',
+  CS.SourceCode.Hiliter.Renderers in '..\Highlighters\CS.SourceCode.Hiliter.Renderers.pas',
   UHTMLBuilder in '..\..\TrunkSrc\UHTMLBuilder.pas',
   UHTMLUtils in '..\..\TrunkSrc\UHTMLUtils.pas',
   UCSSUtils in '..\..\TrunkSrc\UCSSUtils.pas',
@@ -54,7 +54,7 @@ uses
   URTFUtils in '..\..\TrunkSrc\URTFUtils.pas',
   UUtils in '..\..\TrunkSrc\UUtils.pas',
   UCSSBuilder in '..\..\TrunkSrc\UCSSBuilder.pas',
-  CS.Hiliter.Renderers.CSS in '..\Highlighters\CS.Hiliter.Renderers.CSS.pas';
+  CS.SourceCode.Hiliter.Renderers.CSS in '..\Highlighters\CS.SourceCode.Hiliter.Renderers.CSS.pas';
 
 {$R *.res}
 

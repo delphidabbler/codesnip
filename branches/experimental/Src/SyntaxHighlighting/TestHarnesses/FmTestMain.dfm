@@ -26,6 +26,10 @@ object MainTestForm: TMainTestForm
     TabOrder = 0
     object tsThemesLoader: TTabSheet
       Caption = 'Themes Loader'
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       DesignSize = (
         898
         575)
@@ -96,6 +100,10 @@ object MainTestForm: TMainTestForm
     object tsHighlighting: TTabSheet
       Caption = 'Highlighting'
       ImageIndex = 1
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       DesignSize = (
         898
         575)
@@ -141,6 +149,10 @@ object MainTestForm: TMainTestForm
         TabOrder = 2
         object tsBrushAttrs: TTabSheet
           Caption = 'Brush Attributes'
+          ExplicitLeft = 0
+          ExplicitTop = 0
+          ExplicitWidth = 0
+          ExplicitHeight = 0
           DesignSize = (
             886
             480)
@@ -214,6 +226,10 @@ object MainTestForm: TMainTestForm
         object tsRendering: TTabSheet
           Caption = 'Rendering'
           ImageIndex = 2
+          ExplicitLeft = 0
+          ExplicitTop = 0
+          ExplicitWidth = 0
+          ExplicitHeight = 0
           DesignSize = (
             886
             480)
@@ -227,6 +243,10 @@ object MainTestForm: TMainTestForm
             TabOrder = 0
             object tsMockRendering: TTabSheet
               Caption = 'Mock Rendering'
+              ExplicitLeft = 0
+              ExplicitTop = 0
+              ExplicitWidth = 0
+              ExplicitHeight = 0
               object edMockRender: TMemo
                 Left = 0
                 Top = 0
