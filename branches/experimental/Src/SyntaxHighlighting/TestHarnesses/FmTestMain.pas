@@ -8,6 +8,7 @@ uses
 
   Generics.Collections,
 
+  CS.SourceCode.Languages,
   CS.SourceCode.Hiliter.Themes,
   CS.SourceCode.Hiliter.Brushes,
   CS.SourceCode.Editor.Frame;
@@ -47,6 +48,13 @@ type
     edXHTMLDocSource: TMemo;
     tsRTFDocSource: TTabSheet;
     edRTFDocSource: TMemo;
+    TabSheet1: TTabSheet;
+    btnLoadUserLangs: TButton;
+    edLoadedLangs: TMemo;
+    btnLoadDefaultLangs: TButton;
+    btnDisplayLangs: TButton;
+    btnSaveAllLangs: TButton;
+    btnClearLangs: TButton;
     procedure btnLoadUserThemesClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -60,7 +68,13 @@ type
     procedure btnChangeThemeClick(Sender: TObject);
     procedure btnRenderSyntaxHiliteClick(Sender: TObject);
     procedure btnRenderNullClick(Sender: TObject);
+    procedure btnLoadUserLangsClick(Sender: TObject);
+    procedure btnClearLangsClick(Sender: TObject);
+    procedure btnDisplayLangsClick(Sender: TObject);
+    procedure btnSaveAllLangsClick(Sender: TObject);
+    procedure btnLoadDefaultLangsClick(Sender: TObject);
   private
+    fLanguages: TSourceCodeLanguages;
     fThemes: TSyntaxHiliteThemes;
     // Array of theme IDs with same index as theme's entry in cbChooseTheme
     fUIThemeIDs: TArray<string>;
@@ -93,6 +107,7 @@ uses
   UStrUtils,
   UIStringList,
   UHTMLBuilder,
+  CS.SourceCode.Languages.Persist,
   CS.SourceCode.Hiliter.Themes.Persist,
   CS.SourceCode.Hiliter.Parser,
   CS.SourceCode.Hiliter.Renderers;
@@ -133,6 +148,16 @@ type
 
 
 { TMainTestForm }
+
+procedure TMainTestForm.btnClearLangsClick(Sender: TObject);
+begin
+  if not Assigned(fLanguages) then
+    Exit;
+  fLanguages.Clear;
+  btnLoadDefaultLangs.Enabled := True;
+  btnLoadUserLangs.Enabled := True;
+//  PopulateChooseThemeCombo;
+end;
 
 procedure TMainTestForm.btnClearThemesClick(Sender: TObject);
 begin
@@ -195,6 +220,33 @@ begin
       end;
   finally
     Brush.Free;
+  end;
+end;
+
+procedure TMainTestForm.btnDisplayLangsClick(Sender: TObject);
+
+  procedure AddLine(const S: string);
+  begin
+    edLoadedLangs.Lines.Add(S);
+  end;
+
+  procedure AddLineFmt(const Fmt: string; const Args: array of const);
+  begin
+    AddLine(Format(Fmt, Args));
+  end;
+
+var
+  Lang: TSourceCodeLanguage;
+begin
+  edLoadedLangs.Clear;
+  if not Assigned(fLanguages) then
+    Exit;
+  for Lang in fLanguages do
+  begin
+    AddLineFmt('LANGUAGE: %s - "%s"', [Lang.ID, Lang.FriendlyName]);
+    AddLineFmt('  TAB-SIZE: %d', [Lang.EditorTabSize]);
+    AddLineFmt('  BRUSH-ID: %s', [Lang.HiliterBrushID]);
+    AddLineFmt('  BUILT-IN: %s', [BoolToStr(Lang.BuiltIn, True)]);
   end;
 end;
 
@@ -271,6 +323,17 @@ begin
   end;
 end;
 
+procedure TMainTestForm.btnLoadDefaultLangsClick(Sender: TObject);
+begin
+  btnLoadDefaultLangs.Enabled := False;
+  if not Assigned(fLanguages) then
+    fLanguages := TSourceCodeLanguages.Create;
+  TSourceCodeLanguagesIO.LoadFromResources(
+    fLanguages, 'SOURCECODELANGUAGES', RT_RCDATA
+  );
+//  PopulateChooseThemeCombo;
+end;
+
 procedure TMainTestForm.btnLoadDefaultThemesClick(Sender: TObject);
 begin
   btnLoadDefaultThemes.Enabled := False;
@@ -280,6 +343,19 @@ begin
     fThemes, 'HILITETHEMES', RT_RCDATA
   );
   PopulateChooseThemeCombo;
+end;
+
+procedure TMainTestForm.btnLoadUserLangsClick(Sender: TObject);
+begin
+  btnLoadUserLangs.Enabled := False;
+  if not Assigned(fLanguages) then
+    fLanguages := TSourceCodeLanguages.Create;
+  TSourceCodeLanguagesIO.Load(
+    fLanguages,
+    ExtractFilePath(ParamStr(0)) +
+      '..\Src\SyntaxHighlighting\Languages\TestSourceCodeLanguages.txt'
+  );
+//  PopulateChooseThemeCombo;
 end;
 
 procedure TMainTestForm.btnLoadUserThemesClick(Sender: TObject);
@@ -317,6 +393,17 @@ begin
   finally
     Brush.Free;
   end;
+end;
+
+procedure TMainTestForm.btnSaveAllLangsClick(Sender: TObject);
+begin
+  if not Assigned(fLanguages) then
+    Exit;
+  TSourceCodeLanguagesIO.Save(
+    fLanguages,
+    ExtractFilePath(ParamStr(0)) +
+      '..\Src\SyntaxHighlighting\Languages\SavedSourceCodeLanguages.txt'
+  );
 end;
 
 procedure TMainTestForm.btnSaveAllThemesClick(Sender: TObject);
@@ -391,6 +478,7 @@ end;
 procedure TMainTestForm.FormDestroy(Sender: TObject);
 begin
   fThemes.Free;
+  fLanguages.Free;
 end;
 
 procedure TMainTestForm.FormShow(Sender: TObject);

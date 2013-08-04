@@ -26,10 +26,6 @@ object MainTestForm: TMainTestForm
     TabOrder = 0
     object tsThemesLoader: TTabSheet
       Caption = 'Themes Loader'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       DesignSize = (
         898
         575)
@@ -97,13 +93,79 @@ object MainTestForm: TMainTestForm
         OnClick = btnClearThemesClick
       end
     end
+    object TabSheet1: TTabSheet
+      Caption = 'Languages Loader'
+      ImageIndex = 2
+      DesignSize = (
+        898
+        575)
+      object btnLoadUserLangs: TButton
+        Left = 3
+        Top = 3
+        Width = 140
+        Height = 25
+        Caption = 'Load User Languages'
+        TabOrder = 0
+        OnClick = btnLoadUserLangsClick
+      end
+      object edLoadedLangs: TMemo
+        Left = 0
+        Top = 40
+        Width = 898
+        Height = 535
+        Anchors = [akLeft, akTop, akRight, akBottom]
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -12
+        Font.Name = 'Courier New'
+        Font.Style = []
+        ParentFont = False
+        ReadOnly = True
+        ScrollBars = ssBoth
+        TabOrder = 5
+        WantReturns = False
+        WordWrap = False
+      end
+      object btnLoadDefaultLangs: TButton
+        Left = 149
+        Top = 3
+        Width = 140
+        Height = 25
+        Caption = 'Load Default Languages'
+        TabOrder = 1
+        OnClick = btnLoadDefaultLangsClick
+      end
+      object btnDisplayLangs: TButton
+        Left = 441
+        Top = 3
+        Width = 140
+        Height = 25
+        Caption = 'Display Languages'
+        TabOrder = 3
+        OnClick = btnDisplayLangsClick
+      end
+      object btnSaveAllLangs: TButton
+        Left = 587
+        Top = 3
+        Width = 140
+        Height = 25
+        Caption = 'Save All Languages'
+        TabOrder = 4
+        OnClick = btnSaveAllLangsClick
+      end
+      object btnClearLangs: TButton
+        Left = 295
+        Top = 3
+        Width = 140
+        Height = 25
+        Caption = 'Clear Languages'
+        TabOrder = 2
+        OnClick = btnClearLangsClick
+      end
+    end
     object tsHighlighting: TTabSheet
       Caption = 'Highlighting'
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       DesignSize = (
         898
         575)
@@ -144,15 +206,11 @@ object MainTestForm: TMainTestForm
         Top = 64
         Width = 894
         Height = 508
-        ActivePage = tsBrushAttrs
+        ActivePage = tsCodeEditor
         Anchors = [akLeft, akTop, akRight, akBottom]
         TabOrder = 2
         object tsBrushAttrs: TTabSheet
           Caption = 'Brush Attributes'
-          ExplicitLeft = 0
-          ExplicitTop = 0
-          ExplicitWidth = 0
-          ExplicitHeight = 0
           DesignSize = (
             886
             480)
@@ -185,10 +243,6 @@ object MainTestForm: TMainTestForm
         object tsCodeEditor: TTabSheet
           Caption = 'Code Editor'
           ImageIndex = 1
-          ExplicitLeft = 0
-          ExplicitTop = 0
-          ExplicitWidth = 0
-          ExplicitHeight = 0
           DesignSize = (
             886
             480)
@@ -226,10 +280,6 @@ object MainTestForm: TMainTestForm
         object tsRendering: TTabSheet
           Caption = 'Rendering'
           ImageIndex = 2
-          ExplicitLeft = 0
-          ExplicitTop = 0
-          ExplicitWidth = 0
-          ExplicitHeight = 0
           DesignSize = (
             886
             480)
@@ -243,10 +293,6 @@ object MainTestForm: TMainTestForm
             TabOrder = 0
             object tsMockRendering: TTabSheet
               Caption = 'Mock Rendering'
-              ExplicitLeft = 0
-              ExplicitTop = 0
-              ExplicitWidth = 0
-              ExplicitHeight = 0
               object edMockRender: TMemo
                 Left = 0
                 Top = 0
@@ -267,10 +313,6 @@ object MainTestForm: TMainTestForm
             object tsXHTMLFragSource: TTabSheet
               Caption = 'XHTML Fragment Source'
               ImageIndex = 1
-              ExplicitLeft = 0
-              ExplicitTop = 0
-              ExplicitWidth = 0
-              ExplicitHeight = 0
               object edXTHMLFragSource: TMemo
                 Left = 0
                 Top = 0
@@ -291,10 +333,6 @@ object MainTestForm: TMainTestForm
             object tsXHTMLDocSource: TTabSheet
               Caption = 'XHTML Document Source'
               ImageIndex = 2
-              ExplicitLeft = 0
-              ExplicitTop = 0
-              ExplicitWidth = 0
-              ExplicitHeight = 0
               object edXHTMLDocSource: TMemo
                 Left = 0
                 Top = 0
@@ -315,10 +353,6 @@ object MainTestForm: TMainTestForm
             object tsRTFDocSource: TTabSheet
               Caption = 'RTF Document Source'
               ImageIndex = 3
-              ExplicitLeft = 0
-              ExplicitTop = 0
-              ExplicitWidth = 0
-              ExplicitHeight = 0
               object edRTFDocSource: TMemo
                 Left = 0
                 Top = 0
