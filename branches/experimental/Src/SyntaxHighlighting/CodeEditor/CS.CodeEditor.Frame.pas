@@ -38,7 +38,6 @@ implementation
 { TTCodeEditorFrame }
 
 procedure TTCodeEditorFrame.ApplyTheme;
-
 var
   Highlighter: TSynCustomHighlighter;
   I: Integer;
@@ -48,6 +47,16 @@ var
 begin
   if not Assigned(fTheme) then
     Exit;
+  fSynEditCmp.Font.Name := fTheme.FontName;
+  fSynEditCmp.Font.Size := fTheme.FontSize;
+  if fTheme.DefaultForeground = clNone then
+    fSynEditCmp.Font.Color := clWindowText
+  else
+    fSynEditCmp.Font.Color := fTheme.DefaultForeground;
+  if fTheme.DefaultBackground = clNone then
+    fSynEditCmp.Color := clWindow
+  else
+    fSynEditCmp.Color := fTheme.DefaultBackground;
   Highlighter := fSynEditCmp.Highlighter;
   if not Assigned(Highlighter) then
     Exit;
@@ -92,6 +101,7 @@ begin
   fSynEditCmp.BookMarkOptions.EnableKeys := False;
   fSynEditCmp.BookMarkOptions.GlyphsVisible := False;
   fSynEditCmp.Gutter.Font.Color := clGray;
+  ApplyTheme;
 end;
 
 destructor TTCodeEditorFrame.Destroy;
