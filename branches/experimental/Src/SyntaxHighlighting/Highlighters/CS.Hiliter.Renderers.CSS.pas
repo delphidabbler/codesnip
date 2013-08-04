@@ -126,9 +126,9 @@ begin
       AddProperty(TCSS.BackgroundColorProp(AttrStyle.Background));
     if AttrStyle.Foreground <> fTheme.DefaultForeground then
       AddProperty(TCSS.ColorProp(AttrStyle.Foreground));
-    AddProperty(TCSS.FontWeightProp(AttrStyle.ConvertFontStyles));
-    AddProperty(TCSS.FontStyleProp(AttrStyle.ConvertFontStyles));
-    AddProperty(TCSS.TextDecorationProp(AttrStyle.ConvertFontStyles));
+    AddProperty(TCSS.FontWeightProp(AttrStyle.FontStyles));
+    AddProperty(TCSS.FontStyleProp(AttrStyle.FontStyles));
+    AddProperty(TCSS.TextDecorationProp(AttrStyle.FontStyles));
   end;
 end;
 

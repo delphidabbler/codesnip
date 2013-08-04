@@ -535,8 +535,8 @@ begin
     //      fBuilder.SetColour(AttrStyle.Foreground);
     if AttrStyle.Foreground <> Theme.DefaultForeground then
       fBuilder.SetColour(AttrStyle.Foreground);
-    if AttrStyle.ConvertFontStyles <> [] then
-      fBuilder.SetFontStyle(AttrStyle.ConvertFontStyles);
+    if AttrStyle.FontStyles.Styles <> [] then
+      fBuilder.SetFontStyle(AttrStyle.FontStyles);
   end;
 end;
 

@@ -33,6 +33,7 @@ type
       static;
     class function CreateDefault: TSyntaxHiliteFontStyles; static;
     class function CreateNull: TSyntaxHiliteFontStyles; static;
+    class operator Implicit(const S: TSyntaxHiliteFontStyles): TFontStyles;
     function IsNull: Boolean;
     property Styles: TFontStyles read GetStyles;
     property IsDefault: Boolean read fIsDefault;
@@ -48,12 +49,6 @@ type
     function IsNull: Boolean;
     class operator Equal(const Left, Right: TSyntaxHiliteAttrStyle): Boolean;
     class operator NotEqual(const Left, Right: TSyntaxHiliteAttrStyle): Boolean;
-    ///  <summary>Convert FontStyles field into an equivalent TFontStyles value.
-    ///  </summary>
-    ///  <remarks>Callers must make sure that any default font styles have been
-    ///  resolved to actual values before calling this method: it assumes that
-    ///  hfsDefault it is not present in FontStyles.</remarks>
-    function ConvertFontStyles: TFontStyles;
   end;
 
   TSyntaxHiliteBrushStyle = class(TObject)
@@ -152,13 +147,6 @@ uses
   UComparers;
 
 { TSyntaxHiliteAttrStyle }
-
-function TSyntaxHiliteAttrStyle.ConvertFontStyles: TFontStyles;
-begin
-  If FontStyles.IsDefault then
-    Exit([]);
-  Result := FontStyles.Styles;
-end;
 
 constructor TSyntaxHiliteAttrStyle.Create(ABackground, AForeground: TColor;
   AFontStyles: TSyntaxHiliteFontStyles);
@@ -472,6 +460,12 @@ function TSyntaxHiliteFontStyles.GetStyles: TFontStyles;
 begin
   Assert(not IsDefault, 'TSyntaxHiliteFontStyles.GetStyles: Style is default');
   Result := fStyles;
+end;
+
+class operator TSyntaxHiliteFontStyles.Implicit(
+  const S: TSyntaxHiliteFontStyles): TFontStyles;
+begin
+  Result := S.Styles;
 end;
 
 function TSyntaxHiliteFontStyles.IsNull: Boolean;

@@ -60,7 +60,7 @@ begin
     AttrStyle := fTheme.GetStyle(fBrush.ID, AttrID);
     Highlighter.Attribute[I].Background := AttrStyle.Background;
     Highlighter.Attribute[I].Foreground := AttrStyle.Foreground;
-    Highlighter.Attribute[I].Style := AttrStyle.ConvertFontStyles;
+    Highlighter.Attribute[I].Style := AttrStyle.FontStyles;
   end;
 end;
 

@@ -179,7 +179,7 @@ begin
       edBrushAttrs.Lines.Add(
         Format('      Foreground: %s', [ColorToString(AttrStyle.Foreground)])
       );;
-      FontStyles := AttrStyle.ConvertFontStyles;
+      FontStyles := AttrStyle.FontStyles;
       FSParams := TIStringList.Create;
       for FS in FontStyles do
         FSParams.Add(UIFontStyleMap[FS]);
