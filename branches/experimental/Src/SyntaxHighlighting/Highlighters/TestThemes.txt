@@ -71,5 +71,6 @@ Theme Test2 My 2nd Test Theme
     Attr Comment            FF00FF,*,{bold,italic,underline}
   Brush ObjectPascal
     Attr Comment            FFFF00,*,*
+    Attr ReservedWord       *,*,{bold}
     
   Brush JavaScript  
