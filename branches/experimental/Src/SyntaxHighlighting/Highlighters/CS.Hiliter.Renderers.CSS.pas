@@ -118,7 +118,7 @@ var
 begin
   AttrStyle := fTheme.GetStyle(fBrush.ID, AttrID);
   // We only create CSS class if element attribute's style is non-null
-  if AttrStyle.IsNull then
+  if fTheme.IsBaseStyle(AttrStyle) then
     Exit;
   with CSSBuilder.AddSelector('.' + GetElemCSSClassName(fBrush.ID, AttrID)) do
   begin
