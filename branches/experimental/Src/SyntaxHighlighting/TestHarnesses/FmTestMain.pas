@@ -94,8 +94,7 @@ uses
   UHTMLBuilder,
   CS.Hiliter.Themes.Persist,
   CS.Hiliter.Parser,
-  CS.Hiliter.Renderers,
-  CS.Hiliter.Renderers.Globals;
+  CS.Hiliter.Renderers;
 
 {$R *.dfm}
 
