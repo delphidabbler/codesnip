@@ -631,7 +631,6 @@ begin
     Theme := TSyntaxHiliteTheme.Create(ThemeID, ThemeFriendlyName, IsBuiltIn);
     try
       ParseTheme(Theme);
-      ParseBrushStyles(Theme);
       ThemeList.Add(Theme);
     except
       Theme.Free;
