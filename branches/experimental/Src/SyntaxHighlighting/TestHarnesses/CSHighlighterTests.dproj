@@ -53,6 +53,9 @@
 			<RcCompile Include="..\Highlighters\Themes.rc">
 				<Form>Themes.res</Form>
 			</RcCompile>
+			<RcCompile Include="..\Languages\Languages.rc">
+				<Form>Languages.res</Form>
+			</RcCompile>
 			<DCCReference Include="FmTestMain.pas">
 				<Form>MainTestForm</Form>
 			</DCCReference>
@@ -114,6 +117,7 @@
 			<None Include="..\Highlighters\BuiltInHiliterThemes.txt"/>
 			<None Include="..\SynEditUnits\SynEdit.inc"/>
 			<None Include="..\SynEditUnits\SynEditJedi.inc"/>
+			<None Include="..\Languages\BuiltInSourceCodeLanguages.txt"/>
 			<BuildConfiguration Include="Release">
 				<Key>Cfg_2</Key>
 				<CfgParent>Base</CfgParent>

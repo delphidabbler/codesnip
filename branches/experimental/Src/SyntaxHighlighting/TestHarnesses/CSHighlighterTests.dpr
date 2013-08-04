@@ -1,6 +1,7 @@
 program CSHighlighterTests;
 
 {$R 'Themes.res' '..\Highlighters\Themes.rc'}
+{$R 'Languages.res' '..\Languages\Languages.rc'}
 
 uses
   Forms,
