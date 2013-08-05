@@ -28,7 +28,7 @@ uses
   CS.SourceCode.Hiliter.Themes;
 
 type
-  TTCodeEditorFrame = class(TFrame)
+  TCodeEditorFrame = class(TFrame)
   strict private
     var
       fSynEditCmp: TSynEdit;
@@ -57,7 +57,7 @@ implementation
 
 { TTCodeEditorFrame }
 
-procedure TTCodeEditorFrame.ApplyLanguage(const Language: TSourceCodeLanguage);
+procedure TCodeEditorFrame.ApplyLanguage(const Language: TSourceCodeLanguage);
 var
   Brush: TSyntaxHiliterBrush;
 begin
@@ -70,7 +70,7 @@ begin
   SetTabSize(Language.EditorTabSize);
 end;
 
-procedure TTCodeEditorFrame.ApplyTheme;
+procedure TCodeEditorFrame.ApplyTheme;
 var
   Highlighter: TSynCustomHighlighter;
   I: Integer;
@@ -106,7 +106,7 @@ begin
   end;
 end;
 
-constructor TTCodeEditorFrame.Create(AOwner: TComponent);
+constructor TCodeEditorFrame.Create(AOwner: TComponent);
 begin
   inherited;
   fBrush := TSyntaxHiliterBrushes.CreateNullBrush;
@@ -136,7 +136,7 @@ begin
   ApplyTheme;
 end;
 
-destructor TTCodeEditorFrame.Destroy;
+destructor TCodeEditorFrame.Destroy;
 var
   OldHighlighter: TSynCustomHighlighter;
 begin
@@ -150,17 +150,17 @@ begin
   inherited;
 end;
 
-function TTCodeEditorFrame.GetSourceCode: string;
+function TCodeEditorFrame.GetSourceCode: string;
 begin
   Result := fSynEditCmp.Text;
 end;
 
-function TTCodeEditorFrame.GetTabSize: Integer;
+function TCodeEditorFrame.GetTabSize: Integer;
 begin
   Result := fSynEditCmp.TabWidth;
 end;
 
-procedure TTCodeEditorFrame.SetBrush(const ABrush: TSyntaxHiliterBrush);
+procedure TCodeEditorFrame.SetBrush(const ABrush: TSyntaxHiliterBrush);
 var
   OldBrush: TSyntaxHiliterBrush;
   OldHighlighter: TSynCustomHighlighter;
@@ -175,17 +175,17 @@ begin
   ApplyTheme;
 end;
 
-procedure TTCodeEditorFrame.SetSourceCode(const Code: string);
+procedure TCodeEditorFrame.SetSourceCode(const Code: string);
 begin
   fSynEditCmp.Text := Code;
 end;
 
-procedure TTCodeEditorFrame.SetTabSize(const ATabSize: Integer);
+procedure TCodeEditorFrame.SetTabSize(const ATabSize: Integer);
 begin
   fSynEditCmp.TabWidth := ATabSize;
 end;
 
-procedure TTCodeEditorFrame.SetTheme(const ATheme: TSyntaxHiliteTheme);
+procedure TCodeEditorFrame.SetTheme(const ATheme: TSyntaxHiliteTheme);
 begin
   Assert(Assigned(ATheme), ClassName + '.ATheme not assigned');
   fTheme := ATheme;

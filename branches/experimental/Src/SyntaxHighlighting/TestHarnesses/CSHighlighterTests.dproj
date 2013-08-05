@@ -93,7 +93,7 @@
 			<DCCReference Include="..\SynEditUnits\SynHighlighterPas.pas"/>
 			<DCCReference Include="..\SynEditUnits\SynHighlighterPHP.pas"/>
 			<DCCReference Include="..\CodeEditor\CS.SourceCode.Editor.Frame.pas">
-				<Form>TCodeEditorFrame</Form>
+				<Form>CodeEditorFrame</Form>
 				<DesignClass>TFrame</DesignClass>
 			</DCCReference>
 			<DCCReference Include="..\SynEditUnits\SynEdit.pas"/>

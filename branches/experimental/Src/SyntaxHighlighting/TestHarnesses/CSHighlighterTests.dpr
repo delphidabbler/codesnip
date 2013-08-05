@@ -39,7 +39,7 @@ uses
   SynHighlighterJScript in '..\SynEditUnits\SynHighlighterJScript.pas',
   SynHighlighterPas in '..\SynEditUnits\SynHighlighterPas.pas',
   SynHighlighterPHP in '..\SynEditUnits\SynHighlighterPHP.pas',
-  CS.SourceCode.Editor.Frame in '..\CodeEditor\CS.SourceCode.Editor.Frame.pas' {TCodeEditorFrame: TFrame},
+  CS.SourceCode.Editor.Frame in '..\CodeEditor\CS.SourceCode.Editor.Frame.pas' {CodeEditorFrame: TFrame},
   SynEdit in '..\SynEditUnits\SynEdit.pas',
   SynTextDrawer in '..\SynEditUnits\SynTextDrawer.pas',
   SynEditKeyCmds in '..\SynEditUnits\SynEditKeyCmds.pas',
