@@ -35,7 +35,6 @@ type
     edBrushAttrs: TMemo;
     btnDisplaySource: TButton;
     btnChangeTheme: TButton;
-    frmCodeEditor: TTCodeEditorFrame;
     tsRendering: TTabSheet;
     pcRendering: TPageControl;
     tsMockRendering: TTabSheet;
@@ -55,6 +54,11 @@ type
     btnDisplayLangs: TButton;
     btnSaveAllLangs: TButton;
     btnClearLangs: TButton;
+    lblChooseLang: TLabel;
+    cbChooseLang: TComboBox;
+    btnDisplaySourceForLang: TButton;
+    lblLangBrush: TLabel;
+    frmCodeEditor: TCodeEditorFrame;
     procedure btnLoadUserThemesClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -73,6 +77,8 @@ type
     procedure btnDisplayLangsClick(Sender: TObject);
     procedure btnSaveAllLangsClick(Sender: TObject);
     procedure btnLoadDefaultLangsClick(Sender: TObject);
+    procedure btnDisplaySourceForLangClick(Sender: TObject);
+    procedure cbChooseLangChange(Sender: TObject);
   private
     fLanguages: TSourceCodeLanguages;
     fThemes: TSyntaxHiliteThemes;
@@ -80,14 +86,20 @@ type
     fUIThemeIDs: TArray<string>;
     // Array of brush IDs with same index as brush's entry in cbChooseBrush
     fUIBrushIDs: TArray<string>;
+    // Array of language IDs with same index as language's entry in cbChooseLang
+    fUILangIDs: TArray<string>;
     // Sets fUIThemeIDs and populates combo with theme friendly names
     procedure PopulateChooseThemeCombo;
     // Sets fUIBrushIDs and populates combo with brush friendly names
     procedure PopulateChooseBrushCombo;
+    // Sets fUILangIDs and populates combo with brush friendly names
+    procedure PopulateChooseLangCombo;
     // Gets ID of theme corresponding to that selected in cbChooseTheme
     function GetSelectedThemeID: string;
     // Gets ID of brush corresponding to that selected in cbChooseBrush
     function GetSelectedBrushID: string;
+    // Gets ID of language corresponding to that selected in cbChooseLang
+    function GetSelectedLangID: string;
 
     procedure DoRendering(Brush: TSyntaxHiliterBrush);
     // Performs highlight rendering using a mock highlighter that shows each
@@ -156,7 +168,7 @@ begin
   fLanguages.Clear;
   btnLoadDefaultLangs.Enabled := True;
   btnLoadUserLangs.Enabled := True;
-//  PopulateChooseThemeCombo;
+  PopulateChooseLangCombo;
 end;
 
 procedure TMainTestForm.btnClearThemesClick(Sender: TObject);
@@ -266,6 +278,24 @@ begin
   end;
 end;
 
+procedure TMainTestForm.btnDisplaySourceForLangClick(Sender: TObject);
+var
+  Brush: TSyntaxHiliterBrush;
+begin
+  frmCodeEditor.Theme := fThemes.Themes[GetSelectedThemeID];
+  frmCodeEditor.ApplyLanguage(
+    fLanguages.Languages[GetSelectedLangID]
+  );
+  Brush := TSyntaxHiliterBrushes.CreateBrush(
+    fLanguages.Languages[GetSelectedLangID].HiliterBrushID
+  );
+  try
+    frmCodeEditor.SourceCode := Brush.SampleSourceCode;
+  finally
+    Brush.Free;
+  end;
+end;
+
 procedure TMainTestForm.btnDisplayThemesClick(Sender: TObject);
 var
   T: TSyntaxHiliteTheme;
@@ -331,7 +361,7 @@ begin
   TSourceCodeLanguagesIO.LoadFromResources(
     fLanguages, 'SOURCECODELANGUAGES', RT_RCDATA
   );
-//  PopulateChooseThemeCombo;
+  PopulateChooseLangCombo;
 end;
 
 procedure TMainTestForm.btnLoadDefaultThemesClick(Sender: TObject);
@@ -355,7 +385,7 @@ begin
     ExtractFilePath(ParamStr(0)) +
       '..\Src\SyntaxHighlighting\Languages\TestSourceCodeLanguages.txt'
   );
-//  PopulateChooseThemeCombo;
+  PopulateChooseLangCombo;
 end;
 
 procedure TMainTestForm.btnLoadUserThemesClick(Sender: TObject);
@@ -413,6 +443,12 @@ begin
     ExtractFilePath(ParamStr(0)) +
       '..\Src\SyntaxHighlighting\Highlighters\SavedThemes.txt'
   );
+end;
+
+procedure TMainTestForm.cbChooseLangChange(Sender: TObject);
+begin
+  lblLangBrush.Caption := 'Selected brush ID = '
+    + fLanguages[GetSelectedLangID].HiliterBrushID;
 end;
 
 procedure TMainTestForm.DoMockRendering(Brush: TSyntaxHiliterBrush);
@@ -496,6 +532,16 @@ begin
   Result := fUIBrushIDs[SelIdx];
 end;
 
+function TMainTestForm.GetSelectedLangID: string;
+var
+  SelIdx: Integer;
+begin
+  SelIdx := cbChooseLang.ItemIndex;
+  if SelIdx = -1 then
+    raise Exception.Create('No language selected');
+  Result := fUILangIDs[SelIdx];
+end;
+
 function TMainTestForm.GetSelectedThemeID: string;
 var
   SelIdx: Integer;
@@ -524,6 +570,23 @@ begin
   end;
   if cbChooseBrush.Items.Count > 0 then
     cbChooseBrush.ItemIndex := 0;
+end;
+
+procedure TMainTestForm.PopulateChooseLangCombo;
+var
+  LangID: string;
+begin
+  cbChooseLang.Clear;
+  if not Assigned(fLanguages) then
+    Exit;
+  fUILangIDs := fLanguages.SupportedLanguageIDs;
+  for LangID in fUILangIDs do
+    cbChooseLang.Items.Add(fLanguages[LangID].FriendlyName);
+  if cbChooseLang.Items.Count > 0 then
+  begin
+    cbChooseLang.ItemIndex := 0;
+    cbChooseLangChange(cbChooseLang);
+  end;
 end;
 
 procedure TMainTestForm.PopulateChooseThemeCombo;

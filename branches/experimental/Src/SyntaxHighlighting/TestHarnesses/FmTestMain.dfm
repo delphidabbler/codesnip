@@ -178,12 +178,27 @@ object MainTestForm: TMainTestForm
         FocusControl = cbChooseTheme
       end
       object lblChooseBrush: TLabel
-        Left = 219
+        Left = 243
         Top = 5
         Width = 70
         Height = 13
         Caption = 'Choose brush:'
         FocusControl = cbChooseBrush
+      end
+      object lblChooseLang: TLabel
+        Left = 475
+        Top = 5
+        Width = 122
+        Height = 13
+        Caption = 'Choose loaded language:'
+        FocusControl = cbChooseLang
+      end
+      object lblLangBrush: TLabel
+        Left = 671
+        Top = 27
+        Width = 124
+        Height = 13
+        Caption = 'Selected brush ID = None'
       end
       object cbChooseTheme: TComboBox
         Left = 3
@@ -206,9 +221,9 @@ object MainTestForm: TMainTestForm
         Top = 64
         Width = 894
         Height = 508
-        ActivePage = tsCodeEditor
+        ActivePage = tsBrushAttrs
         Anchors = [akLeft, akTop, akRight, akBottom]
-        TabOrder = 2
+        TabOrder = 3
         object tsBrushAttrs: TTabSheet
           Caption = 'Brush Attributes'
           DesignSize = (
@@ -243,9 +258,6 @@ object MainTestForm: TMainTestForm
         object tsCodeEditor: TTabSheet
           Caption = 'Code Editor'
           ImageIndex = 1
-          DesignSize = (
-            886
-            480)
           object btnDisplaySource: TButton
             Left = 3
             Top = 3
@@ -256,25 +268,33 @@ object MainTestForm: TMainTestForm
             OnClick = btnDisplaySourceClick
           end
           object btnChangeTheme: TButton
-            Left = 240
+            Left = 508
             Top = 3
             Width = 90
             Height = 25
             Caption = 'Change Theme'
-            TabOrder = 1
+            TabOrder = 2
             OnClick = btnChangeThemeClick
           end
-          inline frmCodeEditor: TTCodeEditorFrame
-            Left = 3
-            Top = 35
-            Width = 880
-            Height = 444
-            Anchors = [akLeft, akTop, akRight, akBottom]
-            TabOrder = 2
-            ExplicitLeft = 3
-            ExplicitTop = 35
-            ExplicitWidth = 880
-            ExplicitHeight = 444
+          object btnDisplaySourceForLang: TButton
+            Left = 255
+            Top = 3
+            Width = 231
+            Height = 25
+            Caption = 'Display Default Source Code For Language'
+            TabOrder = 1
+            OnClick = btnDisplaySourceForLangClick
+          end
+          inline frmCodeEditor: TCodeEditorFrame
+            Left = 0
+            Top = 34
+            Width = 886
+            Height = 446
+            Align = alBottom
+            TabOrder = 3
+            ExplicitTop = 34
+            ExplicitWidth = 886
+            ExplicitHeight = 446
           end
         end
         object tsRendering: TTabSheet
@@ -390,6 +410,15 @@ object MainTestForm: TMainTestForm
             OnClick = btnRenderNullClick
           end
         end
+      end
+      object cbChooseLang: TComboBox
+        Left = 475
+        Top = 24
+        Width = 190
+        Height = 21
+        Style = csDropDownList
+        TabOrder = 2
+        OnChange = cbChooseLangChange
       end
     end
   end
