@@ -23,6 +23,7 @@ uses
   SynEdit,
   SynEditHighlighter,
 
+  CS.SourceCode.Languages,
   CS.SourceCode.Hiliter.Brushes,
   CS.SourceCode.Hiliter.Themes;
 
@@ -37,12 +38,16 @@ type
     procedure SetSourceCode(const Code: string);
     procedure SetTheme(const ATheme: TSyntaxHiliteTheme);
     procedure SetBrush(const ABrush: TSyntaxHiliterBrush);
+    function GetTabSize: Integer;
+    procedure SetTabSize(const ATabSize: Integer);
     procedure ApplyTheme;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
+    procedure ApplyLanguage(const Language: TSourceCodeLanguage);
     property Theme: TSyntaxHiliteTheme read fTheme write SetTheme;
     property Brush: TSyntaxHiliterBrush read fBrush write SetBrush;
+    property TabSize: Integer read GetTabSize write SetTabSize;
     property SourceCode: string read GetSourceCode write SetSourceCode;
   end;
 
@@ -51,6 +56,19 @@ implementation
 {$R *.dfm}
 
 { TTCodeEditorFrame }
+
+procedure TTCodeEditorFrame.ApplyLanguage(const Language: TSourceCodeLanguage);
+var
+  Brush: TSyntaxHiliterBrush;
+begin
+  Brush := TSyntaxHiliterBrushes.CreateBrush(Language.HiliterBrushID);
+  try
+    SetBrush(Brush);
+  finally
+    Brush.Free;
+  end;
+  SetTabSize(Language.EditorTabSize);
+end;
 
 procedure TTCodeEditorFrame.ApplyTheme;
 var
@@ -99,8 +117,7 @@ begin
   fSynEditCmp.WantTabs := True;
   fSynEditCmp.Gutter.LeftOffset := 0; // change this if use glyphs in gutter
   fSynEditCmp.Gutter.ShowLineNumbers := True; // TODO: make option
-  fSynEditCmp.WordWrap := False;              // TODO: make option
-  // TODO: set tab stop according to highlighter - needs separate option
+  fSynEditCmp.WordWrap := False;
   fSynEditCmp.TabWidth := 2;
   fSynEditCmp.ActiveLineColor := clNone; {default} // TODO: make option
   fSynEditCmp.Options := [
@@ -138,6 +155,11 @@ begin
   Result := fSynEditCmp.Text;
 end;
 
+function TTCodeEditorFrame.GetTabSize: Integer;
+begin
+  Result := fSynEditCmp.TabWidth;
+end;
+
 procedure TTCodeEditorFrame.SetBrush(const ABrush: TSyntaxHiliterBrush);
 var
   OldBrush: TSyntaxHiliterBrush;
@@ -156,6 +178,11 @@ end;
 procedure TTCodeEditorFrame.SetSourceCode(const Code: string);
 begin
   fSynEditCmp.Text := Code;
+end;
+
+procedure TTCodeEditorFrame.SetTabSize(const ATabSize: Integer);
+begin
+  fSynEditCmp.TabWidth := ATabSize;
 end;
 
 procedure TTCodeEditorFrame.SetTheme(const ATheme: TSyntaxHiliteTheme);
