@@ -65,6 +65,9 @@ type
       fViews: TList<IView>;
       ///  <summary>Command bar that wraps tab set's context menu.</summary>
       fTabSetCmdBar: TPopupMenuWrapper;
+    ///  <summary>Pop up the tab control's context menu at the given client
+    ///  coordinates.</summary>
+    procedure PopupTabContextMenu(const CliX, CliY: Integer);
     ///  <summary>Returns number of tabs currently displayed.</summary>
     function TabCount: Integer;
     ///  <summary>Selects tab at given index and displays its associated view.
@@ -430,6 +433,16 @@ begin
     fNotifier.ChangeDetailPane(tcViews.TabIndex);
 end;
 
+procedure TDetailFrame.PopupTabContextMenu(const CliX, CliY: Integer);
+var
+  PopupPos: TPoint; // menu popup position in screen coordinates
+begin
+  if not Assigned(tcViews.PopupMenu) then
+    Exit;
+  PopupPos := tcViews.ClientToScreen(Point(CliX, CliY));
+  tcViews.PopupMenu.Popup(PopupPos.X, PopupPos.Y);
+end;
+
 procedure TDetailFrame.PreviousTab;
 begin
   if IsEmptyTabSet then
@@ -541,16 +554,20 @@ begin
     tcViews.SetFocus;
     case Button of
       mbLeft:
+      begin
         tcViews.BeginDrag(False);
+      end;
       mbRight:
       begin
         // select tab when right clicked
         TabIdx := tcViews.IndexOfTabAt(X, Y);
-        if (TabIdx >= 0) and (TabIdx < tcViews.Tabs.Count) then
+        if (TabIdx >= 0) and (TabIdx < tcViews.Tabs.Count)
+          and (TabIdx <> tcViews.TabIndex) then
         begin
           tcViews.TabIndex := TabIdx;
           NotifyTabChange;
         end;
+        PopupTabContextMenu(X, Y);
       end;
     end;
   end;
