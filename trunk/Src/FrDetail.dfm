@@ -50,6 +50,7 @@ inherited DetailFrame: TDetailFrame
     OnMouseDown = tcViewsMouseDown
   end
   object mnuTabs: TPopupMenu
+    AutoPopup = False
     Left = 144
     Top = 104
   end
