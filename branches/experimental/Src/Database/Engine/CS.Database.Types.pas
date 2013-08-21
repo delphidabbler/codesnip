@@ -18,7 +18,8 @@ interface
 
 uses
   Generics.Collections, Generics.Defaults,
-  CS.Markup;
+  CS.Markup,
+  CS.Utils.Dates;
 
 type
   TDBSnippetID = record
@@ -56,42 +57,48 @@ type
   end;
 
   TDBSnippetProp = (
-    spTitle, spDescription, spSourceCode, spLanguage, spLastUpdated
+    spTitle, spDescription, spSourceCode, spLanguage, spModified
   );
 
   TDBSnippetProps = set of TDBSnippetProp;
 
-  IDBSnippet = interface(IInterface)
-    ['{29AF7828-DAC2-442D-8156-B335D66A255E}']
+  ISnippetBase = interface(IInterface)
+    ['{0F915A15-441B-4180-A9C2-41C52AF63C8A}']
     function GetID: TDBSnippetID;
-    property ID: TDBSnippetID read GetID;
-
     function GetTitle: string;
-    procedure SetTitle(const ATitle: string);
-    property Title: string read GetTitle write SetTitle;
-
     function GetDescription: TMarkup;
-    procedure SetDescription(const ADescription: TMarkup);
-    property Description: TMarkup read GetDescription write SetDescription;
-
     function GetSourceCode: string;
-    procedure SetSourceCode(const ASourceCode: string);
-    property SourceCode: string read GetSourceCode write SetSourceCode;
-
     function GetLanguage: TDBLanguage;
-    procedure SetLanguage(const ALanguage: TDBLanguage);
-    property Language: TDBLanguage read GetLanguage write SetLanguage;
+    function GetModified: TUTCDateTime;
 
-    function GetLastUpdated: TDateTime; // TODO: create a new record for dates
-    procedure SetLastUpdated(const ALastUpdated: TDateTime);
-    property LastUpdated: TDateTime read GetLastUpdated write SetLastUpdated;
+    property ID: TDBSnippetID read GetID;
+    property Modified: TUTCDateTime read GetModified;
+  end;
 
+  IReadOnlySnippet = interface(ISnippetBase)
+    ['{BD221CF4-482D-4FF9-BDAE-D320DDEBD578}']
     function GetValidProperties: TDBSnippetProps;
+
+    property Title: string read GetTitle;
+    property Description: TMarkup read GetDescription;
+    property SourceCode: string read GetSourceCode;
+    property Language: TDBLanguage read GetLanguage;
     property ValidProperties: TDBSnippetProps read GetValidProperties;
 
     function SupportsProperty(const AProp: TDBSnippetProp): Boolean;
-    function SupportsAllProperties: Boolean;
-    procedure Update(AFrom: IDBSnippet);
+  end;
+
+  ISnippet = interface(ISnippetBase)
+    ['{75F44D0E-7611-4A8D-A4F5-F7612E466238}']
+    procedure SetTitle(const ATitle: string);
+    procedure SetDescription(const ADescription: TMarkup);
+    procedure SetSourceCode(const ASourceCode: string);
+    procedure SetLanguage(const ALanguage: TDBLanguage);
+
+    property Title: string read GetTitle write SetTitle;
+    property Description: TMarkup read GetDescription write SetDescription;
+    property SourceCode: string read GetSourceCode write SetSourceCode;
+    property Language: TDBLanguage read GetLanguage write SetLanguage;
   end;
 
   IDBSnippetIDList = interface(IInterface)
@@ -106,7 +113,7 @@ type
     property Count: Integer read GetCount;
   end;
 
-  TDBFilter = reference to function (ASnippet: IDBSnippet): Boolean;
+  TDBFilter = reference to function (ASnippet: IReadOnlySnippet): Boolean;
 
 implementation
 
