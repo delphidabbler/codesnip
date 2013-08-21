@@ -14,9 +14,7 @@
 
 unit CS.Utils.Dates;
 
-// TODO: move any relevant code from UUtils to here
-
-{$WARN SYMBOL_PLATFORM OFF} // TODO: Remove this directive in production code
+// TODO: Move any relevant code from UUtils to this unit
 
 interface
 
