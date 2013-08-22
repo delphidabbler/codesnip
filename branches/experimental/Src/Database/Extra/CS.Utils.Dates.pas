@@ -28,8 +28,9 @@ type
   strict private
     var
       fValue: TDateTime;
-      class function RoundDTToNearestSec(const DT: TDateTime): TDateTime;
-        static;
+    class function RoundDTToNearestSec(const DT: TDateTime): TDateTime; static;
+    class function TryConvertISO8601String(const Str: string;
+      out Y, M, D, H, N, S, MS: Word): Boolean; static;
   public
     constructor Create(const UTC: TDateTime; const RoundToSec: Boolean = False);
       overload;
@@ -42,6 +43,7 @@ type
     class function CreateFromISO8601String(const Str: string): TUTCDateTime;
       static;
     class function Now(const RoundToSec: Boolean = False): TUTCDateTime; static;
+    class function IsValidISO8601String(const Str: string): Boolean; static;
     function ToDateTime: TDateTime; inline;
     function ToISO8601String(const RoundToSec: Boolean = False): string;
     function ToString(const AFormat: string): string; overload;
@@ -99,32 +101,9 @@ class function TUTCDateTime.CreateFromISO8601String(
   const Str: string): TUTCDateTime;
 var
   Y, M, D, H, N, S, MS: Word;
-
-  function ConvertError: EConvertError;
-  begin
-    Result := EConvertError.CreateFmt('"%s" is not a valid date', [Str]);
-  end;
-
 begin
-  // We only support ISO 8601 string in form YYYY-MM-DD"T"HH:MM:SS"Z" and
-  // YYYY-MM-DD"T"HH:MM:SS.XXX"Z" or YYYY-MM-DD"T"HH:MM:SS,XXX"Z"
-  // 1234567890 1 234567890123 4
-  if Length(Str) < 20 then
-    raise ConvertError;
-  if not TryStrToWord(Copy(Str, 1, 4), Y) or not
-    TryStrToWord(Copy(Str, 6, 2), M) or not
-    TryStrToWord(Copy(Str, 9, 2), D) or not
-    TryStrToWord(Copy(Str, 12, 2), H) or not
-    TryStrToWord(Copy(Str, 15, 2), N) or not
-    TryStrToWord(Copy(Str, 18, 2), S) then
-    raise ConvertError;
-  if CharInSet(Str[20], ['.', ',']) then
-  begin
-    if (Length(Str) < 24) or not TryStrToWord(Copy(Str, 21, 3), MS) then
-      raise ConvertError;
-  end
-  else
-    MS := 0;
+  if not TryConvertISO8601String(Str, Y, M, D, H, N, S, MS) then
+    raise EConvertError.CreateFmt('"%s" is not a valid date', [Str]);
   Result := TUTCDateTime.Create(Y, M, D, H, N, S, MS);
 end;
 
@@ -161,6 +140,13 @@ end;
 function TUTCDateTime.IsNull: Boolean;
 begin
   Result := SameDateTime(fValue, 0.0);
+end;
+
+class function TUTCDateTime.IsValidISO8601String(const Str: string): Boolean;
+var
+  Y, M, D, H, N, S, MS: Word;
+begin
+  Result := TryConvertISO8601String(Str, Y, M, D, H, N, S, MS);
 end;
 
 class operator TUTCDateTime.LessThan(const Left, Right: TUTCDateTime): Boolean;
@@ -224,6 +210,31 @@ function TUTCDateTime.ToString(const AFormat: string;
   const AFormatSettings: TFormatSettings): string;
 begin
   Result := FormatDateTime(AFormat, fValue, AFormatSettings);
+end;
+
+class function TUTCDateTime.TryConvertISO8601String(const Str: string; out Y, M,
+  D, H, N, S, MS: Word): Boolean;
+begin
+  // We only support ISO 8601 string in form YYYY-MM-DD"T"HH:MM:SS"Z" and
+  // YYYY-MM-DD"T"HH:MM:SS.XXX"Z" or YYYY-MM-DD"T"HH:MM:SS,XXX"Z"
+  // 1234567890 1 234567890123 4
+  if Length(Str) < 20 then
+    Exit(False);
+  if not TryStrToWord(Copy(Str, 1, 4), Y) or not
+    TryStrToWord(Copy(Str, 6, 2), M) or not
+    TryStrToWord(Copy(Str, 9, 2), D) or not
+    TryStrToWord(Copy(Str, 12, 2), H) or not
+    TryStrToWord(Copy(Str, 15, 2), N) or not
+    TryStrToWord(Copy(Str, 18, 2), S) then
+    Exit(False);
+  if CharInSet(Str[20], ['.', ',']) then
+  begin
+    if (Length(Str) < 24) or not TryStrToWord(Copy(Str, 21, 3), MS) then
+      Exit(False);
+  end
+  else
+    MS := 0;
+  Result := True;
 end;
 
 end.
