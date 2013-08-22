@@ -17,11 +17,14 @@ unit CS.Database.Types;
 interface
 
 uses
+  SysUtils,
   Generics.Collections, Generics.Defaults,
   CS.Markup,
   CS.Utils.Dates;
 
 type
+  EDBSnippetID = class(Exception);
+
   TDBSnippetID = record
   public
     type
@@ -40,6 +43,7 @@ type
     class operator NotEqual(const Left, Right: TDBSnippetID): Boolean; inline;
     function ToString: string; inline;
     function Hash: Integer; inline;
+    class function IsValidIDString(const S: string): Boolean; static;
   end;
 
   TDBLanguage = record
@@ -57,7 +61,7 @@ type
   end;
 
   TDBSnippetProp = (
-    spTitle, spDescription, spSourceCode, spLanguage, spModified
+    spAll, spTitle, spDescription, spSourceCode, spLanguage, spModified
   );
 
   TDBSnippetProps = set of TDBSnippetProp;
@@ -118,7 +122,7 @@ type
 implementation
 
 uses
-  SysUtils,
+  Character,
 
   CS.Utils.Hashes,
   UStrUtils;
@@ -126,7 +130,11 @@ uses
 { TDBSnippetID }
 
 constructor TDBSnippetID.Create(const AIDStr: string);
+resourcestring
+  sInvalidIDStr = '"%s" is not a valid snippet ID string';
 begin
+  if not IsValidIDString(AIDStr) then
+    raise EDBSnippetID.CreateFmt(sInvalidIDStr, [AIDStr]);
   fID := AIDStr;
 end;
 
@@ -151,6 +159,28 @@ end;
 function TDBSnippetID.Hash: Integer;
 begin
   Result := Integer(PaulLarsonHash(fID));
+end;
+
+class function TDBSnippetID.IsValidIDString(const S: string): Boolean;
+
+  function IsValidChar(const Ch: Char): Boolean;
+  const
+    ValidPunctChars = ['_', '-'];
+  begin
+    Result := TCharacter.IsLetterOrDigit(Ch) or CharInSet(Ch, ValidPunctChars);
+  end;
+
+var
+  Ch: Char;
+begin
+  // check for empty string
+  if S = EmptyStr then
+    Exit(False);
+  // check for valid characters
+  for Ch in S do
+    if not IsValidChar(Ch) then
+      Exit(False);
+  Result := True;
 end;
 
 class operator TDBSnippetID.NotEqual(const Left, Right: TDBSnippetID): Boolean;
