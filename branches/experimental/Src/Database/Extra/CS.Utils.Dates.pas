@@ -43,7 +43,7 @@ type
       static;
     class function Now(const RoundToSec: Boolean = False): TUTCDateTime; static;
     function ToDateTime: TDateTime; inline;
-    function ToISO8601String: string;
+    function ToISO8601String(const RoundToSec: Boolean = False): string;
     function ToString(const AFormat: string): string; overload;
     function ToString(const AFormat: string;
       const AFormatSettings: TFormatSettings): string; overload;
@@ -98,7 +98,7 @@ end;
 class function TUTCDateTime.CreateFromISO8601String(
   const Str: string): TUTCDateTime;
 var
-  Y, M, D, H, N, S: Word;
+  Y, M, D, H, N, S, MS: Word;
 
   function ConvertError: EConvertError;
   begin
@@ -106,7 +106,9 @@ var
   end;
 
 begin
-  // We only support ISO 8601 string in form YYYY-MM-DD"T"HH:MM:SS"Z"
+  // We only support ISO 8601 string in form YYYY-MM-DD"T"HH:MM:SS"Z" and
+  // YYYY-MM-DD"T"HH:MM:SS.XXX"Z" or YYYY-MM-DD"T"HH:MM:SS,XXX"Z"
+  // 1234567890 1 234567890123 4
   if Length(Str) < 20 then
     raise ConvertError;
   if not TryStrToWord(Copy(Str, 1, 4), Y) or not
@@ -116,7 +118,14 @@ begin
     TryStrToWord(Copy(Str, 15, 2), N) or not
     TryStrToWord(Copy(Str, 18, 2), S) then
     raise ConvertError;
-  Result := TUTCDateTime.Create(Y, M, D, H, N, S);
+  if CharInSet(Str[20], ['.', ',']) then
+  begin
+    if (Length(Str) < 24) or not TryStrToWord(Copy(Str, 21, 3), MS) then
+      raise ConvertError;
+  end
+  else
+    MS := 0;
+  Result := TUTCDateTime.Create(Y, M, D, H, N, S, MS);
 end;
 
 class function TUTCDateTime.CreateFromLocalDateTime(const DT: TDateTime;
@@ -194,11 +203,16 @@ begin
   Result := fValue;
 end;
 
-function TUTCDateTime.ToISO8601String: string;
+function TUTCDateTime.ToISO8601String(const RoundToSec: Boolean): string;
 begin
-  Result := FormatDateTime(
-    'yyyy"-"mm"-"dd"T"hh":"nn":"ss"Z"', RoundDTToNearestSec(fValue)
-  );
+  if RoundToSec then
+    Result := FormatDateTime(
+      'yyyy"-"mm"-"dd"T"hh":"nn":"ss"Z"', RoundDTToNearestSec(fValue)
+    )
+  else
+    Result := FormatDateTime(
+      'yyyy"-"mm"-"dd"T"hh":"nn":"ss"."zzz"Z"', fValue
+    );
 end;
 
 function TUTCDateTime.ToString(const AFormat: string): string;
