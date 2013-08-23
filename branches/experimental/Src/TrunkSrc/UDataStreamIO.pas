@@ -179,6 +179,8 @@ type
   ///  </remarks>
   TBinaryStreamWriter = class(TDataStreamIO)
   public
+    ///  Writes a single byte in binary.
+    procedure WriteByte(const B: Byte);
     ///  Writes a 16 bit integer in binary.
     procedure WriteInt16(const I: SmallInt);
     ///  Writes a 32 bit integer in binary.
@@ -374,6 +376,11 @@ begin
 end;
 
 { TBinaryStreamWriter }
+
+procedure TBinaryStreamWriter.WriteByte(const B: Byte);
+begin
+  BaseStream.WriteBuffer(B, SizeOf(B));
+end;
 
 procedure TBinaryStreamWriter.WriteBytes(const B: TBytes);
 begin
