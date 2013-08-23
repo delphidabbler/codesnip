@@ -36,6 +36,8 @@ type
   strict private
     var
       fID: string;
+    const
+      MaxIDStringLength = 64;
   public
     constructor Create(const AIDStr: string);
     class function CreateNew: TDBSnippetID; static;
@@ -179,6 +181,9 @@ var
 begin
   // check for empty string
   if S = EmptyStr then
+    Exit(False);
+  // check for long string
+  if Length(S) > MaxIDStringLength then
     Exit(False);
   // check for valid characters
   for Ch in S do
