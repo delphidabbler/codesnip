@@ -48,6 +48,8 @@ type
 
   TDBLanguage = record
   strict private
+    const
+      DefaultLanguage = 'Text';
     var
       fName: string;
   public
@@ -56,6 +58,7 @@ type
     class operator NotEqual(const Left, Right: TDBLanguage): Boolean; inline;
     class function Compare(const Left, Right: TDBLanguage): Integer; static;
       inline;
+    class function CreateDefault: TDBLanguage; static; inline;
     function CompareTo(const Other: TDBLanguage): Integer; inline;
     function ToString: string; inline;
   end;
@@ -223,6 +226,11 @@ end;
 constructor TDBLanguage.Create(const AName: string);
 begin
   fName := AName;
+end;
+
+class function TDBLanguage.CreateDefault: TDBLanguage;
+begin
+  Result := TDBLanguage.Create(DefaultLanguage);
 end;
 
 class operator TDBLanguage.Equal(const Left, Right: TDBLanguage): Boolean;
