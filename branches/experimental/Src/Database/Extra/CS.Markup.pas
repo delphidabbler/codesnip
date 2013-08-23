@@ -26,12 +26,17 @@ type
       fKind: TMarkupKind;
   public
     constructor Create(const ASource: string; const AKind: TMarkupKind);
+    class function CreateEmpty: TMarkup; static; inline;
     property Source: string read fSource;
     property Kind: TMarkupKind read fKind;
+    function IsEmpty: Boolean; inline;
     // TODO: function ToActiveText: IActiveText;
   end;
 
 implementation
+
+uses
+  SysUtils;
 
 { TMarkup }
 
@@ -39,6 +44,16 @@ constructor TMarkup.Create(const ASource: string; const AKind: TMarkupKind);
 begin
   fSource := ASource;
   fKind := AKind;
+end;
+
+class function TMarkup.CreateEmpty: TMarkup;
+begin
+  Result := TMArkup.Create(EmptyStr, mkPlainText);
+end;
+
+function TMarkup.IsEmpty: Boolean;
+begin
+  Result := fSource = EmptyStr;
 end;
 
 end.
