@@ -61,7 +61,7 @@ type
   end;
 
   TDBSnippetProp = (
-    spAll, spTitle, spDescription, spSourceCode, spLanguage, spModified
+    spID, spTitle, spDescription, spSourceCode, spLanguage, spModified
   );
 
   TDBSnippetProps = set of TDBSnippetProp;
@@ -110,6 +110,7 @@ type
     function GetEnumerator: TEnumerator<TDBSnippetID>;
     procedure Add(const ID: TDBSnippetID);
     procedure Delete(const ID: TDBSnippetID);
+    procedure Clear;
     function Contains(const ID: TDBSnippetID): Boolean;
     function GetItem(const Idx: Integer): TDBSnippetID;
     function GetCount: Integer;
