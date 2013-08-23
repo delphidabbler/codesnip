@@ -63,6 +63,7 @@ type
     class function CreateDefault: TDBLanguage; static; inline;
     function CompareTo(const Other: TDBLanguage): Integer; inline;
     function ToString: string; inline;
+    function IsDefault: Boolean;
   end;
 
   TDBSnippetProp = (
@@ -230,7 +231,10 @@ end;
 
 constructor TDBLanguage.Create(const AName: string);
 begin
-  fName := AName;
+  if AName <> EmptyStr then
+    fName := AName
+  else
+    fName := DefaultLanguage;
 end;
 
 class function TDBLanguage.CreateDefault: TDBLanguage;
@@ -241,6 +245,11 @@ end;
 class operator TDBLanguage.Equal(const Left, Right: TDBLanguage): Boolean;
 begin
   Result := Compare(Left, Right) = 0;
+end;
+
+function TDBLanguage.IsDefault: Boolean;
+begin
+  Result := StrSameText(fName, DefaultLanguage);
 end;
 
 class operator TDBLanguage.NotEqual(const Left, Right: TDBLanguage): Boolean;
