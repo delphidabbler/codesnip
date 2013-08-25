@@ -50,9 +50,22 @@ type
     class function IsValidIDString(const S: string): Boolean; static;
   end;
 
+  IDBSnippetIDList = interface(IInterface)
+    ['{842B9A92-6CD5-4DC3-9DA7-9753B08A52AB}']
+    function GetEnumerator: TEnumerator<TDBSnippetID>;
+    procedure Add(const ID: TDBSnippetID);
+    procedure Delete(const ID: TDBSnippetID);
+    procedure Clear;
+    function Contains(const ID: TDBSnippetID): Boolean;
+    function GetItem(const Idx: Integer): TDBSnippetID;
+    function GetCount: Integer;
+    property Items[const Idx: Integer]: TDBSnippetID read GetItem;
+    property Count: Integer read GetCount;
+  end;
+
   TDBSnippetProp = (
     spID, spTitle, spDescription, spSourceCode, spLanguageID, spModified,
-    spCreated, spRequiredModules
+    spCreated, spRequiredModules, spRequiredSnippets
   );
 
   TDBSnippetProps = set of TDBSnippetProp;
@@ -67,6 +80,7 @@ type
     function GetSourceCode: string;
     function GetLanguageID: TSourceCodeLanguageID;
     function GetRequiredModules: IStringList;
+    function GetRequiredSnippets: IDBSnippetIDList;
 
     property ID: TDBSnippetID read GetID;
     property Created: TUTCDateTime read GetCreated;
@@ -82,7 +96,7 @@ type
     property SourceCode: string read GetSourceCode;
     property LanguageID: TSourceCodeLanguageID read GetLanguageID;
     property RequiredModules: IStringList read GetRequiredModules;
-
+    property RequiredSnippets: IDBSnippetIDList read GetRequiredSnippets;
 
     // TODO: query if following properties are required
     property ValidProperties: TDBSnippetProps read GetValidProperties;
@@ -96,6 +110,7 @@ type
     procedure SetSourceCode(const ASourceCode: string);
     procedure SetLanguageID(const ALanguageID: TSourceCodeLanguageID);
     procedure SetRequiredModules(AModuleList: IStringList);
+    procedure SetRequiredSnippets(AIDList: IDBSnippetIDList);
 
     property Title: string read GetTitle write SetTitle;
     property Description: TMarkup read GetDescription write SetDescription;
@@ -104,19 +119,8 @@ type
       write SetLanguageID;
     property RequiredModules: IStringList read GetRequiredModules
       write SetRequiredModules;
-  end;
-
-  IDBSnippetIDList = interface(IInterface)
-    ['{842B9A92-6CD5-4DC3-9DA7-9753B08A52AB}']
-    function GetEnumerator: TEnumerator<TDBSnippetID>;
-    procedure Add(const ID: TDBSnippetID);
-    procedure Delete(const ID: TDBSnippetID);
-    procedure Clear;
-    function Contains(const ID: TDBSnippetID): Boolean;
-    function GetItem(const Idx: Integer): TDBSnippetID;
-    function GetCount: Integer;
-    property Items[const Idx: Integer]: TDBSnippetID read GetItem;
-    property Count: Integer read GetCount;
+    property RequiredSnippets: IDBSnippetIDList read GetRequiredSnippets
+      write SetRequiredSnippets;
   end;
 
   TDBFilter = reference to function (ASnippet: IReadOnlySnippet): Boolean;
