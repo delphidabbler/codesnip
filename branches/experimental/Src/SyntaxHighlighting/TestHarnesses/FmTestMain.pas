@@ -87,7 +87,7 @@ type
     // Array of brush IDs with same index as brush's entry in cbChooseBrush
     fUIBrushIDs: TArray<string>;
     // Array of language IDs with same index as language's entry in cbChooseLang
-    fUILangIDs: TArray<string>;
+    fUILangIDs: TArray<TSourceCodeLanguageID>;
     // Sets fUIThemeIDs and populates combo with theme friendly names
     procedure PopulateChooseThemeCombo;
     // Sets fUIBrushIDs and populates combo with brush friendly names
@@ -99,7 +99,7 @@ type
     // Gets ID of brush corresponding to that selected in cbChooseBrush
     function GetSelectedBrushID: string;
     // Gets ID of language corresponding to that selected in cbChooseLang
-    function GetSelectedLangID: string;
+    function GetSelectedLangID: TSourceCodeLanguageID;
 
     procedure DoRendering(Brush: TSyntaxHiliterBrush);
     // Performs highlight rendering using a mock highlighter that shows each
@@ -255,7 +255,7 @@ begin
     Exit;
   for Lang in fLanguages do
   begin
-    AddLineFmt('LANGUAGE: %s - "%s"', [Lang.ID, Lang.FriendlyName]);
+    AddLineFmt('LANGUAGE: %s - "%s"', [Lang.ID.ToString, Lang.FriendlyName]);
     AddLineFmt('  TAB-SIZE: %d', [Lang.EditorTabSize]);
     AddLineFmt('  BRUSH-ID: %s', [Lang.HiliterBrushID]);
     AddLineFmt('  BUILT-IN: %s', [BoolToStr(Lang.BuiltIn, True)]);
@@ -532,7 +532,7 @@ begin
   Result := fUIBrushIDs[SelIdx];
 end;
 
-function TMainTestForm.GetSelectedLangID: string;
+function TMainTestForm.GetSelectedLangID: TSourceCodeLanguageID;
 var
   SelIdx: Integer;
 begin
@@ -574,7 +574,7 @@ end;
 
 procedure TMainTestForm.PopulateChooseLangCombo;
 var
-  LangID: string;
+  LangID: TSourceCodeLanguageID;
 begin
   cbChooseLang.Clear;
   if not Assigned(fLanguages) then
