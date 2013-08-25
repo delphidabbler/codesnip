@@ -20,6 +20,7 @@ uses
   SysUtils,
   Generics.Collections, Generics.Defaults,
   CS.Markup,
+  CS.SourceCode.Languages,
   CS.Utils.Dates;
 
 type
@@ -48,24 +49,6 @@ type
     class function IsValidIDString(const S: string): Boolean; static;
   end;
 
-  TDBLanguage = record
-  strict private
-    const
-      DefaultLanguage = 'Text';
-    var
-      fName: string;
-  public
-    constructor Create(const AName: string);
-    class operator Equal(const Left, Right: TDBLanguage): Boolean; inline;
-    class operator NotEqual(const Left, Right: TDBLanguage): Boolean; inline;
-    class function Compare(const Left, Right: TDBLanguage): Integer; static;
-      inline;
-    class function CreateDefault: TDBLanguage; static; inline;
-    function CompareTo(const Other: TDBLanguage): Integer; inline;
-    function ToString: string; inline;
-    function IsDefault: Boolean;
-  end;
-
   TDBSnippetProp = (
     spID, spTitle, spDescription, spSourceCode, spLanguage, spModified
   );
@@ -78,7 +61,7 @@ type
     function GetTitle: string;
     function GetDescription: TMarkup;
     function GetSourceCode: string;
-    function GetLanguage: TDBLanguage;
+    function GetLanguageID: TSourceCodeLanguageID;
     function GetModified: TUTCDateTime;
 
     property ID: TDBSnippetID read GetID;
@@ -92,7 +75,7 @@ type
     property Title: string read GetTitle;
     property Description: TMarkup read GetDescription;
     property SourceCode: string read GetSourceCode;
-    property Language: TDBLanguage read GetLanguage;
+    property LanguageID: TSourceCodeLanguageID read GetLanguageID;
     property ValidProperties: TDBSnippetProps read GetValidProperties;
 
     function SupportsProperty(const AProp: TDBSnippetProp): Boolean;
@@ -103,12 +86,13 @@ type
     procedure SetTitle(const ATitle: string);
     procedure SetDescription(const ADescription: TMarkup);
     procedure SetSourceCode(const ASourceCode: string);
-    procedure SetLanguage(const ALanguage: TDBLanguage);
+    procedure SetLanguageID(const ALanguageID: TSourceCodeLanguageID);
 
     property Title: string read GetTitle write SetTitle;
     property Description: TMarkup read GetDescription write SetDescription;
     property SourceCode: string read GetSourceCode write SetSourceCode;
-    property Language: TDBLanguage read GetLanguage write SetLanguage;
+    property LanguageID: TSourceCodeLanguageID read GetLanguageID
+      write SetLanguageID;
   end;
 
   IDBSnippetIDList = interface(IInterface)
@@ -215,51 +199,6 @@ function TDBSnippetID.TEqualityComparer.GetHashCode(
   const Value: TDBSnippetID): Integer;
 begin
   Result := Value.Hash;
-end;
-
-{ TDBLanguage }
-
-class function TDBLanguage.Compare(const Left, Right: TDBLanguage): Integer;
-begin
-  Result := StrCompareText(Left.fName, Right.fName);
-end;
-
-function TDBLanguage.CompareTo(const Other: TDBLanguage): Integer;
-begin
-  Result := Compare(Self, Other);
-end;
-
-constructor TDBLanguage.Create(const AName: string);
-begin
-  if AName <> EmptyStr then
-    fName := AName
-  else
-    fName := DefaultLanguage;
-end;
-
-class function TDBLanguage.CreateDefault: TDBLanguage;
-begin
-  Result := TDBLanguage.Create(DefaultLanguage);
-end;
-
-class operator TDBLanguage.Equal(const Left, Right: TDBLanguage): Boolean;
-begin
-  Result := Compare(Left, Right) = 0;
-end;
-
-function TDBLanguage.IsDefault: Boolean;
-begin
-  Result := StrSameText(fName, DefaultLanguage);
-end;
-
-class operator TDBLanguage.NotEqual(const Left, Right: TDBLanguage): Boolean;
-begin
-  Result := Compare(Left, Right) <> 0;
-end;
-
-function TDBLanguage.ToString: string;
-begin
-  Result := fName;
 end;
 
 end.
