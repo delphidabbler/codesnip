@@ -57,7 +57,8 @@ uses
   UCSSBuilder in '..\..\TrunkSrc\UCSSBuilder.pas',
   CS.SourceCode.Hiliter.Renderers.CSS in '..\Highlighters\CS.SourceCode.Hiliter.Renderers.CSS.pas',
   CS.SourceCode.Languages in '..\Languages\CS.SourceCode.Languages.pas',
-  CS.SourceCode.Languages.Persist in '..\Languages\CS.SourceCode.Languages.Persist.pas';
+  CS.SourceCode.Languages.Persist in '..\Languages\CS.SourceCode.Languages.Persist.pas',
+  CS.Utils.Hashes in '..\..\Database\Extra\CS.Utils.Hashes.pas';
 
 {$R *.res}
 

@@ -114,6 +114,7 @@
 			<DCCReference Include="..\Highlighters\CS.SourceCode.Hiliter.Renderers.CSS.pas"/>
 			<DCCReference Include="..\Languages\CS.SourceCode.Languages.pas"/>
 			<DCCReference Include="..\Languages\CS.SourceCode.Languages.Persist.pas"/>
+			<DCCReference Include="..\..\Database\Extra\CS.Utils.Hashes.pas"/>
 			<None Include="..\Highlighters\BuiltInHiliterThemes.txt"/>
 			<None Include="..\SynEditUnits\SynEdit.inc"/>
 			<None Include="..\SynEditUnits\SynEditJedi.inc"/>
