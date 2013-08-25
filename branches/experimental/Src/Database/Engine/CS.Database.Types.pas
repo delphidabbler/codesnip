@@ -63,9 +63,18 @@ type
     property Count: Integer read GetCount;
   end;
 
+  TDBSnippetKind = (
+    skFreeform,   // free-form code - not in any of other supported formats
+    skRoutine,    // procedure or function in standard format
+    skConstant,   // constant definition in standard format
+    skTypeDef,    // type definition in standard format
+    skUnit,       // complete source code unit
+    skClass       // Delphi class or record with methods
+  );
+
   TDBSnippetProp = (
     spID, spTitle, spDescription, spSourceCode, spLanguageID, spModified,
-    spCreated, spRequiredModules, spRequiredSnippets, spXRefs, spNotes
+    spCreated, spRequiredModules, spRequiredSnippets, spXRefs, spNotes, spKind
   );
 
   TDBSnippetProps = set of TDBSnippetProp;
@@ -83,6 +92,7 @@ type
     function GetRequiredSnippets: IDBSnippetIDList;
     function GetXRefs: IDBSnippetIDList;
     function GetNotes: TMarkup;
+    function GetKind: TDBSnippetKind;
 
     property ID: TDBSnippetID read GetID;
     property Created: TUTCDateTime read GetCreated;
@@ -101,6 +111,7 @@ type
     property RequiredSnippets: IDBSnippetIDList read GetRequiredSnippets;
     property XRefs: IDBSnippetIDList read GetXRefs;
     property Notes: TMarkup read GetNotes;
+    property Kind: TDBSnippetKind read GetKind;
 
     // TODO: query if following properties are required
     property ValidProperties: TDBSnippetProps read GetValidProperties;
@@ -117,6 +128,7 @@ type
     procedure SetRequiredSnippets(AIDList: IDBSnippetIDList);
     procedure SetXRefs(AIDList: IDBSnippetIDList);
     procedure SetNotes(const ANotes: TMarkup);
+    procedure SetKind(const ASnippetKind: TDBSnippetKind);
 
     property Title: string read GetTitle write SetTitle;
     property Description: TMarkup read GetDescription write SetDescription;
@@ -129,6 +141,7 @@ type
       write SetRequiredSnippets;
     property XRefs: IDBSnippetIDList read GetXRefs write SetXRefs;
     property Notes: TMarkup read GetNotes write SetNotes;
+    property Kind: TDBSnippetKind read GetKind write SetKind;
   end;
 
   TDBFilter = reference to function (ASnippet: IReadOnlySnippet): Boolean;
