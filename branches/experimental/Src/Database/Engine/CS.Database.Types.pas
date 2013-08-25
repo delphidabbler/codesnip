@@ -65,7 +65,7 @@ type
 
   TDBSnippetProp = (
     spID, spTitle, spDescription, spSourceCode, spLanguageID, spModified,
-    spCreated, spRequiredModules, spRequiredSnippets, spXRefs
+    spCreated, spRequiredModules, spRequiredSnippets, spXRefs, spNotes
   );
 
   TDBSnippetProps = set of TDBSnippetProp;
@@ -82,6 +82,7 @@ type
     function GetRequiredModules: IStringList;
     function GetRequiredSnippets: IDBSnippetIDList;
     function GetXRefs: IDBSnippetIDList;
+    function GetNotes: TMarkup;
 
     property ID: TDBSnippetID read GetID;
     property Created: TUTCDateTime read GetCreated;
@@ -99,6 +100,7 @@ type
     property RequiredModules: IStringList read GetRequiredModules;
     property RequiredSnippets: IDBSnippetIDList read GetRequiredSnippets;
     property XRefs: IDBSnippetIDList read GetXRefs;
+    property Notes: TMarkup read GetNotes;
 
     // TODO: query if following properties are required
     property ValidProperties: TDBSnippetProps read GetValidProperties;
@@ -114,6 +116,7 @@ type
     procedure SetRequiredModules(AModuleList: IStringList);
     procedure SetRequiredSnippets(AIDList: IDBSnippetIDList);
     procedure SetXRefs(AIDList: IDBSnippetIDList);
+    procedure SetNotes(const ANotes: TMarkup);
 
     property Title: string read GetTitle write SetTitle;
     property Description: TMarkup read GetDescription write SetDescription;
@@ -125,6 +128,7 @@ type
     property RequiredSnippets: IDBSnippetIDList read GetRequiredSnippets
       write SetRequiredSnippets;
     property XRefs: IDBSnippetIDList read GetXRefs write SetXRefs;
+    property Notes: TMarkup read GetNotes write SetNotes;
   end;
 
   TDBFilter = reference to function (ASnippet: IReadOnlySnippet): Boolean;
