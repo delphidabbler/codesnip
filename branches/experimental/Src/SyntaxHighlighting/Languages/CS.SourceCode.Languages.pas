@@ -18,10 +18,41 @@ unit CS.SourceCode.Languages;
 interface
 
 uses
+  Generics.Defaults,
   Generics.Collections,
   CS.SourceCode.Hiliter.Brushes;
 
 type
+  TSourceCodeLanguageID = record
+  strict private
+    const
+      DefaultLanguageID = 'Text';
+    var
+      fID: string;
+  public
+    type
+      TEqualityComparer = class(TEqualityComparer<TSourceCodeLanguageID>)
+      public
+        function Equals(const Left, Right: TSourceCodeLanguageID): Boolean;
+          override;
+        function GetHashCode(const Value: TSourceCodeLanguageID): Integer;
+          override;
+      end;
+  public
+    constructor Create(const AID: string);
+    class operator Equal(const Left, Right: TSourceCodeLanguageID): Boolean;
+      inline;
+    class operator NotEqual(const Left, Right: TSourceCodeLanguageID): Boolean;
+      inline;
+    class function Compare(const Left, Right: TSourceCodeLanguageID): Integer;
+      static; inline;
+    class function CreateDefault: TSourceCodeLanguageID; static; inline;
+    function CompareTo(const Other: TSourceCodeLanguageID): Integer; inline;
+    function ToString: string; inline;
+    function Hash: Integer; inline;
+    function IsDefault: Boolean;
+  end;
+
   TSourceCodeLanguage = record
   strict private
     const
@@ -29,18 +60,18 @@ type
       DefaultBrushID = TSyntaxHiliterBrushes.NullBrushID;
   strict private
     var
-      fID: string;
+      fID: TSourceCodeLanguageID;
       fFriendlyName: string;
       fEditorTabSize: Byte;
       fHiliterBrushID: string;
       fBuiltIn: Boolean;
   public
-    constructor Create(const AID, AFriendlyName: string;
-      const AIsBuiltIn: Boolean);
+    constructor Create(const AID: TSourceCodeLanguageID;
+      const AFriendlyName: string; const AIsBuiltIn: Boolean);
     ///  <summary>Updates the record's properties to those of Lang except that
     ///  the BuiltIn property remains unchanged.</summary>
     procedure Update(const Lang: TSourceCodeLanguage);
-    property ID: string read fID;
+    property ID: TSourceCodeLanguageID read fID;
     property FriendlyName: string read fFriendlyName write fFriendlyName;
     property EditorTabSize: Byte read fEditorTabSize write fEditorTabSize;
     property HiliterBrushID: string read fHiliterBrushID write fHiliterBrushID;
@@ -51,19 +82,20 @@ type
   TSourceCodeLanguages = class(TObject)
   strict private
     var
-      fLanguages: TDictionary<string,TSourceCodeLanguage>;
-    function GetLanguage(const LangID: string): TSourceCodeLanguage;
+      fLanguages: TDictionary<TSourceCodeLanguageID,TSourceCodeLanguage>;
+    function GetLanguage(const LangID: TSourceCodeLanguageID):
+      TSourceCodeLanguage;
   public
     constructor Create;
     destructor Destroy; override;
     procedure Add(const Language: TSourceCodeLanguage);
     procedure Update(const Language: TSourceCodeLanguage);
     procedure Clear;
-    procedure Delete(const LangID: string);
-    function HasLanguage(const LangID: string): Boolean;
-    function SupportedLanguageIDs: TArray<string>;
+    procedure Delete(const LangID: TSourceCodeLanguageID);
+    function HasLanguage(const LangID: TSourceCodeLanguageID): Boolean;
+    function SupportedLanguageIDs: TArray<TSourceCodeLanguageID>;
     function GetEnumerator: TEnumerator<TSourceCodeLanguage>;
-    property Languages[const ID: string]: TSourceCodeLanguage
+    property Languages[const ID: TSourceCodeLanguageID]: TSourceCodeLanguage
       read GetLanguage; default;
   end;
 
@@ -71,12 +103,82 @@ type
 implementation
 
 uses
-  UComparers;
+  SysUtils,
+  CS.Utils.Hashes,
+  UStrUtils;
+
+{ TSourceCodeLanguageID }
+
+class function TSourceCodeLanguageID.Compare(const Left,
+  Right: TSourceCodeLanguageID): Integer;
+begin
+  Result := StrCompareText(Left.fID, Right.fID);
+end;
+
+function TSourceCodeLanguageID.CompareTo(
+  const Other: TSourceCodeLanguageID): Integer;
+begin
+  Result := Compare(Self, Other);
+end;
+
+constructor TSourceCodeLanguageID.Create(const AID: string);
+begin
+  if AID <> EmptyStr then
+    fID := AID
+  else
+    fID := DefaultLanguageID;
+end;
+
+class function TSourceCodeLanguageID.CreateDefault: TSourceCodeLanguageID;
+begin
+  Result := TSourceCodeLanguageID.Create(DefaultLanguageID);
+end;
+
+class operator TSourceCodeLanguageID.Equal(const Left,
+  Right: TSourceCodeLanguageID): Boolean;
+begin
+  Result := Compare(Left, Right) = 0;
+end;
+
+function TSourceCodeLanguageID.Hash: Integer;
+begin
+  Result := PaulLarsonHash(fID);
+end;
+
+function TSourceCodeLanguageID.IsDefault: Boolean;
+begin
+  Result := StrSameText(fID, DefaultLanguageID);
+end;
+
+class operator TSourceCodeLanguageID.NotEqual(const Left,
+  Right: TSourceCodeLanguageID): Boolean;
+begin
+  Result := Compare(Left, Right) <> 0;
+end;
+
+function TSourceCodeLanguageID.ToString: string;
+begin
+  Result := fID;
+end;
+
+{ TSourceCodeLanguageID.TEqualityComparer }
+
+function TSourceCodeLanguageID.TEqualityComparer.Equals(const Left,
+  Right: TSourceCodeLanguageID): Boolean;
+begin
+  Result := Left = Right;
+end;
+
+function TSourceCodeLanguageID.TEqualityComparer.GetHashCode(
+  const Value: TSourceCodeLanguageID): Integer;
+begin
+  Result := Value.Hash;
+end;
 
 { TSourceCodeLanguage }
 
-constructor TSourceCodeLanguage.Create(const AID, AFriendlyName: string;
-  const AIsBuiltIn: Boolean);
+constructor TSourceCodeLanguage.Create(const AID: TSourceCodeLanguageID;
+  const AFriendlyName: string; const AIsBuiltIn: Boolean);
 begin
   fID := AID;
   fFriendlyName := AFriendlyName;
@@ -110,12 +212,12 @@ end;
 constructor TSourceCodeLanguages.Create;
 begin
   inherited Create;
-  fLanguages := TDictionary<string,TSourceCodeLanguage>.Create(
-    TTextEqualityComparer.Create
+  fLanguages := TDictionary<TSourceCodeLanguageID,TSourceCodeLanguage>.Create(
+    TSourceCodeLanguageID.TEqualityComparer.Create
   );
 end;
 
-procedure TSourceCodeLanguages.Delete(const LangID: string);
+procedure TSourceCodeLanguages.Delete(const LangID: TSourceCodeLanguageID);
 begin
   fLanguages.Remove(LangID);
 end;
@@ -131,18 +233,20 @@ begin
   Result := fLanguages.Values.GetEnumerator;
 end;
 
-function TSourceCodeLanguages.GetLanguage(const LangID: string):
+function TSourceCodeLanguages.GetLanguage(const LangID: TSourceCodeLanguageID):
   TSourceCodeLanguage;
 begin
   Result := fLanguages[LangID];
 end;
 
-function TSourceCodeLanguages.HasLanguage(const LangID: string): Boolean;
+function TSourceCodeLanguages.HasLanguage(const LangID: TSourceCodeLanguageID):
+  Boolean;
 begin
   Result := fLanguages.ContainsKey(LangID);
 end;
 
-function TSourceCodeLanguages.SupportedLanguageIDs: TArray<string>;
+function TSourceCodeLanguages.SupportedLanguageIDs:
+  TArray<TSourceCodeLanguageID>;
 begin
   Result := fLanguages.Keys.ToArray;
 end;

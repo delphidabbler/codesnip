@@ -172,8 +172,8 @@ begin
     SB.AppendLine;
     for Language in Langs do
     begin
-      SB.Append(Format('%s %s', [KwdLanguage, Language.ID]));
-      if Language.ID <> Language.FriendlyName then
+      SB.Append(Format('%s %s', [KwdLanguage, Language.ID.ToString]));
+      if Language.ID.ToString <> Language.FriendlyName then
         SB.Append(' ' + Language.FriendlyName);
       SB.AppendLine;
       SB.AppendLine(Format('  %s %d', [KwdTabSize, Language.EditorTabSize]));
@@ -316,20 +316,22 @@ procedure TSourceCodeLanguagesIO.TParser.ParseLanguages(
   const LangList: TLangList; const IsBuiltIn: Boolean);
 var
   LangIDs: IStringList;
-  LangID: string;
+  LangIDStr: string;
+  LangID: TSourceCodeLanguageID;
   LangFriendlyName: string;
   Language: TSourceCodeLanguage;
 begin
   LangIDs := TIStringList.Create;
   while StrSameText(CurrentStatement, KwdLanguage) do
   begin
-    StrSplit(CurrentParameter, ' ', LangID, LangFriendlyName);
-    LangID := StrTrim(LangID);
-    ValidateIdent(KwdLanguage, LangID, LangIDs);
-    LangIDs.Add(LangID);
+    StrSplit(CurrentParameter, ' ', LangIDStr, LangFriendlyName);
+    LangIDStr := StrTrim(LangIDStr);
+    ValidateIdent(KwdLanguage, LangIDStr, LangIDs);
+    LangID := TSourceCodeLanguageID.Create(LangIDStr);
+    LangIDs.Add(LangIDStr);
     LangFriendlyName := StrTrim(LangFriendlyName);
     if LangFriendlyName = EmptyStr then
-      LangFriendlyName := LangID;
+      LangFriendlyName := LangIDStr;
     NextLine;
     Language := TSourceCodeLanguage.Create(LangID, LangFriendlyName, IsBuiltIn);
     ParseLanguage(Language);
