@@ -50,7 +50,8 @@ type
   end;
 
   TDBSnippetProp = (
-    spID, spTitle, spDescription, spSourceCode, spLanguageID, spModified
+    spID, spTitle, spDescription, spSourceCode, spLanguageID, spModified,
+    spCreated
   );
 
   TDBSnippetProps = set of TDBSnippetProp;
@@ -58,13 +59,15 @@ type
   ISnippetBase = interface(IInterface)
     ['{0F915A15-441B-4180-A9C2-41C52AF63C8A}']
     function GetID: TDBSnippetID;
+    function GetCreated: TUTCDateTime;
+    function GetModified: TUTCDateTime;
     function GetTitle: string;
     function GetDescription: TMarkup;
     function GetSourceCode: string;
     function GetLanguageID: TSourceCodeLanguageID;
-    function GetModified: TUTCDateTime;
 
     property ID: TDBSnippetID read GetID;
+    property Created: TUTCDateTime read GetCreated;
     property Modified: TUTCDateTime read GetModified;
   end;
 
