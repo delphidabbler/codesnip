@@ -21,7 +21,8 @@ uses
   Generics.Collections, Generics.Defaults,
   CS.Markup,
   CS.SourceCode.Languages,
-  CS.Utils.Dates;
+  CS.Utils.Dates,
+  UIStringList;
 
 type
   EDBSnippetID = class(Exception);
@@ -51,7 +52,7 @@ type
 
   TDBSnippetProp = (
     spID, spTitle, spDescription, spSourceCode, spLanguageID, spModified,
-    spCreated
+    spCreated, spRequiredModules
   );
 
   TDBSnippetProps = set of TDBSnippetProp;
@@ -65,6 +66,7 @@ type
     function GetDescription: TMarkup;
     function GetSourceCode: string;
     function GetLanguageID: TSourceCodeLanguageID;
+    function GetRequiredModules: IStringList;
 
     property ID: TDBSnippetID read GetID;
     property Created: TUTCDateTime read GetCreated;
@@ -79,8 +81,11 @@ type
     property Description: TMarkup read GetDescription;
     property SourceCode: string read GetSourceCode;
     property LanguageID: TSourceCodeLanguageID read GetLanguageID;
-    property ValidProperties: TDBSnippetProps read GetValidProperties;
+    property RequiredModules: IStringList read GetRequiredModules;
 
+
+    // TODO: query if following properties are required
+    property ValidProperties: TDBSnippetProps read GetValidProperties;
     function SupportsProperty(const AProp: TDBSnippetProp): Boolean;
   end;
 
@@ -90,12 +95,15 @@ type
     procedure SetDescription(const ADescription: TMarkup);
     procedure SetSourceCode(const ASourceCode: string);
     procedure SetLanguageID(const ALanguageID: TSourceCodeLanguageID);
+    procedure SetRequiredModules(AModuleList: IStringList);
 
     property Title: string read GetTitle write SetTitle;
     property Description: TMarkup read GetDescription write SetDescription;
     property SourceCode: string read GetSourceCode write SetSourceCode;
     property LanguageID: TSourceCodeLanguageID read GetLanguageID
       write SetLanguageID;
+    property RequiredModules: IStringList read GetRequiredModules
+      write SetRequiredModules;
   end;
 
   IDBSnippetIDList = interface(IInterface)
