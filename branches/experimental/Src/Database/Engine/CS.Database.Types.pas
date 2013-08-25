@@ -50,7 +50,7 @@ type
   end;
 
   TDBSnippetProp = (
-    spID, spTitle, spDescription, spSourceCode, spLanguage, spModified
+    spID, spTitle, spDescription, spSourceCode, spLanguageID, spModified
   );
 
   TDBSnippetProps = set of TDBSnippetProp;
