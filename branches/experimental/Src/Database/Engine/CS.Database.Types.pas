@@ -133,10 +133,10 @@ type
   IDBTagList = interface(IInterface)
     ['{BFADA81C-8226-4350-BDEC-12816792AB78}']
     function GetEnumerator: TEnumerator<TDBTag>;
-    procedure Add(const ID: TDBTag);
-    procedure Delete(const ID: TDBTag);
+    procedure Add(const ATag: TDBTag);
+    procedure Delete(const ATag: TDBTag);
     procedure Clear;
-    function Contains(const ID: TDBTag): Boolean;
+    function Contains(const ATag: TDBTag): Boolean;
     function GetItem(const Idx: Integer): TDBTag;
     function GetCount: Integer;
     property Items[const Idx: Integer]: TDBTag read GetItem;
@@ -225,7 +225,25 @@ type
     property Tags: IDBTagList read GetTags write SetTags;
   end;
 
-  TDBFilter = reference to function (ASnippet: IReadOnlySnippet): Boolean;
+  TDBFilterFn = reference to function (ASnippet: IReadOnlySnippet): Boolean;
+
+  IDBFilter = interface(IInterface)
+    ['{6610639A-FC54-4FC7-8DCB-34841B3BC99E}']
+    function RequiredProperties: TDBSnippetProps;
+    function Match(ASnippet: IReadOnlySnippet): Boolean;
+  end;
+
+  TDelegatedDBFilter = class(TInterfacedObject, IDBFilter)
+  strict private
+    var
+      fFilterFn: TDBFilterFn;
+      fRequiredProps: TDBSnippetProps;
+  public
+    constructor Create(const FilterFn: TDBFilterFn;
+      const RequiredProps: TDBSnippetProps = []);
+    function RequiredProperties: TDBSnippetProps;
+    function Match(ASnippet: IReadOnlySnippet): Boolean;
+  end;
 
 implementation
 
@@ -456,6 +474,27 @@ end;
 function TDBTag.TEqualityComparer.GetHashCode(const Value: TDBTag): Integer;
 begin
   Result := Value.Hash;
+end;
+
+{ TDelegatedDBFilter }
+
+constructor TDelegatedDBFilter.Create(const FilterFn: TDBFilterFn;
+  const RequiredProps: TDBSnippetProps);
+begin
+  Assert(Assigned(FilterFn), ClassName + '.Create: FilterFn is nil');
+  inherited Create;
+  fFilterFn := FilterFn;
+  fRequiredProps := RequiredProps;
+end;
+
+function TDelegatedDBFilter.Match(ASnippet: IReadOnlySnippet): Boolean;
+begin
+  Result := fFilterFn(ASnippet);
+end;
+
+function TDelegatedDBFilter.RequiredProperties: TDBSnippetProps;
+begin
+  Result := fRequiredProps;
 end;
 
 end.
