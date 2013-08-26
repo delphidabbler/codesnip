@@ -330,6 +330,7 @@ end;
 function TDBCompileResults.FailsWith(const Compilers: TCompilerIDs;
   const Rule: TTestRule): Boolean;
 begin
+  Result := False;  // keeps compiler happy
   case Rule of
     trAnd:
       Result := Compilers <= fFails;
@@ -360,6 +361,7 @@ end;
 function TDBCompileResults.SucceedsWith(const Compilers: TCompilerIDs;
   const Rule: TTestRule): Boolean;
 begin
+  Result := False;  // keeps compiler happy
   case Rule of
     trAnd:
       Result := Compilers <= fSucceeds;
