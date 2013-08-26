@@ -99,6 +99,50 @@ type
       Boolean;
   end;
 
+  EDBTag = class(Exception);
+
+  TDBTag = record
+  public
+    type
+      TComparer = class(TComparer<TDBTag>)
+        function Compare(const Left, Right: TDBTag): Integer; override;
+      end;
+      TEqualityComparer = class(TEqualityComparer<TDBTag>)
+      public
+        function Equals(const Left, Right: TDBTag): Boolean; override;
+        function GetHashCode(const Value: TDBTag): Integer; override;
+      end;
+  strict private
+    var
+      fTag: string;
+    class function PrepareTagString(const AStr: string): string; static;
+    class function IsValidPreparedTagString(const AStr: string): Boolean;
+      static;
+  public
+    constructor Create(const ATagStr: string);
+    class operator Equal(const Left, Right: TDBTag): Boolean; inline;
+    class operator NotEqual(const Left, Right: TDBTag): Boolean; inline;
+    class function IsValidTagString(const AStr: string): Boolean; static;
+      inline;
+    class function Compare(const Left, Right: TDBTag): Integer; static; inline;
+    function ToString: string; inline;
+    function ToDisplayString: string;
+    function Hash: Integer; inline;
+  end;
+
+  IDBTagList = interface(IInterface)
+    ['{BFADA81C-8226-4350-BDEC-12816792AB78}']
+    function GetEnumerator: TEnumerator<TDBTag>;
+    procedure Add(const ID: TDBTag);
+    procedure Delete(const ID: TDBTag);
+    procedure Clear;
+    function Contains(const ID: TDBTag): Boolean;
+    function GetItem(const Idx: Integer): TDBTag;
+    function GetCount: Integer;
+    property Items[const Idx: Integer]: TDBTag read GetItem;
+    property Count: Integer read GetCount;
+  end;
+
   TDBSnippetProp = (
     spID, spTitle, spDescription, spSourceCode, spLanguageID, spModified,
     spCreated, spRequiredModules, spRequiredSnippets, spXRefs, spNotes, spKind,
@@ -324,6 +368,88 @@ begin
     else
       Assert(False, 'Unknown TTestRule value');
   end;
+end;
+
+{ TDBTag }
+
+class function TDBTag.Compare(const Left, Right: TDBTag): Integer;
+begin
+  Result := StrCompareText(Left.fTag, Right.fTag);
+end;
+
+constructor TDBTag.Create(const ATagStr: string);
+resourcestring
+  sBadTagStr = '"%s" is not a valid tag string';
+begin
+  fTag := PrepareTagString(ATagStr);
+  if not IsValidPreparedTagString(fTag) then
+    raise EDBTag.Create(sBadTagStr);
+end;
+
+class operator TDBTag.Equal(const Left, Right: TDBTag): Boolean;
+begin
+  Result := StrSameText(Left.fTag, Right.fTag);
+end;
+
+function TDBTag.Hash: Integer;
+begin
+  Result := Integer(PaulLarsonHash(fTag));
+end;
+
+class function TDBTag.IsValidPreparedTagString(const AStr: string): Boolean;
+begin
+  if AStr = EmptyStr then
+    Exit(False);
+  if Length(AStr) > 64 then
+    Exit(False);
+  // TODO: more validation of tag string
+  Result := True;
+end;
+
+class function TDBTag.IsValidTagString(const AStr: string): Boolean;
+begin
+  Result := IsValidPreparedTagString(PrepareTagString(AStr));
+end;
+
+class operator TDBTag.NotEqual(const Left, Right: TDBTag): Boolean;
+begin
+  Result := not StrSameText(Left.fTag, Right.fTag);
+end;
+
+class function TDBTag.PrepareTagString(const AStr: string): string;
+begin
+  Result := StrReplace(
+    StrCompressWhiteSpace(StrTrim(AStr)), ' ', '_'
+  );
+end;
+
+function TDBTag.ToDisplayString: string;
+begin
+  Result := StrReplace(fTag, '_', ' ');
+end;
+
+function TDBTag.ToString: string;
+begin
+  Result := fTag;
+end;
+
+{ TDBTag.TComparer }
+
+function TDBTag.TComparer.Compare(const Left, Right: TDBTag): Integer;
+begin
+  Result := TDBTag.Compare(Left, Right);
+end;
+
+{ TDBTag.TEqualityComparer }
+
+function TDBTag.TEqualityComparer.Equals(const Left, Right: TDBTag): Boolean;
+begin
+  Result := Left = Right;
+end;
+
+function TDBTag.TEqualityComparer.GetHashCode(const Value: TDBTag): Integer;
+begin
+  Result := Value.Hash;
 end;
 
 end.
