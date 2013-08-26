@@ -22,6 +22,7 @@ uses
   CS.Markup,
   CS.SourceCode.Languages,
   CS.Utils.Dates,
+  Compilers.UGlobals,
   UIStringList;
 
 type
@@ -72,9 +73,27 @@ type
     skClass       // Delphi class or record with methods
   );
 
+  // TODO: move TCompilerIDs to Compilers.UGlobals or successor unit
+  TCompilerIDs = set of TCompilerID;
+
+  // TODO: possibly move TDBCompileResults to Compilers.UGlobals or successor
+  TDBCompileResults = record
+  strict private
+    var
+      fSucceeds: TCompilerIDs;
+      fFails: TCompilerIDs;
+  public
+    constructor Create(const ASucceeds, AFails: TCompilerIDs);
+    class function CreateNull: TDBCompileResults; static; inline;
+    function IsNull: Boolean; inline;
+    property Succeeds: TCompilerIDs read fSucceeds;
+    property Fails: TCompilerIDs read fFails;
+  end;
+
   TDBSnippetProp = (
     spID, spTitle, spDescription, spSourceCode, spLanguageID, spModified,
-    spCreated, spRequiredModules, spRequiredSnippets, spXRefs, spNotes, spKind
+    spCreated, spRequiredModules, spRequiredSnippets, spXRefs, spNotes, spKind,
+    spCompileResults
   );
 
   TDBSnippetProps = set of TDBSnippetProp;
@@ -93,6 +112,7 @@ type
     function GetXRefs: IDBSnippetIDList;
     function GetNotes: TMarkup;
     function GetKind: TDBSnippetKind;
+    function GetCompileResults: TDBCompileResults;
 
     property ID: TDBSnippetID read GetID;
     property Created: TUTCDateTime read GetCreated;
@@ -112,6 +132,7 @@ type
     property XRefs: IDBSnippetIDList read GetXRefs;
     property Notes: TMarkup read GetNotes;
     property Kind: TDBSnippetKind read GetKind;
+    property CompileResults: TDBCompileResults read GetCompileResults;
 
     // TODO: query if following properties are required
     property ValidProperties: TDBSnippetProps read GetValidProperties;
@@ -129,6 +150,7 @@ type
     procedure SetXRefs(AIDList: IDBSnippetIDList);
     procedure SetNotes(const ANotes: TMarkup);
     procedure SetKind(const ASnippetKind: TDBSnippetKind);
+    procedure SetCompileResults(const AResults: TDBCompileResults);
 
     property Title: string read GetTitle write SetTitle;
     property Description: TMarkup read GetDescription write SetDescription;
@@ -142,6 +164,8 @@ type
     property XRefs: IDBSnippetIDList read GetXRefs write SetXRefs;
     property Notes: TMarkup read GetNotes write SetNotes;
     property Kind: TDBSnippetKind read GetKind write SetKind;
+    property CompileResults: TDBCompileResults read GetCompileResults
+      write SetCompileResults;
   end;
 
   TDBFilter = reference to function (ASnippet: IReadOnlySnippet): Boolean;
@@ -235,6 +259,24 @@ function TDBSnippetID.TEqualityComparer.GetHashCode(
   const Value: TDBSnippetID): Integer;
 begin
   Result := Value.Hash;
+end;
+
+{ TDBCompileResults }
+
+constructor TDBCompileResults.Create(const ASucceeds, AFails: TCompilerIDs);
+begin
+  fSucceeds := ASucceeds;
+  fFails := AFails;
+end;
+
+class function TDBCompileResults.CreateNull: TDBCompileResults;
+begin
+  Result := TDBCompileResults.Create([], []);
+end;
+
+function TDBCompileResults.IsNull: Boolean;
+begin
+  Result := (fSucceeds = []) and (fFails = []);
 end;
 
 end.
