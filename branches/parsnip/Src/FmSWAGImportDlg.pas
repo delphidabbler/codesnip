@@ -540,6 +540,7 @@ var
 begin
   lvImports.Items.BeginUpdate;
   try
+    lvImports.Clear;
     for Snippet in fSelectedSnippets do
     begin
       LI := lvImports.Items.Add;
