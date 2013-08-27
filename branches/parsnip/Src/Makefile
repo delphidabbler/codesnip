@@ -121,8 +121,8 @@ config:
   @copy /Y CodeSnip.cfg.tplt CodeSnip.cfg
   # Create build folders
   @cd ..
-  @if exist Bin rmdir /S /Q Bin
-  @mkdir Bin
+  @if exist Bin del /Q Bin\*.*
+  @if not exist Bin mkdir Bin
   @if not exist Exe mkdir Exe
   @if not exist Release mkdir Release
   @cd Src
