@@ -31,6 +31,9 @@ type
   TDBSnippetID = record
   public
     type
+      TComparer = class(TComparer<TDBSnippetID>)
+        function Compare(const Left, Right: TDBSnippetID): Integer; override;
+      end;
       TEqualityComparer = class(TEqualityComparer<TDBSnippetID>)
       public
         function Equals(const Left, Right: TDBSnippetID): Boolean; override;
@@ -44,10 +47,12 @@ type
   public
     constructor Create(const AIDStr: string);
     class function CreateNew: TDBSnippetID; static;
-    class operator Equal(const Left, Right: TDBSnippetID): Boolean; inline;
-    class operator NotEqual(const Left, Right: TDBSnippetID): Boolean; inline;
+    class operator Equal(const Left, Right: TDBSnippetID): Boolean;
+    class operator NotEqual(const Left, Right: TDBSnippetID): Boolean;
+
+    class function Compare(const Left, Right: TDBSnippetID): Integer; static;
     function ToString: string; inline;
-    function Hash: Integer; inline;
+    function Hash: Integer;
     class function IsValidIDString(const S: string): Boolean; static;
   end;
 
@@ -255,6 +260,11 @@ uses
 
 { TDBSnippetID }
 
+class function TDBSnippetID.Compare(const Left, Right: TDBSnippetID): Integer;
+begin
+  Result := StrCompareStr(Left.fID, Right.fID);
+end;
+
 constructor TDBSnippetID.Create(const AIDStr: string);
 resourcestring
   sInvalidIDStr = '"%s" is not a valid snippet ID string';
@@ -279,7 +289,7 @@ end;
 
 class operator TDBSnippetID.Equal(const Left, Right: TDBSnippetID): Boolean;
 begin
-  Result := Left.fID = Right.fID;
+  Result := StrSameStr(Left.fID, Right.fID);
 end;
 
 function TDBSnippetID.Hash: Integer;
@@ -320,6 +330,14 @@ end;
 function TDBSnippetID.ToString: string;
 begin
   Result := fID;
+end;
+
+{ TDBSnippetID.TComparer }
+
+function TDBSnippetID.TComparer.Compare(const Left,
+  Right: TDBSnippetID): Integer;
+begin
+  Result := TDBSnippetid.Compare(Left, Right);
 end;
 
 { TDBSnippetID.TEqualityComparer }
