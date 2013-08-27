@@ -542,7 +542,9 @@ begin
   n:=0;
   for i:=1 to fCount do begin
     p.fCharIndex:=n;
-    Inc(n, Length(p.FString));
+    //! Patch from
+    //! http://sourceforge.net/p/synedit/discussion/132311/thread/ad1f226c/
+    Inc(n, Length(p.FString) + 2); // changed, before it was without "+ 2"
     Inc(p);
   end;
 end;
