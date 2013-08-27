@@ -601,55 +601,63 @@ set PATHSET=1
 
 <pre>./
   |
-  +-- Docs                  - documentation
+  +-- Docs                    - documentation
   |   |
-  |   +-- ChangeLogs        - program change log files
+  |   +-- ChangeLogs          - program change log files
   |   |
-  |   +-- Design            - documents concerning program design
+  |   +-- Design              - documents concerning program design
   |      |
-  |      +-- FileFormats    - documentation of CodeSnip's file formats
+  |      +-- FileFormats      - documentation of CodeSnip's file formats
   |
-  +-- Src                   - main CodeSnip source code
+  +-- Src                     - main CodeSnip source code
   |   |
-  |   +-- 3rdParty          - third party &amp; DelphiDabbler library source code
+  |   +-- 3rdParty            - third party &amp; DelphiDabbler library source code
   |   |
-  |   +-- AutoGen           - receives automatically generated code
+  |   +-- AutoGen             - receives automatically generated code
   |   |
-  |   +-- Help              - help source files
+  |   +-- Help                - help source files
   |   |   |
-  |   |   +-- CSS           - CSS code for help files
+  |   |   +-- CSS             - CSS code for help files
   |   |   |
-  |   |   +-- HTML          - HTML files included in help file
+  |   |   +-- HTML            - HTML files included in help file
   |   |   |
-  |   |   +-- Images        - images included in help file
+  |   |   +-- Images          - images included in help file
   |   |
-  |   +-- Install           - setup script and support code
+  |   +-- Lib                 - library source code, not included in CodeSnip project file
   |   |   |
-  |   |   +-- Assets        - files required for inclusion in install program
+  |   |   +-- 3rdParty        - 3rd party library source code
+  |   |       |
+  |   |       +-- DelphiColl  - delphi-coll collections files
+  |   |       |
+  |   |       +-- SynEdit     - SynEdit highlighted edit control files
   |   |
-  |   +-- Res               - container for files that are embedded in resources
+  |   +-- Install             - setup script and support code
+  |   |   |
+  |   |   +-- Assets          - files required for inclusion in install program
+  |   |
+  |   +-- Res                 - container for files that are embedded in resources
   |       |
-  |       +-- CSS           - CSS files
+  |       +-- CSS             - CSS files
   |       |
-  |       +-- HTML          - HTML files
+  |       +-- HTML            - HTML files
   |       |
-  |       +-- Img           - image files
+  |       +-- Img             - image files
   |       |   |
-  |       |   +-- Branding  - image files used for CodeSnip branding
+  |       |   +-- Branding    - image files used for CodeSnip branding
   |       |   |
-  |       |   +-- Egg       - image files for 'Easter Egg'
+  |       |   +-- Egg         - image files for 'Easter Egg'
   |       |
-  |       +-- Misc          - other resources
+  |       +-- Misc            - other resources
   |       |
-  |       +-- Scripts       - scripting files
+  |       +-- Scripts         - scripting files
   |           |
-  |           +-- 3rdParty  - 3rd party scripting files
+  |           +-- 3rdParty    - 3rd party scripting files
   |
-  +-- Tests                 - contains test code
+  +-- Tests                   - contains test code
       |
-      +-- Src               - test source code
+      +-- Src                 - test source code
           |
-          +-- DUnit         - test source code that uses the DUnit framework</pre>
+          +-- DUnit           - test source code that uses the DUnit framework</pre>
 <p>
   If, by chance you also have <code>Bin</code>, <code>Exe</code> and / or
   <code>Release</code> directories don't worry - all will become clear.
@@ -691,18 +699,29 @@ set PATHSET=1
 
 <pre>./
   |
-  +-- Bin                   - receives object files for CodeSnip
+  +-- Bin                     - receives object files for CodeSnip
   |
   ...
   |
-  +-- Exe                   - receives executable code and compiled help file
+  +-- Exe                     - receives executable code and compiled help file
   |
-  +-- Release               - receives release files
+  +-- Release                 - receives release files
   |
   ...</pre>
 
 <p>
-  If the <code>Bin</code> folder already existed, it will have been emptied.
+  If <code>Bin</code> existied before <code>Make</code> was run, and the
+  required libraries have been built then <code>Bin</code> may have
+  <code>Lib</code> and <code>Lib\Pkg</code> sub-directories.
+</p>
+
+<p>
+  If the <code>Bin</code> folder already existed it will have been emptied but
+  any <code>Lib</code> and <code>Lib\Pkg</code> sub-directories will be left
+  intact.
+</p>
+
+<p>
   In addition, <code>Make</code> will have created a <code>.cfg</code> file from
   template in the <code>Src</code> folder. This <code>.cfg</code> file is needed
   for DCC32 to run correctly. The file will be ignored by Subversion.
