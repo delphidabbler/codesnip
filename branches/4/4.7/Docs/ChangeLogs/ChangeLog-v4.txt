@@ -11,6 +11,9 @@
 ; Change Log for CodeSnip Release 4
 ; ------------------------------------------------------------------------------
 
+Release v4.7.2 of 27 August 2013
++ Fixed bug #88 "SWAG Import Wizard display bug" (http://bit.ly/15ryOxz) where duplicate snippets could be displayed on the "Ready to import" page in certain circumstances.
+
 Release v4.7.1 of 18 August 2013
 + Fixed bug where right clicking a tab in the detail pane sometimes caused the contents of the pane to be temporarily blanked out while the context menu was displayed.
   - This fix also, as a side effect, fixed bug #87 "Tab headings and contents don't match after a tab is closed." (http://bit.ly/15TD197).
