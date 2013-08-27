@@ -19,7 +19,7 @@ inherited SWAGImportDlg: TSWAGImportDlg
     inherited pcWizard: TPageControl
       Width = 671
       Height = 456
-      ActivePage = tsUpdate
+      ActivePage = tsIntro
       ExplicitWidth = 671
       ExplicitHeight = 456
       object tsIntro: TTabSheet
@@ -61,6 +61,8 @@ inherited SWAGImportDlg: TSWAGImportDlg
         TabVisible = False
         ExplicitLeft = 8
         ExplicitTop = -10
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object lblCategories: TLabel
           Left = 0
           Top = 45
@@ -159,6 +161,10 @@ inherited SWAGImportDlg: TSWAGImportDlg
         Caption = 'tsFinish'
         ImageIndex = 3
         TabVisible = False
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         inline frmOutro: THTMLTpltDlgFrame
           Left = 0
           Top = 0
@@ -169,9 +175,13 @@ inherited SWAGImportDlg: TSWAGImportDlg
           TabStop = True
           ExplicitLeft = 280
           ExplicitTop = 64
+          ExplicitWidth = 663
+          ExplicitHeight = 446
           inherited pnlBrowser: TPanel
             Width = 663
             Height = 446
+            ExplicitWidth = 663
+            ExplicitHeight = 446
             inherited wbBrowser: TWebBrowser
               Width = 663
               Height = 446
