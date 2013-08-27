@@ -60,11 +60,11 @@
 				<Delphi.Personality>
 					<VersionInfo>
 						<VersionInfo Name="IncludeVerInfo">True</VersionInfo>
-						<VersionInfo Name="AutoIncBuild">True</VersionInfo>
+						<VersionInfo Name="AutoIncBuild">False</VersionInfo>
 						<VersionInfo Name="MajorVer">1</VersionInfo>
 						<VersionInfo Name="MinorVer">1</VersionInfo>
 						<VersionInfo Name="Release">0</VersionInfo>
-						<VersionInfo Name="Build">114</VersionInfo>
+						<VersionInfo Name="Build">0</VersionInfo>
 						<VersionInfo Name="Debug">False</VersionInfo>
 						<VersionInfo Name="PreRelease">False</VersionInfo>
 						<VersionInfo Name="Special">False</VersionInfo>
@@ -76,7 +76,7 @@
 					<VersionInfoKeys>
 						<VersionInfoKeys Name="CompanyName">Alexandru Ciobanu</VersionInfoKeys>
 						<VersionInfoKeys Name="FileDescription">Collections Package</VersionInfoKeys>
-						<VersionInfoKeys Name="FileVersion">1.1.0.114</VersionInfoKeys>
+						<VersionInfoKeys Name="FileVersion">1.1.0.0</VersionInfoKeys>
 						<VersionInfoKeys Name="InternalName">delphi-coll</VersionInfoKeys>
 						<VersionInfoKeys Name="LegalCopyright">Alexandru Ciobanu</VersionInfoKeys>
 						<VersionInfoKeys Name="LegalTrademarks"/>
