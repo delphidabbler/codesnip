@@ -48,10 +48,11 @@ type
     const ProgramName = 'CodeSnip-p';
     {$ENDIF}
       {Name of program}
+    // TODO -cPRERELEASE: Remove DEV flag from ProgramCaption before release
     {$IFNDEF PORTABLE}
-    const ProgramCaption = 'CodeSnip 4';
+    const ProgramCaption = 'CodeSnip 5 <<<DEV>>>';
     {$ELSE}
-    const ProgramCaption = 'CodeSnip 4 (Portable Edition)';
+    const ProgramCaption = 'CodeSnip 5 <<<DEV>>> (Portable Edition)';
     {$ENDIF}
       {Name of program displayed in main window and task bar caption}
     const FullProgramName = CompanyName + ' ' + ProgramName;
