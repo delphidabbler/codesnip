@@ -20,11 +20,8 @@ interface
 
 
 uses
-  // Delphi
-  Classes, Generics.Collections,
   // Project
-  ActiveText.UMain, Compilers.UGlobals, DB.UCategory, DB.USnippet, UContainers,
-  UIStringList, UMultiCastEvents, USnippetIDs;
+  DB.UCategory, DB.USnippet, UIStringList, UMultiCastEvents, USnippetIDs;
 
 
 type
@@ -273,9 +270,9 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Generics.Defaults,
+  SysUtils,
   // Project
-  DB.UDatabaseIO, IntfCommon, UExceptions, UQuery, UStrUtils;
+  DB.UDatabaseIO, UExceptions, UQuery, UStrUtils;
 
 
 var
