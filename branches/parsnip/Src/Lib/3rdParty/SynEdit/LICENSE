@@ -1,0 +1,30 @@
+Most files in the SynEdit project are covered by the MPL 1.1 / GPL / LGPL
+tri-license and have header comments to that effect.
+
+Any files without header comments should be treated as using this license.
+
+File not using the tri-license are:
+
+* SynEdit.inc - adapted from Brad Stowers' DFS.INC file and used with
+  permission.
+
+* SynEditHighlighter - MPL 1.1.
+
+* SynEditHighlighterOptions - MPL 1.1.
+
+* SynRegExpr.pas - Custom license (see comments in file).
+
+* SynTextDrawer.pas - MPL 1.0.
+
+The SynEdit project is based on the mwEdit component suite.
+
+Key:
+  MPL = Mozilla Public License
+  GPL = GNU General Public License
+  LGPL = GNU Lesser General Public License
+
+Modifications
+-------------
+
+Any modifications to the files are detailed in the SVN change log and/or by
+comments in the source files.
