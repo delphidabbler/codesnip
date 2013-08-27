@@ -13,6 +13,8 @@
 # Define macros giving relative paths to other directories from location of
 # makefile
 BIN = ..\Bin
+LIBBIN = $(BIN)\Lib
+PKGBIN = $(LIBBIN)\Pkg
 EXE = ..\Exe
 
 # Check for required environment variables
@@ -106,10 +108,13 @@ DELPHIDEFINES =
 # Explicit rules
 
 # Default is to build everything and release
-everything: config exes setup release
+everything: config libraries exes setup release
 
 # Builds CodeSnip exe file + help
 exes: codesnip help
+
+# Builds libraries and CodeSnip exe
+bin: libraries codesnip
 
 # Build CodeSnip executable
 codesnip: typelib resources autogen pascal
@@ -219,3 +224,22 @@ clean:
   # remove __history folders
   -@for /F "usebackq" %i in (`dir /S /B /A:D ..\__history`) do @rmdir /S /Q %i
   @cd Src
+
+# Make libraries
+libraries: cfglib Collections.bpl SynEdit_RXE.bpl
+
+cfglib:
+  @if not exist "$(BIN)" mkdir "$(BIN)"
+  @if not exist "$(LIBBIN)" mkdir "$(LIBBIN)"
+  @if not exist "$(PKGBIN)" mkdir "$(PKGBIN)"
+
+Collections.bpl:
+  @cd Lib\3rdParty\DelphiColl
+  @$(DCC32) $(@B).dpk -B $(DELPHIDEFINES)
+  @cd ..\..\..
+
+SynEdit_RXE.bpl:
+  @cd Lib\3rdParty\SynEdit
+  @$(DCC32) $(@B).dpk -B $(DELPHIDEFINES)
+  @cd ..\..\..
+
