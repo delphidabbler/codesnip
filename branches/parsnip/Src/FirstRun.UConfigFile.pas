@@ -82,7 +82,6 @@ type
     ///  <summary>Returns current user config file version.</summary>
     class function GetFileVersion: Integer; override;
   public
-    {$IFNDEF PORTABLE}
     ///  <summary>Updates config file currently in original (pre v1.9) format to
     ///  current format.</summary>
     procedure UpdateFromOriginal;
@@ -98,7 +97,6 @@ type
     ///  <summary>Deletes unused key that determines detail pane index.
     ///  </summary>
     procedure DeleteDetailsPaneIndex;
-    {}{$ENDIF}
     ///  <summary>Effectively renames MainWindow section used prior to version
     ///  11 as WindowState:MainForm.</summary>
     procedure RenameMainWindowSection;
@@ -267,44 +265,36 @@ begin
   SetIniString('Prefs:CodeGen', 'Warning7.MinCompiler', '20.00', CfgFileName);
 end;
 
-{$IFNDEF PORTABLE}
 procedure TUserConfigFileUpdater.DeleteDetailsPaneIndex;
 begin
   if not TFile.Exists(CfgFileName) then
     CreateNewFile;
   DeleteIniKey('MainWindow', 'DetailTab', CfgFileName);
 end;
-{$ENDIF}
 
-{$IFNDEF PORTABLE}
 procedure TUserConfigFileUpdater.DeleteHighligherPrefs;
 begin
   if not TFile.Exists(CfgFileName) then
     CreateNewFile;
   DeleteIniSection('Prefs:Hiliter', CfgFileName);
 end;
-{$ENDIF}
 
-{$IFNDEF PORTABLE}
 procedure TUserConfigFileUpdater.DeleteProxyPassword;
 begin
   if not TFile.Exists(CfgFileName) then
     CreateNewFile;
   SetIniString('ProxyServer', 'Password', '', CfgFileName);
 end;
-{$ENDIF}
 
 class function TUserConfigFileUpdater.GetFileVersion: Integer;
 begin
   Result := FileVersion;
 end;
 
-{$IFNDEF PORTABLE}
 function TUserConfigFileUpdater.HasProxyPassword: Boolean;
 begin
   Result := GetIniString('ProxyServer', 'Password', '', CfgFileName) <> '';
 end;
-{$ENDIF}
 
 procedure TUserConfigFileUpdater.RenameMainWindowSection;
 begin
@@ -365,7 +355,6 @@ begin
   );
 end;
 
-{$IFNDEF PORTABLE}
 procedure TUserConfigFileUpdater.UpdateCodeGenEntries;
 begin
   // Key that determines if warnings are emitted changes from SwitchOffWarnings
@@ -385,7 +374,6 @@ begin
   else
     SetIniInt('Prefs:CodeGen', 'EmitWarnDirs', 0, CfgFileName);
 end;
-{$ENDIF}
 
 procedure TUserConfigFileUpdater.UpdateFindXRefs;
 begin
@@ -405,7 +393,6 @@ begin
     SetIniInt('FindXRefs', 'IncludeSnippet', 1, CfgFileName);
 end;
 
-{$IFNDEF PORTABLE}
 procedure TUserConfigFileUpdater.UpdateFromOriginal;
 var
   I: Integer; // loops thru all highlight elements
@@ -430,7 +417,6 @@ begin
   // Main window's overview tabs changed at v3: so we reset to 0 (default)
   SetIniInt('MainWindow', 'OverviewTab', 0, CfgFileName);
 end;
-{$ENDIF}
 
 procedure TUserConfigFileUpdater.UpdateNamespaces;
 

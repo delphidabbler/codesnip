@@ -30,9 +30,8 @@ type
   ///  <summary>Dialogue box that is used to move the user database to a new
   ///  directory or to restore a previously moved database to its default
   ///  directory.</summary>
-  ///  <remarks>IMPORTANT: This dialogue box is for use only with the standard
-  ///  edition of CodeSnip. It MUST NOT be displayed from the portable edition.
-  ///  </remarks>
+  ///  <remarks>IMPORTANT: This dialogue box is for use only when running in
+  ///  standard mode. It MUST NOT be displayed when in portable mode.</remarks>
   TUserDataPathDlg = class(TGenericViewDlg, INoPublicConstruct)
     actBrowse: TAction;
     actDefaultPath: TAction;
@@ -120,7 +119,7 @@ type
   public
     ///  <summary>Displays the dialogue box aligned over the given owner
     ///  control.</summary>
-    ///  <exception>Raises EBug if called by the portable edition of CodeSnip.
+    ///  <exception>Raises EBug if called when running in portable mode.
     ///  </exception>
     class procedure Execute(AOwner: TComponent);
   end;
@@ -133,8 +132,15 @@ uses
   // Delphi
   IOUtils, 
   // Project
-  UAppInfo, UBrowseForFolderDlg, UCtrlArranger, UExceptions, UFontHelper, 
-  UMessageBox, UStrUtils, UStructs;
+  CS.Init.CommandLineOpts,
+  UAppInfo,
+  UBrowseForFolderDlg,
+  UCtrlArranger,
+  UExceptions,
+  UFontHelper,
+  UMessageBox,
+  UStrUtils,
+  UStructs;
 
 {$R *.dfm}
 
@@ -276,9 +282,8 @@ end;
 
 class procedure TUserDataPathDlg.Execute(AOwner: TComponent);
 begin
-  {$IFDEF PORTABLE}
-  raise EBug.Create(ClassName + '.Execute: Call forbidden in portable edition');
-  {$ENDIF}
+  Assert(not TCommandLineOpts.IsPortable,
+    ClassName + '.Execute: Call forbidden in portable mode');
   with InternalCreate(AOwner) do
     try
       ShowModal

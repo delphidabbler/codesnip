@@ -107,18 +107,31 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Dialogs, Windows {for inlining},
+  SysUtils,
+  Dialogs,
+  Windows {for inlining},
   // Project
-  DB.UMain, DB.USnippet,
-  FmAddCategoryDlg, FmDeleteCategoryDlg, FmDuplicateSnippetDlg,
-  FmRenameCategoryDlg, FmSnippetsEditorDlg,
-  {$IFNDEF PORTABLE}
+  CS.Init.CommandLineOpts,
+  DB.UMain,
+  DB.USnippet,
+  FmAddCategoryDlg,
+  FmDeleteCategoryDlg,
+  FmDuplicateSnippetDlg,
+  FmRenameCategoryDlg,
+  FmSnippetsEditorDlg,
   FmUserDataPathDlg,
-  {$ENDIF}
   FmWaitDlg,
-  UConsts, UExceptions, UIStringList, UMessageBox, UOpenDialogEx,
-  UOpenDialogHelper, UReservedCategories, USaveDialogEx, USnippetIDs,
-  UUserDBBackup, UWaitForThreadUI;
+  UConsts,
+  UExceptions,
+  UIStringList,
+  UMessageBox,
+  UOpenDialogEx,
+  UOpenDialogHelper,
+  UReservedCategories,
+  USaveDialogEx,
+  USnippetIDs,
+  UUserDBBackup,
+  UWaitForThreadUI;
 
 type
   ///  <summary>Base class for classes that execute a user database management
@@ -463,10 +476,9 @@ end;
 
 class procedure TUserDBMgr.MoveDatabase;
 begin
-  // This dialogue box not available in portable edition
-  {$IFNDEF PORTABLE}
-  TUserDataPathDlg.Execute(nil);
-  {$ENDIF}
+  // This dialogue box not available in portable mode
+  if not TCommandLineOpts.IsPortable then
+    TUserDataPathDlg.Execute(nil);
 end;
 
 class procedure TUserDBMgr.RenameACategory;

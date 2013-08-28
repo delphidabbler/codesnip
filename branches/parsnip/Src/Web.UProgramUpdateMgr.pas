@@ -38,13 +38,15 @@ type
       UserAgent = 'CodeSnip';
       ///  <summary>API key required for all calls to web service.</summary>
       ApiKey = '9EE3A4D85A2F46F79AE2AAB1012A7678';
-      ///  <summary>Program edition sent to web service.</summary>
-      {$IFDEF PORTABLE}
-      Edition = 'portable';
-      {$ELSE}
-      Edition = 'standard';
-      {$ENDIF}
+      ///  <summary>Value passed to web service to indicate portable mode.
+      ///  </summary>
+      PortableMode = 'portable';
+      ///  <summary>Value passed to web service to indicate standard mode.
+      ///  </summary>
+      StandardMode = 'standard';
   strict private
+    ///  <summary>Returns program edition to be sent to web service.</summary>
+    class function ProgramEdition: string;
     ///  <summary>Creates and returns a parameters object containing standard
     ///  parameters that are required on every call to the web service.
     ///  </summary>
@@ -61,7 +63,7 @@ type
     ///  <summary>Gets the latest version of the program from the web service.
     ///  </summary>
     ///  <remarks>The version returned is the latest one for the program edition
-    ///  specified by the Edition constant.</remarks>
+    ///  specified by the ProgramMode constant.</remarks>
     function LatestProgramVersion: string;
     ///  <summary>Gets the URL to use to download the latest version of the
     ///  program.</summary>
@@ -78,7 +80,11 @@ uses
   // Delphi
   SysUtils, Classes,
   // Project
-  UAppInfo, UStrUtils, USystemInfo, Web.UInfo;
+  CS.Init.CommandLineOpts,
+  UAppInfo,
+  UStrUtils,
+  USystemInfo,
+  Web.UInfo;
 
 
 { TProgramUpdateMgr }
@@ -102,7 +108,7 @@ var
 begin
   Params := CreateParams;
   try
-    Params.Add('edition', Edition);
+    Params.Add('edition', ProgramEdition);
     Response := TStringList.Create;
     try
       PostCommand('downloadurl', Params, Response);
@@ -122,7 +128,7 @@ var
 begin
   Params := CreateParams;
   try
-    Params.Add('edition', Edition);
+    Params.Add('edition', ProgramEdition);
     Response := TStringList.Create;
     try
       PostCommand('version', Params, Response);
@@ -133,6 +139,13 @@ begin
   finally
     Params.Free;
   end;
+end;
+
+class function TProgramUpdateMgr.ProgramEdition: string;
+begin
+  Result := StrIf(
+    TCommandLineOpts.IsPortable, PortableMode, StandardMode
+  );
 end;
 
 procedure TProgramUpdateMgr.SignOn(const Caller: string);

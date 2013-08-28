@@ -60,11 +60,9 @@ type
       ///  <summary>Object used to copy forward older versions of user database.
       ///  </summary>
       fDatabase: TUserDatabaseUpdater;
-    {$IFNDEF PORTABLE}
     ///  <summary>Checks if config file uses earlier format for storing proxy
     ///  server passwords.</summary>
     function HasOldStyleProxyPwd: Boolean;
-    {}{$ENDIF}
   public
     ///  <summary>Constructs object and owned object.</summary>
     constructor Create;
@@ -129,14 +127,12 @@ implementation
 
 uses
   // Delphi
-  SysUtils, IOUtils, Forms
-  {$IFNDEF PORTABLE}
+  SysUtils,
+  IOUtils,
+  Forms,
   // Project
-  ,
+  CS.Init.CommandLineOpts,
   FirstRun.FmV4ConfigDlg;
-  {$ELSE}
-  ;
-  {$ENDIF}
 
 
 { TFirstRun }
@@ -187,12 +183,10 @@ begin
   inherited;
 end;
 
-{$IFNDEF PORTABLE}
 function TFirstRun.HasOldStyleProxyPwd: Boolean;
 begin
   Result := (fUserConfigFile.FileVer <= 6) and fUserConfigFile.HasProxyPassword;
 end;
-{$ENDIF}
 
 function TFirstRun.HaveOldUserCfgFile: Boolean;
 begin
@@ -213,45 +207,47 @@ procedure TFirstRun.UpdateUserCfgFile(out Changes: TFirstRunCfgChangeSet);
 begin
   Changes := [];
 
-  {$IFNDEF PORTABLE}
-  case fInstallInfo.InstallID of
-    piOriginal:
-    begin
-      fUserConfigFile.UpdateFromOriginal;
-      Include(Changes, frcHiliter);
-      Include(Changes, frcRegistration);
-      Include(Changes, frcSourceFormat);
-    end;
-    piV1_9, piV2:
-    begin
-      fUserConfigFile.DeleteHighligherPrefs;
-      Include(Changes, frcHiliter);
-    end;
-    piV3:
-    begin
-      if HasOldStyleProxyPwd then
+  if not TCommandLineOpts.IsPortable then
+  begin
+    case fInstallInfo.InstallID of
+      piOriginal:
       begin
-        fUserConfigFile.DeleteProxyPassword;
-        Include(Changes, frcProxyPwd);
+        fUserConfigFile.UpdateFromOriginal;
+        Include(Changes, frcHiliter);
+        Include(Changes, frcRegistration);
+        Include(Changes, frcSourceFormat);
+      end;
+      piV1_9, piV2:
+      begin
+        fUserConfigFile.DeleteHighligherPrefs;
+        Include(Changes, frcHiliter);
+      end;
+      piV3:
+      begin
+        if HasOldStyleProxyPwd then
+        begin
+          fUserConfigFile.DeleteProxyPassword;
+          Include(Changes, frcProxyPwd);
+        end;
       end;
     end;
   end;
-  {$ENDIF}
 
   if fUserConfigFile.FileVer < 6 then
     // User ini file versions before 6 don't have the Prefs:CodeGen section and
     // default entries for predefined warnings.
     // NOTE: This works for a new config file providing it has not been stamped:
-    // we rely on this for portable version.
+    // we rely on this when in portable mode.
     fUserConfigFile.CreateDefaultCodeGenEntries;
 
-  {$IFNDEF PORTABLE}
-  if fUserConfigFile.FileVer < 9 then
+  if not TCommandLineOpts.IsPortable then
   begin
-    fUserConfigFile.DeleteDetailsPaneIndex;
-    fUserConfigFile.UpdateCodeGenEntries;
+    if fUserConfigFile.FileVer < 9 then
+    begin
+      fUserConfigFile.DeleteDetailsPaneIndex;
+      fUserConfigFile.UpdateCodeGenEntries;
+    end;
   end;
-  {$ENDIF}
 
   if fUserConfigFile.FileVer < 11 then
     fUserConfigFile.RenameMainWindowSection;
@@ -263,9 +259,9 @@ begin
     fUserConfigFile.UpdateFindXRefs;
 
   fUserConfigFile.Stamp;
-  // NOTE: strictly speaking we only need to stamp common config file in
-  // portable version. Installer does this in normal version. However, it does
-  // no harm to stamp this file twice - belt and braces!
+  // NOTE: strictly speaking we only need to stamp common config file when in
+  // portable mode. Installer does this in normal version. However, it does no
+  // harm to stamp this file twice - belt and braces!
   fCommonConfigFile.Stamp;
 end;
 
@@ -280,10 +276,11 @@ begin
   begin
     FR := TFirstRun.Create;
     try
-      {$IFNDEF PORTABLE}
-      if FR.HaveOldUserCfgFile or FR.HaveOldUserDB then
-        TV4ConfigDlg.Execute(Application, FR);
-      {$ENDIF}
+      if not TCommandLineOpts.IsPortable then
+      begin
+        if FR.HaveOldUserCfgFile or FR.HaveOldUserDB then
+          TV4ConfigDlg.Execute(Application, FR);
+      end;
       if not UserCfgFileExists then
       begin
         FR.CreateEmptyUserCfgFile;

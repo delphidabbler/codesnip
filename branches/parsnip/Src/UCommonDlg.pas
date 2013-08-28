@@ -160,7 +160,9 @@ implementation
 
 uses
   // Project
-  UDlgHelper, UHelpMgr;
+  CS.Init.CommandLineOpts,
+  UDlgHelper,
+  UHelpMgr;
 
 
 { TCommonDlgHelper }
@@ -371,13 +373,9 @@ initialization
 
 Dialogs.UseLatestCommonDialogs := False;
 
-{$IFNDEF PORTABLE}
-// Default to My Docs for file dialogues in standard version
-Dialogs.ForceCurrentDirectory := False;
-{$ELSE}
-// Default to program working directory for file dialogues in portable version
-Dialogs.ForceCurrentDirectory := True;
-{$ENDIF}
+// In standard mode default to My Documents for file dialogues but use program's
+// working directory in portable mode.
+Dialogs.ForceCurrentDirectory := TCommandLineOpts.IsPortable;
 
 end.
 

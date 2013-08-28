@@ -356,7 +356,8 @@ type
     procedure actLoadSelectionExecute(Sender: TObject);
     ///  <summary>Displays a dialogue box that can be used to move the user
     ///  database to a user defined directory.</summary>
-    ///  <remarks>This action must be hidden in the portable edition.</remarks>
+    ///  <remarks>This action must be hidden when running in portable mode.
+    ///  </remarks>
     procedure actMoveUserDatabaseExecute(Sender: TObject);
     ///  <summary>Creates a new empty tab in details pane.</summary>
     procedure actNewDetailsTabExecute(Sender: TObject);
@@ -605,16 +606,48 @@ implementation
 
 uses
   // Delphi
-  Windows, Graphics,
+  Windows,
+  Graphics,
   // Project
-  DB.UCategory, DB.UMain, DB.USnippet, FmSplash, FmTrappedBugReportDlg,
-  FmWaitDlg, IntfFrameMgrs, Notifications.UDisplayMgr, UActionFactory, UAppInfo,
-  UClassHelpers, UCodeShareMgr, UCommandBars, UConsts, UCopyInfoMgr,
-  UCopySourceMgr, UDatabaseLoader, UDatabaseLoaderUI, UDetailTabAction,
-  UEditSnippetAction, UExceptions, UHelpMgr, UHistoryMenus, UKeysHelper,
-  UMessageBox, UNotifier, UNulDropTarget, UPrintMgr, UQuery, USaveSnippetMgr,
-  USaveUnitMgr, USelectionIOMgr, UShowPrefsPageAction, UUserDBMgr, UView,
-  UViewItemAction, UWBExternal, Web.UInfo;
+  CS.Init.CommandLineOpts,
+  DB.UCategory,
+  DB.UMain,
+  DB.USnippet,
+  FmSplash,
+  FmTrappedBugReportDlg,
+  FmWaitDlg,
+  IntfFrameMgrs,
+  Notifications.UDisplayMgr,
+  UActionFactory,
+  UAppInfo,
+  UClassHelpers,
+  UCodeShareMgr,
+  UCommandBars,
+  UConsts,
+  UCopyInfoMgr,
+  UCopySourceMgr,
+  UDatabaseLoader,
+  UDatabaseLoaderUI,
+  UDetailTabAction,
+  UEditSnippetAction,
+  UExceptions,
+  UHelpMgr,
+  UHistoryMenus,
+  UKeysHelper,
+  UMessageBox,
+  UNotifier,
+  UNulDropTarget,
+  UPrintMgr,
+  UQuery,
+  USaveSnippetMgr,
+  USaveUnitMgr,
+  USelectionIOMgr,
+  UShowPrefsPageAction,
+  UUserDBMgr,
+  UView,
+  UViewItemAction,
+  UWBExternal,
+  Web.UInfo;
 
 
 {$R *.dfm}
@@ -1436,10 +1469,8 @@ begin
     actViewCategorised.Tag := cCategorisedTab;
     actViewAlphabetical.Tag := cAlphabeticTab;
     actViewSnippetKinds.Tag := cKindTab;
-    {$IFDEF PORTABLE}
-    // Move user database option not available in portable edition
-    actMoveUserDatabase.Visible := False;
-    {$ENDIF}
+    // Move user database option not available in portable mode
+    actMoveUserDatabase.Visible := not TCommandLineOpts.IsPortable;
 
     // Create notifier object and assign actions triggered by its methods
     // note that actions created on fly are automatically freed

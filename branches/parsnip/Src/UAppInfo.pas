@@ -42,11 +42,7 @@ type
   public
     const CompanyName = 'DelphiDabbler';
       {Name of "company" that owns this program}
-    {$IFNDEF PORTABLE}
     const ProgramName = 'CodeSnip';
-    {$ELSE}
-    const ProgramName = 'CodeSnip-p';
-    {$ENDIF}
       {Name of program}
     const FullProgramName = CompanyName + ' ' + ProgramName;
       {Full name of program, including company name}
@@ -152,11 +148,8 @@ class function TAppInfo.AppDataDir: string;
     @return Full path to database sub directory.
   }
 begin
-  {$IFNDEF PORTABLE}
-  Result := CommonAppDir + '\Database';
-  {$ELSE}
-  Result := CommonAppDir + '\CSDB';
-  {$ENDIF}
+  Result := CommonAppDir +
+    StrIf(TCommandLineOpts.IsPortable, '\CSDB', '\Database');
 end;
 
 class function TAppInfo.AppExeDir: string;
@@ -179,19 +172,17 @@ class procedure TAppInfo.ChangeUserDataDir(const NewDir: string);
   {Changes directory where CodeSnip stores the user's "database" files.
     @param NewDir [in] New directory.
   }
-{$IFNDEF PORTABLE}
 var
   Section: ISettingsSection;
-{$ENDIF}
 begin
-  {$IFNDEF PORTABLE}
+  if not TCommandLineOpts.IsPortable then
+    Exit;
   Section := Settings.ReadSection(ssDatabase);
   if StrSameText(ExcludeTrailingPathDelimiter(NewDir), DefaultUserDataDir) then
     Section.DeleteItem('UserDataDir')
   else
     Section.SetString('UserDataDir', NewDir);
   Section.Save;
-  {$ENDIF}
 end;
 
 class function TAppInfo.CommonAppDir: string;
@@ -200,11 +191,11 @@ class function TAppInfo.CommonAppDir: string;
     @return Full path to common application data directory.
   }
 begin
-  {$IFNDEF PORTABLE}
-  Result := TSystemFolders.CommonAppData + '\DelphiDabbler\CodeSnip.4';
-  {$ELSE}
-  Result := AppExeDir + '\AppData';
-  {$ENDIF}
+  Result := StrIf(
+    TCommandLineOpts.IsPortable,
+    AppExeDir + '\AppData',
+    TSystemFolders.CommonAppData + '\DelphiDabbler\CodeSnip.4'
+  );
 end;
 
 class function TAppInfo.DefaultUserDataDir: string;
@@ -213,11 +204,8 @@ class function TAppInfo.DefaultUserDataDir: string;
     @return Full path to required directory.
   }
 begin
-  {$IFNDEF PORTABLE}
-  Result := UserAppDir + '\UserDatabase';
-  {$ELSE}
-  Result := UserAppDir + '\UserDB';
-  {$ENDIF}
+  Result := UserAppDir +
+    StrIf(TCommandLineOpts.IsPortable, '\UserDB', '\UserDatabase');
 end;
 
 class function TAppInfo.GenerateKey: string;
@@ -230,9 +218,8 @@ begin
       USystemID.SystemIDStr, TEncoding.ASCII
     )
   );
-  {$IFDEF PORTABLE}
-  Result := 'P:' + StrSliceRight(Result, Length(Result) - 2);
-  {$ENDIF}
+  if TCommandLineOpts.IsPortable then
+    Result := 'P:' + StrSliceRight(Result, Length(Result) - 2);
 end;
 
 class function TAppInfo.HelpFileName: string;
@@ -255,13 +242,13 @@ class function TAppInfo.ProgramCaption: string;
   {Returns caption to use in main window and task bar}
 const
   // TODO -cPRERELEASE: Remove DEV flag from ProgramCaption before release
-  {$IFNDEF PORTABLE}
   CaptionBase = 'CodeSnip 5 <<<DEV>>>';
-  {$ELSE}
-  CaptionBase = 'CodeSnip 5 <<<DEV>>> (Portable Edition)';
-  {$ENDIF}
+resourcestring
+  sPortableMode = '(Portable mode)';
 begin
   Result := CaptionBase;
+  if TCommandLineOpts.IsPortable then
+    Result := Result + ' ' + sPortableMode;
   if TCommandLineOpts.UseLocalHost then
     Result := Result + ' [localhost]';
 end;
@@ -356,28 +343,27 @@ class function TAppInfo.UserAppDir: string;
     @return Full path to per-user application data directory.
   }
 begin
-  {$IFNDEF PORTABLE}
-  Result := TSystemFolders.PerUserAppData + '\DelphiDabbler\CodeSnip.4';
-  {$ELSE}
-  Result := CommonAppDir;
-  {$ENDIF}
+  Result := StrIf(
+    TCommandLineOpts.IsPortable,
+    CommonAppDir,
+    TSystemFolders.PerUserAppData + '\DelphiDabbler\CodeSnip.4'
+  );
 end;
 
 class function TAppInfo.UserDataDir: string;
   {Returns the directory where CodeSnip stores the user's "database" files.
     @return Full path to database sub directory.
   }
-{$IFNDEF PORTABLE}
 var
   Section: ISettingsSection;  // persistent storage where code is recorded
-{$ENDIF}
 begin
-  {$IFNDEF PORTABLE}
-  Section := Settings.ReadSection(ssDatabase);
-  Result := Section.GetString('UserDataDir', DefaultUserDataDir);
-  {$ELSE}
-  Result := DefaultUserDataDir;
-  {$ENDIF}
+  if TCommandLineOpts.IsPortable then
+    Result := DefaultUserDataDir
+  else
+  begin
+    Section := Settings.ReadSection(ssDatabase);
+    Result := Section.GetString('UserDataDir', DefaultUserDataDir);
+  end;
 end;
 
 end.
