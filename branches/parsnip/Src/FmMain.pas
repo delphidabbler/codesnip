@@ -1411,9 +1411,6 @@ begin
     // Set window caption
     Application.Title := TAppInfo.ProgramCaption;
     Caption := TAppInfo.ProgramCaption;
-//    // TODO: Move this check in TAppInfo.ProgramCaption
-//    if TCommandLineOpts.UseLocalHost then
-//      Caption := Caption + ' [' + TWebInfo.LocalHost + ']';
 
     // Restore window settings
     fWindowSettings := TMainWindowSettings.CreateStandAlone(Self); // auto-freed
