@@ -86,11 +86,7 @@ MIDL = @echo *** IGNORING MIDL
 !endif
 
 # Command line options
-!ifdef PORTABLE
-DELPHIDEFINES = "-DPORTABLE"
-!else
 DELPHIDEFINES =
-!endif
 
 # Implicit rules
 
@@ -139,27 +135,14 @@ pascal: CodeSnip.exe
 # locations in the project options .cfg file.
 CodeSnip.exe:
   @echo +++ Compiling Pascal +++
-!ifdef PORTABLE
-  @if exist $(EXE)\$(@F) copy $(EXE)\$(@F) $(EXE)\$(@F).bak
-!endif
   @$(DCC32) $(@B).dpr -B -U"$(INDY10)" $(DELPHIDEFINES)
-!ifdef PORTABLE
-  @copy $(EXE)\$(@F) $(EXE)\$(@B)-p.exe /Y
-  @del $(EXE)\$(@F)
-  @if exist $(EXE)\$(@F).bak copy $(EXE)\$(@F).bak $(EXE)\$(@F)
-  @if exist $(EXE)\$(@F).bak del $(EXE)\$(@F).bak
-!endif
 
 # Builds help file
 help:
   -1 @$(HHC) .\Help\CodeSnip.chm
 
 # Compiles the resources and deletes intermediate file created by VIED
-!ifndef PORTABLE
 VERINFOFILEBASE = VCodeSnip
-!else
-VERINFOFILEBASE = VCodeSnipPortable
-!endif
 resources: $(VERINFOFILEBASE).res Resources.res HTML.res
   -@del $(VERINFOFILEBASE).rc
 
@@ -174,12 +157,8 @@ typelib:
 
 # Builds setup program
 setup:
-!ifndef PORTABLE
   @del ..\Exe\CodeSnip-Setup-*
   @$(ISCC) Install\CodeSnip.iss
-!else
-  @echo **** Portable build - no setup file created ****
-!endif
 
 # Creates auto generated files
 autogen:
@@ -189,26 +168,21 @@ autogen:
 # Build release files (.zip)
 !ifndef RELEASEFILENAME
 RELEASEFILENAME = dd-codesnip
-!ifdef PORTABLE
-RELEASEFILENAME = $(RELEASEFILENAME)-portable
 !endif
-!endif
-OUTFILE = Release\$(RELEASEFILENAME).zip
+STANDARDOUTFILE = Release\$(RELEASEFILENAME).zip
+PORTABLEOUTFILE = Release\$(RELEASEFILENAME)-portable.zip
 release:
   @echo.
-  @echo Creating Release File
-  @echo ---------------------
+  @echo Creating Release Files
+  @echo ----------------------
   @cd ..
-  -@if exist $(OUTFILE) del $(OUTFILE)
-!ifndef PORTABLE
-  @$(ZIP) -j -9 $(OUTFILE) Exe\CodeSnip-Setup-*.exe Docs\ReadMe.txt
-!else
-  @$(ZIP) -j -9 $(OUTFILE) Exe\CodeSnip-p.exe
-  @$(ZIP) -j -9 $(OUTFILE) Exe\CodeSnip.chm
-  @$(ZIP) -j -9 $(OUTFILE) Docs\ReadMe.txt
-  @$(ZIP) -j -9 $(OUTFILE) Docs\Privacy.txt
-  @$(ZIP) -j -9 $(OUTFILE) Docs\License.html
-!endif
+  -@if exist $(STANDARDOUTFILE) del $(STANDARDOUTFILE)
+  @$(ZIP) -j -9 $(STANDARDOUTFILE) Exe\CodeSnip-Setup-*.exe Docs\ReadMe.txt
+  @$(ZIP) -j -9 $(PORTABLEOUTFILE) Exe\CodeSnip.exe
+  @$(ZIP) -j -9 $(PORTABLEOUTFILE) Exe\CodeSnip.chm
+  @$(ZIP) -j -9 $(PORTABLEOUTFILE) Docs\ReadMe.txt
+  @$(ZIP) -j -9 $(PORTABLEOUTFILE) Docs\Privacy.txt
+  @$(ZIP) -j -9 $(PORTABLEOUTFILE) Docs\License.html
   @cd Src
 
 # Clean up unwanted files
