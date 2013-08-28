@@ -607,6 +607,7 @@ uses
   // Delphi
   Windows, Graphics,
   // Project
+  CS.Init.CommandLineOpts,
   DB.UCategory, DB.UMain, DB.USnippet, FmSplash, FmTrappedBugReportDlg,
   FmWaitDlg, IntfFrameMgrs, Notifications.UDisplayMgr, UActionFactory, UAppInfo,
   UClassHelpers, UCodeShareMgr, UCommandBars, UConsts, UCopyInfoMgr,
@@ -1411,7 +1412,8 @@ begin
     // Set window caption
     Application.Title := TAppInfo.ProgramCaption;
     Caption := TAppInfo.ProgramCaption;
-    if TWebInfo.UsingLocalHost then
+    // TODO: Move this check in TAppInfo.ProgramCaption
+    if TCommandLineOpts.UseLocalHost then
       Caption := Caption + ' [' + TWebInfo.LocalHost + ']';
 
     // Restore window settings
