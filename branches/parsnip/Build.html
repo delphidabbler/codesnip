@@ -95,17 +95,24 @@
 
 <p>
   Several DelphiDabbler and other 3rd party libraries and components are
-  required to compile <em>CodeSnip</em>, most of which are included in the code
-  repository in the <code>Src/3rdParty</code> directory. Code not included in
-  the repository is noted below.
+  required to compile <em>CodeSnip</em>, most of which can be built from the
+  code repository tree.
 </p>
 
-<h3>
-  Indy libraries v10
+<p>
+  All the libraries must be available before building <em>CodeSnip</em> itself.
+</p>
+
+<h3 id="indy10">
+  Indy v10
 </h3>
 
 <p>
-  The Indy 10 Internet components ship with Delphi XE.
+  The Indy 10 Internet components ship are not included in the code repository,
+  since they are included with Delphi XE.
+</p>
+
+<p>
   If you prefer to work with the latest release you can download it from <a
     href="http://www.indyproject.org/"
   >http://www.indyproject.org/</a>. If you download a copy of Indy 10 you
@@ -146,11 +153,62 @@
 </p>
 
 <h3>
+  DelphiDabbler Code Library
+</h3>
+
+<p>
+  Several units from the <a
+    href="http://code.google.com/p/ddab-lib/"
+  >DelphiDabbler Code Library</a> are required. These files are included in the
+  code repository in the <code>Src\Lib\3rdParty\DDabLib</code> directory.
+</p>
+
+<p>
+  The Makefile provides an option to build this library. <a
+    href="#make-libraries"
+  >See below</a> for details.
+</p>
+
+<h3>
+  SynEdit
+</h3>
+
+<p>
+  Several units from the <a
+    href="http://synedit.sourceforge.net/"
+  >SynEdit</a> project are required. The required files are included in the code
+  repository in the <code>Src\Lib\3rdParty\SynEdit</code> directory.
+</p>
+
+<p>
+  The Makefile provides an option to build this library. <a
+    href="#make-libraries"
+  >See below</a> for details.
+</p>
+
+<h3>
+  delphi-coll Delphi Collections Library
+</h3>
+
+<p>
+  Units from the <a
+    href="http://code.google.com/p/delphi-coll/"
+  >Delphi Collections</a> project are required. The necessary files are included
+  in the code repository in the <code>Src\Lib\3rdParty\DelphiColl</code> directory.
+</p>
+
+<p>
+  The Makefile provides an option to build this library. <a
+    href="#make-libraries"
+  >See below</a> for details.
+</p>
+
+<h3>
   Delphi RTL &amp; VCL
 </h3>
 
 <p>
-  Goes without saying really, but you need the RTL and VCL that ships with
+  Goes without saying really, but you also need the RTL and VCL that ships with
   Delphi.
 </p>
 
@@ -627,6 +685,8 @@ set PATHSET=1
   |   |   |
   |   |   +-- 3rdParty        - 3rd party library source code
   |   |       |
+  |   |       +-- DDabLib     - DelphiDabbler Code Library files
+  |   |       |
   |   |       +-- DelphiColl  - delphi-coll collections files
   |   |       |
   |   |       +-- SynEdit     - SynEdit highlighted edit control files
@@ -736,7 +796,8 @@ set PATHSET=1
   do:
 </p>
 
-<pre class="cmd"><span class="prompt">&gt;</span> Make resources
+<pre class="cmd"><span class="prompt">&gt;</span> Make libraries
+<span class="prompt">&gt;</span> Make resources
 <span class="prompt">&gt;</span> Make typelib
 <span class="prompt">&gt;</span> Make autogen</pre>
 
@@ -870,7 +931,10 @@ set PATHSET=1
 
 <ul>
   <li>
-    Build the <em>CodeSnip</em> Executable
+    Build the Required Libraries.
+  </li>
+  <li>
+    Build the <em>CodeSnip</em> Executable.
   </li>
   <li>
     Build the Help File.
@@ -900,6 +964,38 @@ set PATHSET=1
   <code>Test</code> directory.</em>
 </p>
 
+<h3 id="make-libraries">
+  Build the Required Libraries
+</h3>
+
+<p>
+  Before the <em>CodeSnip</em> executable can be built you need to make sure the
+  required libraries are available.
+</p>
+
+<p>
+  In the case of the Indy components you have to ensure these are available as
+  described <a
+    href="#indy10"
+  >above</a> - the makefile does not know how to build them.
+</p>
+
+<p>
+  All the other libraries that have source code included in the code repository
+  can be built using this command:
+</p>
+
+<pre class="cmd"><span class="prompt">&gt;</span> Make libraries</pre>
+
+<p>
+  You can also build the libraries individually by using one or more of the
+  following commands:
+</p>
+
+<pre class="cmd"><span class="prompt">&gt;</span> Make Collections.bpl
+<span class="prompt">&gt;</span> Make SynEdit_RXE.bpl
+<span class="prompt">&gt;</span> Make DDabLib.bpl</pre>
+
 <h3>
   Build the CodeSnip Executable
 </h3>
@@ -923,6 +1019,20 @@ set PATHSET=1
   The <em>CodeSnip</em> executable, named <code>CodeSnip.exe</code> will be
   placed in the <code>Exe</code> folder.
 </p>
+
+<p>
+  There is a shortcut that helps if you're not sure if the required libraries
+  have been built and are up to date.
+</p>
+
+<pre class="cmd"><span class="prompt">&gt;</span> Make bin</pre>
+
+<p>
+  is the same as doing:
+</p>
+
+<pre class="cmd"><span class="prompt">&gt;</span> Make libraries
+<span class="prompt">&gt;</span> Make codesnip</pre>
 
 <h4>
   Portable edition
@@ -985,7 +1095,8 @@ set PATHSET=1
   As an aside, you can make all the required files by doing:
 </p>
 
-<pre class="cmd"><span class="prompt">&gt;</span> Make exes</pre>
+<pre class="cmd"><span class="prompt">&gt;</span> Make libraries
+<span class="prompt">&gt;</span> Make exes</pre>
 
 <p>
   <code>Make exes</code> will require the use of the <code>-DIGNOREMIDL</code>
@@ -1103,6 +1214,7 @@ set PATHSET=1
 </p>
 
 <pre class="cmd"><span class="prompt">&gt;</span> Make config
+<span class="prompt">&gt;</span> Make libraries
 <span class="prompt">&gt;</span> Make exes
 <span class="prompt">&gt;</span> Make setup
 <span class="prompt">&gt;</span> Make release</pre>
