@@ -158,7 +158,11 @@ begin
     Params.Add('prog-ver', TAppInfo.ProgramReleaseVersion);
     Params.Add('os', SanitiseString(TOSInfo.Description));
     Params.Add('ie-ver', IntToStr(TIEInfo.MajorVersion));
-    Params.Add('caller', SanitiseString(Caller));
+    Params.Add(
+      'caller',
+      SanitiseString(Caller) + ',' +
+        StrIf(TCommandLineOpts.IsPortable, 'Portable', 'Standard')
+    );
     Response := TStringList.Create;
     try
       PostCommand('stats', Params, Response);
