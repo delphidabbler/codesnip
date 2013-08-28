@@ -175,9 +175,11 @@ inherited UserDataPathDlg: TUserDataPathDlg
       Top = 0
       Width = 320
       Height = 82
+      ParentBackground = False
       TabOrder = 2
       Visible = False
       ExplicitLeft = 57
+      ExplicitHeight = 82
     end
   end
   object alDlg: TActionList
