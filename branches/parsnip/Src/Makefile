@@ -226,7 +226,7 @@ clean:
   @cd Src
 
 # Make libraries
-libraries: cfglib Collections.bpl SynEdit_RXE.bpl
+libraries: cfglib Collections.bpl SynEdit_RXE.bpl DDabLib.bpl
 
 cfglib:
   @if not exist "$(BIN)" mkdir "$(BIN)"
@@ -243,3 +243,7 @@ SynEdit_RXE.bpl:
   @$(DCC32) $(@B).dpk -B $(DELPHIDEFINES)
   @cd ..\..\..
 
+DDabLib.bpl:
+  @cd Lib\3rdParty\DDabLib
+  @$(DCC32) $(@B).dpk -B $(DELPHIDEFINES)
+  @cd ..\..\..
