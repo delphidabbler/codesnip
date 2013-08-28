@@ -402,7 +402,8 @@ uses
   Web.URegistrar in 'Web.URegistrar.pas',
   Web.UStdWebService in 'Web.UStdWebService.pas',
   Web.USWAGRESTMgr in 'Web.USWAGRESTMgr.pas',
-  Web.UXMLRequestor in 'Web.UXMLRequestor.pas';
+  Web.UXMLRequestor in 'Web.UXMLRequestor.pas',
+  CS.Init.CommandLineOpts in 'CS.Init.CommandLineOpts.pas';
 
 // Include resources
 {$Resource ExternalObj.tlb}       // Type library file
