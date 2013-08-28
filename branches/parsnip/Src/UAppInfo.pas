@@ -48,17 +48,12 @@ type
     const ProgramName = 'CodeSnip-p';
     {$ENDIF}
       {Name of program}
-    // TODO -cPRERELEASE: Remove DEV flag from ProgramCaption before release
-    {$IFNDEF PORTABLE}
-    const ProgramCaption = 'CodeSnip 5 <<<DEV>>>';
-    {$ELSE}
-    const ProgramCaption = 'CodeSnip 5 <<<DEV>>> (Portable Edition)';
-    {$ENDIF}
-      {Name of program displayed in main window and task bar caption}
     const FullProgramName = CompanyName + ' ' + ProgramName;
       {Full name of program, including company name}
     const ProgramID = 'codesnip';
       {Machine readable identifier of program}
+    class function ProgramCaption: string;
+      {Returns caption to use in main window and task bar}
     class function UserAppDir: string;
       {Gets the CodeSnip data directory stored within the user's application
       data directory.
@@ -142,7 +137,12 @@ uses
   // DelphiDabbler library
   PJMD5,
   // Project
-  USettings, UStrUtils, USystemID, USystemInfo, UVersionInfo;
+  CS.Init.CommandLineOpts,
+  USettings,
+  UStrUtils,
+  USystemID,
+  USystemInfo,
+  UVersionInfo;
 
 
 { TAppInfo }
@@ -249,6 +249,21 @@ class function TAppInfo.IsRegistered: Boolean;
   }
 begin
   Result := RegistrationCode <> '';
+end;
+
+class function TAppInfo.ProgramCaption: string;
+  {Returns caption to use in main window and task bar}
+const
+  // TODO -cPRERELEASE: Remove DEV flag from ProgramCaption before release
+  {$IFNDEF PORTABLE}
+  CaptionBase = 'CodeSnip 5 <<<DEV>>>';
+  {$ELSE}
+  CaptionBase = 'CodeSnip 5 <<<DEV>>> (Portable Edition)';
+  {$ENDIF}
+begin
+  Result := CaptionBase;
+  if TCommandLineOpts.UseLocalHost then
+    Result := Result + ' [localhost]';
 end;
 
 class function TAppInfo.ProgramFileVersion: string;
