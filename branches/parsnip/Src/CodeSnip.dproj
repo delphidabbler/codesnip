@@ -38,12 +38,6 @@
 			</DelphiCompile>
 			<DCCReference Include="3rdParty\GIFImage.pas"/>
 			<DCCReference Include="3rdParty\LVEx.pas"/>
-			<DCCReference Include="3rdParty\PJMD5.pas"/>
-			<DCCReference Include="3rdParty\PJShellFolders.pas"/>
-			<DCCReference Include="3rdParty\PJStreamWrapper.pas"/>
-			<DCCReference Include="3rdParty\PJSysInfo.pas"/>
-			<DCCReference Include="3rdParty\PJVersionInfo.pas"/>
-			<DCCReference Include="3rdParty\PJWdwState.pas"/>
 			<DCCReference Include="3rdParty\UEncrypt.pas"/>
 			<DCCReference Include="AutoGen\IntfExternalObj.pas"/>
 			<DCCReference Include="ActiveText.UHTMLRenderer.pas"/>
