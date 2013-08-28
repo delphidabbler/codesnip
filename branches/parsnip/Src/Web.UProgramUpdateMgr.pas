@@ -38,14 +38,9 @@ type
       UserAgent = 'CodeSnip';
       ///  <summary>API key required for all calls to web service.</summary>
       ApiKey = '9EE3A4D85A2F46F79AE2AAB1012A7678';
-      ///  <summary>Value passed to web service to indicate portable mode.
-      ///  </summary>
-      PortableMode = 'portable';
-      ///  <summary>Value passed to web service to indicate standard mode.
-      ///  </summary>
-      StandardMode = 'standard';
   strict private
-    ///  <summary>Returns program edition to be sent to web service.</summary>
+      ///  <summary>Returns value to be passed to web service to specify the
+      ///  edition of the program making the request.</summary>
     class function ProgramEdition: string;
     ///  <summary>Creates and returns a parameters object containing standard
     ///  parameters that are required on every call to the web service.
@@ -84,6 +79,7 @@ uses
   UAppInfo,
   UStrUtils,
   USystemInfo,
+  UVersionInfo,
   Web.UInfo;
 
 
@@ -143,9 +139,13 @@ end;
 
 class function TProgramUpdateMgr.ProgramEdition: string;
 begin
-  Result := StrIf(
-    TCommandLineOpts.IsPortable, PortableMode, StandardMode
-  );
+  // NOTE: CodeSnip 4 used 'standard' in the standard edition and 'portable' in
+  //       the portable edition. From CodeSnip 5 there was only one edition,
+  //       labelled by its major version number.
+  { TODO -cPRERELEASE: Change the following result to
+    Result := Format('%d', [TVersionInfo.ProductVerNum.V1]);
+    once the major version number in version information is changed to "5" }
+  Result := '5';
 end;
 
 procedure TProgramUpdateMgr.SignOn(const Caller: string);
