@@ -16,11 +16,11 @@
 		<PropertyGroup Condition="'$(Base)'!=''">
 			<DCC_Description>DelphiColl library by Ciobanu Alexandru</DCC_Description>
 			<RuntimeOnlyPackage>true</RuntimeOnlyPackage>
-			<DCC_BplOutput>..\..\..\..\Bin\Lib\Pkg</DCC_BplOutput>
-			<DCC_DcpOutput>..\..\..\..\Bin\Lib\Pkg</DCC_DcpOutput>
+			<DCC_BplOutput>..\..\..\Bin\Lib\Pkg</DCC_BplOutput>
+			<DCC_DcpOutput>..\..\..\Bin\Lib\Pkg</DCC_DcpOutput>
 			<DCC_ImageBase>00400000</DCC_ImageBase>
 			<GenPackage>true</GenPackage>
-			<DCC_DcuOutput>..\..\..\..\Bin\Lib</DCC_DcuOutput>
+			<DCC_DcuOutput>..\..\..\Bin\Lib</DCC_DcuOutput>
 			<DCC_UnitAlias>WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;$(DCC_UnitAlias)</DCC_UnitAlias>
 			<DCC_Warnings>error</DCC_Warnings>
 			<DCC_N>false</DCC_N>

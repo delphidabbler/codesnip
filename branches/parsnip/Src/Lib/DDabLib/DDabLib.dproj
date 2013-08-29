@@ -16,12 +16,12 @@
 		<PropertyGroup Condition="'$(Base)'!=''">
 			<DCC_Description>Subset of DelphiDabbler Code Library for CodeSnip</DCC_Description>
 			<RuntimeOnlyPackage>true</RuntimeOnlyPackage>
-			<DCC_BplOutput>..\..\..\..\Bin\Lib\Pkg</DCC_BplOutput>
-			<DCC_DcpOutput>..\..\..\..\Bin\Lib\Pkg</DCC_DcpOutput>
+			<DCC_BplOutput>..\..\..\Bin\Lib\Pkg</DCC_BplOutput>
+			<DCC_DcpOutput>..\..\..\Bin\Lib\Pkg</DCC_DcpOutput>
 			<GenPackage>true</GenPackage>
 			<GenDll>true</GenDll>
 			<DCC_ImageBase>00400000</DCC_ImageBase>
-			<DCC_DcuOutput>..\..\..\..\Bin\Lib</DCC_DcuOutput>
+			<DCC_DcuOutput>..\..\..\Bin\Lib</DCC_DcuOutput>
 			<DCC_UnitAlias>WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;$(DCC_UnitAlias)</DCC_UnitAlias>
 		</PropertyGroup>
 		<ItemGroup>
@@ -51,7 +51,7 @@
 						<Source Name="MainSource">DDabLib.dpk</Source>
 					</Source>
 					<VersionInfo>
-						<VersionInfo Name="IncludeVerInfo">False</VersionInfo>
+						<VersionInfo Name="IncludeVerInfo">True</VersionInfo>
 						<VersionInfo Name="AutoIncBuild">False</VersionInfo>
 						<VersionInfo Name="MajorVer">1</VersionInfo>
 						<VersionInfo Name="MinorVer">0</VersionInfo>

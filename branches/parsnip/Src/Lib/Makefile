@@ -51,16 +51,16 @@ config:
 libs: Collections.bpl SynEdit_RXE.bpl DDabLib.bpl
 
 Collections.bpl:
-  @cd 3rdParty\DelphiColl
+  @cd DelphiColl
   @$(DCC32) $(@B).dpk -B $(DELPHIDEFINES)
-  @cd ..\..
+  @cd ..
 
 SynEdit_RXE.bpl:
-  @cd 3rdParty\SynEdit
+  @cd SynEdit
   @$(DCC32) $(@B).dpk -B $(DELPHIDEFINES)
-  @cd ..\..
+  @cd ..
 
 DDabLib.bpl:
-  @cd 3rdParty\DDabLib
+  @cd DDabLib
   @$(DCC32) $(@B).dpk -B $(DELPHIDEFINES)
-  @cd ..\..
+  @cd ..
