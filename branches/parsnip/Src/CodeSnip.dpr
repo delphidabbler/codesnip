@@ -403,7 +403,7 @@ uses
   Web.UStdWebService in 'Web.UStdWebService.pas',
   Web.USWAGRESTMgr in 'Web.USWAGRESTMgr.pas',
   Web.UXMLRequestor in 'Web.UXMLRequestor.pas',
-  CS.Init.CommandLineOpts in 'CS.Init.CommandLineOpts.pas';
+  CS.Init.CommandLineOpts in 'Main\CS.Init.CommandLineOpts.pas';
 
 // Include resources
 {$Resource ExternalObj.tlb}       // Type library file

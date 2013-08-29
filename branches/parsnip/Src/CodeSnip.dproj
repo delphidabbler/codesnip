@@ -618,7 +618,7 @@
 			<DCCReference Include="Web.UStdWebService.pas"/>
 			<DCCReference Include="Web.USWAGRESTMgr.pas"/>
 			<DCCReference Include="Web.UXMLRequestor.pas"/>
-			<DCCReference Include="CS.Init.CommandLineOpts.pas"/>
+			<DCCReference Include="Main\CS.Init.CommandLineOpts.pas"/>
 			<None Include="CodeSnip.todo"/>
 			<BuildConfiguration Include="Base">
 				<Key>Base</Key>
