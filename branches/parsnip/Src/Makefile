@@ -208,16 +208,16 @@ cfglib:
   @if not exist "$(PKGBIN)" mkdir "$(PKGBIN)"
 
 Collections.bpl:
-  @cd Lib\3rdParty\DelphiColl
+  @cd Lib\DelphiColl
   @$(DCC32) $(@B).dpk -B $(DELPHIDEFINES)
-  @cd ..\..\..
+  @cd ..\..
 
 SynEdit_RXE.bpl:
-  @cd Lib\3rdParty\SynEdit
+  @cd Lib\SynEdit
   @$(DCC32) $(@B).dpk -B $(DELPHIDEFINES)
-  @cd ..\..\..
+  @cd ..\..
 
 DDabLib.bpl:
-  @cd Lib\3rdParty\DDabLib
+  @cd Lib\DDabLib
   @$(DCC32) $(@B).dpk -B $(DELPHIDEFINES)
-  @cd ..\..\..
+  @cd ..\..
