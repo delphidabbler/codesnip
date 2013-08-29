@@ -27,14 +27,8 @@ ISCC = ISCC.exe
 
 # Explicit rules
 
-# Default is to build everything and release
+# Default is configure and build setup
 everything: config setup
-
-# Builds libraries and CodeSnip exe
-bin: libraries codesnip
-
-# Build CodeSnip executable
-codesnip: typelib resources autogen pascal
 
 # Configure folders
 config:
