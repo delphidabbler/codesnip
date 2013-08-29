@@ -39,7 +39,7 @@
 			<DCCReference Include="3rdParty\GIFImage.pas"/>
 			<DCCReference Include="3rdParty\LVEx.pas"/>
 			<DCCReference Include="3rdParty\UEncrypt.pas"/>
-			<DCCReference Include="AutoGen\IntfExternalObj.pas"/>
+			<DCCReference Include="Main\AutoGen\IntfExternalObj.pas"/>
 			<DCCReference Include="ActiveText.UHTMLRenderer.pas"/>
 			<DCCReference Include="ActiveText.UMain.pas"/>
 			<DCCReference Include="ActiveText.URTFRenderer.pas"/>

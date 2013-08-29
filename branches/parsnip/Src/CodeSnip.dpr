@@ -39,7 +39,7 @@ uses
   GIFImage in '3rdParty\GIFImage.pas',
   LVEx in '3rdParty\LVEx.pas',
   UEncrypt in '3rdParty\UEncrypt.pas',
-  IntfExternalObj in 'AutoGen\IntfExternalObj.pas',
+  IntfExternalObj in 'Main\AutoGen\IntfExternalObj.pas',
   ActiveText.UHTMLRenderer in 'ActiveText.UHTMLRenderer.pas',
   ActiveText.UMain in 'ActiveText.UMain.pas',
   ActiveText.URTFRenderer in 'ActiveText.URTFRenderer.pas',

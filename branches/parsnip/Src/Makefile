@@ -161,9 +161,10 @@ setup:
   @$(ISCC) Install\CodeSnip.iss
 
 # Creates auto generated files
+AUTOGENDIR = .\Main\AutoGen
 autogen:
-  @$(TLIBIMP) -P+ -Ps+ -D.\AutoGen -FtIntfExternalObj $(BIN)\ExternalObj.tlb
-  @if exist .\AutoGen\IntfExternalObj.dcr del .\AutoGen\IntfExternalObj.dcr
+  @$(TLIBIMP) -P+ -Ps+ -D$(AUTOGENDIR) -FtIntfExternalObj $(BIN)\ExternalObj.tlb
+  @if exist $(AUTOGENDIR)\IntfExternalObj.dcr del $(AUTOGENDIR)\IntfExternalObj.dcr
 
 # Build release files (.zip)
 !ifndef RELEASEFILENAME
