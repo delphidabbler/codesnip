@@ -669,7 +669,7 @@ set PATHSET=1
   |
   +-- Src                     - main CodeSnip source code
   |   |
-  |   +-- 3rdParty            - third party &amp; DelphiDabbler library source code
+  |   +-- 3rdParty            - third party source code included directly in CodeSnip
   |   |
   |   +-- AutoGen             - receives automatically generated code
   |   |
@@ -694,6 +694,8 @@ set PATHSET=1
   |   +-- Install             - setup script and support code
   |   |   |
   |   |   +-- Assets          - files required for inclusion in install program
+  |   |
+  |   +-- Portable            - source file for CodeSnip portable loader program
   |   |
   |   +-- Res                 - container for files that are embedded in resources
   |       |
@@ -770,15 +772,18 @@ set PATHSET=1
   ...</pre>
 
 <p>
-  If <code>Bin</code> existied before <code>Make</code> was run, and the
+  If <code>Bin</code> existed before <code>Make</code> was run, and the
   required libraries have been built then <code>Bin</code> may have
   <code>Lib</code> and <code>Lib\Pkg</code> sub-directories.
 </p>
 
 <p>
+  Furthermore if the portable loader for <em>CodeSnip</em> has been built then
+  there will also be a <code>Portable</code> sub-directory of <code>Bin</code>.
+
+<p>
   If the <code>Bin</code> folder already existed it will have been emptied but
-  any <code>Lib</code> and <code>Lib\Pkg</code> sub-directories will be left
-  intact.
+  any sub-directories will be left intact.
 </p>
 
 <p>
