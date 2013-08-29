@@ -59,7 +59,7 @@ will not be included in SVN. The structure of _Build_ is:
 
     Build
       Dist
-       Standard
+        Standard
         Portable
       Exe
         Tests
@@ -373,10 +373,10 @@ source tree:
 
     Since _Src_ is affected by merges from _trunk_ a staged approach is needed:
 
-    - Create new _Main_ sub-directory.
+    - **_DONE:_** Create new _Main_ sub-directory.
 
-    - Move existing files created in _parsnip_ since it was branched from
-      _trunk_ into _Src\Main_, updating project files as required.
+    - **_DONE:_** Move existing files created in _parsnip_ since it was branched
+      from _trunk_ into _Src\Main_, updating project files as required.
 
     - Add any new CodeSnip project files directly into _Src\Main_ instead of
       _Src_.
@@ -452,20 +452,14 @@ source tree:
 
 + **Src\Lib and sub-directories**
 
-    _Src\Lib_ changes only in that the _3rdParty_ directory is removed.
+    **_All changes now complete_**
 
-    Since _Src\Lib_ was added to the _parsnip_ branch after it branched from
-    _trunk_ the directory is not affected by merges from _trunk_ and so the
-    changes can be carried out at any time.
+    All sub-directories of _Src\Lib\3rdParty_ were moved up into _Src\Lib_ and
+    _Src\Lib\3rdParty_ was deleted.
 
-    The following changed are needed:
-
-    - Move all sub-directories of _Src\Lib\3rdParty_ into _Src\Lib_, e.g.
-      _Src\Lib\3rdParty\DDabLib_ moves to _Src\Lib\DDabLib_.
-
-    - Delete the now empty _Src\Lib\3rdParty_.
-
-    - Adjust the library project files and makefile re the new locations.
+    This was safe because _Src\Lib_ was added to the _parsnip_ branch after it
+    branched from _trunk_ so the directory isn't affected by merges from
+    _trunk_.
 
 + **Src\Portable**
 
