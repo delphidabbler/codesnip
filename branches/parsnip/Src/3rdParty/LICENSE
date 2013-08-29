@@ -1,16 +1,20 @@
 Files in the Src/3rdParty directory are licensed as follows:
 
-GIFImage.pas
-------------
-Covered by the "TGifImage" license. See Docs/License.html#tgifimage.
+* GIFImage.pas
 
-LVEx.pas
---------
-This file, and the accompanying resource file (LVEx.res), are freeware copyright
-(c) 1999-2009 Vadim Crits. For details of the terms and conditions of use see
-Docs/License.html#tlistviewex.
+    Covered by the "TGifImage" license.
 
-All Other Files
----------------
-All other files in the directory include licensing information in their
-comments.
+    See Docs/License.html#tgifimage.
+
+* LVEx.pas
+
+    This file, and the accompanying resource file (LVEx.res), are freeware
+    copyright (c) 1999-2009 Vadim Crits.
+
+    For details of the terms and conditions of use see
+    Docs/License.html#tlistviewex.
+
++ UEncrypt.pas
+
+    Any copyright in UEncrypt.pas dedicated to the Public Domain.
+    http://creativecommons.org/publicdomain/zero/1.0/
