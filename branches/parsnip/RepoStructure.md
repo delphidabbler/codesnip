@@ -528,3 +528,8 @@ source tree:
         - Delete _Tests_ and all its remaining contents.
 
         - Adjust any project and make files accordingly.
+
+--------------------------------------------------------------------------------
+$Date$
+$Rev$
+--------------------------------------------------------------------------------
