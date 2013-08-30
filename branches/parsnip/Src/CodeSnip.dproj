@@ -36,10 +36,6 @@
 			<DelphiCompile Include="CodeSnip.dpr">
 				<MainSource>MainSource</MainSource>
 			</DelphiCompile>
-			<DCCReference Include="3rdParty\GIFImage.pas"/>
-			<DCCReference Include="3rdParty\LVEx.pas"/>
-			<DCCReference Include="3rdParty\UEncrypt.pas"/>
-			<DCCReference Include="Main\AutoGen\IntfExternalObj.pas"/>
 			<DCCReference Include="ActiveText.UHTMLRenderer.pas"/>
 			<DCCReference Include="ActiveText.UMain.pas"/>
 			<DCCReference Include="ActiveText.URTFRenderer.pas"/>
@@ -618,6 +614,10 @@
 			<DCCReference Include="Web.UStdWebService.pas"/>
 			<DCCReference Include="Web.USWAGRESTMgr.pas"/>
 			<DCCReference Include="Web.UXMLRequestor.pas"/>
+			<DCCReference Include="Main\AutoGen\IntfExternalObj.pas"/>
+			<DCCReference Include="Main\Imports\GIFImage.pas"/>
+			<DCCReference Include="Main\Imports\LVEx.pas"/>
+			<DCCReference Include="Main\Imports\UEncrypt.pas"/>
 			<DCCReference Include="Main\CS.Init.CommandLineOpts.pas"/>
 			<None Include="CodeSnip.todo"/>
 			<BuildConfiguration Include="Base">

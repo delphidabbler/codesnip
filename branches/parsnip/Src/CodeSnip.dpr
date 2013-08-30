@@ -36,10 +36,6 @@ program CodeSnip;
 uses
   Forms,
   Windows,
-  GIFImage in '3rdParty\GIFImage.pas',
-  LVEx in '3rdParty\LVEx.pas',
-  UEncrypt in '3rdParty\UEncrypt.pas',
-  IntfExternalObj in 'Main\AutoGen\IntfExternalObj.pas',
   ActiveText.UHTMLRenderer in 'ActiveText.UHTMLRenderer.pas',
   ActiveText.UMain in 'ActiveText.UMain.pas',
   ActiveText.URTFRenderer in 'ActiveText.URTFRenderer.pas',
@@ -403,6 +399,10 @@ uses
   Web.UStdWebService in 'Web.UStdWebService.pas',
   Web.USWAGRESTMgr in 'Web.USWAGRESTMgr.pas',
   Web.UXMLRequestor in 'Web.UXMLRequestor.pas',
+  IntfExternalObj in 'Main\AutoGen\IntfExternalObj.pas',
+  GIFImage in 'Main\Imports\GIFImage.pas',
+  LVEx in 'Main\Imports\LVEx.pas',
+  UEncrypt in 'Main\Imports\UEncrypt.pas',
   CS.Init.CommandLineOpts in 'Main\CS.Init.CommandLineOpts.pas';
 
 // Include resources
