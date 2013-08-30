@@ -47,8 +47,8 @@ The code committed to the SVN repo will ultimately have this structure:
             Egg
           Misc
           Scripts
-            Import
-        Import
+            Imports
+        Imports
       Portable
       Tests
         DUnit
@@ -189,13 +189,13 @@ The directories have the following purposes:
                 Contains any assets that don't fit into the other _Assets_
                 sub-directories.
 
-            + **Src\Main\Assets\Scripts and Src\Main\Assets\Scripts\Import**
+            + **Src\Main\Assets\Scripts and Src\Main\Assets\Scripts\Imports**
 
                 Contains scripts that are executed from within HTML display in
                 the program. The _Import_ sub-directory contains scripts
                 imported from 3rd party sources.
 
-        + **Src\Main\Import**
+        + **Src\Main\Imports**
 
              Contains source files referenced directly in CodeSnip's project
              file that have been imported from other sources.
@@ -400,19 +400,19 @@ source tree:
 + **Src\3rdParty**
 
     Ideally this directory and its contents would be renamed and moved into
-    _Src\Main\Import_.
+    _Src\Main\Imports_.
 
     Since _Src\3rdParty_ is affected by merges from _trunk_ a staged approach is
     needed:
 
-    - Create a new _Src\Main\Import_ directory.
+    - Create a new _Src\Main\Imports_ directory.
 
     - If and when any new code is imported into CodeSnip in _parsnip_ that isn't
-      also imported into _trunk_ add it directly to _Src\Main\Import_.
+      also imported into _trunk_ add it directly to _Src\Main\Imports_.
 
     - When merging from _trunk_ has ceased do the following:
 
-        - Move any remaining files from _Src\3rdParty_ to _Src\Main\Import_.
+        - Move any remaining files from _Src\3rdParty_ to _Src\Main\Imports_.
 
         - Delete _Src\3rdParty_, which should now be empty.
 
@@ -434,17 +434,17 @@ source tree:
 
 + **Src\Help and sub-directories**
 
-    These directories do not need to be moved or changed.
+    **_These directories do not need to be moved or changed._**
 
     They are affected by merges from _trunk_, so **do not rename** any
     directories until merges have ceased.
 
 + **Src\Install and sub-directories**
 
-    These directories do not need to be moved or changed.
+    **_These directories do not need to be moved or changed._**
 
     They are affected by merges from _trunk_, so **do not rename** any
-    directories.
+    directories until merges have ceased.
 
 + **Src\Lib and sub-directories**
 
@@ -470,8 +470,8 @@ source tree:
     _Src\Main\Assets_.
 
     All sub-directories would retain the names and relative structure except
-    _Src\Res\Scripts\Import_ which would be renamed as
-    _Src\Main\Assets\Scripts\Import_.
+    _Src\Res\Scripts\3rdParty_ which would be renamed as
+    _Src\Main\Assets\Scripts\Imports_.
 
     Since _Src\Res_ is affected by merges from _trunk_ a staged approach is
     needed:
@@ -484,7 +484,7 @@ source tree:
     - When merging from _trunk_ has ceased proceed as follows as follows:
 
         - Move files from _Src\Res\Scripts\3rdParty_ into
-          _Src\Assets\Scripts\Import_.
+          _Src\Assets\Scripts\Imports_.
 
         - Move files from the remaining sub-directories of _Src\Res_ into the
           correspondingly named sub-directories of _Src\Assets_.
