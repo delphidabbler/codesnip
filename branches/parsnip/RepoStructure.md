@@ -401,13 +401,13 @@ source tree:
 
     **_All changes now complete_**
 
-    The contents of _Src\3rdParty_ were moved into a new _Src\Main\Imports_ 
-    directory and _Src\3rdParty_ was deleted. Related project files were 
+    The contents of _Src\3rdParty_ were moved into a new _Src\Main\Imports_
+    directory and _Src\3rdParty_ was deleted. Related project files were
     revised. No changes to make files were necessary.
 
-    **_Warning re merge conflicts:_** _Src\3rdParty_ was branched from _trunk_ 
+    **_Warning re merge conflicts:_** _Src\3rdParty_ was branched from _trunk_
     so any merges involving changes to the directory will cause a tree conflict,
-    because _Src\3rdParty_ has been deleted. Such a conflict should be resolved 
+    because _Src\3rdParty_ has been deleted. Such a conflict should be resolved
     by rejecting the change. If any of the changes to _trunk\Src\3rdParty_ are
     desirable then merge _trunk\Src\3rdParty_ into _parsnip\Src\Main\Imports_.
 
@@ -415,8 +415,8 @@ source tree:
 
     **_All changes now complete_**
 
-    The versioned contents of _Src\AutoGen_ were moved into a new 
-    _Src\Main\AutoGen_ directory and _Src\AutoGen_ was deleted. Related project 
+    The versioned contents of _Src\AutoGen_ were moved into a new
+    _Src\Main\AutoGen_ directory and _Src\AutoGen_ was deleted. Related project
     and make files were revised.
 
     **_Warning re merge conflicts:_** _Src\AutoGen_ was branched from _trunk_ so
@@ -452,7 +452,7 @@ source tree:
 
 + **Src\Portable**
 
-    This directory does not need to be moved or changed.
+    **_This directory does not need to be moved or changed._**
 
     _Src\Portable_ was added to _parsnip_ after it was branched from _trunk_ so
     the directory is not affected by any merges from _trunk_.
