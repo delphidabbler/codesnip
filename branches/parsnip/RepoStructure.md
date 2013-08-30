@@ -392,8 +392,8 @@ source tree:
     - When merging from _trunk_ has ceased do the following:
 
         - Move remaining CodeSnip files from _Src_ to _Src\Main_. **Be careful
-          to leave behind files that actually belong in _Src_ such as the group
-          project file, make file etc.**
+          to leave behind those files that continue to belong in _Src_ such as
+          the group project file, make file etc.**
 
         - Update relevant project files as required.
 
@@ -469,10 +469,11 @@ source tree:
     Since _Src\Res_ is affected by merges from _trunk_ a staged approach is
     needed:
 
-    - Create the new _Assets_ directory structure in _Src\Main_.
+    - **_DONE:_** Create the new _Assets_ directory structure in _Src\Main_.
 
     - If and when any new assets are added to the project, add them to the
-      appropriate sub-directory of _Src\Assets_ instead of _Src\Res_.
+      appropriate sub-directory of _Src\Assets_ instead of _Src\Res_, where
+      possible.
 
     - When merging from _trunk_ has ceased proceed as follows as follows:
 
@@ -489,28 +490,20 @@ source tree:
 
 + **Test** and its sub-directories.
 
-    Ideally, a new _Src\Test_ directory should be created and the
-    _Test\Src\DUnit_ directory and contents should be moved into _Src\Test_,
-    creating a new _Src\Test\DUnit directory. Then _Test_ should be deleted.
+    **_All changes now complete_**
 
-    Since _Test_ is affected by merges from trunk as staged approach is
-    required:
+    The _DUnit_ sub-directory of _Tests\Src_, along with its contents, was moved
+    into a new  _Src\Tests_ and _Tests_ and all its content was then deleted.
 
-    - Create a new _Src\Test_ directory.
-
-    - Continue to add new unit tests to the existing _Test_ directory until
-      merging from _trunk_ ceases.
-
-    - Create any new, non-DUnit, test projects as sub-directories of _Src\Test_.
-
-    - When merging from _trunk_ has ceased do the following:
-
-        - Move the _DUnit_ directory and its contents from _Tests\Src_ into
-          _Src\Tests_, creating a new _Tests\Src\DUnit_ directory.
-
-        - Delete _Tests_ and all its remaining contents.
-
-        - Adjust any project and make files accordingly.
+    **_Warning re merge conflicts:_** The _Tests_ directory, and its only
+    sub-directory, _Tests\Src\DUnit_ was branched from _trunk_. Therefore so any
+    merges involving changes within the directory will cause a tree conflict
+    because _Tests_ has been deleted. Such a conflict should be resolved by
+    rejecting the change. If any changes to _trunk\Tests\Src\DUnit_ are
+    desirable then merge _trunk\Tests\Src\DUnit_ into _parsnip\Src\Tests\DUnit_.
+    If any other  directories have been added to _trunk\Tests_ or
+    _trunk\Tests\Src_ then a decision needs to be made as to if or how to
+    reflect those changes in _parsnip\Src\Tests_
 
 --------------------------------------------------------------------------------
 
