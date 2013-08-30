@@ -399,37 +399,30 @@ source tree:
 
 + **Src\3rdParty**
 
-    Ideally this directory and its contents would be renamed and moved into
-    _Src\Main\Imports_.
+    **_All changes now complete_**
 
-    Since _Src\3rdParty_ is affected by merges from _trunk_ a staged approach is
-    needed:
+    The contents of _Src\3rdParty_ were moved into a new _Src\Main\Imports_ 
+    directory and _Src\3rdParty_ was deleted. Related project files were 
+    revised. No changes to make files were necessary.
 
-    - Create a new _Src\Main\Imports_ directory.
-
-    - If and when any new code is imported into CodeSnip in _parsnip_ that isn't
-      also imported into _trunk_ add it directly to _Src\Main\Imports_.
-
-    - When merging from _trunk_ has ceased do the following:
-
-        - Move any remaining files from _Src\3rdParty_ to _Src\Main\Imports_.
-
-        - Delete _Src\3rdParty_, which should now be empty.
-
-        - Update any relevant project and make files as required.
+    **_Warning re merge conflicts:_** _Src\3rdParty_ was branched from _trunk_ 
+    so any merges involving changes to the directory will cause a tree conflict,
+    because _Src\3rdParty_ has been deleted. Such a conflict should be resolved 
+    by rejecting the change. If any of the changes to _trunk\Src\3rdParty_ are
+    desirable then merge _trunk\Src\3rdParty_ into _parsnip\Src\Main\Imports_.
 
 + **Src\AutoGen**
 
     **_All changes now complete_**
 
-    _Src\AutoGen_ and its contents were moved into _Src\Main_ to create
-    _Src\Main\AutoGen_. _Src\AutoGen_ was then deleted. Related project and make
-    files were revised.
+    The versioned contents of _Src\AutoGen_ were moved into a new 
+    _Src\Main\AutoGen_ directory and _Src\AutoGen_ was deleted. Related project 
+    and make files were revised.
 
     **_Warning re merge conflicts:_** _Src\AutoGen_ was branched from _trunk_ so
     any merges involving changes to the directory will cause a tree conflict,
-    because _Src\AutoGen_ has been deleted. The conflict should be resolved by
-    rejecting the change. If any of the changes to _trunk\Src\AutoGen_ are
+    because _Src\AutoGen_ has been deleted. Such a conflict should be resolved
+    by rejecting the change. If any of the changes to _trunk\Src\AutoGen_ are
     desirable then merge _trunk\Src\AutoGen_ into _parsnip\Src\Main\AutoGen_.
 
 + **Src\Help and sub-directories**
