@@ -15,17 +15,17 @@
 		</PropertyGroup>
 		<PropertyGroup Condition="'$(Base)'!=''">
 			<DCC_DependencyCheckOutputName>..\..\Exe\CodeSnipTests.exe</DCC_DependencyCheckOutputName>
-			<DCC_UnitSearchPath>$(BDS)\Source\DUnit\src;..\..\Bin\DUnit;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
+			<DCC_UnitSearchPath>$(BDS)\Source\DUnit\src;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
 			<DCC_UnitAlias>WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;$(DCC_UnitAlias)</DCC_UnitAlias>
 			<DCC_Define>TESTING;_CONSOLE_TESTRUNNER;$(DCC_Define)</DCC_Define>
-			<DCC_ExeOutput>..\..\Exe</DCC_ExeOutput>
+			<DCC_ExeOutput>.\Exe</DCC_ExeOutput>
 			<DCC_ImageBase>00400000</DCC_ImageBase>
 			<DCC_CVT_WIDENING_STRING_LOST>true</DCC_CVT_WIDENING_STRING_LOST>
 			<DCC_CVT_ACHAR_TO_WCHAR>true</DCC_CVT_ACHAR_TO_WCHAR>
 			<DCC_EXPLICIT_STRING_CAST_LOSS>true</DCC_EXPLICIT_STRING_CAST_LOSS>
 			<DCC_SYMBOL_PLATFORM>false</DCC_SYMBOL_PLATFORM>
 			<DCC_Platform>x86</DCC_Platform>
-			<DCC_DcuOutput>..\..\Bin\DUnit</DCC_DcuOutput>
+			<DCC_DcuOutput>.\Bin</DCC_DcuOutput>
 			<DCC_SymbolReferenceInfo>1</DCC_SymbolReferenceInfo>
 		</PropertyGroup>
 		<ItemGroup>
@@ -33,16 +33,16 @@
 				<MainSource>MainSource</MainSource>
 			</DelphiCompile>
 			<DCCReference Include="TestUStrUtils.pas"/>
-			<DCCReference Include="..\..\..\Src\UStrUtils.pas"/>
-			<DCCReference Include="..\..\..\Src\UConsts.pas"/>
+			<DCCReference Include="..\..\UStrUtils.pas"/>
+			<DCCReference Include="..\..\UConsts.pas"/>
 			<DCCReference Include="TestUUtils.pas"/>
-			<DCCReference Include="..\..\..\Src\UUtils.pas"/>
-			<DCCReference Include="..\..\..\Src\UBaseObjects.pas"/>
+			<DCCReference Include="..\..\UUtils.pas"/>
+			<DCCReference Include="..\..\UBaseObjects.pas"/>
 			<DCCReference Include="TestUBaseObjects.pas"/>
-			<DCCReference Include="..\..\..\Src\USingleton.pas"/>
+			<DCCReference Include="..\..\USingleton.pas"/>
 			<DCCReference Include="TestUSingleton.pas"/>
 			<DCCReference Include="TestUContainers.pas"/>
-			<DCCReference Include="..\..\..\Src\UContainers.pas"/>
+			<DCCReference Include="..\..\UContainers.pas"/>
 			<BuildConfiguration Include="Base">
 				<Key>Base</Key>
 			</BuildConfiguration>

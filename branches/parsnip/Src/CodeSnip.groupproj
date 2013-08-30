@@ -9,7 +9,7 @@
 			<Projects Include="Portable\CodeSnipPortable.dproj">
 				<Dependencies/>
 			</Projects>
-			<Projects Include="..\Tests\Src\DUnit\CodeSnipTests.dproj">
+			<Projects Include="Tests\DUnit\CodeSnipTests.dproj">
 				<Dependencies/>
 			</Projects>
 		</ItemGroup>
@@ -39,13 +39,13 @@
 			<MSBuild Projects="Portable\CodeSnipPortable.dproj" Targets="Make"/>
 		</Target>
 		<Target Name="CodeSnipTests">
-			<MSBuild Projects="..\Tests\Src\DUnit\CodeSnipTests.dproj"/>
+			<MSBuild Projects="Tests\DUnit\CodeSnipTests.dproj"/>
 		</Target>
 		<Target Name="CodeSnipTests:Clean">
-			<MSBuild Projects="..\Tests\Src\DUnit\CodeSnipTests.dproj" Targets="Clean"/>
+			<MSBuild Projects="Tests\DUnit\CodeSnipTests.dproj" Targets="Clean"/>
 		</Target>
 		<Target Name="CodeSnipTests:Make">
-			<MSBuild Projects="..\Tests\Src\DUnit\CodeSnipTests.dproj" Targets="Make"/>
+			<MSBuild Projects="Tests\DUnit\CodeSnipTests.dproj" Targets="Make"/>
 		</Target>
 		<Target Name="Build">
 			<CallTarget Targets="CodeSnip;CodeSnipPortable;CodeSnipTests"/>
