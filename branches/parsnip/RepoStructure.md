@@ -58,10 +58,11 @@ _Build_ directory that stores files output by the build process. This directory
 will not be included in SVN. The structure of _Build_ is:
 
     Build
-      Dist
+      Distrib
         Standard
         Portable
       Exe
+        Release
         Tests
       Obj
         Lib
@@ -231,7 +232,7 @@ The directories have the following purposes:
 
     Contains all files that result from building the project's source code.
 
-    + **Build\Dist**
+    + **Build\Distrib**
 
         Contains sub-directories that accumulate the files that are to be
         included in each distribution.
@@ -246,14 +247,19 @@ The directories have the following purposes:
 
     + **Build\Exe**
 
-        Contains all distributable executable files that result from various
-        compilations. These include the CodeSnip and CodeSnipPortable loader
-        executables, set-up program and help file.
+        Contains sub-directories that receive executable files created by the
+        build process.
+
+        + **Build\Exe\Release**
+
+            Contains files that are destined for release in one or more of the
+            distributions. They include the CodeSnip and CodeSnipPortable loader
+            executables, set-up program and help file.
 
         + **Build\Exe\Tests**
 
-          Contains executable files compiled from test suites that are not for
-          distribution.
+             Contains executable files compiled from test suites that are not
+             for distribution.
 
     + **Build\Obj**
 
@@ -262,21 +268,23 @@ The directories have the following purposes:
 
         + **Build\Obj\Lib**
 
-            Contains sub-directories that receive binary intermediate files for
-            the various libraries.
+            Contains the package and related files generated when libraries are
+            built.
 
             + **Build\Obj\Lib\DDabLib**
 
                 Contains binary files for the DelphiDabbler Code Library
-                project.
+                project, other than package files.
 
             + **Build\Obj\Lib\DelphiColl**
 
-                Contains binary files for the Delphi Collections project.
+                Contains binary files for the Delphi Collections project, other
+                than package files.
 
             + **Build\Obj\Lib\SynEdit**
 
-                Contains binary files for the SynEdit project.
+                Contains binary files for the SynEdit project, other than
+                package files.
 
         + **Build\Obj\Main**
 
@@ -291,7 +299,7 @@ The directories have the following purposes:
             Contains sub-directories that contain binary files resulting from
             test compilations.
 
-            + **Build\Test\DUnits**
+            + **Build\Test\DUnit**
 
               Contains binaries resulting from compilation of DUnit tests.
 
