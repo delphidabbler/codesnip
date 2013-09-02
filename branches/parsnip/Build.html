@@ -259,11 +259,18 @@
     (<code>.rc</code>) files.
   </dd>
   <dt class="spaced">
+    <code>GenTLB</code>
+  </dt>
+  <dd>
+    Type library generator. Used to create the <code>ExternalObj.tlb</code> type
+    library from source code in <code>ExternalObj.ridl</code>.
+  </dd>
+  <dt class="spaced">
     <code>TLibImpl</code>
   </dt>
   <dd>
     Type library importer tool. Used to create a Pascal unit that describes
-    code contained in <code>ExternalObj.idl</code>.
+    code contained in the <code>ExternalObj.tlb</code> type library.
   </dd>
 </dl>
 
@@ -315,94 +322,10 @@
 
 <p>
   This is the make tool that ships with Delphi. You can use any version that
-  works.
-</p>
-
-<h3 id="mssdk">
-  Microsoft Software Development Kit
-</h3>
-
-<p>
-  The MIDL IDL compiler that ships with the MS SDK is required to build
-  <code>ExternalObj.tlb</code> from <code>ExternalObj.idl</code>.
-</p>
-
-<p>
-  MIDL requires the use of Microsoft's <code>CL.exe</code> C Pre-processor
-  which in turn requires <code>mspdb**.dll</code>, where ** is a number that
-  depends on the version of Visual Studio used. I use MIDL v7 and
-  <code>mspdb80.dll</code> from the Windows 2008 (v6.1) platform SDK. So that
-  MIDL can find these files you need to update your system PATH to include:
-</p>
-
-<ul class="spaced">
-  <li>
-    <div>
-      The path to <code>CL.exe</code>. This will probably be in a sub folder
-      of a MS Visual Studio installation folder. For example:
-    </div>
-<pre class="indent">C:\Program Files\Microsoft Visual Studio 9.0\VC\bin</pre>
-    <div>
-      or
-    </div>
-<pre class="indent">C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin</pre>
-  </li>
-  <li>
-    <div>
-      The Common Visual studio binary directory where <code>mspdb**.dll</code>
-      is located. For example:
-    </div>
-<pre class="indent">C:\Program Files\Microsoft Visual Studio 9.0\Common7\IDE</pre>
-    <div>
-      or
-    </div>
-<pre class="indent">C:\Program Files (x86)\Microsoft Visual Studio 10.0\Common7\IDE</pre>
-  </li>
-</ul>
-
-<p>
-  The <code>MSSDK</code> environment variable must be set and contain the
-  MS SDK install directory. <code>MIDL.exe</code> must be in the
-  <code>Bin</code> sub-directory of <code>MSSDK</code> and the required
-  include files must be in the <code>Include</code> sub-directory.
-</p>
-
-<p>
-  You can use a batch file with contents similar to the following to set the
-  path and the <code>MSSDK</code> environment variable before building
-  <em>CodeSnip</em>:
-</p>
-
-<pre class="indent">if not "%PATHSET%" == "" goto end
-set MSSDK=C:\Program Files\Microsoft SDKs\Windows\v7.1
-set PATH=%PATH%;C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin
-set PATH=%PATH%;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Common7\IDE
-set PATHSET=1
-:end</pre>
-
-<p>
-  <strong>Note:</strong> You do not need a copy of Visual Studio for this
-  &ndash; the required directories and files are created when the SDK is
-  installed.
-</p>
-
-<h4>
-  Build Without MIDL or the MS SDK
-</h4>
-
-<p>
-  If you don't already have the MS SDK it's a big job to download and install
-  it just to compile one <code>.tlb</code> file. Therefore there's an
-  alternative that means you can compile without the SDK. This is described
-  in the section
-  <a
-    href="#nomidl"
-  >Editing and Compiling Without MIDL</a> below.
-</p>
-
-<p>
-  If you take this route, there's no need to set <code>MSSDK</code> or modify
-  the path.
+  works but the version that ships with Delphi XE is preferred. See the <a
+    href="#config-env"
+  >Configure the environment</a> section below for details of how to set the
+  environment to use Delphi XE's version of Make by default.
 </p>
 
 <h3>
@@ -515,7 +438,7 @@ set PATHSET=1
   Preparation
 </h2>
 
-<h3>
+<h3 id="config-env">
   Configure the environment.
 </h3>
 
@@ -541,9 +464,6 @@ set PATHSET=1
   <li>
     <code>INDY10</code>
   </li>
-  <li>
-    <code>MSSDK</code> (if using MIDL - see step 2)
-  </li>
 </ul>
 
 <h4>
@@ -551,17 +471,16 @@ set PATHSET=1
 </h4>
 
 <p>
-  Update the <code>PATH</code> environment variable to include the paths that
-  MIDL needs (explained <a
-    href="#mssdk"
-  >above</a>).
+  Update the <code>PATH</code> environment variable to include
+  <code>%DELPHIROOT%\Bin</code> as its first path, i.e. do:
 </p>
 
+<pre class="cmd"><span class="prompt">&gt;</span> set PATH=%DELPHIROOT%\Bin;%PATH%</pre>
+
 <p>
-  If you are not using MIDL then there is no need to modify the
-  <code>PATH</code> variable or set <code>MSSDK</code>. Instead you can
-  define <code>IGNOREMIDL</code> by setting it to some value, e.g.
-  <code>set IGNOREMIDL=1</code>.
+  You do not have to do this but it means you can run the preferred version of
+  <code>Make</code> from the command line without having to specify its path
+  every time.
 </p>
 
 <h4>
@@ -836,98 +755,8 @@ set PATHSET=1
 </p>
 
 <p>
-  Note that building with the make file insted of the IDE performs all the above
-  steps automatically.
-</p>
-
-<h3 id="nomidl">
-  Editing and Compiling without MIDL
-</h3>
-
-<p>
-  If you don't have the MIDL compiler you need to get hold of a pre-compiled
-  copy of the <code>ExternalObj.tlb</code> type library and tell Make to skip
-  the MIDL compiling stage.
-</p>
-
-<h4>
-  Getting The Type Library
-</h4>
-
-<ol class="spaced">
-  <li>
-    If necessary download a resource file editor. XN Resource Editor will
-    do the job. You can get that from
-    <a
-      href="http://www.wilsonc.demon.co.uk/d10resourceeditor.htm"
-    >http://www.wilsonc.demon.co.uk/d10resourceeditor.htm</a>.
-  </li>
-  <li>
-    Get a suitable copy of the <em>CodeSnip</em> executable. This must have
-    been compiled from the same version of <code>ExternalObj.idl</code> as
-    that included in the source tree.
-  </li>
-  <li>
-    Load <code>CodeSnip.exe</code> into the resource file editor (Use
-    <em>File | Open</em> in XN Resource Editor). You need to
-    find the TYPELIB resource type. There should only be one, language
-    neutral, TYPELIB resource. Select this and export it as
-    <code>ExternalObj.tlb</code> in the <code>Bin</code> folder in your
-    configured source tree. (Use <em>Resource | Export</em> Resource in XN
-    Resource Editor).
-  </li>
-</ol>
-
-<p>
-  If you are working on the latest development tree from the code repository
-  you should get <code>ExternalObj.tlb</code> from the latest release of
-  <em>CodeSnip</em>, <strong>unless</strong> <code>ExternalObj.idl</code>
-  has been changed since the last release. In this case you
-  <strong>must</strong> use MIDL to build the <code>.idl</code> file, because
-  a suitable <code>.tlb</code> file won't be available.
-</p>
-
-<h4>
-  Editing the Type Library
-</h4>
-
-<p>
-  You can edit the type library from the Delphi IDE. Start the IDE, select
-  File | Open, change the file type to Type Library and navigate to
-  <code>ExternalObj.tlb</code>. This opens the type library. Edit as required
-  then save the changes. Delete any <code>*_TLB</code> files that appear.
-</p>
-
-<p>
-  If you do make changes you should also use the type library editor's
-  <em>Export to IDL</em> button to save a copy of the IDL in
-  <code>ExternalObj.idl</code> in the <code>Src</code> folder. The license in
-  the original code must be restored, so take a copy of the license from
-  <code>ExternalObj.idl</code> before overwriting it!
-</p>
-
-<p>
-  You must regenerate the associated Pascal file. Do this by running:
-</p>
-
-<pre class="cmd"><span class="prompt">&gt;</span> Make autogen</pre>
-
-<h4>
-  Telling Make to Ignore MIDL
-</h4>
-
-<p>
-  You now need to prevent Make from trying to compile the <code>.idl</code>
-  file in the absence of MIDL. Do this by defining an environment variable
-  called <code>IGNOREMIDL</code>. This can be done from the command line or
-  a batch file by doing:
-</p>
-
-<pre class="cmd">
-<span class="prompt">&gt;</span> set IGNOREMIDL=1</pre>
-
-<p>
-  Alternatively, call Make with the <code>-DIGNOREMIDL</code> switch.
+  Note that building with the make file instead of the IDE performs all the
+  above steps automatically.
 </p>
 
 <h2>
@@ -1064,28 +893,6 @@ set PATHSET=1
   it is named <code>CodeSnip-p.exe</code>
 </p>
 
-<h4>
-  Building without MIDL
-</h4>
-
-<p>
-  If you are building without MIDL, and have a suitable copy of
-  <code>ExternalObj.tlb</code> already in the <code>Bin</code> directory you
-  must either have defined the <code>IGNOREMIDL</code> environment variable or
-  you must do:
-</p>
-
-<pre class="cmd"><span class="prompt">&gt;</span> Make -DIGNOREMIDL codesnip</pre>
-
-<p>
-  This is the same as doing:
-</p>
-
-<pre class="cmd"><span class="prompt">&gt;</span> Make -DIGNOREMIDL typelib
-<span class="prompt">&gt;</span> Make resources
-<span class="prompt">&gt;</span> Make autogen
-<span class="prompt">&gt;</span> Make pascal</pre>
-
 <h3>
   Build the Help File
 </h3>
@@ -1111,11 +918,6 @@ set PATHSET=1
 
 <pre class="cmd"><span class="prompt">&gt;</span> Make libraries
 <span class="prompt">&gt;</span> Make exes</pre>
-
-<p>
-  <code>Make exes</code> will require the use of the <code>-DIGNOREMIDL</code>
-  switch if MIDL is not available.
-</p>
 
 <p>
   Once you have built all the required files you build the setup file by
@@ -1232,12 +1034,6 @@ set PATHSET=1
 <span class="prompt">&gt;</span> Make exes
 <span class="prompt">&gt;</span> Make setup
 <span class="prompt">&gt;</span> Make release</pre>
-
-<p>
-  <strong>Warning:</strong> You should not run this command if MIDL is not
-  available since <code>Make config</code> will delete any <code>.tlb</code>
-  file you may have placed in the <code>Bin</code> directory.
-</p>
 
 <h4>
   Portable edition
