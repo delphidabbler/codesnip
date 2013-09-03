@@ -1,9 +1,10 @@
-Most files in the SynEdit project are covered by the MPL 1.1 / GPL / LGPL
-tri-license and have header comments to that effect.
+Most files in the SynEdit project is dual licensed under the terms of the
+Mozilla Public License v1.1 and the GPL v2.0 or later. Files using this dual
+license and have header comments to that effect.
 
 Any files without header comments should be treated as using this license.
 
-File not using the tri-license are:
+File not using the MPL 1.1 / GPL 2 dual license are:
 
 * SynEdit.inc - adapted from Brad Stowers' DFS.INC file and used with
   permission.
@@ -11,6 +12,8 @@ File not using the tri-license are:
 * SynEditHighlighter - MPL 1.1.
 
 * SynEditHighlighterOptions - MPL 1.1.
+
+* SynEditJedi.inc - MPL 1.1 / GPL / LGPL tri-license.
 
 * SynRegExpr.pas - Custom license (see comments in file).
 
