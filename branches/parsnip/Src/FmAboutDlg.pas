@@ -23,7 +23,7 @@ uses
   Forms, ComCtrls, StdCtrls, Controls, ExtCtrls, Classes, Messages,
   // Project
   Browser.UHTMLEvents, FmGenericViewDlg, FrBrowserBase, FrHTMLDlg,
-  FrHTMLTpltDlg, UContributors, UCSSBuilder;
+  FrHTMLTpltDlg, UCSSBuilder;
 
 
 type
