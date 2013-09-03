@@ -9,9 +9,9 @@ File not using the MPL 1.1 / GPL 2 dual license are:
 * SynEdit.inc - adapted from Brad Stowers' DFS.INC file and used with
   permission.
 
-* SynEditHighlighter - MPL 1.1.
+* SynEditHighlighter.pas - MPL 1.1.
 
-* SynEditHighlighterOptions - MPL 1.1.
+* SynEditHighlighterOptions.pas - MPL 1.1.
 
 * SynEditJedi.inc - MPL 1.1 / LGPL dual-license.
 
