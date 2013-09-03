@@ -13,7 +13,7 @@ File not using the MPL 1.1 / GPL 2 dual license are:
 
 * SynEditHighlighterOptions - MPL 1.1.
 
-* SynEditJedi.inc - MPL 1.1 / GPL / LGPL tri-license.
+* SynEditJedi.inc - MPL 1.1 / LGPL dual-license.
 
 * SynRegExpr.pas - Custom license (see comments in file).
 
