@@ -446,16 +446,6 @@ begin
       FreeAndNil(ContentFont);
     end;
   end;
-  // Put border round scroll box
-  with CSSBuilder.AddSelector('.scrollbox') do
-    AddProperty(UCSSUtils.TCSS.BorderProp(cssAll, 1, cbsSolid, clBorder));
-  // Set colours and font style of contributors and testers headings
-  with CSSBuilder.AddSelector('.contrib-head, .tester-head') do
-  begin
-    AddProperty(TCSS.BackgroundColorProp(clBtnFace));
-    AddProperty(TCSS.ColorProp(clBtnText));
-    AddProperty(TCSS.FontWeightProp(cfwBold));
-  end;
 end;
 
 procedure TAboutDlg.UpdateTitleCSS(Sender: TObject;
