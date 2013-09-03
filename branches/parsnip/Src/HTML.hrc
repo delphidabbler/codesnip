@@ -16,7 +16,6 @@
 # about box
 Res\HTML\dlg-about-head-tplt.html
 Res\HTML\dlg-about-program-tplt.html
-Res\HTML\dlg-about-database-tplt.html
 
 # easter egg
 Res\HTML\dlg-easter-egg.html

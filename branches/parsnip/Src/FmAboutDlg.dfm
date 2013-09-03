@@ -5,7 +5,7 @@ inherited AboutDlg: TAboutDlg
   ClientHeight = 384
   ClientWidth = 485
   ExplicitWidth = 491
-  ExplicitHeight = 410
+  ExplicitHeight = 412
   PixelsPerInch = 96
   TextHeight = 13
   inherited pnlBody: TPanel
@@ -33,48 +33,7 @@ inherited AboutDlg: TAboutDlg
       OnMouseDown = pcDetailMouseDown
       object tsProgram: TTabSheet
         Caption = 'About The Program'
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         inline frmProgram: THTMLTpltDlgFrame
-          Left = 0
-          Top = 0
-          Width = 401
-          Height = 190
-          Align = alClient
-          TabOrder = 0
-          TabStop = True
-          ExplicitWidth = 401
-          ExplicitHeight = 190
-          inherited pnlBrowser: TPanel
-            Width = 401
-            Height = 190
-            ExplicitWidth = 401
-            ExplicitHeight = 190
-            inherited wbBrowser: TWebBrowser
-              Width = 401
-              Height = 190
-              ExplicitWidth = 345
-              ExplicitHeight = 133
-              ControlData = {
-                4C00000072290000A31300000000000000000000000000000000000000000000
-                000000004C000000000000000000000001000000E0D057007335CF11AE690800
-                2B2E126208000000000000004C0000000114020000000000C000000000000046
-                8000000000000000000000000000000000000000000000000000000000000000
-                00000000000000000100000000000000000000000000000000000000}
-            end
-          end
-        end
-      end
-      object tsDatabase: TTabSheet
-        Caption = 'About The Database'
-        ImageIndex = 1
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
-        inline frmDatabase: THTMLTpltDlgFrame
           Left = 0
           Top = 0
           Width = 401
@@ -107,10 +66,6 @@ inherited AboutDlg: TAboutDlg
       object tsPaths: TTabSheet
         Caption = 'Paths'
         ImageIndex = 2
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
       end
     end
     object pnlTitle: TPanel

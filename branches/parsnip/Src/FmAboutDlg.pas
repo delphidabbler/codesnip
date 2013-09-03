@@ -73,18 +73,14 @@ type
 
   {
   TAboutDlg:
-    Implements an about dialog box that uses web browser controls to display
-    information about the program and the database. HTML templates containing
-    the dialog box content are loaded from resources. Also provides access to
-    the program's easter egg.
+    Implements an about dialog box displays information about the program and
+    provides access to the program's Easter egg.
   }
   TAboutDlg = class(TGenericViewDlg)
     btnRegister: TButton;
     bvlSeparator: TBevel;
-    frmDatabase: THTMLTpltDlgFrame;
     frmProgram: THTMLTpltDlgFrame;
     pcDetail: TPageControl;
-    tsDatabase: TTabSheet;
     tsProgram: TTabSheet;
     pnlTitle: TPanel;
     frmTitle: THTMLTpltDlgFrame;
@@ -113,13 +109,6 @@ type
       {Builds HTML used to display registration information.
         @return Required HTML.
       }
-    function ContribListHTML(const ContribClass: TContributorsClass): string;
-      {Builds HTML used to display list of contributors or creates an error
-      message if contributor list is not available.
-        @param ContribClass [in] Type of contributor class to use. This
-          determines names that are displayed.
-        @return Required HTML.
-      }
   strict protected
     procedure ConfigForm; override;
       {Configures form by creating custom controls and initialising HTML frames.
@@ -142,8 +131,8 @@ type
         @param CSSBuilder [in] Object used to update CSS.
       }
     procedure UpdateDetailCSS(Sender: TObject; const CSSBuilder: TCSSBuilder);
-      {Updates CSS used for HTML displayed in detail (i.e. program and database)
-      frames.
+      {Updates CSS used for HTML displayed in HTML frame used to display program
+      description and credits.
         @param Sender [in] Not used.
         @param CSSBuilder [in] Object used to update CSS.
       }
@@ -218,11 +207,9 @@ begin
   // Set height of title frame and page control
   pnlTitle.Height := frmTitle.DocHeight;
   pcDetail.ClientHeight :=
-    pcDetail.Height - tsProgram.ClientHeight +
-    Max(
-      PathTabHeight,
-      Max(frmProgram.DocHeight, frmDatabase.DocHeight)
-    ) + 8;
+    pcDetail.Height - tsProgram.ClientHeight
+    + Max(PathTabHeight, frmProgram.DocHeight)
+    + 8;
   pnlBody.ClientHeight := pnlTitle.Height + bvlSeparator.Height +
     pcDetail.Height;
   inherited;
@@ -279,46 +266,6 @@ begin
   InitHTMLFrames;
 end;
 
-function TAboutDlg.ContribListHTML(const ContribClass: TContributorsClass):
-  string;
-  {Builds HTML used to display list of contributors or creates an error
-  message if contributor list is not available.
-    @param ContribClass [in] Type of contributor class to use. This determines
-      names that are displayed.
-    @return Required HTML.
-  }
-resourcestring
-  // Error string used when contributor file not available
-  sNoContributors       = 'List not available, please update database.';
-var
-  Contributors: TContributors;  // contributors to database
-  Contributor: string;          // name of a contributor
-  DivAttrs: IHTMLAttributes;    // attributes of div tag
-begin
-  Result := '';
-  // Get list of contributors
-  Contributors := ContribClass.Create;
-  try
-    if not Contributors.IsError then
-    begin
-      for Contributor in Contributors do
-        Result := Result
-          + THTML.CompoundTag('div', THTML.Entities(Contributor))
-          + EOL;
-    end
-    else
-    begin
-      // List couldn't be found: display warning message
-      DivAttrs := THTMLAttributes.Create('class', 'warning');
-      Result := THTML.CompoundTag(
-        'div', DivAttrs, THTML.Entities(sNoContributors)
-      );
-    end;
-  finally
-    FreeAndNil(Contributors);
-  end;
-end;
-
 class procedure TAboutDlg.Execute(AOwner: TComponent);
   {Displays dialog box.
     @param AOwner [in] Component that owns this dialog box.
@@ -340,7 +287,6 @@ begin
   inherited;
   frmTitle.OnBuildCSS := UpdateTitleCSS;
   frmProgram.OnBuildCSS := UpdateDetailCSS;
-  frmDatabase.OnBuildCSS := UpdateDetailCSS;
 end;
 
 procedure TAboutDlg.FormDestroy(Sender: TObject);
@@ -435,30 +381,10 @@ procedure TAboutDlg.InitHTMLFrames;
       end
     );
   end;
-
-  procedure InitDatabaseFrame;
-    {Initialises and loads HTML into database frame.
-    }
-  begin
-    pcDetail.ActivePage := tsDatabase;  // display page to let browser load OK
-    frmDatabase.Initialise(
-      'dlg-about-database-tplt.html',
-      procedure(Tplt: THTMLTemplate)
-      begin
-        Tplt.ResolvePlaceholderHTML(
-          'ContribList', ContribListHTML(TCodeContributors)
-        );
-        Tplt.ResolvePlaceholderHTML(
-          'TesterList', ContribListHTML(TTesters)
-        );
-      end
-    );
-  end;
   // ---------------------------------------------------------------------------
 
 begin
   InitTitleFrame;
-  InitDatabaseFrame;
   InitProgramFrame;
 end;
 
