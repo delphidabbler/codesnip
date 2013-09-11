@@ -676,6 +676,7 @@ begin
   AddMenuItem('Delphi XE2', 23.0);
   AddMenuItem('Delphi XE3', 24.0);
   AddMenuItem('Delphi XE4', 25.0);
+  AddMenuItem('Delphi XE5', 26.0);
 end;
 
 procedure TCodeGenPrefsFrame.PreDefCompilerMenuClick(Sender: TObject);
