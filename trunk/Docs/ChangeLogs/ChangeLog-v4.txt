@@ -11,6 +11,12 @@
 ; Change Log for CodeSnip Release 4
 ; ------------------------------------------------------------------------------
 
+Release v4.8.0 of 12 September 2013
++ Added support for Delphi XE5 compiler.
++ Fixed bug in code that reads or imports user database files written using CodeSnip 3 where Delphi XE4 compile results would be lost.
++ Updated documentation re changes.
++ Updated help file re changes.
+
 Release v4.7.2 of 27 August 2013
 + Fixed bug #88 "SWAG Import Wizard display bug" (http://bit.ly/15ryOxz) where duplicate snippets could be displayed on the "Ready to import" page in certain circumstances.
 
