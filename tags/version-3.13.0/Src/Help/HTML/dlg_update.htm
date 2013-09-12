@@ -1,0 +1,120 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<!--
+ * $Rev$
+ * $Date$
+ *
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is dlg_update.htm
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
+-->
+<html>
+  <head>
+    <title>
+      Update From Web Dialog Box
+    </title>
+    <meta http-equiv="Content-Type" content="text-html; charset=Windows-1252">
+    <link rel="stylesheet" href="../css/codesnip.css" type="text/css">
+  </head>
+  <body>
+    <object
+      type="application/x-oleobject"
+      classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e"
+    >
+      <param name="ALink Name" value="UpdateDlg">
+    </object>
+    <h1>
+      <a name="dlg_update"></a>
+      <img alt="Menu icon" src="../images/Download.gif" class="glyph">
+      Update From Web Dialog Box
+    </h1>
+    <p>
+      This dialog box is used to update the <em>CodeSnip</em> database from the
+      internet. It is displayed using the <em>Database | Update From
+      Web</em> menu option.
+    </p>
+    <p>
+      The <em>Update from Web</em> button should be clicked to initiate the
+      update. <strong>Note:</strong> you must ensure you are connected to the
+      internet before clicking this button otherwise a &quot;Connection
+      Error&quot; message will be displayed.
+    </p>
+    <p>
+      Once the <em>Update from Web</em> button has been clicked it will be
+      replaced by a progress report pane. The update will then begin.
+    </p>
+    <p>
+      <em>CodeSnip</em> first logs on to the web server and then determines if
+      your copy of the database is out of date. If so the latest version is
+      downloaded. A progress bar is displayed while the database is being
+      downloaded. A confirmatory message is displayed once the process is
+      complete.
+    </p>
+    <p>
+      <strong>Note:</strong> The database will be updated for all users, since
+      each user accesses the same copy of the database.
+    </p>
+    <h2>
+      Cancelling the update
+    </h2>
+    <p>
+      The <em>Close</em> button is replaced by a larger <em>Cancel Update</em>
+      button while the update is in progress. This button can be clicked at any
+      time to cancel the update. <em>CodeSnip</em> will restore the previous
+      database. <strong>Note:</strong> database downloads can't be
+      interupted.
+    </p>
+    <h2>
+      Update errors
+    </h2>
+    <p>
+      If <em>CodeSnip</em> detects an error while updating it aborts the
+      update, restores the old database and displays a brief error message at
+      the top of the the dialog box. More details of the error are displayed in
+      the progress report pane.
+    </p>
+    <p>
+      If you see a &quot;Connection Error&quot; check your internet connection
+      and try again. If you receive web server or time out errors this may be
+      due to the server being down or busy so it is worth trying later.
+    </p>
+    <p>
+      If a server or timeout error persists please inform the author via the
+      DelphiDabbler website's
+      <a
+        class="weblink"
+        href="http://www.delphidabbler.com/contact"
+        target="_blank"
+      >contact page</a>.
+    </p>
+    <h2>
+      Latest <em>CodeSnip</em> News
+    </h2>
+    <p>
+      Click the <em>Latest News</em> button at the bottom left of the dialog box
+      to see the latest news about <em>CodeSnip</em> and the online database. If
+      this button is clicked while an update is in progress the update is paused
+      until the dialog box is closed.
+    </p>
+  </body>
+</html>
