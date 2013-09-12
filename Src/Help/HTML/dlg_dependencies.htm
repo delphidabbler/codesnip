@@ -1,21 +1,32 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
 <!--
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * ***** BEGIN LICENSE BLOCK *****
  *
- * Copyright (C) 2009-2013, Peter Johnson (www.delphidabbler.com).
+ * Version: MPL 1.1
  *
- * $Rev$
- * $Date$
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
  *
- * Help topic for Dependencies dialogue box.
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is dlg_dependencies.htm
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2009 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * ***** END LICENSE BLOCK *****
 -->
 <html>
   <head>
     <meta http-equiv="Content-Type" content="text-html; charset=Windows-1252">
     <title>
-      Dependencies Dialogue Box
+      Dependencies Dialog Box
     </title>
     <link rel="stylesheet" href="../css/codesnip.css" type="text/css">
   </head>
@@ -27,35 +38,39 @@
       <param name="ALink Name" value="DependenciesDlg">
     </object>
     <h1>
-      Dependencies Dialogue Box
+      <a name="dlg_dependencies.htm"></a>
+      <img alt="Menu icon" src="../images/Dependencies.gif" class="glyph">
+      Dependencies Dialog Box
     </h1>
     <p>
-      This dialogue box is displayed by choosing the <em>View |
-      Dependencies</em> main menu item. It has two tabs: <em>Depends Upon</em>
-      and <em>Required By</em>.
+      This dialog box displays all the other snippets that the selected snippet
+      depends upon, either directly or indirectly.
     </p>
-    <h2>
-      <em>Depends Upon</em> Tab
-    </h2>
     <p>
-      If the selected snippet has dependenciess (i.e. snippets it requires in
-      order to compile) a tree of snippets is displayed that shows the direct
-      and indirect dependencies. When there are no dependencies a message is
-      displayed to that effect.
+      The dialog box is accessed in two ways:
+    </p>
+    <ol>
+      <li>
+        From the <em>View | Dependencies</em> menu item when it displays
+        dependencies for the selected snippet.
+      </li>
+      <li>
+        By clicking the <em>View Dependencies</em> button on the
+        <em>References</em> tab of the 
+        <a href="dlg_editsnippet.htm">Snippets Editor</a>
+      </li>
+    </ol>
+    <p>
+      If the snippet has no dependenciess then a message to that effect is
+      displayed. Otherwise a tree of snippets is displayed that show the
+      direct and indirect dependencies. 
     </p>
     <p>
       If a circular reference is detected (i.e. the snippet depends directly or
       indirectly upon itself) the circular reference is displayed in red and an
-      error message is displayed. Such a dependency indicates there is an error
-      in the database.
-    </p>
-    <h2>
-      <em>Required By</em> Tab
-    </h2>
-    <p>
-      This tab displays a simple list of snippets that immediately depend on the
-      selected snippet. Again, if there are no snippets to list a message is
-      displayed to that effect.
+      error message is displayed. Circular references are not permitted and must
+      be corrected. 
     </p>
   </body>
 </html>
+

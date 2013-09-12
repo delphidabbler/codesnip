@@ -1,14 +1,35 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * UHistory.pas
  *
- * Copyright (C) 2005-2012, Peter Johnson (www.delphidabbler.com).
+ * Class that records and retrieves history of page accesses.
  *
  * $Rev$
  * $Date$
  *
- * Class that records and retrieves history of page accesses.
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is UHistory.pas
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -27,80 +48,77 @@ uses
 
 type
 
-  ///  <summary>Class that records and retrieves history of displayed view
-  ///  items.</summary>
-  ///  <remarks>Access to two lists is provided: the 'back' list of items that
-  ///  preceed the currently selected item in the history and the 'forward' list
-  ///  of items that follow the currently selected item.</remarks>
+  {
+  THistory:
+    Class that records and retrieves history of page accesses. It provides
+    access to two lists: the "back" list of items that preceed the currently
+    selected item in the history and the "forward" list of items that follow the
+    currently selected item.
+  }
   THistory = class(TObject)
   strict private
     type
-      ///  <summary>Class that implementes list of views in history.</summary>
-      THistoryList = TViewList;
+      // Implements list of view items in history
+      THistoryList = TObjectList<TViewItem>;
     var
-      ///  <summary>List of views in history.</summary>
-      fItems: THistoryList;
-      ///  <summary>Index of current history item in list</summary>
-      fCursor: Integer;
+      fItems: THistoryList;     // History list
+      fCursor: Integer;         // Index of current history item in list
     const
-      ///  <summary>Max number if items stored in history.</summary>
-      cMaxHistoryItems = 50;
-  strict private
-    ///  <summary>Returns current view item in history.</summary>
-    function GetCurrent: IView;
-
-    ///  <summary>Handles database change events by updating the history as
-    ///  necessary.</summary>
-    ///  <param name="Sender">TObject [in] Object that triggered event. Not
-    ///  used.</param>
-    ///  <param name="EvtInfo">IInterface [in] Object that carries information
-    ///  about the database change event.</param>
-    procedure DBChangeHandler(Sender: TObject; const EvtInfo: IInterface);
-
+      cMaxHistoryItems = 50;  // Max items stored in history
+    function GetCurrent: TViewItem;
+      {Gets the current view item in history.
+        @return Reference to current view item or nil if there is no current
+          item.
+      }
   public
-    ///  <summary>Constructs and initialises history object.</summary>
     constructor Create;
-
-    ///  <summary>Destroys history object.</summary>
+      {Constructor. Sets up and initialises object.
+      }
     destructor Destroy; override;
-
-    ///  <summary>Clears history.</summary>
+      {Destructor. Tears down object.
+      }
     procedure Clear;
-
-    ///  <summary>Creates new history item for given view and adds it to history
-    ///  list.</summary>
-    ///  <remarks>Any items in history after insertion position for this new
-    ///  item are discarded.</remarks>
-    procedure NewItem(ViewItem: IView);
-
-    ///  <summary>Selects given view item in history list.</summary>
-    procedure SelectItem(ViewItem: IView);
-
-    ///  <summary>Moves backward in history and returns new current item or nil
-    ///  if at start of list when method called.</summary>
-    function GoBack: IView;
-
-    ///  <summary>Stores list of views in 'back' list in given list object.
-    ///  </summary>
-    procedure BackList(const List: TViewList);
-
-    ///  <summary>Returns number of items in 'back' list.</summary>
+      {Clears history list.
+      }
+    procedure NewItem(const ViewItem: TViewItem);
+      {Creates new history item for a view item.
+        @param ViewItem [in] View item to be added to history.
+      }
+    procedure SelectItem(const ViewItem: TViewItem);
+      {Selects a view item in history list.
+        @param ViewItem [in] View item to be selected.
+        @except EBug raised if ViewItem not in history.
+      }
+    function GoBack: TViewItem;
+      {Moves backward in history.
+        @return Current item after moving back in history or nil if we were at
+          start of list before method called.
+      }
+    procedure BackList(const List: TViewItemList);
+      {Builds a list of items in the "back" list.
+        @param List [in] Receives items in "back" list.
+      }
     function BackListCount: Integer;
-
-    ///  <summary>Moves forward in history and returns new current item or nil
-    ///  if at end of list when method called.</summary>
-    function GoForward: IView;
-
-    ///  <summary>Stores list of views in 'forward' list in given list object.
-    ///  </summary>
-    procedure ForwardList(const List: TViewList);
-
-    ///  <summary>Returns number of items in 'forward' list.</summary>
+      {Counts items in "back" list.
+        @return Number of items in list.
+      }
+    function GoForward: TViewItem;
+      {Moves forward in history.
+        @return Current item after moving forward in history or nil if we were
+          at end of list before method called.
+      }
+    procedure ForwardList(const List: TViewItemList);
+      {Builds a list of items in the "forward" list.
+        @param List [in] Receives items in "forward" list.
+      }
     function ForwardListCount: Integer;
-
-    ///  <summary>Reference to currently selected view item in history or nil if
-    ///  there is no current item.</summary>
-    property Current: IView read GetCurrent;
+      {Counts items in "forward" list.
+        @return Number of items in list.
+      }
+    property Current: TViewItem
+      read GetCurrent;
+      {Reference to current view item in history or nil if there is no current
+      item}
   end;
 
 
@@ -108,15 +126,16 @@ implementation
 
 
 uses
-  // Delphi
-  SysUtils,
   // Project
-  DB.UMain, UExceptions;
+  UExceptions;
 
 
 { THistory }
 
-procedure THistory.BackList(const List: TViewList);
+procedure THistory.BackList(const List: TViewItemList);
+  {Builds a list of items in the "back" list.
+    @param List [in] Receives items in "back" list.
+  }
 var
   Idx: Integer; // loops thru "back" list
 begin
@@ -128,6 +147,9 @@ begin
 end;
 
 function THistory.BackListCount: Integer;
+  {Counts items in "back" list.
+    @return Number of items in list.
+  }
 begin
   // We have entries in back list if current item index > 0
   if fCursor > 0 then
@@ -137,42 +159,34 @@ begin
 end;
 
 procedure THistory.Clear;
+  {Clears history list.
+  }
 begin
   fItems.Clear;   // frees objects in list
   fCursor := -1;  // there is no current item
 end;
 
 constructor THistory.Create;
+  {Constructor. Sets up and initialises object.
+  }
 begin
   inherited;
-  fItems := THistoryList.Create;
+  fItems := THistoryList.Create(True);
   Clear;
-  Database.AddChangeEventHandler(DBChangeHandler);
-end;
-
-procedure THistory.DBChangeHandler(Sender: TObject; const EvtInfo: IInterface);
-var
-  EventInfo: IDatabaseChangeEventInfo;  // information about the event
-begin
-  EventInfo := EvtInfo as IDatabaseChangeEventInfo;
-  // Clear history if snippet or category changed or removed
-  case EventInfo.Kind of
-    evSnippetDeleted, evSnippetChanged,
-    evCategoryDeleted, evCategoryChanged:
-      Clear;
-    evSnippetAdded, evCategoryAdded:
-      NewItem(TViewFactory.CreateDBItemView(EventInfo.Info));
-  end;
 end;
 
 destructor THistory.Destroy;
+  {Destructor. Tears down object.
+  }
 begin
-  Database.RemoveChangeEventHandler(DBChangeHandler);
-  fItems.Free;
+  fItems.Free;  // frees all owned objects
   inherited;
 end;
 
-procedure THistory.ForwardList(const List: TViewList);
+procedure THistory.ForwardList(const List: TViewItemList);
+  {Builds a list of items in the "forward" list.
+    @param List [in] Receives items in "forward" list.
+  }
 var
   Idx: Integer; // loops thru forward list
 begin
@@ -184,6 +198,9 @@ begin
 end;
 
 function THistory.ForwardListCount: Integer;
+  {Counts items in "forward" list.
+    @return Number of items in list.
+  }
 begin
   // Number of items in list is count of those following cursor position
   Result := Pred(fItems.Count) - fCursor;
@@ -191,7 +208,10 @@ begin
     Result := 0;
 end;
 
-function THistory.GetCurrent: IView;
+function THistory.GetCurrent: TViewItem;
+  {Gets the current view item in history.
+    @return Reference to current view item or nil if there is no current item.
+  }
 begin
   if (fCursor >= 0) and (fCursor < fItems.Count) then
     Result := fItems[fCursor]
@@ -199,31 +219,40 @@ begin
     Result := nil;
 end;
 
-function THistory.GoBack: IView;
+function THistory.GoBack: TViewItem;
+  {Moves backward in history.
+    @return Current item after moving back in history or nil if we were at start
+      of list before method called.
+  }
 begin
   if fCursor >= 0 then
     Dec(fCursor);
   Result := Current;
 end;
 
-function THistory.GoForward: IView;
+function THistory.GoForward: TViewItem;
+  {Moves forward in history.
+    @return Current item after moving forward in history or nil if we were at
+      end of list before method called.
+  }
 begin
   if fCursor < fItems.Count then
     Inc(fCursor);
   Result := Current;
 end;
 
-procedure THistory.NewItem(ViewItem: IView);
+procedure THistory.NewItem(const ViewItem: TViewItem);
+  {Creates new history item for a view item.
+    @param ViewItem [in] View item to be added to history.
+  }
 var
-  I: Integer;         // loops thru history list
-  ClonedItem: IView;  // cloned copy of view item
+  I: Integer;             // loops thru history list
+  ClonedItem: TViewItem;  // cloned copy of view item
 begin
   Assert(fCursor <= fItems.Count, ClassName + '.NewItem: fCursor too large');
   Assert(fCursor >= -1, ClassName + '.NewItem: fCursor too small');
   // Create copy of given view item
-  if Supports(ViewItem, INulView) then
-    Exit; // don't record nul views
-  ClonedItem := TViewFactory.Clone(ViewItem);
+  ClonedItem := TViewItem.Create(ViewItem);
   // Increment cursor if possible - it will reference new item
   if fCursor < fItems.Count then
     Inc(fCursor);
@@ -247,7 +276,11 @@ begin
   end;
 end;
 
-procedure THistory.SelectItem(ViewItem: IView);
+procedure THistory.SelectItem(const ViewItem: TViewItem);
+  {Selects a view item in history list.
+    @param ViewItem [in] View item to be selected.
+    @except EBug raised if ViewItem not in history.
+  }
 var
   Idx: Integer; // index of view item in history list
 begin

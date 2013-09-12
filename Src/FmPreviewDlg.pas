@@ -1,15 +1,36 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * FmPreviewDlg.pas
  *
- * Copyright (C) 2005-2012, Peter Johnson (www.delphidabbler.com).
+ * Implements a dialog box that is used to preview or display text, HTML and
+ * Rich text documents.
  *
  * $Rev$
  * $Date$
  *
- * Implements a dialogue box that is used to preview or display plain text, HTML
- * and Rich text documents.
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is FmPreviewDlg.pas
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -25,24 +46,15 @@ uses
   ExtCtrls,
   // Project
   FmGenericViewDlg, FrBrowserBase, FrHTMLPreview, FrMemoPreview, FrRTFPreview,
-  FrTextPreview, UBaseObjects, UEncodings;
+  FrTextPreview, IntfPreview, UBaseObjects;
 
 
 type
-  ///  <summary>
-  ///  Enumeration of types of document that can be displayed by preview dialog
-  ///  box.
-  ///  </summary>
-  TPreviewDocType = (
-    dtPlainText,  // plain text document
-    dtHTML,       // HTML document
-    dtRTF         // rich text format document
-  );
 
-type
-  ///  <summary>
-  ///  Dialog box used to preview text, HTML and Rich text documents.
-  ///  </summary>
+  {
+  TPreviewDlg:
+    Dialog box used to preview text, HTML and Rich text documents.
+  }
   TPreviewDlg = class(TGenericViewDlg, INoPublicConstruct)
     actCopy: TAction;
     actSelectAll: TAction;
@@ -50,6 +62,7 @@ type
     frRTF: TRTFPreviewFrame;
     frHTML: THTMLPreviewFrame;
     frText: TTextPreviewFrame;
+    ilPreview: TImageList;
     miCopy: TMenuItem;
     miSelectAll: TMenuItem;
     mnuPreview: TPopupMenu;
@@ -57,63 +70,49 @@ type
     tsHTML: TTabSheet;
     tsRTF: TTabSheet;
     tsText: TTabSheet;
-    ///  <summary>Copies preview text to clipboard.</summary>
     procedure actCopyExecute(Sender: TObject);
-    ///  <summary>Enables / disables Copy action depending or whether copying is
-    ///  supported in current view.</summary>
     procedure actCopyUpdate(Sender: TObject);
-    ///  <summary>Selects all preview text.</summary>
     procedure actSelectAllExecute(Sender: TObject);
-    ///  <summary>Enables / disables Select All action depending on whether
-    /// selection is supported in current view.</summary>
     procedure actSelectAllUpdate(Sender: TObject);
-    ///  <summary>Frees viewer object when form is closed.</summary>
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
   strict private
-    var
-      ///  <summary>Reference to viewer frame's IInterface.</summary>
-      fViewer: IInterface;
-      ///  <summary>Content of document being displayed.</summary>
-      fDocContent: TEncodedData;
-      ///  <summary>Type (format) of document to be displayed.</summary>
-      fDocType: TPreviewDocType;
-      ///  <summary>Dialog box title.</summary>
-      fDlgTitle: string;
-    ///  <summary>Gets information about required document viewer and tab sheet
-    ///  that contains it.</summary>
-    ///  <param name="Viewer">IInterface [out] Interface to viewer frame.
-    ///  </param>
-    ///  <param name="TabSheet">TTabSheet [out] Tab sheet containing viewer
-    ///  frame.</param>
+    fViewer: IInterface;  // Interfaces with viewer frame
+    fDocContent: string;  // Stores content of document we are displaying
+    fDlgTitle: string;    // Dialog box title
     procedure GetViewerInfo(out Viewer: IInterface; out TabSheet: TTabSheet);
-    ///  <summary>Checks if current view supports copying to clipboard.
-    ///  </summary>
+      {Gets information about required document viewer and tab sheet that
+      contains it.
+        @param Viewer [out] Interface to viewer frame.
+        @param TabSheet [out] Tab sheet containing viewer frame.
+      }
     function CanCopy: Boolean;
-    ///  <summary>Checks if current view supports text selection.</summary>
+      {Checks if current view supports copying to clipboard.
+        @return True if copying supported.
+      }
     function CanSelectAll: Boolean;
-    ///  <summary>Copies selected text to clipboard from current view if viewer
-    ///  supports copying.</summary>
+      {Checks if current view supports text selection.
+        @return True if selection supported.
+      }
     procedure CopyToClipboard;
-    ///  <summary>Selects all text in current view if viewer supports selection.
-    ///  </summary>
+      {Copies selected text to clipboard from current view if view supports
+      copying.
+      }
     procedure SelectAll;
-    ///  <summary>Finds tab sheet that is parent of a given frame.</summary>
-    class function FindParentTabSheet(const Frame: TFrame): TTabSheet;
+      {Selects all text in current view if view supports selection.
+      }
   strict protected
-    ///  <summary>Loads and displays the document being previewed.</summary>
     procedure InitForm; override;
+      {Loads and displays the document being previewed.
+      }
   public
-    ///  <summary>Displays a document in preview dialog box.</summary>
-    ///  <param name="AOwner">TComponent [in] Component that owns dialog box.
-    ///  </param>
-    ///  <param name="ADocContent">TEncodedData [in] Content of document to be
-    ///  displayed.</param>
-    ///  <param name="ADocType">TPreviewDocType [in] Type or format of document
-    ///  to be displayed: HTML, RTF or plain text.</param>
-    ///  <param name="ADlgTitle">string [in] Optional dialog box title. If not
-    ///  supplied default title is used.</param>
-    class procedure Execute(AOwner: TComponent; const ADocContent: TEncodedData;
-      const ADocType: TPreviewDocType; const ADlgTitle: string = '');
+    class procedure Execute(AOwner: TComponent; const ADocContent: string;
+      const ADlgTitle: string = '');
+      {Displays a document in the preview dialog.
+        @param AOwner [in] Owning component.
+        @param ADocContent [in] Content of document to be displayed (HTML, RTF
+          or plain text).
+        @param ADlgTitle [in] Title of dialog box. Default is used if ''.
+      }
   end;
 
 
@@ -124,7 +123,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  IntfFrameMgrs, IntfPreview;
+  IntfFrameMgrs, URTFUtils, UHTMLUtils;
 
 
 {$R *.dfm}
@@ -133,26 +132,43 @@ uses
 { TPreviewDlg }
 
 procedure TPreviewDlg.actCopyExecute(Sender: TObject);
+  {Copies preview text to clipboard.
+    @param Sender [in] Not used.
+  }
 begin
   CopyToClipboard;
 end;
 
 procedure TPreviewDlg.actCopyUpdate(Sender: TObject);
+  {Enables / disables Copy action depending or whether copying is supported in
+  current view.
+    @param Sender [in] Not used.
+  }
 begin
   actCopy.Enabled := CanCopy;
 end;
 
 procedure TPreviewDlg.actSelectAllExecute(Sender: TObject);
+  {Selects all preview text.
+    @param Sender [in] Not used.
+  }
 begin
   SelectAll;
 end;
 
 procedure TPreviewDlg.actSelectAllUpdate(Sender: TObject);
+  {Enables / disables Select All action depending on whether selection is
+  supported in current view.
+    @param Sender [in] Not used.
+  }
 begin
   actSelectAll.Enabled := CanSelectAll;
 end;
 
 function TPreviewDlg.CanCopy: Boolean;
+  {Checks if current view supports copying to clipboard.
+    @return True if copying supported.
+  }
 begin
   Result := False;
   if Supports(fViewer, IClipboardMgr) then
@@ -160,6 +176,9 @@ begin
 end;
 
 function TPreviewDlg.CanSelectAll: Boolean;
+  {Checks if current view supports text selection.
+    @return True if selection supported.
+  }
 begin
   Result := False;
   if Supports(fViewer, ISelectionMgr) then
@@ -167,39 +186,37 @@ begin
 end;
 
 procedure TPreviewDlg.CopyToClipboard;
+  {Copies selected text to clipboard from current view if view supports copying.
+  }
 begin
   if Supports(fViewer, IClipboardMgr) then
     (fViewer as IClipboardMgr).CopyToClipboard;
 end;
 
 class procedure TPreviewDlg.Execute(AOwner: TComponent;
-  const ADocContent: TEncodedData; const ADocType: TPreviewDocType;
-  const ADlgTitle: string);
+  const ADocContent: string; const ADlgTitle: string = '');
+  {Displays a document in the preview dialog.
+    @param AOwner [in] Owning component.
+    @param ADocContent [in] Content of document to be displayed (HTML, RTF or
+      plain text).
+    @param ADlgTitle [in] Title of dialog box. Default is used if ''.
+  }
 begin
   with InternalCreate(AOwner) do
     try
       fDlgTitle := ADlgTitle;
-      fDocContent := TEncodedData.Create(ADocContent);
-      fDocType := ADocType;
+      fDocContent := ADocContent;
       ShowModal;
     finally
       Free;
     end;
 end;
 
-class function TPreviewDlg.FindParentTabSheet(const Frame: TFrame): TTabSheet;
-var
-  ParentCtrl: TWinControl;  // moves up tree of parent controls
-begin
-  ParentCtrl := Frame.Parent;
-  while Assigned(ParentCtrl) and not (ParentCtrl is TTabSheet) do
-    ParentCtrl := ParentCtrl.Parent;
-  Assert(Assigned(ParentCtrl),
-    ClassName + '.FindParentTabSheet: Tab sheet not found.');
-  Result := ParentCtrl as TTabSheet;
-end;
-
 procedure TPreviewDlg.FormClose(Sender: TObject; var Action: TCloseAction);
+  {Frees viewer object whether form is closed.
+    @param Sender [in] Not used.
+    @param Action [in] Not used.
+  }
 begin
   inherited;
   fViewer := nil; // required to prevent access violation
@@ -207,23 +224,38 @@ end;
 
 procedure TPreviewDlg.GetViewerInfo(out Viewer: IInterface;
   out TabSheet: TTabSheet);
-var
-  Frame: TFrame;
+  {Gets information about required document viewer and tab sheet that contains
+  it.
+    @param Viewer [out] Interface to viewer frame.
+    @param TabSheet [out] Tab sheet containing viewer frame.
+  }
 begin
-  case fDocType of
-    dtPlainText: Frame := frText;
-    dtHTML: Frame := frHTML;
-    dtRTF: Frame := frRTF;
-    else Frame := nil;
+  if URTFUtils.IsValidRTFCode(fDocContent) then
+  begin
+    // RTF document
+    TabSheet := tsRTF;
+    Viewer := frRTF;
+  end
+  else if UHTMLUtils.IsValidHTMLCode(fDocContent) then
+  begin
+    // HTML document
+    TabSheet := tsHTML;
+    Viewer := frHTML;
+  end
+  else
+  begin
+    // Plain text document
+    TabSheet := tsText;
+    Viewer := frText;
   end;
-  Assert(Assigned(Frame), ClassName + '.GetViewerInfo: No frame assigned');
-  Viewer := Frame as IInterface;
-  TabSheet := FindParentTabSheet(Frame);
 end;
 
 procedure TPreviewDlg.InitForm;
+  {Loads and displays the document being previewed.
+  }
 var
   TabSheet: TTabSheet;  // tab sheet containing preview frame
+  Title: string;        // document title
 begin
   inherited;
   // Display document (select tab, load doc and set submenu on into frame)
@@ -233,12 +265,16 @@ begin
   // update required frame's popup menu and display document in it
   (fViewer as IPreview).SetPopupMenu(mnuPreview);
   // load content into preview and set dialog caption
-  (fViewer as IPreview).Display(fDocContent);
+  (fViewer as IPreview).Display(fDocContent, Title);
   if fDlgTitle <> '' then
-    Caption := fDlgTitle; // caller specified title - use it
+    Caption := fDlgTitle                // caller specified title - use it
+  else if Title <> '' then
+    Caption := Caption + ': ' + Title;  // use title extracted from document
 end;
 
 procedure TPreviewDlg.SelectAll;
+  {Selects all text in current view if view supports selection.
+  }
 begin
   if Supports(fViewer, ISelectionMgr) then
     (fViewer as ISelectionMgr).SelectAll;

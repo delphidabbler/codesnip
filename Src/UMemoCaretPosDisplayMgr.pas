@@ -1,16 +1,37 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
- *
- * Copyright (C) 2010-2013, Peter Johnson (www.delphidabbler.com).
- *
- * $Rev$
- * $Date$
+ * UMemoCaretPosDisplayMgr.pas
  *
  * Displays the caret position of one or more memo controls in associated label
  * controls. Labels are automatically updated whenever the caret position
  * changes.
+ *
+ * $Rev$
+ * $Date$
+ *
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is UMemoCaretPosDisplayMgr.pas
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2010 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributors:
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -113,12 +134,6 @@ type
       {Updates display of a memo control's caret position.
         @param SourceCtrl [in] Memo whose caret position to be displayed.
       }
-    function FindFirstMemoControl(const ParentCtrl: TWinControl): TMemo;
-      {Finds first memo child control of given parent control.
-        @param ParentCtrl [in] Parent containing required memo control.
-        @return Reference to memo control or nil if ParentCtrl has no memo
-          child control.
-      }
   public
     constructor Create;
       {Object constructor. Sets up object.
@@ -128,25 +143,12 @@ type
       controls then clears up object.
       }
     procedure Manage(const SourceCtrl: TMemo; const DisplayCtrl: TLabel);
-      overload;
       {Registers a memo control to have caret position displayed in an
       associated label. NOTE: This method must only be called once the memo
       control has initialised otherwise selection change events will not be
       detected. Calling during a form's OnShow event is recommended.
         @param SourceCtrl [in] Memo control whose caret position is to be
           displayed.
-        @param DisplayCtrl [in] Label used to display caret position.
-      }
-    procedure Manage(const ParentCtrl: TWinControl; const DisplayCtrl: TLabel);
-      overload;
-      {Registers first memo child control of given parent control to have caret
-      position displayed in an associated label. NOTE 1: This method must only
-      be called once the memo control has initialised otherwise selection change
-      events will not be detected. Calling during a form's OnShow event is
-      recommended. NOTE 2: Parent control MUST have at least one memo control as
-      a child.
-        @param ParentCtrl [in] Parent of memo control whose caret position is to
-          be displayed.
         @param DisplayCtrl [in] Label used to display caret position.
       }
   end;
@@ -193,41 +195,6 @@ begin
   inherited;
 end;
 
-function TMemoCaretPosDisplayMgr.FindFirstMemoControl(
-  const ParentCtrl: TWinControl): TMemo;
-  {Finds first memo child control of given parent control.
-    @param ParentCtrl [in] Parent containing required memo control.
-    @return Reference to memo control or nil if ParentCtrl has no memo child
-      control.
-  }
-var
-  Ctrl: TControl;
-  Idx: Integer;
-begin
-  for Idx := 0 to Pred(ParentCtrl.ControlCount) do
-  begin
-    Ctrl := ParentCtrl.Controls[Idx];
-    if Ctrl is TMemo then
-      Exit(Ctrl as TMemo);
-  end;
-  Result := nil;
-end;
-
-procedure TMemoCaretPosDisplayMgr.Manage(const ParentCtrl: TWinControl;
-  const DisplayCtrl: TLabel);
-  {Registers first memo child control of given parent control to have caret
-  position displayed in an associated label. NOTE 1: This method must only be
-  called once the memo control has initialised otherwise selection change events
-  will not be detected. Calling during a form's OnShow event is recommended.
-  NOTE 2: Parent control MUST have at least one memo control as a child.
-    @param ParentCtrl [in] Parent of memo control whose caret position is to be
-      displayed.
-    @param DisplayCtrl [in] Label used to display caret position.
-  }
-begin
-  Manage(FindFirstMemoControl(ParentCtrl), DisplayCtrl);
-end;
-
 procedure TMemoCaretPosDisplayMgr.Manage(const SourceCtrl: TMemo;
   const DisplayCtrl: TLabel);
   {Registers a memo control to have caret position displayed in an associated
@@ -238,8 +205,6 @@ procedure TMemoCaretPosDisplayMgr.Manage(const SourceCtrl: TMemo;
 var
   Associations: TAssociations;  // data to be associated with memo control
 begin
-  Assert(Assigned(SourceCtrl), ClassName + '.Manage: SourceCtrl is nil');
-  Assert(Assigned(DisplayCtrl), ClassName + '.Manage: DisplayCtrl is nil');
   Assert(not fMap.ContainsKey(SourceCtrl),
     ClassName + '.Manage: Source memo already managed');
   // save old event handlers
@@ -372,7 +337,7 @@ function TMemoCaretPosDisplayMgr.TMemoHook.SetWndProc(
   }
 begin
   Result := Pointer(
-    SetWindowLongPtr(fMemo.Handle, GWL_WNDPROC, LONG_PTR(WndProc))
+    SetWindowLong(fMemo.Handle, GWL_WNDPROC, Integer(WndProc))
   );
 end;
 

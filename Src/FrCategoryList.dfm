@@ -12,7 +12,6 @@ object CategoryListFrame: TCategoryListFrame
     Width = 62
     Height = 13
     Caption = 'lblCategories'
-    FocusControl = lbCategories
   end
   object lbCategories: TListBox
     Left = 0

@@ -1,15 +1,36 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * FmDependenciesDlg.pas
  *
- * Copyright (C) 2009-2013, Peter Johnson (www.delphidabbler.com).
+ * Implements a dialog box that recursively displays all the dependencies of a
+ * snippet.
  *
  * $Rev$
  * $Date$
  *
- * Implements a dialogue box that displays all the dependencies and dependents
- * of a snippet.
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is FmDependenciesDlg.pas
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2009 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -21,43 +42,23 @@ interface
 
 uses
   // Delphi
-  ComCtrls, StdCtrls, Controls, ExtCtrls, Classes, Windows, ActnList,
+  ComCtrls, StdCtrls, Controls, ExtCtrls, Classes,
   // Project
-  DB.USnippet, FmGenericViewDlg, UBaseObjects, USearch, USnippetIDs,
-  USnippetsTVDraw;
+  FmGenericViewDlg, UBaseObjects, USnippetIDs, USnippets, USnippetsTVDraw;
 
 
 type
   {
   TDependenciesDlg:
-    Tabbed dialog box that displays all the dependencies and dependents of a
-    snippet.
+    Dialog box that displays all the dependencies of a snippet in a tree view.
   }
   TDependenciesDlg = class(TGenericViewDlg, INoPublicConstruct)
-    lbDependents: TListBox;
+    tvDependencies: TTreeView;
     lblCircularRef: TLabel;
     lblNoDependencies: TLabel;
-    lblNoDependents: TLabel;
-    pcBody: TPageControl;
-    tsDependsUpon: TTabSheet;
-    tsRequiredBy: TTabSheet;
-    tvDependencies: TTreeView;
-    btnSelectAndClose: TButton;
-    alSelectAndClose: TActionList;
-    actSelectAndClose: TAction;
     procedure FormDestroy(Sender: TObject);
-    procedure lbDependentsDrawItem(Control: TWinControl; Index: Integer;
-      Rect: TRect; State: TOwnerDrawState);
-    procedure pcBodyMouseDown(Sender: TObject; Button: TMouseButton;
-      Shift: TShiftState; X, Y: Integer);
     procedure tvDependenciesCollapsing(Sender: TObject; Node: TTreeNode;
       var AllowCollapse: Boolean);
-    procedure actSelectAndCloseExecute(Sender: TObject);
-    procedure actSelectAndCloseUpdate(Sender: TObject);
-  public
-    type
-      TTabID = (tiDependsUpon, tiRequiredBy);
-      TTabIDs = set of TTabID;
   strict private
     type
       {
@@ -88,21 +89,13 @@ type
       end;
     var
       fSnippetID: TSnippetID;     // Snippet whose dependencies are displayed
-      fDisplayName: string;       // Display name of snippet
-      fDependsList: TSnippetList; // List of dependencies to be displayed
+      fDependsList: TRoutineList; // List of dependencies to be displayed
       fTVDraw: TTVDraw;           // Customises appearance of tree view}
-      fTabs: TTabIDs;             // Specifies tabs to be displayed
-      fCanSelect: Boolean;        // Specifies if dependencies can be selected
-      fSearch: ISearch;           // Search that can select dependencies
-    procedure PopulateRequiredByList;
-      {Populates list box with items for each snippet required to compile the
-      specified snippet.
-      }
     procedure PopulateTreeView;
       {Populates treeview with nodes for each snippet in dependency list.
       }
     procedure AddDependencies(const Parent: TTreeNode;
-      const DependsList: TSnippetList);
+      const DependsList: TRoutineList);
       {Adds tree nodes for snippets in a dependency list.
         @param Parent [in] Parent node for nodes from dependency list.
         @param DependsList [in] Dependency list containing snippets to be added
@@ -123,35 +116,22 @@ type
     procedure ArrangeForm; override;
       {Arranges controls on form.
       }
+    procedure InitForm; override;
+      {Initialises form by placing focus on close button rather than treeview.
+      }
   public
     class procedure Execute(const AOwner: TComponent;
-      const SnippetID: TSnippetID; const DisplayName: string;
-      const DependsList: TSnippetList; const Tabs: TTabIDs;
-      const AHelpKeyword: string); overload;
-      {Displays dialogue box containing details of a snippet's dependencies.
+      const SnippetID: TSnippetID; const DependsList: TRoutineList); overload;
+      {Displays dialog box containing details of a snippet's dependencies.
         @param AOwner [in] Component that owns the dialog box.
         @param SnippetID [in] ID of snippet for which dependencies are to be
           displayed.
-        @param DisplayName [in] Display name of snippet for which dependencies
-          are to be displayed.
-        @param DependsList [in] List of dependencies.
-        @param Tabs [in] Tabs to be displayed in dialogue box.
-        @param AHelpKeyword [in] A-link help keyword ofrequired help topic.
       }
-    class function Execute(const AOwner: TComponent; const Snippet: TSnippet;
-      const Tabs: TTabIDs; const PermitSelection: Boolean;
-      const AHelpKeyword: string): ISearch; overload;
-      {Displays dialogue box containing details of a snippet's dependencies.
+    class procedure Execute(const AOwner: TComponent; const Snippet: TRoutine);
+      overload;
+      {Displays dialog box containing details of a snippet's dependencies.
         @param AOwner [in] Component that owns the dialog box.
         @param Snippet [in] Snippet for which dependencies are to be displayed.
-        @param Tabs [in] Tabs to be displayed in dialogue box.
-        @param PermitSelection [in] Determines whether listed dependencies can
-          be selected. When False this method always returns nil.
-        @param AHelpKeyword [in] A-link help keyword ofrequired help topic.
-        @returns A search object that can be used to select the dependent
-          snippets or nil if no snippets can be selected. The result is only non
-          nil if PermitSelection is True and the user chooses to make a
-          selection.
       }
   end;
 
@@ -163,73 +143,33 @@ uses
   // Delphi
   SysUtils, Graphics,
   // Project
-  DB.UMain, DB.USnippetKind, UBox, UColours, UCtrlArranger, UFontHelper,
-  UPreferences;
+  UColours, UFontHelper, USnippetKindInfo, FmGenericDlg;
 
 {$R *.dfm}
 
 
 { TDependenciesDlg }
 
-procedure TDependenciesDlg.actSelectAndCloseExecute(Sender: TObject);
-  {Creates a suitable search to select the snippets on the active tab when
-  the dialogue box is closed in response to the Select & Close button being
-  clicked.
-    @param Sender [in] Not used.
-  }
-var
-  Snippet: TSnippet;          // snippet for which dependencies required
-  Filter: IXRefSearchFilter;  // xref filter needed to select snippets
-begin
-  Snippet := Database.Snippets.Find(fSnippetID);
-  Assert(Assigned(Snippet),
-    ClassName + '.actSelectAndCloseExecute: Snippet id not found');
-  if pcBody.ActivePage = tsDependsUpon then
-  begin
-    Filter := TSearchFilterFactory.CreateXRefSearchFilter(
-      Snippet, [soRequired, soRequiredRecurse]
-    );
-  end
-  else {pcBody.ActivePage = tsRequiredBy}
-  begin
-    Filter := TSearchFilterFactory.CreateXRefSearchFilter(
-      Snippet, [soRequiredReverse]
-    );
-  end;
-  fSearch := TSearchFactory.CreateSearch(Filter);
-end;
-
-procedure TDependenciesDlg.actSelectAndCloseUpdate(Sender: TObject);
-  {Updates visibility and enabled state of select-and-close action.
-    @param Sender [in] Select-and-close action that triggered the event.
-  }
-begin
-  (Sender as TAction).Visible := fCanSelect;
-  if fCanSelect then
-  begin
-    if pcBody.ActivePage = tsDependsUpon then
-      (Sender as TAction).Enabled := tvDependencies.Items.Count > 0
-    else {pcBody.ActivePage = tsRequiredBy}
-      (Sender as TAction).Enabled := lbDependents.Count > 0;
-  end;
-end;
-
 procedure TDependenciesDlg.AddDependencies(const Parent: TTreeNode;
-  const DependsList: TSnippetList);
+  const DependsList: TRoutineList);
   {Adds tree nodes for snippets in a dependency list.
     @param Parent [in] Parent node for nodes from dependency list.
     @param DependsList [in] Dependency list containing snippets to be added to
       treeview.
   }
 var
-  RequiredSnippet: TSnippet;  // iterates through snippets in DependsList
+  RequiredSnippet: TRoutine;  // iterates through snippets in DependsList
   ChildNode: TTreeNode;       // a node added to treeview
 begin
   for RequiredSnippet in DependsList do
   begin
     // Add node for snippet from dependency list
     ChildNode := tvDependencies.Items.AddChild(
-      Parent, RequiredSnippet.DisplayName
+      Parent,
+      RequiredSnippet.Name
+        + ' ('
+        + TSnippetKindInfoList.Instance[RequiredSnippet.Kind].Description
+        + ')'
     );
     ChildNode.Data := RequiredSnippet;  // reference to associated snippet
     // Check for circular reference. If detetected display warning otherwise
@@ -246,23 +186,16 @@ procedure TDependenciesDlg.ArrangeForm;
   }
 begin
   inherited;
-  // Position extra button in bottom button line
-  TCtrlArranger.MoveToLeftOf(btnClose, btnSelectAndClose, 16);
-  btnSelectAndClose.Top := btnClose.Top;
-  // Position "no dependencies" and "no dependents" message labels in form
+  // Position "no dependencies" message label in form
   lblNoDependencies.Left :=
-    (tsDependsUpon.ClientWidth - lblNoDependencies.Width) div 2;
+    (pnlBody.ClientWidth - lblNoDependencies.Width) div 2;
   lblNoDependencies.Top :=
-    (tsDependsUpon.ClientHeight - lblNoDependencies.Height) div 2;
-  lblNoDependents.Left :=
-    (tsRequiredBy.ClientWidth - lblNoDependents.Width) div 2;
-  lblNoDependents.Top :=
-    (tsRequiredBy.ClientHeight - lblNoDependents.Height) div 2;
+    (pnlBody.ClientHeight - lblNoDependencies.Height) div 2;
   // Adjust size of treeview
   if lblCircularRef.Visible then
   begin
     // move label
-    lblCircularRef.Top := tsDependsUpon.ClientHeight
+    lblCircularRef.Top := pnlBody.Top + pnlBody.ClientHeight
       - lblCircularRef.Height - 8;
     // circular reference: make room to see circular reference label
     tvDependencies.Align := alTop;
@@ -277,23 +210,15 @@ procedure TDependenciesDlg.ConfigForm;
   {Configure controls on form.
   }
 resourcestring
-  // no dependents and no dependencies message templates
-  sNoDepends = '%s has no dependencies';
-  sNoRequires = '%s has no dependents';
-  // form caption template
-  sTitle = 'Dependencies for %s';
+  sNoDepends = '%s has no dependencies';  // message when no dependencies
+  sTitle = 'Dependencies for %s';         // form caption template
 begin
   inherited;
   // Set form caption
   Caption := Format(sTitle, [GetDisplayName]);
-  // Determine which tabs are visible
-  tsDependsUpon.TabVisible := tiDependsUpon in fTabs;
-  tsRequiredBy.TabVisible := tiRequiredBy in fTabs;
-  // Set "no dependencies" and "no dependents" labels in case needed
+  // Set "no dependencies" label in case needed and make bold
   lblNoDependencies.Caption := Format(sNoDepends, [GetDisplayName]);
   lblNoDependencies.Font.Style := [fsBold];
-  lblNoDependents.Caption := Format(sNoRequires, [GetDisplayName]);
-  lblNoDependents.Font.Style := [fsBold];
   // Set "circular reference" label's colour and visibility
   lblCircularRef.Font.Color := clWarningText;
   lblCircularRef.Visible := False;
@@ -302,16 +227,9 @@ begin
   tvDependencies.OnCustomDrawItem := fTVDraw.CustomDrawItem;
   // Populate treeview with dependency information
   PopulateTreeView;
-  // Populate Required By list view with dependent snippets
-  PopulateRequiredByList;
   // Hide treeview, revealing "no dependencies" label if no dependencies
   if tvDependencies.Items.Count = 0 then
     tvDependencies.Visible := False;
-  // Hide list box, revealing "no dependents" label if no dependents
-  if lbDependents.Count = 0 then
-    lbDependents.Visible := False;
-  // Set default search result
-  fSearch := nil;
 end;
 
 procedure TDependenciesDlg.DisplayCircularRefWarning;
@@ -321,42 +239,28 @@ begin
   lblCircularRef.Visible := True;
 end;
 
-class function TDependenciesDlg.Execute(const AOwner: TComponent;
-  const Snippet: TSnippet; const Tabs: TTabIDs; const PermitSelection: Boolean;
-  const AHelpKeyword: string): ISearch;
+class procedure TDependenciesDlg.Execute(const AOwner: TComponent;
+  const Snippet: TRoutine);
+  {Displays dialog box containing details of a snippet's dependencies.
+    @param AOwner [in] Component that owns the dialog box.
+    @param Snippet [in] Snippet for which dependencies are to be displayed.
+  }
 begin
-  Assert(Tabs <> [], ClassName + '.Execute: Tabs is []');
-  with InternalCreate(AOwner) do
-    try
-      fSnippetID := Snippet.ID;
-      fDisplayName := Snippet.DisplayName;
-      fDependsList := Snippet.Depends;
-      fTabs := Tabs;
-      fCanSelect := PermitSelection;
-      HelpKeyword := AHelpKeyword;
-      if ShowModal = mrOK then
-        Result := fSearch
-      else
-        Result := nil;
-    finally
-      Free;
-    end;
+  Execute(AOwner, Snippet.ID, Snippet.Depends);
 end;
 
 class procedure TDependenciesDlg.Execute(const AOwner: TComponent;
-  const SnippetID: TSnippetID; const DisplayName: string;
-  const DependsList: TSnippetList; const Tabs: TTabIDs;
-  const AHelpKeyword: string);
+  const SnippetID: TSnippetID; const DependsList: TRoutineList);
+  {Displays dialog box containing details of a snippet's dependencies.
+    @param AOwner [in] Component that owns the dialog box.
+    @param SnippetIS [in] ID of snippet for which dependencies are to be
+      displayed.
+  }
 begin
-  Assert(Tabs <> [], ClassName + '.Execute: Tabs is []');
   with InternalCreate(AOwner) do
     try
       fSnippetID := SnippetID;
-      fDisplayName := DisplayName;
       fDependsList := DependsList;
-      fTabs := Tabs;
-      fCanSelect := False;
-      HelpKeyword := AHelpKeyword;
       ShowModal;
     finally
       Free;
@@ -367,13 +271,9 @@ procedure TDependenciesDlg.FormDestroy(Sender: TObject);
   {Form destruction event handler. Frees owned object.
     @param Sender [in] Not used.
   }
-var
-  Idx: Integer;
 begin
   inherited;
-  fTVDraw.Free;
-  for Idx := Pred(lbDependents.Items.Count) downto 0 do
-    lbDependents.Items.Objects[Idx].Free;
+  FreeAndNil(fTVDraw);
 end;
 
 function TDependenciesDlg.GetDisplayName: string;
@@ -384,72 +284,17 @@ function TDependenciesDlg.GetDisplayName: string;
 resourcestring
   sUntitled = '<Untitled Snippet>'; // display name when snippet has no name
 begin
-  if fDisplayName <> '' then
-    Exit(fDisplayName);
-  if fSnippetID.Name <> '' then
-    Exit(fSnippetID.Name);
-  Result := sUntitled;
+  Result := fSnippetID.Name;
+  if Result = '' then
+    Result := sUntitled;
 end;
 
-procedure TDependenciesDlg.lbDependentsDrawItem(Control: TWinControl;
-  Index: Integer; Rect: TRect; State: TOwnerDrawState);
-var
-  LB: TListBox;
-  Canvas: TCanvas;
-
-  function IsUserDefinedItem: Boolean;
-  begin
-    Result := (LB.Items.Objects[Index] as TBox<Boolean>).Value;
-  end;
-
+procedure TDependenciesDlg.InitForm;
+  {Initialises form by placing focus on close button rather than treeview.
+  }
 begin
-  LB := Control as TListBox;
-  Canvas := LB.Canvas;
-  if not (odSelected in State) then
-    Canvas.Font.Color := Preferences.DBHeadingColours[IsUserDefinedItem];
-  Canvas.TextRect(
-    Rect,
-    Rect.Left + 2,
-    (Rect.Top + Rect.Bottom - Canvas.TextHeight(LB.Items[Index])) div 2,
-    LB.Items[Index]
-  );
-end;
-
-procedure TDependenciesDlg.pcBodyMouseDown(Sender: TObject;
-  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
-begin
-  if htOnItem in pcBody.GetHitTestInfoAt(X, Y) then
-    pcBody.SetFocus;
-end;
-
-procedure TDependenciesDlg.PopulateRequiredByList;
-var
-  Dependents: ISnippetIDList;
-  SnippetID: TSnippetID;
-  ThisSnippet: TSnippet;
-  ASnippet: TSnippet;
-begin
-  lbDependents.Items.BeginUpdate;
-  try
-    lbDependents.Clear;
-    ThisSnippet := Database.Snippets.Find(fSnippetID);
-    // must only try to get dependents for snippet if it is in database
-    if (tiRequiredBy in fTabs) and Assigned(ThisSnippet) then
-    begin
-      Dependents := (Database as IDatabaseEdit).GetDependents(ThisSnippet);
-      for SnippetID in Dependents do
-      begin
-        ASnippet := Database.Snippets.Find(SnippetID);
-        Assert(Assigned(ASnippet),
-          ClassName + '.PopulateRequiredByList: Snippet id not found');
-        lbDependents.Items.AddObject(
-          ASnippet.DisplayName, TBox<Boolean>.Create(ASnippet.UserDefined)
-        );
-      end;
-    end;
-  finally
-    lbDependents.Items.EndUpdate;
-  end;
+  inherited;
+  btnClose.SetFocus;
 end;
 
 procedure TDependenciesDlg.PopulateTreeView;
@@ -459,11 +304,8 @@ begin
   tvDependencies.Items.BeginUpdate;
   try
     tvDependencies.Items.Clear;
-    if tiDependsUpon in fTabs then
-    begin
-      AddDependencies(nil, fDependsList);
-      tvDependencies.FullExpand;
-    end;
+    AddDependencies(nil, fDependsList);
+    tvDependencies.FullExpand;
   finally
     tvDependencies.Items.EndUpdate;
   end;
@@ -500,7 +342,7 @@ function TDependenciesDlg.TTVDraw.IsErrorNode(
     @return True if node represents error condition, False if not.
   }
 begin
-  Result := Assigned(Node.Data) and (TSnippet(Node.Data).ID = fRootID);
+  Result := Assigned(Node.Data) and (TRoutine(Node.Data).ID = fRootID);
 end;
 
 function TDependenciesDlg.TTVDraw.IsUserDefinedNode(
@@ -513,7 +355,7 @@ begin
   if not Assigned(Node.Data) then
     Result := True
   else
-    Result := TSnippet(Node.Data).UserDefined;
+    Result := TRoutine(Node.Data).UserDefined;
 end;
 
 end.

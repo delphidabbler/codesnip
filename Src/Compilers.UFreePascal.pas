@@ -1,15 +1,37 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * Compilers.UFreePascal.pas
  *
- * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
+ * Implements class that wraps the Free Pascal compiler. Controls compilation,
+ * processes compiler output and provides information about the compiler.
  *
  * $Rev$
  * $Date$
  *
- * Implements class that wraps the Free Pascal compiler. Controls compilation,
- * processes compiler output and provides information about the compiler.
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is Compilers.UFreePascal.pas, formerly
+ * UFreePascalCompiler.pas
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -35,13 +57,7 @@ type
     IClonable,      // can clone this object
     ICompiler       // this is a compiler
   )
-  strict protected
-    function SearchDirParams: string; override;
-      {One of more parameters that define any search directories to be passed
-      to compiler on command line.
-        @return Required space separated parameter(s).
-      }
-  public
+  protected
     { IClonable }
     function Clone: IInterface;
       {Creates a new instance of the object that is an extact copy and returns
@@ -79,9 +95,7 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Windows {for inlining},
-  // Project
-  UIStringList, UStrUtils;
+  SysUtils, Windows {for inlining};
 
 
 { TFreePascalCompiler }
@@ -148,28 +162,6 @@ resourcestring
   sFreePascalName = 'Free Pascal';    // name of compiler
 begin
   Result := sFreePascalName;
-end;
-
-function TFreePascalCompiler.SearchDirParams: string;
-  {One of more parameters that define any search directories to be passed
-  to compiler on command line.
-    @return Required space separated parameter(s).
-  }
-var
-  Dirs: IStringList;  // list of search directory names
-  DirName: string;    // each search directory name
-begin
-  if GetSearchDirs.IsEmpty then
-    Exit('');
-  Dirs := TIStringList.Create;
-  for DirName in GetSearchDirs do
-  begin
-    Dirs.Add(StrQuoteSpaced('-Fu' + DirName));
-    Dirs.Add(StrQuoteSpaced('-Fi' + DirName));
-    Dirs.Add(StrQuoteSpaced('-Fl' + DirName));
-    Dirs.Add(StrQuoteSpaced('-Fo' + DirName));
-  end;
-  Result := Dirs.GetText(' ', False);
 end;
 
 end.

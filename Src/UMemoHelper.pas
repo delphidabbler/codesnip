@@ -1,16 +1,40 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * UMemoHelper.pas
  *
- * Copyright (C) 2006-2013, Peter Johnson (www.delphidabbler.com).
+ * Class that provides information about, and assists with manipulation of, memo
+ * controls where the functionality is not directly available from the control.
+ *
+ * Originally named UMemoInfo.pas. Changed to UMemoHelper.pas at v1.1.
  *
  * $Rev$
  * $Date$
  *
- * Class that provides information about, and assists with manipulation of, memo
- * controls where the functionality is not directly available from the control.
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is UMenuHelper.pas
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2006-2010 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
+
 
 
 unit UMemoHelper;
@@ -110,8 +134,8 @@ function TMemoHelper.CaretPos: TPoint;
     @return Required cursor position.
   }
 begin
-  Result.X := fMemo.SelStart - fMemo.Perform(EM_LINEINDEX, WPARAM(-1), 0);
-  Result.Y := fMemo.Perform(EM_LINEFROMCHAR, WPARAM(-1), 0);
+  Result.X := fMemo.SelStart - fMemo.Perform(EM_LINEINDEX, -1, 0);
+  Result.Y := fMemo.Perform(EM_LINEFROMCHAR, -1, 0);
 end;
 
 constructor TMemoHelper.Create(const AMemo: TCustomMemo);

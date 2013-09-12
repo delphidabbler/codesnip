@@ -1,15 +1,36 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * FrCheckedTV.pas
  *
- * Copyright (C) 2006-2012, Peter Johnson (www.delphidabbler.com).
+ * Implements a frame containing a treeview that has check boxes associated with
+ * tree nodes and updates parent check boxes according to state of child nodes.
  *
  * $Rev$
  * $Date$
  *
- * Implements a frame containing a treeview that has check boxes associated with
- * tree nodes and updates parent check boxes according to state of child nodes.
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is FrCheckedTV.pas
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2006-2011 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -118,13 +139,8 @@ type
       var NodeClass: TTreeNodeClass);
   strict private
     fOnChange: TNotifyEvent;    // Event handler for OnChange event
-    fCanCollapse: Boolean;      // Value of CanCollapse property
     fTVChecks: TTVCheckBoxes;   // Object that manages check box image lists
     fHotNode: TCheckedTreeNode; // Tree node currently under mouse cursor
-    procedure SetCanCollapse(Flag: Boolean);
-      {Write access method for CanCollapse property.
-        @param Flag [in] New property value.
-      }
     procedure MakeHotNode(const Node: TCheckedTreeNode);
       {Makes a node's check box appear "hot". Sets any previous hot check box
       back to normal state.
@@ -175,7 +191,7 @@ type
       }
     function AddNode(const Parent: TCheckedTreeNode; const Text: string;
       const Data: Pointer): TCheckedTreeNode;
-      {Adds new unchecked tree node. This method can be called from descendant
+      {Adds new unchecked tree node. This routine can be called from descendant
       classes to add new nodes to tree from their implementation of the AddNodes
       method.
         @param Parent [in] Parent of new node or nil if new node is top level.
@@ -207,12 +223,6 @@ type
     destructor Destroy; override;
       {Class destructor. Tears down object.
       }
-    procedure ExpandTree;
-    procedure CollapseTree;
-    property CanCollapse: Boolean
-      read fCanCollapse write SetCanCollapse default False;
-      {Determines whether tree nodes can be collapsed. Also switches on buttons
-      for user to use to make nodes expand and collapse}
     property OnChange: TNotifyEvent
       read fOnChange write fOnChange;
       {Event triggered when state of a tree node changes}
@@ -234,7 +244,7 @@ uses
 
 function TCheckedTVFrame.AddNode(const Parent: TCheckedTreeNode;
   const Text: string; const Data: Pointer): TCheckedTreeNode;
-  {Adds new unchecked tree node. This method can be called from descendant
+  {Adds new unchecked tree node. This routine can be called from descendant
   classes to add new nodes to tree from their implementation of the AddNodes
   method.
     @param Parent [in] Parent of new node or nil if new node is top level.
@@ -255,20 +265,6 @@ procedure TCheckedTVFrame.CheckBoxChangeHandler(Sender: TObject);
   }
 begin
   tvChecked.Refresh;
-end;
-
-procedure TCheckedTVFrame.CollapseTree;
-begin
-  if not fCanCollapse then
-    Exit;
-  tvChecked.Items.BeginUpdate;
-  try
-    tvChecked.FullCollapse;
-    if Assigned(tvChecked.Selected) then
-      tvChecked.Selected.MakeVisible;
-  finally
-    tvChecked.Items.EndUpdate;
-  end;
 end;
 
 procedure TCheckedTVFrame.CopyParentStateToChildren(
@@ -338,7 +334,7 @@ begin
   while Assigned(Node) do
   begin
     SetLeafNodeStates(Node);
-    Node := Node.GetNextSibling;
+    Node := Node.GetNextSibling as TCheckedTreeNode;
   end;
   // Set state of parent nodes based on state of leaf node
   SetParentStates;
@@ -360,20 +356,6 @@ procedure TCheckedTVFrame.DoChanged;
 begin
   if Assigned(fOnChange) then
     fOnChange(Self);
-end;
-
-procedure TCheckedTVFrame.ExpandTree;
-begin
-  if not fCanCollapse then
-    Exit;
-  tvChecked.Items.BeginUpdate;
-  try
-    tvChecked.FullExpand;
-    if Assigned(tvChecked.Selected) then
-      tvChecked.Selected.MakeVisible;
-  finally
-    tvChecked.Items.EndUpdate;
-  end;
 end;
 
 function TCheckedTVFrame.FirstNode: TCheckedTreeNode;
@@ -420,15 +402,6 @@ begin
   tvChecked.FullExpand;
   if FirstNode <> nil then
     FirstNode.MakeVisible;
-end;
-
-procedure TCheckedTVFrame.SetCanCollapse(Flag: Boolean);
-begin
-  if fCanCollapse = Flag then
-    Exit;
-  tvChecked.ShowRoot := Flag;
-  tvChecked.ShowButtons := Flag;
-  fCanCollapse := Flag;
 end;
 
 procedure TCheckedTVFrame.SetParentStates;
@@ -516,7 +489,7 @@ procedure TCheckedTVFrame.tvCheckedCollapsing(Sender: TObject;
     @param AllowCollapse [in/out] Whether collapsing allowed. Set to false.
   }
 begin
-  AllowCollapse := fCanCollapse;
+  AllowCollapse := False;
 end;
 
 procedure TCheckedTVFrame.tvCheckedCreateNodeClass(

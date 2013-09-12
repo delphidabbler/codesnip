@@ -1,16 +1,37 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
- *
- * Copyright (C) 2007-2013, Peter Johnson (www.delphidabbler.com).
- *
- * $Rev$
- * $Date$
+ * UWBCommandBars.pas
  *
  * Defines various classes used to configure one or more command bars owned by
  * a web browser container. Command bars are UI elements used to issue commands,
  * e.g. menus & toolbars.
+ *
+ * $Rev$
+ * $Date$
+ *
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is UWBCommandBars.pas
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2007-2009 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -28,94 +49,91 @@ uses
 
 
 type
-  ///  <summary>
-  ///  Command bar manager for use with command bars associated with web browser
-  ///  controls.
-  ///  </summary>
-  ///  <remarks>
-  ///  All instances share the same, static, image list.
-  ///  </remarks>
-  TWBCommandBarMgr = class sealed(TCommandBarMgr, ICommandBarConfig)
+  {
+  TWBCommandBarMgr:
+    Command bar manager for use with command bars associated with web browser
+    controls. Uses a fixed image list.
+  }
+  TWBCommandBarMgr = class(TCommandBarMgr, ICommandBarConfig)
   strict private
-    class var
-      /// <summary>Static image list.</summary>
-      fImages: TGIFImageList;
-  public
-    ///  <summary>Creates empty static image list.</summary>
-    class constructor Create;
-    ///  <summary>Frees static image list.</summary>
-    class destructor Destroy;
-    ///  <summary>Sets image list to be used by all command bars to given image
-    ///  list.</summary>
-    ///  <remarks>
-    ///  <para>Assigns images from Images to static image list.</para>
-    ///  <para>Method of ICommandBarConfig.</para>
-    ///  </remarks>
+    class var fImages: TGIFImageList; // Static image list
+    class var fGC: IInterface;        // Garbage collector for staic image list
+  strict protected
+    class function GetImages: TGIFImageList;
+      {Gets reference to static image list, creating it if necessary.
+        @return Reference to image list.
+      }
     procedure SetImages(const Images: TCustomImageList); override;
+      {Specifies image list to be used by all command bars.
+        @param Images [in] Image list to be used.
+      }
   end;
 
-type
-  ///  <summary>
-  ///  Wrapper for popup menus associated with a web browser control. Records
-  ///  reference HTML element under mouse cursor and prevents display of menu if
-  ///  there's nothing to display.
-  ///  </summary>
+  {
+  TWBPopupMenuWrapper:
+    Wrapper for popup menus associated with a web browser control. Records
+    reference HTML element under mouse cursor and prevents display of menu if
+    there's nothing to display.
+  }
   TWBPopupMenuWrapper = class(TPopupMenuWrapper)
   strict private
-    ///  <summary>Checks if menu has any visible non-spacer menu items with
-    ///  captions.</summary>
-    ///  <remarks>Assumes there are no sub-menus.</remarks>
     function HasVisibleItems: Boolean;
-    ///  <summary>Handles wrapped menu's OnPopupQuery event. Prevents display of
-    ///  menu if there are no displayable items.</summary>
-    ///  <param name="Sender">TObject [in] Not used.</param>
-    ///  <param name="Cancel">Boolean [in/out] False when method called. Set to
-    ///  True if menu is not to be displayed.</param>
+      {Checks if menu has any visible non-spacer menu items with captions.
+      Assumes there are no sub-menus.
+        @return True if menu has displayable items, False if not.
+      }
     procedure QueryPopupHandler(Sender: TObject; var Cancel: Boolean);
+      {Handles wrapped menu's OnPopupQuery event. Prevents display of menu if
+      there are no displayable items.
+        @param Sender [in] Not used.
+        @param Cancel [in/out] Set to True if menu is not to be displayed.
+      }
   strict protected
-    ///  <summary>Initialises menu. Records details of HTML link element in any
-    ///  link related menu items.</summary>
     procedure InitMenu; override;
+      {Initialises menu. Records details of HTML link element to any link
+      related menu items.
+      }
   public
-    ///  <summary>Sets up object for a given popup menu.</summary>
     constructor Create(const Menu: TPopupMenu); override;
+      {Class constructor. Sets up object.
+        @param Menu [in] Menu component being wrapped.
+      }
   end;
 
-type
-  ///  <summary>
-  ///  Wrapper for popup menus associated with a web browser control. Extends
-  ///  TWBPopupMenuWrapper to add some menu items based on links in underlying
-  ///  document in browser control.
-  ///  </summary>
-  TWBDefaultPopupMenuWrapper = class sealed(TWBPopupMenuWrapper)
+  {
+  TWBDefaultPopupMenuWrapper:
+    Wrapper for popup menus associated with a web browser control that extends
+    TWBPopupMenuWrapper to add some menu items based on links in underlying
+    document in browser control.
+  }
+  TWBDefaultPopupMenuWrapper = class(TWBPopupMenuWrapper)
   strict private
-    ///  <summary>Clears temporary menu items from menu.</summary>
     procedure ClearTempMenuItems;
-    ///  <summary>Gets all command and help links from browser document that are
-    ///  designated as menu items.</summary>
-    ///  <param name="Doc">IDispatch [in] IDispatch interface of document
-    ///  containing links.</param>
-    ///  <param name="CommandItems">IDispatchLIst [out] List of command links.
-    ///  </param>
-    ///  <param name="HelpItems">IDispatchList [out] List of help links.</param>
+      {Clears temporary menu items from menu.
+      }
     procedure GetLinkMenuItems(const Doc: IDispatch; out CommandItems,
       HelpItems: IDispatchList);
-    ///  <summary>Adds menu items to menu that can trigger links from a link
-    ///  list.</summary>
-    ///  <param name="Links">IDispatchList [in] List of links to be added to
-    ///  name.</param>
+      {Gets all command and help links from document that are designated as menu
+      items.
+        @param Doc [in] IDispatch interface of document containing links.
+        @param CommandItems [out] List of command links.
+        @param HelpItems [out] List of help links.
+      }
     procedure AddLinksToMenu(const Links: IDispatchList);
-    ///  <summary>Gets index of any image associated with a link in image list
-    ///  used by menu. If image doesn't exist in list it is added to it.
-    ///  </summary>
-    ///  <param name="Link">IDispatch [in] Link for which image needed.</param>
-    ///  <returns>Index of image in image list or -1 if there is no associated
-    ///  image.</returns>
+      {Adds menu items to menu that can trigger links from a link list.
+        @param Links [in] List of links to be added to menu.
+      }
     function GetImageIndex(const Link: IDispatch): Integer;
+      {Gets index of any image associated with a link in image list used by
+      menu. If image doesn't exist in list it is added to it.
+        @param Link [in] Link for which image needed.
+        @return Index of image in image or -1 if there is no associated image.
+      }
   strict protected
-    ///  <summary>Initialises menu. Clears temporary menu items and adds any
-    ///  required menu items for links in HTML document.</summary>
     procedure InitMenu; override;
+      {Initialises menu. Clears temporary menu items and adds any required menu
+      items for links in HTML document.
+      }
   end;
 
 
@@ -123,33 +141,44 @@ implementation
 
 
 uses
+  // Delphi
+  SysUtils, StrUtils,
   // Project
-  UAnchors, UHTMLDOMHelper, UImageTags, ULinkAction, UMenus, UStrUtils,
+  UAnchors, UGC, UHTMLDocHelper, UImageTags, ULinkAction, UMenuHelper,
   UWBPopupMenus;
 
 
 { TWBCommandBarMgr }
 
-class constructor TWBCommandBarMgr.Create;
+class function TWBCommandBarMgr.GetImages: TGIFImageList;
+  {Gets reference to static image list, creating it if necessary.
+    @return Reference to image list.
+  }
 begin
-  fImages := TGIFImageList.Create(nil);
-end;
-
-class destructor TWBCommandBarMgr.Destroy;
-begin
-  fImages.Free;
+  if not Assigned(fImages) then
+  begin
+    fImages := TGIFImageList.Create(nil);
+    TGC.GCLocalObj(fGC, fImages);
+  end;
+  Result := fImages;
 end;
 
 procedure TWBCommandBarMgr.SetImages(const Images: TCustomImageList);
+  {Specifies image list to be used by all command bars.
+    @param Images [in] Image list to be used.
+  }
 begin
-  fImages.Clear;
-  fImages.AddImages(Images);
-  inherited SetImages(fImages);
+  GetImages.Clear;
+  GetImages.AddImages(Images);
+  inherited SetImages(GetImages);
 end;
 
 { TWBPopupMenuWrapper }
 
 constructor TWBPopupMenuWrapper.Create(const Menu: TPopupMenu);
+  {Class constructor. Sets up object.
+    @param Menu [in] Menu component being wrapped.
+  }
 begin
   inherited;
   // Assign popup query handler if possible
@@ -158,6 +187,10 @@ begin
 end;
 
 function TWBPopupMenuWrapper.HasVisibleItems: Boolean;
+  {Checks if menu has any visible non-spacer menu items with captions. Assumes
+  there are no sub-menus.
+    @return True if menu has displayable items, False if not.
+  }
 var
   MI: TMenuItem;  // each menu item in menu
 begin
@@ -171,6 +204,9 @@ begin
 end;
 
 procedure TWBPopupMenuWrapper.InitMenu;
+  {Initialises menu. Records details of HTML link element to any link related
+  menu items.
+  }
 var
   MI: TMenuItem;  // references a menu item
 begin
@@ -182,6 +218,11 @@ end;
 
 procedure TWBPopupMenuWrapper.QueryPopupHandler(Sender: TObject;
   var Cancel: Boolean);
+  {Handles wrapped menu's OnPopupQuery event. Prevents display of menu if there
+  are no displayable items.
+    @param Sender [in] Not used.
+    @param Cancel [in/out] Set to True if menu is not to be displayed.
+  }
 begin
   PrepareMenu;
   Cancel := not HasVisibleItems;
@@ -190,6 +231,9 @@ end;
 { TWBDefaultPopupMenuWrapper }
 
 procedure TWBDefaultPopupMenuWrapper.AddLinksToMenu(const Links: IDispatchList);
+  {Adds menu items to menu that can trigger links from a link list.
+    @param Links [in] List of links to be added to menu.
+  }
 var
   Action: TLinkAction;  // action to trigger a link
   Link: IDispatch;      // references all links in Links
@@ -204,7 +248,7 @@ begin
   begin
     // Create action for menu item: store link reference and get caption from
     // link text. If link is not visible it is not added to menu.
-    if THTMLDOMHelper.ElemIsVisible(Link) then
+    if THTMLDocHelper.ElemIsVisible(Link) then
     begin
       Action := TLinkAction.Create(nil);
       Action.Link := Link;
@@ -216,6 +260,8 @@ begin
 end;
 
 procedure TWBDefaultPopupMenuWrapper.ClearTempMenuItems;
+  {Clears temporary menu items from menu.
+  }
 var
   MI: TMenuItem;  // references each menu item in menu
   Idx: Integer;   // loops through all menu items
@@ -231,18 +277,28 @@ end;
 
 function TWBDefaultPopupMenuWrapper.GetImageIndex(
   const Link: IDispatch): Integer;
+  {Gets index of any image associated with a link in image list used by menu.
+  If image doesn't exist in list it is added to it.
+    @param Link [in] Link for which image needed.
+    @return Index of image in image or -1 if there is no associated image.
+  }
 
-  ///  Extracts a base resource name from a URL.
+  // ---------------------------------------------------------------------------
   function URLBaseName(const URL: string): string;
+    {Extracts a base resource name from a URL.
+      @param URL [in] URL containing resource name.
+      @return Required base name.
+    }
   var
     Pos: Integer; // position of last path delimiter in URL
   begin
-    Pos := StrLastDelimiterPos('/', URL);
+    Pos := LastDelimiter('/', URL);
     if Pos > 0 then
-      Result := StrSliceRight(URL, Length(URL) - Pos)
+      Result := AnsiRightStr(URL, Length(URL) - Pos)
     else
       Result := URL;
   end;
+  // ---------------------------------------------------------------------------
 
 var
   ParentDiv: IDispatch;     // parent <div> or <span> tag that contains Link
@@ -252,16 +308,16 @@ var
 begin
   Result := -1;
   // Check if parent elem is a <div> or <span> with class "option"
-  ParentDiv := THTMLDOMHelper.ParentElem(Link, 'div', 'option');
+  ParentDiv := THTMLDocHelper.ParentElem(Link, 'div', 'option');
   if not Assigned(ParentDiv) then
-    ParentDiv := THTMLDOMHelper.ParentElem(Link, 'span', 'option');
+    ParentDiv := THTMLDocHelper.ParentElem(Link, 'span', 'option');
   if not Assigned(ParentDiv) then
     Exit;
   // So see if there's an child <img> of parent with class "option-img"
   ImgTags := TImageTags.GetAllImageTags(ParentDiv);
   ImgTag := nil;
   for ImgTag in ImgTags do
-    if THTMLDOMHelper.ElemHasClass(ImgTag, 'option-img') then
+    if THTMLDocHelper.ElemHasClass(ImgTag, 'option-img') then
       Break;
   if not Assigned(ImgTag) then
     Exit;
@@ -280,6 +336,12 @@ end;
 
 procedure TWBDefaultPopupMenuWrapper.GetLinkMenuItems(const Doc: IDispatch;
   out CommandItems, HelpItems: IDispatchList);
+  {Gets all command and help links from document that are designated as menu
+  items.
+    @param Doc [in] IDispatch interface of document containing links.
+    @param CommandItems [out] List of command links.
+    @param HelpItems [out] List of help links.
+  }
 var
   AllLinks: IDispatchList;  // list of all links in document
   Link: IDispatch;          // referenced each link in AllLinks
@@ -292,7 +354,7 @@ begin
   for Link in AllLinks do
   begin
     // To have a link on menu it must have 'menu-item' class
-    if THTMLDOMHelper.ElemHasClass(Link, 'menu-item') then
+    if THTMLDocHelper.ElemHasClass(Link, 'menu-item') then
     begin
       case TAnchors.AnchorKind(Link) of
         akCommand:
@@ -305,6 +367,9 @@ begin
 end;
 
 procedure TWBDefaultPopupMenuWrapper.InitMenu;
+  {Initialises menu. Clears temporary menu items and adds any required menu
+  items for links in HTML document.
+  }
 var
   CommandLinks: IDispatchList;  // list of command links in document
   HelpLinks: IDispatchList;     // list of help links in document
@@ -314,7 +379,7 @@ begin
   inherited;
   // Get list of command and help links from current document
   GetLinkMenuItems(
-    THTMLDOMHelper.DocumentFromElem(
+    THTMLDocHelper.DocumentFromElem(
       (Menu as TWBPopupMenu).HTMLElem
     ),
     CommandLinks,
@@ -326,4 +391,3 @@ begin
 end;
 
 end.
-

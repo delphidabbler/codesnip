@@ -1,15 +1,36 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * UXMLDocConsts.pas
  *
- * Copyright (C) 2008-2013, Peter Johnson (www.delphidabbler.com).
+ * Constants defined node names and attributes used in the various XML documents
+ * used by CodeSnip.
  *
  * $Rev$
  * $Date$
  *
- * Constants defined node names and attributes used in the various XML documents
- * used by CodeSnip.
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is UXMLDocConsts.pas
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2008-2013 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -35,7 +56,7 @@ const
   cCategoriesNode             = 'categories';
   cCategoryNode               = 'category';
   cCategoryIdAttr             = 'id';
-  cCatSnippetsNode            = 'cat-routines';
+  cCatRoutinesNode            = 'cat-routines';
   cSourceCodeFileNode         = 'source-code';
   cXRefNode                   = 'xref';
   // export XML only
@@ -50,20 +71,18 @@ const
   cRootVersionAttr            = 'version';
   cRootWatermarkAttr          = 'watermark';
   cPascalNameNode             = 'pascal-name';
-  cDisplayNameNode            = 'display-name';
-  cSnippetsNode               = 'routines';
-  cSnippetNode                = 'routine';
-  cSnippetNameAttr            = 'name';
+  cRoutinesNode               = 'routines';
+  cRoutineNode                = 'routine';
+  cRoutineNameAttr            = 'name';
   cCatIdNode                  = 'cat-id';
   cDescriptionNode            = 'description';
   cUnitsNode                  = 'units';
   cDependsNode                = 'depends';
-  cCommentsNode               = 'comments';
-  cCreditsNode                = 'credits';
-  cCreditsUrlNode             = 'credits-url';
-  cExtraNode                  = 'extra';
-  cKindNode                   = 'kind';
-  cHighlightSource            = 'highlight-source';
+  cCommentsNode               = 'comments';           // v1 docs only
+  cCreditsNode                = 'credits';            // v1 docs only
+  cCreditsUrlNode             = 'credits-url';        // v1 docs only
+  cExtraNode                  = 'extra';              // v2 docs only
+  cKindNode                   = 'kind';               // v3 docs only
   cStandardFormatNode         = 'standard-format';
   cCompilerResultsNode        = 'compiler-results';
   cCompilerResultNode         = 'compiler-result';
@@ -73,7 +92,7 @@ const
   cCompilerIDs: array[TCompilerID] of string = (
     'd2', 'd3', 'd4', 'd5', 'd6', 'd7',
     'd2005', 'd2006', 'd2007', 'd2009', 'd2010',
-    'dXE', 'dXE2', 'dXE3', 'dDX4' {error, but in use}, 'dXE5',
+    'dXE', 'dXE2', 'dXE3', 'dXE4', 'dXE5',
     'fpc'
   );
 

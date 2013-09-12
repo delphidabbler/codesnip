@@ -1,15 +1,32 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
 <!--
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
- *
- * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
- *
  * $Rev$
  * $Date$
  *
- * Help topic for Configure Compilers dialogue box.
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is dlg_configcompilers.htm
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2005-2013 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 -->
 <html>
   <head>
@@ -17,7 +34,7 @@
      http-equiv="Content-Type"
      content="text-html; charset=Windows-1252">
     <title>
-      Configure Compilers Dialogue Box
+      Configure Compilers Dialog Box
     </title>
     <link
      rel="stylesheet"
@@ -33,17 +50,21 @@
        value="CompilersDlg">
     </object>
     <h1>
-      <a name="dlg_configcompilers"></a>Configure Compilers Dialogue Box
+      <a
+       name="dlg_configcompilers"></a> <img
+       alt="Menu icon"
+       src="../images/ConfigCompilers.gif"
+       class="glyph"> Configure Compilers Dialog Box
     </h1>
     <p>
-      This dialogue box is used to let <em>CodeSnip</em> know about the Pascal
+      This dialog box is used to let <em>CodeSnip</em> know about the Pascal
       Compilers that are installed on the system. It is displayed using the
       <em>Tools | Configure Compilers</em> menu option. <em>CodeSnip</em> uses
       these compilers when <a href="about_compiler_checks.htm">test
       compiling</a> routines.
     </p>
     <p>
-      Supported compilers are listed on the left hand side of the dialogue. If a
+      Supported compilers are listed on the left hand side of the dialog. If a
       compiler is known to <em>CodeSnip</em> its name appears in bold. Unknown
       compilers (or compilers that are not installed on the local system)
       appear in plain text.
@@ -53,62 +74,32 @@
     </p>
     <p>
       Selecting a compiler on the left displays information about it on the
-      right hand side of the dialogue. Here you enter or edit the required
+      right hand side of the dialog. Here you enter or edit the required
       information on three tabs, as follows.
     </p>
     <h2>
       Compiler Tab
     </h2>
     <p>
-      Enter the the full path to the compiler's executable file in the <em>Enter
-      compiler executable file name</em> edit box. This must be file name of
-      the command line version of the compiler - for example Delphi's DCC32.exe.
-      If you prefer you can select the file name from a standard file dialogue
-      by clicking the ellipsis button to the right of the edit box. The chosen
-      file name is entered in the edit box. As soon as the cursor leaves the
-      edit box the file name is checked for validity &ndash; it must exist and
-      be an executable file. If it valid it is used and compiler name will be
-      emboldened.
-    </p>
-    <p>
-      Pressing the <em>Clear</em> button removes the compiler by deleting the
-      path to its executable file. The <em>Enter compiler executable file
-      name</em> edit box is cleared.
-    </p>
-    <p>
-      Finally, you can choose whether the compiler is included in the table of
-      compile results displayed in the <a href="detail_pane.htm">Details
-      Pane</a>. This is done using the <em>Display results for this compiler in
-      details pane</em> check box. Tick the box to display the compiler's
-      results or clear it to hide them.
-    </p>
-    <p>
-      <strong
-        class="warning"
-      >Important Note:</strong> The facility to switch off the display of
-      results for selected compilers was designed to limit the number of
-      compilers whose results are displayed to avoid cluttering the
-      <a href="detail_pane.htm">Details Pane</a> with unnecessary information.
-      The feature should not be used to switch off the display of all compilers:
-      doing  that will cause a warning message to be displayed in place of the
-      compiler results table. To switch off compiler results completely you
-      should use  the <a href="dlg_prefs_snippetlayout.htm">Snippet Layout</a>
-      tab of the <a href="dlg_preferences.htm">Preferences</a> dialogue box to
-      remove the <em>Compiler Results Table</em> component from the different
-      kinds of snippet pages.
+      Enter the the full path to the compiler&#39;s executable file. This must
+      be the command line version of the compiler - for example Delphi&#39;s
+      DCC32.exe. You can either type in the name of the file or choose from a
+      standard file dialog by clicking the ellipsis button to the right of the
+      edit box. As soon as the cursor leaves the edit box the selected compiler
+      is assigned the file name and the compiler name will be emboldened.
     </p>
     <h2>
-      Switches
+      Command Line Tab
     </h2>
     <p>
       <em>CodeSnip</em> passes certain switches to the command line of each
       supported compiler. You can edit these switches if you wish the compilers
-      to perform differently. You can add, delete or edit switches as follows:
+      to perform differently. You can add, deleted or edit switches as follows:
     </p>
     <ul>
       <li>
-        <em>Add a switch</em>. Enter its name in the edit box and click
-        <em>Add</em>.
+        <em>Add a switch</em>. Enter its name in the edit box and click <em>
+        Add</em>.
       </li>
       <li>
         <em>Delete a switch</em>. Select the switch in the list box the click
@@ -125,118 +116,18 @@
       </li>
     </ul>
     <p>
+      <span
+       class="warning">Warning:</span> You should not remove any switches that
+      cause the compilers to generate warnings and error messages since <em>
+      CodeSnip</em> will not detect compilation errors correctly without these
+      switches. You are strongly recommended not to pass any switches that
+      alter the compiler&#39;s output otherwise <em>CodeSnip</em> may fail to
+      operate correctly.
+    </p>
+    <p>
       For an explanation of the purpose of the switches please see your
-      compiler's documentation.
+      compiler&#39;s documentation.
     </p>
-    <p>
-      <strong>Notes:</strong>
-    </p>
-    <ol>
-      <li>
-        There is no need to use this tab to provide switches to set the compiler
-        search path &ndash; that is very cumbersome. Instead you can use the
-        <em>Search Paths</em> tab to define your search paths and to generate
-        the correct switches automatically.
-      </li>
-      <li>
-        Similarly, when you have selected the Delphi XE2 or later compiler,
-        there is no need to set up the <code>-NS</code> switch to specify the
-        namespaces to search for various units. The <em>Namespaces</em> tab can
-        be used to make this task simpler and to generate the correct
-        <code>-NS</code> switch.
-      </li>
-    </ol>
-    <p>
-      <strong
-        class="warning"
-      >Warning:</strong> You should not remove any switches that cause the
-      compilers to generate warnings and error messages since <em>CodeSnip</em>
-      will not detect compilation errors correctly without these switches. You
-      are strongly recommended not to pass any switches that alter the
-      compiler's output otherwise <em>CodeSnip</em> may fail to operate
-      correctly.
-    </p>
-    <h2>
-      Namespaces
-    </h2>
-    <p class="bordered">
-      <strong>Note:</strong> This tab appears only if the selected compiler is
-      Delphi XE2 or later.
-    </p>
-    <p>
-      Delphi XE2 or later qualify units from the RTL and VCL are prefixed with
-      the name of the unit's namespace. Much of the code managed by
-      <em>CodeSnip</em> uses unqualified unit names for reasons of backward
-      compatibility. In order for the unqualifed units to be found on Delphi
-      XE2 and later the compiler has to be given a list of namespaces to search
-      for the units.
-    </p>
-    <p>
-      This tab enables you to configure such a namespace, as follows:
-    </p>
-    <ul>
-      <li>
-        <em>Add a namespace</em>. Enter its name in the edit box and click
-        <em>Add</em>.
-      </li>
-      <li>
-        <em>Delete a namespace</em>. Select the namespaces in the list box the
-        click the <em>Delete</em> button.
-      </li>
-      <li>
-        <em>Edit a namespace</em>. Select the namespace in the list box to copy
-        it to the edit box. Change the namespace name and click
-        <em>Replace</em>.
-      </li>
-      <li>
-        <em>Restore default namespaces</em>. Click the <em>Defaults</em> button.
-        This can be useful if you have made some changes to namespaces and
-        <em>CodeSnip</em> fails to compile snippets correctly. The default
-        namespaces have been chosen because they contain the most commonly used
-        units.
-      </li>
-    </ul>
-    <p>
-      For an list of RTL and VCL units, and the namespaces to which thet belong,
-      see your compiler's documentation.
-    </p>
-    <h2>
-      Search Paths
-    </h2>
-    <p>
-      If you have your own or third party units you want your user-defined
-      routines to reference you need to tell the compilers where to find them.
-      This tab lets you do just that. Because you often use different versions
-      of the same unit for different compilers, you must set up each compiler's
-      search path separately.
-    </p>
-    <p>
-      The <em>Existing Paths</em> list displays any current search paths. You
-      edit the search paths as follows:
-    </p>
-    <ul>
-      <li>
-        <em>Add a path</em>. Enter the required directory in the <em>Add or edit
-        path</em> edit box then click <em>Add</em>. You can browse for the
-        directory using a standard <em>Browse For Folders</em> dialogue box by
-        clicking the ellipsis button to the right of the edit control.
-      </li>
-      <li>
-        <em>Edit an existing path</em>. Select the directory in the list box.
-        This copies the directory name to the edit control. Modify the name then
-        click <em>Replace</em>.
-      </li>
-      <li>
-        <em>Delete a path</em>. Select the directory in the list box and press
-        <em>Delete</em>.
-      </li>
-      <li>
-        <em>Change the order of the search paths</em>. Select a directory in the
-        list box then move it up and down the list using the buttons that
-        display the up and down arrows. <span class="smallcaps">Ctrl+Up</span>
-        and <span class="smallcaps">Ctrl+Down</span> have the same effect.
-      </li>
-    </ul>
     <h2>
       Output Log Tab
     </h2>
@@ -271,14 +162,14 @@
       generates warnings, errors and fatal errors then check what text preceeds
       each kind of message. This text should be entered in the <em>Log
       Prefixes</em> editor. Failure to do this will mean that CodeSnip
-      won't detect warnings and won't report errors correctly.
+      won&#39;t detect warnings and won&#39;t report errors correctly.
     </p>
     <h2>
       Auto Detecting Compilers
     </h2>
     <p>
       <em>CodeSnip</em> can automatically detect the presence of Win 32 Delphi
-      compilers from versions 2 to XE5. Click the <em>Detect Delphi
+      compilers from versions 2 to XE5. Click the <em>Auto Detect
       Compilers</em> button to do this. Any supported installed version of
       Delphi will be recorded. This can save considerable time and avoid
       errors.

@@ -1,16 +1,37 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
- *
- * Copyright (C) 2005-2012, Peter Johnson (www.delphidabbler.com).
- *
- * $Rev$
- * $Date$
+ * Hiliter.UHiliters.pas
  *
  * Provides highlighter classes used to format and highlight source code in
  * various file formats. Contains a factory object and implementation of various
  * different highlighter objects.
+ *
+ * $Rev$
+ * $Date$
+ *
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is Hiliter.UHiliters.pas, formerly USyntaxHiliters.pas
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -22,551 +43,840 @@ interface
 
 uses
   // Project
-  Hiliter.UGlobals, Hiliter.UPasParser, UBaseObjects, UEncodings, UHTMLBuilder,
-  URTFBuilder;
+  Hiliter.UGlobals, UBaseObjects;
 
 
 type
-  ///  <summary>
-  ///  Static class that pmplements a syntax highlighter for Pascal source code.
-  ///  </summary>
-  ///  <remarks>
-  ///  Uses a user-provided rendering object to create highlighted output in
-  ///  various formats.
-  ///  </remarks>
-  TSyntaxHiliter = class sealed(TNoPublicConstructObject)
-  strict private
-    var
-      ///  <summary>Object used to render parsed code in required format.
-      ///  </summary>
-      fRenderer: IHiliteRenderer;
-    ///  <summary>Handles Pascal parser's OnElement event.</summary>
-    ///  <param name="Parser">THilitePasParser [in] Reference to parser object.
-    ///  Not used.</param>
-    ///  <param name="Elem">THiliteElement [in] Type of element to be output.
-    ///  </param>
-    ///  <param name="ElemText">string [in] Name of element to be output.
-    ///  </param>
-    ///  <remarks>Event triggered by parser for each different source code
-    ///  element encountered.</remarks>
-    procedure ElementHandler(Parser: THilitePasParser; Elem: THiliteElement;
-      const ElemText: string);
-    ///  <summary>Handles Pascal parser's OnLineBegin event.</summary>
-    ///  <param name="Parser">THilitePasParser [in] Reference to parser object.
-    ///  Not used.</param>
-    ///  <remarks>Called when a new line of source code is about to be started.
-    ///  </remarks>
-    procedure LineBeginHandler(Parser: THilitePasParser);
-    ///  <summary>Handles Pascal parser's OnLineEnd event.</summary>
-    ///  <param name="Parser">THilitePasParser [in] Reference to parser object.
-    ///  Not used.</param>
-    ///  <remarks>Called when a new line of source code has ended.</remarks>
-    procedure LineEndHandler(Parser: THilitePasParser);
-    ///  <summary>Performs syntax highlighting of given source code.</summary>
-    procedure DoHilite(const RawCode: string);
-  strict protected
-    ///  <summary>Internal object constructor. Sets up object to perform
-    ///  highlighting using given renderer object.</summary>
-    constructor InternalCreate(Renderer: IHiliteRenderer);
+
+  {
+  TSyntaxHiliterFactory:
+    Factory class used to create syntax highlighter objects.
+  }
+  TSyntaxHiliterFactory = class(TNoConstructObject)
   public
-    ///  <summary>Syntax highlights source code in an output format specified by
-    ///  caller.</summary>
-    ///  <param name="RawCode">string [in] Plain text source code to be
-    ///  highlighted.</param>
-    ///  <param name="Renderer">IHiliteRenderer [in] Object used to format and
-    ///  record output.</param>
-    ///  <remarks>Output is written via renderer in some user defined way. This
-    ///  may update an object associated with the renderer.</remarks>
-    class procedure Hilite(const RawCode: string; Renderer: IHiliteRenderer);
-  end;
-
-type
-  ///  <summary>
-  ///  Pure abstract base class for classes that create complete highlighted
-  ///  source code documents.
-  ///  </summary>
-  TDocumentHiliter = class abstract(TNoConstructObject)
-  public
-    ///  <summary>Creates document containing highlighted source code.</summary>
-    ///  <param name="RawCode">string [in] Source code to be processed.</param>
-    ///  <param name="Attrs">IHiliteAttrs [in] Specifies required highlighting
-    ///  style. If nil document is not highlighted.</param>
-    ///  <param name="Title">string [in] Title of document to be included in
-    ///  document as meta data. Defaults may be used if Title not specified.
-    ///  </param>
-    ///  <returns>TEncodedData. Highlighted source code in format applicable to
-    ///  output type.</returns>
-    ///  <remarks>
-    ///  <para>Not all document types support formatting, in which case Attrs
-    ///  will be ignored.</para>
-    ///  <para>Not all document types support meta data, in which case Title
-    ///  will be ignored.</para>
-    ///  </remarks>
-    class function Hilite(const RawCode: string;
-      Attrs: IHiliteAttrs = nil; const Title: string = ''): TEncodedData;
-      virtual; abstract;
-  end;
-
-type
-  TDocumentHiliterClass = class of TDocumentHiliter;
-
-type
-  ///  <summary>
-  ///  Creates a Unicode plain text source code document.
-  ///  </summary>
-  TNulDocumentHiliter = class sealed(TDocumentHiliter)
-  public
-    ///  <summary>Creates a plain text document containing source code.
-    ///  </summary>
-    ///  <param name="RawCode">string [in] Source code to be processed.</param>
-    ///  <param name="Attrs">IHiliteAttrs [in] Required highlighting style.
-    ///  Ignored because plain text documents do not support formatting.
-    ///  </param>
-    ///  <param name="Title">string [in] Title of document. Ignored because
-    ///  plain text documents do not support meta-data.</param>
-    ///  <returns>TEncodedData. Plain text in Unicode LE format.
-    ///  </returns>
-    class function Hilite(const RawCode: string;
-      Attrs: IHiliteAttrs = nil; const Title: string = ''): TEncodedData;
-      override;
-  end;
-
-type
-  ///  <summary>
-  ///  Creates a highlighted source code document in XHTML format.
-  ///  </summary>
-  TXHTMLDocumentHiliter = class sealed(TDocumentHiliter)
-  strict private
-    ///  <summary>Generates the CSS rules to be used in the document.</summary>
-    ///  <param name="Attrs">IHiliteAttrs [in] Highlighting styles used in
-    ///  document.</param>
-    ///  <returns>string. CSS rules that apply styles specified in Attrs.
-    ///  </returns>
-    class function GenerateCSSRules(Attrs: IHiliteAttrs): string;
-  public
-    ///  <summary>Creates XHTML document containing highlighted source code.
-    ///  </summary>
-    ///  <param name="RawCode">string [in] Source code to be processed.</param>
-    ///  <param name="Attrs">IHiliteAttrs [in] Specifies required highlighting
-    ///  style. If nil document is not highlighted.</param>
-    ///  <param name="Title">string [in] Title of document to be included in
-    ///  document header. If empty string a default title is used.</param>
-    ///  <returns>TEncodedData. XHTML code in UTF-8 format.</returns>
-    class function Hilite(const RawCode: string;
-      Attrs: IHiliteAttrs = nil; const Title: string = ''): TEncodedData;
-      override;
-  end;
-
-type
-  ///  <summary>
-  ///  Creates a highlighted source code document in rich text format.
-  ///  </summary>
-  TRTFDocumentHiliter = class sealed(TDocumentHiliter)
-  public
-    ///  <summary>Creates rich text format document containing highlighted
-    ///  source code.</summary>
-    ///  <param name="RawCode">string [in] Source code to be processed.</param>
-    ///  <param name="Attrs">IHiliteAttrs [in] Specifies required highlighting
-    ///  style. If nil document is not highlighted.</param>
-    ///  <param name="Title">string [in] Title of document to be included in
-    ///  document header. No title written if Title is empty string.
-    ///  </param>
-    ///  <returns>TEncodedData. RTF code in ASCII format.</returns>
-    class function Hilite(const RawCode: string;
-      Attrs: IHiliteAttrs = nil; const Title: string = ''): TEncodedData;
-      override;
-  end;
-
-type
-  ///  <summary>Base class for highlighter rendering objects. Provides common
-  ///  functionality needed by all implementations.</summary>
-  ///  <remarks>Marked as "abstract" because this class is meaningless if
-  ///  instantiated. It is intended only as a sub-class.</remarks>
-  THiliteRenderer = class abstract(TInterfacedObject)
-  strict private
-    var
-      ///  <summary>Specifies highlighting styles to be used.</summary>
-      fAttrs: IHiliteAttrs;
-  strict protected
-    ///  <summary>Highlighting styles to be used in rendering.</summary>
-    property Attrs: IHiliteAttrs read fAttrs;
-  public
-    ///  <summary>Object constructor. Records a copy of highlighter style
-    ///  attributes passed in Attrs parameter.</summary>
-    constructor Create(Attrs: IHiliteAttrs);
-  end;
-
-type
-  ///  <summary>
-  ///  Renders highlighted source code in rich text format. Generated code is
-  ///  recorded in a given rich text code builder object.
-  ///  </summary>
-  ///  <remarks>
-  ///  Designed for use with TSyntaxHiliter objects.
-  ///  </remarks>
-  TRTFHiliteRenderer = class(THiliteRenderer, IHiliteRenderer)
-  strict private
-    var
-      ///  <summary>Object used to record generated RTF code.</summary>
-      fBuilder: TRTFBuilder;
-  public
-    ///  <summary>Object constructor. Sets up object to render documents.
-    ///  </summary>
-    ///  <param name="Builder">TRTFBuilder [in] Object that receives generated
-    ///  RTF code.</param>
-    ///  <param name="Attrs">IHiliteAttrs [in] Specifies required highlighting
-    ///  style. If nil document is not highlighted.</param>
-    constructor Create(const Builder: TRTFBuilder;
-      const Attrs: IHiliteAttrs = nil);
-    ///  <summary>Initialises RTF ready to receive highlighted code.</summary>
-    ///  <remarks>Method of IHiliteRenderer.</remarks>
-    procedure Initialise;
-    ///  <summary>Tidies up RTF after all highlighted code processed.</summary>
-    ///  <remarks>Method of IHiliteRenderer.</remarks>
-    procedure Finalise;
-    ///  <summary>Resets styles ready for a new line (paragraph) of highlighted
-    ///  code.</summary>
-    ///  <remarks>Method of IHiliteRenderer.</remarks>
-    procedure BeginLine;
-    ///  <summary>Closes current RTF paragraph.</summary>
-    ///  <remarks>Method of IHiliteRenderer.</remarks>
-    procedure EndLine;
-    ///  <summary>Sets any highlighting style required for following source code
-    ///  element as specified by Elem.</summary>
-    ///  <remarks>Method of IHiliteRenderer.</remarks>
-    procedure BeforeElem(Elem: THiliteElement);
-    ///  <summary>Writes given source code element text.</summary>
-    ///  <remarks>Method of IHiliteRenderer.</remarks>
-    procedure WriteElemText(const Text: string);
-    ///  <summary>Switches off any highlighting styles used for source code
-    ///  element specified by Elem.</summary>
-    ///  <remarks>Method of IHiliteRenderer.</remarks>
-    procedure AfterElem(Elem: THiliteElement);
-  end;
-
-type
-  ///  <summary>
-  ///  Renders highlighted source code in XHTML format. Generated code is
-  ///  recorded in a given HTML code builder object.
-  ///  </summary>
-  ///  <remarks>
-  ///  Designed for use with TSyntaxHiliter objects.
-  ///  </remarks>
-  THTMLHiliteRenderer = class(THiliteRenderer, IHiliteRenderer)
-  strict private
-    var
-      ///  <summary>Object used to record generated XHTML code.</summary>
-      fBuilder: THTMLBuilder;
-      ///  <summary>Flag indicating if writing first line of output.</summary>
-      fIsFirstLine: Boolean;
-  public
-    ///  <summary>Object constructor. Sets up object to render documents.
-    ///  </summary>
-    ///  <param name="Builder">THTMLBuilder [in] Object that receives generated
-    ///  XHTML code.</param>
-    ///  <param name="Attrs">IHiliteAttrs [in] Specifies required highlighting
-    ///  style. If nil document is not highlighted.</param>
-    constructor Create(const Builder: THTMLBuilder;
-      const Attrs: IHiliteAttrs = nil);
-    ///  <summary>Initialises XHTML ready to receive highlighted code.</summary>
-    ///  <remarks>Method of IHiliteRenderer.</remarks>
-    procedure Initialise;
-    ///  <summary>Tidies up XHTML after all highlighted code processed.
-    ///  </summary>
-    ///  <remarks>Method of IHiliteRenderer.</remarks>
-    procedure Finalise;
-    ///  <summary>Emits new line if necessary.</summary>
-    ///  <remarks>Method of IHiliteRenderer.</remarks>
-    procedure BeginLine;
-    ///  <summary>Does nothing.</summary>
-    ///  <remarks>
-    ///  <para>Handling of new lines is all done by BeginLine.</para>
-    ///  <para>Method of IHiliteRenderer.</para>
-    ///  </remarks>
-    procedure EndLine;
-    ///  <summary>Emits any span tag required to style following source code
-    ///  element as specified by Elem.</summary>
-    ///  <remarks>Method of IHiliteRenderer.</remarks>
-    procedure BeforeElem(Elem: THiliteElement);
-    ///  <summary>Writes given source code element text.</summary>
-    ///  <remarks>Method of IHiliteRenderer.</remarks>
-    procedure WriteElemText(const Text: string);
-    ///  <summary>Closes any span tag used to style source code element
-    ///  specified by Elem.</summary>
-    ///  <remarks>Method of IHiliteRenderer.</remarks>
-    procedure AfterElem(Elem: THiliteElement);
+    class function CreateHiliter(
+      const Kind: TSyntaxHiliterKind): ISyntaxHiliter;
+      {Creates syntax highlighter of required kind.
+        @param Kind [in] Kind of highlighter required.
+        @return Highlighter object.
+      }
   end;
 
 
 implementation
 
 
+{
+  NOTES:
+
+  The class heirachy for syntax highlighter classes in this unit is:
+
+  TSyntaxHiliter - abstract base class
+  |
+  +-- * TNulHiliter - do nothing class that passes source thru unchanged
+  |                   ignores highlight attributes
+  |
+  +-- TParsedHiliter - abstract base class for classes that parse source code
+      |
+      +-- TBaseHTMLHiliter - base class for highlighters that generate HTML
+      |   |
+      |   +-- * TDetailHTMLHiliter - creates HTML fragment for Details pane
+      |   |                          uses highlight attributes
+      |   |
+      |   +-- * TXHTMLHiliter - creates complete XHTML document
+      |                         uses highlight attributes
+      |
+      +-- * TRTFHiliter - creates complete RTF document
+                          uses highlight attributes
+
+* indicates a class constructed by factory class
+
+}
+
+
 uses
   // Delphi
-  SysUtils, Graphics,
+  SysUtils, Classes, Graphics,
   // Project
-  Hiliter.UAttrs, Hiliter.UCSS, IntfCommon, UCSSBuilder, URTFStyles;
+  Hiliter.UAttrs, Hiliter.UCSS, Hiliter.UPasParser, IntfCommon, UCSSBuilder,
+  UHTMLBuilder, URTFBuilder, UStrStreamWriter;
+
+
+type
+
+  {
+  TSyntaxHiliterClass:
+    Class type for syntax highlighters. Used by factory class to create syntax
+    highlighter objects of different types.
+  }
+  TSyntaxHiliterClass = class of TSyntaxHiliter;
+
+  {
+  TSyntaxHiliter:
+    Abstract base class for all syntax highlighter classes. Provides virtual
+    abstract methods and a virtual constructor that descendants override. This
+    class is provided to give common base class that allows factory class to
+    use TSyntaxHiliterClass for object creation.
+  }
+  TSyntaxHiliter = class(TInterfacedObject)
+  protected
+    { ISyntaxHiliter methods }
+    procedure Hilite(const Src, Dest: TStream; const Attrs: IHiliteAttrs = nil;
+      const Title: string = ''); overload; virtual; abstract;
+      {Highlights source code on an input stream and writes to output stream.
+        @param Src [in] Stream containing source code to be highlighted.
+        @param Dest [in] Stream that receives formatted / highlighted document.
+        @param Attrs [in] Attributes to be used by highlighter. Nil value causes
+          a nul highlighter to be used.
+        @param Title [in] Optional title to be used as meta data in output
+          document. Will be ignored if document type does not support title.
+      }
+    function Hilite(const RawCode: string; const Attrs: IHiliteAttrs = nil;
+      const Title: string = ''): string; overload; virtual; abstract;
+      {Creates string containing highlighted source code.
+        @param RawCode [in] Contains source code to be highlighted.
+        @param Attrs [in] Attributes to be used by highlighter. Nil value causes
+          a nul highlighter to be used.
+        @param Title [in] Optional title to be used as meta data in output
+          document. Will be ignored if document type does not support title.
+        @return Formatted / highlighted source code.
+      }
+    constructor Create; virtual;
+      {Class constructor. Instantiates object. This do-nothing virtual
+      constructor is required to enable polymorphism to work for descendant
+      classes.
+      }
+  end;
+
+  {
+  TNulHiliter:
+    A do nothing highlighter class that passes source code through unchanged.
+  }
+  TNulHiliter = class(TSyntaxHiliter,
+    ISyntaxHiliter
+  )
+  protected
+    { ISyntaxHiliter methods }
+    procedure Hilite(const Src, Dest: TStream; const Attrs: IHiliteAttrs = nil;
+      const Title: string = ''); overload; override;
+      {Copies source code on an input stream to output stream unchanged.
+        @param Src [in] Stream containing source code.
+        @param Dest [in] Stream that receives unchanged copy of source code from
+          Src.
+        @param Attrs [in] Attributes to be used by highlighter. Ignored.
+        @param Title [in] Title of output document. Ignored.
+      }
+    function Hilite(const RawCode: string; const Attrs: IHiliteAttrs = nil;
+      const Title: string = ''): string; overload; override;
+      {Returns provided source code unchanged.
+        @param RawCode [in] Contains source code.
+        @param Attrs [in] Attributes to be used by highlighter. Ignored.
+        @param Title [in] Title of output document. Ignored.
+        @return Unchanged source code.
+      }
+  end;
+
+  {
+  TParsedHiliter:
+    Abstract base class for all highlighter classes that parse source code using
+    Pascal parser object. Handles parser events and calls virtual methods to
+    write the various document parts. Also provides a helper object to simplify
+    output of formatted code.
+  }
+  TParsedHiliter = class(TSyntaxHiliter)
+  strict private
+    fWriter: TStrStreamWriter;
+      {Helper object used to emit formatted source code}
+    fAttrs: IHiliteAttrs;
+      {Reference to highlighter attributes}
+    fTitle: string;
+      {Document title}
+    procedure ElementHandler(Parser: THilitePasParser; Elem: THiliteElement;
+      const ElemText: string);
+      {Handles parser's OnElement event. Calls virtual do nothing and abstract
+      methods that descendants override to write a document element in required
+      format.
+        @param Parser [in] Reference to parser that triggered event (unused).
+        @param Elem [in] Type of element to output.
+        @param ElemText [in] Text to be output for element.
+      }
+    procedure LineBeginHandler(Parser: THilitePasParser);
+      {Handles parser's OnLineBegin event. Calls virtual do nothing method that
+      descendants override to output data needed to start a new line.
+        @param Parser [in] Reference to parser that triggered event (unused).
+      }
+    procedure LineEndHandler(Parser: THilitePasParser);
+      {Handles parser's OnLineEnd event. Calls virtual do nothing method that
+      descendants override to output data needed to end a new line.
+        @param Parser [in] Reference to parser that triggered event (unused).
+      }
+  protected
+    { ISyntaxHiliter methods }
+    procedure Hilite(const Src, Dest: TStream; const Attrs: IHiliteAttrs = nil;
+      const Title: string = ''); overload; override;
+      {Highlights source code on an input stream and writes to output stream.
+        @param Src [in] Stream containing source code to be highlighted.
+        @param Dest [in] Stream that receives formatted / highlighted document.
+        @param Attrs [in] Attributes to be used by highlighter. Nil value causes
+          a nul highlighter to be used.
+        @param Title [in] Optional title to be used as meta data in output
+          document. Will be ignored if document type does not support title.
+      }
+    function Hilite(const RawCode: string; const Attrs: IHiliteAttrs = nil;
+      const Title: string = ''): string; overload; override;
+      {Creates string containing highlighted source code.
+        @param RawCode [in] Contains source code to be highlighted.
+        @param Attrs [in] Attributes to be used by highlighter. Nil value causes
+          a nul highlighter to be used.
+        @param Title [in] Optional title to be used as meta data in output
+          document. Will be ignored if document type does not support title.
+        @return Formatted / highlighted source code.
+      }
+  strict protected
+    procedure BeginDoc; virtual;
+      {Called just before document is parsed. Used to initialise document.
+      }
+    procedure EndDoc; virtual;
+      {Called after parsing complete. Used to finalise document.
+      }
+    procedure BeginLine; virtual;
+      {Called when a new line in output is started. Used to initialise a line in
+      output.
+      }
+    procedure EndLine; virtual;
+      {Called when a line is ending. Used to terminate a line in output.
+      }
+    procedure WriteElem(const ElemText: string); virtual; abstract;
+      {Called for each different highlight element in document and is overridden
+      to output element's text.
+        @param ElemText [in] Text of the element.
+      }
+    procedure BeforeElem(Elem: THiliteElement); virtual;
+      {Called before a highlight element is output. Used to write code to
+      display element in required format.
+        @param Elem [in] Kind of highlight element.
+      }
+    procedure AfterElem(Elem: THiliteElement); virtual;
+      {Called after a highlight element is output. Used to write code to
+      finalise element formatting.
+        @param Elem [in] Kind of highlight element.
+      }
+    property Writer: TStrStreamWriter read fWriter;
+      {Helper object used to write formatted code to output}
+    property Attrs: IHiliteAttrs read fAttrs;
+      {Object storing attributes of highlighter. Defines appearance of document
+      and each highlight element}
+    property Title: string read fTitle;
+      {Title of document. May be ignored if document type doesn't support title
+      meta data}
+  public
+    constructor Create; override;
+      {Class constructor. Sets up object.
+      }
+    destructor Destroy; override;
+      {Class destructor. Tears down object.
+      }
+  end;
+
+  {
+  TRTFHiliter:
+    Highlighter object used to write highlighted rich text.
+  }
+  TRTFHiliter = class(TParsedHiliter,
+    ISyntaxHiliter
+  )
+  strict private
+    fRTFBuilder: TRTFBuilder;
+      {Object used to construct rich text document}
+  strict protected
+    procedure BeginDoc; override;
+      {Called just before document is parsed. Used to emit RTF header.
+      }
+    procedure EndDoc; override;
+      {Called after parsing complete. Outputs whole of RTF code.
+      }
+    procedure BeginLine; override;
+      {Called when a new line in output is started. Used to initialise a line in
+      output.
+      }
+    procedure EndLine; override;
+      {Called when a line is ending. Writes end of line RTF control.
+      }
+    procedure WriteElem(const ElemText: string); override;
+      {Outputs element's text.
+        @param ElemText [in] Text of the element.
+      }
+    procedure BeforeElem(Elem: THiliteElement); override;
+      {Called before a highlight element is output. Used to emit RTF controls
+      that define style of element.
+        @param Elem [in] Kind of highlight element.
+      }
+    procedure AfterElem(Elem: THiliteElement); override;
+      {Called after a highlight element is output. Used to write code to
+      finalise element formatting.
+        @param Elem [in] Kind of highlight element.
+      }
+  public
+    constructor Create; override;
+      {Class constructor. Sets up object.
+      }
+    destructor Destroy; override;
+      {Class destructor. Tears down object.
+      }
+  end;
+
+  {
+  TBaseHTMLHiliter:
+    Base class for all highlighters that emit HTML. Provides some common
+    functionality. Emits HTML for highlighted source code only, not a complete
+    HTML document. No CSS definitions are written since these are expected to
+    have been provided elsewhere and match standard highlighter class names.
+    (THiliterCSS is used to provide CSS class names and definitions).
+  }
+  TBaseHTMLHiliter = class(TParsedHiliter)
+  strict private
+    fIsFirstLine: Boolean;
+      {Records whether we are about to write first line}
+    fHTMLBuilder: THTMLBuilder;
+      {Object used to construct XHTML document}
+  strict protected
+    procedure BeginDoc; override;
+      {Called just before document is parsed. Used to initialise document.
+      }
+    procedure BeginLine; override;
+      {Called when a new line in output is started. Writes new line where
+      required.
+      }
+    procedure WriteElem(const ElemText: string); override;
+      {Outputs element's text.
+        @param ElemText [in] Text of the element.
+      }
+    procedure BeforeElem(Elem: THiliteElement); override;
+      {Called before a highlight element is output. Used to write span tag for
+      any CSS class that is required.
+        @param Elem [in] Kind of highlight element.
+      }
+    procedure AfterElem(Elem: THiliteElement); override;
+      {Called after a highlight element is output. Writes closing span tag if
+      required.
+        @param Elem [in] Kind of highlight element.
+      }
+    property IsFirstLine: Boolean read fIsFirstLine;
+      {Flag true when line to be written is first line and false after that}
+    property HTMLBuilder: THTMLBuilder read fHTMLBuilder;
+      {Object used to construct XHTML document}
+  public
+    constructor Create; override;
+      {Class constructor. Sets up object.
+      }
+    destructor Destroy; override;
+      {Class destructor. Tears down object.
+      }
+  end;
+
+  {
+  TDetailHTMLHiliter:
+    Highlighter that is used to display source code in program's Details pane.
+    The class produces HTML suitable for use in HTML template document,
+    therefore it does not emit a complete document, just HTML between
+    <pre>..</pre> tags.
+  }
+  TDetailHTMLHiliter = class(TBaseHTMLHiliter,
+    ISyntaxHiliter
+  )
+  strict protected
+    procedure BeginDoc; override;
+      {Called just before document is parsed. Used to write opening pre tag.
+      }
+    procedure EndDoc; override;
+      {Called after parsing complete. Writes out HTML.
+      }
+  end;
+
+  {
+  TXHTMLHiliter:
+    Highlighter that emits a complete XHTML document containing the source code.
+    It creates an emebedded style sheet containing information from given
+    highlight attribute objects and then writes code that uses these classes for
+    formatting.
+  }
+  TXHTMLHiliter = class(TBaseHTMLHiliter,
+    ISyntaxHiliter
+  )
+  strict private
+    function GenerateCSSRules: string;
+      {Generates CSS rule for use in head section of HTML document.
+        @return List of CSS class rules.
+      }
+  strict protected
+    procedure BeginDoc; override;
+      {Called just before document is parsed. Used to write XHTML code for
+      document head section and first part of body.
+      }
+    procedure EndDoc; override;
+      {Called after parsing complete. Writes XHTML that closes document.
+      }
+  end;
+
+
+{ TSyntaxHiliterFactory }
+
+class function TSyntaxHiliterFactory.CreateHiliter(
+  const Kind: TSyntaxHiliterKind): ISyntaxHiliter;
+  {Creates syntax highlighter of required kind.
+    @param Kind [in] Kind of highlighter required.
+    @return Highlighter object.
+  }
+const
+  // Map of highlighter kinds to highlighter classes
+  cHiliterMap: array[TSyntaxHiliterKind] of TSyntaxHiliterClass = (
+    TNulHiliter,
+    TDetailHTMLHiliter,
+    TXHTMLHiliter,
+    TRTFHiliter
+  );
+var
+  Obj: TSyntaxHiliter;  // created object
+begin
+  Obj := cHiliterMap[Kind].Create;  // create object
+  Result := Obj as ISyntaxHiliter;  // return ISyntaxHiliter interface to object
+end;
 
 
 { TSyntaxHiliter }
 
-procedure TSyntaxHiliter.DoHilite(const RawCode: string);
-var
-  Parser: THilitePasParser;   // object used to parse source code
+constructor TSyntaxHiliter.Create;
+  {Class constructor. Instantiates object. This do-nothing virtual constructor
+  is required to enable polymorphism to work for descendant classes.
+  }
 begin
-  // Set up parser
-  Parser := THilitePasParser.Create;
-  try
-    Parser.OnElement := ElementHandler;
-    Parser.OnLineBegin := LineBeginHandler;
-    Parser.OnLineEnd := LineEndHandler;
-    // Parse the document:
-    fRenderer.Initialise;
-    Parser.Parse(RawCode);
-    fRenderer.Finalise;
-  finally
-    Parser.Free;
-  end;
+  inherited;
+  // Do nothing ** Do not remove - required for polymorphism to work **
 end;
 
-procedure TSyntaxHiliter.ElementHandler(Parser: THilitePasParser;
-  Elem: THiliteElement; const ElemText: string);
+
+{ TNulHiliter }
+
+procedure TNulHiliter.Hilite(const Src, Dest: TStream;
+  const Attrs: IHiliteAttrs; const Title: string);
+  {Copies source code on an input stream to output stream unchanged.
+    @param Src [in] Stream containing source code.
+    @param Dest [in] Stream that receives unchanged copy of source code from
+      Src.
+    @param Attrs [in] Attributes to be used by highlighter. Ignored.
+    @param Title [in] Title of output document. Ignored.
+  }
 begin
-  fRenderer.BeforeElem(Elem);
-  fRenderer.WriteElemText(ElemText);
-  fRenderer.AfterElem(Elem);
+  // Copy source from current location in input stream to end of stream into
+  // destination stream
+  Dest.CopyFrom(Src, Src.Size - Src.Position);
 end;
 
-class procedure TSyntaxHiliter.Hilite(const RawCode: string;
-  Renderer: IHiliteRenderer);
+function TNulHiliter.Hilite(const RawCode: string; const Attrs: IHiliteAttrs;
+  const Title: string): string;
+  {Returns provided source code unchanged.
+    @param RawCode [in] Contains source code.
+    @param Attrs [in] Attributes to be used by highlighter. Ignored.
+    @param Title [in] Title of output document. Ignored.
+    @return Unchanged source code.
+  }
 begin
-  Assert(Assigned(Renderer), ClassName + '.Create: Renderer is nil');
-  with InternalCreate(Renderer) do
-    try
-      DoHilite(RawCode);
-    finally
-      Free;
-    end;
+  Result := RawCode;
 end;
 
-procedure TSyntaxHiliter.LineBeginHandler(Parser: THilitePasParser);
+
+{ TParsedHiliter }
+
+procedure TParsedHiliter.AfterElem(Elem: THiliteElement);
+  {Called after a highlight element is output. Used to write code to finalise
+  element formatting.
+    @param Elem [in] Kind of highlight element.
+  }
 begin
-  fRenderer.BeginLine;
+  // Do nothing: descendants override
 end;
 
-procedure TSyntaxHiliter.LineEndHandler(Parser: THilitePasParser);
+procedure TParsedHiliter.BeforeElem(Elem: THiliteElement);
+  {Called before a highlight element is output. Used to write code to display
+  element in required format.
+    @param Elem [in] Kind of highlight element.
+  }
 begin
-  fRenderer.EndLine;
+  // Do nothing: descendants override
 end;
 
-constructor TSyntaxHiliter.InternalCreate(Renderer: IHiliteRenderer);
+procedure TParsedHiliter.BeginDoc;
+  {Called just before document is parsed. Used to initialise document.
+  }
 begin
-  inherited InternalCreate;
-  fRenderer := Renderer;
+  // Do nothing: descendants override
 end;
 
-{ TNulDocumentHiliter }
-
-class function TNulDocumentHiliter.Hilite(const RawCode: string;
-  Attrs: IHiliteAttrs; const Title: string): TEncodedData;
+procedure TParsedHiliter.BeginLine;
+  {Called when a new line in output is started. Used to initialise a line in
+  output.
+  }
 begin
-  Result := TEncodedData.Create(RawCode, etUnicode);
+  // Do nothing: descendants override
 end;
 
-{ TXHTMLDocumentHiliter }
-
-class function TXHTMLDocumentHiliter.GenerateCSSRules(Attrs: IHiliteAttrs):
-  string;
-var
-  CSSBuilder: TCSSBuilder;  // builds CSS code
-  HiliterCSS: THiliterCSS;  // generates CSS names and properties for hiliter
+constructor TParsedHiliter.Create;
+  {Class constructor. Sets up object.
+  }
 begin
-  if not Assigned(Attrs) then
-    Attrs := THiliteAttrsFactory.CreateNulAttrs;
-  HiliterCSS := THiliterCSS.Create(Attrs);
-  try
-    CSSBuilder := TCSSBuilder.Create;
-    try
-      HiliterCSS.BuildCSS(CSSBuilder);
-      Result := CSSBuilder.AsString;
-    finally
-      CSSBuilder.Free;
-    end;
-  finally
-    HiliterCSS.Free;
-  end;
-end;
-
-class function TXHTMLDocumentHiliter.Hilite(const RawCode: string;
-  Attrs: IHiliteAttrs; const Title: string): TEncodedData;
-resourcestring
-  // Default document title
-  sDefaultTitle = 'DelphiDabbler CodeSnip Database';
-var
-  Renderer: IHiliteRenderer;    // XHTML renderer object
-  Builder: THTMLBuilder;        // object used to construct XHTML document
-begin
-  Builder := THTMLBuilder.Create;
-  try
-    if Title <> '' then
-      Builder.Title := Title
-    else
-      Builder.Title := sDefaultTitle;
-    Builder.CSS := GenerateCSSRules(Attrs);
-    Renderer := THTMLHiliteRenderer.Create(Builder, Attrs);
-    TSyntaxHiliter.Hilite(RawCode, Renderer);
-    Result := TEncodedData.Create(Builder.HTMLDocument, etUTF8);
-  finally
-    Builder.Free;
-  end;
-end;
-
-{ TRTFDocumentHiliter }
-
-class function TRTFDocumentHiliter.Hilite(const RawCode: string;
-  Attrs: IHiliteAttrs; const Title: string): TEncodedData;
-var
-  Renderer: IHiliteRenderer;  // RTF renderer object
-  Builder: TRTFBuilder;       // object used to construct RTF document
-begin
-  Builder := TRTFBuilder.Create(0);
-  try
-    Builder.DocProperties.Title := Title;
-    Renderer := TRTFHiliteRenderer.Create(Builder, Attrs);
-    TSyntaxHiliter.Hilite(RawCode, Renderer);
-    Result := TEncodedData.Create(Builder.Render.ToBytes, etASCII);
-  finally
-    Builder.Free;
-  end;
-end;
-
-{ THiliteRenderer }
-
-constructor THiliteRenderer.Create(Attrs: IHiliteAttrs);
-begin
-  inherited Create;
+  inherited;
+  // Create nul highlighter object used by default
   fAttrs := THiliteAttrsFactory.CreateNulAttrs;
-  (fAttrs as IAssignable).Assign(Attrs);
 end;
 
-{ TRTFHiliteRenderer }
+destructor TParsedHiliter.Destroy;
+  {Class destructor. Tears down object.
+  }
+begin
+  fAttrs := nil;
+  inherited;
+end;
 
-procedure TRTFHiliteRenderer.AfterElem(Elem: THiliteElement);
+procedure TParsedHiliter.ElementHandler(Parser: THilitePasParser;
+  Elem: THiliteElement; const ElemText: string);
+  {Handles parser's OnElement event. Calls virtual do nothing and abstract
+  methods that descendants override to write a document element in required
+  format.
+    @param Parser [in] Reference to parser that triggered event (unused).
+    @param Elem [in] Type of element to output.
+    @param ElemText [in] Text to be output for element.
+  }
+begin
+  BeforeElem(Elem);
+  WriteElem(ElemText);
+  AfterElem(Elem);
+end;
+
+procedure TParsedHiliter.EndDoc;
+  {Called after parsing complete. Used to finalise document.
+  }
+begin
+  // Do nothing: descendants override
+end;
+
+procedure TParsedHiliter.EndLine;
+  {Called when a line is ending. Used to terminate a line in output.
+  }
+begin
+  // Do nothing: descendants override
+end;
+
+procedure TParsedHiliter.Hilite(const Src, Dest: TStream;
+  const Attrs: IHiliteAttrs; const Title: string);
+  {Highlights source code on an input stream and writes to output stream.
+    @param Src [in] Stream containing source code to be highlighted.
+    @param Dest [in] Stream that receives formatted / highlighted document.
+    @param Attrs [in] Attributes to be used by highlighter. Nil value causes a
+      nul highlighter to be used.
+    @param Title [in] Optional title to be used as meta data in output document.
+      Will be ignored if document type does not support title.
+  }
+var
+  Parser: THilitePasParser;   // object used to parse source
+begin
+  (fAttrs as IAssignable).Assign(Attrs);  // Attrs may be nil
+  fTitle := Title;
+  fWriter := TStrStreamWriter.Create(Dest);
+  try
+    // Create parser
+    Parser := THilitePasParser.Create;
+    try
+      Parser.OnElement := ElementHandler;
+      Parser.OnLineBegin := LineBeginHandler;
+      Parser.OnLineEnd := LineEndHandler;
+      // Parse the document:
+      BeginDoc;   // overridden in descendants to initialise document
+      Parser.Parse(Src);
+      EndDoc;     // overridden in descendants to finalise document
+    finally
+      Parser.Free;
+    end;
+  finally
+    fWriter.Free;
+  end;
+end;
+
+function TParsedHiliter.Hilite(const RawCode: string; const Attrs: IHiliteAttrs;
+  const Title: string): string;
+  {Creates string containing highlighted source code.
+    @param RawCode [in] Contains source code to be highlighted.
+    @param Attrs [in] Attributes to be used by highlighter. Nil value causes a
+      nul highlighter to be used.
+    @param Title [in] Optional title to be used as meta data in output document.
+      Will be ignored if document type does not support title.
+    @return Formatted / highlighted source code.
+  }
+var
+  SrcStm: TStringStream;  // stream used to store raw source code
+  DestStm: TStringStream; // stream used to receive output
+begin
+  DestStm := nil;
+  // Create a string stream containing raw source code and another to receive
+  // highlighted output. Uses unicode string streams if supported.
+  SrcStm := TStringStream.Create(RawCode, TEncoding.Unicode);
+  try
+    DestStm := TStringStream.Create('', TEncoding.Unicode);
+    // Use stream version of method to perform highlighting
+    Hilite(SrcStm, DestStm, Attrs, Title);
+    // Return string stored in destination stream
+    Result := DestStm.DataString;
+  finally
+    DestStm.Free;
+    SrcStm.Free;
+  end;
+end;
+
+procedure TParsedHiliter.LineBeginHandler(Parser: THilitePasParser);
+  {Handles parser's OnLineBegin event. Calls virtual do nothing method that
+  descendants override to output data needed to start a new line.
+    @param Parser [in] Reference to parser that triggered event (unused).
+  }
+begin
+  BeginLine;
+end;
+
+procedure TParsedHiliter.LineEndHandler(Parser: THilitePasParser);
+  {Handles parser's OnLineEnd event. Calls virtual do nothing method that
+  descendants override to output data needed to end a new line.
+    @param Parser [in] Reference to parser that triggered event (unused).
+  }
+begin
+  EndLine;
+end;
+
+
+{ TRTFHiliter }
+
+procedure TRTFHiliter.AfterElem(Elem: THiliteElement);
+  {Called after a highlight element is output. Used to write code to finalise
+  element formatting.
+    @param Elem [in] Kind of highlight element.
+  }
 begin
   if not Attrs[Elem].IsNul then
-    fBuilder.EndGroup;
+    fRTFBuilder.EndGroup;
 end;
 
-procedure TRTFHiliteRenderer.BeforeElem(Elem: THiliteElement);
+procedure TRTFHiliter.BeforeElem(Elem: THiliteElement);
+  {Called before a highlight element is output. Used to emit RTF controls that
+  define style of element.
+    @param Elem [in] Kind of highlight element.
+  }
 begin
   if not Attrs[Elem].IsNul then
   begin
-    fBuilder.BeginGroup;
+    fRTFBuilder.BeginGroup;
     if Attrs[Elem].ForeColor <> clNone then
-      fBuilder.SetColour(Attrs[Elem].ForeColor);
+      fRTFBuilder.SetColour(Attrs[Elem].ForeColor);
     if Attrs[Elem].FontStyle <> [] then
-      fBuilder.SetFontStyle(Attrs[Elem].FontStyle);
+      fRTFBuilder.SetFontStyle(Attrs[Elem].FontStyle);
   end;
 end;
 
-procedure TRTFHiliteRenderer.BeginLine;
-begin
-  fBuilder.ResetCharStyle;
-  fBuilder.SetFont(Attrs.FontName);
-  fBuilder.SetFontSize(Attrs.FontSize);
-end;
-
-constructor TRTFHiliteRenderer.Create(const Builder: TRTFBuilder;
-  const Attrs: IHiliteAttrs = nil);
-begin
-  Assert(Assigned(Builder), ClassName + '.Create: Builder is nil');
-  inherited Create(Attrs);
-  fBuilder := Builder;
-end;
-
-procedure TRTFHiliteRenderer.EndLine;
-begin
-  fBuilder.EndPara;
-end;
-
-procedure TRTFHiliteRenderer.Finalise;
-begin
-  // End group containing all source code
-  fBuilder.EndGroup;
-end;
-
-procedure TRTFHiliteRenderer.Initialise;
+procedure TRTFHiliter.BeginDoc;
+  {Called just before document is parsed. Used to emit RTF header.
+  }
 var
   Elem: THiliteElement; // loops thru all highlight elements
 begin
   // Set up font table
-  fBuilder.FontTable.Add(Attrs.FontName, rgfModern, 0);
+  fRTFBuilder.FontTable.Add(Attrs.FontName, rgfModern, 0);
   // Set up colour table
   for Elem := Low(THiliteElement) to High(THiliteElement) do
-    fBuilder.ColourTable.Add(Attrs[Elem].ForeColor);
-  // Begin group containing all source code
-  fBuilder.BeginGroup;
+    fRTFBuilder.ColourTable.Add(Attrs[Elem].ForeColor);
+  // Add any document title
+  fRTFBuilder.DocProperties.Title := Title;
   // Clear any paragraph formatting
-  fBuilder.ClearParaFormatting;
+  fRTFBuilder.ClearParaFormatting;
 end;
 
-procedure TRTFHiliteRenderer.WriteElemText(const Text: string);
+procedure TRTFHiliter.BeginLine;
+  {Called when a new line in output is started. Used to initialise a line in
+  output.
+  }
 begin
-  fBuilder.AddText(Text);
+  fRTFBuilder.ResetCharStyle;
+  fRTFBuilder.SetFont(Attrs.FontName);
+  fRTFBuilder.SetFontSize(Attrs.FontSize);
 end;
 
-{ THTMLHiliteRenderer }
+constructor TRTFHiliter.Create;
+  {Class constructor. Sets up object.
+  }
+begin
+  inherited;
+  fRTFBuilder := TRTFBuilder.Create;
+end;
 
-procedure THTMLHiliteRenderer.AfterElem(Elem: THiliteElement);
+destructor TRTFHiliter.Destroy;
+  {Class destructor. Tears down object.
+  }
+begin
+  FreeAndNil(fRTFBuilder);
+  inherited;
+end;
+
+procedure TRTFHiliter.EndDoc;
+  {Called after parsing complete. Outputs whole of RTF code.
+  }
+begin
+  Writer.WriteStrLn(string(fRTFBuilder.AsString));
+end;
+
+procedure TRTFHiliter.EndLine;
+  {Called when a line is ending. Writes end of line RTF control.
+  }
+begin
+  fRTFBuilder.EndPara;
+end;
+
+procedure TRTFHiliter.WriteElem(const ElemText: string);
+  {Outputs element's text.
+    @param ElemText [in] Text of the element.
+  }
+begin
+  fRTFBuilder.AddText(ElemText);
+end;
+
+
+{ TBaseHTMLHiliter }
+
+procedure TBaseHTMLHiliter.AfterElem(Elem: THiliteElement);
+  {Called after a highlight element is output. Writes closing span tag if
+  required.
+    @param Elem [in] Kind of highlight element.
+  }
 begin
   if not Attrs[Elem].IsNul then
-    fBuilder.CloseSpan;
+    HTMLBuilder.CloseSpan;
 end;
 
-procedure THTMLHiliteRenderer.BeforeElem(Elem: THiliteElement);
+procedure TBaseHTMLHiliter.BeforeElem(Elem: THiliteElement);
+  {Called before a highlight element is output. Used to write span tag for any
+  CSS class that is required.
+    @param Elem [in] Kind of highlight element.
+  }
 begin
   if not Attrs.Elements[Elem].IsNul then
-    fBuilder.OpenSpan(THiliterCSS.GetElemCSSClassName(Elem));
+    HTMLBuilder.OpenSpan(THiliterCSS.GetElemCSSClassName(Elem));
 end;
 
-procedure THTMLHiliteRenderer.BeginLine;
+procedure TBaseHTMLHiliter.BeginDoc;
+  {Called just before document is parsed. Used to initialise document.
+  }
+begin
+  // Note that we are about to write first line
+  fIsFirstLine := True;
+end;
+
+procedure TBaseHTMLHiliter.BeginLine;
+  {Called when a new line in output is started. Writes new line where required.
+  }
 begin
   // Note we don't emit CRLF before first line since it must be on same line as
   // <pre> tag that will have been written.
   if fIsFirstLine then
     fIsFirstLine := False
   else
-    fBuilder.NewLine;
+    HTMLBuilder.NewLine;
 end;
 
-constructor THTMLHiliteRenderer.Create(const Builder: THTMLBuilder;
-  const Attrs: IHiliteAttrs);
+constructor TBaseHTMLHiliter.Create;
+  {Class constructor. Sets up object.
+  }
 begin
-  Assert(Assigned(Builder), ClassName + '.Create: Builder is nil');
-  inherited Create(Attrs);
-  fBuilder := Builder;
+  inherited;
+  fHTMLBuilder := THTMLBuilder.Create;
 end;
 
-procedure THTMLHiliteRenderer.EndLine;
+destructor TBaseHTMLHiliter.Destroy;
+  {Class destructor. Tears down object.
+  }
 begin
-  // Do nothing: we use BeginLine() to start new lines in preformatted text
+  FreeAndNil(fHTMLBuilder);
+  inherited;
 end;
 
-procedure THTMLHiliteRenderer.Finalise;
+procedure TBaseHTMLHiliter.WriteElem(const ElemText: string);
+  {Outputs element's text.
+    @param ElemText [in] Text of the element.
+  }
 begin
-  fBuilder.ClosePre;
+  HTMLBuilder.AddText(ElemText);
 end;
 
-procedure THTMLHiliteRenderer.Initialise;
+
+{ TDetailHTMLHiliter }
+
+procedure TDetailHTMLHiliter.BeginDoc;
+  {Called just before document is parsed. Used to write opening pre tag.
+  }
 begin
-  // Note that we are about to write first line
-  fIsFirstLine := True;
-  fBuilder.OpenPre(THiliterCSS.GetMainCSSClassName);
+  inherited;
+  HTMLBuilder.OpenPre(THiliterCSS.GetMainCSSClassName);
 end;
 
-procedure THTMLHiliteRenderer.WriteElemText(const Text: string);
+procedure TDetailHTMLHiliter.EndDoc;
+  {Called after parsing complete. Writes out HTML.
+  }
 begin
-  fBuilder.AddText(Text);
+  inherited;
+  HTMLBuilder.ClosePre;
+  Writer.WriteStr(HTMLBuilder.HTMLFragment);
+end;
+
+
+{ TXHTMLHiliter }
+
+procedure TXHTMLHiliter.BeginDoc;
+  {Called just before document is parsed. Used to write XHTML code for document
+  head section and first part of body.
+  }
+resourcestring
+  // Default document title
+  sDefaultTitle = 'DelphiDabbler CodeSnip Database';
+begin
+  inherited;
+  if Title <> '' then
+    HTMLBuilder.Title := Title
+  else
+    HTMLBuilder.Title := sDefaultTitle;
+  HTMLBuilder.CSS := GenerateCSSRules;
+  HTMLBuilder.OpenPre(THiliterCSS.GetMainCSSClassName);
+end;
+
+procedure TXHTMLHiliter.EndDoc;
+  {Called after parsing complete. Writes XHTML that closes document.
+  }
+begin
+  inherited;
+  HTMLBuilder.ClosePre;
+  Writer.WriteStr(HTMLBuilder.HTMLDocument);
+end;
+
+function TXHTMLHiliter.GenerateCSSRules: string;
+  {Generates CSS rule for use in head section of HTML document.
+    @return List of CSS class rules.
+  }
+var
+  CSSBuilder: TCSSBuilder;  // builds CSS code
+  HiliterCSS: THiliterCSS;  // generates CSS names and properties for hiliter
+begin
+  HiliterCSS := THiliterCSS.Create(Attrs);
+  CSSBuilder := nil;
+  try
+    CSSBuilder := TCSSBuilder.Create;
+    HiliterCSS.BuildCSS(CSSBuilder);
+    Result := CSSBuilder.AsString;
+  finally
+    FreeAndNil(CSSBuilder);
+    FreeAndNil(HiliterCSS);
+  end;
 end;
 
 end.

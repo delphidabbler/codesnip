@@ -1,15 +1,36 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * FmRenameCategoryDlg.pas
  *
- * Copyright (C) 2009-2012, Peter Johnson (www.delphidabbler.com).
+ * Implements a dialog box that permits user to select and rename a user-defined
+ * category.
  *
  * $Rev$
  * $Date$
  *
- * Implements a dialogue box that permits user to select and rename a user
- * defined category.
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is FmRenameCategoryDlg.pas
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2009 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -23,8 +44,8 @@ uses
   // Delphi
   Forms, StdCtrls, Controls, ExtCtrls, Classes,
   // Project
-  DB.UCategory, FmCategoryEditDlg, FrCategoryList, FrCategoryDescEdit,
-  UBaseObjects;
+  FmCategoryEditDlg, FrCategoryList, FrCategoryDescEdit, UBaseObjects,
+  USnippets;
 
 
 type
@@ -93,9 +114,9 @@ implementation
 
 uses
   // Delphi
-  Windows {for inlining},
+  SysUtils, Windows {for inlining},
   // Project
-  DB.UMain, UCtrlArranger, UStrUtils;
+  UCtrlArranger;
 
 {$R *.dfm}
 
@@ -138,8 +159,8 @@ procedure TRenameCategoryDlg.ConfigForm;
   }
 resourcestring
   // Prompts
-  sCatPrompt = 'Select &category to be renamed:';
-  sDescPrompt = 'Enter a new &description for the category:';
+  sCatPrompt = 'Select category to be renamed:';
+  sDescPrompt = 'Enter a new description for the category:';
 begin
   inherited;
   // Set the required prompt text in frames
@@ -175,7 +196,7 @@ procedure TRenameCategoryDlg.DescriptionCheckHander(Sender: TObject;
 begin
   if not Valid then
     if Assigned(frmCategories.SelectedCategory) then
-      Valid := StrSameText(Desc, frmCategories.SelectedCategory.Description);
+      Valid := AnsiSameText(Desc, frmCategories.SelectedCategory.Description);
 end;
 
 class function TRenameCategoryDlg.Execute(AOwner: TComponent;
@@ -204,9 +225,9 @@ procedure TRenameCategoryDlg.RenameCategory(const Category: TCategory;
 var
   EditData: TCategoryData;  // category properties
 begin
-  EditData := (Database as IDatabaseEdit).GetEditableCategoryInfo(Category);
+  EditData := (Snippets as ISnippetsEdit).GetEditableCategoryInfo(Category);
   EditData.Desc := NewDesc;
-  (Database as IDatabaseEdit).UpdateCategory(Category, EditData);
+  (Snippets as ISnippetsEdit).UpdateCategory(Category, EditData);
 end;
 
 procedure TRenameCategoryDlg.UpdateOKBtn;
@@ -216,7 +237,7 @@ procedure TRenameCategoryDlg.UpdateOKBtn;
 begin
   btnOK.Enabled := frmDescription.IsValidEntry and
     frmCategories.IsValidEntry and
-    not StrSameStr(
+    not AnsiSameStr(
       frmCategories.SelectedCategory.Description, frmDescription.Description
     );
 end;
