@@ -1,0 +1,135 @@
+{
+ * This Source Code Form is subject to the terms of the Mozilla Public License,
+ * v. 2.0. If a copy of the MPL was not distributed with this file, You can
+ * obtain one at http://mozilla.org/MPL/2.0/
+ *
+ * Copyright (C) 2008-2012, Peter Johnson (www.delphidabbler.com).
+ *
+ * $Rev$
+ * $Date$
+ *
+ * Pascal script for use in [Code] Section of CodeSnip's Install.iss.
+ *
+ * Gets information about location of application data folder and any existing
+ * config files and databaseon on the system where CodeSnip is being installed.
+ * Sets global variables storing folder paths that indicate where config files
+ * and database can be found.
+}
+
+
+{
+  Common file locations in different CodeSnip versions
+  ----------------------------------------------------
+
+  + Versions up to v1.8.11:
+    - Combined config file: %AppData%\DelphiDabbler\CodeSnip\CodeSnip.ini
+      (per-user only - ignored here)
+    - Main database directory: %AppData%\DelphiDabbler\CodeSnip\Data
+      (installed per user - ignored here)
+
+  + From v1.9 to v1.9.4 (last v1.x.x release):
+    - Config file: %ProgramData%\DelphiDabbler\CodeSnip\Common.ini
+    - Database directory: %ProgramData%\DelphiDabbler\CodeSnip\Data
+
+  + All v2 versions:
+    - Config file: %ProgramData%\DelphiDabbler\CodeSnip\Common.ini
+    - Database directory: %ProgramData%\DelphiDabbler\CodeSnip\Data
+
+  + All v3 versions:
+    - Config file: %ProgramData%\DelphiDabbler\CodeSnip\Common.ini
+    - Database directory: %ProgramData%\DelphiDabbler\CodeSnip\Data
+
+  + From v4.0 (inc alpha & beta - v3.98.0 onwards):
+    - Config file: %ProgramData%\DelphiDabbler\CodeSnip.4\Common.config
+    - Database directory: %ProgramData%\DelphiDabbler\CodeSnip.4\Database
+}
+
+const
+  // Identifiers for different types of previous installations of CodeSnip
+  piNone = 0;           // CodeSnip not installed
+  piOriginal = 1;       // original locations used up to v1.8.11
+  piV1_9 = 2;           // v1.9 to v1.9.4
+  piV2V3 = 3;           // all v2 & v3 versions
+  piV4 = 4;             // from v4.0 (including alpha and beta code v3.99.x
+  // Values of first and last identifiers for different types of CodeSnip
+  // installations
+  piFirstVersionID = piOriginal;
+  piFirstReadableVersionID = piV1_9;  // earliest version using %ProgramData%
+  piLastVersionID = piV4;
+  // Identifiers of type of current installation
+  piCurrent = piV4;
+
+var
+  // Records info about previous install
+  gPrevInstallID: Integer;
+
+  // Arrays of paths to common config file & main database directory.
+  gCommonConfigFiles: array[piFirstVersionID..piLastVersionID] of string;
+  gMainDatabaseDirs: array[piFirstVersionID..piLastVersionID] of string;
+
+  // Path to common config file for program being installed
+  gCurrentCommonConfigFile: string;
+
+// Checks if database and config files need to be converted and / or copied to
+// new locations for application being installed.
+function DataConversionRequired: Boolean;
+begin
+  Result := (gPrevInstallID <> piNone) and (gPrevInstallID < piCurrent);
+end;
+
+// Records the application's data directories for each different arrangement
+// used in different versions of CodeSnip.
+procedure InitAppDataFolders;
+var
+  ProgramData: string;  // path to common application data directory
+begin
+  // Record system's common application data directories
+  ProgramData := ExpandConstant('{commonappdata}\');
+
+  // Record paths to config files and database for each installation type
+  gCommonConfigFiles[piOriginal] := ''; // only have a per-user config file
+  gMainDatabaseDirs[piOriginal] := '';  // per-user installation only
+
+  gCommonConfigFiles[piV1_9] :=
+    ProgramData + 'DelphiDabbler\CodeSnip\Common.ini';
+  gMainDatabaseDirs[piV1_9] :=
+    ProgramData + 'DelphiDabbler\CodeSnip\Data';
+
+  gCommonConfigFiles[piV2V3] :=
+    ProgramData + 'DelphiDabbler\CodeSnip\Common.ini';
+  gMainDatabaseDirs[piV2V3] :=
+    ProgramData + 'DelphiDabbler\CodeSnip\Data';
+
+  gCommonConfigFiles[piV4] :=
+    ProgramData + 'DelphiDabbler\CodeSnip.4\Common.config';
+  gMainDatabaseDirs[piV4] :=
+    ProgramData + 'DelphiDabbler\CodeSnip.4\Database';
+
+  // Record path to config file of program version being installed
+  gCurrentCommonConfigFile := gCommonConfigFiles[piCurrent];
+
+end;
+
+// Attempts to detect and identify any previous installation by checking for
+// known files and directories.
+procedure DetectPrevInstall;
+begin
+  if FileExists(gCommonConfigFiles[piV4]) then
+    gPrevInstallID := piV4
+  else if FileExists(gCommonConfigFiles[piV2V3]) then
+    gPrevInstallID := piV2V3
+  else if FileExists(gCommonConfigFiles[piV1_9]) then
+    gPrevInstallID := piV1_9
+  else 
+    gPrevInstallID := piNone;
+end;
+
+// Initialises global variables that (a) store location of config files and
+// databases used by different versions of CodeSnip and (b) record type of any
+// previous installation that was detected.
+procedure InitGlobals;
+begin
+  InitAppDataFolders;
+  DetectPrevInstall;
+end;
+
