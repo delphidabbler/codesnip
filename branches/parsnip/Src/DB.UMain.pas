@@ -952,10 +952,6 @@ begin
   // to this unit
   Factory := TDBDataItemFactory.Create;
   try
-    // Load main database: MUST do this first since user database can
-    // reference objects in main database
-    with TDatabaseIOFactory.CreateMainDBLoader do
-      Load(fSnippets, fCategories, Factory);
     // Load any user database
     with TDatabaseIOFactory.CreateUserDBLoader do
       Load(fSnippets, fCategories, Factory);

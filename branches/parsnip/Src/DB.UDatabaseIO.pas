@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2008-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2008-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -75,10 +75,6 @@ type
   }
   TDatabaseIOFactory = class(TNoConstructObject)
   public
-    class function CreateMainDBLoader: IDatabaseLoader;
-      {Creates an object to use to load the main database.
-        @return Required object instance.
-      }
     class function CreateUserDBLoader: IDatabaseLoader;
       {Creates an object to use to load the user database.
         @return Required object instance.
@@ -104,7 +100,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  DBIO.UFileIOIntf, DBIO.UIniDataReader, DBIO.UNulDataReader, DBIO.UXMLDataIO,
+  DBIO.UFileIOIntf, DBIO.UNulDataReader, DBIO.UXMLDataIO,
   UAppInfo, UConsts, UIStringList, UReservedCategories, USnippetIDs;
 
 
@@ -196,40 +192,6 @@ type
   end;
 
   {
-  TMainDatabaseLoader:
-    Class that updates Database object with data read from main database.
-  }
-  TMainDatabaseLoader = class(TDatabaseLoader, IDatabaseLoader)
-  strict protected
-    function CreateReader: IDataReader; override;
-      {Creates reader object. If main database doesn't exist a nul reader is
-      created.
-        @return Reader object instance.
-      }
-    function FindSnippet(const SnippetName: string;
-      const SnipList: TSnippetList): TSnippet; override;
-      {Finds the snippet object with a specified name in the main database.
-        @param SnippetName [in] Name of required snippet.
-        @param SnipList [in] List of snippets to search.
-        @return Reference to required snippet object or nil if snippet is not
-          found.
-      }
-    function IsNativeSnippet(const Snippet: TSnippet): Boolean; override;
-      {Checks if a snippet is native (belongs) to the main database.
-        @param Snippet [in] Snippet to test.
-        @return True if snippet is native, False if not.
-      }
-    function IsUserDatabase: Boolean; override;
-      {Checks if the database is the user database.
-        @return False - this is not the user database.
-      }
-    function ErrorMessageHeading: string; override;
-      {Returns heading to use in error messages. Identifies main database.
-        @return Required heading.
-      }
-  end;
-
-  {
   TUserDatabaseLoader:
     Class that updates Database object with data read from user database.
   }
@@ -305,14 +267,6 @@ type
   end;
 
 { TDatabaseIOFactory }
-
-class function TDatabaseIOFactory.CreateMainDBLoader: IDatabaseLoader;
-  {Creates an object to use to load the main database.
-    @return Required object instance.
-  }
-begin
-  Result := TMainDatabaseLoader.Create;
-end;
 
 class function TDatabaseIOFactory.CreateUserDBLoader: IDatabaseLoader;
   {Creates an object to use to load the user database.
@@ -488,58 +442,6 @@ begin
     if IsNativeSnippet(Snippet) then
       Cat.Snippets.Add(Snippet);
   end;
-end;
-
-{ TMainDatabaseLoader }
-
-function TMainDatabaseLoader.CreateReader: IDataReader;
-  {Creates reader object. If main database doesn't exist a nul reader is
-  created.
-    @return Reader object instance.
-  }
-begin
-  Result := TIniDataReader.Create(TAppInfo.AppDataDir);
-  if not Result.DatabaseExists then
-    Result := TNulDataReader.Create;
-end;
-
-function TMainDatabaseLoader.ErrorMessageHeading: string;
-  {Returns heading to use in error messages. Identifies main database.
-    @return Required heading.
-  }
-resourcestring
-  sError = 'Error loading the CodeSnip database:';
-begin
-  Result := sError;
-end;
-
-function TMainDatabaseLoader.FindSnippet(const SnippetName: string;
-  const SnipList: TSnippetList): TSnippet;
-  {Finds the snippet object with a specified name in the main database.
-    @param SnippetName [in] Name of required snippet.
-    @param SnipList [in] List of snippets to search.
-    @return Reference to required snippet object or nil if snippet is not found.
-  }
-begin
-  // We only search main database
-  Result := SnipList.Find(SnippetName, False);
-end;
-
-function TMainDatabaseLoader.IsNativeSnippet(const Snippet: TSnippet): Boolean;
-  {Checks if a snippet is native (belongs) to the main database.
-    @param Snippet [in] Snippet to test.
-    @return True if snippet is native, False if not.
-  }
-begin
-  Result := not Snippet.UserDefined;
-end;
-
-function TMainDatabaseLoader.IsUserDatabase: Boolean;
-  {Checks if the database is the user database.
-    @return False - this is not the user database.
-  }
-begin
-  Result := False;
 end;
 
 { TUserDatabaseLoader }
