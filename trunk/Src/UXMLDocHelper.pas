@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2008-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2008-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -256,7 +256,7 @@ class function TXMLDocHelper.GetCompilerResults(const XMLDoc: IXMLDocumentEx;
   }
 
   // -------------------------------------------------------------------------
-  function IDStrToCompID(const IDStr: string;
+  function IDStrToCompID(IDStr: string;
     out Match: TCompilerID): Boolean;
     {Converts an identifier string to a compiler ID.
       @param IDStr [in] Identifier string.
@@ -267,6 +267,12 @@ class function TXMLDocHelper.GetCompilerResults(const XMLDoc: IXMLDocumentEx;
   var
     CompID: TCompilerID;  // loops thru all compiler IDs
   begin
+    // 'dXE4' can be encountered when reading files written by CodeSnip 3, which
+    // uses correct 'dXE4' symbol for Delphi XE4 instead of 'dDX4' used
+    // (erroneously) by CodeSnip 4. So the following two lines convert the
+    // CodeSnip 3 value to the CodeSnip 4 value before testing.
+    if IDStr = 'dXE4' then
+      IDStr = cCompilerIDs[ciDXE4];
     Result := False;
     for CompID := Low(TCompilerID) to High(TCompilerID) do
     begin
