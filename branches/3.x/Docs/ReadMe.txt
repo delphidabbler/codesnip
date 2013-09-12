@@ -13,7 +13,7 @@ display snippets from the online DelphiDabbler CodeSnip database as well as
 maintain a database of user-defined snippets.
 
 It displays details of each snippet in the database and can test-compile them
-with each installed Win32 version of Delphi from v2 to XE4 and Free Pascal.
+with each installed Win32 version of Delphi from v2 to XE5 and Free Pascal.
 
 Compilable Pascal units containing selected snippets can be created.
 
@@ -85,9 +85,9 @@ Configuring CodeSnip to Work With Your Compilers
 ================================================================================
 
 A feature of CodeSnip is the ability to test compile snippets in its database
-with any installed Windows 32 version of Delphi (i.e. Delphi 2 to 7 and 2005,
-2006, 2007, 2009, 2010, XE, XE2, XE3 and XE4) and FreePascal. User defined
-snippets can also be test compiled providing some simple rules are followed.
+with any version of Delphi that can compile 32 bit targets (i.e. Delphi 2 to
+XE5) and FreePascal. User defined snippets can also be test compiled providing
+some simple rules are followed.
 
 When CodeSnip is first installed it knows nothing about the available compilers
 and so test compilations can not be performed. You must tell CodeSnip about the
