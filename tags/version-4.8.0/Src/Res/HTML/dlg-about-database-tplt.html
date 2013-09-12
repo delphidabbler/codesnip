@@ -1,0 +1,90 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<!--
+ * This Source Code Form is subject to the terms of the Mozilla Public License,
+ * v. 2.0. If a copy of the MPL was not distributed with this file, You can
+ * obtain one at http://mozilla.org/MPL/2.0/
+ *
+ * Copyright (C) 2007-2012, Peter Johnson (www.delphidabbler.com).
+ *
+ * $Rev$
+ * $Date$
+ *
+ * Template for content displayed in database tab of about dialog box.
+-->
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+  <head>
+    <title>dlg-about-database-tplt.html</title>
+    <style type="text/css">
+      .scrollbox {
+        overflow: auto;
+        height: 12em;
+        width: auto;
+        margin: 6px 48px;
+      }
+      .contrib-head {
+        margin: 0 0 4px 0;
+        padding: 2px;
+      }
+      .tester-head {
+        margin: 4px 0;
+        padding: 2px;
+      }
+      .people-list {
+        margin: 0 0 0 8px;
+      }
+    </style>
+  </head>
+
+  <body>
+
+    <p>
+      The DelphiDabbler
+      <a
+        class="external-link"
+        href="http://delphidabbler.com/url/csdb"
+        title="View the online database"
+      >Code Snippets Database</a> is an online resource containing numerous
+      fragments of useful Object Pascal code.
+    </p>
+
+    <p>
+      The source code in the database may be used freely, but is made available
+      on an &quot;AS IS&quot; basis, WITHOUT WARRANTY OF ANY KIND, either
+      express or implied. The code is used entirely at your own risk.
+    </p>
+
+    <p>
+      <strong>Credits</strong>
+    </p>
+
+    <p>
+      The following people have contributed code to the database, or have helped
+      to test it:
+    </p>
+
+    <div class="scrollbox">
+      <div class="contrib-head">
+        Contributors
+      </div>
+      <div class="people-list">
+        <%ContribList%>
+      </div>
+      <div class="tester-head">
+        Testers
+      </div>
+      <div class="people-list">
+        <%TesterList%>
+      </div>
+    </div>
+
+  </body>
+
+</html>
+

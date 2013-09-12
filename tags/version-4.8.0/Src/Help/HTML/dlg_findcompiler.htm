@@ -1,0 +1,138 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<!--
+ * This Source Code Form is subject to the terms of the Mozilla Public License,
+ * v. 2.0. If a copy of the MPL was not distributed with this file, You can
+ * obtain one at http://mozilla.org/MPL/2.0/
+ *
+ * Copyright (C) 2005-2012, Peter Johnson (www.delphidabbler.com).
+ *
+ * $Rev$
+ * $Date$
+ *
+ * Help topic for Find Compiler dialogue box.
+-->
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text-html; charset=Windows-1252">
+    <title>
+      Find Compiler Dialogue Box
+    </title>
+    <link rel="stylesheet" href="../css/codesnip.css" type="text/css">
+  </head>
+  <body>
+    <object
+      type="application/x-oleobject"
+      classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e"
+    >
+      <param name="ALink Name" value="FindCompilerDlg">
+    </object>
+    <h1>
+      <a name="dlg_findcompiler"></a>Find Compiler Dialogue Box
+    </h1>
+    <p>
+      This dialogue box enables snippets to be searched for by their
+      relationship with various compilers. It is accessed from the <em>Search |
+      Compiler</em> menu option.
+    </p>
+    <p>
+      The dialogue works by applying a search criteria to any or all of a
+      selection of compilers.
+    </p>
+    <p>
+      Choose the compiler or compilers you wish to test against by ticking those
+      required in the <em>Compilers</em> check list. Use the <em>Select All</em>
+      and <em>Clear All</em> buttons to set or clear all check marks. You must
+      choose at least one compiler.
+    </p>
+    <p>
+      Next you select the compile results you wish to search on in the
+      <em>Criteria</em> drop down list. The possible results are:
+    </p>
+    <ul class="unspaced">
+      <li>
+        <em>Compiles</em> - finds snippets that compile OK, with or without
+        warnings.
+      </li>
+      <li>
+        <em>Compiles with no warnings</em> - finds snippets that compile
+        without warnings.
+      </li>
+      <li>
+        <em>Compiles with warnings</em> - finds snippets that compile with
+        warnings.
+      </li>
+      <li>
+        <em>Does not compile</em> - finds snippets that do not compile.
+      </li>
+      <li>
+        <em>Not tested</em> - finds snippets that have not been tested.
+      </li>
+    </ul>
+    <p>
+      Now choose whether to search for snippets that match the specified
+      compile results for any or all compilers. Do this by selecting the
+      required radio button in the <em>Search logic</em> group box.
+    </p>
+    <p>
+      You may apply the search across the whole database or, if you have run
+      another search, searching only the snippets selected by the previous
+      search, and so refining that search. The <em>Search scope</em> group box
+      is used to decide which course of action to take.
+    </p>
+    <p>
+      If you choose to search the whole database any previous search is
+      abandoned before this search is run. This means that if no snippets are
+      found matching your search criteria, the previous search is lost and the
+      whole database will be selected. On the other hand if you choose to refine
+      the previous search and this search fails to find any snippets, the
+      earlier search remains unchanged.
+    </p>
+    <p>
+      The <em>Search scope</em> group box is disabled if there was no existing
+      search when this dialogue box was opened, and the search operates on the
+      entire database.
+    </p>
+    <h2>
+      Examples
+    </h2>
+    <h3>
+      Example 1
+    </h3>
+    <p>
+      Suppose you have Delphi 7, Delphi 2006 and Delphi 2010 available and you
+      want to find the snippets that will compile on at least one of them.
+    </p>
+    <p>
+      First clear any existing selections in the <em>Compilers</em> list box
+      (press <em>Clear all</em> then place a tick next to each of the three
+      compilers). Now select <em>Compiles</em> in the <em>Criteria</em> drop
+      down list and choose <em>Find any compiler</em> in the <em>Search
+      logic</em> box. If you have existing search results displayed in the main
+      window select <em>Search the whole database</em> in the <em>Search
+      scope</em> box and then press <em>OK</em> to run the search. The results
+      will appear in the main window.
+    </p>
+    <h3>
+      Example 2
+    </h3>
+    <p>
+      You now want to know which of the snippets you found earlier will not
+      compile on both Delphi XE and XE2. Keep the previous search and open the
+      dialogue box again.
+    </p>
+    <p>
+      The dialogue box will have remembered details of your previous search,
+      so deselect Delphi 7, 2006 2010 and select Delphi XE and XE2 in the
+      <em>Compilers</em> list. Now choose <em>Does not compile</em> in the
+      <em>Criteria</em> drop down list and change the search logic to <em>Find
+      all compilers</em>. Ensure that <em>Refine existing search</em> scope is
+      selected and press <em>OK</em>.
+    </p>
+    <p>
+      You initial search will now be refined to show only those snippets that
+      compile on one of Delphi 7, 2006 and 2010 but fail to compile on both
+      Delphi XE and XE2.
+    </p>
+  </body>
+</html>
+
