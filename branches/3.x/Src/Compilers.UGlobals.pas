@@ -52,13 +52,13 @@ type
     Enumeration that identifies all compilers supported by the program.
   }
   TCompilerID = (
-    ciD2, ciD3, ciD4, ciD5, ciD6, ciD7, // Delphi 2-7
-    ciD2005w32, ciD2006w32,             // Delphi 2005/6 Win32 personality
-    ciD2007,                            // Delphi 2007 for Win32
-    ciD2009w32,                         // Delphi 2009 Win32 personality
-    ciD2010,                            // Delphi 2010
-    ciDXE, ciDXE2, ciDXE3, ciDXE4,      // Delphi XE to XE4
-    ciFPC                               // Free Pascal
+    ciD2, ciD3, ciD4, ciD5, ciD6, ciD7,     // Delphi 2-7
+    ciD2005w32, ciD2006w32,                 // Delphi 2005/6 Win32 personality
+    ciD2007,                                // Delphi 2007 for Win32
+    ciD2009w32,                             // Delphi 2009 Win32 personality
+    ciD2010,                                // Delphi 2010
+    ciDXE, ciDXE2, ciDXE3, ciDXE4, ciDXE5,  // Delphi XE to XE5
+    ciFPC                                   // Free Pascal
   );
 
 const
@@ -68,7 +68,7 @@ const
   ];
   cBDSCompilers = [           // BDS based compilers
     ciD2005w32, ciD2006w32, ciD2007, ciD2009w32, ciD2010,
-    ciDXE, ciDXE2, ciDXE3, ciDXE4
+    ciDXE, ciDXE2, ciDXE3, ciDXE4, ciDXE5
   ];
   cFreePascalCompilers = [    // Free Pascal
     ciFPC
