@@ -272,7 +272,7 @@ class function TXMLDocHelper.GetCompilerResults(const XMLDoc: IXMLDocumentEx;
     // (erroneously) by CodeSnip 4. So the following two lines convert the
     // CodeSnip 3 value to the CodeSnip 4 value before testing.
     if IDStr = 'dXE4' then
-      IDStr = cCompilerIDs[ciDXE4];
+      IDStr := cCompilerIDs[ciDXE4];
     Result := False;
     for CompID := Low(TCompilerID) to High(TCompilerID) do
     begin
