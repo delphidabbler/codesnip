@@ -11,6 +11,11 @@
 ; Change Log for CodeSnip Release 3
 ; ------------------------------------------------------------------------------
 
+Release v3.13.0 of 12 September 2013
++ Added support for Delphi XE4 compiler.
++ Updated documentation re changes.
++ Updated help file re changes.
+
 Release v3.12.1 of 01 July 2013
 + Fixed bug #82 "Fatal divide by zero exception on start-up" (http://bit.ly/15aIJqQ) that affected all v3.x versions when the IE 10 browser was installed.
 + Fixed unreported bug where IE 10 browser was being reported as IE 9.
