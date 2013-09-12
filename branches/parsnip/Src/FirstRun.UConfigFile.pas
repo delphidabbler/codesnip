@@ -464,6 +464,7 @@ begin
   UpdateForCompiler('DXE2');
   UpdateForCompiler('DXE3');
   UpdateForCompiler('DXE4');
+  UpdateForCompiler('DXE5');
 end;
 
 { TCommonConfigFileUpdater }
