@@ -440,6 +440,9 @@ begin
       FreeAndNil(ContentFont);
     end;
   end;
+  // Put border round scroll box
+  with CSSBuilder.AddSelector('.scrollbox') do
+    AddProperty(UCSSUtils.TCSS.BorderProp(cssAll, 1, cbsSolid, clBorder));
 end;
 
 procedure TAboutDlg.UpdateTitleCSS(Sender: TObject;
