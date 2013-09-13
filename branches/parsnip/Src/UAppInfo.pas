@@ -181,13 +181,13 @@ class procedure TAppInfo.ChangeUserDataDir(const NewDir: string);
 var
   Section: ISettingsSection;
 begin
-  if not TCommandLineOpts.IsPortable then
+  if TCommandLineOpts.IsPortable then
     Exit;
   Section := Settings.ReadSection(ssDatabase);
   if StrSameText(ExcludeTrailingPathDelimiter(NewDir), DefaultUserDataDir) then
-    Section.DeleteItem('UserDataDir')
+    Section.DeleteItem('Path')
   else
-    Section.SetString('UserDataDir', NewDir);
+    Section.SetString('Path', NewDir);
   Section.Save;
 end;
 
@@ -199,8 +199,8 @@ class function TAppInfo.CommonAppDir: string;
 begin
   Result := StrIf(
     TCommandLineOpts.IsPortable,
-    AppExeDir + '\AppData',
-    TSystemFolders.CommonAppData + '\DelphiDabbler\CodeSnip.4'
+    AppExeDir + '\AppData.5',
+    TSystemFolders.CommonAppData + '\DelphiDabbler\CodeSnip.5'
   );
 end;
 
@@ -215,8 +215,7 @@ class function TAppInfo.DefaultUserDataDir: string;
     @return Full path to required directory.
   }
 begin
-  Result := UserAppDir +
-    StrIf(TCommandLineOpts.IsPortable, '\UserDB', '\UserDatabase');
+  Result := UserAppDir + '\Database';
 end;
 
 class function TAppInfo.GenerateKey: string;
@@ -357,7 +356,7 @@ begin
   Result := StrIf(
     TCommandLineOpts.IsPortable,
     CommonAppDir,
-    TSystemFolders.PerUserAppData + '\DelphiDabbler\CodeSnip.4'
+    TSystemFolders.PerUserAppData + '\DelphiDabbler\CodeSnip.5'
   );
 end;
 
@@ -378,7 +377,7 @@ begin
   else
   begin
     Section := Settings.ReadSection(ssDatabase);
-    Result := Section.GetString('UserDataDir', DefaultUserDataDir);
+    Result := Section.GetString('Path', DefaultUserDataDir);
   end;
 end;
 
