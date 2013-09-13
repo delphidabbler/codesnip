@@ -89,6 +89,12 @@ type
       {Returns fully specified name of CodeSnip's help file.
         @return Name of help file.
       }
+    ///  <summary>Returns fully specified path to CodeSnip's common
+    ///  configuration file.</summary>
+    class function CommonConfigFileName: string;
+    ///  <summary>Returns fully specified path to CodeSnip's per-user
+    ///  configuration file.</summary>
+    class function UserConfigFileName: string;
     class function ProgramReleaseInfo: string;
       {Gets information about the current program release. Includes any special
       build information if present in version information.
@@ -196,6 +202,11 @@ begin
     AppExeDir + '\AppData',
     TSystemFolders.CommonAppData + '\DelphiDabbler\CodeSnip.4'
   );
+end;
+
+class function TAppInfo.CommonConfigFileName: string;
+begin
+  Result := IncludeTrailingPathDelimiter(CommonAppDir) + 'Common.config';
 end;
 
 class function TAppInfo.DefaultUserDataDir: string;
@@ -348,6 +359,11 @@ begin
     CommonAppDir,
     TSystemFolders.PerUserAppData + '\DelphiDabbler\CodeSnip.4'
   );
+end;
+
+class function TAppInfo.UserConfigFileName: string;
+begin
+  Result := IncludeTrailingPathDelimiter(UserAppDir) + 'User.config';
 end;
 
 class function TAppInfo.UserDataDir: string;

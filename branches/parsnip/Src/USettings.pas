@@ -595,9 +595,9 @@ function TIniSettingsBase.StorageName(
 begin
   case Storage of
     ssUser:
-      Result := TAppInfo.UserAppDir + '\User.config';
+      Result := TAppInfo.UserConfigFileName;
     ssCommon:
-      Result := TAppInfo.CommonAppDir + '\Common.config';
+      Result := TAppInfo.CommonConfigFileName;
     else
       raise EBug.Create(ClassName + '.StorageName: unknown storage type');
   end;
