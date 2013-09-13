@@ -23,43 +23,18 @@ uses
   UConsts;
 
 
-const
-  // Chars reserved for URIs: see RFC 3986 section 2.2
-  // generic: reserved by generic URI syntax
-  cURIGenReservedChars = [
-    ':', '/', '?', '#', '[', ']', '@'
-  ];
-  // may be reserved by different URI schemes
-  cURISubReservedChars = [
-    '!', '$', '&', SINGLEQUOTE, '(', ')', '*', '+', ',', ';', '='
-  ];
-  // % character treated as reserved because it is used in percent encoding and
-  // must therefore be percent encoded if to be used literally in URI:
-  // see RFC 3986 section 2.4
-  cPercent = '%';
-  // all the reserved chars: union of above
-  cURIReservedChars =
-    cURIGenReservedChars + cURISubReservedChars + [cPercent];
-
-  // Unreserved URI chars: see RFC 3986 section 2.3
-  cURLUnreservedChars = [
-    'A'..'Z', 'a'..'z', '0'..'9', '-', '_', '.', '~'
-  ];
-
-  // Special reserved char used to encode spaces in query string encoding
-  cPlus = '+';
-
-
 function URIEncode(const S: UTF8String): string; overload;
   {URI encodes a string.
     @param S [in] String of UTF-8 characters to be encoded.
     @return Encoded string. Contains only ASCII unreserved characters and "%".
   }
+
 function URIEncode(const S: UnicodeString): string; overload;
   {URI encodes a string.
     @param S [in] String of Unicode characters to be encoded.
     @return Encoded string. Contains only ASCII unreserved characters and "%".
   }
+
 function URIEncode(const S: AnsiString): string; overload;
   {URI encodes a string.
     @param S [in] String of Unicode characters to be encoded.
@@ -72,12 +47,14 @@ function URIEncodeQueryString(const S: UTF8String): string; overload;
     @param S [in] String of UTF-8 characters to be encoded.
     @return Encoded string. Contains only ASCII unreserved characters and "%".
   }
+
 function URIEncodeQueryString(const S: UnicodeString): string; overload;
   {URI encodes a query string component. Spaces in original string are encoded
   as "+".
     @param S [in] String of Unicode characters to be encoded.
     @return Encoded string. Contains only ASCII unreserved characters and "%".
   }
+
 function URIEncodeQueryString(const S: AnsiString): string; overload;
   {URI encodes a query string component. Spaces in original string are encoded
   as "+".
@@ -117,6 +94,31 @@ resourcestring
   rsEscapeError = 'String to be decoded contains invalid % escape sequence';
 
 const
+  // Chars reserved for URIs: see RFC 3986 section 2.2
+  // generic: reserved by generic URI syntax
+  cURIGenReservedChars = [
+    ':', '/', '?', '#', '[', ']', '@'
+  ];
+  // may be reserved by different URI schemes
+  cURISubReservedChars = [
+    '!', '$', '&', SINGLEQUOTE, '(', ')', '*', '+', ',', ';', '='
+  ];
+  // % character treated as reserved because it is used in percent encoding and
+  // must therefore be percent encoded if to be used literally in URI:
+  // see RFC 3986 section 2.4
+  cPercent = '%';
+  // all the reserved chars: union of above
+  cURIReservedChars =
+    cURIGenReservedChars + cURISubReservedChars + [cPercent];
+
+  // Unreserved URI chars: see RFC 3986 section 2.3
+  cURLUnreservedChars = [
+    'A'..'Z', 'a'..'z', '0'..'9', '-', '_', '.', '~'
+  ];
+
+  // Special reserved char used to encode spaces in query string encoding
+  cPlusEncodedSpace = '+';
+
   // Percent encoding of space character
   cPercentEncodedSpace = '%20';
 
@@ -219,7 +221,7 @@ begin
   // because string is still URI encoded and space is not one of unreserved
   // chars and therefor should be percent-encoded. Finally we decode the
   // percent-encoded string.
-  Result := URIDecode(StrReplace(Str, cPlus, cPercentEncodedSpace));
+  Result := URIDecode(StrReplace(Str, cPlusEncodedSpace, cPercentEncodedSpace));
 end;
 
 {
@@ -288,7 +290,7 @@ begin
   // encoded because we use them to replace spaces and we can't confuse '+'
   // already in URI with those that we add. After this step spaces get encoded
   // as %20. So next we replace all occurences of %20 with '+'.
-  Result := StrReplace(URIEncode(S), cPercentEncodedSpace, cPlus);
+  Result := StrReplace(URIEncode(S), cPercentEncodedSpace, cPlusEncodedSpace);
 end;
 
 function URIEncodeQueryString(const S: UnicodeString): string; overload;
