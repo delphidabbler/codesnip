@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2006-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2006-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -179,6 +179,8 @@ type
   ///  </remarks>
   TBinaryStreamWriter = class(TDataStreamIO)
   public
+    ///  Writes a single byte in binary.
+    procedure WriteByte(const B: Byte);
     ///  Writes a 16 bit integer in binary.
     procedure WriteInt16(const I: SmallInt);
     ///  Writes a 32 bit integer in binary.
@@ -374,6 +376,11 @@ begin
 end;
 
 { TBinaryStreamWriter }
+
+procedure TBinaryStreamWriter.WriteByte(const B: Byte);
+begin
+  BaseStream.WriteBuffer(B, SizeOf(B));
+end;
 
 procedure TBinaryStreamWriter.WriteBytes(const B: TBytes);
 begin
