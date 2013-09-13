@@ -29,16 +29,18 @@ uses
   GUITestRunner,
   TextTestRunner,
   TestUStrUtils in 'TestUStrUtils.pas',
-  UStrUtils in '..\..\..\Src\UStrUtils.pas',
-  UConsts in '..\..\..\Src\UConsts.pas',
+  UStrUtils in '..\..\UStrUtils.pas',
+  UConsts in '..\..\UConsts.pas',
   TestUUtils in 'TestUUtils.pas',
-  UUtils in '..\..\..\Src\UUtils.pas',
-  UBaseObjects in '..\..\..\Src\UBaseObjects.pas',
+  UUtils in '..\..\UUtils.pas',
+  UBaseObjects in '..\..\UBaseObjects.pas',
   TestUBaseObjects in 'TestUBaseObjects.pas',
-  USingleton in '..\..\..\Src\USingleton.pas',
+  USingleton in '..\..\USingleton.pas',
   TestUSingleton in 'TestUSingleton.pas',
   TestUContainers in 'TestUContainers.pas',
-  UContainers in '..\..\..\Src\UContainers.pas';
+  UContainers in '..\..\UContainers.pas',
+  TestUURIEncode in 'TestUURIEncode.pas',
+  UURIEncode in '..\..\UURIEncode.pas';
 
 {$R *.RES}
 

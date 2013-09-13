@@ -43,6 +43,8 @@
 			<DCCReference Include="TestUSingleton.pas"/>
 			<DCCReference Include="TestUContainers.pas"/>
 			<DCCReference Include="..\..\UContainers.pas"/>
+			<DCCReference Include="TestUURIEncode.pas"/>
+			<DCCReference Include="..\..\UURIEncode.pas"/>
 			<BuildConfiguration Include="Base">
 				<Key>Base</Key>
 			</BuildConfiguration>
