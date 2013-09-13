@@ -28,6 +28,7 @@ type
     procedure TestIsValidDriveLetter;
     procedure TestURIBaseName;
     procedure TestTryStrToCardinal;
+    procedure TestTryStrToWord;
   end;
 
 
@@ -117,7 +118,7 @@ var
   S: string;
 begin
   CheckTrue(TryStrToCardinal('42', V), 'Test 1a');
-  CheckEquals(42, V, 'Test 1');
+  CheckEquals(42, V, 'Test 1b');
   CheckTrue(TryStrToCardinal('$F', V), 'Test 2a');
   CheckEquals($F, V, 'Test 2b');
   CheckFalse(TryStrToCardinal('', V), 'Test 3');
@@ -131,13 +132,44 @@ begin
   CheckTrue(TryStrToCardinal(S, V), 'Test 8a');
   CheckEquals(I, V, 'Test 8b');
   CheckFalse(TryStrToCardinal('-1', V), 'Test 9');
-  I := Int64(High(Cardinal)) + 2;
+  I := Int64(High(Cardinal)) + 1;
   S := IntToStr(I);
   CheckFalse(TryStrToCardinal(S, V), 'Test 10');
   CheckTrue(TryStrToCardinal('x10', V), 'Test 11a');
   CheckEquals($10, V, 'Test 11b');
   CheckTrue(TryStrToCardinal('0xFFFF', V), 'Test 12a');
   CheckEquals($FFFF, V, 'Test 12b');
+end;
+
+procedure TTestUtilsRoutines.TestTryStrToWord;
+var
+  V: Word;
+  I: Integer;
+  S: string;
+begin
+  CheckTrue(TryStrToWord('42', V), 'Test 1a');
+  CheckEquals(42, V, 'Test 1b');
+  CheckTrue(TryStrToWord('$F', V), 'Test 2a');
+  CheckEquals($F, V, 'Test 2b');
+  CheckFalse(TryStrToWord('', V), 'Test 3');
+  CheckFalse(TryStrToWord('z42', V), 'Test 4');
+  CheckFalse(TryStrToWord('42.5', V), 'Test 5');
+  CheckFalse(TryStrToWord('42z', V), 'Test 6');
+  CheckTrue(TryStrToWord('0', V), 'Test 7a');
+  CheckEquals(0, V, 'Test 7b');
+  I := Integer(High(Word));
+  S := IntToStr(I);
+  CheckTrue(TryStrToWord(S, V), 'Test 8a');
+  CheckEquals(I, V, 'Test 8b');
+  CheckFalse(TryStrToWord('-1', V), 'Test 9');
+  I := Integer(High(Word)) + 1;
+  S := IntToStr(I);
+  CheckFalse(TryStrToWord(S, V), 'Test 10');
+  CheckTrue(TryStrToWord('x10', V), 'Test 11a');
+  CheckEquals($10, V, 'Test 11b');
+  CheckTrue(TryStrToWord('0xFFFF', V), 'Test 12a');
+  CheckEquals($FFFF, V, 'Test 12b');
+  CheckFalse(TryStrToWord('0xFFFFF', V), 'Test 13');
 end;
 
 procedure TTestUtilsRoutines.TestURIBaseName;
