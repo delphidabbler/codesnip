@@ -96,7 +96,9 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Generics.Collections;
+  SysUtils,
+  // 3rd party
+  Collections.Dictionaries;
 
 
 type
@@ -112,7 +114,7 @@ type
   strict private
     class var fDestroying: Boolean;
       {Flag that indicates if manager is destroying singletons}
-    class var fMap: TDictionary<TClass,TSingleton>;
+    class var fMap: TLinkedDictionary<TClass,TSingleton>;
       {Map of class names to singleton instances}
   {$IFNDEF TESTING}strict{$ENDIF}
   protected
@@ -242,7 +244,7 @@ class procedure TSingletonManager.CreateMap;
   }
 begin
   if not Assigned(fMap) then
-    fMap := TDictionary<TClass,TSingleton>.Create;
+    fMap := TLinkedDictionary<TClass,TSingleton>.Create;
 end;
 
 class destructor TSingletonManager.Destroy;
