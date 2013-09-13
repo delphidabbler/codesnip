@@ -58,6 +58,7 @@ uses
   IOUtils,
   // Project
   CS.Init.CommandLineOpts,
+  CS.Utils.Sound,
   FirstRun.UMain,
   UAppInfo,
   UConsts,
@@ -72,7 +73,7 @@ resourcestring
   sTitle = 'CodeSnip';
   sPrefix = 'CODESNIP CANNOT START!';
 begin
-  MessageBeep(MB_ICONERROR);
+  KeyErrorBeep;
   MessageBox(0, PChar(sPrefix + EOL2 + Msg), PChar(sTitle), MB_OK);
 end;
 

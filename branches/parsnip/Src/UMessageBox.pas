@@ -195,6 +195,7 @@ uses
   // Delphi
   SysUtils, Windows, Forms, StdCtrls, ExtCtrls, Consts, Math,
   // Project
+  CS.Utils.Sound,
   UConsts, UDlgHelper, UFontHelper, UGraphicUtils, UStructs, UStrUtils;
 
 
@@ -374,7 +375,7 @@ end;
 
 class procedure TMessageBox.Error(const Parent: TComponent; const Msg: string);
 begin
-  MessageBeep(MB_ICONERROR);
+  KeyErrorBeep;
   Display(
     Parent,
     Msg,
