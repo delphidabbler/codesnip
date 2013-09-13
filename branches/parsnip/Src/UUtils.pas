@@ -144,6 +144,13 @@ function URIBaseName(const URI: string): string;
 ///  <returns>Boolean. True if conversion succeeds, False if not.</returns>
 function TryStrToCardinal(const S: string; out Value: Cardinal): Boolean;
 
+///  <summary>Attempts to convert string S into a Word value.</summary>
+///  <param name="S">string [in] String to be converted.</param>
+///  <param name="Value">Word [out] Value of converted string. Undefined if
+///  conversion fails.</param>
+///  <returns>Boolean. True if conversion succeeds, False if not.</returns>
+function TryStrToWord(const S: string; out Value: Word): Boolean;
+
 
 implementation
 
@@ -384,6 +391,15 @@ begin
     and (Int64Rec(Value64).Hi = 0);
   if Result then
     Value := Int64Rec(Value64).Lo;
+end;
+
+function TryStrToWord(const S: string; out Value: Word): Boolean;
+var
+  Value32: Integer; // receives 32 bit integer value of conversion
+begin
+  Result := TryStrToInt(S, Value32) and (LongRec(Value32).Hi = 0);
+  if Result then
+    Value := LongRec(Value32).Lo;
 end;
 
 end.
