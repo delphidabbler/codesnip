@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2007-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2007-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -99,9 +99,10 @@ uses
   // Delphi
   SysUtils, Windows, Graphics, Math, ComCtrls,
   // Project
+  CS.Utils.Sound,
   FmPreferencesDlg, Hiliter.UAttrs, Hiliter.UHiliters, IntfCommon, UConsts,
   UEncodings, UKeysHelper, UPrintInfo, URTFBuilder, URTFStyles, URTFUtils,
-  UStrUtils, UUtils;
+  UStrUtils;
 
 
 {$R *.dfm}

@@ -615,6 +615,7 @@
 			<DCCReference Include="Main\Imports\LVEx.pas"/>
 			<DCCReference Include="Main\Imports\UEncrypt.pas"/>
 			<DCCReference Include="Main\CS.Init.CommandLineOpts.pas"/>
+			<DCCReference Include="Main\CS.Utils.Sound.pas"/>
 			<None Include="CodeSnip.todo"/>
 			<BuildConfiguration Include="Base">
 				<Key>Base</Key>

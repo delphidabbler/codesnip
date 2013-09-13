@@ -94,8 +94,9 @@ uses
   // Delphi
   SysUtils, Windows, Character,
   // Project
+  CS.Utils.Sound,
   UConsts, UExceptions, UFontHelper, UMessageBox, USettings, UStructs,
-  USystemInfo, UStrUtils, UUtils;
+  USystemInfo, UStrUtils;
 
 
 {$R *.dfm}

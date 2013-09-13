@@ -123,9 +123,6 @@ procedure Pause(const ADelay: Cardinal);
 ///  </returns>
 function IsValidDriveLetter(const C: Char): Boolean;
 
-///  <summary>Emits a sound indicating a keypress error.</summary>
-procedure KeyErrorBeep;
-
 ///  <summary>Checks whether a character is a valid hex digit.</summary>
 ///  <param name="C">Char [in] Character to be tested.</param>
 ///  <returns>Boolean. True if character is a hex digit, False if not.</returns>
@@ -361,11 +358,6 @@ end;
 function IsValidDriveLetter(const C: Char): Boolean;
 begin
   Result := CharInSet(C, ['A'..'Z', 'a'..'z']);
-end;
-
-procedure KeyErrorBeep;
-begin
-  MessageBeep(UINT(-1));
 end;
 
 function IsHexDigit(C: Char): Boolean;

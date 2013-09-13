@@ -211,8 +211,9 @@ uses
   // Delphi
   SysUtils, Types,
   // Project
+  CS.Utils.Sound,
   FmPreferencesDlg, FmPreviewDlg, IntfCommon, UConsts, UCtrlArranger,
-  UEncodings, UKeysHelper, UMessageBox, UStrUtils, UUtils;
+  UEncodings, UKeysHelper, UMessageBox, UStrUtils;
 
 
 {$R *.dfm}

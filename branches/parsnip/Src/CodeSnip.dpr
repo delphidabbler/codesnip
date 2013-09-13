@@ -399,7 +399,8 @@ uses
   GIFImage in 'Main\Imports\GIFImage.pas',
   LVEx in 'Main\Imports\LVEx.pas',
   UEncrypt in 'Main\Imports\UEncrypt.pas',
-  CS.Init.CommandLineOpts in 'Main\CS.Init.CommandLineOpts.pas';
+  CS.Init.CommandLineOpts in 'Main\CS.Init.CommandLineOpts.pas',
+  CS.Utils.Sound in 'Main\CS.Utils.Sound.pas';
 
 // Include resources
 {$Resource ExternalObj.tlb}       // Type library file
