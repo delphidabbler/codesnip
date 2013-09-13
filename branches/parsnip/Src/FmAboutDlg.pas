@@ -95,7 +95,6 @@ type
     procedure pcDetailMouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
   strict private
-    fMainDBPathGp: TPathInfoBox;  // control that displays main database folder
     fUserDBPathGp: TPathInfoBox;  // control that displays user database folder
     fInstallPathGp: TPathInfoBox; // control that displays program install path
     procedure HTMLEventHandler(Sender: TObject;
@@ -201,8 +200,7 @@ procedure TAboutDlg.ArrangeForm;
 var
   PathTabHeight: Integer;
 begin
-  fMainDBPathGp.Top := TCtrlArranger.BottomOf(fInstallPathGp, 8);
-  fUserDBPathGp.Top := TCtrlArranger.BottomOf(fMainDBPathGp, 8);
+  fUserDBPathGp.Top := TCtrlArranger.BottomOf(fInstallPathGp, 8);
   PathTabHeight := TCtrlArranger.BottomOf(fUserDBPathGp);
   // Set height of title frame and page control
   pnlTitle.Height := frmTitle.DocHeight;
@@ -256,9 +254,6 @@ begin
   fInstallPathGp := CreatePathInfoBox(
     sInstallPathGpCaption, TAppInfo.AppExeDir
   );
-  fMainDBPathGp := CreatePathInfoBox(
-    sMainDBPathGpCaption, TAppInfo.AppDataDir
-  );
   fUserDBPathGp := CreatePathInfoBox(
     sUserDBPathGpCaption, TAppInfo.UserDataDir
   );
@@ -296,7 +291,6 @@ procedure TAboutDlg.FormDestroy(Sender: TObject);
 begin
   inherited;
   fInstallPathGp.Free;
-  fMainDBPathGp.Free;
   fUserDBPathGp.Free;
 end;
 
