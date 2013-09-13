@@ -400,7 +400,8 @@ uses
   LVEx in 'Main\Imports\LVEx.pas',
   UEncrypt in 'Main\Imports\UEncrypt.pas',
   CS.Init.CommandLineOpts in 'Main\CS.Init.CommandLineOpts.pas',
-  CS.Utils.Sound in 'Main\CS.Utils.Sound.pas';
+  CS.Utils.Sound in 'Main\CS.Utils.Sound.pas',
+  CS.Utils.Hashes in 'Main\CS.Utils.Hashes.pas';
 
 // Include resources
 {$Resource ExternalObj.tlb}       // Type library file
