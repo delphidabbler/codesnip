@@ -171,11 +171,11 @@ const
 
 procedure UURIEncodeTests.TestEncodeQueryStringAnsi;
 begin
-  CheckEquals(QSResult0, URIEncodeQueryString(QSAnsiTest0), 'Ansi failure 0');
-  CheckEquals(QSResult1, URIEncodeQueryString(QSAnsiTest1), 'Ansi failure 1');
-  CheckEquals(QSResult2, URIEncodeQueryString(QSAnsiTest2), 'Ansi failure 2');
-  CheckEquals(QSResult3, URIEncodeQueryString(QSAnsiTest3), 'Ansi failure 3');
-  CheckEquals(QSResult4, URIEncodeQueryString(QSAnsiTest4), 'Ansi failure 4');
+  CheckEquals(QSResult0, URIEncodeQueryString(QSAnsiTest0), 'Test 0');
+  CheckEquals(QSResult1, URIEncodeQueryString(QSAnsiTest1), 'Test 1');
+  CheckEquals(QSResult2, URIEncodeQueryString(QSAnsiTest2), 'Test 2');
+  CheckEquals(QSResult3, URIEncodeQueryString(QSAnsiTest3), 'Test 3');
+  CheckEquals(QSResult4, URIEncodeQueryString(QSAnsiTest4), 'Test 4');
 end;
 
 procedure UURIEncodeTests.TestEncodeQueryStringUnicode;
@@ -194,22 +194,22 @@ end;
 
 procedure UURIEncodeTests.TestEncodeQueryStringUTF8;
 begin
-  CheckEquals(QSResult0, URIEncodeQueryString(QSUTF8Test0), 'UTF-8 failure 0');
-  CheckEquals(QSResult1, URIEncodeQueryString(QSUTF8Test1), 'UTF-8 failure 1');
-  CheckEquals(QSResult2, URIEncodeQueryString(QSUTF8Test2), 'UTF-8 failure 2');
-  CheckEquals(QSResult3, URIEncodeQueryString(QSUTF8Test3), 'UTF-8 failure 3');
-  CheckEquals(QSResult4, URIEncodeQueryString(QSUTF8Test4), 'UTF-8 failure 4');
+  CheckEquals(QSResult0, URIEncodeQueryString(QSUTF8Test0), 'Test 0');
+  CheckEquals(QSResult1, URIEncodeQueryString(QSUTF8Test1), 'Test 1');
+  CheckEquals(QSResult2, URIEncodeQueryString(QSUTF8Test2), 'Test 2');
+  CheckEquals(QSResult3, URIEncodeQueryString(QSUTF8Test3), 'Test 3');
+  CheckEquals(QSResult4, URIEncodeQueryString(QSUTF8Test4), 'Test 4');
 end;
 
 procedure UURIEncodeTests.TestURIDecode;
 begin
-  CheckEquals(UnicodeDecoded0, URIDecode(UnicodeEncoded0), 'Decode failure 0');
-  CheckEquals(UnicodeDecoded1, URIDecode(UnicodeEncoded1), 'Decode failure 1');
-  CheckEquals(UnicodeDecoded2, URIDecode(UnicodeEncoded2), 'Decode failure 2');
-  CheckEquals(UnicodeDecoded3, URIDecode(UnicodeEncoded3), 'Decode failure 3');
-  CheckEquals(UnicodeDecoded4, URIDecode(UnicodeEncoded4), 'Decode failure 4');
-  CheckEquals(UnicodeDecoded5, URIDecode(UnicodeEncoded5), 'Decode failure 5');
-  CheckEquals(UnicodeDecoded6, URIDecode(UnicodeEncoded6), 'Decode failure 6');
+  CheckEquals(UnicodeDecoded0, URIDecode(UnicodeEncoded0), 'Test 0');
+  CheckEquals(UnicodeDecoded1, URIDecode(UnicodeEncoded1), 'Test 1');
+  CheckEquals(UnicodeDecoded2, URIDecode(UnicodeEncoded2), 'Test 2');
+  CheckEquals(UnicodeDecoded3, URIDecode(UnicodeEncoded3), 'Test 3');
+  CheckEquals(UnicodeDecoded4, URIDecode(UnicodeEncoded4), 'Test 4');
+  CheckEquals(UnicodeDecoded5, URIDecode(UnicodeEncoded5), 'Test 5');
+  CheckEquals(UnicodeDecoded6, URIDecode(UnicodeEncoded6), 'Test 6');
   fURIDecodeErrorNum := 0;
   CheckException(URIDecodeError, EConvertError);
   fURIDecodeErrorNum := 1;
@@ -221,44 +221,44 @@ end;
 procedure UURIEncodeTests.TestURIDecodeQueryString;
 begin
   CheckEquals(QSUnicodeDecoded0, URIDecodeQueryString(QSUnicodeEncoded0),
-    'Decode failure 0');
+    'Test 0');
   CheckEquals(QSUnicodeDecoded1, URIDecodeQueryString(QSUnicodeEncoded1),
-    'Decode failure 1');
+    'Test 1');
   CheckEquals(QSUnicodeDecoded2, URIDecodeQueryString(QSUnicodeEncoded2),
-    'Decode failure 2');
+    'Test 2');
   CheckEquals(QSUnicodeDecoded3, URIDecodeQueryString(QSUnicodeEncoded3),
-    'Decode failure 3');
+    'Test 3');
   CheckEquals(QSUnicodeDecoded4, URIDecodeQueryString(QSUnicodeEncoded4),
-    'Decode failure 4');
+    'Test 4');
 end;
 
 procedure UURIEncodeTests.TestURIEncodeAnsi;
 begin
-  CheckEquals(Result0, URIEncode(AnsiTest0), 'Ansi failure 0');
-  CheckEquals(Result1, URIEncode(AnsiTest1), 'Ansi failure 1');
-  CheckEquals(Result2, URIEncode(AnsiTest2), 'Ansi failure 2');
-  CheckEquals(Result3, URIEncode(AnsiTest3), 'Ansi failure 3');
-  CheckEquals(Result4, URIEncode(AnsiTest4), 'Ansi failure 4');
+  CheckEquals(Result0, URIEncode(AnsiTest0), 'Test 0');
+  CheckEquals(Result1, URIEncode(AnsiTest1), 'Test 1');
+  CheckEquals(Result2, URIEncode(AnsiTest2), 'Test 2');
+  CheckEquals(Result3, URIEncode(AnsiTest3), 'Test 3');
+  CheckEquals(Result4, URIEncode(AnsiTest4), 'Test 4');
 end;
 
 procedure UURIEncodeTests.TestURIEncodeUnicode;
 begin
-  CheckEquals(Result0, URIEncode(UnicodeTest0), 'Unicode failure 0');
-  CheckEquals(Result1, URIEncode(UnicodeTest1), 'Unicode failure 1');
-  CheckEquals(Result2, URIEncode(UnicodeTest2), 'Unicode failure 2');
-  CheckEquals(Result3, URIEncode(UnicodeTest3), 'Unicode failure 3');
-  CheckEquals(Result4, URIEncode(UnicodeTest4), 'Unicode failure 4');
-  CheckEquals(Result5, URIEncode(UnicodeTest5), 'Unicode failure 5');
+  CheckEquals(Result0, URIEncode(UnicodeTest0), 'Test 0');
+  CheckEquals(Result1, URIEncode(UnicodeTest1), 'Test 1');
+  CheckEquals(Result2, URIEncode(UnicodeTest2), 'Test 2');
+  CheckEquals(Result3, URIEncode(UnicodeTest3), 'Test 3');
+  CheckEquals(Result4, URIEncode(UnicodeTest4), 'Test 4');
+  CheckEquals(Result5, URIEncode(UnicodeTest5), 'Test 5');
 end;
 
 procedure UURIEncodeTests.TestURIEncodeUTF8;
 begin
-  CheckEquals(Result0, URIEncode(UTF8Test0), 'UFT-8 failure 0');
-  CheckEquals(Result1, URIEncode(UTF8Test1), 'UFT-8 failure 1');
-  CheckEquals(Result2, URIEncode(UTF8Test2), 'UFT-8 failure 2');
-  CheckEquals(Result3, URIEncode(UTF8Test3), 'UFT-8 failure 3');
-  CheckEquals(Result4, URIEncode(UTF8Test4), 'UFT-8 failure 4');
-  CheckEquals(Result5, URIEncode(UTF8Test5), 'UFT-8 failure 5');
+  CheckEquals(Result0, URIEncode(UTF8Test0), 'Test 0');
+  CheckEquals(Result1, URIEncode(UTF8Test1), 'Test 1');
+  CheckEquals(Result2, URIEncode(UTF8Test2), 'Test 2');
+  CheckEquals(Result3, URIEncode(UTF8Test3), 'Test 3');
+  CheckEquals(Result4, URIEncode(UTF8Test4), 'Test 4');
+  CheckEquals(Result5, URIEncode(UTF8Test5), 'Test 5');
 end;
 
 procedure UURIEncodeTests.URIDecodeError;
