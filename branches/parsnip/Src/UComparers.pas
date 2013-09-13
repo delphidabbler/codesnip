@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2010-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2010-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -70,26 +70,9 @@ implementation
 
 uses
   // Project
+  CS.Utils.Hashes,
   UStrUtils;
 
-
-///  <summary>String has function.</summary>
-///  <remarks>Sourced from http://www.scalabium.com/faq/dct0136.htm.</summary>
-function ElfHash(const Value: string): Integer;
-var
-  I: Integer; // loops thru string
-  X: Integer; // stores interim results
-begin
-  Result := 0;
-  for I := 1 to Length(Value) do
-  begin
-    Result := (Result shl 4) + Ord(Value[I]);
-    X := Result and $F0000000;
-    if (X <> 0) then
-      Result := Result xor (X shr 24);
-    Result := Result and (not X);
-  end;
-end;
 
 { TTextComparer }
 
@@ -110,7 +93,7 @@ begin
   // Comparison takes place (i.e. Equals gets called) only if hashes are same.
   // So we must ignore case in hash if two strings that differ only in case are
   // to be considered same.
-  Result := ElfHash(StrToLower(Value));
+  Result := PaulLarsonHash(StrToLower(Value));
 end;
 
 { TStringEqualityComparer }
@@ -122,7 +105,7 @@ end;
 
 function TStringEqualityComparer.GetHashCode(const Value: string): Integer;
 begin
-  Result := ElfHash(Value);
+  Result := PaulLarsonHash(Value);
 end;
 
 end.
