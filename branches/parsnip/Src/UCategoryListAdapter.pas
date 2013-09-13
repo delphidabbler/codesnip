@@ -23,8 +23,11 @@ interface
 uses
   // Delphi
   Classes,
+  // 3rd party
+  Collections.Base,
+  Collections.Lists,
   // Project
-  DB.UCategory, UContainers;
+  DB.UCategory;
 
 
 type
@@ -36,7 +39,7 @@ type
   }
   TCategoryListAdapter = class(TObject)
   strict private
-    fCatList: TSortedObjectList<TCategory>; // Sorted list of categories
+    fCatList: TObjectSortedList<TCategory>; // Sorted list of categories
   public
     constructor Create(const CatList: TCategoryList);
       {Object constructor. Sets up object with sorted list of categories.
@@ -68,6 +71,7 @@ uses
   // Delphi
   Windows {for inlining}, Generics.Defaults,
   // Project
+  CS.Utils.Hashes,
   UStrUtils;
 
 
@@ -90,15 +94,27 @@ var
 begin
   inherited Create;
   // create list of categories, sorted by description
-  fCatList := TSortedObjectList<TCategory>.Create(
-    TDelegatedComparer<TCategory>.Create(
-      function (const Left, Right: TCategory): Integer
-      begin
-        Result := Left.CompareDescriptionTo(Right);
-      end
-    ),
-    False
+  fCatList := TObjectSortedList<TCategory>.Create(
+    TRules<TCategory>.Create(
+      TDelegatedComparer<TCategory>.Create(
+        function (const Left, Right: TCategory): Integer
+        begin
+          Result := Left.CompareDescriptionTo(Right);
+        end
+      ),
+      TDelegatedEqualityComparer<TCategory>.Create(
+        function (const Left, Right: TCategory): Boolean
+        begin
+          Result := Left.CompareDescriptionTo(Right) = 0;
+        end,
+        function (const Cat: TCategory): Integer
+        begin
+          Result := PaulLarsonHash(Cat.Description)
+        end
+      )
+    )
   );
+  fCatList.OwnsObjects := False;
   for Cat in CatList do
     fCatList.Add(Cat);
 end;

@@ -21,8 +21,11 @@ interface
 uses
   // Delphi
   Generics.Collections,
+  // 3rd party
+  Collections.Base,
+  Collections.Lists,
   // Project
-  DB.UCategory, DB.USnippet, DB.USnippetKind, UContainers, UInitialLetter;
+  DB.UCategory, DB.USnippet, DB.USnippetKind, UInitialLetter;
 
 
 type
@@ -36,7 +39,9 @@ type
   strict private
     type
       ///  <summary>Implements a sorted list of snippets.</summary>
-      TSortedSnippetList = TSortedObjectList<TSnippet>;
+      ///  <remarks>Using linked list because only operations on list are add
+      ///  and enumeration: both are fast with linked list.</remarks>
+      TSortedSnippetList = TObjectSortedLinkedList<TSnippet>;
     var
       ///  <summary>List of snippets belonging to group, sorted on display name.
       ///  </summary>
@@ -173,14 +178,10 @@ type
   strict private
     type
       // Sorted list of group item objects
-      TGroupItemList = TSortedObjectList<TGroupItem>;
+      // Using linked list here because adding is faster than array base list
+      TGroupItemList = TObjectSortedLinkedList<TGroupItem>;
     var fItems: TGroupItemList;     // List of items
     var fSnippetList: TSnippetList; // List of snippets to be grouped
-    function GetItem(Idx: Integer): TGroupItem;
-      {Read accessor for Items[] property.
-        @param Idx [in] Index of required object in list.
-        @return Required object.
-      }
     function GetCount: Integer;
       {Read accessor for Count property.
         @return Number of group items in grouping.
@@ -203,13 +204,11 @@ type
     destructor Destroy; override;
       {Object destructor. Tears down object.
       }
-    function GetEnumerator: TEnumerator<TGroupItem>;
+    function GetEnumerator: IEnumerator<TGroupItem>;
       {Creates an enumerator for this object.
         @return Reference to new enumerator. Caller is responsible for freeing
           this object.
       }
-    property Items[Idx: Integer]: TGroupItem read GetItem; default;
-      {Indexed array of group items in grouping. Group items are sorted}
     property Count: Integer read GetCount;
       {Number of group items in grouping}
   end;
@@ -236,7 +235,7 @@ type
   strict private
     type
       // Sorted map of letter objects onto group items
-      TLetterGroupMap = TSortedObjectDictionary<TInitialLetter,TGroupItem>;
+      TLetterGroupMap = TObjectDictionary<TInitialLetter,TGroupItem>;
   strict protected
     procedure Populate; override;
       {Populates grouping with sorted alphabetic group items and associated
@@ -286,14 +285,26 @@ begin
   inherited Create;
   fSnippetList := SnippetList;
   fItems := TGroupItemList.Create(
-    TDelegatedComparer<TGroupItem>.Create(
-      function (const Left, Right: TGroupItem): Integer
-      begin
-        Result := Left.CompareTo(Right);
-      end
-    ),
-    True
+    TRules<TGroupItem>.Create(
+      TDelegatedComparer<TGroupItem>.Create(
+        function (const Left, Right: TGroupItem): Integer
+        begin
+          Result := Left.CompareTo(Right);
+        end
+      ),
+      TDelegatedEqualityComparer<TGroupItem>.Create(
+        function (const Left, Right: TGroupItem): Boolean
+        begin
+          Result := Left.CompareTo(Right) = 0;
+        end,
+        function (const GroupItem: TGroupItem): Integer
+        begin
+          Result := Integer(GroupItem);
+        end
+      )
+    )
   );
+  fItems.OwnsObjects := True;
   Populate;
 end;
 
@@ -313,22 +324,13 @@ begin
   Result := fItems.Count;
 end;
 
-function TGrouping.GetEnumerator: TEnumerator<TGroupItem>;
+function TGrouping.GetEnumerator: IEnumerator<TGroupItem>;
   {Creates an enumerator for this object.
     @return Reference to new enumerator. Caller is responsible for freeing this
       object.
   }
 begin
   Result := fItems.GetEnumerator;
-end;
-
-function TGrouping.GetItem(Idx: Integer): TGroupItem;
-  {Read accessor for Items[] property.
-    @param Idx [in] Index of required object in list.
-    @return Required object.
-  }
-begin
-  Result := fItems[Idx];
 end;
 
 { TGroupItem }
@@ -348,9 +350,12 @@ constructor TGroupItem.Create;
 begin
   inherited Create;
   fSnippetList := TSortedSnippetList.Create(
-    TSnippet.TDisplayNameComparer.Create
+    TRules<TSnippet>.Create(
+      TSnippet.TDisplayNameComparer.Create,
+      TSnippet.TDisplayNameEqualityComparer.Create
+    )
   );
-  fSnippetList.PermitDuplicates := True;
+  fSnippetList.OwnsObjects := False;
 end;
 
 destructor TGroupItem.Destroy;
@@ -366,7 +371,7 @@ function TGroupItem.IsEmpty: Boolean;
     @return True if list is empty, False if not.
   }
 begin
-  Result := SnippetList.IsEmpty;
+  Result := SnippetList.Empty;
 end;
 
 { TCategoryGrouping }
@@ -447,13 +452,17 @@ var
   Map: TLetterGroupMap;     // map of initial letters to group items
 begin
   Map := TLetterGroupMap.Create(
-    TDelegatedComparer<TInitialLetter>.Create(
-      function (const Left, Right: TInitialLetter): Integer
+    [],
+    TDelegatedEqualityComparer<TInitialLetter>.Create(
+      function (const Left, Right: TInitialLetter): Boolean
       begin
-        Result := TInitialLetter.Compare(Left, Right);
+        Result := Left = Right;
+      end,
+      function (const Letter: TInitialLetter): Integer
+      begin
+        Result := Ord(Letter.Letter);
       end
-    ),
-    []
+    )
   );
   // NOTE: We have to read all snippets in database to get all possible initial
   // letters in case user wants to display empty letter groups. We then add
@@ -462,7 +471,7 @@ begin
     for Snippet in Database.Snippets do
     begin
       Letter := TInitialLetter.Create(FirstCharOfName(Snippet.DisplayName));
-      if Map.Contains(Letter) then
+      if Map.ContainsKey(Letter) then
         GroupItem := Map[Letter]
       else
       begin

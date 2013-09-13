@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2009-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2009-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -23,8 +23,11 @@ interface
 uses
   // Delphi
   Classes,
+  // 3rd party
+  Collections.Base,
+  Collections.Lists,
   // Project
-  DB.USnippet, DB.USnippetKind, UContainers;
+  DB.USnippet, DB.USnippetKind;
 
 
 type
@@ -36,8 +39,9 @@ type
  }
   TSnipKindListAdapter = class(TObject)
   strict private
-    var fSnipKindList:    // Sorted list of snippet kinds
-      TSortedList<TSnippetKindInfo>;
+    var
+      // Sorted list of snippet kinds
+      fSnipKindList: TSortedList<TSnippetKindInfo>;
   public
     constructor Create;
       {Object constructor. Sets up object with sorted list of all snippet kinds.
@@ -81,11 +85,23 @@ var
 begin
   inherited Create;
   fSnipKindList := TSortedList<TSnippetKindInfo>.Create(
-    TDelegatedComparer<TSnippetKindInfo>.Create(
-      function (const Left, Right: TSnippetKindInfo): Integer
-      begin
-        Result := StrCompareText(Left.DisplayName, Right.DisplayName);
-      end
+    TRules<TSnippetKindInfo>.Create(
+      TDelegatedComparer<TSnippetKindInfo>.Create(
+        function (const Left, Right: TSnippetKindInfo): Integer
+        begin
+          Result := StrCompareText(Left.DisplayName, Right.DisplayName);
+        end
+      ),
+      TDelegatedEqualityComparer<TSnippetKindInfo>.Create(
+        function (const Left, Right: TSnippetKindInfo): Boolean
+        begin
+          Result := StrSameText(Left.DisplayName, Right.DisplayName);
+        end,
+        function (const SKI: TSnippetKindInfo): Integer
+        begin
+          Result := Ord(SKI.Kind);
+        end
+      )
     )
   );
   for SnipKindInfo in TSnippetKindInfoList.Items do

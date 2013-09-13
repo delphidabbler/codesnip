@@ -21,9 +21,12 @@ interface
 
 uses
   // Delphi
-  Classes, Generics.Collections, Generics.Defaults,
+  Classes, Generics.Defaults,
+  // 3rd party
+  Collections.Base,
+  Collections.Lists,
   // Project
-  ActiveText.UMain, Compilers.UGlobals, DB.USnippetKind, UContainers,
+  ActiveText.UMain, Compilers.UGlobals, DB.USnippetKind,
   UIStringList, USnippetIDs;
 
 type
@@ -103,13 +106,18 @@ type
   TSnippet = class(TObject)
   public
     ///  <summary>Comparer for snippets by display name.</summary>
-    type TDisplayNameComparer = class(TComparer<TSnippet>)
-    public
-      ///  <summary>Compares snippets Left and Right. Returns -ve if Left's
-      ///  display name sorts before Right's, 0 if the same or +ve if Left's
-      ///  display name is greater than Right's.</summary>
-      function Compare(const Left, Right: TSnippet): Integer; override;
-    end;
+    type
+      TDisplayNameComparer = class(TComparer<TSnippet>)
+      public
+        ///  <summary>Compares snippets Left and Right. Returns -ve if Left's
+        ///  display name sorts before Right's, 0 if the same or +ve if Left's
+        ///  display name is greater than Right's.</summary>
+        function Compare(const Left, Right: TSnippet): Integer; override;
+      end;
+      TDisplayNameEqualityComparer = class(TEqualityComparer<TSnippet>)
+        function Equals(const Left, Right: TSnippet): Boolean; override;
+        function GetHashCode(const Snippet: TSnippet): Integer; override;
+      end;
   strict private
     fKind: TSnippetKind;                    // Kind of snippet this is
     fCategory: string;                      // Name of snippet's category
@@ -263,7 +271,7 @@ type
         @return True if snippet found, False if not.
       }
   strict protected
-    var fList: TSortedObjectList<TSnippet>; // Sorted list of snippets
+    var fList: TObjectSortedList<TSnippet>; // Sorted list of snippets
   public
     constructor Create(const OwnsObjects: Boolean = False);
       {Constructor. Creates a new empty list.
@@ -283,7 +291,7 @@ type
         @param AList [in] List of snippets to compare.
         @return True if lists are same, False if not.
       }
-    function Add(const Snippet: TSnippet): Integer; virtual;
+    procedure Add(const Snippet: TSnippet); virtual;
       {Adds new snippet to the list, maintaining list in alphabetical order.
         @param Snippet [in] Snippet being added.
         @return Index where item was inserted in list
@@ -316,7 +324,7 @@ type
     procedure Clear;
       {Clears the list.
       }
-    function GetEnumerator: TEnumerator<TSnippet>;
+    function GetEnumerator: IEnumerator<TSnippet>;
       {Gets an intialised snippet list enumerator.
         @return Required enumerator.
       }
@@ -345,7 +353,7 @@ type
   }
   TSnippetListEx = class(TSnippetList)
   public
-    function Add(const Snippet: TSnippet): Integer; override;
+   procedure Add(const Snippet: TSnippet); override;
       {Adds a snippet to list. Snippet must not be TTempSnippet class.
         @param Snippet [in] Snippet to be added.
         @return Index where snippet was added to list.
@@ -378,6 +386,7 @@ uses
   // Delphi
   SysUtils,
   // Project
+  CS.Utils.Hashes,
   IntfCommon, UExceptions, UStrUtils;
 
 { TSnippet }
@@ -490,6 +499,22 @@ begin
     Result := Left.ID.CompareTo(Right.ID);
 end;
 
+{ TSnippet.TDisplayNameEqualityComparer }
+
+function TSnippet.TDisplayNameEqualityComparer.Equals(const Left,
+  Right: TSnippet): Boolean;
+begin
+  Result := StrSameText(Left.DisplayName, Right.DisplayName);
+  if Result then
+    Result := Left.ID = Right.ID;
+end;
+
+function TSnippet.TDisplayNameEqualityComparer.GetHashCode(
+  const Snippet: TSnippet): Integer;
+begin
+  Result := PaulLarsonHash(Snippet.DisplayName);
+end;
+
 { TSnippetEx }
 
 function TSnippetEx.GetEditData: TSnippetEditData;
@@ -578,14 +603,14 @@ end;
 
 { TSnippetList }
 
-function TSnippetList.Add(const Snippet: TSnippet): Integer;
+procedure TSnippetList.Add(const Snippet: TSnippet);
   {Adds new snippet to the list, maintaining list in alphabetical order.
     @param Snippet [in] Snippet being added.
     @return Index where item was inserted in list
     @except Raised if duplicate snippet added to list.
   }
 begin
-  Result := fList.Add(Snippet);
+  fList.Add(Snippet);
 end;
 
 procedure TSnippetList.Assign(const SrcList: TSnippetList);
@@ -671,16 +696,29 @@ constructor TSnippetList.Create(const OwnsObjects: Boolean = False);
   }
 begin
   inherited Create;
-  fList := TSortedObjectList<TSnippet>.Create(
-    TDelegatedComparer<TSnippet>.Create(
-      function (const Left, Right: TSnippet): Integer
-      begin
-        Result := Left.ID.CompareTo(Right.ID);
-      end
-    ),
-    OwnsObjects
+  fList := TObjectSortedList<TSnippet>.Create(
+    TRules<TSnippet>.Create(
+      TDelegatedComparer<TSnippet>.Create(
+        function (const Left, Right: TSnippet): Integer
+        begin
+          Result := Left.ID.CompareTo(Right.ID);
+        end
+      ),
+      TDelegatedEqualityComparer<TSnippet>.Create(
+        function (const Left, Right: TSnippet): Boolean
+        begin
+          Result := Left.ID = Right.ID;
+        end,
+        function (const Snippet: TSnippet): Integer
+        begin
+          Result := PaulLarsonHash(
+            Snippet.ID.Name + IntToStr(Ord(Snippet.ID.UserDefined))
+          );
+        end
+      )
+    )
   );
-  fList.PermitDuplicates := False;
+  fList.OwnsObjects := OwnsObjects;
 end;
 
 destructor TSnippetList.Destroy;
@@ -710,7 +748,8 @@ begin
   NulData.Init;
   TempSnippet := TTempSnippet.Create(SnippetName, UserDefined, NulData);
   try
-    Result := fList.Find(TempSnippet, Index);
+    Index := fList.IndexOf(TempSnippet);
+    Result := Index >= 0;
   finally
     TempSnippet.Free;
   end;
@@ -742,7 +781,7 @@ begin
   Result := Find(SnippetID.Name, SnippetID.UserDefined);
 end;
 
-function TSnippetList.GetEnumerator: TEnumerator<TSnippet>;
+function TSnippetList.GetEnumerator: IEnumerator<TSnippet>;
   {Gets an intialised snippet list enumerator.
     @return Required enumerator.
   }
@@ -794,7 +833,7 @@ end;
 
 { TSnippetListEx }
 
-function TSnippetListEx.Add(const Snippet: TSnippet): Integer;
+procedure TSnippetListEx.Add(const Snippet: TSnippet);
   {Adds a snippet to list. Snippet must not be TTempSnippet class.
     @param Snippet [in] Snippet to be added.
     @return Index where snippet was added to list.
@@ -802,7 +841,7 @@ function TSnippetListEx.Add(const Snippet: TSnippet): Integer;
 begin
   Assert(not(Snippet is TTempSnippet),
     ClassName + '.Add: Can''t add temporary snippets to database');
-  Result := inherited Add(Snippet);
+  inherited Add(Snippet);
 end;
 
 procedure TSnippetListEx.Delete(const Snippet: TSnippet);
@@ -816,7 +855,7 @@ begin
   Idx := fList.IndexOf(Snippet);
   if Idx = -1 then
     Exit;
-  fList.Delete(Idx);  // this frees snippet if list owns objects
+  fList.RemoveAt(Idx);  // this frees snippet if list owns objects
 end;
 
 { TSnippetData }

@@ -67,12 +67,15 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Generics.Defaults,
+  SysUtils,
+  // 3rd party
+  Collections.Base,
+  Collections.Lists,
   // Project
   Compilers.UGlobals, Compilers.UCompilers, DB.UMain, DB.USnippet, UConsts,
-  UContainers, UCSSUtils, UEncodings, UHTMLTemplate, UHTMLUtils,
-  UJavaScriptUtils, UPreferences, UQuery, UResourceUtils, USnippetHTML,
-  USnippetPageHTML, UStrUtils, USystemInfo;
+  UCSSUtils, UEncodings, UHTMLTemplate, UHTMLUtils, UJavaScriptUtils,
+  UPreferences, UQuery, UResourceUtils, USnippetHTML, USnippetPageHTML,
+  UStrUtils, USystemInfo;
 
 
 type
@@ -202,7 +205,7 @@ type
   strict private
     var
       ///  <summary>Sorted list of snippets to be displayed.</summary>
-      fSnippetList: TSortedObjectList<TSnippet>;
+      fSnippetList: TObjectSortedList<TSnippet>;
     ///  <summary>Constructs sorted list of snippets to be displayed.</summary>
     procedure BuildSnippetList;
   strict protected
@@ -582,10 +585,13 @@ end;
 constructor TSnippetListPageHTML.Create(View: IView);
 begin
   inherited;
-  fSnippetList := TSortedObjectList<TSnippet>.Create(
-    TSnippet.TDisplayNameComparer.Create,
-    False
+  fSnippetList := TObjectSortedList<TSnippet>.Create(
+    TRules<TSnippet>.Create(
+      TSnippet.TDisplayNameComparer.Create,
+      TSnippet.TDisplayNameEqualityComparer.Create
+    )
   );
+  fSnippetList.OwnsObjects := False;
   BuildSnippetList;
 end;
 
@@ -615,7 +621,7 @@ end;
 
 function TSnippetListPageHTML.HaveSnippets: Boolean;
 begin
-  Result := not fSnippetList.IsEmpty;
+  Result := not fSnippetList.Empty;
 end;
 
 procedure TSnippetListPageHTML.ResolvePlaceholders(const Tplt: THTMLTemplate);
