@@ -13,6 +13,8 @@ interface
 
 
 uses
+  // RTL
+  SysUtils,
   // DUnit
   TestFramework,
   // Project
@@ -21,11 +23,15 @@ uses
 type
   // Test methods for some routines in interface of UUtils
   TTestUtilsRoutines = class(TTestCase)
+  strict private
+    procedure CheckParseSQLDateError1;
+    procedure CheckParseSQLDateError2;
   published
     procedure TestFloatToInt;
     procedure TestIsBaseFileName;
     procedure TestIsHexDigit;
     procedure TestIsValidDriveLetter;
+    procedure TestParseSQLDateTime;
     procedure TestURIBaseName;
     procedure TestTryStrToCardinal;
     procedure TestTryStrToWord;
@@ -36,11 +42,21 @@ implementation
 
 
 uses
-  // Delphi
-  SysUtils;
+  // RTL
+  DateUtils;
 
 
 { TTestUtilsRoutines }
+
+procedure TTestUtilsRoutines.CheckParseSQLDateError1;
+begin
+  ParseSQLDateTime('1234-13-00 00:00:00');
+end;
+
+procedure TTestUtilsRoutines.CheckParseSQLDateError2;
+begin
+  ParseSQLDateTime('1970-01-01 26:00:00');
+end;
 
 procedure TTestUtilsRoutines.TestFloatToInt;
 begin
@@ -109,6 +125,32 @@ begin
     CheckTrue(IsValidDriveLetter(GoodChars[Idx]), 'Good Test ' + IntToStr(Idx));
   for Idx := 1 to Length(BadChars) do
     CheckFalse(IsValidDriveLetter(BadChars[Idx]), 'Bad Test ' + IntToStr(Idx));
+end;
+
+procedure TTestUtilsRoutines.TestParseSQLDateTime;
+var
+  Actual, Expected: TDateTime;
+begin
+  Expected := EncodeDateTime(2012, 3, 27, 13, 42, 1, 0);
+  Actual := ParseSQLDateTime('2012-03-27 13:42:01');
+  CheckTrue(
+    SameDateTime(Expected, Actual),
+    Format(
+      'Test 0: Expected <%s>, Actual <%s>',
+      [FormatDateTime('c', Expected), FormatDateTime('c', Actual)]
+    )
+  );
+  Expected := EncodeDateTime(1970, 1, 1, 0, 0, 0, 0);
+  Actual := ParseSQLDateTime('1970-01-01 00:00:00');
+  CheckTrue(
+    SameDateTime(Expected, Actual),
+    Format(
+      'Test 1: Expected <%s>, Actual <%s>',
+      [FormatDateTime('c', Expected), FormatDateTime('c', Actual)]
+    )
+  );
+  CheckException(CheckParseSQLDateError1, EConvertError, 'Test except 1');
+  CheckException(CheckParseSQLDateError2, EConvertError, 'Test except 1');
 end;
 
 procedure TTestUtilsRoutines.TestTryStrToCardinal;
