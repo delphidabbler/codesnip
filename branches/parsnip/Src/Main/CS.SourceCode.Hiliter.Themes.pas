@@ -129,6 +129,10 @@ type
       fThemes: TObjectDictionary<string,TSyntaxHiliteTheme>;
     function GetTheme(const ID: string): TSyntaxHiliteTheme;
   public
+    const
+      // TODO: consider how to ensure this theme is definately in def theme file
+      DefaultTheme = '_RADStudio_';
+  public
     constructor Create;
     destructor Destroy; override;
     procedure Add(const Theme: TSyntaxHiliteTheme);
