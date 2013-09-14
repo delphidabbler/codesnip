@@ -618,10 +618,10 @@
 			<DCCReference Include="Main\CS.SourceCode.Hiliter.Renderers.CSS.pas"/>
 			<DCCReference Include="Main\CS.SourceCode.Hiliter.Themes.pas"/>
 			<DCCReference Include="Main\CS.SourceCode.Hiliter.Themes.Persist.pas"/>
+			<DCCReference Include="Main\CS.SourceCode.Languages.pas"/>
+			<DCCReference Include="Main\CS.SourceCode.Languages.Persist.pas"/>
 			<DCCReference Include="Main\CS.Utils.Hashes.pas"/>
-			<DCCReference Include="Main\CS.Utils.Sound.pas">
-				<Form>/ Include resources</Form>
-			</DCCReference>
+			<DCCReference Include="Main\CS.Utils.Sound.pas"/>
 			<None Include="CodeSnip.todo"/>
 			<BuildConfiguration Include="Base">
 				<Key>Base</Key>

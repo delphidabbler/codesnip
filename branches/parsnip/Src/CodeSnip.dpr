@@ -403,6 +403,8 @@ uses
   CS.SourceCode.Hiliter.Renderers.CSS in 'Main\CS.SourceCode.Hiliter.Renderers.CSS.pas',
   CS.SourceCode.Hiliter.Themes in 'Main\CS.SourceCode.Hiliter.Themes.pas',
   CS.SourceCode.Hiliter.Themes.Persist in 'Main\CS.SourceCode.Hiliter.Themes.Persist.pas',
+  CS.SourceCode.Languages in 'Main\CS.SourceCode.Languages.pas',
+  CS.SourceCode.Languages.Persist in 'Main\CS.SourceCode.Languages.Persist.pas',
   CS.Utils.Hashes in 'Main\CS.Utils.Hashes.pas',
   CS.Utils.Sound in 'Main\CS.Utils.Sound.pas';
 
