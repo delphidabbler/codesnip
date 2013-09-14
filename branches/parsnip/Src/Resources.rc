@@ -85,6 +85,12 @@ LANGUAGE LANG_NEUTRAL , SUBLANG_NEUTRAL
 HILITETHEMES RCDATA "Main/Assets/Misc/DefaultHighlighterThemes.dat"
 
 /*
+  Default source code languages recognised by CodeSnip.
+  Note: UTF-8 format text file.
+*/
+SOURCECODELANGUAGES RCDATA "Main/Assets/Misc/DefaultSourceCodeLanguages.dat"
+
+/*
   XP and later manifest file
 */
 1 24 "Res/Misc/CodeSnip.manifest"
