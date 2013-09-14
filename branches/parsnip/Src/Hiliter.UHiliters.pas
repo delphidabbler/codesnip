@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -21,14 +21,62 @@ interface
 
 
 uses
+  // Delphi
+  Generics.Collections,
   // Project
-  Hiliter.UGlobals, Hiliter.UPasParser, UBaseObjects, UEncodings, UHTMLBuilder,
+  CS.SourceCode.Hiliter.Brushes,
+  CS.SourceCode.Hiliter.Parser,
+  CS.SourceCode.Hiliter.Themes,
+  UBaseObjects,
+  UEncodings,
+  UHTMLBuilder,
   URTFBuilder;
 
+// TODO: fix documentation comments re changes
+
+type
+  ///  <summary>Interface implemented by objects that format different source
+  ///  code elements on behalf of syntax highlighter.</summary>
+  ///  <remarks>Implement this interface for each required output format.
+  ///  Syntax highlighter calls the methods of this interface.</remarks>
+  IHiliteRenderer2 = interface(IInterface)
+  { TODO: rename IHiliteRenderer2 back to IHiliteRenderer when original
+          removed. }
+    ['{20ED37E9-DE80-42B5-A920-2A62F1753866}']
+    ///  <summary>Called by syntax highlighter before any source code is
+    ///  processed.</summary>
+    procedure Initialise;
+    ///  <summary>Called by syntax highlighter after all source code has been
+    ///  processed.</summary>
+    procedure Finalise;
+    ///  <summary>Called by syntax highlighter when a new line of source code
+    ///  is started.</summary>
+    procedure BeginLine;
+    ///  <summary>Called by syntax highlighter after a line of souce code is
+    ///  complete.</summary>
+    procedure EndLine;
+    ///  <summary>Called by syntax highlighter just before a source code
+    ///  element is to be output.</summary>
+    ///  <param name="Elem">THiliteElement [in] Type of element to be output.
+    ///  </param>
+    procedure BeforeElem(const ElemInfo: TSyntaxHiliteElemInfo);
+    // TODO: revise comment for BeforeElem
+    ///  <summary>Called by syntax highlighter for each element of source code
+    ///  read. All the given text should be formatted in same style.</summary>
+    ///  <remarks>Type of the element will have been specified in prior call to
+    ///  BeforeElem.</remarks>
+    procedure WriteElemText(const Text: string);
+    ///  <summary>Called by syntax highlighter just after an element of source
+    ///  code has been written.</summary>
+    ///  <param name="Elem">THiliteElement [in] Type of element that has just
+    ///  been output.</param>
+    procedure AfterElem(const ElemInfo: TSyntaxHiliteElemInfo);
+    // TODO: revise comment for AfterElem
+  end;
 
 type
   ///  <summary>
-  ///  Static class that pmplements a syntax highlighter for Pascal source code.
+  ///  Static class that implements a syntax highlighter for Pascal source code.
   ///  </summary>
   ///  <remarks>
   ///  Uses a user-provided rendering object to create highlighted output in
@@ -39,7 +87,7 @@ type
     var
       ///  <summary>Object used to render parsed code in required format.
       ///  </summary>
-      fRenderer: IHiliteRenderer;
+      fRenderer: IHiliteRenderer2;
     ///  <summary>Handles Pascal parser's OnElement event.</summary>
     ///  <param name="Parser">THilitePasParser [in] Reference to parser object.
     ///  Not used.</param>
@@ -49,25 +97,25 @@ type
     ///  </param>
     ///  <remarks>Event triggered by parser for each different source code
     ///  element encountered.</remarks>
-    procedure ElementHandler(Parser: THilitePasParser; Elem: THiliteElement;
-      const ElemText: string);
+    procedure ElementHandler(Parser: TObject;
+      const ElemInfo: TSyntaxHiliteElemInfo; const ElemText: string);
     ///  <summary>Handles Pascal parser's OnLineBegin event.</summary>
     ///  <param name="Parser">THilitePasParser [in] Reference to parser object.
     ///  Not used.</param>
     ///  <remarks>Called when a new line of source code is about to be started.
     ///  </remarks>
-    procedure LineBeginHandler(Parser: THilitePasParser);
+    procedure LineBeginHandler(Parser: TObject);
     ///  <summary>Handles Pascal parser's OnLineEnd event.</summary>
     ///  <param name="Parser">THilitePasParser [in] Reference to parser object.
     ///  Not used.</param>
     ///  <remarks>Called when a new line of source code has ended.</remarks>
-    procedure LineEndHandler(Parser: THilitePasParser);
+    procedure LineEndHandler(Parser: TObject);
     ///  <summary>Performs syntax highlighting of given source code.</summary>
-    procedure DoHilite(const RawCode: string);
+    procedure DoHilite(const RawCode: string; const Brush: TSyntaxHiliterBrush);
   strict protected
     ///  <summary>Internal object constructor. Sets up object to perform
     ///  highlighting using given renderer object.</summary>
-    constructor InternalCreate(Renderer: IHiliteRenderer);
+    constructor InternalCreate(Renderer: IHiliteRenderer2);
   public
     ///  <summary>Syntax highlights source code in an output format specified by
     ///  caller.</summary>
@@ -77,7 +125,8 @@ type
     ///  record output.</param>
     ///  <remarks>Output is written via renderer in some user defined way. This
     ///  may update an object associated with the renderer.</remarks>
-    class procedure Hilite(const RawCode: string; Renderer: IHiliteRenderer);
+    class procedure Hilite(const RawCode: string;
+      const Brush: TSyntaxHiliterBrush; Renderer: IHiliteRenderer2);
   end;
 
 type
@@ -103,8 +152,8 @@ type
     ///  will be ignored.</para>
     ///  </remarks>
     class function Hilite(const RawCode: string;
-      Attrs: IHiliteAttrs = nil; const Title: string = ''): TEncodedData;
-      virtual; abstract;
+      const Brush: TSyntaxHiliterBrush; const Theme: TSyntaxHiliteTheme;
+      const Title: string = ''): TEncodedData; virtual; abstract;
   end;
 
 type
@@ -127,8 +176,8 @@ type
     ///  <returns>TEncodedData. Plain text in Unicode LE format.
     ///  </returns>
     class function Hilite(const RawCode: string;
-      Attrs: IHiliteAttrs = nil; const Title: string = ''): TEncodedData;
-      override;
+      const Brush: TSyntaxHiliterBrush; const Theme: TSyntaxHiliteTheme;
+      const Title: string = ''): TEncodedData; override;
   end;
 
 type
@@ -142,7 +191,8 @@ type
     ///  document.</param>
     ///  <returns>string. CSS rules that apply styles specified in Attrs.
     ///  </returns>
-    class function GenerateCSSRules(Attrs: IHiliteAttrs): string;
+    class function GenerateCSSRules(const Brush: TSyntaxHiliterBrush;
+      const Theme: TSyntaxHiliteTheme): string;
   public
     ///  <summary>Creates XHTML document containing highlighted source code.
     ///  </summary>
@@ -153,7 +203,8 @@ type
     ///  document header. If empty string a default title is used.</param>
     ///  <returns>TEncodedData. XHTML code in UTF-8 format.</returns>
     class function Hilite(const RawCode: string;
-      Attrs: IHiliteAttrs = nil; const Title: string = ''): TEncodedData;
+      const Brush: TSyntaxHiliterBrush; const Theme: TSyntaxHiliteTheme;
+      const Title: string = ''): TEncodedData;
       override;
   end;
 
@@ -173,8 +224,8 @@ type
     ///  </param>
     ///  <returns>TEncodedData. RTF code in ASCII format.</returns>
     class function Hilite(const RawCode: string;
-      Attrs: IHiliteAttrs = nil; const Title: string = ''): TEncodedData;
-      override;
+      const Brush: TSyntaxHiliterBrush; const Theme: TSyntaxHiliteTheme;
+      const Title: string = ''): TEncodedData; override;
   end;
 
 type
@@ -185,15 +236,17 @@ type
   THiliteRenderer = class abstract(TInterfacedObject)
   strict private
     var
-      ///  <summary>Specifies highlighting styles to be used.</summary>
-      fAttrs: IHiliteAttrs;
+      fTheme: TSyntaxHiliteTheme;
+      fBrush: TSyntaxHiliterBrush;
   strict protected
     ///  <summary>Highlighting styles to be used in rendering.</summary>
-    property Attrs: IHiliteAttrs read fAttrs;
+    property Theme: TSyntaxHiliteTheme read fTheme;
+    property Brush: TSyntaxHiliterBrush read fBrush;
   public
     ///  <summary>Object constructor. Records a copy of highlighter style
     ///  attributes passed in Attrs parameter.</summary>
-    constructor Create(Attrs: IHiliteAttrs);
+    constructor Create(const Brush: TSyntaxHiliterBrush;
+      const Theme: TSyntaxHiliteTheme);
   end;
 
 type
@@ -204,11 +257,12 @@ type
   ///  <remarks>
   ///  Designed for use with TSyntaxHiliter objects.
   ///  </remarks>
-  TRTFHiliteRenderer = class(THiliteRenderer, IHiliteRenderer)
+  TRTFHiliteRenderer = class(THiliteRenderer, IHiliteRenderer2)
   strict private
     var
       ///  <summary>Object used to record generated RTF code.</summary>
       fBuilder: TRTFBuilder;
+    function IsEmptyGroup(const Style: TSyntaxHiliteAttrStyle): Boolean;
   public
     ///  <summary>Object constructor. Sets up object to render documents.
     ///  </summary>
@@ -217,7 +271,7 @@ type
     ///  <param name="Attrs">IHiliteAttrs [in] Specifies required highlighting
     ///  style. If nil document is not highlighted.</param>
     constructor Create(const Builder: TRTFBuilder;
-      const Attrs: IHiliteAttrs = nil);
+      const Brush: TSyntaxHiliterBrush; const Theme: TSyntaxHiliteTheme);
     ///  <summary>Initialises RTF ready to receive highlighted code.</summary>
     ///  <remarks>Method of IHiliteRenderer.</remarks>
     procedure Initialise;
@@ -234,14 +288,16 @@ type
     ///  <summary>Sets any highlighting style required for following source code
     ///  element as specified by Elem.</summary>
     ///  <remarks>Method of IHiliteRenderer.</remarks>
-    procedure BeforeElem(Elem: THiliteElement);
+    procedure BeforeElem(const ElemInfo: TSyntaxHiliteElemInfo);
+    // TODO: revise comment for BeforeElem
     ///  <summary>Writes given source code element text.</summary>
     ///  <remarks>Method of IHiliteRenderer.</remarks>
     procedure WriteElemText(const Text: string);
     ///  <summary>Switches off any highlighting styles used for source code
     ///  element specified by Elem.</summary>
     ///  <remarks>Method of IHiliteRenderer.</remarks>
-    procedure AfterElem(Elem: THiliteElement);
+    procedure AfterElem(const ElemInfo: TSyntaxHiliteElemInfo);
+    // TODO: revise comment for AfterElem
   end;
 
 type
@@ -252,7 +308,7 @@ type
   ///  <remarks>
   ///  Designed for use with TSyntaxHiliter objects.
   ///  </remarks>
-  THTMLHiliteRenderer = class(THiliteRenderer, IHiliteRenderer)
+  THTMLHiliteRenderer = class(THiliteRenderer, IHiliteRenderer2)
   strict private
     var
       ///  <summary>Object used to record generated XHTML code.</summary>
@@ -267,7 +323,7 @@ type
     ///  <param name="Attrs">IHiliteAttrs [in] Specifies required highlighting
     ///  style. If nil document is not highlighted.</param>
     constructor Create(const Builder: THTMLBuilder;
-      const Attrs: IHiliteAttrs = nil);
+      const Brush: TSyntaxHiliterBrush; const Theme: TSyntaxHiliteTheme);
     ///  <summary>Initialises XHTML ready to receive highlighted code.</summary>
     ///  <remarks>Method of IHiliteRenderer.</remarks>
     procedure Initialise;
@@ -287,14 +343,14 @@ type
     ///  <summary>Emits any span tag required to style following source code
     ///  element as specified by Elem.</summary>
     ///  <remarks>Method of IHiliteRenderer.</remarks>
-    procedure BeforeElem(Elem: THiliteElement);
+    procedure BeforeElem(const ElemInfo: TSyntaxHiliteElemInfo);
     ///  <summary>Writes given source code element text.</summary>
     ///  <remarks>Method of IHiliteRenderer.</remarks>
     procedure WriteElemText(const Text: string);
     ///  <summary>Closes any span tag used to style source code element
     ///  specified by Elem.</summary>
     ///  <remarks>Method of IHiliteRenderer.</remarks>
-    procedure AfterElem(Elem: THiliteElement);
+    procedure AfterElem(const ElemInfo: TSyntaxHiliteElemInfo);
   end;
 
 
@@ -305,61 +361,67 @@ uses
   // Delphi
   SysUtils, Graphics,
   // Project
-  Hiliter.UAttrs, Hiliter.UCSS, IntfCommon, UCSSBuilder, URTFStyles;
+  {Hiliter.UAttrs, }
+  CS.SourceCode.Hiliter.Renderers.CSS,
+  IntfCommon,
+  UComparers,
+  UCSSBuilder,
+  URTFStyles;
 
 
 { TSyntaxHiliter }
 
-procedure TSyntaxHiliter.DoHilite(const RawCode: string);
+procedure TSyntaxHiliter.DoHilite(const RawCode: string;
+  const Brush: TSyntaxHiliterBrush);
 var
-  Parser: THilitePasParser;   // object used to parse source code
+  Parser: TSyntaxHiliteParser;   // object used to parse source code
 begin
   // Set up parser
-  Parser := THilitePasParser.Create;
+  Parser := TSyntaxHiliteParser.Create;
   try
     Parser.OnElement := ElementHandler;
     Parser.OnLineBegin := LineBeginHandler;
     Parser.OnLineEnd := LineEndHandler;
     // Parse the document:
     fRenderer.Initialise;
-    Parser.Parse(RawCode);
+    Parser.Parse(RawCode, Brush);
     fRenderer.Finalise;
   finally
     Parser.Free;
   end;
 end;
 
-procedure TSyntaxHiliter.ElementHandler(Parser: THilitePasParser;
-  Elem: THiliteElement; const ElemText: string);
+procedure TSyntaxHiliter.ElementHandler(Parser: TObject;
+  const ElemInfo: TSyntaxHiliteElemInfo; const ElemText: string);
 begin
-  fRenderer.BeforeElem(Elem);
+  fRenderer.BeforeElem(ElemInfo);
   fRenderer.WriteElemText(ElemText);
-  fRenderer.AfterElem(Elem);
+  fRenderer.AfterElem(ElemInfo);
 end;
 
 class procedure TSyntaxHiliter.Hilite(const RawCode: string;
-  Renderer: IHiliteRenderer);
+  const Brush: TSyntaxHiliterBrush; Renderer: IHiliteRenderer2);
 begin
   Assert(Assigned(Renderer), ClassName + '.Create: Renderer is nil');
   with InternalCreate(Renderer) do
     try
-      DoHilite(RawCode);
+      DoHilite(RawCode, Brush);
     finally
       Free;
     end;
 end;
 
-procedure TSyntaxHiliter.LineBeginHandler(Parser: THilitePasParser);
+procedure TSyntaxHiliter.LineBeginHandler(Parser: TObject);
 begin
   fRenderer.BeginLine;
 end;
 
-procedure TSyntaxHiliter.LineEndHandler(Parser: THilitePasParser);
+procedure TSyntaxHiliter.LineEndHandler(Parser: TObject);
 begin
   fRenderer.EndLine;
 end;
 
-constructor TSyntaxHiliter.InternalCreate(Renderer: IHiliteRenderer);
+constructor TSyntaxHiliter.InternalCreate(Renderer: IHiliteRenderer2);
 begin
   inherited InternalCreate;
   fRenderer := Renderer;
@@ -368,22 +430,22 @@ end;
 { TNulDocumentHiliter }
 
 class function TNulDocumentHiliter.Hilite(const RawCode: string;
-  Attrs: IHiliteAttrs; const Title: string): TEncodedData;
+  const Brush: TSyntaxHiliterBrush; const Theme: TSyntaxHiliteTheme;
+  const Title: string): TEncodedData;
 begin
   Result := TEncodedData.Create(RawCode, etUnicode);
 end;
 
 { TXHTMLDocumentHiliter }
 
-class function TXHTMLDocumentHiliter.GenerateCSSRules(Attrs: IHiliteAttrs):
+class function TXHTMLDocumentHiliter.GenerateCSSRules(
+  const Brush: TSyntaxHiliterBrush; const Theme: TSyntaxHiliteTheme):
   string;
 var
   CSSBuilder: TCSSBuilder;  // builds CSS code
   HiliterCSS: THiliterCSS;  // generates CSS names and properties for hiliter
 begin
-  if not Assigned(Attrs) then
-    Attrs := THiliteAttrsFactory.CreateNulAttrs;
-  HiliterCSS := THiliterCSS.Create(Attrs);
+  HiliterCSS := THiliterCSS.Create(Brush, Theme);
   try
     CSSBuilder := TCSSBuilder.Create;
     try
@@ -398,12 +460,13 @@ begin
 end;
 
 class function TXHTMLDocumentHiliter.Hilite(const RawCode: string;
-  Attrs: IHiliteAttrs; const Title: string): TEncodedData;
+  const Brush: TSyntaxHiliterBrush; const Theme: TSyntaxHiliteTheme;
+  const Title: string): TEncodedData;
 resourcestring
   // Default document title
   sDefaultTitle = 'DelphiDabbler CodeSnip Database';
 var
-  Renderer: IHiliteRenderer;    // XHTML renderer object
+  Renderer: IHiliteRenderer2;    // XHTML renderer object
   Builder: THTMLBuilder;        // object used to construct XHTML document
 begin
   Builder := THTMLBuilder.Create;
@@ -412,9 +475,9 @@ begin
       Builder.Title := Title
     else
       Builder.Title := sDefaultTitle;
-    Builder.CSS := GenerateCSSRules(Attrs);
-    Renderer := THTMLHiliteRenderer.Create(Builder, Attrs);
-    TSyntaxHiliter.Hilite(RawCode, Renderer);
+    Builder.CSS := GenerateCSSRules(Brush, Theme);
+    Renderer := THTMLHiliteRenderer.Create(Builder, Brush, Theme);
+    TSyntaxHiliter.Hilite(RawCode, Brush, Renderer);
     Result := TEncodedData.Create(Builder.HTMLDocument, etUTF8);
   finally
     Builder.Free;
@@ -424,16 +487,17 @@ end;
 { TRTFDocumentHiliter }
 
 class function TRTFDocumentHiliter.Hilite(const RawCode: string;
-  Attrs: IHiliteAttrs; const Title: string): TEncodedData;
+  const Brush: TSyntaxHiliterBrush; const Theme: TSyntaxHiliteTheme;
+  const Title: string): TEncodedData;
 var
-  Renderer: IHiliteRenderer;  // RTF renderer object
+  Renderer: IHiliteRenderer2;  // RTF renderer object
   Builder: TRTFBuilder;       // object used to construct RTF document
 begin
   Builder := TRTFBuilder.Create(0);
   try
     Builder.DocProperties.Title := Title;
-    Renderer := TRTFHiliteRenderer.Create(Builder, Attrs);
-    TSyntaxHiliter.Hilite(RawCode, Renderer);
+    Renderer := TRTFHiliteRenderer.Create(Builder, Brush, Theme);
+    TSyntaxHiliter.Hilite(RawCode, Brush, Renderer);
     Result := TEncodedData.Create(Builder.Render.ToBytes, etASCII);
   finally
     Builder.Free;
@@ -442,45 +506,53 @@ end;
 
 { THiliteRenderer }
 
-constructor THiliteRenderer.Create(Attrs: IHiliteAttrs);
+constructor THiliteRenderer.Create(const Brush: TSyntaxHiliterBrush;
+  const Theme: TSyntaxHiliteTheme);
 begin
   inherited Create;
-  fAttrs := THiliteAttrsFactory.CreateNulAttrs;
-  (fAttrs as IAssignable).Assign(Attrs);
+  fTheme := Theme;
+  fBrush := Brush;
 end;
 
 { TRTFHiliteRenderer }
 
-procedure TRTFHiliteRenderer.AfterElem(Elem: THiliteElement);
+procedure TRTFHiliteRenderer.AfterElem(const ElemInfo: TSyntaxHiliteElemInfo);
 begin
-  if not Attrs[Elem].IsNul then
+  if not IsEmptyGroup(Theme.GetStyle(ElemInfo.BrushID, ElemInfo.AttrID)) then
     fBuilder.EndGroup;
 end;
 
-procedure TRTFHiliteRenderer.BeforeElem(Elem: THiliteElement);
+procedure TRTFHiliteRenderer.BeforeElem(const ElemInfo: TSyntaxHiliteElemInfo);
+var
+  AttrStyle: TSyntaxHiliteAttrStyle;
 begin
-  if not Attrs[Elem].IsNul then
+  AttrStyle := Theme.GetStyle(ElemInfo.BrushID, ElemInfo.AttrID);
+  if not IsEmptyGroup(AttrStyle) then
   begin
     fBuilder.BeginGroup;
-    if Attrs[Elem].ForeColor <> clNone then
-      fBuilder.SetColour(Attrs[Elem].ForeColor);
-    if Attrs[Elem].FontStyle <> [] then
-      fBuilder.SetFontStyle(Attrs[Elem].FontStyle);
+    // TODO: Find a way of displaying background colour in RTF
+    //    if AttrStyle.Background <> clNone then
+    //      fBuilder.SetColour(AttrStyle.Foreground);
+    if AttrStyle.Foreground <> Theme.DefaultForeground then
+      fBuilder.SetColour(AttrStyle.Foreground);
+    if AttrStyle.FontStyles.Styles <> [] then
+      fBuilder.SetFontStyle(AttrStyle.FontStyles);
   end;
 end;
 
 procedure TRTFHiliteRenderer.BeginLine;
 begin
   fBuilder.ResetCharStyle;
-  fBuilder.SetFont(Attrs.FontName);
-  fBuilder.SetFontSize(Attrs.FontSize);
+  fBuilder.SetFont(Theme.FontName);
+  fBuilder.SetFontSize(Theme.FontSize);
+  fBuilder.SetColour(Theme.DefaultForeground);
 end;
 
 constructor TRTFHiliteRenderer.Create(const Builder: TRTFBuilder;
-  const Attrs: IHiliteAttrs = nil);
+  const Brush: TSyntaxHiliterBrush; const Theme: TSyntaxHiliteTheme);
 begin
   Assert(Assigned(Builder), ClassName + '.Create: Builder is nil');
-  inherited Create(Attrs);
+  inherited Create(Brush, Theme);
   fBuilder := Builder;
 end;
 
@@ -497,17 +569,32 @@ end;
 
 procedure TRTFHiliteRenderer.Initialise;
 var
-  Elem: THiliteElement; // loops thru all highlight elements
+  Attrs: TArray<TSyntaxHiliterAttr>;
+  Attr: TSyntaxHiliterAttr;
+  AttrStyle: TSyntaxHiliteAttrStyle;
 begin
   // Set up font table
-  fBuilder.FontTable.Add(Attrs.FontName, rgfModern, 0);
+  fBuilder.FontTable.Add(Theme.FontName, rgfModern, 0);
   // Set up colour table
-  for Elem := Low(THiliteElement) to High(THiliteElement) do
-    fBuilder.ColourTable.Add(Attrs[Elem].ForeColor);
+  Attrs := Brush.SupportedAttrs;
+  for Attr in Attrs do
+  begin
+    AttrStyle := Theme.GetStyle(Brush.ID, Attr.ID);
+    fBuilder.ColourTable.Add(AttrStyle.Foreground);
+  end;
   // Begin group containing all source code
   fBuilder.BeginGroup;
   // Clear any paragraph formatting
   fBuilder.ClearParaFormatting;
+end;
+
+function TRTFHiliteRenderer.IsEmptyGroup(
+  const Style: TSyntaxHiliteAttrStyle): Boolean;
+begin
+  { TODO: if and when Style.Background is supported, replace this with test on
+          Theme.IsBaseStyle }
+  Result := (Style.Foreground = Theme.DefaultForeground)
+    and Style.FontStyles.IsNull;
 end;
 
 procedure TRTFHiliteRenderer.WriteElemText(const Text: string);
@@ -517,16 +604,22 @@ end;
 
 { THTMLHiliteRenderer }
 
-procedure THTMLHiliteRenderer.AfterElem(Elem: THiliteElement);
+procedure THTMLHiliteRenderer.AfterElem(const ElemInfo: TSyntaxHiliteElemInfo);
 begin
-  if not Attrs[Elem].IsNul then
+  if not Theme.IsBaseStyle(
+    Theme.GetStyle(ElemInfo.BrushID, ElemInfo.AttrID)
+  ) then
     fBuilder.CloseSpan;
 end;
 
-procedure THTMLHiliteRenderer.BeforeElem(Elem: THiliteElement);
+procedure THTMLHiliteRenderer.BeforeElem(const ElemInfo: TSyntaxHiliteElemInfo);
 begin
-  if not Attrs.Elements[Elem].IsNul then
-    fBuilder.OpenSpan(THiliterCSS.GetElemCSSClassName(Elem));
+  if not Theme.IsBaseStyle(
+    Theme.GetStyle(ElemInfo.BrushID, ElemInfo.AttrID)
+  ) then
+    fBuilder.OpenSpan(
+      THiliterCSS.GetElemCSSClassName(ElemInfo.BrushID, ElemInfo.AttrID)
+    );
 end;
 
 procedure THTMLHiliteRenderer.BeginLine;
@@ -540,10 +633,10 @@ begin
 end;
 
 constructor THTMLHiliteRenderer.Create(const Builder: THTMLBuilder;
-  const Attrs: IHiliteAttrs);
+  const Brush: TSyntaxHiliterBrush; const Theme: TSyntaxHiliteTheme);
 begin
   Assert(Assigned(Builder), ClassName + '.Create: Builder is nil');
-  inherited Create(Attrs);
+  inherited Create(Brush, Theme);
   fBuilder := Builder;
 end;
 

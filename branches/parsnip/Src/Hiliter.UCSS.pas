@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2006-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2006-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -22,8 +22,11 @@ interface
 
 uses
   // Project
-  Hiliter.UGlobals, UCSSBuilder;
+  CS.SourceCode.Hiliter.Brushes,
+  CS.SourceCode.Hiliter.Themes,
+  UCSSBuilder;
 
+// TODO: fix documentation comments
 
 type
 
@@ -35,16 +38,18 @@ type
   }
   THiliterCSS = class(TObject)
   strict private
-    fHiliteAttrs: IHiliteAttrs;
+    fTheme: TSyntaxHiliteTheme;
+    fBrush: TSyntaxHiliterBrush;
       {Highlighter for which CSS is to be generated}
-    procedure BuildElemCSS(const Elem: THiliteElement;
-      const CSSBuilder: TCSSBuilder);
+    // TODO: rename BuildElemCSS as BuildAttrCSS
+    procedure BuildElemCSS(const AttrID: string; const CSSBuilder: TCSSBuilder);
       {Builds CSS class for a highlighter element.
         @param Elem [in] Highlighter element for which CSS is required.
         @param CSSBuilder [in] Object used to build and store the CSS.
       }
   public
-    constructor Create(const HiliteAttrs: IHiliteAttrs);
+    constructor Create(const Brush: TSyntaxHiliterBrush;
+      const Theme: TSyntaxHiliteTheme);
       {Class constructor. Sets up object ready to generate code for a syntax
       highlighter.
         @param HiliterAttrs [in] Attributes to be used in highlighter.
@@ -53,7 +58,7 @@ type
       {Gets name of main CSS class used for all highlighted code.
         @return Required class name.
       }
-    class function GetElemCSSClassName(const Elem: THiliteElement): string;
+    class function GetElemCSSClassName(const BrushID, AttrID: string): string;
       {Gets name of CSS class associated with a highlighter element.
         @param Elem [in] Identifies element for which class name required.
         @return Required class name.
@@ -70,9 +75,11 @@ implementation
 
 uses
   // Delphi
+  SysUtils,
   Graphics,
   // Project
-  UCSSUtils;
+  UCSSUtils,
+  UStrUtils;
 
 
 { THiliterCSS }
@@ -82,78 +89,85 @@ procedure THiliterCSS.BuildCSS(const CSSBuilder: TCSSBuilder);
     @param CSSBuilder [in] Object used to build and store required CSS.
   }
 var
-  Elem: THiliteElement; // loops thru highlighter elements
+  Attrs: TArray<TSyntaxHiliterAttr>;
+  Attr: TSyntaxHiliterAttr;
 begin
   // Add font definition in main class
   with CSSBuilder.AddSelector('.' + GetMainCSSClassName) do
   begin
-    AddProperty(TCSS.FontFamilyProp(fHiliteAttrs.FontName, cfgMonoSpace));
-    AddProperty(TCSS.FontSizeProp(fHiliteAttrs.FontSize));
+    AddProperty(TCSS.FontFamilyProp(fTheme.FontName, cfgMonoSpace));
+    AddProperty(TCSS.FontSizeProp(fTheme.FontSize));
+    if fTheme.DefaultBackground <> clNone then
+      AddProperty(TCSS.BackgroundColorProp(fTheme.DefaultBackground));
+    if fTheme.DefaultForeground <> clNone then
+      AddProperty(TCSS.BackgroundColorProp(fTheme.DefaultForeground));
   end;
-  // Add font style and colour definitions for each element
-  for Elem := Low(THiliteElement) to High(THiliteElement) do
-    BuildElemCSS(Elem, CSSBuilder);
+  Attrs := fBrush.SupportedAttrs;
+  for Attr in Attrs do
+    BuildElemCSS(Attr.ID, CSSBuilder);
 end;
 
-procedure THiliterCSS.BuildElemCSS(const Elem: THiliteElement;
-   const CSSBuilder: TCSSBuilder);
+procedure THiliterCSS.BuildElemCSS(const AttrID: string;
+  const CSSBuilder: TCSSBuilder);
   {Builds CSS class for a highlighter element.
     @param Elem [in] Highlighter element for which CSS is required.
     @param CSSBuilder [in] Object used to build and output the CSS.
   }
 var
-  ElemAttr: IHiliteElemAttrs; // reference to highlight element
+  AttrStyle: TSyntaxHiliteAttrStyle;
 begin
-  ElemAttr := fHiliteAttrs[Elem];
-  // We only create CSS class if element attributes are non-nul
-  if not ElemAttr.IsNul then
+  AttrStyle := fTheme.GetStyle(fBrush.ID, AttrID);
+  // We only create CSS class if element attribute's style is non-null
+  if fTheme.IsBaseStyle(AttrStyle) then
+    Exit;
+  with CSSBuilder.AddSelector('.' + GetElemCSSClassName(fBrush.ID, AttrID)) do
   begin
-    with CSSBuilder.AddSelector('.' + GetElemCSSClassName(Elem)) do
-    begin
-      if ElemAttr.ForeColor <> clNone then
-        AddProperty(TCSS.ColorProp(ElemAttr.ForeColor));
-      AddProperty(TCSS.FontWeightProp(ElemAttr.FontStyle));
-      AddProperty(TCSS.FontStyleProp(ElemAttr.FontStyle));
-      AddProperty(TCSS.TextDecorationProp(ElemAttr.FontStyle));
-    end;
+    if AttrStyle.Background <> fTheme.DefaultBackground then
+      AddProperty(TCSS.BackgroundColorProp(AttrStyle.Background));
+    if AttrStyle.Foreground <> fTheme.DefaultForeground then
+      AddProperty(TCSS.ColorProp(AttrStyle.Foreground));
+    AddProperty(TCSS.FontWeightProp(AttrStyle.FontStyles));
+    AddProperty(TCSS.FontStyleProp(AttrStyle.FontStyles));
+    AddProperty(TCSS.TextDecorationProp(AttrStyle.FontStyles));
   end;
 end;
 
-constructor THiliterCSS.Create(const HiliteAttrs: IHiliteAttrs);
+constructor THiliterCSS.Create(const Brush: TSyntaxHiliterBrush;
+  const Theme: TSyntaxHiliteTheme);
   {Class constructor. Sets up object ready to generate code for a syntax
   highlighter.
     @param HiliterAttrs [in] Attributes to be used in highlighter.
   }
 begin
   inherited Create;
-  Assert(Assigned(HiliteAttrs), ClassName + '.Create: HiliteAttrs is nil');
-  fHiliteAttrs := HiliteAttrs;
+  Assert(Assigned(Brush), ClassName + '.Create: Brush is nil');
+  Assert(Assigned(Theme), ClassName + '.Create: Theme is nil');
+  fBrush := Brush;
+  fTheme := Theme;
 end;
 
-class function THiliterCSS.GetElemCSSClassName(
-  const Elem: THiliteElement): string;
+class function THiliterCSS.GetElemCSSClassName(const BrushID, AttrID: string):
+  string;
   {Gets name of CSS class associated with a highlighter element.
     @param Elem [in] Identifies element for which class name required.
     @return Required class name.
   }
-const
-  // Map of highlight element kinds onto CSS class used to format it
-  cClassMap: array[THiliteElement] of string = (
-    'pas-whitespace', // heWhitespace
-    'pas-comment',    // heComment
-    'pas-reserved',   // heReserved
-    'pas-identifier', // heIdentifier
-    'pas-symbol',     // heSymbol
-    'pas-string',     // heString
-    'pas-number',     // heNumber
-    'pas-float',      // heFloat
-    'pas-hex',        // heHex
-    'pas-preproc',    // hePreProcessor
-    'pas-asm',        // heAssembler
-    'pas-error'       // heError
-  );
+var
+  I: Integer;
 begin
-  Result := cClassMap[Elem];
+  Result := StrToLower(BrushID + '-' + AttrID);
+  if Result = '-' then
+    Result := '_null_'
+  else
+  begin
+    if not CharInSet(Result[1], ['a'..'z', '_']) then
+      Result[1] := '_';
+    for I := 2 to Length(Result) do
+    begin
+      if not CharInSet(Result[I], ['a'..'z', '0'..'9', '-', '_']) then
+        Result[I] := '_';
+    end;
+  end;
 end;
 
 class function THiliterCSS.GetMainCSSClassName: string;
@@ -161,7 +175,7 @@ class function THiliterCSS.GetMainCSSClassName: string;
     @return Required class name.
   }
 begin
-  Result := 'pas-source';
+  Result := 'highlighted-source';
 end;
 
 end.
