@@ -617,6 +617,9 @@
 			<DCCReference Include="Main\CS.Init.CommandLineOpts.pas"/>
 			<DCCReference Include="Main\CS.Utils.Sound.pas"/>
 			<DCCReference Include="Main\CS.Utils.Hashes.pas"/>
+			<DCCReference Include="Main\CS.SourceCode.Hiliter.Brushes.pas"/>
+			<DCCReference Include="Main\CS.SourceCode.Hiliter.Themes.pas"/>
+			<DCCReference Include="Main\CS.SourceCode.Hiliter.Themes.Persist.pas"/>
 			<None Include="CodeSnip.todo"/>
 			<BuildConfiguration Include="Base">
 				<Key>Base</Key>

@@ -401,7 +401,10 @@ uses
   UEncrypt in 'Main\Imports\UEncrypt.pas',
   CS.Init.CommandLineOpts in 'Main\CS.Init.CommandLineOpts.pas',
   CS.Utils.Sound in 'Main\CS.Utils.Sound.pas',
-  CS.Utils.Hashes in 'Main\CS.Utils.Hashes.pas';
+  CS.Utils.Hashes in 'Main\CS.Utils.Hashes.pas',
+  CS.SourceCode.Hiliter.Brushes in 'Main\CS.SourceCode.Hiliter.Brushes.pas',
+  CS.SourceCode.Hiliter.Themes in 'Main\CS.SourceCode.Hiliter.Themes.pas',
+  CS.SourceCode.Hiliter.Themes.Persist in 'Main\CS.SourceCode.Hiliter.Themes.Persist.pas';
 
 // Include resources
 {$Resource ExternalObj.tlb}       // Type library file
