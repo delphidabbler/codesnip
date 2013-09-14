@@ -165,12 +165,9 @@ uses
   FrTitled in 'FrTitled.pas' {TitledFrame: TFrame},
   FrUpdatePrefs in 'FrUpdatePrefs.pas' {UpdatePrefsFrame: TFrame},
   Hiliter.UAttrs in 'Hiliter.UAttrs.pas',
-  Hiliter.UCSS in 'Hiliter.UCSS.pas',
   Hiliter.UFileHiliter in 'Hiliter.UFileHiliter.pas',
   Hiliter.UGlobals in 'Hiliter.UGlobals.pas',
-  Hiliter.UHiliters in 'Hiliter.UHiliters.pas',
   Hiliter.UPasLexer in 'Hiliter.UPasLexer.pas',
-  Hiliter.UPasParser in 'Hiliter.UPasParser.pas',
   Hiliter.UPersist in 'Hiliter.UPersist.pas',
   IntfAligner in 'IntfAligner.pas',
   IntfCommon in 'IntfCommon.pas',
@@ -400,11 +397,14 @@ uses
   LVEx in 'Main\Imports\LVEx.pas',
   UEncrypt in 'Main\Imports\UEncrypt.pas',
   CS.Init.CommandLineOpts in 'Main\CS.Init.CommandLineOpts.pas',
-  CS.Utils.Sound in 'Main\CS.Utils.Sound.pas',
-  CS.Utils.Hashes in 'Main\CS.Utils.Hashes.pas',
   CS.SourceCode.Hiliter.Brushes in 'Main\CS.SourceCode.Hiliter.Brushes.pas',
+  CS.SourceCode.Hiliter.Parser in 'Main\CS.SourceCode.Hiliter.Parser.pas',
+  CS.SourceCode.Hiliter.Renderers in 'Main\CS.SourceCode.Hiliter.Renderers.pas',
+  CS.SourceCode.Hiliter.Renderers.CSS in 'Main\CS.SourceCode.Hiliter.Renderers.CSS.pas',
   CS.SourceCode.Hiliter.Themes in 'Main\CS.SourceCode.Hiliter.Themes.pas',
-  CS.SourceCode.Hiliter.Themes.Persist in 'Main\CS.SourceCode.Hiliter.Themes.Persist.pas';
+  CS.SourceCode.Hiliter.Themes.Persist in 'Main\CS.SourceCode.Hiliter.Themes.Persist.pas',
+  CS.Utils.Hashes in 'Main\CS.Utils.Hashes.pas',
+  CS.Utils.Sound in 'Main\CS.Utils.Sound.pas';
 
 // Include resources
 {$Resource ExternalObj.tlb}       // Type library file

@@ -13,7 +13,7 @@
 }
 
 
-unit Hiliter.UPasParser;
+unit CS.SourceCode.Hiliter.Parser;
 
 
 interface

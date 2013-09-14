@@ -14,7 +14,7 @@
 }
 
 
-unit Hiliter.UHiliters;
+unit CS.SourceCode.Hiliter.Renderers;
 
 
 interface

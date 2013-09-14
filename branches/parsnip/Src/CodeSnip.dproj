@@ -380,12 +380,9 @@
 				<DesignClass>TFrame</DesignClass>
 			</DCCReference>
 			<DCCReference Include="Hiliter.UAttrs.pas"/>
-			<DCCReference Include="Hiliter.UCSS.pas"/>
 			<DCCReference Include="Hiliter.UFileHiliter.pas"/>
 			<DCCReference Include="Hiliter.UGlobals.pas"/>
-			<DCCReference Include="Hiliter.UHiliters.pas"/>
 			<DCCReference Include="Hiliter.UPasLexer.pas"/>
-			<DCCReference Include="Hiliter.UPasParser.pas"/>
 			<DCCReference Include="Hiliter.UPersist.pas"/>
 			<DCCReference Include="IntfAligner.pas"/>
 			<DCCReference Include="IntfCommon.pas"/>
@@ -615,11 +612,16 @@
 			<DCCReference Include="Main\Imports\LVEx.pas"/>
 			<DCCReference Include="Main\Imports\UEncrypt.pas"/>
 			<DCCReference Include="Main\CS.Init.CommandLineOpts.pas"/>
-			<DCCReference Include="Main\CS.Utils.Sound.pas"/>
-			<DCCReference Include="Main\CS.Utils.Hashes.pas"/>
 			<DCCReference Include="Main\CS.SourceCode.Hiliter.Brushes.pas"/>
+			<DCCReference Include="Main\CS.SourceCode.Hiliter.Parser.pas"/>
+			<DCCReference Include="Main\CS.SourceCode.Hiliter.Renderers.pas"/>
+			<DCCReference Include="Main\CS.SourceCode.Hiliter.Renderers.CSS.pas"/>
 			<DCCReference Include="Main\CS.SourceCode.Hiliter.Themes.pas"/>
 			<DCCReference Include="Main\CS.SourceCode.Hiliter.Themes.Persist.pas"/>
+			<DCCReference Include="Main\CS.Utils.Hashes.pas"/>
+			<DCCReference Include="Main\CS.Utils.Sound.pas">
+				<Form>/ Include resources</Form>
+			</DCCReference>
 			<None Include="CodeSnip.todo"/>
 			<BuildConfiguration Include="Base">
 				<Key>Base</Key>
