@@ -58,6 +58,10 @@
 			<DCCReference Include="SynRegExpr.pas"/>
 			<DCCReference Include="SynTextDrawer.pas"/>
 			<DCCReference Include="SynUnicode.pas"/>
+			<DCCReference Include="SynHighlighterHtml.pas"/>
+			<DCCReference Include="SynHighlighterJScript.pas"/>
+			<DCCReference Include="SynHighlighterPas.pas"/>
+			<DCCReference Include="SynHighlighterPHP.pas"/>
 			<BuildConfiguration Include="Base">
 				<Key>Base</Key>
 			</BuildConfiguration>

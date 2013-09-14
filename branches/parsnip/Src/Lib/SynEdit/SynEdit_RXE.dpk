@@ -48,6 +48,10 @@ contains
   SynHighlighterMulti in 'SynHighlighterMulti.pas',
   SynRegExpr in 'SynRegExpr.pas',
   SynTextDrawer in 'SynTextDrawer.pas',
-  SynUnicode in 'SynUnicode.pas';
+  SynUnicode in 'SynUnicode.pas',
+  SynHighlighterHtml in 'SynHighlighterHtml.pas',
+  SynHighlighterJScript in 'SynHighlighterJScript.pas',
+  SynHighlighterPas in 'SynHighlighterPas.pas',
+  SynHighlighterPHP in 'SynHighlighterPHP.pas';
 
 end.
