@@ -396,6 +396,7 @@ uses
   GIFImage in 'Main\Imports\GIFImage.pas',
   LVEx in 'Main\Imports\LVEx.pas',
   UEncrypt in 'Main\Imports\UEncrypt.pas',
+  CS.Config in 'Main\CS.Config.pas',
   CS.Init.CommandLineOpts in 'Main\CS.Init.CommandLineOpts.pas',
   CS.SourceCode.Hiliter.Brushes in 'Main\CS.SourceCode.Hiliter.Brushes.pas',
   CS.SourceCode.Hiliter.Parser in 'Main\CS.SourceCode.Hiliter.Parser.pas',
