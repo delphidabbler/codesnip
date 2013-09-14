@@ -1,0 +1,308 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!--
+ * This Source Code Form is subject to the terms of the Mozilla Public License,
+ * v. 2.0. If a copy of the MPL was not distributed with this file, You can
+ * obtain one at http://mozilla.org/MPL/2.0/
+ *
+ * Copyright (C) 2013, Peter Johnson (www.delphidabbler.com).
+ *
+ * $Rev$
+ * $Date$
+ *
+ * CodeSnip File Format Documentation: Syntax Highlighter Themes Files
+-->
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; UTF-8" />
+
+<title>
+  CodeSnip File Format Documentation - Syntax Highlighter Themes Files
+</title>
+
+<link
+  rel="stylesheet"
+  type="text/css"
+  media="screen"
+  href="main.css"
+/>
+
+</head>
+
+<body>
+
+<div class="title">
+  <div>
+    DelphiDabbler CodeSnip
+  </div>
+  <div class="subtitle">
+    File Format Documentation
+  </div>
+</div>
+
+<h1>
+  Syntax Highlighter Themes Files
+</h1>
+
+<h2>
+  Introduction
+</h2>
+
+<p>
+  CodeSnip uses this file format to record syntax highlighter themes. The format
+  is used for two slightly different purposes:
+</p>
+
+<ul>
+  <li>
+    <em>Predefined themes</em> &ndash; These are themes that come pre-installed
+    with CodeSnip. The themes are stored in a themes &quot;file&quot; that is
+    included in the program resources.
+  </li>
+  <li>
+    <em>User-defined themes</em> &ndash; These are themes defined by the user.
+    They are stored in a physical file stored in CodeSnip's per-user application
+    data directory.
+  </li>
+</ul>
+
+<h2>
+  Encoding
+</h2>
+
+<p>
+  This is a simple plain text file format encoded as UTF-8 with byte order mark,
+  regardless of how the data is stored.
+</p>
+
+<h2>
+  File Format
+</h2>
+
+<p>
+  The file is introduced by a header line, which must occupy the first line,
+  with no preceeding white space or comments. This line must be:
+</p>
+
+<pre class="indent">► CodeSnip Syntax Highlight Themes v1 ◄</pre>
+
+<p class="pullout">
+  <strong>NOTE:</strong>
+  The ► and ◄ characters were chosen for the header line because they encode in
+  a unique way in UTF-8 &ndash; ANSI files will not encode them correctly. This
+  provides a second check for the correct file format in addition to the byte
+  order mark.
+</p>
+
+<p>
+  The remainder of the file is a sequence of commands, blank lines and comment
+  lines.
+</p>
+
+<h3>
+  Commands
+</h3>
+
+</p>
+  Each command occupies one line and is introduced by a keyword and is followed
+  by one or more parameter values.
+</p>
+
+<p>
+  In outline, the file is structured as one or more theme definitions. Each
+  theme definition is introduced by a <code>Theme</code> command.
+</p>
+
+<p>
+  Within a theme definition come zero or more brush style definitions, each
+  introduced by a <code>Brush</code> command. A theme can have a default brush
+  style that applies to all highlighter brushes along with named brush styles
+  that apply to a specified brush type. Values in named brush styles override
+  the theme's default style.
+</p>
+
+<p>
+  Finally, within each brush style are zero of more attribute style commands,
+  each introduced by the <code>Attr</code> keyword. For named brush styles these
+  commands need only define attributes that are used by the particular brush.
+</p>
+
+<p>
+  The parameters required by each of the commands are:
+</p>
+
+<dl>
+  <dt>
+    <code>Theme</code>
+  </dt>
+  <dd>
+    <div class="spaced">
+      The keyword is immediately followed by an identifier for the theme. The
+      identifier must be unique and is terminated by one or more spaces.
+      Following the identifier comes the theme's friendly name. This can be any
+      valid Unicode text and is terminated by the end of the line. At least one
+      word must be specified for the friendly name. The friendly name is that
+      which is displayed to users.
+    </div>
+    <div class="pullout">
+      Note that identifiers beginning with <code>_</code> (underscore) are
+      reserved for use by built-in themes and must not be used for user-defined
+      themes.
+    </div>
+    <div class="spaced">
+      <em>Examples:</em>
+    </div>
+    <div class="indent spaced">
+      <code>Theme NewTheme My New Theme</code>
+    </div>
+    <div class="indent spaced">
+      Here <em><code>MyTheme</code></em> is the identifier and the friendly name
+      is <em><code>My New Theme</code></em>.
+    </div>
+  </dd>
+  <dt>
+    <code>Brush</code>
+  </dt>
+  <dd>
+    <div class="spaced">
+      The keyword is immediately followed by either <code>*</code> (asterisk) to
+      indicate this is the default brush style, or an identifier that specifies
+      the name of the brush being styled. This should be the ID of a supported
+      brush and must be unique within the theme.
+    </div>
+    <div class="spaced">
+      <em>Examples:</em>
+    </div>
+    <div class="indent spaced">
+      <code>Brush *</code>
+    </div>
+    <div class="indent spaced">
+      <code>Brush ObjectPascal</code>
+    </div>
+  </dd>
+  <dt>
+    <code>Attr</code>
+  </dt>
+  <dd>
+    <div class="spaced">
+      The keyword is followed by two parameters. The first is an identifier
+      that specifies the ID of the attribute being styled. This should be a
+      valid identifier for the attribute and must be unique within the brush.
+      The second parameter defines the style. The style parameter has the
+      following format:
+    </div>
+    <div class="spaced indent">
+      <code>&lt;background-colour&gt;,&lt;foreground-colour&gt;,&lt;font-style&gt;</code>
+    </div>
+    <div class="spaced">
+      where:
+    </div>
+    <ul>
+      <li>
+        <code>&lt;background-colour&gt;</code> is the colour to use for the
+        attribute's background. This is a six digit hexadecimal representation
+        of the colour in Delphi's <var>TColor</var> format.
+      </li>
+      <li>
+        <code>&lt;foreground-colour&gt;</code> is the colour to use for the
+        attribute's foreground. This is a six digit hexadecimal representation
+        of the colour in Delphi's <var>TColor</var> format.
+      </li>
+      <li>
+        <code>&lt;font-style&gt;</code> is the styling to be applied to the
+        attribute's font. This takes the form of a comma separated list of zero
+        or more of the words <code>italic</code>, <code>bold</code> and
+        <code>underline</code>, surrounded by curly brackets. Including one of
+        these words applies the style while leaving it out switches the style
+        off. Therefore normal text is represented by <code>{}</code>.
+      </li>
+    </ul>
+    <div class="spaced">
+      Any component part of the style parameter can take the special value
+      <code>*</code> (asterisk) to indicate that the default value for that part
+      should be used. For instance specifying
+      &quot;<code>*,880088,*</code>&quot; means that the default values for
+      background colour and font style should be used. Default styles for a
+      named style and those defined for the theme's default brush style
+      (<code>Brush *</code> command), otherwise the program default is used.
+      used.
+    </div>
+    <div class="spaced">
+      <em>Examples:</em>
+    </div>
+    <div class="indent spaced">
+      <code>Attr Comment *,*,{italic}</code>
+    </div>
+    <div class="indent spaced">
+      This means set the <code>Comment</code> attribute's font style to italic,
+      leaving the background and foreground colours with their default values.
+    </div>
+    <div class="indent spaced">
+      <code>Attr ReservedWord *,800000,{bold}</code>
+    </div>
+    <div class="indent spaced">
+      This means set the <code>ReservedWord</code> attribute's foreground colour
+      to 800000 (hex) and the font style to bold, leaving the background
+      colour with its default value.
+    </div>
+    <div class="indent spaced">
+      <code>Attr Identifier *,*,{}</code>
+    </div>
+    <div class="indent spaced">
+      This means that the background and foreground colours retain their default
+      values and the font is styled normally. Note that a font style of
+      <code>{}</code> explicitly removes all styles, while a style of
+      <code>*</code> inherits any default font styling.
+    </div>
+  </dd>
+</dl>
+
+<h4>
+  Identifiers
+</h4>
+
+<p>
+  Each of the commands takes an identifier as its first parameter. Identifiers
+  can be any valid Unicode character exceept white space characters: white space
+  is used to delimit identifiers.
+</p>
+
+<h3>
+  Comments
+</h3>
+
+<p>
+  Comments can be included on any line of the file after the header line.
+  Comments occupy a line by themselves and a introduced by a <code>#</code>
+  (hash) character as the first non white space on a line.
+</p>
+
+<p>
+  Comment lines are ignored.
+</p>
+
+<p>
+  Note that comments cannot be placed on the same line as a command.
+</p>
+
+<h3>
+  White space
+</h3>
+
+<p>
+  Blank lines can be inserted anywhere in the theme file after the header line
+  and are ignored.
+</p>
+
+<p>
+  Leading and trailing white space on a command or comment line is ignored and
+  is stripped off before processing the line. This means that white space can be
+  used to indent commands to make their relationship to one another more
+  apparent.
+</p>
+
+</body>
+
+</html>
