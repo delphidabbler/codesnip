@@ -138,11 +138,11 @@ type
     var
       fThemes: TObjectDictionary<string,TSyntaxHiliteTheme>;
     function GetTheme(const ID: string): TSyntaxHiliteTheme;
+    function GetDefaultTheme: TSyntaxHiliteTheme;
     class function GetNullTheme: TSyntaxHiliteTheme; static;
   public
     const
-      // TODO: consider how to ensure this theme is definately in def theme file
-      DefaultTheme = '_RADStudio_';
+      DefaultThemeId = '_DEFAULT_';
   public
     constructor Create;
     destructor Destroy; override;
@@ -158,6 +158,10 @@ type
     ///  property. Use the Delete method to dispose of a theme.</remarks>
     property Themes[const ID: string]: TSyntaxHiliteTheme
       read GetTheme; default;
+    ///  <summary>Returns the default theme instance, or if none exists, the
+    ///  null theme instance.</summary>
+    ///  <remarks>Callers must NOT free this object.</remarks>
+    property DefaultTheme: TSyntaxHiliteTheme read GetDefaultTheme;
     ///  <summary>Provides a null theme instance.</summary>
     ///  <remarks>Callers must NOT free this object.</remarks>
     class property NullTheme: TSyntaxHiliteTheme read GetNullTheme;
@@ -445,6 +449,14 @@ destructor TSyntaxHiliteThemes.Destroy;
 begin
   fThemes.Free;
   inherited;
+end;
+
+function TSyntaxHiliteThemes.GetDefaultTheme: TSyntaxHiliteTheme;
+begin
+  if fThemes.ContainsKey(DefaultThemeId) then
+    Result := GetTheme(DefaultThemeId)
+  else
+    Result := GetNullTheme;
 end;
 
 function TSyntaxHiliteThemes.GetEnumerator: TEnumerator<TSyntaxHiliteTheme>;
