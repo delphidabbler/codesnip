@@ -25,7 +25,7 @@ type
   TSourceCodeLanguageID = record
   strict private
     const
-      DefaultLanguageID = 'Text';
+      DefaultLanguageID = '_Default_';
     var
       fID: string;
   public
@@ -55,7 +55,7 @@ type
   TSourceCodeLanguage = record
   strict private
     const
-      DefaultTabSize = 2;
+      DefaultTabSize = 4;
   strict private
     var
       fID: TSourceCodeLanguageID;
@@ -66,6 +66,7 @@ type
   public
     constructor Create(const AID: TSourceCodeLanguageID;
       const AFriendlyName: string; const AIsBuiltIn: Boolean);
+    class function CreateDefault: TSourceCodeLanguage; static; inline;
     ///  <summary>Updates the record's properties to those of Lang except that
     ///  the BuiltIn property remains unchanged.</summary>
     procedure Update(const Lang: TSourceCodeLanguage);
@@ -186,6 +187,17 @@ begin
   fHiliterBrushID := TSyntaxHiliterBrushes.NullBrushID;
 end;
 
+class function TSourceCodeLanguage.CreateDefault: TSourceCodeLanguage;
+resourcestring
+  sDefaultFriendlyName = 'Unknown';
+begin
+  Result := TSourceCodeLanguage.Create(
+    TSourceCodeLanguageID.CreateDefault,
+    sDefaultFriendlyName,
+    True
+  );
+end;
+
 procedure TSourceCodeLanguage.Update(
   const Lang: TSourceCodeLanguage);
 var
@@ -235,7 +247,10 @@ end;
 function TSourceCodeLanguages.GetLanguage(const LangID: TSourceCodeLanguageID):
   TSourceCodeLanguage;
 begin
-  Result := fLanguages[LangID];
+  if HasLanguage(LangID) then
+    Result := fLanguages[LangID]
+  else if HasLanguage(TSourceCodeLanguage.CreateDefault.ID) then
+    Result := TSourceCodeLanguage.CreateDefault;
 end;
 
 function TSourceCodeLanguages.HasLanguage(const LangID: TSourceCodeLanguageID):
