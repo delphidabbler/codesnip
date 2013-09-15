@@ -445,11 +445,11 @@ var
   CSSBuilder: TCSSBuilder;  // builds CSS code
   HiliterCSS: THiliterCSS;  // generates CSS names and properties for hiliter
 begin
-  HiliterCSS := THiliterCSS.Create(Brush, Theme);
+  HiliterCSS := THiliterCSS.Create(Theme);
   try
     CSSBuilder := TCSSBuilder.Create;
     try
-      HiliterCSS.BuildCSS(CSSBuilder);
+      HiliterCSS.BuildBrushCSS(Brush, CSSBuilder);
       Result := CSSBuilder.AsString;
     finally
       CSSBuilder.Free;
