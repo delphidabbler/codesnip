@@ -54,6 +54,7 @@ procedure TConfig.Finalize;
 begin
   // TODO: save languages here once user defined languages have been enabled
   // TODO: save themes here once use defined themes have been enabled
+  fHiliterThemes.Free;
   fSourceCodeLanguages.Free;
 end;
 
