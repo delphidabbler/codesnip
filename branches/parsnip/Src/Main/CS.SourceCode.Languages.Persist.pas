@@ -295,7 +295,7 @@ begin
         raise ESourceCodeLanguagesIO.Create(sMissingTabSize);
       if not TryStrToInt(CurrentParameter, TabSize) then
         raise ESourceCodeLanguagesIO.CreateFmt(sBadTabSize, [CurrentParameter]);
-      TabRange := TRange.Create(0, High(Byte));
+      TabRange := TRange.Create(1, High(Byte));
       if not TabRange.Contains(TabSize) then
         raise ESourceCodeLanguagesIO.CreateFmt(sBadTabSize, [CurrentParameter]);
       Language.EditorTabSize := Byte(TabSize);
