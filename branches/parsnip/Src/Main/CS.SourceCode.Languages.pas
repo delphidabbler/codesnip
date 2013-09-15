@@ -19,8 +19,7 @@ interface
 
 uses
   Generics.Defaults,
-  Generics.Collections,
-  CS.SourceCode.Hiliter.Brushes;
+  Generics.Collections;
 
 type
   TSourceCodeLanguageID = record
@@ -57,7 +56,6 @@ type
   strict private
     const
       DefaultTabSize = 2;
-      DefaultBrushID = TSyntaxHiliterBrushes.NullBrushID;
   strict private
     var
       fID: TSourceCodeLanguageID;
@@ -104,6 +102,7 @@ implementation
 
 uses
   SysUtils,
+  CS.SourceCode.Hiliter.Brushes,
   CS.Utils.Hashes,
   UStrUtils;
 
@@ -184,7 +183,7 @@ begin
   fFriendlyName := AFriendlyName;
   fBuiltIn := AIsBuiltIn;
   fEditorTabSize := DefaultTabSize;
-  fHiliterBrushID := DefaultBrushID;
+  fHiliterBrushID := TSyntaxHiliterBrushes.NullBrushID;
 end;
 
 procedure TSourceCodeLanguage.Update(
