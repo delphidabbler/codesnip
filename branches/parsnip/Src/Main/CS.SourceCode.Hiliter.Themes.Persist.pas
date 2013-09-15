@@ -162,6 +162,10 @@ resourcestring
   sMissingFriendlyThemeName = 'Missing friendly name in THEME statement';
   sMissingID = 'Missing identifier in %s statement';
   sBadID = 'Invalid identifier "%0:s" in %1:s statement';
+  sBadUserThemeID = 'User defined THEME identifier "%s" must not start with '
+    + 'an underscore';
+  sBadBuiltInThemeID = 'Built in THEME identifier "%s" must begin with an '
+    + 'underscore';
   sBadAttrColour = 'Invalid colour in ATTR "%s"';
   sBadFontStyle = 'Invalid font style in ATTR "%s"';
   sBadWatermark = 'Invalid or missing watermark line';
@@ -622,6 +626,10 @@ begin
   begin
     StrSplit(CurrentParameter, ' ', ThemeID, ThemeFriendlyName);
     ThemeID := StrTrim(ThemeID);
+    if not IsBuiltIn and StrStartsStr('_', ThemeID) then
+      raise ESyntaxHiliteThemesIO.CreateFmt(sBadUserThemeID, [ThemeID]);
+    if IsBuiltIn and not StrStartsStr('_', ThemeID) then
+      raise ESyntaxHiliteThemesIO.CreateFmt(sBadBuiltInThemeID, [ThemeID]);
     ValidateIdent(KwdTheme, ThemeID, ThemeIDs);
     ThemeIDS.Add(ThemeID);
     ThemeFriendlyName := StrTrim(ThemeFriendlyName);
