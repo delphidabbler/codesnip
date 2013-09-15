@@ -82,8 +82,17 @@
 </h2>
 
 <p>
-  The file is introduced by a header line, which must occupy the first line,
-  with no preceeding white space or comments. This line must be:
+  The file is introduced by a header line followed by zero or more
+  <em>Theme</em> statements, each of which defines a single theme.
+</p>
+
+<h3>
+  Header Line
+</h3>
+
+<p>
+  The header line must occupy the first line, with no preceding white space or
+  comments. This line must be:
 </p>
 
 <pre class="indent">► CodeSnip Syntax Highlight Themes v1 ◄</pre>
@@ -96,212 +105,538 @@
   order mark.
 </p>
 
-<p>
-  The remainder of the file is a sequence of commands, blank lines and comment
-  lines.
-</p>
-
-<h3>
-  Commands
+<h3 id="theme">
+  Theme Statements
 </h3>
 
-</p>
-  Each command occupies one line and is introduced by a keyword and is followed
-  by one or more parameter values.
+<p>
+  The remainder of the file a sequence of <em>Theme</em> statements, optionally
+  interspersed with blank and <a href="#comments">comment</a> lines.
 </p>
 
 <p>
-  In outline, the file is structured as one or more theme definitions. Each
-  theme definition is introduced by a <code>Theme</code> command.
+  Each <em>Theme</em> statement is introduced by the keyword <code>Theme</code>
+  as the first non <a href="#white-space">white space</a> token on a line.
+  <code>Theme</code> is immediately followed by white space then a unique
+  theme <a href="#identifiers">identifier</a>, some more white space and the
+  human readable name of the theme. The human readable theme name continues
+  until the end of the line, and may contain white space. For example:
+</p>
+
+<p class="indent">
+  <code>Theme NewTheme My New Theme</code>
 </p>
 
 <p>
-  Within a theme definition come zero or more brush style definitions, each
-  introduced by a <code>Brush</code> command. A theme can have a default brush
-  style that applies to all highlighter brushes along with named brush styles
-  that apply to a specified brush type. Values in named brush styles override
-  the theme's default style.
+  introduces a theme with identifier <code>NewTheme</code> with human readable
+  name <code>My New Theme</code>.
+</p>
+
+<p class="pullout">
+  <strong>NOTE:</strong> The theme identifier <code>_DEFAULT_</code> is special
+  and denotes the theme that is to be used as the program's default theme. This
+  identifier may only by used in program's pre-defined themes.
 </p>
 
 <p>
-  Finally, within each brush style are zero of more attribute style commands,
-  each introduced by the <code>Attr</code> keyword. For named brush styles these
-  commands need only define attributes that are used by the particular brush.
+  Immediately following the <code>Theme</code> comes a sequence of other
+  statements in any order. They are:
+</p>
+
+<ul>
+  <li>
+    <a href="#default-background"><em>Default Background</em></a> statement
+    (optional).
+  </li>
+  <li>
+    <a href="#default-foreground"><em>Default Foreground</em></a> statement
+    (optional).
+  </li>
+  <li>
+    <a href="font-name"><em>Font Name</em></a> statement (optional).
+  </li>
+  <li>
+    <a href="#font-size"><em>Font Size</em></a> statement (optional).
+  </li>
+  <li>
+    Zero or more <a href="#brush"><em>Brush</em></a> statements.
+  </li>
+</ul>
+
+<p>
+  A <em>Theme</em> statement is terminated by the next <code>Theme</code>
+  keyword or by the end of the file.
+</p>
+
+<h3 id="default-background">
+  Default Background Statement
+</h3>
+
+<p>
+  Each <a href="#theme"><em>Theme</em></a> statement can contain an optional
+  <em>Default Background</em> statement. This defines the default background
+  colour of highlighted code.
 </p>
 
 <p>
-  The parameters required by each of the commands are:
+  The statement is introduced by the <code>DefaultBackground</code> keyword
+  which must be the first non <a href="#white-space">white space</a> token on a
+  line. <code>DefaultBackground</code> is followed by white space and then a six
+  digit hexadecimal representation of the colour in Delphi's TColor format.
+  The end of the line terminates the statement.
 </p>
 
-<dl>
-  <dt>
-    <code>Theme</code>
-  </dt>
-  <dd>
-    <div class="spaced">
-      The keyword is immediately followed by an identifier for the theme. The
-      identifier must be unique and is terminated by one or more spaces.
-      Following the identifier comes the theme's friendly name. This can be any
-      valid Unicode text and is terminated by the end of the line. At least one
-      word must be specified for the friendly name. The friendly name is that
-      which is displayed to users.
-    </div>
-    <div class="pullout">
-      Note that identifiers beginning with <code>_</code> (underscore) are
-      reserved for use by built-in themes and must not be used for user-defined
-      themes.
-    </div>
-    <div class="spaced">
-      <em>Examples:</em>
-    </div>
-    <div class="indent spaced">
-      <code>Theme NewTheme My New Theme</code>
-    </div>
-    <div class="indent spaced">
-      Here <em><code>MyTheme</code></em> is the identifier and the friendly name
-      is <em><code>My New Theme</code></em>.
-    </div>
-  </dd>
-  <dt>
-    <code>Brush</code>
-  </dt>
-  <dd>
-    <div class="spaced">
-      The keyword is immediately followed by either <code>*</code> (asterisk) to
-      indicate this is the default brush style, or an identifier that specifies
-      the name of the brush being styled. This should be the ID of a supported
-      brush and must be unique within the theme.
-    </div>
-    <div class="spaced">
-      <em>Examples:</em>
-    </div>
-    <div class="indent spaced">
-      <code>Brush *</code>
-    </div>
-    <div class="indent spaced">
-      <code>Brush ObjectPascal</code>
-    </div>
-  </dd>
-  <dt>
-    <code>Attr</code>
-  </dt>
-  <dd>
-    <div class="spaced">
-      The keyword is followed by two parameters. The first is an identifier
-      that specifies the ID of the attribute being styled. This should be a
-      valid identifier for the attribute and must be unique within the brush.
-      The second parameter defines the style. The style parameter has the
-      following format:
-    </div>
-    <div class="spaced indent">
-      <code>&lt;background-colour&gt;,&lt;foreground-colour&gt;,&lt;font-style&gt;</code>
-    </div>
-    <div class="spaced">
-      where:
-    </div>
-    <ul>
-      <li>
-        <code>&lt;background-colour&gt;</code> is the colour to use for the
-        attribute's background. This is a six digit hexadecimal representation
-        of the colour in Delphi's <var>TColor</var> format.
-      </li>
-      <li>
-        <code>&lt;foreground-colour&gt;</code> is the colour to use for the
-        attribute's foreground. This is a six digit hexadecimal representation
-        of the colour in Delphi's <var>TColor</var> format.
-      </li>
-      <li>
-        <code>&lt;font-style&gt;</code> is the styling to be applied to the
-        attribute's font. This takes the form of a comma separated list of zero
-        or more of the words <code>italic</code>, <code>bold</code> and
-        <code>underline</code>, surrounded by curly brackets. Including one of
-        these words applies the style while leaving it out switches the style
-        off. Therefore normal text is represented by <code>{}</code>.
-      </li>
-    </ul>
-    <div class="spaced">
-      Any component part of the style parameter can take the special value
-      <code>*</code> (asterisk) to indicate that the default value for that part
-      should be used. For instance specifying
-      &quot;<code>*,880088,*</code>&quot; means that the default values for
-      background colour and font style should be used. Default styles for a
-      named style and those defined for the theme's default brush style
-      (<code>Brush *</code> command), otherwise the program default is used.
-      used.
-    </div>
-    <div class="spaced">
-      <em>Examples:</em>
-    </div>
-    <div class="indent spaced">
-      <code>Attr Comment *,*,{italic}</code>
-    </div>
-    <div class="indent spaced">
-      This means set the <code>Comment</code> attribute's font style to italic,
-      leaving the background and foreground colours with their default values.
-    </div>
-    <div class="indent spaced">
-      <code>Attr ReservedWord *,800000,{bold}</code>
-    </div>
-    <div class="indent spaced">
-      This means set the <code>ReservedWord</code> attribute's foreground colour
-      to 800000 (hex) and the font style to bold, leaving the background
-      colour with its default value.
-    </div>
-    <div class="indent spaced">
-      <code>Attr Identifier *,*,{}</code>
-    </div>
-    <div class="indent spaced">
-      This means that the background and foreground colours retain their default
-      values and the font is styled normally. Note that a font style of
-      <code>{}</code> explicitly removes all styles, while a style of
-      <code>*</code> inherits any default font styling.
-    </div>
-  </dd>
-</dl>
+<p>
+  For example:
+</p>
 
-<h4>
+<p class="indent">
+  <code>DefaultBackground 00FF00</code>
+</p>
+
+<p>
+  sets the theme's default background colour to <code>TColor($0000FF00)</code>.
+</p>
+
+<p>
+  Omitting this statement means that the theme's background is transparent. This
+  can be made explicit by supplying the <code>DefaultBackground</code> keyword
+  followed by a dash (&quot;<code>-</code>&quot;) instead of the six digit
+  colour number, i.e.:
+</p>
+
+<p class="indent">
+  <code>DefaultBackground -</code>
+</p>
+
+<h3 id="default-foreground">
+  Default Foreground Statement
+</h3>
+
+<p>
+  Each <a href="#theme"><em>Theme</em></a> statement can contain an optional
+  <em>Default Foreground</em> statement. This defines the default foreground
+  colour (i.e. font colour) of highlighted code.
+</p>
+
+<p>
+  The statement is introduced by the <code>DefaultForeground</code> keyword
+  which must be the first non <a href="#white-space">white space</a> token on a
+  line. <code>DefaultForeground</code> is followed by white space and then a six
+  digit hexadecimal representation of the colour in Delphi's TColor format.
+  The end of the line terminates the statement.
+</p>
+
+<p>
+  For example:
+</p>
+
+<p class="indent">
+  <code>DefaultForeground 000000</code>
+</p>
+
+<p>
+  sets the theme's default background colour to <code>TColor($00000000)</code>,
+  i.e. black.
+</p>
+
+<p>
+  Omitting this statement means that the theme uses as its default foreground
+  colour the font colour of the surface where the syntax highlighted code is to
+  be displayed. This can be made explicit by supplying the
+  <code>DefaultForeground</code> keyword followed by a dash
+  (&quot;<code>-</code>&quot;) instead of the six digit colour number, i.e.:
+</p>
+
+<p class="indent">
+  <code>DefaultForeground -</code>
+</p>
+
+<h3 id="font-name">
+  Font Name Statement
+</h3>
+
+<p>
+  Each <a href="#theme"><em>Theme</em></a> statement can contain an optional
+  <em>Font Name</em> statement. This statement defines the name of the font to
+  be used in rendering syntax highlighted code when using the theme.
+</p>
+
+<p>
+  The statement is introduced by the <code>FontName</code> keyword as the first
+  non <a href="#white-space">white space</a> token on a line. The keyword is
+  followed by white space and then the name of required font. The font name
+  continues until the end of the line, which terminates the statement.
+</p>
+
+<p>
+  For example:
+</p>
+
+<p class="indent">
+  <code>FontName Lucida Console</code>
+</p>
+
+<p>
+  Causes the theme to use &quot;Lucida Console&quot; font.
+</p>
+
+<p>
+  Ommitting the <em>Font Name</em> statement causes the default theme font to be
+  used. This is &quot;Courier New&quot;.
+</p>
+
+<h3 id="font-size">
+  Font Size Statement
+</h3>
+
+<p>
+  Each <a href="#theme"><em>Theme</em></a> statement can contain an optional
+  <em>Font Size</em> statement. This statement defines the size, in points, of
+  the font to be used when rendering syntax highlighted code using the
+  theme.
+</p>
+
+<p>
+  The statement is introduced by the <code>FontSize</code> keyword as the first
+  non <a href="#white-space">white space</a> token on a line. The keyword is
+  followed by white space and then the size of the required font as a base 10
+  positive integer. The end of line terminates the statement.
+</p>
+
+<p>
+  For example:
+</p>
+
+<p class="indent">
+  <code>FontSize 10</code>
+</p>
+
+<p>
+  Causes the theme to use a font size of 10pt.
+</p>
+
+<p>
+  Ommitting the <em>Font Size</em> statement causes the default theme font size
+  of 9pt to be used.
+</p>
+
+<h3 id="brush">
+  Brush statement
+</h3>
+
+<p>
+  The <em>Brush</em> statement is a multi-line statement that defines a brush to
+  be used within a theme. Each <a href="#theme"><em>Theme</em></a> statement
+  contains zero or more brush statements.
+</p>
+
+<p>
+  The statement is introduced by the <code>Brush</code> keyword as the first non
+  <a href="#white-space">white space</a> token on a line. <code>Brush</code> is
+  followed by white space and then either a brush
+  <a href="#identifiers">identifier</a> or an asterisk
+  (&quot;<code>*</code>&quot;).
+</p>
+
+<p>
+  A brush identifier defines the styling applied to a specific brush. The
+  identifier <em>should</em> be the ID of a supported syntax highlight brush
+  and <strong>must</strong> be unique within the theme.
+</p>
+
+<p>
+  An asterisk indicates that the brush is the theme's default brush. This brush
+  provides default styling used by any brush that does not have its styling
+  defined in its own <em>Brush</em> statement. When the default brush is defined
+  it <strong>must</strong> be defined only once in each theme.
+</p>
+
+<p>
+  Esch <em>Brush</em> statement is terminated either by the next occurrence of
+  the <code>Brush</code>, <code>FontName</code>, <code>FontSize</code>,
+  <code>DefaultBackground</code>, <code>DefaultForeground</code> or
+  <code>Theme</code> keywords or by the end of file.
+</p>
+
+<p>
+  Examples:
+</p>
+
+<p class="indent">
+  <code>Brush ObjectPascal</code>
+</p>
+
+<p>
+  introduces the definition of the styles applied to the <em>ObjectPascal</em>
+  brush.
+</p>
+
+<p class="indent">
+  <code>Brush *</code>
+</p>
+
+<p>
+  introduces the definition of the theme's default brush.
+</p>
+
+<p>
+  Each brush statement contains zero or more
+  <a href="#attribute"><em>Attribute</em></a> statements that define the styling
+  of the syntactic elements used by the brush.
+</p>
+
+<h3 id="attribute">
+  Attribute Statement
+</h3>
+
+<p>
+  The <em>Attribute</em> statement defines the styling of a single syntactic
+  within a <a href="#brush"><em>Brush</em> statement.
+</p>
+
+<p>
+  The statement is introduced by the <code>Attr</code> keyword as the first
+  token on a line. <code>Attr</code> is followed by two
+  <a href="#white-space">white space</a> separated parameters.
+</p>
+
+<p>
+  The first parameter is an <a href="#identifier">identifier</a> that is the ID
+  of an attribute of the brush. This identifier <em>should</em> be a valid
+  attribute of the related brush and <strong>must</strong> be unique within the
+  <a href="#brush"><em>Brush</em></a> statement. In a default
+  <a href="#brush"><em>Brush</em></a> statement the identifier can reference any
+  of the attributes of any brush.
+</p>
+
+<p>
+  The second parameter defines the style to be applied to the attribute
+  specified by the first parameter. The style parameter has the following form:
+</p>
+
+<p class="indent">
+  <code>&lt;background-colour&gt;,&lt;foreground-colour&gt;,&lt;font-style&gt;</code>
+</p>
+
+<p>
+  where the components are:
+</p>
+
+<ul>
+  <li>
+    <code>&lt;background-colour&gt;</code> is the colour to use for the
+    attribute's background. This is a six digit hexadecimal representation
+    of the colour in Delphi's <var>TColor</var> format.
+  </li>
+  <li>
+    <code>&lt;foreground-colour&gt;</code> is the colour to use for the
+    attribute's foreground. This is also a six digit hexadecimal representation
+    of the colour in Delphi's <var>TColor</var> format.
+  </li>
+  <li>
+    <code>&lt;font-style&gt;</code> is the styling to be applied to the
+    attribute's font. This takes the form of a comma separated list of zero
+    or more of the words <code>italic</code>, <code>bold</code> and
+    <code>underline</code>, surrounded by curly brackets. Including one of
+    these words applies the style while leaving it out switches the style
+    off. Therefore normal text is represented by <code>{}</code>.
+  </li>
+</ul>
+
+<p>
+  Any component part of the style parameter can have the special value
+  &quot;<code>*</code>&quot; (asterisk) to indicate that the default value for
+  that part should be used. For instance specifying
+  &quot;<code>*,880088,*</code>&quot; means that the default values for
+  background colour and font style should be used. Default values are determined
+  as follows:
+</p>
+
+<ul>
+  <li>
+    For named brush styles the default is the style provided by the theme's
+    default style for the same attribute. If the default style is not defined
+    or does not have the required attribute then the theme default values are
+    used.
+  </li>
+  <li>
+    Theme defaults are used as default values in the default theme.
+  </li>
+  <li>
+    When theme defaults are used the attributes foreground and background
+    colours are set to the values specified in the
+    <a href="#theme"><em>Theme</em></a> statement's
+    <a href="#default-foreground"><em>Default Foreground</em></a> and
+    <a href="#default-background"><em>Default Background</em></a> statements
+    where specified. Otherwise the system's default foreground and background
+    colours are used. The theme default font style is always <code>{}</code>,
+    i.e. normal text.
+  </li>
+</ul>
+
+<p>
+  Some examples:
+</p>
+
+<p class="indent">
+  <code>Attr Comment *,*,{italic}</code>
+</p>
+
+<p>
+  sets the <code>Comment</code> attribute's font style to italic, leaving the
+  background and foreground colours with their default values.
+</p>
+
+<p class="indent">
+  <code>Attr ReservedWord *,800000,{bold}</code>
+</p>
+
+<p>
+  sets the <code>ReservedWord</code> attribute's foreground colour to
+  <code>800000</code> (hex) and the font style to bold, leaving the background
+  colour with its default value.
+</p>
+
+<p class="indent">
+  <code>Attr Identifier *,*,{}</code>
+</p>
+
+<p>
+  means that the background and foreground colours retain their default values
+  and the font is styled normally. Note that a font style of <code>{}</code>
+  explicitly removes all styles, while a style of <code>*</code> inherits any
+  default font styling.
+</p>
+
+<h3 id="identifiers">
   Identifiers
-</h4>
+</h3>
 
 <p>
-  Each of the commands takes an identifier as its first parameter. Identifiers
-  can be any valid Unicode character exceept white space characters: white space
-  is used to delimit identifiers.
+  Identifier parameters of any keyword may be any valid Unicode character except
+  white space characters: white space is used to delimit parameters.
 </p>
 
-<h3>
+<p>
+  A restriction applies to <em>Theme</em> identifiers: those used for
+  pre-defined themes <strong>must</strong> begin with an underscore
+  (&quot;_&quot;) and user-defined theme identifiers <strong>must not</strong>
+  begin with an underscore.
+</p>
+
+<h3 id="comments">
   Comments
 </h3>
 
 <p>
-  Comments can be included on any line of the file after the header line.
-  Comments occupy a line by themselves and a introduced by a <code>#</code>
-  (hash) character as the first non white space on a line.
+  Comments can be included on any line of the file <strong>after</strong> the
+  header line. Comments occupy a line by themselves and a introduced by a
+  &quot;<code>#</code>&quot; (hash) character as the first non white space on a
+  line.
 </p>
 
 <p>
-  Comment lines are ignored.
+  Comment lines are ignored and are stripped from the file before parsing.
 </p>
 
 <p>
   Note that comments cannot be placed on the same line as a command.
 </p>
 
-<h3>
-  White space
+<h3 id="white-space">
+  White Space, End-Of-Line &amp; Blank Lines
 </h3>
 
 <p>
-  Blank lines can be inserted anywhere in the theme file after the header line
-  and are ignored.
+  The End-of-line characters, <em>CR</em> and <em>LF</em> are used to terminate
+  command lines.
 </p>
 
 <p>
-  Leading and trailing white space on a command or comment line is ignored and
-  is stripped off before processing the line. This means that white space can be
-  used to indent commands to make their relationship to one another more
-  apparent.
+  Leading and trailing white space is ignored: it is always stripped off before
+  parsing begins. This means that white space can be used to indent commands to
+  make their relationship to one another more apparent.
 </p>
+
+<p>
+  Blank lines can be inserted anywhere in the theme file after the header line
+  and are ignored. They are stripped out before processing the file contents.
+</p>
+
+<h3 id="full-example">
+  Example user-defined theme file
+</h3>
+
+<p>
+  Here is an example of a user-defined theme file.
+</p>
+
+<pre class="box">► CodeSnip Syntax Highlight Themes v1 ◄
+
+# 1st theme with ID &quot;Foo&quot; and human readable name &quot;Simple Test Theme&quot;
+
+Theme Foo Simple Test Theme
+
+  DefaultBackground 00FF00
+  # explicitly say we're using default foreground colour
+  DefaultForeground -
+  FontName Lucida Console
+  FontSize 9
+
+  Brush *
+    # Default brush
+    Attr Assembler          *,*,*
+    Attr Comment            *,*,{italic}
+    Attr Preprocessor       *,*,{italic}
+    Attr Identifier         *,*,{}
+    Attr ReservedWord       *,*,{bold}
+    Attr Number             *,*,{}
+    Attr Float              *,*,{}
+    Attr Hexadecimal        *,*,{}
+    Attr Space              *,*,{}
+    Attr String             *,*,{}
+    Attr Character          *,*,{}
+    Attr Symbol             *,*,{}
+    Attr NonreservedKeyword *,*,{bold}
+    Attr Event              *,*,{}
+  Brush ObjectPascal
+    # Object Pascal brush (used for any Pascal dialect)
+    Attr Assembler          *,*,*
+    Attr Comment            *,008000,{italic}
+    Attr Preprocessor       EEDDEE,808000,{}
+    Attr ReservedWord       *,800000,{bold}
+    Attr Number             *,FF0000,{}
+    Attr Float              *,FF0000,{}
+    Attr Hexadecimal        *,FF0000,{}
+    Attr String             *,FF0000,{}
+    Attr Character          *,800080,{}
+  Brush JavaScript
+    # JavaScript brush
+    Attr Comment            *,008000,*
+    Attr Identifier         *,*,{}
+    Attr ReservedWord       *,800000,{bold}
+    Attr NonreservedKeyword *,8515C7,{bold}
+    Attr Event              AAE8EE,*,{}
+    Attr Number             *,FF0000,{}
+    Attr Space              *,*,{}
+    Attr String             *,FF0000,{}
+    Attr Symbol             *,*,{}
+
+# 2nd  theme with ID &quot;Bar&quot; and human readable name &quot;Colourful Theme&quot;
+
+Theme Bar Colourful Theme
+  # A simply styled theme with a colourful background and foreground
+
+  FontSize 14
+  # Using default font
+  DefaultBackground F7F7F7
+  DefaultForeground 7F7F7F
+
+  Brush *
+    # Only a default theme here to make a few tweaks to defaults
+    Attr Comment            *,*,{bold,italic,underline}
+    Attr ReservedWord       *,*,{bold}</pre>
 
 </body>
 
