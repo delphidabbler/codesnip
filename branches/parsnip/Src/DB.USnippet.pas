@@ -26,6 +26,7 @@ uses
   Collections.Base,
   Collections.Lists,
   // Project
+  CS.SourceCode.Languages,
   ActiveText.UMain, Compilers.UGlobals, DB.USnippetKind,
   UIStringList, USnippetIDs;
 
@@ -205,6 +206,11 @@ type
       {List of cross referenced snippets in database}
     property UserDefined: Boolean read fUserDefined;
       {Flag that indicates if this is a user defined snippet}
+    ///  <summary>Returns source code language used for snippet.</summary>
+    ///  <remarks>Included to assist in testing syntax multi-language
+    ///  highlighting. Revised database will include a similar snippet property.
+    ///  </remarks>
+    function Language: TSourceCodeLanguageID;
   end;
 
   {
@@ -463,6 +469,14 @@ function TSnippet.IsEqual(const Snippet: TSnippet): Boolean;
   }
 begin
   Result := Snippet.ID = Self.ID;
+end;
+
+function TSnippet.Language: TSourceCodeLanguageID;
+begin
+  if fHiliteSource then
+    Result := TSourceCodeLanguageID.Create('Pascal')
+  else
+    Result := TSourceCodeLanguageID.Create('Text');
 end;
 
 procedure TSnippet.SetName(const Name: string);
