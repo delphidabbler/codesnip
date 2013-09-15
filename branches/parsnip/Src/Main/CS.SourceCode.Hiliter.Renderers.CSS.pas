@@ -39,17 +39,17 @@ type
   THiliterCSS = class(TObject)
   strict private
     fTheme: TSyntaxHiliteTheme;
-    fBrush: TSyntaxHiliterBrush;
       {Highlighter for which CSS is to be generated}
     // TODO: rename BuildElemCSS as BuildAttrCSS
-    procedure BuildElemCSS(const AttrID: string; const CSSBuilder: TCSSBuilder);
+    procedure BuildElemCSS(const BrushID, AttrID: string;
+      const CSSBuilder: TCSSBuilder);
       {Builds CSS class for a highlighter element.
         @param Elem [in] Highlighter element for which CSS is required.
         @param CSSBuilder [in] Object used to build and store the CSS.
       }
+    procedure BuildCommonThemeCSS(const CSSBuilder: TCSSBuilder);
   public
-    constructor Create(const Brush: TSyntaxHiliterBrush;
-      const Theme: TSyntaxHiliteTheme);
+    constructor Create(const Theme: TSyntaxHiliteTheme);
       {Class constructor. Sets up object ready to generate code for a syntax
       highlighter.
         @param HiliterAttrs [in] Attributes to be used in highlighter.
@@ -63,10 +63,9 @@ type
         @param Elem [in] Identifies element for which class name required.
         @return Required class name.
       }
-    procedure BuildCSS(const CSSBuilder: TCSSBuilder);
-      {Builds all CSS classes for a highlighter.
-        @param CSSBuilder [in] Object used to build and store required CSS.
-      }
+    procedure BuildBrushCSS(const ABrush: TSyntaxHiliterBrush;
+      const CSSBuilder: TCSSBuilder);
+    procedure BuildThemeCSS(const CSSBuilder: TCSSBuilder);
   end;
 
 
@@ -84,30 +83,37 @@ uses
 
 { THiliterCSS }
 
-procedure THiliterCSS.BuildCSS(const CSSBuilder: TCSSBuilder);
-  {Builds all CSS classes for a highlighter.
-    @param CSSBuilder [in] Object used to build and store required CSS.
-  }
+procedure THiliterCSS.BuildBrushCSS(const ABrush: TSyntaxHiliterBrush;
+  const CSSBuilder: TCSSBuilder);
 var
   Attrs: TArray<TSyntaxHiliterAttr>;
   Attr: TSyntaxHiliterAttr;
 begin
   // Add font definition in main class
-  with CSSBuilder.AddSelector('.' + GetMainCSSClassName) do
-  begin
-    AddProperty(TCSS.FontFamilyProp(fTheme.FontName, cfgMonoSpace));
-    AddProperty(TCSS.FontSizeProp(fTheme.FontSize));
-    if fTheme.DefaultBackground <> clNone then
-      AddProperty(TCSS.BackgroundColorProp(fTheme.DefaultBackground));
-    if fTheme.DefaultForeground <> clNone then
-      AddProperty(TCSS.BackgroundColorProp(fTheme.DefaultForeground));
-  end;
-  Attrs := fBrush.SupportedAttrs;
+  BuildCommonThemeCSS(CSSBuilder);
+  Attrs := ABrush.SupportedAttrs;
   for Attr in Attrs do
-    BuildElemCSS(Attr.ID, CSSBuilder);
+    BuildElemCSS(ABrush.ID, Attr.ID, CSSBuilder);
 end;
 
-procedure THiliterCSS.BuildElemCSS(const AttrID: string;
+procedure THiliterCSS.BuildCommonThemeCSS(const CSSBuilder: TCSSBuilder);
+begin
+  // Add font definition in main class
+  if CSSBuilder.Selectors['.' + GetMainCSSClassName] = nil then
+  begin
+    with CSSBuilder.AddSelector('.' + GetMainCSSClassName) do
+    begin
+      AddProperty(TCSS.FontFamilyProp(fTheme.FontName, cfgMonoSpace));
+      AddProperty(TCSS.FontSizeProp(fTheme.FontSize));
+      if fTheme.DefaultBackground <> clNone then
+        AddProperty(TCSS.BackgroundColorProp(fTheme.DefaultBackground));
+      if fTheme.DefaultForeground <> clNone then
+        AddProperty(TCSS.BackgroundColorProp(fTheme.DefaultForeground));
+    end;
+  end;
+end;
+
+procedure THiliterCSS.BuildElemCSS(const BrushID, AttrID: string;
   const CSSBuilder: TCSSBuilder);
   {Builds CSS class for a highlighter element.
     @param Elem [in] Highlighter element for which CSS is required.
@@ -116,11 +122,11 @@ procedure THiliterCSS.BuildElemCSS(const AttrID: string;
 var
   AttrStyle: TSyntaxHiliteAttrStyle;
 begin
-  AttrStyle := fTheme.GetStyle(fBrush.ID, AttrID);
+  AttrStyle := fTheme.GetStyle(BrushID, AttrID);
   // We only create CSS class if element attribute's style is non-null
   if fTheme.IsBaseStyle(AttrStyle) then
     Exit;
-  with CSSBuilder.AddSelector('.' + GetElemCSSClassName(fBrush.ID, AttrID)) do
+  with CSSBuilder.AddSelector('.' + GetElemCSSClassName(BrushID, AttrID)) do
   begin
     if AttrStyle.Background <> fTheme.DefaultBackground then
       AddProperty(TCSS.BackgroundColorProp(AttrStyle.Background));
@@ -132,17 +138,33 @@ begin
   end;
 end;
 
-constructor THiliterCSS.Create(const Brush: TSyntaxHiliterBrush;
-  const Theme: TSyntaxHiliteTheme);
+procedure THiliterCSS.BuildThemeCSS(const CSSBuilder: TCSSBuilder);
+var
+  BrushID: string;
+  Brush: TSyntaxHiliterBrush;
+  Attr: TSyntaxHiliterAttr;
+begin
+  BuildCommonThemeCSS(CSSBuilder);
+  for BrushID in TSyntaxHiliterBrushes.SupportedBrushIDs do
+  begin
+    Brush := TSyntaxHiliterBrushes.CreateBrush(BrushID);
+    try
+      for Attr in Brush.SupportedAttrs do
+        BuildElemCSS(Brush.ID, Attr.ID, CSSBuilder);
+    finally
+      Brush.Free;
+    end;
+  end;
+end;
+
+constructor THiliterCSS.Create(const Theme: TSyntaxHiliteTheme);
   {Class constructor. Sets up object ready to generate code for a syntax
   highlighter.
     @param HiliterAttrs [in] Attributes to be used in highlighter.
   }
 begin
   inherited Create;
-  Assert(Assigned(Brush), ClassName + '.Create: Brush is nil');
   Assert(Assigned(Theme), ClassName + '.Create: Theme is nil');
-  fBrush := Brush;
   fTheme := Theme;
 end;
 
