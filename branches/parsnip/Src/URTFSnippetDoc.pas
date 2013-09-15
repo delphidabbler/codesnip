@@ -120,7 +120,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  Hiliter.UHiliters, UColours, UConsts, UPreferences, UStrUtils;
+  UColours, UConsts, UPreferences, UStrUtils;
 
 
 { TRTFSnippetDoc }

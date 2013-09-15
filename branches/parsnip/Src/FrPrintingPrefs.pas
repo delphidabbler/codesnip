@@ -100,7 +100,7 @@ uses
   SysUtils, Windows, Graphics, Math, ComCtrls,
   // Project
   CS.Utils.Sound,
-  FmPreferencesDlg, Hiliter.UAttrs, Hiliter.UHiliters, IntfCommon, UConsts,
+  FmPreferencesDlg, Hiliter.UAttrs, IntfCommon, UConsts,
   UEncodings, UKeysHelper, UPrintInfo, URTFBuilder, URTFStyles, URTFUtils,
   UStrUtils;
 

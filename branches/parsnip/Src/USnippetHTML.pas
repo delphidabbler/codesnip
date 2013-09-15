@@ -100,7 +100,7 @@ uses
   SysUtils,
   // Project
   ActiveText.UHTMLRenderer, DB.UMain, DB.USnippetKind, Hiliter.UAttrs,
-  Hiliter.UGlobals, Hiliter.UHiliters, UCompResHTML, UHTMLBuilder,
+  Hiliter.UGlobals, UCompResHTML, UHTMLBuilder,
   UHTMLUtils, UIStringList, UJavaScriptUtils, UResourceUtils, UStrUtils;
 
 
