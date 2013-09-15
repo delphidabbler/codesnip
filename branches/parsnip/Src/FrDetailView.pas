@@ -110,11 +110,25 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Graphics, Menus,
+  SysUtils,
+  Graphics,
+  Menus,
   // Project
-  ActiveText.UHTMLRenderer, Browser.UHighlighter, Hiliter.UAttrs,
-  Hiliter.UGlobals, UColours, UCSSUtils, UFontHelper, UPreferences, UQuery,
-  USystemInfo, UUtils, UWBCommandBars;
+  CS.Config,
+  CS.SourceCode.Languages,
+  CS.SourceCode.Hiliter.Brushes,
+  CS.SourceCode.Hiliter.Renderers.CSS,
+  CS.SourceCode.Hiliter.Themes,
+  ActiveText.UHTMLRenderer,
+  Browser.UHighlighter,
+  UColours,
+  UCSSUtils,
+  UFontHelper,
+  UPreferences,
+  UQuery,
+  USystemInfo,
+  UUtils,
+  UWBCommandBars;
 
 {$R *.dfm}
 
@@ -122,8 +136,8 @@ uses
 
 procedure TDetailViewFrame.BuildCSS(const CSSBuilder: TCSSBuilder);
 var
-  HiliteAttrs: IHiliteAttrs;  // syntax highlighter used to build CSS
-  CSSFont: TFont;             // font used to set CSS properties
+  HiliteTheme: TSyntaxHiliteTheme;  // syntax highlighter theme used build CSS
+  CSSFont: TFont;                   // font used to set CSS properties
 begin
   // NOTE:
   // We only set CSS properties that may need to use system colours or fonts
@@ -195,15 +209,18 @@ begin
       CSSFont.Color := clNewTabText;
       AddProperty(TCSS.FontProps(CSSFont));
     end;
-    // Sets text styles and colours used by syntax highlighter
-    HiliteAttrs := THiliteAttrsFactory.CreateUserAttrs;
-    with THiliterCSS.Create(HiliteAttrs) do
+    // Sets CSS required to style using any highlighter brush in current
+    // highlighter theme
+    HiliteTheme := TConfig.Instance.HiliterThemes[
+      Preferences.CurrentHiliteThemeIds[htkUI]
+    ];
+    with THiliterCSS.Create(HiliteTheme) do
       try
-        BuildCSS(CSSBuilder);
+        BuildThemeCSS(CSSBuilder);
       finally
         Free;
       end;
-    // Adjust .pas-source class to use required background colour
+    // Adjust main highlighter CSS class to use required background colour
     with CSSBuilder.Selectors['.' + THiliterCSS.GetMainCSSClassName] do
     begin
       AddProperty(TCSS.BackgroundColorProp(Preferences.SourceCodeBGcolour));
