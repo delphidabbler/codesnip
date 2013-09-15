@@ -112,7 +112,7 @@ uses
   // Delphi
   SysUtils, Graphics, Menus,
   // Project
-  ActiveText.UHTMLRenderer, Browser.UHighlighter, Hiliter.UAttrs, Hiliter.UCSS,
+  ActiveText.UHTMLRenderer, Browser.UHighlighter, Hiliter.UAttrs,
   Hiliter.UGlobals, UColours, UCSSUtils, UFontHelper, UPreferences, UQuery,
   USystemInfo, UUtils, UWBCommandBars;
 
