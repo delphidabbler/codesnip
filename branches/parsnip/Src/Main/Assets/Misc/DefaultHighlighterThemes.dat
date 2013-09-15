@@ -49,7 +49,7 @@ Theme _Delphi7_ Delphi 7
     Attr Preprocessor *,800000,{}
     Attr Assembler *,000000,{}
 
-Theme _RADStudio_ RAD Studio
+Theme _DEFAULT_ RAD Studio
   Brush *
     Attr Space *,*,{}
     Attr Comment *,008000,{italic}
