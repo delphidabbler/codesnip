@@ -97,6 +97,7 @@ type
     destructor Destroy; override;
     procedure Assign(const Src: TSyntaxHiliteTheme);
     procedure SetStyles(const Src: TSyntaxHiliteTheme);
+    function IsNull: Boolean; virtual;
     function IsBrushSupported(const BrushID: string): Boolean;
     // GetStyle => replaces any "default" style place markers with actual values
     //             from default or common style.
@@ -125,9 +126,19 @@ type
 
   TSyntaxHiliteThemes = class(TObject)
   strict private
+    type
+      TNullTheme = class(TSyntaxHiliteTheme)
+      public
+        constructor Create;
+        function IsNull: Boolean; override;
+      end;
+  strict private
+    class var
+      fNullTheme: TSyntaxHiliteTheme;
     var
       fThemes: TObjectDictionary<string,TSyntaxHiliteTheme>;
     function GetTheme(const ID: string): TSyntaxHiliteTheme;
+    class function GetNullTheme: TSyntaxHiliteTheme; static;
   public
     const
       // TODO: consider how to ensure this theme is definately in def theme file
@@ -135,19 +146,27 @@ type
   public
     constructor Create;
     destructor Destroy; override;
+    class destructor Destroy;
     procedure Add(const Theme: TSyntaxHiliteTheme);
     procedure Clear;
     procedure Delete(const ThemeID: string);
     function HasTheme(const ThemeID: string): Boolean;
     function SupportedThemes: TArray<string>;
     function GetEnumerator: TEnumerator<TSyntaxHiliteTheme>;
+    ///  <summary>Array of themes, indexed by theme id string.</summary>
+    ///  <remarks>Callers must NOT free theme instances obtained from this
+    ///  property. Use the Delete method to dispose of a theme.</remarks>
     property Themes[const ID: string]: TSyntaxHiliteTheme
       read GetTheme; default;
+    ///  <summary>Provides a null theme instance.</summary>
+    ///  <remarks>Callers must NOT free this object.</remarks>
+    class property NullTheme: TSyntaxHiliteTheme read GetNullTheme;
   end;
 
 implementation
 
 uses
+  SysUtils,
   UComparers;
 
 { TSyntaxHiliteAttrStyle }
@@ -364,6 +383,11 @@ begin
   Result := fBrushStyles.ContainsKey(BrushID);
 end;
 
+function TSyntaxHiliteTheme.IsNull: Boolean;
+begin
+  Result := False;
+end;
+
 procedure TSyntaxHiliteTheme.SetDefaultBrushStyle(
   const Value: TSyntaxHiliteBrushStyle);
 begin
@@ -412,6 +436,11 @@ begin
     fThemes.Remove(ThemeID);
 end;
 
+class destructor TSyntaxHiliteThemes.Destroy;
+begin
+  fNullTheme.Free;
+end;
+
 destructor TSyntaxHiliteThemes.Destroy;
 begin
   fThemes.Free;
@@ -421,6 +450,13 @@ end;
 function TSyntaxHiliteThemes.GetEnumerator: TEnumerator<TSyntaxHiliteTheme>;
 begin
   Result := fThemes.Values.GetEnumerator;
+end;
+
+class function TSyntaxHiliteThemes.GetNullTheme: TSyntaxHiliteTheme;
+begin
+  if not Assigned(fNullTheme) then
+    fNullTheme := TNullTheme.Create;
+  Result := fNullTheme;
 end;
 
 function TSyntaxHiliteThemes.GetTheme(const ID: string): TSyntaxHiliteTheme;
@@ -436,6 +472,18 @@ end;
 function TSyntaxHiliteThemes.SupportedThemes: TArray<string>;
 begin
   Result := fThemes.Keys.ToArray;
+end;
+
+{ TSyntaxHiliteThemes.TNullTheme }
+
+constructor TSyntaxHiliteThemes.TNullTheme.Create;
+begin
+  inherited Create(EmptyStr, EmptyStr, False);
+end;
+
+function TSyntaxHiliteThemes.TNullTheme.IsNull: Boolean;
+begin
+  Result := True;
 end;
 
 { TSyntaxHiliteFontStyles }
