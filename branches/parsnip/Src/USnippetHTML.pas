@@ -99,9 +99,21 @@ uses
   // Delphi
   SysUtils,
   // Project
-  ActiveText.UHTMLRenderer, DB.UMain, DB.USnippetKind, Hiliter.UAttrs,
-  Hiliter.UGlobals, UCompResHTML, UHTMLBuilder,
-  UHTMLUtils, UIStringList, UJavaScriptUtils, UResourceUtils, UStrUtils;
+  CS.Config,
+  CS.SourceCode.Languages,
+  CS.SourceCode.Hiliter.Brushes,
+  CS.SourceCode.Hiliter.Renderers,
+  ActiveText.UHTMLRenderer,
+  DB.UMain,
+  DB.USnippetKind,
+  UCompResHTML,
+  UHTMLBuilder,
+  UHTMLUtils,
+  UIStringList,
+  UJavaScriptUtils,
+  UPreferences,
+  UResourceUtils,
+  UStrUtils;
 
 
 { TSnippetHTML }
@@ -232,17 +244,28 @@ end;
 function TSnippetHTML.SourceCode: string;
 var
   Builder: THTMLBuilder;      // object that assembles HTML
-  Renderer: IHiliteRenderer;  // object that renders highlighted code as HTML
-  Attrs: IHiliteAttrs;        // attributes of syntax highlighter
+  Renderer: IHiliteRenderer2; // object that renders highlighted code as HTML
+  Lang: TSourceCodeLanguage;  // source code language
+  Brush: TSyntaxHiliterBrush; // brush used to perform highlighting
 begin
-  if fSnippet.HiliteSource then
-    Attrs := THiliteAttrsFactory.CreateUserAttrs
-  else
-    Attrs := THiliteAttrsFactory.CreateNulAttrs;
+  Lang := TConfig.Instance.SourceCodeLanguages[fSnippet.Language];
   Builder := THTMLBuilder.Create;
   try
-    Renderer := THTMLHiliteRenderer.Create(Builder, Attrs);
-    TSyntaxHiliter.Hilite(fSnippet.SourceCode, Renderer);
+    Brush := TSyntaxHiliterBrushes.CreateBrush(Lang.HiliterBrushID);
+    try
+      Renderer := THTMLHiliteRenderer.Create(
+        Builder,
+        Brush,
+        TConfig.Instance.HiliterThemes[Preferences.CurrentHiliteThemeIds[htkUI]]
+      );
+      TSyntaxHiliter.Hilite(
+        fSnippet.SourceCode,
+        Brush,
+        Renderer
+      );
+    finally
+      Brush.Free;
+    end;
     Result := Builder.HTMLFragment;
   finally
     Builder.Free;
