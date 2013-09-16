@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2007-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2007-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -23,7 +23,9 @@ uses
   // Delphi
   Classes,
   // Project
-  DB.UCategory, DB.USnippet, Hiliter.UGlobals, URTFUtils;
+  DB.UCategory,
+  DB.USnippet,
+  URTFUtils;
 
 
 type
@@ -47,9 +49,6 @@ type
     var
       ///  <summary>Reference to snippet described by print document.</summary>
       fSnippet: TSnippet;
-    ///  <summary>Gets highlighter attributes required to render source code,
-    ///  depending on printer properties.</summary>
-    function GetHiliteAttrs: IHiliteAttrs;
   public
     ///  <summary>Constructs object to create print document for given snippet.
     ///  </summary>
@@ -78,12 +77,19 @@ type
     function Generate: TRTF;
   end;
 
+
 implementation
 
 
 uses
   // Project
-  Hiliter.UAttrs, URTFCategoryDoc, URTFSnippetDoc, UPrintInfo;
+  CS.Config,
+  CS.SourceCode.Languages,
+  CS.SourceCode.Hiliter.Brushes,
+  URTFCategoryDoc,
+  URTFSnippetDoc,
+  UPreferences,
+  UPrintInfo;
 
 
 { TSnippetPrintDocument }
@@ -96,30 +102,31 @@ end;
 
 function TSnippetPrintDocument.Generate: TRTF;
 var
-  Doc: TRTFSnippetDoc;  // object that renders snippet document in RTF
+  Doc: TRTFSnippetDoc;            // object that renders snippet document in RTF
+  Language: TSourceCodeLanguage;  // programming language used by snippet
+  Brush: TSyntaxHiliterBrush;     // brush used to syntax highlight snippet
 begin
-  Doc := TRTFSnippetDoc.Create(
-    GetHiliteAttrs, poUseColor in PrintInfo.PrintOptions
-  );
-  try
-    Result := TRTF.Create(Doc.Generate(fSnippet));
-  finally
-    Doc.Free;
-  end;
-end;
-
-function TSnippetPrintDocument.GetHiliteAttrs: IHiliteAttrs;
-begin
-  if fSnippet.HiliteSource then
-    if not (poSyntaxPrint in PrintInfo.PrintOptions) then
-      Result := THiliteAttrsFactory.CreatePrintAttrs(nil, False)
-    else
-      Result := THiliteAttrsFactory.CreatePrintAttrs(
-        THiliteAttrsFactory.CreateUserAttrs,
-        poUseColor in PrintInfo.PrintOptions
-      )
+  Language := TConfig.Instance.SourceCodeLanguages[fSnippet.Language];
+  if (poSyntaxPrint in PrintInfo.PrintOptions) then
+    Brush := TSyntaxHiliterBrushes.CreateBrush(Language.HiliterBrushID)
   else
-    Result := THiliteAttrsFactory.CreateNulAttrs;
+    Brush := TSyntaxHiliterBrushes.CreateNullBrush;
+  try
+    Doc := TRTFSnippetDoc.Create(
+      TConfig.Instance.HiliterThemes[
+        Preferences.CurrentHiliteThemeIds[htkPrint]
+      ],
+      Brush,
+      poUseColor in PrintInfo.PrintOptions
+    );
+    try
+      Result := TRTF.Create(Doc.Generate(fSnippet));
+    finally
+      Doc.Free;
+    end;
+  finally
+    Brush.Free;
+  end;
 end;
 
 { TCategoryPrintDocument }
