@@ -47,6 +47,7 @@ type
       AFontStyles: TSyntaxHiliteFontStyles);
     class function CreateNull: TSyntaxHiliteAttrStyle; static;
     function IsNull: Boolean;
+    function Clone(const IgnoreColour: Boolean = False): TSyntaxHiliteAttrStyle;
     class operator Equal(const Left, Right: TSyntaxHiliteAttrStyle): Boolean;
     class operator NotEqual(const Left, Right: TSyntaxHiliteAttrStyle): Boolean;
   end;
@@ -60,7 +61,10 @@ type
   public
     constructor Create;
     destructor Destroy; override;
-    procedure Assign(const Src: TSyntaxHiliteBrushStyle);
+    procedure Assign(const Src: TSyntaxHiliteBrushStyle;
+      const IgnoreColour: Boolean = False);
+    function Clone(const IgnoreColour: Boolean = False):
+      TSyntaxHiliteBrushStyle;
     procedure Add(const AttrID: string; const Style: TSyntaxHiliteAttrStyle);
     procedure Clear;
     function IsAttrSupported(const AttrID: string): Boolean;
@@ -91,12 +95,15 @@ type
     function GetSupportedBrushes: TArray<string>;
     procedure SetDefaultBrushStyle(const Value: TSyntaxHiliteBrushStyle);
     function GetBaseStyle: TSyntaxHiliteAttrStyle;
+    procedure SetStyles(const Src: TSyntaxHiliteTheme;
+      const IgnoreColour: Boolean);
   public
     constructor Create(const ThemeID: string; const FriendlyName: string;
       const IsBuiltIn: Boolean);
     destructor Destroy; override;
-    procedure Assign(const Src: TSyntaxHiliteTheme);
-    procedure SetStyles(const Src: TSyntaxHiliteTheme);
+    procedure Assign(const Src: TSyntaxHiliteTheme;
+      const IgnoreColour: Boolean = False);
+    function Clone(const IgnoreColour: Boolean = False): TSyntaxHiliteTheme;
     function IsNull: Boolean; virtual;
     function IsBrushSupported(const BrushID: string): Boolean;
     // GetStyle => replaces any "default" style place markers with actual values
@@ -175,6 +182,15 @@ uses
 
 { TSyntaxHiliteAttrStyle }
 
+function TSyntaxHiliteAttrStyle.Clone(const IgnoreColour: Boolean):
+  TSyntaxHiliteAttrStyle;
+begin
+  if IgnoreColour then
+    Result := TSyntaxHiliteAttrStyle.Create(clNone, clNone, FontStyles)
+  else
+    Result := TSyntaxHiliteAttrStyle.Create(Background, Foreground, FontStyles);
+end;
+
 constructor TSyntaxHiliteAttrStyle.Create(ABackground, AForeground: TColor;
   AFontStyles: TSyntaxHiliteFontStyles);
 begin
@@ -219,18 +235,26 @@ begin
   fAttrStyles.Add(AttrID, Style);
 end;
 
-procedure TSyntaxHiliteBrushStyle.Assign(const Src: TSyntaxHiliteBrushStyle);
+procedure TSyntaxHiliteBrushStyle.Assign(const Src: TSyntaxHiliteBrushStyle;
+  const IgnoreColour: Boolean);
 var
   AttrStylePair: TPair<string,TSyntaxHiliteAttrStyle>;
 begin
   Clear;
   for AttrStylePair in Src.fAttrStyles do
-    fAttrStyles.Add(AttrStylePair.Key, AttrStylePair.Value);
+    fAttrStyles.Add(AttrStylePair.Key, AttrStylePair.Value.Clone(IgnoreColour));
 end;
 
 procedure TSyntaxHiliteBrushStyle.Clear;
 begin
-  fAttrStyles.Free;
+  fAttrStyles.Clear;
+end;
+
+function TSyntaxHiliteBrushStyle.Clone(const IgnoreColour: Boolean):
+  TSyntaxHiliteBrushStyle;
+begin
+  Result := TSyntaxHiliteBrushStyle.Create;
+  Result.Assign(Self, IgnoreColour);
 end;
 
 constructor TSyntaxHiliteBrushStyle.Create;
@@ -280,12 +304,24 @@ begin
   fBrushStyles.Add(BrushID, Style);
 end;
 
-procedure TSyntaxHiliteTheme.Assign(const Src: TSyntaxHiliteTheme);
+procedure TSyntaxHiliteTheme.Assign(const Src: TSyntaxHiliteTheme;
+  const IgnoreColour: Boolean);
 begin
   fID := Src.ID;
   fFriendlyName := Src.FriendlyName;
   fBuiltIn := Src.BuiltIn;
-  SetStyles(Src);
+  fFontName := Src.FontName;
+  fFontSize := Src.FontSize;
+  fDefaultForeground := Src.DefaultForeground;
+  fDefaultBackground := Src.DefaultBackground;
+  SetStyles(Src, IgnoreColour);
+end;
+
+function TSyntaxHiliteTheme.Clone(const IgnoreColour: Boolean):
+  TSyntaxHiliteTheme;
+begin
+  Result := TSyntaxHiliteTheme.Create(ID, FriendlyName, BuiltIn);
+  Result.Assign(Self, IgnoreColour);
 end;
 
 constructor TSyntaxHiliteTheme.Create(const ThemeID: string;
@@ -398,19 +434,25 @@ begin
   fDefaultBrushStyle.Assign(Value);
 end;
 
-procedure TSyntaxHiliteTheme.SetStyles(const Src: TSyntaxHiliteTheme);
+procedure TSyntaxHiliteTheme.SetStyles(const Src: TSyntaxHiliteTheme;
+  const IgnoreColour: Boolean);
 var
   BrushStylePair: TPair<string,TSyntaxHiliteBrushStyle>;
   ClonedBrushStyle: TSyntaxHiliteBrushStyle;
+  ClonedDefBrushStyle: TSyntaxHiliteBrushStyle;
 begin
   fBrushStyles.Clear;
   for BrushStylePair in Src.fBrushStyles do
   begin
-    ClonedBrushStyle := TSyntaxHiliteBrushStyle.Create;
-    ClonedBrushStyle.Assign(BrushStylePair.Value);
+    ClonedBrushStyle := BrushStylePair.Value.Clone(IgnoreColour);
     fBrushStyles.Add(BrushStylePair.Key, ClonedBrushStyle);
   end;
-  fDefaultBrushStyle.Assign(Src.DefaultBrushStyle);
+  ClonedDefBrushStyle := Src.DefaultBrushStyle.Clone(IgnoreColour);
+  try
+    SetDefaultBrushStyle(ClonedDefBrushStyle);
+  finally
+    ClonedDefBrushStyle.Free;
+  end;
 end;
 
 { TSyntaxHiliteThemes }
@@ -529,6 +571,7 @@ end;
 class operator TSyntaxHiliteFontStyles.Implicit(
   const S: TSyntaxHiliteFontStyles): TFontStyles;
 begin
+  // TODO: use constructor here - also sets fIsDefault field
   Result := S.Styles;
 end;
 
