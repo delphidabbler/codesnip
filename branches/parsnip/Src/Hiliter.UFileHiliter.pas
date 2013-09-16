@@ -21,7 +21,8 @@ interface
 
 uses
   // Project
-  Hiliter.UGlobals, UEncodings, USourceFileInfo;
+  UEncodings,
+  USourceFileInfo;
 
 
 type
@@ -69,7 +70,11 @@ implementation
 
 uses
   // Project
-  Hiliter.UAttrs;
+  CS.Config,
+  CS.SourceCode.Hiliter.Brushes,
+  CS.SourceCode.Hiliter.Renderers,
+  CS.SourceCode.Hiliter.Themes,
+  UPreferences;
 
 
 { TFileHiliter }
@@ -98,7 +103,8 @@ function TFileHiliter.Hilite(const SourceCode, DocTitle: string): TEncodedData;
   }
 var
   HilitedDocCls: TDocumentHiliterClass; // class used to create hilited document
-  HiliteAttrs: IHiliteAttrs;            // highlighter attributes
+  Theme: TSyntaxHiliteTheme;            // provides highlighting style
+  Brush: TSyntaxHiliterBrush;           // highlights source code
 begin
   case fFileType of
     sfRTF: HilitedDocCls := TRTFDocumentHiliter;
@@ -106,10 +112,22 @@ begin
     else HilitedDocCls := TNulDocumentHiliter;
   end;
   if fWantHiliting and IsHilitingSupported(fFileType) then
-    HiliteAttrs := THiliteAttrsFactory.CreateUserAttrs
+    Theme := TConfig.Instance.HiliterThemes[
+      Preferences.CurrentHiliteThemeIds[htkExport]
+    ]
   else
-    HiliteAttrs := nil;
-  Result := HilitedDocCls.Hilite(SourceCode, HiliteAttrs, DocTitle);
+    Theme := TSyntaxHiliteThemes.NullTheme;
+  { TODO: revise to allow brush to be specified based on source code language.
+          This will probably need extra Language ID parameter to be added.
+          Alternatively see if this unit's code can be redistributed and the
+          unit removed.
+  }
+  Brush := TSyntaxHiliterBrushes.CreateBrush('ObjectPascal');
+  try
+    Result := HilitedDocCls.Hilite(SourceCode, Brush, Theme, DocTitle);
+  finally
+    Brush.Free;
+  end;
 end;
 
 class function TFileHiliter.IsHilitingSupported(
