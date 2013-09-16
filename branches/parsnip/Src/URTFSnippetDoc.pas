@@ -23,8 +23,16 @@ uses
   // Delphi
   Graphics,
   // Project
-  ActiveText.UMain, ActiveText.URTFRenderer, Hiliter.UGlobals, UEncodings,
-  UIStringList, USnippetDoc, URTFBuilder, URTFStyles, URTFUtils;
+  CS.SourceCode.Hiliter.Brushes,
+  CS.SourceCode.Hiliter.Themes,
+  ActiveText.UMain,
+  ActiveText.URTFRenderer,
+  UEncodings,
+  UIStringList,
+  USnippetDoc,
+  URTFBuilder,
+  URTFStyles,
+  URTFUtils;
 
 
 type
@@ -35,15 +43,17 @@ type
   TRTFSnippetDoc = class(TSnippetDoc)
   strict private
     var
-      ///  <summary>Attributes that determine formatting of highlighted source
-      ///  code formatting.</summary>
-      fHiliteAttrs: IHiliteAttrs;
+      ///  <summary>Theme used for styling syntax highlighting.</summary>
+      fTheme: TSyntaxHiliteTheme;
+      ///  <summary>Brush used to perform syntax highlighting.</summary>
+      fBrush: TSyntaxHiliterBrush;
       ///  <summary>Object used to build rich text document.</summary>
       fBuilder: TRTFBuilder;
       ///  <summary>Flag indicates whether to output in colour.</summary>
       fUseColour: Boolean;
-
+      ///  <summary>RTF styles used for snippet's description.</summary>
       fDescStyles: TActiveTextRTFStyleMap;
+      ///  <summary>RTF styles used for snippet's extra information.</summary>
       fExtraStyles: TActiveTextRTFStyleMap;
       ///  <summary>Styling applied to URLs.</summary>
       fURLStyle: TRTFStyle;
@@ -102,11 +112,14 @@ type
     function FinaliseDoc: TEncodedData; override;
   public
     ///  <summary>Constructs object to render a snippet.</summary>
-    ///  <param name="HiliteAttrs">IHiliteAttrs [in] Defines style of syntax
-    ///  highlighting used for source code.</param>
+    ///  <param name="ATheme">TSyntaxHiliteTheme [in] Theme to be used when
+    ///  syntax highlighting source code.</param>
+    ///  <param name="ABrush">TSyntaxHiliterBrush [in] Brush to be used to
+    ///  syntax highlight source code.</param>
     ///  <param name="UseColour">Boolean [in] Flag that whether document is
     ///  printed in colour (True) or black and white (False).</param>
-    constructor Create(const HiliteAttrs: IHiliteAttrs;
+    constructor Create(const ATheme: TSyntaxHiliteTheme;
+      const ABrush: TSyntaxHiliterBrush;
       const UseColour: Boolean = True);
     ///  <summary>Destroys object.</summary>
     destructor Destroy; override;
@@ -119,17 +132,25 @@ implementation
 uses
   // Delphi
   SysUtils,
+  Generics.Collections,
   // Project
-  UColours, UConsts, UPreferences, UStrUtils;
+  CS.SourceCode.Hiliter.Renderers,
+  UColours,
+  UConsts,
+  UPreferences,
+  UStrUtils;
 
 
 { TRTFSnippetDoc }
 
-constructor TRTFSnippetDoc.Create(const HiliteAttrs: IHiliteAttrs;
-  const UseColour: Boolean = True);
+constructor TRTFSnippetDoc.Create(const ATheme: TSyntaxHiliteTheme;
+  const ABrush: TSyntaxHiliterBrush; const UseColour: Boolean = True);
 begin
+  Assert(Assigned(ATheme), ClassName + '.Create: ATheme is nil');
+  Assert(Assigned(ABrush), ClassName + '.Create: ABrush is nil');
   inherited Create;
-  fHiliteAttrs := HiliteAttrs;
+  fTheme := ATheme.Clone(not UseColour);
+  fBrush := ABrush;
   fUseColour := UseColour;
   fDescStyles := TActiveTextRTFStyleMap.Create;
   fExtraStyles := TActiveTextRTFStyleMap.Create;
@@ -138,6 +159,7 @@ end;
 
 destructor TRTFSnippetDoc.Destroy;
 begin
+  fTheme.Free;
   fExtraStyles.Free;
   fDescStyles.Free;
   inherited;
@@ -155,7 +177,7 @@ begin
   fBuilder := TRTFBuilder.Create(0);  // Use default code page
   // Set up font table
   fBuilder.FontTable.Add(MainFontName, rgfSwiss, 0);
-  fBuilder.FontTable.Add(fHiliteAttrs.FontName, rgfModern, 0);
+  fBuilder.FontTable.Add(fTheme.FontName, rgfModern, 0);
   // set up colour table
   fBuilder.ColourTable.Add(clWarningText);
   fBuilder.ColourTable.Add(clVarText);
@@ -358,11 +380,11 @@ end;
 
 procedure TRTFSnippetDoc.RenderSourceCode(const SourceCode: string);
 var
-  Renderer: IHiliteRenderer;  // renders highlighted source as RTF
+  Renderer: IHiliteRenderer2;  // renders highlighted source as RTF
 begin
   fBuilder.ClearParaFormatting;
-  Renderer := TRTFHiliteRenderer.Create(fBuilder, fHiliteAttrs);
-  TSyntaxHiliter.Hilite(SourceCode, Renderer);
+  Renderer := TRTFHiliteRenderer.Create(fBuilder, fBrush, fTheme);
+  TSyntaxHiliter.Hilite(SourceCode, fBrush, Renderer);
   fBuilder.EndPara;
 end;
 
