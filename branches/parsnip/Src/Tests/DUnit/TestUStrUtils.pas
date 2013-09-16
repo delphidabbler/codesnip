@@ -73,6 +73,7 @@ type
     procedure TestStrMakeSentence;
     procedure TestStrIf;
     procedure TestStrBackslashEscape;
+    procedure TestStrIsBlank;
   end;
 
 
@@ -506,6 +507,20 @@ begin
   CheckEquals('', StrIf(False, '', ''), 'Test 2');
   CheckEquals('one', StrIf(True, 'one', 'two'), 'Test 3');
   CheckEquals('two', StrIf(False, 'one', 'two'), 'Test 4');
+end;
+
+procedure TTestStrUtilsRoutines.TestStrIsBlank;
+begin
+  CheckTrue(StrIsBlank(''), 'Test 1');
+  CheckTrue(StrIsBlank('      '), 'Test 2');
+  CheckTrue(StrIsBlank(#9#10#11#12#13#$A0), 'Test 3');
+  CheckFalse(StrIsBlank('foo'), 'Test 4');
+  CheckFalse(StrIsBlank('  foo'), 'Test 5');
+  CheckFalse(StrIsBlank('foo  '), 'Test 6');
+  CheckFalse(StrIsBlank(' foo '), 'Test 7');
+  CheckFalse(StrIsBlank('foo bar'), 'Test 8');
+  CheckFalse(StrIsBlank(#13#10'foo'#13#10), 'Test 9');
+  CheckFalse(StrIsBlank('foo'#13#10'ba'#9'r'), 'Test 10');
 end;
 
 procedure TTestStrUtilsRoutines.TestStrIsDelimiter;
