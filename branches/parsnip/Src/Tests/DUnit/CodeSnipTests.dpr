@@ -37,8 +37,6 @@ uses
   TestUBaseObjects in 'TestUBaseObjects.pas',
   USingleton in '..\..\USingleton.pas',
   TestUSingleton in 'TestUSingleton.pas',
-  TestUContainers in 'TestUContainers.pas',
-  UContainers in '..\..\UContainers.pas',
   TestUURIEncode in 'TestUURIEncode.pas',
   UURIEncode in '..\..\UURIEncode.pas';
 
