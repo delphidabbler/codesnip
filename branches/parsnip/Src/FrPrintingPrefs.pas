@@ -21,9 +21,16 @@ interface
 
 uses
   // Delphi
-  StdCtrls, Controls, Forms, Classes,
+  StdCtrls,
+  Controls,
+  Forms,
+  Classes,
   // Project
-  FrPrefsBase, FrRTFShowCase, Hiliter.UGlobals, UMeasurement, UPreferences;
+  CS.SourceCode.Hiliter.Themes,
+  FrPrefsBase,
+  FrRTFShowCase,
+  UMeasurement,
+  UPreferences;
 
 
 type
@@ -51,8 +58,9 @@ type
     procedure CheckboxClick(Sender: TObject);
     procedure NumEditKeyPress(Sender: TObject; var Key: Char);
   strict private
-    fHiliteAttrs: IHiliteAttrs;
-      {Style of syntax highlighting to use in sample output}
+    ///  <summary>Theme that provides styling for syntax highlighting of
+    ///  preview.</summary>
+    fTheme: TSyntaxHiliteTheme;
     fCurrentUnits: TMeasurementUnits;
       {Current measurement units}
     procedure DisplayPreview;
@@ -63,6 +71,7 @@ type
     constructor Create(AOwner: TComponent); override;
       {Class constructor. Sets up frame object.
       }
+    destructor Destroy; override;
     procedure Activate(const Prefs: IPreferences); override;
       {Called when page activated. Updates controls.
         @param Prefs [in] Object that provides info used to update controls.
@@ -97,11 +106,23 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Windows, Graphics, Math, ComCtrls,
+  SysUtils,
+  Windows,
+  Graphics,
+  Math,
+  ComCtrls,
   // Project
+  CS.Config,
+  CS.SourceCode.Hiliter.Brushes,
+  CS.SourceCode.Hiliter.Renderers,
   CS.Utils.Sound,
-  FmPreferencesDlg, Hiliter.UAttrs, IntfCommon, UConsts,
-  UEncodings, UKeysHelper, UPrintInfo, URTFBuilder, URTFStyles, URTFUtils,
+  FmPreferencesDlg,
+  UConsts,
+  UKeysHelper,
+  UPrintInfo,
+  URTFBuilder,
+  URTFStyles,
+  URTFUtils,
   UStrUtils;
 
 
@@ -119,8 +140,8 @@ type
   strict private
     fRE: TRichEdit;
       {Reference to richedit control used to render preview}
-    fHiliteAttrs: IHiliteAttrs;
-      {Attributes of syntax highlighter to use to render preview}
+    fTheme: TSyntaxHiliteTheme;
+      {Theme providing highlighter style to use when rendering preview}
     procedure HiliteSource(const UseColor, SyntaxPrint: Boolean;
       Builder: TRTFBuilder);
       {Generates sample highlighted source code.
@@ -129,7 +150,7 @@ type
         @param Builder [in] Object that receives highlighted source code.
       }
   public
-    constructor Create(const RE: TRichEdit; const HiliteAttrs: IHiliteAttrs);
+    constructor Create(const RE: TRichEdit; const ATheme: TSyntaxHiliteTheme);
       {Class constructor. Sets up object.
         @param RE [in] Rich edit control used to render preview.
         @param HiliteAttrs [in] Current user defined highlighting.
@@ -195,7 +216,11 @@ begin
   chkUseColor.Checked := (poUseColor in Prefs.PrinterOptions);
 
   // Record current user highlighting choices and display initial preview
-  (fHiliteAttrs as IAssignable).Assign(Prefs.HiliteAttrs);
+  fTheme.Assign(
+    TConfig.Instance.HiliterThemes[
+      Prefs.CurrentHiliteThemeIds[htkPrint]
+    ]
+  );
   DisplayPreview;
 end;
 
@@ -221,8 +246,8 @@ constructor TPrintingPrefsFrame.Create(AOwner: TComponent);
 begin
   inherited;
   HelpKeyword := 'PrintingPrefs';
-  // Create syntax highlighter object for use in sample output
-  fHiliteAttrs := THiliteAttrsFactory.CreateDefaultAttrs;
+  // Create syntax highlighter theme for use in sample output
+  fTheme := TSyntaxHiliteThemes.NullTheme.Clone;
 end;
 
 procedure TPrintingPrefsFrame.Deactivate(const Prefs: IPreferences);
@@ -265,6 +290,12 @@ begin
   Prefs.PrinterPageMargins := Margins;
 end;
 
+destructor TPrintingPrefsFrame.Destroy;
+begin
+  fTheme.Free;
+  inherited;
+end;
+
 function TPrintingPrefsFrame.DisplayName: string;
   {Caption that is displayed in the tab sheet that contains this frame when
   displayed in the preference dialog box.
@@ -283,7 +314,7 @@ procedure TPrintingPrefsFrame.DisplayPreview;
 var
   Preview: TPrintingPrefsPreview; // object that renders preview
 begin
-  Preview := TPrintingPrefsPreview.Create(frmPreview.RichEdit, fHiliteAttrs);
+  Preview := TPrintingPrefsPreview.Create(frmPreview.RichEdit, fTheme);
   try
     Preview.Generate(chkUseColor.Checked, chkSyntaxPrint.Checked);
   finally
@@ -320,7 +351,7 @@ end;
 { TPrintingPrefsPreview }
 
 constructor TPrintingPrefsPreview.Create(const RE: TRichEdit;
-  const HiliteAttrs: IHiliteAttrs);
+  const ATheme: TSyntaxHiliteTheme);
   {Class constructor. Sets up object.
     @param RE [in] Rich edit control used to render preview.
     @param HiliteAttrs [in] Current user defined highlighting.
@@ -330,7 +361,7 @@ begin
     ClassName + '.Create: RE is nil');
   inherited Create;
   fRE := RE;
-  fHiliteAttrs := HiliteAttrs;
+  fTheme := ATheme;
 end;
 
 procedure TPrintingPrefsPreview.Generate(const UseColor, SyntaxPrint: Boolean);
@@ -365,7 +396,7 @@ begin
     HiliteSource(UseColor, SyntaxPrint, Builder);
     Builder.EndPara;
     // Load document into rich edit
-    TRichEditHelper.Load(fRe, Builder.Render);
+    TRichEditHelper.Load(fRE, Builder.Render);
   finally
     FreeAndNil(Builder);
   end;
@@ -386,19 +417,29 @@ const
     + '  ShowMessage(''Bar'');' + EOL
     + 'end;';
 var
-  Attrs: IHiliteAttrs;        // highlighter attributes
-  Renderer: IHiliteRenderer;  // renders highlighted code as RTF
+  Renderer: IHiliteRenderer2;  // renders highlighted code as RTF
+  Brush: TSyntaxHiliterBrush;  // performs syntax highlighting
+  Theme: TSyntaxHiliteTheme;   // determines syntax highlighting style
 begin
-  // Determine which highlighter to use depending on options
   if not SyntaxPrint then
-    // default highlighter - no syntax highlighting
-    Attrs := THiliteAttrsFactory.CreatePrintAttrs(nil, False)
+    // null theme - no syntax highlighting
+    Theme := TSyntaxHiliteThemes.NullTheme.Clone
   else
-    // user-defined highlighter, maybe in mono
-    Attrs := THiliteAttrsFactory.CreatePrintAttrs(fHiliteAttrs, UseColor);
-  // Perform highlighting
-  Renderer := TRTFHiliteRenderer.Create(Builder, Attrs);
-  TSyntaxHiliter.Hilite(cSourceCode, Renderer);
+    // proper theme - with or without colour
+    Theme := fTheme.Clone(not UseColor);
+  try
+    // NOTE: using "pascal" brush here since sample source is pascal.
+    // TODO: eventually get brush from any local language preferences
+    Brush := TSyntaxHiliterBrushes.CreateBrush('ObjectPascal');
+    try
+      Renderer := TRTFHiliteRenderer.Create(Builder, Brush, Theme);
+      TSyntaxHiliter.Hilite(cSourceCode, Brush, Renderer);
+    finally
+      Brush.Free;
+    end;
+  finally
+    Theme.Free;
+  end;
 end;
 
 initialization
