@@ -50,7 +50,15 @@ uses
   // Delphi
   SysUtils,
   // Project
-  FmPreviewDlg, Hiliter.UAttrs, Hiliter.UGlobals, UTestUnit;
+  CS.Config,
+  CS.SourceCode.Languages,
+  CS.SourceCode.Hiliter.Brushes,
+  CS.SourceCode.Hiliter.Renderers,
+  CS.SourceCode.Hiliter.Themes,
+  FmPreviewDlg,
+  UEncodings,
+  UPreferences,
+  UTestUnit;
 
 
 { TTestUnitDlgMgr }
@@ -62,10 +70,15 @@ class procedure TTestUnitDlgMgr.DisplayTestUnit(const Owner: TComponent;
     @param Snippet [in] Snippet for which test unit is to be displayed.
   }
 var
-  TestUnitSource: string;   // source code of test unit
+  TestUnitSource: string;         // source code of test unit
+  Language: TSourceCodeLanguage;  // source code language
+  Brush: TSyntaxHiliterBrush;     // syntax highlighter brush for language
+  Theme: TSyntaxHiliteTheme;      // syntax highlighter theme
+  XHTMLDoc: TEncodedData;         // syntax highlighted source code XHTML
 resourcestring
   sDlgTitle = 'Test Unit for %s'; // caption of dialog box
 begin
+  // TODO: apply extract method refactoring a couple of times
   // Generate unit source code
   with TTestUnit.Create(Snippet) do
     try
@@ -73,14 +86,21 @@ begin
     finally
       Free;
     end;
-  // Convert source to higlighted XHTML document and display it
+  // Create XHTML document containing syntax highlighted source code.
+  // Highlighting is performed using the current UI highlighter theme.
+  Theme := TConfig.Instance.HiliterThemes[
+    Preferences.CurrentHiliteThemeIds[htkUI]
+  ];
+  Language := TConfig.Instance.SourceCodeLanguages[Snippet.Language];
+  Brush := TSyntaxHiliterBrushes.CreateBrush(Language.HiliterBrushID);
+  try
+    XHTMLDoc := TXHTMLDocumentHiliter.Hilite(TestUnitSource, Brush, Theme);
+  finally
+    Brush.Free;
+  end;
+  // Display dialogue box
   TPreviewDlg.Execute(
-    Owner,
-    TXHTMLDocumentHiliter.Hilite(
-      TestUnitSource, THiliteAttrsFactory.CreateUserAttrs
-    ),
-    dtHTML,
-    Format(sDlgTitle, [Snippet.DisplayName])
+    Owner, XHTMLDoc, dtHTML, Format(sDlgTitle, [Snippet.DisplayName])
   );
 end;
 
