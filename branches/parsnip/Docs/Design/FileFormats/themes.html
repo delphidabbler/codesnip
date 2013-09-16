@@ -181,9 +181,9 @@
 <p>
   The statement is introduced by the <code>DefaultBackground</code> keyword
   which must be the first non <a href="#white-space">white space</a> token on a
-  line. <code>DefaultBackground</code> is followed by white space and then a six
-  digit hexadecimal representation of the colour in Delphi's TColor format.
-  The end of the line terminates the statement.
+  line. <code>DefaultBackground</code> is followed by white space and then an up
+  eight digit hexadecimal representation of the colour in Delphi's TColor
+  format. The end of the line terminates the statement.
 </p>
 
 <p>
@@ -191,7 +191,7 @@
 </p>
 
 <p class="indent">
-  <code>DefaultBackground 00FF00</code>
+  <code>DefaultBackground 0000FF00</code>
 </p>
 
 <p>
@@ -201,8 +201,8 @@
 <p>
   Omitting this statement means that the theme's background is transparent. This
   can be made explicit by supplying the <code>DefaultBackground</code> keyword
-  followed by a dash (&quot;<code>-</code>&quot;) instead of the six digit
-  colour number, i.e.:
+  followed by a dash (&quot;<code>-</code>&quot;) instead of the colour number,
+  i.e.:
 </p>
 
 <p class="indent">
@@ -222,9 +222,9 @@
 <p>
   The statement is introduced by the <code>DefaultForeground</code> keyword
   which must be the first non <a href="#white-space">white space</a> token on a
-  line. <code>DefaultForeground</code> is followed by white space and then a six
-  digit hexadecimal representation of the colour in Delphi's TColor format.
-  The end of the line terminates the statement.
+  line. <code>DefaultForeground</code> is followed by white space and then an up
+  to eight digit hexadecimal representation of the colour in Delphi's TColor
+  format. The end of the line terminates the statement.
 </p>
 
 <p>
@@ -232,12 +232,12 @@
 </p>
 
 <p class="indent">
-  <code>DefaultForeground 000000</code>
+  <code>DefaultForeground 00000000</code>
 </p>
 
 <p>
-  sets the theme's default background colour to <code>TColor($00000000)</code>,
-  i.e. black.
+  sets the theme's default background colour to <code>TColor(0)</code>, i.e.
+  black.
 </p>
 
 <p>
@@ -426,13 +426,13 @@
 <ul>
   <li>
     <code>&lt;background-colour&gt;</code> is the colour to use for the
-    attribute's background. This is a six digit hexadecimal representation
-    of the colour in Delphi's <var>TColor</var> format.
+    attribute's background. This is an up to eight digit hexadecimal
+    representation of the colour in Delphi's <var>TColor</var> format.
   </li>
   <li>
     <code>&lt;foreground-colour&gt;</code> is the colour to use for the
-    attribute's foreground. This is also a six digit hexadecimal representation
-    of the colour in Delphi's <var>TColor</var> format.
+    attribute's foreground. This is also an up to eight six digit hexadecimal
+    representation of the colour in Delphi's <var>TColor</var> format.
   </li>
   <li>
     <code>&lt;font-style&gt;</code> is the styling to be applied to the
@@ -448,7 +448,7 @@
   Any component part of the style parameter can have the special value
   &quot;<code>*</code>&quot; (asterisk) to indicate that the default value for
   that part should be used. For instance specifying
-  &quot;<code>*,880088,*</code>&quot; means that the default values for
+  &quot;<code>*,00880088,*</code>&quot; means that the default values for
   background colour and font style should be used. Default values are determined
   as follows:
 </p>
@@ -489,12 +489,12 @@
 </p>
 
 <p class="indent">
-  <code>Attr ReservedWord *,800000,{bold}</code>
+  <code>Attr ReservedWord *,00800000,{bold}</code>
 </p>
 
 <p>
   sets the <code>ReservedWord</code> attribute's foreground colour to
-  <code>800000</code> (hex) and the font style to bold, leaving the background
+  <code>00800000</code> (hex) and the font style to bold, leaving the background
   colour with its default value.
 </p>
 
@@ -578,7 +578,7 @@
 
 Theme Foo Simple Test Theme
 
-  DefaultBackground 00FF00
+  DefaultBackground 0000FF00
   # explicitly say we're using default foreground colour
   DefaultForeground -
   FontName Lucida Console
@@ -603,24 +603,24 @@ Theme Foo Simple Test Theme
   Brush ObjectPascal
     # Object Pascal brush (used for any Pascal dialect)
     Attr Assembler          *,*,*
-    Attr Comment            *,008000,{italic}
+    Attr Comment            *,00008000,{italic}
     Attr Preprocessor       EEDDEE,808000,{}
-    Attr ReservedWord       *,800000,{bold}
-    Attr Number             *,FF0000,{}
-    Attr Float              *,FF0000,{}
-    Attr Hexadecimal        *,FF0000,{}
-    Attr String             *,FF0000,{}
-    Attr Character          *,800080,{}
+    Attr ReservedWord       *,00800000,{bold}
+    Attr Number             *,00FF0000,{}
+    Attr Float              *,00FF0000,{}
+    Attr Hexadecimal        *,00FF0000,{}
+    Attr String             *,00FF0000,{}
+    Attr Character          *,00800080,{}
   Brush JavaScript
     # JavaScript brush
-    Attr Comment            *,008000,*
+    Attr Comment            *,00008000,*
     Attr Identifier         *,*,{}
-    Attr ReservedWord       *,800000,{bold}
-    Attr NonreservedKeyword *,8515C7,{bold}
-    Attr Event              AAE8EE,*,{}
-    Attr Number             *,FF0000,{}
+    Attr ReservedWord       *,00800000,{bold}
+    Attr NonreservedKeyword *,008515C7,{bold}
+    Attr Event              00AAE8EE,*,{}
+    Attr Number             *,00FF0000,{}
     Attr Space              *,*,{}
-    Attr String             *,FF0000,{}
+    Attr String             *,00FF0000,{}
     Attr Symbol             *,*,{}
 
 # 2nd  theme with ID &quot;Bar&quot; and human readable name &quot;Colourful Theme&quot;
@@ -630,8 +630,8 @@ Theme Bar Colourful Theme
 
   FontSize 14
   # Using default font
-  DefaultBackground F7F7F7
-  DefaultForeground 7F7F7F
+  DefaultBackground 00F7F7F7
+  DefaultForeground 007F7F7F
 
   Brush *
     # Only a default theme here to make a few tweaks to defaults
