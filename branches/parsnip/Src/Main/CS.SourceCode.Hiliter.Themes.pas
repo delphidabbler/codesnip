@@ -571,8 +571,7 @@ end;
 class operator TSyntaxHiliteFontStyles.Implicit(
   const S: TSyntaxHiliteFontStyles): TFontStyles;
 begin
-  // TODO: use constructor here - also sets fIsDefault field
-  Result := S.Styles;
+  Result := TSyntaxHiliteFontStyles.CreateStyles(S.Styles);
 end;
 
 function TSyntaxHiliteFontStyles.IsNull: Boolean;
@@ -581,3 +580,4 @@ begin
 end;
 
 end.
+
