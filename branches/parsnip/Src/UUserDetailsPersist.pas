@@ -92,9 +92,9 @@ begin
   Name := Current.Name;
   Email := Current.Email;
   // only update non-empty values
-  if StrTrim(Info.Name) <> '' then
+  if not StrIsBlank(Info.Name) then
     Name := StrTrim(Info.Name);
-  if StrTrim(Info.Email) <> '' then
+  if not StrIsBlank(Info.Email) then
     Email := StrTrim(Info.Email);
   // store the modified settings
   Save(TUserDetails.Create(Name, Email));

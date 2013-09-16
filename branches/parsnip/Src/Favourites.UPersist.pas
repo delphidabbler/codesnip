@@ -99,7 +99,7 @@ begin
   Lines.Delete(0);
   for Line in Lines do
   begin
-    if StrTrim(Line) = '' then
+    if StrIsBlank(Line) then
       Continue;
     Fields := TIStringList.Create(Line, TAB, False, True);
     if Fields.Count <> 3 then

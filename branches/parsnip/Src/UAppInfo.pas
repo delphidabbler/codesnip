@@ -298,7 +298,7 @@ class function TAppInfo.ProgramReleaseInfo: string;
   }
 begin
   Result := StrTrim(TVersionInfo.ProductVersionStr);
-  if StrTrim(TVersionInfo.SpecialBuildStr) <> '' then
+  if not StrIsBlank(TVersionInfo.SpecialBuildStr) then
     Result := Result + '-' + StrTrim(TVersionInfo.SpecialBuildStr);
 end;
 

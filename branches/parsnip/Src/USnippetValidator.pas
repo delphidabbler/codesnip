@@ -316,7 +316,7 @@ const
   ClosingBrace = '}';
 begin
   Result := False;
-  if StrTrim(Desc) = '' then
+  if StrIsBlank(Desc) then
   begin
     ErrorMsg := sErrNoDesc;
     ErrorSel := TSelection.Create(0, Length(Desc));
@@ -425,7 +425,7 @@ resourcestring
   sErrNoSource = 'Some source code must be provided';
 begin
   // Source code must be provided
-  Result := StrTrim(Source) <> '';
+  Result := not StrIsBlank(Source);
   if not Result then
   begin
     ErrorMsg := sErrNoSource;

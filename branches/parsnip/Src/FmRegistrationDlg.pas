@@ -333,7 +333,7 @@ function TRegistrationDlg.ValidateUserInfo: Boolean;
   }
 begin
   Result := True;
-  if StrTrim(edName.Text) = '' then
+  if StrIsBlank(edName.Text) then
   begin
     Result := False;
     TMessageBox.Error(Self, sErrNameRequired);

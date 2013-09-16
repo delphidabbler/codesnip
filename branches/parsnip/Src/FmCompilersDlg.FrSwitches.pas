@@ -161,7 +161,7 @@ end;
 
 procedure TCompilersDlgSwitchesFrame.UpdateSwitchButtons;
 begin
-  btnAdd.Enabled := (StrTrim(edSwitch.Text) <> '') and
+  btnAdd.Enabled := not StrIsBlank(edSwitch.Text) and
     (lbSwitches.Items.IndexOf(StrTrim(edSwitch.Text)) = -1);
   btnReplace.Enabled := btnAdd.Enabled and
     (lbSwitches.ItemIndex >= 0);

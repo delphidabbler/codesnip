@@ -305,7 +305,7 @@ procedure TSnippetsEditorDlg.actAddUnitUpdate(Sender: TObject);
     @param Sender [in] Action triggering this event.
   }
 begin
-  (Sender as TAction).Enabled := (StrTrim(edUnit.Text) <> '')
+  (Sender as TAction).Enabled := not StrIsBlank(edUnit.Text)
     and clbUnits.Enabled;
 end;
 

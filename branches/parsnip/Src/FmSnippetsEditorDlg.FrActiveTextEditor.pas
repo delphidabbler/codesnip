@@ -145,7 +145,7 @@ end;
 
 function TSnippetsActiveTextEdFrame.CanPreview: Boolean;
 begin
-  Result := StrTrim(edText.Text) <> '';
+  Result := not StrIsBlank(edText.Text);
 end;
 
 procedure TSnippetsActiveTextEdFrame.Clear;

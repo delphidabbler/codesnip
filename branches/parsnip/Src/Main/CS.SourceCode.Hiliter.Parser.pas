@@ -213,11 +213,9 @@ begin
   Lines := TStringList.Create;
   try
     Lines.Text := Source;
-    { TODO: Create a StrIsBlank routine to replace numerous calls in form
-            if StrTrim(S) = '' }
-    while (Lines.Count > 0) and (StrTrim(Lines[Pred(Lines.Count)]) = '') do
+    while (Lines.Count > 0) and StrIsBlank(Lines[Pred(Lines.Count)]) do
       Lines.Delete(Pred(Lines.Count));
-    while (Lines.Count > 0) and (StrTrim(Lines[0]) = '') do
+    while (Lines.Count > 0) and StrIsBlank(Lines[0]) do
       Lines.Delete(0);
     if not Brush.IsNull then
       DoHighlighting(Lines, Brush)
