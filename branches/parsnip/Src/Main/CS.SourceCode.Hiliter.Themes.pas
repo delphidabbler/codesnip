@@ -211,7 +211,7 @@ end;
 class operator TSyntaxHiliteFontStyles.Implicit(
   const S: TSyntaxHiliteFontStyles): TFontStyles;
 begin
-  Result := TSyntaxHiliteFontStyles.CreateStyles(S.Styles);
+  Result := S.Styles;
 end;
 
 function TSyntaxHiliteFontStyles.IsNull: Boolean;
