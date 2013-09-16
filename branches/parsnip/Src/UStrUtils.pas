@@ -258,6 +258,11 @@ function StrIf(const Condition: Boolean; const TrueStr, FalseStr: string):
 ///  in Escapes.</summary>
 function StrBackslashEscape(const S, Escapable, Escapes: string): string;
 
+///  <summary>Checks if the given string S is blank.</summary>
+///  <remarks>A string is considered blank if it is the empty string or if it
+///  comprises only of white space characters.</remarks>
+function StrIsBlank(const S: string): Boolean;
+
 
 implementation
 
@@ -857,6 +862,18 @@ begin
       PRes^ := Ch;
     Inc(PRes);
   end;
+end;
+
+function StrIsBlank(const S: string): Boolean;
+var
+  Ch: Char;
+begin
+  if S = EmptyStr then
+    Exit(True);
+  for Ch in S do
+    if not TCharacter.IsWhiteSpace(Ch) then
+      Exit(False);
+  Result := True;
 end;
 
 end.
