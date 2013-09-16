@@ -22,6 +22,7 @@ uses
   // Delphi
   Graphics,
   // Project
+  CS.SourceCode.Hiliter.Themes,
   Hiliter.UGlobals, UIStringList, UMeasurement, UPrintInfo,
   USnippetPageStructure, USourceFileInfo, USourceGen, UWarnings;
 
@@ -33,6 +34,11 @@ type
     ossExpanded,  // start treeview fully expanded
     ossCollapsed  // start treeview fully collapsed
   );
+
+type
+  ///  <summary>Defines possible kinds of syntax highlighter theme that can be
+  ///  recorded as current themes in preferences.</summary>
+  TCurrentHiliteThemeKind = (htkUI, htkExport, htkPrint);
 
 type
   ///  <summary>Interface supported by objects that maintain user preferences.
@@ -208,6 +214,17 @@ type
     property HiliteAttrs: IHiliteAttrs
       read GetHiliteAttrs write SetHiliteAttrs;
 
+    ///  <summary>Gets current highlighter theme of given kind.</summary>
+    function GetCurrentHiliteThemeId(Kind: TCurrentHiliteThemeKind): string;
+    ///  <summary>Gets current highlighter theme of given kind to given theme
+    ///  ID.</summary>
+    procedure SetCurrentHiliteThemeId(Kind: TCurrentHiliteThemeKind;
+      const ThemeId: string);
+    ///  <summary>IDs of currently selected syntax highlighters of all supported
+    ///  kinds.</summary>
+    property CurrentHiliteThemeIds[Kind: TCurrentHiliteThemeKind]: string
+      read GetCurrentHiliteThemeId write SetCurrentHiliteThemeId;
+
     ///  <summary>Gets object containing the attributes of all the named user
     ///  defined syntax highlighters.</summary>
     function GetNamedHiliteAttrs: INamedHiliteAttrs;
@@ -362,7 +379,10 @@ type
       ///  <summary>Attributes of current user defined syntax highlighter.
       ///  </summary>
       fHiliteAttrs: IHiliteAttrs;
-      ///  <summary>Reference tp object containing attributes of all the 'named'
+      ///  <summary>Map of current theme kinds to IDs of required highlighters.
+      ///  </summary>
+      fCurrentHiliteThemeIds: array[TCurrentHiliteThemeKind] of string;
+      ///  <summary>Reference to object containing attributes of all the 'named'
       ///  user defined syntax highlighters.</summary>
       fNamedHiliteAttrs: INamedHiliteAttrs;
       ///  <summary>Custom colours available for syntax highlighters.</summary>
@@ -547,6 +567,14 @@ type
     ///  <remarks>Method of IPreferences.</remarks>
     procedure SetHiliteAttrs(const Attrs: IHiliteAttrs);
 
+    ///  <summary>Gets ID of current highlighter theme of given kind.</summary>
+    function GetCurrentHiliteThemeId(Kind: TCurrentHiliteThemeKind): string;
+
+    ///  <summary>Sets current highlighter theme ID of given kind to given
+    ///  value.</summary>
+    procedure SetCurrentHiliteThemeId(Kind: TCurrentHiliteThemeKind;
+      const ThemeId: string);
+
     ///  <summary>Gets object containing the attributes of all the named user
     ///  defined syntax highlighters.</summary>
     ///  <remarks>Method of IPreferences.</remarks>
@@ -681,6 +709,7 @@ end;
 procedure TPreferences.Assign(const Src: IInterface);
 var
   SrcPref: IPreferences;  // IPreferences interface of Src
+  HiliteThemeKind: TCurrentHiliteThemeKind;
 begin
   // Get IPreferences interface of given object
   if not Supports(Src, IPreferences, SrcPref) then
@@ -703,6 +732,10 @@ begin
   Self.fPrinterOptions := SrcPref.PrinterOptions;
   Self.fPrinterPageMargins := SrcPref.PrinterPageMargins;
   Self.SetHiliteAttrs(SrcPref.HiliteAttrs);
+  for HiliteThemeKind := Low(TCurrentHiliteThemeKind) to
+    High(TCurrentHiliteThemeKind) do
+    Self.fCurrentHiliteThemeIds[HiliteThemeKind] :=
+      SrcPref.CurrentHiliteThemeIds[HiliteThemeKind];
   Self.SetNamedHiliteAttrs(SrcPref.NamedHiliteAttrs);
   Self.SetCustomHiliteColours(SrcPref.CustomHiliteColours);
   Self.SetWarnings(SrcPref.Warnings);
@@ -739,6 +772,14 @@ end;
 function TPreferences.GetAutoCheckProgramFrequency: Word;
 begin
   Result := fAutoCheckProgramFrequency;
+end;
+
+function TPreferences.GetCurrentHiliteThemeId(Kind: TCurrentHiliteThemeKind):
+  string;
+begin
+  Result := fCurrentHiliteThemeIds[Kind];
+  if Result = EmptyStr then
+    Result := TSyntaxHiliteThemes.DefaultThemeId;
 end;
 
 function TPreferences.GetCustomHiliteColours: IStringList;
@@ -852,6 +893,12 @@ begin
   fAutoCheckProgramFrequency := Value;
 end;
 
+procedure TPreferences.SetCurrentHiliteThemeId(Kind: TCurrentHiliteThemeKind;
+  const ThemeId: string);
+begin
+  fCurrentHiliteThemeIds[Kind] := ThemeId;
+end;
+
 procedure TPreferences.SetCustomHiliteColours(const Colours: IStringList);
 begin
   fHiliteCustomColours := Colours;
@@ -957,9 +1004,17 @@ end;
 
 { TPreferencesPersist }
 
+const
+  CurrentHiliterThemeKeyNames:
+    array[TCurrentHiliteThemeKind] of string = (
+      'CurrentUITheme', 'CurrentExportTheme', 'CurrentPrintTheme'
+    );
+
+
 function TPreferencesPersist.Clone: IInterface;
 var
   NewPref: IPreferences;  // reference to new object's IPreferences interface
+  HiliteThemeKind: TCurrentHiliteThemeKind;
 begin
   // Create new object
   Result := TPreferences.Create;
@@ -982,6 +1037,10 @@ begin
   NewPref.PrinterOptions := Self.fPrinterOptions;
   NewPref.PrinterPageMargins := Self.fPrinterPageMargins;
   NewPref.HiliteAttrs := Self.GetHiliteAttrs;
+  for HiliteThemeKind := Low(TCurrentHiliteThemeKind) to
+    High(TCurrentHiliteThemeKind) do
+    NewPref.CurrentHiliteThemeIds[HiliteThemeKind] :=
+      Self.fCurrentHiliteThemeIds[HiliteThemeKind];
   NewPref.NamedHiliteAttrs := Self.GetNamedHiliteAttrs;
   NewPref.CustomHiliteColours := Self.GetCustomHiliteColours;
   NewPref.Warnings := Self.GetWarnings;
@@ -994,6 +1053,7 @@ end;
 constructor TPreferencesPersist.Create;
 var
   Storage: ISettingsSection;  // object used to access persistent storage
+  HiliteThemeKind: TCurrentHiliteThemeKind;
 const
   // Default margin size in millimeters
   cPrintPageMarginSizeMM = 25.0;
@@ -1066,6 +1126,16 @@ begin
   // syntax highlighter attributes
   THiliterPersist.Load(Storage, fHiliteAttrs);
   THiliterPersist.LoadNamed(Storage, fNamedHiliteAttrs);
+  // current theme IDs
+  for HiliteThemeKind := Low(TCurrentHiliteThemeKind) to
+    High(TCurrentHiliteThemeKind) do
+  begin
+    fCurrentHiliteThemeIds[HiliteThemeKind] :=
+      Storage.GetString(
+        CurrentHiliterThemeKeyNames[HiliteThemeKind],
+        TSyntaxHiliteThemes.DefaultThemeId
+      );
+  end;
   // custom colours
   fHiliteCustomColours := Storage.GetStrings(
     'CustomColourCount', 'CustomColour%d'
@@ -1096,6 +1166,7 @@ end;
 destructor TPreferencesPersist.Destroy;
 var
   Storage: ISettingsSection;  // object used to access persistent storage
+  HiliteThemeKind: TCurrentHiliteThemeKind;
 begin
   // Write general section
   Storage := Settings.EmptySection(ssPreferences, cGeneral);
@@ -1150,6 +1221,16 @@ begin
   // syntax highlighter attributes
   THiliterPersist.Save(Storage, fHiliteAttrs);
   THiliterPersist.SaveNamed(Storage, fNamedHiliteAttrs);
+  // current theme IDs
+  for HiliteThemeKind := Low(TCurrentHiliteThemeKind) to
+    High(TCurrentHiliteThemeKind) do
+  begin
+    Storage.SetString(
+      CurrentHiliterThemeKeyNames[HiliteThemeKind],
+      GetCurrentHiliteThemeId(HiliteThemeKind)
+    );
+  end;
+
   // custom colours
   Storage.SetStrings(
     'CustomColourCount', 'CustomColour%d', fHiliteCustomColours
