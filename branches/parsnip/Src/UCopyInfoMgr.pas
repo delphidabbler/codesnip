@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2009-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2009-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -64,7 +64,12 @@ uses
   // Delphi
   SysUtils,
   // Project
-  Hiliter.UAttrs, Hiliter.UGlobals, URTFSnippetDoc, UTextSnippetDoc;
+  CS.Config,
+  CS.SourceCode.Languages,
+  CS.SourceCode.Hiliter.Brushes,
+  UPreferences,
+  URTFSnippetDoc,
+  UTextSnippetDoc;
 
 
 { TCopyInfoMgr }
@@ -97,23 +102,33 @@ end;
 
 class function TCopyInfoMgr.GenerateRichText(View: IView): TEncodedData;
 var
-  Doc: TRTFSnippetDoc;        // object that generates RTF document
-  HiliteAttrs: IHiliteAttrs;  // syntax highlighter formatting attributes
+  Doc: TRTFSnippetDoc;            // object that generates RTF document
+  Language: TSourceCodeLanguage;  // programming language used by snippet
+  Brush: TSyntaxHiliterBrush;     // brush used to syntax highlight snippet
 begin
   Assert(Supports(View, ISnippetView),
     ClassName + '.GenerateRichText: View is not a snippet view');
-  if (View as ISnippetView).Snippet.HiliteSource then
-    HiliteAttrs := THiliteAttrsFactory.CreateUserAttrs
-  else
-    HiliteAttrs := THiliteAttrsFactory.CreateNulAttrs;
-  Doc := TRTFSnippetDoc.Create(HiliteAttrs);
+  Language := TConfig.Instance.SourceCodeLanguages[
+    (View as ISnippetView).Snippet.Language
+  ];
+  Brush := TSyntaxHiliterBrushes.CreateBrush(Language.HiliterBrushID);
   try
-    // TRTFSnippetDoc generates stream of ASCII bytes
-    Result := GenerateDoc(View, Doc);
-    Assert(Result.EncodingType = etASCII,
-      ClassName + '.GenerateRichText: ASCII encoded data expected');
+    Doc := TRTFSnippetDoc.Create(
+      TConfig.Instance.HiliterThemes[
+        Preferences.CurrentHiliteThemeIds[htkPrint]
+      ],
+      Brush
+    );
+    try
+      // TRTFSnippetDoc generates stream of ASCII bytes
+      Result := GenerateDoc(View, Doc);
+      Assert(Result.EncodingType = etASCII,
+        ClassName + '.GenerateRichText: ASCII encoded data expected');
+    finally
+      Doc.Free;
+    end;
   finally
-    Doc.Free;
+    Brush.Free;
   end;
 end;
 
