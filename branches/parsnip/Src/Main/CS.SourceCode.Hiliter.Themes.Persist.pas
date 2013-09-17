@@ -53,9 +53,8 @@ type
     function CurrentStatement: string;
     function CurrentParameter: string;
 
-    function IsValidIdent(const S: string): Boolean;
     procedure ValidateIdent(const Statement, Ident: string;
-      Existing: IStringList);
+      Existing: IStringList; FormatChecker: TFunc<string,Boolean>);
 
     procedure ParseWatermark;
 
@@ -161,7 +160,7 @@ resourcestring
   sMissingAttrData = 'Missing data for ATTR "%s"';
   sMissingFriendlyThemeName = 'Missing friendly name in THEME statement';
   sMissingID = 'Missing identifier in %s statement';
-  sBadID = 'Invalid identifier "%0:s" in %1:s statement';
+  sBadID = 'Malformed identifier "%0:s" in %1:s statement';
   sBadUserThemeID = 'User defined THEME identifier "%s" must not start with '
     + 'an underscore';
   sBadBuiltInThemeID = 'Built in THEME identifier "%s" must begin with an '
@@ -373,17 +372,6 @@ begin
   NextLine;
 end;
 
-function TSyntaxHiliteThemesParser.IsValidIdent(const S: string): Boolean;
-var
-  C: Char;
-begin
-  // An identifier contains only non-whitespace ASCII characters
-  for C in S do
-    if TCharacter.IsWhiteSpace(C) then
-      Exit(False);
-  Result := True;
-end;
-
 procedure TSyntaxHiliteThemesParser.NextLine;
 begin
   if fLineIdx = fLines.Count then
@@ -520,7 +508,15 @@ begin
   begin
     StrSplit(CurrentParameter, ' ', AttrID, AttrData);
     AttrID := StrTrim(AttrID);
-    ValidateIdent(KwdAttr, AttrID, AttrIDs);
+    ValidateIdent(
+      KwdAttr,
+      AttrID,
+      AttrIDs,
+      function (S: string): Boolean
+      begin
+        Result := TSyntaxHiliteAttrStyle.IsValidIDString(S)
+      end
+    );
     AttrIDs.Add(AttrID);
     AttrStyle := ParseAttrStyle(AttrID, AttrData);
     NextLine;
@@ -539,7 +535,15 @@ begin
   while StrSameText(CurrentStatement, KwdBrush) do
   begin
     BrushID := CurrentParameter;
-    ValidateIdent(KwdBrush, BrushID, BrushIDs);
+    ValidateIdent(
+      KwdBrush,
+      BrushID,
+      BrushIDs,
+      function (S: string): Boolean
+      begin
+        Result := (S = '*') or TSyntaxHiliteBrushStyle.IsValidIDString(S)
+      end
+    );
     BrushIDs.Add(BrushID);
     NextLine;
     if BrushID = '*' then
@@ -630,7 +634,15 @@ begin
       raise ESyntaxHiliteThemesIO.CreateFmt(sBadUserThemeID, [ThemeID]);
     if IsBuiltIn and not StrStartsStr('_', ThemeID) then
       raise ESyntaxHiliteThemesIO.CreateFmt(sBadBuiltInThemeID, [ThemeID]);
-    ValidateIdent(KwdTheme, ThemeID, ThemeIDs);
+    ValidateIdent(
+      KwdTheme,
+      ThemeID,
+      ThemeIDs,
+      function (S: string): Boolean
+      begin
+        Result := TSyntaxHiliteTheme.IsValidIDString(S, IsBuiltIn);
+      end
+    );
     ThemeIDS.Add(ThemeID);
     ThemeFriendlyName := StrTrim(ThemeFriendlyName);
     if ThemeFriendlyName = EmptyStr then
@@ -655,11 +667,11 @@ begin
 end;
 
 procedure TSyntaxHiliteThemesParser.ValidateIdent(const Statement,
-  Ident: string; Existing: IStringList);
+  Ident: string; Existing: IStringList; FormatChecker: TFunc<string,Boolean>);
 begin
   if Ident = EmptyStr then
     raise ESyntaxHiliteThemesIO.CreateFmt(sMissingID, [StrToUpper(Statement)]);
-  if not IsValidIdent(Ident) then
+  if not FormatChecker(Ident) then
     raise ESyntaxHiliteThemesIO.CreateFmt(
       sBadID, [Ident, StrToUpper(Statement)]
     );
