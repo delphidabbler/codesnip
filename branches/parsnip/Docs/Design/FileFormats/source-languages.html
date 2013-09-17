@@ -124,18 +124,20 @@
 
 <p>
   <code>Language</code> is immediately followed by white space then a unique
-  language <a href="#identifiers">identifier</a>. The identifier must be unique
-  within the file in which it is defined. However an identifier in the
-  user-defined can be the same as one in the pre-defined &quot;file&quot;. In
-  such a case the definition in the user-defined file updates the pre-defined
-  value.
+  language identifier. The identifier <strong>must</strong> be made up of one or
+  more valid Unicode letters or digits or the '_' or '-' characters. It
+  <strong>must</strong> also be unique within the file in which it is defined.
+  However an identifier in the user-defined can be the same as one in the
+  pre-defined &quot;file&quot;. In such a case the definition in the
+  user-defined file updates the pre-defined value.
 </p>
 
 <p>
-  Optionally a human readable language name follows the language identifier and
-  is separated from it by white space. The human readable name continues up to
-  the end of the line, and may contain white space. If the human readable name
-  is omitted then the language identifier is also used as the human readablename.
+  Optionally a human-readable language name follows the language identifier and
+  is separated from it by white space. The human-readable name continues up to
+  the end of the line, and may contain white space. If the human-readable name
+  is omitted then the language identifier is also used as the human readable
+  name.
 </p>
 
 <p>
@@ -190,7 +192,7 @@
 
 <p>
   This statement always occurs as part of a
-  <a href="language"><em>Language</em></a> statement. It defines the size of
+  <a href="#language"><em>Language</em></a> statement. It defines the size of
   a tab used when editing code in the related language. The tab size is
   specified as a number of spaces.
 </p>
@@ -210,7 +212,7 @@
 
 <p>
   A maximum of one <em>Tab Size</em> statement is required in each
-  <a href="language"><em>Language</em></a> statement. If the statement is
+  <a href="#language"><em>Language</em></a> statement. If the statement is
   duplicated the tab size is taken from the last occurrence.
 </p>
 
@@ -228,37 +230,29 @@
 
 <p>
   This statement always occurs as part of a
-  <a href="language"><em>Language</em></a> statement. It specifies the
-  <a href="identifier">identifier</a> of the &quot;brush&quot; used to syntax
-  highlight code in the language.
+  <a href="#language"><em>Language</em></a> statement. It specifies the
+  identifier of the &quot;brush&quot; used to syntax highlight code in the
+  language.
 </p>
 
 <p>
   The statement is introduced by the <code>Brush</code> keyword which must be
   the first non <a href="#white-space">white space</a> token on the line.
-  <code>Brush</code> is followed by the required brush
-  <a href="identifier">identifier</a>. This identifier <em>should</em> be that
-  of a brush that is supported by CodeSnip.
+  <code>Brush</code> is followed by the required brush identifier. This
+  identifier <strong>must</strong> be made up of one or more of the following
+  characters: 'A'..'Z', 'a'..'z', '_', '-', '&gt;' or '&lt;'. It <em>should</em>
+  identify a brush that is supported by CodeSnip.
 </p>
 
 <p>
   If the <em>Brush</em> statement is omitted the <em>null</em> brush is assumed.
-  The null brush has identifier &quot;<code>_Null_</code>&quot;.
+  This has identifier &quot;<code>_Null_</code>&quot;.
 </p>
 
 <p>
   A maximum of one <em>Brush</em> statement is required in each
-  <a href="language"><em>Language</em></a> statement. If the statement is
+  <a href="#language"><em>Language</em></a> statement. If the statement is
   duplicated the brush identifier is taken from the last occurrence.
-</p>
-
-<h3 id="identifiers">
-  Identifiers
-</h3>
-
-<p>
-  Identifier parameters of any keyword may be any valid Unicode character except
-  white space characters: white space is used to delimit parameters.
 </p>
 
 <h3 id="comments">
