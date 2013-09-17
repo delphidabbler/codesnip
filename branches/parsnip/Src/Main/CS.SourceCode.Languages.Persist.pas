@@ -53,7 +53,6 @@ type
         function CurrentLine: string;
         function CurrentStatement: string;
         function CurrentParameter: string;
-        function IsValidIdent(const S: string): Boolean;
         procedure ValidateIdent(const Statement, Ident: string;
           Existing: IStringList);
         procedure ParseWatermark;
@@ -233,17 +232,6 @@ begin
   NextLine;
 end;
 
-function TSourceCodeLanguagesIO.TParser.IsValidIdent(const S: string): Boolean;
-var
-  C: Char;
-begin
-  // An identifier contains only non-whitespace ASCII characters
-  for C in S do
-    if TCharacter.IsWhiteSpace(C) then
-      Exit(False);
-  Result := True;
-end;
-
 procedure TSourceCodeLanguagesIO.TParser.NextLine;
 begin
   if fLineIdx = fLines.Count then
@@ -351,7 +339,7 @@ procedure TSourceCodeLanguagesIO.TParser.ValidateIdent(const Statement,
 begin
   if Ident = EmptyStr then
     raise ESourceCodeLanguagesIO.CreateFmt(sMissingID, [StrToUpper(Statement)]);
-  if not IsValidIdent(Ident) then
+  if not TSourceCodeLanguageID.IsValidIDString(Ident) then
     raise ESourceCodeLanguagesIO.CreateFmt(
       sBadID, [Ident, StrToUpper(Statement)]
     );
@@ -362,3 +350,4 @@ begin
 end;
 
 end.
+
