@@ -29,7 +29,6 @@ uses
   CS.SourceCode.Hiliter.Themes,
   FrPrefsBase,
   FrRTFShowCase,
-  Hiliter.UGlobals,
   UPreferences,
   USourceFileInfo,
   USourceGen;
@@ -130,7 +129,6 @@ uses
   CS.SourceCode.Hiliter.Brushes,
   CS.SourceCode.Hiliter.Renderers,
   FmPreferencesDlg,
-  Hiliter.UAttrs,
   Hiliter.UFileHiliter,
   IntfCommon,
   UConsts,

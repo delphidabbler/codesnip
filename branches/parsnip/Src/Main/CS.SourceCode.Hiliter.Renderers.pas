@@ -361,7 +361,6 @@ uses
   // Delphi
   SysUtils, Graphics,
   // Project
-  {Hiliter.UAttrs, }
   CS.SourceCode.Hiliter.Renderers.CSS,
   IntfCommon,
   UComparers,
