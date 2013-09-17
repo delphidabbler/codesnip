@@ -46,6 +46,7 @@ type
     constructor Create(ABackground, AForeground: TColor;
       AFontStyles: TSyntaxHiliteFontStyles);
     class function CreateNull: TSyntaxHiliteAttrStyle; static;
+    class function IsValidIDString(const S: string): Boolean; static;
     function IsNull: Boolean;
     function Clone(const IgnoreColour: Boolean = False): TSyntaxHiliteAttrStyle;
     class operator Equal(const Left, Right: TSyntaxHiliteAttrStyle): Boolean;
@@ -68,6 +69,7 @@ type
     procedure Add(const AttrID: string; const Style: TSyntaxHiliteAttrStyle);
     procedure Clear;
     function IsAttrSupported(const AttrID: string): Boolean;
+    class function IsValidIDString(const S: string): Boolean;
     function GetEnumerator: TEnumerator<TPair<string,TSyntaxHiliteAttrStyle>>;
     property SupportedAttrs: TArray<string> read GetSupportedAttrs;
     // AttrStyles => return null attr if style doesn't exist
@@ -107,6 +109,8 @@ type
     procedure ResetDefaultFont;
     function IsNull: Boolean; virtual;
     function IsBrushSupported(const BrushID: string): Boolean;
+    class function IsValidIDString(const S: string; const IsBuiltIn: Boolean):
+      Boolean;
     // GetStyle => replaces any "default" style place markers with actual values
     //             from default or common style.
     function GetStyle(const BrushId, AttrId: string): TSyntaxHiliteAttrStyle;
@@ -180,7 +184,10 @@ implementation
 
 uses
   SysUtils,
-  UComparers;
+  Character,
+  CS.SourceCode.Hiliter.Brushes,
+  UComparers,
+  UStrUtils;
 
 { TSyntaxHiliteFontStyles }
 
@@ -262,6 +269,22 @@ begin
     and FontStyles.IsNull;
 end;
 
+class function TSyntaxHiliteAttrStyle.IsValidIDString(const S: string): Boolean;
+var
+  Ch: Char;
+begin
+  // Requirements are those for a SynEdit attribute name, i.e. one or more of
+  // 'A'..'Z', 'a'..'z', '0'..'9', '_' or '-'
+  if S = EmptyStr then
+    Exit(False);
+  for Ch in S do
+  begin
+    if not CharInSet(Ch, ['A'..'Z', 'a'..'z', '0'..'9', '_', '-']) then
+      Exit(False);
+  end;
+  Result := True;
+end;
+
 class operator TSyntaxHiliteAttrStyle.NotEqual(const Left,
   Right: TSyntaxHiliteAttrStyle): Boolean;
 begin
@@ -335,6 +358,12 @@ end;
 function TSyntaxHiliteBrushStyle.IsAttrSupported(const AttrID: string): Boolean;
 begin
   Result := fAttrStyles.ContainsKey(AttrID);
+end;
+
+class function TSyntaxHiliteBrushStyle.IsValidIDString(
+  const S: string): Boolean;
+begin
+  Result := TSyntaxHiliterBrush.IsValidBrushID(S);
 end;
 
 { TSyntaxHiliteTheme }
@@ -467,6 +496,39 @@ end;
 function TSyntaxHiliteTheme.IsNull: Boolean;
 begin
   Result := False;
+end;
+
+class function TSyntaxHiliteTheme.IsValidIDString(const S: string;
+  const IsBuiltIn: Boolean): Boolean;
+
+  function IsValidBody(const S: string): Boolean;
+  var
+    Idx: Integer;
+  begin
+    if not TCharacter.IsLetter(S[1]) then
+      Exit(False);
+    for Idx := 2 to Length(S) do
+      if not TCharacter.IsLetterOrDigit(S[Idx])
+        and not TCharacter.IsPunctuation(S[Idx]) then
+        Exit(False);
+    Result := True;
+  end;
+
+begin
+  if IsBuiltIn then
+  begin
+    if Length(S) < 3 then
+      Exit(False);
+    if (S[1] <> '_') and (S[Length(S)] <> '_') then
+      Exit(False);
+    Result := IsValidBody(StrSlice(S, 2, Length(S) - 2));
+  end
+  else
+  begin
+    if S = EmptyStr then
+      Exit(False);
+    Result := IsValidBody(S);
+  end;
 end;
 
 procedure TSyntaxHiliteTheme.ResetDefaultFont;
