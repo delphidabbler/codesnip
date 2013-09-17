@@ -314,7 +314,7 @@ begin
   begin
     StrSplit(CurrentParameter, ' ', LangIDStr, LangFriendlyName);
     LangIDStr := StrTrim(LangIDStr);
-    ValidateLanguageIdent(KwdLanguage, LangIDStr, LangIDs);
+    ValidateLanguageIdent(LangIDStr, LangIDs);
     LangID := TSourceCodeLanguageID.Create(LangIDStr);
     LangIDs.Add(LangIDStr);
     LangFriendlyName := StrTrim(LangFriendlyName);
