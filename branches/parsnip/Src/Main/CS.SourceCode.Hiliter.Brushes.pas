@@ -119,6 +119,11 @@ type
     ///  <summary>Returns an array of IDs of supported highlighter brushes.
     ///  </summary>
     class function SupportedBrushIDs: TArray<string>; static;
+    ///  <summary>Returns ID of Pascal brush.</summary>
+    ///  <remarks>Pascal is a special language in CodeSnip and there are
+    ///  occasions when a Pascal brush ID is needed explicitly. This method
+    ///  provides a safe way to get the ID.</remarks>
+    class function PascalBrushID: string; static;
   end;
 
 
@@ -263,6 +268,11 @@ begin
       Exit(Cls);
   end;
   Result := nil;
+end;
+
+class function TSyntaxHiliterBrushes.PascalBrushID: string;
+begin
+  Result := TSynPasSyn.GetLanguageName;
 end;
 
 class function TSyntaxHiliterBrushes.SupportedBrushIDs: TArray<string>;

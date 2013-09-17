@@ -122,7 +122,9 @@ begin
           Alternatively see if this unit's code can be redistributed and the
           unit removed.
   }
-  Brush := TSyntaxHiliterBrushes.CreateBrush('ObjectPascal');
+  Brush := TSyntaxHiliterBrushes.CreateBrush(
+    TSyntaxHiliterBrushes.PascalBrushID
+  );
   try
     Result := HilitedDocCls.Hilite(SourceCode, Brush, Theme, DocTitle);
   finally

@@ -430,7 +430,9 @@ begin
   try
     // NOTE: using "pascal" brush here since sample source is pascal.
     // TODO: eventually get brush from any local language preferences
-    Brush := TSyntaxHiliterBrushes.CreateBrush('ObjectPascal');
+    Brush := TSyntaxHiliterBrushes.CreateBrush(
+      TSyntaxHiliterBrushes.PascalBrushID
+    );
     try
       Renderer := TRTFHiliteRenderer.Create(Builder, Brush, Theme);
       TSyntaxHiliter.Hilite(cSourceCode, Brush, Renderer);

@@ -438,7 +438,10 @@ function TSourcePrefsPreview.Generate: TRTF;
 var
   Brush: TSyntaxHiliterBrush;
 begin
-  Brush := TSyntaxHiliterBrushes.CreateBrush('ObjectPascal');
+  // This preview displays Pascal code
+  Brush := TSyntaxHiliterBrushes.CreateBrush(
+    TSyntaxHiliterBrushes.PascalBrushID
+  );
   try
     Result := TRTF.Create(
       TRTFDocumentHiliter.Hilite(SourceCode, Brush, fTheme)

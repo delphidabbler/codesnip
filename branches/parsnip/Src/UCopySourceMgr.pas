@@ -168,7 +168,7 @@ class function TCopySnippetMgr.HiliteBrushID(View: IView): string;
 begin
   // Snippets can only be generated using TSnippetSourceGen if they are written
   // in Pascal
-  Result := 'ObjectPascal';
+  Result := TSyntaxHiliterBrushes.PascalBrushID;
 end;
 
 end.
