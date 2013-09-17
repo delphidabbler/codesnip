@@ -289,15 +289,24 @@ end;
 class function TSyntaxHiliterBrush.IsValidBrushID(const ID: string): Boolean;
 var
   Ch: Char;
+  AlphaNumCount: Integer;
 begin
+  // Requirements:
+  //    1: at least one character
+  //    2: characters restrict to ASCII letters and digits and
+  //       '_', '-', '>', '<'
+  //    3: at least one character must be letter or digit
   if ID = EmptyStr then
     Exit(False);
+  AlphaNumCount := 0;
   for Ch in ID do
-    if not CharInSet(
-      Ch, ['A'..'Z', 'a'..'z', '0'..'9', '_', '-', '>', '<']
-    ) then
+  begin
+    if CharInSet(Ch, ['A'..'Z', 'a'..'z', '0'..'9']) then
+      Inc(AlphaNumCount)
+    else if not CharInSet(Ch, ['_', '-', '>', '<']) then
       Exit(False);
-  Result := True;
+  end;
+  Result := AlphaNumCount > 0;
 end;
 
 { TSynEditBrush }
