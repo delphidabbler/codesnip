@@ -43,6 +43,7 @@ type
     ///  <summary>Generates source code for the snippet represented by the
     ///  given view. Source code is returned as a Unicode string.</summary>
     class function GenerateSourceCode(View: IView): string; virtual; abstract;
+    class function HiliteBrushID(View: IView): string; virtual; abstract;
   public
     ///  <summary>Checks if a given view can be copied to the clipboard.
     ///  </summary>
@@ -59,6 +60,7 @@ type
     ///  <summary>Returns the source code of the snippet represented by the
     ///  given view. Source code is returned as a Unicode string.</summary>
     class function GenerateSourceCode(View: IView): string; override;
+    class function HiliteBrushID(View: IView): string; override;
   public
     ///  <summary>Checks if given view can be copied to the clipboard. Returns
     ///  True only if view represents a snippet.</summary>
@@ -76,6 +78,7 @@ type
     ///  snippets represented by the given view. Source code is returned as a
     ///  Unicode string.</summary>
     class function GenerateSourceCode(View: IView): string; override;
+    class function HiliteBrushID(View: IView): string; override;
   public
     ///  <summary>Checks if given view can be copied to the clipboard. Returns
     ///  True only if view contains one or more snippets that can be output as
@@ -91,7 +94,12 @@ uses
   // Delphi
   SysUtils,
   // Project
-  Hiliter.UAttrs, Hiliter.UGlobals, UPreferences,
+  CS.Config,
+  CS.SourceCode.Languages,
+  CS.SourceCode.Hiliter.Brushes,
+  CS.SourceCode.Hiliter.Renderers,
+  CS.SourceCode.Hiliter.Themes,
+  UPreferences,
   USnippetSourceGen;
 
 
@@ -103,10 +111,21 @@ begin
 end;
 
 class function TCopySourceCodeBase.GenerateRichText(View: IView): TEncodedData;
+var
+  Brush: TSyntaxHiliterBrush;
 begin
-  Result := TRTFDocumentHiliter.Hilite(
-    GenerateSourceCode(View), THiliteAttrsFactory.CreateUserAttrs
-  );
+  Brush := TSyntaxHiliterBrushes.CreateBrush(HiliteBrushID(View));
+  try
+    Result := TRTFDocumentHiliter.Hilite(
+      GenerateSourceCode(View),
+      Brush,
+      TConfig.Instance.HiliterThemes[
+        Preferences.CurrentHiliteThemeIds[htkExport]
+      ]
+    );
+  finally
+    Brush.Free;
+  end;
 end;
 
 { TCopySourceMgr }
@@ -121,6 +140,16 @@ begin
   Result := (View as ISnippetView).Snippet.SourceCode;
 end;
 
+class function TCopySourceMgr.HiliteBrushID(View: IView): string;
+var
+  Language: TSourceCodeLanguage;
+begin
+  Language := TConfig.Instance.SourceCodeLanguages[
+    (View as ISnippetView).Snippet.Language
+  ];
+  Result := Language.HiliterBrushID;
+end;
+
 { TCopySnippetMgr }
 
 class function TCopySnippetMgr.CanHandleView(View: IView): Boolean;
@@ -133,6 +162,13 @@ begin
   Result := TSnippetSourceGen.Generate(
     View, Preferences.SourceCommentStyle, Preferences.TruncateSourceComments
   );
+end;
+
+class function TCopySnippetMgr.HiliteBrushID(View: IView): string;
+begin
+  // Snippets can only be generated using TSnippetSourceGen if they are written
+  // in Pascal
+  Result := 'ObjectPascal';
 end;
 
 end.
