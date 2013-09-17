@@ -133,6 +133,7 @@ implementation
 uses
   SysUtils,
 
+  SynEditStrConst,
   SynHighlighterHtml,
   SynHighlighterJScript,
   SynHighlighterPas,
@@ -289,24 +290,20 @@ end;
 class function TSyntaxHiliterBrush.IsValidBrushID(const ID: string): Boolean;
 var
   Ch: Char;
-  AlphaNumCount: Integer;
 begin
-  // Requirements:
-  //    1: at least one character
-  //    2: characters restrict to ASCII letters and digits and
-  //       '_', '-', '>', '<'
-  //    3: at least one character must be letter or digit
+  // Requirements are those for a SynEdit language identifier, i.e.:
+  //    EITHER "<Unknown>"
+  //    OR one or more of 'A'..'Z', 'a'..'z', '0'..'9', '_' or '-'
   if ID = EmptyStr then
     Exit(False);
-  AlphaNumCount := 0;
+  if StrSameText(ID, SYNS_LangUnknown) then
+    Exit(True);
   for Ch in ID do
   begin
-    if CharInSet(Ch, ['A'..'Z', 'a'..'z', '0'..'9']) then
-      Inc(AlphaNumCount)
-    else if not CharInSet(Ch, ['_', '-', '>', '<']) then
+    if not CharInSet(Ch, ['A'..'Z', 'a'..'z', '0'..'9', '_', '-']) then
       Exit(False);
   end;
-  Result := AlphaNumCount > 0;
+  Result := True;
 end;
 
 { TSynEditBrush }

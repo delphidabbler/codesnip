@@ -160,12 +160,16 @@ end;
 
 class function TSourceCodeLanguageID.IsValidIDString(const S: string): Boolean;
 var
-  Ch: Char;
+  Idx: Integer;
+  AlphaNumCount: Integer;
 begin
   if S = EmptyStr then
     Exit(False);
-  for Ch in S do
-    if not TCharacter.IsLetterOrDigit(Ch) or not CharInSet(Ch, ['-', '_']) then
+  if not TCharacter.IsLetterOrDigit(S[1]) then
+    Exit(False);
+  for Idx := 2 to Length(S) do
+    if not TCharacter.IsLetterOrDigit(S[Idx])
+      and not TCharacter.IsPunctuation(S[Idx]) then
       Exit(False);
   Result := True;
 end;
