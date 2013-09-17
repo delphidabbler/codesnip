@@ -21,9 +21,17 @@ interface
 
 uses
   // Delphi
-  StdCtrls, Forms, Controls, Classes,
+  StdCtrls,
+  Forms,
+  Controls,
+  Classes,
   // Project
-  FrPrefsBase, FrRTFShowCase, Hiliter.UGlobals, UPreferences, USourceFileInfo,
+  CS.SourceCode.Hiliter.Themes,
+  FrPrefsBase,
+  FrRTFShowCase,
+  Hiliter.UGlobals,
+  UPreferences,
+  USourceFileInfo,
   USourceGen;
 
 
@@ -48,8 +56,9 @@ type
     procedure cbCommentStyleChange(Sender: TObject);
     procedure cbSnippetFileTypeChange(Sender: TObject);
   strict private
-    fHiliteAttrs: IHiliteAttrs;
-      {Style of syntax highlighting to use in sample output}
+    ///  <summary>Theme that provides styling for syntax highlighting of
+    ///  preview.</summary>
+    fTheme: TSyntaxHiliteTheme;
     procedure SelectSourceFileType(const FT: TSourceFileType);
       {Selects entry in file type combo box that matches specified source code
       file type.
@@ -77,6 +86,7 @@ type
     constructor Create(AOwner: TComponent); override;
       {Class constructor. Initialises controls.
       }
+    destructor Destroy; override;
     procedure Activate(const Prefs: IPreferences); override;
       {Called when page activated. Updates controls.
         @param Prefs [in] Object that provides info used to update controls.
@@ -110,11 +120,22 @@ implementation
 
 
 uses
+  // TODO: remove debug unit
+  UEncodings,
   // Delphi
-  SysUtils, Math,
+  SysUtils,
+  Math,
   // Project
-  FmPreferencesDlg, Hiliter.UAttrs, Hiliter.UFileHiliter,
-  IntfCommon, UConsts, UCtrlArranger, URTFUtils;
+  CS.Config,
+  CS.SourceCode.Hiliter.Brushes,
+  CS.SourceCode.Hiliter.Renderers,
+  FmPreferencesDlg,
+  Hiliter.UAttrs,
+  Hiliter.UFileHiliter,
+  IntfCommon,
+  UConsts,
+  UCtrlArranger,
+  URTFUtils;
 
 
 {$R *.dfm}
@@ -143,8 +164,8 @@ type
   }
   TSourcePrefsPreview = class(TObject)
   strict private
-    fHiliteAttrs: IHiliteAttrs;
-      {Attributes of syntax highlighter to use to render preview}
+    fTheme: TSyntaxHiliteTheme;
+      {Theme providing highlighter style to use when rendering preview}
     fCommentStyle: TCommentStyle;
       {Value of CommentStyle property}
     function SourceCode: string;
@@ -153,11 +174,10 @@ type
       }
   public
     constructor Create(const CommentStyle: TCommentStyle;
-      const HiliteAttrs: IHiliteAttrs);
+      const ATheme: TSyntaxHiliteTheme);
       {Class constructor. Sets up object.
         @param CommentStyle [in] Style of commenting to use in preview.
-        @param HiliteAttrs [in] Attributes of highlighter used to render
-          preview.
+        @param ATheme [in] Theme that defines syntax highlighting style.
       }
     function Generate: TRTF;
       {Generate RTF code used to render preview.
@@ -178,8 +198,14 @@ begin
   SelectCommentStyle(Prefs.SourceCommentStyle);
   chkTruncateComments.Checked := Prefs.TruncateSourceComments;
   chkSyntaxHighlighting.Checked := Prefs.SourceSyntaxHilited;
-  (fHiliteAttrs as IAssignable).Assign(Prefs.HiliteAttrs);
-  fHiliteAttrs.ResetDefaultFont;
+  // Record current theme but with default font
+  fTheme.Assign(
+    TConfig.Instance.HiliterThemes[
+      Prefs.CurrentHiliteThemeIds[htkUI]
+    ]
+  );
+  fTheme.ResetDefaultFont;
+
   // Update state of controls and preview
   UpdateControlState;
   UpdatePreview;
@@ -248,8 +274,8 @@ var
 begin
   inherited;
   HelpKeyword := 'SourceCodePrefs';
-  // Create syntax highlighter object for use in sample output
-  fHiliteAttrs := THiliteAttrsFactory.CreateDefaultAttrs;
+  // Create syntax highlighter theme for use in sample output
+  fTheme := TSyntaxHiliteThemes.NullTheme.Clone;
   // Populate file type combo
   for FileType := Low(TSourceFileType) to High(TSourceFileType) do
     cbSnippetFileType.Items.AddObject(cFileDescs[FileType], TObject(FileType));
@@ -269,6 +295,12 @@ begin
   Prefs.TruncateSourceComments := chkTruncateComments.Checked;
   Prefs.SourceDefaultFileType := GetSourceFileType;
   Prefs.SourceSyntaxHilited := chkSyntaxHighlighting.Checked;
+end;
+
+destructor TSourcePrefsFrame.Destroy;
+begin
+  fTheme.Free;
+  inherited;
 end;
 
 function TSourcePrefsFrame.DisplayName: string;
@@ -352,10 +384,10 @@ procedure TSourcePrefsFrame.UpdatePreview;
 var
   Preview: TSourcePrefsPreview; // object that creates preview
 begin
-  // We always use same font size, regardless of user preferences
-  fHiliteAttrs.FontSize := Font.Size;
+  // We always use same font size as frame, regardless of user preferences
+  fTheme.FontSize := Font.Size;
   // Generate and display preview with required comment style
-  Preview := TSourcePrefsPreview.Create(GetCommentStyle, fHiliteAttrs);
+  Preview := TSourcePrefsPreview.Create(GetCommentStyle, fTheme);
   try
     // Display preview
     TRichEditHelper.Load(frmPreview.RichEdit, Preview.Generate);
@@ -388,23 +420,32 @@ const
   );
 
 constructor TSourcePrefsPreview.Create(const CommentStyle: TCommentStyle;
-  const HiliteAttrs: IHiliteAttrs);
+  const ATheme: TSyntaxHiliteTheme);
   {Class constructor. Sets up object.
     @param CommentStyle [in] Style of commenting to use in preview.
-    @param HiliteAttrs [in] Attributes of highlighter used to render preview.
+    @param ATheme [in] Theme that defines syntax highlighting style.
   }
 begin
   inherited Create;
   fCommentStyle := CommentStyle;
-  fHiliteAttrs := HiliteAttrs;
+  fTheme := ATheme;
 end;
 
 function TSourcePrefsPreview.Generate: TRTF;
   {Generate RTF code used to render preview.
     @return Required RTF code.
   }
+var
+  Brush: TSyntaxHiliterBrush;
 begin
-  Result := TRTF.Create(TRTFDocumentHiliter.Hilite(SourceCode, fHiliteAttrs));
+  Brush := TSyntaxHiliterBrushes.CreateBrush('ObjectPascal');
+  try
+    Result := TRTF.Create(
+      TRTFDocumentHiliter.Hilite(SourceCode, Brush, fTheme)
+    );
+  finally
+    Brush.Free;
+  end;
 end;
 
 function TSourcePrefsPreview.SourceCode: string;
