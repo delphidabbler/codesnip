@@ -46,6 +46,7 @@ type
     class function Compare(const Left, Right: TSourceCodeLanguageID): Integer;
       static; inline;
     class function CreateDefault: TSourceCodeLanguageID; static; inline;
+    class function IsValidIDString(const S: string): Boolean; static;
     function CompareTo(const Other: TSourceCodeLanguageID): Integer; inline;
     function ToString: string; inline;
     function Hash: Integer; inline;
@@ -98,13 +99,14 @@ type
       read GetLanguage; default;
   end;
 
-
 implementation
 
 uses
   SysUtils,
+  Character,
   CS.SourceCode.Hiliter.Brushes,
   CS.Utils.Hashes,
+  UExceptions,
   UStrUtils;
 
 { TSourceCodeLanguageID }
@@ -124,7 +126,13 @@ end;
 constructor TSourceCodeLanguageID.Create(const AID: string);
 begin
   if AID <> EmptyStr then
-    fID := AID
+  begin
+    if not IsValidIDString(AID) then
+      raise EBug.CreateFmt(
+        'TSourceCodeLanguageID.Create: Invalid ID string "%s"', [AID]
+      );
+    fID := AID;
+  end
   else
     fID := DefaultLanguageID;
 end;
@@ -148,6 +156,18 @@ end;
 function TSourceCodeLanguageID.IsDefault: Boolean;
 begin
   Result := StrSameText(fID, DefaultLanguageID);
+end;
+
+class function TSourceCodeLanguageID.IsValidIDString(const S: string): Boolean;
+var
+  Ch: Char;
+begin
+  if S = EmptyStr then
+    Exit(False);
+  for Ch in S do
+    if not TCharacter.IsLetterOrDigit(Ch) or not CharInSet(Ch, ['-', '_']) then
+      Exit(False);
+  Result := True;
 end;
 
 class operator TSourceCodeLanguageID.NotEqual(const Left,
