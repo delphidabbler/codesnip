@@ -161,7 +161,6 @@ end;
 class function TSourceCodeLanguageID.IsValidIDString(const S: string): Boolean;
 var
   Idx: Integer;
-  AlphaNumCount: Integer;
 begin
   if S = EmptyStr then
     Exit(False);
