@@ -155,6 +155,7 @@ type
     constructor Create;
     destructor Destroy; override;
     class destructor Destroy;
+    procedure Assign(const Src: TSyntaxHiliteThemes);
     procedure Add(const Theme: TSyntaxHiliteTheme);
     procedure Clear;
     procedure Delete(const ThemeID: string);
@@ -506,6 +507,15 @@ end;
 procedure TSyntaxHiliteThemes.Add(const Theme: TSyntaxHiliteTheme);
 begin
   fThemes.Add(Theme.ID, Theme);
+end;
+
+procedure TSyntaxHiliteThemes.Assign(const Src: TSyntaxHiliteThemes);
+var
+  ThemeID: string;  // each theme ID supported by Src
+begin
+  Clear;
+  for ThemeID in Src.SupportedThemes do
+    fThemes.Add(ThemeID, Src.GetTheme(ThemeID).Clone);
 end;
 
 procedure TSyntaxHiliteThemes.Clear;
