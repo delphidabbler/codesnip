@@ -124,12 +124,13 @@
 
 <p>
   <code>Language</code> is immediately followed by white space then a unique
-  language identifier. The identifier <strong>must</strong> be made up of one or
-  more valid Unicode letters or digits or the '_' or '-' characters. It
-  <strong>must</strong> also be unique within the file in which it is defined.
-  However an identifier in the user-defined can be the same as one in the
-  pre-defined &quot;file&quot;. In such a case the definition in the
-  user-defined file updates the pre-defined value.
+  language identifier. The identifier <strong>must</strong> start with a valid
+  Unicode letter or digit and be followed by a sequence of zero or more Unicode
+  letters, digits and punctuation characters. It <strong>must</strong> also be
+  unique within the file in which it is defined. However an identifier in the
+  user-defined theme file can be the same as one in the pre-defined
+  &quot;file&quot;. In such a case the definition in the user-defined file
+  updates the pre-defined value.
 </p>
 
 <p>
@@ -238,11 +239,12 @@
 <p>
   The statement is introduced by the <code>Brush</code> keyword which must be
   the first non <a href="#white-space">white space</a> token on the line.
-  <code>Brush</code> is followed by the required brush identifier. This
-  identifier <strong>must</strong> be made up of one or more of the following
-  characters: 'A'..'Z', 'a'..'z', '0..'9', '_', '-', '&gt;' or '&lt;' and
-  <strong>must</strong> contain at least one letter or digit. It <em>should</em>
-  identify a brush that is supported by CodeSnip.
+  The keyword is followed by the required brush identifier. This
+  <strong>must</strong> be either &quot;<code>&lt;Unknown&gt;</code>&quot; or be
+  made up of one or more of the following characters:
+  '<code>A</code>'..'<code>Z</code>', '<code>a</code>'..'<code>z</code>',
+  '<code>0</code>'..'<code>9</code>', '<code>-</code>' or '<code>_</code>'. It
+  <em>should</em> identify a brush that is supported by CodeSnip.
 </p>
 
 <p>

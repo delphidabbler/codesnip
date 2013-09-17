@@ -317,7 +317,7 @@
 </p>
 
 <p>
-  Ommitting the <em>Font Size</em> statement causes the default theme font size
+  Omitting the <em>Font Size</em> statement causes the default theme font size
   of 9pt to be used.
 </p>
 
@@ -392,7 +392,7 @@
 
 <p>
   The <em>Attribute</em> statement defines the styling of a single syntactic
-  within a <a href="#brush"><em>Brush</em> statement.
+  element within a <a href="#brush"><em>Brush</em> statement.
 </p>
 
 <p>
@@ -514,15 +514,56 @@
 </h3>
 
 <p>
-  Identifier parameters of any keyword may be any valid Unicode character except
-  white space characters: white space is used to delimit parameters.
+  Where an identifier follows a keyword it must conform to certain requirements
+  that depend on the keyword. These are described in the following sub-sections.
 </p>
 
 <p>
-  A restriction applies to <em>Theme</em> identifiers: those used for
-  pre-defined themes <strong>must</strong> begin with an underscore
-  (&quot;_&quot;) and user-defined theme identifiers <strong>must not</strong>
-  begin with an underscore.
+  All identifiers are case insensitive, for example the identifier
+  &quot;Foo&quot; is equivalent to &quot;FOO&quot;, &quot;foo&quot; etc.
+</p>
+
+<p>
+  In the following, &quot;ASCII letters&quot; refers to the letters 'A'..'Z' and
+  'a'..'z' while &quot;ASCII digits&quot; refers to the digits '0'..'9'.
+</p>
+
+<h4>
+  Theme identifiers
+</h4>
+
+<p>
+  Theme identifiers used in user-defined theme files
+  <strong>must</strong> begin with a valid Unicode letter and be followed by
+  zero or more Unicode letters, digits or punctuation characters.
+</p>
+
+<p>
+  Identifiers used in the pre-defined themes &quot;file&quot; have the same
+  format as user-defined themes except that the whole identifier
+  <strong>must</strong> be enclosed by a pair of underscore ('<code>_</code>')
+  characters.
+</p>
+
+<h4>
+  Brush identifiers
+</h4>
+
+<p>
+  A <em>Brush</em> identifier <strong>must</strong> be either
+  &quot;<code>&lt;Unknown&gt;</code>&quot; or be made up of a sequence of one or
+  more ASCII letters, ASCII digits and the punctuation characters
+  '<code>-</code>' or '<code>_</code>'.
+</p>
+
+<h4>
+  Attribute identifiers</em>
+</h4>
+
+<p>
+  An <em>Attribute</em> identifier <strong>must</strong> be made up of a
+  sequence of one or  more ASCII letters, ASCII digits and the punctuation
+  characters '<code>-</code>' or '<code>_</code>'.
 </p>
 
 <h3 id="comments">
