@@ -104,6 +104,7 @@ type
     procedure Assign(const Src: TSyntaxHiliteTheme;
       const IgnoreColour: Boolean = False);
     function Clone(const IgnoreColour: Boolean = False): TSyntaxHiliteTheme;
+    procedure ResetDefaultFont;
     function IsNull: Boolean; virtual;
     function IsBrushSupported(const BrushID: string): Boolean;
     // GetStyle => replaces any "default" style place markers with actual values
@@ -465,6 +466,12 @@ end;
 function TSyntaxHiliteTheme.IsNull: Boolean;
 begin
   Result := False;
+end;
+
+procedure TSyntaxHiliteTheme.ResetDefaultFont;
+begin
+  fFontName := DefaultFontName;
+  fFontSize := DefaultFontSize;
 end;
 
 procedure TSyntaxHiliteTheme.SetDefaultBrushStyle(
