@@ -53,7 +53,7 @@ type
         function CurrentLine: string;
         function CurrentStatement: string;
         function CurrentParameter: string;
-        procedure ValidateIdent(const Statement, Ident: string;
+        procedure ValidateLanguageIdent(const Ident: string;
           Existing: IStringList);
         procedure ParseWatermark;
       public
@@ -314,7 +314,7 @@ begin
   begin
     StrSplit(CurrentParameter, ' ', LangIDStr, LangFriendlyName);
     LangIDStr := StrTrim(LangIDStr);
-    ValidateIdent(KwdLanguage, LangIDStr, LangIDs);
+    ValidateLanguageIdent(KwdLanguage, LangIDStr, LangIDs);
     LangID := TSourceCodeLanguageID.Create(LangIDStr);
     LangIDs.Add(LangIDStr);
     LangFriendlyName := StrTrim(LangFriendlyName);
@@ -334,18 +334,20 @@ begin
   NextLine;
 end;
 
-procedure TSourceCodeLanguagesIO.TParser.ValidateIdent(const Statement,
-  Ident: string; Existing: IStringList);
+procedure TSourceCodeLanguagesIO.TParser.ValidateLanguageIdent(
+  const Ident: string; Existing: IStringList);
 begin
   if Ident = EmptyStr then
-    raise ESourceCodeLanguagesIO.CreateFmt(sMissingID, [StrToUpper(Statement)]);
+    raise ESourceCodeLanguagesIO.CreateFmt(
+      sMissingID, [StrToUpper(KwdLanguage)]
+    );
   if not TSourceCodeLanguageID.IsValidIDString(Ident) then
     raise ESourceCodeLanguagesIO.CreateFmt(
-      sBadID, [Ident, StrToUpper(Statement)]
+      sBadID, [Ident, StrToUpper(KwdLanguage)]
     );
   if Existing.Contains(Ident) then
     raise ESourceCodeLanguagesIO.CreateFmt(
-      sDuplicateID, [Ident, StrToUpper(Statement)]
+      sDuplicateID, [Ident, StrToUpper(KwdLanguage)]
     )
 end;
 
