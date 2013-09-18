@@ -76,7 +76,6 @@ type
     actNextTab: TAction;
     actNewDetailsTab: TAction;
     actNews: TAction;
-    actPageSetup: TAction;
     actPreferences: TAction;
     actPreviousTab: TAction;
     actPrint: TAction;
@@ -157,7 +156,6 @@ type
     miMoveUserDatabase: TMenuItem;
     miNewDetailsTab: TMenuItem;
     miNews: TMenuItem;
-    miPageSetup: TMenuItem;
     miPreferences: TMenuItem;
     miPrint: TMenuItem;
     miPrivacy: TMenuItem;
@@ -379,8 +377,6 @@ type
     ///  <remarks>Action is checked iff its index, stored in the Tag property,
     ///  is the currently selected overview tab index.</remarks>
     procedure ActOverviewTabUpdate(Sender: TObject);
-    ///  <summary>Displays the page setup dialogue box.</summary>
-    procedure actPageSetupExecute(Sender: TObject);
     ///  <summary>Displays the Preferences dialogue box.</summary>
     procedure actPreferencesExecute(Sender: TObject);
     ///  <summary>Displays previous tab in either the overview or details pane
@@ -1003,11 +999,6 @@ begin
     Checked := fMainDisplayMgr.SelectedOverviewTab = Tag;
     Enabled := True;
   end;
-end;
-
-procedure TMainForm.actPageSetupExecute(Sender: TObject);
-begin
-  fDialogMgr.ExecPageSetupDlg;
 end;
 
 procedure TMainForm.actPreferencesExecute(Sender: TObject);
