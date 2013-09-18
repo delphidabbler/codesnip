@@ -316,10 +316,6 @@
     <param name="Local" value="HTML\task_printroutine.htm">
     </OBJECT>
   <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="printing preferences">
-    <param name="Local" value="HTML\dlg_prefs_printing.htm">
-    </OBJECT>
-  <LI> <OBJECT type="text/sitemap">
     <param name="Name" value="privacy statement">
     <param name="Local" value="HTML\privacy_statement.htm">
     </OBJECT>
