@@ -23,8 +23,13 @@ uses
   Graphics,
   // Project
   CS.SourceCode.Hiliter.Themes,
-  Hiliter.UGlobals, UIStringList, UMeasurement, UPrintInfo,
-  USnippetPageStructure, USourceFileInfo, USourceGen, UWarnings;
+  Hiliter.UGlobals,
+  UIStringList,
+  UMeasurement,
+  USnippetPageStructure,
+  USourceFileInfo,
+  USourceGen,
+  UWarnings;
 
 
 type
@@ -188,22 +193,6 @@ type
     ///  of source code in main display as a string list.</summary>
     property SourceCodeBGCustomColours: IStringList
       read GetSourceCodeBGCustomColours write SetSourceCodeBGCustomColours;
-
-    ///  <summary>Gets default print options.</summary>
-    function GetPrinterOptions: TPrintOptions;
-    ///  <summary>Sets default print options.</summary>
-    procedure SetPrinterOptions(const Options: TPrintOptions);
-    ///  <summary>Default print options.</summary>
-    property PrinterOptions: TPrintOptions
-      read GetPrinterOptions write SetPrinterOptions;
-
-    ///  <summary>Gets default printer page margins.</summary>
-    function GetPrinterPageMargins: TPageMargins;
-    ///  <summary>Sets new default printer page margins.</summary>
-    procedure SetPrinterPageMargins(const Margins: TPageMargins);
-    ///  <summary>Default printer page margins.</summary>
-    property PrinterPageMargins: TPageMargins
-      read GetPrinterPageMargins write SetPrinterPageMargins;
 
     ///  <summary>Gets current user defined syntax highlighter.</summary>
     function GetHiliteAttrs: IHiliteAttrs;
@@ -372,10 +361,6 @@ type
       ///  <summary>Records custom colours available for use as background
       ///  colour of source code in main display.</summary>
       fSourceCodeBGCustomColours: IStringList;
-      ///  <summary>Default print options.</summary>
-      fPrinterOptions: TPrintOptions;
-      ///  <summary>Default printer page margins.</summary>
-      fPrinterPageMargins: TPageMargins;
       ///  <summary>Attributes of current user defined syntax highlighter.
       ///  </summary>
       fHiliteAttrs: IHiliteAttrs;
@@ -543,22 +528,6 @@ type
     ///  <remarks>Method of IPreferences.</remarks>
     procedure SetSourceCodeBGCustomColours(Value: IStringList);
 
-    ///  <summary>Gets default print options.</summary>
-    ///  <remarks>Method of IPreferences.</remarks>
-    function GetPrinterOptions: TPrintOptions;
-
-    ///  <summary>Sets default print options.</summary>
-    ///  <remarks>Method of IPreferences.</remarks>
-    procedure SetPrinterOptions(const Options: TPrintOptions);
-
-    ///  <summary>Gets default printer page margins.</summary>
-    ///  <remarks>Method of IPreferences.</remarks>
-    function GetPrinterPageMargins: TPageMargins;
-
-    ///  <summary>Sets new default printer page margins.</summary>
-    ///  <remarks>Method of IPreferences.</remarks>
-    procedure SetPrinterPageMargins(const Margins: TPageMargins);
-
     ///  <summary>Gets current user defined syntax highlighter.</summary>
     ///  <remarks>Method of IPreferences.</remarks>
     function GetHiliteAttrs: IHiliteAttrs;
@@ -666,7 +635,6 @@ type
       // Sub-sections of ssPreferences ini file section
       cGeneral = 'General';
       cSourceCode = 'SourceCode';
-      cPrinting = 'Printing';
       cHiliter = 'Hiliter';
       cCodeGenerator = 'CodeGen';
       cNews = 'News';
@@ -729,8 +697,6 @@ begin
   Self.fDBHeadingCustomColours[True] := SrcPref.DBHeadingCustomColours[True];
   Self.fSourceCodeBGColour := SrcPref.SourceCodeBGColour;
   Self.fSourceCodeBGCustomColours := SrcPref.SourceCodeBGCustomColours;
-  Self.fPrinterOptions := SrcPref.PrinterOptions;
-  Self.fPrinterPageMargins := SrcPref.PrinterPageMargins;
   Self.SetHiliteAttrs(SrcPref.HiliteAttrs);
   for HiliteThemeKind := Low(TCurrentHiliteThemeKind) to
     High(TCurrentHiliteThemeKind) do
@@ -826,16 +792,6 @@ end;
 function TPreferences.GetPageStructures: TSnippetPageStructures;
 begin
   Result := fPageStructures;
-end;
-
-function TPreferences.GetPrinterOptions: TPrintOptions;
-begin
-  Result := fPrinterOptions;
-end;
-
-function TPreferences.GetPrinterPageMargins: TPageMargins;
-begin
-  Result := fPrinterPageMargins;
 end;
 
 function TPreferences.GetShowEmptySections: Boolean;
@@ -947,16 +903,6 @@ begin
   fPageStructures.Assign(PageStructures);
 end;
 
-procedure TPreferences.SetPrinterOptions(const Options: TPrintOptions);
-begin
-  fPrinterOptions := Options;
-end;
-
-procedure TPreferences.SetPrinterPageMargins(const Margins: TPageMargins);
-begin
-  fPrinterPageMargins := Margins;
-end;
-
 procedure TPreferences.SetShowEmptySections(const Value: Boolean);
 begin
   fShowEmptySections := Value;
@@ -1034,8 +980,6 @@ begin
   NewPref.DBHeadingCustomColours[True] := Self.fDBHeadingCustomColours[True];
   NewPref.SourceCodeBGColour := Self.fSourceCodeBGColour;
   NewPref.SourceCodeBGCustomColours := Self.fSourceCodeBGCustomColours;
-  NewPref.PrinterOptions := Self.fPrinterOptions;
-  NewPref.PrinterPageMargins := Self.fPrinterPageMargins;
   NewPref.HiliteAttrs := Self.GetHiliteAttrs;
   for HiliteThemeKind := Low(TCurrentHiliteThemeKind) to
     High(TCurrentHiliteThemeKind) do
@@ -1106,20 +1050,6 @@ begin
   );
   fTruncateSourceComments := Storage.GetBoolean('TruncateComments', False);
   fSourceSyntaxHilited := Storage.GetBoolean('UseSyntaxHiliting', False);
-
-  // Read printing section
-  Storage := Settings.ReadSection(ssPreferences, cPrinting);
-  fPrinterOptions := [];
-  if Storage.GetBoolean('UseColor', True) then
-    Include(fPrinterOptions, poUseColor);
-  if Storage.GetBoolean('SyntaxPrint', True) then
-    Include(fPrinterOptions, poSyntaxPrint);
-  fPrinterPageMargins := TPageMargins.Create(
-    Storage.GetFloat('LeftMargin', cPrintPageMarginSizeMM),
-    Storage.GetFloat('TopMargin', cPrintPageMarginSizeMM),
-    Storage.GetFloat('RightMargin', cPrintPageMarginSizeMM),
-    Storage.GetFloat('BottomMargin', cPrintPageMarginSizeMM)
-  );
 
   // Read syntax highlighter section
   Storage := Settings.ReadSection(ssPreferences, cHiliter);
@@ -1204,16 +1134,6 @@ begin
   Storage.SetInteger('CommentStyle', Ord(fSourceCommentStyle));
   Storage.SetBoolean('TruncateComments', fTruncateSourceComments);
   Storage.SetBoolean('UseSyntaxHiliting', fSourceSyntaxHilited);
-  Storage.Save;
-
-  // Write printing section
-  Storage := Settings.EmptySection(ssPreferences, cPrinting);
-  Storage.SetBoolean('UseColor', poUseColor in fPrinterOptions);
-  Storage.SetBoolean('SyntaxPrint', poSyntaxPrint in fPrinterOptions);
-  Storage.SetFloat('LeftMargin', fPrinterPageMargins.Left);
-  Storage.SetFloat('TopMargin', fPrinterPageMargins.Top);
-  Storage.SetFloat('RightMargin', fPrinterPageMargins.Right);
-  Storage.SetFloat('BottomMargin', fPrinterPageMargins.Bottom);
   Storage.Save;
 
   // Write syntax highlighter section
