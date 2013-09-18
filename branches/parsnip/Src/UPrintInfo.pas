@@ -173,7 +173,7 @@ begin
   inherited;
   Storage := Settings.EmptySection(ssPrinting);
   Storage.SetBoolean('UseColour', poUseColor in fPrintOptions);
-  Storage.SetBoolean('SyntaxPrint', poSyntaxPrint in fPrintOptions);
+  Storage.SetBoolean('SyntaxHighlight', poSyntaxPrint in fPrintOptions);
   Storage.SetFloat('LeftMargin', fPageMargins.Left);
   Storage.SetFloat('TopMargin', fPageMargins.Top);
   Storage.SetFloat('RightMargin', fPageMargins.Right);
