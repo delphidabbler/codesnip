@@ -1,0 +1,189 @@
+<!--
+ * comp-snippet-tplt.html
+ *
+ * Compiler Check pane template used to display compiler compatibilty and test
+ * information for a selected snippet.
+ *
+ * Must be hosted within a complete HTML document.
+ * 
+ * $Rev$
+ * $Date$
+ *                                                 
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is comp-snippet-tplt.html
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2006-2010 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributors:
+ *    NONE
+ *
+ * ***** END LICENSE BLOCK *****
+-->
+
+
+<div class="details">
+
+  <div>
+
+    <div
+      id="editlink"
+      class="option"
+      style="<%EditLink%>
+        padding:-0.1em 0 0.3em 0;position:relative;float:right;"
+    >
+      <a
+        id="editimglink"
+        class="command-link"
+        href="javascript:void(0);"
+        onclick="<%EditEventHandler%>;return false;"
+        onmouseover="showEditSnippetHint();"
+        onmouseout="clearHint();"
+      ><img
+        src="editsnippet.gif"
+        class="option-img"
+        style="width:16px;height:16px;vertical-align:middle;"
+        title="Edit Snippet"
+      ></a>
+      <a
+        id="edittextlink"
+        class="command-link menu-item"
+        href="javascript:void(0);"
+        onclick="<%EditEventHandler%>;return false;"
+        onmouseover="showEditSnippetHint();"
+        onmouseout="clearHint();"
+      >Edit Snippet</a>
+    </div>
+
+    <!-- Routine name common with info-snippet-tplt.html -->
+    <h1 id="routinename" class="<%RoutineCSSClass%>">
+      <%RoutineName%>
+    </h1>
+
+  </div>
+
+  <table class="testcomp" cellpadding="2" cellspacing="0">
+    <col style="width:auto;" />
+    <col style="width:60px;" />
+    <col style="width:50px;" />
+    <col style="width:auto;" />
+    <tr>
+      <th class="compiler" rowspan="2">Compiler</th>
+      <th class="compres" colspan="2">Compilation results</th>
+      <th class="testerr" rowspan="2">&nbsp;</th>
+    </tr>
+    <tr>
+      <th class="dbres">Per<br />Database</th>
+      <th class="testres">Per<br />Test</th>
+    </tr>
+    <%CompilerInfo%>
+  </table>
+
+  <div class="optionbox">
+
+    <div class="option">
+      <a
+        href="javascript:void(0);"
+        class="command-link"
+        onclick="compileRoutine();return false;"
+        onmouseover="showTestCompileHint();"
+        onmouseout="clearHint();"
+      ><img
+        src="compile.gif"
+        class="option-img"
+        style="width:16px;height:16px;"
+        title="Test Compile Snippet"
+      /></a>
+      <a
+        href="javascript:void(0);"
+        class="command-link menu-item"
+        onclick="compileRoutine();return false;"
+        onmouseover="showTestCompileHint();"
+        onmouseout="clearHint();"
+      >Test Compile Snippet</a>
+    </div>
+
+    <div class="option">
+      <a
+        href="help:CompChecks"
+        class="help-link"
+        onmouseover="showHint(vAboutCompChecksHint);"
+        onmouseout="clearHint();"
+      ><img
+        src="help.gif"
+        class="option-img"
+        style="width:16px;height:16px;"
+        title="About Compiler Checks"
+      /></a>
+      <a
+        href="help:CompChecks"
+        class="help-link menu-item"
+        onmouseover="showHint(vAboutCompChecksHint);"
+        onmouseout="clearHint();"
+      >About Compiler Checks</a>
+    </div>
+
+    <div class="option">
+      <a
+        href="javascript:void(0);"
+        class="command-link"
+        onclick="configCompilers();return false;"
+        onmouseover="showHint(vConfigCompilersHint);"
+        onmouseout="clearHint();"
+      ><img
+        src="configcomp.gif"
+        class="option-img"
+        style="width:16px;height:16px;"
+        title="Configure Compilers"
+      /></a>
+      <a
+        href="javascript:void(0);"
+        class="command-link menu-item"
+        onclick="configCompilers();return false;"
+        onmouseover="showHint(vConfigCompilersHint);"
+        onmouseout="clearHint();"
+      >Configure Compilers</a>
+    </div>
+
+    <div class="option">
+      <a
+        href="javascript:void(0);"
+        class="command-link"
+        onclick="showTestUnit();return false;"
+        onmouseover="showHint(vShowTestUnitHint);"
+        onmouseout="clearHint();"
+      ><img
+        id="viewunitimg"
+        src="viewunit.gif"
+        class="option-img"
+        style="width:16px;height:16px;"
+        title="Display Test Unit"
+      /></a>
+      <a
+        href="javascript:void(0);"
+        class="command-link menu-item"
+        id="viewunittxt"
+        onclick="showTestUnit();return false;"
+        onmouseover="showHint(vShowTestUnitHint);"
+        onmouseout="clearHint();"
+      >Display Test Unit</a>
+    </div>
+
+  </div>
+
+</div>
+

@@ -1,0 +1,83 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<!--
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is dlg_findxrefs.htm
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * ***** END LICENSE BLOCK *****
+-->
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text-html; charset=Windows-1252">
+    <title>
+      Find Cross References Dialog Box
+    </title>
+    <link rel="stylesheet" href="../css/codesnip.css" type="text/css">
+  </head>
+  <body>
+    <object
+      type="application/x-oleobject"
+      classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e"
+    >
+      <param name="ALink Name" value="FindXRefsDlg">
+    </object>
+    <h1>
+      <a name="dlg_findtext"></a>
+      <img alt="Menu icon" src="../images/FindXRefs.gif" class="glyph">
+      Find Cross References Dialog Box
+    </h1>
+    <p>
+      Use this dialog to find snippets that are referenced by the currently
+      selected snippet. The dialog box is displayed from the <em>Search | Find
+      Cross Refs</em> menu option.
+    </p>
+    <p>
+      The search can be customised by checking or clearing the following check 
+      boxes:
+    </p>
+    <ul>
+      <li>
+        <em>Search for required snippets</em>. Selecting this option causes
+        all snippets that are needed to compile the selected snippet to be
+        included in the search result. If the related <em>Search
+        recursively</em> box is checked the search continues through the found
+        snippets.
+      </li>
+      <li>
+        <em>Search for &quot;see also&quot; cross references</em>. This option
+        includes snippets referenced as &quot;see also&quot; to be included in
+        the search result. These snippets are not necessarily needed to compile
+        the selected snippet, but are related to it conceptually. Again,
+        checking the related <em>Search recursively</em> check box causes the
+        search to recurse through the found &quot;see also&quot; cross
+        references.
+      </li>
+      <li>
+        <em>Include &quot;xxxx&quot; in search</em> (where xxxx is the name of
+        the selected snippet). Checking this box simply includes the selected
+        snippet in the search results.
+      </li>
+    </ul>
+    <p>
+      Note that you must check at least one of the <em>Search for required
+      snippets</em> or <em>Search for &quot;see also&quot; cross references</em>
+      options.
+    </p>
+  </body>
+</html>

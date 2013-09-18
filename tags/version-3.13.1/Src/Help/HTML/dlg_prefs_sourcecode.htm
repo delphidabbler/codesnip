@@ -1,0 +1,110 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<!--
+ * $Rev$
+ * $Date$
+ *
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is dlg_prefs_sourcecode.htm
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2007-2010 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s):
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
+-->
+<html>
+  <head>
+  <meta http-equiv="Content-Type" content="text-html; charset=Windows-1252">
+  <title>
+    Code Formatting Preferences
+  </title>
+  <link rel="stylesheet" href="../css/codesnip.css" type="text/css">
+  </head>
+  <body>
+  <object
+    type="application/x-oleobject"
+    classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e"
+  >
+    <param name="ALink Name" value="SourceCodePrefs">
+  </object>
+  <h1>
+    <img
+    alt="Menu icon"
+    src="../images/Preferences.gif"
+    class="glyph"
+    >
+    <!-- Note the file name is a hang-over from when the tab was named
+       'Source Code' -->
+    <a name="dlg_prefs_sourcecode"></a>Code Formatting Preferences
+  </h1>
+  <p>
+    This tab of the <a href="dlg_preferences.htm">Preferences</a> dialog box
+    is used configure the format of source code that <em>CodeSnip</em> writes
+    to file or copies to the clipboard. The tab is accessed by selecting the
+    <em>Tools | Preferences</em> menu item then clicking the <em>Code
+    Formatting</em> tab.
+  </p>
+  <h2>
+    Source code formatting
+  </h2>
+  <p>
+    Descriptions of snippets can be included as comments in generated source
+    code. The placing of such comments can be customised using the
+    <em>Commenting style</em> drop down list. Options are:
+  </p>
+  <ul class="unspaced">
+    <li>
+    <em>No descriptive comments</em> &ndash; descriptions are not included.
+    </li>
+    <li>
+    <em>Comments after snippet header</em> &ndash; comments appear between
+    a snippet's header and the body of the snippet. For functions and
+    procedures the header is the function or procedure prototype. For
+    types and constants the comment is placed after the
+    <strong>type</strong> or <strong>const</strong> keyword and before any
+    other code.
+    </li>
+    <li>
+    <em>Comments before snippet</em> &ndash; comments are placed before the
+    snippet. The snippet's name is included in the comment.
+    </li>
+  </ul>
+  <p>
+    Descriptive comments are not applicable to
+    <a href="snippet_freeform.htm">freeform</a> snippets.
+  <p>
+    A preview of the comment style is displayed below the drop down list.
+  </p>
+  <h2>
+    File formatting
+  </h2>
+  <p>
+    The default format of output files is configurable. The available output
+    types are HTML, rich text and two types of unformatted text, i.e. Pascal
+    files and plain text files. You choose the default output type using the
+    <em>Output file type</em> drop down list.
+  </p>
+  <p>
+    HTML and rich text file types can be syntax highlighted. To enable this
+    option check the <em>Enable syntax highlighting</em> check box. The
+    highlighting can be customised using the
+    <a href="dlg_prefs_hiliter.htm">Syntax Highlighter</a> tab.
+  </p>
+  </body>
+</html>

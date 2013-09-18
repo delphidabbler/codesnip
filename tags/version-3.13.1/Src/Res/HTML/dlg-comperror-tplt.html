@@ -1,0 +1,63 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<!--
+ * dlg-comperror-tplt.html
+ *
+ * Template for content displayed in compiler errors dialog box.
+ *
+ * $Rev$
+ * $Date$
+ *
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is dlg-comperror-tplt.html
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributors:
+ *    NONE
+ *
+ * ***** END LICENSE BLOCK *****
+-->
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+  <head>
+    <title>dlg-comperror-tplt</title>
+  </head>
+
+  <body>
+
+    <div>
+
+      <div style="margin-bottom: 8px;">
+        <%Status%> when compiling <strong><%Routine%></strong> with
+        <strong><%CompilerID%></strong>
+      </div>
+      <ul style="margin-top: 0px; margin-bottom: 0px;">
+        <%ErrorList%>
+      </ul>
+
+    </div>
+
+  </body>
+
+</html>

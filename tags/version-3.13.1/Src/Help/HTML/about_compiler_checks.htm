@@ -1,0 +1,127 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<!--
+ * $Rev$
+ * $Date$
+ *
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is about_compiler_checks.htm
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2005-2013 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
+-->
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text-html; charset=Windows-1252">
+    <title>
+      About Compiler Checks
+    </title>
+    <link rel="stylesheet" href="../css/codesnip.css" type="text/css">
+  </head>
+  <body>
+    <object
+      type="application/x-oleobject"
+      classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e"
+    >
+      <param name="ALink Name" value="CompChecks">
+    </object>
+    <h1>
+      <a name="about_compiler_checks"></a>About Compiler Checks
+    </h1>
+    <p>
+      <em>CodeSnip</em> can be configured to test compile snippets with any
+      supported compiler that is installed on the local computer. Note that
+      <a href="snippet_freeform.htm">freeform</a> snippets cannot be test
+      compiled.
+    </p>
+    <p>
+      The supported compilers are the Win32 Delphi compilers from Delphi 2 to
+      Delphi XE5 and Free Pascal.
+    </p>
+    <h2>
+      Configuring CodeSnip
+    </h2>
+    <p>
+      Before <em>CodeSnip</em> can use the compilers it needs to be told about
+      them. This is done using the <a
+       href="dlg_configcompilers.htm">Configure Compilers</a> dialog box that
+      is accessed from the <em>Tools</em> menu or from a link in the <a
+       href="detail_pane.htm">Detail Pane</a>&#39;s <a
+       href="detail_compilerchecks.htm">Compiler Checks</a> tab.
+    </p>
+    <p>
+      You can also customise the command line switches passed to the compilers
+      to replicate your usual compilation defaults. This is also done in the
+      <em>Configure Compilers</em> dialog box.
+    </p>
+    <p>
+      Compiler configuration is stored on a per user basis, i.e. each user
+      account maintains separate compiler configuration information. Therefore
+      each user must configure compilers separately. The reason for this is that
+      each user may wish to use a different set of available compilers and / or
+      may wish to use different compiler switches.
+    </p>
+    <h2>
+      Running the tests
+    </h2>
+    <p>
+      Select the required routine in the
+      <a href="overview_pane.htm">Overview Pane</a>. Switch to the
+      <a href="detail_compilerchecks.htm">Compiler Checks</a> tab and click the
+      <img
+        src="../Images/TestCompile.gif"
+        alt="Test Compile button"
+        class="glyph"
+      > <em>Test Compile Snippet</em> link. This will generate a test unit for
+      the snippet and try to compile it with all the configured compilers. The
+      <em>Compiler Check</em> tab display will update to show the results.
+    </p>
+    <p>
+      The test unit can be displayed in a dialog box by clicking the
+      <img
+        src="../Images/ViewUnit.gif"
+        alt="Display Test Unit glyph"
+        class="glyph"
+      > <em>Display Test Unit</em> link.
+    </p>
+    <p>
+      You can also initiate tests from the <em>Database | Test Compile</em> menu
+      option or the
+      <img
+        src="../Images/TestCompile.gif"
+        alt="Test Compile button"
+        class="glyph"
+      > <em>Test Compile</em> toolbar button.
+    </p>
+    <h2>
+      Warnings
+    </h2>
+    <p>
+      If any of the Delphi compilers from Delphi 6 onwards show one or more
+      warnings following a test compile you may be able to inhibit them by
+      enabling <em>CodeSnip</em>'s code generator to emit suitable compiler
+      directives. This is done using the <a href="dlg_prefs_codegen.htm">Code
+      Generation</a> tab of the <a href="dlg_preferences.htm">Preferences</a>
+      dialog box. Display the dialog box using the <em>Tools | Preferences</em>
+      menu option.
+    </p>
+  </body>
+</html>
