@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2007-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2007-2013 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -103,11 +103,6 @@ type
       {Displays Print dialog box.
         @return True if user OKs, False if cancelled.
       }
-    function ExecPageSetupDlg: Boolean;
-      {Displays Page Setup dialog box. Records page setup in persistent storage
-      if user OKs.
-        @return True if user OKs, False if cancelled.
-      }
     procedure ShowDonateDlg;
       {Displays Donate dialog box.
       }
@@ -137,7 +132,7 @@ uses
   FmAboutDlg, FmDependenciesDlg, FmDonateDlg, FmFindCompilerDlg, FmFindTextDlg,
   FmFindXRefsDlg, FmNewsDlg, FmPreferencesDlg, FmPrintDlg, FmProxyServerDlg,
   FmRegistrationDlg, FmSelectionSearchDlg, FmUpdateDlg, FmUserBugReportDlg,
-  UPageSetupDlgMgr, UTestUnitDlgMgr;
+  UTestUnitDlgMgr;
 
 
 { TDialogMgr }
@@ -169,15 +164,6 @@ function TDialogMgr.ExecFindXRefsDlg(const ARoutine: TRoutine;
   }
 begin
   Result := TFindXRefsDlg.Execute(Owner, ARoutine, ASearch);
-end;
-
-function TDialogMgr.ExecPageSetupDlg: Boolean;
-  {Displays Page Setup dialog box. Records page setup in persistent storage if
-  user OKs.
-    @return True if user OKs, False if cancelled.
-  }
-begin
-  Result := TPageSetupDlgMgr.Execute(Owner);
 end;
 
 function TDialogMgr.ExecPreferencesDlg: Boolean;

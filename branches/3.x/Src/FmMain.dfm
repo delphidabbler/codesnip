@@ -9,9 +9,9 @@ inherited MainForm: TMainForm
   Menu = mnuMain
   OnResize = FormResize
   ExplicitWidth = 621
-  ExplicitHeight = 420
+  ExplicitHeight = 422
   PixelsPerInch = 96
-  TextHeight = 13
+  TextHeight = 16
   object sbStatusBar: TStatusBar
     Left = 0
     Top = 344
@@ -250,12 +250,12 @@ inherited MainForm: TMainForm
           ExplicitWidth = 183
           ExplicitHeight = 281
           inherited tvSnippets: TTreeView
-            Top = 42
+            Top = 48
             Width = 175
-            Height = 235
-            ExplicitTop = 42
+            Height = 229
+            ExplicitTop = 48
             ExplicitWidth = 175
-            ExplicitHeight = 235
+            ExplicitHeight = 229
           end
         end
       end
@@ -295,16 +295,21 @@ inherited MainForm: TMainForm
           ExplicitHeight = 281
           inherited tsInfo: TTabSheet
             ExplicitLeft = 4
-            ExplicitTop = 24
+            ExplicitTop = 27
             ExplicitWidth = 310
-            ExplicitHeight = 183
+            ExplicitHeight = 180
             inherited frmInfo: TInfoFrame
+              Height = 180
+              ExplicitHeight = 180
               inherited pnlBrowser: TPanel
+                Height = 180
+                ExplicitHeight = 180
                 inherited wbBrowser: TWebBrowser
-                  ExplicitWidth = 400
-                  ExplicitHeight = 253
+                  Height = 180
+                  ExplicitWidth = 310
+                  ExplicitHeight = 183
                   ControlData = {
-                    4C0000000A200000EA1200000000000000000000000000000000000000000000
+                    4C0000000A2000009B1200000000000000000000000000000000000000000000
                     000000004C000000000000000000000001000000E0D057007335CF11AE690800
                     2B2E126208000000000000004C0000000114020000000000C000000000000046
                     8000000000000000000000000000000000000000000000000000000000000000
@@ -315,26 +320,26 @@ inherited MainForm: TMainForm
           end
           inherited tsCompiler: TTabSheet
             ExplicitLeft = 4
-            ExplicitTop = 24
+            ExplicitTop = 27
             ExplicitWidth = 400
-            ExplicitHeight = 253
+            ExplicitHeight = 250
             inherited frmCompCheck: TCompCheckFrame
               Width = 400
-              Height = 253
+              Height = 250
               ExplicitWidth = 400
-              ExplicitHeight = 253
+              ExplicitHeight = 250
               inherited pnlBrowser: TPanel
                 Width = 400
-                Height = 253
+                Height = 250
                 ExplicitWidth = 400
-                ExplicitHeight = 253
+                ExplicitHeight = 250
                 inherited wbBrowser: TWebBrowser
                   Width = 400
-                  Height = 253
-                  ExplicitWidth = 310
-                  ExplicitHeight = 183
+                  Height = 250
+                  ExplicitWidth = 400
+                  ExplicitHeight = 253
                   ControlData = {
-                    4C00000057290000261A00000000000000000000000000000000000000000000
+                    4C00000057290000D71900000000000000000000000000000000000000000000
                     000000004C000000000000000000000001000000E0D057007335CF11AE690800
                     2B2E126208000000000000004C0000000114020000000000C000000000000046
                     8000000000000000000000000000000000000000000000000000000000000000
@@ -351,7 +356,7 @@ inherited MainForm: TMainForm
     Left = 262
     Top = 96
     Bitmap = {
-      494C010124002700040010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010124002700080010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       000000000000360000002800000040000000A0000000010020000000000000A0
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -1988,12 +1993,6 @@ inherited MainForm: TMainForm
       OnExecute = actPrintExecute
       OnUpdate = actPrintUpdate
     end
-    object actPageSetup: TAction
-      Category = 'File'
-      Caption = 'Page Set&up...'
-      Hint = 'Page Setup|Configures printer page settings'
-      OnExecute = actPageSetupExecute
-    end
     object actPrivacy: TAction
       Category = 'Help'
       Caption = 'Privacy Statement'
@@ -2194,9 +2193,6 @@ inherited MainForm: TMainForm
       end
       object miSpacer6: TMenuItem
         Caption = '-'
-      end
-      object miPageSetup: TMenuItem
-        Action = actPageSetup
       end
       object miPrint: TMenuItem
         Action = actPrint

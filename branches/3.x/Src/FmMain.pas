@@ -93,7 +93,6 @@ type
     actLicense: TAction;
     actNextTab: TAction;
     actNews: TAction;
-    actPageSetup: TAction;
     actPreferences: TAction;
     actPreviousTab: TAction;
     actPrint: TAction;
@@ -162,7 +161,6 @@ type
     miImportCode: TMenuItem;
     miLicense: TMenuItem;
     miNews: TMenuItem;
-    miPageSetup: TMenuItem;
     miPreferences: TMenuItem;
     miPrint: TMenuItem;
     miPrivacy: TMenuItem;
@@ -287,7 +285,6 @@ type
     procedure ActNonEmptyDBUpdate(Sender: TObject);
     procedure ActOverviewTabExecute(Sender: TObject);
     procedure ActOverviewTabUpdate(Sender: TObject);
-    procedure actPageSetupExecute(Sender: TObject);
     procedure actPreferencesExecute(Sender: TObject);
     procedure actPreviousTabExecute(Sender: TObject);
     procedure actPrintExecute(Sender: TObject);
@@ -876,14 +873,6 @@ begin
     Checked := fMainDisplayMgr.SelectedOverviewTab = Tag;
     Enabled := True;
   end;
-end;
-
-procedure TMainForm.actPageSetupExecute(Sender: TObject);
-  {Displays the page setup dialog box.
-    @param Sender [in] Not used.
-  }
-begin
-  fDialogMgr.ExecPageSetupDlg;
 end;
 
 procedure TMainForm.actPreferencesExecute(Sender: TObject);
