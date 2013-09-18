@@ -177,6 +177,30 @@ type
       }
   end;
 
+type
+  // Encapsulates a size quantity. Assignment compatible with TSize. Has methods
+  // to compare and cast size.
+  TSizeEx = record
+  public
+    // Width
+    CX: Integer;
+    // Height
+    CY: Integer;
+    // Constructs record with two given CX and CY field values
+    constructor Create(ACX, ACY: Integer);
+    // Enables TSize to be assigned to and compared with TSizeEx
+    class operator Implicit(S: Types.TSize): TSizeEx;
+    // Enables TSizeEx to be assigned to and compared with TSize
+    class operator Implicit(S: TSizeEx): Types.TSize;
+    // Tests for equality of TSizeEx records. Also works if one record is TSize.
+    class operator Equal(S1, S2: TSizeEx): Boolean;
+    // Tests for inequality of TSizeEx records. Also works if one record is
+    // TSize.
+    class operator NotEqual(S1, S2: TSizeEx): Boolean;
+    // Tests if a TSizeEx instance is zero (i.e. one of fields is zero)
+    function IsZero: Boolean;
+  end;
+
 
 implementation
 
@@ -431,5 +455,45 @@ begin
   Length := ALength;
 end;
 
+{ TSizeEx }
+
+constructor TSizeEx.Create(ACX, ACY: Integer);
+begin
+  CX := ACX;
+  CY := ACY;
+end;
+
+class operator TSizeEx.Equal(S1, S2: TSizeEx): Boolean;
+begin
+  // zero records are special: can be zero when only one of CX or CY is zero
+  if S1.IsZero and S2.IsZero then
+  begin
+    Result := True;
+    Exit;
+  end;
+  Result := (S1.CX = S1.CX) and (S1.CY = S2.CY);
+end;
+
+class operator TSizeEx.Implicit(S: Types.TSize): TSizeEx;
+begin
+  Result.CX := S.cx;
+  Result.CY := S.cy;
+end;
+
+class operator TSizeEx.Implicit(S: TSizeEx): Types.TSize;
+begin
+  Result.cx := S.CX;
+  Result.cy := S.CY;
+end;
+
+function TSizeEx.IsZero: Boolean;
+begin
+  Result := (CX = 0) or (CY = 0);
+end;
+
+class operator TSizeEx.NotEqual(S1, S2: TSizeEx): Boolean;
+begin
+  Result := not (S1 = S2);
+end;
 end.
 
