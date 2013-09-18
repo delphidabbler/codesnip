@@ -20,9 +20,19 @@ interface
 
 uses
   // Delphi
-  Controls, StdCtrls, ExtCtrls, Classes, ImgList, Windows,
+  Controls,
+  StdCtrls,
+  ExtCtrls,
+  Classes,
+  ImgList,
+  Windows,
+  ComCtrls,
+  Forms,
   // Project
-  FmGenericOKDlg;
+  CS.SourceCode.Hiliter.Themes,
+  FmGenericOKDlg,
+  FrRTFShowCase,
+  URTFBuilder;
 
 
 type
@@ -35,18 +45,50 @@ type
     btnPreferences: TButton;
     btnSetup: TButton;
     cbPrinters: TComboBox;
-    chkSyntaxPrint: TCheckBox;
-    chkUseColor: TCheckBox;
-    gpOptions: TGroupBox;
     gpPrinter: TGroupBox;
     ilPrinters: TImageList;
     lblPrinters: TLabel;
+    gpFormatOptions: TGroupBox;
+    chkSyntaxHighlight: TCheckBox;
+    chkUseColor: TCheckBox;
+    frmPreview: TRTFShowCaseFrame;
     procedure btnOKClick(Sender: TObject);
     procedure btnPrefencesClick(Sender: TObject);
     procedure btnSetupClick(Sender: TObject);
     procedure cbPrintersDrawItem(Control: TWinControl; Index: Integer;
       Rect: TRect; State: TOwnerDrawState);
     procedure FormCreate(Sender: TObject);
+    procedure FormatCheckBoxClick(Sender: TObject);
+  strict private
+    type
+      {
+      TDocFormatPreview
+        Class that renders a preview of effect of document formatting changes
+        on a printed document.
+      }
+      TDocFormatPreview = class(TObject)
+      strict private
+        fRE: TRichEdit;
+          {Reference to richedit control used to render preview}
+        procedure HiliteSource(const UseColour, SyntaxHighlight: Boolean;
+          Builder: TRTFBuilder);
+          {Generates sample highlighted source code.
+            @param UseColour [in] Whether to use colour or mono highlighter.
+            @param SyntaxHighlight [in] Whether source code to be highlighted.
+            @param Builder [in] Object that receives highlighted source code.
+          }
+      public
+        constructor Create(const RE: TRichEdit);
+          {Class constructor. Sets up object.
+            @param RE [in] Rich edit control used to render preview.
+          }
+        procedure Generate(const UseColour, SyntaxHighlight: Boolean);
+          {Generates RTF source code for preview.
+            @param UseColour [in] Whether preview to be in colour or monochrome.
+            @param SyntaxHighlight [in] Whether preview source code to be syntax
+              hilited.
+          }
+      end;
   strict private
     procedure PopulatePrinterList;
       {Stores name of each installed printer in combo box and selects default
@@ -55,6 +97,7 @@ type
     procedure InitOptions;
       {Initialises options controls to default values.
       }
+    procedure DisplayPreview;
   strict protected
     procedure ArrangeForm; override;
       {Positions Page Setup button to right of window and vertically level with
@@ -79,8 +122,21 @@ uses
   // Delphi
   Printers, Graphics,
   // Project
-  FmPreferencesDlg, FrPrintingPrefs, UClassHelpers, UConsts, UMessageBox,
-  UPageSetupDlgMgr, UPrintInfo, UStructs, UStrUtils;
+  CS.Config,
+  CS.SourceCode.Hiliter.Brushes,
+  CS.SourceCode.Hiliter.Renderers,
+  FmPreferencesDlg,
+  FrPrintingPrefs,
+  UClassHelpers,
+  UConsts,
+  UMessageBox,
+  UPageSetupDlgMgr,
+  UPreferences,
+  UPrintInfo,
+  URTFStyles,
+  URTFUtils,
+  UStructs,
+  UStrUtils;
 
 
 {$R *.dfm}
@@ -110,7 +166,7 @@ begin
   Options := [];
   if chkUseColor.Checked then
     Include(Options, poUseColor);
-  if chkSyntaxPrint.Checked then
+  if chkSyntaxHighlight.Checked then
     Include(Options, poSyntaxPrint);
   PrintInfo.PrintOptions := Options;
   // Update selected printer
@@ -187,7 +243,7 @@ procedure TPrintDlg.cbPrintersDrawItem(Control: TWinControl; Index: Integer;
     except
       on EPrinter do
         // Checks for exception: will be because no default printer available
-        // fixes bug 2875857
+        // Fixes bug 2875857
         Result := False;
     end;
   end;
@@ -258,6 +314,18 @@ begin
   Canvas.TextRect(TxtRect, PrnName, [tfLeft, tfEndEllipsis, tfTop]);
 end;
 
+procedure TPrintDlg.DisplayPreview;
+var
+  Preview: TDocFormatPreview; // object that renders preview
+begin
+  Preview := TDocFormatPreview.Create(frmPreview.RichEdit);
+  try
+    Preview.Generate(chkUseColor.Checked, chkSyntaxHighlight.Checked);
+  finally
+    Preview.Free;
+  end;
+end;
+
 class function TPrintDlg.Execute(const AOwner: TComponent): Boolean;
   {Displays print dialog box and gets information entered by user.
     @param AOwner [in] Owner of dialog box.
@@ -270,6 +338,11 @@ begin
     finally
       Free;
     end;
+end;
+
+procedure TPrintDlg.FormatCheckBoxClick(Sender: TObject);
+begin
+  DisplayPreview;
 end;
 
 procedure TPrintDlg.FormCreate(Sender: TObject);
@@ -285,6 +358,7 @@ begin
   inherited;
   PopulatePrinterList;
   InitOptions;
+  DisplayPreview;
 end;
 
 procedure TPrintDlg.InitOptions;
@@ -292,7 +366,7 @@ procedure TPrintDlg.InitOptions;
   }
 begin
   chkUseColor.Checked := poUseColor in PrintInfo.PrintOptions;
-  chkSyntaxPrint.Checked := poSyntaxPrint in PrintInfo.PrintOptions;
+  chkSyntaxHighlight.Checked := poSyntaxPrint in PrintInfo.PrintOptions;
 end;
 
 procedure TPrintDlg.PopulatePrinterList;
@@ -310,6 +384,88 @@ begin
     on EPrinter do
       // Exception can occur if no default printer: part of fix for bug 2875857
       cbPrinters.ItemIndex := -1;
+  end;
+end;
+
+{ TPrintDlg.TDocFormatPreview }
+
+constructor TPrintDlg.TDocFormatPreview.Create(const RE: TRichEdit);
+begin
+  Assert(Assigned(RE), ClassName + '.Create: RE is nil');
+  inherited Create;
+  fRE := RE;
+end;
+
+procedure TPrintDlg.TDocFormatPreview.Generate(const UseColour,
+  SyntaxHighlight: Boolean);
+resourcestring
+  // Heading and dummy paragraph text
+  sHeading = 'Sample';
+  sBodyText = 'Lorem ipsum dolor sit diam amet.';
+var
+  Builder: TRTFBuilder; // object used to assemble required RTF code
+begin
+  Builder := TRTFBuilder.Create(0); // use default code page
+  try
+    // Set global document font and paragraph spacing
+    Builder.FontTable.Add('Tahoma', rgfSwiss, 0);
+    Builder.SetParaSpacing(TRTFParaSpacing.Create(0.0, 2.0));
+    // Add heading text
+    Builder.BeginGroup;
+    Builder.SetFontSize(10);
+    Builder.SetFontStyle([fsBold]);
+    Builder.AddText(sHeading);
+    Builder.EndGroup;
+    Builder.EndPara;
+    // Add dummy paragraph
+    Builder.SetFontSize(9);
+    Builder.AddText(sBodyText);
+    Builder.EndPara;
+    // Add highlighted source code
+    HiliteSource(UseColour, SyntaxHighlight, Builder);
+    Builder.EndPara;
+    // Load document into rich edit
+    TRichEditHelper.Load(fRE, Builder.Render);
+  finally
+    Builder.Free;
+  end;
+end;
+
+procedure TPrintDlg.TDocFormatPreview.HiliteSource(const UseColour,
+  SyntaxHighlight: Boolean; Builder: TRTFBuilder);
+const
+  // Sample source code displayed in preview
+  cSourceCode = 'procedure Foo;' + EOL
+    + 'begin' + EOL
+    + '  // sample comment' + EOL
+    + '  ShowMessage(''Bar'');' + EOL
+    + 'end;';
+var
+  Renderer: IHiliteRenderer2;  // renders highlighted code as RTF
+  Brush: TSyntaxHiliterBrush;  // performs syntax highlighting
+  Theme: TSyntaxHiliteTheme;   // determines syntax highlighting style
+begin
+  if not SyntaxHighlight then
+    // null theme - no syntax highlighting
+    Theme := TSyntaxHiliteThemes.NullTheme.Clone
+  else
+    // proper theme - with or without colour
+    Theme := TConfig.Instance.HiliterThemes[
+      Preferences.CurrentHiliteThemeIds[htkPrint]
+    ].Clone(not UseColour);
+  try
+    // using "pascal" brush here since sample source is Pascal.
+    Brush := TSyntaxHiliterBrushes.CreateBrush(
+      TSyntaxHiliterBrushes.PascalBrushID
+    );
+    try
+      Renderer := TRTFHiliteRenderer.Create(Builder, Brush, Theme);
+      TSyntaxHiliter.Hilite(cSourceCode, Brush, Renderer);
+    finally
+      Brush.Free;
+    end;
+  finally
+    Theme.Free;
   end;
 end;
 
