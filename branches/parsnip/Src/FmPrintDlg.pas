@@ -121,7 +121,6 @@ uses
   CS.Config,
   CS.SourceCode.Hiliter.Brushes,
   CS.SourceCode.Hiliter.Renderers,
-  FmPreferencesDlg,
   UClassHelpers,
   UConsts,
   UMessageBox,
