@@ -103,24 +103,8 @@ inherited PrintDlg: TPrintDlg
       end
     end
   end
-  inherited btnHelp: TButton
-    TabOrder = 4
-  end
-  inherited btnCancel: TButton
-    TabOrder = 3
-  end
   inherited btnOK: TButton
-    TabOrder = 2
     OnClick = btnOKClick
-  end
-  object btnPreferences: TButton
-    Left = 8
-    Top = 304
-    Width = 89
-    Height = 25
-    Caption = 'P&references...'
-    TabOrder = 1
-    OnClick = btnPrefencesClick
   end
   object ilPrinters: TImageList
     Left = 120

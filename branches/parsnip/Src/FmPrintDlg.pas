@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2007-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2007-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -42,7 +42,6 @@ type
     Class that implements a print dialog box.
   }
   TPrintDlg = class(TGenericOKDlg)
-    btnPreferences: TButton;
     btnSetup: TButton;
     cbPrinters: TComboBox;
     gpPrinter: TGroupBox;
@@ -53,7 +52,6 @@ type
     chkUseColor: TCheckBox;
     frmPreview: TRTFShowCaseFrame;
     procedure btnOKClick(Sender: TObject);
-    procedure btnPrefencesClick(Sender: TObject);
     procedure btnSetupClick(Sender: TObject);
     procedure cbPrintersDrawItem(Control: TWinControl; Index: Integer;
       Rect: TRect; State: TOwnerDrawState);
@@ -98,11 +96,9 @@ type
       {Initialises options controls to default values.
       }
     procedure DisplayPreview;
-  strict protected
-    procedure ArrangeForm; override;
-      {Positions Page Setup button to right of window and vertically level with
-      OK, Cancel and Help buttons.
+      {Displays document formatting options preview.
       }
+  strict protected
     procedure InitForm; override;
       {Initialises dialog box controls.
       }
@@ -126,7 +122,6 @@ uses
   CS.SourceCode.Hiliter.Brushes,
   CS.SourceCode.Hiliter.Renderers,
   FmPreferencesDlg,
-  FrPrintingPrefs,
   UClassHelpers,
   UConsts,
   UMessageBox,
@@ -143,16 +138,6 @@ uses
 
 
 { TPrintDlg }
-
-procedure TPrintDlg.ArrangeForm;
-  {Positions Page Setup button to right of window and vertically level with OK,
-  Cancel and Help buttons.
-  }
-begin
-  inherited;
-  btnPreferences.Left := 8;
-  btnPreferences.Top := btnOK.Top;
-end;
 
 procedure TPrintDlg.btnOKClick(Sender: TObject);
   {OK button click handler. Records results of user input.
@@ -172,33 +157,6 @@ begin
   // Update selected printer
   if cbPrinters.ItemIndex >= 0 then
     Printer.PrinterIndex := cbPrinters.ItemIndex;
-end;
-
-procedure TPrintDlg.btnPrefencesClick(Sender: TObject);
-  {Default Options button click handler. Display preferences dialog with only
-  Printing page visible and updates checkboxes and printer info to reflect any
-  change in settings.
-    @param Sender [in] Not used.
-  }
-resourcestring
-  // Prompt for query dialog when preferences accepted
-  sQuery = 'Do want to apply these preferences now?' + EOL2
-    + 'Click Yes to apply your preferences now.' + EOL
-    + 'Click No to apply your preferences the next time the program starts.';
-  // Message displayed when preferences are not to be applied yet
-  sMessage = 'Your preferences will take effect the next time you start the '
-    + 'application';
-begin
-  if TPreferencesDlg.Execute(Self, [TPrintingPrefsFrame]) then
-  begin
-    if TMessageBox.Confirm(Self, sQuery) then
-    begin
-      PrintInfo.LoadDefaults;
-      InitOptions;
-    end
-    else
-      TMessageBox.Information(Self, sMessage);
-  end;
 end;
 
 procedure TPrintDlg.btnSetupClick(Sender: TObject);
@@ -315,6 +273,8 @@ begin
 end;
 
 procedure TPrintDlg.DisplayPreview;
+  {Displays document formatting options preview.
+  }
 var
   Preview: TDocFormatPreview; // object that renders preview
 begin

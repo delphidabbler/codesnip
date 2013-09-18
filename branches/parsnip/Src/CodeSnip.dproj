@@ -327,10 +327,6 @@
 				<Form>PrefsBaseFrame</Form>
 				<DesignClass>TFrame</DesignClass>
 			</DCCReference>
-			<DCCReference Include="FrPrintingPrefs.pas">
-				<Form>PrintingPrefsFrame</Form>
-				<DesignClass>TFrame</DesignClass>
-			</DCCReference>
 			<DCCReference Include="FrRSSNews.pas">
 				<Form>RSSNewsFrame</Form>
 				<DesignClass>TFrame</DesignClass>

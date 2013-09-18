@@ -151,7 +151,6 @@ uses
   FrNewsPrefs in 'FrNewsPrefs.pas' {NewsPrefsFrame: TFrame},
   FrOverview in 'FrOverview.pas' {OverviewFrame: TFrame},
   FrPrefsBase in 'FrPrefsBase.pas' {PrefsBaseFrame: TFrame},
-  FrPrintingPrefs in 'FrPrintingPrefs.pas' {PrintingPrefsFrame: TFrame},
   FrRSSNews in 'FrRSSNews.pas' {RSSNewsFrame: TFrame},
   FrRTFPreview in 'FrRTFPreview.pas' {RTFPreviewFrame: TFrame},
   FrRTFShowCase in 'FrRTFShowCase.pas' {RTFShowCaseFrame: TFrame},
