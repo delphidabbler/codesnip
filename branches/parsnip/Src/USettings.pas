@@ -192,11 +192,12 @@ type
   ///  windows</para>
   ///  <para>-ssDatabase - database customisation info</para>
   ///  <para>-ssUpdateChecks - info about update checks</para>
+  ///  <para>-ssPrinting - printing preferences</para>
   ///  </summary>
   TSettingsSectionId = (
     ssFindText, ssFindCompiler, ssFindXRefs, ssCompilerInfo, ssApplication,
     ssPreferences, ssUserInfo, ssProxyServer, ssUnits, ssDuplicateSnippet,
-    ssFavourites, ssWindowState, ssDatabase, ssUpdateChecks
+    ssFavourites, ssWindowState, ssDatabase, ssUpdateChecks, ssPrinting
   );
 
 type
@@ -562,7 +563,8 @@ const
     ssUser,     // ssFavourites
     ssUser,     // ssWindowState
     ssUser,     // ssDatabase
-    ssUser      // ssUpdateChecks
+    ssUser,     // ssUpdateChecks
+    ssUser      // ssPrinting
   );
 begin
   Result := cSectionStorageMap[Section];
@@ -645,7 +647,8 @@ const
     'Favourites',       // ssFavourites
     'WindowState',      // ssWindowState
     'Database',         // ssDatabase
-    'UpdateChecks'      // ssUpdateChecks
+    'UpdateChecks',     // ssUpdateChecks
+    'Printing'          // ssPrinting
   );
 begin
   Result := cSectionNames[Id];

@@ -99,7 +99,8 @@ implementation
 
 uses
   // Delphi
-  UPreferences, USingleton;
+  USettings,
+  USingleton;
 
 
 type
@@ -126,6 +127,8 @@ type
   strict protected
     ///  <summary>Initialises singleton object on creation.</summary>
     procedure Initialize; override;
+    ///  <summary>Finalises singleton object on destruction.</summary>
+    procedure Finalize; override;
   public
     class property Instance: IPrintInfo read GetInstance;
       {Reference to singleton instance of this class}
@@ -163,6 +166,21 @@ end;
 
 { TPrintInfo }
 
+procedure TPrintInfo.Finalize;
+var
+  Storage: ISettingsSection;
+begin
+  inherited;
+  Storage := Settings.EmptySection(ssPrinting);
+  Storage.SetBoolean('UseColour', poUseColor in fPrintOptions);
+  Storage.SetBoolean('SyntaxPrint', poSyntaxPrint in fPrintOptions);
+  Storage.SetFloat('LeftMargin', fPageMargins.Left);
+  Storage.SetFloat('TopMargin', fPageMargins.Top);
+  Storage.SetFloat('RightMargin', fPageMargins.Right);
+  Storage.SetFloat('BottomMargin', fPageMargins.Bottom);
+  Storage.Save;
+end;
+
 class function TPrintInfo.GetInstance: IPrintInfo;
   {Returns singletion IPrintInfo object initialised from persistent storage.
     @return Object instance.
@@ -196,9 +214,25 @@ end;
 procedure TPrintInfo.LoadDefaults;
   {Loads default property values from user preferences.
   }
+const
+  // Default margin size in millimeters
+  cPageMarginSizeMM = 25.0;
+var
+  Storage: ISettingsSection;
 begin
-  fPrintOptions := Preferences.PrinterOptions;
-  fPageMargins := Preferences.PrinterPageMargins;
+  // Read printing section
+  Storage := Settings.ReadSection(ssPrinting);
+  fPrintOptions := [];
+  if Storage.GetBoolean('UseColour', True) then
+    Include(fPrintOptions, poUseColor);
+  if Storage.GetBoolean('SyntaxHighlight', True) then
+    Include(fPrintOptions, poSyntaxPrint);
+  fPageMargins := TPageMargins.Create(
+    Storage.GetFloat('LeftMargin', cPageMarginSizeMM),
+    Storage.GetFloat('TopMargin', cPageMarginSizeMM),
+    Storage.GetFloat('RightMargin', cPageMarginSizeMM),
+    Storage.GetFloat('BottomMargin', cPageMarginSizeMM)
+  );
 end;
 
 procedure TPrintInfo.SetPageMargins(const Margins: TPageMargins);
@@ -216,7 +250,6 @@ procedure TPrintInfo.SetPrintOptions(const Options: TPrintOptions);
 begin
   fPrintOptions := Options;
 end;
-
 
 { TPageMargins }
 
