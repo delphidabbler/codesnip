@@ -24,12 +24,15 @@
 			<Base>true</Base>
 		</PropertyGroup>
 		<PropertyGroup Condition="'$(Base)'!=''">
+			<DCC_UNIT_PLATFORM>false</DCC_UNIT_PLATFORM>
+			<DCC_SYMBOL_PLATFORM>false</DCC_SYMBOL_PLATFORM>
 			<DCC_ImageBase>00400000</DCC_ImageBase>
 			<DCC_DcuOutput>.\$(Config)\$(Platform)</DCC_DcuOutput>
 			<DCC_UnitAlias>WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;$(DCC_UnitAlias)</DCC_UnitAlias>
 			<DCC_ExeOutput>.\$(Config)\$(Platform)</DCC_ExeOutput>
 		</PropertyGroup>
 		<PropertyGroup Condition="'$(Cfg_1)'!=''">
+			<DCC_UnitSearchPath>D:\Prg\Public\CodeSnip\WC.exp\Src\DelphiCol\Release\Win32;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
 			<DCC_ExeOutput>..\..\..\Exe</DCC_ExeOutput>
 			<DCC_DcuOutput>..\..\..\Bin\DatabaseTest</DCC_DcuOutput>
 			<DCC_Define>DEBUG;$(DCC_Define)</DCC_Define>
@@ -49,6 +52,55 @@
 			<DCCReference Include="FmTestMain.pas">
 				<Form>Form1</Form>
 			</DCCReference>
+			<DCCReference Include="..\Engine\CS.Database.Types.pas"/>
+			<DCCReference Include="..\Engine\CS.Database.Core.SnippetsTable.pas"/>
+			<DCCReference Include="..\Extra\CS.Utils.Hashes.pas"/>
+			<DCCReference Include="..\..\TrunkSrc\UConsts.pas"/>
+			<DCCReference Include="..\..\TrunkSrc\UStrUtils.pas"/>
+			<DCCReference Include="..\Extra\CS.Markup.pas"/>
+			<DCCReference Include="..\Engine\CS.Database.Main.pas"/>
+			<DCCReference Include="..\..\TrunkSrc\UBaseObjects.pas"/>
+			<DCCReference Include="..\Engine\CS.Database.Snippets.pas"/>
+			<DCCReference Include="..\..\TrunkSrc\UExceptions.pas"/>
+			<DCCReference Include="..\..\TrunkSrc\UStructs.pas"/>
+			<DCCReference Include="..\Extra\CS.Utils.Dates.pas"/>
+			<DCCReference Include="..\..\TrunkSrc\UUtils.pas"/>
+			<DCCReference Include="..\Engine\CS.Database.Core.Lookups.pas"/>
+			<DCCReference Include="..\Engine\CS.Database.Exceptions.pas"/>
+			<DCCReference Include="..\Engine\CS.Database.IO.Native.pas"/>
+			<DCCReference Include="..\..\TrunkSrc\UIStringList.pas"/>
+			<DCCReference Include="..\..\TrunkSrc\IntfCommon.pas"/>
+			<DCCReference Include="..\..\TrunkSrc\UIOUtils.pas"/>
+			<DCCReference Include="..\..\TrunkSrc\UDataStreamIO.pas"/>
+			<DCCReference Include="..\..\TrunkSrc\3rdParty\PJStreamWrapper.pas"/>
+			<DCCReference Include="..\..\TrunkSrc\UEncodings.pas"/>
+			<DCCReference Include="..\..\TrunkSrc\ULocales.pas"/>
+			<DCCReference Include="..\..\TrunkSrc\USystemInfo.pas"/>
+			<DCCReference Include="..\..\TrunkSrc\3rdParty\PJSysInfo.pas"/>
+			<DCCReference Include="..\..\SyntaxHighlighting\Languages\CS.SourceCode.Languages.pas"/>
+			<DCCReference Include="..\..\SyntaxHighlighting\Highlighters\CS.SourceCode.Hiliter.Brushes.pas"/>
+			<DCCReference Include="..\..\SyntaxHighlighting\SynEditUnits\SynEdit.pas"/>
+			<DCCReference Include="..\..\SyntaxHighlighting\SynEditUnits\SynEditHighlighter.pas"/>
+			<DCCReference Include="..\..\SyntaxHighlighting\SynEditUnits\SynEditHighlighterOptions.pas"/>
+			<DCCReference Include="..\..\SyntaxHighlighting\SynEditUnits\SynEditKbdHandler.pas"/>
+			<DCCReference Include="..\..\SyntaxHighlighting\SynEditUnits\SynEditKeyCmds.pas"/>
+			<DCCReference Include="..\..\SyntaxHighlighting\SynEditUnits\SynEditKeyConst.pas"/>
+			<DCCReference Include="..\..\SyntaxHighlighting\SynEditUnits\SynEditMiscClasses.pas"/>
+			<DCCReference Include="..\..\SyntaxHighlighting\SynEditUnits\SynEditMiscProcs.pas"/>
+			<DCCReference Include="..\..\SyntaxHighlighting\SynEditUnits\SynEditStrConst.pas"/>
+			<DCCReference Include="..\..\SyntaxHighlighting\SynEditUnits\SynEditTextBuffer.pas"/>
+			<DCCReference Include="..\..\SyntaxHighlighting\SynEditUnits\SynEditTypes.pas"/>
+			<DCCReference Include="..\..\SyntaxHighlighting\SynEditUnits\SynEditWordWrap.pas"/>
+			<DCCReference Include="..\..\SyntaxHighlighting\SynEditUnits\SynHighlighterHtml.pas"/>
+			<DCCReference Include="..\..\SyntaxHighlighting\SynEditUnits\SynHighlighterJScript.pas"/>
+			<DCCReference Include="..\..\SyntaxHighlighting\SynEditUnits\SynHighlighterMulti.pas"/>
+			<DCCReference Include="..\..\SyntaxHighlighting\SynEditUnits\SynHighlighterPas.pas"/>
+			<DCCReference Include="..\..\SyntaxHighlighting\SynEditUnits\SynHighlighterPHP.pas"/>
+			<DCCReference Include="..\..\SyntaxHighlighting\SynEditUnits\SynRegExpr.pas"/>
+			<DCCReference Include="..\..\SyntaxHighlighting\SynEditUnits\SynTextDrawer.pas"/>
+			<DCCReference Include="..\..\SyntaxHighlighting\SynEditUnits\SynUnicode.pas"/>
+			<DCCReference Include="..\..\TrunkSrc\Compilers.UGlobals.pas"/>
+			<DCCReference Include="..\Engine\CS.Database.Tags.pas"/>
 			<BuildConfiguration Include="Release">
 				<Key>Cfg_2</Key>
 				<CfgParent>Base</CfgParent>

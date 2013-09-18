@@ -117,11 +117,6 @@ type
     ///  </returns>
     function ExecPrintDlg: Boolean;
 
-    ///  <summary>Displays the Page Setup dialogue box.</summary>
-    ///  <returns>Boolean. True if user OKd dialogue or False if user cancelled.
-    ///  </returns>
-    function ExecPageSetupDlg: Boolean;
-
     ///  <summary>Displays the Donate dialogue box.</summary>
     procedure ShowDonateDlg;
 
@@ -177,7 +172,7 @@ uses
   FmFindTextDlg, FmFindXRefsDlg, FmNewsDlg, FmPreferencesDlg, FmPrintDlg,
   FmProgramUpdatesDlg, FmProxyServerDlg, FmRegistrationDlg,
   FmSelectionSearchDlg, FmSWAGImportDlg, FmTestCompileDlg, FmUserBugReportDlg,
-  UPageSetupDlgMgr, UTestUnitDlgMgr;
+  UTestUnitDlgMgr;
 
 
 { TDialogMgr }
@@ -203,11 +198,6 @@ function TDialogMgr.ExecFindXRefsDlg(const ASnippet: TSnippet;
   out ASearch: ISearch): Boolean;
 begin
   Result := TFindXRefsDlg.Execute(Owner, ASnippet, ASearch);
-end;
-
-function TDialogMgr.ExecPageSetupDlg: Boolean;
-begin
-  Result := TPageSetupDlgMgr.Execute(Owner);
 end;
 
 function TDialogMgr.ExecPreferencesDlg(out UpdateUI: Boolean): Boolean;

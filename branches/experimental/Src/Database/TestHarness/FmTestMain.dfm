@@ -11,6 +11,7 @@ object Form1: TForm1
   Font.Name = 'Tahoma'
   Font.Style = []
   OldCreateOrder = False
+  OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
   object pcMain: TPageControl
@@ -23,8 +24,6 @@ object Form1: TForm1
     TabOrder = 0
     object tsSnippetEdit: TTabSheet
       Caption = 'Basic Snippet Editor'
-      ExplicitLeft = 0
-      ExplicitTop = 16
       object lblDesc: TLabel
         Left = 16
         Top = 72
@@ -111,12 +110,19 @@ object Form1: TForm1
         Columns = <
           item
             Caption = 'ID'
+            Width = 220
           end
           item
             Caption = 'Title'
+            Width = 360
+          end
+          item
+            Caption = 'Modified'
+            Width = 120
           end>
         TabOrder = 3
         ViewStyle = vsReport
+        OnDblClick = lvSnippetsDblClick
       end
       object btnAdd: TButton
         Left = 760
@@ -125,6 +131,7 @@ object Form1: TForm1
         Height = 25
         Caption = 'Add'
         TabOrder = 4
+        OnClick = btnAddClick
       end
       object btnUpdate: TButton
         Left = 760
@@ -133,6 +140,7 @@ object Form1: TForm1
         Height = 25
         Caption = 'Update'
         TabOrder = 5
+        OnClick = btnUpdateClick
       end
       object btnDelete: TButton
         Left = 760
@@ -141,6 +149,7 @@ object Form1: TForm1
         Height = 25
         Caption = 'Delete'
         TabOrder = 6
+        OnClick = btnDeleteClick
       end
       object stID: TStaticText
         Left = 48
@@ -163,6 +172,7 @@ object Form1: TForm1
         Height = 25
         Caption = 'New Snippet'
         TabOrder = 8
+        OnClick = btnNewClick
       end
       object edSource: TMemo
         Left = 416
@@ -178,6 +188,15 @@ object Form1: TForm1
         ScrollBars = ssBoth
         TabOrder = 9
         WordWrap = False
+      end
+      object btnSave: TButton
+        Left = 760
+        Top = 479
+        Width = 75
+        Height = 25
+        Caption = 'Save'
+        TabOrder = 10
+        OnClick = btnSaveClick
       end
     end
   end
