@@ -1,17 +1,38 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * UWindowSettings.pas
  *
- * Copyright (C) 2006-2013, Peter Johnson (www.delphidabbler.com).
+ * Implements a class that can save and record position of main window along
+ * with some window widgets.
+ *
+ * Requires DelphiDabbler Window State Components v5.3 of later.
  *
  * $Rev$
  * $Date$
  *
- * Implements classes that can save and record position of a window along with
- * information about any window widgets.
+ * ***** BEGIN LICENSE BLOCK *****
  *
- * Requires DelphiDabbler Window State Components v5.3 of later.
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is UWindowSettings.pas
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2006-2010 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -29,146 +50,73 @@ uses
 
 
 type
-  ///  <summary>Class that can save and record the position of the main program
-  ///  window along with some of the windows widgets.</summary>
-  TMainWindowSettings = class(TPJCustomWdwState)
+
+  {
+  TWindowSettings:
+    Class that can save and record position of main window along with some of
+    window's widgets.
+  }
+  TWindowSettings = class(TPJCustomWdwState)
   strict private
     var
-      ///  <summary>Value of SplitterPos property.</summary>
-      fSplitterPos: Integer;
-      ///  <summary>Value of OverviewTab property.</summary>
-      fOverviewTab: Integer;
+      fSplitterPos: Integer;      // Value of SplitterPos property
+      fOverviewTab: Integer;      // Value of OverviewTab property
+      fDetailTab: Integer;        // Value of DetailTab property
     const
-      ///  <summary>Default width of form's left hand panel.</summary>
-      cDefLeftPanelWidth  = 186;
-
+      cDefLeftPanelWidth  = 186;  // Default width of left hand panel
   strict protected
-    ///  <summary>Reads window size, position and state from persistent settings
-    ///  along with information about some main window widgets, setting the
-    ///  appropriate properties.</summary>
-    ///  <remarks>If persistent information is not present the window defaults
-    ///  to its designed size and is placed at centre of work area.</remarks>
-    ///  <param name="Left">Integer [in/out] Location of left hand side of
-    ///  window. Input value is ignored. Set to value read from persistent
-    ///  storage if available, otherwise set to a value that centres window
-    ///  horizontally in work area.</param>
-    ///  <param name="Top">Integer [in/out] Location of top of window. Input
-    ///  value is ignored. Set to value read from persistent storage if
-    ///  available, otherwise set to a value that centres window vertically in
-    ///  work area.</param>
-    ///  <param name="Width">Integer [in/out] Width of window. Designed width is
-    ///  passed in. Set to width read from persistent storage if available,
-    ///  otherwise left unchanged.</param>
-    ///  <param name="Height">Integer [in/out] Height of window. Designed height
-    ///  is passed in. Set to height read from persistent storage if available,
-    ///  otherwise left unchanged.</param>
-    ///  <param name="State">Integer [in/out] State of window (ordinal value of
-    ///  TWindowState enumeration). Designed state is pased in. Set to state
-    ///  read from persistent storage if available, otherwise left unchanged.
-    ///  Any minimized state is ignored and normal state used in its place.
-    ///  </param>
     procedure ReadWdwState(var Left, Top, Width, Height, State: Integer);
       override;
-
-    ///  <summary>Writes window size, position and state to persistent settings
-    ///  along with information about some window widgets stored in the
-    ///  associated properties.</summary>
-    ///  <param name="Left">Integer [in] Location of left hand side of window.
-    ///  </param>
-    ///  <param name="Top">Integer [in] Location of top of window.</param>
-    ///  <param name="Width">Integer [in] Width of window.</param>
-    ///  <param name="Height">Integer [in] Height of window.</param>
-    ///  <param name="State">Integer [in] State of window (ordinal value of
-    ///  TWindowState enumeration).</param>
+      {Reads window state from persistent local settings. Also reads information
+      about location, size and state of other main window widgets and sets
+      appropriate property. If persistent storage not present window defaults to
+      designed size and is placed at centre of work area.
+        @param Left [in/out] Location of left hand side of window. Designed
+          value passed in. Set to value from persistent storage if available,
+          otherwise set to a value that centres window horizontally in work
+          area.
+        @param Top [in/out] Location of top of window. Designed value passed in.
+          Set to value from persistent storage if available, otherwise set to a
+          value that centres window vertically in work area.
+        @param Width [in/out] Width of window. Passed in as designed width. Set
+          to width from persistent storage if available, otherwise unchanged.
+        @param Height [in/out] Height of window. Passed in as designed height.
+          Set to height from persistent storage if available, otherwise
+          unchanged.
+        @param State [in/out] State of window (ordinal value of TWindowState
+          enumeration). Passed in as designed state. Set to state from
+          persistent storage if available, otherwise unchanged.
+      }
     procedure SaveWdwState(const Left, Top, Width, Height, State: Integer);
       override;
-
+      {Writes window state to persistent local settings. Also writes information
+      about location, size and state of other main window widgets per assoicated
+      property values.
+        @param Left [in] Location of left hand side of window.
+        @param Top [in] Location of top of window.
+        @param Width [in] Width of window.
+        @param Height [in] Height of window.
+        @param State [in] State of window (ordinal value of TWindowState
+          enumeration). If state is minimized this is ignored and normal state
+          used.
+      }
   public
     const
-      ///  <summary>Minimum width of left panel.</summary>
-      MinLeftPanelWidth  = 160;
-      ///  <summary>Minimum width of right panel.</summary>
-      MinRightPanelWidth = 300;
-
-  public
-    ///  <summary>Creates and sets up component and default property values.
-    ///  </summary>
-    ///  <param name="AOwner">TComponent [in] Owner of this component. AOwner
-    ///  must not be nil and must have a non-empty Name property.</param>
-    ///  <remarks>AOwner should be the form whose size, position and state are
-    ///  to be recorded.</remarks>
+      MinLeftPanelWidth  = 160; // minimum width of left panel
+      MinRightPanelWidth = 300; // minimum width of right panel
     constructor Create(AOwner: TComponent); override;
-
-    ///  <summary>Position of main window's vertical splitter.</summary>
+      {Class constructor. Sets up object and default property values.
+        @param AOwner [in] Owning component (must be a TForm).
+      }
     property SplitterPos: Integer
       read fSplitterPos write fSplitterPos default cDefLeftPanelWidth;
-
-    ///  <summary>Index of selected tab in overview pane.</summary>
+      {Position of main window's vertical splitter}
     property OverviewTab: Integer
       read fOverviewTab write fOverviewTab;
-  end;
-
-type
-  ///  <summary>Class that can save and record the position of a dialogue box
-  ///  window.</summary>
-  TDlgWindowSettings = class(TPJCustomWdwState)
-  strict private
-    var
-      ///  <summary>Value of FixedSize property.</summary>
-      fFixedSize: Boolean;
-
-  strict protected
-    ///  <summary>Reads window size and, optionally, position from persistent
-    ///  settings.</summary>
-    ///  <remarks>If persistent information is not present the window defaults
-    ///  to its designed size and is located relative to its owner window
-    ///  according to its aligner.</remarks>
-    ///  <param name="Left">Integer [in/out] Location of left hand side of
-    ///  window. Input value is as set by window's aligner. Set to value read
-    ///  from persistent storage if available, otherwise unchanged.</param>
-    ///  <param name="Top">Integer [in/out] Location of top of window. Input
-    ///  value is as set by window's aligner. Set to value read from persistent
-    ///  storage if available, otherwise unchanged.</param>
-    ///  <param name="Width">Integer [in/out] Width of window. Designed width is
-    ///  passed in. Set to width read from persistent storage if available AND
-    ///  FixedSize property is False, otherwise left unchanged.</param>
-    ///  <param name="Height">Integer [in/out] Height of window. Designed height
-    ///  is passed in. Set to height read from persistent storage if available
-    ///  AND FixedSize property is False, otherwise left unchanged.</param>
-    ///  <param name="State">Integer [in/out] State of window (ordinal value of
-    ///  TWindowState enumeration). Input value is ignored. Always set to
-    ///  wsNormal.</param>
-    procedure ReadWdwState(var Left, Top, Width, Height, State: Integer);
-      override;
-
-    ///  <summary>Writes window size and, optionally, position to persistent
-    ///  settings.</summary>
-    ///  <param name="Left">Integer [in] Location of left hand side of window.
-    ///  </param>
-    ///  <param name="Top">Integer [in] Location of top of window.</param>
-    ///  <param name="Width">Integer [in] Width of window. Ignored if FixedSize
-    ///  is True.</param>
-    ///  <param name="Height">Integer [in] Height of window. Ignored if
-    ///  FxiedSize is True.</param>
-    ///  <param name="State">Integer [in] State of window (ordinal value of
-    ///  TWindowState enumeration). Ignored.</param>
-    procedure SaveWdwState(const Left, Top, Width, Height, State: Integer);
-      override;
-
-  public
-    ///  <summary>Creates and sets up component and default property values.
-    ///  </summary>
-    ///  <param name="AOwner">TComponent [in] Owner of this component. AOwner
-    ///  must not be nil and must have a non-empty Name property.</param>
-    ///  <remarks>AOwner should be the form whose size and, optionally, position
-    ///  are to be recorded.</remarks>
-    constructor Create(AOwner: TComponent); override;
-
-    ///  <summary>Determines if dialogue box is to be treated as fixed (True) or
-    ///  variable (False) size.</summary>
-    ///  <remarks>When True width and height information are not written to
-    ///  persistent storage, or are ignored if present.</remarks>
-    property FixedSize: Boolean read fFixedSize write fFixedSize default True;
+      {Index of selected tab in overview pane}
+    property DetailTab: Integer
+      read fDetailTab write fDetailTab;
+      {Index of selected tab in detail pane}
   end;
 
 
@@ -182,19 +130,39 @@ uses
   USettings, UStructs;
 
 
-{ TMainWindowSettings }
+{ TWindowSettings }
 
-constructor TMainWindowSettings.Create(AOwner: TComponent);
+constructor TWindowSettings.Create(AOwner: TComponent);
+  {Class constructor. Sets up object and default property values.
+    @param AOwner [in] Owning component (must be a TForm).
+  }
 begin
-  Assert(Assigned(AOwner), ClassName + '.Create: AOwner is nil');
   inherited;
   AutoSaveRestore := False;           // need to call Save and Restore manually
   Options := [woFitWorkArea];         // keep main window inside work area
   fSplitterPos := cDefLeftPanelWidth; // default splitter position
 end;
 
-procedure TMainWindowSettings.ReadWdwState(var Left, Top, Width, Height,
+procedure TWindowSettings.ReadWdwState(var Left, Top, Width, Height,
   State: Integer);
+  {Reads window state from persistent local settings. Also reads information
+  about location, size and state of other main window widgets and sets
+  appropriate property. If persistent storage not present window defaults to
+  designed size and is placed at centre of work area.
+    @param Left [in/out] Location of left hand side of window. Designed value
+      passed in. Set to value from persistent storage if available, otherwise
+      set to a value that centres window horizontally in work area.
+    @param Top [in/out] Location of top of window. Designed value passed in. Set
+      to value from persistent storage if available, otherwise set to a value
+      that centres window vertically in work area.
+    @param Width [in/out] Width of window. Passed in as designed width. Set to
+      width from persistent storage if available, otherwise unchanged.
+    @param Height [in/out] Height of window. Passed in as designed height. Set
+      to height from persistent storage if available, otherwise unchanged.
+    @param State [in/out] State of window (ordinal value of TWindowState
+      enumeration). Passed in as designed state. Set to state from persistent
+      storage if available, otherwise unchanged.
+  }
 var
   Section: ISettingsSection;  // object used to access persistent storage
   WorkArea: TRectEx;          // screen's workarea
@@ -204,82 +172,43 @@ begin
   Left := (WorkArea.Width - Width) div 2;
   Top := (WorkArea.Height - Height) div 2;
   // Read values from storage
-  // ** Don't use Owner.Name for sub-section: breaks sub-classed code that needs
-  //    main form settings.
-  Section := Settings.ReadSection(ssWindowState, 'MainForm');
-  Left := Section.GetInteger('Left', Left);
-  Top := Section.GetInteger('Top', Top);
-  Width := Section.GetInteger('Width', Width);
-  Height := Section.GetInteger('Height', Height);
-  State := Section.GetInteger('State', State);
+  Section := Settings.ReadSection(ssMainWindow);
+  Left := StrToIntDef(Section.ItemValues['Left'], Left);
+  Top := StrToIntDef(Section.ItemValues['Top'], Top);
+  Width := StrToIntDef(Section.ItemValues['Width'], Width);
+  Height := StrToIntDef(Section.ItemValues['Height'], Height);
+  State := StrToIntDef(Section.ItemValues['State'], State);
   if TWindowState(State) = wsMinimized then
     State := Ord(wsNormal);   // we don't allow minimized: use normal
-  fSplitterPos := Section.GetInteger('SplitterPos', fSplitterPos);
-  fOverviewTab := Section.GetInteger('OverviewTab', fOverviewTab);
+  fSplitterPos := StrToIntDef(Section.ItemValues['SplitterPos'], fSplitterPos);
+  fOverviewTab := StrToIntDef(Section.ItemValues['OverviewTab'], fOverviewTab);
+  fDetailTab := StrToIntDef(Section.ItemValues['DetailTab'], fDetailTab);
 end;
 
-procedure TMainWindowSettings.SaveWdwState(const Left, Top, Width, Height,
+procedure TWindowSettings.SaveWdwState(const Left, Top, Width, Height,
   State: Integer);
+  {Writes window state to persistent local settings. Also writes information
+  about location, size and state of other main window widgets per assoicated
+  property values.
+    @param Left [in] Location of left hand side of window.
+    @param Top [in] Location of top of window.
+    @param Width [in] Width of window.
+    @param Height [in] Height of window.
+    @param State [in] State of window (ordinal value of TWindowState
+      enumeration). If state is minimized this is ignored and normal state used.
+  }
 var
   Section: ISettingsSection;  // object used to access persistent storage
 begin
-  // ** Don't use Owner.Name for sub-section: breaks sub-classed code that needs
-  //    main form settings.
-  Section := Settings.ReadSection(ssWindowState, 'MainForm');
-  Section.SetInteger('Left', Left);
-  Section.SetInteger('Top', Top);
-  Section.SetInteger('Width', Width);
-  Section.SetInteger('Height', Height);
-  Section.SetInteger('State', State);
-  Section.SetInteger('SplitterPos', fSplitterPos);
-  Section.SetInteger('OverviewTab', fOverviewTab);
-  Section.Save;
-end;
-
-{ TDlgWindowSettings }
-
-constructor TDlgWindowSettings.Create(AOwner: TComponent);
-begin
-  Assert(Assigned(AOwner), ClassName + '.Create: AOwner is nil');
-  Assert(AOwner.Name <> '', ClassName + '.Create: AOwner.Name is empty string');
-  inherited;
-  AutoSaveRestore := False;           // need to call Save and Restore manually
-  Options := [woFitWorkArea];         // keep main window inside work area
-  fFixedSize := True;
-end;
-
-procedure TDlgWindowSettings.ReadWdwState(var Left, Top, Width, Height,
-  State: Integer);
-var
-  Section: ISettingsSection;  // object used to access persistent storage
-begin
-  // Assume that dialogue box has been aligned in default position when this
-  // method called.
-  Section := Settings.ReadSection(ssWindowState, Owner.Name);
-  Left := Section.GetInteger('Left', Left);
-  Top := Section.GetInteger('Top', Top);
-  if not fFixedSize then
-  begin
-    Width := Section.GetInteger('Width', Width);
-    Height := Section.GetInteger('Height', Height);
-  end;
-  State := Ord(wsNormal); // we don't allow minimized or maximized for dialogues
-end;
-
-procedure TDlgWindowSettings.SaveWdwState(const Left, Top, Width, Height,
-  State: Integer);
-var
-  Section: ISettingsSection;  // object used to access persistent storage
-begin
-  Section := Settings.ReadSection(ssWindowState, Owner.Name);
-  Section.SetInteger('Left', Left);
-  Section.SetInteger('Top', Top);
-  // Never save state and only save size if dialogue not fixed size
-  if not fFixedSize then
-  begin
-    Section.SetInteger('Width', Width);
-    Section.SetInteger('Height', Height);
-  end;
+  Section := Settings.ReadSection(ssMainWindow);
+  Section.ItemValues['Left'] := IntToStr(Left);
+  Section.ItemValues['Top'] := IntToStr(Top);
+  Section.ItemValues['Width'] := IntToStr(Width);
+  Section.ItemValues['Height'] := IntToStr(Height);
+  Section.ItemValues['State'] := IntToStr(State);
+  Section.ItemValues['SplitterPos'] := IntToStr(fSplitterPos);
+  Section.ItemValues['OverviewTab'] := IntToStr(fOverviewTab);
+  Section.ItemValues['DetailTab'] := IntToStr(fDetailTab);
   Section.Save;
 end;
 

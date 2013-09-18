@@ -1,15 +1,26 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
 <!--
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * ***** BEGIN LICENSE BLOCK *****
  *
- * Copyright (C) 2005-2012, Peter Johnson (www.delphidabbler.com).
+ * Version: MPL 1.1
  *
- * $Rev$
- * $Date$
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
  *
- * Help topic for Details pane.
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is detail_pane.htm
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * ***** END LICENSE BLOCK *****
 -->
 <html>
   <head>
@@ -21,296 +32,51 @@
   </head>
   <body>
     <h1>
-      Detail Pane
+      <a name="detail_pane"></a>Detail Pane
     </h1>
-    <h2>
-      Introduction
-    </h2>
     <p>
       This pane appears on the right hand side of the display and shows
-      detailed information about the currently selected snippet or section
-      heading, along with some other information (see below).
+      detailed information about the current selection in the
+      <a href="overview_pane.htm">Overview pane</a>.
     </p>
-    <h2>
-      Tabs
-    </h2>
     <p>
-      Information is be displayed in one or more tabs. Items selected in the
-      <a href="overview_pane.htm">Overview pane</a> are normally displayed in
-      the currently selected tab, overwriting previous contents. This behaviour
-      can be changed as follows:
+      The detail pane contains two tabs, each of which display different
+      information relating to the selection:
     </p>
     <ul>
       <li>
-        <span class="smallcaps">Ctrl</span> clicking items in the <a
-          href="overview_pane.htm"
-        >Overview pane</a> causes them to be displayed in a new tab.
+        The <a href="detail_information.htm">Information tab</a> shows detailed
+        information about the selected snippet or section.
       </li>
       <li>
-        Pressing <span class="smallcaps">Ctrl+T</span>, or choosing the <em>View
-        | New Tab</em> menu option opens a new empty tab ready to display the
-        next item chosen in the <a href="overview_pane.htm">Overview pane</a>,
-        for example.
-      </li>
-      <li>
-        <span class="smallcaps">Ctrl</span> clicking snippet and category links
-        in the detail pane displays them in a new tab.
-      </li>
-      <li>
-        Newly created snippets and categories may be displayed in new tabs.
-        This happens only if the feature is selected in the <a
-          href="dlg_prefs_display.htm"
-        >Display</a> tab of the <a
-          href="dlg_preferences.htm"
-        >Preferences</a> dialogue box.
+        The <a href="detail_compilerchecks.htm">Compiler Check tab</a> can
+        test-compile a selected snippet in any supported compiler that is
+        installed on the local computer.
       </li>
     </ul>
     <p>
-      When more than one tab is displayed you can quickly cycle through them
-      from left to right by pressing <span class="smallcaps">Ctrl+Tab</span> or
-      from right to left using <span class="smallcaps">Shift+Ctrl+Tab</span>.
+      Both tabs can also display the Welcome Page.
     </p>
-    <p>
-      You can close tabs in one of three ways:
-    </p>
+    <h2>
+      Related Actions
+    </h2>
     <ul>
       <li>
-        Close the selected tab using <em>Close Tab</em> menu option displayed on
-        the <a href="menu_view.htm">View</a> menu, the detail pane's context
-        menu and any tab's context menu. Alternatively press
-        <span class="smallcaps">Ctrl+F4</span>.
+        Save the selected snippet to disk by using the
+        <a href="dlg_savesnippet.htm">Save Snippet</a> dialog box that is
+        accessed from the
+        <img
+          alt="Save Snippet button"
+          src="../Images/SaveSnippet.gif"
+          class="glyph"
+        > <em>Save Snippet</em> toolbar button. (Not available for
+        <a href="snippet_freeform.htm">freeform</a> snippets).
       </li>
       <li>
-        Close all except the selected tab by right clicking the tab and
-        selecting the <em>Close All Other Tabs</em> option from the tab's
-        context menu. Pressing <span class="smallcaps">Shift+Ctrl+F4</span> has
-        the same effect.
-      </li>
-      <li>
-        Close all open tabs using the <em><a href="menu_view.htm">View</a> |
-        Close All Tabs</em> menu option.
+        Copy the selected snippet to the clipboard using one of the options on
+        the <em>Edit</em> menu.
       </li>
     </ul>
-    <p>
-      Some other types of information are always displayed in new tabs. See
-      below for details.
-    </p>
-    <h2>
-      Views
-    </h2>
-    <p>
-      There are various types of item that can be displayed in a details pane
-      tab. These are referred to as &quot;Views&quot;.
-    </p>
-    <p>
-      Every view has a context menu displayed by right clicking or by pressing
-      <span class="smallcaps">Alt+F10</span>. The content of this menu various
-      according to the view or the selected element within it.
-    </p>
-    <p>
-      Each type of view is described below.
-    </p>
-    <h3>
-      Snippet View
-    </h3>
-    <p>
-      The snippet view displays detailed information about a snippet. The
-      display can be customised and may include the following components:
-    </p>
-    <ul>
-      <li>
-        The snippet's name. This component is always present and its placing is
-        fixed.
-      </li>
-      <li>
-        <div>
-          For snippets downloaded from the <em>Code Snippets Database</em> an
-          image is displayed at the right hand end of the line containing the
-          snippet name that gives information about the level of testing applied
-          to the snippet. The images are:
-        </div>
-        <ul style="list-style: none;" class="unspaced">
-          <li>
-            <img
-              src="..\Images\TestingBasic.png"
-              class="glyph"
-            >&nbsp;&nbsp;the snippet has been given some basic testing before
-            uploading to the database.
-          </li>
-          <li>
-            <img
-              src="..\Images\TestingAdvanced.png"
-              class="glyph"
-            >&nbsp;&nbsp;the snippet has been more rigorously tested, for
-            example by unit testing.
-          </li>
-          <li>
-            <img
-              src="..\Images\TestingNone.png"
-              class="glyph"
-            >&nbsp;&nbsp;the snippet has not been tested and should be used with
-            care.
-          </li>
-        </ul>
-        <div>
-          This information is not displayed for user-defined snippets. In the
-          place of the images is a link that can be clicked to edit the snippet.
-        </div>
-      </li>
-      <li>
-        A brief description of the snippet.
-      </li>
-      <li>
-        Additional information about the snippet, if present.
-      </li>
-      <li>
-        The snippet's source code (syntax highlighted).
-      </li>
-      <li>
-        The <a
-          href="snippet_kinds.htm"
-        >kind</a> of snippet this is.
-      </li>
-      <li>
-        The category to which the snippet belongs. This forms a link to the
-        category's contents.
-      </li>
-      <li>
-        A list of standard Delphi units required by the snippet. <em>Not
-        displayed by default for <a
-          href="snippet_unit.htm"
-        >unit</a> snippets.</em>
-      </li>
-      <li>
-        A list of other snippets called by the selected snippet. This list
-        contains links to the snippets. <em>Not displayed by default for <a
-          href="snippet_unit.htm"
-        >unit</a> snippets.</em>
-      </li>
-      <li>
-        A cross reference to other similar snippets, labelled &quot;See
-        also&quot;. Again, this list contains links to the snippets.
-      </li>
-      <li>
-        A table indicating which compilers the snippet is compatible with. The
-        compilers whose results are displayed in this table can be changed using
-        the <a
-          href="dlg_configcompilers.htm"
-        >Configure Compilers</a> dialogue box. <em>Not displayed by default for
-        <a
-          href="snippet_freeform.htm"
-        >freeform</a> snippets.</em>
-      </li>
-    </ul>
-    <p>
-      The components present in a snippet view are specific to the <a
-        href="snippet_kinds.htm"
-      >snippet kind</a>. The program's default settings for these views can be
-      customised using the <a
-        href="dlg_prefs_snippetlayout.htm"
-      >Snippet Layout</a> tab of the <a
-        href="dlg_preferences.htm"
-      >Preferences</a> dialogue box.
-    </p>
-    <h3>
-      Section Contents View
-    </h3>
-    <p>
-      Selecting a section header (a category, an intial letter or a <a
-        href="snippet_kinds.htm"
-      >snippet kind</a> in the <a
-        href="overview_pane.htm"
-      >Overview Pane</a> causes a table to be displayed in the detail pane that
-      lists the name of the snippets contained in the section, along with their
-      descriptions. Following a search, the listed snippets are just those
-      contained in the current database selection, if any.
-    </p>
-    <p>
-      Snippet names are links that, when clicked, displays the chosen snippet
-      in the detail pane.
-    </p>
-    <p>
-      If the section contains no snippets, a message to that effect is displayed
-      instead of a table of contents.
-    </p>
-    <h3>
-      Welcome Page View
-    </h3>
-    <p>
-      The Welcome Page is displayed when the program starts and may also be
-      re-displayed at any time from the <em>View | Welcome Page</em> menu item.
-      This view is always displayed in a new tab.
-    </p>
-    <h3>
-      Database Update View
-    </h3>
-    <p>
-      When the database has been updated, all open tabs are closed and a new tab
-      created that simply informs that the database has been updated
-      successfully.
-    </p>
-    <h3>
-      Empty Tab View
-    </h3>
-    <p>
-      When a new tab is created (<em>View | New Tab</em> or <span
-        class="smallcaps"
-      >Ctrl+T</span>, nothing is displayed except &quot;Empty Tab&quot; in light
-      grey.
-    </p>
-    <h2>
-      View History
-    </h2>
-    <p>
-      Whenever a snippet or section contents view is displayed, it is added to
-      the view history list. You can return to the immediatly preceeding view by
-      clicking the <img
-        alt="Previous button"
-        src="../Images/GoBack.png"
-        class="glyph"
-      ><em>Previous</em> toolbar button or by pressing <span
-        class="smallcaps"
-      >Alt+Left</span>. Once you have gone back in the history list you can go
-      forward once again using the <img
-        alt="Next button"
-        src="../Images/GoForward.png"
-        class="glyph"
-      ><em>Next</em> toolbar button or by pressing <span
-        class="smallcaps"
-      >Alt+Right</span>.
-    </p>
-    <p>
-      You can also jump directly to some recent views by selecting its name from
-      the drop-down menus adjacent to the <img
-        alt="Previous button"
-        src="../Images/GoBack.png"
-        class="glyph"
-      ><em>Previous</em> and <img
-        alt="Next button"
-        src="../Images/GoForward.png"
-        class="glyph"
-      ><em>Next</em> buttons.
-    </p>
-    <p>
-      Deleting or editing an existing snippet or category will clear the
-      history.
-    </p>
-    <h2>
-      Snippet and Category Links
-    </h2>
-    <p>
-      Links to snippets or categories may be displayed as part of snippet or
-      section contents views.
-    </p>
-    <p>
-      Clicking a snippet link displays a snippet view for that snippet in the
-      current tab of the details pane, Clicking a category link causes a
-      section contents view to be displayed for the contents of the category,
-      again in the current tab.
-    </p>
-    <p>
-      Views displayed in this way are added to the history list.
-    </p>
   </body>
 </html>
 

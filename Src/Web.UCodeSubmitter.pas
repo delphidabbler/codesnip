@@ -1,15 +1,37 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * Web.UCodeSubmitter.pas
  *
- * Copyright (C) 2008-2013, Peter Johnson (www.delphidabbler.com).
+ * Implements a class that submits code snippets database contributions via a
+ * web service.
  *
  * $Rev$
  * $Date$
  *
- * Implements a class that submits code snippets database contributions via a
- * web service.
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is Web.UCodeSubmitter.pas, formerly UCodeSubmitter.pas then
+ * NsWebServices.UCodeSubmitter.pas.
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2008-2010 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -21,24 +43,26 @@ interface
 
 uses
   // Delphi
-  SysUtils, Classes,
+  Classes,
   // Project
   Web.UStdWebService;
 
 
 type
-  ///  <summary>Submits snippets to the Code Snippets Database code submission
-  ///  web service.</summary>
+
+  {
+  TCodeSubmitter:
+    Submits code to the Code Snippets Database using a web service via HTTP.
+  }
   TCodeSubmitter = class sealed(TStdWebService)
   public
-    ///  <summary>Creates a new object instance with correct URL and user agent
-    ///  for web service.</summary>
     constructor Create;
-    ///  <summary>Submits data describing the snippets being submitted to the
-    ///  cpde submission web service.</summary>
-    ///  <param name="Data">TBytes [in] Byte array containing code submission
-    ///  information.</param>
-    procedure SubmitData(const Data: TBytes);
+      {Class constructor. Initialises service.
+      }
+    procedure SubmitData(const Data: TStream);
+      {Submits data describing code to web service.
+        @param Data [in] Stream containing code submission information.
+      }
   end;
 
 
@@ -46,15 +70,17 @@ implementation
 
 
 uses
+  // Delphi
+  SysUtils,
   // Project
   Web.UInfo;
 
 
 const
   // Web service info
-  cScriptURLTplt = 'http://%s/websvc/codesnip-submitter';
-  cUserAgent = 'DelphiDabbler-CSSubmitter-v1';
-  cMediaType = 'text/xml';
+  cScriptName = 'codesnip-submitter.php';       // script name
+  cUserAgent = 'DelphiDabbler-CSSubmitter-v1';  // user agent string
+  cMediaType = 'text/xml';                      // media type
 
 
 resourcestring
@@ -65,17 +91,21 @@ resourcestring
 { TCodeSubmitter }
 
 constructor TCodeSubmitter.Create;
+  {Class constructor. Initialises service.
+  }
 begin
-  inherited Create(
-    TWebServiceInfo.Create(cScriptURLTplt, cUserAgent, cMediaType)
-  );
+  inherited Create(TWebServiceInfo.Create(cScriptName, cUserAgent, cMediaType));
 end;
 
-procedure TCodeSubmitter.SubmitData(const Data: TBytes);
+procedure TCodeSubmitter.SubmitData(const Data: TStream);
+  {Submits data describing code to web service.
+    @param Data [in] Stream containing code submission information.
+  }
 var
-  Response: TStringList;  // valid response from web service: content ignored
+  Response: TStringList;  // valid response from web service
 begin
   Assert(Assigned(Data), ClassName + '.Subscribe: Data stream is nil');
+  // Send subscribe command to web service and gather response
   Response := TStringList.Create;
   try
     PostData(Data, Response);

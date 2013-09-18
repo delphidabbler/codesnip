@@ -1,15 +1,36 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * UStructs.pas
  *
- * Copyright (C) 2008-2013, Peter Johnson (www.delphidabbler.com).
+ * Various structures. Some are extension of existing structures with added
+ * functionality.
  *
  * $Rev$
  * $Date$
  *
- * Various structures. Some are extension of existing structures with added
- * functionality.
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is UStructs.pas
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2008-2010 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -151,13 +172,6 @@ type
       {Checks if a value is contained in range.
         @param Value [in] Value to be tested.
         @return True if Value is in range, False otherwise.
-      }
-    function Constrain(const Value: Integer): Integer;
-      {Adjusts the given value to ensure it falls within the range.
-        @param Value [in] Value to be constrained.
-        @returns Value is returned unchanged if it falls within the range.
-          Otherwise Min is returned if Value is less than Min or Max is returned
-          if Value is greater than max.
       }
   end;
 
@@ -384,21 +398,6 @@ begin
 end;
 
 { TRange }
-
-function TRange.Constrain(const Value: Integer): Integer;
-  {Adjusts the given value to ensure it falls within the range.
-    @param Value [in] Value to be constrained.
-    @returns Value is returned unchanged if it falls within the range. Otherwise
-      Min is returned if Value is less than Min or Max is returned if Value is
-      greater than max.
-  }
-begin
-  if Value < Min then
-    Exit(Min);
-  if Value > Max then
-    Exit(Max);
-  Result := Value;
-end;
 
 function TRange.Contains(const Value: Integer): Boolean;
   {Checks if a value is contained in range.

@@ -1,431 +1,365 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
-<!--
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
- *
- * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
- *
- * $Rev$
- * $Date$
- *
- * CodeSnip help index file.
--->
 <HTML>
 <HEAD>
 <meta name="GENERATOR" content="Microsoft&reg; HTML Help Workshop 4.1">
 <!-- Sitemap 1.0 -->
 </HEAD><BODY>
 <UL>
-  <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="about compiler checks">
-    <param name="Local" value="HTML\about_compiler_checks.htm">
-    </OBJECT>
-  <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="about dialogue">
-    <param name="Local" value="HTML\dlg_about.htm">
-    </OBJECT>
-  <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="add category dialogue">
-    <param name="Local" value="HTML\dlg_addcategory.htm">
-    </OBJECT>
-  <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="add snippet dialogue">
-    <param name="Local" value="HTML\dlg_editsnippet.htm">
-    </OBJECT>
-  <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="bug report dialogue">
-    <param name="Local" value="HTML\dlg_userbugreport.htm">
-    </OBJECT>
-  <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="categories menu">
-    <param name="Local" value="HTML\menu_categories.htm">
-    </OBJECT>
-  <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="check for program updates dialogue">
-    <param name="Local" value="HTML\dlg_programupdates.htm">
-    </OBJECT>
-  <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="compile menu">
-    <param name="Local" value="HTML\menu_compile.htm">
-    </OBJECT>
-  <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="choose element colour dialogue">
-    <param name="Local" value="HTML\dlg_elementcolour.htm">
-    </OBJECT>
-  <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="code formatting preferences">
-    <param name="Local" value="HTML\dlg_prefs_sourcecode.htm">
-    </OBJECT>
-  <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="code generation preferences">
-    <param name="Local" value="HTML\dlg_prefs_codegen.htm">
-    </OBJECT>
-  <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="code submission dialogue">
-    <param name="Local" value="HTML\dlg_submit.htm">
-    </OBJECT>
-  <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="common tasks">
-    <param name="Local" value="HTML\tasks.htm">
-    </OBJECT>
-  <UL>
-    <LI> <OBJECT type="text/sitemap">
-      <param name="Name" value="add snippets to the database">
-      <param name="Local" value="HTML\task_addsnippets.htm">
-      </OBJECT>
-    <LI> <OBJECT type="text/sitemap">
-      <param name="Name" value="copy code snippets">
-      <param name="Local" value="HTML\task_copysnippet.htm">
-      </OBJECT>
-    <LI> <OBJECT type="text/sitemap">
-      <param name="Name" value="customise codesnip">
-      <param name="Local" value="HTML\task_customise.htm">
-      </OBJECT>
-    <LI> <OBJECT type="text/sitemap">
-      <param name="Name" value="duplicate snippet">
-      <param name="Local" value="HTML\dlg_duplicatesnippet.htm">
-      </OBJECT>
-    <LI> <OBJECT type="text/sitemap">
-      <param name="Name" value="generate a unit">
-      <param name="Local" value="HTML\task_generateunit.htm">
-      </OBJECT>
-    <LI> <OBJECT type="text/sitemap">
-      <param name="Name" value="save code snippets">
-      <param name="Local" value="HTML\task_savesnippet.htm">
-      </OBJECT>
-    <LI> <OBJECT type="text/sitemap">
-      <param name="Name" value="search the database">
-      <param name="Local" value="HTML\task_search.htm">
-      </OBJECT>
-    <LI> <OBJECT type="text/sitemap">
-      <param name="Name" value="test compiling">
-      <param name="Local" value="HTML\task_testcompile.htm">
-      </OBJECT>
-    <LI> <OBJECT type="text/sitemap">
-      <param name="Name" value="update the database">
-      <param name="Local" value="HTML\task_update.htm">
-      </OBJECT>
-    <LI> <OBJECT type="text/sitemap">
-      <param name="Name" value="submit code to the database">
-      <param name="Local" value="HTML\task_submit.htm">
-      </OBJECT>
-    <LI> <OBJECT type="text/sitemap">
-      <param name="Name" value="export and import snippets">
-      <param name="Local" value="HTML\task_export.htm">
-      </OBJECT>
-  </UL>
-  <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="configure compilers dialogue">
-    <param name="Local" value="HTML\dlg_configcompilers.htm">
-    </OBJECT>
-  <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="copy code snippets">
-    <param name="Local" value="HTML\task_copysnippet.htm">
-    </OBJECT>
-  <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="customise codesnip">
-    <param name="Local" value="HTML\task_customise.htm">
-    </OBJECT>
-  <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="delete category dialogue">
-    <param name="Local" value="HTML\dlg_deletecategory.htm">
-    </OBJECT>
-  <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="dependencies dialogue">
-    <param name="Local" value="HTML\dlg_dependencies.htm">
-    </OBJECT>
-  <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="detail pane">
-    <param name="Local" value="HTML\detail_pane.htm">
-    </OBJECT>
-  <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="display">
-    <param name="Local" value="HTML\main_display.htm">
-    </OBJECT>
-  <UL>
-    <LI> <OBJECT type="text/sitemap">
-      <param name="Name" value="detail pane">
-      <param name="Local" value="HTML\detail_pane.htm">
-      </OBJECT>
-    <LI> <OBJECT type="text/sitemap">
-      <param name="Name" value="overview page">
-      <param name="Local" value="HTML\overview_pane.htm">
-      </OBJECT>
-  </UL>
-  <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="display preferences">
-    <param name="Local" value="HTML\dlg_prefs_display.htm">
-    </OBJECT>
-  <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="download database">
-    <param name="Local" value="HTML\task_update.htm">
-    </OBJECT>
-  <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="edit menu">
-    <param name="Local" value="HTML\menu_edit.htm">
-    </OBJECT>
-  <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="edit snippet dialogue">
-    <param name="Local" value="HTML\dlg_editsnippet.htm">
-    </OBJECT>
-  <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="export routines dialogue">
-    <param name="Local" value="HTML\dlg_export.htm">
-    </OBJECT>
-  <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="export snippets">
-    <param name="Local" value="HTML\task_export.htm">
-    </OBJECT>
-  <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="favourites dialogue">
-    <param name="Local" value="HTML\dlg_favourites.htm">
-    </OBJECT>
-  <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="first run wizard">
-    <param name="Local" value="HTML\dlg_firstrun.htm">
-    </OBJECT>
-  <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="frequently asked questions">
-    <param name="Local" value="HTML\faqs.htm">
-    </OBJECT>
-  <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="file menu">
-    <param name="Local" value="HTML\menu_file.htm">
-    </OBJECT>
-  <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="find compiler dialogue">
-    <param name="Local" value="HTML\dlg_findcompiler.htm">
-    </OBJECT>
-  <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="find cross references dialogue">
-    <param name="Local" value="HTML\dlg_findxrefs.htm">
-    </OBJECT>
-  <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="find text dialogue">
-    <param name="Local" value="HTML\dlg_findtext.htm">
-    </OBJECT>
-  <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="help menu">
-    <param name="Local" value="HTML\menu_help.htm">
-    </OBJECT>
-  <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="import wizard">
-    <param name="Local" value="HTML\dlg_import.htm">
-    </OBJECT>
-  <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="import snippets">
-    <param name="Local" value="HTML\task_export.htm">
-    </OBJECT>
-  <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="license">
-    <param name="Local" value="HTML\license.htm">
-    </OBJECT>
-  <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="markup editor">
-    <param name="Local" value="HTML\markup_editor.htm">
-    </OBJECT>
-  <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="menus">
-    <param name="Local" value="HTML\main_menu.htm">
-    </OBJECT>
-  <UL>
-    <LI> <OBJECT type="text/sitemap">
-      <param name="Name" value="categories">
-      <param name="Local" value="HTML\menu_categories.htm">
-      </OBJECT>
-    <LI> <OBJECT type="text/sitemap">
-      <param name="Name" value="compile">
-      <param name="Local" value="HTML\menu_compile.htm">
-      </OBJECT>
-    <LI> <OBJECT type="text/sitemap">
-      <param name="Name" value="database">
-      <param name="Local" value="HTML\menu_database.htm">
-      </OBJECT>
-    <LI> <OBJECT type="text/sitemap">
-      <param name="Name" value="edit">
-      <param name="Local" value="HTML\menu_edit.htm">
-      </OBJECT>
-    <LI> <OBJECT type="text/sitemap">
-      <param name="Name" value="file">
-      <param name="Local" value="HTML\menu_file.htm">
-      </OBJECT>
-    <LI> <OBJECT type="text/sitemap">
-      <param name="Name" value="help">
-      <param name="Local" value="HTML\menu_help.htm">
-      </OBJECT>
-    <LI> <OBJECT type="text/sitemap">
-      <param name="Name" value="search">
-      <param name="Local" value="HTML\menu_search.htm">
-      </OBJECT>
-    <LI> <OBJECT type="text/sitemap">
-      <param name="Name" value="snippets">
-      <param name="Local" value="HTML\menu_snippets.htm">
-      </OBJECT>
-    <LI> <OBJECT type="text/sitemap">
-      <param name="Name" value="tools">
-      <param name="Local" value="HTML\menu_tools.htm">
-      </OBJECT>
-    <LI> <OBJECT type="text/sitemap">
-      <param name="Name" value="view">
-      <param name="Local" value="HTML\menu_view.htm">
-      </OBJECT>
-  </UL>
-  <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="miscellaneous preferences">
-    <param name="Local" value="HTML\dlg_prefs_general.htm">
-    </OBJECT>
-  <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="move user database dialogue">
-    <param name="Local" value="HTML\dlg_moveuserdb.htm">
-    </OBJECT>
-  <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="navigation">
-    <param name="Local" value="HTML\navigation.htm">
-    </OBJECT>
-  <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="news dialogue">
-    <param name="Local" value="HTML\dlg_news.htm">
-    </OBJECT>
-  <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="news preferences">
-    <param name="Local" value="HTML\dlg_prefs_news.htm">
-    </OBJECT>
-  <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="open backup dialogue">
-    <param name="Local" value="HTML\dlg_restore.htm">
-    </OBJECT>
-  <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="overview pane">
-    <param name="Local" value="HTML\overview_pane.htm">
-    </OBJECT>
-  <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="page setup dialogue">
-    <param name="Local" value="HTML\dlg_pagesetup.htm">
-    </OBJECT>
-  <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="preferences dialogue">
-    <param name="Local" value="HTML\dlg_preferences.htm">
-    </OBJECT>
-  <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="print dialogue">
-    <param name="Local" value="HTML\dlg_print.htm">
-    </OBJECT>
-  <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="print routine">
-    <param name="Local" value="HTML\task_printroutine.htm">
-    </OBJECT>
-  <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="printing preferences">
-    <param name="Local" value="HTML\dlg_prefs_printing.htm">
-    </OBJECT>
-  <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="privacy statement">
-    <param name="Local" value="HTML\privacy_statement.htm">
-    </OBJECT>
-  <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="proxy server dialogue">
-    <param name="Local" value="HTML\dlg_proxyserver.htm">
-    </OBJECT>
-  <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="quickstart guide">
-    <param name="Local" value="HTML\quickstart.htm">
-    </OBJECT>
-  <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="registration wizard">
-    <param name="Local" value="HTML\dlg_register.htm">
-    </OBJECT>
-  <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="rename category dialogue">
-    <param name="Local" value="HTML\dlg_renamecategory.htm">
-    </OBJECT>
-  <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="save backup dialogue">
-    <param name="Local" value="HTML\dlg_backup.htm">
-    </OBJECT>
-  <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="save code snippets">
-    <param name="Local" value="HTML\task_savesnippet.htm">
-    </OBJECT>
-  <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="save highlighter snippets dialogue">
-    <param name="Local" value="HTML\dlg_savehiliter.htm>s
-    </OBJECT>
-  <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="save snippet dialogue">
-    <param name="Local" value="HTML\dlg_savesnippet.htm">
-    </OBJECT>
-  <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="search menu">
-    <param name="Local" value="HTML\menu_search.htm">
-    </OBJECT>
-  <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="search the database">
-    <param name="Local" value="HTML\task_search.htm">
-    </OBJECT>
-  <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="select compiler dialogue">
-    <param name="Local" value="HTML\dlg_selectcompiler.htm">
-    </OBJECT>
-  <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="select routines dialogue">
-    <param name="Local" value="HTML\dlg_selectroutines.htm">
-    </OBJECT>
-  <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="snippet kinds">
-    <param name="Local" value="HTML\snippet_kinds.htm">
-    </OBJECT>
-  <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="snippets menu">
-    <param name="Local" value="HTML\menu_snippets.htm">
-    </OBJECT>
-  <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="submit code to the database">
-    <param name="Local" value="HTML\task_submit.htm">
-    </OBJECT>
-  <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="SWAG database">
-    <param name="Local" value="HTML\about_swag.htm">
-    </OBJECT>
-  <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="SWAG import wizard">
-    <param name="Local" value="HTML\dlg_swagimport.htm">
-    </OBJECT>
-  <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="syntax highlighter preferences">
-    <param name="Local" value="HTML\dlg_prefs_hiliter.htm">
-    </OBJECT>
-  <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="test compile results dialogue">
-    <param name="Local" value="HTML\dlg_testcompile.htm">
-    </OBJECT>
-  <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="test compiling">
-    <param name="Local" value="HTML\task_testcompile.htm">
-    </OBJECT>
-  <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="tools menu">
-    <param name="Local" value="HTML\menu_tools.htm">
-    </OBJECT>
-  <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="update database">
-    <param name="Local" value="HTML\task_update.htm">
-    </OBJECT>
-  <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="update from web dialogue">
-    <param name="Local" value="HTML\dlg_update.htm">
-    </OBJECT>
-  <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="updates preferences">
-    <param name="Local" value="HTML\dlg_prefs_updates.htm">
-    </OBJECT>
-  <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="user defined highlighters dialogue">
-    <param name="Local" value="HTML\dlg_hilitemgr.htm">
-    </OBJECT>
-  <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="view menu">
-    <param name="Local" value="HTML\menu_view.htm">
-    </OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="about compiler checks">
+		<param name="Local" value="HTML\about_compiler_checks.htm">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="about dialog">
+		<param name="Local" value="HTML\dlg_about.htm">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="add category dialog">
+		<param name="Local" value="HTML\dlg_addcategory.htm">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="add snippet dialog">
+		<param name="Local" value="HTML\dlg_editsnippet.htm">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="bug report dialog">
+		<param name="Local" value="HTML\dlg_userbugreport.htm">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="choose element colour dialog">
+		<param name="Local" value="HTML\dlg_elementcolour.htm">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="code formatting preferences">
+		<param name="Local" value="HTML\dlg_prefs_sourcecode.htm">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="code generation preferences">
+		<param name="Local" value="HTML\dlg_prefs_codegen.htm">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="code submission dialog">
+		<param name="Local" value="HTML\dlg_submit.htm">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="common tasks">
+		<param name="Local" value="HTML\tasks.htm">
+		</OBJECT>
+	<UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="add snippets to the database">
+			<param name="Local" value="HTML\task_addsnippets.htm">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="copy code snippets">
+			<param name="Local" value="HTML\task_copysnippet.htm">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="customise codesnip">
+			<param name="Local" value="HTML\task_customise.htm">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="generate a unit">
+			<param name="Local" value="HTML\task_generateunit.htm">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="save code snippets">
+			<param name="Local" value="HTML\task_savesnippet.htm">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="search the database">
+			<param name="Local" value="HTML\task_search.htm">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="test compiling">
+			<param name="Local" value="HTML\task_testcompile.htm">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="update the database">
+			<param name="Local" value="HTML\task_update.htm">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="submit code to the database">
+			<param name="Local" value="HTML\task_submit.htm">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="export and import snippets">
+			<param name="Local" value="HTML\task_export.htm">
+			</OBJECT>
+	</UL>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="compiler checks tab">
+		<param name="Local" value="HTML\detail_compilerchecks.htm">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="configure compilers dialog">
+		<param name="Local" value="HTML\dlg_configcompilers.htm">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="copy code snippets">
+		<param name="Local" value="HTML\task_copysnippet.htm">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="customise codesnip">
+		<param name="Local" value="HTML\task_customise.htm">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="delete category dialog">
+		<param name="Local" value="HTML\dlg_deletecategory.htm">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="dependencies dialog">
+		<param name="Local" value="HTML\dlg_dependencies.htm">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="detail pane">
+		<param name="Local" value="HTML\detail_pane.htm">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="display">
+		<param name="Local" value="HTML\main_display.htm">
+		</OBJECT>
+	<UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="detail pane">
+			<param name="Local" value="HTML\detail_pane.htm">
+			</OBJECT>
+		<UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="compiler checks tab">
+				<param name="Local" value="HTML\detail_compilerchecks.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="information tab">
+				<param name="Local" value="HTML\detail_information.htm">
+				</OBJECT>
+		</UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="overview page">
+			<param name="Local" value="HTML\overview_pane.htm">
+			</OBJECT>
+	</UL>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="download database">
+		<param name="Local" value="HTML\task_update.htm">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="edit menu">
+		<param name="Local" value="HTML\menu_edit.htm">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="edit snippet dialog">
+		<param name="Local" value="HTML\dlg_editsnippet.htm">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="export routines dialog">
+		<param name="Local" value="HTML\dlg_export.htm">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="export snippets">
+		<param name="Local" value="HTML\task_export.htm">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="frequently asked questions">
+		<param name="Local" value="HTML\faqs.htm">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="file menu">
+		<param name="Local" value="HTML\menu_file.htm">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="find compiler dialog">
+		<param name="Local" value="HTML\dlg_findcompiler.htm">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="find cross references dialog">
+		<param name="Local" value="HTML\dlg_findxrefs.htm">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="find text dialog">
+		<param name="Local" value="HTML\dlg_findtext.htm">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="general preferences">
+		<param name="Local" value="HTML\dlg_prefs_general.htm">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="help menu">
+		<param name="Local" value="HTML\menu_help.htm">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="import routines dialog">
+		<param name="Local" value="HTML\dlg_import.htm">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="information tab">
+		<param name="Local" value="HTML\detail_information.htm">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="import snippets">
+		<param name="Local" value="HTML\task_export.htm">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="license">
+		<param name="Local" value="HTML\license.htm">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="menus">
+		<param name="Local" value="HTML\main_menu.htm">
+		</OBJECT>
+	<UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="database">
+			<param name="Local" value="HTML\menu_database.htm">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="edit">
+			<param name="Local" value="HTML\menu_edit.htm">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="file">
+			<param name="Local" value="HTML\menu_file.htm">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="help">
+			<param name="Local" value="HTML\menu_help.htm">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="search">
+			<param name="Local" value="HTML\menu_search.htm">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="tools">
+			<param name="Local" value="HTML\menu_tools.htm">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="view">
+			<param name="Local" value="HTML\menu_view.htm">
+			</OBJECT>
+	</UL>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="navigation">
+		<param name="Local" value="HTML\navigation.htm">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="news dialog">
+		<param name="Local" value="HTML\dlg_news.htm">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="news preferences">
+		<param name="Local" value="HTML\dlg_prefs_news.htm">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="open backup dialog">
+		<param name="Local" value="HTML\dlg_restore.htm">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="overview pane">
+		<param name="Local" value="HTML\overview_pane.htm">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="page setup dialog">
+		<param name="Local" value="HTML\dlg_pagesetup.htm">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="preferences dialog">
+		<param name="Local" value="HTML\dlg_preferences.htm">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="print dialog">
+		<param name="Local" value="HTML\dlg_print.htm">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="print routine">
+		<param name="Local" value="HTML\task_printroutine.htm">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="printing preferences">
+		<param name="Local" value="HTML\dlg_prefs_printing.htm">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="privacy statement">
+		<param name="Local" value="HTML\privacy_statement.htm">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="proxy server dialog">
+		<param name="Local" value="HTML\dlg_proxyserver.htm">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="quickstart guide">
+		<param name="Local" value="HTML\quickstart.htm">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="registration wizard">
+		<param name="Local" value="HTML\dlg_register.htm">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="rename category dialog">
+		<param name="Local" value="HTML\dlg_renamecategory.htm">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="save backup dialog">
+		<param name="Local" value="HTML\dlg_backup.htm">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="save code snippets">
+		<param name="Local" value="HTML\task_savesnippet.htm">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="save snippet dialog">
+		<param name="Local" value="HTML\dlg_savesnippet.htm">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="search menu">
+		<param name="Local" value="HTML\menu_search.htm">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="search the database">
+		<param name="Local" value="HTML\task_search.htm">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="select compiler dialog">
+		<param name="Local" value="HTML\dlg_selectcompiler.htm">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="select routines dialog">
+		<param name="Local" value="HTML\dlg_selectroutines.htm">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="snippet kinds">
+		<param name="Local" value="HTML\snippet_kinds.htm">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="submit code to the database">
+		<param name="Local" value="HTML\task_submit.htm">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="syntax highlighter preferences">
+		<param name="Local" value="HTML\dlg_prefs_hiliter.htm">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="test compiling">
+		<param name="Local" value="HTML\task_testcompile.htm">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="tools menu">
+		<param name="Local" value="HTML\menu_tools.htm">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="update database">
+		<param name="Local" value="HTML\task_update.htm">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="update from web dialog">
+		<param name="Local" value="HTML\dlg_update.htm">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="view menu">
+		<param name="Local" value="HTML\menu_view.htm">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="welcome">
+		<param name="Local" value="HTML\welcome.htm">
+		</OBJECT>
 </UL>
 </BODY></HTML>

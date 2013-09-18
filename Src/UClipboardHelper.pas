@@ -1,15 +1,35 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * UClipboardHelper.pas
  *
- * Copyright (C) 2009-2012, Peter Johnson (www.delphidabbler.com).
+ * Implements a class that assists in working with the clipboard.
  *
  * $Rev$
  * $Date$
  *
- * Implements a class that manages copying data to the clipboard in multiple
- * formats.
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is UClipboardHelper.pas
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2009-2010 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -20,57 +40,53 @@ interface
 
 
 uses
+  // Delphi
+  SysUtils,
   // Project
-  UEncodings, UExceptions;
+  UExceptions;
 
 
 type
 
-  ///  <summary>
-  ///  Class that manages copying data to the clipboard in multiple formats.
-  ///  </summary>
+  {
+  TClipboardHelper:
+    Class that assists in working with the clipboard.
+  }
   TClipboardHelper = class(TObject)
-  strict private
-    ///  <summary>Adds data to the clipboard in a specified format.</summary>
-    ///  <param name="Fmt">Word [in] Required clipboard format.</param>
-    ///  <param name="Data">Untyped [in] Data to be placed on clipboard.</param>
-    ///  <param name="DataSize">Integer [in] Size of Data in bytes.</param>
-    ///  <remarks>
-    ///  <para>Clipboard must be open before calling this method.</para>
-    ///  <para>Call repeatedly with different formats and data to add more than
-    ///  one format.</para>
-    ///  </remarks>
-    procedure Add(const Fmt: Word; const Data; const DataSize: Integer);
   public
-    ///  <summary>Opens clipboard.</summary>
-    ///  <remarks>Must be called before calling any of the AddXXX methods.
-    ///  </remarks>
     procedure Open;
-    ///  <summary>Closes clipboard.</summary>
-    ///  <remarks>Calls must be balanced with calls to Open.</remarks>
+      {Opens clipboard. Must be called before calling methods that modify
+      clipboard.
+      }
     procedure Close;
-    ///  <summary>Adds plain Unicode text to clipboard in CF_UNICODETEXT format.
-    ///  </summary>
-    ///  <param name="AText">UnicodeString [in] Text to be placed on clipboard.
-    ///  </param>
-    ///  <remarks>
-    ///  <para>String is stored with terminating #0#0.</para>
-    ///  <para>Windows also automatically creates CF_TEXT, CF_OEMTEXT and
-    ///  CF_LOCALE clipboard formats.</para>
-    ///  </remarks>
-    procedure AddUnicodeText(const AText: UnicodeString);
-    ///  <summary>Adds RTF code to the clipboard in 'Rich Text Format' format.
-    ///  </summary>
-    ///  <param name="ARTF">ASCIIString [in] ASCII string containing RTF code to
-    ///  be placed on clipboard.</param>
-    ///  <remarks>Code string is stored with terminating #0.</remarks>
-    procedure AddRTF(const ARTF: ASCIIString);
+      {Closes clipboard. Calls must be matched with calls to Open.
+      }
+    procedure Add(const Fmt: Word; const Data; const DataSize: Integer);
+      overload;
+      {Adds data to the clipboard as a specified format. Clipboard must be open
+      before calling this method. Call repeatedly with different formats and
+      data to add multiple formats to clipboard.
+        @param Fmt [in] Clipboard format.
+        @param Data [in] Data to be added to clipboard.
+        @param Datasize [in] Size of data to be added to clipboard.
+      }
+    procedure Add(const Fmt: Word; const Str: string); overload;
+      {Adds a string, with terminating #0 character to clipboard in a specified
+      format.
+        @param Fmt [in] Clipboard format.
+        @param Str [in] String to be added to clipboard.
+      }
+    procedure Add(const Fmt: Word; const Bytes: TBytes); overload;
+      {Adds an array of bytes to the clipboard in a specified format.
+        @param Fmt [in] Clipboard format.
+        @param Bytes [in] Array of bytes to be added to clipboard.
+      }
   end;
 
-type
-  ///  <summary>
-  ///  Class of exception raised by TClipboardHelper.
-  ///  </summary>
+  {
+  EClipboard:
+    Class of exception raised by TClipboardHelper.
+  }
   EClipboard = class(ECodeSnip);
 
 
@@ -93,6 +109,13 @@ uses
 
 procedure TClipboardHelper.Add(const Fmt: Word; const Data;
   const DataSize: Integer);
+  {Adds data to the clipboard as a specified format. Clipboard must be open
+  before calling this method. Call repeatedly with different formats and data
+  to add multiple formats to clipboard.
+    @param Fmt [in] Clipboard format.
+    @param Data [in] Data to be added to clipboard.
+    @param Datasize [in] Size of data to be added to clipboard.
+  }
 var
   GH: HGLOBAL;    // global memory handle for clipboard data block
   Ptr: Pointer;   // pointer to buffer used to pass data to clipboard
@@ -121,22 +144,35 @@ begin
   end;
 end;
 
-procedure TClipboardHelper.AddRTF(const ARTF: ASCIIString);
+procedure TClipboardHelper.Add(const Fmt: Word; const Str: string);
+  {Adds a string, with terminating #0 character to clipboard in a specified
+  format.
+    @param Fmt [in] Clipboard format.
+    @param Str [in] String to be added to clipboard.
+  }
 begin
-  Add(CF_RTF, Pointer(ARTF)^, (Length(ARTF) + 1) * SizeOf(AnsiChar));
+  Add(Fmt, Pointer(Str)^, SizeOf(Char) * (Length(Str) + 1));
 end;
 
-procedure TClipboardHelper.AddUnicodeText(const AText: UnicodeString);
+procedure TClipboardHelper.Add(const Fmt: Word; const Bytes: TBytes);
+  {Adds an array of bytes to the clipboard in a specified format.
+    @param Fmt [in] Clipboard format.
+    @param Bytes [in] Array of bytes to be added to clipboard.
+  }
 begin
-  Add(CF_UNICODETEXT, Pointer(AText)^, (Length(AText) + 1) * SizeOf(WideChar));
+  Add(Fmt, Pointer(Bytes)^, Length(Bytes));
 end;
 
 procedure TClipboardHelper.Close;
+  {Closes clipboard. Calls must be matched with calls to Open.
+  }
 begin
   Clipboard.Close;
 end;
 
 procedure TClipboardHelper.Open;
+  {Opens clipboard. Must be called before calling methods that modify clipboard.
+  }
 begin
   Clipboard.Open;
 end;

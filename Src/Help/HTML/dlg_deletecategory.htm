@@ -1,15 +1,32 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
 <!--
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
- *
- * Copyright (C) 2009-2012, Peter Johnson (www.delphidabbler.com).
- *
  * $Rev$
  * $Date$
  *
- * Help topic for Delete Category dialogue box.
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is dlg_deletecategory.htm
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2009 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s):
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 -->
 <html>
   <head>
@@ -17,7 +34,7 @@
      http-equiv="Content-Type"
      content="text-html; charset=Windows-1252">
     <title>
-      Delete Category Dialogue Box
+      Delete Category Dialog Box
     </title>
     <link
      rel="stylesheet"
@@ -34,21 +51,26 @@
     </object>
     <h1>
       <a
-       name="dlg_deletecategory"></a>Delete Category Dialogue Box
+       name="dlg_deletecategory"></a>Delete Category Dialog Box
     </h1>
     <p>
-      This dialogue is used to delete a user-defined category from the database.
-      It is accessed from the <em>Categories | Delete Category</em> menu option.
+      This dialog is used to delete a user-defined category from the database.
+      It is accessed from the <em>Database | Delete Category</em> menu option.
     </p>
     <p>
-      Select the category to be deleted from the list box. If the selected
-      category is non-empty, i.e. it contains snippets then it can't be deleted
-      and a message wil be displayed to that effect. Once a suitable category is
-      selected simply click the <em>Delete</em> button to delete it.
+      <span class="warning">Warning:</span> Deleting a category that contains
+      snippets also deletes all those snippets from the database. The dialog box
+      will warn you if this is about to happen.
+    </p>
+    <p>
+      Select the category to be deleted from the list box. then click
+      <em>Delete</em> to delete it. If the category contains any snippets a
+      dialog box will be displayed that asks you to confirm you wish to delete
+      the category and all its snippets. Click <em>Yes</em> to confirm.
     </p>
     <p>
       The <em>Delete</em> button will be disabled if you haven't selected a
-      category from the list box or if the category can't be deleted.
+      category from the list box.
     </p>
     <p>
       You may have noticed that some user defined categories do not appear in

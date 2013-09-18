@@ -1,14 +1,35 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * UURIEncode.pas
  *
- * Copyright (C) 2010-2013, Peter Johnson (www.delphidabbler.com).
+ * Routines that can encode and decode URIs according to RFC 3986.
  *
  * $Rev$
  * $Date$
  *
- * Routines that can encode and decode URIs according to RFC 3986.
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is UURIEncode.pas
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2010 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -16,11 +37,6 @@ unit UURIEncode;
 
 
 interface
-
-
-uses
-  // Project
-  UConsts;
 
 
 const
@@ -31,7 +47,7 @@ const
   ];
   // may be reserved by different URI schemes
   cURISubReservedChars = [
-    '!', '$', '&', SINGLEQUOTE, '(', ')', '*', '+', ',', ';', '='
+    '!', '$', '&', '''', '(', ')', '*', '+', ',', ';', '='
   ];
   // % character treated as reserved because it is used in percent encoding and
   // must therefore be percent encoded if to be used literally in URI:
@@ -107,9 +123,7 @@ implementation
 
 uses
   // Delphi
-  SysUtils,
-  // Project
-  UStrUtils;
+  SysUtils, StrUtils;
 
 
 resourcestring
@@ -219,7 +233,7 @@ begin
   // because string is still URI encoded and space is not one of unreserved
   // chars and therefor should be percent-encoded. Finally we decode the
   // percent-encoded string.
-  Result := URIDecode(StrReplace(Str, cPlus, cPercentEncodedSpace));
+  Result := URIDecode(ReplaceStr(Str, cPlus, cPercentEncodedSpace));
 end;
 
 {
@@ -288,7 +302,7 @@ begin
   // encoded because we use them to replace spaces and we can't confuse '+'
   // already in URI with those that we add. After this step spaces get encoded
   // as %20. So next we replace all occurences of %20 with '+'.
-  Result := StrReplace(URIEncode(S), cPercentEncodedSpace, cPlus);
+  Result := ReplaceStr(URIEncode(S), cPercentEncodedSpace, cPlus);
 end;
 
 function URIEncodeQueryString(const S: UnicodeString): string; overload;

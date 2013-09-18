@@ -1,15 +1,36 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * FrMemoPreview.pas
  *
- * Copyright (C) 2007-2013, Peter Johnson (www.delphidabbler.com).
+ * Abstract base class for frames used to display previews of documents using
+ * controls that descend from TCustomMemo.
  *
  * $Rev$
  * $Date$
  *
- * Implements an abstract base class for frames used to display previews of
- * documents using controls that descend from TCustomMemo.
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is FrMemoPreview.pas
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2007-2009 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -21,9 +42,7 @@ interface
 
 uses
   // Delphi
-  Forms, Classes, Controls, ExtCtrls, StdCtrls,
-  // Project
-  UEncodings;
+  Forms, Classes, Controls, ExtCtrls, StdCtrls;
 
 
 type
@@ -44,16 +63,23 @@ type
       {Gets reference to frame's custom memo control.
         @return Required control reference.
       }
-    procedure LoadContent(const DocContent: TEncodedData); virtual; abstract;
+    function GetTitle(const DocContent: string): string; virtual; abstract;
+      {Extracts a document title from a document if possible.
+        @param DocContent [in] Document content.
+        @return Required tile or '' if no title present or title not supported
+          by document.
+      }
+    procedure LoadContent(const DocContent: string); virtual; abstract;
       {Loads content into frame's custom memo control.
         @param DocContent [in] Content to be displayed in control. Must have a
           format that is displayed by the control.
       }
-  public
+  protected // do not make strict
     { IPreview methods: partial implementation }
-    procedure Display(const DocContent: TEncodedData);
+    procedure Display(const DocContent: string; out Title: string);
       {Displays document in preview dialog box.
         @param DocContent [in] Content of document to be displayed.
+        @param Title [out] Title of document, if any.
       }
     { IClipboardMgr methods }
     function CanCopy: Boolean;
@@ -117,9 +143,11 @@ begin
   GetMemoCtrl.CopyToClipboard;
 end;
 
-procedure TMemoPreviewFrame.Display(const DocContent: TEncodedData);
+procedure TMemoPreviewFrame.Display(const DocContent: string;
+  out Title: string);
   {Displays document in preview dialog box.
     @param DocContent [in] Content of document to be displayed.
+    @param Title [out] Title of document, if any.
   }
 begin
   // Set margin of preview control
@@ -128,6 +156,7 @@ begin
   GetMemoCtrl.Lines.BeginUpdate;
   try
     LoadContent(DocContent);
+    Title := GetTitle(DocContent);
   finally
     GetMemoCtrl.Lines.EndUpdate;
   end;

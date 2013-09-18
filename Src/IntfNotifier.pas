@@ -1,15 +1,36 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * IntfNotifier.pas
  *
- * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
+ * Defines interfaces to set up and use the notifier object that triggers
+ * actions in response to user initiated events in the GUI.
  *
  * $Rev$
  * $Date$
  *
- * Defines interfaces to set up and use the notifier object that triggers
- * actions in response to user initiated events in the GUI.
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is IntfNotifier.pas
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -27,163 +48,151 @@ uses
 
 
 type
-  ///  <summary>Interface that defines methods that trigger actions in response
-  ///  to user intitiated events.</summary>
+
+  {
+  INotifier:
+    Interface that defines methods that trigger actions in response to user
+    intitiated events.
+  }
   INotifier = interface(IInterface)
     ['{13962DE4-784A-4B70-9D3F-FD434FAE4F4F}']
-
-    ///  <summary>Requests a database update.</summary>
     procedure UpdateDbase;
-
-    ///  <summary>Displays a snippet.</summary>
-    ///  <param name="SnippetName">WideString [in] Name of required snippet.
-    ///  </param>
-    ///  <param name="UserDefined">WordBool [in] Indicates whether snippet is
-    ///  user defined.</param>
-    ///  <param name="NewTab">WordBool [in] Whether to display snippet in a new
-    ///  detail pane tab.</param>
-    procedure DisplaySnippet(const SnippetName: WideString;
-      UserDefined: WordBool; NewTab: WordBool);
-
-    ///  <summary>Displays a category.</summary>
-    ///  <param name="CatId">WideString [in] ID of required category.</param>
-    ///  <param name="NewTab">WordBool [in] Whether to display category in a new
-    ///  detail pane tab.</param>
-    procedure DisplayCategory(const CatID: WideString; NewTab: WordBool);
-
-    ///  <summary>Displays Configure Compilers dialogue box.</summary>
+      {Updates database.
+      }
+    procedure DisplayRoutine(const RoutineName: WideString;
+      UserDefined: WordBool);
+      {Displays a named routine.
+        @param RoutineName [in] Name of routine to display.
+        @param UserDefined [in] Whether routine is user defined.
+      }
+    procedure DisplayCategory(const CatID: WideString);
+      {Displays an identified category.
+        @param CatID [in] Id of category to display.
+      }
+    procedure CompileRoutine;
+      {Compiles the current routine.
+      }
+    procedure ViewCompilerLog(Ver: SYSINT);
+      {Displays a compiler log.
+        @param Ver [in] Version of Delphi for which we need to display log. Ver
+          is the ordinal value of the required compiler version enumerated type.
+      }
+    procedure ShowHint(const Hint: WideString);
+      {Displays a hint.
+        @param Hint [in] Hint to be displayed.
+      }
     procedure ConfigCompilers;
-
-    ///  <summary>Displays a view item.</summary>
-    ///  <param name="View">IView [in] Required view item.</param>
-    ///  <param name="NewTab">Boolean [in] Whether to display view item in a new
-    ///  detail pane tab.</param>
-    procedure ShowViewItem(View: IView; const NewTab: Boolean);
-
-    ///  <summary>Changes display style of overview pane.</summary>
-    ///  <param name="Style">Integer [in] Required display style.</param>
-    ///  <remarks>Style is index of an overview pane tab.</remarks>
+      {Displays configure compilers dialog box.
+      }
+    procedure ShowViewItem(const ViewItem: TViewItem);
+      {Displays a view item.
+        @param ViewItem [in] View item to display.
+      }
     procedure ChangeOverviewStyle(const Style: Integer);
-
-    ///  <summary>Changes displayed pane in detail display area.</summary>
-    ///  <param name="Pane">Integer [in] Index of required pane.</param>
+      {Changes display style of overview pane.
+        @param Style [in] Required display style.
+      }
     procedure ChangeDetailPane(const Pane: Integer);
-
-    ///  <summary>Edits a snippet in Snippets Editor.</summary>
-    ///  <param name="SnippetName">WideString [in] Name of snippet.</param>
-    ///  <remarks>Snippet must be user defined.</remarks>
-    procedure EditSnippet(const SnippetName: WideString);
-
-    ///  <summary>Displays Donate dialogue box.</summary>
+      {Changes displayed pane in detail display area.
+        @param Pane [in] Required new pane.
+      }
+    procedure ShowTestUnit;
+      {Displays test unit.
+      }
+    procedure EditRoutine(const RoutineName: WideString);
+      {Edits a routine.
+        @param RoutineName [in] Name of routine. Must be user defined.
+      }
     procedure Donate;
-
-    ///  <summary>Opens Snippets Editor ready to create a new snippet.</summary>
-    procedure NewSnippet;
-
-    ///  <summary>Displays news items from the CodeSnip news feed.</summary>
-    procedure ShowNews;
-
-    ///  <summary>Checks for program updates.</summary>
-    procedure CheckForUpdates;
-
-    ///  <summary>Displays the program's About Box.</summary>
-    procedure ShowAboutBox;
-
-    ///  <summary>Displays the Preferences dialogue box containing the specified
-    ///  page.</summary>
-    ///  <param name="ClsName">string [in] Class name of the frame that
-    ///  implements the required preferences page.</param>
-    procedure ShowPrefsPage(const ClsName: string);
+      {Displays donate dialog box.
+      }
   end;
 
-type
-  ///  <summary>Interface that defines methods for associating action objects
-  ///  with the methods of INotifier.</summary>
-  ///  <remarks>Any object that implements INotifier must also implement this
-  ///  interface.</remarks>
+  {
+  ISetActions:
+    Interface used to associated action objects with the various methods of
+    INotifier. Any object that implements INotifies must also implement this
+    interface.
+  }
   ISetActions = interface(IInterface)
     ['{A4B7AFE2-EE6C-4D39-BEA6-B52CC8AAC1DE}']
-
-    ///  <summary>Sets action used to request a database update.</summary>
-    ///  <param name="Action">TBasicAction [in] Required action.</param>
     procedure SetUpdateDbaseAction(const Action: TBasicAction);
-
-    ///  <summary>Sets action used to display a snippet.</summary>
-    ///  <param name="Action">TBasicAction [in] Required action.</param>
-    procedure SetDisplaySnippetAction(const Action: TBasicAction);
-
-    ///  <summary>Sets action used to display Configure Compilers dialogue
-    ///  box.</summary>
-    ///  <param name="Action">TBasicAction [in] Required action.</param>
+      {Sets action triggered when user requests database update.
+        @param Action [in] Required action.
+      }
+    procedure SetDisplayRoutineAction(const Action: TBasicAction);
+      {Sets action triggered when a named routine is requested to be displayed.
+        @param Action [in] Required action.
+      }
+    procedure SetCompileRoutineAction(const Action: TBasicAction);
+      {Sets action triggered when user wants to test-compile the current
+      routine.
+        @param Action [in] Required action.
+      }
+    procedure SetViewCompilerLogAction(const Action: TBasicAction);
+      {Sets action triggered when user wants to view a compiler log.
+        @param Action [in] Required action.
+      }
+    procedure SetShowHintAction(const Action: TBasicAction);
+      {Sets action triggered when user moves mouse over hot links etc. that
+      cause hints to be displayed.
+        @param Action [in] Required action.
+      }
     procedure SetConfigCompilersAction(const Action: TBasicAction);
-
-    ///  <summary>Sets action used to display a view item.</summary>
-    ///  <param name="Action">TBasicAction [in] Required action.</param>
+      {Sets action triggered when user requests that configure compilers dialog
+      box is to be displayed.
+        @param Action [in] Required action.
+      }
     procedure SetShowViewItemAction(const Action: TBasicAction);
-
-    ///  <summary>Sets actions used to change display style of overview pane.
-    ///  </summary>
-    ///  <param name="Actions">array of TBasicAction [in] Array of required
-    ///  actions.</param>
-    ///  <remarks>Actions array must have one action for each supported display
-    ///  style.</remarks>
+      {Sets action triggered when user requests a view item is displayed.
+        @param Action [in] Required action.
+      }
     procedure SetOverviewStyleChangeActions(
       const Actions: array of TBasicAction);
-
-    ///  <summary>Sets action used to change displayed pane in detail display
-    ///  area.</summary>
-    ///  <param name="Action">TBasicAction [in] Required action.</param>
-    procedure SetDetailPaneChangeAction(const Action: TBasicAction);
-
-    ///  <summary>Sets action used to edit a snippet in Snippets Editor.
-    ///  </summary>
-    ///  <param name="Action">TBasicAction [in] Required action.</param>
-    procedure SetEditSnippetAction(const Action: TBasicAction);
-
-    ///  <summary>Sets action used to display Donate dialogue box.</summary>
-    ///  <param name="Action">TBasicAction [in] Required action.</param>
+      {Sets actions that are triggered when different overview display styles
+      are requested.
+        @param Actions [in] Dynamic array of required actions: one per display
+          style.
+      }
+    procedure SetDetailPaneChangeActions(const Actions: array of TBasicAction);
+      {Sets actions that are triggered when different detail panes are required
+      to be shown.
+        @param Actions [in] Dynamic array of required actions: one per detail
+          display tab.
+      }
+    procedure SetShowTestUnitAction(const Action: TBasicAction);
+      {Sets action triggered where displays a test unit.
+        @param Action [in] Required action.
+      }
+    procedure SetEditRoutineAction(const Action: TBasicAction);
+      {Sets action triggered when user requests a user defined routine is to be
+      edited.
+        @param Action [in] Required action.
+      }
     procedure SetDonateAction(const Action: TBasicAction);
-
-    ///  <summary>Sets action used to display a category.</summary>
-    ///  <param name="Action">TBasicAction [in] Required action.</param>
+      {Sets action triggered when user requests that the donate dialog box is
+      displays.
+        @param Action [in] Required action.
+      }
     procedure SetDisplayCategoryAction(const Action: TBasicAction);
-
-    ///  <summary>Sets action used to open snippets editor to create a new
-    ///  snippet.</summary>
-    ///  <param name="Action">TBasicAction [in] Required action.</param>
-    procedure SetNewSnippetAction(const Action: TBasicAction);
-
-    ///  <summary>Sets action used to display news items from the CodeSnip news
-    ///  feed.</summary>
-    ///  <param name="Action">TBasicAction [in] Required action.</param>
-    procedure SetNewsAction(const Action: TBasicAction);
-
-    ///  <summary>Sets action used to check for program updates.</summary>
-    ///  <param name="Action">TBasicAction [in] Required action.</param>
-    procedure SetCheckForUpdatesAction(const Action: TBasicAction);
-
-    ///  <summary>Sets action used to display the program's About Box.</summary>
-    ///  <param name="Action">TBasicAction [in] Required action.</param>
-    procedure SetAboutBoxAction(const Action: TBasicAction);
-
-    ///  <summary>Sets action used to display a given page of the Preferences
-    ///  dialogue box.</summary>
-    ///  <param name="Action">TBasicAction [in] Required action.</param>
-    procedure SetShowPrefsPageAction(const Action: TBasicAction);
+      {Sets actions triggered when a category is requested to be displayed.
+        @param Action [in] Required action.
+      }
   end;
 
-type
-  ///  <summary>Interface that provides a method used to assign a notifier
-  ///  object to an object that needs to notify the application of events.
-  ///  </summary>
-  ///  <remarks>The interface should be supported by all UI objects other than
-  ///  menus and buttons that initiate events. Such objects must call relevant
-  ///  notifier methods to trigger the events.</remarks>
+  {
+  ISetNotifier:
+    Interface used to assign a notifier object to an object that needs to notify
+    the application of events. The interface must be supported by all UI objects
+    other than menus and buttons that initiate events. Such objects must call
+    relevant notifier methods to trigger the events.
+  }
   ISetNotifier = interface(IInterface)
     ['{83283DBB-A8E3-42CA-9840-B7E2AC4BC79A}']
-    ///  <summary>Sets the implementing object's notifier object.</summary>
-    ///  <param name="Notifier">INotifier [in] Required notifier object.</param>
     procedure SetNotifier(const Notifier: INotifier);
+      {Sets the object's notifier to be called in response to user input.
+        @param Notifier [in] Required notifier object.
+      }
   end;
 
 

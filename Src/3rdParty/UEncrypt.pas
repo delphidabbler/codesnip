@@ -1,16 +1,19 @@
 {
- * Any copyright is dedicated to the Public Domain.
- * http://creativecommons.org/publicdomain/zero/1.0/
- *
- * Sourced from: http://www.swissdelphicenter.ch/torry/showcode.php?id=1243
- * Author: Steve Schafer
- * Homepage: http://www.teamb.com
- *
- * Added to CodeSnip project SVN Repo on 11 Aug 2009 at r165 and since modified.
- * See logs in SVN repository for details.
- *
- * $Rev$
- * $Date$
+  Source: http://www.swissdelphicenter.ch/torry/showcode.php?id=1243
+      or: http://www.delphidabbler.com/tips/73
+
+  Author: Steve Schafer
+  Homepage: http://www.teamb.com
+
+  ------------------------------------------------------------------------------
+
+  Added to CodeSnip project SVN Repo on 11 Aug 2009 at r165.
+
+  $Rev$
+  $Date$
+
+  Unit has been modified by DelphiDabbler: see logs in SVN repository for
+  details.
 }
 
 unit UEncrypt;

@@ -1,15 +1,36 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * UCommonDlg.pas
  *
- * Copyright (C) 2009-2013, Peter Johnson (www.delphidabbler.com).
+ * A set of classes that assist in hooking and handling common dialog box
+ * messages. Also provides helper methods for handling dialog box messages.
  *
  * $Rev$
  * $Date$
  *
- * A set of classes that assist in hooking and handling common dialog box
- * messages. Also provides helper methods for handling dialog box messages.
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is UCommonDlg.pas
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2009-2010 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -59,8 +80,8 @@ type
       @return 0 to pass message to dialog box procedure or non-zero to cause the
         dialog box procedure to ignore the message.
   }
-  TCommonDlgHookFn = function(Wnd: HWnd; Msg: UINT; WParam: WPARAM;
-    LParam: LPARAM): UINT_PTR; stdcall;
+  TCommonDlgHookFn = function(Wnd: HWnd; Msg: UINT; WParam: Integer;
+    LParam: Integer): UINT; stdcall;
 
   {
   TCommonDlgHook:
@@ -244,7 +265,7 @@ end;
 { TFileDlgHook }
 
 function NewExplorerHook(Wnd: HWnd; Msg: UINT; WParam: WPARAM;
-  LParam: LPARAM): UINT_PTR; stdcall;
+  LParam: LPARAM): UINT; stdcall;
   {Replacement explorer hook function called by Windows to process dialog box
   messages. Original hook handles only WM_INITDIALOG message and CDN_INITDONE
   notification. This replacement passes WM_INITDIALOG messages to original
@@ -318,7 +339,7 @@ end;
 { TColorDlgHook }
 
 function NewCCHook(Wnd: HWnd; Msg: UINT; WParam: WPARAM;
-  LParam: LPARAM): UINT_PTR; stdcall;
+  LParam: LPARAM): UINT; stdcall;
   {Replacement hook function called by Windows to process dialog box messages.
   Original hook handles only WM_INITDIALOG message. This replacement passes
   WM_INITDIALOG messages to original hook and then aligns dialog box as
@@ -370,14 +391,6 @@ end;
 initialization
 
 Dialogs.UseLatestCommonDialogs := False;
-
-{$IFNDEF PORTABLE}
-// Default to My Docs for file dialogues in standard version
-Dialogs.ForceCurrentDirectory := False;
-{$ELSE}
-// Default to program working directory for file dialogues in portable version
-Dialogs.ForceCurrentDirectory := True;
-{$ENDIF}
 
 end.
 

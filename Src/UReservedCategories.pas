@@ -1,15 +1,36 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * UReservedCategories.pas
  *
- * Copyright (C) 2009-2013, Peter Johnson (www.delphidabbler.com).
+ * Implements a static class that provides information about reserved user
+ * defined categories.
  *
  * $Rev$
  * $Date$
  *
- * Implements a static class that provides information about reserved user
- * defined categories.
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is UReservedCategories.pas
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2009 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -21,7 +42,7 @@ interface
 
 uses
   // Project
-  DB.UCategory, UBaseObjects;
+  UBaseObjects, USnippets;
 
 
 type
@@ -50,15 +71,14 @@ type
   }
   TReservedCategories = class(TNoConstructObject)
   strict private
-    class function IsReservedName(const CatID: string): Boolean;
+    class function IsReservedName(const CatName: string): Boolean;
       {Checks if a category name is the id of a reserved category.
-        @param CatID [in] ID to be checked.
+        @param CatName [in] Name to be checked.
         @return True if category is reserved, False if not.
       }
   public
-    const UserCatID = 'user';       // default category for user snippets
-    const ImportsCatID = 'imports'; // category for imported user snippets
-    const SWAGCatID = '_swag_';     // category for imported SWAG snippets
+    const UserCatName = 'user';       // default category for user snippets
+    const ImportsCatName = 'imports'; // category where imported snippets placed
     class function IsReserved(const Cat: TCategory): Boolean;
       {Checks if a category is reserved.
         @param Cat [in] Category to be checked.
@@ -81,23 +101,19 @@ implementation
 
 uses
   // Delphi
-  Windows {for inlining},
-  // Project
-  UStrUtils;
+  SysUtils, Windows {for inlining};
 
 
 resourcestring
   // Default reserved category descriptions
   sUserDesc = 'User Defined Snippets';
   sImportsDesc = 'Imported Snippets';
-  sSWAGDesc = 'SWAG Imports';
 
 const
   // Maps reserved category ids onto info that describes category
-  cReservedCats: array[0..2] of TReservedCategoryInfo = (
-    (Name: TReservedCategories.UserCatID;     Data: (Desc: sUserDesc)),
-    (Name: TReservedCategories.ImportsCatID;  Data: (Desc: sImportsDesc)),
-    (Name: TReservedCategories.SWAGCatID;     Data: (Desc: sSWAGDesc))
+  cReservedCats: array[0..1] of TReservedCategoryInfo = (
+    (Name: TReservedCategories.UserCatName;     Data: (Desc: sUserDesc)),
+    (Name: TReservedCategories.ImportsCatName;  Data: (Desc: sImportsDesc))
   );
 
 { TReservedCategories }
@@ -125,13 +141,13 @@ class function TReservedCategories.IsReserved(const Cat: TCategory): Boolean;
     @return True if category is reserved, False if not.
   }
 begin
-  Result := IsReservedName(Cat.ID);
+  Result := IsReservedName(Cat.Category);
 end;
 
 class function TReservedCategories.IsReservedName(
-  const CatID: string): Boolean;
+  const CatName: string): Boolean;
   {Checks if a category name is the id of a reserved category.
-    @param CatID [in] ID to be checked.
+    @param CatName [in] Name to be checked.
     @return True if category is reserved, False if not.
   }
 var
@@ -139,7 +155,7 @@ var
 begin
   Result := False;
   for Idx := 0 to Pred(Count) do
-    if StrSameText(CatID, Info(Idx).Name) then
+    if AnsiSameText(CatName, Info(Idx).Name) then
     begin
       Result := True;
       Exit;

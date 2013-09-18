@@ -1,14 +1,35 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * UMessageWindow.pas
  *
- * Copyright (C) 2008-2013, Peter Johnson (www.delphidabbler.com).
+ * Implements a hidden window that triggers an event for each message received.
  *
  * $Rev$
  * $Date$
  *
- * Implements a hidden window that triggers an event for each message received.
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is UMessageWindow.pas
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2008-2009 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -48,7 +69,7 @@ type
     be inhibited.
   }
   TMessageWindow = class(THiddenWindow)
-  strict private
+  private
     fOnMessage: TMessageWindowEvent;
       {Handler for OnMessage event}
     function DoMessage(var Msg: TMessage): Boolean;
@@ -58,7 +79,7 @@ type
         @return True if message handled (any further processing inhibited),
           False otherwise.
       }
-  strict protected
+  protected
     procedure WndProc(var Msg: TMessage); override;
       {Window procedure for hidden window. Triggers OnMessage event. Performs
       default message processing if OnMessage handler does not inhibit it.
