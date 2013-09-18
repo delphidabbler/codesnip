@@ -623,12 +623,6 @@ inherited MainForm: TMainForm
       OnExecute = actPrintExecute
       OnUpdate = actPrintUpdate
     end
-    object actPageSetup: TAction
-      Category = 'File'
-      Caption = 'Page Set&up...'
-      Hint = 'Page Setup|Configures printer page settings'
-      OnExecute = actPageSetupExecute
-    end
     object actPrivacy: TAction
       Category = 'Help'
       Caption = 'Privacy Statement'
@@ -925,9 +919,6 @@ inherited MainForm: TMainForm
       end
       object miSpacer17: TMenuItem
         Caption = '-'
-      end
-      object miPageSetup: TMenuItem
-        Action = actPageSetup
       end
       object miPrint: TMenuItem
         Action = actPrint
