@@ -39,6 +39,9 @@ type
       {Reads program's registration code from persistent storage.
         @return Registration code or '' if not registered.
       }
+    ///  <summary>Returns the fully specified path to the given file in
+    ///  CodeSnip's per-user data directory.</summary>
+    class function UserFilePath(const FileName: string): string; inline;
   public
     const CompanyName = 'DelphiDabbler';
       {Name of "company" that owns this program}
@@ -47,6 +50,7 @@ type
     const FullProgramName = CompanyName + ' ' + ProgramName;
       {Full name of program, including company name}
     const ProgramID = 'codesnip';
+  public
       {Machine readable identifier of program}
     class function ProgramCaption: string;
       {Returns caption to use in main window and task bar}
@@ -95,6 +99,15 @@ type
     ///  <summary>Returns fully specified path to CodeSnip's per-user
     ///  configuration file.</summary>
     class function UserConfigFileName: string;
+    ///  <summary>Returns fully specified path to current user's favourites
+    ///  file.</summary>
+    class function FavouritesFileName: string;
+    ///  <summary>Returns fully specified path to current user's highlighter
+    ///  themes file.</summary>
+    class function HiliteThemesFileName: string;
+    ///  <summary>Returns fully specified path to current user's source code
+    ///  languages file.</summary>
+    class function SourceCodeLanguagesFileName: string;
     class function ProgramReleaseInfo: string;
       {Gets information about the current program release. Includes any special
       build information if present in version information.
@@ -218,6 +231,11 @@ begin
   Result := UserAppDir + '\Database';
 end;
 
+class function TAppInfo.FavouritesFileName: string;
+begin
+  Result := UserFilePath('Favourites');
+end;
+
 class function TAppInfo.GenerateKey: string;
   {Generates unique program key for application in deterministic way.
     @return Required key.
@@ -238,6 +256,11 @@ class function TAppInfo.HelpFileName: string;
   }
 begin
   Result := AppExeDir + '\CodeSnip.chm';
+end;
+
+class function TAppInfo.HiliteThemesFileName: string;
+begin
+  Result := UserFilePath('HighlighterThemes');
 end;
 
 class function TAppInfo.IsRegistered: Boolean;
@@ -347,6 +370,11 @@ begin
   Result := Section.GetString('RegCode');
 end;
 
+class function TAppInfo.SourceCodeLanguagesFileName: string;
+begin
+  UserFilePath('SourceCodeLanguages');
+end;
+
 class function TAppInfo.UserAppDir: string;
   {Gets the CodeSnip data directory stored within the user's application data
   directory.
@@ -362,7 +390,7 @@ end;
 
 class function TAppInfo.UserConfigFileName: string;
 begin
-  Result := IncludeTrailingPathDelimiter(UserAppDir) + 'User.config';
+  Result := UserFilePath('User.config');
 end;
 
 class function TAppInfo.UserDataDir: string;
@@ -379,6 +407,11 @@ begin
     Section := Settings.ReadSection(ssDatabase);
     Result := Section.GetString('Path', DefaultUserDataDir);
   end;
+end;
+
+class function TAppInfo.UserFilePath(const FileName: string): string;
+begin
+  Result := IncludeTrailingPathDelimiter(UserAppDir) + FileName;
 end;
 
 end.
