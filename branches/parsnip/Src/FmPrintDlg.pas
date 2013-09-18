@@ -149,9 +149,9 @@ begin
   // Record user options
   Options := [];
   if chkUseColor.Checked then
-    Include(Options, poUseColor);
+    Include(Options, poUseColour);
   if chkSyntaxHighlight.Checked then
-    Include(Options, poSyntaxPrint);
+    Include(Options, poSyntaxHilite);
   PrintInfo.PrintOptions := Options;
   // Update selected printer
   if cbPrinters.ItemIndex >= 0 then
@@ -324,8 +324,8 @@ procedure TPrintDlg.InitOptions;
   {Initialises options controls to default values.
   }
 begin
-  chkUseColor.Checked := poUseColor in PrintInfo.PrintOptions;
-  chkSyntaxHighlight.Checked := poSyntaxPrint in PrintInfo.PrintOptions;
+  chkUseColor.Checked := poUseColour in PrintInfo.PrintOptions;
+  chkSyntaxHighlight.Checked := poSyntaxHilite in PrintInfo.PrintOptions;
 end;
 
 procedure TPrintDlg.PopulatePrinterList;

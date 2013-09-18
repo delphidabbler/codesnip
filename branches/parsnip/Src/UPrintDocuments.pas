@@ -107,7 +107,7 @@ var
   Brush: TSyntaxHiliterBrush;     // brush used to syntax highlight snippet
 begin
   Language := TConfig.Instance.SourceCodeLanguages[fSnippet.Language];
-  if (poSyntaxPrint in PrintInfo.PrintOptions) then
+  if (poSyntaxHilite in PrintInfo.PrintOptions) then
     Brush := TSyntaxHiliterBrushes.CreateBrush(Language.HiliterBrushID)
   else
     Brush := TSyntaxHiliterBrushes.CreateNullBrush;
@@ -117,7 +117,7 @@ begin
         Preferences.CurrentHiliteThemeIds[htkPrint]
       ],
       Brush,
-      poUseColor in PrintInfo.PrintOptions
+      poUseColour in PrintInfo.PrintOptions
     );
     try
       Result := TRTF.Create(Doc.Generate(fSnippet));
@@ -141,7 +141,7 @@ function TCategoryPrintDocument.Generate: TRTF;
 var
   Doc: TRTFCategoryDoc; // object that renders category document in RTF
 begin
-  Doc := TRTFCategoryDoc.Create(poUseColor in PrintInfo.PrintOptions);
+  Doc := TRTFCategoryDoc.Create(poUseColour in PrintInfo.PrintOptions);
   try
     Result := TRTF.Create(Doc.Generate(fCategory));
   finally

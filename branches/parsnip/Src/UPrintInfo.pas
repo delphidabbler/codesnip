@@ -42,8 +42,8 @@ type
     Enumeration of possible print options.
   }
   TPrintOption = (
-    poSyntaxPrint,  // printed source code will be syntax highlighted
-    poUseColor      // colour will be used in printed document
+    poSyntaxHilite, // printed source code will be syntax highlighted
+    poUseColour     // colour will be used in printed document
   );
 
   {
@@ -172,8 +172,8 @@ var
 begin
   inherited;
   Storage := Settings.EmptySection(ssPrinting);
-  Storage.SetBoolean('UseColour', poUseColor in fPrintOptions);
-  Storage.SetBoolean('SyntaxHighlight', poSyntaxPrint in fPrintOptions);
+  Storage.SetBoolean('UseColour', poUseColour in fPrintOptions);
+  Storage.SetBoolean('SyntaxHighlight', poSyntaxHilite in fPrintOptions);
   Storage.SetFloat('LeftMargin', fPageMargins.Left);
   Storage.SetFloat('TopMargin', fPageMargins.Top);
   Storage.SetFloat('RightMargin', fPageMargins.Right);
@@ -224,9 +224,9 @@ begin
   Storage := Settings.ReadSection(ssPrinting);
   fPrintOptions := [];
   if Storage.GetBoolean('UseColour', True) then
-    Include(fPrintOptions, poUseColor);
+    Include(fPrintOptions, poUseColour);
   if Storage.GetBoolean('SyntaxHighlight', True) then
-    Include(fPrintOptions, poSyntaxPrint);
+    Include(fPrintOptions, poSyntaxHilite);
   fPageMargins := TPageMargins.Create(
     Storage.GetFloat('LeftMargin', cPageMarginSizeMM),
     Storage.GetFloat('TopMargin', cPageMarginSizeMM),
