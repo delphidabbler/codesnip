@@ -64,8 +64,7 @@ uses
 
 class function TFavouritesPersist.FavouritesFileName: string;
 begin
-  Result := IncludeTrailingPathDelimiter(TAppInfo.UserAppDir)
-    + 'Favourites';
+  Result := TAppInfo.FavouritesFileName;
 end;
 
 class procedure TFavouritesPersist.Load(Favourites: TFavourites);
