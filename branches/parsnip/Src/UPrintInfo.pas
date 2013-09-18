@@ -60,9 +60,6 @@ type
   }
   IPrintInfo = interface(IInterface)
     ['{BEE68732-A74D-4502-9627-63BBDC6C04FB}']
-    procedure LoadDefaults;
-      {Loads default property values from user preferences.
-      }
     function GetPageMargins: TPageMargins;
       {Gets current page margins.
         @return Margins in millimeters.
@@ -133,9 +130,6 @@ type
     class property Instance: IPrintInfo read GetInstance;
       {Reference to singleton instance of this class}
     { IPrintInfo methods }
-    procedure LoadDefaults;
-      {Loads default property values from user preferences.
-      }
     function GetPageMargins: TPageMargins;
       {Gets current page margins.
         @return Margins in millimeters.
@@ -206,20 +200,13 @@ begin
 end;
 
 procedure TPrintInfo.Initialize;
-begin
-  inherited;
-  LoadDefaults;
-end;
-
-procedure TPrintInfo.LoadDefaults;
-  {Loads default property values from user preferences.
-  }
 const
   // Default margin size in millimeters
   cPageMarginSizeMM = 25.0;
 var
   Storage: ISettingsSection;
 begin
+  inherited;
   // Read printing section
   Storage := Settings.ReadSection(ssPrinting);
   fPrintOptions := [];
