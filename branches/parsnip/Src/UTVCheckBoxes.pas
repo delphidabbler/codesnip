@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2006-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2006-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -153,8 +153,9 @@ function TTVCheckBoxes.GetImageSize: TSize;
     ChkBmp := TBitmap.Create;
     try
       ChkBmp.LoadFromResourceName(HInstance, cCheckBoxResName);
-      Result.cx := ChkBmp.Width div cBmpResDim.cx;
-      Result.cy := ChkBmp.Height div cBmpResDim.cy;
+      Result := TSizeEx.Create(
+        ChkBmp.Width div cBmpResDim.cx, ChkBmp.Height div cBmpResDim.cy
+      );
     finally
       ChkBmp.Free;
     end;

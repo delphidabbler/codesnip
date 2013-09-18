@@ -524,8 +524,9 @@ procedure TMessageBoxForm.InitButtons(
     begin
       Btn := fButtons[Idx];
       BtnTextExtent := StringExtent(Btn.Caption, Btn.Font);
-      Result.cx := Max(Result.cx, BtnTextExtent.cx);
-      Result.cy := Max(Result.cy, BtnTextExtent.cy);
+      Result := TSizeEx.Create(
+        Max(Result.cx, BtnTextExtent.cx), Max(Result.cy, BtnTextExtent.cy)
+      );
     end;
   end;
 
@@ -556,8 +557,10 @@ begin
   TextExtent := ButtonTextExtent;
   // Size of each button to be large enough to hold largest caption, but ensure
   // buttons are no smaller than default size. All buttons have same size.
-  BtnSize.cx := Max(fButtons[0].Width, TextExtent.cx + 12);
-  BtnSize.cy := Max(fButtons[0].Height, TextExtent.cy + 10);
+  BtnSize := TSizeEx.Create(
+    Max(fButtons[0].Width, TextExtent.cx + 12),
+    Max(fButtons[0].Height, TextExtent.cy + 10)
+  );
   SizeButtons(BtnSize);
 end;
 
