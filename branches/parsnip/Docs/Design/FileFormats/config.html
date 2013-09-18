@@ -1159,58 +1159,6 @@
 </dl>
 
 <h4>
-  [Prefs:Printing] section
-</h4>
-
-<p>
-  Stores preferences that determine printing defaults.
-</p>
-
-<p>
-  Name / Value pairs:
-</p>
-
-<dl class="indent">
-  <dt>
-    <strong>UseColor</strong> (Boolean)
-  </dt>
-  <dd>
-    Flag that indicates whether printing is to be in colour.
-  </dd>
-  <dt>
-    <strong>SyntaxPrint</strong> (Boolean)
-  </dt>
-  <dd>
-    Flag that indicates whether source code in printed output is to be syntax
-    highlighted.
-  </dd>
-  <dt>
-    <strong>LeftMargin</strong> (Float)
-  </dt>
-  <dd>
-    Size of printed page's left margin in mm.
-  </dd>
-  <dt>
-    <strong>TopMargin</strong> (Float)
-  </dt>
-  <dd>
-    Size of printed page's top margin in mm.
-  </dd>
-  <dt>
-    <strong>RightMargin</strong> (Float)
-  </dt>
-  <dd>
-    Size of printed page's right margin in mm.
-  </dd>
-  <dt>
-    <strong>BottomMargin</strong> (Float)
-  </dt>
-  <dd>
-    Size of printed page's bottom margin in mm.
-  </dd>
-</dl>
-
-<h4>
   [Prefs:SnippetPageStructure] section
 </h4>
 
@@ -1343,6 +1291,73 @@
   <dd>
     Flag indicating whether CodeSnip automatically checks online for database
     updates.
+  </dd>
+</dl>
+
+<h4>
+  [Printing] section
+</h4>
+
+<p>
+  Stores preferences that determine printing defaults.
+</p>
+
+<p class="pullout">
+  This section was renamed from <strong>[Prefs:Printing]</strong> at file
+  version 16.
+</p>
+
+<p>
+  Name / Value pairs:
+</p>
+
+<dl class="indent">
+  <dt>
+    <strong>UseColour</strong> (Boolean)
+  </dt>
+  <dd>
+    <div class="half-spaced">
+      Flag that indicates whether printing is to be in colour.
+    </div>
+    <div class="pullout">
+      Renamed from <strong>UseColor</strong> at file version 16.
+    </div>
+  </dd>
+  <dt>
+    <strong>SyntaxHighlight</strong> (Boolean)
+  </dt>
+  <dd>
+    <div class="half-spaced">
+      Flag that indicates whether source code in printed output is to be syntax
+      highlighted.
+    </div>
+    <div class="pullout">
+      Renamed from <strong>SyntaxPrint</strong> at file version 16.
+    </div>
+  </dd>
+  <dt>
+    <strong>LeftMargin</strong> (Float)
+  </dt>
+  <dd>
+    Size of printed page's left margin in mm.
+  </dd>
+  <dt>
+    <strong>TopMargin</strong> (Float)
+  </dt>
+  <dd>
+    Size of printed page's top margin in mm.
+  </dd>
+  <dt>
+    <strong>RightMargin</strong> (Float)
+  </dt>
+  <dd>
+    Size of printed page's right margin in mm.
+  </dd>
+  <dt>
+    <strong>BottomMargin</strong> (Float)
+  </dt>
+  <dd>
+    Size of printed page's bottom margin in mm.
   </dd>
 </dl>
 
