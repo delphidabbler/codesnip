@@ -20,7 +20,8 @@ interface
 uses
   USingleton,
   CS.SourceCode.Hiliter.Themes,
-  CS.SourceCode.Languages;
+  CS.SourceCode.Languages,
+  UAppInfo;
 
 type
   TConfig = class(TSingleton)
@@ -52,10 +53,20 @@ uses
 
 procedure TConfig.Finalize;
 begin
-  // TODO: save languages here once user defined languages have been enabled
-  // TODO: save themes here once use defined themes have been enabled
-  fHiliterThemes.Free;
-  fSourceCodeLanguages.Free;
+  if Assigned(fHiliterThemes) then
+  begin
+    TSyntaxHiliteThemesIO.SaveThemes(
+      fHiliterThemes, TAppInfo.HiliteThemesFileName
+    );
+    fHiliterThemes.Free;
+  end;
+  if Assigned(fSourceCodeLanguages) then
+  begin
+    TSourceCodeLanguagesIO.Save(
+      fSourceCodeLanguages, TAppInfo.SourceCodeLanguagesFileName
+    );
+    fSourceCodeLanguages.Free;
+  end;
 end;
 
 function TConfig.GetHiliterThemes: TSyntaxHiliteThemes;
@@ -66,7 +77,9 @@ begin
     TSyntaxHiliteThemesIO.LoadThemesFromResources(
       fHiliterThemes, 'HILITETHEMES', RT_RCDATA
     );
-    // TODO: load user defined themes
+    TSyntaxHiliteThemesIO.LoadThemes(
+      fHiliterThemes, TAppInfo.HiliteThemesFileName
+    );
   end;
   Result := fHiliterThemes;
 end;
@@ -79,7 +92,9 @@ begin
     TSourceCodeLanguagesIO.LoadFromResources(
       fSourceCodeLanguages, 'SOURCECODELANGUAGES', RT_RCDATA
     );
-    // TODO: load user defined languages
+    TSourceCodeLanguagesIO.Load(
+      fSourceCodeLanguages, TAppInfo.SourceCodeLanguagesFileName
+    );
   end;
   Result := fSourceCodeLanguages;
 end;
