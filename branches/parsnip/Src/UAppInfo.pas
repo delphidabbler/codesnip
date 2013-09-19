@@ -372,7 +372,7 @@ end;
 
 class function TAppInfo.SourceCodeLanguagesFileName: string;
 begin
-  UserFilePath('SourceCodeLanguages');
+  Result := UserFilePath('SourceCodeLanguages');
 end;
 
 class function TAppInfo.UserAppDir: string;
