@@ -27,6 +27,7 @@ uses
   Classes,
   // Project
   CS.SourceCode.Hiliter.Themes,
+  CS.UI.Helper.CollectionCtrlKVMgr,
   FrPrefsBase,
   FrRTFShowCase,
   UPreferences,
@@ -55,26 +56,16 @@ type
     procedure cbCommentStyleChange(Sender: TObject);
     procedure cbSnippetFileTypeChange(Sender: TObject);
   strict private
-    ///  <summary>Theme that provides styling for syntax highlighting of
-    ///  preview.</summary>
-    fTheme: TSyntaxHiliteTheme;
-    procedure SelectSourceFileType(const FT: TSourceFileType);
-      {Selects entry in file type combo box that matches specified source code
-      file type.
-        @param FT [in] File type to select.
-      }
-    procedure SelectCommentStyle(const CommentStyle: TCommentStyle);
-      {Selects entry in comment style combo box that matches specified style.
-        @param CommentStyle [in] Comment style to select.
-      }
-    function GetSourceFileType: TSourceFileType;
-      {Gets source file type selected by user.
-        @return Source file type.
-      }
-    function GetCommentStyle: TCommentStyle;
-      {Gets comment style selected by user.
-        @return Comment style.
-      }
+    var
+      ///  <summary>Theme that provides styling for syntax highlighting of
+      ///  preview.</summary>
+      fTheme: TSyntaxHiliteTheme;
+      ///  <summary>Manages mapping of items in "output file type" drop-down
+      ///  list to the number of days each item represents.</summary>
+      fSnippetFileTypeMgr: TUnsortedCollectionCtrlKVMgr<TSourceFileType>;
+      ///  <summary>Manages mapping of items in "commentint style" drop-down
+      ///  list to the number of days each item represents.</summary>
+      fCommentStyleMgr: TUnsortedCollectionCtrlKVMgr<TCommentStyle>;
     procedure UpdateControlState;
       {Updates state of dialog's controls depending on values entered.
       }
@@ -192,8 +183,8 @@ procedure TSourcePrefsFrame.Activate(const Prefs: IPreferences);
   }
 begin
   // Update control values per settings
-  SelectSourceFileType(Prefs.SourceDefaultFileType);
-  SelectCommentStyle(Prefs.SourceCommentStyle);
+  fSnippetFileTypeMgr.Select(Prefs.SourceDefaultFileType);
+  fCommentStyleMgr.Select(Prefs.SourceCommentStyle);
   chkTruncateComments.Checked := Prefs.TruncateSourceComments;
   chkSyntaxHighlighting.Checked := Prefs.SourceSyntaxHilited;
   // Record current theme but with default font
@@ -274,14 +265,29 @@ begin
   HelpKeyword := 'SourceCodePrefs';
   // Create syntax highlighter theme for use in sample output
   fTheme := TSyntaxHiliteThemes.NullTheme.Clone;
+  // Create object that manage combo boxes
+  fSnippetFileTypeMgr := TUnsortedCollectionCtrlKVMgr<TSourceFileType>.Create(
+    TComboBoxAdapter.Create(cbSnippetFileType),
+    True,
+    function (const Left, Right: TSourceFileType): Boolean
+    begin
+      Result := Left = Right;
+    end
+  );
+  fCommentStyleMgr := TUnsortedCollectionCtrlKVMgr<TCommentStyle>.Create(
+    TComboBoxAdapter.Create(cbCommentStyle),
+    True,
+    function (const Left, Right: TCommentStyle): Boolean
+    begin
+      Result := Left = Right;
+    end
+  );
   // Populate file type combo
   for FileType := Low(TSourceFileType) to High(TSourceFileType) do
-    cbSnippetFileType.Items.AddObject(cFileDescs[FileType], TObject(FileType));
+    fSnippetFileTypeMgr.Add(FileType, cFileDescs[FileType]);
   // Populate comment style combo
   for CSIdx := Low(TCommentStyle) to High(TCommentStyle) do
-    cbCommentStyle.Items.AddObject(
-      TSourceComments.CommentStyleDesc(CSIdx), TObject(CSIdx)
-    );
+    fCommentStyleMgr.Add(CSIdx, TSourceComments.CommentStyleDesc(CSIdx));
 end;
 
 procedure TSourcePrefsFrame.Deactivate(const Prefs: IPreferences);
@@ -289,14 +295,16 @@ procedure TSourcePrefsFrame.Deactivate(const Prefs: IPreferences);
     @param Prefs [in] Object used to store information.
   }
 begin
-  Prefs.SourceCommentStyle := GetCommentStyle;
+  Prefs.SourceCommentStyle := fCommentStyleMgr.GetSelected;
   Prefs.TruncateSourceComments := chkTruncateComments.Checked;
-  Prefs.SourceDefaultFileType := GetSourceFileType;
+  Prefs.SourceDefaultFileType := fSnippetFileTypeMgr.GetSelected;
   Prefs.SourceSyntaxHilited := chkSyntaxHighlighting.Checked;
 end;
 
 destructor TSourcePrefsFrame.Destroy;
 begin
+  fCommentStyleMgr.Free;
+  fSnippetFileTypeMgr.Free;
   fTheme.Free;
   inherited;
 end;
@@ -312,26 +320,6 @@ begin
   Result := sDisplayName;
 end;
 
-function TSourcePrefsFrame.GetCommentStyle: TCommentStyle;
-  {Gets comment style selected by user.
-    @return Comment style.
-  }
-begin
-  Result := TCommentStyle(
-    cbCommentStyle.Items.Objects[cbCommentStyle.ItemIndex]
-  );
-end;
-
-function TSourcePrefsFrame.GetSourceFileType: TSourceFileType;
-  {Gets source file type selected by user.
-    @return Source file type.
-  }
-begin
-  Result := TSourceFileType(
-    cbSnippetFileType.Items.Objects[cbSnippetFileType.ItemIndex]
-  );
-end;
-
 class function TSourcePrefsFrame.Index: Byte;
   {Index number that determines the location of the tab containing this
   frame when displayed in the preferences dialog box.
@@ -339,27 +327,6 @@ class function TSourcePrefsFrame.Index: Byte;
   }
 begin
   Result := 20;
-end;
-
-procedure TSourcePrefsFrame.SelectCommentStyle(
-  const CommentStyle: TCommentStyle);
-  {Selects entry in comment style combo box that matches specified style.
-    @param CommentStyle [in] Comment style to select.
-  }
-begin
-  cbCommentStyle.ItemIndex :=
-    cbCommentStyle.Items.IndexOfObject(TObject(CommentStyle));
-end;
-
-procedure TSourcePrefsFrame.SelectSourceFileType(
-  const FT: TSourceFileType);
-  {Selects entry in file type combo box that matches specified source code file
-  type.
-    @param FT [in] File type to select.
-  }
-begin
-  cbSnippetFileType.ItemIndex :=
-    cbSnippetFileType.Items.IndexOfObject(TObject(FT));
 end;
 
 function TSourcePrefsFrame.UIUpdated: Boolean;
@@ -372,8 +339,8 @@ procedure TSourcePrefsFrame.UpdateControlState;
   }
 begin
   chkSyntaxHighlighting.Enabled :=
-    TFileHiliter.IsHilitingSupported(GetSourceFileType);
-  chkTruncateComments.Enabled := GetCommentStyle <> csNone;
+    TFileHiliter.IsHilitingSupported(fSnippetFileTypeMgr.GetSelected);
+  chkTruncateComments.Enabled := fCommentStyleMgr.GetSelected <> csNone;
 end;
 
 procedure TSourcePrefsFrame.UpdatePreview;
@@ -385,7 +352,7 @@ begin
   // We always use same font size as frame, regardless of user preferences
   fTheme.FontSize := Font.Size;
   // Generate and display preview with required comment style
-  Preview := TSourcePrefsPreview.Create(GetCommentStyle, fTheme);
+  Preview := TSourcePrefsPreview.Create(fCommentStyleMgr.GetSelected, fTheme);
   try
     // Display preview
     TRichEditHelper.Load(frmPreview.RichEdit, Preview.Generate);
