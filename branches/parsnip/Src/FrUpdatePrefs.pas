@@ -21,9 +21,13 @@ interface
 
 uses
   // Delphi
-  Classes, Controls, StdCtrls,
+  Classes,
+  Controls,
+  StdCtrls,
   // Project
-  FrPrefsBase, UPreferences;
+  CS.UI.Helper.CollectionCtrlKVMgr,
+  FrPrefsBase,
+  UPreferences;
 
 
 type
@@ -43,19 +47,22 @@ type
       ///  <summary>Flag indicating if user has changed any update frequencies.
       ///  </summary>
       fChanged: Boolean;
+      ///  <summary>Manages mapping of items in "check for program updates"
+      ///  drop-down list to the number of days each item represents.</summary>
+      fProgAutoCheckFreqMgr: TUnsortedCollectionCtrlKVMgr<Word>;
+      ///  <summary>Manages mapping of items in "check for database updates"
+      ///  drop-down list to the number of days each item represents.</summary>
+      fDBAutoCheckFreqMgr: TUnsortedCollectionCtrlKVMgr<Word>;
     ///  <summary>Populates the given combo box with values for each available
     ///  auto update check frequency.</summary>
-    procedure PopulateFrequencyCB(const CB: TComboBox);
-    ///  <summary>Gets the currently selected auto-update frequency from the
-    ///  given combo box.</summary>
-    function GetFrequencyFromCB(const CB: TComboBox): Word;
-    ///  <summary>Selects the given combo box item that relates to the given
-    ///  auto-update check frequency.</summary>
-    procedure SelectFrequencyInCB(const CB: TComboBox; const Freq: Word);
+    procedure PopulateFrequencyCB(
+      const CBMgr: TUnsortedCollectionCtrlKVMgr<Word>);
   public
     ///  <summary>Constructs new frame instance and initialises controls.
     ///  </summary>
     constructor Create(AOwner: TComponent); override;
+    ///  <summary>Destroys object instance.</summary>
+    destructor Destroy; override;
     ///  <summary>Updates controls to reflect values recorded in given
     ///  preferences object.</summary>
     ///  <remarks>Called when the page is activated.</remarks>
@@ -86,20 +93,18 @@ implementation
 
 uses
   // Delphi
-  Math,
+  Math, Generics.Defaults,
   // Project
   FmPreferencesDlg, UCtrlArranger, UGraphicUtils;
 
-
 {$R *.dfm}
-
 
 { TUpdatePrefsFrame }
 
 procedure TUpdatePrefsFrame.Activate(const Prefs: IPreferences);
 begin
-  SelectFrequencyInCB(cbProgAutoCheckFreq, Prefs.AutoCheckProgramFrequency);
-  SelectFrequencyInCB(cbDBAutoCheckFreq, Prefs.AutoCheckDatabaseFrequency);
+  fProgAutoCheckFreqMgr.Select(Prefs.AutoCheckProgramFrequency);
+  fDBAutoCheckFreqMgr.Select(Prefs.AutoCheckDatabaseFrequency);
 end;
 
 procedure TUpdatePrefsFrame.ArrangeControls;
@@ -127,18 +132,37 @@ begin
 end;
 
 constructor TUpdatePrefsFrame.Create(AOwner: TComponent);
+var
+  WordEqualFn: TEqualityComparison<Word>;
 begin
   inherited;
-  PopulateFrequencyCB(cbProgAutoCheckFreq);
-  PopulateFrequencyCB(cbDBAutoCheckFreq);
+  WordEqualFn := function (const Left, Right: Word): Boolean
+    begin
+      Result := Left = Right;
+    end;
+  fProgAutoCheckFreqMgr := TUnsortedCollectionCtrlKVMgr<Word>.Create(
+    TComboBoxAdapter.Create(cbProgAutoCheckFreq), True, WordEqualFn
+  );
+  fDBAutoCheckFreqMgr := TUnsortedCollectionCtrlKVMgr<Word>.Create(
+    TComboBoxAdapter.Create(cbDBAutoCheckFreq), True, WordEqualFn
+  );
+  PopulateFrequencyCB(fProgAutoCheckFreqMgr);
+  PopulateFrequencyCB(fDBAutoCheckFreqMgr);
 end;
 
 procedure TUpdatePrefsFrame.Deactivate(const Prefs: IPreferences);
 begin
-  if cbProgAutoCheckFreq.ItemIndex >= 0 then
-    Prefs.AutoCheckProgramFrequency := GetFrequencyFromCB(cbProgAutoCheckFreq);
-  if cbDBAutoCheckFreq.ItemIndex >= 0 then
-    Prefs.AutoCheckDatabaseFrequency := GetFrequencyFromCB(cbDBAutoCheckFreq);
+  if fProgAutoCheckFreqMgr.HasSelection then
+    Prefs.AutoCheckProgramFrequency := fProgAutoCheckFreqMgr.GetSelected;
+  if fDBAutoCheckFreqMgr.HasSelection then
+    Prefs.AutoCheckDatabaseFrequency := fDBAutoCheckFreqMgr.GetSelected;
+end;
+
+destructor TUpdatePrefsFrame.Destroy;
+begin
+  fProgAutoCheckFreqMgr.Free;
+  fDBAutoCheckFreqMgr.Free;
+  inherited;
 end;
 
 function TUpdatePrefsFrame.DisplayName: string;
@@ -148,19 +172,13 @@ begin
   Result := sDisplayName;
 end;
 
-function TUpdatePrefsFrame.GetFrequencyFromCB(const CB: TComboBox): Word;
-begin
-  if CB.ItemIndex = -1 then
-    Exit(0);
-  Result := Word(CB.Items.Objects[CB.ItemIndex]);
-end;
-
 class function TUpdatePrefsFrame.Index: Byte;
 begin
   Result := 60;
 end;
 
-procedure TUpdatePrefsFrame.PopulateFrequencyCB(const CB: TComboBox);
+procedure TUpdatePrefsFrame.PopulateFrequencyCB(
+  const CBMgr: TUnsortedCollectionCtrlKVMgr<Word>);
 resourcestring
   s0 = 'Never';
   s1 = 'Daily';
@@ -183,25 +201,9 @@ const
 var
   I: Integer;
 begin
-  CB.Clear;
+  CBMgr.Clear;
   for I := Low(FreqMap) to High(FreqMap) do
-    CB.Items.AddObject(FreqMap[I].Text, TObject(FreqMap[I].Value));
-end;
-
-procedure TUpdatePrefsFrame.SelectFrequencyInCB(const CB: TComboBox;
-  const Freq: Word);
-var
-  I: Integer;
-begin
-  for I := 0 to Pred(CB.Items.Count) do
-  begin
-    if Word(CB.Items.Objects[I]) = Freq then
-    begin
-      CB.ItemIndex := I;
-      Exit;
-    end;
-  end;
-  CB.ItemIndex := -1;
+    CBMgr.Add(FreqMap[I].Value, FreqMap[I].Text);
 end;
 
 function TUpdatePrefsFrame.UIUpdated: Boolean;
