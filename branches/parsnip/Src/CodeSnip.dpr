@@ -406,7 +406,8 @@ uses
   CS.SourceCode.Languages in 'Main\CS.SourceCode.Languages.pas',
   CS.SourceCode.Languages.Persist in 'Main\CS.SourceCode.Languages.Persist.pas',
   CS.Utils.Hashes in 'Main\CS.Utils.Hashes.pas',
-  CS.Utils.Sound in 'Main\CS.Utils.Sound.pas';
+  CS.Utils.Sound in 'Main\CS.Utils.Sound.pas',
+  CS.UI.Helper.CollectionCtrlKVMgr in 'Main\CS.UI.Helper.CollectionCtrlKVMgr.pas';
 
 // Include resources
 {$Resource ExternalObj.tlb}       // Type library file
