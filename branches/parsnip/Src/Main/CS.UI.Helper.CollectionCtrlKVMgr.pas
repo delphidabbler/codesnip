@@ -31,11 +31,12 @@ uses
 
 type
   TCollectionCtrlAdapter = class abstract (TObject)
-  public  
+  public
     function SelectedItemIndex: Integer; virtual; abstract;
+    function Count: Integer; virtual; abstract;
     procedure SelectItem(const Idx: Integer); virtual; abstract;
     procedure DeleteItem(const Idx: Integer); virtual; abstract;
-    procedure InsertItem(const Idx: Integer; const Value: string); virtual; 
+    procedure InsertItem(const Idx: Integer; const Value: string); virtual;
       abstract;
     procedure Clear; virtual; abstract;
     procedure BeginUpdate; virtual; abstract;
@@ -45,8 +46,9 @@ type
   TListBoxAdapter = class(TCollectionCtrlAdapter)
   strict private
     fListBox: TCustomListBox;
-  public  
+  public
     constructor Create(const AListBox: TCustomListBox);
+    function Count: Integer; override;
     function SelectedItemIndex: Integer; override;
     procedure SelectItem(const Idx: Integer); override;
     procedure DeleteItem(const Idx: Integer); override;
@@ -59,9 +61,10 @@ type
   TComboBoxAdapter = class(TCollectionCtrlAdapter)
   strict private
     fComboBox: TCustomComboBox;
-  public  
+  public
     constructor Create(const AComboBox: TCustomComboBox);
     function SelectedItemIndex: Integer; override;
+    function Count: Integer; override;
     procedure SelectItem(const Idx: Integer); override;
     procedure DeleteItem(const Idx: Integer); override;
     procedure InsertItem(const Idx: Integer; const Value: string); override;
@@ -131,7 +134,7 @@ type
     function GetIndexedList: IEnexIndexedCollection<TPair<TKey,string>>; 
       override;
   public
-    constructor Create(const ACollectionCtrl: TCollectionCtrlAdapter; 
+    constructor Create(const ACollectionCtrl: TCollectionCtrlAdapter;
       const AOwnsCollectionCtrl: Boolean;
       const AKeyEqualFn: TEqualityComparison<TKey>);
     destructor Destroy; override;
@@ -157,6 +160,11 @@ end;
 procedure TListBoxAdapter.Clear;
 begin
   fListBox.Clear;
+end;
+
+function TListBoxAdapter.Count: Integer;
+begin
+  Result := fListBox.Count;
 end;
 
 constructor TListBoxAdapter.Create(const AListBox: TCustomListBox);
@@ -203,6 +211,11 @@ begin
   fComboBox.Clear;
 end;
 
+function TComboBoxAdapter.Count: Integer;
+begin
+  Result := fComboBox.Items.Count;
+end;
+
 constructor TComboBoxAdapter.Create(const AComboBox: TCustomComboBox);
 begin
   Assert(Assigned(AComboBox), ClassName + '.Create: AComboBox is nil');
@@ -237,17 +250,23 @@ end;
 
 { TAbstractCollectionCtrlKVMgr<TKey> }
 
-procedure TAbstractCollectionCtrlKVMgr<TKey>.Add(const AKey: TKey; 
+procedure TAbstractCollectionCtrlKVMgr<TKey>.Add(const AKey: TKey;
   const AStr: string);
 var
   KVPair: TPair<TKey,string>;
-  Idx: Integer;
+  InsIdx: Integer;
+  SelIdx: Integer;
 begin
   KVPair := TPair<TKey,string>.Create(AKey, AStr);
   GetList.Add(KVPair);
+  InsIdx := GetList.IndexOf(KVPair);
+  SelIdx := fCollectionCtrl.SelectedItemIndex;
   fCollectionCtrl.BeginUpdate;
   try
-    fCollectionCtrl.InsertItem(GetList.IndexOf(KVPair), AStr);
+    fCollectionCtrl.InsertItem(InsIdx, AStr);
+    if InsIdx <= SelIdx then
+      Inc(SelIdx);
+    fCollectionCtrl.SelectItem(SelIdx);
   finally
     fCollectionCtrl.EndUpdate;
   end;
@@ -259,12 +278,13 @@ begin
   fCollectionCtrl.BeginUpdate;
   try
     fCollectionCtrl.Clear;
+    fCollectionCtrl.SelectItem(-1);
   finally
     fCollectionCtrl.EndUpdate;
   end;
 end;
 
-function TAbstractCollectionCtrlKVMgr<TKey>.ContainsKey(const AKey: TKey): 
+function TAbstractCollectionCtrlKVMgr<TKey>.ContainsKey(const AKey: TKey):
   Boolean;
 begin
   Result := IndexOfKey(AKey) >= 0;
@@ -276,8 +296,8 @@ begin
 end;
 
 constructor TAbstractCollectionCtrlKVMgr<TKey>.Create(
-  const ACollectionCtrl: TCollectionCtrlAdapter; 
-  const AOwnsCollectionCtrl: Boolean; 
+  const ACollectionCtrl: TCollectionCtrlAdapter;
+  const AOwnsCollectionCtrl: Boolean;
   const AKeyEqualFn: TEqualityComparison<TKey>);
 begin
   inherited Create;
@@ -288,18 +308,23 @@ end;
 
 procedure TAbstractCollectionCtrlKVMgr<TKey>.Delete(const AKey: TKey);
 var
-  Idx: Integer;
+  DelIdx: Integer;
+  SelIdx: Integer;
 begin
-  Idx := IndexOfKey(AKey);
-  if Idx = -1 then
+  DelIdx := IndexOfKey(AKey);
+  if DelIdx = -1 then
     Exit;
+  SelIdx := fCollectionCtrl.SelectedItemIndex;
   fCollectionCtrl.BeginUpdate;
   try
-    fCollectionCtrl.DeleteItem(Idx);
+    fCollectionCtrl.DeleteItem(DelIdx);
+    if (SelIdx > DelIdx) or (SelIdx >= fCollectionCtrl.Count) then
+      Dec(SelIdx);
+    fCollectionCtrl.SelectItem(SelIdx);
   finally
     fCollectionCtrl.EndUpdate;
   end;
-  GetList.RemoveAt(Idx);
+  GetList.RemoveAt(DelIdx);
 end;
 
 destructor TAbstractCollectionCtrlKVMgr<TKey>.Destroy;
@@ -333,7 +358,7 @@ begin
   Result := fCollectionCtrl.SelectedItemIndex >= 0;
 end;
 
-function TAbstractCollectionCtrlKVMgr<TKey>.IndexOfKey(const AKey: TKey): 
+function TAbstractCollectionCtrlKVMgr<TKey>.IndexOfKey(const AKey: TKey):
   Integer;
 var
   Idx: Integer;
@@ -352,7 +377,7 @@ begin
   fCollectionCtrl.SelectItem(Idx);
 end;
 
-function TAbstractCollectionCtrlKVMgr<TKey>.TryGetSelected(out AKey: TKey): 
+function TAbstractCollectionCtrlKVMgr<TKey>.TryGetSelected(out AKey: TKey):
   Boolean;
 var
   Idx: Integer;
