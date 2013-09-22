@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2012-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -20,9 +20,18 @@ interface
 
 uses
   // Delphi
-  StdCtrls, ImgList, Controls, Classes, ActnList, Buttons,
+  StdCtrls,
+  ImgList,
+  Controls,
+  Classes,
+  ActnList,
+  Buttons,
   // Project
-  DB.USnippetKind, FrPrefsBase, UPreferences, USnippetPageStructure;
+  CS.UI.Helper.CollectionCtrlKVMgr,
+  DB.USnippetKind,
+  FrPrefsBase,
+  UPreferences,
+  USnippetPageStructure;
 
 type
   TSnippetLayoutPrefsFrame = class(TPrefsBaseFrame)
@@ -59,6 +68,9 @@ type
     var
       fPageStructs: TSnippetPageStructures;
       fUIUpdated: Boolean;
+      fSnippetKindsCBMgr: TUnsortedCollectionCtrlKVMgr<TSnippetKind>;
+      fAvailableFragsLBMgr: TUnsortedCollectionCtrlKVMgr<TSnippetPagePartId>;
+      fUsedFragsLBMgr: TUnsortedCollectionCtrlKVMgr<TSnippetPagePartId>;
     function PartIdFromStrings(Strings: TStrings; Idx: Integer):
       TSnippetPagePartId;
     function SelectedKind: TSnippetKind;
@@ -83,9 +95,12 @@ implementation
 
 uses
   // Delphi
-  Windows, Graphics,
+  Windows,
+  Graphics,
   // Project
-  FmPreferencesDlg, UClassHelpers, UCtrlArranger;
+  FmPreferencesDlg,
+  UClassHelpers,
+  UCtrlArranger;
 
 {$R *.dfm}
 
@@ -261,9 +276,19 @@ begin
   RefreshActions;
   HelpKeyword := 'SnippetLayoutPrefs';
   fPageStructs := TSnippetPageStructures.Create;
+  fSnippetKindsCBMgr := TUnsortedCollectionCtrlKVMgr<TSnippetKind>.Create(
+    TComboBoxAdapter.Create(cbSnippetKinds),
+    True,
+    function (const Left, Right: TSnippetKind): Boolean
+    begin
+      Result := Left = Right;
+    end
+  );
   for SKInfo in TSnippetKindInfoList.Items do
-    cbSnippetKinds.Items.AddObject(SKInfo.DisplayName, TObject(SKInfo.Kind));
-  cbSnippetKinds.ItemIndex := 0;
+    fSnippetKindsCBMgr.Add(SKInfo.Kind, SKInfo.DisplayName);
+  fSnippetKindsCBMgr.Select(Low(TSnippetKind));
+//    cbSnippetKinds.Items.AddObject(SKInfo.DisplayName, TObject(SKInfo.Kind));
+//  cbSnippetKinds.ItemIndex := 0;
 end;
 
 procedure TSnippetLayoutPrefsFrame.Deactivate(const Prefs: IPreferences);
@@ -273,6 +298,7 @@ end;
 
 destructor TSnippetLayoutPrefsFrame.Destroy;
 begin
+  fSnippetKindsCBMgr.Free;
   fPageStructs.Free;
   inherited;
 end;
@@ -296,12 +322,10 @@ begin
 end;
 
 function TSnippetLayoutPrefsFrame.SelectedKind: TSnippetKind;
-var
-  SelIdx: Integer;
 begin
-  SelIdx := cbSnippetKinds.ItemIndex;
-  Assert(SelIdx >= 0, ClassName + '.SelectedKind: No snippet kind selected');
-  Result := TSnippetKind(cbSnippetKinds.Items.Objects[SelIdx]);
+  Assert(fSnippetKindsCBMgr.HasSelection,
+    ClassName + '.SelectedKind: No snippet kind selected');
+  Result := fSnippetKindsCBMgr.GetSelected;
 end;
 
 function TSnippetLayoutPrefsFrame.UIUpdated: Boolean;
