@@ -82,7 +82,7 @@ type
     function IndexOfKey(const AKey: TKey): Integer;
   strict protected
     function GetList: IList<TPair<TKey,string>>; virtual; abstract;
-    function GetIndexedList: IEnexIndexedCollection<TPair<TKey,string>>; 
+    function GetIndexedList: IEnexIndexedCollection<TPair<TKey,string>>;
       virtual; abstract;
   public
     constructor Create(const ACollectionCtrl: TCollectionCtrlAdapter;
@@ -96,6 +96,9 @@ type
     function ContainsKey(const AKey: TKey): Boolean;
     function Count: Integer;
     function Empty: Boolean;
+    function GetKeyAt(const Idx: Integer): TKey;
+    function GetFirstKey: TKey;
+    function GetLastKey: TKey;
     procedure Select(const AKey: TKey);
     procedure Delete(const AKey: TKey);
     procedure Add(const AKey: TKey; const AStr: string);
@@ -340,10 +343,25 @@ begin
   Result := GetList.Empty;
 end;
 
+function TAbstractCollectionCtrlKVMgr<TKey>.GetFirstKey: TKey;
+begin
+  Result := GetIndexedList.First.Key;
+end;
+
+function TAbstractCollectionCtrlKVMgr<TKey>.GetKeyAt(const Idx: Integer): TKey;
+begin
+  Result := GetIndexedList[Idx].Key;
+end;
+
+function TAbstractCollectionCtrlKVMgr<TKey>.GetLastKey: TKey;
+begin
+  Result := GetIndexedList.Last.Key;
+end;
+
 function TAbstractCollectionCtrlKVMgr<TKey>.GetSelected: TKey;
 begin
   if not TryGetSelected(Result) then
-    raise ECollectionCtrlKVMgrError.Create('No items selected');
+    raise ECollectionCtrlKVMgrError.Create('No item is selected');
 end;
 
 function TAbstractCollectionCtrlKVMgr<TKey>.GetSelectedDef(
@@ -364,7 +382,7 @@ var
   Idx: Integer;
 begin
   for Idx := 0 to Pred(GetList.Count) do
-    if fKeyEqualFn(GetIndexedList[Idx].Key, AKey) then
+    if fKeyEqualFn(GetKeyAt(Idx), AKey) then
       Exit(Idx);
   Result := -1;
 end;
@@ -385,7 +403,7 @@ begin
   Idx := fCollectionCtrl.SelectedItemIndex;
   if Idx = -1 then
     Exit(False);
-  AKey := GetIndexedList[Idx].Key;
+  AKey := GetKeyAt(Idx);
   Result := True;
 end;
 
