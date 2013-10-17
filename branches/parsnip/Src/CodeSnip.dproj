@@ -187,9 +187,6 @@
 			<DCCReference Include="FmMain.pas">
 				<Form>MainForm</Form>
 			</DCCReference>
-			<DCCReference Include="FmNewHiliterNameDlg.pas">
-				<Form>NewHiliterNameDlg</Form>
-			</DCCReference>
 			<DCCReference Include="FmNewsDlg.pas">
 				<Form>NewsDlg</Form>
 			</DCCReference>
@@ -245,9 +242,6 @@
 			<DCCReference Include="FmUserDataPathDlg.FrProgress.pas">
 				<Form>UserDataPathDlgProgressFrame</Form>
 				<DesignClass>TFrame</DesignClass>
-			</DCCReference>
-			<DCCReference Include="FmUserHiliterMgrDlg.pas">
-				<Form>UserHiliterMgrDlg</Form>
 			</DCCReference>
 			<DCCReference Include="FmWaitDlg.pas">
 				<Form>WaitDlg</Form>
