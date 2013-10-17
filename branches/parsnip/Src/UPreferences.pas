@@ -46,6 +46,11 @@ type
   TCurrentHiliteThemeKind = (htkUI, htkExport, htkPrint);
 
 type
+  ///  <summary>Type of array that maps each kind of current syntax highlighter
+  ///  theme to its current theme ID.</summary>
+  TCurrentHiliteThemes = array[TCurrentHiliteThemeKind] of string;
+
+type
   ///  <summary>Interface supported by objects that maintain user preferences.
   ///  </summary>
   IPreferences = interface(IInterface)
@@ -366,7 +371,7 @@ type
       fHiliteAttrs: IHiliteAttrs;
       ///  <summary>Map of current theme kinds to IDs of required highlighters.
       ///  </summary>
-      fCurrentHiliteThemeIds: array[TCurrentHiliteThemeKind] of string;
+      fCurrentHiliteThemeIds: TCurrentHiliteThemes;
       ///  <summary>Reference to object containing attributes of all the 'named'
       ///  user defined syntax highlighters.</summary>
       fNamedHiliteAttrs: INamedHiliteAttrs;
@@ -951,10 +956,9 @@ end;
 { TPreferencesPersist }
 
 const
-  CurrentHiliterThemeKeyNames:
-    array[TCurrentHiliteThemeKind] of string = (
-      'CurrentUITheme', 'CurrentExportTheme', 'CurrentPrintTheme'
-    );
+  CurrentHiliterThemeKeyNames: TCurrentHiliteThemes = (
+    'CurrentUITheme', 'CurrentExportTheme', 'CurrentPrintTheme'
+  );
 
 
 function TPreferencesPersist.Clone: IInterface;
@@ -1150,7 +1154,6 @@ begin
       GetCurrentHiliteThemeId(HiliteThemeKind)
     );
   end;
-
   // custom colours
   Storage.SetStrings(
     'CustomColourCount', 'CustomColour%d', fHiliteCustomColours
