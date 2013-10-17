@@ -178,7 +178,7 @@ begin
   DC := GetDC(0);
   try
     // Enumerate all font families: handle each font in MonoFontFamilyProc()
-    EnumFontFamilies(DC, nil, @MonoFontFamilyProc, Integer(List));
+    EnumFontFamilies(DC, nil, @MonoFontFamilyProc, LPARAM(List));
   finally
     ReleaseDC(0, DC);
   end;
