@@ -120,8 +120,8 @@ type
     function GetIndexedList: IEnexIndexedCollection<TPair<TKey,string>>;
       override;
   public
-    constructor Create(const ACollectionCtrl: TCollectionCtrlAdapter; 
-      const AOwnsCollectionCtrl: Boolean; 
+    constructor Create(const ACollectionCtrl: TCollectionCtrlAdapter;
+      const AOwnsCollectionCtrl: Boolean;
       const AKeyEqualFn: TEqualityComparison<TKey>; const ASortType: TSortType);
     destructor Destroy; override;
   end;
@@ -426,32 +426,36 @@ begin
     stRespectCase:
     begin
       CompareFn := function (const Left, Right: TPair<TKey,string>): Integer
-        begin     
+        begin
           Result := StrCompareStr(Left.Value, Right.Value);
         end;
       HashFn := function (const Value: TPair<TKey,string>): Integer
         begin
           Result := Integer(PaulLarsonHash(Value.Value));
         end;
+      EqualsFn := function (const Left, Right: TPair<TKey,string>): Boolean
+        begin
+          Result := StrSameStr(Left.Value, Right.Value);
+        end;
     end;
     stIgnoreCase:
     begin
       CompareFn := function (const Left, Right: TPair<TKey,string>): Integer
-        begin     
+        begin
           Result := StrCompareText(Left.Value, Right.Value);
         end;
       HashFn := function (const Value: TPair<TKey,string>): Integer
         begin
           Result := Integer(PaulLarsonHash(StrToUpper(Value.Value)));
         end;
+      EqualsFn := function (const Left, Right: TPair<TKey,string>): Boolean
+        begin
+          Result := StrSameText(Left.Value, Right.Value);
+        end;
     end;
   end;
-  Assert(Assigned(CompareFn) and Assigned(HashFn), 
+  Assert(Assigned(CompareFn) and Assigned(HashFn) and Assigned(EqualsFn),
     ClassName + '.Create: Invalid sort type');
-  EqualsFn := function (const Left, Right: TPair<TKey,string>): Boolean
-    begin 
-      Result := CompareFn(Left, Right) = 0;
-    end;
   fKVList := TSortedList<TPair<TKey,string>>.Create(
     TRules<TPair<TKey,string>>.Create(
       TDelegatedComparer<TPair<TKey,string>>.Create(CompareFn),
@@ -461,20 +465,20 @@ begin
   // following assignment to interface type mean that fKVList will be freed
   // automatically when reference count hits zero: don't free explicitly
   fListIntf := fKVList;
-  fIndexedListIntf := fKVList;  
+  fIndexedListIntf := fKVList;
 end;
 
-function TSortedCollectionCtrlKVMgr<TKey>.GetIndexedList: 
-  IEnexIndexedCollection<TPair<TKey,string>>; 
+function TSortedCollectionCtrlKVMgr<TKey>.GetIndexedList:
+  IEnexIndexedCollection<TPair<TKey,string>>;
 begin
   Result := fIndexedListIntf;
 end;
 
-function TSortedCollectionCtrlKVMgr<TKey>.GetList: IList<TPair<TKey,string>>; 
+function TSortedCollectionCtrlKVMgr<TKey>.GetList: IList<TPair<TKey,string>>;
 begin
   Result := fListIntf;
 end;
-  
+
 destructor TSortedCollectionCtrlKVMgr<TKey>.Destroy;
 begin
   inherited;
@@ -484,7 +488,7 @@ end;
 
 constructor TUnsortedCollectionCtrlKVMgr<TKey>.Create(
   const ACollectionCtrl: TCollectionCtrlAdapter;
-  const AOwnsCollectionCtrl: Boolean; 
+  const AOwnsCollectionCtrl: Boolean;
   const AKeyEqualFn: TEqualityComparison<TKey>);
 begin
   inherited Create(ACollectionCtrl, AOwnsCollectionCtrl, AKeyEqualFn);
@@ -502,7 +506,7 @@ begin
   inherited;
 end;
 
-function TUnsortedCollectionCtrlKVMgr<TKey>.GetIndexedList: 
+function TUnsortedCollectionCtrlKVMgr<TKey>.GetIndexedList:
   IEnexIndexedCollection<TPair<TKey, string>>;
 begin
   Result := fIndexedListIntf;
