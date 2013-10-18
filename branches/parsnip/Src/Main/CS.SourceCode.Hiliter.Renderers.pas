@@ -138,16 +138,18 @@ type
   public
     ///  <summary>Creates document containing highlighted source code.</summary>
     ///  <param name="RawCode">string [in] Source code to be processed.</param>
-    ///  <param name="Attrs">IHiliteAttrs [in] Specifies required highlighting
-    ///  style. If nil document is not highlighted.</param>
+    ///  <param name="Brush">TSyntaxHiliterBrush [in] Specifies highlighter
+    ///  brush to be used to perform highlighting.</param>
+    ///  <param name="Theme">TSyntaxHiliteTheme [in] Specifies highlighter
+    ///  styling to be used by highlighter brush.</param>
     ///  <param name="Title">string [in] Title of document to be included in
     ///  document as meta data. Defaults may be used if Title not specified.
     ///  </param>
     ///  <returns>TEncodedData. Highlighted source code in format applicable to
     ///  output type.</returns>
     ///  <remarks>
-    ///  <para>Not all document types support formatting, in which case Attrs
-    ///  will be ignored.</para>
+    ///  <para>Not all document types support formatting, in which case Brush
+    ///  and Theme will be ignored.</para>
     ///  <para>Not all document types support meta data, in which case Title
     ///  will be ignored.</para>
     ///  </remarks>
@@ -168,13 +170,15 @@ type
     ///  <summary>Creates a plain text document containing source code.
     ///  </summary>
     ///  <param name="RawCode">string [in] Source code to be processed.</param>
-    ///  <param name="Attrs">IHiliteAttrs [in] Required highlighting style.
-    ///  Ignored because plain text documents do not support formatting.
-    ///  </param>
+    ///  <param name="Brush">TSyntaxHiliterBrush [in] Specifies highlighter
+    ///  brush to be used to perform highlighting. Ignored because plain text
+    ///  documents do not support syntax highlighting.</param>
+    ///  <param name="Theme">TSyntaxHiliteTheme [in] Specifies highlighter
+    ///  styling to be used by highlighter brush. Ignored because plain text
+    ///  documents do not support syntax highlighting.</param>
     ///  <param name="Title">string [in] Title of document. Ignored because
     ///  plain text documents do not support meta-data.</param>
-    ///  <returns>TEncodedData. Plain text in Unicode LE format.
-    ///  </returns>
+    ///  <returns>TEncodedData. Plain text in Unicode LE format.</returns>
     class function Hilite(const RawCode: string;
       const Brush: TSyntaxHiliterBrush; const Theme: TSyntaxHiliteTheme;
       const Title: string = ''): TEncodedData; override;
@@ -187,8 +191,10 @@ type
   TXHTMLDocumentHiliter = class sealed(TDocumentHiliter)
   strict private
     ///  <summary>Generates the CSS rules to be used in the document.</summary>
-    ///  <param name="Attrs">IHiliteAttrs [in] Highlighting styles used in
-    ///  document.</param>
+    ///  <param name="Brush">TSyntaxHiliterBrush [in] Highlighter brush to be
+    ///  used to perform highlighting.</param>
+    ///  <param name="Theme">TSyntaxHiliteTheme [in] Styling to be used by
+    ///  highlighter brush.</param>
     ///  <returns>string. CSS rules that apply styles specified in Attrs.
     ///  </returns>
     class function GenerateCSSRules(const Brush: TSyntaxHiliterBrush;
@@ -197,8 +203,10 @@ type
     ///  <summary>Creates XHTML document containing highlighted source code.
     ///  </summary>
     ///  <param name="RawCode">string [in] Source code to be processed.</param>
-    ///  <param name="Attrs">IHiliteAttrs [in] Specifies required highlighting
-    ///  style. If nil document is not highlighted.</param>
+    ///  <param name="Brush">TSyntaxHiliterBrush [in] Specifies highlighter
+    ///  brush to be used to perform highlighting.</param>
+    ///  <param name="Theme">TSyntaxHiliteTheme [in] Specifies highlighter
+    ///  styling to be used by highlighter brush.</param>
     ///  <param name="Title">string [in] Title of document to be included in
     ///  document header. If empty string a default title is used.</param>
     ///  <returns>TEncodedData. XHTML code in UTF-8 format.</returns>
@@ -217,8 +225,10 @@ type
     ///  <summary>Creates rich text format document containing highlighted
     ///  source code.</summary>
     ///  <param name="RawCode">string [in] Source code to be processed.</param>
-    ///  <param name="Attrs">IHiliteAttrs [in] Specifies required highlighting
-    ///  style. If nil document is not highlighted.</param>
+    ///  <param name="Brush">TSyntaxHiliterBrush [in] Specifies highlighter
+    ///  brush to be used to perform highlighting.</param>
+    ///  <param name="Theme">TSyntaxHiliteTheme [in] Specifies highlighter
+    ///  styling to be used by highlighter brush.</param>
     ///  <param name="Title">string [in] Title of document to be included in
     ///  document header. No title written if Title is empty string.
     ///  </param>
@@ -268,8 +278,10 @@ type
     ///  </summary>
     ///  <param name="Builder">TRTFBuilder [in] Object that receives generated
     ///  RTF code.</param>
-    ///  <param name="Attrs">IHiliteAttrs [in] Specifies required highlighting
-    ///  style. If nil document is not highlighted.</param>
+    ///  <param name="Brush">TSyntaxHiliterBrush [in] Highlighter brush to be
+    ///  used to perform highlighting.</param>
+    ///  <param name="Theme">TSyntaxHiliteTheme [in] Styling to be used by
+    ///  highlighter brush.</param>
     constructor Create(const Builder: TRTFBuilder;
       const Brush: TSyntaxHiliterBrush; const Theme: TSyntaxHiliteTheme);
     ///  <summary>Initialises RTF ready to receive highlighted code.</summary>
@@ -320,8 +332,10 @@ type
     ///  </summary>
     ///  <param name="Builder">THTMLBuilder [in] Object that receives generated
     ///  XHTML code.</param>
-    ///  <param name="Attrs">IHiliteAttrs [in] Specifies required highlighting
-    ///  style. If nil document is not highlighted.</param>
+    ///  <param name="Brush">TSyntaxHiliterBrush [in] Highlighter brush to be
+    ///  used to perform highlighting.</param>
+    ///  <param name="Theme">TSyntaxHiliteTheme [in] Styling to be used by
+    ///  highlighter brush.</param>
     constructor Create(const Builder: THTMLBuilder;
       const Brush: TSyntaxHiliterBrush; const Theme: TSyntaxHiliteTheme);
     ///  <summary>Initialises XHTML ready to receive highlighted code.</summary>
