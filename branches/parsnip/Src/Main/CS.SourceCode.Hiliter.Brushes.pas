@@ -19,7 +19,7 @@ interface
 
 
 uses
-  Generics.Collections,
+  Collections.Lists,
   SynEditHighlighter;
 
 
@@ -42,6 +42,11 @@ type
     ///  <summary>The attribute's friendly name suitable for displaying to
     ///  users.</summary>
     property FriendlyName: string read fFriendlyName;
+
+    class function Compare(const Left, Right: TSyntaxHiliterAttr): Integer;
+      static;
+    function Hash: Integer;
+
   end;
 
 type
@@ -124,6 +129,8 @@ type
     ///  occasions when a Pascal brush ID is needed explicitly. This method
     ///  provides a safe way to get the ID.</remarks>
     class function PascalBrushID: string; static;
+
+    class function AllSupportedAttrs: TArray<TSyntaxHiliterAttr>; static;
   end;
 
 
@@ -132,12 +139,18 @@ implementation
 
 uses
   SysUtils,
+  Generics.Defaults,
+
+  Collections.Base,
+  Collections.Sets,
 
   SynEditStrConst,
   SynHighlighterHtml,
   SynHighlighterJScript,
   SynHighlighterPas,
   SynHighlighterPHP,
+
+  CS.Utils.Hashes,
 
   UStrUtils;
 
@@ -217,6 +230,53 @@ type
   end;
 
 { TSyntaxHiliterBrushes }
+
+class function TSyntaxHiliterBrushes.AllSupportedAttrs:
+  TArray<TSyntaxHiliterAttr>;
+var
+  BrushID: string;
+  Brush: TSyntaxHiliterBrush;
+  BrushAttrs: TArray<TSyntaxHiliterAttr>;
+  AllAttrs: TLinkedSet<TSyntaxHiliterAttr>;
+  Attr: TSyntaxHiliterAttr;
+begin
+  AllAttrs := TLinkedSet<TSyntaxHiliterAttr>.Create(
+    TRules<TSyntaxHiliterAttr>.Create(
+      TDelegatedComparer<TSyntaxHiliterAttr>.Create(
+        function (const Left, Right: TSyntaxHiliterAttr): Integer
+        begin
+          Result := TSyntaxHiliterAttr.Compare(Left, Right);
+        end
+      ),
+      TDelegatedEqualityComparer<TSyntaxHiliterAttr>.Create(
+        function (const Left, Right: TSyntaxHiliterAttr): Boolean
+        begin
+          Result := TSyntaxHiliterAttr.Compare(Left, Right) = 0;
+        end,
+        function (const Value: TSyntaxHiliterAttr): Integer
+        begin
+          Result := Value.Hash;
+        end
+      )
+    )
+  );
+  try
+    for BrushID in SupportedBrushIDs do
+    begin
+      Brush := TSyntaxHiliterBrushes.CreateBrush(BrushID);
+      try
+        for Attr in Brush.SupportedAttrs do
+          if not AllAttrs.Contains(Attr) then
+            AllAttrs.Add(Attr);
+      finally
+        Brush.Free;
+      end;
+    end;
+    Result := AllAttrs.ToArray;
+  finally
+    AllAttrs.Free;
+  end;
+end;
 
 class function TSyntaxHiliterBrushes.BrushExists(
   const ID: string): Boolean;
@@ -411,10 +471,21 @@ end;
 
 { TSyntaxHiliterAttr }
 
+class function TSyntaxHiliterAttr.Compare(const Left,
+  Right: TSyntaxHiliterAttr): Integer;
+begin
+  Result := StrCompareText(Left.ID, Right.ID);
+end;
+
 constructor TSyntaxHiliterAttr.Create(const AID, AFriendlyName: string);
 begin
   fID := AID;
   fFriendlyName := AFriendlyName;
+end;
+
+function TSyntaxHiliterAttr.Hash: Integer;
+begin
+  Result := Integer(PaulLarsonHash(fID));
 end;
 
 end.
