@@ -106,6 +106,9 @@ type
     procedure Assign(const Src: TSyntaxHiliteTheme;
       const IgnoreColour: Boolean = False);
     function Clone(const IgnoreColour: Boolean = False): TSyntaxHiliteTheme;
+      overload;
+    function Clone(const NewID: string; const IgnoreColour: Boolean = False):
+      TSyntaxHiliteTheme; overload;
     procedure ResetDefaultFont;
     function IsNull: Boolean; virtual;
     function IsBrushSupported(const BrushID: string): Boolean;
@@ -392,6 +395,13 @@ function TSyntaxHiliteTheme.Clone(const IgnoreColour: Boolean):
 begin
   Result := TSyntaxHiliteTheme.Create(ID, FriendlyName, BuiltIn);
   Result.Assign(Self, IgnoreColour);
+end;
+
+function TSyntaxHiliteTheme.Clone(const NewID: string;
+  const IgnoreColour: Boolean): TSyntaxHiliteTheme;
+begin
+  Result := Clone(IgnoreColour);
+  Result.fID := NewID;
 end;
 
 constructor TSyntaxHiliteTheme.Create(const ThemeID: string;
