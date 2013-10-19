@@ -82,7 +82,6 @@ type
   TSyntaxHiliteTheme = class(TObject)
   strict private
     const
-      DefaultFontName = 'Courier New';
       DefaultFontSize = 9;
   strict private
     var
@@ -95,6 +94,7 @@ type
       fDefaultBrushStyle: TSyntaxHiliteBrushStyle;
       fBrushStyles: TObjectDictionary<string,TSyntaxHiliteBrushStyle>;
       fBuiltIn: Boolean;
+    procedure SetFontName(const FontName: string);
     function GetBrushStyle(const BrushID: string): TSyntaxHiliteBrushStyle;
     function GetSupportedBrushes: TArray<string>;
     procedure SetDefaultBrushStyle(const Value: TSyntaxHiliteBrushStyle);
@@ -126,7 +126,7 @@ type
     function IsBaseStyle(const Style: TSyntaxHiliteAttrStyle): Boolean;
     property ID: string read fID;
     property FriendlyName: string read fFriendlyName write fFriendlyName;
-    property FontName: string read fFontName write fFontName;
+    property FontName: string read fFontName write SetFontName;
     property FontSize: Integer read fFontSize write fFontSize;
     property DefaultBackground: TColor
       read fDefaultBackground write fDefaultBackground;
@@ -195,6 +195,7 @@ uses
   Character,
   CS.SourceCode.Hiliter.Brushes,
   UComparers,
+  UFontHelper,
   UStrUtils;
 
 { TSyntaxHiliteFontStyles }
@@ -441,7 +442,7 @@ begin
   fID := ThemeID;
   fFriendlyName := FriendlyName;
   fBuiltIn := IsBuiltIn;
-  fFontName := DefaultFontName;
+  fFontName := TFontHelper.GetDefaultMonoFontName;
   fFontSize := DefaultFontSize;
   fDefaultForeground := clNone;
   fDefaultBackground := clNone;
@@ -556,7 +557,7 @@ end;
 
 procedure TSyntaxHiliteTheme.ResetDefaultFont;
 begin
-  fFontName := DefaultFontName;
+  fFontName := TFontHelper.GetDefaultMonoFontName;
   fFontSize := DefaultFontSize;
 end;
 
@@ -564,6 +565,14 @@ procedure TSyntaxHiliteTheme.SetDefaultBrushStyle(
   const Value: TSyntaxHiliteBrushStyle);
 begin
   fDefaultBrushStyle.Assign(Value);
+end;
+
+procedure TSyntaxHiliteTheme.SetFontName(const FontName: string);
+begin
+  if TFontHelper.FontExists(FontName) then
+    fFontName := FontName
+  else
+    fFontName := TFontHelper.GetDefaultMonoFontName;
 end;
 
 procedure TSyntaxHiliteTheme.SetStyles(const Src: TSyntaxHiliteTheme;
