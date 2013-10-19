@@ -17,8 +17,11 @@ unit CS.SourceCode.Hiliter.Themes;
 interface
 
 uses
+  // Delphi
   Generics.Collections,
-  Graphics;
+  Graphics,
+  // Project
+  UStructs;
 
 type
 
@@ -82,6 +85,10 @@ type
   TSyntaxHiliteTheme = class(TObject)
   strict private
     const
+      MinFontSize = 6;
+      MaxFontSize = 32;
+      ///  <summary>Default theme font size.</summary>
+      ///  <remarks>Must be between MinFontSize and MaxFontSize.</remarks>
       DefaultFontSize = 9;
   strict private
     var
@@ -95,6 +102,7 @@ type
       fBrushStyles: TObjectDictionary<string,TSyntaxHiliteBrushStyle>;
       fBuiltIn: Boolean;
     procedure SetFontName(const FontName: string);
+    procedure SetFontSize(const FontSize: Integer);
     function GetBrushStyle(const BrushID: string): TSyntaxHiliteBrushStyle;
     function GetSupportedBrushes: TArray<string>;
     procedure SetDefaultBrushStyle(const Value: TSyntaxHiliteBrushStyle);
@@ -118,6 +126,7 @@ type
     function IsBrushSupported(const BrushID: string): Boolean;
     class function IsValidIDString(const S: string; const IsBuiltIn: Boolean):
       Boolean;
+    class function ValidFontSizes: TRange;
     // GetStyle => replaces any "default" style place markers with actual values
     //             from default or common style.
     function GetStyle(const BrushId, AttrId: string): TSyntaxHiliteAttrStyle;
@@ -127,7 +136,7 @@ type
     property ID: string read fID;
     property FriendlyName: string read fFriendlyName write fFriendlyName;
     property FontName: string read fFontName write SetFontName;
-    property FontSize: Integer read fFontSize write fFontSize;
+    property FontSize: Integer read fFontSize write SetFontSize;
     property DefaultBackground: TColor
       read fDefaultBackground write fDefaultBackground;
     property DefaultForeground: TColor
@@ -575,6 +584,11 @@ begin
     fFontName := TFontHelper.GetDefaultMonoFontName;
 end;
 
+procedure TSyntaxHiliteTheme.SetFontSize(const FontSize: Integer);
+begin
+  fFontSize := ValidFontSizes.Constrain(FontSize);
+end;
+
 procedure TSyntaxHiliteTheme.SetStyles(const Src: TSyntaxHiliteTheme;
   const IgnoreColour: Boolean);
 var
@@ -594,6 +608,11 @@ begin
   finally
     ClonedDefBrushStyle.Free;
   end;
+end;
+
+class function TSyntaxHiliteTheme.ValidFontSizes: TRange;
+begin
+  Result := TRange.Create(MinFontSize, MaxFontSize);
 end;
 
 { TSyntaxHiliteThemes }
