@@ -59,6 +59,8 @@ type
       fAttrStyles: TDictionary<string,TSyntaxHiliteAttrStyle>;
     function GetSupportedAttrs: TArray<string>;
     function GetAttrStyle(const AttrId: string): TSyntaxHiliteAttrStyle;
+    procedure SetAttrStyle(const AttrID: string;
+      const NewStyle: TSyntaxHiliteAttrStyle);
   public
     constructor Create;
     destructor Destroy; override;
@@ -74,7 +76,7 @@ type
     property SupportedAttrs: TArray<string> read GetSupportedAttrs;
     // AttrStyles => return null attr if style doesn't exist
     property AttrStyles[const AttrId: string]: TSyntaxHiliteAttrStyle
-      read GetAttrStyle;
+      read GetAttrStyle write SetAttrStyle;
   end;
 
   TSyntaxHiliteTheme = class(TObject)
@@ -370,6 +372,15 @@ class function TSyntaxHiliteBrushStyle.IsValidIDString(
   const S: string): Boolean;
 begin
   Result := TSyntaxHiliterBrush.IsValidBrushID(S);
+end;
+
+procedure TSyntaxHiliteBrushStyle.SetAttrStyle(const AttrID: string;
+  const NewStyle: TSyntaxHiliteAttrStyle);
+begin
+  if fAttrStyles.ContainsKey(AttrID) then
+    fAttrStyles[AttrID] := NewStyle
+  else
+    fAttrStyles.Add(AttrID, NewStyle);
 end;
 
 { TSyntaxHiliteTheme }
