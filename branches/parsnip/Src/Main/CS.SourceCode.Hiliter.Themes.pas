@@ -99,6 +99,8 @@ type
     function GetBaseStyle: TSyntaxHiliteAttrStyle;
     procedure SetStyles(const Src: TSyntaxHiliteTheme;
       const IgnoreColour: Boolean);
+    function CascadeAttrStyles(const ParentAttr, ChildAttr:
+      TSyntaxHiliteAttrStyle): TSyntaxHiliteAttrStyle;
   public
     constructor Create(const ThemeID: string; const FriendlyName: string;
       const IsBuiltIn: Boolean);
@@ -117,6 +119,7 @@ type
     // GetStyle => replaces any "default" style place markers with actual values
     //             from default or common style.
     function GetStyle(const BrushId, AttrId: string): TSyntaxHiliteAttrStyle;
+    function GetDefaultStyle(const AttrID: string): TSyntaxHiliteAttrStyle;
     function GetEnumerator: TEnumerator<TPair<string,TSyntaxHiliteBrushStyle>>;
     function IsBaseStyle(const Style: TSyntaxHiliteAttrStyle): Boolean;
     property ID: string read fID;
@@ -397,6 +400,18 @@ begin
   Result.Assign(Self, IgnoreColour);
 end;
 
+function TSyntaxHiliteTheme.CascadeAttrStyles(const ParentAttr,
+  ChildAttr: TSyntaxHiliteAttrStyle): TSyntaxHiliteAttrStyle;
+begin
+  Result := ChildAttr;
+  if ChildAttr.Background = clDefault then
+    Result.Background := ParentAttr.Background;
+  if ChildAttr.Foreground = clDefault then
+    Result.Foreground := ParentAttr.Foreground;
+  if ChildAttr.FontStyles.IsDefault then
+    Result.FontStyles := ParentAttr.FontStyles;
+end;
+
 function TSyntaxHiliteTheme.Clone(const NewID: string;
   const IgnoreColour: Boolean): TSyntaxHiliteTheme;
 begin
@@ -444,6 +459,16 @@ begin
   Result := fBrushStyles[BrushID];
 end;
 
+function TSyntaxHiliteTheme.GetDefaultStyle(const AttrID: string):
+  TSyntaxHiliteAttrStyle;
+begin
+  Result := TSyntaxHiliteAttrStyle.Create(
+    fDefaultBackground, fDefaultForeground, TSyntaxHiliteFontStyles.CreateNull
+  );
+  if fDefaultBrushStyle.IsAttrSupported(AttrId) then
+    Result := CascadeAttrStyles(Result, fDefaultBrushStyle.AttrStyles[AttrId]);
+end;
+
 function TSyntaxHiliteTheme.GetEnumerator:
   TEnumerator<TPair<string, TSyntaxHiliteBrushStyle>>;
 begin
@@ -452,39 +477,16 @@ end;
 
 function TSyntaxHiliteTheme.GetStyle(const BrushId,
   AttrId: string): TSyntaxHiliteAttrStyle;
-
-  function Inherit(const ParentAttr, ChildAttr: TSyntaxHiliteAttrStyle):
-    TSyntaxHiliteAttrStyle;
-  begin
-    Result := ChildAttr;
-    if ChildAttr.Background = clDefault then
-      Result.Background := ParentAttr.Background;
-    if ChildAttr.Foreground = clDefault then
-      Result.Foreground := ParentAttr.Foreground;
-    if ChildAttr.FontStyles.IsDefault then
-      Result.FontStyles := ParentAttr.FontStyles;
-  end;
-
 var
   BrushStyle: TSyntaxHiliteBrushStyle;
 begin
-  Result := TSyntaxHiliteAttrStyle.Create(
-    fDefaultBackground, fDefaultForeground, TSyntaxHiliteFontStyles.CreateNull
-  );
-  if fDefaultBrushStyle.IsAttrSupported(AttrId) then
-    Result := Inherit(Result, fDefaultBrushStyle.AttrStyles[AttrId]);
+  Result := GetDefaultStyle(AttrId);
   if not fBrushStyles.ContainsKey(BrushId) then
     Exit;
   BrushStyle := fBrushStyles[BrushId];
   if not BrushStyle.IsAttrSupported(AttrId) then
     Exit;
-  Result := Inherit(Result, BrushStyle.AttrStyles[AttrId]);
-  Assert(Result.Background <> clDefault,
-    ClassName + '.GetStyle: Background colour is still default');
-  Assert(Result.Foreground <> clDefault,
-    ClassName + '.GetStyle: Foreground colour is still default');
-  Assert(not (Result.FontStyles.IsDefault),
-    ClassName + '.GetStyle: FontStyles are still default');
+  Result := CascadeAttrStyles(Result, BrushStyle.AttrStyles[AttrId]);
 end;
 
 function TSyntaxHiliteTheme.GetSupportedBrushes: TArray<string>;
