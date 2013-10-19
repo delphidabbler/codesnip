@@ -90,7 +90,7 @@ type
       ///  <summary>UI font size used on Windows XP and earlier.</summary>
       PreVistaUIFontSize = 8;
       ///  <summary>Content font name used on Windows XP and earlier.</summary>
-      PreVistsContentFontName = 'Verdana';
+      PreVistaContentFontName = 'Verdana';
       ///  <summary>Content font size used on Windows XP and earlier.</summary>
       PreVistaContentFontSize = PreVistaUIFontSize;
       ///  <summary>Mono spaced font name used on all OSs.</summary>
@@ -183,9 +183,9 @@ begin
   else
   begin
     // Earlier OS than Vista (i.e. 2000 or XP)
-    if FontExists(PreVistsContentFontName) then
+    if FontExists(PreVistaContentFontName) then
     begin
-      Font.Name := PreVistsContentFontName;
+      Font.Name := PreVistaContentFontName;
       Font.Size := PreVistaContentFontSize;
     end;
   end;
