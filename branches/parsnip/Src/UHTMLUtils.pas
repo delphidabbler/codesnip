@@ -27,102 +27,104 @@ uses
 
 type
 
-  {
-  IHTMLAttributes:
-    Interface to object that can build a list of HTML tag attributes and render
-    them.
-  }
+  ///  <summary>Interface supported by objects that can build and render a list
+  ///  of HTML tag attributes.</summary>
   IHTMLAttributes = interface(IInterface)
     ['{2CE69ED2-9622-45A9-A800-5513443D1371}']
+    ///  <summary>Checks if the attributes list is empty.</summary>
     function IsEmpty: Boolean;
-      {Determines if attributes object is empty.
-        @return True if there are no attributes, False otherwise.
-      }
+    ///  <summary>Renders the attributes in plain text.</summary>
     function Render: string;
-      {Renders attributes as plain text.
-        @return Text representation of attributes.
-      }
+    ///  <summary>Renders the attributes as HTML-safe text.</summary>
     function RenderSafe: string;
-      {Renders attributes as HTML safe text.
-        @return HTML safe representation of attributes.
-      }
+    ///  <summary>Adds a named attribute to the list with an associated value.
+    ///  </summary>
+    ///  <param name="Name">string [in] Attribute name.</param>
+    ///  <param name="Value">string [in] Attribute vale.</param>
     procedure Add(const Name, Value: string); overload;
-      {Adds a named attribute with its value.
-        @param Name [in] Name of attribute.
-        @param Value [in] Value of attribute. If '' attribute is not added.
-      }
+    ///  <summary>Adds a name attribute which has a space separated list of
+    ///  values associated with it.</summary>
+    ///  <param name="Name">string [in] Attribute name.</param>
+    ///  <param name="Values">IStringList [in] List of values. If Values is not
+    ///  assigned or is empty then the attribute is not added to the list.
+    ///  </param>
     procedure Add(const Name: string; Values: IStringList); overload;
-      {Adds a named attribute and spaced separated list of values.
-        @param Name [in] Name of attribute.
-        @param Values [in] String list of attribute values. If not assigned or
-          empty, attribute is not added.
-      }
+    ///  <summary>Appends a list of HTML attributes to the list.</summary>
+    ///  <param name="Attrs">IHTMLAttributes [in] List of attributes to be
+    ///  appended.</param>
+    ///  <remarks>If any attribute in Attrs already exists in the list it will
+    ///  be overwritten with the new value.</remarks>
     procedure Append(Attrs: IHTMLAttributes);
-      {Appends all given attributes to these attributes. Any attributes with
-      same name as an existing attribute overwrite the existing one.
-        @param Attrs [in] Attributes to be appended.
-      }
   end;
 
-type
-  // Type that stores the name / value pairs of an HTML attribute
+  ///  <summary>Type that stores the name / value pairs of an HTML attribute.
+  ///  </summary>
   THTMLAttribute = TPair<string,string>;
 
-  {
-  THTMLAttributes:
-    Class that can build a list of HTML tag attributes and render them.
-  }
+  ///  <summary>Class that builds and renders a list of HTML tag attributes.
+  ///  </summary>
   THTMLAttributes = class(TInterfacedObject, IHTMLAttributes)
   strict private
-    fAttrs: TStringList;
-      {Maintains list of attributes as name=value pairs}
+    var
+      ///  <summary>Maintains list of attributes as name=value pairs.</summary>
+      fAttrs: TStringList;
   public
+    ///  <summary>Creates a new object instance with empty attribute list.
+    ///  </summary>
     constructor Create; overload;
-      {Object constructor. Sets up empty object.
-      }
+
+    ///  <summary>Creates a new object instance with an attribute list
+    ///  containing a single attribute.</summary>
+    ///  <param name="Name">string [in] Name of attribute.</param>
+    ///  <param name="Value">string [in] Value of attribute.</param>
     constructor Create(const Name, Value: string); overload;
-      {Object constructor. Sets up object containing a single named attribute.
-        @param Name [in] Name of attribute.
-        @param Value [in] Value of attribute. If '' attribute is not added.
-      }
+
+    ///  <summary>Creates a new object instance with an attribute list
+    ///  containing zero or more attributes.</summary>
+    ///  <param name="Attrs">array of THTMLAttribute [in] Array of attributes to
+    ///  be stored in attribute list. The array may be empty.</param>
     constructor Create(Attrs: array of THTMLAttribute); overload;
-      {Object constructor. Sets up object containing zero or more named
-      attributes.
-        @param Attrs [in] Array of attributes represented by THTMLAttribute
-          records.
-      }
+
+    ///  <summary>Destroys object instance.</summary>
     destructor Destroy; override;
-      {Object destructor. Tears down object.
-      }
-    { IHTMLAttributes methods }
+
+    ///  <summary>Checks if the attributes list is empty.</summary>
+    ///  <remarks>Method of IHTMLAttributes.</remarks>
     function IsEmpty: Boolean;
-      {Determines if attributes object is empty.
-        @return True if there are no attributes, False otherwise.
-      }
+
+    ///  <summary>Renders the attributes in plain text.</summary>
+    ///  <remarks>Method of IHTMLAttributes.</remarks>
     function Render: string;
-      {Renders attributes as plain text.
-        @return Text representation of attributes.
-      }
+
+    ///  <summary>Renders the attributes as HTML-safe text.</summary>
+    ///  <remarks>Method of IHTMLAttributes.</remarks>
     function RenderSafe: string;
-      {Renders attributes as HTML safe text.
-        @return HTML safe representation of attributes.
-      }
+
+    ///  <summary>Adds a named attribute to the list with an associated value.
+    ///  </summary>
+    ///  <param name="Name">string [in] Attribute name.</param>
+    ///  <param name="Value">string [in] Attribute vale.</param>
+    ///  <remarks>Method of IHTMLAttributes.</remarks>
     procedure Add(const Name, Value: string); overload;
-      {Adds a named attribute with its value.
-        @param Name [in] Name of attribute.
-        @param Value [in] Value of attribute. If '' attribute is not added.
-      }
+
+    ///  <summary>Adds a name attribute which has a space separated list of
+    ///  values associated with it.</summary>
+    ///  <param name="Name">string [in] Attribute name.</param>
+    ///  <param name="Values">IStringList [in] List of values. If Values is not
+    ///  assigned or is empty then the attribute is not added to the list.
+    ///  </param>
+    ///  <remarks>Method of IHTMLAttributes.</remarks>
     procedure Add(const Name: string; Values: IStringList); overload;
-      {Adds a named attribute and spaced separated list of values.
-        @param Name [in] Name of attribute.
-        @param Values [in] String list of attribute values. If not assigned or
-          empty, attribute is not added.
-      }
+
+    ///  <summary>Appends a list of HTML attributes to the list.</summary>
+    ///  <param name="Attrs">IHTMLAttributes [in] List of attributes to be
+    ///  appended.</param>
+    ///  <remarks>
+    ///  <para>If any attribute in Attrs already exists in the list it will be
+    ///  overwritten with the new value.</para>
+    ///  <para>Method of IHTMLAttributes.</para>
+    ///  </remarks>
     procedure Append(Attrs: IHTMLAttributes);
-      {Appends all given attributes to these attributes. Any attributes with
-      same name as an existing attribute overwrite the existing one.
-        @param Attrs [in] Attributes to be appended.
-      }
   end;
 
 type
@@ -277,30 +279,17 @@ end;
 { THTMLAttributes }
 
 procedure THTMLAttributes.Add(const Name, Value: string);
-  {Adds a named attribute with its value.
-    @param Name [in] Name of attribute.
-    @param Value [in] Value of attribute. If '' attribute is not added.
-  }
 begin
   fAttrs.Values[Name] := Value; // this deletes entry if Value is ''
 end;
 
 procedure THTMLAttributes.Add(const Name: string; Values: IStringList);
-  {Adds a named attribute and spaced separated list of values.
-    @param Name [in] Name of attribute.
-    @param Values [in] String list of attribute values. If not assigned or
-      empty, attribute is not added.
-  }
 begin
   if Assigned(Values) and (Values.Count > 0) then
     Add(Name, Values.GetText(' ', False));
 end;
 
 procedure THTMLAttributes.Append(Attrs: IHTMLAttributes);
-  {Appends all given attributes to these attributes. Any attributes with
-  same name as an existing attribute overwrite the existing one.
-    @param Attrs [in] Attributes to be appended.
-  }
 var
   Idx: Integer;
   AttrsObj: THTMLAttributes;
@@ -313,27 +302,18 @@ begin
 end;
 
 constructor THTMLAttributes.Create;
-  {Object constructor. Sets up empty object.
-  }
 begin
   inherited Create;
   fAttrs := TStringList.Create;
 end;
 
 constructor THTMLAttributes.Create(const Name, Value: string);
-  {Object constructor. Sets up object containing a single named attribute.
-    @param Name [in] Name of attribute.
-    @param Value [in] Value of attribute. If '' attribute is not added.
-  }
 begin
   Create;
   Add(Name, Value);
 end;
 
 constructor THTMLAttributes.Create(Attrs: array of THTMLAttribute);
-  {Object constructor. Sets up object containing zero or more named attributes.
-    @param Attrs [in] Array of attributes represented by THTMLAttribute records.
-  }
 var
   Attr: THTMLAttribute; // each attribute
 begin
@@ -343,25 +323,17 @@ begin
 end;
 
 destructor THTMLAttributes.Destroy;
-  {Object destructor. Tears down object.
-  }
 begin
   fAttrs.Free;
   inherited;
 end;
 
 function THTMLAttributes.IsEmpty: Boolean;
-  {Determines if attributes object is empty.
-    @return True if there are no attributes, False otherwise.
-  }
 begin
   Result := fAttrs.Count = 0;
 end;
 
 function THTMLAttributes.Render: string;
-  {Renders attributes as plain text.
-    @return Text representation of attributes.
-  }
 var
   Idx: Integer; // loops thru each attribute
 begin
@@ -374,9 +346,6 @@ begin
 end;
 
 function THTMLAttributes.RenderSafe: string;
-  {Renders attributes as HTML safe text.
-    @return HTML safe representation of attributes.
-  }
 var
   Idx: Integer;
 begin
