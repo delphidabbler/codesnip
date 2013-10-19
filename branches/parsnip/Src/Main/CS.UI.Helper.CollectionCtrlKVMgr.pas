@@ -100,6 +100,7 @@ type
     function GetFirstKey: TKey;
     function GetLastKey: TKey;
     procedure Select(const AKey: TKey);
+    procedure ClearSelection;
     procedure Delete(const AKey: TKey);
     procedure Add(const AKey: TKey; const AStr: string);
     procedure Clear;
@@ -285,6 +286,11 @@ begin
   finally
     fCollectionCtrl.EndUpdate;
   end;
+end;
+
+procedure TAbstractCollectionCtrlKVMgr<TKey>.ClearSelection;
+begin
+  fCollectionCtrl.SelectItem(-1);
 end;
 
 function TAbstractCollectionCtrlKVMgr<TKey>.ContainsKey(const AKey: TKey):
