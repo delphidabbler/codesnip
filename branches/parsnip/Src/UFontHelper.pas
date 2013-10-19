@@ -38,7 +38,7 @@ type
         @param FontName [in] Name of required font.
         @return True if font exists, False if not.
       }
-    class procedure ListMonoSpaceFonts(const List: TStrings);
+    class function ListMonoSpaceFonts: TArray<string>;
       {Lists all mono-space fonts on system.
         @param List [in] Receives list of fonts. Cleared before fonts added.
       }
@@ -152,23 +152,28 @@ begin
   Result := DefaultMonoFontName;
 end;
 
-class procedure TFontHelper.ListMonoSpaceFonts(const List: TStrings);
+class function TFontHelper.ListMonoSpaceFonts: TArray<string>;
   {Lists all mono-space fonts on system.
     @param List [in] Receives list of fonts. Cleared before fonts added.
   }
 var
-  DC: HDC;  // device context required for API call
+  DC: HDC;              // device context required for API call
+  FontNames: TStrings;  // receives list of font names
 begin
-  Assert(Assigned(List), ClassName + '.ListMonoSpaceFonts: List is nil');
-  List.Clear;
-  // Get a device context needed for API call
-  DC := GetDC(0);
+  FontNames := TStringList.Create;
   try
-    // Enumerate all font families: handle each font in MonoFontFamilyProc()
-    EnumFontFamilies(DC, nil, @MonoFontFamilyProc, LPARAM(List));
+    // Get a device context needed for API call
+    DC := GetDC(0);
+    try
+      // Enumerate all font families: handle each font in MonoFontFamilyProc()
+      EnumFontFamilies(DC, nil, @MonoFontFamilyProc, LPARAM(FontNames));
+    finally
+      ReleaseDC(0, DC);
+    end;
+    Result := FontNames.ToStringArray;
   finally
-    ReleaseDC(0, DC);
-  end;
+    FontNames.Free;
+  end
 end;
 
 class procedure TFontHelper.SetContentFont(const Font: TFont);
