@@ -27,73 +27,80 @@ uses
 
 type
 
-  {
-  TFontHelper:
-    Static class used to assist when working with fonts.
-  }
+  ///  <summary>Container for methods for assisting with font related
+  ///  operations.</summary>
   TFontHelper = class(TNoConstructObject)
   public
+    ///  <summary>Checks if a font with the given name exists on the system.
+    ///  </summary>
     class function FontExists(const FontName: string): Boolean;
-      {Checks if named font exists on sytem.
-        @param FontName [in] Name of required font.
-        @return True if font exists, False if not.
-      }
+    ///  <summary>Returns an array containing the names of all mono-spaced fonts
+    ///  that are installed on the system.</summary>
     class function ListMonoSpaceFonts: TArray<string>;
-      {Lists all mono-space fonts on system.
-        @param List [in] Receives list of fonts. Cleared before fonts added.
-      }
+    ///  <summary>Sets the given font object to the default UI font for the
+    ///  underlying operating system.</summary>
     class procedure SetDefaultFont(const Font: TFont);
-      {Sets a font to be the default UI font for the underlying operating
-      system.
-        @param Font [in] Font to be set.
-      }
+    ///  <summary>Sets all the given font objects to the default UI font for the
+    ///  underlying operating system.</summary>
     class procedure SetDefaultFonts(const Fonts: array of TFont);
+    ///  <summary>Updates the given font object to have the same font name as
+    ///  the default UI font of the underlying operating system.</summary>
     class procedure SetDefaultBaseFont(const BaseFont: TFont);
-      {Updates a font to use the face of the underlying operating system. Style,
-      colour etc are preserved and point size may be adjusted to retain relative
-      size to base font.
-        @param Font [in] Font to be updated.
-      }
+    ///  <summary>Updates all the given font object to have the same font name
+    ///  as the default UI font of the underlying operating system.</summary>
     class procedure SetDefaultBaseFonts(const Fonts: array of TFont);
+    ///  <summary>Sets the given font object to an appropriate content font for
+    ///  the underlying operating system.</summary>
     class procedure SetContentFont(const Font: TFont);
-      {Sets a font to be the appropriate content font for the underlying
-      operating system.
-        @param Font [in] Font to be set.
-      }
+    ///  <summary>Sets the given font object to the program's default mono-space
+    ///  font.</summary>
     class procedure SetDefaultMonoFont(const Font: TFont);
-      {Sets a font to be used as the default mono spaced font used by the
-      program.
-        @param Font [in] Font to be set.
-      }
-    class function CloneFontHandle(const Handle: THandle): THandle;
-      {Clones a font described by a font handle. Takes a copy of the specified
-      font.
-        @param Handle [in] Handle to font to be cloned.
-        @return Handle to cloned font. Caller is responsible for releasing the
-          handle.
-      }
+    ///  <summary>Returns the name of the program's default mono-spaced font.
+    ///  </summary>
     class function GetDefaultMonoFontName: string;
+    ///  <summary>Clones the font with the given font handle and returns the
+    ///  handle of the cloned font.</summary>
+    ///  <remarks>The caller is responsible for releasing the returned handle.
+    ///  </remarks>
+    class function CloneFontHandle(const Handle: THandle): THandle;
   strict private
     const
-      DefaultFontName = 'Arial';                // Default font name
-      DefaultFontSize = 8;                      // Default font size
-
-      DefaultContentFontName = DefaultFontName; // Default content font name
-      DefaultContentFontSize = DefaultFontSize; // Default content font size
-
-      VistaFontName = 'Segoe UI';               // Vista default font name
-      VistaFontSize = 9;                        // Vista default font size
-      VistaContentFontName = 'Calibri';         // Vista content font name
-      VistaContentFontSize = 10;                // Vista content font size
-
-      XPFontName = 'Tahoma';                    // XP default font name
-      XPFontSize = DefaultFontSize;             // XP default font size
-      XPContentFontName = 'Verdana';            // XP content font name
-      XPContentFontSize                         // XP content font size
-        = DefaultContentFontSize;
-
-      DefaultMonoFontName = 'Courier New';      // Default mono font name
-      DefaultMonoFontSize = 8;                  // Default mono font size
+      ///  <summary>Default UI font name used for OSs earlier than Windows XP.
+      ///  </summary>
+      DefaultFontName = 'Arial';
+      ///  <summary>Default UI font size used for OSs earlier than Windows XP.
+      ///  </summary>
+      DefaultFontSize = 8;
+      ///  <summary>Default content font name used for OSs earlier than Windows
+      ///  XP.</summary>
+      DefaultContentFontName = DefaultFontName;
+      ///  <summary>Default content font size used for OSs earlier than Windows
+      ///  XP.</summary>
+      DefaultContentFontSize = DefaultFontSize;
+      ///  <summary>Default UI font name used by Windows Vista and later.
+      ///  </summary>
+      VistaFontName = 'Segoe UI';
+      ///  <summary>Default UI font size used by Windows Vista and later.
+      ///  </summary>
+      VistaFontSize = 9;
+      ///  <summary>Default content font name used by Windows Vista and later.
+      ///  </summary>
+      VistaContentFontName = 'Calibri';
+      ///  <summary>Default content font size used by Windows Vista and later.
+      ///  </summary>
+      VistaContentFontSize = 10;
+      ///  <summary>Default UI font name used by Windows XP.</summary>
+      XPFontName = 'Tahoma';
+      ///  <summary>Default UI font size used by Windows XP.</summary>
+      XPFontSize = DefaultFontSize;
+      ///  <summary>Default content font name used by Windows XP.</summary>
+      XPContentFontName = 'Verdana';
+      ///  <summary>Default content font size used by Windows XP.</summary>
+      XPContentFontSize = DefaultContentFontSize;
+      ///  <summary>Default mono spaced font name used for any OS.</summary>
+      DefaultMonoFontName = 'Courier New';
+      ///  <summary>Default mono spaced font size used for any OS.</summary>
+      DefaultMonoFontSize = 8;
   end;
 
 
@@ -107,28 +114,21 @@ uses
   UGraphicUtils, USystemInfo;
 
 
-{ TFontHelper }
-
+///  <summary>EnumFontFamilies() callback function used to add mono-spaced fonts
+///  to a string list.</summary>
+///  <remarks>For more info about this callback see
+///  http://msdn.microsoft.com/en-us/library/aa911409.aspx</remarks>
 function MonoFontFamilyProc(PLF: PEnumLogFont; PNTM: PNewTextMetric;
   FontType: Integer; List: TStrings): Integer; stdcall;
-  {EnumFontFamilies() callback function used to add mono-spaced fonts to a list.
-    @param PLF [in] Structure containing info about a logical font.
-    @param PNTM [in] Not used.
-    @param FontType [in] Not used.
-    @param List [in] List to which mono-spaced fonts are added.
-  }
 begin
   if (PLF.elfLogFont.lfPitchAndFamily and $F) = FIXED_PITCH then
     List.Add(PLF.elfLogFont.lfFaceName);
   Result := 1;
 end;
 
+{ TFontHelper }
+
 class function TFontHelper.CloneFontHandle(const Handle: THandle): THandle;
-  {Clones a font described by a font handle. Takes a copy of the specified font.
-    @param Handle [in] Handle to font to be cloned.
-    @return Handle to cloned font. Caller is responsible for releasing the
-      handle.
-  }
 var
   LogFont: TLogFont;  // logical font info for memo control's font
 begin
@@ -139,10 +139,6 @@ begin
 end;
 
 class function TFontHelper.FontExists(const FontName: string): Boolean;
-  {Checks if named font exists on sytem.
-    @param FontName [in] Name of required font.
-    @return True if font exists, False if not.
-  }
 begin
   Result := Screen.Fonts.IndexOf(FontName) >= 0;
 end;
@@ -153,9 +149,6 @@ begin
 end;
 
 class function TFontHelper.ListMonoSpaceFonts: TArray<string>;
-  {Lists all mono-space fonts on system.
-    @param List [in] Receives list of fonts. Cleared before fonts added.
-  }
 var
   DC: HDC;              // device context required for API call
   FontNames: TStrings;  // receives list of font names
@@ -177,10 +170,6 @@ begin
 end;
 
 class procedure TFontHelper.SetContentFont(const Font: TFont);
-  {Sets a font to be the appropriate content font for the underlying operating
-  system.
-    @param Font [in] Font to be set.
-  }
 begin
   // Set default content font, size and style
   Font.Name := DefaultContentFontName;
@@ -207,11 +196,6 @@ begin
 end;
 
 class procedure TFontHelper.SetDefaultBaseFont(const BaseFont: TFont);
-  {Updates a font to use the face of the underlying operating system. Style,
-  colour etc are preserved and point size may be adjusted to retain relative
-  size to base font.
-    @param Font [in] Font to be updated.
-  }
 var
   DefaultFont: TFont;   // default font per OS
   FontDelta: Integer;   // amount to increment font size by
@@ -240,9 +224,6 @@ begin
 end;
 
 class procedure TFontHelper.SetDefaultFont(const Font: TFont);
-  {Sets a font to be the default UI font for the underlying operating system.
-    @param Font [in] Font to be set.
-  }
 begin
   // Set default font, size and style
   Font.Name := DefaultFontName;
@@ -277,9 +258,6 @@ begin
 end;
 
 class procedure TFontHelper.SetDefaultMonoFont(const Font: TFont);
-  {Sets a font to be used as the default mono spaced font used by the program.
-    @param Font [in] Font to be set to default mono font.
-  }
 begin
   Font.Name := DefaultMonoFontName;
   Font.Size := DefaultMonoFontSize;
