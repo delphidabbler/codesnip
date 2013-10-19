@@ -107,7 +107,7 @@ uses
   // Delphi
   SysUtils, Windows, Forms,
   // Project
-  UGraphicUtils, USystemInfo;
+  UGraphicUtils, UStrUtils, USystemInfo;
 
 
 ///  <summary>EnumFontFamilies() callback function used to add mono-spaced fonts
@@ -117,7 +117,10 @@ uses
 function MonoFontFamilyProc(PLF: PEnumLogFont; PNTM: PNewTextMetric;
   FontType: Integer; List: TStrings): Integer; stdcall;
 begin
-  if (PLF.elfLogFont.lfPitchAndFamily and $F) = FIXED_PITCH then
+  // check for fixed pitch font and filter out all "vertical" fonts that start
+  // with "@" (see http://tinyurl.com/6ul6rfo for details of vertical fonts).
+  if ((PLF.elfLogFont.lfPitchAndFamily and $F) = FIXED_PITCH)
+    and not StrStartsStr('@', PLF.elfLogFont.lfFaceName) then
     List.Add(PLF.elfLogFont.lfFaceName);
   Result := 1;
 end;
