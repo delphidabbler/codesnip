@@ -65,41 +65,37 @@ type
     class function CloneFontHandle(const Handle: THandle): THandle;
   strict private
     const
-      ///  <summary>Default UI font name used for OSs earlier than Windows XP.
+      ///  <summary>Font name used when preferred font is not available.
       ///  </summary>
-      DefaultFontName = 'Arial';
-      ///  <summary>Default UI font size used for OSs earlier than Windows XP.
+      FallbackUIFontName = 'Arial';
+      ///  <summary>UI font size used when preferred font is not available.
       ///  </summary>
-      DefaultFontSize = 8;
-      ///  <summary>Default content font name used for OSs earlier than Windows
-      ///  XP.</summary>
-      DefaultContentFontName = DefaultFontName;
-      ///  <summary>Default content font size used for OSs earlier than Windows
-      ///  XP.</summary>
-      DefaultContentFontSize = DefaultFontSize;
-      ///  <summary>Default UI font name used by Windows Vista and later.
+      FallbackUIFontSize = 8;
+      ///  <summary>Content font name used when preferred font is not available.
       ///  </summary>
-      VistaFontName = 'Segoe UI';
-      ///  <summary>Default UI font size used by Windows Vista and later.
+      FallbackContentFontName = FallbackUIFontName;
+      ///  <summary>Content font size used when preferred font is not available.
       ///  </summary>
-      VistaFontSize = 9;
-      ///  <summary>Default content font name used by Windows Vista and later.
-      ///  </summary>
+      FallbackContentFontSize = FallbackUIFontSize;
+      ///  <summary>UI font name used on Windows Vista and later.</summary>
+      VistaUIFontName = 'Segoe UI';
+      ///  <summary>UI font size used on Windows Vista and later.</summary>
+      VistaUIFontSize = 9;
+      ///  <summary>Content font name used on Windows Vista and later.</summary>
       VistaContentFontName = 'Calibri';
-      ///  <summary>Default content font size used by Windows Vista and later.
-      ///  </summary>
+      ///  <summary>Content font size used on Windows Vista and later.</summary>
       VistaContentFontSize = 10;
-      ///  <summary>Default UI font name used by Windows XP.</summary>
-      XPFontName = 'Tahoma';
-      ///  <summary>Default UI font size used by Windows XP.</summary>
-      XPFontSize = DefaultFontSize;
-      ///  <summary>Default content font name used by Windows XP.</summary>
-      XPContentFontName = 'Verdana';
-      ///  <summary>Default content font size used by Windows XP.</summary>
-      XPContentFontSize = DefaultContentFontSize;
-      ///  <summary>Default mono spaced font name used for any OS.</summary>
+      ///  <summary>UI font name used on Windows XP and earlier.</summary>
+      PreVistaUIFontName = 'Tahoma';
+      ///  <summary>UI font size used on Windows XP and earlier.</summary>
+      PreVistaUIFontSize = 8;
+      ///  <summary>Content font name used on Windows XP and earlier.</summary>
+      PreVistsContentFontName = 'Verdana';
+      ///  <summary>Content font size used on Windows XP and earlier.</summary>
+      PreVistaContentFontSize = PreVistaUIFontSize;
+      ///  <summary>Mono spaced font name used on all OSs.</summary>
       DefaultMonoFontName = 'Courier New';
-      ///  <summary>Default mono spaced font size used for any OS.</summary>
+      ///  <summary>Mono spaced font name used on all OSs.</summary>
       DefaultMonoFontSize = 8;
   end;
 
@@ -172,8 +168,8 @@ end;
 class procedure TFontHelper.SetContentFont(const Font: TFont);
 begin
   // Set default content font, size and style
-  Font.Name := DefaultContentFontName;
-  Font.Size := DefaultContentFontSize;
+  Font.Name := FallbackContentFontName;
+  Font.Size := FallbackContentFontSize;
   Font.Style := [];
   if TOSInfo.CheckReportedOS(TOSInfo.WinVista) then
   begin
@@ -187,10 +183,10 @@ begin
   else
   begin
     // Earlier OS than Vista (i.e. 2000 or XP)
-    if FontExists(XPContentFontName) then
+    if FontExists(PreVistsContentFontName) then
     begin
-      Font.Name := XPContentFontName;
-      Font.Size := XPContentFontSize;
+      Font.Name := PreVistsContentFontName;
+      Font.Size := PreVistaContentFontSize;
     end;
   end;
 end;
@@ -206,7 +202,7 @@ begin
     SetDefaultFont(DefaultFont);
     // font delta is difference between normal default font size and that used
     // on a specific OS (e.g. Vista uses Segoe UI 9 rather than MS Sans Serif 8)
-    FontDelta := DefaultFont.Size - DefaultFontSize;
+    FontDelta := DefaultFont.Size - FallbackUIFontSize;
     // change base font name and size as required
     BaseFont.Name := DefaultFont.Name;
     BaseFont.Size := BaseFont.Size + FontDelta;
@@ -226,25 +222,25 @@ end;
 class procedure TFontHelper.SetDefaultFont(const Font: TFont);
 begin
   // Set default font, size and style
-  Font.Name := DefaultFontName;
-  Font.Size := DefaultFontSize;
+  Font.Name := FallbackUIFontName;
+  Font.Size := FallbackUIFontSize;
   Font.Style := [];
   if TOSInfo.CheckReportedOS(TOSInfo.WinVista) then
   begin
     // Vista or later
-    if FontExists(VistaFontName) then
+    if FontExists(VistaUIFontName) then
     begin
-      Font.Name := VistaFontName;
-      Font.Size := VistaFontSize;
+      Font.Name := VistaUIFontName;
+      Font.Size := VistaUIFontSize;
     end;
   end
   else
   begin
     // Earlier OS than Vista (i.e. 2000 or XP)
-    if FontExists(XPFontName) then
+    if FontExists(PreVistaUIFontName) then
     begin
-      Font.Name := XPFontName;
-      Font.Size := XPFontSize;
+      Font.Name := PreVistaUIFontName;
+      Font.Size := PreVistaUIFontSize;
     end;
   end;
 end;
@@ -259,7 +255,7 @@ end;
 
 class procedure TFontHelper.SetDefaultMonoFont(const Font: TFont);
 begin
-  Font.Name := DefaultMonoFontName;
+  Font.Name := GetDefaultMonoFontName;
   Font.Size := DefaultMonoFontSize;
   Font.Style := [];
 end;
