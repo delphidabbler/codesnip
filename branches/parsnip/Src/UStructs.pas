@@ -27,120 +27,123 @@ uses
 
 type
 
-  {
-  TRectEx:
-    Encapsulates a rectangle. Assignment compatible with TRect. Has methods to
-    manipulate and cast rectangle.
-  }
+  ///  <summary>Encapsulates a rectangle.</summary>
+  ///  <remarks>TRectEx is sssignment compatible with TRect.</remarks>
   TRectEx = packed record
-    Left, Top,              // Coordinates of top left corner of rectangle
-    Right, Bottom: Longint; // Coordinates of bottom right corner of rectangle
+  public
+    var
+      ///  <summary>Position of left side of rectangle.</summary>
+      Left: LongInt;
+      ///  <summary>Position of top side of rectangle.</summary>
+      Top: LongInt;
+      ///  <summary>Position of right side of rectangle.</summary>
+      Right: LongInt;
+      ///  <summary>Position of bottom side of rectangle.</summary>
+      Bottom: Longint;
+
+    ///  <summary>Constructs a new rectangle record from the given left, top,
+    ///  right and bottom positions.</summary>
     constructor Create(ALeft, ATop, ARight, ABottom: Longint);
-      {Record constructor. Sets initial field values.
-        @param ALeft [in] Left position of rectangle.
-        @param ATop [in] Top position of rectangle.
-        @param ARight [in] Right position of rectangle.
-        @param ABottom [in] Bottom position of rectangle.
-      }
+
+    ///  <summary>Creates a new rectangle with the given bounds.</summary>
+    ///  <param name="ALeft">Integer [in] X-coordinate of top left corner of
+    ///  rectangle.</param>
+    ///  <param name="ATop">Integer [in] Y-coordinate of top left corner of
+    ///  rectangle.</param>
+    ///  <param name="AWidth">Integer [in] Width of rectangle.</param>
+    ///  <param name="AHeight">Integer [in] Height of rectangle.</param>
     constructor CreateBounds(ALeft, ATop, AWidth, AHeight: Longint); overload;
-      {Record constructor. Creates rectangle from its bounds.
-        @param ALeft [in] Left position of rectangle.
-        @param ATop [in] Top position of rectangle.
-        @param AWidth [in] Width of rectangle.
-        @param AHeight [in] Height of rectangle.
-      }
+
+    ///  <summary>Creates a new rectangle with the given bounds.</summary>
+    ///  <param name="ALeft">Integer [in] X-coordinate of top left corner of
+    ///  rectangle.</param>
+    ///  <param name="ATop">Integer [in] Y-coordinate of top left corner of
+    ///  rectangle.</param>
+    ///  <param name="ASize">TSize [in] Size of rectangle.</param>
     constructor CreateBounds(ALeft, ATop: Longint; ASize: TSize); overload;
-      {Record constructor. Creates rectangle from its bounds.
-        @param ALeft [in] Left position of rectangle.
-        @param ATop [in] Top position of rectangle.
-        @param ASize [in] Size of rectangle.
-      }
+
+    ///  <summary>Casts a TRect record to a TRectEx.</summary>
     class operator Implicit(ARect: TRect): TRectEx;
-      {Implicit cast of TRect to a TRectEx.
-        @param ARect [in] TRect to be cast.
-        @return TRectEx resulting from cast.
-      }
+
+    ///  <summary>Casts a TRectEx record to a TRect.</summary>
     class operator Implicit(ARect: TRectEx): TRect;
-      {Implicit cast of TRectEx to a TRect.
-        @param ARect [in] TRectEx to be cast.
-        @return TRect resulting from cast.
-      }
+
+    ///  <summary>Checks if the given rectangles are the same.</summary>
+    ///  <remarks>One of the records being compared may be a TRect.</remarks>
     class operator Equal(R1, R2: TRectEx): Boolean;
-      {Equality test for two TRectEx rectangles.
-        @param R1 [in] Left hand operand.
-        @param R2 [in] Right hand operand.
-        @return True if R1 is the same as R2, False if different.
-      }
+
+    ///  <summary>Checks if the given rectangles are not the same.</summary>
+    ///  <remarks>One of the records being compared may be a TRect.</remarks>
     class operator NotEqual(R1, R2: TRectEx): Boolean;
-      {Inequality test for two TRectEx rectangles.
-        @param R1 [in] Left hand operand.
-        @param R2 [in] Right hand operand.
-        @return True if R1 is different to R2, False if same.
-      }
+
+    ///  <summary>Returns the width of the rectangle.</summary>
     function Width: Longint;
-      {Width of rectangle.
-        @return Required width.
-      }
+
+    ///  <summary>Returns the height of the rectangle.</summary>
     function Height: Longint;
-      {Height of rectangle.
-        @return Required height.
-      }
-    procedure InflateBy(DeltaX, DeltaY: Longint);
-      {Inflates or deflates the rectangle.
-        @param DeltaX [in] Amount to inflate horizontally. Deflated if -ve.
-        @param DeltaY [in] Amount to inflate vertically. Deflated if -ve.
-      }
+
+    ///  <summary>Inflates or deflates this rectangle.</summary>
+    ///  <param name="DeltaX">LongInt [in] Amount to inflate or deflate
+    ///  horizontally. A +ve value inflates and and a -ve value deflates.
+    ///  </param>
+    ///  <param name="DeltaY">LongInt [in] Amount to inflate or deflate
+    ///  vertically. A +ve value inflates and and a -ve value deflates.</param>
+    procedure InflateBy(DeltaX, DeltaY: LongInt);
+
+    ///  <summary>Returns an inflated or deflated copy of this rectangle.
+    ///  </summary>
+    ///  <param name="DeltaX">LongInt [in] Amount to inflate or deflate
+    ///  horizontally. A +ve value inflates and and a -ve value deflates.
+    ///  </param>
+    ///  <param name="DeltaY">LongInt [in] Amount to inflate or deflate
+    ///  vertically. A +ve value inflates and and a -ve value deflates.</param>
     function Inflate(DeltaX, DeltaY: Longint): TRectEx;
-      {Returns a copy of rectangle, inflated or deflated.
-        @param DeltaX [in] Amount to inflate horizontally. Deflated if -ve.
-        @param DeltaY [in] Amount to inflate vertically. Deflated if -ve.
-        @return Inflated copy of rectangle.
-      }
+
+    ///  <summary>Offsets this rectangle horizontally and vertically.</summary>
+    ///  <param name="AX">LongInt [in] Amount to offset horizontally. A +ve
+    ///  value moves right and a -ve value moves left.</param>
+    ///  <param name="AY">LongInt [in] Amount to offset vertically. A +ve value
+    ///  moves down and a -ve value moves up.</param>
     procedure OffsetBy(AX, AY: Longint);
-      {Offsets rectangle in X and Y directions.
-        @param AX [in] Horizontal offset.
-        @param AY [in] Vertical offset.
-      }
+
+    ///  <summary>Returns the coordinates of the top left corner of this
+    ///  rectangle.</summary>
     function GetTopLeft: TPoint;
-      {Read accessor for TopLeft property.
-        @return Co-ordinates of top left of rectangle.
-      }
+
+    ///  <summary>Sets the coordinates of the top left corner of this rectangle
+    ///  to the given value.</summary>
     procedure SetTopLeft(const Value: TPoint);
-      {Write accessor for TopLeft property.
-        @param Value [in] Coordinates of top left.
-      }
+
+    ///  <summary>Returns the coordinates of the bottom right corner of this
+    ///  rectangle.</summary>
     function GetBottomRight: TPoint;
-      {Read accessor for BottomRight property.
-        @return Co-ordinates of bottom right of rectangle.
-      }
+
+    ///  <summary>Sets the coordinates of the bottom right corner of this
+    ///  rectangle to the given value.</summary>
     procedure SetBottomRight(const Value: TPoint);
-      {Write accessor for BottomRight property.
-        @param Value [in] Coordinates of bottom right.
-      }
+
+    ///  <summary>Checks if the given point is contained in this rectangle.
+    ///  </summary>
     function ContainsPoint(const Pt: TPoint): Boolean;
-      {Checks if a point is contained in the rectangle.
-        @param Pt [in] Point to be tested.
-        @return True if point is contained in the rectangle, False if not.
-      }
+
+    ///  <summary>Checks if this rectangle is empty.</summary>
+    ///  <remarks>Empty is defined as Right &lt;= Left or Bottom &lt;= Top.
+    ///  </remarks>
     function IsEmpty: Boolean;
-      {Checks if a rectangle is empty. Empty is defined as Right <= Left or
-      Bottom <= Top.
-        return True if empty, False if not.
-      }
+
+    ///  <summary>Makes this rectangle empty.</summary>
     procedure MakeEmpty;
-      {Makes the rectangle empty.
-      }
+
+    ///  <summary>Coordinates of the top left corner of this rectangle.
+    ///  </summary>
     property TopLeft: TPoint read GetTopLeft write SetTopLeft;
-      {Coordinates of top left corner of rectangle}
+
+    ///  <summary>Coordinates of the bottom right corner of this rectangle.
+    ///  </summary>
     property BottomRight: TPoint read GetBottomRight write SetBottomRight;
-      {Coordinates of bottom right corner of rectangle}
   end;
 
-  {
-  TRange:
-    Encapsulates a range of integers with a method to test wheter a value falls
-    within the range.
-  }
+  ///  <summary>Encapsulates an enumerable range of integers.</summary>
   TRange = record
   strict private
     type
@@ -169,67 +172,72 @@ type
         constructor Create(const Range: TRange);
       end;
   public
-    Min, Max: Integer;  // Minimum and maximum bounds of range
+    var
+      ///  <summary>Minimum bound of range.</summary>
+      Min: Integer;
+      ///  <summary>Maximum bound of range.</summary>
+      Max: Integer;
+    ///  <summary>Constructs a new range with given bounds.</summary>
+    ///  <remarks>AMin should be less than or equal to AMax.</remarks>
     constructor Create(AMin, AMax: Integer);
-      {Record constructor. Initialises range bounds.
-        @param AMin [in] Minimum value that falls in range.
-        @param AMax [in] Maximum value that falls in range.
-      }
+    ///  <summary>Checks if the given value is contained within the range.
+    ///  </summary>
     function Contains(const Value: Integer): Boolean;
-      {Checks if a value is contained in range.
-        @param Value [in] Value to be tested.
-        @return True if Value is in range, False otherwise.
-      }
+    ///  <summary>Returns the nearest integer to the given value that lies
+    ///  within the range.</summary>
+    ///  <remarks>Value is returned unchanged if it is within the range. If
+    ///  Value is less than Min, Min is returned. If Value is greater then Max,
+    ///  Max is returned.</remarks>
     function Constrain(const Value: Integer): Integer;
-      {Adjusts the given value to ensure it falls within the range.
-        @param Value [in] Value to be constrained.
-        @returns Value is returned unchanged if it falls within the range.
-          Otherwise Min is returned if Value is less than Min or Max is returned
-          if Value is greater than max.
-      }
     ///  <summary>Returns an enumerator that enumerates each integer contained
     ///  in the range.</summary>
     ///  <remarks>The caller must free the enumerator when done.</remarks>
     function GetEnumerator: TEnumerator<Integer>;
   end;
 
-  {
-  TSelection:
-    Encapsulates a selection defined by its starting position and its length.
-    An empty selection has length 0.
-  }
+  ///  <summary>Encapsulates a selection defined by a starting position and a
+  ///  length.</summary>
   TSelection = record
   public
-    StartPos: Cardinal; // Start of selection
-    Length: Cardinal;   // Length of selection
+    var
+      ///  <summary>Start of selection.</summary>
+      StartPos: Cardinal;
+      ///  <summary>Length of selection.</summary>
+      Length: Cardinal;
+    ///  <summary>Constructs a new selection record with the given starting
+    ///  position and optional length.</summary>
+    ///  <remarks>If no length is provided the selection will be empty.
+    ///  </remarks>
     constructor Create(AStartPos: Cardinal; ALength: Cardinal = 0);
-      {Record constructor. Initialises start position and length.
-        @param AStartPos [in] Start of selection.
-        @param Length [in] Length of selection. Optional.
-      }
   end;
 
 type
-  // Encapsulates a size quantity. Assignment compatible with TSize. Has methods
-  // to compare and cast size.
+  ///  <summary>Encapsulates a size quantity.</summary>
+  ///  <remarks>TSizeEx is assignment compatible with TSize.</remarks>
   TSizeEx = record
   public
-    // Width
-    CX: Integer;
-    // Height
-    CY: Integer;
-    // Constructs record with two given CX and CY field values
+    var
+      ///  <summary>Width.</summary>
+      CX: Integer;
+      ///  <summary>Height.</summary>
+      CY: Integer;
+    ///  <summary>Constructs a new size with given dimensions.</summary>
+    ///  <param name="ACX">Integer [in] Width.</param>
+    ///  <param name="ACY">Integer [in] Height.</param>
     constructor Create(ACX, ACY: Integer);
-    // Enables TSize to be assigned to and compared with TSizeEx
+    ///  <summary>Casts a TSize record to TSizeEx.</summary>
     class operator Implicit(S: Types.TSize): TSizeEx;
-    // Enables TSizeEx to be assigned to and compared with TSize
+    ///  <summary>Casts a TSizeEx record to TSize.</summary>
     class operator Implicit(S: TSizeEx): Types.TSize;
-    // Tests for equality of TSizeEx records. Also works if one record is TSize.
+    ///  <summary>Checks if the two given sizes are equal.</summary>
+    ///  <remarks>One of the records being compared may be a TSize.</remarks>
     class operator Equal(S1, S2: TSizeEx): Boolean;
-    // Tests for inequality of TSizeEx records. Also works if one record is
-    // TSize.
+    ///  <summary>Checks if the two given sizes are not equal.</summary>
+    ///  <remarks>One of the records being compared may be a TSize.</remarks>
     class operator NotEqual(S1, S2: TSizeEx): Boolean;
-    // Tests if a TSizeEx instance is zero (i.e. one of fields is zero)
+    ///  <summary>Checks if the current size is zero.</summary>
+    ///  <remarks>A size is zero if either the width or the height are zero.
+    ///  </remarks>
     function IsZero: Boolean;
   end;
 
@@ -245,21 +253,11 @@ uses
 { TRectEx }
 
 function TRectEx.ContainsPoint(const Pt: TPoint): Boolean;
-  {Checks if a point is contained in the rectangle.
-    @param Pt [in] Point to be tested.
-    @return True if point is contained in the rectangle, False if not.
-  }
 begin
   Result := Types.PtInRect(Self, Pt);
 end;
 
 constructor TRectEx.Create(ALeft, ATop, ARight, ABottom: Integer);
-  {Record constructor. Sets initial field values.
-    @param ALeft [in] Left position of rectangle.
-    @param ATop [in] Top position of rectangle.
-    @param ARight [in] Right position of rectangle.
-    @param ABottom [in] Bottom position of rectangle.
-  }
 begin
   Left := ALeft;
   Top := ATop;
@@ -268,68 +266,39 @@ begin
 end;
 
 constructor TRectEx.CreateBounds(ALeft, ATop, AWidth, AHeight: Integer);
-  {Record constructor. Creates rectangle from its bounds.
-    @param ALeft [in] Left position of rectangle.
-    @param ATop [in] Top position of rectangle.
-    @param AWidth [in] Width of rectangle.
-    @param AHeight [in] Height of rectangle.
-  }
 begin
   Create(ALeft, ATop, ALeft + AWidth, ATop + AHeight);
 end;
 
 constructor TRectEx.CreateBounds(ALeft, ATop: Integer; ASize: TSize);
-  {Record constructor. Creates rectangle from its bounds.
-    @param ALeft [in] Left position of rectangle.
-    @param ATop [in] Top position of rectangle.
-    @param ASize [in] Size of rectangle.
-  }
 begin
   CreateBounds(ALeft, ATop, ASize.cx, ASize.cy);
 end;
 
 class operator TRectEx.Equal(R1, R2: TRectEx): Boolean;
-  {Equality test for two TRectEx rectangles.
-    @param R1 [in] Left hand operand.
-    @param R2 [in] Right hand operand.
-    @return True if R1 is the same as R2, False if different.
-  }
 begin
   Result := (R1.Left = R2.Left) and (R1.Top = R2.Top)
     and (R1.Right = R2.Right) and (R1.Bottom = R2.Bottom);
 end;
 
 function TRectEx.GetBottomRight: TPoint;
-  {Read accessor for BottomRight property.
-    @return Co-ordinates of bottom right of rectangle.
-  }
 begin
   Result.X := Right;
   Result.Y := Bottom;
 end;
 
 function TRectEx.GetTopLeft: TPoint;
-  {Read accessor for TopLeft property.
-    @return Co-ordinates of top left of rectangle.
-  }
 begin
   Result.X := Left;
   Result.Y := Top;
 end;
 
 function TRectEx.Height: Longint;
-  {Height of rectangle.
-    @return Required height.
-  }
 begin
   Result := Abs(Bottom - Top);
 end;
 
 class operator TRectEx.Implicit(ARect: TRectEx): TRect;
-  {Implicit cast of TRectEx to a TRect.
-    @param ARect [in] TRectEx to be cast.
-    @return TRect resulting from cast.
-  }
 begin
   Result.Left := ARect.Left;
   Result.Top := ARect.Top;
@@ -338,10 +307,6 @@ begin
 end;
 
 class operator TRectEx.Implicit(ARect: TRect): TRectEx;
-  {Implicit cast of TRect to a TRectEx.
-    @param ARect [in] TRect to be cast.
-    @return TRectEx resulting from cast.
-  }
 begin
   Result.Left := ARect.Left;
   Result.Top := ARect.Top;
@@ -350,21 +315,12 @@ begin
 end;
 
 function TRectEx.Inflate(DeltaX, DeltaY: Integer): TRectEx;
-  {Returns a copy of rectangle, inflated or deflated.
-    @param DeltaX [in] Amount to inflate horizontally. Deflated if -ve.
-    @param DeltaY [in] Amount to inflate vertically. Deflated if -ve.
-    @return Inflated copy of rectangle.
-  }
 begin
   Result := Self;
   Result.InflateBy(DeltaX, DeltaY);
 end;
 
 procedure TRectEx.InflateBy(DeltaX, DeltaY: Integer);
-  {Inflates or deflates the rectangle.
-    @param DeltaX [in] Amount to inflate horizontally. Deflated if -ve.
-    @param DeltaY [in] Amount to inflate vertically. Deflated if -ve.
-  }
 begin
   Dec(Left, DeltaX);
   Inc(Right, DeltaX);
@@ -373,17 +329,11 @@ begin
 end;
 
 function TRectEx.IsEmpty: Boolean;
-  {Checks if a rectangle is empty. Empty is defined as Right <= Left or
-  Bottom <= Top.
-    return True if empty, False if not.
-  }
 begin
   Result := Types.IsRectEmpty(Self);
 end;
 
 procedure TRectEx.MakeEmpty;
-  {Makes the rectangle empty.
-  }
 begin
   Left := 0;
   Top := 0;
@@ -392,20 +342,11 @@ begin
 end;
 
 class operator TRectEx.NotEqual(R1, R2: TRectEx): Boolean;
-  {Inequality test for two TRectEx rectangles.
-    @param R1 [in] Left hand operand.
-    @param R2 [in] Right hand operand.
-    @return True if R1 is different to R2, False if same.
-  }
 begin
   Result := not (R1 = R2);
 end;
 
 procedure TRectEx.OffsetBy(AX, AY: Integer);
-  {Offsets rectangle in X and Y directions.
-    @param AX [in] Horizontal offset.
-    @param AY [in] Vertical offset.
-  }
 begin
   Inc(Left, AX);
   Inc(Right, AX);
@@ -414,27 +355,18 @@ begin
 end;
 
 procedure TRectEx.SetBottomRight(const Value: TPoint);
-  {Write accessor for BottomRight property.
-    @param Value [in] Coordinates of bottom right.
-  }
 begin
   Right := Value.X;
   Bottom := Value.Y;
 end;
 
 procedure TRectEx.SetTopLeft(const Value: TPoint);
-  {Write accessor for TopLeft property.
-    @param Value [in] Coordinates of top left.
-  }
 begin
   Left := Value.X;
   Top := Value.Y;
 end;
 
 function TRectEx.Width: Longint;
-  {Width of rectangle.
-    @return Required width.
-  }
 begin
   Result := Abs(Right - Left);
 end;
@@ -442,12 +374,6 @@ end;
 { TRange }
 
 function TRange.Constrain(const Value: Integer): Integer;
-  {Adjusts the given value to ensure it falls within the range.
-    @param Value [in] Value to be constrained.
-    @returns Value is returned unchanged if it falls within the range. Otherwise
-      Min is returned if Value is less than Min or Max is returned if Value is
-      greater than max.
-  }
 begin
   if Value < Min then
     Exit(Min);
@@ -457,19 +383,11 @@ begin
 end;
 
 function TRange.Contains(const Value: Integer): Boolean;
-  {Checks if a value is contained in range.
-    @param Value [in] Value to be tested.
-    @return True if Value is in range, False otherwise.
-  }
 begin
   Result := Math.InRange(Value, Min, Max);
 end;
 
 constructor TRange.Create(AMin, AMax: Integer);
-  {Record constructor. Initialises range bounds.
-    @param AMin [in] Minimum value that falls in range.
-    @param AMax [in] Maximum value that falls in range.
-  }
 begin
   Min := AMin;
   Max := AMax;
@@ -513,10 +431,6 @@ end;
 { TSelection }
 
 constructor TSelection.Create(AStartPos, ALength: Cardinal);
-  {Record constructor. Initialises start position and length.
-    @param AStartPos [in] Start of selection.
-    @param Length [in] Length of selection. Optional.
-  }
 begin
   StartPos := AStartPos;
   Length := ALength;
