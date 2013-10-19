@@ -42,11 +42,6 @@ type
       {Lists all mono-space fonts on system.
         @param List [in] Receives list of fonts. Cleared before fonts added.
       }
-    class procedure ListCommonFontSizes(const List: TStrings);
-      {Lists all commonly used font sizes.
-        @param List [in] Receives list of font sizes. Cleared before sizes
-          added.
-      }
     class procedure SetDefaultFont(const Font: TFont);
       {Sets a font to be the default UI font for the underlying operating
       system.
@@ -155,19 +150,6 @@ end;
 class function TFontHelper.GetDefaultMonoFontName: string;
 begin
   Result := DefaultMonoFontName;
-end;
-
-class procedure TFontHelper.ListCommonFontSizes(const List: TStrings);
-  {Lists all commonly used font sizes.
-    @param List [in] Receives list of font sizes. Cleared before sizes added.
-  }
-var
-  FontSize: Integer;  // loops thru all font sizes
-begin
-  Assert(Assigned(List), ClassName + '.ListCommonFontSizes: List is nil');
-  List.Clear;
-  for FontSize := 7 to 32 do
-    List.Add(IntToStr(FontSize));
 end;
 
 class procedure TFontHelper.ListMonoSpaceFonts(const List: TStrings);
