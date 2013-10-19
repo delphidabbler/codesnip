@@ -21,6 +21,7 @@ interface
 
 uses
   // Delphi
+  Generics.Collections,
   Types;
 
 
@@ -141,6 +142,33 @@ type
     within the range.
   }
   TRange = record
+  strict private
+    type
+      ///  <summary>Enumerator for TRange.</summary>
+      TEnumerator = class(TEnumerator<Integer>)
+      strict private
+        var
+          ///  <summary>Minimum value of range being enumerated.</summary>
+          fMin: Integer;
+          ///  <summary>Maximum value of range being enumerated.</summary>
+          fMax: Integer;
+          ///  <summary>Current value in enumeration.</summary>
+          fCurrent: Integer;
+          ///  <summary>Flag indicating if enumeration has begun.</summary>
+          fStarted: Boolean;
+      strict protected
+        ///  <summary>Gets current value in enumeration.</summary>
+        function DoGetCurrent: Integer; override;
+        ///  <summary>Moves to next value in enumeration, if any.</summary>
+        ///  <returns>Boolean. True if a new value exists or False if there are
+        ///  no more values in enumeration.</returns>
+        function DoMoveNext: Boolean; override;
+      public
+        ///  <summary>Constructs new instance of enumerator for given range.
+        ///  </summary>
+        constructor Create(const Range: TRange);
+      end;
+  public
     Min, Max: Integer;  // Minimum and maximum bounds of range
     constructor Create(AMin, AMax: Integer);
       {Record constructor. Initialises range bounds.
@@ -159,6 +187,10 @@ type
           Otherwise Min is returned if Value is less than Min or Max is returned
           if Value is greater than max.
       }
+    ///  <summary>Returns an enumerator that enumerates each integer contained
+    ///  in the range.</summary>
+    ///  <remarks>The caller must free the enumerator when done.</remarks>
+    function GetEnumerator: TEnumerator<Integer>;
   end;
 
   {
@@ -443,6 +475,41 @@ begin
   Max := AMax;
 end;
 
+function TRange.GetEnumerator: TEnumerator<Integer>;
+begin
+  Result := TEnumerator.Create(Self);
+end;
+
+{ TRange.TEnumerator }
+
+constructor TRange.TEnumerator.Create(const Range: TRange);
+begin
+  inherited Create;
+  fMin := Range.Min;
+  fMax := Range.Max;
+  fCurrent := -MaxInt;
+  fStarted := False;
+end;
+
+function TRange.TEnumerator.DoGetCurrent: Integer;
+begin
+  Result := fCurrent;
+end;
+
+function TRange.TEnumerator.DoMoveNext: Boolean;
+begin
+  if fCurrent = fMax then
+    Exit(False);
+  if not fStarted then
+  begin
+    fCurrent := fMin;
+    fStarted := True;
+  end
+  else
+    Inc(fCurrent);
+  Result := True;
+end;
+
 { TSelection }
 
 constructor TSelection.Create(AStartPos, ALength: Cardinal);
@@ -495,5 +562,6 @@ class operator TSizeEx.NotEqual(S1, S2: TSizeEx): Boolean;
 begin
   Result := not (S1 = S2);
 end;
+
 end.
 
