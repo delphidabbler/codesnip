@@ -32,13 +32,12 @@ type
     Static class used to assist when working with fonts.
   }
   TFontHelper = class(TNoConstructObject)
-  strict private
+  public
     class function FontExists(const FontName: string): Boolean;
       {Checks if named font exists on sytem.
         @param FontName [in] Name of required font.
         @return True if font exists, False if not.
       }
-  public
     class procedure ListMonoSpaceFonts(const List: TStrings);
       {Lists all mono-space fonts on system.
         @param List [in] Receives list of fonts. Cleared before fonts added.
@@ -78,6 +77,7 @@ type
         @return Handle to cloned font. Caller is responsible for releasing the
           handle.
       }
+    class function GetDefaultMonoFontName: string;
   strict private
     const
       DefaultFontName = 'Arial';                // Default font name
@@ -150,6 +150,11 @@ class function TFontHelper.FontExists(const FontName: string): Boolean;
   }
 begin
   Result := Screen.Fonts.IndexOf(FontName) >= 0;
+end;
+
+class function TFontHelper.GetDefaultMonoFontName: string;
+begin
+  Result := DefaultMonoFontName;
 end;
 
 class procedure TFontHelper.ListCommonFontSizes(const List: TStrings);
