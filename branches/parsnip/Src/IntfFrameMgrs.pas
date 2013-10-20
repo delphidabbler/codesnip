@@ -37,15 +37,15 @@ const
   cOverviewPopupMenu: TCommandBarID = 2;
 
   // Identifiers for Detail Pane's main view command bars
-  cDetailPopupMenuDefault: TCommandBarID = CONTEXT_MENU_DEFAULT;
-  cDetailPopupMenuImage: TCommandBarID = CONTEXT_MENU_IMAGE;
-  cDetailPopupMenuControl: TCommandBarID = CONTEXT_MENU_CONTROL;
-  cDetailPopupMenuTable: TCommandBarID = CONTEXT_MENU_TABLE;
-  cDetailPopupMenuTextSelect: TCommandBarID = CONTEXT_MENU_TEXTSELECT;
-  cDetailPopupMenuAnchor: TCommandBarID = CONTEXT_MENU_ANCHOR;
-  cDetailPopupMenuUnknown: TCommandBarID = CONTEXT_MENU_UNKNOWN;
-  cDetailPopupMenuFirst = CONTEXT_MENU_DEFAULT;
-  cDetailPopupMenuLast = CONTEXT_MENU_UNKNOWN;
+  cDetailPopupMenuDefault: TCommandBarID = TDocHostUIContextMenu.DEFAULT;
+  cDetailPopupMenuImage: TCommandBarID = TDocHostUIContextMenu.IMAGE;
+  cDetailPopupMenuControl: TCommandBarID = TDocHostUIContextMenu.CONTROL;
+  cDetailPopupMenuTable: TCommandBarID = TDocHostUIContextMenu.TABLE;
+  cDetailPopupMenuTextSelect: TCommandBarID = TDocHostUIContextMenu.TEXTSELECT;
+  cDetailPopupMenuAnchor: TCommandBarID = TDocHostUIContextMenu.ANCHOR;
+  cDetailPopupMenuUnknown: TCommandBarID = TDocHostUIContextMenu.UNKNOWN;
+  cDetailPopupMenuFirst = TDocHostUIContextMenu.DEFAULT;
+  cDetailPopupMenuLast = TDocHostUIContextMenu.UNKNOWN;
 
   // Set of all Detail Pane popup menu command bars
   cDetailPopupMenuIDs: TCommandBarIDs =

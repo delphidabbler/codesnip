@@ -526,27 +526,27 @@ begin
   // Update flags depending on property values
   pInfo.dwFlags := 0;
   if fUseThemes and ThemeServicesEx.ThemesEnabled then
-    pInfo.dwFlags := pInfo.dwFlags or DOCHOSTUIFLAG_THEME
+    pInfo.dwFlags := pInfo.dwFlags or TDocHostUIFlag.THEME
   else if ThemeServicesEx.ThemesAvailable then
-    pInfo.dwFlags := pInfo.dwFlags or DOCHOSTUIFLAG_NOTHEME;
+    pInfo.dwFlags := pInfo.dwFlags or TDocHostUIFlag.NOTHEME;
   // scroll bar style
   case fScrollbarStyle of
     sbsHide:
       // hide the scroll bars
-      pInfo.dwFlags := pInfo.dwFlags or DOCHOSTUIFLAG_SCROLL_NO;
+      pInfo.dwFlags := pInfo.dwFlags or TDocHostUIFlag.SCROLL_NO;
     sbsFlat:
       // use flat scroll bars (has effect in classic UI only)
-      pInfo.dwFlags := pInfo.dwFlags or DOCHOSTUIFLAG_FLAT_SCROLLBAR;
+      pInfo.dwFlags := pInfo.dwFlags or TDocHostUIFlag.FLAT_SCROLLBAR;
     sbsNormal:
       // use standard scroll bars: this is default
       {Do nothing};
   end;
   // 3d border
   if not fShow3dBorder then
-    pInfo.dwFlags := pInfo.dwFlags or DOCHOSTUIFLAG_NO3DBORDER;
+    pInfo.dwFlags := pInfo.dwFlags or TDocHostUIFlag.NO3DBORDER;
   // text selection
   if not fAllowTextSelection then
-    pInfo.dwFlags := pInfo.dwFlags or DOCHOSTUIFLAG_DIALOG;
+    pInfo.dwFlags := pInfo.dwFlags or TDocHostUIFlag.DIALOG;
 
   // Record default style sheet if provided
   CSS := fCSS;
@@ -639,7 +639,7 @@ begin
   BodyElem := THTMLDOMHelper.GetBodyElem(fWebBrowser.Document);
   if not Assigned(BodyElem) then
     Exit;
-  DisplayPopupMenu(Pt, CONTEXT_MENU_DEFAULT, BodyElem);
+  DisplayPopupMenu(Pt, TDocHostUIContextMenu.DEFAULT, BodyElem);
 end;
 
 function TWBUIMgr.ShowUI(const dwID: DWORD;
