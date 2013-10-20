@@ -20,7 +20,7 @@ interface
 
 uses
   // Delphi
-  Classes, Graphics, Generics.Collections,
+  Classes, Generics.Collections,
   // Project
   UIStringList;
 
@@ -199,9 +199,9 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Windows,
+  SysUtils,
   // Project
-  UConsts, UCSSUtils, UExceptions, UStrUtils, UURIEncode;
+  UConsts, UStrUtils;
 
 
 { THTML }
