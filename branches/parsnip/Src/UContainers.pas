@@ -51,6 +51,16 @@ type
     constructor Create(const A: array of T);
   end;
 
+type
+  ///  <summary>Container of functions that help in manipulating arrays.
+  ///  </summary>
+  TArrayHelper = record
+  public
+    ///  <summary>Creates and returns a new dynamic array that is an exact copy
+    ///  of the given open array.</summary>
+    class function Copy<T>(const A: array of T): TArray<T>; static;
+  end;
+
 
 implementation
 
@@ -79,6 +89,17 @@ begin
     Exit(False);
   Inc(fIndex);
   Result := fIndex < Length(fArray);
+end;
+
+{ TArrayHelper }
+
+class function TArrayHelper.Copy<T>(const A: array of T): TArray<T>;
+var
+  Idx: Integer;
+begin
+  SetLength(Result, Length(A));
+  for Idx := 0 to High(A) do
+    Result[Idx] := A[Idx];
 end;
 
 end.
