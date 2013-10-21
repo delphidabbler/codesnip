@@ -72,9 +72,7 @@ var
   Idx: Integer;
 begin
   inherited Create;
-  SetLength(fArray, Length(A));
-  for Idx := Low(A) to High(A) do
-    fArray[Idx] := A[Idx];
+  fArray := TArrayHelper.Copy<T>(A);
   fIndex := -1;
 end;
 

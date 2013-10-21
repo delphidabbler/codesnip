@@ -93,21 +93,21 @@ type
 
 implementation
 
+uses
+  // Project
+  UContainers;
+
 { TNotificationData }
 
 constructor TNotificationData.Create(const ATitle: string;
   const AContent: array of string; const AHelpKeyord: string;
   const ATaskCallback: TProc; const ATaskPrompt: string);
-var
-  I: Integer;
 begin
-  Assert(ATitle <> '', 'TNotificationData.Create: ATitle = empty string');
+  Assert(ATitle <> '', 'TNotificationData.Create: ATitle is empty string');
   Assert((Length(AContent) > 0),
     'TNotificationData.Create: AContent has no elements');
   fTitle := ATitle;
-  SetLength(fContent, Length(AContent));
-  for I := 0 to Pred(Length(AContent)) do
-    fContent[I] := AContent[I];
+  fContent := TArrayHelper.Copy<string>(AContent);
   fHelpKeyword := AHelpKeyord;
   fTaskCallback := ATaskCallback;
   fTaskPrompt := ATaskPrompt;
