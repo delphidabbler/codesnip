@@ -239,7 +239,7 @@ type
           }
       end;
   strict private
-    class var fTagMap: array of TREMLTag;
+    class var fTagMap: TArray<TREMLTag>;
       {Details of all supported tags}
     class function IndexOfTagId(const Id: TActiveTextActionElemKind): Integer;
       {Finds index of a tag id in tag map.
@@ -314,7 +314,7 @@ type
             @param ACh [in] Equivalent character.
           }
       end;
-    class var fEntityMap: array of TREMLEntity; // Entity <=> character map
+    class var fEntityMap: TArray<TREMLEntity>; // Entity <=> character map
     class function CharToMnemonicEntity(const Ch: Char): string;
       {Gets the mnemonic character entity that represents a character.
         @param Entity [in] Character for which equivalent entity is required.

@@ -207,9 +207,9 @@ type
       ///  <summary>Image control used to display any icon.</summary>
       fImage: TImage;
       ///  <summary>Array of dialogue box's buttons.</summary>
-      fButtons: array of TButton;
+      fButtons: TArray<TButton>;
       ///  <summary>Array of lables that display dialogue box's text.</summary>
-      fLabels: array of TLabel;
+      fLabels: TArray<TLabel>;
     const
       ///  <summary>Left and right dialogue box margins.</summary>
       cXPadding = 16;

@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2008-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2008-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -42,7 +42,7 @@ type
 
 type
   ///  <summary>Array of textual compiler result information.</summary>
-  TCompileDocInfoArray = array of TCompileDocInfo;
+  TCompileDocInfoArray = TArray<TCompileDocInfo>;
 
 type
   ///  <summary>Abstract base class for classes that render documents that
@@ -55,10 +55,6 @@ type
     ///  <summary>Creates and returns an array of compiler compatibility
     ///  information for given snippet.</summary>
     function CompilerInfo(const Snippet: TSnippet): TCompileDocInfoArray;
-      {Gets compiler compatibility information for a snippet.
-        @param Snippet [in] Snippet for which compiler information is required.
-        @return Array of compiler compatibility information.
-      }
   strict protected
     ///  <summary>Initialise document.</summary>
     ///  <remarks>Does nothing. Descendant classes should perform any required

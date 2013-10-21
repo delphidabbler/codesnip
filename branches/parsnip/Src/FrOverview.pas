@@ -96,7 +96,7 @@ type
       fSelectedItem: IView;         // Current selected view item in tree view
       fPrevSelectedItem: IView;     // Previous selected view item in tree view
       fSnippetList: TSnippetList;   // List of currently displayed snippets
-      fTreeStates: array of TOverviewTreeState;
+      fTreeStates: TArray<TOverviewTreeState>;
                                     // Array of tree state objects: one per tab
       fCommandBars: TCommandBarMgr; // Configures popup menu and toolbar
   strict private
@@ -505,7 +505,7 @@ procedure TOverviewFrame.Redisplay;
 var
   Builder: TOverviewTreeBuilder;  // builds overview tree with correct grouping
   BuilderClasses:                 // overview builder classes for each grouping
-    array of TOverviewTreeBuilderClass;
+    TArray<TOverviewTreeBuilderClass>;
 begin
   // Store list of overview tree builder classes: one for each tab
   SetLength(BuilderClasses, tcDisplayStyle.Tabs.Count);
