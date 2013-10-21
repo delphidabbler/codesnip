@@ -50,7 +50,7 @@ type
       fShowViewItemAction: TBasicAction;
       ///  <summary>List of actions triggered when display style in overview
       ///  pane changes.</summary>
-      fOverviewStyleChangeActions: array of TBasicAction;
+      fOverviewStyleChangeActions: TArray<TBasicAction>;
       ///  <summary>List of actions triggered when current pane in detail view
       ///  changes.</summary>
       fDisplayPaneChangeAction: TBasicAction;
@@ -251,8 +251,8 @@ uses
   // Delphi
   SysUtils, StdActns,
   // Project
-  Compilers.UGlobals, UCategoryAction, UDetailTabAction, UEditSnippetAction,
-  UShowPrefsPageAction, USnippetAction, UViewItemAction;
+  Compilers.UGlobals, UCategoryAction, UContainers, UDetailTabAction,
+  UEditSnippetAction, UShowPrefsPageAction, USnippetAction, UViewItemAction;
 
 
 { TNotifier }
@@ -396,12 +396,8 @@ end;
 
 procedure TNotifier.SetOverviewStyleChangeActions(
   const Actions: array of TBasicAction);
-var
-  Idx: Integer; // loops thru actions
 begin
-  SetLength(fOverviewStyleChangeActions, Length(Actions));
-  for Idx := Low(Actions) to High(Actions) do
-    fOverviewStyleChangeActions[Idx] := Actions[Idx];
+  fOverviewStyleChangeActions := TArrayHelper.Copy<TBasicAction>(Actions);
 end;
 
 procedure TNotifier.SetShowPrefsPageAction(const Action: TBasicAction);

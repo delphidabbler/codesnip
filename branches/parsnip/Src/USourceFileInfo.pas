@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2006-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2006-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -56,7 +56,7 @@ type
 
 type
   ///  <summary>Array of source file encoding records.</summary>
-  TSourceFileEncodings = array of TSourceFileEncoding;
+  TSourceFileEncodings = TArray<TSourceFileEncoding>;
 
 type
   ///  <summary>
@@ -130,7 +130,7 @@ uses
   // Delphi
   SysUtils, Windows {for inlining}, Character,
   // Project
-  UStrUtils;
+  UContainers, UStrUtils;
 
 
 { TSourceFileInfo }
@@ -203,14 +203,10 @@ end;
 
 constructor TSourceFileTypeInfo.Create(const AExtension, ADisplayName: string;
   const AEncodings: array of TSourceFileEncoding);
-var
-  I: Integer;
 begin
   fExtension := AExtension;
   fDisplayName := ADisplayName;
-  SetLength(fEncodings, Length(AEncodings));
-  for I := 0 to Pred(Length(AEncodings)) do
-    fEncodings[I] := AEncodings[I];
+  fEncodings := TArrayHelper.Copy<TSourceFileEncoding>(AEncodings);
 end;
 
 { TSourceFileEncoding }
