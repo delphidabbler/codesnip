@@ -115,8 +115,8 @@ type
     ///  <remarks>When HasBOM is true and Encoding has a BOM then the BOM must
     ///  begin the file, otherwise an exception is raised.</remarks>
     class function ReadAllLines(const FileName: string;
-      const Encoding: TEncoding; const HasBOM: Boolean = False):
-      TArray<string>; static;
+      const Encoding: TEncoding; const HasBOM: Boolean = False): TArray<string>;
+      static;
 
     ///  <summary>
     ///  Copies content of one file to another.
@@ -190,15 +190,12 @@ class function TFileIO.ReadAllLines(const FileName: string;
   const Encoding: TEncoding; const HasBOM: Boolean): TArray<string>;
 var
   Lines: TStrings;
-  I: Integer;
 begin
   Assert(Assigned(Encoding), 'TFileIO.ReadAllLines: Encoding is nil');
   Lines := TStringList.Create;
   try
     Lines.Text := ReadAllText(FileName, Encoding, HasBOM);
-    SetLength(Result, Lines.Count);
-    for I := 0 to Pred(Lines.Count) do
-      Result[I] := Lines[I];
+    Result := Lines.ToStringArray;
   finally
     Lines.Free;
   end;
