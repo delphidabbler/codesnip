@@ -152,7 +152,7 @@ uses
 
 procedure TConfigFileUpdater.CopyANSIFile(const SrcFileName: string);
 var
-  Lines: TStringDynArray;  // lines of text read from ANSI .ini file
+  Lines: TArray<string>;  // lines of text read from ANSI .ini file
 begin
   if StrSameText(SrcFileName, fCfgFileName) then
     Exit;

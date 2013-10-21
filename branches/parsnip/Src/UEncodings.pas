@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2009-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2009-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -304,7 +304,7 @@ type
     ///  Returns an array names of supported character sets.
     ///  </summary>
     ///  <returns>String array of required character set names.</returns>
-    class function CharSets: TStringDynArray;
+    class function CharSets: TArray<string>;
   end;
 
   ///  Ansi string using the ASCII code page.
@@ -460,7 +460,7 @@ resourcestring
   sBadCharSet = 'Character set %s not supported';
   sBadCodePage = 'Code page %d not supported';
 
-class function TEncodingHelper.CharSets: TStringDynArray;
+class function TEncodingHelper.CharSets: TArray<string>;
 var
   I: Integer;
   EncInfo: TEncodingInfo;

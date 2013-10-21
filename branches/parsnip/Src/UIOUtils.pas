@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2009-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2009-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -20,7 +20,7 @@ interface
 
 uses
   // Delphi
-  SysUtils, Classes, Types;
+  SysUtils, Classes;
 
 type
   ///  <summary>
@@ -111,12 +111,12 @@ type
     ///  </param>
     ///  <param name="HasBOM">Boolean [in] Flag indicating if file has a byte
     ///  order mark. Ignored if Encoding has no BOM.</param>
-    ///  <returns>TStringDynArray containing lines from file.</returns>
+    ///  <returns>TArray&lt;string&gt; containing lines from file.</returns>
     ///  <remarks>When HasBOM is true and Encoding has a BOM then the BOM must
     ///  begin the file, otherwise an exception is raised.</remarks>
     class function ReadAllLines(const FileName: string;
       const Encoding: TEncoding; const HasBOM: Boolean = False):
-      TStringDynArray; static;
+      TArray<string>; static;
 
     ///  <summary>
     ///  Copies content of one file to another.
@@ -187,7 +187,7 @@ begin
 end;
 
 class function TFileIO.ReadAllLines(const FileName: string;
-  const Encoding: TEncoding; const HasBOM: Boolean): TStringDynArray;
+  const Encoding: TEncoding; const HasBOM: Boolean): TArray<string>;
 var
   Lines: TStrings;
   I: Integer;
