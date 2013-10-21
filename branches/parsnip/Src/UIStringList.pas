@@ -369,10 +369,10 @@ procedure TIStringList.Add(const Strs: IStringList);
     @param Strs [in] String list to be added.
   }
 var
-  Idx: Integer; // loops through strings in added list
+  S: string;  // each string in Str
 begin
-  for Idx := 0 to Pred(Strs.Count) do
-    Add(Strs[Idx]);
+  for S in Strs do
+    Add(S);
 end;
 
 procedure TIStringList.Add(const Str: string; const Delim: string;
@@ -405,10 +405,10 @@ procedure TIStringList.Add(const Strs: array of string);
     @param Strs [in] Dynamic array of strings to be added.
   }
 var
-  Idx: Integer; // loops thru elements of array
+  S: string;
 begin
-  for Idx := Low(Strs) to High(Strs) do
-    Add(Strs[Idx]);
+  for S in Strs do
+    Add(S);
 end;
 
 procedure TIStringList.Assign(const Src: IInterface);
@@ -657,12 +657,8 @@ function TIStringList.ToArray: TArray<string>;
   {Copies strings from string list into an array of strings.
     @return Array of strings.
   }
-var
-  Idx: Integer; // loops through all strings
 begin
-  SetLength(Result, Count);
-  for Idx := 0 to Pred(Count) do
-    Result[Idx] := GetItem(Idx);
+  Result := fStrings.ToStringArray;
 end;
 
 end.
