@@ -649,9 +649,10 @@ begin
       raise ESyntaxHiliteThemesIO.Create(sMissingFriendlyThemeName);
     NextLine;
     Theme := TSyntaxHiliteTheme.Create(
-      TSyntaxHiliteThemeID.Create(ThemeIDStr), ThemeFriendlyName, IsBuiltIn
+      TSyntaxHiliteThemeID.Create(ThemeIDStr), ThemeFriendlyName
     );
     try
+      Theme.BuiltIn := IsBuiltIn;
       ParseTheme(Theme);
       ThemeList.Add(Theme);
     except

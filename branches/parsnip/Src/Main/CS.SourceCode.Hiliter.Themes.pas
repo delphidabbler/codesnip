@@ -149,7 +149,7 @@ type
       TSyntaxHiliteAttrStyle): TSyntaxHiliteAttrStyle;
   public
     constructor Create(const ThemeID: TSyntaxHiliteThemeID;
-      const FriendlyName: string; const IsBuiltIn: Boolean);
+      const FriendlyName: string);
     destructor Destroy; override;
     procedure Assign(const Src: TSyntaxHiliteTheme;
       const IgnoreColour: Boolean = False; const KeepID: Boolean = False);
@@ -549,7 +549,7 @@ end;
 function TSyntaxHiliteTheme.Clone(const IgnoreColour: Boolean):
   TSyntaxHiliteTheme;
 begin
-  Result := TSyntaxHiliteTheme.Create(ID, FriendlyName, BuiltIn);
+  Result := TSyntaxHiliteTheme.Create(ID, FriendlyName);
   Result.Assign(Self, IgnoreColour);
 end;
 
@@ -573,7 +573,7 @@ begin
 end;
 
 constructor TSyntaxHiliteTheme.Create(const ThemeID: TSyntaxHiliteThemeID;
-  const FriendlyName: string; const IsBuiltIn: Boolean);
+  const FriendlyName: string);
 begin
   inherited Create;
   fBrushStyles := TObjectDictionary<string,TSyntaxHiliteBrushStyle>.Create(
@@ -582,7 +582,7 @@ begin
   );
   fID := ThemeID;
   fFriendlyName := FriendlyName;
-  fBuiltIn := IsBuiltIn;
+  fBuiltIn := False;
   fFontName := TFontHelper.GetDefaultMonoFontName;
   fFontSize := DefaultFontSize;
   fDefaultForeground := clNone;
@@ -859,7 +859,7 @@ end;
 
 constructor TSyntaxHiliteThemes.TNullTheme.Create;
 begin
-  inherited Create(TSyntaxHiliteThemeID.CreateNull, EmptyStr, False);
+  inherited Create(TSyntaxHiliteThemeID.CreateNull, EmptyStr);
 end;
 
 function TSyntaxHiliteThemes.TNullTheme.IsNull: Boolean;
