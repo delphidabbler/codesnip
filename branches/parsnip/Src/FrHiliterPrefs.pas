@@ -56,8 +56,11 @@ type
     procedure btnEditThemesClick(Sender: TObject);
   strict private
     var
+      ///  <summary>Shorthand reference TConfig.Instance.HiliterThemes.
+      ///  </summary>
+      fThemes: TSyntaxHiliteThemes;
       ///  <summary>Records syntax highlighter themes chosen by user.</summary>
-      fCurrentHiliteThemeIds: TCurrentHiliteThemes;
+      fCurrentHiliteThemeIDs: TCurrentHiliteThemes;
       ///  <summary>Map of syntax highlighter theme kinds onto the combo boxes
       ///  used to select the themes.</summary>
       fThemeCombos: array[TCurrentHiliteThemeKind] of TComboBox;
@@ -115,9 +118,12 @@ implementation
 uses
   // Project
   CS.Config,
+  CS.UI.Dialogs.HiliteThemesEditor,
   FmPreferencesDlg,
+  UContainers,
   UCtrlArranger,
   UExceptions,
+  UIStringList,
   UStrUtils;
 
 
@@ -130,7 +136,7 @@ var
   Kind: TCurrentHiliteThemeKind;
 begin
   for Kind := Low(TCurrentHiliteThemeKind) to High(TCurrentHiliteThemeKind) do
-    fCurrentHiliteThemeIds[Kind] := Prefs.CurrentHiliteThemeIds[Kind];
+    fCurrentHiliteThemeIDs[Kind] := Prefs.CurrentHiliteThemeIds[Kind];
   PopulateThemeCombos;
 end;
 
@@ -162,21 +168,25 @@ end;
 
 procedure THiliterPrefsFrame.btnEditThemesClick(Sender: TObject);
 begin
-  // TODO: Implement this event handler
+  if THiliteThemesEditorDlg.Execute(Self, fCurrentHiliteThemeIDs) then
+  begin
+    PopulateThemeCombos;
+    fChanged := True;
+  end;
 end;
 
 procedure THiliterPrefsFrame.btnResetClick(Sender: TObject);
 var
   Kind: TCurrentHiliteThemeKind;
-  UIThemeID: string;
+  UIThemeID: TSyntaxHiliteThemeID;
 begin
-  UIThemeID := fCurrentHiliteThemeIds[htkUI];
+  UIThemeID := fCurrentHiliteThemeIDs[htkUI];
   for Kind := Low(TCurrentHiliteThemeKind) to High(TCurrentHiliteThemeKind) do
   begin
-    fComboBoxMgrs[Kind].Select(TConfig.Instance.HiliterThemes.DefaultTheme);
-    fCurrentHiliteThemeIds[Kind] := fComboBoxMgrs[Kind].GetSelected.ID;
+    fComboBoxMgrs[Kind].Select(fThemes.DefaultTheme);
+    fCurrentHiliteThemeIDs[Kind] := fComboBoxMgrs[Kind].GetSelected.ID;
   end;
-  if fCurrentHiliteThemeIds[htkUI] <> UIThemeID then
+  if fCurrentHiliteThemeIDs[htkUI] <> UIThemeID then
     fChanged := True;
 end;
 
@@ -190,20 +200,22 @@ begin
   inherited;
   HelpKeyword := 'HiliterPrefs';
 
+  fThemes := TConfig.Instance.HiliterThemes;
+
   fThemeCombos[htkUI] := cbUITheme;
   fThemeCombos[htkExport] := cbExportTheme;
   fThemeCombos[htkPrint] := cbPrintTheme;
 
   for Kind := Low(TCurrentHiliteThemeKind) to High(TCurrentHiliteThemeKind) do
   begin
-    fCurrentHiliteThemeIds[Kind] := '';
+    fCurrentHiliteThemeIDs[Kind] := TSyntaxHiliteThemeID.CreateNull;
     fComboBoxMgrs[Kind] :=
       TUnsortedCollectionCtrlKVMgr<TSyntaxHiliteTheme>.Create(
         TComboBoxAdapter.Create(fThemeCombos[Kind]),
         True,
         function (const Left, Right: TSyntaxHiliteTheme): Boolean
         begin
-          Result := StrSameText(Left.ID, Right.ID);
+          Result := Left.ID = Right.ID;
         end
       );
   end;
@@ -218,7 +230,7 @@ var
 begin
 //  Prefs.HiliteThemes := fHiliteThemes;
   for Kind := Low(TCurrentHiliteThemeKind) to High(TCurrentHiliteThemeKind) do
-    Prefs.CurrentHiliteThemeIds[Kind] := fCurrentHiliteThemeIds[Kind];
+    Prefs.CurrentHiliteThemeIds[Kind] := fCurrentHiliteThemeIDs[Kind];
 end;
 
 destructor THiliterPrefsFrame.Destroy;
@@ -250,10 +262,10 @@ begin
   for Kind := Low(TCurrentHiliteThemeKind) to High(TCurrentHiliteThemeKind) do
   begin
     fComboBoxMgrs[Kind].Clear;
-    for Theme in TConfig.Instance.HiliterThemes do
+    for Theme in fThemes do
       fComboBoxMgrs[Kind].Add(Theme, Theme.FriendlyName);
     fComboBoxMgrs[Kind].Select(
-      TConfig.Instance.HiliterThemes[fCurrentHiliteThemeIds[Kind]]
+      fThemes[fCurrentHiliteThemeIDs[Kind]]
     );
   end;
 end;
@@ -276,7 +288,7 @@ var
   Kind: TCurrentHiliteThemeKind;
 begin
   Kind := ComboToThemeKind(Sender as TComboBox);
-  fCurrentHiliteThemeIds[Kind] := fComboBoxMgrs[Kind].GetSelected.ID;
+  fCurrentHiliteThemeIDs[Kind] := fComboBoxMgrs[Kind].GetSelected.ID;
   if Kind = htkUI then
     fChanged := True;
 end;
