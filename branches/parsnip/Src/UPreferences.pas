@@ -23,7 +23,6 @@ uses
   Graphics,
   // Project
   CS.SourceCode.Hiliter.Themes,
-  Hiliter.UGlobals,
   UIStringList,
   UMeasurement,
   USnippetPageStructure,
@@ -292,8 +291,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  Hiliter.UAttrs, Hiliter.UPersist, IntfCommon, UExceptions, UColours,
-  USettings;
+  IntfCommon, UExceptions, UColours, USettings;
 
 
 type
