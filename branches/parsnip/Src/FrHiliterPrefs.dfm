@@ -41,34 +41,34 @@ inherited HiliterPrefsFrame: THiliterPrefsFrame
     Height = 25
     Anchors = [akTop, akRight]
     Caption = '&Restore Defaults'
-    TabOrder = 0
+    TabOrder = 3
     OnClick = btnResetClick
   end
   object cbUITheme: TComboBox
     Left = 96
     Top = 51
-    Width = 145
+    Width = 271
     Height = 21
     Style = csDropDownList
-    TabOrder = 1
+    TabOrder = 0
     OnChange = ThemeComboChange
   end
   object cbExportTheme: TComboBox
     Left = 96
     Top = 82
-    Width = 145
+    Width = 271
     Height = 21
     Style = csDropDownList
-    TabOrder = 2
+    TabOrder = 1
     OnChange = ThemeComboChange
   end
   object cbPrintTheme: TComboBox
     Left = 96
     Top = 120
-    Width = 145
+    Width = 271
     Height = 21
     Style = csDropDownList
-    TabOrder = 3
+    TabOrder = 2
     OnChange = ThemeComboChange
   end
   object btnEditThemes: TButton

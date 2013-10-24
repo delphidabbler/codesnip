@@ -164,6 +164,9 @@ begin
     [cbUITheme, cbExportTheme, cbPrintTheme, btnReset, btnEditThemes],
     TCtrlArranger.RightOf([lblUITheme, lblExportTheme, lblPrintTheme], 18)
   );
+  TCtrlArranger.StretchRightTo(
+    [cbUITheme, cbExportTheme, cbPrintTheme], Self.ClientWidth - 3
+  );
 end;
 
 procedure THiliterPrefsFrame.btnEditThemesClick(Sender: TObject);
