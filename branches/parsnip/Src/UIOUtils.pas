@@ -191,19 +191,10 @@ class function TFileIO.ReadAllText(const FileName: string;
   const Encoding: TEncoding; const HasBOM: Boolean): string;
 var
   Content: TBytes;
-  SizeOfBOM: Integer;
 begin
   Assert(Assigned(Encoding), 'TFileIO.ReadAllBytes: Encoding is nil');
   Content := ReadAllBytes(FileName);
-  if HasBOM then
-  begin
-    SizeOfBOM := Length(Encoding.GetPreamble);
-    if (SizeOfBOM > 0) and not CheckBOM(Content, Encoding) then
-      raise EIOUtils.CreateFmt(sBadBOM, [FileName]);
-  end
-  else
-    SizeOfBOM := 0;
-  Result := Encoding.GetString(Content, SizeOfBOM, Length(Content) - SizeOfBOM);
+  Result := BytesToString(Content, Encoding, HasBOM);
 end;
 
 class function TFileIO.StreamToBytes(const Stream: TStream): TBytes;

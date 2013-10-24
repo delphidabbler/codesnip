@@ -367,6 +367,18 @@ function WideCharToChar(const Source: WideChar; const CodePage: Integer;
 ///  is always returned.</summary>
 function CheckBOM(const Bytes: TBytes; const Encoding: TEncoding): Boolean;
 
+///  <summary>Converts an array of bytes into a Unicode string.</summary>
+///  <param name="Bytes">TBytes [in] Byte array to be converted.</param>
+///  <param name="Encoding">TEncoding [in] Encoding of the byte array.</param>
+///  <param name="HasBOM">Boolean [in] Flag indicating if the byte array begins
+///  with a byte order mark. Ignored if Encoding has no BOM.</param>
+///  <returns>String. Converted Unicode string.</returns>
+///  <remarks>When HasBOM is true and Encoding has a BOM then the byte array
+///  must begin with the correct BOM, otherwise an exception is raised.
+/// </remarks>
+function BytesToString(const Bytes: TBytes; const Encoding: TEncoding;
+  const HasBOM: Boolean): UnicodeString;
+
 
 implementation
 
@@ -747,6 +759,22 @@ begin
     if Bytes[I] <> Preamble[I] then
       Exit(False);
   Result := True;
+end;
+
+function BytesToString(const Bytes: TBytes; const Encoding: TEncoding;
+  const HasBOM: Boolean): UnicodeString;
+var
+  SizeOfBOM: Integer;
+begin
+  if HasBOM then
+  begin
+    SizeOfBOM := Length(Encoding.GetPreamble);
+    if (SizeOfBOM > 0) and not CheckBOM(Bytes, Encoding) then
+      raise EConvertError.Create('BytesToString: Invalid BOM for encoding');
+  end
+  else
+    SizeOfBOM := 0;
+  Result := Encoding.GetString(Bytes, SizeOfBOM, Length(Bytes) - SizeOfBOM);
 end;
 
 end.

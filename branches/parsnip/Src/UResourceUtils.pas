@@ -91,7 +91,7 @@ uses
   // Delphi
   SysUtils, Classes, Windows,
   // Project
-  UExceptions, UURIEncode;
+  UURIEncode;
 
 
 function ResNameOrTypeToString(R: PChar): string;
@@ -198,28 +198,15 @@ var
   RS: TResourceStream;  // stream onto resource
   Content: TBytes;      // resource contents as byte array
   Encoding: TEncoding;  // encoding to use for string conversion
-  SizeOfBOM: Integer;   // size of any byte order mark
 begin
   Encoding := TEncodingHelper.GetEncoding(EncType);
   try
     RS := TResourceStream.Create(Inst, ResName, ResType);
     try
-      { TODO: much of this code duplicates TFileIO.ReadAllText. Need to perform
-              a suitable refactoring. }
       SetLength(Content, RS.Size);
       if RS.Size > 0 then
         RS.ReadBuffer(Pointer(Content)^, Length(Content));
-      if HasBOM then
-      begin
-        SizeOfBOM := Length(Encoding.GetPreamble);
-        if (SizeOfBOM > 0) and not CheckBOM(Content, Encoding) then
-          raise EBug.Create('LoadResourceAsString: Invalid BOM in resource');
-      end
-      else
-        SizeOfBOM := 0;
-      Result := Encoding.GetString(
-        Content, SizeOfBOM, Length(Content) - SizeOfBOM
-      );
+      Result := BytesToString(Content, Encoding, HasBOM);
     finally
       RS.Free;
     end;
