@@ -362,6 +362,11 @@ function CodePageSupportsString(const S: UnicodeString;
 function WideCharToChar(const Source: WideChar; const CodePage: Integer;
   out Dest: TArray<AnsiChar>): Boolean;
 
+///  <summary>Checks if the given byte array starts with the byte order mark
+///  associated with the given encoding. If the encoding has no BOM then False
+///  is always returned.</summary>
+function CheckBOM(const Bytes: TBytes; const Encoding: TEncoding): Boolean;
+
 
 implementation
 
@@ -726,6 +731,22 @@ begin
   finally
     TEncodingHelper.FreeEncoding(Encoding);
   end;
+end;
+
+function CheckBOM(const Bytes: TBytes; const Encoding: TEncoding): Boolean;
+var
+  Preamble: TBytes;
+  I: Integer;
+begin
+  Preamble := Encoding.GetPreamble;
+  if Length(Preamble) = 0 then
+    Exit(False);
+  if Length(Bytes) < Length(Preamble) then
+    Exit(False);
+  for I := 0 to Pred(Length(Preamble)) do
+    if Bytes[I] <> Preamble[I] then
+      Exit(False);
+  Result := True;
 end;
 
 end.

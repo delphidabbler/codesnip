@@ -194,27 +194,6 @@ function LoadResourceAsString(const Inst: HMODULE; const ResName: string;
       order mark.
     @return Content of resource as a string.
   }
-
-  { TODO: This code duplicates TFileIO.CheckBOM - extract common code to
-          TEncodingHelper. }
-  // Checks if the given byte array starts with byte order mark of the given
-  // encoding. If the encoding has no BOM then False is returned.
-  function CheckBOM(const Bytes: TBytes; const Encoding: TEncoding): Boolean;
-  var
-    Preamble: TBytes; // preamble for the encoding (BOM)
-    I: Integer;       // loops through each byte of Preamble
-  begin
-    Preamble := Encoding.GetPreamble;
-    if Length(Preamble) = 0 then
-      Exit(False);
-    if Length(Bytes) < Length(Preamble) then
-      Exit(False);
-    for I := 0 to Pred(Length(Preamble)) do
-      if Bytes[I] <> Preamble[I] then
-        Exit(False);
-    Result := True;
-  end;
-
 var
   RS: TResourceStream;  // stream onto resource
   Content: TBytes;      // resource contents as byte array

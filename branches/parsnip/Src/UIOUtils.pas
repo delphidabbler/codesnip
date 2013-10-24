@@ -33,8 +33,6 @@ type
   ///  </remarks>
   TFileIO = record
   strict private
-    class function CheckBOM(const Bytes: TBytes; const Encoding: TEncoding):
-      Boolean; static;
     ///  <summary>
     ///  Appends whole contents of a byte array to a stream.
     ///  </summary>
@@ -138,6 +136,11 @@ type
 implementation
 
 
+uses
+  // Project
+  UEncodings;
+
+
 resourcestring
   // Error messages
   sBadBOM = 'Preamble of file %s does not match expected encoding';
@@ -150,23 +153,6 @@ class procedure TFileIO.BytesToStream(const Bytes: TBytes;
 begin
   if Length(Bytes) > 0 then
     Stream.WriteBuffer(Pointer(Bytes)^, Length(Bytes));
-end;
-
-class function TFileIO.CheckBOM(const Bytes: TBytes; const Encoding: TEncoding):
-  Boolean;
-var
-  Preamble: TBytes;
-  I: Integer;
-begin
-  Preamble := Encoding.GetPreamble;
-  if Length(Preamble) = 0 then
-    Exit(False);
-  if Length(Bytes) < Length(Preamble) then
-    Exit(False);
-  for I := 0 to Pred(Length(Preamble)) do
-    if Bytes[I] <> Preamble[I] then
-      Exit(False);
-  Result := True;
 end;
 
 class procedure TFileIO.CopyFile(const SrcFileName, DestFileName: string);
