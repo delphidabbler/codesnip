@@ -210,9 +210,6 @@ type
     function GetDefaultTheme: TSyntaxHiliteTheme;
     class function GetNullTheme: TSyntaxHiliteTheme; static;
   public
-    const
-      DefaultThemeId = '_DEFAULT_';
-  public
     constructor Create;
     destructor Destroy; override;
     class destructor Destroy;

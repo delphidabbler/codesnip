@@ -1071,7 +1071,7 @@ begin
       TSyntaxHiliteThemeID.Create(
         Storage.GetString(
           CurrentHiliterThemeKeyNames[HiliteThemeKind],
-          TSyntaxHiliteThemes.DefaultThemeId
+          TSyntaxHiliteThemeID.CreateDefault.ToString
         )
       );
   end;
