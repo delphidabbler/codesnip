@@ -236,7 +236,6 @@ class function TSyntaxHiliterBrushes.AllSupportedAttrs:
 var
   BrushID: string;
   Brush: TSyntaxHiliterBrush;
-  BrushAttrs: TArray<TSyntaxHiliterAttr>;
   AllAttrs: TLinkedSet<TSyntaxHiliterAttr>;
   Attr: TSyntaxHiliterAttr;
 begin
