@@ -162,7 +162,6 @@ uses
   FrTitled in 'FrTitled.pas' {TitledFrame: TFrame},
   FrUpdatePrefs in 'FrUpdatePrefs.pas' {UpdatePrefsFrame: TFrame},
   Hiliter.UFileHiliter in 'Hiliter.UFileHiliter.pas',
-  Hiliter.UGlobals in 'Hiliter.UGlobals.pas',
   Hiliter.UPasLexer in 'Hiliter.UPasLexer.pas',
   IntfAligner in 'IntfAligner.pas',
   IntfCommon in 'IntfCommon.pas',
