@@ -116,7 +116,7 @@ type
       const IsBuiltIn: Boolean);
     destructor Destroy; override;
     procedure Assign(const Src: TSyntaxHiliteTheme;
-      const IgnoreColour: Boolean = False);
+      const IgnoreColour: Boolean = False; const KeepID: Boolean = False);
     function Clone(const IgnoreColour: Boolean = False): TSyntaxHiliteTheme;
       overload;
     function Clone(const NewID: string; const IgnoreColour: Boolean = False):
@@ -182,6 +182,8 @@ type
     procedure Delete(const ThemeID: string);
     function HasTheme(const ThemeID: string): Boolean;
     function SupportedThemes: TArray<string>;
+    function UniqueIDString: string;
+    function FindThemeByFriendlyName(const AName: string): TSyntaxHiliteTheme;
     function GetEnumerator: TEnumerator<TSyntaxHiliteTheme>;
     ///  <summary>Array of themes, indexed by theme id string.</summary>
     ///  <remarks>Callers must NOT free theme instances obtained from this
@@ -402,9 +404,10 @@ begin
 end;
 
 procedure TSyntaxHiliteTheme.Assign(const Src: TSyntaxHiliteTheme;
-  const IgnoreColour: Boolean);
+  const IgnoreColour: Boolean; const KeepID: Boolean);
 begin
-  fID := Src.ID;
+  if not KeepID then
+    fID := Src.ID;
   fFriendlyName := Src.FriendlyName;
   fBuiltIn := Src.BuiltIn;
   fFontName := Src.FontName;
@@ -656,6 +659,17 @@ begin
   fNullTheme.Free;
 end;
 
+function TSyntaxHiliteThemes.FindThemeByFriendlyName(const AName: string):
+  TSyntaxHiliteTheme;
+var
+  Theme: TSyntaxHiliteTheme;
+begin
+  for Theme in Self do
+    if StrSameText(Theme.FriendlyName, AName) then
+      Exit(Theme);
+  Result := nil;
+end;
+
 destructor TSyntaxHiliteThemes.Destroy;
 begin
   fThemes.Free;
@@ -695,6 +709,19 @@ end;
 function TSyntaxHiliteThemes.SupportedThemes: TArray<string>;
 begin
   Result := fThemes.Keys.ToArray;
+end;
+
+function TSyntaxHiliteThemes.UniqueIDString: string;
+const
+  Base = 'Theme';
+var
+  Suffix: Cardinal;
+begin
+  Suffix := 0;
+  repeat
+    Inc(Suffix);
+    Result := Base + IntToStr(Suffix);
+  until not fThemes.ContainsKey(Result);
 end;
 
 { TSyntaxHiliteThemes.TNullTheme }
