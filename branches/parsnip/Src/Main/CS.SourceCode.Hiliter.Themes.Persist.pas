@@ -242,7 +242,7 @@ begin
       if Theme.BuiltIn then
         Continue;
       SB.AppendLine(
-        Format('%s %s %s', [KwdTheme, Theme.ID, Theme.FriendlyName])
+        Format('%s %s %s', [KwdTheme, Theme.ID.ToString, Theme.FriendlyName])
       );
       SB.AppendLine(
         Format(
@@ -620,35 +620,37 @@ end;
 procedure TSyntaxHiliteThemesParser.ParseThemes(const ThemeList: TThemeList;
   const IsBuiltIn: Boolean);
 var
-  ThemeID: string;
+  ThemeIDStr: string;
   ThemeFriendlyName: string;
   Theme: TSyntaxHiliteTheme;
-  ThemeIDs: IStringList;
+  ThemeIDStrs: IStringList;
 begin
-  ThemeIDs := TIStringList.Create;
+  ThemeIDStrs := TIStringList.Create;
   while StrSameText(CurrentStatement, KwdTheme) do
   begin
-    StrSplit(CurrentParameter, ' ', ThemeID, ThemeFriendlyName);
-    ThemeID := StrTrim(ThemeID);
-    if not IsBuiltIn and StrStartsStr('_', ThemeID) then
-      raise ESyntaxHiliteThemesIO.CreateFmt(sBadUserThemeID, [ThemeID]);
-    if IsBuiltIn and not StrStartsStr('_', ThemeID) then
-      raise ESyntaxHiliteThemesIO.CreateFmt(sBadBuiltInThemeID, [ThemeID]);
+    StrSplit(CurrentParameter, ' ', ThemeIDStr, ThemeFriendlyName);
+    ThemeIDStr := StrTrim(ThemeIDStr);
+    if not IsBuiltIn and StrStartsStr('_', ThemeIDStr) then
+      raise ESyntaxHiliteThemesIO.CreateFmt(sBadUserThemeID, [ThemeIDStr]);
+    if IsBuiltIn and not StrStartsStr('_', ThemeIDStr) then
+      raise ESyntaxHiliteThemesIO.CreateFmt(sBadBuiltInThemeID, [ThemeIDStr]);
     ValidateIdent(
       KwdTheme,
-      ThemeID,
-      ThemeIDs,
+      ThemeIDStr,
+      ThemeIDStrs,
       function (S: string): Boolean
       begin
         Result := TSyntaxHiliteTheme.IsValidIDString(S, IsBuiltIn);
       end
     );
-    ThemeIDS.Add(ThemeID);
+    ThemeIDStrs.Add(ThemeIDStr);
     ThemeFriendlyName := StrTrim(ThemeFriendlyName);
     if ThemeFriendlyName = EmptyStr then
       raise ESyntaxHiliteThemesIO.Create(sMissingFriendlyThemeName);
     NextLine;
-    Theme := TSyntaxHiliteTheme.Create(ThemeID, ThemeFriendlyName, IsBuiltIn);
+    Theme := TSyntaxHiliteTheme.Create(
+      TSyntaxHiliteThemeID.Create(ThemeIDStr), ThemeFriendlyName, IsBuiltIn
+    );
     try
       ParseTheme(Theme);
       ThemeList.Add(Theme);
