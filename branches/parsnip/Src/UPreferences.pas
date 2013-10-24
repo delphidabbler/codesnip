@@ -48,7 +48,7 @@ type
 type
   ///  <summary>Type of array that maps each kind of current syntax highlighter
   ///  theme to its current theme ID.</summary>
-  TCurrentHiliteThemes = array[TCurrentHiliteThemeKind] of string;
+  TCurrentHiliteThemes = array[TCurrentHiliteThemeKind] of TSyntaxHiliteThemeID;
 
 type
   ///  <summary>Interface supported by objects that maintain user preferences.
@@ -209,14 +209,16 @@ type
       read GetHiliteAttrs write SetHiliteAttrs;
 
     ///  <summary>Gets current highlighter theme of given kind.</summary>
-    function GetCurrentHiliteThemeId(Kind: TCurrentHiliteThemeKind): string;
+    function GetCurrentHiliteThemeId(Kind: TCurrentHiliteThemeKind):
+      TSyntaxHiliteThemeID;
     ///  <summary>Gets current highlighter theme of given kind to given theme
     ///  ID.</summary>
     procedure SetCurrentHiliteThemeId(Kind: TCurrentHiliteThemeKind;
-      const ThemeId: string);
+      const ThemeId: TSyntaxHiliteThemeID);
     ///  <summary>IDs of currently selected syntax highlighters of all supported
     ///  kinds.</summary>
-    property CurrentHiliteThemeIds[Kind: TCurrentHiliteThemeKind]: string
+    property CurrentHiliteThemeIds[Kind: TCurrentHiliteThemeKind]:
+      TSyntaxHiliteThemeID
       read GetCurrentHiliteThemeId write SetCurrentHiliteThemeId;
 
     ///  <summary>Gets object containing the attributes of all the named user
@@ -542,12 +544,13 @@ type
     procedure SetHiliteAttrs(const Attrs: IHiliteAttrs);
 
     ///  <summary>Gets ID of current highlighter theme of given kind.</summary>
-    function GetCurrentHiliteThemeId(Kind: TCurrentHiliteThemeKind): string;
+    function GetCurrentHiliteThemeId(Kind: TCurrentHiliteThemeKind):
+      TSyntaxHiliteThemeID;
 
     ///  <summary>Sets current highlighter theme ID of given kind to given
     ///  value.</summary>
     procedure SetCurrentHiliteThemeId(Kind: TCurrentHiliteThemeKind;
-      const ThemeId: string);
+      const ThemeId: TSyntaxHiliteThemeID);
 
     ///  <summary>Gets object containing the attributes of all the named user
     ///  defined syntax highlighters.</summary>
@@ -746,11 +749,11 @@ begin
 end;
 
 function TPreferences.GetCurrentHiliteThemeId(Kind: TCurrentHiliteThemeKind):
-  string;
+  TSyntaxHiliteThemeID;
 begin
   Result := fCurrentHiliteThemeIds[Kind];
-  if Result = EmptyStr then
-    Result := TSyntaxHiliteThemes.DefaultThemeId;
+  if Result.IsNull then
+    Result := TSyntaxHiliteThemeID.CreateDefault;
 end;
 
 function TPreferences.GetCustomHiliteColours: IStringList;
@@ -855,7 +858,7 @@ begin
 end;
 
 procedure TPreferences.SetCurrentHiliteThemeId(Kind: TCurrentHiliteThemeKind;
-  const ThemeId: string);
+  const ThemeId: TSyntaxHiliteThemeID);
 begin
   fCurrentHiliteThemeIds[Kind] := ThemeId;
 end;
@@ -956,7 +959,7 @@ end;
 { TPreferencesPersist }
 
 const
-  CurrentHiliterThemeKeyNames: TCurrentHiliteThemes = (
+  CurrentHiliterThemeKeyNames: array[TCurrentHiliteThemeKind] of string = (
     'CurrentUITheme', 'CurrentExportTheme', 'CurrentPrintTheme'
   );
 
@@ -1065,9 +1068,11 @@ begin
     High(TCurrentHiliteThemeKind) do
   begin
     fCurrentHiliteThemeIds[HiliteThemeKind] :=
-      Storage.GetString(
-        CurrentHiliterThemeKeyNames[HiliteThemeKind],
-        TSyntaxHiliteThemes.DefaultThemeId
+      TSyntaxHiliteThemeID.Create(
+        Storage.GetString(
+          CurrentHiliterThemeKeyNames[HiliteThemeKind],
+          TSyntaxHiliteThemes.DefaultThemeId
+        )
       );
   end;
   // custom colours
@@ -1151,7 +1156,7 @@ begin
   begin
     Storage.SetString(
       CurrentHiliterThemeKeyNames[HiliteThemeKind],
-      GetCurrentHiliteThemeId(HiliteThemeKind)
+      GetCurrentHiliteThemeId(HiliteThemeKind).ToString
     );
   end;
   // custom colours
