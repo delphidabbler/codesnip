@@ -244,7 +244,7 @@ end;
 function TSnippetHTML.SourceCode: string;
 var
   Builder: THTMLBuilder;      // object that assembles HTML
-  Renderer: IHiliteRenderer2; // object that renders highlighted code as HTML
+  Renderer: IHiliteRenderer;  // object that renders highlighted code as HTML
   Lang: TSourceCodeLanguage;  // source code language
   Brush: TSyntaxHiliterBrush; // brush used to perform highlighting
 begin

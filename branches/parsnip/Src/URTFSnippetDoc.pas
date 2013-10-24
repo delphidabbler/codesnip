@@ -380,7 +380,7 @@ end;
 
 procedure TRTFSnippetDoc.RenderSourceCode(const SourceCode: string);
 var
-  Renderer: IHiliteRenderer2;  // renders highlighted source as RTF
+  Renderer: IHiliteRenderer;  // renders highlighted source as RTF
 begin
   fBuilder.ClearParaFormatting;
   Renderer := TRTFHiliteRenderer.Create(fBuilder, fBrush, fTheme);

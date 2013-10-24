@@ -400,9 +400,9 @@ const
     + '  ShowMessage(''Bar'');' + EOL
     + 'end;';
 var
-  Renderer: IHiliteRenderer2;  // renders highlighted code as RTF
-  Brush: TSyntaxHiliterBrush;  // performs syntax highlighting
-  Theme: TSyntaxHiliteTheme;   // determines syntax highlighting style
+  Renderer: IHiliteRenderer;  // renders highlighted code as RTF
+  Brush: TSyntaxHiliterBrush; // performs syntax highlighting
+  Theme: TSyntaxHiliteTheme;  // determines syntax highlighting style
 begin
   if not SyntaxHighlight then
     // null theme - no syntax highlighting

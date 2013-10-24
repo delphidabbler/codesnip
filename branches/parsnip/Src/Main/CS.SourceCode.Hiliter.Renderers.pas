@@ -39,10 +39,8 @@ type
   ///  code elements on behalf of syntax highlighter.</summary>
   ///  <remarks>Implement this interface for each required output format.
   ///  Syntax highlighter calls the methods of this interface.</remarks>
-  IHiliteRenderer2 = interface(IInterface)
-  { TODO: rename IHiliteRenderer2 back to IHiliteRenderer when original
-          removed. }
-    ['{20ED37E9-DE80-42B5-A920-2A62F1753866}']
+  IHiliteRenderer = interface(IInterface)
+    ['{17816D15-0565-449A-AFE3-D3CD74C3C6FC}']
     ///  <summary>Called by syntax highlighter before any source code is
     ///  processed.</summary>
     procedure Initialise;
@@ -87,7 +85,7 @@ type
     var
       ///  <summary>Object used to render parsed code in required format.
       ///  </summary>
-      fRenderer: IHiliteRenderer2;
+      fRenderer: IHiliteRenderer;
     ///  <summary>Handles Pascal parser's OnElement event.</summary>
     ///  <param name="Parser">THilitePasParser [in] Reference to parser object.
     ///  Not used.</param>
@@ -115,7 +113,7 @@ type
   strict protected
     ///  <summary>Internal object constructor. Sets up object to perform
     ///  highlighting using given renderer object.</summary>
-    constructor InternalCreate(Renderer: IHiliteRenderer2);
+    constructor InternalCreate(Renderer: IHiliteRenderer);
   public
     ///  <summary>Syntax highlights source code in an output format specified by
     ///  caller.</summary>
@@ -126,7 +124,7 @@ type
     ///  <remarks>Output is written via renderer in some user defined way. This
     ///  may update an object associated with the renderer.</remarks>
     class procedure Hilite(const RawCode: string;
-      const Brush: TSyntaxHiliterBrush; Renderer: IHiliteRenderer2);
+      const Brush: TSyntaxHiliterBrush; Renderer: IHiliteRenderer);
   end;
 
 type
@@ -267,7 +265,7 @@ type
   ///  <remarks>
   ///  Designed for use with TSyntaxHiliter objects.
   ///  </remarks>
-  TRTFHiliteRenderer = class(THiliteRenderer, IHiliteRenderer2)
+  TRTFHiliteRenderer = class(THiliteRenderer, IHiliteRenderer)
   strict private
     var
       ///  <summary>Object used to record generated RTF code.</summary>
@@ -320,7 +318,7 @@ type
   ///  <remarks>
   ///  Designed for use with TSyntaxHiliter objects.
   ///  </remarks>
-  THTMLHiliteRenderer = class(THiliteRenderer, IHiliteRenderer2)
+  THTMLHiliteRenderer = class(THiliteRenderer, IHiliteRenderer)
   strict private
     var
       ///  <summary>Object used to record generated XHTML code.</summary>
@@ -413,7 +411,7 @@ begin
 end;
 
 class procedure TSyntaxHiliter.Hilite(const RawCode: string;
-  const Brush: TSyntaxHiliterBrush; Renderer: IHiliteRenderer2);
+  const Brush: TSyntaxHiliterBrush; Renderer: IHiliteRenderer);
 begin
   Assert(Assigned(Renderer), ClassName + '.Create: Renderer is nil');
   with InternalCreate(Renderer) do
@@ -434,7 +432,7 @@ begin
   fRenderer.EndLine;
 end;
 
-constructor TSyntaxHiliter.InternalCreate(Renderer: IHiliteRenderer2);
+constructor TSyntaxHiliter.InternalCreate(Renderer: IHiliteRenderer);
 begin
   inherited InternalCreate;
   fRenderer := Renderer;
@@ -479,8 +477,8 @@ resourcestring
   // Default document title
   sDefaultTitle = 'DelphiDabbler CodeSnip Database';
 var
-  Renderer: IHiliteRenderer2;    // XHTML renderer object
-  Builder: THTMLBuilder;        // object used to construct XHTML document
+  Renderer: IHiliteRenderer;  // XHTML renderer object
+  Builder: THTMLBuilder;      // object used to construct XHTML document
 begin
   Builder := THTMLBuilder.Create;
   try
@@ -503,7 +501,7 @@ class function TRTFDocumentHiliter.Hilite(const RawCode: string;
   const Brush: TSyntaxHiliterBrush; const Theme: TSyntaxHiliteTheme;
   const Title: string): TEncodedData;
 var
-  Renderer: IHiliteRenderer2;  // RTF renderer object
+  Renderer: IHiliteRenderer;  // RTF renderer object
   Builder: TRTFBuilder;       // object used to construct RTF document
 begin
   Builder := TRTFBuilder.Create(0);
