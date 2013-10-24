@@ -126,6 +126,9 @@ type
     function IsBrushSupported(const BrushID: string): Boolean;
     class function IsValidIDString(const S: string; const IsBuiltIn: Boolean):
       Boolean;
+    class function CompareIDs(const Left, Right: TSyntaxHiliteTheme):
+      Integer; overload; inline;
+    class function CompareIDs(const Left, Right: string): Integer; overload;
     class function ValidFontSizes: TRange;
     // GetStyle => replaces any "default" style place markers with actual values
     //             from default or common style.
@@ -441,6 +444,18 @@ function TSyntaxHiliteTheme.Clone(const NewID: string;
 begin
   Result := Clone(IgnoreColour);
   Result.fID := NewID;
+end;
+
+class function TSyntaxHiliteTheme.CompareIDs(const Left,
+  Right: string): Integer;
+begin
+  Result := StrCompareText(Left, Right);
+end;
+
+class function TSyntaxHiliteTheme.CompareIDs(const Left,
+  Right: TSyntaxHiliteTheme): Integer;
+begin
+  Result := CompareIDs(Left.ID, Right.ID);
 end;
 
 constructor TSyntaxHiliteTheme.Create(const ThemeID: string;
