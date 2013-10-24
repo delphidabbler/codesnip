@@ -163,6 +163,18 @@ type
     class function AlignRights(const Ctrls: array of TControl): Integer;
       overload;
 
+    ///  <summary>Grows or shrinks the given control so that its right hand side
+    ///  is aligned with the given position, leaving the position of the left
+    ///  hand side of the control unchanged.</summary>
+    class procedure StretchRightTo(const Ctrl: TControl; const ARight: Integer);
+      overload;
+
+    ///  <summary>Grows or shrinks each of the controls in Ctrls so that its
+    ///  right hand side is aligned with the given position, leaving the
+    ///  positions of the left hand side of the controls unchanged.</summary>
+    class procedure StretchRightTo(const Ctrls: array of TControl;
+      const ARight: Integer); overload;
+
     ///  <summary>Returns the total height needed to display all the controls
     ///  parented by given container.</summary>
     class function TotalControlHeight(const Container: TWinControl): Integer;
@@ -410,6 +422,21 @@ begin
         SetLabelHeight(Lbl);
     end;
   end;
+end;
+
+class procedure TCtrlArranger.StretchRightTo(const Ctrls: array of TControl;
+  const ARight: Integer);
+var
+  Ctrl: TControl;
+begin
+  for Ctrl in Ctrls do
+    StretchRightTo(Ctrl, ARight);
+end;
+
+class procedure TCtrlArranger.StretchRightTo(const Ctrl: TControl;
+  const ARight: Integer);
+begin
+  Ctrl.Width := ARight - Ctrl.Left;
 end;
 
 class function TCtrlArranger.TopOf(const Ctrls: array of TControl;
