@@ -199,15 +199,6 @@ type
     property SourceCodeBGCustomColours: IStringList
       read GetSourceCodeBGCustomColours write SetSourceCodeBGCustomColours;
 
-    ///  <summary>Gets current user defined syntax highlighter.</summary>
-    function GetHiliteAttrs: IHiliteAttrs;
-    ///  <summary>Sets current user defined syntax highlighter.</summary>
-    procedure SetHiliteAttrs(const Attrs: IHiliteAttrs);
-    ///  <summary>Attributes of current user defined syntax highlighter.
-    ///  </summary>
-    property HiliteAttrs: IHiliteAttrs
-      read GetHiliteAttrs write SetHiliteAttrs;
-
     ///  <summary>Gets current highlighter theme of given kind.</summary>
     function GetCurrentHiliteThemeId(Kind: TCurrentHiliteThemeKind):
       TSyntaxHiliteThemeID;
@@ -220,17 +211,6 @@ type
     property CurrentHiliteThemeIds[Kind: TCurrentHiliteThemeKind]:
       TSyntaxHiliteThemeID
       read GetCurrentHiliteThemeId write SetCurrentHiliteThemeId;
-
-    ///  <summary>Gets object containing the attributes of all the named user
-    ///  defined syntax highlighters.</summary>
-    function GetNamedHiliteAttrs: INamedHiliteAttrs;
-    ///  <summary>Stores a copy of the given object containing the attributes of
-    ///  all the 'named' user defined syntax highlighters.</summary>
-    procedure SetNamedHiliteAttrs(NamedHiliteAttrs: INamedHiliteAttrs);
-    ///  <summary>Reference tp object containing attributes of all the 'named'
-    ///  user defined syntax highlighters.</summary>
-    property NamedHiliteAttrs: INamedHiliteAttrs
-      read GetNamedHiliteAttrs write SetNamedHiliteAttrs;
 
     ///  <summary>Gets custom colours available for syntax highlighter.
     ///  </summary>
@@ -368,15 +348,9 @@ type
       ///  <summary>Records custom colours available for use as background
       ///  colour of source code in main display.</summary>
       fSourceCodeBGCustomColours: IStringList;
-      ///  <summary>Attributes of current user defined syntax highlighter.
-      ///  </summary>
-      fHiliteAttrs: IHiliteAttrs;
       ///  <summary>Map of current theme kinds to IDs of required highlighters.
       ///  </summary>
       fCurrentHiliteThemeIds: TCurrentHiliteThemes;
-      ///  <summary>Reference to object containing attributes of all the 'named'
-      ///  user defined syntax highlighters.</summary>
-      fNamedHiliteAttrs: INamedHiliteAttrs;
       ///  <summary>Custom colours available for syntax highlighters.</summary>
       fHiliteCustomColours: IStringList;
       ///  <summary>Reference to object containing information about warnings to
@@ -535,14 +509,6 @@ type
     ///  <remarks>Method of IPreferences.</remarks>
     procedure SetSourceCodeBGCustomColours(Value: IStringList);
 
-    ///  <summary>Gets current user defined syntax highlighter.</summary>
-    ///  <remarks>Method of IPreferences.</remarks>
-    function GetHiliteAttrs: IHiliteAttrs;
-
-    ///  <summary>Sets current user defined syntax highlighter.</summary>
-    ///  <remarks>Method of IPreferences.</remarks>
-    procedure SetHiliteAttrs(const Attrs: IHiliteAttrs);
-
     ///  <summary>Gets ID of current highlighter theme of given kind.</summary>
     function GetCurrentHiliteThemeId(Kind: TCurrentHiliteThemeKind):
       TSyntaxHiliteThemeID;
@@ -551,16 +517,6 @@ type
     ///  value.</summary>
     procedure SetCurrentHiliteThemeId(Kind: TCurrentHiliteThemeKind;
       const ThemeId: TSyntaxHiliteThemeID);
-
-    ///  <summary>Gets object containing the attributes of all the named user
-    ///  defined syntax highlighters.</summary>
-    ///  <remarks>Method of IPreferences.</remarks>
-    function GetNamedHiliteAttrs: INamedHiliteAttrs;
-
-    ///  <summary>Stores a copy of the given object containing the attributes of
-    ///  all the 'named' user defined syntax highlighters.</summary>
-    ///  <remarks>Method of IPreferences.</remarks>
-    procedure SetNamedHiliteAttrs(NamedHiliteAttrs: INamedHiliteAttrs);
 
     ///  <summary>Gets custom colours available for syntax highlighter.
     ///  </summary>
@@ -705,12 +661,10 @@ begin
   Self.fDBHeadingCustomColours[True] := SrcPref.DBHeadingCustomColours[True];
   Self.fSourceCodeBGColour := SrcPref.SourceCodeBGColour;
   Self.fSourceCodeBGCustomColours := SrcPref.SourceCodeBGCustomColours;
-  Self.SetHiliteAttrs(SrcPref.HiliteAttrs);
   for HiliteThemeKind := Low(TCurrentHiliteThemeKind) to
     High(TCurrentHiliteThemeKind) do
     Self.fCurrentHiliteThemeIds[HiliteThemeKind] :=
       SrcPref.CurrentHiliteThemeIds[HiliteThemeKind];
-  Self.SetNamedHiliteAttrs(SrcPref.NamedHiliteAttrs);
   Self.SetCustomHiliteColours(SrcPref.CustomHiliteColours);
   Self.SetWarnings(SrcPref.Warnings);
   Self.SetNewsAge(SrcPref.NewsAge);
@@ -722,8 +676,6 @@ end;
 constructor TPreferences.Create;
 begin
   inherited Create;
-  fHiliteAttrs := THiliteAttrsFactory.CreateDefaultAttrs;
-  fNamedHiliteAttrs := THiliteAttrsFactory.CreateNamedAttrs;
   fHiliteCustomColours := TIStringList.Create;
   fWarnings := TWarnings.Create;
   fDBHeadingCustomColours[False] := TIStringList.Create;
@@ -772,19 +724,9 @@ begin
   Result := fDBHeadingCustomColours[UserDefined];
 end;
 
-function TPreferences.GetHiliteAttrs: IHiliteAttrs;
-begin
-  Result := fHiliteAttrs;
-end;
-
 function TPreferences.GetMeasurementUnits: TMeasurementUnits;
 begin
   Result := fMeasurementUnits;
-end;
-
-function TPreferences.GetNamedHiliteAttrs: INamedHiliteAttrs;
-begin
-  Result := fNamedHiliteAttrs;
 end;
 
 function TPreferences.GetNewsAge: Integer;
@@ -880,19 +822,9 @@ begin
   fDBHeadingCustomColours[UserDefined] := Value;
 end;
 
-procedure TPreferences.SetHiliteAttrs(const Attrs: IHiliteAttrs);
-begin
-  (fHiliteAttrs as IAssignable).Assign(Attrs);
-end;
-
 procedure TPreferences.SetMeasurementUnits(const Value: TMeasurementUnits);
 begin
   fMeasurementUnits := Value;
-end;
-
-procedure TPreferences.SetNamedHiliteAttrs(NamedHiliteAttrs: INamedHiliteAttrs);
-begin
-  (fNamedHiliteAttrs as IAssignable).Assign(NamedHiliteAttrs);
 end;
 
 procedure TPreferences.SetNewsAge(const Age: Integer);
@@ -987,12 +919,10 @@ begin
   NewPref.DBHeadingCustomColours[True] := Self.fDBHeadingCustomColours[True];
   NewPref.SourceCodeBGColour := Self.fSourceCodeBGColour;
   NewPref.SourceCodeBGCustomColours := Self.fSourceCodeBGCustomColours;
-  NewPref.HiliteAttrs := Self.GetHiliteAttrs;
   for HiliteThemeKind := Low(TCurrentHiliteThemeKind) to
     High(TCurrentHiliteThemeKind) do
     NewPref.CurrentHiliteThemeIds[HiliteThemeKind] :=
       Self.fCurrentHiliteThemeIds[HiliteThemeKind];
-  NewPref.NamedHiliteAttrs := Self.GetNamedHiliteAttrs;
   NewPref.CustomHiliteColours := Self.GetCustomHiliteColours;
   NewPref.Warnings := Self.GetWarnings;
   NewPref.NewsAge := Self.fNewsAge;
@@ -1060,9 +990,6 @@ begin
 
   // Read syntax highlighter section
   Storage := Settings.ReadSection(ssPreferences, cHiliter);
-  // syntax highlighter attributes
-  THiliterPersist.Load(Storage, fHiliteAttrs);
-  THiliterPersist.LoadNamed(Storage, fNamedHiliteAttrs);
   // current theme IDs
   for HiliteThemeKind := Low(TCurrentHiliteThemeKind) to
     High(TCurrentHiliteThemeKind) do
@@ -1147,9 +1074,6 @@ begin
 
   // Write syntax highlighter section
   Storage := Settings.EmptySection(ssPreferences, cHiliter);
-  // syntax highlighter attributes
-  THiliterPersist.Save(Storage, fHiliteAttrs);
-  THiliterPersist.SaveNamed(Storage, fNamedHiliteAttrs);
   // current theme IDs
   for HiliteThemeKind := Low(TCurrentHiliteThemeKind) to
     High(TCurrentHiliteThemeKind) do

@@ -39,9 +39,6 @@ type
     ///  <summary>Creates and returns a highlighter attributes object instance
     ///  that uses the program's default syntax highlighting style.</summary>
     class function CreateDefaultAttrs: IHiliteAttrs;
-    ///  <summary>Creates and returns a highlighter attributes object instance
-    ///  that uses a syntax highlighting style defined by the user.</summary>
-    class function CreateUserAttrs: IHiliteAttrs;
     ///  <summary>Creates and returns a copy of the given highlighter attributes
     ///  instance in a form suitable for printing. If UseColour is False, all
     ///  colour information is removed from the highlighter. If Attrs is nil a
@@ -55,9 +52,6 @@ type
     ///  <summary>Creates a returns a highlighter attributes object instance
     ///  that is a clone of the given highlighter attributes.</summary>
     class function CloneAttrs(Attrs: IHiliteAttrs): IHiliteAttrs;
-    ///  <summary>Creates and returns named highlighter attributes object
-    ///  instance.</summary>
-    class function CreateNamedAttrs: INamedHiliteAttrs;
   end;
 
 
@@ -385,11 +379,6 @@ begin
   Result := THiliteAttrsFactory.CreatePredefinedAttrs(hsRADStudio);
 end;
 
-class function THiliteAttrsFactory.CreateNamedAttrs: INamedHiliteAttrs;
-begin
-  Result := TNamedHiliterAttrs.Create;
-end;
-
 class function THiliteAttrsFactory.CreateNulAttrs: IHiliteAttrs;
 begin
   // Just create highlighter object: null values are defaults
@@ -510,12 +499,6 @@ begin
       for Elem := Low(THiliteElement) to High(THiliteElement) do
         Result[Elem].ForeColor := clNone;
   end;
-end;
-
-class function THiliteAttrsFactory.CreateUserAttrs: IHiliteAttrs;
-begin
-  Result := THiliteAttrs.Create;
-  (Result as IAssignable).Assign(Preferences.HiliteAttrs);
 end;
 
 { TNamedHiliterAttrs }
