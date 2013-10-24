@@ -22,6 +22,7 @@ interface
 
 uses
   // Delphi
+  Generics.Defaults,
   Generics.Collections;
 
 
@@ -59,6 +60,16 @@ type
     ///  <summary>Creates and returns a new dynamic array that is an exact copy
     ///  of the given open array.</summary>
     class function Copy<T>(const A: array of T): TArray<T>; static;
+    ///  <summary>Finds the index of the first array element in the given array
+    ///  that has the given value, using the given comparer to check for
+    ///  equality of values. Returns -1 if the value is not in the array.
+    ///  </summary>
+    class function IndexOf<T>(const A: array of T; const Value: T;
+      const EqualsFn: TEqualityComparison<T>): Integer; static;
+    ///  <summary>Checks if the value exists as an element of the given array,
+    ///  using the given comparer to check for equality of values.</summary>
+    class function Contains<T>(const A: array of T; const Value: T;
+      const EqualsFn: TEqualityComparison<T>): Boolean; static;
   end;
 
 
@@ -91,6 +102,12 @@ end;
 
 { TArrayHelper }
 
+class function TArrayHelper.Contains<T>(const A: array of T; const Value: T;
+  const EqualsFn: TEqualityComparison<T>): Boolean;
+begin
+  Result := TArrayHelper.IndexOf<T>(A, Value, EqualsFn) >= 0;
+end;
+
 class function TArrayHelper.Copy<T>(const A: array of T): TArray<T>;
 var
   Idx: Integer;
@@ -98,6 +115,17 @@ begin
   SetLength(Result, Length(A));
   for Idx := 0 to High(A) do
     Result[Idx] := A[Idx];
+end;
+
+class function TArrayHelper.IndexOf<T>(const A: array of T; const Value: T;
+  const EqualsFn: TEqualityComparison<T>): Integer;
+var
+  Idx: Integer;
+begin
+  for Idx := 0 to High(A) do
+    if EqualsFn(A[Idx], Value) then
+      Exit(Idx);
+  Result := -1;
 end;
 
 end.
