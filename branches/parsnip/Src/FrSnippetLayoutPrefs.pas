@@ -69,8 +69,6 @@ type
       fPageStructs: TSnippetPageStructures;
       fUIUpdated: Boolean;
       fSnippetKindsCBMgr: TUnsortedCollectionCtrlKVMgr<TSnippetKind>;
-      fAvailableFragsLBMgr: TUnsortedCollectionCtrlKVMgr<TSnippetPagePartId>;
-      fUsedFragsLBMgr: TUnsortedCollectionCtrlKVMgr<TSnippetPagePartId>;
     function PartIdFromStrings(Strings: TStrings; Idx: Integer):
       TSnippetPagePartId;
     function SelectedKind: TSnippetKind;
