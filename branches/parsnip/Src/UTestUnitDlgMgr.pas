@@ -8,7 +8,7 @@
  * $Rev$
  * $Date$
  *
- * Implements a static class that manages and displays a test unit in a dialog
+ * Implements a static class that creates and displays a test unit in a dialogue
  * box.
 }
 
@@ -30,23 +30,27 @@ uses
 
 
 type
-
-  {
-  TTestUnitDlgMgr:
-    Static class that manages and displays a test unit in a dialog box.
-  }
+  ///  <summary>Static class that creates and displays a test unit in a dialogue
+  ///  box.</summary>
   TTestUnitDlgMgr = class(TNoConstructObject)
   strict private
+    ///  <summary>Generates source code a test unit for the given snippet's
+    ///  source code.</summary>
     class function GenerateTestUnit(const Snippet: TSnippet): string;
+    ///  <summary>Syntax highlights the given source code with a highlighter
+    ///  suitable for the given language and returns the highlighted code as
+    ///  XHTML.</summary>
     class function HighlightSource(const SourceCode: string;
       const Language: TSourceCodeLanguage): TEncodedData;
   public
+    ///  <summary>Generates and displays a syntax highlighted test compile unit
+    ///  in a dialogue box.</summary>
+    ///  <param name="Owner">TComponent [in] Component that owns the dialogue
+    ///  box.</param>
+    ///  <param name="Snippet">TSnippet [in] Snippet for which test unit is to
+    ///  be displayed.</param>
     class procedure DisplayTestUnit(const Owner: TComponent;
       const Snippet: TSnippet);
-      {Generates and displays a highlighted test compile unit in a dialog box.
-        @param Owner [in] Component that owns the dialog box.
-        @param Snippet [in] Snippet for which test unit is to be displayed.
-      }
   end;
 
 
@@ -70,10 +74,6 @@ uses
 
 class procedure TTestUnitDlgMgr.DisplayTestUnit(const Owner: TComponent;
   const Snippet: TSnippet);
-  {Generates and displays a highlighted test compile unit in a dialog box.
-    @param Owner [in] Component that owns the dialog box.
-    @param Snippet [in] Snippet for which test unit is to be displayed.
-  }
 var
   XHTMLDoc: TEncodedData;         // syntax highlighted source code XHTML
 resourcestring
