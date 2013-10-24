@@ -189,7 +189,7 @@ type
     property SupportedBrushes: TArray<string> read GetSupportedBrushes;
     property BrushStyles[const BrushID: string]: TSyntaxHiliteBrushStyle
       read GetBrushStyle; default;
-    property BuiltIn: Boolean read fBuiltIn;
+    property BuiltIn: Boolean read fBuiltIn write fBuiltIn;
     property BaseStyle: TSyntaxHiliteAttrStyle read GetBaseStyle;
   end;
 
@@ -534,13 +534,6 @@ begin
   SetStyles(Src, IgnoreColour);
 end;
 
-function TSyntaxHiliteTheme.Clone(const IgnoreColour: Boolean):
-  TSyntaxHiliteTheme;
-begin
-  Result := TSyntaxHiliteTheme.Create(ID, FriendlyName, BuiltIn);
-  Result.Assign(Self, IgnoreColour);
-end;
-
 function TSyntaxHiliteTheme.CascadeAttrStyles(const ParentAttr,
   ChildAttr: TSyntaxHiliteAttrStyle): TSyntaxHiliteAttrStyle;
 begin
@@ -551,6 +544,13 @@ begin
     Result.Foreground := ParentAttr.Foreground;
   if ChildAttr.FontStyles.IsDefault then
     Result.FontStyles := ParentAttr.FontStyles;
+end;
+
+function TSyntaxHiliteTheme.Clone(const IgnoreColour: Boolean):
+  TSyntaxHiliteTheme;
+begin
+  Result := TSyntaxHiliteTheme.Create(ID, FriendlyName, BuiltIn);
+  Result.Assign(Self, IgnoreColour);
 end;
 
 function TSyntaxHiliteTheme.Clone(const NewID: TSyntaxHiliteThemeID;
