@@ -19,6 +19,7 @@ interface
 uses
   // Delphi
   Generics.Collections,
+  Generics.Defaults,
   Graphics,
   // Project
   UStructs;
@@ -82,6 +83,41 @@ type
       read GetAttrStyle write SetAttrStyle;
   end;
 
+  TSyntaxHiliteThemeID = record
+  strict private
+    const
+      DefaultID = '_DEFAULT_';
+    var
+      fID: string;
+  public
+    type
+      TComparer = class(TComparer<TSyntaxHiliteThemeID>)
+        function Compare(const Left, Right: TSyntaxHiliteThemeID): Integer;
+          override;
+      end;
+      TEqualityComparer = class(TEqualityComparer<TSyntaxHiliteThemeID>)
+      public
+        function Equals(const Left, Right: TSyntaxHiliteThemeID): Boolean;
+          override;
+        function GetHashCode(const Value: TSyntaxHiliteThemeID): Integer;
+          override;
+      end;
+  public
+    constructor Create(const AID: string);
+    class function CreateDefault: TSyntaxHiliteThemeID; static; inline;
+    class function CreateNull: TSyntaxHiliteThemeID; static; inline;
+    class operator Equal(const Left, Right: TSyntaxHiliteThemeID): Boolean;
+      inline;
+    class operator NotEqual(const Left, Right: TSyntaxHiliteThemeID): Boolean;
+      inline;
+    class function Compare(const Left, Right: TSyntaxHiliteThemeID): Integer;
+      static; inline;
+    function CompareTo(const Other: TSyntaxHiliteThemeID): Integer; inline;
+    function ToString: string; inline;
+    function Hash: Integer; inline;
+    function IsNull: Boolean;
+  end;
+
   TSyntaxHiliteTheme = class(TObject)
   strict private
     const
@@ -92,7 +128,7 @@ type
       DefaultFontSize = 9;
   strict private
     var
-      fID: string;
+      fID: TSyntaxHiliteThemeID;
       fFriendlyName: string;
       fFontName: string;
       fFontSize: Integer;
@@ -112,15 +148,15 @@ type
     function CascadeAttrStyles(const ParentAttr, ChildAttr:
       TSyntaxHiliteAttrStyle): TSyntaxHiliteAttrStyle;
   public
-    constructor Create(const ThemeID: string; const FriendlyName: string;
-      const IsBuiltIn: Boolean);
+    constructor Create(const ThemeID: TSyntaxHiliteThemeID;
+      const FriendlyName: string; const IsBuiltIn: Boolean);
     destructor Destroy; override;
     procedure Assign(const Src: TSyntaxHiliteTheme;
       const IgnoreColour: Boolean = False; const KeepID: Boolean = False);
     function Clone(const IgnoreColour: Boolean = False): TSyntaxHiliteTheme;
       overload;
-    function Clone(const NewID: string; const IgnoreColour: Boolean = False):
-      TSyntaxHiliteTheme; overload;
+    function Clone(const NewID: TSyntaxHiliteThemeID;
+      const IgnoreColour: Boolean = False): TSyntaxHiliteTheme; overload;
     procedure ResetDefaultFont;
     function IsNull: Boolean; virtual;
     function IsBrushSupported(const BrushID: string): Boolean;
@@ -128,7 +164,8 @@ type
       Boolean;
     class function CompareIDs(const Left, Right: TSyntaxHiliteTheme):
       Integer; overload; inline;
-    class function CompareIDs(const Left, Right: string): Integer; overload;
+    class function CompareIDs(const Left, Right: TSyntaxHiliteThemeID): Integer;
+      overload;
     class function ValidFontSizes: TRange;
     // GetStyle => replaces any "default" style place markers with actual values
     //             from default or common style.
@@ -136,7 +173,7 @@ type
     function GetDefaultStyle(const AttrID: string): TSyntaxHiliteAttrStyle;
     function GetEnumerator: TEnumerator<TPair<string,TSyntaxHiliteBrushStyle>>;
     function IsBaseStyle(const Style: TSyntaxHiliteAttrStyle): Boolean;
-    property ID: string read fID;
+    property ID: TSyntaxHiliteThemeID read fID;
     property FriendlyName: string read fFriendlyName write fFriendlyName;
     property FontName: string read fFontName write SetFontName;
     property FontSize: Integer read fFontSize write SetFontSize;
@@ -168,8 +205,8 @@ type
     class var
       fNullTheme: TSyntaxHiliteTheme;
     var
-      fThemes: TObjectDictionary<string,TSyntaxHiliteTheme>;
-    function GetTheme(const ID: string): TSyntaxHiliteTheme;
+      fThemes: TObjectDictionary<TSyntaxHiliteThemeID,TSyntaxHiliteTheme>;
+    function GetTheme(const ID: TSyntaxHiliteThemeID): TSyntaxHiliteTheme;
     function GetDefaultTheme: TSyntaxHiliteTheme;
     class function GetNullTheme: TSyntaxHiliteTheme; static;
   public
@@ -182,16 +219,16 @@ type
     procedure Assign(const Src: TSyntaxHiliteThemes);
     procedure Add(const Theme: TSyntaxHiliteTheme);
     procedure Clear;
-    procedure Delete(const ThemeID: string);
-    function HasTheme(const ThemeID: string): Boolean;
-    function SupportedThemes: TArray<string>;
-    function UniqueIDString: string;
+    procedure Delete(const ThemeID: TSyntaxHiliteThemeID);
+    function HasTheme(const ThemeID: TSyntaxHiliteThemeID): Boolean;
+    function SupportedThemes: TArray<TSyntaxHiliteThemeID>;
+    function UniqueIDString: TSyntaxHiliteThemeID;
     function FindThemeByFriendlyName(const AName: string): TSyntaxHiliteTheme;
     function GetEnumerator: TEnumerator<TSyntaxHiliteTheme>;
     ///  <summary>Array of themes, indexed by theme id string.</summary>
     ///  <remarks>Callers must NOT free theme instances obtained from this
     ///  property. Use the Delete method to dispose of a theme.</remarks>
-    property Themes[const ID: string]: TSyntaxHiliteTheme
+    property Themes[const ID: TSyntaxHiliteThemeID]: TSyntaxHiliteTheme
       read GetTheme; default;
     ///  <summary>Returns the default theme instance, or if none exists, the
     ///  null theme instance.</summary>
@@ -208,7 +245,9 @@ uses
   SysUtils,
   Character,
   CS.SourceCode.Hiliter.Brushes,
+  CS.Utils.Hashes,
   UComparers,
+  UExceptions,
   UFontHelper,
   UStrUtils;
 
@@ -398,6 +437,84 @@ begin
     fAttrStyles.Add(AttrID, NewStyle);
 end;
 
+{ TSyntaxHiliteThemeID }
+
+class function TSyntaxHiliteThemeID.Compare(const Left,
+  Right: TSyntaxHiliteThemeID): Integer;
+begin
+  Result := StrCompareText(Left.fID, Right.fID);
+end;
+
+function TSyntaxHiliteThemeID.CompareTo(const Other: TSyntaxHiliteThemeID):
+  Integer;
+begin
+  Result := Compare(Self, Other);
+end;
+
+constructor TSyntaxHiliteThemeID.Create(const AID: string);
+begin
+  fID := AID;
+end;
+
+class function TSyntaxHiliteThemeID.CreateDefault: TSyntaxHiliteThemeID;
+begin
+  Result := TSyntaxHiliteThemeID.Create(DefaultID);
+end;
+
+class function TSyntaxHiliteThemeID.CreateNull: TSyntaxHiliteThemeID;
+begin
+  Result := TSyntaxHiliteThemeID.Create(EmptyStr);
+end;
+
+class operator TSyntaxHiliteThemeID.Equal(const Left,
+  Right: TSyntaxHiliteThemeID): Boolean;
+begin
+  Result := Compare(Left, Right) = 0;
+end;
+
+function TSyntaxHiliteThemeID.Hash: Integer;
+begin
+  Result := Integer(PaulLarsonHash(fID));
+end;
+
+function TSyntaxHiliteThemeID.IsNull: Boolean;
+begin
+  Result := fID = EmptyStr;
+end;
+
+class operator TSyntaxHiliteThemeID.NotEqual(const Left,
+  Right: TSyntaxHiliteThemeID): Boolean;
+begin
+  Result := Compare(Left, Right) <> 0;
+end;
+
+function TSyntaxHiliteThemeID.ToString: string;
+begin
+  Result := fID;
+end;
+
+{ TSyntaxHiliteThemeID.TComparer }
+
+function TSyntaxHiliteThemeID.TComparer.Compare(const Left,
+  Right: TSyntaxHiliteThemeID): Integer;
+begin
+  Result := TSyntaxHiliteThemeID.Compare(Left, Right);
+end;
+
+{ TSyntaxHiliteThemeID.TEqualityComparer }
+
+function TSyntaxHiliteThemeID.TEqualityComparer.Equals(const Left,
+  Right: TSyntaxHiliteThemeID): Boolean;
+begin
+  Result := Left = Right;
+end;
+
+function TSyntaxHiliteThemeID.TEqualityComparer.GetHashCode(
+  const Value: TSyntaxHiliteThemeID): Integer;
+begin
+  Result := Value.Hash;
+end;
+
 { TSyntaxHiliteTheme }
 
 procedure TSyntaxHiliteTheme.AddBrushStyle(const BrushID: string;
@@ -439,7 +556,7 @@ begin
     Result.FontStyles := ParentAttr.FontStyles;
 end;
 
-function TSyntaxHiliteTheme.Clone(const NewID: string;
+function TSyntaxHiliteTheme.Clone(const NewID: TSyntaxHiliteThemeID;
   const IgnoreColour: Boolean): TSyntaxHiliteTheme;
 begin
   Result := Clone(IgnoreColour);
@@ -447,9 +564,9 @@ begin
 end;
 
 class function TSyntaxHiliteTheme.CompareIDs(const Left,
-  Right: string): Integer;
+  Right: TSyntaxHiliteThemeID): Integer;
 begin
-  Result := StrCompareText(Left, Right);
+  Result := TSyntaxHiliteThemeID.Compare(Left, Right);
 end;
 
 class function TSyntaxHiliteTheme.CompareIDs(const Left,
@@ -458,7 +575,7 @@ begin
   Result := CompareIDs(Left.ID, Right.ID);
 end;
 
-constructor TSyntaxHiliteTheme.Create(const ThemeID: string;
+constructor TSyntaxHiliteTheme.Create(const ThemeID: TSyntaxHiliteThemeID;
   const FriendlyName: string; const IsBuiltIn: Boolean);
 begin
   inherited Create;
@@ -642,7 +759,7 @@ end;
 
 procedure TSyntaxHiliteThemes.Assign(const Src: TSyntaxHiliteThemes);
 var
-  ThemeID: string;  // each theme ID supported by Src
+  ThemeID: TSyntaxHiliteThemeID;  // each theme ID supported by Src
 begin
   Clear;
   for ThemeID in Src.SupportedThemes do
@@ -657,13 +774,13 @@ end;
 constructor TSyntaxHiliteThemes.Create;
 begin
   inherited Create;
-  fThemes := TObjectDictionary<string,TSyntaxHiliteTheme>.Create(
+  fThemes := TObjectDictionary<TSyntaxHiliteThemeID,TSyntaxHiliteTheme>.Create(
     [doOwnsValues],
-    TTextEqualityComparer.Create
+    TSyntaxHiliteThemeID.TEqualityComparer.Create
   );
 end;
 
-procedure TSyntaxHiliteThemes.Delete(const ThemeID: string);
+procedure TSyntaxHiliteThemes.Delete(const ThemeID: TSyntaxHiliteThemeID);
 begin
   if fThemes.ContainsKey(ThemeID) then
     fThemes.Remove(ThemeID);
@@ -693,8 +810,8 @@ end;
 
 function TSyntaxHiliteThemes.GetDefaultTheme: TSyntaxHiliteTheme;
 begin
-  if fThemes.ContainsKey(DefaultThemeId) then
-    Result := GetTheme(DefaultThemeId)
+  if fThemes.ContainsKey(TSyntaxHiliteThemeID.CreateDefault) then
+    Result := GetTheme(TSyntaxHiliteThemeID.CreateDefault)
   else
     Result := GetNullTheme;
 end;
@@ -711,22 +828,24 @@ begin
   Result := fNullTheme;
 end;
 
-function TSyntaxHiliteThemes.GetTheme(const ID: string): TSyntaxHiliteTheme;
+function TSyntaxHiliteThemes.GetTheme(const ID: TSyntaxHiliteThemeID):
+  TSyntaxHiliteTheme;
 begin
   Result := fThemes[ID];
 end;
 
-function TSyntaxHiliteThemes.HasTheme(const ThemeID: string): Boolean;
+function TSyntaxHiliteThemes.HasTheme(const ThemeID: TSyntaxHiliteThemeID):
+  Boolean;
 begin
   Result := fThemes.ContainsKey(ThemeID);
 end;
 
-function TSyntaxHiliteThemes.SupportedThemes: TArray<string>;
+function TSyntaxHiliteThemes.SupportedThemes: TArray<TSyntaxHiliteThemeID>;
 begin
   Result := fThemes.Keys.ToArray;
 end;
 
-function TSyntaxHiliteThemes.UniqueIDString: string;
+function TSyntaxHiliteThemes.UniqueIDString: TSyntaxHiliteThemeID;
 const
   Base = 'Theme';
 var
@@ -735,7 +854,7 @@ begin
   Suffix := 0;
   repeat
     Inc(Suffix);
-    Result := Base + IntToStr(Suffix);
+    Result := TSyntaxHiliteThemeID.Create(Base + IntToStr(Suffix));
   until not fThemes.ContainsKey(Result);
 end;
 
@@ -743,7 +862,7 @@ end;
 
 constructor TSyntaxHiliteThemes.TNullTheme.Create;
 begin
-  inherited Create(EmptyStr, EmptyStr, False);
+  inherited Create(TSyntaxHiliteThemeID.CreateNull, EmptyStr, False);
 end;
 
 function TSyntaxHiliteThemes.TNullTheme.IsNull: Boolean;
