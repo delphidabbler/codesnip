@@ -372,7 +372,7 @@ function CheckBOM(const Bytes: TBytes; const Encoding: TEncoding): Boolean;
 ///  <param name="Encoding">TEncoding [in] Encoding of the byte array.</param>
 ///  <param name="HasBOM">Boolean [in] Flag indicating if the byte array begins
 ///  with a byte order mark. Ignored if Encoding has no BOM.</param>
-///  <returns>String. Converted Unicode string.</returns>
+///  <returns>UnicodeString. Converted Unicode string.</returns>
 ///  <remarks>When HasBOM is true and Encoding has a BOM then the byte array
 ///  must begin with the correct BOM, otherwise an exception is raised.
 /// </remarks>
