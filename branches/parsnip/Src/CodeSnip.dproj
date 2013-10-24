@@ -611,9 +611,17 @@
 			<DCCReference Include="Main\CS.SourceCode.Hiliter.Themes.Persist.pas"/>
 			<DCCReference Include="Main\CS.SourceCode.Languages.pas"/>
 			<DCCReference Include="Main\CS.SourceCode.Languages.Persist.pas"/>
-			<DCCReference Include="Main\CS.Utils.Hashes.pas"/>
-			<DCCReference Include="Main\CS.Utils.Sound.pas"/>
+			<DCCReference Include="Main\CS.UI.Dialogs.HiliteThemeName.pas">
+				<Form>HiliteThemeNameDlg</Form>
+			</DCCReference>
+			<DCCReference Include="Main\CS.UI.Dialogs.HiliteThemesEditor.pas">
+				<Form>HiliteThemesEditorDlg</Form>
+			</DCCReference>
 			<DCCReference Include="Main\CS.UI.Helper.CollectionCtrlKVMgr.pas"/>
+			<DCCReference Include="Main\CS.Utils.Hashes.pas"/>
+			<DCCReference Include="Main\CS.Utils.Sound.pas">
+				<Form>/ Include resources</Form>
+			</DCCReference>
 			<None Include="CodeSnip.todo"/>
 			<BuildConfiguration Include="Base">
 				<Key>Base</Key>

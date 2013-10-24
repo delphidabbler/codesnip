@@ -403,9 +403,11 @@ uses
   CS.SourceCode.Hiliter.Themes.Persist in 'Main\CS.SourceCode.Hiliter.Themes.Persist.pas',
   CS.SourceCode.Languages in 'Main\CS.SourceCode.Languages.pas',
   CS.SourceCode.Languages.Persist in 'Main\CS.SourceCode.Languages.Persist.pas',
+  CS.UI.Dialogs.HiliteThemeName in 'Main\CS.UI.Dialogs.HiliteThemeName.pas' {HiliteThemeNameDlg},
+  CS.UI.Dialogs.HiliteThemesEditor in 'Main\CS.UI.Dialogs.HiliteThemesEditor.pas' {HiliteThemesEditorDlg},
+  CS.UI.Helper.CollectionCtrlKVMgr in 'Main\CS.UI.Helper.CollectionCtrlKVMgr.pas',
   CS.Utils.Hashes in 'Main\CS.Utils.Hashes.pas',
-  CS.Utils.Sound in 'Main\CS.Utils.Sound.pas',
-  CS.UI.Helper.CollectionCtrlKVMgr in 'Main\CS.UI.Helper.CollectionCtrlKVMgr.pas';
+  CS.Utils.Sound in 'Main\CS.Utils.Sound.pas';
 
 // Include resources
 {$Resource ExternalObj.tlb}       // Type library file
