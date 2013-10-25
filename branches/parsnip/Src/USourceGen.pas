@@ -1085,15 +1085,15 @@ class procedure TConstAndTypeFormatter.Split(const ConstOrType: TSnippet;
   procedure SplitAtKeyword(const SourceCode, KW: string;
     out Prefix, Body: string);
   var
-    Lexer: THilitePasLexer;       // parses Pascal code
-    PrefixCode: TStringBuilder;   // records prefix code
+    Lexer: TPascalLexer;        // parses Pascal code
+    PrefixCode: TStringBuilder; // records prefix code
   const
     SkipTokens = [tkComment, tkCompilerDir, tkWhitespace, tkEOL];
     WhiteSpaceTokens = [tkWhitespace, tkEOL];
   resourcestring
     sTypeKwdError = '"%s" must be first keyword in source code';
   begin
-    Lexer := THilitePasLexer.Create(SourceCode);
+    Lexer := TPascalLexer.Create(SourceCode);
     try
       PrefixCode := TStringBuilder.Create;
       try
@@ -1313,7 +1313,7 @@ end;
 class procedure TClassFormatter.SplitDeclFromDefn(const Source: string;
   out Decl, Defn: string);
 var
-  Lexer: THilitePasLexer;
+  Lexer: TPascalLexer;
   SB: TStringBuilder;
   ClassTypeName: string;
   Temp: string;
@@ -1333,7 +1333,7 @@ const
 
   ///  <summary>Checks if current lexer token can represent a method name.
   ///  </summary>
-  function IsMethodName(const Lexer: THilitePasLexer): Boolean;
+  function IsMethodName(const Lexer: TPascalLexer): Boolean;
   begin
     // Either an identifier or one of a certain number of directives can be used
     // as the name of a method.
@@ -1350,7 +1350,7 @@ resourcestring
   sImplementationKwdError = '"implementation" keyword not permitted in class '
     + 'or advanced record snippets.';
 begin
-  Lexer := THilitePasLexer.Create(Source);
+  Lexer := TPascalLexer.Create(Source);
   try
     SB := TStringBuilder.Create;
     try

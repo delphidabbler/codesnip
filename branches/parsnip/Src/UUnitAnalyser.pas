@@ -59,7 +59,7 @@ end;
 class function TUnitAnalyser.UnitName(const SourceCode: string): string;
 
 var
-  Lexer: THilitePasLexer; // object used to tokenise Pascal source code
+  Lexer: TPascalLexer;  // object used to tokenise Pascal source code
 
   ///  <summary>Skips over white space and command tokens in source code.
   ///  </summary>
@@ -76,7 +76,7 @@ resourcestring
   sNotAUnit = 'Source code is not a valid unit';
   sBadName = 'Invalid unit name found in source code';
 begin
-  Lexer := THilitePasLexer.Create(SourceCode);
+  Lexer := TPascalLexer.Create(SourceCode);
   try
     // first Pascal token must be "unit" keyword
     SkipWhiteSpaceTokens;

@@ -27,8 +27,8 @@ uses
 
 type
   ///  <summary>Tokens describing the different components of Pascal source code
-  ///  recognised by THilitePasLexer.</summary>
-  THilitePasToken = (
+  ///  recognised by TPascalLexer.</summary>
+  TPascalToken = (
     tkKeyword,        // Pascal keyword
     tkComment,        // comment including opening and closing symbols
     tkCompilerDir,    // compiler directive including include comment symbols
@@ -48,17 +48,17 @@ type
 
 type
   ///  <summary>Class that analyses and tokenises Pascal source code.</summary>
-  THilitePasLexer = class(TObject)
+  TPascalLexer = class(TObject)
   strict private
     type
       TEntityMap = class(TObject)
       strict private
-        fMap: TDictionary<string,THilitePasToken>;
+        fMap: TDictionary<string,TPascalToken>;
       public
         constructor Create;
         destructor Destroy; override;
-        procedure Add(const Entity: string; const Token: THilitePasToken);
-        function Lookup(const Entity: string): THilitePasToken;
+        procedure Add(const Entity: string; const Token: TPascalToken);
+        function Lookup(const Entity: string): TPascalToken;
       end;
     class var
       fEntityMap: TEntityMap;
@@ -66,13 +66,13 @@ type
       ///  <summary>Text of last token read from input.</summary>
       fTokenStr: string;
       ///  <summary>Identifies last token read from input.</summary>
-      fToken: THilitePasToken;
+      fToken: TPascalToken;
       ///  <summary>Records state of comment being processed.</summary>
       fCommentState: record
         ///  <summary>Informs whether currently processing comment.</summary>
         InComment: Boolean;
         ///  <summary>Indicates whether comment or compiler directive.</summary>
-        CommentType: THilitePasToken;
+        CommentType: TPascalToken;
         ///  <summary>Closing comment symbol.</summary>
         ///  <remarks>One of "*)", "}" or EOL.</remarks>
         CommentCloser: string;
@@ -89,60 +89,60 @@ type
     ///  string.</summary>
     ///  <remarks>A literal character comprises a # followed by a number.
     ///  </remarks>
-    ///  <returns>THilitePasToken. Token indicating literal character.</returns>
-    function ParseChar: THilitePasToken;
+    ///  <returns>TPascalToken. Token indicating literal character.</returns>
+    function ParseChar: TPascalToken;
     ///  <summary>Begins parsing of a new comment or compiler directive.
     ///  </summary>
-    ///  <returns>THilitePasToken. Token informing whether this is a comment or
+    ///  <returns>TPascalToken. Token informing whether this is a comment or
     ///  compiler directive.</returns>
-    function ParseCommentFromStart: THilitePasToken;
+    function ParseCommentFromStart: TPascalToken;
     ///  <summary>Analyses body of comment following start or after resuming
     ///  processing multi-line comments.</summary>
-    ///  <returns>THilitePasToken. Token informing whether this is a comment or
+    ///  <returns>TPascalToken. Token informing whether this is a comment or
     ///  compiler directive.</returns>
-    function ParseCommentInterior: THilitePasToken;
+    function ParseCommentInterior: TPascalToken;
     ///  <summary>Analyses end of line from input and stores in token string.
     ///  </summary>
-    ///  <returns>THilitePasToken. End of line token.</returns>
-    function ParseEOL: THilitePasToken;
+    ///  <returns>TPascalToken. End of line token.</returns>
+    function ParseEOL: TPascalToken;
     ///  <summary>Analyses a hexadecimal integer from input and stores in token
     ///  string.</summary>
-    ///  <returns>THilitePasToken. Token indicating hexadecimal value.</returns>
-    function ParseHex: THilitePasToken;
+    ///  <returns>TPascalToken. Token indicating hexadecimal value.</returns>
+    function ParseHex: TPascalToken;
     ///  <summary>Analyses an alphanumeric identifier from input and stores in
     ///  token string.</summary>
-    ///  <returns>THilitePasToken. Token indicating if identifier is normal
+    ///  <returns>TPascalToken. Token indicating if identifier is normal
     ///  identifier, keyword or directive.</returns>
-    function ParseIdent: THilitePasToken;
+    function ParseIdent: TPascalToken;
     ///  <summary>Analyses a number from input and stores in token string.
     ///  </summary>
     ///  <remarks>Number can be integer or real.</remarks>
-    ///  <returns>THilitePasToken. Token indicating whether an integer or real
+    ///  <returns>TPascalToken. Token indicating whether an integer or real
     ///  number was parsed.</returns>
-    function ParseNumber: THilitePasToken;
+    function ParseNumber: TPascalToken;
     ///  <summary>Analyses a string literal from input and stores in token
     ///  string.</summary>
-    ///  <returns>THilitePasToken. Token indicating a string.</returns>
-    function ParseString: THilitePasToken;
+    ///  <returns>TPascalToken. Token indicating a string.</returns>
+    function ParseString: TPascalToken;
     ///  <summary>Parses a symbol from input and stores in token string.
     ///  </summary>
     ///  <remarks>Determines whether the current symbol character on input
     ///  represents a symbol or introduces some other syntactic entity (i.e.
     ///  comment, string, character literal or a hex number).</remarks>
-    ///  <returns>THilitePasToken. Token describing parsed entity.</returns>
-    function ParseSymbol: THilitePasToken;
+    ///  <returns>TPascalToken. Token describing parsed entity.</returns>
+    function ParseSymbol: TPascalToken;
     ///  <summary>Analyses an unrecognised entity from input and adds it to
     ///  token string.</summary>
-    ///  <returns>THilitePasToken. Error token.</returns>
-    function ParseUnknown: THilitePasToken;
+    ///  <returns>TPascalToken. Error token.</returns>
+    function ParseUnknown: TPascalToken;
     ///  <summary>Analyses a sequence of white space from input and appends to
     ///  token string.</summary>
-    ///  <returns>THilitePasToken. White space token.</returns>
-    function ParseWhiteSpace: THilitePasToken;
+    ///  <returns>TPascalToken. White space token.</returns>
+    function ParseWhiteSpace: TPascalToken;
     ///  <summary>Analyses a whole number from input and appends to token
     ///  string.</summary>
-    ///  <returns>THilitePasToken. Whole number token.</returns>
-    function ParseWholeNumber: THilitePasToken;
+    ///  <returns>TPascalToken. Whole number token.</returns>
+    function ParseWholeNumber: TPascalToken;
   public
     class constructor Create;
     class destructor Destroy;
@@ -153,12 +153,12 @@ type
     destructor Destroy; override;
     ///  <summary>Gets and analyses next pascal token from input and stores
     ///  details in token string.</summary>
-    ///  <returns>THilitePasToken. Token identifying type of token.</returns>
-    function NextToken: THilitePasToken;
+    ///  <returns>TPascalToken. Token identifying type of token.</returns>
+    function NextToken: TPascalToken;
     ///  <summary>Text of token last read from input.</summary>
     property TokenStr: string read fTokenStr;
     ///  <summary>Identifies type of last token read from input.</summary>
-    property Token: THilitePasToken read fToken;
+    property Token: TPascalToken read fToken;
   end;
 
 
@@ -197,19 +197,21 @@ const
     '{', '(*'                                             // compiler directives
   );
 
-    // Notes about directives and symbols (from Delphi XE documentation)
-  // * the words "at" and "or" have special meaning and should be treated as
-  //   reserved words.
-  // * "private", "protected", "public", "published" and "automated" act as
-  //   reserved words within class type definitions but otherwise are treated as
-  //   directives.
-  // * "near", "far" and "resident" are obsolete.
-  // * "inline" is used directive-style, but became a keyword in Turbo Pascal.
-  // * "library" is a keyword when used as the 1st token in a project source
-  //   file.
-  // * "local" was a Kylix directive and is ignored by Delphi.
-  // * "package" when used as the first token in a project indicates a package.
-  //   Only in packages are "contains" and "requires" directives.
+  {
+    Notes about directives and symbols (from Delphi XE documentation)
+     * the words "at" and "or" have special meaning and should be treated as
+       reserved words.
+     * "private", "protected", "public", "published" and "automated" act as
+       reserved words within class type definitions but otherwise are treated as
+       directives.
+     * "near", "far" and "resident" are obsolete.
+     * "inline" is used directive-style, but became a keyword in Turbo Pascal.
+     * "library" is a keyword when used as the 1st token in a project source
+       file.
+     * "local" was a Kylix directive and is ignored by Delphi.
+     * "package" when used as the first token in a project indicates a package.
+     * "contains" and "requires" are directives only in packages.
+  }
 
   // Table of keywords per Delphi XE documentation
   cKeywords: array[0..66] of string = (
@@ -253,8 +255,8 @@ const
   // Maps symbols onto likely tokens or error if token shouldn't occur (eg
   // close comments).
   cSymToTokenMap: array[0..32] of record
-    Symbol: string;           // symbol strings
-    Token: THilitePasToken;   // related token
+    Symbol: string;       // symbol strings
+    Token: TPascalToken;  // related token
   end = (
     ( Symbol: '$';  Token: tkHex;     ),
     ( Symbol: '#';  Token: tkChar;    ),
@@ -408,9 +410,9 @@ begin
   Result := IndexInTable(Str, cCompilerDirOpeners) >= 0;
 end;
 
-{ THilitePasLexer }
+{ TPascalLexer }
 
-class constructor THilitePasLexer.Create;
+class constructor TPascalLexer.Create;
 var
   Entity: string; // each keyword and directive name
   Idx: Integer;   // loops trhough symbol to token map
@@ -424,24 +426,24 @@ begin
     fEntityMap.Add(cSymToTokenMap[Idx].Symbol, cSymToTokenMap[Idx].Token);
 end;
 
-constructor THilitePasLexer.Create(const Source: string);
+constructor TPascalLexer.Create(const Source: string);
 begin
   inherited Create;
   fReader := TStringReader.Create(Source);
 end;
 
-class destructor THilitePasLexer.Destroy;
+class destructor TPascalLexer.Destroy;
 begin
   fEntityMap.Free;
 end;
 
-destructor THilitePasLexer.Destroy;
+destructor TPascalLexer.Destroy;
 begin
   fReader.Free;
   inherited;
 end;
 
-function THilitePasLexer.NextToken: THilitePasToken;
+function TPascalLexer.NextToken: TPascalToken;
 begin
   // Reset token string
   fTokenStr := '';
@@ -476,7 +478,7 @@ begin
   fToken := Result;
 end;
 
-function THilitePasLexer.ParseChar: THilitePasToken;
+function TPascalLexer.ParseChar: TPascalToken;
 begin
   // This method called with token string already containing '#' and current
   // char is char after '#'
@@ -499,7 +501,7 @@ begin
     Result := tkError;
 end;
 
-function THilitePasLexer.ParseCommentFromStart: THilitePasToken;
+function TPascalLexer.ParseCommentFromStart: TPascalToken;
 begin
   // Token string contains comment opening symbol and current char is that which
   // follows opening symbol
@@ -519,7 +521,7 @@ begin
   Result := ParseCommentInterior;
 end;
 
-function THilitePasLexer.ParseCommentInterior: THilitePasToken;
+function TPascalLexer.ParseCommentInterior: TPascalToken;
 var
   Done: Boolean;  // flag true when we have finished comment
 begin
@@ -591,14 +593,14 @@ begin
     fCommentState.InComment := False;
 end;
 
-function THilitePasLexer.ParseEOL: THilitePasToken;
+function TPascalLexer.ParseEOL: TPascalToken;
 begin
   UpdateTokenStr(cEOL);
   Result := tkEOL;
   fReader.NextChar;
 end;
 
-function THilitePasLexer.ParseHex: THilitePasToken;
+function TPascalLexer.ParseHex: TPascalToken;
 begin
   // Called with fTokenStr = '$' and fReader.Ch with char after '$'
   // Build string of hex digits
@@ -614,7 +616,7 @@ begin
     Result := tkHex;
 end;
 
-function THilitePasLexer.ParseIdent: THilitePasToken;
+function TPascalLexer.ParseIdent: TPascalToken;
 begin
   Assert(IsValidIdentStartChar(fReader.Ch),
     ClassName + '.ParseIdent: identifier starting character expected');
@@ -630,7 +632,7 @@ begin
     Result := tkIdentifier;
 end;
 
-function THilitePasLexer.ParseNumber: THilitePasToken;
+function TPascalLexer.ParseNumber: TPascalToken;
 var
   TempCh: Char; // temporary storage for a character read from input
 begin
@@ -690,7 +692,7 @@ begin
   end;
 end;
 
-function THilitePasLexer.ParseString: THilitePasToken;
+function TPascalLexer.ParseString: TPascalToken;
 var
   Done: Boolean;  // flag true when done parsing string
 begin
@@ -722,9 +724,9 @@ begin
   Result := tkString;
 end;
 
-function THilitePasLexer.ParseSymbol: THilitePasToken;
+function TPascalLexer.ParseSymbol: TPascalToken;
 var
-  AToken: THilitePasToken; // token represented by the symbol
+  AToken: TPascalToken; // token represented by the symbol
 begin
   Assert(IsSymbolChar(fReader.Ch), ClassName + '.ParseSymbol: symbol expected');
   // Add character that starts symbol to token string and read next char
@@ -757,14 +759,14 @@ begin
   end;
 end;
 
-function THilitePasLexer.ParseUnknown: THilitePasToken;
+function TPascalLexer.ParseUnknown: TPascalToken;
 begin
   Result := tkError;
   UpdateTokenStr;
   fReader.NextChar;
 end;
 
-function THilitePasLexer.ParseWhiteSpace: THilitePasToken;
+function TPascalLexer.ParseWhiteSpace: TPascalToken;
 begin
   Assert(IsWhiteSpaceChar(fReader.Ch),
     ClassName + '.ParseWhiteSpace: current char not white space');
@@ -776,7 +778,7 @@ begin
   Result := tkWhiteSpace;
 end;
 
-function THilitePasLexer.ParseWholeNumber: THilitePasToken;
+function TPascalLexer.ParseWholeNumber: TPascalToken;
 begin
   Assert(TCharacter.IsDigit(fReader.Ch),
     ClassName + '.ParseWholeNumber: current char not a digit');
@@ -788,41 +790,38 @@ begin
   Result := tkNumber;
 end;
 
-procedure THilitePasLexer.UpdateTokenStr;
+procedure TPascalLexer.UpdateTokenStr;
 begin
   UpdateTokenStr(fReader.Ch);
 end;
 
-procedure THilitePasLexer.UpdateTokenStr(const Ch: Char);
+procedure TPascalLexer.UpdateTokenStr(const Ch: Char);
 begin
   if Ch <> cEOF then
     fTokenStr := fTokenStr + Ch;
 end;
 
-{ THilitePasLexer.TEntityMap }
+{ TPascalLexer.TEntityMap }
 
-constructor THilitePasLexer.TEntityMap.Create;
+constructor TPascalLexer.TEntityMap.Create;
 begin
   inherited Create;
-  fMap := TDictionary<string,THilitePasToken>.Create(
-    TTextEqualityComparer.Create
-  );
+  fMap := TDictionary<string,TPascalToken>.Create(TTextEqualityComparer.Create);
 end;
 
-destructor THilitePasLexer.TEntityMap.Destroy;
+destructor TPascalLexer.TEntityMap.Destroy;
 begin
   fMap.Free;
   inherited;
 end;
 
-procedure THilitePasLexer.TEntityMap.Add(const Entity: string;
-  const Token: THilitePasToken);
+procedure TPascalLexer.TEntityMap.Add(const Entity: string;
+  const Token: TPascalToken);
 begin
   fMap.Add(Entity, Token);
 end;
 
-function THilitePasLexer.TEntityMap.Lookup(const Entity: string):
-  THilitePasToken;
+function TPascalLexer.TEntityMap.Lookup(const Entity: string): TPascalToken;
 begin
   if fMap.ContainsKey(Entity) then
     Result := fMap[Entity]
@@ -831,7 +830,6 @@ begin
 end;
 
 initialization
-
 
 finalization
 
