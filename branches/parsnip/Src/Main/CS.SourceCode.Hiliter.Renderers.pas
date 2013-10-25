@@ -697,9 +697,10 @@ class function TDocumentHiliterHelper.GetHiliterClass(
   const FileType: TSourceOutputFileType): TDocumentHiliterClass;
 begin
   case FileType of
-    sfText, sfPascal: Result := TNulDocumentHiliter;
     sfRTF: Result := TRTFDocumentHiliter;
     sfHTML: Result := TXHTMLDocumentHiliter;
+  else
+    Result := TNulDocumentHiliter;
   end;
 end;
 
