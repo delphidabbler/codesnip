@@ -56,16 +56,20 @@ type
     procedure cbCommentStyleChange(Sender: TObject);
     procedure cbSnippetFileTypeChange(Sender: TObject);
   strict private
+    type
+      TSnippetFileTypeMgr = TUnsortedCollectionCtrlKVMgr<TSourceOutputFileType>;
+      TCommentStyleMgr = TUnsortedCollectionCtrlKVMgr<TCommentStyle>;
+  strict private
     var
       ///  <summary>Theme that provides styling for syntax highlighting of
       ///  preview.</summary>
       fTheme: TSyntaxHiliteTheme;
       ///  <summary>Manages mapping of items in "output file type" drop-down
       ///  list to the number of days each item represents.</summary>
-      fSnippetFileTypeMgr: TUnsortedCollectionCtrlKVMgr<TSourceFileType>;
+      fSnippetFileTypeMgr: TSnippetFileTypeMgr;
       ///  <summary>Manages mapping of items in "commentint style" drop-down
       ///  list to the number of days each item represents.</summary>
-      fCommentStyleMgr: TUnsortedCollectionCtrlKVMgr<TCommentStyle>;
+      fCommentStyleMgr: TCommentStyleMgr;
     procedure UpdateControlState;
       {Updates state of dialog's controls depending on values entered.
       }
@@ -140,7 +144,7 @@ resourcestring
 
 const
   // Maps source code file types to descriptions
-  cFileDescs: array[TSourceFileType] of string = (
+  cFileDescs: array[TSourceOutputFileType] of string = (
     sTextFileDesc, sPascalFileDesc, sHTMLFileDesc, sRTFFileDesc
   );
 
@@ -258,23 +262,23 @@ constructor TSourcePrefsFrame.Create(AOwner: TComponent);
     @param AOwner [in] Not used.
   }
 var
-  FileType: TSourceFileType;  // loops thru source file types
-  CSIdx: TCommentStyle;       // loops thru comment styles
+  FileType: TSourceOutputFileType;  // loops thru source file types
+  CSIdx: TCommentStyle;             // loops thru comment styles
 begin
   inherited;
   HelpKeyword := 'SourceCodePrefs';
   // Create syntax highlighter theme for use in sample output
   fTheme := TSyntaxHiliteThemes.NullTheme.Clone;
   // Create object that manage combo boxes
-  fSnippetFileTypeMgr := TUnsortedCollectionCtrlKVMgr<TSourceFileType>.Create(
+  fSnippetFileTypeMgr := TSnippetFileTypeMgr.Create(
     TComboBoxAdapter.Create(cbSnippetFileType),
     True,
-    function (const Left, Right: TSourceFileType): Boolean
+    function (const Left, Right: TSourceOutputFileType): Boolean
     begin
       Result := Left = Right;
     end
   );
-  fCommentStyleMgr := TUnsortedCollectionCtrlKVMgr<TCommentStyle>.Create(
+  fCommentStyleMgr := TCommentStyleMgr.Create(
     TComboBoxAdapter.Create(cbCommentStyle),
     True,
     function (const Left, Right: TCommentStyle): Boolean
@@ -283,7 +287,7 @@ begin
     end
   );
   // Populate file type combo
-  for FileType := Low(TSourceFileType) to High(TSourceFileType) do
+  for FileType := Low(TSourceOutputFileType) to High(TSourceOutputFileType) do
     fSnippetFileTypeMgr.Add(FileType, cFileDescs[FileType]);
   // Populate comment style combo
   for CSIdx := Low(TCommentStyle) to High(TCommentStyle) do

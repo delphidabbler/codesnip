@@ -28,7 +28,7 @@ type
   ///  <summary>
   ///  Enumeration of file types that can be used for source code output.
   ///  </summary>
-  TSourceFileType = (
+  TSourceOutputFileType = (
     sfText,     // plain text files
     sfPascal,   // pascal files (either .pas for units or .inc for include files
     sfHTML,     // HTML files
@@ -91,14 +91,14 @@ type
     var
       ///  <summary>Stores information about the different source code output
       //   types required by save source dialog boxes.</summary>
-      fFileTypeInfo: array[TSourceFileType] of TSourceFileTypeInfo;
+      fFileTypeInfo: array[TSourceOutputFileType] of TSourceFileTypeInfo;
       //   <summary>Value of DefaultFileName property.</summary>
       fDefaultFileName: string;
     ///  <summary>Read accessor for FileTypeInfo property.</summary>
-    function GetFileTypeInfo(const FileType: TSourceFileType):
+    function GetFileTypeInfo(const FileType: TSourceOutputFileType):
       TSourceFileTypeInfo;
     ///  <summary>Write accessor for FileTypeInfo property.</summary>
-    procedure SetFileTypeInfo(const FileType: TSourceFileType;
+    procedure SetFileTypeInfo(const FileType: TSourceOutputFileType;
       const Info: TSourceFileTypeInfo);
     ///  <summary>Write access for DefaultFileName property.</summary>
     ///  <remarks>Converts new property value into a valid Pascal identifier if
@@ -110,10 +110,11 @@ type
     function FilterString: string;
     ///  <summary>Finds source file type associated with a file extension.
     ///  </summary>
-    function FileTypeFromExt(const Ext: string): TSourceFileType;
+    function FileTypeFromExt(const Ext: string): TSourceOutputFileType;
     ///  <summary>Array of information about each supported file type that is
     ///  of use to save source dialog boxes.</summary>
-    property FileTypeInfo[const FileType: TSourceFileType]: TSourceFileTypeInfo
+    property FileTypeInfo[const FileType: TSourceOutputFileType]:
+      TSourceFileTypeInfo
       read GetFileTypeInfo write SetFileTypeInfo;
     ///  <summary>Default source code file name.</summary>
     ///  <remarks>Must be a valid Pascal identifier. Invalid characters are
@@ -135,13 +136,14 @@ uses
 
 { TSourceFileInfo }
 
-function TSourceFileInfo.FileTypeFromExt(const Ext: string): TSourceFileType;
+function TSourceFileInfo.FileTypeFromExt(const Ext: string):
+  TSourceOutputFileType;
 var
-  FT: TSourceFileType;  // loops thru all source file types
+  FT: TSourceOutputFileType;  // loops thru all source file types
 begin
   // Assume text file type if extension not recognised
   Result := sfText;
-  for FT := Low(TSourceFileType) to High(TSourceFileType) do
+  for FT := Low(TSourceOutputFileType) to High(TSourceOutputFileType) do
   begin
     if StrSameText(Ext, fFileTypeInfo[FT].Extension) then
     begin
@@ -155,10 +157,10 @@ function TSourceFileInfo.FilterString: string;
 const
   cFilterFmt = '%0:s (*%1:s)|*%1:s';  // format string for creating file filter
 var
-  FT: TSourceFileType;  // loops thru all source file types
+  FT: TSourceOutputFileType;  // loops thru all source file types
 begin
   Result := '';
-  for FT := Low(TSourceFileType) to High(TSourceFileType) do
+  for FT := Low(TSourceOutputFileType) to High(TSourceOutputFileType) do
   begin
     if Result <> '' then
       Result := Result + '|';
@@ -169,7 +171,7 @@ begin
 end;
 
 function TSourceFileInfo.GetFileTypeInfo(
-  const FileType: TSourceFileType): TSourceFileTypeInfo;
+  const FileType: TSourceOutputFileType): TSourceFileTypeInfo;
 begin
   Result := fFileTypeInfo[FileType];
 end;
@@ -193,7 +195,7 @@ begin
     ClassName + '.SetFileName: Not a valid identifier');
 end;
 
-procedure TSourceFileInfo.SetFileTypeInfo(const FileType: TSourceFileType;
+procedure TSourceFileInfo.SetFileTypeInfo(const FileType: TSourceOutputFileType;
   const Info: TSourceFileTypeInfo);
 begin
   fFileTypeInfo[FileType] := Info;

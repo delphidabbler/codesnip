@@ -37,11 +37,11 @@ type
     fWantHiliting: Boolean;
       {Flag indicating whether output is to be highlighted. Ignored if target
       file type does not support highlighting}
-    fFileType: TSourceFileType;
+    fFileType: TSourceOutputFileType;
       {Type of source file to be targetted}
   public
     constructor Create(const WantHiliting: Boolean;
-      const FileType: TSourceFileType);
+      const FileType: TSourceOutputFileType);
       {Class contructor. Creates file highlighter object of requested kind.
         @param WantHighlighting [in] Whether user wants actual highlighting
           performed. When false source code output is correct kind for file
@@ -56,8 +56,8 @@ type
           file type does not support document title meta data.
         @return Highlighted source.
       }
-    class function IsHilitingSupported(
-      const FileType: TSourceFileType): Boolean;
+    class function IsHilitingSupported(const FileType: TSourceOutputFileType):
+      Boolean;
       {Tests if a source file type supports highlighting.
         @param FileType [in] Source code file type.
         @return True if file type supports highlighting, false if not.
@@ -80,7 +80,7 @@ uses
 { TFileHiliter }
 
 constructor TFileHiliter.Create(const WantHiliting: Boolean;
-  const FileType: TSourceFileType);
+  const FileType: TSourceOutputFileType);
   {Class contructor. Creates file highlighter object of requested kind.
     @param WantHighlighting [in] Whether user wants actual highlighting
       performed. When false source code output is correct kind for file type,
@@ -133,7 +133,7 @@ begin
 end;
 
 class function TFileHiliter.IsHilitingSupported(
-  const FileType: TSourceFileType): Boolean;
+  const FileType: TSourceOutputFileType): Boolean;
   {Tests if a source file type supports highlighting.
     @param FileType [in] Source code file type.
     @return True if file type supports highlighting, false if not.

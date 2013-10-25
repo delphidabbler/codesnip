@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -44,7 +44,8 @@ type
     ///  encapsulated by a view.</summary>
     constructor InternalCreate(View: IView);
     ///  <summary>Gets description of given source code file type.</summary>
-    function GetFileTypeDesc(const FileType: TSourceFileType): string; override;
+    function GetFileTypeDesc(const FileType: TSourceOutputFileType): string;
+      override;
     ///  <summary>Gets default file name to display in dialog box.</summary>
     function GetDefaultFileName: string; override;
     ///  <summary>Gets dialog box title.</summary>
@@ -162,9 +163,9 @@ begin
 end;
 
 function TSaveSnippetMgr.GetFileTypeDesc(
-  const FileType: TSourceFileType): string;
+  const FileType: TSourceOutputFileType): string;
 const
-  Descriptions: array[TSourceFileType] of string = (
+  Descriptions: array[TSourceOutputFileType] of string = (
     sTxtExtDesc, sIncExtDesc, sHtmExtDesc, sRtfExtDesc
   );
 begin

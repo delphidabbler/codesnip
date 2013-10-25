@@ -79,13 +79,13 @@ type
 
     ///  <summary>Gets current default file extension / type used when writing
     ///  code snippets to file.</summary>
-    function GetSourceDefaultFileType: TSourceFileType;
+    function GetSourceDefaultFileType: TSourceOutputFileType;
     ///  <summary>Sets default file extension / type to be used when writing
     ///  code snippets to file.</summary>
-    procedure SetSourceDefaultFileType(const Value: TSourceFileType);
+    procedure SetSourceDefaultFileType(const Value: TSourceOutputFileType);
     ///  <summary>Default file extension / type used when writing code snippets
     ///  to file.</summary>
-    property SourceDefaultFileType: TSourceFileType
+    property SourceDefaultFileType: TSourceOutputFileType
       read GetSourceDefaultFileType write SetSourceDefaultFileType;
 
     ///  <summary>Gets current indicator of whether generated source is
@@ -312,7 +312,7 @@ type
     var
       ///  <summary>Default file extension / type used when writing code
       ///  snippets  file.</summary>
-      fSourceDefaultFileType: TSourceFileType;
+      fSourceDefaultFileType: TSourceOutputFileType;
       ///  <summary>Commenting style used to describe snippets in generated
       ///  source code.</summary>
       fSourceCommentStyle: TCommentStyle;
@@ -399,12 +399,12 @@ type
     ///  <summary>Gets current default file extension / type used when writing
     ///  code snippets to file.</summary>
     ///  <remarks>Method of IPreferences.</remarks>
-    function GetSourceDefaultFileType: TSourceFileType;
+    function GetSourceDefaultFileType: TSourceOutputFileType;
 
     ///  <summary>Sets default file extension / type to be used when writing
     ///  code snippets to file.</summary>
     ///  <remarks>Method of IPreferences.</remarks>
-    procedure SetSourceDefaultFileType(const Value: TSourceFileType);
+    procedure SetSourceDefaultFileType(const Value: TSourceOutputFileType);
 
     ///  <summary>Gets current indicator of whether generated source is
     ///  highlighted by default.</summary>
@@ -767,7 +767,7 @@ begin
   Result := fSourceCommentStyle;
 end;
 
-function TPreferences.GetSourceDefaultFileType: TSourceFileType;
+function TPreferences.GetSourceDefaultFileType: TSourceOutputFileType;
 begin
   Result := fSourceDefaultFileType;
 end;
@@ -866,7 +866,8 @@ begin
   fSourceCommentStyle := Value;
 end;
 
-procedure TPreferences.SetSourceDefaultFileType(const Value: TSourceFileType);
+procedure TPreferences.SetSourceDefaultFileType(
+  const Value: TSourceOutputFileType);
 begin
   fSourceDefaultFileType := Value;
 end;
@@ -977,7 +978,7 @@ begin
 
   // Read source code section
   Storage := Settings.ReadSection(ssPreferences, cSourceCode);
-  fSourceDefaultFileType := TSourceFileType(
+  fSourceDefaultFileType := TSourceOutputFileType(
     Storage.GetInteger('FileType', Ord(sfPascal))
   );
   fSourceCommentStyle := TCommentStyle(

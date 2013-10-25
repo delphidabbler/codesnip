@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2006-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2006-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -77,13 +77,15 @@ type
     ///  <param name="FileType">TSourceFileType [in] File type to check.</param>
     ///  <returns>True if file type supports highlighting, False if not.
     ///  </returns>
-    function IsHilitingSupported(const FileType: TSourceFileType): Boolean;
+    function IsHilitingSupported(const FileType: TSourceOutputFileType):
+      Boolean;
     ///  <summary>Generates source code in desired format.</summary>
     ///  <param name="FileType">TSourceFileType [in] Type of file. Determines
     ///  output file format.</param>
     ///  <returns>TEncodedData - Formatted source code, syntax highlighted if
     ///  required.</returns>
-    function GenerateOutput(const FileType: TSourceFileType): TEncodedData;
+    function GenerateOutput(const FileType: TSourceOutputFileType):
+      TEncodedData;
   strict protected
     ///  <summary>Internal constructor. Initialises managed save source dialog
     ///  box and records information about supported file types.</summary>
@@ -92,7 +94,7 @@ type
     ///  code file if user OKs.</summary>
     procedure DoExecute;
     ///  <summary>Gets description of given source code file type.</summary>
-    function GetFileTypeDesc(const FileType: TSourceFileType): string;
+    function GetFileTypeDesc(const FileType: TSourceOutputFileType): string;
       virtual; abstract;
     ///  <summary>Gets default file name to display in dialog box.</summary>
     function GetDefaultFileName: string; virtual; abstract;
@@ -175,9 +177,9 @@ end;
 
 procedure TSaveSourceMgr.DoExecute;
 var
-  Encoding: TEncoding;        // encoding to use for output file
-  FileContent: string;        // output file content before encoding
-  FileType: TSourceFileType;  // type of source file
+  Encoding: TEncoding;              // encoding to use for output file
+  FileContent: string;              // output file content before encoding
+  FileType: TSourceOutputFileType;  // type of source file
 begin
   // Set up dialog box
   fSaveDlg.Filter := fSourceFileInfo.FilterString;
@@ -206,13 +208,13 @@ end;
 procedure TSaveSourceMgr.EncodingQueryHandler(Sender: TObject;
   const Ext: string; var Encodings: TSourceFileEncodings);
 var
-  FileType: TSourceFileType;  // type of file that has given extension
+  FileType: TSourceOutputFileType;  // type of file that has given extension
 begin
   FileType := fSourceFileInfo.FileTypeFromExt(Ext);
   Encodings := fSourceFileInfo.FileTypeInfo[FileType].Encodings;
 end;
 
-function TSaveSourceMgr.GenerateOutput(const FileType: TSourceFileType):
+function TSaveSourceMgr.GenerateOutput(const FileType: TSourceOutputFileType):
   TEncodedData;
 var
   RawSource: string;      // raw source code
@@ -297,7 +299,7 @@ begin
 end;
 
 function TSaveSourceMgr.IsHilitingSupported(
-  const FileType: TSourceFileType): Boolean;
+  const FileType: TSourceOutputFileType): Boolean;
 begin
   Result := TFileHiliter.IsHilitingSupported(FileType);
 end;
@@ -305,11 +307,11 @@ end;
 procedure TSaveSourceMgr.PreviewHandler(Sender: TObject);
 const
   // Map of source file type to preview document types
-  PreviewDocTypeMap: array[TSourceFileType] of TPreviewDocType = (
+  PreviewDocTypeMap: array[TSourceOutputFileType] of TPreviewDocType = (
     dtPlainText, dtPlainText, dtHTML, dtRTF
   );
 var
-  FileType: TSourceFileType;  // type of source file to preview
+  FileType: TSourceOutputFileType;  // type of source file to preview
 begin
   FileType := fSourceFileInfo.FileTypeFromExt(fSaveDlg.SelectedExt);
   // Display preview dialog box. We use save dialog as owner to ensure preview

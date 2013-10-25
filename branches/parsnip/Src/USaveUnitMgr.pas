@@ -54,7 +54,8 @@ type
     ///  all snippets in given list.</summary>
     constructor InternalCreate(const Snips: TSnippetList);
     ///  <summary>Gets description of given source code file type.</summary>
-    function GetFileTypeDesc(const FileType: TSourceFileType): string; override;
+    function GetFileTypeDesc(const FileType: TSourceOutputFileType): string;
+      override;
     ///  <summary>Gets default file name to display in dialog box.</summary>
     function GetDefaultFileName: string; override;
     ///  <summary>Gets dialog box title.</summary>
@@ -230,9 +231,10 @@ begin
   Result := Format(sDocTitle, [TAppInfo.ProgramName]);
 end;
 
-function TSaveUnitMgr.GetFileTypeDesc(const FileType: TSourceFileType): string;
+function TSaveUnitMgr.GetFileTypeDesc(const FileType: TSourceOutputFileType):
+  string;
 const
-  Descriptions: array[TSourceFileType] of string = (
+  Descriptions: array[TSourceOutputFileType] of string = (
     sTextDesc, sPascalDesc, sHTMLDesc, sRTFDesc
   );
 begin
