@@ -369,7 +369,6 @@
 				<Form>UpdatePrefsFrame</Form>
 				<DesignClass>TFrame</DesignClass>
 			</DCCReference>
-			<DCCReference Include="Hiliter.UFileHiliter.pas"/>
 			<DCCReference Include="Hiliter.UPasLexer.pas"/>
 			<DCCReference Include="IntfAligner.pas"/>
 			<DCCReference Include="IntfCommon.pas"/>
