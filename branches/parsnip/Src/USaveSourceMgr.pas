@@ -21,7 +21,11 @@ interface
 
 uses
   // Project
-  UBaseObjects, UEncodings, USaveSourceDlg, USourceFileInfo, USourceGen;
+  UBaseObjects,
+  UEncodings,
+  USaveSourceDlg,
+  USourceFileInfo,
+  USourceGen;
 
 
 type
@@ -73,12 +77,6 @@ type
     ///  </summary>
     ///  <returns>True if file name is acceptable, False if not.</returns>
     function CheckEnteredFileName: Boolean;
-    ///  <summary>Checks if highlighting is supported for a file type.</summary>
-    ///  <param name="FileType">TSourceFileType [in] File type to check.</param>
-    ///  <returns>True if file type supports highlighting, False if not.
-    ///  </returns>
-    function IsHilitingSupported(const FileType: TSourceOutputFileType):
-      Boolean;
     ///  <summary>Generates source code in desired format.</summary>
     ///  <param name="FileType">TSourceFileType [in] Type of file. Determines
     ///  output file format.</param>
@@ -136,7 +134,13 @@ uses
   // Delphi
   SysUtils,
   // Project
-  FmPreviewDlg, Hiliter.UFileHiliter, UIOUtils, UMessageBox, UOpenDialogHelper,
+  CS.Config,
+  CS.SourceCode.Hiliter.Brushes,
+  CS.SourceCode.Hiliter.Renderers,
+  FmPreviewDlg,
+  UIOUtils,
+  UMessageBox,
+  UOpenDialogHelper,
   UPreferences;
 
 
@@ -217,26 +221,39 @@ end;
 function TSaveSourceMgr.GenerateOutput(const FileType: TSourceOutputFileType):
   TEncodedData;
 var
-  RawSource: string;      // raw source code
-  Hiliter: TFileHiliter;  // object used to highlight source code
+  HiliterCls: TDocumentHiliterClass;  // class used to create hilited document
+  Brush: TSyntaxHiliterBrush;         // highlights source code
+  RawSource: string;                  // raw source code
 begin
   RawSource := GenerateSource(fSaveDlg.CommentStyle, fSaveDlg.TruncateComments);
-  // Highlight the raw source as required
-  Hiliter := TFileHiliter.Create(
-    fSaveDlg.UseSyntaxHiliting and IsHilitingSupported(FileType),
-    FileType
+  HiliterCls := TDocumentHiliterHelper.GetHiliterClass(FileType);
+  { TODO: revise to allow brush to be specified based on source code language.
+          This will probably need extra Language ID parameter to be added.
+  }
+  Brush := TSyntaxHiliterBrushes.CreateBrush(
+    TSyntaxHiliterBrushes.PascalBrushID
   );
   try
-    Result := Hiliter.Hilite(RawSource, GetDocTitle);
+    Result := HiliterCls.Hilite(
+      RawSource,
+      Brush,
+      TConfig.Instance.HiliterThemes[
+        Preferences.CurrentHiliteThemeIds[htkExport]
+      ],
+      GetDocTitle
+    );
   finally
-    Hiliter.Free;
+    Brush.Free;
   end;
 end;
+
 
 procedure TSaveSourceMgr.HiliteQueryHandler(Sender: TObject; const Ext: string;
   var CanHilite: Boolean);
 begin
-  CanHilite := IsHilitingSupported(fSourceFileInfo.FileTypeFromExt(Ext));
+  CanHilite := TDocumentHiliterHelper.IsHilitingSupported(
+    fSourceFileInfo.FileTypeFromExt(Ext)
+  );
 end;
 
 constructor TSaveSourceMgr.InternalCreate;
@@ -296,12 +313,6 @@ begin
   fSaveDlg.OnHiliteQuery := HiliteQueryHandler;
   fSaveDlg.OnEncodingQuery := EncodingQueryHandler;
   fSaveDlg.OnCanClose := CanCloseHandler;
-end;
-
-function TSaveSourceMgr.IsHilitingSupported(
-  const FileType: TSourceOutputFileType): Boolean;
-begin
-  Result := TFileHiliter.IsHilitingSupported(FileType);
 end;
 
 procedure TSaveSourceMgr.PreviewHandler(Sender: TObject);
