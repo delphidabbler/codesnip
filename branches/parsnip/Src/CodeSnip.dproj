@@ -369,7 +369,6 @@
 				<Form>UpdatePrefsFrame</Form>
 				<DesignClass>TFrame</DesignClass>
 			</DCCReference>
-			<DCCReference Include="Hiliter.UPasLexer.pas"/>
 			<DCCReference Include="IntfAligner.pas"/>
 			<DCCReference Include="IntfCommon.pas"/>
 			<DCCReference Include="IntfFrameMgrs.pas"/>
@@ -607,6 +606,7 @@
 			<DCCReference Include="Main\CS.SourceCode.Hiliter.Themes.Persist.pas"/>
 			<DCCReference Include="Main\CS.SourceCode.Languages.pas"/>
 			<DCCReference Include="Main\CS.SourceCode.Languages.Persist.pas"/>
+			<DCCReference Include="Main\CS.SourceCode.Pascal.Lexer.pas"/>
 			<DCCReference Include="Main\CS.UI.Dialogs.HiliteThemeName.pas">
 				<Form>HiliteThemeNameDlg</Form>
 			</DCCReference>

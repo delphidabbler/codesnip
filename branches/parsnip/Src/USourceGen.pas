@@ -21,9 +21,13 @@ interface
 
 uses
   // Delphi
-  Classes, Generics.Collections,
+  Classes,
+  Generics.Collections,
   // Project
-  ActiveText.UMain, DB.USnippet, UBaseObjects, UIStringList;
+  ActiveText.UMain,
+  DB.USnippet,
+  UBaseObjects,
+  UIStringList;
 
 
 type
@@ -255,8 +259,15 @@ uses
   // Delphi
   SysUtils,
   // Project
-  ActiveText.UTextRenderer, DB.USnippetKind, UConsts, UExceptions, UPreferences,
-  USnippetValidator, UStrUtils, UWarnings, Hiliter.UPasLexer;
+  CS.SourceCode.Pascal.Lexer,
+  ActiveText.UTextRenderer,
+  DB.USnippetKind,
+  UConsts,
+  UExceptions,
+  UPreferences,
+  USnippetValidator,
+  UStrUtils,
+  UWarnings;
 
 
 const

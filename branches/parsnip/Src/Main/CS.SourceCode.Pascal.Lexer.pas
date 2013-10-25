@@ -12,7 +12,7 @@
 }
 
 
-unit Hiliter.UPasLexer;
+unit CS.SourceCode.Pascal.Lexer;
 
 
 interface
