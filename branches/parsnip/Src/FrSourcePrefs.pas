@@ -114,8 +114,6 @@ implementation
 
 
 uses
-  // TODO: remove debug unit
-  UEncodings,
   // Delphi
   SysUtils,
   Math,
@@ -124,8 +122,6 @@ uses
   CS.SourceCode.Hiliter.Brushes,
   CS.SourceCode.Hiliter.Renderers,
   FmPreferencesDlg,
-  Hiliter.UFileHiliter,
-  IntfCommon,
   UConsts,
   UCtrlArranger,
   URTFUtils;
@@ -343,7 +339,7 @@ procedure TSourcePrefsFrame.UpdateControlState;
   }
 begin
   chkSyntaxHighlighting.Enabled :=
-    TFileHiliter.IsHilitingSupported(fSnippetFileTypeMgr.GetSelected);
+    TDocumentHiliterHelper.IsHilitingSupported(fSnippetFileTypeMgr.GetSelected);
   chkTruncateComments.Enabled := fCommentStyleMgr.GetSelected <> csNone;
 end;
 
@@ -438,4 +434,5 @@ initialization
 TPreferencesDlg.RegisterPage(TSourcePrefsFrame);
 
 end.
+
 
