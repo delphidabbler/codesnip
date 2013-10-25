@@ -30,7 +30,8 @@ uses
   UBaseObjects,
   UEncodings,
   UHTMLBuilder,
-  URTFBuilder;
+  URTFBuilder,
+  USourceFileInfo;
 
 // TODO: fix documentation comments re changes
 
@@ -234,6 +235,23 @@ type
     class function Hilite(const RawCode: string;
       const Brush: TSyntaxHiliterBrush; const Theme: TSyntaxHiliteTheme;
       const Title: string = ''): TEncodedData; override;
+  end;
+
+type
+  ///  <summary>Container for methods to help with highlighting source code for
+  ///  various different output file types.</summary>
+  TDocumentHiliterHelper = record
+  public
+    ///  <summary>Checks if syntax highlighting is supported for the given
+    ///  output file type.</summary>
+    class function IsHilitingSupported(const FileType: TSourceOutputFileType):
+      Boolean; static;
+    ///  <summary>Returns the highlighter class to be used to syntax highlight
+    ///  source code for the given output file type.</summary>
+    ///  <remarks>A null highlighter will be returned if syntax highlighting is
+    ///  not supported for the given file type.</remarks>
+    class function GetHiliterClass(const FileType: TSourceOutputFileType):
+      TDocumentHiliterClass; static;
   end;
 
 type
@@ -671,6 +689,24 @@ end;
 procedure THTMLHiliteRenderer.WriteElemText(const Text: string);
 begin
   fBuilder.AddText(Text);
+end;
+
+{ TDocumentHiliterHelper }
+
+class function TDocumentHiliterHelper.GetHiliterClass(
+  const FileType: TSourceOutputFileType): TDocumentHiliterClass;
+begin
+  case FileType of
+    sfText, sfPascal: Result := TNulDocumentHiliter;
+    sfRTF: Result := TRTFDocumentHiliter;
+    sfHTML: Result := TXHTMLDocumentHiliter;
+  end;
+end;
+
+class function TDocumentHiliterHelper.IsHilitingSupported(
+  const FileType: TSourceOutputFileType): Boolean;
+begin
+  Result := FileType in [sfRTF, sfHTML];
 end;
 
 end.
