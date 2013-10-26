@@ -12,7 +12,7 @@
 }
 
 
-unit UUnitAnalyser;
+unit CS.SourceCode.Pascal.UnitAnalyser;
 
 
 interface

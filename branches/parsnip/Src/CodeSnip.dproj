@@ -553,7 +553,6 @@
 			<DCCReference Include="UTVCheckBoxes.pas"/>
 			<DCCReference Include="UUIWidgetImages.pas"/>
 			<DCCReference Include="UUniqueID.pas"/>
-			<DCCReference Include="UUnitAnalyser.pas"/>
 			<DCCReference Include="UUnitsChkListMgr.pas"/>
 			<DCCReference Include="UUpdateCheckers.pas"/>
 			<DCCReference Include="UURIEncode.pas"/>
@@ -607,6 +606,7 @@
 			<DCCReference Include="Main\CS.SourceCode.Languages.Persist.pas"/>
 			<DCCReference Include="Main\CS.SourceCode.Pascal.Lexer.pas"/>
 			<DCCReference Include="Main\CS.SourceCode.Pascal.TestUnit.pas"/>
+			<DCCReference Include="Main\CS.SourceCode.Pascal.UnitAnalyser.pas"/>
 			<DCCReference Include="Main\CS.UI.Dialogs.HiliteThemeName.pas">
 				<Form>HiliteThemeNameDlg</Form>
 			</DCCReference>
@@ -615,9 +615,7 @@
 			</DCCReference>
 			<DCCReference Include="Main\CS.UI.Helper.CollectionCtrlKVMgr.pas"/>
 			<DCCReference Include="Main\CS.Utils.Hashes.pas"/>
-			<DCCReference Include="Main\CS.Utils.Sound.pas">
-				<Form>/ Include resources</Form>
-			</DCCReference>
+			<DCCReference Include="Main\CS.Utils.Sound.pas"/>
 			<None Include="CodeSnip.todo"/>
 			<BuildConfiguration Include="Base">
 				<Key>Base</Key>
