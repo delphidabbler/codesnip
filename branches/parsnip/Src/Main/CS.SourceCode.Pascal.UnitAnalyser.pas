@@ -27,14 +27,14 @@ uses
 
 
 type
-  TUnitAnalyser = class sealed(TNoConstructObject)
+  TPascalUnitAnalyser = class sealed(TNoConstructObject)
   public
     class function RequiredEncoding(const SourceCode: string): TEncoding;
     class function UnitName(const SourceCode: string): string;
   end;
 
 type
-  EUnitAnalyser = class(ECodeSnip);
+  EPascalUnitAnalyser = class(ECodeSnip);
 
 implementation
 
@@ -45,9 +45,9 @@ uses
   UEncodings,
   UStrUtils;
 
-{ TUnitAnalyser }
+{ TPascalUnitAnalyser }
 
-class function TUnitAnalyser.RequiredEncoding(const SourceCode: string):
+class function TPascalUnitAnalyser.RequiredEncoding(const SourceCode: string):
   TEncoding;
 begin
   if EncodingSupportsString(SourceCode, TEncoding.Default) then
@@ -56,7 +56,7 @@ begin
     Result := TEncoding.UTF8;
 end;
 
-class function TUnitAnalyser.UnitName(const SourceCode: string): string;
+class function TPascalUnitAnalyser.UnitName(const SourceCode: string): string;
 
 var
   Lexer: TPascalLexer;  // object used to tokenise Pascal source code
@@ -82,12 +82,12 @@ begin
     SkipWhiteSpaceTokens;
     if (Lexer.Token <> tkKeyword)
       or not StrSameText(Lexer.TokenStr, 'unit') then
-      raise EUnitAnalyser.Create(sNotAUnit);
+      raise EPascalUnitAnalyser.Create(sNotAUnit);
     // next Pascal token must be unit name identifier
     SkipWhiteSpaceTokens;
     if (Lexer.Token <> tkIdentifier)
       or not IsValidIdent(Lexer.TokenStr, True) then
-      raise EUnitAnalyser.Create(sBadName);
+      raise EPascalUnitAnalyser.Create(sBadName);
     Result := Lexer.TokenStr;
     // we also support dotted unit names: complication is that white space and
     // comments can separate identifiers from dots.
@@ -97,7 +97,7 @@ begin
       SkipWhiteSpaceTokens;
       if (Lexer.Token <> tkIdentifier)
         or not IsValidIdent(Lexer.TokenStr, True) then
-        raise EUnitAnalyser.Create(sBadName);
+        raise EPascalUnitAnalyser.Create(sBadName);
       Result := Result + '.' + Lexer.TokenStr;
       SkipWhiteSpaceTokens;
     end;

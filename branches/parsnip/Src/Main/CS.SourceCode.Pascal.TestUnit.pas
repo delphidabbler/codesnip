@@ -115,7 +115,7 @@ begin
   // Preference for default ANSI encoding is because early Delphis can only read
   // source code files in this format. Later versions that can handle unicode
   // characters in units also support UTF-8 format source code files.
-  Encoding := TUnitAnalyser.RequiredEncoding(SourceCode);
+  Encoding := TPascalUnitAnalyser.RequiredEncoding(SourceCode);
   try
     TFileIO.WriteAllText(FileName, SourceCode, Encoding, True);
   finally
@@ -140,7 +140,7 @@ var
   Ch: Char;
 begin
   if fSnippet.Kind = skUnit then
-    Exit(TUnitAnalyser.UnitName(fSnippet.SourceCode));
+    Exit(TPascalUnitAnalyser.UnitName(fSnippet.SourceCode));
   // Unit name is same as Snippet being tested, but with prefix to make unique
   Result := cUnitPrefix + fSnippet.Name;
   // We ensure only ASCII characters are used in unit name. Any unsuitable
