@@ -23,11 +23,11 @@ uses
   Graphics,
   // Project
   CS.SourceCode.Hiliter.Themes,
+  CS.SourceCode.Pascal.SourceGen,
   UIStringList,
   UMeasurement,
   USnippetPageStructure,
   USourceFileInfo,
-  USourceGen,
   UWarnings;
 
 
@@ -291,7 +291,10 @@ uses
   // Delphi
   SysUtils,
   // Project
-  IntfCommon, UExceptions, UColours, USettings;
+  IntfCommon,
+  UExceptions,
+  UColours,
+  USettings;
 
 
 type

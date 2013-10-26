@@ -21,7 +21,11 @@ interface
 
 uses
   // Project
-  DB.USnippet, UIStringList, USourceFileInfo, USaveSourceMgr, USourceGen;
+  CS.SourceCode.Pascal.SourceGen,
+  DB.USnippet,
+  UIStringList,
+  USourceFileInfo,
+  USaveSourceMgr;
 
 
 type
@@ -100,7 +104,9 @@ uses
   // Delphi
   SysUtils,
   // Project
-  UAppInfo, UUtils, Web.UInfo;
+  UAppInfo,
+  UUtils,
+  Web.UInfo;
 
 
 resourcestring

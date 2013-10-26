@@ -13,7 +13,7 @@
 }
 
 
-unit USourceGen;
+unit CS.SourceCode.Pascal.SourceGen;
 
 
 interface

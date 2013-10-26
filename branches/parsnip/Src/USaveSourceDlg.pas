@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -22,9 +22,14 @@ interface
 
 uses
   // Delphi
-  Classes, StdCtrls, ExtCtrls,
+  Classes,
+  StdCtrls,
+  ExtCtrls,
   // Project
-  UEncodings, USaveDialogEx, USourceFileInfo, USourceGen;
+  CS.SourceCode.Pascal.SourceGen,
+  UEncodings,
+  USaveDialogEx,
+  USourceFileInfo;
 
 type
   ///  <summary>Type of handler for events triggered by TSaveSourceDlg to check
@@ -216,9 +221,17 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Forms, Dialogs, Dlgs, Controls, Windows,
+  SysUtils,
+  Forms,
+  Dialogs,
+  Dlgs,
+  Controls,
+  Windows,
   // Project
-  UConsts, UMessageBox, UOpenDialogHelper, UStructs;
+  UConsts,
+  UMessageBox,
+  UOpenDialogHelper,
+  UStructs;
 
 
 resourcestring

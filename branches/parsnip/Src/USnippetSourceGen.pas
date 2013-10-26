@@ -21,7 +21,10 @@ interface
 
 uses
   // Project
-  UBaseObjects, UIStringList, USourceGen, UView;
+  CS.SourceCode.Pascal.SourceGen,
+  UBaseObjects,
+  UIStringList,
+  UView;
 
 
 type
@@ -90,7 +93,11 @@ uses
   // Delphi
   SysUtils,
   // Project
-  DB.USnippet, DB.USnippetKind, UAppInfo, UQuery, UUtils;
+  DB.USnippet,
+  DB.USnippetKind,
+  UAppInfo,
+  UQuery,
+  UUtils;
 
 
 { TSnippetSourceGen }

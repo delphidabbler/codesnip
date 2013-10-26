@@ -21,11 +21,11 @@ interface
 
 uses
   // Project
+  CS.SourceCode.Pascal.SourceGen,
   UBaseObjects,
   UEncodings,
   USaveSourceDlg,
-  USourceFileInfo,
-  USourceGen;
+  USourceFileInfo;
 
 
 type

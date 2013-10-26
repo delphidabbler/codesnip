@@ -534,7 +534,6 @@
 			<DCCReference Include="USnippetsTVDraw.pas"/>
 			<DCCReference Include="USnippetValidator.pas"/>
 			<DCCReference Include="USourceFileInfo.pas"/>
-			<DCCReference Include="USourceGen.pas"/>
 			<DCCReference Include="UStartUp.pas"/>
 			<DCCReference Include="UStatusBarMgr.pas"/>
 			<DCCReference Include="UStringReader.pas"/>
@@ -605,6 +604,7 @@
 			<DCCReference Include="Main\CS.SourceCode.Languages.pas"/>
 			<DCCReference Include="Main\CS.SourceCode.Languages.Persist.pas"/>
 			<DCCReference Include="Main\CS.SourceCode.Pascal.Lexer.pas"/>
+			<DCCReference Include="Main\CS.SourceCode.Pascal.SourceGen.pas"/>
 			<DCCReference Include="Main\CS.SourceCode.Pascal.TestUnit.pas"/>
 			<DCCReference Include="Main\CS.SourceCode.Pascal.UnitAnalyser.pas"/>
 			<DCCReference Include="Main\CS.UI.Dialogs.HiliteThemeName.pas">

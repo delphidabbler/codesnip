@@ -27,12 +27,12 @@ uses
   Classes,
   // Project
   CS.SourceCode.Hiliter.Themes,
+  CS.SourceCode.Pascal.SourceGen,
   CS.UI.Helper.CollectionCtrlKVMgr,
   FrPrefsBase,
   FrRTFShowCase,
   UPreferences,
-  USourceFileInfo,
-  USourceGen;
+  USourceFileInfo;
 
 
 type

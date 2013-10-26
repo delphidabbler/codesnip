@@ -21,7 +21,10 @@ interface
 
 uses
   // Project
-  USourceFileInfo, USaveSourceMgr, USourceGen, UView;
+  CS.SourceCode.Pascal.SourceGen,
+  USourceFileInfo,
+  USaveSourceMgr,
+  UView;
 
 
 type

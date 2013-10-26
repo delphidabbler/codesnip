@@ -67,11 +67,11 @@ uses
   // Delphi
   SysUtils,
   // Project
+  CS.SourceCode.Pascal.SourceGen,
   CS.SourceCode.Pascal.UnitAnalyser,
   DB.USnippetKind,
   UEncodings,
   UIOUtils,
-  USourceGen,
   USystemInfo,
   UUtils;
 
