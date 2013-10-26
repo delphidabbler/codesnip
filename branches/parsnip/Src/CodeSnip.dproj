@@ -545,7 +545,6 @@
 			<DCCReference Include="UTaggedTextLexer.pas"/>
 			<DCCReference Include="UTestCompile.pas"/>
 			<DCCReference Include="UTestCompileUI.pas"/>
-			<DCCReference Include="UTestUnit.pas"/>
 			<DCCReference Include="UTestUnitDlgMgr.pas"/>
 			<DCCReference Include="UTextSnippetDoc.pas"/>
 			<DCCReference Include="UThemesEx.pas"/>
@@ -607,6 +606,7 @@
 			<DCCReference Include="Main\CS.SourceCode.Languages.pas"/>
 			<DCCReference Include="Main\CS.SourceCode.Languages.Persist.pas"/>
 			<DCCReference Include="Main\CS.SourceCode.Pascal.Lexer.pas"/>
+			<DCCReference Include="Main\CS.SourceCode.Pascal.TestUnit.pas"/>
 			<DCCReference Include="Main\CS.UI.Dialogs.HiliteThemeName.pas">
 				<Form>HiliteThemeNameDlg</Form>
 			</DCCReference>

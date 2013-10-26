@@ -67,7 +67,7 @@ uses
   CS.SourceCode.Hiliter.Themes,
   FmPreviewDlg,
   UPreferences,
-  UTestUnit;
+  CS.SourceCode.Pascal.TestUnit;
 
 
 { TTestUnitDlgMgr }

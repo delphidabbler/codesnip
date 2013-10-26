@@ -102,7 +102,7 @@ uses
   // Delphi
   SysUtils, Windows {for inlining},
   // Project
-  UTestUnit;
+  CS.SourceCode.Pascal.TestUnit;
 
 
 { TTestCompile }
