@@ -8,8 +8,8 @@
  * $Rev$
  * $Date$
  *
- * Implements a static class that creates and displays a test unit in a dialogue
- * box.
+ * Implements a static class that creates and displays a Pascal test unit in a
+ * dialogue box.
 }
 
 
@@ -30,8 +30,8 @@ uses
 
 
 type
-  ///  <summary>Static class that creates and displays a test unit in a dialogue
-  ///  box.</summary>
+  ///  <summary>Static class that creates and displays a Pascal test unit in a
+  ///  dialogue box.</summary>
   TTestUnitDlgMgr = class(TNoConstructObject)
   strict private
     ///  <summary>Generates source code a test unit for the given snippet's
@@ -91,7 +91,7 @@ end;
 class function TTestUnitDlgMgr.GenerateTestUnit(const Snippet: TSnippet):
   string;
 begin
-  with TTestUnit.Create(Snippet) do
+  with TPascalTestUnit.Create(Snippet) do
     try
       Result := GenerateUnitSource;
     finally

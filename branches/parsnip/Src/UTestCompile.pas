@@ -23,7 +23,9 @@ uses
   // Delphi
   Classes,
   // Project
-  Compilers.UGlobals, DB.USnippet, UBaseObjects;
+  Compilers.UGlobals,
+  DB.USnippet,
+  UBaseObjects;
 
 
 type
@@ -100,7 +102,8 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Windows {for inlining},
+  SysUtils,
+  Windows {for inlining},
   // Project
   CS.SourceCode.Pascal.TestUnit;
 
@@ -166,7 +169,7 @@ procedure TTestCompile.GenerateSourceFile(out FileName: string);
     @param FileName [out] Name of the generated file.
   }
 begin
-  with TTestUnit.Create(fSnippet) do
+  with TPascalTestUnit.Create(fSnippet) do
     try
       SaveUnit(FileName);
     finally

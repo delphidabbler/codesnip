@@ -8,7 +8,7 @@
  * $Rev$
  * $Date$
  *
- * Implements a class that generates Pascal units for use in test compiling
+ * Implements a class that generates Pascal units for use when test compiling
  * snippets.
 }
 
@@ -26,10 +26,9 @@ uses
 
 type
 
-  ///  <summary>
-  ///  Class that generates Pascal units for use in test compiling snippets.
-  ///  </summary>
-  TTestUnit = class(TObject)
+  ///  <summary>Class that generates Pascal units for use when test compiling
+  ///  snippets.</summary>
+  TPascalTestUnit = class(TObject)
   strict private
     var
       ///  <summary>Reference to snippet for which test unit is required.
@@ -43,7 +42,7 @@ type
     ///  <summary>Builds and returns fully specified unit file name.</summary>
     function UnitFileName: string;
   public
-    ///  <summary>Sets up object to create test unit for given snippet.
+    ///  <summary>Sets up object to create Pascal test unit for given snippet.
     ///  </summary>
     constructor Create(const Snippet: TSnippet);
     ///  <summary>Generates source code of test unit.</summary>
@@ -68,20 +67,25 @@ uses
   // Delphi
   SysUtils,
   // Project
-  DB.USnippetKind, UEncodings, UIOUtils, USourceGen, USystemInfo, UUnitAnalyser,
+  DB.USnippetKind,
+  UEncodings,
+  UIOUtils,
+  USourceGen,
+  USystemInfo,
+  UUnitAnalyser,
   UUtils;
 
 
-{ TTestUnit }
+{ TPascalTestUnit }
 
-constructor TTestUnit.Create(const Snippet: TSnippet);
+constructor TPascalTestUnit.Create(const Snippet: TSnippet);
 begin
   Assert(Assigned(Snippet), ClassName + '.Create: Snippet is nil');
   inherited Create;
   fSnippet := Snippet;
 end;
 
-function TTestUnit.GenerateUnitSource: string;
+function TPascalTestUnit.GenerateUnitSource: string;
 begin
   if fSnippet.Kind <> skUnit then
   begin
@@ -99,7 +103,7 @@ begin
     Result := fSnippet.SourceCode;
 end;
 
-procedure TTestUnit.SaveUnit(out FileName: string);
+procedure TPascalTestUnit.SaveUnit(out FileName: string);
 var
   SourceCode: string;
   Encoding: TEncoding;
@@ -119,7 +123,7 @@ begin
   end;
 end;
 
-function TTestUnit.UnitFileName: string;
+function TPascalTestUnit.UnitFileName: string;
 const
   cPasExt = '.pas'; // file extension for Pascal unit:
 begin
@@ -128,7 +132,7 @@ begin
     + UnitName + cPasExt;
 end;
 
-function TTestUnit.UnitName: string;
+function TPascalTestUnit.UnitName: string;
 const
   cUnitPrefix = 'U_'; // unit file name prefix
 var
