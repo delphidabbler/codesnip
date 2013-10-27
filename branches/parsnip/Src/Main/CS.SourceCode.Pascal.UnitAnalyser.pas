@@ -8,7 +8,7 @@
  * $Rev$
  * $Date$
  *
- * Static class that analyses and provides information about unit source code.
+ * Provides methods that analyse and provide information about unit source code.
 }
 
 
@@ -22,15 +22,15 @@ uses
   // Delphi
   SysUtils,
   // Project
-  UBaseObjects,
   UExceptions;
 
 
 type
-  TPascalUnitAnalyser = class sealed(TNoConstructObject)
+  TPascalUnitAnalyser = record
   public
     class function RequiredEncoding(const SourceCode: string): TEncoding;
-    class function UnitName(const SourceCode: string): string;
+      static;
+    class function UnitName(const SourceCode: string): string; static;
   end;
 
 type
