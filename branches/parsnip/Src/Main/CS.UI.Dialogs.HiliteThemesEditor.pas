@@ -18,13 +18,15 @@ unit CS.UI.Dialogs.HiliteThemesEditor;
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, ExtCtrls, ActnList,
-  Generics.Collections,
-
-  Collections.Base,
-  Collections.Sets,
-
+  // Delphi
+  Classes,
+  ActnList,
+  Forms,
+  StdCtrls,
+  Controls,
+  ExtCtrls,
+  Graphics,
+  // Project
   CS.SourceCode.Hiliter.Brushes,
   CS.SourceCode.Hiliter.Themes,
   CS.UI.Helper.CollectionCtrlKVMgr,
@@ -32,8 +34,7 @@ uses
   FrRTFShowCase,
   UBaseObjects,
   UColorBoxEx,
-  UColorDialogEx,
-  UIStringList;
+  UColorDialogEx;
 
 type
   THiliteThemesEditorDlg = class(TGenericViewDlg, INoPublicConstruct)
@@ -175,8 +176,10 @@ implementation
 
 uses
   // Delphi
+  SysUtils,
   Character,
   Math,
+  Dialogs,
   // Project
   CS.Config,
   CS.SourceCode.Hiliter.Renderers,
@@ -188,7 +191,6 @@ uses
   UCtrlArranger,
   UFontHelper,
   UMessageBox,
-  UStructs,
   UStrUtils;
 
 {$R *.dfm}
@@ -379,34 +381,29 @@ end;
 
 procedure THiliteThemesEditorDlg.cbBackgroundChange(Sender: TObject);
 begin
-  outputdebugstring('cbBackgroundChange');
   fWorkingAttrStyle.AttrStyle.Background := cbBackground.Selected;
   UpdateWorkingThemeStyles;
 end;
 
 procedure THiliteThemesEditorDlg.cbBrushesChange(Sender: TObject);
 begin
-  outputdebugstring('cbBrushesChange');
   ChangeBrush(fBrushesComboMgr.GetSelected);
 end;
 
 procedure THiliteThemesEditorDlg.cbDefBackgroundChange(Sender: TObject);
 begin
-  outputdebugstring('cbDefBackgroundChange');
   fWorkingTheme.DefaultBackground := cbDefBackground.Selected;
   SetWorkingThemeDirty;
 end;
 
 procedure THiliteThemesEditorDlg.cbDefForegroundChange(Sender: TObject);
 begin
-  outputdebugstring('cbDefBackgroundChange');
   fWorkingTheme.DefaultForeground := cbDefForeground.Selected;
   SetWorkingThemeDirty;
 end;
 
 procedure THiliteThemesEditorDlg.cbFontNameChange(Sender: TObject);
 begin
-  outputdebugstring('cbFontNameChange');
   if fFontNameComboMgr.HasSelection then
   begin
     fWorkingTheme.FontName := fFontNameComboMgr.GetSelected;
@@ -416,7 +413,6 @@ end;
 
 procedure THiliteThemesEditorDlg.cbFontSizeChange(Sender: TObject);
 begin
-  outputdebugstring('cbFontSizeChange');
   if fFontSizeComboMgr.HasSelection then
   begin
     fWorkingTheme.FontSize := fFontSizeComboMgr.GetSelected;
@@ -436,14 +432,12 @@ end;
 
 procedure THiliteThemesEditorDlg.cbForegroundChange(Sender: TObject);
 begin
-  outputdebugstring('cbForegroundChange');
   fWorkingAttrStyle.AttrStyle.Foreground := cbForeground.Selected;
   UpdateWorkingThemeStyles;
 end;
 
 procedure THiliteThemesEditorDlg.cbThemesChange(Sender: TObject);
 begin
-  outputdebugstring('cbThemesChange');
   ChangeTheme;
 end;
 
@@ -705,7 +699,6 @@ end;
 
 procedure THiliteThemesEditorDlg.lbElementsClick(Sender: TObject);
 begin
-  outputdebugstring('lbElementsClick');
   ChangeAttrStyle;
 end;
 
