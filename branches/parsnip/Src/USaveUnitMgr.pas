@@ -41,7 +41,7 @@ type
   strict private
     var
       ///  <summary>Used to generate source code unit.</summary>
-      fSourceGen: TSourceGen;
+      fSourceGen: TPascalSourceGen;
       ///  <summary>Name of generated unit.</summary>
       ///  <remarks>If empty string a default name is used.</remarks>
       fUnitName: string;
@@ -69,12 +69,12 @@ type
     ///  <summary>Gets title to be used for source document.</summary>
     function GetDocTitle: string; override;
     ///  <summary>Generates raw, un-highlighted, source code.</summary>
-    ///  <param name="CommentStyle">TCommentStyle [in] Style of commenting to be
-    ///  used in source code.</param>
+    ///  <param name="CommentStyle">TPascalCommentStyle [in] Style of commenting
+    ///  to be used in source code.</param>
     ///  <param name="TruncateComments">Boolean [in] Indicates whether multi
     ///  paragraph comments are to be truncated to first paragraph.</param>
     ///  <returns>String containing generated source code.</returns>
-    function GenerateSource(const CommentStyle: TCommentStyle;
+    function GenerateSource(const CommentStyle: TPascalCommentStyle;
       const TruncateComments: Boolean): string;
       override;
     ///  <summary>Checks if a file name is valid for the kind of file being
@@ -143,9 +143,9 @@ resourcestring
 procedure TSaveUnitMgr.CheckFileName(const FileName: string;
   out NameOK: Boolean; out ErrorMessage: string);
 begin
-  NameOK := TSourceGen.IsFileNameValidUnitName(FileName);
+  NameOK := TPascalSourceGen.IsFileNameValidUnitName(FileName);
   if NameOK then
-    fUnitName := TSourceGen.UnitNameFromFileName(FileName)
+    fUnitName := TPascalSourceGen.UnitNameFromFileName(FileName)
   else
   begin
     fUnitName := '';
@@ -209,7 +209,7 @@ begin
     end;
 end;
 
-function TSaveUnitMgr.GenerateSource(const CommentStyle: TCommentStyle;
+function TSaveUnitMgr.GenerateSource(const CommentStyle: TPascalCommentStyle;
   const TruncateComments: Boolean): string;
 begin
   Result := fSourceGen.UnitAsString(
@@ -255,7 +255,7 @@ begin
   inherited InternalCreate;
 
   // Create source generator and initialize it with required snippets
-  fSourceGen := TSourceGen.Create;
+  fSourceGen := TPascalSourceGen.Create;
   fSourceGen.IncludeSnippets(Snips);
 
   // Determine if snippet list contains at least one snippet from main database

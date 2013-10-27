@@ -89,7 +89,7 @@ function TPascalTestUnit.GenerateUnitSource: string;
 begin
   if fSnippet.Kind <> skUnit then
   begin
-    with TSourceGen.Create do
+    with TPascalSourceGen.Create do
       try
         IncludeSnippet(fSnippet);
         // Must use Self.UnitName below for Delphis that define TObject.UnitName

@@ -58,7 +58,7 @@ type
   strict private
     type
       TSnippetFileTypeMgr = TUnsortedCollectionCtrlKVMgr<TSourceOutputFileType>;
-      TCommentStyleMgr = TUnsortedCollectionCtrlKVMgr<TCommentStyle>;
+      TCommentStyleMgr = TUnsortedCollectionCtrlKVMgr<TPascalCommentStyle>;
   strict private
     var
       ///  <summary>Theme that provides styling for syntax highlighting of
@@ -155,14 +155,14 @@ type
   strict private
     fTheme: TSyntaxHiliteTheme;
       {Theme providing highlighter style to use when rendering preview}
-    fCommentStyle: TCommentStyle;
+    fCommentStyle: TPascalCommentStyle;
       {Value of CommentStyle property}
     function SourceCode: string;
       {Create raw source code used in preview.
         @return Required raw source code.
       }
   public
-    constructor Create(const CommentStyle: TCommentStyle;
+    constructor Create(const CommentStyle: TPascalCommentStyle;
       const ATheme: TSyntaxHiliteTheme);
       {Class constructor. Sets up object.
         @param CommentStyle [in] Style of commenting to use in preview.
@@ -259,7 +259,7 @@ constructor TSourcePrefsFrame.Create(AOwner: TComponent);
   }
 var
   FileType: TSourceOutputFileType;  // loops thru source file types
-  CSIdx: TCommentStyle;             // loops thru comment styles
+  CSIdx: TPascalCommentStyle;       // loops thru comment styles
 begin
   inherited;
   HelpKeyword := 'SourceCodePrefs';
@@ -277,7 +277,7 @@ begin
   fCommentStyleMgr := TCommentStyleMgr.Create(
     TComboBoxAdapter.Create(cbCommentStyle),
     True,
-    function (const Left, Right: TCommentStyle): Boolean
+    function (const Left, Right: TPascalCommentStyle): Boolean
     begin
       Result := Left = Right;
     end
@@ -286,8 +286,8 @@ begin
   for FileType := Low(TSourceOutputFileType) to High(TSourceOutputFileType) do
     fSnippetFileTypeMgr.Add(FileType, cFileDescs[FileType]);
   // Populate comment style combo
-  for CSIdx := Low(TCommentStyle) to High(TCommentStyle) do
-    fCommentStyleMgr.Add(CSIdx, TSourceComments.CommentStyleDesc(CSIdx));
+  for CSIdx := Low(TPascalCommentStyle) to High(TPascalCommentStyle) do
+    fCommentStyleMgr.Add(CSIdx, TPascalComments.CommentStyleDesc(CSIdx));
 end;
 
 procedure TSourcePrefsFrame.Deactivate(const Prefs: IPreferences);
@@ -375,7 +375,7 @@ const
   cPrevProcBody = 'begin' + EOL +'  %1:s;'+ EOL + 'end;';
 
   // Map of comment style to sample code
-  cPrevSamples: array[TCommentStyle] of string = (
+  cPrevSamples: array[TPascalCommentStyle] of string = (
     // no comments: just prototype followed by body
     cPrevProcProto + cPrevProcBody,
     // comments after snippet header: prototype then comments then body
@@ -384,7 +384,7 @@ const
     '{' + EOL + '  %2:s' + EOL + '}' + EOL + cPrevProcProto + cPrevProcBody
   );
 
-constructor TSourcePrefsPreview.Create(const CommentStyle: TCommentStyle;
+constructor TSourcePrefsPreview.Create(const CommentStyle: TPascalCommentStyle;
   const ATheme: TSyntaxHiliteTheme);
   {Class constructor. Sets up object.
     @param CommentStyle [in] Style of commenting to use in preview.

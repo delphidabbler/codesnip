@@ -85,7 +85,7 @@ type
       ///  <summary>Preview button added to dialog.</summary>
       fPreviewBtn: TButton;
       ///  <summary>Style of commenting to be used in source code.</summary>
-      fCommentStyle: TCommentStyle;
+      fCommentStyle: TPascalCommentStyle;
       ///  <summary>Whether snippet comments are to be truncated to a single
       ///  paragraph.</summary>
       fTruncateComments: Boolean;
@@ -184,7 +184,7 @@ type
     property SelectedEncoding: TEncodingType
       read fSelectedEncoding;
     ///  <summary>Gets and sets the selected commenting style.</summary>
-    property CommentStyle: TCommentStyle
+    property CommentStyle: TPascalCommentStyle
       read fCommentStyle write fCommentStyle;
     ///  <summary>Gets and sets the value of the comment truncation check box.
     ///  </summary>
@@ -265,7 +265,7 @@ end;
 
 procedure TSaveSourceDlg.CommentStyleChange(Sender: TObject);
 begin
-  fCommentStyle := TCommentStyle(
+  fCommentStyle := TPascalCommentStyle(
     fCmbCommentStyle.Items.Objects[fCmbCommentStyle.ItemIndex]
   );
 end;
@@ -402,7 +402,7 @@ var
   ButtonBounds: TRect;        // bounds of one of dlg's buttons
   StaticBounds: TRect;        // bounds of dlg's hidden ctrl (per dlg resource)
   PanelBounds: TRect;         // bounds of panel we add to dlg
-  CSIdx: TCommentStyle;       // loops thru comment styles
+  CSIdx: TPascalCommentStyle; // loops thru comment styles
 begin
   // Get bounding rectangle of various dialog box controls
   // bounds of hidden static text control per our custom dialog resource
@@ -431,9 +431,9 @@ begin
   if fCmbCommentStyle.Items.Count = 0 then
   begin
     // Populate comment style combo
-    for CSIdx := Low(TCommentStyle) to High(TCommentStyle) do
+    for CSIdx := Low(TPascalCommentStyle) to High(TPascalCommentStyle) do
       fCmbCommentStyle.Items.AddObject(
-        TSourceComments.CommentStyleDesc(CSIdx), TObject(CSIdx)
+        TPascalComments.CommentStyleDesc(CSIdx), TObject(CSIdx)
       );
   end;
   UpdateCommentStyle;
@@ -592,7 +592,9 @@ begin
   for Idx := 0 to Pred(fCmbCommentStyle.Items.Count) do
   begin
     // comment style stored in Objects[] property
-    if TCommentStyle(fCmbCommentStyle.Items.Objects[Idx]) = fCommentStyle then
+    if TPascalCommentStyle(
+      fCmbCommentStyle.Items.Objects[Idx]
+    ) = fCommentStyle then
       fCmbCommentStyle.ItemIndex := Idx;
   end;
 end;

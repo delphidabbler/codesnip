@@ -58,12 +58,12 @@ type
     ///  <summary>Gets title to be used for source document.</summary>
     function GetDocTitle: string; override;
     ///  <summary>Generates raw, un-highlighted, source code.</summary>
-    ///  <param name="CommentStyle">TCommentStyle [in] Style of commenting to be
-    ///  used in source code.</param>
+    ///  <param name="CommentStyle">TPascalCommentStyle [in] Style of commenting
+    ///  to be used in source code.</param>
     ///  <param name="TruncateComments">Boolean [in] Indicates whether multi
     ///  paragraph comments are to be truncated to first paragraph.</param>
     ///  <returns>String containing generated source code.</returns>
-    function GenerateSource(const CommentStyle: TCommentStyle;
+    function GenerateSource(const CommentStyle: TPascalCommentStyle;
       const TruncateComments: Boolean): string;
       override;
     ///  <summary>Checks if a file name is valid for the kind of file being
@@ -134,7 +134,7 @@ begin
     end;
 end;
 
-function TSaveSnippetMgr.GenerateSource(const CommentStyle: TCommentStyle;
+function TSaveSnippetMgr.GenerateSource(const CommentStyle: TPascalCommentStyle;
   const TruncateComments: Boolean): string;
 begin
   Result := TSnippetSourceGen.Generate(fView, CommentStyle, TruncateComments);

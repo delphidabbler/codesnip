@@ -39,7 +39,7 @@ type
     fContainsMainDBSnippets: Boolean;
       {Flag true if source code contains at least one snippet from main
       database, False only if source code is completely user defined}
-    fGenerator: TSourceGen;
+    fGenerator: TPascalSourceGen;
       {Object used to generate the source code}
     procedure Initialize(View: IView);
       {Initializes source code generator using information from a snippet or
@@ -50,7 +50,7 @@ type
       {Creates and stores header comments to be written to head of snippet.
         @return String list containing comments.
       }
-    function DoGenerate(const CommentStyle: TCommentStyle;
+    function DoGenerate(const CommentStyle: TPascalCommentStyle;
       const TruncateComments: Boolean): string;
       {Generates source code for included snippets.
         @param CommentStyle [in] Style of commenting to use in source code.
@@ -74,8 +74,9 @@ type
         @return True if View is a routine snippet or a category that contains
           routine snippets for current query.
       }
-    class function Generate(View: IView; const CommentStyle: TCommentStyle;
-      const TruncateComments: Boolean): string;
+    class function Generate(View: IView;
+      const CommentStyle: TPascalCommentStyle; const TruncateComments: Boolean):
+      string;
       {Generates source code of all routine snippets or categories in a view.
         @param View [in] View containing required snippet(s).
         @param CommentStyle [in] Style of commenting to use in source code.
@@ -168,7 +169,7 @@ begin
   inherited;
 end;
 
-function TSnippetSourceGen.DoGenerate(const CommentStyle: TCommentStyle;
+function TSnippetSourceGen.DoGenerate(const CommentStyle: TPascalCommentStyle;
   const TruncateComments: Boolean): string;
   {Generates source code for included snippets.
     @param CommentStyle [in] Style of commenting to use in source code.
@@ -183,7 +184,8 @@ begin
 end;
 
 class function TSnippetSourceGen.Generate(View: IView;
-  const CommentStyle: TCommentStyle; const TruncateComments: Boolean): string;
+  const CommentStyle: TPascalCommentStyle; const TruncateComments: Boolean):
+  string;
   {Generates source code of all routine snippets or categories in a view.
     @param View [in] View containing required snippet(s).
     @param CommentStyle [in] Style of commenting to use in source code.
@@ -248,7 +250,7 @@ begin
   Assert(Assigned(View), ClassName + '.InternalCreate: View is nil');
   Assert(CanGenerate(View), ClassName + '.InternalCreate: View not supported');
   inherited InternalCreate;
-  fGenerator := TSourceGen.Create;
+  fGenerator := TPascalSourceGen.Create;
   Initialize(View);
 end;
 

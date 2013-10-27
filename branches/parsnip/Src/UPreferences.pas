@@ -57,13 +57,13 @@ type
 
     ///  <summary>Gets style of commenting used to describe snippets in
     ///  generated code.</summary>
-    function GetSourceCommentStyle: TCommentStyle;
+    function GetSourceCommentStyle: TPascalCommentStyle;
     ///  <summary>Sets style of commenting to be used describe snippets in
     ///  generated code.</summary>
-    procedure SetSourceCommentStyle(const Value: TCommentStyle);
+    procedure SetSourceCommentStyle(const Value: TPascalCommentStyle);
     ///  <summary>Commenting style used to describe snippets in generated source
     ///  code.</summary>
-    property SourceCommentStyle: TCommentStyle
+    property SourceCommentStyle: TPascalCommentStyle
       read GetSourceCommentStyle write SetSourceCommentStyle;
 
     ///  <summary>Gets flag that determines whether multi-paragraph source code
@@ -318,7 +318,7 @@ type
       fSourceDefaultFileType: TSourceOutputFileType;
       ///  <summary>Commenting style used to describe snippets in generated
       ///  source code.</summary>
-      fSourceCommentStyle: TCommentStyle;
+      fSourceCommentStyle: TPascalCommentStyle;
       ///  <summary>Flag determining whether multi-paragraph source code is
       ///  truncated to first paragraph in source code comments.</summary>
       fTruncateSourceComments: Boolean;
@@ -382,12 +382,12 @@ type
     ///  <summary>Gets style of commenting used to describe snippets in
     ///  generated code.</summary>
     ///  <remarks>Method of IPreferences.</remarks>
-    function GetSourceCommentStyle: TCommentStyle;
+    function GetSourceCommentStyle: TPascalCommentStyle;
 
     ///  <summary>Sets style of commenting to be used describe snippets in
     ///  generated code.</summary>
     ///  <remarks>Method of IPreferences.</remarks>
-    procedure SetSourceCommentStyle(const Value: TCommentStyle);
+    procedure SetSourceCommentStyle(const Value: TPascalCommentStyle);
 
     ///  <summary>Gets flag that determines whether multi-paragraph source code
     ///  is truncated to first paragraph in source code comments.</summary>
@@ -765,7 +765,7 @@ begin
   Result := fSourceCodeBGCustomColours;
 end;
 
-function TPreferences.GetSourceCommentStyle: TCommentStyle;
+function TPreferences.GetSourceCommentStyle: TPascalCommentStyle;
 begin
   Result := fSourceCommentStyle;
 end;
@@ -864,7 +864,7 @@ begin
   fSourceCodeBGCustomColours := Value;
 end;
 
-procedure TPreferences.SetSourceCommentStyle(const Value: TCommentStyle);
+procedure TPreferences.SetSourceCommentStyle(const Value: TPascalCommentStyle);
 begin
   fSourceCommentStyle := Value;
 end;
@@ -984,7 +984,7 @@ begin
   fSourceDefaultFileType := TSourceOutputFileType(
     Storage.GetInteger('FileType', Ord(sfPascal))
   );
-  fSourceCommentStyle := TCommentStyle(
+  fSourceCommentStyle := TPascalCommentStyle(
     Storage.GetInteger('CommentStyle', Ord(csAfter))
   );
   fTruncateSourceComments := Storage.GetBoolean('TruncateComments', False);

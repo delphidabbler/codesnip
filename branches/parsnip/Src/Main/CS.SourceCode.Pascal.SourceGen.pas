@@ -32,17 +32,17 @@ uses
 
 type
   ///  <summary>Enumeration of different styles of commenting used when
-  ///  documenting snippets with their descriptions.</summary>
-  TCommentStyle = (
+  ///  documenting Pascal snippets with their descriptions.</summary>
+  TPascalCommentStyle = (
     csNone,     // no documentation of snippets
     csAfter,    // description of snippet between prototype and body
     csBefore    // description of snippet immediatly preceeds code
   );
 
 type
-  ///  <summary>Static class that provides information about comment styles and
-  ///  which formats comments in the appropriate style.</summary>
-  TSourceComments = class(TNoConstructObject)
+  ///  <summary>Static class that provides information about Pascal comment
+  ///  styles and which formats comments in the appropriate style.</summary>
+  TPascalComments = class(TNoConstructObject)
   strict private
     ///  <summary>Formats the given comment text into lines with a fixed
     ///  maximum width indented by the given number of spaces on the left.
@@ -54,11 +54,11 @@ type
     ///  <summary>Returns a description of the given comment style.</summary>
     ///  <remarks>The description is in a form uitable for use in the UI.
     ///  </remarks>
-    class function CommentStyleDesc(const Style: TCommentStyle): string;
+    class function CommentStyleDesc(const Style: TPascalCommentStyle): string;
 
     ///  <summary>Formats a snippet's descriptive comment as a Pascal comment
     ///  with to a specified commenting style.</summary>
-    ///  <param name="Style">TCommentStyle [in] Required commenting style.
+    ///  <param name="Style">TPascalCommentStyle [in] Required commenting style.
     ///  </param>
     ///  <param name="TruncateComments">Boolean [in] Flag indicating whether or
     ///  not comment is to be truncated at the end of the first paragraph of
@@ -66,7 +66,7 @@ type
     ///  <param name="Text">IActiveText [in] Active text of comment.</param>
     ///  <returns>string.Formatted comment or empty string if Style = csNone.
     ///  </returns>
-    class function FormatSnippetComment(const Style: TCommentStyle;
+    class function FormatSnippetComment(const Style: TPascalCommentStyle;
       const TruncateComments: Boolean; const Text: IActiveText): string;
 
     ///  <summary>Formats document's header text as a Pascal comment.</summary>
@@ -77,11 +77,11 @@ type
   end;
 
 type
-  ///  <summary>Class that receives snippets for which source is to be
+  ///  <summary>Class that receives snippets for which Pascal source is to be
   ///  generated, determines dependencies and pulls in any required snippets.
   ///  Data structures are created that can be used to emit source code with all
   ///  dependencies resolved.</summary>
-  TSourceAnalyser = class(TObject)
+  TPascalSourceAnalyser = class(TObject)
   strict private
     var
       ///  <summary>Value of TypesAndConsts property.</summary>
@@ -181,12 +181,12 @@ type
   ///  <summary>Generates Pascal source code containing all specified snippets
   ///  along with any other snippets that are required by the specified
   ///  snippets.</summary>
-  TSourceGen = class(TObject)
+  TPascalSourceGen = class(TObject)
   strict private
     var
       ///  <summary>Object that analyses specified snippets and their
       ///  dependencies.</summary>
-      fSourceAnalyser: TSourceAnalyser;
+      fSourceAnalyser: TPascalSourceAnalyser;
 
   public
     ///  <summary>Constructs new object instance.</summary>
@@ -206,8 +206,8 @@ type
     ///  specified snippets along with any other snippets that are required to
     ///  compile the code.</summary>
     ///  <param name="UnitName">string [in] Name of unit.</param>
-    ///  <param name="CommentStyle">TCommentStyle [in] Style of commenting used
-    ///  in documenting snippets.</param>
+    ///  <param name="CommentStyle">TPascalCommentStyle [in] Style of commenting
+    ///  used in documenting snippets.</param>
     ///  <param name="TruncateComments">Boolean [in] Flag indicating whether or
     ///  not documentation comments are to be truncated at the end of the first
     ///  paragraph of multi-paragraph text.</param>
@@ -215,7 +215,7 @@ type
     ///  included at top of unit.</param>
     ///  <returns>string. Unit source code.</returns>
     function UnitAsString(const UnitName: string;
-      const CommentStyle: TCommentStyle = csNone;
+      const CommentStyle: TPascalCommentStyle = csNone;
       const TruncateComments: Boolean = False;
       const HeaderComments: IStringList = nil): string;
 
@@ -223,15 +223,15 @@ type
     ///  the specified snippets. Also writes comments that note which units,
     ///  types, consts and other routines are required to compile the specified
     ///  snippets.</summary>
-    ///  <param name="CommentStyle">TCommentStyle [in] Style of commenting used
-    ///  in documenting snippets.</param>
+    ///  <param name="CommentStyle">TPascalCommentStyle [in] Style of commenting
+    ///  used in documenting snippets.</param>
     ///  <param name="TruncateComments">Boolean [in] Flag indicating whether or
     ///  not documentation comments are to be truncated at the end of the first
     ///  paragraph of multi-paragraph text.</param>
     ///  <param name="HeaderComments">IStringList [in] List of comments to be
     ///  included at top of unit.</param>
     ///  <returns>string. Source code of include file.</returns>
-    function IncFileAsString(const CommentStyle: TCommentStyle = csNone;
+    function IncFileAsString(const CommentStyle: TPascalCommentStyle = csNone;
       const TruncateComments: Boolean = False;
       const HeaderComments: IStringList = nil): string;
 
@@ -295,7 +295,7 @@ type
 
     ///  <summary>Creates and returns a comment containing a routine's
     ///  description.</summary>
-    ///  <param name="CommentStyle">TCommentStyle [in] Required commenting
+    ///  <param name="CommentStyle">TPascalCommentStyle [in] Required commenting
     ///  style.</param>
     ///  <param name="TruncateComments">Boolean [in] Flag indicating whether or
     ///  not comment is to be truncated at the end of the first paragraph of
@@ -303,7 +303,7 @@ type
     ///  <param name="Routine">TSnippet [in] Routine for which comments are to
     ///  be rendered. Snippet kind must be skRoutine.</param>
     ///  <returns>string. Formatted comments.</returns>
-    class function RenderDescComment(CommentStyle: TCommentStyle;
+    class function RenderDescComment(CommentStyle: TPascalCommentStyle;
       const TruncateComments: Boolean; const Routine: TSnippet): string;
 
   public
@@ -315,26 +315,27 @@ type
     ///  containing its description if required.</summary>
     ///  <param name="Routine">TSnippet [in] Routine whose prototype is to be
     ///  formatted. Snippet kind must be skRoutine.</param>
-    ///  <param name="CommentStyle">TCommentStyle [in] Style of commenting to
-    ///  be used for routine's description.</param>
+    ///  <param name="CommentStyle">TPascalCommentStyle [in] Style of commenting
+    ///  to be used for routine's description.</param>
     ///  <param name="TruncateComments">Boolean [in] Flag indicating whether or
     ///  not description comment is to be truncated at the end of the first
     ///  paragraph of multi-paragraph text.</param>
     ///  <returns>string. Formatted prototype.</returns>
     class function FormatRoutinePrototype(const Routine: TSnippet;
-      CommentStyle: TCommentStyle; const TruncateComments: Boolean): string;
+      CommentStyle: TPascalCommentStyle; const TruncateComments: Boolean):
+      string;
 
     ///  <summary>Formats the whole source code of a routine snippet, including
     ///  a comment containing its description if required.</summary>
-    ///  <param name="CommentStyle">TCommentStyle [in] Style of commenting to
-    ///  be used for routine's description.</param>
+    ///  <param name="CommentStyle">TPascalCommentStyle [in] Style of commenting
+    ///  to be used for routine's description.</param>
     ///  <param name="TruncateComments">Boolean [in] Flag indicating whether or
     ///  not description comment is to be truncated at the end of the first
     ///  paragraph of multi-paragraph text.</param>
     ///  <param name="Routine">TSnippet [in] Routine whose source code is to be
     ///  formatted.</param>
     ///  <returns>string. Formatted source code.</returns>
-    class function FormatRoutine(CommentStyle: TCommentStyle;
+    class function FormatRoutine(CommentStyle: TPascalCommentStyle;
       const TruncateComments: Boolean; const Routine: TSnippet): string;
   end;
 
@@ -357,7 +358,7 @@ type
 
     ///  <summary>Creates and returns a comment containing a constant or simple
     ///  type's description.</summary>
-    ///  <param name="CommentStyle">TCommentStyle [in] Required commenting
+    ///  <param name="CommentStyle">TPascalCommentStyle [in] Required commenting
     ///  style.</param>
     ///  <param name="TruncateComments">Boolean [in] Flag indicating whether or
     ///  not comment is to be truncated at the end of the first paragraph of
@@ -366,21 +367,21 @@ type
     ///  which comments are to be rendered. Snippet kind must be skConstant or
     ///  skTypeDef.</param>
     ///  <returns>string. Formatted comments.</returns>
-    class function RenderDescComment(CommentStyle: TCommentStyle;
+    class function RenderDescComment(CommentStyle: TPascalCommentStyle;
       const TruncateComments: Boolean; const ConstOrType: TSnippet): string;
 
   public
     ///  <summary>Formats the source code of a constant or simple type snippet,
     ///  including a comment containing its description if required.</summary>
-    ///  <param name="CommentStyle">TCommentStyle [in] Style of commenting to
-    ///  be used for snippet's description.</param>
+    ///  <param name="CommentStyle">TPascalCommentStyle [in] Style of commenting
+    ///  to be used for snippet's description.</param>
     ///  <param name="TruncateComments">Boolean [in] Flag indicating whether or
     ///  not description comment is to be truncated at the end of the first
     ///  paragraph of multi-paragraph text.</param>
     ///  <param name="ConstOrType">TSnippet [in] Constant or simple type whose
     ///  source code is to be formatted.</param>
     ///  <returns>string. Formatted source code.</returns>
-    class function FormatConstOrType(CommentStyle: TCommentStyle;
+    class function FormatConstOrType(CommentStyle: TPascalCommentStyle;
       const TruncateComments: Boolean; const ConstOrType: TSnippet): string;
   end;
 
@@ -396,7 +397,7 @@ type
 
     ///  <summary>Creates and returns a comment containing a class or advanced
     ///  record type's description.</summary>
-    ///  <param name="CommentStyle">TCommentStyle [in] Required commenting
+    ///  <param name="CommentStyle">TPascalCommentStyle [in] Required commenting
     ///  style.</param>
     ///  <param name="TruncateComments">Boolean [in] Flag indicating whether or
     ///  not comment is to be truncated at the end of the first paragraph of
@@ -404,7 +405,7 @@ type
     ///  <param name="Snippet">TSnippet [in] Class or advanced record type for
     ///  which comments are to be rendered.</param>
     ///  <returns>string. Formatted comments.</returns>
-    class function RenderDescComment(CommentStyle: TCommentStyle;
+    class function RenderDescComment(CommentStyle: TPascalCommentStyle;
       const TruncateComments: Boolean; const Snippet: TSnippet): string;
 
     ///  <summary>Removes any introductory 'type' keyword from a class or
@@ -434,22 +435,22 @@ type
     ///  <summary>Formats source code of a class or advanced record snippet's
     ///  declaration, including a comment containing its description if
     ///  required.</summary>
-    ///  <param name="CommentStyle">TCommentStyle [in] Style of commenting to
-    ///  be used for snippet's description.</param>
+    ///  <param name="CommentStyle">TPascalCommentStyle [in] Style of commenting
+    ///  to be used for snippet's description.</param>
     ///  <param name="TruncateComments">Boolean [in] Flag indicating whether or
     ///  not description comment is to be truncated at the end of the first
     ///  paragraph of multi-paragraph text.</param>
     ///  <param name="Snippet">TSnippet [in] Class or advanced record type whose
     ///  declaration is to be formatted.</param>
     ///  <returns>string. Formatted declaration source code.</returns>
-    class function FormatClassDeclaration(CommentStyle: TCommentStyle;
+    class function FormatClassDeclaration(CommentStyle: TPascalCommentStyle;
       const TruncateComments: Boolean; const Snippet: TSnippet): string;
 
     ///  <summary>Formats source code of a class or advanced record snippet's
     ///  definition, including a comment containing its description if required.
     ///  </summary>
-    ///  <param name="CommentStyle">TCommentStyle [in] Style of commenting to
-    ///  be used for snippet's description.</param>
+    ///  <param name="CommentStyle">TPascalCommentStyle [in] Style of commenting
+    ///  to be used for snippet's description.</param>
     ///  <param name="TruncateComments">Boolean [in] Flag indicating whether or
     ///  not description comment is to be truncated at the end of the first
     ///  paragraph of multi-paragraph text.</param>
@@ -459,22 +460,23 @@ type
     class function FormatClassDefinition(const Snippet: TSnippet): string;
   end;
 
-{ TSourceGen }
+{ TPascalSourceGen }
 
-constructor TSourceGen.Create;
+constructor TPascalSourceGen.Create;
 begin
   inherited;
-  fSourceAnalyser := TSourceAnalyser.Create;
+  fSourceAnalyser := TPascalSourceAnalyser.Create;
 end;
 
-destructor TSourceGen.Destroy;
+destructor TPascalSourceGen.Destroy;
 begin
   fSourceAnalyser.Free;
   inherited;
 end;
 
-function TSourceGen.IncFileAsString(const CommentStyle: TCommentStyle;
-  const TruncateComments: Boolean; const HeaderComments: IStringList): string;
+function TPascalSourceGen.IncFileAsString(
+  const CommentStyle: TPascalCommentStyle; const TruncateComments: Boolean;
+  const HeaderComments: IStringList): string;
 resourcestring
   // Comment text
   sReqUnits           = 'Required unit(s):';
@@ -497,7 +499,7 @@ begin
   try
 
     // Write header comment
-    Writer.Append(TSourceComments.FormatHeaderComments(HeaderComments));
+    Writer.Append(TPascalComments.FormatHeaderComments(HeaderComments));
 
     // Write required units, additional routines, types and consts
     if (fSourceAnalyser.Units.Count > 0) or
@@ -575,12 +577,12 @@ begin
   end;
 end;
 
-procedure TSourceGen.IncludeSnippet(const Snippet: TSnippet);
+procedure TPascalSourceGen.IncludeSnippet(const Snippet: TSnippet);
 begin
   fSourceAnalyser.AddSnippet(Snippet);
 end;
 
-procedure TSourceGen.IncludeSnippets(const Snips: TSnippetList);
+procedure TPascalSourceGen.IncludeSnippets(const Snips: TSnippetList);
 var
   Snippet: TSnippet;  // iterates through snippets to be added
 begin
@@ -588,14 +590,14 @@ begin
     IncludeSnippet(Snippet);
 end;
 
-class function TSourceGen.IsFileNameValidUnitName(const FileName: string):
+class function TPascalSourceGen.IsFileNameValidUnitName(const FileName: string):
   Boolean;
 begin
   Result := IsValidIdent(UnitNameFromFileName(FileName));
 end;
 
-function TSourceGen.UnitAsString(const UnitName: string;
-  const CommentStyle: TCommentStyle = csNone;
+function TPascalSourceGen.UnitAsString(const UnitName: string;
+  const CommentStyle: TPascalCommentStyle = csNone;
   const TruncateComments: Boolean = False;
   const HeaderComments: IStringList = nil): string;
 var
@@ -611,7 +613,7 @@ begin
     // Write unit
 
     // heading comment
-    Writer.Append(TSourceComments.FormatHeaderComments(HeaderComments));
+    Writer.Append(TPascalComments.FormatHeaderComments(HeaderComments));
 
     // unit name
     Writer.AppendFormat('unit %s;', [UnitName]).AppendLine;
@@ -717,7 +719,8 @@ begin
   end;
 end;
 
-class function TSourceGen.UnitNameFromFileName(const FileName: string): string;
+class function TPascalSourceGen.UnitNameFromFileName(const FileName: string):
+  string;
 var
   BaseFileName: string; // base file name (i.e. file name without path)
   Ext: string;          // file's extension
@@ -727,9 +730,9 @@ begin
   Result := StrSliceLeft(BaseFileName, Length(BaseFileName) - Length(Ext));
 end;
 
-{ TSourceAnalyser }
+{ TPascalSourceAnalyser }
 
-procedure TSourceAnalyser.AddIntfRoutine(const Routine: TSnippet);
+procedure TPascalSourceAnalyser.AddIntfRoutine(const Routine: TSnippet);
 begin
   Assert(Routine.Kind = skRoutine,
     ClassName + '.AddIntfRoutine: Routine must have kind skRoutine');
@@ -741,7 +744,7 @@ begin
   end;
 end;
 
-procedure TSourceAnalyser.AddSnippet(const Snippet: TSnippet);
+procedure TPascalSourceAnalyser.AddSnippet(const Snippet: TSnippet);
 var
   ErrorMsg: string;       // any error message
 begin
@@ -764,7 +767,7 @@ begin
   end;
 end;
 
-procedure TSourceAnalyser.AddTypeOrConst(const TypeOrConst: TSnippet);
+procedure TPascalSourceAnalyser.AddTypeOrConst(const TypeOrConst: TSnippet);
 var
   ErrorMsg: string;       // any error message
 begin
@@ -784,7 +787,7 @@ begin
   fTypesAndConsts.Add(TypeOrConst)
 end;
 
-constructor TSourceAnalyser.Create;
+constructor TPascalSourceAnalyser.Create;
 begin
   inherited;
   fTypesAndConsts := TObjectList<TSnippet>.Create(False);
@@ -795,7 +798,7 @@ begin
   fUnits := TStringList.Create;
 end;
 
-destructor TSourceAnalyser.Destroy;
+destructor TPascalSourceAnalyser.Destroy;
 begin
   fTypesAndConsts.Free;
   fIntfRoutines.Free;
@@ -806,7 +809,7 @@ begin
   inherited;
 end;
 
-procedure TSourceAnalyser.Generate;
+procedure TPascalSourceAnalyser.Generate;
 var
   Routine: TSnippet;  // iterates through various routine lists
 begin
@@ -824,7 +827,7 @@ begin
     fAllRoutines.Add(Routine);
 end;
 
-procedure TSourceAnalyser.RequireRoutine(const Routine: TSnippet);
+procedure TPascalSourceAnalyser.RequireRoutine(const Routine: TSnippet);
 begin
   if not fRequiredRoutines.Contains(Routine) then
   begin
@@ -834,7 +837,7 @@ begin
   end;
 end;
 
-procedure TSourceAnalyser.RequireSnippet(const Snippet: TSnippet);
+procedure TPascalSourceAnalyser.RequireSnippet(const Snippet: TSnippet);
 resourcestring
   // Error message
   sCantDependOnFreeform = 'Can''t depend on "%s" - it is freeform code';
@@ -849,7 +852,7 @@ begin
   end;
 end;
 
-procedure TSourceAnalyser.RequireSnippets(const Snips: TSnippetList);
+procedure TPascalSourceAnalyser.RequireSnippets(const Snips: TSnippetList);
 var
   Snippet: TSnippet;  // iterates through snippets list
 begin
@@ -857,13 +860,13 @@ begin
     RequireSnippet(Snippet);
 end;
 
-procedure TSourceAnalyser.RequireUnit(const UnitName: string);
+procedure TPascalSourceAnalyser.RequireUnit(const UnitName: string);
 begin
   if fUnits.IndexOf(UnitName) = -1 then
     fUnits.Add(UnitName);
 end;
 
-procedure TSourceAnalyser.RequireUnits(const Units: TStringList);
+procedure TPascalSourceAnalyser.RequireUnits(const Units: TStringList);
 var
   UnitName: string; // iterates through list of units.
 begin
@@ -882,8 +885,9 @@ begin
   Result := StrTrim(Result);
 end;
 
-class function TRoutineFormatter.FormatRoutine(CommentStyle: TCommentStyle;
-  const TruncateComments: Boolean; const Routine: TSnippet): string;
+class function TRoutineFormatter.FormatRoutine(
+  CommentStyle: TPascalCommentStyle; const TruncateComments: Boolean;
+  const Routine: TSnippet): string;
 var
   Prototype, Body: string;  // prototype and body of routine
 begin
@@ -912,7 +916,7 @@ begin
 end;
 
 class function TRoutineFormatter.FormatRoutinePrototype(const Routine: TSnippet;
-  CommentStyle: TCommentStyle; const TruncateComments: Boolean): string;
+  CommentStyle: TPascalCommentStyle; const TruncateComments: Boolean): string;
 var
   Prototype: string;  // prototype of given routine
 begin
@@ -939,13 +943,13 @@ begin
 end;
 
 class function TRoutineFormatter.RenderDescComment(
-  CommentStyle: TCommentStyle; const TruncateComments: Boolean;
+  CommentStyle: TPascalCommentStyle; const TruncateComments: Boolean;
   const Routine: TSnippet): string;
 begin
   Assert(Routine.Kind = skRoutine,
     ClassName + '.RenderDescComment: Routine must have kind skRoutine');
   // Format the output
-  Result := TSourceComments.FormatSnippetComment(
+  Result := TPascalComments.FormatSnippetComment(
     CommentStyle, TruncateComments, Routine.Description
   );
 end;
@@ -1031,7 +1035,7 @@ end;
 { TConstAndTypeFormatter }
 
 class function TConstAndTypeFormatter.FormatConstOrType(
-  CommentStyle: TCommentStyle; const TruncateComments: Boolean;
+  CommentStyle: TPascalCommentStyle; const TruncateComments: Boolean;
   const ConstOrType: TSnippet): string;
 var
   Keyword: string;  // keyword that preceeds source code body
@@ -1064,13 +1068,13 @@ begin
 end;
 
 class function TConstAndTypeFormatter.RenderDescComment(
-  CommentStyle: TCommentStyle; const TruncateComments: Boolean;
+  CommentStyle: TPascalCommentStyle; const TruncateComments: Boolean;
   const ConstOrType: TSnippet): string;
 begin
   Assert(ConstOrType.Kind in [skConstant, skTypeDef],
     ClassName + '.RenderDescComment: ConstOrType must have kind skTypeDef or '
       + 'skConstant');
-  Result := TSourceComments.FormatSnippetComment(
+  Result := TPascalComments.FormatSnippetComment(
     CommentStyle, TruncateComments, ConstOrType.Description
   );
 end;
@@ -1132,10 +1136,10 @@ begin
     SplitAtKeyword(ConstOrType.SourceCode, 'type', Prefix, Body)
 end;
 
-{ TSourceComments }
+{ TPascalComments }
 
-class function TSourceComments.CommentStyleDesc(
-  const Style: TCommentStyle): string;
+class function TPascalComments.CommentStyleDesc(
+  const Style: TPascalCommentStyle): string;
 resourcestring
   // Comment style descriptions
   sCSNone = 'No descriptive comments';
@@ -1143,14 +1147,14 @@ resourcestring
   sCSBefore = 'Comments before snippet';
 const
   // Map of comment styles to descriptions
-  sDescriptions: array[TCommentStyle] of string = (
+  sDescriptions: array[TPascalCommentStyle] of string = (
     sCSNone, sCSAfter, sCSBefore
   );
 begin
   Result := sDescriptions[Style];
 end;
 
-class function TSourceComments.FormatCommentLines(const Text: string;
+class function TPascalComments.FormatCommentLines(const Text: string;
   const Indent: Cardinal): string;
 var
   Lines: TStringList;
@@ -1164,7 +1168,7 @@ begin
   end;
 end;
 
-class function TSourceComments.FormatHeaderComments(
+class function TPascalComments.FormatHeaderComments(
   const Comments: IStringList): string;
 var
   Line: string;         // loops thru each line of comments & exploded comments
@@ -1194,8 +1198,9 @@ begin
     Result := '';
 end;
 
-class function TSourceComments.FormatSnippetComment(const Style: TCommentStyle;
-  const TruncateComments: Boolean; const Text: IActiveText): string;
+class function TPascalComments.FormatSnippetComment(
+  const Style: TPascalCommentStyle; const TruncateComments: Boolean;
+  const Text: IActiveText): string;
 var
   Renderer: TActiveTextTextRenderer;
   PlainText: string;
@@ -1251,7 +1256,7 @@ begin
 end;
 
 class function TClassFormatter.FormatClassDeclaration(
-  CommentStyle: TCommentStyle; const TruncateComments: Boolean;
+  CommentStyle: TPascalCommentStyle; const TruncateComments: Boolean;
   const Snippet: TSnippet): string;
 var
   Dummy: string;
@@ -1302,10 +1307,11 @@ begin
     DeclBody := Decl;
 end;
 
-class function TClassFormatter.RenderDescComment(CommentStyle: TCommentStyle;
-  const TruncateComments: Boolean; const Snippet: TSnippet): string;
+class function TClassFormatter.RenderDescComment(
+  CommentStyle: TPascalCommentStyle; const TruncateComments: Boolean;
+  const Snippet: TSnippet): string;
 begin
-  Result := TSourceComments.FormatSnippetComment(
+  Result := TPascalComments.FormatSnippetComment(
     CommentStyle, TruncateComments, Snippet.Description
   );
 end;
