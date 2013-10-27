@@ -8,7 +8,8 @@
  * $Rev$
  * $Date$
  *
- * Provides methods that analyse and provide information about unit source code.
+ * Provides a for methods that analyse and provide information about the source
+ * code of Pascal units.
 }
 
 
@@ -26,15 +27,26 @@ uses
 
 
 type
+  ///  <summary>Container for methods that analyse and provide information about
+  ///  the source code of Pascal units.</summary>
   TPascalUnitAnalyser = record
   public
+    ///  <summary>Returns the type of encoding needed to store the given unit
+    ///  source code in a file.</summary>
+    ///  <remarks>The encoding will be the default ANSI encoding unless the
+    ///  source code contains characters outside the ANSI code page, when the
+    ///  UTF-8 encoding is returned.</remarks>
     class function RequiredEncoding(const SourceCode: string): TEncoding;
       static;
+    ///  <summary>Extracts and returns the unit name from the given unit source
+    ///  code.</summary>
     class function UnitName(const SourceCode: string): string; static;
   end;
 
-type
+  ///  <summary>Class of exception raised by methods in TPascalUnitAnalyser.
+  ///  </summary>
   EPascalUnitAnalyser = class(ECodeSnip);
+
 
 implementation
 
@@ -44,6 +56,7 @@ uses
   CS.SourceCode.Pascal.Lexer,
   UEncodings,
   UStrUtils;
+
 
 { TPascalUnitAnalyser }
 
