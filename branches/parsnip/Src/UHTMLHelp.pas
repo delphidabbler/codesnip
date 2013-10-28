@@ -165,7 +165,7 @@ type
 
   {
   THtmlHelp:
-    Prototype for HtmlHelpA API function.
+    Prototype for HtmlHelpW API function.
       @param hwndCaller [in] Handle of window calling HtmlHelp. HtmlHelp returns
         focus to this window when closed, unless window is desktop. If
         notifcations are enabled HtmlHelp sends notification messages to this
@@ -185,7 +185,7 @@ type
 
 var
   pvtHHCtrl: THandle = 0;         // handle to hhctrl.ocx library
-  pvtHtmlHelp: THtmlHelp = nil;   // pointer to HtmlHelpA API function
+  pvtHtmlHelp: THtmlHelp = nil;   // pointer to HtmlHelpW API function
 
 
 resourcestring
@@ -219,14 +219,14 @@ begin
 end;
 
 procedure LoadHtmlHelp;
-  {Attempt to load HtmlHelpA function from hhctrl.ocx.
+  {Attempt to load HtmlHelpW function from hhctrl.ocx.
   }
 const
-  cHTMLHelp = 'HtmlHelpW';
+  HTMLHelp = 'HtmlHelpW';
 begin
   pvtHHCtrl := SafeLoadLibrary('hhctrl.ocx');
   if pvtHHCtrl <> 0 then
-    pvtHtmlHelp := GetProcAddress(pvtHHCtrl, cHTMLHelp);
+    pvtHtmlHelp := GetProcAddress(pvtHHCtrl, HTMLHelp);
 end;
 
 initialization
