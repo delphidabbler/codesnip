@@ -11,6 +11,10 @@
 ; Change Log for CodeSnip Release 4
 ; ------------------------------------------------------------------------------
 
+Release v4.8.2 of 30 October 2013
++ Modified Syntax Highlighter tab of Preferences dialogue box so that "vertical" fonts (whose names begin with "@") no longer appear in list of available fonts.
++ Fixed potential bug in operating system detection code that may fail on Windows 2000.
+
 Release v4.8.1 of 18 September 2013
 + Removed File | Page Setup menu option because some settings made there were being ignored when a file was printed. This is a fix for bug #89 "Setup selections not being remembered" (http://bit.ly/1a3V94x).
 + Updated help file re changes.
