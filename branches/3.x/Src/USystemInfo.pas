@@ -234,10 +234,14 @@ const
 
 begin
   Result := 0;
-  Reg := TRegistry.Create;
+  if CheckReportedOS(WinXP) then
+    Reg := TRegistry.Create(KEY_READ or KEY_WOW64_64KEY)
+  else
+    // KEY_WOW64_64KEY is not supported on Windows 2000
+    Reg := TRegistry.Create(KEY_READ);
   try
     Reg.RootKey := HKEY_LOCAL_MACHINE;
-    if Reg.OpenKeyReadOnly(cRegKey) then
+    if Reg.OpenKey(cRegKey, False) then
     begin
       if Reg.ValueExists(cRegValue10) then
         Result := GetVer(cRegValue10)
