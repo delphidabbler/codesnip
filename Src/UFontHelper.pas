@@ -109,7 +109,7 @@ uses
   // Delphi
   SysUtils, Windows, Forms,
   // Project
-  UGraphicUtils, USystemInfo;
+  UGraphicUtils, UStrUtils, USystemInfo;
 
 
 { TFontHelper }
@@ -123,7 +123,10 @@ function MonoFontFamilyProc(PLF: PEnumLogFont; PNTM: PNewTextMetric;
     @param List [in] List to which mono-spaced fonts are added.
   }
 begin
-  if (PLF.elfLogFont.lfPitchAndFamily and $F) = FIXED_PITCH then
+  // check for fixed pitch font and filter out all "vertical" fonts that start
+  // with "@" (see http://tinyurl.com/6ul6rfo for details of vertical fonts).
+  if ((PLF.elfLogFont.lfPitchAndFamily and $F) = FIXED_PITCH)
+    and not StrStartsStr('@', PLF.elfLogFont.lfFaceName) then
     List.Add(PLF.elfLogFont.lfFaceName);
   Result := 1;
 end;

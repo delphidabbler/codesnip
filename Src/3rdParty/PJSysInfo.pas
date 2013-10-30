@@ -983,14 +983,31 @@ begin
     Result := '';
 end;
 
-// Creates a read only TRegistry instance. On versions of Delphi that don't
-// support passing access flags to TRegistry constructor, registry is opened
-// normally for read/write access.
+// Checks if host OS is Windows 2000 or earlier, included any Win9x OS.
+// This is a helper function for RegCreate and RegOpenKeyReadOnly and avoids
+// avoids using TPJOSInfo to ensure that an infinite loop is not set up with
+// TPJOSInfo calling back into RegCreate.
+function IsWin2000OrEarlier: Boolean;
+begin
+  // NOTE: all Win9x OSs have Win32MajorVersion < 5, so we don't need to check
+  // platform.
+  Result := (Win32MajorVersion < 5) or
+    ((Win32MajorVersion = 5) and (Win32MinorVersion = 0));
+end;
+
+// Creates a read only TRegistry instance. On versions of Delphi or OSs that
+// don't support passing access flags to TRegistry constructor, registry is
+// opened normally for read/write access.
 function RegCreate: TRegistry;
 begin
   {$IFDEF REGACCESSFLAGS}
-  //! fix for issue #14 (http://bit.ly/eWkw9X) suggested by Steffen Schaff
-  Result := TRegistry.Create(KEY_READ or KEY_WOW64_64KEY);
+  //! Fix for issue #14 (http://bit.ly/eWkw9X) suggested by Steffen Schaff.
+  //! Later modified to allow for fact that Windows 2000 fails if
+  //! KEY_WOW64_64KEY is used.
+  if IsWin2000OrEarlier then
+    Result := TRegistry.Create
+  else
+    Result := TRegistry.Create(KEY_READ or KEY_WOW64_64KEY);
   {$ELSE}
   Result := TRegistry.Create;
   {$ENDIF}
@@ -999,19 +1016,32 @@ end;
 // Uses registry object to open a key as read only. On versions of Delphi that
 // can't open keys as read only the key is opened normally.
 function RegOpenKeyReadOnly(const Reg: TRegistry; const Key: string): Boolean;
+
+  // Opens registry key using TRegistry.OpenKeyReadOnly if supported, otherwise
+  // uses TRegistry.OpenKey.
+  function TryOpenKeyReadOnly: Boolean;
+  begin
+    {$IFDEF REGOPENREADONLY}
+    Result := Reg.OpenKeyReadOnly(Key);
+    {$ELSE}
+    Result := Reg.OpenKey(Key, False);
+    {$ENDIF}
+  end;
+
 begin
   {$IFDEF REGACCESSFLAGS}
-  //! Fix for problem with OpenKeyReadOnly on 64 bit Windows
-  //! requires Reg has (KEY_READ or KEY_WOW64_64KEY) access flags
-  Result := Reg.OpenKey(Key, False);
+  //! Fix for problem with OpenKeyReadOnly on 64 bit Windows requires Reg has
+  //! (KEY_READ or KEY_WOW64_64KEY) access flags.
+  //! Even though these flags aren't provided on Windows 2000 and earlier, the
+  //! following code should still work
+  if IsWin2000OrEarlier then
+    Result := TryOpenKeyReadOnly
+  else
+    Result := Reg.OpenKey(Key, False);
   {$ELSE}
   // Can't fix Win 64 problem since this version of Delphi does not support
   // customisation of registry access flags.
-  {$IFDEF REGOPENREADONLY}
-  Result := Reg.OpenKeyReadOnly(Key);
-  {$ELSE}
-  Result := Reg.OpenKey(Key, False);
-  {$ENDIF}
+  Result := TryOpenKeyReadOnly;
   {$ENDIF}
 end;
 
