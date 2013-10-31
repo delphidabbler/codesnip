@@ -1,0 +1,105 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<!--
+ * $Rev$
+ * $Date$
+ *
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is dlg_proxyserver.htm
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2009 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s):
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
+-->
+<html>
+  <head>
+    <meta
+     http-equiv="Content-Type"
+     content="text-html; charset=Windows-1252">
+    <title>
+      Proxy Server Dialog Box
+    </title>
+    <link
+     rel="stylesheet"
+     href="../css/codesnip.css"
+     type="text/css">
+  </head>
+  <body>
+    <object
+     type="application/x-oleobject"
+     classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+      <param
+       name="ALink Name"
+       value="ProxyServerDlg">
+    </object>
+    <h1>
+      <a
+       name="dlg_proxyserver"></a>Proxy Server Configuration Dialog Box
+    </h1>
+    <p>
+      Use this dialog to specify any proxy server that you want
+      <em>CodeSnip</em> to use when it accesses the internet. The dialog is
+      accessed from the <em>Tools | Proxy Server</em> menu option.
+    </p>
+    <p>
+      To use a proxy server tick the <em>User Proxy Server</em> check box then
+      provide the required information in the rest of the dialog box.
+    </p>
+    <ul>
+      <li>
+         <em>Server IP address</em> &ndash; Enter the IP address of your server
+         in dotted quad format, i.e. xxx.xxx.xxx.xxx where xxx is a number
+         between 0 and 255.
+      </li>
+      <li>
+        <em>Port</em> &ndash; Enter the number of the port used by the proxy
+        server.
+      </li>
+      <li>
+        <em>User Name</em> &ndash; Provide any user name you need to access the
+        proxy server. This may be left blank if your server does not require a
+        user name.
+      </li>
+      <li>
+        <em>Password</em> &ndash; Enter any required password here. May be left
+        blank if no password is required.
+      </li>
+      <li>
+        <em>Re-enter Password</em> &ndash; If you entered a password above you
+        should type it again here.
+      </li>
+    </ul>
+    <p>
+      If you wish to stop using a proxy server you should clear the <em>Use
+      proxy server</em> check box.
+    </p>
+    <p>
+      Click <em>OK</em> once you have entered the correct details. If a proxy
+      server has been specified <em>CodeSnip</em> will use it whenever accessing
+      the internet.
+    </p>
+    <p>
+      <strong>Note:</strong> <em>CodeSnip</em> does not use this proxy when it
+      displays web links in your default browser: you must configure your
+      browser to use the required proxy server.
+    </p>
+  </body>
+</html>
+

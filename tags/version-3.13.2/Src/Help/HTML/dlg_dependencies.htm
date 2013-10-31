@@ -1,0 +1,76 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<!--
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is dlg_dependencies.htm
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2009 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * ***** END LICENSE BLOCK *****
+-->
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text-html; charset=Windows-1252">
+    <title>
+      Dependencies Dialog Box
+    </title>
+    <link rel="stylesheet" href="../css/codesnip.css" type="text/css">
+  </head>
+  <body>
+    <object
+      type="application/x-oleobject"
+      classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e"
+    >
+      <param name="ALink Name" value="DependenciesDlg">
+    </object>
+    <h1>
+      <a name="dlg_dependencies.htm"></a>
+      <img alt="Menu icon" src="../images/Dependencies.gif" class="glyph">
+      Dependencies Dialog Box
+    </h1>
+    <p>
+      This dialog box displays all the other snippets that the selected snippet
+      depends upon, either directly or indirectly.
+    </p>
+    <p>
+      The dialog box is accessed in two ways:
+    </p>
+    <ol>
+      <li>
+        From the <em>View | Dependencies</em> menu item when it displays
+        dependencies for the selected snippet.
+      </li>
+      <li>
+        By clicking the <em>View Dependencies</em> button on the
+        <em>References</em> tab of the 
+        <a href="dlg_editsnippet.htm">Snippets Editor</a>
+      </li>
+    </ol>
+    <p>
+      If the snippet has no dependenciess then a message to that effect is
+      displayed. Otherwise a tree of snippets is displayed that show the
+      direct and indirect dependencies. 
+    </p>
+    <p>
+      If a circular reference is detected (i.e. the snippet depends directly or
+      indirectly upon itself) the circular reference is displayed in red and an
+      error message is displayed. Circular references are not permitted and must
+      be corrected. 
+    </p>
+  </body>
+</html>
+
