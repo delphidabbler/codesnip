@@ -1,15 +1,36 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * Compilers.UBorland.pas
  *
- * Copyright (C) 2006-2013, Peter Johnson (www.delphidabbler.com).
+ * Abstract base class for classes that control and provide information about
+ * Borland compilers.
  *
  * $Rev$
  * $Date$
  *
- * Abstract base class for classes that control and provide information about
- * Borland compilers.
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is Compilers.UBorland.pas, formerly UBorlandCompiler.pas
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2006-2012 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -34,34 +55,19 @@ type
     Borland compilers. Provides common functionality.
   }
   TBorlandCompiler = class(TCompilerBase)
-  strict private
-    var
-      fId: TCompilerID;
-        {Identifies compiler}
+  private
+    fId: TCompilerID;
+      {Identifies compiler}
     function InstallPathFromReg(const RootKey: HKEY): string;
       {Gets compiler install root path from given registry root key, if present.
         @param RootKey [in] Given registry root key.
         @return Required root path or '' if not compiler not installed.
       }
-  strict protected
-    function SearchDirParams: string; override;
-      {One of more parameters that define any search directories to be passed
-      to compiler on command line.
-        @return Required space separated parameter(s).
-      }
+  protected
     function InstallationRegKey: string; virtual; abstract;
       {Returns name of registry key where records compiler's installation path
       is recorded.
         @return Name of key.
-      }
-  public
-    constructor Create(const Id: TCompilerID);
-      {Class constructor. Creates object for a Borland compiler.
-        @param Id Compiler id.
-      }
-    constructor CreateCopy(const Obj: TBorlandCompiler);
-      {Copy constructor. Creates a new object that is copy of another object.
-        @param Obj Compiler object to copy.
       }
     { ICompilerAutoDetect }
     function DetectExeFile: Boolean;
@@ -83,6 +89,15 @@ type
       {Provides the unique id of the compiler.
         @return Compiler id.
       }
+  public
+    constructor Create(const Id: TCompilerID);
+      {Class constructor. Creates object for a Borland compiler.
+        @param Id Compiler id.
+      }
+    constructor CreateCopy(const Obj: TBorlandCompiler);
+      {Copy constructor. Creates a new object that is copy of another object.
+        @param Obj Compiler object to copy.
+      }
   end;
 
 
@@ -93,7 +108,7 @@ uses
   // Delphi
   SysUtils, Registry,
   // Project
-  UIStringList, UStrUtils;
+  USystemInfo;
 
 
 constructor TBorlandCompiler.Create(const Id: TCompilerID);
@@ -180,32 +195,19 @@ function TBorlandCompiler.InstallPathFromReg(const RootKey: HKEY): string;
 var
   Reg: TRegistry; // registry accessor
 begin
-  Reg := TRegistry.Create;
+  if TOSInfo.CheckReportedOS(TOSInfo.WinXP) then
+    Reg := TRegistry.Create(KEY_READ or KEY_WOW64_64KEY)
+  else
+    // KEY_WOW64_64KEY is not supported on Windows 2000
+    Reg := TRegistry.Create(KEY_READ);
   try
     Reg.RootKey := RootKey;
-    if not Reg.OpenKeyReadOnly(InstallationRegKey) then
+    if not Reg.OpenKey(InstallationRegKey, False) then
       Exit('');
     Result := Reg.ReadString('RootDir');
   finally
     Reg.Free;
   end;
-end;
-
-function TBorlandCompiler.SearchDirParams: string;
-  {One of more parameters that define any search directories to be passed to
-  compiler on command line.
-    @return Required space separated parameter(s).
-  }
-var
-  Dirs: IStringList;  // list of search directory strings
-begin
-  if GetSearchDirs.IsEmpty then
-    Exit('');
-  Dirs := TIStringList.Create(GetSearchDirs.ToStrings);
-  Result := StrQuoteSpaced('-U' + Dirs.GetText(';', False))
-    + ' ' + StrQuoteSpaced('-I' + Dirs.GetText(';', False))
-    + ' ' + StrQuoteSpaced('-O' + Dirs.GetText(';', False))
-    + ' ' + StrQuoteSpaced('-R' + Dirs.GetText(';', False));
 end;
 
 end.

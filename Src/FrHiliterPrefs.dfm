@@ -6,6 +6,18 @@ inherited HiliterPrefsFrame: THiliterPrefsFrame
   DesignSize = (
     393
     326)
+  object lblNotice: TLabel
+    Left = 0
+    Top = 301
+    Width = 393
+    Height = 18
+    Alignment = taCenter
+    Anchors = [akLeft, akTop, akRight]
+    AutoSize = False
+    Caption = 
+      'Changes will be reflected in the main display only when you rest' +
+      'art CodeSnip.'
+  end
   object gbElements: TGroupBox
     Left = 0
     Top = 95
@@ -13,7 +25,7 @@ inherited HiliterPrefsFrame: THiliterPrefsFrame
     Height = 196
     Anchors = [akLeft, akTop, akRight]
     Caption = ' Syntactic elements '
-    TabOrder = 4
+    TabOrder = 3
     object lblElements: TLabel
       Left = 8
       Top = 20
@@ -143,7 +155,7 @@ inherited HiliterPrefsFrame: THiliterPrefsFrame
   end
   object btnReset: TButton
     Left = 247
-    Top = 32
+    Top = 46
     Width = 146
     Height = 25
     Anchors = [akTop, akRight]
@@ -157,7 +169,7 @@ inherited HiliterPrefsFrame: THiliterPrefsFrame
     Width = 146
     Height = 25
     Anchors = [akTop, akRight]
-    Caption = 'Use N&amed Style'
+    Caption = '&Use Predefined Styles'
     DoubleBuffered = True
     Glyph.Data = {
       F6000000424DF600000000000000760000002800000010000000100000000100
@@ -173,16 +185,6 @@ inherited HiliterPrefsFrame: THiliterPrefsFrame
     TabOrder = 1
     OnClick = btnStyleClick
   end
-  object btnSaveStyle: TButton
-    Left = 247
-    Top = 63
-    Width = 146
-    Height = 25
-    Anchors = [akTop, akRight]
-    Caption = '&Save Style...'
-    TabOrder = 3
-    OnClick = btnSaveStyleClick
-  end
   object mnuStyles: TPopupMenu
     Left = 304
     Top = 144
@@ -194,22 +196,15 @@ inherited HiliterPrefsFrame: THiliterPrefsFrame
       Caption = 'Delphi 7'
       OnClick = StyleMenuClick
     end
-    object miRADStudio: TMenuItem
-      Caption = 'RAD Studio'
+    object miDelphi2006: TMenuItem
+      Caption = 'Delphi 2006'
       OnClick = StyleMenuClick
     end
     object miVisualStudio: TMenuItem
       Caption = 'Visual Studio'#8482
       OnClick = StyleMenuClick
     end
-    object miSpacer1: TMenuItem
-      Caption = '-'
-    end
-    object miNamedStyles: TMenuItem
-      Caption = 'User Defined Styles...'
-      OnClick = miNamedStylesClick
-    end
-    object miSpacer2: TMenuItem
+    object miSpacer: TMenuItem
       Caption = '-'
     end
     object miNoHilite: TMenuItem

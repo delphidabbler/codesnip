@@ -1,15 +1,36 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * FrCategoryDescEdit.pas
  *
- * Copyright (C) 2009-2013, Peter Johnson (www.delphidabbler.com).
+ * Implements a frame that accepts and validates a description for a snippet
+ * category.
  *
  * $Rev$
  * $Date$
  *
- * Implements a frame that accepts and validates a description for a snippet
- * category.
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is FrCategoryDescEdit.pas
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2009 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -118,9 +139,9 @@ implementation
 
 uses
   // Delphi
-  Windows {for inlining},
+  SysUtils, Windows {for inlining},
   // Project
-  DB.UCategory, DB.UMain, UColours, UCtrlArranger, UFontHelper, UStrUtils;
+  UColours, UCtrlArranger, USnippets;
 
 {$R *.dfm}
 
@@ -130,7 +151,6 @@ procedure TCategoryDescEditFrame.ArrangeFrame;
   {Arranges controls in frame and sizes it to fit the controls.
   }
 begin
-  TCtrlArranger.SetLabelHeights(Self);
   edDescription.Top := TCtrlArranger.BottomOf(lblDescription, 4);
   lblError.Top := TCtrlArranger.BottomOf(edDescription, 4);
   Self.ClientHeight := TCtrlArranger.TotalControlHeight(Self);
@@ -146,8 +166,8 @@ var
   Cat: TCategory; // each category in database
 begin
   Result := False;
-  for Cat in Database.Categories do
-    if StrSameText(Desc, Cat.Description) then
+  for Cat in Snippets.Categories do
+    if AnsiSameText(Desc, Cat.Description) then
     begin
       Result := True;
       Break;
@@ -161,7 +181,6 @@ constructor TCategoryDescEditFrame.Create(AOwner: TComponent);
 begin
   inherited;
   lblError.Font.Color := clWarningText;
-  TFontHelper.SetDefaultBaseFont(lblError.Font);
   UpdateControls;
 end;
 
@@ -196,7 +215,7 @@ function TCategoryDescEditFrame.GetDescription: string;
     @return Current description from edit control.
   }
 begin
-  Result := StrTrim(edDescription.Text);
+  Result := Trim(edDescription.Text);
 end;
 
 function TCategoryDescEditFrame.GetPrompt: string;

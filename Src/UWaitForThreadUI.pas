@@ -1,15 +1,36 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * UWaitForThreadUI.pas
  *
- * Copyright (C) 2006-2013, Peter Johnson (www.delphidabbler.com).
+ * Implements a class that executes a thread and displays a dialog box if thread
+ * takes more than a specified time to complete.
  *
  * $Rev$
  * $Date$
  *
- * Implements a class that executes a thread and displays a dialog box if thread
- * takes more than a specified time to complete.
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is UWaitForThreadUI.pas, formerly UWaitForActionUI.pas
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2006-2010 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -21,9 +42,9 @@ interface
 
 uses
   // Delphi
-  SysUtils, Classes, ExtCtrls, Forms, SyncObjs,
+  Classes, ExtCtrls, Forms, SyncObjs,
   // Project
-  UBaseObjects;
+  UBaseObjects, UThreadEx;
 
 
 type
@@ -35,9 +56,7 @@ type
   }
   TWaitForThreadUI = class(TNoPublicConstructObject)
   strict private
-    const DefaultPauseBeforeDisplay = 50;
-    const DefaultMinDisplayTime = 1000;
-    var fThread: TThread;               // Thread to be executed
+    var fThread: TThreadEx;             // Thread to be executed
     var fForm: TForm;                   // Form to be displayed if required
     var fMinDisplayTimer: TTimer;       // Timer to delay closure of form
     var fSaveOnTerminate: TNotifyEvent; // Saves fThread.OnTerminate value
@@ -73,7 +92,7 @@ type
       {Delays execution by fPauseBeforeDisplay ms.
       }
   strict protected
-    constructor InternalCreate(const AThread: TThread;
+    constructor InternalCreate(const AThread: TThreadEx;
       const AForm: TForm; const APauseBeforeDisplay, AMinDisplayTime: Cardinal);
       {Object constructor. Sets up object.
         @param AThread [in] Thread to be executed.
@@ -95,27 +114,12 @@ type
     destructor Destroy; override;
       {Object destructor. Tears down object.
       }
-    class procedure Run(const AThread: TThread; const AForm: TForm;
-      const APauseBeforeDisplay: Cardinal = DefaultPauseBeforeDisplay;
-      const AMinDisplayTime: Cardinal = DefaultMinDisplayTime); overload;
+    class procedure Run(const AThread: TThreadEx; const AForm: TForm;
+      const APauseBeforeDisplay: Cardinal = 50;
+      const AMinDisplayTime: Cardinal = 1000);
       {Creates and executes a TWaitForThreadUI object that executes a thread,
       displaying dialog box if necessary.
         @param AThread [in] Thread to be executed.
-        @param AForm [in] Form to be displayed while thread executes.
-        @param APauseBeforeDisplay [in] Time thread given to execute before form
-          is displayed (optional)
-        @param AMinDisplayTime [in] Minimum time to display form (optional).
-      }
-    class procedure Run(const AProc: TProc; const AIsThreadSafe: Boolean;
-      const AForm: TForm;
-      const APauseBeforeDisplay: Cardinal = DefaultPauseBeforeDisplay;
-      const AMinDisplayTime: Cardinal = DefaultMinDisplayTime); overload;
-      {Creates and executes a TWaitForThreadUI object that executes a closure in
-      a thread, displaying dialog box if necessary.
-        @param AProc [in] Closure to be executed in thread.
-        @param AIsThreadSage [in] Indicates if AProc is thread safe. If True
-          AProc is excuted in context of thread. If False closure is executed
-          in context of main thread.
         @param AForm [in] Form to be displayed while thread executes.
         @param APauseBeforeDisplay [in] Time thread given to execute before form
           is displayed (optional)
@@ -128,31 +132,10 @@ implementation
 
 
 uses
+  // Delphi
+  SysUtils,
   // Project
   UExceptions, UUtils;
-
-
-type
-  ///  <summary>Thread class that executes a given closure.</summary>
-  TProcThread = class(TThread)
-  strict private
-    var
-      ///  <summary>Closure to executed.</summary>
-      fProc: TProc;
-      ///  <summary>Flag indicating if closure is thread safe.</summary>
-      fProcIsThreadSafe: Boolean;
-  strict protected
-    ///  <summary>Executes closure from thread.</summary>
-    procedure Execute; override;
-  public
-    ///  <summary>Constructs a new, suspended, thread instance.</summary>
-    ///  <param name="Proc">TProc [in] Closure to be executed by thread.</param>
-    ///  <param name="ProcIsThreadSafe">Boolean [in] Flag indicating if Proc is
-    ///  thread safe or not.</param>
-    ///  <remarks>If Proc is not thread safe it is executed in the context of
-    ///  the main thread.</remarks>
-    constructor Create(const Proc: TProc; const ProcIsThreadSafe: Boolean);
-  end;
 
 
 { TWaitForThreadUI }
@@ -212,7 +195,7 @@ begin
   fThread.Start;
   // Pause before displayng dialog by PauseBeforeDisplay ms
   Pause;
-  if not fThread.Finished then
+  if not fThread.Completed then
     // Show dialog if thread not completed. Dialog blocks until thread
     // terminates.
     ShowForm;
@@ -236,7 +219,7 @@ begin
     fForm.Close;
 end;
 
-constructor TWaitForThreadUI.InternalCreate(const AThread: TThread;
+constructor TWaitForThreadUI.InternalCreate(const AThread: TThreadEx;
   const AForm: TForm; const APauseBeforeDisplay, AMinDisplayTime: Cardinal);
   {Object constructor. Sets up object.
     @param AThread [in] Thread to be executed.
@@ -282,32 +265,7 @@ begin
   UUtils.Pause(fPauseBeforeDisplay);
 end;
 
-class procedure TWaitForThreadUI.Run(const AProc: TProc;
-  const AIsThreadSafe: Boolean; const AForm: TForm;
-  const APauseBeforeDisplay, AMinDisplayTime: Cardinal);
-  {Creates and executes a TWaitForThreadUI object that executes a closure in a
-  thread, displaying dialog box if necessary.
-    @param AProc [in] Closure to be executed in thread.
-    @param AIsThreadSage [in] Indicates if AProc is thread safe. If True AProc
-      is excuted in context of thread. If False closure is executed in context
-      of main thread.
-    @param AForm [in] Form to be displayed while thread executes.
-    @param APauseBeforeDisplay [in] Time thread given to execute before form is
-      displayed (optional)
-    @param AMinDisplayTime [in] Minimum time to display form (optional).
-  }
-var
-  ProcThread: TProcThread;  // thread used to execute AProc
-begin
-  ProcThread := TProcThread.Create(AProc, AIsThreadSafe);
-  try
-    Run(ProcThread, AForm, APauseBeforeDisplay, AMinDisplayTime);
-  finally
-    ProcThread.Free;
-  end;
-end;
-
-class procedure TWaitForThreadUI.Run(const AThread: TThread;
+class procedure TWaitForThreadUI.Run(const AThread: TThreadEx;
   const AForm: TForm; const APauseBeforeDisplay, AMinDisplayTime: Cardinal);
   {Creates and executes a TWaitForThreadUI object that executes a thread,
   displaying dialog box if necessary.
@@ -368,25 +326,6 @@ begin
   CloseForm;
   if Assigned(fSaveOnTerminate) then
     fSaveOnTerminate(fThread);
-end;
-
-{ TProcThread }
-
-constructor TProcThread.Create(const Proc: TProc;
-  const ProcIsThreadSafe: Boolean);
-begin
-  Assert(Assigned(Proc), ClassName + '.Create: Proc is nil');
-  inherited Create(True);
-  fProc := Proc;
-  fProcIsThreadSafe := ProcIsThreadSafe;
-end;
-
-procedure TProcThread.Execute;
-begin
-  if fProcIsThreadSafe then
-    fProc
-  else
-    Synchronize(procedure begin fProc; end);
 end;
 
 end.

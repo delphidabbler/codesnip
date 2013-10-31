@@ -1,15 +1,37 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * UWBExternal.pas
  *
- * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
+ * COM object that extends the "external" object accessible from JavaScript in a
+ * browser control and notifies application of events triggered via JavaScript
+ * calls to the external object's methods.
  *
  * $Rev$
  * $Date$
  *
- * Implements a COM object that extends a browser control's "external" object
- * enabling application code to be called from JavaScript.
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is UWBExternal.pas
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -29,102 +51,73 @@ uses
 
 
 type
-  ///  <summary>COM object that implements the methods of the IWBExternal12
-  ///  interface that extend the browser control's 'external' object.</summary>
-  ///  <remarks>
-  ///  <para>This class enables application code to be called from JavaScript
-  ///  running in the browser control.</para>
-  ///  <para>The methods a declared in the type library that is defined in
-  ///  External.idl.</para>
-  ///  </remarks>
-  TWBExternal = class(TAutoIntfObject, IWBExternal12, ISetNotifier)
+
+  {
+  TWBExternal:
+    COM object that extends the "external" object accessible from JavaScript in
+    a web browser and notifies application of events triggered via JavaScript
+    calls to the external object's methods. Uses notification object to pass
+    events to application.
+  }
+  TWBExternal = class(TAutoIntfObject,
+    IWBExternal6, // browser external object's methods
+    ISetNotifier  // sets object used to notify app of events
+    )
   strict private
-    var
-      ///  <summary>Object used to call application code in response to
-      ///  JavaScript calls.</summary>
-      fNotifier: INotifier;
-
-    ///  <summary>Handles exceptions raised by getting the application object to
-    ///  handle.</summary>
-    ///  <remarks>Exceptions must be handle by application objects to avoid them
-    ///  causing browser error messages.</remarks>
+    fNotifier: INotifier; // Notifies application of events triggered by user
     procedure HandleException;
-
-  public
-
-    ///  <summary>Constructs a new object instance and connects it to the type
-    ///  library.</summary>
-    constructor Create;
-
-    ///  <summary>Updates database from internet.</summary>
-    ///  <remarks>Method of IWBExternal12.</remarks>
+      {Gets application to handle current exception.
+      }
+  protected // do not make strict
+    { IWBExternal5: defined in type library }
     procedure UpdateDbase; safecall;
-
-    ///  <summary>Displays a named snippet.</summary>
-    ///  <param name="SnippetName">WideString [in] Name of snippet to be
-    ///  displayed.</param>
-    ///  <param name="UserDefined">WordBool [in] Whether the snippet is user
-    ///  defined.</param>
-    ///  <param name="NewTab">WordBool [in] Whether to display snippet in a new
-    ///  tab.</param>
-    ///  <remarks>Method of IWBExternal12.</remarks>
+      {Updates database from internet.
+      }
     procedure DisplaySnippet(const SnippetName: WideString;
-      UserDefined: WordBool; NewTab: WordBool); safecall;
-
-    ///  <summary>Displays the Configure Compilers dialogue box.</summary>
-    ///  <remarks>Method of IWBExternal12.</remarks>
+      UserDefined: WordBool); safecall;
+      {Displays a named snippet.
+        @param SnippetName [in] Name of snippet to display.
+        @param UserDefined [in] Whether snippet is user defined.
+      }
+    procedure CompileSnippet; safecall;
+      {Compiles the current snippet via notifier.
+      }
+    procedure ViewCompilerLog(Ver: SYSINT); safecall;
+      {Displays a compiler log.
+        @param Ver [in] Version of Delphi for which we need to display log. Ver
+          is the ordinal value of the required compiler version enumerated type.
+      }
+    procedure ShowHint(const Hint: WideString); safecall;
+      {Displays a hint.
+        @param Hint [in] Hint to be displayed.
+      }
     procedure ConfigCompilers; safecall;
-
-    ///  <summary>Edits a named snippet.</summary>
-    ///  <param name="SnippetName">WideString [in] Name of snippet to be edited.
-    ///  </param>
-    ///  <remarks>
-    ///  <para>The named snippet must be user defined.</para>
-    ///  <para>Method of IWBExternal12.</para>
-    ///  </remarks>
+      {Displays the Configure Compilers dialog box.
+      }
+    procedure ShowTestUnit; safecall;
+      {Displays test unit for current snippet.
+      }
     procedure EditSnippet(const SnippetName: WideString); safecall;
-
-    ///  <summary>Displays the Donate dialogue box.</summary>
-    ///  <remarks>Method of IWBExternal12.</remarks>
+      {Edits a named snippet.
+        @param SnippetName [in] Name of snippet to be edited. Must be a user
+          defined snippet.
+      }
     procedure Donate; safecall;
-
-    ///  <summary>Displays a named category.</summary>
-    ///  <param name="CatID">WideString [in] ID of category to be displayed.
-    ///  </param>
-    ///  <param name="NewTab">WordBool [in] Whether to display category in a new
-    ///  tab.</param>
-    ///  <remarks>Method of IWBExternal12.</remarks>
-    procedure DisplayCategory(const CatID: WideString; NewTab: WordBool);
-      safecall;
-
-    ///  <summary>Opens Snippet Editor ready to create a new snippet.</summary>
-    ///  <remarks>Method of IWBExternal12.</remarks>
-    procedure NewSnippet; safecall;
-
-    ///  <summary>Shows latest news items from CodeSnip news feed.</summary>
-    ///  <remarks>Method of IWBExternal12.</remarks>
-    procedure ShowNews; safecall;
-
-    ///  <summary>Checks for program updates.</summary>
-    ///  <remarks>Method of IWBExternal12.</remarks>
-    procedure CheckForUpdates; safecall;
-
-    ///  <summary>Displays the program's About Box.</summary>
-    ///  <remarks>Method of IWBExternal12.</remarks>
-    procedure ShowAboutBox; safecall;
-
-    ///  <summary>Displays specified page of the Preferences dialogue.</summary>
-    ///  <param name="ClsName">WideString [in] Class name of the frame that
-    ///  implements the required preferences page.</param>
-    ///  <remarks>Method of IWBExternal12.</remarks>
-    procedure ShowPrefsPage(const ClsName: WideString); safecall;
-
-    ///  <summary>Records the notifier object that is used to call application
-    ///  code in response to JavaScript calls running in browser documents.
-    ///  </summary>
-    ///  <param name="Notifier">INotifier [in] The notifier object.</param>
-    ///  <remarks>Method of ISetNotifier.</remarks>
+      {Displays the Donate dialog box.
+      }
+    procedure DisplayCategory(const CatID: WideString); safecall;
+      {Displays a category.
+        @param CatID [in] ID of category to display.
+      }
+    { ISetNotifier }
     procedure SetNotifier(const Notifier: INotifier);
+      {Records the notifier object that is called in response to user input.
+        @param Notifier [in] Notifier object.
+      }
+  public
+    constructor Create;
+      {Class constructor. Sets up object using embedded type library.
+      }
   end;
 
 
@@ -133,24 +126,28 @@ implementation
 
 uses
   // Delphi
-  Forms,
+  SysUtils, Forms,
   // Project
   UAppInfo;
 
 
 { TWBExternal }
 
-procedure TWBExternal.CheckForUpdates;
+procedure TWBExternal.CompileSnippet;
+  {Compiles the current snippet.
+  }
 begin
   try
     if Assigned(fNotifier) then
-      fNotifier.CheckForUpdates;
+      fNotifier.CompileRoutine;
   except
     HandleException;
   end;
 end;
 
 procedure TWBExternal.ConfigCompilers;
+  {Displays the Configure Compilers dialog box.
+  }
 begin
   try
     if Assigned(fNotifier) then
@@ -161,6 +158,8 @@ begin
 end;
 
 constructor TWBExternal.Create;
+  {Class constructor. Sets up object using embedded type library.
+  }
 var
   TypeLib: ITypeLib;    // type library
   ExeName: WideString;  // name of this executable file
@@ -169,32 +168,40 @@ begin
   ExeName := TAppInfo.AppExeFilePath;
   OleCheck(LoadTypeLib(PWideChar(ExeName), TypeLib));
   // Create the object using type library
-  inherited Create(TypeLib, IWBExternal12);
+  inherited Create(TypeLib, IWBExternal6);
 end;
 
-procedure TWBExternal.DisplayCategory(const CatID: WideString;
-  NewTab: WordBool);
+procedure TWBExternal.DisplayCategory(const CatID: WideString);
+  {Displays a category.
+    @param CatID [in] ID of category to display.
+  }
 begin
   try
     if Assigned(fNotifier) then
-      fNotifier.DisplayCategory(CatID, NewTab);
+      fNotifier.DisplayCategory(CatID);
   except
     HandleException;
   end;
 end;
 
 procedure TWBExternal.DisplaySnippet(const SnippetName: WideString;
-  UserDefined: WordBool; NewTab: WordBool);
+  UserDefined: WordBool);
+  {Displays a named snippet.
+    @param SnippetName [in] Name of snippet to display.
+    @param UserDefined [in] Whether snippet is user defined.
+  }
 begin
   try
     if Assigned(fNotifier) then
-      fNotifier.DisplaySnippet(SnippetName, UserDefined, NewTab);
+      fNotifier.DisplayRoutine(SnippetName, UserDefined);
   except
     HandleException;
   end;
 end;
 
 procedure TWBExternal.Donate;
+  {Displays the Donate dialog box.
+  }
 begin
   try
     if Assigned(fNotifier) then
@@ -205,70 +212,80 @@ begin
 end;
 
 procedure TWBExternal.EditSnippet(const SnippetName: WideString);
+  {Edits a named snippet.
+    @param SnippetName [in] Name of snippet to be edited. Must be a user defined
+      snippet.
+  }
 begin
   try
     if Assigned(fNotifier) then
-      fNotifier.EditSnippet(SnippetName);
+      fNotifier.EditRoutine(SnippetName);
   except
     HandleException;
   end;
 end;
 
 procedure TWBExternal.HandleException;
+  {Gets application to handle current exception.
+  }
 begin
   Application.HandleException(ExceptObject);
 end;
 
-procedure TWBExternal.NewSnippet;
-begin
-  try
-    if Assigned(fNotifier) then
-      fNotifier.NewSnippet;
-  except
-    HandleException;
-  end;
-end;
-
 procedure TWBExternal.SetNotifier(const Notifier: INotifier);
+  {Records the notifier object that is called in response to user input.
+    @param Notifier [in] Notifier object.
+  }
 begin
   fNotifier := Notifier;
 end;
 
-procedure TWBExternal.ShowAboutBox;
+procedure TWBExternal.ShowHint(const Hint: WideString);
+  {Displays a hint.
+    @param Hint [in] Hint to be displayed.
+  }
 begin
   try
     if Assigned(fNotifier) then
-      fNotifier.ShowAboutBox;
+      fNotifier.ShowHint(Hint);
   except
     HandleException;
   end;
 end;
 
-procedure TWBExternal.ShowNews;
+procedure TWBExternal.ShowTestUnit;
+  {Displays test unit for current snippet.
+  }
 begin
   try
     if Assigned(fNotifier) then
-      fNotifier.ShowNews;
-  except
-    HandleException;
-  end;
-end;
-
-procedure TWBExternal.ShowPrefsPage(const ClsName: WideString); safecall;
-begin
-  try
-    if Assigned(fNotifier) then
-      fNotifier.ShowPrefsPage(ClsName);
+      fNotifier.ShowTestUnit;
   except
     HandleException;
   end;
 end;
 
 procedure TWBExternal.UpdateDbase;
+  {Updates database from internet.
+  }
 begin
   try
     if Assigned(fNotifier) then
       fNotifier.UpdateDbase;
+  except
+    HandleException;
+  end;
+end;
+
+procedure TWBExternal.ViewCompilerLog(Ver: SYSINT);
+  {Displays a compiler log.
+    @param Ver [in] Version of Delphi for which we need to display log. Ver is
+      the ordinal value of the required compiler version enumerated type.
+  }
+begin
+  try
+    if Assigned(fNotifier) then
+      fNotifier.ViewCompilerLog(Ver);
   except
     HandleException;
   end;

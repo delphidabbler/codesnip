@@ -1,84 +1,127 @@
-<?xml version="1.0"?>
-
-<!DOCTYPE html
-  PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-
 <!--
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * info-snippet-tplt.html
  *
- * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
+ * Information pane template used to display details of currently selected
+ * snippet.
+ *
+ * Must be hosted within a complete HTML document.
  *
  * $Rev$
  * $Date$
  *
- * Information pane template used to display details of currently selected
- * snippet.
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is info-snippet-tplt.html
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributors:
+ *    NONE
+ *
+ * ***** END LICENSE BLOCK *****
 -->
 
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 
-  <head>
-    <title>detail-info</title>
-    <link rel="stylesheet" href="<%ResourcePath%>detail.css" />
-    <script type="text/javascript" language="JavaScript">
-      <%externalScript%>
-    </script>
-    <script type="text/javascript" language="JavaScript">
-      <%overflowXFixScript%>
-    </script>
-  </head>
+<div class="details">
 
-  <body>
-  
-    <div class="details">
+  <div>
 
-      <div>
-
-        <div style="<%TestingInfo%>">
-          <%TestingInfoImg%>
-        </div>
-
-        <div
-          id="editlink"
-          class="option"
-          style="<%EditLink%>
-            padding:0;margin:0 0 0 8px;position:relative;float:right;"
-        >
-          <a
-            id="editimglink"
-            class="command-link"
-            href="#"
-            onclick="<%EditEventHandler%>;return false;"
-          ><img
-            src="<%ResourcePath%>editsnippet.gif"
-            class="option-img"
-            style="width:16px;height:16px;vertical-align:middle;"
-            title="Edit Snippet"
-          ></a>
-          <a
-            id="edittextlink"
-            class="command-link menu-item"
-            style="line-height: 150%;";
-            href="#"
-            onclick="<%EditEventHandler%>;return false;"
-          >Edit Snippet</a>
-        </div>
-
-        <h1 id="snippetname" class="<%SnippetCSSClass%>">
-          <%SnippetName%>
-        </h1>
-
-      </div>
-
-      <div id="details">
-        <%SnippetPageFragments%>
-      </div>
-
+    <div
+      id="editlink"
+      class="option"
+      style="<%EditLink%>
+        padding:-0.1em 0 0.3em 0;position:relative;float:right;"
+    >
+      <a
+        id="editimglink"
+        class="command-link"
+        href="javascript:void(0);"
+        onclick="<%EditEventHandler%>;return false;"
+        onmouseover="showEditSnippetHint();"
+        onmouseout="clearHint();"
+      ><img
+        src="editsnippet.gif"
+        class="option-img"
+        style="width:16px;height:16px;vertical-align:middle;"
+        title="Edit Snippet"
+      ></a>
+      <a
+        id="edittextlink"
+        class="command-link menu-item"
+        href="javascript:void(0);"
+        onclick="<%EditEventHandler%>;return false;"
+        onmouseover="showEditSnippetHint();"
+        onmouseout="clearHint();"
+      >Edit Snippet</a>
     </div>
 
-  </body>
-  
-</html>
+    <!-- Routine name common with info-routine-tplt.html -->
+    <h1 id="routinename" class="<%RoutineCSSClass%>">
+      <%RoutineName%>
+    </h1>
+
+  </div>
+
+  <p id="description">
+    <%Description%>
+  </p>
+
+  <div id="sourcecode">
+    <%SourceCode%>
+  </div>
+
+  <p>
+    <strong>Snippet type:</strong>
+    <span id="kind"><%Kind%></span>
+  </p>
+
+  <p>
+    <strong>Category:</strong>
+    <span id="category"><%Category%></span>
+  </p>
+
+  <p>
+    <strong>Required units:</strong>
+    <span id="units"><%Units%></span>
+  </p>
+
+  <p>
+    <strong>Required snippets:</strong>
+    <span id="depends"><%Depends%></span>
+  </p>
+
+  <p>
+    <strong>See also:</strong>
+    <span id="xrefs"><%XRefs%></span>
+  </p>
+
+  <div style="<%ShowCompilations%>">
+    <p>
+      <strong>Supported Compilers:</strong>
+    </p>
+
+    <table class="comptable" cellspacing="1" cellpadding="4">
+      <%CompilerTableRows%>
+    </table>
+  </div>
+
+  <div id="extra">
+    <%Extra%>
+  </div>
+
+</div>
+

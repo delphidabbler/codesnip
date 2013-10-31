@@ -6,10 +6,14 @@ inherited CodeSubmitDlg: TCodeSubmitDlg
   TextHeight = 13
   inherited pnlBody: TPanel
     inherited pcWizard: TPageControl
-      ActivePage = tsSnippets
+      ActivePage = tsRoutines
       object tsIntro: TTabSheet
         Caption = 'tsIntro'
         TabVisible = False
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object lblIntro: TLabel
           Left = 0
           Top = 8
@@ -26,19 +30,19 @@ inherited CodeSubmitDlg: TCodeSubmitDlg
           WordWrap = True
         end
       end
-      object tsSnippets: TTabSheet
-        Caption = 'tsSnippets'
+      object tsRoutines: TTabSheet
+        Caption = 'tsRoutines'
         ImageIndex = 1
         TabVisible = False
-        object lblSnippets: TLabel
+        object lblRoutines: TLabel
           Left = 0
           Top = 8
           Width = 190
           Height = 13
           Caption = '&Select the snippet(s) you want to submit:'
-          FocusControl = frmSnippets
+          FocusControl = frmRoutines
         end
-        object lblSnippetPrompt: TLabel
+        object lblRoutinePrompt: TLabel
           Left = 0
           Top = 221
           Width = 183
@@ -46,7 +50,7 @@ inherited CodeSubmitDlg: TCodeSubmitDlg
           Caption = 'One or more snippets must be selected'
           Visible = False
         end
-        inline frmSnippets: TSelectUserSnippetsFrame
+        inline frmRoutines: TSelectUserSnippetsFrame
           Left = 0
           Top = 32
           Width = 369
@@ -68,6 +72,10 @@ inherited CodeSubmitDlg: TCodeSubmitDlg
         Caption = 'tsUserInfo'
         ImageIndex = 2
         TabVisible = False
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object lblName: TLabel
           Left = 0
           Top = 8
@@ -149,6 +157,10 @@ inherited CodeSubmitDlg: TCodeSubmitDlg
         Caption = 'tsSubmit'
         ImageIndex = 4
         TabVisible = False
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object lblSubmit: TLabel
           Left = 0
           Top = 3
@@ -178,6 +190,10 @@ inherited CodeSubmitDlg: TCodeSubmitDlg
         Caption = 'tsFinished'
         ImageIndex = 3
         TabVisible = False
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object lblFinished: TLabel
           Left = 0
           Top = 0

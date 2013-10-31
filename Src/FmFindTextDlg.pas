@@ -1,16 +1,33 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * FmFindTextDlg.pas
  *
- * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
+ * Dialog box that is used to select criteria for text searches. Also defines a
+ * class that is used to persist the last chosen search criteria.
  *
  * $Rev$
  * $Date$
  *
- * Implements a dialogue box that is used to select criteria for text searches.
+ * ***** BEGIN LICENSE BLOCK *****
  *
- * Also defines a class that is used to persist the last chosen search criteria.
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is FmFindTextDlg.pas
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -34,7 +51,7 @@ type
   {
   TFindTextDlg:
     Defines a dialog box that is used to select criteria for searches for
-    snippets containing specified text.
+    routines containing specified text.
   }
   TFindTextDlg = class(TGenericOKDlg, INoPublicConstruct)
     cbCaseSensitive: TCheckBox;
@@ -44,7 +61,6 @@ type
     lblDesc: TLabel;
     lblFindText: TLabel;
     rgLogic: TRadioGroup;
-    rgScope: TRadioGroup;
     procedure btnOKClick(Sender: TObject);
     procedure cbFindTextChange(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -52,7 +68,6 @@ type
   strict private
     fSearchParams: TTextSearchParams; // Object that persists search options
     fSearch: ISearch;                 // Search corresponding to criteria
-    fRefinePreviousSearch: Boolean;   // Whether to refine previous search
   strict protected
     procedure ArrangeForm; override;
       {Sizes and arrange controls in dialog box and determine size of dialog
@@ -63,14 +78,11 @@ type
       }
   public
     class function Execute(const AOwner: TComponent;
-      out ASearch: ISearch; out RefineExisting: Boolean): Boolean;
+      out ASearch: ISearch): Boolean;
       {Displays dialog and returns search object based on entered criteria.
         @param AOwner [in] Component that owns this dialog.
         @param ASearch [out] Set to value of Search property: nil if user
           cancels.
-        @param RefineExisting [out] Set to flag indicating if any existing
-          search is to be refined (True) or if this search is to apply to whole
-          database (False).
         @return True if user OKs and search object created or false if user
           cancels and search object is nil.
       }
@@ -155,9 +167,9 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Windows,
+  SysUtils,
   // Project
-  UCtrlArranger, UIStringList, UQuery, USettings, FmGenericDlg;
+  UCtrlArranger, UIStringList, USettings, FmGenericDlg;
 
 
 {$R *.dfm}
@@ -165,24 +177,30 @@ uses
 
 { TFindTextDlg }
 
+procedure TFindTextDlg.cbFindTextChange(Sender: TObject);
+  {OnChange event handler. Enables or disables OK button depending on if text
+  box has text.
+    @param Sender [in] Not used.
+  }
+begin
+  inherited;
+  btnOK.Enabled := cbFindText.Text <> '';
+end;
+
 procedure TFindTextDlg.ArrangeForm;
   {Sizes and arrange controls in dialog box and determine size of dialog box.
   }
 begin
   TCtrlArranger.SetLabelHeight(lblDesc);
-  TCtrlArranger.MoveBelow(lblFindText, cbFindText, 4);
-  TCtrlArranger.MoveBelow(cbFindText, lblDesc, 4);
-  TCtrlArranger.AlignTops(
-    [gbOptions, rgLogic], TCtrlArranger.BottomOf(lblDesc, 8)
-  );
-  TCtrlArranger.MoveBelow([rgLogic, gbOptions], rgScope, 8);
-  pnlBody.ClientHeight := TCtrlArranger.TotalControlHeight(pnlBody) + 4;
-  pnlBody.ClientWidth := TCtrlArranger.TotalControlWidth(pnlBody);
+  lblDesc.Top := TCtrlArranger.BottomOf(cbFindText, 4);
+  gbOptions.Top := TCtrlArranger.BottomOf(lblDesc, 8);
+  rgLogic.Top := gbOptions.Top;
+  pnlBody.ClientHeight := rgLogic.Top + rgLogic.Height + 4;
   inherited;
 end;
 
 procedure TFindTextDlg.btnOKClick(Sender: TObject);
-  {OK button click event handler. Creates search object and records criteria.
+  {OK button click event handler. Creates and records search criteria.
     @param Sender [in] Not used.
   }
 
@@ -212,56 +230,21 @@ procedure TFindTextDlg.btnOKClick(Sender: TObject);
   // ---------------------------------------------------------------------------
 
 var
-  Filter: ITextSearchFilter;  // search filter
+  SearchCriteria: ITextSearchCriteria;  // user's search criteria
 begin
   inherited;
-  // Create search filter object containing info from dialog controls
-  Filter := TSearchFilterFactory.CreateTextSearchFilter(
+  // Create search criteria object containing info from dialog controls
+  SearchCriteria := TSearchCriteriaFactory.CreateTextSearchCriteria(
     cbFindText.Text,
     ParseLogicControls,
     ParseOptionsControls
   );
   // Record search params in persistent store
   fSearchParams.AddHistoryItem(cbFindText.Text);
-  fSearchParams.Logic := Filter.Logic;
-  fSearchParams.Options := Filter.Options;
-  // Create search object
-  fSearch := TSearchFactory.CreateSearch(Filter);
-  // Record search scope
-  fRefinePreviousSearch := rgScope.ItemIndex = 0
-end;
-
-procedure TFindTextDlg.cbFindTextChange(Sender: TObject);
-  {OnChange event handler. Enables or disables OK button depending on if text
-  box has text.
-    @param Sender [in] Not used.
-  }
-begin
-  inherited;
-  btnOK.Enabled := cbFindText.Text <> '';
-end;
-
-class function TFindTextDlg.Execute(const AOwner: TComponent;
-  out ASearch: ISearch; out RefineExisting: Boolean): Boolean;
-  {Displays dialog and returns search object based on entered criteria.
-    @param AOwner [in] Component that owns this dialog.
-    @param ASearch [out] Set to value of Search property: nil if user
-      cancels.
-    @param RefineExisting [out] Set to flag indicating if any existing
-      search is to be refined (True) or if this search is to apply to whole
-      database (False).
-    @return True if user OKs and search object created or false if user
-      cancels and search object is nil.
-  }
-begin
-  with InternalCreate(AOwner) do
-    try
-      Result := (ShowModal = mrOK);
-      ASearch := fSearch;
-      RefineExisting := fRefinePreviousSearch;
-    finally
-      Free;
-    end;
+  fSearchParams.Logic := SearchCriteria.Logic;
+  fSearchParams.Options := SearchCriteria.Options;
+  // Create search object from the entered criteria
+  fSearch := TSearchFactory.CreateTextSearch(SearchCriteria);
 end;
 
 procedure TFindTextDlg.FormCreate(Sender: TObject);
@@ -272,7 +255,6 @@ begin
   inherited;
   // Create search params object with default values
   fSearchParams := TTextSearchParams.Create;
-  fRefinePreviousSearch := False;
 end;
 
 procedure TFindTextDlg.FormDestroy(Sender: TObject);
@@ -284,6 +266,24 @@ begin
   FreeAndNil(fSearchParams);
 end;
 
+class function TFindTextDlg.Execute(const AOwner: TComponent;
+  out ASearch: ISearch): Boolean;
+  {Displays dialog and returns search object based on entered criteria.
+    @param AOwner [in] Component that owns this dialog.
+    @param ASearch [out] Set to value of Search property: nil if user cancels.
+    @return True if user OKs and search object created or false if user cancels
+      and search object is nil.
+  }
+begin
+  with InternalCreate(AOwner) do
+    try
+      Result := (ShowModal = mrOK);
+      ASearch := fSearch;
+    finally
+      Free;
+    end;
+end;
+
 procedure TFindTextDlg.InitForm;
   {Populates and initialises controls.
   }
@@ -293,15 +293,11 @@ begin
   cbFindText.Items := fSearchParams.HistoryList;
   cbFindText.Text := fSearchParams.FirstHistoryItem;
   btnOK.Enabled := cbFindText.Text <> '';
-  // Set default radio buttons
+  // Check required options
   cbWholeWords.Checked := soWholeWord in fSearchParams.Options;
   cbCaseSensitive.Checked := soMatchCase in fSearchParams.Options;
+  // Set require logic radio button
   rgLogic.ItemIndex := Ord(fSearchParams.Logic);
-  rgScope.Enabled := Query.IsSearchActive;
-  if Query.IsSearchActive then
-    rgScope.ItemIndex := 0
-  else
-    rgScope.ItemIndex := 1;
 end;
 
 { TTextSearchParams }
@@ -389,11 +385,11 @@ begin
   // Update data
   Storage.GetStrings('HistoryCount', 'History%d').CopyTo(fHistoryList, True);
   fOptions := [];
-  if Storage.GetBoolean('MatchCase') then
+  if Storage.ItemValues['MatchCase'] = '1' then
     Include(fOptions, soMatchCase);
-  if Storage.GetBoolean('WholeWord') then
+  if Storage.ItemValues['WholeWord'] = '1' then
     Include(fOptions, soWholeWord);
-  fLogic := TSearchLogic(Storage.GetInteger('Logic', Ord(slOr)));
+  fLogic := TSearchLogic(StrToIntDef(Storage.ItemValues['Logic'], Ord(slOr)));
 end;
 
 procedure TTextSearchParams.SetHistoryList(const Value: TStrings);
@@ -434,9 +430,9 @@ begin
   Storage.SetStrings(
     'HistoryCount', 'History%d', TIStringList.Create(fHistoryList)
   );
-  Storage.SetBoolean('MatchCase', soMatchCase in fOptions);
-  Storage.SetBoolean('WholeWord', soWholeWord in fOptions);
-  Storage.SetInteger('Logic', Ord(fLogic));
+  Storage.ItemValues['MatchCase'] := IntToStr(Ord(soMatchCase in fOptions));
+  Storage.ItemValues['WholeWord'] := IntToStr(Ord(soWholeWord in fOptions));
+  Storage.ItemValues['Logic'] := IntToStr(Ord(fLogic));
   // Write name=value pairs to appropriate ini file section
   Storage.Save;
 end;

@@ -1,17 +1,37 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * FmFindXRefsDlg.pas
  *
- * Copyright (C) 2006-2013, Peter Johnson (www.delphidabbler.com).
+ * Dialog box that is used to select criteria for searches for cross referenced
+ * snippets. Also defines a class that is used to persist the last chosen search
+ * criteria.
  *
  * $Rev$
  * $Date$
  *
- * Implements a dialogue box that is used to select criteria for searches for
- * cross referenced snippets.
+ * ***** BEGIN LICENSE BLOCK *****
  *
- * Also defines a class that is used to persist the last chosen search criteria.
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is FmFindXRefsDlg.pas
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2006-2011 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -25,7 +45,7 @@ uses
   // Delphi
   StdCtrls, Controls, ExtCtrls, Classes,
   // Project
-  DB.USnippet, FmGenericOKDlg, UBaseObjects, USearch;
+  FmGenericOKDlg, UBaseObjects, USearch, USnippets;
 
 
 type
@@ -39,15 +59,12 @@ type
   }
   TFindXRefsDlg = class(TGenericOKDlg, INoPublicConstruct)
     lblDesc: TLabel;
-    lblSnippetName: TLabel;
+    lblRoutineName: TLabel;
     chkRequired: TCheckBox;
     chkSeeAlso: TCheckBox;
-    chkIncludeSnippet: TCheckBox;
+    chkIncludeRoutine: TCheckBox;
     chkRequiredRecurse: TCheckBox;
     chkSeeAlsoRecurse: TCheckBox;
-    lblOverwriteSearch: TLabel;
-    chkSeeAlsoReverse: TCheckBox;
-    chkRequiredReverse: TCheckBox;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure SearchCheckClick(Sender: TObject);
@@ -55,7 +72,7 @@ type
   strict private
     fSearchParams: TXRefSearchParams; // Persists XRef search options
     fSearch: ISearch;                 // Search for user's criteria
-    fSnippet: TSnippet;               // Snippet whose x-refs to be found
+    fRoutine: TRoutine;               // Snippet whose x-refs to be found
     procedure UpdateControls;
       {Updates state of controls.
       }
@@ -70,12 +87,12 @@ type
       {Populates and initialises controls.
       }
   public
-    class function Execute(const AOwner: TComponent; const Snippet: TSnippet;
+    class function Execute(const AOwner: TComponent; const Routine: TRoutine;
       out ASearch: ISearch): Boolean;
       {Displays dialog and returns search object based on entered criteria.
         @param AOwner [in] Component that owns this dialog.
-        @param Snippet [in] Snippet whose cross references are to be found.
-        @param ASearch [out] Search to be performed if user OKs. Has filter
+        @param Routine [in] Snippet whose cross references are to be found.
+        @param ASearch [out] Search to be performed if user OKs. Has criteria
           that causes specified cross references be returned by search. Set to
           nil if user cancels.
         @return True if user OKs and search object created or false if user
@@ -87,7 +104,7 @@ type
   TXRefSearchParams:
     Object used to store persistent parameters for cross-reference search.
     Format in ini file is
-    + Whether to include base snippet in search in 'IncludeSnippet'
+    + Whether to include base snippet in search in 'IncludeRoutine'
     + Whether to include required snippets in search in 'Required'
     + Whether to recusively include required snippets in 'RequiredRecurse'
     + Whether to include "see also" snippets in search in 'SeeAlso'
@@ -132,7 +149,7 @@ uses
   // Delphi
   SysUtils, Graphics,
   // Project
-  UColours, UCtrlArranger, UPreferences, UQuery, USettings;
+  UColours, UCtrlArranger, USettings;
 
 
 {$R *.dfm}
@@ -144,40 +161,12 @@ procedure TFindXRefsDlg.ArrangeForm;
   {Arranges components on form and rezize form as required.
   }
 begin
-  // Horizontal alignment & sizing
   // Place snippet name after end of description label
-  TCtrlArranger.AlignLefts(
-    [
-      lblDesc, chkRequired, chkSeeAlso, chkIncludeSnippet, chkSeeAlsoReverse,
-      chkRequiredReverse, lblOverwriteSearch
-    ],
-    0
-  );
-  TCtrlArranger.AlignLefts([chkRequiredRecurse, chkSeeAlsoRecurse], 24);
-  TCtrlArranger.MoveToRightOf(lblDesc, lblSnippetName);
+  TCtrlArranger.MoveToRightOf(lblDesc, lblRoutineName);
   // Check if snippet name is clipped at right of dialog box and increase
   // available body panel space if so
-  // Don't use TCtrlArranger.TotalControlWidth here
-  if lblSnippetName.Left + lblSnippetName.Width > pnlBody.ClientWidth then
-    pnlBody.ClientWidth := lblSnippetName.Left + lblSnippetName.Width;
-  lblOverwriteSearch.Width := pnlBody.ClientWidth;
-  TCtrlArranger.SetLabelHeight(lblOverwriteSearch);
-
-  // Vertical alignment & sizing
-  TCtrlArranger.AlignVCentres(0, [lblDesc, lblSnippetName]);
-  TCtrlArranger.MoveBelow([lblDesc, lblSnippetName], chkRequired, 12);
-  TCtrlArranger.MoveBelow(chkRequired, chkRequiredRecurse, 6);
-  TCtrlArranger.MoveBelow(chkRequiredRecurse, chkRequiredReverse, 6);
-  TCtrlArranger.MoveBelow(chkRequiredReverse, chkSeeAlso, 16);
-  TCtrlArranger.MoveBelow(chkSeeAlso, chkSeeAlsoRecurse, 6);
-  TCtrlArranger.MoveBelow(chkSeeAlsoRecurse, chkSeeAlsoReverse, 6);
-  TCtrlArranger.MoveBelow(chkSeeAlsoReverse, chkIncludeSnippet, 16);
-  if lblOverwriteSearch.Visible then
-    TCtrlArranger.MoveBelow(chkIncludeSnippet, lblOverwriteSearch, 16)
-  else
-    lblOverwriteSearch.SetBounds(0, 0, 0, 0); // hide from panel sizing
-  pnlBody.ClientHeight := TCtrlArranger.TotalControlHeight(pnlBody) + 8;
-
+  if lblRoutineName.Left + lblRoutineName.Width > pnlBody.ClientWidth then
+    pnlBody.ClientWidth := lblRoutineName.Left + lblRoutineName.Width;
   // Inherited arrangement: will set dialog width based on body panel width
   inherited;
 end;
@@ -198,30 +187,26 @@ procedure TFindXRefsDlg.btnOKClick(Sender: TObject);
       Include(Result, soRequired);
     if chkRequiredRecurse.Checked then
       Include(Result, soRequiredRecurse);
-    if chkRequiredReverse.Checked then
-      Include(Result, soRequiredReverse);
     if chkSeeAlso.Checked then
       Include(Result, soSeeAlso);
     if chkSeeAlsoRecurse.Checked then
       Include(Result, soSeeAlsoRecurse);
-    if chkSeeAlsoReverse.Checked then
-      Include(Result, soSeeAlsoReverse);
-    if chkIncludeSnippet.Checked then
-      Include(Result, soIncludeSnippet);
+    if chkIncludeRoutine.Checked then
+      Include(Result, soIncludeRoutine);
   end;
   // ---------------------------------------------------------------------------
 
 var
-  Filter: IXRefSearchFilter;  // search filter
+  SearchCriteria: IXRefSearchCriteria;  // user's search criteria
 begin
-  // Create search filter from entries made in dialog box
-  Filter := TSearchFilterFactory.CreateXRefSearchFilter(
-    fSnippet, GetOptionsFromUI
+  // Create search criteria from entries made in dialog box
+  SearchCriteria := TSearchCriteriaFactory.CreateXRefSearchCriteria(
+    fRoutine, GetOptionsFromUI
   );
   // Persist the search criteria
-  fSearchParams.Options := Filter.Options;
-  // Create search object
-  fSearch := TSearchFactory.CreateSearch(Filter);
+  fSearchParams.Options := SearchCriteria.Options;
+  // Create search object from the entered criteria
+  fSearch := TSearchFactory.CreateXRefSearch(SearchCriteria);
 end;
 
 procedure TFindXRefsDlg.ConfigForm;
@@ -230,34 +215,32 @@ procedure TFindXRefsDlg.ConfigForm;
 begin
   inherited;
   // Set label font styles and colours
-  lblSnippetName.Font.Style := [fsBold];
-  lblSnippetName.Font.Color :=
-    Preferences.DBHeadingColours[fSnippet.UserDefined];
+  lblRoutineName.Font.Style := [fsBold];
+  if fRoutine.UserDefined then
+    lblRoutineName.Font.Color := clUserRoutine;
   // Display selected snippet name in appropriate controls
-  lblSnippetName.Caption := fSnippet.DisplayName;
-  chkIncludeSnippet.Caption := Format(
-    chkIncludeSnippet.Caption, [fSnippet.DisplayName]
+  lblRoutineName.Caption := fRoutine.Name;
+  chkIncludeRoutine.Caption := Format(
+    chkIncludeRoutine.Caption, [fRoutine.Name]
   );
-  // Display or hide warning about overwriting searches
-  lblOverwriteSearch.Visible := Query.IsSearchActive;
 end;
 
 class function TFindXRefsDlg.Execute(const AOwner: TComponent;
-  const Snippet: TSnippet; out ASearch: ISearch): Boolean;
+  const Routine: TRoutine; out ASearch: ISearch): Boolean;
   {Displays dialog and returns search object based on entered criteria.
     @param AOwner [in] Component that owns this dialog.
-    @param Snippet [in] Snippet whose cross references are to be found.
-    @param ASearch [out] Search to be performed if user OKs. Has filter that
+    @param Routine [in] Snippet whose cross references are to be found.
+    @param ASearch [out] Search to be performed if user OKs. Has criteria that
       causes specified cross references be returned by search. Set to nil if
       user cancels.
     @return True if user OKs and search object created or false if user cancels
       and search object is nil.
   }
 begin
-  Assert(Assigned(Snippet), ClassName + '.Execute: Snippet is nil');
+  Assert(Assigned(Routine), ClassName + '.Execute: Routine is nil');
   with InternalCreate(AOwner) do
     try
-      fSnippet := Snippet;
+      fRoutine := Routine;
       Result := (ShowModal = mrOK);
       ASearch := fSearch;
     finally
@@ -292,11 +275,9 @@ begin
   // Check appropriate check boxes
   chkRequired.Checked := soRequired in fSearchParams.Options;
   chkRequiredRecurse.Checked := soRequiredRecurse in fSearchParams.Options;
-  chkRequiredReverse.Checked := soRequiredReverse in fSearchParams.Options;
   chkSeeAlso.Checked := soSeeAlso in fSearchParams.Options;
   chkSeeAlsoRecurse.Checked := soSeeAlsoRecurse in fSearchParams.Options;
-  chkSeeAlsoReverse.Checked := soSeeAlsoReverse in fSearchParams.Options;
-  chkIncludeSnippet.Checked := soIncludeSnippet in fSearchParams.Options;
+  chkIncludeRoutine.Checked := soIncludeRoutine in fSearchParams.Options;
   // Update other controls per state of check boxes
   UpdateControls;
 end;
@@ -314,8 +295,7 @@ procedure TFindXRefsDlg.UpdateControls;
   {Updates state of controls.
   }
 begin
-  btnOK.Enabled := chkRequired.Checked or chkRequiredReverse.Checked
-    or chkSeeAlso.Checked or chkSeeAlsoReverse.Checked;
+  btnOK.Enabled := chkRequired.Checked or chkSeeAlso.Checked;
   chkRequiredRecurse.Enabled := chkRequired.Checked;
   chkSeeAlsoRecurse.Enabled := chkSeeAlso.Checked;
 end;
@@ -350,20 +330,16 @@ var
 begin
   Storage := Settings.ReadSection(ssFindXRefs);
   fOptions := [];
-  if Storage.GetBoolean('IncludeSnippet', True) then
-    Include(fOptions, soIncludeSnippet);
-  if Storage.GetBoolean('Required', True) then
+  if Boolean(StrToIntDef(Storage.ItemValues['IncludeRoutine'], 1)) then
+    Include(fOptions, soIncludeRoutine);
+  if Boolean(StrToIntDef(Storage.ItemValues['Required'], 1)) then
     Include(fOptions, soRequired);
-  if Storage.GetBoolean('RequiredRecurse', False) then
+  if Boolean(StrToIntDef(Storage.ItemValues['RequiredRecurse'], 0)) then
     Include(fOptions, soRequiredRecurse);
-  if Storage.GetBoolean('RequiredReverse', False) then
-    Include(fOptions, soRequiredReverse);
-  if Storage.GetBoolean('SeeAlso', False) then
+  if Boolean(StrToIntDef(Storage.ItemValues['SeeAlso'], 0)) then
     Include(fOptions, soSeeAlso);
-  if Storage.GetBoolean('SeeAlsoRecurse', False) then
+  if Boolean(StrToIntDef(Storage.ItemValues['SeeAlsoRecurse'], 0)) then
     Include(fOptions, soSeeAlsoRecurse);
-  if Storage.GetBoolean('SeeAlsoReverse', False) then
-    Include(fOptions, soSeeAlsoReverse);
 end;
 
 procedure TXRefSearchParams.SetOptions(const Value: TXRefSearchOptions);
@@ -396,7 +372,7 @@ var
     }
   begin
     // Store boolean flag as string for each option
-    Storage.SetBoolean(Name, Option in fOptions);
+    Storage.ItemValues[Name] := IntToStr(Ord(Option in fOptions));
   end;
   // ---------------------------------------------------------------------------
 
@@ -404,13 +380,11 @@ begin
   // Create blank persistent storage object
   Storage := Settings.EmptySection(ssFindXRefs);
   // Record parameters
-  StoreOption('IncludeSnippet', soIncludeSnippet);
+  StoreOption('IncludeRoutine', soIncludeRoutine);
   StoreOption('Required', soRequired);
   StoreOption('RequiredRecurse', soRequiredRecurse);
-  StoreOption('RequiredReverse', soRequiredReverse);
   StoreOption('SeeAlso', soSeeAlso);
   StoreOption('SeeAlsoRecurse', soSeeAlsoRecurse);
-  StoreOption('SeeAlsoReverse', soSeeAlsoReverse);
   // Store data
   Storage.Save;
 end;

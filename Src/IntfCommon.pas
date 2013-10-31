@@ -1,14 +1,35 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * IntfCommon.pas
  *
- * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
+ * Contains common general purpose interfaces.
  *
  * $Rev$
  * $Date$
  *
- * Common general purpose interfaces.
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is IntfCommon.pas
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -19,33 +40,33 @@ interface
 
 
 type
-  ///  <summary>Interface that defines a method that clones a copy of the
-  ///  implementing object.</summary>
-  ///  <remarks>Any object that supports cloning should implement this
-  ///  interface.</remarks>
+
+  {
+  IClonable:
+    Interface that defines a method that clones a copy of the implementing
+    object. Any object that supports cloning should implement this interface.
+  }
   IClonable = interface(IInterface)
     ['{5718FBDF-C307-4E28-94A2-76D672486324}']
-    ///  <summary>Creates and returns a new object that is an exact copy of the
-    ///  current object.</summary>
-    ///  <returns>IInterface reference to cloned object.</returns>
     function Clone: IInterface;
+      {Create a new instance of the object that is an extact copy and return it.
+        @return New object's IInterface interface.
+      }
   end;
 
-type
-  ///  <summary>Interface that defines a method that changes the implementing
-  ///  object to be an exact copy of a given object of a compatible type.
-  ///  </summary>
-  ///  <remarks>Any object that supports assignment should implement this
-  ///  interface.</remarks>
+  {
+  IAssignable:
+    Interface that defines a method that sets the implementing object to be
+    equal to the assigned object. Any object that supports assignment should
+    implement this interface.
+  }
   IAssignable = interface(IInterface)
     ['{AB1EC037-FB19-4E6F-ACA6-8113891D9089}']
-    ///  <summary>Modifies the current object to be an exact copy of another
-    ///  object.</summary>
-    ///  <param name="Src">IInterface [in] Reference to IInterface of object to
-    ///  be assigned.</param>
-    ///  <exception>An EBug exception should be raised if Src is not type
-    ///  compatible with this object.</exception>
     procedure Assign(const Src: IInterface);
+      {Assigns properties of a given object to this object.
+        @param Src [in] Object whose properties are to be copied.
+        @except EBug should be raised if Src is incompatible with this object.
+      }
   end;
 
 

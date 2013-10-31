@@ -1,15 +1,26 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
 <!--
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * ***** BEGIN LICENSE BLOCK *****
  *
- * Copyright (C) 2005-2012, Peter Johnson (www.delphidabbler.com).
+ * Version: MPL 1.1
  *
- * $Rev$
- * $Date$
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
  *
- * Help topic describing File menu.
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is menu_file.htm
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2005-2013 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * ***** END LICENSE BLOCK *****
 -->
 <html>
   <head>
@@ -32,17 +43,16 @@
           <img alt="Menu icon" src="../images/SaveSnippet.gif" class="glyph">
         </td>
         <td class="item">
-          Save Snippet<br>
-          [<span class="smallcaps">Shift+Ctrl+N</span>]
+          Save Snippet <span class="smallcaps">(Ctrl+S)</span>
         </td>
         <td class="desc">
           Saves the source code of the currently selected routine or category
           to a file. The file is a fragment of Pascal code. The
-          <a href="dlg_savesnippet.htm">Save Snippet</a> dialogue box is
-          displayed and is used to determine the format of the file being saved.
-          This can be plain text, a Pascal include file, HTML or RTF. The latter
-          two options can be syntax highlighted. Not available for type
-          definition and constant snippets.
+          <a href="dlg_savesnippet.htm">Save Snippet</a> dialog box is displayed
+          and is used to determine the format of the file being saved. This can
+          be plain text, a Pascal include file, HTML or RTF. The latter two
+          options can be syntax highlighted. Not available for type definition
+          and constant snippets.
         </td>
       </tr>
       <tr>
@@ -51,13 +61,12 @@
            alt="Menu icon" src="../images/SaveUnit.gif" class="glyph">
         </td>
         <td class="item">
-          Save Unit<br>
-          [<span class="smallcaps">Ctrl+U</span>]
+          Save Unit <span class="smallcaps">(Ctrl+U)</span>
         </td>
         <td class="desc">
           Generates a valid Pascal unit containing the the currently selected
           snippets and saves it to file. The <a href="dlg_saveunit.htm">Save
-          Unit</a> dialogue box is displayed and is used to determine the format
+          Unit</a> dialog box is displayed and is used to determine the format
           of the file being saved. The format can be plain text, a Pascal unit
           file, HTML or RTF. The latter two options can be syntax highlighted.
           <a href="snippet_freeform.htm">Freeform</a> snippets are not included
@@ -66,58 +75,21 @@
       </tr>
       <tr>
         <td class="img">
-          &nbsp;
-        </td>
-        <td class="item">
-          Save Selection<br>
-          [<span class="smallcaps">Shift+Alt+S</span>]
-        </td>
-        <td class="desc">
-          Saves a list snippets selected by the most recent search. This
-          selection can then be reloaded later. The
-          <a href="dlg_saveselection.htm">Save Selection</a> dialogue box is
-          displayed where the required file name is entered. Note that this
-          menu option is not available if there is not a current search, i.e. if
-          the whole database is selected.
-        </td>
-      </tr>
-      <tr>
-        <td class="img">
-          &nbsp;
-        </td>
-        <td class="item">
-          Load Selection<br>
-          [<span class="smallcaps">Shift+Alt+L</span>]
-        </td>
-        <td class="desc">
-          Loads a previously saved snippet selection file and selects any
-          snippets currently in the database that match the stored selection.
-          The <a href="dlg_loadselection.htm">Load Selection</a> dialogue box is
-          displayed to enable the required file to be selected. Note that any
-          snippets in the chosen selection file that are no longer in the
-          database are quietly ignored.
-        </td>
-      </tr>
-      <tr>
-        <td class="img">
           <img
-           alt="Menu icon" src="../images/Print.png" class="glyph">
+           alt="Menu icon" src="../images/Print.gif" class="glyph">
         </td>
         <td class="item">
-          Print<br>
-          [<span class="smallcaps">Ctrl+P</span>]
+          Print <span class="smallcaps">(Ctrl+P)</span>
         </td>
         <td class="desc">
-          Prints details of the currently selected snippet or category. The
-          information printed is similar to that displayed in the
-          <a href="detail_pane.htm">Detail Pane</a>. The
-          <a href="dlg_print.htm">Print</a> dialogue box is displayed where the
-          required printer and various output options are specified.
+          Prints information about the currently selected snippet. Displays the
+          <a href="dlg_print.htm">Print</a> dialog box where the required
+          printer can be specified and various output options set.
         </td>
       </tr>
       <tr>
         <td class="img">
-          <img alt="Menu icon" src="../images/Exit.png" class="glyph">
+          <img alt="Menu icon" src="../images/Exit.gif" class="glyph">
         </td>
         <td class="item">
           Exit

@@ -1,0 +1,134 @@
+/*
+ * easteregg.css
+ *
+ * Cascading style sheet used to format HTML displayed in program's easter egg.
+ *
+ * $Rev$
+ * $Date$
+ *
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is easteregg.css
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2009 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributors:
+ *    NONE
+ *
+ * ***** END LICENSE BLOCK *****
+ */
+
+
+/* main scrolling content */
+#blurb {
+  position: absolute;
+  /* width + 2*left + 2*padding + 2*margin 2*2px for border set in
+     container must add up to 380 ( = width of browser in frame) */
+  width: 300px;
+  left: 34px;
+  padding: 4px;
+  margin: 0;
+  height: 20px;
+  top: 360px;
+  overflow: hidden;
+}
+
+/* applies to headings in main content */
+#blurb h1 {
+  text-align: center;
+}
+
+/* div containing cancel button */
+#cancel {
+  display: none;
+  position: fixed;
+  top: 0; /* gets set dynamically relative to final top position of #blurb */
+  /* left = #blurb.left + #blurb.width + 2 * #blurb.padding + 2 * #blurb.margin
+     - #cancel-btn.width */
+  left: 326px;
+}
+
+/* applies to cancel button image */
+#cancel-btn {
+  width: 16px;
+  height: 16px;
+  cursor: hand;
+}
+
+/* links that appear after content has scrolled */
+#more-info {
+  position: absolute;
+  /* width + 2*left + 2*padding + 2*margin + 2*1px for border set in
+     container must add up to 380 ( = width of browser in frame ) */
+  width: 210px;
+  left: 80px;
+  padding: 4px;
+  margin: 0;
+  height: auto;
+  top: 380px;
+  text-align: center;
+}
+
+/* applies to div containing "click me" image */
+#click-me {
+  display: none;
+  position: absolute;
+  /* 2*left + width of "click me" image must add up to 380 ( = width of browser
+     in frame ) */
+  left: 133px;
+  top: 120px;
+}
+
+/* applies to "click me" image contained in #click-me div */
+#click-me img {
+  width: 114px;
+  height: 76px;
+  cursor: hand;
+}
+
+/* applies to divs containing egg images */
+div.egg {
+  position: absolute;
+  /* 2*left + width of egg image must add up to 380 ( = width of browser in
+     frame ) => both egg images must be same width (see img.egg) */
+  left: 25px;
+  cursor: hand;
+}
+
+/* applies to egg images - must both be same size */
+img.egg {
+  width: 330px;
+  height: 450px;
+}
+
+/* applies to padding at start at end of scrolling content */
+div.padding {
+  position: relative;
+  width: 300px;
+  overflow: hidden;
+}
+
+/* applies to paragraph containing close instructions */
+p.esc {
+  text-align: center;
+  margin-top: 4em;
+}
+
+/* applies to paragraphs that enclose photos */
+p.photo {
+  text-align: center;
+}

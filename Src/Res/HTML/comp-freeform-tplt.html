@@ -1,0 +1,150 @@
+<!--
+ * comp-freeform-tplt.html
+ *
+ * Compiler Check pane template used to display warning message that a snippet
+ * can't be compiled when a freeform snippet is selected.
+ *
+ * Must be hosted within a complete HTML document.
+ *
+ * $Rev$
+ * $Date$
+ *
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is comp-freeform-tplt.html
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2009-2010 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributors:
+ *    NONE
+ *
+ * ***** END LICENSE BLOCK *****
+-->
+
+
+<div class="details">
+
+  <div>
+
+    <div
+      id="editlink"
+      class="option"
+      style="<%EditLink%>
+        padding:-0.1em 0 0.3em 0;position:relative;float:right;"
+    >
+      <a
+        id="editimglink"
+        class="command-link"
+        href="javascript:void(0);"
+        onclick="<%EditEventHandler%>;return false;"
+        onmouseover="showEditSnippetHint();"
+        onmouseout="clearHint();"
+      ><img
+        src="editsnippet.gif"
+        class="option-img"
+        style="width:16px;height:16px;vertical-align:middle;"
+        title="Edit Snippet"
+      ></a>
+      <a
+        id="edittextlink"
+        class="command-link menu-item"
+        href="javascript:void(0);"
+        onclick="<%EditEventHandler%>;return false;"
+        onmouseover="showEditSnippetHint();"
+        onmouseout="clearHint();"
+      >Edit Snippet</a>
+    </div>
+
+    <!-- Routine name common with info-snippet-tplt.html -->
+    <h1 id="routinename" class="<%RoutineCSSClass%>">
+      <%RoutineName%>
+    </h1>
+
+  </div>
+
+  <div style="float:left;margin-right:1em;">
+    <img src="symbol-information.png" style="width:64px;height:64px;" />
+  </div>
+
+  <p>
+    This snippet is
+    <a
+      href="help:SnippetFreeform"
+      class="help-link"
+      onmouseover="showHint(vFreeformHelpHint);"
+      onmouseout="clearHint();"
+    >Freeform</a> and therefore cannot be test compiled.
+  </p>
+
+  <p>
+    Only
+    <a
+      href="help:SnippetRoutine"
+      class="help-link"
+      onmouseover="showHint(vRoutineHelpHint);"
+      onmouseout="clearHint();"
+    >Routine</a>,
+    <a
+      href="help:SnippetType"
+      class="help-link"
+      onmouseover="showHint(vTypeDefHelpHint);"
+      onmouseout="clearHint();"
+    >Type definition</a> and
+    <a
+      href="help:SnippetConstant"
+      class="help-link"
+      onmouseover="showHint(vConstantHelpHint);"
+      onmouseout="clearHint();"
+    >Constant</a> snippets may be test compiled.
+  </p>
+
+  <p>
+    The snippet's
+    <a
+      href="help:SnippetKinds"
+      class="help-link"
+      onmouseover="showHint(vSnippetKindHelpHint);"
+      onmouseout="clearHint();"
+    >kind</a>, can be changed in the snippet editor.
+  </p>
+
+  <div class="optionbox" style="clear:all;">
+
+    <div class="option">
+      <a
+        href="help:CompChecks"
+        class="help-link"
+        onmouseover="showHint(vAboutCompChecksHint);"
+        onmouseout="clearHint();"
+      ><img
+        src="help.gif"
+        class="option-img"
+        style="width:16px;height:16px;"
+        title="About Compiler Checks"
+      /></a>
+      <a
+        href="help:CompChecks"
+        class="help-link menu-item"
+        onmouseover="showHint(vAboutCompChecksHint);"
+        onmouseout="clearHint();"
+      >About Compiler Checks</a>
+    </div>
+
+  </div>
+
+</div>
+

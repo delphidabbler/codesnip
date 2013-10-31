@@ -15,22 +15,22 @@
 unit PJWdwState;
 
 // Conditional defines
-
-// Assume all required facilities available
-{$DEFINE WarnDirs}          // $WARN compiler directives available
-{$UNDEF RTLNameSpaces}      // Qualify RTL units names with namespaces
-{$UNDEF TScrollStyleMoved}  // TScrollStyle has moved to System.UITypes units
-
-// Undefine facilities not available in earlier compilers
 // Note: Delphi 1/2 not included since code will not compile on these compilers
+{$DEFINE WarnDirs}          // $WARN compiler directives available
+{$DEFINE RegAccessFlags}    // TRegistry access flags available
+{$UNDEF RTLNameSpaces}      // Don't qualify RTL units names with namespaces
+{$UNDEF TScrollStyleMoved}  // TScrollStyle hasn't moved to System.UITypes units
 {$IFDEF VER100} // Delphi 3
   {$UNDEF WarnDirs}
+  {$UNDEF RegAccessFlags}
 {$ENDIF}
 {$IFDEF VER120} // Delphi 4
   {$UNDEF WarnDirs}
+  {$UNDEF RegAccessFlags}
 {$ENDIF}
 {$IFDEF VER130} // Delphi 5
   {$UNDEF WarnDirs}
+  {$UNDEF RegAccessFlags}
 {$ENDIF}
 {$IFDEF VER140} // Delphi 6
   {$UNDEF WarnDirs}
@@ -661,6 +661,10 @@ type
   TPJRegWdwState:
     Implements a component that records a window's size, position and state
     between program executions. The registry is used to store the information.
+    NOTE: Do not use TPJRegWdwState in programs compiled with Delphi 5 and
+    earlier if the program is to run on 64 bit Windows: The version of TRegistry
+    used by these early Delphis does not fully support access to the 64 bit
+    registry view.
   }
   TPJRegWdwState = class(TPJCustomWdwState)
   private // properties
@@ -1670,6 +1674,32 @@ begin
   Reg.WriteInteger(AName, AnInt);
 end;
 
+function SafeCreateReg: TRegistry;
+  {Safely open registry for read/write, using 64 bit registry view on 64 bits if
+  possible.
+  NOTE: Versions of Delphi where TRegistry does not permit access flags to be
+  changed cannot support using the 64 bit reqistry view.
+    @return New TRegistry instance. The user is responsible for freeing this
+      object.
+  }
+{$IFDEF REGACCESSFLAGS}
+const
+  KEY_WOW64_64KEY = $0100;  // registry access flag not defined in all Delphis
+{$ENDIF}
+begin
+  Result := TRegistry.Create;
+  {$IFDEF RegAccessFlags}
+  // We use the KEY_WOW64_64KEY access flag to force 32 bit applications running
+  // on 64 bit Windows to ue the 64 bit registry view. This flag is ignored by
+  // when running on 32 bit Windows from Windows XP (v5.1), but is not supported
+  // by Windows 2000 and earlier.
+  if (Win32MajorVersion > 5) or
+    ((Win32MajorVersion = 5) and (Win32MinorVersion >= 1)) then
+    // XP or later
+    Result.Access := Result.Access or KEY_WOW64_64KEY;
+  {$ENDIF}
+end;
+
 constructor TPJRegWdwState.Create(AOwner: TComponent);
   {Class constructor. Sets default property values.
     @param AOwner [in] Owning component. Must be a TForm.
@@ -1724,7 +1754,7 @@ begin
   // Get registry keys from which to read window state
   GetRegInfo(ARootKey, ASubKey);
   // Open registry at required key
-  Reg := TRegistry.Create;
+  Reg := SafeCreateReg;
   try
     Reg.RootKey := ARootKey;
     if Reg.OpenKey(ASubKey, False) then
@@ -1762,7 +1792,7 @@ begin
   // Get registry keys in which to save window state
   GetRegInfo(ARootKey, ASubKey);
   // Open registry at required key
-  Reg := TRegistry.Create;
+  Reg := SafeCreateReg;
   try
     Reg.RootKey := ARootKey;
     if Reg.OpenKey(ASubKey, True) then

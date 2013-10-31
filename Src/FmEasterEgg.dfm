@@ -1,11 +1,10 @@
 inherited EasterEggForm: TEasterEggForm
   AlphaBlend = True
   AlphaBlendValue = 0
-  BorderIcons = []
   BorderStyle = bsNone
   Caption = 'EasterEggForm'
-  ClientHeight = 630
-  ClientWidth = 542
+  ClientHeight = 550
+  ClientWidth = 380
   Color = clPurple
   TransparentColor = True
   TransparentColorValue = clPurple
@@ -14,16 +13,16 @@ inherited EasterEggForm: TEasterEggForm
   Position = poDesigned
   OnClose = FormClose
   OnKeyPress = FormKeyPress
-  ExplicitWidth = 542
-  ExplicitHeight = 630
+  ExplicitWidth = 380
+  ExplicitHeight = 550
   PixelsPerInch = 96
   TextHeight = 13
   inline frmEasterEgg: TEasterEggFrame
     AlignWithMargins = True
     Left = 0
     Top = 0
-    Width = 542
-    Height = 630
+    Width = 380
+    Height = 550
     Margins.Left = 0
     Margins.Top = 0
     Margins.Right = 0
@@ -33,25 +32,25 @@ inherited EasterEggForm: TEasterEggForm
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
     Font.Height = -19
-    Font.Name = 'Tahoma'
+    Font.Name = 'MS Sans Serif'
     Font.Style = []
     ParentFont = False
     TabOrder = 0
     TabStop = True
-    ExplicitWidth = 526
-    ExplicitHeight = 617
+    ExplicitWidth = 380
+    ExplicitHeight = 550
     inherited pnlBrowser: TPanel
-      Width = 542
-      Height = 630
-      ExplicitWidth = 526
-      ExplicitHeight = 617
+      Width = 380
+      Height = 550
+      ExplicitWidth = 380
+      ExplicitHeight = 550
       inherited wbBrowser: TWebBrowser
-        Width = 542
-        Height = 630
+        Width = 380
+        Height = 550
         ExplicitWidth = 327
         ExplicitHeight = 329
         ControlData = {
-          4C000000043800001D4100000000000000000000000000000000000000000000
+          4C00000046270000D83800000000000000000000000000000000000000000000
           000000004C000000000000000000000001000000E0D057007335CF11AE690800
           2B2E126208000000000000004C0000000114020000000000C000000000000046
           8000000000000000000000000000000000000000000000000000000000000000

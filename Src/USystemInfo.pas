@@ -1,16 +1,37 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
- *
- * Copyright (C) 2006-2013, Peter Johnson (www.delphidabbler.com).
- *
- * $Rev$
- * $Date$
+ * USystemInfo.pas
  *
  * Static classes that provide information about the host system.
  *
  * Requires DelphiDabbler System information unit v3 or later.
+ *
+ * $Rev$
+ * $Date$
+ *
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is USystemInfo.pas
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2006-2013 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributors:
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -24,9 +45,7 @@ uses
   // Delphi
   ShlObj,
   // DelphiDabbler library
-  PJSysInfo,
-  // Project
-  UBaseObjects;
+  PJSysInfo;
 
 
 type
@@ -58,7 +77,7 @@ type
     causing and assertion failure when called.
   }
   TOSInfo = class(TPJOSInfo)
-  strict private
+  private
     class function CheckForKernelFn(const FnName: string): Boolean;
       {Checks if a specified function exists in OSs kernel.
         @param FnName [in] Name of required function.
@@ -91,54 +110,12 @@ type
         @param MinVer [in] Minimum OS version required.
         @return True if OS reported by Windows is same as or later than MinVer.
       }
-  end;
-
-  ///  <summary>Static class that provides information about the installed
-  ///  version of Internet Explorer.</summary>
-  TIEInfo = class(TNoConstructObject)
-  strict private
-    const
-      ///  <summary>Majic value indicating that browser version number has not
-      ///  yet been determined.</summary>
-      UnsetMajorVersion = $FFFF;
-    class var
-      ///  <summary>Records browser's major version number.</summary>
-      ///  <remarks>Is set to UnsetMajorVersion until calculated.</remarks>
-      fMajorVersion: Word;
-  strict private
-    ///  <summary>Returns version number string of current Internet Explorer
-    ///  installation.</summary>
-    class function GetIEVersionStr: string;
-    ///  <summary>Calculates major version number of Internet Explorer if it has
-    ///  not already been calculated.</summary>
-    ///  <remarks>See http://support.microsoft.com/kb/969393/en-us.</remarks>
-    class procedure InitMajorVersion;
-  public
-    const
-      ///  <summary>Minimum version of Internet Explorer required to run
-      ///  CodeSnip.</summary>
-      MinSupportedVersion = 6;
-  public
-    ///  <summary>Static class constructor: initialises class.</summary>
-    class constructor Create;
-    ///  <summary>Returns the major version number of the installed version of
-    ///  Internet Explorer.</summary>
-    class function MajorVersion: Word;
-    ///  <summary>Checks if the installed version of Internet Explorer is
-    //// supported by CodeSnip.</summary>
-    class function IsSupportedBrowser: Boolean; inline;
-    ///  <summary>Checks if the installed version of Internet Explorer supports
-    ///  the "max-height" CSS property.</summary>
-    class function SupportsCSSMaxHeight: Boolean; inline;
-    ///  <summary>Checks if the installed version of Internet Explorer supports
-    ///  the "overflow-x" CSS property sufficiently well to be used.</summary>
-    class function SupportsCSSOverflowX: Boolean; inline;
-    ///  <summary>Checks if the installed version of Internet Explorer has the
-    ///  "auto" overflow bug and needs to have its behaviour fixed when using
-    ///  "auto" with the "overflow-x" property.</summary>
-    ///  <remarks>Always returns False if Internet Explorer does not have
-    ///  sufficient support for the "overflow-x" property.</remarks>
-    class function RequiresCSSOverflowXFix: Boolean; inline;
+    class function BrowserVer: Word;
+      {Gets the major version number of the installed internet explorer browser.
+      Works for all version if IE from v4 onwards. See
+      http://support.microsoft.com/kb/969393/en-us.
+        @return Browser version >=4 or 0 if earlier browser or on error.
+      }
   end;
 
   {
@@ -228,6 +205,53 @@ begin
 end;
 
 { TOSInfo }
+
+class function TOSInfo.BrowserVer: Word;
+  {Gets the major version number of the installed internet explorer browser.
+  Works for all version if IE from v4 onwards. See
+  http://support.microsoft.com/kb/969393/en-us.
+    @return Browser version >=4 or 0 if earlier browser or on error.
+  }
+var
+  Reg: TRegistry;     // registry access object
+const
+  cRegKey = 'Software\Microsoft\Internet Explorer'; // required registry key
+  cRegValue = 'Version';      // name of required registry value
+  cRegValue10 = 'svcVersion'; // name of required registry value for IE10
+
+  // Get major version number from named registry value
+  function GetVer(const ValName: string): Word;
+  var
+    Vers: IStringList;  // receives parts of version number string;
+    begin
+      Vers := TIStringList.Create(Reg.ReadString(ValName), '.', False, True);
+      // we want most significant version number
+      if (Vers.Count > 0) then
+        Result := StrToIntDef(Vers[0], 0)
+      else
+        Result := 0;
+    end;
+
+begin
+  Result := 0;
+  if CheckReportedOS(WinXP) then
+    Reg := TRegistry.Create(KEY_READ or KEY_WOW64_64KEY)
+  else
+    // KEY_WOW64_64KEY is not supported on Windows 2000
+    Reg := TRegistry.Create(KEY_READ);
+  try
+    Reg.RootKey := HKEY_LOCAL_MACHINE;
+    if Reg.OpenKey(cRegKey, False) then
+    begin
+      if Reg.ValueExists(cRegValue10) then
+        Result := GetVer(cRegValue10)
+      else if Reg.ValueExists(cRegValue) then
+        Result := GetVer(cRegValue);
+    end;
+  finally
+    Reg.Free;
+  end;
+end;
 
 class function TOSInfo.CheckForKernelFn(const FnName: string): Boolean;
   {Checks if a specified function exists in OSs kernel.
@@ -364,78 +388,6 @@ begin
       FreePIDL(PIDL);
     end;
   end
-end;
-
-{ TIEInfo }
-
-class constructor TIEInfo.Create;
-begin
-  fMajorVersion := UnsetMajorVersion;
-end;
-
-class function TIEInfo.GetIEVersionStr: string;
-var
-  Reg: TRegistry; // registry access object
-const
-  IERegKey = 'Software\Microsoft\Internet Explorer';
-  RegValName = 'Version';         // name of registry value for IE up to 9
-  RegValNameIE10 = 'svcVersion';  // name of registry value for IE 10
-begin
-  Result := '';
-  Reg := TRegistry.Create;
-  try
-    Reg.RootKey := HKEY_LOCAL_MACHINE;
-    if Reg.OpenKeyReadOnly(IERegKey) then
-    begin
-      if Reg.ValueExists(RegValNameIE10) then
-        Result := Reg.ReadString(RegValNameIE10)
-      else if Reg.ValueExists(RegValName) then
-        Result := Reg.ReadString(RegValName);
-    end;
-  finally
-    Reg.Free;
-  end;
-end;
-
-class procedure TIEInfo.InitMajorVersion;
-var
-  Vers: IStringList;  // receives parts of version number string
-begin
-  if fMajorVersion <> UnsetMajorVersion then
-    Exit;
-  Vers := TIStringList.Create(GetIEVersionStr, '.', False, True);
-  if Vers.Count > 0 then
-    fMajorVersion := StrToIntDef(Vers[0], 0)
-  else
-    fMajorVersion := 0;
-end;
-
-class function TIEInfo.IsSupportedBrowser: Boolean;
-begin
-  Result := MajorVersion >= MinSupportedVersion;
-end;
-
-class function TIEInfo.MajorVersion: Word;
-begin
-  if fMajorVersion = UnsetMajorVersion then
-    InitMajorVersion;
-  Result := fMajorVersion;
-end;
-
-class function TIEInfo.RequiresCSSOverflowXFix: Boolean;
-begin
-  // Can't require "overflow-x" fix if "overflow-x" is not itself supported
-  Result := SupportsCSSOverflowX;
-end;
-
-class function TIEInfo.SupportsCSSMaxHeight: Boolean;
-begin
-  Result := MajorVersion >= 7;
-end;
-
-class function TIEInfo.SupportsCSSOverflowX: Boolean;
-begin
-  Result := MajorVersion >= 9;
 end;
 
 end.

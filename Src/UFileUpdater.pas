@@ -1,15 +1,36 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * UFileUpdater.pas
  *
- * Copyright (C) 2006-2013, Peter Johnson (www.delphidabbler.com).
+ * Object that updates local CodeSnip data files using a supplied stream of
+ * data.
  *
  * $Rev$
  * $Date$
  *
- * Object that updates local CodeSnip data files using a supplied stream of
- * data.
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is UFileUpdater.pas
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2006-2010 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -27,76 +48,50 @@ uses
 
 
 type
-  ///  <summary>
-  ///  Class that updates local CodeSnip data files using a supplied stream of
-  ///  data.
-  ///  </summary>
+
+  {
+  TFileUpdater:
+    Object that updates local CodeSnip data files using a supplied stream of
+    data.
+  }
   TFileUpdater = class(TObject)
-  public
-    type
-      ///  <summary>Type of event triggered when reporting progress in updating
-      ///  data files.</summary>
-      ///  <param name="Sender">TObject [in] Object instance that triggered the
-      ///  event.</param>
-      ///  <param name="FilesHandled">Cardinal [in] Number of files updated to
-      ///  date.</param>
-      ///  <param name="TotalFiles">Cardinal [in] Total number of files to be
-      ///  updated.</param>
-      TProgressEvent = procedure(Sender: TObject; const FilesHandled,
-        TotalFiles: Cardinal) of object;
   strict private
-    var
-      ///  <summary>Used to read formatted text data stream.</summary>
-      fReader: TTextStreamReader;
-      ///  <summary>Local data directory.</summary>
-      fLocalDir: string;
-      ///  <summary>Reference to any OnProgess event handler.</summary>
-      fOnProgress: TProgressEvent;
-    ///  <summary>
-    ///  Reverts data files to state they were in before update.
-    ///  </summary>
+    fReader: TDataStreamReader; // Provides methods to read data stream
+    fLocalDir: string;          // Local data directory
     procedure UndoUpdate;
-    ///  <summary>
-    ///  Creates a file from information in data stream.
-    ///  </summary>
+      {Reverts data files to state they were in before update.
+      }
     procedure UpdateFile;
-    ///  <summary>
-    ///  Writes a local database file.
-    ///  </summary>
-    ///  <param name="Name">string [in] Name of file.</param>
-    ///  <param name="Content">string [in] Content of file.</param>
-    ///  <param name="UnixDate">Int64 [in] Unix format GMT date stamp to be
-    ///  applied to file.</param>
-    procedure WriteFile(const Name, Content: string; const UnixDate: Int64);
-    ///  <summary>
-    ///  Triggers any assigned OnProgress event handler with information about
-    ///  file update progress to date.
-    ///  </summary>
-    ///  <param name="FilesHandled">Cardinal [in] Number of files updated to
-    ///  date.</param>
-    ///  <param name="TotalFiles">Cardinal [in] Total number of files to be
-    ///  updated.</param>
-    procedure ReportProgress(const FilesHandled, TotalFiles: Cardinal);
+      {Creates a file from data stream.
+      }
+    procedure WriteFile(const Name, Content: Windows1252String;
+      const UnixDate: Int64);
+      {Writes local database file.
+        @param Name [in] Name of file.
+        @param Content [in] File content.
+        @param UnixDate [in] Date date stamp to be applied to file. This is in
+          Unix time stamp format and is GMT.
+      }
   public
-    ///  <summary>Object constructor. Initialises object.</summary>
-    ///  <param name="LocalDir">string [in] Directory storing local data files
-    ///  that receives updated files.</param>
-    ///  <param name="UpdateData">TEncodedData [in] Update data.</param>
-    constructor Create(const LocalDir: string; const UpdateData: TEncodedData);
-    ///  <summary>Object destructor. Tears down object.</summary>
+    constructor Create(const LocalDir: string; const UpdateData: TStream);
+      {Class constructor. Sets up object to update local files.
+        @param LocalDir [in] Directory storing local data files.
+        @param UpdateData [in] Stream containing details of files to be updated.
+      }
     destructor Destroy; override;
-    ///  <summary>Performs file updates.</summary>
+      {Class destructor. Tears down object.
+      }
     procedure Execute;
-    ///  <summary>Event that reports progress when updating local files.
-    ///  </summary>
-    ///  <remarks>Triggered once for each file processed.</remarks>
-    property OnProgress: TProgressEvent read fOnProgress write fOnProgress;
+      {Performs file updates.
+        @except Untrapped exception raised if an error is detected in update
+          process.
+      }
   end;
 
-type
-  ///  <summary>
-  ///  Class of exception raised by TFileUpdater.
-  ///  </summary>
+  {
+  EFileUpdater:
+    Class of exception raised by TFileUpdater.
+  }
   EFileUpdater = class(ECodeSnip);
 
 
@@ -107,7 +102,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  UDataBackupMgr, UDOSDateTime, UIOUtils, UUtils;
+  UDataBackupMgr, UDOSDateTime, UUtils;
 
 
 resourcestring
@@ -119,11 +114,11 @@ resourcestring
   Data stream format
   ------------------
 
-  Stream comprises text characters from a MBCS encoding. Numbers are encoded as
-  hex, which must be single byte characters.
+  Stream comproses text characters. Numbers are encoded as hex.
 
   Format is:
 
+    MD5: String[32];          - MD5 hash of remaining data
     FileCount: SmallInt;      - number of files encoded in datastream
 
   followed by FileCount file records of:
@@ -141,46 +136,53 @@ resourcestring
     SizedString   - SmallInt specifying string length followed by specified
                     number of characters
     String[32]    - 32 character fixed length string
+
+  All strings are single byte Windows-1252
 }
 
 
 { TFileUpdater }
 
 constructor TFileUpdater.Create(const LocalDir: string;
-  const UpdateData: TEncodedData);
+  const UpdateData: TStream);
+  {Class constructor. Sets up object to update local files.
+    @param LocalDir [in] Directory storing local data files.
+    @param UpdateData [in] Stream containing details of files to be updated.
+  }
 begin
   inherited Create;
   fLocalDir := LocalDir;
-  fReader := TTextStreamReader.Create(
-    TBytesStream.Create(UpdateData.Data),
-    TEncodingHelper.GetEncoding(UpdateData.EncodingType),
-    [dsOwnsStream, dsOwnsEncoding]
-  );
+  fReader := TDataStreamReader.Create(UpdateData);
+  // skip over MD5 checksum: not used in this version of CodeSnip
+  fReader.ReadString(32);
 end;
 
 destructor TFileUpdater.Destroy;
+  {Class destructor. Tears down object.
+  }
 begin
-  fReader.Free;
+  FreeAndNil(fReader);
   inherited;
 end;
 
 procedure TFileUpdater.Execute;
+  {Performs file updates.
+    @except Untrapped exception raised if an error is detected in update
+      process.
+  }
 var
   FileCount: Integer;   // number of files to copy to local directory
-  CopiedCount: Integer; // number of files copied
 begin
   TDataBackupMgr.Backup;
   try
     // Clear local data directory
     UUtils.DeleteFiles(fLocalDir, '*.*');
     // Copy in new files
-    FileCount := fReader.ReadInt16;
-    CopiedCount := 0;
-    while CopiedCount < FileCount do
+    FileCount := fReader.ReadSmallInt;
+    while FileCount > 0 do
     begin
       UpdateFile;
-      Inc(CopiedCount);
-      ReportProgress(CopiedCount, FileCount);
+      Dec(FileCount);
     end;
   except
     // Error: restore backup
@@ -191,40 +193,44 @@ begin
   TDataBackupMgr.DeleteBackup;
 end;
 
-procedure TFileUpdater.ReportProgress(const FilesHandled, TotalFiles: Cardinal);
-begin
-  if Assigned(fOnProgress) then
-    fOnProgress(Self, FilesHandled, TotalFiles);
-end;
-
 procedure TFileUpdater.UndoUpdate;
+  {Reverts data files to state they were in before update.
+  }
 begin
   TDataBackupMgr.RestoreBackup;
   TDataBackupMgr.DeleteBackup;
 end;
 
 procedure TFileUpdater.UpdateFile;
+  {Creates a file from data stream.
+  }
 var
-  Name: string;       // name of file
-  UnixDate: Int64;    // file update date per server: Unix format & GMT
-  Content: string;    // file content
+  Name: Windows1252String;    // name of file
+  UnixDate: Int64;            // file update date per server: Unix format & GMT
+  Content: Windows1252String; // file content
 begin
   // Get info about file from data stream
-  Name := fReader.ReadSizedString16;
+  Name := fReader.ReadSizedString;
   UnixDate := fReader.ReadInt64;
-  Content := fReader.ReadSizedString16;
+  Content := fReader.ReadSizedString;
   // and create file
   WriteFile(Name, Content, UnixDate);
 end;
 
-procedure TFileUpdater.WriteFile(const Name, Content: string;
+procedure TFileUpdater.WriteFile(const Name, Content: Windows1252String;
   const UnixDate: Int64);
+  {Writes local database file.
+    @param Name [in] Name of file.
+    @param Content [in] File content.
+    @param UnixDate [in] Date date stamp to be applied to file. This is in Unix
+      time stamp format and is GMT.
+  }
 var
   FilePath: string;   // full path to local file
   Date: IDOSDateTime; // object that encapsulates DOS date time value
 begin
-  FilePath := IncludeTrailingPathDelimiter(fLocalDir) + Name;
-  TFileIO.WriteAllText(FilePath, Content, TEncoding.UTF8, True);
+  FilePath := IncludeTrailingPathDelimiter(fLocalDir) + string(Name);
+  UUtils.StringToFile(string(Content), FilePath);
   Date := TDOSDateTimeFactory.CreateFromUnixTimeStamp(UnixDate);
   Date.ApplyToFile(FilePath);
 end;

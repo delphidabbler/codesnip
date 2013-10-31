@@ -5,15 +5,15 @@ CodeSnip: Historical update information from v0.1.0 to v3.0.0
 ================================================================================
 
 This file records known changes to files in CodeSnip from v0.1.0 and v3.0.0
-before the project was placed was placed under version control with Subversion.
+begore the project was placed was placed under version control with Subversion.
 
 There are three sections:
 
-  1: Releases: Lists the CodeSnip releases and notes which files were added,
-     updated or deleted in each release.
+  1: Releases: Lists all the releases of CodeSnip and notes which files were
+     added, updated or deleted in each release.
 
-  2: Files: Lists all source code files and development tools and provides
-     details of changes to these files.
+  2: Files: Lists all source code and development tools and provides details of
+     changes to these files.
 
   3: Compilers: Lists the compilers required to build each release.
 
@@ -22,21 +22,16 @@ There are three sections:
 1: RELEASES
 ================================================================================
 
-This section lists all releases of CodeSnip from the first version (0.1.0) to
+This section lists all releases of CodeSnip from the first version (0.1.0) to 
 release 3.0.0. For each release the following is noted:
 
   + Version, build number and date
   + List of new, updated and deleted files.
-
+  
 The Development tools, .bpg and .cfg files, test files and documentation are not
 included in this information.
 
-For details of changes in each release see the following change log files:
-
-  + ChangeLog-v0.txt for details of v0.1.0 to v0.11.1
-  + ChangeLog-v1.txt for details of v1.0 RC 1 to v1.9.4
-  + ChangeLog-v2.txt for details of v2.0.0 to v2.4.1
-  + ChangeLog-v3.txt for details of v3.0.0
+For details of changes to each release see ChangeLog.txt
 
 --------------------------------------------------------------------------------
 v0.1.0 (build 1) of 30 Jan 2005
@@ -1129,7 +1124,7 @@ Updated - Res\HTML\nodata-welcome.html 1.0
 Updated - Res\HTML\welcome.html 1.0
           (renamed from HTML\welcome.html)
 New     - Res\Img\configcomp.gif 29 May 2006
-Updated - Res\Img\download.gif 16 Jan 2005
+Updated - Res\Img\download.gif 16 Jan 2005 
           (renamed from HTML\download.gif)
 Updated - Res\Img\help.gif 16 Jan 2005
           (renamed from HTML\help.gif)
@@ -1141,7 +1136,7 @@ Updated - Res\Img\led-off.png 29 Dec 2004
 Updated - Res\Img\led-red.png 29 Dec 2004
           (renamed from HTML\led-red.png)
 Updated - Res\Img\led-yellow.png 29 Dec 2004
-          (renamed from HTML\led-yellow.png)
+          (renamed from HTML\led-yellow.png) 
 New     - Res\Img\viewunit.gif 28 May 2006
 Updated - Res\Img\Delphi2.bmp 01 Mar 2005
           (renamed from Img\Delphi2.bmp)
@@ -1409,7 +1404,7 @@ Updated - FrHTMLDlg.pas 1.2
 Updated - UAppInfo.pas 1.3
 New     - UHelpProtocol.pas 1.0
 New     - UHTTPProtocol.pas 1.0
-Updated - UProtocols.pas
+Updated - UProtocols.pas 
           renamed from UProtocolHandler.pas) 2.0
 Updated - HTML.hrc 1.3
 Updated - VCodeSnip.vi 14 Nov 2006
@@ -3175,8 +3170,8 @@ Updated - Res\Misc\CodeSnip.manifest 1.2
 2: FILES
 ================================================================================
 
-This section lists all files for which the update history is known between
-v0.1.0 and v3.0.0, inclusive.
+This section lists all files for which update history is known between v0.1.0
+and v3.0.0, inclusive.
 
 --------------------------------------------------------------------------------
 DevTools\BuilAll.bat
@@ -3195,7 +3190,7 @@ DevTools\BuildInstallHelper.bat
 --------------------------------------------------------------------------------
         14 Aug 2008  - Original version. Builds install helper project.
         04 Jul 2009  - IMPORTED TO SVN.
-
+        
 --------------------------------------------------------------------------------
 DevTools\BuildPascal.bat
 --------------------------------------------------------------------------------
@@ -3496,8 +3491,8 @@ Src\Dialogs.rc
 --------------------------------------------------------------------------------
 v0.1 of 17 Mar 2005  - Original version.
 v1.0 of 29 May 2006  - Made minor change to comments.
-                     - Changed name of dialogue box resource from EXPORTDIALOG
-                       to SAVESNIPPETEXT.
+                     - Changed name of dialog box resource from EXPORTDIALOG to
+                       SAVESNIPPETEXT.
         22 Apr 2008  - DELETED.
 
 --------------------------------------------------------------------------------
@@ -3508,10 +3503,10 @@ v0.2 of 20 Feb 2005  - Changed name of template html file to
                        dlg-about-tplt.html.
 v0.3 of 23 Feb 2005  - Changed to use new THTMLTpltDlgFrame frame instead of
                        THTMLDlgFrame to process HTML template and display
-                       dialogue content.
+                       dialog content.
 v0.4 of 01 Mar 2005  - Template HTML revised. Resolved new <%ResURL%> place-
                        holder with root part of res:// url to program's
-                       resources. New template changes appearance of dialogue
+                       resources. New template changes appearance of dialog
                        and adds "Powered by Delphi" logo.
 v0.5 of 04 Jan 2006  - Fixed problem where help failed to display because F1
                        key press was not being detected.
@@ -3520,7 +3515,7 @@ v0.7 of 07 Apr 2006  - Removed dependency on TPJVersionInfo. Replaced with
                        calls to new methods of TAppInfo.
                      - Added code to replace new Registration HTML
                        placeholder with registration information.
-                     - Made dialogue box resize to accomodate size of dialogue's
+                     - Made dialog box resize to accomodate size of dialog's
                        HTML.
                      - Added new "Register CodeSnip" button that is displayed
                        only if application is unregistered and displays
@@ -3532,9 +3527,9 @@ v1.0 of 04 Jun 2006  - Improved and corrected comments.
                      - Highlighted note that program unregistered in red.
                      - Added directive to turn off unsafe type warnings.
                      - Changed to derive from base class that can resize
-                       dialogue to fit HTML content. Removed code from this
+                       dialog to fit HTML content. Removed code from this
                        unit that did same job.
-                     - Widened dialogue box.
+                     - Widened dialog box.
 v1.1 of 25 Oct 2006  - Removed OnBeforeNavigate2 event handler and code that
                        checked for "execute:" protocol. This has now moved to
                        TBrowserBaseFrame and is available to all browser
@@ -3548,12 +3543,12 @@ v1.2 of 26 Oct 2006  - Changed to replace LicenseFileName template id with
 v1.3 of 07 Nov 2006  - Changed to use UCSSUtils methods to generate CSS
                        attributes.
 v1.4 of 14 Nov 2006  - Removed resolution of LicenseFileName template id
-                       since it has been removed from the dialogue box
+                       since it has been removed from the dialog box
                        template.
 v1.5 of 25 Nov 2006  - Changed literal colour reference to special program
                        colour constant.
                      - Added .header class to frame's CSS. This is used to
-                       colour the dialogue's header rather than hard wired
+                       colour the dialog's header rather than hard wired
                        colour formerly in HTML template file.
 v1.6 of 08 Feb 2007  - Modified to work with revised THTMLViewDlg base class
                        and new form customisation and alignment framework.
@@ -3597,7 +3592,7 @@ v2.8 of 16 Jun 2009  - Added facility to display easter egg by clicking
                        following prompt text.
                      - Removed type qualifier from constructor call in
                        TAboutDlg.Execute.
-                     - Widened dialogue box.
+                     - Widened dialog box.
         04 Jul 2009  - IMPORTED TO SVN.
 
 --------------------------------------------------------------------------------
@@ -3639,13 +3634,13 @@ v2.6 of 13 May 2009  - Now gets company and program name from TAppInfo
 Src\FmBugReportDlg.pas
 --------------------------------------------------------------------------------
 v0.1 of 30 Jan 2005  - Original version.
-v0.2 of 24 Feb 2005  - Now use TMessageBox class to display subsidiary dialogue
+v0.2 of 24 Feb 2005  - Now use TMessageBox class to display subsidiary dialog
                        box rather than MessageDlg routine.
 v0.3 of 25 Feb 2005  - Fixed tab order of controls and removed read only
                        controls from tab stops.
                      - Realign controls.
 v0.4 of 20 Nov 2005  - Improved and adjusted exception handling to avoid
-                       re-displaying dialogue on unexpected errors and to work
+                       re-displaying dialog on unexpected errors and to work
                        with new web service exception.
                      - Revised to use TBugReporter web service class to
                        interact with web service and removed code from this
@@ -3667,11 +3662,11 @@ v1.0 of 05 Jun 2006  - Improved and corrected comments.
                        modal result of Cancel button when ESC key pressed if
                        button is enabled.
                      - Changed bug glyph.
-v2.0 of 26 Oct 2006  - Total rewrite as a descendant of TWizardDlg. Dialogue
+v2.0 of 26 Oct 2006  - Total rewrite as a descendant of TWizardDlg. Dialog
                        retains same functionality as v1 code.
 v2.1 of 08 Feb 2007  - Changed type of Owner parameter of Execute method from
                        TForm to TComponent.
-                     - Removed code used to align dialogue to active form if
+                     - Removed code used to align dialog to active form if
                        owner was nil. This now done by object used to align
                        form.
                      - Re-assigned form's OnCreate event handler that was
@@ -3723,11 +3718,11 @@ Src\FmCompErrorDlg.pas
 v0.1 of 30 Jan 2005  - Original version.
 v0.2 of 20 Feb 2005  - Changed name of template html file from to
                        dlg-comperror-tplt.html.
-                     - Localised dialogue and HTML text.
+                     - Localised dialog and HTML text.
 v0.3 of 23 Feb 2005  - Changed to use new THTMLTpltDlgFrame frame instead of
                        THTMLDlgFrame to process HTML template and display
-                       dialogue content.
-v0.4 of 23 Feb 2005  - Added static method that displays dialogue box for a
+                       dialog content.
+v0.4 of 23 Feb 2005  - Added static method that displays dialog box for a
                        specified routine and compiler.
 v0.5 of 24 Feb 2005  - Changed to compiler names from Compilers global object
                        now that name removed from UCompilerTypes.
@@ -3738,7 +3733,7 @@ v0.7 of 20 Apr 2005  - Changed to use renamed IntfCompilers unit.
 v1.0 of 28 May 2006  - Improved and corrected comments.
                      - Removed unused unit reference.
                      - Changed to derive from base class that can resize
-                       dialogue to fit HTML content. Removed code from this
+                       dialog to fit HTML content. Removed code from this
                        unit that did same job.
 v1.1 of 07 Feb 2007  - Modified to work with revised THTMLViewDlg base class.
 v1.2 of 11 Feb 2007  - Added GetBodyPanelHeight method override to return
@@ -3801,14 +3796,14 @@ v1.2 of 08 Feb 2007  - Moved code that displays document from FormShow event
                        handler. Deleted FormShow.
 v1.3 of 04 Nov 2007  - Removed the IAssignable cast from the parameter to
                        IAssignable.Assign method calls.
-v1.4 of 10 Aug 2008  - Changed to use a dynamically created open file dialogue
-                       box that can be aligned to over dialogue and that
+v1.4 of 10 Aug 2008  - Changed to use a dynamically created open file dialog
+                       box that can be aligned to over dialog and that
                        behaves correctly with the Vista task bar.
-                     - Supplied help keyword to file open dialogue box.
+                     - Supplied help keyword to file open dialog box.
                      - Current compiler executable files are selected in open
-                       file dialogue when being edited.
+                       file dialog when being edited.
                      - Detection of non-existant files is now handled in this
-                       code rather automatically by file open dialogue box.
+                       code rather automatically by file open dialog box.
 v1.5 of 11 Aug 2008  - Replaced calls to ThemeServices with ThemeServicesEx.
 v1.6 of 25 Aug 2008  - Added checks that compiler executable files exists and
                        are valid executable files.
@@ -3818,7 +3813,7 @@ v1.6 of 25 Aug 2008  - Added checks that compiler executable files exists and
                      - Changed to use for..in loops to enumerate compilers.
 v1.7 of 15 Dec 2008  - Modified to use TRectEx record instead of TRect.
                      - Made private and protected sections strict.
-                     - Fixed minor bug where open dialogue could fail to detect
+                     - Fixed minor bug where open dialog could fail to detect
                        a non-existant file.
 v1.8 of 09 Jan 2009  - Now accepts a compilers object as parameter to Execute
                        method rather than operating on singletion object.
@@ -3860,7 +3855,7 @@ v0.3 of 19 Feb 2005  - Refactoring: renamed SetCompiler property write method
 v0.4 of 23 Feb 2005  - Changed so that a search object rather than a search
                        criteria is created when user OKs. Replaced
                        SearchCriteria property with Search property.
-                     - Added static Execute method that displays dialogue and
+                     - Added static Execute method that displays dialog and
                        returns search object if user OKs.
 v0.5 of 24 Feb 2005  - Changed to compiler names from Compilers global object
                        now that name removed from UCompilerTypes.
@@ -3871,7 +3866,7 @@ v0.6 of 04 Mar 2005  - Changed to use TCompilerIDs enumerated type that
 v0.7 of 21 Apr 2005  - Changed to use renamed IntfCompilers unit.
                      - Changed code that persists search settings to use
                        revised UAppInfo code.
-v0.8 of 10 Jan 2006  - Reordered controls in dialogue in more logical order.
+v0.8 of 10 Jan 2006  - Reordered controls in dialog in more logical order.
 v0.9 of 04 Apr 2006  - Changed to use renamed and revised Settings object and
                        associated interfaces.
 v1.0 of 24 May 2006  - Improved and corrected comments.
@@ -3894,7 +3889,7 @@ v0.2 of 18 Feb 2005  - Fixed error where code was creating new instances of
 v0.3 of 23 Feb 2005  - Changed so that a search object rather than a search
                        criteria is created when user OKs. Replaced
                        SearchCriteria property with Search property.
-                     - Added static Execute method that displays dialogue and
+                     - Added static Execute method that displays dialog and
                        returns search object if user OKs.
                      - Moved constant that determines max size of history
                        list to UGlobals.
@@ -3939,8 +3934,8 @@ v0.2 of 17 Mar 2005  - If no owner form provided form now align's over
 v0.3 of 19 Apr 2005  - Added code to prevent help being activated on F1 if
                        help button is invisible.
 v1.0 of 05 Jun 2006  - Added code to detect ESC key presses and to close
-                       dialogue if descendant-supplied modal result is not
-                       mrNone. This added because some dialogues ignore ESC
+                       dialog if descendant-supplied modal result is not
+                       mrNone. This added because some dialogs ignore ESC
                        when certain controls have focus. Added an abstract
                        method to return required modal result.
                      - Improved and corrected comments.
@@ -3951,7 +3946,7 @@ v1.1 of 03 Dec 2006  - Made AlignToOwner method protected and virtual instead
                        ArrangeForm and AlignToOwner. This can be called by
                        subclasses that change size of form after this class
                        has aligned it, and therefore need to resize and
-                       re-align the dialogue.
+                       re-align the dialog.
 v1.2 of 04 Feb 2007  - Removed now unused parameter from DisplayHelp call in
                        help button click event handler.
 v2.0 of 07 Feb 2007  - Rewrote in terms of new alignment and customisation
@@ -3970,7 +3965,7 @@ v2.0 of 07 Feb 2007  - Rewrote in terms of new alignment and customisation
                        - Overrode various of the new virtual methods of
                          TBaseForm.
 v2.1 of 26 Sep 2007  - Changed to use renamed IFormAligner interface.
-v2.2 of 11 Jun 2008  - Added calls to TDlgHelper to set dialogue box's parent.
+v2.2 of 11 Jun 2008  - Added calls to TDlgHelper to set dialog box's parent.
                        This change needed for app to work correctly with
                        Vista task bar.
         04 Jul 2009  - IMPORTED TO SVN.
@@ -4031,7 +4026,7 @@ v2.1 of 11 Feb 2007  - Added new abstract GetBodyPanelHeight method to return
                        height to value returned from GetBodyPanelHeight method.
                        We no longer simply assume the body panel should be the
                        same height as the HTML frame since there may be more
-                       than one frame in a HTML dialogue.
+                       than one frame in a HTML dialog.
                      - Removed unused GetBrowser abstract method.
         04 Jul 2009  - IMPORTED TO SVN.
 
@@ -4074,35 +4069,35 @@ v0.4 of 22 Feb 2005  - Added a notifier object that is passed to frames an
 v0.5 of 22 Feb 2005  - Localised string literals.
 v0.6 of 23 Feb 2005  - Changed new include new versions of information and
                        compiler check frames with new control names.
-v0.7 of 23 Feb 2005  - Changed all code that displays subsidiary dialogues to
+v0.7 of 23 Feb 2005  - Changed all code that displays subsidiary dialogs to
                        call static Execute methods rather than instantiating
-                       the dialogue classes in this code.
-                     - Search dialogues now return search objects rather than
+                       the dialog classes in this code.
+                     - Search dialogs now return search objects rather than
                        criteria: changed code that uses them accordingly.
 v0.8 of 23 Feb 2005  - Changed startup code and access to welcome page:
-                     - Removed dialogue boxes that display on start up when
+                     - Removed dialog boxes that display on start up when
                        database is emtpy: the welcome page now informs user
                        when the database is empty.
                      - Made code that displays welcome page on startup
                        independent of whether welcome page menu option is
                        enabled.
-v0.9 of 24 Feb 2005  - Now displays dialogue boxes via new TMessageBox class.
+v0.9 of 24 Feb 2005  - Now displays dialog boxes via new TMessageBox class.
                        Removed TPJWinMsgDlg component as a consequence.
-v0.10 of 25 Feb 2005 - Fixed bug: Ctrl+F was not displaying Find Dialogue
+v0.10 of 25 Feb 2005 - Fixed bug: Ctrl+F was not displaying Find Dialog
                        (Ctrl+F had also been assigned to Search menu item).
 v0.11 of 05 Mar 2005 - Added new top level "Tools" menu item with single menu
                        item "Configure Compilers" that displays "Configure
-                       Compilers" dialogue box.
+                       Compilers" dialog box.
                      - Added missing ellipsis to about box action.
 v0.12 of 17 Mar 2005 - Added new menu item / tool button to save selected
                        routine or category to disk along with custom save
-                       dialogue.
+                       dialog.
 v0.13 of 21 Apr 2005 - Changed code that persists main form settings to use
                        revised UAppInfo code.
 v0.14 of 25 Apr 2005 - Added new instance of custom action and handlers to
                        access help topic by ALink keyword.
                      - Passed action used to display configure compilers
-                       dialogue box to notifier object.
+                       dialog box to notifier object.
                      - Removed code that sets obsolete quick start help
                        action in notifier object.
                      - Added new "About Compiler Checks" help menu item and
@@ -4119,7 +4114,7 @@ v0.15 of 30 Nov 2005 - Deleted setting of Application.HelpFile.
 v0.16 of 06 Jan 2006 - Added new copy Snippet menu option / action that
                        selected code snippet to clipboard.
                      - Added new Preferences menu option / action that
-                       displays preferences dialogue box.
+                       displays preferences dialog box.
                      - Changed to use TSaveSnippetMgr to determine whether a
                        view item is savable.
 v0.17 of 10 Jan 2006 - Removed unsupported properties from form on reversion
@@ -4146,7 +4141,7 @@ v0.20 of 04 Apr 2006 - Removed old AppInfo object - now use TWindowSettings
                      - Removed unused resourcestrings.
 v0.21 of 07 Apr 2006 - Added new registration action and menu item to Help
                        menu and code to support it to display Registration
-                       dialogue. Menu item only visible if app is not
+                       dialog. Menu item only visible if app is not
                        registered. Code also added to detect if registration
                        performed via About box.
 v0.22 of 16 Apr 2006 - Added object that prevents drag drop on web browser
@@ -4160,7 +4155,7 @@ v1.0 of 09 Jun 2006  - Improved and corrected comments.
                        appEvents.OnException.
                      - Added several new glyphs to actions / menu items.
                      - No longer refreshes display after Configure Compilers
-                       dialogue is cancelled.
+                       dialog is cancelled.
                      - Deleted duplicate glyph from image list.
                      - Added new actions to display license and to access
                        CodeSnip home page on web.
@@ -4176,11 +4171,11 @@ v1.1 of 25 Oct 2006  - Renamed some menu items to confirm with naming
 v1.2 of 26 Oct 2006  - Changed to use TAppInfo.LicenseFileName to get full
                        file path of licence file rather than hard-wiring it.
 v1.3 of 29 Oct 2006  - Added new Select Routines action, menu item, tool
-                       button and code to display Select Routines dialogue box.
+                       button and code to display Select Routines dialog box.
                      - Added new Find Cross References action, menu item and
-                       code to display Find Cross References dialogue box.
+                       code to display Find Cross References dialog box.
                      - Added new Save Unit action, menu item, tool button and
-                       code to display Save Unit dialogue box.
+                       code to display Save Unit dialog box.
                      - Changed to use renamed USaveSourceDlg unit and
                        TSaveSourceDlg class.
                      - Changed glyph used for Save Snippets action.
@@ -4195,11 +4190,11 @@ v1.5 of 14 Nov 2006  - Changed license action to display license topic in
                        help file rather than license text file in external
                        text editor.
 v1.6 of 18 Nov 2006  - Added new action that displays Join Mailing List
-                       dialogue box. Also added corresponding tools menu item.
+                       dialog box. Also added corresponding tools menu item.
 v1.7 of 23 Nov 2006  - Added new action that shows / hides test units in
                        Compiler Check pane.
                      - Changed calls to .Free to calls to FreeAndNil.
-v1.8 of 01 Dec 2006  - Changed so that a wait dialogue box may be displayed
+v1.8 of 01 Dec 2006  - Changed so that a wait dialog box may be displayed
                        during relatively lengthy test compilations.
 v1.9 of 03 Dec 2006  - Fixed bug where Test Compile actions were always
                        enabled, permitting action to be triggered when no
@@ -4236,7 +4231,7 @@ v1.14 of 08 Feb 2007 - Tidied up code and reduced number of required units:
                        test bug exception with action that does same thing.
                      - Changed actTestCompileIndirectExecute to use new
                        static Run method of TWaitForActionUI class.
-                     - Changed to use TDialogMgr to display main dialogue
+                     - Changed to use TDialogMgr to display main dialog
                        boxes.
 v1.15 of 11 Feb 2007 - Changed info and detail frames so they are not tab
                        stops - now only tab controls, routine tree view and
@@ -4274,7 +4269,7 @@ v1.19 of 01 Mar 2007 - Removed actTestCompile and its events and renamed
                      - Added Update database action that enables database to
                        be loaded while a waiy dialpg box is displayed.
                      - No longer disable form when database re-loading after
-                       updating. We display modal dialogue instead.
+                       updating. We display modal dialog instead.
                      - Modified LoadSnippets to load database via a thread.
 v1.20 of 04 Mar 2007 - Fixed bug where Register CodeSnip and Show/Hide Test
                        Unit menu options were always disabled.
@@ -4287,7 +4282,7 @@ v1.23 of 22 Sep 2007 - Moved Help | License menu option up the menu to help
                        section.
                      - Added Help | Privacy Statement menu option and
                        associated action that displays help message.
-v1.24 of 24 Sep 2007 - Lengthened time before wait dialogue appears when test-
+v1.24 of 24 Sep 2007 - Lengthened time before wait dialog appears when test-
                        compiling.
 v1.25 of 31 Oct 2007 - Added support for pop-up menus in detail pane.
 v1.26 of 04 Nov 2007 - Removed call to INotifier.SetHelpTopicAction and
@@ -4305,7 +4300,7 @@ v1.29 of 12 Jun 2008 - Modified to change task bar handling. Application
                        Main form window now used for task bar. This change
                        required for compatibility with Vista.
 v1.30 of 25 Aug 2008 - Code that performs test compile in a thread while
-                       displaying a wait dialogue was extracted into the
+                       displaying a wait dialog was extracted into the
                        UTestCompileUI unit. This new unit improves handling
                        of cases when compiler fails to run.
 v1.31 of 14 Sep 2008 - Changed to work with redefined methods in Snippets
@@ -4357,7 +4352,7 @@ v1.37 of 06 Jan 2009 - Changed to use revised TTestCompileUI.Execute
 v1.38 of 10 Jan 2009 - Changed to use a manager object to manage compilations
                        triggered from main program. No longer uses global
                        Compilers singleton. New manager also manages compile
-                       related UI and dialogues.
+                       related UI and dialogs.
                      - Added Database menu option to show last compile errors
                        and warnings for selected routine if available.
 v1.39 of 14 Jan 2009 - Replaced control char literals with constants.
@@ -4367,7 +4362,7 @@ v1.41 of 13 May 2009 - Full program name now obtained from TAppInfo instead
                      - Browse actions that access website now have URLs set
                        using information from TWebInfo. Hints were modified.
 v1.42 of 23 Jun 2009 - Added new View | Dependencies menu option and action.
-                     - View Test Unit action now displays a dialogue box rather
+                     - View Test Unit action now displays a dialog box rather
                        than unit in compiler check pane. Hide Test Unit
                        action now removed.
                      - Actions and menu items added to expand/collapse tree
@@ -4424,7 +4419,7 @@ v3.0 of 07 Sep 2007  - Major revision.
                      - Added new General and Printing tabs
                      - Added ability to display a subset of them preference
                        pages.
-                     - Dialogue now always displayed left-most visible tab
+                     - Dialog now always displayed left-most visible tab
                        sheet when it opens.
                      - Changed so that help button now displays a help topic
                        relating to displayed page.
@@ -4462,8 +4457,8 @@ v1.3 of 13 May 2007  - Added popup menu for selection and copying of
                        list.
                      - Added code to call into viewer objects to perform
                        selection and copying.
-v1.4 of 17 Jun 2009  - Added support for variable dialogue box captions:
-                       - An optional parameter was to the dialogue's Execute
+v1.4 of 17 Jun 2009  - Added support for variable dialog box captions:
+                       - An optional parameter was to the dialog's Execute
                          method to allow caller to specify a title.
                        - Added support for getting caption from any title
                          embedded in displayed document.
@@ -4475,7 +4470,7 @@ Src\FmPrintDlg.pas
 --------------------------------------------------------------------------------
 v1.0 of 07 Sep 2007  - Original version.
 v1.1 of 16 Dec 2008  - Revised to use new static Execute method of
-                       TPageSetupDlgMgr to display page setup dialogue box.
+                       TPageSetupDlgMgr to display page setup dialog box.
                      - Added printer glyphs to printers combo box.
                      - Made private and protected methods strict.
                      - Now use for..in loop to enumerate printers.
@@ -4497,7 +4492,7 @@ v1.2 of 18 Nov 2006  - Corrected typo on "about user" page of wizard.
                        already recorded.
 v1.3 of 08 Feb 2007  - Changed type of Owner parameter of Execute method from
                        TForm to TComponent.
-                     - Removed unused code used to align dialogue to active
+                     - Removed unused code used to align dialog to active
                        form if owner was nil.
                      - Moved control initialisation code from FormCreate
                        event handler to new overridden InitForm method and
@@ -4552,18 +4547,18 @@ Src\FmUpdateDlg.pas
 v0.1 of 30 Jan 2005  - Original version.
 v0.2 of 18 Feb 2005  - Deleted unused DataUpdated property.
 v0.3 of 20 Nov 2005  - Changed error handling to display kind of error that
-                       occured in main dialogue box with text link to click to
+                       occured in main dialog box with text link to click to
                        display more detailed information in a message box.
 v0.4 of 04 Jan 2006  - Fixed minor bug that made label used for error message
                        was clickable (but blank) even when no error had
                        occured.
 v0.5 of 04 Jan 2006  - Changed to get web service host from TParams class.
-v0.6 of 10 Jan 2006  - Reinstated dialogue's title bar close button and
+v0.6 of 10 Jan 2006  - Reinstated dialog's title bar close button and
                        prevented closure while downloading.
 v0.7 of 12 Jan 2006  - Fixed alignment problem with error label.
 v0.8 of 02 Apr 2006  - Removed response to TUpdateMgr's usStarting status
                        notification now this notification and updated
-                       usFileList notification to set up dialogue for updates.
+                       usFileList notification to set up dialog for updates.
                        Changed usFileList message accordingly.
 v0.9 of 03 Apr 2006  - Added new status messages for new actions to "log on"
                        and "log off" web service.
@@ -4573,7 +4568,7 @@ v0.9 of 03 Apr 2006  - Added new status messages for new actions to "log on"
 v0.10 of 04 Apr 2006 - Changed to use TAppInfo class renamed from
                        TAppLocations.
 v0.11 of 01 May 2006 - Total rewrite to work with revised download code
-                       including redesign of dialogue box and method of
+                       including redesign of dialog box and method of
                        displaying progress. Added support for news items
                        received from server.
 v1.0 of 24 May 2006  - Improved and corrected comments.
@@ -4633,7 +4628,7 @@ v1.6 of 06 Jan 2009  - Changed to use local instance of Compiler object to
                        required in main form.
                      - Changed to use revised TTestCompileUI.Execute and
                        TCompErrorDlg.Execute method signatures.
-                     - Now centres wait dialogue rather than offsetting it from
+                     - Now centres wait dialog rather than offsetting it from
                        top left of form.
 v1.7 of 10 Jan 2009  - Changed to use new factory class to create local
                        compilers object instead of cloning global singleton.
@@ -4658,7 +4653,7 @@ v1.10 of 23 Jun 2009 - Removed reference to Snippet item standard format
                        explains snippet kinds.
                      - Improved dependency checking code to do a deep
                        recursive check.
-                     - Added View Dependencies button that displays dialogue
+                     - Added View Dependencies button that displays dialog
                        box that shows deep dependencies.
                      - XRefs are no longer checked: anything is allowed.
                      - Default list of units re-ordered so that Graphics unit
@@ -5037,7 +5032,7 @@ v1.1 of 07 Sep 2007  - Adapted to use revised virtual methods in base class.
 v1.2 of 17 Oct 2007  - Changed to allow highlighting data to be loaded and
                        saved by preferences object and to update local
                        preferences object when frame deactivated to make
-                       latest changes available to other tabs in dialogue box.
+                       latest changes available to other tabs in dialog box.
                      - Removed LoadPrefs and SavePrefs methods.
 v1.3 of 04 Nov 2007  - Removed the IAssignable cast from the parameter to
                        IAssignable.Assign method calls.
@@ -5046,8 +5041,8 @@ v1.4 of 22 Apr 2008  - Replaced RichEdit control used to display source code
                        displayed source code to be selected.
 v1.5 of 10 Aug 2008  - Replaced TColorBox control from component palette with
                        dynamically created, custom TColorBoxEx control along
-                       with assigned TColorDialogEx dialogue box. Done to fix
-                       bug in TColorBox's built in colour dialogue box when
+                       with assigned TColorDialogEx dialog box. Done to fix
+                       bug in TColorBox's built in colour dialog box when
                        running on Vista and to provide help keyword support.
 v1.6 of 14 Jan 2009  - Replaced control char literals with constants.
                      - Made private section strict.
@@ -5064,8 +5059,8 @@ v0.2 of 23 Feb 2005  - Now derived from TBrowserFrame that provides web
                      - Moved code that handled HTML templates to a new
                        descendant class.
 v0.3 of 05 Mar 2005  - Added new default CSS style for <table> tag.
-v0.4 of 16 Apr 2006  - Fixed error where user could drop files on dialogue box
-                       and display the file contents, replacing dialogue
+v0.4 of 16 Apr 2006  - Fixed error where user could drop files on dialog box
+                       and display the file contents, replacing dialog
                        contents. Added drag drop handler to browser control
                        that inhibits all drag drop.
 v1.0 of 25 May 2006  - Improved and corrected comments.
@@ -5380,7 +5375,7 @@ v1.3 of 17 Oct 2007  - Style of syntax highlighting use for source code
                        preview is now updated from local preferences when
                        frame is activated. This enables any changes to
                        highlighting style made elsewhere in preferences
-                       dialogue box to be immediately reflected in the preview.
+                       dialog box to be immediately reflected in the preview.
 v1.4 of 04 Nov 2007  - Removed the IAssignable cast from the parameter to
                        IAssignable.Assign method calls.
 v1.5 of 21 Apr 2008  - Replaced RichEdit control used to display source code
@@ -5442,7 +5437,7 @@ v0.7 of 19 Apr 2005  - Resource changes only:
                        - Moved update history comments to after xml and
                          doctype tags in all html files.
 v0.8 of 25 Apr 2005  - Renamed info-welcome.html to welcome.html (added link
-                       to file that displays Configure Compilers dialogue).
+                       to file that displays Configure Compilers dialog).
                      - Removed comp-welcome.html as no longer used (now
                        replaced by a help topic).
                      - Resource changes were:
@@ -5471,7 +5466,7 @@ v0.11 of 28 Jan 2006 - Resource changes only:
 v0.12 of 07 Apr 2006 - Resource changes only:
                        - Added registration info dlg-about-tplt.html.
 v0.13 of 01 May 2006 - Added new dlg-updt-news-tplt.html that displays news in
-                       update dialogue box.
+                       update dialog box.
 v1.0 of 04 Jun 2006  - Reformatted update log comments.
                      - Added Mozilla public license to this file and to all
                        referenced HTML, JavaScript and CSS files.
@@ -5532,7 +5527,7 @@ v1.13 of 19 Jan 2009 - Changed to use nocompcheck-body.html renamed from
                        info-routine.html as detail-info.html and
                        comp-routine.html as detail-compcheck.html.
                      - Removed info-blank.html.
-v1.14 of 10 May 2009 - Added new dlg-donate.html fixed dialogue box content
+v1.14 of 10 May 2009 - Added new dlg-donate.html fixed dialog box content
                        along with pound-sign.png image displayed by it.
 v1.15 of 19 Jun 2009 - Removed hideunit.gif.
                      - Removed info-uncatheader-tplt.html.
@@ -5787,7 +5782,7 @@ v1.1 of 31 Oct 2006  - Added bitmap containing check boxes used in tree
 v1.2 of 03 Feb 2007  - Added bitmaps for search glyphs displayed in status
                        bar.
 v1.3 of 08 May 2007  - Added glyph for Delphi 2007.
-v2.0 of 21 Apr 2008  - Added definition of template dialogue box formerly in
+v2.0 of 21 Apr 2008  - Added definition of template dialog box formerly in
                        Dialogs.rc.
                      - Added new manifest file used to configure program for
                        use with Windows XP and Vista.
@@ -6077,7 +6072,7 @@ Src\UColours.pas
 v1.0 of 25 Nov 2006  - Original version.
 v1.1 of 15 Dec 2006  - Updated some constants to use system colours instead
                        of hard wired colours.
-                     - Added some new constants for update dialogue news pane's
+                     - Added some new constants for update dialog news pane's
                        heading and highlight colours.
                      - Removed clHiliteText constants since now unused.
 v1.2 of 17 Feb 2007  - Added new clTextSearchHighlight and clTextSearchText
@@ -6751,7 +6746,7 @@ v1.0 of 05 Feb 2007  - Original version.
 v1.1 of 07 Sep 2007  - Added new TDialogMgr.ExecPrintDlg method.
                      - Added new TDialogMgr.ExecPageSetupDlg method.
 v1.2 of 16 Dec 2008  - Revised to use new static Execute method of
-                       TPageSetupDlgMgr to display page setup dialogue box.
+                       TPageSetupDlgMgr to display page setup dialog box.
 v1.3 of 09 Jan 2009  - Delete unused TDialogMgr's ExecCompilersDlg and
                        ShowCompErrorDlg methods.
 v1.4 of 09 May 2009  - Added new TDialogMgr.ShowDonateDlg method.
@@ -6893,7 +6888,7 @@ v1.0 of 06 Dec 2008  - Original version.
 Src\UExceptions.pas
 --------------------------------------------------------------------------------
 v0.1 of 30 Jan 2005  - Original version.
-v0.2 of 24 Feb 2005  - Changed to use dialogue box provided by new TMessageBox
+v0.2 of 24 Feb 2005  - Changed to use dialog box provided by new TMessageBox
                        class to display non-bug exceptions.
 v1.0 of 25 May 2006  - Improved and corrected comments.
                      - Changed call to TMessageBox.Error to remove now
@@ -6904,7 +6899,7 @@ v1.2 of 04 Oct 2008  - Changed TExceptionHandler to derive from
                        TNoConstructObject and hence prevented it from being
                        constructed.
 v1.3 of 30 Nov 2008  - Added new EDataEntry exception class for use in
-                       validating data entered into dialogue boxes.
+                       validating data entered into dialog boxes.
         04 Jul 2009  - IMPORTED TO SVN.
 
 --------------------------------------------------------------------------------
@@ -7680,9 +7675,9 @@ v1.0 of 25 Feb 2006  - Improved and corrected comments.
                      - Removed all help context parameters and references.
                        Unused and not appropriate to program's HTML help
                        system.
-v1.1 of 29 Oct 2006  - When dialogue box called with nil Form parameter and
+v1.1 of 29 Oct 2006  - When dialog box called with nil Form parameter and
                        Screen.ActiveForm is nil, Application.MainForm is now
-                       use as dialogue box parent.
+                       use as dialog box parent.
 v1.2 of 12 Feb 2007  - Ensures that error messages are terminated by
                        appropriate punctuation, i.e. a full stop, an
                        exclamation mark or a question mark.
@@ -7692,28 +7687,28 @@ v2.0 of 26 Sep 2007  - Replaced all custom alignment code with call to
                        method with "AlignTo" parameter that identifies
                        component that the message box is to be aligned to.
                      - Added "const" keyword to all constant parameters.
-v2.1 of 15 Jun 2008  - Added calls to TDlgHelper to set dialogue box's parent.
+v2.1 of 15 Jun 2008  - Added calls to TDlgHelper to set dialog box's parent.
                        This change needed for app to work correctly with
                        Vista task bar.
                      - Changed to use renamed UDlgHelper unit.
                      - Renamed all "AlignTo" parameters as "Parent".
-                     - Registered dialogue form with object that fixes Delphi's
+                     - Registered dialog form with object that fixes Delphi's
                        Alt key bug.
 v2.2 of 04 Oct 2008  - Changed TMessageBox to derive from TNoConstructObject
                        and hence prevented it from being constructed.
                      - Made private section strict.
                      - Now use ClassName method in assert statement.
-v3.0 of 06 Dec 2008  - Rewritten to use a custom dialogue box form implemented
+v3.0 of 06 Dec 2008  - Rewritten to use a custom dialog box form implemented
                        in this unit rather than code from Dialogs unit.
                      - Added new TMessageBox.Custom method that can display
-                       a dialogue box with custom buttons.
+                       a dialog box with custom buttons.
                      - Added new record type to use to define custom buttons.
                      - Blank lines included in text are now used as paragraph
                        spacers.
                      - Sealed TMessageBox.
 v3.1 of 15 Dec 2008  - Further modified to use TRectEx record instead of
                        TRect.
-v3.2 of 14 Jan 2009  - Made "&" signs in dialogue box appear literally instead
+v3.2 of 14 Jan 2009  - Made "&" signs in dialog box appear literally instead
                        of being treated as accelerator characters.
                      - Deleted LF const: now use equivalent in UConsts.
         04 Jul 2009  - IMPORTED TO SVN.
@@ -7772,7 +7767,7 @@ v0.4 of 25 Apr 2005  - Added implementation of INotifier.HelpTopic and
                        help topic to be displayed by a-link keyword.
                      - Added implementation of INotifier.ConfigCompilers and
                        ISetActions.SetConfigCompilersAction methods that
-                       enable configure compilers dialogue box to be displayed.
+                       enable configure compilers dialog box to be displayed.
                      - Removed implementation of INotifier.QuickStartHelp and
                        ISetActions.SetQuickStartHelpAction methods and quick
                        start help action field.
@@ -7871,7 +7866,7 @@ Src\UPageSetupDialogEx.pas
 v1.0 of 04 Sep 2007  - Original version.
 v1.1 of 26 Sep 2007  - Changed to perform alignment using new TDlgAligner
                        class instead of TCommonDlgAligner.
-v1.2 of 11 Jun 2008  - Added calls to TDlgHelper to set dialogue box's parent.
+v1.2 of 11 Jun 2008  - Added calls to TDlgHelper to set dialog box's parent.
                        This change needed for app to work correctly with
                        Vista task bar.
                      - Now uses new TDlgAligner.AlignToOwner method to
@@ -7892,7 +7887,7 @@ v1.1 of 16 Dec 2008  - Changed to static class. Now inherits from
                        deleted PageMargins function to initialise margins.
                      - Fixed bug where required margins weren't being
                        displayed due to addition of psoMargins to page setup
-                       dialogue options in Delphi 2006.
+                       dialog options in Delphi 2006.
         04 Jul 2009  - IMPORTED TO SVN.
 
 --------------------------------------------------------------------------------
@@ -8254,7 +8249,7 @@ Src\USaveDialogEx.pas
 v1.0 of 11 Sep 2008  - Original version.
 v1.1 of 03 Oct 2008  - Added WantDefaultHelpSupport property that toggles
                        support for default help processing. Provided to make
-                       suitable as a base class for custom save dialogues.
+                       suitable as a base class for custom save dialogs.
         04 Jul 2009  - IMPORTED TO SVN.
 
 --------------------------------------------------------------------------------
@@ -8265,7 +8260,7 @@ v0.2 of 21 Apr 2005  - Changed to use renamed USourceGen unit and renamed
                        TSourceGen class.
                      - Added new IntfHiliter unit that contains required type
                        definitions formerly in other units.
-v0.3 of 25 Apr 2005  - Added code to persist managed save last snippet dialogue
+v0.3 of 25 Apr 2005  - Added code to persist managed save last snippet dialog
                        user's settings to application's storage.
 v0.4 of 08 Jan 2006  - Extracted highlighting code from TSaveSnippetMgr into
                        separate class.
@@ -8278,23 +8273,23 @@ v0.4 of 08 Jan 2006  - Extracted highlighting code from TSaveSnippetMgr into
                      - Added new CanHandleView class method (in new super
                        class) to enable class to test for a valid view from
                        which to generate snippet.
-                     - Extracted dialogue box's title to resource string.
+                     - Extracted dialog box's title to resource string.
 v1.0 of 24 May 2006  - Improved and corrected comments.
                      - Removed unused unit reference.
 v2.0 of 29 Oct 2006  - Major update. Passed off much of processing to helper
                        objects:
                        - Now uses TSourceFileInfo object to handle
-                         extensions, dialogue box file type filter, and mapping
+                         extensions, dialog box file type filter, and mapping
                          to source file type.
                        - Now uses TSourceFileOutputMgr to handle display of
-                         dialogue box and formatting of source code.
+                         dialog box and formatting of source code.
 v2.1 of 04 Feb 2007  - Replaced redundant TDetailView class references with
                        TViewItem.
 v2.2 of 02 Jul 2007  - Added code to build a document title and to include in
                        generated snippets.
                      - A default file name, based on snippet name and made
                        into valid Pascal identifier, is now provided for use
-                       in dialogue box.
+                       in dialog box.
 v2.3 of 12 Sep 2008  - Changed document title to remove reference to
                        database.
 v2.4 of 03 Oct 2008  - Changed to use new inherited static Execute method and
@@ -8317,7 +8312,7 @@ v1.0 of 28 May 2006  - Improved and corrected comments.
                      - Relocated and rationalised $WARN directives.
                      - Removed unused unit reference.
                      - Localised literal strings.
-                     - Changed to use renamed dialogue box resource.
+                     - Changed to use renamed dialog box resource.
                        EXPORTDIALOG was renamed to SAVESNIPPETEXT.
 v1.1 of 29 Oct 2006  - Removed code that sets Filter property. This is now
                        set by caller.
@@ -8332,17 +8327,17 @@ v1.1 of 29 Oct 2006  - Removed code that sets Filter property. This is now
                        where extensionless files were having extension added
                        and then could silently overwrite an existing file
                        with same name.
-v1.2 of 26 Sep 2007  - Added code to align dialogue over owner. Required new
-                       Explorer hook function to prevent dialogue being
+v1.2 of 26 Sep 2007  - Added code to align dialog over owner. Required new
+                       Explorer hook function to prevent dialog being
                        centred.
                      - Revised overwrite message box to use TMessageBox
                        rather than Windows API and to align properly.
-v1.3 of 29 May 2008  - Fixed bug that caused dialogue box to always set default
+v1.3 of 29 May 2008  - Fixed bug that caused dialog box to always set default
                        file extension.
                      - Also changed so that UseSyntaxHiliting propery value
                        only depends on state of check box without reference
                        to whether it is enabled.
-v1.4 of 14 Jun 2008  - Added calls to TDlgHelper to set dialogue box's parent.
+v1.4 of 14 Jun 2008  - Added calls to TDlgHelper to set dialog box's parent.
                        This change needed for app to work correctly with
                        Vista task bar.
                      - Now uses new TDlgAligner.AlignToOwner method to
@@ -8358,7 +8353,7 @@ v2.2 of 15 Dec 2008  - Modified to use TRectEx record instead of TRect.
                      - Made protected section strict.
                      - Fixed bug that could wrongly detect an existing file
                        by using FileOpenEditedFileName routine in
-                       UOpenDialogHelper instead of dialogue's FileName
+                       UOpenDialogHelper instead of dialog's FileName
                        property.
 v2.3 of 13 Jan 2009  - Replaced control char literals with constants.
 v2.4 of 05 Jun 2009  - Changed comment style descriptions to refer to
@@ -8376,7 +8371,7 @@ v1.1 of 09 Feb 2007  - Added disclaimer to generated unit.
 v1.2 of 02 Jul 2007  - Fixed typo in source code disclaimer comment.
                      - Added code to build a document title and to include it
                        in generated units.
-                     - A unit file name is now suggested for dialogue box.
+                     - A unit file name is now suggested for dialog box.
                      - Changed default unit name / filename from
                        "PreviewUnit" to "Snippets".
 v1.3 of 26 Sep 2007  - Changed code that checks for acceptable file name to
@@ -8456,7 +8451,7 @@ v1.0 of 28 May 2006  - Improved and corrected comments.
                      - Changed to get name of CodeSnip's exe file from
                        TAppInfo.AppExeFile.
 v1.1 of 29 Oct 2006  - Added new ssFindXRefs section to store persistent
-                       settings for cross-reference search dialogue box.
+                       settings for cross-reference search dialog box.
 v1.2 of 09 Nov 2006  - Added new ssHiliteOutput storage section to store
                        syntax highlighter customisation.
 v1.3 of 07 Sep 2007  - Added new ssPreferences sections for storing program
@@ -8762,9 +8757,9 @@ v1.2 of 26 Sep 2007  - Added ErrorMessage parameter to
                        TSourceFileNameCheckEvent.
                      - Now display error message if entered file not
                        acceptable.
-                     - Preview dialogues are now aligned over save dialogue box.
+                     - Preview dialogs are now aligned over save dialog box.
 v1.3 of 29 May 2008  - Fixed bug that was always saving files of type
-                       selected in save dialogue's highlight type regardless of
+                       selected in save dialog's highlight type regardless of
                        file extension. Now bases file format on extension.
 v1.4 of 14 Dec 2008  - Changed to use ExtToFilterIndex routine from
                        its new location in the UOpenDialogHelper unit.
@@ -9218,7 +9213,7 @@ v1.2 of 04 Oct 2008  - Changed TUserDBMgr to derive from TNoConstructObject
                        and hence prevented it from being constructed.
                      - Now use ClassName method in all assert and raise EBug
                        statements.
-v1.3 of 15 Dec 2008  - Fixed minor bug where open and save dialogues could
+v1.3 of 15 Dec 2008  - Fixed minor bug where open and save dialogs could
                        incorrectly identify existance of a file.
 v1.4 of 14 Jan 2009  - Replaced control char literals with constants.
 v1.5 of 06 Jun 2009  - Changed to use TSnippetID and ISnippetIDList instead
@@ -9366,7 +9361,7 @@ v1.2 of 01 Mar 2007  - Added new overloaded TWaitForActionUI.Run method that
                        can execute a thread instead of an action. We use new
                        TOwnedAction private class to do this.
                      - Fixed possible bug in TWaitForActionUI that fails to
-                       close dialogue if MinDisplayTime is zero.
+                       close dialog if MinDisplayTime is zero.
                      - Changed TActionThread to descend from TThreadEx and
                        removed TActionThread's own Completed property in
                        favour of property of same name in new base class.
@@ -9375,7 +9370,7 @@ v1.3 of 24 Sep 2007  - Replaced call to Sleep routine in pause processing
                        system and therefore not displaying wait form.
 v1.4 of 29 Oct 2007  - Made form closure thread safe so that timer and thread
                        cannot both access at same time. This was done to try
-                       to fix occasional bug where dialogue box never closes.
+                       to fix occasional bug where dialog box never closes.
 v1.5 of 02 Jun 2008  - Rewrote code from v1.4 to make form opening / closure
                        thread safe. Now use critical section rather than lock
                        count. Previous fix did not work.
@@ -9718,23 +9713,23 @@ Src\Help\CodeSnip.cnt
 --------------------------------------------------------------------------------
 v0.1 of 30 Jan 2005  - New WinHelp contents file.
         30 Nov 2005  - DELETED.
-
+        
 --------------------------------------------------------------------------------
 Src\Help\CodeSnip.hap
 --------------------------------------------------------------------------------
 30 Jan 2005 - New Help topic file containing skeletal help file topics.
 05 Mar 2005 - Added topics describing menu options.
-            - Added topic describing new Configure Compilers dialogue box.
-            - Corrected k-link error in bug report and about dialogue topics and
-              added additional keywords for menus and dialogues.
-17 Mar 2005 - Added topic for Save Snippets dialogue box and added Save Snippet
+            - Added topic describing new Configure Compilers dialog box.
+            - Corrected k-link error in bug report and about dialog topics and
+              added additional keywords for menus and dialogs.
+17 Mar 2005 - Added topic for Save Snippets dialog box and added Save Snippet
             - description to File menu option.
 25 Mar 2005 - Added topic about usage of compiler check pane and added entry to
               help menu topic re this new option.
             - Completed Quick Start help topic.
 21 Nov 2005 - Wrote the "Download Updates Dialog Box" and "Bug Report Dialog
               Box" topics.
-            - Added glyphs to all dialogue box topics where corresponding menu
+            - Added glyphs to all dialog box topics where corresponding menu
               item has glyph.
 30 Nov 2005 - DELETED.
 
@@ -9750,16 +9745,16 @@ v0.3 of 17 Mar 2005  - Changed copyright date from 2004 to 2005.
 Src\Help\CodeSnip.hhp
 --------------------------------------------------------------------------------
 30 Nov 2005 - New project file for HTML Help.
-06 Jan 2006 - Added new preferences dialogue topic file.
+06 Jan 2006 - Added new preferences dialog topic file.
 14 Jan 2006 - Added HTML files for all new topics.
 06 Apr 2006 - Added new files re new topics associated with registration.
 29 Oct 2006 - Added new topic files.
 12 Nov 2006 - Added License topic file.
 18 Nov 2006 - Added Join Mailing List Dialog topic file.
 04 Sep 2007 - Added new topics re new print functionality and revised
-              preferences dialogue box.
-10 Aug 2008 - Added topics for Choose Element Colour dialogue box and Select
-              Compiler dialogue box.
+              preferences dialog box.
+10 Aug 2008 - Added topics for Choose Element Colour dialog box and Select
+              Compiler dialog box.
 10 Sep 2008 - Added new dlg_backup, dlg_restore, menu_database, standard_format,
               task_addsnippets and dlg_editsnippet topics.
 14 Dec 2008 - Added new topic files.
@@ -9774,22 +9769,22 @@ Src\Help\CodeSnip.hhp
 Src\Help\Index.hhk
 --------------------------------------------------------------------------------
 30 Nov 2005 - New index file for HTML Help.
-06 Jan 2006 - Added new preferences dialogue topic to index and removed two-
-              level dialogue box index.
+06 Jan 2006 - Added new preferences dialog topic to index and removed two-level
+              dialog box index.
 14 Jan 2006 - Added new index entries relating to new topics.
 06 Apr 2006 - Added new index entries relating to registration and mailing list.
-29 Oct 2006 - Added index entries for new dialogue boxes and tasks.
+29 Oct 2006 - Added index entries for new dialog boxes and tasks.
 12 Nov 2006 - Added privacy statement and license to index.
 18 Nov 2006 - Added Join Mailing List Dialog to index.
-03 Dec 2006 - Corrected error in index - update from web dialogue box entry was
+03 Dec 2006 - Corrected error in index - update from web dialog box entry was
               displaying wrong topic.
 04 Sep 2007 - Added new index entries re new printing and revised preferences
               topics.
-10 Aug 2008 - Added keywords for Choose Element Colour dialogue box and Select
-              Compiler dialogue box.
+10 Aug 2008 - Added keywords for Choose Element Colour dialog box and Select
+              Compiler dialog box.
 10 Sep 2008 - Added keywords for new topics.
-14 Dec 2008 - Added new task entries and dialogue box entries.
-07 Jun 2009 - Added index entry for dependencies dialogue box. Replaced
+14 Dec 2008 - Added new task entries and dialog box entries.
+07 Jun 2009 - Added index entry for dependencies dialog box. Replaced
               standard_format.htm with snippet_kinds.htm.
 04 Jul 2009 - IMPORTED TO SVN.
 
@@ -9974,15 +9969,15 @@ Src\Help\HTML\detail_pane.htm
 --------------------------------------------------------------------------------
 Src\Help\HTML\dlg_about.htm
 --------------------------------------------------------------------------------
-27 Nov 2005 - New About box dialogue HTML Help topic.
+27 Nov 2005 - New About box dialog HTML Help topic.
 14 Jan 2006 - Revised topic re changes to About Box.
 07 Apr 2006 - Updated with information about registration information and button
-              that can appear in dialogue.
+              that can appear in dialog.
 04 Jun 2006 - Added Mozilla public license statement.
             - Changed to use CSS class for image rather than inline style.
 14 Nov 2006 - Added link to license topic.
             - Made minor changes to other text.
-11 Feb 2007 - Revised About Box topic to describe revised dialogue box.
+11 Feb 2007 - Revised About Box topic to describe revised dialog box.
 08 May 2007 - Added Delphi 2007 to list of supported compilers.
 22 Sep 2007 - Added note about new testers list.
 04 Jul 2009 - IMPORTED TO SVN.
@@ -9990,13 +9985,13 @@ Src\Help\HTML\dlg_about.htm
 --------------------------------------------------------------------------------
 Src\Help\HTML\dlg_backup.htm
 --------------------------------------------------------------------------------
-10 Sep 2008 - New HTML Help topic for Save Backup dialogue box.
+10 Sep 2008 - New HTML Help topic for Save Backup dialog box.
 04 Jul 2009 - IMPORTED TO SVN.
 
 --------------------------------------------------------------------------------
 Src\Help\HTML\dlg_bugreport.htm
 --------------------------------------------------------------------------------
-27 Nov 2005 - New Bug report dialogue box HTML help topic.
+27 Nov 2005 - New Bug report dialog box HTML help topic.
 14 Jan 2006 - Tidied HTML.
 10 Apr 2006 - Added link to privacy statement topic.
 04 Jun 2006 - Added Mozilla public license statement.
@@ -10009,8 +10004,8 @@ Src\Help\HTML\dlg_bugreport.htm
 --------------------------------------------------------------------------------
 Src\Help\HTML\dlg_configcompilers.htm
 --------------------------------------------------------------------------------
-27 Nov 2005 - New Configure compilers dialogue box HTML Help topic.
-08 Jan 2006 - Updated topic re revised and extended Configure Compilers dialogue
+27 Nov 2005 - New Configure compilers dialog box HTML Help topic.
+08 Jan 2006 - Updated topic re revised and extended Configure Compilers dialog
               box.
 14 Jan 2006 - Tidied HTML.
 04 Jun 2006 - Added Mozilla public license statement.
@@ -10026,48 +10021,48 @@ Src\Help\HTML\dlg_configcompilers.htm
 --------------------------------------------------------------------------------
 Src\Help\HTML\dlg_dependencies.htm
 --------------------------------------------------------------------------------
-06 Jun 2009 - New HTML Help topic associated with the new Dependencies dialogue
+06 Jun 2009 - New HTML Help topic associated with the new Dependencies dialog
               box.
 04 Jul 2009 - IMPORTED TO SVN.
 
 --------------------------------------------------------------------------------
 Src\Help\HTML\dlg_editsnippet.htm
 --------------------------------------------------------------------------------
-13 Sep 2008 - New HTML Help topic for Add / Edit Snippet dialogue box.
+13 Sep 2008 - New HTML Help topic for Add / Edit Snippet dialog box.
 11 Oct 2008 - Noted addition of new Set All To Success button on Compile Results
-              tab of snippets editor dialogue box.
+              tab of snippets editor dialog box.
 05 Jan 2009 - Noted earlier changes to Extra Information tab.
             - Noted changes to Compile Results tab.
-23 Jun 2009 - Revised in line with changes to the edit snippet dialogue box.
+23 Jun 2009 - Revised in line with changes to the edit snippet dialog box.
 04 Jul 2009 - IMPORTED TO SVN.
 
 --------------------------------------------------------------------------------
 Src\Help\HTML\dlg_elementcolour.htm
 --------------------------------------------------------------------------------
-10 Aug 2008 - New HTML Help topic for Choose Element Colour dialogue box.
+10 Aug 2008 - New HTML Help topic for Choose Element Colour dialog box.
 04 Jul 2009 - IMPORTED TO SVN.
 
 --------------------------------------------------------------------------------
 Src\Help\HTML\dlg_export.htm
 --------------------------------------------------------------------------------
-14 Dec 2008 - New export routines dialogue HTML Help topic.
-05 Jun 2009 - Revised re change of dialogue box name to Export Snippets.
+14 Dec 2008 - New export routines dialog HTML Help topic.
+05 Jun 2009 - Revised re change of dialog box name to Export Snippets.
             - Changed references to "routines" to "snippets".
 04 Jul 2009 - IMPORTED TO SVN.
 
 --------------------------------------------------------------------------------
 Src\Help\HTML\dlg_exportfile.htm
 --------------------------------------------------------------------------------
-14 Dec 2008 - New export file dialogue HTML Help topic.
-07 Jun 2009 - Revised to refer to renamed "Export Snippets" dialogue box. Also
+14 Dec 2008 - New export file dialog HTML Help topic.
+07 Jun 2009 - Revised to refer to renamed "Export Snippets" dialog box. Also
               fixed an error in the text.
 04 Jul 2009 - IMPORTED TO SVN.
 
 --------------------------------------------------------------------------------
 Src\Help\HTML\dlg_findcompiler.htm
 --------------------------------------------------------------------------------
-27 Nov 2005 - New Find Compiler dialogue box HTML Help topic.
-10 Jan 2006 - Completed Find Compilers dialogue box topic.
+27 Nov 2005 - New Find Compiler dialog box HTML Help topic.
+10 Jan 2006 - Completed Find Compilers dialog box topic.
 14 Jan 2006 - Replaced dashes with n-dashes.
             - Tidied HTML.
 04 Jun 2006 - Added Mozilla public license statement.
@@ -10080,8 +10075,8 @@ Src\Help\HTML\dlg_findcompiler.htm
 --------------------------------------------------------------------------------
 Src\Help\HTML\dlg_findtext.htm
 --------------------------------------------------------------------------------
-27 Nov 2005 - New Find Text dialogue box HTML Help topic.
-10 Jan 2006 - Completed Find Text dialogue box topic.
+27 Nov 2005 - New Find Text dialog box HTML Help topic.
+10 Jan 2006 - Completed Find Text dialog box topic.
 14 Jan 2006 - Tidied HTML.
 04 Jun 2006 - Added Mozilla public license statement.
             - Changed to use CSS class for image rather than inline style.
@@ -10092,7 +10087,7 @@ Src\Help\HTML\dlg_findtext.htm
 --------------------------------------------------------------------------------
 Src\Help\HTML\dlg_findxrefs.htm
 --------------------------------------------------------------------------------
-29 Oct 2006 - New HTML Help topic for Find Cross References dialogue box.
+29 Oct 2006 - New HTML Help topic for Find Cross References dialog box.
 07 Jun 2009 - Changed references to "routines" to "snippets" and made minor
               editorial change.
 04 Jul 2009 - IMPORTED TO SVN.
@@ -10100,27 +10095,27 @@ Src\Help\HTML\dlg_findxrefs.htm
 --------------------------------------------------------------------------------
 Src\Help\HTML\dlg_import.htm
 --------------------------------------------------------------------------------
-14 Dec 2008 - New import routines dialogue HTML Help topic.
-05 Jun 2009 - Revised re change of dialogue box name to Import Snippets.
+14 Dec 2008 - New import routines dialog HTML Help topic.
+05 Jun 2009 - Revised re change of dialog box name to Import Snippets.
             - Changed references to "routines" to "snippets".
 04 Jul 2009 - IMPORTED TO SVN.
 
 --------------------------------------------------------------------------------
 Src\Help\HTML\dlg_maillist.htm
 --------------------------------------------------------------------------------
-18 Nov 2006 - New HTML Help topic for the Join Mailing List dialogue box.
+18 Nov 2006 - New HTML Help topic for the Join Mailing List dialog box.
 04 Jul 2009 - IMPORTED TO SVN.
 
 --------------------------------------------------------------------------------
 Src\Help\HTML\dlg_pagesetup.htm
 --------------------------------------------------------------------------------
-04 Sep 2007 - New HTML Help topic for the Page Setup dialogue box.
+04 Sep 2007 - New HTML Help topic for the Page Setup dialog box.
 04 Jul 2009 - IMPORTED TO SVN.
 
 --------------------------------------------------------------------------------
 Src\Help\HTML\dlg_preferences.htm
 --------------------------------------------------------------------------------
-06 Jan 2006 - New Preferences dialogue box HTML Help topic.
+06 Jan 2006 - New Preferences dialog box HTML Help topic.
 14 Jan 2006 - Added reference to related menu item.
             - Tidied HTML.
 04 Jun 2006 - Added Mozilla public license statement.
@@ -10129,7 +10124,7 @@ Src\Help\HTML\dlg_preferences.htm
 29 Oct 2006 - Rephrased some text to reflect there is now more than one source
               code export option.
             - Clarified some text.
-08 Nov 2006 - Topic rewritten to describe revised two-tab preferences dialogue
+08 Nov 2006 - Topic rewritten to describe revised two-tab preferences dialog
               box.
 04 Sep 2007 - Revised to link to separate tab help topics for each tab.
 04 Jul 2009 - IMPORTED TO SVN.
@@ -10137,7 +10132,7 @@ Src\Help\HTML\dlg_preferences.htm
 --------------------------------------------------------------------------------
 Src\Help\HTML\dlg_prefs_general.htm
 --------------------------------------------------------------------------------
-07 Sep 2007 - New HTML Help topic for General tab of Preferences dialogue box.
+07 Sep 2007 - New HTML Help topic for General tab of Preferences dialog box.
 07 Jun 2009 - Fixed typo.
 04 Jul 2009 - IMPORTED TO SVN.
 
@@ -10145,36 +10140,35 @@ Src\Help\HTML\dlg_prefs_general.htm
 Src\Help\HTML\dlg_prefs_hiliter.htm
 --------------------------------------------------------------------------------
 07 Sep 2007 - New HTML Help topic for Syntax Highlighter tab of Preferences
-              dialogue box.
+              dialog box.
 07 Jun 2009 - Updated re addition of option to use some pre-defined styles.
 04 Jul 2009 - IMPORTED TO SVN.
 
 --------------------------------------------------------------------------------
 Src\Help\HTML\dlg_prefs_printing.htm
 --------------------------------------------------------------------------------
-07 Sep 2007 - New HTML Help topic for Printing tab of Preferences dialogue box.
+07 Sep 2007 - New HTML Help topic for Printing tab of Preferences dialog box.
 07 Jun 2009 - Fixed typo.
 04 Jul 2009 - IMPORTED TO SVN.
 
 --------------------------------------------------------------------------------
 Src\Help\HTML\dlg_prefs_sourcecode.htm
 --------------------------------------------------------------------------------
-04 Sep 2007 - New HTML Help topic for Source Code tab of Preferences dialogue
-              box.
+04 Sep 2007 - New HTML Help topic for Source Code tab of Preferences dialog box.
 07 Jun 2009 - Updated re addition of new kinds of snippets.
 04 Jul 2009 - IMPORTED TO SVN.
 
 --------------------------------------------------------------------------------
 Src\Help\HTML\dlg_print.htm
 --------------------------------------------------------------------------------
-07 Sep 2007 - New HTML Help topic for Print dialogue box.
+07 Sep 2007 - New HTML Help topic for Print dialog box.
 07 Jun 2009 - Replaced occurences of "routine" with "snippet".
 04 Jul 2009 - IMPORTED TO SVN.
 
 --------------------------------------------------------------------------------
 Src\Help\HTML\dlg_register.htm
 --------------------------------------------------------------------------------
-07 Apr 2006 - New HTML Help topic that describes used of Registration dialogue
+07 Apr 2006 - New HTML Help topic that describes used of Registration dialog
               box.
 10 Apr 2006 - Added links to mailing list and privacy statement topics.
             - Added external link to delphidabbler.com.
@@ -10185,13 +10179,13 @@ Src\Help\HTML\dlg_register.htm
 --------------------------------------------------------------------------------
 Src\Help\HTML\dlg_restore.htm
 --------------------------------------------------------------------------------
-10 Sep 2008 - New HTML Help topic for Open Backup dialogue box.
+10 Sep 2008 - New HTML Help topic for Open Backup dialog box.
 04 Jul 2009 - IMPORTED TO SVN.
 
 --------------------------------------------------------------------------------
 Src\Help\HTML\dlg_savesnippet.htm
 --------------------------------------------------------------------------------
-27 Nov 2005 - New Save Snippet dialogue box HTML Help topic.
+27 Nov 2005 - New Save Snippet dialog box HTML Help topic.
 14 Jan 2006 - Minor changes to style of some text.
             - Tidied HTML.
 11 Apr 2006 - Removed reference to Save Snippet toolbar button.
@@ -10199,15 +10193,15 @@ Src\Help\HTML\dlg_savesnippet.htm
             - Changed to use CSS class for image rather than inline style.
             - Made minor changes to content.
 28 Oct 2006 - Made minor change to text.
-13 May 2007 - Noted that text can now be selected and copied in preview dialogue
+13 May 2007 - Noted that text can now be selected and copied in preview dialog
               box.
 04 Jul 2009 - IMPORTED TO SVN.
 
 --------------------------------------------------------------------------------
 Src\Help\HTML\dlg_saveunit.htm
 --------------------------------------------------------------------------------
-28 Oct 2006 - New HTML Help topic that describes use of Save Unit dialogue box.
-13 May 2007 - Noted that text can now be selected and copied in preview dialogue
+28 Oct 2006 - New HTML Help topic that describes use of Save Unit dialog box.
+13 May 2007 - Noted that text can now be selected and copied in preview dialog
               box.
 07 Jun 2009 - Occurences of "routine" replaced by "snippet" and fact that
               freeform snippets are not exported noted.
@@ -10216,23 +10210,23 @@ Src\Help\HTML\dlg_saveunit.htm
 --------------------------------------------------------------------------------
 Src\Help\HTML\dlg_selectcompiler.htm
 --------------------------------------------------------------------------------
-10 Aug 2008 - New HTML Help topic for Select Compiler dialogue box.
+10 Aug 2008 - New HTML Help topic for Select Compiler dialog box.
 07 Jun 2009 - Revised text and fixed incomplete sentence.
 04 Jul 2009 - IMPORTED TO SVN.
 
 --------------------------------------------------------------------------------
 Src\Help\HTML\dlg_selectroutines.htm
 --------------------------------------------------------------------------------
-28 Oct 2006 - New HTML Help topic for Select Routines dialogue box.
-03 Jan 2009 - Modified re changes to dialogue box.
-16 May 2009 - Revised re change of dialogue box name to Select Snippets.
+28 Oct 2006 - New HTML Help topic for Select Routines dialog box.
+03 Jan 2009 - Modified re changes to dialog box.
+16 May 2009 - Revised re change of dialog box name to Select Snippets.
             - Changed references to "routines" to "snippets".
 04 Jul 2009 - IMPORTED TO SVN.
 
 --------------------------------------------------------------------------------
 Src\Help\HTML\dlg_submit.htm
 --------------------------------------------------------------------------------
-14 Dec 2008 - New code submit dialogue HTML Help topic.
+14 Dec 2008 - New code submit dialog HTML Help topic.
 26 Apr 2009 - Added note that user name and email address are persistent.
 05 Jun 2009 - Changed references to "routines" to "snippets".
 04 Jul 2009 - IMPORTED TO SVN.
@@ -10240,7 +10234,7 @@ Src\Help\HTML\dlg_submit.htm
 --------------------------------------------------------------------------------
 Src\Help\HTML\dlg_update.htm
 --------------------------------------------------------------------------------
-27 Nov 2005 - New Database Update dialogue box HTML Help topic.
+27 Nov 2005 - New Database Update dialog box HTML Help topic.
 14 Jan 2006 - Changed title and main heading from Download Updates Dialog Box to
               Update from Web Dialog Box.
             - Tidied HTML.
@@ -10350,7 +10344,7 @@ Src\Help\HTML\menu_file.htm
             - Changed reference to Compiler Checks Tab into a link.
 28 Oct 2006 - Added entry for Save Unit menu option.
             - Revised Save Snippet entry.
-01 Dec 2006 - Noted that sometimes a message dialogue box my appear during test
+01 Dec 2006 - Noted that sometimes a message dialog box my appear during test
               compilations.
 04 Sep 2007 - Added entries for new Page Setup and Print menu items.
 09 Sep 2008 - Removed menu items that are now in Database menu.
@@ -10363,7 +10357,7 @@ Src\Help\HTML\menu_help.htm
 --------------------------------------------------------------------------------
 27 Nov 2005 - New Help menu HTML Help topic.
 14 Jan 2006 - Revised About Box menu item description re changes to About Box
-              and added link to dialogue box.
+              and added link to dialog box.
             - Standardised wording of main menu link.
             - Tidied HTML.
 04 Apr 2006 - Added entry for new Register CodeSnip menu option that appears for
@@ -10392,14 +10386,14 @@ Src\Help\HTML\menu_help.htm
 Src\Help\HTML\menu_search.htm
 --------------------------------------------------------------------------------
 27 Nov 2005 - New Search menu HTML Help topic.
-10 Jan 2006 - Added links to Find Compilers and Find Text dialogue box topics to
+10 Jan 2006 - Added links to Find Compilers and Find Text dialog box topics to
               relevant menu item entries.
 14 Jan 2006 - Standardised wording of main menu link.
             - Tidied HTML.
 04 Jun 2006 - Added Mozilla public license statement.
             - Changed to use new menu table styling.
             - References to Overview Pane changed into links.
-28 Oct 2006 - Added entries for new Select Routines and Finds Cross Refs menu
+28 Oct 2006 - Added entries for new Select Routines and Finds Cross Refs menu 
               items.
 01 Dec 2006 - Fixed minor error.
 07 Jun 2009 - Revised re changes to the Search menu.
@@ -10568,7 +10562,7 @@ Src\Help\HTML\task_copysnippet.htm
 14 Jan 2006 - New HTML Help topic informing how to copy a code snippet to
               clipboard.
 04 Jun 2006 - Added Mozilla public license statement.
-04 Sep 2007 - Updated to link correctly to revised preferences dialogue box
+04 Sep 2007 - Updated to link correctly to revised preferences dialog box
               topics.
 07 Jun 2009 - Radical rewrite to deal with all three ways of copying a snippet
               instead of only "Copy Snippet".
@@ -10745,7 +10739,7 @@ Src\Help\Images\DeleteSnippet.gif
 --------------------------------------------------------------------------------
 Src\Help\Images\Dependencies.gif
 --------------------------------------------------------------------------------
-05 Jun 2009 - New glyph for action that displays Dependencies dialogue.
+05 Jun 2009 - New glyph for action that displays Dependencies dialog.
 04 Jul 2009 - IMPORTED TO SVN.
 
 --------------------------------------------------------------------------------
@@ -11175,7 +11169,7 @@ v0.1 of 20 Feb 2005  - Original version.
 v0.2 of 19 Apr 2005  - Prefixed "Compile" to compile button hint.
                      - Moved these comments below xml and doctype tags.
 v0.3 of 25 Apr 2005  - Added links to display About Compiler Checks help topic
-                       and Configure Compilers dialogue box.
+                       and Configure Compilers dialog box.
                      - JavaScript now used to write HTML for Test Compile
                        button and disables it, and writes message when new
                        external.InstalledCompilers() method returns 0.
@@ -11202,7 +11196,7 @@ Src\Res\HTML\comp-routine-test-tplt.html
 v0.1 of 20 Feb 2005  - Original version.
 v0.2 of 19 Apr 2005  - Moved these comments below xml and doctype tags.
 v0.3 of 25 Apr 2005  - Added links to display About Compiler Checks help topic
-                       and Configure Compilers dialogue box.
+                       and Configure Compilers dialog box.
 v0.4 of 03 Jun 2005  - Now contains only inner HTML of body tag rather than
                        complete XHTML document.
 v1.0 of 04 Jun 2006  - Reformatted update log comments.
@@ -11251,7 +11245,7 @@ v2.0 of 25 Jan 2009  - Added template placeholders to be used instead of
 v2.1 of 19 Jun 2009  - Removed HTML divs that were used to display test unit.
                      - Links that previously toggled visibility of test unit
                        now call a new external object function that causes
-                       test unit to be displayed in dialogue. These links are
+                       test unit to be displayed in dialog. These links are
                        no longer updated dynamically: they now have static
                        text and images.
                      - Changed test compile link etc to refer to "snippet"
@@ -12058,7 +12052,7 @@ BRCC32 5.4
 MS HTML Help Workshop 1.1
 HTML Resource Compiler 1.0.1
 Version Information Editor 2.11
-
+  
 --------------------------------------------------------------------------------
 From v0.8.3 (build 30)
 --------------------------------------------------------------------------------
@@ -12149,7 +12143,4 @@ Inno Setup Compiler v5.2.3 with ISPP preprocessor.
 Microsoft MIDL compiler v7.0
 Borland TLIBIMP v10.0
 
---------------------------------------------------------------------------------
-$Rev$
-$Date$
 --------------------------------------------------------------------------------
