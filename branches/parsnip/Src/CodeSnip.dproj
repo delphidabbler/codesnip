@@ -453,7 +453,6 @@
 			<DCCReference Include="UHistoryMenus.pas"/>
 			<DCCReference Include="UHTMLBuilder.pas"/>
 			<DCCReference Include="UHTMLDOMHelper.pas"/>
-			<DCCReference Include="UHTMLHelp.pas"/>
 			<DCCReference Include="UHTMLHelpMgr.pas"/>
 			<DCCReference Include="UHTMLTemplate.pas"/>
 			<DCCReference Include="UHTMLUtils.pas"/>

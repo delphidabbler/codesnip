@@ -245,7 +245,6 @@ uses
   UHistoryMenus in 'UHistoryMenus.pas',
   UHTMLBuilder in 'UHTMLBuilder.pas',
   UHTMLDOMHelper in 'UHTMLDOMHelper.pas',
-  UHTMLHelp in 'UHTMLHelp.pas',
   UHTMLHelpMgr in 'UHTMLHelpMgr.pas',
   UHTMLTemplate in 'UHTMLTemplate.pas',
   UHTMLUtils in 'UHTMLUtils.pas',

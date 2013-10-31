@@ -27,10 +27,26 @@ uses
   // Delphi
   Windows,
   // Project
-  UAppInfo, UEncodings, UHTMLHelp, UHelpMgr;
+  UAppInfo, UEncodings, UHelpMgr;
 
 
 type
+  {
+  THHAKLink:
+    Structure used to specify one or more ALink names or KLink keywords to be
+    searched for.
+  }
+  THHAKLink = packed record
+    cbStruct: Integer;    // sizeof this structure
+    fReserved: BOOL;      // must be FALSE (really!)
+    pszKeywords: LPCTSTR; // semi-colon separated keywords
+    pszUrl: LPCTSTR;      // URL to jump to if no keywords found (may be nil)
+    pszMsgText: LPCTSTR;  // MessageBox text on failure (used if pszUrl nil)
+    pszMsgTitle: LPCTSTR; // Title of any failure MessageBox
+    pszWindow: LPCTSTR;   // Window to display pszURL in
+    fIndexOnFail: BOOL;   // Displays index if keyword lookup fails.
+  end;
+
   {
   THTMLHelpMgr:
     Class that interacts with and controls HTML Help and implements IHelpMgr.
@@ -94,7 +110,7 @@ begin
   // Fill in A link structure
   ALink.cbStruct := SizeOf(THHAKLink);
   // *** NOTE:
-  // This one is weird: when using the unicode API just casting the keyword to
+  // This one is weird: when using the Unicode API just casting the keyword to
   // PChar causes HTML Help to see only the first character of the keyword. We
   // have to cast to ASCII string and then to a pointer to get this to work,
   // even though pszKeywords is declared as PWideChar
