@@ -55,8 +55,8 @@ type
     IHelpMgr
   )
   strict private
-    procedure DoAppHelp(const Command: LongWord; const HelpPage: string;
-      const Data: LongWord);
+    procedure DoAppHelp(const Command: UINT; const HelpPage: string;
+      const Data: DWORD);
       {Calls HtmlHelp API with specified command and parameters.
         @param Command [in] Command to send to HTML Help.
         @param HelpPage [in] Name of HTML file containing required help page
@@ -75,8 +75,8 @@ type
 
 { THTMLHelpMgr }
 
-procedure THTMLHelpMgr.DoAppHelp(const Command: LongWord;
-  const HelpPage: string; const Data: LongWord);
+procedure THTMLHelpMgr.DoAppHelp(const Command: UINT; const HelpPage: string;
+  const Data: DWORD);
   {Calls HtmlHelp API with specified command and parameters.
     @param Command [in] Command to send to HTML Help.
     @param HelpPage [in] Name of HTML file containing required help page within
@@ -89,7 +89,7 @@ begin
   HelpSpec := TAppInfo.HelpFileName;
   if HelpPage <> '' then
     HelpSpec := HelpSpec + '::/' + HelpPage;
-  HtmlHelp(GetDesktopWindow(), PChar(HelpSpec), Command, Data);
+  HtmlHelp(GetDesktopWindow(), HelpSpec, Command, Data);
 end;
 
 procedure THTMLHelpMgr.ShowContents;
@@ -113,11 +113,12 @@ begin
   // This one is weird: when using the Unicode API just casting the keyword to
   // PChar causes HTML Help to see only the first character of the keyword. We
   // have to cast to ASCII string and then to a pointer to get this to work,
-  // even though pszKeywords is declared as PWideChar
+  // even though pszKeywords is declared as LPCTSTR which is defined as
+  // PWideChar.
   ALink.pszKeywords := Pointer(StringToASCIIString(AKeyword));
   ALink.fIndexOnFail := True;
   // Display help
-  DoAppHelp(HH_ALINK_LOOKUP, '', LongWord(@ALink));
+  DoAppHelp(HH_ALINK_LOOKUP, '', DWORD(@ALink));
 end;
 
 initialization
