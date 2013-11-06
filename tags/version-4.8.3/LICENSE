@@ -1,0 +1,20 @@
+Licensing of CodeSnip's source and image files is on a per file basis.
+
+There are two ways that license information can be found:
+
+1) By examining comments within source files. License information will be at or
+   near the beginning of the file.
+
+2) By reading any LICENSE file that exists in the same directory as the files
+   you are interested in, or if no such file exists, in a parent directory.
+   The "nearest" LICENSE file takes precedence.
+
+   A LICENSE file is used to provide license information for source files that
+   have no (or unclear) embedded information and for images and other files that
+   do not have human-readable content.
+
+If any information is missing or incorrect please inform the author by filling
+in a bug report at http://delphidabbler.com/url/codesnip-bugs
+
+If you are planning on re-using any of the CodeSnip source, detailed licensing
+information will be found in Docs/License.html.
