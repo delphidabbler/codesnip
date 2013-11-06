@@ -1,36 +1,14 @@
 {
- * PJShellFolders.pas
+ * This Source Code Form is subject to the terms of the Mozilla Public License,
+ * v. 2.0. If a copy of the MPL was not distributed with this file, You can
+ * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Run time unit that defines shell folders components, classes and routines.
+ * Copyright (C) 2001-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
  *
- * ***** BEGIN LICENSE BLOCK *****
- *
- * Version: MPL 1.1
- *
- * The contents of this file are subject to the Mozilla Public License Version
- * 1.1 (the "License"); you may not use this file except in compliance with the
- * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
- *
- * Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
- * the specific language governing rights and limitations under the License.
- *
- * The Original Code is PJShellFolders.pas
- *
- * The Initial Developer of the Original Code is Peter Johnson
- * (http://www.delphidabbler.com/).
- *
- * Portions created by the Initial Developer are Copyright (C) 2001-2010 Peter
- * Johnson. All Rights Reserved.
- *
- * Contributor(s):
- *   Philippe Lucarz
- *   Ryan Fischbach
- *
- * ***** END LICENSE BLOCK *****
+ * Run time unit that defines shell folders components, classes and routines.
 }
 
 
@@ -41,10 +19,16 @@ interface
 
 
 // Determine compiler
+{$UNDEF DELPHI5ANDUP}
 {$UNDEF DELPHI6ANDUP}
 {$UNDEF DELPHI7ANDUP}
+{$UNDEF RTLNameSpaces}      // Don't qualify RTL units names with namespaces
+{$IFDEF VER130}
+  {$DEFINE DELPHI5ANDUP}
+{$ENDIF}
 {$IFDEF CONDITIONALEXPRESSIONS}
   {$IF CompilerVersion >= 14.0} // Delphi 6 and later
+    {$DEFINE DELPHI5ANDUP}
     {$DEFINE DELPHI6ANDUP}
   {$IFEND}
   {$IF CompilerVersion >= 15.0} // Delphi 7 and later
@@ -52,10 +36,14 @@ interface
     {$WARN UNSAFE_CODE OFF}
     {$WARN UNSAFE_CAST OFF}
   {$IFEND}
+  {$IF CompilerVersion >= 23.0} // Delphi XE2
+    {$DEFINE RTLNameSpaces}
+  {$IFEND}
 {$ENDIF}
 
 
 uses
+  {$IFNDEF RTLNameSpaces}
   // Delphi
   SysUtils, Windows, Classes, Controls, Messages, ShlObj
   {$IFDEF DELPHI6ANDUP}
@@ -63,6 +51,10 @@ uses
   , SHFolder
   {$ENDIF}
   ;
+  {$ELSE}
+  System.SysUtils, Winapi.Windows, System.Classes, Vcl.Controls,
+  Winapi.Messages, Winapi.ShlObj, Winapi.SHFolder;
+  {$ENDIF}
 
 
 {$IFNDEF DELPHI6ANDUP}
@@ -334,7 +326,7 @@ type
     boDirsOnly,           // only allow selection of items in file system
     boNewDlgStyle,        // use new dialog style
                           // (requires shlobj.dll v5 or later)
-    boHideMakeFolderBtn,   // hide Make New Folder button
+    boHideMakeFolderBtn,  // hide Make New Folder button
                           // (new style dialog only)
     boEditBox,            // display folder edit box
     boHint                // display usage hint
@@ -375,10 +367,10 @@ type
       TPJBrowseValidationFailedEvent;
     fOnHelp: TPJBrowseHelpEvent;    // Reference to OnHelp event handler
     fData:                          // Info passed to and from callback proc
-      array[1..SizeOf(THandle) + SizeOf(Pointer)] of Byte;
+      array[1..SizeOf(HWND) + SizeOf(Pointer)] of Byte;
     fOldBrowseWndProc: Pointer;     // Address of dialog's original winproc
     fNewBrowseWndProc: Pointer;     // Address of dialog's new window procedure
-    function GetHandle: THandle;
+    function GetHandle: HWND;
       {Read accessor for Handle property.
         @return Handle to browse dialog box while Execute method is running or 0
           otherwise.
@@ -407,7 +399,7 @@ type
       called if assigned. Application help is called if request not cancelled in
       any OnHelp event handler.
       }
-    function GetHWND: THandle;
+    function GetHWND: HWND;
       {Gets window handle of any TWinControl that owns this component.
         @return Owner handle or 0 if owner is nil or not a TWinControl.
       }
@@ -460,7 +452,7 @@ type
       }
     property DisplayName: string read fDisplayName;
       {The display name of the selected folder}
-    property Handle: THandle read GetHandle;
+    property Handle: HWND read GetHandle;
       {The window handle of the browse dlg box: this returns 0 if the dlg box is
       not currently displayed}
   published
@@ -583,8 +575,12 @@ implementation
 
 
 uses
+  {$IFNDEF RTLNameSpaces}
   // Delphi
   ActiveX, Forms, ShellAPI;
+  {$ELSE}
+  Winapi.ActiveX, Vcl.Forms, Winapi.ShellAPI;
+  {$ENDIF}
 
 
 { Error handling }
@@ -615,6 +611,51 @@ begin
 end;
 
 { PIDL information routines }
+
+type
+  // Signature of SHGetFolderLocation API function.
+  TSHGetFolderLocation = function (hwnd: HWND; csidl: Integer; hToken: THandle;
+    dwFlags: DWORD; var ppidl: PItemIDList): HResult; stdcall;
+
+var
+  // Handle to shell32.dll.
+  Shell32Handle: THandle = 0;
+  // Reference to SHGetFolderLocation API function if supported by OS. Nil if
+  // function not supported.
+  SHGetFolderLocation: TSHGetFolderLocation = nil;
+
+procedure InitSHGetFolderLocation;
+  {Loads the SHGetFolderLocation API function if available on the underlying OS.
+  }
+begin
+  {$IFDEF DELPHI5ANDUP}
+  Shell32Handle := SafeLoadLibrary('shell32.dll');
+  {$ELSE}
+  Shell32Handle := LoadLibrary('shell32.dll');
+  {$ENDIF}
+  if Shell32Handle = 0 then
+    Exit;
+  SHGetFolderLocation := GetProcAddress(Shell32Handle, 'SHGetFolderLocation');
+end;
+
+function GetSpecialFolderLocation(FolderID: Integer; var PIDL: PItemIDList):
+  HResult;
+  {Gets a specified special folder location as a PIDL.
+  NOTE: This is provided as a wrapper to SHGetFolderLocation or, if that is not
+  supported, to SHGetSpecialFolderLocation which is deprecated in later Windows
+  OSs and may be removed at some point. The code in this unit calls this
+  function wherever it would have previously called SHGetSpecialFolderLocation.
+    @param FolderID [in] A CSIDL value that identifies the folder of interest.
+    @param PIDL [out] A PIDL specifying the folder's location relative to the
+      desktop. The caller must free PIDL by using CoTaskMemFree.
+    @return S_OK on success or an HResult error code on failure.
+  }
+begin
+  if Assigned(SHGetFolderLocation) then
+    Result := SHGetFolderLocation(0, FolderID, 0, 0, PIDL)
+  else
+    Result := SHGetSpecialFolderLocation(0, FolderID, PIDL);
+end;
 
 function PIDLToFolderPath(PIDL: PItemIDList): string;
   {Gets the path of a folder from a PIDL.
@@ -864,7 +905,7 @@ var
   PIDL: PItemIDList;  // PIDL to special folder
 begin
   // Get special folder's PIDL
-  fIsSupported := Succeeded(SHGetSpecialFolderLocation(0, fFolderID, PIDL));
+  fIsSupported := Succeeded(GetSpecialFolderLocation(fFolderID, PIDL));
   if fIsSupported then
   begin
     try
@@ -912,8 +953,8 @@ type
     public scope.
   }
   TCBData = packed record
-    Handle: THandle;        // window handle of dlg box (0 if not active)
-    Obj: TPJBrowseDialog;   // reference to component instance
+    Handle: HWND;         // window handle of dlg box (0 if not active)
+    Obj: TPJBrowseDialog; // reference to component instance
   end;
 
   {
@@ -945,8 +986,8 @@ const
   // added by this component
   cHelpBtnID = $1000;
 
-function BrowseCallbackProc(HWnd: THandle; Msg: LongWord;
-  LParam, Data: LongInt): Integer; stdcall;
+function BrowseCallbackProc(HWnd: HWND; Msg: UINT; LParam, Data: LPARAM):
+  Integer; stdcall;
   {Callback function called by browse dialog box. This function has two
   purposes: (1) to initialise the dialog box - properties not definable using
   BrowseInfo structure are set up here (2) special processing performed when
@@ -969,7 +1010,7 @@ begin
   // Store dialog box's window handle in data structure
   PDataRec^.Handle := HWnd;
   // Record reference to TPJBrowseDlg component stored in Data param
-  Obj := TPJBrowseDialog(PDataRec^.Obj);
+  Obj := PDataRec^.Obj;
   // Process event notifications
   case Msg of
     BFFM_INITIALIZED:     // Perform initialisation
@@ -991,8 +1032,8 @@ procedure TPJBrowseDialog.BrowseWndProc(var Msg: TMessage);
     @param Msg [in] Message to be handled by window procedure.
   }
 var
-  HelpBtnHWnd: THandle; // window handle of help button
-  Handled: Boolean;     // whether message was handled
+  HelpBtnHWnd: HWND;  // window handle of help button
+  Handled: Boolean;   // whether message was handled
 begin
   // Assume we don't handle message
   Handled := False;
@@ -1005,7 +1046,7 @@ begin
         // Find help button's window
         HelpBtnHWnd := GetDlgItem(Handle, cHelpBtnID);
         // Check if message came from help button (sender's hwnd in LParam)
-        if THandle(Msg.LParam) = HelpBtnHWnd then
+        if HWND(Msg.LParam) = HelpBtnHWnd then
         begin
           // Check for button clicked notification and display help topic if so
           if Msg.WParamHi = BN_CLICKED then
@@ -1049,18 +1090,19 @@ begin
   {$IFDEF DELPHI6ANDUP}
   fHelpType := htContext;
   {$ENDIF}
-  with TCBData(fData) do
-  begin
-    Handle := 0;
-    Obj := Self;
-  end;
+  TCBData(fData).Handle := 0;
+  TCBData(fData).Obj := Self;
   // Create window procedure to be used for sub classing browse dlg box
   if not (csDesigning in ComponentState) then
     // call MakeObjectInstance from appropriate unit for compiler
+    {$IFDEF RTLNameSpaces}
+    fNewBrowseWndProc := System.Classes.MakeObjectInstance(BrowseWndProc);
+    {$ELSE}
     {$IFDEF DELPHI6ANDUP}
     fNewBrowseWndProc := Classes.MakeObjectInstance(BrowseWndProc);
     {$ELSE}
     fNewBrowseWndProc := Forms.MakeObjectInstance(BrowseWndProc);
+    {$ENDIF}
     {$ENDIF}
 end;
 
@@ -1071,10 +1113,14 @@ destructor TPJBrowseDialog.Destroy;
 begin
   if Assigned(fNewBrowseWndProc) then
     // call FreeObjectInstance from appropriate unit for compiler
+    {$IFDEF RTLNameSpaces}
+    System.Classes.FreeObjectInstance(fNewBrowseWndProc);
+    {$ELSE}
     {$IFDEF DELPHI6ANDUP}
     Classes.FreeObjectInstance(fNewBrowseWndProc);
     {$ELSE}
     Forms.FreeObjectInstance(fNewBrowseWndProc);
+    {$ENDIF}
     {$ENDIF}
   inherited Destroy;
 end;
@@ -1117,48 +1163,47 @@ function TPJBrowseDialog.Execute: Boolean;
     @return True if user OKs, False if dialog is cancelled.
   }
 var
-  BI: TBrowseInfo;  // structure that controls appearance of browse dlg box
-  pDisplayName: array [0..MAX_PATH] of Char;  // used to return display name
-  pidlRootFolder: PItemIDList;  // PIDL of root folder to be displayed
-  pidlFolder: PItemIDList;      // PIDL of selected folder
+  BI: TBrowseInfo; // structure that controls appearance of browse dlg box
+  pDisplayName: array [0..MAX_PATH] of Char; // used to return display name
+  pidlRootFolder: PItemIDList; // PIDL of root folder to be displayed
+  pidlFolder: PItemIDList; // PIDL of selected folder
+  pImageIdx: Integer; // system image list index associated with selected folder
 begin
   // Get PIDL for required root folder (if desktop use nil)
   if fRootFolderID = CSIDL_DESKTOP then
     pidlRootFolder := nil
   else
     if not Succeeded(
-      SHGetSpecialFolderLocation(0, fRootFolderID, pidlRootFolder)
+      GetSpecialFolderLocation(fRootFolderID, pidlRootFolder)
     ) then
       Error(sNoRootFolder);
   try
     // Set up structure that defines properties of browse dlg box
-    with BI do
+    BI.hwndOwner := GetHWND;        // window that owns dlg is component's owner
+    BI.pidlRoot := pidlRootFolder;                 // the root folder in dlg box
+    BI.pszDisplayName := pDisplayName; // stores display name of selected folder
+    BI.lpszTitle := PChar(fHeadline);               // any body text for dlg box
+    BI.ulFlags := 0;                                         // initialise flags
+    if boDirsOnly in fOptions then
+      BI.ulFlags := BI.ulFlags or BIF_RETURNONLYFSDIRS;
+    if boNewDlgStyle in fOptions then
+      BI.ulFlags := BI.ulFlags or BIF_NEWDIALOGSTYLE;
+    if boEditBox in fOptions then
+      BI.ulFlags := BI.ulFlags or BIF_EDITBOX or BIF_VALIDATE;
+    if IsNewStyle then
     begin
-      hwndOwner := GetHWND;         // window that owns dlg is component's owner
-      pidlRoot := pidlRootFolder;                  // the root folder in dlg box
-      pszDisplayName := pDisplayName;  // stores display name of selected folder
-      lpszTitle := PChar(fHeadline);                // any body text for dlg box
-      ulFlags := 0;                                          // initialise flags
-      if boDirsOnly in fOptions then
-        ulFlags := ulFlags or BIF_RETURNONLYFSDIRS;
-      if boNewDlgStyle in fOptions then
-        ulFlags := ulFlags or BIF_NEWDIALOGSTYLE;
-      if boEditBox in fOptions then
-        ulFlags := ulFlags or BIF_EDITBOX or BIF_VALIDATE;
-      if IsNewStyle then
-      begin
-        if (boHint in fOptions) and not (boEditBox in fOptions) then
-          ulFlags := ulFlags or BIF_UAHINT;
-      end
-      else
-      begin
-        if boStatusText in fOptions then
-          ulFlags := ulFlags or BIF_STATUSTEXT;
-      end;
-      lpfn := @BrowseCallbackProc;         // callback function to handle events
-      lParam := Integer(@fData);         // reference to this component instance
-      iImage := 0;                                                     // unused
+      if (boHint in fOptions) and not (boEditBox in fOptions) then
+        BI.ulFlags := BI.ulFlags or BIF_UAHINT;
+    end
+    else
+    begin
+      if boStatusText in fOptions then
+        BI.ulFlags := BI.ulFlags or BIF_STATUSTEXT;
     end;
+    BI.lpfn := @BrowseCallbackProc;        // callback function to handle events
+    BI.lParam := LPARAM(@fData);         // reference to this component instance
+    pImageIdx := 0;
+    BI.iImage := pImageIdx;                                            // unused
     // Display the dlg box: returns non-nil PIDL if user OKs
     pidlFolder := SHBrowseForFolder(BI);
     TCBData(fData).Handle := 0;
@@ -1185,7 +1230,7 @@ begin
   end;
 end;
 
-function TPJBrowseDialog.GetHandle: THandle;
+function TPJBrowseDialog.GetHandle: HWND;
   {Read accessor for Handle property.
     @return Handle to browse dialog box while Execute method is running or 0
       otherwise.
@@ -1194,7 +1239,7 @@ begin
   Result := TCBData(fData).Handle;
 end;
 
-function TPJBrowseDialog.GetHWND: THandle;
+function TPJBrowseDialog.GetHWND: HWND;
   {Gets window handle of any TWinControl that owns this component.
     @return Owner handle or 0 if owner is nil or not a TWinControl.
   }
@@ -1220,7 +1265,7 @@ procedure TPJBrowseDialog.IncludeHelpButton;
   }
 
   // ---------------------------------------------------------------------------
-  procedure GetBounds(HWnd, HParentWnd: THandle;
+  procedure GetBounds(HWnd, HParentWnd: HWND;
     PLeft, PTop, PWidth, PHeight: PInteger);
     {Gets bounds of a window in terms of parent control's coordinates.
       @param HWnd [in] Handle of window for which we want bounds.
@@ -1242,6 +1287,9 @@ procedure TPJBrowseDialog.IncludeHelpButton;
     GetWindowRect(Hwnd, ScreenRect);
     // Get top left corner of window in (parent's coordinates)
     TopLeft := ScreenRect.TopLeft;
+    {$IFDEF RTLNameSpaces}
+    Winapi.
+    {$ENDIF}
     Windows.ScreenToClient(HParentWnd, TopLeft);
     // Calculate the required value for Left, Top, Width and Height
     if Assigned(PTop) then PTop^ := TopLeft.Y;
@@ -1256,7 +1304,7 @@ resourcestring
 const
   cButtonClass = 'Button';   // button window class name
 var
-  HOKBtn, HCancelBtn, HHelpBtn: THandle;  // handles to buttons in dlg
+  HOKBtn, HCancelBtn, HHelpBtn: HWND;     // window handles to buttons in dlg
   FontH: HFONT;                           // handle to font used on buttons
   BtnWidth, BtnHeight, BtnTop: Integer;   // width, height and top of dlg btns
   HelpLeft, OKLeft, CancelLeft: Integer;  // left of each of dlg's buttons
@@ -1294,11 +1342,13 @@ begin
     BtnHeight,              // height of button
     Handle,                 // handle of parent window
     cHelpBtnID,             // id of button
-    GetWindowLong(Handle, GWL_HINSTANCE), // instance of owning app
+    // NOTE: GetWindowLong call is 64 bit safe since VCL maps it to
+    // GetWindowLongPtr.
+    GetWindowLong(Handle, GWL_HINSTANCE),    // instance of owning app
     nil                     // no CREATESTRUCT data
   );
   // Set the font of the help button to he same as other buttons
-  SendMessage(HHelpBtn, WM_SETFONT, FontH, MakeLParam(1, 0));
+  SendMessage(HHelpBtn, WM_SETFONT, WPARAM(FontH), MakeLParam(1, 0));
 end;
 
 procedure TPJBrowseDialog.InitBrowseWindow;
@@ -1309,12 +1359,18 @@ var
   pidlRootFolder: PItemIDList;  // PIDL of root folder
 begin
   // Sub class the browse window using new wnd proc
+  {$IFDEF WIN64}
+  fOldBrowseWndProc := Pointer(
+    SetWindowLongPtr(Handle, GWL_WNDPROC, LONG_PTR(fNewBrowseWndProc))
+  );
+  {$ELSE}
   fOldBrowseWndProc := Pointer(
     SetWindowLong(Handle, GWL_WNDPROC, LongInt(fNewBrowseWndProc))
   );
+  {$ENDIF}
   // Select any folder in browse dlg box as specified by user
   if FolderName <> '' then
-    SendMessage(Handle, BFFM_SETSELECTION, 1, LongInt(PChar(fFolderName)));
+    SendMessage(Handle, BFFM_SETSELECTION, 1, LPARAM(PChar(fFolderName)));
   // If user specified title, display it in window caption
   if Title <> '' then
     SetWindowText(Handle, PChar(Title));
@@ -1329,8 +1385,11 @@ begin
     HideMakeNewFolderButton;
   // Hide context help window caption icon if required
   if not (boContextHelp in fOptions) then
+    // NOTE: GetWindowLong and SetWindowLong calls are 64 bit safe since VCL
+    // maps them to GetWindowLongPtr and SetWindowLongPtr respectively.
     SetWindowLong(Handle, GWL_EXSTYLE,
-      GetWindowLong(Handle, GWL_EXSTYLE) and not WS_EX_CONTEXTHELP);
+      GetWindowLong(Handle, GWL_EXSTYLE) and not WS_EX_CONTEXTHELP
+    );
   // Trigger OnInitialise event
   if Assigned(fOnInitialise) then
     fOnInitialise(Self);
@@ -1338,9 +1397,7 @@ begin
   // this to disable new style dlg OK button if error triggered when displayed.
   if fRootFolderID <> CSIDL_DESKTOP then
   begin
-    if Succeeded(
-      SHGetSpecialFolderLocation(0, fRootFolderID, pidlRootFolder)
-    ) then
+    if Succeeded(GetSpecialFolderLocation(fRootFolderID, pidlRootFolder)) then
       SelectionChanged(pidlRootFolder);
   end;
 end;
@@ -1415,7 +1472,7 @@ begin
     SendMessage(Handle, BFFM_ENABLEOK, 0, Ord(OKEnabled));
   // Display any status text in dlg if user has specified this option
   if (boStatusText in fOptions) and not IsNewStyle then
-    SendMessage(Handle, BFFM_SETSTATUSTEXT, 0, LongInt(PChar(StatusText)));
+    SendMessage(Handle, BFFM_SETSTATUSTEXT, 0, LPARAM(PChar(StatusText)));
 end;
 
 procedure TPJBrowseDialog.SetRootFolderID(const Value: Integer);
@@ -1447,12 +1504,13 @@ end;
 
 initialization
 
-// Initialize COM: required per MS documentation
-OleInitialize(nil);
+OleInitialize(nil); // COM initialisation: required per MS documentation
+InitSHGetFolderLocation;
 
 finalization
 
-// Uninitialize OLE
+if Shell32Handle <> 0 then
+  FreeLibrary(Shell32Handle);
 OleUninitialize;
 
 end.
