@@ -11,6 +11,11 @@
 ; Change Log for CodeSnip Release 4
 ; ------------------------------------------------------------------------------
 
+Release v4.8.3 of 06 November 2013
++ Fixed registry access code so that the 64 bit view of the registry is used when CodeSnip runs on a Windows 64 bit operating system.
++ Changed to avoid use of a deprecated API call when using the Windows Browse for Folder dialogue box.
++ Updated documentation.
+
 Release v4.8.2 of 30 October 2013
 + Modified Syntax Highlighter tab of Preferences dialogue box so that "vertical" fonts (whose names begin with "@") no longer appear in list of available fonts.
 + Fixed potential bug in operating system detection code that may fail on Windows 2000.
