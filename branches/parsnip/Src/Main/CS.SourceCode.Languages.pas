@@ -140,7 +140,11 @@ end;
 
 class function TSourceCodeLanguageID.CreateDefault: TSourceCodeLanguageID;
 begin
-  Result := TSourceCodeLanguageID.Create(DefaultLanguageID);
+  // Passing '' to Create method skips validation and sets id to
+  // DefaultLanguageID. Passing DefaultLanguageID to Create will cause
+  // DefaultLanguageID to be validated and to fail, which is behaviour we want
+  // when Create is called externally.
+  Result := TSourceCodeLanguageID.Create('');
 end;
 
 class operator TSourceCodeLanguageID.Equal(const Left,
