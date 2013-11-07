@@ -296,6 +296,15 @@ object MainTestForm: TMainTestForm
             ExplicitWidth = 886
             ExplicitHeight = 446
           end
+          object btnDisplayEditedSource: TButton
+            Left = 632
+            Top = 3
+            Width = 185
+            Height = 25
+            Caption = 'Display Source From Editor'
+            TabOrder = 4
+            OnClick = btnDisplayEditedSourceClick
+          end
         end
         object tsRendering: TTabSheet
           Caption = 'Rendering'

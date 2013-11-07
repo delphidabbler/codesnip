@@ -59,6 +59,7 @@ type
     btnDisplaySourceForLang: TButton;
     lblLangBrush: TLabel;
     frmCodeEditor: TCodeEditorFrame;
+    btnDisplayEditedSource: TButton;
     procedure btnLoadUserThemesClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -79,6 +80,7 @@ type
     procedure btnLoadDefaultLangsClick(Sender: TObject);
     procedure btnDisplaySourceForLangClick(Sender: TObject);
     procedure cbChooseLangChange(Sender: TObject);
+    procedure btnDisplayEditedSourceClick(Sender: TObject);
   private
     fLanguages: TSourceCodeLanguages;
     fThemes: TSyntaxHiliteThemes;
@@ -233,6 +235,11 @@ begin
   finally
     Brush.Free;
   end;
+end;
+
+procedure TMainTestForm.btnDisplayEditedSourceClick(Sender: TObject);
+begin
+  ShowMessageFmt('[%s]', [frmCodeEditor.SourceCode]);
 end;
 
 procedure TMainTestForm.btnDisplayLangsClick(Sender: TObject);
