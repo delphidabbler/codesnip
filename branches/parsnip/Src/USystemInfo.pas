@@ -382,10 +382,14 @@ const
   RegValNameIE10 = 'svcVersion';  // name of registry value for IE 10
 begin
   Result := '';
-  Reg := TRegistry.Create;
+  if TOSInfo.CheckReportedOS(TOSInfo.WinXP) then
+    Reg := TRegistry.Create(KEY_READ or KEY_WOW64_64KEY)
+  else
+    // KEY_WOW64_64KEY is not supported on Windows 2000
+    Reg := TRegistry.Create(KEY_READ);
   try
     Reg.RootKey := HKEY_LOCAL_MACHINE;
-    if Reg.OpenKeyReadOnly(IERegKey) then
+    if Reg.OpenKey(IERegKey, False) then
     begin
       if Reg.ValueExists(RegValNameIE10) then
         Result := Reg.ReadString(RegValNameIE10)
