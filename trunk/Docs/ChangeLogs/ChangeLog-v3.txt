@@ -75,7 +75,7 @@ Release v3.10.2 of 19 June 2012
 + Updated privacy statement re changes in information sent by update web service.
 
 Release v3.10.1 of 20 April 2012
-+ Fixed bug #3519784 (http://bit.ly/IsCsun) where multi-line type or const snippets that start on same line as type or const keyword were corrupted when included in units using the "comments after snippet header" comment style.
++ Fixed bug #3519784 (http://bit.ly/IsCsun) where multi-line type or constant snippets that start on same line as type or const keyword were corrupted when included in units using the "comments after snippet header" comment style.
 + Also fixed potential source of a bug in code that edits user-defined categories.
 
 Release v3.10.0 of 17 April 2012
@@ -128,13 +128,13 @@ Release v3.8.8 of 19 January 2011
 + Added facility for user to specify maximum age of news items displayed in news dialogue box. New preferences tab added where the maximum age can be customised.
 + Preferences dialogue box now displays multi-line tabs when necessary.
 + Refactored some code used to align controls on forms.
-+ Updated license. License HTML help file is no longer MPLd and may not be altered by thrid parties.
++ Updated license. License HTML help file is no longer MPLd and may not be altered by third parties.
 + Updated help file re changes.
 + Updated documentation.
 
 Release v3.8.7 of 16 December 2010
 + Delphi XE compiler version 22.0 has been added to the drop down menu in the Code Generation tab of the preference dialogue box.
-+ Bug fix: compiler results are no longer listed when freeform snippets are printed or copied to the clipboard using the "Edit | Copy Information" menu item.
++ Bug fix: compiler results are no longer listed when free-form snippets are printed or copied to the clipboard using the "Edit | Copy Information" menu item.
 
 Release v3.8.6 of 06 December 2010
 + Bug fix release (none reported in bug tracker):
@@ -153,7 +153,7 @@ Release v3.8.4 of 26 November 2010
 + Snippets selection dialogue box now displays wait cursor while waiting for it to be displayed.
 + Some corrections and clarifications made to comments that appear in generated "include" files.
 + Custom message boxes can now display custom title and icon.
-+ Imported some updates from "new-backend" develoment tree:
++ Imported some updates from "new-backend" development tree:
   - Some source code re-organisation and renaming.
   - Updated some sorted list management code.
 
@@ -172,7 +172,7 @@ Release v3.8.2 of 16 November 2010
 + The position of the caret in the Snippets Editor's Extra Information control is now displayed. Implements feature request #3105288 (http://bit.ly/bRV86Z).
 + Code that displays caret positions was refactored and improved.
 + Display of errors in the Snippets Editor's text edit controls has been improved in most cases either by positioning the caret near the error or selecting the erroneous text. This implements feature request #3107042 (http://bit.ly/cKx5YQ).
-+ Made significant changes to code that parses REML markup:
++ Made significant changes to code that parses REML mark-up:
   - Rationalised error reporting and added support for reporting the position of errors.
   - Fixed unreported bug that produced wrong error message when empty tags are encountered.
   - Fixed bug #3107982 (http://bit.ly/cp9Cff) that failed to report some unclosed tags as errors.
@@ -223,7 +223,7 @@ Release v3.6.3 of 22 July 2010
 
 Release v3.6.2 of 18 June 2010
 + Fixed source code formatting problem in code generator where "forward" declarations were sometimes preceded with an unwanted blank line.
-+ Fixed potential bug in code that parses markup used for a snippet's Extra information. Symbolic entities were not case sensitive.
++ Fixed potential bug in code that parses mark-up used for a snippet's Extra information. Symbolic entities were not case sensitive.
 + Fixed a memory leak.
 + Some refactorings that increase use of generics and some others.
 + Read-me file updated re v3.6.1 password changes.
@@ -275,7 +275,7 @@ Release v3.5.2 of 22 February 2010
 
 Release v3.5.1 of 09 February 2010
 + New Unicode build of the program compiled with Delphi 2010. File I/O remains ANSI.
-+ Windows NT is no longer supported. Windows 2000 is now the minimum OS. Setup program changed to enforce this.
++ Windows NT is no longer supported. Windows 2000 is now the minimum OS. Set-up program changed to enforce this.
 + More rigorous enforcement of rules for REML tag attributes used in a snippet's Extra information.
 + Fixed a couple of minor UI problems in the Proxy Server and Trapped Bug Report dialogue boxes.
 + Minor changes to HTML and embedded browser code.
@@ -291,12 +291,12 @@ Release v3.5.0 of 16 January 2010
 Release v3.4.8 of 10 January 2010
 + Made some changes to key presses responded to by overview pane and fixed bug where Alt+F4 was not closing program when pane had focus.
 + Made some changes to hints displayed when rolling over links in compiler check pane. Also removed pop-up windows describing compiler errors.
-+ Updated help file: noted Delphi 2010 compiler support and added new information about overview pane keyboard shortcuts.
++ Updated help file: noted Delphi 2010 compiler support and added new information about overview pane keyboard short-cuts.
 
 Release v3.4.7 of 31 December 2009
 + Added IE version number to OS information submitted when program is registered.
 + Program now displays "[localhost]" in main window caption when started with -localhost switch.
-+ All text edit controls in snippets editor now have custom pop-up menus and shortcuts for "cut", "copy", "paste", "select all" and "undo" now work.
++ All text edit controls in snippets editor now have custom pop-up menus and short-cuts for "cut", "copy", "paste", "select all" and "undo" now work.
 + Refactored code that supports use of fonts.
 + Updated privacy statement re registration changes.
 
@@ -312,7 +312,7 @@ Release v3.4.5 of 09 November 2009
 + Home, Ctrl+Home, End and Ctrl+End keys now work in overview pane and go to first and last item in tree view respectively per feature request #2888880 - see http://bit.ly/bgJCVU).
 + State of tree view in overview pane is now maintained after editing the user database: the tree is no longer always fully expanded after each edit.
 + Removed "Properties" button from print dialogue box along with associated dialogue boxes. This option has always been buggy. This "fixes" bug #2868706 (see http://bit.ly/9LArqI).
-+ Fixed un-reported makefile bug.
++ Fixed unreported makefile bug.
 
 Release v3.4.4 of 21 October 2009
 + Changed bug reporting mechanism. Bugs are now reported via the on-line bug tracker. Bug report dialogues changed accordingly. Access to the old bug report web service was removed.
@@ -401,17 +401,17 @@ Release v3.1.1 of 15 August 2009
 + Some refactorings.
 
 Release v3.1 of 11 August 2009
-+ Added a button to the snippets editor to preview an HTML rendering of the markup entered as extra information. Includes facility to check any links in the markup.
++ Added a button to the snippets editor to preview an HTML rendering of the mark-up entered as extra information. Includes facility to check any links in the mark-up.
 
 Release v3.0.5 of 21 July 2009
 + Default font is now dependent on underlying OS: Vista - Segoe UI, XP/2000 - Tahoma, NT - MS Sans Serif.
 + Some dialogues and splash screen modified to accommodate OS font, in particular larger Vista font. Some also given a light makeover.
 
-Release v3.0.4 of 13 Jul 2009
+Release v3.0.4 of 13 July 2009
 + Added a snippet's category description to main display and to snippet information copied to clipboard or printed. Category description in main display can be clicked to display the category.
 + Refactored code that displays clicked routines and code that displays a snippet for editing.
 
-Un-released v3.0.3 of 12 Jul 2009
+Unreleased v3.0.3 of 12 July 2009
 + Refactored code:
   - Rationalised some JavaScript code.
   - Rationalised some dialogue alignment code.
@@ -420,7 +420,7 @@ Un-released v3.0.3 of 12 Jul 2009
   - Removed some duplicate code and merged some units.
 + Fixed an obscure bug in category code snippet generation as a side effect of refactoring.
 
-Release v3.0.2 of 08 Jul 2009
+Release v3.0.2 of 08 July 2009
 + Fixed broken link to CodeSnip database in welcome page.
 + Fixed bug in selection search that was selecting both user defined and main database snippets with same name if only one was selected.
 + Fixed bug where units required by constants and type definitions were not being added to generated units.
@@ -445,7 +445,7 @@ Changes relate to v2.4.1
   - "Edit snippet" links displayed in information pane are now also displayed in compiler check pane.
   - Information about snippet type added to information pane.
   - Context menu added to overview pane.
-  - Some changes to menu glyphs and shortcut keys.
+  - Some changes to menu glyphs and short-cut keys.
   - Welcome display modified and now has a link to the donate dialogue box.
 + Added option to copy an snippet's source code to clipboard in text and RTF formats.
 + Exporting and copying of snippets complete with descriptions and cross references is restricted to routines: not supported for free-form, types and constants.
@@ -454,7 +454,7 @@ Changes relate to v2.4.1
 + Changed format and location of user-defined database and format of exported and submitted files.
 + Added new "Imported Snippets" category that receives imported routines: they were formerly imported into the "User Defined" category
 + Modified code that reads main database to deal with revised file format for new snippets types and introduction of pre-processor instructions to enable retrofitting of new snippets without breaking earlier versions of CodeSnip.
-+ Changed name and location of user preference config file.
++ Changed name and location of user preference configuration file.
 + Revised external object that communicates with JavaScript in browser controls.
 + Updated program credits in about box, restyled and widened it.
 + Changed size of preferences dialogue box and revised syntax highlighter tab.
@@ -462,7 +462,7 @@ Changes relate to v2.4.1
 + Changed appearance of splash screen.
 + Modified snippets editor to work with new snippet types, improved error checking code and prevented test compilation of free-form snippets.
 + Speeded up loading of main database.
-+ Added an easter egg!
++ Added an Easter egg!
 + A few refactorings.
 + Fixed several bugs:
   - Bug in backup files including database files larger than 32Kb was fixed.

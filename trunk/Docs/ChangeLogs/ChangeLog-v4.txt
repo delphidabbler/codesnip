@@ -11,12 +11,17 @@
 ; Change Log for CodeSnip Release 4
 ; ------------------------------------------------------------------------------
 
+Release v4.8.3 of 06 November 2013
++ Fixed registry access code so that the 64 bit view of the registry is used when CodeSnip runs on a Windows 64 bit operating system.
++ Changed to avoid use of a deprecated API call when using the Windows Browse for Folder dialogue box.
++ Updated documentation.
+
 Release v4.8.2 of 30 October 2013
 + Modified Syntax Highlighter tab of Preferences dialogue box so that "vertical" fonts (whose names begin with "@") no longer appear in list of available fonts.
 + Fixed potential bug in operating system detection code that may fail on Windows 2000.
 
 Release v4.8.1 of 18 September 2013
-+ Removed File | Page Setup menu option because some settings made there were being ignored when a file was printed. This is a fix for bug #89 "Setup selections not being remembered" (http://bit.ly/1a3V94x).
++ Removed "File | Page Setup" menu option because some settings made there were being ignored when a file was printed. This is a fix for bug #89 "Setup selections not being remembered" (http://bit.ly/1a3V94x).
 + Updated help file re changes.
 
 Release v4.8.0 of 12 September 2013
@@ -50,7 +55,7 @@ Release v4.7.0 of 31 July 2013
 
 Release v4.6.4 of 24 July 2013
 + Fix for IE 9 related browser control script bugs introduced in v4.6.3 when IE 10 bugs were fixed:
-  - Bug #84 "Script errors on startup " (http://bit.ly/13bfaAL).
+  - Bug #84 "Script errors on startup" (http://bit.ly/13bfaAL).
   - Bug #85 "Check For Updates link " (http://bit.ly/1656pgE).
 
 Release v4.6.3 of 14 July 2013
@@ -60,7 +65,7 @@ Release v4.6.2 of 09 July 2013
 + Tentative fix for bug #83 "Error when the main form is shown" (http://bit.ly/12eUV5Y) that has been reported on Windows 8. The fix is tentative because the bug hasn't been reproduced.
 
 Release v4.6.1 of 01 July 2013
-+ Provided fix for un-reproduced bug #75 "Floating point error in 4.4.1" (http://bit.ly/12zAWSp) that apparently affects Windows 8, probably with IE 10 installed.
++ Provided fix for reported bug #75 "Floating point error in 4.4.1" (http://bit.ly/12zAWSp) that apparently affects Windows 8, probably with IE 10 installed.
 + Fixed unreported bug where IE 10 browser was being reported as IE 9.
 + Fixed potential bug in code that processes class / advanced record snippet types ready for test compilation and inclusion in generated units.
 
@@ -119,7 +124,7 @@ Release v4.4.0 of 08 April 2013
 
 Release v4.3.0 of 27 February 2013
 + Implemented feature request #40 "Add 'Namespaces' tab to Configure Compilers dialogue box" (http://bit.ly/12XsX32). The new tab appears only for Delphi XE2 and later and obviates the need to manually create -NS commands for passing to the compilers. Suitable default namespaces are provided if none have been configured.
-+ Implemented feature request #70 "Let user specify location of user database" (http://bit.ly/13aNCQZ). This feature is accessed from the new "Move Use Database" option on the Database menu. NOTE: The feature is not available in the portable edition which is designed to keep the user database toegther with the program.
++ Implemented feature request #70 "Let user specify location of user database" (http://bit.ly/13aNCQZ). This feature is accessed from the new "Move Use Database" option on the Database menu. NOTE: The feature is not available in the portable edition which is designed to keep the user database together with the program.
 + Implemented feature request #69 "Enable custom syntax highlighter styles to be saved" (http://bit.ly/XQHkOI). The Syntax Highlighter tab of the Preferences dialogue box has been modified to enable custom syntax highlighter attributes to be saved under a given name and existing named styles to be used or deleted.
 + Changed name of "Delphi 2006" predefined syntax highlighter to "RAD Studio". This remains the default highlighter.
 + A little refactoring.
@@ -188,7 +193,7 @@ Release v4.1.0 of 06 January 2013
 Release v4.0.2 of 17 December 2012
 + Improvements to keyboard handling:
   - Fixed some keyboard focus bugs.
-  - Fixed broken, missing and duplicate Alt-key shortcuts in several dialogue boxes.
+  - Fixed broken, missing and duplicate Alt-key short-cuts in several dialogue boxes.
   - Fixed broken keyboard access to list view in Code Generation tab of Preferences dialogue box.
 + Corrected an incorrect font in Compilers dialogue box.
 + Added title to "View Link" dialogue box displayed from mark-up editor.
@@ -210,7 +215,7 @@ Internal CodeSnip version 4.0.1.213
 
 Release v4.0.1 of 08 December 2012
 Internal CodeSnip version 4.0.1.212
-+ Fixed bug #3578652 (http://bit.ly/RXIwBC): Pre-processor directive errors in main db ini files by removing support for problematic directives.
++ Fixed bug #3578652 (http://bit.ly/RXIwBC): "Pre-processor directive errors in main db ini files" by removing support for problematic directives.
 + Rolling mouse over links in detail pane no longer displays a hint in the status bar. This change fixes bug #3577407 (http://bit.ly/VeSVGg): Clicking detail pane snippet link leaves hint in status bar.
 + Windows no longer scale automatically when screen DPI differs from that on design system. This fixes bugs #3591818 (http://bit.ly/TvNaUL) "Strange window behaviour in Windows 7" and bug #3591820 (http://bit.ly/SEH6dO) "Incorrect font size used for some bold text".
 + Update operating system detection code to detect W0ndows 8 & 2012 server.
@@ -224,7 +229,7 @@ See also changes from alpha, beta and release candidates below for details of ch
 + New glyphs that describes level of testing applied to snippets from online Code Snippets Database now appear in top right of detail pane.
 + Changed main window caption and task bar entry to include version number "4" after program name.
 + Fixed bugs:
-  - #3572382 (http://bit.ly/OnEtNY): Automatic conversion of blank lines to paragraphs in REML markup editor gets confused if block level tags are already present.
+  - #3572382 (http://bit.ly/OnEtNY): Automatic conversion of blank lines to paragraphs in REML mark-up editor gets confused if block level tags are already present.
   - Unreported: Controls in News dialogue box do not use correct font.
 + A little refactoring.
 + Updated help file:
@@ -235,7 +240,7 @@ See also changes from alpha, beta and release candidates below for details of ch
 
 Release v4.0 RC 3 of 18 September 2012
 Internal CodeSnip version 3.999.3
-+ Fixed serious bug #3568628 (http://bit.ly/V5NX0H): CodeSnip faulting at startup after fresh install with no previous v3 installation.
++ Fixed serious bug #3568628 (http://bit.ly/V5NX0H): "CodeSnip faulting at startup after fresh install with no previous v3 installation".
 
 Release v4.0 RC 2 of 17 September 2012
 Internal CodeSnip version 3.999.2
@@ -276,7 +281,7 @@ Internal CodeSnip version 3.99.2
   - #3559156 (http://bit.ly/TKXYQ7): "Previews" giving examples of the effect of changes made in the Preferences dialogue box sometimes disappear when the tab key is pressed.
   - #3559239 (http://bit.ly/Pm1HU4): Snippet names and display names are used inconsistently in the UI.
   - #3559257 (http://bit.ly/Qc8Fqu): Compile Results displayed from the main menu can get out of sync with the actual compile results of snippets that have been edited since they were last compiled.
-  - #3559265 (http://bit.ly/NvV9iH): Viewing dependencies for an un-named snippet or a snippet not in the database causes a GPF.
+  - #3559265 (http://bit.ly/NvV9iH): Viewing dependencies for an unnamed snippet or a snippet not in the database causes a GPF.
   - #3559266 (http://bit.ly/S69wO2): When include files are generated for a snippet that depends on a class type, the required class is not listed in the file's header comments.
   - #3560317 (http://bit.ly/PUcEgV): The caption of the Active Text preview dialogue box refers to "Extra" text when it is used to preview a snippet's description.
   - #3560521 (http://bit.ly/RG7Jlw): The state of the Overview tree often doesn't restore correctly after a database update.
@@ -286,7 +291,7 @@ Internal CodeSnip version 3.99.2
   - Untracked: Removed "(v4 preview)" text that had been left in main window title bar.
   - Untracked: Minor accelerator key related problems in the Preferences dialogue box.
 + Main UI changes:
-  - The Detail pane tabset now has a context menu that can be used to close the current tab or all but the current tab. The Close tab option is also added to current view's context menu.
+  - The Detail pane tab-set now has a context menu that can be used to close the current tab or all but the current tab. The Close tab option is also added to current view's context menu.
   - Right-clicking a tab in the Overview or Detail pane now selects the tab.
   - Middle-clicking an item in the Overview pane now selects it. Previously middle clicks were ignored.
   - Many more parts of the main display and dialogue boxes now display display names for snippets rather than unique names.
@@ -321,7 +326,7 @@ Internal CodeSnip version 3.99.1
 + Changes to snippets editor:
   - New field on Code tab to enter optional snippet display name.
   - New check box on Code tab to specify if Pascal syntax highlighter is to be used for source code.
-  - New tabbed "markup editor" lets user enter multi-paragraph snippet descriptions and extra information either as plain text or as REML markup.
+  - New tabbed "mark-up editor" lets user enter multi-paragraph snippet descriptions and extra information either as plain text or as REML mark-up.
   - Controls on Code tab re-ordered.
   - Extra Information tab revised with much larger edit control and deletion of explanatory text.
   - Editor enlarged.
@@ -330,7 +335,7 @@ Internal CodeSnip version 3.99.1
   - "General" preferences tab split into two: "Misc." that contains only measurement units and "Display" that contains display related options.
   - Added controls to "Display" tab to set main and user database heading colours.
   - Changes that affect appearance of content of details pane are now reflected in the display as soon as the Preferences dialogue box closes, rather than on program restart.
-+ Changes to REML markup handling:
++ Changes to REML mark-up handling:
   - Any REML text not embedded in block level tags is now automatically wrapped in <p> tags.
   - Nested REML block level tags are no longer allowed.
   - Changed handling of multiple spaces in REML code to be the same as in HTML.
@@ -343,7 +348,7 @@ Internal CodeSnip version 3.99.1
 + User database and export file formats updated to v6.
 + Per-user configuration file format changes: bumped file version to v9.
 + Major changes to installer:
-  - Now always brings forward any earlier common config files if needed.
+  - Now always brings forward any earlier common configuration files if needed.
   - Per user configuration files are now ignored: they are handled by main program (see below).
   - Only main database, not user database, is now imported from earlier versions on user request. User databases are now handled by main program (see below).
   - There is no longer an option to delete old databases or configuration files.
@@ -366,9 +371,9 @@ Internal CodeSnip version 3.98.3
   - Overview pane now displays buttons that can be used to collapse or expand non-empty section headings.
   - Ctrl + arrow keys can now be used to scroll overview pane tree view vertically and horizontally without changing selection in overview pane.
   - Main window is now refreshed whenever changes that affect it are made in the Preferences dialogue box.
-  - Some main menu shortcut keys changed.
+  - Some main menu short-cut keys changed.
   - Dependencies dialogue box now has two tabs: the first displays the snippets required to compile the selected snippet while the second tab displays snippets that depend upon the selected snippet.
-  - Code Generation tab of Preferences dialogue box updated to enable warnings to be switched on or off. In addition default warnings can be restored, list view columns can be sorted and Alt key shortcuts tweaked.
+  - Code Generation tab of Preferences dialogue box updated to enable warnings to be switched on or off. In addition default warnings can be restored, list view columns can be sorted and Alt key short-cuts tweaked.
   - Code Import dialogue box improved: now sorts imported units in list view and scrolls to make renamed snippets visible.
   - Snippet selection and cross-reference search dialogues now report if existing search results will be overwritten.
   - Text and compiler search dialogues now ask if any current search results are to be refined.
@@ -383,7 +388,7 @@ Internal CodeSnip version 3.98.3
 + Some refactoring.
 + Help file updated in line with changes and new features. Some US English spellings changed to UK English for consistency.
 + Updated documentation, including:
-  - Privacy statement updated re changes in data recorded via database update logons.
+  - Privacy statement updated re changes in data recorded via database update log-ons.
   - Licensing docs updated re introduction of some MPL 2.0 files.
 
 Release v4.0 alpha 2 (preview) of 21 April 2012
@@ -457,13 +462,13 @@ Changes relate to v3.9.3
 + Cascading style sheet handling improved.
 + Any errors in scripts run in browser control now trapped and reported as exceptions instead of via browser control's own error dialogue box.
 + Revised external object that communicates with JavaScript in browser controls.
-+ Hyperlinks used in snippets now support the https:// protocol.
++ Hyper-links used in snippets now support the https:// protocol.
 + A default title now used in print spooler if none specified.
 + Source code heavily refactored.
 + Help file updated in line with changes.
 + Installer:
   - Changed so that v3 and v4 installs can co-exist - default install locations are different and v4 does not overwrite v3.
-  - Converts v3 config files to v4 Unicode format and copies to new locations. File version stamps are updated.
+  - Converts v3 configuration files to v4 Unicode format and copies to new locations. File version stamps are updated.
   - Installer is now compiled with Unicode version of Inno Setup instead of ANSI version.
   - Scripts updated and refactored.
 + Updated documentation, including changes to privacy statement and new file format documentation.

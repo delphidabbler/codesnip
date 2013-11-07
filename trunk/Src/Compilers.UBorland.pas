@@ -93,7 +93,7 @@ uses
   // Delphi
   SysUtils, Registry,
   // Project
-  UIStringList, UStrUtils;
+  UIStringList, UStrUtils, USystemInfo;
 
 
 constructor TBorlandCompiler.Create(const Id: TCompilerID);
@@ -180,10 +180,14 @@ function TBorlandCompiler.InstallPathFromReg(const RootKey: HKEY): string;
 var
   Reg: TRegistry; // registry accessor
 begin
-  Reg := TRegistry.Create;
+  if TOSInfo.CheckReportedOS(TOSInfo.WinXP) then
+    Reg := TRegistry.Create(KEY_READ or KEY_WOW64_64KEY)
+  else
+    // KEY_WOW64_64KEY is not supported on Windows 2000
+    Reg := TRegistry.Create(KEY_READ);
   try
     Reg.RootKey := RootKey;
-    if not Reg.OpenKeyReadOnly(InstallationRegKey) then
+    if not Reg.OpenKey(InstallationRegKey, False) then
       Exit('');
     Result := Reg.ReadString('RootDir');
   finally

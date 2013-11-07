@@ -11,7 +11,7 @@
 ; Change Log for CodeSnip Release 0 (Beta releases)
 ; ------------------------------------------------------------------------------
 
-Un-released v0.11.1 Beta of 10 April 2006
+Unreleased v0.11.1 Beta of 10 April 2006
 + Improved and fixed interaction with database update web service:
   - Download manager now sends program's key and registration code to web service instead of place-holder strings.
   - Handling for HTTP error messages improved. Short HTTP error descriptions are displayed rather than full content of error pages.
@@ -25,13 +25,13 @@ Release v0.11.0 Beta of 07 April 2006
 + Reworked and added classes to centralise access to system and application information.
 + Updated help file with details of registration dialogue and CodeSnip mailing list.
 
-Un-released v0.10.12 Beta of 04 April 2006
+Unreleased v0.10.12 Beta of 04 April 2006
 + Improved code that stores global application settings. Prepared way for having per-user and global settings rather than just per-user settings as at present.
 
-Un-released v0.10.11 Beta of 03 April 2006
+Unreleased v0.10.11 Beta of 03 April 2006
 + Revised to work with v3.1 of CodeSnip database update web service.
 
-Un-released v0.10.10 Beta of 02 April 2006
+Unreleased v0.10.10 Beta of 02 April 2006
 + Added program icon (16x16, 32x32 and 48x48 versions).
 
 Release v0.10.9 Beta of 02 April 2006
@@ -39,7 +39,7 @@ Release v0.10.9 Beta of 02 April 2006
 + Refactored some code in main form and main snippets object as a result of above fix.
 + Also refactored some of search code in main form.
 
-Un-released v0.10.8 Beta of 02 April 2006
+Unreleased v0.10.8 Beta of 02 April 2006
 + Removed bug in database update manager that was causing database to be restored unnecessarily.
 + Heavily refactored update manager code as part of bug fix.
 
@@ -59,11 +59,11 @@ Release v0.10.4 Beta of 12 January 2006
 + Added checking of checksums of downloaded files to increase security. Exceptions now raised when a file's checksum is incorrect.
 + Fixed small alignment problem in update dialogue.
 
-Un-released v0.10.3 Beta of 11 January 2006
+Unreleased v0.10.3 Beta of 11 January 2006
 + Changed so that compiler output is now captured directly rather than via temporary log file.
 + Compiler execution is now time-sliced and time-limited rather than being allowed infinite processing time.
 
-Un-released v0.10.2 Beta of 10 January 2006
+Unreleased v0.10.2 Beta of 10 January 2006
 + Reverted to Delphi 7 to avoid Delphi 2006 bug that was enabling dialogues to be minimized and maximized.
 + Reordered controls in Find Compiler dialogues.
 + Restored title bar close button to web update dialogue.
@@ -88,13 +88,13 @@ Release v0.9.0 Beta of 06 January 2006
 + Refactored main snippets class to simplify addition of new copy snippet facility.
 + Updated help file re new additions.
 
-Un-released v0.8.3 Beta of 04 January 2006
+Unreleased v0.8.3 Beta of 04 January 2006
 + Modified to compile with Indy Components v10 and Delphi 2006 for Win 32.
 
-Un-released v0.8.2 Beta of 04 January 2006
+Unreleased v0.8.2 Beta of 04 January 2006
 + Created static class to interpret command line and changed other code to work with the new class.
 
-Un-released v0.8.1 Beta of 04 January 2006
+Unreleased v0.8.1 Beta of 04 January 2006
 + Fixed minor display bug in web update dialogue box.
 + Fixed about box's problem in displaying help in response to F1 key press.
 
@@ -119,20 +119,20 @@ Release v0.7.5 Beta of 03 June 2005
 Release v0.7.4 Beta of 09 May 2005
 + Made user defined settings in Save Snippets dialogue box persistent.
 
-Un-released v0.7.3 Beta of 25 April 2005
+Unreleased v0.7.3 Beta of 25 April 2005
 + Disabled test compile button on compiler checks pane along with associated menu and toolbar button when no compilers installed.
 + Rewrote main welcome page, adding links to compiler check dialogue. Made same welcome page appear in both detail panes.
 + Updated compiler check pages by adding links to compiler check dialogue and new "about compiler checks" help topic.
 + Updated help file with new "about compiler checks" topic and completed "QuickStart" topic.
 + Added new features to DOM's external object to support above changes.
 
-Un-released v0.7.2 Beta of 21 April 2005
+Unreleased v0.7.2 Beta of 21 April 2005
 + Refactored code that maintains persistent application data.
 + Refactored syntax highlighter code and moved interfaces and enumerated types to own unit.
 + Renamed unit generation unit now that it generates source code other than complete units.
 + Carried out minor refactoring of Pascal analyser unit.
 
-Un-released v0.7.1 Beta of 20 April 2005
+Unreleased v0.7.1 Beta of 20 April 2005
 + Disabled F1 key press handling in dialogues with no help button. Was triggering bad topic errors in WinHelp.
 + Added "Compile" prefix to compiler check page's "Test Compile" button.
 + Fixed errors in "do nothing" doc host handler used by web browser control.
@@ -157,54 +157,54 @@ Release v0.5.0 Beta of 05 March 2005
 Release v0.4.0 Beta of 28 February 2005
 + Text search results are now highlighted when routines are displayed in the information pane.
 
-Un-released v0.3.4 Beta of 26 February 2005
+Unreleased v0.3.4 Beta of 26 February 2005
 + Separated back end database code from Snippets object.
 + New back end code designed to make it easy to change the data provider in future versions. Current version accesses data in .ini and .dat files.
 
-Un-released v0.3.3 Beta of 25 February 2005
+Unreleased v0.3.3 Beta of 25 February 2005
 + Fixed bug that was preventing Ctrl+F from activating Find Text dialogue box.
 + Realigned controls in bug report dialogue and fixed tab order problems.
 + Fixed email address validation error in bug report dialogue
 
-Un-released v0.3.2 Beta of 24 February 2005
+Unreleased v0.3.2 Beta of 24 February 2005
 + Refactored code that provides compiler names and introduced global Compilers object.
 
-Un-released v0.3.1 Beta of 24 February 2005
+Unreleased v0.3.1 Beta of 24 February 2005
 + Centralised code that displays message dialogues and standardised their appearance.
 
-Un-released v0.3.0 Beta of 23 February 2005
+Unreleased v0.3.0 Beta of 23 February 2005
 + Updated welcome pages to provide more help on using CodeSnip.
 + Removed dialogues that appeared on start up when database was empty. Welcome page now provides this information along with an option to download database.
 + Improved handling of welcome page.
 
-Un-released v0.2.4 Beta of 23 February 2005
+Unreleased v0.2.4 Beta of 23 February 2005
 + Refactored and simplified access to dialogue boxes.
 + Improved search code.
 
-Un-released v0.2.3 Beta of 23 February 2005
+Unreleased v0.2.3 Beta of 23 February 2005
 + Created a class hierarchy for all frames that display HTML in a web browser control.
 
-Un-released v0.2.2 Beta of 22 February 2005
+Unreleased v0.2.2 Beta of 22 February 2005
 + Localised various literal strings and moved some constant values to a common location.
 
-Un-released v0.2.1 Beta of 22 February 2005
+Unreleased v0.2.1 Beta of 22 February 2005
 + Overhauled web browser external object extender that communicates browser events to application.
 + Added new notifier object that centralises handling of GUI user interaction.
 
-Un-released v0.2.0 Beta of 21 February 2005
+Unreleased v0.2.0 Beta of 21 February 2005
 + Made minor changes to appearance of main display.
 + Refactored the HTML generation engine, added several HTML templates to resources and localised all strings used in generated HTML.
 
-Un-released v0.1.4 Beta of 19 February 2005
+Unreleased v0.1.4 Beta of 19 February 2005
 + Refactored some code.
 
-Un-released v0.1.3 Beta of 18 February 2005
+Unreleased v0.1.3 Beta of 18 February 2005
 + Removed redundant code.
 
-Un-released v0.1.2 Beta of 18 February 2005
+Unreleased v0.1.2 Beta of 18 February 2005
 + Removed debug code.
 
-Un-released v0.1.1 Beta of 18 February 2005
+Unreleased v0.1.1 Beta of 18 February 2005
 + Fixed minor bugs.
 
 Release v0.1.0 Beta of 30 January 2005
