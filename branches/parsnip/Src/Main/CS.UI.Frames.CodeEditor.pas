@@ -34,21 +34,31 @@ type
       fSynEditCmp: TSynEdit;
       fTheme: TSyntaxHiliteTheme;
       fBrush: TSyntaxHiliterBrush;
+      fFontSize: Integer;
+      fUseThemeFontSize: Boolean;
+      fDefaultFontSize: Integer;
     function GetSourceCode: string;
     procedure SetSourceCode(const Code: string);
     procedure SetTheme(const ATheme: TSyntaxHiliteTheme);
     procedure SetBrush(const ABrush: TSyntaxHiliterBrush);
     function GetTabSize: Integer;
     procedure SetTabSize(const ATabSize: Integer);
+    procedure SetUseThemeFontSize(const AFlag: Boolean);
+    function GetFontSize: Integer;
+    procedure SetFontSize(const ASize: Integer);
     procedure ApplyTheme;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
+    procedure Clear;
     procedure ApplyLanguage(const Language: TSourceCodeLanguage);
     property Theme: TSyntaxHiliteTheme read fTheme write SetTheme;
     property Brush: TSyntaxHiliterBrush read fBrush write SetBrush;
     property TabSize: Integer read GetTabSize write SetTabSize;
     property SourceCode: string read GetSourceCode write SetSourceCode;
+    property UseThemeFontSize: Boolean read fUseThemeFontSize write
+      SetUseThemeFontSize default True;
+    property FontSize: Integer read GetFontSize write SetFontSize;
   end;
 
 implementation
@@ -81,7 +91,8 @@ begin
   if not Assigned(fTheme) then
     Exit;
   fSynEditCmp.Font.Name := fTheme.FontName;
-  fSynEditCmp.Font.Size := fTheme.FontSize;
+  if fUseThemeFontSize then
+    fSynEditCmp.Font.Size := fTheme.FontSize;
   if fTheme.DefaultForeground = clNone then
     fSynEditCmp.Font.Color := clWindowText
   else
@@ -104,6 +115,11 @@ begin
     Highlighter.Attribute[I].Foreground := AttrStyle.Foreground;
     Highlighter.Attribute[I].Style := AttrStyle.FontStyles;
   end;
+end;
+
+procedure TCodeEditorFrame.Clear;
+begin
+  fSynEditCmp.Clear;
 end;
 
 constructor TCodeEditorFrame.Create(AOwner: TComponent);
@@ -129,10 +145,12 @@ begin
   // Turn off book mark keys & glyphs
   { TODO: could make option, in which case need to restore default gutter's
           right offset. If option included glyphs we'll need some nicer ones
-          to give to BookmMarkOptions.BookmarkImages }
+          to give to BookMarkOptions.BookmarkImages }
   fSynEditCmp.BookMarkOptions.EnableKeys := False;
   fSynEditCmp.BookMarkOptions.GlyphsVisible := False;
   fSynEditCmp.Gutter.Font.Color := clGray;
+  fDefaultFontSize := fSynEditCmp.Font.Size;
+  fUseThemeFontSize := True;
   ApplyTheme;
 end;
 
@@ -148,6 +166,11 @@ begin
   end;
   fBrush.Free;
   inherited;
+end;
+
+function TCodeEditorFrame.GetFontSize: Integer;
+begin
+  Result := fSynEditCmp.Font.Size;
 end;
 
 function TCodeEditorFrame.GetSourceCode: string;
@@ -175,6 +198,12 @@ begin
   ApplyTheme;
 end;
 
+procedure TCodeEditorFrame.SetFontSize(const ASize: Integer);
+begin
+  fFontSize := ASize;
+  SetUseThemeFontSize(False);
+end;
+
 procedure TCodeEditorFrame.SetSourceCode(const Code: string);
 begin
   fSynEditCmp.Text := Code;
@@ -190,6 +219,22 @@ begin
   Assert(Assigned(ATheme), ClassName + '.ATheme not assigned');
   fTheme := ATheme;
   ApplyTheme;
+end;
+
+procedure TCodeEditorFrame.SetUseThemeFontSize(const AFlag: Boolean);
+begin
+  if AFlag = fUseThemeFontSize then
+    Exit;
+  fUseThemeFontSize := AFlag;
+  if AFlag then
+  begin
+    if Assigned(fTheme) then
+      fSynEditCmp.Font.Size := fTheme.FontSize
+    else
+      fSynEditCmp.Font.Size := fDefaultFontSize;
+  end
+  else
+    fSynEditCmp.Font.Size := fFontSize;
 end;
 
 end.
