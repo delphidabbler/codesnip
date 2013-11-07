@@ -36,7 +36,6 @@ type
       fBrush: TSyntaxHiliterBrush;
       fFontSize: Integer;
       fUseThemeFontSize: Boolean;
-      fDefaultFontSize: Integer;
     function GetSourceCode: string;
     procedure SetSourceCode(const Code: string);
     procedure SetTheme(const ATheme: TSyntaxHiliteTheme);
@@ -88,8 +87,6 @@ var
   AttrID: string;
   AttrStyle: TSyntaxHiliteAttrStyle;
 begin
-  if not Assigned(fTheme) then
-    Exit;
   fSynEditCmp.Font.Name := fTheme.FontName;
   if fUseThemeFontSize then
     fSynEditCmp.Font.Size := fTheme.FontSize;
@@ -125,6 +122,7 @@ end;
 constructor TCodeEditorFrame.Create(AOwner: TComponent);
 begin
   inherited;
+  fTheme := TSyntaxHiliteThemes.NullTheme;
   fBrush := TSyntaxHiliterBrushes.CreateNullBrush;
   fSynEditCmp := TSynEdit.Create(Self);
   fSynEditCmp.Parent := Self;
@@ -149,7 +147,7 @@ begin
   fSynEditCmp.BookMarkOptions.EnableKeys := False;
   fSynEditCmp.BookMarkOptions.GlyphsVisible := False;
   fSynEditCmp.Gutter.Font.Color := clGray;
-  fDefaultFontSize := fSynEditCmp.Font.Size;
+  fFontSize := fTheme.FontSize; // default FontSize = default theme font size
   fUseThemeFontSize := True;
   ApplyTheme;
 end;
@@ -227,12 +225,7 @@ begin
     Exit;
   fUseThemeFontSize := AFlag;
   if AFlag then
-  begin
-    if Assigned(fTheme) then
-      fSynEditCmp.Font.Size := fTheme.FontSize
-    else
-      fSynEditCmp.Font.Size := fDefaultFontSize;
-  end
+    fSynEditCmp.Font.Size := fTheme.FontSize
   else
     fSynEditCmp.Font.Size := fFontSize;
 end;
