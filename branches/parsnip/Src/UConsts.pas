@@ -35,7 +35,7 @@ const
   DOUBLEQUOTE = '"';    // double quote character
 
   CRLF  = CR + LF;      // carriage return followed by line feed
-  EOL   = CRLF;         // end of line character sequence for Windows systems
+  EOL   = sLineBreak;   // end of line character sequence for OS
   EOL2  = EOL + EOL;    // 2 end of line sequences
 
   RT_HTML = MakeIntResource(23);    // HTML resource identifier
