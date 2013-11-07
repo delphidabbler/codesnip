@@ -32,10 +32,10 @@
 -K$00400000
 -E"..\Exe"
 -N0"..\Bin"
--U"..\Bin;..\Bin\Lib;3rdParty"
--O"..\Bin;..\Bin\Lib;3rdParty"
--I"..\Bin;..\Bin\Lib;3rdParty"
--R"..\Bin;..\Bin\Lib;3rdParty"
+-U"..\Bin;..\Bin\Lib"
+-O"..\Bin;..\Bin\Lib"
+-I"..\Bin;..\Bin\Lib"
+-R"..\Bin;..\Bin\Lib"
 -w-SYMBOL_PLATFORM
 -w+EXPLICIT_STRING_CAST_LOSS
 -w+CVT_WIDENING_STRING_LOST
