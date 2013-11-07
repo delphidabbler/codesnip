@@ -60,6 +60,7 @@ type
     lblLangBrush: TLabel;
     frmCodeEditor: TCodeEditorFrame;
     btnDisplayEditedSource: TButton;
+    btnChangeBrush: TButton;
     procedure btnLoadUserThemesClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -81,6 +82,7 @@ type
     procedure btnDisplaySourceForLangClick(Sender: TObject);
     procedure cbChooseLangChange(Sender: TObject);
     procedure btnDisplayEditedSourceClick(Sender: TObject);
+    procedure btnChangeBrushClick(Sender: TObject);
   private
     fLanguages: TSourceCodeLanguages;
     fThemes: TSyntaxHiliteThemes;
@@ -504,6 +506,18 @@ begin
     edXTHMLFragSource.Text := B.HTMLFragment;
   finally
     B.Free;
+  end;
+end;
+
+procedure TMainTestForm.btnChangeBrushClick(Sender: TObject);
+var
+  Brush: TSyntaxHiliterBrush;
+begin
+  Brush := TSyntaxHiliterBrushes.CreateBrush(GetSelectedBrushID);
+  try
+    frmCodeEditor.Brush := Brush;
+  finally
+    Brush.Free;
   end;
 end;
 

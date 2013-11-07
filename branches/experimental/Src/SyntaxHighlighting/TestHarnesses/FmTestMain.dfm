@@ -291,19 +291,28 @@ object MainTestForm: TMainTestForm
             Width = 886
             Height = 446
             Align = alBottom
-            TabOrder = 3
+            TabOrder = 5
             ExplicitTop = 34
             ExplicitWidth = 886
             ExplicitHeight = 446
           end
           object btnDisplayEditedSource: TButton
-            Left = 632
+            Left = 727
             Top = 3
-            Width = 185
+            Width = 156
             Height = 25
             Caption = 'Display Source From Editor'
             TabOrder = 4
             OnClick = btnDisplayEditedSourceClick
+          end
+          object btnChangeBrush: TButton
+            Left = 604
+            Top = 3
+            Width = 85
+            Height = 25
+            Caption = 'Change Brush'
+            TabOrder = 3
+            OnClick = btnChangeBrushClick
           end
         end
         object tsRendering: TTabSheet
