@@ -67,7 +67,8 @@ type
   public
     constructor Create(const AID: TSourceCodeLanguageID;
       const AFriendlyName: string; const AIsBuiltIn: Boolean);
-    class function CreateDefault: TSourceCodeLanguage; static; inline;
+    // NOTE: DO NOT MAKE CreateDefault inline: causes internal compiler error!
+    class function CreateDefault: TSourceCodeLanguage; static;
     ///  <summary>Updates the record's properties to those of Lang except that
     ///  the BuiltIn property remains unchanged.</summary>
     procedure Update(const Lang: TSourceCodeLanguage);
