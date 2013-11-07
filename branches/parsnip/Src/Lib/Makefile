@@ -46,7 +46,6 @@ config:
   @if not exist "$(PKGBIN)" mkdir "$(PKGBIN)"
   @del $(LIBBIN)\*.* /Q /S
 
-
 # Make libraries
 libs: Collections.bpl SynEdit_RXE.bpl DDabLib.bpl
 
@@ -59,6 +58,7 @@ SynEdit_RXE.bpl:
   @cd SynEdit
   @$(DCC32) $(@B).dpk -B $(DELPHIDEFINES)
   @cd ..
+  @copy SynEdit\SynEdit.res $(LIBBIN)
 
 DDabLib.bpl:
   @cd DDabLib
