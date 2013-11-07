@@ -21,14 +21,39 @@ interface
 
 uses
   // Delphi
-  SysUtils, Classes, ActnList, Buttons, StdCtrls, Forms, Controls, CheckLst,
-  ComCtrls, ExtCtrls, StdActns, Menus, ImgList,
+  SysUtils,
+  Classes,
+  ActnList,
+  Buttons,
+  StdCtrls,
+  Forms,
+  Controls,
+  CheckLst,
+  ComCtrls,
+  ExtCtrls,
+  StdActns,
+  Menus,
+  ImgList,
   // Project
-  ActiveText.UMain, Compilers.UGlobals, DB.USnippet, FmGenericOKDlg,
-  FrBrowserBase, FrFixedHTMLDlg, FrHTMLDlg, UBaseObjects, UCategoryListAdapter,
-  UCompileMgr, UCompileResultsLBMgr, UCSSBuilder, UMemoCaretPosDisplayMgr,
-  UMemoHelper, USnipKindListAdapter, USnippetsChkListMgr, UUnitsChkListMgr,
-  FmSnippetsEditorDlg.FrActiveTextEditor;
+  CS.UI.Frames.CodeEditor,
+  ActiveText.UMain,
+  Compilers.UGlobals,
+  DB.USnippet,
+  FmGenericOKDlg,
+  FmSnippetsEditorDlg.FrActiveTextEditor,
+  FrBrowserBase,
+  FrFixedHTMLDlg,
+  FrHTMLDlg,
+  UBaseObjects,
+  UCategoryListAdapter,
+  UCompileMgr,
+  UCompileResultsLBMgr,
+  UCSSBuilder,
+  UMemoCaretPosDisplayMgr,
+  UMemoHelper,
+  USnipKindListAdapter,
+  USnippetsChkListMgr,
+  UUnitsChkListMgr;
 
 
 type
@@ -65,7 +90,6 @@ type
     clbUnits: TCheckListBox;
     clbXRefs: TCheckListBox;
     edName: TEdit;
-    edSourceCode: TMemo;
     edUnit: TEdit;
     lbCompilers: TListBox;
     lblCategories: TLabel;
@@ -78,7 +102,6 @@ type
     lblExtraCaretPos: TLabel;
     lblName: TLabel;
     lblKind: TLabel;
-    lblSourceCaretPos: TLabel;
     lblSourceCode: TLabel;
     lblSnippetKindHelp: TLabel;
     lblUnits: TLabel;
@@ -121,6 +144,7 @@ type
     actClearUnits: TAction;
     miClearUnits: TMenuItem;
     miSpacer3: TMenuItem;
+    frmSourceEditor: TCodeEditorFrame;
     procedure actAddUnitExecute(Sender: TObject);
     procedure actAddUnitUpdate(Sender: TObject);
     procedure actCompileExecute(Sender: TObject);
@@ -158,6 +182,7 @@ type
     procedure actRestoreUnitsExecute(Sender: TObject);
     procedure actClearUnitsExecute(Sender: TObject);
     procedure actClearUnitsUpdate(Sender: TObject);
+    procedure chkUseHiliterClick(Sender: TObject);
   strict private
     fSnippet: TSnippet;             // Snippet being edited: nil for new snippet
     fCatList: TCategoryListAdapter; // Accesses sorted list of categories
@@ -173,7 +198,6 @@ type
     fUnitsCLBMgr: TUnitsChkListMgr; // Manages units check list box
     fCompilersLBMgr:
       TCompileResultsLBMgr;         // Manages compilers list box
-    fSourceMemoHelper: TMemoHelper; // Helper for working with source code memo
     fMemoCaretPosDisplayMgr: TMemoCaretPosDisplayMgr;
                                     // Manages display of memo caret positions
     procedure PopulateControls;
@@ -255,12 +279,33 @@ implementation
 
 uses
   // Delphi
-  Windows {for inlining}, Graphics,
+  Windows {for inlining},
+  Graphics,
   // Project
-  DB.UMain, DB.USnippetKind, FmDependenciesDlg, IntfCommon, UColours, UConsts,
-  UCSSUtils, UCtrlArranger, UExceptions, UFontHelper, UIStringList,
-  UReservedCategories, USnippetExtraHelper, USnippetValidator, UMessageBox,
-  USnippetIDs, UStructs, UStrUtils, UTestUnitDlgMgr, UThemesEx, UUtils;
+  CS.Config,
+  CS.SourceCode.Languages,
+  DB.UMain,
+  DB.USnippetKind,
+  FmDependenciesDlg,
+  IntfCommon,
+  UColours,
+  UConsts,
+  UCSSUtils,
+  UCtrlArranger,
+  UExceptions,
+  UFontHelper,
+  UIStringList,
+  UPreferences,
+  UReservedCategories,
+  USnippetExtraHelper,
+  USnippetValidator,
+  UMessageBox,
+  USnippetIDs,
+  UStructs,
+  UStrUtils,
+  UTestUnitDlgMgr,
+  UThemesEx,
+  UUtils;
 
 
 {$R *.dfm}
@@ -552,17 +597,15 @@ procedure TSnippetsEditorDlg.ArrangeForm;
   }
 begin
   // tsCode
-  edSourceCode.Width := tsCode.ClientWidth - 8;
+  frmSourceEditor.Width := tsCode.ClientWidth - 8;
   TCtrlArranger.AlignLefts(
     [
       lblName, lblDisplayName, lblDescription, lblKind, lblCategories,
-      lblSourceCode, edSourceCode
+      lblSourceCode, frmSourceEditor
     ],
     3
   );
-  TCtrlArranger.AlignRights(
-    [edSourceCode, lblSourceCaretPos, btnViewDescription]
-  );
+  TCtrlArranger.AlignRights([frmSourceEditor, btnViewDescription]);
   frmDescription.Width := btnViewDescription.Left - frmDescription.Left - 8;
   TCtrlArranger.AlignVCentres(3, [lblName, edName]);
   TCtrlArranger.AlignVCentres(
@@ -584,12 +627,9 @@ begin
     [lblCategories, cbCategories]
   );
   TCtrlArranger.MoveToRightOf(cbKind, lblSnippetKindHelp, 12);
-  TCtrlArranger.AlignTops(
-    [lblSourceCode, lblSourceCaretPos],
-    TCtrlArranger.BottomOf([lblCategories, cbCategories], 8)
-  );
-  TCtrlArranger.MoveBelow([lblSourceCode, lblSourceCaretPos], edSourceCode, 4);
-  TCtrlArranger.MoveBelow(edSourceCode, chkUseHiliter, 8);
+  TCtrlArranger.MoveBelow([lblCategories, cbCategories], lblSourceCode, 8);
+  TCtrlArranger.MoveBelow(lblSourceCode, frmSourceEditor, 4);
+  TCtrlArranger.MoveBelow(frmSourceEditor, chkUseHiliter, 8);
 
   // tsReferences
   TCtrlArranger.AlignVCentres(
@@ -657,6 +697,19 @@ begin
   UpdateReferences;
 end;
 
+procedure TSnippetsEditorDlg.chkUseHiliterClick(Sender: TObject);
+var
+  Language: TSourceCodeLanguage;
+begin
+  if chkUseHiliter.Checked then
+    Language := TConfig.Instance.SourceCodeLanguages[
+      TSourceCodeLanguageID.Create('Pascal')
+    ]
+  else
+    Language := TSourceCodeLanguage.CreateDefault;
+  frmSourceEditor.ApplyLanguage(Language);
+end;
+
 procedure TSnippetsEditorDlg.ConfigForm;
   {Configures form's controls. Sets font and colors of "link" labels. Also sets
   item height of owner draw check list boxes.
@@ -671,6 +724,10 @@ begin
   lblViewCompErrs.Caption := actViewErrors.Caption;
   lblViewCompErrsKey.Caption :=
     '(' + ShortcutToText(actViewErrors.ShortCut) + ')';
+  frmSourceEditor.FontSize := 8;
+  frmSourceEditor.Theme := TConfig.Instance.HiliterThemes[
+    Preferences.CurrentHiliteThemeIds[htkUI]
+  ];
 end;
 
 function TSnippetsEditorDlg.CreateTempSnippet: TSnippet;
@@ -764,7 +821,6 @@ begin
   fCompilersLBMgr := TCompileResultsLBMgr.Create(
     lbCompilers, fCompileMgr.Compilers
   );
-  fSourceMemoHelper := TMemoHelper.Create(edSourceCode);
 end;
 
 procedure TSnippetsEditorDlg.FormDestroy(Sender: TObject);
@@ -773,7 +829,6 @@ procedure TSnippetsEditorDlg.FormDestroy(Sender: TObject);
   }
 begin
   inherited;
-  FreeAndNil(fSourceMemoHelper);
   FreeAndNil(fCompilersLBMgr);
   FreeAndNil(fUnitsCLBMgr);
   FreeAndNil(fXRefsCLBMgr);
@@ -812,12 +867,15 @@ end;
 procedure TSnippetsEditorDlg.InitControls;
   {Initialises controls to default values.
   }
+var
+  Language: TSourceCodeLanguage;
 begin
   if Assigned(fSnippet) then
   begin
     // We are editing a snippet: initialise controls from snippet's properties
-    edSourceCode.Text := fSnippet.SourceCode;
+    frmSourceEditor.SourceCode := fSnippet.SourceCode;
     chkUseHiliter.Checked := fSnippet.HiliteSource;
+    Language := TConfig.Instance.SourceCodeLanguages[fSnippet.Language];
     frmDescription.DefaultEditMode := emAuto;
     frmDescription.ActiveText := fSnippet.Description;
     edName.Text := fSnippet.Name;
@@ -839,8 +897,9 @@ begin
   else
   begin
     // We are adding a new snippet: clear all controls or set default values
-    edSourceCode.Clear;
+    frmSourceEditor.Clear;
     chkUseHiliter.Checked := True;
+    Language := TSourceCodeLanguage.CreateDefault;
     frmDescription.DefaultEditMode := emPlainText;
     frmDescription.Clear;
     edName.Clear;
@@ -853,14 +912,14 @@ begin
     frmExtra.Clear;
     UpdateReferences;
   end;
+  frmSourceEditor.ApplyLanguage(Language);
   // Display all compiler results
   fCompilersLBMgr.SetCompileResults(fEditData.Props.CompilerResults);
   Assert(cbKind.ItemIndex >= 0,
     ClassName + '.InitControls: no selection in cbKind');
   Assert(cbCategories.ItemIndex >= 0,
     ClassName + '.InitControls: no selection in cbCategories');
-  // Auto-update caret position display for source and extra info memos
-  fMemoCaretPosDisplayMgr.Manage(edSourceCode, lblSourceCaretPos);
+  // Auto-update caret position display for extra info memos
   fMemoCaretPosDisplayMgr.Manage(frmExtra, lblExtraCaretPos);
 end;
 
@@ -956,7 +1015,7 @@ begin
     Props.Cat := fCatList.CatID(cbCategories.ItemIndex);
     Props.Kind := fSnipKindList.SnippetKind(cbKind.ItemIndex);
     (Props.Desc as IAssignable).Assign(frmDescription.ActiveText);
-    Props.SourceCode := StrTrimRight(edSourceCode.Text);
+    Props.SourceCode := StrTrimRight(frmSourceEditor.SourceCode);
     Props.HiliteSource := chkUseHiliter.Checked;
     (Props.Extra as IAssignable).Assign(frmExtra.ActiveText);
     Props.CompilerResults := fCompilersLBMgr.GetCompileResults;
@@ -1027,9 +1086,9 @@ begin
     raise EDataEntry.Create(ErrorMessage, edName, ErrorSelection);
   frmDescription.Validate;
   if not TSnippetValidator.ValidateSourceCode(
-    edSourceCode.Text, ErrorMessage, ErrorSelection
+    frmSourceEditor.SourceCode, ErrorMessage, ErrorSelection
   ) then
-    raise EDataEntry.Create(ErrorMessage, edSourceCode, ErrorSelection);
+    raise EDataEntry.Create(ErrorMessage, frmSourceEditor, ErrorSelection);
   frmExtra.Validate;
   if not TSnippetValidator.ValidateDependsList(
     StrTrim(edName.Text), UpdateData, ErrorMessage

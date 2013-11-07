@@ -19,7 +19,7 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
       Top = 0
       Width = 662
       Height = 504
-      ActivePage = tsReferences
+      ActivePage = tsCode
       Align = alClient
       TabOrder = 0
       OnChange = pcMainChange
@@ -40,7 +40,6 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
           Width = 63
           Height = 13
           Caption = '&Source code:'
-          FocusControl = edSourceCode
         end
         object lblName: TLabel
           Left = 3
@@ -81,15 +80,6 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
           Caption = '&Kind:'
           FocusControl = cbKind
         end
-        object lblSourceCaretPos: TLabel
-          Left = 556
-          Top = 204
-          Width = 91
-          Height = 13
-          Alignment = taRightJustify
-          AutoSize = False
-          Caption = 'lblSourceCaretPos'
-        end
         object lblDisplayName: TLabel
           Left = 3
           Top = 40
@@ -97,21 +87,6 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
           Height = 13
           Caption = 'Displa&y Name:'
           FocusControl = edDisplayName
-        end
-        object edSourceCode: TMemo
-          Left = 4
-          Top = 224
-          Width = 647
-          Height = 225
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -12
-          Font.Name = 'Courier New'
-          Font.Style = []
-          ParentFont = False
-          PopupMenu = mnuEditCtrls
-          ScrollBars = ssBoth
-          TabOrder = 6
         end
         object edName: TEdit
           Left = 93
@@ -187,16 +162,23 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
           Width = 478
           Height = 17
           Caption = 'Synta&x highlight this snippet as Pascal code'
+          TabOrder = 6
+          OnClick = chkUseHiliterClick
+        end
+        inline frmSourceEditor: TCodeEditorFrame
+          Left = 0
+          Top = 220
+          Width = 652
+          Height = 227
           TabOrder = 7
+          ExplicitTop = 220
+          ExplicitWidth = 652
+          ExplicitHeight = 227
         end
       end
       object tsReferences: TTabSheet
         Caption = 'References'
         ImageIndex = 1
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         object lblXRefs: TLabel
           Left = 3
           Top = 3
@@ -326,10 +308,6 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
       object tsCompileResults: TTabSheet
         Caption = 'Compile Results'
         ImageIndex = 3
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         object lblCompilers: TLabel
           Left = 3
           Top = 3
