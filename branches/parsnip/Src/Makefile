@@ -191,24 +191,7 @@ clean:
   @cd Src
 
 # Make libraries
-libraries: cfglib Collections.bpl SynEdit_RXE.bpl DDabLib.bpl
-
-cfglib:
-  @if not exist "$(BIN)" mkdir "$(BIN)"
-  @if not exist "$(LIBBIN)" mkdir "$(LIBBIN)"
-  @if not exist "$(PKGBIN)" mkdir "$(PKGBIN)"
-
-Collections.bpl:
-  @cd Lib\DelphiColl
-  @$(DCC32) $(@B).dpk -B $(DELPHIDEFINES)
-  @cd ..\..
-
-SynEdit_RXE.bpl:
-  @cd Lib\SynEdit
-  @$(DCC32) $(@B).dpk -B $(DELPHIDEFINES)
-  @cd ..\..
-
-DDabLib.bpl:
-  @cd Lib\DDabLib
-  @$(DCC32) $(@B).dpk -B $(DELPHIDEFINES)
-  @cd ..\..
+libraries:
+  @cd Lib
+  Make
+  @cd ..
