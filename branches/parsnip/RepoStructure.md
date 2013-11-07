@@ -174,7 +174,7 @@ The directories have the following purposes:
 
             + **Src\Main\Assets\HTML**
 
-                 HTML files the are displayed in the program's UI.
+                 HTML files that are displayed in the program's UI.
 
             + **Src\Main\Assets\Img**, **Src\Main\Assets\Img\Branding** &
               **Src\Main\Assets\Img\Egg**
@@ -299,7 +299,7 @@ The directories have the following purposes:
             Contains sub-directories that contain binary files resulting from
             test compilations.
 
-            + **Build\Test\DUnit**
+            + **Build\Obj\Tests\DUnit**
 
               Contains binaries resulting from compilation of DUnit tests.
 
@@ -312,9 +312,9 @@ The _Build_ directory structure is entirely new and replaces the _Bin_, _Exe_
 and _Release_ directories in the old structure.
 
 Make files, _.cfg_ and Delphi project files will be updated over time to store
-binary files into the new _Build_ directory over time. This process can proceed
-at any time since the affected folders are not part of SVN and non consideration
-of merges has to take place.
+binary files into the new _Build_ directory. This process can proceed at any
+time since the affected folders are not part of SVN and non consideration of
+merges has to take place.
 
 ### Docs Directory
 
@@ -330,7 +330,8 @@ difficult to make all the changes. Only when the divergence between _parsnip_
 and  _trunk_ becomes so great that future merges are too problematic can the
 final transition be made.
 
-The current structure of _Src_ in _parsnip_ is as follows:
+The structure of _Src_ in _parsnip_ before the restructuring began was as
+follows:
 
     Src
       3rdParty
@@ -357,7 +358,7 @@ The current structure of _Src_ in _parsnip_ is as follows:
         Scripts
           3rdParty
 
-In addition there is a _Test_ top level sub-directory with the following
+In addition there was a _Test_ top level sub-directory with the following
 structure:
 
     Test
@@ -366,7 +367,7 @@ structure:
       Src
         DUnit
 
-Of these directories _Test\Bin_ and _Test\Exe_ are excluded from SVN.
+Of these directories _Test\Bin_ and _Test\Exe_ were excluded from SVN.
 
 **Action required**
 
@@ -386,8 +387,8 @@ source tree:
     - **_DONE:_** Move existing files created in _parsnip_ since it was branched
       from _trunk_ into _Src\Main_, updating project files as required.
 
-    - Add any new CodeSnip project files directly into _Src\Main_ instead of
-      _Src_.
+    - **_IN PROGRESS_** Add any new CodeSnip project files directly into
+      _Src\Main_ instead of _Src_.
 
     - When merging from _trunk_ has ceased do the following:
 
