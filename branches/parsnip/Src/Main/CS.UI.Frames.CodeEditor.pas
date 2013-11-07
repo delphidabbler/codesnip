@@ -62,6 +62,12 @@ type
 
 implementation
 
+
+uses
+  // Project
+  UIStringList;
+
+
 {$R *.dfm}
 
 { TTCodeEditorFrame }
@@ -172,8 +178,14 @@ begin
 end;
 
 function TCodeEditorFrame.GetSourceCode: string;
+var
+  Lines: IStringList;
 begin
-  Result := fSynEditCmp.Text;
+  // Work around bug in either TSynEdit or TStrings which means that accessing
+  // fSynEditCmp.Text can cause a buffer overrun error that can include spurious
+  // characters from raw memory to be included at end of source code string.+
+  Lines := TIStringList.Create(fSynEditCmp.Lines);
+  Result := Lines.GetText(sLineBreak, True);
 end;
 
 function TCodeEditorFrame.GetTabSize: Integer;
