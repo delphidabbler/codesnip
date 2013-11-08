@@ -662,13 +662,10 @@ function TDatabase.CreateTempSnippet(const Snippet: TSnippet): TSnippet;
     @param Snippet [in] Snippet to be copied.
     @return Reference to new snippet.
   }
-var
-  Data: TSnippetEditData; // data describing snippet's properties and references
 begin
   Assert(Assigned(Snippet), ClassName + '.CreateTempSnippet: Snippet is nil');
   Assert(Snippet is TSnippetEx,
     ClassName + '.CreateTempSnippet: Snippet is a TSnippetEx');
-  Data := (Snippet as TSnippetEx).GetEditData;
   Result := TTempSnippet.Create(
     Snippet.Name, Snippet.UserDefined, (Snippet as TSnippetEx).GetProps);
   (Result as TTempSnippet).UpdateRefs(
