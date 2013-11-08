@@ -528,7 +528,7 @@ end;
 function TSnippet.TDisplayNameEqualityComparer.GetHashCode(
   const Snippet: TSnippet): Integer;
 begin
-  Result := PaulLarsonHash(Snippet.DisplayName);
+  Result := Integer(PaulLarsonHash(StrToLower(Snippet.DisplayName)));
 end;
 
 { TSnippetEx }
