@@ -393,7 +393,9 @@ uses
   SysUtils,
   // Project
   CS.Utils.Hashes,
-  IntfCommon, UExceptions, UStrUtils;
+  IntfCommon,
+  UExceptions,
+  UStrUtils;
 
 { TSnippet }
 
@@ -725,9 +727,7 @@ begin
         end,
         function (const Snippet: TSnippet): Integer
         begin
-          Result := PaulLarsonHash(
-            Snippet.ID.Name + IntToStr(Ord(Snippet.ID.UserDefined))
-          );
+          Result := Snippet.ID.Hash;
         end
       )
     )
