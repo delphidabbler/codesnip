@@ -605,7 +605,6 @@
 			<DCCReference Include="Main\CS.SourceCode.Pascal.Lexer.pas"/>
 			<DCCReference Include="Main\CS.SourceCode.Pascal.SourceGen.pas"/>
 			<DCCReference Include="Main\CS.SourceCode.Pascal.TestUnit.pas"/>
-			<DCCReference Include="Main\CS.SourceCode.Pascal.UnitAnalyser.pas"/>
 			<DCCReference Include="Main\CS.UI.Dialogs.HiliteThemeName.pas">
 				<Form>HiliteThemeNameDlg</Form>
 			</DCCReference>

@@ -397,7 +397,6 @@ uses
   CS.SourceCode.Pascal.Lexer in 'Main\CS.SourceCode.Pascal.Lexer.pas',
   CS.SourceCode.Pascal.SourceGen in 'Main\CS.SourceCode.Pascal.SourceGen.pas',
   CS.SourceCode.Pascal.TestUnit in 'Main\CS.SourceCode.Pascal.TestUnit.pas',
-  CS.SourceCode.Pascal.UnitAnalyser in 'Main\CS.SourceCode.Pascal.UnitAnalyser.pas',
   CS.UI.Dialogs.HiliteThemeName in 'Main\CS.UI.Dialogs.HiliteThemeName.pas' {HiliteThemeNameDlg},
   CS.UI.Dialogs.HiliteThemesEditor in 'Main\CS.UI.Dialogs.HiliteThemesEditor.pas' {HiliteThemesEditorDlg},
   CS.UI.Helper.CollectionCtrlKVMgr in 'Main\CS.UI.Helper.CollectionCtrlKVMgr.pas',
