@@ -184,6 +184,7 @@ type
         @param Snippet [in] Snippet for which cross referers are required.
         @return List of IDs of referring snippets.
       }
+    // TODO: Remove NewName parameter: name should never change
     function UpdateSnippet(const Snippet: TSnippet;
       const Data: TSnippetEditData; const NewName: string = ''): TSnippet;
       {Updates a user defined snippet's properties and references using provided
@@ -194,13 +195,15 @@ type
           name is not to change.
         @return Reference to updated snippet. Will have changed.
       }
-    function AddSnippet(const SnippetName: string;
+    // TODO: Remove SnippetName parameter: it is now ignored.
+    function AddSnippet(SnippetName: string;
       const Data: TSnippetEditData): TSnippet;
       {Adds a new snippet to the user database.
         @param SnippetName [in] Name of new snippet.
         @param Data [in] Record storing new snippet's properties and references.
         @return Reference to new snippet.
       }
+    // TODO: Remove SnippetName parameter: it is now ignored.
     function DuplicateSnippet(const Snippet: TSnippet;
       const UniqueName, DisplayName: string; const CatID: string): TSnippet;
     function CreateTempSnippet(const SnippetName: string;
@@ -272,7 +275,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  DB.UDatabaseIO, UExceptions, UQuery, UStrUtils;
+  DB.UDatabaseIO, UExceptions, UQuery, UStrUtils, UUniqueID;
 
 
 var
@@ -393,6 +396,10 @@ type
         @param ASnippet [in] The cross referenced snippet.
         @param List [in] Receives list of cross referencing snippets.
       }
+    function UniqueSnippetName: string;
+      {Generates a snippet "name" that is unique in the database.
+        @return Required unique snippet "name".
+      }
   public
     constructor Create;
       {Constructor. Sets up new empty object.
@@ -453,7 +460,7 @@ type
           name is not to change.
         @return Reference to updated snippet. Will have changed.
       }
-    function AddSnippet(const SnippetName: string;
+    function AddSnippet(SnippetName: string;
       const Data: TSnippetEditData): TSnippet;
       {Adds a new snippet to the user database.
         @param SnippetName [in] Name of new snippet.
@@ -603,7 +610,7 @@ begin
   fChangeEvents.AddHandler(Handler);
 end;
 
-function TDatabase.AddSnippet(const SnippetName: string;
+function TDatabase.AddSnippet(SnippetName: string;
   const Data: TSnippetEditData): TSnippet;
   {Adds a new snippet to the user database.
     @param SnippetName [in] Name of new snippet.
@@ -617,6 +624,7 @@ begin
   Result := nil;  // keeps compiler happy
   TriggerEvent(evChangeBegin);
   try
+    SnippetName := UniqueSnippetName;
     // Check if snippet with same name exists in user database: error if so
     if fSnippets.Find(SnippetName, True) <> nil then
       raise ECodeSnip.CreateFmt(sNameExists, [SnippetName]);
@@ -996,6 +1004,13 @@ var
 begin
   EvtInfo := TEventInfo.Create(Kind, Info);
   fChangeEvents.TriggerEvents(EvtInfo);
+end;
+
+function TDatabase.UniqueSnippetName: string;
+begin
+  repeat
+    Result := 'Snippet' + TUniqueID.Generate;
+  until fSnippets.Find(Result, True) = nil;
 end;
 
 function TDatabase.UpdateCategory(const Category: TCategory;
