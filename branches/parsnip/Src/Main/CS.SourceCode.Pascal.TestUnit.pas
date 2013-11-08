@@ -20,6 +20,8 @@ interface
 
 
 uses
+  // Delphi
+  SysUtils,
   // Project
   DB.USnippet;
 
@@ -30,17 +32,21 @@ type
   ///  snippets.</summary>
   TPascalTestUnit = class(TObject)
   strict private
+    const
+      ///  <summary>Name used for all test units.</summary>
+      TestUnitName = 'CodeSnipTestUnit';
     var
       ///  <summary>Reference to snippet for which test unit is required.
       ///  </summary>
       fSnippet: TSnippet;
-    ///  <summary>Generates name of test unit, based on snippet being tested.
-    ///  </summary>
-    ///  <remarks>Returned unit name contains only valid ASCII characters. Any
-    ///  invalid characters are replaced with '_'.</remarks>
-    function UnitName: string;
     ///  <summary>Builds and returns fully specified unit file name.</summary>
     function UnitFileName: string;
+    ///  <summary>Returns the type of encoding needed to store the given unit
+    ///  source code in a file.</summary>
+    ///  <remarks>The encoding will be the default ANSI encoding unless the
+    ///  source code contains characters outside the ANSI code page, when the
+    ///  UTF-8 encoding is returned.</remarks>
+    function RequiredFileEncoding(const SourceCode: string): TEncoding;
   public
     ///  <summary>Sets up object to create Pascal test unit for given snippet.
     ///  </summary>
@@ -64,11 +70,8 @@ implementation
 
 
 uses
-  // Delphi
-  SysUtils,
   // Project
   CS.SourceCode.Pascal.SourceGen,
-  CS.SourceCode.Pascal.UnitAnalyser,
   DB.USnippetKind,
   UEncodings,
   UIOUtils,
@@ -92,15 +95,22 @@ begin
     with TPascalSourceGen.Create do
       try
         IncludeSnippet(fSnippet);
-        // Must use Self.UnitName below for Delphis that define TObject.UnitName
-        // otherwise the TObject version is used.
-        Result := UnitAsString(Self.UnitName);
+        Result := UnitAsString(TestUnitName);
       finally
         Free;
       end;
   end
   else
     Result := fSnippet.SourceCode;
+end;
+
+function TPascalTestUnit.RequiredFileEncoding(const SourceCode: string):
+  TEncoding;
+begin
+  if EncodingSupportsString(SourceCode, TEncoding.Default) then
+    Result := TEncoding.Default
+  else
+    Result := TEncoding.UTF8;
 end;
 
 procedure TPascalTestUnit.SaveUnit(out FileName: string);
@@ -115,7 +125,7 @@ begin
   // Preference for default ANSI encoding is because early Delphis can only read
   // source code files in this format. Later versions that can handle unicode
   // characters in units also support UTF-8 format source code files.
-  Encoding := TPascalUnitAnalyser.RequiredEncoding(SourceCode);
+  Encoding := RequiredFileEncoding(SourceCode);
   try
     TFileIO.WriteAllText(FileName, SourceCode, Encoding, True);
   finally
@@ -125,39 +135,11 @@ end;
 
 function TPascalTestUnit.UnitFileName: string;
 const
-  cPasExt = '.pas'; // file extension for Pascal unit:
+  PasExt = '.pas';  // file extension for Pascal unit:
 begin
   // Unit file name is in temp folder
   Result := IncludeTrailingPathDelimiter(TSystemFolders.Temp)
-    + UnitName + cPasExt;
-end;
-
-function TPascalTestUnit.UnitName: string;
-const
-  cUnitPrefix = 'U_'; // unit file name prefix
-var
-  I: Integer;
-  Ch: Char;
-begin
-  if fSnippet.Kind = skUnit then
-    Exit(TPascalUnitAnalyser.UnitName(fSnippet.SourceCode));
-  // Unit name is same as Snippet being tested, but with prefix to make unique
-  Result := cUnitPrefix + fSnippet.Name;
-  // We ensure only ASCII characters are used in unit name. Any unsuitable
-  // characters are replaced by underscore.
-  // This is done because unit name is also used as unit file name. If we took
-  // no action would could have a Unicode file name. Earlier versions of Delphi
-  // can't cope with Unicode file names and claim the file can't be found. Some
-  // compilers like Delphi 2006 that can handle non-ANSI characters in source
-  // code still cannot handle those characters in the file name.
-  // Some valid ANSI characters are not handled by some compilers, hence we have
-  // fallen back to ASCII.
-  for I := 1 to Length(Result) do
-  begin
-    Ch := Result[I];
-    if not EncodingSupportsString(Ch, TEncoding.ASCII) then
-      Result[I] := '_';
-  end;
+    + TestUnitName + PasExt;
 end;
 
 end.
