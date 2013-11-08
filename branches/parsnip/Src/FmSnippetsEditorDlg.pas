@@ -899,7 +899,9 @@ begin
     // We are adding a new snippet: clear all controls or set default values
     frmSourceEditor.Clear;
     chkUseHiliter.Checked := True;
-    Language := TSourceCodeLanguage.CreateDefault;
+    Language := TConfig.Instance.SourceCodeLanguages[
+      TSourceCodeLanguageID.Create('Pascal')
+    ];
     frmDescription.DefaultEditMode := emPlainText;
     frmDescription.Clear;
     edName.Clear;
