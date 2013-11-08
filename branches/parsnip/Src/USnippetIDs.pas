@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2009-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2009-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -49,6 +49,9 @@ type
 
     ///  <summary>Creates copy of given snippet ID</summary>
     constructor Clone(const Src: TSnippetID);
+
+    ///  <summary>Returns hash of snippet ID.</summary>
+    function Hash: Integer;
 
     ///  <summary>Compares this record with another.</summary>
     ///  <param name="SID">TSnippetID [in] Snippet ID to compare with.</param>
@@ -153,6 +156,7 @@ uses
   // Delphi
   SysUtils, Generics.Defaults,
   // Project
+  CS.Utils.Hashes,
   UStrUtils;
 
 
@@ -184,6 +188,11 @@ end;
 class operator TSnippetID.Equal(const SID1, SID2: TSnippetID): Boolean;
 begin
   Result := SID1.CompareTo(SID2) = 0;
+end;
+
+function TSnippetID.Hash: Integer;
+begin
+  Result := Integer(PaulLarsonHash(StrToLower(fName)));
 end;
 
 class operator TSnippetID.NotEqual(const SID1, SID2: TSnippetID): Boolean;
