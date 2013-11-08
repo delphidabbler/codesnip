@@ -437,7 +437,7 @@ begin
         end;
       HashFn := function (const Value: TPair<TKey,string>): Integer
         begin
-          Result := Integer(PaulLarsonHash(Value.Value));
+          Result := StrHash(Value.Value);
         end;
       EqualsFn := function (const Left, Right: TPair<TKey,string>): Boolean
         begin
@@ -452,7 +452,7 @@ begin
         end;
       HashFn := function (const Value: TPair<TKey,string>): Integer
         begin
-          Result := Integer(PaulLarsonHash(StrToUpper(Value.Value)));
+          Result := TextHash(Value.Value);
         end;
       EqualsFn := function (const Left, Right: TPair<TKey,string>): Boolean
         begin

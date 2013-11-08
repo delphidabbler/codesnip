@@ -192,7 +192,7 @@ end;
 
 function TSnippetID.Hash: Integer;
 begin
-  Result := Integer(PaulLarsonHash(StrToLower(fName)));
+  Result := TextHash(fName);
 end;
 
 class operator TSnippetID.NotEqual(const SID1, SID2: TSnippetID): Boolean;

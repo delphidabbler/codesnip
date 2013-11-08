@@ -109,7 +109,7 @@ begin
         end,
         function (const Cat: TCategory): Integer
         begin
-          Result := PaulLarsonHash(Cat.Description)
+          Result := TextHash(Cat.Description)
         end
       )
     )

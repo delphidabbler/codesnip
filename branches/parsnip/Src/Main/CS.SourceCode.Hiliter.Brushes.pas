@@ -484,7 +484,7 @@ end;
 
 function TSyntaxHiliterAttr.Hash: Integer;
 begin
-  Result := Integer(PaulLarsonHash(fID));
+  Result := TextHash(fID);
 end;
 
 end.

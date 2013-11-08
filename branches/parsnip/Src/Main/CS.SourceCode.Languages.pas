@@ -155,7 +155,7 @@ end;
 
 function TSourceCodeLanguageID.Hash: Integer;
 begin
-  Result := PaulLarsonHash(fID);
+  Result := TextHash(fID);
 end;
 
 function TSourceCodeLanguageID.IsDefault: Boolean;

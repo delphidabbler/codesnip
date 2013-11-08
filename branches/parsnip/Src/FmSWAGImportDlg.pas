@@ -489,7 +489,7 @@ begin
         end,
         function (const Cat: TSWAGCategory): Integer
         begin
-          Result := PaulLarsonHash(Cat.Title);
+          Result := StrHash(Cat.Title);
         end
       )
     )
@@ -510,7 +510,7 @@ begin
         end,
         function (const Snippet: TSWAGSnippet): Integer
         begin
-          Result := PaulLarsonHash(Snippet.Title);
+          Result := StrHash(Snippet.Title);
         end
       )
     )

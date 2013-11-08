@@ -467,7 +467,7 @@ end;
 
 function TSyntaxHiliteThemeID.Hash: Integer;
 begin
-  Result := Integer(PaulLarsonHash(fID));
+  Result := TextHash(fID);
 end;
 
 function TSyntaxHiliteThemeID.IsNull: Boolean;

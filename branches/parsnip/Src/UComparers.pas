@@ -93,7 +93,7 @@ begin
   // Comparison takes place (i.e. Equals gets called) only if hashes are same.
   // So we must ignore case in hash if two strings that differ only in case are
   // to be considered same.
-  Result := PaulLarsonHash(StrToLower(Value));
+  Result := TextHash(Value);
 end;
 
 { TStringEqualityComparer }
@@ -105,7 +105,7 @@ end;
 
 function TStringEqualityComparer.GetHashCode(const Value: string): Integer;
 begin
-  Result := PaulLarsonHash(Value);
+  Result := StrHash(Value);
 end;
 
 end.
