@@ -206,6 +206,7 @@ type
     // TODO: Remove SnippetName parameter: it is now ignored.
     function DuplicateSnippet(const Snippet: TSnippet;
       const UniqueName, DisplayName: string; const CatID: string): TSnippet;
+    // TODO: Remove SnippetName parameter: it is now ignored.
     function CreateTempSnippet(const SnippetName: string;
       const Data: TSnippetEditData): TSnippet; overload;
       {Creates a new temporary snippet without adding it to the Snippets
@@ -683,7 +684,7 @@ function TDatabase.CreateTempSnippet(const SnippetName: string;
     @return Reference to new snippet.
   }
 begin
-  Result := TTempSnippet.Create(SnippetName, True, Data.Props);
+  Result := TTempSnippet.Create(UniqueSnippetName, True, Data.Props);
   (Result as TTempSnippet).UpdateRefs(Data.Refs, fSnippets);
 end;
 
