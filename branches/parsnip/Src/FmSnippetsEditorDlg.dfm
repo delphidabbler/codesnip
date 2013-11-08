@@ -162,7 +162,7 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
           Width = 478
           Height = 17
           Caption = 'Synta&x highlight this snippet as Pascal code'
-          TabOrder = 6
+          TabOrder = 7
           OnClick = chkUseHiliterClick
         end
         inline frmSourceEditor: TCodeEditorFrame
@@ -170,7 +170,7 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
           Top = 220
           Width = 652
           Height = 227
-          TabOrder = 7
+          TabOrder = 6
           ExplicitTop = 220
           ExplicitWidth = 652
           ExplicitHeight = 227
