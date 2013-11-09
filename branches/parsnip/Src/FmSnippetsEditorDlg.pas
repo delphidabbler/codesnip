@@ -464,13 +464,18 @@ procedure TSnippetsEditorDlg.actViewDependenciesExecute(Sender: TObject);
   }
 var
   DependsList: TSnippetList;  // list of dependencies
+  SnippetID: TSnippetID;
 begin
+  if Assigned(fSnippet) then
+    SnippetID := fSnippet.ID
+  else
+    SnippetID := TSnippetID.Create('', True);
   DependsList := TSnippetList.Create;
   try
     fDependsCLBMgr.GetCheckedSnippets(DependsList);
     TDependenciesDlg.Execute(
       Self,
-      TSnippetID.Create('', True),
+      SnippetID,
       StrTrim(edDisplayName.Text),
       DependsList,
       [tiDependsUpon],
