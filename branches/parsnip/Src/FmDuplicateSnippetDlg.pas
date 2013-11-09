@@ -54,7 +54,6 @@ type
       fNewSnippet: TSnippet;
       fCatList: TCategoryListAdapter;
       fOptions: TPersistentOptions;
-    function DisallowedNames: IStringList;
     procedure ValidateData;
     procedure HandleException(const E: Exception);
     procedure UpdateDatabase;
@@ -119,17 +118,6 @@ begin
     on E: Exception do
       HandleException(E);
   end;
-end;
-
-function TDuplicateSnippetDlg.DisallowedNames: IStringList;
-var
-  Snippet: TSnippet;
-begin
-  Result := TIStringList.Create;
-  Result.CaseSensitive := False;
-  for Snippet in Database.Snippets do
-    if Snippet.UserDefined then
-      Result.Add(Snippet.Name);
 end;
 
 class function TDuplicateSnippetDlg.Execute(const AOwner: TComponent;
