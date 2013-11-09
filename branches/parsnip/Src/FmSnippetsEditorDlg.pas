@@ -741,9 +741,7 @@ begin
   ValidateData;
   // Create snippet object from entered data
   EditData.Assign(UpdateData);
-  Result := (Database as IDatabaseEdit).CreateTempSnippet(
-    StrTrim(edName.Text), EditData
-  );
+  Result := (Database as IDatabaseEdit).CreateTempSnippet(EditData);
 end;
 
 procedure TSnippetsEditorDlg.DisplayCompileResults(const Compilers: ICompilers);
