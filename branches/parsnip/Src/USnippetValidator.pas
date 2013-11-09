@@ -102,6 +102,15 @@ type
         @param ErrorSel [out] Selection that can be used to highlight error.
         @return True if name is valid or False if not.
       }
+    ///  <summary>Validates a snippet's display name.</summary>
+    ///  <param name="DisplayName">string [in] Display name to be validated.
+    ///  </param>
+    ///  <param name="ErrorMsg">string [out] Message that describes error. -
+    ///  Undefined if True returned.</param>
+    ///  <returns>Boolean. True if display name is valid or False if not.
+    ///  </returns>
+    class function ValidateDisplayName(const DisplayName: string;
+      out ErrorMsg: string): Boolean;
     class function ValidateExtra(const Extra: IActiveText;
       out ErrorMsg: string): Boolean;
       {Validates a extra information from a snippet.
@@ -330,6 +339,16 @@ begin
   end
   else
     Result := True;
+end;
+
+class function TSnippetValidator.ValidateDisplayName(const DisplayName: string;
+  out ErrorMsg: string): Boolean;
+resourcestring
+  sErrNoName = 'A title must be provided';
+begin
+  Result := not StrIsBlank(DisplayName);
+  if not Result then
+    ErrorMsg := sErrNoName;
 end;
 
 class function TSnippetValidator.ValidateExtra(const Extra: IActiveText;
