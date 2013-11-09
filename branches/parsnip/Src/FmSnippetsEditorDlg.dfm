@@ -75,9 +75,9 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
         object lblDisplayName: TLabel
           Left = 3
           Top = 14
-          Width = 68
+          Width = 24
           Height = 13
-          Caption = 'Displa&y Name:'
+          Caption = '&Title:'
           FocusControl = edDisplayName
         end
         object cbCategories: TComboBox

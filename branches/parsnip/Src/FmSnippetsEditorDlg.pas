@@ -1067,6 +1067,10 @@ var
   ErrorMessage: string;       // receives validation error messages
   ErrorSelection: TSelection; // receives selection containing errors
 begin
+  if not TSnippetValidator.ValidateDisplayName(
+    edDisplayName.Text, ErrorMessage
+  ) then
+    raise EDataEntry.Create(ErrorMessage, edDisplayName);
   frmDescription.Validate;
   if not TSnippetValidator.ValidateSourceCode(
     frmSourceEditor.SourceCode, ErrorMessage, ErrorSelection
