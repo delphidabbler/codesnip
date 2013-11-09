@@ -213,12 +213,14 @@ type
     ///  <return>TSnippet. Required duplicate snippet.</return>
     function DuplicateSnippet(const Snippet: TSnippet;
       const DisplayName: string; const CatID: string): TSnippet;
-    function CreateTempSnippet(const Data: TSnippetEditData): TSnippet;
-      overload;
+    function CreateTempSnippet(const Data: TSnippetEditData;
+      const Name: string = ''): TSnippet; overload;
       {Creates a new temporary snippet without adding it to the Snippets
       object's snippets list. The new instance may not be added to the
       Snippets object.
         @param Data [in] Record storing new snippet's properties and references.
+        @param Name [in] Required snippet name. If ommitted then the snippet is
+          created with a new, unique, name.
         @return Reference to new snippet.
       }
     function CreateTempSnippet(const Snippet: TSnippet): TSnippet; overload;
@@ -484,12 +486,14 @@ type
     ///  <remarks>Method of IDatabaseEdit.</remarks>
     function DuplicateSnippet(const Snippet: TSnippet;
       const DisplayName: string; const CatID: string): TSnippet;
-    function CreateTempSnippet(const Data: TSnippetEditData): TSnippet;
-      overload;
-      {Creates a new temporary user defined snippet without adding it to the
-      Snippets object's snippets list. The new instance may not be added to the
+    function CreateTempSnippet(const Data: TSnippetEditData;
+      const Name: string = ''): TSnippet; overload;
+      {Creates a new temporary snippet without adding it to the Snippets
+      object's snippets list. The new instance may not be added to the
       Snippets object.
         @param Data [in] Record storing new snippet's properties and references.
+        @param Name [in] Required snippet name. If ommitted then the snippet is
+          created with a new, unique, name.
         @return Reference to new snippet.
       }
     function CreateTempSnippet(const Snippet: TSnippet): TSnippet; overload;
@@ -687,15 +691,19 @@ begin
   );
 end;
 
-function TDatabase.CreateTempSnippet(const Data: TSnippetEditData): TSnippet;
-  {Creates a new temporary user defined snippet without adding it to the
-  Snippets object's snippets list. The new instance may not be added to the
-  Snippets object.
+function TDatabase.CreateTempSnippet(const Data: TSnippetEditData;
+  const Name: string = ''): TSnippet;
+  {Creates a new temporary snippet without adding it to the Snippets object's
+  snippets list. The new instance may not be added to the Snippets object.
     @param Data [in] Record storing new snippet's properties and references.
+    @param Name [in] Required snippet name. If ommitted then the snippet is
+      created with a new, unique, name.
     @return Reference to new snippet.
   }
 begin
-  Result := TTempSnippet.Create(UniqueSnippetName, True, Data.Props);
+  Result := TTempSnippet.Create(
+    StrIf(Name <> '', Name, UniqueSnippetName), True, Data.Props
+  );
   (Result as TTempSnippet).UpdateRefs(Data.Refs, fSnippets);
 end;
 
