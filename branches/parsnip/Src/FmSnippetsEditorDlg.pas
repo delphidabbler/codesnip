@@ -631,6 +631,8 @@ begin
   TCtrlArranger.MoveBelow(frmSourceEditor, chkUseHiliter, 8);
 
   // tsReferences
+  clbDepends.Height := clbXRefs.Height;
+  clbUnits.Height := clbDepends.Height;
   TCtrlArranger.AlignVCentres(
     TCtrlArranger.BottomOf(clbXRefs, 8), [edUnit, btnAddUnit]
   );
