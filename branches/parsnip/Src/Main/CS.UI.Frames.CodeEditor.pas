@@ -65,7 +65,7 @@ implementation
 
 uses
   // Project
-  UIStringList;
+  UStrUtils;
 
 
 {$R *.dfm}
@@ -179,13 +179,21 @@ end;
 
 function TCodeEditorFrame.GetSourceCode: string;
 var
-  Lines: IStringList;
+  Line: string;
+  SB: TStringBuilder;
 begin
   // Work around bug in either TSynEdit or TStrings which means that accessing
   // fSynEditCmp.Text can cause a buffer overrun error that can include spurious
-  // characters from raw memory to be included at end of source code string.+
-  Lines := TIStringList.Create(fSynEditCmp.Lines);
-  Result := Lines.GetText(sLineBreak, True);
+  // characters from raw memory to be included at end of source code string.
+  // We also strip all trailing space from code lines
+  SB := TStringBuilder.Create;
+  try
+    for Line in fSynEditCmp.Lines do
+      SB.AppendLine(StrTrimRight(Line));  // trim trailing spaces from line
+    Result := StrTrimRight(SB.ToString);  // remove trailing EOL character
+  finally
+    SB.Free;
+  end;
 end;
 
 function TCodeEditorFrame.GetTabSize: Integer;
