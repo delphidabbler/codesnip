@@ -89,7 +89,6 @@ type
     clbDepends: TCheckListBox;
     clbUnits: TCheckListBox;
     clbXRefs: TCheckListBox;
-    edName: TEdit;
     edUnit: TEdit;
     lbCompilers: TListBox;
     lblCategories: TLabel;
@@ -100,7 +99,6 @@ type
     lblDescription: TLabel;
     lblExtra: TLabel;
     lblExtraCaretPos: TLabel;
-    lblName: TLabel;
     lblKind: TLabel;
     lblSourceCode: TLabel;
     lblSnippetKindHelp: TLabel;
@@ -472,7 +470,7 @@ begin
     fDependsCLBMgr.GetCheckedSnippets(DependsList);
     TDependenciesDlg.Execute(
       Self,
-      TSnippetID.Create(StrTrim(edName.Text), True),
+      TSnippetID.Create('', True),
       StrTrim(edDisplayName.Text),
       DependsList,
       [tiDependsUpon],
@@ -600,18 +598,14 @@ begin
   frmSourceEditor.Width := tsCode.ClientWidth - 8;
   TCtrlArranger.AlignLefts(
     [
-      lblName, lblDisplayName, lblDescription, lblKind, lblCategories,
+      lblDisplayName, lblDescription, lblKind, lblCategories,
       lblSourceCode, frmSourceEditor
     ],
     3
   );
   TCtrlArranger.AlignRights([frmSourceEditor, btnViewDescription]);
   frmDescription.Width := btnViewDescription.Left - frmDescription.Left - 8;
-  TCtrlArranger.AlignVCentres(3, [lblName, edName]);
-  TCtrlArranger.AlignVCentres(
-    TCtrlArranger.BottomOf([lblName, edName], 8),
-    [lblDisplayName, edDisplayName]
-  );
+  TCtrlArranger.AlignVCentres(3, [lblDisplayName, edDisplayName]);
   TCtrlArranger.AlignTops(
     [lblDescription, frmDescription, btnViewDescription],
     TCtrlArranger.BottomOf([lblDisplayName, edDisplayName], 8)
@@ -662,24 +656,21 @@ procedure TSnippetsEditorDlg.btnOKClick(Sender: TObject);
   snippet if all is well.
     @param Sender [in] Not used.
   }
-var
-  SnippetName: string;  // name of snippet being edited / added
 begin
   inherited;
   try
     // Validate and record entered data
     ValidateData;
     fEditData.Assign(UpdateData);
-    SnippetName := StrTrim(edName.Text);
     // Add or update snippet
     if Assigned(fSnippet) then
       fSnippet := (Database as IDatabaseEdit).UpdateSnippet(
-        fSnippet, fEditData, SnippetName
+        fSnippet, fEditData, ''
       )
     else
     begin
       fSnippet := (Database as IDatabaseEdit).AddSnippet(
-        SnippetName, fEditData
+        '', fEditData
       )
     end;
   except
@@ -876,11 +867,7 @@ begin
     Language := TConfig.Instance.SourceCodeLanguages[fSnippet.Language];
     frmDescription.DefaultEditMode := emAuto;
     frmDescription.ActiveText := fSnippet.Description;
-    edName.Text := fSnippet.Name;
-    if fSnippet.Name <> fSnippet.DisplayName then
-      edDisplayName.Text := fSnippet.DisplayName
-    else
-      edDisplayName.Text := '';
+    edDisplayName.Text := fSnippet.DisplayName;
     cbCategories.ItemIndex := fCatList.IndexOf(fSnippet.Category);
     frmExtra.DefaultEditMode := emAuto;
     frmExtra.ActiveText := fSnippet.Extra;
@@ -902,7 +889,6 @@ begin
     ];
     frmDescription.DefaultEditMode := emPlainText;
     frmDescription.Clear;
-    edName.Clear;
     edDisplayName.Clear;
     cbCategories.ItemIndex := fCatList.IndexOf(TReservedCategories.UserCatID);
     if cbCategories.ItemIndex = -1 then
@@ -1008,10 +994,7 @@ begin
   Result.Init;
   with Result do
   begin
-    if StrTrim(edName.Text) <> StrTrim(edDisplayName.Text) then
-      Props.DisplayName := StrTrim(edDisplayName.Text)
-    else
-      Props.DisplayName := '';
+    Props.DisplayName := StrTrim(edDisplayName.Text);
     Props.Cat := fCatList.CatID(cbCategories.ItemIndex);
     Props.Kind := fSnipKindList.SnippetKind(cbKind.ItemIndex);
     (Props.Desc as IAssignable).Assign(frmDescription.ActiveText);
@@ -1077,25 +1060,21 @@ var
   ErrorMessage: string;       // receives validation error messages
   ErrorSelection: TSelection; // receives selection containing errors
 begin
-  if not TSnippetValidator.ValidateName(
-    edName.Text,
-    not StrSameText(StrTrim(edName.Text), fOrigName),
-    ErrorMessage,
-    ErrorSelection
-  ) then
-    raise EDataEntry.Create(ErrorMessage, edName, ErrorSelection);
   frmDescription.Validate;
   if not TSnippetValidator.ValidateSourceCode(
     frmSourceEditor.SourceCode, ErrorMessage, ErrorSelection
   ) then
     raise EDataEntry.Create(ErrorMessage, frmSourceEditor, ErrorSelection);
   frmExtra.Validate;
-  if not TSnippetValidator.ValidateDependsList(
-    StrTrim(edName.Text), UpdateData, ErrorMessage
-  ) then
-    raise EDataEntry.Create(  // selection not applicable to list boxes
-      StrMakeSentence(ErrorMessage) + EOL2 + sDependencyPrompt, clbDepends
-    );
+  if Assigned(fSnippet) then
+  begin
+    if not TSnippetValidator.ValidateDependsList(
+      fSnippet.Name, UpdateData, ErrorMessage
+    ) then
+      raise EDataEntry.Create(  // selection not applicable to list boxes
+        StrMakeSentence(ErrorMessage) + EOL2 + sDependencyPrompt, clbDepends
+      );
+    end;
 end;
 
 end.

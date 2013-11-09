@@ -28,7 +28,7 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
         Caption = 'Code'
         object lblDescription: TLabel
           Left = 0
-          Top = 73
+          Top = 47
           Width = 57
           Height = 13
           Caption = '&Description:'
@@ -36,22 +36,14 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
         end
         object lblSourceCode: TLabel
           Left = 0
-          Top = 204
+          Top = 178
           Width = 63
           Height = 13
           Caption = '&Source code:'
         end
-        object lblName: TLabel
-          Left = 3
-          Top = 11
-          Width = 31
-          Height = 13
-          Caption = '&Name:'
-          FocusControl = edName
-        end
         object lblCategories: TLabel
           Left = 0
-          Top = 183
+          Top = 157
           Width = 49
           Height = 13
           Caption = '&Category:'
@@ -59,7 +51,7 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
         end
         object lblSnippetKindHelp: TLabel
           Left = 330
-          Top = 146
+          Top = 120
           Width = 117
           Height = 13
           Cursor = crHandPoint
@@ -74,7 +66,7 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
         end
         object lblKind: TLabel
           Left = 0
-          Top = 151
+          Top = 125
           Width = 24
           Height = 13
           Caption = '&Kind:'
@@ -82,48 +74,40 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
         end
         object lblDisplayName: TLabel
           Left = 3
-          Top = 40
+          Top = 14
           Width = 68
           Height = 13
           Caption = 'Displa&y Name:'
           FocusControl = edDisplayName
         end
-        object edName: TEdit
-          Left = 93
-          Top = 7
-          Width = 209
-          Height = 21
-          PopupMenu = mnuEditCtrls
-          TabOrder = 0
-        end
         object cbCategories: TComboBox
           Left = 93
-          Top = 179
-          Width = 209
-          Height = 21
-          Style = csDropDownList
-          TabOrder = 5
-        end
-        object cbKind: TComboBox
-          Left = 93
-          Top = 146
+          Top = 153
           Width = 209
           Height = 21
           Style = csDropDownList
           TabOrder = 4
+        end
+        object cbKind: TComboBox
+          Left = 93
+          Top = 120
+          Width = 209
+          Height = 21
+          Style = csDropDownList
+          TabOrder = 3
           OnChange = cbKindChange
         end
         inline frmDescription: TSnippetsActiveTextEdFrame
           Left = 93
-          Top = 67
+          Top = 41
           Width = 462
           Height = 78
           Color = clWindow
           ParentBackground = False
           ParentColor = False
-          TabOrder = 2
+          TabOrder = 1
           ExplicitLeft = 93
-          ExplicitTop = 67
+          ExplicitTop = 41
           ExplicitWidth = 462
           ExplicitHeight = 78
           inherited edText: TMemo
@@ -141,20 +125,20 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
         end
         object btnViewDescription: TButton
           Left = 562
-          Top = 65
+          Top = 39
           Width = 85
           Height = 25
           Action = actViewDescription
           Caption = 'Previe&w...'
-          TabOrder = 3
+          TabOrder = 2
         end
         object edDisplayName: TEdit
           Left = 93
-          Top = 34
+          Top = 8
           Width = 298
           Height = 21
           PopupMenu = mnuEditCtrls
-          TabOrder = 1
+          TabOrder = 0
         end
         object chkUseHiliter: TCheckBox
           Left = 3
@@ -162,18 +146,18 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
           Width = 478
           Height = 17
           Caption = 'Synta&x highlight this snippet as Pascal code'
-          TabOrder = 7
+          TabOrder = 6
           OnClick = chkUseHiliterClick
         end
         inline frmSourceEditor: TCodeEditorFrame
           Left = 0
-          Top = 220
+          Top = 194
           Width = 652
-          Height = 227
-          TabOrder = 6
-          ExplicitTop = 220
+          Height = 250
+          TabOrder = 5
+          ExplicitTop = 194
           ExplicitWidth = 652
-          ExplicitHeight = 227
+          ExplicitHeight = 250
         end
       end
       object tsReferences: TTabSheet
