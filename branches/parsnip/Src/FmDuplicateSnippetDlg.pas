@@ -31,10 +31,8 @@ type
     cbCategory: TComboBox;
     chkEdit: TCheckBox;
     edDisplayName: TEdit;
-    edUniqueName: TEdit;
     lblCategory: TLabel;
     lblDisplayName: TLabel;
-    lblUniqueName: TLabel;
     procedure btnOKClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -53,10 +51,10 @@ type
   strict private
     var
       fSnippet: TSnippet;
+      fNewSnippet: TSnippet;
       fCatList: TCategoryListAdapter;
       fOptions: TPersistentOptions;
     function DisallowedNames: IStringList;
-    function UniqueSnippetName(const BaseName: string): string;
     procedure ValidateData;
     procedure HandleException(const E: Exception);
     procedure UpdateDatabase;
@@ -92,16 +90,10 @@ begin
   TCtrlArranger.SetLabelHeights(Self);
 
   TCtrlArranger.AlignLefts(
-    [
-      lblUniqueName, lblDisplayName, lblCategory, edUniqueName, edDisplayName,
-      cbCategory, chkEdit
-    ],
-    0
+    [lblDisplayName, lblCategory, edDisplayName, cbCategory, chkEdit], 0
   );
 
-  lblUniqueName.Top := 0;
-  TCtrlArranger.MoveBelow(lblUniqueName, edUniqueName, 4);
-  TCtrlArranger.MoveBelow(edUniqueName, lblDisplayName, 8);
+  lblDisplayName.Top := 0;
   TCtrlArranger.MoveBelow(lblDisplayName, edDisplayName, 4);
   TCtrlArranger.MoveBelow(edDisplayName, lblCategory, 8);
   TCtrlArranger.MoveBelow(lblCategory, cbCategory, 4);
@@ -111,6 +103,8 @@ begin
     TCtrlArranger.TotalControlWidth(pnlBody) + 8,
     TCtrlArranger.RightOf(btnHelp) - btnOK.Left
   );
+
+  pnlBody.ClientHeight := TCtrlArranger.TotalControlHeight(pnlBody) + 8;
 
   // Arrange inherited controls and size the form
   inherited;
@@ -179,7 +173,6 @@ var
   SnippetCat: TCategory;
 begin
   inherited;
-  edUniqueName.Text := UniqueSnippetName(fSnippet.Name);
   edDisplayName.Text := StrIf(
     StrSameStr(fSnippet.Name, fSnippet.DisplayName), '', fSnippet.DisplayName
   );
@@ -192,33 +185,15 @@ begin
   chkEdit.Checked := fOptions.EditSnippetOnClose;
 end;
 
-function TDuplicateSnippetDlg.UniqueSnippetName(const BaseName: string): string;
-var
-  ExistingNames: IStringList;
-  Postfix: Cardinal;
-begin
-  ExistingNames := DisallowedNames;
-  if not ExistingNames.Contains(BaseName) then
-    Exit(BaseName);
-  // BaseName exists: find number to append to it to make name unique
-  Postfix := 1;
-  repeat
-    Inc(PostFix);
-    Result := BaseName + IntToStr(PostFix);
-  until not ExistingNames.Contains(Result);
-end;
-
 procedure TDuplicateSnippetDlg.UpdateDatabase;
 var
-  UniqueName: string;
   DisplayName: string;
 begin
-  UniqueName := StrTrim(edUniqueName.Text);
   DisplayName := StrTrim(edDisplayName.Text);
-  (Database as IDatabaseEdit).DuplicateSnippet(
+  fNewSnippet := (Database as IDatabaseEdit).DuplicateSnippet(
     fSnippet,
-    UniqueName,
-    StrIf(StrSameStr(UniqueName, DisplayName), '', DisplayName),
+    '',
+    DisplayName,
     fCatList.CatID(cbCategory.ItemIndex)
   );
 end;
@@ -226,14 +201,11 @@ end;
 procedure TDuplicateSnippetDlg.ValidateData;
 var
   ErrMsg: string;
-  ErrSel: TSelection;
 resourcestring
   sNoCategory = 'You must choose a category';
 begin
-  if not TSnippetValidator.ValidateName(
-    StrTrim(edUniqueName.Text), True, ErrMsg, ErrSel
-  ) then
-    raise EDataEntry.Create(ErrMsg, edUniqueName, ErrSel);
+  if not TSnippetValidator.ValidateDisplayName(edDisplayName.Text, ErrMsg) then
+    raise EDataEntry.Create(ErrMsg, edDisplayName);
   if cbCategory.ItemIndex = -1 then
     raise EDataEntry.Create(sNoCategory, cbCategory);
 end;
@@ -248,7 +220,7 @@ end;
 procedure TDuplicateSnippetDlg.FormDestroy(Sender: TObject);
 begin
   if (ModalResult = mrOK) and chkEdit.Checked then
-    TUserDBMgr.EditSnippet(StrTrim(edUniqueName.Text));
+    TUserDBMgr.EditSnippet(fNewSnippet.Name);
   fOptions.EditSnippetOnClose := chkEdit.Checked;
   inherited;
   fOptions.Free;
