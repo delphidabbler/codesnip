@@ -203,9 +203,8 @@ type
         @param Data [in] Record storing new snippet's properties and references.
         @return Reference to new snippet.
       }
-    // TODO: Remove SnippetName parameter: it is now ignored.
     function DuplicateSnippet(const Snippet: TSnippet;
-      const UniqueName, DisplayName: string; const CatID: string): TSnippet;
+      const DisplayName: string; const CatID: string): TSnippet;
     // TODO: Remove SnippetName parameter: it is now ignored.
     function CreateTempSnippet(const SnippetName: string;
       const Data: TSnippetEditData): TSnippet; overload;
@@ -469,7 +468,7 @@ type
         @return Reference to new snippet.
       }
     function DuplicateSnippet(const Snippet: TSnippet;
-      const UniqueName, DisplayName: string; const CatID: string): TSnippet;
+      const DisplayName: string; const CatID: string): TSnippet;
     function CreateTempSnippet(const SnippetName: string;
       const Data: TSnippetEditData): TSnippet; overload;
       {Creates a new temporary user defined snippet without adding it to the
@@ -761,14 +760,14 @@ begin
 end;
 
 function TDatabase.DuplicateSnippet(const Snippet: TSnippet;
-  const UniqueName, DisplayName: string; const CatID: string): TSnippet;
+  const DisplayName: string; const CatID: string): TSnippet;
 var
   Data: TSnippetEditData;
 begin
   Data := (Snippet as TSnippetEx).GetEditData;
   Data.Props.Cat := CatID;
   Data.Props.DisplayName := DisplayName;
-  Result := AddSnippet(UniqueName, Data);
+  Result := AddSnippet('', Data);
 end;
 
 function TDatabase.GetCategories: TCategoryList;

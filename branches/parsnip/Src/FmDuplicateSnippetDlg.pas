@@ -192,7 +192,6 @@ begin
   DisplayName := StrTrim(edDisplayName.Text);
   fNewSnippet := (Database as IDatabaseEdit).DuplicateSnippet(
     fSnippet,
-    '',
     DisplayName,
     fCatList.CatID(cbCategory.ItemIndex)
   );
