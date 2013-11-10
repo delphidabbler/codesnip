@@ -193,11 +193,14 @@ type
   ///  <para>-ssDatabase - database customisation info</para>
   ///  <para>-ssUpdateChecks - info about update checks</para>
   ///  <para>-ssPrinting - printing preferences</para>
+  ///  <para>-ssExternalApps - information about external applicatios used by
+  ///  CodeSnip.</para>
   ///  </summary>
   TSettingsSectionId = (
     ssFindText, ssFindCompiler, ssFindXRefs, ssCompilerInfo, ssApplication,
     ssPreferences, ssUserInfo, ssProxyServer, ssUnits, ssDuplicateSnippet,
-    ssFavourites, ssWindowState, ssDatabase, ssUpdateChecks, ssPrinting
+    ssFavourites, ssWindowState, ssDatabase, ssUpdateChecks, ssPrinting,
+    ssExternalApps
   );
 
 type
@@ -564,7 +567,8 @@ const
     ssUser,     // ssWindowState
     ssUser,     // ssDatabase
     ssUser,     // ssUpdateChecks
-    ssUser      // ssPrinting
+    ssUser,     // ssPrinting
+    ssUser      // ssExternalApps
   );
 begin
   Result := cSectionStorageMap[Section];
@@ -648,7 +652,8 @@ const
     'WindowState',      // ssWindowState
     'Database',         // ssDatabase
     'UpdateChecks',     // ssUpdateChecks
-    'Printing'          // ssPrinting
+    'Printing',         // ssPrinting
+    'ExternalApps'      // ssExternalApps
   );
 begin
   Result := cSectionNames[Id];
