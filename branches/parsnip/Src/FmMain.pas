@@ -238,6 +238,8 @@ type
     tbSpacer8: TToolButton;
     tbTestCompile: TToolButton;
     tbUpdateDbase: TToolButton;
+    actConfigDiffProg: TAction;
+    miConfigDiffProg: TMenuItem;
     ///  <summary>Displays About Box.</summary>
     procedure actAboutExecute(Sender: TObject);
     ///  <summary>Gets a new category from user and adds to database.</summary>
@@ -513,6 +515,7 @@ type
     ///  position is permitted and blocks the move if not.</summary>
     procedure splitVertCanResize(Sender: TObject; var NewSize: Integer;
       var Accept: Boolean);
+    procedure actConfigDiffProgExecute(Sender: TObject);
   strict private
     var
       ///  <summary>Flag denoting if application is registered.</summary>
@@ -717,6 +720,11 @@ procedure TMainForm.actCompilersExecute(Sender: TObject);
 begin
   if fCompileMgr.ConfigCompilers then
     fMainDisplayMgr.Refresh;
+end;
+
+procedure TMainForm.actConfigDiffProgExecute(Sender: TObject);
+begin
+  fDialogMgr.ExecConfigDiffProgDlg;
 end;
 
 procedure TMainForm.actCopyExecute(Sender: TObject);

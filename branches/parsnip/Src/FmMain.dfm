@@ -895,6 +895,14 @@ inherited MainForm: TMainForm
         'nline SWAG database'
       OnExecute = actSWAGImportExecute
     end
+    object actConfigDiffProg: TAction
+      Category = 'Tools'
+      Caption = 'Configure Diff Viewer Program...'
+      Hint = 
+        'Configure Diff Viewer|Display dialogue box where an externl diff' +
+        ' viewer program can be configured'
+      OnExecute = actConfigDiffProgExecute
+    end
   end
   object mnuMain: TMainMenu
     Images = ilMain
@@ -1153,6 +1161,9 @@ inherited MainForm: TMainForm
       end
       object miCompilers: TMenuItem
         Action = actCompilers
+      end
+      object miConfigDiffProg: TMenuItem
+        Action = actConfigDiffProg
       end
       object miProxyServer: TMenuItem
         Action = actProxyServer

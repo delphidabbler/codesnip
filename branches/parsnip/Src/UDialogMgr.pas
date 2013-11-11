@@ -22,7 +22,9 @@ uses
   // Delphi
   Classes,
   // Project
-  DB.USnippet, UCompileMgr, USearch;
+  DB.USnippet,
+  UCompileMgr,
+  USearch;
 
 
 type
@@ -158,6 +160,12 @@ type
 
     ///  <summary>Displays the SWAG Import Wizard dialogue box.</summary>
     procedure ShowSWAGImportDlg;
+
+    ///  <summary>Displays the Configure Diff Viewer Program dialogue box.
+    ///  </summary>
+    ///  <returns>Boolean. True if user OKd dialogue or False if user cancelled.
+    ///  </returns>
+    function ExecConfigDiffProgDlg: Boolean;
   end;
 
 
@@ -168,14 +176,33 @@ uses
   // Delphi
   Forms,
   // Project
-  FmAboutDlg, FmDBUpdateDlg, FmDependenciesDlg, FmDonateDlg, FmFindCompilerDlg,
-  FmFindTextDlg, FmFindXRefsDlg, FmNewsDlg, FmPreferencesDlg, FmPrintDlg,
-  FmProgramUpdatesDlg, FmProxyServerDlg, FmRegistrationDlg,
-  FmSelectionSearchDlg, FmSWAGImportDlg, FmTestCompileDlg, FmUserBugReportDlg,
+  CS.UI.Dialogs.ConfigDiffProg,
+  FmAboutDlg,
+  FmDBUpdateDlg,
+  FmDependenciesDlg,
+  FmDonateDlg,
+  FmFindCompilerDlg,
+  FmFindTextDlg,
+  FmFindXRefsDlg,
+  FmNewsDlg,
+  FmPreferencesDlg,
+  FmPrintDlg,
+  FmProgramUpdatesDlg,
+  FmProxyServerDlg,
+  FmRegistrationDlg,
+  FmSelectionSearchDlg,
+  FmSWAGImportDlg,
+  FmTestCompileDlg,
+  FmUserBugReportDlg,
   UTestUnitDlgMgr;
 
 
 { TDialogMgr }
+
+function TDialogMgr.ExecConfigDiffProgDlg: Boolean;
+begin
+  Result := TConfigDiffProgDlg.Execute(Owner);
+end;
 
 function TDialogMgr.ExecDBUpdateDlg: Boolean;
 begin
