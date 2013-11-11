@@ -593,6 +593,7 @@
 			<DCCReference Include="Main\Imports\LVEx.pas"/>
 			<DCCReference Include="Main\Imports\UEncrypt.pas"/>
 			<DCCReference Include="Main\CS.Config.pas"/>
+			<DCCReference Include="Main\CS.ExternalProgs.DiffViewer.pas"/>
 			<DCCReference Include="Main\CS.Init.CommandLineOpts.pas"/>
 			<DCCReference Include="Main\CS.SourceCode.Hiliter.Brushes.pas"/>
 			<DCCReference Include="Main\CS.SourceCode.Hiliter.Parser.pas"/>
@@ -605,6 +606,9 @@
 			<DCCReference Include="Main\CS.SourceCode.Pascal.Lexer.pas"/>
 			<DCCReference Include="Main\CS.SourceCode.Pascal.SourceGen.pas"/>
 			<DCCReference Include="Main\CS.SourceCode.Pascal.TestUnit.pas"/>
+			<DCCReference Include="Main\CS.UI.Dialogs.ConfigDiffProg.pas">
+				<Form>ConfigDiffProgDlg</Form>
+			</DCCReference>
 			<DCCReference Include="Main\CS.UI.Dialogs.HiliteThemeName.pas">
 				<Form>HiliteThemeNameDlg</Form>
 			</DCCReference>
