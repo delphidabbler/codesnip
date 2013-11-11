@@ -419,6 +419,36 @@
 </dl>
 
 <h4>
+  [ExternalApps] section
+</h4>
+
+<p>
+  Records information about any external applications used by CodeSnip other
+  than compilers, which are store in the <strong>[Cmp:<em>XXX</em>]</strong>
+  sections.
+</p>
+
+<p>
+  Name / Value pairs:
+</p>
+
+<dl class="indent">
+  <dt>
+    <strong>DiffViewerPath</strong> (string)
+  </dt>
+  <dd>
+    Stores file name and path of any external diff viewer program.
+  </dd>
+  <dt>
+    <strong>DiffViewerParams</strong> (string)
+  </dt>
+  <dd>
+    Stores template used to generate parameter string passed to Diff program.
+    Ignored if <strong>DiffApp</strong> is not set.
+  </dd>
+</dl>
+
+<h4>
   [Favourites] section
 </h4>
 
