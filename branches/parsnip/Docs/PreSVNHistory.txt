@@ -3259,7 +3259,7 @@ v1.0 of 06 Jun 2006  - First version that builds all project.
 v1.1 of 21 Apr 2008  - Removed call to MS SDK's SetEnv.cmd and instead
                        directly set path to required directories to get MIDL
                        to work.
-                     - Changed to worj with single Resources.rc file instead
+                     - Changed to work with single Resources.rc file instead
                        of Images.rc and Dialogs.rc.
                      - Removed some redundant code.
                      - Now set (renamed) window title at top of file.
@@ -3510,18 +3510,18 @@ v0.3 of 23 Feb 2005  - Changed to use new THTMLTpltDlgFrame frame instead of
                        THTMLDlgFrame to process HTML template and display
                        dialogue content.
 v0.4 of 01 Mar 2005  - Template HTML revised. Resolved new <%ResURL%> place-
-                       holder with root part of res:// url to program's
+                       holder with root part of res:// URL to program's
                        resources. New template changes appearance of dialogue
                        and adds "Powered by Delphi" logo.
 v0.5 of 04 Jan 2006  - Fixed problem where help failed to display because F1
                        key press was not being detected.
-v0.6 of 14 Jan 2006  - Resized to accomodate revised content.
+v0.6 of 14 Jan 2006  - Resized to accommodate revised content.
 v0.7 of 07 Apr 2006  - Removed dependency on TPJVersionInfo. Replaced with
                        calls to new methods of TAppInfo.
                      - Added code to replace new Registration HTML
-                       placeholder with registration information.
-                     - Made dialogue box resize to accomodate size of dialogue's
-                       HTML.
+                       place-holder with registration information.
+                     - Made dialogue box resize to accommodate size of
+                       dialogue's HTML.
                      - Added new "Register CodeSnip" button that is displayed
                        only if application is unregistered and displays
                        registration wizard when clicked.
@@ -3565,11 +3565,11 @@ v2.0 of 11 Feb 2007  - Major revision.
                      - Added information about database and separated out
                        heading from main body of program information. There
                        is now an HTML frame containing the heading and two
-                       further frames giving informaion about program and
+                       further frames giving information about program and
                        database, hosted by a page control. Database frame
                        displays list of contributors loaded from a downloaded
                        file.
-                     - Also made other changes to accomodate modifications to
+                     - Also made other changes to accommodate modifications to
                        base class:
                        * Added new GetBodyPanelHeight method override to
                          return required height of body panel which now
@@ -3590,7 +3590,7 @@ v2.6 of 13 Jan 2009  - Replaced control char literals with constants.
                      - Made protected section strict.
 v2.7 of 25 Jan 2009  - Changed to use routines and objects from UHTMLUtils
                        to generate HTML tags.
-v2.8 of 16 Jun 2009  - Added facility to display easter egg by clicking
+v2.8 of 16 Jun 2009  - Added facility to display Easter egg by clicking
                        program icon in title HTML frame.
                      - Changed to use content font in detail (tabbed) frames.
                      - Added space to separate "un-registered" message from
@@ -3610,11 +3610,11 @@ v1.0 of 24 May 2006  - Improved and corrected comments.
 v1.1 of 31 Oct 2006  - Added handler for CM_WININICHANGE that updates theme
                        manager.
 v2.0 of 08 Feb 2007  - Major update.
-                     - Added support for form aligment to class:
+                     - Added support for form alignment to class:
                        - Added code that enables form to be aligned over
                          another form via a provided IAligner instance.
                        - Added virtual methods that be overridden to
-                         configure form before aligment and initialise it
+                         configure form before alignment and initialise it
                          after alignment.
                      - WindowClassName now only strips leading character of
                        class name if it starts with a 'T'.
@@ -3625,7 +3625,7 @@ v2.3 of 11 Aug 2008  - Removed handler for CM_WININICHANGE that updated theme
                        manager. Not required now that theme manager can
                        detect changes itself.
 v2.4 of 05 Oct 2008  - Alt key bug fix was not being unregistered correctly.
-                       Fixed by moving unregistration of form from OnHide
+                       Fixed by moving un-registration of form from OnHide
                        event handler (which is not always called) to the
                        OnDestroy event handler.
 v2.5 of 04 Jan 2009  - Added code that detects form's enabled state changing
@@ -3807,7 +3807,7 @@ v1.4 of 10 Aug 2008  - Changed to use a dynamically created open file dialogue
                      - Supplied help keyword to file open dialogue box.
                      - Current compiler executable files are selected in open
                        file dialogue when being edited.
-                     - Detection of non-existant files is now handled in this
+                     - Detection of non-existent files is now handled in this
                        code rather automatically by file open dialogue box.
 v1.5 of 11 Aug 2008  - Replaced calls to ThemeServices with ThemeServicesEx.
 v1.6 of 25 Aug 2008  - Added checks that compiler executable files exists and
@@ -3819,9 +3819,9 @@ v1.6 of 25 Aug 2008  - Added checks that compiler executable files exists and
 v1.7 of 15 Dec 2008  - Modified to use TRectEx record instead of TRect.
                      - Made private and protected sections strict.
                      - Fixed minor bug where open dialogue could fail to detect
-                       a non-existant file.
+                       a non-existent file.
 v1.8 of 09 Jan 2009  - Now accepts a compilers object as parameter to Execute
-                       method rather than operating on singletion object.
+                       method rather than operating on singleton object.
 v1.9 of 25 Jan 2009  - Revised to used renamed ICompilers.GetGlyph method.
         04 Jul 2009  - IMPORTED TO SVN.
 
@@ -3865,7 +3865,7 @@ v0.4 of 23 Feb 2005  - Changed so that a search object rather than a search
 v0.5 of 24 Feb 2005  - Changed to compiler names from Compilers global object
                        now that name removed from UCompilerTypes.
 v0.6 of 04 Mar 2005  - Changed to use TCompilerIDs enumerated type that
-                       replaces TDelphiVersion and renamed indentifiers and
+                       replaces TDelphiVersion and renamed identifiers and
                        controls that specified "Delphi" now that other
                        compilers are supported.
 v0.7 of 21 Apr 2005  - Changed to use renamed IntfCompilers unit.
@@ -3879,7 +3879,7 @@ v1.1 of 08 Feb 2007  - Moved control initialisation code from FormCreate
                        event handler to new overridden InitForm method.
                      - Re-assigned form's OnCreate event handler that was
                        uncoupled when handler in ancestor class was deleted.
-v1.2 of 15 Dec 2008  - Replaced some loops thru compilers with for..in loops.
+v1.2 of 15 Dec 2008  - Replaced some loops through compilers with for..in loops.
                      - Made some private and protected sections strict.
 v1.3 of 09 Jan 2009  - Changed to use local compilers objects rather than
                        global singleton.
@@ -3934,7 +3934,7 @@ v1.2 of 05 Jun 2009  - Replaced all "routine" text with "snippet".
 Src\FmGenericDlg.pas
 --------------------------------------------------------------------------------
 v0.1 of 30 Jan 2005  - Original version.
-v0.2 of 17 Mar 2005  - If no owner form provided form now align's over
+v0.2 of 17 Mar 2005  - If no owner form provided form now aligns over
                        application's main form rather than not aligning.
 v0.3 of 19 Apr 2005  - Added code to prevent help being activated on F1 if
                        help button is invisible.
@@ -4017,7 +4017,7 @@ v1.0 of 28 May 2006  - Original version.
 v1.1 of 03 Dec 2006  - Changed to re-align form to owner after resizing to fit
                        HTML content.
 v2.0 of 07 Feb 2007  - Rewrote to work with revised TGenericDlg base class and
-                       new form customisation / aligment framework:
+                       new form customisation / alignment framework:
                        - Overrode new ConfigForm method to initialise the HTML
                          displayed in browser control before sizing the body
                          panel to fit the content.
@@ -4079,11 +4079,11 @@ v0.7 of 23 Feb 2005  - Changed all code that displays subsidiary dialogues to
                        the dialogue classes in this code.
                      - Search dialogues now return search objects rather than
                        criteria: changed code that uses them accordingly.
-v0.8 of 23 Feb 2005  - Changed startup code and access to welcome page:
+v0.8 of 23 Feb 2005  - Changed start-up code and access to welcome page:
                      - Removed dialogue boxes that display on start up when
-                       database is emtpy: the welcome page now informs user
+                       database is empty: the welcome page now informs user
                        when the database is empty.
-                     - Made code that displays welcome page on startup
+                     - Made code that displays welcome page on start-up
                        independent of whether welcome page menu option is
                        enabled.
 v0.9 of 24 Feb 2005  - Now displays dialogue boxes via new TMessageBox class.
@@ -4186,7 +4186,7 @@ v1.3 of 29 Oct 2006  - Added new Select Routines action, menu item, tool
                      - Changed glyph used for Save Snippets action.
                      - Changed to use new UGlobals.cFullProgName constant for
                        application title.
-                     - Added Ctrl+S shortuct to Save Snippets action.
+                     - Added Ctrl+S short-cut to Save Snippets action.
 v1.4 of 12 Nov 2006  - Corrected glyph associated with Show All search
                        action.
                      - Moved Tools | Preferences menu item to top of Tools
@@ -4260,7 +4260,7 @@ v1.17 of 16 Feb 2007 - Changed to work with revised Main Display Manager and
                      - Slightly modified conditions under which Select All
                        and Copy actions are made available.
 v1.18 of 25 Feb 2007 - Moved most of code from FormCreate and all of code
-                       FormShow to overriden InitForm method.
+                       FormShow to overridden InitForm method.
                      - Added code to request closing splash screen that was
                        opened in main project file.
                      - Form is now disabled when initialising and when
@@ -4272,7 +4272,7 @@ v1.19 of 01 Mar 2007 - Removed actTestCompile and its events and renamed
                        TWaitForActionUI instead of executing action via the
                        class.
                      - Added Update database action that enables database to
-                       be loaded while a waiy dialpg box is displayed.
+                       be loaded while a wait dialogue box is displayed.
                      - No longer disable form when database re-loading after
                        updating. We display modal dialogue instead.
                      - Modified LoadSnippets to load database via a thread.
@@ -4281,7 +4281,7 @@ v1.20 of 04 Mar 2007 - Fixed bug where Register CodeSnip and Show/Hide Test
 v1.21 of 09 May 2007 - Fixed bug that permitted new routine to be selected
                        while compiling routines by disabling form during
                        compilation.
-v1.22 of 07 Sep 2007 - Added new print and page setup actions and menu items
+v1.22 of 07 Sep 2007 - Added new print and page set-up actions and menu items
                        and added a print tool button.
 v1.23 of 22 Sep 2007 - Moved Help | License menu option up the menu to help
                        section.
@@ -4317,7 +4317,7 @@ v1.31 of 14 Sep 2008 - Changed to work with redefined methods in Snippets
                        update and Test Compile from File to Database menu.
                      - Added new Save Database and New, Edit and Delete
                        Snippet glyph and revised Save Snippet and Save unit
-                       gylphs.
+                       glyphs.
                      - Fixed display bug in status bar by switching AutoHint
                        off.
 v1.32 of 18 Sep 2008 - Added code to hide splash form and enable form if
@@ -4378,7 +4378,7 @@ v1.42 of 23 Jun 2009 - Added new View | Dependencies menu option and action.
                        property.
                      - Revised text, hot keys and/or glyphs of some actions /
                        menu items.
-                     - Code added to dynamically define toolbar and popup
+                     - Code added to dynamically define toolbar and pop-up
                        menu in overview frame.
                      - Altered to work with revised Notifier object.
                      - Retitled Copy Source Code action as Copy Snippet and
@@ -4439,7 +4439,7 @@ v3.0 of 07 Sep 2007  - Major revision.
                        re-initialise controls.
 v3.1 of 04 Nov 2007  - Removed the IAssignable cast from the parameter to
                        IAssignable.Assign method calls.
-v3.2 of 21 May 2009  - Resized body panel and frame to accomodate larger
+v3.2 of 21 May 2009  - Resized body panel and frame to accommodate larger
                        highlighter preferences frame.
         04 Jul 2009  - IMPORTED TO SVN.
 
@@ -4457,7 +4457,7 @@ v1.1 of 11 Nov 2006  - Replaced code that detects HTML and RTF formats with
 v1.2 of 08 Feb 2007  - Moved code that displays document from FormShow event
                        handler to new overridden InitForm method deleted
                        FormShow.
-v1.3 of 13 May 2007  - Added popup menu for selection and copying of
+v1.3 of 13 May 2007  - Added pop-up menu for selection and copying of
                        previewed text along with associated actions and image
                        list.
                      - Added code to call into viewer objects to perform
@@ -4475,16 +4475,15 @@ Src\FmPrintDlg.pas
 --------------------------------------------------------------------------------
 v1.0 of 07 Sep 2007  - Original version.
 v1.1 of 16 Dec 2008  - Revised to use new static Execute method of
-                       TPageSetupDlgMgr to display page setup dialogue box.
+                       TPageSetupDlgMgr to display page set-up dialogue box.
                      - Added printer glyphs to printers combo box.
                      - Made private and protected methods strict.
                      - Now use for..in loop to enumerate printers.
 v1.2 of 14 Jan 2009  - Replaced control char literals with constants.
         04 Jul 2009  - IMPORTED TO SVN.
 
-¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
-FmRegistrationDlg.pas
-
+--------------------------------------------------------------------------------
+Src\FmRegistrationDlg.pas
 --------------------------------------------------------------------------------
 0.1 of 07 Apr 2006  - Original version.
 1.0 of 26 May 2006  - Improved and corrected comments.
@@ -4493,7 +4492,7 @@ FmRegistrationDlg.pas
 v1.1 of 16 Nov 2006  - Corrected and revised text displayed on final page of
                        when user elects to join mailing list.
 v1.2 of 18 Nov 2006  - Corrected typo on "about user" page of wizard.
-                     - Now intialises user name edit box if user name is
+                     - Now initialises user name edit box if user name is
                        already recorded.
 v1.3 of 08 Feb 2007  - Changed type of Owner parameter of Execute method from
                        TForm to TComponent.
@@ -4541,7 +4540,7 @@ v1.3 of 15 Dec 2008  - Modified to use TRectEx record instead of TRect.
                      - Made private and protected sections strict.
 v1.4 of 13 May 2009  - Now gets program and company name from TAppInfo
                        instead of UGlobals unit.
-v1.5 of 17 Jun 2009  - Splash form content now comes from a gif image.
+v1.5 of 17 Jun 2009  - Splash form content now comes from a GIF image.
                        Program's version number is overlayed on the image.
                      - Made TSplashAligner's private section strict.
         04 Jul 2009  - IMPORTED TO SVN.
@@ -4552,11 +4551,11 @@ Src\FmUpdateDlg.pas
 v0.1 of 30 Jan 2005  - Original version.
 v0.2 of 18 Feb 2005  - Deleted unused DataUpdated property.
 v0.3 of 20 Nov 2005  - Changed error handling to display kind of error that
-                       occured in main dialogue box with text link to click to
+                       occurred in main dialogue box with text link to click to
                        display more detailed information in a message box.
 v0.4 of 04 Jan 2006  - Fixed minor bug that made label used for error message
-                       was clickable (but blank) even when no error had
-                       occured.
+                       was click-able (but blank) even when no error had
+                       occurred.
 v0.5 of 04 Jan 2006  - Changed to get web service host from TParams class.
 v0.6 of 10 Jan 2006  - Reinstated dialogue's title bar close button and
                        prevented closure while downloading.
@@ -4649,7 +4648,7 @@ v1.9 of 25 Jan 2009  - Revised to use renamed ICompiler.GetGlyph method.
 v1.10 of 23 Jun 2009 - Removed reference to Snippet item standard format
                        property and associated controls and code.
                      - Added support for new snippet item Kind property.
-                     - Moved management of Dependencies and XRef checklist
+                     - Moved management of Dependencies and XRef check-list
                        boxes to new TSnippetsChkListMgr manager class and
                        varied snippets that appear in Dependencies list
                        according to snippet kind.
@@ -4666,7 +4665,7 @@ v1.10 of 23 Jun 2009 - Removed reference to Snippet item standard format
                      - Made extra information edit control bigger.
                      - Made extra description HTML use content font and
                        removed unused CSS style definitions.
-                     - Test compilation prevented for freeform snippets.
+                     - Test compilation prevented for free-form snippets.
         04 Jul 2009  - IMPORTED TO SVN.
 
 --------------------------------------------------------------------------------
@@ -4853,7 +4852,7 @@ v1.6 of 16 Feb 2007  - Revised to work with redefined display interfaces from
                        visibility flag.
 v1.7 of 04 Mar 2007  - Fixed bug that was causing showing and hiding of test
                        unit to get out of sync with main menu.
-                     - Renamed and removed unecessary parameter from method
+                     - Renamed and removed unnecessary parameter from method
                        that updates visibility of test unit.
 v1.8 of 05 Nov 2007  - Changed to use revised CSS builder classes.
 v1.9 of 09 Jan 2009  - Changed DisplayCompileResults to take compilers object
@@ -4862,7 +4861,7 @@ v1.10 of 19 Jan 2009 - Changed to support interfaces from IntfHTMLDocHostInfo
                        to replace those deleted from UDHTML.
                      - Methods that need to dynamically update document in
                        browser control now construct an IDHTML object
-                       explicitly now that DHTML property delected.
+                       explicitly now that DHTML property deleted.
                      - Made private and protected sections strict.
 v1.11 of 16 May 2009 - Removed frame's IDetailViewHostInfo and
                        ICompCheckRoutineHostInfo support.
@@ -4870,9 +4869,8 @@ v1.11 of 16 May 2009 - Removed frame's IDetailViewHostInfo and
                        test unit in compiler check pane.
         04 Jul 2009  - IMPORTED TO SVN.
 
-¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
-FrDetail.pas
-
+--------------------------------------------------------------------------------
+Src\FrDetail.pas
 --------------------------------------------------------------------------------
 0.1 of 30 Jan 2005  - Original version.
 0.2 of 18 Feb 2005  - Fixed possible out of bounds error in accessing
@@ -4993,7 +4991,7 @@ v1.12 of 10 Sep 2008 - Added definition of new CSS classes: .routinenameuser
 v1.13 of 19 Jan 2009 - Changed to support interfaces from IntfHTMLDocHostInfo
                        to replace those deleted from UDHTML.
                      - Removed unused GetView method.
-                     - Changed how new pages are loaded into web borwser
+                     - Changed how new pages are loaded into web browser
                        control. New page loader is used and loaded pages are
                        no longer initialised dynamically.
                      - Made private and protected sections strict.
@@ -5159,7 +5157,7 @@ v1.2 of 04 Feb 2007  - Now uses global query object to find details of
                        object.
                      - Added new parameter to TInfoFrame.Display to force
                        redisplay of view item even if already displayed. This
-                       was done to enable pane to highlight or unhilight text
+                       was done to enable pane to highlight or un-highlight text
                        search results. We previously used a TDetailView
                        object to do this.
                      - Replaced now redundant TDetailView class references
@@ -5258,20 +5256,20 @@ v1.4 of 26 Aug 2008  - Added OnCustomDrawItem event handler to tree view to
                        bold.
 v1.5 of 13 Jan 2009  - Replaced tree view's draw item event with new TTVDraw
                        private class that descends from TSnippetsTVDraw.
-                     - Made some visbility specifiers strict.
+                     - Made some visibility specifiers strict.
                      - Made assert statement use ClassName method.
 v2.0 of 06 Jun 2009  - Removed uncategorised tab and replaced with two new
                        tabs: alphabetical (snippets grouped by initial
                        letter) and snippet kind (snippets grouped by type).
                      - Enabled expanding and collapsing of sections in
-                       treeview and provided keyboard and local toolbar
+                       tree-view and provided keyboard and local toolbar
                        support. State persists when tabs are changed.
                      - Clicking to right of tree node now selects it.
                      - TTVDraw revised re changes in TSnippetsTVDraw base
                        class.
                      - Now use a separate set of classes in another unit to
                        populate tree view in the various different styles.
-                     - Added toolbar and popup menu and support for
+                     - Added toolbar and pop-up menu and support for
                        ICommandBarConfig using contained TCommandBarMgr
                        instance.
                      - Renamed some identifiers and components.
@@ -5333,9 +5331,9 @@ v1.0 of 22 Apr 2008  - Original version.
 Src\FrSelectSnippets.pas
 --------------------------------------------------------------------------------
 v1.0 of 29 Oct 2006  - Original version.
-v1.1 of 31 Oct 2006  - Added code to render checkboxes using XP theme if
+v1.1 of 31 Oct 2006  - Added code to render check-boxes using XP theme if
                        theme changes.
-v2.0 of 12 Nov 2006  - Rewrote to decend from new TCheckedTVFrame frame. All
+v2.0 of 12 Nov 2006  - Rewrote to descend from new TCheckedTVFrame frame. All
                        generic code relating to check boxes and tree view
                        handling now in base frame leaving only snippet
                        specific code in TSelectSnippetsFrame.
@@ -5348,10 +5346,10 @@ v2.2 of 20 Sep 2008  - Fixed assertion failure that arises when an empty
                        or category lists with for..in construct.
 v2.3 of 13 Jan 2009  - Replaced tree view's draw item event with new TTVDraw
                        private class that descends from TSnippetsTVDraw.
-                     - Made some visbility specifiers strict.
+                     - Made some visibility specifiers strict.
                      - Made assert statement use ClassName method.
                      - Removed an unnecessary $WARN directive.
-v2.4 of 16 May 2009  - Changed TTVDraw to accomodate revised inherited
+v2.4 of 16 May 2009  - Changed TTVDraw to accommodate revised inherited
                        TSnippetsTVDraw methods.
         04 Jul 2009  - IMPORTED TO SVN.
 
@@ -5364,7 +5362,7 @@ v1.0 of 30 Nov 2008  - Original version.
 --------------------------------------------------------------------------------
 Src\FrSourcePrefs.pas
 --------------------------------------------------------------------------------
-v1.0 of 09 Nov 2006  - Original version. Based on code foremerly in
+v1.0 of 09 Nov 2006  - Original version. Based on code formerly in
                        FmPreferences unit and adds comment style preview.
 v1.1 of 02 Jul 2007  - Changed to use global user-defined highlighter
                        preferences for syntax highlighting comment style
@@ -5427,7 +5425,7 @@ v0.3 of 23 Feb 2005  - Resource changes only:
                        - Expanded information on standard welcome page and
                          added information about how to download database on
                        - "empty database" welcome page.
-v0.4 of 04 Mar 2005  - Added new "powered by delphi" .png image file.
+v0.4 of 04 Mar 2005  - Added new "powered by Delphi" .png image file.
                      - Resource changes were:
                        - Restyled about box HTML template.
                        - Restyled compiler error HTML template.
@@ -5439,8 +5437,8 @@ v0.6 of 16 Mar 2005  - Resource changes only:
 v0.7 of 19 Apr 2005  - Resource changes only:
                        - Prefixed "Compile" prefix to compile button hint in
                          comp-routine-dbase-tplt.html.
-                       - Moved update history comments to after xml and
-                         doctype tags in all html files.
+                       - Moved update history comments to after XML and
+                         DOCTYPE tags in all HTML files.
 v0.8 of 25 Apr 2005  - Renamed info-welcome.html to welcome.html (added link
                        to file that displays Configure Compilers dialogue).
                      - Removed comp-welcome.html as no longer used (now
@@ -5465,7 +5463,7 @@ v0.10 of 14 Jan 2006 - Resource changes only:
                        - Changed dlg-about-tplt.html to add MD5 credits and
                          noted source code availability.
 v0.11 of 28 Jan 2006 - Resource changes only:
-                       - Removed xml processing instruction from all HTML
+                       - Removed XML processing instruction from all HTML
                          files displayed in details pane to work round display
                          problem on some OSs.
 v0.12 of 07 Apr 2006 - Resource changes only:
@@ -5525,7 +5523,7 @@ v1.10 of 11 Feb 2007 - Added new dlg-about-head-tplt.html and
                      - Renamed dlg-about-tplt.html template as
                        dlg-about-program-tplt.html.
 v1.11 of 14 Sep 2008 - Removed nodata-welcome.html. welcome.html v2 now used.
-                     - Added new editsnippet.gif action gylph.
+                     - Added new editsnippet.gif action glyph.
 v1.12 of 29 Dec 2008 - Added new dlg-userdb-extra.html fixed content.
 v1.13 of 19 Jan 2009 - Changed to use nocompcheck-body.html renamed from
                        comp-na.html, welcome.html as welcome-tplt.html,
@@ -5543,7 +5541,7 @@ v1.15 of 19 Jun 2009 - Removed hideunit.gif.
                        as info-snippet-tplt.html and comp-routine-tplt.html as
                        comp-snippet-tplt.html.
                      - Added new donate-btn.gif button image.
-                     - Added new dlg-easter-egg.html easter egg content,
+                     - Added new dlg-easter-egg.html Easter egg content,
                        associated easteregg.js and easteregg.css, plus images
                        tvr.jpg, pj.jpg, cancel.png, cancel-glow.png,
                        click-me.png, easter-egg-top.png and
@@ -5566,8 +5564,7 @@ Src\IntfCommon.pas
 --------------------------------------------------------------------------------
 v0.1 of 05 May 2005  - Original version.
 v1.0 of 24 May 2006  - Improved and corrected comments.
-                     - Removed warnings about un-fixed interfaces - now
-                       fixed.
+                     - Removed warnings about unfixed interfaces - now fixed.
 v1.1 of 04 Nov 2007  - Changed parameter type of IAssignable.Assign from
                        IAssignable to IInterface.
         04 Jul 2009  - IMPORTED TO SVN.
@@ -5593,8 +5590,8 @@ v0.4 of 05 Mar 2005  - Added interface declarations for new ICompiler,
 v0.5 of 20 Apr 2005  - Renamed from UCompilerTypes.pas to IntfCompilers.pas.
 v0.6 of 25 Apr 2005  - Added new AvailableCount method to ICompilers along
                        with associated GetAvailableCount method.
-v0.7 of 08 Jan 2006  - Removed redundant parameterss from ICompiler's Compile
-                       and DeleteObjFiles methods.
+v0.7 of 08 Jan 2006  - Removed redundant parameters from ICompiler's Compile and
+                       DeleteObjFiles methods.
                      - Added ids for Delphi 2005/6 to TCompilerID.
                      - Changed ICompilerAutoDetect's only method to enable
                        implementation as part of compiler objects rather than
@@ -5602,7 +5599,7 @@ v0.7 of 08 Jan 2006  - Removed redundant parameterss from ICompiler's Compile
                      - Added support to ICompiler for user-defined command
                        line switches.
 v1.0 of 24 May 2006  - Improved and corrected comments.
-                     - Removed warnings about un-fixed interfaces: now fixed.
+                     - Removed warnings about unfixed interfaces: now fixed.
                      - Removed unused unit reference.
 v1.1 of 08 May 2007  - Added support for Delphi 2007 by adding item to
                        TCompilerID enumeration.
@@ -5635,8 +5632,7 @@ v0.6 of 16 Apr 2006  - Removed ISetWBExternal interface and replaced with
                        SetExternalObj method plus one new method to set
                        browser's drag drop handler.
 v1.0 of 24 May 2006  - Completed, improved and corrected comments.
-                       Removed warnings about un-fixed interfaces - now
-                       fixed.
+                       Removed warnings about unfixed interfaces - now fixed.
 v1.1 of 23 Nov 2006  - Added TestUnitVisible property and accessors to
                        ICompCheckDisplayMgr.
 v1.2 of 02 Dec 2006  - Updated re change to single compiler check display
@@ -5694,9 +5690,9 @@ Src\IntfHiliter.pas
 --------------------------------------------------------------------------------
 v0.1 of 21 Apr 2005  - Original version.
 v1.0 of 24 May 2006  - Improved and corrected comments.
-                     - Removed warnings about un-fixed interfaces - now
-                       fixed.
-v1.1 of 02 Jul 2007  - Added Title param to Hilite methods of ISyntaxHiliter.
+                     - Removed warnings about unfixed interfaces - now fixed.
+v1.1 of 02 Jul 2007  - Added Title parameter to Hilite methods of
+                       ISyntaxHiliter.
 v1.2 of 21 May 2009  - Added TPredefinedHiliteStyle enumeration.
         04 Jul 2009  - IMPORTED TO SVN.
 
@@ -5719,10 +5715,9 @@ v0.2 of 25 Apr 2005  - Added new HelpTopic and ConfigCompilers methods to
                        actions that the new methods trigger.
                      - Removed INotifier.QuickStartHelp and
                        ISetActions.SetQuickStartHelpAction methods that are
-                       superceded by new help topic methods noted above.
+                       superseded by new help topic methods noted above.
 v1.0 of 24 May 2006  - Improved and corrected comments.
-                     - Removed warnings about un-fixed interfaces - now
-                       fixed.
+                     - Removed warnings about unfixed interfaces - now fixed.
                      - Removed unused unit reference.
 v1.1 of 23 Nov 2006  - Added SetToggleTestUnitAction method to ISetActions.
                      - Added ToggleTestUnit method to INotifier.
@@ -5745,8 +5740,7 @@ Src\IntfPreview.pas
 --------------------------------------------------------------------------------
 v0.1 of 17 Mar 2005  - Original version.
 v1.0 of 24 May 2006  - Improved and corrected comments.
-                     - Removed warnings about un-fixed interfaces - now
-                       fixed.
+                     - Removed warnings about unfixed interfaces - now fixed.
 v1.1 of 13 May 2007  - Added SetPopupMenu method to IPreview.
 v1.2 of 17 Jun 2009  - Modified IPreview.Display method with extra out
                        parameter that gets document title.
@@ -5796,7 +5790,7 @@ v2.1 of 11 Aug 2008  - Replaced duplicated compiler glyphs with single,
                        renamed resources and bitmaps.
 v2.2 of 03 Jan 2009  - Added bitmap for user database modified indicator
                        displayed in status bar.
-v2.3 of 17 Jun 2009  - Added new splash screen gif image.
+v2.3 of 17 Jun 2009  - Added new splash screen GIF image.
         04 Jul 2009  - IMPORTED TO SVN.
 
 --------------------------------------------------------------------------------
@@ -5821,7 +5815,7 @@ v1.1 of 20 Jun 2009  - Added new element kinds: em, var, p, warning, heading
                      - Added new IActiveTextActionElem.DisplayStyle property,
                        getter and implementation with associated enumeration.
                        Used to check whether an element displays as a block
-                       or inline.
+                       or in-line.
         04 Jul 2009  - IMPORTED TO SVN.
 
 --------------------------------------------------------------------------------
@@ -5841,7 +5835,7 @@ v1.2 of 05 Oct 2008  - Added TAltBugFix.IsCtrlRecorded method to check if a
                        with a class property of TAltBugFix and modified
                        AltBugFix function to access this property.
                      - Made some protected and private section strict.
-                     - Moved lock timeout constant into TAltBugFix.
+                     - Moved lock time-out constant into TAltBugFix.
                      - Adapted a for loop to use TObjectList enumerator.
                      - Changed Assert message to ClassName for class name.
 v1.3 of 11 Oct 2008  - Added code to prevent repainting of TBitBtn on Vista.
@@ -5876,7 +5870,7 @@ v0.3 of 21 Apr 2005  - Total rewrite of TAppInfo object that accesses
                        encapsulation object.
 v0.4 of 25 Apr 2005  - Added new Source Output storage section.
 v0.5 of 08 Jan 2006  - Added new ItemExists method to IAppSectionInfo and its
-                       implememtaion.
+                       implementation.
 v0.6 of 04 Apr 2006  - Major revision:
                        - Removed AppInfo object and associated code to new
                          USettings unit and renamed and revised there.
@@ -5919,9 +5913,9 @@ v1.9 of 04 Oct 2008  - Changed TAppInfo to derive from TNoConstructObject and
                      - Made private section strict.
 v1.10 of 11 Jan 2009 - Replaced direct call to MD5 routines with call to
                        TCheckSum static class.
-v1.11 of 13 May 2009 - Added new class consts to TAppInfo: CompanyName,
+v1.11 of 13 May 2009 - Added new class constants to TAppInfo: CompanyName,
                        ProgramName, FullProgramName and ProgamID. These
-                       value were previosly provided by the UGlobals unit.
+                       value were previously provided by the UGlobals unit.
 v1.12 of 23 May 2009 - Changed user database sub-directory to UserData.3 from
                        UserData to prevent making data in UserData unreadable
                        by CodeSnip versions before release 3.
@@ -5971,7 +5965,7 @@ v0.1 of 08 Jan 2006  - Original version.
 v0.2 of 09 Jan 2006  - Added new CreateCopy constructor.
 v1.0 of 24 May 2006  - Improved and corrected comments.
                      - Relocated and rationalised $WARN directives.
-                     - Removed warnings about un-fixed interfaces - now fixed.
+                     - Removed warnings about unfixed interfaces - now fixed.
                      - Moved unit reference from interface to implementation.
         04 Jul 2009  - IMPORTED TO SVN.
 
@@ -6089,8 +6083,8 @@ v1.3 of 25 Feb 2007  - Added new constants relating to new splash screen.
 v1.4 of 26 Aug 2008  - Added new constant that specifies colour used to
                        display names of routines from user database.
 v1.5 of 31 Dec 2008  - Added new constant that specifies colour used to
-                       display REML markup tags in example code.
-v1.6 of 20 Jun 2009  - Added new constants relating to new easter egg.
+                       display REML mark-up tags in example code.
+v1.6 of 20 Jun 2009  - Added new constants relating to new Easter egg.
                      - Removed constants not now required for new splash
                        screen and changed others.
                      - Added new constant for colour of rendered REML var
@@ -6283,7 +6277,7 @@ v1.5 of 10 Jan 2009  - Changed to use new ICompiler.HasErrorsOrWarnings
                        method to detect compiler errors or warnings.
 v1.6 of 13 Jan 2009  - Replaced call to StringReplace with ReplaceStr.
                      - Replaced control char literals with constants.
-v1.7 of 25 Jan 2009  - Replaced some methods that created placeholder HTML
+v1.7 of 25 Jan 2009  - Replaced some methods that created place-holder HTML
                        for later dynamic updating with methods that create
                        actual content.
                      - Revised code to use routines and objects from
@@ -6319,7 +6313,7 @@ v1.2 of 24 Aug 2008  - Modified so that two descendant classes are used to
                        need to pass file names: descendant classes have this
                        knowledge.
                      - Provided enumeration for contributors to enable use of
-                       for .. in contruct in Delphi 2006.
+                       for .. in construct in Delphi 2006.
                      - Made some method visibility specifiers "strict".
         04 Jul 2009  - IMPORTED TO SVN.
 
@@ -6346,7 +6340,7 @@ v1.2 of 03 Oct 2008  - Changed to override new DoExecute method of base class
                      - Made protected section strict.
 v1.3 of 03 Jan 2009  - Revised to use UClipboardHelper unit instead of
                        ClipBrd.
-v1.4 of 16 Jan 2009  - Nows copies snippet to clipboard as syntax highlighted
+v1.4 of 16 Jan 2009  - Now copies snippet to clipboard as syntax highlighted
                        rich text in addition to plain text.
         04 Jul 2009  - IMPORTED TO SVN.
 
@@ -6354,12 +6348,12 @@ v1.4 of 16 Jan 2009  - Nows copies snippet to clipboard as syntax highlighted
 Src\UCopySourceMgr.pas
 --------------------------------------------------------------------------------
 v1.0 of 06 Jun 2009  - Original version containing just TCopySourceMgr.
-v2.0 of 11 Jul 2009  - Added new TCopySourceCodeBase abtract base class for
+v2.0 of 11 Jul 2009  - Added new TCopySourceCodeBase abstract base class for
                        all objects that copy source code to clipboard.
                      - Re-implemented TCopySourceMgr as a concrete subclass
                        of TCopySourceCodeBase.
                      - Added a re-implementation of TCopySnippetMgr, formerly
-                       defined in UCopySnippetMgr, as a concreate subclass of
+                       defined in UCopySnippetMgr, as a concrete subclass of
                        TCopySourceCodeBase.
         04 Jul 2009  - IMPORTED TO SVN.
 
@@ -6442,8 +6436,8 @@ v0.1 of 30 Jan 2005  - Original version.
 v0.2 of 18 Feb 2005  - Fixed bug in ExecAndWaitRedirect to make return
                        expected MaxInt rather than -MaxInt when requested
                        program can't be started.
-                     - Fixed bug where singletion Compilers object was not
-                       being freed when application closes.
+                     - Fixed bug where singleton Compilers object was not being
+                       freed when application closes.
 v0.3 of 18 Feb 2005  - Deleted unused units from uses clauses.
 v0.4 of 22 Feb 2005  - Localised compiler error & warning string literals.
 v0.5 of 24 Feb 2005  - Added Names[] property to TDelphiCompilers that
@@ -6464,7 +6458,7 @@ v0.8 of 08 Jan 2006  - Major revision:
                          TBDSCompiler to new TBorlandCompiler.
                        - Added support for ICompilerAutoDetect interface.
                        - Made changes to reflect new place in compiler class
-                         heirachy.
+                         hierarchy.
                        - Added support for user-defined and default command
                          line switches.
 v0.9 of 09 Jan 2006  - Changed Clone method to call new CreateCopy
@@ -6539,24 +6533,24 @@ v1.5 of 02 Dec 2006  - Modified to handle compiler check pane change to
                        TTestCompRoutineGenerator and
                        TDbaseCompRoutineGenerator with single
                        TCompRoutineGenerator class that resolves only one
-                       placeholder. Remainder of details are updated
+                       place-holder. Remainder of details are updated
                        dynamically.
                      - Updated THTMLGeneratorFactory re changes.
                      - Modified TInfoRoutineGenerator to get compiler image
                        from TCompResHTML.ImageTag().
 v1.6 of 03 Dec 2006  - Removed HiliteSource helper routine.
                      - Changed TInfoRoutineGenerator.ResolvePlaceholders to
-                       remove all HTML generation code except for nul
+                       remove all HTML generation code except for null
                        compiler table. Also changed to work with revised
-                       template document. The only placeholder is now the nul
+                       template document. The only place-holder is now the null
                        compiler table.
 v1.7 of 04 Feb 2007  - Replaced use of redundant TDetailView objects with
                        calls to new global query object and TViewItem
                        objects.
                      - Removed some redundant code.
-v1.8 of 10 Sep 2008  - Added new UserDefined param to call RoutineALink
+v1.8 of 10 Sep 2008  - Added new UserDefined parameter to call RoutineALink
                        routine.
-                     - Added code to resolve new <%H1Class%> placeholder when
+                     - Added code to resolve new <%H1Class%> place-holder when
                        generating category details on information pane.
 v1.9 of 04 Oct 2008  - Changed THTMLGeneratorFactory to derive from
                        TNoConstructObject and hence prevented it from being
@@ -6594,7 +6588,7 @@ v2.1 of 16 Jun 2009  - Now calls new TRoutine.CanCompile method instead of
                      - Provided new TRoutineListPageHTML.HaveSnippets method.
                      - Modified TWelcomePageHTML.ResolvePlaceholders to work
                        with revised template.
-                     - Added support for new <%Kind%> placeholder in snippet
+                     - Added support for new <%Kind%> place-holder in snippet
                        information HTML.
                      - Moved edit link code from TRoutineInfoPageHTML down to
                        TRoutinePageHTML since now common with
@@ -6685,7 +6679,7 @@ Src\UDHTML.pas
 v1.0 of 02 Dec 2006  - Original version.
 v1.1 of 03 Dec 2006  - Added interfaces and classes to support dynamic
                        updating of routine view in information pane.
-                     - Reorganised class heirachy to move code common to
+                     - Reorganised class hierarchy to move code common to
                        information and compiler check classes into base
                        classes. This reorganisation also takes account of
                      - Changed factory class to work with information pane
@@ -6728,8 +6722,8 @@ v1.8 of 09 Jan 2009  - Added parameter to ICompCheckRoutineDHTML's
                        global compilers singleton. Provides this to sub
                        classes as a protected property.
 v1.9 of 13 Jan 2009  - Replaced control char literals with constants.
-v2.0 of 25 Jan 2009  - Heavliy revised now that many interfaces and much code
-                       is no longer used since generation of detgail HTML
+v2.0 of 25 Jan 2009  - Heavily revised now that many interfaces and much code
+                       is no longer used since generation of detail HTML
                        changed to avoid use of dynamic code generation.
                        required interfaces from IHTMLDocHostInfo.
                      - HostInfo interfaces that are still required now come
@@ -6751,7 +6745,7 @@ v1.0 of 05 Feb 2007  - Original version.
 v1.1 of 07 Sep 2007  - Added new TDialogMgr.ExecPrintDlg method.
                      - Added new TDialogMgr.ExecPageSetupDlg method.
 v1.2 of 16 Dec 2008  - Revised to use new static Execute method of
-                       TPageSetupDlgMgr to display page setup dialogue box.
+                       TPageSetupDlgMgr to display page set-up dialogue box.
 v1.3 of 09 Jan 2009  - Delete unused TDialogMgr's ExecCompilersDlg and
                        ShowCompErrorDlg methods.
 v1.4 of 09 May 2009  - Added new TDialogMgr.ShowDonateDlg method.
@@ -6794,8 +6788,8 @@ Src\UDOSDateTime.pas
 v0.1 of 30 Apr 2006  - Original version.
 v1.0 of 24 May 2006  - Improved and corrected comments.
                      - Relocated and rationalised $WARN directives.
-                     - Removed warnings about un-fixed interfaces.
-v1.1 of 14 Oct 2006  - Removed code that converts unix time stamps from GMT
+                     - Removed warnings about unfixed interfaces.
+v1.1 of 14 Oct 2006  - Removed code that converts Unix time stamps from GMT
                        to local time on Windows 9x systems. The code used
                        Windows API routines that are not supported on Windows
                        9x. This means that date checks may be inaccurate on
@@ -6844,7 +6838,7 @@ v0.5 of 03 Apr 2006  - Updated to work with v3.1 of the update web service.
                        Some of log-on parameters have been given dummy values
                        since information is not all available in this version
                        of the program.
-v0.6 of 10 Apr 2006  - Replaced placeholder strings for program key and
+v0.6 of 10 Apr 2006  - Replaced place-holder strings for program key and
                        registration code sent to web server as part of login
                        with actual values.
                      - Changed "long" error messages stored when EHTTPError
@@ -7027,7 +7021,7 @@ Src\UGlobals.pas
 v0.1 of 30 Jan 2005  - Original version.
 v0.2 of 22 Feb 2005  - Added new constant defining maximum number of menu
                        items in history menu.
-                     - Added new constant defining max number of view items
+                     - Added new constant defining maximum number of view items
                        stored in history list.
 v0.3 of 23 Feb 2005  - Added new constant defining maximum number of menu
                        items in text search history.
@@ -7076,7 +7070,7 @@ v1.1 of 26 Oct 2006  - Declared new IHelpMgr interface.
                      type.
 v1.2 of 11 Nov 2006  - Now gets help file name from TAppInfo rather than naming
                        it in this method.
-                     - Removed unecessary fHelpFile field and now empty
+                     - Removed unnecessary fHelpFile field and now empty
                        constructor.
 v2.0 of 04 Feb 2007  - Total rewrite.
                        - Moved help manager implementation to separate
@@ -7127,10 +7121,10 @@ v0.2 of 21 Apr 2005  - Replaced UHilitePasParser with IntfHiliter which
                        contains definitions formerly in UHilitePasParser.
 v1.0 of 24 May 2006  - Improved and corrected comments.
 v1.1 of 09 Nov 2006  - Added new THiliteAttrsFactory.CreateUserAttrs method
-                       that creates a hilite attributes object and reads its
+                       that creates a highlight attributes object and reads its
                        properties from persistent storage.
 v1.2 of 04 Sep 2007  - Added new THiliteAttrsFactory.CreateMonoAttrs method
-                       that creates mono (black & white) hilite attributes
+                       that creates mono (black & white) highlight attributes
                        object.
 v1.3 of 17 Oct 2007  - Changed THiliteAttrsFactory.CreateUserAttrs to return
                        attributes object from Preferences rather than
@@ -7149,7 +7143,7 @@ v1.6 of 16 Dec 2008  - Added new THiliteAttrsFactory.CreatePrintAttrsfactory
                      - Removed THiliteAttrsFactory.CreateMonoAttrs method.
                        Functionality now provided in THiliteAttrsFactory's
                        CreatePrintAttrsfactory method.
-                     - Added default font consts to THiliteAttrs.
+                     - Added default font constants to THiliteAttrs.
 v1.7 of 23 May 2009  - Added THiliterAttrsFactory.CreatePredefinedAttrs and
                        THiliteAttrsFactory.CreateDisplayAttrs methods.
                      - Changed THiliteAttrsFactory.CreateDefaultAttrs to call
@@ -7165,12 +7159,13 @@ v0.1 of 10 Mar 2005  - Original version.
 v0.2 of 21 Apr 2005  - Refactored ParseWhiteSpace and ParseIdent methods of
                        THilitePasLexer to have same construction as
                        ParseWholeNumber method.
-v0.3 of 04 Jun 2005  - Made lexer detect line ends in multiline comments and
+v0.3 of 04 Jun 2005  - Made lexer detect line ends in multi-line comments and
                        return alternate comment and new line tokens until
                        comment is closed.
 v1.0 of 24 May 2006  - Improved and corrected comments.
 v1.1 of 24 Aug 2008  - Added Windows unit to enable inlining in Delphi 2006.
-v1.2 of 14 Jan 2009  - Changed to use EOL and EOF consts now defined as part
+v1.2 of 14 Jan 2009  - Changed to use EOL and EOF
+ now defined as part
                        of TTextStreamReader.
                      - Redefined white space in terms of difference between
                        sets of characters.
@@ -7217,15 +7212,15 @@ v0.2 of 18 Feb 2005  - Fixed bug where wrong history item was being made
 v0.3 of 18 Feb 2005  - Deleted unused OnChange event and DoChange method that
                        triggers it.
                      - Deleted unused Clear procedure.
-v0.4 of 22 Feb 2005  - Moved constant that determines max history size to
+v0.4 of 22 Feb 2005  - Moved constant that determines maximum history size to
                        UGlobals unit.
 v1.0 of 24 May 2006  - Improved and corrected comments.
                      - Removed unused unit reference.
 v1.1 of 16 Feb 2007  - Reinstated Clear method to clear the history.
-v1.2 of 11 Jan 2009  - cMaxHistoryItems const added to private section of
+v1.2 of 11 Jan 2009  - cMaxHistoryItems constant added to private section of
                        THistory, moved back here from UGlobals.
                      - Made THistory's private section strict.
-                     - Now use ClassName in Assrets and EBugs exceptions.
+                     - Now use ClassName in Asserts and EBugs exceptions.
         04 Jul 2009  - IMPORTED TO SVN.
 
 --------------------------------------------------------------------------------
@@ -7240,15 +7235,15 @@ v0.4 of 19 Feb 2005  - Refactoring: moved code that sets history menu item
                        caption to describe associated view item into custom
                        menu item class.
 v0.5 of 22 Feb 2005  - Localised literal strings.
-                     - Moved constant determining max number of menu items to
-                       UGlobals unit.
+                     - Moved constant determining maximum number of menu items
+                       to UGlobals unit.
 v1.0 of 24 May 2006  - Improved and corrected comments.
-v1.1 of 11 Jan 2009  - cMaxHistoryMenuItems const added to private section of
+v1.1 of 11 Jan 2009  - cMaxHistoryMenuItems constant added to private section of
                        THistoryMenu, moved back here from UGlobals.
                      - Flagged THistoryMenu as abstract and TBackHistoryMenu,
                        TForwardHistoryMenu and THistoryMenuItem as sealed.
                      - Made private and protected visibility sections strict.
-                     - Made assertions and buf exceptions use ClassName to
+                     - Made assertions and bug exceptions use ClassName to
                        report name of class.
 v1.2 of 19 Jun 2009  - Removed support for uncategorised view items.
                      - Added support for alphabetic and snippet kind view
@@ -7288,7 +7283,7 @@ v1.5 of 26 Aug 2008  - Modified parameter list of RoutineALink() to add a
                        UserDefined parameter. This data is used used as a
                        parameter to underlying JavaScript function.
 v1.6 of 27 Dec 2008  - Added new AOpenTag() routine to create and opening
-                       hyperlink tag and modified ALink routine to use it.
+                       hyper-link tag and modified ALink routine to use it.
         04 Jul 2009  - IMPORTED TO SVN.
 
 --------------------------------------------------------------------------------
@@ -7360,7 +7355,7 @@ v1.1 of 24 Aug 2008  - Added directive to switch off unsafe code warnings in
                        Delphi 2006.
 v1.2 of 11 Jan 2009  - Replaced call to StringReplace with ReplaceStr.
 v1.3 of 25 Jan 2009  - Replaced call to MakeIntResource with RT_HTML.
-                     - Removed unnecessay $WARN directive.
+                     - Removed unnecessary $WARN directive.
                      - Made private section strict.
         04 Jul 2009  - IMPORTED TO SVN.
 
@@ -7383,7 +7378,7 @@ v1.4 of 25 Nov 2006  - Removed CSS border property from image tag style since
 v1.5 of 02 Dec 2006  - Added optional Id parameter to ImageTag() routine and
                        re-implemented the routine.
                      - Removed now unused ResImageTag() routine.
-v2.0 of 29 Dec 2008  - Added new IHTMLAttributes interface and implementating
+v2.0 of 29 Dec 2008  - Added new IHTMLAttributes interface and implementation
                        THMTLAttributes class.
                      - Added new MakeTag routine to create an HTML tag.
                      - Converted ImageTag to use THTMLAttributes and MakeTag.
@@ -7457,13 +7452,13 @@ v2.0 of 02 Sep 2008  - Made changes to support multiple databases. Can now
 v2.1 of 11 Oct 2008  - Added support for Delphi 2009.
                      - Refactoring: pulled out common code from methods that
                        get routine references into a separate method.
-v2.2 of 28 Dec 2008  - Included consts for all ini value names.
+v2.2 of 28 Dec 2008  - Included constants for all ini value names.
                      - Added support for routine's new Extra property and
                        possible Extra value in ini files.
                      - Removed support for routine's Credits, CreditsURL and
                        Comments properties.
                      - Isolated code that gets compiler results and source
-                       code for a routine into seperate local routines of
+                       code for a routine into separate local routines of
                        GetRoutineProps method.
                      - Deleted redundant helper routine. Moved remaining
                        CommaToStrings into class.
@@ -7478,9 +7473,8 @@ v2.4 of 20 Jun 2009  - Added support for snippet's Kind property and, where
                      - Changed error message to refer to snippet not routine.
         04 Jul 2009  - IMPORTED TO SVN.
 
-¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
-UIStringList.pas
-
+--------------------------------------------------------------------------------
+Src\UIStringList.pas
 --------------------------------------------------------------------------------
 1.0 of 31 Oct 2007  - Original version.
 1.1 of 04 Nov 2007  - Changed parameter type of TIStringList.Assign from
@@ -7489,7 +7483,7 @@ v1.2 of 14 Sep 2008  - Added enumerator object to enable use of for..in with
                        IStringList.
                      - Added new CopyTo method to copy strings to a TStrings
                        object.
-                     - "Add" method that deals with delimted strings now has
+                     - "Add" method that deals with delimited strings now has
                        additional optional TrimStr parameter that causes all
                        fields stripped from string to be trimmed. Associated
                        constructor and SetText method similarly updated.
@@ -7501,7 +7495,7 @@ Src\UJavaScriptUtils.pas
 v1.0 of 24 Nov 2006  - Original version.
 v1.1 of 02 Dec 2006  - Changed JSExec() to take a IHTMLDocument2 parameter
                        instead of a TWebBrowser.
-                     - Changed JSExec() to trap nul object window errors
+                     - Changed JSExec() to trap null object window errors
                        using assertions rather than raising EBug.
 v1.2 of 07 Feb 2007  - Changed JSExec to execute by calling
                        THTMLDocHelper.ExecScript. JSExec reverts to raising
@@ -7511,12 +7505,12 @@ v1.2 of 07 Feb 2007  - Changed JSExec to execute by calling
                      - Added new overloaded version of JSExec that takes
                        function name and separate parameter list.
                      - Made explicit that string is AnsiString and Char is
-                       AnsiChar in exepected parameter types.
+                       AnsiChar in expected parameter types.
 v1.3 of 24 Aug 2008  - Added directive to switch off unsafe code warnings in
                        Delphi 2006.
 v1.4 of 14 Jan 2009  - Replaced call to StringReplace with UnixLineBreaks.
                      - Removed unnecessary $WARN directives.
-                     - Replaced control char literals with consts.
+                     - Replaced control char literals with constants.
 v1.5 of 17 Jun 2009  - Removed unused JSExec overloaded routines.
         04 Jul 2009  - IMPORTED TO SVN.
 
@@ -7539,7 +7533,7 @@ v1.0 of 25 May 2009  - Original version, containing TIntegerList only.
 Src\ULocales.pas
 --------------------------------------------------------------------------------
 v1.0 of 26 Jan 2009  - Commented the unit.
-v1.1 of 11 May 2009  - Removed code targetted at Windows 9x platform since
+v1.1 of 11 May 2009  - Removed code targeted at Windows 9x platform since
                        CodeSnip no longer supports the platform.
         04 Jul 2009  - IMPORTED TO SVN.
 
@@ -7600,7 +7594,7 @@ v1.6 of 16 Feb 2007  - Added new Clear method to clear overview and detail
                        panes and modified Initialise method to use Clear.
 v2.0 of 16 Feb 2007  - Major update. Two major changes were:
                        - This TMainDisplayMgr no longer manipulates and
-                         interogates the information and compiler check panes
+                         interrogates the information and compiler check panes
                          of the details frame. TDetailFrame now supports all
                          relevant interfaces and dispatches requests and
                          commands to the relevant child pane. Therefore this
@@ -7610,7 +7604,7 @@ v2.0 of 16 Feb 2007  - Major update. Two major changes were:
                          to make calls on TDetailFrame.
                        - Revised to work with redefined and new display
                          interfaces from IntfFrameMgrs and fact that these
-                         interfaces no longer form a heirachy.
+                         interfaces no longer form a hierarchy.
                          TMainDisplayMgr casts the managed frames to the
                          appropriate interfaces when calling their methods.
 v2.1 of 05 Jun 2008  - Replaced methods use to select tabs in overview and
@@ -7715,7 +7709,7 @@ v3.1 of 15 Dec 2008  - Further modified to use TRectEx record instead of
                        TRect.
 v3.2 of 14 Jan 2009  - Made "&" signs in dialogue box appear literally instead
                        of being treated as accelerator characters.
-                     - Deleted LF const: now use equivalent in UConsts.
+                     - Deleted LF constant: now use equivalent in UConsts.
         04 Jul 2009  - IMPORTED TO SVN.
 
 --------------------------------------------------------------------------------
@@ -7751,9 +7745,8 @@ v1.0 of 25 May 2006  - Improved and corrected comments.
                      - Changed exception used to detect bugs from Exception
                        type to EBug.
 v1.1 of 12 May 2007  - Removed all code that tested for program version
-                       numbers at which news items were targetted. This
-                       testing now performed by web service rather than
-                       program.
+                       numbers at which news items were targeted. This testing
+                       now performed by web service rather than program.
                      - Adapted to use revised news data format: versions
                        field no included in data stream.
         04 Jul 2009  - IMPORTED TO SVN.
@@ -7819,8 +7812,8 @@ v1.1 of 26 Sep 2007  - Changed to use renamed IFormAligner interface.
 Src\UNulUIHandler.pas
 --------------------------------------------------------------------------------
 v0.1 of 30 Jan 2005  - Original version.
-v0.2 of 20 Apr 2005  - Fixed potential bugs by setting unused [out] params to
-                       nil in GetOptionKeyPath & TranslateURL methods. Made
+v0.2 of 20 Apr 2005  - Fixed potential bugs by setting unused [out] parameters
+                       to nil in GetOptionKeyPath & TranslateURL methods. Made
                        both methods return S_FALSE rather than E_FAIL.
 v1.0 of 24 May 2006  - Improved and corrected comments.
                      - Relocated and rationalised $WARN directives.
@@ -7891,7 +7884,7 @@ v1.1 of 16 Dec 2008  - Changed to static class. Now inherits from
                      - Modified to user TPageMargins constructor instead of
                        deleted PageMargins function to initialise margins.
                      - Fixed bug where required margins weren't being
-                       displayed due to addition of psoMargins to page setup
+                       displayed due to addition of psoMargins to page set-up
                        dialogue options in Delphi 2006.
         04 Jul 2009  - IMPORTED TO SVN.
 
@@ -7951,10 +7944,10 @@ v2.0 of 07 Sep 2007  - Major revision:
                      - Added ability to get a non-persisting copy of
                        singleton to use for temporary preference updates.
                        This was done by splitting implementation into two
-                       classes, one that persists (for singletion) and one
-                       that does not. Added Clone and Assign methods to
-                       enable singlton to create a temp copy of itself and to
-                       assign modified temp data to itself.
+                       classes, one that persists (for singleton) and one that
+                       does not. Added Clone and Assign methods to enable
+                       singleton to create a temp copy of itself and to assign
+                       modified temp data to itself.
                      - Added new MeasurementUnits, PrinterOptions and
                        PrinterPageMargins properties.
                      - Changed to write to various sub sections of
@@ -7963,7 +7956,7 @@ v2.0 of 07 Sep 2007  - Major revision:
                        CodeSnip v1.6.4 and earlier.
 v2.1 of 17 Oct 2007  - Added HiliteAttrs property and code to support
                        persisting syntax highlighter information to
-                       ssPreferences settings kye. NOTE: this breaks
+                       ssPreferences settings key. NOTE: this breaks
                        compatibility with persistent storage produced by
                        CodeSnip v1.7.4 and earlier.
 v2.2 of 04 Nov 2007  - Changed parameter type of TPreferences.Assign from
@@ -7988,7 +7981,7 @@ v1.1 of 12 Sep 2008  - Moved information about code snip database from top of
 v1.2 of 16 Dec 2008  - Changed to use user-defined highlighter when syntax
                        highlighting of source code is required. Always uses
                        "print version", where font is always Courier New.
-                     - Moved database description from const to resources.
+                     - Moved database description from constant to resources.
                      - Made private section of TRoutinePrintDocument strict.
                      - Made assertion message get class name from method.
                      - Changed routine list enumeration to use for..in loop.
@@ -8124,8 +8117,7 @@ Src\URoutineAction.pas
 --------------------------------------------------------------------------------
 v0.1 of 30 Jan 2005  - Original version.
 v0.2 of 18 Feb 2005  - Removed debug code.
-v0.3 of 18 Feb 2005  - Deleted unused TRoutineAction contructor and
-                       destructor.
+v0.3 of 18 Feb 2005  - Deleted unused TRoutineAction constructor and destructor.
 v1.0 of 24 May 2006  - Made minor change to comments.
 v1.1 of 31 Aug 2008  - Added new UserDefined property that indicates if
                        routine is from main or user database.
@@ -8144,7 +8136,7 @@ v1.0 of 28 Dec 2008  - Original version.
 v1.1 of 09 Jan 2009  - Replaced use of global singleton compilers object with
                        a locally instantiated compilers object.
 v1.2 of 13 May 2009  - Changed to get online database URL from TWebInfo
-                       instead of const in UGlobals unit.
+                       instead of constant in UGlobals unit.
 v1.3 of 21 Jun 2009  - Changed "routine" text to "snippets"
                      - Now includes snippet kind in document.
                      - Added new abstract method to write titled text.
@@ -8157,7 +8149,7 @@ v1.3 of 21 Jun 2009  - Changed "routine" text to "snippets"
 Src\URoutineExtraHelper.pas
 --------------------------------------------------------------------------------
 v1.0 of 28 Dec 2008  - Original version.
-v1.1 of 21 Jun 2009  - No longer converts REML markup into a sentence since
+v1.1 of 21 Jun 2009  - No longer converts REML mark-up into a sentence since
                        REML may now end in a block level tag causing spurious
                        new lines containing full stops.
                      - Refactored some code.
@@ -8201,7 +8193,7 @@ v1.1 of 02 Jul 2007  - Added new TRTFDocProperties class.
                        facility to generate document properties RTF.
 v1.2 of 06 Sep 2007  - Added SetParaSpacing method to TRTFBuilder.
                      - Changed SetFontSize method of TRTFBuilder to accept
-                       float params.
+                       float parameters.
 v1.3 of 14 Jan 2009  - Replaced control char literals with constants.
                      - Removed unnecessary $WARN directive.
                      - Made class private sections strict.
@@ -8218,7 +8210,7 @@ v1.0 of 05 Sep 2007  - Original version.
 Src\URTFRoutineDoc.pas
 --------------------------------------------------------------------------------
 v1.0 of 28 Dec 2008  - Original version.
-v1.1 of 14 Jan 2009  - Replaced control char literals with consts.
+v1.1 of 14 Jan 2009  - Replaced control char literals with constants.
 v1.2 of 21 Jun 2009  - Added override of new RenderTitledText method that
                        writes out a title followed by some text.
                      - Reimplemented RenderTitledList method in terms of
@@ -8235,8 +8227,8 @@ v0.1 of 17 Mar 2005  - Original version.
 v1.0 of 24 May 2006  - Improved and corrected comments.
                      - Removed unused unit references.
 v1.1 of 29 Ocr 2006  - Fixed bug in RTFLoadFromString where long documents were
-                       not displaying correctly. Set max length of RTF control
-                       to length of loaded document.
+                       not displaying correctly. Set maximum length of RTF
+                       control to length of loaded document.
 v1.2 of 07 Nov 2006  - Added various routines to create RTF controls.
                      - Renamed MakeSafeRTFText() as RTFMakeSafeText().
 v1.3 of 11 Nov 2006  - Added new IsValidRTFCode() routine.
@@ -8329,7 +8321,7 @@ v1.1 of 29 Oct 2006  - Removed code that sets Filter property. This is now
                      - Removed ofOverwritePrompt from Options. We now handle
                        overwriting manually to account for files without
                        extensions that have them added. This fixes a bug
-                       where extensionless files were having extension added
+                       where extension-less files were having extension added
                        and then could silently overwrite an existing file
                        with same name.
 v1.2 of 26 Sep 2007  - Added code to align dialogue over owner. Required new
@@ -8339,7 +8331,7 @@ v1.2 of 26 Sep 2007  - Added code to align dialogue over owner. Required new
                        rather than Windows API and to align properly.
 v1.3 of 29 May 2008  - Fixed bug that caused dialogue box to always set default
                        file extension.
-                     - Also changed so that UseSyntaxHiliting propery value
+                     - Also changed so that UseSyntaxHiliting property value
                        only depends on state of check box without reference
                        to whether it is enabled.
 v1.4 of 14 Jun 2008  - Added calls to TDlgHelper to set dialogue box's parent.
@@ -8377,8 +8369,8 @@ v1.2 of 02 Jul 2007  - Fixed typo in source code disclaimer comment.
                      - Added code to build a document title and to include it
                        in generated units.
                      - A unit file name is now suggested for dialogue box.
-                     - Changed default unit name / filename from
-                       "PreviewUnit" to "Snippets".
+                     - Changed default unit name / file name from "PreviewUnit"
+                       to "Snippets".
 v1.3 of 26 Sep 2007  - Changed code that checks for acceptable file name to
                        pass any error message back via OnCheckFileName event
                        handler rather than displaying error in a message box.
@@ -8401,8 +8393,8 @@ v1.7 of 16 May 2009  - Modified to use renamed TSourceGen methods.
 Src\USearch.pas
 --------------------------------------------------------------------------------
 v0.1 of 30 Jan 2005  - Original version.
-v0.2 of 18 Feb 2005  - Changed nul search Execute method to return false
-                       (i.e. nothing found) if database is empty.
+v0.2 of 18 Feb 2005  - Changed null search Execute method to return false (i.e.
+                       nothing found) if database is empty.
 v0.3 of 18 Feb 2005  - Deleted unused TCompilerSearch, TTextSearch,
                        TNulSearch and TCompilerSearchCriteria destructors.
 v0.4 of 04 Mar 2005  - Changed to use TCompileID enumeration that replaces
@@ -8410,7 +8402,7 @@ v0.4 of 04 Mar 2005  - Changed to use TCompileID enumeration that replaces
 v0.5 of 20 Apr 2005  - Changed to use renamed IntfCompilers unit.
 v1.0 of 24 May 2006  - Improved and corrected comments.
                      - Relocated and rationalised $WARN directives.
-                     - Removed warnings about un-fixed interfaces: now fixed.
+                     - Removed warnings about unfixed interfaces: now fixed.
 v2.0 of 29 Oct 2006  - Major update. Added two new search types:
                        - Added Selection Search with associated criteria.
                          This search checks for routines in a supplied list
@@ -8430,7 +8422,7 @@ v2.2 of 14 Oct 2007  - Updated text search algorithm to find text strings
                      - Added routine's credits and comments to text that is
                        searched.
 v2.3 of 24 Aug 2008  - Added Windows unit to enable inlining in Delphi 2006.
-v2.4 of 04 Oct 2008  - Chanegd TSearchFactory and TSearchCriteriaFactory to
+v2.4 of 04 Oct 2008  - Changed TSearchFactory and TSearchCriteriaFactory to
                        derive from TNoConstructObject and hence prevented
                        them from being constructed.
                      - Changed some private and protected class sections to
@@ -8451,9 +8443,9 @@ v0.2 of 07 Apr 2006  - Added new ssApplication section mapped to ssUser
 v0.3 of 11 Apr 2006  - Deleted unused ISectionStorage interface.
                      - Removed code relating to unused ssGlobal storage.
 v1.0 of 28 May 2006  - Improved and corrected comments.
-                     - Removed warnings about un-fixed interfaces.
+                     - Removed warnings about unfixed interfaces.
                      - Moved unit reference from interface to implementation.
-                     - Changed to get name of CodeSnip's exe file from
+                     - Changed to get name of CodeSnip's .exe file from
                        TAppInfo.AppExeFile.
 v1.1 of 29 Oct 2006  - Added new ssFindXRefs section to store persistent
                        settings for cross-reference search dialogue box.
@@ -8543,8 +8535,8 @@ v1.0 of 19 Jun 2009  - Original version.
 Src\USnippets.pas
 --------------------------------------------------------------------------------
 v0.1 of 30 Jan 2005  - Original version.
-v0.2 of 18 Feb 2005  - Fixed bug where singletion Snippets object was not
-                       being freed when application closes.
+v0.2 of 18 Feb 2005  - Fixed bug where singleton Snippets object was not being
+                       freed when application closes.
 v0.3 of 19 Feb 2005  - Refactoring:
                        - Added check that requires only unique categories can
                          be added to a category list.
@@ -8613,7 +8605,7 @@ v2.1 of 19 Sep 2008  - Modified routine update and deletion methods of
                        of routines that depend on and cross reference a
                        specified routine.
 v2.2 of 21 Sep 2008  - Improved speed of routine searches in routine list by
-                       changing to use binrary search.
+                       changing to use binary search.
                      - Added constructor, Compare method and overloads for
                        "=" and "<>" operators to TRoutineID record.
                      - Removed unused StrToBoolean helper routine.
@@ -8648,11 +8640,11 @@ v2.6 of 10 Jan 2009  - Added overload of ISnippetsEdit.CreateTempRoutine
 v3.0 of 09 Jun 2009  - Added support for difference kinds of snippet.
                        TRoutine modified to have a Kind property that
                        determines if snippet is routine, type, constant or
-                       freeform.
+                       free-form.
                      - Deleted TRoutine.StandardFormat property and
                        associated code.
                      - Added TRoutine.CanCompile method.
-                     - Made Items proptery of IRoutineIDList writeable.
+                     - Made Items property of IRoutineIDList writeable.
                      - Removed TRoutineID, IRoutineIDListEnum,
                        IRoutineIDList and TRoutineIDList. Renamed versions
                        now in USnippetIDs. Private TSnippetIDListEx added to
@@ -8822,16 +8814,16 @@ v1.5 of 13 Jan 2009  - Replaced control char literals with constants.
                      - Made private class section strict.
                      - Deleted unused method.
                      - Now use constants for line width and indent size.
-v2.0 of 06 Jun 2009  - Added support for constants, types and freeform code
+v2.0 of 06 Jun 2009  - Added support for constants, types and free-form code
                        as well as routines to TSourceGen. TRoutine.Kind
                        property now used to get kind of snippet being output.
                      - Pulled out code from TSourceGen that analyses the
                        code to be output into new TSourceAnalyser class.
                      - Pulled out most formatting code from TSourceGen into
-                       new classes that format consts and types and one that
+                       new classes that format constants and types and one that
                        formats routines. Old formatting routines removed.
                      - Added new TConstAndTypeList class to manage order that
-                       consts and types are written to source code.
+                       constants and types are written to source code.
                      - Refactored some TSourceGen code and removed redundant
                        methods.
                      - Renamed TSourceGen's IncludeRoutine & IncludeRoutines
@@ -8899,12 +8891,12 @@ v0.1 of 17 Mar 2005  - Original version. This is a reworking of earlier
 v0.2 of 21 Apr 2005  - Added new IntfHilite unit that contains type
                        declarations formerly in other units.
 v0.3 of 04 Jun 2005  - Changed invalid default font in
-                       TXHTMLHiliter.GetMainCSSStyle from mono to monospace.
+                       TXHTMLHiliter.GetMainCSSStyle from mono to mono-space.
 v1.0 of 25 May 2006  - Improved and corrected comments.
                      - Localised literal HTML document title string.
 v1.1 of 07 Nov 2006  - Changed to use UCSSUtils methods to generate CSS
                        attributes.
-                     - Completely rewrote RTF hiliter using new TRTFBuilder
+                     - Completely rewrote RTF highlighter using new TRTFBuilder
                        class. Also changed class to generate smaller RTF
                        code.
                      - Changed reference to fAttrs private field of parent
@@ -8912,7 +8904,7 @@ v1.1 of 07 Nov 2006  - Changed to use UCSSUtils methods to generate CSS
                        TXHTMLHiliter.
 v1.2 of 25 Nov 2006  - Changed to use new THiliterCSS class to handle CSS
                        generation and class names. As a result removed all
-                       explicit CSS generation and interogation code from
+                       explicit CSS generation and interrogation code from
                        this unit.
                      - Pushed BeforeElem() and AfterElem() methods from
                        TDetailHTMLHiliter and TCHTMLHiliter up into super
@@ -9133,7 +9125,7 @@ v1.2 of 11 Aug 2008  - Replaced calls to ThemeServices with ThemeServicesEx.
                      - Added code to receive notification from
                        ThemeServicesEx when themes change and to update check
                        boxes.
-                     - Fixed bug where wrong checkboxes were drawn when
+                     - Fixed bug where wrong check-boxes were drawn when
                        themes changed.
                      - Added new OnChange event triggered when themes change.
                      - Protected Update event by locks and made method
@@ -9157,7 +9149,7 @@ v0.2 of 18 Feb 2005  - Fixed bug where download manager object was not being
 v0.3 of 19 Feb 2005  - Refactoring: stored name of local backup directory in
                        a TUpdateMgr field and clarified code that restores
                        backups.
-v0.4 of 20 Nov 2005  - Revised to record full and abreviated error messages
+v0.4 of 20 Nov 2005  - Revised to record full and abbreviated error messages
                        describing exceptions in new LongError and ShortError
                        properties.
 v0.5 of 12 Jan 2006  - Fixed error which was swallowing exceptions raised
@@ -9178,10 +9170,10 @@ v0.7 of 02 Apr 2006  - Heavily refactored.
                        affected v0.6 of this unit.
                      - Deleted usStarting state from TUpdateStatus
                        enumeration.
-v0.8 of 03 Apr 2006  - Modified to log on to and log off from webserver using
+v0.8 of 03 Apr 2006  - Modified to log on to and log off from web server using
                        revised download manager object.
                      - Added new status update codes re log on / off.
-v0.9 of 01 May 2006  - Major revision to accomodate new v4 web service. All
+v0.9 of 01 May 2006  - Major revision to accommodate new v4 web service. All
                        handling of download manager is now within this unit.
                        Exposed property to enable callers to access news
                        items downloaded as part of update process.
@@ -9196,7 +9188,7 @@ v1.2 of 24 Aug 2008  - Modified code that determines whether update is needed
                      - Modified visibility specifiers to be strict.
 v1.3 of 13 May 2009  - Changed to use revised TDownloadMgr parameterless
                        constructor.
-                     - Removed second parameter to TUpdateMgr construtor.
+                     - Removed second parameter to TUpdateMgr constructor.
         04 Jul 2009  - IMPORTED TO SVN.
 
 --------------------------------------------------------------------------------
@@ -9205,21 +9197,21 @@ Src\UUserDBBackup.pas
 v1.0 of 13 Sep 2008  - Original version.
 v1.1 of 22 May 2009  - Fixed bug where restoring files greater than 32Kb
                        caused a stream read error. Changed file format to
-                       ver 2 and kept ability to read v1 files.
+                       version 2 and kept ability to read v1 files.
         04 Jul 2009  - IMPORTED TO SVN.
 
 --------------------------------------------------------------------------------
 Src\UUserDBMgr.pas
 --------------------------------------------------------------------------------
 v1.0 of 14 Sep 2008  - Original version.
-v1.1 of 19 Sep 2008  - Now prevents deletion of snippets with dependents.
+v1.1 of 19 Sep 2008  - Now prevents deletion of snippets with dependants.
                      - Referenced routines now listed in deletion prompt.
 v1.2 of 04 Oct 2008  - Changed TUserDBMgr to derive from TNoConstructObject
                        and hence prevented it from being constructed.
                      - Now use ClassName method in all assert and raise EBug
                        statements.
 v1.3 of 15 Dec 2008  - Fixed minor bug where open and save dialogues could
-                       incorrectly identify existance of a file.
+                       incorrectly identify existence of a file.
 v1.4 of 14 Jan 2009  - Replaced control char literals with constants.
 v1.5 of 06 Jun 2009  - Changed to use TSnippetID and ISnippetIDList instead
                        of TRoutineID and IRoutineIDList.
@@ -9238,7 +9230,7 @@ v0.5 of 20 Jan 2006  - Made IsDirectory function accessible from other units
                        by moving prototype to interface section.
 v1.0 of 24 May 2006  - Improved and corrected comments.
                      - Relocated and rationalised $WARN directives.
-                     - Removed units names preceeding several routine calls
+                     - Removed units names preceding several routine calls
                        and constants.
                      - Moved some unit references from interface to
                        implementation.
@@ -9255,7 +9247,7 @@ v1.3 of 12 Feb 2007  - Added new MakeSentence function.
                        IncludeTrailingPathDelimiter and
                        ExcludeTrailingPathDelimiter respectively.
                      - Reimplemented EnsureFolders using ForceDirectories
-                       from SysUtils and changed parameter to a const.
+                       from SysUtils and changed parameter to a constant.
 v1.4 of 17 Feb 2007  - Added new GetIntf procedure.
 v1.5 of 02 Jul 2007  - Added new StripWhiteSpace and CapitaliseWords
                        routines.
@@ -9264,13 +9256,13 @@ v1.5 of 02 Jul 2007  - Added new StripWhiteSpace and CapitaliseWords
                      - Changed all routines that process white space to use
                        new cWhiteSpaceChars constant.
 v1.6 of 30 May 2008  - Removed unused GetFileDate and SetFileDate routines.
-v1.7 of 24 Aug 2008  - Provided work-arounds for deprecated warnings in
-                       Delphi 2006:
+v1.7 of 24 Aug 2008  - Provided workarounds for deprecated warnings in Delphi
+                       2006:
                        - Redeclared SysUtils faVolume attribute.
                        - Added FileAge routine to replace SysUtils version.
-v1.8 of 08 Sep 2008  - Added TrimsStrs param to ExplodeStr routine that trims
-                       leading and trailing spaces from fields stripped from
-                       string.
+v1.8 of 08 Sep 2008  - Added TrimsStrs parameter to ExplodeStr routine that
+                       trims leading and trailing spaces from fields stripped
+                       from string.
                      - Added FileToString and supporting StreamToString
                        routines moved from UIniDataReader unit.
                      - Modified ListFiles to optionally exclude directory
@@ -9472,7 +9464,7 @@ Src\UWBHighlighter.pas
 --------------------------------------------------------------------------------
 v0.1 of 28 Feb 2005  - Original version.
 v1.0 of 25 May 2006  - Improved and corrected comments.
-                     - Deleted redundant const in TWBHighlighter.Create.
+                     - Deleted redundant constant in TWBHighlighter.Create.
 v1.1 of 07 Nov 2006  - Changed to use UCSSUtils methods to generate CSS
                        attributes.
 v1.2 of 17 Feb 2007  - We now create text ranges by calling a method of
@@ -9580,7 +9572,7 @@ v1.2 of 11 Feb 2007  - Added ShowUI and HideUI method overrides that trigger
                        original event.
 v2.0 of 17 Feb 2007  - Added significant new functionality over and above
                        IDocHostUIHandler implementation. Extended to provide
-                       methods to execute commands in and interogate browser
+                       methods to execute commands in and interrogate browser
                        control and current document. Specifically:
                        - Added CanCopy, CanSelectAll, CopyToClipboard,
                          SelectAll, ClearSelection, ScrollTo and DocHeight
@@ -9592,7 +9584,7 @@ v2.0 of 17 Feb 2007  - Added significant new functionality over and above
                          Made property read only.
                        - Removed OnCommandStateChange event handler - was
                          only used to record text selection.
-v2.1 of 13 May 2007  - Added new PopupMenu property that assigns popup menu
+v2.1 of 13 May 2007  - Added new PopupMenu property that assigns pop-up menu
                        to browser control.
                      - Added test to CanSelectAll to check whether
                        AllowTextSelection is true.
@@ -9674,7 +9666,7 @@ v1.5 of 28 Dec 2008  - Modified to support new TRoutine.Extra property.
 v1.6 of 14 Jan 2009  - Replaced control char literals with constants.
 v1.7 of 06 Jun 2009  - Updated to write v3 files that have no StandardFormat
                        nodes but instead have Kind nodes that specify the
-                       kind of snippet: routine, const, type or freeform.
+                       kind of snippet: routine, constant, type or free-form.
                      - Reader code can handle v1..v3 formats.
                      - Changed code that reads old StandardFormat property to
                        use TXMLDocHelper class.
@@ -9687,9 +9679,9 @@ v1.7 of 06 Jun 2009  - Updated to write v3 files that have no StandardFormat
 Src\UXMLDocConsts.pas
 --------------------------------------------------------------------------------
 v1.0 of 17 Sep 2008  - Original version.
-v1.1 of 27 Dec 2008  - Added const for new "extra" node supported by v2 XML
+v1.1 of 27 Dec 2008  - Added constant for new "extra" node supported by v2 XML
                        documents.
-v1.2 of 16 May 2009  - Added const for new "kind" node supported by v3 XML
+v1.2 of 16 May 2009  - Added constant for new "kind" node supported by v3 XML
                        documents.
         04 Jul 2009  - IMPORTED TO SVN.
 
@@ -9754,8 +9746,8 @@ Src\Help\CodeSnip.hhp
 14 Jan 2006 - Added HTML files for all new topics.
 06 Apr 2006 - Added new files re new topics associated with registration.
 29 Oct 2006 - Added new topic files.
-12 Nov 2006 - Added License topic file.
-18 Nov 2006 - Added Join Mailing List Dialog topic file.
+12 Nov 2006 - Added "License" topic file.
+18 Nov 2006 - Added "Join Mailing List Dialog" topic file.
 04 Sep 2007 - Added new topics re new print functionality and revised
               preferences dialogue box.
 10 Aug 2008 - Added topics for Choose Element Colour dialogue box and Select
@@ -9780,7 +9772,7 @@ Src\Help\Index.hhk
 06 Apr 2006 - Added new index entries relating to registration and mailing list.
 29 Oct 2006 - Added index entries for new dialogue boxes and tasks.
 12 Nov 2006 - Added privacy statement and license to index.
-18 Nov 2006 - Added Join Mailing List Dialog to index.
+18 Nov 2006 - Added "Join Mailing List Dialog" topic to index.
 03 Dec 2006 - Corrected error in index - update from web dialogue box entry was
               displaying wrong topic.
 04 Sep 2007 - Added new index entries re new printing and revised preferences
@@ -9819,7 +9811,7 @@ Src\Help\Bmp\About.bmp
 --------------------------------------------------------------------------------
 Src\Help\Bmp\Blank.bmp
 --------------------------------------------------------------------------------
-05 Mar 2005 - New placeholder bitmap for inclusion in help file
+05 Mar 2005 - New place=holder bitmap for inclusion in help file
 30 Nov 2005 - DELETED.
 
 --------------------------------------------------------------------------------
@@ -9979,7 +9971,7 @@ Src\Help\HTML\dlg_about.htm
 07 Apr 2006 - Updated with information about registration information and button
               that can appear in dialogue.
 04 Jun 2006 - Added Mozilla public license statement.
-            - Changed to use CSS class for image rather than inline style.
+            - Changed to use CSS class for image rather than in-line style.
 14 Nov 2006 - Added link to license topic.
             - Made minor changes to other text.
 11 Feb 2007 - Revised About Box topic to describe revised dialogue box.
@@ -10071,7 +10063,7 @@ Src\Help\HTML\dlg_findcompiler.htm
 14 Jan 2006 - Replaced dashes with n-dashes.
             - Tidied HTML.
 04 Jun 2006 - Added Mozilla public license statement.
-            - Changed to use CSS class for image rather than inline style.
+            - Changed to use CSS class for image rather than in-line style.
             - Made minor changes to content.
 29 Oct 2006 - Corrected an error and clarified some text.
 07 Jun 2009 - Changed references to "routines" to "snippets".
@@ -10084,7 +10076,7 @@ Src\Help\HTML\dlg_findtext.htm
 10 Jan 2006 - Completed Find Text dialogue box topic.
 14 Jan 2006 - Tidied HTML.
 04 Jun 2006 - Added Mozilla public license statement.
-            - Changed to use CSS class for image rather than inline style.
+            - Changed to use CSS class for image rather than in-line style.
             - Made minor changes to content.
 29 Oct 2006 - Corrected typo.
 04 Jul 2009 - IMPORTED TO SVN.
@@ -10168,7 +10160,7 @@ Src\Help\HTML\dlg_prefs_sourcecode.htm
 Src\Help\HTML\dlg_print.htm
 --------------------------------------------------------------------------------
 07 Sep 2007 - New HTML Help topic for Print dialogue box.
-07 Jun 2009 - Replaced occurences of "routine" with "snippet".
+07 Jun 2009 - Replaced occurrences of "routine" with "snippet".
 04 Jul 2009 - IMPORTED TO SVN.
 
 --------------------------------------------------------------------------------
@@ -10196,7 +10188,7 @@ Src\Help\HTML\dlg_savesnippet.htm
             - Tidied HTML.
 11 Apr 2006 - Removed reference to Save Snippet toolbar button.
 04 Jun 2006 - Added Mozilla public license statement.
-            - Changed to use CSS class for image rather than inline style.
+            - Changed to use CSS class for image rather than in-line style.
             - Made minor changes to content.
 28 Oct 2006 - Made minor change to text.
 13 May 2007 - Noted that text can now be selected and copied in preview dialogue
@@ -10209,8 +10201,8 @@ Src\Help\HTML\dlg_saveunit.htm
 28 Oct 2006 - New HTML Help topic that describes use of Save Unit dialogue box.
 13 May 2007 - Noted that text can now be selected and copied in preview dialogue
               box.
-07 Jun 2009 - Occurences of "routine" replaced by "snippet" and fact that
-              freeform snippets are not exported noted.
+07 Jun 2009 - Occurrences of "routine" replaced by "snippet" and fact that
+              free-form snippets are not exported noted.
 04 Jul 2009 - IMPORTED TO SVN.
 
 --------------------------------------------------------------------------------
@@ -10241,19 +10233,19 @@ Src\Help\HTML\dlg_submit.htm
 Src\Help\HTML\dlg_update.htm
 --------------------------------------------------------------------------------
 27 Nov 2005 - New Database Update dialogue box HTML Help topic.
-14 Jan 2006 - Changed title and main heading from Download Updates Dialog Box to
-              Update from Web Dialog Box.
+14 Jan 2006 - Changed title and main heading from "Download Updates Dialog Box"
+              to "Update from Web Dialog Box".
             - Tidied HTML.
-01 May 2006 - Modified topic re changes to Update from Web dialog box.
+01 May 2006 - Modified topic re changes to "Update from Web" dialogue box.
 04 Jun 2006 - Added Mozilla public license statement.
-            - Changed to use CSS class for image rather than inline style.
+            - Changed to use CSS class for image rather than in-line style.
             - Replaced contact email address with link to web site's contact
               page.
             - Made minor changes to text.
 14 Aug 2008 - Added note that database updates apply to all users.
 11 Sep 2008 - Changed to refer to Database menu instead of File menu for
               database update menu option.
-07 Jun 2009 - Fixed text formatting and HTML markup errors.
+07 Jun 2009 - Fixed text formatting and HTML mark-up errors.
             - Minor editorial changes.
 04 Jul 2009 - IMPORTED TO SVN.
 
@@ -10285,7 +10277,7 @@ Src\Help\HTML\main_display.htm
 --------------------------------------------------------------------------------
 14 Jan 2006 - New HTML Help topic describing program's main display.
 04 Jun 2006 - Added Mozilla public license statement.
-03 Feb 2007 - Modified re enahanced status bar.
+03 Feb 2007 - Modified re enhanced status bar.
 07 Jun 2009 - Changed references to "routines" to "snippets"
             - Corrected some text.
 04 Jul 2009 - IMPORTED TO SVN.
@@ -10352,7 +10344,7 @@ Src\Help\HTML\menu_file.htm
             - Revised Save Snippet entry.
 01 Dec 2006 - Noted that sometimes a message dialogue box my appear during test
               compilations.
-04 Sep 2007 - Added entries for new Page Setup and Print menu items.
+04 Sep 2007 - Added entries for new "Page Setup" and "Print" menu items.
 09 Sep 2008 - Removed menu items that are now in Database menu.
 07 Jun 2009 - Corrected error.
             - Changed to refer to snippets instead of routines.
@@ -10380,7 +10372,7 @@ Src\Help\HTML\menu_help.htm
               rather than external license file.
             - Added link to license topic.
 22 Sep 2007 - Modified re rearranged license menu item.
-            - Added entry for privacy statemen
+            - Added entry for privacy statement.
 10 May 2009 - Added entry for new Help | Donate menu option.
 17 Jun 2009 - Added challenge to find the Easter Egg.
             - Changed to refer to snippets instead of routines
@@ -10399,8 +10391,8 @@ Src\Help\HTML\menu_search.htm
 04 Jun 2006 - Added Mozilla public license statement.
             - Changed to use new menu table styling.
             - References to Overview Pane changed into links.
-28 Oct 2006 - Added entries for new Select Routines and Finds Cross Refs menu
-              items.
+28 Oct 2006 - Added entries for new "Select Routines" and "Finds Cross Refs"
+              menu items.
 01 Dec 2006 - Fixed minor error.
 07 Jun 2009 - Revised re changes to the Search menu.
             - Changed to refer to snippets instead of routines.
@@ -10421,7 +10413,7 @@ Src\Help\HTML\menu_tools.htm
 28 Oct 2006 - Corrected error in text.
 12 Nov 2006 - Swapped position of Preferences and Configure Compilers menu item
               descriptions in table to reflect changed positions in menu.
-18 Nov 2006 - Added entry for new Join Mailist List menu option.
+18 Nov 2006 - Added entry for new "Join Mailist List" menu option.
 04 Jul 2009 - IMPORTED TO SVN.
 
 --------------------------------------------------------------------------------
@@ -10458,7 +10450,7 @@ Src\Help\HTML\overview_pane.htm
 --------------------------------------------------------------------------------
 27 Nov 2005 - New Overview of application HTML Help topic. Named overview.htm.
 14 Jan 2006 - Renamed from overview.htm.
-            - Replaced "To do" placeholder with topic text.
+            - Replaced "To do" place-holder with topic text.
             - Changed title and main heading from Overview to Overview Pane.
             - Tidied HTML.
 04 Jun 2006 - Added Mozilla public license statement.
@@ -10476,7 +10468,7 @@ Src\Help\HTML\privacy_statement.htm
               Report web services.
 04 Jun 2006 - Added Mozilla public license statement.
             - Completely rewrote as a more comprehensive statement.
-28 Oct 2006 - Syncronised content with text file version.
+28 Oct 2006 - Synchronised content with text file version.
 18 Nov 2006 - Added section about mailing list subscription.
 14 Aug 2008 - Revised section that discusses ini files to refer to Common.ini
               and User.ini instead of CodeSnip.ini.
@@ -10489,7 +10481,7 @@ Src\Help\HTML\privacy_statement.htm
 --------------------------------------------------------------------------------
 Src\Help\HTML\quickstart.htm
 --------------------------------------------------------------------------------
-27 Nov 2005 - New Quickstart guide HTML Help topic.
+27 Nov 2005 - New "Quickstart" guide HTML Help topic.
 14 Jan 2006 - Added reference to Update Database toolbar button in database
               download section.
             - Added links to relevant new topics.
@@ -10512,7 +10504,7 @@ Src\Help\HTML\quickstart.htm
 --------------------------------------------------------------------------------
 Src\Help\HTML\reml.htm
 --------------------------------------------------------------------------------
-23 Jun 2009 - New HTML Help topic for REML markup language.
+23 Jun 2009 - New HTML Help topic for REML mark-up language.
 04 Jul 2009 - IMPORTED TO SVN.
 
 --------------------------------------------------------------------------------
@@ -10524,7 +10516,7 @@ Src\Help\HTML\snippet_constant.htm
 --------------------------------------------------------------------------------
 Src\Help\HTML\snippet_freeform.htm
 --------------------------------------------------------------------------------
-08 Jun 2009 - New HTML Help topic that explains freeform snippets.
+08 Jun 2009 - New HTML Help topic that explains free-form snippets.
 04 Jul 2009 - IMPORTED TO SVN.
 
 --------------------------------------------------------------------------------
@@ -10597,7 +10589,7 @@ Src\Help\HTML\task_generateunit.htm
 --------------------------------------------------------------------------------
 28 Oct 2006 - New HTML Help topic that describes how to generate a Pascal unit.
 07 Jun 2009 - Modified to refer to snippets rather than routines
-            - Noted that freeform snippets can't be included in a unit.
+            - Noted that free-form snippets can't be included in a unit.
 04 Jul 2009 - IMPORTED TO SVN.
 
 --------------------------------------------------------------------------------
@@ -10682,7 +10674,7 @@ Src\Help\HTML\welcome.htm
 10 Apr 2006 - Modified external web link to create new browser window.
 04 Jun 2006 - Added Mozilla public license statement.
             - Made minor changes to text.
-29 Oct 2006 - Ammended to note that complete units can be generated.
+29 Oct 2006 - Amended to note that complete units can be generated.
 03 Dec 2006 - Fixed typo.
 10 Sep 2008 - Noted that user's routines can be added to the database.
 07 Jun 2009 - Updated re new welcome page.
@@ -10769,7 +10761,7 @@ Src\Help\Images\EditSnippet.gif
 --------------------------------------------------------------------------------
 Src\Help\Images\Exit.gif
 --------------------------------------------------------------------------------
-26 Nov 2005 - New Exit application aciton glyph.
+26 Nov 2005 - New Exit application action glyph.
 04 Jul 2009 - IMPORTED TO SVN.
 
 --------------------------------------------------------------------------------
@@ -10799,7 +10791,7 @@ Src\Help\Images\FindText.gif
 --------------------------------------------------------------------------------
 Src\Help\Images\FindXRefs.gif
 --------------------------------------------------------------------------------
-28 Oct 2006 - New Find Cross Refs action glyph.
+28 Oct 2006 - New "Find Cross Refs" action glyph.
 04 Jul 2009 - IMPORTED TO SVN.
 
 --------------------------------------------------------------------------------
@@ -11003,11 +10995,11 @@ v1.56 of 05 Nov 2007 - Updated to reference release 1.8.3.
 v2.0 of 21 Apr 2008  - Re-written to work with ISPP pre-processor.
                      - Now automatically gets version number from CodeSnip.exe
                        removing need to update this file for each release.
-                     - Most paths, files and other app information now
+                     - Most paths, files and other application information now
                        represented by pre-processor macros.
 v2.1 of 30 May 2008  - Removed option to create desktop icon.
                      - Removed isreadme flag from files section and added
-                       display of readme file to run section.
+                       display of read-me file to run section.
 v2.2 of 14 Aug 2008  - Included new DataLocations.ps, EventHandler.ps and
                        UpdateDBase.ps scripts to enable database and config
                        to be moved to new locations if necessary.
@@ -11078,8 +11070,8 @@ v2.0 of 14 Aug 2008  - Major update: added support for twin per-user and
                        - Redundant code removed.
 v3.0 of 15 Jun 2009  - Heavily revised to updated ini files required by
                        CodeSnip v3.0 and later:
-                       - Now delete source hiliting from config files created
-                         by earlier versions than CodeSnip 3.x.
+                       - Now delete source highlighting from config files
+                         created by earlier versions than CodeSnip 3.x.
                        - Source code formatting from CodeSnip prior to v1.7
                          is now lost.
                        - Modified to deal with new user ini file name.
@@ -11092,7 +11084,7 @@ v3.0 of 15 Jun 2009  - Heavily revised to updated ini files required by
 Src\InstallHelper\Build.bat
 --------------------------------------------------------------------------------
 v1.0 of 14 Aug 2008  - First version.
-v1.1 of 24 Aug 2008  - Modified to work witrh Delphi 2006
+v1.1 of 24 Aug 2008  - Modified to work with Delphi 2006
         04 Jul 2009  - IMPORTED TO SVN.
 
 --------------------------------------------------------------------------------
@@ -11173,7 +11165,7 @@ Src\Res\HTML\comp-routine-dbase-tplt.html
 --------------------------------------------------------------------------------
 v0.1 of 20 Feb 2005  - Original version.
 v0.2 of 19 Apr 2005  - Prefixed "Compile" to compile button hint.
-                     - Moved these comments below xml and doctype tags.
+                     - Moved these comments below XML and DOCTYPE tags.
 v0.3 of 25 Apr 2005  - Added links to display About Compiler Checks help topic
                        and Configure Compilers dialogue box.
                      - JavaScript now used to write HTML for Test Compile
@@ -11200,7 +11192,7 @@ v1.3 of 26 Nov 2006  - Replaced direct calls to external object with calls to
 Src\Res\HTML\comp-routine-test-tplt.html
 --------------------------------------------------------------------------------
 v0.1 of 20 Feb 2005  - Original version.
-v0.2 of 19 Apr 2005  - Moved these comments below xml and doctype tags.
+v0.2 of 19 Apr 2005  - Moved these comments below XML and DOCTYPE tags.
 v0.3 of 25 Apr 2005  - Added links to display About Compiler Checks help topic
                        and Configure Compilers dialogue box.
 v0.4 of 03 Jun 2005  - Now contains only inner HTML of body tag rather than
@@ -11228,13 +11220,13 @@ v1.1 of 04 Dec 2006  - Modified View/Hide Test Unit link's onmouseover and
                        onmouseout events to call enterTestUnitLink() and
                        exitTestUnitLink() rather than showHint() and
                        clearHint().
-                     - Added new viewunitimg img to View Test Unit image to
+                     - Added new viewunitimg image to View Test Unit image to
                        allow image to be changed.
 v1.2 of 17 Dec 2006  - Changed help text link to use .help-link CSS class.
 v1.3 of 18 Oct 2007  - Added "return false;" statement to end of each onclick
                        event that didn't already have it.
 v1.4 of 03 Nov 2007  - Updated link class names to designate link type and
-                       links to be included in popup menus.
+                       links to be included in pop-up menus.
 v1.5 of 04 Nov 2007  - Changed to display help via "help:" protocol rather
                        than using JavaScript calls.
 v1.6 of 14 Sep 2008  - Added extra ids to enable toggle unit and test compile
@@ -11268,7 +11260,7 @@ v2.1 of 19 Jun 2009  - Removed HTML divs that were used to display test unit.
 Src\Res\HTML\comp-welcome.html
 --------------------------------------------------------------------------------
 v0.1 of 20 Feb 2005  - Original version
-v0.2 of 19 Apr 2005  - Moved these comments below xml and doctype tags
+v0.2 of 19 Apr 2005  - Moved these comments below XML and DOCTYPE tags
         25 May 2005  - DELETED.
 
 --------------------------------------------------------------------------------
@@ -11281,7 +11273,7 @@ v0.2 of 20 Feb 2005  - Deleted redundant styles and added those needed for
 v0.3 of 10 Mar 2005  - Added .pas-* classes to use in syntax highlighting of
                        pascal source if detail pane.
 v0.4 of 16 Mar 2005  - Changed pascal comment class to use same colour as
-                       default hilighting used elsewhere. Also changed pascal
+                       default highlighting used elsewhere. Also changed pascal
                        classes to use hex colour numbers rather than names.
 v0.5 of 25 Apr 2005  - Added new .hilite class.
 v1.0 of 04 Jun 2006  - Reformatted update log comments.
@@ -11315,7 +11307,7 @@ v2.0 of 25 Jan 2009  - Removed all except getInnerText() routine. This script
 Src\Res\HTML\detail-compcheck.html
 --------------------------------------------------------------------------------
 v0.1 of 03 Jun 2005  - Original version named comp-blank.html.
-v0.2 of 28 Jan 2006  - Removed xml processing instruction because it caused
+v0.2 of 28 Jan 2006  - Removed XML processing instruction because it caused
                        some display problems on some OSs (e.g. Win2K).
 v1.0 of 04 Jun 2006  - Reformatted update log comments.
                      - Changed to Mozilla Public License.
@@ -11366,7 +11358,7 @@ v1.1 of 22 Sep 2007  - Modified to list testers as well as contributors.
                      - Created internal styles to format list of contributors
                        / testers list.
 v1.2 of 14 Oct 2007  - Fixed typo in Credits section.
-v1.3 of 21 Apr 2008  - Increased height of scrollbox.
+v1.3 of 21 Apr 2008  - Increased height of scroll-box.
 v1.4 of 14 Sep 2008  - Fixed tag mismatch and replaced literal quotes with
                        entities.
                      - Made "Credits" heading bold.
@@ -11382,7 +11374,7 @@ Src\Res\HTML\dlg-about-head-tplt.html
 v1.0 of 11 Feb 2007  - Original version.
 v1.1 of 27 May 2009  - Added "icon" id to img element that displays icon and
                        a title advising to ctrl-click the icon (displays
-                       easter egg).
+                       Easter egg).
                      - Changed sub-title to denote CodeSnip now a database
                        manager as well as viewer.
         04 Jul 2009  - IMPORTED TO SVN.
@@ -11393,17 +11385,17 @@ Src\Res\HTML\dlg-about-program-tplt.html
 v0.1 of 20 Jan 2005  - Original version named about.html.
 v0.2 of 20 Jan 2005  - Renamed as dlg-about-tplt.html.
                      - Changed page title to file name without extension.
-v0.3 of 01 Jan 2005  - Restyled to include "powered by delphi" image and to
+v0.3 of 01 Jan 2005  - Restyled to include "Powered by Delphi" image and to
                        add program name and version number to white pane with
                        image.
                      - Added ResURL template id that maps to HTML resources.
-v0.4 of 19 Jan 2005  - Moved these comments below xml and doctype tags.
+v0.4 of 19 Jan 2005  - Moved these comments below XML and DOCTYPE tags.
 v0.5 of 14 Jan 2006  - Added credits for 3rd party MD5 code.
-v0.6 of 07 Apr 2006  - Added placeholder for registration information.
+v0.6 of 07 Apr 2006  - Added place-holder for registration information.
 v1.0 of 08 Jun 2006  - Reformatted update log comments.
                      - Changed link re source code to CodeSnip home page.
                      - Changed to Mozilla Public License.
-                     - Removed "powered by delphi" image.
+                     - Removed "Powered by Delphi" image.
 v1.1 of 21 Oct 2006  - Removed all target attributes from a-links.
                      - Added AppExePath template id that maps to path of
                        program's executable file (used for location of
@@ -11438,7 +11430,7 @@ v0.2 of 20 Feb 2005  - Renamed as dlg-comperror-tplt.html.
                      - Changed page title to file name without extension.
 v0.3 of 04 Mar 2005  - Changed <%Delphi%> template code to <%CompilerID%>.
                      - Restyled title line of HTML.
-v0.4 of 19 Apr 2005  - Moved these comments below xml and doctype tags.
+v0.4 of 19 Apr 2005  - Moved these comments below XML and DOCTYPE tags.
 v1.0 of 04 Jun 2006  - Reformatted update log comments.
                      - Changed to Mozilla Public License.
         04 Jul 2009  - IMPORTED TO SVN.
@@ -11494,7 +11486,8 @@ Src\Res\HTML\external.js
 --------------------------------------------------------------------------------
 v1.0 of 26 Nov 2006  - Original version.
 v1.1 of 04 Nov 2007  - Removed helpTopic() function. No longer required.
-v1.2 of 14 Sep 2008  - Added "userdefined" param to displayRoutine() routine.
+v1.2 of 14 Sep 2008  - Added "userdefined" parameter to displayRoutine()
+                       routine.
                      - Added new editRoutine() function.
 v1.3 of 17 Jun 2009  - Modified to work with v5 external object:
                        - Removed redundant toggleTestUnit() function.
@@ -11507,7 +11500,7 @@ v1.3 of 17 Jun 2009  - Modified to work with v5 external object:
 Src\Res\HTML\info-blank.html
 --------------------------------------------------------------------------------
 v0.1 of 03 Jun 2005  - Original version.
-v0.2 of 28 Jan 2006  - Removed xml processing instruction because it caused
+v0.2 of 28 Jan 2006  - Removed XML processing instruction because it caused
                        some display problems on some OSs (e.g. Win2K).
 v1.0 of 04 Jun 2006  - Reformatted update log comments.
                      - Changed to Mozilla Public License.
@@ -11520,19 +11513,19 @@ v1.1 of 26 Nov 2006  - Included new external.js JavaScript file.
 Src\Res\HTML\info-empty-selection-tplt.html
 --------------------------------------------------------------------------------
 v0.1 of 20 Feb 2005  - Original version, named info-category-empty-tplt.html.
-v0.2 of 19 Apr 2005  - Moved these comments below xml and doctype tags.
+v0.2 of 19 Apr 2005  - Moved these comments below XML and DOCTYPE tags.
 v0.3 of 03 Jun 2005  - Now contains only inner HTML of body tag rather than
                        complete XHTML document.
 v1.0 of 04 Jun 2006  - Reformatted update log comments.
                      - Changed to Mozilla Public License.
-v1.1 of 14 Sep 2008  - Added new <%H1Class%> placeholder for CSS class name
+v1.1 of 14 Sep 2008  - Added new <%H1Class%> place-holder for CSS class name
                        used in heading.
 v2.0 of 07 Jun 2009  - Revised template for use with any view item that
                        normally displays a table of snippets where there are
                        no snippets to display.
-                       - Replaced <%Cat%> placeholder as <%Heading%>.
+                       - Replaced <%Cat%> place-holder as <%Heading%>.
                        - Replaced literal note text with <%Note%>
-                         placeholder.
+                         place-holder.
                      - Renamed as info-empty-selection-tplt.html.
         04 Jul 2009  - IMPORTED TO SVN.
 
@@ -11540,18 +11533,18 @@ v2.0 of 07 Jun 2009  - Revised template for use with any view item that
 Src\Res\HTML\info-snippet-list-tplt.html
 --------------------------------------------------------------------------------
 v0.1 of 20 Feb 2005  - Original version, named info-category-list-tplt.html.
-v0.2 of 19 Apr 2005  - Moved these comments below xml and doctype tags.
+v0.2 of 19 Apr 2005  - Moved these comments below XML and DOCTYPE tags.
 v0.3 of 03 Jun 2005  - Now contains only inner HTML of body tag rather than
                        complete XHTML document.
 v1.0 of 04 Jun 2006  - Reformatted update log comments.
                      - Changed to Mozilla Public License.
 v1.1 of 25 Nov 2006  - Removed border attribute from table tag.
-v1.2 of 14 Sep 2008  - Added new <%H1Class%> placeholder for CSS class name
+v1.2 of 14 Sep 2008  - Added new <%H1Class%> place=holder for CSS class name
                        used in heading.
 v2.0 of 07 Jun 2009  - Revised template for use with any view item that
                        displays a table of snippets.
                        - Replaced opening paragraph text with <%Narrative%>
-                         placeholder.
+                         place-holder.
                        - Renamed <%Cat%> has <%Heading%>
                      - Renamed as info-snippet-list-tplt.html.
         04 Jul 2009  - IMPORTED TO SVN.
@@ -11560,7 +11553,7 @@ v2.0 of 07 Jun 2009  - Revised template for use with any view item that
 Src\Res\HTML\info-snippet-tplt.html
 --------------------------------------------------------------------------------
 v0.1 of 20 Feb 2005  - Original version, named info-routine-tplt.html.
-v0.2 of 19 Apr 2005  - Moved these comments below xml and doctype tags.
+v0.2 of 19 Apr 2005  - Moved these comments below XML and DOCTYPE tags.
 v0.3 of 03 Jun 2005  - Now contains only inner HTML of body tag rather than
                        complete XHTML document.
 v1.0 of 04 Jun 2006  - Reformatted update log comments.
@@ -11571,16 +11564,16 @@ v2.0 of 03 Dec 2006  - Removed all template placeholders except compiler
                        to be updated via DHTML.
 v2.1 of 14 Sep 2008  - Added "Edit snippet" link to title line that can be
                        hidden dynamically for non-user defined routines. This
-                       link has classes that make it alos appear in context
+                       link has classes that make it also appear in context
                        menus.
 v3.0 of 25 Jan 2009  - Reinstated and modified template placeholders to
                        be used instead of dynamic updating via DHTML.
 v3.1 of 20 Jun 2009  - Replaced reference to "routines" with "snippets".
                      - Added new "snippet type" paragraph and <%Kind%>
-                       placeholder.
+                       place-holder.
                      - Added div round compiler table that can show or hide
-                       it depending on new <%ShowCompilations%> placeholder.
-                     - Replaced <p> tag round <%Extra%> placeholder with a
+                       it depending on new <%ShowCompilations%> place-holder.
+                     - Replaced <p> tag round <%Extra%> place-holder with a
                        <div>: One or more <p> tags now added as part of
                        template replacement.
                      - Renamed as info-snippet-tplt.html.
@@ -11590,7 +11583,7 @@ v3.1 of 20 Jun 2009  - Replaced reference to "routines" with "snippets".
 Src\Res\HTML\info-uncatheader-tplt.html
 --------------------------------------------------------------------------------
 v0.1 of 20 Feb 2005  - Original version.
-v0.2 of 19 Apr 2005  - Moved these comments below xml and doctype tags.
+v0.2 of 19 Apr 2005  - Moved these comments below XML and DOCTYPE tags.
 v0.3 of 03 Jun 2005  - Now contains only inner HTML of body tag rather than
                        complete XHTML document.
 v1.0 of 04 Jun 2006  - Reformatted update log comments.
@@ -11605,11 +11598,11 @@ v0.1 of 16 Jan 2005  - Original version named nocompcheck.html.
 v0.2 of 20 Feb 2005  - Revised to include options box.
                      - Renamed as comp-na.html.
                      - Changed page title to file name without extension.
-v0.3 of 19 Apr 2005  - Moved these comments below xml and doctype tag.
+v0.3 of 19 Apr 2005  - Moved these comments below XML and DOCTYPE tag.
 v0.4 of 25 Apr 2005  - Changed to use external.HelpTopic method to display
                        the About Compiler Checks help topic rather than
                        QuickStart help.
-v0.5 of 28 Jan 2006  - Removed xml processing instruction because it caused
+v0.5 of 28 Jan 2006  - Removed XML processing instruction because it caused
                        some display problems on some OSs (e.g. Win2K).
 v1.0 of 04 Jun 2006  - Reformatted update log comments.
                      - Changed to Mozilla Public License.
@@ -11642,7 +11635,7 @@ v1.9 of 14 Sep 2008  - Added class option-img to images related to menu
 v2.0 of 19 Jan 2009  - Renamed as nocompcheck-body.html.
                      - Changed from complete HTML document to provide inner
                        HTML of and existing HTML document:
-                       - doctype and <html> tags removed
+                       - DOCTYPE and <html> tags removed
                        - all <head> section, including scripts, removed.
                        - <body> tags removed.
 v2.1 of 16 Jun 2009  - Replaced reference to "routines" with "snippets".
@@ -11654,10 +11647,10 @@ Src\Res\HTML\nodata-welcome.html
 --------------------------------------------------------------------------------
 v0.1 of 20 Feb 2005  - Original version.
 v0.2 of 23 Feb 2005  - Provided information on how to download.
-v0.3 of 19 Apr 2005  - Moved these comments below xml and doctype tags.
+v0.3 of 19 Apr 2005  - Moved these comments below XML and DOCTYPE tags.
 v0.4 of 25 Apr 2005  - Changed to use external.HelpTopic method rather than
                        obsolete external.QuickStartHelp in option box.
-v0.5 of 28 Jan 2006  - Removed xml processing instruction because it caused
+v0.5 of 28 Jan 2006  - Removed XML processing instruction because it caused
                        some display problems on some OSs (e.g. Win2K).
 v1.0 of 04 Jun 2006  - Reformatted update log comments.
                      - Changed to Mozilla Public License.
@@ -11680,7 +11673,7 @@ v1.5 of 15 Dec 2006  - Changed help text link to use .help-link CSS class.
 v1.6 of 18 Oct 2007  - Added "return false;" statement to end of each onclick
                        event.
 v1.7 of 03 Nov 2007  - Updated link class names to designate link type and
-                       links to be included in popup menus.
+                       links to be included in pop-up menus.
                      - Changed case of some link text.
 v1.8 of 04 Nov 2007  - Changed to display help via "help:" protocol rather
                        than using JavaScript calls.
@@ -11691,18 +11684,18 @@ Src\Res\HTML\welcome-tplt.html
 --------------------------------------------------------------------------------
 v0.1 of 20 Feb 2005  - Original version.
 v0.2 of 23 Feb 2005  - Expanded information about using program.
-v0.3 of 19 Apr 2005  - Moved these comments below xml and doctype tags.
+v0.3 of 19 Apr 2005  - Moved these comments below XML and DOCTYPE tags.
 v0.4 of 25 Apr 2005  - Changed to use external.HelpTopic method rather than
                        obsolete external.QuickStartHelp in option box.
                      - Renamed from info-welcome.html to welcome.html,
                        rephrased text and highlighted tab and menu names.
-v0.5 of 28 Jan 2006  - Removed xml processing instruction because it caused
+v0.5 of 28 Jan 2006  - Removed XML processing instruction because it caused
                        some display problems on some OSs (e.g. Win2K).
 v1.0 of 04 Jun 2006  - Reformatted update log comments.
                      - Changed to Mozilla Public License.
 v1.1 of 22 Oct 2006  - Added link to online database.
                      - Added reference to new detail-consts.js script and
-                       changed all literal hints and help keywrods to use
+                       changed all literal hints and help keywords to use
                        variables from it.
 v1.2 of 26 Oct 2006  - Changed do-nothing links that referenced '#' to call
                        javascript:void(0) instead.
@@ -11713,13 +11706,13 @@ v1.4 of 26 Nov 2006  - Included new external.js JavaScript file.
                      - Replaced direct calls to external object with calls to
                        functions in external.js.
                      - Changed title from info-welcome to welcome.
-v1.5 of 15 Dec 2006  - Removed all hilite class spans.
+v1.5 of 15 Dec 2006  - Removed all "hilite" class spans.
                      - Changed help text link to use .help-link CSS class.
 v1.6 of 09 Feb 2007  - Added new disclaimer section.
 v1.7 of 18 Oct 2007  - Added "return false;" statement to end of each onclick
                        event.
 v1.8 of 03 Nov 2007  - Updated link class names to designate link type and
-                       links to be included in popup menus.
+                       links to be included in pop-up menus.
                      - Changed case of some link text.
 v1.9 of 04 Nov 2007  - Changed to display help via "help:" protocol rather
                        than using JavaScript calls.
@@ -11736,14 +11729,14 @@ v2.0 of 14 Sep 2008  - Heavily revised to dynamically updated via DHTML. The
 v3.0 of 25 Jan 2009  - Renamed as welcome-tplt.html.
                      - Changed from complete HTML document to provide inner
                        HTML of and existing HTML document:
-                       - doctype and <html> tags removed
+                       - DOCTYPE and <html> tags removed
                        - all <head> section, including scripts, removed.
                        - <body> tags removed.
                      - Added templates placeholders to specify which divs are
                        to be displayed and which hidden.
 v3.1 of 07 Jun 2009  - Added donation section and button.
                      - Significantly edited the welcome text.
-                     - Removed the <%NoDatabases%> placeholder and replaced
+                     - Removed the <%NoDatabases%> place-holder and replaced
                        <%MainDBOnly%> and <%UserDBOnly%> with <%NoUserDB%>
                        and <%NoMainDB%> placeholders respectively.
                      - Added Configure Compilers command to pop-up menu.
@@ -11987,9 +11980,9 @@ Src\Res\Img\TVCheckBoxes.bmp
 --------------------------------------------------------------------------------
 31 Oct 2006 - Added to project.
 11 Aug 2008 - Changed order of check box faces to match TCheckBoxState ordinals.
-              Duplicated all check boxes as placeholder for "hot" images. This
-              change made to help fix display bug in treeviews that use
-              checkboxes that manifests itself when themes change.
+              Duplicated all check boxes as place-holder for "hot" images. This
+              change made to help fix display bug in tree-views that use
+              check-boxes that manifests itself when themes change.
 04 Jul 2009 - IMPORTED TO SVN.
 
 --------------------------------------------------------------------------------
