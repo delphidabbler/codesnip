@@ -5,7 +5,7 @@ PRIVACY STATEMENT FOR DELPHIDABBLER CODESNIP
 ================================================================================
 
 
-Offline Privacy
+Off-line Privacy
 ================================================================================
 
 CodeSnip stores some personal information in two configuration files. The
@@ -26,7 +26,7 @@ The data that is stored in Common.config includes:
     * A 32 digit registration key (registered programs only).
     * The registered user name or nickname (registered programs only).
 
-The data that is used to create the hexidecimal keys cannot be recovered from
+The data that is used to create the hexadecimal keys cannot be recovered from
 those keys.
 
 
@@ -51,12 +51,12 @@ preferences. The only personal information is as follows:
       proxy. Passwords are encrypted.
 
 
-Spyware
+Spy-ware
 ================================================================================
 
-No spyware or other software that threatens your privacy has been deliberately
+No spy-ware or other software that threatens your privacy has been deliberately
 or knowingly included with CodeSnip or its installer. If the program is found to
-contain spyware it will have been added by third parties without permission.
+contain spy-ware it will have been added by third parties without permission.
 Please inform the author of any such occurrence or any suspicious behaviour via
 http://delphidabbler.com/contact.
 
