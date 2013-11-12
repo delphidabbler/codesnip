@@ -86,7 +86,7 @@
     Version 3
   </dt>
   <dd>
-    Similar to Versions 1 and 2. Nowused for backing up both the user database
+    Similar to Versions 1 and 2. Now used for backing up both the user database
     and the main database. An file ID field was added to allows which database
     was backed up. The file ID generalises to any file.
   </dd>
@@ -440,7 +440,7 @@
 
 <p>
   Some earlier versions of the backup restoration code have faults in that they
-  will attempt to read later backup file versions than thosethey were designed
+  will attempt to read later backup file versions than those they were designed
   for. By good fortune factors in the design of later file formats mean that the
   reading code always abandons the reading, albeit with no error message. These
   problems are:
@@ -498,7 +498,7 @@
       work with file format v3 will also try to read later file versions. It
       looks for its file count in a hex encoded SmallInt value at position 12 in
       the backup file. File format v4 was designed to have a padding value of
-      <code>'0000'</code> in this location. Agains this fools the reader software
+      <code>'0000'</code> in this location. Again this fools the reader software
       into thinking there are no files in the backup.
     </div>
     <div class="half-spaced">
