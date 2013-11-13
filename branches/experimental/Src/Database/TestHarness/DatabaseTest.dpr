@@ -51,7 +51,18 @@ uses
   SynTextDrawer in '..\..\SyntaxHighlighting\SynEditUnits\SynTextDrawer.pas',
   SynUnicode in '..\..\SyntaxHighlighting\SynEditUnits\SynUnicode.pas',
   Compilers.UGlobals in '..\..\TrunkSrc\Compilers.UGlobals.pas',
-  CS.Database.Tags in '..\Engine\CS.Database.Tags.pas';
+  CS.Database.Tags in '..\Engine\CS.Database.Tags.pas',
+  Collections.Bags in '..\..\DelphiCol\Collections.Bags.pas',
+  Collections.Base in '..\..\DelphiCol\Collections.Base.pas',
+  Collections.BidiDictionaries in '..\..\DelphiCol\Collections.BidiDictionaries.pas',
+  Collections.BidiMaps in '..\..\DelphiCol\Collections.BidiMaps.pas',
+  Collections.Dictionaries in '..\..\DelphiCol\Collections.Dictionaries.pas',
+  Collections.Dynamic in '..\..\DelphiCol\Collections.Dynamic.pas',
+  Collections.Lists in '..\..\DelphiCol\Collections.Lists.pas',
+  Collections.MultiMaps in '..\..\DelphiCol\Collections.MultiMaps.pas',
+  Collections.Queues in '..\..\DelphiCol\Collections.Queues.pas',
+  Collections.Sets in '..\..\DelphiCol\Collections.Sets.pas',
+  Collections.Stacks in '..\..\DelphiCol\Collections.Stacks.pas';
 
 {$R *.res}
 

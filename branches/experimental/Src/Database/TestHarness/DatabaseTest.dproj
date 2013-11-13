@@ -101,6 +101,17 @@
 			<DCCReference Include="..\..\SyntaxHighlighting\SynEditUnits\SynUnicode.pas"/>
 			<DCCReference Include="..\..\TrunkSrc\Compilers.UGlobals.pas"/>
 			<DCCReference Include="..\Engine\CS.Database.Tags.pas"/>
+			<DCCReference Include="..\..\DelphiCol\Collections.Bags.pas"/>
+			<DCCReference Include="..\..\DelphiCol\Collections.Base.pas"/>
+			<DCCReference Include="..\..\DelphiCol\Collections.BidiDictionaries.pas"/>
+			<DCCReference Include="..\..\DelphiCol\Collections.BidiMaps.pas"/>
+			<DCCReference Include="..\..\DelphiCol\Collections.Dictionaries.pas"/>
+			<DCCReference Include="..\..\DelphiCol\Collections.Dynamic.pas"/>
+			<DCCReference Include="..\..\DelphiCol\Collections.Lists.pas"/>
+			<DCCReference Include="..\..\DelphiCol\Collections.MultiMaps.pas"/>
+			<DCCReference Include="..\..\DelphiCol\Collections.Queues.pas"/>
+			<DCCReference Include="..\..\DelphiCol\Collections.Sets.pas"/>
+			<DCCReference Include="..\..\DelphiCol\Collections.Stacks.pas"/>
 			<BuildConfiguration Include="Release">
 				<Key>Cfg_2</Key>
 				<CfgParent>Base</CfgParent>
