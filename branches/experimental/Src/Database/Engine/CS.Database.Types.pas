@@ -163,10 +163,18 @@ type
     property LinkedSnippetID: TDBSnippetID read GetLinkedSnippetID;
   end;
 
+  ///  <summary>Enumeration providing information about the level to which a
+  ///  snippet has been tested.</summary>
+  TSnippetTestInfo = (
+    stiNone,              // snippet has not been tested
+    stiBasic,             // snippet has had some basic testing
+    stiAdvanced           // snippet has had advanced (unit) testing
+  );
+
   TDBSnippetProp = (
     spID, spTitle, spDescription, spSourceCode, spLanguageID, spModified,
     spCreated, spRequiredModules, spRequiredSnippets, spXRefs, spNotes, spKind,
-    spCompileResults, spTags, spLinkInfo
+    spCompileResults, spTags, spLinkInfo, spTestInfo
   );
 
   TDBSnippetProps = set of TDBSnippetProp;
@@ -188,6 +196,7 @@ type
     function GetCompileResults: TDBCompileResults;
     function GetTags: IDBTagList;
     function GetLinkInfo: ISnippetLinkInfo;
+    function GetTestInfo: TSnippetTestInfo;
 
     property ID: TDBSnippetID read GetID;
     property Created: TUTCDateTime read GetCreated;
@@ -210,6 +219,7 @@ type
     property CompileResults: TDBCompileResults read GetCompileResults;
     property Tags: IDBTagList read GetTags;
     property LinkInfo: ISnippetLinkInfo read GetLinkInfo;
+    property TestInfo: TSnippetTestInfo read GetTestInfo;
 
     // TODO: query if following properties are required
     property ValidProperties: TDBSnippetProps read GetValidProperties;
@@ -230,6 +240,7 @@ type
     procedure SetCompileResults(const AResults: TDBCompileResults);
     procedure SetTags(ATagList: IDBTagList);
     procedure SetLinkInfo(ALinkInfo: ISnippetLinkInfo);
+    procedure SetTestInfo(ATestInfo: TSnippetTestInfo);
 
     property Title: string read GetTitle write SetTitle;
     property Description: TMarkup read GetDescription write SetDescription;
@@ -247,6 +258,7 @@ type
       write SetCompileResults;
     property Tags: IDBTagList read GetTags write SetTags;
     property LinkInfo: ISnippetLinkInfo read GetLinkInfo write SetLinkInfo;
+    property TestInfo: TSnippetTestInfo read GetTestInfo write SetTestInfo;
   end;
 
   TDBFilterFn = reference to function (ASnippet: IReadOnlySnippet): Boolean;
