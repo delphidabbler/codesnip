@@ -222,7 +222,7 @@
     <param name="Local" value="HTML\license.htm">
     </OBJECT>
   <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="markup editor">
+    <param name="Name" value="mark-up editor">
     <param name="Local" value="HTML\markup_editor.htm">
     </OBJECT>
   <LI> <OBJECT type="text/sitemap">
@@ -300,7 +300,7 @@
     <param name="Local" value="HTML\overview_pane.htm">
     </OBJECT>
   <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="page setup dialogue">
+    <param name="Name" value="page set-up dialogue">
     <param name="Local" value="HTML\dlg_pagesetup.htm">
     </OBJECT>
   <LI> <OBJECT type="text/sitemap">
@@ -324,7 +324,7 @@
     <param name="Local" value="HTML\dlg_proxyserver.htm">
     </OBJECT>
   <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="quickstart guide">
+    <param name="Name" value="quick-start guide">
     <param name="Local" value="HTML\quickstart.htm">
     </OBJECT>
   <LI> <OBJECT type="text/sitemap">

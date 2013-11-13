@@ -4,12 +4,12 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2012-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
  *
- * Help topic describing the use of the Markup Editor.
+ * Help topic describing the use of the Mark-up Editor.
 -->
 <html>
   <head>
@@ -17,7 +17,7 @@
      http-equiv="Content-Type"
      content="text-html; charset=Windows-1252">
     <title>
-      Markup Editor
+      Mark-up Editor
     </title>
     <link
      rel="stylesheet"
@@ -26,16 +26,16 @@
   </head>
   <body>
     <h1>
-      Markup Editor
+      Mark-up Editor
     </h1>
     <p>
-      The markup editor is used in the <a href="dlg_editsnippet.htm">Edit
+      The mark-up editor is used in the <a href="dlg_editsnippet.htm">Edit
       Snippet</a> dialogue box to enter text that can optionally be formatted.
       It is used to enter and edit snippet descriptions and extra information.
     </p>
     <p>
       The editor has two modes of operation: <em><a href="#plain-text">Plain
-      Text</a></em> and <em><a href="#markup">Markup</a></em>. The modes are
+      Text</a></em> and <em><a href="#markup">Mark-up</a></em>. The modes are
       selected by using the buttons below the edit control. Each mode causes
       the text entered in the edit control to be interpreted in a different way,
       as explained below.
@@ -56,11 +56,11 @@
     <p>
       All characters you enter are treated literally. You cannot style the text.
       Any URLs you enter are treated as plain text and are not interpreted as
-      hyplerlinks.
+      hyperlinks.
     </p>
     <p>
       You can enter multiple paragraphs of text by separating each paragraph
-      with a blank line. Any text on consequtive lines is otherwise treated as
+      with a blank line. Any text on consecutive lines is otherwise treated as
       a single line. For example:
     </p>
     <p class="indent bordered">
@@ -94,11 +94,11 @@
       text is displayed in the default proportional font.
     </p>
     <h2 id="markup">
-      Markup
+      Mark-up
     </h2>
     <p>
       Choosing the <em>Markup</em> tab causes the entered text to be treated as
-      markup language, which is a very simple, HTML-like, language that allows
+      mark-up language, which is a very simple, HTML-like, language that allows
       for a limited amount of text formatting and for the inclusion of
       hyperlinks. For full details see the <a href="reml.htm">REML</a> help
       topic.
@@ -111,10 +111,11 @@
       Conversions
     </h2>
     <p>
-      Normally, if you switch between <em>Plain Text</em> and <em>Markup</em>
+      Normally, if you switch between <em>Plain Text</em> and <em>Mark-up</em>
       modes, the text in the edit control does not change. However you can
-      convert plain text into the equivalent <a href="reml.htm">REML</a> markup
-      and vice versa. This is done from the markup editor's pop-up context menu.
+      convert plain text into the equivalent <a href="reml.htm">REML</a> mark-up
+      and vice versa. This is done from the mark-up editor's pop-up context
+      menu.
     </p>
     <p>
       There are two menu options:
@@ -125,8 +126,8 @@
           <em>Convert To Plain Text</em>
         </div>
         <div>
-          This option is only available when the editor is in <em>Markup</em>
-          mode. It replaces the <a href="reml.htm">REML</a> markup in the edit
+          This option is only available when the editor is in <em>Mark-up</em>
+          mode. It replaces the <a href="reml.htm">REML</a> mark-up in the edit
           control with the plain text equivalent.
         </div>
         <div>
@@ -137,8 +138,9 @@
           The editor is switched into <em>Plain Text</em> mode.
         </div>
         <div>
-          If there is an error in the markup an error message will be displayed,
-          no conversion will take place and the mode will not be changed.
+          If there is an error in the mark-up an error message will be
+          displayed, no conversion will take place and the mode will not be
+          changed.
         </div>
       </li>
       <li>
@@ -157,7 +159,7 @@
           using the &lt;p&gt; tag.
         </div>
         <div>
-          The editor is switched into <em>Markup</em> mode.
+          The editor is switched into <em>Mark-up</em> mode.
         </div>
       </li>
     </ul>

@@ -174,7 +174,7 @@
       <param name="Local" value="HTML\snippet_unit.htm">
       </OBJECT>
     <LI> <OBJECT type="text/sitemap">
-      <param name="Name" value="Freeform">
+      <param name="Name" value="Free-form">
       <param name="Local" value="HTML\snippet_freeform.htm">
       </OBJECT>
   </UL>
