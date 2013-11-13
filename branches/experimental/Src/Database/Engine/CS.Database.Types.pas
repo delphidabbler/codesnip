@@ -166,7 +166,7 @@ type
   TDBSnippetProp = (
     spID, spTitle, spDescription, spSourceCode, spLanguageID, spModified,
     spCreated, spRequiredModules, spRequiredSnippets, spXRefs, spNotes, spKind,
-    spCompileResults, spTags
+    spCompileResults, spTags, spLinkInfo
   );
 
   TDBSnippetProps = set of TDBSnippetProp;
