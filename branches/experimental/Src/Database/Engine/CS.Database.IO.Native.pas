@@ -112,6 +112,12 @@ type
     procedure WriteTagsProp(const Writer: TBinaryStreamWriter;
       const PropCode: TDBSnippetProp; Tags: IDBTagList;
       const Optional: Boolean);
+    // WriteLinkInfoProp is always "optional": it is never output if not linked.
+    procedure WriteLinkInfoProp(const Writer: TBinaryStreamWriter;
+      const PropCode: TDBSnippetProp; LinkInfo: ISnippetLinkInfo);
+    procedure WriteTestInfoProp(const Writer: TBinaryStreamWriter;
+      const PropCode: TDBSnippetProp; const TestInfo: TSnippetTestInfo;
+      const Optional: Boolean);
     procedure WriteSnippetFile(const ASnippet: TDBSnippet);
     procedure WriteChangedAndNewSnippetFiles(const ATable: TDBSnippetsTable;
       const ALastModified: TUTCDateTime);
@@ -140,6 +146,7 @@ type
     function ReadCompileResults(const Reader: TBinaryStreamReader):
       TDBCompileResults;
     function ReadTags(const Reader: TBinaryStreamReader): IDBTagList;
+    function ReadLinkInfo(const Reader: TBinaryStreamReader): ISnippetLinkInfo;
   public
     constructor Create(const DBPath: string);
     destructor Destroy; override;
@@ -154,6 +161,7 @@ implementation
 uses
   IOUtils,
 
+  CS.Database.SnippetLinks,
   CS.Database.Snippets,
   CS.Database.Tags,
   Compilers.UGlobals,
@@ -419,6 +427,19 @@ begin
   Writer.WriteSizedString16(LangID.ToString);
 end;
 
+procedure TDBNativeWriter.WriteLinkInfoProp(const Writer: TBinaryStreamWriter;
+  const PropCode: TDBSnippetProp; LinkInfo: ISnippetLinkInfo);
+var
+  SynchSpaceID: TGUID;
+begin
+  if not LinkInfo.IsLinked then
+    Exit;
+  WritePropCode(Writer, PropCode);
+  SynchSpaceID := LinkInfo.SynchSpaceID;
+  Writer.WriteBuffer(SynchSpaceID, SizeOf(SynchSpaceID));
+  Writer.WriteSizedString16(LinkInfo.LinkedSnippetID.ToString);
+end;
+
 procedure TDBNativeWriter.WriteMarkupProp(const Writer: TBinaryStreamWriter;
   const PropCode: TDBSnippetProp; const Markup: TMarkup;
   const Optional: Boolean);
@@ -498,6 +519,8 @@ begin
       Writer, spCompileResults, ASnippet.GetCompileResults, True
     );
     WriteTagsProp(Writer, spTags, ASnippet.GetTags, True);
+    WriteLinkInfoProp(Writer, spLinkInfo, ASnippet.GetLinkInfo);
+    WriteTestInfoProp(Writer, spTestInfo, ASnippet.GetTestInfo, True);
 
     // Write "EOF" marker as last byte in file
     Writer.WriteByte(EOFByte);
@@ -563,6 +586,16 @@ begin
   Writer.WriteInt32(Tags.Count);
   for Tag in Tags do
     Writer.WriteSizedString16(Tag.ToString);
+end;
+
+procedure TDBNativeWriter.WriteTestInfoProp(const Writer: TBinaryStreamWriter;
+  const PropCode: TDBSnippetProp; const TestInfo: TSnippetTestInfo;
+  const Optional: Boolean);
+begin
+  if Optional and (TestInfo = stiBasic) then
+    Exit;
+  WritePropCode(Writer, PropCode);
+  Writer.WriteByte(Ord(TestInfo));
 end;
 
 { TDBNativeReader }
@@ -691,6 +724,10 @@ begin
         ASnippet.SetCompileResults(ReadCompileResults(Reader));
       spTags:
         ASnippet.SetTags(ReadTags(Reader));
+      spLinkInfo:
+        ASnippet.SetLinkInfo(ReadLinkInfo(Reader));
+      spTestInfo:
+        ASnippet.SetTestInfo(TSnippetTestInfo(Reader.ReadByte));
       else
         ; // ignore any property codes we don't recognise
     end;
@@ -717,6 +754,20 @@ begin
   Succeeds := ReadSet;
   Fails := ReadSet;
   Result := TDBCompileResults.Create(Succeeds, Fails);
+end;
+
+function TDBNativeReader.ReadLinkInfo(const Reader: TBinaryStreamReader):
+  ISnippetLinkInfo;
+var
+  SynchSpaceID: TGUID;
+  LinkedSnippetID: TDBSnippetID;
+begin
+  // If this property is present snippet is linked to space: the property is
+  // never present in file if snippet is not linked. Therefore return value is
+  // never a null instance.
+  Reader.ReadBuffer(SynchSpaceID, SizeOf(SynchSpaceID));
+  LinkedSnippetID := TDBSnippetID.Create(Reader.ReadSizedString16);
+  Result := TSnippetLinkInfo.Create(SynchSpaceID, LinkedSnippetID);
 end;
 
 function TDBNativeReader.ReadMarkup(const Reader: TBinaryStreamReader): TMarkup;
@@ -785,3 +836,4 @@ begin
 end;
 
 end.
+
