@@ -53,25 +53,25 @@ type
     procedure SetSourceCode(const Value: string);
     function GetLanguageID: TSourceCodeLanguageID; virtual;
     procedure SetLanguageID(const Value: TSourceCodeLanguageID);
-    function GetRequiredModules: IStringList;
+    function GetRequiredModules: IStringList; virtual;
     procedure SetRequiredModules(Value: IStringList);
-    function GetRequiredSnippets: IDBSnippetIDList;
+    function GetRequiredSnippets: IDBSnippetIDList; virtual;
     procedure SetRequiredSnippets(Value: IDBSnippetIDList);
-    function GetXRefs: IDBSnippetIDList;
+    function GetXRefs: IDBSnippetIDList; virtual;
     procedure SetXRefs(Value: IDBSnippetIDList);
-    function GetNotes: TMarkup;
+    function GetNotes: TMarkup; virtual;
     procedure SetNotes(const Value: TMarkup);
-    function GetKind: TDBSnippetKind;
+    function GetKind: TDBSnippetKind; virtual;
     procedure SetKind(const Value: TDBSnippetKind);
-    function GetCompileResults: TDBCompileResults;
+    function GetCompileResults: TDBCompileResults; virtual;
     procedure SetCompileResults(const Value: TDBCompileResults);
-    function GetTags: IDBTagList;
+    function GetTags: IDBTagList; virtual;
     procedure SetTags(Value: IDBTagList);
-    function GetLinkInfo: ISnippetLinkInfo;
+    function GetLinkInfo: ISnippetLinkInfo; virtual;
     procedure SetLinkInfo(ALinkInfo: ISnippetLinkInfo);
-    function GetTestInfo: TSnippetTestInfo;
+    function GetTestInfo: TSnippetTestInfo; virtual;
     procedure SetTestInfo(ATestInfo: TSnippetTestInfo);
-    function GetStarred: Boolean;
+    function GetStarred: Boolean; virtual;
     procedure SetStarred(AStarred: Boolean);
   end;
 
@@ -96,6 +96,17 @@ type
     function GetDescription: TMarkup; override;
     function GetSourceCode: string; override;
     function GetLanguageID: TSourceCodeLanguageID; override;
+    function GetRequiredModules: IStringList; override;
+    function GetRequiredSnippets: IDBSnippetIDList; override;
+    function GetXRefs: IDBSnippetIDList; override;
+    function GetNotes: TMarkup; override;
+    function GetKind: TDBSnippetKind; override;
+    function GetCompileResults: TDBCompileResults; override;
+    function GetTags: IDBTagList; override;
+    function GetLinkInfo: ISnippetLinkInfo; override;
+    function GetTestInfo: TSnippetTestInfo; override;
+    function GetStarred: Boolean; override;
+
     function GetValidProperties: TDBSnippetProps;
     function SupportsProperty(const AProp: TDBSnippetProp): Boolean; override;
   end;
@@ -519,10 +530,22 @@ begin
   inherited;
 end;
 
+function TPartialSnippet.GetCompileResults: TDBCompileResults;
+begin
+  CheckValidProp(spCompileResults);
+  Result := inherited GetCompileResults;
+end;
+
 function TPartialSnippet.GetDescription: TMarkup;
 begin
   CheckValidProp(spDescription);
   Result := inherited GetDescription;
+end;
+
+function TPartialSnippet.GetKind: TDBSnippetKind;
+begin
+  CheckValidProp(spKind);
+  Result := inherited GetKind;
 end;
 
 function TPartialSnippet.GetLanguageID: TSourceCodeLanguageID;
@@ -531,16 +554,58 @@ begin
   Result := inherited GetLanguageID;
 end;
 
+function TPartialSnippet.GetLinkInfo: ISnippetLinkInfo;
+begin
+  CheckValidProp(spLinkInfo);
+  Result := inherited GetLinkInfo;
+end;
+
 function TPartialSnippet.GetModified: TUTCDateTime;
 begin
   CheckValidProp(spModified);
   Result := inherited GetModified;
 end;
 
+function TPartialSnippet.GetNotes: TMarkup;
+begin
+  CheckValidProp(spNotes);
+  Result := inherited GetNotes;
+end;
+
+function TPartialSnippet.GetRequiredModules: IStringList;
+begin
+  CheckValidProp(spRequiredModules);
+  Result := inherited GetRequiredModules;
+end;
+
+function TPartialSnippet.GetRequiredSnippets: IDBSnippetIDList;
+begin
+  CheckValidProp(spRequiredSnippets);
+  Result := inherited GetRequiredSnippets;
+end;
+
 function TPartialSnippet.GetSourceCode: string;
 begin
   CheckValidProp(spSourceCode);
   Result := inherited GetSourceCode;
+end;
+
+function TPartialSnippet.GetStarred: Boolean;
+begin
+  CheckValidProp(spStarred);
+  Result := inherited GetStarred;
+end;
+
+function TPartialSnippet.GetTags: IDBTagList;
+begin
+  CheckValidProp(spTags);
+  Result := inherited GetTags;
+end;
+
+function TPartialSnippet.GetTestInfo: TSnippetTestInfo;
+begin
+  CheckValidProp(spTestInfo);
+  Result := inherited GetTestInfo;
 end;
 
 function TPartialSnippet.GetTitle: string;
@@ -552,6 +617,12 @@ end;
 function TPartialSnippet.GetValidProperties: TDBSnippetProps;
 begin
   Result := fValidProperties;
+end;
+
+function TPartialSnippet.GetXRefs: IDBSnippetIDList;
+begin
+  CheckValidProp(spXRefs);
+  Result := inherited GetXRefs;
 end;
 
 function TPartialSnippet.SupportsProperty(const AProp: TDBSnippetProp): Boolean;
