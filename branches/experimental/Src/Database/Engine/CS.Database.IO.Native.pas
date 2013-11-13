@@ -643,14 +643,19 @@ var
   SI: TSnippetInfo;
 begin
   ATable.Clear;
-  MI := TMasterInfo.Create;
   try
-    LoadMasterFile(MI);
-    ALastModified := MI.LastModified;
-    for SI in MI.Snippets do
-      LoadSnippet(SI.ID, ATable);
-  finally
-    MI.Free;
+  MI := TMasterInfo.Create;
+    try
+      LoadMasterFile(MI);
+      ALastModified := MI.LastModified;
+      for SI in MI.Snippets do
+        LoadSnippet(SI.ID, ATable);
+    finally
+      MI.Free;
+    end;
+  except
+    ATable.Clear;
+    raise;
   end;
 end;
 
