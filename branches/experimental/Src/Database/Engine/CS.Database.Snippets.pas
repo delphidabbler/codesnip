@@ -245,7 +245,7 @@ begin
   fCompileResults := TDBCompileResults.CreateNull;
   fTags := nil;
   fLinkInfo := nil;
-  fTestInfo := stiBasic;
+  fTestInfo := stiNone;
   fStarred := False;
 end;
 

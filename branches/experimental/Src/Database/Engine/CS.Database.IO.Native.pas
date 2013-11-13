@@ -605,7 +605,7 @@ procedure TDBNativeWriter.WriteTestInfoProp(const Writer: TBinaryStreamWriter;
   const PropCode: TDBSnippetProp; const TestInfo: TSnippetTestInfo;
   const Optional: Boolean);
 begin
-  if Optional and (TestInfo = stiBasic) then
+  if Optional and (TestInfo = stiNone) then
     Exit;
   WritePropCode(Writer, PropCode);
   Writer.WriteByte(Ord(TestInfo));
