@@ -31,6 +31,7 @@ type
       fTags: IDBTagList;
       fLinkInfo: ISnippetLinkInfo;
       fTestInfo: TSnippetTestInfo;
+      fStarred: Boolean;
   strict protected
     function SupportsProperty(const APropID: TDBSnippetProp): Boolean; virtual;
   public
@@ -70,6 +71,8 @@ type
     procedure SetLinkInfo(ALinkInfo: ISnippetLinkInfo);
     function GetTestInfo: TSnippetTestInfo;
     procedure SetTestInfo(ATestInfo: TSnippetTestInfo);
+    function GetStarred: Boolean;
+    procedure SetStarred(AStarred: Boolean);
   end;
 
   TSnippet = class(TSnippetBase, ISnippet)
@@ -232,6 +235,7 @@ begin
   fTags := nil;
   fLinkInfo := nil;
   fTestInfo := stiBasic;
+  fStarred := False;
 end;
 
 constructor TSnippetBase.Create;
@@ -310,6 +314,11 @@ end;
 function TSnippetBase.GetSourceCode: string;
 begin
   Result := fSourceCode;
+end;
+
+function TSnippetBase.GetStarred: Boolean;
+begin
+  Result := fStarred;
 end;
 
 function TSnippetBase.GetTags: IDBTagList;
@@ -397,6 +406,11 @@ begin
   fSourceCode := Value;
 end;
 
+procedure TSnippetBase.SetStarred(AStarred: Boolean);
+begin
+  fStarred := AStarred;
+end;
+
 procedure TSnippetBase.SetTags(Value: IDBTagList);
 begin
   if not Assigned(Value) or (Value.Count = 0) then
@@ -462,6 +476,8 @@ begin
     SetLinkInfo(ASourceSnippet.fLinkInfo);
   if SupportsProperty(spTestInfo) then
     SetTestInfo(ASourceSnippet.fTestInfo);
+  if SupportsProperty(spStarred) then
+    SetStarred(ASourceSnippet.fStarred);
 end;
 
 { TSnippet }

@@ -88,6 +88,9 @@ type
     procedure WriteString16Prop(const Writer: TBinaryStreamWriter;
       const PropCode: TDBSnippetProp; const Str: string;
       const Optional: Boolean);
+    procedure WriteBooleanProp(const Writer: TBinaryStreamWriter;
+      const PropCode: TDBSnippetProp; const AValue: Boolean;
+      const Optional: Boolean);
     procedure WriteLanguageIDProp(const Writer: TBinaryStreamWriter;
       const PropCode: TDBSnippetProp; const LangID: TSourceCodeLanguageID;
       const Optional: Boolean);
@@ -359,6 +362,15 @@ begin
   RemoveDeletedSnippetFiles(ATable);
 end;
 
+procedure TDBNativeWriter.WriteBooleanProp(const Writer: TBinaryStreamWriter;
+  const PropCode: TDBSnippetProp; const AValue, Optional: Boolean);
+begin
+  if Optional and not AValue then
+    Exit;
+  WritePropCode(Writer, PropCode);
+  Writer.WriteByte(Ord(AValue));
+end;
+
 procedure TDBNativeWriter.WriteChangedAndNewSnippetFiles(
   const ATable: TDBSnippetsTable; const ALastModified: TUTCDateTime);
 var
@@ -521,6 +533,7 @@ begin
     WriteTagsProp(Writer, spTags, ASnippet.GetTags, True);
     WriteLinkInfoProp(Writer, spLinkInfo, ASnippet.GetLinkInfo);
     WriteTestInfoProp(Writer, spTestInfo, ASnippet.GetTestInfo, True);
+    WriteBooleanProp(Writer, spStarred, ASnippet.GetStarred, True);
 
     // Write "EOF" marker as last byte in file
     Writer.WriteByte(EOFByte);
@@ -728,6 +741,8 @@ begin
         ASnippet.SetLinkInfo(ReadLinkInfo(Reader));
       spTestInfo:
         ASnippet.SetTestInfo(TSnippetTestInfo(Reader.ReadByte));
+      spStarred:
+        ASnippet.SetStarred(Boolean(Reader.ReadByte));
       else
         ; // ignore any property codes we don't recognise
     end;

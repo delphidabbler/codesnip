@@ -174,7 +174,7 @@ type
   TDBSnippetProp = (
     spID, spTitle, spDescription, spSourceCode, spLanguageID, spModified,
     spCreated, spRequiredModules, spRequiredSnippets, spXRefs, spNotes, spKind,
-    spCompileResults, spTags, spLinkInfo, spTestInfo
+    spCompileResults, spTags, spLinkInfo, spTestInfo, spStarred
   );
 
   TDBSnippetProps = set of TDBSnippetProp;
@@ -197,6 +197,7 @@ type
     function GetTags: IDBTagList;
     function GetLinkInfo: ISnippetLinkInfo;
     function GetTestInfo: TSnippetTestInfo;
+    function GetStarred: Boolean;
 
     property ID: TDBSnippetID read GetID;
     property Created: TUTCDateTime read GetCreated;
@@ -220,6 +221,7 @@ type
     property Tags: IDBTagList read GetTags;
     property LinkInfo: ISnippetLinkInfo read GetLinkInfo;
     property TestInfo: TSnippetTestInfo read GetTestInfo;
+    property Starred: Boolean read GetStarred;
 
     // TODO: query if following properties are required
     property ValidProperties: TDBSnippetProps read GetValidProperties;
@@ -241,6 +243,7 @@ type
     procedure SetTags(ATagList: IDBTagList);
     procedure SetLinkInfo(ALinkInfo: ISnippetLinkInfo);
     procedure SetTestInfo(ATestInfo: TSnippetTestInfo);
+    procedure SetStarred(AStarred: Boolean);
 
     property Title: string read GetTitle write SetTitle;
     property Description: TMarkup read GetDescription write SetDescription;
@@ -259,6 +262,7 @@ type
     property Tags: IDBTagList read GetTags write SetTags;
     property LinkInfo: ISnippetLinkInfo read GetLinkInfo write SetLinkInfo;
     property TestInfo: TSnippetTestInfo read GetTestInfo write SetTestInfo;
+    property Starred: Boolean read GetStarred write SetStarred;
   end;
 
   TDBFilterFn = reference to function (ASnippet: IReadOnlySnippet): Boolean;
