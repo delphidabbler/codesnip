@@ -124,6 +124,7 @@ uses
   SysUtils,
   Classes,
   RTLConsts,
+  CS.Database.SnippetLinks,
   CS.Database.Tags;
 
 { TDBSnippetIDList }
@@ -272,9 +273,9 @@ end;
 
 function TSnippetBase.GetLinkInfo: ISnippetLinkInfo;
 begin
-  // TODO: Create a null link info object if fLinkInfo is nil
-  // TODO: return a clone of fLinkInfo
-  Result := fLinkInfo;
+  if not Assigned(fLinkInfo) then
+    Exit(TNullSnippetLinkInfo.Create);
+  Result := TSnippetLinkInfo.Create(fLinkInfo);
 end;
 
 function TSnippetBase.GetModified: TUTCDateTime;
