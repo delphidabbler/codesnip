@@ -30,6 +30,7 @@ type
       fCompileResults: TDBCompileResults;
       fTags: IDBTagList;
       fLinkInfo: ISnippetLinkInfo;
+      fTestInfo: TSnippetTestInfo;
   strict protected
     function SupportsProperty(const APropID: TDBSnippetProp): Boolean; virtual;
   public
@@ -67,6 +68,8 @@ type
     procedure SetTags(Value: IDBTagList);
     function GetLinkInfo: ISnippetLinkInfo;
     procedure SetLinkInfo(ALinkInfo: ISnippetLinkInfo);
+    function GetTestInfo: TSnippetTestInfo;
+    procedure SetTestInfo(ATestInfo: TSnippetTestInfo);
   end;
 
   TSnippet = class(TSnippetBase, ISnippet)
@@ -227,6 +230,8 @@ begin
   fKind := skFreeForm;
   fCompileResults := TDBCompileResults.CreateNull;
   fTags := nil;
+  fLinkInfo := nil;
+  fTestInfo := stiBasic;
 end;
 
 constructor TSnippetBase.Create;
@@ -314,6 +319,11 @@ begin
   Result := TDBTagList.Create(fTags);
 end;
 
+function TSnippetBase.GetTestInfo: TSnippetTestInfo;
+begin
+  Result := fTestInfo;
+end;
+
 function TSnippetBase.GetTitle: string;
 begin
   Result := fTitle;
@@ -395,6 +405,11 @@ begin
     fTags := TDBTagList.Create(Value);
 end;
 
+procedure TSnippetBase.SetTestInfo(ATestInfo: TSnippetTestInfo);
+begin
+  fTestInfo := ATestInfo;
+end;
+
 procedure TSnippetBase.SetTitle(const Value: string);
 begin
   fTitle := Value;
@@ -443,6 +458,10 @@ begin
     SetCompileResults(ASourceSnippet.fCompileResults);
   if SupportsProperty(spTags) then
     SetTags(ASourceSnippet.fTags);
+  if SupportsProperty(spLinkInfo) then
+    SetLinkInfo(ASourceSnippet.fLinkInfo);
+  if SupportsProperty(spTestInfo) then
+    SetTestInfo(ASourceSnippet.fTestInfo);
 end;
 
 { TSnippet }
