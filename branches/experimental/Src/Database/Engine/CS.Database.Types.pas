@@ -148,6 +148,21 @@ type
     property Count: Integer read GetCount;
   end;
 
+  TSnippetOriginKind = (
+    soUser, soImport, soSWAG, soSynchSpace
+  );
+
+  { TODO: Implement these (Null implementation would be useful since it will
+          apply to all user-defined snippets. }
+  ISnippetLinkInfo = interface(IInterface)
+    ['{F98BBE9C-B9F1-4FC7-BDE2-BBC90958BF52}']
+    function IsLinked: Boolean;
+    function GetSynchSpaceID: TGUID;
+    function GetLinkedSnippetID: TDBSnippetID;
+    property SynchSpaceID: TGUID read GetSynchSpaceID;
+    property LinkedSnippetID: TDBSnippetID read GetLinkedSnippetID;
+  end;
+
   TDBSnippetProp = (
     spID, spTitle, spDescription, spSourceCode, spLanguageID, spModified,
     spCreated, spRequiredModules, spRequiredSnippets, spXRefs, spNotes, spKind,
@@ -172,6 +187,7 @@ type
     function GetKind: TDBSnippetKind;
     function GetCompileResults: TDBCompileResults;
     function GetTags: IDBTagList;
+    function GetLinkInfo: ISnippetLinkInfo;
 
     property ID: TDBSnippetID read GetID;
     property Created: TUTCDateTime read GetCreated;
@@ -193,6 +209,7 @@ type
     property Kind: TDBSnippetKind read GetKind;
     property CompileResults: TDBCompileResults read GetCompileResults;
     property Tags: IDBTagList read GetTags;
+    property LinkInfo: ISnippetLinkInfo read GetLinkInfo;
 
     // TODO: query if following properties are required
     property ValidProperties: TDBSnippetProps read GetValidProperties;
@@ -212,6 +229,7 @@ type
     procedure SetKind(const ASnippetKind: TDBSnippetKind);
     procedure SetCompileResults(const AResults: TDBCompileResults);
     procedure SetTags(ATagList: IDBTagList);
+    procedure SetLinkInfo(ALinkInfo: ISnippetLinkInfo);
 
     property Title: string read GetTitle write SetTitle;
     property Description: TMarkup read GetDescription write SetDescription;
@@ -228,6 +246,7 @@ type
     property CompileResults: TDBCompileResults read GetCompileResults
       write SetCompileResults;
     property Tags: IDBTagList read GetTags write SetTags;
+    property LinkInfo: ISnippetLinkInfo read GetLinkInfo write SetLinkInfo;
   end;
 
   TDBFilterFn = reference to function (ASnippet: IReadOnlySnippet): Boolean;
