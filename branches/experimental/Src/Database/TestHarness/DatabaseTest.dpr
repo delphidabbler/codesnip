@@ -62,7 +62,8 @@ uses
   Collections.MultiMaps in '..\..\DelphiCol\Collections.MultiMaps.pas',
   Collections.Queues in '..\..\DelphiCol\Collections.Queues.pas',
   Collections.Sets in '..\..\DelphiCol\Collections.Sets.pas',
-  Collections.Stacks in '..\..\DelphiCol\Collections.Stacks.pas';
+  Collections.Stacks in '..\..\DelphiCol\Collections.Stacks.pas',
+  CS.Database.SnippetLinks in '..\Engine\CS.Database.SnippetLinks.pas';
 
 {$R *.res}
 
