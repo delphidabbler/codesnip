@@ -392,7 +392,7 @@ begin
   else if not IsValidIdent(TrimmedName) then
     ErrorMsg := Format(sErrBadName, [TrimmedName])
   else if CheckForUniqueness and
-    (Database.Snippets.Find(TrimmedName, True) <> nil) then
+    (Database.Snippets.Find(TrimmedName) <> nil) then
     ErrorMsg := Format(sErrDupName, [TrimmedName])
   else
     Result := True;

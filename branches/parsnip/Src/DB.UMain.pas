@@ -644,7 +644,7 @@ begin
   try
     SnippetName := UniqueSnippetName;
     // Check if snippet with same name exists in user database: error if so
-    if fSnippets.Find(SnippetName, True) <> nil then
+    if fSnippets.Find(SnippetName) <> nil then
       raise ECodeSnip.CreateFmt(sNameExists, [SnippetName]);
     Result := InternalAddSnippet(SnippetName, Data);
     Query.Update;
@@ -685,7 +685,7 @@ begin
   Assert(Snippet is TSnippetEx,
     ClassName + '.CreateTempSnippet: Snippet is a TSnippetEx');
   Result := TTempSnippet.Create(
-    Snippet.Name, True, (Snippet as TSnippetEx).GetProps);
+    Snippet.Name, (Snippet as TSnippetEx).GetProps);
   (Result as TTempSnippet).UpdateRefs(
     (Snippet as TSnippetEx).GetReferences, fSnippets
   );
@@ -702,7 +702,7 @@ function TDatabase.CreateTempSnippet(const Data: TSnippetEditData;
   }
 begin
   Result := TTempSnippet.Create(
-    StrIf(Name <> '', Name, UniqueSnippetName), True, Data.Props
+    StrIf(Name <> '', Name, UniqueSnippetName), Data.Props
   );
   (Result as TTempSnippet).UpdateRefs(Data.Refs, fSnippets);
 end;
@@ -929,7 +929,7 @@ resourcestring
   sCatNotFound = 'Category "%0:s" referenced by new snippet named "%1:s" does '
     + 'not exist';
 begin
-  Result := TSnippetEx.Create(SnippetName, True, Data.Props);
+  Result := TSnippetEx.Create(SnippetName, Data.Props);
   (Result as TSnippetEx).UpdateRefs(Data.Refs, fSnippets);
   Cat := fCategories.Find(Result.Category);
   if not Assigned(Cat) then
@@ -1023,7 +1023,7 @@ function TDatabase.UniqueSnippetName: string;
 begin
   repeat
     Result := 'Snippet' + TUniqueID.Generate;
-  until fSnippets.Find(Result, True) = nil;
+  until fSnippets.Find(Result) = nil;
 end;
 
 function TDatabase.UpdateCategory(const Category: TCategory;
@@ -1103,7 +1103,7 @@ begin
       SnippetName := Snippet.Name;
     // If name has changed then new name musn't exist in user database
     if not StrSameText(SnippetName, Snippet.Name) then
-      if fSnippets.Find(SnippetName, True) <> nil then
+      if fSnippets.Find(SnippetName) <> nil then
         raise ECodeSnip.CreateFmt(sCantRename, [Snippet.Name, SnippetName]);
     // We update by deleting old snippet and inserting new one
     // get lists of snippets that cross reference or depend on this snippet
@@ -1190,7 +1190,7 @@ function TDBDataItemFactory.CreateSnippet(const Name: string;
     @return Instance of new snippet with no references.
   }
 begin
-  Result := TSnippetEx.Create(Name, UserDefined, Props);
+  Result := TSnippetEx.Create(Name, Props);
 end;
 
 { TUserDataProvider }

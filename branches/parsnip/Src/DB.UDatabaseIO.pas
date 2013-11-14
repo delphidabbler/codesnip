@@ -157,6 +157,7 @@ type
         @param Snippet [in] Snippet to test.
         @return True if snippet is native, False if not.
       }
+    // TODO: Remove this method
     function IsUserDatabase: Boolean; virtual; abstract;
       {Checks if the database is the user database.
         @return True if the database is the user database, False if not.
@@ -429,7 +430,7 @@ begin
   for SnippetName in SnippetNames do
   begin
     // Check if snippet exists in current database and add it to list if not
-    Snippet := fSnipList.Find(SnippetName, IsUserDatabase);
+    Snippet := fSnipList.Find(SnippetName);
     if not Assigned(Snippet) then
     begin
       fReader.GetSnippetProps(SnippetName, SnippetProps);
@@ -469,18 +470,14 @@ end;
 
 function TUserDatabaseLoader.FindSnippet(const SnippetName: string;
   const SnipList: TSnippetList): TSnippet;
-  {Finds the snippet object with a specified name. If snippet is not in this
-  (user) database the main database is searched.
+  {Finds the snippet object with a specified name.
     @param SnippetName [in] Name of required snippet.
     @param SnipList [in] List of snippets to search.
     @return Reference to required snippet object or nil if snippet is not found.
   }
 begin
   // Search in user database
-  Result := SnipList.Find(SnippetName, True);
-  if not Assigned(Result) then
-    // Not in user database: try main database
-    Result := SnipList.Find(SnippetName, False);
+  Result := SnipList.Find(SnippetName);
 end;
 
 function TUserDatabaseLoader.IsNativeSnippet(const Snippet: TSnippet): Boolean;

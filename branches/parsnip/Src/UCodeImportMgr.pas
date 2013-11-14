@@ -302,7 +302,7 @@ begin
     if UserInfo.Details.ToString <> '' then
       SnippetInfo.Data.Props.Extra.Append(UserDetailsActiveText);
 
-    Snippet := Database.Snippets.Find(ImportInfo.ImportAsName, True);
+    Snippet := Database.Snippets.Find(ImportInfo.ImportAsName);
     if Assigned(Snippet) then
       // snippet already exists: overwrite it
       Editor.UpdateSnippet(Snippet, SnippetInfo.Data)

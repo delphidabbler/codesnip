@@ -155,11 +155,9 @@ type
         @return Required field content.
       }
   public
-    constructor Create(const Name: string; const UserDefined: Boolean;
-      const Props: TSnippetData);
+    constructor Create(const Name: string; const Props: TSnippetData);
       {Class contructor. Sets up snippet object with given property values.
         @param Name [in] Name of snippet.
-        @param UserDefined [in] Indicates if this is a user defined snippet.
         @param Props [in] Values of various snippet properties.
       }
     destructor Destroy; override;
@@ -263,12 +261,11 @@ type
         @param Idx [in] Index of required snippet in list.
         @return Snippet at specified index in list.
       }
-    function Find(const SnippetName: string;
-      const UserDefined: Boolean; out Index: Integer): Boolean; overload;
+    function Find(const SnippetName: string; out Index: Integer): Boolean;
+      overload;
       {Finds a snippet in the list that has a specified name and user defined
       property. Uses a binary search.
         @param SnippetName [in] Name of snippet to be found.
-        @param UserDefined [in] Whether required snippet is user defined or not.
         @param Index [out] Index of required snippet in list. Valid only if
           method returns True.
         @return True if snippet found, False if not.
@@ -305,12 +302,9 @@ type
         @param SnippetID [in] ID of snippet to find.
         @return Reference to required snippet or nil if not found.
       }
-    function Find(const SnippetName: string;
-      const UserDefined: Boolean): TSnippet; overload;
+    function Find(const SnippetName: string): TSnippet; overload;
       {Finds a named snippet in list with a matching user defined property.
         @param SnippetName [in] Name of required snippet.
-        @param UserDefined [in] Flag that determines if we are looking for a
-          user defined snippet or one from main database.
         @return Reference to required snippet or nil if not found.
       }
     function Contains(const Snippet: TSnippet): Boolean;
@@ -397,11 +391,9 @@ begin
   Result := Kind <> skFreeform;
 end;
 
-constructor TSnippet.Create(const Name: string; const UserDefined: Boolean;
-  const Props: TSnippetData);
+constructor TSnippet.Create(const Name: string; const Props: TSnippetData);
   {Class contructor. Sets up snippet object with given property values.
     @param Name [in] Name of snippet.
-    @param UserDefined [in] Indicates if this is a user defined snippet.
     @param Props [in] Values of various snippet properties.
   }
 begin
@@ -715,12 +707,11 @@ begin
   inherited;
 end;
 
-function TSnippetList.Find(const SnippetName: string;
-  const UserDefined: Boolean; out Index: Integer): Boolean;
+function TSnippetList.Find(const SnippetName: string; out Index: Integer):
+  Boolean;
   {Finds a snippet in the list that has a specified name and user defined
   property. Uses a binary search.
     @param SnippetName [in] Name of snippet to be found.
-    @param UserDefined [in] Whether required snippet is user defined or not.
     @param Index [out] Index of required snippet in list. Valid only if
       method returns True.
     @return True if snippet found, False if not.
@@ -732,7 +723,7 @@ begin
   // We need a temporary snippet object in order to perform binary search using
   // object list's built in search
   NulData.Init;
-  TempSnippet := TTempSnippet.Create(SnippetName, UserDefined, NulData);
+  TempSnippet := TTempSnippet.Create(SnippetName, NulData);
   try
     Index := fList.IndexOf(TempSnippet);
     Result := Index >= 0;
@@ -741,11 +732,9 @@ begin
   end;
 end;
 
-function TSnippetList.Find(const SnippetName: string;
-  const UserDefined: Boolean): TSnippet;
+function TSnippetList.Find(const SnippetName: string): TSnippet;
   {Finds a named snippet in list with a matching user defined property.
     @param SnippetName [in] Name of required snippet.
-    @param UserDefined [in] Flag that determines if we are looking for a
       user defined snippet or one from main database.
     @return Reference to required snippet or nil if not found.
   }
@@ -753,7 +742,7 @@ function TSnippetList.Find(const SnippetName: string;
 var
   Idx: Integer; // index of snippet name in list
 begin
-  if Find(SnippetName, UserDefined, Idx) then
+  if Find(SnippetName, Idx) then
     Result := Items[Idx]
   else
     Result := nil;
@@ -765,7 +754,7 @@ function TSnippetList.Find(const SnippetID: TSnippetID): TSnippet;
     @return Reference to required snippet or nil if not found.
   }
 begin
-  Result := Find(SnippetID.Name, True);
+  Result := Find(SnippetID.Name);
 end;
 
 function TSnippetList.GetEnumerator: IEnumerator<TSnippet>;
