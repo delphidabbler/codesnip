@@ -251,9 +251,6 @@ procedure TCodeImportMgr.UpdateDatabase;
     Idx: Integer;           // loops through dependencies
     SnippetID: TSnippetID;  // each snippet ID in dependency list
   begin
-    // NOTE: The data file format does not record which database a required
-    // snippet belongs to, so we first look in the user database and if it's
-    // not there, we assume the main database
     // TODO: will eventually need to set snippet's link info here
     for Idx := 0 to Pred(Depends.Count) do
     begin
