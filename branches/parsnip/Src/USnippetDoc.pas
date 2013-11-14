@@ -60,12 +60,8 @@ type
     ///  <remarks>Does nothing. Descendant classes should perform any required
     ///  initialisation here.</remarks>
     procedure InitialiseDoc; virtual;
-    ///  <summary>Output given heading, i.e. snippet name. Can be user defined
-    ///  or from main database.</summary>
-    ///  <remarks>Heading may be rendered differently depending on whether user
-    ///  defined or not.</remarks>
-    procedure RenderHeading(const Heading: string; const UserDefined: Boolean);
-      virtual; abstract;
+    ///  <summary>Output given heading.</summary>
+    procedure RenderHeading(const Heading: string); virtual; abstract;
     ///  <summary>Output given snippet description.</summary>
     procedure RenderDescription(const Desc: IActiveText); virtual; abstract;
     ///  <summary>Output given source code.</summary>
@@ -159,8 +155,7 @@ begin
   Assert(Assigned(Snippet), ClassName + '.Create: Snippet is nil');
   // generate document
   InitialiseDoc;
-  // TODO: rethink following method in terms of Synch Spaces
-  RenderHeading(Snippet.DisplayName, True);
+  RenderHeading(Snippet.DisplayName);
   RenderDescription(Snippet.Description);
   RenderSourceCode(Snippet.SourceCode);
   RenderTitledText(

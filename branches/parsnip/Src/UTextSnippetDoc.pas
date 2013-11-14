@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2009-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2009-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -49,12 +49,8 @@ type
   strict protected
     ///  <summary>Initialises plain text document.</summary>
     procedure InitialiseDoc; override;
-    ///  <summary>Adds given heading (i.e. snippet name) to document. Can be
-    ///  user defined or from main database.</summary>
-    ///  <remarks>Heading is output the same whether user defined or not, so
-    ///  UserDefined parameter is ignored.</remarks>
-    procedure RenderHeading(const Heading: string; const UserDefined: Boolean);
-      override;
+    ///  <summary>Adds given heading to document.</summary>
+    procedure RenderHeading(const Heading: string); override;
     ///  <summary>Interprets and adds given snippet description to document.
     ///  </summary>
     ///  <remarks>Active text is converted to word-wrapped plain text
@@ -166,8 +162,7 @@ begin
   RenderActiveText(ExtraText, 0, True);
 end;
 
-procedure TTextSnippetDoc.RenderHeading(const Heading: string;
-  const UserDefined: Boolean);
+procedure TTextSnippetDoc.RenderHeading(const Heading: string);
 begin
   fWriter.WriteLine(Heading);
 end;
