@@ -63,7 +63,21 @@ uses
   Collections.Queues in '..\..\DelphiCol\Collections.Queues.pas',
   Collections.Sets in '..\..\DelphiCol\Collections.Sets.pas',
   Collections.Stacks in '..\..\DelphiCol\Collections.Stacks.pas',
-  CS.Database.SnippetLinks in '..\Engine\CS.Database.SnippetLinks.pas';
+  CS.Database.SnippetLinks in '..\Engine\CS.Database.SnippetLinks.pas',
+  CS.Database.IO.Legacy.UserDB in '..\Engine\CS.Database.IO.Legacy.UserDB.pas',
+  UComparers in '..\..\TrunkSrc\UComparers.pas',
+  UXMLDocumentEx in '..\..\TrunkSrc\UXMLDocumentEx.pas',
+  UXMLDocHelper in '..\..\TrunkSrc\UXMLDocHelper.pas',
+  DB.USnippetKind in '..\..\TrunkSrc\DB.USnippetKind.pas',
+  UXMLDocConsts in '..\..\TrunkSrc\UXMLDocConsts.pas',
+  UREMLDataIO in '..\..\TrunkSrc\UREMLDataIO.pas',
+  ActiveText.UMain in '..\..\TrunkSrc\ActiveText.UMain.pas',
+  USnippetExtraHelper in '..\..\TrunkSrc\USnippetExtraHelper.pas',
+  UTaggedTextLexer in '..\..\TrunkSrc\UTaggedTextLexer.pas',
+  USnippetCreditsParser in '..\..\TrunkSrc\USnippetCreditsParser.pas',
+  UDOSDateTime in '..\..\TrunkSrc\UDOSDateTime.pas',
+  UAppInfo in '..\..\TrunkSrc\UAppInfo.pas',
+  PJMD5 in '..\..\TrunkSrc\3rdParty\PJMD5.pas';
 
 {$R *.res}
 
