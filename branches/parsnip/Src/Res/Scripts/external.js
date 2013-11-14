@@ -37,12 +37,11 @@ function updateDbase() {
 /*
  * Calls external object to get host application to display a named snippet.
  *  @param string snippet [in] Name of snippet to be displayed.
- *  @param boolean userdefined [in] Whether snippet is user defined.
  *  @return False.
  */
-function displaySnippet(snippet, userdefined) {
+function displaySnippet(snippet) {
   var e = window.event;
-  external.DisplaySnippet(snippet, userdefined, e.ctrlKey);
+  external.DisplaySnippet(snippet, e.ctrlKey);
   return false;
 }
 

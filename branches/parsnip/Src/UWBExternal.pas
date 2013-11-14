@@ -37,7 +37,7 @@ type
   ///  <para>The methods a declared in the type library that is defined in
   ///  External.idl.</para>
   ///  </remarks>
-  TWBExternal = class(TAutoIntfObject, IWBExternal12, ISetNotifier)
+  TWBExternal = class(TAutoIntfObject, IWBExternal13, ISetNotifier)
   strict private
     var
       ///  <summary>Object used to call application code in response to
@@ -63,13 +63,11 @@ type
     ///  <summary>Displays a named snippet.</summary>
     ///  <param name="SnippetName">WideString [in] Name of snippet to be
     ///  displayed.</param>
-    ///  <param name="UserDefined">WordBool [in] Whether the snippet is user
-    ///  defined.</param>
     ///  <param name="NewTab">WordBool [in] Whether to display snippet in a new
     ///  tab.</param>
     ///  <remarks>Method of IWBExternal12.</remarks>
-    procedure DisplaySnippet(const SnippetName: WideString;
-      UserDefined: WordBool; NewTab: WordBool); safecall;
+    procedure DisplaySnippet(const SnippetName: WideString; NewTab: WordBool);
+      safecall;
 
     ///  <summary>Displays the Configure Compilers dialogue box.</summary>
     ///  <remarks>Method of IWBExternal12.</remarks>
@@ -169,7 +167,7 @@ begin
   ExeName := TAppInfo.AppExeFilePath;
   OleCheck(LoadTypeLib(PWideChar(ExeName), TypeLib));
   // Create the object using type library
-  inherited Create(TypeLib, IWBExternal12);
+  inherited Create(TypeLib, IWBExternal13);
 end;
 
 procedure TWBExternal.DisplayCategory(const CatID: WideString;
@@ -184,9 +182,8 @@ begin
 end;
 
 procedure TWBExternal.DisplaySnippet(const SnippetName: WideString;
-  UserDefined: WordBool; NewTab: WordBool);
+  NewTab: WordBool);
 begin
-  // TODO: remove UserDefined param from this method (& from external.idl etc)
   try
     if Assigned(fNotifier) then
       fNotifier.DisplaySnippet(SnippetName, NewTab);
