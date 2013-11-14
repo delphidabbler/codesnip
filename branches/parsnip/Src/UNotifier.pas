@@ -82,17 +82,13 @@ type
     ///  <remarks>Methods of INotifier.</remarks>
     procedure UpdateDbase;
 
-    // TODO: remove UserDefined parameter from DisplaySnippet
     ///  <summary>Displays a snippet.</summary>
     ///  <param name="SnippetName">WideString [in] Name of required snippet.
     ///  </param>
-    ///  <param name="UserDefined">WordBool [in] Indicates whether snippet is
-    ///  user defined.</param>
     ///  <param name="NewTab">WordBool [in] Whether to display snippet in a new
     ///  detail pane tab.</param>
     ///  <remarks>Methods of INotifier.</remarks>
-    procedure DisplaySnippet(const SnippetName: WideString;
-      UserDefined: WordBool; NewTab: WordBool);
+    procedure DisplaySnippet(const SnippetName: WideString; NewTab: WordBool);
 
     ///  <summary>Displays a category.</summary>
     ///  <param name="CatId">WideString [in] ID of required category.</param>
@@ -298,7 +294,7 @@ begin
 end;
 
 procedure TNotifier.DisplaySnippet(const SnippetName: WideString;
-  UserDefined: WordBool; NewTab: WordBool);
+  NewTab: WordBool);
 begin
   if Assigned(fDisplaySnippetAction) then
   begin

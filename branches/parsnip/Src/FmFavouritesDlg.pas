@@ -347,7 +347,6 @@ begin
   SelectedSnippet := LI.Favourite.SnippetID;
   fNotifier.DisplaySnippet(
     SelectedSnippet.Name,
-    True,   // TODO: remove this old UserDefined param from method
     chkNewTab.Checked
   );
   fFavourites.Touch(SelectedSnippet);

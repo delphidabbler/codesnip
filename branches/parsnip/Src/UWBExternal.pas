@@ -186,9 +186,10 @@ end;
 procedure TWBExternal.DisplaySnippet(const SnippetName: WideString;
   UserDefined: WordBool; NewTab: WordBool);
 begin
+  // TODO: remove UserDefined param from this method (& from external.idl etc)
   try
     if Assigned(fNotifier) then
-      fNotifier.DisplaySnippet(SnippetName, UserDefined, NewTab);
+      fNotifier.DisplaySnippet(SnippetName, NewTab);
   except
     HandleException;
   end;
