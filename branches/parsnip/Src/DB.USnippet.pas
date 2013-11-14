@@ -738,7 +738,6 @@ function TSnippetList.Find(const SnippetName: string): TSnippet;
       user defined snippet or one from main database.
     @return Reference to required snippet or nil if not found.
   }
-  // TODO: Remove UserDefined parameter from this method
 var
   Idx: Integer; // index of snippet name in list
 begin
