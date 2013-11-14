@@ -1562,6 +1562,8 @@ begin
         [cDetailPopupMenuAnchor, cDetailPopupMenuImage]
       );
       AddSpacer([cDetailPopupMenuAnchor, cDetailPopupMenuImage]);
+      AddAction(actEditSnippet, cDetailPopupMenuIDs);
+      AddSpacer(cDetailPopupMenuIDs);
       AddAction(actViewDependencies, cDetailPopupMenuIDs);
       AddSpacer(cDetailPopupMenuIDs);
       AddAction(actCopyInfo, cDetailPopupMenuIDs);
