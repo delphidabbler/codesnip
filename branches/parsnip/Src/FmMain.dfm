@@ -659,6 +659,7 @@ inherited MainForm: TMainForm
       Caption = 'Update From Web...'
       Hint = 'Update Database from Web|Update the database from the internet'
       ImageIndex = 7
+      Visible = False
       OnExecute = actUpdateDbaseExecute
     end
     object actSubmit: TAction

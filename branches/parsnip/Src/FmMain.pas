@@ -1219,20 +1219,24 @@ begin
 end;
 
 procedure TMainForm.actUpdateDbaseExecute(Sender: TObject);
-resourcestring
-  sConfirmSave = 'The user database has been changed. Do you wish to save it '
-    + 'before updating the database?' + EOL2 + 'Clicking No will cause all '
-    + 'recent changes to be lost.';
+{ TODO -cCommented Out: Reinstate this action or similar to check for updates to
+                        linked spaces.
+                        NOTE: associated action has been made invisible. }
+//resourcestring
+//  sConfirmSave = 'The user database has been changed. Do you wish to save it '
+//    + 'before updating the database?' + EOL2 + 'Clicking No will cause all '
+//    + 'recent changes to be lost.';
 begin
-  if fDialogMgr.ExecDBUpdateDlg then
-  begin
-    // Database was updated: check if user database needs saving
-    if (Database as IDatabaseEdit).Updated
-      and TMessageBox.Confirm(Self, sConfirmSave) then
-      TUserDBMgr.Save(Self);
-    // Reload the databases
-    ReloadDatabase;
-  end;
+//  if fDialogMgr.ExecDBUpdateDlg then
+//  begin
+//    // Database was updated: check if user database needs saving
+//    if (Database as IDatabaseEdit).Updated
+//      and TMessageBox.Confirm(Self, sConfirmSave) then
+//      TUserDBMgr.Save(Self);
+//    // Reload the databases
+//    ReloadDatabase;
+//  end;
+  TMessageBox.Error(Self, 'actUpdateDbase temporarily disabled');
 end;
 
 procedure TMainForm.actViewCompErrsExecute(Sender: TObject);
