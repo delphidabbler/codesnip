@@ -254,11 +254,10 @@ procedure TCodeImportMgr.UpdateDatabase;
     // NOTE: The data file format does not record which database a required
     // snippet belongs to, so we first look in the user database and if it's
     // not there, we assume the main database
+    // TODO: will eventually need to set snippet's link info here
     for Idx := 0 to Pred(Depends.Count) do
     begin
       SnippetID := Depends[Idx];
-      SnippetID.UserDefined :=
-        Database.Snippets.Find(SnippetID.Name, True) <> nil;
       Depends[Idx] := SnippetID;
     end;
   end;

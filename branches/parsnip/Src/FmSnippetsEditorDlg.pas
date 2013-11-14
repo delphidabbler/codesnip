@@ -469,7 +469,7 @@ begin
   if Assigned(fSnippet) then
     SnippetID := fSnippet.ID
   else
-    SnippetID := TSnippetID.Create('', True);
+    SnippetID := TSnippetID.Create('');
   DependsList := TSnippetList.Create;
   try
     fDependsCLBMgr.GetCheckedSnippets(DependsList);
@@ -1029,7 +1029,7 @@ begin
   fDependsCLBMgr.Clear;
   fXRefsCLBMgr.Save;
   fXRefsCLBMgr.Clear;
-  EditSnippetID := TSnippetID.Create(fOrigName, True);
+  EditSnippetID := TSnippetID.Create(fOrigName);
   EditSnippetKind := fSnipKindList.SnippetKind(cbKind.ItemIndex);
   for Snippet in Database.Snippets do
   begin

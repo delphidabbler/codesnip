@@ -448,7 +448,7 @@ function TSnippet.GetID: TSnippetID;
     @return Required ID.
   }
 begin
-  Result := TSnippetID.Create(fName, True);
+  Result := TSnippetID.Create(fName);
 end;
 
 function TSnippet.IsEqual(const Snippet: TSnippet): Boolean;
@@ -749,6 +749,7 @@ function TSnippetList.Find(const SnippetName: string;
       user defined snippet or one from main database.
     @return Reference to required snippet or nil if not found.
   }
+  // TODO: Remove UserDefined parameter from this method
 var
   Idx: Integer; // index of snippet name in list
 begin
@@ -764,7 +765,7 @@ function TSnippetList.Find(const SnippetID: TSnippetID): TSnippet;
     @return Reference to required snippet or nil if not found.
   }
 begin
-  Result := Find(SnippetID.Name, SnippetID.UserDefined);
+  Result := Find(SnippetID.Name, True);
 end;
 
 function TSnippetList.GetEnumerator: IEnumerator<TSnippet>;

@@ -93,9 +93,11 @@ resourcestring
 var
   Line: string;         // each line in fLines
   Name: string;         // name of each snippet
+  // Following values are now ignored
   UserDefStr: string;   // user defined value of each snippet as string
   UserDefInt: Integer;  // user defined value of each snippet as integer
 begin
+  // TODO: change file format so that User-defined field not required
   fSnippetIDs.Clear;
   if (fLines.Count <= 1) or (fLines[0] <> fWatermark) then
     raise ESnippetIDListFileReader.Create(sBadFileFormat);
@@ -112,7 +114,7 @@ begin
     if not TryStrToInt(UserDefStr, UserDefInt)
       or not (UserDefInt in [0, 1]) then
       raise ESnippetIDListFileReader.CreateFmt(sBadUserDef, [Line]);
-    fSnippetIDs.Add(TSnippetID.Create(Name, Boolean(UserDefInt)));
+    fSnippetIDs.Add(TSnippetID.Create(Name));
   end;
 end;
 
@@ -160,7 +162,8 @@ begin
     fBuilder.Append(TAB);
     // NOTE: TStringBuilder.Append(Boolean) override not used here since ordinal
     // value wanted instead of "True" or "False" or localised equivalent.
-    fBuilder.Append(Ord(SnippetID.UserDefined));
+    // TODO: Create a revised file format without this redundant field
+    fBuilder.Append(Ord(True));
     fBuilder.AppendLine;
   end;
 end;

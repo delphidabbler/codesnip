@@ -35,17 +35,12 @@ type
     var
       ///  <summary>Value of Name property.</summary>
       fName: string;
-      ///  <summary>Value of UserDefined property.</summary>
-      fUserDefined: Boolean;
   public
     ///  <summary>Name of snippet.</summary>
     property Name: string read fName write fName;
 
-    ///  <summary>Whether snippet is user defined.</summary>
-    property UserDefined: Boolean read fUserDefined write fUserDefined;
-
-    ///  <summary>Creates a record with given property values.</summary>
-    constructor Create(const AName: string; const AUserDefined: Boolean);
+    ///  <summary>Creates a record with given name.</summary>
+    constructor Create(const AName: string);
 
     ///  <summary>Creates copy of given snippet ID</summary>
     constructor Clone(const Src: TSnippetID);
@@ -164,7 +159,7 @@ uses
 
 constructor TSnippetID.Clone(const Src: TSnippetID);
 begin
-  Create(Src.Name, Src.UserDefined);
+  Create(Src.Name);
 end;
 
 class function TSnippetID.CompareNames(const Left, Right: string): Integer;
@@ -175,14 +170,11 @@ end;
 function TSnippetID.CompareTo(const SID: TSnippetID): Integer;
 begin
   Result := CompareNames(Name, SID.Name);
-  if Result = 0 then
-    Result := Ord(UserDefined) - Ord(SID.UserDefined);
 end;
 
-constructor TSnippetID.Create(const AName: string; const AUserDefined: Boolean);
+constructor TSnippetID.Create(const AName: string);
 begin
   fName := AName;
-  fUserDefined := AUserDefined;
 end;
 
 class operator TSnippetID.Equal(const SID1, SID2: TSnippetID): Boolean;

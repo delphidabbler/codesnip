@@ -445,7 +445,7 @@ procedure TCodeImporter.Execute(const Data: TBytes);
     for SnippetName in SnippetNames do
       // Note: in building snippet ID list we assume each snippet is user-
       // defined. It may not be, but there is no way of telling from XML.
-      Depends.Add(TSnippetID.Create(SnippetName, True));
+      Depends.Add(TSnippetID.Create(SnippetName));
   end;
 
   // Reads description node and converts to active text.

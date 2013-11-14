@@ -347,7 +347,7 @@ begin
   SelectedSnippet := LI.Favourite.SnippetID;
   fNotifier.DisplaySnippet(
     SelectedSnippet.Name,
-    SelectedSnippet.UserDefined,
+    True,   // TODO: remove this old UserDefined param from method
     chkNewTab.Checked
   );
   fFavourites.Touch(SelectedSnippet);
@@ -582,11 +582,9 @@ end;
 
 procedure TFavouritesDlg.LVCustomDrawItem(Sender: TCustomListView;
   Item: TListItem; State: TCustomDrawState; var DefaultDraw: Boolean);
-var
-  UserDefined: Boolean;
 begin
-  UserDefined := (Item as TFavouriteListItem).Favourite.SnippetID.UserDefined;
-  fLVFavs.Canvas.Font.Color := Preferences.DBHeadingColours[UserDefined];
+  // TODO: reconsider in light of SYnch Spaces
+  fLVFavs.Canvas.Font.Color := Preferences.DBHeadingColours[True];
 end;
 
 procedure TFavouritesDlg.LVCustomDrawSubItem(Sender: TCustomListView;
