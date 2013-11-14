@@ -16,6 +16,8 @@
 
 unit UUpdateCheckers;
 
+{ TODO -cCommented Out: Reinstate TDatabaseUpdateCheckerThread or similar to
+                        check for updates to linked spaces. }
 
 interface
 
@@ -117,37 +119,37 @@ type
     destructor Destroy; override;
   end;
 
-type
-  ///  <summary>Thread that checks online to find if a new version of the online
-  ///  code snippets database is available.</summary>
-  ///  <remarks>
-  ///  <para>No check is made if the user has switched the automatic database
-  ///  update checking facility off in preferences or if a check has been made
-  ///  within the time period specified by the user.
-  ///  </para>
-  ///  <para>The thread fails silently as if no update is available if any
-  ///  errors occur when accessing the internet or web service.</para>
-  ///  <para>If an update is found a notification containing the details is
-  ///  placed in the notification queue to await display.</para>
-  ///  </remarks>
-  TDatabaseUpdateCheckerThread = class sealed(TUpdateCheckerThread)
-  strict protected
-    ///  <summary>Returns the frequency of update checks, in days.</summary>
-    ///  <remarks>A return value of zero indicates that no checks should be
-    ///  made.</remarks>
-    function UpdateFrequency: Word; override;
-    ///  <summary>Returns the name of the value in the 'UpdateChecks' settings
-    ///  section that stores the date the last update check was made.</summary>
-    function LastUpdateSettingsName: string; override;
-    ///  <summary>Checks to see if a database update is available and, if so,
-    ///  creates a notification record with details of how to obtain the update.
-    ///  </summary>
-    ///  <param name="N">TNotificationData [out] The required notification
-    ///  record if an update is available. Undefined otherwise.</param>
-    ///  <returns>Boolean. True if an update is available or False if not.
-    ///  </returns>
-    function DoCheck(out N: TNotificationData): Boolean; override;
-  end;
+//type
+//  ///  <summary>Thread that checks online to find if a new version of the online
+//  ///  code snippets database is available.</summary>
+//  ///  <remarks>
+//  ///  <para>No check is made if the user has switched the automatic database
+//  ///  update checking facility off in preferences or if a check has been made
+//  ///  within the time period specified by the user.
+//  ///  </para>
+//  ///  <para>The thread fails silently as if no update is available if any
+//  ///  errors occur when accessing the internet or web service.</para>
+//  ///  <para>If an update is found a notification containing the details is
+//  ///  placed in the notification queue to await display.</para>
+//  ///  </remarks>
+//  TDatabaseUpdateCheckerThread = class sealed(TUpdateCheckerThread)
+//  strict protected
+//    ///  <summary>Returns the frequency of update checks, in days.</summary>
+//    ///  <remarks>A return value of zero indicates that no checks should be
+//    ///  made.</remarks>
+//    function UpdateFrequency: Word; override;
+//    ///  <summary>Returns the name of the value in the 'UpdateChecks' settings
+//    ///  section that stores the date the last update check was made.</summary>
+//    function LastUpdateSettingsName: string; override;
+//    ///  <summary>Checks to see if a database update is available and, if so,
+//    ///  creates a notification record with details of how to obtain the update.
+//    ///  </summary>
+//    ///  <param name="N">TNotificationData [out] The required notification
+//    ///  record if an update is available. Undefined otherwise.</param>
+//    ///  <returns>Boolean. True if an update is available or False if not.
+//    ///  </returns>
+//    function DoCheck(out N: TNotificationData): Boolean; override;
+//  end;
 
 type
   ///  <summary>Manages creation and lifetime of the background threads that
@@ -181,8 +183,8 @@ uses
   // Delphi
   SysUtils, Classes, DateUtils,
   // Project
-  FmDBUpdateDlg, UAppInfo, UPreferences, UProgramUpdateChecker, USettings,
-  UDBUpdateMgr, UUtils;
+  {FmDBUpdateDlg, }UAppInfo, UPreferences, UProgramUpdateChecker, USettings,
+  {UDBUpdateMgr, }UUtils;
 
 
 { TUpdateCheckerThread }
@@ -284,51 +286,51 @@ begin
   Result := Preferences.AutoCheckProgramFrequency;
 end;
 
-{ TDatabaseUpdateCheckerThread }
-
-function TDatabaseUpdateCheckerThread.DoCheck(
-  out N: TNotificationData): Boolean;
-resourcestring
-  sTitle = 'Database Update Available';
-  sContent1 = 'The online Code Snippets Database has been updated.';
-  sContent2 = 'You can update your local copy of the database to reflect the '
-    + 'changes.';
-  sUpdatePrompt = 'Update Now';
-const
-  HelpKeyword = 'DatabaseUpdateNotification';
-var
-  UpdateMgr: TDBUpdateMgr;
-  Content: TArray<string>;
-  TaskCallback: TProc;
-begin
-  UpdateMgr := TDBUpdateMgr.Create(TAppInfo.AppDataDir, 'Auto');
-  try
-    if UpdateMgr.CheckForUpdates in [uqUpToDate, uqError] then
-      Exit(False);
-    Content := TArray<string>.Create(sContent1, sContent2);
-    TaskCallback :=
-      procedure
-      begin
-        TDBUpdateDlg.Execute(nil);
-      end;
-    N := TNotificationData.Create(
-      sTitle, Content, HelpKeyword, TaskCallback, sUpdatePrompt
-    );
-    Result := True;
-  finally
-    UpdateMgr.Free;
-  end
-end;
-
-function TDatabaseUpdateCheckerThread.LastUpdateSettingsName: string;
-begin
-  Result := 'LastDatabaseCheck';
-end;
-
-function TDatabaseUpdateCheckerThread.UpdateFrequency: Word;
-begin
-  Result := Preferences.AutoCheckDatabaseFrequency;
-end;
+//{ TDatabaseUpdateCheckerThread }
+//
+//function TDatabaseUpdateCheckerThread.DoCheck(
+//  out N: TNotificationData): Boolean;
+//resourcestring
+//  sTitle = 'Database Update Available';
+//  sContent1 = 'The online Code Snippets Database has been updated.';
+//  sContent2 = 'You can update your local copy of the database to reflect the '
+//    + 'changes.';
+//  sUpdatePrompt = 'Update Now';
+//const
+//  HelpKeyword = 'DatabaseUpdateNotification';
+//var
+//  UpdateMgr: TDBUpdateMgr;
+//  Content: TArray<string>;
+//  TaskCallback: TProc;
+//begin
+//  UpdateMgr := TDBUpdateMgr.Create(TAppInfo.AppDataDir, 'Auto');
+//  try
+//    if UpdateMgr.CheckForUpdates in [uqUpToDate, uqError] then
+//      Exit(False);
+//    Content := TArray<string>.Create(sContent1, sContent2);
+//    TaskCallback :=
+//      procedure
+//      begin
+//        TDBUpdateDlg.Execute(nil);
+//      end;
+//    N := TNotificationData.Create(
+//      sTitle, Content, HelpKeyword, TaskCallback, sUpdatePrompt
+//    );
+//    Result := True;
+//  finally
+//    UpdateMgr.Free;
+//  end
+//end;
+//
+//function TDatabaseUpdateCheckerThread.LastUpdateSettingsName: string;
+//begin
+//  Result := 'LastDatabaseCheck';
+//end;
+//
+//function TDatabaseUpdateCheckerThread.UpdateFrequency: Word;
+//begin
+//  Result := Preferences.AutoCheckDatabaseFrequency;
+//end;
 
 { TUpdateCheckerMgr }
 
@@ -337,8 +339,8 @@ begin
   inherited Create;
   fThreads := TThreadGroup.Create;
   fThreads.Add([
-    TProgramUpdateCheckerThread.Create(10000),  // begins work after 10s delay
-    TDatabaseUpdateCheckerThread.Create(20000)  // begins work after 20s delay
+    TProgramUpdateCheckerThread.Create(10000)//,  // begins work after 10s delay
+//    TDatabaseUpdateCheckerThread.Create(20000)  // begins work after 20s delay
   ]);
   fThreads.SetPriorities(tpLowest);
 end;
