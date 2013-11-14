@@ -73,7 +73,6 @@ var
   Line: string;
   Fields: IStringList;
   SnippetName: string;
-  UserDef: Boolean;
   LastAccess: TDateTime;
 resourcestring
   sBadFormat = 'Invalid favourites file format';
@@ -104,10 +103,6 @@ begin
     if Fields.Count <> 3 then
       raise EFavouritesPersist.Create(sBadFormat);
     SnippetName := Fields[0];
-    // TODO: no longer a for UserDef here
-    UserDef := True; // accept any text as true except "false"
-//    if StrSameText(Fields[1], 'false') then
-//      UserDef := False;
     if not TryStrToDateTime(Fields[2], LastAccess) then
       raise EFavouritesPersist.Create(sBadFormat);
     // only add to favourites if snippet in database
