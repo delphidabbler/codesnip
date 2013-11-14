@@ -541,26 +541,12 @@ begin
       'overflowXFixScript',
       'window.onload = null;'
     );
-  // TODO: rethink all of following re synch spaces
-  // TODO: rethink design re edit link vs test info
-//  if GetSnippet.UserDefined then
+  { TODO -cSynch Spaces: rethink following placeholder re synch-spaces: may need
+                         style attrib to set required colour. }
   Tplt.ResolvePlaceholderHTML('SnippetCSSClass', 'userdb');
-//  else
-//    Tplt.ResolvePlaceholderHTML('SnippetCSSClass', 'maindb');
-  Tplt.ResolvePlaceholderHTML(
-    'TestingInfo', TCSS.BlockDisplayProp(False)
-  );
-  Tplt.ResolvePlaceholderHTML(
-    'EditLink', TCSS.BlockDisplayProp(True)
-  );
-  Tplt.ResolvePlaceholderText(
-    'EditEventHandler',
-    TJavaScript.LiteralFunc('editSnippet', [GetSnippet.Name])
-  );
   SnippetHTML := TSnippetHTML.Create(GetSnippet);
   try
-//    if not GetSnippet.UserDefined then
-//      Tplt.ResolvePlaceholderHTML('TestingInfoImg', SnippetHTML.TestingImage);
+    Tplt.ResolvePlaceholderHTML('TestingInfoImg', SnippetHTML.TestingImage);
     Tplt.ResolvePlaceholderHTML('SnippetName', SnippetHTML.SnippetName);
   finally
     SnippetHTML.Free;
