@@ -136,9 +136,6 @@
 			</DCCReference>
 			<DCCReference Include="FmCompilersDlg.UBannerMgr.pas"/>
 			<DCCReference Include="FmCompilersDlg.UCompilerListMgr.pas"/>
-			<DCCReference Include="FmDBUpdateDlg.pas">
-				<Form>DBUpdateDlg</Form>
-			</DCCReference>
 			<DCCReference Include="FmDeleteCategoryDlg.pas">
 				<Form>DeleteCategoryDlg</Form>
 			</DCCReference>
@@ -417,11 +414,9 @@
 			<DCCReference Include="UCSSBuilder.pas"/>
 			<DCCReference Include="UCSSUtils.pas"/>
 			<DCCReference Include="UCtrlArranger.pas"/>
-			<DCCReference Include="UDataBackupMgr.pas"/>
 			<DCCReference Include="UDatabaseLoader.pas"/>
 			<DCCReference Include="UDatabaseLoaderUI.pas"/>
 			<DCCReference Include="UDataStreamIO.pas"/>
-			<DCCReference Include="UDBUpdateMgr.pas"/>
 			<DCCReference Include="UDetailPageHTML.pas"/>
 			<DCCReference Include="UDetailPageLoader.pas"/>
 			<DCCReference Include="UDetailTabAction.pas"/>
@@ -437,7 +432,6 @@
 			<DCCReference Include="UExceptions.pas"/>
 			<DCCReference Include="UExeFileType.pas"/>
 			<DCCReference Include="UFileProtocol.pas"/>
-			<DCCReference Include="UFileUpdater.pas"/>
 			<DCCReference Include="UFolderBackup.pas"/>
 			<DCCReference Include="UFontHelper.pas"/>
 			<DCCReference Include="UFormAligner.pas"/>
@@ -471,7 +465,6 @@
 			<DCCReference Include="UMeasurement.pas"/>
 			<DCCReference Include="UMemoCaretPosDisplayMgr.pas"/>
 			<DCCReference Include="UMemoHelper.pas"/>
-			<DCCReference Include="UMemoProgBarMgr.pas"/>
 			<DCCReference Include="UMenus.pas"/>
 			<DCCReference Include="UMessageBox.pas"/>
 			<DCCReference Include="UMessageWindow.pas"/>
@@ -578,7 +571,6 @@
 			<DCCReference Include="Web.UBaseWebService.pas"/>
 			<DCCReference Include="Web.UCharEncodings.pas"/>
 			<DCCReference Include="Web.UCodeSubmitter.pas"/>
-			<DCCReference Include="Web.UDBDownloadMgr.pas"/>
 			<DCCReference Include="Web.UDownloadMonitor.pas"/>
 			<DCCReference Include="Web.UExceptions.pas"/>
 			<DCCReference Include="Web.UHTTPEx.pas"/>
