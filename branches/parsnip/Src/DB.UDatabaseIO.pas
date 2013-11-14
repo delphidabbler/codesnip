@@ -151,13 +151,6 @@ type
         @return Reference to required snippet object or nil if snippet is not
           found.
       }
-    function IsNativeSnippet(const Snippet: TSnippet): Boolean;
-      virtual; abstract;
-      {Checks if a snippet is native (belongs) to the database being read.
-        @param Snippet [in] Snippet to test.
-        @return True if snippet is native, False if not.
-      }
-
     function ErrorMessageHeading: string; virtual; abstract;
       {Returns heading to use in error messages. Should identify the database.
         @return Required heading.
@@ -207,11 +200,6 @@ type
         @param SnipList [in] List of snippets to search.
         @return Reference to required snippet object or nil if snippet is not
           found.
-      }
-    function IsNativeSnippet(const Snippet: TSnippet): Boolean; override;
-      {Checks if a snippet is native (belongs) to the user database.
-        @param Snippet [in] Snippet to test.
-        @return True if snippet is native, False if not.
       }
     function ErrorMessageHeading: string; override;
       {Returns heading to use in error messages. Identifies main database.
@@ -334,10 +322,7 @@ begin
     // Build XRef, Depends and Units reference list of each snippet for this
     // database
     for Snippet in fSnipList do
-    begin
-      if IsNativeSnippet(Snippet) then
-        LoadReferences(Snippet);
-    end;
+      LoadReferences(Snippet);
   except
     on E: Exception do
       HandleException(E);
@@ -430,8 +415,7 @@ begin
       fSnipList.Add(Snippet);
     end;
     // Add snippet to database only if it belongs to this database
-    if IsNativeSnippet(Snippet) then
-      Cat.Snippets.Add(Snippet);
+    Cat.Snippets.Add(Snippet);
   end;
 end;
 
@@ -468,16 +452,6 @@ function TUserDatabaseLoader.FindSnippet(const SnippetName: string;
 begin
   // Search in user database
   Result := SnipList.Find(SnippetName);
-end;
-
-function TUserDatabaseLoader.IsNativeSnippet(const Snippet: TSnippet): Boolean;
-  {Checks if a snippet is native (belongs) to the user database.
-    @param Snippet [in] Snippet to test.
-    @return True if snippet is native, False if not.
-  }
-begin
-  // TODO: remove this method
-  Result := True;
 end;
 
 procedure TUserDatabaseLoader.LoadCategories;
