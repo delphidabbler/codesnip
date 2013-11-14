@@ -12,6 +12,10 @@
 }
 
 
+{ TODO -cCommented Out: Reinstate TDialogMgr.ExecDBUpdateDlg or similar to
+                        check for updates to linked spaces. }
+
+
 unit UDialogMgr;
 
 
@@ -107,13 +111,13 @@ type
     function ExecSelectionSearchDlg(const SelectedSnippets: TSnippetList;
       out ASearch: ISearch): Boolean;
 
-    ///  <summary>Displays Update From Web dialogue box used to update the local
-    ///  copy of the online database.</summary>
-    ///  <returns>Boolean. True if the database was updated successfully or
-    ///  False if the local database is up to date, if the update failed or if
-    ///  the user cancelled.</returns>
-    function ExecDBUpdateDlg: Boolean;
-
+//    ///  <summary>Displays Update From Web dialogue box used to update the local
+//    ///  copy of the online database.</summary>
+//    ///  <returns>Boolean. True if the database was updated successfully or
+//    ///  False if the local database is up to date, if the update failed or if
+//    ///  the user cancelled.</returns>
+//    function ExecDBUpdateDlg: Boolean;
+//
     ///  <summary>Displays the Print dialogue box.</summary>
     ///  <returns>Boolean. True if user OKd dialogue or False if user cancelled.
     ///  </returns>
@@ -178,7 +182,7 @@ uses
   // Project
   CS.UI.Dialogs.ConfigDiffProg,
   FmAboutDlg,
-  FmDBUpdateDlg,
+//  FmDBUpdateDlg,
   FmDependenciesDlg,
   FmDonateDlg,
   FmFindCompilerDlg,
@@ -204,10 +208,10 @@ begin
   Result := TConfigDiffProgDlg.Execute(Owner);
 end;
 
-function TDialogMgr.ExecDBUpdateDlg: Boolean;
-begin
-  Result := TDBUpdateDlg.Execute(Owner);
-end;
+//function TDialogMgr.ExecDBUpdateDlg: Boolean;
+//begin
+//  Result := TDBUpdateDlg.Execute(Owner);
+//end;
 
 function TDialogMgr.ExecFindCompilerDlg(out ASearch: ISearch;
   out RefineExisting: Boolean): Boolean;
