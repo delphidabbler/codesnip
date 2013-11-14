@@ -157,11 +157,7 @@ type
         @param Snippet [in] Snippet to test.
         @return True if snippet is native, False if not.
       }
-    // TODO: Remove this method
-    function IsUserDatabase: Boolean; virtual; abstract;
-      {Checks if the database is the user database.
-        @return True if the database is the user database, False if not.
-      }
+
     function ErrorMessageHeading: string; virtual; abstract;
       {Returns heading to use in error messages. Should identify the database.
         @return Required heading.
@@ -216,10 +212,6 @@ type
       {Checks if a snippet is native (belongs) to the user database.
         @param Snippet [in] Snippet to test.
         @return True if snippet is native, False if not.
-      }
-    function IsUserDatabase: Boolean; override;
-      {Checks if the database is the user database.
-        @return True - this is the user database.
       }
     function ErrorMessageHeading: string; override;
       {Returns heading to use in error messages. Identifies main database.
@@ -295,7 +287,7 @@ procedure TDatabaseLoader.CreateCategory(const CatID: string;
     @param CatData [in] Properties of category.
   }
 begin
-  fCategories.Add(fFactory.CreateCategory(CatID, IsUserDatabase, CatData));
+  fCategories.Add(fFactory.CreateCategory(CatID, True, CatData));
 end;
 
 procedure TDatabaseLoader.HandleException(const E: Exception);
@@ -485,14 +477,6 @@ function TUserDatabaseLoader.IsNativeSnippet(const Snippet: TSnippet): Boolean;
   }
 begin
   // TODO: remove this method
-  Result := True;
-end;
-
-function TUserDatabaseLoader.IsUserDatabase: Boolean;
-  {Checks if the database is the user database.
-    @return True - this is the user database.
-  }
-begin
   Result := True;
 end;
 
