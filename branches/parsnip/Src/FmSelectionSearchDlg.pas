@@ -37,18 +37,14 @@ type
   }
   TSelectionSearchDlg = class(TGenericOKDlg, INoPublicConstruct)
     btnClearAll: TButton;
-    btnMainDB: TButton;
     btnSelectAll: TButton;
-    btnUserDB: TButton;
     frmSelect: TSelectSnippetsFrame;
     btnExpandAll: TButton;
     btnCollapseAll: TButton;
     lblOverwriteSearch: TLabel;
     procedure btnClearAllClick(Sender: TObject);
-    procedure btnMainDBClick(Sender: TObject);
     procedure btnOKClick(Sender: TObject);
     procedure btnSelectAllClick(Sender: TObject);
-    procedure btnUserDBClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure btnExpandAllClick(Sender: TObject);
     procedure btnCollapseAllClick(Sender: TObject);
@@ -63,11 +59,6 @@ type
       {OnChange event handler for snippet selection frame. Disables OK button if
       no snippet selected.
         @param Sender [in] Not used.
-      }
-    procedure SelectDB(const UserDefined: Boolean);
-      {Selects all snippets from either main or user defined database.
-        @param UserDefined [in] Flag true if user-defined snippets are to be
-          selected, False if main database snippets are to be selected.
       }
   strict protected
     procedure ConfigForm; override;
@@ -135,14 +126,6 @@ begin
   frmSelect.ExpandTree;
 end;
 
-procedure TSelectionSearchDlg.btnMainDBClick(Sender: TObject);
-  {Main button click handler. Selects all snippets in main database.
-    @param Sender [in] Not used.
-  }
-begin
-  SelectDB(False);
-end;
-
 procedure TSelectionSearchDlg.btnOKClick(Sender: TObject);
   {OK button click handler.
     @param Sender [in] Not used.
@@ -167,15 +150,6 @@ begin
   // Storing all snippets in database in snippet selection frame's
   // SelectedSnippets property causes all snippets to be selected
   frmSelect.SelectedSnippets := Database.Snippets;
-end;
-
-procedure TSelectionSearchDlg.btnUserDBClick(Sender: TObject);
-  {User Defined button click handler. Selects all user defined snippets in
-  database.
-    @param Sender [in] Not used.
-  }
-begin
-  SelectDB(True);
 end;
 
 procedure TSelectionSearchDlg.ConfigForm;
@@ -225,30 +199,7 @@ procedure TSelectionSearchDlg.InitForm;
   }
 begin
   inherited;
-  // TODO: re-do form no no main db. Rethink re synch spaces
   frmSelect.CollapseTree;
-  btnUserDB.Enabled := Database.Snippets.Count > 0;
-  btnMainDB.Enabled := False; // TODO: remove this button
-end;
-
-procedure TSelectionSearchDlg.SelectDB(const UserDefined: Boolean);
-  {Selects all snippets from either main or user defined database.
-    @param UserDefined [in] Flag true if user-defined snippets are to be
-      selected, False if main database snippets are to be selected.
-  }
-  // TODO: remove UserDefined parameter from this method
-var
-  Snippet: TSnippet;          // references each snippet in database
-  SnippetList: TSnippetList;  // list of selected snippets
-begin
-  SnippetList := TSnippetList.Create;
-  try
-    for Snippet in Database.Snippets do
-      SnippetList.Add(Snippet);
-    frmSelect.SelectedSnippets := SnippetList;
-  finally
-    FreeAndNil(SnippetList);
-  end;
 end;
 
 procedure TSelectionSearchDlg.SelectionChanged(Sender: TObject);
