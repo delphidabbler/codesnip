@@ -98,12 +98,8 @@ pre {
   border-bottom: 1px solid silver;
 }
 
-#user-db .caption {
+#database .caption {
   background-color: #D5E0FF;
-}
-
-#main-db .caption {
-  background-color: #DBD1FF;
 }
 
 #compilers .caption {

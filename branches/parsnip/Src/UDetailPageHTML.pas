@@ -413,8 +413,7 @@ end;
 
 procedure TWelcomePageHTML.ResolvePlaceholders(const Tplt: THTMLTemplate);
 var
-  UserDBCount: Integer;
-  MainDBCount: Integer;
+  DBSize: Integer;
   Compilers: ICompilers;
   Compiler: ICompiler;
   CompilerList: TStringBuilder;
@@ -444,27 +443,15 @@ begin
     'externalScript', TJavaScript.LoadScript('external.js', etWindows1252)
   );
 
-  UserDBCount := Database.Snippets.Count;
+  DBSize := Database.Snippets.Count;
   Tplt.ResolvePlaceholderHTML(
-    'HaveUserDB', TCSS.BlockDisplayProp(UserDBCount > 0)
+    'HaveSnippets', TCSS.BlockDisplayProp(DBSize > 0)
   );
   Tplt.ResolvePlaceholderHTML(
-    'NoUserDB', TCSS.BlockDisplayProp(UserDBCount <= 0)
+    'NoSnippets', TCSS.BlockDisplayProp(DBSize <= 0)
   );
-  Tplt.ResolvePlaceholderText(
-    'UserDBCount', IntToStr(UserDBCount)
-  );
+  Tplt.ResolvePlaceholderText('SnippetCount', IntToStr(DBSize));
 
-  // TODO: change Welcome page so there is no main database section
-  Tplt.ResolvePlaceholderHTML(
-    'HaveMainDB', TCSS.BlockDisplayProp(False)
-  );
-  Tplt.ResolvePlaceholderHTML(
-    'NoMainDB', TCSS.BlockDisplayProp(True)
-  );
-  Tplt.ResolvePlaceholderText(
-    'MainDBCount', '0'
-  );
 
   Compilers := TCompilersFactory.CreateAndLoadCompilers;
   Tplt.ResolvePlaceholderHTML(
@@ -491,10 +478,11 @@ begin
     'ProgramAutoCheckFrequency',
     UpdateFrequencyText(Preferences.AutoCheckProgramFrequency)
   );
-  Tplt.ResolvePlaceholderText(
-    'DatabaseAutoCheckFrequency',
-    UpdateFrequencyText(Preferences.AutoCheckDatabaseFrequency)
-  );
+  // TODO: Restore line similar to following when synch spaces can auto-update
+//  Tplt.ResolvePlaceholderText(
+//    'DatabaseAutoCheckFrequency',
+//    UpdateFrequencyText(Preferences.AutoCheckDatabaseFrequency)
+//  );
 end;
 
 { TDBUpdatedPageHTML }
