@@ -442,8 +442,9 @@ begin
         ASnippet := Database.Snippets.Find(SnippetID);
         Assert(Assigned(ASnippet),
           ClassName + '.PopulateRequiredByList: Snippet id not found');
+        // TODO: rethink lbDependants: TBox value is always same (i.e. True)
         lbDependents.Items.AddObject(
-          ASnippet.DisplayName, TBox<Boolean>.Create(ASnippet.UserDefined)
+          ASnippet.DisplayName, TBox<Boolean>.Create(True)
         );
       end;
     end;
@@ -510,10 +511,8 @@ function TDependenciesDlg.TTVDraw.IsUserDefinedNode(
     @return True if node represents user defined object, False if not.
   }
 begin
-  if not Assigned(Node.Data) then
-    Result := True
-  else
-    Result := TSnippet(Node.Data).UserDefined;
+  // TODO: rethink this method: always returns true
+  Result := True;
 end;
 
 end.

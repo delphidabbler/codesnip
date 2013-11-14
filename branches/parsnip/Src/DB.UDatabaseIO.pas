@@ -489,7 +489,8 @@ function TUserDatabaseLoader.IsNativeSnippet(const Snippet: TSnippet): Boolean;
     @return True if snippet is native, False if not.
   }
 begin
-  Result := Snippet.UserDefined;
+  // TODO: remove this method
+  Result := True;
 end;
 
 function TUserDatabaseLoader.IsUserDatabase: Boolean;
@@ -594,18 +595,14 @@ var
 begin
   for Snippet in fSnipList do
   begin
-    // Only write user-defined snippets
-    if Snippet.UserDefined then
-    begin
-      // Get and write a snippet's properties
-      Props := fProvider.GetSnippetProps(Snippet);
-      fWriter.WriteSnippetProps(Snippet.Name, Props);
-      // Get and write a snippet's references
-      Refs := fProvider.GetSnippetRefs(Snippet);
-      fWriter.WriteSnippetUnits(Snippet.Name, Refs.Units);
-      fWriter.WriteSnippetDepends(Snippet.Name, IDListToStrings(Refs.Depends));
-      fWriter.WriteSnippetXRefs(Snippet.Name, IDListToStrings(Refs.XRef));
-    end;
+    // Get and write a snippet's properties
+    Props := fProvider.GetSnippetProps(Snippet);
+    fWriter.WriteSnippetProps(Snippet.Name, Props);
+    // Get and write a snippet's references
+    Refs := fProvider.GetSnippetRefs(Snippet);
+    fWriter.WriteSnippetUnits(Snippet.Name, Refs.Units);
+    fWriter.WriteSnippetDepends(Snippet.Name, IDListToStrings(Refs.Depends));
+    fWriter.WriteSnippetXRefs(Snippet.Name, IDListToStrings(Refs.XRef));
   end;
 end;
 

@@ -286,7 +286,7 @@ begin
   SnipObj := TObject(Node.Data);
   Result := False;
   if SnipObj is TSnippet then
-    Result := (SnipObj as TSnippet).UserDefined
+    Result := True
   else if SnipObj is TCategory then
     Result := (SnipObj as TCategory).UserDefined;
 end;

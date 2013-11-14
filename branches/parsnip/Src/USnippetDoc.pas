@@ -159,7 +159,8 @@ begin
   Assert(Assigned(Snippet), ClassName + '.Create: Snippet is nil');
   // generate document
   InitialiseDoc;
-  RenderHeading(Snippet.DisplayName, Snippet.UserDefined);
+  // TODO: rethink following method in terms of Synch Spaces
+  RenderHeading(Snippet.DisplayName, True);
   RenderDescription(Snippet.Description);
   RenderSourceCode(Snippet.SourceCode);
   RenderTitledText(
@@ -175,9 +176,10 @@ begin
     RenderCompilerInfo(sCompilers, CompilerInfo(Snippet));
   if not Snippet.Extra.IsEmpty then
     RenderExtra(Snippet.Extra);
-  if not Snippet.UserDefined then
-    // database info written only if snippet is from main database
-    RenderDBInfo(Format(sMainDatabaseInfo, [TWebInfo.DatabaseURL]));
+  // TODO: check if RenderDBInfo method is still required (commented out below)
+//  if not Snippet.UserDefined then
+//    // database info written only if snippet is from main database
+//    RenderDBInfo(Format(sMainDatabaseInfo, [TWebInfo.DatabaseURL]));
   Result := FinaliseDoc;
 end;
 

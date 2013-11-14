@@ -221,8 +221,9 @@ class function TSnippetHTML.SnippetALink(const Snippet: TSnippet): string;
 begin
   // Create javascript link enclosing snippet name
   Result := JSALink(
+    // TODO change displaySnippet JS fn to remove UserDefined param.
     TJavaScript.LiteralFunc(
-      'displaySnippet', [Snippet.Name, Snippet.UserDefined]
+      'displaySnippet', [Snippet.Name, True]
     ),
     'snippet-link',
     Snippet.DisplayName

@@ -225,8 +225,10 @@ procedure TSelectionSearchDlg.InitForm;
   }
 begin
   inherited;
+  // TODO: re-do form no no main db. Rethink re synch spaces
   frmSelect.CollapseTree;
-  btnUserDB.Enabled := Database.Snippets.Count(True) > 0;
+  btnUserDB.Enabled := Database.Snippets.Count > 0;
+  btnMainDB.Enabled := False; // TODO: remove this button
 end;
 
 procedure TSelectionSearchDlg.SelectDB(const UserDefined: Boolean);
@@ -234,6 +236,7 @@ procedure TSelectionSearchDlg.SelectDB(const UserDefined: Boolean);
     @param UserDefined [in] Flag true if user-defined snippets are to be
       selected, False if main database snippets are to be selected.
   }
+  // TODO: remove UserDefined parameter from this method
 var
   Snippet: TSnippet;          // references each snippet in database
   SnippetList: TSnippetList;  // list of selected snippets
@@ -241,8 +244,7 @@ begin
   SnippetList := TSnippetList.Create;
   try
     for Snippet in Database.Snippets do
-      if Snippet.UserDefined = UserDefined then
-        SnippetList.Add(Snippet);
+      SnippetList.Add(Snippet);
     frmSelect.SelectedSnippets := SnippetList;
   finally
     FreeAndNil(SnippetList);

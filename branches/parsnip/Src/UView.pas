@@ -591,7 +591,8 @@ end;
 
 function TSnippetView.IsUserDefined: Boolean;
 begin
-  Result := GetSnippet.UserDefined;
+  // TODO: no need for this method: replace with synch space?
+  Result := True;
 end;
 
 { TSnippetView.TKey }

@@ -1033,13 +1033,8 @@ begin
   EditSnippetKind := fSnipKindList.SnippetKind(cbKind.ItemIndex);
   for Snippet in Database.Snippets do
   begin
-    // We ignore snippet being edited and main database snippets if there is
-    // a user-defined one with same name
-    if (Snippet.ID <> EditSnippetID) and
-      (
-        Snippet.UserDefined or
-        not Assigned(Database.Snippets.Find(Snippet.Name, True))
-      ) then
+    // We ignore snippet being edited
+    if (Snippet.ID <> EditSnippetID) then
     begin
       // Decide if snippet can be added to depends list: must be correct kind
       if Snippet.Kind in

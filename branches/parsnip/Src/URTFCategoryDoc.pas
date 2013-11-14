@@ -230,7 +230,8 @@ begin
   fBuilder.SetFont(MainFontName);
   fBuilder.SetFontSize(SubHeadingFontSize);
   fBuilder.SetFontStyle([fsBold]);
-  SetColour(Preferences.DBHeadingColours[Snippet.UserDefined]);
+  // TODO: reconsider following code in light of synch spaces
+  SetColour(Preferences.DBHeadingColours[True]);
   fBuilder.AddText(Snippet.DisplayName);
   fBuilder.EndPara;
   fBuilder.EndGroup;

@@ -259,15 +259,8 @@ begin
   fSourceGen.IncludeSnippets(Snips);
 
   // Determine if snippet list contains at least one snippet from main database
+  // TODO: remove following field
   fContainsMainDBSnippets := False;
-  for Snippet in Snips do
-  begin
-    if not Snippet.UserDefined then
-    begin
-      fContainsMainDBSnippets := True;
-      Break;
-    end;
-  end;
 end;
 
 function TSaveUnitMgr.UnitName: string;

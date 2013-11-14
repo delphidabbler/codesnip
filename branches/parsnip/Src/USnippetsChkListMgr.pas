@@ -202,9 +202,8 @@ begin
   Assert(fCLB = Control, ClassName + '.DrawItem: Control <> fCLB');
   Canvas := fCLB.Canvas;
   if not (odSelected in State) then
-    Canvas.Font.Color := Preferences.DBHeadingColours[
-      (fCLB.Items.Objects[Index] as TSnippet).UserDefined
-    ];
+    // TODO: rethink this: DBHeadingColours[True] always used
+    Canvas.Font.Color := Preferences.DBHeadingColours[True];
   Canvas.TextRect(
     Rect,
     Rect.Left + 2,

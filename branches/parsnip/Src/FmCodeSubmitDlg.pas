@@ -398,7 +398,7 @@ procedure TCodeSubmitDlg.SelectSnippet(const Snippet: TSnippet);
 var
   List: TSnippetList; // list containing only one snippet
 begin
-  if not Assigned(Snippet) or not Snippet.UserDefined then
+  if not Assigned(Snippet) then
     frmSnippets.SelectedSnippets := nil
   else
   begin

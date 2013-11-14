@@ -444,7 +444,7 @@ begin
     'externalScript', TJavaScript.LoadScript('external.js', etWindows1252)
   );
 
-  UserDBCount := Database.Snippets.Count(True);
+  UserDBCount := Database.Snippets.Count;
   Tplt.ResolvePlaceholderHTML(
     'HaveUserDB', TCSS.BlockDisplayProp(UserDBCount > 0)
   );
@@ -455,15 +455,15 @@ begin
     'UserDBCount', IntToStr(UserDBCount)
   );
 
-  MainDBCount := Database.Snippets.Count(False);
+  // TODO: change Welcome page so there is no main database section
   Tplt.ResolvePlaceholderHTML(
-    'HaveMainDB', TCSS.BlockDisplayProp(MainDBCount > 0)
+    'HaveMainDB', TCSS.BlockDisplayProp(False)
   );
   Tplt.ResolvePlaceholderHTML(
-    'NoMainDB', TCSS.BlockDisplayProp(MainDBCount <= 0)
+    'NoMainDB', TCSS.BlockDisplayProp(True)
   );
   Tplt.ResolvePlaceholderText(
-    'MainDBCount', IntToStr(MainDBCount)
+    'MainDBCount', '0'
   );
 
   Compilers := TCompilersFactory.CreateAndLoadCompilers;
@@ -541,15 +541,17 @@ begin
       'overflowXFixScript',
       'window.onload = null;'
     );
-  if GetSnippet.UserDefined then
-    Tplt.ResolvePlaceholderHTML('SnippetCSSClass', 'userdb')
-  else
-    Tplt.ResolvePlaceholderHTML('SnippetCSSClass', 'maindb');
+  // TODO: rethink all of following re synch spaces
+  // TODO: rethink design re edit link vs test info
+//  if GetSnippet.UserDefined then
+  Tplt.ResolvePlaceholderHTML('SnippetCSSClass', 'userdb');
+//  else
+//    Tplt.ResolvePlaceholderHTML('SnippetCSSClass', 'maindb');
   Tplt.ResolvePlaceholderHTML(
-    'TestingInfo', TCSS.BlockDisplayProp(not GetSnippet.UserDefined)
+    'TestingInfo', TCSS.BlockDisplayProp(False)
   );
   Tplt.ResolvePlaceholderHTML(
-    'EditLink', TCSS.BlockDisplayProp(GetSnippet.UserDefined)
+    'EditLink', TCSS.BlockDisplayProp(True)
   );
   Tplt.ResolvePlaceholderText(
     'EditEventHandler',
@@ -557,8 +559,8 @@ begin
   );
   SnippetHTML := TSnippetHTML.Create(GetSnippet);
   try
-    if not GetSnippet.UserDefined then
-      Tplt.ResolvePlaceholderHTML('TestingInfoImg', SnippetHTML.TestingImage);
+//    if not GetSnippet.UserDefined then
+//      Tplt.ResolvePlaceholderHTML('TestingInfoImg', SnippetHTML.TestingImage);
     Tplt.ResolvePlaceholderHTML('SnippetName', SnippetHTML.SnippetName);
   finally
     SnippetHTML.Free;

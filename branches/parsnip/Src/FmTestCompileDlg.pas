@@ -284,8 +284,8 @@ begin
   CreateCompilerCtrls;
   // Set required label fonts and captions
   TFontHelper.SetDefaultBaseFont(lblSnippetName.Font);
-  lblSnippetName.Font.Color :=
-    Preferences.DBHeadingColours[fSnippet.UserDefined];
+  // Rethinl following in light of synch spaces: no always same colour
+  lblSnippetName.Font.Color := Preferences.DBHeadingColours[True];
   lblSnippetName.Caption := fSnippet.DisplayName;
 end;
 

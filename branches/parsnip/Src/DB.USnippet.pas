@@ -131,7 +131,6 @@ type
     fXRef: TSnippetList;                    // List of cross-referenced snippets
     fExtra: IActiveText;                    // Further information for snippet
     fCompatibility: TCompileResults;        // Snippet's compiler compatibility
-    fUserDefined: Boolean;                  // If this snippet is user-defined
     fHiliteSource: Boolean;                 // If source is syntax highlighted
     fTestInfo: TSnippetTestInfo;            // Level of testing of snippet
     function GetID: TSnippetID;
@@ -204,8 +203,6 @@ type
       {List of any other snippet in database on which this snippet depends}
     property XRef: TSnippetList read fXRef;
       {List of cross referenced snippets in database}
-    property UserDefined: Boolean read fUserDefined;
-      {Flag that indicates if this is a user defined snippet}
     ///  <summary>Returns source code language used for snippet.</summary>
     ///  <remarks>Included to assist in testing syntax multi-language
     ///  highlighting. Revised database will include a similar snippet property.
@@ -334,14 +331,7 @@ type
       {Gets an intialised snippet list enumerator.
         @return Required enumerator.
       }
-    function Count(const UserDefined: Boolean): Integer; overload;
-      {Counts number of snippets in list that are either from or not from user
-      defined database.
-        @param UserDefined [in] Flags whether to count snippets in user database
-          (True) or in main database (False).
-        @return Number of snippets in specified database.
-      }
-    function Count: Integer; overload;
+    function Count: Integer;
       {Counts number of snippets in list.
         @return Number of snippets in list.
       }
@@ -426,8 +416,6 @@ begin
   // Create snippets lists for Depends and XRef properties
   fDepends := TSnippetListEx.Create;
   fXRef := TSnippetListEx.Create;
-  // The following properties added to support user defined snippets
-  fUserDefined := UserDefined;
 end;
 
 destructor TSnippet.Destroy;
@@ -460,7 +448,7 @@ function TSnippet.GetID: TSnippetID;
     @return Required ID.
   }
 begin
-  Result := TSnippetID.Create(fName, fUserDefined);
+  Result := TSnippetID.Create(fName, True);
 end;
 
 function TSnippet.IsEqual(const Snippet: TSnippet): Boolean;
@@ -679,22 +667,6 @@ begin
       Result := True;
       Break;
     end;
-end;
-
-function TSnippetList.Count(const UserDefined: Boolean): Integer;
-  {Counts number of snippets in list that are either from or not from user
-  defined database.
-    @param UserDefined [in] Flags whether to count snippets in user database
-      (True) or in main database (False).
-    @return Number of snippets in specified database.
-  }
-var
-  Snippet: TSnippet;  // refers to all snippets in list
-begin
-  Result := 0;
-  for Snippet in Self do
-    if Snippet.UserDefined = UserDefined then
-      Inc(Result);
 end;
 
 function TSnippetList.Count: Integer;

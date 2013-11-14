@@ -231,8 +231,8 @@ begin
   inherited;
   // Set label font styles and colours
   lblSnippetName.Font.Style := [fsBold];
-  lblSnippetName.Font.Color :=
-    Preferences.DBHeadingColours[fSnippet.UserDefined];
+  // TODO: rethink following DBHeadingColours is always same
+  lblSnippetName.Font.Color := Preferences.DBHeadingColours[True];
   // Display selected snippet name in appropriate controls
   lblSnippetName.Caption := fSnippet.DisplayName;
   chkIncludeSnippet.Caption := Format(

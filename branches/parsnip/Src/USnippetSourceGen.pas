@@ -211,6 +211,7 @@ var
   Snips: TSnippetList;  // list of snippets in a category to display
   Snippet: TSnippet;    // a snippet in Snips list
 begin
+  // TODO: remove following field
   fContainsMainDBSnippets := False;
   // Record required snippet(s)
   if Supports(View, ISnippetView) then
@@ -218,7 +219,6 @@ begin
     // view is single snippet: just record that
     Snippet := (View as ISnippetView).Snippet;
     fGenerator.IncludeSnippet(Snippet);
-    fContainsMainDBSnippets := not Snippet.UserDefined;
   end
   else
   begin
@@ -227,14 +227,6 @@ begin
     try
       Query.GetCatSelection((View as ICategoryView).Category, Snips);
       fGenerator.IncludeSnippets(Snips);  // ignores freeform snippets
-      for Snippet in Snips do
-      begin
-        if not Snippet.UserDefined then
-        begin
-          fContainsMainDBSnippets := True;
-          Break;
-        end;
-      end;
     finally
       Snips.Free;
     end;

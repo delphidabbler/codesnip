@@ -210,8 +210,8 @@ procedure TCodeExportDlg.SelectSnippet(const Snippet: TSnippet);
 var
   List: TSnippetList; // list containing only the provided snippet
 begin
-  if not Assigned(Snippet) or not Snippet.UserDefined then
-    // Snippet is nil or not user-defined: select nothing
+  if not Assigned(Snippet) then
+    // Snippet is nil: select nothing
     frmSnippets.SelectedSnippets := nil
   else
   begin
