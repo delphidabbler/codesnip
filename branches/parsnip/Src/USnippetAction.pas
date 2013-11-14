@@ -27,20 +27,13 @@ uses
 
 type
 
-  ///  <summary>
-  ///  Custom action used to request display of a snippet.
-  ///  </summary>
-  ///  <remarks>
-  ///  Required snippet is uniquely identified by its name and whether it is
-  ///  user defined or not.
-  ///  </remarks>
+  ///  <summary>Custom action used to request display of a snippet.</summary>
+  ///  <remarks>Required snippet is uniquely identified by its name.</remarks>
   TSnippetAction = class(TBasicAction, ISetNotifier)
   strict private
     var
       ///  <summary>Value of SnippetName property.</summary>
       fSnippetName: string;
-      ///  <summary>Value of UserDefined property.</summary>
-      fUserDefined: Boolean;
       ///  <summary>Value of NewTab property.</summary>
       fNewTab: Boolean;
       ///  <summary>Reference to Notifier object.</summary>
@@ -61,9 +54,6 @@ type
     procedure SetNotifier(const Notifier: INotifier);
     ///  <summary>Name of snippet to be displayed.</summary>
     property SnippetName: string read fSnippetName write fSnippetName;
-    ///  <summary>Flag indicating whether snippet to be displayed is user
-    ///  defined.</summary>
-    property UserDefined: Boolean read fUserDefined write fUserDefined;
     ///  <summary>Flag indicating if snippet is to be displayed in new detail
     ///  pane tab.</summary>
     property NewTab: Boolean read fNewTab write fNewTab;

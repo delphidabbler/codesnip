@@ -82,6 +82,7 @@ type
     ///  <remarks>Methods of INotifier.</remarks>
     procedure UpdateDbase;
 
+    // TODO: remove UserDefined parameter from DisplaySnippet
     ///  <summary>Displays a snippet.</summary>
     ///  <param name="SnippetName">WideString [in] Name of required snippet.
     ///  </param>
@@ -302,7 +303,6 @@ begin
   if Assigned(fDisplaySnippetAction) then
   begin
     (fDisplaySnippetAction as TSnippetAction).SnippetName := SnippetName;
-    (fDisplaySnippetAction as TSnippetAction).UserDefined := UserDefined;
     (fDisplaySnippetAction as TSnippetAction).NewTab := NewTab;
     fDisplaySnippetAction.Execute;
   end;
