@@ -80,9 +80,6 @@ type
     ///  <remarks>Active text must be interpreted in a manner that makes sense
     ///  for document format.</remarks>
     procedure RenderExtra(const ExtraText: IActiveText); virtual; abstract;
-    ///  <summary>Output given information about code snippets database.
-    ///  </summary>
-    procedure RenderDBInfo(const Text: string); virtual; abstract;
     ///  <summary>Finalise document and return content as encoded data.
     ///  </summary>
     ///  <remarks>Descendant classes should perform any required finalisation
@@ -171,10 +168,6 @@ begin
     RenderCompilerInfo(sCompilers, CompilerInfo(Snippet));
   if not Snippet.Extra.IsEmpty then
     RenderExtra(Snippet.Extra);
-  // TODO: check if RenderDBInfo method is still required (commented out below)
-//  if not Snippet.UserDefined then
-//    // database info written only if snippet is from main database
-//    RenderDBInfo(Format(sMainDatabaseInfo, [TWebInfo.DatabaseURL]));
   Result := FinaliseDoc;
 end;
 

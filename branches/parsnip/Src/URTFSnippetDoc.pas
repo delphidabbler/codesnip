@@ -100,9 +100,6 @@ type
     ///  <remarks>Active text formatting is observed and styled to suit
     ///  document.</remarks>
     procedure RenderExtra(const ExtraText: IActiveText); override;
-    ///  <summary>Adds given information about code snippets database to
-    ///  document.</summary>
-    procedure RenderDBInfo(const Text: string); override;
     ///  <summary>Finalises document and returns content as encoded data.
     ///  </summary>
     function FinaliseDoc: TEncodedData; override;
@@ -313,17 +310,6 @@ begin
     fBuilder.EndGroup;
     fBuilder.EndPara;
   end;
-end;
-
-procedure TRTFSnippetDoc.RenderDBInfo(const Text: string);
-begin
-  fBuilder.SetParaSpacing(TRTFParaSpacing.Create(ParaSpacing, 0.0));
-  fBuilder.SetFontSize(DBInfoFontSize);
-  fBuilder.SetFontStyle([fsItalic]);
-  fBuilder.AddText(Text);
-  fBuilder.EndPara;
-  fBuilder.ClearParaFormatting;
-  fBuilder.ResetCharStyle;
 end;
 
 procedure TRTFSnippetDoc.RenderDescription(const Desc: IActiveText);

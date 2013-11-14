@@ -73,9 +73,6 @@ type
     ///  <remarks>Active text is converted to word-wrapped plain text
     ///  paragraphs.</remarks>
     procedure RenderExtra(const ExtraText: IActiveText); override;
-    ///  <summary>Adds given information about code snippets database to
-    ///  document.</summary>
-    procedure RenderDBInfo(const Text: string); override;
     ///  <summary>Finalises document and returns content as encoded data.
     ///  </summary>
     function FinaliseDoc: TEncodedData; override;
@@ -141,12 +138,6 @@ begin
   fWriter.WriteLine(Heading);
   for Idx := Low(Info) to High(Info) do
     fWriter.WriteLine('%-20s%s', [Info[Idx].Compiler, Info[Idx].Result]);
-end;
-
-procedure TTextSnippetDoc.RenderDBInfo(const Text: string);
-begin
-  fWriter.WriteLine;
-  fWriter.WriteLine(StrWrap(Text, cPageWidth, 0));
 end;
 
 procedure TTextSnippetDoc.RenderDescription(const Desc: IActiveText);
