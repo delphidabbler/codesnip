@@ -434,9 +434,7 @@ begin
     if not Assigned(Snippet) then
     begin
       fReader.GetSnippetProps(SnippetName, SnippetProps);
-      Snippet := fFactory.CreateSnippet(
-        SnippetName, IsUserDatabase, SnippetProps
-      );
+      Snippet := fFactory.CreateSnippet(SnippetName, SnippetProps);
       fSnipList.Add(Snippet);
     end;
     // Add snippet to database only if it belongs to this database

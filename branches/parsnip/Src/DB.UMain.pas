@@ -113,12 +113,11 @@ type
         @param Data [in] Record describing category's properties.
         @return Instance of new category object.
       }
-    function CreateSnippet(const Name: string; const UserDefined: Boolean;
-      const Props: TSnippetData): TSnippet;
+    function CreateSnippet(const Name: string; const Props: TSnippetData):
+      TSnippet;
       {Creates a new snippet object.
         @param Name [in] Name of new snippet. Must not exist in database
           specified by UserDefined parameter.
-        @param UserDefined [in] True if snippet is user defined, False if not.
         @param Props [in] Record describing snippet's properties.
         @return Instance of new snippet with no references.
       }
@@ -307,12 +306,11 @@ type
         @param Data [in] Record describing category's properties.
         @return Instance of new category object.
       }
-    function CreateSnippet(const Name: string; const UserDefined: Boolean;
-      const Props: TSnippetData): TSnippet;
+    function CreateSnippet(const Name: string; const Props: TSnippetData):
+      TSnippet;
       {Creates a new snippet object.
         @param Name [in] Name of new snippet. Must not exist in database
           specified by UserDefined parameter.
-        @param UserDefined [in] True if snippet is user defined, False if not.
         @param Props [in] Record describing snippet's properties.
         @return Instance of new snippet with no references.
       }
@@ -1181,11 +1179,10 @@ begin
 end;
 
 function TDBDataItemFactory.CreateSnippet(const Name: string;
-  const UserDefined: Boolean; const Props: TSnippetData): TSnippet;
+  const Props: TSnippetData): TSnippet;
   {Creates a new snippet object.
     @param Name [in] Name of new snippet. Must not exist in database specified
       by UserDefined parameter.
-    @param UserDefined [in] True if snippet is user defined, False if not.
     @param Props [in] Record describing snippet's properties.
     @return Instance of new snippet with no references.
   }
