@@ -125,8 +125,6 @@
 			<DCCReference Include="..\..\TrunkSrc\UTaggedTextLexer.pas"/>
 			<DCCReference Include="..\..\TrunkSrc\USnippetCreditsParser.pas"/>
 			<DCCReference Include="..\..\TrunkSrc\UDOSDateTime.pas"/>
-			<DCCReference Include="..\..\TrunkSrc\UAppInfo.pas"/>
-			<DCCReference Include="..\..\TrunkSrc\3rdParty\PJMD5.pas"/>
 			<BuildConfiguration Include="Release">
 				<Key>Cfg_2</Key>
 				<CfgParent>Base</CfgParent>

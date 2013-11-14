@@ -75,9 +75,7 @@ uses
   USnippetExtraHelper in '..\..\TrunkSrc\USnippetExtraHelper.pas',
   UTaggedTextLexer in '..\..\TrunkSrc\UTaggedTextLexer.pas',
   USnippetCreditsParser in '..\..\TrunkSrc\USnippetCreditsParser.pas',
-  UDOSDateTime in '..\..\TrunkSrc\UDOSDateTime.pas',
-  UAppInfo in '..\..\TrunkSrc\UAppInfo.pas',
-  PJMD5 in '..\..\TrunkSrc\3rdParty\PJMD5.pas';
+  UDOSDateTime in '..\..\TrunkSrc\UDOSDateTime.pas';
 
 {$R *.res}
 
