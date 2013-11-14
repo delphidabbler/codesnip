@@ -6,6 +6,12 @@ uses
   CS.Database.Types;
 
 type
+  // TODO: May need to be in a separate Synch Space unit, or in Types
+  TSnippetSynchSpaceIDs = record
+  public
+    const LegacyDB: TGUID = '{04AE1B53-6D60-48FA-B81F-E8CF15222F6D}';
+  end;
+
   TSnippetLinkInfo = class(TInterfacedObject, ISnippetLinkInfo)
   strict private
     var
