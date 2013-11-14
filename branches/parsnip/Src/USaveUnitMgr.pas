@@ -45,9 +45,6 @@ type
       ///  <summary>Name of generated unit.</summary>
       ///  <remarks>If empty string a default name is used.</remarks>
       fUnitName: string;
-      ///  <summary>Flag true if unit contains at least one snippet from main
-      ///  database, False only if unit is completely user defined.</summary>
-      fContainsMainDBSnippets: Boolean;
     ///  <summary>Gets name of unit to be used in generated code.</summary>
     function UnitName: string;
     ///  <summary>Creates a string list containing comments to be written to
@@ -156,41 +153,14 @@ end;
 function TSaveUnitMgr.CreateHeaderComments: IStringList;
 begin
   Result := TIStringList.Create;
-  if fContainsMainDBSnippets then
-  begin
-    // Result used for units that contain at snippet(s) from main database
-    Result.Add(sLicense);
-    Result.Add('');
-    Result.Add(Format(sMainDescription, [TWebInfo.DatabaseURL]));
-    Result.Add('');
-    Result.Add(sDisclaimer);
-    Result.Add('');
-    Result.Add(Format(sGenerated, [RFC1123DateStamp]));
-    Result.Add(
-      Format(
-        sGenerator, [TAppInfo.FullProgramName, TAppInfo.ProgramReleaseInfo]
-      )
-    );
-    Result.Add('');
-    Result.Add(
-      Format(
-        sAdvert,
-        [TAppInfo.ProgramName, TAppInfo.CompanyName, TWebInfo.ProgramHomeURL]
-      )
-    );
-  end
-  else
-  begin
-    // Result used for units that contain only user defined snippets
-    Result.Add(sUserDescription);
-    Result.Add('');
-    Result.Add(Format(sGenerated, [RFC1123DateStamp]));
-    Result.Add(
-      Format(
-        sGenerator, [TAppInfo.FullProgramName, TAppInfo.ProgramReleaseInfo]
-      )
-    );
-  end;
+  Result.Add(sUserDescription);
+  Result.Add('');
+  Result.Add(Format(sGenerated, [RFC1123DateStamp]));
+  Result.Add(
+    Format(
+      sGenerator, [TAppInfo.FullProgramName, TAppInfo.ProgramReleaseInfo]
+    )
+  );
 end;
 
 destructor TSaveUnitMgr.Destroy;
@@ -248,19 +218,12 @@ begin
 end;
 
 constructor TSaveUnitMgr.InternalCreate(const Snips: TSnippetList);
-var
-  Snippet: TSnippet;  // references each snippet in list
 begin
   Assert(Assigned(Snips), ClassName + '.InternalCreate: Snips is nil');
   inherited InternalCreate;
-
   // Create source generator and initialize it with required snippets
   fSourceGen := TPascalSourceGen.Create;
   fSourceGen.IncludeSnippets(Snips);
-
-  // Determine if snippet list contains at least one snippet from main database
-  // TODO: remove following field
-  fContainsMainDBSnippets := False;
 end;
 
 function TSaveUnitMgr.UnitName: string;
