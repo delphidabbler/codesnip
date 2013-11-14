@@ -54,12 +54,12 @@ type
     ///  SID or +ve if this record greater than SID.</returns>
     function CompareTo(const SID: TSnippetID): Integer;
 
-    ///  <summary>Compares two snippet names.</summary>
-    ///  <param name="Left">string [in] First name.</param>
-    ///  <param name="Right">string [in] Second name.</param>
-    ///  <result>Integer. 0 if names are same, -ve if Left is less than Right or
-    ///  +ve Left is greater than Right.</result>
-    class function CompareNames(const Left, Right: string): Integer; static;
+    ///  <summary>Compares two snippet IDs.</summary>
+    ///  <param name="Left">string [in] First ID to compare.</param>
+    ///  <param name="Right">string [in] Second ID to compare.</param>
+    ///  <returns>Integer. 0 if names are same, -ve if Left is less than Right or
+    ///  +ve Left is greater than Right.</returns>
+    class function Compare(const Left, Right: TSnippetID): Integer; static;
 
     ///  <summary>Overload of equality operator for two TSnippetIDs.</summary>
     class operator Equal(const SID1, SID2: TSnippetID): Boolean;
@@ -162,14 +162,14 @@ begin
   Create(Src.Name);
 end;
 
-class function TSnippetID.CompareNames(const Left, Right: string): Integer;
+class function TSnippetID.Compare(const Left, Right: TSnippetID): Integer;
 begin
-  Result := StrCompareText(Left, Right);
+  Result := StrCompareText(Left.Name, Right.Name);
 end;
 
 function TSnippetID.CompareTo(const SID: TSnippetID): Integer;
 begin
-  Result := CompareNames(Name, SID.Name);
+  Result := Compare(Self, SID);
 end;
 
 constructor TSnippetID.Create(const AName: string);

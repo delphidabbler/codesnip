@@ -326,7 +326,9 @@ end;
 
 function TImportInfoComparer.Compare(const Left, Right: TImportInfo): Integer;
 begin
-  Result := TSnippetID.CompareNames(Left.OrigName, Right.OrigName);
+  Result := TSnippetID.Compare(
+    TSnippetID.Create(Left.OrigName), TSnippetID.Create(Right.OrigName)
+  );
 end;
 
 { TImportInfoList }
