@@ -60,13 +60,6 @@ library ExternalObj
     HRESULT _stdcall ConfigCompilers(void);
 
     /*
-     * Edits the named snippet.
-     *    @param SnippetName [in] Name of snippet to edit. Must be user defined.
-     */
-    [id(0x0000006C)]
-    HRESULT _stdcall EditSnippet([in] BSTR SnippetName);
-
-    /*
      * Displays Donate dialog box.
      */
     [id(0x0000006D)]

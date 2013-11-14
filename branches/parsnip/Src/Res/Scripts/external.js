@@ -57,17 +57,6 @@ function displayCategory(catid) {
 }
 
 /*
- * Calls external object to get host application to edit a named snippet.
- *  @param string snippet [in] Name of snippet to be edited. Must be user
- *    defined.
- *  @return False.
- */
-function editSnippet(snippet) {
-  external.EditSnippet(snippet);
-  return false;
-}
-
-/*
  * Calls external object to get host application to display Donate dialog box.
  *  @return False.
  */

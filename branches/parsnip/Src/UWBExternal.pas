@@ -73,15 +73,6 @@ type
     ///  <remarks>Method of IWBExternal12.</remarks>
     procedure ConfigCompilers; safecall;
 
-    ///  <summary>Edits a named snippet.</summary>
-    ///  <param name="SnippetName">WideString [in] Name of snippet to be edited.
-    ///  </param>
-    ///  <remarks>
-    ///  <para>The named snippet must be user defined.</para>
-    ///  <para>Method of IWBExternal12.</para>
-    ///  </remarks>
-    procedure EditSnippet(const SnippetName: WideString); safecall;
-
     ///  <summary>Displays the Donate dialogue box.</summary>
     ///  <remarks>Method of IWBExternal12.</remarks>
     procedure Donate; safecall;
@@ -197,16 +188,6 @@ begin
   try
     if Assigned(fNotifier) then
       fNotifier.Donate;
-  except
-    HandleException;
-  end;
-end;
-
-procedure TWBExternal.EditSnippet(const SnippetName: WideString);
-begin
-  try
-    if Assigned(fNotifier) then
-      fNotifier.EditSnippet(SnippetName);
   except
     HandleException;
   end;
