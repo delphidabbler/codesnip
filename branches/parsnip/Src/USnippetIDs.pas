@@ -33,11 +33,11 @@ type
   TSnippetID = record
   strict private
     var
-      ///  <summary>Value of Name property.</summary>
-      fName: string;
+      ///  <summary>Internal value of snippet ID.</summary>
+      fID: string;
   public
-    ///  <summary>Creates a record with given name.</summary>
-    constructor Create(const AName: string);
+    ///  <summary>Creates a record with given ID string.</summary>
+    constructor Create(const AIDStr: string);
 
     ///  <summary>Creates copy of given snippet ID</summary>
     constructor Clone(const Src: TSnippetID);
@@ -49,10 +49,11 @@ type
     function ToString: string;
 
     ///  <summary>Compares this record with another.</summary>
-    ///  <param name="SID">TSnippetID [in] Snippet ID to compare with.</param>
+    ///  <param name="OtherID">TSnippetID [in] Snippet ID to compare with.
+    ///  </param>
     ///  <returns>Integer. 0 if records are same, -ve if this record less than
-    ///  SID or +ve if this record greater than SID.</returns>
-    function CompareTo(const SID: TSnippetID): Integer;
+    ///  OtherID or +ve if this record greater than OtherID.</returns>
+    function CompareTo(const OtherID: TSnippetID): Integer;
 
     ///  <summary>Compares two snippet IDs.</summary>
     ///  <param name="Left">string [in] First ID to compare.</param>
@@ -62,10 +63,10 @@ type
     class function Compare(const Left, Right: TSnippetID): Integer; static;
 
     ///  <summary>Overload of equality operator for two TSnippetIDs.</summary>
-    class operator Equal(const SID1, SID2: TSnippetID): Boolean;
+    class operator Equal(const Left, Right: TSnippetID): Boolean;
 
     ///  <summary>Overload of inequality operator for two TSnippetIDs.</summary>
-    class operator NotEqual(const SID1, SID2: TSnippetID): Boolean;
+    class operator NotEqual(const Left, Right: TSnippetID): Boolean;
   end;
 
 type
@@ -159,42 +160,42 @@ uses
 
 constructor TSnippetID.Clone(const Src: TSnippetID);
 begin
-  Create(Src.fName);
+  Create(Src.fID);
 end;
 
 class function TSnippetID.Compare(const Left, Right: TSnippetID): Integer;
 begin
-  Result := StrCompareText(Left.fName, Right.fName);
+  Result := StrCompareText(Left.fID, Right.fID);
 end;
 
-function TSnippetID.CompareTo(const SID: TSnippetID): Integer;
+function TSnippetID.CompareTo(const OtherID: TSnippetID): Integer;
 begin
-  Result := Compare(Self, SID);
+  Result := Compare(Self, OtherID);
 end;
 
-constructor TSnippetID.Create(const AName: string);
+constructor TSnippetID.Create(const AIDStr: string);
 begin
-  fName := AName;
+  fID := AIDStr;
 end;
 
-class operator TSnippetID.Equal(const SID1, SID2: TSnippetID): Boolean;
+class operator TSnippetID.Equal(const Left, Right: TSnippetID): Boolean;
 begin
-  Result := SID1.CompareTo(SID2) = 0;
+  Result := Left.CompareTo(Right) = 0;
 end;
 
 function TSnippetID.Hash: Integer;
 begin
-  Result := TextHash(fName);
+  Result := TextHash(fID);
 end;
 
-class operator TSnippetID.NotEqual(const SID1, SID2: TSnippetID): Boolean;
+class operator TSnippetID.NotEqual(const Left, Right: TSnippetID): Boolean;
 begin
-  Result := not (SID1 = SID2);
+  Result := not (Left = Right);
 end;
 
 function TSnippetID.ToString: string;
 begin
-  Result := fName;
+  Result := fID;
 end;
 
 { TSnippetIDList }
