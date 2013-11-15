@@ -39,9 +39,6 @@ type
     ///  <summary>Creates a record with given ID string.</summary>
     constructor Create(const AIDStr: string);
 
-    ///  <summary>Creates copy of given snippet ID</summary>
-    constructor Clone(const Src: TSnippetID);
-
     ///  <summary>Returns hash of snippet ID.</summary>
     function Hash: Integer;
 
@@ -158,11 +155,6 @@ uses
 
 { TSnippetID }
 
-constructor TSnippetID.Clone(const Src: TSnippetID);
-begin
-  Create(Src.fID);
-end;
-
 class function TSnippetID.Compare(const Left, Right: TSnippetID): Integer;
 begin
   Result := StrCompareText(Left.fID, Right.fID);
@@ -213,7 +205,7 @@ begin
     ClassName + '.Assign: Src must support ISnippetIDList');
   Clear;
   for SrcID in (Src as ISnippetIDList) do
-    Add(TSnippetID.Clone(SrcID));
+    Add(SrcID);
 end;
 
 procedure TSnippetIDList.Clear;
