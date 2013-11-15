@@ -672,8 +672,7 @@ begin
   Assert(Assigned(Snippet), ClassName + '.CreateTempSnippet: Snippet is nil');
   Assert(Snippet is TSnippetEx,
     ClassName + '.CreateTempSnippet: Snippet is a TSnippetEx');
-  Result := TTempSnippet.Create(
-    Snippet.ID.Name, (Snippet as TSnippetEx).GetProps);
+  Result := TTempSnippet.Create(Snippet.ID, (Snippet as TSnippetEx).GetProps);
   (Result as TTempSnippet).UpdateRefs(
     (Snippet as TSnippetEx).GetReferences, fSnippets
   );
@@ -690,7 +689,7 @@ function TDatabase.CreateTempSnippet(const Data: TSnippetEditData;
   }
 begin
   Result := TTempSnippet.Create(
-    StrIf(Name <> '', Name, UniqueSnippetName), Data.Props
+    TSnippetID.Create(StrIf(Name <> '', Name, UniqueSnippetName)), Data.Props
   );
   (Result as TTempSnippet).UpdateRefs(Data.Refs, fSnippets);
 end;
@@ -917,7 +916,7 @@ resourcestring
   sCatNotFound = 'Category "%0:s" referenced by new snippet named "%1:s" does '
     + 'not exist';
 begin
-  Result := TSnippetEx.Create(SnippetName, Data.Props);
+  Result := TSnippetEx.Create(TSnippetID.Create(SnippetName), Data.Props);
   (Result as TSnippetEx).UpdateRefs(Data.Refs, fSnippets);
   Cat := fCategories.Find(Result.Category);
   if not Assigned(Cat) then
@@ -1170,7 +1169,7 @@ function TDBDataItemFactory.CreateSnippet(const Name: string;
     @return Instance of new snippet with no references.
   }
 begin
-  Result := TSnippetEx.Create(Name, Props);
+  Result := TSnippetEx.Create(TSnippetID.Create(Name), Props);
 end;
 
 { TUserDataProvider }

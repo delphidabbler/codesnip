@@ -147,7 +147,7 @@ type
         @return Required field content.
       }
   public
-    constructor Create(const Name: string; const Props: TSnippetData);
+    constructor Create(const ID: TSnippetID; const Props: TSnippetData);
       {Class contructor. Sets up snippet object with given property values.
         @param Name [in] Name of snippet.
         @param Props [in] Values of various snippet properties.
@@ -381,7 +381,7 @@ begin
   Result := Kind <> skFreeform;
 end;
 
-constructor TSnippet.Create(const Name: string; const Props: TSnippetData);
+constructor TSnippet.Create(const ID: TSnippetID; const Props: TSnippetData);
   {Class contructor. Sets up snippet object with given property values.
     @param Name [in] Name of snippet.
     @param Props [in] Values of various snippet properties.
@@ -391,7 +391,7 @@ begin
     ClassName + '.Create: must only be called from descendants.');
   inherited Create;
   // Record simple property values
-  fID := TSnippetID.Create(Name);
+  fID := ID;
   SetProps(Props);
   // Create string list to store required units
   fUnits := TStringList.Create;
@@ -697,7 +697,7 @@ begin
   // We need a temporary snippet object in order to perform binary search using
   // object list's built in search
   NulData.Init;
-  TempSnippet := TTempSnippet.Create(SnippetName, NulData);
+  TempSnippet := TTempSnippet.Create(TSnippetID.Create(SnippetName), NulData);
   try
     Index := fList.IndexOf(TempSnippet);
     Result := Index >= 0;
