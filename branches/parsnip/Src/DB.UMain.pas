@@ -1076,7 +1076,6 @@ resourcestring
   sCantRename = 'Can''t rename snippet named %0:s to %1:s: Snippet with name '
     + '%1:s already exists in user database';
 begin
-  Result := Snippet;      // keeps compiler happy
   Referrers := nil;
   Dependents := nil;
   TriggerEvent(evChangeBegin);
