@@ -161,11 +161,7 @@ var
   SnippetCat: TCategory;
 begin
   inherited;
-  edDisplayName.Text := StrIf(
-    StrSameStr(fSnippet.ID.ToString, fSnippet.DisplayName),
-    '',
-    fSnippet.DisplayName
-  );
+  edDisplayName.Text := fSnippet.DisplayName;
   fCatList.ToStrings(cbCategory.Items);
   SnippetCat := Database.Categories.Find(fSnippet.Category);
   if Assigned(SnippetCat) then
