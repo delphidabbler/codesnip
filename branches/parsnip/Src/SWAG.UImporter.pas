@@ -239,12 +239,12 @@ end;
 
 procedure TSWAGImporter.ImportSnippet(const SWAGSnippet: TSWAGSnippet);
 var
-  SnippetName: string;                // unique name of new snippet
   SnippetDetails: TSnippetEditData;   // data describing new snippet
 begin
-  SnippetName := MakeValidSnippetName(SWAGSnippet.ID);
   SnippetDetails := BuildSnippetInfo(SWAGSnippet);
-  (Database as IDatabaseEdit).AddSnippet(SnippetName, SnippetDetails);
+  { TODO: add SWAG snippet ID (passed through MakeValidSnippetName to snippet's
+          LinkInfo property, when implemented. }
+  (Database as IDatabaseEdit).AddSnippet(SnippetDetails);
 end;
 
 procedure TSWAGImporter.IncludeSnippet(const SWAGSnippet: TSWAGSnippet);

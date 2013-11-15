@@ -194,11 +194,8 @@ type
           name is not to change.
         @return Reference to updated snippet. Will have changed.
       }
-    // TODO: Remove SnippetName parameter: it is now ignored.
-    function AddSnippet(SnippetName: string;
-      const Data: TSnippetEditData): TSnippet;
+    function AddSnippet(const Data: TSnippetEditData): TSnippet;
       {Adds a new snippet to the user database.
-        @param SnippetName [in] Name of new snippet.
         @param Data [in] Record storing new snippet's properties and references.
         @return Reference to new snippet.
       }
@@ -466,10 +463,8 @@ type
           name is not to change.
         @return Reference to updated snippet. Will have changed.
       }
-    function AddSnippet(SnippetName: string;
-      const Data: TSnippetEditData): TSnippet;
+    function AddSnippet(const Data: TSnippetEditData): TSnippet;
       {Adds a new snippet to the user database.
-        @param SnippetName [in] Name of new snippet.
         @param Data [in] Record storing new snippet's properties and references.
         @return Reference to new snippet.
       }
@@ -626,16 +621,16 @@ begin
   fChangeEvents.AddHandler(Handler);
 end;
 
-function TDatabase.AddSnippet(SnippetName: string;
-  const Data: TSnippetEditData): TSnippet;
+function TDatabase.AddSnippet(const Data: TSnippetEditData): TSnippet;
   {Adds a new snippet to the user database.
-    @param SnippetName [in] Name of new snippet.
     @param Data [in] Record storing new snippet's properties and references.
     @return Reference to new snippet.
   }
 resourcestring
   // Error message
   sNameExists = 'Snippet "%s" already exists in user database';
+var
+  SnippetName: string;
 begin
   Result := nil;  // keeps compiler happy
   TriggerEvent(evChangeBegin);
@@ -783,7 +778,7 @@ begin
   Data := (Snippet as TSnippetEx).GetEditData;
   Data.Props.Cat := CatID;
   Data.Props.DisplayName := DisplayName;
-  Result := AddSnippet('', Data);
+  Result := AddSnippet(Data);
 end;
 
 function TDatabase.GetCategories: TCategoryList;

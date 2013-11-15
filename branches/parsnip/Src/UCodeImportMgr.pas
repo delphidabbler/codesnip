@@ -299,13 +299,16 @@ begin
     if UserInfo.Details.ToString <> '' then
       SnippetInfo.Data.Props.Extra.Append(UserDetailsActiveText);
 
+    { TODO: fix this code - ImportAsName will not longer have correct snippet
+                            ID: will need to implement LinkInfo property of
+                            snippet for this to work }
     Snippet := Database.Snippets.Find(ImportInfo.ImportAsName);
     if Assigned(Snippet) then
       // snippet already exists: overwrite it
       Editor.UpdateSnippet(Snippet, SnippetInfo.Data)
     else
       // snippet is new: add to database
-      Editor.AddSnippet(ImportInfo.ImportAsName, SnippetInfo.Data);
+      Editor.AddSnippet(SnippetInfo.Data);
   end;
 end;
 

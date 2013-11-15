@@ -675,11 +675,7 @@ begin
         fSnippet, fEditData, ''
       )
     else
-    begin
-      fSnippet := (Database as IDatabaseEdit).AddSnippet(
-        '', fEditData
-      )
-    end;
+      fSnippet := (Database as IDatabaseEdit).AddSnippet(fEditData)
   except
     on E: Exception do
       HandleException(E);
