@@ -45,18 +45,11 @@ type
     ///  <summary>Returns string representation of ID.</summary>
     function ToString: string;
 
-    ///  <summary>Compares this record with another.</summary>
-    ///  <param name="OtherID">TSnippetID [in] Snippet ID to compare with.
-    ///  </param>
-    ///  <returns>Integer. 0 if records are same, -ve if this record less than
-    ///  OtherID or +ve if this record greater than OtherID.</returns>
-    function CompareTo(const OtherID: TSnippetID): Integer;
-
     ///  <summary>Compares two snippet IDs.</summary>
     ///  <param name="Left">string [in] First ID to compare.</param>
     ///  <param name="Right">string [in] Second ID to compare.</param>
-    ///  <returns>Integer. 0 if names are same, -ve if Left is less than Right or
-    ///  +ve Left is greater than Right.</returns>
+    ///  <returns>Integer. 0 if names are same, -ve if Left is less than Right
+    ///  or +ve Left is greater than Right.</returns>
     class function Compare(const Left, Right: TSnippetID): Integer; static;
 
     ///  <summary>Overload of equality operator for two TSnippetIDs.</summary>
@@ -160,11 +153,6 @@ begin
   Result := StrCompareText(Left.fID, Right.fID);
 end;
 
-function TSnippetID.CompareTo(const OtherID: TSnippetID): Integer;
-begin
-  Result := Compare(Self, OtherID);
-end;
-
 constructor TSnippetID.Create(const AIDStr: string);
 begin
   fID := AIDStr;
@@ -172,7 +160,7 @@ end;
 
 class operator TSnippetID.Equal(const Left, Right: TSnippetID): Boolean;
 begin
-  Result := Left.CompareTo(Right) = 0;
+  Result := Compare(Left, Right) = 0;
 end;
 
 function TSnippetID.Hash: Integer;
@@ -182,7 +170,7 @@ end;
 
 class operator TSnippetID.NotEqual(const Left, Right: TSnippetID): Boolean;
 begin
-  Result := not (Left = Right);
+  Result := Compare(Left, Right) <> 0;
 end;
 
 function TSnippetID.ToString: string;
@@ -230,7 +218,7 @@ begin
     TDelegatedComparer<TSnippetID>.Create(
       function(const Left, Right: TSnippetID): Integer
       begin
-        Result := Left.CompareTo(Right);
+        Result := TSnippetID.Compare(Left, Right);
       end
     )
   );

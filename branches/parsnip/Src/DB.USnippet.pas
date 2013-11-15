@@ -466,7 +466,7 @@ function TSnippet.TDisplayNameComparer.Compare(const Left,
 begin
   Result := StrCompareText(Left.DisplayName, Right.DisplayName);
   if Result = 0 then
-    Result := Left.ID.CompareTo(Right.ID);
+    Result := TSnippetID.Compare(Left.ID, Right.ID);
 end;
 
 { TSnippet.TDisplayNameEqualityComparer }
@@ -655,7 +655,7 @@ begin
       TDelegatedComparer<TSnippet>.Create(
         function (const Left, Right: TSnippet): Integer
         begin
-          Result := Left.ID.CompareTo(Right.ID);
+          Result := TSnippetID.Compare(Left.ID, Right.ID);
         end
       ),
       TDelegatedEqualityComparer<TSnippet>.Create(

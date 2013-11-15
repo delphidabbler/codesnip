@@ -189,7 +189,7 @@ begin
     TDelegatedComparer<TFavourite>.Create(
       function (const Left, Right: TFavourite): Integer
       begin
-        Result := Left.SnippetID.CompareTo(Right.SnippetID);
+        Result := TSnippetID.Compare(Left.SnippetID, Right.SnippetID);
       end
     )
   );
