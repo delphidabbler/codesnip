@@ -22,7 +22,10 @@ uses
   // Delphi
   Classes,
   // Project
-  DB.UCategory, UBaseObjects, UView;
+  DB.UCategory,
+  UBaseObjects,
+  USnippetIDs,
+  UView;
 
 
 type
@@ -59,7 +62,7 @@ type
     ///  <summary>Enables user to edit the snippet with the given name using the
     ///  snippets editor.</summary>
     ///  <remarks>The named snippet must be user defined.</remarks>
-    class procedure EditSnippet(const SnippetName: string);
+    class procedure EditSnippet(const SnippetID: TSnippetID);
     ///  <summary>Duplicates the snippet specified by the given view as a user
     ///  defined snippet with name specified by user.</summary>
     class procedure DuplicateSnippet(ViewItem: IView);
@@ -129,7 +132,6 @@ uses
   UOpenDialogHelper,
   UReservedCategories,
   USaveDialogEx,
-  USnippetIDs,
   UUserDBBackup,
   UWaitForThreadUI;
 
@@ -461,11 +463,11 @@ begin
   TDuplicateSnippetDlg.Execute(nil, (ViewItem as ISnippetView).Snippet);
 end;
 
-class procedure TUserDBMgr.EditSnippet(const SnippetName: string);
+class procedure TUserDBMgr.EditSnippet(const SnippetID: TSnippetID);
 var
   Snippet: TSnippet;    // reference to snippet to be edited
 begin
-  Snippet := Database.Snippets.Find(SnippetName);
+  Snippet := Database.Snippets.Find(SnippetID);
   if not Assigned(Snippet) then
     raise EBug.Create(ClassName + '.EditSnippet: Snippet not in user database');
   TSnippetsEditorDlg.EditSnippet(nil, Snippet);

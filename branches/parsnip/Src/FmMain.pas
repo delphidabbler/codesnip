@@ -642,6 +642,7 @@ uses
   USaveUnitMgr,
   USelectionIOMgr,
   UShowPrefsPageAction,
+  USnippetIDs,
   UUserDBMgr,
   UView,
   UViewItemAction,
@@ -812,7 +813,9 @@ end;
 
 procedure TMainForm.ActEditSnippetByNameExecute(Sender: TObject);
 begin
-  TUserDBMgr.EditSnippet((Sender as TEditSnippetAction).SnippetName);
+  TUserDBMgr.EditSnippet(
+    TSnippetID.Create((Sender as TEditSnippetAction).SnippetName)
+  );
 end;
 
 procedure TMainForm.actEditSnippetExecute(Sender: TObject);

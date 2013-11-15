@@ -205,7 +205,7 @@ end;
 procedure TDuplicateSnippetDlg.FormDestroy(Sender: TObject);
 begin
   if (ModalResult = mrOK) and chkEdit.Checked then
-    TUserDBMgr.EditSnippet(fNewSnippet.ID.ToString);
+    TUserDBMgr.EditSnippet(fNewSnippet.ID);
   fOptions.EditSnippetOnClose := chkEdit.Checked;
   inherited;
   fOptions.Free;
