@@ -24,7 +24,7 @@ uses
   StdCtrls, Forms, ComCtrls, Controls, ExtCtrls, Classes,
   // Project
   DB.USnippet, FmWizardDlg, FrBrowserBase, FrCheckedTV, FrFixedHTMLDlg,
-  FrHTMLDlg, FrSelectSnippetsBase, FrSelectUserSnippets, UBaseObjects,
+  FrHTMLDlg, FrSelectSnippetsBase, FrSelectSnippets, UBaseObjects,
   UEncodings, UExceptions;
 
 
@@ -40,7 +40,7 @@ type
     edComments: TMemo;
     edEMail: TEdit;
     edName: TEdit;
-    frmSnippets: TSelectUserSnippetsFrame;
+    frmSnippets: TSelectSnippetsFrame;
     lblComments: TLabel;
     lblEmail: TLabel;
     lblFinished: TLabel;

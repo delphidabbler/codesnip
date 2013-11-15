@@ -154,7 +154,6 @@ uses
   FrCheckedTV in 'FrCheckedTV.pas' {CheckedTVFrame: TFrame},
   FrSelectSnippetsBase in 'FrSelectSnippetsBase.pas' {SelectSnippetsBaseFrame: TFrame},
   FrSelectSnippets in 'FrSelectSnippets.pas' {SelectSnippetsFrame: TFrame},
-  FrSelectUserSnippets in 'FrSelectUserSnippets.pas' {SelectUserSnippetsFrame: TFrame},
   FrSnippetLayoutPrefs in 'FrSnippetLayoutPrefs.pas' {SnippetLayoutPrefsFrame: TFrame},
   FrSourcePrefs in 'FrSourcePrefs.pas' {SourcePrefsFrame: TFrame},
   FrTextPreview in 'FrTextPreview.pas' {TextPreviewFrame: TFrame},

@@ -23,7 +23,7 @@ uses
   // Delphi
   Classes, StdCtrls, Controls, Forms, ExtCtrls,
   // Project
-  DB.USnippet, FmGenericOKDlg, FrCheckedTV, FrSelectUserSnippets,
+  DB.USnippet, FmGenericOKDlg, FrCheckedTV,
   FrSelectSnippets, FrSelectSnippetsBase, UBaseObjects;
 
 
@@ -37,7 +37,7 @@ type
   TCodeExportDlg = class(TGenericOKDlg, INoPublicConstruct)
     btnBrowse: TButton;
     edFile: TEdit;
-    frmSnippets: TSelectUserSnippetsFrame;
+    frmSnippets: TSelectSnippetsFrame;
     lblFile: TLabel;
     lblSnippets: TLabel;
     procedure btnBrowseClick(Sender: TObject);

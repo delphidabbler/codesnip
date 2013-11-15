@@ -1,7 +1,7 @@
 inherited CodeSubmitDlg: TCodeSubmitDlg
   Caption = 'Code Submission Wizard'
   ExplicitWidth = 565
-  ExplicitHeight = 433
+  ExplicitHeight = 435
   PixelsPerInch = 96
   TextHeight = 13
   inherited pnlBody: TPanel
@@ -33,7 +33,7 @@ inherited CodeSubmitDlg: TCodeSubmitDlg
         object lblSnippets: TLabel
           Left = 0
           Top = 8
-          Width = 190
+          Width = 198
           Height = 13
           Caption = '&Select the snippet(s) you want to submit:'
           FocusControl = frmSnippets
@@ -41,12 +41,12 @@ inherited CodeSubmitDlg: TCodeSubmitDlg
         object lblSnippetPrompt: TLabel
           Left = 0
           Top = 221
-          Width = 183
+          Width = 187
           Height = 13
           Caption = 'One or more snippets must be selected'
           Visible = False
         end
-        inline frmSnippets: TSelectUserSnippetsFrame
+        inline frmSnippets: TSelectSnippetsFrame
           Left = 0
           Top = 32
           Width = 369
@@ -79,7 +79,7 @@ inherited CodeSubmitDlg: TCodeSubmitDlg
         object lblEmail: TLabel
           Left = 0
           Top = 43
-          Width = 69
+          Width = 70
           Height = 13
           Caption = '&Email Address:'
           FocusControl = edEMail
@@ -87,7 +87,7 @@ inherited CodeSubmitDlg: TCodeSubmitDlg
         object lblComments: TLabel
           Left = 0
           Top = 104
-          Width = 77
+          Width = 79
           Height = 13
           Caption = 'Your &Comments:'
           FocusControl = edComments

@@ -342,10 +342,6 @@
 				<Form>SelectSnippetsFrame</Form>
 				<DesignClass>TFrame</DesignClass>
 			</DCCReference>
-			<DCCReference Include="FrSelectUserSnippets.pas">
-				<Form>SelectUserSnippetsFrame</Form>
-				<DesignClass>TFrame</DesignClass>
-			</DCCReference>
 			<DCCReference Include="FrSnippetLayoutPrefs.pas">
 				<Form>SnippetLayoutPrefsFrame</Form>
 				<DesignClass>TFrame</DesignClass>
