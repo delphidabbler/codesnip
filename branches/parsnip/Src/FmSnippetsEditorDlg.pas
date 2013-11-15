@@ -672,7 +672,7 @@ begin
     // Add or update snippet
     if Assigned(fSnippet) then
       fSnippet := (Database as IDatabaseEdit).UpdateSnippet(
-        fSnippet, fEditData, ''
+        fSnippet, fEditData
       )
     else
       fSnippet := (Database as IDatabaseEdit).AddSnippet(fEditData)

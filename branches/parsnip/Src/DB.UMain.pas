@@ -183,15 +183,12 @@ type
         @param Snippet [in] Snippet for which cross referers are required.
         @return List of IDs of referring snippets.
       }
-    // TODO: Remove NewName parameter: name should never change
     function UpdateSnippet(const Snippet: TSnippet;
-      const Data: TSnippetEditData; const NewName: string = ''): TSnippet;
+      const Data: TSnippetEditData): TSnippet;
       {Updates a user defined snippet's properties and references using provided
       data.
         @param Snippet [in] Snippet to be updated. Must be user-defined.
         @param Data [in] Record containing revised data.
-        @param NewName [in] New name of snippet. Set to '' or Snippet.Name if
-          name is not to change.
         @return Reference to updated snippet. Will have changed.
       }
     function AddSnippet(const Data: TSnippetEditData): TSnippet;
@@ -454,13 +451,11 @@ type
         @return List of IDs of referring snippets.
       }
     function UpdateSnippet(const Snippet: TSnippet;
-      const Data: TSnippetEditData; const NewName: string = ''): TSnippet;
+      const Data: TSnippetEditData): TSnippet;
       {Updates a user defined snippet's properties and references using provided
       data.
         @param Snippet [in] Snippet to be updated. Must be user-defined.
         @param Data [in] Record containing revised data.
-        @param NewName [in] New name of snippet. Set to '' or Snippet.Name if
-          name is not to change.
         @return Reference to updated snippet. Will have changed.
       }
     function AddSnippet(const Data: TSnippetEditData): TSnippet;
@@ -1063,13 +1058,11 @@ begin
 end;
 
 function TDatabase.UpdateSnippet(const Snippet: TSnippet;
-  const Data: TSnippetEditData; const NewName: string): TSnippet;
+  const Data: TSnippetEditData): TSnippet;
   {Updates a user defined snippet's properties and references using provided
   data.
     @param Snippet [in] Snippet to be updated. Must be user-defined.
     @param Data [in] Record containing revised data.
-    @param NewName [in] New name of snippet. Set to '' or Snippet.Name if name
-      is not to change.
     @return Reference to updated snippet. Will have changed.
   }
 var
@@ -1089,26 +1082,22 @@ begin
   TriggerEvent(evChangeBegin);
   TriggerEvent(evBeforeSnippetChange, Snippet);
   try
-    // Calculate new name
-    if NewName <> '' then
-      SnippetName := NewName
-    else
-      SnippetName := Snippet.Name;
-    // If name has changed then new name musn't exist in user database
-    if not StrSameText(SnippetName, Snippet.Name) then
-      if fSnippets.Find(SnippetName) <> nil then
-        raise ECodeSnip.CreateFmt(sCantRename, [Snippet.Name, SnippetName]);
+    SnippetName := Snippet.Name;
     // We update by deleting old snippet and inserting new one
     // get lists of snippets that cross reference or depend on this snippet
     Dependents := TSnippetList.Create;
     GetDependentList(Snippet, Dependents);
     Referrers := TSnippetList.Create;
     GetReferrerList(Snippet, Referrers);
+    { TODO: check if removal, re-adding of this snippet to referrers and
+            dependants is necessary now that name/ID of snippet doesn't change}
     // remove invalid references from referring snippets
     for Referrer in Referrers do
       (Referrer.XRef as TSnippetListEx).Delete(Snippet);
     for Dependent in Dependents do
       (Dependent.Depends as TSnippetListEx).Delete(Snippet);
+    { TODO: check if we need to delete and recreate snippet now that name/ID
+            can't change. }
     // delete the snippet
     InternalDeleteSnippet(Snippet);
     // add new snippet
