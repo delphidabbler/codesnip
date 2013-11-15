@@ -251,11 +251,11 @@ type
         @param Idx [in] Index of required snippet in list.
         @return Snippet at specified index in list.
       }
-    function Find(const SnippetName: string; out Index: Integer): Boolean;
+    function Find(const SnippetID: TSnippetID; out Index: Integer): Boolean;
       overload;
       {Finds a snippet in the list that has a specified name and user defined
       property. Uses a binary search.
-        @param SnippetName [in] Name of snippet to be found.
+        @param SnippetID [in] ID of snippet to be found.
         @param Index [out] Index of required snippet in list. Valid only if
           method returns True.
         @return True if snippet found, False if not.
@@ -681,11 +681,11 @@ begin
   inherited;
 end;
 
-function TSnippetList.Find(const SnippetName: string; out Index: Integer):
+function TSnippetList.Find(const SnippetID: TSnippetID; out Index: Integer):
   Boolean;
   {Finds a snippet in the list that has a specified name and user defined
   property. Uses a binary search.
-    @param SnippetName [in] Name of snippet to be found.
+    @param SnippetID [in] ID of snippet to be found.
     @param Index [out] Index of required snippet in list. Valid only if
       method returns True.
     @return True if snippet found, False if not.
@@ -697,7 +697,7 @@ begin
   // We need a temporary snippet object in order to perform binary search using
   // object list's built in search
   NulData.Init;
-  TempSnippet := TTempSnippet.Create(TSnippetID.Create(SnippetName), NulData);
+  TempSnippet := TTempSnippet.Create(SnippetID, NulData);
   try
     Index := fList.IndexOf(TempSnippet);
     Result := Index >= 0;
@@ -712,13 +712,8 @@ function TSnippetList.Find(const SnippetName: string): TSnippet;
       user defined snippet or one from main database.
     @return Reference to required snippet or nil if not found.
   }
-var
-  Idx: Integer; // index of snippet name in list
 begin
-  if Find(SnippetName, Idx) then
-    Result := Items[Idx]
-  else
-    Result := nil;
+  Result := Find(TSnippetID.Create(SnippetName));
 end;
 
 function TSnippetList.Find(const SnippetID: TSnippetID): TSnippet;
@@ -726,8 +721,13 @@ function TSnippetList.Find(const SnippetID: TSnippetID): TSnippet;
     @param SnippetID [in] ID of snippet to find.
     @return Reference to required snippet or nil if not found.
   }
+var
+  Idx: Integer; // index of snippet name in list
 begin
-  Result := Find(SnippetID.Name);
+  if Find(SnippetID, Idx) then
+    Result := Items[Idx]
+  else
+    Result := nil;
 end;
 
 function TSnippetList.GetEnumerator: IEnumerator<TSnippet>;
