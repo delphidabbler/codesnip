@@ -382,12 +382,12 @@ procedure TDatabaseLoader.LoadReferences(const Snippet: TSnippet);
 
 begin
   LoadSnippetReferences(
-    Snippet.Depends, fReader.GetSnippetDepends(Snippet.ID.Name)
+    Snippet.Depends, fReader.GetSnippetDepends(Snippet.ID.ToString)
   );
   LoadSnippetReferences(
-    Snippet.XRef, fReader.GetSnippetXRefs(Snippet.ID.Name)
+    Snippet.XRef, fReader.GetSnippetXRefs(Snippet.ID.ToString)
   );
-  fReader.GetSnippetUnits(Snippet.ID.Name).CopyTo(Snippet.Units);
+  fReader.GetSnippetUnits(Snippet.ID.ToString).CopyTo(Snippet.Units);
 end;
 
 procedure TDatabaseLoader.LoadSnippets(const Cat: TCategory);
@@ -537,7 +537,7 @@ procedure TDatabaseWriter.WriteSnippets;
   begin
     Result := TIStringList.Create;
     for ID in IDList do
-      Result.Add(ID.Name);
+      Result.Add(ID.ToString);
   end;
   // ---------------------------------------------------------------------------
 
@@ -550,12 +550,14 @@ begin
   begin
     // Get and write a snippet's properties
     Props := fProvider.GetSnippetProps(Snippet);
-    fWriter.WriteSnippetProps(Snippet.ID.Name, Props);
+    fWriter.WriteSnippetProps(Snippet.ID.ToString, Props);
     // Get and write a snippet's references
     Refs := fProvider.GetSnippetRefs(Snippet);
-    fWriter.WriteSnippetUnits(Snippet.ID.Name, Refs.Units);
-    fWriter.WriteSnippetDepends(Snippet.ID.Name, IDListToStrings(Refs.Depends));
-    fWriter.WriteSnippetXRefs(Snippet.ID.Name, IDListToStrings(Refs.XRef));
+    fWriter.WriteSnippetUnits(Snippet.ID.ToString, Refs.Units);
+    fWriter.WriteSnippetDepends(
+      Snippet.ID.ToString, IDListToStrings(Refs.Depends)
+    );
+    fWriter.WriteSnippetXRefs(Snippet.ID.ToString, IDListToStrings(Refs.XRef));
   end;
 end;
 

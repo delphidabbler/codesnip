@@ -158,7 +158,7 @@ begin
   fBuilder.AppendLine(fWatermark);
   for SnippetID in SnippetIDs do
   begin
-    fBuilder.Append(SnippetID.Name);
+    fBuilder.Append(SnippetID.ToString);
     fBuilder.Append(TAB);
     // NOTE: TStringBuilder.Append(Boolean) override not used here since ordinal
     // value wanted instead of "True" or "False" or localised equivalent.

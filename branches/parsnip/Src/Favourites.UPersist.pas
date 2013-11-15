@@ -121,7 +121,7 @@ begin
     SB.AppendLine(Watermark);
     for Fav in Favourites do
     begin
-      SB.Append(Fav.SnippetID.Name);
+      SB.Append(Fav.SnippetID.ToString);
       SB.Append(TAB);
       SB.Append(BoolToStr(True, True)); // redundant field: always True in v5
       SB.Append(TAB);

@@ -920,7 +920,9 @@ begin
   (Result as TSnippetEx).UpdateRefs(Data.Refs, fSnippets);
   Cat := fCategories.Find(Result.Category);
   if not Assigned(Cat) then
-    raise ECodeSnip.CreateFmt(sCatNotFound, [Result.Category, Result.ID.Name]);
+    raise ECodeSnip.CreateFmt(
+      sCatNotFound, [Result.Category, Result.ID.ToString]
+    );
   Cat.Snippets.Add(Result);
   fSnippets.Add(Result);
 end;
@@ -1080,7 +1082,7 @@ begin
   TriggerEvent(evChangeBegin);
   TriggerEvent(evBeforeSnippetChange, Snippet);
   try
-    SnippetName := Snippet.ID.Name;
+    SnippetName := Snippet.ID.ToString;
     // We update by deleting old snippet and inserting new one
     // get lists of snippets that cross reference or depend on this snippet
     Dependents := TSnippetList.Create;
@@ -1207,7 +1209,7 @@ var
 begin
   Result := TIStringList.Create;
   for Snippet in Cat.Snippets do
-    Result.Add(Snippet.ID.Name);
+    Result.Add(Snippet.ID.ToString);
 end;
 
 function TUserDataProvider.GetSnippetProps(

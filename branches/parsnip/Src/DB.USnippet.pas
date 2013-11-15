@@ -417,7 +417,7 @@ begin
   if GetDisplayNameValue <> '' then
     Result := GetDisplayNameValue
   else
-    Result := fID.Name;
+    Result := fID.ToString;
 end;
 
 function TSnippet.GetDisplayNameValue: string;

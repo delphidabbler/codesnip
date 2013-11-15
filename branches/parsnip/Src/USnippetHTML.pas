@@ -221,7 +221,7 @@ class function TSnippetHTML.SnippetALink(const Snippet: TSnippet): string;
 begin
   // Create javascript link enclosing snippet name
   Result := JSALink(
-    TJavaScript.LiteralFunc('displaySnippet', [Snippet.ID.Name]),
+    TJavaScript.LiteralFunc('displaySnippet', [Snippet.ID.ToString]),
     'snippet-link',
     Snippet.DisplayName
   );

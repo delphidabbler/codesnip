@@ -386,8 +386,8 @@ resourcestring
 begin
   if fDisplayName <> '' then
     Exit(fDisplayName);
-  if fSnippetID.Name <> '' then
-    Exit(fSnippetID.Name);
+  if fSnippetID.ToString <> '' then
+    Exit(fSnippetID.ToString);
   Result := sUntitled;
 end;
 

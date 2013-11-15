@@ -181,7 +181,7 @@ class function TSnippetValidator.Validate(const Snippet: TSnippet;
     @return True if snippet valid or False if not.
   }
 begin
-  Result := ValidateName(Snippet.ID.Name, False, ErrorMsg, ErrorSel)
+  Result := ValidateName(Snippet.ID.ToString, False, ErrorMsg, ErrorSel)
     and ValidateDescription(Snippet.Description.ToString, ErrorMsg, ErrorSel)
     and ValidateSourceCode(Snippet.SourceCode, ErrorMsg, ErrorSel)
     and ValidateDependsList(Snippet, ErrorMsg)
@@ -264,7 +264,7 @@ begin
     ErrorMsg := Format(
       sCircular, [
         TSnippetKindInfoList.Items[Snippet.Kind].DisplayName,
-        Snippet.ID.Name
+        Snippet.ID.ToString
       ]
     );
     Exit;
@@ -279,7 +279,7 @@ begin
       sInvalidKind,
       [
         TSnippetKindInfoList.Items[Snippet.Kind].DisplayName,
-        Snippet.ID.Name
+        Snippet.ID.ToString
       ]
     );
 end;

@@ -346,7 +346,7 @@ begin
   LI := fLVFavs.Selected as TFavouriteListItem;
   SelectedSnippet := LI.Favourite.SnippetID;
   fNotifier.DisplaySnippet(
-    SelectedSnippet.Name,
+    SelectedSnippet.ToString,
     chkNewTab.Checked
   );
   fFavourites.Touch(SelectedSnippet);
@@ -368,7 +368,7 @@ begin
   if Assigned(Snippet) then
     LI.Caption := Snippet.DisplayName
   else
-    LI.Caption := Favourite.SnippetID.Name;
+    LI.Caption := Favourite.SnippetID.ToString;
   if IsToday(Favourite.LastAccessed) then
     LI.SubItems.Add(TimeToStr(Favourite.LastAccessed))
   else

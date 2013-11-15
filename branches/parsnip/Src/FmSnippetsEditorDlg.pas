@@ -922,7 +922,7 @@ begin
   fEditData := (Database as IDatabaseEdit).GetEditableSnippetInfo(fSnippet);
   // Record snippet's original name, if any
   if Assigned(fSnippet) then
-    fOrigName := fSnippet.ID.Name
+    fOrigName := fSnippet.ID.ToString
   else
     fOrigName := '';
   // Populate controls with dynamic data
@@ -1071,7 +1071,7 @@ begin
   if Assigned(fSnippet) then
   begin
     if not TSnippetValidator.ValidateDependsList(
-      fSnippet.ID.Name, UpdateData, ErrorMessage
+      fSnippet.ID.ToString, UpdateData, ErrorMessage
     ) then
       raise EDataEntry.Create(  // selection not applicable to list boxes
         StrMakeSentence(ErrorMessage) + EOL2 + sDependencyPrompt, clbDepends

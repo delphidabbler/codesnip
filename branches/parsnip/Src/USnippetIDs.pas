@@ -36,9 +36,6 @@ type
       ///  <summary>Value of Name property.</summary>
       fName: string;
   public
-    ///  <summary>Name of snippet.</summary>
-    property Name: string read fName write fName;
-
     ///  <summary>Creates a record with given name.</summary>
     constructor Create(const AName: string);
 
@@ -47,6 +44,9 @@ type
 
     ///  <summary>Returns hash of snippet ID.</summary>
     function Hash: Integer;
+
+    ///  <summary>Returns string representation of ID.</summary>
+    function ToString: string;
 
     ///  <summary>Compares this record with another.</summary>
     ///  <param name="SID">TSnippetID [in] Snippet ID to compare with.</param>
@@ -159,12 +159,12 @@ uses
 
 constructor TSnippetID.Clone(const Src: TSnippetID);
 begin
-  Create(Src.Name);
+  Create(Src.fName);
 end;
 
 class function TSnippetID.Compare(const Left, Right: TSnippetID): Integer;
 begin
-  Result := StrCompareText(Left.Name, Right.Name);
+  Result := StrCompareText(Left.fName, Right.fName);
 end;
 
 function TSnippetID.CompareTo(const SID: TSnippetID): Integer;
@@ -190,6 +190,11 @@ end;
 class operator TSnippetID.NotEqual(const SID1, SID2: TSnippetID): Boolean;
 begin
   Result := not (SID1 = SID2);
+end;
+
+function TSnippetID.ToString: string;
+begin
+  Result := fName;
 end;
 
 { TSnippetIDList }
