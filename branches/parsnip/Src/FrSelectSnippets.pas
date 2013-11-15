@@ -40,9 +40,6 @@ type
     Each category and snippet has a check box that can be checked to select
     them. A property is exposed that gives access to selected snippets.
   }
-  { TODO: rename this class as TSelectSnippetsFrame and convert forms that used
-          that frame in FrSelectSnippets to use this unit. Finally, delete
-          FrSelectSnippets and rename this unit as FrSelectSnippets. }
   TSelectSnippetsFrame = class(TCheckedTVFrame)
   strict private
     type
