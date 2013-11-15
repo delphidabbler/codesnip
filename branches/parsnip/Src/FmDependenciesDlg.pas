@@ -378,16 +378,14 @@ end;
 
 function TDependenciesDlg.GetDisplayName: string;
   {Gets display name for snippet for which dependencies are being displayed.
-    @return Required display name: snippet's name if available, otherwise an
-      untitled string.
+    @return Required display name or special untitled id no display name is
+      available.
   }
 resourcestring
   sUntitled = '<Untitled Snippet>'; // display name when snippet has no name
 begin
   if fDisplayName <> '' then
     Exit(fDisplayName);
-  if fSnippetID.ToString <> '' then
-    Exit(fSnippetID.ToString);
   Result := sUntitled;
 end;
 
