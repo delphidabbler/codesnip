@@ -1,0 +1,56 @@
+; ------------------------------------------------------------------------------
+; This Source Code Form is subject to the terms of the Mozilla Public License,
+; v. 2.0. If a copy of the MPL was not distributed with this file, You can
+; obtain one at http://mozilla.org/MPL/2.0/
+;
+; Copyright (C) 2013, Peter Johnson (www.delphidabbler.com).
+;
+; $Rev$
+; $Date$
+;
+; Change Log for CodeSnip Release 5
+; ------------------------------------------------------------------------------
+
+Summary of changes in SVN parsnip branch up to REVISION 3810.
+Changes relate to v4.8.3 (#### may need to update this if new v4 release is merged in###)
++ User interface changes:
+  - The link used to edit the displayed snippet has been removed from the Detail pane and replaced by a glyph showing the snippet's level of testing. (### may need to change this in light of further redesigns###)
+  - Welcome page revised re change from two to one logical databases. (### may need to change this in light of further redesigns###)
+  - Main window and task bar captions changed.
+  - Splash screen updated.
+  - "About the Database" tab removed from About box and "Paths" tab modified.
+  - Syntax highlighter changed.
+  - Source code editor in Snippets Editor is now syntax highlighted and supports several languages. The editor supports different tab stop settings for different programming languages. Removed row and column indicator associated with source code editor.
+  - Print dialogue box now displays a preview of selected document formatting options.
+  - Select Snippets dialogue box modified re change from two to one logical databases.
+  - "Printing" tab removed from Preferences dialogue box. The button in the Print dialogue box that displayed this tab was removed.
+  - "Syntax Highlighter" tab of Preferences dialogue box totally redesigned. It is now used to select syntax highlighter styles for various output types. Highlighter themes are no longer customised on the tab.
+  - New dialogue box to enable user to customise and create syntax highlighter themes. This dialogue box is accessed via the "Syntax Highlighter" tab of the Preferences dialogue box.
+  - Snippet editor enlarged and controls changed re revised snippet properties.
++ Database changes:
+  - Online Code Snippets Database is no longer treated differently to user database: all snippets are now editable.
+  - Changed location of (user) database in portable mode and default location in standard mode. All database files are now per-user.
+  - Snippet IDs (formerly "names") are now generated automatically instead of being provided by the user. The IDs no longer be edited. This means that a snippet's ID can never be changed.
+  - Snippet titles (formerly "display names") are now required since ID is no longer suitable as a default display name.
++ Support for snippets in languages other than Pascal has been added. Available languages are: Pascal, plain text *** GROW THIS LANGUAGE LIST AS NEW LANGUAGES ADDED ***
++ The user can now specify an external diff viewer to be used by CodeSnip. *** Update this line when diff viewer is actually used for something!! ***
++ Syntax highlighter changes:
+  - Syntax highlighting is now available for all supported programming languages.
+  - Different highlighter "themes" can now be used for user interface, exported code and printed output.
+  - User designed themes are now saved in a themes file alongside the per-user config file, instead of in the config file.
++ Portable application changes:
+  - CodeSnip no acts in portable mode when -portable switch is passed on command line. There is no longer a separate build for the portable version.
+  - New launcher application that starts CodeSnip in portable mode.
++ Common and per-user configuration file names and locations changed for both standard and portable modes. Per-user configuration file format changed and version bumped to v16.
++ Changes to "first run" detection and configuration code:
+  - Modified to detect v5 installs and to treat v4 installs as legacy.
+  - Fixed bug where databases moved by user were not being detected.
+  - *** ADD CHANGES HERE AS THEY HAPPEN ***
++ Documentation changes:
+  - Help file updated re changes.
+  - Many spelling errors fixed in text and help files.
++ Internal changes:
+  - Much refactoring.
+  - String hash functions changed.
+  - Revised the "external" object that communicates with JavaScript in browser controls.
+  - Code now has dependencies on Ciobanu Alexandru's Delphi Collections project and on the "SynEdit" project.
