@@ -30,53 +30,21 @@ type
 
   {
   TSelectSnippetsFrame:
-    Frame class that enables one or more snippets from both the user and main
-    databases to be selected. Displays a two-level tree of snippets categories
-    with their associated snippets. Each category and snippet has a check box
-    that can be checked to select them. A property is exposed that gives access
-    to selected snippets.
+    Frame class that enables one or more snippets the database to be selected.
+    Displays a two-level tree of snippets categories with their associated
+    snippets. Each category and snippet has a check box that can be checked to
+    select them. A property is exposed that gives access to selected snippets.
   }
-  TSelectSnippetsFrame = class(TSelectSnippetsBaseFrame)
-  strict protected
-    function CanAddCatNode(const Cat: TCategory): Boolean; override;
-      {Checks if a category node should be added to treeview.
-        @param Cat [in] Category to be checked.
-        @return True if category contains any snippets.
-      }
-    function CanAddSnippetNode(const Snippet: TSnippet): Boolean; override;
-      {Checks if a snippet node should be added to treeview.
-        @param Snippet [in] Snippet to be checked.
-        @return True. All snippets should be added.
-      }
-  end;
+  { TODO: Delete this frame and rename TSelectSnippetsBaseFrame as
+          TSelectSnippetsFrame. Change code that uses this unit to use
+          FrSelectSnippetsBase. }
+  TSelectSnippetsFrame = class(TSelectSnippetsBaseFrame);
 
 
 implementation
 
 
 {$R *.dfm}
-
-
-{ TSelectSnippetsFrame }
-
-function TSelectSnippetsFrame.CanAddCatNode(const Cat: TCategory): Boolean;
-  {Checks if a category node should be added to treeview.
-    @param Cat [in] Category to be checked.
-    @return True if category contains any snippets.
-  }
-begin
-  Result := not Cat.Snippets.IsEmpty;
-end;
-
-function TSelectSnippetsFrame.CanAddSnippetNode(
-  const Snippet: TSnippet): Boolean;
-  {Checks if a snippet node should be added to treeview.
-    @param Snippet [in] Snippet to be checked.
-    @return True. All snippets should be added.
-  }
-begin
-  Result := True;
-end;
 
 end.
 

@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2009-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2009-2012, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -30,12 +30,13 @@ type
 
   {
   TSelectSnippetsBaseFrame:
-    Abstract base class for frames that enable snippets to be selected. Displays
-    a two-level tree of snippets categories with associated snippets. Each
-    category and snippet has a check box that can be checked to select them. A
-    property is exposed that gives access to selected snippets. Subclasses must
-    determine which categories and snippets are displayed.
+    Displays a two-level tree of snippet categories with associated snippets.
+    Each category and snippet has a check box that can be checked to select
+    them. A property is exposed that gives access to selected snippets.
   }
+  { TODO: rename this class as TSelectSnippetsFrame and convert forms that used
+          that frame in FrSelectSnippets to use this unit. Finally, delete
+          FrSelectSnippets and rename this unit as FrSelectSnippets. }
   TSelectSnippetsBaseFrame = class(TCheckedTVFrame)
   strict private
     type
@@ -88,18 +89,6 @@ type
       once for each leaf node.
         @param Node [in] Leaf node whose state to set.
       }
-    function CanAddCatNode(const Cat: TCategory): Boolean;
-      virtual; abstract;
-      {Checks if a category node should be added to treeview.
-        @param Cat [in] Category to be checked.
-        @return True if category is to be added, False if not.
-      }
-    function CanAddSnippetNode(const Snippet: TSnippet): Boolean;
-      virtual; abstract;
-      {Checks if a snippet node should be added to treeview.
-        @param Snippet [in] Snippet to be checked.
-        @return True if snippet is to be added, False if not.
-      }
   public
     constructor Create(AOwner: TComponent); override;
       {Class constructor. Sets up object.
@@ -147,12 +136,11 @@ begin
     for Group in Grouping do
     begin
       Cat := (Group as TCategoryGroupItem).Category;
-      if Group.IsEmpty or not CanAddCatNode(Cat) then
+      if Group.IsEmpty or not Cat.Snippets.IsEmpty then
         Continue;
       CatNode := AddNode(nil, Group.Title, Cat);
       for Snippet in Group.SnippetList do
-        if CanAddSnippetNode(Snippet) then
-          AddNode(CatNode, Snippet.DisplayName, Snippet);
+        AddNode(CatNode, Snippet.DisplayName, Snippet);
     end;
   finally
     FreeAndNil(Grouping);

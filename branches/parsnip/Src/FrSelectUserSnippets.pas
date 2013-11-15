@@ -30,54 +30,19 @@ type
 
   {
   TSelectUserSnippetsFrame:
-    Frame class that enables one or more snippets from the user defined
-    database to be selected. Displays a two-level tree of snippets categories
-    with their associated user defined snippets. Each category and snippet has a
-    check box that can be checked to select them. A property is exposed that
-    gives access to selected snippets.
+    Frame class that enables one or more snippets from the database to be
+    selected. Displays a two-level tree of snippets categories with their
+    associated user defined snippets. Each category and snippet has a check box
+    that can be checked to select them. A property is exposed that gives access
+    to selected snippets.
   }
-  TSelectUserSnippetsFrame = class(TSelectSnippetsBaseFrame)
-  strict protected
-    function CanAddCatNode(const Cat: TCategory): Boolean; override;
-      {Checks if a category node should be added to treeview.
-        @param Cat [in] Category to be checked.
-        @return True if category contains any user-defined snippets.
-      }
-    function CanAddSnippetNode(const Snippet: TSnippet): Boolean; override;
-      {Checks if a snippet node should be added to treeview.
-        @param Snippet [in] Snippet to be checked.
-        @return True if snippet is user-defined.
-      }
-  end;
-
+  // TODO: Replace use of this frame with FrSelectSnippets and delete unit.
+  TSelectUserSnippetsFrame = class(TSelectSnippetsBaseFrame);
 
 implementation
 
 
 {$R *.dfm}
-
-
-{ TSelectUserSnippetsFrame }
-
-function TSelectUserSnippetsFrame.CanAddCatNode(const Cat: TCategory): Boolean;
-  {Checks if a category node should be added to treeview.
-    @param Cat [in] Category to be checked.
-    @return True if category contains any user-defined snippets.
-  }
-begin
-  Result := Cat.Snippets.Count > 0;
-end;
-
-function TSelectUserSnippetsFrame.CanAddSnippetNode(
-  const Snippet: TSnippet): Boolean;
-  {Checks if a snippet node should be added to treeview.
-    @param Snippet [in] Snippet to be checked.
-    @return True if snippet is user-defined.
-  }
-begin
-  // TODO: check if this method can be removed
-  Result := True;
-end;
 
 end.
 
