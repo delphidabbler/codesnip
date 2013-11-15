@@ -21,10 +21,18 @@ interface
 
 uses
   // Delphi
-  Forms, StdCtrls, Controls, ExtCtrls, Classes,
+  Forms,
+  StdCtrls,
+  Controls,
+  ExtCtrls,
+  Classes,
   // Project
-  DB.USnippet, FmGenericOKDlg, FrCheckedTV,
-  FrSelectSnippetsBase, UBaseObjects, USearch;
+  DB.USnippet,
+  FmGenericOKDlg,
+  FrCheckedTV,
+  FrSelectSnippets,
+  UBaseObjects,
+  USearch;
 
 
 type
@@ -90,7 +98,9 @@ uses
   // Delphi
   SysUtils,
   // Project
-  DB.UMain, UCtrlArranger, UQuery;
+  DB.UMain,
+  UCtrlArranger,
+  UQuery;
 
 
 {$R *.dfm}

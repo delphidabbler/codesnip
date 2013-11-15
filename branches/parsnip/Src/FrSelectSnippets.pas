@@ -13,7 +13,7 @@
 }
 
 
-unit FrSelectSnippetsBase;
+unit FrSelectSnippets;
 
 
 interface
@@ -21,9 +21,15 @@ interface
 
 uses
   // Delphi
-  ImgList, Controls, Classes, ComCtrls,
+  ImgList,
+  Controls,
+  Classes,
+  ComCtrls,
   // Project
-  DB.UCategory, DB.USnippet, FrCheckedTV, USnippetsTVDraw;
+  DB.UCategory,
+  DB.USnippet,
+  FrCheckedTV,
+  USnippetsTVDraw;
 
 
 type
@@ -110,9 +116,11 @@ implementation
 
 uses
   // Delphi
-  SysUtils, StdCtrls,
+  SysUtils,
+  StdCtrls,
   // Project
-  DB.UMain, UGroups;
+  DB.UMain,
+  UGroups;
 
 
 {$R *.dfm}

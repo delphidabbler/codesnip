@@ -21,11 +21,23 @@ interface
 
 uses
   // Delphi
-  StdCtrls, Forms, ComCtrls, Controls, ExtCtrls, Classes,
+  StdCtrls,
+  Forms,
+  ComCtrls,
+  Controls,
+  ExtCtrls,
+  Classes,
   // Project
-  DB.USnippet, FmWizardDlg, FrBrowserBase, FrCheckedTV, FrFixedHTMLDlg,
-  FrHTMLDlg, FrSelectSnippetsBase, UBaseObjects,
-  UEncodings, UExceptions;
+  DB.USnippet,
+  FmWizardDlg,
+  FrBrowserBase,
+  FrCheckedTV,
+  FrFixedHTMLDlg,
+  FrHTMLDlg,
+  FrSelectSnippets,
+  UBaseObjects,
+  UEncodings,
+  UExceptions;
 
 
 type
@@ -152,9 +164,16 @@ uses
   // Delphi
   Graphics,
   // Project
-  FmPreviewDlg, UCodeImportExport, UCtrlArranger,
-  UEmailHelper, UMessageBox, UStrUtils, UUserDetails, UUserDetailsPersist,
-  Web.UCodeSubmitter, Web.UExceptions;
+  FmPreviewDlg,
+  UCodeImportExport,
+  UCtrlArranger,
+  UEmailHelper,
+  UMessageBox,
+  UStrUtils,
+  UUserDetails,
+  UUserDetailsPersist,
+  Web.UCodeSubmitter,
+  Web.UExceptions;
 
 
 {$R *.dfm}

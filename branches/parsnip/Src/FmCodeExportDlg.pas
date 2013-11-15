@@ -21,10 +21,17 @@ interface
 
 uses
   // Delphi
-  Classes, StdCtrls, Controls, Forms, ExtCtrls,
+  Classes,
+  StdCtrls,
+  Controls,
+  Forms,
+  ExtCtrls,
   // Project
-  DB.USnippet, FmGenericOKDlg, FrCheckedTV,
-  FrSelectSnippetsBase, UBaseObjects;
+  DB.USnippet,
+  FmGenericOKDlg,
+  FrCheckedTV,
+  FrSelectSnippets,
+  UBaseObjects;
 
 
 type
@@ -73,10 +80,19 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Dialogs,
+  SysUtils,
+  Dialogs,
   // Project
-  UCodeImportExport, UCtrlArranger, UEncodings, UExceptions, UIOUtils,
-  UMessageBox, UOpenDialogHelper, USaveDialogEx, UStrUtils, UUtils;
+  UCodeImportExport,
+  UCtrlArranger,
+  UEncodings,
+  UExceptions,
+  UIOUtils,
+  UMessageBox,
+  UOpenDialogHelper,
+  USaveDialogEx,
+  UStrUtils,
+  UUtils;
 
 
 {$R *.dfm}
