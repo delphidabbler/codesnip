@@ -162,7 +162,7 @@ var
 begin
   inherited;
   edDisplayName.Text := StrIf(
-    StrSameStr(fSnippet.Name, fSnippet.DisplayName), '', fSnippet.DisplayName
+    StrSameStr(fSnippet.ID.Name, fSnippet.DisplayName), '', fSnippet.DisplayName
   );
   fCatList.ToStrings(cbCategory.Items);
   SnippetCat := Database.Categories.Find(fSnippet.Category);
@@ -207,7 +207,7 @@ end;
 procedure TDuplicateSnippetDlg.FormDestroy(Sender: TObject);
 begin
   if (ModalResult = mrOK) and chkEdit.Checked then
-    TUserDBMgr.EditSnippet(fNewSnippet.Name);
+    TUserDBMgr.EditSnippet(fNewSnippet.ID.Name);
   fOptions.EditSnippetOnClose := chkEdit.Checked;
   inherited;
   fOptions.Free;

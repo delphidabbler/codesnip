@@ -120,11 +120,11 @@ type
         function GetHashCode(const Snippet: TSnippet): Integer; override;
       end;
   strict private
+    fID: TSnippetID;                        // Snippet's ID.
     fKind: TSnippetKind;                    // Kind of snippet this is
     fCategory: string;                      // Name of snippet's category
     fDescription: IActiveText;              // Description of snippet
     fSourceCode: string;                    // Snippet's source code
-    fName: string;                          // Name of snippet
     fDisplayName: string;                   // Display name of snippet
     fUnits: TStringList;                    // List of required units
     fDepends: TSnippetList;                 // List of required snippets
@@ -133,19 +133,11 @@ type
     fCompatibility: TCompileResults;        // Snippet's compiler compatibility
     fHiliteSource: Boolean;                 // If source is syntax highlighted
     fTestInfo: TSnippetTestInfo;            // Level of testing of snippet
-    function GetID: TSnippetID;
-      {Gets snippet's unique ID.
-        @return Required ID.
-      }
     function GetDisplayName: string;
       {Gets snippet's display name, or name if no display name is set
         @return Required display name.
       }
   strict protected
-    procedure SetName(const Name: string);
-      {Sets Name property.
-        @param Name [in] New name.
-      }
     procedure SetProps(const Data: TSnippetData);
       {Sets snippet's properties.
         @param Data [in] Record containing property values.
@@ -173,12 +165,10 @@ type
       {Checks if snippet can be compiled.
         @return True if compilation supported and False if not.
       }
+    property ID: TSnippetID read fID;
+      {Snippet's unique ID}
     property Kind: TSnippetKind read fKind;
       {Kind of snippet represented by this object}
-    property ID: TSnippetID read GetID;
-      {Snippet's unique ID}
-    property Name: string read fName;
-      {Name of snippet}
     property DisplayName: string read GetDisplayName;
       {Displat name of snippet}
     property Category: string read fCategory;
@@ -401,7 +391,7 @@ begin
     ClassName + '.Create: must only be called from descendants.');
   inherited Create;
   // Record simple property values
-  SetName(Name);
+  fID := TSnippetID.Create(Name);
   SetProps(Props);
   // Create string list to store required units
   fUnits := TStringList.Create;
@@ -427,20 +417,12 @@ begin
   if GetDisplayNameValue <> '' then
     Result := GetDisplayNameValue
   else
-    Result := fName;
+    Result := fID.Name;
 end;
 
 function TSnippet.GetDisplayNameValue: string;
 begin
   Result := fDisplayName;
-end;
-
-function TSnippet.GetID: TSnippetID;
-  {Gets snippet's unique ID.
-    @return Required ID.
-  }
-begin
-  Result := TSnippetID.Create(fName);
 end;
 
 function TSnippet.IsEqual(const Snippet: TSnippet): Boolean;
@@ -459,14 +441,6 @@ begin
     Result := TSourceCodeLanguageID.Create('Pascal')
   else
     Result := TSourceCodeLanguageID.Create('Text');
-end;
-
-procedure TSnippet.SetName(const Name: string);
-  {Sets Name property.
-    @param Name [in] New name.
-  }
-begin
-  fName := Name;
 end;
 
 procedure TSnippet.SetProps(const Data: TSnippetData);

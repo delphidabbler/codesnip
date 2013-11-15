@@ -186,7 +186,7 @@ begin
   Result := TIStringList.Create;
   Result.CaseSensitive := False;
   for Snippet in Database.Snippets do
-    Result.Add(Snippet.Name);
+    Result.Add(Snippet.ID.Name);
   for SnippetInfo in fSnippetInfoList do
     if not StrSameText(SnippetInfo.Name, ExcludedName) then
       Result.Add(SnippetInfo.Name);

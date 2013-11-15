@@ -316,7 +316,7 @@ var
 begin
   Result := TIStringList.Create;
   for Snippet in SnipList do
-    Result.Add(Snippet.Name);
+    Result.Add(Snippet.ID.Name);
 end;
 
 procedure TCodeExporter.WriteProgInfo(const ParentNode: IXMLNode);
@@ -345,7 +345,7 @@ var
 begin
   // Create snippet node with attribute that specifies snippet name
   SnippetNode := fXMLDoc.CreateElement(ParentNode, cSnippetNode);
-  SnippetNode.Attributes[cSnippetNameAttr] := Snippet.Name;
+  SnippetNode.Attributes[cSnippetNameAttr] := Snippet.ID.Name;
   // Add nodes for properties: (ignore category and xrefs)
   // description node is written even if empty (which it shouldn't be)
   fXMLDoc.CreateElement(
@@ -354,7 +354,7 @@ begin
     TSnippetExtraHelper.BuildREMLMarkup(Snippet.Description)
   );
   // Snippet's display name is only written if different to Snippet's name
-  if Snippet.Name <> Snippet.DisplayName then
+  if Snippet.ID.Name <> Snippet.DisplayName then
     fXMLDoc.CreateElement(SnippetNode, cDisplayNameNode, Snippet.DisplayName);
   // source code is stored directly in XML, not in external file
   fXMLDoc.CreateElement(SnippetNode, cSourceCodeTextNode, Snippet.SourceCode);
