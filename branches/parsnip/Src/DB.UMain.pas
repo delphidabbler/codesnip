@@ -359,11 +359,11 @@ type
         @param Info [in] Reference to any further information for event. May be
           nil.
       }
-    function InternalAddSnippet(const SnippetName: string;
+    function InternalAddSnippet(const SnippetID: TSnippetID;
       const Data: TSnippetEditData): TSnippet;
       {Adds a new snippet to the user database. Assumes snippet not already in
       user database.
-        @param SnippetName [in] Name of new snippet.
+        @param SnippetID [in] ID of new snippet.
         @param Data [in] Properties and references of new snippet.
         @return Reference to new snippet object.
         @except Exception raised if snippet's category does not exist.
@@ -625,16 +625,16 @@ resourcestring
   // Error message
   sNameExists = 'Snippet "%s" already exists in user database';
 var
-  SnippetName: string;
+  NewSnippetID: TSnippetID;
 begin
   Result := nil;  // keeps compiler happy
   TriggerEvent(evChangeBegin);
   try
-    SnippetName := UniqueSnippetName;
+    NewSnippetID := TSnippetID.Create(UniqueSnippetName);
     // Check if snippet with same name exists in user database: error if so
-    if fSnippets.Find(SnippetName) <> nil then
-      raise ECodeSnip.CreateFmt(sNameExists, [SnippetName]);
-    Result := InternalAddSnippet(SnippetName, Data);
+    if fSnippets.Find(NewSnippetID) <> nil then
+      raise ECodeSnip.CreateFmt(sNameExists, [NewSnippetID.ToString]);
+    Result := InternalAddSnippet(NewSnippetID, Data);
     Query.Update;
     TriggerEvent(evSnippetAdded, Result);
   finally
@@ -900,11 +900,11 @@ begin
   fCategories.Add(Result);
 end;
 
-function TDatabase.InternalAddSnippet(const SnippetName: string;
+function TDatabase.InternalAddSnippet(const SnippetID: TSnippetID;
   const Data: TSnippetEditData): TSnippet;
   {Adds a new snippet to the user database. Assumes snippet not already in user
   database.
-    @param SnippetName [in] Name of new snippet.
+    @param SnippetID [in] ID of new snippet.
     @param Data [in] Properties and references of new snippet.
     @return Reference to new snippet object.
     @except Exception raised if snippet's category does not exist.
@@ -916,7 +916,7 @@ resourcestring
   sCatNotFound = 'Category "%0:s" referenced by new snippet named "%1:s" does '
     + 'not exist';
 begin
-  Result := TSnippetEx.Create(TSnippetID.Create(SnippetName), Data.Props);
+  Result := TSnippetEx.Create(SnippetID, Data.Props);
   (Result as TSnippetEx).UpdateRefs(Data.Refs, fSnippets);
   Cat := fCategories.Find(Result.Category);
   if not Assigned(Cat) then
@@ -1067,7 +1067,7 @@ function TDatabase.UpdateSnippet(const Snippet: TSnippet;
     @return Reference to updated snippet. Will have changed.
   }
 var
-  SnippetName: string;      // name of snippet
+  SnippetID: TSnippetID;    // ID of snippet
   Dependent: TSnippet;      // loops thru each snippetthat depends on Snippet
   Dependents: TSnippetList; // list of dependent snippets
   Referrer: TSnippet;       // loops thru snippets that cross references Snippet
@@ -1082,7 +1082,7 @@ begin
   TriggerEvent(evChangeBegin);
   TriggerEvent(evBeforeSnippetChange, Snippet);
   try
-    SnippetName := Snippet.ID.ToString;
+    SnippetID := Snippet.ID;
     // We update by deleting old snippet and inserting new one
     // get lists of snippets that cross reference or depend on this snippet
     Dependents := TSnippetList.Create;
@@ -1101,7 +1101,7 @@ begin
     // delete the snippet
     InternalDeleteSnippet(Snippet);
     // add new snippet
-    Result := InternalAddSnippet(SnippetName, Data);
+    Result := InternalAddSnippet(SnippetID, Data);
     // add new snippet to referrer list of referring snippets
     for Referrer in Referrers do
       Referrer.XRef.Add(Result);
