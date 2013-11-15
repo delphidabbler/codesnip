@@ -335,10 +335,6 @@
 				<DesignClass>TFrame</DesignClass>
 			</DCCReference>
 			<DCCReference Include="FrSelectSnippetsBase.pas">
-				<Form>SelectSnippetsBaseFrame</Form>
-				<DesignClass>TFrame</DesignClass>
-			</DCCReference>
-			<DCCReference Include="FrSelectSnippets.pas">
 				<Form>SelectSnippetsFrame</Form>
 				<DesignClass>TFrame</DesignClass>
 			</DCCReference>

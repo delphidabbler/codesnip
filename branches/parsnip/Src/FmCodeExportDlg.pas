@@ -24,7 +24,7 @@ uses
   Classes, StdCtrls, Controls, Forms, ExtCtrls,
   // Project
   DB.USnippet, FmGenericOKDlg, FrCheckedTV,
-  FrSelectSnippets, FrSelectSnippetsBase, UBaseObjects;
+  FrSelectSnippetsBase, UBaseObjects;
 
 
 type

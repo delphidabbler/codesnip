@@ -24,7 +24,7 @@ uses
   StdCtrls, Forms, ComCtrls, Controls, ExtCtrls, Classes,
   // Project
   DB.USnippet, FmWizardDlg, FrBrowserBase, FrCheckedTV, FrFixedHTMLDlg,
-  FrHTMLDlg, FrSelectSnippetsBase, FrSelectSnippets, UBaseObjects,
+  FrHTMLDlg, FrSelectSnippetsBase, UBaseObjects,
   UEncodings, UExceptions;
 
 

@@ -1,4 +1,4 @@
-inherited SelectSnippetsBaseFrame: TSelectSnippetsBaseFrame
+inherited SelectSnippetsFrame: TSelectSnippetsFrame
   Width = 199
   Height = 203
   ExplicitWidth = 199

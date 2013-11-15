@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2009-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2009-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -29,7 +29,7 @@ uses
 type
 
   {
-  TSelectSnippetsBaseFrame:
+  TSelectSnippetsFrame:
     Displays a two-level tree of snippet categories with associated snippets.
     Each category and snippet has a check box that can be checked to select
     them. A property is exposed that gives access to selected snippets.
@@ -37,7 +37,7 @@ type
   { TODO: rename this class as TSelectSnippetsFrame and convert forms that used
           that frame in FrSelectSnippets to use this unit. Finally, delete
           FrSelectSnippets and rename this unit as FrSelectSnippets. }
-  TSelectSnippetsBaseFrame = class(TCheckedTVFrame)
+  TSelectSnippetsFrame = class(TCheckedTVFrame)
   strict private
     type
       {
@@ -120,7 +120,7 @@ uses
 
 { TSelectSnippetsBaseFrame }
 
-procedure TSelectSnippetsBaseFrame.AddNodes;
+procedure TSelectSnippetsFrame.AddNodes;
   {Adds nodes for each category and the snippets it contains to empty tree view.
   }
 var
@@ -147,7 +147,7 @@ begin
   end;
 end;
 
-constructor TSelectSnippetsBaseFrame.Create(AOwner: TComponent);
+constructor TSelectSnippetsFrame.Create(AOwner: TComponent);
   {Class constructor. Sets up object.
     @param AOwner [in] Not used.
   }
@@ -158,7 +158,7 @@ begin
   tvChecked.OnCustomDrawItem := fTVDraw.CustomDrawItem;
 end;
 
-destructor TSelectSnippetsBaseFrame.Destroy;
+destructor TSelectSnippetsFrame.Destroy;
   {Class destructor. Tears down object.
   }
 begin
@@ -167,7 +167,7 @@ begin
   inherited;
 end;
 
-function TSelectSnippetsBaseFrame.IsSnippetNode(
+function TSelectSnippetsFrame.IsSnippetNode(
   const Node: TCheckedTreeNode): Boolean;
   {Checks if node represents a snippet.
     @param Node [in] Node to be checked.
@@ -178,7 +178,7 @@ begin
     (TObject(Node.Data) is TSnippet);
 end;
 
-procedure TSelectSnippetsBaseFrame.RecordChanges;
+procedure TSelectSnippetsFrame.RecordChanges;
   {Updates tree view's underlying data when state of treeview changes.
   }
 var
@@ -206,7 +206,7 @@ begin
   end;
 end;
 
-procedure TSelectSnippetsBaseFrame.SetLeafNodeState(
+procedure TSelectSnippetsFrame.SetLeafNodeState(
   const Node: TCheckedTreeNode);
   {Sets leaf node's state when tree view's underlying data changes. Called once
   for each leaf node.
@@ -222,7 +222,7 @@ begin
     Node.Check := cbUnchecked;
 end;
 
-procedure TSelectSnippetsBaseFrame.SetSelectedSnippets(
+procedure TSelectSnippetsFrame.SetSelectedSnippets(
   const Value: TSnippetList);
   {Write access method for SelectedSnippets property. Updates state of items in
   tree view and triggers OnChange event.
@@ -237,7 +237,7 @@ begin
   DataChanged;
 end;
 
-function TSelectSnippetsBaseFrame.SnippetFromNode(
+function TSelectSnippetsFrame.SnippetFromNode(
   const Node: TCheckedTreeNode): TSnippet;
   {Gets snippet object associated with a node.
     @param Node [in] Node associated with snippet. Must be a valid node.
@@ -251,7 +251,7 @@ end;
 
 { TSelectSnippetsBaseFrame.TTVDraw }
 
-function TSelectSnippetsBaseFrame.TTVDraw.IsSectionHeadNode(
+function TSelectSnippetsFrame.TTVDraw.IsSectionHeadNode(
   const Node: TTreeNode): Boolean;
   {Checks if a node represents a section header.
     @param Node [in] Node to be checked.
@@ -262,7 +262,7 @@ begin
   Result := TObject(Node.Data) is TCategory;
 end;
 
-function TSelectSnippetsBaseFrame.TTVDraw.IsUserDefinedNode(
+function TSelectSnippetsFrame.TTVDraw.IsUserDefinedNode(
   const Node: TTreeNode): Boolean;
   {Checks if a node represents a user defined snippets object.
     @param Node [in] Node to be checked.

@@ -23,7 +23,7 @@ uses
   // Delphi
   Forms, StdCtrls, Controls, ExtCtrls, Classes,
   // Project
-  DB.USnippet, FmGenericOKDlg, FrCheckedTV, FrSelectSnippets,
+  DB.USnippet, FmGenericOKDlg, FrCheckedTV,
   FrSelectSnippetsBase, UBaseObjects, USearch;
 
 
