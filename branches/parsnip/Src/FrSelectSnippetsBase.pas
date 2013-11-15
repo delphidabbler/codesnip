@@ -136,7 +136,7 @@ begin
     for Group in Grouping do
     begin
       Cat := (Group as TCategoryGroupItem).Category;
-      if Group.IsEmpty or not Cat.Snippets.IsEmpty then
+      if Group.IsEmpty or Cat.Snippets.IsEmpty then
         Continue;
       CatNode := AddNode(nil, Group.Title, Cat);
       for Snippet in Group.SnippetList do
