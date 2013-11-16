@@ -19,27 +19,16 @@ interface
 type
   TMarkupKind = (mkPlainText, mkREML1, mkREML2, mkREML3);
 
-  IMarkup = interface(IInterface)
-    ['{71793A5D-A89B-4228-9EFD-E3B8488B75B6}']
-    function GetSource: string;
-    function GetKind: TMarkupKind;
-    property Source: string read GetSource;
-    property Kind: TMarkupKind read GetKind;
-    function IsEmpty: Boolean;
-  end;
-
-  TMarkup = class(TInterfacedObject, IMarkup)
+  TMarkup = record
   strict private
     var
       fSource: string;
       fKind: TMarkupKind;
   public
     constructor Create(const ASource: string; const AKind: TMarkupKind);
-    class function CreateEmpty: TMarkup; inline;
-    function GetSource: string;
-    function GetKind: TMarkupKind;
-    property Source: string read GetSource;
-    property Kind: TMarkupKind read GetKind;
+    class function CreateEmpty: TMarkup; static; inline;
+    property Source: string read fSource;
+    property Kind: TMarkupKind read fKind;
     function IsEmpty: Boolean; inline;
     // TODO: function ToActiveText: IActiveText;
   end;
@@ -53,24 +42,13 @@ uses
 
 constructor TMarkup.Create(const ASource: string; const AKind: TMarkupKind);
 begin
-  inherited Create;
   fSource := ASource;
   fKind := AKind;
 end;
 
 class function TMarkup.CreateEmpty: TMarkup;
 begin
-  Result := Create(EmptyStr, mkPlainText);
-end;
-
-function TMarkup.GetKind: TMarkupKind;
-begin
-  Result := fKind;
-end;
-
-function TMarkup.GetSource: string;
-begin
-  Result := fSource;
+  Result := TMArkup.Create(EmptyStr, mkPlainText);
 end;
 
 function TMarkup.IsEmpty: Boolean;
@@ -79,4 +57,3 @@ begin
 end;
 
 end.
-
