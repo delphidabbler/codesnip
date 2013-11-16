@@ -53,13 +53,14 @@ uses
 
 constructor TMarkup.Create(const ASource: string; const AKind: TMarkupKind);
 begin
+  inherited Create;
   fSource := ASource;
   fKind := AKind;
 end;
 
 class function TMarkup.CreateEmpty: TMarkup;
 begin
-  Result := TMArkup.Create(EmptyStr, mkPlainText);
+  Result := Create(EmptyStr, mkPlainText);
 end;
 
 function TMarkup.GetKind: TMarkupKind;
@@ -78,3 +79,4 @@ begin
 end;
 
 end.
+
