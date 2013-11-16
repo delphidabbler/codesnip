@@ -33,6 +33,18 @@ type
     const
       cAllSnippetKinds: TSnippetKinds =   // Set of all possible snippet kinds
         [skFreeform, skRoutine, skConstant, skTypeDef, skUnit, skClass];
+    class function ValidateName(const Name: string;
+      const CheckForUniqueness: Boolean; out ErrorMsg: string;
+      out ErrorSel: TSelection): Boolean; overload;
+      {Validates a snippet's name.
+        @param Name [in] Snippet name to be checked.
+        @param CheckForUniqueness [in] Flag indicating whether a check should
+          be made to see if snippet name is already in user database.
+        @param ErrorMsg [out] Message that describes error. Undefined if True
+          returned.
+        @param ErrorSel [out] Selection that can be used to highlight error.
+        @return True if name is valid or False if not.
+      }
   public
     class function ValidateDependsList(const Snippet: TSnippet;
       out ErrorMsg: string): Boolean; overload;
@@ -88,18 +100,6 @@ type
           be made to see if snippet name is already in user database.
         @param ErrorMsg [out] Message that describes error. Undefined if True
           returned.
-        @return True if name is valid or False if not.
-      }
-    class function ValidateName(const Name: string;
-      const CheckForUniqueness: Boolean; out ErrorMsg: string;
-      out ErrorSel: TSelection): Boolean; overload;
-      {Validates a snippet's name.
-        @param Name [in] Snippet name to be checked.
-        @param CheckForUniqueness [in] Flag indicating whether a check should
-          be made to see if snippet name is already in user database.
-        @param ErrorMsg [out] Message that describes error. Undefined if True
-          returned.
-        @param ErrorSel [out] Selection that can be used to highlight error.
         @return True if name is valid or False if not.
       }
     ///  <summary>Validates a snippet's display name.</summary>
