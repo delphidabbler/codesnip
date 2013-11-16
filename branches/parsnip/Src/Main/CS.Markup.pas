@@ -30,7 +30,6 @@ type
     property Source: string read fSource;
     property Kind: TMarkupKind read fKind;
     function IsEmpty: Boolean; inline;
-    // TODO: function ToActiveText: IActiveText;
   end;
 
 implementation
