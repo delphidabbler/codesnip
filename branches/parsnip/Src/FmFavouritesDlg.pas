@@ -345,10 +345,7 @@ var
 begin
   LI := fLVFavs.Selected as TFavouriteListItem;
   SelectedSnippet := LI.Favourite.SnippetID;
-  fNotifier.DisplaySnippet(
-    SelectedSnippet.ToString,
-    chkNewTab.Checked
-  );
+  fNotifier.DisplaySnippet(SelectedSnippet, chkNewTab.Checked);
   fFavourites.Touch(SelectedSnippet);
   fLVFavs.Selected := FindListItem(SelectedSnippet);
 end;

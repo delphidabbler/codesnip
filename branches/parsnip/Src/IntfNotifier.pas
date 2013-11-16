@@ -21,8 +21,11 @@ interface
 
 uses
   // Delphi
-  Classes, ActiveX, Windows,
+  Classes,
+  ActiveX,
+  Windows,
   // Project
+  USnippetIDs,
   UView;
 
 
@@ -36,11 +39,11 @@ type
     procedure UpdateDbase;
 
     ///  <summary>Displays a snippet.</summary>
-    ///  <param name="SnippetName">WideString [in] Name of required snippet.
+    ///  <param name="SnippetID">TSnippetID [in] ID of required snippet.
     ///  </param>
     ///  <param name="NewTab">WordBool [in] Whether to display snippet in a new
     ///  detail pane tab.</param>
-    procedure DisplaySnippet(const SnippetName: WideString; NewTab: WordBool);
+    procedure DisplaySnippet(const SnippetID: TSnippetID; NewTab: WordBool);
 
     ///  <summary>Displays a category.</summary>
     ///  <param name="CatId">WideString [in] ID of required category.</param>
@@ -67,9 +70,9 @@ type
     procedure ChangeDetailPane(const Pane: Integer);
 
     ///  <summary>Edits a snippet in Snippets Editor.</summary>
-    ///  <param name="SnippetName">WideString [in] Name of snippet.</param>
+    ///  <param name="SnippetID">TSnippetID [in] ID of snippet.</param>
     ///  <remarks>Snippet must be user defined.</remarks>
-    procedure EditSnippet(const SnippetName: WideString);
+    procedure EditSnippet(const SnippetID: TSnippetID);
 
     ///  <summary>Displays Donate dialogue box.</summary>
     procedure Donate;

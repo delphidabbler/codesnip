@@ -813,9 +813,7 @@ end;
 
 procedure TMainForm.ActEditSnippetByNameExecute(Sender: TObject);
 begin
-  TUserDBMgr.EditSnippet(
-    TSnippetID.Create((Sender as TEditSnippetAction).SnippetName)
-  );
+  TUserDBMgr.EditSnippet((Sender as TEditSnippetAction).SnippetID);
 end;
 
 procedure TMainForm.actEditSnippetExecute(Sender: TObject);
@@ -823,7 +821,7 @@ begin
   Assert(TUserDBMgr.CanEdit(fMainDisplayMgr.CurrentView),
     ClassName + '.actEditSnippetExecute: Can''t edit current view item');
   fNotifier.EditSnippet(
-    (fMainDisplayMgr.CurrentView as ISnippetView).Snippet.ID.ToString
+    (fMainDisplayMgr.CurrentView as ISnippetView).Snippet.ID
   );
   // display of updated snippet is handled by snippets change event handler
 end;

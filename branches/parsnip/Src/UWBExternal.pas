@@ -124,7 +124,8 @@ uses
   // Delphi
   Forms,
   // Project
-  UAppInfo;
+  UAppInfo,
+  USnippetIDs;
 
 
 { TWBExternal }
@@ -177,7 +178,7 @@ procedure TWBExternal.DisplaySnippet(const SnippetName: WideString;
 begin
   try
     if Assigned(fNotifier) then
-      fNotifier.DisplaySnippet(SnippetName, NewTab);
+      fNotifier.DisplaySnippet(TSnippetID.Create(SnippetName), NewTab);
   except
     HandleException;
   end;

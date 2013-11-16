@@ -20,9 +20,12 @@ interface
 
 uses
   // Delphi
-  Classes, ActiveX,
+  Classes,
+  ActiveX,
   // Project
-  IntfNotifier, UView;
+  IntfNotifier,
+  USnippetIDs,
+  UView;
 
 
 type
@@ -83,12 +86,12 @@ type
     procedure UpdateDbase;
 
     ///  <summary>Displays a snippet.</summary>
-    ///  <param name="SnippetName">WideString [in] Name of required snippet.
+    ///  <param name="SnippetID">TSnippetID [in] ID of required snippet.
     ///  </param>
     ///  <param name="NewTab">WordBool [in] Whether to display snippet in a new
     ///  detail pane tab.</param>
     ///  <remarks>Methods of INotifier.</remarks>
-    procedure DisplaySnippet(const SnippetName: WideString; NewTab: WordBool);
+    procedure DisplaySnippet(const SnippetID: TSnippetID; NewTab: WordBool);
 
     ///  <summary>Displays a category.</summary>
     ///  <param name="CatId">WideString [in] ID of required category.</param>
@@ -122,12 +125,12 @@ type
     procedure ChangeDetailPane(const Pane: Integer);
 
     ///  <summary>Edits a snippet in Snippets Editor.</summary>
-    ///  <param name="SnippetName">WideString [in] Name of snippet.</param>
+    ///  <param name="SnippetID">TSnippetID [in] ID of snippet.</param>
     ///  <remarks>
     ///  <para>Snippet must be user defined.</para>
     ///  <para>Methods of INotifier.</para>
     ///  </remarks>
-    procedure EditSnippet(const SnippetName: WideString);
+    procedure EditSnippet(const SnippetID: TSnippetID);
 
     ///  <summary>Displays Donate dialogue box.</summary>
     ///  <remarks>Methods of INotifier.</remarks>
@@ -293,12 +296,12 @@ begin
   end;
 end;
 
-procedure TNotifier.DisplaySnippet(const SnippetName: WideString;
+procedure TNotifier.DisplaySnippet(const SnippetID: TSnippetID;
   NewTab: WordBool);
 begin
   if Assigned(fDisplaySnippetAction) then
   begin
-    (fDisplaySnippetAction as TSnippetAction).SnippetName := SnippetName;
+    (fDisplaySnippetAction as TSnippetAction).SnippetID := SnippetID;
     (fDisplaySnippetAction as TSnippetAction).NewTab := NewTab;
     fDisplaySnippetAction.Execute;
   end;
@@ -310,11 +313,11 @@ begin
     fDonateAction.Execute;
 end;
 
-procedure TNotifier.EditSnippet(const SnippetName: WideString);
+procedure TNotifier.EditSnippet(const SnippetID: TSnippetID);
 begin
   if Assigned(fEditSnippetAction) then
   begin
-    (fEditSnippetAction as TEditSnippetAction).SnippetName := SnippetName;
+    (fEditSnippetAction as TEditSnippetAction).SnippetID := SnippetID;
     fEditSnippetAction.Execute;
   end;
 end;
