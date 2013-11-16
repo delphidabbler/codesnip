@@ -379,6 +379,7 @@ uses
   CS.Config in 'Main\CS.Config.pas',
   CS.ExternalProgs.DiffViewer in 'Main\CS.ExternalProgs.DiffViewer.pas',
   CS.Init.CommandLineOpts in 'Main\CS.Init.CommandLineOpts.pas',
+  CS.Markup in 'Main\CS.Markup.pas',
   CS.SourceCode.Hiliter.Brushes in 'Main\CS.SourceCode.Hiliter.Brushes.pas',
   CS.SourceCode.Hiliter.Parser in 'Main\CS.SourceCode.Hiliter.Parser.pas',
   CS.SourceCode.Hiliter.Renderers in 'Main\CS.SourceCode.Hiliter.Renderers.pas',
