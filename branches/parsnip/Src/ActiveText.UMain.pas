@@ -1,4 +1,4 @@
-{
+﻿{
  * This Source Code Form is subject to the terms of the Mozilla Public License,
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
@@ -40,7 +40,9 @@ uses
   // Delphi
   Generics.Collections,
   // Project
-  UBaseObjects, UExceptions;
+  UBaseObjects,
+  UEncodings,
+  UExceptions;
 
 
 type
@@ -53,7 +55,6 @@ type
       Link_URL = 'href';
   end;
 
-type
   ///  <summary>Indicates whether a active text action element is opening or
   ///  closing.</summary>
   ///  <remarks>An opening action element changes the state of the document
@@ -64,7 +65,6 @@ type
     fsOpen          // element is opening
   );
 
-type
   ///  <summary>Indicates how an active text action element is displayed.
   ///  </summary>
   TActiveTextDisplayStyle = (
@@ -72,15 +72,12 @@ type
     dsBlock     // element is block
   );
 
-type
-  ///  <summary>
-  ///  Base, do nothing, interface supported by all active text elements.
-  ///  </summary>
+  ///  <summary>Base, do nothing, interface supported by all active text
+  ///  elements.</summary>
   IActiveTextElem = interface(IInterface)
     ['{F08A9853-EDB6-4B14-8E21-F3AB10FAF7D9}']
   end;
 
-type
   ///  <summary>Interface supported by plain text active text elements.
   ///  </summary>
   ///  <remarks>All instances that support this interface kind Kind = ekText.
@@ -93,14 +90,12 @@ type
     property Text: string read GetText;
   end;
 
-type
   ///  <summary>Encapsulates an attribute of a active text action element.
   ///  </summary>
   ///  <remarks>Key field is attribute name and Value field is attribute value.
   ///  </remarks>
   TActiveTextAttr = TPair<string,string>;
 
-type
   ///  <summary>Interface supported by active text attributes.</summary>
   IActiveTextAttrs = interface(IInterface)
     ['{6AE73940-60C4-4097-8DB8-6A88C97D7DA7}']
@@ -120,7 +115,6 @@ type
     function GetEnumerator: TEnumerator<TActiveTextAttr>;
   end;
 
-type
   ///  <summary>Supported types of active text action elements.</summary>
   TActiveTextActionElemKind = (
     ekLink,         // link element: has a URL (inline)
@@ -133,11 +127,9 @@ type
     ekMono          // text formatted as mono spaced (inline)
   );
 
-type
   ///  <summary>Set of types of active text action elements.</summary>
   TActiveTextActionElemKinds = set of TActiveTextActionElemKind;
 
-type
   ///  <summary>Interface supported by active text action elements, i.e. those
   ///  that specify actions to be performed on text.</summary>
   ///  <remarks>Actions include formatting text and hot links.</remarks>
@@ -168,7 +160,51 @@ type
     property DisplayStyle: TActiveTextDisplayStyle read GetDisplayStyle;
   end;
 
-type
+  ///  <summary>Interface supported by objects that can render active text into
+  ///  some other form.</summary>
+  IActiveTextRenderer = interface(IInterface)
+    ['{88C9312F-1485-4C55-B1F7-A4A9FC13E00E}']
+    ///  <summary>Called before active text is processed.</summary>
+    procedure Initialise;
+    ///  <summary>Called after last active text element has been processed.
+    ///  </summary>
+    procedure Finalise;
+    ///  <summary>Called when plain text should be output.</summary>
+    ///  <param name="AText">string. Text to be output.</param>
+    procedure OutputText(const AText: string);
+    ///  <summary>Called at the start of a new block of active text.</summary>
+    ///  <param name="Kind">TActiveTextActionElemKind [in] Kind of block being
+    ///  opened. This will be an active text element with DisplayStyle =
+    ///  dsBlock.</param>
+    procedure BeginBlock(const Kind: TActiveTextActionElemKind);
+    ///  <summary>Called when the current active text block ends.</summary>
+    ///  <param name="Kind">TActiveTextActionElemKind [in] Kind of block being
+    ///  opened. This will be an active text element with DisplayStyle =
+    ///  dsBlock.</param>
+    procedure EndBlock(const Kind: TActiveTextActionElemKind);
+    ///  <summary>Called at the start of a new active text styling element.
+    ///  </summary>
+    ///  <param name="Kind">TActiveTextActionElemKind [in] Kind of styling
+    ///  element. The kind indicates the type of styling to be applied. This
+    ///  will be an active text element with DisplayStyle = dsInline that is
+    ///  not ekLink.</param>
+    procedure BeginInlineStyle(const Kind: TActiveTextActionElemKind);
+    ///  <summary>Called the current active text styling element ends.</summary>
+    ///  <param name="Kind">TActiveTextActionElemKind [in] Kind of styling
+    ///  element. The kind indicates the type of styling to be applied. This
+    ///  will be an active text element with DisplayStyle = dsInline that is
+    ///  not ekLink.</param>
+    procedure EndInlineStyle(const Kind: TActiveTextActionElemKind);
+    ///  <summary>Called at the start of a new active text link element.
+    ///  </summary>
+    ///  <param name="URL">string. URL to accessed from the link.</param>
+    procedure BeginLink(const URL: string);
+    ///  <summary>Called when the current active text link element ends.
+    ///  </summary>
+    ///  <param name="URL">string. URL to accessed from the link.</param>
+    procedure EndLink(const URL: string);
+  end;
+
   ///  <summary>Interface that defines operations of active text objects.
   ///  </summary>
   IActiveText = interface(IInterface)
@@ -196,6 +232,12 @@ type
     ///  <summary>Returns number of elements in active text object's element
     ///  list.</summary>
     function GetCount: Integer;
+    ///  <summary>Renders active text object using given renderer object.
+    ///  </summary>
+    ///  <remarks>How the rendered data is used or out is determined by the
+    ///  renderer.</remarks>
+    procedure Render(Renderer: IActiveTextRenderer);
+    // TODO: Replace ToString by use of a (plain text) renderer.
     ///  <summary>Converts active text object into plain text.</summary<>
     function ToString: string;
     ///  <summary>List of elements in active text object.</summary>
@@ -204,12 +246,12 @@ type
     property Count: Integer read GetCount;
   end;
 
-type
   ///  <summary>Interface supported by objects that can build an active text
   ///  object by parsing mark-up.</summary>
   ///  <remarks>Markup format is not specified: different implementations of
   ///  this interface may support different markup.</remarks>
   IActiveTextParser = interface(IInterface)
+    ['{C17BC6AA-6012-4530-A39D-9807C1A1AF42}']
     ///  <summary>Parses markup and updates active text object accordingly.
     ///  </summary>
     ///  <param name="Markup">string [in] Markup that describes active text.
@@ -219,12 +261,10 @@ type
     procedure Parse(const Markup: string; const ActiveText: IActiveText);
   end;
 
-type
   ///  <summary>Class of exception raised when parsing active text markup.
   ///  </summary>
   EActiveTextParserError = class(EValidation);
 
-type
   ///  <summary>Static factory class that can create instances of active text
   ///  objects and active text elements.</summary>
   TActiveTextFactory = class(TNoConstructObject)
@@ -342,6 +382,11 @@ type
     ///  <summary>Returns number of elements element list.</summary>
     ///  <remarks>Method of IActiveText.</remarks>
     function GetCount: Integer;
+    ///  <summary>Renders active text object using given renderer object.
+    ///  </summary>
+    ///  <remarks>How the rendered data is used or out is determined by the
+    ///  renderer.</remarks>
+    procedure Render(Renderer: IActiveTextRenderer);
     ///  <summary>Converts active text object into plain text.</summary<>
     ///  <remarks>Method of IActiveText.</remarks>
     function ToString: string; override;
@@ -604,6 +649,50 @@ begin
       Exit(False);
   end;
   Result := True;
+end;
+
+procedure TActiveText.Render(Renderer: IActiveTextRenderer);
+var
+  Elem: IActiveTextElem;
+  TextElem: IActiveTextTextElem;
+  ActionElem: IActiveTextActionElem;
+begin
+  Renderer.Initialise;
+  for Elem in fElems do
+  begin
+    if Supports(Elem, IActiveTextTextElem, TextElem) then
+      Renderer.OutputText(TextElem.Text)
+    else if Supports(Elem, IActiveTextActionElem, ActionElem) then
+    begin
+      if ActionElem.DisplayStyle = dsBlock then
+      begin
+        if ActionElem.State = fsOpen then
+          Renderer.BeginBlock(ActionElem.Kind)
+        else
+          Renderer.EndBlock(ActionElem.Kind)
+      end
+      else
+      begin
+        Assert(ActionElem.DisplayStyle = dsInline,
+          ClassName + '.Render: Unknown display style for IActiveTextElem');
+        if ActionElem.Kind = ekLink then
+        begin
+          if ActionElem.State = fsOpen then
+            Renderer.BeginLink(ActionElem.Attrs[TActiveTextAttrNames.Link_URL])
+          else
+            Renderer.EndLink(ActionElem.Attrs[TActiveTextAttrNames.Link_URL]);
+        end
+        else
+        begin
+          if ActionElem.State = fsOpen then
+            Renderer.BeginInlineStyle(ActionElem.Kind)
+          else
+            Renderer.EndInlineStyle(ActionElem.Kind);
+        end
+      end;
+    end;
+  end;
+  Renderer.Finalise;
 end;
 
 function TActiveText.ToString: string;
