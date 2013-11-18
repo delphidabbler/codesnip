@@ -21,7 +21,9 @@ interface
 
 uses
   // Project
-  ActiveText.UMain, UBaseObjects, UIStringList;
+  ActiveText.UMain,
+  UBaseObjects,
+  UIStringList;
 
 
 type
@@ -74,7 +76,10 @@ uses
   // Delphi
   SysUtils,
   // Project
-  UREMLDataIO, USnippetCreditsParser, UStrUtils;
+  CS.ActiveText.Parsers.REML,
+  UREMLDataIO,
+  USnippetCreditsParser,
+  UStrUtils;
 
 
 { TSnippetExtraHelper }
@@ -165,9 +170,14 @@ begin
   if REML = '' then
     Exit;
   // Create active text by parsing REML
-  ActiveText := TActiveTextFactory.CreateActiveText(REML, TREMLReader.Create);
+  ActiveText := TActiveTextFactory.CreateActiveText(
+    REML, TActiveTextREMLParser.Create
+  );
   if ActiveText.IsEmpty then
     Exit;
+  { TODO: Move following code to a new class or method of TActiveText named
+          Normalise that clones given active text into another, normalised,
+          instance. }
   // Scan active text, inserting paragraph level block tags where the active
   // text is not enclosed by them: this can be at the start, at the end or
   // between existing blocks. E.g for "xxx <p>yyy</p> xxx <p>yyy</p> xxx", xxx

@@ -376,6 +376,7 @@ uses
   GIFImage in 'Main\Imports\GIFImage.pas',
   LVEx in 'Main\Imports\LVEx.pas',
   UEncrypt in 'Main\Imports\UEncrypt.pas',
+  CS.ActiveText.Parsers.REML in 'Main\CS.ActiveText.Parsers.REML.pas',
   CS.Config in 'Main\CS.Config.pas',
   CS.ExternalProgs.DiffViewer in 'Main\CS.ExternalProgs.DiffViewer.pas',
   CS.Init.CommandLineOpts in 'Main\CS.Init.CommandLineOpts.pas',

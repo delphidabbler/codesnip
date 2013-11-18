@@ -126,28 +126,6 @@ type
   end;
 
   {
-  TREMLReader:
-    Class that parses markup used in Extra element read from snippets data
-    files. Markup is translated into active text. The Extra element may occur in
-    main database files and v2 of the user database and export files.
-  }
-  TREMLReader = class(TInterfacedObject, IActiveTextParser)
-  strict private
-    var
-      fActiveText: IActiveText;
-    procedure REMLTextHandler(Sender: TObject; const Text: string);
-    procedure REMLTagHandler(Sender: TObject; const TagInfo: TREMLTagInfo);
-  public
-    { IActiveTextParser method }
-    procedure Parse(const Markup: string; const ActiveText: IActiveText);
-      {Parses markup and updates active text object with details.
-        @param Markup [in] Markup containing definition of active text. Must be
-          in format understood by parser.
-        @param ActiveText [in] Active text object updated by parser.
-      }
-  end;
-
-  {
   TREMLWriter:
     Class that creates a REML markup representation of an active text object.
   }
@@ -414,62 +392,6 @@ type
     class property Chars[Idx: Integer]: Char read GetChar;
       {List of characters that match entities}
   end;
-
-{ TREMLReader }
-
-procedure TREMLReader.Parse(const Markup: string;
-  const ActiveText: IActiveText);
-var
-  REMLParser: TREMLParser;
-begin
-  Assert(Assigned(ActiveText), ClassName + '.Parse: ActiveText is nil');
-  try
-    fActiveText := ActiveText;
-    REMLParser := TREMLParser.Create;
-    try
-      REMLParser.OnText := REMLTextHandler;
-      REMLParser.OnTag := REMLTagHandler;
-      REMLParser.Parse(Markup);
-    finally
-      REMLParser.Free;
-    end;
-  except
-    on E: EREMLParseError do
-      raise EActiveTextParserError.Create(E);
-    else
-      raise;
-  end;
-end;
-
-procedure TREMLReader.REMLTagHandler(Sender: TObject;
-  const TagInfo: TREMLTagInfo);
-const
-  IDMap: array[TREMLTagID] of TActiveTextActionElemKind = (
-    ekLink, ekStrong, ekEm, ekVar, ekPara, ekWarning, ekHeading, ekMono
-  );
-  StateMap: array[TREMLTagState] of TActiveTextElemState = (
-    fsOpen, fsClose
-  );
-var
-  Attrs: IActiveTextAttrs;
-begin
-  if TagInfo.Attr.IsNull then
-    Attrs := TActiveTextFactory.CreateAttrs
-  else
-    Attrs := TActiveTextFactory.CreateAttrs(
-      TActiveTextAttr.Create(TagInfo.Attr.Key, TagInfo.Attr.Value)
-    );
-  fActiveText.AddElem(
-    TActiveTextFactory.CreateActionElem(
-      IDMap[TagInfo.ID], Attrs, StateMap[TagInfo.State]
-    )
-  );
-end;
-
-procedure TREMLReader.REMLTextHandler(Sender: TObject; const Text: string);
-begin
-  fActiveText.AddElem(TActiveTextFactory.CreateTextElem(Text));
-end;
 
 { TREMLWriter }
 

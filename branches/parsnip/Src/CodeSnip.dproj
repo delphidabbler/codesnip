@@ -576,6 +576,7 @@
 			<DCCReference Include="Main\Imports\GIFImage.pas"/>
 			<DCCReference Include="Main\Imports\LVEx.pas"/>
 			<DCCReference Include="Main\Imports\UEncrypt.pas"/>
+			<DCCReference Include="Main\CS.ActiveText.Parsers.REML.pas"/>
 			<DCCReference Include="Main\CS.Config.pas"/>
 			<DCCReference Include="Main\CS.ExternalProgs.DiffViewer.pas"/>
 			<DCCReference Include="Main\CS.Init.CommandLineOpts.pas"/>
