@@ -64,6 +64,157 @@ type
       overload;
   end;
 
+  {
+  TREMLTags:
+    Class that provides information about REML tags.
+  }
+  TREMLTags = class(TNoConstructObject)
+  strict private
+    const
+      BlockTags = [rtPara, rtHeading];
+  strict private
+    type
+      {
+      TREMLTag:
+        Record that stores information a REML tag.
+      }
+      TREMLTag = record
+      public
+        Id: TREMLTagID;  // active text element kind
+        // ids of tags that can't nest inside this tag
+        Exclusions: TREMLTagIDs;
+        TagName: string;                // corresponding REML tag name
+        ParamName: string;              // name of any REML parameter
+        constructor Create(const AId: TREMLTagID;
+          const AExclusions: TREMLTagIDs; const ATagName: string;
+          const AParamName: string = '');
+          {Record contructor. Initialises fields.
+            @param AId [in] Tag identifier.
+            @param AExclusions [in] IDs of tags that can't be nested within this
+              tag.
+            @param ATagName [in] REML tag name.
+            @param AParamName [in] Optional name of parameter.
+          }
+      end;
+  strict private
+    class var fTagMap: TArray<TREMLTag>;
+      {Details of all supported tags}
+    class function IndexOfTagId(const Id: TREMLTagID): Integer;
+      {Finds index of a tag id in tag map.
+        @param Id [in] Tag id to be found.
+        @return Index of tag id or -1 if tag id not found.
+      }
+    class function GetCount: Integer; static;
+      {Read accessor for Count property.
+        @return Number of supported tags.
+      }
+    class function GetId(Idx: Integer): TREMLTagID; static;
+      {Read accessor for Ids[] property.
+        @param Idx [in] Zero based index of required id.
+        @return Required id.
+      }
+    class function GetName(Idx: Integer): string; static;
+      {Read accessor for Names[] property,
+        @param Idx [in] Zero based index of required tag name.
+        @return Required tag name.
+      }
+    class function GetExclusions(Idx: Integer): TREMLTagIDs; static;
+  public
+    class constructor Create;
+      {Class constructor. Sets up map of REML tags.
+      }
+    class destructor Destroy;
+      {Class destructor. Clears tag map.
+      }
+    class function LookupTagName(const Id: TREMLTagID; out TagName: string):
+      Boolean;
+      {Looks up name of a tag.
+        @param Id [in] Id of tag.
+        @param TagName [out] Name of tag or '' if unknown id.
+        @return True if tag id is valid, False if not.
+      }
+    class function LookupParamName(const Id: TREMLTagID; out ParamName: string):
+      Boolean;
+      {Looks up a parameter name of an identified REML tag.
+        @param Id [in] Id of required tag.
+        @param ParamName [out] Set to name of parameter name. '' if tag has no
+          parameter or if tag id is not valid.
+        @return True if tag is valid, False if not.
+      }
+    class property Count: Integer read GetCount;
+      {Number of supported tags}
+    class property Ids[Idx: Integer]: TREMLTagID read GetId;
+      {List of tag ids}
+    class property Names[Idx: Integer]: string read GetName;
+      {List of tag names}
+    class property Exclusions[Idx: Integer]: TREMLTagIDs read GetExclusions;
+      {Set of IDs of tags that can't be nested within this tag}
+  end;
+
+  {
+  TREMLEntities:
+    Static class that provides information about character entities.
+  }
+  TREMLEntities = class(TNoConstructObject)
+  strict private
+    type
+      {
+      TREMLEntity:
+        Record that associates a character with its REML mnemonic entity.
+      }
+      TREMLEntity = record
+        Entity: string;         // Mnemonic entity
+        Ch: Char;               // Character equivalent
+        constructor Create(const AEntity: string; const ACh: Char);
+          {Record constructor. Initialises record.
+            @param AEntity [in] Mnemonic entity.
+            @param ACh [in] Equivalent character.
+          }
+      end;
+    class var fEntityMap: TArray<TREMLEntity>; // Entity <=> character map
+    class function CharToMnemonicEntity(const Ch: Char): string;
+      {Gets the mnemonic character entity that represents a character.
+        @param Entity [in] Character for which equivalent entity is required.
+        @return Required entity or '' if character has no matching mnemonic
+          entity.
+      }
+    class function GetCount: Integer; static;
+      {Read accessor for Count property.
+        @return Number of supported tags.
+      }
+    class function GetEntity(Idx: Integer): string; static;
+      {Read accessor for Entities[] property.
+        @param Idx [in] Zero based index of required entity.
+        @return Required entity.
+      }
+    class function GetChar(Idx: Integer): Char; static;
+      {Read accessor for Chars[] property.
+        @param Idx [in] Zero based index of required character.
+        @return Required character.
+      }
+  public
+    class constructor Create;
+      {Class constructor. Creates map of mnemonic entities to equivalent
+      characters.
+      }
+    class destructor Destroy;
+      {Class destructor. Clears entity map
+      }
+    class function MapToEntity(const Ch: Char): string;
+      {Maps a character to a character entity if appropriate.
+        @param Ch [in] Character to be mapped.
+        @return Mnemonic entity if one exists, character itself if it is
+          printable and has ascii value less than 127, or a numeric character
+          otherwise.
+      }
+    class property Count: Integer read GetCount;
+      {Number of supported tags}
+    class property Entities[Idx: Integer]: string read GetEntity;
+      {List of character entities}
+    class property Chars[Idx: Integer]: Char read GetChar;
+      {List of characters that match entities}
+  end;
+
   TREMLParser = class(TObject)
   public
     type
@@ -239,159 +390,6 @@ uses
   // Project
   UConsts, UStrUtils;
 
-
-type
-
-  {
-  TREMLTags:
-    Class that provides information about REML tags.
-  }
-  TREMLTags = class(TNoConstructObject)
-  strict private
-    const
-      BlockTags = [rtPara, rtHeading];
-  strict private
-    type
-      {
-      TREMLTag:
-        Record that stores information a REML tag.
-      }
-      TREMLTag = record
-      public
-        Id: TREMLTagID;  // active text element kind
-        // ids of tags that can't nest inside this tag
-        Exclusions: TREMLTagIDs;
-        TagName: string;                // corresponding REML tag name
-        ParamName: string;              // name of any REML parameter
-        constructor Create(const AId: TREMLTagID;
-          const AExclusions: TREMLTagIDs; const ATagName: string;
-          const AParamName: string = '');
-          {Record contructor. Initialises fields.
-            @param AId [in] Tag identifier.
-            @param AExclusions [in] IDs of tags that can't be nested within this
-              tag.
-            @param ATagName [in] REML tag name.
-            @param AParamName [in] Optional name of parameter.
-          }
-      end;
-  strict private
-    class var fTagMap: TArray<TREMLTag>;
-      {Details of all supported tags}
-    class function IndexOfTagId(const Id: TREMLTagID): Integer;
-      {Finds index of a tag id in tag map.
-        @param Id [in] Tag id to be found.
-        @return Index of tag id or -1 if tag id not found.
-      }
-    class function GetCount: Integer; static;
-      {Read accessor for Count property.
-        @return Number of supported tags.
-      }
-    class function GetId(Idx: Integer): TREMLTagID; static;
-      {Read accessor for Ids[] property.
-        @param Idx [in] Zero based index of required id.
-        @return Required id.
-      }
-    class function GetName(Idx: Integer): string; static;
-      {Read accessor for Names[] property,
-        @param Idx [in] Zero based index of required tag name.
-        @return Required tag name.
-      }
-    class function GetExclusions(Idx: Integer): TREMLTagIDs; static;
-  public
-    class constructor Create;
-      {Class constructor. Sets up map of REML tags.
-      }
-    class destructor Destroy;
-      {Class destructor. Clears tag map.
-      }
-    class function LookupTagName(const Id: TREMLTagID; out TagName: string):
-      Boolean;
-      {Looks up name of a tag.
-        @param Id [in] Id of tag.
-        @param TagName [out] Name of tag or '' if unknown id.
-        @return True if tag id is valid, False if not.
-      }
-    class function LookupParamName(const Id: TREMLTagID; out ParamName: string):
-      Boolean;
-      {Looks up a parameter name of an identified REML tag.
-        @param Id [in] Id of required tag.
-        @param ParamName [out] Set to name of parameter name. '' if tag has no
-          parameter or if tag id is not valid.
-        @return True if tag is valid, False if not.
-      }
-    class property Count: Integer read GetCount;
-      {Number of supported tags}
-    class property Ids[Idx: Integer]: TREMLTagID read GetId;
-      {List of tag ids}
-    class property Names[Idx: Integer]: string read GetName;
-      {List of tag names}
-    class property Exclusions[Idx: Integer]: TREMLTagIDs read GetExclusions;
-      {Set of IDs of tags that can't be nested within this tag}
-  end;
-
-  {
-  TREMLEntities:
-    Static class that provides information about character entities.
-  }
-  TREMLEntities = class(TNoConstructObject)
-  strict private
-    type
-      {
-      TREMLEntity:
-        Record that associates a character with its REML mnemonic entity.
-      }
-      TREMLEntity = record
-        Entity: string;         // Mnemonic entity
-        Ch: Char;               // Character equivalent
-        constructor Create(const AEntity: string; const ACh: Char);
-          {Record constructor. Initialises record.
-            @param AEntity [in] Mnemonic entity.
-            @param ACh [in] Equivalent character.
-          }
-      end;
-    class var fEntityMap: TArray<TREMLEntity>; // Entity <=> character map
-    class function CharToMnemonicEntity(const Ch: Char): string;
-      {Gets the mnemonic character entity that represents a character.
-        @param Entity [in] Character for which equivalent entity is required.
-        @return Required entity or '' if character has no matching mnemonic
-          entity.
-      }
-    class function GetCount: Integer; static;
-      {Read accessor for Count property.
-        @return Number of supported tags.
-      }
-    class function GetEntity(Idx: Integer): string; static;
-      {Read accessor for Entities[] property.
-        @param Idx [in] Zero based index of required entity.
-        @return Required entity.
-      }
-    class function GetChar(Idx: Integer): Char; static;
-      {Read accessor for Chars[] property.
-        @param Idx [in] Zero based index of required character.
-        @return Required character.
-      }
-  public
-    class constructor Create;
-      {Class constructor. Creates map of mnemonic entities to equivalent
-      characters.
-      }
-    class destructor Destroy;
-      {Class destructor. Clears entity map
-      }
-    class function MapToEntity(const Ch: Char): string;
-      {Maps a character to a character entity if appropriate.
-        @param Ch [in] Character to be mapped.
-        @return Mnemonic entity if one exists, character itself if it is
-          printable and has ascii value less than 127, or a numeric character
-          otherwise.
-      }
-    class property Count: Integer read GetCount;
-      {Number of supported tags}
-    class property Entities[Idx: Integer]: string read GetEntity;
-      {List of character entities}
-    class property Chars[Idx: Integer]: Char read GetChar;
-      {List of characters that match entities}
-  end;
 
 { TREMLWriter }
 
