@@ -237,6 +237,11 @@ type
     ///  <remarks>How the rendered data is used or out is determined by the
     ///  renderer.</remarks>
     procedure Render(Renderer: IActiveTextRenderer);
+    ///  <summary>Returns a copy of the active text object converted into normal
+    ///  form.</summary>
+    ///  <remarks>Any REML not contained with a block is enclosed within a
+    ///  specially created paragraph block.</remarks>
+    function Normalise: IActiveText;
     // TODO: Replace ToString by use of a (plain text) renderer.
     ///  <summary>Converts active text object into plain text.</summary<>
     function ToString: string;
@@ -324,7 +329,8 @@ uses
   // Delphi
   SysUtils,
   // Project
-  IntfCommon;
+  IntfCommon,
+  UStrUtils;
 
 
 type
@@ -384,9 +390,20 @@ type
     function GetCount: Integer;
     ///  <summary>Renders active text object using given renderer object.
     ///  </summary>
-    ///  <remarks>How the rendered data is used or out is determined by the
-    ///  renderer.</remarks>
+    ///  <remarks>
+    ///  <para>How the rendered data is used or out is determined by the
+    ///  renderer.</para>
+    ///  <para>Method of IActiveText.</para>
+    ///  </remarks>
     procedure Render(Renderer: IActiveTextRenderer);
+    ///  <summary>Returns a copy of the active text object converted into normal
+    ///  form.</summary>
+    ///  <remarks>
+    ///  <para>Any REML not contained with a block is enclosed within a
+    ///  specially created paragraph block.</para>
+    ///  </remarks>
+    function Normalise: IActiveText;
+    // TODO: Replace ToString by use of a (plain text) renderer.
     ///  <summary>Converts active text object into plain text.</summary<>
     ///  <remarks>Method of IActiveText.</remarks>
     function ToString: string; override;
@@ -649,6 +666,101 @@ begin
       Exit(False);
   end;
   Result := True;
+end;
+
+function TActiveText.Normalise: IActiveText;
+
+  // Checks if the given active text element is an opening block tag.
+  function IsBlockOpener(Elem: IActiveTextElem): Boolean;
+  var
+    ActionElem: IActiveTextActionElem;
+  begin
+    if not Supports(Elem, IActiveTextActionElem, ActionElem) then
+      Exit(False);
+    Result := (ActionElem.DisplayStyle = dsBlock)
+      and (ActionElem.State = fsOpen);
+  end;
+
+  // Checks if the given active text element is a closing block tag.
+  function IsBlockCloser(Elem: IActiveTextElem): Boolean;
+  var
+    ActionElem: IActiveTextActionElem;
+  begin
+    if not Supports(Elem, IActiveTextActionElem, ActionElem) then
+      Exit(False);
+    Result := (ActionElem.DisplayStyle = dsBlock)
+      and (ActionElem.State = fsClose);
+  end;
+
+type
+  ///  <summary>Describes different parts of parsed REML code in relation to
+  ///  block tags.</summary>
+  ///  <remarks>Can be within a pair of block tags; without, i.e. not enclosed
+  ///  by block tags or in the transitional state between one and the other.
+  ///  </remarks>
+  TBlockState = (bsWithin, bsWithout, bsTransition);
+var
+  TextElem: IActiveTextTextElem;
+  Text: string;
+  BlockState: TBlockState;
+  Elem: IActiveTextElem;
+begin
+  Result := TActiveTextFactory.CreateActiveText;
+  if IsEmpty then
+    Exit;
+  // Scan active text, inserting paragraph level block tags where the active
+  // text is not enclosed by them: this can be at the start, at the end or
+  // between existing blocks. E.g for "xxx <p>yyy</p> xxx <p>yyy</p> xxx", xxx
+  // is without any block and will be enclosed in paragraphs while yyy is within
+  // a block and will be unchanged.
+  BlockState := bsTransition;
+  for Elem in fElems do
+  begin
+    if IsBlockOpener(Elem) then
+    begin
+      Assert(BlockState <> bsWithin,
+        ClassName + '.Normalise: Block is nested.');
+      if BlockState = bsWithout then
+        Result.AddElem(TActiveTextFactory.CreateActionElem(ekPara, fsClose));
+      Result.AddElem(Elem);
+      BlockState := bsWithin;
+    end
+    else if IsBlockCloser(Elem) then
+    begin
+      Assert(BlockState = bsWithin,
+        ClassName + '.Normalise: Block closer outside block.');
+      Result.AddElem(Elem);
+      BlockState := bsTransition;
+    end
+    else
+    begin
+      if BlockState = bsTransition then
+      begin
+        if Supports(Elem, IActiveTextTextElem, TextElem) then
+        begin
+          // make sure we don't start a paragraph block if text contains only
+          // spaces
+          Text := StrTrimLeft(TextElem.Text);
+          if Text <> '' then
+          begin
+            Result.AddElem(TActiveTextFactory.CreateActionElem(ekPara, fsOpen));
+            Result.AddElem(TActiveTextFactory.CreateTextElem(Text));
+            BlockState := bsWithout;
+          end;
+        end
+        else
+        begin
+          Result.AddElem(TActiveTextFactory.CreateActionElem(ekPara, fsOpen));
+          Result.AddElem(Elem);
+          BlockState := bsWithout;
+        end;
+      end
+      else
+        Result.AddElem(Elem);
+    end;
+  end;
+  if BlockState = bsWithout then
+    Result.AddElem(TActiveTextFactory.CreateActionElem(ekPara, fsClose));
 end;
 
 procedure TActiveText.Render(Renderer: IActiveTextRenderer);
