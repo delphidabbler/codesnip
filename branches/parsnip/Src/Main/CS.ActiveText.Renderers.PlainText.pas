@@ -179,7 +179,7 @@ end;
 procedure TActiveTextPlainTextRenderer.EndLink(const URL: string);
 begin
   if ptrIncludeURLs in fOptions then
-    fParaBuilder.Append(URLOpenParen + URL + URLCloseParan);
+    fParaBuilder.Append(' ' + URLOpenParen + URL + URLCloseParan);
 end;
 
 procedure TActiveTextPlainTextRenderer.Finalise;
