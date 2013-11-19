@@ -25,9 +25,11 @@ type
     const
       LocalHostSwitch = 'localhost';
       PortableSwitch = 'portable';
+      NoSplashSwitch = 'no-splash';
     class var
       fUseLocalHost: Boolean;
       fIsPortable: Boolean;
+      fNoSplash: Boolean;
   public
     ///  <summary>Parses the command line on startup.</summary>
     class constructor Create;
@@ -40,6 +42,11 @@ type
     ///  <returns>True if the program is to run in portable mode or False if it
     ///  to run in standard mode (the default).</returns>
     class function IsPortable: Boolean; static; inline;
+    ///  <summary>Checks whether the program is to display its splash screen.
+    ///  </summary>
+    ///  <returns>True if the splash screen is to be hidden or False if the
+    ///  splash screen is to be displayed.</returns>
+    class function NoSplash: Boolean; static; inline;
   end;
 
 implementation
@@ -53,11 +60,17 @@ class constructor TCommandLineOpts.Create;
 begin
   fUseLocalHost := FindCmdLineSwitch(LocalHostSwitch, True);
   fIsPortable := FindCmdLineSwitch(PortableSwitch, True);
+  fNoSplash := FindCmdLineSwitch(NoSplashSwitch, True);
 end;
 
 class function TCommandLineOpts.IsPortable: Boolean;
 begin
   Result := fIsPortable;
+end;
+
+class function TCommandLineOpts.NoSplash: Boolean;
+begin
+  Result := fNoSplash;
 end;
 
 class function TCommandLineOpts.UseLocalHost: Boolean;

@@ -418,7 +418,8 @@ begin
     Exit;
   end;
   SplashForm := TSplashForm.Create(Application);
-  SplashForm.Show;
+  if not TCommandLineOpts.NoSplash then
+    SplashForm.Show;
   Application.ModalPopupMode := pmAuto;
   Application.ProcessMessages;
   Application.CreateForm(TMainForm, MainForm);
