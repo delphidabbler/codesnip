@@ -8,7 +8,8 @@
  * $Rev$
  * $Date$
  *
- * Provides a class that can render active text as plain text.
+ * Provides an object that can be passed to IActiveText.Render to render active
+ * text as plain text.
 }
 
 
