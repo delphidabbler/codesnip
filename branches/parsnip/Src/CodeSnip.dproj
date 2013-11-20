@@ -576,6 +576,7 @@
 			<DCCReference Include="Main\Imports\LVEx.pas"/>
 			<DCCReference Include="Main\Imports\UEncrypt.pas"/>
 			<DCCReference Include="Main\CS.ActiveText.Parsers.Credits.pas"/>
+			<DCCReference Include="Main\CS.ActiveText.Parsers.PlainText.pas"/>
 			<DCCReference Include="Main\CS.ActiveText.Parsers.REML.pas"/>
 			<DCCReference Include="Main\CS.ActiveText.Renderers.PlainText.pas"/>
 			<DCCReference Include="Main\CS.ActiveText.Renderers.REML.pas"/>
