@@ -55,11 +55,6 @@ type
         @return Required active text object. Will be an empty object if REML is
           empty string.
       }
-    class function BuildREMLMarkup(const ActiveText: IActiveText): string;
-      {Creates REML markup from an active text object using latest version.
-        @param ActiveText [in] Active text object used to generate markup.
-        @return Required REML markup.
-      }
     ///  <summary>Converts given plain text into an active text paragraph.
     ///  </summary>
     ///  <remarks>All text is treated as one paragraph, embedded newlines are
@@ -142,17 +137,6 @@ begin
     REML, TActiveTextREMLParser.Create
   );
   Result := ActiveText.Normalise;
-end;
-
-class function TSnippetExtraHelper.BuildREMLMarkup(
-  const ActiveText: IActiveText): string;
-  {Creates REML markup from an active text object using latest version.
-    @param ActiveText [in] Active text object used to generate markup.
-    @return Required REML markup.
-  }
-begin
-  // TODO: Write with no block separator when saving to XML file (if needed)
-  Result := TActiveTextREMLRenderer.Render(ActiveText, sLineBreak);
 end;
 
 class function TSnippetExtraHelper.PlainTextToActiveText(
