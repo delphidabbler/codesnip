@@ -72,6 +72,7 @@ uses
   SysUtils,
   // Project
   CS.ActiveText.Parsers.Credits,
+  CS.ActiveText.Parsers.PlainText,
   CS.ActiveText.Parsers.REML,
   CS.ActiveText.Renderers.REML,
   UREMLDataIO,
@@ -96,23 +97,22 @@ class function TSnippetExtraHelper.BuildActiveText(const PrefixText,
 begin
   // Create new empty active text object
   Result := TActiveTextFactory.CreateActiveText;
-  if (PrefixText <> '') then
-  begin
-    // We have prefix text: add it to result as a paragraph containing a single
-    // text element
-    Result.AddElem(TActiveTextFactory.CreateActionElem(ekPara, fsOpen));
-    Result.AddElem(
-      TActiveTextFactory.CreateTextElem(StrMakeSentence(PrefixText))
+  if not StrIsBlank(PrefixText) then
+    // Add comments if present, enclosed in a paragraph block
+    Result.Append(
+      TActiveTextFactory.CreateActiveText(
+        StrMakeSentence(StrTrim(PrefixText)),
+        TActiveTextPlainTextParser.Create('', [])
+      ).Normalise // Normalise ensures required paragraph block
     );
-    Result.AddElem(TActiveTextFactory.CreateActionElem(ekPara, fsClose));
-  end;
-  // Add credits if present, enclosed in a paragraph block
-  Result.Append(
-    TActiveTextFactory.CreateActiveText(
-      StrMakeSentence(CreditsMarkup),
-      TActiveTextCreditsParser.Create(URL)
-    ).Normalise // normalise ensures required paragraph block
-  );
+  if not StrIsBlank(CreditsMarkup) then
+    // Add credits if present, enclosed in a paragraph block
+    Result.Append(
+      TActiveTextFactory.CreateActiveText(
+        StrMakeSentence(StrTrim(CreditsMarkup)),
+        TActiveTextCreditsParser.Create(URL)
+      ).Normalise // Normalise ensures required paragraph block
+    );
 end;
 
 class function TSnippetExtraHelper.BuildActiveText(
@@ -137,15 +137,10 @@ end;
 class function TSnippetExtraHelper.PlainTextToActiveText(
   Text: string): IActiveText;
 begin
-  Result := TActiveTextFactory.CreateActiveText;
-  Text := StrTrim(Text);
-  if Text = '' then
-    Exit;
-  Result.AddElem(TActiveTextFactory.CreateActionElem(ekPara, fsOpen));
-  Result.AddElem(
-    TActiveTextFactory.CreateTextElem(Text)
-  );
-  Result.AddElem(TActiveTextFactory.CreateActionElem(ekPara, fsClose));
+  Result := TActiveTextFactory.CreateActiveText(
+    Text,
+    TActiveTextPlainTextParser.Create('', [])
+  ).Normalise;
 end;
 
 end.

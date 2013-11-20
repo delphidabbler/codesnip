@@ -89,6 +89,7 @@ implementation
 
 uses
   // Project
+  CS.ActiveText.Parsers.PlainText,
   CS.ActiveText.Renderers.PlainText,
   CS.ActiveText.Renderers.REML,
   ActiveText.UValidator, FmActiveTextPreviewDlg, UConsts, UExceptions,
@@ -211,26 +212,14 @@ end;
 
 function TSnippetsActiveTextEdFrame.PlainTextToActiveText(Text: string):
   IActiveText;
-var
-  Paragraphs: IStringList;  // list of paragraphs (separated by newlines pairs)
-  Paragraph: string;        // each paragraph in paragraphs
 begin
-  // NOTE: TSnippetExtraHelper.PlainTextToActiveText is not sufficient for use
-  // here since it ignores newlines and we want double newlines to separated
-  // paragraphs.
-  Result := TActiveTextFactory.CreateActiveText;
-  Text := StrTrim(Text);
-  if Text = '' then
-    Exit;
-  Paragraphs := TIStringList.Create(Text, EOL2, False, True);
-  for Paragraph in Paragraphs do
-  begin
-    Result.AddElem(TActiveTextFactory.CreateActionElem(ekPara, fsOpen));
-    Result.AddElem(
-      TActiveTextFactory.CreateTextElem(StrCompressWhiteSpace(Paragraph))
-    );
-    Result.AddElem(TActiveTextFactory.CreateActionElem(ekPara, fsClose));
-  end;
+  Result := TActiveTextFactory.CreateActiveText(
+    Text,
+    TActiveTextPlainTextParser.Create(
+      EOL2,
+      [ptpSplitIntoParas, ptpIgnoreEmptyParas, ptpTrim, ptpCompressWhiteSpace]
+    )
+  );
 end;
 
 procedure TSnippetsActiveTextEdFrame.Preview;
