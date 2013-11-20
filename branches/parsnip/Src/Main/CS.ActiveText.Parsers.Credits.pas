@@ -68,6 +68,8 @@ implementation
 
 
 uses
+  // Delphi
+  SysUtils,
   // Project
   UStrUtils;
 
@@ -100,6 +102,8 @@ var
   LinkText: string;         // link text
 begin
   Result := TActiveTextFactory.CreateActiveText;
+  if Markup = EmptyStr then
+    Exit;
   // Find open and closing brackets that delimit link text
   OpenBracketPos := StrPos(cOpenBracket, Markup);
   CloseBracketPos := StrPos(cCloseBracket, Markup);
