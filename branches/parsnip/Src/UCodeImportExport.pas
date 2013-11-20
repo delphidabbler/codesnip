@@ -21,10 +21,18 @@ interface
 
 uses
   // Delphi
-  SysUtils, Classes, XMLIntf,
+  SysUtils,
+  Classes,
+  XMLIntf,
   // Project
-  DB.USnippet, UBaseObjects, UEncodings,  UExceptions, UIStringList,
-  UUserDetails, UXMLDocHelper, UXMLDocumentEx;
+  DB.USnippet,
+  UBaseObjects,
+  UEncodings,
+  UExceptions,
+  UIStringList,
+  UUserDetails,
+  UXMLDocHelper,
+  UXMLDocumentEx;
 
 
 type
@@ -195,10 +203,20 @@ implementation
 
 uses
   // Delphi
-  ActiveX, XMLDom,
+  ActiveX,
+  XMLDom,
   // Project
-  ActiveText.UMain, DB.UMain, DB.USnippetKind, UAppInfo, UREMLDataIO,
-  UReservedCategories, USnippetExtraHelper, USnippetIDs, UStructs,
+  CS.ActiveText.Renderers.REML,
+  ActiveText.UMain,
+  DB.UMain,
+  DB.USnippetKind,
+  UAppInfo,
+  UConsts,
+  UREMLDataIO,
+  UReservedCategories,
+  USnippetExtraHelper,
+  USnippetIDs,
+  UStructs,
   UXMLDocConsts;
 
 
@@ -351,7 +369,7 @@ begin
   fXMLDoc.CreateElement(
     SnippetNode,
     cDescriptionNode,
-    TSnippetExtraHelper.BuildREMLMarkup(Snippet.Description)
+    TActiveTextREMLRenderer.Render(Snippet.Description, EOL)
   );
   // Snippet's display name is only written if different to Snippet's name
   if Snippet.ID.ToString <> Snippet.DisplayName then
@@ -367,7 +385,7 @@ begin
     fXMLDoc.CreateElement(
       SnippetNode,
       cExtraNode,
-      TSnippetExtraHelper.BuildREMLMarkup(Snippet.Extra)
+      TActiveTextREMLRenderer.Render(Snippet.Extra, EOL)
     );
   // write kind
   TXMLDocHelper.WriteSnippetKind(fXMLDoc, SnippetNode, Snippet.Kind);

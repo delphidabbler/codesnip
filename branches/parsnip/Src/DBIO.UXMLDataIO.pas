@@ -23,7 +23,11 @@ uses
   // Delphi
   XMLIntf,
   // Project
-  DB.UCategory, DB.USnippet, DBIO.UFileIOIntf, UIStringList, UREMLDataIO,
+  DB.UCategory,
+  DB.USnippet,
+  DBIO.UFileIOIntf,
+  UIStringList,
+  UREMLDataIO,
   UXMLDocumentEx;
 
 
@@ -243,10 +247,22 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Classes, ActiveX, XMLDom,
+  SysUtils,
+  Classes,
+  ActiveX,
+  XMLDom,
   // Project
-  ActiveText.UMain, DB.USnippetKind, UConsts, UExceptions, UIOUtils,
-  USnippetExtraHelper, UStructs, UUtils, UXMLDocConsts, UXMLDocHelper;
+  CS.ActiveText.Renderers.REML,
+  ActiveText.UMain,
+  DB.USnippetKind,
+  UConsts,
+  UExceptions,
+  UIOUtils,
+  USnippetExtraHelper,
+  UStructs,
+  UUtils,
+  UXMLDocConsts,
+  UXMLDocHelper;
 
 
 const
@@ -938,7 +954,7 @@ begin
     fXMLDoc.CreateElement(
       SnippetNode,
       cDescriptionNode,
-      TSnippetExtraHelper.BuildREMLMarkup(Props.Desc)
+      TActiveTextREMLRenderer.Render(Props.Desc, EOL)
     );
     // source code is written to a UTF-8 encoded file with no BOM and filename
     // is stored in XML
@@ -958,7 +974,7 @@ begin
       fXMLDoc.CreateElement(
         SnippetNode,
         cExtraNode,
-        TSnippetExtraHelper.BuildREMLMarkup(Props.Extra)
+        TActiveTextREMLRenderer.Render(Props.Extra, EOL)
       );
     end;
     TXMLDocHelper.WriteSnippetKind(fXMLDoc, SnippetNode, Props.Kind);
