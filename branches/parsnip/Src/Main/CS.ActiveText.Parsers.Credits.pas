@@ -14,7 +14,7 @@
 }
 
 
-unit USnippetCreditsParser;
+unit CS.ActiveText.Parsers.Credits;
 
 
 interface
@@ -31,7 +31,7 @@ type
   ///  snippets data files. Markup is translated into active text.</summary>
   ///  <remarks>The Credits element may occur in main database files and v1 of
   ///  the user database and export files.</remarks>
-  TSnippetCreditsParser = class(TInterfacedObject, IActiveTextParser)
+  TActiveTextCreditsParser = class(TInterfacedObject, IActiveTextParser)
   strict private
     var
       ///  <summary>URL to be used in any link contained in markup.</summary>
@@ -72,15 +72,15 @@ uses
   UStrUtils;
 
 
-{ TSnippetCreditsParser }
+{ TActiveTextCreditsParser }
 
-constructor TSnippetCreditsParser.Create(const URL: string);
+constructor TActiveTextCreditsParser.Create(const URL: string);
 begin
   inherited Create;
   fURL := URL;
 end;
 
-function TSnippetCreditsParser.Parse(const Markup: string): IActiveText;
+function TActiveTextCreditsParser.Parse(const Markup: string): IActiveText;
 const
   cOpenBracket  = '[';  // open bracket character that starts a link
   cCloseBracket = ']';  // close bracket character that ends a link

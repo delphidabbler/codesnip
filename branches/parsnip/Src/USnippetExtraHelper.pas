@@ -71,10 +71,10 @@ uses
   // Delphi
   SysUtils,
   // Project
+  CS.ActiveText.Parsers.Credits,
   CS.ActiveText.Parsers.REML,
   CS.ActiveText.Renderers.REML,
   UREMLDataIO,
-  USnippetCreditsParser,
   UStrUtils;
 
 
@@ -113,7 +113,7 @@ begin
     Result.Append(
       TActiveTextFactory.CreateActiveText(
         StrMakeSentence(CreditsMarkup),
-        TSnippetCreditsParser.Create(URL)
+        TActiveTextCreditsParser.Create(URL)
       )
     );
     Result.AddElem(TActiveTextFactory.CreateActionElem(ekPara, fsClose));
