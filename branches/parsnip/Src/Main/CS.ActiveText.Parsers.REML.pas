@@ -41,11 +41,10 @@ type
   public
     ///  <summary>Parses REML mark-up into active text.</summary>
     ///  <param name="Markup">string [in] REML mark-up to be parsed.</param>
-    ///  <param name="ActiveText">IActiveText [in] Active text object that
-    ///  is updated from parsed mark-up. If ActiveText already contains some
-    ///  active text the result of parsing the mark-up is appended.</param>
+    ///  <returns>IActiveText. Active text object created from parsed mark-up.
+    ///  </returns>
     ///  <remarks>Method of IActiveTextParser.</remarks>
-    procedure Parse(const Markup: string; const ActiveText: IActiveText);
+    function Parse(const Markup: string): IActiveText;
   end;
 
 
@@ -54,19 +53,18 @@ implementation
 
 { TActiveTextREMLParser }
 
-procedure TActiveTextREMLParser.Parse(const Markup: string;
-  const ActiveText: IActiveText);
+function TActiveTextREMLParser.Parse(const Markup: string): IActiveText;
 var
   REMLParser: TREMLParser;
 begin
-  Assert(Assigned(ActiveText), ClassName + '.Parse: ActiveText is nil');
+  fActiveText := TActiveTextFactory.CreateActiveText;
   try
-    fActiveText := ActiveText;
     REMLParser := TREMLParser.Create;
     try
       REMLParser.OnText := REMLTextHandler;
       REMLParser.OnTag := REMLTagHandler;
       REMLParser.Parse(Markup);
+      Result := fActiveText;
     finally
       REMLParser.Free;
     end;

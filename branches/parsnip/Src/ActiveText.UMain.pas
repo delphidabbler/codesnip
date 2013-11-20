@@ -257,13 +257,11 @@ type
   ///  this interface may support different markup.</remarks>
   IActiveTextParser = interface(IInterface)
     ['{C17BC6AA-6012-4530-A39D-9807C1A1AF42}']
-    ///  <summary>Parses markup and updates active text object accordingly.
-    ///  </summary>
+    ///  <summary>Parses markup into active text.</summary>
     ///  <param name="Markup">string [in] Markup that describes active text.
     ///  </param>
-    ///  <param name="ActiveText">IActiveText [in] Active text object that is
-    ///  updated by parser.</param>
-    procedure Parse(const Markup: string; const ActiveText: IActiveText);
+    ///  <returns>IActiveText. Active text object created by parser.</returns>
+    function Parse(const Markup: string): IActiveText;
   end;
 
   ///  <summary>Class of exception raised when parsing active text markup.
@@ -557,8 +555,7 @@ end;
 class function TActiveTextFactory.CreateActiveText(const Markup: string;
   Parser: IActiveTextParser): IActiveText;
 begin
-  Result := CreateActiveText;
-  Parser.Parse(Markup, Result);
+  Result := Parser.Parse(Markup);
 end;
 
 class function TActiveTextFactory.CreateAttrs(

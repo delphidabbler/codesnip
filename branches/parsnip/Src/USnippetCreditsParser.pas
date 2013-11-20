@@ -41,13 +41,12 @@ type
     ///  <param name="URL">string [in] URL to be used in any hyperlinks defined
     ///  by Credit markup.</param>
     constructor Create(const URL: string);
-    ///  <summary>Parses markup and updates active text object.</summary>
+    ///  <summary>Parses markup credits mark-up into active text.</summary>
     ///  <param name="Markup">string [in] Markup containing definition of active
     ///  text. Must be valid Credits element markup.</param>
-    ///  <param name="ActiveText">IActiveText [in] Active text object updated by
-    ///  parser.</param>
+    ///  <returns>IActiveText. Active text object created by parser.</param>
     ///  <remarks>Implements IActiveTextParser.Parse.</remarks>
-    procedure Parse(const Markup: string; const ActiveText: IActiveText);
+    function Parse(const Markup: string): IActiveText;
   end;
 
 
@@ -81,8 +80,7 @@ begin
   fURL := URL;
 end;
 
-procedure TSnippetCreditsParser.Parse(const Markup: string;
-  const ActiveText: IActiveText);
+function TSnippetCreditsParser.Parse(const Markup: string): IActiveText;
 const
   cOpenBracket  = '[';  // open bracket character that starts a link
   cCloseBracket = ']';  // close bracket character that ends a link
@@ -101,6 +99,7 @@ var
   Prefix, Postfix: string;  // text before and after link (can be empty)
   LinkText: string;         // link text
 begin
+  Result := TActiveTextFactory.CreateActiveText;
   // Find open and closing brackets that delimit link text
   OpenBracketPos := StrPos(cOpenBracket, Markup);
   CloseBracketPos := StrPos(cCloseBracket, Markup);
@@ -111,7 +110,7 @@ begin
     if CloseBracketPos > 0 then
       raise EActiveTextParserError.Create(sUnexpectedCloser);
     // record text element
-    ActiveText.AddElem(TActiveTextFactory.CreateTextElem(Markup));
+    Result.AddElem(TActiveTextFactory.CreateTextElem(Markup));
   end
   else
   begin
@@ -140,8 +139,8 @@ begin
     Postfix := StrSliceRight(Markup, Length(Markup) - CloseBracketPos);
     // record the elements
     if Prefix <> '' then
-      ActiveText.AddElem(TActiveTextFactory.CreateTextElem(Prefix));
-    ActiveText.AddElem(
+      Result.AddElem(TActiveTextFactory.CreateTextElem(Prefix));
+    Result.AddElem(
       TActiveTextFactory.CreateActionElem(
         ekLink,
         TActiveTextFactory.CreateAttrs(
@@ -150,8 +149,8 @@ begin
         fsOpen
       )
     );
-    ActiveText.AddElem(TActiveTextFactory.CreateTextElem(LinkText));
-    ActiveText.AddElem(
+    Result.AddElem(TActiveTextFactory.CreateTextElem(LinkText));
+    Result.AddElem(
       TActiveTextFactory.CreateActionElem(
         ekLink,
         TActiveTextFactory.CreateAttrs(
@@ -161,7 +160,7 @@ begin
       )
     );
     if Postfix <> '' then
-      ActiveText.AddElem(TActiveTextFactory.CreateTextElem(Postfix));
+      Result.AddElem(TActiveTextFactory.CreateTextElem(Postfix));
   end;
 end;
 
