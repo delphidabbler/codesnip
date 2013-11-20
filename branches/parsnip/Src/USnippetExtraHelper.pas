@@ -106,18 +106,13 @@ begin
     );
     Result.AddElem(TActiveTextFactory.CreateActionElem(ekPara, fsClose));
   end;
-  if (CreditsMarkup <> '') then
-  begin
-    // We have credits: add credits and any hyperlink as a paragraph
-    Result.AddElem(TActiveTextFactory.CreateActionElem(ekPara, fsOpen));
-    Result.Append(
-      TActiveTextFactory.CreateActiveText(
-        StrMakeSentence(CreditsMarkup),
-        TActiveTextCreditsParser.Create(URL)
-      )
-    );
-    Result.AddElem(TActiveTextFactory.CreateActionElem(ekPara, fsClose));
-  end;
+  // Add credits if present, enclosed in a paragraph block
+  Result.Append(
+    TActiveTextFactory.CreateActiveText(
+      StrMakeSentence(CreditsMarkup),
+      TActiveTextCreditsParser.Create(URL)
+    ).Normalise // normalise ensures required paragraph block
+  );
 end;
 
 class function TSnippetExtraHelper.BuildActiveText(
