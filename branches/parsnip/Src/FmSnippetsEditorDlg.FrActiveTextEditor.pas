@@ -89,6 +89,8 @@ implementation
 
 uses
   // Project
+  CS.ActiveText.Renderers.PlainText,
+  CS.ActiveText.Renderers.REML,
   ActiveText.UValidator, FmActiveTextPreviewDlg, UConsts, UExceptions,
   UFontHelper, UIStringList, USnippetExtraHelper, UStrUtils;
 
@@ -127,20 +129,16 @@ end;
 
 function TSnippetsActiveTextEdFrame.ActiveTextToPlainText(
   ActiveText: IActiveText): string;
-var
-  Lines: IStringList;
 begin
-  // NOTE: we use IActiveText.ToString here, because there may be text not in
-  // blocks and we want to see that: usual renderer will ignore that text.
-  // However all lines are trimmed and empty blanks are ingored.
-  Lines := TIStringList.Create(ActiveText.ToString, EOL, False, True);
-  Result := Lines.GetText(EOL2, False); // insert blank line between paras
+  Result := TActiveTextPlainTextRenderer.Render(
+    ActiveText, EOL2, [ptrIgnoreEmptyBlocks, ptrTrimLines]
+  );
 end;
 
 function TSnippetsActiveTextEdFrame.ActiveTextToREML(ActiveText: IActiveText):
   string;
 begin
-  Result := TSnippetExtraHelper.BuildREMLMarkup(ActiveText);
+  Result := TActiveTextREMLRenderer.Render(ActiveText, EOL);
 end;
 
 function TSnippetsActiveTextEdFrame.CanPreview: Boolean;
