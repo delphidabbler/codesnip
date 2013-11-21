@@ -180,15 +180,8 @@ begin
 end;
 
 function TSnippetHTML.RenderActiveText(ActiveText: IActiveText): string;
-var
-  Renderer: TActiveTextHTML;
 begin
-  Renderer := TActiveTextHTML.Create;
-  try
-    Result := Renderer.Render(ActiveText);
-  finally
-    Renderer.Free;
-  end;
+  Result := TActiveTextHTML.Render(ActiveText);
 end;
 
 function TSnippetHTML.SnippetList(const Snippets: TSnippetList): string;
@@ -310,4 +303,5 @@ begin
 end;
 
 end.
+
 

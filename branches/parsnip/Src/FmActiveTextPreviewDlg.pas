@@ -99,27 +99,19 @@ procedure TActiveTextPreviewDlg.ConfigForm;
   {Initialises HTML frame, loads HTML template and inserts HTML representation
   of the active text.
   }
-var
-  Renderer: TActiveTextHTML;
 begin
   inherited;
   frmPreview.OnBuildCSS := UpdateCSS;
   frmPreview.OnHTMLEvent := HTMLEventHandler;
-
-  Renderer := TActiveTextHTML.Create;
-  try
-    frmPreview.Initialise(
-      'dlg-activetext-preview-tplt.html',
-      procedure(Tplt: THTMLTemplate)
-      begin
-        Tplt.ResolvePlaceholderHTML(
-          'Content', Renderer.Render(fActiveText)
-        );
-      end
-    );
-  finally
-    Renderer.Free;
-  end;
+  frmPreview.Initialise(
+    'dlg-activetext-preview-tplt.html',
+    procedure(Tplt: THTMLTemplate)
+    begin
+      Tplt.ResolvePlaceholderHTML(
+        'Content', TActiveTextHTML.Render(fActiveText)
+      );
+    end
+  );
 end;
 
 function TActiveTextPreviewDlg.ContainsLinks: Boolean;
