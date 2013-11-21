@@ -246,15 +246,13 @@ begin
   fBuilder.SetFont(MainFontName);
   fBuilder.SetFontSize(ParaFontSize);
   fBuilder.SetFontStyle([]);
-  RTFWriter := TActiveTextRTF.Create;
-  try
-    RTFWriter.ElemStyleMap := fDescStyles;
-    RTFWriter.DisplayURLs := True;
-    RTFWriter.URLStyle := fURLStyle;
-    RTFWriter.Render(Snippet.Description, fBuilder);
-  finally
-    RTFWriter.Free;
-  end;
+  // RTFWriter is freed automatically since it is reference counted and an
+  // interface reference is passed to Snippet.Description.Render()
+  RTFWriter := TActiveTextRTF.Create(fBuilder);
+  RTFWriter.Options.ElemStyleMap := fDescStyles;
+  RTFWriter.Options.DisplayURLs := True;
+  RTFWriter.Options.URLStyle := fURLStyle;
+  Snippet.Description.Render(RTFWriter);
   fBuilder.EndGroup;
 end;
 

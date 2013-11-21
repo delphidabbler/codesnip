@@ -8,8 +8,8 @@
  * $Rev$
  * $Date$
  *
- * Implements a class and helpers that create RTF representations of active text
- * with customised styling.
+ * Provides an object that can be passed to IActiveText.Render to render active
+ * text in rich text format.
 }
 
 
@@ -46,32 +46,95 @@ type
   end;
 
 type
-  TActiveTextRTF = class(TObject)
+  TActiveTextRTF = class(TInterfacedObject, IActiveTextRenderer)
+  public
+    type
+      TOptions = class(TObject)
+      strict private
+        var
+          fElemStyleMap: TActiveTextRTFStyleMap;
+          fDisplayURLs: Boolean;
+          fIgnoreInterBlockText: Boolean;
+          fURLStyle: TRTFStyle;
+        procedure SetElemStyleMap(const ElemStyleMap: TActiveTextRTFStyleMap);
+      public
+        constructor Create;
+        destructor Destroy; override;
+        property ElemStyleMap: TActiveTextRTFStyleMap
+          read fElemStyleMap write SetElemStyleMap;
+        property DisplayURLs: Boolean read fDisplayURLs write fDisplayURLs
+          default False;
+        property IgnoreInterBlockText: Boolean read fIgnoreInterBlockText
+          write fIgnoreInterBlockText default True;
+        property URLStyle: TRTFStyle read fURLStyle write fURLStyle;
+      end;
   strict private
     var
-      fElemStyleMap: TActiveTextRTFStyleMap;
-      fDisplayURLs: Boolean;
-      fURLStyle: TRTFStyle;
       fInBlock: Boolean;
-    procedure SetElemStyleMap(const ElemStyleMap: TActiveTextRTFStyleMap);
-    procedure Initialise(const Builder: TRTFBuilder);
-    procedure RenderTextElem(Elem: IActiveTextTextElem;
-      const Builder: TRTFBuilder);
-    procedure RenderBlockActionElem(Elem: IActiveTextActionElem;
-      const Builder: TRTFBuilder);
-    procedure RenderInlineActionElem(Elem: IActiveTextActionElem;
-      const Builder: TRTFBuilder);
-    procedure RenderURL(Elem: IActiveTextActionElem;
-      const Builder: TRTFBuilder);
+      fOptions: TOptions;
+      fBuilder: TRTFBuilder;
+    function SkipOutput: Boolean;
   public
-    constructor Create;
+    constructor Create(const Builder: TRTFBuilder);
     destructor Destroy; override;
-    property ElemStyleMap: TActiveTextRTFStyleMap
-      read fElemStyleMap write SetElemStyleMap;
-    property DisplayURLs: Boolean read fDisplayURLs write fDisplayURLs;
-    property URLStyle: TRTFStyle read fURLStyle write fURLStyle;
-    procedure Render(ActiveText: IActiveText;
-      const RTFBuilder: TRTFBuilder);
+    property Options: TOptions read fOptions;
+
+    ///  <summary>Called before active text is processed.</summary>
+    ///  <remarks>Method of IActiveTextRenderer.</remarks>
+    procedure Initialise;
+
+    ///  <summary>Called after last active text element has been processed.
+    ///  </summary>
+    ///  <remarks>Method of IActiveTextRenderer.</remarks>
+    procedure Finalise;
+
+    ///  <summary>Called when plain text should be output.</summary>
+    ///  <param name="AText">string. Text to be output.</param>
+    ///  <remarks>Method of IActiveTextRenderer.</remarks>
+    procedure OutputText(const AText: string);
+
+    ///  <summary>Called at the start of a new block of active text.</summary>
+    ///  <param name="Kind">TActiveTextActionElemKind [in] Kind of block being
+    ///  opened. This will be an active text element with DisplayStyle =
+    ///  dsBlock.</param>
+    ///  <remarks>Method of IActiveTextRenderer.</remarks>
+    procedure BeginBlock(const Kind: TActiveTextActionElemKind);
+
+    ///  <summary>Called when the current active text block ends.</summary>
+    ///  <param name="Kind">TActiveTextActionElemKind [in] Kind of block being
+    ///  opened. This will be an active text element with DisplayStyle =
+    ///  dsBlock.</param>
+    ///  <remarks>Method of IActiveTextRenderer.</remarks>
+    procedure EndBlock(const Kind: TActiveTextActionElemKind);
+
+    ///  <summary>Called at the start of a new active text styling element.
+    ///  </summary>
+    ///  <param name="Kind">TActiveTextActionElemKind [in] Kind of styling
+    ///  element. The kind indicates the type of styling to be applied. This
+    ///  will be an active text element with DisplayStyle = dsInline that is
+    ///  not ekLink.</param>
+    ///  <remarks>Method of IActiveTextRenderer.</remarks>
+    procedure BeginInlineStyle(const Kind: TActiveTextActionElemKind);
+
+    ///  <summary>Called the current active text styling element ends.</summary>
+    ///  <param name="Kind">TActiveTextActionElemKind [in] Kind of styling
+    ///  element. The kind indicates the type of styling to be applied. This
+    ///  will be an active text element with DisplayStyle = dsInline that is
+    ///  not ekLink.</param>
+    ///  <remarks>Method of IActiveTextRenderer.</remarks>
+    procedure EndInlineStyle(const Kind: TActiveTextActionElemKind);
+
+    ///  <summary>Called at the start of a new active text link element.
+    ///  </summary>
+    ///  <param name="URL">string. URL to accessed from the link.</param>
+    ///  <remarks>Method of IActiveTextRenderer.</remarks>
+    procedure BeginLink(const URL: string);
+
+    ///  <summary>Called when the current active text link element ends.
+    ///  </summary>
+    ///  <param name="URL">string. URL to accessed from the link.</param>
+    ///  <remarks>Method of IActiveTextRenderer.</remarks>
+    procedure EndLink(const URL: string);
   end;
 
 
@@ -158,117 +221,116 @@ end;
 
 { TActiveTextRTF }
 
-constructor TActiveTextRTF.Create;
+procedure TActiveTextRTF.BeginBlock(const Kind: TActiveTextActionElemKind);
 begin
+  fInBlock := True;
+  fBuilder.BeginGroup;
+  fBuilder.ApplyStyle(fOptions.ElemStyleMap[Kind]);
+end;
+
+procedure TActiveTextRTF.BeginInlineStyle(
+  const Kind: TActiveTextActionElemKind);
+begin
+  if SkipOutput then
+    Exit;
+  fBuilder.BeginGroup;
+  fBuilder.ApplyStyle(fOptions.ElemStyleMap[Kind]);
+end;
+
+procedure TActiveTextRTF.BeginLink(const URL: string);
+begin
+  // do nothing
+end;
+
+constructor TActiveTextRTF.Create(const Builder: TRTFBuilder);
+begin
+  Assert(not Assigned(fBuilder), ClassName + '.Create: Builder is nil');
   inherited Create;
-  fElemStyleMap := TActiveTextRTFStyleMap.Create;
-  fURLStyle := TRTFStyle.CreateNull;
+  fBuilder := Builder;
+  fOptions := TOptions.Create;
 end;
 
 destructor TActiveTextRTF.Destroy;
+begin
+  fOptions.Free;
+  inherited;
+end;
+
+procedure TActiveTextRTF.EndBlock(const Kind: TActiveTextActionElemKind);
+begin
+  fBuilder.EndPara;
+  fBuilder.EndGroup;
+  fInBlock := False;
+end;
+
+procedure TActiveTextRTF.EndInlineStyle(const Kind: TActiveTextActionElemKind);
+begin
+  if SkipOutput then
+    Exit;
+  fBuilder.EndGroup;
+end;
+
+procedure TActiveTextRTF.EndLink(const URL: string);
+resourcestring
+  sURL = ' (%s)';                     // formatting for URLs from hyperlinks
+begin
+  if SkipOutput then
+    Exit;
+  fBuilder.BeginGroup;
+  fBuilder.ApplyStyle(fOptions.URLStyle);
+  fBuilder.AddText(Format(sURL, [URL]));
+  fBuilder.EndGroup;
+end;
+
+procedure TActiveTextRTF.Finalise;
+begin
+  // do nothing
+end;
+
+procedure TActiveTextRTF.Initialise;
+var
+  Style: TRTFStyle;
+begin
+  fInBlock := False;
+  for Style in fOptions.ElemStyleMap do
+  begin
+    fBuilder.FontTable.AddFromStyle(Style);
+    fBuilder.ColourTable.AddFromStyle(Style);
+  end;
+  fBuilder.FontTable.AddFromStyle(fOptions.URLStyle);
+  fBuilder.ColourTable.AddFromStyle(fOptions.URLStyle);
+end;
+
+procedure TActiveTextRTF.OutputText(const AText: string);
+begin
+  if SkipOutput then
+    Exit;
+  fBuilder.AddText(AText);
+end;
+
+function TActiveTextRTF.SkipOutput: Boolean;
+begin
+  Result := not fInBlock and fOptions.IgnoreInterBlockText;
+end;
+
+{ TActiveTextRTF.TOptions }
+
+constructor TActiveTextRTF.TOptions.Create;
+begin
+  inherited Create;
+  fElemStyleMap := TActiveTextRTFStyleMap.Create;
+  fDisplayURLs := False;
+  fIgnoreInterBlockText := True;
+  fURLStyle := TRTFStyle.CreateNull;
+end;
+
+destructor TActiveTextRTF.TOptions.Destroy;
 begin
   fElemStyleMap.Free;
   inherited;
 end;
 
-procedure TActiveTextRTF.Initialise(const Builder: TRTFBuilder);
-var
-  Style: TRTFStyle;
-begin
-  for Style in fElemStyleMap do
-  begin
-    Builder.FontTable.AddFromStyle(Style);
-    Builder.ColourTable.AddFromStyle(Style);
-  end;
-  Builder.FontTable.AddFromStyle(fURLStyle);
-  Builder.ColourTable.AddFromStyle(fURLStyle);
-end;
-
-procedure TActiveTextRTF.Render(ActiveText: IActiveText;
-  const RTFBuilder: TRTFBuilder);
-var
-  Elem: IActiveTextElem;
-  TextElem: IActiveTextTextElem;
-  ActionElem: IActiveTextActionElem;
-begin
-  Initialise(RTFBuilder);
-  fInBlock := False;
-  for Elem in ActiveText do
-  begin
-    if Supports(Elem, IActiveTextTextElem, TextElem) then
-      RenderTextElem(TextElem, RTFBuilder)
-    else if Supports(Elem, IActiveTextActionElem, ActionElem) then
-    begin
-      if ActionElem.DisplayStyle = dsBlock then
-        RenderBlockActionElem(ActionElem, RTFBuilder)
-      else
-        RenderInlineActionElem(ActionElem, RTFBuilder);
-    end;
-  end;
-end;
-
-procedure TActiveTextRTF.RenderBlockActionElem(Elem: IActiveTextActionElem;
-  const Builder: TRTFBuilder);
-begin
-  case Elem.State of
-    fsOpen:
-    begin
-      fInBlock := True;
-      Builder.BeginGroup;
-      Builder.ApplyStyle(fElemStyleMap[Elem.Kind]);
-    end;
-    fsClose:
-    begin
-      Builder.EndPara;
-      Builder.EndGroup;
-      fInBlock := False;
-    end;
-  end;
-end;
-
-procedure TActiveTextRTF.RenderInlineActionElem(Elem: IActiveTextActionElem;
-  const Builder: TRTFBuilder);
-begin
-  if not fInBlock then
-    Exit;
-  case Elem.State of
-    fsOpen:
-    begin
-      Builder.BeginGroup;
-      Builder.ApplyStyle(fElemStyleMap[Elem.Kind]);
-    end;
-    fsClose:
-    begin
-      if (Elem.Kind = ekLink) and fDisplayURLs then
-        RenderURL(Elem, Builder);
-      Builder.EndGroup;
-    end;
-  end;
-end;
-
-procedure TActiveTextRTF.RenderTextElem(Elem: IActiveTextTextElem;
-  const Builder: TRTFBuilder);
-begin
-  if not fInBlock then
-    Exit;
-  Builder.AddText(Elem.Text);
-end;
-
-procedure TActiveTextRTF.RenderURL(Elem: IActiveTextActionElem;
-  const Builder: TRTFBuilder);
-resourcestring
-  sURL = ' (%s)';                     // formatting for URLs from hyperlinks
-begin
-  Assert(Elem.Kind = ekLink, ClassName + '.RenderURL: Not a link element');
-  Builder.BeginGroup;
-  Builder.ApplyStyle(URLStyle);
-  Builder.AddText(
-    Format(sURL, [Elem.Attrs[TActiveTextAttrNames.Link_URL]])
-  );
-  Builder.EndGroup;
-end;
-
-procedure TActiveTextRTF.SetElemStyleMap(
+procedure TActiveTextRTF.TOptions.SetElemStyleMap(
   const ElemStyleMap: TActiveTextRTFStyleMap);
 begin
   fElemStyleMap.Assign(ElemStyleMap);

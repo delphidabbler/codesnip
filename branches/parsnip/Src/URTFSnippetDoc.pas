@@ -103,6 +103,9 @@ type
     ///  <summary>Finalises document and returns content as encoded data.
     ///  </summary>
     function FinaliseDoc: TEncodedData; override;
+
+    function CreateActiveTextRenderer(const Styles: TActiveTextRTFStyleMap):
+      IActiveTextRenderer;
   public
     ///  <summary>Constructs object to render a snippet.</summary>
     ///  <param name="ATheme">TSyntaxHiliteTheme [in] Theme to be used when
@@ -147,6 +150,18 @@ begin
   fDescStyles := TActiveTextRTFStyleMap.Create;
   fExtraStyles := TActiveTextRTFStyleMap.Create;
   InitStyles;
+end;
+
+function TRTFSnippetDoc.CreateActiveTextRenderer(
+  const Styles: TActiveTextRTFStyleMap): IActiveTextRenderer;
+var
+  Renderer: TActiveTextRTF;
+begin
+  Renderer := TActiveTextRTF.Create(fBuilder);
+  Renderer.Options.ElemStyleMap := Styles;
+  Renderer.Options.DisplayURLs := True;
+  Renderer.Options.URLStyle := fURLStyle;
+  Result := Renderer;
 end;
 
 destructor TRTFSnippetDoc.Destroy;
@@ -313,36 +328,16 @@ begin
 end;
 
 procedure TRTFSnippetDoc.RenderDescription(const Desc: IActiveText);
-var
-  RTFWriter: TActiveTextRTF;  // Object that generates RTF from active text
 begin
   fBuilder.ResetCharStyle;
   fBuilder.SetFontSize(ParaFontSize);
-  RTFWriter := TActiveTextRTF.Create;
-  try
-    RTFWriter.ElemStyleMap := fDescStyles;
-    RTFWriter.DisplayURLs := True;
-    RTFWriter.URLStyle := fURLStyle;
-    RTFWriter.Render(Desc, fBuilder);
-  finally
-    RTFWriter.Free;
-  end;
+  Desc.Render(CreateActiveTextRenderer(fDescStyles));
 end;
 
 procedure TRTFSnippetDoc.RenderExtra(const ExtraText: IActiveText);
-var
-  RTFWriter: TActiveTextRTF;  // Object that generates RTF from active text
 begin
   Assert(not ExtraText.IsEmpty, ClassName + '.RenderExtra: ExtraText is empty');
-  RTFWriter := TActiveTextRTF.Create;
-  try
-    RTFWriter.ElemStyleMap := fExtraStyles;
-    RTFWriter.DisplayURLs := True;
-    RTFWriter.URLStyle := fURLStyle;
-    RTFWriter.Render(ExtraText, fBuilder);
-  finally
-    RTFWriter.Free;
-  end;
+  ExtraText.Render(CreateActiveTextRenderer(fExtraStyles));
 end;
 
 procedure TRTFSnippetDoc.RenderHeading(const Heading: string);
