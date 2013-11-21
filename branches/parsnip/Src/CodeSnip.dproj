@@ -36,7 +36,6 @@
 			<DelphiCompile Include="CodeSnip.dpr">
 				<MainSource>MainSource</MainSource>
 			</DelphiCompile>
-			<DCCReference Include="ActiveText.UHTMLRenderer.pas"/>
 			<DCCReference Include="ActiveText.UMain.pas"/>
 			<DCCReference Include="ActiveText.UValidator.pas"/>
 			<DCCReference Include="Browser.IntfDocHostUI.pas"/>
@@ -576,6 +575,7 @@
 			<DCCReference Include="Main\CS.ActiveText.Parsers.Credits.pas"/>
 			<DCCReference Include="Main\CS.ActiveText.Parsers.PlainText.pas"/>
 			<DCCReference Include="Main\CS.ActiveText.Parsers.REML.pas"/>
+			<DCCReference Include="Main\CS.ActiveText.Renderers.HTML.pas"/>
 			<DCCReference Include="Main\CS.ActiveText.Renderers.PlainText.pas"/>
 			<DCCReference Include="Main\CS.ActiveText.Renderers.REML.pas"/>
 			<DCCReference Include="Main\CS.ActiveText.Renderers.RTF.pas"/>

@@ -21,10 +21,20 @@ interface
 
 uses
   // Delphi
-  Classes, Forms, StdCtrls, Controls, ExtCtrls,
+  Classes,
+  Forms,
+  StdCtrls,
+  Controls,
+  ExtCtrls,
   // Project
-  ActiveText.UMain, Browser.UHTMLEvents, FmGenericViewDlg, FrBrowserBase,
-  FrHTMLDlg, FrHTMLTpltDlg, UBaseObjects, UCSSBuilder;
+  ActiveText.UMain,
+  Browser.UHTMLEvents,
+  FmGenericViewDlg,
+  FrBrowserBase,
+  FrHTMLDlg,
+  FrHTMLTpltDlg,
+  UBaseObjects,
+  UCSSBuilder;
 
 
 type
@@ -80,8 +90,16 @@ uses
   // Delphi
   SysUtils, Graphics,
   // Project
-  ActiveText.UHTMLRenderer, UAnchors, UColours, UConsts, UCSSUtils, UFontHelper,
-  UHTMLTemplate, UMessageBox, UProtocols, USystemInfo;
+  CS.ActiveText.Renderers.HTML,
+  UAnchors,
+  UColours,
+  UConsts,
+  UCSSUtils,
+  UFontHelper,
+  UHTMLTemplate,
+  UMessageBox,
+  UProtocols,
+  USystemInfo;
 
 {$R *.dfm}
 
@@ -108,7 +126,7 @@ begin
     procedure(Tplt: THTMLTemplate)
     begin
       Tplt.ResolvePlaceholderHTML(
-        'Content', TActiveTextHTML.Render(fActiveText)
+        'Content', TActiveTextHTMLRenderer.Render(fActiveText)
       );
     end
   );

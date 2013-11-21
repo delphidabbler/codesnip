@@ -20,7 +20,9 @@ interface
 
 uses
   // Project
-  ActiveText.UMain, DB.UCategory, DB.USnippet;
+  ActiveText.UMain,
+  DB.UCategory,
+  DB.USnippet;
 
 
 type
@@ -99,11 +101,11 @@ uses
   // Delphi
   SysUtils,
   // Project
+  CS.ActiveText.Renderers.HTML,
   CS.Config,
   CS.SourceCode.Languages,
   CS.SourceCode.Hiliter.Brushes,
   CS.SourceCode.Hiliter.Renderers,
-  ActiveText.UHTMLRenderer,
   DB.UMain,
   DB.USnippetKind,
   UCompResHTML,
@@ -181,7 +183,7 @@ end;
 
 function TSnippetHTML.RenderActiveText(ActiveText: IActiveText): string;
 begin
-  Result := TActiveTextHTML.Render(ActiveText);
+  Result := TActiveTextHTMLRenderer.Render(ActiveText);
 end;
 
 function TSnippetHTML.SnippetList(const Snippets: TSnippetList): string;

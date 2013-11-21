@@ -36,7 +36,6 @@ program CodeSnip;
 uses
   Forms,
   Windows,
-  ActiveText.UHTMLRenderer in 'ActiveText.UHTMLRenderer.pas',
   ActiveText.UMain in 'ActiveText.UMain.pas',
   ActiveText.UValidator in 'ActiveText.UValidator.pas',
   Browser.IntfDocHostUI in 'Browser.IntfDocHostUI.pas',
@@ -376,6 +375,7 @@ uses
   CS.ActiveText.Parsers.Credits in 'Main\CS.ActiveText.Parsers.Credits.pas',
   CS.ActiveText.Parsers.PlainText in 'Main\CS.ActiveText.Parsers.PlainText.pas',
   CS.ActiveText.Parsers.REML in 'Main\CS.ActiveText.Parsers.REML.pas',
+  CS.ActiveText.Renderers.HTML in 'Main\CS.ActiveText.Renderers.HTML.pas',
   CS.ActiveText.Renderers.PlainText in 'Main\CS.ActiveText.Renderers.PlainText.pas',
   CS.ActiveText.Renderers.REML in 'Main\CS.ActiveText.Renderers.REML.pas',
   CS.ActiveText.Renderers.RTF in 'Main\CS.ActiveText.Renderers.RTF.pas',

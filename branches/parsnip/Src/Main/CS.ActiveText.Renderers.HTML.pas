@@ -12,7 +12,7 @@
 }
 
 
-unit ActiveText.UHTMLRenderer;
+unit CS.ActiveText.Renderers.HTML;
 
 
 interface
@@ -29,7 +29,7 @@ uses
 
 
 type
-  TActiveTextHTML = class(TInterfacedObject, IActiveTextRenderer)
+  TActiveTextHTMLRenderer = class(TInterfacedObject, IActiveTextRenderer)
   public
     type
       TCSSStyles = class(TObject)
@@ -137,15 +137,16 @@ uses
   UStrUtils;
 
 
-{ TActiveTextHTML }
+{ TActiveTextHTMLRenderer }
 
-procedure TActiveTextHTML.BeginBlock(const Kind: TActiveTextActionElemKind);
+procedure TActiveTextHTMLRenderer.BeginBlock(
+  const Kind: TActiveTextActionElemKind);
 begin
   fBuilder.Append(MakeOpeningTag(Kind));
   fInBlock := True;
 end;
 
-procedure TActiveTextHTML.BeginInlineStyle(
+procedure TActiveTextHTMLRenderer.BeginInlineStyle(
   const Kind: TActiveTextActionElemKind);
 begin
   if not fInBlock then
@@ -153,14 +154,14 @@ begin
   fBuilder.Append(MakeOpeningTag(Kind));
 end;
 
-procedure TActiveTextHTML.BeginLink(const URL: string);
+procedure TActiveTextHTMLRenderer.BeginLink(const URL: string);
 begin
   if not fInBlock then
     Exit;
   fBuilder.Append(MakeOpeningTag(ekLink, THTMLAttributes.Create('href', URL)));
 end;
 
-constructor TActiveTextHTML.Create(const Builder: TStringBuilder);
+constructor TActiveTextHTMLRenderer.Create(const Builder: TStringBuilder);
 begin
   Assert(Assigned(Builder), ClassName + '.Create: Builder is nil');
   inherited Create;
@@ -168,39 +169,41 @@ begin
   fBuilder := Builder;
 end;
 
-destructor TActiveTextHTML.Destroy;
+destructor TActiveTextHTMLRenderer.Destroy;
 begin
   fCSSStyles.Free;
   inherited;
 end;
 
-procedure TActiveTextHTML.EndBlock(const Kind: TActiveTextActionElemKind);
+procedure TActiveTextHTMLRenderer.EndBlock(
+  const Kind: TActiveTextActionElemKind);
 begin
   fInBlock := False;
   fBuilder.AppendLine(MakeClosingTag(Kind));
 end;
 
-procedure TActiveTextHTML.EndInlineStyle(const Kind: TActiveTextActionElemKind);
+procedure TActiveTextHTMLRenderer.EndInlineStyle(
+  const Kind: TActiveTextActionElemKind);
 begin
   if not fInBlock then
     Exit;
   fBuilder.Append(MakeClosingTag(Kind));
 end;
 
-procedure TActiveTextHTML.EndLink(const URL: string);
+procedure TActiveTextHTMLRenderer.EndLink(const URL: string);
 begin
   if not fInBlock then
     Exit;
   fBuilder.Append(MakeClosingTag(ekLink));
 end;
 
-procedure TActiveTextHTML.Finalise;
+procedure TActiveTextHTMLRenderer.Finalise;
 begin
   fBuilder.AppendLine(THTML.ClosingTag('div'));
 end;
 
-function TActiveTextHTML.GetTagName(const Kind: TActiveTextActionElemKind):
-  string;
+function TActiveTextHTMLRenderer.GetTagName(
+  const Kind: TActiveTextActionElemKind): string;
 const
   Tags: array[TActiveTextActionElemKind] of string = (
     'a', 'strong', 'em', 'var', 'p', 'span', 'h2', 'code'
@@ -209,7 +212,7 @@ begin
   Result := Tags[Kind];
 end;
 
-procedure TActiveTextHTML.Initialise;
+procedure TActiveTextHTMLRenderer.Initialise;
 var
   WrapperClassAttr: IHTMLAttributes;
 begin
@@ -220,14 +223,14 @@ begin
   fBuilder.AppendLine(THTML.OpeningTag('div', WrapperClassAttr));
 end;
 
-function TActiveTextHTML.MakeClosingTag(const Kind: TActiveTextActionElemKind):
-  string;
+function TActiveTextHTMLRenderer.MakeClosingTag(
+  const Kind: TActiveTextActionElemKind): string;
 begin
   Result := THTML.ClosingTag(GetTagName(Kind));
 end;
 
-function TActiveTextHTML.MakeOpeningTag(const Kind: TActiveTextActionElemKind;
-  Attrs: IHTMLAttributes): string;
+function TActiveTextHTMLRenderer.MakeOpeningTag(
+  const Kind: TActiveTextActionElemKind; Attrs: IHTMLAttributes): string;
 var
   AllAttrs: IHTMLAttributes;
 begin
@@ -238,24 +241,24 @@ begin
   Result := THTML.OpeningTag(GetTagName(Kind), AllAttrs);
 end;
 
-procedure TActiveTextHTML.OutputText(const AText: string);
+procedure TActiveTextHTMLRenderer.OutputText(const AText: string);
 begin
   if not fInBlock then
     Exit;
   fBuilder.Append(THTML.Entities(AText));
 end;
 
-class function TActiveTextHTML.Render(ActiveText: IActiveText;
+class function TActiveTextHTMLRenderer.Render(ActiveText: IActiveText;
   const CSSStyles: TCSSStyles): string;
 var
   SB: TStringBuilder;
-  Renderer: TActiveTextHTML;
+  Renderer: TActiveTextHTMLRenderer;
 begin
   SB := TStringBuilder.Create;
   try
     // Renderer will be freed automatically since it is reference counted and
     // passed to ActiveText.Render via its IActiveTextRenderer interface.
-    Renderer := TActiveTextHTML.Create(SB);
+    Renderer := TActiveTextHTMLRenderer.Create(SB);
     Renderer.CSSStyles := CSSStyles;
     ActiveText.Render(Renderer);
     Result := SB.ToString;
@@ -264,14 +267,14 @@ begin
   end;
 end;
 
-procedure TActiveTextHTML.SetCSSStyles(const AStyles: TCSSStyles);
+procedure TActiveTextHTMLRenderer.SetCSSStyles(const AStyles: TCSSStyles);
 begin
   fCSSStyles.Assign(AStyles)
 end;
 
-{ TActiveTextHTML.TCSSStyles }
+{ TActiveTextHTMLRenderer.TCSSStyles }
 
-procedure TActiveTextHTML.TCSSStyles.Assign(const Other: TCSSStyles);
+procedure TActiveTextHTMLRenderer.TCSSStyles.Assign(const Other: TCSSStyles);
 var
   Kind: TActiveTextActionElemKind;
 begin
@@ -286,19 +289,19 @@ begin
     Initialise;
 end;
 
-constructor TActiveTextHTML.TCSSStyles.Create;
+constructor TActiveTextHTMLRenderer.TCSSStyles.Create;
 begin
   inherited Create;
   Initialise;
 end;
 
-function TActiveTextHTML.TCSSStyles.GetElemClass(
+function TActiveTextHTMLRenderer.TCSSStyles.GetElemClass(
   ElemKind: TActiveTextActionElemKind): string;
 begin
   Result := fElemClassMap[ElemKind];
 end;
 
-procedure TActiveTextHTML.TCSSStyles.Initialise;
+procedure TActiveTextHTMLRenderer.TCSSStyles.Initialise;
 const
   DefaultWrapperClassName = 'active-text';
   DefaultClasses: array[TActiveTextActionElemKind] of string = (
@@ -313,7 +316,7 @@ begin
     SetElemClass(ElemKind, DefaultClasses[ElemKind]);
 end;
 
-procedure TActiveTextHTML.TCSSStyles.SetElemClass(
+procedure TActiveTextHTMLRenderer.TCSSStyles.SetElemClass(
   ElemKind: TActiveTextActionElemKind; const Value: string);
 begin
   fElemClassMap[ElemKind] := Value;
