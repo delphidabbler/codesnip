@@ -179,7 +179,7 @@ procedure TActiveTextHTMLRenderer.EndBlock(
   const Kind: TActiveTextActionElemKind);
 begin
   fInBlock := False;
-  fBuilder.AppendLine(MakeClosingTag(Kind));
+  fBuilder.Append(MakeClosingTag(Kind));
 end;
 
 procedure TActiveTextHTMLRenderer.EndInlineStyle(
@@ -199,7 +199,7 @@ end;
 
 procedure TActiveTextHTMLRenderer.Finalise;
 begin
-  fBuilder.AppendLine(THTML.ClosingTag('div'));
+  fBuilder.Append(THTML.ClosingTag('div'));
 end;
 
 function TActiveTextHTMLRenderer.GetTagName(
@@ -220,7 +220,7 @@ begin
     WrapperClassAttr := THTMLAttributes.Create('class', fCSSStyles.WrapperClass)
   else
     WrapperClassAttr := nil;
-  fBuilder.AppendLine(THTML.OpeningTag('div', WrapperClassAttr));
+  fBuilder.Append(THTML.OpeningTag('div', WrapperClassAttr));
 end;
 
 function TActiveTextHTMLRenderer.MakeClosingTag(
