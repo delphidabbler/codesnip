@@ -39,7 +39,6 @@ uses
   ActiveText.UHTMLRenderer in 'ActiveText.UHTMLRenderer.pas',
   ActiveText.UMain in 'ActiveText.UMain.pas',
   ActiveText.URTFRenderer in 'ActiveText.URTFRenderer.pas',
-  ActiveText.UTextRenderer in 'ActiveText.UTextRenderer.pas',
   ActiveText.UValidator in 'ActiveText.UValidator.pas',
   Browser.IntfDocHostUI in 'Browser.IntfDocHostUI.pas',
   Browser.UControlHelper in 'Browser.UControlHelper.pas',

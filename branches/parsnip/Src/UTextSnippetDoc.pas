@@ -23,7 +23,10 @@ uses
   // Delphi
   Classes,
   // Project
-  ActiveText.UMain, UEncodings, UIStringList, USnippetDoc;
+  ActiveText.UMain,
+  UEncodings,
+  UIStringList,
+  USnippetDoc;
 
 
 type
@@ -86,7 +89,9 @@ uses
   // Delphi
   SysUtils,
   // Project
-  ActiveText.UTextRenderer, UStrUtils;
+  CS.ActiveText.Renderers.PlainText,
+  UConsts,
+  UStrUtils;
 
 
 { TTextSnippetDoc }
@@ -105,27 +110,20 @@ end;
 procedure TTextSnippetDoc.RenderActiveText(ActiveText: IActiveText;
   const Indent: Cardinal; const SpaceParas: Boolean);
 var
-  Renderer: TActiveTextTextRenderer;
   Lines: TStringList;
 begin
-  Renderer := TActiveTextTextRenderer.Create;
+  Lines := TStringList.Create;
   try
-    Renderer.DisplayURLs := True;
-    Lines := TStringList.Create;
-    try
-      Lines.Text := Renderer.Render(ActiveText);
-      fWriter.WriteLine(
-        StrTrimRight(
-          StrWrap(
-            Lines, cPageWidth - Indent, Indent, True
-          )
-        )
-      );
-    finally
-      Lines.Free;
-    end;
+    Lines.Text := TActiveTextPlainTextRenderer.Render(
+      ActiveText, EOL, [ptrIgnoreInterBlockText, ptrIncludeURLs]
+    );
+    fWriter.WriteLine(
+      StrTrimRight(
+        StrWrap(Lines, cPageWidth - Indent, Indent, True)
+      )
+    );
   finally
-    Renderer.Free;
+    Lines.Free;
   end;
 end;
 

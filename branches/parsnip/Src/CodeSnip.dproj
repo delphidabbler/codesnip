@@ -39,7 +39,6 @@
 			<DCCReference Include="ActiveText.UHTMLRenderer.pas"/>
 			<DCCReference Include="ActiveText.UMain.pas"/>
 			<DCCReference Include="ActiveText.URTFRenderer.pas"/>
-			<DCCReference Include="ActiveText.UTextRenderer.pas"/>
 			<DCCReference Include="ActiveText.UValidator.pas"/>
 			<DCCReference Include="Browser.IntfDocHostUI.pas"/>
 			<DCCReference Include="Browser.UControlHelper.pas"/>

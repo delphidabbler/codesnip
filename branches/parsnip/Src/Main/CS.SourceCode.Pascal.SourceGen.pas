@@ -259,8 +259,8 @@ uses
   // Delphi
   SysUtils,
   // Project
+  CS.ActiveText.Renderers.PlainText,
   CS.SourceCode.Pascal.Lexer,
-  ActiveText.UTextRenderer,
   DB.USnippetKind,
   UConsts,
   UExceptions,
@@ -1202,37 +1202,32 @@ class function TPascalComments.FormatSnippetComment(
   const Style: TPascalCommentStyle; const TruncateComments: Boolean;
   const Text: IActiveText): string;
 var
-  Renderer: TActiveTextTextRenderer;
   PlainText: string;
   Lines: IStringList;
 begin
-  Renderer := TActiveTextTextRenderer.Create;
-  try
-    Renderer.DisplayURLs := False;
-    PlainText := Renderer.Render(Text);
-    if TruncateComments then
-    begin
-      // use first non-empty paragraph of Text as comment
-      Lines := TIStringList.Create(PlainText, string(sLineBreak), False);
-      if Lines.Count > 0 then
-        PlainText := Lines[0];
-    end;
-    case Style of
-      csNone:
-        Result := '';
-      csBefore:
-        Result := '{'
-          + EOL
-          + FormatCommentLines(PlainText, cIndent)
-          + EOL
-          + '}';
-      csAfter:
-        Result := FormatCommentLines(
-          '{' + PlainText + '}', cIndent
-        );
-    end;
-  finally
-    Renderer.Free;
+  PlainText := TActiveTextPlainTextRenderer.Render(
+    Text, EOL, [ptrIgnoreInterBlockText]
+  );
+  if TruncateComments then
+  begin
+    // use first non-empty paragraph of Text as comment
+    Lines := TIStringList.Create(PlainText, string(sLineBreak), False);
+    if Lines.Count > 0 then
+      PlainText := Lines[0];
+  end;
+  case Style of
+    csNone:
+      Result := '';
+    csBefore:
+      Result := '{'
+        + EOL
+        + FormatCommentLines(PlainText, cIndent)
+        + EOL
+        + '}';
+    csAfter:
+      Result := FormatCommentLines(
+        '{' + PlainText + '}', cIndent
+      );
   end;
 end;
 
