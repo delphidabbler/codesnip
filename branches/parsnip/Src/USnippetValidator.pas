@@ -20,7 +20,11 @@ interface
 
 uses
   // Project
-  ActiveText.UMain, DB.USnippet, DB.USnippetKind, UBaseObjects, UStructs;
+  ActiveText.UMain,
+  DB.USnippet,
+  DB.USnippetKind,
+  UBaseObjects,
+  UStructs;
 
 
 type
@@ -152,7 +156,9 @@ uses
   // Delphi
   SysUtils,
   // Project
-  ActiveText.UValidator, DB.UMain, UStrUtils;
+  CS.ActiveText.Validator,
+  DB.UMain,
+  UStrUtils;
 
 
 { TSnippetValidator }

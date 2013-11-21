@@ -23,7 +23,14 @@ interface
 
 uses
   // Delphi
-  Forms, ComCtrls, Menus, Classes, ActnList, Controls, StdCtrls, ImgList,
+  Forms,
+  ComCtrls,
+  Menus,
+  Classes,
+  ActnList,
+  Controls,
+  StdCtrls,
+  ImgList,
   StdActns,
   // Project
   ActiveText.UMain;
@@ -92,8 +99,14 @@ uses
   CS.ActiveText.Parsers.PlainText,
   CS.ActiveText.Renderers.PlainText,
   CS.ActiveText.Renderers.REML,
-  ActiveText.UValidator, FmActiveTextPreviewDlg, UConsts, UExceptions,
-  UFontHelper, UIStringList, USnippetExtraHelper, UStrUtils;
+  CS.ActiveText.Validator,
+  FmActiveTextPreviewDlg,
+  UConsts,
+  UExceptions,
+  UFontHelper,
+  UIStringList,
+  USnippetExtraHelper,
+  UStrUtils;
 
 
 {$R *.dfm}
