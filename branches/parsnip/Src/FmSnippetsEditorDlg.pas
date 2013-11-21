@@ -36,7 +36,6 @@ uses
   ImgList,
   // Project
   CS.UI.Frames.CodeEditor,
-  ActiveText.UMain,
   Compilers.UGlobals,
   DB.USnippet,
   FmGenericOKDlg,

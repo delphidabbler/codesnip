@@ -23,7 +23,6 @@ uses
   // Delphi
   Generics.Collections,
   // Project
-  ActiveText.UMain,
   UBaseObjects,
   UExceptions,
   UTaggedTextLexer;
