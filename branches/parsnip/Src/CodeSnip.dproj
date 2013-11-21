@@ -38,7 +38,6 @@
 			</DelphiCompile>
 			<DCCReference Include="ActiveText.UHTMLRenderer.pas"/>
 			<DCCReference Include="ActiveText.UMain.pas"/>
-			<DCCReference Include="ActiveText.URTFRenderer.pas"/>
 			<DCCReference Include="ActiveText.UValidator.pas"/>
 			<DCCReference Include="Browser.IntfDocHostUI.pas"/>
 			<DCCReference Include="Browser.UControlHelper.pas"/>
@@ -579,6 +578,7 @@
 			<DCCReference Include="Main\CS.ActiveText.Parsers.REML.pas"/>
 			<DCCReference Include="Main\CS.ActiveText.Renderers.PlainText.pas"/>
 			<DCCReference Include="Main\CS.ActiveText.Renderers.REML.pas"/>
+			<DCCReference Include="Main\CS.ActiveText.Renderers.RTF.pas"/>
 			<DCCReference Include="Main\CS.Config.pas"/>
 			<DCCReference Include="Main\CS.ExternalProgs.DiffViewer.pas"/>
 			<DCCReference Include="Main\CS.Init.CommandLineOpts.pas"/>

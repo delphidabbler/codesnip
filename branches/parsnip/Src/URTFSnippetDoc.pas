@@ -23,10 +23,10 @@ uses
   // Delphi
   Graphics,
   // Project
+  CS.ActiveText.Renderers.RTF,
   CS.SourceCode.Hiliter.Brushes,
   CS.SourceCode.Hiliter.Themes,
   ActiveText.UMain,
-  ActiveText.URTFRenderer,
   UEncodings,
   UIStringList,
   USnippetDoc,
@@ -155,9 +155,9 @@ end;
 function TRTFSnippetDoc.CreateActiveTextRenderer(
   const Styles: TActiveTextRTFStyleMap): IActiveTextRenderer;
 var
-  Renderer: TActiveTextRTF;
+  Renderer: TActiveTextRTFRenderer;
 begin
-  Renderer := TActiveTextRTF.Create(fBuilder);
+  Renderer := TActiveTextRTFRenderer.Create(fBuilder);
   Renderer.Options.ElemStyleMap := Styles;
   Renderer.Options.DisplayURLs := True;
   Renderer.Options.URLStyle := fURLStyle;

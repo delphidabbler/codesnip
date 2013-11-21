@@ -13,7 +13,7 @@
 }
 
 
-unit ActiveText.URTFRenderer;
+unit CS.ActiveText.Renderers.RTF;
 
 
 interface
@@ -46,7 +46,7 @@ type
   end;
 
 type
-  TActiveTextRTF = class(TInterfacedObject, IActiveTextRenderer)
+  TActiveTextRTFRenderer = class(TInterfacedObject, IActiveTextRenderer)
   public
     type
       TOptions = class(TObject)
@@ -219,16 +219,17 @@ begin
   end;
 end;
 
-{ TActiveTextRTF }
+{ TActiveTextRTFRenderer }
 
-procedure TActiveTextRTF.BeginBlock(const Kind: TActiveTextActionElemKind);
+procedure TActiveTextRTFRenderer.BeginBlock(
+  const Kind: TActiveTextActionElemKind);
 begin
   fInBlock := True;
   fBuilder.BeginGroup;
   fBuilder.ApplyStyle(fOptions.ElemStyleMap[Kind]);
 end;
 
-procedure TActiveTextRTF.BeginInlineStyle(
+procedure TActiveTextRTFRenderer.BeginInlineStyle(
   const Kind: TActiveTextActionElemKind);
 begin
   if SkipOutput then
@@ -237,12 +238,12 @@ begin
   fBuilder.ApplyStyle(fOptions.ElemStyleMap[Kind]);
 end;
 
-procedure TActiveTextRTF.BeginLink(const URL: string);
+procedure TActiveTextRTFRenderer.BeginLink(const URL: string);
 begin
   // do nothing
 end;
 
-constructor TActiveTextRTF.Create(const Builder: TRTFBuilder);
+constructor TActiveTextRTFRenderer.Create(const Builder: TRTFBuilder);
 begin
   Assert(not Assigned(fBuilder), ClassName + '.Create: Builder is nil');
   inherited Create;
@@ -250,31 +251,33 @@ begin
   fOptions := TOptions.Create;
 end;
 
-destructor TActiveTextRTF.Destroy;
+destructor TActiveTextRTFRenderer.Destroy;
 begin
   fOptions.Free;
   inherited;
 end;
 
-procedure TActiveTextRTF.EndBlock(const Kind: TActiveTextActionElemKind);
+procedure TActiveTextRTFRenderer.EndBlock(
+  const Kind: TActiveTextActionElemKind);
 begin
   fBuilder.EndPara;
   fBuilder.EndGroup;
   fInBlock := False;
 end;
 
-procedure TActiveTextRTF.EndInlineStyle(const Kind: TActiveTextActionElemKind);
+procedure TActiveTextRTFRenderer.EndInlineStyle(
+  const Kind: TActiveTextActionElemKind);
 begin
   if SkipOutput then
     Exit;
   fBuilder.EndGroup;
 end;
 
-procedure TActiveTextRTF.EndLink(const URL: string);
+procedure TActiveTextRTFRenderer.EndLink(const URL: string);
 resourcestring
   sURL = ' (%s)';                     // formatting for URLs from hyperlinks
 begin
-  if SkipOutput then
+  if SkipOutput or not fOptions.DisplayURLs then
     Exit;
   fBuilder.BeginGroup;
   fBuilder.ApplyStyle(fOptions.URLStyle);
@@ -282,12 +285,12 @@ begin
   fBuilder.EndGroup;
 end;
 
-procedure TActiveTextRTF.Finalise;
+procedure TActiveTextRTFRenderer.Finalise;
 begin
   // do nothing
 end;
 
-procedure TActiveTextRTF.Initialise;
+procedure TActiveTextRTFRenderer.Initialise;
 var
   Style: TRTFStyle;
 begin
@@ -301,21 +304,21 @@ begin
   fBuilder.ColourTable.AddFromStyle(fOptions.URLStyle);
 end;
 
-procedure TActiveTextRTF.OutputText(const AText: string);
+procedure TActiveTextRTFRenderer.OutputText(const AText: string);
 begin
   if SkipOutput then
     Exit;
   fBuilder.AddText(AText);
 end;
 
-function TActiveTextRTF.SkipOutput: Boolean;
+function TActiveTextRTFRenderer.SkipOutput: Boolean;
 begin
   Result := not fInBlock and fOptions.IgnoreInterBlockText;
 end;
 
-{ TActiveTextRTF.TOptions }
+{ TActiveTextRTFRenderer.TOptions }
 
-constructor TActiveTextRTF.TOptions.Create;
+constructor TActiveTextRTFRenderer.TOptions.Create;
 begin
   inherited Create;
   fElemStyleMap := TActiveTextRTFStyleMap.Create;
@@ -324,13 +327,13 @@ begin
   fURLStyle := TRTFStyle.CreateNull;
 end;
 
-destructor TActiveTextRTF.TOptions.Destroy;
+destructor TActiveTextRTFRenderer.TOptions.Destroy;
 begin
   fElemStyleMap.Free;
   inherited;
 end;
 
-procedure TActiveTextRTF.TOptions.SetElemStyleMap(
+procedure TActiveTextRTFRenderer.TOptions.SetElemStyleMap(
   const ElemStyleMap: TActiveTextRTFStyleMap);
 begin
   fElemStyleMap.Assign(ElemStyleMap);

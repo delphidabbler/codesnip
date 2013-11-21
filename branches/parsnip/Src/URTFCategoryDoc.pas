@@ -23,7 +23,11 @@ uses
   // Delphi
   Graphics,
   // Project
-  ActiveText.URTFRenderer, DB.UCategory, DB.USnippet, UEncodings, URTFBuilder,
+  CS.ActiveText.Renderers.RTF,
+  DB.UCategory,
+  DB.USnippet,
+  UEncodings,
+  URTFBuilder,
   URTFStyles;
 
 
@@ -93,7 +97,9 @@ implementation
 
 uses
   // Project
-  ActiveText.UMain, UColours, UPreferences;
+  ActiveText.UMain,
+  UColours,
+  UPreferences;
 
 
 { TRTFCategoryDoc }
@@ -239,20 +245,20 @@ end;
 
 procedure TRTFCategoryDoc.OutputSnippetText(const Snippet: TSnippet);
 var
-  RTFWriter: TActiveTextRTF;  // Object that generates RTF from active text
+  RTFRenderer: TActiveTextRTFRenderer;
 begin
   fBuilder.BeginGroup;
   fBuilder.SetParaSpacing(TRTFParaSpacing.Create(ParaSpacing, 0.0));
   fBuilder.SetFont(MainFontName);
   fBuilder.SetFontSize(ParaFontSize);
   fBuilder.SetFontStyle([]);
-  // RTFWriter is freed automatically since it is reference counted and an
+  // RTFRenderer is freed automatically since it is reference counted and an
   // interface reference is passed to Snippet.Description.Render()
-  RTFWriter := TActiveTextRTF.Create(fBuilder);
-  RTFWriter.Options.ElemStyleMap := fDescStyles;
-  RTFWriter.Options.DisplayURLs := True;
-  RTFWriter.Options.URLStyle := fURLStyle;
-  Snippet.Description.Render(RTFWriter);
+  RTFRenderer := TActiveTextRTFRenderer.Create(fBuilder);
+  RTFRenderer.Options.ElemStyleMap := fDescStyles;
+  RTFRenderer.Options.DisplayURLs := True;
+  RTFRenderer.Options.URLStyle := fURLStyle;
+  Snippet.Description.Render(RTFRenderer);
   fBuilder.EndGroup;
 end;
 
