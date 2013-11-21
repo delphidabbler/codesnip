@@ -36,7 +36,6 @@ program CodeSnip;
 uses
   Forms,
   Windows,
-  ActiveText.UMain in 'ActiveText.UMain.pas',
   Browser.IntfDocHostUI in 'Browser.IntfDocHostUI.pas',
   Browser.UControlHelper in 'Browser.UControlHelper.pas',
   Browser.UController in 'Browser.UController.pas',
@@ -371,6 +370,7 @@ uses
   GIFImage in 'Main\Imports\GIFImage.pas',
   LVEx in 'Main\Imports\LVEx.pas',
   UEncrypt in 'Main\Imports\UEncrypt.pas',
+  CS.ActiveText in 'Main\CS.ActiveText.pas',
   CS.ActiveText.Parsers.Credits in 'Main\CS.ActiveText.Parsers.Credits.pas',
   CS.ActiveText.Parsers.PlainText in 'Main\CS.ActiveText.Parsers.PlainText.pas',
   CS.ActiveText.Parsers.REML in 'Main\CS.ActiveText.Parsers.REML.pas',

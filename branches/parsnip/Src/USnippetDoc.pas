@@ -24,7 +24,11 @@ uses
   // Delphi
   Classes,
   // Project
-  ActiveText.UMain, Compilers.UGlobals, DB.USnippet, UEncodings, UIStringList;
+  CS.ActiveText,
+  Compilers.UGlobals,
+  DB.USnippet,
+  UEncodings,
+  UIStringList;
 
 
 type

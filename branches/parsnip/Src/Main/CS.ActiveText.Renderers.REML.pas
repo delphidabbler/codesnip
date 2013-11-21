@@ -23,7 +23,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  ActiveText.UMain,
+  CS.ActiveText,
   UREMLDataIO;
 
 

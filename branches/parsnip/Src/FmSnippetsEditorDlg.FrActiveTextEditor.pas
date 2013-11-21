@@ -33,7 +33,7 @@ uses
   ImgList,
   StdActns,
   // Project
-  ActiveText.UMain;
+  CS.ActiveText;
 
 
 type

@@ -97,7 +97,7 @@ implementation
 
 uses
   // Project
-  ActiveText.UMain,
+  CS.ActiveText,
   UColours,
   UPreferences;
 

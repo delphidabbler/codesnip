@@ -24,7 +24,7 @@ uses
   Classes,
   Generics.Collections,
   // Project
-  ActiveText.UMain,
+  CS.ActiveText,
   DB.USnippet,
   UBaseObjects,
   UIStringList;

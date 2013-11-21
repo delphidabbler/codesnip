@@ -23,7 +23,7 @@ uses
   // Delphi
   Classes,
   // Project
-  ActiveText.UMain,
+  CS.ActiveText,
   UEncodings,
   UIStringList,
   USnippetDoc;

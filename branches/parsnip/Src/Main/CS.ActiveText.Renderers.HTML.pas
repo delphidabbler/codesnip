@@ -20,9 +20,11 @@ interface
 
 uses
   // Delphi
-  SysUtils, Graphics, Generics.Collections,
+  SysUtils,
+  Graphics,
+  Generics.Collections,
   // Project
-  ActiveText.UMain,
+  CS.ActiveText,
   UBaseObjects,
   UCSSBuilder,
   UHTMLUtils;

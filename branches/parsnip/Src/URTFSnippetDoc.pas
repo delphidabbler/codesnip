@@ -23,10 +23,10 @@ uses
   // Delphi
   Graphics,
   // Project
+  CS.ActiveText,
   CS.ActiveText.Renderers.RTF,
   CS.SourceCode.Hiliter.Brushes,
   CS.SourceCode.Hiliter.Themes,
-  ActiveText.UMain,
   UEncodings,
   UIStringList,
   USnippetDoc,

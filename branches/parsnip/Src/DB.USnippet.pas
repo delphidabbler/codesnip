@@ -26,9 +26,12 @@ uses
   Collections.Base,
   Collections.Lists,
   // Project
+  CS.ActiveText,
   CS.SourceCode.Languages,
-  ActiveText.UMain, Compilers.UGlobals, DB.USnippetKind,
-  UIStringList, USnippetIDs;
+  Compilers.UGlobals,
+  DB.USnippetKind,
+  UIStringList,
+  USnippetIDs;
 
 type
   ///  <summary>Enumeration providing information about the level to which a

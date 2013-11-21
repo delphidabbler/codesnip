@@ -23,7 +23,10 @@ uses
   // Delphi
   Generics.Collections,
   // Project
-  ActiveText.UMain, UBaseObjects, URTFBuilder, URTFStyles;
+  CS.ActiveText,
+  UBaseObjects,
+  URTFBuilder,
+  URTFStyles;
 
 
 type

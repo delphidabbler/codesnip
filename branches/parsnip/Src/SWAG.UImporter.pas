@@ -23,7 +23,7 @@ uses
   // Delphi
   Generics.Collections,
   // Project
-  ActiveText.UMain,
+  CS.ActiveText,
   DB.USnippet,
   SWAG.UCommon;
 

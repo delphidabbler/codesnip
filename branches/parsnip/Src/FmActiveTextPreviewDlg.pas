@@ -27,7 +27,7 @@ uses
   Controls,
   ExtCtrls,
   // Project
-  ActiveText.UMain,
+  CS.ActiveText,
   Browser.UHTMLEvents,
   FmGenericViewDlg,
   FrBrowserBase,

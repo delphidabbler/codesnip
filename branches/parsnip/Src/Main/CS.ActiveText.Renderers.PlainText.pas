@@ -21,7 +21,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  ActiveText.UMain,
+  CS.ActiveText,
   UIStringList;
 
 type

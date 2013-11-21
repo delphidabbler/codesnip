@@ -156,9 +156,15 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Classes,
+  SysUtils,
+  Classes,
   // Project
-  ActiveText.UMain, DB.UMain, DB.USnippet, UIOUtils, USnippetIDs, UStrUtils;
+  CS.ActiveText,
+  DB.UMain,
+  DB.USnippet,
+  UIOUtils,
+  USnippetIDs,
+  UStrUtils;
 
 
 { TCodeImportMgr }

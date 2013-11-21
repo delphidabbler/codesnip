@@ -20,7 +20,7 @@ interface
 
 uses
   // Project
-  ActiveText.UMain,
+  CS.ActiveText,
   DB.UCategory,
   DB.USnippet;
 

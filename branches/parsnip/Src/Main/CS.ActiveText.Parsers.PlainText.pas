@@ -19,7 +19,7 @@ interface
 
 uses
   // Project
-  ActiveText.UMain;
+  CS.ActiveText;
 
 type
   ///  <summary>Class that creates active text by parsing plain text.</summary>

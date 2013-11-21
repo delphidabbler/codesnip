@@ -206,8 +206,8 @@ uses
   ActiveX,
   XMLDom,
   // Project
+  CS.ActiveText,
   CS.ActiveText.Renderers.REML,
-  ActiveText.UMain,
   DB.UMain,
   DB.USnippetKind,
   UAppInfo,
