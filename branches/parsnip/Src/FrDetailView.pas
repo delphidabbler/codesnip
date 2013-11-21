@@ -119,7 +119,6 @@ uses
   CS.SourceCode.Hiliter.Brushes,
   CS.SourceCode.Hiliter.Renderers.CSS,
   CS.SourceCode.Hiliter.Themes,
-  ActiveText.UHTMLRenderer,
   Browser.UHighlighter,
   UColours,
   UCSSUtils,
