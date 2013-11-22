@@ -823,8 +823,6 @@ begin
   SourceCode := Src.SourceCode;
   HiliteSource := Src.HiliteSource;
   DisplayName := Src.DisplayName;
-  // we use cloning for Extra below because it deals uccessfully with both
-  // Self.Extra = nil and Src.Extra = nil
   Notes := TActiveTextFactory.CloneActiveText(Src.Notes);
   CompilerResults := Src.CompilerResults;
   TestInfo := Src.TestInfo;
