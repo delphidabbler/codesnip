@@ -872,7 +872,7 @@ begin
     edDisplayName.Text := fSnippet.DisplayName;
     cbCategories.ItemIndex := fCatList.IndexOf(fSnippet.Category);
     frmExtra.DefaultEditMode := emAuto;
-    frmExtra.ActiveText := fSnippet.Extra;
+    frmExtra.ActiveText := fSnippet.Notes;
     cbKind.ItemIndex := fSnipKindList.IndexOf(fSnippet.Kind);
     // check required items in references check list boxes
     UpdateReferences;
@@ -1002,7 +1002,7 @@ begin
     (Props.Desc as IAssignable).Assign(frmDescription.ActiveText);
     Props.SourceCode := StrTrimRight(frmSourceEditor.SourceCode);
     Props.HiliteSource := chkUseHiliter.Checked;
-    (Props.Extra as IAssignable).Assign(frmExtra.ActiveText);
+    (Props.Notes as IAssignable).Assign(frmExtra.ActiveText);
     Props.CompilerResults := fCompilersLBMgr.GetCompileResults;
     Refs.Units := fUnitsCLBMgr.GetCheckedUnits;
     Refs.Depends := fDependsCLBMgr.GetCheckedSnippets;

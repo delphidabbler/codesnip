@@ -170,8 +170,8 @@ begin
   RenderTitledList(sXRefListTitle, SnippetsToStrings(Snippet.XRef));
   if Snippet.Kind <> skFreeform then
     RenderCompilerInfo(sCompilers, CompilerInfo(Snippet));
-  if not Snippet.Extra.IsEmpty then
-    RenderExtra(Snippet.Extra);
+  if not Snippet.Notes.IsEmpty then
+    RenderExtra(Snippet.Notes);
   Result := FinaliseDoc;
 end;
 

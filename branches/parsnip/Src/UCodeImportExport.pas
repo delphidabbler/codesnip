@@ -381,11 +381,11 @@ begin
     SnippetNode, cHighlightSource, IntToStr(Ord(Snippet.HiliteSource))
   );
   // extra info is written only if present
-  if not Snippet.Extra.IsEmpty then
+  if not Snippet.Notes.IsEmpty then
     fXMLDoc.CreateElement(
       SnippetNode,
       cExtraNode,
-      TActiveTextREMLRenderer.Render(Snippet.Extra, EOL)
+      TActiveTextREMLRenderer.Render(Snippet.Notes, EOL)
     );
   // write kind
   TXMLDocHelper.WriteSnippetKind(fXMLDoc, SnippetNode, Snippet.Kind);
@@ -543,13 +543,13 @@ begin
         // how we read extra property depends on version of file
         case fVersion of
           1:
-            Props.Extra := TSnippetExtraHelper.BuildActiveText(
+            Props.Notes := TSnippetExtraHelper.BuildActiveText(
               TXMLDocHelper.GetSubTagText(fXMLDoc, SnippetNode, cCommentsNode),
               TXMLDocHelper.GetSubTagText(fXMLDoc, SnippetNode, cCreditsNode),
               TXMLDocHelper.GetSubTagText(fXMLDoc, SnippetNode, cCreditsUrlNode)
             );
           else // later versions
-            Props.Extra := TSnippetExtraHelper.BuildActiveText(
+            Props.Notes := TSnippetExtraHelper.BuildActiveText(
               TXMLDocHelper.GetSubTagText(fXMLDoc, SnippetNode, cExtraNode)
             );
         end;

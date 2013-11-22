@@ -55,7 +55,7 @@ type
     SourceCode: string;                   // Snippet's source code
     HiliteSource: Boolean;                // If syntax highlighter to be used
     DisplayName: string;                  // Snippet's display name
-    Extra: IActiveText;                   // Extra text used to describe snippet
+    Notes: IActiveText;                   // Additional notes about snippet
     CompilerResults: TCompileResults;     // Compilation results
     TestInfo: TSnippetTestInfo;           // Test information
     procedure Init;
@@ -132,7 +132,7 @@ type
     fUnits: TStringList;                    // List of required units
     fDepends: TSnippetList;                 // List of required snippets
     fXRef: TSnippetList;                    // List of cross-referenced snippets
-    fExtra: IActiveText;                    // Further information for snippet
+    fNotes: IActiveText;                    // Further information for snippet
     fCompatibility: TCompileResults;        // Snippet's compiler compatibility
     fHiliteSource: Boolean;                 // If source is syntax highlighted
     fTestInfo: TSnippetTestInfo;            // Level of testing of snippet
@@ -182,7 +182,7 @@ type
       {Source code of snippet}
     property HiliteSource: Boolean read fHiliteSource;
       {Flags whether source code can be syntax highlighted}
-    property Extra: IActiveText read fExtra;
+    property Notes: IActiveText read fNotes;
       {Additional information about snippet}
     property Compatibility: TCompileResults read fCompatibility;
       {Compiler compatibilty of this snippet}
@@ -410,7 +410,7 @@ begin
   FreeAndNil(fXRef);
   FreeAndNil(fDepends);
   FreeAndNil(fUnits);
-  fExtra := nil;
+  fNotes := nil;
   fDescription := nil;
   inherited;
 end;
@@ -457,7 +457,7 @@ begin
   fSourceCode := StrWindowsLineBreaks(Data.SourceCode);
   fHiliteSource := Data.HiliteSource;
   fDisplayName := Data.DisplayName;
-  fExtra := TActiveTextFactory.CloneActiveText(Data.Extra);
+  fNotes := TActiveTextFactory.CloneActiveText(Data.Notes);
   fCompatibility := Data.CompilerResults;
   fTestInfo := Data.TestInfo;
 end;
@@ -510,7 +510,7 @@ begin
   Result.SourceCode := SourceCode;
   Result.HiliteSource := HiliteSource;
   Result.DisplayName := GetDisplayNameValue;
-  Result.Extra := TActiveTextFactory.CloneActiveText(Extra);
+  Result.Notes := TActiveTextFactory.CloneActiveText(Notes);
   Result.CompilerResults := Compatibility;
   Result.TestInfo := TestInfo;
 end;
@@ -825,7 +825,7 @@ begin
   DisplayName := Src.DisplayName;
   // we use cloning for Extra below because it deals uccessfully with both
   // Self.Extra = nil and Src.Extra = nil
-  Extra := TActiveTextFactory.CloneActiveText(Src.Extra);
+  Notes := TActiveTextFactory.CloneActiveText(Src.Notes);
   CompilerResults := Src.CompilerResults;
   TestInfo := Src.TestInfo;
 end;
@@ -842,7 +842,7 @@ begin
   DisplayName := '';
   SourceCode := '';
   HiliteSource := True;
-  Extra := TActiveTextFactory.CreateActiveText;
+  Notes := TActiveTextFactory.CreateActiveText;
   for CompID := Low(TCompilerID) to High(TCompilerID) do
     CompilerResults[CompID] := crQuery;
   TestInfo := stiNone;

@@ -655,7 +655,7 @@ begin
     Props.DisplayName := GetPropertyText(cDisplayNameNode);
     Props.Kind := GetKindProperty;
     Props.Desc := GetDescriptionProperty;
-    Props.Extra := GetExtraProperty;
+    Props.Notes := GetExtraProperty;
     Props.SourceCode := GetSourceCodePropertyText;
     Props.HiliteSource := TXMLDocHelper.GetHiliteSource(
       fXMLDoc, SnippetNode, True
@@ -969,12 +969,12 @@ begin
     );
     fXMLDoc.CreateElement(SnippetNode, cDisplayNameNode, Props.DisplayName);
     // extra node is only written if extra property has a value
-    if not Props.Extra.IsEmpty then
+    if not Props.Notes.IsEmpty then
     begin
       fXMLDoc.CreateElement(
         SnippetNode,
         cExtraNode,
-        TActiveTextREMLRenderer.Render(Props.Extra, EOL)
+        TActiveTextREMLRenderer.Render(Props.Notes, EOL)
       );
     end;
     TXMLDocHelper.WriteSnippetKind(fXMLDoc, SnippetNode, Props.Kind);

@@ -165,7 +165,7 @@ end;
 
 function TSnippetHTML.Extra: string;
 begin
-  Result := RenderActiveText(fSnippet.Extra);
+  Result := RenderActiveText(fSnippet.Notes);
 end;
 
 class function TSnippetHTML.JSALink(const JSFn, CSSClass, Text: string):

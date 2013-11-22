@@ -191,7 +191,7 @@ begin
     and ValidateDescription(Snippet.Description.ToString, ErrorMsg, ErrorSel)
     and ValidateSourceCode(Snippet.SourceCode, ErrorMsg, ErrorSel)
     and ValidateDependsList(Snippet, ErrorMsg)
-    and ValidateExtra(Snippet.Extra, ErrorMsg);
+    and ValidateExtra(Snippet.Notes, ErrorMsg);
 end;
 
 class function TSnippetValidator.ValidateDependsList(const Snippet: TSnippet;

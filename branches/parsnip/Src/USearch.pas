@@ -918,7 +918,7 @@ begin
   SearchText := NormaliseSearchText(
     ' ' + StrMakeSentence(Snippet.Description.ToString) +
     ' ' + Snippet.SourceCode +
-    ' ' + StrMakeSentence(Snippet.Extra.ToString) +
+    ' ' + StrMakeSentence(Snippet.Notes.ToString) +
     ' '
   );
   if fLogic = slOr then

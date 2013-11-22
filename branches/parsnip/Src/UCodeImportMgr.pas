@@ -303,7 +303,7 @@ begin
     AdjustDependsList(SnippetInfo.Data.Refs.Depends);
 
     if UserInfo.Details.ToString <> '' then
-      SnippetInfo.Data.Props.Extra.Append(UserDetailsActiveText);
+      SnippetInfo.Data.Props.Notes.Append(UserDetailsActiveText);
 
     { TODO: fix this code - ImportAsName will not longer have correct snippet
                             ID: will need to implement LinkInfo property of
