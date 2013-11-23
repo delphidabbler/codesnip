@@ -380,7 +380,6 @@ uses
   CS.ActiveText.Renderers.RTF in 'Main\CS.ActiveText.Renderers.RTF.pas',
   CS.ActiveText.Validator in 'Main\CS.ActiveText.Validator.pas',
   CS.Config in 'Main\CS.Config.pas',
-  CS.Database.IO.Legacy.UserDB in 'Main\CS.Database.IO.Legacy.UserDB.pas',
   CS.Database.Tags in 'Main\CS.Database.Tags.pas',
   CS.Database.Types in 'Main\CS.Database.Types.pas',
   CS.ExternalProgs.DiffViewer in 'Main\CS.ExternalProgs.DiffViewer.pas',
