@@ -80,21 +80,6 @@ function IsDirectory(const DirName: string): Boolean;
 ///  <returns>Integer. Rounded value.</returns>
 function FloatToInt(const F: Double): Int64;
 
-///  <summary>Creates a date stamp for current date in RFC1123 format.</summary>
-///  <returns>string. Required date and time as date stamp in UTC/GMT.</returns>
-function RFC1123DateStamp: string; inline;
-
-///  <summary>Returns the current date and time in GMT/UTC.</summary>
-function NowGMT: TDateTime;
-
-///  <summary>Converts a date-time value in SQL format into a TDateTime.
-///  </summary>
-///  <param name="SQLDate">string [in] SQL format date-time value to be
-///  converted.</param>
-///  <returns>TDateTime. Converted value.</returns>
-///  <remarks>SQLDate must be in YYYY-MM-DD hh:mm:ss format.</remarks>
-function ParseSQLDateTime(const SQLDate: string): TDateTime;
-
 ///  <summary>Get a desired interface pointer to an object instance.</summary>
 ///  <param name="Instance">IInterface [in] Instance for which an interface is
 ///  requested. May be nil.</param>
@@ -273,40 +258,6 @@ function FloatToInt(const F: Double): Int64;
 begin
   // We don't just use Round() on its own because don't want bankers rounding.
   Result := Round(SimpleRoundTo(F, 0));
-end;
-
-function NowGMT: TDateTime;
-var
-  ST: TSystemTime;
-begin
-  // This Windows API function gets system time in UTC/GMT
-  // see http://msdn.microsoft.com/en-us/library/ms724390
-  GetSystemTime(ST);
-  Result := SystemTimeToDateTime(ST);
-end;
-
-function RFC1123DateStamp: string;
-const
-  // Pattern to create RFC1123 date formats
-  cRFC1123Pattern = 'ddd, dd mmm yyyy HH'':''nn'':''ss ''GMT''';
-begin
-  Result := FormatDateTime(cRFC1123Pattern, NowGMT);
-end;
-
-function ParseSQLDateTime(const SQLDate: string): TDateTime;
-begin
-  Result := SysUtils.EncodeDate(
-    SysUtils.StrToInt(Copy(SQLDate, 1, 4)),
-    SysUtils.StrToInt(Copy(SQLDate, 6, 2)),
-    SysUtils.StrToInt(Copy(SQLDate, 9, 2))
-  )
-  +
-  SysUtils.EncodeTime(
-    SysUtils.StrToInt(Copy(SQLDate, 12, 2)),
-    SysUtils.StrToInt(Copy(SQLDate, 15, 2)),
-    SysUtils.StrToInt(Copy(SQLDate, 18, 2)),
-    0
-  );
 end;
 
 procedure GetIntf(const Instance: IInterface; const IID: TGUID; out Intf);

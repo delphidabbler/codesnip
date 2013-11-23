@@ -26,7 +26,9 @@ uses
   // Delphi
   ExtActns,
   // Project
-  Notifications.UData, Notifications.URecorderThread, UThreadGroup;
+  Notifications.UData,
+  Notifications.URecorderThread,
+  UThreadGroup;
 
 
 type
@@ -183,8 +185,13 @@ uses
   // Delphi
   SysUtils, Classes, DateUtils,
   // Project
-  {FmDBUpdateDlg, }UAppInfo, UPreferences, UProgramUpdateChecker, USettings,
-  {UDBUpdateMgr, }UUtils;
+  CS.Utils.Dates,
+  {FmDBUpdateDlg, }
+  UAppInfo,
+  UPreferences,
+  UProgramUpdateChecker,
+  USettings;
+  {UDBUpdateMgr; }
 
 
 { TUpdateCheckerThread }
