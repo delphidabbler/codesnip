@@ -131,7 +131,6 @@ type
       inline;
     class function Compare(const Left, Right: TDBTag): Integer; static; inline;
     function ToString: string; inline;
-    function ToDisplayString: string;
     function Hash: Integer; inline;
   end;
 
@@ -291,6 +290,7 @@ uses
   Character,
 
   CS.Utils.Hashes,
+  UConsts,
   UStrUtils;
 
 { TDBSnippetID }
@@ -474,12 +474,20 @@ begin
 end;
 
 class function TDBTag.IsValidPreparedTagString(const AStr: string): Boolean;
+var
+  Ch: Char;
 begin
   if AStr = EmptyStr then
     Exit(False);
   if Length(AStr) > 64 then
     Exit(False);
-  // TODO: more validation of tag string
+  for Ch in AStr do
+    if not TCharacter.IsLetter(Ch)
+      and not TCharacter.IsNumber(Ch)
+      and (Ch <> ' ')
+      and not TCharacter.IsPunctuation(Ch)
+      and not TCharacter.IsSymbol(Ch) then
+      Exit(False);
   Result := True;
 end;
 
@@ -495,14 +503,7 @@ end;
 
 class function TDBTag.PrepareTagString(const AStr: string): string;
 begin
-  Result := StrReplace(
-    StrCompressWhiteSpace(StrTrim(AStr)), ' ', '_'
-  );
-end;
-
-function TDBTag.ToDisplayString: string;
-begin
-  Result := StrReplace(fTag, '_', ' ');
+  Result := StrCompressWhiteSpace(StrTrim(AStr));
 end;
 
 function TDBTag.ToString: string;
