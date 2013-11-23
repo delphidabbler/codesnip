@@ -53,8 +53,8 @@ type
       fUseColour: Boolean;
       ///  <summary>RTF styles used for snippet's description.</summary>
       fDescStyles: TActiveTextRTFStyleMap;
-      ///  <summary>RTF styles used for snippet's extra information.</summary>
-      fExtraStyles: TActiveTextRTFStyleMap;
+      ///  <summary>RTF styles used for snippet's notes.</summary>
+      fNotesStyles: TActiveTextRTFStyleMap;
       ///  <summary>Styling applied to URLs.</summary>
       fURLStyle: TRTFStyle;
     const
@@ -95,11 +95,10 @@ type
     ///  document.</summary>
     procedure RenderCompilerInfo(const Heading: string;
       const Info: TCompileDocInfoArray); override;
-    ///  <summary>Interprets and adds given extra information to document.
-    ///  </summary>
+    ///  <summary>Interprets and adds given notes to document.</summary>
     ///  <remarks>Active text formatting is observed and styled to suit
     ///  document.</remarks>
-    procedure RenderExtra(const ExtraText: IActiveText); override;
+    procedure RenderNotes(const NotesText: IActiveText); override;
     ///  <summary>Finalises document and returns content as encoded data.
     ///  </summary>
     function FinaliseDoc: TEncodedData; override;
@@ -148,7 +147,7 @@ begin
   fBrush := ABrush;
   fUseColour := UseColour;
   fDescStyles := TActiveTextRTFStyleMap.Create;
-  fExtraStyles := TActiveTextRTFStyleMap.Create;
+  fNotesStyles := TActiveTextRTFStyleMap.Create;
   InitStyles;
 end;
 
@@ -167,7 +166,7 @@ end;
 destructor TRTFSnippetDoc.Destroy;
 begin
   fTheme.Free;
-  fExtraStyles.Free;
+  fNotesStyles.Free;
   fDescStyles.Free;
   inherited;
 end;
@@ -197,7 +196,7 @@ begin
     [scColour], TRTFFont.CreateNull, 0.0, [], clExternalLink
   );
 
-  fExtraStyles.Add(
+  fNotesStyles.Add(
      ekPara,
      TRTFStyle.Create(
        TRTFParaSpacing.Create(ParaSpacing, 0.0)
@@ -210,7 +209,7 @@ begin
      )
   );
 
-  fExtraStyles.Add(
+  fNotesStyles.Add(
     ekHeading,
     TRTFStyle.Create(
       [scParaSpacing, scFontStyles],
@@ -233,7 +232,7 @@ begin
     )
   );
 
-  fExtraStyles.Add(
+  fNotesStyles.Add(
     ekStrong,
     TRTFStyle.Create(
       [scFontStyles],
@@ -243,9 +242,9 @@ begin
       clNone
     )
   );
-  fDescStyles.Add(ekStrong, fExtraStyles[ekStrong]);
+  fDescStyles.Add(ekStrong, fNotesStyles[ekStrong]);
 
-  fExtraStyles.Add(
+  fNotesStyles.Add(
     ekEm,
     TRTFStyle.Create(
       [scFontStyles],
@@ -255,9 +254,9 @@ begin
       clNone
     )
   );
-  fDescStyles.Add(ekEm, fExtraStyles[ekEm]);
+  fDescStyles.Add(ekEm, fNotesStyles[ekEm]);
 
-  fExtraStyles.Add(
+  fNotesStyles.Add(
     ekVar,
     TRTFStyle.Create(
       [scFontStyles, scColour],
@@ -267,9 +266,9 @@ begin
       clVarText
     )
   );
-  fDescStyles.Add(ekVar, fExtraStyles[ekVar]);
+  fDescStyles.Add(ekVar, fNotesStyles[ekVar]);
 
-  fExtraStyles.Add(
+  fNotesStyles.Add(
     ekWarning,
     TRTFStyle.Create(
       [scFontStyles, scColour],
@@ -279,9 +278,9 @@ begin
       clWarningText
     )
   );
-  fDescStyles.Add(ekWarning, fExtraStyles[ekWarning]);
+  fDescStyles.Add(ekWarning, fNotesStyles[ekWarning]);
 
-  fExtraStyles.Add(
+  fNotesStyles.Add(
     ekMono,
     TRTFStyle.Create(
       [scFont],
@@ -291,12 +290,12 @@ begin
       clNone
     )
   );
-  fDescStyles.Add(ekMono, fExtraStyles[ekMono]);
+  fDescStyles.Add(ekMono, fNotesStyles[ekMono]);
 
   if not fUseColour then
   begin
     fDescStyles.MakeMonochrome;
-    fExtraStyles.MakeMonochrome;
+    fNotesStyles.MakeMonochrome;
     fURLStyle.MakeMonochrome;
   end;
 end;
@@ -334,12 +333,6 @@ begin
   Desc.Render(CreateActiveTextRenderer(fDescStyles));
 end;
 
-procedure TRTFSnippetDoc.RenderExtra(const ExtraText: IActiveText);
-begin
-  Assert(not ExtraText.IsEmpty, ClassName + '.RenderExtra: ExtraText is empty');
-  ExtraText.Render(CreateActiveTextRenderer(fExtraStyles));
-end;
-
 procedure TRTFSnippetDoc.RenderHeading(const Heading: string);
 begin
   fBuilder.SetFontStyle([fsBold]);
@@ -347,6 +340,12 @@ begin
   fBuilder.SetParaSpacing(TRTFParaSpacing.Create(0.0, ParaSpacing));
   fBuilder.AddText(Heading);
   fBuilder.EndPara;
+end;
+
+procedure TRTFSnippetDoc.RenderNotes(const NotesText: IActiveText);
+begin
+  Assert(not NotesText.IsEmpty, ClassName + '.RenderNotes: NotesText is empty');
+  NotesText.Render(CreateActiveTextRenderer(fNotesStyles));
 end;
 
 procedure TRTFSnippetDoc.RenderSourceCode(const SourceCode: string);

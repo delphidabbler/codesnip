@@ -182,9 +182,9 @@ type
 type
   ///  <summary>Class that renders "Extra Information" HTML fragment for a
   ///  snippet.</summary>
-  TSnippetExtraHTMLFragment = class(TSnippetHTMLFragment)
+  TSnippetNotesHTMLFragment = class(TSnippetHTMLFragment)
   public
-    ///  <summary>Renders "Extra Information" fragment as HTML.</summary>
+    ///  <summary>Renders "Notes" fragment as HTML.</summary>
     function ToString: string; override;
   end;
 
@@ -299,12 +299,12 @@ begin
   );
 end;
 
-{ TSnippetExtraHTMLFragment }
+{ TSnippetNotesHTMLFragment }
 
-function TSnippetExtraHTMLFragment.ToString: string;
+function TSnippetNotesHTMLFragment.ToString: string;
 begin
   Result := THTML.CompoundTag(
-    'div', THTMLAttributes.Create('id', 'extra'), SnippetHTML.Extra
+    'div', THTMLAttributes.Create('id', 'notes'), SnippetHTML.Notes
   );
 end;
 
@@ -322,7 +322,7 @@ const
     TSnippetDependsHTMLFragment,        // sppDepends,
     TSnippetXRefsHTMLFragment,          // sppXRefs,
     TSnippetCompileResultsHTMLFragment, // sppCompileResults,
-    TSnippetExtraHTMLFragment           // sppExtra
+    TSnippetNotesHTMLFragment           // sppNotes
   );
 begin
   Result := Map[FragKind].Create(Snippet);

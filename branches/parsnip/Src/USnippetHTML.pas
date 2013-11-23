@@ -81,8 +81,8 @@ type
     ///  snippet, or a messafe if list is empty.</summary>
     function Units: string;
     ///  <summary>Returns HTML representation of active text from snippet's
-    ///  Extra property.</summary>
-    function Extra: string;
+    ///  Notes property.</summary>
+    function Notes: string;
     ///  <summary>Returns HTML containing rows of a table representing snippet's
     ///  compilation results for each supported compiler.</summary>
     function CompileResults: string;
@@ -163,11 +163,6 @@ begin
   Result := THTML.Entities(StrMakeSentence(sEmpty));
 end;
 
-function TSnippetHTML.Extra: string;
-begin
-  Result := RenderActiveText(fSnippet.Notes);
-end;
-
 class function TSnippetHTML.JSALink(const JSFn, CSSClass, Text: string):
   string;
 var
@@ -179,6 +174,11 @@ begin
     THTMLAttribute.Create('class', CSSClass)
   ]);
   Result := THTML.CompoundTag('a', Attrs, THTML.Entities(Text));
+end;
+
+function TSnippetHTML.Notes: string;
+begin
+  Result := RenderActiveText(fSnippet.Notes);
 end;
 
 function TSnippetHTML.RenderActiveText(ActiveText: IActiveText): string;

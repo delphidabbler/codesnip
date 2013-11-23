@@ -235,34 +235,34 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
         end
       end
       object tsComments: TTabSheet
-        Caption = 'Extra Information'
+        Caption = 'Notes'
         ImageIndex = 2
-        object lblExtra: TLabel
+        object lblNotes: TLabel
           Left = 3
           Top = 3
-          Width = 87
+          Width = 32
           Height = 13
-          Caption = 'E&xtra information:'
-          FocusControl = frmExtra
+          Caption = '&Notes:'
+          FocusControl = frmNotes
         end
-        object lblExtraCaretPos: TLabel
+        object lblNotesCaretPos: TLabel
           Left = 560
           Top = 3
           Width = 91
           Height = 13
           Alignment = taRightJustify
           AutoSize = False
-          Caption = 'lblExtraCaretPos'
+          Caption = 'lblNotesCaretPos'
         end
-        object btnViewExtra: TButton
+        object btnViewNotes: TButton
           Left = 3
           Top = 409
           Width = 85
           Height = 25
-          Action = actViewExtra
+          Action = actViewNotes
           TabOrder = 1
         end
-        inline frmExtra: TSnippetsActiveTextEdFrame
+        inline frmNotes: TSnippetsActiveTextEdFrame
           Left = 3
           Top = 22
           Width = 648
@@ -471,10 +471,10 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
       OnExecute = actClearXRefsExecute
       OnUpdate = actClearXRefsUpdate
     end
-    object actViewExtra: TAction
+    object actViewNotes: TAction
       Caption = 'Previe&w...'
-      OnExecute = actViewExtraExecute
-      OnUpdate = actViewExtraUpdate
+      OnExecute = actViewNotesExecute
+      OnUpdate = actViewNotesUpdate
     end
     object actCut: TEditCut
       Category = 'Edit'

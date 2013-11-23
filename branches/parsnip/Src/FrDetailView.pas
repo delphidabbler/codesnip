@@ -319,13 +319,13 @@ begin
   // Create and configure highlighter object
   Highlighter := TWBHighlighter.Create(wbBrowser);
   try
-    // only a snippet's description and source code are included in a text
-    // search. These sections are enclosed in tags with ids 'description',
-    // 'sourcecode' and 'extra' respectively in the document's HTML so we
+    // only a snippet's description, notes and source code are included in a
+    // text search. These sections are enclosed in tags with ids 'description',
+    // 'notes' and 'sourcecode' respectively in the document's HTML so we
     // restrict highlighting to these sections
     Highlighter.SearchSectionIDs.Add('description');
+    Highlighter.SearchSectionIDs.Add('notes');
     Highlighter.SearchSectionIDs.Add('sourcecode');
-    Highlighter.SearchSectionIDs.Add('extra');
     Highlighter.HighlightSearchResults(Filter);
   finally
     Highlighter.Free;

@@ -115,13 +115,13 @@ type
     ///  </returns>
     class function ValidateDisplayName(const DisplayName: string;
       out ErrorMsg: string): Boolean;
-    class function ValidateExtra(const Extra: IActiveText;
+    class function ValidateNotes(const Notes: IActiveText;
       out ErrorMsg: string): Boolean;
-      {Validates a extra information from a snippet.
-        @param Extra [in] Extra information to be checked.
+      {Validates a snippet's notes.
+        @param Notes [in] Notes information to be checked.
         @param ErrorMsg [out] Message that describes error. Undefined if True
           returned.
-        @return True if extra information is valid, False if not.
+        @return True if notes are valid, False if not.
       }
     class function Validate(const Snippet: TSnippet; out ErrorMsg: string):
       Boolean; overload;
@@ -191,7 +191,7 @@ begin
     and ValidateDescription(Snippet.Description.ToString, ErrorMsg, ErrorSel)
     and ValidateSourceCode(Snippet.SourceCode, ErrorMsg, ErrorSel)
     and ValidateDependsList(Snippet, ErrorMsg)
-    and ValidateExtra(Snippet.Notes, ErrorMsg);
+    and ValidateNotes(Snippet.Notes, ErrorMsg);
 end;
 
 class function TSnippetValidator.ValidateDependsList(const Snippet: TSnippet;
@@ -357,22 +357,6 @@ begin
     ErrorMsg := sErrNoName;
 end;
 
-class function TSnippetValidator.ValidateExtra(const Extra: IActiveText;
-  out ErrorMsg: string): Boolean;
-  {Validates a extra information from a snippet.
-    @param Extra [in] Extra information to be checked.
-    @param ErrorMsg [out] Message that describes error. Undefined if True
-      returned.
-    @return True if extra information is valid, False if not.
-  }
-var
-  ErrorInfo: TActiveTextValidator.TErrorInfo; // info about error
-begin
-  Result :=  TActiveTextValidator.Validate(Extra, ErrorInfo);
-  if not Result then
-    ErrorMsg := ErrorInfo.Description;
-end;
-
 class function TSnippetValidator.ValidateName(const Name: string;
   const CheckForUniqueness: Boolean; out ErrorMsg: string): Boolean;
   {Validates a snippet's name.
@@ -434,6 +418,22 @@ var
   DummyErrMsg: string;
 begin
   Result := ValidateName(Name, CheckForUniqueness, DummyErrMsg);
+end;
+
+class function TSnippetValidator.ValidateNotes(const Notes: IActiveText;
+  out ErrorMsg: string): Boolean;
+  {Validates a snippet's notes.
+    @param Notes [in] Notes information to be checked.
+    @param ErrorMsg [out] Message that describes error. Undefined if True
+      returned.
+    @return True if notes are valid, False if not.
+  }
+var
+  ErrorInfo: TActiveTextValidator.TErrorInfo; // info about error
+begin
+  Result :=  TActiveTextValidator.Validate(Notes, ErrorInfo);
+  if not Result then
+    ErrorMsg := ErrorInfo.Description;
 end;
 
 class function TSnippetValidator.ValidateSourceCode(const Source: string;

@@ -47,12 +47,12 @@ type
     var
       ///  <summary>List of SWAG snippets to be imported.</summary>
       fImportList: TList<TSWAGSnippet>;
-      ///  <summary>Records the common active text that is included in the Extra
+      ///  <summary>Records the common active text that is included in the Notes
       ///  property of each imported snippet.</summary>
-      fExtraBoilerplate: IActiveText;
+      fNotesBoilerplate: IActiveText;
     ///  <summary>Returns the common active text that will be included in the
-    ///  Extra property of each imported snippet.</summary>
-    function ExtraBoilerplate: IActiveText;
+    ///  Notes property of each imported snippet.</summary>
+    function NotesBoilerplate: IActiveText;
     ///  <summary>Records the data from the given SWAG snippet into a data
     ///  structure suitable for adding to CodeSnip's user database.</summary>
     function BuildSnippetInfo(const SWAGSnippet: TSWAGSnippet):
@@ -121,12 +121,12 @@ function TSWAGImporter.BuildSnippetInfo(const SWAGSnippet: TSWAGSnippet):
   end;
 
   // Constructs and returns the active text to be stored in the new snippet's
-  // Extra field.
-  function BuildExtra: IActiveText;
+  // Notes field.
+  function BuildNotes: IActiveText;
   resourcestring
     sAuthor = 'Author(s): %s';
   begin
-    Result := TActiveTextFactory.CloneActiveText(ExtraBoilerplate);
+    Result := TActiveTextFactory.CloneActiveText(NotesBoilerplate);
     Result.AddElem(TActiveTextFactory.CreateActionElem(ekPara, fsOpen));
     Result.AddElem(
       TActiveTextFactory.CreateTextElem(Format(sAuthor, [SWAGSnippet.Author]))
@@ -142,7 +142,7 @@ begin
   Result.Props.SourceCode := SWAGSnippet.SourceCode;
   Result.Props.HiliteSource := not SWAGSnippet.IsDocument;
   Result.Props.DisplayName := SWAGSnippet.Title;
-  Result.Props.Notes := BuildExtra;
+  Result.Props.Notes := BuildNotes;
   // TSnippetEditData.Refs properties can keep default values
 end;
 
@@ -156,73 +156,6 @@ destructor TSWAGImporter.Destroy;
 begin
   fImportList.Free;
   inherited;
-end;
-
-function TSWAGImporter.ExtraBoilerplate: IActiveText;
-resourcestring
-  sStatementPrefix = 'This snippet was imported from the ';
-  sStatementLinkText = 'SWAG Pascal Archive';
-  sStatementPostfix = '. ';
-  sLicensePrefix = 'Unless stated otherwise this snippet is licensed under '
-    + 'the ';
-  sLicenseLinkText = 'BSD 3-Clause License';
-  sLicensePostfix = '.';
-const
-  // URLs of web pages referenced from links in boilerplate
-  SWAGDBURI = 'http://swag.delphidabbler.com/';
-  BSD3URI = 'http://opensource.org/licenses/BSD-3-Clause';
-var
-  // Active text attributes for links included in boilerplate
-  SWAGDBURIAttr: IActiveTextAttrs;
-  BSD3URIAttr: IActiveTextAttrs;
-begin
-  if not Assigned(fExtraBoilerplate) then
-  begin
-    SWAGDBURIAttr := TActiveTextFactory.CreateAttrs(
-      TActiveTextAttr.Create('href', SWAGDBURI)
-    );
-    BSD3URIAttr := TActiveTextFactory.CreateAttrs(
-      TActiveTextAttr.Create('href', BSD3URI)
-    );
-    fExtraBoilerplate := TActiveTextFactory.CreateActiveText;
-    fExtraBoilerplate.AddElem(
-      TActiveTextFactory.CreateActionElem(ekPara, fsOpen)
-    );
-    fExtraBoilerplate.AddElem(
-      TActiveTextFactory.CreateTextElem(sStatementPrefix)
-    );
-    fExtraBoilerplate.AddElem(
-      TActiveTextFactory.CreateActionElem(ekLink, SWAGDBURIAttr, fsOpen)
-    );
-    fExtraBoilerplate.AddElem(
-      TActiveTextFactory.CreateTextElem(sStatementLinkText)
-    );
-    fExtraBoilerplate.AddElem(
-      TActiveTextFactory.CreateActionElem(ekLink, SWAGDBURIAttr, fsClose)
-    );
-    fExtraBoilerplate.AddElem(
-      TActiveTextFactory.CreateTextElem(sStatementPostfix)
-    );
-    fExtraBoilerplate.AddElem(
-      TActiveTextFactory.CreateTextElem(sLicensePrefix)
-    );
-    fExtraBoilerplate.AddElem(
-      TActiveTextFactory.CreateActionElem(ekLink, BSD3URIAttr, fsOpen)
-    );
-    fExtraBoilerplate.AddElem(
-      TActiveTextFactory.CreateTextElem(sLicenseLinkText)
-    );
-    fExtraBoilerplate.AddElem(
-      TActiveTextFactory.CreateActionElem(ekLink, BSD3URIAttr, fsClose)
-    );
-    fExtraBoilerplate.AddElem(
-      TActiveTextFactory.CreateTextElem(sLicensePostfix)
-    );
-    fExtraBoilerplate.AddElem(
-      TActiveTextFactory.CreateActionElem(ekPara, fsClose)
-    );
-  end;
-  Result := fExtraBoilerplate;
 end;
 
 procedure TSWAGImporter.Import(const Callback: TProgressCallback);
@@ -268,6 +201,73 @@ begin
     Inc(Appendix);
     Result := RootName + '_' + IntToStr(Appendix);
   end;
+end;
+
+function TSWAGImporter.NotesBoilerplate: IActiveText;
+resourcestring
+  sStatementPrefix = 'This snippet was imported from the ';
+  sStatementLinkText = 'SWAG Pascal Archive';
+  sStatementPostfix = '. ';
+  sLicensePrefix = 'Unless stated otherwise this snippet is licensed under '
+    + 'the ';
+  sLicenseLinkText = 'BSD 3-Clause License';
+  sLicensePostfix = '.';
+const
+  // URLs of web pages referenced from links in boilerplate
+  SWAGDBURI = 'http://swag.delphidabbler.com/';
+  BSD3URI = 'http://opensource.org/licenses/BSD-3-Clause';
+var
+  // Active text attributes for links included in boilerplate
+  SWAGDBURIAttr: IActiveTextAttrs;
+  BSD3URIAttr: IActiveTextAttrs;
+begin
+  if not Assigned(fNotesBoilerplate) then
+  begin
+    SWAGDBURIAttr := TActiveTextFactory.CreateAttrs(
+      TActiveTextAttr.Create('href', SWAGDBURI)
+    );
+    BSD3URIAttr := TActiveTextFactory.CreateAttrs(
+      TActiveTextAttr.Create('href', BSD3URI)
+    );
+    fNotesBoilerplate := TActiveTextFactory.CreateActiveText;
+    fNotesBoilerplate.AddElem(
+      TActiveTextFactory.CreateActionElem(ekPara, fsOpen)
+    );
+    fNotesBoilerplate.AddElem(
+      TActiveTextFactory.CreateTextElem(sStatementPrefix)
+    );
+    fNotesBoilerplate.AddElem(
+      TActiveTextFactory.CreateActionElem(ekLink, SWAGDBURIAttr, fsOpen)
+    );
+    fNotesBoilerplate.AddElem(
+      TActiveTextFactory.CreateTextElem(sStatementLinkText)
+    );
+    fNotesBoilerplate.AddElem(
+      TActiveTextFactory.CreateActionElem(ekLink, SWAGDBURIAttr, fsClose)
+    );
+    fNotesBoilerplate.AddElem(
+      TActiveTextFactory.CreateTextElem(sStatementPostfix)
+    );
+    fNotesBoilerplate.AddElem(
+      TActiveTextFactory.CreateTextElem(sLicensePrefix)
+    );
+    fNotesBoilerplate.AddElem(
+      TActiveTextFactory.CreateActionElem(ekLink, BSD3URIAttr, fsOpen)
+    );
+    fNotesBoilerplate.AddElem(
+      TActiveTextFactory.CreateTextElem(sLicenseLinkText)
+    );
+    fNotesBoilerplate.AddElem(
+      TActiveTextFactory.CreateActionElem(ekLink, BSD3URIAttr, fsClose)
+    );
+    fNotesBoilerplate.AddElem(
+      TActiveTextFactory.CreateTextElem(sLicensePostfix)
+    );
+    fNotesBoilerplate.AddElem(
+      TActiveTextFactory.CreateActionElem(ekPara, fsClose)
+    );
+  end;
+  Result := fNotesBoilerplate;
 end;
 
 procedure TSWAGImporter.Reset;

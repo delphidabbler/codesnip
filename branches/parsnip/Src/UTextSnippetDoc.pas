@@ -71,11 +71,10 @@ type
     ///  document.</summary>
     procedure RenderCompilerInfo(const Heading: string;
       const Info: TCompileDocInfoArray); override;
-    ///  <summary>Interprets and adds given extra information to document.
-    ///  </summary>
+    ///  <summary>Interprets and adds given notes to document.</summary>
     ///  <remarks>Active text is converted to word-wrapped plain text
     ///  paragraphs.</remarks>
-    procedure RenderExtra(const ExtraText: IActiveText); override;
+    procedure RenderNotes(const NotesText: IActiveText); override;
     ///  <summary>Finalises document and returns content as encoded data.
     ///  </summary>
     function FinaliseDoc: TEncodedData; override;
@@ -144,16 +143,16 @@ begin
   RenderActiveText(Desc, 0, True);
 end;
 
-procedure TTextSnippetDoc.RenderExtra(const ExtraText: IActiveText);
-begin
-  Assert(not ExtraText.IsEmpty, ClassName + '.RenderExtra: ExtraText is empty');
-  fWriter.WriteLine;
-  RenderActiveText(ExtraText, 0, True);
-end;
-
 procedure TTextSnippetDoc.RenderHeading(const Heading: string);
 begin
   fWriter.WriteLine(Heading);
+end;
+
+procedure TTextSnippetDoc.RenderNotes(const NotesText: IActiveText);
+begin
+  Assert(not NotesText.IsEmpty, ClassName + '.RenderNotes: NotesText is empty');
+  fWriter.WriteLine;
+  RenderActiveText(NotesText, 0, True);
 end;
 
 procedure TTextSnippetDoc.RenderSourceCode(const SourceCode: string);

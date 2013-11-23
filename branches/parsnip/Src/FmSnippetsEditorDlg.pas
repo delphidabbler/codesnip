@@ -75,13 +75,13 @@ type
     actSetAllSuccess: TAction;
     actUndo: TEditUndo;
     actViewErrors: TAction;
-    actViewExtra: TAction;
+    actViewNotes: TAction;
     actViewTestUnit: TAction;
     btnAddUnit: TButton;
     btnCompile: TButton;
     btnSetAllQuery: TButton;
     btnSetAllSuccess: TButton;
-    btnViewExtra: TButton;
+    btnViewNotes: TButton;
     btnViewTestUnit: TButton;
     cbCategories: TComboBox;
     cbKind: TComboBox;
@@ -96,8 +96,8 @@ type
     lblCompResDesc: TLabel;
     lblDepends: TLabel;
     lblDescription: TLabel;
-    lblExtra: TLabel;
-    lblExtraCaretPos: TLabel;
+    lblNotes: TLabel;
+    lblNotesCaretPos: TLabel;
     lblKind: TLabel;
     lblSourceCode: TLabel;
     lblSnippetKindHelp: TLabel;
@@ -122,7 +122,7 @@ type
     frmDescription: TSnippetsActiveTextEdFrame;
     btnViewDescription: TButton;
     actViewDescription: TAction;
-    frmExtra: TSnippetsActiveTextEdFrame;
+    frmNotes: TSnippetsActiveTextEdFrame;
     lblDisplayName: TLabel;
     edDisplayName: TEdit;
     chkUseHiliter: TCheckBox;
@@ -151,8 +151,8 @@ type
     procedure actSetAllSuccessExecute(Sender: TObject);
     procedure actViewErrorsExecute(Sender: TObject);
     procedure actViewErrorsUpdate(Sender: TObject);
-    procedure actViewExtraExecute(Sender: TObject);
-    procedure actViewExtraUpdate(Sender: TObject);
+    procedure actViewNotesExecute(Sender: TObject);
+    procedure actViewNotesUpdate(Sender: TObject);
     procedure actViewTestUnitExecute(Sender: TObject);
     procedure actViewTestUnitUpdate(Sender: TObject);
     procedure btnOKClick(Sender: TObject);
@@ -517,27 +517,26 @@ begin
   (Sender as TAction).Enabled := pnlViewCompErrs.Visible;
 end;
 
-procedure TSnippetsEditorDlg.actViewExtraExecute(Sender: TObject);
-  {Validates REML entered in the extra information memo control then displays it
-  as it will appear in the main form.
+procedure TSnippetsEditorDlg.actViewNotesExecute(Sender: TObject);
+  {Validates REML entered in the Notes memo control then displays it as it will
+  appear in the main form.
     @param Sender [in] Not used.
   }
 begin
   try
-    frmExtra.Preview;
+    frmNotes.Preview;
   except
     on E: Exception do
       HandleException(E);
   end;
 end;
 
-procedure TSnippetsEditorDlg.actViewExtraUpdate(Sender: TObject);
-  {Disables view extra information action if no markup is entered in Extra
-  Information tab.
+procedure TSnippetsEditorDlg.actViewNotesUpdate(Sender: TObject);
+  {Disables View Notes action if no markup is entered in Notes tab.
     @param Sender [in] Reference to action to be updated.
   }
 begin
-  (Sender as TAction).Enabled := frmExtra.CanPreview;
+  (Sender as TAction).Enabled := frmNotes.CanPreview;
 end;
 
 procedure TSnippetsEditorDlg.actViewTestUnitExecute(Sender: TObject);
@@ -637,13 +636,13 @@ begin
   );
 
   // tsComments
-  frmExtra.Width := tsComments.ClientWidth - 8;
-  frmExtra.Height := clbDepends.Height;
-  TCtrlArranger.AlignLefts([lblExtra, frmExtra, btnViewExtra], 3);
-  TCtrlArranger.AlignVCentres(3, [lblExtra, lblExtraCaretPos]);
-  TCtrlArranger.AlignRights([frmExtra, lblExtraCaretPos]);
-  TCtrlArranger.MoveBelow([lblExtra, lblExtraCaretPos], frmExtra, 4);
-  TCtrlArranger.MoveBelow(frmExtra, btnViewExtra, 8);
+  frmNotes.Width := tsComments.ClientWidth - 8;
+  frmNotes.Height := clbDepends.Height;
+  TCtrlArranger.AlignLefts([lblNotes, frmNotes, btnViewNotes], 3);
+  TCtrlArranger.AlignVCentres(3, [lblNotes, lblNotesCaretPos]);
+  TCtrlArranger.AlignRights([frmNotes, lblNotesCaretPos]);
+  TCtrlArranger.MoveBelow([lblNotes, lblNotesCaretPos], frmNotes, 4);
+  TCtrlArranger.MoveBelow(frmNotes, btnViewNotes, 8);
 
   // tsCompileResults
   lblViewCompErrsKey.Top := TCtrlArranger.BottomOf(lblViewCompErrs);
@@ -871,8 +870,8 @@ begin
     frmDescription.ActiveText := fSnippet.Description;
     edDisplayName.Text := fSnippet.DisplayName;
     cbCategories.ItemIndex := fCatList.IndexOf(fSnippet.Category);
-    frmExtra.DefaultEditMode := emAuto;
-    frmExtra.ActiveText := fSnippet.Notes;
+    frmNotes.DefaultEditMode := emAuto;
+    frmNotes.ActiveText := fSnippet.Notes;
     cbKind.ItemIndex := fSnipKindList.IndexOf(fSnippet.Kind);
     // check required items in references check list boxes
     UpdateReferences;
@@ -896,8 +895,8 @@ begin
     if cbCategories.ItemIndex = -1 then
       cbCategories.ItemIndex := 0;
     cbKind.ItemIndex := fSnipKindList.IndexOf(skFreeform);
-    frmExtra.DefaultEditMode := emPlainText;
-    frmExtra.Clear;
+    frmNotes.DefaultEditMode := emPlainText;
+    frmNotes.Clear;
     UpdateReferences;
   end;
   frmSourceEditor.ApplyLanguage(Language);
@@ -907,8 +906,8 @@ begin
     ClassName + '.InitControls: no selection in cbKind');
   Assert(cbCategories.ItemIndex >= 0,
     ClassName + '.InitControls: no selection in cbCategories');
-  // Auto-update caret position display for extra info memos
-  fMemoCaretPosDisplayMgr.Manage(frmExtra, lblExtraCaretPos);
+  // Auto-update caret position display for Notes mark-up editor
+  fMemoCaretPosDisplayMgr.Manage(frmNotes, lblNotesCaretPos);
 end;
 
 procedure TSnippetsEditorDlg.InitForm;
@@ -1002,7 +1001,7 @@ begin
     (Props.Desc as IAssignable).Assign(frmDescription.ActiveText);
     Props.SourceCode := StrTrimRight(frmSourceEditor.SourceCode);
     Props.HiliteSource := chkUseHiliter.Checked;
-    (Props.Notes as IAssignable).Assign(frmExtra.ActiveText);
+    (Props.Notes as IAssignable).Assign(frmNotes.ActiveText);
     Props.CompilerResults := fCompilersLBMgr.GetCompileResults;
     Refs.Units := fUnitsCLBMgr.GetCheckedUnits;
     Refs.Depends := fDependsCLBMgr.GetCheckedSnippets;
@@ -1066,7 +1065,7 @@ begin
     frmSourceEditor.SourceCode, ErrorMessage, ErrorSelection
   ) then
     raise EDataEntry.Create(ErrorMessage, frmSourceEditor, ErrorSelection);
-  frmExtra.Validate;
+  frmNotes.Validate;
   if Assigned(fSnippet) then
   begin
     if not TSnippetValidator.ValidateDependsList(

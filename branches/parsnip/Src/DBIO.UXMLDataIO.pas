@@ -599,15 +599,15 @@ var
     Result := TXMLDocHelper.GetSnippetKind(fXMLDoc, SnippetNode, Default);
   end;
 
-  function GetExtraProperty: IActiveText;
-    {Builds Extra active text object from file data.
+  function GetNotesProperty: IActiveText;
+    {Builds active text object for snippet's Notes property from file data.
       @return Required active text.
     }
   begin
-    // We get extra data from different nodes depending on file version
+    // We get Notes data from different nodes depending on file version
     try
       if fVersion = 1 then
-        // version 1: build extra data from comments, credits and credits URL
+        // version 1: build Notes from comments, credits and credits URL
         // nodes
         Result := TSnippetExtraHelper.BuildActiveText(
           GetPropertyText(cCommentsNode),
@@ -615,7 +615,7 @@ var
           GetPropertyText(cCreditsUrlNode)
         )
       else
-        // version 2 & later: build extra data from REML in extra node
+        // version 2 & later: build Notes from REML in "extra" node
         Result := TSnippetExtraHelper.BuildActiveText(
           GetPropertyText(cExtraNode)
         );
@@ -655,7 +655,7 @@ begin
     Props.DisplayName := GetPropertyText(cDisplayNameNode);
     Props.Kind := GetKindProperty;
     Props.Desc := GetDescriptionProperty;
-    Props.Notes := GetExtraProperty;
+    Props.Notes := GetNotesProperty;
     Props.SourceCode := GetSourceCodePropertyText;
     Props.HiliteSource := TXMLDocHelper.GetHiliteSource(
       fXMLDoc, SnippetNode, True
@@ -968,7 +968,7 @@ begin
       SnippetNode, cHighlightSource, IntToStr(Ord(Props.HiliteSource))
     );
     fXMLDoc.CreateElement(SnippetNode, cDisplayNameNode, Props.DisplayName);
-    // extra node is only written if extra property has a value
+    // "extra" node is only written if Notes property has a value
     if not Props.Notes.IsEmpty then
     begin
       fXMLDoc.CreateElement(

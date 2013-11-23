@@ -33,7 +33,7 @@ type
     sppDepends,
     sppXRefs,
     sppCompileResults,
-    sppExtra
+    sppNotes
   );
 
 type
@@ -356,7 +356,7 @@ resourcestring
   sDepends = 'Required Snippets List';
   sXRefs = 'Cross Reference List';
   sCompileResults = 'Compile Results Table';
-  sExtra = 'Extra Information';
+  sNotes = 'Notes';
 
 class constructor TAllSnippetPageParts.Create;
 var
@@ -386,8 +386,9 @@ begin
   fParts[sppCompileResults] := TSnippetPagePart.Create(
     sppCompileResults, 'CompileResults', sCompileResults
   );
-  fParts[sppExtra] := TSnippetPagePart.Create(
-    sppExtra, 'ExtraInfo', sExtra
+  fParts[sppNotes] := TSnippetPagePart.Create(
+    // TODO: change name in config file (will need changing in first-run import
+    sppNotes, 'ExtraInfo', sNotes
   );
   for Part in fParts do
     Assert(Part.DisplayName <> '',
@@ -425,17 +426,17 @@ begin
     skFreeform:
       Result := TArray<TSnippetPagePartId>.Create(
         sppDescription, sppSourceCode, sppKind, sppCategory, sppUnits,
-        sppDepends, sppXRefs, sppExtra
+        sppDepends, sppXRefs, sppNotes
       );
     skUnit:
       Result := TArray<TSnippetPagePartId>.Create(
         sppDescription, sppSourceCode, sppKind, sppCategory, sppXRefs,
-        sppCompileResults, sppExtra
+        sppCompileResults, sppNotes
       );
     else
       Result := TArray<TSnippetPagePartId>.Create(
         sppDescription, sppSourceCode, sppKind, sppCategory, sppUnits,
-        sppDepends, sppXRefs, sppCompileResults, sppExtra
+        sppDepends, sppXRefs, sppCompileResults, sppNotes
       );
   end;
 end;
