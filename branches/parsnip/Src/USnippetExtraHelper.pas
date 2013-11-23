@@ -8,10 +8,11 @@
  * $Rev$
  * $Date$
  *
- * Implements a class that helps with parsing of a snippet's extra property as
- * active text and vice versa.
+ * Implements a class that helps with parsing of data from input files into
+ * active text for use in relevant properties of a snippet.
 }
 
+// TODO: rename this unit to something more suitable.
 
 unit USnippetExtraHelper;
 
@@ -30,8 +31,8 @@ type
 
   {
   TSnippetExtraHelper:
-    Class that helps with the parsing of a snippet's Extra property as active
-    text and vice versa.
+    Class that helps with parsing of data from input files into active text for
+    use in relevant properties of a snippet.
   }
   TSnippetExtraHelper = class(TNoConstructObject)
   public
