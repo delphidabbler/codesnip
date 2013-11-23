@@ -177,7 +177,7 @@ var
   ParseError: EDataEntry; // parser error
 resourcestring
   // parse error message
-  sActiveTextErr = 'Error parsing extra information markup:' + EOL2 + '%s';
+  sActiveTextErr = 'Error parsing markup:' + EOL2 + '%s';
 begin
   try
     Result := Parse;
