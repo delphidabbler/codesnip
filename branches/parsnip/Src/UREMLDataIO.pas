@@ -367,11 +367,11 @@ implementation
   REML is greatly simplified form of (X)HTML created to allow formatted text to
   be included in a snippet's Description and Notes properties.
 
-  REML stands for "Ruutine Extra Markup Language". This was named in CodeSnip v2
+  REML stands for "Routine Extra Markup Language". This was named in CodeSnip v2
   when all snippets were simple "routines" and the only field capable of storing
   rich text was the snippet's (or routine's) Extra property. From CodeSnip v4
   the Description field could now also contain formatted text and from CodeSnip
-  v5 the "Extra" field was renamed as "Notes".
+  v5 the "Extra" field was renamed to "Notes".
 
   REML comprises plain text with limited inline and block level formatting and
   hyperlink specified by HTML like tags.
