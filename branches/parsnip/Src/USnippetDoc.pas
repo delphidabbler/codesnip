@@ -80,10 +80,10 @@ type
     ///  </summary>
     procedure RenderCompilerInfo(const Heading: string;
       const Info: TCompileDocInfoArray); virtual; abstract;
-    ///  <summary>Output given extra information to document.</summary>
+    ///  <summary>Outputs given snippet notes.</summary>
     ///  <remarks>Active text must be interpreted in a manner that makes sense
     ///  for document format.</remarks>
-    procedure RenderExtra(const ExtraText: IActiveText); virtual; abstract;
+    procedure RenderNotes(const NotesText: IActiveText); virtual; abstract;
     ///  <summary>Finalise document and return content as encoded data.
     ///  </summary>
     ///  <remarks>Descendant classes should perform any required finalisation
@@ -171,7 +171,7 @@ begin
   if Snippet.Kind <> skFreeform then
     RenderCompilerInfo(sCompilers, CompilerInfo(Snippet));
   if not Snippet.Notes.IsEmpty then
-    RenderExtra(Snippet.Notes);
+    RenderNotes(Snippet.Notes);
   Result := FinaliseDoc;
 end;
 
