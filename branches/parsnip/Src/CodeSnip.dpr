@@ -399,6 +399,7 @@ uses
   CS.UI.Dialogs.HiliteThemesEditor in 'Main\CS.UI.Dialogs.HiliteThemesEditor.pas' {HiliteThemesEditorDlg},
   CS.UI.Helper.CollectionCtrlKVMgr in 'Main\CS.UI.Helper.CollectionCtrlKVMgr.pas',
   CS.UI.Frames.CodeEditor in 'Main\CS.UI.Frames.CodeEditor.pas' {CodeEditorFrame: TFrame},
+  CS.Utils.Dates in 'Main\CS.Utils.Dates.pas',
   CS.Utils.Hashes in 'Main\CS.Utils.Hashes.pas',
   CS.Utils.Sound in 'Main\CS.Utils.Sound.pas';
 

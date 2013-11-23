@@ -608,6 +608,7 @@
 				<Form>CodeEditorFrame</Form>
 				<DesignClass>TFrame</DesignClass>
 			</DCCReference>
+			<DCCReference Include="Main\CS.Utils.Dates.pas"/>
 			<DCCReference Include="Main\CS.Utils.Hashes.pas"/>
 			<DCCReference Include="Main\CS.Utils.Sound.pas"/>
 			<None Include="CodeSnip.todo"/>
