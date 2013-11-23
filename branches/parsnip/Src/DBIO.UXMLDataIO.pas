@@ -253,12 +253,12 @@ uses
   XMLDom,
   // Project
   CS.ActiveText,
+  CS.ActiveText.Helper,
   CS.ActiveText.Renderers.REML,
   DB.USnippetKind,
   UConsts,
   UExceptions,
   UIOUtils,
-  USnippetExtraHelper,
   UStructs,
   UUtils,
   UXMLDocConsts,
@@ -609,14 +609,14 @@ var
       if fVersion = 1 then
         // version 1: build Notes from comments, credits and credits URL
         // nodes
-        Result := TSnippetExtraHelper.BuildActiveText(
+        Result := TActiveTextHelper.ParseCommentsAndCredits(
           GetPropertyText(cCommentsNode),
           GetPropertyText(cCreditsNode),
           GetPropertyText(cCreditsUrlNode)
         )
       else
         // version 2 & later: build Notes from REML in "extra" node
-        Result := TSnippetExtraHelper.BuildActiveText(
+        Result := TActiveTextHelper.ParseREML(
           GetPropertyText(cExtraNode)
         );
     except
@@ -634,10 +634,10 @@ var
     begin
       if fVersion < 6 then
         // versions before 6: description is stored as plain text
-        Result := TSnippetExtraHelper.PlainTextToActiveText(Desc)
+        Result := TActiveTextHelper.ParsePlainText(Desc)
       else
         // version 6 & later: description is stored as REML
-        Result := TSnippetExtraHelper.BuildActiveText(Desc)
+        Result := TActiveTextHelper.ParseREML(Desc)
     end
     else
       Result := TActiveTextFactory.CreateActiveText;

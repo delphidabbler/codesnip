@@ -207,6 +207,7 @@ uses
   XMLDom,
   // Project
   CS.ActiveText,
+  CS.ActiveText.Helper,
   CS.ActiveText.Renderers.REML,
   DB.UMain,
   DB.USnippetKind,
@@ -214,7 +215,6 @@ uses
   UConsts,
   UREMLDataIO,
   UReservedCategories,
-  USnippetExtraHelper,
   USnippetIDs,
   UStructs,
   UXMLDocConsts;
@@ -476,10 +476,10 @@ procedure TCodeImporter.Execute(const Data: TBytes);
     begin
       if fVersion < 6 then
         // versions before 6: description is stored as plain text
-        Result := TSnippetExtraHelper.PlainTextToActiveText(Desc)
+        Result := TActiveTextHelper.ParsePlainText(Desc)
       else
         // version 6 & later: description is stored as REML
-        Result := TSnippetExtraHelper.BuildActiveText(Desc)
+        Result := TActiveTextHelper.ParseREML(Desc)
     end
     else
       Result := TActiveTextFactory.CreateActiveText;
@@ -543,13 +543,13 @@ begin
         // how we read Notes property depends on version of file
         case fVersion of
           1:
-            Props.Notes := TSnippetExtraHelper.BuildActiveText(
+            Props.Notes := TActiveTextHelper.ParseCommentsAndCredits(
               TXMLDocHelper.GetSubTagText(fXMLDoc, SnippetNode, cCommentsNode),
               TXMLDocHelper.GetSubTagText(fXMLDoc, SnippetNode, cCreditsNode),
               TXMLDocHelper.GetSubTagText(fXMLDoc, SnippetNode, cCreditsUrlNode)
             );
           else // later versions
-            Props.Notes := TSnippetExtraHelper.BuildActiveText(
+            Props.Notes := TActiveTextHelper.ParseREML(
               TXMLDocHelper.GetSubTagText(fXMLDoc, SnippetNode, cExtraNode)
             );
         end;

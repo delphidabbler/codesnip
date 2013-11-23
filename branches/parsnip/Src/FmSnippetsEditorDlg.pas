@@ -279,6 +279,7 @@ uses
   Windows {for inlining},
   Graphics,
   // Project
+  CS.ActiveText.Helper,
   CS.Config,
   CS.SourceCode.Languages,
   DB.UMain,
@@ -294,7 +295,6 @@ uses
   UIStringList,
   UPreferences,
   UReservedCategories,
-  USnippetExtraHelper,
   USnippetValidator,
   UMessageBox,
   USnippetIDs,

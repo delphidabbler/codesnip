@@ -74,8 +74,8 @@ type
       fDefaultEditMode: TEditMode;
     function ActiveTextToPlainText(ActiveText: IActiveText): string;
     function ActiveTextToREML(ActiveText: IActiveText): string;
-    function PlainTextToActiveText(Text: string): IActiveText;
-    function REMLToActiveText(const Text: string): IActiveText;
+    function PlainTextToActiveText(PlainText: string): IActiveText;
+    function REMLToActiveText(const REML: string): IActiveText;
     function Parse: IActiveText;
     function GetActiveText: IActiveText;
     procedure SetActiveText(Value: IActiveText);
@@ -96,6 +96,7 @@ implementation
 
 uses
   // Project
+  CS.ActiveText.Helper,
   CS.ActiveText.Parsers.PlainText,
   CS.ActiveText.Renderers.PlainText,
   CS.ActiveText.Renderers.REML,
@@ -105,7 +106,6 @@ uses
   UExceptions,
   UFontHelper,
   UIStringList,
-  USnippetExtraHelper,
   UStrUtils;
 
 
@@ -223,11 +223,11 @@ begin
   end;
 end;
 
-function TSnippetsActiveTextEdFrame.PlainTextToActiveText(Text: string):
+function TSnippetsActiveTextEdFrame.PlainTextToActiveText(PlainText: string):
   IActiveText;
 begin
   Result := TActiveTextFactory.CreateActiveText(
-    Text,
+    PlainText,
     TActiveTextPlainTextParser.Create(
       EOL2,
       [ptpSplitIntoParas, ptpIgnoreEmptyParas, ptpTrim, ptpCompressWhiteSpace]
@@ -243,10 +243,10 @@ begin
   TActiveTextPreviewDlg.Execute(nil, ActiveText);
 end;
 
-function TSnippetsActiveTextEdFrame.REMLToActiveText(const Text: string):
+function TSnippetsActiveTextEdFrame.REMLToActiveText(const REML: string):
   IActiveText;
 begin
-  Result := TSnippetExtraHelper.BuildActiveText(StrTrim(Text));
+  Result := TActiveTextHelper.ParseREML(StrTrim(REML));
 end;
 
 procedure TSnippetsActiveTextEdFrame.SetActiveText(Value: IActiveText);
