@@ -380,6 +380,7 @@ uses
   CS.ActiveText.Renderers.RTF in 'Main\CS.ActiveText.Renderers.RTF.pas',
   CS.ActiveText.Validator in 'Main\CS.ActiveText.Validator.pas',
   CS.Config in 'Main\CS.Config.pas',
+  CS.Database.Types in 'Main\CS.Database.Types.pas',
   CS.ExternalProgs.DiffViewer in 'Main\CS.ExternalProgs.DiffViewer.pas',
   CS.Init.CommandLineOpts in 'Main\CS.Init.CommandLineOpts.pas',
   CS.Markup in 'Main\CS.Markup.pas',
