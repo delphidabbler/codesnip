@@ -380,7 +380,7 @@ begin
   fXMLDoc.CreateElement(
     SnippetNode, cHighlightSource, IntToStr(Ord(Snippet.HiliteSource))
   );
-  // extra info is written only if present
+  // "extra" tag is written only if snippet has a non-empty Notes property
   if not Snippet.Notes.IsEmpty then
     fXMLDoc.CreateElement(
       SnippetNode,
@@ -540,7 +540,7 @@ begin
         Props.HiliteSource := TXMLDocHelper.GetHiliteSource(
           fXMLDoc, SnippetNode, True
         );
-        // how we read extra property depends on version of file
+        // how we read Notes property depends on version of file
         case fVersion of
           1:
             Props.Notes := TSnippetExtraHelper.BuildActiveText(
