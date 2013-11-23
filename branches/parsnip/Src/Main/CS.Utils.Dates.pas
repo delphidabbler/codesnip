@@ -67,16 +67,6 @@ uses
   Types,
   UUtils;
 
-// TODO: put this in UUtils
-function TryStrToWord(const S: string; out Value: Word): Boolean;
-var
-  Value32: Integer; // receives 32 bit integer value of conversion
-begin
-  Result := TryStrToInt(S, Value32) and (LongRec(Value32).Hi = 0);
-  if Result then
-    Value := LongRec(Value32).Lo;
-end;
-
 
 { TUTCDateTime }
 
