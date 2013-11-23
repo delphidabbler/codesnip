@@ -329,7 +329,7 @@ end;
 
 function TDBSnippetID.Hash: Integer;
 begin
-  Result := Integer(PaulLarsonHash(fID));
+  Result := StrHash(fID);
 end;
 
 class function TDBSnippetID.IsValidIDString(const S: string): Boolean;
@@ -470,7 +470,7 @@ end;
 
 function TDBTag.Hash: Integer;
 begin
-  Result := Integer(PaulLarsonHash(fTag));
+  Result := TextHash(fTag);
 end;
 
 class function TDBTag.IsValidPreparedTagString(const AStr: string): Boolean;
