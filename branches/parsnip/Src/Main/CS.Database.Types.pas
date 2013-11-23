@@ -17,8 +17,12 @@ unit CS.Database.Types;
 interface
 
 uses
+  // Delphi
   SysUtils,
-  Generics.Collections, Generics.Defaults,
+  Generics.Defaults,
+  // 3rd party
+  Collections.Base,
+  // Project
   CS.Markup,
   CS.SourceCode.Languages,
   CS.Utils.Dates,
@@ -138,11 +142,12 @@ type
 
   ITagSet = interface(IInterface)
     ['{CE0E8AB9-0EA0-431D-87B0-E60264E398EE}']
-    function GetEnumerator: TEnumerator<TTag>;
+    function GetEnumerator: IEnumerator<TTag>;
     function Contains(const ATag: TTag): Boolean;
     function GetCount: Integer;
     function IsEmpty: Boolean;
-    function Filter(const Filter: TTagFilter): ITagSet;
+    function Filter(const AFilterFn: TTagFilter): ITagSet;
+    procedure Assign(Other: ITagSet);
     procedure Add(const ATag: TTag);
     procedure Remove(const ATag: TTag);
     procedure Clear;
