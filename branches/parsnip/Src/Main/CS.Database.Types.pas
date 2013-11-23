@@ -104,18 +104,18 @@ type
       Boolean;
   end;
 
-  EDBTag = class(Exception);
+  ETag = class(Exception);
 
-  TDBTag = record
+  TTag = record
   public
     type
-      TComparer = class(TComparer<TDBTag>)
-        function Compare(const Left, Right: TDBTag): Integer; override;
+      TComparer = class(TComparer<TTag>)
+        function Compare(const Left, Right: TTag): Integer; override;
       end;
-      TEqualityComparer = class(TEqualityComparer<TDBTag>)
+      TEqualityComparer = class(TEqualityComparer<TTag>)
       public
-        function Equals(const Left, Right: TDBTag): Boolean; override;
-        function GetHashCode(const Value: TDBTag): Integer; override;
+        function Equals(const Left, Right: TTag): Boolean; override;
+        function GetHashCode(const Value: TTag): Integer; override;
       end;
   strict private
     var
@@ -125,25 +125,25 @@ type
       static;
   public
     constructor Create(const ATagStr: string);
-    class operator Equal(const Left, Right: TDBTag): Boolean; inline;
-    class operator NotEqual(const Left, Right: TDBTag): Boolean; inline;
+    class operator Equal(const Left, Right: TTag): Boolean; inline;
+    class operator NotEqual(const Left, Right: TTag): Boolean; inline;
     class function IsValidTagString(const AStr: string): Boolean; static;
       inline;
-    class function Compare(const Left, Right: TDBTag): Integer; static; inline;
+    class function Compare(const Left, Right: TTag): Integer; static; inline;
     function ToString: string; inline;
     function Hash: Integer; inline;
   end;
 
-  IDBTagList = interface(IInterface)
+  ITagList = interface(IInterface)
     ['{BFADA81C-8226-4350-BDEC-12816792AB78}']
-    function GetEnumerator: TEnumerator<TDBTag>;
-    procedure Add(const ATag: TDBTag);
-    procedure Delete(const ATag: TDBTag);
+    function GetEnumerator: TEnumerator<TTag>;
+    procedure Add(const ATag: TTag);
+    procedure Delete(const ATag: TTag);
     procedure Clear;
-    function Contains(const ATag: TDBTag): Boolean;
-    function GetItem(const Idx: Integer): TDBTag;
+    function Contains(const ATag: TTag): Boolean;
+    function GetItem(const Idx: Integer): TTag;
     function GetCount: Integer;
-    property Items[const Idx: Integer]: TDBTag read GetItem;
+    property Items[const Idx: Integer]: TTag read GetItem;
     property Count: Integer read GetCount;
   end;
 
@@ -193,7 +193,7 @@ type
     function GetNotes: TMarkup;
     function GetKind: TDBSnippetKind;
     function GetCompileResults: TDBCompileResults;
-    function GetTags: IDBTagList;
+    function GetTags: ITagList;
     function GetLinkInfo: ISnippetLinkInfo;
     function GetTestInfo: TSnippetTestInfo;
     function GetStarred: Boolean;
@@ -217,7 +217,7 @@ type
     property Notes: TMarkup read GetNotes;
     property Kind: TDBSnippetKind read GetKind;
     property CompileResults: TDBCompileResults read GetCompileResults;
-    property Tags: IDBTagList read GetTags;
+    property Tags: ITagList read GetTags;
     property LinkInfo: ISnippetLinkInfo read GetLinkInfo;
     property TestInfo: TSnippetTestInfo read GetTestInfo;
     property Starred: Boolean read GetStarred;
@@ -239,7 +239,7 @@ type
     procedure SetNotes(const ANotes: TMarkup);
     procedure SetKind(const ASnippetKind: TDBSnippetKind);
     procedure SetCompileResults(const AResults: TDBCompileResults);
-    procedure SetTags(ATagList: IDBTagList);
+    procedure SetTags(ATagList: ITagList);
     procedure SetLinkInfo(ALinkInfo: ISnippetLinkInfo);
     procedure SetTestInfo(ATestInfo: TSnippetTestInfo);
     procedure SetStarred(AStarred: Boolean);
@@ -258,7 +258,7 @@ type
     property Kind: TDBSnippetKind read GetKind write SetKind;
     property CompileResults: TDBCompileResults read GetCompileResults
       write SetCompileResults;
-    property Tags: IDBTagList read GetTags write SetTags;
+    property Tags: ITagList read GetTags write SetTags;
     property LinkInfo: ISnippetLinkInfo read GetLinkInfo write SetLinkInfo;
     property TestInfo: TSnippetTestInfo read GetTestInfo write SetTestInfo;
     property Starred: Boolean read GetStarred write SetStarred;
@@ -447,33 +447,33 @@ begin
   end;
 end;
 
-{ TDBTag }
+{ TTag }
 
-class function TDBTag.Compare(const Left, Right: TDBTag): Integer;
+class function TTag.Compare(const Left, Right: TTag): Integer;
 begin
   Result := StrCompareText(Left.fTag, Right.fTag);
 end;
 
-constructor TDBTag.Create(const ATagStr: string);
+constructor TTag.Create(const ATagStr: string);
 resourcestring
   sBadTagStr = '"%s" is not a valid tag string';
 begin
   fTag := PrepareTagString(ATagStr);
   if not IsValidPreparedTagString(fTag) then
-    raise EDBTag.Create(sBadTagStr);
+    raise ETag.Create(sBadTagStr);
 end;
 
-class operator TDBTag.Equal(const Left, Right: TDBTag): Boolean;
+class operator TTag.Equal(const Left, Right: TTag): Boolean;
 begin
   Result := StrSameText(Left.fTag, Right.fTag);
 end;
 
-function TDBTag.Hash: Integer;
+function TTag.Hash: Integer;
 begin
   Result := TextHash(fTag);
 end;
 
-class function TDBTag.IsValidPreparedTagString(const AStr: string): Boolean;
+class function TTag.IsValidPreparedTagString(const AStr: string): Boolean;
 var
   Ch: Char;
 begin
@@ -491,41 +491,41 @@ begin
   Result := True;
 end;
 
-class function TDBTag.IsValidTagString(const AStr: string): Boolean;
+class function TTag.IsValidTagString(const AStr: string): Boolean;
 begin
   Result := IsValidPreparedTagString(PrepareTagString(AStr));
 end;
 
-class operator TDBTag.NotEqual(const Left, Right: TDBTag): Boolean;
+class operator TTag.NotEqual(const Left, Right: TTag): Boolean;
 begin
   Result := not StrSameText(Left.fTag, Right.fTag);
 end;
 
-class function TDBTag.PrepareTagString(const AStr: string): string;
+class function TTag.PrepareTagString(const AStr: string): string;
 begin
   Result := StrCompressWhiteSpace(StrTrim(AStr));
 end;
 
-function TDBTag.ToString: string;
+function TTag.ToString: string;
 begin
   Result := fTag;
 end;
 
-{ TDBTag.TComparer }
+{ TTag.TComparer }
 
-function TDBTag.TComparer.Compare(const Left, Right: TDBTag): Integer;
+function TTag.TComparer.Compare(const Left, Right: TTag): Integer;
 begin
-  Result := TDBTag.Compare(Left, Right);
+  Result := TTag.Compare(Left, Right);
 end;
 
-{ TDBTag.TEqualityComparer }
+{ TTag.TEqualityComparer }
 
-function TDBTag.TEqualityComparer.Equals(const Left, Right: TDBTag): Boolean;
+function TTag.TEqualityComparer.Equals(const Left, Right: TTag): Boolean;
 begin
   Result := Left = Right;
 end;
 
-function TDBTag.TEqualityComparer.GetHashCode(const Value: TDBTag): Integer;
+function TTag.TEqualityComparer.GetHashCode(const Value: TTag): Integer;
 begin
   Result := Value.Hash;
 end;
