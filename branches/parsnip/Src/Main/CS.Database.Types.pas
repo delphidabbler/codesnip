@@ -134,16 +134,18 @@ type
     function Hash: Integer; inline;
   end;
 
-  ITagList = interface(IInterface)
-    ['{BFADA81C-8226-4350-BDEC-12816792AB78}']
+  TTagFilter = reference to function(const ATag: TTag): Boolean;
+
+  ITagSet = interface(IInterface)
+    ['{CE0E8AB9-0EA0-431D-87B0-E60264E398EE}']
     function GetEnumerator: TEnumerator<TTag>;
-    procedure Add(const ATag: TTag);
-    procedure Delete(const ATag: TTag);
-    procedure Clear;
     function Contains(const ATag: TTag): Boolean;
-    function GetItem(const Idx: Integer): TTag;
     function GetCount: Integer;
-    property Items[const Idx: Integer]: TTag read GetItem;
+    function IsEmpty: Boolean;
+    function Filter(const Filter: TTagFilter): ITagSet;
+    procedure Add(const ATag: TTag);
+    procedure Remove(const ATag: TTag);
+    procedure Clear;
     property Count: Integer read GetCount;
   end;
 
@@ -193,7 +195,7 @@ type
     function GetNotes: TMarkup;
     function GetKind: TDBSnippetKind;
     function GetCompileResults: TDBCompileResults;
-    function GetTags: ITagList;
+    function GetTags: ITagSet;
     function GetLinkInfo: ISnippetLinkInfo;
     function GetTestInfo: TSnippetTestInfo;
     function GetStarred: Boolean;
@@ -217,7 +219,7 @@ type
     property Notes: TMarkup read GetNotes;
     property Kind: TDBSnippetKind read GetKind;
     property CompileResults: TDBCompileResults read GetCompileResults;
-    property Tags: ITagList read GetTags;
+    property Tags: ITagSet read GetTags;
     property LinkInfo: ISnippetLinkInfo read GetLinkInfo;
     property TestInfo: TSnippetTestInfo read GetTestInfo;
     property Starred: Boolean read GetStarred;
@@ -239,7 +241,7 @@ type
     procedure SetNotes(const ANotes: TMarkup);
     procedure SetKind(const ASnippetKind: TDBSnippetKind);
     procedure SetCompileResults(const AResults: TDBCompileResults);
-    procedure SetTags(ATagList: ITagList);
+    procedure SetTags(ATagList: ITagSet);
     procedure SetLinkInfo(ALinkInfo: ISnippetLinkInfo);
     procedure SetTestInfo(ATestInfo: TSnippetTestInfo);
     procedure SetStarred(AStarred: Boolean);
@@ -258,7 +260,7 @@ type
     property Kind: TDBSnippetKind read GetKind write SetKind;
     property CompileResults: TDBCompileResults read GetCompileResults
       write SetCompileResults;
-    property Tags: ITagList read GetTags write SetTags;
+    property Tags: ITagSet read GetTags write SetTags;
     property LinkInfo: ISnippetLinkInfo read GetLinkInfo write SetLinkInfo;
     property TestInfo: TSnippetTestInfo read GetTestInfo write SetTestInfo;
     property Starred: Boolean read GetStarred write SetStarred;
