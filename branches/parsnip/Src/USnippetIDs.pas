@@ -71,8 +71,13 @@ type
     ///  <summary>Adds given snippet ID to list and returns its index in list.
     ///  </summary>
     function Add(const SnippetID: TSnippetID): Integer;
+    ///  <summary>Removed the given snippet ID from the list.</summary>
+    ///  <remarks>Does nothing if SnippetID is not in the list.</remarks>
+    procedure Remove(const SnippetID: TSnippetID);
     ///  <summary>Checks if list contains given snippet ID.</summary>
     function Contains(const SnippetID: TSnippetID): Boolean;
+    ///  <summary>Checks if list is empty.</summary>
+    function IsEmpty: Boolean;
     ///  <summary>Returns number of snippet ID records in list.</summary>
     function Count: Integer;
     ///  <summary>Gets snippet ID record from list by index.</summary>
@@ -86,7 +91,9 @@ type
 
 type
   ///  <summary>Implements a list of snippet identification records.</summary>
-  TSnippetIDList = class(TInterfacedObject, ISnippetIDList, IAssignable)
+  TSnippetIDList = class(
+    TInterfacedObject, ISnippetIDList, IAssignable, IClonable
+  )
   strict private
     var
       ///  <summary>Internal list if snippet ID records.</summary>
@@ -111,9 +118,20 @@ type
     ///  <remarks>Method of ISnippetIDList.</remarks>
     function Add(const SnippetID: TSnippetID): Integer;
 
+    ///  <summary>Removed the given snippet ID from the list.</summary>
+    ///  <remarks>
+    ///  <para>Does nothing if SnippetID is not in the list.</para>
+    ///  <para>Method of ISnippetIDList.</para>
+    ///  </remarks>
+    procedure Remove(const SnippetID: TSnippetID);
+
     ///  <summary>Checks if list contains given snippet ID.</summary>
     ///  <remarks>Method of ISnippetIDList.</remarks>
     function Contains(const SnippetID: TSnippetID): Boolean;
+
+    ///  <summary>Checks if list is empty.</summary>
+    ///  <remarks>Method of ISnippetIDList.</remarks>
+    function IsEmpty: Boolean;
 
     ///  <summary>Returns number of snippet ID records in list.</summary>
     ///  <remarks>Method of ISnippetIDList.</remarks>
@@ -132,6 +150,12 @@ type
     ///  copied. Src must support ISnippetIDList.</param>
     ///  <remarks>Method of IAssignable.</remarks>
     procedure Assign(const Src: IInterface);
+
+    ///  <summary>Creates and returns a new list that is an exact copy of the
+    ///  current one.</summary>
+    ///  <returns>IInterface. Reference to cloned object.</returns>
+    ///  <remarks>Method of IClonable</remarks>
+    function Clone: IInterface;
   end;
 
 
@@ -143,6 +167,7 @@ uses
   SysUtils, Generics.Defaults,
   // Project
   CS.Utils.Hashes,
+  UExceptions,
   UStrUtils;
 
 
@@ -188,17 +213,24 @@ end;
 procedure TSnippetIDList.Assign(const Src: IInterface);
 var
   SrcID: TSnippetID;  // references each ID in source
+  SrcList: ISnippetIDList;
 begin
-  Assert(Supports(Src, ISnippetIDList),
-    ClassName + '.Assign: Src must support ISnippetIDList');
+  if not Supports(Src, ISnippetIDList, Srclist) then
+    raise EBug.Create(ClassName + '.Assign: Src must support ISnippetIDList');
   Clear;
-  for SrcID in (Src as ISnippetIDList) do
+  for SrcID in SrcList do
     Add(SrcID);
 end;
 
 procedure TSnippetIDList.Clear;
 begin
   fList.Clear;
+end;
+
+function TSnippetIDList.Clone: IInterface;
+begin
+  Result := TSnippetIDList.Create;
+  (Result as IAssignable).Assign(Self);
 end;
 
 function TSnippetIDList.Contains(const SnippetID: TSnippetID): Boolean;
@@ -238,6 +270,16 @@ end;
 function TSnippetIDList.GetItem(Idx: Integer): TSnippetID;
 begin
   Result := fList[Idx];
+end;
+
+function TSnippetIDList.IsEmpty: Boolean;
+begin
+  Result := fList.Count < 0;
+end;
+
+procedure TSnippetIDList.Remove(const SnippetID: TSnippetID);
+begin
+  fList.Remove(SnippetID);
 end;
 
 procedure TSnippetIDList.SetItem(Idx: Integer; const Value: TSnippetID);
