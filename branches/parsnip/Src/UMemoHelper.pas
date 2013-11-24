@@ -149,7 +149,7 @@ begin
     // Get size of memo line in its current font
     Result := StringExtent(fMemo.Lines[LineIdx], Font);
   finally
-    FreeAndNil(Font); // releases HCloneFont handle
+    Font.Free; // releases HCloneFont handle
   end;
 end;
 

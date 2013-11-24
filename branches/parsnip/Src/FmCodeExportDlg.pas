@@ -136,7 +136,7 @@ begin
       // user selected file name: copy to edit control
       edFile.Text := FileOpenFileNameWithExt(Dlg);
   finally
-    FreeAndNil(Dlg);
+    Dlg.Free;
   end;
 end;
 
@@ -238,7 +238,7 @@ begin
       List.Add(Snippet);
       frmSnippets.SelectedSnippets := List;
     finally
-      FreeAndNil(List);
+      List.Free;
     end;
   end;
 end;

@@ -437,7 +437,7 @@ begin
         AddProperty(TCSS.BackgroundColorProp(ThemeServicesEx.GetTabBodyColour));
       AddProperty(UCSSUtils.TCSS.MarginProp(0, 2, 6, 2));
     finally
-      FreeAndNil(ContentFont);
+      ContentFont.Free;
     end;
   end;
   // Put border round scroll box

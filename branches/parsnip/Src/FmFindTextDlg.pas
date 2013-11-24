@@ -281,7 +281,7 @@ procedure TFindTextDlg.FormDestroy(Sender: TObject);
   }
 begin
   inherited;
-  FreeAndNil(fSearchParams);
+  fSearchParams.Free;
 end;
 
 procedure TFindTextDlg.InitForm;

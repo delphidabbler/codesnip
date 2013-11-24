@@ -347,7 +347,7 @@ begin
     // Display the dialogue and return result
     Result := Dlg.ShowModal;
   finally
-    FreeAndNil(Dlg);
+    Dlg.Free;
   end;
 end;
 

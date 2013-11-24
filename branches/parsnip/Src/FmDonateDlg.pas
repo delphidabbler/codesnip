@@ -137,7 +137,7 @@ begin
       AddProperty(TCSS.PaddingProp(0, 6, 6, 6));
     end;
   finally
-    FreeAndNil(ContentFont);
+    ContentFont.Free;
   end;
 end;
 

@@ -352,7 +352,7 @@ procedure TFindCompilerDlg.FormDestroy(Sender: TObject);
   }
 begin
   inherited;
-  FreeAndNil(fSearchParams);
+  fSearchParams.Free;
   fCompilers := nil;
 end;
 

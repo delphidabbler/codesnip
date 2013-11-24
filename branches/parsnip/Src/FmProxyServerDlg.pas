@@ -279,7 +279,7 @@ procedure TProxyServerDlg.Validate;
           Exit; // each quad must be storable in a byte
       end;
     finally
-      FreeAndNil(Quads);
+      Quads.Free;
     end;
     Result := True;
   end;

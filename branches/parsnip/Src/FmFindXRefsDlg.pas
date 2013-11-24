@@ -281,7 +281,7 @@ procedure TFindXRefsDlg.FormDestroy(Sender: TObject);
   }
 begin
   inherited;
-  FreeAndNil(fSearchParams);
+  fSearchParams.Free;
 end;
 
 procedure TFindXRefsDlg.InitForm;

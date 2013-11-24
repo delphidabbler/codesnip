@@ -125,7 +125,7 @@ begin
     // Build function name and parameter list
     Result := FnName + '(' + StrJoin(ParamList, ', ') + ')';
   finally
-    FreeAndNil(ParamList);
+    ParamList.Free;
   end;
 end;
 

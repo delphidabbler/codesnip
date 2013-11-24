@@ -110,7 +110,7 @@ begin
     with CSSBuilder.AddSelector('table') do
       AddProperty(TCSS.FontProps(fOwner.Font));
   finally
-    FreeAndNil(CSSFont);
+    CSSFont.Free;
   end;
 end;
 

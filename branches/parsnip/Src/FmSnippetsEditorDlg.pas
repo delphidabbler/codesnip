@@ -407,7 +407,7 @@ begin
     try
       fCompileMgr.Compile(tsCompileResults, TempSnippet, DisplayCompileResults);
     finally
-      FreeAndNil(TempSnippet);
+      TempSnippet.Free;
     end;
   finally
     // Re-enable dialog and controls
@@ -814,12 +814,12 @@ procedure TSnippetsEditorDlg.FormDestroy(Sender: TObject);
   }
 begin
   inherited;
-  FreeAndNil(fCompilersLBMgr);
-  FreeAndNil(fUnitsCLBMgr);
-  FreeAndNil(fXRefsCLBMgr);
-  FreeAndNil(fDependsCLBMgr);
-  FreeAndNil(fSnipKindList);
-  FreeAndNil(fCatList);
+  fCompilersLBMgr.Free;
+  fUnitsCLBMgr.Free;
+  fXRefsCLBMgr.Free;
+  fDependsCLBMgr.Free;
+  fSnipKindList.Free;
+  fCatList.Free;
   fMemoCaretPosDisplayMgr.Free;
 end;
 

@@ -247,7 +247,7 @@ destructor TCategory.Destroy;
   {Destructor. Tears down object.
   }
 begin
-  FreeAndNil(fSnippets);
+  fSnippets.Free;
   inherited;
 end;
 
@@ -314,7 +314,7 @@ destructor TCategoryList.Destroy;
   {Destructor. Tears down object.
   }
 begin
-  FreeAndNil(fList);
+  fList.Free;
   inherited;
 end;
 

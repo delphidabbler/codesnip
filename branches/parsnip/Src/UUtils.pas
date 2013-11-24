@@ -187,7 +187,7 @@ begin
       end;
     end;
   finally
-    FreeAndNil(Files);
+    Files.Free;
   end;
 end;
 

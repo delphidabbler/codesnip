@@ -299,7 +299,7 @@ end;
 
 destructor TBrowserBaseFrame.Destroy;
 begin
-  FreeAndNil(fWBController);
+  fWBController.Free;
   inherited;
 end;
 
@@ -315,7 +315,7 @@ begin
   try
     Result := Protocol.Execute;
   finally
-    FreeAndNil(Protocol);
+    Protocol.Free;
   end;
 end;
 
@@ -524,7 +524,7 @@ begin
       fOnBuildCSS(Self, CSSBuilder);
     CSS := CSSBuilder.AsString;
   finally
-    FreeAndNil(CSSBuilder);
+    CSSBuilder.Free;
   end;
 end;
 

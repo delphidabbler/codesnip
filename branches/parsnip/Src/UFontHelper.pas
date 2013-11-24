@@ -210,7 +210,7 @@ begin
     BaseFont.Name := DefaultFont.Name;
     BaseFont.Size := BaseFont.Size + FontDelta;
   finally
-    FreeAndNil(DefaultFont);
+    DefaultFont.Free;
   end;
 end;
 

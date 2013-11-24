@@ -743,9 +743,9 @@ destructor TDatabase.Destroy;
   {Destructor. Tidies up and tears down object.
   }
 begin
-  FreeAndNil(fChangeEvents);
-  FreeAndNil(fCategories);
-  FreeAndNil(fSnippets);
+  fChangeEvents.Free;
+  fCategories.Free;
+  fSnippets.Free;
   inherited;
 end;
 
@@ -991,7 +991,7 @@ begin
       for Snippet in SnippetList do
         Result.Snippets.Add(Snippet);
     finally
-      FreeAndNil(SnippetList);
+      SnippetList.Free;
     end;
     Query.Update;
     TriggerEvent(evCategoryChanged, Result);

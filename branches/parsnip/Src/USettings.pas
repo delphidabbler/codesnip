@@ -688,7 +688,7 @@ end;
 
 destructor TIniSettingsSection.Destroy;
 begin
-  FreeAndNil(fValues);
+  fValues.Free;
   inherited;
 end;
 

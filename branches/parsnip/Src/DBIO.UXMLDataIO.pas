@@ -772,7 +772,7 @@ begin
       fXMLDoc.Encoding := 'UTF-8';
       fXMLDoc.SaveToStream(FS);
     finally
-      FreeAndNil(FS);
+      FS.Free;
     end;
   except
     HandleException(ExceptObject);

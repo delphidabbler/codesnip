@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2009-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2009-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -119,7 +119,7 @@ destructor TCategoryListFrame.Destroy;
   {Class destructor. Tears down object.
   }
 begin
-  FreeAndNil(fCatList);
+  fCatList.Free;
   inherited;
 end;
 
@@ -188,7 +188,7 @@ procedure TCategoryListFrame.SetCategories(const CatList: TCategoryList);
   }
 begin
   // create category list object to order the categories
-  FreeAndNil(fCatList);
+  fCatList.Free;
   fCatList := TCategoryListAdapter.Create(CatList);
   // display categories in list box
   lbCategories.Clear;

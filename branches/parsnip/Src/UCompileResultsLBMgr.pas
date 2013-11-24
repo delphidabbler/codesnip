@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2009-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2009-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -306,13 +306,13 @@ var
   Idx: Integer;     // loops through all list items
   Tmp: TPopupMenu;  // temporary menu reference used for thread safe freeing
 begin
-  FreeAndNil(fDropDownBtns);
+  fDropDownBtns.Free;
   for Idx := Pred(fLB.Items.Count) downto 0 do
     fLB.Items.Objects[Idx].Free;  // free all compiler info records
   // free list box's popup menu in thread safe way
   Tmp := fLB.PopupMenu;
   fLB.PopupMenu := nil;
-  FreeAndNil(Tmp);
+  Tmp.Free;
   inherited;
 end;
 

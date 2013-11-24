@@ -159,8 +159,8 @@ destructor TStatusBarMgr.Destroy;
   {Class destructor. Tears down object.
   }
 begin
-  FreeAndNil(fModifiedGlyph);
-  FreeAndNil(fSearchGlyph);
+  fModifiedGlyph.Free;
+  fSearchGlyph.Free;
   inherited;
 end;
 

@@ -80,7 +80,7 @@ begin
   try
     PostData(Data, Response);
   finally
-    FreeAndNil(Response);
+    Response.Free;
   end;
 end;
 

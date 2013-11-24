@@ -311,8 +311,8 @@ begin
     BuildSubmission(PostData);
     Result := Reg.Submit(PostData); // raises exception on fail result
   finally
-    FreeAndNil(PostData);
-    FreeAndNil(Reg);
+    PostData.Free;
+    Reg.Free;
   end;
 end;
 

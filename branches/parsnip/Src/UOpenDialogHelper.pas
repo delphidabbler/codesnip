@@ -95,7 +95,7 @@ begin
     StrExplode(Dlg.Filter, '|', FilterParts);
     Result := ExtractFileExt(FilterParts[2 * (Dlg.FilterIndex - 1) + 1]);
   finally
-    FreeAndNil(FilterParts);
+    FilterParts.Free;
   end;
 end;
 
@@ -138,8 +138,8 @@ begin
     else
       Result := DefValue;
   finally
-    FreeAndNil(Extensions);
-    FreeAndNil(FilterParts);
+    Extensions.Free;
+    FilterParts.Free;
   end;
 end;
 

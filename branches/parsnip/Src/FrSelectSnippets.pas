@@ -148,7 +148,7 @@ begin
         AddNode(CatNode, Snippet.DisplayName, Snippet);
     end;
   finally
-    FreeAndNil(Grouping);
+    Grouping.Free;
   end;
 end;
 
@@ -167,8 +167,8 @@ destructor TSelectSnippetsFrame.Destroy;
   {Class destructor. Tears down object.
   }
 begin
-  FreeAndNil(fTVDraw);
-  FreeAndNil(fSelectedSnippets);
+  fTVDraw.Free;
+  fSelectedSnippets.Free;
   inherited;
 end;
 

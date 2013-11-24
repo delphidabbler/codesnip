@@ -74,8 +74,8 @@ destructor THiddenRichEdit.Destroy;
   {Class destructor. Tears down object.
   }
 begin
-  FreeAndNil(fRichEdit);
-  FreeAndNil(fHiddenWindow);
+  fRichEdit.Free;
+  fHiddenWindow.Free;
   inherited;
 end;
 
