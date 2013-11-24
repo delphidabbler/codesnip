@@ -178,8 +178,8 @@ begin
   Assert(EventInfo.Info is TSnippet,
     ClassName + '.DBChangeEventHandler: EventInfo is not TSnippet');
   if (EventInfo.Info as TSnippet).IsEqual(fLastCompiledSnippet) then
-    // Snippet being changed is last compiled snippet: free and nil it so to
-    // ensure incorrect results can't be viewed.
+    // Snippet being changed is last compiled snippet: we use FreeAndNil instead
+    // of .Free to signal that there is no stored compiled snippet to view.
     FreeAndNil(fLastCompiledSnippet);
 end;
 

@@ -393,7 +393,7 @@ end;
 class procedure TFavouritesDlg.Close;
 begin
   if IsDisplayed then
-    FreeAndNil(fInstance);
+    FreeAndNil(fInstance);  // FreeAndNil is necessary here
 end;
 
 procedure TFavouritesDlg.ConfigForm;

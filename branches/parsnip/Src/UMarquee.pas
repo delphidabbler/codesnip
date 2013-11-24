@@ -181,7 +181,7 @@ begin
   if Assigned(fTimer) then
   begin
     fTimer.Enabled := False;
-    FreeAndNil(fTimer);
+    FreeAndNil(fTimer); // FreeAndNil is necessary here
   end;
 end;
 

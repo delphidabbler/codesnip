@@ -265,10 +265,10 @@ begin
   // free the singletons in the map, then the map itself
   for Singleton in fMap.Values do
     Singleton.Free;
-  FreeAndNil(fMap);
+  FreeAndNil(fMap); // FreeAndNil necessary here: see note below
   Destroying := False;
-  // setting fMap nil and Destroying False make it safe to re-create map when
-  // testing
+  // NOTE: setting fMap to nil and Destroying False make it safe to re-create
+  // map when testing
 end;
 
 class function TSingletonManager.Lookup(const Cls: TClass): TSingleton;

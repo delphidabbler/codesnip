@@ -331,9 +331,9 @@ begin
   if Assigned(fThemeChanges) then
   begin
     fThemeChanges.RemoveHandler(Evt);
-    // we free list if it is empty
+    // free list if empty
     if fThemeChanges.Count = 0 then
-      FreeAndNil(fThemeChanges);
+      FreeAndNil(fThemeChanges);  // NOTE: FreeAndNil necessary here
   end;
 end;
 

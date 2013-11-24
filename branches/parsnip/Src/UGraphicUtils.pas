@@ -90,7 +90,8 @@ begin
       DeleteDC(Canvas.Handle);
       Canvas.Handle := 0;
     finally
-      FreeAndNil(Canvas);
+      // TODO: Change method to have const parameter andget rid of FreeAndNil
+      FreeAndNil(Canvas); // FreeAndNil is necessary here per documentation
     end;
 end;
 
