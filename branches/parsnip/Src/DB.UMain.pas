@@ -183,13 +183,12 @@ type
         @param Snippet [in] Snippet for which cross referers are required.
         @return List of IDs of referring snippets.
       }
-    function UpdateSnippet(const Snippet: TSnippet;
-      const Data: TSnippetEditData): TSnippet;
+    procedure UpdateSnippet(const Snippet: TSnippet;
+      const Data: TSnippetEditData);
       {Updates a user defined snippet's properties and references using provided
       data.
         @param Snippet [in] Snippet to be updated. Must be user-defined.
         @param Data [in] Record containing revised data.
-        @return Reference to updated snippet. Will have changed.
       }
     function AddSnippet(const Data: TSnippetEditData): TSnippet;
       {Adds a new snippet to the user database.
@@ -438,13 +437,12 @@ type
         @param ASnippet [in] Snippet which is cross referenced.
         @return List of IDs of referring snippets.
       }
-    function UpdateSnippet(const Snippet: TSnippet;
-      const Data: TSnippetEditData): TSnippet;
+    procedure UpdateSnippet(const Snippet: TSnippet;
+      const Data: TSnippetEditData);
       {Updates a user defined snippet's properties and references using provided
       data.
         @param Snippet [in] Snippet to be updated. Must be user-defined.
         @param Data [in] Record containing revised data.
-        @return Reference to updated snippet. Will have changed.
       }
     function AddSnippet(const Data: TSnippetEditData): TSnippet;
       {Adds a new snippet to the user database.
@@ -1009,13 +1007,12 @@ begin
   Result := fUpdated;
 end;
 
-function TDatabase.UpdateSnippet(const Snippet: TSnippet;
-  const Data: TSnippetEditData): TSnippet;
+procedure TDatabase.UpdateSnippet(const Snippet: TSnippet;
+  const Data: TSnippetEditData);
   {Updates a user defined snippet's properties and references using provided
   data.
     @param Snippet [in] Snippet to be updated. Must be user-defined.
     @param Data [in] Record containing revised data.
-    @return Reference to updated snippet. Will have changed.
   }
 
   procedure UpdateCategories(const OldCatID: string; const Snippet: TSnippet);
@@ -1049,9 +1046,8 @@ begin
     OldCatID := Snippet.Category;
     (Snippet as TSnippetEx).Update(Data, fSnippets);
     UpdateCategories(OldCatID, Snippet);
-    Result := Snippet;
     Query.Update;
-    TriggerEvent(evSnippetChanged, Result);
+    TriggerEvent(evSnippetChanged, Snippet);
   finally
     fUpdated := True;
     TriggerEvent(evChangeEnd);
