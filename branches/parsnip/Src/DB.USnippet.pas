@@ -540,24 +540,10 @@ procedure TSnippetEx.UpdateRefs(const Refs: TSnippetReferences;
       Units).
     @param AllSnippets [in] List of all snippets in database.
   }
-
-  { TODO: this routine exists to set the Depends and XRef properties to new
-          values. In future implementation when the properties can be written,
-          use direct assignment, or ISnippetIDList.Clone. }
-  procedure BuildSnippetList(Src, Dest: ISnippetIDList);
-  var
-    ID: TSnippetID;     // refers to each ID in ID list
-  begin
-    Dest.Clear;
-    for ID in Src do
-      Dest.Add(ID);
-  end;
-
 begin
   (Self.Units as IAssignable).Assign(Refs.Units);
-  // TODO: use IAssignable intf of snippet list instead of BuildReferences??
-  BuildSnippetList(Refs.Depends, Self.Depends);
-  BuildSnippetList(Refs.XRef, Self.XRef);
+  (Self.Depends as IAssignable).Assign(Refs.Depends);
+  (Self.XRef as IAssignable).Assign(Refs.XRef);
 end;
 
 { TSnippetList }
