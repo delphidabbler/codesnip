@@ -540,10 +540,25 @@ procedure TSnippetEx.UpdateRefs(const Refs: TSnippetReferences;
       Units).
     @param AllSnippets [in] List of all snippets in database.
   }
+
+  // Copies all snippet IDs from list Src to list Dest except that any IDs not
+  // in AllSnippets are ignored.
+  procedure StoreValidRefs(Src, Dest: ISnippetIDList);
+  var
+    ID: TSnippetID;
+  begin
+    Dest.Clear;
+    for ID in Src do
+    begin
+      if AllSnippets.Find(ID) <> nil then
+        Dest.Add(ID);
+    end;
+  end;
+
 begin
   (Self.Units as IAssignable).Assign(Refs.Units);
-  (Self.Depends as IAssignable).Assign(Refs.Depends);
-  (Self.XRef as IAssignable).Assign(Refs.XRef);
+  StoreValidRefs(Refs.Depends, Self.Depends);
+  StoreValidRefs(Refs.XRef, Self.XRef);
 end;
 
 { TSnippetList }

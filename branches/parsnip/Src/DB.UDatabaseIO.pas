@@ -305,6 +305,22 @@ procedure TDatabaseLoader.Load(const SnipList: TSnippetList;
 var
   Category: TCategory;  // a category
   Snippet: TSnippet;    // a snippet
+
+  procedure TrimBadSnippets(IDList: ISnippetIDList;
+    const AllSnippets: TSnippetList);
+  var
+    SnippetID: TSnippetID;
+    BadSnippetID: TSnippetID;
+    BadList: ISnippetIDList;
+  begin
+    BadList := TSnippetIDList.Create;
+    for SnippetID in IDList do
+      if AllSnippets.Find(SnippetID) = nil then
+        BadList.Add(SnippetID);
+    for BadSnippetID in BadList do
+      IDList.Remove(BadSnippetID);
+  end;
+
 begin
   // Create reader object that can access data storage
   fReader := CreateReader;
@@ -323,6 +339,12 @@ begin
     // database
     for Snippet in fSnipList do
       LoadReferences(Snippet);
+    // Trim out in invalid references
+    for Snippet in fSnipList do
+    begin
+      TrimBadSnippets(Snippet.Depends, fSnipList);
+      TrimBadSnippets(Snippet.XRef, fSnipList);
+    end;
   except
     on E: Exception do
       HandleException(E);
