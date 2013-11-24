@@ -368,7 +368,6 @@ procedure TDatabaseLoader.LoadReferences(const Snippet: TSnippet);
   end;
 
 begin
-  // TODO: use IAssignable intf of snippet list instead of BuildReferences??
   BuildReferences(
     fReader.GetSnippetDepends(Snippet.ID.ToString), Snippet.Depends
   );
