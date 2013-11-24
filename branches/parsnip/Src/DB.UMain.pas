@@ -1017,43 +1017,39 @@ function TDatabase.UpdateSnippet(const Snippet: TSnippet;
     @param Data [in] Record containing revised data.
     @return Reference to updated snippet. Will have changed.
   }
+
+  procedure UpdateCategories(const OldCatID: string; const Snippet: TSnippet);
+  resourcestring
+    // Error message
+    sCatNotFound = 'Category "%0:s" referenced by new snippet named "%1:s" '
+      + 'does not exist';
+  var
+    OldCat: TCategory;
+    NewCat: TCategory;
+  begin
+    if StrSameText(OldCatID, Snippet.Category) then
+      Exit;
+    OldCat := fCategories.Find(OldCatID);
+    if Assigned(OldCat) then
+      (OldCat.Snippets as TSnippetListEx).Delete(Snippet);
+    NewCat := fCategories.Find(Snippet.Category);
+    if not Assigned(NewCat) then
+      raise ECodeSnip.CreateFmt(
+        sCatNotFound, [Snippet.Category, Snippet.ID.ToString]
+      );
+    NewCat.Snippets.Add(Snippet);
+  end;
+
 var
-  SnippetID: TSnippetID;      // ID of snippet
-  Dependent: TSnippetID;      // loops thru each snippet that depends on Snippet
-  Dependents: ISnippetIDList; // list of dependent snippets
-  Referrer: TSnippetID;       // loops thru snippets that cross refs Snippet
-  Referrers: ISnippetIDList;  // list of referencing snippets
-resourcestring
-  // Error message
-  sCantRename = 'Can''t rename snippet named %0:s to %1:s: Snippet with name '
-    + '%1:s already exists in user database';
+  OldCatID: string;
 begin
   TriggerEvent(evChangeBegin);
   TriggerEvent(evBeforeSnippetChange, Snippet);
   try
-    SnippetID := Snippet.ID;
-    // We update by deleting old snippet and inserting new one
-    // get lists of snippets that cross reference or depend on this snippet
-    Dependents := GetDependents(Snippet);
-    Referrers := GetReferrers(Snippet);
-    { TODO: check if removal, re-adding of this snippet to referrers and
-            dependants is necessary now that name/ID of snippet doesn't change}
-    // remove invalid references from referring snippets
-    for Referrer in Referrers do
-      fSnippets.Find(Referrer).XRef.Remove(Snippet.ID);
-    for Dependent in Dependents do
-      fSnippets.Find(Dependent).Depends.Remove(Snippet.ID);
-    { TODO: check if we need to delete and recreate snippet now that name/ID
-            can't change. }
-    // delete the snippet
-    InternalDeleteSnippet(Snippet);
-    // add new snippet
-    Result := InternalAddSnippet(SnippetID, Data);
-    // add new snippet to referrer list of referring snippets
-    for Referrer in Referrers do
-      fSnippets.Find(Referrer).XRef.Add(Result.ID);
-    for Dependent in Dependents do
-      fSnippets.Find(Dependent).Depends.Add(Result.ID);
+    OldCatID := Snippet.Category;
+    (Snippet as TSnippetEx).Update(Data, fSnippets);
+    UpdateCategories(OldCatID, Snippet);
+    Result := Snippet;
     Query.Update;
     TriggerEvent(evSnippetChanged, Result);
   finally
