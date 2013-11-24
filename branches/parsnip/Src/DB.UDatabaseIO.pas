@@ -100,7 +100,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  DBIO.UFileIOIntf, DBIO.UNulDataReader, DBIO.UXMLDataIO,
+  DBIO.UFileIOIntf, DBIO.UNulDataReader, DBIO.UXMLDataIO, IntfCommon,
   UAppInfo, UConsts, UIStringList, UReservedCategories, USnippetIDs;
 
 
@@ -368,13 +368,16 @@ procedure TDatabaseLoader.LoadReferences(const Snippet: TSnippet);
   end;
 
 begin
+  // TODO: use IAssignable intf of snippet list instead of BuildReferences??
   BuildReferences(
     fReader.GetSnippetDepends(Snippet.ID.ToString), Snippet.Depends
   );
   BuildReferences(
     fReader.GetSnippetXRefs(Snippet.ID.ToString), Snippet.XRef
   );
-  fReader.GetSnippetUnits(Snippet.ID.ToString).CopyTo(Snippet.Units);
+  (Snippet.Units as IAssignable).Assign(
+    fReader.GetSnippetUnits(Snippet.ID.ToString)
+  );
 end;
 
 procedure TDatabaseLoader.LoadSnippets(const Cat: TCategory);

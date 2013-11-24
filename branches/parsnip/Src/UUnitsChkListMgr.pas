@@ -70,11 +70,11 @@ type
     ///  be checked.</param>
     procedure IncludeUnit(const UnitName: string; const Checked: Boolean);
     ///  <summary>Ensures all the given units are include in the list.</summary>
-    ///  <param name="Units">TStrings [in] List of unit names to be included.
+    ///  <param name="Units">IStringList [in] List of unit names to be included.
     ///  Each is added to the list unless already present.</param>
     ///  <param name="Checked">Boolean [in] Determines whether each unit is to
     ///  be checked.</param>
-    procedure IncludeUnits(const Units: TStrings; const Checked: Boolean);
+    procedure IncludeUnits(Units: IStringList; const Checked: Boolean);
     ///  <summary>Returns a list of names of all checked units in list box.
     ///  </summary>
     function GetCheckedUnits: IStringList;
@@ -192,7 +192,7 @@ begin
   fCLB.Checked[UnitIndex] := Checked;
 end;
 
-procedure TUnitsChkListMgr.IncludeUnits(const Units: TStrings;
+procedure TUnitsChkListMgr.IncludeUnits(Units: IStringList;
   const Checked: Boolean);
 var
   UnitName: string; // name of each unit in list

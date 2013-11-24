@@ -297,7 +297,7 @@ begin
   if fSnippet.Units.Count = 0 then
     Result := EmptyListSentence
   else
-    Result := THTML.Entities(StrJoin(fSnippet.Units, ', ', False) + '.');
+    Result := THTML.Entities(fSnippet.Units.GetText(', ', False));
 end;
 
 function TSnippetHTML.XRefs: string;

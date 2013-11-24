@@ -129,7 +129,7 @@ type
     fDescription: IActiveText;              // Description of snippet
     fSourceCode: string;                    // Snippet's source code
     fDisplayName: string;                   // Display name of snippet
-    fUnits: TStringList;                    // List of required units
+    fUnits: IStringList;                    // List of required units
     fDepends: ISnippetIDList;               // List of required snippets
     fXRef: ISnippetIDList;                  // List of cross-referenced snippets
     fNotes: IActiveText;                    // Further information for snippet
@@ -188,7 +188,7 @@ type
       {Compiler compatibilty of this snippet}
     property TestInfo: TSnippetTestInfo read fTestInfo;
       {Describes level of testing carried out on snippet}
-    property Units: TStringList read fUnits;
+    property Units: IStringList read fUnits;
       {List of units used by snippet}
     property Depends: ISnippetIDList read fDepends;
       {List of any other snippet in database on which this snippet depends}
@@ -397,7 +397,7 @@ begin
   fID := ID;
   SetProps(Props);
   // Create string list to store required units
-  fUnits := TStringList.Create;
+  fUnits := TIStringList.Create;
   // Create snippets lists for Depends and XRef properties
   fDepends := TSnippetIDList.Create;
   fXRef := TSnippetIDList.Create;
@@ -407,7 +407,6 @@ destructor TSnippet.Destroy;
   {Destructor. Tears down object.
   }
 begin
-  fUnits.Free;
   fNotes := nil;
   fDescription := nil;
   inherited;
@@ -548,7 +547,6 @@ procedure TSnippetEx.UpdateRefs(const Refs: TSnippetReferences;
   procedure BuildSnippetList(Src, Dest: ISnippetIDList);
   var
     ID: TSnippetID;     // refers to each ID in ID list
-    Snippet: TSnippet;  // references each snippet identified by ID
   begin
     Dest.Clear;
     for ID in Src do
@@ -556,7 +554,8 @@ procedure TSnippetEx.UpdateRefs(const Refs: TSnippetReferences;
   end;
 
 begin
-  Refs.Units.CopyTo(Self.Units, True);
+  (Self.Units as IAssignable).Assign(Refs.Units);
+  // TODO: use IAssignable intf of snippet list instead of BuildReferences??
   BuildSnippetList(Refs.Depends, Self.Depends);
   BuildSnippetList(Refs.XRef, Self.XRef);
 end;

@@ -117,7 +117,7 @@ type
     ///  <summary>Adds each unit in given list to list of required units.
     ///  </summary>
     ///  <remarks>Duplicates are ignored.</remarks>
-    procedure RequireUnits(const Units: TStringList);
+    procedure RequireUnits(Units: IStringList);
 
     ///  <summary>Adds given unit to list of required units.</summary>
     ///  <remarks>Duplicates are ignored.</remarks>
@@ -868,7 +868,7 @@ begin
     fUnits.Add(UnitName);
 end;
 
-procedure TPascalSourceAnalyser.RequireUnits(const Units: TStringList);
+procedure TPascalSourceAnalyser.RequireUnits(Units: IStringList);
 var
   UnitName: string; // iterates through list of units.
 begin
