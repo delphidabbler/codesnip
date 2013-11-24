@@ -130,8 +130,8 @@ type
     fSourceCode: string;                    // Snippet's source code
     fDisplayName: string;                   // Display name of snippet
     fUnits: TStringList;                    // List of required units
-    fDepends: TSnippetList;                 // List of required snippets
-    fXRef: TSnippetList;                    // List of cross-referenced snippets
+    fDepends: ISnippetIDList;               // List of required snippets
+    fXRef: ISnippetIDList;                  // List of cross-referenced snippets
     fNotes: IActiveText;                    // Further information for snippet
     fCompatibility: TCompileResults;        // Snippet's compiler compatibility
     fHiliteSource: Boolean;                 // If source is syntax highlighted
@@ -190,9 +190,9 @@ type
       {Describes level of testing carried out on snippet}
     property Units: TStringList read fUnits;
       {List of units used by snippet}
-    property Depends: TSnippetList read fDepends;
+    property Depends: ISnippetIDList read fDepends;
       {List of any other snippet in database on which this snippet depends}
-    property XRef: TSnippetList read fXRef;
+    property XRef: ISnippetIDList read fXRef;
       {List of cross referenced snippets in database}
     ///  <summary>Returns source code language used for snippet.</summary>
     ///  <remarks>Included to assist in testing syntax multi-language
@@ -399,17 +399,15 @@ begin
   // Create string list to store required units
   fUnits := TStringList.Create;
   // Create snippets lists for Depends and XRef properties
-  fDepends := TSnippetListEx.Create;
-  fXRef := TSnippetListEx.Create;
+  fDepends := TSnippetIDList.Create;
+  fXRef := TSnippetIDList.Create;
 end;
 
 destructor TSnippet.Destroy;
   {Destructor. Tears down object.
   }
 begin
-  FreeAndNil(fXRef);
-  FreeAndNil(fDepends);
-  FreeAndNil(fUnits);
+  fUnits.Free;
   fNotes := nil;
   fDescription := nil;
   inherited;
@@ -521,8 +519,8 @@ function TSnippetEx.GetReferences: TSnippetReferences;
   }
 begin
   Result.Units := TIStringList.Create(Units);
-  Result.Depends := TSnippetIDListEx.Create(Depends);
-  Result.XRef := TSnippetIDListEx.Create(XRef);
+  Result.Depends := (Depends as IClonable).Clone as ISnippetIDList;
+  Result.XRef := (XRef as IClonable).Clone as ISnippetIDList;
 end;
 
 procedure TSnippetEx.Update(const Data: TSnippetEditData;
@@ -544,34 +542,23 @@ procedure TSnippetEx.UpdateRefs(const Refs: TSnippetReferences;
     @param AllSnippets [in] List of all snippets in database.
   }
 
-  // ---------------------------------------------------------------------------
-  procedure BuildSnippetList(const SL: TSnippetList;
-    const IDList: ISnippetIDList);
-    {Creates a snippets list from a snippets ID list. Looks up snippets in list
-    of all snippets in database. Any snippets in ID list that do not exist in
-    database are ignored.
-      @param SL [in] Snippets list object to be updated.
-      @param IDList [in] Snippets ID list that provides information used to
-        create snippets list.
-    }
+  { TODO: this routine exists to set the Depends and XRef properties to new
+          values. In future implementation when the properties can be written,
+          use direct assignment, or ISnippetIDList.Clone. }
+  procedure BuildSnippetList(Src, Dest: ISnippetIDList);
   var
     ID: TSnippetID;     // refers to each ID in ID list
     Snippet: TSnippet;  // references each snippet identified by ID
   begin
-    SL.Clear;
-    for ID in IDList do
-    begin
-      Snippet := AllSnippets.Find(ID);
-      if Assigned(Snippet) then
-        SL.Add(Snippet);
-    end;
+    Dest.Clear;
+    for ID in Src do
+      Dest.Add(ID);
   end;
-  // ---------------------------------------------------------------------------
 
 begin
-  Refs.Units.CopyTo(Self.Units, True);            // copy units
-  BuildSnippetList(Self.Depends, Refs.Depends);   // build Depends list
-  BuildSnippetList(Self.XRef, Refs.XRef);         // build XRef list
+  Refs.Units.CopyTo(Self.Units, True);
+  BuildSnippetList(Refs.Depends, Self.Depends);
+  BuildSnippetList(Refs.XRef, Self.XRef);
 end;
 
 { TSnippetList }

@@ -462,27 +462,22 @@ procedure TSnippetsEditorDlg.actViewDependenciesExecute(Sender: TObject);
     @param Sender [in] Not used.
   }
 var
-  DependsList: TSnippetList;  // list of dependencies
+  DependsList: ISnippetIDList;  // list of dependencies
   SnippetID: TSnippetID;
 begin
   if Assigned(fSnippet) then
     SnippetID := fSnippet.ID
   else
     SnippetID := TSnippetID.Create('');
-  DependsList := TSnippetList.Create;
-  try
-    fDependsCLBMgr.GetCheckedSnippets(DependsList);
-    TDependenciesDlg.Execute(
-      Self,
-      SnippetID,
-      StrTrim(edDisplayName.Text),
-      DependsList,
-      [tiDependsUpon],
-      'SnippetsEditorDependenciesDlg'
-    );
-  finally
-    FreeAndNil(DependsList);
-  end;
+  DependsList := fDependsCLBMgr.GetCheckedSnippets;
+  TDependenciesDlg.Execute(
+    Self,
+    SnippetID,
+    StrTrim(edDisplayName.Text),
+    DependsList,
+    [tiDependsUpon],
+    'SnippetsEditorDependenciesDlg'
+  );
 end;
 
 procedure TSnippetsEditorDlg.actViewDescriptionExecute(Sender: TObject);

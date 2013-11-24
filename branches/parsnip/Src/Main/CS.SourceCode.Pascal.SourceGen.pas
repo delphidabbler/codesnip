@@ -27,7 +27,8 @@ uses
   CS.ActiveText,
   DB.USnippet,
   UBaseObjects,
-  UIStringList;
+  UIStringList,
+  USnippetIDs;
 
 
 type
@@ -107,7 +108,7 @@ type
 
     ///  <summary>Adds all snippets in given list to a list of required
     ///  snippets, according to type.</summary>
-    procedure RequireSnippets(const Snips: TSnippetList);
+    procedure RequireSnippets(Snips: ISnippetIDList);
 
     ///  <summary>Adds given snippet to appropriate list of required snippets,
     ///  according to type.</summary>
@@ -261,6 +262,7 @@ uses
   // Project
   CS.ActiveText.Renderers.PlainText,
   CS.SourceCode.Pascal.Lexer,
+  DB.UMain,
   DB.USnippetKind,
   UConsts,
   UExceptions,
@@ -852,12 +854,12 @@ begin
   end;
 end;
 
-procedure TPascalSourceAnalyser.RequireSnippets(const Snips: TSnippetList);
+procedure TPascalSourceAnalyser.RequireSnippets(Snips: ISnippetIDList);
 var
-  Snippet: TSnippet;  // iterates through snippets list
+  SnippetID: TSnippetID;  // iterates through snippets list
 begin
-  for Snippet in Snips do
-    RequireSnippet(Snippet);
+  for SnippetID in Snips do
+    RequireSnippet(Database.Snippets.Find(SnippetID));
 end;
 
 procedure TPascalSourceAnalyser.RequireUnit(const UnitName: string);

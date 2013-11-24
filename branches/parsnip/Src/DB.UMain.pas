@@ -384,18 +384,6 @@ type
       {Deletes a category from the user database.
         @param Cat [in] Category to delete from database.
       }
-    procedure GetDependentList(const ASnippet: TSnippet;
-      const List: TSnippetList);
-      {Builds a list of all snippets that depend on a specified snippet.
-        @param ASnippet [in] Snippet for which dependents are required.
-        @param List [in] Receives list of dependent snippets.
-      }
-    procedure GetReferrerList(const ASnippet: TSnippet;
-      const List: TSnippetList);
-      {Builds list of all snippets that cross reference a specified snippet.
-        @param ASnippet [in] The cross referenced snippet.
-        @param List [in] Receives list of cross referencing snippets.
-      }
     function UniqueSnippetName: string;
       {Generates a snippet "name" that is unique in the database.
         @return Required unique snippet "name".
@@ -439,15 +427,15 @@ type
           which case a blank record is returned.
         @return Required data.
       }
-    function GetDependents(const Snippet: TSnippet): ISnippetIDList;
+    function GetDependents(const ASnippet: TSnippet): ISnippetIDList;
       {Builds an ID list of all snippets that depend on a specified snippet.
-        @param Snippet [in] Snippet for which dependents are required.
+        @param ASnippet [in] Snippet for which dependents are required.
         @return List of IDs of dependent snippets.
       }
-    function GetReferrers(const Snippet: TSnippet): ISnippetIDList;
+    function GetReferrers(const ASnippet: TSnippet): ISnippetIDList;
       {Builds an ID list of all snippets that cross reference a specified
       snippet.
-        @param Snippet [in] Snippet which is cross referenced.
+        @param ASnippet [in] Snippet which is cross referenced.
         @return List of IDs of referring snippets.
       }
     function UpdateSnippet(const Snippet: TSnippet;
@@ -720,10 +708,10 @@ procedure TDatabase.DeleteSnippet(const Snippet: TSnippet);
     @param Snippet [in] Snippet to be deleted.
   }
 var
-  Dependent: TSnippet;      // loops thru each snippet that depends on Snippet
-  Dependents: TSnippetList; // list of dependent snippets
-  Referrer: TSnippet;       // loops thru snippets that cross references Snippet
-  Referrers: TSnippetList;  // list of referencing snippets
+  Dependent: TSnippetID;      // loops thru each snippet that depends on Snippet
+  Dependents: ISnippetIDList; // list of dependent snippets
+  Referrer: TSnippetID;       // loops thru snippets that cross references Snippet
+  Referrers: ISnippetIDList;  // list of referencing snippets
 begin
   Assert(fSnippets.Contains(Snippet),
     ClassName + '.DeleteSnippet: Snippet is not in the database');
@@ -733,21 +721,18 @@ begin
   Dependents := nil;
   Referrers := nil;
   try
-    Dependents := TSnippetList.Create;
-    GetDependentList(Snippet, Dependents);
-    Referrers := TSnippetList.Create;
-    GetReferrerList(Snippet, Referrers);
+    Dependents := GetDependents(Snippet);
+    Referrers := GetReferrers(Snippet);
+    // TODO: scan all snippets and remove references that match snippet ID
     // Delete snippet for XRef or Depends list of referencing snippets
     for Referrer in Referrers do
-      (Referrer.XRef as TSnippetListEx).Delete(Snippet);
+      fSnippets.Find(Referrer).XRef.Remove(Snippet.ID);
     for Dependent in Dependents do
-      (Dependent.Depends as TSnippetListEx).Delete(Snippet);
+      fSnippets.Find(Dependent).Depends.Remove(Snippet.ID);
     // Delete snippet itself
     InternalDeleteSnippet(Snippet);
     Query.Update;
   finally
-    FreeAndNil(Referrers);
-    FreeAndNil(Dependents);
     fUpdated := True;
     TriggerEvent(evSnippetDeleted);
     TriggerEvent(evChangeEnd);
@@ -783,36 +768,19 @@ begin
   Result := fCategories;
 end;
 
-procedure TDatabase.GetDependentList(const ASnippet: TSnippet;
-  const List: TSnippetList);
-  {Builds a list of all snippets that depend on a specified snippet.
+function TDatabase.GetDependents(const ASnippet: TSnippet): ISnippetIDList;
+  {Builds an ID list of all snippets that depend on a specified snippet.
     @param ASnippet [in] Snippet for which dependents are required.
-    @param List [in] Receives list of dependent snippets.
+    @return List of IDs of dependent snippets.
   }
 var
   Snippet: TSnippet;  // references each snippet in database
 begin
-  List.Clear;
+  Result := TSnippetIDList.Create;
   for Snippet in fSnippets do
-    if not Snippet.IsEqual(ASnippet) and Snippet.Depends.Contains(ASnippet) then
-      List.Add(Snippet);
-end;
-
-function TDatabase.GetDependents(const Snippet: TSnippet): ISnippetIDList;
-  {Builds an ID list of all snippets that depend on a specified snippet.
-    @param Snippet [in] Snippet for which dependents are required.
-    @return List of IDs of dependent snippets.
-  }
-var
-  List: TSnippetList; // list of dependent snippets
-begin
-  List := TSnippetList.Create;
-  try
-    GetDependentList(Snippet, List);
-    Result := TSnippetIDListEx.Create(List);
-  finally
-    FreeAndNil(List);
-  end;
+    if not Snippet.IsEqual(ASnippet)
+      and Snippet.Depends.Contains(ASnippet.ID) then
+      Result.Add(Snippet.ID);
 end;
 
 function TDatabase.GetEditableCategoryInfo(
@@ -846,37 +814,20 @@ begin
     Result.Init;
 end;
 
-function TDatabase.GetReferrers(const Snippet: TSnippet): ISnippetIDList;
+function TDatabase.GetReferrers(const ASnippet: TSnippet): ISnippetIDList;
   {Builds an ID list of all snippets that cross reference a specified
   snippet.
     @param Snippet [in] Snippet which is cross referenced.
     @return List of IDs of referring snippets.
   }
 var
-  List: TSnippetList; // list of referring snippets
-begin
-  List := TSnippetList.Create;
-  try
-    GetReferrerList(Snippet, List);
-    Result := TSnippetIDListEx.Create(List);
-  finally
-    FreeAndNil(List);
-  end;
-end;
-
-procedure TDatabase.GetReferrerList(const ASnippet: TSnippet;
-  const List: TSnippetList);
-  {Builds list of all snippets that cross reference a specified snippet.
-    @param ASnippet [in] The cross referenced snippet.
-    @param List [in] Receives list of cross referencing snippets.
-  }
-var
   Snippet: TSnippet;  // references each snippet in database
 begin
-  List.Clear;
+  Result := TSnippetIDList.Create;
   for Snippet in fSnippets do
-    if not Snippet.IsEqual(ASnippet) and Snippet.XRef.Contains(ASnippet) then
-      List.Add(Snippet);
+    if not Snippet.IsEqual(ASnippet)
+      and Snippet.XRef.Contains(ASnippet.ID) then
+      Result.Add(Snippet.ID);
 end;
 
 function TDatabase.GetSnippets: TSnippetList;
@@ -1067,35 +1018,31 @@ function TDatabase.UpdateSnippet(const Snippet: TSnippet;
     @return Reference to updated snippet. Will have changed.
   }
 var
-  SnippetID: TSnippetID;    // ID of snippet
-  Dependent: TSnippet;      // loops thru each snippetthat depends on Snippet
-  Dependents: TSnippetList; // list of dependent snippets
-  Referrer: TSnippet;       // loops thru snippets that cross references Snippet
-  Referrers: TSnippetList;  // list of referencing snippets
+  SnippetID: TSnippetID;      // ID of snippet
+  Dependent: TSnippetID;      // loops thru each snippet that depends on Snippet
+  Dependents: ISnippetIDList; // list of dependent snippets
+  Referrer: TSnippetID;       // loops thru snippets that cross refs Snippet
+  Referrers: ISnippetIDList;  // list of referencing snippets
 resourcestring
   // Error message
   sCantRename = 'Can''t rename snippet named %0:s to %1:s: Snippet with name '
     + '%1:s already exists in user database';
 begin
-  Referrers := nil;
-  Dependents := nil;
   TriggerEvent(evChangeBegin);
   TriggerEvent(evBeforeSnippetChange, Snippet);
   try
     SnippetID := Snippet.ID;
     // We update by deleting old snippet and inserting new one
     // get lists of snippets that cross reference or depend on this snippet
-    Dependents := TSnippetList.Create;
-    GetDependentList(Snippet, Dependents);
-    Referrers := TSnippetList.Create;
-    GetReferrerList(Snippet, Referrers);
+    Dependents := GetDependents(Snippet);
+    Referrers := GetReferrers(Snippet);
     { TODO: check if removal, re-adding of this snippet to referrers and
             dependants is necessary now that name/ID of snippet doesn't change}
     // remove invalid references from referring snippets
     for Referrer in Referrers do
-      (Referrer.XRef as TSnippetListEx).Delete(Snippet);
+      fSnippets.Find(Referrer).XRef.Remove(Snippet.ID);
     for Dependent in Dependents do
-      (Dependent.Depends as TSnippetListEx).Delete(Snippet);
+      fSnippets.Find(Dependent).Depends.Remove(Snippet.ID);
     { TODO: check if we need to delete and recreate snippet now that name/ID
             can't change. }
     // delete the snippet
@@ -1104,15 +1051,13 @@ begin
     Result := InternalAddSnippet(SnippetID, Data);
     // add new snippet to referrer list of referring snippets
     for Referrer in Referrers do
-      Referrer.XRef.Add(Result);
+      fSnippets.Find(Referrer).XRef.Add(Result.ID);
     for Dependent in Dependents do
-      Dependent.Depends.Add(Result);
+      fSnippets.Find(Dependent).Depends.Add(Result.ID);
     Query.Update;
     TriggerEvent(evSnippetChanged, Result);
   finally
     fUpdated := True;
-    Referrers.Free;
-    Dependents.Free;
     TriggerEvent(evChangeEnd);
   end;
 end;

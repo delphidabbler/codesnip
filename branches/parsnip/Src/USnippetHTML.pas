@@ -22,7 +22,8 @@ uses
   // Project
   CS.ActiveText,
   DB.UCategory,
-  DB.USnippet;
+  DB.USnippet,
+  USnippetIDs;
 
 
 type
@@ -40,7 +41,7 @@ type
     ///  <param name="Snippets">TSnippetList [in] List of snippets.</param>
     ///  <returns>string. HTML of snippet list or 'None' if list empty.
     ///  </returns>
-    function SnippetList(const Snippets: TSnippetList): string;
+    function SnippetList(SnippetIDs: ISnippetIDList): string;
     ///  <summary>Returns HTML text indicating a list is empty.</summary>
     function EmptyListSentence: string;
     ///  <summary>Renders given active text as HTML and returns it.</summary>
@@ -186,22 +187,22 @@ begin
   Result := TActiveTextHTMLRenderer.Render(ActiveText);
 end;
 
-function TSnippetHTML.SnippetList(const Snippets: TSnippetList): string;
+function TSnippetHTML.SnippetList(SnippetIDs: ISnippetIDList): string;
 var
-  Snippet: TSnippet;  // refers to each snippet in list
+  SnippetID: TSnippetID;
 begin
-  if Snippets.IsEmpty then
+  if SnippetIDs.IsEmpty then
     // There are no snippets: say so
     Result := EmptyListSentence
   else
   begin
     // Build comma separated list of snippet links
     Result := '';
-    for Snippet in Snippets do
+    for SnippetID in SnippetIDs do
     begin
       if Result <> '' then
         Result := Result + ', ';
-      Result := Result + SnippetALink(Snippet);
+      Result := Result + SnippetALink(Database.Snippets.Find(SnippetID));
     end;
     Result := StrMakeSentence(Result);
   end;

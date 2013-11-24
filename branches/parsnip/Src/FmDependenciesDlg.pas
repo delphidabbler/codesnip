@@ -87,13 +87,13 @@ type
           }
       end;
     var
-      fSnippetID: TSnippetID;     // Snippet whose dependencies are displayed
-      fDisplayName: string;       // Display name of snippet
-      fDependsList: TSnippetList; // List of dependencies to be displayed
-      fTVDraw: TTVDraw;           // Customises appearance of tree view}
-      fTabs: TTabIDs;             // Specifies tabs to be displayed
-      fCanSelect: Boolean;        // Specifies if dependencies can be selected
-      fSearch: ISearch;           // Search that can select dependencies
+      fSnippetID: TSnippetID;       // Snippet whose dependencies are displayed
+      fDisplayName: string;         // Display name of snippet
+      fDependsList: ISnippetIDList; // List of dependencies to be displayed
+      fTVDraw: TTVDraw;             // Customises appearance of tree view}
+      fTabs: TTabIDs;               // Specifies tabs to be displayed
+      fCanSelect: Boolean;          // Specifies if dependencies can be selected
+      fSearch: ISearch;             // Search that can select dependencies
     procedure PopulateRequiredByList;
       {Populates list box with items for each snippet required to compile the
       specified snippet.
@@ -102,7 +102,7 @@ type
       {Populates treeview with nodes for each snippet in dependency list.
       }
     procedure AddDependencies(const Parent: TTreeNode;
-      const DependsList: TSnippetList);
+      DependsList: ISnippetIDList);
       {Adds tree nodes for snippets in a dependency list.
         @param Parent [in] Parent node for nodes from dependency list.
         @param DependsList [in] Dependency list containing snippets to be added
@@ -126,7 +126,7 @@ type
   public
     class procedure Execute(const AOwner: TComponent;
       const SnippetID: TSnippetID; const DisplayName: string;
-      const DependsList: TSnippetList; const Tabs: TTabIDs;
+      DependsList: ISnippetIDList; const Tabs: TTabIDs;
       const AHelpKeyword: string); overload;
       {Displays dialogue box containing details of a snippet's dependencies.
         @param AOwner [in] Component that owns the dialog box.
@@ -215,18 +215,20 @@ begin
 end;
 
 procedure TDependenciesDlg.AddDependencies(const Parent: TTreeNode;
-  const DependsList: TSnippetList);
+  DependsList: ISnippetIDList);
   {Adds tree nodes for snippets in a dependency list.
     @param Parent [in] Parent node for nodes from dependency list.
     @param DependsList [in] Dependency list containing snippets to be added to
       treeview.
   }
 var
-  RequiredSnippet: TSnippet;  // iterates through snippets in DependsList
-  ChildNode: TTreeNode;       // a node added to treeview
+  RequiredSnippetID: TSnippetID;
+  RequiredSnippet: TSnippet;
+  ChildNode: TTreeNode;
 begin
-  for RequiredSnippet in DependsList do
+  for RequiredSnippetID in DependsList do
   begin
+    RequiredSnippet := Database.Snippets.Find(RequiredSnippetID);
     // Add node for snippet from dependency list
     ChildNode := tvDependencies.Items.AddChild(
       Parent, RequiredSnippet.DisplayName
@@ -345,7 +347,7 @@ end;
 
 class procedure TDependenciesDlg.Execute(const AOwner: TComponent;
   const SnippetID: TSnippetID; const DisplayName: string;
-  const DependsList: TSnippetList; const Tabs: TTabIDs;
+  DependsList: ISnippetIDList; const Tabs: TTabIDs;
   const AHelpKeyword: string);
 begin
   Assert(Tabs <> [], ClassName + '.Execute: Tabs is []');

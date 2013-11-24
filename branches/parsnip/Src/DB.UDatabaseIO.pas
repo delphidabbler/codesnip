@@ -358,34 +358,21 @@ procedure TDatabaseLoader.LoadReferences(const Snippet: TSnippet);
     @param Snippet [in] Snippet for which references are required.
   }
 
-  // ---------------------------------------------------------------------------
-  procedure LoadSnippetReferences(const RefList: TSnippetList;
-    const RefNames: IStringList);
-    {Creates a snippet list from names of snippets in a string list. If no
-    snippet with a given name is found no matching entry is added to snippet
-    list.
-      @param RefList [in] List to receive referenced snippets.
-      @param RefNames [in] List of snippet names.
-    }
+  procedure BuildReferences(Src: IStringList; Dest: ISnippetIDList);
   var
-    RefName: string;        // referenced snippet name
-    Reference: TSnippet;    // referenced snippet object
+    IDStr: string;
   begin
-    for RefName in RefNames do
-    begin
-      Reference := FindSnippet(RefName, fSnipList);
-      if Assigned(Reference) then
-        RefList.Add(Reference);
-    end;
+    Dest.Clear;
+    for IDStr in Src do
+      Dest.Add(TSnippetID.Create(IDStr));
   end;
-  // ---------------------------------------------------------------------------
 
 begin
-  LoadSnippetReferences(
-    Snippet.Depends, fReader.GetSnippetDepends(Snippet.ID.ToString)
+  BuildReferences(
+    fReader.GetSnippetDepends(Snippet.ID.ToString), Snippet.Depends
   );
-  LoadSnippetReferences(
-    Snippet.XRef, fReader.GetSnippetXRefs(Snippet.ID.ToString)
+  BuildReferences(
+    fReader.GetSnippetXRefs(Snippet.ID.ToString), Snippet.XRef
   );
   fReader.GetSnippetUnits(Snippet.ID.ToString).CopyTo(Snippet.Units);
 end;

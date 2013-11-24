@@ -30,6 +30,7 @@ uses
   UEncodings,
   UExceptions,
   UIStringList,
+  USnippetIDs,
   UUserDetails,
   UXMLDocHelper,
   UXMLDocumentEx;
@@ -134,7 +135,7 @@ type
     ///  <exception>An exception is always raised.</exception>
     procedure HandleException(const EObj: TObject);
     ///  <summary>Returns a list of snippet names from snippets list.</summary>
-    function SnippetNames(const SnipList: TSnippetList): IStringList;
+    function SnippetNames(const SnipList: ISnippetIDList): IStringList;
     ///  <summary>Writes a XML node that contains a list of pascal names.
     ///  </summary>
     ///  <param name="ParentNode">IXMLNode [in] Node under which this name list
@@ -215,7 +216,6 @@ uses
   UConsts,
   UREMLDataIO,
   UReservedCategories,
-  USnippetIDs,
   UStructs,
   UXMLDocConsts;
 
@@ -328,13 +328,13 @@ begin
 end;
 
 function TCodeExporter.SnippetNames(
-  const SnipList: TSnippetList): IStringList;
+  const SnipList: ISnippetIDList): IStringList;
 var
-  Snippet: TSnippet;  // references each snippet in list
+  SnippetID: TSnippetID;  // references each snippet in list
 begin
   Result := TIStringList.Create;
-  for Snippet in SnipList do
-    Result.Add(Snippet.ID.ToString);
+  for SnippetID in SnipList do
+    Result.Add(SnippetID.ToString);
 end;
 
 procedure TCodeExporter.WriteProgInfo(const ParentNode: IXMLNode);

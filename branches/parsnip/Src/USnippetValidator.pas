@@ -158,6 +158,7 @@ uses
   // Project
   CS.ActiveText.Validator,
   DB.UMain,
+  USnippetIDs,
   UStrUtils;
 
 
@@ -205,7 +206,7 @@ class function TSnippetValidator.ValidateDependsList(const Snippet: TSnippet;
 
   // ---------------------------------------------------------------------------
   function DependsListIsCircular(const Snippet: TSnippet;
-    const DependsList: TSnippetList): Boolean;
+    DependsList: ISnippetIDList): Boolean;
     {Checks if dependency list is circular, i.e. a snippet is referenced in own
     chain of dependencies. Recursive function.
       @param Snippet [in] Snippet to be checked.
@@ -213,21 +214,23 @@ class function TSnippetValidator.ValidateDependsList(const Snippet: TSnippet;
       @return True if dependency list is circular, false if not.
     }
   var
-    RequiredSnippet: TSnippet;  // iterates through DependsList
+    RequiredSnippet: TSnippetID;  // iterates through DependsList
   begin
     Result := False;
     for RequiredSnippet in DependsList do
     begin
-      if RequiredSnippet.ID = Snippet.ID then
+      if RequiredSnippet = Snippet.ID then
         Result := True
       else
-        Result := DependsListIsCircular(Snippet, RequiredSnippet.Depends);
+        Result := DependsListIsCircular(
+          Snippet, Database.Snippets.Find(RequiredSnippet).Depends
+        );
       if Result then
         Exit;
     end;
   end;
 
-  function DependsListHasKinds(const DependsList: TSnippetList;
+  function DependsListHasKinds(DependsList: ISnippetIDList;
     const Kinds: TSnippetKinds): Boolean;
     {Recursively checks if a dependency list contains snippets of specified
     kinds.
@@ -236,13 +239,15 @@ class function TSnippetValidator.ValidateDependsList(const Snippet: TSnippet;
       @return True if one or more of specified kinds are found, false if not.
     }
   var
-    RequiredSnippet: TSnippet;  // iterates through depends list
+    RequiredSnippetID: TSnippetID;
+    RequiredSnippet: TSnippet;
   begin
     Result := False;
     if Kinds = [] then
       Exit; // no kinds specified so depends list can't have these kinds!
-    for RequiredSnippet in DependsList do
+    for RequiredSnippetID in DependsList do
     begin
+      RequiredSnippet := Database.Snippets.Find(RequiredSnippetID);
       if RequiredSnippet.Kind in Kinds then
         Result := True
       else

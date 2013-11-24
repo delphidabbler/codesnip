@@ -36,8 +36,8 @@ type
   }
   TSnippetsChkListMgr = class(TObject)
   strict private
-    fCLB: TCheckListBox;      // Reference to check list box being managed
-    fSaveList: TSnippetList;  // Internal snaphot of checked snippets
+    fCLB: TCheckListBox;        // Reference to check list box being managed
+    fSaveList: ISnippetIDList;  // Internal snaphot of checked snippets
     procedure CheckSnippet(const Snippet: TSnippet);
       {Checks entry corresponding to a snippet in check list box. Snippets not
       in check list box are ignored.
@@ -78,7 +78,7 @@ type
       {Adds a snippet to the check box list, unchecked.
         @param Snippet [in] Snippet to be added to list.
       }
-    procedure CheckSnippets(const SnipList: TSnippetList);
+    procedure CheckSnippets(const SnipList: ISnippetIDList);
       {Checks entries in list corresponding to each snippet in a list.
         @param SnipList [in] List of snippets to check. Snippets not in check
           list box are ignored.
@@ -105,6 +105,7 @@ uses
   // Delphi
   Graphics, StdCtrls,
   // Project
+  DB.UMain,
   UColours, UGraphicUtils, UPreferences;
 
 
@@ -131,16 +132,16 @@ begin
     fCLB.Checked[Idx] := True;
 end;
 
-procedure TSnippetsChkListMgr.CheckSnippets(const SnipList: TSnippetList);
+procedure TSnippetsChkListMgr.CheckSnippets(const SnipList: ISnippetIDList);
   {Checks entries in list corresponding to each snippet in a list.
     @param SnipList [in] List of snippets to check. Snippets not in check list
       box are ignored.
   }
 var
-  Snippet: TSnippet;  // each snippet in list
+  SnippetID: TSnippetID;  // each snippet in list
 begin
-  for Snippet in SnipList do
-    CheckSnippet(Snippet);
+  for SnippetID in SnipList do
+    CheckSnippet(Database.Snippets.Find(SnippetID));
 end;
 
 procedure TSnippetsChkListMgr.Clear;
@@ -172,7 +173,7 @@ begin
   fCLB.OnDrawItem := DrawItem;
   fCLB.Style := lbOwnerDrawFixed;
   fCLB.ItemHeight := StringExtent('Xy', fCLB.Font).cy;
-  fSaveList := TSnippetList.Create;
+  fSaveList := TSnippetIDList.Create;
 end;
 
 destructor TSnippetsChkListMgr.Destroy;
@@ -180,7 +181,6 @@ destructor TSnippetsChkListMgr.Destroy;
   }
 begin
   fCLB.OnDrawItem := nil;
-  fSaveList.Free;
   inherited;
 end;
 
@@ -264,7 +264,7 @@ procedure TSnippetsChkListMgr.Save;
   box.
   }
 begin
-  GetCheckedSnippets(fSaveList);
+  fSaveList := GetCheckedSnippets;
 end;
 
 end.

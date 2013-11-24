@@ -28,7 +28,8 @@ uses
   Compilers.UGlobals,
   DB.USnippet,
   UEncodings,
-  UIStringList;
+  UIStringList,
+  USnippetIDs;
 
 
 type
@@ -55,7 +56,7 @@ type
   strict private
     ///  <summary>Creates and returns a string list containing snippet names
     ///  from given snippet list.</summary>
-    function SnippetsToStrings(const SnippetList: TSnippetList): IStringList;
+    function SnippetsToStrings(SnippetList: ISnippetIDList): IStringList;
     ///  <summary>Creates and returns an array of compiler compatibility
     ///  information for given snippet.</summary>
     function CompilerInfo(const Snippet: TSnippet): TCompileDocInfoArray;
@@ -180,14 +181,14 @@ begin
   // Do nothing
 end;
 
-function TSnippetDoc.SnippetsToStrings(const SnippetList: TSnippetList):
+function TSnippetDoc.SnippetsToStrings(SnippetList: ISnippetIDList):
   IStringList;
 var
-  Snippet: TSnippet;  // each snippet in list
+  SnippetID: TSnippetID;  // each snippet in list
 begin
   Result := TIStringList.Create;
-  for Snippet in SnippetList do
-    Result.Add(Snippet.DisplayName);
+  for SnippetID in SnippetList do
+    Result.Add(Database.Snippets.Find(SnippetID).DisplayName);
 end;
 
 { TCompileDocInfo }
