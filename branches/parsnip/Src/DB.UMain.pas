@@ -200,15 +200,14 @@ type
         @return Reference to new snippet.
       }
     ///  <summary>Creates new snippet that duplicates the given snippet, except
-    ///  that it a given a new unique name and the given display name and
-    ///  category.</summary>
+    ///  that its is a given a new unique name and the given title and category.
+    ///  </summary>
     ///  <param name="Snippet">TSnippet [in] Snippet to be duplicated.</param>
-    ///  <param name="DisplayName">string [in] Display name of duplicated
-    ///  snippet.</param>
+    ///  <param name="Title">string [in] Title of duplicated snippet.</param>
     ///  <param name="CatID">string [in] ID of new snippet's category.</param>
-    ///  <return>TSnippet. Required duplicate snippet.</return>
+    ///  <return>TSnippet. Duplicated snippet.</return>
     function DuplicateSnippet(const Snippet: TSnippet;
-      const DisplayName: string; const CatID: string): TSnippet;
+      const Title: string; const CatID: string): TSnippet;
     function CreateTempSnippet(const Data: TSnippetEditData;
       const Name: string = ''): TSnippet; overload;
       {Creates a new temporary snippet without adding it to the Snippets
@@ -458,16 +457,15 @@ type
         @return Reference to new snippet.
       }
     ///  <summary>Creates new snippet that duplicates the given snippet, except
-    ///  that it a given a new unique name and the given display name and
-    ///  category.</summary>
+    ///  that its is a given a new unique name and the given title and category.
+    ///  </summary>
     ///  <param name="Snippet">TSnippet [in] Snippet to be duplicated.</param>
-    ///  <param name="DisplayName">string [in] Display name of duplicated
-    ///  snippet.</param>
+    ///  <param name="Title">string [in] Title of duplicated snippet.</param>
     ///  <param name="CatID">string [in] ID of new snippet's category.</param>
-    ///  <return>TSnippet. Required duplicate snippet.</return>
+    ///  <return>TSnippet. Duplicated snippet.</return>
     ///  <remarks>Method of IDatabaseEdit.</remarks>
     function DuplicateSnippet(const Snippet: TSnippet;
-      const DisplayName: string; const CatID: string): TSnippet;
+      const Title: string; const CatID: string): TSnippet;
     function CreateTempSnippet(const Data: TSnippetEditData;
       const Name: string = ''): TSnippet; overload;
       {Creates a new temporary snippet without adding it to the Snippets
@@ -763,13 +761,13 @@ begin
 end;
 
 function TDatabase.DuplicateSnippet(const Snippet: TSnippet;
-  const DisplayName: string; const CatID: string): TSnippet;
+  const Title: string; const CatID: string): TSnippet;
 var
   Data: TSnippetEditData;
 begin
   Data := (Snippet as TSnippetEx).GetEditData;
   Data.Props.Cat := CatID;
-  Data.Props.Title := DisplayName;
+  Data.Props.Title := Title;
   Result := AddSnippet(Data);
 end;
 
