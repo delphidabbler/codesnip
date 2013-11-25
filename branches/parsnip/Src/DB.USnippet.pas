@@ -54,7 +54,7 @@ type
     Desc: IActiveText;                    // Description of snippet
     SourceCode: string;                   // Snippet's source code
     HiliteSource: Boolean;                // If syntax highlighter to be used
-    DisplayName: string;                  // Snippet's display name
+    Title: string;                        // Snippet's title
     Notes: IActiveText;                   // Additional notes about snippet
     CompilerResults: TCompileResults;     // Compilation results
     TestInfo: TSnippetTestInfo;           // Test information
@@ -444,7 +444,7 @@ begin
   fDescription := Data.Desc;
   fSourceCode := StrWindowsLineBreaks(Data.SourceCode);
   fHiliteSource := Data.HiliteSource;
-  fTitle := Data.DisplayName;
+  fTitle := Data.Title;
   fNotes := TActiveTextFactory.CloneActiveText(Data.Notes);
   fCompatibility := Data.CompilerResults;
   fTestInfo := Data.TestInfo;
@@ -497,7 +497,7 @@ begin
   Result.Desc := Description;
   Result.SourceCode := SourceCode;
   Result.HiliteSource := HiliteSource;
-  Result.DisplayName := Title;
+  Result.Title := Title;
   Result.Notes := TActiveTextFactory.CloneActiveText(Notes);
   Result.CompilerResults := Compatibility;
   Result.TestInfo := TestInfo;
@@ -801,7 +801,7 @@ begin
   Desc := TActiveTextFactory.CloneActiveText(Src.Desc);
   SourceCode := Src.SourceCode;
   HiliteSource := Src.HiliteSource;
-  DisplayName := Src.DisplayName;
+  Title := Src.Title;
   Notes := TActiveTextFactory.CloneActiveText(Src.Notes);
   CompilerResults := Src.CompilerResults;
   TestInfo := Src.TestInfo;
@@ -816,7 +816,7 @@ begin
   Kind := skFreeform;
   Cat := '';
   Desc := TActiveTextFactory.CreateActiveText;
-  DisplayName := '';
+  Title := '';
   SourceCode := '';
   HiliteSource := True;
   Notes := TActiveTextFactory.CreateActiveText;

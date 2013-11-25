@@ -769,7 +769,7 @@ var
 begin
   Data := (Snippet as TSnippetEx).GetEditData;
   Data.Props.Cat := CatID;
-  Data.Props.DisplayName := DisplayName;
+  Data.Props.Title := DisplayName;
   Result := AddSnippet(Data);
 end;
 

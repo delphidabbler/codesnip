@@ -141,7 +141,7 @@ begin
   Result.Props.Desc := BuildDescription;
   Result.Props.SourceCode := SWAGSnippet.SourceCode;
   Result.Props.HiliteSource := not SWAGSnippet.IsDocument;
-  Result.Props.DisplayName := SWAGSnippet.Title;
+  Result.Props.Title := SWAGSnippet.Title;
   Result.Props.Notes := BuildNotes;
   // TSnippetEditData.Refs properties can keep default values
 end;

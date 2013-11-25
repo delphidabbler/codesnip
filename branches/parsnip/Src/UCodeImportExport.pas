@@ -531,7 +531,7 @@ begin
       begin
         Props.Cat := TReservedCategories.ImportsCatID;
         Props.Desc := GetDescription(SnippetNode);
-        Props.DisplayName := TXMLDocHelper.GetSubTagText(
+        Props.Title := TXMLDocHelper.GetSubTagText(
           fXMLDoc, SnippetNode, cDisplayNameNode
         );
         Props.SourceCode := TXMLDocHelper.GetSubTagText(

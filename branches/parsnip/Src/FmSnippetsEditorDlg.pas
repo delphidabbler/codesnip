@@ -988,7 +988,7 @@ begin
   Result.Init;
   with Result do
   begin
-    Props.DisplayName := StrTrim(edDisplayName.Text);
+    Props.Title := StrTrim(edDisplayName.Text);
     Props.Cat := fCatList.CatID(cbCategories.ItemIndex);
     Props.Kind := fSnipKindList.SnippetKind(cbKind.ItemIndex);
     (Props.Desc as IAssignable).Assign(frmDescription.ActiveText);

@@ -652,7 +652,7 @@ begin
       Error(sSnippetNotFound, [Snippet]);
     // Snippet found: read properties
     Props.Cat := GetPropertyText(cCatIdNode);
-    Props.DisplayName := GetPropertyText(cDisplayNameNode);
+    Props.Title := GetPropertyText(cDisplayNameNode);
     Props.Kind := GetKindProperty;
     Props.Desc := GetDescriptionProperty;
     Props.Notes := GetNotesProperty;
@@ -967,7 +967,7 @@ begin
     fXMLDoc.CreateElement(
       SnippetNode, cHighlightSource, IntToStr(Ord(Props.HiliteSource))
     );
-    fXMLDoc.CreateElement(SnippetNode, cDisplayNameNode, Props.DisplayName);
+    fXMLDoc.CreateElement(SnippetNode, cDisplayNameNode, Props.Title);
     // "extra" node is only written if Notes property has a value
     if not Props.Notes.IsEmpty then
     begin
