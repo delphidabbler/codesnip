@@ -88,7 +88,7 @@ type
       end;
     var
       fSnippetID: TSnippetID;       // Snippet whose dependencies are displayed
-      fDisplayName: string;         // Display name of snippet
+      fTitle: string;               // Title of snippet
       fDependsList: ISnippetIDList; // List of dependencies to be displayed
       fTVDraw: TTVDraw;             // Customises appearance of tree view}
       fTabs: TTabIDs;               // Specifies tabs to be displayed
@@ -111,10 +111,10 @@ type
     procedure DisplayCircularRefWarning;
       {Displays circular reference warning label.
       }
-    function GetDisplayName: string;
-      {Gets display name for snippet for which dependencies are being displayed.
-        @return Required display name: snippet's name if available, otherwise an
-          untitled string.
+    function GetTitle: string;
+      {Gets title for snippet for which dependencies are being displayed.
+        @return Required title: snippet's title if available, otherwise a
+          special string.
       }
   strict protected
     procedure ConfigForm; override;
@@ -125,15 +125,15 @@ type
       }
   public
     class procedure Execute(const AOwner: TComponent;
-      const SnippetID: TSnippetID; const DisplayName: string;
+      const SnippetID: TSnippetID; const Title: string;
       DependsList: ISnippetIDList; const Tabs: TTabIDs;
       const AHelpKeyword: string); overload;
       {Displays dialogue box containing details of a snippet's dependencies.
         @param AOwner [in] Component that owns the dialog box.
         @param SnippetID [in] ID of snippet for which dependencies are to be
           displayed.
-        @param DisplayName [in] Display name of snippet for which dependencies
-          are to be displayed.
+        @param Title [in] Title of snippet for which dependencies are to be
+          displayed.
         @param DependsList [in] List of dependencies.
         @param Tabs [in] Tabs to be displayed in dialogue box.
         @param AHelpKeyword [in] A-link help keyword ofrequired help topic.
@@ -287,14 +287,14 @@ resourcestring
 begin
   inherited;
   // Set form caption
-  Caption := Format(sTitle, [GetDisplayName]);
+  Caption := Format(sTitle, [GetTitle]);
   // Determine which tabs are visible
   tsDependsUpon.TabVisible := tiDependsUpon in fTabs;
   tsRequiredBy.TabVisible := tiRequiredBy in fTabs;
   // Set "no dependencies" and "no dependents" labels in case needed
-  lblNoDependencies.Caption := Format(sNoDepends, [GetDisplayName]);
+  lblNoDependencies.Caption := Format(sNoDepends, [GetTitle]);
   lblNoDependencies.Font.Style := [fsBold];
-  lblNoDependents.Caption := Format(sNoRequires, [GetDisplayName]);
+  lblNoDependents.Caption := Format(sNoRequires, [GetTitle]);
   lblNoDependents.Font.Style := [fsBold];
   // Set "circular reference" label's colour and visibility
   lblCircularRef.Font.Color := clWarningText;
@@ -331,7 +331,7 @@ begin
   with InternalCreate(AOwner) do
     try
       fSnippetID := Snippet.ID;
-      fDisplayName := Snippet.Title;
+      fTitle := Snippet.Title;
       fDependsList := Snippet.RequiredSnippets;
       fTabs := Tabs;
       fCanSelect := PermitSelection;
@@ -346,7 +346,7 @@ begin
 end;
 
 class procedure TDependenciesDlg.Execute(const AOwner: TComponent;
-  const SnippetID: TSnippetID; const DisplayName: string;
+  const SnippetID: TSnippetID; const Title: string;
   DependsList: ISnippetIDList; const Tabs: TTabIDs;
   const AHelpKeyword: string);
 begin
@@ -354,7 +354,7 @@ begin
   with InternalCreate(AOwner) do
     try
       fSnippetID := SnippetID;
-      fDisplayName := DisplayName;
+      fTitle := Title;
       fDependsList := DependsList;
       fTabs := Tabs;
       fCanSelect := False;
@@ -378,16 +378,16 @@ begin
     lbDependents.Items.Objects[Idx].Free;
 end;
 
-function TDependenciesDlg.GetDisplayName: string;
-  {Gets display name for snippet for which dependencies are being displayed.
-    @return Required display name or special untitled id no display name is
-      available.
+function TDependenciesDlg.GetTitle: string;
+  {Gets title for snippet for which dependencies are being displayed.
+    @return Required title: snippet's title if available, otherwise a special
+      string.
   }
 resourcestring
   sUntitled = '<Untitled Snippet>'; // display name when snippet has no name
 begin
-  if fDisplayName <> '' then
-    Exit(fDisplayName);
+  if fTitle <> '' then
+    Exit(fTitle);
   Result := sUntitled;
 end;
 
