@@ -351,8 +351,7 @@ begin
   inherited Create;
   fSnippetList := TSortedSnippetList.Create(
     TRules<TSnippet>.Create(
-      TSnippet.TDisplayNameComparer.Create,
-      TSnippet.TDisplayNameEqualityComparer.Create
+      TSnippet.TTitleComparer.Create, TSnippet.TTitleEqualityComparer.Create
     )
   );
   fSnippetList.OwnsObjects := False;

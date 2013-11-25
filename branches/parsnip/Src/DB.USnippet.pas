@@ -111,14 +111,14 @@ type
   public
     ///  <summary>Comparer for snippets by title.</summary>
     type
-      TDisplayNameComparer = class(TComparer<TSnippet>)
+      TTitleComparer = class(TComparer<TSnippet>)
       public
         ///  <summary>Compares snippets Left and Right. Returns -ve if Left's
         ///  title sorts before Right's, 0 if the same or +ve if Left's title is
         ///  greater than Right's.</summary>
         function Compare(const Left, Right: TSnippet): Integer; override;
       end;
-      TDisplayNameEqualityComparer = class(TEqualityComparer<TSnippet>)
+      TTitleEqualityComparer = class(TEqualityComparer<TSnippet>)
         function Equals(const Left, Right: TSnippet): Boolean; override;
         function GetHashCode(const Snippet: TSnippet): Integer; override;
       end;
@@ -450,28 +450,27 @@ begin
   fTestInfo := Data.TestInfo;
 end;
 
-{ TSnippet.TDisplayNameComparer }
+{ TSnippet.TTitleComparer }
 
-function TSnippet.TDisplayNameComparer.Compare(const Left,
-  Right: TSnippet): Integer;
+function TSnippet.TTitleComparer.Compare(const Left, Right: TSnippet): Integer;
 begin
   Result := StrCompareText(Left.Title, Right.Title);
   if Result = 0 then
     Result := TSnippetID.Compare(Left.ID, Right.ID);
 end;
 
-{ TSnippet.TDisplayNameEqualityComparer }
+{ TSnippet.TTitleEqualityComparer }
 
-function TSnippet.TDisplayNameEqualityComparer.Equals(const Left,
-  Right: TSnippet): Boolean;
+function TSnippet.TTitleEqualityComparer.Equals(const Left, Right: TSnippet):
+  Boolean;
 begin
   Result := StrSameText(Left.Title, Right.Title);
   if Result then
     Result := Left.ID = Right.ID;
 end;
 
-function TSnippet.TDisplayNameEqualityComparer.GetHashCode(
-  const Snippet: TSnippet): Integer;
+function TSnippet.TTitleEqualityComparer.GetHashCode(const Snippet: TSnippet):
+  Integer;
 begin
   Result := TextHash(Snippet.Title);
 end;
