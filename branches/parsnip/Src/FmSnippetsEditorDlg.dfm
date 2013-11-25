@@ -72,13 +72,13 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
           Caption = '&Kind:'
           FocusControl = cbKind
         end
-        object lblDisplayName: TLabel
+        object lblTitle: TLabel
           Left = 3
           Top = 14
           Width = 24
           Height = 13
           Caption = '&Title:'
-          FocusControl = edDisplayName
+          FocusControl = edTitle
         end
         object cbCategories: TComboBox
           Left = 93
@@ -132,7 +132,7 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
           Caption = 'Previe&w...'
           TabOrder = 2
         end
-        object edDisplayName: TEdit
+        object edTitle: TEdit
           Left = 93
           Top = 8
           Width = 298

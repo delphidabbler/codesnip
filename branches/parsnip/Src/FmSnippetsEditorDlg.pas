@@ -123,8 +123,8 @@ type
     btnViewDescription: TButton;
     actViewDescription: TAction;
     frmNotes: TSnippetsActiveTextEdFrame;
-    lblDisplayName: TLabel;
-    edDisplayName: TEdit;
+    lblTitle: TLabel;
+    edTitle: TEdit;
     chkUseHiliter: TCheckBox;
     actClearDependencies: TAction;
     actClearXRefs: TAction;
@@ -473,7 +473,7 @@ begin
   TDependenciesDlg.Execute(
     Self,
     SnippetID,
-    StrTrim(edDisplayName.Text),
+    StrTrim(edTitle.Text),
     DependsList,
     [tiDependsUpon],
     'SnippetsEditorDependenciesDlg'
@@ -596,17 +596,17 @@ begin
   frmSourceEditor.Width := tsCode.ClientWidth - 8;
   TCtrlArranger.AlignLefts(
     [
-      lblDisplayName, lblDescription, lblKind, lblCategories,
+      lblTitle, lblDescription, lblKind, lblCategories,
       lblSourceCode, frmSourceEditor
     ],
     3
   );
   TCtrlArranger.AlignRights([frmSourceEditor, btnViewDescription]);
   frmDescription.Width := btnViewDescription.Left - frmDescription.Left - 8;
-  TCtrlArranger.AlignVCentres(3, [lblDisplayName, edDisplayName]);
+  TCtrlArranger.AlignVCentres(3, [lblTitle, edTitle]);
   TCtrlArranger.AlignTops(
     [lblDescription, frmDescription, btnViewDescription],
-    TCtrlArranger.BottomOf([lblDisplayName, edDisplayName], 8)
+    TCtrlArranger.BottomOf([lblTitle, edTitle], 8)
   );
   TCtrlArranger.AlignVCentres(
     TCtrlArranger.BottomOf(
@@ -861,7 +861,7 @@ begin
     Language := TConfig.Instance.SourceCodeLanguages[fSnippet.Language];
     frmDescription.DefaultEditMode := emAuto;
     frmDescription.ActiveText := fSnippet.Description;
-    edDisplayName.Text := fSnippet.Title;
+    edTitle.Text := fSnippet.Title;
     cbCategories.ItemIndex := fCatList.IndexOf(fSnippet.Category);
     frmNotes.DefaultEditMode := emAuto;
     frmNotes.ActiveText := fSnippet.Notes;
@@ -883,7 +883,7 @@ begin
     ];
     frmDescription.DefaultEditMode := emPlainText;
     frmDescription.Clear;
-    edDisplayName.Clear;
+    edTitle.Clear;
     cbCategories.ItemIndex := fCatList.IndexOf(TReservedCategories.UserCatID);
     if cbCategories.ItemIndex = -1 then
       cbCategories.ItemIndex := 0;
@@ -988,7 +988,7 @@ begin
   Result.Init;
   with Result do
   begin
-    Props.Title := StrTrim(edDisplayName.Text);
+    Props.Title := StrTrim(edTitle.Text);
     Props.Cat := fCatList.CatID(cbCategories.ItemIndex);
     Props.Kind := fSnipKindList.SnippetKind(cbKind.ItemIndex);
     (Props.Desc as IAssignable).Assign(frmDescription.ActiveText);
@@ -1050,9 +1050,9 @@ var
   ErrorSelection: TSelection; // receives selection containing errors
 begin
   if not TSnippetValidator.ValidateTitle(
-    edDisplayName.Text, ErrorMessage
+    edTitle.Text, ErrorMessage
   ) then
-    raise EDataEntry.Create(ErrorMessage, edDisplayName);
+    raise EDataEntry.Create(ErrorMessage, edTitle);
   frmDescription.Validate;
   if not TSnippetValidator.ValidateSourceCode(
     frmSourceEditor.SourceCode, ErrorMessage, ErrorSelection
