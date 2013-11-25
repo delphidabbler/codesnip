@@ -342,8 +342,8 @@ begin
     // Trim out in invalid references
     for Snippet in fSnipList do
     begin
-      TrimBadSnippets(Snippet.Depends, fSnipList);
-      TrimBadSnippets(Snippet.XRef, fSnipList);
+      TrimBadSnippets(Snippet.RequiredSnippets, fSnipList);
+      TrimBadSnippets(Snippet.XRefs, fSnipList);
     end;
   except
     on E: Exception do
@@ -391,12 +391,12 @@ procedure TDatabaseLoader.LoadReferences(const Snippet: TSnippet);
 
 begin
   BuildReferences(
-    fReader.GetSnippetDepends(Snippet.ID.ToString), Snippet.Depends
+    fReader.GetSnippetDepends(Snippet.ID.ToString), Snippet.RequiredSnippets
   );
   BuildReferences(
-    fReader.GetSnippetXRefs(Snippet.ID.ToString), Snippet.XRef
+    fReader.GetSnippetXRefs(Snippet.ID.ToString), Snippet.XRefs
   );
-  (Snippet.Units as IAssignable).Assign(
+  (Snippet.RequiredModules as IAssignable).Assign(
     fReader.GetSnippetUnits(Snippet.ID.ToString)
   );
 end;

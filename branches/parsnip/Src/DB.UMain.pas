@@ -739,9 +739,9 @@ begin
     // TODO: scan all snippets and remove references that match snippet ID
     // Delete snippet for XRef or Depends list of referencing snippets
     for Referrer in Referrers do
-      fSnippets.Find(Referrer).XRef.Remove(Snippet.ID);
+      fSnippets.Find(Referrer).XRefs.Remove(Snippet.ID);
     for Dependent in Dependents do
-      fSnippets.Find(Dependent).Depends.Remove(Snippet.ID);
+      fSnippets.Find(Dependent).RequiredSnippets.Remove(Snippet.ID);
     // Delete snippet itself
     InternalDeleteSnippet(Snippet);
     Query.Update;
@@ -792,7 +792,7 @@ begin
   Result := TSnippetIDList.Create;
   for Snippet in fSnippets do
     if not Snippet.IsEqual(ASnippet)
-      and Snippet.Depends.Contains(ASnippet.ID) then
+      and Snippet.RequiredSnippets.Contains(ASnippet.ID) then
       Result.Add(Snippet.ID);
 end;
 
@@ -839,7 +839,7 @@ begin
   Result := TSnippetIDList.Create;
   for Snippet in fSnippets do
     if not Snippet.IsEqual(ASnippet)
-      and Snippet.XRef.Contains(ASnippet.ID) then
+      and Snippet.XRefs.Contains(ASnippet.ID) then
       Result.Add(Snippet.ID);
 end;
 

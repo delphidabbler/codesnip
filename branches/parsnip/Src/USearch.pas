@@ -1070,8 +1070,8 @@ var
 begin
   if soRequired in fOptions then
     // TODO: change to for..in loop
-    for Idx := 0 to Pred(Snippet.Depends.Count) do
-      ReferenceSnippet(Database.Lookup(Snippet.Depends[Idx]));
+    for Idx := 0 to Pred(Snippet.RequiredSnippets.Count) do
+      ReferenceSnippet(Database.Lookup(Snippet.RequiredSnippets[Idx]));
 end;
 
 procedure TXRefSearchFilter.ReferenceReverseRequired(const Snippet: TSnippet);
@@ -1094,8 +1094,8 @@ var
 begin
   if soSeeAlso in fOptions then
     // TODO: change to for .. in loop
-    for Idx := 0 to Pred(Snippet.XRef.Count) do
-      ReferenceSnippet(Database.Lookup(Snippet.XRef[Idx]));
+    for Idx := 0 to Pred(Snippet.XRefs.Count) do
+      ReferenceSnippet(Database.Lookup(Snippet.XRefs[Idx]));
 end;
 
 procedure TXRefSearchFilter.ReferenceSnippet(const Snippet: TSnippet);

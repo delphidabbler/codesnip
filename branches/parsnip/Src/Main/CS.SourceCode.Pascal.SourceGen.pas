@@ -740,9 +740,9 @@ begin
     ClassName + '.AddIntfRoutine: Routine must have kind skRoutine');
   if not fIntfRoutines.Contains(Routine) then
   begin
-    fIntfRoutines.Add(Routine);         // add to user-specified list
-    RequireUnits(Routine.Units);        // add all routine's required units
-    RequireSnippets(Routine.Depends);   // add all routine's required snippets
+    fIntfRoutines.Add(Routine);
+    RequireUnits(Routine.RequiredModules);
+    RequireSnippets(Routine.RequiredSnippets);
   end;
 end;
 
@@ -784,8 +784,8 @@ begin
     raise ECodeSnip.Create(ErrorMsg);
   // Add all required snippets to list before adding this one: this ensures
   // required snippets preceed those that depend on them
-  RequireSnippets(TypeOrConst.Depends);
-  RequireUnits(TypeOrConst.Units);
+  RequireSnippets(TypeOrConst.RequiredSnippets);
+  RequireUnits(TypeOrConst.RequiredModules);
   fTypesAndConsts.Add(TypeOrConst)
 end;
 
@@ -833,9 +833,9 @@ procedure TPascalSourceAnalyser.RequireRoutine(const Routine: TSnippet);
 begin
   if not fRequiredRoutines.Contains(Routine) then
   begin
-    fRequiredRoutines.Add(Routine);   // add routine to required list
-    RequireUnits(Routine.Units);      // add all routine's required unit
-    RequireSnippets(Routine.Depends); // require all snippets in depends list
+    fRequiredRoutines.Add(Routine);
+    RequireUnits(Routine.RequiredModules);
+    RequireSnippets(Routine.RequiredSnippets);
   end;
 end;
 

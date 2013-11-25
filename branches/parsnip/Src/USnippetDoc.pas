@@ -166,9 +166,11 @@ begin
   RenderTitledText(
     sCategoryTitle, Database.Categories.Find(Snippet.Category).Description
   );
-  RenderTitledList(sUnitListTitle, Snippet.Units);
-  RenderTitledList(sDependListTitle, SnippetsToStrings(Snippet.Depends));
-  RenderTitledList(sXRefListTitle, SnippetsToStrings(Snippet.XRef));
+  RenderTitledList(sUnitListTitle, Snippet.RequiredModules);
+  RenderTitledList(
+    sDependListTitle, SnippetsToStrings(Snippet.RequiredSnippets)
+  );
+  RenderTitledList(sXRefListTitle, SnippetsToStrings(Snippet.XRefs));
   if Snippet.Kind <> skFreeform then
     RenderCompilerInfo(sCompilers, CompilerInfo(Snippet));
   if not Snippet.Notes.IsEmpty then

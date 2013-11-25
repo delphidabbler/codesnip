@@ -223,7 +223,7 @@ class function TSnippetValidator.ValidateDependsList(const Snippet: TSnippet;
         Result := True
       else
         Result := DependsListIsCircular(
-          Snippet, Database.Lookup(RequiredSnippet).Depends
+          Snippet, Database.Lookup(RequiredSnippet).RequiredSnippets
         );
       if Result then
         Exit;
@@ -251,7 +251,7 @@ class function TSnippetValidator.ValidateDependsList(const Snippet: TSnippet;
       if RequiredSnippet.Kind in Kinds then
         Result := True
       else
-        Result := DependsListHasKinds(RequiredSnippet.Depends, Kinds);
+        Result := DependsListHasKinds(RequiredSnippet.RequiredSnippets, Kinds);
       if Result then
         Exit;
     end;
@@ -269,7 +269,7 @@ begin
   // No snippets kinds may depend on themselves
   // ** MUST do circularity test before any other. Other tests MUST NOT be
   // applied if this test fails: endless loop could result
-  Result := not DependsListIsCircular(Snippet, Snippet.Depends);
+  Result := not DependsListIsCircular(Snippet, Snippet.RequiredSnippets);
   if not Result then
   begin
     ErrorMsg := Format(
@@ -285,7 +285,7 @@ begin
   // determine which snippet kinds can't appear in a dependency list
   DeniedDepends := cAllSnippetKinds - ValidDependsKinds(Snippet.Kind);
   // check dependency list for invalid kinds
-  Result := not DependsListHasKinds(Snippet.Depends, DeniedDepends);
+  Result := not DependsListHasKinds(Snippet.RequiredSnippets, DeniedDepends);
   if not Result then
     ErrorMsg := Format(
       sInvalidKind,

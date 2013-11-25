@@ -237,7 +237,7 @@ begin
     // Check for circular reference. If detetected display warning otherwise
     // recursively add child nodes for snippet's dependency list
     if (RequiredSnippet.ID <> fSnippetID) then
-      AddDependencies(ChildNode, RequiredSnippet.Depends)
+      AddDependencies(ChildNode, RequiredSnippet.RequiredSnippets)
     else
       DisplayCircularRefWarning;
   end;
@@ -332,7 +332,7 @@ begin
     try
       fSnippetID := Snippet.ID;
       fDisplayName := Snippet.DisplayName;
-      fDependsList := Snippet.Depends;
+      fDependsList := Snippet.RequiredSnippets;
       fTabs := Tabs;
       fCanSelect := PermitSelection;
       HelpKeyword := AHelpKeyword;

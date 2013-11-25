@@ -149,7 +149,7 @@ end;
 
 function TSnippetHTML.Depends: string;
 begin
-  Result := SnippetList(fSnippet.Depends);
+  Result := SnippetList(fSnippet.RequiredSnippets);
 end;
 
 function TSnippetHTML.Description: string;
@@ -294,15 +294,15 @@ end;
 
 function TSnippetHTML.Units: string;
 begin
-  if fSnippet.Units.Count = 0 then
+  if fSnippet.RequiredModules.Count = 0 then
     Result := EmptyListSentence
   else
-    Result := THTML.Entities(fSnippet.Units.GetText(', ', False));
+    Result := THTML.Entities(fSnippet.RequiredModules.GetText(', ', False));
 end;
 
 function TSnippetHTML.XRefs: string;
 begin
-  Result := SnippetList(fSnippet.XRef);
+  Result := SnippetList(fSnippet.XRefs);
 end;
 
 end.

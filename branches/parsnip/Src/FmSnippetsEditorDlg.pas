@@ -868,10 +868,10 @@ begin
     cbKind.ItemIndex := fSnipKindList.IndexOf(fSnippet.Kind);
     // check required items in references check list boxes
     UpdateReferences;
-    fDependsCLBMgr.CheckSnippets(fSnippet.Depends);
-    fXRefsCLBMgr.CheckSnippets(fSnippet.XRef);
+    fDependsCLBMgr.CheckSnippets(fSnippet.RequiredSnippets);
+    fXRefsCLBMgr.CheckSnippets(fSnippet.XRefs);
     // ensure snippet's units are displayed checked in units check list box
-    fUnitsCLBMgr.IncludeUnits(fSnippet.Units, True);
+    fUnitsCLBMgr.IncludeUnits(fSnippet.RequiredModules, True);
   end
   else
   begin

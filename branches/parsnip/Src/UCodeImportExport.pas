@@ -395,10 +395,10 @@ begin
   );
   // depends and units lists
   WriteReferenceList(
-    SnippetNode, cDependsNode, SnippetNames(Snippet.Depends)
+    SnippetNode, cDependsNode, SnippetNames(Snippet.RequiredSnippets)
   );
   WriteReferenceList(
-    SnippetNode, cUnitsNode, TIStringList.Create(Snippet.Units)
+    SnippetNode, cUnitsNode, TIStringList.Create(Snippet.RequiredModules)
   );
 end;
 

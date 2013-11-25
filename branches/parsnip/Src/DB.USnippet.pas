@@ -129,9 +129,9 @@ type
     fDescription: IActiveText;              // Description of snippet
     fSourceCode: string;                    // Snippet's source code
     fDisplayName: string;                   // Display name of snippet
-    fUnits: IStringList;                    // List of required units
-    fDepends: ISnippetIDList;               // List of required snippets
-    fXRef: ISnippetIDList;                  // List of cross-referenced snippets
+    fRequiredModules: IStringList;          // List of required modules (units)
+    fRequiredSnippets: ISnippetIDList;      // List of required snippets
+    fXRefs: ISnippetIDList;                 // List of cross-referenced snippets
     fNotes: IActiveText;                    // Further information for snippet
     fCompatibility: TCompileResults;        // Snippet's compiler compatibility
     fHiliteSource: Boolean;                 // If source is syntax highlighted
@@ -188,11 +188,11 @@ type
       {Compiler compatibilty of this snippet}
     property TestInfo: TSnippetTestInfo read fTestInfo;
       {Describes level of testing carried out on snippet}
-    property Units: IStringList read fUnits;
-      {List of units used by snippet}
-    property Depends: ISnippetIDList read fDepends;
+    property RequiredModules: IStringList read fRequiredModules;
+      {List of modules (e.g. units) used by snippet}
+    property RequiredSnippets: ISnippetIDList read fRequiredSnippets;
       {List of any other snippet in database on which this snippet depends}
-    property XRef: ISnippetIDList read fXRef;
+    property XRefs: ISnippetIDList read fXRefs;
       {List of cross referenced snippets in database}
     ///  <summary>Returns source code language used for snippet.</summary>
     ///  <remarks>Included to assist in testing syntax multi-language
@@ -397,10 +397,10 @@ begin
   fID := ID;
   SetProps(Props);
   // Create string list to store required units
-  fUnits := TIStringList.Create;
+  fRequiredModules := TIStringList.Create;
   // Create snippets lists for Depends and XRef properties
-  fDepends := TSnippetIDList.Create;
-  fXRef := TSnippetIDList.Create;
+  fRequiredSnippets := TSnippetIDList.Create;
+  fXRefs := TSnippetIDList.Create;
 end;
 
 destructor TSnippet.Destroy;
@@ -517,9 +517,10 @@ function TSnippetEx.GetReferences: TSnippetReferences;
     @return Information sufficient to define references.
   }
 begin
-  Result.RequiredModules := TIStringList.Create(Units);
-  Result.RequiredSnippets := (Depends as IClonable).Clone as ISnippetIDList;
-  Result.XRefs := (XRef as IClonable).Clone as ISnippetIDList;
+  Result.RequiredModules := TIStringList.Create(RequiredModules);
+  Result.RequiredSnippets :=
+    (RequiredSnippets as IClonable).Clone as ISnippetIDList;
+  Result.XRefs := (XRefs as IClonable).Clone as ISnippetIDList;
 end;
 
 procedure TSnippetEx.Update(const Data: TSnippetEditData;
@@ -556,9 +557,9 @@ procedure TSnippetEx.UpdateRefs(const Refs: TSnippetReferences;
   end;
 
 begin
-  (Self.Units as IAssignable).Assign(Refs.RequiredModules);
-  StoreValidRefs(Refs.RequiredSnippets, Self.Depends);
-  StoreValidRefs(Refs.XRefs, Self.XRef);
+  (Self.RequiredModules as IAssignable).Assign(Refs.RequiredModules);
+  StoreValidRefs(Refs.RequiredSnippets, Self.RequiredSnippets);
+  StoreValidRefs(Refs.XRefs, Self.XRefs);
 end;
 
 { TSnippetList }
