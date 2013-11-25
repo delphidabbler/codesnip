@@ -123,15 +123,14 @@ type
           returned.
         @return True if name is valid or False if not.
       }
-    ///  <summary>Validates a snippet's display name.</summary>
-    ///  <param name="DisplayName">string [in] Display name to be validated.
-    ///  </param>
+    ///  <summary>Validates a snippet's title.</summary>
+    ///  <param name="DisplayName">string [in] Title to be validated.</param>
     ///  <param name="ErrorMsg">string [out] Message that describes error. -
     ///  Undefined if True returned.</param>
-    ///  <returns>Boolean. True if display name is valid or False if not.
+    ///  <returns>Boolean. True if title is valid or False if not.
     ///  </returns>
-    class function ValidateDisplayName(const DisplayName: string;
-      out ErrorMsg: string): Boolean;
+    class function ValidateTitle(const Title: string; out ErrorMsg: string):
+      Boolean;
     class function Validate(const Snippet: TSnippet; out ErrorMsg: string):
       Boolean;
       {Checks a snippet for validity.
@@ -349,16 +348,6 @@ begin
   Result := True;
 end;
 
-class function TSnippetValidator.ValidateDisplayName(const DisplayName: string;
-  out ErrorMsg: string): Boolean;
-resourcestring
-  sErrNoName = 'A title must be provided';
-begin
-  Result := not StrIsBlank(DisplayName);
-  if not Result then
-    ErrorMsg := sErrNoName;
-end;
-
 class function TSnippetValidator.ValidateName(const Name: string;
   const CheckForUniqueness: Boolean; out ErrorMsg: string): Boolean;
   {Validates a snippet's name.
@@ -470,6 +459,16 @@ begin
     ErrorMsg := sErrNoSource;
     ErrorSel := TSelection.Create(0, Length(Source));
   end;
+end;
+
+class function TSnippetValidator.ValidateTitle(const Title: string;
+  out ErrorMsg: string): Boolean;
+resourcestring
+  sErrNoName = 'A title must be provided';
+begin
+  Result := not StrIsBlank(Title);
+  if not Result then
+    ErrorMsg := sErrNoName;
 end;
 
 class function TSnippetValidator.ValidDependsKinds(

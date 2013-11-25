@@ -189,7 +189,7 @@ var
 resourcestring
   sNoCategory = 'You must choose a category';
 begin
-  if not TSnippetValidator.ValidateDisplayName(edDisplayName.Text, ErrMsg) then
+  if not TSnippetValidator.ValidateTitle(edDisplayName.Text, ErrMsg) then
     raise EDataEntry.Create(ErrMsg, edDisplayName);
   if cbCategory.ItemIndex = -1 then
     raise EDataEntry.Create(sNoCategory, cbCategory);
