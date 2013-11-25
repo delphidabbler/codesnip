@@ -188,7 +188,7 @@ var
 begin
   Result := TIStringList.Create;
   for SnippetID in SnippetList do
-    Result.Add(Database._Snippets.Find(SnippetID).DisplayName);
+    Result.Add(Database.Lookup(SnippetID).DisplayName);
 end;
 
 { TCompileDocInfo }

@@ -859,7 +859,7 @@ var
   SnippetID: TSnippetID;  // iterates through snippets list
 begin
   for SnippetID in Snips do
-    RequireSnippet(Database._Snippets.Find(SnippetID));
+    RequireSnippet(Database.Lookup(SnippetID));
 end;
 
 procedure TPascalSourceAnalyser.RequireUnit(const UnitName: string);

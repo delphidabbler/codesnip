@@ -202,7 +202,7 @@ begin
     begin
       if Result <> '' then
         Result := Result + ', ';
-      Result := Result + SnippetALink(Database._Snippets.Find(SnippetID));
+      Result := Result + SnippetALink(Database.Lookup(SnippetID));
     end;
     Result := StrMakeSentence(Result);
   end;

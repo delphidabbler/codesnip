@@ -405,7 +405,7 @@ class procedure TUserDBMgr.DeleteSnippet(ViewItem: IView);
     Result := TIStringList.Create;
     for ID in IDList do
     begin
-      Snippet := Database._Snippets.Find(ID);
+      Snippet := Database.Lookup(ID);
       Result.Add(Snippet.DisplayName);
     end;
   end;
@@ -467,9 +467,8 @@ class procedure TUserDBMgr.EditSnippet(const SnippetID: TSnippetID);
 var
   Snippet: TSnippet;    // reference to snippet to be edited
 begin
-  Snippet := Database._Snippets.Find(SnippetID);
-  if not Assigned(Snippet) then
-    raise EBug.Create(ClassName + '.EditSnippet: Snippet not in user database');
+  if not Database.TryLookup(SnippetID, Snippet) then
+    raise EBug.Create(ClassName + '.EditSnippet: Snippet not in database');
   TSnippetsEditorDlg.EditSnippet(nil, Snippet);
 end;
 

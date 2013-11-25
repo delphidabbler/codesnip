@@ -141,7 +141,7 @@ var
   SnippetID: TSnippetID;  // each snippet in list
 begin
   for SnippetID in SnipList do
-    CheckSnippet(Database._Snippets.Find(SnippetID));
+    CheckSnippet(Database.Lookup(SnippetID));
 end;
 
 procedure TSnippetsChkListMgr.Clear;

@@ -181,7 +181,7 @@ var
   Snippet: TSnippet;          // snippet for which dependencies required
   Filter: IXRefSearchFilter;  // xref filter needed to select snippets
 begin
-  Snippet := Database._Snippets.Find(fSnippetID);
+  Snippet := Database.Lookup(fSnippetID);
   Assert(Assigned(Snippet),
     ClassName + '.actSelectAndCloseExecute: Snippet id not found');
   if pcBody.ActivePage = tsDependsUpon then
@@ -228,7 +228,7 @@ var
 begin
   for RequiredSnippetID in DependsList do
   begin
-    RequiredSnippet := Database._Snippets.Find(RequiredSnippetID);
+    RequiredSnippet := Database.Lookup(RequiredSnippetID);
     // Add node for snippet from dependency list
     ChildNode := tvDependencies.Items.AddChild(
       Parent, RequiredSnippet.DisplayName
@@ -432,14 +432,14 @@ begin
   lbDependents.Items.BeginUpdate;
   try
     lbDependents.Clear;
-    ThisSnippet := Database._Snippets.Find(fSnippetID);
+    ThisSnippet := Database.Lookup(fSnippetID);
     // must only try to get dependents for snippet if it is in database
     if (tiRequiredBy in fTabs) and Assigned(ThisSnippet) then
     begin
       Dependents := (Database as IDatabaseEdit).GetDependents(ThisSnippet);
       for SnippetID in Dependents do
       begin
-        ASnippet := Database._Snippets.Find(SnippetID);
+        ASnippet := Database.Lookup(SnippetID);
         Assert(Assigned(ASnippet),
           ClassName + '.PopulateRequiredByList: Snippet id not found');
         // TODO: rethink lbDependants: TBox value is always same (i.e. True)

@@ -361,8 +361,7 @@ var
   Snippet: TSnippet;
 begin
   LI := fLVFavs.Items.Add as TFavouriteListItem;
-  Snippet := Database._Snippets.Find(Favourite.SnippetID);
-  if Assigned(Snippet) then
+  if Database.TryLookup(Favourite.SnippetID, Snippet) then
     LI.Caption := Snippet.DisplayName
   else
     LI.Caption := Favourite.SnippetID.ToString;

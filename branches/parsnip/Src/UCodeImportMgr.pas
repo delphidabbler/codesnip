@@ -308,8 +308,9 @@ begin
     { TODO: fix this code - ImportAsName will not longer have correct snippet
                             ID: will need to implement LinkInfo property of
                             snippet for this to work }
-    Snippet := Database._Snippets.Find(ImportInfo.ImportAsName);
-    if Assigned(Snippet) then
+    if Database.TryLookup(
+      TSnippetID.Create(ImportInfo.ImportAsName), Snippet
+    ) then
       // snippet already exists: overwrite it
       Editor.UpdateSnippet(Snippet, SnippetInfo.Data)
     else

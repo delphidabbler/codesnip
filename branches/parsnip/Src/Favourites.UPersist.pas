@@ -72,7 +72,7 @@ var
   Lines: IStringList;
   Line: string;
   Fields: IStringList;
-  SnippetName: string;
+  SnippetID: TSnippetID;
   LastAccess: TDateTime;
 resourcestring
   sBadFormat = 'Invalid favourites file format';
@@ -102,12 +102,12 @@ begin
     Fields := TIStringList.Create(Line, TAB, False, True);
     if Fields.Count <> 3 then
       raise EFavouritesPersist.Create(sBadFormat);
-    SnippetName := Fields[0];
+    SnippetID := TSnippetID.Create(Fields[0]);
     if not TryStrToDateTime(Fields[2], LastAccess) then
       raise EFavouritesPersist.Create(sBadFormat);
     // only add to favourites if snippet in database
-    if Database._Snippets.Find(SnippetName) <> nil then
-      Favourites.Add(TSnippetID.Create(SnippetName), LastAccess);
+    if Database.Contains(SnippetID) then
+      Favourites.Add(SnippetID, LastAccess);
   end;
 end;
 
