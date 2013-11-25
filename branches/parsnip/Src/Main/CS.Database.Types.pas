@@ -173,7 +173,7 @@ type
     function GetXRefs: IDBSnippetIDList;
     function GetNotes: TMarkup;
     function GetKind: TDBSnippetKind;
-    function GetCompileResults: TDBCompileResults;
+    function GetCompileResults: TCompileResults;
     function GetTags: ITagSet;
     function GetLinkInfo: ISnippetLinkInfo;
     function GetTestInfo: TSnippetTestInfo;
@@ -197,7 +197,7 @@ type
     property XRefs: IDBSnippetIDList read GetXRefs;
     property Notes: TMarkup read GetNotes;
     property Kind: TDBSnippetKind read GetKind;
-    property CompileResults: TDBCompileResults read GetCompileResults;
+    property CompileResults: TCompileResults read GetCompileResults;
     property Tags: ITagSet read GetTags;
     property LinkInfo: ISnippetLinkInfo read GetLinkInfo;
     property TestInfo: TSnippetTestInfo read GetTestInfo;
@@ -219,7 +219,7 @@ type
     procedure SetXRefs(AIDList: IDBSnippetIDList);
     procedure SetNotes(const ANotes: TMarkup);
     procedure SetKind(const ASnippetKind: TDBSnippetKind);
-    procedure SetCompileResults(const AResults: TDBCompileResults);
+    procedure SetCompileResults(const AResults: TCompileResults);
     procedure SetTags(ATagList: ITagSet);
     procedure SetLinkInfo(ALinkInfo: ISnippetLinkInfo);
     procedure SetTestInfo(ATestInfo: TSnippetTestInfo);
@@ -237,7 +237,7 @@ type
     property XRefs: IDBSnippetIDList read GetXRefs write SetXRefs;
     property Notes: TMarkup read GetNotes write SetNotes;
     property Kind: TDBSnippetKind read GetKind write SetKind;
-    property CompileResults: TDBCompileResults read GetCompileResults
+    property CompileResults: TCompileResults read GetCompileResults
       write SetCompileResults;
     property Tags: ITagSet read GetTags write SetTags;
     property LinkInfo: ISnippetLinkInfo read GetLinkInfo write SetLinkInfo;
