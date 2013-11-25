@@ -30,9 +30,9 @@ type
   TDuplicateSnippetDlg = class(TGenericOKDlg, INoPublicConstruct)
     cbCategory: TComboBox;
     chkEdit: TCheckBox;
-    edDisplayName: TEdit;
+    edTitle: TEdit;
     lblCategory: TLabel;
-    lblDisplayName: TLabel;
+    lblTitle: TLabel;
     procedure btnOKClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -89,12 +89,12 @@ begin
   TCtrlArranger.SetLabelHeights(Self);
 
   TCtrlArranger.AlignLefts(
-    [lblDisplayName, lblCategory, edDisplayName, cbCategory, chkEdit], 0
+    [lblTitle, lblCategory, edTitle, cbCategory, chkEdit], 0
   );
 
-  lblDisplayName.Top := 0;
-  TCtrlArranger.MoveBelow(lblDisplayName, edDisplayName, 4);
-  TCtrlArranger.MoveBelow(edDisplayName, lblCategory, 8);
+  lblTitle.Top := 0;
+  TCtrlArranger.MoveBelow(lblTitle, edTitle, 4);
+  TCtrlArranger.MoveBelow(edTitle, lblCategory, 8);
   TCtrlArranger.MoveBelow(lblCategory, cbCategory, 4);
   TCtrlArranger.MoveBelow(cbCategory, chkEdit, 20);
 
@@ -161,7 +161,7 @@ var
   SnippetCat: TCategory;
 begin
   inherited;
-  edDisplayName.Text := fSnippet.Title;
+  edTitle.Text := fSnippet.Title;
   fCatList.ToStrings(cbCategory.Items);
   SnippetCat := Database.Categories.Find(fSnippet.Category);
   if Assigned(SnippetCat) then
@@ -175,7 +175,7 @@ procedure TDuplicateSnippetDlg.UpdateDatabase;
 var
   DisplayName: string;
 begin
-  DisplayName := StrTrim(edDisplayName.Text);
+  DisplayName := StrTrim(edTitle.Text);
   fNewSnippet := (Database as IDatabaseEdit).DuplicateSnippet(
     fSnippet,
     DisplayName,
@@ -189,8 +189,8 @@ var
 resourcestring
   sNoCategory = 'You must choose a category';
 begin
-  if not TSnippetValidator.ValidateTitle(edDisplayName.Text, ErrMsg) then
-    raise EDataEntry.Create(ErrMsg, edDisplayName);
+  if not TSnippetValidator.ValidateTitle(edTitle.Text, ErrMsg) then
+    raise EDataEntry.Create(ErrMsg, edTitle);
   if cbCategory.ItemIndex = -1 then
     raise EDataEntry.Create(sNoCategory, cbCategory);
 end;

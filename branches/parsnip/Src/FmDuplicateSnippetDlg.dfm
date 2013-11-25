@@ -17,13 +17,13 @@ inherited DuplicateSnippetDlg: TDuplicateSnippetDlg
       Caption = '&Category:'
       FocusControl = cbCategory
     end
-    object lblDisplayName: TLabel
+    object lblTitle: TLabel
       Left = 0
       Top = 2
       Width = 24
       Height = 13
       Caption = '&Title:'
-      FocusControl = edDisplayName
+      FocusControl = edTitle
     end
     object cbCategory: TComboBox
       Left = 0
@@ -33,16 +33,14 @@ inherited DuplicateSnippetDlg: TDuplicateSnippetDlg
       Style = csDropDownList
       Anchors = [akLeft, akTop, akRight]
       TabOrder = 1
-      ExplicitWidth = 222
     end
-    object edDisplayName: TEdit
+    object edTitle: TEdit
       Left = 0
       Top = 21
       Width = 337
       Height = 21
       Anchors = [akLeft, akTop, akRight]
       TabOrder = 0
-      ExplicitWidth = 222
     end
     object chkEdit: TCheckBox
       Left = 0
@@ -52,7 +50,6 @@ inherited DuplicateSnippetDlg: TDuplicateSnippetDlg
       Anchors = [akLeft, akTop, akRight]
       Caption = '&Edit in Snippets Editor'
       TabOrder = 2
-      ExplicitWidth = 222
     end
   end
   inherited btnHelp: TButton
