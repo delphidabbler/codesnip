@@ -584,7 +584,6 @@
 			<DCCReference Include="Main\CS.Database.Types.pas"/>
 			<DCCReference Include="Main\CS.ExternalProgs.DiffViewer.pas"/>
 			<DCCReference Include="Main\CS.Init.CommandLineOpts.pas"/>
-			<DCCReference Include="Main\CS.Markup.pas"/>
 			<DCCReference Include="Main\CS.SourceCode.Hiliter.Brushes.pas"/>
 			<DCCReference Include="Main\CS.SourceCode.Hiliter.Parser.pas"/>
 			<DCCReference Include="Main\CS.SourceCode.Hiliter.Renderers.pas"/>

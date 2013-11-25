@@ -23,7 +23,7 @@ uses
   // 3rd party
   Collections.Base,
   // Project
-  CS.Markup,
+  CS.ActiveText,
   CS.SourceCode.Languages,
   CS.Utils.Dates,
   Compilers.UGlobals,
@@ -165,13 +165,13 @@ type
     function GetCreated: TUTCDateTime;
     function GetModified: TUTCDateTime;
     function GetTitle: string;
-    function GetDescription: TMarkup;
+    function GetDescription: IActiveText;
     function GetSourceCode: string;
     function GetLanguageID: TSourceCodeLanguageID;
     function GetRequiredModules: IStringList;
     function GetRequiredSnippets: IDBSnippetIDList;
     function GetXRefs: IDBSnippetIDList;
-    function GetNotes: TMarkup;
+    function GetNotes: IActiveText;
     function GetKind: TDBSnippetKind;
     function GetCompileResults: TCompileResults;
     function GetTags: ITagSet;
@@ -189,13 +189,13 @@ type
     function GetValidProperties: TDBSnippetProps;
 
     property Title: string read GetTitle;
-    property Description: TMarkup read GetDescription;
+    property Description: IActiveText read GetDescription;
     property SourceCode: string read GetSourceCode;
     property LanguageID: TSourceCodeLanguageID read GetLanguageID;
     property RequiredModules: IStringList read GetRequiredModules;
     property RequiredSnippets: IDBSnippetIDList read GetRequiredSnippets;
     property XRefs: IDBSnippetIDList read GetXRefs;
-    property Notes: TMarkup read GetNotes;
+    property Notes: IActiveText read GetNotes;
     property Kind: TDBSnippetKind read GetKind;
     property CompileResults: TCompileResults read GetCompileResults;
     property Tags: ITagSet read GetTags;
@@ -211,13 +211,13 @@ type
   ISnippet = interface(ISnippetBase)
     ['{75F44D0E-7611-4A8D-A4F5-F7612E466238}']
     procedure SetTitle(const ATitle: string);
-    procedure SetDescription(const ADescription: TMarkup);
+    procedure SetDescription(ADescription: IActiveText);
     procedure SetSourceCode(const ASourceCode: string);
     procedure SetLanguageID(const ALanguageID: TSourceCodeLanguageID);
     procedure SetRequiredModules(AModuleList: IStringList);
     procedure SetRequiredSnippets(AIDList: IDBSnippetIDList);
     procedure SetXRefs(AIDList: IDBSnippetIDList);
-    procedure SetNotes(const ANotes: TMarkup);
+    procedure SetNotes(ANotes: IActiveText);
     procedure SetKind(const ASnippetKind: TDBSnippetKind);
     procedure SetCompileResults(const AResults: TCompileResults);
     procedure SetTags(ATagList: ITagSet);
@@ -226,7 +226,7 @@ type
     procedure SetStarred(AStarred: Boolean);
 
     property Title: string read GetTitle write SetTitle;
-    property Description: TMarkup read GetDescription write SetDescription;
+    property Description: IActiveText read GetDescription write SetDescription;
     property SourceCode: string read GetSourceCode write SetSourceCode;
     property LanguageID: TSourceCodeLanguageID read GetLanguageID
       write SetLanguageID;
@@ -235,7 +235,7 @@ type
     property RequiredSnippets: IDBSnippetIDList read GetRequiredSnippets
       write SetRequiredSnippets;
     property XRefs: IDBSnippetIDList read GetXRefs write SetXRefs;
-    property Notes: TMarkup read GetNotes write SetNotes;
+    property Notes: IActiveText read GetNotes write SetNotes;
     property Kind: TDBSnippetKind read GetKind write SetKind;
     property CompileResults: TCompileResults read GetCompileResults
       write SetCompileResults;
