@@ -32,30 +32,53 @@ uses
 type
   EDBSnippetID = class(Exception);
 
+  ///  <summary>Record that uniquely identifies a code snippet.</summary>
   TDBSnippetID = record
   public
     type
+      ///  <summary>Comparer for snippet IDs.</summary>
       TComparer = class(TComparer<TDBSnippetID>)
+        ///  <summary>Compares the two given snippet IDs.</summary>
+        ///  <remarks>Returns zero if Left is the same as Right, -ve if Left is
+        ///  less than Right or +ve if Left is greater than Right.</remarks>
         function Compare(const Left, Right: TDBSnippetID): Integer; override;
       end;
+      ///  <summary>Equality comparer for snippet IDs.</summary>
       TEqualityComparer = class(TEqualityComparer<TDBSnippetID>)
       public
+        ///  <summary>Checks if the two given snippet IDs are equal.</summary>
         function Equals(const Left, Right: TDBSnippetID): Boolean; override;
+        ///  <summary>Returns the hash code of the given snippet ID.</summary>
         function GetHashCode(const Value: TDBSnippetID): Integer; override;
       end;
   strict private
     var
+      ///  <summary>Internal value of ID.</summary>
       fID: string;
     const
+      ///  <summary>Maximum size, in characters, of string representation of ID
+      ///  string.</summary>
       MaxIDStringLength = 64;
   public
+    ///  <summary>Constructs a new ID with value created from given ID string.
+    ///  </summary>
     constructor Create(const AIDStr: string);
+    ///  <summary>Creates and returns a snippet ID with a globally unique value.
+    ///  </summary>
     class function CreateNew: TDBSnippetID; static;
+    ///  <summary>Checks if the two given snippet IDs are equal.</summary>
     class operator Equal(const Left, Right: TDBSnippetID): Boolean;
+    ///  <summary>Checks if the two given snippet IDs are not equal.</summary>
     class operator NotEqual(const Left, Right: TDBSnippetID): Boolean;
+    ///  <summary>Compares the two given snippet IDs.</summary>
+    ///  <remarks>Returns zero if Left is the same as Right, -ve if Left is less
+    ///  than Right or +ve if Left is greater than Right.</remarks>
     class function Compare(const Left, Right: TDBSnippetID): Integer; static;
+    ///  <summary>Returns a string representation of the ID.</summary>
     function ToString: string; inline;
+    ///  <summary>Returns a hash of the ID.</summary>
     function Hash: Integer;
+    ///  <summary>Checks if the given string is a valid snippet ID.</summary>
     class function IsValidIDString(const S: string): Boolean; static;
   end;
 
