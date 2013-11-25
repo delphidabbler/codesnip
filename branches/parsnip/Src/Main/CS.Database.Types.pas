@@ -53,7 +53,6 @@ type
     class function CreateNew: TDBSnippetID; static;
     class operator Equal(const Left, Right: TDBSnippetID): Boolean;
     class operator NotEqual(const Left, Right: TDBSnippetID): Boolean;
-
     class function Compare(const Left, Right: TDBSnippetID): Integer; static;
     function ToString: string; inline;
     function Hash: Integer;
@@ -278,7 +277,7 @@ uses
 
 class function TDBSnippetID.Compare(const Left, Right: TDBSnippetID): Integer;
 begin
-  Result := StrCompareStr(Left.fID, Right.fID);
+  Result := StrCompareText(Left.fID, Right.fID);
 end;
 
 constructor TDBSnippetID.Create(const AIDStr: string);
@@ -305,12 +304,12 @@ end;
 
 class operator TDBSnippetID.Equal(const Left, Right: TDBSnippetID): Boolean;
 begin
-  Result := StrSameStr(Left.fID, Right.fID);
+  Result := StrSameText(Left.fID, Right.fID);
 end;
 
 function TDBSnippetID.Hash: Integer;
 begin
-  Result := StrHash(fID);
+  Result := TextHash(fID);
 end;
 
 class function TDBSnippetID.IsValidIDString(const S: string): Boolean;
@@ -340,7 +339,7 @@ end;
 
 class operator TDBSnippetID.NotEqual(const Left, Right: TDBSnippetID): Boolean;
 begin
-  Result := Left.fID <> Right.fID;
+  Result := not StrSameText(Left.fID, Right.fID);
 end;
 
 function TDBSnippetID.ToString: string;
