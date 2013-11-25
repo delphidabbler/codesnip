@@ -410,7 +410,7 @@ end;
 
 function TSnippet.GetTitle: string;
 begin
-  if StrIsBlank(fTitle) then
+  if not StrIsBlank(fTitle) then
     Result := fTitle
   else
     Result := fID.ToString;
