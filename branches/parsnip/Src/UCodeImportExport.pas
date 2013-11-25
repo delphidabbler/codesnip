@@ -372,8 +372,8 @@ begin
     TActiveTextREMLRenderer.Render(Snippet.Description, EOL)
   );
   // Snippet's display name is only written if different to Snippet's name
-  if Snippet.ID.ToString <> Snippet.DisplayName then
-    fXMLDoc.CreateElement(SnippetNode, cDisplayNameNode, Snippet.DisplayName);
+  if Snippet.ID.ToString <> Snippet.Title then
+    fXMLDoc.CreateElement(SnippetNode, cDisplayNameNode, Snippet.Title);
   // source code is stored directly in XML, not in external file
   fXMLDoc.CreateElement(SnippetNode, cSourceCodeTextNode, Snippet.SourceCode);
   // write highlight source flag

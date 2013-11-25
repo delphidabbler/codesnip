@@ -231,7 +231,7 @@ begin
     RequiredSnippet := Database.Lookup(RequiredSnippetID);
     // Add node for snippet from dependency list
     ChildNode := tvDependencies.Items.AddChild(
-      Parent, RequiredSnippet.DisplayName
+      Parent, RequiredSnippet.Title
     );
     ChildNode.Data := RequiredSnippet;  // reference to associated snippet
     // Check for circular reference. If detetected display warning otherwise
@@ -331,7 +331,7 @@ begin
   with InternalCreate(AOwner) do
     try
       fSnippetID := Snippet.ID;
-      fDisplayName := Snippet.DisplayName;
+      fDisplayName := Snippet.Title;
       fDependsList := Snippet.RequiredSnippets;
       fTabs := Tabs;
       fCanSelect := PermitSelection;
@@ -444,7 +444,7 @@ begin
           ClassName + '.PopulateRequiredByList: Snippet id not found');
         // TODO: rethink lbDependants: TBox value is always same (i.e. True)
         lbDependents.Items.AddObject(
-          ASnippet.DisplayName, TBox<Boolean>.Create(True)
+          ASnippet.Title, TBox<Boolean>.Create(True)
         );
       end;
     end;

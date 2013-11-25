@@ -362,7 +362,7 @@ var
 begin
   LI := fLVFavs.Items.Add as TFavouriteListItem;
   if Database.TryLookup(Favourite.SnippetID, Snippet) then
-    LI.Caption := Snippet.DisplayName
+    LI.Caption := Snippet.Title
   else
     LI.Caption := Favourite.SnippetID.ToString;
   if IsToday(Favourite.LastAccessed) then

@@ -234,9 +234,9 @@ begin
   // TODO: rethink following DBHeadingColours is always same
   lblSnippetName.Font.Color := Preferences.DBHeadingColours[True];
   // Display selected snippet name in appropriate controls
-  lblSnippetName.Caption := fSnippet.DisplayName;
+  lblSnippetName.Caption := fSnippet.Title;
   chkIncludeSnippet.Caption := Format(
-    chkIncludeSnippet.Caption, [fSnippet.DisplayName]
+    chkIncludeSnippet.Caption, [fSnippet.Title]
   );
   // Display or hide warning about overwriting searches
   lblOverwriteSearch.Visible := Query.IsSearchActive;

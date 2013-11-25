@@ -128,7 +128,7 @@ begin
   Assert(Assigned(ASnippet), ClassName + '.Execute: ASnippet is nil');
   with InternalCreate(AOwner) do
     try
-      Caption := Format(sCaption, [ASnippet.DisplayName]);
+      Caption := Format(sCaption, [ASnippet.Title]);
       fSnippet := ASnippet;
       Result := ShowModal = mrOK;
     finally
@@ -161,7 +161,7 @@ var
   SnippetCat: TCategory;
 begin
   inherited;
-  edDisplayName.Text := fSnippet.DisplayName;
+  edDisplayName.Text := fSnippet.Title;
   fCatList.ToStrings(cbCategory.Items);
   SnippetCat := Database.Categories.Find(fSnippet.Category);
   if Assigned(SnippetCat) then

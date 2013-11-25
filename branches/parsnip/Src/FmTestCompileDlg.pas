@@ -286,7 +286,7 @@ begin
   TFontHelper.SetDefaultBaseFont(lblSnippetName.Font);
   // Rethinl following in light of synch spaces: no always same colour
   lblSnippetName.Font.Color := Preferences.DBHeadingColours[True];
-  lblSnippetName.Caption := fSnippet.DisplayName;
+  lblSnippetName.Caption := fSnippet.Title;
 end;
 
 procedure TTestCompileDlg.CreateCompilerCtrls;

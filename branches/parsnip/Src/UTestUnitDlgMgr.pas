@@ -84,7 +84,7 @@ begin
     TConfig.Instance.SourceCodeLanguages[Snippet.Language]
   );
   TPreviewDlg.Execute(
-    Owner, XHTMLDoc, dtHTML, Format(sDlgTitle, [Snippet.DisplayName])
+    Owner, XHTMLDoc, dtHTML, Format(sDlgTitle, [Snippet.Title])
   );
 end;
 

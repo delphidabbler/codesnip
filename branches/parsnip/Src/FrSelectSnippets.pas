@@ -145,7 +145,7 @@ begin
         Continue;
       CatNode := AddNode(nil, Group.Title, Cat);
       for Snippet in Group.SnippetList do
-        AddNode(CatNode, Snippet.DisplayName, Snippet);
+        AddNode(CatNode, Snippet.Title, Snippet);
     end;
   finally
     Grouping.Free;

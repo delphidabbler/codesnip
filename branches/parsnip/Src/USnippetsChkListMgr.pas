@@ -116,7 +116,7 @@ procedure TSnippetsChkListMgr.AddSnippet(const Snippet: TSnippet);
     @param Snippet [in] Snippet to be added to list.
   }
 begin
-  fCLB.Items.AddObject(Snippet.DisplayName, Snippet);
+  fCLB.Items.AddObject(Snippet.Title, Snippet);
 end;
 
 procedure TSnippetsChkListMgr.CheckSnippet(const Snippet: TSnippet);

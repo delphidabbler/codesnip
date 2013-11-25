@@ -861,7 +861,7 @@ begin
     Language := TConfig.Instance.SourceCodeLanguages[fSnippet.Language];
     frmDescription.DefaultEditMode := emAuto;
     frmDescription.ActiveText := fSnippet.Description;
-    edDisplayName.Text := fSnippet.DisplayName;
+    edDisplayName.Text := fSnippet.Title;
     cbCategories.ItemIndex := fCatList.IndexOf(fSnippet.Category);
     frmNotes.DefaultEditMode := emAuto;
     frmNotes.ActiveText := fSnippet.Notes;

@@ -470,7 +470,7 @@ begin
   try
     for Snippet in Database._Snippets do
     begin
-      Letter := TInitialLetter.Create(FirstCharOfName(Snippet.DisplayName));
+      Letter := TInitialLetter.Create(FirstCharOfName(Snippet.Title));
       if Map.ContainsKey(Letter) then
         GroupItem := Map[Letter]
       else

@@ -406,7 +406,7 @@ class procedure TUserDBMgr.DeleteSnippet(ViewItem: IView);
     for ID in IDList do
     begin
       Snippet := Database.Lookup(ID);
-      Result.Add(Snippet.DisplayName);
+      Result.Add(Snippet.Title);
     end;
   end;
 
@@ -443,12 +443,12 @@ begin
   // Get permission to delete. If snippet has dependents list them in prompt
   Referrers := (Database as IDatabaseEdit).GetReferrers(Snippet);
   if Referrers.Count = 0 then
-    ConfirmMsg := Format(sConfirmDelete, [Snippet.DisplayName])
+    ConfirmMsg := Format(sConfirmDelete, [Snippet.Title])
   else
     ConfirmMsg := Format(
       sConfirmDeleteEx,
       [
-        Snippet.DisplayName,
+        Snippet.Title,
         SnippetNames(Referrers).GetText(',' + EOL + '    ', False)
       ]
     );

@@ -523,7 +523,7 @@ begin
           Writer.AppendLine;
         Writer.AppendLine('  ' + sReqConstsAndTypes);
         for Snippet in fSourceAnalyser.TypesAndConsts do
-          Writer.AppendLine('    ' + Snippet.DisplayName);
+          Writer.AppendLine('    ' + Snippet.Title);
       end;
       if fSourceAnalyser.ForwardRoutines.Count > 0 then
       begin
@@ -533,7 +533,7 @@ begin
           Writer.AppendLine;
         Writer.AppendLine('  ' + sReqRoutines);
         for Snippet in fSourceAnalyser.ForwardRoutines do
-          Writer.AppendLine('    ' + Snippet.DisplayName);
+          Writer.AppendLine('    ' + Snippet.Title);
       end;
       Writer.AppendLine('}');
       Writer.AppendLine;
@@ -850,7 +850,7 @@ begin
     skConstant, skTypeDef, skClass: // add type/const allowing for dependencies
       AddTypeOrConst(Snippet);
     skFreeform:                     // can't require a freeform snippet
-      raise ECodeSnip.CreateFmt(sCantDependOnFreeform, [Snippet.DisplayName]);
+      raise ECodeSnip.CreateFmt(sCantDependOnFreeform, [Snippet.Title]);
   end;
 end;
 

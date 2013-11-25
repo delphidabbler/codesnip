@@ -560,7 +560,7 @@ end;
 
 function TSnippetView.GetDescription: string;
 begin
-  Result := GetSnippet.DisplayName;
+  Result := GetSnippet.Title;
 end;
 
 function TSnippetView.GetKey: IViewKey;

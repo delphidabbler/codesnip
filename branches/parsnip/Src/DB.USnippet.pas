@@ -109,13 +109,13 @@ type
   }
   TSnippet = class(TObject)
   public
-    ///  <summary>Comparer for snippets by display name.</summary>
+    ///  <summary>Comparer for snippets by title.</summary>
     type
       TDisplayNameComparer = class(TComparer<TSnippet>)
       public
         ///  <summary>Compares snippets Left and Right. Returns -ve if Left's
-        ///  display name sorts before Right's, 0 if the same or +ve if Left's
-        ///  display name is greater than Right's.</summary>
+        ///  title sorts before Right's, 0 if the same or +ve if Left's title is
+        ///  greater than Right's.</summary>
         function Compare(const Left, Right: TSnippet): Integer; override;
       end;
       TDisplayNameEqualityComparer = class(TEqualityComparer<TSnippet>)
@@ -128,7 +128,7 @@ type
     fCategory: string;                      // Name of snippet's category
     fDescription: IActiveText;              // Description of snippet
     fSourceCode: string;                    // Snippet's source code
-    fDisplayName: string;                   // Display name of snippet
+    fTitle: string;                         // Title of snippet
     fRequiredModules: IStringList;          // List of required modules (units)
     fRequiredSnippets: ISnippetIDList;      // List of required snippets
     fXRefs: ISnippetIDList;                 // List of cross-referenced snippets
@@ -172,7 +172,7 @@ type
       {Snippet's unique ID}
     property Kind: TSnippetKind read fKind;
       {Kind of snippet represented by this object}
-    property DisplayName: string read GetDisplayName;
+    property Title: string read GetDisplayName;
       {Displat name of snippet}
     property Category: string read fCategory;
       {Category to which snippet belongs}
@@ -422,7 +422,7 @@ end;
 
 function TSnippet.GetDisplayNameValue: string;
 begin
-  Result := fDisplayName;
+  Result := fTitle;
 end;
 
 function TSnippet.IsEqual(const Snippet: TSnippet): Boolean;
@@ -453,7 +453,7 @@ begin
   fDescription := Data.Desc;
   fSourceCode := StrWindowsLineBreaks(Data.SourceCode);
   fHiliteSource := Data.HiliteSource;
-  fDisplayName := Data.DisplayName;
+  fTitle := Data.DisplayName;
   fNotes := TActiveTextFactory.CloneActiveText(Data.Notes);
   fCompatibility := Data.CompilerResults;
   fTestInfo := Data.TestInfo;
@@ -464,7 +464,7 @@ end;
 function TSnippet.TDisplayNameComparer.Compare(const Left,
   Right: TSnippet): Integer;
 begin
-  Result := StrCompareText(Left.DisplayName, Right.DisplayName);
+  Result := StrCompareText(Left.Title, Right.Title);
   if Result = 0 then
     Result := TSnippetID.Compare(Left.ID, Right.ID);
 end;
@@ -474,7 +474,7 @@ end;
 function TSnippet.TDisplayNameEqualityComparer.Equals(const Left,
   Right: TSnippet): Boolean;
 begin
-  Result := StrSameText(Left.DisplayName, Right.DisplayName);
+  Result := StrSameText(Left.Title, Right.Title);
   if Result then
     Result := Left.ID = Right.ID;
 end;
@@ -482,7 +482,7 @@ end;
 function TSnippet.TDisplayNameEqualityComparer.GetHashCode(
   const Snippet: TSnippet): Integer;
 begin
-  Result := TextHash(Snippet.DisplayName);
+  Result := TextHash(Snippet.Title);
 end;
 
 { TSnippetEx }
@@ -892,3 +892,4 @@ begin
 end;
 
 end.
+

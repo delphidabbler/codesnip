@@ -701,7 +701,7 @@ end;
 function TAlphaListPageHTML.IsSnippetRequired(const Snippet: TSnippet): Boolean;
 begin
   Result := StrStartsText(
-    (View as IInitialLetterView).InitialLetter, Snippet.DisplayName
+    (View as IInitialLetterView).InitialLetter, Snippet.Title
   );
 end;
 

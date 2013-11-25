@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -255,7 +255,7 @@ begin
       begin
         Tplt.ResolvePlaceholderText('Status', Log.Status);
         Tplt.ResolvePlaceholderHTML('ErrorList', Log.LogListHTML);
-        Tplt.ResolvePlaceholderText('SnippetName', fSnippet.DisplayName);
+        Tplt.ResolvePlaceholderText('SnippetName', fSnippet.Title);
         Tplt.ResolvePlaceholderText('CompilerID', Compiler.GetName);
       end
     );

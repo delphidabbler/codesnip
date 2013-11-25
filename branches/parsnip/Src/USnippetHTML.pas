@@ -210,7 +210,7 @@ end;
 
 function TSnippetHTML.SnippetName: string;
 begin
-  Result := THTML.Entities(fSnippet.DisplayName);
+  Result := THTML.Entities(fSnippet.Title);
 end;
 
 class function TSnippetHTML.SnippetALink(const Snippet: TSnippet): string;
@@ -219,7 +219,7 @@ begin
   Result := JSALink(
     TJavaScript.LiteralFunc('displaySnippet', [Snippet.ID.ToString]),
     'snippet-link',
-    Snippet.DisplayName
+    Snippet.Title
   );
 end;
 
