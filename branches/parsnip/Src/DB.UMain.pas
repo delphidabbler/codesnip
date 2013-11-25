@@ -136,6 +136,10 @@ type
     procedure Clear;
       {Clears all data.
       }
+    function Contains(const SnippetID: TSnippetID): Boolean;
+    function Lookup(const SnippetID: TSnippetID): TSnippet;
+    function TryLookup(const SnippetID: TSnippetID; out Snippet: TSnippet):
+      Boolean;
     procedure AddChangeEventHandler(const Handler: TNotifyEventInfo);
       {Adds a change event handler to list of listeners.
         @param Handler [in] Event handler to be added.
@@ -417,6 +421,10 @@ type
       {Removes a change event handler from list of listeners.
         @param Handler [in] Handler to remove from list.
       }
+    function Contains(const SnippetID: TSnippetID): Boolean;
+    function Lookup(const SnippetID: TSnippetID): TSnippet;
+    function TryLookup(const SnippetID: TSnippetID; out Snippet: TSnippet):
+      Boolean;
     { IDatabaseEdit methods }
     function GetEditableSnippetInfo(const Snippet: TSnippet = nil):
       TSnippetEditData;
@@ -635,6 +643,13 @@ procedure TDatabase.Clear;
 begin
   fCategories.Clear;
   fSnippets.Clear;
+end;
+
+function TDatabase.Contains(const SnippetID: TSnippetID): Boolean;
+var
+  Dummy: TSnippet;
+begin
+  Result := TryLookup(SnippetID, Dummy);
 end;
 
 constructor TDatabase.Create;
@@ -922,6 +937,12 @@ begin
   end;
 end;
 
+function TDatabase.Lookup(const SnippetID: TSnippetID): TSnippet;
+begin
+  if not TryLookup(SnippetID, Result) then
+    Result := nil;
+end;
+
 procedure TDatabase.RemoveChangeEventHandler(const Handler: TNotifyEventInfo);
   {Removes a change event handler from list of listeners.
     @param Handler [in] Handler to remove from list.
@@ -955,6 +976,13 @@ var
 begin
   EvtInfo := TEventInfo.Create(Kind, Info);
   fChangeEvents.TriggerEvents(EvtInfo);
+end;
+
+function TDatabase.TryLookup(const SnippetID: TSnippetID;
+  out Snippet: TSnippet): Boolean;
+begin
+  Snippet := fSnippets.Find(SnippetID);
+  Result := Assigned(Snippet);
 end;
 
 function TDatabase.UniqueSnippetName: string;
