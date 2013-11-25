@@ -198,7 +198,6 @@ procedure TActiveTextPlainTextRenderer.Initialise;
 begin
   fIsFirstBlock := True;
   fInBlock := False;
-  fBuilder.Clear;
   fParas.Clear;
   fParaBuilder.Clear;
 end;

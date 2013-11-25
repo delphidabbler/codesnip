@@ -256,7 +256,7 @@ end;
 
 procedure TActiveTextREMLRenderer.Initialise;
 begin
-  fBuilder.Clear;
+  // Do nothing
 end;
 
 procedure TActiveTextREMLRenderer.OutputText(const AText: string);
@@ -297,3 +297,4 @@ begin
 end;
 
 end.
+
