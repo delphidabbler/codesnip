@@ -136,18 +136,14 @@ type
     fCompatibility: TCompileResults;        // Snippet's compiler compatibility
     fHiliteSource: Boolean;                 // If source is syntax highlighted
     fTestInfo: TSnippetTestInfo;            // Level of testing of snippet
-    function GetDisplayName: string;
-      {Gets snippet's display name, or name if no display name is set
-        @return Required display name.
+    function GetTitle: string;
+      {Gets snippet's title, or ID string if no title is set
+        @return Required title.
       }
   strict protected
     procedure SetProps(const Data: TSnippetData);
       {Sets snippet's properties.
         @param Data [in] Record containing property values.
-      }
-    function GetDisplayNameValue: string;
-      {Get's value of snippet's display name field.
-        @return Required field content.
       }
   public
     constructor Create(const ID: TSnippetID; const Props: TSnippetData);
@@ -172,7 +168,7 @@ type
       {Snippet's unique ID}
     property Kind: TSnippetKind read fKind;
       {Kind of snippet represented by this object}
-    property Title: string read GetDisplayName;
+    property Title: string read GetTitle;
       {Displat name of snippet}
     property Category: string read fCategory;
       {Category to which snippet belongs}
@@ -412,17 +408,12 @@ begin
   inherited;
 end;
 
-function TSnippet.GetDisplayName: string;
+function TSnippet.GetTitle: string;
 begin
-  if GetDisplayNameValue <> '' then
-    Result := GetDisplayNameValue
+  if StrIsBlank(fTitle) then
+    Result := fTitle
   else
     Result := fID.ToString;
-end;
-
-function TSnippet.GetDisplayNameValue: string;
-begin
-  Result := fTitle;
 end;
 
 function TSnippet.IsEqual(const Snippet: TSnippet): Boolean;
@@ -506,7 +497,7 @@ begin
   Result.Desc := Description;
   Result.SourceCode := SourceCode;
   Result.HiliteSource := HiliteSource;
-  Result.DisplayName := GetDisplayNameValue;
+  Result.DisplayName := Title;
   Result.Notes := TActiveTextFactory.CloneActiveText(Notes);
   Result.CompilerResults := Compatibility;
   Result.TestInfo := TestInfo;
