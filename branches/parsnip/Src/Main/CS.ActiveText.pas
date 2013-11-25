@@ -242,9 +242,6 @@ type
     ///  <remarks>Any REML not contained with a block is enclosed within a
     ///  specially created paragraph block.</remarks>
     function Normalise: IActiveText;
-    // TODO: Replace ToString by use of a (plain text) renderer.
-    ///  <summary>Converts active text object into plain text.</summary<>
-    function ToString: string;
     ///  <summary>List of elements in active text object.</summary>
     property Elems[Idx: Integer]: IActiveTextElem read GetElem; default;
     ///  <summary>Number of elements in element list.</summary>
@@ -401,10 +398,6 @@ type
     ///  specially created paragraph block.</para>
     ///  </remarks>
     function Normalise: IActiveText;
-    // TODO: Replace ToString by use of a (plain text) renderer.
-    ///  <summary>Converts active text object into plain text.</summary<>
-    ///  <remarks>Method of IActiveText.</remarks>
-    function ToString: string; override;
   end;
 
 type
@@ -802,32 +795,6 @@ begin
     end;
   end;
   Renderer.Finalise;
-end;
-
-function TActiveText.ToString: string;
-var
-  Elem: IActiveTextElem;
-  TextElem: IActiveTextTextElem;
-  ActionElem: IActiveTextActionElem;
-  SB: TStringBuilder;
-begin
-  SB := TStringBuilder.Create;
-  try
-    for Elem in fElems do
-    begin
-      if Supports(Elem, IActiveTextTextElem, TextElem) then
-        SB.Append(TextElem.Text);
-      if Supports(Elem, IActiveTextActionElem, ActionElem)
-        and (ActionElem.DisplayStyle = dsBlock)
-        and (ActionElem.State = fsClose) then
-        // new line at end of block to separate text at end of closing block
-        // from text at start of following block
-        SB.AppendLine;
-    end;
-    Result := SB.ToString;
-  finally
-    SB.Free;
-  end;
 end;
 
 { TActiveTextTextElem }
