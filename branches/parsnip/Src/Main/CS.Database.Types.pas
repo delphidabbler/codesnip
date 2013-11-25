@@ -96,12 +96,12 @@ type
   end;
 
   TDBSnippetKind = (
-    skFreeform,   // free-form code - not in any of other supported formats
-    skRoutine,    // procedure or function in standard format
-    skConstant,   // constant definition in standard format
-    skTypeDef,    // type definition in standard format
-    skUnit,       // complete source code unit
-    skClass       // Delphi class or record with methods
+    _skFreeform,   // free-form code - not in any of other supported formats
+    _skRoutine,    // procedure or function in standard format
+    _skConstant,   // constant definition in standard format
+    _skTypeDef,    // type definition in standard format
+    _skUnit,       // complete source code unit
+    _skClass       // Delphi class or record with methods
   );
 
   ETag = class(Exception);
