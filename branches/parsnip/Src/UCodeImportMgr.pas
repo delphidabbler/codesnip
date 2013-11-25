@@ -300,7 +300,7 @@ begin
     if ImportInfo.Skip then
       Continue;
 
-    AdjustDependsList(SnippetInfo.Data.Refs.Depends);
+    AdjustDependsList(SnippetInfo.Data.Refs.RequiredSnippets);
 
     if UserInfo.Details.ToString <> '' then
       SnippetInfo.Data.Props.Notes.Append(UserDetailsActiveText);

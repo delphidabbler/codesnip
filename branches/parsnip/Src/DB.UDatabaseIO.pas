@@ -564,11 +564,11 @@ begin
     fWriter.WriteSnippetProps(Snippet.ID.ToString, Props);
     // Get and write a snippet's references
     Refs := fProvider.GetSnippetRefs(Snippet);
-    fWriter.WriteSnippetUnits(Snippet.ID.ToString, Refs.Units);
+    fWriter.WriteSnippetUnits(Snippet.ID.ToString, Refs.RequiredModules);
     fWriter.WriteSnippetDepends(
-      Snippet.ID.ToString, IDListToStrings(Refs.Depends)
+      Snippet.ID.ToString, IDListToStrings(Refs.RequiredSnippets)
     );
-    fWriter.WriteSnippetXRefs(Snippet.ID.ToString, IDListToStrings(Refs.XRef));
+    fWriter.WriteSnippetXRefs(Snippet.ID.ToString, IDListToStrings(Refs.XRefs));
   end;
 end;
 

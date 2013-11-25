@@ -571,9 +571,9 @@ begin
         Props.CompilerResults := TXMLDocHelper.GetCompilerResults(
           fXMLDoc, SnippetNode
         );
-        GetUnits(SnippetNode, Refs.Units);
-        GetDepends(SnippetNode, Refs.Depends);
-        Refs.XRef.Clear;
+        GetUnits(SnippetNode, Refs.RequiredModules);
+        GetDepends(SnippetNode, Refs.RequiredSnippets);
+        Refs.XRefs.Clear;
       end;
     end;
   except

@@ -996,9 +996,9 @@ begin
     Props.HiliteSource := chkUseHiliter.Checked;
     (Props.Notes as IAssignable).Assign(frmNotes.ActiveText);
     Props.CompilerResults := fCompilersLBMgr.GetCompileResults;
-    Refs.Units := fUnitsCLBMgr.GetCheckedUnits;
-    Refs.Depends := fDependsCLBMgr.GetCheckedSnippets;
-    Refs.XRef := fXRefsCLBMgr.GetCheckedSnippets;
+    Refs.RequiredModules := fUnitsCLBMgr.GetCheckedUnits;
+    Refs.RequiredSnippets := fDependsCLBMgr.GetCheckedSnippets;
+    Refs.XRefs := fXRefsCLBMgr.GetCheckedSnippets;
   end;
 end;
 

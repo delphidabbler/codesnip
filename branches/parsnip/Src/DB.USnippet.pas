@@ -72,9 +72,9 @@ type
     Record that details a snippet's references
   }
   TSnippetReferences = record
-    Units: IStringList;         // List of required units
-    Depends: ISnippetIDList;    // List of IDs of required snippets
-    XRef: ISnippetIDList;       // List of IDs of cross referenced snippets
+    RequiredModules: IStringList;     // List of required modules (e.g. units)
+    RequiredSnippets: ISnippetIDList; // List of IDs of required snippets
+    XRefs: ISnippetIDList;            // List of IDs of x-referenced snippets
     procedure Init;
       {Initialises record by creating objects stored in fields.
       }
@@ -517,9 +517,9 @@ function TSnippetEx.GetReferences: TSnippetReferences;
     @return Information sufficient to define references.
   }
 begin
-  Result.Units := TIStringList.Create(Units);
-  Result.Depends := (Depends as IClonable).Clone as ISnippetIDList;
-  Result.XRef := (XRef as IClonable).Clone as ISnippetIDList;
+  Result.RequiredModules := TIStringList.Create(Units);
+  Result.RequiredSnippets := (Depends as IClonable).Clone as ISnippetIDList;
+  Result.XRefs := (XRef as IClonable).Clone as ISnippetIDList;
 end;
 
 procedure TSnippetEx.Update(const Data: TSnippetEditData;
@@ -556,9 +556,9 @@ procedure TSnippetEx.UpdateRefs(const Refs: TSnippetReferences;
   end;
 
 begin
-  (Self.Units as IAssignable).Assign(Refs.Units);
-  StoreValidRefs(Refs.Depends, Self.Depends);
-  StoreValidRefs(Refs.XRef, Self.XRef);
+  (Self.Units as IAssignable).Assign(Refs.RequiredModules);
+  StoreValidRefs(Refs.RequiredSnippets, Self.Depends);
+  StoreValidRefs(Refs.XRefs, Self.XRef);
 end;
 
 { TSnippetList }
@@ -841,18 +841,18 @@ procedure TSnippetReferences.Assign(const Src: TSnippetReferences);
   }
 begin
   Init;
-  (Units as IAssignable).Assign(Src.Units);
-  (Depends as IAssignable).Assign(Src.Depends);
-  (XRef as IAssignable).Assign(Src.XRef);
+  (RequiredModules as IAssignable).Assign(Src.RequiredModules);
+  (RequiredSnippets as IAssignable).Assign(Src.RequiredSnippets);
+  (XRefs as IAssignable).Assign(Src.XRefs);
 end;
 
 procedure TSnippetReferences.Init;
   {Initialises record by creating objects stored in fields.
   }
 begin
-  Units := TIStringList.Create;
-  Depends := TSnippetIDList.Create;
-  XRef := TSnippetIDList.Create;
+  RequiredModules := TIStringList.Create;
+  RequiredSnippets := TSnippetIDList.Create;
+  XRefs := TSnippetIDList.Create;
 end;
 
 { TSnippetEditData }
