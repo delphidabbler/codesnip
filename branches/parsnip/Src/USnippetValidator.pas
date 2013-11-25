@@ -124,7 +124,7 @@ type
         @return True if name is valid or False if not.
       }
     ///  <summary>Validates a snippet's title.</summary>
-    ///  <param name="DisplayName">string [in] Title to be validated.</param>
+    ///  <param name="Title">string [in] Title to be validated.</param>
     ///  <param name="ErrorMsg">string [out] Message that describes error. -
     ///  Undefined if True returned.</param>
     ///  <returns>Boolean. True if title is valid or False if not.
@@ -258,8 +258,7 @@ begin
     ErrorMsg := Format(
       sCircular, [
         TSnippetKindInfoList.Items[Snippet.Kind].DisplayName,
-        // TODO: change ID.ToString to DisplayName
-        Snippet.ID.ToString
+        Snippet.Title
       ]
     );
     Exit;
@@ -274,8 +273,7 @@ begin
       sInvalidKind,
       [
         TSnippetKindInfoList.Items[Snippet.Kind].DisplayName,
-        // TODO: change ID.ToString to DisplayName
-        Snippet.ID.ToString
+        Snippet.Title
       ]
     );
 end;
