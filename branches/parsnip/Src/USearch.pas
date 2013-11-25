@@ -995,7 +995,7 @@ var
 begin
   for SnippetID in SnippetIDs do
   begin
-    Snippet := Database.Snippets.Find(SnippetID);
+    Snippet := Database._Snippets.Find(SnippetID);
     if Assigned(Snippet) then
       AddToXRefs(Snippet);
   end;
@@ -1073,7 +1073,7 @@ var
 begin
   if soRequired in fOptions then
     for Idx := 0 to Pred(Snippet.Depends.Count) do
-      ReferenceSnippet(Database.Snippets.Find(Snippet.Depends[Idx]));
+      ReferenceSnippet(Database._Snippets.Find(Snippet.Depends[Idx]));
 end;
 
 procedure TXRefSearchFilter.ReferenceReverseRequired(const Snippet: TSnippet);
@@ -1096,7 +1096,7 @@ var
 begin
   if soSeeAlso in fOptions then
     for Idx := 0 to Pred(Snippet.XRef.Count) do
-      ReferenceSnippet(Database.Snippets.Find(Snippet.XRef[Idx]));
+      ReferenceSnippet(Database._Snippets.Find(Snippet.XRef[Idx]));
 end;
 
 procedure TXRefSearchFilter.ReferenceSnippet(const Snippet: TSnippet);

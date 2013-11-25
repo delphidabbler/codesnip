@@ -81,7 +81,7 @@ class function TCodeShareMgr.CanShare: Boolean;
     @return True if user defined snippets exist in database.
   }
 begin
-  Result := Database.Snippets.Count > 0;
+  Result := Database._Snippets.Count > 0;
 end;
 
 class procedure TCodeShareMgr.ExportCode(ViewItem: IView);

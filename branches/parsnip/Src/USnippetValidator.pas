@@ -223,7 +223,7 @@ class function TSnippetValidator.ValidateDependsList(const Snippet: TSnippet;
         Result := True
       else
         Result := DependsListIsCircular(
-          Snippet, Database.Snippets.Find(RequiredSnippet).Depends
+          Snippet, Database._Snippets.Find(RequiredSnippet).Depends
         );
       if Result then
         Exit;
@@ -247,7 +247,7 @@ class function TSnippetValidator.ValidateDependsList(const Snippet: TSnippet;
       Exit; // no kinds specified so depends list can't have these kinds!
     for RequiredSnippetID in DependsList do
     begin
-      RequiredSnippet := Database.Snippets.Find(RequiredSnippetID);
+      RequiredSnippet := Database._Snippets.Find(RequiredSnippetID);
       if RequiredSnippet.Kind in Kinds then
         Result := True
       else
@@ -387,7 +387,7 @@ begin
   else if not IsValidIdent(TrimmedName) then
     ErrorMsg := Format(sErrBadName, [TrimmedName])
   else if CheckForUniqueness and
-    (Database.Snippets.Find(TrimmedName) <> nil) then
+    (Database._Snippets.Find(TrimmedName) <> nil) then
     ErrorMsg := Format(sErrDupName, [TrimmedName])
   else
     Result := True;

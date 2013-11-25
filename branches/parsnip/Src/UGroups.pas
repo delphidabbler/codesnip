@@ -468,7 +468,7 @@ begin
   // letters in case user wants to display empty letter groups. We then add
   // only those snippets in given snippet list to the grouping.
   try
-    for Snippet in Database.Snippets do
+    for Snippet in Database._Snippets do
     begin
       Letter := TInitialLetter.Create(FirstCharOfName(Snippet.DisplayName));
       if Map.ContainsKey(Letter) then

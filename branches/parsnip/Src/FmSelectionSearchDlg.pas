@@ -159,7 +159,7 @@ procedure TSelectionSearchDlg.btnSelectAllClick(Sender: TObject);
 begin
   // Storing all snippets in database in snippet selection frame's
   // SelectedSnippets property causes all snippets to be selected
-  frmSelect.SelectedSnippets := Database.Snippets;
+  frmSelect.SelectedSnippets := Database._Snippets;
 end;
 
 procedure TSelectionSearchDlg.ConfigForm;

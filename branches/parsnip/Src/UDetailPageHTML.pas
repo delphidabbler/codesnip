@@ -443,7 +443,7 @@ begin
     'externalScript', TJavaScript.LoadScript('external.js', etWindows1252)
   );
 
-  DBSize := Database.Snippets.Count;
+  DBSize := Database._Snippets.Count;
   Tplt.ResolvePlaceholderHTML(
     'HaveSnippets', TCSS.BlockDisplayProp(DBSize > 0)
   );

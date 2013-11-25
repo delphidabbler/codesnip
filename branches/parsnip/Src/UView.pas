@@ -570,7 +570,7 @@ end;
 
 function TSnippetView.GetSnippet: TSnippet;
 begin
-  Result := Database.Snippets.Find(fSnippetID);
+  Result := Database._Snippets.Find(fSnippetID);
   Assert(Assigned(Result), ClassName + '.GetSnippet: Snippet not found');
 end;
 

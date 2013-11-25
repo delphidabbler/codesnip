@@ -191,7 +191,7 @@ var
 begin
   Result := TIStringList.Create;
   Result.CaseSensitive := False;
-  for Snippet in Database.Snippets do
+  for Snippet in Database._Snippets do
     Result.Add(Snippet.ID.ToString);
   for SnippetInfo in fSnippetInfoList do
     if not StrSameText(SnippetInfo.Name, ExcludedName) then
@@ -308,7 +308,7 @@ begin
     { TODO: fix this code - ImportAsName will not longer have correct snippet
                             ID: will need to implement LinkInfo property of
                             snippet for this to work }
-    Snippet := Database.Snippets.Find(ImportInfo.ImportAsName);
+    Snippet := Database._Snippets.Find(ImportInfo.ImportAsName);
     if Assigned(Snippet) then
       // snippet already exists: overwrite it
       Editor.UpdateSnippet(Snippet, SnippetInfo.Data)

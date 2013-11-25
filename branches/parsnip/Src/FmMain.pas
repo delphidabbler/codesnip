@@ -991,7 +991,7 @@ end;
 
 procedure TMainForm.ActNonEmptyDBUpdate(Sender: TObject);
 begin
-  (Sender as TAction).Enabled := not Database.Snippets.IsEmpty;
+  (Sender as TAction).Enabled := not Database._Snippets.IsEmpty;
 end;
 
 procedure TMainForm.ActOverviewTabExecute(Sender: TObject);

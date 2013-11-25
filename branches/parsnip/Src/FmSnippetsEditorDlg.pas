@@ -1018,7 +1018,7 @@ begin
   fXRefsCLBMgr.Clear;
   EditSnippetID := TSnippetID.Create(fOrigName);
   EditSnippetKind := fSnipKindList.SnippetKind(cbKind.ItemIndex);
-  for Snippet in Database.Snippets do
+  for Snippet in Database._Snippets do
   begin
     // We ignore snippet being edited
     if (Snippet.ID <> EditSnippetID) then

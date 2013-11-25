@@ -158,7 +158,7 @@ type
       }
     property Categories: TCategoryList read GetCategories;
       {List of categories in main and user databases}
-    property Snippets: TSnippetList read GetSnippets;
+    property _Snippets: TSnippetList read GetSnippets;
       {List of snippets in main and user databases}
   end;
 
