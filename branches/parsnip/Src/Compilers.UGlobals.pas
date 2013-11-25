@@ -77,6 +77,30 @@ type
   TCompileResults = array[TCompilerID] of TCompileResult;
 
 type
+  // TODO: possibly move TDBCompileResults to Compilers.UGlobals or successor
+  TDBCompileResults = record
+  strict private
+    var
+      fSucceeds: TCompilerIDs;
+      fFails: TCompilerIDs;
+    function GetUnknown: TCompilerIDs;
+  public
+    type
+      TTestRule = (trAnd, trOr);
+  public
+    constructor Create(const ASucceeds, AFails: TCompilerIDs);
+    class function CreateNull: TDBCompileResults; static; inline;
+    property Succeeds: TCompilerIDs read fSucceeds;
+    property Fails: TCompilerIDs read fFails;
+    property Unknown: TCompilerIDs read GetUnknown;
+    function IsNull: Boolean; inline;
+    function SucceedsWith(const Compilers: TCompilerIDs; const Rule: TTestRule):
+      Boolean;
+    function FailsWith(const Compilers: TCompilerIDs; const Rule: TTestRule):
+      Boolean;
+  end;
+
+type
   ///  <summary>Enumeration of different warning and error prefixes that can be
   ///  recognised in a compiler log file.</summary>
   ///  <remarks>These values are used to identify the prefix text used by a
@@ -327,6 +351,64 @@ type
 
 
 implementation
+
+{ TDBCompileResults }
+
+constructor TDBCompileResults.Create(const ASucceeds, AFails: TCompilerIDs);
+begin
+  fSucceeds := ASucceeds;
+  fFails := AFails;
+end;
+
+class function TDBCompileResults.CreateNull: TDBCompileResults;
+begin
+  Result := TDBCompileResults.Create([], []);
+end;
+
+function TDBCompileResults.FailsWith(const Compilers: TCompilerIDs;
+  const Rule: TTestRule): Boolean;
+begin
+  Result := False;  // keeps compiler happy
+  case Rule of
+    trAnd:
+      Result := Compilers <= fFails;
+    trOr:
+      Result := (Compilers * fFails) <> [];
+    else
+      Assert(False, 'Unknown TTestRule value');
+  end;
+end;
+
+function TDBCompileResults.GetUnknown: TCompilerIDs;
+var
+  ID: TCompilerID;
+  Known: TCompilerIDs;
+begin
+  Known := fSucceeds + fFails;
+  Result := [];
+  for ID := Low(TCompilerID) to High(TCompilerID) do
+    if not (ID in Known) then
+      Include(Result, ID);
+end;
+
+function TDBCompileResults.IsNull: Boolean;
+begin
+  Result := (fSucceeds = []) and (fFails = []);
+end;
+
+function TDBCompileResults.SucceedsWith(const Compilers: TCompilerIDs;
+  const Rule: TTestRule): Boolean;
+begin
+  Result := False;  // keeps compiler happy
+  case Rule of
+    trAnd:
+      Result := Compilers <= fSucceeds;
+    trOr:
+      Result := (Compilers * fSucceeds) <> [];
+    else
+      Assert(False, 'Unknown TTestRule value');
+  end;
+end;
 
 end.
 
