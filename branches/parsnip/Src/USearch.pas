@@ -21,9 +21,13 @@ interface
 
 uses
   // Delphi
-  Classes, Graphics,
+  Classes,
+  Graphics,
   // Project
-  Compilers.UGlobals, DB.USnippet, UBaseObjects, USnippetIDs;
+  Compilers.UGlobals,
+  DB.USnippet,
+  UBaseObjects,
+  USnippetIDs;
 
 
 type
@@ -299,9 +303,15 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Character,
+  SysUtils,
+  Character,
   // Project
-  DB.UMain, IntfCommon, UConsts, UStrUtils;
+  CS.ActiveText,
+  CS.ActiveText.Renderers.PlainText,
+  DB.UMain,
+  IntfCommon,
+  UConsts,
+  UStrUtils;
 
 
 type
@@ -911,16 +921,28 @@ function TTextSearchFilter.Match(const Snippet: TSnippet): Boolean;
   end;
 
 var
-  SearchText: string; // text we're searching in
-  SearchWord: string; // a word we're searching for
+  SearchText: string;                      // text we're searching in
+  SearchWord: string;                      // a word we're searching for
+  ActiveTextRenderer: IActiveTextRenderer; // converts active text to plain text
+  StrBuilder: TStringBuilder;              // constructs search text
 begin
   // Build search text
-  SearchText := NormaliseSearchText(
-    ' ' + StrMakeSentence(Snippet.Description.ToString) +
-    ' ' + Snippet.SourceCode +
-    ' ' + StrMakeSentence(Snippet.Notes.ToString) +
-    ' '
-  );
+  StrBuilder := TStringBuilder.Create;
+  try
+    ActiveTextRenderer := TActiveTextPlainTextRenderer.Create(
+      StrBuilder, ' ', [ptrIgnoreEmptyBlocks]
+    );
+    StrBuilder.Append(' ');
+    Snippet.Description.Render(ActiveTextRenderer);
+    StrBuilder.Append(' ');
+    Snippet.Notes.Render(ActiveTextRenderer);
+    StrBuilder.Append(' ');
+    StrBuilder.Append(Snippet.SourceCode);
+    StrBuilder.Append(' ');
+    SearchText := NormaliseSearchText(StrBuilder.ToString);
+  finally
+    StrBuilder.Free;
+  end;
   if fLogic = slOr then
   begin
     // Find any of words in search text: return True as soon as any word matches
@@ -1182,4 +1204,5 @@ begin
 end;
 
 end.
+
 
