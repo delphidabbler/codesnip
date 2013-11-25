@@ -41,6 +41,9 @@ type
     ciFPC                               // Free Pascal
   );
 
+  ///  <summary>Set of compiler identifiers.</summary>
+  TCompilerIDs = set of TCompilerID;
+
 const
   ///  <summary>Set of classic Borland / Inprise Delphi compilers.</summary>
   cClassicDelphiCompilers = [ciD2, ciD3, ciD4, ciD5, ciD6, ciD7];

@@ -82,9 +82,6 @@ type
     skClass       // Delphi class or record with methods
   );
 
-  // TODO: move TCompilerIDs to Compilers.UGlobals or successor unit
-  TCompilerIDs = set of TCompilerID;
-
   // TODO: possibly move TDBCompileResults to Compilers.UGlobals or successor
   TDBCompileResults = record
   strict private
