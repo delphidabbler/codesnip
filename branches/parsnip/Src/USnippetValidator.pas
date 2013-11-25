@@ -49,6 +49,32 @@ type
         @param ErrorSel [out] Selection that can be used to highlight error.
         @return True if name is valid or False if not.
       }
+    class function ValidateNotes(Notes: IActiveText; out ErrorMsg: string):
+      Boolean;
+      {Validates a snippet's notes.
+        @param Notes [in] Notes information to be checked.
+        @param ErrorMsg [out] Message that describes error. Undefined if True
+          returned.
+        @return True if notes are valid, False if not.
+      }
+    class function ValidateDescription(Desc: IActiveText; out ErrorMsg: string;
+      out ErrorSel: TSelection): Boolean;
+      {Validates a description code from a snippet.
+        @param Desc [in] Description to be checked.
+        @param ErrorMsg [out] Message that describes error. Undefined if True
+          returned.
+        @param ErrorSel [out] Selection that can be used to highlight error.
+        @return True if description is valid or False if not.
+      }
+    class function ValidateSnippet(const Snippet: TSnippet;
+      out ErrorMsg: string; out ErrorSel: TSelection): Boolean;
+      {Checks a snippet for validity.
+        @param Snippet [in] Snippet to be checked.
+        @param ErrorMsg [out] Message that describes error. Undefined if True
+          returned.
+        @param ErrorSel [out] Selection that can be used to highlight error.
+        @return True if snippet valid or False if not.
+      }
   public
     class function ValidateDependsList(const Snippet: TSnippet;
       out ErrorMsg: string): Boolean; overload;
@@ -78,15 +104,6 @@ type
         @param ErrorSel [out] Selection that can be used to highlight error.
         @return True if source code is valid or False if not.
       }
-    class function ValidateDescription(const Desc: string; out ErrorMsg: string;
-      out ErrorSel: TSelection): Boolean;
-      {Validates a description code from a snippet.
-        @param Desc [in] Description to be checked.
-        @param ErrorMsg [out] Message that describes error. Undefined if True
-          returned.
-        @param ErrorSel [out] Selection that can be used to highlight error.
-        @return True if description is valid or False if not.
-      }
     class function ValidateName(const Name: string;
       const CheckForUniqueness: Boolean): Boolean; overload;
       {Validates a snippet's name.
@@ -115,29 +132,12 @@ type
     ///  </returns>
     class function ValidateDisplayName(const DisplayName: string;
       out ErrorMsg: string): Boolean;
-    class function ValidateNotes(const Notes: IActiveText;
-      out ErrorMsg: string): Boolean;
-      {Validates a snippet's notes.
-        @param Notes [in] Notes information to be checked.
-        @param ErrorMsg [out] Message that describes error. Undefined if True
-          returned.
-        @return True if notes are valid, False if not.
-      }
     class function Validate(const Snippet: TSnippet; out ErrorMsg: string):
-      Boolean; overload;
+      Boolean;
       {Checks a snippet for validity.
         @param Snippet [in] Snippet to be checked.
         @param ErrorMsg [out] Message that describes error. Undefined if True
           returned.
-        @return True if snippet valid or False if not.
-      }
-    class function Validate(const Snippet: TSnippet; out ErrorMsg: string;
-      out ErrorSel: TSelection): Boolean; overload;
-      {Checks a snippet for validity.
-        @param Snippet [in] Snippet to be checked.
-        @param ErrorMsg [out] Message that describes error. Undefined if True
-          returned.
-        @param ErrorSel [out] Selection that can be used to highlight error.
         @return True if snippet valid or False if not.
       }
     class function ValidDependsKinds(const Kind: TSnippetKind): TSnippetKinds;
@@ -156,6 +156,7 @@ uses
   // Delphi
   SysUtils,
   // Project
+  CS.ActiveText.Renderers.PlainText,
   CS.ActiveText.Validator,
   DB.UMain,
   USnippetIDs,
@@ -175,24 +176,7 @@ class function TSnippetValidator.Validate(const Snippet: TSnippet;
 var
   DummySel: TSelection; // unused parameter to overloaded Validate call
 begin
-  Result := Validate(Snippet, ErrorMsg, DummySel);
-end;
-
-class function TSnippetValidator.Validate(const Snippet: TSnippet;
-  out ErrorMsg: string; out ErrorSel: TSelection): Boolean;
-  {Checks a snippet for validity.
-    @param Snippet [in] Snippet to be checked.
-    @param ErrorMsg [out] Message that describes error. Undefined if True
-      returned.
-    @param ErrorSel [out] Selection that can be used to highlight error.
-    @return True if snippet valid or False if not.
-  }
-begin
-  Result := ValidateName(Snippet.ID.ToString, False, ErrorMsg, ErrorSel)
-    and ValidateDescription(Snippet.Description.ToString, ErrorMsg, ErrorSel)
-    and ValidateSourceCode(Snippet.SourceCode, ErrorMsg, ErrorSel)
-    and ValidateDependsList(Snippet, ErrorMsg)
-    and ValidateNotes(Snippet.Notes, ErrorMsg);
+  Result := ValidateSnippet(Snippet, ErrorMsg, DummySel);
 end;
 
 class function TSnippetValidator.ValidateDependsList(const Snippet: TSnippet;
@@ -321,7 +305,7 @@ begin
   end;
 end;
 
-class function TSnippetValidator.ValidateDescription(const Desc: string;
+class function TSnippetValidator.ValidateDescription(Desc: IActiveText;
   out ErrorMsg: string; out ErrorSel: TSelection): Boolean;
   {Validates a description code from a snippet.
     @param Desc [in] Description to be checked.
@@ -330,28 +314,39 @@ class function TSnippetValidator.ValidateDescription(const Desc: string;
     @param ErrorSel [out] Selection that can be used to highlight error.
     @return True if description is valid or False if not.
   }
+var
+  ErrorInfo: TActiveTextValidator.TErrorInfo; // info about error
+  DescText: string;
 resourcestring
   // Error messages
   sErrNoDesc = 'A description must be provided';
   sErrDescHasClosingBrace = 'Description must not contain a ''}'' character';
+  sErrorStub = 'Error in snippet''s description: %s';
 const
   ClosingBrace = '}';
 begin
-  Result := False;
-  if StrIsBlank(Desc) then
+  if not TActiveTextValidator.Validate(Desc, ErrorInfo) then
+  begin
+    ErrorMsg := Format(sErrorStub, [ErrorInfo.Description]);
+    ErrorSel := TSelection.Create(0);
+    Exit(False);
+  end;
+  DescText := TActiveTextPlainTextRenderer.Render(Desc, sLineBreak, []);
+  if StrIsBlank(DescText) then
   begin
     ErrorMsg := sErrNoDesc;
-    ErrorSel := TSelection.Create(0, Length(Desc));
-  end
-  else if StrContainsStr(ClosingBrace, Desc) then
+    ErrorSel := TSelection.Create(0, Length(DescText));
+    Exit(False);
+  end;
+  if StrContainsStr(ClosingBrace, DescText) then
   begin
     ErrorMsg := sErrDescHasClosingBrace;
     ErrorSel := TSelection.Create(
-      StrPos(ClosingBrace, Desc) - 1, Length(ClosingBrace)
+      StrPos(ClosingBrace, DescText) - 1, Length(ClosingBrace)
     );
-  end
-  else
-    Result := True;
+    Exit(False);
+  end;
+  Result := True;
 end;
 
 class function TSnippetValidator.ValidateDisplayName(const DisplayName: string;
@@ -427,7 +422,7 @@ begin
   Result := ValidateName(Name, CheckForUniqueness, DummyErrMsg);
 end;
 
-class function TSnippetValidator.ValidateNotes(const Notes: IActiveText;
+class function TSnippetValidator.ValidateNotes(Notes: IActiveText;
   out ErrorMsg: string): Boolean;
   {Validates a snippet's notes.
     @param Notes [in] Notes information to be checked.
@@ -437,10 +432,22 @@ class function TSnippetValidator.ValidateNotes(const Notes: IActiveText;
   }
 var
   ErrorInfo: TActiveTextValidator.TErrorInfo; // info about error
+resourcestring
+  sErrorStub = 'Error in snippet''s notes: %s';
 begin
-  Result :=  TActiveTextValidator.Validate(Notes, ErrorInfo);
+  Result := TActiveTextValidator.Validate(Notes, ErrorInfo);
   if not Result then
-    ErrorMsg := ErrorInfo.Description;
+    ErrorMsg := Format(sErrorStub, [ErrorInfo.Description]);
+end;
+
+class function TSnippetValidator.ValidateSnippet(const Snippet: TSnippet;
+  out ErrorMsg: string; out ErrorSel: TSelection): Boolean;
+begin
+  Result := ValidateName(Snippet.ID.ToString, False, ErrorMsg, ErrorSel)
+    and ValidateDescription(Snippet.Description, ErrorMsg, ErrorSel)
+    and ValidateSourceCode(Snippet.SourceCode, ErrorMsg, ErrorSel)
+    and ValidateDependsList(Snippet, ErrorMsg)
+    and ValidateNotes(Snippet.Notes, ErrorMsg);
 end;
 
 class function TSnippetValidator.ValidateSourceCode(const Source: string;
