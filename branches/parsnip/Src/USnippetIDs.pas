@@ -28,13 +28,14 @@ uses
 
 
 type
+  // TODO: Add new ToList<TSnippetID> method
   ///  <summary>Implements a list of snippet identification records.</summary>
   TSnippetIDList = class(
     TInterfacedObject, ISnippetIDList, IAssignable, IClonable
   )
   strict private
     var
-      // TODO: Change implementation to use DelphiColl
+      // TODO: Change implementation to use DelphiColl - use TLinkedSet
       ///  <summary>Internal list if snippet ID records.</summary>
       fList: TList<TSnippetID>;
   public
@@ -168,7 +169,7 @@ end;
 
 function TSnippetIDList.IsEmpty: Boolean;
 begin
-  Result := fList.Count < 0;
+  Result := fList.Count = 0;
 end;
 
 procedure TSnippetIDList.Remove(const SnippetID: TSnippetID);
