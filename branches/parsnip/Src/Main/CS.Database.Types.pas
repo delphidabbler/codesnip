@@ -66,6 +66,8 @@ type
     ///  <summary>Constructs a new ID with value created from given ID string.
     ///  </summary>
     constructor Create(const AIDStr: string);
+    ///  <summary>Returns a new, null, snippet ID.</summary>
+    class function CreateNull: TSnippetID; static;
     ///  <summary>Creates and returns a snippet ID with a globally unique value.
     ///  </summary>
     class function CreateNew: TSnippetID; static;
@@ -81,6 +83,8 @@ type
     function ToString: string; inline;
     ///  <summary>Returns a hash of the ID.</summary>
     function Hash: Integer;
+    ///  <summary>Checks if the snippet ID is null.</summary>
+    function IsNull: Boolean;
     ///  <summary>Checks if the given string is a valid snippet ID.</summary>
     class function IsValidIDString(const S: string): Boolean; static;
   end;
@@ -344,6 +348,11 @@ begin
   Result := TSnippetID.Create(IDStr);
 end;
 
+class function TSnippetID.CreateNull: TSnippetID;
+begin
+  Result.fID := EmptyStr;
+end;
+
 class operator TSnippetID.Equal(const Left, Right: TSnippetID): Boolean;
 begin
   Result := StrSameText(Left.fID, Right.fID);
@@ -352,6 +361,11 @@ end;
 function TSnippetID.Hash: Integer;
 begin
   Result := TextHash(fID);
+end;
+
+function TSnippetID.IsNull: Boolean;
+begin
+  Result := fID = EmptyStr;
 end;
 
 class function TSnippetID.IsValidIDString(const S: string): Boolean;
