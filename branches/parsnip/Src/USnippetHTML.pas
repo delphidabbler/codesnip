@@ -104,6 +104,7 @@ uses
   // Project
   CS.ActiveText.Renderers.HTML,
   CS.Config,
+  CS.Database.Types,
   CS.SourceCode.Languages,
   CS.SourceCode.Hiliter.Brushes,
   CS.SourceCode.Hiliter.Renderers,

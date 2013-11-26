@@ -27,23 +27,15 @@ uses
   Collections.Lists,
   // Project
   CS.ActiveText,
+  CS.Database.Types,
   CS.SourceCode.Languages,
   Compilers.UGlobals,
   DB.USnippetKind,
   UIStringList,
   USnippetIDs;
 
-type
-  ///  <summary>Enumeration providing information about the level to which a
-  ///  snippet has been tested.</summary>
-  TSnippetTestInfo = (
-    stiNone,              // snippet has not been tested
-    stiBasic,             // snippet has had some basic testing
-    stiAdvanced           // snippet has had advanced (unit) testing
-  );
 
 type
-
   {
   TSnippetData:
     Record that provides information about a snippet's properties.
