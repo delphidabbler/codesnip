@@ -1089,12 +1089,11 @@ end;
 
 procedure TXRefSearchFilter.ReferenceRequired(const Snippet: TSnippet);
 var
-  Idx: Integer; // loops thru all required snippets
+  SnippetID: TSnippetID;
 begin
   if soRequired in fOptions then
-    // TODO: change to for..in loop
-    for Idx := 0 to Pred(Snippet.RequiredSnippets.Count) do
-      ReferenceSnippet(Database.Lookup(Snippet.RequiredSnippets[Idx]));
+    for SnippetID in Snippet.RequiredSnippets do
+      ReferenceSnippet(Database.Lookup(SnippetID));
 end;
 
 procedure TXRefSearchFilter.ReferenceReverseRequired(const Snippet: TSnippet);
@@ -1113,12 +1112,11 @@ end;
 
 procedure TXRefSearchFilter.ReferenceSeeAlso(const Snippet: TSnippet);
 var
-  Idx: Integer; // loops thru all "see also" snippets
+  SnippetID: TSnippetID;
 begin
   if soSeeAlso in fOptions then
-    // TODO: change to for .. in loop
-    for Idx := 0 to Pred(Snippet.XRefs.Count) do
-      ReferenceSnippet(Database.Lookup(Snippet.XRefs[Idx]));
+    for SnippetID in Snippet.XRefs do
+      ReferenceSnippet(Database.Lookup(SnippetID));
 end;
 
 procedure TXRefSearchFilter.ReferenceSnippet(const Snippet: TSnippet);
