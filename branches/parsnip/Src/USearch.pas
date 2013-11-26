@@ -272,20 +272,20 @@ type
       ITextSearchFilter;
     ///  <summary>Creates and returns a search filter that selects from a given
     ///  list of snippets provided by a user.</summary>
-    ///  <param name="SelectedItems">TSnippetList [in] List of snippets to be
-    ///  included in search.</param>
+    ///  <param name="SelectedSnippets">ISnippetIDList [in] IDs of snippets to
+    ///  be included in search.</param>
     ///  <returns>ISelectionSearchFilter. Interface to filter object.
     ///  </returns>
     class function CreateManualSelectionSearchFilter(
-      const SelectedSnippets: TSnippetList): ISelectionSearchFilter;
+      SelectedSnippets: ISnippetIDList): ISelectionSearchFilter;
     ///  <summary>Creates and returns a search filter that selects from a given
     ///  list of snippets provided from file.</summary>
-    ///  <param name="SelectedItems">TSnippetList [in] List of snippets to be
-    ///  included in search.</param>
+    ///  <param name="SelectedSnippets">ISnippetIDList [in] IDs of snippets to
+    ///  be included in search.</param>
     ///  <returns>ISelectionSearchFilter. Interface to filter object.
     ///  </returns>
     class function CreateStoredSelectionSearchFilter(
-      const SelectedSnippets: ISnippetIDList): ISelectionSearchFilter;
+      SelectedSnippets: ISnippetIDList): ISelectionSearchFilter;
     ///  <summary>Creates and returns a cross-reference search filter object.
     ///  </summary>
     ///  <param name="BaseSnippet">TSnippet [in] Snippet whose cross references
@@ -1171,19 +1171,13 @@ begin
 end;
 
 class function TSearchFilterFactory.CreateManualSelectionSearchFilter(
-  const SelectedSnippets: TSnippetList): ISelectionSearchFilter;
-var
-  SnippetIDs: ISnippetIDList; // snippet id list
-  Snippet: TSnippet;          // each snippet in SelectedSnippets
+  SelectedSnippets: ISnippetIDList): ISelectionSearchFilter;
 begin
-  SnippetIDs := TSnippetIDList.Create;
-  for Snippet in SelectedSnippets do
-    SnippetIDs.Add(Snippet.ID);
-  Result := TManualSelectionSearchFilter.Create(SnippetIDs);
+  Result := TManualSelectionSearchFilter.Create(SelectedSnippets);
 end;
 
 class function TSearchFilterFactory.CreateStoredSelectionSearchFilter(
-  const SelectedSnippets: ISnippetIDList): ISelectionSearchFilter;
+  SelectedSnippets: ISnippetIDList): ISelectionSearchFilter;
 begin
   Result := TStoredSelectionSearchFilter.Create(SelectedSnippets);
 end;
@@ -1203,5 +1197,4 @@ begin
 end;
 
 end.
-
 
