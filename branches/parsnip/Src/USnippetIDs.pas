@@ -119,9 +119,10 @@ var
   SrcID: TSnippetID;  // references each ID in source
   SrcList: ISnippetIDList;
 begin
-  if not Supports(Src, ISnippetIDList, Srclist) then
+  if not Supports(Src, ISnippetIDList, SrcList) then
     raise EBug.Create(ClassName + '.Assign: Src must support ISnippetIDList');
   Clear;
+  fList.Capacity := SrcList.Count;
   for SrcID in SrcList do
     Add(SrcID);
 end;
