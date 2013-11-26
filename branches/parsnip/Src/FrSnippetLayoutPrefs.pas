@@ -286,8 +286,6 @@ begin
   for SKInfo in TSnippetKindInfoList.Items do
     fSnippetKindsCBMgr.Add(SKInfo.Kind, SKInfo.DisplayName);
   fSnippetKindsCBMgr.Select(Low(TSnippetKind));
-//    cbSnippetKinds.Items.AddObject(SKInfo.DisplayName, TObject(SKInfo.Kind));
-//  cbSnippetKinds.ItemIndex := 0;
 end;
 
 procedure TSnippetLayoutPrefsFrame.Deactivate(const Prefs: IPreferences);
