@@ -40,7 +40,11 @@ type
       fList: TList<TSnippetID>;
   public
     ///  <summary>Constructs empty list object.</summary>
-    constructor Create;
+    constructor Create; overload;
+
+    ///  <summary>Constructs empty list object with the given capacity.
+    ///  </summary>
+    constructor Create(const ACapacity: Integer); overload;
 
     ///  <summary>Destroys object.</summary>
     destructor Destroy; override;
@@ -141,6 +145,12 @@ end;
 function TSnippetIDList.Count: Integer;
 begin
   Result := fList.Count;
+end;
+
+constructor TSnippetIDList.Create(const ACapacity: Integer);
+begin
+  Create;
+  fList.Capacity := ACapacity;
 end;
 
 constructor TSnippetIDList.Create;
