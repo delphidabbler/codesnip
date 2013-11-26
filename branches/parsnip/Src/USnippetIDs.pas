@@ -76,14 +76,6 @@ type
     ///  <remarks>Method of ISnippetIDList.</remarks>
     function Count: Integer;
 
-    ///  <summary>Gets snippet ID record from list by index.</summary>
-    ///  <remarks>Method of ISnippetIDList.</remarks>
-    function GetItem(Idx: Integer): TSnippetID;
-
-    ///  <summary>Stores snippet ID record in list at specified index.</summary>
-    ///  <remarks>Method of ISnippetIDList.</remarks>
-    procedure SetItem(Idx: Integer; const Value: TSnippetID);
-
     ///  <summary>Copies properties of given list to this one.</summary>
     ///  <param name="Src">IInterface [in] List whose properties are to be
     ///  copied. Src must support ISnippetIDList.</param>
@@ -174,11 +166,6 @@ begin
   Result := fList.GetEnumerator;
 end;
 
-function TSnippetIDList.GetItem(Idx: Integer): TSnippetID;
-begin
-  Result := fList[Idx];
-end;
-
 function TSnippetIDList.IsEmpty: Boolean;
 begin
   Result := fList.Count < 0;
@@ -187,11 +174,6 @@ end;
 procedure TSnippetIDList.Remove(const SnippetID: TSnippetID);
 begin
   fList.Remove(SnippetID);
-end;
-
-procedure TSnippetIDList.SetItem(Idx: Integer; const Value: TSnippetID);
-begin
-  fList[Idx] := Value;
 end;
 
 end.

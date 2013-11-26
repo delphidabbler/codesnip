@@ -106,13 +106,6 @@ type
     function IsEmpty: Boolean;
     ///  <summary>Returns number of snippet ID records in list.</summary>
     function Count: Integer;
-    ///  <summary>Gets snippet ID record from list by index.</summary>
-    function GetItem(Idx: Integer): TSnippetID;
-    ///  <summary>Stores snippet ID record in list at specified index.</summary>
-    procedure SetItem(Idx: Integer; const Value: TSnippetID);
-    ///  <summary>Provides read/write access to snippet IDs by index.</summary>
-    property Items[Idx: Integer]: TSnippetID
-      read GetItem write SetItem; default;
   end;
 
   ///  <summary>Enumeration of various supported kinds of snippets.</summary>
