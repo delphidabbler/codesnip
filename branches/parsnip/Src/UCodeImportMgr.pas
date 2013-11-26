@@ -251,21 +251,6 @@ end;
 procedure TCodeImportMgr.UpdateDatabase;
 
   // ---------------------------------------------------------------------------
-  // Adjusts a snippet's dependency list so that main database is searched for a
-  // required snippet if it is not in the user database.
-  procedure AdjustDependsList(const Depends: ISnippetIDList);
-  var
-    Idx: Integer;           // loops through dependencies
-    SnippetID: TSnippetID;  // each snippet ID in dependency list
-  begin
-    // TODO: will eventually need to set snippet's link info here
-    for Idx := 0 to Pred(Depends.Count) do
-    begin
-      SnippetID := Depends[Idx];
-      Depends[Idx] := SnippetID;
-    end;
-  end;
-
   ///  Builds an active text representation of the contributing user's details.
   function UserDetailsActiveText: IActiveText;
   resourcestring
@@ -300,8 +285,6 @@ begin
 
     if ImportInfo.Skip then
       Continue;
-
-    AdjustDependsList(SnippetInfo.Data.Refs.RequiredSnippets);
 
     if UserInfo.Details.ToString <> '' then
       SnippetInfo.Data.Props.Notes.Append(UserDetailsActiveText);
