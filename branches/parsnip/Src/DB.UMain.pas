@@ -128,6 +128,8 @@ type
       }
   end;
 
+  TDatabaseFilterFn = reference to function (const Snippet: TSnippet): Boolean;
+
   {
   IDatabase:
     Interface to object that encapsulates the whole (main and user) databases
@@ -147,6 +149,8 @@ type
       Boolean;
     function SnippetCount: Integer;
     function IsEmpty: Boolean;
+    function SelectAll: ISnippetIDList;
+    function Select(FilterFn: TDatabaseFilterFn): ISnippetIDList;
     procedure AddChangeEventHandler(const Handler: TNotifyEventInfo);
       {Adds a change event handler to list of listeners.
         @param Handler [in] Event handler to be added.
@@ -282,7 +286,7 @@ implementation
 
 
 uses
-  // Delphi
+  //Delphi
   SysUtils,
   // Project
   DB.UDatabaseIO, UExceptions, UQuery, UStrUtils, UUniqueID;
@@ -433,6 +437,8 @@ type
       Boolean;
     function SnippetCount: Integer;
     function IsEmpty: Boolean;
+    function SelectAll: ISnippetIDList;
+    function Select(FilterFn: TDatabaseFilterFn): ISnippetIDList;
     { IDatabaseEdit methods }
     function GetEditableSnippetInfo(const Snippet: TSnippet = nil):
       TSnippetEditData;
@@ -975,6 +981,25 @@ begin
   with TDatabaseIOFactory.CreateWriter do
     Write(fSnippets, fCategories, Provider);
   fUpdated := False;
+end;
+
+function TDatabase.Select(FilterFn: TDatabaseFilterFn): ISnippetIDList;
+var
+  Snippet: TSnippet;
+begin
+  Result := TSnippetIDList.Create;
+  for Snippet in fSnippets do
+    if FilterFn(Snippet) then
+      Result.Add(Snippet.ID)
+end;
+
+function TDatabase.SelectAll: ISnippetIDList;
+var
+  Snippet: TSnippet;
+begin
+  Result := TSnippetIDList.Create(fSnippets.Count);
+  for Snippet in fSnippets do
+    Result.Add(Snippet.ID);
 end;
 
 function TDatabase.SnippetCount: Integer;
