@@ -26,6 +26,7 @@ uses
   Classes,
   ComCtrls,
   // Project
+  CS.Database.Types,
   DB.UCategory,
   DB.USnippet,
   FrCheckedTV,
@@ -62,13 +63,10 @@ type
           }
       end;
     var
-      fTVDraw: TTVDraw;                 // Object that renders tree view nodes
-      fSelectedSnippets: TSnippetList;  // Value of SelectedSnippets property
-    procedure SetSelectedSnippets(const Value: TSnippetList);
-      {Write access method for SelectedSnippets property. Updates state of items
-      in tree view and triggers OnChange event.
-        @param Value [in] New list of snippets. If nil list is cleared.
-      }
+      ///  <summary>Object that renders tree view nodes.</summary>
+      fTVDraw: TTVDraw;
+      ///  <summary>IDs of selected snippets.</summary>
+      fSelectedSnippets: ISnippetIDList;
     function IsSnippetNode(const Node: TCheckedTreeNode): Boolean;
       {Checks if node represents a snippet.
         @param Node [in] Node to be checked.
@@ -100,11 +98,20 @@ type
     destructor Destroy; override;
       {Class destructor. Tears down object.
       }
-    property SelectedSnippets: TSnippetList
-      read fSelectedSnippets write SetSelectedSnippets;
-      {List of selected snippets. When set all snippets in list are checked in
-      tree view. When user toggles checked state of nodes snippet list is
-      updated to include all checked snippets}
+    ///  <summary>Clears all selections.</summary>
+    procedure Clear;
+    ///  <summary>Selects the snippets with the given IDs.</summary>
+    ///  <remarks>Any pre-existing selections a cleared.</remarks>
+    procedure SelectSnippets(SnippetIDs: ISnippetIDList);
+    ///  <summary>Selects the snippet with the given ID.</summary>
+    ///  <remarks>Any pre-existing selections a cleared.</remarks>
+    procedure SelectSnippet(const SnippetID: TSnippetID);
+    ///  <summary>Returns a list of IDs of all the snippets that are currently
+    ///  selected.</summary>
+    function GetSelection: ISnippetIDList;
+    ///  <summary>Checks if any snippets are selected and returns True if so or
+    ///  False if not.</summary>
+    function HasSelection: Boolean;
   end;
 
 
@@ -117,7 +124,9 @@ uses
   StdCtrls,
   // Project
   DB.UMain,
-  UGroups;
+  IntfCommon,
+  UGroups,
+  USnippetIDs;
 
 
 {$R *.dfm}
@@ -152,13 +161,19 @@ begin
   end;
 end;
 
+procedure TSelectSnippetsFrame.Clear;
+begin
+  fSelectedSnippets.Clear;
+  DataChanged;
+end;
+
 constructor TSelectSnippetsFrame.Create(AOwner: TComponent);
   {Class constructor. Sets up object.
     @param AOwner [in] Not used.
   }
 begin
   inherited;
-  fSelectedSnippets := TSnippetList.Create;
+  fSelectedSnippets := TSnippetIDList.Create;
   fTVDraw := TTVDraw.Create;
   tvChecked.OnCustomDrawItem := fTVDraw.CustomDrawItem;
 end;
@@ -168,8 +183,17 @@ destructor TSelectSnippetsFrame.Destroy;
   }
 begin
   fTVDraw.Free;
-  fSelectedSnippets.Free;
   inherited;
+end;
+
+function TSelectSnippetsFrame.GetSelection: ISnippetIDList;
+begin
+  Result := (fSelectedSnippets as IClonable).Clone as ISnippetIDList;
+end;
+
+function TSelectSnippetsFrame.HasSelection: Boolean;
+begin
+  Result := not fSelectedSnippets.IsEmpty;
 end;
 
 function TSelectSnippetsFrame.IsSnippetNode(
@@ -204,11 +228,26 @@ begin
       Assert(IsSnippetNode(SnippetNode),
         ClassName + 'RecordChanges: SnippetNode is not a snippet node');
       if SnippetNode.IsChecked then
-        fSelectedSnippets.Add(SnippetFromNode(SnippetNode));
+        fSelectedSnippets.Add(SnippetFromNode(SnippetNode).ID);
       SnippetNode := SnippetNode.GetNextSibling;
     end;
     CatNode := CatNode.GetNextSibling;
   end;
+end;
+
+procedure TSelectSnippetsFrame.SelectSnippet(const SnippetID: TSnippetID);
+begin
+  fSelectedSnippets.Clear;
+  fSelectedSnippets.Add(SnippetID);
+  DataChanged;
+end;
+
+procedure TSelectSnippetsFrame.SelectSnippets(SnippetIDs: ISnippetIDList);
+begin
+  Assert(Assigned(SnippetIDs),
+    ClassName + '.SelectSnippets: SnippetIDs is nil');
+  (fSelectedSnippets as IAssignable).Assign(SnippetIDs);
+  DataChanged;
 end;
 
 procedure TSelectSnippetsFrame.SetLeafNodeState(
@@ -221,25 +260,10 @@ begin
   Assert(IsSnippetNode(Node),
     ClassName + '.SetLeafNodeState: Node is not a snippet node');
   // check the snippet node if its snippet is in currently selected snippets
-  if fSelectedSnippets.Contains(SnippetFromNode(Node)) then
+  if fSelectedSnippets.Contains(SnippetFromNode(Node).ID) then
     Node.Check := cbChecked
   else
     Node.Check := cbUnchecked;
-end;
-
-procedure TSelectSnippetsFrame.SetSelectedSnippets(
-  const Value: TSnippetList);
-  {Write access method for SelectedSnippets property. Updates state of items in
-  tree view and triggers OnChange event.
-    @param Value [in] New list of snippets. If nil list is cleared.
-  }
-begin
-  if Assigned(Value) then
-    fSelectedSnippets.Assign(Value)
-  else
-    fSelectedSnippets.Clear;
-  // Refresh tree view state now ata has changed
-  DataChanged;
 end;
 
 function TSelectSnippetsFrame.SnippetFromNode(
