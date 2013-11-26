@@ -28,42 +28,13 @@ uses
 
 
 type
-  ///  <summary>Interface supported by objects that implement a list of
-  ///  TSnippetID records.</summary>
-  ISnippetIDList = interface(IInterface)
-    ['{238CFDCC-E84E-4D29-9BC6-10FBCECBC4FA}']
-    ///  <summary>Gets new list enumerator.</summary>
-    function GetEnumerator: TEnumerator<TSnippetID>;
-    ///  <summary>Clears the list.</summary>
-    procedure Clear;
-    ///  <summary>Adds given snippet ID to list and returns its index in list.
-    ///  </summary>
-    function Add(const SnippetID: TSnippetID): Integer;
-    ///  <summary>Removed the given snippet ID from the list.</summary>
-    ///  <remarks>Does nothing if SnippetID is not in the list.</remarks>
-    procedure Remove(const SnippetID: TSnippetID);
-    ///  <summary>Checks if list contains given snippet ID.</summary>
-    function Contains(const SnippetID: TSnippetID): Boolean;
-    ///  <summary>Checks if list is empty.</summary>
-    function IsEmpty: Boolean;
-    ///  <summary>Returns number of snippet ID records in list.</summary>
-    function Count: Integer;
-    ///  <summary>Gets snippet ID record from list by index.</summary>
-    function GetItem(Idx: Integer): TSnippetID;
-    ///  <summary>Stores snippet ID record in list at specified index.</summary>
-    procedure SetItem(Idx: Integer; const Value: TSnippetID);
-    ///  <summary>Provides read/write access to snippet IDs by index.</summary>
-    property Items[Idx: Integer]: TSnippetID
-      read GetItem write SetItem; default;
-  end;
-
-type
   ///  <summary>Implements a list of snippet identification records.</summary>
   TSnippetIDList = class(
     TInterfacedObject, ISnippetIDList, IAssignable, IClonable
   )
   strict private
     var
+      // TODO: Change implementation to use DelphiColl
       ///  <summary>Internal list if snippet ID records.</summary>
       fList: TList<TSnippetID>;
   public

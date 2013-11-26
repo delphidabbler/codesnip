@@ -25,11 +25,11 @@ uses
   Classes,
   // Project
   CS.ActiveText,
+  CS.Database.Types,
   Compilers.UGlobals,
   DB.USnippet,
   UEncodings,
-  UIStringList,
-  USnippetIDs;
+  UIStringList;
 
 
 type
@@ -108,7 +108,6 @@ uses
   // Delphi
   SysUtils,
   // Project
-  CS.Database.Types,
   Compilers.UCompilers,
   DB.UMain,
   DB.USnippetKind,

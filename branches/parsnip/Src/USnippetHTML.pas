@@ -21,9 +21,9 @@ interface
 uses
   // Project
   CS.ActiveText,
+  CS.Database.Types,
   DB.UCategory,
-  DB.USnippet,
-  USnippetIDs;
+  DB.USnippet;
 
 
 type
@@ -104,7 +104,6 @@ uses
   // Project
   CS.ActiveText.Renderers.HTML,
   CS.Config,
-  CS.Database.Types,
   CS.SourceCode.Languages,
   CS.SourceCode.Hiliter.Brushes,
   CS.SourceCode.Hiliter.Renderers,

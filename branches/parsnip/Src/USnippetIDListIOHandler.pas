@@ -19,8 +19,12 @@ interface
 
 
 uses
+  // Delphi
   SysUtils,
-  UExceptions, UIStringList, USnippetIDs;
+  // Project
+  CS.Database.Types,
+  UExceptions,
+  UIStringList;
 
 
 type
@@ -69,9 +73,9 @@ uses
   // Delphi
   Classes,
   // Project
-  CS.Database.Types,
   UConsts,
   UIOUtils,
+  USnippetIDs,
   UStrUtils;
 
 

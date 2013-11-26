@@ -25,10 +25,10 @@ uses
   Generics.Collections,
   // Project
   CS.ActiveText,
+  CS.Database.Types,
   DB.USnippet,
   UBaseObjects,
-  UIStringList,
-  USnippetIDs;
+  UIStringList;
 
 
 type
@@ -261,7 +261,6 @@ uses
   SysUtils,
   // Project
   CS.ActiveText.Renderers.PlainText,
-  CS.Database.Types,
   CS.SourceCode.Pascal.Lexer,
   DB.UMain,
   UConsts,

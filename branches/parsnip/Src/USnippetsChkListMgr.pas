@@ -23,7 +23,8 @@ uses
   // Delphi
   Controls, CheckLst, Windows,
   // Project
-  DB.USnippet, USnippetIDs;
+  CS.Database.Types,
+  DB.USnippet;
 
 
 type
@@ -106,11 +107,11 @@ uses
   Graphics,
   StdCtrls,
   // Project
-  CS.Database.Types,
   DB.UMain,
   UColours,
   UGraphicUtils,
-  UPreferences;
+  UPreferences,
+  USnippetIDs;
 
 
 { TSnippetsChkListMgr }

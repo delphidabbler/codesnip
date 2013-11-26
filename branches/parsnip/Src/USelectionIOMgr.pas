@@ -48,8 +48,16 @@ uses
   // Delphi
   SysUtils, Dialogs,
   // Project
-  DB.USnippet, UConsts, UMessageBox, UOpenDialogEx, UOpenDialogHelper,
-  UQuery, USaveDialogEx, USnippetIDListIOHandler, USnippetIDs;
+  CS.Database.Types,
+  DB.USnippet,
+  UConsts,
+  UMessageBox,
+  UOpenDialogEx,
+  UOpenDialogHelper,
+  UQuery,
+  USaveDialogEx,
+  USnippetIDListIOHandler,
+  USnippetIDs;
 
 const
   ///  <summary>Watermark for selection files. Uses characters that will be

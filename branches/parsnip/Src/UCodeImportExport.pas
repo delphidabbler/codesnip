@@ -25,12 +25,12 @@ uses
   Classes,
   XMLIntf,
   // Project
+  CS.Database.Types,
   DB.USnippet,
   UBaseObjects,
   UEncodings,
   UExceptions,
   UIStringList,
-  USnippetIDs,
   UUserDetails,
   UXMLDocHelper,
   UXMLDocumentEx;
@@ -210,7 +210,6 @@ uses
   CS.ActiveText,
   CS.ActiveText.Helper,
   CS.ActiveText.Renderers.REML,
-  CS.Database.Types,
   DB.UMain,
   UAppInfo,
   UConsts,

@@ -24,10 +24,10 @@ uses
   Classes,
   Graphics,
   // Project
+  CS.Database.Types,
   Compilers.UGlobals,
   DB.USnippet,
-  UBaseObjects,
-  USnippetIDs;
+  UBaseObjects;
 
 
 type
@@ -308,11 +308,11 @@ uses
   // Project
   CS.ActiveText,
   CS.ActiveText.Renderers.PlainText,
-  CS.Database.Types,
   DB.UMain,
   IntfCommon,
   UConsts,
-  UStrUtils;
+  UStrUtils,
+  USnippetIDs;
 
 
 type

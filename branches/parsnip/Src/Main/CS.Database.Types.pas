@@ -20,6 +20,7 @@ uses
   // Delphi
   SysUtils,
   Generics.Defaults,
+  Generics.Collections,
   // 3rd party
   Collections.Base,
   // Project
@@ -82,17 +83,36 @@ type
     class function IsValidIDString(const S: string): Boolean; static;
   end;
 
-  IDBSnippetIDList = interface(IInterface)
-    ['{842B9A92-6CD5-4DC3-9DA7-9753B08A52AB}']
-    function GetEnumerator: TEnumerator<TSnippetID>;
-    procedure Add(const ID: TSnippetID);
-    procedure Delete(const ID: TSnippetID);
+type
+  ///  <summary>Interface supported by objects that implement a list of
+  ///  TSnippetID records.</summary>
+  ISnippetIDList = interface(IInterface)
+    ['{238CFDCC-E84E-4D29-9BC6-10FBCECBC4FA}']
+    { TODO: When implementation changes to use DelphiColl, remove
+            Generics.Collections. specifier from GetEnumerator. }
+    ///  <summary>Gets new list enumerator.</summary>
+    function GetEnumerator: Generics.Collections.TEnumerator<TSnippetID>;
+    ///  <summary>Clears the list.</summary>
     procedure Clear;
-    function Contains(const ID: TSnippetID): Boolean;
-    function GetItem(const Idx: Integer): TSnippetID;
-    function GetCount: Integer;
-    property Items[const Idx: Integer]: TSnippetID read GetItem;
-    property Count: Integer read GetCount;
+    ///  <summary>Adds given snippet ID to list and returns its index in list.
+    ///  </summary>
+    function Add(const SnippetID: TSnippetID): Integer;
+    ///  <summary>Removed the given snippet ID from the list.</summary>
+    ///  <remarks>Does nothing if SnippetID is not in the list.</remarks>
+    procedure Remove(const SnippetID: TSnippetID);
+    ///  <summary>Checks if list contains given snippet ID.</summary>
+    function Contains(const SnippetID: TSnippetID): Boolean;
+    ///  <summary>Checks if list is empty.</summary>
+    function IsEmpty: Boolean;
+    ///  <summary>Returns number of snippet ID records in list.</summary>
+    function Count: Integer;
+    ///  <summary>Gets snippet ID record from list by index.</summary>
+    function GetItem(Idx: Integer): TSnippetID;
+    ///  <summary>Stores snippet ID record in list at specified index.</summary>
+    procedure SetItem(Idx: Integer; const Value: TSnippetID);
+    ///  <summary>Provides read/write access to snippet IDs by index.</summary>
+    property Items[Idx: Integer]: TSnippetID
+      read GetItem write SetItem; default;
   end;
 
   ///  <summary>Enumeration of various supported kinds of snippets.</summary>
@@ -195,8 +215,8 @@ type
     function GetSourceCode: string;
     function GetLanguageID: TSourceCodeLanguageID;
     function GetRequiredModules: IStringList;
-    function GetRequiredSnippets: IDBSnippetIDList;
-    function GetXRefs: IDBSnippetIDList;
+    function GetRequiredSnippets: ISnippetIDList;
+    function GetXRefs: ISnippetIDList;
     function GetNotes: IActiveText;
     function GetKind: TSnippetKind;
     function GetCompileResults: TCompileResults;
@@ -219,8 +239,8 @@ type
     property SourceCode: string read GetSourceCode;
     property LanguageID: TSourceCodeLanguageID read GetLanguageID;
     property RequiredModules: IStringList read GetRequiredModules;
-    property RequiredSnippets: IDBSnippetIDList read GetRequiredSnippets;
-    property XRefs: IDBSnippetIDList read GetXRefs;
+    property RequiredSnippets: ISnippetIDList read GetRequiredSnippets;
+    property XRefs: ISnippetIDList read GetXRefs;
     property Notes: IActiveText read GetNotes;
     property Kind: TSnippetKind read GetKind;
     property CompileResults: TCompileResults read GetCompileResults;
@@ -241,8 +261,8 @@ type
     procedure SetSourceCode(const ASourceCode: string);
     procedure SetLanguageID(const ALanguageID: TSourceCodeLanguageID);
     procedure SetRequiredModules(AModuleList: IStringList);
-    procedure SetRequiredSnippets(AIDList: IDBSnippetIDList);
-    procedure SetXRefs(AIDList: IDBSnippetIDList);
+    procedure SetRequiredSnippets(AIDList: ISnippetIDList);
+    procedure SetXRefs(AIDList: ISnippetIDList);
     procedure SetNotes(ANotes: IActiveText);
     procedure SetKind(const ASnippetKind: TSnippetKind);
     procedure SetCompileResults(const AResults: TCompileResults);
@@ -258,9 +278,9 @@ type
       write SetLanguageID;
     property RequiredModules: IStringList read GetRequiredModules
       write SetRequiredModules;
-    property RequiredSnippets: IDBSnippetIDList read GetRequiredSnippets
+    property RequiredSnippets: ISnippetIDList read GetRequiredSnippets
       write SetRequiredSnippets;
-    property XRefs: IDBSnippetIDList read GetXRefs write SetXRefs;
+    property XRefs: ISnippetIDList read GetXRefs write SetXRefs;
     property Notes: IActiveText read GetNotes write SetNotes;
     property Kind: TSnippetKind read GetKind write SetKind;
     property CompileResults: TCompileResults read GetCompileResults
