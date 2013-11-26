@@ -1012,18 +1012,22 @@ procedure TSnippetsEditorDlg.UpdateReferences;
   edited, depending on kind.
   }
 var
-  Snippet: TSnippet;              // each snippet in database
+  SnippetID: TSnippetID;  // ID of each snippet in database
+  Snippet: TSnippet;      // each snippet in database, except one being edited
 begin
   // Save state of dependencies and x-ref check list boxes and clear them
   fDependsCLBMgr.Save;
   fDependsCLBMgr.Clear;
   fXRefsCLBMgr.Save;
   fXRefsCLBMgr.Clear;
-  for Snippet in Database._Snippets do
+  for SnippetID in Database.SelectAll do
   begin
     // We ignore any snippet being edited
-    if not Assigned(fSnippet) or (Snippet.ID <> fSnippet.ID) then
+    if not Assigned(fSnippet) or (SnippetID <> fSnippet.ID) then
     begin
+      Snippet := Database.Lookup(SnippetID);
+      Assert(Assigned(Snippet),
+        ClassName + '.UpdateReferences: Snippet not found');
       // Decide if snippet can be added to depends list: must be correct kind
       if Snippet.Kind in
         TSnippetValidator.ValidDependsKinds(fKindCBMgr.GetSelected) then
