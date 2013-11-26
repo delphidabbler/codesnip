@@ -453,7 +453,8 @@ procedure TAlphaGrouping.Populate;
 var
   Letter: TInitialLetter;   // upper case initial letter of snippet name
   GroupItem: TGroupItem;    // a group item
-  Snippet: TSnippet;        // each snippet in snippet list
+  SnippetID: TSnippetID;    // each snippet ID in database
+  Snippet: TSnippet;        // each snippet in database
   Map: TLetterGroupMap;     // map of initial letters to group items
 begin
   Map := TLetterGroupMap.Create(
@@ -473,8 +474,10 @@ begin
   // letters in case user wants to display empty letter groups. We then add
   // only those snippets in given snippet list to the grouping.
   try
-    for Snippet in Database._Snippets do
+    for SnippetID in Database.SelectAll do
     begin
+      Snippet := Database.Lookup(SnippetID);
+      Assert(Assigned(Snippet), ClassName + '.Populate: Snippet not found');
       Letter := TInitialLetter.Create(FirstCharOfName(Snippet.Title));
       if Map.ContainsKey(Letter) then
         GroupItem := Map[Letter]
