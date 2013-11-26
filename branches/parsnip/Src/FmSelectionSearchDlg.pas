@@ -27,6 +27,7 @@ uses
   ExtCtrls,
   Classes,
   // Project
+  CS.Database.Types,
   DB.USnippet,
   FmGenericOKDlg,
   FrCheckedTV,
@@ -58,10 +59,10 @@ type
     procedure btnCollapseAllClick(Sender: TObject);
   strict private
     fSearch: ISearch; // Search corresponding to snippets selected by the user
-    procedure SetSelectedSnippets(const Value: TSnippetList);
+    procedure SetSelectedSnippets(Value: ISnippetIDList);
       {Stores a list of snippets in snippet selection frame. Frame then selects
       all listed snippets in its treeview.
-        @param Value [in] List of snippets.
+        @param Value [in] List of snippet IDs.
       }
     procedure SelectionChanged(Sender: TObject);
       {OnChange event handler for snippet selection frame. Disables OK button if
@@ -79,10 +80,10 @@ type
       }
   public
     class function Execute(const AOwner: TComponent;
-      const SelectedSnippets: TSnippetList; out ASearch: ISearch): Boolean;
+      SelectedSnippets: ISnippetIDList; out ASearch: ISearch): Boolean;
       {Displays dialog and returns search object based on entered criteria.
         @param AOwner [in] Component that owns this dialog.
-        @param SelectedSnippets [in] Default list of selected snippets.
+        @param SelectedSnippets [in] Default list of IDs of selected snippets.
         @param ASearch [out] Search to be performed if user OKs. Has filter
           that causes all snippets selected by user to be returned by search.
           Set to nil if user cancels.
@@ -121,9 +122,7 @@ procedure TSelectionSearchDlg.btnClearAllClick(Sender: TObject);
     @param Sender [in] Not used.
   }
 begin
-  // Assigning nil to snippet selection frame's SelectedSnippets property clears
-  // the list.
-  frmSelect.SelectedSnippets := nil;
+  frmSelect.Clear;
 end;
 
 procedure TSelectionSearchDlg.btnCollapseAllClick(Sender: TObject);
@@ -146,7 +145,7 @@ begin
   inherited;
   // Create search filter for all selected snippets
   Filter := TSearchFilterFactory.CreateManualSelectionSearchFilter(
-    frmSelect.SelectedSnippets
+    frmSelect.GetSelection
   );
   // Create search object from the entered criteria
   fSearch := TSearchFactory.CreateSearch(Filter);
@@ -157,9 +156,7 @@ procedure TSelectionSearchDlg.btnSelectAllClick(Sender: TObject);
     @param Sender [in] Not used.
   }
 begin
-  // Storing all snippets in database in snippet selection frame's
-  // SelectedSnippets property causes all snippets to be selected
-  frmSelect.SelectedSnippets := Database._Snippets;
+  frmSelect.SelectSnippets(Database.SelectAll);
 end;
 
 procedure TSelectionSearchDlg.ConfigForm;
@@ -172,10 +169,10 @@ begin
 end;
 
 class function TSelectionSearchDlg.Execute(const AOwner: TComponent;
-  const SelectedSnippets: TSnippetList; out ASearch: ISearch): Boolean;
+  SelectedSnippets: ISnippetIDList; out ASearch: ISearch): Boolean;
   {Displays dialog and returns search object based on entered criteria.
     @param AOwner [in] Component that owns this dialog.
-    @param SelectedSnippets [in] Default list of selected snippets.
+    @param SelectedSnippets [in] Default list of IDs of selected snippets.
     @param ASearch [out] Search to be performed if user OKs. Has filter that
       causes all snippets selected by user to be returned by search. Set to nil
       if user cancels.
@@ -218,16 +215,19 @@ procedure TSelectionSearchDlg.SelectionChanged(Sender: TObject);
     @param Sender [in] Not used.
   }
 begin
-  btnOK.Enabled := not frmSelect.SelectedSnippets.IsEmpty;
+  btnOK.Enabled := frmSelect.HasSelection;
 end;
 
-procedure TSelectionSearchDlg.SetSelectedSnippets(const Value: TSnippetList);
+procedure TSelectionSearchDlg.SetSelectedSnippets(Value: ISnippetIDList);
   {Stores a list of snippets in snippet selection frame. Frame then selects all
   listed snippets in its treeview.
-    @param Value [in] List of snippets.
+    @param Value [in] List of snippet IDs.
   }
 begin
-  frmSelect.SelectedSnippets := Value;
+  if Assigned(Value) then
+    frmSelect.SelectSnippets(Value)
+  else
+    frmSelect.Clear;
 end;
 
 end.

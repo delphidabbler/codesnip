@@ -26,6 +26,7 @@ uses
   // Delphi
   Classes,
   // Project
+  CS.Database.Types,
   DB.USnippet,
   UCompileMgr,
   USearch;
@@ -198,6 +199,7 @@ uses
   FmSWAGImportDlg,
   FmTestCompileDlg,
   FmUserBugReportDlg,
+  USnippetIDs,
   UTestUnitDlgMgr;
 
 
@@ -259,8 +261,15 @@ end;
 
 function TDialogMgr.ExecSelectionSearchDlg(
   const SelectedSnippets: TSnippetList; out ASearch: ISearch): Boolean;
+var
+  TempList: ISnippetIDList;
+  TempSnippet: TSnippet;
 begin
-  Result := TSelectionSearchDlg.Execute(Owner, SelectedSnippets, ASearch);
+  // TODO -cFudge: remove this conversion once method is passed ISnippetIDList
+  TempList := TSnippetIDList.Create(SelectedSnippets.Count);
+  for TempSnippet in SelectedSnippets do
+    TempList.Add(TempSnippet.ID);
+  Result := TSelectionSearchDlg.Execute(Owner, TempList{SelectedSnippets}, ASearch);
 end;
 
 procedure TDialogMgr.ShowAboutDlg;
