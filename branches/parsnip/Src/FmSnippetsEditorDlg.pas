@@ -35,7 +35,9 @@ uses
   Menus,
   ImgList,
   // Project
+  CS.Database.Types,
   CS.UI.Frames.CodeEditor,
+  CS.UI.Helper.CollectionCtrlKVMgr,
   Compilers.UGlobals,
   DB.USnippet,
   FmGenericOKDlg,
@@ -50,7 +52,6 @@ uses
   UCSSBuilder,
   UMemoCaretPosDisplayMgr,
   UMemoHelper,
-  USnipKindListAdapter,
   USnippetsChkListMgr,
   UUnitsChkListMgr;
 
@@ -183,8 +184,6 @@ type
   strict private
     fSnippet: TSnippet;             // Snippet being edited: nil for new snippet
     fCatList: TCategoryListAdapter; // Accesses sorted list of categories
-    fSnipKindList:
-      TSnipKindListAdapter;         // Accesses sorted list of snippet kinds
     fOrigName: string;              // Original name of snippet ('' for new)
     fEditData: TSnippetEditData;    // Record storing a snippet's editable data
     fCompileMgr: TCompileMgr;       // Manages compilation and results display
@@ -197,6 +196,8 @@ type
       TCompileResultsLBMgr;         // Manages compilers list box
     fMemoCaretPosDisplayMgr: TMemoCaretPosDisplayMgr;
                                     // Manages display of memo caret positions
+    fKindCBMgr: TSortedCollectionCtrlKVMgr<TSnippetKind>;
+                                    // Manages snippet kind combo box
     procedure PopulateControls;
       {Populates controls with dynamic data.
       }
@@ -281,9 +282,9 @@ uses
   // Project
   CS.ActiveText.Helper,
   CS.Config,
-  CS.Database.Types,
   CS.SourceCode.Languages,
   DB.UMain,
+  DB.USnippetKind,
   FmDependenciesDlg,
   IntfCommon,
   UColours,
@@ -422,7 +423,7 @@ procedure TSnippetsEditorDlg.actCompileUpdate(Sender: TObject);
   }
 begin
   (Sender as TAction).Enabled := fCompileMgr.HaveCompilers
-    and (fSnipKindList.SnippetKind(cbKind.ItemIndex) <> skFreeform);
+    and (fKindCBMgr.GetSelected <> skFreeForm);
 end;
 
 procedure TSnippetsEditorDlg.actDeleteUnitExecute(Sender: TObject);
@@ -565,8 +566,7 @@ procedure TSnippetsEditorDlg.actViewTestUnitUpdate(Sender: TObject);
     @param Sender [in] Action triggering this event.
   }
 begin
-  (Sender as TAction).Enabled :=
-    fSnipKindList.SnippetKind(cbKind.ItemIndex) <> skFreeform;
+  (Sender as TAction).Enabled := fKindCBMgr.GetSelected <> skFreeForm;
 end;
 
 class function TSnippetsEditorDlg.AddNewSnippet(AOwner: TComponent): Boolean;
@@ -795,7 +795,6 @@ procedure TSnippetsEditorDlg.FormCreate(Sender: TObject);
 begin
   inherited;
   fCatList := TCategoryListAdapter.Create(Database.Categories);
-  fSnipKindList := TSnipKindListAdapter.Create;
   fCompileMgr := TCompileMgr.Create(Self);  // auto-freed
   fMemoCaretPosDisplayMgr := TMemoCaretPosDisplayMgr.Create;
   fDependsCLBMgr := TSnippetsChkListMgr.Create(clbDepends);
@@ -803,6 +802,15 @@ begin
   fUnitsCLBMgr := TUnitsChkListMgr.Create(clbUnits);
   fCompilersLBMgr := TCompileResultsLBMgr.Create(
     lbCompilers, fCompileMgr.Compilers
+  );
+  fKindCBMgr := TSortedCollectionCtrlKVMgr<TSnippetKind>.Create(
+    TComboBoxAdapter.Create(cbKind),
+    True,
+    function (const Left, Right: TSnippetKind): Boolean
+    begin
+      Result := Left = Right;
+    end,
+    stIgnoreCase
   );
 end;
 
@@ -812,11 +820,11 @@ procedure TSnippetsEditorDlg.FormDestroy(Sender: TObject);
   }
 begin
   inherited;
+  fKindCBMgr.Free;
   fCompilersLBMgr.Free;
   fUnitsCLBMgr.Free;
   fXRefsCLBMgr.Free;
   fDependsCLBMgr.Free;
-  fSnipKindList.Free;
   fCatList.Free;
   fMemoCaretPosDisplayMgr.Free;
 end;
@@ -865,7 +873,7 @@ begin
     cbCategories.ItemIndex := fCatList.IndexOf(fSnippet.Category);
     frmNotes.DefaultEditMode := emAuto;
     frmNotes.ActiveText := fSnippet.Notes;
-    cbKind.ItemIndex := fSnipKindList.IndexOf(fSnippet.Kind);
+    fKindCBMgr.Select(fSnippet.Kind);
     // check required items in references check list boxes
     UpdateReferences;
     fDependsCLBMgr.CheckSnippets(fSnippet.RequiredSnippets);
@@ -887,7 +895,7 @@ begin
     cbCategories.ItemIndex := fCatList.IndexOf(TReservedCategories.UserCatID);
     if cbCategories.ItemIndex = -1 then
       cbCategories.ItemIndex := 0;
-    cbKind.ItemIndex := fSnipKindList.IndexOf(skFreeform);
+    fKindCBMgr.Select(skFreeForm);
     frmNotes.DefaultEditMode := emPlainText;
     frmNotes.Clear;
     UpdateReferences;
@@ -964,9 +972,12 @@ end;
 procedure TSnippetsEditorDlg.PopulateControls;
   {Populates controls with dynamic data.
   }
+var
+  KindInfo: TSnippetKindInfo;
 begin
   // Display all kinds in drop down list
-  fSnipKindList.ToStrings(cbKind.Items);
+  for KindInfo in TSnippetKindInfoList.Items do
+    fKindCBMgr.Add(KindInfo.Kind, KindInfo.DisplayName);
   // Display all available categories in drop down list
   fCatList.ToStrings(cbCategories.Items);
 end;
@@ -990,7 +1001,7 @@ begin
   begin
     Props.Title := StrTrim(edTitle.Text);
     Props.Cat := fCatList.CatID(cbCategories.ItemIndex);
-    Props.Kind := fSnipKindList.SnippetKind(cbKind.ItemIndex);
+    Props.Kind := fKindCBMgr.GetSelected;
     (Props.Desc as IAssignable).Assign(frmDescription.ActiveText);
     Props.SourceCode := StrTrimRight(frmSourceEditor.SourceCode);
     Props.HiliteSource := chkUseHiliter.Checked;
@@ -1017,7 +1028,7 @@ begin
   fXRefsCLBMgr.Save;
   fXRefsCLBMgr.Clear;
   EditSnippetID := TSnippetID.Create(fOrigName);
-  EditSnippetKind := fSnipKindList.SnippetKind(cbKind.ItemIndex);
+  EditSnippetKind := fKindCBMgr.GetSelected;
   for Snippet in Database._Snippets do
   begin
     // We ignore snippet being edited
