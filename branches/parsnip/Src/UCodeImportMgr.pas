@@ -187,13 +187,13 @@ end;
 function TCodeImportMgr.DisallowedNames(const ExcludedName: string):
   IStringList;
 var
-  Snippet: TSnippet;          // each snippet in user database
+  SnippetID: TSnippetID;      // each snippet in user database
   SnippetInfo: TSnippetInfo;  // info about each imported snippet
 begin
   Result := TIStringList.Create;
   Result.CaseSensitive := False;
-  for Snippet in Database._Snippets do
-    Result.Add(Snippet.ID.ToString);
+  for SnippetID in Database.SelectAll do
+    Result.Add(SnippetID.ToString);
   for SnippetInfo in fSnippetInfoList do
     if not StrSameText(SnippetInfo.Name, ExcludedName) then
       Result.Add(SnippetInfo.Name);
