@@ -184,7 +184,6 @@ type
   strict private
     fSnippet: TSnippet;             // Snippet being edited: nil for new snippet
     fCatList: TCategoryListAdapter; // Accesses sorted list of categories
-    fOrigName: string;              // Original name of snippet ('' for new)
     fEditData: TSnippetEditData;    // Record storing a snippet's editable data
     fCompileMgr: TCompileMgr;       // Manages compilation and results display
     fDependsCLBMgr:
@@ -469,7 +468,7 @@ begin
   if Assigned(fSnippet) then
     SnippetID := fSnippet.ID
   else
-    SnippetID := TSnippetID.Create('');
+    SnippetID := TSnippetID.CreateNull;
   DependsList := fDependsCLBMgr.GetCheckedSnippets;
   TDependenciesDlg.Execute(
     Self,
@@ -919,11 +918,6 @@ begin
   // Get data associated with snippet, or blank / default data if adding a new
   // snippet
   fEditData := (Database as IDatabaseEdit).GetEditableSnippetInfo(fSnippet);
-  // Record snippet's original name, if any
-  if Assigned(fSnippet) then
-    fOrigName := fSnippet.ID.ToString
-  else
-    fOrigName := '';
   // Populate controls with dynamic data
   PopulateControls;
   // Initialise controls to default values
@@ -1018,25 +1012,21 @@ procedure TSnippetsEditorDlg.UpdateReferences;
   edited, depending on kind.
   }
 var
-  EditSnippetID: TSnippetID;      // id of snippet being edited
   Snippet: TSnippet;              // each snippet in database
-  EditSnippetKind: TSnippetKind;  // kind of snippet being edited
 begin
   // Save state of dependencies and x-ref check list boxes and clear them
   fDependsCLBMgr.Save;
   fDependsCLBMgr.Clear;
   fXRefsCLBMgr.Save;
   fXRefsCLBMgr.Clear;
-  EditSnippetID := TSnippetID.Create(fOrigName);
-  EditSnippetKind := fKindCBMgr.GetSelected;
   for Snippet in Database._Snippets do
   begin
-    // We ignore snippet being edited
-    if (Snippet.ID <> EditSnippetID) then
+    // We ignore any snippet being edited
+    if not Assigned(fSnippet) or (Snippet.ID <> fSnippet.ID) then
     begin
       // Decide if snippet can be added to depends list: must be correct kind
       if Snippet.Kind in
-        TSnippetValidator.ValidDependsKinds(EditSnippetKind) then
+        TSnippetValidator.ValidDependsKinds(fKindCBMgr.GetSelected) then
         fDependsCLBMgr.AddSnippet(Snippet);
       // Anything can be in XRefs list
       fXRefsCLBMgr.AddSnippet(Snippet);
@@ -1045,8 +1035,8 @@ begin
   // Restore checks to any saved checked item that still exist in new list
   fDependsCLBMgr.Restore;
   fXRefsCLBMgr.Restore;
-  clbUnits.Enabled := EditSnippetKind <> skUnit;
-  edUnit.Enabled := EditSnippetKind <> skUnit;
+  clbUnits.Enabled := fKindCBMgr.GetSelected <> skUnit;
+  edUnit.Enabled := fKindCBMgr.GetSelected <> skUnit;
 end;
 
 procedure TSnippetsEditorDlg.ValidateData;
