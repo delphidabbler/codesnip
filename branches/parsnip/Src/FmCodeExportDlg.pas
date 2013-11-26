@@ -163,7 +163,7 @@ begin
 
     // Validate entries
     // must have at least one snippet
-    if frmSnippets.SelectedSnippets.IsEmpty then
+    if not frmSnippets.HasSelection then
       raise EDataEntry.Create(sNoSnippets, frmSnippets);
     // must have a file name
     if FileName = '' then
@@ -223,24 +223,12 @@ procedure TCodeExportDlg.SelectSnippet(const Snippet: TSnippet);
     @param Snippet [in] Snippet to be selected. If nil, or not user-defined, no
       snippet is selected.
   }
-var
-  List: TSnippetList; // list containing only the provided snippet
 begin
   if not Assigned(Snippet) then
     // Snippet is nil: select nothing
-    frmSnippets.SelectedSnippets := nil
+    frmSnippets.Clear
   else
-  begin
-    // Snippet is user-defined. We make a snippet list containing only this
-    // snippet because frmSnippets requires a list of snippets to select.
-    List := TSnippetList.Create;
-    try
-      List.Add(Snippet);
-      frmSnippets.SelectedSnippets := List;
-    finally
-      List.Free;
-    end;
-  end;
+    frmSnippets.SelectSnippet(Snippet.ID);
 end;
 
 procedure TCodeExportDlg.WriteOutputFile;
@@ -250,7 +238,7 @@ var
   OutData: TEncodedData;  // receives export file content
 begin
   OutData := TCodeExporter.ExportSnippets(
-    TUserInfo.CreateNul, frmSnippets.SelectedSnippets
+    TUserInfo.CreateNul, frmSnippets.GetSelection
   );
   TFileIO.WriteAllBytes(StrTrim(edFile.Text), OutData.Data);
 end;
