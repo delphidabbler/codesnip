@@ -31,7 +31,9 @@ uses
   UIStringList;
 
 type
-  EDBSnippetID = class(Exception);
+  ///  <summary>Type of exception raised when errors are detected in TSnippetID.
+  ///  </summary>
+  ESnippetID = class(Exception);
 
   ///  <summary>Record that uniquely identifies a code snippet.</summary>
   TSnippetID = record
@@ -325,7 +327,7 @@ resourcestring
   sInvalidIDStr = '"%s" is not a valid snippet ID string';
 begin
   if not IsValidIDString(AIDStr) then
-    raise EDBSnippetID.CreateFmt(sInvalidIDStr, [AIDStr]);
+    raise ESnippetID.CreateFmt(sInvalidIDStr, [AIDStr]);
   fID := AIDStr;
 end;
 
