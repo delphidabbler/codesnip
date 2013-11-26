@@ -240,7 +240,7 @@ procedure TCodeSubmitDlg.BuildSubmission;
   {Builds XML document containing details of submission and stores in a stream.
   }
 begin
-  Assert(not frmSnippets.SelectedSnippets.IsEmpty,
+  Assert(frmSnippets.HasSelection,
     ClassName + '.BuildSubmission: No snippets selected');
   Assert(edName.Text <> '',
     ClassName + '.BuildSubmission: No user name provided');
@@ -252,7 +252,7 @@ begin
       TUserDetails.Create(edName.Text, edEmail.Text),
       StrTrim(edComments.Text)
     ),
-    frmSnippets.SelectedSnippets
+    frmSnippets.GetSelection
   );
 end;
 
@@ -414,21 +414,11 @@ procedure TCodeSubmitDlg.SelectSnippet(const Snippet: TSnippet);
     @param Snippet [in] Snippet to be selected in the list. If Snippet is nil
       then list is cleared of selections.
   }
-var
-  List: TSnippetList; // list containing only one snippet
 begin
   if not Assigned(Snippet) then
-    frmSnippets.SelectedSnippets := nil
+    frmSnippets.Clear
   else
-  begin
-    List := TSnippetList.Create;
-    try
-      List.Add(Snippet);
-      frmSnippets.SelectedSnippets := List;
-    finally
-      List.Free;
-    end;
-  end;
+    frmSnippets.SelectSnippet(Snippet.ID);
 end;
 
 procedure TCodeSubmitDlg.SnippetListChange(Sender: TObject);
@@ -439,7 +429,7 @@ procedure TCodeSubmitDlg.SnippetListChange(Sender: TObject);
 begin
   if CurrentPage = cSnippetsPageIdx then
     UpdateButtons(CurrentPage);
-  lblSnippetPrompt.Visible := frmSnippets.SelectedSnippets.IsEmpty;
+  lblSnippetPrompt.Visible := not frmSnippets.HasSelection;
 end;
 
 procedure TCodeSubmitDlg.UpdateButtons(const PageIdx: Integer);
@@ -471,7 +461,7 @@ resourcestring
 begin
   case PageIdx of
     cSnippetsPageIdx:
-      if frmSnippets.SelectedSnippets.Count = 0 then
+      if not frmSnippets.HasSelection then
         raise EDataEntry.Create(sNoSnippets, frmSnippets);
     cUserInfoPageIdx:
     begin
