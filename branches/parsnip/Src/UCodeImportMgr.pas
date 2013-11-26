@@ -160,6 +160,7 @@ uses
   Classes,
   // Project
   CS.ActiveText,
+  CS.Database.Types,
   DB.UMain,
   DB.USnippet,
   UIOUtils,

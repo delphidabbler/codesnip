@@ -22,7 +22,7 @@ uses
   // Delphi
   Classes,
   // Project
-  USnippetIDs;
+  CS.Database.Types;
 
 
 type

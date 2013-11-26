@@ -21,12 +21,22 @@ interface
 
 uses
   // Delphi
-  Classes, ActnList, StdCtrls, Controls, ExtCtrls, Forms, ComCtrls, Types,
+  Classes,
+  ActnList,
+  StdCtrls,
+  Controls,
+  ExtCtrls,
+  Forms,
+  ComCtrls,
+  Types,
   Generics.Collections {must be listed after Classes},
   // 3rd party
   LVEx,
   // Project
-  FmGenericNonModalDlg, Favourites.UFavourites, IntfNotifier, USnippetIDs,
+  CS.Database.Types,
+  FmGenericNonModalDlg,
+  Favourites.UFavourites,
+  IntfNotifier,
   UWindowSettings;
 
 

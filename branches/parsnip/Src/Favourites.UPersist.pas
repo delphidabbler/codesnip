@@ -55,9 +55,17 @@ implementation
 
 uses
   // Delphi
-  SysUtils, IOUtils, Classes,
+  SysUtils,
+  IOUtils,
+  Classes,
   /// Project
-  DB.UMain, UAppInfo, UConsts, UIOUtils, UIStringList, USnippetIDs, UStrUtils;
+  CS.Database.Types,
+  DB.UMain,
+  UAppInfo,
+  UConsts,
+  UIOUtils,
+  UIStringList,
+  UStrUtils;
 
 
 { TFavouritesPersist }

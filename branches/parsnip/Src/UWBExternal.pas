@@ -124,8 +124,8 @@ uses
   // Delphi
   Forms,
   // Project
-  UAppInfo,
-  USnippetIDs;
+  CS.Database.Types,
+  UAppInfo;
 
 
 { TWBExternal }

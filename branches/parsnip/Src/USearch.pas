@@ -308,6 +308,7 @@ uses
   // Project
   CS.ActiveText,
   CS.ActiveText.Renderers.PlainText,
+  CS.Database.Types,
   DB.UMain,
   IntfCommon,
   UConsts,

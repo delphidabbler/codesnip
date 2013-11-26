@@ -21,7 +21,12 @@ interface
 
 uses
   // Project
-  DB.UCategory, DB.USnippet, UIStringList, UMultiCastEvents, USnippetIDs;
+  CS.Database.Types,
+  DB.UCategory,
+  DB.USnippet,
+  UIStringList,
+  UMultiCastEvents,
+  USnippetIDs;
 
 
 type

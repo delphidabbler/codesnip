@@ -69,7 +69,10 @@ uses
   // Delphi
   Classes,
   // Project
-  UConsts, UIOUtils, UStrUtils;
+  CS.Database.Types,
+  UConsts,
+  UIOUtils,
+  UStrUtils;
 
 
 { TSnippetIDListFileReader }

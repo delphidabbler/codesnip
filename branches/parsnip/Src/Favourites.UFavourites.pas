@@ -22,7 +22,8 @@ uses
   // Delphi
   Generics.Collections,
   // Project
-  UMultiCastEvents, USnippetIDs;
+  CS.Database.Types,
+  UMultiCastEvents;
 
 
 type

@@ -23,41 +23,9 @@ uses
   // Delphi
   Generics.Collections,
   // Project
+  CS.Database.Types,
   IntfCommon;
 
-
-type
-
-  ///  <summary>Record that uniquely identifies a code snippet. Specifies name
-  ///  and flag indicating whether snippet is user-defined.</summary>
-  TSnippetID = record
-  strict private
-    var
-      ///  <summary>Internal value of snippet ID.</summary>
-      fID: string;
-  public
-    ///  <summary>Creates a record with given ID string.</summary>
-    constructor Create(const AIDStr: string);
-
-    ///  <summary>Returns hash of snippet ID.</summary>
-    function Hash: Integer;
-
-    ///  <summary>Returns string representation of ID.</summary>
-    function ToString: string;
-
-    ///  <summary>Compares two snippet IDs.</summary>
-    ///  <param name="Left">string [in] First ID to compare.</param>
-    ///  <param name="Right">string [in] Second ID to compare.</param>
-    ///  <returns>Integer. 0 if names are same, -ve if Left is less than Right
-    ///  or +ve Left is greater than Right.</returns>
-    class function Compare(const Left, Right: TSnippetID): Integer; static;
-
-    ///  <summary>Overload of equality operator for two TSnippetIDs.</summary>
-    class operator Equal(const Left, Right: TSnippetID): Boolean;
-
-    ///  <summary>Overload of inequality operator for two TSnippetIDs.</summary>
-    class operator NotEqual(const Left, Right: TSnippetID): Boolean;
-  end;
 
 type
   ///  <summary>Interface supported by objects that implement a list of
@@ -170,38 +138,6 @@ uses
   UExceptions,
   UStrUtils;
 
-
-{ TSnippetID }
-
-class function TSnippetID.Compare(const Left, Right: TSnippetID): Integer;
-begin
-  Result := StrCompareText(Left.fID, Right.fID);
-end;
-
-constructor TSnippetID.Create(const AIDStr: string);
-begin
-  fID := AIDStr;
-end;
-
-class operator TSnippetID.Equal(const Left, Right: TSnippetID): Boolean;
-begin
-  Result := Compare(Left, Right) = 0;
-end;
-
-function TSnippetID.Hash: Integer;
-begin
-  Result := TextHash(fID);
-end;
-
-class operator TSnippetID.NotEqual(const Left, Right: TSnippetID): Boolean;
-begin
-  Result := Compare(Left, Right) <> 0;
-end;
-
-function TSnippetID.ToString: string;
-begin
-  Result := fID;
-end;
 
 { TSnippetIDList }
 

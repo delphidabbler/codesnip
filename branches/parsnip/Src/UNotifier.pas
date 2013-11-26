@@ -23,8 +23,8 @@ uses
   Classes,
   ActiveX,
   // Project
+  CS.Database.Types,
   IntfNotifier,
-  USnippetIDs,
   UView;
 
 

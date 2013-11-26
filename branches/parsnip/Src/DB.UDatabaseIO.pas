@@ -100,8 +100,16 @@ uses
   // Delphi
   SysUtils,
   // Project
-  DBIO.UFileIOIntf, DBIO.UNulDataReader, DBIO.UXMLDataIO, IntfCommon,
-  UAppInfo, UConsts, UIStringList, UReservedCategories, USnippetIDs;
+  CS.Database.Types,
+  DBIO.UFileIOIntf,
+  DBIO.UNulDataReader,
+  DBIO.UXMLDataIO,
+  IntfCommon,
+  UAppInfo,
+  UConsts,
+  UIStringList,
+  UReservedCategories,
+  USnippetIDs;
 
 
 type

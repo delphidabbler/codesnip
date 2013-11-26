@@ -22,8 +22,8 @@ uses
   // Delphi
   Classes,
   // Project
-  IntfNotifier,
-  USnippetIDs;
+  CS.Database.Types,
+  IntfNotifier;
 
 
 type

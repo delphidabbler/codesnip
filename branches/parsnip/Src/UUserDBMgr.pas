@@ -22,9 +22,9 @@ uses
   // Delphi
   Classes,
   // Project
+  CS.Database.Types,
   DB.UCategory,
   UBaseObjects,
-  USnippetIDs,
   UView;
 
 
@@ -132,6 +132,7 @@ uses
   UOpenDialogHelper,
   UReservedCategories,
   USaveDialogEx,
+  USnippetIDs,
   UUserDBBackup,
   UWaitForThreadUI;
 

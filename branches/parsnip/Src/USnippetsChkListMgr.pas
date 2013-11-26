@@ -103,10 +103,14 @@ implementation
 
 uses
   // Delphi
-  Graphics, StdCtrls,
+  Graphics,
+  StdCtrls,
   // Project
+  CS.Database.Types,
   DB.UMain,
-  UColours, UGraphicUtils, UPreferences;
+  UColours,
+  UGraphicUtils,
+  UPreferences;
 
 
 { TSnippetsChkListMgr }

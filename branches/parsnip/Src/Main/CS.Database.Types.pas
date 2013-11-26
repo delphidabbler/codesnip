@@ -33,23 +33,23 @@ type
   EDBSnippetID = class(Exception);
 
   ///  <summary>Record that uniquely identifies a code snippet.</summary>
-  TDBSnippetID = record
+  TSnippetID = record
   public
     type
       ///  <summary>Comparer for snippet IDs.</summary>
-      TComparer = class(TComparer<TDBSnippetID>)
+      TComparer = class(TComparer<TSnippetID>)
         ///  <summary>Compares the two given snippet IDs.</summary>
         ///  <remarks>Returns zero if Left is the same as Right, -ve if Left is
         ///  less than Right or +ve if Left is greater than Right.</remarks>
-        function Compare(const Left, Right: TDBSnippetID): Integer; override;
+        function Compare(const Left, Right: TSnippetID): Integer; override;
       end;
       ///  <summary>Equality comparer for snippet IDs.</summary>
-      TEqualityComparer = class(TEqualityComparer<TDBSnippetID>)
+      TEqualityComparer = class(TEqualityComparer<TSnippetID>)
       public
         ///  <summary>Checks if the two given snippet IDs are equal.</summary>
-        function Equals(const Left, Right: TDBSnippetID): Boolean; override;
+        function Equals(const Left, Right: TSnippetID): Boolean; override;
         ///  <summary>Returns the hash code of the given snippet ID.</summary>
-        function GetHashCode(const Value: TDBSnippetID): Integer; override;
+        function GetHashCode(const Value: TSnippetID): Integer; override;
       end;
   strict private
     var
@@ -65,15 +65,15 @@ type
     constructor Create(const AIDStr: string);
     ///  <summary>Creates and returns a snippet ID with a globally unique value.
     ///  </summary>
-    class function CreateNew: TDBSnippetID; static;
+    class function CreateNew: TSnippetID; static;
     ///  <summary>Checks if the two given snippet IDs are equal.</summary>
-    class operator Equal(const Left, Right: TDBSnippetID): Boolean;
+    class operator Equal(const Left, Right: TSnippetID): Boolean;
     ///  <summary>Checks if the two given snippet IDs are not equal.</summary>
-    class operator NotEqual(const Left, Right: TDBSnippetID): Boolean;
+    class operator NotEqual(const Left, Right: TSnippetID): Boolean;
     ///  <summary>Compares the two given snippet IDs.</summary>
     ///  <remarks>Returns zero if Left is the same as Right, -ve if Left is less
     ///  than Right or +ve if Left is greater than Right.</remarks>
-    class function Compare(const Left, Right: TDBSnippetID): Integer; static;
+    class function Compare(const Left, Right: TSnippetID): Integer; static;
     ///  <summary>Returns a string representation of the ID.</summary>
     function ToString: string; inline;
     ///  <summary>Returns a hash of the ID.</summary>
@@ -84,14 +84,14 @@ type
 
   IDBSnippetIDList = interface(IInterface)
     ['{842B9A92-6CD5-4DC3-9DA7-9753B08A52AB}']
-    function GetEnumerator: TEnumerator<TDBSnippetID>;
-    procedure Add(const ID: TDBSnippetID);
-    procedure Delete(const ID: TDBSnippetID);
+    function GetEnumerator: TEnumerator<TSnippetID>;
+    procedure Add(const ID: TSnippetID);
+    procedure Delete(const ID: TSnippetID);
     procedure Clear;
-    function Contains(const ID: TDBSnippetID): Boolean;
-    function GetItem(const Idx: Integer): TDBSnippetID;
+    function Contains(const ID: TSnippetID): Boolean;
+    function GetItem(const Idx: Integer): TSnippetID;
     function GetCount: Integer;
-    property Items[const Idx: Integer]: TDBSnippetID read GetItem;
+    property Items[const Idx: Integer]: TSnippetID read GetItem;
     property Count: Integer read GetCount;
   end;
 
@@ -164,9 +164,9 @@ type
     ['{F98BBE9C-B9F1-4FC7-BDE2-BBC90958BF52}']
     function IsLinked: Boolean;
     function GetSynchSpaceID: TGUID;
-    function GetLinkedSnippetID: TDBSnippetID;
+    function GetLinkedSnippetID: TSnippetID;
     property SynchSpaceID: TGUID read GetSynchSpaceID;
-    property LinkedSnippetID: TDBSnippetID read GetLinkedSnippetID;
+    property LinkedSnippetID: TSnippetID read GetLinkedSnippetID;
   end;
 
   ///  <summary>Enumeration providing information about the level to which a
@@ -187,7 +187,7 @@ type
 
   ISnippetBase = interface(IInterface)
     ['{0F915A15-441B-4180-A9C2-41C52AF63C8A}']
-    function GetID: TDBSnippetID;
+    function GetID: TSnippetID;
     function GetCreated: TUTCDateTime;
     function GetModified: TUTCDateTime;
     function GetTitle: string;
@@ -205,7 +205,7 @@ type
     function GetTestInfo: TSnippetTestInfo;
     function GetStarred: Boolean;
 
-    property ID: TDBSnippetID read GetID;
+    property ID: TSnippetID read GetID;
     property Created: TUTCDateTime read GetCreated;
     property Modified: TUTCDateTime read GetModified;
   end;
@@ -300,14 +300,14 @@ uses
   UConsts,
   UStrUtils;
 
-{ TDBSnippetID }
+{ TSnippetID }
 
-class function TDBSnippetID.Compare(const Left, Right: TDBSnippetID): Integer;
+class function TSnippetID.Compare(const Left, Right: TSnippetID): Integer;
 begin
   Result := StrCompareText(Left.fID, Right.fID);
 end;
 
-constructor TDBSnippetID.Create(const AIDStr: string);
+constructor TSnippetID.Create(const AIDStr: string);
 resourcestring
   sInvalidIDStr = '"%s" is not a valid snippet ID string';
 begin
@@ -316,7 +316,7 @@ begin
   fID := AIDStr;
 end;
 
-class function TDBSnippetID.CreateNew: TDBSnippetID;
+class function TSnippetID.CreateNew: TSnippetID;
 var
   Bytes: TBytes;
   B: Byte;
@@ -326,20 +326,20 @@ begin
   IDStr := EmptyStr;
   for B in Bytes do
     IDStr := IDStr + IntToHex(B, 2 * SizeOf(B));
-  Result := TDBSnippetID.Create(IDStr);
+  Result := TSnippetID.Create(IDStr);
 end;
 
-class operator TDBSnippetID.Equal(const Left, Right: TDBSnippetID): Boolean;
+class operator TSnippetID.Equal(const Left, Right: TSnippetID): Boolean;
 begin
   Result := StrSameText(Left.fID, Right.fID);
 end;
 
-function TDBSnippetID.Hash: Integer;
+function TSnippetID.Hash: Integer;
 begin
   Result := TextHash(fID);
 end;
 
-class function TDBSnippetID.IsValidIDString(const S: string): Boolean;
+class function TSnippetID.IsValidIDString(const S: string): Boolean;
 
   function IsValidChar(const Ch: Char): Boolean;
   const
@@ -364,34 +364,34 @@ begin
   Result := True;
 end;
 
-class operator TDBSnippetID.NotEqual(const Left, Right: TDBSnippetID): Boolean;
+class operator TSnippetID.NotEqual(const Left, Right: TSnippetID): Boolean;
 begin
   Result := not StrSameText(Left.fID, Right.fID);
 end;
 
-function TDBSnippetID.ToString: string;
+function TSnippetID.ToString: string;
 begin
   Result := fID;
 end;
 
-{ TDBSnippetID.TComparer }
+{ TSnippetID.TComparer }
 
-function TDBSnippetID.TComparer.Compare(const Left,
-  Right: TDBSnippetID): Integer;
+function TSnippetID.TComparer.Compare(const Left,
+  Right: TSnippetID): Integer;
 begin
-  Result := TDBSnippetid.Compare(Left, Right);
+  Result := TSnippetID.Compare(Left, Right);
 end;
 
-{ TDBSnippetID.TEqualityComparer }
+{ TSnippetID.TEqualityComparer }
 
-function TDBSnippetID.TEqualityComparer.Equals(const Left,
-  Right: TDBSnippetID): Boolean;
+function TSnippetID.TEqualityComparer.Equals(const Left,
+  Right: TSnippetID): Boolean;
 begin
   Result := Left = Right;
 end;
 
-function TDBSnippetID.TEqualityComparer.GetHashCode(
-  const Value: TDBSnippetID): Integer;
+function TSnippetID.TEqualityComparer.GetHashCode(
+  const Value: TSnippetID): Integer;
 begin
   Result := Value.Hash;
 end;
