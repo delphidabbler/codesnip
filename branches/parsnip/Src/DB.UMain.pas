@@ -145,6 +145,8 @@ type
     function Lookup(const SnippetID: TSnippetID): TSnippet;
     function TryLookup(const SnippetID: TSnippetID; out Snippet: TSnippet):
       Boolean;
+    function SnippetCount: Integer;
+    function IsEmpty: Boolean;
     procedure AddChangeEventHandler(const Handler: TNotifyEventInfo);
       {Adds a change event handler to list of listeners.
         @param Handler [in] Event handler to be added.
@@ -429,6 +431,8 @@ type
     function Lookup(const SnippetID: TSnippetID): TSnippet;
     function TryLookup(const SnippetID: TSnippetID; out Snippet: TSnippet):
       Boolean;
+    function SnippetCount: Integer;
+    function IsEmpty: Boolean;
     { IDatabaseEdit methods }
     function GetEditableSnippetInfo(const Snippet: TSnippet = nil):
       TSnippetEditData;
@@ -917,6 +921,11 @@ begin
   (fSnippets as TSnippetListEx).Delete(Snippet);
 end;
 
+function TDatabase.IsEmpty: Boolean;
+begin
+  Result := fSnippets.IsEmpty;
+end;
+
 procedure TDatabase.Load;
   {Loads object's data from main and user defined databases.
   }
@@ -966,6 +975,11 @@ begin
   with TDatabaseIOFactory.CreateWriter do
     Write(fSnippets, fCategories, Provider);
   fUpdated := False;
+end;
+
+function TDatabase.SnippetCount: Integer;
+begin
+  Result := fSnippets.Count;
 end;
 
 procedure TDatabase.TriggerEvent(const Kind: TDatabaseChangeEventKind;
