@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2009-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2009-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -23,7 +23,11 @@ uses
   // Delphu
   ComCtrls,
   // Project
-  DB.USnippet, UGroups, UView, UViewItemTreeNode;
+  CS.Database.Types,
+  DB.USnippet,
+  UGroups,
+  UView,
+  UViewItemTreeNode;
 
 
 type
@@ -35,13 +39,13 @@ type
   TOverviewTreeBuilder = class abstract(TObject)
   strict private
     var
-      fTreeView: TTreeView;       // Value of TreeView property
-      fSnippetList: TSnippetList; // Value of SnippetList property
+      fTreeView: TTreeView;           // Value of TreeView property
+      fSnippetIDList: ISnippetIDList; // Value of SnippetList property
   strict protected
     property TreeView: TTreeView read fTreeView;
       {Reference to treeview populated by class}
-    property SnippetList: TSnippetList read fSnippetList;
-      {List of snippets to be displayed in treeview}
+    property SnippetIDList: ISnippetIDList read fSnippetIDList;
+      {List of IDs of snippets to be displayed in treeview}
     function AddViewItemNode(const ParentNode: TViewItemTreeNode;
       ViewItem: IView): TViewItemTreeNode;
       {Adds a new node to the tree view that represents a view item.
@@ -60,11 +64,11 @@ type
         @return Required view item object.
       }
   public
-    constructor Create(const TV: TTreeView; const SnippetList: TSnippetList);
+    constructor Create(const TV: TTreeView; SnippetIDList: ISnippetIDList);
       {Class constructor. Sets up object to populate a treeview with a list of
       snippets.
         @param TV [in] Treeview control to be populated.
-        @param SnippetList [in] List of snippets to be added to TV.
+        @param SnippetIDList [in] List of IDs of snippets to be added to TV.
       }
     procedure Build;
       {Populates the treeview.
@@ -202,16 +206,16 @@ begin
 end;
 
 constructor TOverviewTreeBuilder.Create(const TV: TTreeView;
-  const SnippetList: TSnippetList);
+  SnippetIDList: ISnippetIDList);
   {Class constructor. Sets up object to populate a treeview with a list of
   snippets.
     @param TV [in] Treeview control to be populated.
-    @param SnippetList [in] List of snippets to be added to TV.
+    @param SnippetIDList [in] List of IDs of snippets to be added to TV.
   }
 begin
   inherited Create;
   fTreeView := TV;
-  fSnippetList := SnippetList;
+  fSnippetIDList := SnippetIDList;
 end;
 
 { TOverviewCategorisedTreeBuilder }
@@ -221,7 +225,7 @@ function TOverviewCategorisedTreeBuilder.CreateGrouping: TGrouping;
     @return Required grouping object.
   }
 begin
-  Result := TCategoryGrouping.Create(SnippetList);
+  Result := TCategoryGrouping.Create(SnippetIDList);
 end;
 
 function TOverviewCategorisedTreeBuilder.CreateViewItemForGroup(
@@ -243,7 +247,7 @@ function TOverviewAlphabeticTreeBuilder.CreateGrouping: TGrouping;
     @return Required grouping object.
   }
 begin
-  Result := TAlphaGrouping.Create(SnippetList);
+  Result := TAlphaGrouping.Create(SnippetIDList);
 end;
 
 function TOverviewAlphabeticTreeBuilder.CreateViewItemForGroup(
@@ -265,7 +269,7 @@ function TOverviewSnipKindTreeBuilder.CreateGrouping: TGrouping;
     @return Required grouping object.
   }
 begin
-  Result := TSnipKindGrouping.Create(SnippetList);
+  Result := TSnipKindGrouping.Create(SnippetIDList);
 end;
 
 function TOverviewSnipKindTreeBuilder.CreateViewItemForGroup(

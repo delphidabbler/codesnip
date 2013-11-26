@@ -25,6 +25,7 @@ uses
   Collections.Base,
   Collections.Lists,
   // Project
+  CS.Database.Types,
   DB.UCategory,
   DB.USnippet,
   DB.USnippetKind,
@@ -183,8 +184,9 @@ type
       // Sorted list of group item objects
       // Using linked list here because adding is faster than array base list
       TGroupItemList = TObjectSortedLinkedList<TGroupItem>;
-    var fItems: TGroupItemList;     // List of items
-    var fSnippetList: TSnippetList; // List of snippets to be grouped
+    var
+      fItems: TGroupItemList;         // List of items
+      fSnippetIDList: ISnippetIDList; // List of snippets to be grouped
     function GetCount: Integer;
       {Read accessor for Count property.
         @return Number of group items in grouping.
@@ -197,12 +199,12 @@ type
     procedure Populate; virtual; abstract;
       {Populates grouping with group items and associated snippets.
       }
-    property SnippetList: TSnippetList read fSnippetList;
+    property SnippetIDList: ISnippetIDList read fSnippetIDList;
       {List of snippets to be grouped}
   public
-    constructor Create(const SnippetList: TSnippetList);
+    constructor Create(ASnippetList: ISnippetIDList);
       {Object constructor. Sets up grouping object for a snippet list.
-        @param SnippetList [in] List of snippets to be grouped.
+        @param ASnippetList [in] List of snippets to be grouped.
       }
     destructor Destroy; override;
       {Object destructor. Tears down object.
@@ -267,7 +269,6 @@ uses
   // Delphi
   Generics.Defaults,
   // Project
-  CS.Database.Types,
   DB.UMain,
   UStrUtils;
 
@@ -282,13 +283,13 @@ begin
   fItems.Add(Item);
 end;
 
-constructor TGrouping.Create(const SnippetList: TSnippetList);
+constructor TGrouping.Create(ASnippetList: ISnippetIDList);
   {Object constructor. Sets up grouping object for a snippet list.
-    @param SnippetList [in] List of snippets to be grouped.
+    @param ASnippetList [in] List of snippets to be grouped.
   }
 begin
   inherited Create;
-  fSnippetList := SnippetList;
+  fSnippetIDList := ASnippetList;
   fItems := TGroupItemList.Create(
     TRules<TGroupItem>.Create(
       TDelegatedComparer<TGroupItem>.Create(
@@ -393,7 +394,7 @@ begin
     Item := TCategoryGroupItem.Create(Cat);
     AddItem(Item);
     for Snippet in Cat.Snippets do
-      if SnippetList.Contains(Snippet) then
+      if SnippetIDList.Contains(Snippet.ID) then
         Item.AddSnippet(Snippet);
   end;
 end;
@@ -483,7 +484,7 @@ begin
         AddItem(GroupItem);
         Map.Add(Letter, GroupItem);
       end;
-      if SnippetList.Contains(Snippet) then
+      if SnippetIDList.Contains(Snippet.ID) then
         GroupItem.AddSnippet(Snippet);
     end;
   finally
@@ -530,6 +531,7 @@ procedure TSnipKindGrouping.Populate;
 var
   SnipKind: TSnippetKind;           // each snippet kind
   Item: TGroupItem;                 // group item for each snippet kind
+  SnippetID: TSnippetID;            // each of each snippet to be grouped
   Snippet: TSnippet;                // each snippet to be grouped
   Lookup: array[TSnippetKind]
     of TGroupItem;                  // lookup table of group kinds for searching
@@ -543,9 +545,11 @@ begin
     Lookup[SnipKind] := Item;
   end;
   // Add each snippet to required group
-  for Snippet in SnippetList do
+  for SnippetID in SnippetIDList do
   begin
     // find group item and add snippet to it
+    Snippet := Database.Lookup(SnippetID);
+    Assert(Assigned(Snippet), ClassName + '.Populate: Snippet not in database');
     Item := Lookup[Snippet.Kind];
     Assert(Assigned(Item), ClassName + '.Populate: Item not found');
     Item.AddSnippet(Snippet);

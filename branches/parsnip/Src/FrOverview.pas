@@ -240,7 +240,10 @@ uses
   // Delphi
   Messages,
   // Project
-  UKeysHelper, UOverviewTreeBuilder;
+  CS.Database.Types,
+  UKeysHelper,
+  UOverviewTreeBuilder,
+  USnippetIDs;
 
 
 {$R *.dfm}
@@ -506,6 +509,18 @@ var
   Builder: TOverviewTreeBuilder;  // builds overview tree with correct grouping
   BuilderClasses:                 // overview builder classes for each grouping
     TArray<TOverviewTreeBuilderClass>;
+
+  {TODO: Remeove this temporary function once frame stores displayed snippets in
+         ISnippetIDList instead of TSnippetList. }
+  function SnippetListToIDList(const SL: TSnippetList): ISnippetIDList;
+  var
+    Snippet: TSnippet;
+  begin
+    Result := TSnippetIDList.Create(SL.Count);
+    for Snippet in SL do
+      Result.Add(Snippet.ID);
+  end;
+
 begin
   // Store list of overview tree builder classes: one for each tab
   SetLength(BuilderClasses, tcDisplayStyle.Tabs.Count);
@@ -522,7 +537,7 @@ begin
       Exit;
     // Build new treeview using grouping determined by selected tab
     Builder := BuilderClasses[tcDisplayStyle.TabIndex].Create(
-      tvSnippets, fSnippetList
+      tvSnippets, SnippetListToIDList(fSnippetList)
     );
     Builder.Build;
     // Restore state of treeview based on last time it was displayed
