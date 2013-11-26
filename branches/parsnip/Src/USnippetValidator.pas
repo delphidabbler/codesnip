@@ -21,8 +21,8 @@ interface
 uses
   // Project
   CS.ActiveText,
+  CS.Database.Types,
   DB.USnippet,
-  DB.USnippetKind,
   UBaseObjects,
   UStructs;
 
@@ -158,6 +158,7 @@ uses
   CS.ActiveText.Renderers.PlainText,
   CS.ActiveText.Validator,
   DB.UMain,
+  DB.USnippetKind,
   USnippetIDs,
   UStrUtils;
 

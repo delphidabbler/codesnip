@@ -199,7 +199,11 @@ uses
   // Delphi
   SysUtils,
   // Project
-  DB.UMain, UExceptions, USnippetIDs, UStrUtils;
+  CS.Database.Types,
+  DB.UMain,
+  UExceptions,
+  USnippetIDs,
+  UStrUtils;
 
 type
   ///  <summary>

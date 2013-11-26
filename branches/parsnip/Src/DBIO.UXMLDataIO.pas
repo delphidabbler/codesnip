@@ -255,7 +255,7 @@ uses
   CS.ActiveText,
   CS.ActiveText.Helper,
   CS.ActiveText.Renderers.REML,
-  DB.USnippetKind,
+  CS.Database.Types,
   UConsts,
   UExceptions,
   UIOUtils,

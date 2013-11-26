@@ -23,7 +23,12 @@ uses
   // Delphi
   XMLIntf,
   // Project
-  Compilers.UGlobals, DB.USnippetKind, UExceptions, UIStringList, UStructs,
+  CS.Database.Types,
+  Compilers.UGlobals,
+  DB.USnippetKind,
+  UExceptions,
+  UIStringList,
+  UStructs,
   UXMLDocumentEx;
 
 

@@ -281,9 +281,9 @@ uses
   // Project
   CS.ActiveText.Helper,
   CS.Config,
+  CS.Database.Types,
   CS.SourceCode.Languages,
   DB.UMain,
-  DB.USnippetKind,
   FmDependenciesDlg,
   IntfCommon,
   UColours,

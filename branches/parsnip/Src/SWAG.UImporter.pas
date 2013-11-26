@@ -95,9 +95,9 @@ uses
   // Delphi
   SysUtils,
   // Project
+  CS.Database.Types,
   DB.UCategory,
   DB.UMain,
-  DB.USnippetKind,
   UReservedCategories,
   USnippetValidator;
 

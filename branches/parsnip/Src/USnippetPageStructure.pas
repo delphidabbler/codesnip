@@ -18,8 +18,16 @@ unit USnippetPageStructure;
 interface
 
 uses
+  // Delphi
   Generics.Collections,
-  DB.USnippetKind, IntfCommon, UBaseObjects, UContainers, USettings, USingleton;
+  // Project
+  CS.Database.Types,
+  DB.USnippetKind,
+  IntfCommon,
+  UBaseObjects,
+  UContainers,
+  USettings,
+  USingleton;
 
 type
 

@@ -71,8 +71,8 @@ implementation
 
 uses
   // Project
+  CS.Database.Types,
   CS.SourceCode.Pascal.SourceGen,
-  DB.USnippetKind,
   UEncodings,
   UIOUtils,
   USystemInfo,

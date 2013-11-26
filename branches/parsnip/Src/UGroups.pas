@@ -25,7 +25,10 @@ uses
   Collections.Base,
   Collections.Lists,
   // Project
-  DB.UCategory, DB.USnippet, DB.USnippetKind, UInitialLetter;
+  DB.UCategory,
+  DB.USnippet,
+  DB.USnippetKind,
+  UInitialLetter;
 
 
 type
@@ -264,7 +267,9 @@ uses
   // Delphi
   Generics.Defaults,
   // Project
-  DB.UMain, UStrUtils;
+  CS.Database.Types,
+  DB.UMain,
+  UStrUtils;
 
 
 { TGrouping }

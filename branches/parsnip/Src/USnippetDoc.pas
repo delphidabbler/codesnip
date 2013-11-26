@@ -108,7 +108,12 @@ uses
   // Delphi
   SysUtils,
   // Project
-  Compilers.UCompilers, DB.UMain, DB.USnippetKind, UStrUtils, Web.UInfo;
+  CS.Database.Types,
+  Compilers.UCompilers,
+  DB.UMain,
+  DB.USnippetKind,
+  UStrUtils,
+  Web.UInfo;
 
 
 { TSnippetDoc }

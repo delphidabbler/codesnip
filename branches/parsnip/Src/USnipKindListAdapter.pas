@@ -27,7 +27,9 @@ uses
   Collections.Base,
   Collections.Lists,
   // Project
-  DB.USnippet, DB.USnippetKind;
+  CS.Database.Types,
+  DB.USnippet,
+  DB.USnippetKind;
 
 
 type

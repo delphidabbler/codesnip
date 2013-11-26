@@ -95,14 +95,18 @@ type
     property Count: Integer read GetCount;
   end;
 
-  TDBSnippetKind = (
-    _skFreeform,   // free-form code - not in any of other supported formats
-    _skRoutine,    // procedure or function in standard format
-    _skConstant,   // constant definition in standard format
-    _skTypeDef,    // type definition in standard format
-    _skUnit,       // complete source code unit
-    _skClass       // Delphi class or record with methods
+  ///  <summary>Enumeration of various supported kinds of snippets.</summary>
+  TSnippetKind = (
+    skFreeform,   // free-form code - not in any of other supported formats
+    skRoutine,    // procedure or function in standard format
+    skConstant,   // constant definition in standard format
+    skTypeDef,    // type definition in standard format
+    skUnit,       // complete source code unit
+    skClass       // Delphi class or record with methods
   );
+
+  ///  <summary>Set of supported snippet kinds.</summary>
+  TSnippetKinds = set of TSnippetKind;
 
   ETag = class(Exception);
 
@@ -194,7 +198,7 @@ type
     function GetRequiredSnippets: IDBSnippetIDList;
     function GetXRefs: IDBSnippetIDList;
     function GetNotes: IActiveText;
-    function GetKind: TDBSnippetKind;
+    function GetKind: TSnippetKind;
     function GetCompileResults: TCompileResults;
     function GetTags: ITagSet;
     function GetLinkInfo: ISnippetLinkInfo;
@@ -218,7 +222,7 @@ type
     property RequiredSnippets: IDBSnippetIDList read GetRequiredSnippets;
     property XRefs: IDBSnippetIDList read GetXRefs;
     property Notes: IActiveText read GetNotes;
-    property Kind: TDBSnippetKind read GetKind;
+    property Kind: TSnippetKind read GetKind;
     property CompileResults: TCompileResults read GetCompileResults;
     property Tags: ITagSet read GetTags;
     property LinkInfo: ISnippetLinkInfo read GetLinkInfo;
@@ -240,7 +244,7 @@ type
     procedure SetRequiredSnippets(AIDList: IDBSnippetIDList);
     procedure SetXRefs(AIDList: IDBSnippetIDList);
     procedure SetNotes(ANotes: IActiveText);
-    procedure SetKind(const ASnippetKind: TDBSnippetKind);
+    procedure SetKind(const ASnippetKind: TSnippetKind);
     procedure SetCompileResults(const AResults: TCompileResults);
     procedure SetTags(ATagList: ITagSet);
     procedure SetLinkInfo(ALinkInfo: ISnippetLinkInfo);
@@ -258,7 +262,7 @@ type
       write SetRequiredSnippets;
     property XRefs: IDBSnippetIDList read GetXRefs write SetXRefs;
     property Notes: IActiveText read GetNotes write SetNotes;
-    property Kind: TDBSnippetKind read GetKind write SetKind;
+    property Kind: TSnippetKind read GetKind write SetKind;
     property CompileResults: TCompileResults read GetCompileResults
       write SetCompileResults;
     property Tags: ITagSet read GetTags write SetTags;

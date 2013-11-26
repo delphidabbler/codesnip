@@ -91,9 +91,9 @@ uses
   // Delphi
   SysUtils,
   // Project
+  CS.Database.Types,
   CS.Utils.Dates,
   DB.USnippet,
-  DB.USnippetKind,
   UAppInfo,
   UQuery;
 

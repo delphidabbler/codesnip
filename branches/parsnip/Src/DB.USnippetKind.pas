@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2009-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2009-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -22,27 +22,9 @@ interface
 
 uses
   // Project
+  CS.Database.Types,
   UBaseObjects;
 
-
-type
-  ///  <summary>
-  ///  Enumeration of various supported kinds of snippets.
-  ///  </summary>
-  TSnippetKind = (
-    skFreeform,   // free-form code - not in any of other supported formats
-    skRoutine,    // procedure or function in standard format
-    skConstant,   // constant definition in standard format
-    skTypeDef,    // type definition in standard format
-    skUnit,       // complete source code unit
-    skClass       // Delphi class or record with methods
-  );
-
-type
-  ///  <summary>
-  ///  Set of snippet kinds.
-  ///  </summary>
-  TSnippetKinds = set of TSnippetKind;
 
 type
   ///  <summary>

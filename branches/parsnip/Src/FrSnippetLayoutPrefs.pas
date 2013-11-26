@@ -27,8 +27,8 @@ uses
   ActnList,
   Buttons,
   // Project
+  CS.Database.Types,
   CS.UI.Helper.CollectionCtrlKVMgr,
-  DB.USnippetKind,
   FrPrefsBase,
   UPreferences,
   USnippetPageStructure;
@@ -96,6 +96,7 @@ uses
   Windows,
   Graphics,
   // Project
+  DB.USnippetKind,
   FmPreferencesDlg,
   UClassHelpers,
   UCtrlArranger;

@@ -261,9 +261,9 @@ uses
   SysUtils,
   // Project
   CS.ActiveText.Renderers.PlainText,
+  CS.Database.Types,
   CS.SourceCode.Pascal.Lexer,
   DB.UMain,
-  DB.USnippetKind,
   UConsts,
   UExceptions,
   UPreferences,
