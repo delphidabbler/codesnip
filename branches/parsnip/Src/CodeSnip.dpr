@@ -298,7 +298,6 @@ uses
   UShowPrefsPageAction in 'UShowPrefsPageAction.pas',
   USimpleDispatch in 'USimpleDispatch.pas',
   USingleton in 'USingleton.pas',
-  USnipKindListAdapter in 'USnipKindListAdapter.pas',
   USnippetAction in 'USnippetAction.pas',
   USnippetDoc in 'USnippetDoc.pas',
   USnippetHTML in 'USnippetHTML.pas',

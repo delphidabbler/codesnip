@@ -498,7 +498,6 @@
 			<DCCReference Include="UShowPrefsPageAction.pas"/>
 			<DCCReference Include="USimpleDispatch.pas"/>
 			<DCCReference Include="USingleton.pas"/>
-			<DCCReference Include="USnipKindListAdapter.pas"/>
 			<DCCReference Include="USnippetAction.pas"/>
 			<DCCReference Include="USnippetDoc.pas"/>
 			<DCCReference Include="USnippetHTML.pas"/>
