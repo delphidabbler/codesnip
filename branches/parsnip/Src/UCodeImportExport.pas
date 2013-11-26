@@ -125,8 +125,8 @@ type
     var
       ///  <summary>User information to be written to XML.</summary>
       fUserInfo: TUserInfo;
-      ///  <summary>List of snippets to be exported.</summary>
-      fSnippets: TSnippetList;
+      ///  <summary>IDs of snippets to be exported.</summary>
+      fSnippetIDs: ISnippetIDList;
       ///  <summary>Extended XML document object.</summary>
       fXMLDoc: IXMLDocumentEx;
     ///  <summary>Examines given exception and converts into ECodeExporter if it
@@ -164,9 +164,10 @@ type
     ///  snippet.</summary>
     ///  <param name="ParentNode">IXMLNode [in] Node under which snippet node is
     ///  to be written.</param>
-    ///  <param name="Snippet">TSnippet [in] Reference to snippet to be
-    ///  described in XML.</param>
-    procedure WriteSnippet(const ParentNode: IXMLNode; const Snippet: TSnippet);
+    ///  <param name="SnippetID">TSnippetID [in] ID of snippet to be written to
+    ///  XML.</param>
+    procedure WriteSnippet(const ParentNode: IXMLNode;
+      const SnippetID: TSnippetID);
     ///  <summary>Performs the export.</summary>
     ///  <returns>TEncodedData. Encoded data containing exported XML.</returns>
     ///  <exception>ECodeExporter raised if a known error is encountered.
@@ -176,21 +177,21 @@ type
     ///  </summary>
     ///  <param name="UserInfo">TUserInfo [in] User information to be exported.
     ///  Ignored if null.</param>
-    ///  <param name="SnipList">TSnippetList [in] List of snippets to be
+    ///  <param name="SnipList">ISnippetIDList [in] IDs of snippets to be
     ///  exported.</param>
     constructor InternalCreate(const UserInfo: TUserInfo;
-      const SnipList: TSnippetList);
+      SnipList: ISnippetIDList);
   public
     ///  <summary>Destroys object.</summary>
     destructor Destroy; override;
     ///  <summary>Exports user information and snippets as XML.</summary>
     ///  <param name="UserInfo">TUserInfo [in] User information to be exported.
     ///  Ignored if null.</param>
-    ///  <param name="SnipList">TSnippetList [in] List of snippets to be
+    ///  <param name="SnipList">ISnippetIDList [in] IDs of snippets to be
     ///  exported.</param>
     ///  <returns>TEncodedData. Encoded data containing exported XML.</returns>
     class function ExportSnippets(const UserInfo: TUserInfo;
-      const SnipList: TSnippetList): TEncodedData;
+      SnipList: ISnippetIDList): TEncodedData;
   end;
 
 type
@@ -211,6 +212,7 @@ uses
   CS.ActiveText.Helper,
   CS.ActiveText.Renderers.REML,
   DB.UMain,
+  IntfCommon,
   UAppInfo,
   UConsts,
   UREMLDataIO,
@@ -301,7 +303,7 @@ begin
 end;
 
 class function TCodeExporter.ExportSnippets(const UserInfo: TUserInfo;
-  const SnipList: TSnippetList): TEncodedData;
+  SnipList: ISnippetIDList): TEncodedData;
 begin
   with InternalCreate(UserInfo, SnipList) do
     try
@@ -319,10 +321,10 @@ begin
 end;
 
 constructor TCodeExporter.InternalCreate(const UserInfo: TUserInfo;
-  const SnipList: TSnippetList);
+  SnipList: ISnippetIDList);
 begin
   inherited InternalCreate;
-  fSnippets := SnipList;
+  fSnippetIDs := (SnipList as IClonable).Clone as ISnippetIDList;
   fUserInfo := UserInfo;
 end;
 
@@ -356,13 +358,16 @@ begin
 end;
 
 procedure TCodeExporter.WriteSnippet(const ParentNode: IXMLNode;
-  const Snippet: TSnippet);
+  const SnippetID: TSnippetID);
 var
-  SnippetNode: IXMLNode; // new snippet node
+  SnippetNode: IXMLNode;  // new snippet node
+  Snippet: TSnippet;      // snippet being written out
 begin
+  Snippet := Database.Lookup(SnippetID);
+  Assert(Assigned(Snippet), ClassName + '.WriteSnippet: Snippet not found');
   // Create snippet node with attribute that specifies snippet name
   SnippetNode := fXMLDoc.CreateElement(ParentNode, cSnippetNode);
-  SnippetNode.Attributes[cSnippetNameAttr] := Snippet.ID.ToString;
+  SnippetNode.Attributes[cSnippetNameAttr] := SnippetID.ToString;
   // Add nodes for properties: (ignore category and xrefs)
   // description node is written even if empty (which it shouldn't be)
   fXMLDoc.CreateElement(
@@ -403,14 +408,14 @@ end;
 
 procedure TCodeExporter.WriteSnippets(const ParentNode: IXMLNode);
 var
-  Node: IXMLNode;       // new snippets list node
-  Snippet: TSnippet;    // refers to each exported snippet
+  Node: IXMLNode;         // new snippets list node
+  SnippetID: TSnippetID;  // ID of each exported snippet
 begin
   // Add snippets list node
   Node := fXMLDoc.CreateElement(ParentNode, cSnippetsNode);
   // Add child node for each exported snippet
-  for Snippet in fSnippets do
-    WriteSnippet(Node, Snippet);
+  for SnippetID in fSnippetIDs do
+    WriteSnippet(Node, SnippetID);
 end;
 
 procedure TCodeExporter.WriteUserInfo(const ParentNode: IXMLNode);
