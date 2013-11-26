@@ -357,7 +357,7 @@ const
   SnippetsStr: array[Boolean] of string = (sSnippet, sSnippets);
 begin
   // Calculate database stats
-  TotalSnippets := Database._Snippets.Count;
+  TotalSnippets := Database.SnippetCount;
   // Build display text and display it
   fStatusBar.Panels[cDBPanel].Text := Format(
     sStats, [TotalSnippets, SnippetsStr[TotalSnippets <> 1]]
