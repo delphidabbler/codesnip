@@ -108,6 +108,9 @@ type
     procedure Remove(const SnippetID: TSnippetID);
     ///  <summary>Checks if list contains given snippet ID.</summary>
     function Contains(const SnippetID: TSnippetID): Boolean;
+    ///  <summary>Checks if this list has the same content as another list.
+    ///  </summary>
+    function IsEqual(Other: ISnippetIDList): Boolean;
     ///  <summary>Checks if list is empty.</summary>
     function IsEmpty: Boolean;
     ///  <summary>Returns number of snippet ID records in list.</summary>

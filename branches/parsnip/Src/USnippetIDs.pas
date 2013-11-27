@@ -73,6 +73,11 @@ type
     ///  <remarks>Method of ISnippetIDList.</remarks>
     function Contains(const SnippetID: TSnippetID): Boolean;
 
+    ///  <summary>Checks if this list has the same content as another list.
+    ///  </summary>
+    ///  <remarks>Method of ISnippetIDList.</remarks>
+    function IsEqual(Other: ISnippetIDList): Boolean;
+
     ///  <summary>Checks if list is empty.</summary>
     ///  <remarks>Method of ISnippetIDList.</remarks>
     function IsEmpty: Boolean;
@@ -181,6 +186,20 @@ end;
 function TSnippetIDList.IsEmpty: Boolean;
 begin
   Result := fList.Count = 0;
+end;
+
+function TSnippetIDList.IsEqual(Other: ISnippetIDList): Boolean;
+var
+  OtherID: TSnippetID;
+begin
+  // Lists are equal if they are the same size and every member of Other is in
+  // this list.
+  if fList.Count <> Other.Count then
+    Exit(False);
+  for OtherID in Other do
+    if not fList.Contains(OtherID) then
+      Exit(False);
+  Result := True;
 end;
 
 procedure TSnippetIDList.Remove(const SnippetID: TSnippetID);
