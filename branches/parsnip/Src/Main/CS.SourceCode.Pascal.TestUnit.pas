@@ -94,7 +94,7 @@ begin
   begin
     with TPascalSourceGen.Create do
       try
-        IncludeSnippet(fSnippet);
+        IncludeSnippet(fSnippet.ID);
         Result := UnitAsString(TestUnitName);
       finally
         Free;

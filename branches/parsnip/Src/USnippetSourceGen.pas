@@ -195,15 +195,16 @@ procedure TSnippetSourceGen.Initialize(View: IView);
     @param View [in] View from which to retrieve source code.
   }
 var
-  Snips: TSnippetList;  // list of snippets in a category to display
-  Snippet: TSnippet;    // a snippet in Snips list
+  Snips: TSnippetList;
+  Snippet: TSnippet;
+  SnippetID: TSnippetID;
 begin
   // Record required snippet(s)
   if Supports(View, ISnippetView) then
   begin
     // view is single snippet: just record that
     Snippet := (View as ISnippetView).Snippet;
-    fGenerator.IncludeSnippet(Snippet);
+    fGenerator.IncludeSnippet(Snippet.ID);
   end
   else
   begin
@@ -211,7 +212,11 @@ begin
     Snips := TSnippetList.Create;
     try
       Query.GetCatSelection((View as ICategoryView).Category, Snips);
-      fGenerator.IncludeSnippets(Snips);  // ignores freeform snippets
+      for Snippet in Snips do
+        fGenerator.IncludeSnippet(Snippet.ID);
+      { TODO: when Query.GetCatSelection returns ISnippetIDList, restore
+              following line and remove for..in loop above. }
+//      fGenerator.IncludeSnippets(Snips);  // ignores freeform snippets
     finally
       Snips.Free;
     end;

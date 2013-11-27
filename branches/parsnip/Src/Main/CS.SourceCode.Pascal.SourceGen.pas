@@ -136,9 +136,9 @@ type
     ///  <summary>Destroys object instance.</summary>
     destructor Destroy; override;
 
-    ///  <summary>Adds the given user-defined snippet to the analysis.</summary>
+    ///  <summary>Adds the snippet with the given ID to the analysis.</summary>
     ///  <remarks>Freeform snippets are ignored.</remarks>
-    procedure AddSnippet(const Snippet: TSnippet);
+    procedure AddSnippet(const SnippetID: TSnippetID);
 
     ///  <summary>Performs analysis and generates data structures that are
     ///  exposed via the object's properties.</summary>
@@ -196,12 +196,13 @@ type
     ///  <summary>Destroys object instance.</summary>
     destructor Destroy; override;
 
-    ///  <summary>Includes the given snippet in the source code.</summary>
-    procedure IncludeSnippet(const Snippet: TSnippet);
-
-    ///  <summary>Includes all snippets from the given list in the source code.
+    ///  <summary>Includes the snippet with the given ID in the source code.
     ///  </summary>
-    procedure IncludeSnippets(const Snips: TSnippetList);
+    procedure IncludeSnippet(const SnippetID: TSnippetID);
+
+    ///  <summary>Includes snippets with the given IDs in the source code.
+    ///  </summary>
+    procedure IncludeSnippets(SnipIDs: ISnippetIDList);
 
     ///  <summary>Generates source code of a Pascal unit containing all the
     ///  specified snippets along with any other snippets that are required to
@@ -578,17 +579,17 @@ begin
   end;
 end;
 
-procedure TPascalSourceGen.IncludeSnippet(const Snippet: TSnippet);
+procedure TPascalSourceGen.IncludeSnippet(const SnippetID: TSnippetID);
 begin
-  fSourceAnalyser.AddSnippet(Snippet);
+  fSourceAnalyser.AddSnippet(SnippetID);
 end;
 
-procedure TPascalSourceGen.IncludeSnippets(const Snips: TSnippetList);
+procedure TPascalSourceGen.IncludeSnippets(SnipIDs: ISnippetIDList);
 var
-  Snippet: TSnippet;  // iterates through snippets to be added
+  SnippetID: TSnippetID;  // iterates through snippet UDs to be added
 begin
-  for Snippet in Snips do
-    IncludeSnippet(Snippet);
+  for SnippetID in SnipIDs do
+    IncludeSnippet(SnippetID);
 end;
 
 class function TPascalSourceGen.IsFileNameValidUnitName(const FileName: string):
@@ -745,12 +746,15 @@ begin
   end;
 end;
 
-procedure TPascalSourceAnalyser.AddSnippet(const Snippet: TSnippet);
+procedure TPascalSourceAnalyser.AddSnippet(const SnippetID: TSnippetID);
 var
-  ErrorMsg: string;       // any error message
+  ErrorMsg: string;
+  Snippet: TSnippet;
 begin
   // NOTE: this method must not be called from any other method of this class
   // Validate the snippet
+  Snippet := Database.Lookup(SnippetID);
+  Assert(Assigned(Snippet), ClassName + '.AddSnippet: Snippet not found');
   if not TSnippetValidator.Validate(Snippet, ErrorMsg) then
     raise ECodeSnip.Create(ErrorMsg);
   // Process the snippet

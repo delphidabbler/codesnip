@@ -218,12 +218,18 @@ begin
 end;
 
 constructor TSaveUnitMgr.InternalCreate(const Snips: TSnippetList);
+var
+  Snippet: TSnippet;
 begin
   Assert(Assigned(Snips), ClassName + '.InternalCreate: Snips is nil');
   inherited InternalCreate;
   // Create source generator and initialize it with required snippets
   fSourceGen := TPascalSourceGen.Create;
-  fSourceGen.IncludeSnippets(Snips);
+  for Snippet in Snips do
+    fSourceGen.IncludeSnippet(Snippet.ID);
+  { TODO: when InternalCreate takes ISnippetIDList parameter, restore
+          following line and remove for..in loop above. }
+//  fSourceGen.IncludeSnippets(Snips);
 end;
 
 function TSaveUnitMgr.UnitName: string;
