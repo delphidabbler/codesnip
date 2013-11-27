@@ -159,18 +159,12 @@ type
       {Removes a change event handler from list of listeners.
         @param Handler [in] Handler to remove from list.
       }
-    function GetSnippets: TSnippetList;
-      {Gets list of snippets in main and user databases.
-        @return Required list.
-      }
     function GetCategories: TCategoryList;
       {Gets list of categories in main and user databases.
         @return Required list.
       }
     property Categories: TCategoryList read GetCategories;
       {List of categories in main and user databases}
-    property _Snippets: TSnippetList read GetSnippets;
-      {List of snippets in main and user databases}
   end;
 
   {
@@ -411,10 +405,6 @@ type
     { IDatabase methods }
     function GetCategories: TCategoryList;
       {Gets list of all categories in database.
-        @return Required list.
-      }
-    function GetSnippets: TSnippetList;
-      {Gets list of all snippets in database.
         @return Required list.
       }
     procedure Load;
@@ -854,14 +844,6 @@ begin
     if not Snippet.IsEqual(ASnippet)
       and Snippet.XRefs.Contains(ASnippet.ID) then
       Result.Add(Snippet.ID);
-end;
-
-function TDatabase.GetSnippets: TSnippetList;
-  {Gets list of all snippets in database.
-    @return Required list.
-  }
-begin
-  Result := fSnippets;
 end;
 
 function TDatabase.InternalAddCategory(const CatID: string;
