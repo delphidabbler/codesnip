@@ -103,13 +103,13 @@ type
     function ExecRegistrationDlg: Boolean;
 
     ///  <summary>Displays Select Snippets dialogue box.</summary>
-    ///  <param name="SelectedSnippets">TSnippetList [in] List of pre-selected
+    ///  <param name="SelectedSnippets">ISnippetIDList [in] IDs of pre-selected
     ///  snippets.</param>
     ///  <param name="ASearch">ISearch [out] Set to object containing search
     ///  details. Undefined if user cancelled dialogue.</param>
     ///  <returns>Boolean. True if user OKd dialogue or False if user cancelled.
     ///  </returns>
-    function ExecSelectionSearchDlg(const SelectedSnippets: TSnippetList;
+    function ExecSelectionSearchDlg(SelectedSnippets: ISnippetIDList;
       out ASearch: ISearch): Boolean;
 
 //    ///  <summary>Displays Update From Web dialogue box used to update the local
@@ -259,14 +259,10 @@ begin
   Result := TRegistrationDlg.Execute(Owner);
 end;
 
-function TDialogMgr.ExecSelectionSearchDlg(
-  const SelectedSnippets: TSnippetList; out ASearch: ISearch): Boolean;
-var
-  TempList: ISnippetIDList;
+function TDialogMgr.ExecSelectionSearchDlg(SelectedSnippets: ISnippetIDList;
+  out ASearch: ISearch): Boolean;
 begin
-  // TODO -cFudge: remove this conversion once method is passed ISnippetIDList
-  TempList := SelectedSnippets.ToIDList;
-  Result := TSelectionSearchDlg.Execute(Owner, TempList{SelectedSnippets}, ASearch);
+  Result := TSelectionSearchDlg.Execute(Owner, SelectedSnippets, ASearch);
 end;
 
 procedure TDialogMgr.ShowAboutDlg;
