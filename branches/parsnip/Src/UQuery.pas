@@ -98,6 +98,7 @@ uses
   Generics.Collections,
   // Project
   DB.UMain,
+  IntfCommon,
   UBaseObjects,
   USingleton,
   USnippetIDs;
@@ -116,8 +117,8 @@ type
   )
   strict private
     var
-      fSelection: TSnippetList;   // List of snippets selected by current query
-      fActiveSearches: TList<ISearch>; // List of currently active searches
+      fSelection: ISnippetIDList;   // IDs of snippets selected by current query
+      fActiveSearches: TList<ISearch>;      // List of currently active searches
     class function GetInstance: IQuery; static;
       {Gets singleton instance of class, creating it if necessary
         @return Singleton instance.
@@ -209,7 +210,6 @@ end;
 
 procedure TQuery.Finalize;
 begin
-  fSelection.Free;
   fActiveSearches.Free;
   inherited;
 end;
@@ -221,13 +221,13 @@ function TQuery.GetCatSelection(const Cat: TCategory): ISnippetIDList;
     @return List of snippet IDs.
   }
 var
-  Snippet: TSnippet;
+  SnippetID: TSnippetID;
 begin
   Result := TSnippetIDList.Create;
-  for Snippet in fSelection do
+  for SnippetID in fSelection do
   begin
-    if Cat.SnippetIDs.Contains(Snippet.ID) then
-      Result.Add(Snippet.ID);
+    if Cat.SnippetIDs.Contains(SnippetID) then
+      Result.Add(SnippetID);
   end;
 end;
 
@@ -255,13 +255,13 @@ function TQuery.GetSelection: ISnippetIDList;
     @return Reference to required list of snippets.
   }
 begin
-  Result := fSelection.ToIDList;
+  Result := fSelection;
 end;
 
 procedure TQuery.Initialize;
 begin
   inherited;
-  fSelection := TSnippetList.Create;
+  fSelection := TSnippetIDList.Create;
   fActiveSearches := TList<ISearch>.Create;
   Reset;
 end;
@@ -282,7 +282,7 @@ var
 begin
   if not IsSearchActive then
     Exit(False);
-  fSelection.Assign(Database._Snippets);
+  (fSelection as IAssignable).Assign(Database.SelectAll);
   for Search in fActiveSearches do
     RunSearch(Search);
   Result := True;
@@ -293,23 +293,18 @@ procedure TQuery.Reset;
   Search property is set to nul search.
   }
 begin
-  fSelection.Assign(Database._Snippets);
+  (fSelection as IAssignable).Assign(Database.SelectAll);
   fActiveSearches.Clear;
 end;
 
 function TQuery.RunSearch(Search: ISearch): Boolean;
 var
-  FoundList: TSnippetList;
+  FoundList: ISnippetIDList;
 begin
-  FoundList := TSnippetList.Create;
-  try
-    Result := Search.Execute(fSelection, FoundList);
-    if not Result then
-      Exit;
-    fSelection.Assign(FoundList);
-  finally
-    FoundList.Free;
-  end;
+  Result := Search.Execute(fSelection, FoundList);
+  if not Result then
+    Exit;
+  (fSelection as IAssignable).Assign(FoundList);
 end;
 
 procedure TQuery.Update;
