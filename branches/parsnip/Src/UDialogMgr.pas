@@ -263,12 +263,9 @@ function TDialogMgr.ExecSelectionSearchDlg(
   const SelectedSnippets: TSnippetList; out ASearch: ISearch): Boolean;
 var
   TempList: ISnippetIDList;
-  TempSnippet: TSnippet;
 begin
   // TODO -cFudge: remove this conversion once method is passed ISnippetIDList
-  TempList := TSnippetIDList.Create(SelectedSnippets.Count);
-  for TempSnippet in SelectedSnippets do
-    TempList.Add(TempSnippet.ID);
+  TempList := SelectedSnippets.ToIDList;
   Result := TSelectionSearchDlg.Execute(Owner, TempList{SelectedSnippets}, ASearch);
 end;
 
