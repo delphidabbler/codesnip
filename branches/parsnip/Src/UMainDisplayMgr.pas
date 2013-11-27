@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -571,7 +571,7 @@ end;
 
 procedure TMainDisplayMgr.RedisplayOverview;
 begin
-  (fOverviewMgr as IOverviewDisplayMgr).Display(Query.Selection.ToIDList, True);
+  (fOverviewMgr as IOverviewDisplayMgr).Display(Query.Selection, True);
 end;
 
 procedure TMainDisplayMgr.Refresh;
@@ -593,7 +593,7 @@ procedure TMainDisplayMgr.ReStart;
 begin
   // Clear all tabs and force re-displayed of overview
   (fDetailsMgr as IDetailPaneDisplayMgr).CloseMultipleTabs(False);
-  (fOverviewMgr as IOverviewDisplayMgr).Display(Query.Selection.ToIDList, True);
+  (fOverviewMgr as IOverviewDisplayMgr).Display(Query.Selection, True);
 end;
 
 procedure TMainDisplayMgr.SelectAll;
@@ -684,7 +684,7 @@ end;
 procedure TMainDisplayMgr.UpdateDisplayedQuery;
 begin
   // Update overview to show only found snippets
-  (fOverviewMgr as IOverviewDisplayMgr).Display(Query.Selection.ToIDList, False);
+  (fOverviewMgr as IOverviewDisplayMgr).Display(Query.Selection, False);
   // Redisplay detail pane
   RefreshDetailPage;
 end;

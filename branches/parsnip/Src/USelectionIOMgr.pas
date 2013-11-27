@@ -187,15 +187,15 @@ var
   FileName: string;
   Writer: TSnippetIDListFileWriter;
   SnippetIDs: ISnippetIDList;
-  Snippet: TSnippet;
+  SnippetID: TSnippetID;
 begin
   if not GetSaveFileName(FileName) then
     Exit;
   Writer := TSnippetIDListFileWriter.Create(SelectionFileWatermark);
   try
     SnippetIDs := TSnippetIDList.Create;
-    for Snippet in Query.Selection do
-      SnippetIDs.Add(Snippet.ID);
+    for SnippetID in Query.Selection do
+      SnippetIDs.Add(SnippetID);
     Writer.WriteFile(FileName, SnippetIDs);
   finally
     Writer.Free;

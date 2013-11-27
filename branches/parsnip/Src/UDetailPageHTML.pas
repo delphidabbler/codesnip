@@ -72,10 +72,24 @@ uses
   Collections.Base,
   Collections.Lists,
   // Project
-  Compilers.UGlobals, Compilers.UCompilers, DB.UMain, DB.USnippet, UConsts,
-  UCSSUtils, UEncodings, UHTMLTemplate, UHTMLUtils, UJavaScriptUtils,
-  UPreferences, UQuery, UResourceUtils, USnippetHTML, USnippetPageHTML,
-  UStrUtils, USystemInfo;
+  CS.Database.Types,
+  Compilers.UGlobals,
+  Compilers.UCompilers,
+  DB.UMain,
+  DB.USnippet,
+  UConsts,
+  UCSSUtils,
+  UEncodings,
+  UHTMLTemplate,
+  UHTMLUtils,
+  UJavaScriptUtils,
+  UPreferences,
+  UQuery,
+  UResourceUtils,
+  USnippetHTML,
+  USnippetPageHTML,
+  UStrUtils,
+  USystemInfo;
 
 
 type
@@ -549,11 +563,15 @@ end;
 
 procedure TSnippetListPageHTML.BuildSnippetList;
 var
-  Snippet: TSnippet;  // each snippet in current query
+  SnippetID: TSnippetID;  // ID of each snippet in current query
+  Snippet: TSnippet;      // each snippet in current query
 begin
   fSnippetList.Clear;
-  for Snippet in Query.Selection do
+  for SnippetID in Query.Selection do
   begin
+    Snippet := Database.Lookup(SnippetID);
+    Assert(Assigned(Snippet),
+      ClassName + '.BuildSnippetList: Snippet not found');
     if IsSnippetRequired(Snippet) then
       fSnippetList.Add(Snippet);
   end;

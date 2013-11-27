@@ -64,7 +64,7 @@ type
       {Gets value of LatestSearch property.
         @return Search object used to generate latest search.
       }
-    function GetSelection: TSnippetList;
+    function GetSelection: ISnippetIDList;
       {Gets value of Selection property.
         @return List of snippets matching current query.
       }
@@ -76,7 +76,7 @@ type
       }
     property LatestSearch: ISearch read GetLatestSearch;
       {Reference to search object used to generate current query}
-    property Selection: TSnippetList read GetSelection;
+    property Selection: ISnippetIDList read GetSelection;
       {List of snippets that match current query. This records all snippets in
       database if there is no search}
   end;
@@ -158,7 +158,7 @@ type
       {Gets reference to latest search object.
         @return Required search object.
       }
-    function GetSelection: TSnippetList;
+    function GetSelection: ISnippetIDList;
       {Gets reference to list of snippets selected by last search.
         @return Reference to required list of snippets.
       }
@@ -221,7 +221,6 @@ function TQuery.GetCatSelection(const Cat: TCategory): ISnippetIDList;
     @return List of snippet IDs.
   }
 var
-  Idx: Integer; // Loops thru all snippets in selection
   Snippet: TSnippet;
 begin
   Result := TSnippetIDList.Create;
@@ -251,12 +250,12 @@ begin
   Result := TQuery.Create;  // OK since multiple calls return same instance
 end;
 
-function TQuery.GetSelection: TSnippetList;
+function TQuery.GetSelection: ISnippetIDList;
   {Gets reference to list of snippets selected by last search.
     @return Reference to required list of snippets.
   }
 begin
-  Result := fSelection;
+  Result := fSelection.ToIDList;
 end;
 
 procedure TQuery.Initialize;
