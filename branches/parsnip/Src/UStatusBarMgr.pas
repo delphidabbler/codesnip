@@ -319,7 +319,7 @@ begin
   begin
     SelectionCount := Query.Selection.Count;
     fStatusBar.Panels[cSearchPanel].Text
-      := Format(SearchActiveStr[SelectionCount <> 1], [Query.Selection.Count]);
+      := Format(SearchActiveStr[SelectionCount <> 1], [SelectionCount]);
   end;
   // Store glyph that indicates latest search type
   fSearchGlyph.Assign((Query.LatestSearch.Filter as ISearchUIInfo).Glyph);
