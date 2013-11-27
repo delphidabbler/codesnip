@@ -229,6 +229,7 @@ type
     ///  snippets to be displayed.</summary>
     function IsSnippetRequired(const Snippet: TSnippet): Boolean; virtual;
       abstract;
+      // TODO: change Snippet param of IsSnippetRequired to TSnippetID
     ///  <summary>Returns name of CSS class to be used for page heading.
     ///  </summary>
     ///  <remarks>Provides default class name. Descendant classes should
@@ -675,7 +676,7 @@ end;
 
 function TCategoryPageHTML.IsSnippetRequired(const Snippet: TSnippet): Boolean;
 begin
-  Result := (View as ICategoryView).Category.Snippets.Contains(Snippet);
+  Result := (View as ICategoryView).Category.SnippetIDs.Contains(Snippet.ID);
 end;
 
 { TAlphaListPageHTML }

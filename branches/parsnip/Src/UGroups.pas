@@ -386,16 +386,16 @@ procedure TCategoryGrouping.Populate;
   }
 var
   Cat: TCategory;           // each category in databases
-  Snippet: TSnippet;        // each snippet in a category
+  SnippetID: TSnippetID;    // ID of each snippet in a category
   Item: TCategoryGroupItem; // group item for each category
 begin
   for Cat in Database.Categories do
   begin
     Item := TCategoryGroupItem.Create(Cat);
     AddItem(Item);
-    for Snippet in Cat.Snippets do
-      if SnippetIDList.Contains(Snippet.ID) then
-        Item.AddSnippet(Snippet);
+    for SnippetID in Cat.SnippetIDs do
+      if SnippetIDList.Contains(SnippetID) then
+        Item.AddSnippet(Database.Lookup(SnippetID));
   end;
 end;
 

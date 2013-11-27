@@ -81,7 +81,7 @@ begin
   (
     Supports(ViewItem, ICategoryView)
       and
-    not (ViewItem as ICategoryView).Category.Snippets.IsEmpty
+    not (ViewItem as ICategoryView).Category.SnippetIDs.IsEmpty
   );
 end;
 

@@ -23,6 +23,7 @@ uses
   // Delphi
   Generics.Collections,
   // Project
+  CS.Database.Types,
   DB.USnippet;
 
 
@@ -51,10 +52,10 @@ type
   }
   TCategory = class(TObject)
   strict private
-    fSnippets: TSnippetList;  // List of snippet objects in category
-    fID: string;              // Category id
-    fDescription: string;     // Category description
-    fUserDefined: Boolean;    // Whether this is a user-defined snippet
+    fSnippetIDs: ISnippetIDList;  // List of snippet ids in category
+    fID: string;                  // Category id
+    fDescription: string;         // Category description
+    fUserDefined: Boolean;        // Whether this is a user-defined snippet
     function CompareIDTo(const Cat: TCategory): Integer;
       {Compares this category's ID to that of a given category. The check is not
       case sensitive.
@@ -94,7 +95,7 @@ type
       {Category id. Must be unique}
     property Description: string read fDescription;
       {Description of category}
-    property Snippets: TSnippetList read fSnippets;
+    property SnippetIDs: ISnippetIDList read fSnippetIDs;
       {List of snippets in this category}
     property UserDefined: Boolean read fUserDefined;
       {Flag that indicates if this is a user defined category}
@@ -187,7 +188,9 @@ uses
   // Delphi
   SysUtils,
   // Project
-  UReservedCategories, UStrUtils;
+  UReservedCategories,
+  USnippetIDs,
+  UStrUtils;
 
 
 { TCategory }
@@ -197,7 +200,7 @@ function TCategory.CanDelete: Boolean;
     @return True if deletion allowed, False if not.
   }
 begin
-  Result := fUserDefined and fSnippets.IsEmpty
+  Result := fUserDefined and fSnippetIDs.IsEmpty
     and not TReservedCategories.IsReserved(Self);
 end;
 
@@ -239,15 +242,14 @@ begin
   fID := CatID;
   fDescription := Data.Desc;
   fUserDefined := UserDefined;
-  // Create list to store snippets in category
-  fSnippets := TSnippetListEx.Create;
+  // Create list to store snippet IDs in category
+  fSnippetIDs := TSnippetIDList.Create;
 end;
 
 destructor TCategory.Destroy;
   {Destructor. Tears down object.
   }
 begin
-  fSnippets.Free;
   inherited;
 end;
 

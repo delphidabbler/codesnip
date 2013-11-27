@@ -225,7 +225,7 @@ begin
   SnipList.Clear;
   for Idx := 0 to Pred(fSelection.Count) do
   begin
-    if Cat.Snippets.Contains(fSelection[Idx]) then
+    if Cat.SnippetIDs.Contains(fSelection[Idx].ID) then
       SnipList.Add(fSelection[Idx]);
   end;
 end;

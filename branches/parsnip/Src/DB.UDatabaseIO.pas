@@ -433,8 +433,7 @@ begin
       Snippet := fFactory.CreateSnippet(SnippetName, SnippetProps);
       fSnipList.Add(Snippet);
     end;
-    // Add snippet to database only if it belongs to this database
-    Cat.Snippets.Add(Snippet);
+    Cat.SnippetIDs.Add(Snippet.ID);
   end;
 end;
 
@@ -581,4 +580,5 @@ begin
 end;
 
 end.
+
 

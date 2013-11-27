@@ -98,6 +98,8 @@ implementation
 uses
   // Project
   CS.ActiveText,
+  CS.Database.Types,
+  DB.UMain,
   UColours,
   UPreferences;
 
@@ -130,10 +132,13 @@ end;
 function TRTFCategoryDoc.Generate(const Category: TCategory): TEncodedData;
 var
   Snippet: TSnippet;
+  SnippetID: TSnippetID;
 begin
   OutputCategoryHeading(Category);
-  for Snippet in Category.Snippets do
+  for SnippetID in Category.SnippetIDs do
   begin
+    Snippet := Database.Lookup(SnippetID);
+    Assert(Assigned(Snippet), ClassName + '.Generate: Snippet not found');
     OutputSnippetSubHeading(Snippet);
     OutputSnippetText(Snippet);
   end;

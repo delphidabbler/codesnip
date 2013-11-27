@@ -900,7 +900,7 @@ begin
     raise ECodeSnip.CreateFmt(
       sCatNotFound, [Result.Category, Result.ID.ToString]
     );
-  Cat.Snippets.Add(Result);
+  Cat.SnippetIDs.Add(Result.ID);
   fSnippets.Add(Result);
 end;
 
@@ -922,7 +922,7 @@ begin
   // Delete from category if found
   Cat := fCategories.Find(Snippet.Category);
   if Assigned(Cat) then
-    (Cat.Snippets as TSnippetListEx).Delete(Snippet);
+    Cat.SnippetIDs.Remove(Snippet.ID);
   // Delete from "master" list: this frees Snippet
   (fSnippets as TSnippetListEx).Delete(Snippet);
 end;
@@ -1042,25 +1042,21 @@ function TDatabase.UpdateCategory(const Category: TCategory;
     @return Reference to updated category. Will have changed.
   }
 var
-  SnippetList: TSnippetList;
-  Snippet: TSnippet;
+  SnippetIDs: ISnippetIDList;
+  SnippetID: TSnippetID;
   CatID: string;
 begin
   TriggerEvent(evChangeBegin);
   TriggerEvent(evBeforeCategoryChange, Category);
   try
-    SnippetList := TSnippetList.Create;
-    try
-      for Snippet in Category.Snippets do
-        SnippetList.Add(Snippet);
-      CatID := Category.ID;
-      InternalDeleteCategory(Category);
-      Result := InternalAddCategory(CatID, Data);
-      for Snippet in SnippetList do
-        Result.Snippets.Add(Snippet);
-    finally
-      SnippetList.Free;
-    end;
+    SnippetIDs := TSnippetIDList.Create;
+    for SnippetID in Category.SnippetIDs do
+      SnippetIDs.Add(SnippetID);
+    CatID := Category.ID;
+    InternalDeleteCategory(Category);
+    Result := InternalAddCategory(CatID, Data);
+    for SnippetID in SnippetIDs do
+      Result.SnippetIDs.Add(SnippetID);
     Query.Update;
     TriggerEvent(evCategoryChanged, Result);
   finally
@@ -1098,13 +1094,13 @@ procedure TDatabase.UpdateSnippet(const Snippet: TSnippet;
       Exit;
     OldCat := fCategories.Find(OldCatID);
     if Assigned(OldCat) then
-      (OldCat.Snippets as TSnippetListEx).Delete(Snippet);
+      OldCat.SnippetIDs.Remove(Snippet.ID);
     NewCat := fCategories.Find(Snippet.Category);
     if not Assigned(NewCat) then
       raise ECodeSnip.CreateFmt(
         sCatNotFound, [Snippet.Category, Snippet.ID.ToString]
       );
-    NewCat.Snippets.Add(Snippet);
+    NewCat.SnippetIDs.Add(Snippet.ID);
   end;
 
 var
@@ -1212,11 +1208,11 @@ function TUserDataProvider.GetCategorySnippets(
     @return Required list of snippet names.
   }
 var
-  Snippet: TSnippet;  // references each snippet in category
+  SnippetID: TSnippetID;  // references ID of each snippet in category
 begin
   Result := TIStringList.Create;
-  for Snippet in Cat.Snippets do
-    Result.Add(Snippet.ID.ToString);
+  for SnippetID in Cat.SnippetIDs do
+    Result.Add(SnippetID.ToString);
 end;
 
 function TUserDataProvider.GetSnippetProps(
