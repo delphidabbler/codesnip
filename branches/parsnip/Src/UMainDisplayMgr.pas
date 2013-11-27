@@ -571,7 +571,7 @@ end;
 
 procedure TMainDisplayMgr.RedisplayOverview;
 begin
-  (fOverviewMgr as IOverviewDisplayMgr).Display(Query.Selection, True);
+  (fOverviewMgr as IOverviewDisplayMgr).Display(Query.Selection.ToIDList, True);
 end;
 
 procedure TMainDisplayMgr.Refresh;
@@ -593,7 +593,7 @@ procedure TMainDisplayMgr.ReStart;
 begin
   // Clear all tabs and force re-displayed of overview
   (fDetailsMgr as IDetailPaneDisplayMgr).CloseMultipleTabs(False);
-  (fOverviewMgr as IOverviewDisplayMgr).Display(Query.Selection, True);
+  (fOverviewMgr as IOverviewDisplayMgr).Display(Query.Selection.ToIDList, True);
 end;
 
 procedure TMainDisplayMgr.SelectAll;
@@ -684,7 +684,7 @@ end;
 procedure TMainDisplayMgr.UpdateDisplayedQuery;
 begin
   // Update overview to show only found snippets
-  (fOverviewMgr as IOverviewDisplayMgr).Display(Query.Selection, False);
+  (fOverviewMgr as IOverviewDisplayMgr).Display(Query.Selection.ToIDList, False);
   // Redisplay detail pane
   RefreshDetailPage;
 end;

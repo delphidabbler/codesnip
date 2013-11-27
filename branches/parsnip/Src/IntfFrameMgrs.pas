@@ -23,7 +23,12 @@ uses
   // Delphi
   SHDocVw, ActiveX,
   // Project
-  Browser.IntfDocHostUI, DB.USnippet, Compilers.UGlobals, UCommandBars, UView;
+  CS.Database.Types,
+  Browser.IntfDocHostUI,
+//  DB.USnippet,
+  Compilers.UGlobals,
+  UCommandBars,
+  UView;
 
 
 const
@@ -130,7 +135,7 @@ type
     ///  </summary>
     ///  <remarks>If given snippet list is same as that displayed it may not
     ///  be redisplayed unless Force parameter is True.</remarks>
-    procedure Display(const SnippetList: TSnippetList; const Force: Boolean);
+    procedure Display(Snippets: ISnippetIDList; const Force: Boolean);
     ///  <summary>Clear the display.</summary>
     procedure Clear;
     ///  <summary>Select given view item in tree view.</summary>

@@ -201,11 +201,11 @@ type
     ///  <summary>Initialise frame with given tab selected.</summary>
     ///  <remarks>Method of IOverviewDisplayMgr.</remarks>
     procedure Initialise(const TabIdx: Integer);
-    procedure Display(const SnippetList: TSnippetList; const Force: Boolean);
-      {Displays the snippets in the current overview tab.
-      NOTE: May not redisplay if SnippetList is same as that displayed, unless
+    procedure Display(Snippets: ISnippetIDList; const Force: Boolean);
+      {Displays snippets in the current overview tab.
+      NOTE: May not redisplay if Snippets is same as that displayed, unless
       Force is True.
-        @param SnippetList [in] List of snippets to be displayed.
+        @param Snippets [in] List of IDs snippets to be displayed.
         @param Force [in] Forces redisplay regardless of current state.
       }
     procedure Clear;
@@ -341,12 +341,12 @@ begin
   inherited;
 end;
 
-procedure TOverviewFrame.Display(const SnippetList: TSnippetList;
+procedure TOverviewFrame.Display(Snippets: ISnippetIDList;
   const Force: Boolean);
-  {Displays the snippets in the current overview tab.
-  NOTE: May not redisplay if SnippetList is same as that displayed, unless
-  Force is True.
-    @param SnippetList [in] List of snippets to be displayed.
+  {Displays snippets in the current overview tab.
+  NOTE: May not redisplay if Snippets is same as that displayed, unless Force is
+  True.
+    @param Snippets [in] List of IDs snippets to be displayed.
     @param Force [in] Forces redisplay regardless of current state.
   }
 begin
@@ -354,10 +354,10 @@ begin
                   to enable .ToIDList fudges to be removed below. }
   // Only do update if new snippet list is different to current one unless
   // Force is True
-  if Force or not fSnippetList.IsEqual(SnippetList.ToIDList) then
+  if Force or not fSnippetList.IsEqual(Snippets) then
   begin
     // Take copy of new list
-    (fSnippetList as IAssignable).Assign(SnippetList.ToIDList);
+    (fSnippetList as IAssignable).Assign(Snippets);
     Redisplay;
   end;
 end;
