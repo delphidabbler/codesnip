@@ -21,10 +21,25 @@ interface
 
 uses
   // Delphi
-  ComCtrls, Controls, Classes, Windows, ExtCtrls, StdCtrls, ToolWin, Menus,
+  ComCtrls,
+  Controls,
+  Classes,
+  Windows,
+  ExtCtrls,
+  StdCtrls,
+  ToolWin,
+  Menus,
   // Project
-  DB.USnippet, FrTitled, IntfFrameMgrs, IntfNotifier, UCommandBars,
-  UOverviewTreeState, USnippetsTVDraw, UView, UViewItemTreeNode;
+  CS.Database.Types,
+  DB.USnippet,
+  FrTitled,
+  IntfFrameMgrs,
+  IntfNotifier,
+  UCommandBars,
+  UOverviewTreeState,
+  USnippetsTVDraw,
+  UView,
+  UViewItemTreeNode;
 
 
 type
@@ -95,7 +110,7 @@ type
       fCanChange: Boolean;          // Whether selected node allowed to change
       fSelectedItem: IView;         // Current selected view item in tree view
       fPrevSelectedItem: IView;     // Previous selected view item in tree view
-      fSnippetList: TSnippetList;   // List of currently displayed snippets
+      fSnippetList: ISnippetIDList; // List of currently displayed snippet IDs
       fTreeStates: TArray<TOverviewTreeState>;
                                     // Array of tree state objects: one per tab
       fCommandBars: TCommandBarMgr; // Configures popup menu and toolbar
@@ -240,7 +255,7 @@ uses
   // Delphi
   Messages,
   // Project
-  CS.Database.Types,
+  IntfCommon,
   UKeysHelper,
   UOverviewTreeBuilder,
   USnippetIDs;
@@ -304,7 +319,7 @@ begin
   fTVDraw := TTVDraw.Create;
   tvSnippets.OnCustomDrawItem := fTVDraw.CustomDrawItem;
   // Create list to store displayed snippets
-  fSnippetList := TSnippetList.Create;
+  fSnippetList := TSnippetIDList.Create;
   // Create objects used to remember state of each tree view
   SetLength(fTreeStates, tcDisplayStyle.Tabs.Count);
   for TabIdx := 0 to Pred(tcDisplayStyle.Tabs.Count) do
@@ -322,7 +337,6 @@ begin
   fTVDraw.Free;
   fPrevSelectedItem := nil;
   fSelectedItem := nil;
-  fSnippetList.Free;  // does not free referenced snippets
   fCommandBars.Free;
   inherited;
 end;
@@ -336,12 +350,14 @@ procedure TOverviewFrame.Display(const SnippetList: TSnippetList;
     @param Force [in] Forces redisplay regardless of current state.
   }
 begin
+  { TODO -cFudge: Change this method's SnippetList parameter to ISnippetIDList
+                  to enable .ToIDList fudges to be removed below. }
   // Only do update if new snippet list is different to current one unless
   // Force is True
-  if Force or not fSnippetList.IsEqual(SnippetList) then
+  if Force or not fSnippetList.IsEqual(SnippetList.ToIDList) then
   begin
     // Take copy of new list
-    fSnippetList.Assign(SnippetList);
+    (fSnippetList as IAssignable).Assign(SnippetList.ToIDList);
     Redisplay;
   end;
 end;
@@ -524,10 +540,8 @@ begin
     if fSnippetList.IsEmpty then
       Exit;
     // Build new treeview using grouping determined by selected tab
-    { TODO -cFudge: remove fSnippetList.ToIDList call once method is passed
-                    once type of fSnippetList changes ISnippetIDList. }
     Builder := BuilderClasses[tcDisplayStyle.TabIndex].Create(
-      tvSnippets, fSnippetList.ToIDList
+      tvSnippets, fSnippetList
     );
     Builder.Build;
     // Restore state of treeview based on last time it was displayed
