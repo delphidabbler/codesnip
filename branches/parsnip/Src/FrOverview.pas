@@ -350,8 +350,6 @@ procedure TOverviewFrame.Display(Snippets: ISnippetIDList;
     @param Force [in] Forces redisplay regardless of current state.
   }
 begin
-  { TODO -cFudge: Change this method's SnippetList parameter to ISnippetIDList
-                  to enable .ToIDList fudges to be removed below. }
   // Only do update if new snippet list is different to current one unless
   // Force is True
   if Force or not fSnippetList.IsEqual(Snippets) then
