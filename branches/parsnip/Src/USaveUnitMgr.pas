@@ -21,6 +21,7 @@ interface
 
 uses
   // Project
+  CS.Database.Types,
   CS.SourceCode.Pascal.SourceGen,
   DB.USnippet,
   UIStringList,
@@ -53,7 +54,7 @@ type
   strict protected
     ///  <summary>Object constuctor. Sets up object to save a unit containing
     ///  all snippets in given list.</summary>
-    constructor InternalCreate(const Snips: TSnippetList);
+    constructor InternalCreate(Snips: ISnippetIDList);
     ///  <summary>Gets description of given source code file type.</summary>
     function GetFileTypeDesc(const FileType: TSourceOutputFileType): string;
       override;
@@ -88,9 +89,9 @@ type
     destructor Destroy; override;
     ///  <summary>Creates and outputs a Pascal unit file containing specified
     ///  snippets with name and format speficied by user.</summary>
-    ///  <param name="Snips">TSnippetList [in] List of snippets to include in
+    ///  <param name="Snips">ISnippetIDList [in] IDs of snippets to include in
     ///  unit.</param>
-    class procedure Execute(const Snips: TSnippetList);
+    class procedure Execute(Snips: ISnippetIDList);
   end;
 
 
@@ -169,7 +170,7 @@ begin
   inherited;
 end;
 
-class procedure TSaveUnitMgr.Execute(const Snips: TSnippetList);
+class procedure TSaveUnitMgr.Execute(Snips: ISnippetIDList);
 begin
   with InternalCreate(Snips) do
     try
@@ -217,19 +218,15 @@ begin
   Result := Descriptions[FileType];
 end;
 
-constructor TSaveUnitMgr.InternalCreate(const Snips: TSnippetList);
+constructor TSaveUnitMgr.InternalCreate(Snips: ISnippetIDList);
 var
-  Snippet: TSnippet;
+  SnippetID: TSnippetID;
 begin
   Assert(Assigned(Snips), ClassName + '.InternalCreate: Snips is nil');
   inherited InternalCreate;
   // Create source generator and initialize it with required snippets
   fSourceGen := TPascalSourceGen.Create;
-  for Snippet in Snips do
-    fSourceGen.IncludeSnippet(Snippet.ID);
-  { TODO: when InternalCreate takes ISnippetIDList parameter, restore
-          following line and remove for..in loop above. }
-//  fSourceGen.IncludeSnippets(Snips);
+  fSourceGen.IncludeSnippets(Snips);
 end;
 
 function TSaveUnitMgr.UnitName: string;
