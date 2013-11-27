@@ -940,7 +940,7 @@ end;
 function TDatabase.Lookup(const SnippetID: TSnippetID): TSnippet;
 begin
   if not TryLookup(SnippetID, Result) then
-    Result := nil;
+    raise EBug.Create(ClassName + '.Lookup: SnippetID not found in database');
 end;
 
 procedure TDatabase.RemoveChangeEventHandler(const Handler: TNotifyEventInfo);
