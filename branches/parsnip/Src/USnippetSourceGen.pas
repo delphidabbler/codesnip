@@ -93,6 +93,7 @@ uses
   // Project
   CS.Database.Types,
   CS.Utils.Dates,
+  DB.UMain,
   DB.USnippet,
   UAppInfo,
   UQuery;
@@ -129,23 +130,25 @@ class function TSnippetSourceGen.CanGenerate(View: IView): Boolean;
       routine snippets for current query.
   }
 var
-  CatSnippets: TSnippetList;  // list of snippets in a category
+  CatSnippets: ISnippetIDList;// list of snippets in a category
   CatView: ICategoryView;     // category view if supported
   SnipView: ISnippetView;     // snippets view if supported
+  SnippetID: TSnippetID;
+  Snippet: TSnippet;
 begin
-  Result := False;
   if Supports(View, ISnippetView, SnipView) then
-    Result := SnipView.Snippet.Kind = skRoutine
-  else if Supports(View, ICategoryView, CatView) then
+    Exit(SnipView.Snippet.Kind = skRoutine);
+  if not Supports(View, ICategoryView, CatView) then
+    Exit(False);
+  CatSnippets := Query.GetCatSelection(CatView.Category);
+  for SnippetID in CatSnippets do
   begin
-    CatSnippets := TSnippetList.Create;
-    try
-      Query.GetCatSelection(CatView.Category, CatSnippets);
-      Result := CatSnippets.ContainsKinds([skRoutine]);
-    finally
-      CatSnippets.Free;
-    end;
+    Snippet := Database.Lookup(SnippetID);
+    Assert(Assigned(Snippet), ClassName + '.CanGenerate: Snippet not found');
+    if Snippet.Kind = skRoutine then
+      Exit(True);
   end;
+  Result := False;
 end;
 
 destructor TSnippetSourceGen.Destroy;
@@ -194,33 +197,18 @@ procedure TSnippetSourceGen.Initialize(View: IView);
   category view.
     @param View [in] View from which to retrieve source code.
   }
-var
-  Snips: TSnippetList;
-  Snippet: TSnippet;
-  SnippetID: TSnippetID;
 begin
   // Record required snippet(s)
   if Supports(View, ISnippetView) then
-  begin
     // view is single snippet: just record that
-    Snippet := (View as ISnippetView).Snippet;
-    fGenerator.IncludeSnippet(Snippet.ID);
-  end
+    fGenerator.IncludeSnippet(
+      (View as ISnippetView).Snippet.ID
+    )
   else
-  begin
     // view is category: record all selected snippets in category
-    Snips := TSnippetList.Create;
-    try
-      Query.GetCatSelection((View as ICategoryView).Category, Snips);
-      for Snippet in Snips do
-        fGenerator.IncludeSnippet(Snippet.ID);
-      { TODO: when Query.GetCatSelection returns ISnippetIDList, restore
-              following line and remove for..in loop above. }
-//      fGenerator.IncludeSnippets(Snips);  // ignores freeform snippets
-    finally
-      Snips.Free;
-    end;
-  end;
+    fGenerator.IncludeSnippets(   // ignores freeform snippets
+      Query.GetCatSelection((View as ICategoryView).Category)
+    );
 end;
 
 constructor TSnippetSourceGen.InternalCreate(View: IView);

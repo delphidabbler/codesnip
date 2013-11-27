@@ -21,7 +21,10 @@ interface
 
 uses
   // Project
-  DB.UCategory, DB.USnippet, USearch;
+  CS.Database.Types,
+  DB.UCategory,
+  DB.USnippet,
+  USearch;
 
 
 type
@@ -65,13 +68,11 @@ type
       {Gets value of Selection property.
         @return List of snippets matching current query.
       }
-    procedure GetCatSelection(const Cat: TCategory;
-      const Snippets: TSnippetList);
-      {Provides list of snippets selected by last search that are in a specified
-      category.
+    function GetCatSelection(const Cat: TCategory): ISnippetIDList;
+      {Provides list of IDs of snippets selected by last search that are in a
+      certain category.
         @param Cat [in] Reference to required category.
-        @param Snippets [in] Object to receive snippet list. List is emptied
-          before snippets are copied in.
+        @return List of snippet IDs.
       }
     property LatestSearch: ISearch read GetLatestSearch;
       {Reference to search object used to generate current query}
@@ -93,9 +94,13 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Generics.Collections,
+  SysUtils,
+  Generics.Collections,
   // Project
-  DB.UMain, UBaseObjects, USingleton;
+  DB.UMain,
+  UBaseObjects,
+  USingleton,
+  USnippetIDs;
 
 
 type
@@ -157,13 +162,11 @@ type
       {Gets reference to list of snippets selected by last search.
         @return Reference to required list of snippets.
       }
-    procedure GetCatSelection(const Cat: TCategory;
-      const SnipList: TSnippetList);
-      {Provides list of snippets selected by last search that are in a specified
-      category.
+    function GetCatSelection(const Cat: TCategory): ISnippetIDList;
+      {Provides list of IDs of snippets selected by last search that are in a
+      certain category.
         @param Cat [in] Reference to required category.
-        @param SnipList [in] Object to receive snippet list. List is emptied
-          before snippets are copied in.
+        @return List of snippet IDs.
       }
   end;
 
@@ -211,22 +214,21 @@ begin
   inherited;
 end;
 
-procedure TQuery.GetCatSelection(const Cat: TCategory;
-  const SnipList: TSnippetList);
-  {Provides list of snippets selected by last search that are in a specified
-  category.
+function TQuery.GetCatSelection(const Cat: TCategory): ISnippetIDList;
+  {Provides list of IDs of snippets selected by last search that are in a
+  certain category.
     @param Cat [in] Reference to required category.
-    @param SnipList [in] Object to receive snippet list. List is emptied before
-      snippets are copied in.
+    @return List of snippet IDs.
   }
 var
   Idx: Integer; // Loops thru all snippets in selection
+  Snippet: TSnippet;
 begin
-  SnipList.Clear;
-  for Idx := 0 to Pred(fSelection.Count) do
+  Result := TSnippetIDList.Create;
+  for Snippet in fSelection do
   begin
-    if Cat.SnippetIDs.Contains(fSelection[Idx].ID) then
-      SnipList.Add(fSelection[Idx]);
+    if Cat.SnippetIDs.Contains(Snippet.ID) then
+      Result.Add(Snippet.ID);
   end;
 end;
 
