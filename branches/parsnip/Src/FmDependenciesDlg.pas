@@ -194,7 +194,7 @@ var
 begin
   Snippet := Database.Lookup(fSnippetID);
   Assert(Assigned(Snippet),
-    ClassName + '.actSelectAndCloseExecute: Snippet id not found');
+    ClassName + '.actSelectAndCloseExecute: Snippet not found');
   if pcBody.ActivePage = tsDependsUpon then
   begin
     Filter := TSearchFilterFactory.CreateXRefSearchFilter(
