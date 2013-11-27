@@ -50,9 +50,10 @@ type
     ///  <summary>Performs any required tidying up of filter after a search
     ///  finishes.</summary>
     procedure Finalise;
-    ///  <summary>Checks whether the given snippet matches the filter's search
-    ///  criteria, returning True if so or False if not.</summary>
-    function Match(const Snippet: TSnippet): Boolean;
+    ///  <summary>Checks whether the snippet with the given ID matches the
+    ///  filter's search criteria, returning True if so or False if not.
+    ///  </summary>
+    function Match(const SnippetID: TSnippetID): Boolean;
     ///  <summary>Indicates whether the object is a null filter or not.
     ///  </summary>
     ///  <remarks>A null filter is a no-op - every snippet is passed through.
@@ -219,13 +220,14 @@ type
     function GetFilter: ISearchFilter;
     ///  <summary>Executes the search selecting the snippets that pass the
     ///  filter referenced by the Filter property.</summary>
-    ///  <param name="InList">TSnippetList [in] List of snippets to be searched.
-    ///  </param>
-    ///  <param name="FoundList">TSnippetList [in] Receives list of snippets
+    ///  <param name="InList">ISnippetIDList [in] IDs of snippets to be
+    ///  searched.</param>
+    ///  <param name="FoundList">ISnippetIDList [out] Receives IDs of snippets
     ///  that pass the search filter.</param>
     ///  <returns>Boolean. True if some snippets were found or False if not.
     ///  </returns>
-    function Execute(const InList, FoundList: TSnippetList): Boolean;
+    function Execute(InList: ISnippetIDList; out FoundList: ISnippetIDList):
+      Boolean;
     ///  <summary>Reference to the search filter.</summary>
     property Filter: ISearchFilter read GetFilter;
   end;
@@ -325,15 +327,17 @@ type
   public
     ///  <summary>Constructs search object to use given search filter.</summary>
     constructor Create(const Filter: ISearchFilter);
-    ///  <summary>Executes the search.</summary>
-    ///  <param name="InList">TSnippetList [in] List of snippets to be searched.
-    ///  </param>
-    ///  <param name="FoundList">TSnippetList [in] Receives list of snippets
+    ///  <summary>Executes the search selecting the snippets that pass the
+    ///  filter referenced by the Filter property.</summary>
+    ///  <param name="InList">ISnippetIDList [in] IDs of snippets to be
+    ///  searched.</param>
+    ///  <param name="FoundList">ISnippetIDList [out] Receives IDs of snippets
     ///  that pass the search filter.</param>
     ///  <returns>Boolean. True if some snippets were found or False if not.
     ///  </returns>
     ///  <remarks>Method of ISearch.</remarks>
-    function Execute(const InList, FoundList: TSnippetList): Boolean;
+    function Execute(InList: ISnippetIDList; out FoundList: ISnippetIDList):
+      Boolean;
     ///  <summary>Returns search filter that is used for search.</summary>
     ///  <remarks>Method of ISearch</remarks>
     function GetFilter: ISearchFilter;
@@ -402,10 +406,11 @@ type
     ///  searched for.</param>
     constructor Create(const Compilers: TCompilerSearchCompilers;
       const Logic: TSearchLogic; const Option: TCompilerSearchOption);
-    ///  <summary>Checks whether the given snippet matches the filter's search
-    ///  criteria, returning True if so or False if not.</summary>
+    ///  <summary>Checks whether the snippet with the given ID matches the
+    ///  filter's search criteria, returning True if so or False if not.
+    ///  </summary>
     ///  <remarks>Method of ISearchFilter.</remarks>
-    function Match(const Snippet: TSnippet): Boolean;
+    function Match(const SnippetID: TSnippetID): Boolean;
     ///  <summary>Indicates whether the object is a null filter. Returns False.
     ///  </summary>
     ///  <remarks>Method of ISearchFilter.</remarks>
@@ -451,10 +456,11 @@ type
       const Options: TTextSearchOptions);
     ///  <summary>Destroys filter object.</summary>
     destructor Destroy; override;
-    ///  <summary>Checks whether the given snippet matches the filter's search
-    ///  criteria, returning True if so or False if not.</summary>
+    ///  <summary>Checks whether the snippet with the given ID matches the
+    ///  filter's search criteria, returning True if so or False if not.
+    ///  </summary>
     ///  <remarks>Method of ISearchFilter.</remarks>
-    function Match(const Snippet: TSnippet): Boolean;
+    function Match(const SnippetID: TSnippetID): Boolean;
     ///  <summary>Indicates whether the object is a null filter. Returns False.
     ///  </summary>
     ///  <remarks>Method of ISearchFilter.</remarks>
@@ -487,10 +493,11 @@ type
     ///  <param name="SelectedItems">ISnippetIDList [in] List of snippets to be
     ///  selected in search.</param>
     constructor Create(const SelectedItems: ISnippetIDList);
-     ///  <summary>Checks whether the given snippet matches the filter's search
-    ///  criteria, returning True if so or False if not.</summary>
+    ///  <summary>Checks whether the snippet with the given ID matches the
+    ///  filter's search criteria, returning True if so or False if not.
+    ///  </summary>
     ///  <remarks>Method of ISearchFilter.</remarks>
-    function Match(const Snippet: TSnippet): Boolean;
+    function Match(const SnippetID: TSnippetID): Boolean;
     ///  <summary>Indicates whether the object is a null filter. Returns False.
     ///  </summary>
     ///  <remarks>Method of ISearchFilter.</remarks>
@@ -598,10 +605,11 @@ type
     ///  list of XRefs.</summary>
     ///  <remarks>Method of ISearchFilter.</remarks>
     procedure Finalise; override;
-    ///  <summary>Checks whether the given snippet matches the filter's search
-    ///  criteria, returning True if so or False if not.</summary>
+    ///  <summary>Checks whether the snippet with the given ID matches the
+    ///  filter's search criteria, returning True if so or False if not.
+    ///  </summary>
     ///  <remarks>Method of ISearchFilter.</remarks>
-    function Match(const Snippet: TSnippet): Boolean;
+    function Match(const SnippetID: TSnippetID): Boolean;
     ///  <summary>Indicates whether the object is a null filter. Returns False.
     ///  </summary>
     ///  <remarks>Method of ISearchFilter.</remarks>
@@ -627,10 +635,10 @@ type
     ///  <summary>Returns resource id of glyph bitmap.</summary>
     function GlyphResourceName: string; override;
   public
-    ///  <summary>Checks whether the given snippet matches the filter's search
-    ///  criteria. Always returns True.</summary>
+    ///  <summary>Checks whether the snippet with the given ID matches the
+    ///  filter's search criteria. Always returns True.</summary>
     ///  <remarks>Method of ISearchFilter.</remarks>
-    function Match(const Snippet: TSnippet): Boolean;
+    function Match(const SnippetID: TSnippetID): Boolean;
     ///  <summary>Indicates whether the object is a null filter. Returns True.
     ///  </summary>
     ///  <remarks>Method of ISearchFilter.</remarks>
@@ -646,24 +654,24 @@ begin
   fFilter := Filter;
 end;
 
-function TSearch.Execute(const InList, FoundList: TSnippetList): Boolean;
+function TSearch.Execute(InList: ISnippetIDList; out FoundList: ISnippetIDList):
+  Boolean;
 var
-  Snippet: TSnippet;    // each snippet in InList
+  SnippetID: TSnippetID;    // each snippet ID in InList
 begin
   Assert(Assigned(InList), ClassName + '.Execute: InList is nil');
-  Assert(Assigned(FoundList), ClassName + '.Execute: FoundList is nil');
-  Assert(InList <> FoundList, ClassName + '.Execute: InList = FoundList');
-
-  FoundList.Clear;
+  FoundList := TSnippetIDList.Create;
+  if InList.IsEmpty then
+    Exit(False);
   GetFilter.Initialise;
   try
-    for Snippet in InList do
-      if GetFilter.Match(Snippet) then
-        FoundList.Add(Snippet);
+    for SnippetID in InList do
+      if GetFilter.Match(SnippetID) then
+        FoundList.Add(SnippetID);
   finally
     GetFilter.Finalise;
   end;
-  Result := FoundList.Count > 0;
+  Result := not FoundList.IsEmpty;
 end;
 
 function TSearch.GetFilter: ISearchFilter;
@@ -738,7 +746,7 @@ begin
   Result := False;
 end;
 
-function TCompilerSearchFilter.Match(const Snippet: TSnippet): Boolean;
+function TCompilerSearchFilter.Match(const SnippetID: TSnippetID): Boolean;
 const
   // Maps compiler search option onto set of compiler results it describes
   cCompatMap: array[TCompilerSearchOption] of set of TCompileResult = (
@@ -751,14 +759,18 @@ const
 
   // Checks if a snippet's compiler result for given compiler ID matches
   // expected results.
-  function CompatibilityMatches(const CompID: TCompilerID): Boolean;
+  function CompatibilityMatches(const Snippet: TSnippet;
+    const CompID: TCompilerID): Boolean;
   begin
     Result := Snippet.Compatibility[CompID] in cCompatMap[fOption];
   end;
 
 var
   CompID: TCompilerID;  // loops thru supported compilers
+  Snippet: TSnippet;    //
 begin
+  Snippet := Database.Lookup(SnippetID);
+  Assert(Assigned(Snippet), ClassName + '.Match: Snippet not found');
   if fLogic = slOr then
   begin
     // Find any compiler: we return true as soon as any compiler compatibility
@@ -766,7 +778,7 @@ begin
     Result := False;
     for CompID in fCompilers do
     begin
-      if CompatibilityMatches(CompID) then
+      if CompatibilityMatches(Snippet, CompID) then
         Exit(True);
     end;
   end
@@ -777,7 +789,7 @@ begin
     Result := True;
     for CompID in fCompilers do
     begin
-      if not CompatibilityMatches(CompID) then
+      if not CompatibilityMatches(Snippet, CompID) then
         Exit(False);
     end;
   end;
@@ -829,7 +841,7 @@ begin
   Result := False;
 end;
 
-function TTextSearchFilter.Match(const Snippet: TSnippet): Boolean;
+function TTextSearchFilter.Match(const SnippetID: TSnippetID): Boolean;
 
   // Converts the text to be searched into a standard format.
   function NormaliseSearchText(const RawText: string): string;
@@ -926,7 +938,10 @@ var
   SearchWord: string;                      // a word we're searching for
   ActiveTextRenderer: IActiveTextRenderer; // converts active text to plain text
   StrBuilder: TStringBuilder;              // constructs search text
+  Snippet: TSnippet;                       // snippet we're matching
 begin
+  Snippet := Database.Lookup(SnippetID);
+  Assert(Assigned(Snippet), ClassName + '.Match: Snippet not found');
   // Build search text
   StrBuilder := TStringBuilder.Create;
   try
@@ -983,9 +998,9 @@ begin
   Result := False;
 end;
 
-function TBaseSelectionSearchFilter.Match(const Snippet: TSnippet): Boolean;
+function TBaseSelectionSearchFilter.Match(const SnippetID: TSnippetID): Boolean;
 begin
-  Result := fSelectedItems.Contains(Snippet.ID);
+  Result := fSelectedItems.Contains(SnippetID);
 end;
 
 { TManualSelectionSearchFilter }
@@ -1074,7 +1089,9 @@ begin
   Result := False;
 end;
 
-function TXRefSearchFilter.Match(const Snippet: TSnippet): Boolean;
+function TXRefSearchFilter.Match(const SnippetID: TSnippetID): Boolean;
+var
+  Snippet: TSnippet;
 begin
   // Check if cross references are still to be calcaluted and do it if so
   // We do this here to avoid the overhead if just using object to store / read
@@ -1084,6 +1101,8 @@ begin
     fXRefs := TSnippetList.Create;
     Initialise;
   end;
+  Snippet := Database.Lookup(SnippetID);
+  Assert(Assigned(Snippet), ClassName + '.Match: Snippet not found');
   Result := fXRefs.Contains(Snippet);
 end;
 
@@ -1144,7 +1163,7 @@ begin
   Result := True;
 end;
 
-function TNullSearchFilter.Match(const Snippet: TSnippet): Boolean;
+function TNullSearchFilter.Match(const SnippetID: TSnippetID): Boolean;
 begin
   Result := True;
 end;
