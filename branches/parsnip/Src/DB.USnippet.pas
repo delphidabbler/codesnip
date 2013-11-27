@@ -293,12 +293,6 @@ type
         @param Snippet [in] Required snippet.
         @return True if snippet is in list, False otherwise.
       }
-    function ContainsKinds(const Kinds: TSnippetKinds): Boolean;
-      {Checks if the list contains specified kinds of snippets.
-        @param Kinds [in] Set of kinds to test for.
-        @return True if list contains at least one snippet of any of the
-          specified kinds.
-      }
     procedure Clear;
       {Clears the list.
       }
@@ -588,24 +582,6 @@ function TSnippetList.Contains(const Snippet: TSnippet): Boolean;
   }
 begin
   Result := fList.Contains(Snippet);
-end;
-
-function TSnippetList.ContainsKinds(const Kinds: TSnippetKinds): Boolean;
-  {Checks if the list contains specified kinds of snippets.
-    @param Kinds [in] Set of kinds to test for.
-    @return True if list contains at least one snippet of any of the specified
-      kinds.
-  }
-var
-  Snippet: TSnippet;  // reference to all snippets in list
-begin
-  Result := False;
-  for Snippet in Self do
-    if Snippet.Kind in Kinds then
-    begin
-      Result := True;
-      Break;
-    end;
 end;
 
 function TSnippetList.Count: Integer;
