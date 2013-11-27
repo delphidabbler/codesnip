@@ -570,8 +570,6 @@ begin
   for SnippetID in Query.Selection do
   begin
     Snippet := Database.Lookup(SnippetID);
-    Assert(Assigned(Snippet),
-      ClassName + '.BuildSnippetList: Snippet not found');
     if IsSnippetRequired(Snippet) then
       fSnippetList.Add(Snippet);
   end;

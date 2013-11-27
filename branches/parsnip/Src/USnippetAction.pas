@@ -77,7 +77,6 @@ var
 begin
   Assert(Assigned(fNotifier), ClassName + '.Execute: Notifier not set');
   Snippet := Database.Lookup(SnippetID);
-  Assert(Assigned(Snippet), ClassName + '.Execute: Snippet not found');
   // Create a view item for snippet and get notifier to display it
   fNotifier.ShowViewItem(TViewFactory.CreateSnippetView(Snippet), NewTab);
   Result := False;

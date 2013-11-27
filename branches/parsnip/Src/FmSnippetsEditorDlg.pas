@@ -1026,8 +1026,6 @@ begin
     if not Assigned(fSnippet) or (SnippetID <> fSnippet.ID) then
     begin
       Snippet := Database.Lookup(SnippetID);
-      Assert(Assigned(Snippet),
-        ClassName + '.UpdateReferences: Snippet not found');
       // Decide if snippet can be added to depends list: must be correct kind
       if Snippet.Kind in
         TSnippetValidator.ValidDependsKinds(fKindCBMgr.GetSelected) then

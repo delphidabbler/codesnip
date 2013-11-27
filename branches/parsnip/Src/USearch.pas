@@ -770,7 +770,6 @@ var
   Snippet: TSnippet;    //
 begin
   Snippet := Database.Lookup(SnippetID);
-  Assert(Assigned(Snippet), ClassName + '.Match: Snippet not found');
   if fLogic = slOr then
   begin
     // Find any compiler: we return true as soon as any compiler compatibility
@@ -941,7 +940,6 @@ var
   Snippet: TSnippet;                       // snippet we're matching
 begin
   Snippet := Database.Lookup(SnippetID);
-  Assert(Assigned(Snippet), ClassName + '.Match: Snippet not found');
   // Build search text
   StrBuilder := TStringBuilder.Create;
   try
@@ -1102,7 +1100,6 @@ begin
     Initialise;
   end;
   Snippet := Database.Lookup(SnippetID);
-  Assert(Assigned(Snippet), ClassName + '.Match: Snippet not found');
   Result := fXRefs.Contains(Snippet);
 end;
 

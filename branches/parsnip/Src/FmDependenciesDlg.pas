@@ -193,8 +193,6 @@ var
   Filter: IXRefSearchFilter;  // xref filter needed to select snippets
 begin
   Snippet := Database.Lookup(fSnippetID);
-  Assert(Assigned(Snippet),
-    ClassName + '.actSelectAndCloseExecute: Snippet not found');
   if pcBody.ActivePage = tsDependsUpon then
   begin
     Filter := TSearchFilterFactory.CreateXRefSearchFilter(
@@ -451,8 +449,6 @@ begin
       for SnippetID in Dependents do
       begin
         ASnippet := Database.Lookup(SnippetID);
-        Assert(Assigned(ASnippet),
-          ClassName + '.PopulateRequiredByList: Snippet id not found');
         // TODO: rethink lbDependants: TBox value is always same (i.e. True)
         lbDependents.Items.AddObject(
           ASnippet.Title, TBox<Boolean>.Create(True)

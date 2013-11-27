@@ -754,7 +754,6 @@ begin
   // NOTE: this method must not be called from any other method of this class
   // Validate the snippet
   Snippet := Database.Lookup(SnippetID);
-  Assert(Assigned(Snippet), ClassName + '.AddSnippet: Snippet not found');
   if not TSnippetValidator.Validate(Snippet, ErrorMsg) then
     raise ECodeSnip.Create(ErrorMsg);
   // Process the snippet

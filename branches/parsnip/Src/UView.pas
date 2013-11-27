@@ -575,7 +575,6 @@ end;
 function TSnippetView.GetSnippet: TSnippet;
 begin
   Result := Database.Lookup(fSnippetID);
-  Assert(Assigned(Result), ClassName + '.GetSnippet: Snippet not found');
 end;
 
 function TSnippetView.IsEqual(View: IView): Boolean;

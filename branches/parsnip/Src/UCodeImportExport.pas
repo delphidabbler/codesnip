@@ -364,7 +364,6 @@ var
   Snippet: TSnippet;      // snippet being written out
 begin
   Snippet := Database.Lookup(SnippetID);
-  Assert(Assigned(Snippet), ClassName + '.WriteSnippet: Snippet not found');
   // Create snippet node with attribute that specifies snippet name
   SnippetNode := fXMLDoc.CreateElement(ParentNode, cSnippetNode);
   SnippetNode.Attributes[cSnippetNameAttr] := SnippetID.ToString;

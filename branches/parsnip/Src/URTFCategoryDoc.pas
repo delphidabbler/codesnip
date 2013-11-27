@@ -138,7 +138,6 @@ begin
   for SnippetID in Category.SnippetIDs do
   begin
     Snippet := Database.Lookup(SnippetID);
-    Assert(Assigned(Snippet), ClassName + '.Generate: Snippet not found');
     OutputSnippetSubHeading(Snippet);
     OutputSnippetText(Snippet);
   end;

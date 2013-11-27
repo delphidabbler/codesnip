@@ -144,7 +144,6 @@ begin
   for SnippetID in CatSnippets do
   begin
     Snippet := Database.Lookup(SnippetID);
-    Assert(Assigned(Snippet), ClassName + '.CanGenerate: Snippet not found');
     if Snippet.Kind = skRoutine then
       Exit(True);
   end;
