@@ -308,9 +308,6 @@ type
       {Checks if list is empty.
         @return True if list is empty, False otehrwise.
       }
-    ///  <summary>Helper method that creates a list of IDs of all the snippets
-    ///  in the list.</summary>
-    function ToIDList: ISnippetIDList;
     property Items[Idx: Integer]: TSnippet read GetItem; default;
       {List of snippets}
   end;
@@ -730,15 +727,6 @@ begin
       end;
     end;
   end;
-end;
-
-function TSnippetList.ToIDList: ISnippetIDList;
-var
-  Snippet: TSnippet;
-begin
-  Result := TSnippetIDList.Create(fList.Count);
-  for Snippet in fList do
-    Result.Add(Snippet.ID);
 end;
 
 { TSnippetListEx }
