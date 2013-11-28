@@ -50,6 +50,7 @@ type
     Notes: IActiveText;                   // Additional notes about snippet
     CompilerResults: TCompileResults;     // Compilation results
     TestInfo: TSnippetTestInfo;           // Test information
+    Tags: ITagSet;                        // Set of tags assigned to snippet
     procedure Init;
       {Initialises record by setting default values for fields.
       }
@@ -128,6 +129,7 @@ type
     fCompatibility: TCompileResults;        // Snippet's compiler compatibility
     fHiliteSource: Boolean;                 // If source is syntax highlighted
     fTestInfo: TSnippetTestInfo;            // Level of testing of snippet
+    fTags: ITagSet;                         // Set of snippet's tags
     function GetTitle: string;
       {Gets snippet's title, or ID string if no title is set
         @return Required title.
@@ -176,6 +178,8 @@ type
       {Compiler compatibilty of this snippet}
     property TestInfo: TSnippetTestInfo read fTestInfo;
       {Describes level of testing carried out on snippet}
+    property Tags: ITagSet read fTags;
+      {Set of tags associated with snippet}
     property RequiredModules: IStringList read fRequiredModules;
       {List of modules (e.g. units) used by snippet}
     property RequiredSnippets: ISnippetIDList read fRequiredSnippets;
@@ -328,6 +332,7 @@ uses
   // Delphi
   SysUtils,
   // Project
+  CS.Database.Tags,
   CS.Utils.Hashes,
   IntfCommon,
   UExceptions,
@@ -411,6 +416,7 @@ begin
   fNotes := TActiveTextFactory.CloneActiveText(Data.Notes);
   fCompatibility := Data.CompilerResults;
   fTestInfo := Data.TestInfo;
+  fTags := (Data.Tags as IClonable).Clone as ITagSet;
 end;
 
 { TSnippet.TTitleComparer }
@@ -463,6 +469,7 @@ begin
   Result.Notes := TActiveTextFactory.CloneActiveText(Notes);
   Result.CompilerResults := Compatibility;
   Result.TestInfo := TestInfo;
+  Result.Tags := (Tags as IClonable).Clone as ITagSet;
 end;
 
 function TSnippetEx.GetReferences: TSnippetReferences;
@@ -706,6 +713,7 @@ begin
   Notes := TActiveTextFactory.CloneActiveText(Src.Notes);
   CompilerResults := Src.CompilerResults;
   TestInfo := Src.TestInfo;
+  Tags := (Src.Tags as IClonable).Clone as ITagSet;
 end;
 
 procedure TSnippetData.Init;
@@ -724,6 +732,7 @@ begin
   for CompID := Low(TCompilerID) to High(TCompilerID) do
     CompilerResults[CompID] := crQuery;
   TestInfo := stiNone;
+  Tags := TTagSet.Create;
 end;
 
 { TSnippetReferences }
