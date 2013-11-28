@@ -1,0 +1,262 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!--
+ * This Source Code Form is subject to the terms of the Mozilla Public License,
+ * v. 2.0. If a copy of the MPL was not distributed with this file, You can
+ * obtain one at http://mozilla.org/MPL/2.0/
+ *
+ * Copyright (C) 2012-2013, Peter Johnson (www.delphidabbler.com).
+ *
+ * $Rev$
+ * $Date$
+ *
+ * CodeSnip File Format Documentation: Main Database Update Data Stream
+-->
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+
+<head>
+
+<title>
+  CodeSnip File Format Documentation - Main Database Update Data Stream
+</title>
+
+<link
+  rel="stylesheet"
+  type="text/css"
+  media="screen"
+  href="main.css"
+/>
+
+<style type="text/css">
+  div.flowchart {
+    width: 26em;
+    background-color: #eee;
+    text-align: center;
+    padding: 1em;
+    margin: 1em auto;
+    border: 1px silver solid;
+  }
+  div.flowchart .box {
+    width: 25em;
+    pading: 0.5em;
+    background-color: white;
+    border: 1px silver solid;
+  }
+  div.flowchart .label {
+  }
+</style>
+
+</head>
+
+<body>
+
+<div class="title">
+  <div>
+    DelphiDabbler CodeSnip
+  </div>
+  <div class="subtitle">
+    File Format Documentation
+  </div>
+</div>
+
+<h1>
+  Main Database Update Data Stream
+</h1>
+
+<h2>
+  Introduction
+</h2>
+
+<p>
+  The Database Update Data Stream is a stream of data received from the CodeSnip
+  Database Update web service that is used to update the local copy of the main
+  database.
+</p>
+
+<p>
+  The stream is plain text and consists of a concatenation of text files from
+  the online database along with some housekeeping information. The text files
+  are recreated in the main database directory.
+</p>
+
+<h2>
+  Encoding
+</h2>
+
+<p>
+  The data stream is received from the web server as single- or multi-byte ANSI
+  encoded text. The encoding must be such that characters from the ASCII
+  character set occupy one byte each. Therefore encodings that use two bytes for
+  such characters, such as UTF-16, cannot be used.
+</p>
+
+<p>
+  The actual encoding used is determined by the web server should be specified
+  in HTTP header. If the HTTP headers do not specify the encoding then
+  ISO-8859-1 is assumed.
+</p>
+
+<p>
+  The encoding used for the files recreated in the main database directory is
+  UTF-8 with byte order mark.
+</p>
+
+<p>
+  Data is converted between several formats on its journey from the web server
+  to the final database file. See the <a href="#appendix">appendix</a> for
+  details.
+</p>
+
+<h2>
+  Stream Format
+</h2>
+
+<p>
+  The stream contains structured plain text comprising both numeric and string
+  information. Variable length strings are preceded by numeric values that
+  indicate the length of the following string in bytes. Numeric values are
+  encoded as hexadecimal characters. The format is as follows:
+</p>
+
+<dl>
+  <dt>
+    <code>FileCount</code>
+  </dt>
+  <dd>
+    Number of files encoded in the data stream. SmallInt encoded as four hex
+    digits. Maximum number of files is 32,767.
+  </dd>
+</dl>
+
+<p>
+  Followed by <code>FileCount</code> file records of:
+</p>
+
+<dl>
+  <dt>
+    <code>Name</code>
+  </dt>
+  <dd>
+    Name of file without path information. AnsiString preceded by its size in
+    bytes as a SmallInt encoded as four hex digits.
+  </dd>
+  <dt>
+    <code>UnixDate</code>
+  </dt>
+  <dd>
+    File's modification date (GMT) in Unix format. Int64 encoded as 16 hex
+    digits.
+  </dd>
+  <dt>
+    <code>Content</code>
+  </dt>
+  <dd>
+    File contents. AnsiString preceded by its size in bytes as a SmallInt
+    encoded as four hex digits. File size is limited to 32kB.
+  </dd>
+</dl>
+
+<h2 id="appendix">
+  Appendix: Description of Data Encoding Conversions
+</h2>
+
+<p>
+  The following flowchart show the various encodings used for downloaded data on
+  its journey from web server to main database file.
+</p>
+
+<div class="flowchart">
+
+  <div class="box">
+    Text sent from web server using a single or multi-byte ANSI encoding.<br />
+    Encoding used sent in HTTP header.
+  </div>
+
+  <div class="label">
+    &darr;
+  </div>
+
+  <div class="label">
+    ANSI text stream
+  </div>
+
+  <div class="label">
+    &darr;
+  </div>
+
+  <div class="box">
+    CodeSnip's HTTP handling code automatically converts ANSI text stream into
+    Unicode string using encoding specified in HTTP header.
+  </div>
+
+  <div class="label">
+    &darr;
+  </div>
+
+  <div class="label">
+    Unicode string
+  </div>
+
+  <div class="label">
+    &darr;
+  </div>
+
+  <div class="box">
+      Database download manager code converts Unicode string back into ANSI text
+      stream with same encoding in which it was sent from web server.
+  </div>
+
+  <div class="label">
+    &darr;
+  </div>
+
+  <div class="label">
+    ANSI text stream
+  </div>
+
+  <div class="label">
+    &darr;
+  </div>
+
+  <div class="box">
+      File updater interprets information stored in formatted ANSI text stream and
+      get contents of each file, converting them to Unicode.
+  </div>
+
+  <div class="label">
+    &darr;
+  </div>
+
+  <div class="label">
+    Unicode string
+  </div>
+
+  <div class="label">
+    &darr;
+  </div>
+
+  <div class="box">
+      File writer finally writes each file as UTF-8 with a BOM.
+  </div>
+
+  <div class="label">
+    &darr;
+  </div>
+
+  <div class="label">
+    UTF-8 stream
+  </div>
+
+  <div class="label">
+    &darr;
+  </div>
+
+  <div class="box">
+      UTF-8 text files.
+  </div>
+
+</div>
+
+</body>
+
+</html>
