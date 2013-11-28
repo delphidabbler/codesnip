@@ -38,7 +38,7 @@ uses
   UContainers,
   SWAG.UCommon,
   SWAG.UImporter,
-  SWAG.UReader;
+  SWAG.UReader, ActnList;
 
 
 type
@@ -59,6 +59,11 @@ type
     lblUpdateDesc: TLabel;
     tsFinish: TTabSheet;
     frmOutro: THTMLTpltDlgFrame;
+    btnDisplayCategory: TButton;
+    alWizard: TActionList;
+    actDisplayCategory: TAction;
+    actDisplaySnippet: TAction;
+    btnDisplaySnippet: TButton;
     ///  <summary>Handles clicks on the check boxes next to snippets in the
     ///  snippet selection list box by selecting and deselecting snippets for
     ///  inclusion in the import.</summary>
@@ -80,6 +85,10 @@ type
     ///  list box when the user presses enter.</summary>
     procedure lbCategoriesKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
+    procedure actDisplayCategoryUpdate(Sender: TObject);
+    procedure actDisplayCategoryExecute(Sender: TObject);
+    procedure actDisplaySnippetExecute(Sender: TObject);
+    procedure actDisplaySnippetUpdate(Sender: TObject);
   strict private
     const
       ///  <summary>Index of introductory page in wizard.</summary>
@@ -201,6 +210,7 @@ uses
   // Project
   FmPreviewDlg,
   FmWaitDlg,
+  UConsts,
   UCtrlArranger,
   UEncodings,
   UExceptions,
@@ -214,11 +224,34 @@ uses
 
 { TSWAGImportDlg }
 
+procedure TSWAGImportDlg.actDisplayCategoryExecute(Sender: TObject);
+begin
+  DisplaySnippetsForCategory;
+end;
+
+procedure TSWAGImportDlg.actDisplayCategoryUpdate(Sender: TObject);
+begin
+  actDisplayCategory.Enabled := lbCategories.ItemIndex >= 0;
+end;
+
+procedure TSWAGImportDlg.actDisplaySnippetExecute(Sender: TObject);
+begin
+  PreviewSelectedSnippet;
+end;
+
+procedure TSWAGImportDlg.actDisplaySnippetUpdate(Sender: TObject);
+begin
+  actDisplaySnippet.Enabled := clbSelectSnippets.ItemIndex >= 0;
+end;
+
 procedure TSWAGImportDlg.ArrangeForm;
 begin
   TCtrlArranger.SetLabelHeights(Self);
   // Arrange controls on tab sheets
-  // tsIntro: nothing to do
+
+  // tsIntro
+  frmIntro.Height := frmIntro.DocHeight;
+
   // tsCategories
   lblCategoriesDesc.Width := tsCategories.ClientWidth;
   lblCategoriesDesc.Top := 3;
@@ -233,13 +266,31 @@ begin
     [lbCategories, clbSelectSnippets],
     TCtrlArranger.BottomOf([lblCategories, lblSelectSnippets], 6)
   );
+  TCtrlArranger.AlignTops(
+    [btnDisplayCategory, btnDisplaySnippet],
+    TCtrlArranger.BottomOf([lbCategories, clbSelectSnippets], 8)
+  );
+  TCtrlArranger.AlignHCentresTo([lbCategories], [btnDisplayCategory]);
+  TCtrlArranger.AlignHCentresTo([clbSelectSnippets], [btnDisplaySnippet]);
+
   // tsUpdate
   lblUpdateDesc.Width := tsUpdate.ClientWidth;
   lblUpdateDesc.Top := 3;
   lvImports.Width := tsUpdate.ClientWidth;
   TCtrlArranger.AlignLefts([lblUpdateDesc, lvImports], 0);
   TCtrlArranger.MoveBelow(lblUpdateDesc, lvImports, 12);
-  // tsFinish: nothing to do
+
+  // tsFinish
+  frmOutro.Height := frmOutro.DocHeight;
+
+  // set required height
+  pnlBody.ClientHeight := TCtrlArranger.MaxContainerHeight(
+    [tsIntro, tsCategories, tsUpdate, tsFinish]
+  ) + pnlBody.ClientHeight - tsFinish.Height;
+
+  // re-size controls to fit height
+  lvImports.Height := tsUpdate.ClientHeight - lvImports.Top;
+
   inherited;
 end;
 
@@ -313,6 +364,8 @@ begin
 end;
 
 procedure TSWAGImportDlg.DisplaySnippetsForCategory;
+resourcestring
+  sSnippetListCaption = '&Select snippets from "%s"';
 var
   CatIdx: Integer;
   Idx: Integer;
@@ -329,6 +382,9 @@ begin
     // nothing to do if current category selected again
     Exit;
   fCurrentCatID := fSortedCategories[CatIdx].ID;
+  lblSelectSnippets.Caption := Format(
+    sSnippetListCaption, [fSortedCategories[CatIdx].Title]
+  );
   Snippets := TList<TSWAGSnippet>.Create;
   try
     fSWAGReader.GetPartialSnippets(fCurrentCatID, Snippets);
@@ -560,6 +616,12 @@ var
   Content: string;
 resourcestring
   sWaitMsg = 'Downloading Snippet From SWAG...';
+  sContentTplt = 'ID: %0:d' + EOL +
+    'Category: "%1:s"' + EOL +
+    'File Name: "%2:s"' + EOL +
+    'Title: "%3:s"' + EOL +
+    'Author: "%4:s"' + EOL2 +
+    'Source Code:' + EOL + '%5:s' + EOL + '%6:s';
 begin
   SelIdx := clbSelectSnippets.ItemIndex;
   if SelIdx = -1 then
@@ -572,20 +634,15 @@ begin
       WaitWrapper(Self, CallProc, sWaitMsg);
     end
   );
-  // TODO: Display snippet as HTML, highlighted if necessary
   Content := Format(
-    'ID: %d'#13#10
-      + 'Category: "%s"'#13#10
-      + 'File Name: "%s"'#13#10
-      + 'Title: "%s"'#13#10
-      + 'Author: "%s"'#13#10#13#10
-      + 'Source Code:'#13#10 + StringOfChar('-', 80) + #13#10'%s',
+    sContentTplt,
     [
       FullSnippet.ID,
       FullSnippet.Category,
       FullSnippet.FileName,
       FullSnippet.Title,
       FullSnippet.Author,
+      StringOfChar('-', 80),
       StrWindowsLineBreaks(FullSnippet.SourceCode)
     ]
   );
