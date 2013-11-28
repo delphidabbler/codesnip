@@ -262,16 +262,6 @@ type
     destructor Destroy; override;
       {Destructor. Tears down object.
       }
-    procedure Assign(const SrcList: TSnippetList);
-      {Sets this list to be same as another list. List items are referenced, not
-      copied.
-        @param SrcList [in] List of snippets to be assigned.
-      }
-    function IsEqual(const AList: TSnippetList): Boolean;
-      {Checks if this list contains same snippets as another list.
-        @param AList [in] List of snippets to compare.
-        @return True if lists are same, False if not.
-      }
     procedure Add(const Snippet: TSnippet); virtual;
       {Adds new snippet to the list, maintaining list in alphabetical order.
         @param Snippet [in] Snippet being added.
@@ -318,7 +308,7 @@ type
   }
   TSnippetListEx = class(TSnippetList)
   public
-   procedure Add(const Snippet: TSnippet); override;
+    procedure Add(const Snippet: TSnippet); override;
       {Adds a snippet to list. Snippet must not be TTempSnippet class.
         @param Snippet [in] Snippet to be added.
         @return Index where snippet was added to list.
@@ -330,22 +320,9 @@ type
       }
   end;
 
-  {
-  TSnippetIDListEx:
-    Extension of TSnippetIDList that provides an additional constructor that can
-    create a snippet ID list from a TSnippetList.
-  }
-  TSnippetIDListEx = class(TSnippetIDList)
-  public
-    constructor Create(const SnipList: TSnippetList); overload;
-      {Constructor overload that creates a snippets ID list from a
-      TSnippetList object.
-        @param SnipList [in] List of snippets objects for which ID list is
-          required.
-      }
-  end;
 
 implementation
+
 
 uses
   // Delphi
@@ -550,24 +527,6 @@ begin
   fList.Add(Snippet);
 end;
 
-procedure TSnippetList.Assign(const SrcList: TSnippetList);
-  {Sets this list to be same as another list. List items are referenced, not
-  copied.
-    @param SrcList [in] List of snippets to be assigned.
-  }
-var
-  Idx: Integer; // loops thru source list
-begin
-  Assert(not fList.OwnsObjects,
-    ClassName + '.Assign: can''t assign to master list');
-  Self.Clear;
-  if Assigned(SrcList) then
-  begin
-    for Idx := 0 to Pred(SrcList.Count) do
-      Self.Add(SrcList[Idx]);
-  end;
-end;
-
 procedure TSnippetList.Clear;
   {Clears the list.
   }
@@ -704,31 +663,6 @@ begin
   Result := Count = 0;
 end;
 
-function TSnippetList.IsEqual(const AList: TSnippetList): Boolean;
-  {Checks if this list contains same snippets as another list.
-    @param AList [in] List of snippets to compare.
-    @return True if lists are same, False if not.
-  }
-var
-  Idx: Integer; // loops thru all snippets in list
-begin
-  // To be same comparison list must exist and have same number of snippets
-  Result := Assigned(AList) and (Self.Count = AList.Count);
-  if Result then
-  begin
-    // Same number of snippets: scan list checking snippet names same. We can
-    // rely on items being in same order since lists are sorted
-    for Idx := 0 to Pred(Self.Count) do
-    begin
-      if not Self[Idx].IsEqual(AList[Idx]) then
-      begin
-        Result := False;
-        Break;
-      end;
-    end;
-  end;
-end;
-
 { TSnippetListEx }
 
 procedure TSnippetListEx.Add(const Snippet: TSnippet);
@@ -831,22 +765,6 @@ procedure TSnippetEditData.Init;
 begin
   Props.Init;
   Refs.Init;
-end;
-
-{ TSnippetIDListEx }
-
-constructor TSnippetIDListEx.Create(const SnipList: TSnippetList);
-  {Constructor overload that creates a snippets ID list from a TSnippetList
-  object.
-    @param SnipList [in] List of snippets objects for which ID list is
-      required.
-  }
-var
-  Snippet: TSnippet;  // references each snippet in list
-begin
-  inherited Create;
-  for Snippet in SnipList do
-    Add(Snippet.ID);
 end;
 
 end.
