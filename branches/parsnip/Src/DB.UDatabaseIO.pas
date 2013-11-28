@@ -422,7 +422,7 @@ var
   SnippetName: string;          // each name in name list
   Snippet: TSnippet;            // references a snippet object
 begin
-  FillChar(SnippetProps, SizeOf(SnippetProps), 0);
+  SnippetProps.Init;
   // Get names of all snippets in category
   SnippetNames := fReader.GetCatSnippets(Cat.ID);
   // Process each snippet name in list

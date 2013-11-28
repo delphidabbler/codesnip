@@ -359,6 +359,7 @@ begin
   inherited Create;
   // Record simple property values
   fID := ID;
+  fTags := TTagSet.Create;
   SetProps(Props);
   // Create string list to store required units
   fRequiredModules := TIStringList.Create;
@@ -416,7 +417,7 @@ begin
   fNotes := TActiveTextFactory.CloneActiveText(Data.Notes);
   fCompatibility := Data.CompilerResults;
   fTestInfo := Data.TestInfo;
-  fTags := (Data.Tags as IClonable).Clone as ITagSet;
+  fTags.Assign(Data.Tags);
 end;
 
 { TSnippet.TTitleComparer }
@@ -460,6 +461,7 @@ function TSnippetEx.GetProps: TSnippetData;
     @return Record containing property values.
   }
 begin
+  Result.Init;
   Result.Cat := Category;
   Result.Kind := Kind;
   Result.Desc := Description;
@@ -469,7 +471,7 @@ begin
   Result.Notes := TActiveTextFactory.CloneActiveText(Notes);
   Result.CompilerResults := Compatibility;
   Result.TestInfo := TestInfo;
-  Result.Tags := (Tags as IClonable).Clone as ITagSet;
+  Result.Tags.Assign(Tags);
 end;
 
 function TSnippetEx.GetReferences: TSnippetReferences;
@@ -704,6 +706,7 @@ procedure TSnippetData.Assign(const Src: TSnippetData);
     @param Src [in] Record to be copied.
   }
 begin
+  Init;
   Kind := Src.Kind;
   Cat := Src.Cat;
   Desc := TActiveTextFactory.CloneActiveText(Src.Desc);
@@ -713,7 +716,7 @@ begin
   Notes := TActiveTextFactory.CloneActiveText(Src.Notes);
   CompilerResults := Src.CompilerResults;
   TestInfo := Src.TestInfo;
-  Tags := (Src.Tags as IClonable).Clone as ITagSet;
+  Tags.Assign(Src.Tags);
 end;
 
 procedure TSnippetData.Init;
