@@ -445,7 +445,7 @@ inherited MainForm: TMainForm
       Category = 'Edit'
       Caption = 'Copy Annotated Source'
       Hint = 
-        'Copy the annotated source code of the selected snippet or catego' +
+        'Copy the annotated source code of the selected routine or catego' +
         'ry to the clipboard'
       ShortCut = 16462
       OnExecute = actCopySnippetExecute
