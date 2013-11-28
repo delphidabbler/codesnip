@@ -219,8 +219,6 @@ begin
 end;
 
 constructor TSaveUnitMgr.InternalCreate(Snips: ISnippetIDList);
-var
-  SnippetID: TSnippetID;
 begin
   Assert(Assigned(Snips), ClassName + '.InternalCreate: Snips is nil');
   inherited InternalCreate;
