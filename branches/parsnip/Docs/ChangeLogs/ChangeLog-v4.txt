@@ -11,6 +11,12 @@
 ; Change Log for CodeSnip Release 4
 ; ------------------------------------------------------------------------------
 
+Release v4.8.4 of 28 November 2013
++ Improved user interface of SWAG Import Wizard.
++ Renamed "Save Snippet" and "Copy Snippet" menu options to "Save Annotated Source" and "Copy Annotated Source". This fixes bug #90: " Wrong caption on menu option for copying category to clipboard" (http://bit.ly/ImA398).
++ Revised and corrected numerous main menu and pop-up menu hints.
++ Updated help file re changes to menu options and SWAG Import Wizards.
+
 Release v4.8.3 of 06 November 2013
 + Fixed registry access code so that the 64 bit view of the registry is used when CodeSnip runs on a Windows 64 bit operating system.
 + Changed to avoid use of a deprecated API call when using the Windows Browse for Folder dialogue box.
