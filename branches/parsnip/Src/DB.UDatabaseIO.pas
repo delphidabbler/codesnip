@@ -347,11 +347,14 @@ begin
     // database
     for Snippet in fSnipList do
       LoadReferences(Snippet);
-    // Trim out in invalid references
+    // Trim out in invalid references and add tag based on category
     for Snippet in fSnipList do
     begin
       TrimBadSnippets(Snippet.RequiredSnippets, fSnipList);
       TrimBadSnippets(Snippet.XRefs, fSnipList);
+      Category := fCategories.Find(Snippet.Category);
+      if Assigned(Category) then
+        Snippet.Tags.Add(TTag.Create(Category.Description));
     end;
   except
     on E: Exception do

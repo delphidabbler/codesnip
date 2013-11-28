@@ -489,8 +489,8 @@ procedure TCodeImporter.Execute(const Data: TBytes);
   end;
 
 resourcestring
-  // Error message
   sParseError = 'Import file has an invalid format';
+  sImportTagStr = 'Imported';
 var
   UserNode: IXMLNode;               // node containing any user info
   SnippetNodes: IXMLSimpleNodeList; // list of snippet nodes
@@ -533,6 +533,7 @@ begin
       with fSnippetInfo[Idx].Data do
       begin
         Props.Cat := TReservedCategories.ImportsCatID;
+        Props.Tags.Add(TTag.Create(sImportTagStr));
         Props.Desc := GetDescription(SnippetNode);
         Props.Title := TXMLDocHelper.GetSubTagText(
           fXMLDoc, SnippetNode, cDisplayNameNode

@@ -134,10 +134,13 @@ function TSWAGImporter.BuildSnippetInfo(const SWAGSnippet: TSWAGSnippet):
     Result.AddElem(TActiveTextFactory.CreateActionElem(ekPara, fsClose));
   end;
 
+resourcestring
+  sSWAGTagStr = 'SWAG';
 begin
   Result.Init;
   Result.Props.Kind := skFreeform;
   Result.Props.Cat := TReservedCategories.SWAGCatID;
+  Result.Props.Tags.Add(TTag.Create(sSWAGTagStr));
   Result.Props.Desc := BuildDescription;
   Result.Props.SourceCode := SWAGSnippet.SourceCode;
   Result.Props.HiliteSource := not SWAGSnippet.IsDocument;
