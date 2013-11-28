@@ -108,11 +108,11 @@
       <param name="Local" value="HTML\task_addsnippets.htm">
       </OBJECT>
     <LI> <OBJECT type="text/sitemap">
-      <param name="Name" value="Save Snippet">
+      <param name="Name" value="Save Annotated Source">
       <param name="Local" value="HTML\task_savesnippet.htm">
       </OBJECT>
     <LI> <OBJECT type="text/sitemap">
-      <param name="Name" value="Copy Snippet">
+      <param name="Name" value="Copy Annotated Source">
       <param name="Local" value="HTML\task_copysnippet.htm">
       </OBJECT>
     <LI> <OBJECT type="text/sitemap">
