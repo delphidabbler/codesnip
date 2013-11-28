@@ -1,3 +1,17 @@
+{
+ * This Source Code Form is subject to the terms of the Mozilla Public License,
+ * v. 2.0. If a copy of the MPL was not distributed with this file, You can
+ * obtain one at http://mozilla.org/MPL/2.0/
+ *
+ * Copyright (C) 2013, Peter Johnson (www.delphidabbler.com).
+ *
+ * $Rev$
+ * $Date$
+ *
+ * Provides a class that encapsulates a set of snippet tags.
+}
+
+
 unit CS.Database.Tags;
 
 interface
@@ -5,10 +19,11 @@ interface
 uses
   Collections.Base,
   Collections.Sets,
-  CS.Database.Types;
+  CS.Database.Types,
+  IntfCommon;
 
 type
-  TTagSet = class(TInterfacedObject, ITagSet)
+  TTagSet = class(TInterfacedObject, ITagSet, IClonable)
   strict private
     var
       fTags: TArraySet<TTag>;
@@ -26,6 +41,7 @@ type
     procedure Remove(const ATag: TTag);
     procedure Clear;
     property Count: Integer read GetCount;
+    function Clone: IInterface;
   end;
 
 implementation
@@ -49,6 +65,11 @@ end;
 procedure TTagSet.Clear;
 begin
   fTags.Clear;
+end;
+
+function TTagSet.Clone: IInterface;
+begin
+  Result := TTagSet.Create(Self);
 end;
 
 function TTagSet.Contains(const ATag: TTag): Boolean;
