@@ -322,7 +322,7 @@ inherited MainForm: TMainForm
       Category = 'File'
       Caption = 'Save Annotated Source...'
       Hint = 
-        'Save the annotated source code of the selected snippet or catego' +
+        'Save the annotated source code of the selected routine or catego' +
         'ry to a file'
       ImageIndex = 18
       ShortCut = 24654
