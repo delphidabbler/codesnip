@@ -12,7 +12,7 @@
 ; ------------------------------------------------------------------------------
 
 Summary of changes in SVN parsnip branch up to REVISION 3854.
-Changes relate to v4.8.3 (#### may need to update this if new v4 release is merged in###)
+Changes relate to v4.8.4 (#### may need to update this if new v4 release is merged in###)
 + User interface changes:
   - The link used to edit the displayed snippet has been removed from the Detail pane and replaced by a glyph showing the snippet's level of testing. (### may need to change this in light of further redesigns###)
   - Welcome page revised re change from two to one logical databases. (### may need to change this in light of further redesigns###)
