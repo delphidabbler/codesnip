@@ -4,12 +4,12 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
  *
- * Help topic for Save Snippet dialogue box.
+ * Help topic for Save Annotated Source dialogue box.
 -->
 <html>
   <head>
@@ -20,7 +20,7 @@
      http-equiv="Content-Type"
      content="text-html; charset=Windows-1252">
     <title>
-      Save Snippet Dialogue Box
+      Save Annotated Source Dialogue Box
     </title>
     <link
      rel="stylesheet"
@@ -36,26 +36,31 @@
        value="SaveSnippetDlg">
     </object>
     <h1>
-      <a name="dlg_savesnippet"></a>Save Snippet Dialogue Box
+      <a name="dlg_savesnippet"></a>Save Annotated Source Dialogue Box
     </h1>
     <p>
-      This dialogue box is displayed when the <em>File | Save Snippet</em> menu
-      option is clicked. It is used to specify the file name, file type and
-      formatting information for the source code snippet that is to be
-      saved.
+      This dialogue box is displayed when the <em>File | Save Annotated
+      Source</em> menu option is clicked. It is used to specify the required
+      file name, type and formatting information for the
+      <a href="snippet_routine.htm">routine</a> snippet or category that is to
+      be saved.
     </p>
     <p>
-      The source saved is that of the currently selected routine or
-      category. If a category is selected, all its contained routines are
-      included in the code snippet.
+      The saved code includes comments noting the units and any other snippets
+      from the database that are required by the saved routine(s).
+    </p>
+    <p>
+      The output file contains the source code of the currently selected
+      <a href="snippet_routine.htm">routine</a> snippet or category. If a
+      category is selected its contained routines are included in the output
+      file, but any non-routine snippets are ignored.
     </p>
     <p>
       The dialogue is a standard Windows save dialogue box with a few added
       options.
     </p>
     <p>
-      You specify the name and folder for the file that the code snippet will
-      be saved in in the usual way.
+      You specify the name and folder for the file in the usual way.
     </p>
     <p>
       Use the <em>Save as type</em> drop down list to specify the type of file
@@ -64,9 +69,7 @@
     <ul>
       <li>
         A Pascal include file (.inc) - The code is written to a file with
-        extension *.inc that can be included in any Pascal source file. The
-        code includes comments noting the units and any other routines from the
-        database that are required by the saved routine(s).
+        extension *.inc that can be included in any Pascal source file.
       </li>
       <li>
         A plain text file (.txt) - This is the same as the Pascal include file
@@ -75,7 +78,7 @@
       <li>
         An HTML file (.html) - This option writes the source code out as a
         valid XHTML document that uses CSS to format the code. The document can
-        contain syntax highlighting if the <em>Use syntax highlighting</em>
+        be syntax highlighted if the <em>Use syntax highlighting</em>
         check box is checked.
       </li>
       <li>
@@ -100,8 +103,8 @@
       clipboard if required.
     </p>
     <p>
-      Use the <em>Save</em> button to write the source code to disk or <em>
-      Cancel</em> to abort.
+      Use the <em>Save</em> button to write the file to disk or press
+      <em>Cancel</em> to abort.
     </p>
   </body>
 </html>

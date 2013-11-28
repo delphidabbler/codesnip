@@ -30,7 +30,7 @@ inherited SWAGImportDlg: TSWAGImportDlg
           Top = 0
           Width = 663
           Height = 446
-          Align = alClient
+          Align = alTop
           TabOrder = 0
           TabStop = True
           ExplicitWidth = 663
@@ -59,10 +59,6 @@ inherited SWAGImportDlg: TSWAGImportDlg
         Caption = 'tsCategories'
         ImageIndex = 1
         TabVisible = False
-        ExplicitLeft = 8
-        ExplicitTop = -10
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         object lblCategories: TLabel
           Left = 0
           Top = 45
@@ -78,19 +74,19 @@ inherited SWAGImportDlg: TSWAGImportDlg
           Height = 36
           AutoSize = False
           Caption = 
-            'Double-click a category from the list on the left and a list of ' +
-            'its snippets will be displayed in right hand list. Tick the snip' +
-            'pets you want to import in the right hand list. Double-click and' +
-            ' snippet to view it. Repeat with as many categories as you wish.' +
-            ' When you are ready to import click "Next".'
+            'Select a category from the list on the left and click "Show Snip' +
+            'pets In Category" (or double click the category) to display a li' +
+            'st of its snippets in the right hand list. Tick the snippets you' +
+            ' want to import. Repeat with as many categories as you wish. Whe' +
+            'n you are ready to import click "Next".'
           WordWrap = True
         end
         object lblSelectSnippets: TLabel
           Left = 256
           Top = 45
-          Width = 145
+          Width = 119
           Height = 13
-          Caption = '&Snippets in selected category:'
+          Caption = '&Select required snippets:'
           FocusControl = clbSelectSnippets
         end
         object lbCategories: TListBox
@@ -110,9 +106,25 @@ inherited SWAGImportDlg: TSWAGImportDlg
           Height = 321
           OnClickCheck = clbSelectSnippetsClickCheck
           ItemHeight = 13
-          TabOrder = 1
+          TabOrder = 2
           OnDblClick = clbSelectSnippetsDblClick
           OnKeyDown = clbSelectSnippetsKeyDown
+        end
+        object btnDisplayCategory: TButton
+          Left = 30
+          Top = 391
+          Width = 185
+          Height = 25
+          Action = actDisplayCategory
+          TabOrder = 1
+        end
+        object btnDisplaySnippet: TButton
+          Left = 280
+          Top = 391
+          Width = 185
+          Height = 25
+          Action = actDisplaySnippet
+          TabOrder = 3
         end
       end
       object tsUpdate: TTabSheet
@@ -161,20 +173,14 @@ inherited SWAGImportDlg: TSWAGImportDlg
         Caption = 'tsFinish'
         ImageIndex = 3
         TabVisible = False
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         inline frmOutro: THTMLTpltDlgFrame
           Left = 0
           Top = 0
           Width = 663
           Height = 446
-          Align = alClient
+          Align = alTop
           TabOrder = 0
           TabStop = True
-          ExplicitLeft = 280
-          ExplicitTop = 64
           ExplicitWidth = 663
           ExplicitHeight = 446
           inherited pnlBrowser: TPanel
@@ -197,6 +203,20 @@ inherited SWAGImportDlg: TSWAGImportDlg
           end
         end
       end
+    end
+  end
+  object alWizard: TActionList
+    Left = 336
+    Top = 256
+    object actDisplayCategory: TAction
+      Caption = 'S&how Snippets In Category'
+      OnExecute = actDisplayCategoryExecute
+      OnUpdate = actDisplayCategoryUpdate
+    end
+    object actDisplaySnippet: TAction
+      Caption = '&Preview Selected Snippet...'
+      OnExecute = actDisplaySnippetExecute
+      OnUpdate = actDisplaySnippetUpdate
     end
   end
 end
