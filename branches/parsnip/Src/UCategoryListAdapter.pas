@@ -56,6 +56,10 @@ type
       {Gets id of category at a specified index in the sorted list.
         @param Index [in] Index of category for which id is required.
       }
+    function CatDesc(const Index: Integer): string;
+      {Gets description of category at specified index in the sorted list.
+        @param Index [in] Index of category for which description is required.
+      }
     function IndexOf(const CatID: string): Integer;
       {Gets index of a specified category in sorted list.
         @param CatID [in] Id of category.
@@ -76,6 +80,11 @@ uses
 
 
 { TCategoryListAdapter }
+
+function TCategoryListAdapter.CatDesc(const Index: Integer): string;
+begin
+  Result := fCatList[Index].Description;
+end;
 
 function TCategoryListAdapter.CatID(const Index: Integer): string;
   {Gets name (id) of category at a specified index in the sorted list.
