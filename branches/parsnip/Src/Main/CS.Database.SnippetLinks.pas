@@ -16,21 +16,21 @@ type
   strict private
     var
       fSynchSpaceID: TGUID;
-      fLinkedSnippetID: TDBSnippetID;
+      fLinkedSnippetID: TSnippetID;
   public
     constructor Create(const ASynchSpaceID: TGUID;
-      const ALinkedSnippetID: TDBSnippetID); overload;
+      const ALinkedSnippetID: TSnippetID); overload;
     constructor Create(Src: ISnippetLinkInfo); overload;
     function IsLinked: Boolean;
     function GetSynchSpaceID: TGUID;
-    function GetLinkedSnippetID: TDBSnippetID;
+    function GetLinkedSnippetID: TSnippetID;
   end;
 
   TNullSnippetLinkInfo = class(TInterfacedObject, ISnippetLinkInfo)
   public
     function IsLinked: Boolean;
     function GetSynchSpaceID: TGUID;
-    function GetLinkedSnippetID: TDBSnippetID;
+    function GetLinkedSnippetID: TSnippetID;
   end;
 
 implementation
@@ -41,7 +41,7 @@ uses
 { TSnippetLinkInfo }
 
 constructor TSnippetLinkInfo.Create(const ASynchSpaceID: TGUID;
-  const ALinkedSnippetID: TDBSnippetID);
+  const ALinkedSnippetID: TSnippetID);
 begin
   inherited Create;
   fSynchSpaceID := ASynchSpaceID;
@@ -53,7 +53,7 @@ begin
   Create(Src.SynchSpaceID, Src.LinkedSnippetID);
 end;
 
-function TSnippetLinkInfo.GetLinkedSnippetID: TDBSnippetID;
+function TSnippetLinkInfo.GetLinkedSnippetID: TSnippetID;
 begin
   Result := fLinkedSnippetID;
 end;
@@ -70,7 +70,7 @@ end;
 
 { TNullSnippetLinkInfo }
 
-function TNullSnippetLinkInfo.GetLinkedSnippetID: TDBSnippetID;
+function TNullSnippetLinkInfo.GetLinkedSnippetID: TSnippetID;
 begin
   raise ENotSupportedException.Create(
     'GetLinkedSnippetID is not implemented in ' + ClassName
@@ -90,3 +90,4 @@ begin
 end;
 
 end.
+
