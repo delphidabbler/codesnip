@@ -23,6 +23,7 @@ uses
   CS.Database.Types,
   CS.SourceCode.Languages,
   CS.Utils.Dates,
+  IntfCommon,
   UExceptions,
   UIStringList;
 
@@ -127,115 +128,184 @@ type
     function SupportsProperty(const AProp: TDBSnippetProp): Boolean; override;
   end;
 
-//  TDBSnippetIDList = class(TInterfacedObject, IDBSnippetIDList)
-//  strict private
-//    var
-//      fItems: TList<TDBSnippetID>;
-//    function IndexOf(const AID: TDBSnippetID): Integer;
-//  public
-//    constructor Create; overload;
-//    constructor Create(const ASnippetIDs: IDBSnippetIDList); overload;
-//    destructor Destroy; override;
-//
-//    // IDBSnippetIDList methods
-//    function GetEnumerator: TEnumerator<TDBSnippetID>;
-//    procedure Add(const AID: TDBSnippetID);
-//    procedure Delete(const AID: TDBSnippetID);
-//    procedure Clear;
-//    function Contains(const AID: TDBSnippetID): Boolean; inline;
-//    function GetItem(const AIdx: Integer): TDBSnippetID;
-//    function GetCount: Integer;
-//    property Items[const AIdx: Integer]: TDBSnippetID read GetItem;
-//    property Count: Integer read GetCount;
-//  end;
-
   EDBSnippet = class(EBug);
+
+  // TODO: Add new ToList<TSnippetID> method
+  ///  <summary>Implements a list of snippet identification records.</summary>
+  TSnippetIDList = class(
+    TInterfacedObject, ISnippetIDList, IAssignable, IClonable
+  )
+  strict private
+    var
+      // TODO: Change implementation to use DelphiColl - use TLinkedSet
+      ///  <summary>Internal list if snippet ID records.</summary>
+      fList: TList<TSnippetID>;
+  public
+    ///  <summary>Constructs empty list object.</summary>
+    constructor Create; overload;
+
+    ///  <summary>Constructs empty list object with the given capacity.
+    ///  </summary>
+    constructor Create(const ACapacity: Integer); overload;
+
+    ///  <summary>Destroys object.</summary>
+    destructor Destroy; override;
+
+    ///  <summary>Gets new list enumerator.</summary>
+    ///  <remarks>Method of ISnippetIDList.</remarks>
+    function GetEnumerator: TEnumerator<TSnippetID>;
+
+    ///  <summary>Clears the list.</summary>
+    ///  <remarks>Method of ISnippetIDList.</remarks>
+    procedure Clear;
+
+    ///  <summary>Adds given snippet ID to list and returns its index in list.
+    ///  </summary>
+    ///  <remarks>Method of ISnippetIDList.</remarks>
+    function Add(const SnippetID: TSnippetID): Integer;
+
+    ///  <summary>Removed the given snippet ID from the list.</summary>
+    ///  <remarks>
+    ///  <para>Does nothing if SnippetID is not in the list.</para>
+    ///  <para>Method of ISnippetIDList.</para>
+    ///  </remarks>
+    procedure Remove(const SnippetID: TSnippetID);
+
+    ///  <summary>Checks if list contains given snippet ID.</summary>
+    ///  <remarks>Method of ISnippetIDList.</remarks>
+    function Contains(const SnippetID: TSnippetID): Boolean;
+
+    ///  <summary>Checks if this list has the same content as another list.
+    ///  </summary>
+    ///  <remarks>Method of ISnippetIDList.</remarks>
+    function IsEqual(Other: ISnippetIDList): Boolean;
+
+    ///  <summary>Checks if list is empty.</summary>
+    ///  <remarks>Method of ISnippetIDList.</remarks>
+    function IsEmpty: Boolean;
+
+    ///  <summary>Returns number of snippet ID records in list.</summary>
+    ///  <remarks>Method of ISnippetIDList.</remarks>
+    function Count: Integer;
+
+    ///  <summary>Copies properties of given list to this one.</summary>
+    ///  <param name="Src">IInterface [in] List whose properties are to be
+    ///  copied. Src must support ISnippetIDList.</param>
+    ///  <remarks>Method of IAssignable.</remarks>
+    procedure Assign(const Src: IInterface);
+
+    ///  <summary>Creates and returns a new list that is an exact copy of the
+    ///  current one.</summary>
+    ///  <returns>IInterface. Reference to cloned object.</returns>
+    ///  <remarks>Method of IClonable</remarks>
+    function Clone: IInterface;
+  end;
 
 implementation
 
 uses
   SysUtils,
+  Generics.Defaults,
   Classes,
   RTLConsts,
   CS.Database.SnippetLinks,
   CS.Database.Tags,
-  IntfCommon,
   USnippetIDs;
 
-//{ TDBSnippetIDList }
-//
-//procedure TDBSnippetIDList.Add(const AID: TDBSnippetID);
-//begin
-////  if Contains(AID) then
-////    raise EListError.Create(SGenericDuplicateItem);
-//  fItems.Add(AID);
-//end;
-//
-//procedure TDBSnippetIDList.Clear;
-//begin
-//  fItems.Clear;
-//end;
-//
-//function TDBSnippetIDList.Contains(const AID: TDBSnippetID): Boolean;
-//begin
-//  Result := IndexOf(AID) >= 0;
-//end;
-//
-//constructor TDBSnippetIDList.Create(const ASnippetIDs: IDBSnippetIDList);
-//var
-//  ID: TDBSnippetID;
-//begin
-//  Create;
-//  for ID in ASnippetIDs do
-//    fItems.Add(ID);
-//end;
-//
-//constructor TDBSnippetIDList.Create;
-//begin
-//  inherited Create;
-//  fItems := TList<TDBSnippetID>.Create;
-//end;
-//
-//procedure TDBSnippetIDList.Delete(const AID: TDBSnippetID);
-//var
-//  Idx: Integer;
-//begin
-//  Idx := IndexOf(AID);
-//  if Idx = -1 then
-//    raise EListError.Create(SGenericItemNotFound);
-//  fItems.Delete(Idx);
-//end;
-//
-//destructor TDBSnippetIDList.Destroy;
-//begin
-//  fItems.Free;
-//  inherited;
-//end;
-//
-//function TDBSnippetIDList.GetCount: Integer;
-//begin
-//  Result := fItems.Count;
-//end;
-//
-//function TDBSnippetIDList.GetEnumerator: TEnumerator<TDBSnippetID>;
-//begin
-//  Result := fItems.GetEnumerator;
-//end;
-//
-//function TDBSnippetIDList.GetItem(const AIdx: Integer): TDBSnippetID;
-//begin
-//  Result := fItems[AIdx];
-//end;
-//
-//function TDBSnippetIDList.IndexOf(const AID: TDBSnippetID): Integer;
-//var
-//  Idx: Integer;
-//begin
-//  for Idx := 0 to Pred(fItems.Count) do
-//    if fItems[Idx] = AID then
-//      Exit(Idx);
-//  Result := -1;
-//end;
+{ TSnippetIDList }
+
+function TSnippetIDList.Add(const SnippetID: TSnippetID): Integer;
+begin
+  Result := fList.Add(SnippetID);
+end;
+
+procedure TSnippetIDList.Assign(const Src: IInterface);
+var
+  SrcID: TSnippetID;  // references each ID in source
+  SrcList: ISnippetIDList;
+begin
+  if not Supports(Src, ISnippetIDList, SrcList) then
+    raise EBug.Create(ClassName + '.Assign: Src must support ISnippetIDList');
+  Clear;
+  fList.Capacity := SrcList.Count;
+  for SrcID in SrcList do
+    Add(SrcID);
+end;
+
+procedure TSnippetIDList.Clear;
+begin
+  fList.Clear;
+end;
+
+function TSnippetIDList.Clone: IInterface;
+begin
+  Result := TSnippetIDList.Create;
+  (Result as IAssignable).Assign(Self);
+end;
+
+function TSnippetIDList.Contains(const SnippetID: TSnippetID): Boolean;
+begin
+  Result := fList.Contains(SnippetID);
+end;
+
+function TSnippetIDList.Count: Integer;
+begin
+  Result := fList.Count;
+end;
+
+constructor TSnippetIDList.Create(const ACapacity: Integer);
+begin
+  Create;
+  fList.Capacity := ACapacity;
+end;
+
+constructor TSnippetIDList.Create;
+begin
+  inherited;
+  fList := TList<TSnippetID>.Create(
+    TDelegatedComparer<TSnippetID>.Create(
+      function(const Left, Right: TSnippetID): Integer
+      begin
+        Result := TSnippetID.Compare(Left, Right);
+      end
+    )
+  );
+end;
+
+destructor TSnippetIDList.Destroy;
+begin
+  fList.Free;
+  inherited;
+end;
+
+function TSnippetIDList.GetEnumerator: TEnumerator<TSnippetID>;
+begin
+  Result := fList.GetEnumerator;
+end;
+
+function TSnippetIDList.IsEmpty: Boolean;
+begin
+  Result := fList.Count = 0;
+end;
+
+function TSnippetIDList.IsEqual(Other: ISnippetIDList): Boolean;
+var
+  OtherID: TSnippetID;
+begin
+  // Lists are equal if they are the same size and every member of Other is in
+  // this list.
+  if fList.Count <> Other.Count then
+    Exit(False);
+  for OtherID in Other do
+    if not fList.Contains(OtherID) then
+      Exit(False);
+  Result := True;
+end;
+
+procedure TSnippetIDList.Remove(const SnippetID: TSnippetID);
+begin
+  fList.Remove(SnippetID);
+end;
 
 { TSnippetBase }
 
