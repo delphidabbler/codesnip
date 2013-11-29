@@ -1,3 +1,19 @@
+{
+ * This Source Code Form is subject to the terms of the Mozilla Public License,
+ * v. 2.0. If a copy of the MPL was not distributed with this file, You can
+ * obtain one at http://mozilla.org/MPL/2.0/
+ *
+ * Copyright (C) 2013, Peter Johnson (www.delphidabbler.com).
+ *
+ * $Rev$
+ * $Date$
+ *
+ * Provides a class that encapsulates information about a snippet's links to
+ * other snippets, along with a null class that represents the absence of such a
+ * link.
+}
+
+
 unit CS.Database.SnippetLinks;
 
 interface
