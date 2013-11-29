@@ -4,8 +4,9 @@ interface
 
 uses
   Generics.Collections,
+  CS.ActiveText,
+  Compilers.UGlobals,
   CS.Database.Types,
-  CS.Markup,
   CS.SourceCode.Languages,
   CS.Utils.Dates,
   UExceptions,
@@ -15,20 +16,20 @@ type
   TSnippetBase = class(TInterfacedObject)
   strict private
     var
-      fID: TDBSnippetID;
+      fID: TSnippetID;
       fCreated: TUTCDateTime;
       fModified: TUTCDateTime;
       fTitle: string;
-      fDescription: TMarkup;
+      fDescription: IActiveText;
       fSourceCode: string;
       fLanguageID: TSourceCodeLanguageID;
       fRequiredModules: IStringList;
-      fRequiredSnippets: IDBSnippetIDList;
-      fXRefs: IDBSnippetIDList;
-      fNotes: TMarkup;
-      fKind: TDBSnippetKind;
-      fCompileResults: TDBCompileResults;
-      fTags: IDBTagList;
+      fRequiredSnippets: ISnippetIDList;
+      fXRefs: ISnippetIDList;
+      fNotes: IActiveText;
+      fKind: TSnippetKind;
+      fCompileResults: TCompileResults;
+      fTags: ITagSet;
       fLinkInfo: ISnippetLinkInfo;
       fTestInfo: TSnippetTestInfo;
       fStarred: Boolean;
@@ -36,37 +37,37 @@ type
     function SupportsProperty(const APropID: TDBSnippetProp): Boolean; virtual;
   public
     constructor Create; overload;
-    constructor Create(const ASnippetID: TDBSnippetID); overload;
+    constructor Create(const ASnippetID: TSnippetID); overload;
     constructor Create(const ASourceSnippet: TSnippetBase); overload;
     destructor Destroy; override;
     procedure UpdateFrom(const ASourceSnippet: TSnippetBase);
-    function GetID: TDBSnippetID; virtual;
+    function GetID: TSnippetID; virtual;
     function GetCreated: TUTCDateTime;
     procedure SetCreated(const Value: TUTCDateTime);
     function GetModified: TUTCDateTime; virtual;
     procedure SetModified(const Value: TUTCDateTime);
     function GetTitle: string; virtual;
     procedure SetTitle(const Value: string);
-    function GetDescription: TMarkup; virtual;
-    procedure SetDescription(const Value: TMarkup);
+    function GetDescription: IActiveText; virtual;
+    procedure SetDescription(Value: IActiveText);
     function GetSourceCode: string; virtual;
     procedure SetSourceCode(const Value: string);
     function GetLanguageID: TSourceCodeLanguageID; virtual;
     procedure SetLanguageID(const Value: TSourceCodeLanguageID);
     function GetRequiredModules: IStringList; virtual;
     procedure SetRequiredModules(Value: IStringList);
-    function GetRequiredSnippets: IDBSnippetIDList; virtual;
-    procedure SetRequiredSnippets(Value: IDBSnippetIDList);
-    function GetXRefs: IDBSnippetIDList; virtual;
-    procedure SetXRefs(Value: IDBSnippetIDList);
-    function GetNotes: TMarkup; virtual;
-    procedure SetNotes(const Value: TMarkup);
-    function GetKind: TDBSnippetKind; virtual;
-    procedure SetKind(const Value: TDBSnippetKind);
-    function GetCompileResults: TDBCompileResults; virtual;
-    procedure SetCompileResults(const Value: TDBCompileResults);
-    function GetTags: IDBTagList; virtual;
-    procedure SetTags(Value: IDBTagList);
+    function GetRequiredSnippets: ISnippetIDList; virtual;
+    procedure SetRequiredSnippets(Value: ISnippetIDList);
+    function GetXRefs: ISnippetIDList; virtual;
+    procedure SetXRefs(Value: ISnippetIDList);
+    function GetNotes: IActiveText; virtual;
+    procedure SetNotes(Value: IActiveText);
+    function GetKind: TSnippetKind; virtual;
+    procedure SetKind(const Value: TSnippetKind);
+    function GetCompileResults: TCompileResults; virtual;
+    procedure SetCompileResults(const Value: TCompileResults);
+    function GetTags: ITagSet; virtual;
+    procedure SetTags(Value: ITagSet);
     function GetLinkInfo: ISnippetLinkInfo; virtual;
     procedure SetLinkInfo(ALinkInfo: ISnippetLinkInfo);
     function GetTestInfo: TSnippetTestInfo; virtual;
@@ -87,22 +88,22 @@ type
       fValidProperties: TDBSnippetProps;
     procedure CheckValidProp(const AProp: TDBSnippetProp);
   public
-    constructor Create(const ASnippetID: TDBSnippetID); overload;
+    constructor Create(const ASnippetID: TSnippetID); overload;
     constructor Create(const ASourceSnippet: TSnippetBase;
       const ValidProps: TDBSnippetProps = []); overload;
     destructor Destroy; override;
     function GetModified: TUTCDateTime; override;
     function GetTitle: string; override;
-    function GetDescription: TMarkup; override;
+    function GetDescription: IActiveText; override;
     function GetSourceCode: string; override;
     function GetLanguageID: TSourceCodeLanguageID; override;
     function GetRequiredModules: IStringList; override;
-    function GetRequiredSnippets: IDBSnippetIDList; override;
-    function GetXRefs: IDBSnippetIDList; override;
-    function GetNotes: TMarkup; override;
-    function GetKind: TDBSnippetKind; override;
-    function GetCompileResults: TDBCompileResults; override;
-    function GetTags: IDBTagList; override;
+    function GetRequiredSnippets: ISnippetIDList; override;
+    function GetXRefs: ISnippetIDList; override;
+    function GetNotes: IActiveText; override;
+    function GetKind: TSnippetKind; override;
+    function GetCompileResults: TCompileResults; override;
+    function GetTags: ITagSet; override;
     function GetLinkInfo: ISnippetLinkInfo; override;
     function GetTestInfo: TSnippetTestInfo; override;
     function GetStarred: Boolean; override;
@@ -111,27 +112,27 @@ type
     function SupportsProperty(const AProp: TDBSnippetProp): Boolean; override;
   end;
 
-  TDBSnippetIDList = class(TInterfacedObject, IDBSnippetIDList)
-  strict private
-    var
-      fItems: TList<TDBSnippetID>;
-    function IndexOf(const AID: TDBSnippetID): Integer;
-  public
-    constructor Create; overload;
-    constructor Create(const ASnippetIDs: IDBSnippetIDList); overload;
-    destructor Destroy; override;
-
-    // IDBSnippetIDList methods
-    function GetEnumerator: TEnumerator<TDBSnippetID>;
-    procedure Add(const AID: TDBSnippetID);
-    procedure Delete(const AID: TDBSnippetID);
-    procedure Clear;
-    function Contains(const AID: TDBSnippetID): Boolean; inline;
-    function GetItem(const AIdx: Integer): TDBSnippetID;
-    function GetCount: Integer;
-    property Items[const AIdx: Integer]: TDBSnippetID read GetItem;
-    property Count: Integer read GetCount;
-  end;
+//  TDBSnippetIDList = class(TInterfacedObject, IDBSnippetIDList)
+//  strict private
+//    var
+//      fItems: TList<TDBSnippetID>;
+//    function IndexOf(const AID: TDBSnippetID): Integer;
+//  public
+//    constructor Create; overload;
+//    constructor Create(const ASnippetIDs: IDBSnippetIDList); overload;
+//    destructor Destroy; override;
+//
+//    // IDBSnippetIDList methods
+//    function GetEnumerator: TEnumerator<TDBSnippetID>;
+//    procedure Add(const AID: TDBSnippetID);
+//    procedure Delete(const AID: TDBSnippetID);
+//    procedure Clear;
+//    function Contains(const AID: TDBSnippetID): Boolean; inline;
+//    function GetItem(const AIdx: Integer): TDBSnippetID;
+//    function GetCount: Integer;
+//    property Items[const AIdx: Integer]: TDBSnippetID read GetItem;
+//    property Count: Integer read GetCount;
+//  end;
 
   EDBSnippet = class(EBug);
 
@@ -142,82 +143,84 @@ uses
   Classes,
   RTLConsts,
   CS.Database.SnippetLinks,
-  CS.Database.Tags;
+  CS.Database.Tags,
+  IntfCommon,
+  USnippetIDs;
 
-{ TDBSnippetIDList }
-
-procedure TDBSnippetIDList.Add(const AID: TDBSnippetID);
-begin
-//  if Contains(AID) then
-//    raise EListError.Create(SGenericDuplicateItem);
-  fItems.Add(AID);
-end;
-
-procedure TDBSnippetIDList.Clear;
-begin
-  fItems.Clear;
-end;
-
-function TDBSnippetIDList.Contains(const AID: TDBSnippetID): Boolean;
-begin
-  Result := IndexOf(AID) >= 0;
-end;
-
-constructor TDBSnippetIDList.Create(const ASnippetIDs: IDBSnippetIDList);
-var
-  ID: TDBSnippetID;
-begin
-  Create;
-  for ID in ASnippetIDs do
-    fItems.Add(ID);
-end;
-
-constructor TDBSnippetIDList.Create;
-begin
-  inherited Create;
-  fItems := TList<TDBSnippetID>.Create;
-end;
-
-procedure TDBSnippetIDList.Delete(const AID: TDBSnippetID);
-var
-  Idx: Integer;
-begin
-  Idx := IndexOf(AID);
-  if Idx = -1 then
-    raise EListError.Create(SGenericItemNotFound);
-  fItems.Delete(Idx);
-end;
-
-destructor TDBSnippetIDList.Destroy;
-begin
-  fItems.Free;
-  inherited;
-end;
-
-function TDBSnippetIDList.GetCount: Integer;
-begin
-  Result := fItems.Count;
-end;
-
-function TDBSnippetIDList.GetEnumerator: TEnumerator<TDBSnippetID>;
-begin
-  Result := fItems.GetEnumerator;
-end;
-
-function TDBSnippetIDList.GetItem(const AIdx: Integer): TDBSnippetID;
-begin
-  Result := fItems[AIdx];
-end;
-
-function TDBSnippetIDList.IndexOf(const AID: TDBSnippetID): Integer;
-var
-  Idx: Integer;
-begin
-  for Idx := 0 to Pred(fItems.Count) do
-    if fItems[Idx] = AID then
-      Exit(Idx);
-  Result := -1;
-end;
+//{ TDBSnippetIDList }
+//
+//procedure TDBSnippetIDList.Add(const AID: TDBSnippetID);
+//begin
+////  if Contains(AID) then
+////    raise EListError.Create(SGenericDuplicateItem);
+//  fItems.Add(AID);
+//end;
+//
+//procedure TDBSnippetIDList.Clear;
+//begin
+//  fItems.Clear;
+//end;
+//
+//function TDBSnippetIDList.Contains(const AID: TDBSnippetID): Boolean;
+//begin
+//  Result := IndexOf(AID) >= 0;
+//end;
+//
+//constructor TDBSnippetIDList.Create(const ASnippetIDs: IDBSnippetIDList);
+//var
+//  ID: TDBSnippetID;
+//begin
+//  Create;
+//  for ID in ASnippetIDs do
+//    fItems.Add(ID);
+//end;
+//
+//constructor TDBSnippetIDList.Create;
+//begin
+//  inherited Create;
+//  fItems := TList<TDBSnippetID>.Create;
+//end;
+//
+//procedure TDBSnippetIDList.Delete(const AID: TDBSnippetID);
+//var
+//  Idx: Integer;
+//begin
+//  Idx := IndexOf(AID);
+//  if Idx = -1 then
+//    raise EListError.Create(SGenericItemNotFound);
+//  fItems.Delete(Idx);
+//end;
+//
+//destructor TDBSnippetIDList.Destroy;
+//begin
+//  fItems.Free;
+//  inherited;
+//end;
+//
+//function TDBSnippetIDList.GetCount: Integer;
+//begin
+//  Result := fItems.Count;
+//end;
+//
+//function TDBSnippetIDList.GetEnumerator: TEnumerator<TDBSnippetID>;
+//begin
+//  Result := fItems.GetEnumerator;
+//end;
+//
+//function TDBSnippetIDList.GetItem(const AIdx: Integer): TDBSnippetID;
+//begin
+//  Result := fItems[AIdx];
+//end;
+//
+//function TDBSnippetIDList.IndexOf(const AID: TDBSnippetID): Integer;
+//var
+//  Idx: Integer;
+//begin
+//  for Idx := 0 to Pred(fItems.Count) do
+//    if fItems[Idx] = AID then
+//      Exit(Idx);
+//  Result := -1;
+//end;
 
 { TSnippetBase }
 
@@ -227,22 +230,25 @@ begin
   UpdateFrom(ASourceSnippet);
 end;
 
-constructor TSnippetBase.Create(const ASnippetID: TDBSnippetID);
+constructor TSnippetBase.Create(const ASnippetID: TSnippetID);
+var
+  CompID: TCompilerID;
 begin
   inherited Create;
   fID := ASnippetID;
   fCreated := TUTCDateTime.Now;
   fModified := fCreated;
   fTitle := '';
-  fDescription := TMarkup.CreateEmpty;
+  fDescription := nil;
   fSourceCode := '';
   fLanguageID := TSourceCodeLanguageID.CreateDefault;
   fRequiredModules := nil;
   fRequiredSnippets := nil;
   fXRefs := nil;
-  fNotes := TMarkup.CreateEmpty;
+  fNotes := nil;
   fKind := skFreeForm;
-  fCompileResults := TDBCompileResults.CreateNull;
+  for CompID := Low(TCompilerID) to High(TCompilerID) do
+    fCompileResults[CompID] := crQuery;
   fTags := nil;
   fLinkInfo := nil;
   fTestInfo := stiNone;
@@ -261,7 +267,7 @@ begin
   inherited;
 end;
 
-function TSnippetBase.GetCompileResults: TDBCompileResults;
+function TSnippetBase.GetCompileResults: TCompileResults;
 begin
   Result := fCompileResults;
 end;
@@ -271,17 +277,19 @@ begin
   Result := fCreated;
 end;
 
-function TSnippetBase.GetDescription: TMarkup;
+function TSnippetBase.GetDescription: IActiveText;
 begin
-  Result := fDescription;
+  if not Assigned(fDescription) then
+    Exit(TActiveTextFactory.CreateActiveText);
+  Result := TActiveTextFactory.CloneActiveText(fDescription);
 end;
 
-function TSnippetBase.GetID: TDBSnippetID;
+function TSnippetBase.GetID: TSnippetID;
 begin
   Result := fID;
 end;
 
-function TSnippetBase.GetKind: TDBSnippetKind;
+function TSnippetBase.GetKind: TSnippetKind;
 begin
   Result := fKind;
 end;
@@ -303,9 +311,11 @@ begin
   Result := fModified;
 end;
 
-function TSnippetBase.GetNotes: TMarkup;
+function TSnippetBase.GetNotes: IActiveText;
 begin
-  Result := fNotes;
+  if not Assigned(fNotes) then
+    Exit(TActiveTextFactory.CreateActiveText);
+  Result := TActiveTextFactory.CloneActiveText(fNotes);
 end;
 
 function TSnippetBase.GetRequiredModules: IStringList;
@@ -315,11 +325,11 @@ begin
   Result := TIStringList.Create(fRequiredModules);
 end;
 
-function TSnippetBase.GetRequiredSnippets: IDBSnippetIDList;
+function TSnippetBase.GetRequiredSnippets: ISnippetIDList;
 begin
   if not Assigned(fRequiredSnippets) then
-    Exit(TDBSnippetIDList.Create);
-  Result := TDBSnippetIDList.Create(fRequiredSnippets);
+    Exit(TSnippetIDList.Create);
+  Result := (fRequiredSnippets as IClonable).Clone as ISnippetIDList;
 end;
 
 function TSnippetBase.GetSourceCode: string;
@@ -332,11 +342,11 @@ begin
   Result := fStarred;
 end;
 
-function TSnippetBase.GetTags: IDBTagList;
+function TSnippetBase.GetTags: ITagSet;
 begin
   if not Assigned(fTags) then
-    Exit(TDBTagList.Create);
-  Result := TDBTagList.Create(fTags);
+    Exit(TTagSet.Create);
+  Result := TTagSet.Create(fTags);
 end;
 
 function TSnippetBase.GetTestInfo: TSnippetTestInfo;
@@ -349,14 +359,14 @@ begin
   Result := fTitle;
 end;
 
-function TSnippetBase.GetXRefs: IDBSnippetIDList;
+function TSnippetBase.GetXRefs: ISnippetIDList;
 begin
   if not Assigned(fXRefs) then
-    Exit(TDBSnippetIDList.Create);
-  Result := TDBSnippetIDList.Create(fXRefs);
+    Exit(TSnippetIDList.Create);
+  Result := (fXRefs as IClonable).Clone as ISnippetIDList;
 end;
 
-procedure TSnippetBase.SetCompileResults(const Value: TDBCompileResults);
+procedure TSnippetBase.SetCompileResults(const Value: TCompileResults);
 begin
   fCompileResults := Value;
 end;
@@ -366,12 +376,15 @@ begin
   fCreated := Value;
 end;
 
-procedure TSnippetBase.SetDescription(const Value: TMarkup);
+procedure TSnippetBase.SetDescription(Value: IActiveText);
 begin
-  fDescription := Value;
+  if not Assigned(Value) or Value.IsEmpty then
+    fDescription := nil
+  else
+    fDescription := TActiveTextFactory.CloneActiveText(Value);
 end;
 
-procedure TSnippetBase.SetKind(const Value: TDBSnippetKind);
+procedure TSnippetBase.SetKind(const Value: TSnippetKind);
 begin
   fKind := Value;
 end;
@@ -383,7 +396,10 @@ end;
 
 procedure TSnippetBase.SetLinkInfo(ALinkInfo: ISnippetLinkInfo);
 begin
-  fLinkInfo := ALinkInfo;
+  if not Assigned(ALinkInfo) then
+    fLinkInfo := nil
+  else
+    fLinkInfo := TSnippetLinkInfo.Create(ALinkInfo);
 end;
 
 procedure TSnippetBase.SetModified(const Value: TUTCDateTime);
@@ -391,9 +407,12 @@ begin
   fModified := Value;
 end;
 
-procedure TSnippetBase.SetNotes(const Value: TMarkup);
+procedure TSnippetBase.SetNotes(Value: IActiveText);
 begin
-  fNotes := Value;
+  if not Assigned(Value) or Value.IsEmpty then
+    fNotes := nil
+  else
+    fNotes := TActiveTextFactory.CloneActiveText(Value);
 end;
 
 procedure TSnippetBase.SetRequiredModules(Value: IStringList);
@@ -404,12 +423,12 @@ begin
     fRequiredModules := TIStringList.Create(Value);
 end;
 
-procedure TSnippetBase.SetRequiredSnippets(Value: IDBSnippetIDList);
+procedure TSnippetBase.SetRequiredSnippets(Value: ISnippetIDList);
 begin
-  if not Assigned(Value) or (Value.Count = 0) then
+  if not Assigned(Value) or Value.IsEmpty then
     fRequiredSnippets := nil
   else
-    fRequiredSnippets := TDBSnippetIDList.Create(Value);
+    fRequiredSnippets := (Value as IClonable).Clone as ISnippetIDList;
 end;
 
 procedure TSnippetBase.SetSourceCode(const Value: string);
@@ -422,12 +441,12 @@ begin
   fStarred := AStarred;
 end;
 
-procedure TSnippetBase.SetTags(Value: IDBTagList);
+procedure TSnippetBase.SetTags(Value: ITagSet);
 begin
-  if not Assigned(Value) or (Value.Count = 0) then
+  if not Assigned(Value) or Value.IsEmpty then
     fTags := nil
   else
-    fTags := TDBTagList.Create(Value);
+    fTags := TTagSet.Create(Value);
 end;
 
 procedure TSnippetBase.SetTestInfo(ATestInfo: TSnippetTestInfo);
@@ -440,12 +459,12 @@ begin
   fTitle := Value;
 end;
 
-procedure TSnippetBase.SetXRefs(Value: IDBSnippetIDList);
+procedure TSnippetBase.SetXRefs(Value: ISnippetIDList);
 begin
-  if not Assigned(Value) or (Value.Count = 0) then
+  if not Assigned(Value) or Value.IsEmpty then
     fXRefs := nil
   else
-    fXRefs := TDBSnippetIDList.Create(Value);
+    fXRefs := (Value as IClonable).Clone as ISnippetIDList;
 end;
 
 function TSnippetBase.SupportsProperty(const APropID: TDBSnippetProp): Boolean;
@@ -495,7 +514,7 @@ end;
 
 class function TSnippet.CreateNew: TSnippet;
 begin
-  Result := TSnippet.Create(TDBSnippetID.CreateNew);
+  Result := TSnippet.Create(TSnippetID.CreateNew);
 end;
 
 destructor TSnippet.Destroy;
@@ -511,7 +530,7 @@ begin
     raise EDBSnippet.Create('Property access not permitted');
 end;
 
-constructor TPartialSnippet.Create(const ASnippetID: TDBSnippetID);
+constructor TPartialSnippet.Create(const ASnippetID: TSnippetID);
 begin
   raise ENoConstructException.CreateFmt(
     'This form of constructor not permitted for %s', [ClassName]
@@ -530,19 +549,19 @@ begin
   inherited;
 end;
 
-function TPartialSnippet.GetCompileResults: TDBCompileResults;
+function TPartialSnippet.GetCompileResults: TCompileResults;
 begin
   CheckValidProp(spCompileResults);
   Result := inherited GetCompileResults;
 end;
 
-function TPartialSnippet.GetDescription: TMarkup;
+function TPartialSnippet.GetDescription: IActiveText;
 begin
   CheckValidProp(spDescription);
   Result := inherited GetDescription;
 end;
 
-function TPartialSnippet.GetKind: TDBSnippetKind;
+function TPartialSnippet.GetKind: TSnippetKind;
 begin
   CheckValidProp(spKind);
   Result := inherited GetKind;
@@ -566,7 +585,7 @@ begin
   Result := inherited GetModified;
 end;
 
-function TPartialSnippet.GetNotes: TMarkup;
+function TPartialSnippet.GetNotes: IActiveText;
 begin
   CheckValidProp(spNotes);
   Result := inherited GetNotes;
@@ -578,7 +597,7 @@ begin
   Result := inherited GetRequiredModules;
 end;
 
-function TPartialSnippet.GetRequiredSnippets: IDBSnippetIDList;
+function TPartialSnippet.GetRequiredSnippets: ISnippetIDList;
 begin
   CheckValidProp(spRequiredSnippets);
   Result := inherited GetRequiredSnippets;
@@ -596,7 +615,7 @@ begin
   Result := inherited GetStarred;
 end;
 
-function TPartialSnippet.GetTags: IDBTagList;
+function TPartialSnippet.GetTags: ITagSet;
 begin
   CheckValidProp(spTags);
   Result := inherited GetTags;
@@ -619,7 +638,7 @@ begin
   Result := fValidProperties;
 end;
 
-function TPartialSnippet.GetXRefs: IDBSnippetIDList;
+function TPartialSnippet.GetXRefs: ISnippetIDList;
 begin
   CheckValidProp(spXRefs);
   Result := inherited GetXRefs;
