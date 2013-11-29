@@ -145,7 +145,7 @@ var
   Group: TGroupItem;            // group representing a category
 begin
   // Create grouping of all snippets by category, with categories alpha sorted
-  Grouping := TCategoryGrouping.Create(Database.SelectAll);
+  Grouping := TCategoryGrouping.Create(_Database.SelectAll);
   try
     for Group in Grouping do
     begin

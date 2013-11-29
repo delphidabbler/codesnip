@@ -753,7 +753,7 @@ var
 begin
   // NOTE: this method must not be called from any other method of this class
   // Validate the snippet
-  Snippet := Database.Lookup(SnippetID);
+  Snippet := _Database.Lookup(SnippetID);
   if not TSnippetValidator.Validate(Snippet, ErrorMsg) then
     raise ECodeSnip.Create(ErrorMsg);
   // Process the snippet
@@ -861,7 +861,7 @@ var
   SnippetID: TSnippetID;  // iterates through snippets list
 begin
   for SnippetID in Snips do
-    RequireSnippet(Database.Lookup(SnippetID));
+    RequireSnippet(_Database.Lookup(SnippetID));
 end;
 
 procedure TPascalSourceAnalyser.RequireUnit(const UnitName: string);

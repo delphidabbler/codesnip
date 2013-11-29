@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2009-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2009-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -204,9 +204,9 @@ procedure TRenameCategoryDlg.RenameCategory(const Category: TCategory;
 var
   EditData: TCategoryData;  // category properties
 begin
-  EditData := (Database as IDatabaseEdit).GetEditableCategoryInfo(Category);
+  EditData := (_Database as IDatabaseEdit).GetEditableCategoryInfo(Category);
   EditData.Desc := NewDesc;
-  (Database as IDatabaseEdit).UpdateCategory(Category, EditData);
+  (_Database as IDatabaseEdit).UpdateCategory(Category, EditData);
 end;
 
 procedure TRenameCategoryDlg.UpdateOKBtn;

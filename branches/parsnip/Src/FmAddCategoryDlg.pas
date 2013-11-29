@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2009-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2009-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -85,11 +85,11 @@ procedure TAddCategoryDlg.AddCategory(const Desc: string);
 var
   Data: TCategoryData;  // category properties
 begin
-  Data := (Database as IDatabaseEdit).GetEditableCategoryInfo;
+  Data := (_Database as IDatabaseEdit).GetEditableCategoryInfo;
   Data.Desc := Desc;
   // add category with a unique id string as name (name must be unique and is
   // for internal use only)
-  (Database as IDatabaseEdit).AddCategory(TUniqueID.Generate, Data);
+  (_Database as IDatabaseEdit).AddCategory(TUniqueID.Generate, Data);
 end;
 
 procedure TAddCategoryDlg.ArrangeForm;

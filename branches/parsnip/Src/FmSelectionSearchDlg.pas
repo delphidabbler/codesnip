@@ -156,7 +156,7 @@ procedure TSelectionSearchDlg.btnSelectAllClick(Sender: TObject);
     @param Sender [in] Not used.
   }
 begin
-  frmSelect.SelectSnippets(Database.SelectAll);
+  frmSelect.SelectSnippets(_Database.SelectAll);
 end;
 
 procedure TSelectionSearchDlg.ConfigForm;

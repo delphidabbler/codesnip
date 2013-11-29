@@ -114,7 +114,7 @@ begin
     if not TryStrToDateTime(Fields[2], LastAccess) then
       raise EFavouritesPersist.Create(sBadFormat);
     // only add to favourites if snippet in database
-    if Database.Contains(SnippetID) then
+    if _Database.Contains(SnippetID) then
       Favourites.Add(SnippetID, LastAccess);
   end;
 end;

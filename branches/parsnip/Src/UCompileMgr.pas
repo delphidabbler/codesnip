@@ -150,7 +150,7 @@ begin
     DisplayProc(fCompilers);
   // Copy snippet to LastCompiledSnippet property
   fLastCompiledSnippet.Free;
-  fLastCompiledSnippet := (Database as IDatabaseEdit).CreateTempSnippet(
+  fLastCompiledSnippet := (_Database as IDatabaseEdit).CreateTempSnippet(
     Snippet
   );
 end;
@@ -162,7 +162,7 @@ constructor TCompileMgr.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
   fCompilers := TCompilersFactory.CreateAndLoadCompilers;
-  Database.AddChangeEventHandler(DBChangeEventHandler);
+  _Database.AddChangeEventHandler(DBChangeEventHandler);
 end;
 
 procedure TCompileMgr.DBChangeEventHandler(Sender: TObject;
@@ -187,7 +187,7 @@ destructor TCompileMgr.Destroy;
   {Class destructor. Tears down object.
   }
 begin
-  Database.RemoveChangeEventHandler(DBChangeEventHandler);
+  _Database.RemoveChangeEventHandler(DBChangeEventHandler);
   fLastCompiledSnippet.Free;
   fCompilers := nil;
   inherited;

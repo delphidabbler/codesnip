@@ -363,7 +363,7 @@ var
   SnippetNode: IXMLNode;  // new snippet node
   Snippet: TSnippet;      // snippet being written out
 begin
-  Snippet := Database.Lookup(SnippetID);
+  Snippet := _Database.Lookup(SnippetID);
   // Create snippet node with attribute that specifies snippet name
   SnippetNode := fXMLDoc.CreateElement(ParentNode, cSnippetNode);
   SnippetNode.Attributes[cSnippetNameAttr] := SnippetID.ToString;
@@ -529,7 +529,7 @@ begin
       SnippetNode := SnippetNodes[Idx];
       fSnippetInfo[Idx].Name := SnippetNode.Attributes[cSnippetNameAttr];
       fSnippetInfo[Idx].Data :=
-        (Database as IDatabaseEdit).GetEditableSnippetInfo;
+        (_Database as IDatabaseEdit).GetEditableSnippetInfo;
       with fSnippetInfo[Idx].Data do
       begin
         Props.Cat := TReservedCategories.ImportsCatID;

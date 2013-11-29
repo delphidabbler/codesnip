@@ -143,7 +143,7 @@ begin
   CatSnippets := Query.GetCatSelection(CatView.Category);
   for SnippetID in CatSnippets do
   begin
-    Snippet := Database.Lookup(SnippetID);
+    Snippet := _Database.Lookup(SnippetID);
     if Snippet.Kind = skRoutine then
       Exit(True);
   end;

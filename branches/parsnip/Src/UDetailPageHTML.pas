@@ -458,7 +458,7 @@ begin
     'externalScript', TJavaScript.LoadScript('external.js', etWindows1252)
   );
 
-  DBSize := Database.SnippetCount;
+  DBSize := _Database.SnippetCount;
   Tplt.ResolvePlaceholderHTML(
     'HaveSnippets', TCSS.BlockDisplayProp(DBSize > 0)
   );
@@ -569,7 +569,7 @@ begin
   fSnippetList.Clear;
   for SnippetID in Query.Selection do
   begin
-    Snippet := Database.Lookup(SnippetID);
+    Snippet := _Database.Lookup(SnippetID);
     if IsSnippetRequired(Snippet) then
       fSnippetList.Add(Snippet);
   end;

@@ -371,7 +371,7 @@ var
   Snippet: TSnippet;
 begin
   LI := fLVFavs.Items.Add as TFavouriteListItem;
-  if Database.TryLookup(Favourite.SnippetID, Snippet) then
+  if _Database.TryLookup(Favourite.SnippetID, Snippet) then
     LI.Caption := Snippet.Title
   else
     LI.Caption := Favourite.SnippetID.ToString;

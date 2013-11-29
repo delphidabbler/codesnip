@@ -357,7 +357,7 @@ const
   SnippetsStr: array[Boolean] of string = (sSnippet, sSnippets);
 begin
   // Calculate database stats
-  TotalSnippets := Database.SnippetCount;
+  TotalSnippets := _Database.SnippetCount;
   // Build display text and display it
   fStatusBar.Panels[cDBPanel].Text := Format(
     sStats, [TotalSnippets, SnippetsStr[TotalSnippets <> 1]]
@@ -373,7 +373,7 @@ begin
   // status bar to draw the panel.
 
   // We hide message if database not updated
-  fUserDBInfoVisible := (Database as IDatabaseEdit).Updated;
+  fUserDBInfoVisible := (_Database as IDatabaseEdit).Updated;
   fStatusBar.Repaint;
 end;
 

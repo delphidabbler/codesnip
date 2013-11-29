@@ -191,7 +191,7 @@ var
 begin
   Result := TIStringList.Create;
   Result.CaseSensitive := False;
-  for SnippetID in Database.SelectAll do
+  for SnippetID in _Database.SelectAll do
     Result.Add(SnippetID.ToString);
   for SnippetInfo in fSnippetInfoList do
     if not StrSameText(SnippetInfo.Name, ExcludedName) then
@@ -276,7 +276,7 @@ resourcestring
   // Error message
   sBadNameError = 'Can''t find snippet "%s" in import data';
 begin
-  Editor := Database as IDatabaseEdit;
+  Editor := _Database as IDatabaseEdit;
   for SnippetInfo in fSnippetInfoList do
   begin
     if not fImportInfoList.FindByName(SnippetInfo.Name, ImportInfo) then
@@ -291,7 +291,7 @@ begin
     { TODO: fix this code - ImportAsName will not longer have correct snippet
                             ID: will need to implement LinkInfo property of
                             snippet for this to work }
-    if Database.TryLookup(
+    if _Database.TryLookup(
       TSnippetID.Create(ImportInfo.ImportAsName), Snippet
     ) then
       // snippet already exists: overwrite it

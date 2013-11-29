@@ -990,7 +990,7 @@ end;
 
 procedure TMainForm.ActNonEmptyDBUpdate(Sender: TObject);
 begin
-  (Sender as TAction).Enabled := not Database.IsEmpty;
+  (Sender as TAction).Enabled := not _Database.IsEmpty;
 end;
 
 procedure TMainForm.ActOverviewTabExecute(Sender: TObject);
@@ -1395,13 +1395,13 @@ begin
   TNotificationDisplayMgr.Stop;
 
   // Save any changes to user database
-  with Database as IDatabaseEdit do
+  with _Database as IDatabaseEdit do
   begin
     if Updated then
       Save;
   end;
   // Unhook snippets event handler
-  Database.RemoveChangeEventHandler(DBChangeHandler);
+  _Database.RemoveChangeEventHandler(DBChangeHandler);
   // Save window state
   fWindowSettings.SplitterPos := pnlLeft.Width;
   fWindowSettings.OverviewTab := fMainDisplayMgr.SelectedOverviewTab;
@@ -1614,7 +1614,7 @@ begin
     fIsAppRegistered := TAppInfo.IsRegistered;
 
     // Set event handler for snippets database
-    Database.AddChangeEventHandler(DBChangeHandler);
+    _Database.AddChangeEventHandler(DBChangeHandler);
 
     // Load snippets database
     LoadSnippets(

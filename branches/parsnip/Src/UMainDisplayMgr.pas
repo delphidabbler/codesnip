@@ -401,7 +401,7 @@ begin
   // Record subsidiary display managers
   fOverviewMgr := OverviewMgr;
   fDetailsMgr := DetailsMgr;
-  Database.AddChangeEventHandler(DBChangeEventHandler);
+  _Database.AddChangeEventHandler(DBChangeEventHandler);
 end;
 
 procedure TMainDisplayMgr.CreateNewDetailsTab;
@@ -463,7 +463,7 @@ end;
 
 destructor TMainDisplayMgr.Destroy;
 begin
-  Database.RemoveChangeEventHandler(DBChangeEventHandler);
+  _Database.RemoveChangeEventHandler(DBChangeEventHandler);
   inherited;
 end;
 

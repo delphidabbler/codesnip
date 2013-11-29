@@ -573,7 +573,7 @@ end;
 
 function TSnippetView.GetSnippet: TSnippet;
 begin
-  Result := Database.Lookup(fSnippetID);
+  Result := _Database.Lookup(fSnippetID);
 end;
 
 function TSnippetView.IsEqual(View: IView): Boolean;
@@ -622,7 +622,7 @@ end;
 
 function TCategoryView.GetCategory: TCategory;
 begin
-  Result := Database.Categories.Find(fCategoryID);
+  Result := _Database.Categories.Find(fCategoryID);
   Assert(Assigned(Result), ClassName + '.GetCategory: Category not found');
 end;
 

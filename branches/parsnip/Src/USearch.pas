@@ -769,7 +769,7 @@ var
   CompID: TCompilerID;  // loops thru supported compilers
   Snippet: TSnippet;    //
 begin
-  Snippet := Database.Lookup(SnippetID);
+  Snippet := _Database.Lookup(SnippetID);
   if fLogic = slOr then
   begin
     // Find any compiler: we return true as soon as any compiler compatibility
@@ -939,7 +939,7 @@ var
   StrBuilder: TStringBuilder;              // constructs search text
   Snippet: TSnippet;                       // snippet we're matching
 begin
-  Snippet := Database.Lookup(SnippetID);
+  Snippet := _Database.Lookup(SnippetID);
   // Build search text
   StrBuilder := TStringBuilder.Create;
   try
@@ -1030,7 +1030,7 @@ var
   Snippet: TSnippet;
 begin
   for SnippetID in SnippetIDs do
-    if Database.TryLookup(SnippetID, Snippet) then
+    if _Database.TryLookup(SnippetID, Snippet) then
       AddToXRefs(Snippet);
 end;
 
@@ -1099,7 +1099,7 @@ begin
     fXRefs := TSnippetList.Create;
     Initialise;
   end;
-  Snippet := Database.Lookup(SnippetID);
+  Snippet := _Database.Lookup(SnippetID);
   Result := fXRefs.Contains(Snippet);
 end;
 
@@ -1109,21 +1109,21 @@ var
 begin
   if soRequired in fOptions then
     for SnippetID in Snippet.RequiredSnippets do
-      ReferenceSnippet(Database.Lookup(SnippetID));
+      ReferenceSnippet(_Database.Lookup(SnippetID));
 end;
 
 procedure TXRefSearchFilter.ReferenceReverseRequired(const Snippet: TSnippet);
 begin
   if not (soRequiredReverse in fOptions) then
     Exit;
-  AddToXRefs((Database as IDatabaseEdit).GetDependents(Snippet));
+  AddToXRefs((_Database as IDatabaseEdit).GetDependents(Snippet));
 end;
 
 procedure TXRefSearchFilter.ReferenceReverseSeeAlso(const Snippet: TSnippet);
 begin
   if not (soSeeAlsoReverse in fOptions) then
     Exit;
-  AddToXRefs((Database as IDatabaseEdit).GetReferrers(Snippet));
+  AddToXRefs((_Database as IDatabaseEdit).GetReferrers(Snippet));
 end;
 
 procedure TXRefSearchFilter.ReferenceSeeAlso(const Snippet: TSnippet);
@@ -1132,7 +1132,7 @@ var
 begin
   if soSeeAlso in fOptions then
     for SnippetID in Snippet.XRefs do
-      ReferenceSnippet(Database.Lookup(SnippetID));
+      ReferenceSnippet(_Database.Lookup(SnippetID));
 end;
 
 procedure TXRefSearchFilter.ReferenceSnippet(const Snippet: TSnippet);

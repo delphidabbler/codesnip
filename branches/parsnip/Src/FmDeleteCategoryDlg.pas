@@ -130,7 +130,7 @@ procedure TDeleteCategoryDlg.DeleteCategory(const Cat: TCategory);
     @param Cat [in] Category to be deleted.
   }
 begin
-  (Database as IDatabaseEdit).DeleteCategory(Cat);
+  (_Database as IDatabaseEdit).DeleteCategory(Cat);
 end;
 
 class function TDeleteCategoryDlg.Execute(AOwner: TComponent;

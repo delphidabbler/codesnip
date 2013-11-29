@@ -146,7 +146,7 @@ var
   Cat: TCategory; // each category in database
 begin
   Result := False;
-  for Cat in Database.Categories do
+  for Cat in _Database.Categories do
     if StrSameText(Desc, Cat.Description) then
     begin
       Result := True;

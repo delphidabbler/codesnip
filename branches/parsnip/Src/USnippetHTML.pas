@@ -125,7 +125,7 @@ function TSnippetHTML.Category: string;
 var
   Cat: TCategory; // category that snippet belongs to
 begin
-  Cat := Database.Categories.Find(fSnippet.Category);
+  Cat := _Database.Categories.Find(fSnippet.Category);
   Assert(Assigned(Cat), ClassName + '.Category: Category not found');
   Result := StrMakeSentence(
     JSALink(
@@ -202,7 +202,7 @@ begin
     begin
       if Result <> '' then
         Result := Result + ', ';
-      Result := Result + SnippetALink(Database.Lookup(SnippetID));
+      Result := Result + SnippetALink(_Database.Lookup(SnippetID));
     end;
     Result := StrMakeSentence(Result);
   end;

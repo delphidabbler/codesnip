@@ -389,13 +389,13 @@ var
   SnippetID: TSnippetID;    // ID of each snippet in a category
   Item: TCategoryGroupItem; // group item for each category
 begin
-  for Cat in Database.Categories do
+  for Cat in _Database.Categories do
   begin
     Item := TCategoryGroupItem.Create(Cat);
     AddItem(Item);
     for SnippetID in Cat.SnippetIDs do
       if SnippetIDList.Contains(SnippetID) then
-        Item.AddSnippet(Database.Lookup(SnippetID));
+        Item.AddSnippet(_Database.Lookup(SnippetID));
   end;
 end;
 
@@ -474,9 +474,9 @@ begin
   // letters in case user wants to display empty letter groups. We then add
   // only those snippets in given snippet list to the grouping.
   try
-    for SnippetID in Database.SelectAll do
+    for SnippetID in _Database.SelectAll do
     begin
-      Snippet := Database.Lookup(SnippetID);
+      Snippet := _Database.Lookup(SnippetID);
       Letter := TInitialLetter.Create(FirstCharOfName(Snippet.Title));
       if Map.ContainsKey(Letter) then
         GroupItem := Map[Letter]
@@ -550,7 +550,7 @@ begin
   for SnippetID in SnippetIDList do
   begin
     // find group item and add snippet to it
-    Snippet := Database.Lookup(SnippetID);
+    Snippet := _Database.Lookup(SnippetID);
     Item := Lookup[Snippet.Kind];
     Assert(Assigned(Item), ClassName + '.Populate: Item not found');
     Item.AddSnippet(Snippet);

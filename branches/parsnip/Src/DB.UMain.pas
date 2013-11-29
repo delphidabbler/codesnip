@@ -130,11 +130,11 @@ type
   TDatabaseFilterFn = reference to function (const Snippet: TSnippet): Boolean;
 
   {
-  IDatabase:
+  _IDatabase:
     Interface to object that encapsulates the whole (main and user) databases
     and provides access to all snippets and all categories.
   }
-  IDatabase = interface(IInterface)
+  _IDatabase = interface(IInterface)
     ['{A280DEEF-0336-4264-8BD0-7CDFBB207D2E}']
     procedure Load;
       {Loads data from main and user databases.
@@ -268,7 +268,7 @@ type
   end;
 
 
-function Database: IDatabase;
+function _Database: _IDatabase;
   {Returns singleton instance of object that encapsulates main and user
   databases.
     @return Singleton object.
@@ -292,7 +292,7 @@ uses
 
 var
   // Private global snippets singleton object
-  PvtDatabase: IDatabase = nil;
+  _PvtDatabase: _IDatabase = nil;
 
 
 type
@@ -322,13 +322,13 @@ type
   end;
 
   {
-  TDatabase:
+  _TDatabase:
     Class that encapsulates the main and user databases. Provides access to all
     snippets and all categories via the IDatabase interface. Also enables user
     defined database to be modified via IDatabaseEdit interface.
   }
-  TDatabase = class(TInterfacedObject,
-    IDatabase,
+  _TDatabase = class(TInterfacedObject,
+    _IDatabase,
     IDatabaseEdit
   )
   strict private
@@ -570,20 +570,20 @@ type
       }
   end;
 
-function Database: IDatabase;
+function _Database: _IDatabase;
   {Returns singleton instance of object that encapsulates main and user
   databases.
     @return Singleton object.
   }
 begin
-  if not Assigned(PvtDatabase) then
-    PvtDatabase := TDatabase.Create;
-  Result := PvtDatabase;
+  if not Assigned(_PvtDatabase) then
+    _PvtDatabase := _TDatabase.Create;
+  Result := _PvtDatabase;
 end;
 
-{ TDatabase }
+{ _TDatabase }
 
-function TDatabase.AddCategory(const CatID: string;
+function _TDatabase.AddCategory(const CatID: string;
   const Data: TCategoryData): TCategory;
   {Adds a new category to the user database.
     @param CatID [in] ID of new category.
@@ -609,7 +609,7 @@ begin
   end;
 end;
 
-procedure TDatabase.AddChangeEventHandler(const Handler: TNotifyEventInfo);
+procedure _TDatabase.AddChangeEventHandler(const Handler: TNotifyEventInfo);
   {Adds a change event handler to list of listeners.
     @param Handler [in] Event handler to be added.
   }
@@ -617,7 +617,7 @@ begin
   fChangeEvents.AddHandler(Handler);
 end;
 
-function TDatabase.AddSnippet(const Data: TSnippetEditData): TSnippet;
+function _TDatabase.AddSnippet(const Data: TSnippetEditData): TSnippet;
   {Adds a new snippet to the user database.
     @param Data [in] Record storing new snippet's properties and references.
     @return Reference to new snippet.
@@ -644,7 +644,7 @@ begin
   end;
 end;
 
-procedure TDatabase.Clear;
+procedure _TDatabase.Clear;
   {Clears the object's data.
   }
 begin
@@ -652,14 +652,14 @@ begin
   fSnippets.Clear;
 end;
 
-function TDatabase.Contains(const SnippetID: TSnippetID): Boolean;
+function _TDatabase.Contains(const SnippetID: TSnippetID): Boolean;
 var
   Dummy: TSnippet;
 begin
   Result := TryLookup(SnippetID, Dummy);
 end;
 
-constructor TDatabase.Create;
+constructor _TDatabase.Create;
   {Constructor. Sets up new empty object.
   }
 begin
@@ -669,7 +669,7 @@ begin
   fChangeEvents := TMultiCastEvents.Create(Self);
 end;
 
-function TDatabase.CreateTempSnippet(const Snippet: TSnippet): TSnippet;
+function _TDatabase.CreateTempSnippet(const Snippet: TSnippet): TSnippet;
   {Creates a new temporary copy of a snippet without adding it to the
   Snippets object's snippets list. The new instance may not be added to the
   Snippets object.
@@ -686,7 +686,7 @@ begin
   );
 end;
 
-function TDatabase.CreateTempSnippet(const Data: TSnippetEditData;
+function _TDatabase.CreateTempSnippet(const Data: TSnippetEditData;
   const Name: string = ''): TSnippet;
   {Creates a new temporary snippet without adding it to the Snippets object's
   snippets list. The new instance may not be added to the Snippets object.
@@ -702,7 +702,7 @@ begin
   (Result as TTempSnippet).UpdateRefs(Data.Refs, fSnippets);
 end;
 
-procedure TDatabase.DeleteCategory(const Category: TCategory);
+procedure _TDatabase.DeleteCategory(const Category: TCategory);
   {Deletes a category and all its snippets from the user database.
     @param Category [in] Category to be deleted.
   }
@@ -723,7 +723,7 @@ begin
   end;
 end;
 
-procedure TDatabase.DeleteSnippet(const Snippet: TSnippet);
+procedure _TDatabase.DeleteSnippet(const Snippet: TSnippet);
   {Deletes a snippet from the user database.
     @param Snippet [in] Snippet to be deleted.
   }
@@ -759,7 +759,7 @@ begin
   end;
 end;
 
-destructor TDatabase.Destroy;
+destructor _TDatabase.Destroy;
   {Destructor. Tidies up and tears down object.
   }
 begin
@@ -769,7 +769,7 @@ begin
   inherited;
 end;
 
-function TDatabase.DuplicateSnippet(const Snippet: TSnippet;
+function _TDatabase.DuplicateSnippet(const Snippet: TSnippet;
   const Title: string; const CatID: string): TSnippet;
 var
   Data: TSnippetEditData;
@@ -780,7 +780,7 @@ begin
   Result := AddSnippet(Data);
 end;
 
-function TDatabase.GetCategories: TCategoryList;
+function _TDatabase.GetCategories: TCategoryList;
   {Gets list of all categories in database.
     @return Required list.
   }
@@ -788,7 +788,7 @@ begin
   Result := fCategories;
 end;
 
-function TDatabase.GetDependents(const ASnippet: TSnippet): ISnippetIDList;
+function _TDatabase.GetDependents(const ASnippet: TSnippet): ISnippetIDList;
   {Builds an ID list of all snippets that depend on a specified snippet.
     @param ASnippet [in] Snippet for which dependents are required.
     @return List of IDs of dependent snippets.
@@ -803,7 +803,7 @@ begin
       Result.Add(Snippet.ID);
 end;
 
-function TDatabase.GetEditableCategoryInfo(
+function _TDatabase.GetEditableCategoryInfo(
   const Category: TCategory): TCategoryData;
   {Provides details of all a category's data that may be edited.
     @param Category [in] Category for which data is required. May be nil in
@@ -819,7 +819,7 @@ begin
     Result.Init;
 end;
 
-function TDatabase.GetEditableSnippetInfo(
+function _TDatabase.GetEditableSnippetInfo(
   const Snippet: TSnippet): TSnippetEditData;
   {Provides details of all a snippet's data (properties and references) that may
   be edited.
@@ -834,7 +834,7 @@ begin
     Result.Init;
 end;
 
-function TDatabase.GetReferrers(const ASnippet: TSnippet): ISnippetIDList;
+function _TDatabase.GetReferrers(const ASnippet: TSnippet): ISnippetIDList;
   {Builds an ID list of all snippets that cross reference a specified
   snippet.
     @param Snippet [in] Snippet which is cross referenced.
@@ -850,7 +850,7 @@ begin
       Result.Add(Snippet.ID);
 end;
 
-function TDatabase.InternalAddCategory(const CatID: string;
+function _TDatabase.InternalAddCategory(const CatID: string;
   const Data: TCategoryData): TCategory;
   {Adds a new category to the user database. Assumes category not already in
   user database.
@@ -863,7 +863,7 @@ begin
   fCategories.Add(Result);
 end;
 
-function TDatabase.InternalAddSnippet(const SnippetID: TSnippetID;
+function _TDatabase.InternalAddSnippet(const SnippetID: TSnippetID;
   const Data: TSnippetEditData): TSnippet;
   {Adds a new snippet to the user database. Assumes snippet not already in user
   database.
@@ -890,7 +890,7 @@ begin
   fSnippets.Add(Result);
 end;
 
-procedure TDatabase.InternalDeleteCategory(const Cat: TCategory);
+procedure _TDatabase.InternalDeleteCategory(const Cat: TCategory);
   {Deletes a category from the user database.
     @param Cat [in] Category to delete from database.
   }
@@ -898,7 +898,7 @@ begin
   (fCategories as TCategoryListEx).Delete(Cat);
 end;
 
-procedure TDatabase.InternalDeleteSnippet(const Snippet: TSnippet);
+procedure _TDatabase.InternalDeleteSnippet(const Snippet: TSnippet);
   {Deletes a snippet from the user database.
     @param Snippet [in] Snippet to delete from database.
   }
@@ -913,12 +913,12 @@ begin
   (fSnippets as TSnippetListEx).Delete(Snippet);
 end;
 
-function TDatabase.IsEmpty: Boolean;
+function _TDatabase.IsEmpty: Boolean;
 begin
   Result := fSnippets.IsEmpty;
 end;
 
-procedure TDatabase.Load;
+procedure _TDatabase.Load;
   {Loads object's data from main and user defined databases.
   }
 var
@@ -941,13 +941,13 @@ begin
   end;
 end;
 
-function TDatabase.Lookup(const SnippetID: TSnippetID): TSnippet;
+function _TDatabase.Lookup(const SnippetID: TSnippetID): TSnippet;
 begin
   if not TryLookup(SnippetID, Result) then
     raise EBug.Create(ClassName + '.Lookup: SnippetID not found in database');
 end;
 
-procedure TDatabase.RemoveChangeEventHandler(const Handler: TNotifyEventInfo);
+procedure _TDatabase.RemoveChangeEventHandler(const Handler: TNotifyEventInfo);
   {Removes a change event handler from list of listeners.
     @param Handler [in] Handler to remove from list.
   }
@@ -955,7 +955,7 @@ begin
   fChangeEvents.RemoveHandler(Handler);
 end;
 
-procedure TDatabase.Save;
+procedure _TDatabase.Save;
   {Saves user defined snippets and all categories to user database.
   }
 var
@@ -969,7 +969,7 @@ begin
   fUpdated := False;
 end;
 
-function TDatabase.Select(FilterFn: TDatabaseFilterFn): ISnippetIDList;
+function _TDatabase.Select(FilterFn: TDatabaseFilterFn): ISnippetIDList;
 var
   Snippet: TSnippet;
 begin
@@ -979,7 +979,7 @@ begin
       Result.Add(Snippet.ID)
 end;
 
-function TDatabase.SelectAll: ISnippetIDList;
+function _TDatabase.SelectAll: ISnippetIDList;
 var
   Snippet: TSnippet;
 begin
@@ -988,12 +988,12 @@ begin
     Result.Add(Snippet.ID);
 end;
 
-function TDatabase.SnippetCount: Integer;
+function _TDatabase.SnippetCount: Integer;
 begin
   Result := fSnippets.Count;
 end;
 
-procedure TDatabase.TriggerEvent(const Kind: TDatabaseChangeEventKind;
+procedure _TDatabase.TriggerEvent(const Kind: TDatabaseChangeEventKind;
   const Info: TObject);
   {Triggers a change event. Notifies all registered listeners.
     @param Kind [in] Kind of event.
@@ -1006,21 +1006,21 @@ begin
   fChangeEvents.TriggerEvents(EvtInfo);
 end;
 
-function TDatabase.TryLookup(const SnippetID: TSnippetID;
+function _TDatabase.TryLookup(const SnippetID: TSnippetID;
   out Snippet: TSnippet): Boolean;
 begin
   Snippet := fSnippets.Find(SnippetID);
   Result := Assigned(Snippet);
 end;
 
-function TDatabase.UniqueSnippetName: string;
+function _TDatabase.UniqueSnippetName: string;
 begin
   repeat
     Result := 'Snippet' + TUniqueID.Generate;
   until fSnippets.Find(Result) = nil;
 end;
 
-function TDatabase.UpdateCategory(const Category: TCategory;
+function _TDatabase.UpdateCategory(const Category: TCategory;
   const Data: TCategoryData): TCategory;
   {Updates a user defined category's properties.
     @param Category [in] Category to be updated. Must be user-defined.
@@ -1051,7 +1051,7 @@ begin
   end;
 end;
 
-function TDatabase.Updated: Boolean;
+function _TDatabase.Updated: Boolean;
   {Checks if user database has been updated since last save.
     @return True if database has been updated, False otherwise.
   }
@@ -1059,7 +1059,7 @@ begin
   Result := fUpdated;
 end;
 
-procedure TDatabase.UpdateSnippet(const Snippet: TSnippet;
+procedure _TDatabase.UpdateSnippet(const Snippet: TSnippet;
   const Data: TSnippetEditData);
   {Updates a user defined snippet's properties and references using provided
   data.
@@ -1108,7 +1108,7 @@ end;
 
 { TSnippets.TEventInfo }
 
-constructor TDatabase.TEventInfo.Create(const Kind: TDatabaseChangeEventKind;
+constructor _TDatabase.TEventInfo.Create(const Kind: TDatabaseChangeEventKind;
   const Info: TObject);
   {Constructor. Creates an event information object.
     @param Kind [in] Kind of event.
@@ -1121,7 +1121,7 @@ begin
   fInfo := Info;
 end;
 
-function TDatabase.TEventInfo.GetInfo: TObject;
+function _TDatabase.TEventInfo.GetInfo: TObject;
   {Gets additional information about event.
     @return Object that provides required information.
   }
@@ -1129,7 +1129,7 @@ begin
   Result := fInfo;
 end;
 
-function TDatabase.TEventInfo.GetKind: TDatabaseChangeEventKind;
+function _TDatabase.TEventInfo.GetKind: TDatabaseChangeEventKind;
   {Gets kind (type) of event.
     @return Event kind.
   }
@@ -1227,7 +1227,7 @@ initialization
 finalization
 
 // Free the singleton
-PvtDatabase := nil;
+_PvtDatabase := nil;
 
 end.
 

@@ -180,7 +180,7 @@ begin
   SnippetDetails := BuildSnippetInfo(SWAGSnippet);
   { TODO: add SWAG snippet ID (passed through MakeValidSnippetName to snippet's
           LinkInfo property, when implemented. }
-  (Database as IDatabaseEdit).AddSnippet(SnippetDetails);
+  (_Database as IDatabaseEdit).AddSnippet(SnippetDetails);
 end;
 
 procedure TSWAGImporter.IncludeSnippet(const SWAGSnippet: TSWAGSnippet);
@@ -282,7 +282,7 @@ class function TSWAGImporter.SWAGCategoryDesc: string;
 var
   Cat: TCategory; // reserved SWAG category in code snippets database
 begin
-  Cat := Database.Categories.Find(TReservedCategories.SWAGCatID);
+  Cat := _Database.Categories.Find(TReservedCategories.SWAGCatID);
   Assert(Assigned(Cat),
     ClassName + '.SWAGCategoryDesc: Can''t find SWAG category');
   Result := Cat.Description;

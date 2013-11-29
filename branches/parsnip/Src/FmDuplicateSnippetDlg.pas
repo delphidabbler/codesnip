@@ -163,7 +163,7 @@ begin
   inherited;
   edTitle.Text := fSnippet.Title;
   fCatList.ToStrings(cbCategory.Items);
-  SnippetCat := Database.Categories.Find(fSnippet.Category);
+  SnippetCat := _Database.Categories.Find(fSnippet.Category);
   if Assigned(SnippetCat) then
     cbCategory.ItemIndex := cbCategory.Items.IndexOf(SnippetCat.Description)
   else
@@ -176,7 +176,7 @@ var
   DisplayName: string;
 begin
   DisplayName := StrTrim(edTitle.Text);
-  fNewSnippet := (Database as IDatabaseEdit).DuplicateSnippet(
+  fNewSnippet := (_Database as IDatabaseEdit).DuplicateSnippet(
     fSnippet,
     DisplayName,
     fCatList.CatID(cbCategory.ItemIndex)
@@ -198,7 +198,7 @@ end;
 procedure TDuplicateSnippetDlg.FormCreate(Sender: TObject);
 begin
   inherited;
-  fCatList := TCategoryListAdapter.Create(Database.Categories);
+  fCatList := TCategoryListAdapter.Create(_Database.Categories);
   fOptions := TPersistentOptions.Create;
 end;
 

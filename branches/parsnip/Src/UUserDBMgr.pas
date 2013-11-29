@@ -349,7 +349,7 @@ end;
 class function TUserDBMgr.CanSave: Boolean;
 begin
   // We can save database if it's been changed
-  Result := (Database as IDatabaseEdit).Updated;
+  Result := (_Database as IDatabaseEdit).Updated;
 end;
 
 class procedure TUserDBMgr.CanSaveDialogClose(Sender: TObject;
@@ -375,7 +375,7 @@ var
   Cat: TCategory; // references each category in snippets database
 begin
   Result := TCategoryList.Create;
-  for Cat in Database.Categories do
+  for Cat in _Database.Categories do
     if Cat.UserDefined and
       (IncludeSpecial or not TReservedCategories.IsReserved(Cat)) then
       Result.Add(Cat);
@@ -405,7 +405,7 @@ class procedure TUserDBMgr.DeleteSnippet(ViewItem: IView);
     Result := TIStringList.Create;
     for ID in IDList do
     begin
-      Snippet := Database.Lookup(ID);
+      Snippet := _Database.Lookup(ID);
       Result.Add(Snippet.Title);
     end;
   end;
@@ -428,7 +428,7 @@ begin
     ClassName + '.Delete: Current view is not a snippet');
   Snippet := (ViewItem as ISnippetView).Snippet;
   // Check if snippet has dependents: don't allow deletion if so
-  Dependents := (Database as IDatabaseEdit).GetDependents(Snippet);
+  Dependents := (_Database as IDatabaseEdit).GetDependents(Snippet);
   if Dependents.Count > 0 then
   begin
     TMessageBox.Error(
@@ -441,7 +441,7 @@ begin
     Exit;
   end;
   // Get permission to delete. If snippet has dependents list them in prompt
-  Referrers := (Database as IDatabaseEdit).GetReferrers(Snippet);
+  Referrers := (_Database as IDatabaseEdit).GetReferrers(Snippet);
   if Referrers.Count = 0 then
     ConfirmMsg := Format(sConfirmDelete, [Snippet.Title])
   else
@@ -453,7 +453,7 @@ begin
       ]
     );
   if TMessageBox.Confirm(nil, ConfirmMsg) then
-    (Database as IDatabaseEdit).DeleteSnippet(Snippet);
+    (_Database as IDatabaseEdit).DeleteSnippet(Snippet);
 end;
 
 class procedure TUserDBMgr.DuplicateSnippet(ViewItem: IView);
@@ -467,7 +467,7 @@ class procedure TUserDBMgr.EditSnippet(const SnippetID: TSnippetID);
 var
   Snippet: TSnippet;    // reference to snippet to be edited
 begin
-  if not Database.TryLookup(SnippetID, Snippet) then
+  if not _Database.TryLookup(SnippetID, Snippet) then
     raise EBug.Create(ClassName + '.EditSnippet: Snippet not in database');
   TSnippetsEditorDlg.EditSnippet(nil, Snippet);
 end;
@@ -563,7 +563,7 @@ end;
 
 procedure TUserDBSaveUI.TSaveThread.Execute;
 begin
-  (Database as IDatabaseEdit).Save;
+  (_Database as IDatabaseEdit).Save;
 end;
 
 { TUserDBRestoreUI }

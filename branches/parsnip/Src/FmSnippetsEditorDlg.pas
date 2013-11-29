@@ -662,9 +662,9 @@ begin
     fEditData.Assign(UpdateData);
     // Add or update snippet
     if Assigned(fSnippet) then
-      (Database as IDatabaseEdit).UpdateSnippet(fSnippet, fEditData)
+      (_Database as IDatabaseEdit).UpdateSnippet(fSnippet, fEditData)
     else
-      fSnippet := (Database as IDatabaseEdit).AddSnippet(fEditData)
+      fSnippet := (_Database as IDatabaseEdit).AddSnippet(fEditData)
   except
     on E: Exception do
       HandleException(E);
@@ -724,7 +724,7 @@ begin
   ValidateData;
   // Create snippet object from entered data
   EditData.Assign(UpdateData);
-  Result := (Database as IDatabaseEdit).CreateTempSnippet(EditData);
+  Result := (_Database as IDatabaseEdit).CreateTempSnippet(EditData);
 end;
 
 procedure TSnippetsEditorDlg.DisplayCompileResults(const Compilers: ICompilers);
@@ -792,7 +792,7 @@ procedure TSnippetsEditorDlg.FormCreate(Sender: TObject);
   }
 begin
   inherited;
-  fCatList := TCategoryListAdapter.Create(Database.Categories);
+  fCatList := TCategoryListAdapter.Create(_Database.Categories);
   fCompileMgr := TCompileMgr.Create(Self);  // auto-freed
   fMemoCaretPosDisplayMgr := TMemoCaretPosDisplayMgr.Create;
   fDependsCLBMgr := TSnippetsChkListMgr.Create(clbDepends);
@@ -916,7 +916,7 @@ begin
   inherited;
   // Get data associated with snippet, or blank / default data if adding a new
   // snippet
-  fEditData := (Database as IDatabaseEdit).GetEditableSnippetInfo(fSnippet);
+  fEditData := (_Database as IDatabaseEdit).GetEditableSnippetInfo(fSnippet);
   // Populate controls with dynamic data
   PopulateControls;
   // Initialise controls to default values
@@ -1019,12 +1019,12 @@ begin
   fDependsCLBMgr.Clear;
   fXRefsCLBMgr.Save;
   fXRefsCLBMgr.Clear;
-  for SnippetID in Database.SelectAll do
+  for SnippetID in _Database.SelectAll do
   begin
     // We ignore any snippet being edited
     if not Assigned(fSnippet) or (SnippetID <> fSnippet.ID) then
     begin
-      Snippet := Database.Lookup(SnippetID);
+      Snippet := _Database.Lookup(SnippetID);
       // Decide if snippet can be added to depends list: must be correct kind
       if Snippet.Kind in
         TSnippetValidator.ValidDependsKinds(fKindCBMgr.GetSelected) then

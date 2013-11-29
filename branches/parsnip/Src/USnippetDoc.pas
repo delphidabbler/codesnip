@@ -168,7 +168,7 @@ begin
     sKindTitle, TSnippetKindInfoList.Items[Snippet.Kind].DisplayName
   );
   RenderTitledText(
-    sCategoryTitle, Database.Categories.Find(Snippet.Category).Description
+    sCategoryTitle, _Database.Categories.Find(Snippet.Category).Description
   );
   RenderTitledList(sUnitListTitle, Snippet.RequiredModules);
   RenderTitledList(
@@ -194,7 +194,7 @@ var
 begin
   Result := TIStringList.Create;
   for SnippetID in SnippetList do
-    Result.Add(Database.Lookup(SnippetID).Title);
+    Result.Add(_Database.Lookup(SnippetID).Title);
 end;
 
 { TCompileDocInfo }

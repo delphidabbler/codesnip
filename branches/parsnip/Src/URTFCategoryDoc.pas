@@ -137,7 +137,7 @@ begin
   OutputCategoryHeading(Category);
   for SnippetID in Category.SnippetIDs do
   begin
-    Snippet := Database.Lookup(SnippetID);
+    Snippet := _Database.Lookup(SnippetID);
     OutputSnippetSubHeading(Snippet);
     OutputSnippetText(Snippet);
   end;

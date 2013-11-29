@@ -282,7 +282,7 @@ var
 begin
   if not IsSearchActive then
     Exit(False);
-  (fSelection as IAssignable).Assign(Database.SelectAll);
+  (fSelection as IAssignable).Assign(_Database.SelectAll);
   for Search in fActiveSearches do
     RunSearch(Search);
   Result := True;
@@ -293,7 +293,7 @@ procedure TQuery.Reset;
   Search property is set to nul search.
   }
 begin
-  (fSelection as IAssignable).Assign(Database.SelectAll);
+  (fSelection as IAssignable).Assign(_Database.SelectAll);
   fActiveSearches.Clear;
 end;
 
