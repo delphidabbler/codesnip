@@ -379,6 +379,7 @@ uses
   CS.ActiveText.Renderers.RTF in 'Main\CS.ActiveText.Renderers.RTF.pas',
   CS.ActiveText.Validator in 'Main\CS.ActiveText.Validator.pas',
   CS.Config in 'Main\CS.Config.pas',
+  CS.Database.SnippetLinks in 'Main\CS.Database.SnippetLinks.pas',
   CS.Database.Snippets in 'Main\CS.Database.Snippets.pas',
   CS.Database.Tags in 'Main\CS.Database.Tags.pas',
   CS.Database.Types in 'Main\CS.Database.Types.pas',
