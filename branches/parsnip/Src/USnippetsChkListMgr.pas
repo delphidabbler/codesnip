@@ -107,11 +107,11 @@ uses
   Graphics,
   StdCtrls,
   // Project
+  CS.Database.Snippets,
   DB.UMain,
   UColours,
   UGraphicUtils,
-  UPreferences,
-  USnippetIDs;
+  UPreferences;
 
 
 { TSnippetsChkListMgr }

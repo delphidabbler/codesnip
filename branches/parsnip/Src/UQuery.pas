@@ -97,11 +97,11 @@ uses
   SysUtils,
   Generics.Collections,
   // Project
+  CS.Database.Snippets,
   DB.UMain,
   IntfCommon,
   UBaseObjects,
-  USingleton,
-  USnippetIDs;
+  USingleton;
 
 
 type

@@ -302,7 +302,6 @@ uses
   USnippetDoc in 'USnippetDoc.pas',
   USnippetHTML in 'USnippetHTML.pas',
   USnippetIDListIOHandler in 'USnippetIDListIOHandler.pas',
-  USnippetIDs in 'USnippetIDs.pas',
   USnippetPageHTML in 'USnippetPageHTML.pas',
   USnippetPageStructure in 'USnippetPageStructure.pas',
   USnippetsChkListMgr in 'USnippetsChkListMgr.pas',

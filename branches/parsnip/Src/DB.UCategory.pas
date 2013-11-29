@@ -188,8 +188,8 @@ uses
   // Delphi
   SysUtils,
   // Project
+  CS.Database.Snippets,
   UReservedCategories,
-  USnippetIDs,
   UStrUtils;
 
 

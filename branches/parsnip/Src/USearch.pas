@@ -310,11 +310,11 @@ uses
   // Project
   CS.ActiveText,
   CS.ActiveText.Renderers.PlainText,
+  CS.Database.Snippets,
   DB.UMain,
   IntfCommon,
   UConsts,
-  UStrUtils,
-  USnippetIDs;
+  UStrUtils;
 
 
 type

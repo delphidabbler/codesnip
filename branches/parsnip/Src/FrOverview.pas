@@ -255,10 +255,10 @@ uses
   // Delphi
   Messages,
   // Project
+  CS.Database.Snippets,
   IntfCommon,
   UKeysHelper,
-  UOverviewTreeBuilder,
-  USnippetIDs;
+  UOverviewTreeBuilder;
 
 
 {$R *.dfm}

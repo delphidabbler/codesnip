@@ -100,6 +100,7 @@ uses
   // Delphi
   SysUtils,
   // Project
+  CS.Database.Snippets,
   CS.Database.Types,
   DBIO.UFileIOIntf,
   DBIO.UNulDataReader,
@@ -108,8 +109,7 @@ uses
   UAppInfo,
   UConsts,
   UIStringList,
-  UReservedCategories,
-  USnippetIDs;
+  UReservedCategories;
 
 
 type

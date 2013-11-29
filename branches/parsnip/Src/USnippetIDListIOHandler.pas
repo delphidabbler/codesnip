@@ -73,9 +73,9 @@ uses
   // Delphi
   Classes,
   // Project
+  CS.Database.Snippets,
   UConsts,
   UIOUtils,
-  USnippetIDs,
   UStrUtils;
 
 

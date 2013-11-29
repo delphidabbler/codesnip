@@ -123,10 +123,10 @@ uses
   SysUtils,
   StdCtrls,
   // Project
+  CS.Database.Snippets,
   DB.UMain,
   IntfCommon,
-  UGroups,
-  USnippetIDs;
+  UGroups;
 
 
 {$R *.dfm}

@@ -25,8 +25,7 @@ uses
   DB.UCategory,
   DB.USnippet,
   UIStringList,
-  UMultiCastEvents,
-  USnippetIDs;
+  UMultiCastEvents;
 
 
 type
@@ -283,7 +282,12 @@ uses
   //Delphi
   SysUtils,
   // Project
-  DB.UDatabaseIO, UExceptions, UQuery, UStrUtils, UUniqueID;
+  CS.Database.Snippets,
+  DB.UDatabaseIO,
+  UExceptions,
+  UQuery,
+  UStrUtils,
+  UUniqueID;
 
 
 var

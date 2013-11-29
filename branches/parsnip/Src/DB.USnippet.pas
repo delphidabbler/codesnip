@@ -31,8 +31,7 @@ uses
   CS.SourceCode.Languages,
   Compilers.UGlobals,
   DB.USnippetKind,
-  UIStringList,
-  USnippetIDs;
+  UIStringList;
 
 
 type
@@ -332,6 +331,7 @@ uses
   // Delphi
   SysUtils,
   // Project
+  CS.Database.Snippets,
   CS.Database.Tags,
   CS.Utils.Hashes,
   IntfCommon,
