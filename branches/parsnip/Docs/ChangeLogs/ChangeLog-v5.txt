@@ -11,7 +11,7 @@
 ; Change Log for CodeSnip Release 5
 ; ------------------------------------------------------------------------------
 
-Summary of changes in SVN parsnip branch up to REVISION 3854.
+Summary of changes in SVN parsnip branch up to REVISION 4019.
 Changes relate to v4.8.4 (#### may need to update this if new v4 release is merged in###)
 + User interface changes:
   - The link used to edit the displayed snippet has been removed from the Detail pane and replaced by a glyph showing the snippet's level of testing. (### may need to change this in light of further redesigns###)
@@ -28,12 +28,14 @@ Changes relate to v4.8.4 (#### may need to update this if new v4 release is merg
   - Duplicate snippet dialogue box revised to remove control snippet name (ID) edit control.
   - New dialogue box to enable user to customise and create syntax highlighter themes. This dialogue box is accessed via the "Syntax Highlighter" tab of the Preferences dialogue box.
   - Snippet editor enlarged and controls changed re revised snippet properties.
+  - Splash screen can be hidden by passing the new -no-splash switch on CodeSnip's command line.
 + Database changes:
   - Online Code Snippets Database is no longer treated differently to user database: all snippets are now editable.
   - Changed location of (user) database in portable mode and default location in standard mode. All database files are now per-user.
   - Snippet IDs (formerly "names") are now generated automatically instead of being provided by the user. The IDs can no longer be edited. This means that a snippet's ID can never be changed.
   - Snippet titles (formerly "display names") are now required since ID is no longer suitable as a default display name. Snippet titles are now used in the UI in places where the snippet name used to be used.
-  - Splash screen can be hidden by passing the new -no-splash switch on CodeSnip's command line.
+  - Snippet can now have zero or more "tags".
+  - Categories have been removed from the database. Categories read from legacy database and import files are converted to tags.
 + Support for snippets in languages other than Pascal has been added. Available languages are: Pascal, plain text *** GROW THIS LANGUAGE LIST AS NEW LANGUAGES ADDED ***
 + The user can now specify an external diff viewer to be used by CodeSnip. *** Update this line when diff viewer is actually used for something!! ***
 + Syntax highlighter changes:
