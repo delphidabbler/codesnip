@@ -90,9 +90,10 @@ type
     procedure SetStarred(AStarred: Boolean);
   end;
 
-  TSnippet = class(TSnippetBase, ISnippet)
+  // TODO: rename back to TSnippet once ambiguity with legacy TSnippet resolved.
+  TNewSnippet = class(TSnippetBase, ISnippet)
   public
-    class function CreateNew: TSnippet;
+    class function CreateNew: TNewSnippet;
     destructor Destroy; override;
   end;
 
@@ -524,14 +525,14 @@ begin
     SetStarred(ASourceSnippet.fStarred);
 end;
 
-{ TSnippet }
+{ TNewSnippet }
 
-class function TSnippet.CreateNew: TSnippet;
+class function TNewSnippet.CreateNew: TNewSnippet;
 begin
-  Result := TSnippet.Create(TSnippetID.CreateNew);
+  Result := TNewSnippet.Create(TSnippetID.CreateNew);
 end;
 
-destructor TSnippet.Destroy;
+destructor TNewSnippet.Destroy;
 begin
   inherited;
 end;
