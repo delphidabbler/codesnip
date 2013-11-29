@@ -164,7 +164,6 @@ uses
   DB.UMain,
   DB.USnippet,
   UIOUtils,
-  USnippetIDs,
   UStrUtils;
 
 

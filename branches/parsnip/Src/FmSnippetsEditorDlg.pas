@@ -297,7 +297,6 @@ uses
   UReservedCategories,
   USnippetValidator,
   UMessageBox,
-  USnippetIDs,
   UStructs,
   UStrUtils,
   UTestUnitDlgMgr,

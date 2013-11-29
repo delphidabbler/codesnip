@@ -132,7 +132,6 @@ uses
   UOpenDialogHelper,
   UReservedCategories,
   USaveDialogEx,
-  USnippetIDs,
   UUserDBBackup,
   UWaitForThreadUI;
 

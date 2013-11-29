@@ -209,8 +209,7 @@ uses
   Classes,
   RTLConsts,
   CS.Database.SnippetLinks,
-  CS.Database.Tags,
-  USnippetIDs;
+  CS.Database.Tags;
 
 { TSnippetIDList }
 

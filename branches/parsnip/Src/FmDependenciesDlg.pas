@@ -34,7 +34,6 @@ uses
   FmGenericViewDlg,
   UBaseObjects,
   USearch,
-  USnippetIDs,
   USnippetsTVDraw;
 
 

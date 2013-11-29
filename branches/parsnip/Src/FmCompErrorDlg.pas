@@ -24,7 +24,7 @@ uses
   Generics.Collections,
   // Project
   Compilers.UGlobals, DB.USnippet, FmGenericViewDlg, FrBrowserBase, FrHTMLDlg,
-  FrHTMLTpltDlg, UBaseObjects, USnippetIDs;
+  FrHTMLTpltDlg, UBaseObjects;
 
 
 type

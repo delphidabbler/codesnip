@@ -202,7 +202,6 @@ uses
   CS.Database.Types,
   DB.UMain,
   UExceptions,
-  USnippetIDs,
   UStrUtils;
 
 type

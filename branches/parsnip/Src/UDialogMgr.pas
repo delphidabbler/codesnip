@@ -199,7 +199,6 @@ uses
   FmSWAGImportDlg,
   FmTestCompileDlg,
   FmUserBugReportDlg,
-  USnippetIDs,
   UTestUnitDlgMgr;
 
 

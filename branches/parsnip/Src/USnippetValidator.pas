@@ -159,7 +159,6 @@ uses
   CS.ActiveText.Validator,
   DB.UMain,
   DB.USnippetKind,
-  USnippetIDs,
   UStrUtils;
 
 

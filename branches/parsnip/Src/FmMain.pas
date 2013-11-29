@@ -642,7 +642,6 @@ uses
   USaveUnitMgr,
   USelectionIOMgr,
   UShowPrefsPageAction,
-  USnippetIDs,
   UUserDBMgr,
   UView,
   UViewItemAction,
