@@ -146,9 +146,6 @@ type
   strict private
     var
       fTag: string;
-    class function PrepareTagString(const AStr: string): string; static;
-    class function IsValidPreparedTagString(const AStr: string): Boolean;
-      static;
   public
     constructor Create(const ATagStr: string);
     class operator Equal(const Left, Right: TTag): Boolean; inline;
@@ -439,9 +436,9 @@ constructor TTag.Create(const ATagStr: string);
 resourcestring
   sBadTagStr = '"%s" is not a valid tag string';
 begin
-  fTag := PrepareTagString(ATagStr);
-  if not IsValidPreparedTagString(fTag) then
-    raise ETag.Create(sBadTagStr);
+  if not IsValidTagString(ATagStr) then
+    raise ETag.CreateFmt(sBadTagStr, [ATagStr]);
+  fTag := ATagStr;
 end;
 
 class operator TTag.Equal(const Left, Right: TTag): Boolean;
@@ -454,7 +451,7 @@ begin
   Result := TextHash(fTag);
 end;
 
-class function TTag.IsValidPreparedTagString(const AStr: string): Boolean;
+class function TTag.IsValidTagString(const AStr: string): Boolean;
 var
   Ch: Char;
 begin
@@ -465,26 +462,14 @@ begin
   for Ch in AStr do
     if not TCharacter.IsLetter(Ch)
       and not TCharacter.IsNumber(Ch)
-      and (Ch <> ' ')
-      and not TCharacter.IsPunctuation(Ch)
-      and not TCharacter.IsSymbol(Ch) then
+      and not CharInSet(Ch, ['-', '_', ' ']) then
       Exit(False);
   Result := True;
-end;
-
-class function TTag.IsValidTagString(const AStr: string): Boolean;
-begin
-  Result := IsValidPreparedTagString(PrepareTagString(AStr));
 end;
 
 class operator TTag.NotEqual(const Left, Right: TTag): Boolean;
 begin
   Result := not StrSameText(Left.fTag, Right.fTag);
-end;
-
-class function TTag.PrepareTagString(const AStr: string): string;
-begin
-  Result := StrCompressWhiteSpace(StrTrim(AStr));
 end;
 
 function TTag.ToString: string;
