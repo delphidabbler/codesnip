@@ -152,7 +152,7 @@ end;
 
 procedure TDBSnippetsTable.Update(const ASnippet: TDBSnippet);
 begin
-  fTable[ASnippet.GetID] := ASnippet;   // original snippet object will be freed
+  fTable[ASnippet.GetID].UpdateFrom(ASnippet);
 end;
 
 end.
