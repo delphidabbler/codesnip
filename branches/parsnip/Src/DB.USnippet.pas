@@ -27,6 +27,7 @@ uses
   Collections.Lists,
   // Project
   CS.ActiveText,
+  CS.Database.SnippetsTable,
   CS.Database.Types,
   CS.SourceCode.Languages,
   Compilers.UGlobals,
@@ -99,7 +100,7 @@ type
     Encapsulates a snippet from the database. Can be routine, type, constant or
     free-form.
   }
-  TSnippet = class(TObject)
+  TSnippet = class(TDBSnippet)
   public
     ///  <summary>Comparer for snippets by title.</summary>
     type
@@ -115,21 +116,10 @@ type
         function GetHashCode(const Snippet: TSnippet): Integer; override;
       end;
   strict private
-    fID: TSnippetID;                        // Snippet's ID.
-    fKind: TSnippetKind;                    // Kind of snippet this is
     fCategory: string;                      // Name of snippet's category
-    fDescription: IActiveText;              // Description of snippet
-    fSourceCode: string;                    // Snippet's source code
-    fTitle: string;                         // Title of snippet
-    fRequiredModules: IStringList;          // List of required modules (units)
-    fRequiredSnippets: ISnippetIDList;      // List of required snippets
-    fXRefs: ISnippetIDList;                 // List of cross-referenced snippets
-    fNotes: IActiveText;                    // Further information for snippet
-    fCompatibility: TCompileResults;        // Snippet's compiler compatibility
     fHiliteSource: Boolean;                 // If source is syntax highlighted
-    fTestInfo: TSnippetTestInfo;            // Level of testing of snippet
-    fTags: ITagSet;                         // Set of snippet's tags
-    function GetTitle: string;
+  public
+    function GetTitle: string; override;
       {Gets snippet's title, or ID string if no title is set
         @return Required title.
       }
@@ -157,33 +147,33 @@ type
       {Checks if snippet can be compiled.
         @return True if compilation supported and False if not.
       }
-    property ID: TSnippetID read fID;
+    property ID: TSnippetID read GetID;
       {Snippet's unique ID}
-    property Kind: TSnippetKind read fKind;
+    property Kind: TSnippetKind read GetKind;
       {Kind of snippet represented by this object}
     property Title: string read GetTitle;
       {Displat name of snippet}
     property Category: string read fCategory;
       {Category to which snippet belongs}
-    property Description: IActiveText read fDescription;
+    property Description: IActiveText read GetDescription;
       {Description of snippet}
-    property SourceCode: string read fSourceCode;
+    property SourceCode: string read GetSourceCode;
       {Source code of snippet}
     property HiliteSource: Boolean read fHiliteSource;
       {Flags whether source code can be syntax highlighted}
-    property Notes: IActiveText read fNotes;
+    property Notes: IActiveText read GetNotes;
       {Additional information about snippet}
-    property Compatibility: TCompileResults read fCompatibility;
+    property Compatibility: TCompileResults read GetCompileResults;
       {Compiler compatibilty of this snippet}
-    property TestInfo: TSnippetTestInfo read fTestInfo;
+    property TestInfo: TSnippetTestInfo read GetTestInfo;
       {Describes level of testing carried out on snippet}
-    property Tags: ITagSet read fTags;
+    property Tags: ITagSet read GetTags;
       {Set of tags associated with snippet}
-    property RequiredModules: IStringList read fRequiredModules;
+    property RequiredModules: IStringList read GetRequiredModules;
       {List of modules (e.g. units) used by snippet}
-    property RequiredSnippets: ISnippetIDList read fRequiredSnippets;
+    property RequiredSnippets: ISnippetIDList read GetRequiredSnippets;
       {List of any other snippet in database on which this snippet depends}
-    property XRefs: ISnippetIDList read fXRefs;
+    property XRefs: ISnippetIDList read GetXRefs;
       {List of cross referenced snippets in database}
     ///  <summary>Returns source code language used for snippet.</summary>
     ///  <remarks>Included to assist in testing syntax multi-language
@@ -356,33 +346,33 @@ constructor TSnippet.Create(const ID: TSnippetID; const Props: TSnippetData);
 begin
   Assert(ClassType <> TSnippet,
     ClassName + '.Create: must only be called from descendants.');
-  inherited Create;
+  inherited Create(ID);
   // Record simple property values
-  fID := ID;
-  fTags := TTagSet.Create;
+//  fID := ID;
+//  fTags := TTagSet.Create;
   SetProps(Props);
   // Create string list to store required units
-  fRequiredModules := TIStringList.Create;
+//  fRequiredModules := TIStringList.Create;
   // Create snippets lists for Depends and XRef properties
-  fRequiredSnippets := TSnippetIDList.Create;
-  fXRefs := TSnippetIDList.Create;
+//  fRequiredSnippets := TSnippetIDList.Create;
+//  fXRefs := TSnippetIDList.Create;
 end;
 
 destructor TSnippet.Destroy;
   {Destructor. Tears down object.
   }
 begin
-  fNotes := nil;
-  fDescription := nil;
+//  fNotes := nil;
+//  fDescription := nil;
   inherited;
 end;
 
 function TSnippet.GetTitle: string;
 begin
-  if not StrIsBlank(fTitle) then
-    Result := fTitle
+  if not StrIsBlank(inherited GetTitle) then
+    Result := inherited GetTitle
   else
-    Result := fID.ToString;
+    Result := ID.ToString;
 end;
 
 function TSnippet.IsEqual(const Snippet: TSnippet): Boolean;
@@ -409,15 +399,15 @@ procedure TSnippet.SetProps(const Data: TSnippetData);
   }
 begin
   fCategory := Data.Cat;
-  fKind := Data.Kind;
-  fDescription := Data.Desc;
-  fSourceCode := StrWindowsLineBreaks(Data.SourceCode);
+  SetKind(Data.Kind);
+  SetDescription(Data.Desc);
+  SetSourceCode(StrWindowsLineBreaks(Data.SourceCode));
   fHiliteSource := Data.HiliteSource;
-  fTitle := Data.Title;
-  fNotes := TActiveTextFactory.CloneActiveText(Data.Notes);
-  fCompatibility := Data.CompilerResults;
-  fTestInfo := Data.TestInfo;
-  fTags.Assign(Data.Tags);
+  SetTitle(Data.Title);
+  SetNotes(Data.Notes);
+  SetCompileResults(Data.CompilerResults);
+  SetTestInfo(Data.TestInfo);
+  SetTags(Data.Tags);
 end;
 
 { TSnippet.TTitleComparer }
@@ -468,10 +458,10 @@ begin
   Result.SourceCode := SourceCode;
   Result.HiliteSource := HiliteSource;
   Result.Title := Title;
-  Result.Notes := TActiveTextFactory.CloneActiveText(Notes);
+  Result.Notes := Notes;
   Result.CompilerResults := Compatibility;
   Result.TestInfo := TestInfo;
-  Result.Tags.Assign(Tags);
+  Result.Tags := Tags;
 end;
 
 function TSnippetEx.GetReferences: TSnippetReferences;
@@ -479,10 +469,9 @@ function TSnippetEx.GetReferences: TSnippetReferences;
     @return Information sufficient to define references.
   }
 begin
-  Result.RequiredModules := TIStringList.Create(RequiredModules);
-  Result.RequiredSnippets :=
-    (RequiredSnippets as IClonable).Clone as ISnippetIDList;
-  Result.XRefs := (XRefs as IClonable).Clone as ISnippetIDList;
+  Result.RequiredModules := GetRequiredModules;
+  Result.RequiredSnippets := GetRequiredSnippets;
+  Result.XRefs := GetXRefs;
 end;
 
 procedure TSnippetEx.Update(const Data: TSnippetEditData;
@@ -504,24 +493,23 @@ procedure TSnippetEx.UpdateRefs(const Refs: TSnippetReferences;
     @param AllSnippets [in] List of all snippets in database.
   }
 
-  // Copies all snippet IDs from list Src to list Dest except that any IDs not
-  // in AllSnippets are ignored.
-  procedure StoreValidRefs(Src, Dest: ISnippetIDList);
+  // Returns a copy of the ID list Src with any IDs not in AllSnippets omitted.
+  function MakeValidRefs(Src: ISnippetIDList): ISnippetIDList;
   var
     ID: TSnippetID;
   begin
-    Dest.Clear;
+    Result := TSnippetIDList.Create;
     for ID in Src do
     begin
       if AllSnippets.Find(ID) <> nil then
-        Dest.Add(ID);
+        Result.Add(ID);
     end;
   end;
 
 begin
-  (Self.RequiredModules as IAssignable).Assign(Refs.RequiredModules);
-  StoreValidRefs(Refs.RequiredSnippets, Self.RequiredSnippets);
-  StoreValidRefs(Refs.XRefs, Self.XRefs);
+  SetRequiredModules(Refs.RequiredModules);
+  SetRequiredSnippets(MakeValidRefs(Refs.RequiredSnippets));
+  SetXRefs(MakeValidRefs(Refs.XRefs));
 end;
 
 { TSnippetList }
