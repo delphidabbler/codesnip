@@ -291,6 +291,7 @@ function TSnippetIDList.IsEqual(Other: ISnippetIDList): Boolean;
 var
   OtherID: TSnippetID;
 begin
+  Assert(Assigned(Other), ClassName + '.IsEqual: Other is nil');
   // Lists are equal if they are the same size and every member of Other is in
   // this list.
   if fList.Count <> Other.Count then
