@@ -21,14 +21,31 @@ interface
 
 uses
   // Project
+  CS.Database.SnippetsTable,
   CS.Database.Types,
   DB.UCategory,
   DB.USnippet,
   UIStringList,
-  UMultiCastEvents;
+  UMultiCastEvents,
+  USingleton;
 
 
 type
+
+  TDatabase = class(TSingleton)
+  strict private
+    class var
+      fInstance: TDatabase;
+    class function GetInstance: TDatabase; static;
+  strict private
+    var
+      fSnippetsTable: TDBSnippetsTable;
+  strict protected
+    procedure Initialize; override;
+    procedure Finalize; override;
+  public
+    class property Instance: TDatabase read GetInstance;
+  end;
 
   {
   TDatabaseChangeEventKind:
@@ -273,6 +290,8 @@ function _Database: _IDatabase;
   databases.
     @return Singleton object.
   }
+
+function Database: TDatabase;
 
 
 implementation
@@ -569,6 +588,11 @@ type
         @return Record containing references.
       }
   end;
+
+function Database: TDatabase;
+begin
+  Result := TDatabase.Instance;
+end;
 
 function _Database: _IDatabase;
   {Returns singleton instance of object that encapsulates main and user
@@ -1219,6 +1243,27 @@ function TUserDataProvider.GetSnippetRefs(
   }
 begin
   Result := (Snippet as TSnippetEx).GetReferences;
+end;
+
+{ TDatabase }
+
+procedure TDatabase.Finalize;
+begin
+  fSnippetsTable.Free;
+  inherited;
+end;
+
+class function TDatabase.GetInstance: TDatabase;
+begin
+  if not Assigned(fInstance) then
+    fInstance := TDatabase.Create;
+  Result := fInstance;
+end;
+
+procedure TDatabase.Initialize;
+begin
+  inherited;
+  fSnippetsTable := TDBSnippetsTable.Create;
 end;
 
 initialization
