@@ -101,6 +101,7 @@ uses
   SysUtils,
   // Project
   CS.Database.Snippets,
+  CS.Database.Tags,
   CS.Database.Types,
   DBIO.UFileIOIntf,
   DBIO.UNulDataReader,
@@ -314,21 +315,20 @@ var
   Category: TCategory;  // a category
   Snippet: TSnippet;    // a snippet
 
-  procedure TrimBadSnippets(IDList: ISnippetIDList;
-    const AllSnippets: TSnippetList);
+  function TrimBadSnippets(IDList: ISnippetIDList;
+    const AllSnippets: TSnippetList): ISnippetIDList;
   var
     SnippetID: TSnippetID;
-    BadSnippetID: TSnippetID;
-    BadList: ISnippetIDList;
   begin
-    BadList := TSnippetIDList.Create;
+    Result := TSnippetIDList.Create;
     for SnippetID in IDList do
-      if AllSnippets.Find(SnippetID) = nil then
-        BadList.Add(SnippetID);
-    for BadSnippetID in BadList do
-      IDList.Remove(BadSnippetID);
+      if AllSnippets.Find(SnippetID) <> nil then
+        Result.Add(SnippetID);
+    Result := (IDList as IClonable).Clone as ISnippetIDList;
   end;
 
+var
+  TagSet: ITagSet;
 begin
   // Create reader object that can access data storage
   fReader := CreateReader;
@@ -350,11 +350,19 @@ begin
     // Trim out in invalid references and add tag based on category
     for Snippet in fSnipList do
     begin
-      TrimBadSnippets(Snippet.RequiredSnippets, fSnipList);
-      TrimBadSnippets(Snippet.XRefs, fSnipList);
+      Snippet.SetRequiredSnippets(
+        TrimBadSnippets(Snippet.RequiredSnippets, fSnipList)
+      );
+      Snippet.SetXRefs(
+        TrimBadSnippets(Snippet.XRefs, fSnipList)
+      );
       Category := fCategories.Find(Snippet.Category);
       if Assigned(Category) then
-        Snippet.Tags.Add(TTag.Create(Category.Description));
+      begin
+        TagSet := TTagSet.Create;
+        TagSet.Add(TTag.Create(Category.Description));
+        Snippet.SetTags(TagSet);
+      end;
     end;
   except
     on E: Exception do
@@ -391,25 +399,23 @@ procedure TDatabaseLoader.LoadReferences(const Snippet: TSnippet);
     @param Snippet [in] Snippet for which references are required.
   }
 
-  procedure BuildReferences(Src: IStringList; Dest: ISnippetIDList);
+  function BuildReferences(Src: IStringList): ISnippetIDList;
   var
     IDStr: string;
   begin
-    Dest.Clear;
+    Result := TSnippetIDList.Create;
     for IDStr in Src do
-      Dest.Add(TSnippetID.Create(IDStr));
+      Result.Add(TSnippetID.Create(IDStr));
   end;
 
 begin
-  BuildReferences(
-    fReader.GetSnippetDepends(Snippet.ID.ToString), Snippet.RequiredSnippets
+  Snippet.SetRequiredSnippets(
+    BuildReferences(fReader.GetSnippetDepends(Snippet.ID.ToString))
   );
-  BuildReferences(
-    fReader.GetSnippetXRefs(Snippet.ID.ToString), Snippet.XRefs
+  Snippet.SetXRefs(
+    BuildReferences(fReader.GetSnippetXRefs(Snippet.ID.ToString))
   );
-  (Snippet.RequiredModules as IAssignable).Assign(
-    fReader.GetSnippetUnits(Snippet.ID.ToString)
-  );
+  Snippet.SetRequiredModules(fReader.GetSnippetUnits(Snippet.ID.ToString));
 end;
 
 procedure TDatabaseLoader.LoadSnippets(const Cat: TCategory);
