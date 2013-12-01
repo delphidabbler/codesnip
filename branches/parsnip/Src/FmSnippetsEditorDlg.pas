@@ -1050,6 +1050,7 @@ resourcestring
 var
   ErrorMessage: string;       // receives validation error messages
   ErrorSelection: TSelection; // receives selection containing errors
+  TempSnippet: TSnippet;  // temporary snippet that is checked for dependencies
 begin
   if not TSnippetValidator.ValidateTitle(
     edTitle.Text, ErrorMessage
@@ -1063,13 +1064,20 @@ begin
   frmNotes.Validate;
   if Assigned(fSnippet) then
   begin
-    if not TSnippetValidator.ValidateDependsList(
-      fSnippet.ID.ToString, UpdateData, ErrorMessage
-    ) then
-      raise EDataEntry.Create(  // selection not applicable to list boxes
-        StrMakeSentence(ErrorMessage) + EOL2 + sDependencyPrompt, clbDepends
-      );
+    TempSnippet := (_Database as IDatabaseEdit).CreateTempSnippet(
+      UpdateData, fSnippet.ID.ToString
+    );
+    try
+      if not TSnippetValidator.ValidateDependsList(
+        TempSnippet, ErrorMessage
+      ) then
+        raise EDataEntry.Create(  // selection not applicable to list boxes
+          StrMakeSentence(ErrorMessage) + EOL2 + sDependencyPrompt, clbDepends
+        );
+    finally
+      TempSnippet.Free;
     end;
+  end;
 end;
 
 end.

@@ -77,20 +77,9 @@ type
       }
   public
     class function ValidateDependsList(const Snippet: TSnippet;
-      out ErrorMsg: string): Boolean; overload;
+      out ErrorMsg: string): Boolean;
       {Recursively checks dependency list of a snippet for validity.
         @param Snippet [in] Snippet for which dependencies are to be checked.
-        @param ErrorMsg [out] Message that describes error. Undefined if True
-          returned.
-        @return True if dependency list is valid or False if not.
-      }
-    class function ValidateDependsList(const SnippetName: string;
-      const Data: TSnippetEditData; out ErrorMsg: string): Boolean; overload;
-      {Recursively checks dependency list of a snippet for validity.
-        @param SnippetName [in] Name of snippet for which dependencies are to be
-          checked.
-        @param Data [in] Data describing properties and references of snippet
-          for which dependencies are to be checked.
         @param ErrorMsg [out] Message that describes error. Undefined if True
           returned.
         @return True if dependency list is valid or False if not.
@@ -276,30 +265,6 @@ begin
         Snippet.Title
       ]
     );
-end;
-
-class function TSnippetValidator.ValidateDependsList(const SnippetName: string;
-  const Data: TSnippetEditData; out ErrorMsg: string): Boolean;
-  {Recursively checks dependency list of a snippet for validity.
-    @param SnippetName [in] Name of snippet for which dependencies are to be
-      checked.
-    @param Data [in] Data describing properties and references of snippet for
-      which dependencies are to be checked.
-    @param ErrorMsg [out] Message that describes error. Undefined if True
-      returned.
-    @return True if dependency list is valid or False if not.
-  }
-var
-  TempSnippet: TSnippet;  // temporary snippet that is checked for dependencies
-begin
-  TempSnippet := (_Database as IDatabaseEdit).CreateTempSnippet(
-    Data, SnippetName
-  );
-  try
-    Result := ValidateDependsList(TempSnippet, ErrorMsg);
-  finally
-    TempSnippet.Free;
-  end;
 end;
 
 class function TSnippetValidator.ValidateDescription(Desc: IActiveText;
