@@ -580,6 +580,7 @@
 			<DCCReference Include="Main\CS.Config.pas"/>
 			<DCCReference Include="Main\CS.Database.SnippetLinks.pas"/>
 			<DCCReference Include="Main\CS.Database.Snippets.pas"/>
+			<DCCReference Include="Main\CS.Database.SnippetsTable.pas"/>
 			<DCCReference Include="Main\CS.Database.Tags.pas"/>
 			<DCCReference Include="Main\CS.Database.Types.pas"/>
 			<DCCReference Include="Main\CS.ExternalProgs.DiffViewer.pas"/>

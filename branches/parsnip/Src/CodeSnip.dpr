@@ -380,6 +380,7 @@ uses
   CS.Config in 'Main\CS.Config.pas',
   CS.Database.SnippetLinks in 'Main\CS.Database.SnippetLinks.pas',
   CS.Database.Snippets in 'Main\CS.Database.Snippets.pas',
+  CS.Database.SnippetsTable in 'Main\CS.Database.SnippetsTable.pas',
   CS.Database.Tags in 'Main\CS.Database.Tags.pas',
   CS.Database.Types in 'Main\CS.Database.Types.pas',
   CS.ExternalProgs.DiffViewer in 'Main\CS.ExternalProgs.DiffViewer.pas',
