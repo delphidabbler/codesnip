@@ -462,7 +462,7 @@ begin
   for Ch in AStr do
     if not TCharacter.IsLetter(Ch)
       and not TCharacter.IsNumber(Ch)
-      and not CharInSet(Ch, ['-', '_', ' ']) then
+      and not CharInSet(Ch, ['-', '_', ' ', ':', '(', ')']) then
       Exit(False);
   Result := True;
 end;
