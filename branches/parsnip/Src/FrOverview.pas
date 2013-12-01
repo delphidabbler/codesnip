@@ -293,7 +293,7 @@ procedure TOverviewFrame.Clear;
   }
 begin
   SelectItem(nil);
-  Display(nil, False);
+  Display(TSnippetIDLIst.Create, False);
 end;
 
 constructor TOverviewFrame.Create(AOwner: TComponent);
