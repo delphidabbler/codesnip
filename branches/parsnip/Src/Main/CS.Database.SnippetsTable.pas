@@ -21,8 +21,6 @@ uses
   Collections.Base,
   CS.Database.Types,
   CS.Database.Snippets,
-  CS.Markup,
-  CS.Utils.Dates,
   UExceptions;
 
 type
@@ -38,16 +36,16 @@ type
   TDBSnippetsTable = class(TObject)
   strict private
     var
-      fTable: TObjectDictionary<TDBSnippetID, TDBSnippet>;
+      fTable: TObjectDictionary<TSnippetID, TDBSnippet>;
   public
     constructor Create;
     destructor Destroy; override;
     function GetEnumerator: IEnumerator<TDBSnippet>;
-    function Contains(const ASnippetID: TDBSnippetID): Boolean;
-    function Get(const ASnippetID: TDBSnippetID): TDBSnippet;
+    function Contains(const ASnippetID: TSnippetID): Boolean;
+    function Get(const ASnippetID: TSnippetID): TDBSnippet;
     procedure Add(const ASnippet: TDBSnippet);
     procedure Update(const ASnippet: TDBSnippet);
-    procedure Delete(const ASnippetID: TDBSnippetID);
+    procedure Delete(const ASnippetID: TSnippetID);
     procedure Clear;
     function Size: Integer;
   end;
@@ -64,7 +62,7 @@ uses
 
 function TDBSnippet.Copy: ISnippet;
 begin
-  Result := TSnippet.Create(Self);
+  Result := TNewSnippet.Create(Self);
 end;
 
 function TDBSnippet.CopyPartial(const RequiredProps: TDBSnippetProps):
@@ -75,7 +73,7 @@ end;
 
 class function TDBSnippet.CreateFrom(ASnippet: ISnippet): TDBSnippet;
 begin
-  Result := TDBSnippet.Create(ASnippet as TSnippet);
+  Result := TDBSnippet.Create(ASnippet as TNewSnippet);
 end;
 
 { TDBSnippetsTable }
@@ -90,7 +88,7 @@ begin
   fTable.Clear;
 end;
 
-function TDBSnippetsTable.Contains(const ASnippetID: TDBSnippetID): Boolean;
+function TDBSnippetsTable.Contains(const ASnippetID: TSnippetID): Boolean;
 begin
   Result := fTable.ContainsKey(ASnippetID);
 end;
@@ -98,16 +96,16 @@ end;
 constructor TDBSnippetsTable.Create;
 begin
   inherited Create;
-  fTable := TObjectDictionary<TDBSnippetID,TDBSnippet>.Create(
-    TRules<TDBSnippetID>.Create(
-      TDBSnippetID.TComparer.Create,
-      TDBSnippetID.TEqualityComparer.Create
+  fTable := TObjectDictionary<TSnippetID,TDBSnippet>.Create(
+    TRules<TSnippetID>.Create(
+      TSnippetID.TComparer.Create,
+      TSnippetID.TEqualityComparer.Create
     ),
     TRules<TDBSnippet>.Create(
       TDelegatedComparer<TDBSnippet>.Create(
         function (const Left, Right: TDBSnippet): Integer
         begin
-          Result := TDBSnippetID.Compare(Left.GetID, Right.GetID);
+          Result := TSnippetID.Compare(Left.GetID, Right.GetID);
         end
       ),
       TDelegatedEqualityComparer<TDBSnippet>.Create(
@@ -126,7 +124,7 @@ begin
   fTable.OwnsValues := True;
 end;
 
-procedure TDBSnippetsTable.Delete(const ASnippetID: TDBSnippetID);
+procedure TDBSnippetsTable.Delete(const ASnippetID: TSnippetID);
 begin
   fTable.Remove(ASnippetID);
 end;
@@ -137,7 +135,7 @@ begin
   inherited;
 end;
 
-function TDBSnippetsTable.Get(const ASnippetID: TDBSnippetID): TDBSnippet;
+function TDBSnippetsTable.Get(const ASnippetID: TSnippetID): TDBSnippet;
 begin
   Result := fTable[ASnippetID];
 end;
@@ -158,5 +156,4 @@ begin
 end;
 
 end.
-
 
