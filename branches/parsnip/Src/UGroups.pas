@@ -51,6 +51,8 @@ type
       ///  </summary>
       fSnippetList: TSortedSnippetList;
   strict protected
+    { TODO: Get rid of this method: it's only used for snippet kinds and there
+            is a good alternative. }
     function GetTitle: string; virtual; abstract;
       {Read accessor for Title property.
         @return Required title.
@@ -80,6 +82,27 @@ type
       {Sorted list of snippets associated with this group}
     property Title: string read GetTitle;
       {Title of group. Used for display}
+  end;
+
+  TTagGroupItem = class(TGroupItem)
+  strict private
+    var
+      fTag: TTag;
+  strict protected
+    function GetTitle: string; override;
+      {Gets group title from tag's name.
+        @return Required title.
+      }
+  public
+    constructor Create(const ATag: TTag);
+    function CompareTo(const Item: TGroupItem): Integer; override;
+      {Compares this group item against another. Comparison is alphabetic and
+      case insensitive based on associated tag name.
+        @param Item [in] Group item to compare against. Must be TTagGroupItem.
+        @return -ve if this item sorts before Item, 0 if same and +ve if this
+          item sorts after Item.
+      }
+    property Tag: TTag read fTag;
   end;
 
   {
@@ -218,6 +241,14 @@ type
       {Number of group items in grouping}
   end;
 
+  TTagGrouping = class(TGrouping)
+  strict protected
+    ///  <summary>Populates grouping with sorted tag group items and associated
+    ///  snippets.</summary>
+    ///  <remarks>Snippets will appear once for each tag.</remarks>
+    procedure Populate; override;
+  end;
+
   {
   TCategoryGrouping:
     Class that groups snippets by category. Categories are sorted by
@@ -268,7 +299,10 @@ implementation
 uses
   // Delphi
   Generics.Defaults,
+  // 3rd party
+  Collections.MultiMaps,
   // Project
+  CS.Database.Tags,
   DB.UMain,
   UStrUtils;
 
@@ -379,6 +413,79 @@ begin
   Result := SnippetList.Empty;
 end;
 
+{ TTagGrouping }
+
+procedure TTagGrouping.Populate;
+var
+  Tag: TTag;
+  SnippetID: TSnippetID;
+  Snippet: TSnippet;
+  TagMap: TSortedDistinctMultiMap<TTag, TSnippet>;
+  GroupItem: TTagGroupItem;
+  TaglessSnippets: TSnippetList;
+begin
+  TaglessSnippets := nil;
+  TagMap := TSortedDistinctMultiMap<TTag, TSnippet>.Create(
+    TRules<TTag>.Create(
+      TTag.TComparer.Create, TTag.TEqualityComparer.Create
+    ),
+    TRules<TSnippet>.Create(
+      TDelegatedComparer<TSnippet>.Create(
+        function (const Left, Right: TSnippet): Integer
+        begin
+          Result := TSnippetID.Compare(Left.ID, Right.ID);
+        end
+      ),
+      TDelegatedEqualityComparer<TSnippet>.Create(
+        function (const Left, Right: TSnippet): Boolean
+        begin
+          Result := Left.ID = Right.ID;
+        end,
+        function (const Value: TSnippet): Integer
+        begin
+          Result := Value.ID.Hash
+        end
+      )
+    ),
+    True
+  );
+  try
+    TaglessSnippets := TSnippetList.Create;
+    for SnippetID in SnippetIDList do
+    begin
+      Snippet := _Database.Lookup(SnippetID);
+      if not Snippet.Tags.IsEmpty then
+      begin
+        for Tag in Snippet.Tags do
+        begin
+          TagMap.Add(Tag, Snippet);
+        end;
+      end
+      else
+      begin
+        TaglessSnippets.Add(Snippet);
+      end;
+    end;
+    // special group for snippets with no tags
+    GroupItem := TTagGroupItem.Create(TTag.CreateNull);
+    AddItem(GroupItem);
+    for Snippet in TaglessSnippets do
+      GroupItem.AddSnippet(Snippet);
+    for Tag in TagMap.Keys do
+    begin
+      GroupItem := TTagGroupItem.Create(Tag);
+      AddItem(GroupItem);
+      for Snippet in TagMap[Tag] do
+      begin
+        GroupItem.AddSnippet(Snippet);
+      end;
+    end;
+  finally
+    TagMap.Free;
+    TaglessSnippets.Free;
+  end;
+end;
+
 { TCategoryGrouping }
 
 procedure TCategoryGrouping.Populate;
@@ -397,6 +504,27 @@ begin
       if SnippetIDList.Contains(SnippetID) then
         Item.AddSnippet(_Database.Lookup(SnippetID));
   end;
+end;
+
+{ TTagGroupItem }
+
+function TTagGroupItem.CompareTo(const Item: TGroupItem): Integer;
+var
+  ItemTag: TTag;
+begin
+  ItemTag := (Item as TTagGroupItem).fTag;
+  Result := TTag.Compare(fTag, ItemTag);
+end;
+
+constructor TTagGroupItem.Create(const ATag: TTag);
+begin
+  inherited Create;
+  fTag := ATag;
+end;
+
+function TTagGroupItem.GetTitle: string;
+begin
+  Result := fTag.ToString;
 end;
 
 { TCategoryGroupItem }

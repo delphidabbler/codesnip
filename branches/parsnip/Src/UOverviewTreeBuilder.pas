@@ -81,6 +81,20 @@ type
   }
   TOverviewTreeBuilderClass = class of TOverviewTreeBuilder;
 
+
+  ///  <summary>Class that populates the overview treeview with a list of
+  ///  snippets grouped by tags.</summary>
+  ///  <remarks>Snippets are repeated once per tag.</remarks>
+  TOverviewTagTreeBuilder = class sealed(TOverviewTreeBuilder)
+  strict protected
+    ///  <summary>Creates and returns a tag grouping object.</summary>
+    function CreateGrouping: TGrouping; override;
+    ///  <summary>Createa and returns a tag view item from a group item.
+    ///  </summary>
+    function CreateViewItemForGroup(const Group: TGroupItem): IView;
+      override;
+  end;
+
   {
   TOverviewCategorisedTreeBuilder:
     Class that populates the overview treeview with a list of snippets grouped
@@ -216,6 +230,21 @@ begin
   inherited Create;
   fTreeView := TV;
   fSnippetIDList := SnippetIDList;
+end;
+
+{ TOverviewTagTreeBuilder }
+
+function TOverviewTagTreeBuilder.CreateGrouping: TGrouping;
+begin
+  Result := TTagGrouping.Create(SnippetIDList);
+end;
+
+function TOverviewTagTreeBuilder.CreateViewItemForGroup(
+  const Group: TGroupItem): IView;
+begin
+  Result := TViewFactory.CreateTagView(
+    (Group as TTagGroupItem).Tag
+  );
 end;
 
 { TOverviewCategorisedTreeBuilder }
