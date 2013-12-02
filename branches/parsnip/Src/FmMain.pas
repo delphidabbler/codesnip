@@ -985,7 +985,7 @@ end;
 
 procedure TMainForm.actNextTabExecute(Sender: TObject);
 begin
-  fMainDisplayMgr.SelectNextActiveTab;
+  fMainDisplayMgr.SelectNextDetailsTab;
 end;
 
 procedure TMainForm.ActNonEmptyDBUpdate(Sender: TObject);
@@ -1020,7 +1020,7 @@ end;
 
 procedure TMainForm.actPreviousTabExecute(Sender: TObject);
 begin
-  fMainDisplayMgr.SelectPreviousActiveTab;
+  fMainDisplayMgr.SelectPreviousDetailsTab;
 end;
 
 procedure TMainForm.actPrintExecute(Sender: TObject);

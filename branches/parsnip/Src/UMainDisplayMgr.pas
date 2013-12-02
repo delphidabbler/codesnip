@@ -209,13 +209,13 @@ type
     ///  Detail pane is refreshed.</remarks>
     procedure UpdateDisplayedQuery;
 
-    ///  <summary>Selects next tab in currently active tab set.</summary>
-    ///  <remarks>Does nothing if there is no active tab set.</remarks>
-    procedure SelectNextActiveTab;
+    ///  <summary>Selects next tab in detail pane.</summary>
+    ///  <remarks>Does nothing when there are less than 2 tabs.</remarks>
+    procedure SelectNextDetailsTab;
 
-    ///  <summary>Selects previous tab in currently active tab set.</summary>
-    ///  <remarks>Does nothing if there is no active tab set.</remarks>
-    procedure SelectPreviousActiveTab;
+    ///  <summary>Selects previous tab in detail pane.</summary>
+    ///  <remarks>Does nothing when there are less than 2 tabs.</remarks>
+    procedure SelectPreviousDetailsTab;
 
     ///  <summary>Closes one or more tabs in detail pane, according to value
     ///  of Options parameter.</summary>
@@ -563,7 +563,7 @@ end;
 
 procedure TMainDisplayMgr.Refresh;
 begin
-  // Redisplays current view in overview pane and active tab of detail pane
+  // Redisplays current view in overview pane and current tab of detail pane
   (fOverviewMgr as IOverviewDisplayMgr).SelectItem(CurrentView);
   RefreshDetailPage;
 end;
@@ -607,7 +607,7 @@ begin
   Result := (fOverviewMgr as IOVerviewDisplayMgr).SelectedGroupingIdx;
 end;
 
-procedure TMainDisplayMgr.SelectNextActiveTab;
+procedure TMainDisplayMgr.SelectNextDetailsTab;
 begin
   (fDetailsMgr as IDetailPaneDisplayMgr).NextTab;
 end;
@@ -617,7 +617,7 @@ begin
   (fOverviewMgr as IOVerviewDisplayMgr).SelectGrouping(GroupingIdx);
 end;
 
-procedure TMainDisplayMgr.SelectPreviousActiveTab;
+procedure TMainDisplayMgr.SelectPreviousDetailsTab;
 begin
   (fDetailsMgr as IDetailPaneDisplayMgr).PreviousTab;
 end;
