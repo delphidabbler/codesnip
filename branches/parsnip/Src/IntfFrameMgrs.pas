@@ -65,11 +65,13 @@ const
 ////////////////////////////////////////////////////////////////////////////////
 
 type
-  ///  <summary>Interface that defines methods for use in managing tab sets.
-  ///  </summary>
-  ITabbedDisplayMgr = interface(IInterface)
-    ['{5445BF4F-0A02-48E6-A6FA-AE0FFC2F9939}']
-    ///  <summary>Select tab with given index in set.</summary>
+  ///  <summary>Interface that defines operations on Detail Pane relating to
+  ///  display of views in one or more tabs.</summary>
+  IDetailPaneDisplayMgr = interface(IInterface)
+    ['{79F8BCAB-4C3F-4935-B5BF-9E5B9B32D88A}']
+    /// <summary>Return currently selected view.</summary>
+    function SelectedView: IView;
+    ///  <summary>Select tab with given index.</summary>
     procedure SelectTab(const TabIdx: Integer);
     ///  <summary>Get index of currently selected tab.</summary>
     function SelectedTab: Integer;
@@ -79,19 +81,8 @@ type
     ///  <summary>Switch to previous tab in sequence or go to last tab if
     ///  current tab is first.</summary>
     procedure PreviousTab;
-  end;
-
-type
-  ///  <summary>Interface that defines operations on Detail Pane relating to
-  ///  display of views in one or more tabs.</summary>
-  IDetailPaneDisplayMgr = interface(IInterface)
-    ['{79F8BCAB-4C3F-4935-B5BF-9E5B9B32D88A}']
-    /// <summary>Return currently selected view.</summary>
-    function SelectedView: IView;
-    ///  <summary>Select detail pane tab with given index.</summary>
-    procedure SelectTab(const TabIdx: Integer);
-    ///  <summary>Find index of tab displaying given view or -1 if no such tab.
-    ///  </summary>
+    ///  <summary>Find index of tab displaying given view or return -1 if no
+    ///  such tab exists.</summary>
     function FindTab(ViewKey: IViewKey): Integer;
     ///  <summary>Display given view in tab with given index.</summary>
     procedure Display(View: IView; const TabIdx: Integer);

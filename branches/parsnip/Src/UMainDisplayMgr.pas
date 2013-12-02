@@ -87,20 +87,6 @@ type
       ///  </remarks>
       fPendingChange: Boolean;
 
-    ///  <summary>Gets reference to the manager of the currently interactive
-    ///  frame.</summary>
-    ///  <returns>IInterface. Reference to the required frame, or nil if no
-    ///  frame is interactive.</returns>
-    ///  <remarks>The frame with keyboard focus is defined to be "interactive".
-    ///  </remarks>
-    function GetInteractiveFrameMgr: IInterface;
-
-    ///  <summary>Gets reference to manager object for tab set that is currently
-    ///  "interactive".</summary>
-    ///  <returns>ITabbedDisplayMgr. Reference to required tab set manager
-    ///  object, or nil if no tab set is interactive.</returns>
-    function GetInteractiveTabMgr: ITabbedDisplayMgr;
-
     ///  <summary>Redisplays the current grouping in overview pane's tree-view
     ///  using the snippets included in the current database query.</summary>
     procedure RedisplayOverview;
@@ -360,7 +346,7 @@ begin
   case Option of
     dtcSelected:
       (fDetailsMgr as IDetailPaneDisplayMgr).CloseTab(
-        (fDetailsMgr as ITabbedDisplayMgr).SelectedTab
+        (fDetailsMgr as IDetailPaneDisplayMgr).SelectedTab
       );
     dtcAllExceptSelected:
       (fDetailsMgr as IDetailPaneDisplayMgr).CloseMultipleTabs(True);
@@ -394,8 +380,6 @@ begin
 
   Assert(Assigned(DetailsMgr),
     ClassName + '.Create: DetailsMgr is nil');
-  Assert(Supports(DetailsMgr, ITabbedDisplayMgr),
-    ClassName + '.Create: DetailsMgr must support ITabbedDisplayMgr');
   Assert(Supports(DetailsMgr, IPaneInfo),
     ClassName + '.Create: DetailsMgr must support IPaneInfo');
   Assert(Supports(DetailsMgr, IDetailPaneDisplayMgr),
@@ -479,7 +463,7 @@ end;
 procedure TMainDisplayMgr.DisplayInSelectedDetailView(View: IView);
 begin
   (fDetailsMgr as IDetailPaneDisplayMgr).Display(
-    View, (fDetailsMgr as ITabbedDisplayMgr).SelectedTab
+    View, (fDetailsMgr as IDetailPaneDisplayMgr).SelectedTab
   );
 end;
 
@@ -529,20 +513,6 @@ begin
   end;
 end;
 
-function TMainDisplayMgr.GetInteractiveFrameMgr: IInterface;
-begin
-  if (fDetailsMgr as IPaneInfo).IsInteractive then
-    Exit(fDetailsMgr);
-  if (fOverviewMgr as IPaneInfo).IsInteractive then
-    Exit(fOverviewMgr);
-  Result := nil;
-end;
-
-function TMainDisplayMgr.GetInteractiveTabMgr: ITabbedDisplayMgr;
-begin
-  GetIntf(GetInteractiveFrameMgr, ITabbedDisplayMgr, Result);
-end;
-
 procedure TMainDisplayMgr.Initialise(const OverviewGroupingIdx: Integer);
 begin
   (fOverviewMgr as IOverviewDisplayMgr).Initialise(OverviewGroupingIdx);
@@ -571,7 +541,10 @@ begin
     View.GetKey
   );
   if (fChangingDetailPageIdx >= 0) and
-    (fChangingDetailPageIdx = (fDetailsMgr as ITabbedDisplayMgr).SelectedTab)
+    (
+      fChangingDetailPageIdx =
+        (fDetailsMgr as IDetailPaneDisplayMgr).SelectedTab
+    )
     then
     begin
       // NOTE: Clear overview pane here to ensure no hanging references to
@@ -618,7 +591,7 @@ end;
 
 procedure TMainDisplayMgr.SelectDetailTab(TabIdx: Integer);
 begin
-  (fDetailsMgr as ITabbedDisplayMgr).SelectTab(TabIdx);
+  (fDetailsMgr as IDetailPaneDisplayMgr).SelectTab(TabIdx);
   (fOverviewMgr as IOverviewDisplayMgr).SelectItem(
     (fDetailsMgr as IDetailPaneDisplayMgr).SelectedView
   );
@@ -626,7 +599,7 @@ end;
 
 function TMainDisplayMgr.SelectedDetailTab: Integer;
 begin
-  Result := (fDetailsMgr as ITabbedDisplayMgr).SelectedTab;
+  Result := (fDetailsMgr as IDetailPaneDisplayMgr).SelectedTab;
 end;
 
 function TMainDisplayMgr.SelectedOverviewGrouping: Integer;
@@ -635,12 +608,8 @@ begin
 end;
 
 procedure TMainDisplayMgr.SelectNextActiveTab;
-var
-  TabMgr: ITabbedDisplayMgr;  // reference to active tab manager object
 begin
-  TabMgr := GetInteractiveTabMgr;
-  if Assigned(TabMgr) then
-    TabMgr.NextTab;
+  (fDetailsMgr as IDetailPaneDisplayMgr).NextTab;
 end;
 
 procedure TMainDisplayMgr.SelectOverviewGrouping(GroupingIdx: Integer);
@@ -649,12 +618,8 @@ begin
 end;
 
 procedure TMainDisplayMgr.SelectPreviousActiveTab;
-var
-  TabMgr: ITabbedDisplayMgr;  // reference to active tab manager object
 begin
-  TabMgr := GetInteractiveTabMgr;
-  if Assigned(TabMgr) then
-    TabMgr.PreviousTab;
+  (fDetailsMgr as IDetailPaneDisplayMgr).PreviousTab;
 end;
 
 procedure TMainDisplayMgr.ShowDBUpdatedPage;
@@ -669,7 +634,7 @@ var
   NewTabIdx: Integer; // index of new detail pane tab
 begin
   NewTabIdx := (fDetailsMgr as IDetailPaneDisplayMgr).CreateTab(View);
-  (fDetailsMgr as ITabbedDisplayMgr).SelectTab(NewTabIdx);
+  (fDetailsMgr as IDetailPaneDisplayMgr).SelectTab(NewTabIdx);
 end;
 
 procedure TMainDisplayMgr.ShowWelcomePage;
