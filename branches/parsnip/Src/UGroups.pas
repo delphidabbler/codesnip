@@ -51,8 +51,6 @@ type
       ///  </summary>
       fSnippetList: TSortedSnippetList;
   strict protected
-    { TODO: Get rid of this method: it's only used for snippet kinds and there
-            is a good alternative. }
     function GetTitle: string; virtual; abstract;
       {Read accessor for Title property.
         @return Required title.
