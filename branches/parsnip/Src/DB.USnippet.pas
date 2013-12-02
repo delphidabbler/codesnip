@@ -117,11 +117,6 @@ type
       end;
   strict private
     fCategory: string;                      // Name of snippet's category
-  public
-    function GetTitle: string; override;
-      {Gets snippet's title, or ID string if no title is set
-        @return Required title.
-      }
   strict protected
     procedure SetProps(const Data: TSnippetData);
       {Sets snippet's properties.
@@ -342,31 +337,14 @@ begin
     ClassName + '.Create: must only be called from descendants.');
   inherited Create(ID);
   // Record simple property values
-//  fID := ID;
-//  fTags := TTagSet.Create;
   SetProps(Props);
-  // Create string list to store required units
-//  fRequiredModules := TIStringList.Create;
-  // Create snippets lists for Depends and XRef properties
-//  fRequiredSnippets := TSnippetIDList.Create;
-//  fXRefs := TSnippetIDList.Create;
 end;
 
 destructor TSnippet.Destroy;
   {Destructor. Tears down object.
   }
 begin
-//  fNotes := nil;
-//  fDescription := nil;
   inherited;
-end;
-
-function TSnippet.GetTitle: string;
-begin
-  if not StrIsBlank(inherited GetTitle) then
-    Result := inherited GetTitle
-  else
-    Result := ID.ToString;
 end;
 
 function TSnippet.IsEqual(const Snippet: TSnippet): Boolean;
