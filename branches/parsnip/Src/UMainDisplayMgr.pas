@@ -551,7 +551,7 @@ begin
       // deleted views. Same principle applies to overwriting view in detail
       // pane.
       (fOverviewMgr as IOverviewDisplayMgr).Clear;
-      DisplayInSelectedDetailView(TViewFactory.CreateNulView);
+      DisplayInSelectedDetailView(TViewFactory.CreateNullView);
     end;
   fPendingViewChange := True;
 end;

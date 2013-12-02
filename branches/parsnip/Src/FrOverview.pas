@@ -339,8 +339,8 @@ begin
   fGroupingCBMgr.Add(cKindGrouping, sKindGrouping);
   fGroupingCBMgr.Select(cCategorisedGrouping);
   // Create new empty objects to store current and previous selected view items
-  fSelectedItem := TViewFactory.CreateNulView;
-  fPrevSelectedItem := TViewFactory.CreateNulView;
+  fSelectedItem := TViewFactory.CreateNullView;
+  fPrevSelectedItem := TViewFactory.CreateNullView;
   // Create treeview draw object
   fTVDraw := TTVDraw.Create;
   tvSnippets.OnCustomDrawItem := fTVDraw.CustomDrawItem;

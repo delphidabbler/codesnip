@@ -73,11 +73,10 @@ type
   end;
 
 type
-  // TODO: rename INulView and INullView
   ///  <summary>
-  ///  Interface supported by nul view.
+  ///  Interface supported by null view.
   ///  </summary>
-  INulView = interface(IView)
+  INullView = interface(IView)
     ['{18D06867-2E6D-4B62-A0A5-A269C91D18D6}']
   end;
 
@@ -180,8 +179,8 @@ type
     ///  <summary>Creates a copy of the given view. Copy has same type and
     ///  properties.</summary>
     class function Clone(View: IView): IView;
-    ///  <summary>Creates a nul view instance.</summary>
-    class function CreateNulView: IView;
+    ///  <summary>Creates a null view instance.</summary>
+    class function CreateNullView: IView;
     ///  <summary>Creates a new tab view instance.</summary>
     class function CreateNewTabView: IView;
     ///  <summary>Creates a start page view instance.</summary>
@@ -265,10 +264,9 @@ type
   end;
 
 type
-  // TODO: rename TNulView as TNullView
-  ///  <summary>Nul view.</summary>
-  TNulView = class sealed(TSimpleView,
-    IView, INulView
+  ///  <summary>Null view.</summary>
+  TNullView = class sealed(TSimpleView,
+    IView, INullView
   )
   public
     ///  <summary>Gets description of view.</summary>
@@ -588,9 +586,9 @@ begin
   Result := (Key is TKey) and ((Key as TKey).fOwnerClass = Self.fOwnerClass);
 end;
 
-{ TNulView }
+{ TNullView }
 
-function TNulView.GetDescription: string;
+function TNullView.GetDescription: string;
 begin
   Result := '';
 end;
@@ -916,8 +914,8 @@ end;
 
 class function TViewFactory.Clone(View: IView): IView;
 begin
-  if not Assigned(View) or Supports(View, INulView) then
-    Result := CreateNulView // also created if View = nil
+  if not Assigned(View) or Supports(View, INullView) then
+    Result := CreateNullView
   else if Supports(View, IStartPageView) then
     Result := CreateStartPageView
   else if Supports(View, ISnippetView) then
@@ -952,7 +950,7 @@ class function TViewFactory.CreateDBItemView(const DBObj: TObject): IView;
 begin
   Result := nil;
   if not Assigned(DBObj) then
-    Result := TViewFactory.CreateNulView
+    Result := TViewFactory.CreateNullView
   else if DBObj is TSnippet then
     Result := TViewFactory.CreateSnippetView(DBObj as TSnippet)
   else if DBObj is TCategory then
@@ -977,9 +975,9 @@ begin
   Result := TNewTabView.Create;
 end;
 
-class function TViewFactory.CreateNulView: IView;
+class function TViewFactory.CreateNullView: IView;
 begin
-  Result := TNulView.Create;
+  Result := TNullView.Create;
 end;
 
 class function TViewFactory.CreateSnippetKindView(

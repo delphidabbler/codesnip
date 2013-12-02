@@ -349,7 +349,7 @@ class function TDetailPageHTMLFactory.CreateGenerator(
   View: IView): TDetailPageHTML;
 begin
   Result := nil;
-  if Supports(View, INulView) then
+  if Supports(View, INullView) then
     Result := TNulPageHTML.Create(View)
   else if Supports(View, IStartPageView) then
     Result := TWelcomePageHTML.Create(View)

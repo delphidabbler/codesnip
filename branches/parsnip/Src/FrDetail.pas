@@ -268,7 +268,7 @@ end;
 
 procedure TDetailFrame.Clear;
 begin
-  InternalDisplay(TViewFactory.CreateNulView);
+  InternalDisplay(TViewFactory.CreateNullView);
 end;
 
 procedure TDetailFrame.CloseMultipleTabs(const KeepSelected: Boolean);
@@ -457,7 +457,7 @@ end;
 function TDetailFrame.SelectedView: IView;
 begin
   if IsEmptyTabSet then
-    Result := TViewFactory.CreateNulView
+    Result := TViewFactory.CreateNullView
   else
     Result := fViews[SelectedTab];
 end;
