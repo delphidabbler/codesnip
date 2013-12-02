@@ -261,6 +261,7 @@ uses
   UExceptions,
   UIOUtils,
   UStructs,
+  UStrUtils,
   UUtils,
   UXMLDocConsts,
   UXMLDocHelper;
@@ -543,6 +544,16 @@ var
     Result := TXMLDocHelper.GetSubTagText(fXMLDoc, SnippetNode, PropTagName);
   end;
 
+  function GetTitleProperty: string;
+    {Gets the text of the title property.
+      @return Value of display-name node if present, otherwise snippet ID.
+    }
+  begin
+    Result := GetPropertyText(cDisplayNameNode);
+    if StrIsBlank(Result) then
+      Result := Snippet;
+  end;
+
   function GetSourceCodePropertyText: string;
     {Gets source code from a file referenced from XML file.
       @return Source code.
@@ -661,7 +672,7 @@ begin
       Error(sSnippetNotFound, [Snippet]);
     // Snippet found: read properties
     Props.Cat := GetPropertyText(cCatIdNode);
-    Props.Title := GetPropertyText(cDisplayNameNode);
+    Props.Title := GetTitleProperty;
     Props.Kind := GetKindProperty;
     Props.Desc := GetDescriptionProperty;
     Props.Notes := GetNotesProperty;
