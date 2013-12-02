@@ -208,14 +208,13 @@ type
         @param Snippet [in] Snippet for which cross referers are required.
         @return List of IDs of referring snippets.
       }
-    procedure UpdateSnippet(const Snippet: TSnippet;
-      const Data: TSnippetEditData);
+    procedure UpdateSnippet(const Snippet: TSnippet; Data: TSnippetEditData);
       {Updates a user defined snippet's properties and references using provided
       data.
         @param Snippet [in] Snippet to be updated. Must be user-defined.
         @param Data [in] Record containing revised data.
       }
-    function AddSnippet(const Data: TSnippetEditData): TSnippet;
+    function AddSnippet(Data: TSnippetEditData): TSnippet;
       {Adds a new snippet to the user database.
         @param Data [in] Record storing new snippet's properties and references.
         @return Reference to new snippet.
@@ -418,6 +417,11 @@ type
       {Generates a snippet "name" that is unique in the database.
         @return Required unique snippet "name".
       }
+    procedure CleanUpRefs(var Refs: TSnippetReferences);
+      {Cleans any references non-existant snippets from snippet references.
+        @param [in/out] Snippet references to be cleaned: .RequiredSnippets and
+          .XRefs fields are modified.
+      }
   public
     constructor Create;
       {Constructor. Sets up new empty object.
@@ -472,14 +476,13 @@ type
         @param ASnippet [in] Snippet which is cross referenced.
         @return List of IDs of referring snippets.
       }
-    procedure UpdateSnippet(const Snippet: TSnippet;
-      const Data: TSnippetEditData);
+    procedure UpdateSnippet(const Snippet: TSnippet; Data: TSnippetEditData);
       {Updates a user defined snippet's properties and references using provided
       data.
         @param Snippet [in] Snippet to be updated. Must be user-defined.
         @param Data [in] Record containing revised data.
       }
-    function AddSnippet(const Data: TSnippetEditData): TSnippet;
+    function AddSnippet(Data: TSnippetEditData): TSnippet;
       {Adds a new snippet to the user database.
         @param Data [in] Record storing new snippet's properties and references.
         @return Reference to new snippet.
@@ -641,7 +644,7 @@ begin
   fChangeEvents.AddHandler(Handler);
 end;
 
-function _TDatabase.AddSnippet(const Data: TSnippetEditData): TSnippet;
+function _TDatabase.AddSnippet(Data: TSnippetEditData): TSnippet;
   {Adds a new snippet to the user database.
     @param Data [in] Record storing new snippet's properties and references.
     @return Reference to new snippet.
@@ -659,6 +662,7 @@ begin
     // Check if snippet with same name exists in user database: error if so
     if fSnippets.Find(NewSnippetID) <> nil then
       raise ECodeSnip.CreateFmt(sNameExists, [NewSnippetID.ToString]);
+    CleanUpRefs(Data.Refs);
     Result := InternalAddSnippet(NewSnippetID, Data);
     Query.Update;
     TriggerEvent(evSnippetAdded, Result);
@@ -666,6 +670,23 @@ begin
     fUpdated := True;
     TriggerEvent(evChangeEnd);
   end;
+end;
+
+procedure _TDatabase.CleanUpRefs(var Refs: TSnippetReferences);
+
+  function CleanSnippetList(const SnipList: ISnippetIDList): ISnippetIDList;
+  var
+    SnippetID: TSnippetID;
+  begin
+    Result := TSnippetIDList.Create;
+    for SnippetID in SnipList do
+      if Assigned(fSnippets.Find(SnippetID)) then
+        Result.Add(SnippetID);
+  end;
+
+begin
+  Refs.RequiredSnippets := CleanSnippetList(Refs.RequiredSnippets);
+  Refs.XRefs := CleanSnippetList(Refs.XRefs);
 end;
 
 procedure _TDatabase.Clear;
@@ -1084,7 +1105,7 @@ begin
 end;
 
 procedure _TDatabase.UpdateSnippet(const Snippet: TSnippet;
-  const Data: TSnippetEditData);
+  Data: TSnippetEditData);
   {Updates a user defined snippet's properties and references using provided
   data.
     @param Snippet [in] Snippet to be updated. Must be user-defined.
@@ -1120,6 +1141,7 @@ begin
   TriggerEvent(evBeforeSnippetChange, Snippet);
   try
     OldCatID := Snippet.Category;
+    CleanUpRefs(Data.Refs);
     (Snippet as TSnippetEx).Update(Data, fSnippets);
     UpdateCategories(OldCatID, Snippet);
     Query.Update;
