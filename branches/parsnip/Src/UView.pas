@@ -747,7 +747,11 @@ begin
 end;
 
 function TTagView.GetDescription: string;
+resourcestring
+  sNullTagName = '[No tags]';
 begin
+  if fTag.IsNull then
+    Exit(sNullTagName);
   Result := fTag.ToString;
 end;
 
