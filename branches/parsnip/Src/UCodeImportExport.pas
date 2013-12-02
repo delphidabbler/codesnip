@@ -219,6 +219,7 @@ uses
   UREMLDataIO,
   UReservedCategories,
   UStructs,
+  UStrUtils,
   UXMLDocConsts;
 
 
@@ -491,6 +492,19 @@ procedure TCodeImporter.Execute(const Data: TBytes);
       Result := TActiveTextFactory.CreateActiveText;
   end;
 
+  // Gets value of Title property: uses value of display-name node if present,
+  // otherwise uses snippet ID.
+  function GetTitleProperty(const SnippetNode: IXMLNode; const IDStr: string):
+    string;
+  begin
+    Result := TXMLDocHelper.GetSubTagText(
+      fXMLDoc, SnippetNode, cDisplayNameNode
+    );
+    if StrIsBlank(Result) then
+      Result := IDStr;
+  end;
+
+
 resourcestring
   sParseError = 'Import file has an invalid format';
   sImportTagStr = 'Imported';
@@ -538,9 +552,7 @@ begin
         Props.Cat := TReservedCategories.ImportsCatID;
         Props.Tags.Add(TTag.Create(sImportTagStr));
         Props.Desc := GetDescription(SnippetNode);
-        Props.Title := TXMLDocHelper.GetSubTagText(
-          fXMLDoc, SnippetNode, cDisplayNameNode
-        );
+        Props.Title := GetTitleProperty(SnippetNode, fSnippetInfo[Idx].Name);
         Props.SourceCode := TXMLDocHelper.GetSubTagText(
           fXMLDoc, SnippetNode, cSourceCodeTextNode
         );
