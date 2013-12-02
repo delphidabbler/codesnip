@@ -924,6 +924,8 @@ begin
     Result := CreateSnippetView((View as ISnippetView).Snippet)
   else if Supports(View, ICategoryView) then
     Result := CreateCategoryView((View as ICategoryView).Category)
+  else if Supports(View, ITagView) then
+    Result := CreateTagView((View as ITagView).Tag)
   else if Supports(View, ISnippetKindView) then
     Result := CreateSnippetKindView((View as ISnippetKindView).KindInfo)
   else if Supports(View, IInitialLetterView) then
@@ -999,7 +1001,7 @@ end;
 
 class function TViewFactory.CreateTagView(const Tag: TTag): IView;
 begin
-
+  Result := TTagView.Create(Tag);
 end;
 
 end.
