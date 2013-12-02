@@ -27,7 +27,6 @@ uses
   ComCtrls,
   // Project
   CS.Database.Types,
-  DB.UCategory,
   DB.USnippet,
   FrCheckedTV,
   USnippetsTVDraw;
@@ -37,9 +36,10 @@ type
 
   {
   TSelectSnippetsFrame:
-    Displays a two-level tree of snippet categories with associated snippets.
-    Each category and snippet has a check box that can be checked to select
-    them. A property is exposed that gives access to selected snippets.
+    Displays a two-level tree of snippet initial letters, with associated
+    snippets. Each initial letter and snippet has a check box that can be
+    ticked to select them. A property is exposed that gives access to selected
+    snippets.
   }
   TSelectSnippetsFrame = class(TCheckedTVFrame)
   strict private
@@ -90,6 +90,10 @@ type
       once for each leaf node.
         @param Node [in] Leaf node whose state to set.
       }
+    procedure FinalizeNode(const Node: TCheckedTreeNode); override;
+      {Frees any TBox<TInitialLetter> instance associated with Node.
+        @param Node [in] Node being finalised.
+      }
   public
     constructor Create(AOwner: TComponent); override;
       {Class constructor. Sets up object.
@@ -126,35 +130,39 @@ uses
   CS.Database.Snippets,
   DB.UMain,
   IntfCommon,
-  UGroups;
+  UBox,
+  UGroups,
+  UInitialLetter;
 
 
 {$R *.dfm}
 
 
-{ TSelectSnippetsBaseFrame }
+{ TSelectSnippetsFrame }
 
 procedure TSelectSnippetsFrame.AddNodes;
   {Adds nodes for each category and the snippets it contains to empty tree view.
   }
 var
-  Cat: TCategory;               // reference to a category
-  CatNode: TCheckedTreeNode;    // tree node representing a category
-  Snippet: TSnippet;            // reference to snippets in a category
-  Grouping: TGrouping;          // groups/sorts snippets by category
-  Group: TGroupItem;            // group representing a category
+  Initial: TInitialLetter;        // reference to an initial
+  InitialNode: TCheckedTreeNode;  // tree node representing an initial letter
+  Snippet: TSnippet;              // reference to snippets in a category
+  Grouping: TGrouping;            // groups/sorts snippets by category
+  Group: TGroupItem;              // group representing a category
 begin
   // Create grouping of all snippets by category, with categories alpha sorted
-  Grouping := TCategoryGrouping.Create(_Database.SelectAll);
+  Grouping := TAlphaGrouping.Create(_Database.SelectAll);
   try
     for Group in Grouping do
     begin
-      Cat := (Group as TCategoryGroupItem).Category;
-      if Group.IsEmpty or Cat.SnippetIDs.IsEmpty then
+      if Group.IsEmpty then
         Continue;
-      CatNode := AddNode(nil, Group.Title, Cat);
+      Initial := (Group as TAlphaGroupItem).Letter;
+      InitialNode := AddNode(
+        nil, Group.Title, TBox<TInitialLetter>.Create(Initial)
+      );
       for Snippet in Group.SnippetList do
-        AddNode(CatNode, Snippet.Title, Snippet);
+        AddNode(InitialNode, Snippet.Title, Snippet);
     end;
   finally
     Grouping.Free;
@@ -184,6 +192,12 @@ destructor TSelectSnippetsFrame.Destroy;
 begin
   fTVDraw.Free;
   inherited;
+end;
+
+procedure TSelectSnippetsFrame.FinalizeNode(const Node: TCheckedTreeNode);
+begin
+  if TObject(Node.Data) is TBox<TInitialLetter> then
+    TObject(Node.Data).Free;
 end;
 
 function TSelectSnippetsFrame.GetSelection: ISnippetIDList;
@@ -288,7 +302,7 @@ function TSelectSnippetsFrame.TTVDraw.IsSectionHeadNode(
   }
 begin
   // Header section is a category
-  Result := TObject(Node.Data) is TCategory;
+  Result := TObject(Node.Data) is TBox<TInitialLetter>;
 end;
 
 function TSelectSnippetsFrame.TTVDraw.IsUserDefinedNode(
@@ -304,8 +318,8 @@ begin
   Result := False;
   if SnipObj is TSnippet then
     Result := True
-  else if SnipObj is TCategory then
-    Result := (SnipObj as TCategory).UserDefined;
+  else if SnipObj is TBox<TInitialLetter> then
+    Result := True;
 end;
 
 end.
