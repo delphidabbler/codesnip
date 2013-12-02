@@ -395,8 +395,7 @@ begin
     sppCompileResults, 'CompileResults', sCompileResults
   );
   fParts[sppNotes] := TSnippetPagePart.Create(
-    // TODO: change name in config file (will need changing in first-run import
-    sppNotes, 'ExtraInfo', sNotes
+    sppNotes, 'Notes', sNotes
   );
   for Part in fParts do
     Assert(Part.DisplayName <> '',
