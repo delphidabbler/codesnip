@@ -111,37 +111,6 @@ type
   end;
 
   {
-  TCategoryGroupItem:
-    Defines a group heading for snippets organised by category. Contains all
-    snippets that fall in a specified category.
-  }
-  TCategoryGroupItem = class(TGroupItem)
-  strict private
-    var fCategory: TCategory; // Snippet category associated with group
-  strict protected
-    function GetTitle: string; override;
-      {Gets group title from category description.
-        @return Required title.
-      }
-  public
-    constructor Create(const Category: TCategory);
-      {Object constructor. Sets up group for a category.
-        @param Category [in] Category represented by the group.
-      }
-    function CompareTo(const Item: TGroupItem): Integer; override;
-      {Compares this group item against another. Comparison is alphabetic and
-      case insensitive based on associated category description. Categories with
-      same description from main database sort before user defined versions.
-        @param Item [in] Group item to compare against. Must be
-          TCategoryGroupItem.
-        @return -ve if this item sorts before Item, 0 if same and +ve if this
-          item sorts after Item.
-      }
-    property Category: TCategory read fCategory;
-      {Category represented by this group}
-  end;
-
-  {
   TAlphaGroupItem:
     Defines a group heading for snippets organised by initial letter of name.
     Contains all snippets sharing a specified initial letter.
@@ -256,19 +225,6 @@ type
     ///  snippets. Also adds a "no tags" group used for snippets which have no
     ///  tag.</summary>
     procedure Populate; override;
-  end;
-
-  {
-  TCategoryGrouping:
-    Class that groups snippets by category. Categories are sorted by
-    description.
-  }
-  TCategoryGrouping = class(TGrouping)
-  strict protected
-    procedure Populate; override;
-      {Populates grouping with sorted category group items and associated
-      snippets.
-      }
   end;
 
   {
@@ -495,26 +451,6 @@ begin
   end;
 end;
 
-{ TCategoryGrouping }
-
-procedure TCategoryGrouping.Populate;
-  {Populates grouping with sorted category group items and associated snippets.
-  }
-var
-  Cat: TCategory;           // each category in databases
-  SnippetID: TSnippetID;    // ID of each snippet in a category
-  Item: TCategoryGroupItem; // group item for each category
-begin
-  for Cat in _Database.Categories do
-  begin
-    Item := TCategoryGroupItem.Create(Cat);
-    AddItem(Item);
-    for SnippetID in Cat.SnippetIDs do
-      if SnippetIDList.Contains(SnippetID) then
-        Item.AddSnippet(_Database.Lookup(SnippetID));
-  end;
-end;
-
 { TTagGroupItem }
 
 function TTagGroupItem.CompareTo(const Item: TGroupItem): Integer;
@@ -534,40 +470,6 @@ end;
 function TTagGroupItem.GetTitle: string;
 begin
   Result := fTag.ToString;
-end;
-
-{ TCategoryGroupItem }
-
-function TCategoryGroupItem.CompareTo(const Item: TGroupItem): Integer;
-  {Compares this group item against another. Comparison is alphabetic and case
-  insensitive based on associated category description. Categories with same
-  description from main database sort before user defined versions.
-    @param Item [in] Group item to compare against. Must be TCategoryGroupItem.
-    @return -ve if this item sorts before Item, 0 if same and +ve if this
-      item sorts after Item.
-  }
-var
-  ItemCat: TCategory; // category which Item represents
-begin
-  ItemCat := (Item as TCategoryGroupItem).fCategory;
-  Result := fCategory.CompareDescriptionTo(ItemCat);
-end;
-
-constructor TCategoryGroupItem.Create(const Category: TCategory);
-  {Object constructor. Sets up group for a category.
-    @param Category [in] Category represented by the group.
-  }
-begin
-  inherited Create;
-  fCategory := Category;
-end;
-
-function TCategoryGroupItem.GetTitle: string;
-  {Gets group title from category description.
-    @return Required title.
-  }
-begin
-  Result := fCategory.Description;
 end;
 
 { TAlphaGrouping }
