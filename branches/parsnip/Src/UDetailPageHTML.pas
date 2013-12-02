@@ -297,6 +297,32 @@ type
 
 type
   ///  <summary>
+  ///  Generates HTML body of a page that displays information about a grouping
+  ///  of snippets by tag.
+  ///  </summary>
+  ///  <remarks>
+  ///  List of snippets contained in grouping may be empty.
+  ///  </remarks>
+  TTagsPageHTML = class sealed(TSnippetListPageHTML)
+  strict protected
+    ///  <summary>Checks if the given snippet should be included in the list of
+    ///  snippets to be displayed.</summary>
+    ///  <remarks>The snippet is to be displayed if it is in the tag being
+    ///  displayed.</remarks>
+    function IsSnippetRequired(const Snippet: TSnippet): Boolean; override;
+    ///  <summary>Returns name of CSS class to be used for page heading.
+    ///  </summary>
+    function GetH1ClassName: string; override;
+    ///  <summary>Returns narrative to be used at top of any page that displays
+    ///  a snippet list.</summary>
+    function GetNarrative: string; override;
+    ///  <summary>Returns text to be displayed on a page that has no snippets to
+    ///  display.</summary>
+    function GetEmptyListNote: string; override;
+  end;
+
+type
+  ///  <summary>
   ///  Generates HTML body of a page that displays information about an
   ///  alphabetical grouping of snippets.
   ///  </summary>
@@ -357,6 +383,8 @@ begin
     Result := TSnippetInfoPageHTML.Create(View)
   else if Supports(View, ICategoryView) then
     Result := TCategoryPageHTML.Create(View)
+  else if Supports(View, ITagView) then
+    Result := TTagsPageHTML.Create(View)
   else if Supports(View, ISnippetKindView) then
     Result := TSnipKindPageHTML.Create(View)
   else if Supports(View, IInitialLetterView) then
@@ -693,6 +721,32 @@ end;
 function TCategoryPageHTML.IsSnippetRequired(const Snippet: TSnippet): Boolean;
 begin
   Result := (View as ICategoryView).Category.SnippetIDs.Contains(Snippet.ID);
+end;
+
+{ TTagsPageHTML }
+
+function TTagsPageHTML.GetEmptyListNote: string;
+resourcestring
+  sNote = 'The current selection contains no snippets with this tag.';
+begin
+  Result := sNote;
+end;
+
+function TTagsPageHTML.GetH1ClassName: string;
+begin
+  Result := 'userdb';
+end;
+
+function TTagsPageHTML.GetNarrative: string;
+resourcestring
+  sNarrative = 'List of selected snippets with this tag.';
+begin
+  Result := sNarrative;
+end;
+
+function TTagsPageHTML.IsSnippetRequired(const Snippet: TSnippet): Boolean;
+begin
+  Result := Snippet.Tags.Contains((View as ITagView).Tag);
 end;
 
 { TAlphaListPageHTML }
