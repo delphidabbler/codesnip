@@ -87,12 +87,18 @@ type
       ///  </remarks>
       fPendingChange: Boolean;
 
+    ///  <summary>Gets reference to the manager of the currently interactive
+    ///  frame.</summary>
+    ///  <returns>IInterface. Reference to the required frame, or nil if no
+    ///  frame is interactive.</returns>
+    ///  <remarks>The frame with keyboard focus is defined to be "interactive".
+    ///  </remarks>
+    function GetInteractiveFrameMgr: IInterface;
+
     ///  <summary>Gets reference to manager object for tab set that is currently
     ///  "interactive".</summary>
     ///  <returns>ITabbedDisplayMgr. Reference to required tab set manager
-    ///  object, or nil if no tab set in interactive.</returns>
-    ///  <remarks>Both overview and detail pane has a tab set. The tab set in
-    ///  the frame that has (keyboard) focus is "interactive".</remarks>
+    ///  object, or nil if no tab set is interactive.</returns>
     function GetInteractiveTabMgr: ITabbedDisplayMgr;
 
     ///  <summary>Redisplays the current grouping in overview pane's tree-view
@@ -304,7 +310,10 @@ uses
   // Delphi
   SysUtils,
   // Project
-  DB.UMain, UPreferences, UQuery;
+  DB.UMain,
+  UPreferences,
+  UQuery,
+  UUtils;
 
 
 { TMainDisplayMgr }
@@ -376,8 +385,6 @@ constructor TMainDisplayMgr.Create(const OverviewMgr, DetailsMgr: IInterface);
 begin
   Assert(Assigned(OverviewMgr),
     ClassName + '.Create: OverviewMgr is nil');
-  Assert(Supports(OverviewMgr, ITabbedDisplayMgr),
-    ClassName + '.Create: OverviewMgr must support ITabbedDisplayMgr');
   Assert(Supports(OverviewMgr, IPaneInfo),
     ClassName + '.Create: OverviewMgr must support IPaneInfo');
   Assert(Supports(OverviewMgr, IOverviewDisplayMgr),
@@ -520,13 +527,18 @@ begin
   end;
 end;
 
+function TMainDisplayMgr.GetInteractiveFrameMgr: IInterface;
+begin
+  if (fDetailsMgr as IPaneInfo).IsInteractive then
+    Exit(fDetailsMgr);
+  if (fOverviewMgr as IPaneInfo).IsInteractive then
+    Exit(fOverviewMgr);
+  Result := nil;
+end;
+
 function TMainDisplayMgr.GetInteractiveTabMgr: ITabbedDisplayMgr;
 begin
-  Result := nil;
-  if (fOverviewMgr as IPaneInfo).IsInteractive then
-    Result := fOverviewMgr as ITabbedDisplayMgr
-  else if (fDetailsMgr as IPaneInfo).IsInteractive then
-    Result := fDetailsMgr as ITabbedDisplayMgr;
+  GetIntf(GetInteractiveFrameMgr, ITabbedDisplayMgr, Result);
 end;
 
 procedure TMainDisplayMgr.Initialise(const OverviewTab: Integer);
@@ -617,7 +629,7 @@ end;
 
 function TMainDisplayMgr.SelectedOverviewTab: Integer;
 begin
-  Result := (fOverviewMgr as ITabbedDisplayMgr).SelectedTab;
+  Result := (fOverviewMgr as IOVerviewDisplayMgr).SelectedGroupingIdx;
 end;
 
 procedure TMainDisplayMgr.SelectNextActiveTab;
@@ -631,7 +643,7 @@ end;
 
 procedure TMainDisplayMgr.SelectOverviewTab(TabIdx: Integer);
 begin
-  (fOverviewMgr as ITabbedDisplayMgr).SelectTab(TabIdx);
+  (fOverviewMgr as IOVerviewDisplayMgr).SelectGrouping(TabIdx);
 end;
 
 procedure TMainDisplayMgr.SelectPreviousActiveTab;

@@ -53,7 +53,6 @@ type
     of user-initiated events via a notifier object.
   }
   TOverviewFrame = class(TTitledFrame,
-    ITabbedDisplayMgr,                    // uses tabs to select different views
     IOverviewDisplayMgr,                   // for loading and selecting snippets
     IPaneInfo,                                // provides information about pane
     ISetNotifier,                                        // sets notifier object
@@ -188,21 +187,6 @@ type
     destructor Destroy; override;
       {Class destructor. Tears down object.
       }
-    { ITabbedDisplayMgr }
-    procedure SelectTab(const TabIdx: Integer);
-      {Selects tab with specified index.
-        @param TabIdx [in] Index of tab to be selected.
-      }
-    function SelectedTab: Integer;
-      {Returns index of currently selected tab.
-        @return Required tab index.
-      }
-    procedure NextTab;
-      {Switches to next tab, or return to first tab if current tab is last.
-      }
-    procedure PreviousTab;
-      {Switches to previous tab, or return to last tab if current tab is first.
-      }
     { IOverviewDisplayMgr }
     ///  <summary>Initialise frame with given tab selected.</summary>
     ///  <remarks>Method of IOverviewDisplayMgr.</remarks>
@@ -214,6 +198,12 @@ type
         @param Snippets [in] List of IDs snippets to be displayed.
         @param Force [in] Forces redisplay regardless of current state.
       }
+    ///  <summary>Select grouping with given index.</summary>
+    ///  <remarks>Method of IOverviewDisplayMgr.</remarks>
+    procedure SelectGrouping(const Idx: Integer);
+    ///  <summary>Get index of currently displayed grouping.</summary>
+    ///  <remarks>Method of IOverviewDisplayMgr.</remarks>
+    function SelectedGroupingIdx: Integer;
     procedure Clear;
       {Clears the display.
       }
@@ -563,30 +553,10 @@ begin
     end;
 end;
 
-procedure TOverviewFrame.NextTab;
-  {Switches to next tab, or return to first tab if current tab is last.
-  }
-begin
-  if SelectedTab = Pred(fGroupingCBMgr.Count) then
-    SelectTab(0)
-  else
-    SelectTab(Succ(SelectedTab));
-end;
-
 procedure TOverviewFrame.NotifyTabChange;
 begin
   if Assigned(fNotifier) then
     fNotifier.ChangeOverviewStyle(fGroupingCBMgr.GetSelected);
-end;
-
-procedure TOverviewFrame.PreviousTab;
-  {Switches to previous tab, or return to last tab if current tab is first.
-  }
-begin
-  if SelectedTab = 0 then
-    SelectTab(Pred(fGroupingCBMgr.Count))
-  else
-    SelectTab(Pred(SelectedTab));
 end;
 
 procedure TOverviewFrame.Redisplay;
@@ -642,12 +612,24 @@ begin
     DoSaveTreeState(fGroupingCBMgr.GetSelected);
 end;
 
-function TOverviewFrame.SelectedTab: Integer;
-  {Returns index of currently selected tab.
-    @return Required tab index.
-  }
+function TOverviewFrame.SelectedGroupingIdx: Integer;
 begin
   Result := fGroupingCBMgr.GetSelected;
+end;
+
+procedure TOverviewFrame.SelectGrouping(const Idx: Integer);
+begin
+  Assert((Idx >= 0) and (Idx < fGroupingCBMgr.Count),
+    ClassName + '.SelectGrouping: Idx out range');
+  // If SelectGrouping called for current grouping index we assume it's via
+  // cbGroupingsChange when tree state will have already been saved
+  if fGroupingCBMgr.GetSelected <> Idx then
+  begin
+    SaveTreeState;
+    fGroupingCBMgr.Select(Idx);
+    fPreviousGrouping := fGroupingCBMgr.GetSelected;
+  end;
+  Redisplay;
 end;
 
 procedure TOverviewFrame.SelectionChange(const Node: TTreeNode;
@@ -712,24 +694,6 @@ begin
   finally
     fCanChange := False;
   end;
-end;
-
-procedure TOverviewFrame.SelectTab(const TabIdx: Integer);
-  {Selects tab with specified index.
-    @param TabIdx [in] Tab to be selected.
-  }
-begin
-  Assert((TabIdx >= 0) and (TabIdx < fGroupingCBMgr.Count),
-    ClassName + '.SelectTab: TabIdx out range');
-  // If SelectTab called for current tab index we assume it's via
-  // cbGroupingsChange when tree state will have already been saved
-  if fGroupingCBMgr.GetSelected <> TabIdx then
-  begin
-    SaveTreeState;
-    fGroupingCBMgr.Select(TabIdx);
-    fPreviousGrouping := fGroupingCBMgr.GetSelected;
-  end;
-  Redisplay;
 end;
 
 procedure TOverviewFrame.SetNotifier(const Notifier: INotifier);

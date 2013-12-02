@@ -136,6 +136,10 @@ type
     ///  <remarks>If given snippet list is same as that displayed it may not
     ///  be redisplayed unless Force parameter is True.</remarks>
     procedure Display(Snippets: ISnippetIDList; const Force: Boolean);
+    ///  <summary>Select grouping with given index.</summary>
+    procedure SelectGrouping(const Idx: Integer);
+    ///  <summary>Get index of currently displayed grouping.</summary>
+    function SelectedGroupingIdx: Integer;
     ///  <summary>Clear the display.</summary>
     procedure Clear;
     ///  <summary>Select given view item in tree view.</summary>
