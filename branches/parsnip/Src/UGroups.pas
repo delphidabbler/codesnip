@@ -84,24 +84,31 @@ type
       {Title of group. Used for display}
   end;
 
+  ///  <summary>Defines a group heading for snippets organised by tag. Contains
+  ///  all snippets that use the associated tag. In a special case the group may
+  ///  contain snippets that have no tag.</summary>
   TTagGroupItem = class(TGroupItem)
   strict private
     var
+      ///  <summary>Read accessor for Tag property.</summary>
       fTag: TTag;
   strict protected
+    ///  <summary>Gets group title from tag's name.</summary>
     function GetTitle: string; override;
-      {Gets group title from tag's name.
-        @return Required title.
-      }
   public
+    ///  <summary>Constructs a group item instance associated with the given
+    ///  tag.</summary>
+    ///  <remarks>If Tag is null then the group item is considered to represent
+    ///  the special "no tags" group used for snippets with no tags.</remarks>
     constructor Create(const ATag: TTag);
+    ///  <summary>Compares this group item against another. Comparison is
+    ///  alphabetic and case insensitive based on associated tag name.</summary>
+    ///  <param name="Item">TGroupItem [in] Group item to be compared against.
+    ///  This must be a TTagGroupItem instance.</param>
+    ///  <returns>Integer. -ve if this item sorts before Item, 0 if same and +ve
+    ///  if this item sorts after Item.</returns>
     function CompareTo(const Item: TGroupItem): Integer; override;
-      {Compares this group item against another. Comparison is alphabetic and
-      case insensitive based on associated tag name.
-        @param Item [in] Group item to compare against. Must be TTagGroupItem.
-        @return -ve if this item sorts before Item, 0 if same and +ve if this
-          item sorts after Item.
-      }
+    ///  <summary>Tag associated with group item.</summary>
     property Tag: TTag read fTag;
   end;
 
@@ -241,11 +248,15 @@ type
       {Number of group items in grouping}
   end;
 
+  ///  <summary>Class that groups snippets by tag, except that the special "no
+  ///  tags" group sorts first.</summary>
+  ///  <remarks>The "no tags" group is used for snippets that have no tags.
+  ///  </remarks>
   TTagGrouping = class(TGrouping)
   strict protected
     ///  <summary>Populates grouping with sorted tag group items and associated
-    ///  snippets.</summary>
-    ///  <remarks>Snippets will appear once for each tag.</remarks>
+    ///  snippets. Also adds a "no tags" group used for snippets which have no
+    ///  tag.</summary>
     procedure Populate; override;
   end;
 
