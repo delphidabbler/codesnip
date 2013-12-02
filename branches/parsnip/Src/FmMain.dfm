@@ -239,11 +239,21 @@ inherited MainForm: TMainForm
           Width = 183
           ExplicitWidth = 183
         end
-        inherited tvSnippets: TTreeView
+        inherited pnlSnippets: TPanel
           Width = 183
           Height = 320
+          ExplicitLeft = 0
+          ExplicitTop = 68
           ExplicitWidth = 183
           ExplicitHeight = 320
+          inherited tvSnippets: TTreeView
+            Width = 181
+            Height = 316
+            ExplicitLeft = 0
+            ExplicitTop = 2
+            ExplicitWidth = 181
+            ExplicitHeight = 316
+          end
         end
       end
     end
