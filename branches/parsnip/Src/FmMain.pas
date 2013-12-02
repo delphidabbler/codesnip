@@ -995,16 +995,16 @@ end;
 
 procedure TMainForm.ActOverviewTabExecute(Sender: TObject);
 begin
-  // Action's Tag property specifies index of tab being selected
-  fMainDisplayMgr.SelectOverviewTab((Sender as TAction).Tag);
+  // Action's Tag property specifies index of grouping being selected
+  fMainDisplayMgr.SelectOverviewGrouping((Sender as TAction).Tag);
 end;
 
 procedure TMainForm.ActOverviewTabUpdate(Sender: TObject);
 begin
-  // Action's Tag property specifies index of tab being updated
+  // Action's Tag property specifies index of grouping being updated
   with Sender as TAction do
   begin
-    Checked := fMainDisplayMgr.SelectedOverviewTab = Tag;
+    Checked := fMainDisplayMgr.SelectedOverviewGrouping = Tag;
     Enabled := True;
   end;
 end;
@@ -1404,7 +1404,7 @@ begin
   _Database.RemoveChangeEventHandler(DBChangeHandler);
   // Save window state
   fWindowSettings.SplitterPos := pnlLeft.Width;
-  fWindowSettings.OverviewTab := fMainDisplayMgr.SelectedOverviewTab;
+  fWindowSettings.OverviewTab := fMainDisplayMgr.SelectedOverviewGrouping;
   fWindowSettings.Save;
 
   // Free owned objects
@@ -1469,9 +1469,9 @@ begin
     actCollapseTree.Tag := Ord(taCollapseAll);
     actCollapseNode.Tag := Ord(taCollapseNode);
     // Overview tab actions have tab id in tags
-    actViewCategorised.Tag := cCategorisedTab;
-    actViewAlphabetical.Tag := cAlphabeticTab;
-    actViewSnippetKinds.Tag := cKindTab;
+    actViewCategorised.Tag := cCategorisedGrouping;
+    actViewAlphabetical.Tag := cAlphabeticGrouping;
+    actViewSnippetKinds.Tag := cKindGrouping;
     // Move user database option not available in portable mode
     actMoveUserDatabase.Visible := not TCommandLineOpts.IsPortable;
 

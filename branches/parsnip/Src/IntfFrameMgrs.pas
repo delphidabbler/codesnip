@@ -25,17 +25,16 @@ uses
   // Project
   CS.Database.Types,
   Browser.IntfDocHostUI,
-//  DB.USnippet,
   Compilers.UGlobals,
   UCommandBars,
   UView;
 
 
 const
-  // Indexes of tabs in Overview Pane
-  cCategorisedTab = 0;
-  cAlphabeticTab = 1;
-  cKindTab = 2; // snippet kind tab
+  // Indexes of groupings in Overview Pane
+  cCategorisedGrouping = 0;
+  cAlphabeticGrouping = 1;
+  cKindGrouping = 2;
 
   // Identifiers for Overview Pane's command bars
   cOverviewToolBar: TCommandBarID = 1;
@@ -129,11 +128,11 @@ type
   ///  snippets.</summary>
   IOverviewDisplayMgr = interface(IInterface)
     ['{AD5D5A0F-E7D3-4173-A4F9-04D43909B0F5}']
-    ///  <summary>Initialise frame with given tab selected.</summary>
-    procedure Initialise(const TabIdx: Integer);
-    ///  <summary>Display given list of snippets in the current overview tab.
+    ///  <summary>Initialise frame with grouping with given index selected.
     ///  </summary>
-    ///  <remarks>If given snippet list is same as that displayed it may not
+    procedure Initialise(const GroupingIdx: Integer);
+    ///  <summary>Display snippets with the given IDs.</summary>
+    ///  <remarks>If snippet ID list is same as that displayed it may not
     ///  be redisplayed unless Force parameter is True.</remarks>
     procedure Display(Snippets: ISnippetIDList; const Force: Boolean);
     ///  <summary>Select grouping with given index.</summary>

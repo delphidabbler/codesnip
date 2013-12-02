@@ -146,7 +146,7 @@ type
     ///  PrepareForDBChange has been made.</remarks>
     procedure AddDBView(View: IView);
 
-    ///  <summary>Updates that display to reflect changes to a database view.
+    ///  <summary>Updates the display to reflect changes to a database view.
     ///  </summary>
     ///  <param name="TabIdx">Integer [in] Index of detail pane tab where view
     ///  is displayed. May be -1 if view not displayed in detail pane.</param>
@@ -187,7 +187,9 @@ type
     destructor Destroy; override;
 
     ///  <summary>Performs start-up initialisation of display.</summary>
-    procedure Initialise(const OverviewTab: Integer);
+    ///  <param name="OverviewGroupingIdx">Integer [in] Index of grouping to
+    ///  be used by overview frame.</param>
+    procedure Initialise(const OverviewGroupingIdx: Integer);
 
     ///  <summary>Re-starts display.</summary>
     ///  <remarks>All snippets in current query are shown in overview pane and
@@ -279,11 +281,11 @@ type
     ///  <summary>Selects all text in current detail tab.</summary>
     procedure SelectAll;
 
-    ///  <summary>Selects tab with given index in overview pane.</summary>
-    procedure SelectOverviewTab(TabIdx: Integer);
+    ///  <summary>Selects grouping with given index in overview pane.</summary>
+    procedure SelectOverviewGrouping(GroupingIdx: Integer);
 
-    ///  <summary>Returns index of selected tab in overview pane.</summary>
-    function SelectedOverviewTab: Integer;
+    ///  <summary>Returns index of current grouping in overview pane.</summary>
+    function SelectedOverviewGrouping: Integer;
 
     ///  <summary>Selects tab with given index in detail pane.</summary>
     procedure SelectDetailTab(TabIdx: Integer);
@@ -493,7 +495,7 @@ end;
 procedure TMainDisplayMgr.DisplayViewItem(ViewItem: IView;
   Mode: TDetailPageDisplayMode);
 var
-  TabIdx: Integer;  // index of tab showing given view (-1 if no such tab)
+  TabIdx: Integer;  // index of details tab showing given view (-1 if no tab)
 begin
   (fOverviewMgr as IOverviewDisplayMgr).SelectItem(ViewItem);
   if (fDetailsMgr as IDetailPaneDisplayMgr).IsEmptyTabSet
@@ -541,9 +543,9 @@ begin
   GetIntf(GetInteractiveFrameMgr, ITabbedDisplayMgr, Result);
 end;
 
-procedure TMainDisplayMgr.Initialise(const OverviewTab: Integer);
+procedure TMainDisplayMgr.Initialise(const OverviewGroupingIdx: Integer);
 begin
-  (fOverviewMgr as IOverviewDisplayMgr).Initialise(OverviewTab);
+  (fOverviewMgr as IOverviewDisplayMgr).Initialise(OverviewGroupingIdx);
 end;
 
 procedure TMainDisplayMgr.PrepareForDBChange;
@@ -603,7 +605,7 @@ end;
 
 procedure TMainDisplayMgr.ReStart;
 begin
-  // Clear all tabs and force re-displayed of overview
+  // Clear all detail pane tabs and force re-displayed of overview
   (fDetailsMgr as IDetailPaneDisplayMgr).CloseMultipleTabs(False);
   (fOverviewMgr as IOverviewDisplayMgr).Display(Query.Selection, True);
 end;
@@ -627,7 +629,7 @@ begin
   Result := (fDetailsMgr as ITabbedDisplayMgr).SelectedTab;
 end;
 
-function TMainDisplayMgr.SelectedOverviewTab: Integer;
+function TMainDisplayMgr.SelectedOverviewGrouping: Integer;
 begin
   Result := (fOverviewMgr as IOVerviewDisplayMgr).SelectedGroupingIdx;
 end;
@@ -641,9 +643,9 @@ begin
     TabMgr.NextTab;
 end;
 
-procedure TMainDisplayMgr.SelectOverviewTab(TabIdx: Integer);
+procedure TMainDisplayMgr.SelectOverviewGrouping(GroupingIdx: Integer);
 begin
-  (fOverviewMgr as IOVerviewDisplayMgr).SelectGrouping(TabIdx);
+  (fOverviewMgr as IOVerviewDisplayMgr).SelectGrouping(GroupingIdx);
 end;
 
 procedure TMainDisplayMgr.SelectPreviousActiveTab;
@@ -657,7 +659,8 @@ end;
 
 procedure TMainDisplayMgr.ShowDBUpdatedPage;
 begin
-  // NOTE: Normally this page is only shown when there are no tabs displayed
+  // NOTE: Normally this page is only shown when there are no tab displayed in
+  // details pane.
   DisplayViewItem(TViewFactory.CreateDBUpdateInfoView, ddmForceNewTab);
 end;
 

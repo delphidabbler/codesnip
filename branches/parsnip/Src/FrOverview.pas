@@ -112,8 +112,9 @@ type
       fSelectedItem: IView;         // Current selected view item in tree view
       fPrevSelectedItem: IView;     // Previous selected view item in tree view
       fSnippetList: ISnippetIDList; // List of currently displayed snippet IDs
+      ///  <summary>Array of tree state objects associated with supported
+      ///  groupings.</summary>
       fTreeStates: TArray<TOverviewTreeState>;
-                                    // Array of tree state objects: one per tab
       fCommandBars: TCommandBarMgr; // Configures popup menu and toolbar
       fPreviousGrouping: Integer;
       fGroupingCBMgr: TUnsortedCollectionCtrlKVMgr<Integer>;
@@ -174,10 +175,10 @@ type
           returned. If there is no selected node the first section node is
           returned.
       }
-    procedure NotifyTabChange;
-      {Sends a notification that overview display style tab has changed as a
-      result.
-      }
+    ///  <summary>Sends a notification that the overview grouping has changed.
+    ///  </summary>
+    procedure NotifyGroupingChange;
+    ///  <summary>Saves tree state for grouping with given index.</summary>
     procedure DoSaveTreeState(const GroupingIdx: Integer);
   public
     constructor Create(AOwner: TComponent); override;
@@ -188,16 +189,17 @@ type
       {Class destructor. Tears down object.
       }
     { IOverviewDisplayMgr }
-    ///  <summary>Initialise frame with given tab selected.</summary>
+    ///  <summary>Initialise frame with grouping with given index selected.
+    ///  </summary>
     ///  <remarks>Method of IOverviewDisplayMgr.</remarks>
-    procedure Initialise(const TabIdx: Integer);
+    procedure Initialise(const GroupingIdx: Integer);
+    ///  <summary>Display snippets with the given IDs.</summary>
+    ///  <remarks>
+    ///  <para>If snippet ID list is same as that displayed it may not
+    ///  be redisplayed unless Force parameter is True.</para>
+    ///  <para>Method of IOverviewDisplayMgr.</para>
+    ///  </remarks>
     procedure Display(Snippets: ISnippetIDList; const Force: Boolean);
-      {Displays snippets in the current overview tab.
-      NOTE: May not redisplay if Snippets is same as that displayed, unless
-      Force is True.
-        @param Snippets [in] List of IDs snippets to be displayed.
-        @param Force [in] Forces redisplay regardless of current state.
-      }
     ///  <summary>Select grouping with given index.</summary>
     ///  <remarks>Method of IOverviewDisplayMgr.</remarks>
     procedure SelectGrouping(const Idx: Integer);
@@ -290,7 +292,7 @@ procedure TOverviewFrame.cbGroupingsChange(Sender: TObject);
 begin
   if fPreviousGrouping >= 0 then
     DoSaveTreeState(fPreviousGrouping);
-  NotifyTabChange;
+  NotifyGroupingChange;
   fPreviousGrouping := fGroupingCBMgr.GetSelected;
   Redisplay;
 end;
@@ -308,7 +310,7 @@ constructor TOverviewFrame.Create(AOwner: TComponent);
     @param AOwner [in] Component that owns frame.
   }
 var
-  TabIdx: Integer;  // loops through tabs
+  GroupingIdx: Integer;  // loops through all supported groupings
 resourcestring
   sCategoryGrouping = 'By Category';
   sAlphaGrouping = 'Alphabetically';
@@ -332,10 +334,10 @@ begin
     end
   );
   fPreviousGrouping := -1;
-  fGroupingCBMgr.Add(cCategorisedTab, sCategoryGrouping);
-  fGroupingCBMgr.Add(cAlphabeticTab, sAlphaGrouping);
-  fGroupingCBMgr.Add(cKindTab, sKindGrouping);
-  fGroupingCBMgr.Select(cCategorisedTab);
+  fGroupingCBMgr.Add(cCategorisedGrouping, sCategoryGrouping);
+  fGroupingCBMgr.Add(cAlphabeticGrouping, sAlphaGrouping);
+  fGroupingCBMgr.Add(cKindGrouping, sKindGrouping);
+  fGroupingCBMgr.Select(cCategorisedGrouping);
   // Create new empty objects to store current and previous selected view items
   fSelectedItem := TViewFactory.CreateNulView;
   fPrevSelectedItem := TViewFactory.CreateNulView;
@@ -346,18 +348,18 @@ begin
   fSnippetList := TSnippetIDList.Create;
   // Create objects used to remember state of each tree view
   SetLength(fTreeStates, fGroupingCBMgr.Count);
-  for TabIdx := 0 to Pred(fGroupingCBMgr.Count) do
-    fTreeStates[TabIdx] := TOverviewTreeState.Create(tvSnippets);
+  for GroupingIdx := 0 to Pred(fGroupingCBMgr.Count) do
+    fTreeStates[GroupingIdx] := TOverviewTreeState.Create(tvSnippets);
 end;
 
 destructor TOverviewFrame.Destroy;
   {Class destructor. Tears down object.
   }
 var
-  TabIdx: Integer;  // loops through tabs
+  GroupingIdx: Integer;  // loops through all supported groupings
 begin
-  for TabIdx := Pred(fGroupingCBMgr.Count) downto 0 do
-    fTreeStates[TabIdx].Free;
+  for GroupingIdx := Pred(fGroupingCBMgr.Count) downto 0 do
+    fTreeStates[GroupingIdx].Free;
   fTVDraw.Free;
   fPrevSelectedItem := nil;
   fSelectedItem := nil;
@@ -368,12 +370,6 @@ end;
 
 procedure TOverviewFrame.Display(Snippets: ISnippetIDList;
   const Force: Boolean);
-  {Displays snippets in the current overview tab.
-  NOTE: May not redisplay if Snippets is same as that displayed, unless Force is
-  True.
-    @param Snippets [in] List of IDs snippets to be displayed.
-    @param Force [in] Forces redisplay regardless of current state.
-  }
 begin
   // Only do update if new snippet list is different to current one unless
   // Force is True
@@ -499,12 +495,12 @@ begin
   Result := CurrentNode as TViewItemTreeNode;
 end;
 
-procedure TOverviewFrame.Initialise(const TabIdx: Integer);
+procedure TOverviewFrame.Initialise(const GroupingIdx: Integer);
 begin
-  Assert((TabIdx >= 0) and (TabIdx < fGroupingCBMgr.Count),
-    ClassName + '.Initialise: TabIdx out range');
-  fGroupingCBMgr.Select(TabIdx);
-  fPreviousGrouping := TabIdx;
+  Assert((GroupingIdx >= 0) and (GroupingIdx < fGroupingCBMgr.Count),
+    ClassName + '.Initialise: GroupingIdx out range');
+  fGroupingCBMgr.Select(GroupingIdx);
+  fPreviousGrouping := GroupingIdx;
   Redisplay;
 end;
 
@@ -553,7 +549,7 @@ begin
     end;
 end;
 
-procedure TOverviewFrame.NotifyTabChange;
+procedure TOverviewFrame.NotifyGroupingChange;
 begin
   if Assigned(fNotifier) then
     fNotifier.ChangeOverviewStyle(fGroupingCBMgr.GetSelected);
@@ -567,11 +563,11 @@ var
   BuilderClasses:                 // overview builder classes for each grouping
     TArray<TOverviewTreeBuilderClass>;
 begin
-  // Store list of overview tree builder classes: one for each tab
+  // Store list of overview tree builder classes: one for each grouping
   SetLength(BuilderClasses, fGroupingCBMgr.Count);
-  BuilderClasses[cCategorisedTab] := TOverviewCategorisedTreeBuilder;
-  BuilderClasses[cAlphabeticTab] := TOverviewAlphabeticTreeBuilder;
-  BuilderClasses[cKindTab] := TOverviewSnipKindTreeBuilder;
+  BuilderClasses[cCategorisedGrouping] := TOverviewCategorisedTreeBuilder;
+  BuilderClasses[cAlphabeticGrouping] := TOverviewAlphabeticTreeBuilder;
+  BuilderClasses[cKindGrouping] := TOverviewSnipKindTreeBuilder;
   tvSnippets.Items.BeginUpdate;
   try
     // Clear tree view
