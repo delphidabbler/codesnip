@@ -728,7 +728,10 @@ end;
 function TTagsPageHTML.GetEmptyListNote: string;
 resourcestring
   sNote = 'The current selection contains no snippets with this tag.';
+  sNullNote = 'The current selection contains no snippets that have no tags.';
 begin
+  if (View as ITagView).Tag.IsNull then
+    Exit(sNullNote);
   Result := sNote;
 end;
 
@@ -740,13 +743,19 @@ end;
 function TTagsPageHTML.GetNarrative: string;
 resourcestring
   sNarrative = 'List of selected snippets with this tag.';
+  sNullNarrative = 'List of selected snippets that have no tags.';
 begin
+  if (View as ITagView).Tag.IsNull then
+    Exit(sNullNarrative);
   Result := sNarrative;
 end;
 
 function TTagsPageHTML.IsSnippetRequired(const Snippet: TSnippet): Boolean;
 begin
-  Result := Snippet.Tags.Contains((View as ITagView).Tag);
+  if not (View as ITagView).Tag.IsNull then
+    Result := Snippet.Tags.Contains((View as ITagView).Tag)
+  else
+    Result := Snippet.Tags.IsEmpty;
 end;
 
 { TAlphaListPageHTML }
