@@ -148,11 +148,13 @@ type
       fTag: string;
   public
     constructor Create(const ATagStr: string);
+    class function CreateNull: TTag; static;
     class operator Equal(const Left, Right: TTag): Boolean; inline;
     class operator NotEqual(const Left, Right: TTag): Boolean; inline;
     class function IsValidTagString(const AStr: string): Boolean; static;
       inline;
     class function Compare(const Left, Right: TTag): Integer; static; inline;
+    function IsNull: Boolean;
     function ToString: string; inline;
     function Hash: Integer; inline;
   end;
@@ -441,6 +443,11 @@ begin
   fTag := ATagStr;
 end;
 
+class function TTag.CreateNull: TTag;
+begin
+  Result.fTag := EmptyStr;
+end;
+
 class operator TTag.Equal(const Left, Right: TTag): Boolean;
 begin
   Result := StrSameText(Left.fTag, Right.fTag);
@@ -449,6 +456,11 @@ end;
 function TTag.Hash: Integer;
 begin
   Result := TextHash(fTag);
+end;
+
+function TTag.IsNull: Boolean;
+begin
+  Result := fTag = EmptyStr;
 end;
 
 class function TTag.IsValidTagString(const AStr: string): Boolean;
