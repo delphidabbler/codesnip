@@ -145,7 +145,7 @@ var
   Language: TSourceCodeLanguage;
 begin
   Language := TConfig.Instance.SourceCodeLanguages[
-    (View as ISnippetView).Snippet.Language
+    (View as ISnippetView).Snippet.LanguageID
   ];
   Result := Language.HiliterBrushID;
 end;

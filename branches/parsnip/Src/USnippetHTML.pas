@@ -242,7 +242,7 @@ var
   Lang: TSourceCodeLanguage;  // source code language
   Brush: TSyntaxHiliterBrush; // brush used to perform highlighting
 begin
-  Lang := TConfig.Instance.SourceCodeLanguages[fSnippet.Language];
+  Lang := TConfig.Instance.SourceCodeLanguages[fSnippet.LanguageID];
   Builder := THTMLBuilder.Create;
   try
     Brush := TSyntaxHiliterBrushes.CreateBrush(Lang.HiliterBrushID);

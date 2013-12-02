@@ -45,7 +45,7 @@ type
     Cat: string;                          // Category containing snippet
     Desc: IActiveText;                    // Description of snippet
     SourceCode: string;                   // Snippet's source code
-    HiliteSource: Boolean;                // If syntax highlighter to be used
+    LanguageID: TSourceCodeLanguageID;    // Source code language ID
     Title: string;                        // Snippet's title
     Notes: IActiveText;                   // Additional notes about snippet
     CompilerResults: TCompileResults;     // Compilation results
@@ -117,7 +117,6 @@ type
       end;
   strict private
     fCategory: string;                      // Name of snippet's category
-    fHiliteSource: Boolean;                 // If source is syntax highlighted
   public
     function GetTitle: string; override;
       {Gets snippet's title, or ID string if no title is set
@@ -159,8 +158,8 @@ type
       {Description of snippet}
     property SourceCode: string read GetSourceCode;
       {Source code of snippet}
-    property HiliteSource: Boolean read fHiliteSource;
-      {Flags whether source code can be syntax highlighted}
+    property LanguageID: TSourceCodeLanguageID read GetLanguageID;
+      {Identifier of source code language}
     property Notes: IActiveText read GetNotes;
       {Additional information about snippet}
     property Compatibility: TCompileResults read GetCompileResults;
@@ -175,11 +174,6 @@ type
       {List of any other snippet in database on which this snippet depends}
     property XRefs: ISnippetIDList read GetXRefs;
       {List of cross referenced snippets in database}
-    ///  <summary>Returns source code language used for snippet.</summary>
-    ///  <remarks>Included to assist in testing syntax multi-language
-    ///  highlighting. Revised database will include a similar snippet property.
-    ///  </remarks>
-    function Language: TSourceCodeLanguageID;
   end;
 
   {
@@ -385,14 +379,6 @@ begin
   Result := Snippet.ID = Self.ID;
 end;
 
-function TSnippet.Language: TSourceCodeLanguageID;
-begin
-  if fHiliteSource then
-    Result := TSourceCodeLanguageID.Create('Pascal')
-  else
-    Result := TSourceCodeLanguageID.Create('Text');
-end;
-
 procedure TSnippet.SetProps(const Data: TSnippetData);
   {Sets snippet's properties.
     @param Data [in] Record containing property values.
@@ -402,7 +388,7 @@ begin
   SetKind(Data.Kind);
   SetDescription(Data.Desc);
   SetSourceCode(StrWindowsLineBreaks(Data.SourceCode));
-  fHiliteSource := Data.HiliteSource;
+  SetLanguageID(Data.LanguageID);
   SetTitle(Data.Title);
   SetNotes(Data.Notes);
   SetCompileResults(Data.CompilerResults);
@@ -456,7 +442,7 @@ begin
   Result.Kind := Kind;
   Result.Desc := Description;
   Result.SourceCode := SourceCode;
-  Result.HiliteSource := HiliteSource;
+  Result.LanguageID := LanguageID;
   Result.Title := Title;
   Result.Notes := Notes;
   Result.CompilerResults := Compatibility;
@@ -699,7 +685,7 @@ begin
   Cat := Src.Cat;
   Desc := TActiveTextFactory.CloneActiveText(Src.Desc);
   SourceCode := Src.SourceCode;
-  HiliteSource := Src.HiliteSource;
+  LanguageID := Src.LanguageID;
   Title := Src.Title;
   Notes := TActiveTextFactory.CloneActiveText(Src.Notes);
   CompilerResults := Src.CompilerResults;
@@ -718,7 +704,7 @@ begin
   Desc := TActiveTextFactory.CreateActiveText;
   Title := '';
   SourceCode := '';
-  HiliteSource := True;
+  LanguageID := TSourceCodeLanguageID.CreateDefault;
   Notes := TActiveTextFactory.CreateActiveText;
   for CompID := Low(TCompilerID) to High(TCompilerID) do
     CompilerResults[CompID] := crQuery;

@@ -256,6 +256,7 @@ uses
   CS.ActiveText.Helper,
   CS.ActiveText.Renderers.REML,
   CS.Database.Types,
+  CS.SourceCode.Languages,
   UConsts,
   UExceptions,
   UIOUtils,
@@ -642,6 +643,14 @@ var
     else
       Result := TActiveTextFactory.CreateActiveText;
   end;
+
+  function GetLanguageIDProperty: TSourceCodeLanguageID;
+  begin
+    if TXMLDocHelper.GetHiliteSource(fXMLDoc, SnippetNode, True) then
+      Result := TSourceCodeLanguageID.Create('Pascal')
+    else
+      Result := TSourceCodeLanguageID.CreateDefault;
+  end;
   // ---------------------------------------------------------------------------
 
 begin
@@ -657,9 +666,7 @@ begin
     Props.Desc := GetDescriptionProperty;
     Props.Notes := GetNotesProperty;
     Props.SourceCode := GetSourceCodePropertyText;
-    Props.HiliteSource := TXMLDocHelper.GetHiliteSource(
-      fXMLDoc, SnippetNode, True
-    );
+    Props.LanguageID := GetLanguageIDProperty;
     Props.CompilerResults := TXMLDocHelper.GetCompilerResults(
       fXMLDoc, SnippetNode
     );
@@ -965,7 +972,9 @@ begin
     );
     fXMLDoc.CreateElement(SnippetNode, cSourceCodeFileNode, FileName);
     fXMLDoc.CreateElement(
-      SnippetNode, cHighlightSource, IntToStr(Ord(Props.HiliteSource))
+      SnippetNode,
+      cHighlightSource,
+      IntToStr(Ord(Props.LanguageID = TSourceCodeLanguageID.Create('Pascal')))
     );
     fXMLDoc.CreateElement(SnippetNode, cDisplayNameNode, Props.Title);
     // "extra" node is only written if Notes property has a value

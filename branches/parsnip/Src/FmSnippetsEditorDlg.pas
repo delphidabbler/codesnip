@@ -863,8 +863,9 @@ begin
   begin
     // We are editing a snippet: initialise controls from snippet's properties
     frmSourceEditor.SourceCode := fSnippet.SourceCode;
-    chkUseHiliter.Checked := fSnippet.HiliteSource;
-    Language := TConfig.Instance.SourceCodeLanguages[fSnippet.Language];
+    chkUseHiliter.Checked :=
+      fSnippet.LanguageID = TSourceCodeLanguageID.Create('Pascal');
+    Language := TConfig.Instance.SourceCodeLanguages[fSnippet.LanguageID];
     frmDescription.DefaultEditMode := emAuto;
     frmDescription.ActiveText := fSnippet.Description;
     edTitle.Text := fSnippet.Title;
@@ -997,7 +998,10 @@ begin
     Props.Kind := fKindCBMgr.GetSelected;
     (Props.Desc as IAssignable).Assign(frmDescription.ActiveText);
     Props.SourceCode := StrTrimRight(frmSourceEditor.SourceCode);
-    Props.HiliteSource := chkUseHiliter.Checked;
+    if chkUseHiliter.Checked then
+      Props.LanguageID := TSourceCodeLanguageID.Create('Pascal')
+    else
+      Props.LanguageID := TSourceCodeLanguageID.Create('Text');
     (Props.Notes as IAssignable).Assign(frmNotes.ActiveText);
     Props.CompilerResults := fCompilersLBMgr.GetCompileResults;
     Refs.RequiredModules := fUnitsCLBMgr.GetCheckedUnits;

@@ -81,7 +81,7 @@ resourcestring
 begin
   XHTMLDoc := HighlightSource(
     GenerateTestUnit(Snippet),
-    TConfig.Instance.SourceCodeLanguages[Snippet.Language]
+    TConfig.Instance.SourceCodeLanguages[Snippet.LanguageID]
   );
   TPreviewDlg.Execute(
     Owner, XHTMLDoc, dtHTML, Format(sDlgTitle, [Snippet.Title])

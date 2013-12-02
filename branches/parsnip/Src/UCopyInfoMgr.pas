@@ -109,7 +109,7 @@ begin
   Assert(Supports(View, ISnippetView),
     ClassName + '.GenerateRichText: View is not a snippet view');
   Language := TConfig.Instance.SourceCodeLanguages[
-    (View as ISnippetView).Snippet.Language
+    (View as ISnippetView).Snippet.LanguageID
   ];
   Brush := TSyntaxHiliterBrushes.CreateBrush(Language.HiliterBrushID);
   try

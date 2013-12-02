@@ -106,7 +106,7 @@ var
   Language: TSourceCodeLanguage;  // programming language used by snippet
   Brush: TSyntaxHiliterBrush;     // brush used to syntax highlight snippet
 begin
-  Language := TConfig.Instance.SourceCodeLanguages[fSnippet.Language];
+  Language := TConfig.Instance.SourceCodeLanguages[fSnippet.LanguageID];
   if (poSyntaxHilite in PrintInfo.PrintOptions) then
     Brush := TSyntaxHiliterBrushes.CreateBrush(Language.HiliterBrushID)
   else

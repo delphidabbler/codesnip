@@ -96,6 +96,7 @@ uses
   SysUtils,
   // Project
   CS.Database.Types,
+  CS.SourceCode.Languages,
   DB.UCategory,
   DB.UMain,
   UReservedCategories,
@@ -143,7 +144,10 @@ begin
   Result.Props.Tags.Add(TTag.Create(sSWAGTagStr));
   Result.Props.Desc := BuildDescription;
   Result.Props.SourceCode := SWAGSnippet.SourceCode;
-  Result.Props.HiliteSource := not SWAGSnippet.IsDocument;
+  if SWAGSnippet.IsDocument then
+    Result.Props.LanguageID := TSourceCodeLanguageID.Create('Text')
+  else
+    Result.Props.LanguageID := TSourceCodeLanguageID.Create('Pascal');
   Result.Props.Title := SWAGSnippet.Title;
   Result.Props.Notes := BuildNotes;
   // TSnippetEditData.Refs properties can keep default values

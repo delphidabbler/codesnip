@@ -211,6 +211,7 @@ uses
   CS.ActiveText,
   CS.ActiveText.Helper,
   CS.ActiveText.Renderers.REML,
+  CS.SourceCode.Languages,
   DB.UMain,
   IntfCommon,
   UAppInfo,
@@ -381,7 +382,9 @@ begin
   fXMLDoc.CreateElement(SnippetNode, cSourceCodeTextNode, Snippet.SourceCode);
   // write highlight source flag
   fXMLDoc.CreateElement(
-    SnippetNode, cHighlightSource, IntToStr(Ord(Snippet.HiliteSource))
+    SnippetNode,
+    cHighlightSource,
+    IntToStr(Ord(Snippet.LanguageID = TSourceCodeLanguageID.Create('Pascal')))
   );
   // "extra" tag is written only if snippet has a non-empty Notes property
   if not Snippet.Notes.IsEmpty then
@@ -541,9 +544,10 @@ begin
         Props.SourceCode := TXMLDocHelper.GetSubTagText(
           fXMLDoc, SnippetNode, cSourceCodeTextNode
         );
-        Props.HiliteSource := TXMLDocHelper.GetHiliteSource(
-          fXMLDoc, SnippetNode, True
-        );
+        if TXMLDocHelper.GetHiliteSource(fXMLDoc, SnippetNode, True) then
+          Props.LanguageID := TSourceCodeLanguageID.Create('Pascal')
+        else
+          Props.LanguageID := TSourceCodeLanguageID.Create('Text');
         // how we read Notes property depends on version of file
         case fVersion of
           1:
