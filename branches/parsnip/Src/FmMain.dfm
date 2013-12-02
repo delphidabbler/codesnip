@@ -465,32 +465,32 @@ inherited MainForm: TMainForm
       OnExecute = actSelectAllExecute
       OnUpdate = actSelectAllUpdate
     end
-    object actViewCategorised: TAction
+    object actViewGroupByTags: TAction
       Category = 'View'
       AutoCheck = True
       Caption = 'Group Snippet By Tags'
       Checked = True
       GroupIndex = 100
       Hint = 'Categorised Snippets|View snippets in categories'
-      OnExecute = ActOverviewTabExecute
-      OnUpdate = ActOverviewTabUpdate
+      OnExecute = ActOverviewGroupingExecute
+      OnUpdate = ActOverviewGroupingUpdate
     end
-    object actViewAlphabetical: TAction
+    object actViewGroupAlphabetically: TAction
       Category = 'View'
       AutoCheck = True
       Caption = 'Group Snippets Alphabetically'
       GroupIndex = 100
       Hint = 'Alphabetical Snippets|View snippets in alphabetical order'
-      OnExecute = ActOverviewTabExecute
-      OnUpdate = ActOverviewTabUpdate
+      OnExecute = ActOverviewGroupingExecute
+      OnUpdate = ActOverviewGroupingUpdate
     end
-    object actViewSnippetKinds: TAction
+    object actViewGroupBySnippetKinds: TAction
       Category = 'View'
       Caption = 'Group Snippets By Kind'
       GroupIndex = 100
       Hint = 'Snippets By Kind|View snippets by kind'
-      OnExecute = ActOverviewTabExecute
-      OnUpdate = ActOverviewTabUpdate
+      OnExecute = ActOverviewGroupingExecute
+      OnUpdate = ActOverviewGroupingUpdate
     end
     object actWebSite: TBrowseURL
       Category = 'Help'
@@ -988,20 +988,20 @@ inherited MainForm: TMainForm
         Caption = '-'
         GroupIndex = 2
       end
-      object miViewCategorised: TMenuItem
-        Action = actViewCategorised
+      object miViewGroupByTags: TMenuItem
+        Action = actViewGroupByTags
         AutoCheck = True
         GroupIndex = 100
         RadioItem = True
       end
-      object miViewAlphabetical: TMenuItem
-        Action = actViewAlphabetical
+      object miViewGroupAlphabetically: TMenuItem
+        Action = actViewGroupAlphabetically
         AutoCheck = True
         GroupIndex = 100
         RadioItem = True
       end
-      object miViewSnippetKinds: TMenuItem
-        Action = actViewSnippetKinds
+      object miViewGroupBySnippetKinds: TMenuItem
+        Action = actViewGroupBySnippetKinds
         GroupIndex = 100
       end
       object miSpacer4: TMenuItem

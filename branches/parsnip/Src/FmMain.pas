@@ -96,11 +96,11 @@ type
     actTestBug: TAction;
     actTestCompile: TAction;
     actUpdateDbase: TAction;
-    actViewAlphabetical: TAction;
-    actViewCategorised: TAction;
+    actViewGroupAlphabetically: TAction;
+    actViewGroupByTags: TAction;
     actViewCompErrs: TAction;
     actViewDependencies: TAction;
-    actViewSnippetKinds: TAction;
+    actViewGroupBySnippetKinds: TAction;
     actViewTestUnit: TAction;
     actWebSite: TBrowseURL;
     actWelcome: TAction;
@@ -199,12 +199,12 @@ type
     miTools: TMenuItem;
     miUpdateDbase: TMenuItem;
     miView: TMenuItem;
-    miViewCategorised: TMenuItem;
+    miViewGroupByTags: TMenuItem;
     miViewCompErrs: TMenuItem;
     miViewDependencies: TMenuItem;
-    miViewSnippetKinds: TMenuItem;
+    miViewGroupBySnippetKinds: TMenuItem;
     miViewTestUnit: TMenuItem;
-    miViewAlphabetical: TMenuItem;
+    miViewGroupAlphabetically: TMenuItem;
     miWebSite: TMenuItem;
     miWelcome: TMenuItem;
     mnuMain: TMainMenu;
@@ -373,12 +373,12 @@ type
     ///  <summary>Selects a tab in the overview pane.</summary>
     ///  <remarks>The index of the tab to be selected is stored in the sending
     ///  action's Tag property.</remarks>
-    procedure ActOverviewTabExecute(Sender: TObject);
+    procedure ActOverviewGroupingExecute(Sender: TObject);
     ///  <summary>Updates checked state of OverviewTab action referenced by
     ///  Sender.</summary>
     ///  <remarks>Action is checked iff its index, stored in the Tag property,
     ///  is the currently selected overview tab index.</remarks>
-    procedure ActOverviewTabUpdate(Sender: TObject);
+    procedure ActOverviewGroupingUpdate(Sender: TObject);
     ///  <summary>Displays the Preferences dialogue box.</summary>
     procedure actPreferencesExecute(Sender: TObject);
     ///  <summary>Displays previous tab in either the overview or details pane
@@ -993,13 +993,13 @@ begin
   (Sender as TAction).Enabled := not _Database.IsEmpty;
 end;
 
-procedure TMainForm.ActOverviewTabExecute(Sender: TObject);
+procedure TMainForm.ActOverviewGroupingExecute(Sender: TObject);
 begin
   // Action's Tag property specifies index of grouping being selected
   fMainDisplayMgr.SelectOverviewGrouping((Sender as TAction).Tag);
 end;
 
-procedure TMainForm.ActOverviewTabUpdate(Sender: TObject);
+procedure TMainForm.ActOverviewGroupingUpdate(Sender: TObject);
 begin
   // Action's Tag property specifies index of grouping being updated
   with Sender as TAction do
@@ -1469,13 +1469,9 @@ begin
     actCollapseTree.Tag := Ord(taCollapseAll);
     actCollapseNode.Tag := Ord(taCollapseNode);
     // Overview tab actions have tab id in tags
-    { TODO: rename grouping actions:
-      actViewCategorised as actViewTagsGrouping
-      actViewAlphabetical as actViewAlphaGrouping
-      actViewSnippetKinds as actViewSnippetKindsGrouping }
-    actViewCategorised.Tag := cTagsGrouping;
-    actViewAlphabetical.Tag := cAlphabeticGrouping;
-    actViewSnippetKinds.Tag := cKindGrouping;
+    actViewGroupByTags.Tag := cTagsGrouping;
+    actViewGroupAlphabetically.Tag := cAlphabeticGrouping;
+    actViewGroupBySnippetKinds.Tag := cKindGrouping;
     // Move user database option not available in portable mode
     actMoveUserDatabase.Visible := not TCommandLineOpts.IsPortable;
 
@@ -1492,7 +1488,11 @@ begin
         TActionFactory.CreateViewItemAction(Self, ActViewItemExecute)
       );
       SetOverviewStyleChangeActions(
-        [actViewCategorised, actViewAlphabetical, actViewSnippetKinds]
+        [
+          actViewGroupByTags,
+          actViewGroupAlphabetically,
+          actViewGroupBySnippetKinds
+        ]
       );
       SetDetailPaneChangeAction(
         TActionFactory.CreateDetailTabAction(Self, ActSelectDetailTabExecute)
