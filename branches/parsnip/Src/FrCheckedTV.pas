@@ -116,6 +116,7 @@ type
       Y: Integer);
     procedure tvCheckedCreateNodeClass(Sender: TCustomTreeView;
       var NodeClass: TTreeNodeClass);
+    procedure tvCheckedDeletion(Sender: TObject; Node: TTreeNode);
   strict private
     fOnChange: TNotifyEvent;    // Event handler for OnChange event
     fCanCollapse: Boolean;      // Value of CanCollapse property
@@ -182,6 +183,12 @@ type
         @param Text [in] Text to display in new node.
         @param Data [in] User defined data assoicated with new node.
         @return Reference to new node.
+      }
+    procedure FinalizeNode(const Node: TCheckedTreeNode); virtual;
+      {Called when tree nodes are being deleted. Does nothing in this class but
+      can be overridden by descendants if any finalisation of the node is
+      required.
+        @param Node [in] Node being finalised.
       }
     function FirstNode: TCheckedTreeNode;
       {Gets reference to first top level node in tree view.
@@ -376,6 +383,11 @@ begin
   end;
 end;
 
+procedure TCheckedTVFrame.FinalizeNode(const Node: TCheckedTreeNode);
+begin
+  // Do nothing: descendants may override
+end;
+
 function TCheckedTVFrame.FirstNode: TCheckedTreeNode;
   {Gets reference to first top level node in tree view.
     @return Node reference.
@@ -528,6 +540,18 @@ procedure TCheckedTVFrame.tvCheckedCreateNodeClass(
   }
 begin
   NodeClass := TCheckedTreeNode;
+end;
+
+procedure TCheckedTVFrame.tvCheckedDeletion(Sender: TObject; Node: TTreeNode);
+  {Handles tree view's OnDeletion event. Enables node to be finalised, for
+  example if node stores an object in its data that must be freed.
+    @param Sender [in] Not used.
+    @param Node [in] Node being deleted.
+  }
+begin
+  // If descendant class need to perform any finalisation they must override
+  // FinalizeNode: implementation in this class does nothing.
+  FinalizeNode(Node as TCheckedTreeNode);
 end;
 
 procedure TCheckedTVFrame.tvCheckedKeyPress(Sender: TObject;
