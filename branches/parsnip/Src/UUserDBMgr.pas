@@ -299,16 +299,14 @@ end;
 
 class function TUserDBMgr.CanDuplicate(ViewItem: IView): Boolean;
 begin
+  Assert(Assigned(ViewItem), ClassName + '.CanDuplicate: ViewItem is nil');
   Result := Supports(ViewItem, ISnippetView);
 end;
 
 class function TUserDBMgr.CanEdit(ViewItem: IView): Boolean;
-var
-  SnippetView: ISnippetView;  // ViewItem as snippet view if supported
 begin
   Assert(Assigned(ViewItem), ClassName + '.CanEdit: ViewItem is nil');
-  Result := Assigned(ViewItem)
-    and Supports(ViewItem, ISnippetView, SnippetView);
+  Result := Supports(ViewItem, ISnippetView);
 end;
 
 class procedure TUserDBMgr.CanOpenDialogClose(Sender: TObject;
