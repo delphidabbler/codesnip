@@ -235,19 +235,15 @@ inherited MainForm: TMainForm
             ExplicitLeft = 89
           end
         end
-        inherited tcDisplayStyle: TTabControl
+        inherited pnlGroupings: TPanel
           Width = 183
-          Height = 361
           ExplicitWidth = 183
-          ExplicitHeight = 361
-          inherited tvSnippets: TTreeView
-            Top = 42
-            Width = 175
-            Height = 315
-            ExplicitTop = 42
-            ExplicitWidth = 175
-            ExplicitHeight = 315
-          end
+        end
+        inherited tvSnippets: TTreeView
+          Width = 183
+          Height = 320
+          ExplicitWidth = 183
+          ExplicitHeight = 320
         end
       end
     end

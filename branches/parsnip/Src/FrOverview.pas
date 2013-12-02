@@ -31,6 +31,7 @@ uses
   Menus,
   // Project
   CS.Database.Types,
+  CS.UI.Helper.CollectionCtrlKVMgr,
   DB.USnippet,
   FrTitled,
   IntfFrameMgrs,
@@ -58,12 +59,13 @@ type
     ISetNotifier,                                        // sets notifier object
     ICommandBarConfig                         // configuration of "command bars"
   )
-    tcDisplayStyle: TTabControl;
     tvSnippets: TTreeView;
     tbarOverview: TToolBar;
     mnuOverview: TPopupMenu;
-    procedure tcDisplayStyleChange(Sender: TObject);
-    procedure tcDisplayStyleChanging(Sender: TObject; var AllowChange: Boolean);
+    pnlGroupings: TPanel;
+    lblGroupings: TLabel;
+    cbGroupings: TComboBox;
+    pnlSnippets: TPanel;
     procedure tvSnippetsChanging(Sender: TObject; Node: TTreeNode;
       var AllowChange: Boolean);
     procedure tvSnippetsCreateNodeClass(Sender: TCustomTreeView;
@@ -77,8 +79,8 @@ type
       Shift: TShiftState);
     procedure tvSnippetsMouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
-    procedure tcDisplayStyleMouseDown(Sender: TObject; Button: TMouseButton;
-      Shift: TShiftState; X, Y: Integer);
+    procedure FrameResize(Sender: TObject);
+    procedure cbGroupingsChange(Sender: TObject);
   strict private
     const
       cPermittedKeys = [            // Keypresses handled by treeview as default
@@ -114,6 +116,9 @@ type
       fTreeStates: TArray<TOverviewTreeState>;
                                     // Array of tree state objects: one per tab
       fCommandBars: TCommandBarMgr; // Configures popup menu and toolbar
+      fPreviousGrouping: Integer;
+      fGroupingCBMgr: TUnsortedCollectionCtrlKVMgr<Integer>;
+        // TODO: make grouping IDs into enum type instead of integer consts
   strict private
     procedure SelectNode(const Node: TTreeNode; const MakeVisible: Boolean);
       {Selects a specified node and optionally make it visible in the tree view.
@@ -174,6 +179,7 @@ type
       {Sends a notification that overview display style tab has changed as a
       result.
       }
+    procedure DoSaveTreeState(const GroupingIdx: Integer);
   public
     constructor Create(AOwner: TComponent); override;
       {Class constructor. Sets up object.
@@ -225,9 +231,10 @@ type
         @param State [in] Expand / collapse action being queried.
         @return True if action can be performed, False if not.
       }
+    ///  <summary>Save current expand / collapse state of tree view.
+    ///  </summary>
+    ///  <remarks>Method of IOverviewDisplayMgr.</remarks>
     procedure SaveTreeState;
-      {Saves current expansion state of treeview in memory.
-      }
     procedure RestoreTreeState;
       {Restores last saved treeview expansion state from memory.
       }
@@ -257,6 +264,7 @@ uses
   // Project
   CS.Database.Snippets,
   IntfCommon,
+  UCtrlArranger,
   UKeysHelper,
   UOverviewTreeBuilder;
 
@@ -288,6 +296,15 @@ begin
   end;
 end;
 
+procedure TOverviewFrame.cbGroupingsChange(Sender: TObject);
+begin
+  if fPreviousGrouping >= 0 then
+    DoSaveTreeState(fPreviousGrouping);
+  NotifyTabChange;
+  fPreviousGrouping := fGroupingCBMgr.GetSelected;
+  Redisplay;
+end;
+
 procedure TOverviewFrame.Clear;
   {Clears the display.
   }
@@ -302,6 +319,10 @@ constructor TOverviewFrame.Create(AOwner: TComponent);
   }
 var
   TabIdx: Integer;  // loops through tabs
+resourcestring
+  sCategoryGrouping = 'By Category';
+  sAlphaGrouping = 'Alphabetically';
+  sKindGrouping = 'By Snippet Kind';
 begin
   inherited;
   // Create delegated (contained) command bar manager for toolbar and popup menu
@@ -312,6 +333,19 @@ begin
   fCommandBars.AddCommandBar(
     cOverviewPopupMenu, TPopupMenuWrapper.Create(mnuOverview)
   );
+  fGroupingCBMgr := TUnsortedCollectionCtrlKVMgr<Integer>.Create(
+    TComboBoxAdapter.Create(cbGroupings),
+    True,
+    function (const Left, Right: Integer): Boolean
+    begin
+      Result := Left = Right;
+    end
+  );
+  fPreviousGrouping := -1;
+  fGroupingCBMgr.Add(cCategorisedTab, sCategoryGrouping);
+  fGroupingCBMgr.Add(cAlphabeticTab, sAlphaGrouping);
+  fGroupingCBMgr.Add(cKindTab, sKindGrouping);
+  fGroupingCBMgr.Select(cCategorisedTab);
   // Create new empty objects to store current and previous selected view items
   fSelectedItem := TViewFactory.CreateNulView;
   fPrevSelectedItem := TViewFactory.CreateNulView;
@@ -321,8 +355,8 @@ begin
   // Create list to store displayed snippets
   fSnippetList := TSnippetIDList.Create;
   // Create objects used to remember state of each tree view
-  SetLength(fTreeStates, tcDisplayStyle.Tabs.Count);
-  for TabIdx := 0 to Pred(tcDisplayStyle.Tabs.Count) do
+  SetLength(fTreeStates, fGroupingCBMgr.Count);
+  for TabIdx := 0 to Pred(fGroupingCBMgr.Count) do
     fTreeStates[TabIdx] := TOverviewTreeState.Create(tvSnippets);
 end;
 
@@ -332,11 +366,12 @@ destructor TOverviewFrame.Destroy;
 var
   TabIdx: Integer;  // loops through tabs
 begin
-  for TabIdx := Pred(tcDisplayStyle.Tabs.Count) downto 0 do
+  for TabIdx := Pred(fGroupingCBMgr.Count) downto 0 do
     fTreeStates[TabIdx].Free;
   fTVDraw.Free;
   fPrevSelectedItem := nil;
   fSelectedItem := nil;
+  fGroupingCBMgr.Free;
   fCommandBars.Free;
   inherited;
 end;
@@ -358,6 +393,13 @@ begin
     (fSnippetList as IAssignable).Assign(Snippets);
     Redisplay;
   end;
+end;
+
+procedure TOverviewFrame.DoSaveTreeState(const GroupingIdx: Integer);
+begin
+  Assert((GroupingIdx >= 0) and (GroupingIdx < fGroupingCBMgr.Count),
+    ClassName + '.SaveTreeState: GroupingIdx out range');
+  fTreeStates[GroupingIdx].SaveState;
 end;
 
 function TOverviewFrame.FindItemNode(Item: IView): TViewItemTreeNode;
@@ -387,6 +429,36 @@ begin
       end;
     end;
   end;
+end;
+
+procedure TOverviewFrame.FrameResize(Sender: TObject);
+const
+  MinGroupBoxWidth = 170;
+  Margin = 4;
+  CtrlHSpacing = 6;
+  CtrlVSPacing = 6;
+var
+  AvailWidth: Integer;
+  MinInlineWidth: Integer;
+begin
+  inherited;
+  AvailWidth := pnlGroupings.ClientWidth - 2 * Margin;
+  MinInlineWidth := lblGroupings.Width + CtrlHSpacing + MinGroupBoxWidth;
+  lblGroupings.Left := Margin;
+  if MinInlineWidth <= AvailWidth then
+  begin
+    TCtrlArranger.AlignVCentres(Margin, [lblGroupings, cbGroupings]);
+    TCtrlArranger.MoveToRightOf(lblGroupings, cbGroupings, CtrlHSpacing);
+  end
+  else
+  begin
+    lblGroupings.Top := Margin;
+    TCtrlArranger.AlignLefts([lblGroupings, cbGroupings]);
+    TCtrlArranger.MoveBelow(lblGroupings, cbGroupings, CtrlVSPacing);
+  end;
+  TCtrlArranger.StretchRightTo(cbGroupings, pnlGroupings.ClientWidth - Margin);
+  pnlGroupings.ClientHeight := TCtrlArranger.TotalControlHeight(pnlGroupings)
+    + Margin;
 end;
 
 function TOverviewFrame.GetNextTopLevelNode: TTreeNode;
@@ -439,9 +511,10 @@ end;
 
 procedure TOverviewFrame.Initialise(const TabIdx: Integer);
 begin
-  Assert((TabIdx >= 0) and (TabIdx < tcDisplayStyle.Tabs.Count),
+  Assert((TabIdx >= 0) and (TabIdx < fGroupingCBMgr.Count),
     ClassName + '.Initialise: TabIdx out range');
-  tcDisplayStyle.TabIndex := TabIdx;
+  fGroupingCBMgr.Select(TabIdx);
+  fPreviousGrouping := TabIdx;
   Redisplay;
 end;
 
@@ -494,7 +567,7 @@ procedure TOverviewFrame.NextTab;
   {Switches to next tab, or return to first tab if current tab is last.
   }
 begin
-  if SelectedTab = Pred(tcDisplayStyle.Tabs.Count) then
+  if SelectedTab = Pred(fGroupingCBMgr.Count) then
     SelectTab(0)
   else
     SelectTab(Succ(SelectedTab));
@@ -503,7 +576,7 @@ end;
 procedure TOverviewFrame.NotifyTabChange;
 begin
   if Assigned(fNotifier) then
-    fNotifier.ChangeOverviewStyle(tcDisplayStyle.TabIndex);
+    fNotifier.ChangeOverviewStyle(fGroupingCBMgr.GetSelected);
 end;
 
 procedure TOverviewFrame.PreviousTab;
@@ -511,7 +584,7 @@ procedure TOverviewFrame.PreviousTab;
   }
 begin
   if SelectedTab = 0 then
-    SelectTab(Pred(tcDisplayStyle.Tabs.Count))
+    SelectTab(Pred(fGroupingCBMgr.Count))
   else
     SelectTab(Pred(SelectedTab));
 end;
@@ -525,11 +598,10 @@ var
     TArray<TOverviewTreeBuilderClass>;
 begin
   // Store list of overview tree builder classes: one for each tab
-  SetLength(BuilderClasses, tcDisplayStyle.Tabs.Count);
+  SetLength(BuilderClasses, fGroupingCBMgr.Count);
   BuilderClasses[cCategorisedTab] := TOverviewCategorisedTreeBuilder;
   BuilderClasses[cAlphabeticTab] := TOverviewAlphabeticTreeBuilder;
   BuilderClasses[cKindTab] := TOverviewSnipKindTreeBuilder;
-  Builder := nil;
   tvSnippets.Items.BeginUpdate;
   try
     // Clear tree view
@@ -537,16 +609,19 @@ begin
     tvSnippets.Items.Clear;
     if fSnippetList.IsEmpty then
       Exit;
-    // Build new treeview using grouping determined by selected tab
-    Builder := BuilderClasses[tcDisplayStyle.TabIndex].Create(
+    // Build new treeview using selected grouping
+    Builder := BuilderClasses[fGroupingCBMgr.GetSelected].Create(
       tvSnippets, fSnippetList
     );
-    Builder.Build;
+    try
+      Builder.Build;
+    finally
+      Builder.Free;
+    end;
     // Restore state of treeview based on last time it was displayed
     tvSnippets.FullExpand;
     RestoreTreeState;
   finally
-    Builder.Free;
     fCanChange := True;
     tvSnippets.Items.EndUpdate;
   end;
@@ -558,14 +633,13 @@ procedure TOverviewFrame.RestoreTreeState;
   {Restores last saved treeview expansion state from memory.
   }
 begin
-  fTreeStates[tcDisplayStyle.TabIndex].RestoreState;
+  fTreeStates[fGroupingCBMgr.GetSelected].RestoreState;
 end;
 
 procedure TOverviewFrame.SaveTreeState;
-  {Saves current expansion state of treeview in memory.
-  }
 begin
-  fTreeStates[tcDisplayStyle.TabIndex].SaveState;
+  if fGroupingCBMgr.HasSelection then
+    DoSaveTreeState(fGroupingCBMgr.GetSelected);
 end;
 
 function TOverviewFrame.SelectedTab: Integer;
@@ -573,7 +647,7 @@ function TOverviewFrame.SelectedTab: Integer;
     @return Required tab index.
   }
 begin
-  Result := tcDisplayStyle.TabIndex;
+  Result := fGroupingCBMgr.GetSelected;
 end;
 
 procedure TOverviewFrame.SelectionChange(const Node: TTreeNode;
@@ -645,15 +719,15 @@ procedure TOverviewFrame.SelectTab(const TabIdx: Integer);
     @param TabIdx [in] Tab to be selected.
   }
 begin
-  Assert((TabIdx >= 0) and (TabIdx < tcDisplayStyle.Tabs.Count),
+  Assert((TabIdx >= 0) and (TabIdx < fGroupingCBMgr.Count),
     ClassName + '.SelectTab: TabIdx out range');
   // If SelectTab called for current tab index we assume it's via
-  // tcDisplayStyleChange when tree state will have already been saved in
-  // tcDisplayStyleChanging
-  if tcDisplayStyle.TabIndex <> TabIdx then
+  // cbGroupingsChange when tree state will have already been saved
+  if fGroupingCBMgr.GetSelected <> TabIdx then
   begin
     SaveTreeState;
-    tcDisplayStyle.TabIndex := TabIdx;
+    fGroupingCBMgr.Select(TabIdx);
+    fPreviousGrouping := fGroupingCBMgr.GetSelected;
   end;
   Redisplay;
 end;
@@ -664,48 +738,6 @@ procedure TOverviewFrame.SetNotifier(const Notifier: INotifier);
   }
 begin
   fNotifier := Notifier;
-end;
-
-procedure TOverviewFrame.tcDisplayStyleChange(Sender: TObject);
-  {Handles tab set's tab change event. Notifies application of display style
-  change via notifier object.
-    @param Sender [in] Not used.
-  }
-begin
-  NotifyTabChange;
-end;
-
-procedure TOverviewFrame.tcDisplayStyleChanging(Sender: TObject;
-  var AllowChange: Boolean);
-  {Handles tab sets tab changing event, called just before tab changes. Stores
-  current state of tree in tab that is closing.
-    @param Sender [in] Not used.
-    @param AllowChanges [in/out] Not used or modified. Permits tab change.
-  }
-begin
-  SaveTreeState;
-end;
-
-procedure TOverviewFrame.tcDisplayStyleMouseDown(Sender: TObject;
-  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
-var
-  TabIdx: Integer;  // index of clicked tab
-begin
-  if htOnItem in tcDisplayStyle.GetHitTestInfoAt(X, Y) then
-  begin
-    // ensure tab set has focus when a tab is clicked
-    tcDisplayStyle.SetFocus;
-    if Button = mbRight then
-    begin
-      // select tab when right clicked
-      TabIdx := tcDisplayStyle.IndexOfTabAt(X, Y);
-      if (TabIdx >= 0) and (TabIdx < tcDisplayStyle.Tabs.Count) then
-      begin
-        tcDisplayStyle.TabIndex := TabIdx;
-        NotifyTabChange;
-      end;
-    end;
-  end;
 end;
 
 procedure TOverviewFrame.tvSnippetsChanging(Sender: TObject;
