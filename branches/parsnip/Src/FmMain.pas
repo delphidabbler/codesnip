@@ -1315,7 +1315,7 @@ procedure TMainForm.AfterShowForm;
 begin
   inherited;
   // initialise display
-  fMainDisplayMgr.Initialise(fWindowSettings.OverviewTab);
+  fMainDisplayMgr.Initialise(fWindowSettings.OverviewGrouping);
   fMainDisplayMgr.ShowWelcomePage;
 end;
 
@@ -1404,7 +1404,7 @@ begin
   _Database.RemoveChangeEventHandler(DBChangeHandler);
   // Save window state
   fWindowSettings.SplitterPos := pnlLeft.Width;
-  fWindowSettings.OverviewTab := fMainDisplayMgr.SelectedOverviewGrouping;
+  fWindowSettings.OverviewGrouping := fMainDisplayMgr.SelectedOverviewGrouping;
   fWindowSettings.Save;
 
   // Free owned objects
