@@ -23,7 +23,12 @@ uses
   // Delphi
   Generics.Collections,
   // Project
-  DB.UCategory, DB.USnippet, DB.USnippetKind, UBaseObjects, UInitialLetter;
+  CS.Database.Types,
+  DB.UCategory,
+  DB.USnippet,
+  DB.USnippetKind,
+  UBaseObjects,
+  UInitialLetter;
 
 
 type
@@ -60,7 +65,7 @@ type
     ///  </remarks>
     function GetKey: IViewKey;
     ///  <summary>Checks if view is user-defined.</summary>
-    function IsUserDefined: Boolean;
+    function IsUserDefined: Boolean;  // TODO: remove this method
     ///  <summary>Checks if view is a grouping.</summary>
     ///  <remarks>A grouping is a view that groups views together.
     ///  </remarks>
@@ -68,6 +73,7 @@ type
   end;
 
 type
+  // TODO: rename INulView and INullView
   ///  <summary>
   ///  Interface supported by nul view.
   ///  </summary>
@@ -125,6 +131,18 @@ type
 
 type
   ///  <summary>
+  ///  Interface supported by tag views.
+  ///  </summary>
+  ITagView = interface(IView)
+    ['{2C62913F-E5D9-4AAC-BDC3-19F639A875AA}']
+    ///  <summary>Gets tag associated with view.</summary>
+    function GetTag: TTag;
+    ///  <summary>Tag associated with view.</summary>
+    property Tag: TTag read GetTag;
+  end;
+
+type
+  ///  <summary>
   ///  Interface supported by snippet kind views.
   ///  </summary>
   ISnippetKindView = interface(IView)
@@ -177,6 +195,9 @@ type
     ///  <summary>Creates a category view instance associated with a given
     ///  category.</summary>
     class function CreateCategoryView(const Category: TCategory): IView;
+    ///  <summary>Creates a tag view instance associated with a given tag.
+    ///  </summary>
+    class function CreateTagView(const Tag: TTag): IView;
     ///  <summary>Creates a snippet kind view instance associated with a given
     ///  snippet kind.</summary>
     class function CreateSnippetKindView(const KindInfo: TSnippetKindInfo):
@@ -199,7 +220,6 @@ uses
   // Delphi
   SysUtils,
   // Project
-  CS.Database.Types,
   DB.UMain,
   UExceptions,
   UStrUtils;
@@ -245,6 +265,7 @@ type
   end;
 
 type
+  // TODO: rename TNulView as TNullView
   ///  <summary>Nul view.</summary>
   TNulView = class sealed(TSimpleView,
     IView, INulView
@@ -382,6 +403,54 @@ type
     ///  <summary>Gets reference to category associated with view.</summary>
     ///  <remarks>Method of ICategoryView.</remarks>
     function GetCategory: TCategory;
+  end;
+
+type
+  ///  <summary>View associated with a category.</summary>
+  TTagView = class sealed(TInterfacedObject,
+    IView, ITagView
+  )
+  strict private
+    var
+      ///  <summary>Tag associated with view.</summary>
+      fTag: TTag;
+    type
+      ///  <summary>Implementation of IViewKey for tag view.</summary>
+      TKey = class(TInterfacedObject, IViewKey)
+      strict private
+        var
+          ///  <summary>Tag used as key.</summary>
+          fID: TTag;
+      public
+        ///  <summary>Constructs object with given tag as key.</summary>
+        constructor Create(const ID: TTag);
+        ///  <summary>Checks if this key is equal to one passed as a parameter.
+        ///  </summary>
+        ///  <remarks>Method of IViewKey.</remarks>
+        function IsEqual(const Key: IViewKey): Boolean;
+      end;
+  public
+    ///  <summary>Constructs view for a specified tag.</summary>
+    constructor Create(const Tag: TTag);
+    ///  <summary>Checks if this view is equal to the one passed as a parameter.
+    ///  </summary>
+    ///  <remarks>Method of IView.</remarks>
+    function IsEqual(View: IView): Boolean;
+    ///  <summary>Gets description of view.</summary>
+    ///  <remarks>Method of IView.</remarks>
+    function GetDescription: string;
+    ///  <summary>Gets object containing view's unique key.</summary>
+    ///  <remarks>Method of IView.</remarks>
+    function GetKey: IViewKey;
+    ///  <summary>Checks if view is user-defined.</summary>
+    ///  <remarks>Method of IView.</remarks>
+    function IsUserDefined: Boolean;
+    ///  <summary>Checks if view is a grouping.</summary>
+    ///  <remarks>Method of IView.</remarks>
+    function IsGrouping: Boolean;
+    ///  <summary>Gets tag associated with view.</summary>
+    ///  <remarks>Method of ITagView.</remarks>
+    function GetTag: TTag;
   end;
 
 type
@@ -671,6 +740,64 @@ begin
   Result := StrSameText((Key as TKey).fID, fID);
 end;
 
+{ TTagView }
+
+constructor TTagView.Create(const Tag: TTag);
+begin
+  inherited Create;
+  fTag := Tag;
+end;
+
+function TTagView.GetDescription: string;
+begin
+  Result := fTag.ToString;
+end;
+
+function TTagView.GetKey: IViewKey;
+begin
+  Result := TKey.Create(fTag);
+end;
+
+function TTagView.GetTag: TTag;
+begin
+  Result := fTag;
+end;
+
+function TTagView.IsEqual(View: IView): Boolean;
+var
+  TagView: ITagView;
+begin
+  if not Supports(View, ITagView, TagView) then
+    Exit(False);
+  // don't compare category IDs directly in case equality test changes
+  Result := fTag = TagView.Tag;
+end;
+
+function TTagView.IsGrouping: Boolean;
+begin
+  Result := True;
+end;
+
+function TTagView.IsUserDefined: Boolean;
+begin
+  Result := True;
+end;
+
+{ TTagView.TKey }
+
+constructor TTagView.TKey.Create(const ID: TTag);
+begin
+  inherited Create;
+  fID := ID;
+end;
+
+function TTagView.TKey.IsEqual(const Key: IViewKey): Boolean;
+begin
+  if not (Key is TKey) then
+    Exit(False);
+  Result := (Key as TKey).fID = fID;
+end;
+
 { TSnippetKindView }
 
 constructor TSnippetKindView.Create(const KindInfo: TSnippetKindInfo);
@@ -868,6 +995,11 @@ end;
 class function TViewFactory.CreateStartPageView: IView;
 begin
   Result := TStartPageView.Create;
+end;
+
+class function TViewFactory.CreateTagView(const Tag: TTag): IView;
+begin
+
 end;
 
 end.
