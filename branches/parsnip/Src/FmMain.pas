@@ -1469,7 +1469,11 @@ begin
     actCollapseTree.Tag := Ord(taCollapseAll);
     actCollapseNode.Tag := Ord(taCollapseNode);
     // Overview tab actions have tab id in tags
-    actViewCategorised.Tag := cCategorisedGrouping;
+    { TODO: rename grouping actions:
+      actViewCategorised as actViewTagsGrouping
+      actViewAlphabetical as actViewAlphaGrouping
+      actViewSnippetKinds as actViewSnippetKindsGrouping }
+    actViewCategorised.Tag := cTagsGrouping;
     actViewAlphabetical.Tag := cAlphabeticGrouping;
     actViewSnippetKinds.Tag := cKindGrouping;
     // Move user database option not available in portable mode

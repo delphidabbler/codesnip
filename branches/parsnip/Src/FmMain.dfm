@@ -468,7 +468,7 @@ inherited MainForm: TMainForm
     object actViewCategorised: TAction
       Category = 'View'
       AutoCheck = True
-      Caption = 'Categorised Snippets'
+      Caption = 'Group Snippet By Tags'
       Checked = True
       GroupIndex = 100
       Hint = 'Categorised Snippets|View snippets in categories'
@@ -478,7 +478,7 @@ inherited MainForm: TMainForm
     object actViewAlphabetical: TAction
       Category = 'View'
       AutoCheck = True
-      Caption = 'Alphabetical Snippets'
+      Caption = 'Group Snippets Alphabetically'
       GroupIndex = 100
       Hint = 'Alphabetical Snippets|View snippets in alphabetical order'
       OnExecute = ActOverviewTabExecute
@@ -486,7 +486,7 @@ inherited MainForm: TMainForm
     end
     object actViewSnippetKinds: TAction
       Category = 'View'
-      Caption = 'Snippets By Kind'
+      Caption = 'Group Snippets By Kind'
       GroupIndex = 100
       Hint = 'Snippets By Kind|View snippets by kind'
       OnExecute = ActOverviewTabExecute

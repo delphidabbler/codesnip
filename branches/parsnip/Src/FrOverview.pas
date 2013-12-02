@@ -312,7 +312,7 @@ constructor TOverviewFrame.Create(AOwner: TComponent);
 var
   GroupingIdx: Integer;  // loops through all supported groupings
 resourcestring
-  sCategoryGrouping = 'By Category';
+  sTagsGrouping = 'By Tags';
   sAlphaGrouping = 'Alphabetically';
   sKindGrouping = 'By Snippet Kind';
 begin
@@ -334,10 +334,10 @@ begin
     end
   );
   fPreviousGrouping := -1;
-  fGroupingCBMgr.Add(cCategorisedGrouping, sCategoryGrouping);
+  fGroupingCBMgr.Add(cTagsGrouping, sTagsGrouping);
   fGroupingCBMgr.Add(cAlphabeticGrouping, sAlphaGrouping);
   fGroupingCBMgr.Add(cKindGrouping, sKindGrouping);
-  fGroupingCBMgr.Select(cCategorisedGrouping);
+  fGroupingCBMgr.Select(cTagsGrouping);
   // Create new empty objects to store current and previous selected view items
   fSelectedItem := TViewFactory.CreateNullView;
   fPrevSelectedItem := TViewFactory.CreateNullView;
@@ -565,7 +565,7 @@ var
 begin
   // Store list of overview tree builder classes: one for each grouping
   SetLength(BuilderClasses, fGroupingCBMgr.Count);
-  BuilderClasses[cCategorisedGrouping] := TOverviewCategorisedTreeBuilder;
+  BuilderClasses[cTagsGrouping] := TOverviewTagTreeBuilder;
   BuilderClasses[cAlphabeticGrouping] := TOverviewAlphabeticTreeBuilder;
   BuilderClasses[cKindGrouping] := TOverviewSnipKindTreeBuilder;
   tvSnippets.Items.BeginUpdate;

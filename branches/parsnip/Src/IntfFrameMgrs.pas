@@ -32,7 +32,7 @@ uses
 
 const
   // Indexes of groupings in Overview Pane
-  cCategorisedGrouping = 0;
+  cTagsGrouping = 0;
   cAlphabeticGrouping = 1;
   cKindGrouping = 2;
 
