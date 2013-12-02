@@ -96,25 +96,6 @@ type
   end;
 
   {
-  TOverviewCategorisedTreeBuilder:
-    Class that populates the overview treeview with a list of snippets grouped
-    by category.
-  }
-  TOverviewCategorisedTreeBuilder = class sealed(TOverviewTreeBuilder)
-  strict protected
-    function CreateGrouping: TGrouping; override;
-      {Creates a categorised grouping object.
-        @return Required grouping object.
-      }
-    function CreateViewItemForGroup(const Group: TGroupItem): IView;
-      override;
-      {Creates a category view item from group item.
-        @param Group [in] Group item containing category data.
-        @return Required category view item for group.
-      }
-  end;
-
-  {
   TOverviewAlphabeticTreeBuilder:
     Class that populates the overview treeview with a list of snippets grouped
     by initial letter of the snippet name.
@@ -159,20 +140,6 @@ implementation
 uses
   // Project
   UPreferences;
-
-
-{
-  NOTE:
-
-  Early version of this code, that were contained in the FrOverview unit used
-  to add a section head tree node for every category and then delete empty ones.
-  However, attempts to delete the first node from a tree causes an endless loop,
-  freezing the program. This could be a bug in the Delphi treeview component.
-
-  Therefore the code in this unit now builds or uses a list of snippets for
-  each section and does not create a section header node for sections that
-  contain no snippets.
-}
 
 
 { TOverviewTreeBuilder }
@@ -244,28 +211,6 @@ function TOverviewTagTreeBuilder.CreateViewItemForGroup(
 begin
   Result := TViewFactory.CreateTagView(
     (Group as TTagGroupItem).Tag
-  );
-end;
-
-{ TOverviewCategorisedTreeBuilder }
-
-function TOverviewCategorisedTreeBuilder.CreateGrouping: TGrouping;
-  {Creates a categorised grouping object.
-    @return Required grouping object.
-  }
-begin
-  Result := TCategoryGrouping.Create(SnippetIDList);
-end;
-
-function TOverviewCategorisedTreeBuilder.CreateViewItemForGroup(
-  const Group: TGroupItem): IView;
-  {Creates a category view item from group item.
-    @param Group [in] Group item containing category data.
-    @return Required category view item for group.
-  }
-begin
-  Result := TViewFactory.CreateCategoryView(
-    (Group as TCategoryGroupItem).Category
   );
 end;
 
