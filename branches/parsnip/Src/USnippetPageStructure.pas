@@ -36,7 +36,7 @@ type
     sppDescription,
     sppSourceCode,
     sppKind,
-    sppCategory,
+    sppTags,
     sppUnits,
     sppDepends,
     sppXRefs,
@@ -359,7 +359,7 @@ resourcestring
   sDescription = 'Description';
   sSourceCode = 'Source Code';
   sKind = 'Type';
-  sCategory = 'Category';
+  sTags = 'Tags';
   sUnits = 'Required Units List';
   sDepends = 'Required Snippets List';
   sXRefs = 'Cross Reference List';
@@ -379,8 +379,8 @@ begin
   fParts[sppKind] := TSnippetPagePart.Create(
     sppKind, 'Kind', sKind
   );
-  fParts[sppCategory] := TSnippetPagePart.Create(
-    sppCategory, 'Category', sCategory
+  fParts[sppTags] := TSnippetPagePart.Create(
+    sppTags, 'Tags', sTags
   );
   fParts[sppUnits] := TSnippetPagePart.Create(
     sppUnits, 'Units', sUnits
@@ -432,18 +432,18 @@ begin
   case Kind of
     skFreeform:
       Result := TArray<TSnippetPagePartId>.Create(
-        sppDescription, sppSourceCode, sppKind, sppCategory, sppUnits,
-        sppDepends, sppXRefs, sppNotes
+        sppDescription, sppSourceCode, sppKind, sppTags, sppUnits, sppDepends,
+        sppXRefs, sppNotes
       );
     skUnit:
       Result := TArray<TSnippetPagePartId>.Create(
-        sppDescription, sppSourceCode, sppKind, sppCategory, sppXRefs,
+        sppDescription, sppSourceCode, sppKind, sppTags, sppXRefs,
         sppCompileResults, sppNotes
       );
     else
       Result := TArray<TSnippetPagePartId>.Create(
-        sppDescription, sppSourceCode, sppKind, sppCategory, sppUnits,
-        sppDepends, sppXRefs, sppCompileResults, sppNotes
+        sppDescription, sppSourceCode, sppKind, sppTags, sppUnits, sppDepends,
+        sppXRefs, sppCompileResults, sppNotes
       );
   end;
 end;

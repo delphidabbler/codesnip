@@ -135,11 +135,10 @@ type
   end;
 
 type
-  ///  <summary>Class that renders "Category" HTML fragment for a snippet.
-  ///  </summary>
-  TSnippetCategoryHTMLFragment = class(TPrefixedSnippetHTMLFragment)
+  ///  <summary>Class that renders "Tags" HTML fragment for a snippet.</summary>
+  TSnippetTagsHTMLFragment = class(TPrefixedSnippetHTMLFragment)
   public
-    ///  <summary>Renders "Category" fragment as HTML.</summary>
+    ///  <summary>Renders "Tags" fragment as HTML.</summary>
     function ToString: string; override;
   end;
 
@@ -242,13 +241,13 @@ begin
   Result := Render(sPrefix, 'kind', SnippetHTML.SnippetKind);
 end;
 
-{ TSnippetCategoryHTMLFragment }
+{ TSnippetTagsHTMLFragment }
 
-function TSnippetCategoryHTMLFragment.ToString: string;
+function TSnippetTagsHTMLFragment.ToString: string;
 resourcestring
-  sPrefix = 'Category:';
+  sPrefix = 'Tags:';
 begin
-  Result := Render(sPrefix, 'category', SnippetHTML.Category);
+  Result := Render(sPrefix, 'tags', SnippetHTML.Tags);
 end;
 
 { TSnippetUnitsHTMLFragment }
@@ -317,7 +316,7 @@ const
     TSnippetDescHTMLFragment,           // sppDescription,
     TSnippetSourceCodeHTMLFragment,     // sppSourceCode,
     TSnippetKindHTMLFragment,           // sppKind,
-    TSnippetCategoryHTMLFragment,       // sppCategory,
+    TSnippetTagsHTMLFragment,           // sppTags,
     TSnippetUnitsHTMLFragment,          // sppUnits,
     TSnippetDependsHTMLFragment,        // sppDepends,
     TSnippetXRefsHTMLFragment,          // sppXRefs,
