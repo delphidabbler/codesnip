@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2006-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2006-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -40,6 +40,11 @@ const
   clHelpLink            = clGreen;      // help links
   clDBLink              = clNavy;       // database links (cat. and snippet)
   clCommandLink         = clMaroon;     // links that execute program commands
+  clTagLinkFG           = clWindowText; // tag links foreground
+  clTagLinkHoverFG      = clWHite;      // tag links hover foreground
+  clTagLinkBG           = clBtnFace;    // tag link foreground
+  clTagLinkHoverBG      = $999999;      // tag links hover background
+  clTagBorder           = clBorder;     // border of tag links
 
   // news pane
   clNewsHeading         = clHotLight;   // headings in news frames
