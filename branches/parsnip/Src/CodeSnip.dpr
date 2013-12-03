@@ -366,6 +366,8 @@ uses
   GIFImage in 'Main\Imports\GIFImage.pas',
   LVEx in 'Main\Imports\LVEx.pas',
   UEncrypt in 'Main\Imports\UEncrypt.pas',
+  CS.Actions.DisplayTag in 'Main\CS.Actions.DisplayTag.pas',
+  CS.Actions.RemoveTag in 'Main\CS.Actions.RemoveTag.pas',
   CS.ActiveText in 'Main\CS.ActiveText.pas',
   CS.ActiveText.Helper in 'Main\CS.ActiveText.Helper.pas',
   CS.ActiveText.Parsers.Credits in 'Main\CS.ActiveText.Parsers.Credits.pas',
