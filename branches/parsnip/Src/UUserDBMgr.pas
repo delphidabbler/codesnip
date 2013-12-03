@@ -89,6 +89,10 @@ type
     ///  <summary>Checks if it is possible for any categories to be deleted.
     ///  </summary>
     class function CanDeleteACategory: Boolean;
+    ///  <summary>Removes given tag from tag list of snippet with given ID.
+    ///  </summary>
+    class procedure RemoveTagFromSnippet(const SnippetID: TSnippetID;
+      const Tag: TTag);
     ///  <summary>Saves the current user database to disk.</summary>
     class procedure Save(ParentCtrl: TComponent);
     ///  <summary>Checks if the user database can be saved.</summary>
@@ -475,6 +479,21 @@ begin
   // This dialogue box not available in portable mode
   if not TCommandLineOpts.IsPortable then
     TUserDataPathDlg.Execute(nil);
+end;
+
+class procedure TUserDBMgr.RemoveTagFromSnippet(const SnippetID: TSnippetID;
+  const Tag: TTag);
+var
+  Snippet: TSnippet;
+  Tags: ITagSet;
+  EditData: TSnippetEditData;
+begin
+  Snippet := _Database.Lookup(SnippetID);
+  Tags := Snippet.Tags;
+  Tags.Remove(Tag);
+  EditData := (_Database as IDatabaseEdit).GetEditableSnippetInfo(Snippet);
+  EditData.Props.Tags := Tags;
+  (_Database as IDatabaseEdit).UpdateSnippet(Snippet, EditData);
 end;
 
 class procedure TUserDBMgr.RenameACategory;
