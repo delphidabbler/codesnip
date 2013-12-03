@@ -22,7 +22,6 @@ uses
   // Project
   CS.ActiveText,
   CS.Database.Types,
-  DB.UCategory,
   DB.USnippet;
 
 
@@ -67,9 +66,6 @@ type
     function Description: string;
     ///  <summary>Returns description of snippet's kind as HTML.</summary>
     function SnippetKind: string;
-    ///  <summary>Returns HTML of a link to category containing snippet.
-    ///  </summary>
-    function Category: string;
     ///  <summary>Returns HTML of a list of links to the snippet's associated
     ///  tags, or a message if list is empty.</summary>
     function Tags: string;
@@ -124,21 +120,6 @@ uses
 
 
 { TSnippetHTML }
-
-function TSnippetHTML.Category: string;
-var
-  Cat: TCategory; // category that snippet belongs to
-begin
-  Cat := _Database.Categories.Find(fSnippet.Category);
-  Assert(Assigned(Cat), ClassName + '.Category: Category not found');
-  Result := StrMakeSentence(
-    JSALink(
-      TJavaScript.LiteralFunc('displayCategory', [Cat.ID]),
-      'category-link',
-      THTML.Entities(Cat.Description)
-    )
-  );
-end;
 
 function TSnippetHTML.CompileResults: string;
 begin
