@@ -46,17 +46,6 @@ function displaySnippet(snippetID) {
 }
 
 /*
- * Calls external object to get host application to display a category.
- *  @param string catid [in] ID of category to be displayed.
- *  @return False.
- */
-function displayCategory(catid) {
-  var e = window.event;
-  external.DisplayCategory(catid, e.ctrlKey);
-  return false;
-}
-
-/*
  * Calls external object to get host application to display Donate dialog box.
  *  @return False.
  */
