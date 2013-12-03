@@ -109,13 +109,6 @@ type
     ///  <remarks>Method of IWBExternal13.</remarks>
     procedure ShowPrefsPage(const ClsName: WideString); safecall;
 
-    ///  <summary>Records the notifier object that is used to call application
-    ///  code in response to JavaScript calls running in browser documents.
-    ///  </summary>
-    ///  <param name="Notifier">INotifier [in] The notifier object.</param>
-    ///  <remarks>Method of ISetNotifier.</remarks>
-    procedure SetNotifier(const Notifier: INotifier);
-
     ///  <summary>Displays the given tag.</summary>
     ///  <param name="Tag">WideString [in] Tag to be displayed.</param>
     ///  <param name="NewTab">WordBool [in] Whether to display tag in a new tab.
@@ -129,6 +122,13 @@ type
     ///  <remarks>Method of IWBExternal13.</remarks>
     procedure RemoveTag(const SnippetID: WideString; const Tag: WideString);
       safecall;
+
+    ///  <summary>Records the notifier object that is used to call application
+    ///  code in response to JavaScript calls running in browser documents.
+    ///  </summary>
+    ///  <param name="Notifier">INotifier [in] The notifier object.</param>
+    ///  <remarks>Method of ISetNotifier.</remarks>
+    procedure SetNotifier(const Notifier: INotifier);
   end;
 
 
@@ -204,7 +204,7 @@ begin
   try
     if Assigned(fNotifier) then
       fNotifier.DisplayTag(TTag.Create(Tag), NewTab);
-  finally
+  except
     HandleException;
   end;
 end;
@@ -239,7 +239,7 @@ begin
   try
     if Assigned(fNotifier) then
       fNotifier.RemoveTag(TSnippetID.Create(SnippetID), TTag.Create(Tag));
-  finally
+  except
     HandleException;
   end;
 end;
