@@ -770,29 +770,6 @@ inherited MainForm: TMainForm
         'ing web services'
       OnExecute = actProxyServerExecute
     end
-    object actAddCategory: TAction
-      Category = 'Categories'
-      Caption = 'New Category...'
-      Hint = 'New Category|Add a new category to the database'
-      ImageIndex = 8
-      OnExecute = actAddCategoryExecute
-    end
-    object actRenameCategory: TAction
-      Category = 'Categories'
-      Caption = 'Rename Category...'
-      Hint = 'Rename Category|Rename a user defined category in the database'
-      ImageIndex = 21
-      OnExecute = actRenameCategoryExecute
-      OnUpdate = actRenameCategoryUpdate
-    end
-    object actDeleteCategory: TAction
-      Category = 'Categories'
-      Caption = 'Delete Category...'
-      Hint = 'Delete Category|Delete an empty category from the database'
-      ImageIndex = 13
-      OnExecute = actDeleteCategoryExecute
-      OnUpdate = actDeleteCategoryUpdate
-    end
     object actNews: TAction
       Category = 'Help'
       Caption = 'CodeSnip News...'
@@ -1110,18 +1087,6 @@ inherited MainForm: TMainForm
       end
       object miFavourites: TMenuItem
         Action = actFavourites
-      end
-    end
-    object miCategories: TMenuItem
-      Caption = 'Categories'
-      object miAddCategory: TMenuItem
-        Action = actAddCategory
-      end
-      object miRenameCategory: TMenuItem
-        Action = actRenameCategory
-      end
-      object miDeleteCategory: TMenuItem
-        Action = actDeleteCategory
       end
     end
     object miDatabase: TMenuItem

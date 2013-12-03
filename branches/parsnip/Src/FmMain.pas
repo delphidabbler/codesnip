@@ -33,7 +33,6 @@ type
   ///  <summary>Form that provides the application's main window.</summary>
   TMainForm = class(THelpAwareForm)
     actAbout: TAction;
-    actAddCategory: TAction;
     actAddFavourite: TAction;
     actAddSnippet: TAction;
     actBackupDatabase: TAction;
@@ -48,7 +47,6 @@ type
     actCopyInfo: TAction;
     actCopySnippet: TAction;
     actCopySource: TAction;
-    actDeleteCategory: TAction;
     actDeleteSnippet: TAction;
     actDonate: TAction;
     actDuplicateSnippet: TAction;
@@ -83,7 +81,6 @@ type
     actProgramUpdates: TAction;
     actProxyServer: TAction;
     actRegister: TAction;
-    actRenameCategory: TAction;
     actRestoreDatabase: TAction;
     actSaveDatabase: TAction;
     actSaveSelection: TAction;
@@ -110,11 +107,9 @@ type
     frmOverview: TOverviewFrame;
     ilMain: TImageList;
     miAbout: TMenuItem;
-    miAddCategory: TMenuItem;
     miAddFavourite: TMenuItem;
     miAddSnippet: TMenuItem;
     miBackupDatabase: TMenuItem;
-    miCategories: TMenuItem;
     miCheckUpdates: TMenuItem;
     miCloseAllDetailsTabs: TMenuItem;
     miCloseDetailsTab: TMenuItem;
@@ -126,7 +121,6 @@ type
     miCopyInfo: TMenuItem;
     miCopySnippet: TMenuItem;
     miDatabase: TMenuItem;
-    miDeleteCategory: TMenuItem;
     miDeleteSnippet: TMenuItem;
     miDonate: TMenuItem;
     miDuplicateSnippet: TMenuItem;
@@ -161,7 +155,6 @@ type
     miPrivacy: TMenuItem;
     miProxyServer: TMenuItem;
     miRegister: TMenuItem;
-    miRenameCategory: TMenuItem;
     miReportBug: TMenuItem;
     miRestoreDatabase: TMenuItem;
     miSaveDatabase: TMenuItem;
@@ -242,8 +235,6 @@ type
     miConfigDiffProg: TMenuItem;
     ///  <summary>Displays About Box.</summary>
     procedure actAboutExecute(Sender: TObject);
-    ///  <summary>Gets a new category from user and adds to database.</summary>
-    procedure actAddCategoryExecute(Sender: TObject);
     ///  <summary>Adds current snippet to favourites.</summary>
     procedure actAddFavouriteExecute(Sender: TObject);
     ///  <summary>Determines whether AddFavourites action can be enabled.
@@ -287,12 +278,6 @@ type
     procedure actCopySourceUpdate(Sender: TObject);
     ///  <summary>Determines whether Copy action can be enabled.</summary>
     procedure actCopyUpdate(Sender: TObject);
-    ///  <summary>Displays a dialogue box that can be used to delete a user
-    ///  defined category.</summary>
-    procedure actDeleteCategoryExecute(Sender: TObject);
-    ///  <summary>Determines whether DeleteCategory action can be enabled.
-    ///  </summary>
-    procedure actDeleteCategoryUpdate(Sender: TObject);
     ///  <summary>Attempts to delete the current user defined snippet from the
     ///  database.</summary>
     procedure actDeleteSnippetExecute(Sender: TObject);
@@ -404,12 +389,6 @@ type
     ///  <remarks>The action is visible iff the program is not already
     ///  registered.</remarks>
     procedure actRegisterUpdate(Sender: TObject);
-    ///  <summary>Displays a dialogue box that can be used to rename a user
-    ///  defined category.</summary>
-    procedure actRenameCategoryExecute(Sender: TObject);
-    ///  <summary>Determines whether the RenameCategory action can be enabled.
-    ///  </summary>
-    procedure actRenameCategoryUpdate(Sender: TObject);
     ///  <summary>Displays a dialogue box from which a backup file can be
     ///  selected and used to restore the user defined database.</summary>
     procedure actRestoreDatabaseExecute(Sender: TObject);
@@ -666,11 +645,6 @@ begin
     fIsAppRegistered := TAppInfo.IsRegistered;
 end;
 
-procedure TMainForm.actAddCategoryExecute(Sender: TObject);
-begin
-  TUserDBMgr.AddCategory;
-end;
-
 procedure TMainForm.actAddFavouriteExecute(Sender: TObject);
 begin
   fFavouritesMgr.AddFavourite(fMainDisplayMgr.CurrentView);
@@ -773,16 +747,6 @@ end;
 procedure TMainForm.actCopyUpdate(Sender: TObject);
 begin
   (Sender as TAction).Enabled := fMainDisplayMgr.CanCopy;
-end;
-
-procedure TMainForm.actDeleteCategoryExecute(Sender: TObject);
-begin
-  TUserDBMgr.DeleteACategory;
-end;
-
-procedure TMainForm.actDeleteCategoryUpdate(Sender: TObject);
-begin
-  (Sender as TAction).Enabled := TUserDBMgr.CanDeleteACategory;
 end;
 
 procedure TMainForm.actDeleteSnippetExecute(Sender: TObject);
@@ -1080,16 +1044,6 @@ begin
     (Sender as TRemoveTagAction).SnippetID, (Sender as TRemoveTagAction).Tag
   );
   fMainDisplayMgr.Refresh;
-end;
-
-procedure TMainForm.actRenameCategoryExecute(Sender: TObject);
-begin
-  TUserDBMgr.RenameACategory;
-end;
-
-procedure TMainForm.actRenameCategoryUpdate(Sender: TObject);
-begin
-  (Sender as TAction).Enabled := TUserDBMgr.CanRenameACategory;
 end;
 
 procedure TMainForm.actRestoreDatabaseExecute(Sender: TObject);
