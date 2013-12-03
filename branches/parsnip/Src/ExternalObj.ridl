@@ -66,13 +66,6 @@ library ExternalObj
     HRESULT _stdcall Donate(void);
 
     /*
-     * Display identified category.
-     *    @param CatID [in] ID of category to display.
-     */
-    [id(0x0000006E)]
-    HRESULT _stdcall DisplayCategory([in] BSTR CatID, [in] VARIANT_BOOL NewTab);
-
-    /*
      * Open Snippets Editor ready to create a new snippet.
      */
     [id(0x0000006F)]

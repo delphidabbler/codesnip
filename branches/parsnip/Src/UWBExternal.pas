@@ -77,16 +77,6 @@ type
     ///  <remarks>Method of IWBExternal13.</remarks>
     procedure Donate; safecall;
 
-    // TODO: Remove this method from External.ridl and here when possible
-    ///  <summary>Displays a named category.</summary>
-    ///  <param name="CatID">WideString [in] ID of category to be displayed.
-    ///  </param>
-    ///  <param name="NewTab">WordBool [in] Whether to display category in a new
-    ///  tab.</param>
-    ///  <remarks>Method of IWBExternal13.</remarks>
-    procedure DisplayCategory(const CatID: WideString; NewTab: WordBool);
-      safecall;
-
     ///  <summary>Opens Snippet Editor ready to create a new snippet.</summary>
     ///  <remarks>Method of IWBExternal13.</remarks>
     procedure NewSnippet; safecall;
@@ -175,17 +165,6 @@ begin
   OleCheck(LoadTypeLib(PWideChar(ExeName), TypeLib));
   // Create the object using type library
   inherited Create(TypeLib, IWBExternal13);
-end;
-
-procedure TWBExternal.DisplayCategory(const CatID: WideString;
-  NewTab: WordBool);
-begin
-  try
-    if Assigned(fNotifier) then
-      fNotifier.DisplayCategory(CatID, NewTab);
-  except
-    HandleException;
-  end;
 end;
 
 procedure TWBExternal.DisplaySnippet(const SnippetID: WideString;
