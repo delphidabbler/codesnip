@@ -271,32 +271,6 @@ type
 
 type
   ///  <summary>
-  ///  Generates HTML body of a page that displays information about a category
-  ///  grouping of snippets.
-  ///  </summary>
-  ///  <remarks>
-  ///  List of snippets contained in grouping may be empty.
-  ///  </remarks>
-  TCategoryPageHTML = class sealed(TSnippetListPageHTML)
-  strict protected
-    ///  <summary>Checks if the given snippet should be included in the list of
-    ///  snippets to be displayed.</summary>
-    ///  <remarks>The snippet is to be displayed if it is in the category being
-    ///  displayed.</remarks>
-    function IsSnippetRequired(const Snippet: TSnippet): Boolean; override;
-    ///  <summary>Returns name of CSS class to be used for page heading.
-    ///  </summary>
-    function GetH1ClassName: string; override;
-    ///  <summary>Returns narrative to be used at top of any page that displays
-    ///  a snippet list.</summary>
-    function GetNarrative: string; override;
-    ///  <summary>Returns text to be displayed on a page that has no snippets to
-    ///  display.</summary>
-    function GetEmptyListNote: string; override;
-  end;
-
-type
-  ///  <summary>
   ///  Generates HTML body of a page that displays information about a grouping
   ///  of snippets by tag.
   ///  </summary>
@@ -371,8 +345,8 @@ type
 
 { TDetailPageHTMLFactory }
 
-class function TDetailPageHTMLFactory.CreateGenerator(
-  View: IView): TDetailPageHTML;
+class function TDetailPageHTMLFactory.CreateGenerator(View: IView):
+  TDetailPageHTML;
 begin
   Result := nil;
   if Supports(View, INullView) then
@@ -381,8 +355,6 @@ begin
     Result := TWelcomePageHTML.Create(View)
   else if Supports(View, ISnippetView) then
     Result := TSnippetInfoPageHTML.Create(View)
-  else if Supports(View, ICategoryView) then
-    Result := TCategoryPageHTML.Create(View)
   else if Supports(View, ITagView) then
     Result := TTagsPageHTML.Create(View)
   else if Supports(View, ISnippetKindView) then
@@ -692,35 +664,6 @@ begin
   finally
     SnippetHTML.Free;
   end;
-end;
-
-{ TCategoryPageHTML }
-
-function TCategoryPageHTML.GetEmptyListNote: string;
-resourcestring
-  sNote = 'The current selection contains no snippets in this category.';
-begin
-  Result := sNote;
-end;
-
-function TCategoryPageHTML.GetH1ClassName: string;
-begin
-  if (View as ICategoryView).Category.UserDefined then
-    Result := 'userdb'
-  else
-    Result := inherited GetH1ClassName;
-end;
-
-function TCategoryPageHTML.GetNarrative: string;
-resourcestring
-  sNarrative = 'List of selected snippets in this category.';
-begin
-  Result := sNarrative;
-end;
-
-function TCategoryPageHTML.IsSnippetRequired(const Snippet: TSnippet): Boolean;
-begin
-  Result := (View as ICategoryView).Category.SnippetIDs.Contains(Snippet.ID);
 end;
 
 { TTagsPageHTML }
