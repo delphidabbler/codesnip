@@ -309,7 +309,7 @@ uses
 procedure TMainDisplayMgr.AddDBView(View: IView);
 begin
   Assert(fPendingChange, ClassName + '.AddView: no change pending');
-  Assert(Supports(View, ISnippetView) or Supports(View, ICategoryView),
+  Assert(Supports(View, ISnippetView),
     ClassName + '.AddView: View not a database item');
   RedisplayOverview;
   (fOverviewMgr as IOverviewDisplayMgr).SelectItem(View);
@@ -433,7 +433,8 @@ begin
     evSnippetDeleted, evCategoryDeleted:
       DeleteDBView(fChangingDetailPageIdx);
 
-    evSnippetAdded, evCategoryAdded:
+    evSnippetAdded:
+      // TODO -cComment: removed evCategoryAdded from case statement
       AddDBView(TViewFactory.CreateDBItemView(EventInfo.Info));
   end;
 end;
