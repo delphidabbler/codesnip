@@ -233,10 +233,6 @@
 				<Form>BrowserBaseFrame</Form>
 				<DesignClass>TFrame</DesignClass>
 			</DCCReference>
-			<DCCReference Include="FrCategoryDescEdit.pas">
-				<Form>CategoryDescEditFrame</Form>
-				<DesignClass>TFrame</DesignClass>
-			</DCCReference>
 			<DCCReference Include="FrCategoryList.pas">
 				<Form>CategoryListFrame</Form>
 				<DesignClass>TFrame</DesignClass>
