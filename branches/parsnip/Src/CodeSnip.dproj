@@ -375,7 +375,6 @@
 			<DCCReference Include="UBox.pas"/>
 			<DCCReference Include="UBrowseForFolderDlg.pas"/>
 			<DCCReference Include="UBrowseProtocol.pas"/>
-			<DCCReference Include="UCategoryAction.pas"/>
 			<DCCReference Include="UCategoryListAdapter.pas"/>
 			<DCCReference Include="UClassHelpers.pas"/>
 			<DCCReference Include="UClipboardHelper.pas"/>

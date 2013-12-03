@@ -175,7 +175,6 @@ uses
   UBox in 'UBox.pas',
   UBrowseForFolderDlg in 'UBrowseForFolderDlg.pas',
   UBrowseProtocol in 'UBrowseProtocol.pas',
-  UCategoryAction in 'UCategoryAction.pas',
   UCategoryListAdapter in 'UCategoryListAdapter.pas',
   UClassHelpers in 'UClassHelpers.pas',
   UClipboardHelper in 'UClipboardHelper.pas',
