@@ -121,7 +121,8 @@ function showPrefsPage(tabCls) {
  *  @return False.
  */
 function displayTag(tag) {
-  external.DisplayTag(tag);
+  var e = window.event;
+  external.DisplayTag(tag, e.ctrlKey);
   return false;
 }
 
