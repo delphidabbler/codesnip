@@ -78,17 +78,11 @@
 			<DCCReference Include="FmActiveTextPreviewDlg.pas">
 				<Form>ActiveTextPreviewDlg</Form>
 			</DCCReference>
-			<DCCReference Include="FmAddCategoryDlg.pas">
-				<Form>AddCategoryDlg</Form>
-			</DCCReference>
 			<DCCReference Include="FmBase.pas">
 				<Form>BaseForm</Form>
 			</DCCReference>
 			<DCCReference Include="FmBugReportBaseDlg.pas">
 				<Form>BugReportBaseDlg</Form>
-			</DCCReference>
-			<DCCReference Include="FmCategoryEditDlg.pas">
-				<Form>CategoryEditDlg</Form>
 			</DCCReference>
 			<DCCReference Include="FmCodeExportDlg.pas">
 				<Form>CodeExportDlg</Form>
@@ -131,9 +125,6 @@
 			</DCCReference>
 			<DCCReference Include="FmCompilersDlg.UBannerMgr.pas"/>
 			<DCCReference Include="FmCompilersDlg.UCompilerListMgr.pas"/>
-			<DCCReference Include="FmDeleteCategoryDlg.pas">
-				<Form>DeleteCategoryDlg</Form>
-			</DCCReference>
 			<DCCReference Include="FmDependenciesDlg.pas">
 				<Form>DependenciesDlg</Form>
 			</DCCReference>
@@ -199,9 +190,6 @@
 			</DCCReference>
 			<DCCReference Include="FmRegistrationDlg.pas">
 				<Form>RegistrationDlg</Form>
-			</DCCReference>
-			<DCCReference Include="FmRenameCategoryDlg.pas">
-				<Form>RenameCategoryDlg</Form>
 			</DCCReference>
 			<DCCReference Include="FmSelectionSearchDlg.pas">
 				<Form>SelectionSearchDlg</Form>
