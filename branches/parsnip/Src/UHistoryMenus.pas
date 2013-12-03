@@ -203,7 +203,6 @@ procedure THistoryMenuItem.SetViewItem(Value: IView);
 resourcestring
   // Menu caption templates
   sSnippetDesc = 'Snippet: %s';
-  sCategoryDesc = 'Category: %s';
   sTagDesc = 'Tag: %s';
   sSnipKindDesc = 'Snippets type: %s';
   sAlphabetDesc = 'Alphabetic section: %s';
@@ -217,8 +216,6 @@ begin
     Caption := ViewItem.Description
   else if Supports(fViewItem, ISnippetView) then
     Caption := Format(sSnippetDesc, [ViewItem.Description])
-  else if Supports(fViewItem, ICategoryView) then
-    Caption := Format(sCategoryDesc, [ViewItem.Description])
   else if Supports(fViewItem, ITagView) then
     Caption := Format(sTagDesc, [ViewItem.Description])
   else if Supports(fViewItem, ISnippetKindView) then
