@@ -45,6 +45,7 @@ type
     ///  detail pane tab.</param>
     procedure DisplaySnippet(const SnippetID: TSnippetID; NewTab: WordBool);
 
+    // TODO: delete this method when possible
     ///  <summary>Displays a category.</summary>
     ///  <param name="CatId">WideString [in] ID of required category.</param>
     ///  <param name="NewTab">WordBool [in] Whether to display category in a new
@@ -94,6 +95,18 @@ type
     ///  <param name="ClsName">string [in] Class name of the frame that
     ///  implements the required preferences page.</param>
     procedure ShowPrefsPage(const ClsName: string);
+
+    ///  <summary>Displays the given tag.</summary>
+    ///  <param name="Tag">TTag [in] Tag to be displayed.</param>
+    ///  <param name="NewTab">WordBool [in] Whether to display tag in a new tab.
+    ///  </param>
+    procedure DisplayTag(const Tag: TTag; NewTab: WordBool);
+
+    ///  <summary>Removes a tag from a snippet's tag list.<summary>
+    ///  <param name="SnippetID">TSnippetID [in] ID of snippet.</param>
+    ///  <param name="Tag">TTag [in] Tag to be removed.</param>
+    ///  <remarks>Method of INotifier.</remarks>
+    procedure RemoveTag(const SnippetID: TSnippetID; const Tag: TTag);
   end;
 
 type
@@ -144,6 +157,7 @@ type
     ///  <param name="Action">TBasicAction [in] Required action.</param>
     procedure SetDonateAction(const Action: TBasicAction);
 
+    // TODO: delete this method when possible
     ///  <summary>Sets action used to display a category.</summary>
     ///  <param name="Action">TBasicAction [in] Required action.</param>
     procedure SetDisplayCategoryAction(const Action: TBasicAction);
@@ -170,6 +184,16 @@ type
     ///  dialogue box.</summary>
     ///  <param name="Action">TBasicAction [in] Required action.</param>
     procedure SetShowPrefsPageAction(const Action: TBasicAction);
+
+    ///  <summary>Sets action used to display a tag.</summary>
+    ///  <param name="Action">TBasicAction [in] Required action.</param>
+    procedure SetDisplayTagAction(const Action: TBasicAction);
+
+    ///  <summary>Sets action used to remove a tag from a snippet's tag list.
+    ///  </summary>
+    ///  <param name="Action">TBasicAction [in] Required action.</param>
+    ///  <remarks>Method of ISetActions.</remarks>
+    procedure SetRemoveTagAction(const Action: TBasicAction);
   end;
 
 type

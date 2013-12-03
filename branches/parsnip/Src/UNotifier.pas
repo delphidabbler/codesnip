@@ -62,6 +62,7 @@ type
       fEditSnippetAction: TBasicAction;
       ///  <summary>Action that displays donate dialogue box.</summary>
       fDonateAction: TBasicAction;
+      // TODO: delete this field when possible
       ///  <summary>Action that causes a category to be displayed.</summary>
       fDisplayCategoryAction: TBasicAction;
       ///  <summary>Action that causes the Snippets Editor to be opened ready to
@@ -78,6 +79,12 @@ type
       ///  <summary>Action that displays a specified page in the preferences
       ///  dialogue box.</summary>
       fShowPrefsPageAction: TBasicAction;
+      ///  <summary>Action that causes a specified tag to be displayed.
+      ///  </summary>
+      fDisplayTagAction: TBasicAction;
+      ///  <summary>Action that causes a specified tag to be removed from a
+      ///  specified snippet's tag list.</summary>
+      fRemoveTagAction: TBasicAction;
 
   public
 
@@ -93,6 +100,7 @@ type
     ///  <remarks>Methods of INotifier.</remarks>
     procedure DisplaySnippet(const SnippetID: TSnippetID; NewTab: WordBool);
 
+    // TODO: delete this method when possible
     ///  <summary>Displays a category.</summary>
     ///  <param name="CatId">WideString [in] ID of required category.</param>
     ///  <param name="NewTab">WordBool [in] Whether to display category in a new
@@ -159,6 +167,19 @@ type
     ///  <remarks>Method of INotifier.</remarks>
     procedure ShowPrefsPage(const ClsName: string);
 
+    ///  <summary>Displays the given tag.</summary>
+    ///  <param name="Tag">TTag [in] Tag to be displayed.</param>
+    ///  <param name="NewTab">WordBool [in] Whether to display tag in a new tab.
+    ///  </param>
+    ///  <remarks>Method of INotifier.</remarks>
+    procedure DisplayTag(const Tag: TTag; NewTab: WordBool);
+
+    ///  <summary>Removes a tag from a snippet's tag list.<summary>
+    ///  <param name="SnippetID">TSnippetID [in] ID of snippet.</param>
+    ///  <param name="Tag">TTag [in] Tag to be removed.</param>
+    ///  <remarks>Method of INotifier.</remarks>
+    procedure RemoveTag(const SnippetID: TSnippetID; const Tag: TTag);
+
     ///  <summary>Sets action used to request a database update.</summary>
     ///  <param name="Action">TBasicAction [in] Required action.</param>
     ///  <remarks>Methods of ISetActions.</remarks>
@@ -209,6 +230,7 @@ type
     ///  <remarks>Methods of ISetActions.</remarks>
     procedure SetDonateAction(const Action: TBasicAction);
 
+    // TODO: delete this method when possible
     ///  <summary>Sets action used to display a category.</summary>
     ///  <param name="Action">TBasicAction [in] Required action.</param>
     ///  <remarks>Methods of ISetActions.</remarks>
@@ -241,6 +263,18 @@ type
     ///  <param name="Action">TBasicAction [in] Required action.</param>
     ///  <remarks>Method of ISetActions.</remarks>
     procedure SetShowPrefsPageAction(const Action: TBasicAction);
+
+    ///  <summary>Sets action used to display a tag.</summary>
+    ///  <param name="Action">TBasicAction [in] Required action.</param>
+    ///  <remarks>Method of ISetActions.</remarks>
+    procedure SetDisplayTagAction(const Action: TBasicAction);
+
+    ///  <summary>Sets action used to remove a tag from a snippet's tag list.
+    ///  </summary>
+    ///  <param name="Action">TBasicAction [in] Required action.</param>
+    ///  <remarks>Method of ISetActions.</remarks>
+    procedure SetRemoveTagAction(const Action: TBasicAction);
+
   end;
 
 
@@ -251,8 +285,16 @@ uses
   // Delphi
   SysUtils, StdActns,
   // Project
-  Compilers.UGlobals, UCategoryAction, UContainers, UDetailTabAction,
-  UEditSnippetAction, UShowPrefsPageAction, USnippetAction, UViewItemAction;
+  CS.Actions.DisplayTag,
+  CS.Actions.RemoveTag,
+  Compilers.UGlobals,
+  UCategoryAction,
+  UContainers,
+  UDetailTabAction,
+  UEditSnippetAction,
+  UShowPrefsPageAction,
+  USnippetAction,
+  UViewItemAction;
 
 
 { TNotifier }
@@ -307,6 +349,16 @@ begin
   end;
 end;
 
+procedure TNotifier.DisplayTag(const Tag: TTag; NewTab: WordBool);
+begin
+  if Assigned(fDisplayTagAction) then
+  begin
+    (fDisplayTagAction as TDisplayTagAction).Tag := Tag;
+    (fDisplayTagAction as TDisplayTagAction).NewTab := NewTab;
+    fDisplayTagAction.Execute;
+  end;
+end;
+
 procedure TNotifier.Donate;
 begin
   if Assigned(fDonateAction) then
@@ -326,6 +378,16 @@ procedure TNotifier.NewSnippet;
 begin
   if Assigned(fNewSnippetAction) then
     fNewSnippetAction.Execute;
+end;
+
+procedure TNotifier.RemoveTag(const SnippetID: TSnippetID; const Tag: TTag);
+begin
+  if Assigned(fRemoveTagAction) then
+  begin
+    (fRemoveTagAction as TRemoveTagAction).SnippetID := SnippetID;
+    (fRemoveTagAction as TRemoveTagAction).Tag := Tag;
+    fRemoveTagAction.Execute;
+  end;
 end;
 
 procedure TNotifier.SetAboutBoxAction(const Action: TBasicAction);
@@ -371,6 +433,16 @@ begin
   (fDisplaySnippetAction as ISetNotifier).SetNotifier(Self);
 end;
 
+procedure TNotifier.SetDisplayTagAction(const Action: TBasicAction);
+begin
+  Assert(Action is TDisplayTagAction,
+    ClassName + '.SetDisplayTagAction: Action is not TDisplayTagAction');
+  Assert(Supports(Action, ISetNotifier),
+    ClassName + '.SetDisplayTagAction: Action must support ISetNotifier');
+  fDisplayTagAction := Action;
+  (fDisplayTagAction as ISetNotifier).SetNotifier(Self);
+end;
+
 procedure TNotifier.SetDonateAction(const Action: TBasicAction);
 begin
   fDonateAction := Action;
@@ -397,6 +469,13 @@ procedure TNotifier.SetOverviewStyleChangeActions(
   const Actions: array of TBasicAction);
 begin
   fOverviewStyleChangeActions := TArrayHelper.Copy<TBasicAction>(Actions);
+end;
+
+procedure TNotifier.SetRemoveTagAction(const Action: TBasicAction);
+begin
+  Assert(Action is TRemoveTagAction,
+    ClassName + '.SetRemoveTagAction: Action is not TRemoveTagAction');
+  fRemoveTagAction := Action;
 end;
 
 procedure TNotifier.SetShowPrefsPageAction(const Action: TBasicAction);
