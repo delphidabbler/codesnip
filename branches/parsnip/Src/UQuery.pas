@@ -22,7 +22,6 @@ interface
 uses
   // Project
   CS.Database.Types,
-  DB.UCategory,
   DB.UMain,
   DB.USnippet,
   USearch;
