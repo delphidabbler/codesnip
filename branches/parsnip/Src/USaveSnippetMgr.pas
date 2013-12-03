@@ -30,7 +30,7 @@ uses
 type
   ///  <summary>
   ///  Manages generation, previewing and saving of a suitable code snippet or
-  ///  category to disk.
+  ///  tag to disk.
   ///  </summary>
   ///  <remarks>
   ///  Generated file can be a Pascal include file, a plain text file, an HTML
@@ -100,9 +100,9 @@ uses
 resourcestring
   // Dialog box title
   sSaveDlgTitle = 'Save %0:s Snippet';
-  // Output document title for snippets and categories
+  // Output document title for snippets and tags
   sDocTitle = '"%0:s" %1:s';
-  sCategory = 'category';
+  sTag = 'tag';
   sSnippet = 'routine';
   // File filter strings
   sHtmExtDesc = 'HTML file';
@@ -157,8 +157,8 @@ end;
 
 function TSaveSnippetMgr.GetDocTitle: string;
 begin
-  if Supports(fView, ICategoryView) then
-    Result := Format(sDocTitle, [fView.Description, sCategory])
+  if Supports(fView, ITagView) then
+    Result := Format(sDocTitle, [fView.Description, sTag])
   else if Supports(fView, ISnippetView) then
     Result := Format(sDocTitle, [fView.Description, sSnippet])
   else
