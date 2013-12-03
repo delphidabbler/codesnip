@@ -48,13 +48,6 @@ type
     ///  <param name="CanClose">Boolean [in/out] Set to True to permit dialogue
     ///  to close or False to inhibit closure.</param>
     class procedure CanSaveDialogClose(Sender: TObject; var CanClose: Boolean);
-    ///  <summary>Creates a list of user defined categories.</summary>
-    ///  <param name="IncludeSpecial">Boolean [in] Flag indicating whether list
-    ///  should include special, non-deletable, categories.</param>
-    ///  <returns>Required category list.</returns>
-    ///  <remarks>Caller must free the returned object.</remarks>
-    class function CreateUserCatList(
-      const IncludeSpecial: Boolean): TCategoryList;
   public
     ///  <summary>Enables user to adds a new user defined snippet to the
     ///  database using the snippets editor.</summary>
@@ -76,19 +69,6 @@ type
     ///  <summary>Checks if the given view item specifies an editable snippet.
     ///  </summary>
     class function CanEdit(ViewItem: IView): Boolean;
-    ///  <summary>Adds a new category, specified by the user, to the database.
-    ///  </summary>
-    class procedure AddCategory;
-    ///  <summary>Deletes a user specified category from the database.</summary>
-    class procedure DeleteACategory;
-    ///  <summary>Renames a user specified category.</summary>
-    class procedure RenameACategory;
-    ///  <summary>Checks if it is possible for any categories to be renamed.
-    ///  </summary>
-    class function CanRenameACategory: Boolean;
-    ///  <summary>Checks if it is possible for any categories to be deleted.
-    ///  </summary>
-    class function CanDeleteACategory: Boolean;
     ///  <summary>Removes given tag from tag list of snippet with given ID.
     ///  </summary>
     class procedure RemoveTagFromSnippet(const SnippetID: TSnippetID;
@@ -254,12 +234,6 @@ type
 
 { TUserDBMgr }
 
-class procedure TUserDBMgr.AddCategory;
-begin
-  // all work takes place in dialog box
-  TAddCategoryDlg.Execute(nil);
-end;
-
 class procedure TUserDBMgr.AddSnippet;
 begin
   // Display Add Snippet dialog box which performs update of database.
@@ -286,18 +260,6 @@ begin
       TUserDBBackupUI.Execute(ParentCtrl, SaveDlg.FileName);
   finally
     SaveDlg.Free;
-  end;
-end;
-
-class function TUserDBMgr.CanDeleteACategory: Boolean;
-var
-  CatList: TCategoryList; // list of user deletable categories
-begin
-  CatList := CreateUserCatList(False);  // builds list of deletable user cats
-  try
-    Result := CatList.Count > 0;
-  finally
-    CatList.Free;
   end;
 end;
 
@@ -336,18 +298,6 @@ begin
   CanClose := True;
 end;
 
-class function TUserDBMgr.CanRenameACategory: Boolean;
-var
-  CatList: TCategoryList; // list of user renamable categories
-begin
-  CatList := CreateUserCatList(True); // build list of all user categories
-  try
-    Result := CatList.Count > 0;
-  finally
-    CatList.Free;
-  end;
-end;
-
 class function TUserDBMgr.CanSave: Boolean;
 begin
   // We can save database if it's been changed
@@ -369,31 +319,6 @@ begin
       Sender as TSaveDialogEx,
       Format(sOverwritePrompt, [FileName])
     );
-end;
-
-class function TUserDBMgr.CreateUserCatList(
-  const IncludeSpecial: Boolean): TCategoryList;
-var
-  Cat: TCategory; // references each category in snippets database
-begin
-  Result := TCategoryList.Create;
-  for Cat in _Database.Categories do
-    if Cat.UserDefined and
-      (IncludeSpecial or not TReservedCategories.IsReserved(Cat)) then
-      Result.Add(Cat);
-end;
-
-class procedure TUserDBMgr.DeleteACategory;
-var
-  CatList: TCategoryList; // list of deletable categories
-begin
-  CatList := CreateUserCatList(False);
-  try
-    // all work takes place in dialog box
-    TDeleteCategoryDlg.Execute(nil, CatList)
-  finally
-    CatList.Free;
-  end;
 end;
 
 class procedure TUserDBMgr.DeleteSnippet(ViewItem: IView);
@@ -494,19 +419,6 @@ begin
   EditData := (_Database as IDatabaseEdit).GetEditableSnippetInfo(Snippet);
   EditData.Props.Tags := Tags;
   (_Database as IDatabaseEdit).UpdateSnippet(Snippet, EditData);
-end;
-
-class procedure TUserDBMgr.RenameACategory;
-var
-  CatList: TCategoryList; // list of user defined categories
-begin
-  CatList := CreateUserCatList(True);
-  try
-    // all work takes place in dialog box
-    TRenameCategoryDlg.Execute(nil, CatList)
-  finally
-    CatList.Free;
-  end;
 end;
 
 class function TUserDBMgr.RestoreDatabase(ParentCtrl: TComponent): Boolean;
