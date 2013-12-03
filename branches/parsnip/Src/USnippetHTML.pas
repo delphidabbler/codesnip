@@ -53,9 +53,10 @@ type
     ///  <param name="JSFn">string [in] Javascript function to be called when
     ///  link is clicked.</param>
     ///  <param name="CSSClass">string [in] CSS class of link.</param>
-    ///  <param name="Text">string [in] Text to be displayed in link.</param>
+    ///  <param name="Text">string [in] HTML to be displayed in link. Must be
+    ///  valid HTML.</param>
     ///  <returns>string. Required HTML.</returns>
-    class function JSALink(const JSFn, CSSClass, Text: string): string;
+    class function JSALink(const JSFn, CSSClass, HTML: string): string;
   public
     ///  <summary>Object constructor. Sets up object to provide HTML for given
     ///  snippet.</summary>
@@ -69,6 +70,9 @@ type
     ///  <summary>Returns HTML of a link to category containing snippet.
     ///  </summary>
     function Category: string;
+    ///  <summary>Returns HTML of a list of links to the snippet's associated
+    ///  tags, or a message if list is empty.</summary>
+    function Tags: string;
     ///  <summary>Highlights snippet's source code and returns it as HTML.
     ///  </summary>
     function SourceCode: string;
@@ -131,7 +135,7 @@ begin
     JSALink(
       TJavaScript.LiteralFunc('displayCategory', [Cat.ID]),
       'category-link',
-      Cat.Description
+      THTML.Entities(Cat.Description)
     )
   );
 end;
@@ -164,7 +168,7 @@ begin
   Result := THTML.Entities(StrMakeSentence(sEmpty));
 end;
 
-class function TSnippetHTML.JSALink(const JSFn, CSSClass, Text: string):
+class function TSnippetHTML.JSALink(const JSFn, CSSClass, HTML: string):
   string;
 var
   Attrs: IHTMLAttributes;
@@ -174,7 +178,7 @@ begin
     THTMLAttribute.Create('onclick', JSFn + '; return false;'),
     THTMLAttribute.Create('class', CSSClass)
   ]);
-  Result := THTML.CompoundTag('a', Attrs, THTML.Entities(Text));
+  Result := THTML.CompoundTag('a', Attrs, HTML);
 end;
 
 function TSnippetHTML.Notes: string;
@@ -219,7 +223,7 @@ begin
   Result := JSALink(
     TJavaScript.LiteralFunc('displaySnippet', [Snippet.ID.ToString]),
     'snippet-link',
-    Snippet.Title
+    THTML.Entities(Snippet.Title)
   );
 end;
 
@@ -263,6 +267,50 @@ begin
     Result := Builder.HTMLFragment;
   finally
     Builder.Free;
+  end;
+end;
+
+function TSnippetHTML.Tags: string;
+
+  function TagHTML(const Tag: TTag): string;
+  var
+    DisplayTagLink: string;
+    RemoveTagLink: string;
+  const
+    CloseGlyph = #$72;    // Marlett font required for this symbol
+  begin
+    DisplayTagLink := JSALink(
+      TJavaScript.LiteralFunc('displayTag', [Tag.ToString]),
+      'tag-link',
+      THTML.Entities(Tag.ToString)
+    );
+    RemoveTagLink := JSALink(
+      TJavaScript.LiteralFunc(
+        'removeTag', [fSnippet.ID.ToString, Tag.ToString]
+      ),
+      'remove-tag',
+      THTML.CompoundTag(
+        'span', THTMLAttributes.Create('class', 'close-glyph'), CloseGlyph
+      )
+    );
+    Result := THTML.CompoundTag(
+      'span',
+      THTMLAttributes.Create('class',  'tag'),
+      DisplayTagLink + RemoveTagLink
+    );
+  end;
+
+var
+  Tag: TTag;
+begin
+  if fSnippet.Tags.IsEmpty then
+    Exit(EmptyListSentence);
+  Result := '';
+  for Tag in fSnippet.Tags do
+  begin
+    if Result <> '' then
+      Result := Result + ' ';
+    Result := Result + TagHTML(Tag);
   end;
 end;
 
