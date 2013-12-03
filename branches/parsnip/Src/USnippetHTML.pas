@@ -253,12 +253,13 @@ end;
 
 function TSnippetHTML.Tags: string;
 
+  // Creates HTML for a single tag.
   function TagHTML(const Tag: TTag): string;
   var
     DisplayTagLink: string;
     RemoveTagLink: string;
   const
-    CloseGlyph = #$72;    // Marlett font required for this symbol
+    CloseGlyph = '&times;';
   begin
     DisplayTagLink := JSALink(
       TJavaScript.LiteralFunc('displayTag', [Tag.ToString]),
@@ -269,14 +270,14 @@ function TSnippetHTML.Tags: string;
       TJavaScript.LiteralFunc(
         'removeTag', [fSnippet.ID.ToString, Tag.ToString]
       ),
-      'remove-tag',
+      'remove-tag command-link',
       THTML.CompoundTag(
-        'span', THTMLAttributes.Create('class', 'close-glyph'), CloseGlyph
+        'span', THTMLAttributes.Create('class', 'close-tab-glyph'), CloseGlyph
       )
     );
     Result := THTML.CompoundTag(
       'span',
-      THTMLAttributes.Create('class',  'tag'),
+      THTMLAttributes.Create('class', 'tag no-link-decoration'),
       DisplayTagLink + RemoveTagLink
     );
   end;
