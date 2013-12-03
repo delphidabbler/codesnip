@@ -9,7 +9,7 @@
  * $Date$
  *
  * Implements a static class that generates source code for code snippet(s)
- * contained in a routine snippet or category view.
+ * contained in a routine snippet or tag view.
 }
 
 
@@ -21,6 +21,7 @@ interface
 
 uses
   // Project
+  CS.Database.Types,
   CS.SourceCode.Pascal.SourceGen,
   UBaseObjects,
   UIStringList,
@@ -32,21 +33,22 @@ type
   {
   TSnippetSourceGen:
     Static class that generates source code for code snippet(s) contained in a
-    routine snippet or category view.
+    routine snippet or tag view.
   }
   TSnippetSourceGen = class sealed(TNoPublicConstructObject)
   strict private
     fGenerator: TPascalSourceGen;
       {Object used to generate the source code}
     procedure Initialize(View: IView);
-      {Initializes source code generator using information from a snippet or
-      category view.
+      {Initializes source code generator using information from a snippet or tag
+      tag view.
         @param View [in] View from which to retrieve source code.
       }
     function BuildHeaderComments: IStringList;
       {Creates and stores header comments to be written to head of snippet.
         @return String list containing comments.
       }
+    class function GetTagSnippets(const Tag: TTag): ISnippetIDList;
     function DoGenerate(const CommentStyle: TPascalCommentStyle;
       const TruncateComments: Boolean): string;
       {Generates source code for included snippets.
@@ -68,13 +70,13 @@ type
     class function CanGenerate(View: IView): Boolean;
       {Checks if a valid source code snippet can be generated from a view.
         @param View [in] View to be checked.
-        @return True if View is a routine snippet or a category that contains
-          routine snippets for current query.
+        @return True if View is a routine snippet or a tag that contains routine
+          snippets for current query.
       }
     class function Generate(View: IView;
       const CommentStyle: TPascalCommentStyle; const TruncateComments: Boolean):
       string;
-      {Generates source code of all routine snippets or categories in a view.
+      {Generates source code of all routine snippets or tags in a view.
         @param View [in] View containing required snippet(s).
         @param CommentStyle [in] Style of commenting to use in source code.
         @param TruncateComments [in] Whether to truncate multi paragraph
@@ -91,7 +93,6 @@ uses
   // Delphi
   SysUtils,
   // Project
-  CS.Database.Types,
   CS.Utils.Dates,
   DB.UMain,
   DB.USnippet,
@@ -126,28 +127,19 @@ end;
 class function TSnippetSourceGen.CanGenerate(View: IView): Boolean;
   {Checks if a valid source code snippet can be generated from a view.
     @param View [in] View to be checked.
-    @return True if View is a routine snippet or a category that contains
-      routine snippets for current query.
+    @return True if View is a routine snippet or a tag that contains routine
+      snippets for current query.
   }
 var
-  CatSnippets: ISnippetIDList;// list of snippets in a category
-  CatView: ICategoryView;     // category view if supported
-  SnipView: ISnippetView;     // snippets view if supported
-  SnippetID: TSnippetID;
-  Snippet: TSnippet;
+  SnipView: ISnippetView; // snippets view if supported
+  TagView: ITagView;      // tag view if supported
 begin
   if Supports(View, ISnippetView, SnipView) then
-    Exit(SnipView.Snippet.Kind = skRoutine);
-  if not Supports(View, ICategoryView, CatView) then
-    Exit(False);
-  CatSnippets := Query.GetCatSelection(CatView.Category);
-  for SnippetID in CatSnippets do
-  begin
-    Snippet := _Database.Lookup(SnippetID);
-    if Snippet.Kind = skRoutine then
-      Exit(True);
-  end;
-  Result := False;
+    Result := SnipView.Snippet.Kind = skRoutine
+  else if Supports(View, ITagView, TagView) then
+    Result := not GetTagSnippets(TagView.Tag).IsEmpty
+  else
+    Result := False;
 end;
 
 destructor TSnippetSourceGen.Destroy;
@@ -175,7 +167,7 @@ end;
 class function TSnippetSourceGen.Generate(View: IView;
   const CommentStyle: TPascalCommentStyle; const TruncateComments: Boolean):
   string;
-  {Generates source code of all routine snippets or categories in a view.
+  {Generates source code of all routine snippets or tags in a view.
     @param View [in] View containing required snippet(s).
     @param CommentStyle [in] Style of commenting to use in source code.
     @param TruncateComments [in] Whether to truncate multi paragraph snippet
@@ -191,23 +183,42 @@ begin
     end;
 end;
 
+class function TSnippetSourceGen.GetTagSnippets(const Tag: TTag):
+  ISnippetIDList;
+begin
+  { TODO: this Tag.IsNull / not Tag.IsNull code seems to be getting replicated
+          all over: need to provide a help method to centralised the code. }
+  if not Tag.IsNull then
+    // non-null tag => we want all associated snippets
+    Result := Query.FilterSelection(
+      function (const Snippet: TSnippet): Boolean
+      begin
+        Result := Snippet.Tags.Contains(Tag) and (Snippet.Kind = skRoutine);
+      end
+    )
+  else
+    // null tag => we want all snippets with no tag
+    Result := Query.FilterSelection(
+      function (const Snippet: TSnippet): Boolean
+      begin
+        Result := Snippet.Tags.IsEmpty and (Snippet.Kind = skRoutine);
+      end
+    );
+end;
+
 procedure TSnippetSourceGen.Initialize(View: IView);
-  {Initializes source code generator using information from a snippet or
-  category view.
+  {Initializes source code generator using information from a snippet or tags
+  view.
     @param View [in] View from which to retrieve source code.
   }
 begin
   // Record required snippet(s)
   if Supports(View, ISnippetView) then
     // view is single snippet: just record that
-    fGenerator.IncludeSnippet(
-      (View as ISnippetView).Snippet.ID
-    )
+    fGenerator.IncludeSnippet((View as ISnippetView).Snippet.ID)
   else
-    // view is category: record all selected snippets in category
-    fGenerator.IncludeSnippets(   // ignores freeform snippets
-      Query.GetCatSelection((View as ICategoryView).Category)
-    );
+    // view is tag: record all skRoutine snippets for tag in current query
+    fGenerator.IncludeSnippets(GetTagSnippets((View as ITagView).Tag));
 end;
 
 constructor TSnippetSourceGen.InternalCreate(View: IView);
