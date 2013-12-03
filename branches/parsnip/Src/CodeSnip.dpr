@@ -122,7 +122,6 @@ uses
   FmWaitDlg in 'FmWaitDlg.pas' {WaitDlg},
   FmWizardDlg in 'FmWizardDlg.pas' {WizardDlg},
   FrBrowserBase in 'FrBrowserBase.pas' {BrowserBaseFrame: TFrame},
-  FrCategoryList in 'FrCategoryList.pas' {CategoryListFrame: TFrame},
   FrCodeGenPrefs in 'FrCodeGenPrefs.pas' {CodeGenPrefsFrame: TFrame},
   FrDetail in 'FrDetail.pas' {DetailFrame: TFrame},
   FrDetailView in 'FrDetailView.pas' {DetailViewFrame: TFrame},

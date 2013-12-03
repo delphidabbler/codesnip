@@ -233,10 +233,6 @@
 				<Form>BrowserBaseFrame</Form>
 				<DesignClass>TFrame</DesignClass>
 			</DCCReference>
-			<DCCReference Include="FrCategoryList.pas">
-				<Form>CategoryListFrame</Form>
-				<DesignClass>TFrame</DesignClass>
-			</DCCReference>
 			<DCCReference Include="FrCodeGenPrefs.pas">
 				<Form>CodeGenPrefsFrame</Form>
 				<DesignClass>TFrame</DesignClass>
