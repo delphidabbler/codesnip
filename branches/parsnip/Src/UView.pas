@@ -24,7 +24,6 @@ uses
   Generics.Collections,
   // Project
   CS.Database.Types,
-  DB.UCategory,
   DB.USnippet,
   DB.USnippetKind,
   UBaseObjects,
@@ -118,18 +117,6 @@ type
 
 type
   ///  <summary>
-  ///  Interface supported by category views.
-  ///  </summary>
-  ICategoryView = interface(IView)
-    ['{C8BB04FD-B0B7-42F9-84AA-2F7FDD3A6FE8}']
-    ///  <summary>Gets reference to category associated with view.</summary>
-    function GetCategory: TCategory;
-    ///  <summary>Category associated with view.</summary>
-    property Category: TCategory read GetCategory;
-  end;
-
-type
-  ///  <summary>
   ///  Interface supported by tag views.
   ///  </summary>
   ITagView = interface(IView)
@@ -191,9 +178,6 @@ type
     ///  <summary>Creates a snippet view instance associated with a given
     ///  snippet.</summary>
     class function CreateSnippetView(const Snippet: TSnippet): IView;
-    ///  <summary>Creates a category view instance associated with a given
-    ///  category.</summary>
-    class function CreateCategoryView(const Category: TCategory): IView;
     ///  <summary>Creates a tag view instance associated with a given tag.
     ///  </summary>
     class function CreateTagView(const Tag: TTag): IView;
@@ -353,54 +337,6 @@ type
     ///  <summary>Gets reference to snippet associated with view.</summary>
     ///  <remarks>Method of ISnippetView.</remarks>
     function GetSnippet: TSnippet;
-  end;
-
-type
-  ///  <summary>View associated with a category.</summary>
-  TCategoryView = class sealed(TInterfacedObject,
-    IView, ICategoryView
-  )
-  strict private
-    var
-      ///  <summary>ID of category associated with view.</summary>
-      fCategoryID: string;
-    type
-      ///  <summary>Implementation of IViewKey for category view.</summary>
-      TKey = class(TInterfacedObject, IViewKey)
-      strict private
-        var
-          ///  <summary>Category id used as key.</summary>
-          fID: string;
-      public
-        ///  <summary>Constructs object with given category id as key.</summary>
-        constructor Create(const ID: string);
-        ///  <summary>Checks if this key is equal to one passed as a parameter.
-        ///  </summary>
-        ///  <remarks>Method of IViewKey.</remarks>
-        function IsEqual(const Key: IViewKey): Boolean;
-      end;
-  public
-    ///  <summary>Constructs view for a specified category.</summary>
-    constructor Create(const Category: TCategory);
-    ///  <summary>Checks if this view is equal to the one passed as a parameter.
-    ///  </summary>
-    ///  <remarks>Method of IView.</remarks>
-    function IsEqual(View: IView): Boolean;
-    ///  <summary>Gets description of view.</summary>
-    ///  <remarks>Method of IView.</remarks>
-    function GetDescription: string;
-    ///  <summary>Gets object containing view's unique key.</summary>
-    ///  <remarks>Method of IView.</remarks>
-    function GetKey: IViewKey;
-    ///  <summary>Checks if view is user-defined.</summary>
-    ///  <remarks>Method of IView.</remarks>
-    function IsUserDefined: Boolean;
-    ///  <summary>Checks if view is a grouping.</summary>
-    ///  <remarks>Method of IView.</remarks>
-    function IsGrouping: Boolean;
-    ///  <summary>Gets reference to category associated with view.</summary>
-    ///  <remarks>Method of ICategoryView.</remarks>
-    function GetCategory: TCategory;
   end;
 
 type
@@ -679,65 +615,6 @@ begin
   Result := (Key as TSnippetView.TKey).fID = fID;
 end;
 
-{ TCategoryView }
-
-constructor TCategoryView.Create(const Category: TCategory);
-begin
-  inherited Create;
-  fCategoryID := Category.ID;
-end;
-
-function TCategoryView.GetCategory: TCategory;
-begin
-  Result := _Database.Categories.Find(fCategoryID);
-  Assert(Assigned(Result), ClassName + '.GetCategory: Category not found');
-end;
-
-function TCategoryView.GetDescription: string;
-begin
-  Result := GetCategory.Description;
-end;
-
-function TCategoryView.GetKey: IViewKey;
-begin
-  Result := TKey.Create(GetCategory.ID);
-end;
-
-function TCategoryView.IsEqual(View: IView): Boolean;
-var
-  CatView: ICategoryView;
-begin
-  if not Supports(View, ICategoryView, CatView) then
-    Exit(False);
-  // don't compare category IDs directly in case equality test changes
-  Result := GetCategory.IsEqual(CatView.Category);
-end;
-
-function TCategoryView.IsGrouping: Boolean;
-begin
-  Result := True;
-end;
-
-function TCategoryView.IsUserDefined: Boolean;
-begin
-  Result := GetCategory.UserDefined;
-end;
-
-{ TCategoryView.TKey }
-
-constructor TCategoryView.TKey.Create(const ID: string);
-begin
-  inherited Create;
-  fID := ID;
-end;
-
-function TCategoryView.TKey.IsEqual(const Key: IViewKey): Boolean;
-begin
-  if not (Key is TKey) then
-    Exit(False);
-  Result := StrSameText((Key as TKey).fID, fID);
-end;
-
 { TTagView }
 
 constructor TTagView.Create(const Tag: TTag);
@@ -924,8 +801,6 @@ begin
     Result := CreateStartPageView
   else if Supports(View, ISnippetView) then
     Result := CreateSnippetView((View as ISnippetView).Snippet)
-  else if Supports(View, ICategoryView) then
-    Result := CreateCategoryView((View as ICategoryView).Category)
   else if Supports(View, ITagView) then
     Result := CreateTagView((View as ITagView).Tag)
   else if Supports(View, ISnippetKindView) then
@@ -944,21 +819,13 @@ begin
     );
 end;
 
-class function TViewFactory.CreateCategoryView(const Category: TCategory):
-  IView;
-begin
-  Result := TCategoryView.Create(Category);
-end;
-
 class function TViewFactory.CreateDBItemView(const DBObj: TObject): IView;
 begin
   Result := nil;
   if not Assigned(DBObj) then
     Result := TViewFactory.CreateNullView
   else if DBObj is TSnippet then
-    Result := TViewFactory.CreateSnippetView(DBObj as TSnippet)
-  else if DBObj is TCategory then
-    Result := TViewFactory.CreateCategoryView(DBObj as TCategory);
+    Result := TViewFactory.CreateSnippetView(DBObj as TSnippet);
   Assert(Assigned(Result),
     ClassName + '.CreateDBItemView: DBObj is not valid type');
 end;
