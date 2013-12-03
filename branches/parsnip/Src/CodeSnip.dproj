@@ -482,7 +482,6 @@
 			<DCCReference Include="URFC2822Date.pas"/>
 			<DCCReference Include="URSS20.pas"/>
 			<DCCReference Include="URTFBuilder.pas"/>
-			<DCCReference Include="URTFCategoryDoc.pas"/>
 			<DCCReference Include="URTFSnippetDoc.pas"/>
 			<DCCReference Include="URTFStyles.pas"/>
 			<DCCReference Include="URTFUtils.pas"/>
@@ -578,6 +577,7 @@
 			<DCCReference Include="Main\CS.ActiveText.Renderers.RTF.pas"/>
 			<DCCReference Include="Main\CS.ActiveText.Validator.pas"/>
 			<DCCReference Include="Main\CS.Config.pas"/>
+			<DCCReference Include="Main\CS.Docs.TagInfo.RTF.pas"/>
 			<DCCReference Include="Main\CS.Database.SnippetLinks.pas"/>
 			<DCCReference Include="Main\CS.Database.Snippets.pas"/>
 			<DCCReference Include="Main\CS.Database.SnippetsTable.pas"/>

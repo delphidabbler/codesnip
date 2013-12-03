@@ -83,9 +83,9 @@ implementation
 uses
   // Project
   CS.Config,
+  CS.Docs.TagInfo.RTF,
   CS.SourceCode.Languages,
   CS.SourceCode.Hiliter.Brushes,
-  URTFCategoryDoc,
   URTFSnippetDoc,
   UPreferences,
   UPrintInfo;
@@ -138,9 +138,9 @@ end;
 
 function TTagPrintDocument.Generate: TRTF;
 var
-  Doc: TRTFCategoryDoc; // object that renders tag document in RTF
+  Doc: TTagInfoRTFDoc; // object that renders tag document in RTF
 begin
-  Doc := TRTFCategoryDoc.Create(poUseColour in PrintInfo.PrintOptions);
+  Doc := TTagInfoRTFDoc.Create(poUseColour in PrintInfo.PrintOptions);
   try
     Result := TRTF.Create(Doc.Generate(fTag));
   finally

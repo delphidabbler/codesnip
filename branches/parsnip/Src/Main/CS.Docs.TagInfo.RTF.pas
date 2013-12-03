@@ -13,7 +13,7 @@
 }
 
 
-unit URTFCategoryDoc;
+unit CS.Docs.TagInfo.RTF;
 
 
 interface
@@ -34,7 +34,7 @@ uses
 type
   ///  <summary>Renders a rich text document that lists the snippets associated
   ///  with a tag, or those snippets that have no tag.</summary>
-  TRTFCategoryDoc = class(TObject)
+  TTagInfoRTFDoc = class(TObject)
   strict private
     const
       ///  <summary>Name of main document font.</summary>
@@ -110,9 +110,9 @@ uses
   UStrUtils;
 
 
-{ TRTFCategoryDoc }
+{ TTagInfoRTFDoc }
 
-constructor TRTFCategoryDoc.Create(const UseColour: Boolean);
+constructor TTagInfoRTFDoc.Create(const UseColour: Boolean);
 begin
   inherited Create;
   fUseColour := UseColour;
@@ -128,14 +128,14 @@ begin
   InitStyles;
 end;
 
-destructor TRTFCategoryDoc.Destroy;
+destructor TTagInfoRTFDoc.Destroy;
 begin
   fDescStyles.Free;
   fBuilder.Free;
   inherited;
 end;
 
-function TRTFCategoryDoc.Generate(const Tag: TTag): TEncodedData;
+function TTagInfoRTFDoc.Generate(const Tag: TTag): TEncodedData;
 var
   Snippet: TSnippet;
   SnippetID: TSnippetID;
@@ -178,7 +178,7 @@ begin
   Result := TEncodedData.Create(fBuilder.Render.ToBytes, etASCII);
 end;
 
-procedure TRTFCategoryDoc.InitStyles;
+procedure TTagInfoRTFDoc.InitStyles;
 begin
   fURLStyle := TRTFStyle.Create(
     [scColour], TRTFFont.CreateNull, 0.0, [], clExternalLink
@@ -254,7 +254,7 @@ begin
   end;
 end;
 
-procedure TRTFCategoryDoc.OutputPlainTextPara(const Text: string);
+procedure TTagInfoRTFDoc.OutputPlainTextPara(const Text: string);
 begin
   fBuilder.BeginGroup;
   fBuilder.SetParaSpacing(TRTFParaSpacing.Create(ParaSpacing, 0.0));
@@ -266,7 +266,7 @@ begin
   fBuilder.EndGroup;
 end;
 
-procedure TRTFCategoryDoc.OutputSnippetSubHeading(const Snippet: TSnippet);
+procedure TTagInfoRTFDoc.OutputSnippetSubHeading(const Snippet: TSnippet);
 begin
   fBuilder.BeginGroup;
   fBuilder.SetParaSpacing(TRTFParaSpacing.Create(SubHeadingSpacing, 0.0));
@@ -280,7 +280,7 @@ begin
   fBuilder.EndGroup;
 end;
 
-procedure TRTFCategoryDoc.OutputSnippetText(const Snippet: TSnippet);
+procedure TTagInfoRTFDoc.OutputSnippetText(const Snippet: TSnippet);
 var
   RTFRenderer: TActiveTextRTFRenderer;
 begin
@@ -299,7 +299,7 @@ begin
   fBuilder.EndGroup;
 end;
 
-procedure TRTFCategoryDoc.OutputTagHeading(const Tag: TTag);
+procedure TTagInfoRTFDoc.OutputTagHeading(const Tag: TTag);
 resourcestring
   sNormalHeading = 'Snippets With "%s" Tag';
   sNoTagsHeading = 'Snippets That Have No Tags';
@@ -317,7 +317,7 @@ begin
   fBuilder.EndGroup;
 end;
 
-procedure TRTFCategoryDoc.SetColour(const Colour: TColor);
+procedure TTagInfoRTFDoc.SetColour(const Colour: TColor);
 begin
   if fUseColour then
     fBuilder.SetColour(Colour);
