@@ -16,7 +16,7 @@
 
 /*
  * Calls external object to get host application to display Configure Compilers
- * dialog box.
+ * dialogue box.
  *  @return False.
  */
 function configCompilers() {
@@ -26,7 +26,7 @@ function configCompilers() {
 
 /*
  * Calls external object to get host application to display Update Database
- * dialog box.
+ * dialogue box.
  *  @return False.
  */
 function updateDbase() {
@@ -35,13 +35,13 @@ function updateDbase() {
 }
 
 /*
- * Calls external object to get host application to display a named snippet.
- *  @param string snippet [in] Name of snippet to be displayed.
+ * Calls external object to get host application to display a given snippet.
+ *  @param string snippetID [in] ID of snippet to be displayed.
  *  @return False.
  */
-function displaySnippet(snippet) {
+function displaySnippet(snippetID) {
   var e = window.event;
-  external.DisplaySnippet(snippet, e.ctrlKey);
+  external.DisplaySnippet(snippetID, e.ctrlKey);
   return false;
 }
 
@@ -112,5 +112,27 @@ function showAboutBox() {
  */
 function showPrefsPage(tabCls) {
   external.ShowPrefsPage(tabCls);
+  return false;
+}
+
+/*
+ * Calls external object to get the host application to display a specified tag.
+ *  @param string tag [in] Tag to be displayed.
+ *  @return False.
+ */
+function displayTag(tag) {
+  external.DisplayTag(tag);
+  return false;
+}
+
+/*
+ * Calls external object to get host application to remove a tag from a
+ * snippet's tag list.
+ *  @param string snippetID [in] ID of snippet.
+ *  @param string tag [in] Tag to be removed.
+ *  @return False.
+ */
+function removeTag(snippetID, tag) {
+  external.RemoveTag(snippetID, tag);
   return false;
 }

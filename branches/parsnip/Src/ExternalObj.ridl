@@ -47,20 +47,20 @@ library ExternalObj
 
     /*
      * Display named snippet.
-     *    @param SnippetName [in] Name of snippet to display.
+     *    @param SnippetID [in] ID of snippet to display.
      */
     [id(0x00000066)]
-    HRESULT _stdcall DisplaySnippet([in] BSTR SnippetName,
+    HRESULT _stdcall DisplaySnippet([in] BSTR SnippetID,
       [in] VARIANT_BOOL NewTab);
 
     /*
-     * Displays configure compilers dialog box.
+     * Displays configure compilers dialogue box.
      */
     [id(0x0000006A)]
     HRESULT _stdcall ConfigCompilers(void);
 
     /*
-     * Displays Donate dialog box.
+     * Displays Donate dialogue box.
      */
     [id(0x0000006D)]
     HRESULT _stdcall Donate(void);
@@ -98,11 +98,27 @@ library ExternalObj
 
     /*
      * Displays a tab in the Preferences dialogue box.
-     *    @param TagCls [in] Class name of frame hosting required dialogue box
+     *    @param ClsName [in] Class name of frame hosting required dialogue box
      *      page.
      */
     [id(0x00000073)]
     HRESULT _stdcall ShowPrefsPage([in] BSTR ClsName);
+
+    /*
+     * Display given tag.
+     *    @param Tag [in] Tag to be displayed.
+     */
+    [id(0x00000074)]
+    HRESULT _stdcall DisplayTag([in] BSTR Tag, [in] VARIANT_BOOL NewTab);
+
+    /*
+     * Removes a tag from a snippet's tag list.
+     *    @param SnippetID [in] ID of snippet.
+     *    @param Tag [in] Tag to be removed.
+     */
+    [id(0x00000075)]
+    HRESULT _stdcall RemoveTag([in] BSTR SnippetID, [in] BSTR Tag);
+
   };
 
 };
