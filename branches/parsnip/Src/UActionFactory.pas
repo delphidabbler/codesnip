@@ -116,7 +116,6 @@ uses
   // Project
   CS.Actions.DisplayTag,
   CS.Actions.RemoveTag,
-  UCategoryAction,
   UDetailTabAction,
   UEditSnippetAction,
   ULinkAction,
