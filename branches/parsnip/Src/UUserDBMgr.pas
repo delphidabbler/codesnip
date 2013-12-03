@@ -23,7 +23,6 @@ uses
   Classes,
   // Project
   CS.Database.Types,
-  DB.UCategory,
   UBaseObjects,
   UView;
 

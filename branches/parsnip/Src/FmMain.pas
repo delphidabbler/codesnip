@@ -267,7 +267,7 @@ type
     ///  <summary>Determines whether CopyInfo action can be enabled.</summary>
     procedure actCopyInfoUpdate(Sender: TObject);
     ///  <summary>Copies annotated source code of selected snippet or selected
-    ///  category to clipboard.</summary>
+    ///  tag to clipboard.</summary>
     procedure actCopySnippetExecute(Sender: TObject);
     ///  <summary>Determines whether CopySnippet action can be enabled.
     ///  </summary>
@@ -370,7 +370,7 @@ type
     ///  depending on which pane is active.</summary>
     procedure actPreviousTabExecute(Sender: TObject);
     ///  <summary>Displays the Print dialogue box that can be used to print the
-    ///  selected snippet or category.</summary>
+    ///  selected snippet or tag.</summary>
     procedure actPrintExecute(Sender: TObject);
     ///  <summary>Determines whether the Print action can be enabled.</summary>
     procedure actPrintUpdate(Sender: TObject);
@@ -405,7 +405,7 @@ type
     ///  </summary>
     procedure actSaveSelectionUpdate(Sender: TObject);
     ///  <summary>Saves annotated source code of the currently selected snippet
-    ///  or category to disk in a user-specified file.</summary>
+    ///  or tag to disk in a user-specified file.</summary>
     procedure actSaveSnippetExecute(Sender: TObject);
     ///  <summary>Determines whether the SaveSnippet action can be enabled.
     ///  </summary>
@@ -593,7 +593,6 @@ uses
   // Project
   CS.Actions.RemoveTag,
   CS.Init.CommandLineOpts,
-  DB.UCategory,
   DB.UMain,
   DB.USnippet,
   FmSplash,
