@@ -74,19 +74,19 @@ type
       {Returns singletion IPrintInfo object initialised from persistent storage.
         @return Object instance.
       }
+    procedure SetPageMargins(const Margins: TPageMargins);
+    procedure SetPrintOptions(const Options: TPrintOptions);
   strict protected
     ///  <summary>Initialises singleton object on creation.</summary>
     procedure Initialize; override;
-    ///  <summary>Finalises singleton object on destruction.</summary>
-    procedure Finalize; override;
   public
     class property Instance: TPrintInfo read GetInstance;
       {Reference to singleton instance of this class}
     property PageMargins: TPageMargins
-      read fPageMargins write fPageMargins;
+      read fPageMargins write SetPageMargins;
       {Stores current page margins, in millimeters}
     property PrintOptions: TPrintOptions
-      read fPrintOptions write fPrintOptions;
+      read fPrintOptions write SetPrintOptions;
       {Stores current print options}
   end;
 
@@ -115,21 +115,6 @@ end;
 
 
 { TPrintInfo }
-
-procedure TPrintInfo.Finalize;
-var
-  Storage: ISettingsSection;
-begin
-  inherited;
-  Storage := Settings.EmptySection(ssPrinting);
-  Storage.SetBoolean('UseColour', poUseColour in fPrintOptions);
-  Storage.SetBoolean('SyntaxHighlight', poSyntaxHilite in fPrintOptions);
-  Storage.SetFloat('LeftMargin', fPageMargins.Left);
-  Storage.SetFloat('TopMargin', fPageMargins.Top);
-  Storage.SetFloat('RightMargin', fPageMargins.Right);
-  Storage.SetFloat('BottomMargin', fPageMargins.Bottom);
-  Storage.Save;
-end;
 
 class function TPrintInfo.GetInstance: TPrintInfo;
   {Returns singletion IPrintInfo object initialised from persistent storage.
@@ -160,6 +145,35 @@ begin
     Storage.GetFloat('RightMargin', cPageMarginSizeMM),
     Storage.GetFloat('BottomMargin', cPageMarginSizeMM)
   );
+end;
+
+procedure TPrintInfo.SetPageMargins(const Margins: TPageMargins);
+var
+  Storage: ISettingsSection;
+begin
+  fPageMargins := Margins;
+  // NOTE: must write to settings storage when property is set: attempting to
+  // write in a Finalize method fails and writes to an empty section.
+  Storage := Settings.ReadSection(ssPrinting);
+  Storage.SetFloat('LeftMargin', fPageMargins.Left);
+  Storage.SetFloat('TopMargin', fPageMargins.Top);
+  Storage.SetFloat('RightMargin', fPageMargins.Right);
+  Storage.SetFloat('BottomMargin', fPageMargins.Bottom);
+  Storage.Save;
+end;
+
+procedure TPrintInfo.SetPrintOptions(const Options: TPrintOptions);
+var
+  Storage: ISettingsSection;
+begin
+  inherited;
+  fPrintOptions := Options;
+  // NOTE: must write to settings storage when property is set: attempting to
+  // write in a Finalize method fails and writes to an empty section.
+  Storage := Settings.ReadSection(ssPrinting);
+  Storage.SetBoolean('UseColour', poUseColour in fPrintOptions);
+  Storage.SetBoolean('SyntaxHighlight', poSyntaxHilite in fPrintOptions);
+  Storage.Save;
 end;
 
 { TPageMargins }
