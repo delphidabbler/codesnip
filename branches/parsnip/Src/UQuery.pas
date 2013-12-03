@@ -23,6 +23,7 @@ uses
   // Project
   CS.Database.Types,
   DB.UCategory,
+  DB.UMain,
   DB.USnippet,
   USearch;
 
@@ -74,6 +75,9 @@ type
         @param Cat [in] Reference to required category.
         @return List of snippet IDs.
       }
+    ///  <summary>Applies the given filter function to the current selection
+    ///  and returns the IDs of snippets that pass the filter.</summary>
+    function FilterSelection(const FilterFn: TDatabaseFilterFn): ISnippetIDList;
     property LatestSearch: ISearch read GetLatestSearch;
       {Reference to search object used to generate current query}
     property Selection: ISnippetIDList read GetSelection;
@@ -98,7 +102,6 @@ uses
   Generics.Collections,
   // Project
   CS.Database.Snippets,
-  DB.UMain,
   IntfCommon,
   UBaseObjects,
   USingleton;
@@ -163,6 +166,9 @@ type
       {Gets reference to list of snippets selected by last search.
         @return Reference to required list of snippets.
       }
+    ///  <summary>Applies the given filter function to the current selection
+    ///  and returns the IDs of snippets that pass the filter.</summary>
+    function FilterSelection(const FilterFn: TDatabaseFilterFn): ISnippetIDList;
     function GetCatSelection(const Cat: TCategory): ISnippetIDList;
       {Provides list of IDs of snippets selected by last search that are in a
       certain category.
@@ -206,6 +212,17 @@ begin
     Exit;
   // Search was successful
   fActiveSearches.Add(Search);
+end;
+
+function TQuery.FilterSelection(const FilterFn: TDatabaseFilterFn):
+  ISnippetIDList;
+begin
+  Result := _Database.Select(
+    function (const Snippet: TSnippet): Boolean
+    begin
+      Result := fSelection.Contains(Snippet.ID) and FilterFn(Snippet);
+    end
+  );
 end;
 
 procedure TQuery.Finalize;
