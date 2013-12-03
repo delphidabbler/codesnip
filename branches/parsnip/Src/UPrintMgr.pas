@@ -30,8 +30,8 @@ type
   ///  <summary>Class that manages printing of a document providing information
   ///  about certain view items.</summary>
   ///  <remarks>
-  ///  <para>Currently supports printing of snippets and non-empty categories.
-  ///  </para>
+  ///  <para>Currently supports printing of a given snippet and a list of
+  ///  snippets associated with a given tag.</para>
   ///  <para>Generates an RTF formatted document and passes it to the print
   ///  engine for printing.</para>
   ///  </remarks>
@@ -55,8 +55,8 @@ type
     ///  </summary>
     class procedure Print(ViewItem: IView);
     ///  <summary>Checks if given view item can be printed.</summary>
-    ///  <remarks>View item must either represent a snippet or a non-empty
-    ///  category to be able to be printed.</remarks>
+    ///  <remarks>View item must either represent a snippet or a tag to be able
+    ///  to be printed.</remarks>
     class function CanPrint(ViewItem: IView): Boolean;
   end;
 
@@ -75,14 +75,8 @@ uses
 
 class function TPrintMgr.CanPrint(ViewItem: IView): Boolean;
 begin
-  // Can print snippets or non-empty categories
-  Result := Supports(ViewItem, ISnippetView)
-    or
-  (
-    Supports(ViewItem, ICategoryView)
-      and
-    not (ViewItem as ICategoryView).Category.SnippetIDs.IsEmpty
-  );
+  // Can print snippets or tags
+  Result := Supports(ViewItem, ISnippetView) or Supports(ViewItem, ITagView);
 end;
 
 procedure TPrintMgr.DoPrint;
@@ -103,13 +97,13 @@ end;
 function TPrintMgr.GetDocGenerator: IPrintDocument;
 var
   SnippetView: ISnippetView;
-  CategoryView: ICategoryView;
+  TagView: ITagView;
 begin
   Result := nil;
   if Supports(fViewItem, ISnippetView, SnippetView) then
     Result := TSnippetPrintDocument.Create(SnippetView.Snippet)
-  else if Supports(fViewItem, ICategoryView, CategoryView) then
-    Result := TCategoryPrintDocument.Create(CategoryView.Category);
+  else if Supports(fViewItem, ITagView, TagView) then
+    Result := TTagPrintDocument.Create(TagView.Tag);
   Assert(Assigned(Result), ClassName + '.GetPrintDocument: Invalid view');
 end;
 

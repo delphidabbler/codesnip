@@ -24,7 +24,7 @@ uses
   Graphics,
   // Project
   CS.ActiveText.Renderers.RTF,
-  DB.UCategory,
+  CS.Database.Types,
   DB.USnippet,
   UEncodings,
   URTFBuilder,
@@ -32,8 +32,8 @@ uses
 
 
 type
-  ///  <summary>Renders a rich text document that lists the snippets in a
-  ///  category.</summary>
+  ///  <summary>Renders a rich text document that lists the snippets associated
+  ///  with a tag, or those snippets that have no tag.</summary>
   TRTFCategoryDoc = class(TObject)
   strict private
     const
@@ -64,13 +64,17 @@ type
       fDescStyles: TActiveTextRTFStyleMap;
       ///  <summary>Styling applied to URLs.</summary>
       fURLStyle: TRTFStyle;
-    ///  <summary>Outputs description of given category as a main heading as
-    ///  RTF.</summary>
-    procedure OutputCategoryHeading(const Category: TCategory);
+    ///  <summary>Outputs description of tag as a main heading as RTF.</summary>
+    ///  <remarks>If the tag is null then a special "no tags" heading is output.
+    ///  </remarks>
+    procedure OutputTagHeading(const Tag: TTag);
     ///  <summary>Outputs name of given snippet as sub-heading as RTF.</summary>
     procedure OutputSnippetSubHeading(const Snippet: TSnippet);
-    ///  <summary>Outputs description of given snippet as RTF.</summary>
+    ///  <summary>Outputs description of given snippet as RTF paragraph.
+    ///  </summary>
     procedure OutputSnippetText(const Snippet: TSnippet);
+    ///  <summary>Output given text as RTF paragraph.</summary>
+    procedure OutputPlainTextPara(const Text: string);
     ///  <summary>Uses given font colour for subsequent text unless caller has
     ///  specified that colour is not to be used.</summary>
     ///  <remarks>Font colour is used until next call to this method.</remarks>
@@ -85,10 +89,10 @@ type
     constructor Create(const UseColour: Boolean);
     ///  <summary>Destroys object.</summary>
     destructor Destroy; override;
-    ///  <summary>Generates a document that lists contents of given category and
-    ///  returns as encoded data using an encoding suitable for RTF.
+    ///  <summary>Generates a document that lists snippets associated with given
+    ///  tag and returns as encoded data using an encoding suitable for RTF.
     ///  </summary>
-    function Generate(const Category: TCategory): TEncodedData;
+    function Generate(const Tag: TTag): TEncodedData;
   end;
 
 
@@ -96,12 +100,14 @@ implementation
 
 
 uses
+  // Delphi
+  SysUtils,
   // Project
   CS.ActiveText,
-  CS.Database.Types,
   DB.UMain,
   UColours,
-  UPreferences;
+  UPreferences,
+  UStrUtils;
 
 
 { TRTFCategoryDoc }
@@ -129,18 +135,46 @@ begin
   inherited;
 end;
 
-function TRTFCategoryDoc.Generate(const Category: TCategory): TEncodedData;
+function TRTFCategoryDoc.Generate(const Tag: TTag): TEncodedData;
 var
   Snippet: TSnippet;
   SnippetID: TSnippetID;
+  SnippetIDs: ISnippetIDList;
+resourcestring
+  sEmptySnippetPara = 'There are no snippets with this tag.';
+  sEmptySnippetNullPara = 'All snippets have at least one tag.';
 begin
-  OutputCategoryHeading(Category);
-  for SnippetID in Category.SnippetIDs do
+  // TODO: move following selection code into a TDatabase method
+  { TODO: change this to print only the currently selected snippets in the tag:
+          this will be a change from v4. }
+  if not Tag.IsNull then
+    SnippetIDs := _Database.Select(
+      function (const Snippet: TSnippet): Boolean
+      begin
+        Result := Snippet.Tags.Contains(Tag)
+      end
+    )
+  else
+    SnippetIDs := _Database.Select(
+      function (const Snippet: TSnippet): Boolean
+      begin
+        Result := Snippet.Tags.IsEmpty;
+      end
+    );
+  OutputTagHeading(Tag);
+  if not SnippetIDs.IsEmpty then
   begin
-    Snippet := _Database.Lookup(SnippetID);
-    OutputSnippetSubHeading(Snippet);
-    OutputSnippetText(Snippet);
-  end;
+    for SnippetID in SnippetIDs do
+    begin
+      Snippet := _Database.Lookup(SnippetID);
+      OutputSnippetSubHeading(Snippet);
+      OutputSnippetText(Snippet);
+    end;
+  end
+  else
+    OutputPlainTextPara(
+      StrIf(Tag.IsNull, sEmptySnippetNullPara, sEmptySnippetPara)
+    );
   Result := TEncodedData.Create(fBuilder.Render.ToBytes, etASCII);
 end;
 
@@ -220,15 +254,14 @@ begin
   end;
 end;
 
-procedure TRTFCategoryDoc.OutputCategoryHeading(const Category: TCategory);
+procedure TRTFCategoryDoc.OutputPlainTextPara(const Text: string);
 begin
   fBuilder.BeginGroup;
-  fBuilder.SetParaSpacing(TRTFParaSpacing.Create(HeadingSpacing, 0.0));
+  fBuilder.SetParaSpacing(TRTFParaSpacing.Create(ParaSpacing, 0.0));
   fBuilder.SetFont(MainFontName);
-  fBuilder.SetFontSize(HeadingFontSize);
-  fBuilder.SetFontStyle([fsBold]);
-  SetColour(Preferences.DBHeadingColours[Category.UserDefined]);
-  fBuilder.AddText(Category.Description);
+  fBuilder.SetFontSize(ParaFontSize);
+  fBuilder.SetFontStyle([]);
+  fBuilder.AddText(Text);
   fBuilder.EndPara;
   fBuilder.EndGroup;
 end;
@@ -263,6 +296,24 @@ begin
   RTFRenderer.Options.DisplayURLs := True;
   RTFRenderer.Options.URLStyle := fURLStyle;
   Snippet.Description.Render(RTFRenderer);
+  fBuilder.EndGroup;
+end;
+
+procedure TRTFCategoryDoc.OutputTagHeading(const Tag: TTag);
+resourcestring
+  sNormalHeading = 'Snippets With "%s" Tag';
+  sNoTagsHeading = 'Snippets That Have No Tags';
+begin
+  fBuilder.BeginGroup;
+  fBuilder.SetParaSpacing(TRTFParaSpacing.Create(HeadingSpacing, 0.0));
+  fBuilder.SetFont(MainFontName);
+  fBuilder.SetFontSize(HeadingFontSize);
+  fBuilder.SetFontStyle([fsBold]);
+  if Tag.IsNull then
+    fBuilder.AddText(sNoTagsHeading)
+  else
+    fBuilder.AddText(Format(sNormalHeading, [Tag.ToString]));
+  fBuilder.EndPara;
   fBuilder.EndGroup;
 end;
 

@@ -23,7 +23,7 @@ uses
   // Delphi
   Classes,
   // Project
-  DB.UCategory,
+  CS.Database.Types,
   DB.USnippet,
   URTFUtils;
 
@@ -59,24 +59,23 @@ type
   end;
 
 type
-  ///  <summary>Class that generates a print document that describes a category.
-  ///  </summary>
-  TCategoryPrintDocument = class(TInterfacedObject,
+  ///  <summary>Class that generates a print document that describes a tag and
+  ///  the snippets it contains.</summary>
+  TTagPrintDocument = class(TInterfacedObject,
     IPrintDocument
   )
   strict private
     var
-      ///  <summary>Reference to category described by print document.</summary>
-      fCategory: TCategory;
+      ///  <summary>Reference to tag described by print document.</summary>
+      fTag: TTag;
   public
-    ///  <summary>Constructs object to create print document for given category.
+    ///  <summary>Constructs object to create print document for given tag.
     ///  </summary>
-    constructor Create(const Category: TCategory);
+    constructor Create(const Tag: TTag);
     ///  <summary>Generates and returns print document.</summary>
     ///  <remarks>Method of IPrintDocument.</remarks>
     function Generate: TRTF;
   end;
-
 
 implementation
 
@@ -129,21 +128,21 @@ begin
   end;
 end;
 
-{ TCategoryPrintDocument }
+{ TTagPrintDocument }
 
-constructor TCategoryPrintDocument.Create(const Category: TCategory);
+constructor TTagPrintDocument.Create(const Tag: TTag);
 begin
   inherited Create;
-  fCategory := Category;
+  fTag := Tag;
 end;
 
-function TCategoryPrintDocument.Generate: TRTF;
+function TTagPrintDocument.Generate: TRTF;
 var
-  Doc: TRTFCategoryDoc; // object that renders category document in RTF
+  Doc: TRTFCategoryDoc; // object that renders tag document in RTF
 begin
   Doc := TRTFCategoryDoc.Create(poUseColour in PrintInfo.PrintOptions);
   try
-    Result := TRTF.Create(Doc.Generate(fCategory));
+    Result := TRTF.Create(Doc.Generate(fTag));
   finally
     Doc.Free;
   end;
