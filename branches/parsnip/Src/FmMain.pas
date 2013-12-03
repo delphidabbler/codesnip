@@ -559,6 +559,10 @@ type
     ///  specified by the TShowPrefsPageAction instance referenced by Sender.
     ///  </summary>
     procedure ActShowPrefsPageExecute(Sender: TObject);
+    ///  <summary>Removes a tag from a snippet where both the tag and snippet ID
+    ///  are specified by the TRemoveTagAction instance referenced by Sender.
+    ///  </summary>
+    procedure ActRemoveTagExecute(Sender: TObject);
     ///  <summary>Handles events that inform of changes to the database. The
     ///  EvtInfo object provides information about the change.</summary>
     procedure DBChangeHandler(Sender: TObject; const EvtInfo: IInterface);
@@ -608,6 +612,7 @@ uses
   Windows,
   Graphics,
   // Project
+  CS.Actions.RemoveTag,
   CS.Init.CommandLineOpts,
   DB.UCategory,
   DB.UMain,
@@ -1069,6 +1074,13 @@ begin
   end;
 end;
 
+procedure TMainForm.ActRemoveTagExecute(Sender: TObject);
+begin
+  TUserDBMgr.RemoveTagFromSnippet(
+    (Sender as TRemoveTagAction).SnippetID, (Sender as TRemoveTagAction).Tag
+  );
+end;
+
 procedure TMainForm.actRenameCategoryExecute(Sender: TObject);
 begin
   TUserDBMgr.RenameACategory;
@@ -1509,6 +1521,10 @@ begin
       SetAboutBoxAction(actAbout);
       SetShowPrefsPageAction(
         TActionFactory.CreateShowPrefsPageAction(Self, ActShowPrefsPageExecute)
+      );
+      SetDisplayTagAction(TActionFactory.CreateDisplayTagAction(Self));
+      SetRemoveTagAction(
+        TActionFactory.CreateRemoveTagAction(Self, ActRemoveTagExecute)
       );
     end;
 
