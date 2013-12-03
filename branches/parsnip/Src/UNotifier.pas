@@ -62,9 +62,6 @@ type
       fEditSnippetAction: TBasicAction;
       ///  <summary>Action that displays donate dialogue box.</summary>
       fDonateAction: TBasicAction;
-      // TODO: delete this field when possible
-      ///  <summary>Action that causes a category to be displayed.</summary>
-      fDisplayCategoryAction: TBasicAction;
       ///  <summary>Action that causes the Snippets Editor to be opened ready to
       ///  create a new snippet.</summary>
       fNewSnippetAction: TBasicAction;
@@ -99,14 +96,6 @@ type
     ///  detail pane tab.</param>
     ///  <remarks>Methods of INotifier.</remarks>
     procedure DisplaySnippet(const SnippetID: TSnippetID; NewTab: WordBool);
-
-    // TODO: delete this method when possible
-    ///  <summary>Displays a category.</summary>
-    ///  <param name="CatId">WideString [in] ID of required category.</param>
-    ///  <param name="NewTab">WordBool [in] Whether to display category in a new
-    ///  detail pane tab.</param>
-    ///  <remarks>Methods of INotifier.</remarks>
-    procedure DisplayCategory(const CatID: WideString; NewTab: WordBool);
 
     ///  <summary>Displays Configure Compilers dialogue box.</summary>
     ///  <remarks>Methods of INotifier.</remarks>
@@ -230,12 +219,6 @@ type
     ///  <remarks>Methods of ISetActions.</remarks>
     procedure SetDonateAction(const Action: TBasicAction);
 
-    // TODO: delete this method when possible
-    ///  <summary>Sets action used to display a category.</summary>
-    ///  <param name="Action">TBasicAction [in] Required action.</param>
-    ///  <remarks>Methods of ISetActions.</remarks>
-    procedure SetDisplayCategoryAction(const Action: TBasicAction);
-
     ///  <summary>Sets action used to open snippets editor to create a new
     ///  snippet.</summary>
     ///  <param name="Action">TBasicAction [in] Required action.</param>
@@ -288,7 +271,6 @@ uses
   CS.Actions.DisplayTag,
   CS.Actions.RemoveTag,
   Compilers.UGlobals,
-  UCategoryAction,
   UContainers,
   UDetailTabAction,
   UEditSnippetAction,
@@ -326,16 +308,6 @@ procedure TNotifier.ConfigCompilers;
 begin
   if Assigned(fConfigCompilersAction) then
     fConfigCompilersAction.Execute;
-end;
-
-procedure TNotifier.DisplayCategory(const CatID: WideString; NewTab: WordBool);
-begin
-  if Assigned(fDisplayCategoryAction) then
-  begin
-    (fDisplayCategoryAction as TCategoryAction).CatID := CatID;
-    (fDisplayCategoryAction as TCategoryAction).NewTab := NewTab;
-    fDisplayCategoryAction.Execute;
-  end;
 end;
 
 procedure TNotifier.DisplaySnippet(const SnippetID: TSnippetID;
@@ -410,16 +382,6 @@ begin
   Assert(Action is TDetailTabAction,
     ClassName + '.SetDetailPaneChangeAction: Action is not TDetailTabAction');
   fDisplayPaneChangeAction := Action;
-end;
-
-procedure TNotifier.SetDisplayCategoryAction(const Action: TBasicAction);
-begin
-  Assert(Action is TCategoryAction,
-    ClassName + '.SetDisplayCategoryAction: Action is not TCategoryAction');
-  Assert(Supports(Action, ISetNotifier),
-    ClassName + '.SetDisplayCategoryAction: Action must support ISetNotifier');
-  fDisplayCategoryAction := Action;
-  (fDisplayCategoryAction as ISetNotifier).SetNotifier(Self);
 end;
 
 procedure TNotifier.SetDisplaySnippetAction(

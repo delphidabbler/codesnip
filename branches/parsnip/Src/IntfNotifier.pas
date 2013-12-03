@@ -45,13 +45,6 @@ type
     ///  detail pane tab.</param>
     procedure DisplaySnippet(const SnippetID: TSnippetID; NewTab: WordBool);
 
-    // TODO: delete this method when possible
-    ///  <summary>Displays a category.</summary>
-    ///  <param name="CatId">WideString [in] ID of required category.</param>
-    ///  <param name="NewTab">WordBool [in] Whether to display category in a new
-    ///  detail pane tab.</param>
-    procedure DisplayCategory(const CatID: WideString; NewTab: WordBool);
-
     ///  <summary>Displays Configure Compilers dialogue box.</summary>
     procedure ConfigCompilers;
 
@@ -156,11 +149,6 @@ type
     ///  <summary>Sets action used to display Donate dialogue box.</summary>
     ///  <param name="Action">TBasicAction [in] Required action.</param>
     procedure SetDonateAction(const Action: TBasicAction);
-
-    // TODO: delete this method when possible
-    ///  <summary>Sets action used to display a category.</summary>
-    ///  <param name="Action">TBasicAction [in] Required action.</param>
-    procedure SetDisplayCategoryAction(const Action: TBasicAction);
 
     ///  <summary>Sets action used to open snippets editor to create a new
     ///  snippet.</summary>
