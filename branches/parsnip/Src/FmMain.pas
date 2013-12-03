@@ -1495,7 +1495,6 @@ begin
     begin
       SetUpdateDbaseAction(actUpdateDbase);
       SetDisplaySnippetAction(TActionFactory.CreateSnippetAction(Self));
-      SetDisplayCategoryAction(TActionFactory.CreateCategoryAction(Self));
       SetConfigCompilersAction(actCompilers);
       SetShowViewItemAction(
         TActionFactory.CreateViewItemAction(Self, ActViewItemExecute)
