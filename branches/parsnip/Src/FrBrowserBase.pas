@@ -211,14 +211,14 @@ begin
   begin
     AddProperty(TCSS.ColorProp(clHelpLink));
   end;
-  // <a class="snippet-link"> and <a class="category-link"> overrides
-  with CSSBuilder.AddSelector('a.snippet-link, a.category-link') do
+  // <a class="snippet-link"> and override
+  with CSSBuilder.AddSelector('a.snippet-link') do
   begin
     AddProperty(TCSS.ColorProp(clDBLink));
     AddProperty(TCSS.FontStyleProp(cfsItalic));
     AddProperty(TCSS.TextDecorationProp([ctdNone]));
   end;
-  with CSSBuilder.AddSelector('a:hover.snippet-link, a:hover.category-link') do
+  with CSSBuilder.AddSelector('a:hover.snippet-link') do
   begin
     AddProperty(TCSS.BorderProp(cssBottom, 1, cbsDotted, clDBLink));
   end;
@@ -233,12 +233,39 @@ begin
   begin
     AddProperty(TCSS.BorderProp(cssBottom, 1, cbsDotted, clCommandLink));
   end;
-  with CSSBuilder.AddSelector('.no-link-decoration a:hover') do
-    AddProperty(TCSS.HideBorderProp(cssBottom));
   // <a class="external-link"> override
   with CSSBuilder.AddSelector('a.external-link') do
   begin
     AddProperty(TCSS.ColorProp(clExternalLink));
+  end;
+
+  with CSSBuilder.AddSelector('.no-link-decoration a:hover') do
+    AddProperty(TCSS.HideBorderProp(cssBottom));
+
+
+  with CSSBuilder.AddSelector('.tag') do
+  begin
+    AddProperty(TCSS.BorderProp(cssAll, 1, cbsSolid, clTagBorder));
+    AddProperty(TCSS.BackgroundColorProp(clTagLinkBG));
+  end;
+  with CSSBuilder.AddSelector('a.tag-link, a.remove-tag, .tag a.command-link') do
+  begin
+    CSSFont := TFont.Create;
+    try
+      TFontHelper.SetContentFont(CSSFont);
+      AddProperty(TCSS.FontSizeProp(CSSFont.Size - 1));
+    finally
+      CSSFont.Free;
+    end;
+    AddProperty(TCSS.PaddingProp(2, 4, 2, 4));
+    AddProperty(TCSS.TextDecorationProp([ctdNone]));
+    AddProperty(TCSS.FontStyleProp([]));
+    AddProperty(TCSS.ColorProp(clTagLinkFG));
+  end;
+  with CSSBuilder.AddSelector('a:hover.tag-link, a:hover.remove-tag') do
+  begin
+    AddProperty(TCSS.BackgroundColorProp(clTagLinkHoverBG));
+    AddProperty(TCSS.ColorProp(clTagLinkHoverFG));
   end;
 
   // <var> tag style
