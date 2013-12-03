@@ -69,12 +69,6 @@ type
       {Gets value of Selection property.
         @return List of snippets matching current query.
       }
-    function GetCatSelection(const Cat: TCategory): ISnippetIDList;
-      {Provides list of IDs of snippets selected by last search that are in a
-      certain category.
-        @param Cat [in] Reference to required category.
-        @return List of snippet IDs.
-      }
     ///  <summary>Applies the given filter function to the current selection
     ///  and returns the IDs of snippets that pass the filter.</summary>
     function FilterSelection(const FilterFn: TDatabaseFilterFn): ISnippetIDList;
@@ -115,9 +109,7 @@ type
     search to be run against the database and makes the found snippets
     available. Must only be instantiated once as a singleton.
   }
-  TQuery = class(TSingleton,
-    IQuery
-  )
+  TQuery = class(TSingleton, IQuery)
   strict private
     var
       fSelection: ISnippetIDList;   // IDs of snippets selected by current query
@@ -143,8 +135,11 @@ type
         @return True if search succeeds and False if it fails.
       }
     ///  <summary>Checks if there is an active search.</summary>
-    ///  <remarks>A search is active if the latest search is not the null
-    ///  search.</remarks>
+    ///  <remarks>
+    ///  <para>A search is active if the latest search is not the null
+    ///  search.</para>
+    ///  <para>Method of IQuery.</para>
+    ///  </remarks>
     function IsSearchActive: Boolean;
     function Refresh: Boolean;
       {Re-applies the latest search if one exists.
@@ -168,13 +163,8 @@ type
       }
     ///  <summary>Applies the given filter function to the current selection
     ///  and returns the IDs of snippets that pass the filter.</summary>
+    ///  <remarks>Method of IQuery.</remarks>
     function FilterSelection(const FilterFn: TDatabaseFilterFn): ISnippetIDList;
-    function GetCatSelection(const Cat: TCategory): ISnippetIDList;
-      {Provides list of IDs of snippets selected by last search that are in a
-      certain category.
-        @param Cat [in] Reference to required category.
-        @return List of snippet IDs.
-      }
   end;
 
 function Query: IQuery;
@@ -229,23 +219,6 @@ procedure TQuery.Finalize;
 begin
   fActiveSearches.Free;
   inherited;
-end;
-
-function TQuery.GetCatSelection(const Cat: TCategory): ISnippetIDList;
-  {Provides list of IDs of snippets selected by last search that are in a
-  certain category.
-    @param Cat [in] Reference to required category.
-    @return List of snippet IDs.
-  }
-var
-  SnippetID: TSnippetID;
-begin
-  Result := TSnippetIDList.Create;
-  for SnippetID in fSelection do
-  begin
-    if Cat.SnippetIDs.Contains(SnippetID) then
-      Result.Add(SnippetID);
-  end;
 end;
 
 function TQuery.GetLatestSearch: ISearch;
