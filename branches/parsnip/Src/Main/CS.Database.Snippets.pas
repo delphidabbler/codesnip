@@ -161,8 +161,11 @@ type
 
     ///  <summary>Adds given snippet ID to list and returns its index in list.
     ///  </summary>
-    ///  <remarks>Method of ISnippetIDList.</remarks>
-    function Add(const SnippetID: TSnippetID): Integer;
+    ///  <remarks>
+    ///  <para>If SnippetID is already in list then nothing happens.</para>
+    ///  <para>Method of ISnippetIDList.</para>
+    ///  </remarks>
+    procedure Add(const SnippetID: TSnippetID);
 
     ///  <summary>Removed the given snippet ID from the list.</summary>
     ///  <remarks>
@@ -213,9 +216,9 @@ uses
 
 { TSnippetIDList }
 
-function TSnippetIDList.Add(const SnippetID: TSnippetID): Integer;
+procedure TSnippetIDList.Add(const SnippetID: TSnippetID);
 begin
-  Result := fList.Add(SnippetID);
+  fList.Add(SnippetID);
 end;
 
 procedure TSnippetIDList.Assign(const Src: IInterface);

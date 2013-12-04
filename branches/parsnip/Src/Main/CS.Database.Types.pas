@@ -102,7 +102,9 @@ type
     procedure Clear;
     ///  <summary>Adds given snippet ID to list and returns its index in list.
     ///  </summary>
-    function Add(const SnippetID: TSnippetID): Integer;
+    ///  <remarks>If SnippetID is already in list then nothing happens.
+    ///  </remarks>
+    procedure Add(const SnippetID: TSnippetID);
     ///  <summary>Removed the given snippet ID from the list.</summary>
     ///  <remarks>Does nothing if SnippetID is not in the list.</remarks>
     procedure Remove(const SnippetID: TSnippetID);
