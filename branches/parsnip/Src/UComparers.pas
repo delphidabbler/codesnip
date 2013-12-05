@@ -20,11 +20,126 @@ interface
 
 uses
   // Delphi
-  Generics.Defaults;
+  Generics.Defaults,
+  // 3rd party
+  Collections.Base;
 
 
 type
+  ///  <summary>Generic interface use to compare and check equality of two
+  ///  values of the get the hash of a value.</summary>
+  ///  <remarks>IComparator is a union of the methods of IComparer and
+  ///  IEqualityComparer.</remarks>
+  IComparator<T> = interface
+    ///  <summary>Generic method to compare two values, Left and Right. Returns
+    ///  -ve if Left is less than Right, 0 if the values are equal or +ve if
+    ///  Left is greater than Right.</summary>
+    function Compare(const Left, Right: T): Integer;
+    ///  <summary>Generic method used to check the equality of two values, Left
+    ///  and Right.</summary>
+    function Equals(const Left, Right: T): Boolean;
+    ///  <summary>Generic method used to generate a hash code for the given
+    ///  value.</summary>
+    function GetHashCode(const Value: T): Integer;
+  end;
 
+  ///  <summary>Abstract base class for IComparator implementations and a
+  ///  provider of default IComparator implementations.</summary>
+  ///  <remarks>Since the IComparator is a union of the methods of IComparer and
+  ///  IEqualityComparer, TComparator also supports those interfaces.</remarks>
+  TComparator<T> = class abstract(TInterfacedObject,
+    IComparator<T>, IComparer<T>, IEqualityComparer<T>)
+  public
+    ///  <summary>Returns an instance of TComparator for the required type.
+    ///  </summary>
+    ///  <remarks>RTTI is used to determine the type information and to select
+    ///  the most appropriate implementation of TComparator.</remarks>
+    class function Default: IComparator<T>;
+    ///  <summary>Constructs a concrete instance of TComparator for the required
+    ///  type.</summary>
+    ///  <param name="ACompareFn">TComparison [in] Reference to a function that
+    ///  will handle comparision requests.</param>
+    ///  <param name="AEqualsFn">TEqualityComparison [in] Reference to a
+    ///  function that will handle equality checks.</param>
+    ///  <param name="AHasherFn">THasher [in] Reference to a function that will
+    ///  handle hash generation.</param>
+    ///  <returns>IComparer. Required concrete object instance.</returns>
+    ///  <remarks>This method creates a new instance of TDelegatedComparator,
+    ///  passing the user-supplied routines as parameters to the constructor of
+    ///  TDelegatedEqualityComparer.</remarks>
+    class function Construct(const ACompareFn: TComparison<T>;
+      const AEqualsFn: TEqualityComparison<T>; const AHasherFn: THasher<T>):
+      IComparer<T>; overload;
+    ///  <summary>Constructs a concrete instance of TComparator for the required
+    ///  type from the given IComparer and IEqualityComparer instances.
+    ///  </summary>
+    ///  <remarks>This method creates a new instance of TDelegatedComparator,
+    ///  passing the user-supplied comparers as parameters to the constructor of
+    ///  TDelegatedEqualityComparer.</remarks>
+    class function Construct(AComparer: IComparer<T>;
+      AEqualityComparer: IEqualityComparer<T>): IComparer<T>; overload;
+    ///  <summary>Abstract generic method to compare two values, Left and Right.
+    ///  Returns -ve if Left is less than Right, 0 if the values are equal or
+    ///  +ve if Left is greater than Right.</summary>
+    function Compare(const Left, Right: T): Integer;
+      virtual; abstract;
+    ///  <summary>Abstract generic method used to check the equality of two
+    ///  values, Left and Right.</summary>
+    function Equals(const Left, Right: T): Boolean;
+      reintroduce; overload; virtual; abstract;
+    ///  <summary>Abstract generic method used to generate a hash code for the
+    ///  given value.</summary>
+    function GetHashCode(const Value: T): Integer;
+      reintroduce; overload; virtual; abstract;
+  end;
+
+  ///  <summary>Concrete implementation of TComparator that delegates all method
+  ///  calls to user-provide callback functions or to user-provided instances of
+  ///  TComparer and TEqualityComparer.</summary>
+  ///  <remarks>Note TDelegatedComparator is used by TComparator to provide a
+  ///  concrete implementation of TComparator as return from it Construct
+  ///  methods.</remarks>
+  TDelegatedComparator<T> = class(TComparator<T>)
+  private
+    var
+      ///  <summary>Object that provides implementation of Compare method.
+      ///  </summary>
+      fComparer: IComparer<T>;
+      ///  <summary>Object that provides implementation of Equals and
+      ///  GetHashCode methods.</summary>
+      fEqualityComparer: IEqualityComparer<T>;
+  public
+    ///  <summary>Constructs a new instance for the required type from given.
+    ///  </summary>
+    ///  <param name="ACompareFn">TComparison [in] Reference to a function that
+    ///  will handle comparision requests.</param>
+    ///  <param name="AEqualsFn">TEqualityComparison [in] Reference to a
+    ///  function that will handle equality checks.</param>
+    ///  <param name="AHasherFn">THasher [in] Reference to a function that will
+    ///  handle hash generation.</param>
+    constructor Create(const ACompareFn: TComparison<T>;
+      const AEqualsFn: TEqualityComparison<T>; const AHasherFn: THasher<T>);
+      overload;
+    ///  <summary>Constructs a new instance of for the required type from the
+    ///  given IComparer and IEqualityComparer instances.</summary>
+    constructor Create(AComparer: IComparer<T>;
+      AEqualityComparer: IEqualityComparer<T>); overload;
+    ///  <summary>Generic method to compare two values, Left and Right. Returns
+    ///  -ve if Left is less than Right, 0 if the values are equal or +ve if
+    ///  Left is greater than Right.</summary>
+    ///  <remarks>Method of IComparator and IComparer</remarks>
+    function Compare(const Left, Right: T): Integer;
+    ///  <summary>Generic method used to check the equality of two values, Left
+    ///  and Right.</summary>
+    ///  <remarks>Method of IComparator and IEqualityComparer.</remarks>
+    function Equals(const Left, Right: T): Boolean;
+    ///  <summary>Generic method used to generate a hash code for the given
+    ///  value.</summary>
+    ///  <remarks>Method of IComparator and IEqualityComparer.</remarks>
+    function GetHashCode(const Value: T): Integer;
+  end;
+
+type
   ///  <summary>
   ///  Case insenstive string comparer.
   ///  </summary>
@@ -73,6 +188,68 @@ uses
   CS.Utils.Hashes,
   UStrUtils;
 
+{ TComparator<T> }
+
+class function TComparator<T>.Construct(const ACompareFn: TComparison<T>;
+  const AEqualsFn: TEqualityComparison<T>; const AHasherFn: THasher<T>):
+  IComparer<T>;
+begin
+  Result := TDelegatedComparator<T>.Create(ACompareFn, AEqualsFn, AHasherFn);
+end;
+
+class function TComparator<T>.Construct(AComparer: IComparer<T>;
+  AEqualityComparer: IEqualityComparer<T>): IComparer<T>;
+begin
+  Result := TDelegatedComparator<T>.Create(AComparer, AEqualityComparer);
+end;
+
+class function TComparator<T>.Default: IComparator<T>;
+var
+  DefComparer: IComparer<T>;
+  DefEqualityComparer: IEqualityComparer<T>;
+begin
+  DefComparer := TComparer<T>.Default;
+  DefEqualityComparer := TEqualityComparer<T>.Default;
+  Result := TDelegatedComparator<T>.Create(DefComparer, DefEqualityComparer);
+end;
+
+{ TDelegatedComparator<T> }
+
+function TDelegatedComparator<T>.Compare(const Left, Right: T): Integer;
+begin
+  Result := fComparer.Compare(Left, Right);
+end;
+
+constructor TDelegatedComparator<T>.Create(const ACompareFn: TComparison<T>;
+  const AEqualsFn: TEqualityComparison<T>; const AHasherFn: THasher<T>);
+begin
+  inherited Create;
+  fComparer := TComparer<T>.Construct(ACompareFn);
+  fEqualityComparer := TEqualityComparer<T>.Construct(AEqualsFn, AHasherFn);
+end;
+
+constructor TDelegatedComparator<T>.Create(AComparer: IComparer<T>;
+  AEqualityComparer: IEqualityComparer<T>);
+begin
+  if Assigned(AComparer) then
+    fComparer := AComparer
+  else
+    fComparer := TComparer<T>.Default;
+  if Assigned(AEqualityComparer) then
+    fEqualityComparer := AEqualityComparer
+  else
+    fEqualityComparer := TEqualityComparer<T>.Default;
+end;
+
+function TDelegatedComparator<T>.Equals(const Left, Right: T): Boolean;
+begin
+  Result := fEqualityComparer.Equals(Left, Right);
+end;
+
+function TDelegatedComparator<T>.GetHashCode(const Value: T): Integer;
+begin
+  Result := fEqualityComparer.GetHashCode(Value);
+end;
 
 { TTextComparer }
 
