@@ -197,8 +197,7 @@ begin
   fDefaultCallWrapper := DefaultRESTCallWrapper;
   fCategories := TList<TSWAGCategory>.Create;
   fSnippetsByCategory := TObjectDictionary<string,TList<TSWAGSnippet>>.Create(
-    [doOwnsValues],
-    TStringEqualityComparer.Create
+    [doOwnsValues], TStringComparator.Create
   );
   fSnippetCache := TSWAGSnippetCache.Create(MaxSnippetCacheSize);
   fSWAGRESTMgr := TSWAGRESTMgr.Create;

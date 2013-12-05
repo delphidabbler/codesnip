@@ -445,7 +445,7 @@ constructor TTaggedTextEntityHandler.Create;
 begin
   inherited;
   fSymbolicEntities := TDictionary<string, Char>.Create(
-    TStringEqualityComparer.Create
+    TStringComparator.Create
   );
 end;
 
