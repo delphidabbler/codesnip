@@ -97,7 +97,6 @@ procedure THiliteThemeNameDlg.cbThemeNameChange(Sender: TObject);
 var
   ThemeName: string;
 begin
-  outputdebugstring('cbThemeNameChange');
   ThemeName := StrTrim(cbThemeName.Text);
   if ThemeName <> EmptyStr then
   begin
