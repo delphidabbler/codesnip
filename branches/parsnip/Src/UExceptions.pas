@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -93,10 +93,10 @@ type
 
   {
   EValidation:
-    Base class fo exceptions that are raised when some kind of validation fails.
-    Has a Selection property that may indicate the position and, optionally,
-    length of the error, where this makes sense. The HasSelection property is
-    set to False when there is no selection information available.
+    Base class for exceptions that are raised when some kind of validation
+    fails. Has a Selection property that may indicate the position and,
+    optionally, length of the error, where this makes sense. The HasSelection
+    property is set to False when there is no selection information available.
   }
   EValidation = class(ECodeSnip)
   strict private
@@ -128,8 +128,9 @@ type
     procedure Assign(const E: Exception); override;
       {Sets this exception object's properties to be the same as another
       exception.
-        @param E [in] Exception whose properties are to be copied. Must be
-          another EValidation.
+        @param E [in] Exception whose properties are to be copied. If E is not
+          an EValidation instance, we copy message and set HasSelection to
+          False.
       }
     property HasSelection: Boolean read fHasSelection;
       {Informs if the exception has selection information. When False the
@@ -223,14 +224,21 @@ end;
 
 procedure EValidation.Assign(const E: Exception);
   {Sets this exception object's properties to be the same as another exception.
-    @param E [in] Exception whose properties are to be copied. Must be  another
-    EValidation.
+    @param E [in] Exception whose properties are to be copied. If E is not an
+      EValidation instance, we copy message and set HasSelection to False.
   }
 begin
-  Assert(E is EValidation, ClassName + '.Assign: E must be a EValidation');
   inherited;
-  fHasSelection := (E as EValidation).fHasSelection;
-  fSelection := (E as EValidation).fSelection;
+  if E is EValidation then
+  begin
+    fHasSelection := (E as EValidation).fHasSelection;
+    fSelection := (E as EValidation).fSelection;
+  end
+  else
+  begin
+    fHasSelection := False;
+    fSelection := TSelection.Create(0);
+  end;
 end;
 
 constructor EValidation.Create(const Msg: string; const ASelection: TSelection);
