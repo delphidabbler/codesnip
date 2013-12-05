@@ -128,15 +128,15 @@ type
     ///  -ve if Left is less than Right, 0 if the values are equal or +ve if
     ///  Left is greater than Right.</summary>
     ///  <remarks>Method of IComparator and IComparer</remarks>
-    function Compare(const Left, Right: T): Integer;
+    function Compare(const Left, Right: T): Integer; override;
     ///  <summary>Generic method used to check the equality of two values, Left
     ///  and Right.</summary>
     ///  <remarks>Method of IComparator and IEqualityComparer.</remarks>
-    function Equals(const Left, Right: T): Boolean;
+    function Equals(const Left, Right: T): Boolean; override;
     ///  <summary>Generic method used to generate a hash code for the given
     ///  value.</summary>
     ///  <remarks>Method of IComparator and IEqualityComparer.</remarks>
-    function GetHashCode(const Value: T): Integer;
+    function GetHashCode(const Value: T): Integer; override;
   end;
 
 type
@@ -179,6 +179,50 @@ type
     function GetHashCode(const Value: string): Integer; override;
   end;
 
+type
+  ///  <summary>Case sensitive string comparator.</summary>
+  TStringComparator = class(TInterfacedObject,
+    IComparator<string>, IComparer<string>, IEqualityComparer<string>
+  )
+  public
+    ///  <summary>Compares strings Left and Right, taking account of case.
+    ///  Returns -ve if Left less than Right, 0 if equal or +ve if Left greater
+    ///  than Right.</summary>
+    ///  <remarks>Method of IComparator and IComparer.</remarks>
+    function Compare(const Left, Right: string): Integer;
+    ///  <summary>Checks if two strings, Left and Right, are equal, taking
+    ///  account of case.</summary>
+    ///  <remarks>Method of IComparator and IEqualityComparer.</remarks>
+    function Equals(const Left, Right: string): Boolean; reintroduce;
+    ///  <summary>Gets hash of given string, taking account of case.</summary>
+    ///  <remarks>Method of IComparator and IEqualityComparer.</remarks>
+    function GetHashCode(const Value: string): Integer; reintroduce;
+  end;
+
+type
+  ///  <summary>Case insensitive string comparator.</summary>
+  TTextComparator = class(TInterfacedObject,
+    IComparator<string>, IComparer<string>, IEqualityComparer<string>
+  )
+  public
+    ///  <summary>Compares strings Left and Right, ignoring case. Returns -ve if
+    ///  Left less than Right, 0 if equal or +ve if Left greater than Right.
+    ///  </summary>
+    ///  <remarks>Method of IComparator and IComparer.</remarks>
+    function Compare(const Left, Right: string): Integer;
+    ///  <summary>Checks if two strings, Left and Right, are equal, ignoring
+    ///  case.</summary>
+    ///  <remarks>Method of IComparator and IEqualityComparer.</remarks>
+    function Equals(const Left, Right: string): Boolean; reintroduce;
+    ///  <summary>Gets hash of given string, ignoring case.</summary>
+    ///  <remarks>
+    ///  <para>To strings that contain the same text but differ in case will
+    ///  always hash to the same value.</para>
+    ///  <para>Method of IComparator and IEqualityComparer.</para>
+    ///  </remarks>
+    function GetHashCode(const Value: string): Integer; reintroduce;
+  end;
+
 
 implementation
 
@@ -187,6 +231,7 @@ uses
   // Project
   CS.Utils.Hashes,
   UStrUtils;
+
 
 { TComparator<T> }
 
@@ -283,6 +328,43 @@ end;
 function TStringEqualityComparer.GetHashCode(const Value: string): Integer;
 begin
   Result := StrHash(Value);
+end;
+
+{ TStringComparator }
+
+function TStringComparator.Compare(const Left, Right: string): Integer;
+begin
+  Result := StrCompareStr(Left, Right);
+end;
+
+function TStringComparator.Equals(const Left, Right: string): Boolean;
+begin
+  Result := StrSameStr(Left, Right);
+end;
+
+function TStringComparator.GetHashCode(const Value: string): Integer;
+begin
+  Result := StrHash(Value);
+end;
+
+{ TTextComparator }
+
+function TTextComparator.Compare(const Left, Right: string): Integer;
+begin
+  Result := StrCompareText(Left, Right);
+end;
+
+function TTextComparator.Equals(const Left, Right: string): Boolean;
+begin
+  Result := StrSameText(Left, Right);
+end;
+
+function TTextComparator.GetHashCode(const Value: string): Integer;
+begin
+  // In principle, two values that are considered equal should hash to the same
+  // value. Using TextHash() ensures this for strings that test equal but vary
+  // in case.
+  Result := TextHash(Value);
 end;
 
 end.
