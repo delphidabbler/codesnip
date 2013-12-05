@@ -107,9 +107,7 @@ constructor TURIParams.Create;
   }
 begin
   inherited Create;
-  fDict := TDictionary<string,string>.Create(
-    24, TTextEqualityComparer.Create
-  );
+  fDict := TDictionary<string,string>.Create(24, TTextComparator.Create);
 end;
 
 constructor TURIParams.Create(const Params: TStrings);

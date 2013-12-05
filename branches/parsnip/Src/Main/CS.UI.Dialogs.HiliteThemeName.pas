@@ -127,8 +127,9 @@ var
   Theme: TSyntaxHiliteTheme;
 begin
   inherited;
-  fBlockedThemeNames := THashSet<string>.Create(
-    TRules<string>.Create(TTextComparer.Create, TTextEqualityComparer.Create)
+    fBlockedThemeNames := THashSet<string>.Create(
+    // TODO: Find a better way to create TRules using TTestComparator etc.
+    TRules<string>.Create(TTextComparator.Create, TTextComparator.Create)
   );
   for Theme in fThemesList do
     if Theme.BuiltIn
@@ -183,3 +184,4 @@ begin
 end;
 
 end.
+

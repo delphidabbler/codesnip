@@ -102,7 +102,7 @@ end;
 constructor TSearchDirs.Create;
 begin
   inherited Create;
-  fList := TList<string>.Create(TTextComparer.Create);
+  fList := TList<string>.Create(TTextComparator.Create);
 end;
 
 constructor TSearchDirs.Create(const DirNames: TArray<string>);

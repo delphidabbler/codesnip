@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -194,9 +194,7 @@ begin
   inherited;
   // fSelectors treats selector names are not case sensitive
   // fSelectors owns value objects and frees them when they are removed from map
-  fSelectors := TCSSSelectorMap.Create(
-    [doOwnsValues], TTextEqualityComparer.Create
-  );
+  fSelectors := TCSSSelectorMap.Create([doOwnsValues], TTextComparator.Create);
 end;
 
 destructor TCSSBuilder.Destroy;

@@ -380,7 +380,7 @@ constructor TSyntaxHiliteBrushStyle.Create;
 begin
   inherited Create;
   fAttrStyles := TDictionary<string,TSyntaxHiliteAttrStyle>.Create(
-    TTextEqualityComparer.Create
+    TTextComparator.Create
   )
 end;
 
@@ -561,8 +561,7 @@ constructor TSyntaxHiliteTheme.Create(const ThemeID: TSyntaxHiliteThemeID;
 begin
   inherited Create;
   fBrushStyles := TObjectDictionary<string,TSyntaxHiliteBrushStyle>.Create(
-    [doOwnsValues],
-    TTextEqualityComparer.Create
+    [doOwnsValues], TTextComparator.Create
   );
   fID := ThemeID;
   fFriendlyName := FriendlyName;

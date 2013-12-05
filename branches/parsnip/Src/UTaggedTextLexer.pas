@@ -615,9 +615,7 @@ constructor TTaggedTextTagHandler.Create(const EH: TTaggedTextEntityHandler);
 begin
   Assert(Assigned(EH), ClassName + '.Create: EH is not assigned');
   inherited Create;
-  fTags := TDictionary<string, TTagInfo>.Create(
-    TTextEqualityComparer.Create
-  );
+  fTags := TDictionary<string, TTagInfo>.Create(TTextComparator.Create);
   fEntityHandler := EH;
 end;
 

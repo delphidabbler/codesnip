@@ -806,7 +806,7 @@ end;
 constructor TPascalLexer.TEntityMap.Create;
 begin
   inherited Create;
-  fMap := TDictionary<string,TPascalToken>.Create(TTextEqualityComparer.Create);
+  fMap := TDictionary<string,TPascalToken>.Create(TTextComparator.Create);
 end;
 
 destructor TPascalLexer.TEntityMap.Destroy;
