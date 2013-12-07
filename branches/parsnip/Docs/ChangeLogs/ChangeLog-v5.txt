@@ -11,11 +11,15 @@
 ; Change Log for CodeSnip Release 5
 ; ------------------------------------------------------------------------------
 
-Summary of changes in SVN parsnip branch up to REVISION 4019.
+Summary of changes in SVN parsnip branch up to REVISION 4119.
 Changes relate to v4.8.4 (#### may need to update this if new v4 release is merged in###)
 + User interface changes:
   - The link used to edit the displayed snippet has been removed from the Detail pane and replaced by a glyph showing the snippet's level of testing. (### may need to change this in light of further redesigns###)
+  - The overview pane now uses a drop-down list instead of tabs to select the required snippet.
+  - The category grouping in the overview pane has been replaced by a grouping by tags. Clicking on a tag heading displays a list of snippets that use that tag in the detail panes. These pages are included in the history list.
+  - The detail pane now displays a list of tags associated with displayed snippets, in place of the category displayed in earlier versions. Tags can be deleted directly from the detail pane.
   - Welcome page revised re change from two to one logical databases. (### may need to change this in light of further redesigns###)
+  - "Categories" main menu was removed along with its sub menu items and associated dialogue boxes.
   - Main window and task bar captions changed.
   - Splash screen updated.
   - "About the Database" tab removed from About box and "Paths" tab modified.
@@ -24,16 +28,20 @@ Changes relate to v4.8.4 (#### may need to update this if new v4 release is merg
   - Print dialogue box now displays a preview of selected document formatting options.
   - Select Snippets dialogue box modified re change from two to one logical databases.
   - "Printing" tab removed from Preferences dialogue box. The button in the Print dialogue box that displayed this tab was removed.
+  - In the "Snippet Layout" tab of the Preferences dialogue box the "Category" page section was replaced by a "Tags" section and the "Extra Information" page section was renamed as "Notes".
   - "Syntax Highlighter" tab of Preferences dialogue box totally redesigned. It is now used to select syntax highlighter styles for various output types. Highlighter themes are no longer customised on the tab.
   - Duplicate snippet dialogue box revised to remove control snippet name (ID) edit control.
   - New dialogue box to enable user to customise and create syntax highlighter themes. This dialogue box is accessed via the "Syntax Highlighter" tab of the Preferences dialogue box.
   - Snippet editor enlarged and controls changed re revised snippet properties.
   - Splash screen can be hidden by passing the new -no-splash switch on CodeSnip's command line.
+  - Pressing Ctrl+Tab and Shift+Ctrl+Tab now always moves between tabs in the detail pane: it no longer changes the snippet grouping when the overview has focus.
+  - Lists of snippets in "Select Snippets", "Export Snippets" and "Code Submission Wizard" dialogue boxes are now grouping by initial letter instead of category. (### this may change again before release ##),
 + Database changes:
   - Online Code Snippets Database is no longer treated differently to user database: all snippets are now editable.
   - Changed location of (user) database in portable mode and default location in standard mode. All database files are now per-user.
   - Snippet IDs (formerly "names") are now generated automatically instead of being provided by the user. The IDs can no longer be edited. This means that a snippet's ID can never be changed.
-  - Snippet titles (formerly "display names") are now required since ID is no longer suitable as a default display name. Snippet titles are now used in the UI in places where the snippet name used to be used.
+  - Snippet titles (formerly "display names") are now required rather than optional.
+  - Snippet titles are now used in the UI in places where the snippet name used to be used.
   - Snippet can now have zero or more "tags".
   - Categories have been removed from the database. Categories read from legacy database and import files are converted to tags.
 + Support for snippets in languages other than Pascal has been added. Available languages are: Pascal, plain text *** GROW THIS LANGUAGE LIST AS NEW LANGUAGES ADDED ***
@@ -42,6 +50,7 @@ Changes relate to v4.8.4 (#### may need to update this if new v4 release is merg
   - Syntax highlighting is now available for all supported programming languages.
   - Different highlighter "themes" can now be used for user interface, exported code and printed output.
   - User designed themes are now saved in a themes file alongside the per-user config file, instead of in the config file.
++ A list snippets that belong to a selected tag can now be printed and, for snippets that are routines, written to file or copied to the clipboard. These features replace those that previously worked with categories.
 + Portable application changes:
   - CodeSnip no acts in portable mode when -portable switch is passed on command line. There is no longer a separate build for the portable version.
   - New launcher application that starts CodeSnip in portable mode.
@@ -55,6 +64,7 @@ Changes relate to v4.8.4 (#### may need to update this if new v4 release is merg
   - Many spelling errors fixed in text and help files.
 + Internal changes:
   - Much refactoring.
+  - Database "engine" completely re-written.
   - String hash functions changed.
   - Revised the "external" object that communicates with JavaScript in browser controls.
   - Code now has dependencies on Ciobanu Alexandru's Delphi Collections project and on the "SynEdit" project.
