@@ -76,6 +76,11 @@ div.half-spaced {
   margin: 0.25em 0 0 0;
   padding: 0;
 }
+div.reader-note {
+  background-color: #f7f7f7;
+  padding: 2px 4px;
+  border: 1px silver dotted;
+}
 
 dl {
   margin: 0.5em 0 0 0;
