@@ -24,7 +24,7 @@ uses
   // 3rd party
   Collections.Dictionaries,
   // Project
-  CS.Database.Core.SnippetsTable,
+  CS.Database.SnippetsTable,
   CS.Database.Types,
   CS.Utils.Dates,
   UExceptions,
@@ -78,12 +78,14 @@ uses
   // 3rd party
   Collections.Base,
   // Project
+  CS.ActiveText,
+  CS.ActiveText.Helper,
+//  CS.ActiveText.Parsers.REML,
+//  CS.ActiveText.Renderers.REML,
   CS.Database.SnippetLinks,
   CS.Database.Snippets,
   CS.Database.Tags,
-  CS.Markup,
   CS.SourceCode.Languages,
-  ActiveText.UMain,
   Compilers.UGlobals,
   DB.USnippetKind,
   UComparers,
@@ -91,7 +93,6 @@ uses
   UDOSDateTime,
   UIOUtils,
   UIStringList,
-  USnippetExtraHelper,
   UStructs,
   UStrUtils,
   UXMLDocConsts,
@@ -113,7 +114,7 @@ begin
   inherited Create;
   fDBPath := DBPath;
   StrRules := TRules<string>.Create(
-    TTextComparer.Create, TTextEqualityComparer.Create
+    TTextComparator.Create, TTextComparator.Create
   );
   fCategoryMap := TDictionary<string,string>.Create(
     StrRules, StrRules
@@ -138,9 +139,9 @@ var
 begin
   Result := TUTCDateTime.CreateNull;
   for Snippet in ATable do
-  begin  
+  begin
     if Result < Snippet.GetModified then
-      Result := Snippet.GetModified;  
+      Result := Snippet.GetModified;
   end;
   if Result.IsNull then
     Result := TUTCDateTime.Now;
@@ -154,7 +155,7 @@ resourcestring
 begin
   if (E is EXMLDocError) or (E is ECodeSnipXML) or (E is EDOMParseError) then
     raise EDBLegacyUserDBReader.CreateFmt(sXMLError, [E.Message]);
-  if (E is EDBSnippetID) or (E is EDBTag) then
+  if (E is ESnippetID) or (E is ETag) then
     raise EDBLegacyUserDBReader.CreateFmt(sParseError, [E.Message]);
   if (E is EIOUtils) or (E is EStreamError) then
     raise EDBLegacyUserDBReader.CreateFmt(sSourceFileError, [E.Message]);
@@ -189,7 +190,7 @@ var
   Snippet: TDBSnippet;
 begin
   Snippet := TDBSnippet.Create(
-    TDBSnippetID.Create(LegacySnippetName(SnippetNode))
+    TSnippetID.Create(LegacySnippetName(SnippetNode))
   );
   try
     LoadSnippetProperties(SnippetNode, Snippet);
@@ -217,26 +218,26 @@ procedure TDBLegacyUserDBReader.LoadSnippetProperties(SnippetNode: IXMLNode;
     Result := True;
   end;
 
-  // Gets text of property with given sub-tag of current snippet node in XML 
+  // Gets text of property with given sub-tag of current snippet node in XML
   // document.
   function GetPropertyText(const PropTagName: string): string;
   begin
     Result := TXMLDocHelper.GetSubTagText(fXMLDoc, SnippetNode, PropTagName);
   end;
 
-  // Returns value of current snippet'ss Tags property from data in XML 
-  // document. A single tag is returned which uses as its text the description 
+  // Returns value of current snippet'ss Tags property from data in XML
+  // document. A single tag is returned which uses as its text the description
   // of the legacy snippet's category.
-  function GetTagsProperty: IDBTagList;
+  function GetTagsProperty: ITagSet;
   var
     CatID: string;
     CatDesc: string;
   begin
-    Result := TDBTagList.Create;
-    CatID := GetPropertyText(cCatIDNode);  
+    Result := TTagSet.Create;
+    CatID := GetPropertyText(cCatIDNode);
     if not fCategoryMap.TryGetValue(CatID, CatDesc) then
       Exit;
-    Result.Add(TDBTag.Create(CatDesc));
+    Result.Add(TTag.Create(CatDesc));
   end;
 
   // Returns the name of the file containing the snippet's source code.
@@ -265,13 +266,13 @@ procedure TDBLegacyUserDBReader.LoadSnippetProperties(SnippetNode: IXMLNode;
     );
   end;
 
-  // Returns the snippet's source code, read from the data file referenced in 
+  // Returns the snippet's source code, read from the data file referenced in
   // the XML document.
   function GetSourceCodeProperty: string;
   var
     Encoding: TEncoding;
   begin
-    // Before database v5, source code files used default ANSI encoding. From v5 
+    // Before database v5, source code files used default ANSI encoding. From v5
     // UTF-8 with no BOM was used.
     if fVersion < 5 then
       Encoding := TEncoding.Default
@@ -294,13 +295,12 @@ procedure TDBLegacyUserDBReader.LoadSnippetProperties(SnippetNode: IXMLNode;
 
   // Returns the value of the snippet's Kind property. This is a direct match
   // with legacy snippet's property of the same name.
-  function GetKindProperty: TDBSnippetKind;
+  function GetKindProperty: TSnippetKind;
     {Gets value of Kind node.
       @return Kind that matches node value.
     }
   var
     Default: TSnippetKind;            // default value
-    LegacySnippetKind: TSnippetKind;  //
   begin
     // In earlier file format versions we have no Kind node, so we calculate
     // kind from StandardFormat value. If Kind node is present StandardFormat is
@@ -309,85 +309,55 @@ procedure TDBLegacyUserDBReader.LoadSnippetProperties(SnippetNode: IXMLNode;
       Default := skRoutine
     else
       Default := skFreeform;
-    { TODO: change TXMLDocHelper.GetSnippetKind to return TDBSnippetKind to get
-            rid of this convoluted conversion to TDBSnippetKind. }
-    LegacySnippetKind := TXMLDocHelper.GetSnippetKind(
+    Result := TXMLDocHelper.GetSnippetKind(
       fXMLDoc, SnippetNode, Default
     );
-    case LegacySnippetKind of
-      TSnippetKind.skRoutine: Result := TDBSnippetKind.skRoutine;
-      TSnippetKind.skConstant: Result := TDBSnippetKind.skConstant;
-      TSnippetKind.skTypeDef: Result := TDBSnippetKind.skTypeDef;
-      TSnippetKind.skUnit: Result := TDBSnippetKind.skUnit;
-      TSnippetKind.skClass: Result := TDBSnippetKind.skClass;
-    else
-       Result := TDBSnippetKind.skFreeform;
-    end;
   end;
 
   // Returns mark-up of snippet's Notes property. This value is derived from
   // either the legacy snippet's Comments and Credits properties or from its
   // Extra property.
-  function GetNotesProperty: TMarkup;
-  var
-    ActiveText: IActiveText;
-    REML: string;
+  function GetNotesProperty: IActiveText;
   begin
-    // We get extra data from different nodes depending on file version
+    // We get Notes data from different nodes depending on file version
     try
       if fVersion = 1 then
-      begin
-        // version 1: build Notes from comments, credits and credits URL nodes.
-        ActiveText := TSnippetExtraHelper.BuildActiveText(
+        // version 1: build Notes from comments, credits and credits URL
+        // nodes
+        Result := TActiveTextHelper.ParseCommentsAndCredits(
           GetPropertyText(cCommentsNode),
           GetPropertyText(cCreditsNode),
           GetPropertyText(cCreditsUrlNode)
-        );
-      end
+        )
       else
-      begin
-        // version 2 and later: build Notes from Extra node
-        REML := GetPropertyText(cExtraNode);
-        if StrIsBlank(REML) then
-          ActiveText := TActiveTextFactory.CreateActiveText
-        else
-          // Following conversion works with all versions of REML from v1 to v3
-          ActiveText := TSnippetExtraHelper.BuildActiveText(REML);
-      end;
-      if ActiveText.IsEmpty then
-        Result := TMarkup.CreateEmpty
-      else if ActiveText.IsPlainText then
-        Result := TMarkup.Create(ActiveText.ToString, mkPlainText)
-      else
-        // Active text is converted to REML v3 regardless of REML version used
-        // in database file.
-        Result := TMarkup.Create(
-          TSnippetExtraHelper.BuildREMLMarkup(ActiveText), mkREML3
+        // version 2 & later: build Notes from REML in "extra" node
+        Result := TActiveTextHelper.ParseREML(
+          GetPropertyText(cExtraNode)
         );
     except
       // error: provide an empty property value
-      Result := TMarkup.CreateEmpty;
+      Result := TActiveTextFactory.CreateActiveText;
     end;
   end;
 
   // Returns markup of snippets Description property. This is derived from the
   // similar property of the legacy snippet.
-  function GetDescriptionProperty: TMarkup;
+  function GetDescriptionProperty: IActiveText;
   var
     Desc: string; // text read from description node
   begin
     Desc := GetPropertyText(cDescriptionNode);
-    if not StrIsBlank(Desc) then
+    if Desc <> '' then
     begin
       if fVersion < 6 then
         // versions before 6: description is stored as plain text
-        Result := TMarkup.Create(Desc, mkPlainText)
+        Result := TActiveTextHelper.ParsePlainText(Desc)
       else
-        // version 6 & later: description is stored as REML v3
-        Result := TMarkup.Create(Desc, mkREML3);
+        // version 6 & later: description is stored as REML
+        Result := TActiveTextHelper.ParseREML(Desc)
     end
     else
-      Result := TMarkup.CreateEmpty;
+      Result := TActiveTextFactory.CreateActiveText;
   end;
 
   // Returns the text of the snippet's Title property. This is derived from the
@@ -413,13 +383,13 @@ procedure TDBLegacyUserDBReader.LoadSnippetProperties(SnippetNode: IXMLNode;
 
   // Converts the given list of legacy snippet names into a list of snippets
   // with IDs based on the legacy names.
-  function ConvertSnippetIDList(LegacyNameList: IStringList): IDBSnippetIDList;
+  function ConvertSnippetIDList(LegacyNameList: IStringList): ISnippetIDList;
   var
     LegacyName: string;
   begin
-    Result := TDBSnippetIDList.Create;
+    Result := TSnippetIDList.Create;
     for LegacyName in LegacyNameList do
-      Result.Add(TDBSnippetID.Create(LegacyName));
+      Result.Add(TSnippetID.Create(LegacyName));
   end;
 
   // Reads a list of Pascal names from the given sub-tag of the current
@@ -435,25 +405,11 @@ procedure TDBLegacyUserDBReader.LoadSnippetProperties(SnippetNode: IXMLNode;
   // Returns the snippet's CompileResults property value. This is derived from
   // the legacy snippet's own CompileResult property, which has a different
   // format to that of the new snippet.
-  function GetCompileResultsProperty: TDBCompileResults;
-  var
-    LegacyCompileResults: TCompileResults;
-    CompilerID: TCompilerID;
-    Succeeds, Fails: TCompilerIDs;
+  function GetCompileResultsProperty: TCompileResults;
   begin
-    LegacyCompileResults := TXMLDocHelper.GetCompilerResults(
+    Result := TXMLDocHelper.GetCompilerResults(
       fXMLDoc, SnippetNode
     );
-    Succeeds := [];
-    Fails := [];
-    for CompilerID := Low(TCompilerID) to High(TCompilerID) do
-    begin
-      if LegacyCompileResults[CompilerID] in [crSuccess, crWarning] then
-        Include(Succeeds, CompilerID)
-      else if LegacyCompileResults[CompilerID] = crError then
-        Include(Fails, CompilerID);
-    end;
-    Result := TDBCompileResults.Create(Succeeds, Fails);
   end;
 
   // ---------------------------------------------------------------------------
@@ -481,7 +437,7 @@ begin
   ASnippet.SetLinkInfo(
     TSnippetLinkInfo.Create(
       TSnippetSynchSpaceIDs.LegacyDB,
-      TDBSnippetID.Create(LegacySnippetName(SnippetNode))
+      TSnippetID.Create(LegacySnippetName(SnippetNode))
     )
   );
   // Note that the snippet's TestInfo and Starred properties have no equivalent
