@@ -51,7 +51,8 @@ type
   ///  must support IComparer and IEqualityComparer in addition to IComparator.
   ///  </remarks>
   TBaseComparator<T> = class abstract(TInterfacedObject,
-    IComparator<T>, IComparer<T>, IEqualityComparer<T>)
+    IComparator<T>, IComparer<T>, IEqualityComparer<T>
+  )
   public
     ///  <summary>Creates a TRules wrapper around an instance of the comparator
     ///  that provides the IComparer and IEqualityComparer objects required by
@@ -76,8 +77,7 @@ type
   ///  provider of default IComparator implementations.</summary>
   ///  <remarks>Since the IComparator is a union of the methods of IComparer and
   ///  IEqualityComparer, TComparator also supports those interfaces.</remarks>
-  TComparator<T> = class abstract(TBaseComparator<T>,
-    IComparator<T>, IComparer<T>, IEqualityComparer<T>)
+  TComparator<T> = class abstract(TBaseComparator<T>)
   public
     ///  <summary>Returns an instance of TComparator for the required type.
     ///  </summary>
@@ -157,9 +157,7 @@ type
 
 type
   ///  <summary>Case sensitive string comparator.</summary>
-  TStringComparator = class(TBaseComparator<string>,
-    IComparator<string>, IComparer<string>, IEqualityComparer<string>
-  )
+  TStringComparator = class(TBaseComparator<string>)
   public
     ///  <summary>Compares strings Left and Right, taking account of case.
     ///  Returns -ve if Left less than Right, 0 if equal or +ve if Left greater
@@ -177,9 +175,7 @@ type
 
 type
   ///  <summary>Case insensitive string comparator.</summary>
-  TTextComparator = class(TBaseComparator<string>,
-    IComparator<string>, IComparer<string>, IEqualityComparer<string>
-  )
+  TTextComparator = class(TBaseComparator<string>)
   public
     ///  <summary>Compares strings Left and Right, ignoring case. Returns -ve if
     ///  Left less than Right, 0 if equal or +ve if Left greater than Right.
