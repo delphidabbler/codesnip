@@ -24,12 +24,12 @@ uses
   Classes,
   Generics.Collections,
 
-  CS.Database.Core.SnippetsTable,
+  CS.ActiveText,
+  CS.Database.SnippetsTable,
   CS.Database.Types,
-  CS.Markup,
   CS.SourceCode.Languages,
   CS.Utils.Dates,
-
+  Compilers.UGlobals,
   UDataStreamIO,
   UExceptions,
   UIStringList;
@@ -39,7 +39,7 @@ type
   protected // NOTE: use of strict here causes IDE not to see TSnippetInfo !
     type
       TSnippetInfo = record
-        ID: TDBSnippetID;
+        ID: TSnippetID;
         LastModified: TUTCDateTime;
       end;
     type
@@ -67,7 +67,7 @@ type
       EOFByte = $FF;
     var
       fDBPath: string;
-    function SnippetFileName(const ID: TDBSnippetID): string;
+    function SnippetFileName(const ID: TSnippetID): string;
     procedure LoadMasterFile(const MI: TMasterInfo);
     function IsSupportedVersion(const Version: Integer): Boolean;
   public
@@ -77,7 +77,7 @@ type
   TDBNativeWriter = class sealed(TDBNativeIOBase)
   strict private
     var
-      fExistingSnippets: TDictionary<TDBSnippetID,TUTCDateTime>;
+      fExistingSnippets: TDictionary<TSnippetID,TUTCDateTime>;
       fLastModified: TUTCDateTime;
     procedure ReadMasterFileData;
     procedure WritePropCode(const Writer: TBinaryStreamWriter;
@@ -98,22 +98,22 @@ type
       const PropCode: TDBSnippetProp; const Date: TUTCDateTime;
       const Optional: Boolean);
     procedure WriteMarkupProp(const Writer: TBinaryStreamWriter;
-      const PropCode: TDBSnippetProp; const Markup: TMarkup;
+      const PropCode: TDBSnippetProp; ActiveText: IActiveText;
       const Optional: Boolean);
     procedure WriteStringsProp(const Writer: TBinaryStreamWriter;
       const PropCode: TDBSnippetProp; Strings: IStringList;
       const Optional: Boolean);
     procedure WriteSnippetIDListProp(const Writer: TBinaryStreamWriter;
-      const PropCode: TDBSnippetProp; IDs: IDBSnippetIDList;
+      const PropCode: TDBSnippetProp; IDs: ISnippetIDList;
       const Optional: Boolean);
     procedure WriteKindProp(const Writer: TBinaryStreamWriter;
-      const PropCode: TDBSnippetProp; const Kind: TDBSnippetKind;
+      const PropCode: TDBSnippetProp; const Kind: TSnippetKind;
       const Optional: Boolean);
     procedure WriteCompileResultsProp(const Writer: TBinaryStreamWriter;
-      const PropCode: TDBSnippetProp; const Results: TDBCompileResults;
+      const PropCode: TDBSnippetProp; const Results: TCompileResults;
       const Optional: Boolean);
     procedure WriteTagsProp(const Writer: TBinaryStreamWriter;
-      const PropCode: TDBSnippetProp; Tags: IDBTagList;
+      const PropCode: TDBSnippetProp; Tags: ITagSet;
       const Optional: Boolean);
     // WriteLinkInfoProp is always "optional": it is never output if not linked.
     procedure WriteLinkInfoProp(const Writer: TBinaryStreamWriter;
@@ -138,17 +138,17 @@ type
   strict private
     procedure HandleException(const E: Exception);
     procedure ValidateSnippetFileHeader(const Reader: TBinaryStreamReader);
-    procedure LoadSnippet(const AID: TDBSnippetID;
+    procedure LoadSnippet(const AID: TSnippetID;
       const ATable: TDBSnippetsTable);
     procedure LoadSnippetProperties(const ASnippet: TDBSnippet;
       const Reader: TBinaryStreamReader);
-    function ReadMarkup(const Reader: TBinaryStreamReader): TMarkup;
+    function ReadMarkup(const Reader: TBinaryStreamReader): IActiveText;
     function ReadStrings(const Reader: TBinaryStreamReader): IStringList;
     function ReadSnippetIDs(const Reader: TBinaryStreamReader):
-      IDBSnippetIDList;
+      ISnippetIDList;
     function ReadCompileResults(const Reader: TBinaryStreamReader):
-      TDBCompileResults;
-    function ReadTags(const Reader: TBinaryStreamReader): IDBTagList;
+      TCompileResults;
+    function ReadTags(const Reader: TBinaryStreamReader): ITagSet;
     function ReadLinkInfo(const Reader: TBinaryStreamReader): ISnippetLinkInfo;
   public
     constructor Create(const DBPath: string);
@@ -164,10 +164,11 @@ implementation
 uses
   IOUtils,
 
+  CS.ActiveText.Parsers.REML,
+  CS.ActiveText.Renderers.REML,
   CS.Database.SnippetLinks,
   CS.Database.Snippets,
   CS.Database.Tags,
-  Compilers.UGlobals,
   UConsts,
   UIOUtils,
   UStrUtils,
@@ -211,7 +212,7 @@ begin
   ValidateMasterFileInfo(MI);
 end;
 
-function TDBNativeIOBase.SnippetFileName(const ID: TDBSnippetID): string;
+function TDBNativeIOBase.SnippetFileName(const ID: TSnippetID): string;
 var
   IDComponent: string;
 begin
@@ -287,7 +288,7 @@ begin
     fSnippets.Clear;
     for I := 1 to SnippetCount do
     begin
-      SnippetInfo.ID := TDBSnippetID.Create(Reader.ReadSizedString16);
+      SnippetInfo.ID := TSnippetID.Create(Reader.ReadSizedString16);
       SnippetInfo.LastModified := TUTCDateTime.CreateFromISO8601String(
         Reader.ReadSizedString16
       );
@@ -296,7 +297,7 @@ begin
   except
     on E: Exception do
     begin
-      if (E is EDBSnippetID) or (E is EConvertError) then
+      if (E is ESnippetID) or (E is EConvertError) then
         raise EDBNativeIO.CreateFmt(sConvertError, [E.Message]);
       if (E is EStreamError) then
         raise EDBNativeIO.CreateFmt(sStreamError, [E.Message]);
@@ -310,8 +311,8 @@ end;
 constructor TDBNativeWriter.Create(const DBPath: string);
 begin
   inherited Create(DBPath);
-  fExistingSnippets := TDictionary<TDBSnippetID,TUTCDateTime>.Create(
-    TDBSnippetID.TEqualityComparer.Create
+  fExistingSnippets := TDictionary<TSnippetID,TUTCDateTime>.Create(
+    TSnippetID.TComparator.Create
   );
 end;
 
@@ -340,7 +341,7 @@ end;
 procedure TDBNativeWriter.RemoveDeletedSnippetFiles(
   const ATable: TDBSnippetsTable);
 var
-  SnippetID: TDBSnippetID;
+  SnippetID: TSnippetID;
 begin
   for SnippetID in fExistingSnippets.Keys do
   begin
@@ -386,7 +387,7 @@ end;
 
 procedure TDBNativeWriter.WriteCompileResultsProp(
   const Writer: TBinaryStreamWriter; const PropCode: TDBSnippetProp;
-  const Results: TDBCompileResults; const Optional: Boolean);
+  const Results: TCompileResults; const Optional: Boolean);
 
   procedure WriteSet(const S: TCompilerIDs);
   var
@@ -401,12 +402,26 @@ procedure TDBNativeWriter.WriteCompileResultsProp(
       Writer.WriteByte(Ord(Elem));
   end;
 
+var
+  Success, Failure: TCompilerIDs;
+  CompilerID: TCompilerID;
+  CompRes: TCompileResult;
 begin
-  if Optional and (Results.IsNull) then
+  Success := [];
+  Failure := [];
+  for CompilerID := Low(Results) to High(Results) do
+  begin
+    CompRes := Results[CompilerID];
+    if CompRes in [crSuccess, crWarning] then
+      Include(Success, CompilerID);
+    if CompRes = crError then
+      Include(Failure, CompilerID);
+  end;
+  if Optional and (Success = []) and (Failure = []) then
     Exit;
   WritePropCode(Writer, PropCode);
-  WriteSet(Results.Succeeds);
-  WriteSet(Results.Fails);
+  WriteSet(Success);
+  WriteSet(Failure);
 end;
 
 procedure TDBNativeWriter.WriteDateProp(const Writer: TBinaryStreamWriter;
@@ -420,7 +435,7 @@ begin
 end;
 
 procedure TDBNativeWriter.WriteKindProp(const Writer: TBinaryStreamWriter;
-  const PropCode: TDBSnippetProp; const Kind: TDBSnippetKind;
+  const PropCode: TDBSnippetProp; const Kind: TSnippetKind;
   const Optional: Boolean);
 begin
   if Optional and (Kind = skFreeform) then
@@ -453,14 +468,15 @@ begin
 end;
 
 procedure TDBNativeWriter.WriteMarkupProp(const Writer: TBinaryStreamWriter;
-  const PropCode: TDBSnippetProp; const Markup: TMarkup;
+  const PropCode: TDBSnippetProp; ActiveText: IActiveText;
   const Optional: Boolean);
 begin
-  if Optional and Markup.IsEmpty then
+  if Optional and ActiveText.IsEmpty then
     Exit;
   WritePropCode(Writer, PropCode);
-  Writer.WriteByte(Ord(Markup.Kind));
-  Writer.WriteSizedString32(Markup.Source);
+  Writer.WriteSizedString32(
+    TActiveTextREMLRenderer.Render(ActiveText, EmptyStr)
+  );
 end;
 
 procedure TDBNativeWriter.WriteMasterFile(const ATable: TDBSnippetsTable;
@@ -544,9 +560,9 @@ end;
 
 procedure TDBNativeWriter.WriteSnippetIDListProp(
   const Writer: TBinaryStreamWriter; const PropCode: TDBSnippetProp;
-  IDs: IDBSnippetIDList; const Optional: Boolean);
+  IDs: ISnippetIDList; const Optional: Boolean);
 var
-  ID: TDBSnippetID;
+  ID: TSnippetID;
 begin
   if Optional and (IDs.Count = 0) then
     Exit;
@@ -589,9 +605,9 @@ begin
 end;
 
 procedure TDBNativeWriter.WriteTagsProp(const Writer: TBinaryStreamWriter;
-  const PropCode: TDBSnippetProp; Tags: IDBTagList; const Optional: Boolean);
+  const PropCode: TDBSnippetProp; Tags: ITagSet; const Optional: Boolean);
 var
-  Tag: TDBTag;
+  Tag: TTag;
 begin
   if Optional and (Tags.Count = 0) then
     Exit;
@@ -631,7 +647,7 @@ resourcestring
 begin
   if (E is EStreamError) then
     raise EDBNativeIO.CreateFmt(sStreamError, [E.Message]);
-  if (E is EDBSnippetID) or (E is EConvertError) then
+  if (E is ESnippetID) or (E is EConvertError) then
     raise EDBNativeIO.CreateFmt(sConvertError, [E.Message]);
   raise E;
 end;
@@ -659,7 +675,7 @@ begin
   end;
 end;
 
-procedure TDBNativeReader.LoadSnippet(const AID: TDBSnippetID;
+procedure TDBNativeReader.LoadSnippet(const AID: TSnippetID;
   const ATable: TDBSnippetsTable);
 var
   Reader: TBinaryStreamReader;
@@ -737,7 +753,7 @@ begin
       spNotes:
         ASnippet.SetNotes(ReadMarkup(Reader));
       spKind:
-        ASnippet.SetKind(TDBSnippetKind(Reader.ReadByte));
+        ASnippet.SetKind(TSnippetKind(Reader.ReadByte));
       spCompileResults:
         ASnippet.SetCompileResults(ReadCompileResults(Reader));
       spTags:
@@ -755,7 +771,7 @@ begin
 end;
 
 function TDBNativeReader.ReadCompileResults(const Reader: TBinaryStreamReader):
-  TDBCompileResults;
+  TCompileResults;
 
   function ReadSet: TCompilerIDs;
   var
@@ -770,46 +786,53 @@ function TDBNativeReader.ReadCompileResults(const Reader: TBinaryStreamReader):
 
 var
   Succeeds, Fails: TCompilerIDs;
+  CompilerID: TCompilerID;
 begin
   Succeeds := ReadSet;
   Fails := ReadSet;
-  Result := TDBCompileResults.Create(Succeeds, Fails);
+  for CompilerID := Low(Result) to High(Result) do
+  begin
+    if CompilerID in Succeeds then
+      Result[CompilerID] := crSuccess
+    else if CompilerID in Fails then
+      Result[CompilerID] := crError
+    else
+      Result[CompilerID] := crQuery;
+  end;
 end;
 
 function TDBNativeReader.ReadLinkInfo(const Reader: TBinaryStreamReader):
   ISnippetLinkInfo;
 var
   SynchSpaceID: TGUID;
-  LinkedSnippetID: TDBSnippetID;
+  LinkedSnippetID: TSnippetID;
 begin
   // If this property is present snippet is linked to space: the property is
   // never present in file if snippet is not linked. Therefore return value is
   // never a null instance.
   Reader.ReadBuffer(SynchSpaceID, SizeOf(SynchSpaceID));
-  LinkedSnippetID := TDBSnippetID.Create(Reader.ReadSizedString16);
+  LinkedSnippetID := TSnippetID.Create(Reader.ReadSizedString16);
   Result := TSnippetLinkInfo.Create(SynchSpaceID, LinkedSnippetID);
 end;
 
-function TDBNativeReader.ReadMarkup(const Reader: TBinaryStreamReader): TMarkup;
-var
-  Kind: TMarkupKind;
-  Source: string;
+function TDBNativeReader.ReadMarkup(const Reader: TBinaryStreamReader):
+  IActiveText;
 begin
-  Kind := TMarkupKind(Reader.ReadByte);
-  Source := Reader.ReadSizedString32;
-  Result := TMarkup.Create(Source, Kind);
+  Result := TActiveTextFactory.CreateActiveText(
+    Reader.ReadSizedString32, TActiveTextREMLParser.Create
+  ).Normalise;
 end;
 
 function TDBNativeReader.ReadSnippetIDs(const Reader: TBinaryStreamReader):
-  IDBSnippetIDList;
+  ISnippetIDList;
 var
   Count: Integer;
   I: Integer;
 begin
   Count := Reader.ReadInt32;
-  Result := TDBSnippetIDList.Create;
+  Result := TSnippetIDList.Create;
   for I := 1 to Count do
-    Result.Add(TDBSnippetID.Create(Reader.ReadSizedString16));
+    Result.Add(TSnippetID.Create(Reader.ReadSizedString16));
 end;
 
 function TDBNativeReader.ReadStrings(const Reader: TBinaryStreamReader):
@@ -825,15 +848,15 @@ begin
 end;
 
 function TDBNativeReader.ReadTags(const Reader: TBinaryStreamReader):
-  IDBTagList;
+  ITagSet;
 var
   Count: Integer;
   I: Integer;
 begin
   Count := Reader.ReadInt32;
-  Result := TDBTagList.Create;
+  Result := TTagSet.Create;
   for I := 1 to Count do
-    Result.Add(TDBTag.Create(Reader.ReadSizedString16));
+    Result.Add(TTag.Create(Reader.ReadSizedString16));
 end;
 
 procedure TDBNativeReader.ValidateSnippetFileHeader(
