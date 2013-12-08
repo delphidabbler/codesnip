@@ -81,7 +81,7 @@ constructor TTagSet.Create;
 begin
   inherited Create;
   fTags := TArraySet<TTag>.Create(
-    TRules<TTag>.Create(TTag.TComparer.Create, TTag.TEqualityComparer.Create)
+    TRules<TTag>.Create(TTag.TComparator.Create, TTag.TComparator.Create)
   );
 end;
 
@@ -129,3 +129,4 @@ begin
 end;
 
 end.
+

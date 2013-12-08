@@ -392,7 +392,7 @@ begin
   TaglessSnippets := nil;
   TagMap := TSortedDistinctMultiMap<TTag, TSnippet>.Create(
     TRules<TTag>.Create(
-      TTag.TComparer.Create, TTag.TEqualityComparer.Create
+      TTag.TComparator.Create, TTag.TComparator.Create
     ),
     TRules<TSnippet>.Create(
       TDelegatedComparer<TSnippet>.Create(

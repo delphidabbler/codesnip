@@ -28,6 +28,7 @@ uses
   CS.SourceCode.Languages,
   CS.Utils.Dates,
   Compilers.UGlobals,
+  UComparers,
   UIStringList;
 
 type
@@ -137,12 +138,16 @@ type
   TTag = record
   public
     type
-      TComparer = class(TComparer<TTag>)
+      TComparator = class(TComparator<TTag>)
+        ///  <summary>Compares tags Left and Right, returning -ve if Left less
+        ///  than Right, 0 if equal or +ve if Left greater than Right.</summary>
+        ///  <remarks>Method of IComparator and IComparer.</remarks>
         function Compare(const Left, Right: TTag): Integer; override;
-      end;
-      TEqualityComparer = class(TEqualityComparer<TTag>)
-      public
+        ///  <summary>Checks if two tags, Left and Right, are equal.</summary>
+        ///  <remarks>Method of IComparator and IEqualityComparer.</remarks>
         function Equals(const Left, Right: TTag): Boolean; override;
+        ///  <summary>Gets hash of tag.</summary>
+        ///  <remarks>Method of IComparator and IEqualityComparer.</remarks>
         function GetHashCode(const Value: TTag): Integer; override;
       end;
   strict private
@@ -491,21 +496,19 @@ begin
   Result := fTag;
 end;
 
-{ TTag.TComparer }
+{ TTag.TComparator }
 
-function TTag.TComparer.Compare(const Left, Right: TTag): Integer;
+function TTag.TComparator.Compare(const Left, Right: TTag): Integer;
 begin
   Result := TTag.Compare(Left, Right);
 end;
 
-{ TTag.TEqualityComparer }
-
-function TTag.TEqualityComparer.Equals(const Left, Right: TTag): Boolean;
+function TTag.TComparator.Equals(const Left, Right: TTag): Boolean;
 begin
   Result := Left = Right;
 end;
 
-function TTag.TEqualityComparer.GetHashCode(const Value: TTag): Integer;
+function TTag.TComparator.GetHashCode(const Value: TTag): Integer;
 begin
   Result := Value.Hash;
 end;
