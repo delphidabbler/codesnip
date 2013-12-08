@@ -17,7 +17,7 @@
 <head>
 
 <title>
-  CodeSnip File Format Documentation - User Database
+  CodeSnip File Format Documentation - Legacy User Database
 </title>
 
 <link
@@ -41,7 +41,7 @@
 </div>
 
 <h1>
-  User Database Files
+  Legacy User Database Files
 </h1>
 
 <h2>
@@ -49,9 +49,16 @@
 </h2>
 
 <p>
-  CodeSnip's user defined snippets database is stored in an XML file along with
-  a number of data files located in the user database directory. There is a
-  different user database for each logged on user.
+  From CodeSnip version 2 to 4 the program stored its &quot;user defined&quot;
+  database in an XML file along with a number of data files located in the
+  user database directory. There was a different user database for each logged on
+  user.
+</p>
+
+<p>
+  This file format is retained to enable CodeSnip 5 to read databases created
+  by CodeSnip 2 to 4. CodeSnip 5 can load its database from one of these legacy
+  files, but but does not write files in this format.
 </p>
 
 <p>
@@ -67,8 +74,8 @@
 </p>
 
 <p>
-  There have been several different versions of the XML file format. Each of
-  these is explained below.
+  There have been several different versions of the XML file format between
+  CodeSnip 2 and CodeSnip 4. Each of the variations is explained below.
 </p>
 
 <h2>
@@ -76,9 +83,9 @@
 </h2>
 
 <p>
-  CodeSnip 4 stores all user database files using UTF-8 encoding. Files are
+  CodeSnip 4 stored all user database files using UTF-8 encoding. Files were
   saved <em>without</em> any UTF-8 preamble (BOM). The XML processing
-  instruction of <code>database.xml</code> has an &quot;encoding&quot; attribute
+  instruction of <code>database.xml</code> had an &quot;encoding&quot; attribute
   set to &quot;UTF-8&quot;.
 </p>
 
@@ -89,8 +96,8 @@
 </p>
 
 <p>
-  CodeSnip v4 must be able to work with all these encoding because it may
-  inherit a copy of a user database in an earlier format.
+  CodeSnip v5 must be able to read files with all these encoding because it may
+  inherit a copy of a user database in any of them.
 </p>
 
 <h2>
@@ -102,10 +109,17 @@
 </h3>
 
 <p>
-  There have been six different versions of the XML file formats &ndash; v1 to
-  v6. Tags from all six versions are explained below with notes describing
-  which versions a tag applies to. Where there is no note the tag is valid in
-  all versions.
+  There were six different versions of the XML file formats &ndash; v1 to v6.
+  Nodes from all six versions are explained below with notes describing which
+  versions a node applies to. Where there is no note, the node is valid in all
+  versions.
+</p>
+
+<p>
+  <div class="reader-note">
+    Notes about how the fields are used in CodeSnip 5 (and later) are displayed
+    in boxes like this one.
+  </div>
 </p>
 
 <dl>
@@ -163,8 +177,8 @@
         <em>version</em>
       </dt>
       <dd>
-        Identifies version of file. Determines which tags are valid and rules
-        concerning content. Valid versions are 1..6.
+        Identifies version of file. Determines which nodes are valid and also
+        the rules concerning content. Valid versions are 1..6.
       </dd>
     </dl>
   </dd>
@@ -188,7 +202,12 @@
         <em>id</em>
       </dt>
       <dd>
-        Internal (unique) id of category.
+        <div class="half-spaced">
+          Internal (unique) id of category.
+        </div>
+        <div class="half-spaced reader-note">
+          Ignored.
+        </div>
       </dd>
     </dl>
   <dd>
@@ -197,15 +216,25 @@
     <strong>codesnip-data/categories/category/description</strong>
   </dt>
   <dd>
-    Description of category.
+    <div class="half-spaced">
+      Description of category.
+    </div>
+    <div class="half-spaced reader-note">
+      Added to the set of known <em>Tags</em>.
+    </div>
   </dd>
 
   <dt>
     <strong>codesnip-data/categories/category/cat-routines</strong>
   </dt>
   <dd>
-    Contains list of name of all snippets in category. Omitted if there are no
-    snippets in category.
+    <div class="half-spaced">
+      Contains list of name of all snippets in category. Omitted if there are no
+      snippets in category.
+    </div>
+    <div class="half-spaced reader-note">
+      This node, and its children, are ignored.
+    </div>
   </dd>
 
   <dt>
@@ -263,13 +292,25 @@
         </ul>
       </dd>
     </dl>
+    <div class="half-spaced reader-note">
+      This value is used as the snippet's <em>ID</em>. It may also be used as
+      the value of the snippet's <em>Title</em> property if the
+      <em>codesnip-data/routines/routine/display-name</em> node is missing or
+      empty.
+    </div>
   </dd>
 
   <dt>
     <strong>codesnip-data/routines/routine/cat-id</strong>
   </dt>
   <dd>
-    Id of category to which snippet belongs.
+    <div class="half-spaced">
+      ID of category to which snippet belongs.
+    </div>
+    <div class="half-spaced reader-note">
+      The snippet's <em>Tags</em> property is set to contain a single member
+      which is the description of the category with this ID.
+    </div>
   </dd>
 
   <dt>
@@ -289,22 +330,49 @@
         encoded in REML mark-up. REML v3 is supported.
       </li>
     </ul>
+    <div class="half-spaced reader-note">
+      <div>
+        This value is parsed and converted to active text and used as the value
+        of the snippet's <em>Description</em> property.
+      </div>
+      <ul class="squashed">
+        <li>
+          <span class="highlight">versions 1..5:</span> The plain text is
+          parsed as if it was a single paragraph of REML.
+        </li>
+        <li>
+          <span class="highlight">version 6:</span> the REML is parsed as-is.
+        </li>
+      </ul>
+    </div>
   </dd>
 
   <dt>
     <strong>codesnip-data/routines/routine/source-code</strong>
   </dt>
   <dd>
-    Name of file containing snippet's source code. No path information included.
+    <div class="half-spaced">
+      Name of file containing snippet's source code. No path information
+      included.
+    </div>
+    <div class="half-spaced reader-note">
+      The referenced file is read and used as the value of snippet's
+      <em>SourceCode</em> property.
+    </div>
   </dd>
 
   <dt>
     <strong>codesnip-export/routines/routine/highlight-source</strong>
   </dt>
   <dd>
+    <div class="half-spaced">
+      This node was originally used to determine whether source code should be
+      syntax highlighted, as follows:
+    <div>
     <ul class="squashed">
       <li>
-        <span class="highlight">versions 1..5:</span> Not supported.
+        <span class="highlight">versions 1..5:</span> The node is not supported
+        and source code should always be syntax highlighted.
       </li>
       <li>
         <div>
@@ -312,41 +380,57 @@
         </div>
         <div class="indent">
           <div>
-            Flag indicating if snippet source code can be highlighted using
-            syntax highlighter. Permissible values are:
+            The node is optional and has a default value of &quot;1&quot; when
+            omitted. Permissible values are:
           </div>
           <ul class="squashed">
             <li>
-              &quot;0&quot; &ndash; do not syntax highlight source code
+              &quot;0&quot; &ndash; do not syntax highlight source code.
             </li>
             <li>
-              &quot;1&quot; &ndash; syntax highlight source code
+              &quot;1&quot; &ndash; syntax highlight source code.
             </li>
           </ul>
-          <div class="half-spaced">
-            Omitting this tag is permitted. Value defaults to &quot;1&quot; in
-            this case.
-          </div>
         </div>
       </li>
     </ul>
+    <div class="half-spaced reader-note">
+      This node no longer has any meaning: source code language is now used to
+      determine if or how source code is highlighted. Since this file format has
+      no way of specifying the language directly, this node is used to decide
+      the what language to use and the snippet's <em>LanguageID</em> property is
+      set as follows. If the node is present and has value &quot;0&quot; the
+      language ID is set to &quot;Text&quot;. Otherwise the language ID is set
+      to &quot;Pascal&quot;.
+    </div>
   </dd>
 
   <dt>
     <strong>codesnip-data/routines/routine/display-name</strong>
   </dt>
   <dd>
+    <div class="half-space">
+      This node was used to specify the snippet's display name, if different to
+      its name, as follows:
+    </div>
     <ul class="squashed">
       <li>
-        <span class="highlight">versions 1..5:</span> Not supported.
+        <span class="highlight">versions 1..5:</span> Not supported. The display
+        name was always the same as the value of the
+        <em>codesnip-data/routines/routine</em> node.
       </li>
       <li>
         <span class="highlight">version 6:</span> Display name of snippet. Can
         contain any characters and need not be unique. Present only if snippet
         has a display name that is different to the value of the <em>name</em>
-        attribute of the <em>codesnip-data/routines/routine</em> tag.
+        attribute of the <em>codesnip-data/routines/routine</em> node.
       </li>
     </ul>
+    <div class="snippet reader-note">
+      If present and non-empty the value of this node is used for the
+      <em>Title</em> property, otherwise the <em>Title</em> property is set to
+      the value of the <em>codesnip-data/routines/routine</em> node.
+    </div>
   </dd>
 
   <dt>
@@ -357,12 +441,18 @@
       <ul class="squashed">
         <li>
           <span class="highlight">version 1:</span> Additional comments about
-          snippets.
+          snippets. Optional.
         </li>
         <li>
           <span class="highlight">version 2 and later:</span> Not supported.
         </li>
       </ul>
+    </div>
+    <div class="half-spaced reader-note">
+      If the <em>codesnip-data/routines/routine/extra</em> node is present or if
+      this node is absent it is ignored. Otherwise the node's text is converted
+      to a single paragraph of active text and used as the first paragraph of
+      the snippet's <em>Notes</em> property.
     </div>
   </dd>
 
@@ -383,6 +473,15 @@
         </li>
       </ul>
     </div>
+    <div class="half-spaced reader-note">
+      If the <em>codesnip-data/routines/routine/extra</em> node is present or if
+      this node is absent it is ignored. Otherwise the node's content is parsed,
+      using the URL from the <em>codesnip-data/routines/routine/credits-url</em>
+      node if necessary, into a single active text paragraph this is appended to
+      the snippet's <em>Notes</em> property. Note that the credits paragraph
+      follows after any paragraph obtained from the
+      <em>codesnip-data/routines/routine/comments</em> node.
+    </div>
   </dd>
 
   <dt>
@@ -393,13 +492,20 @@
       <ul class="squashed">
         <li>
           <span class="highlight">version 1:</span> URL required by
-          <em>codesnip-data/routines/routine/credits</em> tag. Present only if
+          <em>codesnip-data/routines/routine/credits</em> node. Present only if
           <em>codesnip-data/routines/routine/credits</em> requires a hyperlink.
         </li>
         <li>
           <span class="highlight">version 2 and later:</span> Not supported.
         </li>
       </ul>
+    </div>
+    <div class="half-spaced reader-note">
+      Ignored if the the <em>codesnip-data/routines/routine/extra</em> node is
+      present or if the <em>codesnip-data/routines/routine/credits</em> node is
+      missing or contains no hyperlink placeholder. Otherwise this node is used
+      in the construction of the snippet's <em>Notes</em> property. See
+      <em>codesnip-data/routines/routine/credits</em> above for details.
     </div>
   </dd>
 
@@ -432,6 +538,15 @@
         </li>
       </ul>
     </div>
+    <div class="half-spaced reader-note">
+      When present, the value of this node is parsed and converted to active
+      text and used as the value of the snippet's <em>Notes</em> node. If this
+      node is not present the <em>Notes</em> property will be constructed from
+      the <em>codesnip-data/routines/routine/comments</em>,
+      <em>codesnip-data/routines/routine/credits</em> and
+      <em>codesnip-data/routines/routine/credits-url</em> nodes (see above). If
+      none of those nodes are present then the <em>Notes</em> property is empty.
+    </div>
   </dd>
 
   <dt>
@@ -442,11 +557,28 @@
       <ul class="squashed">
         <li>
           <span class="highlight">versions 1 and 2:</span> Flag indicating if
-          snippet is in &quot;standard format&quot;. Value of 1 indicates true
-          and 0 indicates false.
+          the snippet is in &quot;standard format&quot;. A value of
+          &quot;1&quot; indicates True and &quot;0&quot; indicates False.
         </li>
         <li>
           <span class="highlight">version 3 and later:</span> Not supported.
+        </li>
+      </ul>
+    </div>
+    <div class="half-spaced reader-note">
+      <div>
+        If the <em>codesnip-data/routines/routine/kind</em> node is present then
+        this node is ignored. Otherwise it is used to determine the value of the
+        snippet's <em>Kind</em> property, as follows:
+      </div>
+      <ul class="squashed">
+        <li>
+          Value is &quot;1&quot; or the node is not present &ndash; the snippet
+          kind is taken to be <em>routine</em>.
+        </li>
+        <li>
+          Value is &quot;0&quot; &ndash; the snippet kind is taken to be
+          <em>freeform</em>.
         </li>
       </ul>
     </div>
@@ -479,13 +611,28 @@
         </li>
       </ul>
     </div>
+    <div class="half-spaced reader-note">
+      When present, the value of this node determines the value of the snippet's
+      <em>Kind</em> property. If the node is not present, the property's value
+      determined by the <em>codesnip-data/routines/routine/standard-format</em>
+      node (see above).
+    </div>
   </dd>
 
   <dt>
     <strong>codesnip-data/routines/routine/compiler-results</strong>
   </dt>
   <dd>
-    Contains a list of compile results for the snippet.
+    <div class="half-spaced">
+      Contains a list of compile results for the snippet.
+    </div>
+    <div class="half-spaced reader-note">
+      Used to set the snippet's <em>CompileResults</em> property. Each of the
+      Results for each supported compiler are determined by the
+      <em>codesnip-data/routines/routine/compiler-results/compiler-result</em>
+      child nodes. Any compiler whose results are not listed are et to a
+      <em>query</em> result.
+    </div>
   </dd>
 
   <dt>
@@ -581,8 +728,27 @@
       </li>
     </ul>
     <div class="half-spaced">
-      Omitting a tag for a certain compiler is permitted and is equivalent to
+      Omitting a node for a certain compiler is permitted and is equivalent to
       specifying &quot;Q&quot;.
+    </div>
+    <div class="half-spaced reader-note">
+      <div>
+        Each of the child nodes provides the compile result for a single
+        supported compiler. The node values are handled as follows:
+      </div>
+      <ul class="squashed">
+        <li>
+          &quot;Y&quot; or &quot;W&quot; &ndash; Compile result set to
+          <em>success</em>.
+        </li>
+        <li>
+          &quot;N&quot; &ndash; Compile result set to <em>error</em>.
+        </li>
+        <li>
+          Any other value &ndash; Compile result set to <em>query</em> (i.e.
+          unknown).
+        </li>
+      </ul>
     </div>
   </dd>
 
@@ -590,7 +756,16 @@
     <strong>codesnip-data/routines/routine/units</strong>
   </dt>
   <dd>
-    List of required units.
+    <div class="half-spaced">
+      List of required units.
+    </div>
+    <div class="half-spaced reader-note">
+      Used to set the snippet's <em>RequiredModules</em> property. Each of this
+      node's <em>codesnip-data/routines/routine/units/pascal-name</em> child
+      nodes provides the name of a module which is added to the
+      <em>RequiredModules</em> list. If this node is missing, or there are no
+      child nodes, then <em>RequiredModules</em> is an empty list.
+    </div>
   </dd>
 
   <dt>
@@ -604,7 +779,16 @@
     <strong>codesnip-data/routines/routine/depends</strong>
   </dt>
   <dd>
-    List of required snippets.
+    <div class="half-spaced">
+      List of required snippets.
+    </div>
+    <div class="half-spaced reader-note">
+      Used to set the snippet's <em>RequiredSnippets</em> property. Each of this
+      node's <em>codesnip-data/routines/routine/depends/pascal-name</em> child
+      nodes provides the ID of a snippet which is added to the
+      <em>RequiredSnippets</em> list. If this node is missing, or there are no
+      child nodes, then <em>RequiredSnippets</em> is an empty list.
+    </div>
   </dd>
 
   <dt>
@@ -631,7 +815,16 @@
     <strong>codesnip-data/routines/routine/xref</strong>
   </dt>
   <dd>
-    List of cross-referenced snippets.
+    <div class="half-spaced">
+      List of cross-referenced snippets.
+    </div>
+    <div class="half-spaced reader-note">
+      Used to set the snippet's <em>XRefs</em> property. Each of this node's
+      <em>codesnip-data/routines/routine/xref/pascal-name</em> child nodes
+      provides the ID of a snippet which is added to the <em>XRefs</em> list. If
+      this node is missing, or there are no child nodes, then <em>XRefs</em> is
+      an empty list.
+    </div>
   </dd>
 
   <dt>
@@ -667,12 +860,12 @@
 
 <p>
   Source code files are referenced by the
-  <em>codesnip-data/routines/routine/source-code</em> tag in the database's
+  <em>codesnip-data/routines/routine/source-code</em> node in the database's
   XML file.
 </p>
 
 <h2>
-  Differences Between File Versions
+  Summary of Differences Between File Versions
 </h2>
 
 <p>
@@ -692,7 +885,7 @@
   </dt>
   <dd>
     <div class="half-spaced">
-      The following tags are no longer supported:
+      The following nodes are no longer supported:
     </div>
     <ul class="squashed">
       <li>
@@ -706,7 +899,7 @@
       </li>
     </ul>
     <div class="half-spaced">
-      The following tag was introduced:
+      The following nodes was introduced:
     </div>
     <ul class="squashed">
       <li>
@@ -719,7 +912,7 @@
   </dt>
   <dd>
     <div class="half-spaced">
-      The following tag is no longer supported:
+      The following node is no longer supported:
     </div>
     <ul class="squashed">
       <li>
@@ -727,7 +920,7 @@
       </li>
     </ul>
     <div class="half-spaced">
-      The following tag was introduced:
+      The following node was introduced:
     </div>
     <ul class="squashed">
       <li>
@@ -736,7 +929,7 @@
     </ul>
     <div class="half-spaced">
       The version of REML supported by the
-      <em>codesnip-data/routines/routine/extra</em> tag was updated to v2.
+      <em>codesnip-data/routines/routine/extra</em> node was updated to v2.
     </div>
   </dd>
   <dt>
@@ -744,7 +937,7 @@
   </dt>
   <dd>
     The version of REML supported by the
-    <em>codesnip-data/routines/routine/extra</em> tag was updated to v3.
+    <em>codesnip-data/routines/routine/extra</em> node was updated to v3.
   </dd>
   <dt>
     Version 5
@@ -777,7 +970,7 @@
       mark-up. Previously the description was plain text.
     </div>
     <div class="half-spaced">
-      The following tag was introduced:
+      The following node was introduced:
     </div>
     <ul class="squashed">
       <li>
@@ -789,42 +982,5 @@
     </ul>
   </dd>
 </dl>
-
-<h3>
-  Notes for File Readers
-</h3>
-
-<p>
-  Readers of version 1 files must convert the contents of the
-  <em>codesnip-data/routines/routine/comments</em>,
-  <em>codesnip-data/routines/routine/credits</em> and
-  <em>codesnip-data/routines/routine/credits-url</em> tags into formatted text
-  that simulates the parsed content of the
-  <em>codesnip-data/routines/routine/extra</em> tag.
-</p>
-
-<p>
-  Readers of v1 and v2 files should map a
-  <em>codesnip-data/routines/routine/standard-format</em> value of &quot;0&quot;
-  to a <em>codesnip-data/routines/routine/kind</em> value of
-  &quot;freeform&quot; and a value of &quot;1&quot; to &quot;routine&quot;.
-</p>
-
-<p>
-  Readers of v1 to v5 files must:
-</p>
-<ol>
-  <li>
-    Convert the plain text snippet description read from
-    <em>codesnip-data/routines/routine/description</em> into the formatted text
-    equivalent of a single paragraph containing the description.
-  </li>
-  <li>
-    Proceed as if a <em>codesnip-export/routines/routine/highlight-source</em>
-    tag with value &quot;1&quot; had been specified.
-  </li>
-</ul>
-
-</body>
 
 </html>
