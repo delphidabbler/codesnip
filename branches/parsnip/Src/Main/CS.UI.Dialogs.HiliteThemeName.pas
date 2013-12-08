@@ -127,7 +127,8 @@ var
 begin
   inherited;
     fBlockedThemeNames := THashSet<string>.Create(
-    TTextComparator.ConstructRules
+    // TODO: Find a better way to create TRules using TTestComparator etc.
+    TRules<string>.Create(TTextComparator.Create, TTextComparator.Create)
   );
   for Theme in fThemesList do
     if Theme.BuiltIn
