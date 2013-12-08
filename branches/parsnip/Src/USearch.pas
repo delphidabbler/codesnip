@@ -103,11 +103,6 @@ type
   end;
 
 type
-  ///  <summary>Set of ids of compilers to be included in a compiler search.
-  ///  </summary>
-  TCompilerIDs = set of TCompilerID;
-
-type
   ///  <summary>Options that can be used to customise a compiler search by
   ///  specifying the expected compilation results.</summary>
   TCompilerSearchOption = (
