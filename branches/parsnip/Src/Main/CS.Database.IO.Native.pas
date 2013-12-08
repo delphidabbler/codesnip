@@ -164,7 +164,7 @@ implementation
 uses
   IOUtils,
 
-  CS.ActiveText.Parsers.REML,
+  CS.ActiveText.Helper,
   CS.ActiveText.Renderers.REML,
   CS.Database.SnippetLinks,
   CS.Database.Snippets,
@@ -818,9 +818,12 @@ end;
 function TDBNativeReader.ReadMarkup(const Reader: TBinaryStreamReader):
   IActiveText;
 begin
-  Result := TActiveTextFactory.CreateActiveText(
-    Reader.ReadSizedString32, TActiveTextREMLParser.Create
-  ).Normalise;
+  try
+    Result := TActiveTextHelper.ParseREML(Reader.ReadSizedString32);
+  except
+    // error: provide an empty property value
+    Result := TActiveTextFactory.CreateActiveText;
+  end;
 end;
 
 function TDBNativeReader.ReadSnippetIDs(const Reader: TBinaryStreamReader):
