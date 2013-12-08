@@ -99,7 +99,7 @@ type
   strict private
     fCompilersObj: ICompilers;            // Provides info about compilers
     fUpdated: Boolean;                    // Flags if properties updated
-    fCompilers: TCompilerSearchCompilers; // Value of Compilers property
+    fCompilers: TCompilerIDs;             // Value of Compilers property
     fOption: TCompilerSearchOption;       // Value of Option property
     fLogic: TSearchLogic;                 // Value of Logic property
     procedure ReadValues;
@@ -108,7 +108,7 @@ type
     procedure WriteValues;
       {Writes search parameters to persistent storage.
       }
-    procedure SetCompilers(const Value: TCompilerSearchCompilers);
+    procedure SetCompilers(const Value: TCompilerIDs);
       {Write access method for Compilers property. Records value and flags
       updated.
         @param Value The new property value.
@@ -139,7 +139,7 @@ type
     property Logic: TSearchLogic
       read fLogic write SetLogic;
       {Search logic. Either AND or OR}
-    property Compilers: TCompilerSearchCompilers
+    property Compilers: TCompilerIDs
       read fCompilers write SetCompilers;
       {Set of compilers to include in search}
   end;
@@ -223,7 +223,7 @@ procedure TFindCompilerDlg.btnOKClick(Sender: TObject);
   }
 
   // ---------------------------------------------------------------------------
-  function GetCompilerVersions: TCompilerSearchCompilers;
+  function GetCompilerVersions: TCompilerIDs;
     {Returns set of compilers selected by user.
       @return Set of selected compilers.
     }
@@ -465,8 +465,7 @@ begin
   fLogic := TSearchLogic(Storage.GetInteger('Logic', Ord(slOr)));
 end;
 
-procedure TCompilerSearchParams.SetCompilers(
-  const Value: TCompilerSearchCompilers);
+procedure TCompilerSearchParams.SetCompilers(const Value: TCompilerIDs);
   {Write access method for Compilers property. Records value and flags updated.
     @param Value The new property value.
   }

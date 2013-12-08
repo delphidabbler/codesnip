@@ -105,7 +105,7 @@ type
 type
   ///  <summary>Set of ids of compilers to be included in a compiler search.
   ///  </summary>
-  TCompilerSearchCompilers = set of TCompilerID;
+  TCompilerIDs = set of TCompilerID;
 
 type
   ///  <summary>Options that can be used to customise a compiler search by
@@ -125,9 +125,9 @@ type
   ICompilerSearchFilter = interface(ISearchFilter)
     ['{6DFAD486-C142-4B0F-873A-51075E285C0C}']
     ///  <summary>Read accessor for Compilers property.</summary>
-    ///  <returns>TCompilerSearchCompilers. Set of compilers to be included in
+    ///  <returns>TCompilerIDs. Set of compilers to be included in
     ///  search.</returns>
-    function GetCompilers: TCompilerSearchCompilers;
+    function GetCompilers: TCompilerIDs;
     ///  <summary>Read accessor for Logic property.</summary>
     ///  <returns>TSearchLogic. Search logic to be used: "and" which requires
     ///  that all compilers in Compilers property are found or "or" which
@@ -138,7 +138,7 @@ type
     ///  outcome to be searched for.</returns>
     function GetOption: TCompilerSearchOption;
     ///  <summary>Set of compilers to be included in the search.</summary>
-    property Compilers: TCompilerSearchCompilers read GetCompilers;
+    property Compilers: TCompilerIDs read GetCompilers;
     ///  <summary>Search logic to be used: "and" which requires all a matched
     ///  snippet to have the compile result that matches the Option property for
     ///  all compilers specified in the Compilers property, or "or" which
@@ -251,7 +251,7 @@ type
   TSearchFilterFactory = class(TNoConstructObject)
   public
     ///  <summary>Creates and returns a compiler search filter object.</summary>
-    ///  <param name="Compilers">TCompilerSearchCompilers [in] Set of compilers
+    ///  <param name="Compilers">TCompilerIDs [in] Set of compilers
     ///  to be included in search.</param>
     ///  <param name="Logic">TSearchLogic [in] Search logic to be used: AND or
     ///  OR.</param>
@@ -259,7 +259,7 @@ type
     ///  outcome.</param>.
     ///  <returns>ICompilerSearchFilter. Interface to filter object.</returns>
     class function CreateCompilerSearchFilter(
-      const Compilers: TCompilerSearchCompilers; const Logic: TSearchLogic;
+      const Compilers: TCompilerIDs; const Logic: TSearchLogic;
       const Option: TCompilerSearchOption): ICompilerSearchFilter;
     ///  <summary>Creates and returns a text search filter object.</summary>
     ///  <param name="Words">string [in] List of words to be searched for.
@@ -388,7 +388,7 @@ type
   strict private
     var
       ///  <summary>Compilers to include in search.</summary>
-      fCompilers: TCompilerSearchCompilers;
+      fCompilers: TCompilerIDs;
       ///  <summary>Search logic.</summary>
       fLogic: TSearchLogic;
       ///  <summary>Required compilation result.</summary>
@@ -398,13 +398,13 @@ type
     function GlyphResourceName: string; override;
   public
     ///  <summary>Constructs filter object with given criteria.</summary>
-    ///  <param name="Compilers">TCompilerSearchCompilers [in] Set of compilers
+    ///  <param name="Compilers">TCompilerIDs [in] Set of compilers
     ///  to be included in search.</param>
     ///  <param name="Logic">TSearchLogic [in] Search logic to be used: AND or
     ///  OR.</param>
     ///  <param name="Option">TCompilerSearchOption [in] Compiler result to be
     ///  searched for.</param>
-    constructor Create(const Compilers: TCompilerSearchCompilers;
+    constructor Create(const Compilers: TCompilerIDs;
       const Logic: TSearchLogic; const Option: TCompilerSearchOption);
     ///  <summary>Checks whether the snippet with the given ID matches the
     ///  filter's search criteria, returning True if so or False if not.
@@ -417,7 +417,7 @@ type
     function IsNull: Boolean;
     ///  <summary>Returns sets of compilers to be included in search.</summary>
     ///  <remarks>Method of ICompilerSearchFilter.</remarks>
-    function GetCompilers: TCompilerSearchCompilers;
+    function GetCompilers: TCompilerIDs;
     ///  <summary>Returns search logic to be used.</summary>
     ///  <remarks>Method of ICompilerSearchFilter.</remarks>
     function GetLogic: TSearchLogic;
@@ -711,7 +711,7 @@ end;
 { TCompilerSearchFilter }
 
 constructor TCompilerSearchFilter.Create(
-  const Compilers: TCompilerSearchCompilers; const Logic: TSearchLogic;
+  const Compilers: TCompilerIDs; const Logic: TSearchLogic;
   const Option: TCompilerSearchOption);
 begin
   inherited Create;
@@ -721,7 +721,7 @@ begin
   fOption := Option;
 end;
 
-function TCompilerSearchFilter.GetCompilers: TCompilerSearchCompilers;
+function TCompilerSearchFilter.GetCompilers: TCompilerIDs;
 begin
   Result := fCompilers;
 end;
@@ -1180,7 +1180,7 @@ end;
 { TSearchFilterFactory }
 
 class function TSearchFilterFactory.CreateCompilerSearchFilter(
-  const Compilers: TCompilerSearchCompilers; const Logic: TSearchLogic;
+  const Compilers: TCompilerIDs; const Logic: TSearchLogic;
   const Option: TCompilerSearchOption): ICompilerSearchFilter;
 begin
   Result := TCompilerSearchFilter.Create(Compilers, Logic, Option);
