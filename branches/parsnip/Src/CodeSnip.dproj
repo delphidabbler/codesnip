@@ -559,6 +559,7 @@
 			<DCCReference Include="Main\CS.ActiveText.Validator.pas"/>
 			<DCCReference Include="Main\CS.Config.pas"/>
 			<DCCReference Include="Main\CS.Docs.TagInfo.RTF.pas"/>
+			<DCCReference Include="Main\CS.Database.IO.Legacy.pas"/>
 			<DCCReference Include="Main\CS.Database.IO.Native.pas"/>
 			<DCCReference Include="Main\CS.Database.SnippetLinks.pas"/>
 			<DCCReference Include="Main\CS.Database.Snippets.pas"/>
