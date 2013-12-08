@@ -323,9 +323,8 @@ begin
       ) then
       begin
         case CompResultStr[1] of
-          'Y': Result[CompID] := crSuccess;
+          'Y', 'W': Result[CompID] := crSuccess;
           'N': Result[CompID] := crError;
-          'W': Result[CompiD] := crWarning;
           else Result[CompID] := crQuery;
         end;
       end;
