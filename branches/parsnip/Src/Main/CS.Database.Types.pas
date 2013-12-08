@@ -40,16 +40,12 @@ type
   TSnippetID = record
   public
     type
-      ///  <summary>Comparer for snippet IDs.</summary>
-      TComparer = class(TComparer<TSnippetID>)
+      ///  <summary>Comparator for snippet IDs.</summary>
+      TComparator = class(TComparator<TSnippetID>)
         ///  <summary>Compares the two given snippet IDs.</summary>
         ///  <remarks>Returns zero if Left is the same as Right, -ve if Left is
         ///  less than Right or +ve if Left is greater than Right.</remarks>
         function Compare(const Left, Right: TSnippetID): Integer; override;
-      end;
-      ///  <summary>Equality comparer for snippet IDs.</summary>
-      TEqualityComparer = class(TEqualityComparer<TSnippetID>)
-      public
         ///  <summary>Checks if the two given snippet IDs are equal.</summary>
         function Equals(const Left, Right: TSnippetID): Boolean; override;
         ///  <summary>Returns the hash code of the given snippet ID.</summary>
@@ -412,24 +408,19 @@ begin
   Result := fID;
 end;
 
-{ TSnippetID.TComparer }
+{ TSnippetID.TComparator }
 
-function TSnippetID.TComparer.Compare(const Left,
-  Right: TSnippetID): Integer;
+function TSnippetID.TComparator.Compare(const Left, Right: TSnippetID): Integer;
 begin
   Result := TSnippetID.Compare(Left, Right);
 end;
 
-{ TSnippetID.TEqualityComparer }
-
-function TSnippetID.TEqualityComparer.Equals(const Left,
-  Right: TSnippetID): Boolean;
+function TSnippetID.TComparator.Equals(const Left, Right: TSnippetID): Boolean;
 begin
   Result := Left = Right;
 end;
 
-function TSnippetID.TEqualityComparer.GetHashCode(
-  const Value: TSnippetID): Integer;
+function TSnippetID.TComparator.GetHashCode(const Value: TSnippetID): Integer;
 begin
   Result := Value.Hash;
 end;

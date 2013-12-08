@@ -98,8 +98,7 @@ begin
   inherited Create;
   fTable := TObjectDictionary<TSnippetID,TDBSnippet>.Create(
     TRules<TSnippetID>.Create(
-      TSnippetID.TComparer.Create,
-      TSnippetID.TEqualityComparer.Create
+      TSnippetID.TComparator.Create, TSnippetID.TComparator.Create
     ),
     TRules<TDBSnippet>.Create(
       TDelegatedComparer<TDBSnippet>.Create(
@@ -156,4 +155,5 @@ begin
 end;
 
 end.
+
 
