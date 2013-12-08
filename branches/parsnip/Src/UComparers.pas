@@ -43,11 +43,40 @@ type
     function GetHashCode(const Value: T): Integer;
   end;
 
+  ///  <summary>Abstract base class for all comparator classes that can
+  ///  construct a TRules record that uses this class to provide comparison
+  ///  rules for use with collections from the Delphi Collections library.
+  ///  </summary>
+  ///  <remarks>In order for classes to be used by TRules instances, the classes
+  ///  must support IComparer and IEqualityComparer in addition to IComparator.
+  ///  </remarks>
+  TBaseComparator<T> = class abstract(TInterfacedObject,
+    IComparator<T>, IComparer<T>, IEqualityComparer<T>)
+  public
+    ///  <summary>Creates a TRules wrapper around an instance of the comparator
+    ///  that provides the IComparer and IEqualityComparer objects required by
+    ///  collection classes in the Delphi Collections library.</summary>
+    class function ConstructRules: TRules<T>; virtual;
+    ///  <summary>Abstract generic method to compare two values, Left and Right.
+    ///  Returns -ve if Left is less than Right, 0 if the values are equal or
+    ///  +ve if Left is greater than Right.</summary>
+    function Compare(const Left, Right: T): Integer;
+      virtual; abstract;
+    ///  <summary>Abstract generic method used to check the equality of two
+    ///  values, Left and Right.</summary>
+    function Equals(const Left, Right: T): Boolean;
+      reintroduce; overload; virtual; abstract;
+    ///  <summary>Abstract generic method used to generate a hash code for the
+    ///  given value.</summary>
+    function GetHashCode(const Value: T): Integer;
+      reintroduce; overload; virtual; abstract;
+  end;
+
   ///  <summary>Abstract base class for IComparator implementations and a
   ///  provider of default IComparator implementations.</summary>
   ///  <remarks>Since the IComparator is a union of the methods of IComparer and
   ///  IEqualityComparer, TComparator also supports those interfaces.</remarks>
-  TComparator<T> = class abstract(TInterfacedObject,
+  TComparator<T> = class abstract(TBaseComparator<T>,
     IComparator<T>, IComparer<T>, IEqualityComparer<T>)
   public
     ///  <summary>Returns an instance of TComparator for the required type.
@@ -78,19 +107,6 @@ type
     ///  TDelegatedEqualityComparer.</remarks>
     class function Construct(AComparer: IComparer<T>;
       AEqualityComparer: IEqualityComparer<T>): IComparer<T>; overload;
-    ///  <summary>Abstract generic method to compare two values, Left and Right.
-    ///  Returns -ve if Left is less than Right, 0 if the values are equal or
-    ///  +ve if Left is greater than Right.</summary>
-    function Compare(const Left, Right: T): Integer;
-      virtual; abstract;
-    ///  <summary>Abstract generic method used to check the equality of two
-    ///  values, Left and Right.</summary>
-    function Equals(const Left, Right: T): Boolean;
-      reintroduce; overload; virtual; abstract;
-    ///  <summary>Abstract generic method used to generate a hash code for the
-    ///  given value.</summary>
-    function GetHashCode(const Value: T): Integer;
-      reintroduce; overload; virtual; abstract;
   end;
 
   ///  <summary>Concrete implementation of TComparator that delegates all method
@@ -141,7 +157,7 @@ type
 
 type
   ///  <summary>Case sensitive string comparator.</summary>
-  TStringComparator = class(TInterfacedObject,
+  TStringComparator = class(TBaseComparator<string>,
     IComparator<string>, IComparer<string>, IEqualityComparer<string>
   )
   public
@@ -149,19 +165,19 @@ type
     ///  Returns -ve if Left less than Right, 0 if equal or +ve if Left greater
     ///  than Right.</summary>
     ///  <remarks>Method of IComparator and IComparer.</remarks>
-    function Compare(const Left, Right: string): Integer;
+    function Compare(const Left, Right: string): Integer; override;
     ///  <summary>Checks if two strings, Left and Right, are equal, taking
     ///  account of case.</summary>
     ///  <remarks>Method of IComparator and IEqualityComparer.</remarks>
-    function Equals(const Left, Right: string): Boolean; reintroduce;
+    function Equals(const Left, Right: string): Boolean; override;
     ///  <summary>Gets hash of given string, taking account of case.</summary>
     ///  <remarks>Method of IComparator and IEqualityComparer.</remarks>
-    function GetHashCode(const Value: string): Integer; reintroduce;
+    function GetHashCode(const Value: string): Integer; override;
   end;
 
 type
   ///  <summary>Case insensitive string comparator.</summary>
-  TTextComparator = class(TInterfacedObject,
+  TTextComparator = class(TBaseComparator<string>,
     IComparator<string>, IComparer<string>, IEqualityComparer<string>
   )
   public
@@ -169,18 +185,18 @@ type
     ///  Left less than Right, 0 if equal or +ve if Left greater than Right.
     ///  </summary>
     ///  <remarks>Method of IComparator and IComparer.</remarks>
-    function Compare(const Left, Right: string): Integer;
+    function Compare(const Left, Right: string): Integer; override;
     ///  <summary>Checks if two strings, Left and Right, are equal, ignoring
     ///  case.</summary>
     ///  <remarks>Method of IComparator and IEqualityComparer.</remarks>
-    function Equals(const Left, Right: string): Boolean; reintroduce;
+    function Equals(const Left, Right: string): Boolean; override;
     ///  <summary>Gets hash of given string, ignoring case.</summary>
     ///  <remarks>
     ///  <para>To strings that contain the same text but differ in case will
     ///  always hash to the same value.</para>
     ///  <para>Method of IComparator and IEqualityComparer.</para>
     ///  </remarks>
-    function GetHashCode(const Value: string): Integer; reintroduce;
+    function GetHashCode(const Value: string): Integer; override;
   end;
 
 
@@ -192,6 +208,16 @@ uses
   CS.Utils.Hashes,
   UStrUtils;
 
+
+{ TBaseComparator<T> }
+
+class function TBaseComparator<T>.ConstructRules: TRules<T>;
+var
+  Inst: TBaseComparator<T>;
+begin
+  Inst := Self.Create;
+  Result := TRules<T>.Create(Inst, Inst);
+end;
 
 { TComparator<T> }
 
