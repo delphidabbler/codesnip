@@ -32,6 +32,9 @@
 <body>
 
 <div class="title">
+  <div class="index-link">
+    <a href="index.html">Back to Index</a>
+  </div>
   <div>
     DelphiDabbler CodeSnip
   </div>
@@ -142,15 +145,15 @@
   </dt>
   <dd>
     This is a representation of a list of <kbd>SizedString</kbd> values. It is a
-    sequence of zero or more <kbd>SizedString</kbd> values preceded by the 
+    sequence of zero or more <kbd>SizedString</kbd> values preceded by the
     number of strings in the list as a <kbd>LongWord</kbd>.
   </dd>
   <dt>
     <kbd>LongStringList</kbd>
   </dt>
   <dd>
-    This is a representation of a list of <kbd>SizedLongString</kbd> values. It 
-    is a sequence of zero or more <kbd>SizedLongString</kbd> values preceded by 
+    This is a representation of a list of <kbd>SizedLongString</kbd> values. It
+    is a sequence of zero or more <kbd>SizedLongString</kbd> values preceded by
     the number of strings in the list as a <kbd>LongWord</kbd>.
   </dd>
   <dt>
@@ -173,7 +176,7 @@
   <dd>
     This is a UTC date in <a
       href="http://www.cl.cam.ac.uk/~mgk25/iso-time.html"
-    >ISO-8601 format</a> written as a <kbd>SizedString</kbd> value. The string 
+    >ISO-8601 format</a> written as a <kbd>SizedString</kbd> value. The string
     will always have the format
     <kbd>YYYY-MM-DD&quot;T&quot;HH:MM:SS.XXX&quot;Z&quot;</kbd> or
     <kbd>YYYY-MM-DD&quot;T&quot;HH:MM:SS,XXX&quot;Z&quot;</kbd>.
@@ -269,7 +272,7 @@
 
 <p>
   There is one snippet file for each snippet in the database. The files are
-  named <kbd>csdb.snippet.<em>ID</em>.dat</kbd> where <kbd><em>ID</em></kbd> is 
+  named <kbd>csdb.snippet.<em>ID</em>.dat</kbd> where <kbd><em>ID</em></kbd> is
   a string representation of the snippet's ID.
 </p>
 
@@ -351,7 +354,7 @@
         Description property
       </dt>
       <dd>
-        A <kbd>SizedLongString</kbd> value containing the required description 
+        A <kbd>SizedLongString</kbd> value containing the required description
         in REML mark-up.
       </dd>
       <dt>
@@ -450,7 +453,7 @@
             the link's synch space.
           </li>
           <li>
-            A <kbd>SizedString</kbd> value that is a string representation of ID 
+            A <kbd>SizedString</kbd> value that is a string representation of ID
             of the linked snippet.
           </li>
         </ol>

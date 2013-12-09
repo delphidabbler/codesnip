@@ -33,6 +33,26 @@ body {
   font-style: italic;
   color: #336;
 }
+.title div.index-link {
+  position: absolute;
+  top: 1em;
+  right: 1em;
+  text-align: right;
+  float: right;
+  padding: 0;
+  margin: 0;
+}
+.title div.index-link a {
+  font-weight: normal;
+  font-size: 10pt;
+  text-decoration: none;
+  background-color: #f7f7f7;
+  padding: 0.25em;
+}
+.title div.index-link a:hover {
+  background-color: silver;
+  color: white;
+}
 
 h1, h2, h3, h4, h5 {
   font-family: Georgia, Garamond, "Times New Roman", Times, serif;
