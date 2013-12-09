@@ -27,18 +27,32 @@ uses
 type
   ///  <summary>Enumeration that identifies all compilers supported by the
   ///  program.</summary>
+  ///  <remarks>
+  ///  <para>- ciD2 - Delphi 2 compiler.</para>
+  ///  <para>- ciD3 - Delphi 3 compiler.</para>
+  ///  <para>- ciD4 - Delphi 4 compiler.</para>
+  ///  <para>- ciD5 - Delphi 5 compiler.</para>
+  ///  <para>- ciD6 - Delphi 6 compiler.</para>
+  ///  <para>- ciD7 - Delphi 7 compiler.</para>
+  ///  <para>- ciD2005 - Delphi 2005 for Win 32 compiler.</para>
+  ///  <para>- ciD2006 - Delphi 2006 for Win 32 compiler.</para>
+  ///  <para>- ciD2007 - Delphi 2007 for Win 32 compiler.</para>
+  ///  <para>- ciD2009 - Delphi 2009 for Win 32 compiler.</para>
+  ///  <para>- ciD2010 - Delphi 2010 compiler (Win 32 only).</para>
+  ///  <para>- ciDXE - Delphi XE Win 32 compiler.</para>
+  ///  <para>- ciDXE2 - Delphi XE2 Win 32 compiler.</para>
+  ///  <para>- ciDXE3 - Delphi XE3 Win 32 compiler.</para>
+  ///  <para>- ciDXE4 - Delphi XE4 Win 32 compiler.</para>
+  ///  <para>- ciDXE5 - Delphi XE5 Win 32 compiler.</para>
+  ///  <para>- ciFPC - Free Pascal Compiler.</para>
+  ///  <para>IMPORTANT NOTE: Any new compiler IDs must be added to the END of
+  ///  the enumeration. Some code depends on the ordering of this enueration
+  ///  and will fail if it changes.</para>
+  ///  </remarks>
   TCompilerID = (
-    ciD2, ciD3, ciD4, ciD5, ciD6, ciD7, // Delphi 2-7
-    ciD2005w32, ciD2006w32,             // Delphi 2005/6 Win32 personality
-    ciD2007,                            // Delphi 2007 for Win32
-    ciD2009w32,                         // Delphi 2009 Win32 personality
-    ciD2010,                            // Delphi 2010
-    ciDXE,                              // Delphi XE
-    ciDXE2,                             // Delphi XE2
-    ciDXE3,                             // Delphi XE3
-    ciDXE4,                             // Delphi XE4
-    ciDXE5,                             // Delphi XE5
-    ciFPC                               // Free Pascal
+    ciD2, ciD3, ciD4, ciD5, ciD6, ciD7, ciD2005, ciD2006, ciD2007, ciD2009,
+    ciD2010, ciDXE, ciDXE2, ciDXE3, ciDXE4, ciDXE5, ciFPC
+    // NOTE: enter any new compiler IDs here
   );
 
   ///  <summary>Set of compiler ID identifiers from TCompilerID enumeration.
@@ -53,8 +67,8 @@ const
   ///  <summary>Set of Borland / CodeGear / Embarcadero BDS based Delphi
   ///  compilers.</summary>
   cBDSCompilers = [
-    ciD2005w32, ciD2006w32, ciD2007, ciD2009w32, ciD2010, ciDXE, ciDXE2,
-    ciDXE3, ciDXE4, ciDXE5
+    ciD2005, ciD2006, ciD2007, ciD2009, ciD2010, ciDXE, ciDXE2, ciDXE3, ciDXE4,
+    ciDXE5
   ];
 
 const
