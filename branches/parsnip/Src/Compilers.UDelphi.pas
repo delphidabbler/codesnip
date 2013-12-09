@@ -95,8 +95,16 @@ function TDelphiCompiler.CompilerIDToVerNum: Integer;
     @return Delphi version number.
   }
 begin
-  // The following code assumes ciD2 to ciD7 are contiguous
-  Result := 2 + Ord(GetID) - Ord(ciD2)
+  case GetID of
+    ciD2: Result := 2;
+    ciD3: Result := 3;
+    ciD4: Result := 4;
+    ciD5: Result := 5;
+    ciD6: Result := 6;
+    ciD7: Result := 7;
+  else
+    raise EBug.Create(ClassName + '.CompilerIDToVerNum: Invalid compiler ID');
+  end;
 end;
 
 constructor TDelphiCompiler.Create(const Ver: TCompilerID);
