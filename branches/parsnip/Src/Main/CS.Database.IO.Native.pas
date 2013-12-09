@@ -143,7 +143,6 @@ type
     procedure LoadSnippetProperties(const ASnippet: TDBSnippet;
       const Reader: TBinaryStreamReader);
     function ReadMarkup(const Reader: TBinaryStreamReader): IActiveText;
-    function ReadStrings(const Reader: TBinaryStreamReader): IStringList;
     function ReadSnippetIDs(const Reader: TBinaryStreamReader):
       ISnippetIDList;
     function ReadCompileResults(const Reader: TBinaryStreamReader):
@@ -554,13 +553,10 @@ var
   ID: TSnippetID;
   IDStrs: IStringList;
 begin
-  if Optional and IDs.IsEmpty then
-    Exit;
-  WritePropCode(Writer, PropCode);
   IDStrs := TIStringList.Create;
   for ID in IDs do
     IDStrs.Add(ID.ToString);
-  Writer.WriteSizedString16List(IDStrs);
+  WriteStringsProp(Writer, PropCode, IDStrs, Optional);
 end;
 
 procedure TDBNativeWriter.WriteString16Prop(const Writer: TBinaryStreamWriter;
@@ -584,15 +580,11 @@ end;
 procedure TDBNativeWriter.WriteStringsProp(const Writer: TBinaryStreamWriter;
   const PropCode: TDBSnippetProp; Strings: IStringList;
   const Optional: Boolean);
-var
-  S: string;
 begin
   if Optional and Strings.IsEmpty then
     Exit;
   WritePropCode(Writer, PropCode);
-  Writer.WriteInt32(Strings.Count);
-  for S in Strings do
-    Writer.WriteSizedString32(S);
+  Writer.WriteSizedString16List(Strings);
 end;
 
 procedure TDBNativeWriter.WriteTagsProp(const Writer: TBinaryStreamWriter;
@@ -601,13 +593,10 @@ var
   Tag: TTag;
   TagStrs: IStringList;
 begin
-  if Optional and Tags.IsEmpty then
-    Exit;
-  WritePropCode(Writer, PropCode);
   TagStrs := TIStringList.Create;
   for Tag in Tags do
     TagStrs.Add(Tag.ToString);
-  Writer.WriteSizedString16List(TagStrs);
+  WriteStringsProp(Writer, PropCode, TagStrs, Optional);
 end;
 
 procedure TDBNativeWriter.WriteTestInfoProp(const Writer: TBinaryStreamWriter;
@@ -738,7 +727,7 @@ begin
           TUTCDateTime.CreateFromISO8601String(Reader.ReadSizedString16)
         );
       spRequiredModules:
-        ASnippet.SetRequiredModules(ReadStrings(Reader));
+        ASnippet.SetRequiredModules(Reader.ReadSizedString16List);
       spRequiredSnippets:
         ASnippet.SetRequiredSnippets(ReadSnippetIDs(Reader));
       spXRefs:
@@ -823,18 +812,6 @@ begin
   Result := TSnippetIDList.Create;
   for IDStr in IDStrs do
     Result.Add(TSnippetID.Create(IDStr));
-end;
-
-function TDBNativeReader.ReadStrings(const Reader: TBinaryStreamReader):
-  IStringList;
-var
-  Count: Integer;
-  I: Integer;
-begin
-  Count := Reader.ReadInt32;
-  Result := TIStringList.Create;
-  for I := 1 to Count do
-    Result.Add(Reader.ReadSizedString32);
 end;
 
 function TDBNativeReader.ReadTags(const Reader: TBinaryStreamReader):
