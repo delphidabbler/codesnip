@@ -126,7 +126,7 @@ type
       const ALastModified: TUTCDateTime);
     procedure WriteMasterFile(const ATable: TDBSnippetsTable;
       const ALastModified: TUTCDateTime);
-    procedure RemoveDeletedSnippetFiles(const ATable: TDBSnippetsTable);
+    procedure RemoveUnwantedFiles(const ATable: TDBSnippetsTable);
   public
     constructor Create(const DBPath: string);
     destructor Destroy; override;
@@ -163,12 +163,16 @@ implementation
 uses
   IOUtils,
 
+  Collections.Base,
+  Collections.Sets,
+
   CS.ActiveText.Helper,
   CS.ActiveText.Renderers.REML,
   CS.Database.SnippetLinks,
   CS.Database.Snippets,
   CS.Database.Tags,
   Compilers.UCompilers,
+  UComparers,
   UConsts,
   UIOUtils,
   UStrUtils,
@@ -178,8 +182,9 @@ const
   MasterFileWatermark = 'CSUSERDBMASTER';
   SnippetFileWatermark = 'CSUSERDBSNIPPET';
   CurrentVersion = 7;
-  MasterFileName = 'csdb.master.dat';
-  SnippetFileNameFmt = 'csdb.snippet.%s.dat';
+  DBFileNamePrefix = 'csdb';
+  MasterFileName = DBFileNamePrefix + '.master.dat';
+  SnippetFileNameFmt = DBFileNamePrefix + '.snippet.%s.dat';
 
 { TDBNativeIOBase }
 
@@ -338,15 +343,44 @@ begin
   end;
 end;
 
-procedure TDBNativeWriter.RemoveDeletedSnippetFiles(
-  const ATable: TDBSnippetsTable);
+procedure TDBNativeWriter.RemoveUnwantedFiles(const ATable: TDBSnippetsTable);
 var
   SnippetID: TSnippetID;
+  AllFiles: TStringList;
+  WantedFiles: THashSet<string>;
+  FileName: string;
 begin
-  for SnippetID in fExistingSnippets.Keys do
-  begin
-    if not ATable.Contains(SnippetID) then
-       TFile.Delete(fDBPath + SnippetFileName(SnippetID));
+  // Build list of files that are supposed to be in directory. These are the
+  // master database file and a snippet file for all existing snippets.
+  WantedFiles := THashSet<string>.Create(
+    TRules<string>.Create(TTextComparator.Create, TTextComparator.Create)
+  );
+  try
+    WantedFiles.Add(MasterFileName);
+    for SnippetID in fExistingSnippets.Keys do
+    begin
+      if ATable.Contains(SnippetID) then
+        WantedFiles.Add(SnippetFileName(SnippetID))
+    end;
+    // Build a list of files that are actually in the database
+    AllFiles := TStringList.Create;
+    try
+      ListFiles(
+        ExcludeTrailingPathDelimiter(fDBPath), '*.*', AllFiles, False, True
+      );
+      // Remove files in directory that are not required. These include any
+      // files for deleted snippets, any legacy files and anything else placed
+      // there by a third party.
+      for FileName in AllFiles do
+      begin
+        if not WantedFiles.Contains(FileName) then
+          TFile.Delete(fDBPath + FileName);
+      end;
+    finally
+      AllFiles.Free;
+    end;
+  finally
+    WantedFiles.Free;
   end;
 end;
 
@@ -360,7 +394,7 @@ begin
     fLastModified := TUTCDateTime.CreateNull;
   WriteChangedAndNewSnippetFiles(ATable, ALastModified);
   WriteMasterFile(ATable, ALastModified);
-  RemoveDeletedSnippetFiles(ATable);
+  RemoveUnwantedFiles(ATable);
 end;
 
 procedure TDBNativeWriter.WriteBooleanProp(const Writer: TBinaryStreamWriter;
