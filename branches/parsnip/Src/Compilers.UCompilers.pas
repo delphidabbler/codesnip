@@ -77,7 +77,7 @@ uses
   // Project
   Compilers.UBDS, Compilers.UDelphi, Compilers.UFreePascal,
   Compilers.USearchDirs, IntfCommon, UConsts, UExceptions, UIStringList,
-  USettings;
+  USettings, UStrUtils;
 
 
 type
@@ -136,6 +136,19 @@ type
       {Read access method for AvailableCount property
         @return Number of installed compilers available to program.
       }
+    ///  <summary>Finds the ID of the compiler with a given ID string.</summary>
+    ///  <param name="IDStr">string [in] ID string of required compiler.</param>
+    ///  <param name="ID">TCompilerID [out] Set to the ID of the compiler whose
+    ///  ID string matches IDStr if found. Left undefined if no compiler is
+    ///  found.</param>
+    ///  <returns>Boolean. True if a compiler with the given ID string was
+    ///  found or False if not.</returns>
+    ///  <remarks>
+    ///  <para>The search for the ID string is not case sensitive.</para>
+    ///  <para>Method of ICompilers.</para>
+    ///  </remarks>
+    function GetIDFromString(const IDStr: string; out ID: TCompilerID): Boolean;
+
     function HaveDisplayable: Boolean;
       {Checks if any compilers are displayable.
         @return True if at least one compiler is displayable, False otherwise.
@@ -270,6 +283,20 @@ function TCompilers.GetEnumerator: TEnumerator<ICompiler>;
   }
 begin
   Result := fCompilers.GetEnumerator;
+end;
+
+function TCompilers.GetIDFromString(const IDStr: string; out ID: TCompilerID):
+  Boolean;
+var
+  Compiler: ICompiler;  // each compiler
+begin
+  for Compiler in fCompilers do
+    if StrSameText(Compiler.GetIDString, IDStr) then
+    begin
+      ID := Compiler.GetID;
+      Exit(True);
+    end;
+  Result := False;
 end;
 
 function TCompilers.HaveDisplayable: Boolean;

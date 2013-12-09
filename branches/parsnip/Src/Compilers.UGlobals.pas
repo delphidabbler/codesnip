@@ -296,6 +296,16 @@ type
     ///  <summary>Getter for AvailableCount property.</summary>
     function GetAvailableCount: Integer;
 
+    ///  <summary>Finds the ID of the compiler with a given ID string.</summary>
+    ///  <param name="IDStr">string [in] ID string of required compiler.</param>
+    ///  <param name="ID">TCompilerID [out] Set to the ID of the compiler whose
+    ///  ID string matches IDStr if found. Left undefined if no compiler is
+    ///  found.</param>
+    ///  <returns>Boolean. True if a compiler with the given ID string was
+    ///  found or False if not.</returns>
+    ///  <remarks>The search for the ID string is not case sensitive.</remarks>
+    function GetIDFromString(const IDStr: string; out ID: TCompilerID): Boolean;
+
     ///  <summary>Creates and returns an enumerator for all compilers in this
     ///  object.</summary>
     function GetEnumerator: TEnumerator<ICompiler>;
