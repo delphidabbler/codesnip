@@ -123,9 +123,7 @@ end;
 function TBDSCompiler.GetIDString: string;
 begin
   case GetID of
-    ciD2005, ciD2006, ciD2009:
-      Result := Format('D%dw32', [ProductVersion]);
-    ciD2007, ciD2010:
+    ciD2005, ciD2006, ciD2007, ciD2009, ciD2010:
       Result := Format('D%d', [ProductVersion]);
     ciDXE:
       Result := 'DXE';
@@ -143,7 +141,7 @@ end;
 
 function TBDSCompiler.GetName: string;
 resourcestring
-  sCompilerName = 'Delphi %d';  // template for name of compiler
+  sCompilerName = 'Delphi %d';  // template for Delpi 2005-2010 compiler names
   sDelphiXE = 'Delphi XE';      // name of Delphi XE compiler
   sDelphiXE2 = 'Delphi XE2';    // name of Delphi XE2 compiler
   sDelphiXE3 = 'Delphi XE3';    // name of Delphi XE3 compiler
