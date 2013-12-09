@@ -133,14 +133,6 @@
     <kbd>LongWord</kbd>.
   </dd>
   <dt>
-    <kbd>ByteList</kbd>
-  </dt>
-  <dd>
-    This is a representation of a list of at most 255 <kbd>Byte</kbd> values.
-    It is a sequence of zero or more <kbd>Byte</kbd> values preceded by the
-    number of values in the list as a <kbd>Byte</kbd>.
-  </dd>
-  <dt>
     <kbd>StringList</kbd>
   </dt>
   <dd>
@@ -424,12 +416,12 @@
         </div>
         <ol class="squashed">
           <li>
-            A <kbd>ByteList</kbd> containing codes representing the IDs of
-            compilers with which the snippet compiles successfully.
+            A <kbd>StringList</kbd> containing the ID strings of compilers with
+            which the snippet compiles successfully.
           </li>
           <li>
-            A <kbd>ByteList</kbd> containing codes representing the IDs of
-            compilers with which the snippet fails to compile.
+            A <kbd>StringList</kbd> containing the ID strings of compilers with
+            which the snippet fails to compile.
           </li>
         </ol>
       </dd>
