@@ -472,8 +472,8 @@ inherited MainForm: TMainForm
       Checked = True
       GroupIndex = 100
       Hint = 
-        'Group Snippets By Tags|View snippets grouped by their associated' +
-        ' tags in overview pane'
+        'Group Snippets By Tags|Display snippets in overview pane grouped' +
+        ' by their associated tags'
       OnExecute = ActOverviewGroupingExecute
       OnUpdate = ActOverviewGroupingUpdate
     end
@@ -483,8 +483,8 @@ inherited MainForm: TMainForm
       Caption = 'Group Snippets Alphabetically'
       GroupIndex = 100
       Hint = 
-        'Group Snippets Alphabetically|View snippets grouped by the initi' +
-        'al letter of their title'
+        'Group Snippets Alphabetically|Display snippets in overview pane ' +
+        'grouped by the initial letter of their title'
       OnExecute = ActOverviewGroupingExecute
       OnUpdate = ActOverviewGroupingUpdate
     end
@@ -492,7 +492,9 @@ inherited MainForm: TMainForm
       Category = 'View'
       Caption = 'Group Snippets By Kind'
       GroupIndex = 100
-      Hint = 'Group Snippets By Kind|View snippets grouped by kind'
+      Hint = 
+        'Group Snippets By Kind|Display snippets in overview pane grouped' +
+        ' by kind'
       OnExecute = ActOverviewGroupingExecute
       OnUpdate = ActOverviewGroupingUpdate
     end
