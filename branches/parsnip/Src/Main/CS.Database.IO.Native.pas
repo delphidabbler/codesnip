@@ -552,13 +552,15 @@ procedure TDBNativeWriter.WriteSnippetIDListProp(
   IDs: ISnippetIDList; const Optional: Boolean);
 var
   ID: TSnippetID;
+  IDStrs: IStringList;
 begin
-  if Optional and (IDs.Count = 0) then
+  if Optional and IDs.IsEmpty then
     Exit;
   WritePropCode(Writer, PropCode);
-  Writer.WriteInt32(IDs.Count);
+  IDStrs := TIStringList.Create;
   for ID in IDs do
-    Writer.WriteSizedString16(ID.ToString);
+    IDStrs.Add(ID.ToString);
+  Writer.WriteSizedString16List(IDStrs);
 end;
 
 procedure TDBNativeWriter.WriteString16Prop(const Writer: TBinaryStreamWriter;
@@ -597,13 +599,15 @@ procedure TDBNativeWriter.WriteTagsProp(const Writer: TBinaryStreamWriter;
   const PropCode: TDBSnippetProp; Tags: ITagSet; const Optional: Boolean);
 var
   Tag: TTag;
+  TagStrs: IStringList;
 begin
-  if Optional and (Tags.Count = 0) then
+  if Optional and Tags.IsEmpty then
     Exit;
   WritePropCode(Writer, PropCode);
-  Writer.WriteInt32(Tags.Count);
+  TagStrs := TIStringList.Create;
   for Tag in Tags do
-    Writer.WriteSizedString16(Tag.ToString);
+    TagStrs.Add(Tag.ToString);
+  Writer.WriteSizedString16List(TagStrs);
 end;
 
 procedure TDBNativeWriter.WriteTestInfoProp(const Writer: TBinaryStreamWriter;
@@ -812,13 +816,13 @@ end;
 function TDBNativeReader.ReadSnippetIDs(const Reader: TBinaryStreamReader):
   ISnippetIDList;
 var
-  Count: Integer;
-  I: Integer;
+  IDStr: string;
+  IDStrs: IStringList;
 begin
-  Count := Reader.ReadInt32;
+  IDStrs := Reader.ReadSizedString16List;
   Result := TSnippetIDList.Create;
-  for I := 1 to Count do
-    Result.Add(TSnippetID.Create(Reader.ReadSizedString16));
+  for IDStr in IDStrs do
+    Result.Add(TSnippetID.Create(IDStr));
 end;
 
 function TDBNativeReader.ReadStrings(const Reader: TBinaryStreamReader):
@@ -836,13 +840,13 @@ end;
 function TDBNativeReader.ReadTags(const Reader: TBinaryStreamReader):
   ITagSet;
 var
-  Count: Integer;
-  I: Integer;
+  TagStr: string;
+  TagStrs: IStringList;
 begin
-  Count := Reader.ReadInt32;
+  TagStrs := Reader.ReadSizedString16List;
   Result := TTagSet.Create;
-  for I := 1 to Count do
-    Result.Add(TTag.Create(Reader.ReadSizedString16));
+  for TagStr in TagStrs do
+    Result.Add(TTag.Create(TagStr));
 end;
 
 procedure TDBNativeReader.ValidateSnippetFileHeader(
