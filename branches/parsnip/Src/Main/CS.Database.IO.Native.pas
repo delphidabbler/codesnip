@@ -406,7 +406,7 @@ begin
     if CompRes = crError then
       Failure.Add(Compilers[CompilerID].GetIDString);
   end;
-  if Optional and (Success.Count = 0) and (Failure.Count = 0) then
+  if Optional and Success.IsEmpty and Failure.IsEmpty then
     Exit;
   WritePropCode(Writer, PropCode);
   Writer.WriteSizedString16List(Success);
@@ -585,7 +585,7 @@ procedure TDBNativeWriter.WriteStringsProp(const Writer: TBinaryStreamWriter;
 var
   S: string;
 begin
-  if Optional and (Strings.Count = 0) then
+  if Optional and Strings.IsEmpty then
     Exit;
   WritePropCode(Writer, PropCode);
   Writer.WriteInt32(Strings.Count);

@@ -879,7 +879,7 @@ var
 begin
   try
     // Don't write list if no snippets
-    if SnipList.Count = 0 then
+    if SnipList.IsEmpty then
       Exit;
     // Find required category node
     CatNode := FindCategoryNode(CatID);
@@ -922,7 +922,7 @@ var
 begin
   try
     // Don't write list tags if no items
-    if Items.Count = 0 then
+    if Items.IsEmpty then
       Exit;
     // Find snippet node
     SnippetNode := FindSnippetNode(SnippetName);

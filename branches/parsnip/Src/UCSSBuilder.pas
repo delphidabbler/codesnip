@@ -127,7 +127,7 @@ begin
   Lines := TIStringList.Create;
   // Compose CSS selector statement
   Lines.Add(Selector + ' {');
-  if fProperties.Count > 0 then
+  if not fProperties.IsEmpty then
     Lines.Add(fProperties);
   Lines.Add('}');
   // Write CSS in string
@@ -152,7 +152,7 @@ function TCSSSelector.IsEmpty: Boolean;
 begin
   // Selector is empty if background colour not set, there is no font,
   // margin is not defined and there is no extra CSS
-  Result := fProperties.Count = 0;
+  Result := fProperties.IsEmpty;
 end;
 
 { TCSSBuilder }

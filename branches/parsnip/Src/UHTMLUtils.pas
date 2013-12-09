@@ -285,7 +285,7 @@ end;
 
 procedure THTMLAttributes.Add(const Name: string; Values: IStringList);
 begin
-  if Assigned(Values) and (Values.Count > 0) then
+  if Assigned(Values) and not Values.IsEmpty then
     Add(Name, Values.GetText(' ', False));
 end;
 

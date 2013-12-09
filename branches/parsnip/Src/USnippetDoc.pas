@@ -122,7 +122,7 @@ resourcestring
   sNone = 'None.';  // string output for empty lists
 begin
   Assert(Assigned(List), ClassName + '.CommaList: List is nil');
-  if List.Count > 0 then
+  if not List.IsEmpty then
     Result := StrMakeSentence(List.GetText(', ', False))
   else
     Result := sNone;

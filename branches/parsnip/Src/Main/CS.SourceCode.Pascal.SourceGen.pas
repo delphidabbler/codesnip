@@ -1181,7 +1181,7 @@ const
   cLinePrefix = ' * ';  // prefixes each comment line
 begin
   // Only create comment if some comment text is provided
-  if Assigned(Comments) and (Comments.Count > 0) then
+  if Assigned(Comments) and not Comments.IsEmpty then
   begin
     // text wrap each line of comments and exploded into separate lines
     Lines := TIStringList.Create;
@@ -1216,7 +1216,7 @@ begin
   begin
     // use first non-empty paragraph of Text as comment
     Lines := TIStringList.Create(PlainText, string(sLineBreak), False);
-    if Lines.Count > 0 then
+    if not Lines.IsEmpty then
       PlainText := Lines[0];
   end;
   case Style of

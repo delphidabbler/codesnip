@@ -324,7 +324,7 @@ end;
 
 function TSnippetHTML.Units: string;
 begin
-  if fSnippet.RequiredModules.Count = 0 then
+  if fSnippet.RequiredModules.IsEmpty then
     Result := EmptyListSentence
   else
     Result := THTML.Entities(fSnippet.RequiredModules.GetText(', ', False));
@@ -336,5 +336,4 @@ begin
 end;
 
 end.
-
 

@@ -211,7 +211,7 @@ begin
   if Storage.ItemCount > 0 then
   begin
     StoredUnits := Storage.GetStrings('Count', 'Unit%d');
-    if StoredUnits.Count > 0 then
+    if not StoredUnits.IsEmpty then
       StoredUnits.CopyTo(fCLB.Items, False);
   end
   else

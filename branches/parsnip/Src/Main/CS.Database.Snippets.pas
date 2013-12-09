@@ -505,7 +505,7 @@ end;
 
 procedure TSnippetBase.SetRequiredModules(Value: IStringList);
 begin
-  if not Assigned(Value) or (Value.Count = 0) then
+  if not Assigned(Value) or Value.IsEmpty then
     fRequiredModules := nil
   else
     fRequiredModules := TIStringList.Create(Value);

@@ -454,7 +454,7 @@ procedure TUserConfigFileUpdater.UpdateNamespaces;
     SetIniString(
       Section, 'Switches', Switches.GetText(',', False), CfgFileName
     );
-    if Namespaces.Count > 0 then
+    if not Namespaces.IsEmpty then
       SetIniString(
         Section, 'Namespaces', Namespaces.GetText(' ', False), CfgFileName
       );

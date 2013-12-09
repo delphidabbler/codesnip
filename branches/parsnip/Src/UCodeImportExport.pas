@@ -351,7 +351,7 @@ procedure TCodeExporter.WriteReferenceList(const ParentNode: IXMLNode;
   const ListNodeName: string; PasNames: IStringList);
 begin
   // Don't write list tags if no items
-  if PasNames.Count = 0 then
+  if PasNames.IsEmpty then
     Exit;
   // Write the list
   TXMLDocHelper.WritePascalNameList(

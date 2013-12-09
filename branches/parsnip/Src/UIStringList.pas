@@ -96,6 +96,10 @@ type
       {Gets number of items in list.
         @return Required number of items.
       }
+    function IsEmpty: Boolean;
+      {Checks if the string list is empty.
+        @return True if the string is empty, False if not.
+      }
     procedure Delete(const Idx: Integer);
       {Deletes a string from list.
         @param Index of string to be deleted.
@@ -266,6 +270,10 @@ type
     function Count: Integer;
       {Gets number of items in list.
         @return Required number of items.
+      }
+    function IsEmpty: Boolean;
+      {Checks if the string list is empty.
+        @return True if the string is empty, False if not.
       }
     procedure Delete(const Idx: Integer);
       {Deletes a string from list.
@@ -601,6 +609,14 @@ function TIStringList.IndexOf(const Str: string): Integer;
   }
 begin
   Result := fStrings.IndexOf(Str);
+end;
+
+function TIStringList.IsEmpty: Boolean;
+  {Checks if the string list is empty.
+    @return True if the string is empty, False if not.
+  }
+begin
+  Result := fStrings.Count = 0;
 end;
 
 function TIStringList.IsValidIndex(const Idx: Integer): Boolean;

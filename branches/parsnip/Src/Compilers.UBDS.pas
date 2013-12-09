@@ -195,7 +195,7 @@ begin
   if not RequiresRTLNamespaces then
     Exit('');
   Namespaces := TIStringList.Create(fRTLNamespaces, ' ', False, True);
-  if Namespaces.Count = 0 then
+  if Namespaces.IsEmpty then
     Exit('');
   Result := '-NS' + Namespaces.GetText(';', False);
 end;
