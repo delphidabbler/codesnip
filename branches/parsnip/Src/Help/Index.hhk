@@ -38,10 +38,6 @@
     <param name="Local" value="HTML\dlg_userbugreport.htm">
     </OBJECT>
   <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="categories menu">
-    <param name="Local" value="HTML\menu_categories.htm">
-    </OBJECT>
-  <LI> <OBJECT type="text/sitemap">
     <param name="Name" value="check for program updates dialogue">
     <param name="Local" value="HTML\dlg_programupdates.htm">
     </OBJECT>
@@ -230,10 +226,6 @@
     <param name="Local" value="HTML\main_menu.htm">
     </OBJECT>
   <UL>
-    <LI> <OBJECT type="text/sitemap">
-      <param name="Name" value="categories">
-      <param name="Local" value="HTML\menu_categories.htm">
-      </OBJECT>
     <LI> <OBJECT type="text/sitemap">
       <param name="Name" value="compile">
       <param name="Local" value="HTML\menu_compile.htm">
