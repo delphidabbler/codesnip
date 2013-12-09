@@ -42,6 +42,10 @@ type
         ID: TSnippetID;
         LastModified: TUTCDateTime;
       end;
+      TTagInfo = record
+        Tag: TTag;
+        Reserved: LongWord;
+      end;
     type
       TMasterInfo = class(TObject)
       strict private
@@ -50,6 +54,7 @@ type
           fLastModified: TUTCDateTime;
           fWatermark: string;
           fSnippets: TList<TSnippetInfo>;
+          fTags: ITagSet;
         procedure Init;
       public
         constructor Create;
@@ -59,6 +64,7 @@ type
         property Version: Integer read fVersion;
         property LastModified: TUTCDateTime read fLastModified;
         property Snippets: TList<TSnippetInfo> read fSnippets;
+        property Tags: ITagSet read fTags;
       end;
   strict private
     procedure ValidateMasterFileInfo(const MI: TMasterInfo);
@@ -124,13 +130,13 @@ type
     procedure WriteSnippetFile(const ASnippet: TDBSnippet);
     procedure WriteChangedAndNewSnippetFiles(const ATable: TDBSnippetsTable;
       const ALastModified: TUTCDateTime);
-    procedure WriteMasterFile(const ATable: TDBSnippetsTable;
+    procedure WriteMasterFile(const ATable: TDBSnippetsTable; ATagSet: ITagSet;
       const ALastModified: TUTCDateTime);
     procedure RemoveUnwantedFiles(const ATable: TDBSnippetsTable);
   public
     constructor Create(const DBPath: string);
     destructor Destroy; override;
-    procedure Save(const ATable: TDBSnippetsTable;
+    procedure Save(const ATable: TDBSnippetsTable; ATagSet: ITagSet;
       const ALastModified: TUTCDateTime);
   end;
 
@@ -152,7 +158,7 @@ type
   public
     constructor Create(const DBPath: string);
     destructor Destroy; override;
-    procedure Load(const ATable: TDBSnippetsTable;
+    procedure Load(const ATable: TDBSnippetsTable; out ATagSet: ITagSet;
       out ALastModified: TUTCDateTime);
   end;
 
@@ -172,6 +178,7 @@ uses
   CS.Database.Snippets,
   CS.Database.Tags,
   Compilers.UCompilers,
+  IntfCommon,
   UComparers,
   UConsts,
   UIOUtils,
@@ -255,6 +262,7 @@ constructor TDBNativeIOBase.TMasterInfo.Create;
 begin
   inherited Create;
   fSnippets := TList<TSnippetInfo>.Create;
+  fTags := TTagSet.Create;
   Init;
 end;
 
@@ -270,13 +278,15 @@ begin
   fWatermark := '';
   fLastModified := TUTCDateTime.CreateNull;
   fSnippets.Clear;
+  fTags.Clear;
 end;
 
 procedure TDBNativeIOBase.TMasterInfo.Parse(const Reader: TBinaryStreamReader);
 var
   SnippetCount: Integer;
-  I: Integer;
   SnippetInfo: TSnippetInfo;
+  TagCount: Integer;
+  I: Integer;
 resourcestring
   sStreamError = 'Master file data is corrupt:' + EOL2 + '%s';
   sConvertError = 'Conversion error while reading master file:' + EOL2 + '%s';
@@ -289,8 +299,8 @@ begin
     fLastModified := TUTCDateTime.CreateFromISO8601String(
       Reader.ReadSizedString16
     );
-    SnippetCount := Reader.ReadInt32;
     fSnippets.Clear;
+    SnippetCount := Reader.ReadInt32;
     for I := 1 to SnippetCount do
     begin
       SnippetInfo.ID := TSnippetID.Create(Reader.ReadSizedString16);
@@ -299,10 +309,17 @@ begin
       );
       fSnippets.Add(SnippetInfo);
     end;
+    fTags.Clear;
+    TagCount := Reader.ReadInt32;
+    for I := 1 to TagCount do
+    begin
+      fTags.Add(TTag.Create(Reader.ReadSizedString16));
+      Reader.ReadInt32;   // skip reserved value: not used
+    end;
   except
     on E: Exception do
     begin
-      if (E is ESnippetID) or (E is EConvertError) then
+      if (E is ESnippetID) or (E is ETag) or (E is EConvertError) then
         raise EDBNativeIO.CreateFmt(sConvertError, [E.Message]);
       if (E is EStreamError) then
         raise EDBNativeIO.CreateFmt(sStreamError, [E.Message]);
@@ -384,7 +401,7 @@ begin
   end;
 end;
 
-procedure TDBNativeWriter.Save(const ATable: TDBSnippetsTable;
+procedure TDBNativeWriter.Save(const ATable: TDBSnippetsTable; ATagSet: ITagSet;
   const ALastModified: TUTCDateTime);
 begin
   fExistingSnippets.Clear;
@@ -393,7 +410,7 @@ begin
   else
     fLastModified := TUTCDateTime.CreateNull;
   WriteChangedAndNewSnippetFiles(ATable, ALastModified);
-  WriteMasterFile(ATable, ALastModified);
+  WriteMasterFile(ATable, ATagSet, ALastModified);
   RemoveUnwantedFiles(ATable);
 end;
 
@@ -502,10 +519,11 @@ begin
 end;
 
 procedure TDBNativeWriter.WriteMasterFile(const ATable: TDBSnippetsTable;
-  const ALastModified: TUTCDateTime);
+  ATagSet: ITagSet; const ALastModified: TUTCDateTime);
 var
   Writer: TBinaryStreamWriter;
   Snippet: TDBSnippet;
+  Tag: TTag;
 begin
   Writer := TBinaryStreamWriter.Create(
     TFileStream.Create(MasterFileName, fmCreate),
@@ -523,6 +541,12 @@ begin
     begin
       Writer.WriteSizedString16(Snippet.GetID.ToString);
       Writer.WriteSizedString16(Snippet.GetModified.ToISO8601String);
+    end;
+    Writer.WriteInt32(ATagSet.Count);
+    for Tag in ATagSet do
+    begin
+      Writer.WriteSizedString16(Tag.ToString);
+      Writer.WriteInt32(0);   // reserved value
     end;
   finally
     Writer.Free;
@@ -663,23 +687,24 @@ resourcestring
 begin
   if (E is EStreamError) then
     raise EDBNativeIO.CreateFmt(sStreamError, [E.Message]);
-  if (E is ESnippetID) or (E is EConvertError) then
+  if (E is ESnippetID) or (E is ETag) or (E is EConvertError) then
     raise EDBNativeIO.CreateFmt(sConvertError, [E.Message]);
   raise E;
 end;
 
 procedure TDBNativeReader.Load(const ATable: TDBSnippetsTable;
-  out ALastModified: TUTCDateTime);
+  out ATagSet: ITagSet; out ALastModified: TUTCDateTime);
 var
   MI: TMasterInfo;
   SI: TSnippetInfo;
 begin
   ATable.Clear;
   try
-  MI := TMasterInfo.Create;
+    MI := TMasterInfo.Create;
     try
       LoadMasterFile(MI);
       ALastModified := MI.LastModified;
+      ATagSet := (MI.Tags as IClonable).Clone as ITagSet;
       for SI in MI.Snippets do
         LoadSnippet(SI.ID, ATable);
     finally
