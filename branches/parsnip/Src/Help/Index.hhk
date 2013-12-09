@@ -26,10 +26,6 @@
     <param name="Local" value="HTML\dlg_about.htm">
     </OBJECT>
   <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="add category dialogue">
-    <param name="Local" value="HTML\dlg_addcategory.htm">
-    </OBJECT>
-  <LI> <OBJECT type="text/sitemap">
     <param name="Name" value="add snippet dialogue">
     <param name="Local" value="HTML\dlg_editsnippet.htm">
     </OBJECT>
@@ -122,10 +118,6 @@
   <LI> <OBJECT type="text/sitemap">
     <param name="Name" value="customise codesnip">
     <param name="Local" value="HTML\task_customise.htm">
-    </OBJECT>
-  <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="delete category dialogue">
-    <param name="Local" value="HTML\dlg_deletecategory.htm">
     </OBJECT>
   <LI> <OBJECT type="text/sitemap">
     <param name="Name" value="dependencies dialogue">
@@ -322,10 +314,6 @@
   <LI> <OBJECT type="text/sitemap">
     <param name="Name" value="registration wizard">
     <param name="Local" value="HTML\dlg_register.htm">
-    </OBJECT>
-  <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="rename category dialogue">
-    <param name="Local" value="HTML\dlg_renamecategory.htm">
     </OBJECT>
   <LI> <OBJECT type="text/sitemap">
     <param name="Name" value="save annotated source dialogue">
