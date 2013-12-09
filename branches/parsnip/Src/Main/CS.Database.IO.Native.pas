@@ -169,6 +169,7 @@ uses
   CS.Database.SnippetLinks,
   CS.Database.Snippets,
   CS.Database.Tags,
+  Compilers.UCompilers,
   UConsts,
   UIOUtils,
   UStrUtils,
@@ -388,40 +389,28 @@ end;
 procedure TDBNativeWriter.WriteCompileResultsProp(
   const Writer: TBinaryStreamWriter; const PropCode: TDBSnippetProp;
   const Results: TCompileResults; const Optional: Boolean);
-
-  procedure WriteSet(const S: TCompilerIDs);
-  var
-    SetSize: Integer;
-    Elem: TCompilerID;
-  begin
-    SetSize := 0;
-    for Elem in S do
-      Inc(SetSize);
-    Writer.WriteByte(SetSize);
-    for Elem in S do
-      Writer.WriteByte(Ord(Elem));
-  end;
-
 var
-  Success, Failure: TCompilerIDs;
+  Success, Failure: IStringList;
   CompilerID: TCompilerID;
   CompRes: TCompileResult;
+  Compilers: ICompilers;
 begin
-  Success := [];
-  Failure := [];
+  Compilers := TCompilersFactory.CreateCompilers;
+  Success := TIStringList.Create;
+  Failure := TIStringList.Create;
   for CompilerID := Low(Results) to High(Results) do
   begin
     CompRes := Results[CompilerID];
     if CompRes in [crSuccess, crWarning] then
-      Include(Success, CompilerID);
+      Success.Add(Compilers[CompilerID].GetIDString);
     if CompRes = crError then
-      Include(Failure, CompilerID);
+      Failure.Add(Compilers[CompilerID].GetIDString);
   end;
-  if Optional and (Success = []) and (Failure = []) then
+  if Optional and (Success.Count = 0) and (Failure.Count = 0) then
     Exit;
   WritePropCode(Writer, PropCode);
-  WriteSet(Success);
-  WriteSet(Failure);
+  Writer.WriteSizedString16List(Success);
+  Writer.WriteSizedString16List(Failure);
 end;
 
 procedure TDBNativeWriter.WriteDateProp(const Writer: TBinaryStreamWriter;
@@ -772,29 +761,23 @@ end;
 
 function TDBNativeReader.ReadCompileResults(const Reader: TBinaryStreamReader):
   TCompileResults;
-
-  function ReadSet: TCompilerIDs;
-  var
-    SetSize: Integer;
-    I: Integer;
-  begin
-    SetSize := Reader.ReadByte;
-    Result := [];
-    for I := 1 to SetSize do
-      Include(Result, TCompilerID(Reader.ReadByte));
-  end;
-
 var
-  Succeeds, Fails: TCompilerIDs;
+  Succeeds, Fails: IStringList;
   CompilerID: TCompilerID;
+  Compilers: ICompilers;
+  IDStr: string;
 begin
-  Succeeds := ReadSet;
-  Fails := ReadSet;
+  Succeeds := Reader.ReadSizedString16List;
+  Succeeds.CaseSensitive := False;
+  Fails := Reader.ReadSizedString16List;
+  Fails.CaseSensitive := False;
+  Compilers := TCompilersFactory.CreateCompilers;
   for CompilerID := Low(Result) to High(Result) do
   begin
-    if CompilerID in Succeeds then
+    IDStr := Compilers[CompilerID].GetIDString;
+    if Succeeds.Contains(IDStr) then
       Result[CompilerID] := crSuccess
-    else if CompilerID in Fails then
+    else if Fails.Contains(IDStr) then
       Result[CompilerID] := crError
     else
       Result[CompilerID] := crQuery;
