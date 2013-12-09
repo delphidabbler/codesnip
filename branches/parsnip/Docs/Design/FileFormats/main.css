@@ -118,8 +118,8 @@ ol.unspaced li {
   margin-top: 0;
 }
 
-code {
-  font-family: "Courier New", Courier, monospace;
+code, kbd {
+  font-family: Consolas, "Courier New", Courier, monospace;
 }
 
 del {
