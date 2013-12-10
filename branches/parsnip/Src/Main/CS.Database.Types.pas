@@ -149,13 +149,14 @@ type
   strict private
     var
       fTag: string;
+    class function IsValidTagChar(const Ch: Char): Boolean; static; inline;
   public
     constructor Create(const ATagStr: string);
     class function CreateNull: TTag; static;
     class operator Equal(const Left, Right: TTag): Boolean; inline;
     class operator NotEqual(const Left, Right: TTag): Boolean; inline;
     class function IsValidTagString(const AStr: string): Boolean; static;
-      inline;
+    class function MakeValidTagString(const AStr: string): string; static;
     class function Compare(const Left, Right: TTag): Integer; static; inline;
     function IsNull: Boolean;
     function ToString: string; inline;
@@ -461,6 +462,13 @@ begin
   Result := fTag = EmptyStr;
 end;
 
+class function TTag.IsValidTagChar(const Ch: Char): Boolean;
+begin
+  Result := TCharacter.IsLetter(Ch)
+    or TCharacter.IsNumber(Ch)
+    or CharInSet(Ch, ['-', '_', ' ', ':', '(', ')']);
+end;
+
 class function TTag.IsValidTagString(const AStr: string): Boolean;
 var
   Ch: Char;
@@ -470,11 +478,23 @@ begin
   if Length(AStr) > 64 then
     Exit(False);
   for Ch in AStr do
-    if not TCharacter.IsLetter(Ch)
-      and not TCharacter.IsNumber(Ch)
-      and not CharInSet(Ch, ['-', '_', ' ', ':', '(', ')']) then
+    if not IsValidTagChar(Ch) then
       Exit(False);
   Result := True;
+end;
+
+class function TTag.MakeValidTagString(const AStr: string): string;
+var
+  I: Integer;
+begin
+  SetLength(Result, Length(AStr));
+  for I := 1 to Length(AStr) do
+  begin
+    if IsValidTagChar(AStr[I]) then
+      Result[I] := AStr[I]
+    else
+      Result[I] := '_';
+  end;
 end;
 
 class operator TTag.NotEqual(const Left, Right: TTag): Boolean;
