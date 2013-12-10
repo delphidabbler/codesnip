@@ -55,7 +55,6 @@ type
     fSnippetIDs: ISnippetIDList;  // List of snippet ids in category
     fID: string;                  // Category id
     fDescription: string;         // Category description
-    fUserDefined: Boolean;        // Whether this is a user-defined snippet
     function CompareIDTo(const Cat: TCategory): Integer;
       {Compares this category's ID to that of a given category. The check is not
       case sensitive.
@@ -72,12 +71,6 @@ type
     destructor Destroy; override;
       {Destructor. Tears down object.
       }
-    function IsEqual(const Cat: TCategory): Boolean;
-      {Checks if this category is same as another category. Categories are
-      considered equal if they have the same ID.
-        @param Cat [in] Category being compared.
-        @return True if categories are equal, False if not.
-      }
     function CompareDescriptionTo(const Cat: TCategory): Integer;
       {Compares this category's description to that of a given category. The
       check is not case sensitive. If both categories have the same description
@@ -87,18 +80,12 @@ type
         @return -1 if this category's description is less than Cat's, 0 if they
           are equal or +1 if this category's description is greater than Cat's.
       }
-    function CanDelete: Boolean;
-      {Checks if category can be deleted.
-        @return True if deletion allowed, False if not.
-      }
     property ID: string read fID;
       {Category id. Must be unique}
     property Description: string read fDescription;
       {Description of category}
     property SnippetIDs: ISnippetIDList read fSnippetIDs;
       {List of snippets in this category}
-    property UserDefined: Boolean read fUserDefined;
-      {Flag that indicates if this is a user defined category}
   end;
 
   {
@@ -106,11 +93,6 @@ type
     Private extension of TCategory for use internally by Snippets object.
   }
   TCategoryEx = class(TCategory)
-  public
-    function GetEditData: TCategoryData;
-      {Gets details of all editable data of category.
-        @return Required editable data.
-      }
   end;
 
   {
@@ -153,11 +135,6 @@ type
         @return Reference to object representing category in list or nil if not
           in list.
       }
-    function Contains(const Category: TCategory): Boolean;
-      {Checks if a category is in list. Checks object reference.
-        @param Category [in] Category to be checked.
-        @return True if category object is in list.
-      }
     function GetEnumerator: TEnumerator<TCategory>;
       {Gets an intialised category list enumerator.
         @return Required enumerator.
@@ -173,11 +150,6 @@ type
     Private extension of TCategoryList for use internally by snippets object.
   }
   TCategoryListEx = class(TCategoryList)
-  public
-    procedure Delete(const Category: TCategory);
-      {Deletes a category from the list.
-        @param Category [in] Category to be deleted.
-      }
   end;
 
 
@@ -194,15 +166,6 @@ uses
 
 
 { TCategory }
-
-function TCategory.CanDelete: Boolean;
-  {Checks if category can be deleted.
-    @return True if deletion allowed, False if not.
-  }
-begin
-  Result := fUserDefined and fSnippetIDs.IsEmpty
-    and not TReservedCategories.IsReserved(Self);
-end;
 
 function TCategory.CompareDescriptionTo(const Cat: TCategory): Integer;
   {Compares this category's description to that of a given category. The check
@@ -241,7 +204,6 @@ begin
   inherited Create;
   fID := CatID;
   fDescription := Data.Desc;
-  fUserDefined := UserDefined;
   // Create list to store snippet IDs in category
   fSnippetIDs := TSnippetIDList.Create;
 end;
@@ -251,26 +213,6 @@ destructor TCategory.Destroy;
   }
 begin
   inherited;
-end;
-
-function TCategory.IsEqual(const Cat: TCategory): Boolean;
-  {Checks if this category is same as another category. Categories are
-  considered equal if they have the same ID.
-    @param Cat [in] Category being compared.
-    @return True if categories are equal, False if not.
-  }
-begin
-  Result := CompareIDTo(Cat) = 0;
-end;
-
-{ TCategoryEx }
-
-function TCategoryEx.GetEditData: TCategoryData;
-  {Gets details of all editable data of category.
-    @return Required editable data.
-  }
-begin
-  Result.Desc := Self.Description;
 end;
 
 { TCategoryList }
@@ -291,15 +233,6 @@ procedure TCategoryList.Clear;
   }
 begin
   fList.Clear;
-end;
-
-function TCategoryList.Contains(const Category: TCategory): Boolean;
-  {Checks if a category is in list. Checks object reference.
-    @param Category [in] Category to be checked.
-    @return True if category object is in list.
-  }
-begin
-  Result := fList.Contains(Category);
 end;
 
 constructor TCategoryList.Create(const OwnsObjects: Boolean);
@@ -363,21 +296,6 @@ function TCategoryList.GetItem(Idx: Integer): TCategory;
   }
 begin
   Result := fList[Idx];
-end;
-
-{ TCategoryListEx }
-
-procedure TCategoryListEx.Delete(const Category: TCategory);
-  {Deletes a category from the list.
-    @param Category [in] Category to be deleted.
-  }
-var
-  Idx: Integer; // index of snippet in list.
-begin
-  Idx := fList.IndexOf(Category);
-  if Idx = -1 then
-    Exit;
-  fList.Delete(Idx);  // this frees category if list owns objects
 end;
 
 { TCategoryData }
