@@ -129,12 +129,6 @@ type
     destructor Destroy; override;
       {Destructor. Tears down object.
       }
-    function IsEqual(const Snippet: TSnippet): Boolean;
-      {Checks if this snippet is same as another snippet. Snippets are
-      considered equal if they have the same name and come from same database.
-        @param Snippet [in] Snippet being compared.
-        @return True if snippets are equal, False if not.
-      }
     function CanCompile: Boolean;
       {Checks if snippet can be compiled.
         @return True if compilation supported and False if not.
@@ -343,16 +337,6 @@ destructor TSnippet.Destroy;
   }
 begin
   inherited;
-end;
-
-function TSnippet.IsEqual(const Snippet: TSnippet): Boolean;
-  {Checks if this snippet is same as another snippet. Snippets are considered
-  equal if they have the same name and come from same database.
-    @param Snippet [in] Snippet being compared.
-    @return True if snippets are equal, False if not.
-  }
-begin
-  Result := Snippet.ID = Self.ID;
 end;
 
 procedure TSnippet.SetProps(const Data: TSnippetData);

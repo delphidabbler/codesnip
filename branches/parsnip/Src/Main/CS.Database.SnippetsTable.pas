@@ -31,6 +31,7 @@ type
     function Copy: ISnippet;
     function CopyPartial(const RequiredProps: TDBSnippetProps):
       IReadOnlySnippet;
+    function IsEqual(const AOther: TDBSnippet): Boolean;
   end;
 
   TDBSnippetsTable = class(TObject)
@@ -75,6 +76,11 @@ end;
 class function TDBSnippet.CreateFrom(ASnippet: ISnippet): TDBSnippet;
 begin
   Result := TDBSnippet.Create(ASnippet as TNewSnippet);
+end;
+
+function TDBSnippet.IsEqual(const AOther: TDBSnippet): Boolean;
+begin
+  Result := Self.GetID = AOther.GetID;
 end;
 
 { TDBSnippetsTable }
