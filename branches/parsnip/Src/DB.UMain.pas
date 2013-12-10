@@ -176,6 +176,7 @@ type
       {Removes a change event handler from list of listeners.
         @param Handler [in] Handler to remove from list.
       }
+    function GetAllTags: ITagSet;
   end;
 
   {
@@ -265,7 +266,7 @@ implementation
 
 
 uses
-  //Delphi
+  // Delphi
   SysUtils,
   // Project
   CS.Database.Snippets,
@@ -410,6 +411,7 @@ type
     function IsEmpty: Boolean;
     function SelectAll: ISnippetIDList;
     function Select(FilterFn: TDatabaseFilterFn): ISnippetIDList;
+    function GetAllTags: ITagSet;
     { IDatabaseEdit methods }
     function GetEditableSnippetInfo(const Snippet: TSnippet = nil):
       TSnippetEditData;
@@ -704,6 +706,11 @@ begin
   Data := (Snippet as TSnippetEx).GetEditData;
   Data.Props.Title := Title;
   Result := AddSnippet(Data);
+end;
+
+function _TDatabase.GetAllTags: ITagSet;
+begin
+  Result := TTagSet.Create(fAllTags);
 end;
 
 function _TDatabase.GetDependents(const ASnippet: TSnippet): ISnippetIDList;
