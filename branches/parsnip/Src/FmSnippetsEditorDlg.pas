@@ -280,6 +280,7 @@ uses
   Graphics,
   // Project
   CS.ActiveText.Helper,
+  CS.Database.Tags,
   CS.Config,
   CS.SourceCode.Languages,
   DB.UMain,
@@ -1003,6 +1004,14 @@ begin
     else
       Props.LanguageID := TSourceCodeLanguageID.Create('Text');
     (Props.Notes as IAssignable).Assign(frmNotes.ActiveText);
+    Props.Tags := TTagSet.Create;
+    Props.Tags.Add(
+      TTag.Create(
+        TTag.MakeValidTagString(
+          fCatList.CatDesc(cbCategories.ItemIndex)
+        )
+      )
+    );
     Props.CompilerResults := fCompilersLBMgr.GetCompileResults;
     Refs.RequiredModules := fUnitsCLBMgr.GetCheckedUnits;
     Refs.RequiredSnippets := fDependsCLBMgr.GetCheckedSnippets;
