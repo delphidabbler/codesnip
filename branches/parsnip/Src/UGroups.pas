@@ -405,7 +405,8 @@ begin
   SelectedSnippetIDs := _Database.Select(
     function (const Snippet: TSnippet): Boolean
     begin
-      Result := Snippet.Tags.IsEmpty;
+      Result := Snippet.Tags.IsEmpty
+        and SnippetIDList.Contains(Snippet.ID);
     end
   );
   AddGroupItem(TTag.CreateNull, SelectedSnippetIDs);
@@ -415,7 +416,8 @@ begin
     SelectedSnippetIDs := _Database.Select(
       function (const Snippet: TSnippet): Boolean
       begin
-        Result := Snippet.Tags.Contains(Tag);
+        Result := Snippet.Tags.Contains(Tag) and
+          SnippetIDList.Contains(Snippet.ID);
       end
     );
     AddGroupItem(Tag, SelectedSnippetIDs);
