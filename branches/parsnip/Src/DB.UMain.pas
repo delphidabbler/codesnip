@@ -633,12 +633,8 @@ function _TDatabase.CreateTempSnippet(const Snippet: TSnippet): TSnippet;
   }
 begin
   Assert(Assigned(Snippet), ClassName + '.CreateTempSnippet: Snippet is nil');
-  Assert(Snippet is TSnippetEx,
-    ClassName + '.CreateTempSnippet: Snippet is a TSnippetEx');
-  Result := TTempSnippet.Create(Snippet.ID, (Snippet as TSnippetEx).GetProps);
-  (Result as TTempSnippet).UpdateRefs(
-    MakeValidRefs((Snippet as TSnippetEx).GetReferences)
-  );
+  Result := TSnippet.Create(Snippet.ID, Snippet.GetProps);
+  Result.UpdateRefs(MakeValidRefs(Snippet.GetReferences));
 end;
 
 function _TDatabase.CreateTempSnippet(const Data: TSnippetEditData;
@@ -651,10 +647,10 @@ function _TDatabase.CreateTempSnippet(const Data: TSnippetEditData;
     @return Reference to new snippet.
   }
 begin
-  Result := TTempSnippet.Create(
+  Result := TSnippet.Create(
     TSnippetID.Create(StrIf(Name <> '', Name, UniqueSnippetName)), Data.Props
   );
-  (Result as TTempSnippet).UpdateRefs(MakeValidRefs(Data.Refs));
+  Result.UpdateRefs(MakeValidRefs(Data.Refs));
 end;
 
 procedure _TDatabase.DeleteSnippet(const Snippet: TSnippet);
@@ -708,7 +704,7 @@ function _TDatabase.DuplicateSnippet(const Snippet: TSnippet;
 var
   Data: TSnippetEditData;
 begin
-  Data := (Snippet as TSnippetEx).GetEditData;
+  Data := Snippet.GetEditData;
   Data.Props.Title := Title;
   Result := AddSnippet(Data);
 end;
@@ -755,7 +751,7 @@ function _TDatabase.GetEditableSnippetInfo(
   }
 begin
   if Assigned(Snippet) then
-    Result := (Snippet as TSnippetEx).GetEditData
+    Result := Snippet.GetEditData
   else
     Result.Init;
 end;
@@ -804,8 +800,8 @@ resourcestring
   sCatNotFound = 'Category "%0:s" referenced by new snippet named "%1:s" does '
     + 'not exist';
 begin
-  Result := TSnippetEx.Create(SnippetID, Data.Props);
-  (Result as TSnippetEx).UpdateRefs(MakeValidRefs(Data.Refs));
+  Result := TSnippet.Create(SnippetID, Data.Props);
+  Result.UpdateRefs(MakeValidRefs(Data.Refs));
   Cat := fCategories.Find(Result.Category);
   if not Assigned(Cat) then
     raise ECodeSnip.CreateFmt(
@@ -970,7 +966,7 @@ begin
   try
     OldCatID := Snippet.Category;
     CleanUpRefs(Data.Refs);
-    (Snippet as TSnippetEx).Update(Data);
+    Snippet.Update(Data);
     // ensure any new, unknown, tags are added to set of all tags
     fAllTags.Include(Snippet.Tags);
     // NOTE: since categories can no longer be changed, there is no need to
@@ -1037,7 +1033,7 @@ function TDBDataItemFactory.CreateSnippet(const Name: string;
     @return Instance of new snippet with no references.
   }
 begin
-  Result := TSnippetEx.Create(TSnippetID.Create(Name), Props);
+  Result := TSnippet.Create(TSnippetID.Create(Name), Props);
 end;
 
 { TUserDataProvider }
@@ -1073,7 +1069,7 @@ function TUserDataProvider.GetSnippetProps(const Snippet: TSnippet):
     @return Record containing property data.
   }
 begin
-  Result := (Snippet as TSnippetEx).GetProps;
+  Result := Snippet.GetProps;
 end;
 
 function TUserDataProvider.GetSnippetRefs(const Snippet: TSnippet):
@@ -1083,7 +1079,7 @@ function TUserDataProvider.GetSnippetRefs(const Snippet: TSnippet):
     @return Record containing references.
   }
 begin
-  Result := (Snippet as TSnippetEx).GetReferences;
+  Result := Snippet.GetReferences;
 end;
 
 { TDatabase }
