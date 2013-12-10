@@ -618,7 +618,7 @@ constructor _TDatabase.Create;
   }
 begin
   inherited Create;
-  fSnippets := TSnippetListEx.Create(True);
+  fSnippets := _TSnippetList.Create(True);
   fCategories := TCategoryListEx.Create(True);
   fAllTags := TTagSet.Create;
   fChangeEvents := TMultiCastEvents.Create(Self);
@@ -826,7 +826,7 @@ begin
   if Assigned(Cat) then
     Cat.SnippetIDs.Remove(Snippet.ID);
   // Delete from "master" list: this frees Snippet
-  (fSnippets as TSnippetListEx).Delete(Snippet);
+  fSnippets.Delete(Snippet);
 end;
 
 function _TDatabase.IsEmpty: Boolean;

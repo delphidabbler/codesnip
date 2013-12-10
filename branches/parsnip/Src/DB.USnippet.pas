@@ -249,26 +249,14 @@ type
       {Checks if list is empty.
         @return True if list is empty, False otehrwise.
       }
-    property Items[Idx: Integer]: TSnippet read GetItem; default;
-      {List of snippets}
-  end;
-
-  {
-  TSnippetListEx:
-    Private extension of _TSnippetList for use internally by Snippets object.
-  }
-  TSnippetListEx = class(_TSnippetList)
-  public
-    procedure Add(const Snippet: TSnippet); override;
-      {Adds a snippet to list. Snippet must not be TTempSnippet class.
-        @param Snippet [in] Snippet to be added.
-        @return Index where snippet was added to list.
-      }
     procedure Delete(const Snippet: TSnippet);
       {Deletes a snippet from list.
         @param Snippet [in] Snippet to be deleted. No action taken if snippet
           not in list.
+      NOTE: formerly a method of TSnippetListEx
       }
+    property Items[Idx: Integer]: TSnippet read GetItem; default;
+      {List of snippets}
   end;
 
 
@@ -472,6 +460,20 @@ begin
   fList.OwnsObjects := OwnsObjects;
 end;
 
+procedure _TSnippetList.Delete(const Snippet: TSnippet);
+  {Deletes a snippet from list.
+    @param Snippet [in] Snippet to be deleted. No action taken if snippet not in
+      list.
+  }
+var
+  Idx: Integer; // index of snippet in list.
+begin
+  Idx := fList.IndexOf(Snippet);
+  if Idx = -1 then
+    Exit;
+  fList.RemoveAt(Idx);  // this frees snippet if list owns objects
+end;
+
 destructor _TSnippetList.Destroy;
   {Destructor. Tears down object.
   }
@@ -552,31 +554,6 @@ function _TSnippetList.IsEmpty: Boolean;
   }
 begin
   Result := Count = 0;
-end;
-
-{ TSnippetListEx }
-
-procedure TSnippetListEx.Add(const Snippet: TSnippet);
-  {Adds a snippet to list. Snippet must not be TTempSnippet class.
-    @param Snippet [in] Snippet to be added.
-    @return Index where snippet was added to list.
-  }
-begin
-  inherited Add(Snippet);
-end;
-
-procedure TSnippetListEx.Delete(const Snippet: TSnippet);
-  {Deletes a snippet from list.
-    @param Snippet [in] Snippet to be deleted. No action taken if snippet not in
-      list.
-  }
-var
-  Idx: Integer; // index of snippet in list.
-begin
-  Idx := fList.IndexOf(Snippet);
-  if Idx = -1 then
-    Exit;
-  fList.RemoveAt(Idx);  // this frees snippet if list owns objects
 end;
 
 { TSnippetData }
