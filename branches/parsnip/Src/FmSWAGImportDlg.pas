@@ -347,10 +347,7 @@ begin
     'dlg-swag-import-outro-tplt.html',
     procedure (Tplt: THTMLTemplate)
     begin
-      Tplt.ResolvePlaceholderText(
-        'SWAGCategory',
-        TSWAGImporter.SWAGCategoryDesc
-      );
+      Tplt.ResolvePlaceholderText('SWAGTag', TSWAGImporter.SWAGTagName);
     end
   );
   pcWizard.ActivePage := tsIntro;

@@ -82,9 +82,8 @@ type
     ///  <summary>Creates and returns a valid snippet name, based on the given
     ///  SWAG snippet ID, that is unique in the user database.</summary>
     class function MakeValidSnippetName(SWAGSnippetID: Cardinal): string;
-    ///  <summary>Description of the category in the user database used for all
-    ///  imported SWAG snippets.</summary>
-    class function SWAGCategoryDesc: string;
+    ///  <summary>Name of tag applied to all imported SWAG snippets.</summary>
+    class function SWAGTagName: string;
   end;
 
 
@@ -134,14 +133,12 @@ function TSWAGImporter.BuildSnippetInfo(const SWAGSnippet: TSWAGSnippet):
     Result.AddElem(TActiveTextFactory.CreateActionElem(ekPara, fsClose));
   end;
 
-resourcestring
-  sSWAGTagStr = 'SWAG';
 begin
   Result.Init;
   Result.Props.Kind := skFreeform;
   // TODO: remove this placeholder code when categories have been removed
   Result.Props.Cat := '_swag_';
-  Result.Props.Tags.Add(TTag.Create(sSWAGTagStr));
+  Result.Props.Tags.Add(TTag.Create(SWAGTagName));
   Result.Props.Desc := BuildDescription;
   Result.Props.SourceCode := SWAGSnippet.SourceCode;
   if SWAGSnippet.IsDocument then
@@ -282,10 +279,11 @@ begin
   fImportList.Clear;
 end;
 
-class function TSWAGImporter.SWAGCategoryDesc: string;
+class function TSWAGImporter.SWAGTagName: string;
+resourcestring
+  sTagName = 'SWAG';
 begin
-  // TODO: remove this function and replace with one that provides tag name
-  Result := 'SWAG Imports';   // copied from TReservedCaetegories
+  Result := sTagName;
 end;
 
 end.
