@@ -215,20 +215,6 @@ end;
 procedure TDBLegacyUserDBReader.LoadSnippetProperties(SnippetNode: IXMLNode;
   const ASnippet: TDBSnippet);
 
-  {TODO: Remove following routine when routine of same name becomes available in
-         UStrUtils. }
-  function StrIsBlank(const S: string): Boolean;
-  var
-    Ch: Char;
-  begin
-    if S = EmptyStr then
-      Exit(True);
-    for Ch in S do
-      if not TCharacter.IsWhiteSpace(Ch) then
-        Exit(False);
-    Result := True;
-  end;
-
   // Gets text of property with given sub-tag of current snippet node in XML
   // document.
   function GetPropertyText(const PropTagName: string): string;
