@@ -46,8 +46,6 @@ type
     Data: TSnippetEditData;
     ///  <summary>Copies given TSnippetInfo record to this one.</summary>
     procedure Assign(const Src: TSnippetInfo);
-    ///  <summary>Initialises record to null value.</summary>
-    procedure Init;
   end;
 
 type
@@ -675,12 +673,6 @@ procedure TSnippetInfo.Assign(const Src: TSnippetInfo);
 begin
   Name := Src.Name;
   Data.Assign(Src.Data);
-end;
-
-procedure TSnippetInfo.Init;
-begin
-  Name := '';
-  Data.Init;
 end;
 
 end.
