@@ -57,6 +57,9 @@ type
     ///  <summary>Creates and returns a string list containing snippet names
     ///  from given snippet list.</summary>
     function SnippetsToStrings(SnippetList: ISnippetIDList): IStringList;
+    ///  <summary>Creates and returns a string list containing the names of
+    ///  tags from the given tag set.</summary>
+    function TagsToStrings(TagSet: ITagSet): IStringList;
     ///  <summary>Creates and returns an array of compiler compatibility
     ///  information for given snippet.</summary>
     function CompilerInfo(const Snippet: TSnippet): TCompileDocInfoArray;
@@ -73,8 +76,8 @@ type
     procedure RenderSourceCode(const SourceCode: string); virtual; abstract;
     ///  <summary>Output given title followed by given text.</summary>
     procedure RenderTitledText(const Title, Text: string); virtual; abstract;
-    ///  <summary>Output given comma-separated list of text, preceded by given
-    ///  title.</summary>
+    ///  <summary>Output given list of text items, preceded by given title.
+    ///  </summary>
     procedure RenderTitledList(const Title: string; List: IStringList);
       virtual; abstract;
     ///  <summary>Output given compiler info, preceeded by given heading.
@@ -151,7 +154,7 @@ function TSnippetDoc.Generate(const Snippet: TSnippet): TEncodedData;
 resourcestring
   // Literal string required in output
   sKindTitle = 'Snippet Type:';
-  sCategoryTitle = 'Category:';
+  sTagsTitle = 'Tags:';
   sUnitListTitle = 'Required units:';
   sDependListTitle = 'Required snippets:';
   sXRefListTitle = 'See also:';
@@ -167,9 +170,7 @@ begin
   RenderTitledText(
     sKindTitle, TSnippetKindInfoList.Items[Snippet.Kind].DisplayName
   );
-  RenderTitledText(
-    sCategoryTitle, _Database.Categories.Find(Snippet.Category).Description
-  );
+  RenderTitledList(sTagsTitle, TagsToStrings(Snippet.Tags));
   RenderTitledList(sUnitListTitle, Snippet.RequiredModules);
   RenderTitledList(
     sDependListTitle, SnippetsToStrings(Snippet.RequiredSnippets)
@@ -195,6 +196,15 @@ begin
   Result := TIStringList.Create;
   for SnippetID in SnippetList do
     Result.Add(_Database.Lookup(SnippetID).Title);
+end;
+
+function TSnippetDoc.TagsToStrings(TagSet: ITagSet): IStringList;
+var
+  Tag: TTag;
+begin
+  Result := TIStringList.Create;
+  for Tag in TagSet do
+    Result.Add(Tag.ToString);
 end;
 
 { TCompileDocInfo }
