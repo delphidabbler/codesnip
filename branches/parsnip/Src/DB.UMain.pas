@@ -176,7 +176,14 @@ type
       {Removes a change event handler from list of listeners.
         @param Handler [in] Handler to remove from list.
       }
+    // Returns a list of all supported tags
     function GetAllTags: ITagSet;
+    // Returns a list of IDs of all snippets that depend on the snippet with
+    // the given ID.
+    function GetDependentsOf(const ASnippetID: TSnippetID): ISnippetIDList;
+    // Returns a list of IDs of all snippet that refer to (i.e. cross-reference)
+    // the snippet with the given ID.
+    function GetReferrersTo(const ASnippetID: TSnippetID): ISnippetIDList;
   end;
 
   {
@@ -411,7 +418,14 @@ type
     function IsEmpty: Boolean;
     function SelectAll: ISnippetIDList;
     function Select(FilterFn: TDatabaseFilterFn): ISnippetIDList;
+    // Returns a list of all supported tags
     function GetAllTags: ITagSet;
+    // Returns a list of IDs of all snippets that depend on the snippet with
+    // the given ID.
+    function GetDependentsOf(const ASnippetID: TSnippetID): ISnippetIDList;
+    // Returns a list of IDs of all snippet that refer to (i.e. cross-reference)
+    // the snippet with the given ID.
+    function GetReferrersTo(const ASnippetID: TSnippetID): ISnippetIDList;
     { IDatabaseEdit methods }
     function GetEditableSnippetInfo(const Snippet: TSnippet = nil):
       TSnippetEditData;
@@ -728,6 +742,18 @@ begin
       Result.Add(Snippet.ID);
 end;
 
+function _TDatabase.GetDependentsOf(const ASnippetID: TSnippetID):
+  ISnippetIDList;
+var
+  Snippet: TSnippet;
+begin
+  Result := TSnippetIDList.Create;
+  for Snippet in fSnippets do
+    if (Snippet.ID <> ASnippetID)
+      and Snippet.RequiredSnippets.Contains(ASnippetID) then
+      Result.Add(Snippet.ID);
+end;
+
 function _TDatabase.GetEditableSnippetInfo(
   const Snippet: TSnippet): TSnippetEditData;
   {Provides details of all a snippet's data (properties and references) that may
@@ -756,6 +782,18 @@ begin
   for Snippet in fSnippets do
     if not Snippet.IsEqual(ASnippet)
       and Snippet.XRefs.Contains(ASnippet.ID) then
+      Result.Add(Snippet.ID);
+end;
+
+function _TDatabase.GetReferrersTo(const ASnippetID: TSnippetID):
+  ISnippetIDList;
+var
+  Snippet: TSnippet;  // references each snippet in database
+begin
+  Result := TSnippetIDList.Create;
+  for Snippet in fSnippets do
+    if (Snippet.ID <> ASnippetID)
+      and Snippet.XRefs.Contains(ASnippetID) then
       Result.Add(Snippet.ID);
 end;
 
