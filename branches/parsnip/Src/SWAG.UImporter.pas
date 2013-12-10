@@ -99,7 +99,6 @@ uses
   CS.SourceCode.Languages,
   DB.UCategory,
   DB.UMain,
-  UReservedCategories,
   USnippetValidator;
 
 
@@ -140,7 +139,8 @@ resourcestring
 begin
   Result.Init;
   Result.Props.Kind := skFreeform;
-  Result.Props.Cat := TReservedCategories.SWAGCatID;
+  // TODO: remove this placeholder code when categories have been removed
+  Result.Props.Cat := '_swag_';
   Result.Props.Tags.Add(TTag.Create(sSWAGTagStr));
   Result.Props.Desc := BuildDescription;
   Result.Props.SourceCode := SWAGSnippet.SourceCode;
@@ -283,13 +283,9 @@ begin
 end;
 
 class function TSWAGImporter.SWAGCategoryDesc: string;
-var
-  Cat: TCategory; // reserved SWAG category in code snippets database
 begin
-  Cat := _Database.Categories.Find(TReservedCategories.SWAGCatID);
-  Assert(Assigned(Cat),
-    ClassName + '.SWAGCategoryDesc: Can''t find SWAG category');
-  Result := Cat.Description;
+  // TODO: remove this function and replace with one that provides tag name
+  Result := 'SWAG Imports';   // copied from TReservedCaetegories
 end;
 
 end.
