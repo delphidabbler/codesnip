@@ -22,8 +22,7 @@ uses
   // Delphi
   SysUtils, Controls, StdCtrls, ExtCtrls, Classes,
   // Project
-  DB.USnippet, FmGenericOKDlg, UBaseObjects, UCategoryListAdapter,
-  UIStringList;
+  DB.USnippet, FmGenericOKDlg, UBaseObjects, UIStringList;
 
 
 type
@@ -50,7 +49,6 @@ type
     var
       fSnippet: TSnippet;
       fNewSnippet: TSnippet;
-      fCatList: TCategoryListAdapter;
       fOptions: TPersistentOptions;
     procedure ValidateData;
     procedure HandleException(const E: Exception);
@@ -175,7 +173,6 @@ end;
 procedure TDuplicateSnippetDlg.FormCreate(Sender: TObject);
 begin
   inherited;
-  fCatList := TCategoryListAdapter.Create(_Database.Categories);
   fOptions := TPersistentOptions.Create;
 end;
 
@@ -186,7 +183,6 @@ begin
   fOptions.EditSnippetOnClose := chkEdit.Checked;
   inherited;
   fOptions.Free;
-  fCatList.Free;
 end;
 
 { TDuplicateSnippetDlg.TPersistentOptions }
