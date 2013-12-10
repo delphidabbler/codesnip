@@ -48,6 +48,7 @@ type
     procedure Delete(const ASnippetID: TSnippetID);
     procedure Clear;
     function Size: Integer;
+    function IsEmpty: Boolean;
   end;
 
   EDBSnippetsTable = class(EBug);
@@ -142,6 +143,11 @@ end;
 function TDBSnippetsTable.GetEnumerator: IEnumerator<TDBSnippet>;
 begin
   Result := fTable.Values.GetEnumerator;
+end;
+
+function TDBSnippetsTable.IsEmpty: Boolean;
+begin
+  Result := fTable.Count = 0;
 end;
 
 function TDBSnippetsTable.Size: Integer;
