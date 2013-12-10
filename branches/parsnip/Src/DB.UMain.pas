@@ -388,6 +388,7 @@ type
         @param [in/out] Snippet references to be cleaned: .RequiredSnippets and
           .XRefs fields are modified.
       }
+    function MakeValidRefs(const Refs: TSnippetReferences): TSnippetReferences;
   public
     constructor Create;
       {Constructor. Sets up new empty object.
@@ -646,7 +647,7 @@ begin
     ClassName + '.CreateTempSnippet: Snippet is a TSnippetEx');
   Result := TTempSnippet.Create(Snippet.ID, (Snippet as TSnippetEx).GetProps);
   (Result as TTempSnippet).UpdateRefs(
-    (Snippet as TSnippetEx).GetReferences, fSnippets
+    MakeValidRefs((Snippet as TSnippetEx).GetReferences)
   );
 end;
 
@@ -663,7 +664,7 @@ begin
   Result := TTempSnippet.Create(
     TSnippetID.Create(StrIf(Name <> '', Name, UniqueSnippetName)), Data.Props
   );
-  (Result as TTempSnippet).UpdateRefs(Data.Refs, fSnippets);
+  (Result as TTempSnippet).UpdateRefs(MakeValidRefs(Data.Refs));
 end;
 
 procedure _TDatabase.DeleteSnippet(const Snippet: TSnippet);
@@ -814,7 +815,7 @@ resourcestring
     + 'not exist';
 begin
   Result := TSnippetEx.Create(SnippetID, Data.Props);
-  (Result as TSnippetEx).UpdateRefs(Data.Refs, fSnippets);
+  (Result as TSnippetEx).UpdateRefs(MakeValidRefs(Data.Refs));
   Cat := fCategories.Find(Result.Category);
   if not Assigned(Cat) then
     raise ECodeSnip.CreateFmt(
@@ -874,6 +875,13 @@ function _TDatabase.Lookup(const SnippetID: TSnippetID): TSnippet;
 begin
   if not TryLookup(SnippetID, Result) then
     raise EBug.Create(ClassName + '.Lookup: SnippetID not found in database');
+end;
+
+function _TDatabase.MakeValidRefs(const Refs: TSnippetReferences):
+  TSnippetReferences;
+begin
+  Result.Assign(Refs);
+  CleanUpRefs(Result);
 end;
 
 procedure _TDatabase.RemoveChangeEventHandler(const Handler: TNotifyEventInfo);
@@ -995,7 +1003,7 @@ begin
   try
     OldCatID := Snippet.Category;
     CleanUpRefs(Data.Refs);
-    (Snippet as TSnippetEx).Update(Data, fSnippets);
+    (Snippet as TSnippetEx).Update(Data);
     // ensure any new, unknown, tags are added to set of all tags
     fAllTags.Include(Snippet.Tags);
     UpdateCategories(OldCatID, Snippet);

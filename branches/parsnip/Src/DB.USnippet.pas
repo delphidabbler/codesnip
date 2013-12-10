@@ -166,18 +166,14 @@ type
   }
   TSnippetEx = class(TSnippet)
   public
-    procedure UpdateRefs(const Refs: TSnippetReferences;
-      const AllSnippets: _TSnippetList);
+    procedure UpdateRefs(const Refs: TSnippetReferences);
       {Updates a snippet's references.
         @param Refs [in] Stores all snippet's references (XRef, Depends and
           Units).
-        @param AllSnippets [in] List of all snippets in database.
       }
-    procedure Update(const Data: TSnippetEditData;
-      const AllSnippets: _TSnippetList);
+    procedure Update(const Data: TSnippetEditData);
       {Updates snippet's properties and references.
         @param Data [in] New property values and references.
-        @param AllSnippets [in] List of all snippets in database.
       }
     function GetEditData: TSnippetEditData;
       {Gets details of all editable data of snippet.
@@ -410,42 +406,24 @@ begin
   Result.XRefs := GetXRefs;
 end;
 
-procedure TSnippetEx.Update(const Data: TSnippetEditData;
-  const AllSnippets: _TSnippetList);
+procedure TSnippetEx.Update(const Data: TSnippetEditData);
   {Updates snippet's properties and references.
     @param Data [in] New property values and references.
-    @param AllSnippets [in] List of all snippets in database.
   }
 begin
   SetProps(Data.Props);
-  UpdateRefs(Data.Refs, AllSnippets);
+  UpdateRefs(Data.Refs);
 end;
 
-procedure TSnippetEx.UpdateRefs(const Refs: TSnippetReferences;
-  const AllSnippets: _TSnippetList);
+procedure TSnippetEx.UpdateRefs(const Refs: TSnippetReferences);
   {Updates a snippet's references.
     @param Refs [in] Stores all snippet's references (XRef, Depends and
       Units).
-    @param AllSnippets [in] List of all snippets in database.
   }
-
-  // Returns a copy of the ID list Src with any IDs not in AllSnippets omitted.
-  function MakeValidRefs(Src: ISnippetIDList): ISnippetIDList;
-  var
-    ID: TSnippetID;
-  begin
-    Result := TSnippetIDList.Create;
-    for ID in Src do
-    begin
-      if AllSnippets.Find(ID) <> nil then
-        Result.Add(ID);
-    end;
-  end;
-
 begin
   SetRequiredModules(Refs.RequiredModules);
-  SetRequiredSnippets(MakeValidRefs(Refs.RequiredSnippets));
-  SetXRefs(MakeValidRefs(Refs.XRefs));
+  SetRequiredSnippets(Refs.RequiredSnippets);
+  SetXRefs(Refs.XRefs);
 end;
 
 { _TSnippetList }
