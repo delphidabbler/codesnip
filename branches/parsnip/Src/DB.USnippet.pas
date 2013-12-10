@@ -115,8 +115,6 @@ type
         function Equals(const Left, Right: TSnippet): Boolean; override;
         function GetHashCode(const Snippet: TSnippet): Integer; override;
       end;
-  strict private
-    fCategory: string;                      // Name of snippet's category
   strict protected
     procedure SetProps(const Data: TSnippetData);
       {Sets snippet's properties.
@@ -146,9 +144,9 @@ type
     property Kind: TSnippetKind read GetKind;
       {Kind of snippet represented by this object}
     property Title: string read GetTitle;
-      {Displat name of snippet}
-    property Category: string read fCategory;
-      {Category to which snippet belongs}
+      {Display name of snippet}
+    //property Category  *** now INHERITED from TDBSnippet ***
+    //  {Category to which snippet belongs}
     property Description: IActiveText read GetDescription;
       {Description of snippet}
     property SourceCode: string read GetSourceCode;
@@ -362,7 +360,7 @@ procedure TSnippet.SetProps(const Data: TSnippetData);
     @param Data [in] Record containing property values.
   }
 begin
-  fCategory := Data.Cat;
+  _fCategory := Data.Cat;
   SetKind(Data.Kind);
   SetDescription(Data.Desc);
   SetSourceCode(StrWindowsLineBreaks(Data.SourceCode));

@@ -49,6 +49,8 @@ type
       fTestInfo: TSnippetTestInfo;
       fStarred: Boolean;
   strict protected
+    var
+      _fCategory: string;
     function SupportsProperty(const APropID: TDBSnippetProp): Boolean; virtual;
   public
     constructor Create; overload;
@@ -89,6 +91,9 @@ type
     procedure SetTestInfo(ATestInfo: TSnippetTestInfo);
     function GetStarred: Boolean; virtual;
     procedure SetStarred(AStarred: Boolean);
+
+    // TODO: remove this temporary property anf field when categories excised
+    property Category: string read _fCategory write _fCategory;
   end;
 
   // TODO: rename back to TSnippet once ambiguity with legacy TSnippet resolved.
@@ -596,6 +601,8 @@ begin
     SetTestInfo(ASourceSnippet.fTestInfo);
   if SupportsProperty(spStarred) then
     SetStarred(ASourceSnippet.fStarred);
+
+  _fCategory := ASourceSnippet._fCategory;
 end;
 
 { TNewSnippet }
