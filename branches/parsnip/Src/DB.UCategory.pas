@@ -56,8 +56,7 @@ type
     fID: string;                  // Category id
     fDescription: string;         // Category description
   public
-    constructor Create(const CatID: string; const UserDefined: Boolean;
-      const Data: TCategoryData);
+    constructor Create(const CatID: string; const Data: TCategoryData);
       {Class contructor. Sets up category object with given property values.
         @param Data [in] Contains required property values.
       }
@@ -151,8 +150,7 @@ uses
 
 { TCategory }
 
-constructor TCategory.Create(const CatID: string; const UserDefined: Boolean;
-  const Data: TCategoryData);
+constructor TCategory.Create(const CatID: string; const Data: TCategoryData);
   {Class contructor. Sets up category object with given property values.
     @param Data [in] Contains required property values.
   }

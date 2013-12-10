@@ -127,8 +127,8 @@ type
   }
   IDBDataItemFactory = interface(IInterface)
     ['{C6DD85BD-E649-4A90-961C-4011D2714B3E}']
-    function CreateCategory(const CatID: string; const UserDefined: Boolean;
-      const Data: TCategoryData): TCategory;
+    function CreateCategory(const CatID: string; const Data: TCategoryData):
+      TCategory;
       {Creates a new category object.
         @param CatID [in] ID of new category. Must be unique.
         @param UserDefined [in] True if category is user defined, False if not.
@@ -290,7 +290,7 @@ type
   }
   TDBDataItemFactory = class(TInterfacedObject, IDBDataItemFactory)
   public
-    function CreateCategory(const CatID: string; const UserDefined: Boolean;
+    function CreateCategory(const CatID: string;
       const Data: TCategoryData): TCategory;
       {Creates a new category object.
         @param CatID [in] ID of new category. Must be unique.
@@ -996,7 +996,7 @@ end;
 { TDBDataItemFactory }
 
 function TDBDataItemFactory.CreateCategory(const CatID: string;
-  const UserDefined: Boolean; const Data: TCategoryData): TCategory;
+  const Data: TCategoryData): TCategory;
   {Creates a new category object.
     @param CatID [in] ID of new category. Must be unique.
     @param UserDefined [in] True if category is user defined, False if not.
@@ -1004,7 +1004,7 @@ function TDBDataItemFactory.CreateCategory(const CatID: string;
     @return Instance of new category object.
   }
 begin
-  Result := TCategoryEx.Create(CatID, UserDefined, Data);
+  Result := TCategoryEx.Create(CatID, Data);
 end;
 
 function TDBDataItemFactory.CreateSnippet(const Name: string;

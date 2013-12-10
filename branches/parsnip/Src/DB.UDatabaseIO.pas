@@ -290,7 +290,7 @@ procedure TDatabaseLoader.CreateCategory(const CatID: string;
     @param CatData [in] Properties of category.
   }
 begin
-  fCategories.Add(fFactory.CreateCategory(CatID, True, CatData));
+  fCategories.Add(fFactory.CreateCategory(CatID, CatData));
 end;
 
 procedure TDatabaseLoader.HandleException(const E: Exception);
