@@ -156,13 +156,11 @@ end;
 
 procedure TDuplicateSnippetDlg.UpdateDatabase;
 var
-  DisplayName: string;
+  Title: string;
 begin
-  DisplayName := StrTrim(edTitle.Text);
+  Title := StrTrim(edTitle.Text);
   fNewSnippet := (_Database as IDatabaseEdit).DuplicateSnippet(
-    fSnippet,
-    DisplayName,
-    fSnippet.Category // TODO: Remove this param from DuplicateSnippet
+    fSnippet, Title
   );
 end;
 
