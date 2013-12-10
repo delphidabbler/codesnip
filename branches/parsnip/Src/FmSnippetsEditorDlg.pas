@@ -46,7 +46,6 @@ uses
   FrFixedHTMLDlg,
   FrHTMLDlg,
   UBaseObjects,
-  UCategoryListAdapter,
   UCompileMgr,
   UCompileResultsLBMgr,
   UCSSBuilder,
@@ -183,7 +182,6 @@ type
     procedure chkUseHiliterClick(Sender: TObject);
   strict private
     fSnippet: TSnippet;             // Snippet being edited: nil for new snippet
-    fCatList: TCategoryListAdapter; // Accesses sorted list of categories
     fEditData: TSnippetEditData;    // Record storing a snippet's editable data
     fCompileMgr: TCompileMgr;       // Manages compilation and results display
     fDependsCLBMgr:
@@ -793,7 +791,6 @@ procedure TSnippetsEditorDlg.FormCreate(Sender: TObject);
   }
 begin
   inherited;
-  fCatList := TCategoryListAdapter.Create(_Database.Categories);
   fCompileMgr := TCompileMgr.Create(Self);  // auto-freed
   fMemoCaretPosDisplayMgr := TMemoCaretPosDisplayMgr.Create;
   fDependsCLBMgr := TSnippetsChkListMgr.Create(clbDepends);
@@ -824,7 +821,6 @@ begin
   fUnitsCLBMgr.Free;
   fXRefsCLBMgr.Free;
   fDependsCLBMgr.Free;
-  fCatList.Free;
   fMemoCaretPosDisplayMgr.Free;
 end;
 
@@ -870,7 +866,6 @@ begin
     frmDescription.DefaultEditMode := emAuto;
     frmDescription.ActiveText := fSnippet.Description;
     edTitle.Text := fSnippet.Title;
-    cbCategories.ItemIndex := fCatList.IndexOf(fSnippet.Category);
     frmNotes.DefaultEditMode := emAuto;
     frmNotes.ActiveText := fSnippet.Notes;
     fKindCBMgr.Select(fSnippet.Kind);
@@ -892,9 +887,6 @@ begin
     frmDescription.DefaultEditMode := emPlainText;
     frmDescription.Clear;
     edTitle.Clear;
-    cbCategories.ItemIndex := fCatList.IndexOf(TReservedCategories.UserCatID);
-    if cbCategories.ItemIndex = -1 then
-      cbCategories.ItemIndex := 0;
     fKindCBMgr.Select(skFreeForm);
     frmNotes.DefaultEditMode := emPlainText;
     frmNotes.Clear;
@@ -973,8 +965,7 @@ begin
   // Display all kinds in drop down list
   for KindInfo in TSnippetKindInfoList.Items do
     fKindCBMgr.Add(KindInfo.Kind, KindInfo.DisplayName);
-  // Display all available categories in drop down list
-  fCatList.ToStrings(cbCategories.Items);
+  // TODO: display all tags in a check list box or similar
 end;
 
 procedure TSnippetsEditorDlg.SetAllCompilerResults(
@@ -995,7 +986,13 @@ begin
   with Result do
   begin
     Props.Title := StrTrim(edTitle.Text);
-    Props.Cat := fCatList.CatID(cbCategories.ItemIndex);
+    // TODO: remove this temporary code to set category
+    // In this temporary code we preserve category of an existing snippet and
+    // force category of a new snippet to "User Defined"
+    if Assigned(fSnippet) then
+      Props.Cat := fSnippet.Category
+    else
+      Props.Cat := 'user';
     Props.Kind := fKindCBMgr.GetSelected;
     (Props.Desc as IAssignable).Assign(frmDescription.ActiveText);
     Props.SourceCode := StrTrimRight(frmSourceEditor.SourceCode);
@@ -1004,14 +1001,16 @@ begin
     else
       Props.LanguageID := TSourceCodeLanguageID.Create('Text');
     (Props.Notes as IAssignable).Assign(frmNotes.ActiveText);
-    Props.Tags := TTagSet.Create;
-    Props.Tags.Add(
-      TTag.Create(
-        TTag.MakeValidTagString(
-          fCatList.CatDesc(cbCategories.ItemIndex)
-        )
-      )
-    );
+    // TODO: Permit user to set requied tag(s)
+    // In this temporary code we preserve tags of an existing snippet and give
+    // an arbitrary "NEW" tag to new snippets.
+    if Assigned(fSnippet) then
+      Props.Tags := TTagSet.Create(fSnippet.Tags)
+    else
+    begin
+      Props.Tags := TTagSet.Create;
+      Props.Tags.Add(TTag.Create('NEW'));
+    end;
     Props.CompilerResults := fCompilersLBMgr.GetCompileResults;
     Refs.RequiredModules := fUnitsCLBMgr.GetCheckedUnits;
     Refs.RequiredSnippets := fDependsCLBMgr.GetCheckedSnippets;

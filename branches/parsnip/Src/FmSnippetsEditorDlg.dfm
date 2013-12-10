@@ -86,7 +86,11 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
           Width = 209
           Height = 21
           Style = csDropDownList
+          ItemIndex = 0
           TabOrder = 4
+          Text = '** NOT IN USE **'
+          Items.Strings = (
+            '** NOT IN USE **')
         end
         object cbKind: TComboBox
           Left = 93
