@@ -633,7 +633,8 @@ function _TDatabase.CreateTempSnippet(const Snippet: TSnippet): TSnippet;
   }
 begin
   Assert(Assigned(Snippet), ClassName + '.CreateTempSnippet: Snippet is nil');
-  Result := TSnippet.Create(Snippet.ID, Snippet.GetProps);
+  Result := TSnippet.Create(Snippet.ID);
+  Result.SetProps(Snippet.GetProps);
   Result.UpdateRefs(MakeValidRefs(Snippet.GetReferences));
 end;
 
@@ -648,8 +649,9 @@ function _TDatabase.CreateTempSnippet(const Data: TSnippetEditData;
   }
 begin
   Result := TSnippet.Create(
-    TSnippetID.Create(StrIf(Name <> '', Name, UniqueSnippetName)), Data.Props
+    TSnippetID.Create(StrIf(Name <> '', Name, UniqueSnippetName))
   );
+  Result.SetProps(Data.Props);
   Result.UpdateRefs(MakeValidRefs(Data.Refs));
 end;
 
@@ -800,7 +802,8 @@ resourcestring
   sCatNotFound = 'Category "%0:s" referenced by new snippet named "%1:s" does '
     + 'not exist';
 begin
-  Result := TSnippet.Create(SnippetID, Data.Props);
+  Result := TSnippet.Create(SnippetID);
+  Result.SetProps(Data.Props);
   Result.UpdateRefs(MakeValidRefs(Data.Refs));
   Cat := fCategories.Find(Result.Category);
   if not Assigned(Cat) then
@@ -1033,7 +1036,8 @@ function TDBDataItemFactory.CreateSnippet(const Name: string;
     @return Instance of new snippet with no references.
   }
 begin
-  Result := TSnippet.Create(TSnippetID.Create(Name), Props);
+  Result := TSnippet.Create(TSnippetID.Create(Name));
+  Result.SetProps(Props);
 end;
 
 { TUserDataProvider }

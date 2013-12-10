@@ -93,8 +93,6 @@ type
       }
   end;
 
-  _TSnippetList = class;
-
   {
   TSnippet:
     Encapsulates a snippet from the database. Can be routine, type, constant or
@@ -115,17 +113,12 @@ type
         function Equals(const Left, Right: TSnippet): Boolean; override;
         function GetHashCode(const Snippet: TSnippet): Integer; override;
       end;
-  strict protected
+  public
     procedure SetProps(const Data: TSnippetData);
       {Sets snippet's properties.
         @param Data [in] Record containing property values.
       }
   public
-    constructor Create(const ID: TSnippetID; const Props: TSnippetData);
-      {Class contructor. Sets up snippet object with given property values.
-        @param Name [in] Name of snippet.
-        @param Props [in] Values of various snippet properties.
-      }
     function CanCompile: Boolean;
       {Checks if snippet can be compiled.
         @return True if compilation supported and False if not.
@@ -195,8 +188,8 @@ type
       }
     function Find(const SnippetID: TSnippetID; out Index: Integer): Boolean;
       overload;
-      {Finds a snippet in the list that has a specified name and user defined
-      property. Uses a binary search.
+      {Finds a snippet in the list that has a specified ID. Uses a binary
+      search.
         @param SnippetID [in] ID of snippet to be found.
         @param Index [out] Index of required snippet in list. Valid only if
           method returns True.
@@ -282,17 +275,6 @@ function TSnippet.CanCompile: Boolean;
   }
 begin
   Result := Kind <> skFreeform;
-end;
-
-constructor TSnippet.Create(const ID: TSnippetID; const Props: TSnippetData);
-  {Class contructor. Sets up snippet object with given property values.
-    @param Name [in] Name of snippet.
-    @param Props [in] Values of various snippet properties.
-  }
-begin
-  inherited Create(ID);
-  // Record simple property values
-  SetProps(Props);
 end;
 
 function TSnippet.GetEditData: TSnippetEditData;
@@ -484,8 +466,7 @@ end;
 
 function _TSnippetList.Find(const SnippetID: TSnippetID; out Index: Integer):
   Boolean;
-  {Finds a snippet in the list that has a specified name and user defined
-  property. Uses a binary search.
+  {Finds a snippet in the list that has a specified ID. Uses a binary search.
     @param SnippetID [in] ID of snippet to be found.
     @param Index [out] Index of required snippet in list. Valid only if
       method returns True.
@@ -493,13 +474,14 @@ function _TSnippetList.Find(const SnippetID: TSnippetID; out Index: Integer):
   }
 var
   TempSnippet: TSnippet;  // temp snippet used to perform search
-  NulData: TSnippetData;  // nul data used to create snippet
+  NullData: TSnippetData; // null data used to create snippet
 begin
   // We need a temporary snippet object in order to perform binary search using
   // object list's built in search
-  NulData.Init;
-  TempSnippet := TSnippet.Create(SnippetID, NulData);
+  NullData.Init;
+  TempSnippet := TSnippet.Create(SnippetID);
   try
+    TempSnippet.SetProps(NullData);
     Index := fList.IndexOf(TempSnippet);
     Result := Index >= 0;
   finally
