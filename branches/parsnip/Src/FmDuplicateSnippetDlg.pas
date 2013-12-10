@@ -8,7 +8,7 @@
  * $Rev$
  * $Date$
  *
- * Implements a dialogue box which can create a duplicate copy of asnippet.
+ * Implements a dialogue box which can create a duplicate copy of a snippet.
 }
 
 
@@ -22,7 +22,7 @@ uses
   // Delphi
   SysUtils, Controls, StdCtrls, ExtCtrls, Classes,
   // Project
-  DB.USnippet, FmGenericOKDlg, UBaseObjects, UIStringList;
+  DB.USnippet, FmGenericOKDlg, UBaseObjects;
 
 
 type
@@ -73,8 +73,8 @@ uses
   // Delphi
   Math,
   // Project
-  DB.UCategory, DB.UMain, UCtrlArranger, UExceptions, UMessageBox, USettings,
-  USnippetValidator, UStructs, UStrUtils, UUserDBMgr;
+  DB.UMain, UCtrlArranger, UExceptions, UMessageBox, USettings,
+  USnippetValidator, UStrUtils, UUserDBMgr;
 
 {$R *.dfm}
 
