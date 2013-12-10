@@ -40,6 +40,7 @@ type
   strict private
     var
       fSnippetsTable: TDBSnippetsTable;
+      fTagSet: ITagSet;
   strict protected
     procedure Initialize; override;
     procedure Finalize; override;
@@ -301,6 +302,7 @@ uses
   SysUtils,
   // Project
   CS.Database.Snippets,
+  CS.Database.Tags,
   DB.UDatabaseIO,
   UExceptions,
   UQuery,
@@ -1286,6 +1288,7 @@ procedure TDatabase.Initialize;
 begin
   inherited;
   fSnippetsTable := TDBSnippetsTable.Create;
+  fTagSet := TTagSet.Create;
 end;
 
 initialization
