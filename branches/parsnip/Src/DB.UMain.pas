@@ -176,12 +176,6 @@ type
       {Removes a change event handler from list of listeners.
         @param Handler [in] Handler to remove from list.
       }
-    function GetCategories: TCategoryList;
-      {Gets list of categories in main and user databases.
-        @return Required list.
-      }
-    property Categories: TCategoryList read GetCategories;
-      {List of categories in main and user databases}
   end;
 
   {
@@ -393,10 +387,6 @@ type
       {Destructor. Tidies up and tears down object.
       }
     { IDatabase methods }
-    function GetCategories: TCategoryList;
-      {Gets list of all categories in database.
-        @return Required list.
-      }
     procedure Load;
       {Loads object's data from main and user defined databases.
       }
@@ -711,14 +701,6 @@ begin
   Data := (Snippet as TSnippetEx).GetEditData;
   Data.Props.Title := Title;
   Result := AddSnippet(Data);
-end;
-
-function _TDatabase.GetCategories: TCategoryList;
-  {Gets list of all categories in database.
-    @return Required list.
-  }
-begin
-  Result := fCategories;
 end;
 
 function _TDatabase.GetDependents(const ASnippet: TSnippet): ISnippetIDList;
