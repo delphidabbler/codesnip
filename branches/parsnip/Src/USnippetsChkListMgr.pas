@@ -87,14 +87,12 @@ type
     procedure ClearChecks;
       {Clears all checks from items in check list box.
       }
-    procedure GetCheckedSnippets(const SnipList: _TSnippetList); overload;
-      {Gets all checked snippets in check list box.
-        @param SnipList [in] List that receives checked snippets objects.
-      }
-    function GetCheckedSnippets: ISnippetIDList; overload;
+    function GetCheckedSnippets: ISnippetIDList;
       {Gets all checked snippets in check list box.
         @returns List that receives ids of checked snippets.
       }
+    ///  <summary>Checks any of the items in the check list box are checked.
+    ///  </summary>
     function HasCheckedItems: Boolean;
   end;
 
@@ -215,20 +213,6 @@ begin
     (Rect.Top + Rect.Bottom - Canvas.TextHeight(fCLB.Items[Index])) div 2,
     fCLB.Items[Index]
   );
-end;
-
-procedure TSnippetsChkListMgr.GetCheckedSnippets(
-  const SnipList: _TSnippetList);
-  {Gets all checked snippets in check list box.
-    @param SnipList [in] List that receives checked snippets objects.
-  }
-var
-  Idx: Integer; // loops through all items in list box
-begin
-  SnipList.Clear;
-  for Idx := 0 to Pred(fCLB.Count) do
-    if fCLB.Checked[Idx] then
-      SnipList.Add(fCLB.Items.Objects[Idx] as TSnippet);
 end;
 
 function TSnippetsChkListMgr.GetCheckedSnippets: ISnippetIDList;
