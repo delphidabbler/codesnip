@@ -126,9 +126,6 @@ type
         @param Name [in] Name of snippet.
         @param Props [in] Values of various snippet properties.
       }
-    destructor Destroy; override;
-      {Destructor. Tears down object.
-      }
     function CanCompile: Boolean;
       {Checks if snippet can be compiled.
         @return True if compilation supported and False if not.
@@ -330,13 +327,6 @@ begin
   inherited Create(ID);
   // Record simple property values
   SetProps(Props);
-end;
-
-destructor TSnippet.Destroy;
-  {Destructor. Tears down object.
-  }
-begin
-  inherited;
 end;
 
 procedure TSnippet.SetProps(const Data: TSnippetData);
