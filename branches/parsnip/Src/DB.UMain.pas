@@ -248,31 +248,6 @@ type
       {Deletes a snippet from the user database.
         @param Snippet [in] Snippet to be deleted.
       }
-    function GetEditableCategoryInfo(
-      const Category: TCategory = nil): TCategoryData;
-      {Provides details of all a category's data that may be edited.
-        @param Category [in] Category for which data is required. May be nil in
-          whih case a blank record is returned.
-        @return Required data.
-      }
-    function AddCategory(const CatID: string;
-      const Data: TCategoryData): TCategory;
-      {Adds a new category to the user database.
-        @param CatID [in] ID of new category.
-        @param Data [in] Record storing new category's properties.
-        @return Reference to new category.
-      }
-    function UpdateCategory(const Category: TCategory;
-      const Data: TCategoryData): TCategory;
-      {Updates a user defined category's properties.
-        @param Category [in] Category to be updated. Must be user-defined.
-        @param Data [in] Record containing revised data.
-        @return Reference to updated category. Will have changed.
-      }
-    procedure DeleteCategory(const Category: TCategory);
-      {Deletes a category and all its snippets from the user database.
-        @param Category [in] Category to be deleted.
-      }
     function Updated: Boolean;
       {Checks if user database has been updated since last save.
         @return True if database has been updated, False otherwise.
@@ -401,18 +376,6 @@ type
       {Deletes a snippet from the user database.
         @param Snippet [in] Snippet to delete from database.
       }
-    function InternalAddCategory(const CatID: string;
-      const Data: TCategoryData): TCategory;
-      {Adds a new category to the user database. Assumes category not already in
-      user database.
-        @param CatID [in] ID of new category.
-        @param Data [in] Properties of new category.
-        @return Reference to new category object.
-      }
-    procedure InternalDeleteCategory(const Cat: TCategory);
-      {Deletes a category from the user database.
-        @param Cat [in] Category to delete from database.
-      }
     function UniqueSnippetName: string;
       {Generates a snippet "name" that is unique in the database.
         @return Required unique snippet "name".
@@ -516,31 +479,6 @@ type
       {Deletes a snippet from the user database.
         @param Snippet [in] Snippet to be deleted.
       }
-    function GetEditableCategoryInfo(
-      const Category: TCategory = nil): TCategoryData;
-      {Provides details of all a category's data that may be edited.
-        @param Category [in] Category for which data is required. May be nil in
-          which case a blank record is returned.
-        @return Required data.
-      }
-    function AddCategory(const CatID: string;
-      const Data: TCategoryData): TCategory;
-      {Adds a new category to the user database.
-        @param CatID [in] ID of new category.
-        @param Data [in] Record storing new category's properties.
-        @return Reference to new category.
-      }
-    function UpdateCategory(const Category: TCategory;
-      const Data: TCategoryData): TCategory;
-      {Updates a user defined category's properties.
-        @param Category [in] Category to be updated. Must be user-defined.
-        @param Data [in] Record containing revised data.
-        @return Reference to updated category. Will have changed.
-      }
-    procedure DeleteCategory(const Category: TCategory);
-      {Deletes a category and all its snippets from the user database.
-        @param Category [in] Category to be deleted.
-      }
     function Updated: Boolean;
       {Checks if user database has been updated since last save.
         @return True if database has been updated, False otherwise.
@@ -607,32 +545,6 @@ begin
 end;
 
 { _TDatabase }
-
-function _TDatabase.AddCategory(const CatID: string;
-  const Data: TCategoryData): TCategory;
-  {Adds a new category to the user database.
-    @param CatID [in] ID of new category.
-    @param Data [in] Record storing new category's properties.
-    @return Reference to new category.
-  }
-resourcestring
-  // Error message
-  sNameExists = 'Category %s already exists in user database';
-begin
-  Result := nil;
-  TriggerEvent(evChangeBegin);
-  try
-    // Check if category with same id exists in user database: error if so
-    if fCategories.Find(CatID) <> nil then
-      raise ECodeSnip.CreateFmt(sNameExists, [CatID]);
-    Result := InternalAddCategory(CatID, Data);
-    Query.Update;
-    TriggerEvent(evCategoryAdded, Result);
-  finally
-    fUpdated := True;
-    TriggerEvent(evChangeEnd);
-  end;
-end;
 
 procedure _TDatabase.AddChangeEventHandler(const Handler: TNotifyEventInfo);
   {Adds a change event handler to list of listeners.
@@ -745,27 +657,6 @@ begin
   (Result as TTempSnippet).UpdateRefs(Data.Refs, fSnippets);
 end;
 
-procedure _TDatabase.DeleteCategory(const Category: TCategory);
-  {Deletes a category and all its snippets from the user database.
-    @param Category [in] Category to be deleted.
-  }
-begin
-  Assert(Category.CanDelete,
-    ClassName + '.DeleteCategory: Category can''t be deleted');
-  Assert(fCategories.Contains(Category),
-    ClassName + '.DeleteCategory: Category is not in the database');
-  TriggerEvent(evChangeBegin);
-  TriggerEvent(evBeforeCategoryDelete, Category);
-  try
-    InternalDeleteCategory(Category);
-    Query.Update;
-  finally
-    TriggerEvent(evCategoryDeleted);
-    TriggerEvent(evChangeEnd);
-    fUpdated := True;
-  end;
-end;
-
 procedure _TDatabase.DeleteSnippet(const Snippet: TSnippet);
   {Deletes a snippet from the user database.
     @param Snippet [in] Snippet to be deleted.
@@ -845,22 +736,6 @@ begin
       Result.Add(Snippet.ID);
 end;
 
-function _TDatabase.GetEditableCategoryInfo(
-  const Category: TCategory): TCategoryData;
-  {Provides details of all a category's data that may be edited.
-    @param Category [in] Category for which data is required. May be nil in
-      whih case a blank record is returned.
-    @return Required data.
-  }
-begin
-  Assert(not Assigned(Category) or Category.UserDefined,
-    ClassName + '.GetEditableCategoryInfo: Category is not user-defined');
-  if Assigned(Category) then
-    Result := (Category as TCategoryEx).GetEditData
-  else
-    Result.Init;
-end;
-
 function _TDatabase.GetEditableSnippetInfo(
   const Snippet: TSnippet): TSnippetEditData;
   {Provides details of all a snippet's data (properties and references) that may
@@ -892,19 +767,6 @@ begin
       Result.Add(Snippet.ID);
 end;
 
-function _TDatabase.InternalAddCategory(const CatID: string;
-  const Data: TCategoryData): TCategory;
-  {Adds a new category to the user database. Assumes category not already in
-  user database.
-    @param CatID [in] ID of new category.
-    @param Data [in] Properties of new category.
-    @return Reference to new category object.
-  }
-begin
-  Result := TCategoryEx.Create(CatID, True, Data);
-  fCategories.Add(Result);
-end;
-
 function _TDatabase.InternalAddSnippet(const SnippetID: TSnippetID;
   const Data: TSnippetEditData): TSnippet;
   {Adds a new snippet to the user database. Assumes snippet not already in user
@@ -930,14 +792,6 @@ begin
     );
   Cat.SnippetIDs.Add(Result.ID);
   fSnippets.Add(Result);
-end;
-
-procedure _TDatabase.InternalDeleteCategory(const Cat: TCategory);
-  {Deletes a category from the user database.
-    @param Cat [in] Category to delete from database.
-  }
-begin
-  (fCategories as TCategoryListEx).Delete(Cat);
 end;
 
 procedure _TDatabase.InternalDeleteSnippet(const Snippet: TSnippet);
@@ -1060,37 +914,6 @@ begin
   repeat
     Result := 'Snippet' + TUniqueID.Generate;
   until fSnippets.Find(Result) = nil;
-end;
-
-function _TDatabase.UpdateCategory(const Category: TCategory;
-  const Data: TCategoryData): TCategory;
-  {Updates a user defined category's properties.
-    @param Category [in] Category to be updated. Must be user-defined.
-    @param Data [in] Record containing revised data.
-    @return Reference to updated category. Will have changed.
-  }
-var
-  SnippetIDs: ISnippetIDList;
-  SnippetID: TSnippetID;
-  CatID: string;
-begin
-  TriggerEvent(evChangeBegin);
-  TriggerEvent(evBeforeCategoryChange, Category);
-  try
-    SnippetIDs := TSnippetIDList.Create;
-    for SnippetID in Category.SnippetIDs do
-      SnippetIDs.Add(SnippetID);
-    CatID := Category.ID;
-    InternalDeleteCategory(Category);
-    Result := InternalAddCategory(CatID, Data);
-    for SnippetID in SnippetIDs do
-      Result.SnippetIDs.Add(SnippetID);
-    Query.Update;
-    TriggerEvent(evCategoryChanged, Result);
-  finally
-    fUpdated := True;
-    TriggerEvent(evChangeEnd);
-  end;
 end;
 
 function _TDatabase.Updated: Boolean;
