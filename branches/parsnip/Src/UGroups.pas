@@ -381,73 +381,44 @@ end;
 { TTagGrouping }
 
 procedure TTagGrouping.Populate;
-var
-  Tag: TTag;
-  SnippetID: TSnippetID;
-  Snippet: TSnippet;
-  TagMap: TSortedDistinctMultiMap<TTag, TSnippet>;
-  GroupItem: TTagGroupItem;
-  TaglessSnippets: _TSnippetList;
-begin
-  TaglessSnippets := nil;
-  TagMap := TSortedDistinctMultiMap<TTag, TSnippet>.Create(
-    TRules<TTag>.Create(
-      TTag.TComparator.Create, TTag.TComparator.Create
-    ),
-    TRules<TSnippet>.Create(
-      TDelegatedComparer<TSnippet>.Create(
-        function (const Left, Right: TSnippet): Integer
-        begin
-          Result := TSnippetID.Compare(Left.ID, Right.ID);
-        end
-      ),
-      TDelegatedEqualityComparer<TSnippet>.Create(
-        function (const Left, Right: TSnippet): Boolean
-        begin
-          Result := Left.ID = Right.ID;
-        end,
-        function (const Value: TSnippet): Integer
-        begin
-          Result := Value.ID.Hash
-        end
-      )
-    ),
-    True
-  );
-  try
-    TaglessSnippets := _TSnippetList.Create;
-    for SnippetID in SnippetIDList do
+
+  procedure AddGroupItem(const ATag: TTag; SnippetIDs: ISnippetIDList);
+  var
+    GroupItem: TTagGroupItem;
+    SnippetID: TSnippetID;
+    Snippet: TSnippet;
+  begin
+    GroupItem := TTagGroupItem.Create(ATag);
+    for SnippetID in SnippetIDs do
     begin
       Snippet := _Database.Lookup(SnippetID);
-      if not Snippet.Tags.IsEmpty then
-      begin
-        for Tag in Snippet.Tags do
-        begin
-          TagMap.Add(Tag, Snippet);
-        end;
-      end
-      else
-      begin
-        TaglessSnippets.Add(Snippet);
-      end;
-    end;
-    // special group for snippets with no tags
-    GroupItem := TTagGroupItem.Create(TTag.CreateNull);
-    AddItem(GroupItem);
-    for Snippet in TaglessSnippets do
       GroupItem.AddSnippet(Snippet);
-    for Tag in TagMap.Keys do
-    begin
-      GroupItem := TTagGroupItem.Create(Tag);
-      AddItem(GroupItem);
-      for Snippet in TagMap[Tag] do
-      begin
-        GroupItem.AddSnippet(Snippet);
-      end;
     end;
-  finally
-    TagMap.Free;
-    TaglessSnippets.Free;
+    AddItem(GroupItem);
+  end;
+
+var
+  SelectedSnippetIDs: ISnippetIDList;
+  AllTags: ITagSet;
+  Tag: TTag;
+begin
+  SelectedSnippetIDs := _Database.Select(
+    function (const Snippet: TSnippet): Boolean
+    begin
+      Result := Snippet.Tags.IsEmpty;
+    end
+  );
+  AddGroupItem(TTag.CreateNull, SelectedSnippetIDs);
+  AllTags := _Database.GetAllTags;
+  for Tag in AllTags do
+  begin
+    SelectedSnippetIDs := _Database.Select(
+      function (const Snippet: TSnippet): Boolean
+      begin
+        Result := Snippet.Tags.Contains(Tag);
+      end
+    );
+    AddGroupItem(Tag, SelectedSnippetIDs);
   end;
 end;
 
