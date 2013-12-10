@@ -174,6 +174,7 @@ type
     function Filter(const AFilterFn: TTagFilter): ITagSet;
     procedure Assign(Other: ITagSet);
     procedure Add(const ATag: TTag);
+    procedure Include(Tags: ITagSet);
     procedure Remove(const ATag: TTag);
     procedure Clear;
     property Count: Integer read GetCount;

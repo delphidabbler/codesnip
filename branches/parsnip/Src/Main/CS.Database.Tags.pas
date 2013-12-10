@@ -38,6 +38,7 @@ type
     function Filter(const AFilterFn: TTagFilter): ITagSet;
     procedure Assign(Other: ITagSet);
     procedure Add(const ATag: TTag);
+    procedure Include(Tags: ITagSet);
     procedure Remove(const ATag: TTag);
     procedure Clear;
     property Count: Integer read GetCount;
@@ -116,6 +117,14 @@ end;
 function TTagSet.GetEnumerator: IEnumerator<TTag>;
 begin
   Result := fTags.GetEnumerator;
+end;
+
+procedure TTagSet.Include(Tags: ITagSet);
+var
+  Tag: TTag;
+begin
+  for Tag in Tags do
+    fTags.Add(Tag); // set implementation ignores duplicates
 end;
 
 function TTagSet.IsEmpty: Boolean;
