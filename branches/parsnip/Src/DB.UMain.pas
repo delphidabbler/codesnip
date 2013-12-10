@@ -972,29 +972,6 @@ procedure _TDatabase.UpdateSnippet(const Snippet: TSnippet;
     @param Snippet [in] Snippet to be updated. Must be user-defined.
     @param Data [in] Record containing revised data.
   }
-
-  procedure UpdateCategories(const OldCatID: string; const Snippet: TSnippet);
-  resourcestring
-    // Error message
-    sCatNotFound = 'Category "%0:s" referenced by new snippet named "%1:s" '
-      + 'does not exist';
-  var
-    OldCat: TCategory;
-    NewCat: TCategory;
-  begin
-    if StrSameText(OldCatID, Snippet.Category) then
-      Exit;
-    OldCat := fCategories.Find(OldCatID);
-    if Assigned(OldCat) then
-      OldCat.SnippetIDs.Remove(Snippet.ID);
-    NewCat := fCategories.Find(Snippet.Category);
-    if not Assigned(NewCat) then
-      raise ECodeSnip.CreateFmt(
-        sCatNotFound, [Snippet.Category, Snippet.ID.ToString]
-      );
-    NewCat.SnippetIDs.Add(Snippet.ID);
-  end;
-
 var
   OldCatID: string;
 begin
@@ -1006,7 +983,8 @@ begin
     (Snippet as TSnippetEx).Update(Data);
     // ensure any new, unknown, tags are added to set of all tags
     fAllTags.Include(Snippet.Tags);
-    UpdateCategories(OldCatID, Snippet);
+    // NOTE: since categories can no longer be changed, there is no need to
+    // update TCategory.SnippetIDs like we used to.
     Query.Update;
     TriggerEvent(evSnippetChanged, Snippet);
   finally
