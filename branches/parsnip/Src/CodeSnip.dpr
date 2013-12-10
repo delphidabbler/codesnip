@@ -169,7 +169,6 @@ uses
   UBox in 'UBox.pas',
   UBrowseForFolderDlg in 'UBrowseForFolderDlg.pas',
   UBrowseProtocol in 'UBrowseProtocol.pas',
-  UCategoryListAdapter in 'UCategoryListAdapter.pas',
   UClassHelpers in 'UClassHelpers.pas',
   UClipboardHelper in 'UClipboardHelper.pas',
   UCodeImportExport in 'UCodeImportExport.pas',
