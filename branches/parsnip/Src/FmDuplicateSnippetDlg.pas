@@ -28,10 +28,8 @@ uses
 
 type
   TDuplicateSnippetDlg = class(TGenericOKDlg, INoPublicConstruct)
-    cbCategory: TComboBox;
     chkEdit: TCheckBox;
     edTitle: TEdit;
-    lblCategory: TLabel;
     lblTitle: TLabel;
     procedure btnOKClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -87,24 +85,17 @@ uses
 procedure TDuplicateSnippetDlg.ArrangeForm;
 begin
   TCtrlArranger.SetLabelHeights(Self);
-
   TCtrlArranger.AlignLefts(
-    [lblTitle, lblCategory, edTitle, cbCategory, chkEdit], 0
+    [lblTitle, edTitle, chkEdit], 0
   );
-
   lblTitle.Top := 0;
   TCtrlArranger.MoveBelow(lblTitle, edTitle, 4);
-  TCtrlArranger.MoveBelow(edTitle, lblCategory, 8);
-  TCtrlArranger.MoveBelow(lblCategory, cbCategory, 4);
-  TCtrlArranger.MoveBelow(cbCategory, chkEdit, 20);
-
+  TCtrlArranger.MoveBelow(edTitle, chkEdit, 16);
   pnlBody.ClientWidth := Max(
     TCtrlArranger.TotalControlWidth(pnlBody) + 8,
     TCtrlArranger.RightOf(btnHelp) - btnOK.Left
   );
-
   pnlBody.ClientHeight := TCtrlArranger.TotalControlHeight(pnlBody) + 8;
-
   // Arrange inherited controls and size the form
   inherited;
 end;
@@ -157,17 +148,9 @@ begin
 end;
 
 procedure TDuplicateSnippetDlg.InitForm;
-var
-  SnippetCat: TCategory;
 begin
   inherited;
   edTitle.Text := fSnippet.Title;
-  fCatList.ToStrings(cbCategory.Items);
-  SnippetCat := _Database.Categories.Find(fSnippet.Category);
-  if Assigned(SnippetCat) then
-    cbCategory.ItemIndex := cbCategory.Items.IndexOf(SnippetCat.Description)
-  else
-    cbCategory.ItemIndex := -1;
   chkEdit.Checked := fOptions.EditSnippetOnClose;
 end;
 
@@ -179,20 +162,16 @@ begin
   fNewSnippet := (_Database as IDatabaseEdit).DuplicateSnippet(
     fSnippet,
     DisplayName,
-    fCatList.CatID(cbCategory.ItemIndex)
+    fSnippet.Category // TODO: Remove this param from DuplicateSnippet
   );
 end;
 
 procedure TDuplicateSnippetDlg.ValidateData;
 var
   ErrMsg: string;
-resourcestring
-  sNoCategory = 'You must choose a category';
 begin
   if not TSnippetValidator.ValidateTitle(edTitle.Text, ErrMsg) then
     raise EDataEntry.Create(ErrMsg, edTitle);
-  if cbCategory.ItemIndex = -1 then
-    raise EDataEntry.Create(sNoCategory, cbCategory);
 end;
 
 procedure TDuplicateSnippetDlg.FormCreate(Sender: TObject);
