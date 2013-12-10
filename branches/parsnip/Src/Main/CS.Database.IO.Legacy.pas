@@ -46,6 +46,8 @@ type
       fDBPath: string;
       fXMLDoc: IXMLDocumentEx;  // Extended XML document object
       fVersion: Integer;
+      ///  <summary>Maps category IDs to tag name based on category name.
+      ///  </summary>
       fCategoryMap: TDictionary<string,string>;
     procedure HandleException(E: Exception);
     function LegacySnippetName(SnippetNode: IXMLNode): string;
@@ -57,10 +59,11 @@ type
     procedure LoadSnippetProperties(SnippetNode: IXMLNode;
       const ASnippet: TDBSnippet);
     function GetLastModifiedFileDate(ATable: TDBSnippetsTable): TUTCDateTime;
+    function BuildTagSet: ITagSet;
   public
     constructor Create(const DBPath: string);
     destructor Destroy; override;
-    procedure Load(const ATable: TDBSnippetsTable;
+    procedure Load(const ATable: TDBSnippetsTable; out ATagSet: ITagSet;
       out ALastModified: TUTCDateTime);
   end;
 
@@ -80,8 +83,6 @@ uses
   // Project
   CS.ActiveText,
   CS.ActiveText.Helper,
-//  CS.ActiveText.Parsers.REML,
-//  CS.ActiveText.Renderers.REML,
   CS.Database.SnippetLinks,
   CS.Database.Snippets,
   CS.Database.Tags,
@@ -106,6 +107,15 @@ resourcestring
   sMissingSource = 'Source code file name missing for legacy snippet named '
     + '"%s"';
   sFileNotFound = 'Database file "%s" missing.';
+
+function TDBLegacyUserDBReader.BuildTagSet: ITagSet;
+var
+  TagName: string;
+begin
+  Result := TTagSet.Create;
+  for TagName in fCategoryMap.Values do
+    Result.Add(TTag.Create(TagName));
+end;
 
 constructor TDBLegacyUserDBReader.Create(const DBPath: string);
 var
@@ -169,13 +179,14 @@ begin
 end;
 
 procedure TDBLegacyUserDBReader.Load(const ATable: TDBSnippetsTable;
-  out ALastModified: TUTCDateTime);
+  out ATagSet: ITagSet; out ALastModified: TUTCDateTime);
 begin
   ATable.Clear;
   try
     OpenXMLDoc;
     ReadCategoryInfo;
     ReadSnippets(ATable);
+    ATagSet := BuildTagSet;
     ALastModified := GetLastModifiedFileDate(ATable);
   except
     ATable.Clear;
@@ -231,13 +242,13 @@ procedure TDBLegacyUserDBReader.LoadSnippetProperties(SnippetNode: IXMLNode;
   function GetTagsProperty: ITagSet;
   var
     CatID: string;
-    CatDesc: string;
+    TagName: string;
   begin
     Result := TTagSet.Create;
     CatID := GetPropertyText(cCatIDNode);
-    if not fCategoryMap.TryGetValue(CatID, CatDesc) then
+    if not fCategoryMap.TryGetValue(CatID, TagName) then
       Exit;
-    Result.Add(TTag.Create(CatDesc));
+    Result.Add(TTag.Create(TagName));
   end;
 
   // Returns the name of the file containing the snippet's source code.
@@ -474,7 +485,7 @@ var
   CatNodes: IXMLSimpleNodeList;
   CatNode: IXMLNode;
   CatID: string;
-  CatDesc: string;
+  TagName: string;
 begin
   // Find <categories> node
   CatListNode := fXMLDoc.FindNode(cUserDataRootNode + '\' + cCategoriesNode);
@@ -489,11 +500,15 @@ begin
     CatID := CatNode.Attributes[cCategoryIdAttr];
     if not fCategoryMap.ContainsKey(CatID) then
     begin
-      // Category description is in <description> sub-tag of <category>
-      CatDesc := TXMLDocHelper.GetSubTagText(
-        fXMLDoc, CatNode, cDescriptionNode
+      // Category description is in <description> sub-tag of <category>. We
+      // convert description to a valid tag name and add to category->tag name
+      // map
+      TagName := TTag.MakeValidTagString(
+        TXMLDocHelper.GetSubTagText(
+          fXMLDoc, CatNode, cDescriptionNode
+        )
       );
-      fCategoryMap.Add(CatID, CatDesc);
+      fCategoryMap.Add(CatID, TagName);
     end;
   end;
 end;
