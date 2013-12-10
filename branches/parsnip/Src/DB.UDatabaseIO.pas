@@ -336,6 +336,7 @@ var
 
 var
   TagSet: ITagSet;
+  Tag: TTag;
 begin
   // Create reader object that can access data storage
   fReader := CreateReader;
@@ -349,7 +350,10 @@ begin
     LoadCategories;
     // Load snippets in each category
     for Category in fCategories do
+    begin
+      Tags.Add(TTag.Create(TTag.MakeValidTagString(Category.Description)));
       LoadSnippets(Category);
+    end;
     // Build XRef, Depends and Units reference list of each snippet for this
     // database
     for Snippet in fSnipList do
@@ -369,7 +373,6 @@ begin
         TagSet := TTagSet.Create;
         TagSet.Add(TTag.Create(Category.Description));
         Snippet.SetTags(TagSet);
-        Tags.Include(Snippet.Tags);
       end;
     end;
   except
