@@ -322,6 +322,7 @@ type
     fUpdated: Boolean;                // Flags if user database has been updated
     fCategories: TCategoryList;       // List of categories
     fSnippets: TSnippetList;          // List of snippets
+    fAllTags: ITagSet;                // Set of all tags
     fChangeEvents: TMulticastEvents;  // List of change event handlers
     type
       {
@@ -594,6 +595,7 @@ procedure _TDatabase.Clear;
   }
 begin
   fCategories.Clear;
+  fAllTags.Clear;
   fSnippets.Clear;
 end;
 
@@ -611,6 +613,7 @@ begin
   inherited Create;
   fSnippets := TSnippetListEx.Create(True);
   fCategories := TCategoryListEx.Create(True);
+  fAllTags := TTagSet.Create;
   fChangeEvents := TMultiCastEvents.Create(Self);
 end;
 
@@ -773,6 +776,8 @@ begin
       sCatNotFound, [Result.Category, Result.ID.ToString]
     );
   Cat.SnippetIDs.Add(Result.ID);
+  // ensure any unknown tags are added to set of all known tags
+  fAllTags.Include(Result.Tags);
   fSnippets.Add(Result);
 end;
 
@@ -783,6 +788,7 @@ procedure _TDatabase.InternalDeleteSnippet(const Snippet: TSnippet);
 var
   Cat: TCategory; // category containing snippet
 begin
+  // Don't remove tags from tag list - leave them there
   // Delete from category if found
   Cat := fCategories.Find(Snippet.Category);
   if Assigned(Cat) then
@@ -810,7 +816,7 @@ begin
   try
     // Load any user database
     with TDatabaseIOFactory.CreateUserDBLoader do
-      Load(fSnippets, fCategories, Factory);
+      Load(fSnippets, fCategories, fAllTags, Factory);
     fUpdated := False;
   except
     // If an exception occurs clear the database
@@ -945,6 +951,8 @@ begin
     OldCatID := Snippet.Category;
     CleanUpRefs(Data.Refs);
     (Snippet as TSnippetEx).Update(Data, fSnippets);
+    // ensure any new, unknown, tags are added to set of all tags
+    fAllTags.Include(Snippet.Tags);
     UpdateCategories(OldCatID, Snippet);
     Query.Update;
     TriggerEvent(evSnippetChanged, Snippet);

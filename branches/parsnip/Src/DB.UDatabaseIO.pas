@@ -24,7 +24,12 @@ interface
 
 uses
   // Project
-  DB.UCategory, DB.UMain, DB.USnippet, UBaseObjects, UExceptions;
+  CS.Database.Types,
+  DB.UCategory,
+  DB.UMain,
+  DB.USnippet,
+  UBaseObjects,
+  UExceptions;
 
 
 type
@@ -38,6 +43,7 @@ type
     ['{C6AF94FC-F56F-44AE-9E79-3B0CD0BB21D4}']
     procedure Load(const SnipList: TSnippetList;
       const Categories: TCategoryList;
+      Tags: ITagSet;
       const DBDataItemFactory: IDBDataItemFactory);
       {Loads data from storage and updates database object.
         @param SnipList [in] Receives information about each snippet in the
@@ -102,7 +108,6 @@ uses
   // Project
   CS.Database.Snippets,
   CS.Database.Tags,
-  CS.Database.Types,
   DBIO.UFileIOIntf,
   DBIO.UNulDataReader,
   DBIO.UXMLDataIO,
@@ -179,6 +184,7 @@ type
     { IDatabaseLoader method }
     procedure Load(const SnipList: TSnippetList;
       const Categories: TCategoryList;
+      Tags: ITagSet;
       const DBDataItemFactory: IDBDataItemFactory);
       {Loads data from storage and updates database object.
         @param SnipList [in] Receives information about each snippet in the
@@ -302,7 +308,8 @@ begin
 end;
 
 procedure TDatabaseLoader.Load(const SnipList: TSnippetList;
-  const Categories: TCategoryList; const DBDataItemFactory: IDBDataItemFactory);
+  const Categories: TCategoryList; Tags: ITagSet;
+  const DBDataItemFactory: IDBDataItemFactory);
   {Loads data from storage and updates database object.
     @param SnipList [in] Receives information about each snippet in the
       database.
@@ -362,6 +369,7 @@ begin
         TagSet := TTagSet.Create;
         TagSet.Add(TTag.Create(Category.Description));
         Snippet.SetTags(TagSet);
+        Tags.Include(Snippet.Tags);
       end;
     end;
   except
