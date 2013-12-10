@@ -88,13 +88,13 @@ type
       ///  <summary>Value of TypesAndConsts property.</summary>
       fTypesAndConsts: TObjectList<TSnippet>;
       ///  <summary>Value of IntfRoutines property.</summary>
-      fIntfRoutines: TSnippetList;
+      fIntfRoutines: _TSnippetList;
       ///  <summary>Value of AllRoutines property.</summary>
-      fAllRoutines: TSnippetList;
+      fAllRoutines: _TSnippetList;
       ///  <summary>Value of ForwardRoutines property.</summary>
-      fForwardRoutines: TSnippetList;
+      fForwardRoutines: _TSnippetList;
       ///  <summary>Value of RequiredRoutines property.</summary>
-      fRequiredRoutines: TSnippetList;
+      fRequiredRoutines: _TSnippetList;
       ///  <summary>Value of Units property.</summary>
       fUnits: TStringList;
 
@@ -153,16 +153,16 @@ type
     ///  <summary>List of routines added by the user.</summary>
     ///  <remarks>These routines are those which would appear in a unit's
     ///  interface section.</remarks>
-    property IntfRoutines: TSnippetList read fIntfRoutines;
+    property IntfRoutines: _TSnippetList read fIntfRoutines;
 
     ///  <summary>List of routines that have been required by other snippets.
     ///  </summary>
-    property RequiredRoutines: TSnippetList read fRequiredRoutines;
+    property RequiredRoutines: _TSnippetList read fRequiredRoutines;
 
     ///  <summary>List of all routines, both added and required.</summary>
     ///  <remarks>Not valid until Generate has been called. Invalidated if
     ///  further snippets are added without calling Generate again.</remarks>
-    property AllRoutines: TSnippetList read fAllRoutines;
+    property AllRoutines: _TSnippetList read fAllRoutines;
 
     ///  <summary>List of required routines that have not also been added by the
     ///  user.</summary>
@@ -172,7 +172,7 @@ type
     ///  <para>Not valid until Generate has been called. Invalidated if further
     ///  snippets are added without calling Generate again.</para>
     ///  </remarks>
-    property ForwardRoutines: TSnippetList read fForwardRoutines;
+    property ForwardRoutines: _TSnippetList read fForwardRoutines;
 
     ///  <summary>List of required units.</summary>
     property Units: TStringList read fUnits;
@@ -795,10 +795,10 @@ constructor TPascalSourceAnalyser.Create;
 begin
   inherited;
   fTypesAndConsts := TObjectList<TSnippet>.Create(False);
-  fIntfRoutines := TSnippetList.Create;
-  fAllRoutines := TSnippetList.Create;
-  fForwardRoutines := TSnippetList.Create;
-  fRequiredRoutines := TSnippetList.Create;
+  fIntfRoutines := _TSnippetList.Create;
+  fAllRoutines := _TSnippetList.Create;
+  fForwardRoutines := _TSnippetList.Create;
+  fRequiredRoutines := _TSnippetList.Create;
   fUnits := TStringList.Create;
 end;
 

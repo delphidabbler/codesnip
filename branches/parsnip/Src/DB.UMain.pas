@@ -321,7 +321,7 @@ type
   strict private
     fUpdated: Boolean;                // Flags if user database has been updated
     fCategories: TCategoryList;       // List of categories
-    fSnippets: TSnippetList;          // List of snippets
+    fSnippets: _TSnippetList;          // List of snippets
     fAllTags: ITagSet;                // Set of all tags
     fChangeEvents: TMulticastEvents;  // List of change event handlers
     type
@@ -486,10 +486,10 @@ type
   }
   TUserDataProvider = class(TInterfacedObject, IDBDataProvider)
   strict private
-    fSnippets: TSnippetList;    // All snippets in the whole database
+    fSnippets: _TSnippetList;    // All snippets in the whole database
     fCategories: TCategoryList; // All categories in the whole database
   public
-    constructor Create(const SnipList: TSnippetList;
+    constructor Create(const SnipList: _TSnippetList;
       const Categories: TCategoryList);
       {Constructor. Records list of all snippets and categories in both
       databases.
@@ -1021,7 +1021,7 @@ end;
 
 { TUserDataProvider }
 
-constructor TUserDataProvider.Create(const SnipList: TSnippetList;
+constructor TUserDataProvider.Create(const SnipList: _TSnippetList;
   const Categories: TCategoryList);
   {Constructor. Records list of all snippets and categories in both databases.
     @param SnipList [in] List of all snippets in whole database.

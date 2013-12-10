@@ -93,7 +93,7 @@ type
       }
   end;
 
-  TSnippetList = class;
+  _TSnippetList = class;
 
   {
   TSnippet:
@@ -167,14 +167,14 @@ type
   TSnippetEx = class(TSnippet)
   public
     procedure UpdateRefs(const Refs: TSnippetReferences;
-      const AllSnippets: TSnippetList);
+      const AllSnippets: _TSnippetList);
       {Updates a snippet's references.
         @param Refs [in] Stores all snippet's references (XRef, Depends and
           Units).
         @param AllSnippets [in] List of all snippets in database.
       }
     procedure Update(const Data: TSnippetEditData;
-      const AllSnippets: TSnippetList);
+      const AllSnippets: _TSnippetList);
       {Updates snippet's properties and references.
         @param Data [in] New property values and references.
         @param AllSnippets [in] List of all snippets in database.
@@ -203,10 +203,10 @@ type
   TTempSnippet = class(TSnippetEx);
 
   {
-  TSnippetList:
+  _TSnippetList:
     Class that implements a list of TSnippet objects.
   }
-  TSnippetList = class(TObject)
+  _TSnippetList = class(TObject)
   strict private
     function GetItem(Idx: Integer): TSnippet;
       {Read accessor for Items property.
@@ -275,9 +275,9 @@ type
 
   {
   TSnippetListEx:
-    Private extension of TSnippetList for use internally by Snippets object.
+    Private extension of _TSnippetList for use internally by Snippets object.
   }
-  TSnippetListEx = class(TSnippetList)
+  TSnippetListEx = class(_TSnippetList)
   public
     procedure Add(const Snippet: TSnippet); override;
       {Adds a snippet to list. Snippet must not be TTempSnippet class.
@@ -411,7 +411,7 @@ begin
 end;
 
 procedure TSnippetEx.Update(const Data: TSnippetEditData;
-  const AllSnippets: TSnippetList);
+  const AllSnippets: _TSnippetList);
   {Updates snippet's properties and references.
     @param Data [in] New property values and references.
     @param AllSnippets [in] List of all snippets in database.
@@ -422,7 +422,7 @@ begin
 end;
 
 procedure TSnippetEx.UpdateRefs(const Refs: TSnippetReferences;
-  const AllSnippets: TSnippetList);
+  const AllSnippets: _TSnippetList);
   {Updates a snippet's references.
     @param Refs [in] Stores all snippet's references (XRef, Depends and
       Units).
@@ -448,9 +448,9 @@ begin
   SetXRefs(MakeValidRefs(Refs.XRefs));
 end;
 
-{ TSnippetList }
+{ _TSnippetList }
 
-procedure TSnippetList.Add(const Snippet: TSnippet);
+procedure _TSnippetList.Add(const Snippet: TSnippet);
   {Adds new snippet to the list, maintaining list in alphabetical order.
     @param Snippet [in] Snippet being added.
     @return Index where item was inserted in list
@@ -460,14 +460,14 @@ begin
   fList.Add(Snippet);
 end;
 
-procedure TSnippetList.Clear;
+procedure _TSnippetList.Clear;
   {Clears the list.
   }
 begin
   fList.Clear;
 end;
 
-function TSnippetList.Contains(const Snippet: TSnippet): Boolean;
+function _TSnippetList.Contains(const Snippet: TSnippet): Boolean;
   {Checks whether list contains a specified snippet.
     @param Snippet [in] Required snippet.
     @return True if snippet is in list, False otherwise.
@@ -476,7 +476,7 @@ begin
   Result := fList.Contains(Snippet);
 end;
 
-function TSnippetList.Count: Integer;
+function _TSnippetList.Count: Integer;
   {Counts number of snippets in list.
     @return Number of snippets in list.
   }
@@ -484,7 +484,7 @@ begin
   Result := fList.Count;
 end;
 
-constructor TSnippetList.Create(const OwnsObjects: Boolean = False);
+constructor _TSnippetList.Create(const OwnsObjects: Boolean = False);
   {Constructor. Creates a new empty list.
     @param OwnsObjects [in] Specifies whether list owns the snippet objects it
       contains. If True the snippets are freed when deleted from list.
@@ -514,7 +514,7 @@ begin
   fList.OwnsObjects := OwnsObjects;
 end;
 
-destructor TSnippetList.Destroy;
+destructor _TSnippetList.Destroy;
   {Destructor. Tears down object.
   }
 begin
@@ -522,7 +522,7 @@ begin
   inherited;
 end;
 
-function TSnippetList.Find(const SnippetID: TSnippetID; out Index: Integer):
+function _TSnippetList.Find(const SnippetID: TSnippetID; out Index: Integer):
   Boolean;
   {Finds a snippet in the list that has a specified name and user defined
   property. Uses a binary search.
@@ -547,7 +547,7 @@ begin
   end;
 end;
 
-function TSnippetList.Find(const SnippetName: string): TSnippet;
+function _TSnippetList.Find(const SnippetName: string): TSnippet;
   {Finds a named snippet in list with a matching user defined property.
     @param SnippetName [in] Name of required snippet.
       user defined snippet or one from main database.
@@ -557,7 +557,7 @@ begin
   Result := Find(TSnippetID.Create(SnippetName));
 end;
 
-function TSnippetList.Find(const SnippetID: TSnippetID): TSnippet;
+function _TSnippetList.Find(const SnippetID: TSnippetID): TSnippet;
   {Finds a specified snippet in list.
     @param SnippetID [in] ID of snippet to find.
     @return Reference to required snippet or nil if not found.
@@ -571,7 +571,7 @@ begin
     Result := nil;
 end;
 
-function TSnippetList.GetEnumerator: IEnumerator<TSnippet>;
+function _TSnippetList.GetEnumerator: IEnumerator<TSnippet>;
   {Gets an intialised snippet list enumerator.
     @return Required enumerator.
   }
@@ -579,7 +579,7 @@ begin
   Result := fList.GetEnumerator;
 end;
 
-function TSnippetList.GetItem(Idx: Integer): TSnippet;
+function _TSnippetList.GetItem(Idx: Integer): TSnippet;
   {Read accessor for Items property.
     @param Idx [in] Index of required snippet in list.
     @return Snippet at specified index in list.
@@ -588,7 +588,7 @@ begin
   Result := fList[Idx];
 end;
 
-function TSnippetList.IsEmpty: Boolean;
+function _TSnippetList.IsEmpty: Boolean;
   {Checks if list is empty.
     @return True if list is empty, False otehrwise.
   }

@@ -387,7 +387,7 @@ var
   Snippet: TSnippet;
   TagMap: TSortedDistinctMultiMap<TTag, TSnippet>;
   GroupItem: TTagGroupItem;
-  TaglessSnippets: TSnippetList;
+  TaglessSnippets: _TSnippetList;
 begin
   TaglessSnippets := nil;
   TagMap := TSortedDistinctMultiMap<TTag, TSnippet>.Create(
@@ -415,7 +415,7 @@ begin
     True
   );
   try
-    TaglessSnippets := TSnippetList.Create;
+    TaglessSnippets := _TSnippetList.Create;
     for SnippetID in SnippetIDList do
     begin
       Snippet := _Database.Lookup(SnippetID);

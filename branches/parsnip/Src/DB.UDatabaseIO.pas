@@ -41,7 +41,7 @@ type
   }
   IDatabaseLoader = interface(IInterface)
     ['{C6AF94FC-F56F-44AE-9E79-3B0CD0BB21D4}']
-    procedure Load(const SnipList: TSnippetList;
+    procedure Load(const SnipList: _TSnippetList;
       const Categories: TCategoryList;
       Tags: ITagSet;
       const DBDataItemFactory: IDBDataItemFactory);
@@ -62,7 +62,7 @@ type
   }
   IDatabaseWriter = interface(IInterface)
     ['{F46EE2E3-68A7-4877-9E04-192D15D29BB1}']
-    procedure Write(const SnipList: TSnippetList;
+    procedure Write(const SnipList: _TSnippetList;
       const Categories: TCategoryList; const Provider: IDBDataProvider);
       {Writes data from Database object to storage.
         @param SnipList [in] Contains information about each snippet in the
@@ -134,7 +134,7 @@ type
   TDatabaseLoader = class(TInterfacedObject, IDatabaseLoader)
   strict private
     fReader: IDataReader;         // Object used to read data from storage
-    fSnipList: TSnippetList;      // Receives list of snippets
+    fSnipList: _TSnippetList;      // Receives list of snippets
     fCategories: TCategoryList;   // Receives list of categories
     fFactory: IDBDataItemFactory; // Object creates new categories and snippets
     procedure LoadSnippets(const Cat: TCategory);
@@ -158,7 +158,7 @@ type
         @return Reader object instance.
       }
     function FindSnippet(const SnippetName: string;
-      const SnipList: TSnippetList): TSnippet; virtual; abstract;
+      const SnipList: _TSnippetList): TSnippet; virtual; abstract;
       {Finds the snippet object with a specified name.
         @param SnippetName [in] Name of required snippet.
         @param SnipList [in] List of snippets to search.
@@ -182,7 +182,7 @@ type
       {Reference to category list}
   public
     { IDatabaseLoader method }
-    procedure Load(const SnipList: TSnippetList;
+    procedure Load(const SnipList: _TSnippetList;
       const Categories: TCategoryList;
       Tags: ITagSet;
       const DBDataItemFactory: IDBDataItemFactory);
@@ -208,7 +208,7 @@ type
         @return Reader object instance.
       }
     function FindSnippet(const SnippetName: string;
-      const SnipList: TSnippetList): TSnippet; override;
+      const SnipList: _TSnippetList): TSnippet; override;
       {Finds the snippet object with a specified name. If snippet is not in this
       (user) database the main database is searched.
         @param SnippetName [in] Name of required snippet.
@@ -234,7 +234,7 @@ type
   )
   strict private
     fWriter: IDataWriter;             // Object used to write to storage
-    fSnipList: TSnippetList;          // List of snippets to be written
+    fSnipList: _TSnippetList;          // List of snippets to be written
     fCategories: TCategoryList;       // List of categories to be written
     fProvider: IDBDataProvider;       // Object used to get data to be written
     function CreateWriter: IDataWriter;
@@ -249,7 +249,7 @@ type
       }
   public
     { IDatabaseWriter method }
-    procedure Write(const SnipList: TSnippetList;
+    procedure Write(const SnipList: _TSnippetList;
       const Categories: TCategoryList;
       const Provider: IDBDataProvider);
       {Writes data from Database object to storage.
@@ -307,7 +307,7 @@ begin
     raise E;
 end;
 
-procedure TDatabaseLoader.Load(const SnipList: TSnippetList;
+procedure TDatabaseLoader.Load(const SnipList: _TSnippetList;
   const Categories: TCategoryList; Tags: ITagSet;
   const DBDataItemFactory: IDBDataItemFactory);
   {Loads data from storage and updates database object.
@@ -323,7 +323,7 @@ var
   Snippet: TSnippet;    // a snippet
 
   function TrimBadSnippets(IDList: ISnippetIDList;
-    const AllSnippets: TSnippetList): ISnippetIDList;
+    const AllSnippets: _TSnippetList): ISnippetIDList;
   var
     SnippetID: TSnippetID;
   begin
@@ -478,7 +478,7 @@ begin
 end;
 
 function TUserDatabaseLoader.FindSnippet(const SnippetName: string;
-  const SnipList: TSnippetList): TSnippet;
+  const SnipList: _TSnippetList): TSnippet;
   {Finds the snippet object with a specified name.
     @param SnippetName [in] Name of required snippet.
     @param SnipList [in] List of snippets to search.
@@ -519,7 +519,7 @@ begin
   Result := TXMLDataWriter.Create(TAppInfo.UserDataDir);
 end;
 
-procedure TDatabaseWriter.Write(const SnipList: TSnippetList;
+procedure TDatabaseWriter.Write(const SnipList: _TSnippetList;
   const Categories: TCategoryList; const Provider: IDBDataProvider);
   {Writes data from Database object to storage.
     @param SnipList [in] Contains information about each snippet in the

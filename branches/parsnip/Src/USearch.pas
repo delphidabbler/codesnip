@@ -548,7 +548,7 @@ type
       ///  </summary>
       fOptions: TXRefSearchOptions;
       ///  <summary>Stores list of cross-referenced snippets.</summary>
-      fXRefs: TSnippetList;
+      fXRefs: _TSnippetList;
     ///  <summary>Adds given snippet to list of x-refs if snippet is not already
     ///  in the list. Returns True if snippet added, False if not.</summary>
     function AddToXRefs(const Snippet: TSnippet): Boolean; overload;
@@ -1036,7 +1036,7 @@ begin
   inherited Create;
   fBaseSnippet := BaseSnippet;
   fOptions := Options;
-  fXRefs := TSnippetList.Create;
+  fXRefs := _TSnippetList.Create;
 end;
 
 destructor TXRefSearchFilter.Destroy;
@@ -1091,7 +1091,7 @@ begin
   // persistent settings.
   if not Assigned(fXRefs) then
   begin
-    fXRefs := TSnippetList.Create;
+    fXRefs := _TSnippetList.Create;
     Initialise;
   end;
   Snippet := _Database.Lookup(SnippetID);

@@ -87,7 +87,7 @@ type
     procedure ClearChecks;
       {Clears all checks from items in check list box.
       }
-    procedure GetCheckedSnippets(const SnipList: TSnippetList); overload;
+    procedure GetCheckedSnippets(const SnipList: _TSnippetList); overload;
       {Gets all checked snippets in check list box.
         @param SnipList [in] List that receives checked snippets objects.
       }
@@ -218,7 +218,7 @@ begin
 end;
 
 procedure TSnippetsChkListMgr.GetCheckedSnippets(
-  const SnipList: TSnippetList);
+  const SnipList: _TSnippetList);
   {Gets all checked snippets in check list box.
     @param SnipList [in] List that receives checked snippets objects.
   }
