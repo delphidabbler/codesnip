@@ -181,16 +181,17 @@ type
   ///  cross-reference filter.</summary>
   IXRefSearchFilter = interface(ISearchFilter)
     ['{92277B2B-AB48-4B3B-8C4F-6DCC71716D79}']
-    ///  <summary>Read accessor for BaseSnippet property.</summary>
-    ///  <returns>TSnippet. Snippet for which cross-references are to be found.
-    ///  </returns>
-    function GetBaseSnippet: TSnippet;
+    ///  <summary>Read accessor for BaseSnippetID property.</summary>
+    ///  <returns>TSnippetID. ID of snippet for which cross-references are to be
+    ///  found.</returns>
+    function GetBaseSnippetID: TSnippetID;
     ///  <summary>Read accessor for Options property.</summary>
     ///  <returns>TXRefSearchOptions. Set of search options used to customise
     ///  the filter.</returns>
     function GetOptions: TXRefSearchOptions;
-    ///  <summary>Snippet for which cross-references are to be found.</summary>
-    property BaseSnippet: TSnippet read GetBaseSnippet;
+    ///  <summary>ID of snippet for which cross-references are to be found.
+    ///  </summary>
+    property BaseSnippetID: TSnippetID read GetBaseSnippetID;
     ///  <summary>Set of search options used to customise the filter.</summary>
     property Options: TXRefSearchOptions read GetOptions;
   end;
@@ -285,12 +286,12 @@ type
       SelectedSnippets: ISnippetIDList): ISelectionSearchFilter;
     ///  <summary>Creates and returns a cross-reference search filter object.
     ///  </summary>
-    ///  <param name="BaseSnippet">TSnippet [in] Snippet whose cross references
-    ///  are to be searched for.</param>
+    ///  <param name="BaseSnippetID">TSnippetID [in] ID of snippet whose cross
+    ///  references are to be searched for.</param>
     ///  <param name="Options">TXRefSearchOptions [in] Set of search
     ///  customisation options.</param>
     ///  <returns>IXRefSearchFilter. Interface to filter object.</returns>
-    class function CreateXRefSearchFilter(const BaseSnippet: TSnippet;
+    class function CreateXRefSearchFilter(const BaseSnippetID: TSnippetID;
       const Options: TXRefSearchOptions): IXRefSearchFilter;
  end;
 
@@ -541,57 +542,55 @@ type
   )
   strict private
     var
-      ///  <summary>Snippet to which the cross-reference filter applies.
+      ///  <summary>ID of snippet to which the cross-reference filter applies.
       ///  </summary>
-      fBaseSnippet: TSnippet;
+      fBaseSnippetID: TSnippetID;
       ///  <summary>Set of options used to modify the operation of the filter.
       ///  </summary>
       fOptions: TXRefSearchOptions;
       ///  <summary>Stores list of cross-referenced snippets.</summary>
-      fXRefs: _TSnippetList;
-    ///  <summary>Adds given snippet to list of x-refs if snippet is not already
-    ///  in the list. Returns True if snippet added, False if not.</summary>
-    function AddToXRefs(const Snippet: TSnippet): Boolean; overload;
+      fXRefs: ISnippetIDList;
+    ///  <summary>Adds given snippet ID to list of x-refs if ID is not already
+    ///  in the list. Returns True if ID added, False if not.</summary>
+    function AddToXRefs(const ASnippetID: TSnippetID): Boolean; overload;
     ///  <summary>Adds all snippets with all the given IDs to the x-ref list
     ///  unless the snippet is already in the list.</summary>
-    procedure AddToXRefs(SnippetIDs: ISnippetIDList); overload;
+    procedure AddToXRefs(ASnippetIDs: ISnippetIDList); overload;
     ///  <summary>Adds all the given snippet's required snippets to the x-ref
     ///  list.</summary>
     ///  <remarks>References are only added if appropriate search option is set.
     ///  </remarks>
-    procedure ReferenceRequired(const Snippet: TSnippet);
+    procedure ReferenceRequired(const ASnippetID: TSnippetID);
     ///  <summary>Adds all snippets that require (depend upon) the given snippet
     ///  is selected.</summary>
     ///  <remarks>References are only added if appropriate search option is set.
     ///  </remarks>
-    procedure ReferenceReverseRequired(const Snippet: TSnippet);
+    procedure ReferenceReverseRequired(const ASnippetID: TSnippetID);
     ///  <summary>Adds all the given snippet's required snippets to x-ref list.
     ///  </summary>
     ///  <remarks>References are only added if appropriate search option is set.
     ///  </remarks>
-    procedure ReferenceSeeAlso(const Snippet: TSnippet);
+    procedure ReferenceSeeAlso(const ASnippetID: TSnippetID);
     ///  <summary>Adds all snippets that cross-reference the given snippet is
     ///  selected.</summary>
     ///  <remarks>References are only added if appropriate search option is set.
     ///  </remarks>
-    procedure ReferenceReverseSeeAlso(const Snippet: TSnippet);
+    procedure ReferenceReverseSeeAlso(const ASnippetID: TSnippetID);
     ///  <summary>Adds a snippet to x-ref list if it is not already present.
     ///  Also recursively adds the snippet's all its cross-referenced snippets
     ///  if appropriate search options are set.</summary>
-    procedure ReferenceSnippet(const Snippet: TSnippet);
+    procedure ReferenceSnippet(const ASnippetID: TSnippetID);
   strict protected
     ///  <summary>Returns resource id of glyph bitmap.</summary>
     function GlyphResourceName: string; override;
   public
     ///  <summary>Constructs filter object with given criteria.</summary>
-    ///  <param name="BaseSnippet">TSnippet [in] Snippet whose cross references
-    ///  are to be searched.</param>
+    ///  <param name="BaseSnippetID">TSnippetID [in] ID of snippet whose cross
+    ///  references are to be searched.</param>
     ///  <param name="Options">TXRefSearchOptions [in] Set of options used to
     ///  modify the operation of the filter.</param>
-    constructor Create(const BaseSnippet: TSnippet;
+    constructor Create(const BaseSnippetID: TSnippetID;
       const Options: TXRefSearchOptions);
-    ///  <summary>Destroys filter object.</summary>
-    destructor Destroy; override;
     ///  <summary>Called to initialise filter before a search is commenced.
     ///  Prepares list of XRefs.</summary>
     ///  <remarks>Method of ISearchFilter.</remarks>
@@ -609,10 +608,10 @@ type
     ///  </summary>
     ///  <remarks>Method of ISearchFilter.</remarks>
     function IsNull: Boolean;
-    ///  <summary>Returns snippet whose cross references are to be searched.
+    ///  <summary>Returns ID snippet whose cross references are to be searched.
     ///  </summary>
     ///  <remarks>Method of IXRefSearchFilter.</remarks>
-    function GetBaseSnippet: TSnippet;
+    function GetBaseSnippetID: TSnippetID;
     ///  <summary>Returns set of options used to modify operation of the filter.
     ///  </summary>
     ///  <remarks>Method of IXRefSearchFilter.</remarks>
@@ -1012,37 +1011,30 @@ end;
 
 { TXRefSearchFilter }
 
-function TXRefSearchFilter.AddToXRefs(const Snippet: TSnippet): Boolean;
+function TXRefSearchFilter.AddToXRefs(const ASnippetID: TSnippetID): Boolean;
 begin
-  Result := not fXRefs.Contains(Snippet);
+  Result := not fXRefs.Contains(ASnippetID);
   if Result then
-    fXRefs.Add(Snippet);
+    fXRefs.Add(ASnippetID);
 end;
 
-procedure TXRefSearchFilter.AddToXRefs(SnippetIDs: ISnippetIDList);
+procedure TXRefSearchFilter.AddToXRefs(ASnippetIDs: ISnippetIDList);
 var
   SnippetID: TSnippetID;
-  Snippet: TSnippet;
 begin
-  for SnippetID in SnippetIDs do
-    if _Database.TryLookup(SnippetID, Snippet) then
-      AddToXRefs(Snippet);
+  for SnippetID in ASnippetIDs do
+    AddToXRefs(SnippetID);
 end;
 
-constructor TXRefSearchFilter.Create(const BaseSnippet: TSnippet;
+constructor TXRefSearchFilter.Create(const BaseSnippetID: TSnippetID;
   const Options: TXRefSearchOptions);
 begin
-  Assert(Assigned(BaseSnippet), ClassName + '.Create: BaseSnippet is nil');
+  Assert(not BaseSnippetID.IsNull,
+    ClassName + '.Create: BaseSnippetID is null');
   inherited Create;
-  fBaseSnippet := BaseSnippet;
+  fBaseSnippetID := BaseSnippetID;
   fOptions := Options;
-  fXRefs := _TSnippetList.Create;
-end;
-
-destructor TXRefSearchFilter.Destroy;
-begin
-  fXRefs.Free;
-  inherited;
+  fXRefs := TSnippetIDList.Create;
 end;
 
 procedure TXRefSearchFilter.Finalise;
@@ -1050,9 +1042,9 @@ begin
   fXRefs.Clear;
 end;
 
-function TXRefSearchFilter.GetBaseSnippet: TSnippet;
+function TXRefSearchFilter.GetBaseSnippetID: TSnippetID;
 begin
-  Result := fBaseSnippet;
+  Result := fBaseSnippetID;
 end;
 
 function TXRefSearchFilter.GetOptions: TXRefSearchOptions;
@@ -1069,12 +1061,12 @@ procedure TXRefSearchFilter.Initialise;
 begin
   Assert(Assigned(fXRefs), ClassName + '.Initialise: fXRefs is nil');
   fXRefs.Clear;
-  ReferenceRequired(fBaseSnippet);
-  ReferenceReverseRequired(fBaseSnippet);
-  ReferenceSeeAlso(fBaseSnippet);
-  ReferenceReverseSeeAlso(fBaseSnippet);
+  ReferenceRequired(fBaseSnippetID);
+  ReferenceReverseRequired(fBaseSnippetID);
+  ReferenceSeeAlso(fBaseSnippetID);
+  ReferenceReverseSeeAlso(fBaseSnippetID);
   if soIncludeSnippet in fOptions then
-    AddToXRefs(fBaseSnippet);
+    AddToXRefs(fBaseSnippetID);
 end;
 
 function TXRefSearchFilter.IsNull: Boolean;
@@ -1083,64 +1075,69 @@ begin
 end;
 
 function TXRefSearchFilter.Match(const SnippetID: TSnippetID): Boolean;
-var
-  Snippet: TSnippet;
 begin
   // Check if cross references are still to be calcaluted and do it if so
   // We do this here to avoid the overhead if just using object to store / read
   // persistent settings.
   if not Assigned(fXRefs) then
   begin
-    fXRefs := _TSnippetList.Create;
+    fXRefs := TSnippetIDList.Create;
     Initialise;
   end;
-  Snippet := _Database.Lookup(SnippetID);
-  Result := fXRefs.Contains(Snippet);
+  Result := fXRefs.Contains(SnippetID);
 end;
 
-procedure TXRefSearchFilter.ReferenceRequired(const Snippet: TSnippet);
+procedure TXRefSearchFilter.ReferenceRequired(const ASnippetID: TSnippetID);
 var
+  ASnippet: TSnippet;
   SnippetID: TSnippetID;
 begin
-  if soRequired in fOptions then
-    for SnippetID in Snippet.RequiredSnippets do
-      ReferenceSnippet(_Database.Lookup(SnippetID));
+  if not (soRequired in fOptions) then
+    Exit;
+  ASnippet := _Database.Lookup(ASnippetID);
+  for SnippetID in ASnippet.RequiredSnippets do
+    ReferenceSnippet(SnippetID);
 end;
 
-procedure TXRefSearchFilter.ReferenceReverseRequired(const Snippet: TSnippet);
+procedure TXRefSearchFilter.ReferenceReverseRequired(
+  const ASnippetID: TSnippetID);
 begin
   if not (soRequiredReverse in fOptions) then
     Exit;
-  AddToXRefs((_Database as IDatabaseEdit).GetDependents(Snippet));
+  AddToXRefs(_Database.GetDependentsOf(ASnippetID));
 end;
 
-procedure TXRefSearchFilter.ReferenceReverseSeeAlso(const Snippet: TSnippet);
+procedure TXRefSearchFilter.ReferenceReverseSeeAlso(
+  const ASnippetID: TSnippetID);
 begin
   if not (soSeeAlsoReverse in fOptions) then
     Exit;
-  AddToXRefs((_Database as IDatabaseEdit).GetReferrers(Snippet));
+  AddToXRefs(_Database.GetReferrersTo(ASnippetID));
 end;
 
-procedure TXRefSearchFilter.ReferenceSeeAlso(const Snippet: TSnippet);
+procedure TXRefSearchFilter.ReferenceSeeAlso(const ASnippetID: TSnippetID);
 var
+  ASnippet: TSnippet;
   SnippetID: TSnippetID;
 begin
-  if soSeeAlso in fOptions then
-    for SnippetID in Snippet.XRefs do
-      ReferenceSnippet(_Database.Lookup(SnippetID));
+  if not (soSeeAlso in fOptions) then
+    Exit;
+  ASnippet := _Database.Lookup(ASnippetID);
+  for SnippetID in ASnippet.XRefs do
+    ReferenceSnippet(SnippetID);
 end;
 
-procedure TXRefSearchFilter.ReferenceSnippet(const Snippet: TSnippet);
+procedure TXRefSearchFilter.ReferenceSnippet(const ASnippetID: TSnippetID);
 begin
   // Add snippet to list if not present. Quit if snippet already referenced.
-  if not AddToXRefs(Snippet) then
+  if not AddToXRefs(ASnippetID) then
     Exit;
   // Recurse required snippets if specified in options
   if soRequiredRecurse in fOptions then
-    ReferenceRequired(Snippet);
+    ReferenceRequired(ASnippetID);
   // Recurse "see also" snippets if specified in options
   if soSeeAlsoRecurse in fOptions then
-    ReferenceSeeAlso(Snippet);
+    ReferenceSeeAlso(ASnippetID);
 end;
 
 { TNullSearchFilter }
@@ -1201,10 +1198,10 @@ begin
 end;
 
 class function TSearchFilterFactory.CreateXRefSearchFilter(
-  const BaseSnippet: TSnippet;
+  const BaseSnippetID: TSnippetID;
   const Options: TXRefSearchOptions): IXRefSearchFilter;
 begin
-  Result := TXRefSearchFilter.Create(BaseSnippet, Options);
+  Result := TXRefSearchFilter.Create(BaseSnippetID, Options);
 end;
 
 end.

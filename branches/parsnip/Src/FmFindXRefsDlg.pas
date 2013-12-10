@@ -216,7 +216,7 @@ var
 begin
   // Create search filter from entries made in dialog box
   Filter := TSearchFilterFactory.CreateXRefSearchFilter(
-    fSnippet, GetOptionsFromUI
+    fSnippet.ID, GetOptionsFromUI
   );
   // Persist the search criteria
   fSearchParams.Options := Filter.Options;

@@ -188,20 +188,18 @@ procedure TDependenciesDlg.actSelectAndCloseExecute(Sender: TObject);
     @param Sender [in] Not used.
   }
 var
-  Snippet: TSnippet;          // snippet for which dependencies required
   Filter: IXRefSearchFilter;  // xref filter needed to select snippets
 begin
-  Snippet := _Database.Lookup(fSnippetID);
   if pcBody.ActivePage = tsDependsUpon then
   begin
     Filter := TSearchFilterFactory.CreateXRefSearchFilter(
-      Snippet, [soRequired, soRequiredRecurse]
+      fSnippetID, [soRequired, soRequiredRecurse]
     );
   end
   else {pcBody.ActivePage = tsRequiredBy}
   begin
     Filter := TSearchFilterFactory.CreateXRefSearchFilter(
-      Snippet, [soRequiredReverse]
+      fSnippetID, [soRequiredReverse]
     );
   end;
   fSearch := TSearchFactory.CreateSearch(Filter);
