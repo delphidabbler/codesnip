@@ -502,17 +502,7 @@ type
     defined database.
   }
   TUserDataProvider = class(TInterfacedObject, IDBDataProvider)
-  strict private
-    fSnippets: _TSnippetList;    // All snippets in the whole database
-    fCategories: TCategoryList; // All categories in the whole database
   public
-    constructor Create(const SnipList: _TSnippetList;
-      const Categories: TCategoryList);
-      {Constructor. Records list of all snippets and categories in both
-      databases.
-        @param SnipList [in] List of all snippets in whole database.
-        @param Categories [in] List of all categories in whole database.
-      }
     { IDBDataProvider methods }
     function GetCategoryProps(const Cat: TCategory): TCategoryData;
       {Retrieves all the properties of a category.
@@ -899,7 +889,7 @@ var
   Provider: IDBDataProvider;  // object that supplies info to writer
 begin
   // Create object that can provide required information about user database
-  Provider := TUserDataProvider.Create(fSnippets, fCategories);
+  Provider := TUserDataProvider.Create;
   // Use a writer object to write out the database
   with TDatabaseIOFactory.CreateWriter do
     Write(fSnippets, fCategories, Provider);
@@ -1052,20 +1042,8 @@ end;
 
 { TUserDataProvider }
 
-constructor TUserDataProvider.Create(const SnipList: _TSnippetList;
-  const Categories: TCategoryList);
-  {Constructor. Records list of all snippets and categories in both databases.
-    @param SnipList [in] List of all snippets in whole database.
-    @param Categories [in] List of all categories in whole database.
-  }
-begin
-  inherited Create;
-  fSnippets := SnipList;
-  fCategories := Categories;
-end;
-
-function TUserDataProvider.GetCategoryProps(
-  const Cat: TCategory): TCategoryData;
+function TUserDataProvider.GetCategoryProps(const Cat: TCategory):
+  TCategoryData;
   {Retrieves all the properties of a category.
     @param Cat [in] Category for which data is requested.
     @return Record containing property data.
@@ -1074,8 +1052,8 @@ begin
   Result.Desc := Cat.Description;
 end;
 
-function TUserDataProvider.GetCategorySnippets(
-  const Cat: TCategory): IStringList;
+function TUserDataProvider.GetCategorySnippets(const Cat: TCategory):
+  IStringList;
   {Retrieves names of all user-defined snippets that belong to a category.
     @param Cat [in] Category for which snippet names are requested.
     @return Required list of snippet names.
@@ -1088,8 +1066,8 @@ begin
     Result.Add(SnippetID.ToString);
 end;
 
-function TUserDataProvider.GetSnippetProps(
-  const Snippet: TSnippet): TSnippetData;
+function TUserDataProvider.GetSnippetProps(const Snippet: TSnippet):
+  TSnippetData;
   {Retrieves all the properties of a snippet.
     @param Snippet [in] Snippet for which data is requested.
     @return Record containing property data.
@@ -1098,8 +1076,8 @@ begin
   Result := (Snippet as TSnippetEx).GetProps;
 end;
 
-function TUserDataProvider.GetSnippetRefs(
-  const Snippet: TSnippet): TSnippetReferences;
+function TUserDataProvider.GetSnippetRefs(const Snippet: TSnippet):
+  TSnippetReferences;
   {Retrieves information about all the references of a snippet.
     @param Snippet [in] Snippet for which information is requested.
     @return Record containing references.
