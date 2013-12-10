@@ -40,6 +40,7 @@ type
     procedure Add(const ATag: TTag);
     procedure Include(Tags: ITagSet);
     procedure Remove(const ATag: TTag);
+    procedure Exclude(Tags: ITagSet);
     procedure Clear;
     property Count: Integer read GetCount;
     function Clone: IInterface;
@@ -96,6 +97,14 @@ destructor TTagSet.Destroy;
 begin
   fTags.Free;
   inherited;
+end;
+
+procedure TTagSet.Exclude(Tags: ITagSet);
+var
+  Tag: TTag;
+begin
+  for Tag in Tags do
+    fTags.Remove(Tag);
 end;
 
 function TTagSet.Filter(const AFilterFn: TTagFilter): ITagSet;

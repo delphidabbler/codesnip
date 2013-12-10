@@ -176,6 +176,7 @@ type
     procedure Add(const ATag: TTag);
     procedure Include(Tags: ITagSet);
     procedure Remove(const ATag: TTag);
+    procedure Exclude(Tags: ITagSet);
     procedure Clear;
     property Count: Integer read GetCount;
   end;
