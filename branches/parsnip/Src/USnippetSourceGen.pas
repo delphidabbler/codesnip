@@ -186,23 +186,27 @@ end;
 class function TSnippetSourceGen.GetTagSnippets(const Tag: TTag):
   ISnippetIDList;
 begin
-  { TODO: this Tag.IsNull / not Tag.IsNull code seems to be getting replicated
-          all over: need to provide a help method to centralised the code. }
   if not Tag.IsNull then
     // non-null tag => we want all associated snippets
     Result := Query.FilterSelection(
-      function (const Snippet: TSnippet): Boolean
-      begin
-        Result := Snippet.Tags.Contains(Tag) and (Snippet.Kind = skRoutine);
-      end
+      TDBFilter.Construct(
+        function (Snippet: IReadOnlySnippet): Boolean
+        begin
+          Result := Snippet.Tags.Contains(Tag) and (Snippet.Kind = skRoutine);
+        end,
+        [spTags, spKind]
+      )
     )
   else
     // null tag => we want all snippets with no tag
     Result := Query.FilterSelection(
-      function (const Snippet: TSnippet): Boolean
-      begin
-        Result := Snippet.Tags.IsEmpty and (Snippet.Kind = skRoutine);
-      end
+      TDBFilter.Construct(
+        function (Snippet: IReadOnlySnippet): Boolean
+        begin
+          Result := Snippet.Tags.IsEmpty and (Snippet.Kind = skRoutine);
+        end,
+        [spTags, spKind]
+      )
     );
 end;
 

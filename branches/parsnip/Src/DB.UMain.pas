@@ -65,7 +65,7 @@ type
             them }
     // NOTE: These properties have been made protected so that _TDatabase can
     //       directly access them using unit scope.
-    ///      DON'T make this section strict.
+    //       DON'T make this section strict.
     property __SnippetsTable: TDBSnippetsTable read fSnippetsTable;
     property __AllTags: ITagSet read fAllTags;
   public
@@ -194,7 +194,6 @@ type
     function Lookup(const SnippetID: TSnippetID): TSnippet;
     function TryLookup(const SnippetID: TSnippetID; out Snippet: TSnippet):
       Boolean;
-    function Select(FilterFn: TDatabaseFilterFn): ISnippetIDList;
     procedure AddChangeEventHandler(const Handler: TNotifyEventInfo);
       {Adds a change event handler to list of listeners.
         @param Handler [in] Event handler to be added.
@@ -450,7 +449,6 @@ type
     function Lookup(const SnippetID: TSnippetID): TSnippet;
     function TryLookup(const SnippetID: TSnippetID; out Snippet: TSnippet):
       Boolean;
-    function Select(FilterFn: TDatabaseFilterFn): ISnippetIDList;
     // Returns a list of IDs of all snippets that depend on the snippet with
     // the given ID.
     function GetDependentsOf(const ASnippetID: TSnippetID): ISnippetIDList;
@@ -923,16 +921,6 @@ begin
     SnipList.Free;
   end;
   fUpdated := False;
-end;
-
-function _TDatabase.Select(FilterFn: TDatabaseFilterFn): ISnippetIDList;
-var
-  Snippet: TSnippet;
-begin
-  Result := TSnippetIDList.Create;
-  for Snippet in Database.__SnippetsTable do
-    if FilterFn(Snippet) then
-      Result.Add(Snippet.ID)
 end;
 
 procedure _TDatabase.TriggerEvent(const Kind: TDatabaseChangeEventKind;

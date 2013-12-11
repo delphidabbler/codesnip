@@ -144,22 +144,27 @@ resourcestring
   sEmptySnippetPara = 'There are no snippets with this tag.';
   sEmptySnippetNullPara = 'All snippets have at least one tag.';
 begin
-  // TODO: move following selection code into a TDatabase method
   { TODO: change this to print only the currently selected snippets in the tag:
           this will be a change from v4. }
   if not Tag.IsNull then
-    SnippetIDs := _Database.Select(
-      function (const Snippet: TSnippet): Boolean
-      begin
-        Result := Snippet.Tags.Contains(Tag)
-      end
+    SnippetIDs := Database.SelectSnippets(
+      TDBFilter.Construct(
+        function (Snippet: IReadOnlySnippet): Boolean
+        begin
+          Result := Snippet.Tags.Contains(Tag)
+        end,
+        [spTags]
+      )
     )
   else
-    SnippetIDs := _Database.Select(
-      function (const Snippet: TSnippet): Boolean
-      begin
-        Result := Snippet.Tags.IsEmpty;
-      end
+    SnippetIDs := Database.SelectSnippets(
+      TDBFilter.Construct(
+        function (Snippet: IReadOnlySnippet): Boolean
+        begin
+          Result := Snippet.Tags.IsEmpty;
+        end,
+        [spTags]
+      )
     );
   OutputTagHeading(Tag);
   if not SnippetIDs.IsEmpty then
