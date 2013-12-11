@@ -410,7 +410,7 @@ begin
     end
   );
   AddGroupItem(TTag.CreateNull, SelectedSnippetIDs);
-  AllTags := _Database.GetAllTags;
+  AllTags := Database.GetAllTags;
   for Tag in AllTags do
   begin
     SelectedSnippetIDs := _Database.Select(

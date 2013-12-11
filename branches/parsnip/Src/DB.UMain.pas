@@ -191,8 +191,6 @@ type
       {Removes a change event handler from list of listeners.
         @param Handler [in] Handler to remove from list.
       }
-    // Returns a list of all supported tags
-    function GetAllTags: ITagSet;
     // Returns a list of IDs of all snippets that depend on the snippet with
     // the given ID.
     function GetDependentsOf(const ASnippetID: TSnippetID): ISnippetIDList;
@@ -429,8 +427,6 @@ type
     function TryLookup(const SnippetID: TSnippetID; out Snippet: TSnippet):
       Boolean;
     function Select(FilterFn: TDatabaseFilterFn): ISnippetIDList;
-    // Returns a list of all supported tags
-    function GetAllTags: ITagSet;
     // Returns a list of IDs of all snippets that depend on the snippet with
     // the given ID.
     function GetDependentsOf(const ASnippetID: TSnippetID): ISnippetIDList;
@@ -718,11 +714,6 @@ begin
   Data := Snippet.GetEditData;
   Data.Props.Title := Title;
   Result := AddSnippet(Data);
-end;
-
-function _TDatabase.GetAllTags: ITagSet;
-begin
-  Result := TTagSet.Create(Database.__AllTags);
 end;
 
 function _TDatabase.GetDependents(const ASnippet: TSnippet): ISnippetIDList;
