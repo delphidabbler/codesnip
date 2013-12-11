@@ -1104,7 +1104,7 @@ procedure TXRefSearchFilter.ReferenceReverseRequired(
 begin
   if not (soRequiredReverse in fOptions) then
     Exit;
-  AddToXRefs(_Database.GetDependentsOf(ASnippetID));
+  AddToXRefs(Database.GetDependentsOf(ASnippetID));
 end;
 
 procedure TXRefSearchFilter.ReferenceReverseSeeAlso(
@@ -1112,7 +1112,7 @@ procedure TXRefSearchFilter.ReferenceReverseSeeAlso(
 begin
   if not (soSeeAlsoReverse in fOptions) then
     Exit;
-  AddToXRefs(_Database.GetReferrersTo(ASnippetID));
+  AddToXRefs(Database.GetReferrersTo(ASnippetID));
 end;
 
 procedure TXRefSearchFilter.ReferenceSeeAlso(const ASnippetID: TSnippetID);

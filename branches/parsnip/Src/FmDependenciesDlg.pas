@@ -442,7 +442,7 @@ begin
     // must only try to get dependents for snippet if it is in database
     if (tiRequiredBy in fTabs) and Assigned(ThisSnippet) then
     begin
-      Dependents := (_Database as IDatabaseEdit).GetDependents(ThisSnippet);
+      Dependents := Database.GetDependentsOf(fSnippetID);
       for SnippetID in Dependents do
       begin
         ASnippet := _Database.Lookup(SnippetID);

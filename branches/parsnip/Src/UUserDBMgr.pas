@@ -351,7 +351,7 @@ begin
     ClassName + '.Delete: Current view is not a snippet');
   Snippet := (ViewItem as ISnippetView).Snippet;
   // Check if snippet has dependents: don't allow deletion if so
-  Dependents := (_Database as IDatabaseEdit).GetDependents(Snippet);
+  Dependents := Database.GetDependentsOf(Snippet.ID);
   if Dependents.Count > 0 then
   begin
     TMessageBox.Error(
@@ -364,7 +364,7 @@ begin
     Exit;
   end;
   // Get permission to delete. If snippet has dependents list them in prompt
-  Referrers := (_Database as IDatabaseEdit).GetReferrers(Snippet);
+  Referrers := Database.GetReferrersTo(Snippet.ID);
   if Referrers.Count = 0 then
     ConfirmMsg := Format(sConfirmDelete, [Snippet.Title])
   else

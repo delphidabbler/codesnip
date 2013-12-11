@@ -80,6 +80,12 @@ type
     function SnippetExists(const ASnippetID: TSnippetID): Boolean;
     function SnippetCount: Integer;
     function IsEmpty: Boolean;
+    // Returns a list of IDs of all snippets that depend on the snippet with
+    // the given ID.
+    function GetDependentsOf(const ASnippetID: TSnippetID): ISnippetIDList;
+    // Returns a list of IDs of all snippet that refer to (i.e. cross-reference)
+    // the snippet with the given ID.
+    function GetReferrersTo(const ASnippetID: TSnippetID): ISnippetIDList;
   end;
 
   {
@@ -202,12 +208,6 @@ type
       {Removes a change event handler from list of listeners.
         @param Handler [in] Handler to remove from list.
       }
-    // Returns a list of IDs of all snippets that depend on the snippet with
-    // the given ID.
-    function GetDependentsOf(const ASnippetID: TSnippetID): ISnippetIDList;
-    // Returns a list of IDs of all snippet that refer to (i.e. cross-reference)
-    // the snippet with the given ID.
-    function GetReferrersTo(const ASnippetID: TSnippetID): ISnippetIDList;
   end;
 
   {
@@ -223,17 +223,6 @@ type
         @param Snippet [in] Snippet for which data is required. May be nil in
           which case a blank record is returned.
         @return Required data.
-      }
-    function GetDependents(const Snippet: TSnippet): ISnippetIDList;
-      {Builds an ID list of all snippets that depend on a specified snippet.
-        @param Snippet [in] Snippet for which dependents are required.
-        @return List of IDs of dependent snippets.
-      }
-    function GetReferrers(const Snippet: TSnippet): ISnippetIDList;
-      {Builds an ID list of all snippets that cross reference a specified
-      snippet.
-        @param Snippet [in] Snippet for which cross referers are required.
-        @return List of IDs of referring snippets.
       }
     procedure UpdateSnippet(const Snippet: TSnippet; Data: TSnippetEditData);
       {Updates a user defined snippet's properties and references using provided
@@ -449,12 +438,6 @@ type
     function Lookup(const SnippetID: TSnippetID): TSnippet;
     function TryLookup(const SnippetID: TSnippetID; out Snippet: TSnippet):
       Boolean;
-    // Returns a list of IDs of all snippets that depend on the snippet with
-    // the given ID.
-    function GetDependentsOf(const ASnippetID: TSnippetID): ISnippetIDList;
-    // Returns a list of IDs of all snippet that refer to (i.e. cross-reference)
-    // the snippet with the given ID.
-    function GetReferrersTo(const ASnippetID: TSnippetID): ISnippetIDList;
     { IDatabaseEdit methods }
     function GetEditableSnippetInfo(const Snippet: TSnippet = nil):
       TSnippetEditData;
@@ -463,17 +446,6 @@ type
         @param Snippet [in] Snippet for which data is required. May be nil in
           which case a blank record is returned.
         @return Required data.
-      }
-    function GetDependents(const ASnippet: TSnippet): ISnippetIDList;
-      {Builds an ID list of all snippets that depend on a specified snippet.
-        @param ASnippet [in] Snippet for which dependents are required.
-        @return List of IDs of dependent snippets.
-      }
-    function GetReferrers(const ASnippet: TSnippet): ISnippetIDList;
-      {Builds an ID list of all snippets that cross reference a specified
-      snippet.
-        @param ASnippet [in] Snippet which is cross referenced.
-        @return List of IDs of referring snippets.
       }
     procedure UpdateSnippet(const Snippet: TSnippet; Data: TSnippetEditData);
       {Updates a user defined snippet's properties and references using provided
@@ -692,8 +664,8 @@ begin
   Dependents := nil;
   Referrers := nil;
   try
-    Dependents := GetDependents(Snippet);
-    Referrers := GetReferrers(Snippet);
+    Dependents := Database.GetDependentsOf(Snippet.ID);
+    Referrers := Database.GetReferrersTo(Snippet.ID);
     // TODO: scan all snippets and remove references that match snippet ID
     // Delete snippet for XRef or Depends list of referencing snippets
     for Referrer in Referrers do
@@ -731,33 +703,6 @@ begin
   Result := AddSnippet(Data);
 end;
 
-function _TDatabase.GetDependents(const ASnippet: TSnippet): ISnippetIDList;
-  {Builds an ID list of all snippets that depend on a specified snippet.
-    @param ASnippet [in] Snippet for which dependents are required.
-    @return List of IDs of dependent snippets.
-  }
-var
-  Snippet: TSnippet;  // references each snippet in database
-begin
-  Result := TSnippetIDList.Create;
-  for Snippet in Database.__SnippetsTable do
-    if not Snippet.IsEqual(ASnippet)
-      and Snippet.RequiredSnippets.Contains(ASnippet.ID) then
-      Result.Add(Snippet.ID);
-end;
-
-function _TDatabase.GetDependentsOf(const ASnippetID: TSnippetID):
-  ISnippetIDList;
-var
-  Snippet: TSnippet;
-begin
-  Result := TSnippetIDList.Create;
-  for Snippet in Database.__SnippetsTable do
-    if (Snippet.ID <> ASnippetID)
-      and Snippet.RequiredSnippets.Contains(ASnippetID) then
-      Result.Add(Snippet.ID);
-end;
-
 function _TDatabase.GetEditableSnippetInfo(
   const Snippet: TSnippet): TSnippetEditData;
   {Provides details of all a snippet's data (properties and references) that may
@@ -771,34 +716,6 @@ begin
     Result := Snippet.GetEditData
   else
     Result.Init;
-end;
-
-function _TDatabase.GetReferrers(const ASnippet: TSnippet): ISnippetIDList;
-  {Builds an ID list of all snippets that cross reference a specified
-  snippet.
-    @param Snippet [in] Snippet which is cross referenced.
-    @return List of IDs of referring snippets.
-  }
-var
-  Snippet: TSnippet;  // references each snippet in database
-begin
-  Result := TSnippetIDList.Create;
-  for Snippet in Database.__SnippetsTable do
-    if not Snippet.IsEqual(ASnippet)
-      and Snippet.XRefs.Contains(ASnippet.ID) then
-      Result.Add(Snippet.ID);
-end;
-
-function _TDatabase.GetReferrersTo(const ASnippetID: TSnippetID):
-  ISnippetIDList;
-var
-  Snippet: TSnippet;  // references each snippet in database
-begin
-  Result := TSnippetIDList.Create;
-  for Snippet in Database.__SnippetsTable do
-    if (Snippet.ID <> ASnippetID)
-      and Snippet.XRefs.Contains(ASnippetID) then
-      Result.Add(Snippet.ID);
 end;
 
 function _TDatabase.InternalAddSnippet(const SnippetID: TSnippetID;
@@ -1113,11 +1030,34 @@ begin
   Result := TTagSet.Create(fAllTags);
 end;
 
+function TDatabase.GetDependentsOf(const ASnippetID: TSnippetID):
+  ISnippetIDList;
+var
+  Snippet: TDBSnippet;
+begin
+  Result := TSnippetIDList.Create;
+  for Snippet in fSnippetsTable do
+    if (Snippet.GetID <> ASnippetID)
+      and Snippet.GetRequiredSnippets.Contains(ASnippetID) then
+      Result.Add(Snippet.GetID);
+end;
+
 class function TDatabase.GetInstance: TDatabase;
 begin
   if not Assigned(fInstance) then
     fInstance := TDatabase.Create;
   Result := fInstance;
+end;
+
+function TDatabase.GetReferrersTo(const ASnippetID: TSnippetID): ISnippetIDList;
+var
+  Snippet: TDBSnippet;  // references each snippet in database
+begin
+  Result := TSnippetIDList.Create;
+  for Snippet in fSnippetsTable do
+    if (Snippet.GetID <> ASnippetID)
+      and Snippet.GetXRefs.Contains(ASnippetID) then
+      Result.Add(Snippet.GetID);
 end;
 
 procedure TDatabase.Initialize;
