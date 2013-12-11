@@ -40,10 +40,18 @@ type
   strict private
     var
       fSnippetsTable: TDBSnippetsTable;
-      fTagSet: ITagSet;
+      fAllTags: ITagSet;
   strict protected
     procedure Initialize; override;
     procedure Finalize; override;
+  protected
+    { TODO: Remove these properties when _TDatabase no longer needs access to
+            them }
+    // NOTE: These properties have been made protected so that _TDatabase can
+    //       directly access them using unit scope.
+    ///      DON'T make this section strict.
+    property __SnippetsTable: TDBSnippetsTable read fSnippetsTable;
+    property __AllTags: ITagSet read fAllTags;
   public
     class property Instance: TDatabase read GetInstance;
   end;
@@ -1124,7 +1132,7 @@ procedure TDatabase.Initialize;
 begin
   inherited;
   fSnippetsTable := TDBSnippetsTable.Create;
-  fTagSet := TTagSet.Create;
+  fAllTags := TTagSet.Create;
 end;
 
 initialization
