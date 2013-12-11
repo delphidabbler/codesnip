@@ -93,7 +93,7 @@ type
       }
   end;
 
-  TSnippet = class;
+  TSnippet = TDBSnippet;
 
   ///  <summary>Comparer for snippets by title.</summary>
   TSnippetTitleComparer = class(TComparer<TSnippet>)
@@ -109,12 +109,7 @@ type
     function GetHashCode(const Snippet: TSnippet): Integer; override;
   end;
 
-  {
-  TSnippet:
-    Encapsulates a snippet from the database. Can be routine, type, constant or
-    free-form.
-  }
-  TSnippet = class(TDBSnippet)
+  TSnippetHelper = class helper for TDBSnippet
   public
     procedure SetProps(const Data: TSnippetData);
       {Sets snippet's properties.
@@ -269,9 +264,9 @@ uses
   UExceptions,
   UStrUtils;
 
-{ TSnippet }
+{ TSnippetHelper }
 
-function TSnippet.CanCompile: Boolean;
+function TSnippetHelper.CanCompile: Boolean;
   {Checks if snippet can be compiled.
     @return True if compilation supported and False if not.
   }
@@ -279,17 +274,17 @@ begin
   Result := Kind <> skFreeform;
 end;
 
-function TSnippet.Compatibility: TCompileResults;
+function TSnippetHelper.Compatibility: TCompileResults;
 begin
   Result := GetCompileResults;
 end;
 
-function TSnippet.Description: IActiveText;
+function TSnippetHelper.Description: IActiveText;
 begin
   Result := GetDescription;
 end;
 
-function TSnippet.GetEditData: TSnippetEditData;
+function TSnippetHelper.GetEditData: TSnippetEditData;
   {Gets details of all editable data of snippet.
     @return Required editable properties and references.
   }
@@ -298,7 +293,7 @@ begin
   Result.Refs := GetReferences;
 end;
 
-function TSnippet.GetProps: TSnippetData;
+function TSnippetHelper.GetProps: TSnippetData;
   {Gets details of snippet's properties.
     @return Record containing property values.
   }
@@ -316,7 +311,7 @@ begin
   Result.Tags := Tags;
 end;
 
-function TSnippet.GetReferences: TSnippetReferences;
+function TSnippetHelper.GetReferences: TSnippetReferences;
   {Gets details of snippet's references.
     @return Information sufficient to define references.
   }
@@ -326,37 +321,37 @@ begin
   Result.XRefs := GetXRefs;
 end;
 
-function TSnippet.ID: TSnippetID;
+function TSnippetHelper.ID: TSnippetID;
 begin
   Result := GetID;
 end;
 
-function TSnippet.Kind: TSnippetKind;
+function TSnippetHelper.Kind: TSnippetKind;
 begin
   Result := GetKind;
 end;
 
-function TSnippet.LanguageID: TSourceCodeLanguageID;
+function TSnippetHelper.LanguageID: TSourceCodeLanguageID;
 begin
   Result := GetLanguageID;
 end;
 
-function TSnippet.Notes: IActiveText;
+function TSnippetHelper.Notes: IActiveText;
 begin
   Result := GetNotes;
 end;
 
-function TSnippet.RequiredModules: IStringList;
+function TSnippetHelper.RequiredModules: IStringList;
 begin
   Result := GetRequiredModules;
 end;
 
-function TSnippet.RequiredSnippets: ISnippetIDList;
+function TSnippetHelper.RequiredSnippets: ISnippetIDList;
 begin
   Result := GetRequiredSnippets;
 end;
 
-procedure TSnippet.SetProps(const Data: TSnippetData);
+procedure TSnippetHelper.SetProps(const Data: TSnippetData);
   {Sets snippet's properties.
     @param Data [in] Record containing property values.
   }
@@ -373,27 +368,27 @@ begin
   SetTags(Data.Tags);
 end;
 
-function TSnippet.SourceCode: string;
+function TSnippetHelper.SourceCode: string;
 begin
   Result := GetSourceCode;
 end;
 
-function TSnippet.Tags: ITagSet;
+function TSnippetHelper.Tags: ITagSet;
 begin
   Result := GetTags;
 end;
 
-function TSnippet.TestInfo: TSnippetTestInfo;
+function TSnippetHelper.TestInfo: TSnippetTestInfo;
 begin
   Result := GetTestInfo;
 end;
 
-function TSnippet.Title: string;
+function TSnippetHelper.Title: string;
 begin
   Result := GetTitle;
 end;
 
-procedure TSnippet.Update(const Data: TSnippetEditData);
+procedure TSnippetHelper.Update(const Data: TSnippetEditData);
   {Updates snippet's properties and references.
     @param Data [in] New property values and references.
   }
@@ -402,7 +397,7 @@ begin
   UpdateRefs(Data.Refs);
 end;
 
-procedure TSnippet.UpdateRefs(const Refs: TSnippetReferences);
+procedure TSnippetHelper.UpdateRefs(const Refs: TSnippetReferences);
   {Updates a snippet's references.
     @param Refs [in] Stores all snippet's references (XRef, Depends and
       Units).
@@ -413,7 +408,7 @@ begin
   SetXRefs(Refs.XRefs);
 end;
 
-function TSnippet.XRefs: ISnippetIDList;
+function TSnippetHelper.XRefs: ISnippetIDList;
 begin
   Result := GetXRefs;
 end;

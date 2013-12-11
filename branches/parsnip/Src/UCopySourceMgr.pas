@@ -99,6 +99,7 @@ uses
   CS.SourceCode.Hiliter.Brushes,
   CS.SourceCode.Hiliter.Renderers,
   CS.SourceCode.Hiliter.Themes,
+  DB.USnippet, // for class helper
   UPreferences,
   USnippetSourceGen;
 

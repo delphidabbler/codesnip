@@ -67,6 +67,7 @@ uses
   CS.Config,
   CS.SourceCode.Languages,
   CS.SourceCode.Hiliter.Brushes,
+  DB.USnippet,  // for class helper
   UPreferences,
   URTFSnippetDoc,
   UTextSnippetDoc;
