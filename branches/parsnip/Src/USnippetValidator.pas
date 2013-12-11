@@ -43,7 +43,7 @@ type
       {Validates a snippet's name.
         @param Name [in] Snippet name to be checked.
         @param CheckForUniqueness [in] Flag indicating whether a check should
-          be made to see if snippet name is already in user database.
+          be made to see if snippet name is already in database.
         @param ErrorMsg [out] Message that describes error. Undefined if True
           returned.
         @param ErrorSel [out] Selection that can be used to highlight error.
@@ -98,7 +98,7 @@ type
       {Validates a snippet's name.
         @param Name [in] Snippet name to be checked.
         @param CheckForUniqueness [in] Flag indicating whether a check should
-          be made to see if snippet name is already in user database.
+          be made to see if snippet name is already in database.
         @return True if name is valid or False if not.
       }
     class function ValidateName(const Name: string;
@@ -107,7 +107,7 @@ type
       {Validates a snippet's name.
         @param Name [in] Snippet name to be checked.
         @param CheckForUniqueness [in] Flag indicating whether a check should
-          be made to see if snippet name is already in user database.
+          be made to see if snippet name is already in database.
         @param ErrorMsg [out] Message that describes error. Undefined if True
           returned.
         @return True if name is valid or False if not.
@@ -316,7 +316,7 @@ class function TSnippetValidator.ValidateName(const Name: string;
   {Validates a snippet's name.
     @param Name [in] Snippet name to be checked.
     @param CheckForUniqueness [in] Flag indicating whether a check should be
-      made to see if snippet name is already in user database.
+      made to see if snippet name is already in database.
     @param ErrorMsg [out] Message that describes error. Undefined if True
       returned.
     @return True if name is valid or False if not.
@@ -336,7 +336,7 @@ begin
   else if not IsValidIdent(TrimmedName) then
     ErrorMsg := Format(sErrBadName, [TrimmedName])
   else if CheckForUniqueness
-    and _Database.Contains(TSnippetID.Create(TrimmedName)) then
+    and Database.SnippetExists(TSnippetID.Create(TrimmedName)) then
     ErrorMsg := Format(sErrDupName, [TrimmedName])
   else
     Result := True;
@@ -348,7 +348,7 @@ class function TSnippetValidator.ValidateName(const Name: string;
   {Validates a snippet's name.
     @param Name [in] Snippet name to be checked.
     @param CheckForUniqueness [in] Flag indicating whether a check should be
-      made to see if snippet name is already in user database.
+      made to see if snippet name is already in database.
     @param ErrorMsg [out] Message that describes error. Undefined if True
       returned.
     @param ErrorSel [out] Selection that can be used to highlight error.
@@ -365,7 +365,7 @@ class function TSnippetValidator.ValidateName(const Name: string;
   {Validates a snippet's name.
     @param Name [in] Snippet name to be checked.
     @param CheckForUniqueness [in] Flag indicating whether a check should be
-      made to see if snippet name is already in user database.
+      made to see if snippet name is already in database.
     @return True if name is valid or False if not.
   }
 var

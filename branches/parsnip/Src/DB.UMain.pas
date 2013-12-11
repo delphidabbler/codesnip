@@ -178,7 +178,6 @@ type
     procedure Clear;
       {Clears all data.
       }
-    function Contains(const SnippetID: TSnippetID): Boolean;
     function Lookup(const SnippetID: TSnippetID): TSnippet;
     function TryLookup(const SnippetID: TSnippetID; out Snippet: TSnippet):
       Boolean;
@@ -422,7 +421,6 @@ type
       {Removes a change event handler from list of listeners.
         @param Handler [in] Handler to remove from list.
       }
-    function Contains(const SnippetID: TSnippetID): Boolean;
     function Lookup(const SnippetID: TSnippetID): TSnippet;
     function TryLookup(const SnippetID: TSnippetID; out Snippet: TSnippet):
       Boolean;
@@ -610,13 +608,6 @@ begin
   fCategories.Clear;
   Database.__AllTags.Clear;
   Database.__SnippetsTable.Clear;
-end;
-
-function _TDatabase.Contains(const SnippetID: TSnippetID): Boolean;
-var
-  Dummy: TSnippet;
-begin
-  Result := TryLookup(SnippetID, Dummy);
 end;
 
 constructor _TDatabase.Create;
