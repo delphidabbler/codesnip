@@ -261,7 +261,7 @@ type
     function SupportsProperty(const AProp: TDBSnippetProp): Boolean;
   end;
 
-  ISnippet = interface(ISnippetBase)
+  IEditableSnippet = interface(ISnippetBase)
     ['{75F44D0E-7611-4A8D-A4F5-F7612E466238}']
     procedure SetTitle(const ATitle: string);
     procedure SetDescription(ADescription: IActiveText);

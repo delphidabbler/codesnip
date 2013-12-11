@@ -96,14 +96,13 @@ type
     property Category: string read _fCategory write _fCategory;
   end;
 
-  // TODO: rename back to TSnippet once ambiguity with legacy TSnippet resolved.
-  TNewSnippet = class(TSnippetBase, ISnippet)
+  TEditableSnippet = class(TSnippetBase, IEditableSnippet)
   public
-    class function CreateNew: TNewSnippet;
+    class function CreateNew: TEditableSnippet;
     destructor Destroy; override;
   end;
 
-  TPartialSnippet = class(TSnippetBase, IReadOnlySnippet)
+  TReadOnlySnippet = class(TSnippetBase, IReadOnlySnippet)
   strict private
     var
       fValidProperties: TDBSnippetProps;
@@ -605,141 +604,142 @@ begin
   _fCategory := ASourceSnippet._fCategory;
 end;
 
-{ TNewSnippet }
+{ TEditableSnippet }
 
-class function TNewSnippet.CreateNew: TNewSnippet;
+class function TEditableSnippet.CreateNew: TEditableSnippet;
 begin
-  Result := TNewSnippet.Create(TSnippetID.CreateNew);
+  Result := TEditableSnippet.Create(TSnippetID.CreateNew);
 end;
 
-destructor TNewSnippet.Destroy;
+destructor TEditableSnippet.Destroy;
 begin
   inherited;
 end;
 
-{ TPartialSnippet }
+{ TReadOnlySnippet }
 
-procedure TPartialSnippet.CheckValidProp(const AProp: TDBSnippetProp);
+procedure TReadOnlySnippet.CheckValidProp(const AProp: TDBSnippetProp);
 begin
   if not SupportsProperty(AProp) then
     raise EDBSnippet.Create('Property access not permitted');
 end;
 
-constructor TPartialSnippet.Create(const ASnippetID: TSnippetID);
+constructor TReadOnlySnippet.Create(const ASnippetID: TSnippetID);
 begin
   raise ENoConstructException.CreateFmt(
     'This form of constructor not permitted for %s', [ClassName]
   );
 end;
 
-constructor TPartialSnippet.Create(const ASourceSnippet: TSnippetBase;
+constructor TReadOnlySnippet.Create(const ASourceSnippet: TSnippetBase;
   const ValidProps: TDBSnippetProps);
 begin
   fValidProperties := ValidProps;
   inherited Create(ASourceSnippet);
 end;
 
-destructor TPartialSnippet.Destroy;
+destructor TReadOnlySnippet.Destroy;
 begin
   inherited;
 end;
 
-function TPartialSnippet.GetCompileResults: TCompileResults;
+function TReadOnlySnippet.GetCompileResults: TCompileResults;
 begin
   CheckValidProp(spCompileResults);
   Result := inherited GetCompileResults;
 end;
 
-function TPartialSnippet.GetDescription: IActiveText;
+function TReadOnlySnippet.GetDescription: IActiveText;
 begin
   CheckValidProp(spDescription);
   Result := inherited GetDescription;
 end;
 
-function TPartialSnippet.GetKind: TSnippetKind;
+function TReadOnlySnippet.GetKind: TSnippetKind;
 begin
   CheckValidProp(spKind);
   Result := inherited GetKind;
 end;
 
-function TPartialSnippet.GetLanguageID: TSourceCodeLanguageID;
+function TReadOnlySnippet.GetLanguageID: TSourceCodeLanguageID;
 begin
   CheckValidProp(spLanguageID);
   Result := inherited GetLanguageID;
 end;
 
-function TPartialSnippet.GetLinkInfo: ISnippetLinkInfo;
+function TReadOnlySnippet.GetLinkInfo: ISnippetLinkInfo;
 begin
   CheckValidProp(spLinkInfo);
   Result := inherited GetLinkInfo;
 end;
 
-function TPartialSnippet.GetModified: TUTCDateTime;
+function TReadOnlySnippet.GetModified: TUTCDateTime;
 begin
   CheckValidProp(spModified);
   Result := inherited GetModified;
 end;
 
-function TPartialSnippet.GetNotes: IActiveText;
+function TReadOnlySnippet.GetNotes: IActiveText;
 begin
   CheckValidProp(spNotes);
   Result := inherited GetNotes;
 end;
 
-function TPartialSnippet.GetRequiredModules: IStringList;
+function TReadOnlySnippet.GetRequiredModules: IStringList;
 begin
   CheckValidProp(spRequiredModules);
   Result := inherited GetRequiredModules;
 end;
 
-function TPartialSnippet.GetRequiredSnippets: ISnippetIDList;
+function TReadOnlySnippet.GetRequiredSnippets: ISnippetIDList;
 begin
   CheckValidProp(spRequiredSnippets);
   Result := inherited GetRequiredSnippets;
 end;
 
-function TPartialSnippet.GetSourceCode: string;
+function TReadOnlySnippet.GetSourceCode: string;
 begin
   CheckValidProp(spSourceCode);
   Result := inherited GetSourceCode;
 end;
 
-function TPartialSnippet.GetStarred: Boolean;
+function TReadOnlySnippet.GetStarred: Boolean;
 begin
   CheckValidProp(spStarred);
   Result := inherited GetStarred;
 end;
 
-function TPartialSnippet.GetTags: ITagSet;
+function TReadOnlySnippet.GetTags: ITagSet;
 begin
   CheckValidProp(spTags);
   Result := inherited GetTags;
 end;
 
-function TPartialSnippet.GetTestInfo: TSnippetTestInfo;
+function TReadOnlySnippet.GetTestInfo: TSnippetTestInfo;
 begin
   CheckValidProp(spTestInfo);
   Result := inherited GetTestInfo;
 end;
 
-function TPartialSnippet.GetTitle: string;
+function TReadOnlySnippet.GetTitle: string;
 begin
   CheckValidProp(spTitle);
   Result := inherited GetTitle;
 end;
 
-function TPartialSnippet.GetValidProperties: TDBSnippetProps;
+function TReadOnlySnippet.GetValidProperties: TDBSnippetProps;
 begin
   Result := fValidProperties;
 end;
 
-function TPartialSnippet.GetXRefs: ISnippetIDList;
+function TReadOnlySnippet.GetXRefs: ISnippetIDList;
 begin
   CheckValidProp(spXRefs);
   Result := inherited GetXRefs;
 end;
 
-function TPartialSnippet.SupportsProperty(const AProp: TDBSnippetProp): Boolean;
+function TReadOnlySnippet.SupportsProperty(const AProp: TDBSnippetProp):
+  Boolean;
 begin
   Result := (AProp in fValidProperties) or (fValidProperties = []);
 end;

@@ -27,9 +27,9 @@ type
 
   TDBSnippet = class(TSnippetBase)
   public
-    class function CreateFrom(ASnippet: ISnippet): TDBSnippet;
-    function Copy: ISnippet;
-    function CopyPartial(const RequiredProps: TDBSnippetProps):
+    class function CreateFrom(ASnippet: IEditableSnippet): TDBSnippet;
+    function CloneAsEditable: IEditableSnippet;
+    function CloseAsReadOnly(const RequiredProps: TDBSnippetProps):
       IReadOnlySnippet;
     function IsEqual(const AOther: TDBSnippet): Boolean;
   end;
@@ -62,20 +62,20 @@ uses
 
 { TDBSnippet }
 
-function TDBSnippet.Copy: ISnippet;
+function TDBSnippet.CloneAsEditable: IEditableSnippet;
 begin
-  Result := TNewSnippet.Create(Self);
+  Result := TEditableSnippet.Create(Self);
 end;
 
-function TDBSnippet.CopyPartial(const RequiredProps: TDBSnippetProps):
+function TDBSnippet.CloseAsReadOnly(const RequiredProps: TDBSnippetProps):
   IReadOnlySnippet;
 begin
-  Result := TPartialSnippet.Create(Self, RequiredProps);
+  Result := TReadOnlySnippet.Create(Self, RequiredProps);
 end;
 
-class function TDBSnippet.CreateFrom(ASnippet: ISnippet): TDBSnippet;
+class function TDBSnippet.CreateFrom(ASnippet: IEditableSnippet): TDBSnippet;
 begin
-  Result := TDBSnippet.Create(ASnippet as TNewSnippet);
+  Result := TDBSnippet.Create(ASnippet as TEditableSnippet);
 end;
 
 function TDBSnippet.IsEqual(const AOther: TDBSnippet): Boolean;
