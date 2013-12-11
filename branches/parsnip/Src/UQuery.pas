@@ -207,7 +207,7 @@ function TQuery.FilterSelection(Filter: IDBFilter): ISnippetIDList;
 begin
   Result := Database.SelectSnippets(
     TDBFilter.Construct(
-      function (Snippet: IReadOnlySnippet): Boolean
+      function (Snippet: ISnippet): Boolean
       begin
         Result := fSelection.Contains(Snippet.ID) and Filter.Match(Snippet);
       end,

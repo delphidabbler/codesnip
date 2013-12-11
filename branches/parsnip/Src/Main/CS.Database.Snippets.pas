@@ -102,7 +102,7 @@ type
     destructor Destroy; override;
   end;
 
-  TReadOnlySnippet = class(TSnippetBase, IReadOnlySnippet)
+  TReadOnlySnippet = class(TSnippetBase, ISnippet)
   strict private
     var
       fValidProperties: TDBSnippetProps;

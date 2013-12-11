@@ -404,7 +404,7 @@ var
 begin
   SelectedSnippetIDs := Database.SelectSnippets(
     TDBFilter.Construct(
-      function (Snippet: IReadOnlySnippet): Boolean
+      function (Snippet: ISnippet): Boolean
       begin
         Result := Snippet.Tags.IsEmpty
           and SnippetIDList.Contains(Snippet.ID);
@@ -418,7 +418,7 @@ begin
   begin
     SelectedSnippetIDs := Database.SelectSnippets(
       TDBFilter.Construct(
-        function (Snippet: IReadOnlySnippet): Boolean
+        function (Snippet: ISnippet): Boolean
         begin
           Result := Snippet.Tags.Contains(Tag) and
             SnippetIDList.Contains(Snippet.ID);

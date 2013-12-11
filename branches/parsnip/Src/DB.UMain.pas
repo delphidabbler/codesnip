@@ -32,19 +32,19 @@ uses
 
 type
 
-  TDBFilterFn = reference to function (ASnippet: IReadOnlySnippet): Boolean;
+  TDBFilterFn = reference to function (ASnippet: ISnippet): Boolean;
 
   IDBFilter = interface(IInterface)
     ['{6610639A-FC54-4FC7-8DCB-34841B3BC99E}']
     function RequiredProperties: TDBSnippetProps;
-    function Match(ASnippet: IReadOnlySnippet): Boolean;
+    function Match(ASnippet: ISnippet): Boolean;
   end;
 
   TDBFilter = class abstract(TInterfacedObject, IDBFilter)
   public
     class function Construct(const FilterFn: TDBFilterFn;
       const RequiredProps: TDBSnippetProps = []): IDBFilter;
-    function Match(ASnippet: IReadOnlySnippet): Boolean; virtual; abstract;
+    function Match(ASnippet: ISnippet): Boolean; virtual; abstract;
     function RequiredProperties: TDBSnippetProps; virtual; abstract;
   end;
 
@@ -72,8 +72,8 @@ type
     class property Instance: TDatabase read GetInstance;
     function LookupEditableSnippet(const ASnippetID: TSnippetID):
       IEditableSnippet;
-    function LookupReadOnlySnippet(const ASnippetID: TSnippetID;
-      const ARequiredProperties: TDBSnippetProps): IReadOnlySnippet;
+    function LookupSnippet(const ASnippetID: TSnippetID;
+      const ARequiredProperties: TDBSnippetProps): ISnippet;
     function SelectSnippets(Filter: IDBFilter): ISnippetIDList;
     function GetAllSnippets: ISnippetIDList;
     function GetAllTags: ITagSet;
@@ -323,7 +323,7 @@ type
     constructor Create(const FilterFn: TDBFilterFn;
       const RequiredProps: TDBSnippetProps = []);
     function RequiredProperties: TDBSnippetProps; override;
-    function Match(ASnippet: IReadOnlySnippet): Boolean; override;
+    function Match(ASnippet: ISnippet): Boolean; override;
   end;
 
 
@@ -1141,8 +1141,8 @@ begin
   Result := Row.CloneAsEditable;
 end;
 
-function TDatabase.LookupReadOnlySnippet(const ASnippetID: TSnippetID;
-  const ARequiredProperties: TDBSnippetProps): IReadOnlySnippet;
+function TDatabase.LookupSnippet(const ASnippetID: TSnippetID;
+  const ARequiredProperties: TDBSnippetProps): ISnippet;
 var
   Row: TDBSnippet;
 begin
@@ -1189,7 +1189,7 @@ begin
   fRequiredProps := RequiredProps;
 end;
 
-function TDelegatedDBFilter.Match(ASnippet: IReadOnlySnippet): Boolean;
+function TDelegatedDBFilter.Match(ASnippet: ISnippet): Boolean;
 begin
   Result := fFilterFn(ASnippet);
 end;

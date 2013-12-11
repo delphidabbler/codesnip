@@ -149,7 +149,7 @@ begin
   if not Tag.IsNull then
     SnippetIDs := Database.SelectSnippets(
       TDBFilter.Construct(
-        function (Snippet: IReadOnlySnippet): Boolean
+        function (Snippet: ISnippet): Boolean
         begin
           Result := Snippet.Tags.Contains(Tag)
         end,
@@ -159,7 +159,7 @@ begin
   else
     SnippetIDs := Database.SelectSnippets(
       TDBFilter.Construct(
-        function (Snippet: IReadOnlySnippet): Boolean
+        function (Snippet: ISnippet): Boolean
         begin
           Result := Snippet.Tags.IsEmpty;
         end,

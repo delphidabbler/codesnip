@@ -29,8 +29,7 @@ type
   public
     class function CreateFrom(ASnippet: IEditableSnippet): TDBSnippet;
     function CloneAsEditable: IEditableSnippet;
-    function CloneAsReadOnly(const RequiredProps: TDBSnippetProps):
-      IReadOnlySnippet;
+    function CloneAsReadOnly(const RequiredProps: TDBSnippetProps): ISnippet;
     function IsEqual(const AOther: TDBSnippet): Boolean;
   end;
 
@@ -68,7 +67,7 @@ begin
 end;
 
 function TDBSnippet.CloneAsReadOnly(const RequiredProps: TDBSnippetProps):
-  IReadOnlySnippet;
+  ISnippet;
 begin
   Result := TReadOnlySnippet.Create(Self, RequiredProps);
 end;

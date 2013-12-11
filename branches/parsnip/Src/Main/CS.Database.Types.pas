@@ -237,7 +237,7 @@ type
     property Modified: TUTCDateTime read GetModified;
   end;
 
-  IReadOnlySnippet = interface(ISnippetBase)
+  ISnippet = interface(ISnippetBase)
     ['{BD221CF4-482D-4FF9-BDAE-D320DDEBD578}']
     function GetValidProperties: TDBSnippetProps;
 
