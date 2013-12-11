@@ -175,9 +175,6 @@ type
     procedure Load;
       {Loads data from main and user databases.
       }
-    procedure Clear;
-      {Clears all data.
-      }
     function Lookup(const SnippetID: TSnippetID): TSnippet;
     function TryLookup(const SnippetID: TSnippetID; out Snippet: TSnippet):
       Boolean;
@@ -389,6 +386,9 @@ type
       {Deletes a snippet from the user database.
         @param Snippet [in] Snippet to delete from database.
       }
+    procedure Clear;
+      {Clears the object's data.
+      }
     function UniqueSnippetName: string;
       {Generates a snippet "name" that is unique in the database.
         @return Required unique snippet "name".
@@ -409,9 +409,6 @@ type
     { IDatabase methods }
     procedure Load;
       {Loads object's data from main and user defined databases.
-      }
-    procedure Clear;
-      {Clears the object's data.
       }
     procedure AddChangeEventHandler(const Handler: TNotifyEventInfo);
       {Adds a change event handler to list of listeners.
