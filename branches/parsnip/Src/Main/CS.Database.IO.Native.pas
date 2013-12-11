@@ -48,10 +48,6 @@ type
         ID: TSnippetID;
         LastModified: TUTCDateTime;
       end;
-      TTagInfo = record
-        Tag: TTag;
-        Reserved: LongWord;
-      end;
     type
       TMasterInfo = class(TObject)
       strict private
