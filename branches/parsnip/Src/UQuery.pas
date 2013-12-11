@@ -70,7 +70,7 @@ type
       }
     ///  <summary>Applies the given filter function to the current selection
     ///  and returns the IDs of snippets that pass the filter.</summary>
-    function FilterSelection(const FilterFn: TDatabaseFilterFn): ISnippetIDList;
+    function FilterSelection(Filter: IDBFilter): ISnippetIDList;
     property LatestSearch: ISearch read GetLatestSearch;
       {Reference to search object used to generate current query}
     property Selection: ISnippetIDList read GetSelection;
@@ -163,7 +163,7 @@ type
     ///  <summary>Applies the given filter function to the current selection
     ///  and returns the IDs of snippets that pass the filter.</summary>
     ///  <remarks>Method of IQuery.</remarks>
-    function FilterSelection(const FilterFn: TDatabaseFilterFn): ISnippetIDList;
+    function FilterSelection(Filter: IDBFilter): ISnippetIDList;
   end;
 
 function Query: IQuery;
@@ -203,14 +203,16 @@ begin
   fActiveSearches.Add(Search);
 end;
 
-function TQuery.FilterSelection(const FilterFn: TDatabaseFilterFn):
-  ISnippetIDList;
+function TQuery.FilterSelection(Filter: IDBFilter): ISnippetIDList;
 begin
-  Result := _Database.Select(
-    function (const Snippet: TSnippet): Boolean
-    begin
-      Result := fSelection.Contains(Snippet.ID) and FilterFn(Snippet);
-    end
+  Result := Database.SelectSnippets(
+    TDBFilter.Construct(
+      function (Snippet: IReadOnlySnippet): Boolean
+      begin
+        Result := fSelection.Contains(Snippet.ID) and Filter.Match(Snippet);
+      end,
+      Filter.RequiredProperties
+    )
   );
 end;
 
