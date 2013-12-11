@@ -32,6 +32,22 @@ uses
 
 type
 
+  TDBFilterFn = reference to function (ASnippet: IReadOnlySnippet): Boolean;
+
+  IDBFilter = interface(IInterface)
+    ['{6610639A-FC54-4FC7-8DCB-34841B3BC99E}']
+    function RequiredProperties: TDBSnippetProps;
+    function Match(ASnippet: IReadOnlySnippet): Boolean;
+  end;
+
+  TDBFilter = class abstract(TInterfacedObject, IDBFilter)
+  public
+    class function Construct(const FilterFn: TDBFilterFn;
+      const RequiredProps: TDBSnippetProps = []): IDBFilter;
+    function Match(ASnippet: IReadOnlySnippet): Boolean; virtual; abstract;
+    function RequiredProperties: TDBSnippetProps; virtual; abstract;
+  end;
+
   TDatabase = class(TSingleton)
   strict private
     class var
@@ -297,6 +313,19 @@ uses
 var
   // Private global snippets singleton object
   _PvtDatabase: _IDatabase = nil;
+
+
+type
+  TDelegatedDBFilter = class(TDBFilter, IDBFilter)
+    var
+      fFilterFn: TDBFilterFn;
+      fRequiredProps: TDBSnippetProps;
+  public
+    constructor Create(const FilterFn: TDBFilterFn;
+      const RequiredProps: TDBSnippetProps = []);
+    function RequiredProperties: TDBSnippetProps; override;
+    function Match(ASnippet: IReadOnlySnippet): Boolean; override;
+  end;
 
 
 type
@@ -1153,8 +1182,36 @@ begin
   Result := fSnippetsTable.Contains(ASnippetID);
 end;
 
-initialization
+{ TDBFilter }
 
+class function TDBFilter.Construct(const FilterFn: TDBFilterFn;
+  const RequiredProps: TDBSnippetProps): IDBFilter;
+begin
+  Result := TDelegatedDBFilter.Create(FilterFn, RequiredProps);
+end;
+
+{ TDelegatedDBFilter }
+
+constructor TDelegatedDBFilter.Create(const FilterFn: TDBFilterFn;
+  const RequiredProps: TDBSnippetProps);
+begin
+  Assert(Assigned(FilterFn), ClassName + '.Create: FilterFn is nil');
+  inherited Create;
+  fFilterFn := FilterFn;
+  fRequiredProps := RequiredProps;
+end;
+
+function TDelegatedDBFilter.Match(ASnippet: IReadOnlySnippet): Boolean;
+begin
+  Result := fFilterFn(ASnippet);
+end;
+
+function TDelegatedDBFilter.RequiredProperties: TDBSnippetProps;
+begin
+  Result := fRequiredProps;
+end;
+
+initialization
 
 finalization
 
