@@ -182,7 +182,6 @@ type
     function Lookup(const SnippetID: TSnippetID): TSnippet;
     function TryLookup(const SnippetID: TSnippetID; out Snippet: TSnippet):
       Boolean;
-    function SelectAll: ISnippetIDList;
     function Select(FilterFn: TDatabaseFilterFn): ISnippetIDList;
     procedure AddChangeEventHandler(const Handler: TNotifyEventInfo);
       {Adds a change event handler to list of listeners.
@@ -429,7 +428,6 @@ type
     function Lookup(const SnippetID: TSnippetID): TSnippet;
     function TryLookup(const SnippetID: TSnippetID; out Snippet: TSnippet):
       Boolean;
-    function SelectAll: ISnippetIDList;
     function Select(FilterFn: TDatabaseFilterFn): ISnippetIDList;
     // Returns a list of all supported tags
     function GetAllTags: ITagSet;
@@ -927,15 +925,6 @@ begin
   for Snippet in Database.__SnippetsTable do
     if FilterFn(Snippet) then
       Result.Add(Snippet.ID)
-end;
-
-function _TDatabase.SelectAll: ISnippetIDList;
-var
-  Snippet: TSnippet;
-begin
-  Result := TSnippetIDList.Create(Database.__SnippetsTable.Size);
-  for Snippet in Database.__SnippetsTable do
-    Result.Add(Snippet.ID);
 end;
 
 procedure _TDatabase.TriggerEvent(const Kind: TDatabaseChangeEventKind;

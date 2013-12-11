@@ -486,7 +486,7 @@ begin
   // letters in case user wants to display empty letter groups. We then add
   // only those snippets in given snippet list to the grouping.
   try
-    for SnippetID in _Database.SelectAll do
+    for SnippetID in Database.GetAllSnippets do
     begin
       Snippet := _Database.Lookup(SnippetID);
       Letter := TInitialLetter.Create(FirstCharOfName(Snippet.Title));

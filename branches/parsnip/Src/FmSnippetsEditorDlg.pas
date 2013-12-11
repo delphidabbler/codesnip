@@ -1031,7 +1031,7 @@ begin
   fDependsCLBMgr.Clear;
   fXRefsCLBMgr.Save;
   fXRefsCLBMgr.Clear;
-  for SnippetID in _Database.SelectAll do
+  for SnippetID in Database.GetAllSnippets do
   begin
     // We ignore any snippet being edited
     if not Assigned(fSnippet) or (SnippetID <> fSnippet.ID) then
