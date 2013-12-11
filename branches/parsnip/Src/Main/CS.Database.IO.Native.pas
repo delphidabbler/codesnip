@@ -35,6 +35,12 @@ uses
   UIStringList;
 
 type
+  TDBSnippetProp = (
+    spID, spTitle, spDescription, spSourceCode, spLanguageID, spModified,
+    spCreated, spRequiredModules, spRequiredSnippets, spXRefs, spNotes, spKind,
+    spCompileResults, spTags, spLinkInfo, spTestInfo, spStarred
+  );
+
   TDBNativeIOBase = class abstract(TObject)
   protected // NOTE: use of strict here causes IDE not to see TSnippetInfo !
     type

@@ -204,15 +204,6 @@ type
     stiAdvanced           // snippet has had advanced (unit) testing
   );
 
-  // TODO: Move TDBSnippetProp to CS.Database.IO.Native.pas ??
-  TDBSnippetProp = (
-    spID, spTitle, spDescription, spSourceCode, spLanguageID, spModified,
-    spCreated, spRequiredModules, spRequiredSnippets, spXRefs, spNotes, spKind,
-    spCompileResults, spTags, spLinkInfo, spTestInfo, spStarred
-  );
-
-  TDBSnippetProps = set of TDBSnippetProp;
-
   ISnippetBase = interface(IInterface)
     ['{0F915A15-441B-4180-A9C2-41C52AF63C8A}']
     function GetID: TSnippetID;
