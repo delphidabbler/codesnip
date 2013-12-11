@@ -182,7 +182,6 @@ type
     function Lookup(const SnippetID: TSnippetID): TSnippet;
     function TryLookup(const SnippetID: TSnippetID; out Snippet: TSnippet):
       Boolean;
-    function SnippetCount: Integer;
     function IsEmpty: Boolean;
     function SelectAll: ISnippetIDList;
     function Select(FilterFn: TDatabaseFilterFn): ISnippetIDList;
@@ -431,7 +430,6 @@ type
     function Lookup(const SnippetID: TSnippetID): TSnippet;
     function TryLookup(const SnippetID: TSnippetID; out Snippet: TSnippet):
       Boolean;
-    function SnippetCount: Integer;
     function IsEmpty: Boolean;
     function SelectAll: ISnippetIDList;
     function Select(FilterFn: TDatabaseFilterFn): ISnippetIDList;
@@ -945,11 +943,6 @@ begin
   Result := TSnippetIDList.Create(Database.__SnippetsTable.Size);
   for Snippet in Database.__SnippetsTable do
     Result.Add(Snippet.ID);
-end;
-
-function _TDatabase.SnippetCount: Integer;
-begin
-  Result := Database.__SnippetsTable.Size;
 end;
 
 procedure _TDatabase.TriggerEvent(const Kind: TDatabaseChangeEventKind;
