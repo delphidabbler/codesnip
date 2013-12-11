@@ -59,8 +59,7 @@ type
     function LookupEditableSnippet(const ASnippetID: TSnippetID):
       IEditableSnippet;
     // TODO: remove ARequiredProperties parameter from following method
-    function LookupSnippet(const ASnippetID: TSnippetID;
-      const ARequiredProperties: TDBSnippetProps): ISnippet;
+    function LookupSnippet(const ASnippetID: TSnippetID): ISnippet;
     function SelectSnippets(FilterFn: TDBFilterFn): ISnippetIDList;
     function GetAllSnippets: ISnippetIDList;
     function GetAllTags: ITagSet;
@@ -1055,8 +1054,7 @@ begin
   Result := Row.CloneAsEditable;
 end;
 
-function TDatabase.LookupSnippet(const ASnippetID: TSnippetID;
-  const ARequiredProperties: TDBSnippetProps): ISnippet;
+function TDatabase.LookupSnippet(const ASnippetID: TSnippetID): ISnippet;
 var
   Row: TDBSnippet;
 begin
