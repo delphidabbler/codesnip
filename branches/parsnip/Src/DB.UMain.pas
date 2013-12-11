@@ -182,7 +182,6 @@ type
     function Lookup(const SnippetID: TSnippetID): TSnippet;
     function TryLookup(const SnippetID: TSnippetID; out Snippet: TSnippet):
       Boolean;
-    function IsEmpty: Boolean;
     function SelectAll: ISnippetIDList;
     function Select(FilterFn: TDatabaseFilterFn): ISnippetIDList;
     procedure AddChangeEventHandler(const Handler: TNotifyEventInfo);
@@ -430,7 +429,6 @@ type
     function Lookup(const SnippetID: TSnippetID): TSnippet;
     function TryLookup(const SnippetID: TSnippetID; out Snippet: TSnippet):
       Boolean;
-    function IsEmpty: Boolean;
     function SelectAll: ISnippetIDList;
     function Select(FilterFn: TDatabaseFilterFn): ISnippetIDList;
     // Returns a list of all supported tags
@@ -843,11 +841,6 @@ begin
     Cat.SnippetIDs.Remove(Snippet.ID);
   // Delete from "master" list: this frees Snippet
   Database.__SnippetsTable.Delete(Snippet.ID);
-end;
-
-function _TDatabase.IsEmpty: Boolean;
-begin
-  Result := Database.__SnippetsTable.IsEmpty;
 end;
 
 procedure _TDatabase.Load;

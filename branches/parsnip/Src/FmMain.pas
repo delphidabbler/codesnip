@@ -958,7 +958,7 @@ end;
 
 procedure TMainForm.ActNonEmptyDBUpdate(Sender: TObject);
 begin
-  (Sender as TAction).Enabled := not _Database.IsEmpty;
+  (Sender as TAction).Enabled := not Database.IsEmpty;
 end;
 
 procedure TMainForm.ActOverviewGroupingExecute(Sender: TObject);
