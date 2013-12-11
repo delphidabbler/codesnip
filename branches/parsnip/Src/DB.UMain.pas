@@ -54,6 +54,16 @@ type
     property __AllTags: ITagSet read fAllTags;
   public
     class property Instance: TDatabase read GetInstance;
+    function LookupEditableSnippet(const ASnippetID: TSnippetID):
+      IEditableSnippet;
+    function LookupReadOnlySnippet(const ASnippetID: TSnippetID;
+      const ARequiredProperties: TDBSnippetProps): IReadOnlySnippet;
+    function SelectSnippets(Filter: IDBFilter): ISnippetIDList;
+    function GetAllSnippets: ISnippetIDList;
+    function GetAllTags: ITagSet;
+    function SnippetExists(const ASnippetID: TSnippetID): Boolean;
+    function SnippetCount: Integer;
+    function IsEmpty: Boolean;
   end;
 
   {
@@ -1118,6 +1128,20 @@ begin
   inherited;
 end;
 
+function TDatabase.GetAllSnippets: ISnippetIDList;
+var
+  Snippet: TDBSnippet;
+begin
+  Result := TSnippetIDList.Create(fSnippetsTable.Size);
+  for Snippet in fSnippetsTable do
+    Result.Add(Snippet.ID);
+end;
+
+function TDatabase.GetAllTags: ITagSet;
+begin
+  Result := TTagSet.Create(fAllTags);
+end;
+
 class function TDatabase.GetInstance: TDatabase;
 begin
   if not Assigned(fInstance) then
@@ -1130,6 +1154,49 @@ begin
   inherited;
   fSnippetsTable := TDBSnippetsTable.Create;
   fAllTags := TTagSet.Create;
+end;
+
+function TDatabase.IsEmpty: Boolean;
+begin
+  Result := fSnippetsTable.Size = 0;
+end;
+
+function TDatabase.LookupEditableSnippet(const ASnippetID: TSnippetID):
+  IEditableSnippet;
+var
+  Row: TDBSnippet;
+begin
+  Row := fSnippetsTable.Get(ASnippetID);
+  Result := Row.CloneAsEditable;
+end;
+
+function TDatabase.LookupReadOnlySnippet(const ASnippetID: TSnippetID;
+  const ARequiredProperties: TDBSnippetProps): IReadOnlySnippet;
+var
+  Row: TDBSnippet;
+begin
+  Row := fSnippetsTable.Get(ASnippetID);
+  Result := Row.CloneAsReadOnly(ARequiredProperties);
+end;
+
+function TDatabase.SelectSnippets(Filter: IDBFilter): ISnippetIDList;
+var
+  Snippet: TDBSnippet;
+begin
+  Result := TSnippetIDList.Create;
+  for Snippet in fSnippetsTable do
+    if Filter.Match(Snippet.CloneAsReadOnly(Filter.RequiredProperties)) then
+      Result.Add(Snippet.ID)
+end;
+
+function TDatabase.SnippetCount: Integer;
+begin
+  Result := fSnippetsTable.Size;
+end;
+
+function TDatabase.SnippetExists(const ASnippetID: TSnippetID): Boolean;
+begin
+  Result := fSnippetsTable.Contains(ASnippetID);
 end;
 
 initialization
