@@ -58,8 +58,11 @@ type
     class property Instance: TDatabase read GetInstance;
     function LookupEditableSnippet(const ASnippetID: TSnippetID):
       IEditableSnippet;
-    // TODO: remove ARequiredProperties parameter from following method
+    function TryLookupEditableSnippet(const ASnippetID: TSnippetID;
+      out ASnippet: IEditableSnippet): Boolean;
     function LookupSnippet(const ASnippetID: TSnippetID): ISnippet;
+    function TryLookupSnippet(const ASnippetID: TSnippetID;
+      out ASnippet: ISnippet): Boolean;
     function SelectSnippets(FilterFn: TDBFilterFn): ISnippetIDList;
     function GetAllSnippets: ISnippetIDList;
     function GetAllTags: ITagSet;
@@ -1080,6 +1083,26 @@ end;
 function TDatabase.SnippetExists(const ASnippetID: TSnippetID): Boolean;
 begin
   Result := fSnippetsTable.Contains(ASnippetID);
+end;
+
+function TDatabase.TryLookupEditableSnippet(const ASnippetID: TSnippetID;
+  out ASnippet: IEditableSnippet): Boolean;
+begin
+  Result := fSnippetsTable.Contains(ASnippetID);
+  if Result then
+    ASnippet := fSnippetsTable.Get(ASnippetID).CloneAsEditable
+  else
+    ASnippet := nil;
+end;
+
+function TDatabase.TryLookupSnippet(const ASnippetID: TSnippetID;
+  out ASnippet: ISnippet): Boolean;
+begin
+  Result := fSnippetsTable.Contains(ASnippetID);
+  if Result then
+    ASnippet := fSnippetsTable.Get(ASnippetID).CloneAsReadOnly
+  else
+    ASnippet := nil;
 end;
 
 initialization
