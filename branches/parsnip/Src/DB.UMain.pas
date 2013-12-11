@@ -337,8 +337,6 @@ type
   strict private
     fUpdated: Boolean;                // Flags if user database has been updated
     fCategories: TCategoryList;       // List of categories
-    fSnippets: TDBSnippetsTable;
-    fAllTags: ITagSet;                // Set of all tags
     fChangeEvents: TMulticastEvents;  // List of change event handlers
     type
       {
@@ -576,7 +574,7 @@ begin
   try
     NewSnippetID := TSnippetID.Create(UniqueSnippetName);
     // Check if snippet with same name exists in user database: error if so
-    if fSnippets.Contains(NewSnippetID) then
+    if Database.__SnippetsTable.Contains(NewSnippetID) then
       raise ECodeSnip.CreateFmt(sNameExists, [NewSnippetID.ToString]);
     CleanUpRefs(Data.Refs);
     Result := InternalAddSnippet(NewSnippetID, Data);
@@ -596,7 +594,7 @@ procedure _TDatabase.CleanUpRefs(var Refs: TSnippetReferences);
   begin
     Result := TSnippetIDList.Create;
     for SnippetID in SnipList do
-      if fSnippets.Contains(SnippetID) then
+      if Database.__SnippetsTable.Contains(SnippetID) then
         Result.Add(SnippetID);
   end;
 
@@ -610,8 +608,8 @@ procedure _TDatabase.Clear;
   }
 begin
   fCategories.Clear;
-  fAllTags.Clear;
-  fSnippets.Clear;
+  Database.__AllTags.Clear;
+  Database.__SnippetsTable.Clear;
 end;
 
 function _TDatabase.Contains(const SnippetID: TSnippetID): Boolean;
@@ -626,9 +624,7 @@ constructor _TDatabase.Create;
   }
 begin
   inherited Create;
-  fSnippets := TDBSnippetsTable.Create;
   fCategories := TCategoryListEx.Create(True);
-  fAllTags := TTagSet.Create;
   fChangeEvents := TMultiCastEvents.Create(Self);
 end;
 
@@ -668,12 +664,12 @@ procedure _TDatabase.DeleteSnippet(const Snippet: TSnippet);
     @param Snippet [in] Snippet to be deleted.
   }
 var
-  Dependent: TSnippetID;      // loops thru each snippet that depends on Snippet
+  Dependent: TSnippetID;      // each snippet that depends on Snippet
   Dependents: ISnippetIDList; // list of dependent snippets
-  Referrer: TSnippetID;       // loops thru snippets that cross references Snippet
+  Referrer: TSnippetID;       // each snippet that cross references Snippet
   Referrers: ISnippetIDList;  // list of referencing snippets
 begin
-  Assert(fSnippets.Contains(Snippet.ID),
+  Assert(Database.__SnippetsTable.Contains(Snippet.ID),
     ClassName + '.DeleteSnippet: Snippet is not in the database');
   TriggerEvent(evChangeBegin);
   TriggerEvent(evBeforeSnippetDelete, Snippet);
@@ -686,9 +682,11 @@ begin
     // TODO: scan all snippets and remove references that match snippet ID
     // Delete snippet for XRef or Depends list of referencing snippets
     for Referrer in Referrers do
-      fSnippets.Get(Referrer).XRefs.Remove(Snippet.ID);
+      Database.__SnippetsTable.Get(Referrer).XRefs.Remove(Snippet.ID);
     for Dependent in Dependents do
-      fSnippets.Get(Dependent).RequiredSnippets.Remove(Snippet.ID);
+      Database.__SnippetsTable.Get(Dependent).RequiredSnippets.Remove(
+        Snippet.ID
+      );
     // Delete snippet itself
     InternalDeleteSnippet(Snippet);
     Query.Update;
@@ -705,7 +703,6 @@ destructor _TDatabase.Destroy;
 begin
   fChangeEvents.Free;
   fCategories.Free;
-  fSnippets.Free;
   inherited;
 end;
 
@@ -721,7 +718,7 @@ end;
 
 function _TDatabase.GetAllTags: ITagSet;
 begin
-  Result := TTagSet.Create(fAllTags);
+  Result := TTagSet.Create(Database.__AllTags);
 end;
 
 function _TDatabase.GetDependents(const ASnippet: TSnippet): ISnippetIDList;
@@ -733,7 +730,7 @@ var
   Snippet: TSnippet;  // references each snippet in database
 begin
   Result := TSnippetIDList.Create;
-  for Snippet in fSnippets do
+  for Snippet in Database.__SnippetsTable do
     if not Snippet.IsEqual(ASnippet)
       and Snippet.RequiredSnippets.Contains(ASnippet.ID) then
       Result.Add(Snippet.ID);
@@ -745,7 +742,7 @@ var
   Snippet: TSnippet;
 begin
   Result := TSnippetIDList.Create;
-  for Snippet in fSnippets do
+  for Snippet in Database.__SnippetsTable do
     if (Snippet.ID <> ASnippetID)
       and Snippet.RequiredSnippets.Contains(ASnippetID) then
       Result.Add(Snippet.ID);
@@ -776,7 +773,7 @@ var
   Snippet: TSnippet;  // references each snippet in database
 begin
   Result := TSnippetIDList.Create;
-  for Snippet in fSnippets do
+  for Snippet in Database.__SnippetsTable do
     if not Snippet.IsEqual(ASnippet)
       and Snippet.XRefs.Contains(ASnippet.ID) then
       Result.Add(Snippet.ID);
@@ -788,7 +785,7 @@ var
   Snippet: TSnippet;  // references each snippet in database
 begin
   Result := TSnippetIDList.Create;
-  for Snippet in fSnippets do
+  for Snippet in Database.__SnippetsTable do
     if (Snippet.ID <> ASnippetID)
       and Snippet.XRefs.Contains(ASnippetID) then
       Result.Add(Snippet.ID);
@@ -820,8 +817,8 @@ begin
     );
   Cat.SnippetIDs.Add(Result.ID);
   // ensure any unknown tags are added to set of all known tags
-  fAllTags.Include(Result.Tags);
-  fSnippets.Add(Result);
+  Database.__AllTags.Include(Result.Tags);
+  Database.__SnippetsTable.Add(Result);
 end;
 
 procedure _TDatabase.InternalDeleteSnippet(const Snippet: TSnippet);
@@ -837,12 +834,12 @@ begin
   if Assigned(Cat) then
     Cat.SnippetIDs.Remove(Snippet.ID);
   // Delete from "master" list: this frees Snippet
-  fSnippets.Delete(Snippet.ID);
+  Database.__SnippetsTable.Delete(Snippet.ID);
 end;
 
 function _TDatabase.IsEmpty: Boolean;
 begin
-  Result := fSnippets.IsEmpty;
+  Result := Database.__SnippetsTable.IsEmpty;
 end;
 
 procedure _TDatabase.Load;
@@ -863,9 +860,9 @@ begin
     try
       // Load any user database
       with TDatabaseIOFactory.CreateUserDBLoader do
-        Load(SnipList, fCategories, fAllTags, Factory);
+        Load(SnipList, fCategories, Database.__AllTags, Factory);
       for Snippet in SnipList do
-        fSnippets.Add(Snippet);
+        Database.__SnippetsTable.Add(Snippet);
     finally
       SnipList.Free;
     end;
@@ -910,7 +907,7 @@ begin
   Provider := TUserDataProvider.Create;
   SnipList := _TSnippetList.Create(False);
   try
-    for Snippet in fSnippets do
+    for Snippet in Database.__SnippetsTable do
       SnipList.Add(Snippet);
     // Use a writer object to write out the database
     with TDatabaseIOFactory.CreateWriter do
@@ -926,7 +923,7 @@ var
   Snippet: TSnippet;
 begin
   Result := TSnippetIDList.Create;
-  for Snippet in fSnippets do
+  for Snippet in Database.__SnippetsTable do
     if FilterFn(Snippet) then
       Result.Add(Snippet.ID)
 end;
@@ -935,14 +932,14 @@ function _TDatabase.SelectAll: ISnippetIDList;
 var
   Snippet: TSnippet;
 begin
-  Result := TSnippetIDList.Create(fSnippets.Size);
-  for Snippet in fSnippets do
+  Result := TSnippetIDList.Create(Database.__SnippetsTable.Size);
+  for Snippet in Database.__SnippetsTable do
     Result.Add(Snippet.ID);
 end;
 
 function _TDatabase.SnippetCount: Integer;
 begin
-  Result := fSnippets.Size;
+  Result := Database.__SnippetsTable.Size;
 end;
 
 procedure _TDatabase.TriggerEvent(const Kind: TDatabaseChangeEventKind;
@@ -961,16 +958,16 @@ end;
 function _TDatabase.TryLookup(const SnippetID: TSnippetID;
   out Snippet: TSnippet): Boolean;
 begin
-  Result := fSnippets.Contains(SnippetID);
+  Result := Database.__SnippetsTable.Contains(SnippetID);
   if Result then
-    Snippet := fSnippets.Get(SnippetID);
+    Snippet := Database.__SnippetsTable.Get(SnippetID);
 end;
 
 function _TDatabase.UniqueSnippetName: string;
 begin
   repeat
     Result := 'Snippet' + TUniqueID.Generate;
-  until not fSnippets.Contains(TSnippetID.Create(Result));
+  until not Database.__SnippetsTable.Contains(TSnippetID.Create(Result));
 end;
 
 function _TDatabase.Updated: Boolean;
@@ -998,7 +995,7 @@ begin
     CleanUpRefs(Data.Refs);
     Snippet.Update(Data);
     // ensure any new, unknown, tags are added to set of all tags
-    fAllTags.Include(Snippet.Tags);
+    Database.__AllTags.Include(Snippet.Tags);
     // NOTE: since categories can no longer be changed, there is no need to
     // update TCategory.SnippetIDs like we used to.
     Query.Update;
