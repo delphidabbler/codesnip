@@ -34,20 +34,6 @@ type
 
   TDBFilterFn = reference to function (ASnippet: ISnippet): Boolean;
 
-  IDBFilter = interface(IInterface)
-    ['{6610639A-FC54-4FC7-8DCB-34841B3BC99E}']
-    function RequiredProperties: TDBSnippetProps;
-    function Match(ASnippet: ISnippet): Boolean;
-  end;
-
-  TDBFilter = class abstract(TInterfacedObject, IDBFilter)
-  public
-    class function Construct(const FilterFn: TDBFilterFn;
-      const RequiredProps: TDBSnippetProps = []): IDBFilter;
-    function Match(ASnippet: ISnippet): Boolean; virtual; abstract;
-    function RequiredProperties: TDBSnippetProps; virtual; abstract;
-  end;
-
   TDatabase = class(TSingleton)
   strict private
     class var
@@ -75,7 +61,7 @@ type
     // TODO: remove ARequiredProperties parameter from following method
     function LookupSnippet(const ASnippetID: TSnippetID;
       const ARequiredProperties: TDBSnippetProps): ISnippet;
-    function SelectSnippets(Filter: IDBFilter): ISnippetIDList;
+    function SelectSnippets(FilterFn: TDBFilterFn): ISnippetIDList;
     function GetAllSnippets: ISnippetIDList;
     function GetAllTags: ITagSet;
     function SnippetExists(const ASnippetID: TSnippetID): Boolean;
@@ -302,19 +288,6 @@ uses
 var
   // Private global snippets singleton object
   _PvtDatabase: _IDatabase = nil;
-
-
-type
-  TDelegatedDBFilter = class(TDBFilter, IDBFilter)
-    var
-      fFilterFn: TDBFilterFn;
-      fRequiredProps: TDBSnippetProps;
-  public
-    constructor Create(const FilterFn: TDBFilterFn;
-      const RequiredProps: TDBSnippetProps = []);
-    function RequiredProperties: TDBSnippetProps; override;
-    function Match(ASnippet: ISnippet): Boolean; override;
-  end;
 
 
 type
@@ -1091,13 +1064,13 @@ begin
   Result := Row.CloneAsReadOnly;
 end;
 
-function TDatabase.SelectSnippets(Filter: IDBFilter): ISnippetIDList;
+function TDatabase.SelectSnippets(FilterFn: TDBFilterFn): ISnippetIDList;
 var
   Snippet: TDBSnippet;
 begin
   Result := TSnippetIDList.Create;
   for Snippet in fSnippetsTable do
-    if Filter.Match(Snippet.CloneAsReadOnly) then
+    if FilterFn(Snippet.CloneAsReadOnly) then
       Result.Add(Snippet.ID)
 end;
 
@@ -1109,35 +1082,6 @@ end;
 function TDatabase.SnippetExists(const ASnippetID: TSnippetID): Boolean;
 begin
   Result := fSnippetsTable.Contains(ASnippetID);
-end;
-
-{ TDBFilter }
-
-class function TDBFilter.Construct(const FilterFn: TDBFilterFn;
-  const RequiredProps: TDBSnippetProps): IDBFilter;
-begin
-  Result := TDelegatedDBFilter.Create(FilterFn, RequiredProps);
-end;
-
-{ TDelegatedDBFilter }
-
-constructor TDelegatedDBFilter.Create(const FilterFn: TDBFilterFn;
-  const RequiredProps: TDBSnippetProps);
-begin
-  Assert(Assigned(FilterFn), ClassName + '.Create: FilterFn is nil');
-  inherited Create;
-  fFilterFn := FilterFn;
-  fRequiredProps := RequiredProps;
-end;
-
-function TDelegatedDBFilter.Match(ASnippet: ISnippet): Boolean;
-begin
-  Result := fFilterFn(ASnippet);
-end;
-
-function TDelegatedDBFilter.RequiredProperties: TDBSnippetProps;
-begin
-  Result := fRequiredProps;
 end;
 
 initialization

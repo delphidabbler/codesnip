@@ -403,28 +403,22 @@ var
   Tag: TTag;
 begin
   SelectedSnippetIDs := Database.SelectSnippets(
-    TDBFilter.Construct(
-      function (Snippet: ISnippet): Boolean
-      begin
-        Result := Snippet.Tags.IsEmpty
-          and SnippetIDList.Contains(Snippet.ID);
-      end,
-      [spID, spTags]
-    )
+    function (Snippet: ISnippet): Boolean
+    begin
+      Result := Snippet.Tags.IsEmpty
+        and SnippetIDList.Contains(Snippet.ID);
+    end
   );
   AddGroupItem(TTag.CreateNull, SelectedSnippetIDs);
   AllTags := Database.GetAllTags;
   for Tag in AllTags do
   begin
     SelectedSnippetIDs := Database.SelectSnippets(
-      TDBFilter.Construct(
-        function (Snippet: ISnippet): Boolean
-        begin
-          Result := Snippet.Tags.Contains(Tag) and
-            SnippetIDList.Contains(Snippet.ID);
-        end,
-        [spID, spTags]
-      )
+      function (Snippet: ISnippet): Boolean
+      begin
+        Result := Snippet.Tags.Contains(Tag) and
+          SnippetIDList.Contains(Snippet.ID);
+      end
     );
     AddGroupItem(Tag, SelectedSnippetIDs);
   end;

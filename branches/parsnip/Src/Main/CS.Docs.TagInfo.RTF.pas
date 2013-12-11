@@ -148,23 +148,17 @@ begin
           this will be a change from v4. }
   if not Tag.IsNull then
     SnippetIDs := Database.SelectSnippets(
-      TDBFilter.Construct(
-        function (Snippet: ISnippet): Boolean
-        begin
-          Result := Snippet.Tags.Contains(Tag)
-        end,
-        [spTags]
-      )
+      function (Snippet: ISnippet): Boolean
+      begin
+        Result := Snippet.Tags.Contains(Tag)
+      end
     )
   else
     SnippetIDs := Database.SelectSnippets(
-      TDBFilter.Construct(
-        function (Snippet: ISnippet): Boolean
-        begin
-          Result := Snippet.Tags.IsEmpty;
-        end,
-        [spTags]
-      )
+      function (Snippet: ISnippet): Boolean
+      begin
+        Result := Snippet.Tags.IsEmpty;
+      end
     );
   OutputTagHeading(Tag);
   if not SnippetIDs.IsEmpty then

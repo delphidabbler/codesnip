@@ -189,24 +189,18 @@ begin
   if not Tag.IsNull then
     // non-null tag => we want all associated snippets
     Result := Query.FilterSelection(
-      TDBFilter.Construct(
-        function (Snippet: ISnippet): Boolean
-        begin
-          Result := Snippet.Tags.Contains(Tag) and (Snippet.Kind = skRoutine);
-        end,
-        [spTags, spKind]
-      )
+      function (Snippet: ISnippet): Boolean
+      begin
+        Result := Snippet.Tags.Contains(Tag) and (Snippet.Kind = skRoutine);
+      end
     )
   else
     // null tag => we want all snippets with no tag
     Result := Query.FilterSelection(
-      TDBFilter.Construct(
-        function (Snippet: ISnippet): Boolean
-        begin
-          Result := Snippet.Tags.IsEmpty and (Snippet.Kind = skRoutine);
-        end,
-        [spTags, spKind]
-      )
+      function (Snippet: ISnippet): Boolean
+      begin
+        Result := Snippet.Tags.IsEmpty and (Snippet.Kind = skRoutine);
+      end
     );
 end;
 
