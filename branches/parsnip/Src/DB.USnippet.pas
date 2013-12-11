@@ -125,33 +125,33 @@ type
       {Checks if snippet can be compiled.
         @return True if compilation supported and False if not.
       }
-    property ID: TSnippetID read GetID;
+    function ID: TSnippetID;
       {Snippet's unique ID}
-    property Kind: TSnippetKind read GetKind;
+    function Kind: TSnippetKind;
       {Kind of snippet represented by this object}
-    property Title: string read GetTitle;
+    function Title: string;
       {Display name of snippet}
     //property Category  *** now INHERITED from TDBSnippet ***
     //  {Category to which snippet belongs}
-    property Description: IActiveText read GetDescription;
+    function Description: IActiveText;
       {Description of snippet}
-    property SourceCode: string read GetSourceCode;
+    function SourceCode: string;
       {Source code of snippet}
-    property LanguageID: TSourceCodeLanguageID read GetLanguageID;
+    function LanguageID: TSourceCodeLanguageID;
       {Identifier of source code language}
-    property Notes: IActiveText read GetNotes;
+    function Notes: IActiveText;
       {Additional information about snippet}
-    property Compatibility: TCompileResults read GetCompileResults;
+    function Compatibility: TCompileResults;
       {Compiler compatibilty of this snippet}
-    property TestInfo: TSnippetTestInfo read GetTestInfo;
+    function TestInfo: TSnippetTestInfo;
       {Describes level of testing carried out on snippet}
-    property Tags: ITagSet read GetTags;
+    function Tags: ITagSet;
       {Set of tags associated with snippet}
-    property RequiredModules: IStringList read GetRequiredModules;
+    function RequiredModules: IStringList;
       {List of modules (e.g. units) used by snippet}
-    property RequiredSnippets: ISnippetIDList read GetRequiredSnippets;
+    function RequiredSnippets: ISnippetIDList;
       {List of any other snippet in database on which this snippet depends}
-    property XRefs: ISnippetIDList read GetXRefs;
+    function XRefs: ISnippetIDList;
       {List of cross referenced snippets in database}
   public  // ex TSnippetEx
     procedure UpdateRefs(const Refs: TSnippetReferences);
@@ -279,6 +279,16 @@ begin
   Result := Kind <> skFreeform;
 end;
 
+function TSnippet.Compatibility: TCompileResults;
+begin
+  Result := GetCompileResults;
+end;
+
+function TSnippet.Description: IActiveText;
+begin
+  Result := GetDescription;
+end;
+
 function TSnippet.GetEditData: TSnippetEditData;
   {Gets details of all editable data of snippet.
     @return Required editable properties and references.
@@ -316,6 +326,36 @@ begin
   Result.XRefs := GetXRefs;
 end;
 
+function TSnippet.ID: TSnippetID;
+begin
+  Result := GetID;
+end;
+
+function TSnippet.Kind: TSnippetKind;
+begin
+  Result := GetKind;
+end;
+
+function TSnippet.LanguageID: TSourceCodeLanguageID;
+begin
+  Result := GetLanguageID;
+end;
+
+function TSnippet.Notes: IActiveText;
+begin
+  Result := GetNotes;
+end;
+
+function TSnippet.RequiredModules: IStringList;
+begin
+  Result := GetRequiredModules;
+end;
+
+function TSnippet.RequiredSnippets: ISnippetIDList;
+begin
+  Result := GetRequiredSnippets;
+end;
+
 procedure TSnippet.SetProps(const Data: TSnippetData);
   {Sets snippet's properties.
     @param Data [in] Record containing property values.
@@ -331,6 +371,26 @@ begin
   SetCompileResults(Data.CompilerResults);
   SetTestInfo(Data.TestInfo);
   SetTags(Data.Tags);
+end;
+
+function TSnippet.SourceCode: string;
+begin
+  Result := GetSourceCode;
+end;
+
+function TSnippet.Tags: ITagSet;
+begin
+  Result := GetTags;
+end;
+
+function TSnippet.TestInfo: TSnippetTestInfo;
+begin
+  Result := GetTestInfo;
+end;
+
+function TSnippet.Title: string;
+begin
+  Result := GetTitle;
 end;
 
 procedure TSnippet.Update(const Data: TSnippetEditData);
@@ -351,6 +411,11 @@ begin
   SetRequiredModules(Refs.RequiredModules);
   SetRequiredSnippets(Refs.RequiredSnippets);
   SetXRefs(Refs.XRefs);
+end;
+
+function TSnippet.XRefs: ISnippetIDList;
+begin
+  Result := GetXRefs;
 end;
 
 { TSnippetTitleComparer }
