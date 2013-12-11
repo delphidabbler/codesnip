@@ -51,7 +51,6 @@ type
   strict protected
     var
       _fCategory: string;
-    function SupportsProperty(const APropID: TDBSnippetProp): Boolean; virtual;
   public
     constructor Create; overload;
     constructor Create(const ASnippetID: TSnippetID); overload;
@@ -102,35 +101,7 @@ type
     destructor Destroy; override;
   end;
 
-  TReadOnlySnippet = class(TSnippetBase, ISnippet)
-  strict private
-    var
-      fValidProperties: TDBSnippetProps;
-    procedure CheckValidProp(const AProp: TDBSnippetProp);
-  public
-    constructor Create(const ASnippetID: TSnippetID); overload;
-    constructor Create(const ASourceSnippet: TSnippetBase;
-      const ValidProps: TDBSnippetProps = []); overload;
-    destructor Destroy; override;
-    function GetModified: TUTCDateTime; override;
-    function GetTitle: string; override;
-    function GetDescription: IActiveText; override;
-    function GetSourceCode: string; override;
-    function GetLanguageID: TSourceCodeLanguageID; override;
-    function GetRequiredModules: IStringList; override;
-    function GetRequiredSnippets: ISnippetIDList; override;
-    function GetXRefs: ISnippetIDList; override;
-    function GetNotes: IActiveText; override;
-    function GetKind: TSnippetKind; override;
-    function GetCompileResults: TCompileResults; override;
-    function GetTags: ITagSet; override;
-    function GetLinkInfo: ISnippetLinkInfo; override;
-    function GetTestInfo: TSnippetTestInfo; override;
-    function GetStarred: Boolean; override;
-
-    function GetValidProperties: TDBSnippetProps;
-    function SupportsProperty(const AProp: TDBSnippetProp): Boolean; override;
-  end;
+  TReadOnlySnippet = class(TSnippetBase, ISnippet);
 
   EDBSnippet = class(EBug);
 
@@ -559,47 +530,26 @@ begin
     fXRefs := (Value as IClonable).Clone as ISnippetIDList;
 end;
 
-function TSnippetBase.SupportsProperty(const APropID: TDBSnippetProp): Boolean;
-begin
-  Result := True;
-end;
-
 procedure TSnippetBase.UpdateFrom(const ASourceSnippet: TSnippetBase);
 begin
   Assert(fID = ASourceSnippet.fID,
     ClassName + '.UpdateFrom: source snippet must have same ID');
-  if SupportsProperty(spCreated) then
-    SetCreated(ASourceSnippet.fCreated);
-  if SupportsProperty(spModified) then
-    SetModified(ASourceSnippet.fModified);
-  if SupportsProperty(spTitle) then
-    SetTitle(ASourceSnippet.fTitle);
-  if SupportsProperty(spDescription) then
-    SetDescription(ASourceSnippet.fDescription);
-  if SupportsProperty(spSourceCode) then
-    SetSourceCode(ASourceSnippet.fSourceCode);
-  if SupportsProperty(spLanguageID) then
-    SetLanguageID(ASourceSnippet.fLanguageID);
-  if SupportsProperty(spRequiredModules) then
-    SetRequiredModules(ASourceSnippet.fRequiredModules);
-  if SupportsProperty(spRequiredSnippets) then
-    SetRequiredSnippets(ASourceSnippet.fRequiredSnippets);
-  if SupportsProperty(spXRefs) then
-    SetXRefs(ASourceSnippet.fXRefs);
-  if SupportsProperty(spNotes) then
-    SetNotes(ASourceSnippet.fNotes);
-  if SupportsProperty(spKind) then
-    SetKind(ASourceSnippet.fKind);
-  if SupportsProperty(spCompileResults) then
-    SetCompileResults(ASourceSnippet.fCompileResults);
-  if SupportsProperty(spTags) then
-    SetTags(ASourceSnippet.fTags);
-  if SupportsProperty(spLinkInfo) then
-    SetLinkInfo(ASourceSnippet.fLinkInfo);
-  if SupportsProperty(spTestInfo) then
-    SetTestInfo(ASourceSnippet.fTestInfo);
-  if SupportsProperty(spStarred) then
-    SetStarred(ASourceSnippet.fStarred);
+  SetCreated(ASourceSnippet.fCreated);
+  SetModified(ASourceSnippet.fModified);
+  SetTitle(ASourceSnippet.fTitle);
+  SetDescription(ASourceSnippet.fDescription);
+  SetSourceCode(ASourceSnippet.fSourceCode);
+  SetLanguageID(ASourceSnippet.fLanguageID);
+  SetRequiredModules(ASourceSnippet.fRequiredModules);
+  SetRequiredSnippets(ASourceSnippet.fRequiredSnippets);
+  SetXRefs(ASourceSnippet.fXRefs);
+  SetNotes(ASourceSnippet.fNotes);
+  SetKind(ASourceSnippet.fKind);
+  SetCompileResults(ASourceSnippet.fCompileResults);
+  SetTags(ASourceSnippet.fTags);
+  SetLinkInfo(ASourceSnippet.fLinkInfo);
+  SetTestInfo(ASourceSnippet.fTestInfo);
+  SetStarred(ASourceSnippet.fStarred);
 
   _fCategory := ASourceSnippet._fCategory;
 end;
@@ -614,134 +564,6 @@ end;
 destructor TEditableSnippet.Destroy;
 begin
   inherited;
-end;
-
-{ TReadOnlySnippet }
-
-procedure TReadOnlySnippet.CheckValidProp(const AProp: TDBSnippetProp);
-begin
-  if not SupportsProperty(AProp) then
-    raise EDBSnippet.Create('Property access not permitted');
-end;
-
-constructor TReadOnlySnippet.Create(const ASnippetID: TSnippetID);
-begin
-  raise ENoConstructException.CreateFmt(
-    'This form of constructor not permitted for %s', [ClassName]
-  );
-end;
-
-constructor TReadOnlySnippet.Create(const ASourceSnippet: TSnippetBase;
-  const ValidProps: TDBSnippetProps);
-begin
-  fValidProperties := ValidProps;
-  inherited Create(ASourceSnippet);
-end;
-
-destructor TReadOnlySnippet.Destroy;
-begin
-  inherited;
-end;
-
-function TReadOnlySnippet.GetCompileResults: TCompileResults;
-begin
-  CheckValidProp(spCompileResults);
-  Result := inherited GetCompileResults;
-end;
-
-function TReadOnlySnippet.GetDescription: IActiveText;
-begin
-  CheckValidProp(spDescription);
-  Result := inherited GetDescription;
-end;
-
-function TReadOnlySnippet.GetKind: TSnippetKind;
-begin
-  CheckValidProp(spKind);
-  Result := inherited GetKind;
-end;
-
-function TReadOnlySnippet.GetLanguageID: TSourceCodeLanguageID;
-begin
-  CheckValidProp(spLanguageID);
-  Result := inherited GetLanguageID;
-end;
-
-function TReadOnlySnippet.GetLinkInfo: ISnippetLinkInfo;
-begin
-  CheckValidProp(spLinkInfo);
-  Result := inherited GetLinkInfo;
-end;
-
-function TReadOnlySnippet.GetModified: TUTCDateTime;
-begin
-  CheckValidProp(spModified);
-  Result := inherited GetModified;
-end;
-
-function TReadOnlySnippet.GetNotes: IActiveText;
-begin
-  CheckValidProp(spNotes);
-  Result := inherited GetNotes;
-end;
-
-function TReadOnlySnippet.GetRequiredModules: IStringList;
-begin
-  CheckValidProp(spRequiredModules);
-  Result := inherited GetRequiredModules;
-end;
-
-function TReadOnlySnippet.GetRequiredSnippets: ISnippetIDList;
-begin
-  CheckValidProp(spRequiredSnippets);
-  Result := inherited GetRequiredSnippets;
-end;
-
-function TReadOnlySnippet.GetSourceCode: string;
-begin
-  CheckValidProp(spSourceCode);
-  Result := inherited GetSourceCode;
-end;
-
-function TReadOnlySnippet.GetStarred: Boolean;
-begin
-  CheckValidProp(spStarred);
-  Result := inherited GetStarred;
-end;
-
-function TReadOnlySnippet.GetTags: ITagSet;
-begin
-  CheckValidProp(spTags);
-  Result := inherited GetTags;
-end;
-
-function TReadOnlySnippet.GetTestInfo: TSnippetTestInfo;
-begin
-  CheckValidProp(spTestInfo);
-  Result := inherited GetTestInfo;
-end;
-
-function TReadOnlySnippet.GetTitle: string;
-begin
-  CheckValidProp(spTitle);
-  Result := inherited GetTitle;
-end;
-
-function TReadOnlySnippet.GetValidProperties: TDBSnippetProps;
-begin
-  Result := fValidProperties;
-end;
-
-function TReadOnlySnippet.GetXRefs: ISnippetIDList;
-begin
-  CheckValidProp(spXRefs);
-  Result := inherited GetXRefs;
-end;
-
-function TReadOnlySnippet.SupportsProperty(const AProp: TDBSnippetProp):
-  Boolean;
-begin
-  Result := (AProp in fValidProperties) or (fValidProperties = []);
 end;
 
 end.

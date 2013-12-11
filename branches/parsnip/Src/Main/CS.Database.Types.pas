@@ -204,6 +204,7 @@ type
     stiAdvanced           // snippet has had advanced (unit) testing
   );
 
+  // TODO: Move TDBSnippetProp to CS.Database.IO.Native.pas ??
   TDBSnippetProp = (
     spID, spTitle, spDescription, spSourceCode, spLanguageID, spModified,
     spCreated, spRequiredModules, spRequiredSnippets, spXRefs, spNotes, spKind,
@@ -239,8 +240,6 @@ type
 
   ISnippet = interface(ISnippetBase)
     ['{BD221CF4-482D-4FF9-BDAE-D320DDEBD578}']
-    function GetValidProperties: TDBSnippetProps;
-
     property Title: string read GetTitle;
     property Description: IActiveText read GetDescription;
     property SourceCode: string read GetSourceCode;
@@ -255,10 +254,6 @@ type
     property LinkInfo: ISnippetLinkInfo read GetLinkInfo;
     property TestInfo: TSnippetTestInfo read GetTestInfo;
     property Starred: Boolean read GetStarred;
-
-    // TODO: query if following properties are required
-    property ValidProperties: TDBSnippetProps read GetValidProperties;
-    function SupportsProperty(const AProp: TDBSnippetProp): Boolean;
   end;
 
   IEditableSnippet = interface(ISnippetBase)

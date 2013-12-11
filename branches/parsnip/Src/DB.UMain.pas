@@ -72,6 +72,7 @@ type
     class property Instance: TDatabase read GetInstance;
     function LookupEditableSnippet(const ASnippetID: TSnippetID):
       IEditableSnippet;
+    // TODO: remove ARequiredProperties parameter from following method
     function LookupSnippet(const ASnippetID: TSnippetID;
       const ARequiredProperties: TDBSnippetProps): ISnippet;
     function SelectSnippets(Filter: IDBFilter): ISnippetIDList;
@@ -1087,7 +1088,7 @@ var
   Row: TDBSnippet;
 begin
   Row := fSnippetsTable.Get(ASnippetID);
-  Result := Row.CloneAsReadOnly(ARequiredProperties);
+  Result := Row.CloneAsReadOnly;
 end;
 
 function TDatabase.SelectSnippets(Filter: IDBFilter): ISnippetIDList;
@@ -1096,7 +1097,7 @@ var
 begin
   Result := TSnippetIDList.Create;
   for Snippet in fSnippetsTable do
-    if Filter.Match(Snippet.CloneAsReadOnly(Filter.RequiredProperties)) then
+    if Filter.Match(Snippet.CloneAsReadOnly) then
       Result.Add(Snippet.ID)
 end;
 
