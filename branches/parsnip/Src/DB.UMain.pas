@@ -590,6 +590,8 @@ begin
   Assert(Assigned(Snippet), ClassName + '.CreateTempSnippet: Snippet is nil');
   Result := TSnippet.Create(Snippet.ID);
   Result.SetProps(Snippet.GetProps);
+  Result.SetCreated(TUTCDateTime.Now);
+  Result.SetModified(Result.GetCreated);
   Result.UpdateRefs(MakeValidRefs(Snippet.GetReferences));
 end;
 
@@ -607,6 +609,8 @@ begin
     TSnippetID.Create(StrIf(Name <> '', Name, UniqueSnippetName))
   );
   Result.SetProps(Data.Props);
+  Result.SetCreated(TUTCDateTime.Now);
+  Result.SetModified(Result.GetCreated);
   Result.UpdateRefs(MakeValidRefs(Data.Refs));
 end;
 
@@ -700,6 +704,8 @@ resourcestring
 begin
   Result := TSnippet.Create(SnippetID);
   Result.SetProps(Data.Props);
+  Result.SetCreated(TUTCDateTime.Now);
+  Result.SetModified(Result.GetCreated);
   Result.UpdateRefs(MakeValidRefs(Data.Refs));
   Cat := fCategories.Find(Result.Category);
   if not Assigned(Cat) then
@@ -793,6 +799,7 @@ begin
     OldCatID := Snippet.Category;
     CleanUpRefs(Data.Refs);
     Snippet.Update(Data);
+    Snippet.SetModified(TUTCDateTime.Now);
     // ensure any new, unknown, tags are added to set of all tags
     Database.__AllTags.Include(Snippet.Tags);
     // NOTE: since categories can no longer be changed, there is no need to
