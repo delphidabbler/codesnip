@@ -244,13 +244,14 @@ begin
     ErrMsg := sFileDoesNotExist;
     Exit(False);
   end;
-  // NOTE: Following code works for as long as CodeSnip is a 32 bit application.
-  //       If it becomes 64 bit then IsWow64 will return False, but fkExe64 will
-  //       be valid.
+  {$IFDEF WIN64}
+  PermittedExeFileKinds := [fkExe32, fkExe64];
+  {$ELSE}
   if TOSInfo.IsWow64 then
     PermittedExeFileKinds := [fkExe32, fkExe64]
   else
     PermittedExeFileKinds := [fkExe32];
+  {$ENDIF}
   if not (ExeFileType(FileName) in PermittedExeFileKinds) then
   begin
     ErrMsg := sFileNotExe;
