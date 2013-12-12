@@ -87,8 +87,8 @@ type
     ///  <remarks>If a database in native format is present a loader for that
     ///  database is returned. If there is no native database then any legacy
     ///  XML format database is looked for and a loader for that is returned if
-    ///  found. If there is no database present then a null loader is returned.
-    ///  </remarks>
+    ///  found. If there is no database present at all then a special "empty
+    ///  database" loader is returned.</remarks>
     class function CreateLoader: IDatabaseLoader;
     class function CreateUserDBLoader: _IDatabaseLoader;
       {Creates an object to use to load the user database.
@@ -115,9 +115,9 @@ uses
   // Delphi
   SysUtils,
   // Project
+  CS.Database.IO.Empty,
   CS.Database.IO.Legacy,
   CS.Database.IO.Native,
-  CS.Database.IO.Null,
   CS.Database.Snippets,
   CS.Database.Tags,
   DBIO.UFileIOIntf,
@@ -282,7 +282,7 @@ begin
   if not Result.DatabaseExists then
     Result := TDBLegacyUserDBReader.Create(TAppInfo.UserDataDir);
   if not Result.DatabaseExists then
-    Result := TDBNullReader.Create;
+    Result := TEmptyDBReader.Create;
 end;
 
 class function TDatabaseIOFactory.CreateUserDBLoader: _IDatabaseLoader;
