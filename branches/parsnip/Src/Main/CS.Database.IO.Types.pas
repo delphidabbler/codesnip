@@ -30,6 +30,12 @@ type
     function DatabaseExists: Boolean;
   end;
 
+  IDatabaseWriter = interface(IInterface)
+    ['{4ADAA87C-5C00-446A-9637-5849BB5F5EE8}']
+    procedure Save(const ATable: TDBSnippetsTable; ATagSet: ITagSet;
+      const ALastModified: TUTCDateTime);
+  end;
+
 implementation
 
 end.

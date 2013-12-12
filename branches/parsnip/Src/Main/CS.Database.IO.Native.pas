@@ -84,7 +84,7 @@ type
     constructor Create(const DBPath: string);
   end;
 
-  TDBNativeWriter = class sealed(TDBNativeIOBase)
+  TDBNativeWriter = class sealed(TDBNativeIOBase, IDatabaseWriter)
   strict private
     var
       fExistingSnippets: TDictionary<TSnippetID,TUTCDateTime>;
