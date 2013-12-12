@@ -196,17 +196,21 @@ procedure TInstallInfo.DetectInstall;
   end;
 
 begin
-  if TFile.Exists(MakeFullUserPath(UserConfigFileNames[piV4])) and not
+  if TFile.Exists(MakeFullUserPath(UserConfigFileNames[piV4]), False) and not
     IsEmptyUnicodeCfgFile(MakeFullUserPath(UserConfigFileNames[piV4])) then
     fInstallID := piV4
   {$IFNDEF PORTABLE}
-  else if TFile.Exists(MakeFullUserPath(UserConfigFileNames[piV3])) then
+  else if TFile.Exists(MakeFullUserPath(UserConfigFileNames[piV3]), False) then
     fInstallID := piV3
   else if TDirectory.Exists(MakeFullUserPath(DatabaseDirs[piV2])) then
     fInstallID := piV2
-  else if TFile.Exists(MakeFullUserPath(UserConfigFileNames[piV1_9])) then
+  else if TFile.Exists(
+    MakeFullUserPath(UserConfigFileNames[piV1_9]), False
+  ) then
     fInstallID := piV1_9
-  else if TFile.Exists(MakeFullUserPath(UserConfigFileNames[piOriginal])) then
+  else if TFile.Exists(
+    MakeFullUserPath(UserConfigFileNames[piOriginal]), False
+  ) then
     fInstallID := piOriginal
   {$ENDIF}
   else

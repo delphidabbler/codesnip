@@ -219,7 +219,7 @@ end;
 
 procedure TConfigFileUpdater.Stamp;
 begin
-  if not TFile.Exists(fCfgFileName) then
+  if not TFile.Exists(fCfgFileName, False) then
     CreateNewFile;
   SetIniInt('IniFile', 'Version', GetFileVersion, fCfgFileName);
 end;
@@ -228,7 +228,7 @@ end;
 
 procedure TUserConfigFileUpdater.CreateDefaultCodeGenEntries;
 begin
-  if not TFile.Exists(CfgFileName) then
+  if not TFile.Exists(CfgFileName, False) then
     CreateNewFile;
   SetIniInt('Prefs:CodeGen', 'EmitWarnDirs', 0, CfgFileName);
   SetIniInt('Prefs:CodeGen', 'WarningCount', 8, CfgFileName);
@@ -270,7 +270,7 @@ end;
 {$IFNDEF PORTABLE}
 procedure TUserConfigFileUpdater.DeleteDetailsPaneIndex;
 begin
-  if not TFile.Exists(CfgFileName) then
+  if not TFile.Exists(CfgFileName, False) then
     CreateNewFile;
   DeleteIniKey('MainWindow', 'DetailTab', CfgFileName);
 end;
@@ -279,7 +279,7 @@ end;
 {$IFNDEF PORTABLE}
 procedure TUserConfigFileUpdater.DeleteHighligherPrefs;
 begin
-  if not TFile.Exists(CfgFileName) then
+  if not TFile.Exists(CfgFileName, False) then
     CreateNewFile;
   DeleteIniSection('Prefs:Hiliter', CfgFileName);
 end;
@@ -288,7 +288,7 @@ end;
 {$IFNDEF PORTABLE}
 procedure TUserConfigFileUpdater.DeleteProxyPassword;
 begin
-  if not TFile.Exists(CfgFileName) then
+  if not TFile.Exists(CfgFileName, False) then
     CreateNewFile;
   SetIniString('ProxyServer', 'Password', '', CfgFileName);
 end;
@@ -308,7 +308,7 @@ end;
 
 procedure TUserConfigFileUpdater.RenameMainWindowSection;
 begin
-  if not TFile.Exists(CfgFileName) then
+  if not TFile.Exists(CfgFileName, False) then
     Exit;
   if not IniSectionExists('MainWindow', CfgFileName) then
     Exit;
@@ -370,7 +370,7 @@ procedure TUserConfigFileUpdater.UpdateCodeGenEntries;
 begin
   // Key that determines if warnings are emitted changes from SwitchOffWarnings
   // to EmitWarnDirs.
-  if not TFile.Exists(CfgFileName) then
+  if not TFile.Exists(CfgFileName, False) then
     CreateNewFile;
   if IniKeyExists('Prefs:CodeGen', 'SwitchOffWarnings', CfgFileName) then
   begin
@@ -410,7 +410,7 @@ procedure TUserConfigFileUpdater.UpdateFromOriginal;
 var
   I: Integer; // loops thru all highlight elements
 begin
-  if not TFile.Exists(CfgFileName) then
+  if not TFile.Exists(CfgFileName, False) then
     CreateNewFile;
   // Delete unwanted sections:
   // - Application section: now in common config file
