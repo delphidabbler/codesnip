@@ -69,7 +69,7 @@ class procedure TDatabaseLoader.Load;
   {Loads the database.
   }
 begin
-  _Database.Load;
+  Database.Load;
   Query.Reset;
 end;
 

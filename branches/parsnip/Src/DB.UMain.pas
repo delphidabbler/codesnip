@@ -23,6 +23,7 @@ uses
   // Project
   CS.Database.SnippetsTable,
   CS.Database.Types,
+  CS.Utils.Dates,
   DB.UCategory,
   DB.USnippet,
   UIStringList,
@@ -43,6 +44,7 @@ type
     var
       fSnippetsTable: TDBSnippetsTable;
       fAllTags: ITagSet;
+      fLastModified: TUTCDateTime;
   strict protected
     procedure Initialize; override;
     procedure Finalize; override;
@@ -56,6 +58,8 @@ type
     property __AllTags: ITagSet read fAllTags;
   public
     class property Instance: TDatabase read GetInstance;
+  public
+    procedure Load;
     function LookupEditableSnippet(const ASnippetID: TSnippetID):
       IEditableSnippet;
     function TryLookupEditableSnippet(const ASnippetID: TSnippetID;
@@ -181,9 +185,6 @@ type
   }
   _IDatabase = interface(IInterface)
     ['{A280DEEF-0336-4264-8BD0-7CDFBB207D2E}']
-    procedure Load;
-      {Loads data from main and user databases.
-      }
     function Lookup(const SnippetID: TSnippetID): TSnippet;
     function TryLookup(const SnippetID: TSnippetID; out Snippet: TSnippet):
       Boolean;
@@ -276,9 +277,11 @@ uses
   // Delphi
   SysUtils,
   // Project
+  CS.Database.IO.Types,
   CS.Database.Snippets,
   CS.Database.Tags,
   DB.UDatabaseIO,
+  UAppInfo,
   UExceptions,
   UQuery,
   UStrUtils,
@@ -398,9 +401,6 @@ type
       {Destructor. Tidies up and tears down object.
       }
     { IDatabase methods }
-    procedure Load;
-      {Loads object's data from main and user defined databases.
-      }
     procedure AddChangeEventHandler(const Handler: TNotifyEventInfo);
       {Adds a change event handler to list of listeners.
         @param Handler [in] Event handler to be added.
@@ -738,38 +738,6 @@ begin
   Database.__SnippetsTable.Delete(Snippet.ID);
 end;
 
-procedure _TDatabase.Load;
-  {Loads object's data from main and user defined databases.
-  }
-var
-  Factory: IDBDataItemFactory;  // object reader uses to create snippets objects
-  SnipList: _TSnippetList;
-  Snippet: TSnippet;
-begin
-  Clear;
-  // Create factory that reader calls into to create category and snippet
-  // objects. This is done to keep updating of snippet and categories private
-  // to this unit
-  Factory := TDBDataItemFactory.Create;
-  try
-    SnipList := _TSnippetList.Create(False);
-    try
-      // Load any user database
-      with TDatabaseIOFactory.CreateUserDBLoader do
-        Load(SnipList, fCategories, Database.__AllTags, Factory);
-      for Snippet in SnipList do
-        Database.__SnippetsTable.Add(Snippet);
-    finally
-      SnipList.Free;
-    end;
-    fUpdated := False;
-  except
-    // If an exception occurs clear the database
-    Clear;
-    raise;
-  end;
-end;
-
 function _TDatabase.Lookup(const SnippetID: TSnippetID): TSnippet;
 begin
   if not TryLookup(SnippetID, Result) then
@@ -1044,6 +1012,15 @@ end;
 function TDatabase.IsEmpty: Boolean;
 begin
   Result := fSnippetsTable.Size = 0;
+end;
+
+procedure TDatabase.Load;
+var
+  Loader: IDatabaseLoader;
+begin
+  fSnippetsTable.Clear; // TODO: decide if loaders should clear this table
+  Loader := TDatabaseIOFactory.CreateLoader;
+  Loader.Load(fSnippetsTable, fAllTags, fLastModified);
 end;
 
 function TDatabase.LookupEditableSnippet(const ASnippetID: TSnippetID):
