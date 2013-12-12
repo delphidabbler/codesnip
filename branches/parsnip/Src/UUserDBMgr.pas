@@ -296,8 +296,8 @@ end;
 
 class function TUserDBMgr.CanSave: Boolean;
 begin
-  // We can save database if it's been changed
-  Result := (_Database as IDatabaseEdit).Updated;
+  // We can save database if it's been changed, i.e. it is dirty
+  Result := Database.IsDirty
 end;
 
 class procedure TUserDBMgr.CanSaveDialogClose(Sender: TObject;

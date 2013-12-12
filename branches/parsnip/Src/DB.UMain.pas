@@ -45,6 +45,7 @@ type
       fSnippetsTable: TDBSnippetsTable;
       fAllTags: ITagSet;
       fLastModified: TUTCDateTime;
+      fDirty: Boolean;
   strict protected
     procedure Initialize; override;
     procedure Finalize; override;
@@ -56,10 +57,13 @@ type
     //       DON'T make this section strict.
     property __SnippetsTable: TDBSnippetsTable read fSnippetsTable;
     property __AllTags: ITagSet read fAllTags;
+    property __Updated: Boolean read fDirty write fDirty;
+
   public
     class property Instance: TDatabase read GetInstance;
   public
     procedure Load;
+    function IsDirty: Boolean;
     function LookupEditableSnippet(const ASnippetID: TSnippetID):
       IEditableSnippet;
     function TryLookupEditableSnippet(const ASnippetID: TSnippetID;
@@ -251,10 +255,6 @@ type
       {Deletes a snippet from the user database.
         @param Snippet [in] Snippet to be deleted.
       }
-    function Updated: Boolean;
-      {Checks if user database has been updated since last save.
-        @return True if database has been updated, False otherwise.
-      }
     procedure Save;
       {Saves user database.
       }
@@ -330,7 +330,6 @@ type
     IDatabaseEdit
   )
   strict private
-    fUpdated: Boolean;                // Flags if user database has been updated
     fCategories: TCategoryList;       // List of categories
     fChangeEvents: TMulticastEvents;  // List of change event handlers
     type
@@ -461,10 +460,6 @@ type
       {Deletes a snippet from the user database.
         @param Snippet [in] Snippet to be deleted.
       }
-    function Updated: Boolean;
-      {Checks if user database has been updated since last save.
-        @return True if database has been updated, False otherwise.
-      }
     procedure Save;
       {Saves user defined snippets and all categories to user database.
       }
@@ -549,7 +544,7 @@ begin
     Query.Update;
     TriggerEvent(evSnippetAdded, Result);
   finally
-    fUpdated := True;
+    Database.__Updated := True;
     TriggerEvent(evChangeEnd);
   end;
 end;
@@ -652,7 +647,7 @@ begin
     InternalDeleteSnippet(Snippet);
     Query.Update;
   finally
-    fUpdated := True;
+    Database.__Updated := True;
     TriggerEvent(evSnippetDeleted);
     TriggerEvent(evChangeEnd);
   end;
@@ -779,7 +774,7 @@ begin
   finally
     SnipList.Free;
   end;
-  fUpdated := False;
+  Database.__Updated := False;
 end;
 
 procedure _TDatabase.TriggerEvent(const Kind: TDatabaseChangeEventKind;
@@ -810,14 +805,6 @@ begin
   until not Database.__SnippetsTable.Contains(TSnippetID.Create(Result));
 end;
 
-function _TDatabase.Updated: Boolean;
-  {Checks if user database has been updated since last save.
-    @return True if database has been updated, False otherwise.
-  }
-begin
-  Result := fUpdated;
-end;
-
 procedure _TDatabase.UpdateSnippet(const Snippet: TSnippet;
   Data: TSnippetEditData);
   {Updates a user defined snippet's properties and references using provided
@@ -841,7 +828,7 @@ begin
     Query.Update;
     TriggerEvent(evSnippetChanged, Snippet);
   finally
-    fUpdated := True;
+    Database.__Updated := True;
     TriggerEvent(evChangeEnd);
   end;
 end;
@@ -1009,6 +996,11 @@ begin
   fAllTags := TTagSet.Create;
 end;
 
+function TDatabase.IsDirty: Boolean;
+begin
+  Result := fDirty;
+end;
+
 function TDatabase.IsEmpty: Boolean;
 begin
   Result := fSnippetsTable.Size = 0;
@@ -1021,6 +1013,7 @@ begin
   fSnippetsTable.Clear; // TODO: decide if loaders should clear this table
   Loader := TDatabaseIOFactory.CreateLoader;
   Loader.Load(fSnippetsTable, fAllTags, fLastModified);
+  fDirty := False;
 end;
 
 function TDatabase.LookupEditableSnippet(const ASnippetID: TSnippetID):

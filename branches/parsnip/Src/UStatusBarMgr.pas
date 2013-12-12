@@ -373,7 +373,7 @@ begin
   // status bar to draw the panel.
 
   // We hide message if database not updated
-  fUserDBInfoVisible := (_Database as IDatabaseEdit).Updated;
+  fUserDBInfoVisible := Database.IsDirty;
   fStatusBar.Repaint;
 end;
 

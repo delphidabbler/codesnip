@@ -1361,11 +1361,9 @@ begin
   TNotificationDisplayMgr.Stop;
 
   // Save any changes to user database
-  with _Database as IDatabaseEdit do
-  begin
-    if Updated then
-      Save;
-  end;
+  if Database.IsDirty then
+    (_Database as IDatabaseEdit).Save;
+
   // Unhook snippets event handler
   _Database.RemoveChangeEventHandler(DBChangeHandler);
   // Save window state
