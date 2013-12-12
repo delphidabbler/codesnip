@@ -49,6 +49,7 @@ end;
 procedure TDBNullReader.Load(const ATable: TDBSnippetsTable;
   out ATagSet: ITagSet; out ALastModified: TUTCDateTime);
 begin
+  ATable.Clear;
   ATagSet := TTagSet.Create;
   ALastModified := TUTCDateTime.CreateNull;
 end;
