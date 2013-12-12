@@ -63,6 +63,7 @@ type
     class property Instance: TDatabase read GetInstance;
   public
     procedure Load;
+    procedure Save;
     function IsDirty: Boolean;
     function LookupEditableSnippet(const ASnippetID: TSnippetID):
       IEditableSnippet;
@@ -254,9 +255,6 @@ type
     procedure DeleteSnippet(const Snippet: TSnippet);
       {Deletes a snippet from the user database.
         @param Snippet [in] Snippet to be deleted.
-      }
-    procedure Save;
-      {Saves user database.
       }
   end;
 
@@ -459,9 +457,6 @@ type
     procedure DeleteSnippet(const Snippet: TSnippet);
       {Deletes a snippet from the user database.
         @param Snippet [in] Snippet to be deleted.
-      }
-    procedure Save;
-      {Saves user defined snippets and all categories to user database.
       }
   end;
 
@@ -754,29 +749,6 @@ begin
   fChangeEvents.RemoveHandler(Handler);
 end;
 
-procedure _TDatabase.Save;
-  {Saves user defined snippets and all categories to user database.
-  }
-var
-  Provider: IDBDataProvider;  // object that supplies info to writer
-  SnipList: _TSnippetList;
-  Snippet: TSnippet;
-begin
-  // Create object that can provide required information about user database
-  Provider := TUserDataProvider.Create;
-  SnipList := _TSnippetList.Create(False);
-  try
-    for Snippet in Database.__SnippetsTable do
-      SnipList.Add(Snippet);
-    // Use a writer object to write out the database
-    with TDatabaseIOFactory.CreateWriter do
-      Write(SnipList, fCategories, Provider);
-  finally
-    SnipList.Free;
-  end;
-  Database.__Updated := False;
-end;
-
 procedure _TDatabase.TriggerEvent(const Kind: TDatabaseChangeEventKind;
   const Info: TObject);
   {Triggers a change event. Notifies all registered listeners.
@@ -1031,6 +1003,15 @@ var
 begin
   Row := fSnippetsTable.Get(ASnippetID);
   Result := Row.CloneAsReadOnly;
+end;
+
+procedure TDatabase.Save;
+var
+  Writer: IDatabaseWriter;
+begin
+  Writer := TDatabaseIOFactory.CreateWriter;
+  Writer.Save(fSnippetsTable, fAllTags, fLastModified);
+  fDirty := False;
 end;
 
 function TDatabase.SelectSnippets(FilterFn: TDBFilterFn): ISnippetIDList;

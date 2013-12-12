@@ -488,7 +488,7 @@ end;
 
 procedure TUserDBSaveUI.TSaveThread.Execute;
 begin
-  (_Database as IDatabaseEdit).Save;
+  Database.Save;
 end;
 
 { TUserDBRestoreUI }

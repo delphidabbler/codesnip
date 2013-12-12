@@ -1362,7 +1362,7 @@ begin
 
   // Save any changes to user database
   if Database.IsDirty then
-    (_Database as IDatabaseEdit).Save;
+    Database.Save;
 
   // Unhook snippets event handler
   _Database.RemoveChangeEventHandler(DBChangeHandler);
