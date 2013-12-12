@@ -135,8 +135,6 @@ function TSWAGImporter.BuildSnippetInfo(const SWAGSnippet: TSWAGSnippet):
 begin
   Result.Init;
   Result.Props.Kind := skFreeform;
-  // TODO: remove this placeholder code when categories have been removed
-  Result.Props.Cat := '_swag_';
   Result.Props.Tags.Add(TTag.Create(SWAGTagName));
   Result.Props.Desc := BuildDescription;
   Result.Props.SourceCode := SWAGSnippet.SourceCode;

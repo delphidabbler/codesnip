@@ -648,13 +648,10 @@ procedure _TDatabase.UpdateSnippet(const Snippet: TSnippet;
     @param Snippet [in] Snippet to be updated. Must be user-defined.
     @param Data [in] Record containing revised data.
   }
-var
-  OldCatID: string;
 begin
   TriggerEvent(evChangeBegin);
   TriggerEvent(evBeforeSnippetChange, Snippet);
   try
-    OldCatID := Snippet.Category;
     CleanUpRefs(Data.Refs);
     Snippet.Update(Data);
     Snippet.SetModified(TUTCDateTime.Now);

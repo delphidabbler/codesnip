@@ -42,7 +42,6 @@ type
   }
   TSnippetData = record
     Kind: TSnippetKind;                   // Kind of snippet
-    Cat: string;                          // Category containing snippet
     Desc: IActiveText;                    // Description of snippet
     SourceCode: string;                   // Snippet's source code
     LanguageID: TSourceCodeLanguageID;    // Source code language ID
@@ -126,8 +125,6 @@ type
       {Kind of snippet represented by this object}
     function Title: string;
       {Display name of snippet}
-    //property Category  *** now INHERITED from TDBSnippet ***
-    //  {Category to which snippet belongs}
     function Description: IActiveText;
       {Description of snippet}
     function SourceCode: string;
@@ -299,7 +296,6 @@ function TSnippetHelper.GetProps: TSnippetData;
   }
 begin
   Result.Init;
-  Result.Cat := Category;
   Result.Kind := Kind;
   Result.Desc := Description;
   Result.SourceCode := SourceCode;
@@ -356,7 +352,6 @@ procedure TSnippetHelper.SetProps(const Data: TSnippetData);
     @param Data [in] Record containing property values.
   }
 begin
-  _fCategory := Data.Cat;
   SetKind(Data.Kind);
   SetDescription(Data.Desc);
   SetSourceCode(StrWindowsLineBreaks(Data.SourceCode));
@@ -609,7 +604,6 @@ procedure TSnippetData.Assign(const Src: TSnippetData);
 begin
   Init;
   Kind := Src.Kind;
-  Cat := Src.Cat;
   Desc := TActiveTextFactory.CloneActiveText(Src.Desc);
   SourceCode := Src.SourceCode;
   LanguageID := Src.LanguageID;
@@ -627,7 +621,6 @@ var
   CompID: TCompilerID;  // loops thru compiler IDs
 begin
   Kind := skFreeform;
-  Cat := '';
   Desc := TActiveTextFactory.CreateActiveText;
   Title := '';
   SourceCode := '';

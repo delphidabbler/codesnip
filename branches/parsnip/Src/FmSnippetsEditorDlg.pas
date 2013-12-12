@@ -973,13 +973,6 @@ begin
   with Result do
   begin
     Props.Title := StrTrim(edTitle.Text);
-    // TODO: remove this temporary code to set category
-    // In this temporary code we preserve category of an existing snippet and
-    // force category of a new snippet to "User Defined"
-    if Assigned(fSnippet) then
-      Props.Cat := fSnippet.Category
-    else
-      Props.Cat := 'user';
     Props.Kind := fKindCBMgr.GetSelected;
     (Props.Desc as IAssignable).Assign(frmDescription.ActiveText);
     Props.SourceCode := StrTrimRight(frmSourceEditor.SourceCode);

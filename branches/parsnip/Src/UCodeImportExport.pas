@@ -546,10 +546,6 @@ begin
         (_Database as IDatabaseEdit).GetEditableSnippetInfo;
       with fSnippetInfo[Idx].Data do
       begin
-        // TODO: Deleted following temporary line when categories removed
-        // We use the "reserved" import category as a string literal, copied
-        // from TReservedCategories.
-        Props.Cat := 'imports';
         Props.Tags.Add(TTag.Create(sImportTagStr));
         Props.Desc := GetDescription(SnippetNode);
         Props.Title := GetTitleProperty(SnippetNode, fSnippetInfo[Idx].Name);

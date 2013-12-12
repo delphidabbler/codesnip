@@ -48,9 +48,6 @@ type
       fLinkInfo: ISnippetLinkInfo;
       fTestInfo: TSnippetTestInfo;
       fStarred: Boolean;
-  strict protected
-    var
-      _fCategory: string;
   public
     constructor Create; overload;
     constructor Create(const ASnippetID: TSnippetID); overload;
@@ -90,9 +87,6 @@ type
     procedure SetTestInfo(ATestInfo: TSnippetTestInfo);
     function GetStarred: Boolean; virtual;
     procedure SetStarred(AStarred: Boolean);
-
-    // TODO: remove this temporary property anf field when categories excised
-    property Category: string read _fCategory write _fCategory;
   end;
 
   TEditableSnippet = class(TSnippetBase, IEditableSnippet)
@@ -550,8 +544,6 @@ begin
   SetLinkInfo(ASourceSnippet.fLinkInfo);
   SetTestInfo(ASourceSnippet.fTestInfo);
   SetStarred(ASourceSnippet.fStarred);
-
-  _fCategory := ASourceSnippet._fCategory;
 end;
 
 { TEditableSnippet }
