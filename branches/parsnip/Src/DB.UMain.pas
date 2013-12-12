@@ -174,8 +174,6 @@ type
       }
   end;
 
-  TDatabaseFilterFn = reference to function (const Snippet: TSnippet): Boolean;
-
   {
   _IDatabase:
     Interface to object that encapsulates the whole (main and user) databases
