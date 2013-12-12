@@ -15,7 +15,7 @@
 }
 
 
-unit CS.Database.IO.Null;
+unit CS.Database.IO.Empty;
 
 interface
 
@@ -26,7 +26,7 @@ uses
   CS.Utils.Dates;
 
 type
-  TDBNullReader = class(TInterfacedObject, IDatabaseLoader)
+  TEmptyDBReader = class(TInterfacedObject, IDatabaseLoader)
   public
     procedure Load(const ATable: TDBSnippetsTable; out ATagSet: ITagSet;
       out ALastModified: TUTCDateTime);
@@ -38,20 +38,21 @@ implementation
 uses
   CS.Database.Tags;
 
-{ TDBNullReader }
+{ TEmptyDBReader }
 
-function TDBNullReader.DatabaseExists: Boolean;
+function TEmptyDBReader.DatabaseExists: Boolean;
 begin
   // The null database always exists
   Result := True;
 end;
 
-procedure TDBNullReader.Load(const ATable: TDBSnippetsTable;
+procedure TEmptyDBReader.Load(const ATable: TDBSnippetsTable;
   out ATagSet: ITagSet; out ALastModified: TUTCDateTime);
 begin
   ATable.Clear;
   ATagSet := TTagSet.Create;
-  ALastModified := TUTCDateTime.CreateNull;
+  ALastModified := TUTCDateTime.Now;
 end;
 
 end.
+
