@@ -149,7 +149,7 @@ var
 begin
   Result := False;
   try
-    if not TFile.Exists(XMLFileName) then
+    if not TFile.Exists(XMLFileName, False) then
       Exit;
     // Beginning of file can be treated as ASCII. There is never a BOM
     Chunk := TEncoding.ASCII.GetString(
@@ -476,7 +476,7 @@ var
   XMLFile: string;
 begin
   XMLFile := XMLFileName;
-  if not TFile.Exists(XMLFile) then
+  if not TFile.Exists(XMLFile, False) then
     raise EDBLegacyUserDBReader.CreateFmt(sFileNotFound, [DatabaseFileName]);
   fXMLDoc.LoadFromFile(XMLFile);
   fXMLDoc.Active := True;

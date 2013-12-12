@@ -186,7 +186,7 @@ procedure TInstallInfo.DetectInstall;
     Encoding: TEncoding;  // encoding of cfg file
   begin
     CfgFileName := UserConfigFileNames(InstID);
-    if (CfgFileName = EmptyStr) or not TFile.Exists(CfgFileName) then
+    if (CfgFileName = EmptyStr) or not TFile.Exists(CfgFileName, False) then
       Exit(False);
     if IsUserConfigFileANSI(InstID) then
       Encoding := TEncoding.Default

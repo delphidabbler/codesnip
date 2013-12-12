@@ -97,11 +97,12 @@ class function TDiffViewer.InternalExecute(const AExePath, AParams, AFileName1,
 begin
   if StrIsBlank(AFileName1) or StrIsBlank(AFileName2) then
     Exit(False);
-  if not TFile.Exists(AFileName1) or not TFile.Exists(AFileName2) then
+  if not TFile.Exists(AFileName1, False)
+    or not TFile.Exists(AFileName2, False) then
     Exit(False);
   if (AExePath = EmptyStr) or (AParams = EmptyStr) then
     Exit(False);
-  if not TFile.Exists(AExePath) then
+  if not TFile.Exists(AExePath, False) then
     Exit(False);
   Result := ShellExecute(
     0,

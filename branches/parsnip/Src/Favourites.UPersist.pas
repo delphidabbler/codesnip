@@ -85,7 +85,7 @@ var
 resourcestring
   sBadFormat = 'Invalid favourites file format';
 begin
-  if not TFile.Exists(FavouritesFileName) then
+  if not TFile.Exists(FavouritesFileName, False) then
     Exit;
   try
     Lines := TIStringList.Create(

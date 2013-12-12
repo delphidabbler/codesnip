@@ -161,7 +161,7 @@ begin
     OpenDlg.OptionsEx := [];
     OpenDlg.Title := sTitle;
     OpenDlg.HelpKeyword := 'SelectCompilerDlg';
-    if TFile.Exists(GetProgFile) then
+    if TFile.Exists(GetProgFile, False) then
       OpenDlg.FileName := GetProgFile;
     if OpenDlg.Execute then
       edProgFile.Text := StrTrim(OpenDlg.FileName);
@@ -239,7 +239,7 @@ resourcestring
 var
   PermittedExeFileKinds: TExeFileKinds;
 begin
-  if not TFile.Exists(FileName) then
+  if not TFile.Exists(FileName, False) then
   begin
     ErrMsg := sFileDoesNotExist;
     Exit(False);

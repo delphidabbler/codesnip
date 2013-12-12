@@ -191,7 +191,7 @@ end;
 class procedure TSyntaxHiliteThemesIO.LoadThemes(
   const Themes: TSyntaxHiliteThemes; const FileName: string);
 begin
-  if not TFile.Exists(FileName) then
+  if not TFile.Exists(FileName, False) then
     Exit;
   try
     InternalLoadThemes(

@@ -133,7 +133,7 @@ end;
 class procedure TSourceCodeLanguagesIO.Load(const Langs: TSourceCodeLanguages;
   const FileName: string);
 begin
-  if not TFile.Exists(FileName) then
+  if not TFile.Exists(FileName, False) then
     Exit;
   try
     InternalLoad(
