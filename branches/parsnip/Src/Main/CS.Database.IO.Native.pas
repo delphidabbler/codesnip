@@ -79,6 +79,7 @@ type
     function SnippetFileName(const ID: TSnippetID): string;
     procedure LoadMasterFile(const MI: TMasterInfo);
     function IsSupportedVersion(const Version: Integer): Boolean;
+    function MakeFullPath(const RelFileName: string): string;
   public
     constructor Create(const DBPath: string);
   end;
@@ -216,7 +217,9 @@ var
   Reader: TBinaryStreamReader;
 begin
   Reader := TBinaryStreamReader.Create(
-    TFileStream.Create(MasterFileName, fmOpenRead or fmShareDenyWrite),
+    TFileStream.Create(
+      MakeFullPath(MasterFileName), fmOpenRead or fmShareDenyWrite
+    ),
     TEncoding.UTF8,
     [dsOwnsStream]
   );
@@ -226,6 +229,11 @@ begin
     Reader.Free;
   end;
   ValidateMasterFileInfo(MI);
+end;
+
+function TDBNativeIOBase.MakeFullPath(const RelFileName: string): string;
+begin
+  Result := fDBPath + RelFileName;
 end;
 
 function TDBNativeIOBase.SnippetFileName(const ID: TSnippetID): string;
@@ -395,7 +403,7 @@ begin
       for FileName in AllFiles do
       begin
         if not WantedFiles.Contains(FileName) then
-          TFile.Delete(fDBPath + FileName);
+          TFile.Delete(MakeFullPath(FileName));
       end;
     finally
       AllFiles.Free;
@@ -409,7 +417,7 @@ procedure TDBNativeWriter.Save(const ATable: TDBSnippetsTable; ATagSet: ITagSet;
   const ALastModified: TUTCDateTime);
 begin
   fExistingSnippets.Clear;
-  if FileExists(fDBPath + MasterFileName) then
+  if FileExists(MakeFullPath(MasterFileName)) then
     ReadMasterFileData
   else
     fLastModified := TUTCDateTime.CreateNull;
@@ -530,7 +538,7 @@ var
   Tag: TTag;
 begin
   Writer := TBinaryStreamWriter.Create(
-    TFileStream.Create(MasterFileName, fmCreate),
+    TFileStream.Create(MakeFullPath(MasterFileName), fmCreate),
     TEncoding.UTF8,
     [dsOwnsStream]
   );
@@ -568,7 +576,7 @@ var
   Writer: TBinaryStreamWriter;
 begin
   Writer := TBinaryStreamWriter.Create(
-    TFileStream.Create(SnippetFileName(ASnippet.GetID), fmCreate),
+    TFileStream.Create(MakeFullPath(SnippetFileName(ASnippet.GetID)), fmCreate),
     TEncoding.UTF8,
     [dsOwnsStream]
   );
@@ -690,10 +698,12 @@ var
 begin
   Result := False;
   try
-    if not TFile.Exists(MasterFileName) then
+    if not TFile.Exists(MakeFullPath(MasterFileName), False) then
       Exit;
     Reader := TBinaryStreamReader.Create(
-      TFileStream.Create(MasterFileName, fmOpenRead or fmShareDenyWrite),
+      TFileStream.Create(
+        MakeFullPath(MasterFileName), fmOpenRead or fmShareDenyWrite
+      ),
       TEncoding.UTF8,
       [dsOwnsStream]
     );
@@ -770,7 +780,9 @@ var
   Snippet: TDBSnippet;
 begin
   Reader := TBinaryStreamReader.Create(
-    TFileStream.Create(SnippetFileName(AID), fmOpenRead or fmShareDenyWrite),
+    TFileStream.Create(
+      MakeFullPath(SnippetFileName(AID)), fmOpenRead or fmShareDenyWrite
+    ),
     TEncoding.UTF8,
     [dsOwnsStream]
   );
