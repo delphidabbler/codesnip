@@ -723,6 +723,7 @@ begin
       );
       if not IsSupportedVersion(Version) then
         Exit;
+      Result := True;
     finally
       Reader.Free;
     end;
@@ -954,7 +955,7 @@ resourcestring
   sBadVersion = 'Invalid or unsupported snippet file version';
 begin
   Watermark := TEncoding.UTF8.GetString(
-    Reader.ReadBytes(Length(MasterFileWatermark))
+    Reader.ReadBytes(Length(SnippetFileWatermark))
   );
   if Watermark <> SnippetFileWatermark then
     raise EDBNativeIO.Create(sBadWatermark);
