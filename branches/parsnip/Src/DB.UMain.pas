@@ -299,9 +299,6 @@ type
       {Deletes a snippet from the user database.
         @param Snippet [in] Snippet to delete from database.
       }
-    procedure Clear;
-      {Clears the object's data.
-      }
     function UniqueSnippetName: string;
       {Generates a snippet "name" that is unique in the database.
         @return Required unique snippet "name".
@@ -451,15 +448,6 @@ procedure _TDatabase.CleanUpRefs(var Refs: TSnippetReferences);
 begin
   Refs.RequiredSnippets := CleanSnippetList(Refs.RequiredSnippets);
   Refs.XRefs := CleanSnippetList(Refs.XRefs);
-end;
-
-procedure _TDatabase.Clear;
-  {Clears the object's data.
-  }
-begin
-  fCategories.Clear;
-  Database.__AllTags.Clear;
-  Database.__SnippetsTable.Clear;
 end;
 
 constructor _TDatabase.Create;
