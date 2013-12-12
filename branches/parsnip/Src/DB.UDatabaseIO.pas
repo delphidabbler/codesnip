@@ -39,7 +39,7 @@ type
     Interface to object that can load data into the Database object from
     storage.
   }
-  IDatabaseLoader = interface(IInterface)
+  _IDatabaseLoader = interface(IInterface)
     ['{C6AF94FC-F56F-44AE-9E79-3B0CD0BB21D4}']
     procedure Load(const SnipList: _TSnippetList;
       const Categories: TCategoryList;
@@ -60,7 +60,7 @@ type
     Interface to object that can write data from the user-defined component of
     the Database object to storage.
   }
-  IDatabaseWriter = interface(IInterface)
+  _IDatabaseWriter = interface(IInterface)
     ['{F46EE2E3-68A7-4877-9E04-192D15D29BB1}']
     procedure Write(const SnipList: _TSnippetList;
       const Categories: TCategoryList; const Provider: IDBDataProvider);
@@ -81,11 +81,11 @@ type
   }
   TDatabaseIOFactory = class(TNoConstructObject)
   public
-    class function CreateUserDBLoader: IDatabaseLoader;
+    class function CreateUserDBLoader: _IDatabaseLoader;
       {Creates an object to use to load the user database.
         @return Required object instance.
       }
-    class function CreateWriter: IDatabaseWriter;
+    class function CreateWriter: _IDatabaseWriter;
       {Create an object that can write user defined data from the Database
       object to storage.
         @return Required object instance.
@@ -131,7 +131,7 @@ type
     Abstract base class for objects that can load data into the Database object
     from storage.
   }
-  TDatabaseLoader = class(TInterfacedObject, IDatabaseLoader)
+  TDatabaseLoader = class(TInterfacedObject, _IDatabaseLoader)
   strict private
     fReader: IDataReader;         // Object used to read data from storage
     fSnipList: _TSnippetList;      // Receives list of snippets
@@ -200,7 +200,7 @@ type
   TUserDatabaseLoader:
     Class that updates Database object with data read from user database.
   }
-  TUserDatabaseLoader = class(TDatabaseLoader, IDatabaseLoader)
+  TUserDatabaseLoader = class(TDatabaseLoader, _IDatabaseLoader)
   strict protected
     function CreateReader: IDataReader; override;
       {Creates reader object. If user database doesn't exist a nul reader is
@@ -230,7 +230,7 @@ type
     Object used to write data from user database to storage.
   }
   TDatabaseWriter = class(TInterfacedObject,
-    IDatabaseWriter
+    _IDatabaseWriter
   )
   strict private
     fWriter: IDataWriter;             // Object used to write to storage
@@ -264,7 +264,7 @@ type
 
 { TDatabaseIOFactory }
 
-class function TDatabaseIOFactory.CreateUserDBLoader: IDatabaseLoader;
+class function TDatabaseIOFactory.CreateUserDBLoader: _IDatabaseLoader;
   {Creates an object to use to load the user database.
     @return Required object instance.
   }
@@ -272,7 +272,7 @@ begin
   Result := TUserDatabaseLoader.Create;
 end;
 
-class function TDatabaseIOFactory.CreateWriter: IDatabaseWriter;
+class function TDatabaseIOFactory.CreateWriter: _IDatabaseWriter;
   {Create an object that can write user defined data from the Database object to
   storage.
     @return Required object instance.
@@ -336,7 +336,6 @@ var
 
 var
   TagSet: ITagSet;
-  Tag: TTag;
 begin
   // Create reader object that can access data storage
   fReader := CreateReader;
