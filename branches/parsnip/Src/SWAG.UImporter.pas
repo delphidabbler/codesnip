@@ -96,7 +96,6 @@ uses
   // Project
   CS.Database.Types,
   CS.SourceCode.Languages,
-  DB.UCategory,
   DB.UMain,
   USnippetValidator;
 

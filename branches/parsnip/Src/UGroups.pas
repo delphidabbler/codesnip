@@ -26,7 +26,6 @@ uses
   Collections.Lists,
   // Project
   CS.Database.Types,
-  DB.UCategory,
   DB.USnippet,
   DB.USnippetKind,
   UInitialLetter;
@@ -264,10 +263,7 @@ implementation
 uses
   // Delphi
   Generics.Defaults,
-  // 3rd party
-  Collections.MultiMaps,
   // Project
-  CS.Database.Tags,
   DB.UMain,
   UStrUtils;
 
