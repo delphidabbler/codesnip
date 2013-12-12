@@ -269,7 +269,6 @@ uses
   UProtocols in 'UProtocols.pas',
   UQuery in 'UQuery.pas',
   UREMLDataIO in 'UREMLDataIO.pas',
-  UReservedCategories in 'UReservedCategories.pas',
   UResourceUtils in 'UResourceUtils.pas',
   URFC2822Date in 'URFC2822Date.pas',
   URSS20 in 'URSS20.pas',
