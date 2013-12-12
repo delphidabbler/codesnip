@@ -375,6 +375,7 @@ end;
 procedure TDBNativeWriter.RemoveUnwantedFiles(const ATable: TDBSnippetsTable);
 var
   SnippetID: TSnippetID;
+  Snippet: TDBSnippet;
   AllFiles: TStringList;
   WantedFiles: THashSet<string>;
   FileName: string;
@@ -386,10 +387,9 @@ begin
   );
   try
     WantedFiles.Add(MasterFileName);
-    for SnippetID in fExistingSnippets.Keys do
+    for Snippet in ATable do
     begin
-      if ATable.Contains(SnippetID) then
-        WantedFiles.Add(SnippetFileName(SnippetID))
+      WantedFiles.Add(SnippetFileName(Snippet.GetID))
     end;
     // Build a list of files that are actually in the database
     AllFiles := TStringList.Create;
