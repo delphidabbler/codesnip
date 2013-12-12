@@ -561,6 +561,7 @@
 			<DCCReference Include="Main\CS.Database.IO.Types.pas"/>
 			<DCCReference Include="Main\CS.Database.IO.Legacy.pas"/>
 			<DCCReference Include="Main\CS.Database.IO.Native.pas"/>
+			<DCCReference Include="Main\CS.Database.IO.Null.pas"/>
 			<DCCReference Include="Main\CS.Database.SnippetLinks.pas"/>
 			<DCCReference Include="Main\CS.Database.Snippets.pas"/>
 			<DCCReference Include="Main\CS.Database.SnippetsTable.pas"/>
