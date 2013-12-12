@@ -24,7 +24,6 @@ uses
   CS.Database.SnippetsTable,
   CS.Database.Types,
   CS.Utils.Dates,
-  DB.UCategory,
   DB.USnippet,
   UMultiCastEvents,
   USingleton;
@@ -246,7 +245,6 @@ type
     IDatabaseEdit
   )
   strict private
-    fCategories: TCategoryList;       // List of categories
     fChangeEvents: TMulticastEvents;  // List of change event handlers
     type
       {
@@ -451,7 +449,6 @@ constructor _TDatabase.Create;
   }
 begin
   inherited Create;
-  fCategories := TCategoryListEx.Create(True);
   fChangeEvents := TMultiCastEvents.Create(Self);
 end;
 
@@ -533,7 +530,6 @@ destructor _TDatabase.Destroy;
   }
 begin
   fChangeEvents.Free;
-  fCategories.Free;
   inherited;
 end;
 
@@ -571,8 +567,6 @@ function _TDatabase.InternalAddSnippet(const SnippetID: TSnippetID;
     @return Reference to new snippet object.
     @except Exception raised if snippet's category does not exist.
   }
-var
-  Cat: TCategory; // category object containing new snippet
 resourcestring
   // Error message
   sCatNotFound = 'Category "%0:s" referenced by new snippet named "%1:s" does '
@@ -583,12 +577,6 @@ begin
   Result.SetCreated(TUTCDateTime.Now);
   Result.SetModified(Result.GetCreated);
   Result.UpdateRefs(MakeValidRefs(Data.Refs));
-  Cat := fCategories.Find(Result.Category);
-  if not Assigned(Cat) then
-    raise ECodeSnip.CreateFmt(
-      sCatNotFound, [Result.Category, Result.ID.ToString]
-    );
-  Cat.SnippetIDs.Add(Result.ID);
   // ensure any unknown tags are added to set of all known tags
   Database.__AllTags.Include(Result.Tags);
   Database.__SnippetsTable.Add(Result);
@@ -598,14 +586,8 @@ procedure _TDatabase.InternalDeleteSnippet(const Snippet: TSnippet);
   {Deletes a snippet from the user database.
     @param Snippet [in] Snippet to delete from database.
   }
-var
-  Cat: TCategory; // category containing snippet
 begin
-  // Don't remove tags from tag list - leave them there
-  // Delete from category if found
-  Cat := fCategories.Find(Snippet.Category);
-  if Assigned(Cat) then
-    Cat.SnippetIDs.Remove(Snippet.ID);
+  // Don't remove snippets tags from tag list - leave them there
   // Delete from "master" list: this frees Snippet
   Database.__SnippetsTable.Delete(Snippet.ID);
 end;
