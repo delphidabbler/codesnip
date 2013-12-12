@@ -23,8 +23,7 @@ uses
   // Delphi
   Generics.Collections,
   // Project
-  CS.Database.Types,
-  DB.USnippet;
+  CS.Database.Types;
 
 
 type
@@ -140,11 +139,8 @@ implementation
 
 
 uses
-  // Delphi
-  SysUtils,
   // Project
   CS.Database.Snippets,
-  UReservedCategories,
   UStrUtils;
 
 

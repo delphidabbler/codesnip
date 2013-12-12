@@ -24,7 +24,6 @@ uses
   SysUtils,
   Classes,
   ActnList,
-  Buttons,
   StdCtrls,
   Forms,
   Controls,
@@ -33,7 +32,6 @@ uses
   ExtCtrls,
   StdActns,
   Menus,
-  ImgList,
   // Project
   CS.Database.Types,
   CS.UI.Frames.CodeEditor,
@@ -42,13 +40,9 @@ uses
   DB.USnippet,
   FmGenericOKDlg,
   FmSnippetsEditorDlg.FrActiveTextEditor,
-  FrBrowserBase,
-  FrFixedHTMLDlg,
-  FrHTMLDlg,
   UBaseObjects,
   UCompileMgr,
   UCompileResultsLBMgr,
-  UCSSBuilder,
   UMemoCaretPosDisplayMgr,
   UMemoHelper,
   USnippetsChkListMgr,
@@ -275,9 +269,7 @@ implementation
 uses
   // Delphi
   Windows {for inlining},
-  Graphics,
   // Project
-  CS.ActiveText.Helper,
   CS.Database.Tags,
   CS.Config,
   CS.SourceCode.Languages,
@@ -287,20 +279,15 @@ uses
   IntfCommon,
   UColours,
   UConsts,
-  UCSSUtils,
   UCtrlArranger,
   UExceptions,
   UFontHelper,
-  UIStringList,
   UPreferences,
-  UReservedCategories,
   USnippetValidator,
   UMessageBox,
   UStructs,
   UStrUtils,
-  UTestUnitDlgMgr,
-  UThemesEx,
-  UUtils;
+  UTestUnitDlgMgr;
 
 
 {$R *.dfm}

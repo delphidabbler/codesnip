@@ -95,7 +95,6 @@ uses
   // Delphi
   SysUtils,
   Dialogs,
-  Windows {for inlining},
   // Project
   CS.Init.CommandLineOpts,
   DB.UMain,
@@ -110,7 +109,6 @@ uses
   UMessageBox,
   UOpenDialogEx,
   UOpenDialogHelper,
-  UReservedCategories,
   USaveDialogEx,
   UUserDBBackup,
   UWaitForThreadUI;

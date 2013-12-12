@@ -26,7 +26,6 @@ uses
   CS.Utils.Dates,
   DB.UCategory,
   DB.USnippet,
-  UIStringList,
   UMultiCastEvents,
   USingleton;
 
@@ -218,14 +217,11 @@ implementation
 
 
 uses
-  // Delphi
-  SysUtils,
   // Project
   CS.Database.IO.Types,
   CS.Database.Snippets,
   CS.Database.Tags,
   DB.UDatabaseIO,
-  UAppInfo,
   UExceptions,
   UQuery,
   UStrUtils,
