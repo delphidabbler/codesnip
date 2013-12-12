@@ -142,7 +142,7 @@ end;
 function TDBLegacyUserDBReader.DatabaseExists: Boolean;
 const
   ChunkSize = 512;
-  XMLProcInst = '<? xml version="1.0"';
+  XMLProcInst = '<?xml version="1.0"';
   Watermark = '<codesnip-data watermark="531257EA-1EE3-4B0F-8E46-C6E7F7140106"';
 var
   Chunk: string;  // chunk of up to 512 ASCII chars read from file
