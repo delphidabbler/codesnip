@@ -25,6 +25,7 @@ uses
   Generics.Collections,
 
   CS.ActiveText,
+  CS.Database.IO.Types,
   CS.Database.SnippetsTable,
   CS.Database.Types,
   CS.SourceCode.Languages,
@@ -41,7 +42,7 @@ type
     spCompileResults, spTags, spLinkInfo, spTestInfo, spStarred
   );
 
-  TDBNativeIOBase = class abstract(TObject)
+  TDBNativeIOBase = class abstract(TInterfacedObject)
   protected // NOTE: use of strict here causes IDE not to see TSnippetInfo !
     type
       TSnippetInfo = record
@@ -142,7 +143,7 @@ type
       const ALastModified: TUTCDateTime);
   end;
 
-  TDBNativeReader = class sealed(TDBNativeIOBase)
+  TDBNativeReader = class sealed(TDBNativeIOBase, IDatabaseLoader)
   strict private
     procedure HandleException(const E: Exception);
     procedure ValidateSnippetFileHeader(const Reader: TBinaryStreamReader);
@@ -162,6 +163,7 @@ type
     destructor Destroy; override;
     procedure Load(const ATable: TDBSnippetsTable; out ATagSet: ITagSet;
       out ALastModified: TUTCDateTime);
+    function DatabaseExists(const Path: string): Boolean;
   end;
 
   EDBNativeIO = class(ECodeSnip);
@@ -674,6 +676,49 @@ end;
 constructor TDBNativeReader.Create(const DBPath: string);
 begin
   inherited Create(DBPath);
+end;
+
+function TDBNativeReader.DatabaseExists(const Path: string): Boolean;
+const
+  WatermarkSize = Length(MasterFileWatermark);
+  VersionSize = 4;
+  HeaderSize = WatermarkSize + VersionSize;
+var
+  WaterMark: string;
+  Version: Integer;
+  Reader: TBinaryStreamReader;
+begin
+  Result := False;
+  try
+    if not TFile.Exists(MasterFileName) then
+      Exit;
+    Reader := TBinaryStreamReader.Create(
+      TFileStream.Create(MasterFileName, fmOpenRead or fmShareDenyWrite),
+      TEncoding.UTF8,
+      [dsOwnsStream]
+    );
+    try
+      if Reader.Size < HeaderSize then
+        Exit;
+      { TODO: Use extract method on code to use to read master file watermark
+              and version shared with TMasterInfo.Parse (use public class method
+              in TMasterInfo?}
+      Watermark := TEncoding.UTF8.GetString(
+        Reader.ReadBytes(Length(MasterFileWatermark))
+      );
+      if Watermark <> MasterFileWatermark then
+        Exit;
+      Version := StrToIntDef(
+        TEncoding.UTF8.GetString(Reader.ReadBytes(VersionSize)), 0
+      );
+      if not IsSupportedVersion(Version) then
+        Exit;
+    finally
+      Reader.Free;
+    end;
+  except
+    // Swallow any exception. Result will be False
+  end;
 end;
 
 destructor TDBNativeReader.Destroy;

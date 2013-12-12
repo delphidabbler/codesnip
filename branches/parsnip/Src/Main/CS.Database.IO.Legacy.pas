@@ -24,6 +24,7 @@ uses
   // 3rd party
   Collections.Dictionaries,
   // Project
+  CS.Database.IO.Types,
   CS.Database.SnippetsTable,
   CS.Database.Types,
   CS.Utils.Dates,
@@ -31,7 +32,7 @@ uses
   UXMLDocumentEx;
 
 type
-  TDBLegacyUserDBReader = class(TObject)
+  TDBLegacyUserDBReader = class(TInterfacedObject, IDatabaseLoader)
   strict private
     const
       // Database file name
@@ -50,6 +51,7 @@ type
       ///  </summary>
       fCategoryMap: TDictionary<string,string>;
     procedure HandleException(E: Exception);
+    function XMLFileName: string;
     function LegacySnippetName(SnippetNode: IXMLNode): string;
     procedure OpenXMLDoc;
     procedure ReadCategoryInfo;
@@ -65,6 +67,7 @@ type
     destructor Destroy; override;
     procedure Load(const ATable: TDBSnippetsTable; out ATagSet: ITagSet;
       out ALastModified: TUTCDateTime);
+    function DatabaseExists(const Path: string): Boolean;
   end;
 
   EDBLegacyUserDBReader = class(ECodeSnip);
@@ -134,6 +137,32 @@ begin
   // initialization section
   OleInitialize(nil);
   fXMLDoc := TXMLDocHelper.CreateXMLDoc;
+end;
+
+function TDBLegacyUserDBReader.DatabaseExists(const Path: string): Boolean;
+const
+  ChunkSize = 512;
+  XMLProcInst = '<? xml version="1.0"';
+  Watermark = '<codesnip-data watermark="531257EA-1EE3-4B0F-8E46-C6E7F7140106"';
+var
+  Chunk: string;  // chunk of up to 512 ASCII chars read from file
+begin
+  Result := False;
+  try
+    if not TFile.Exists(XMLFileName) then
+      Exit;
+    // Beginning of file can be treated as ASCII. There is never a BOM
+    Chunk := TEncoding.ASCII.GetString(
+      TFileIO.ReadBytes(XMLFileName, ChunkSize)
+    );
+    if not StrStartsStr(XMLProcInst, Chunk) then
+      Exit; // Not XML
+    if not StrContainsStr(Watermark, Chunk) then
+      Exit; // No valid open tag or watermark attribute
+    Result := True;
+  except
+    // swallow any exception (Result will be False)
+  end;
 end;
 
 destructor TDBLegacyUserDBReader.Destroy;
@@ -446,7 +475,7 @@ procedure TDBLegacyUserDBReader.OpenXMLDoc;
 var
   XMLFile: string;
 begin
-  XMLFile := IncludeTrailingPathDelimiter(fDBPath) + DatabaseFileName;
+  XMLFile := XMLFileName;
   if not TFile.Exists(XMLFile) then
     raise EDBLegacyUserDBReader.CreateFmt(sFileNotFound, [DatabaseFileName]);
   fXMLDoc.LoadFromFile(XMLFile);
@@ -513,6 +542,11 @@ begin
   SnippetNodes := fXMLDoc.FindChildNodes(SnippetListNode, cSnippetNode);
   for SnippetNode in SnippetNodes do
     LoadSnippet(SnippetNode, ATable);
+end;
+
+function TDBLegacyUserDBReader.XMLFileName: string;
+begin
+  Result := IncludeTrailingPathDelimiter(fDBPath) + DatabaseFileName;
 end;
 
 end.
