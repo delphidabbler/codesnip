@@ -372,6 +372,7 @@ uses
   CS.ActiveText.Validator in 'Main\CS.ActiveText.Validator.pas',
   CS.Config in 'Main\CS.Config.pas',
   CS.Docs.TagInfo.RTF in 'Main\CS.Docs.TagInfo.RTF.pas',
+  CS.Database.IO.Types in 'Main\CS.Database.IO.Types.pas',
   CS.Database.IO.Legacy in 'Main\CS.Database.IO.Legacy.pas',
   CS.Database.IO.Native in 'Main\CS.Database.IO.Native.pas',
   CS.Database.SnippetLinks in 'Main\CS.Database.SnippetLinks.pas',
