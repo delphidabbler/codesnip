@@ -53,7 +53,6 @@
 			<DCCReference Include="Compilers.UGlobals.pas"/>
 			<DCCReference Include="Compilers.URunner.pas"/>
 			<DCCReference Include="Compilers.USearchDirs.pas"/>
-			<DCCReference Include="DB.UCategory.pas"/>
 			<DCCReference Include="DB.UDatabaseIO.pas"/>
 			<DCCReference Include="DB.UMain.pas"/>
 			<DCCReference Include="DB.USnippet.pas"/>

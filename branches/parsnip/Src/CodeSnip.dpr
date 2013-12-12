@@ -53,7 +53,6 @@ uses
   Compilers.UGlobals in 'Compilers.UGlobals.pas',
   Compilers.URunner in 'Compilers.URunner.pas',
   Compilers.USearchDirs in 'Compilers.USearchDirs.pas',
-  DB.UCategory in 'DB.UCategory.pas',
   DB.UDatabaseIO in 'DB.UDatabaseIO.pas',
   DB.UMain in 'DB.UMain.pas',
   DB.USnippet in 'DB.USnippet.pas',
