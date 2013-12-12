@@ -67,7 +67,7 @@ type
     destructor Destroy; override;
     procedure Load(const ATable: TDBSnippetsTable; out ATagSet: ITagSet;
       out ALastModified: TUTCDateTime);
-    function DatabaseExists(const Path: string): Boolean;
+    function DatabaseExists: Boolean;
   end;
 
   EDBLegacyUserDBReader = class(ECodeSnip);
@@ -139,7 +139,7 @@ begin
   fXMLDoc := TXMLDocHelper.CreateXMLDoc;
 end;
 
-function TDBLegacyUserDBReader.DatabaseExists(const Path: string): Boolean;
+function TDBLegacyUserDBReader.DatabaseExists: Boolean;
 const
   ChunkSize = 512;
   XMLProcInst = '<? xml version="1.0"';

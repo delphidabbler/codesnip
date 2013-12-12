@@ -164,7 +164,7 @@ type
     destructor Destroy; override;
     procedure Load(const ATable: TDBSnippetsTable; out ATagSet: ITagSet;
       out ALastModified: TUTCDateTime);
-    function DatabaseExists(const Path: string): Boolean;
+    function DatabaseExists: Boolean;
   end;
 
   EDBNativeIO = class(ECodeSnip);
@@ -686,7 +686,7 @@ begin
   inherited Create(DBPath);
 end;
 
-function TDBNativeReader.DatabaseExists(const Path: string): Boolean;
+function TDBNativeReader.DatabaseExists: Boolean;
 const
   WatermarkSize = Length(MasterFileWatermark);
   VersionSize = 4;
