@@ -107,35 +107,6 @@ type
   );
 
   {
-  IDBDataProvider:
-    Interface supported by objects that provides data about the categories and
-    snippets in the database.
-  }
-  IDBDataProvider = interface(IInterface)
-    ['{D2D57A0D-DB29-4012-891E-E817E0EED8C8}']
-    function GetCategoryProps(const Cat: TCategory): TCategoryData;
-      {Retrieves all the properties of a category.
-        @param Cat [in] Category for which data is requested.
-        @return Record containing property data.
-      }
-    function GetCategorySnippets(const Cat: TCategory): IStringList;
-      {Retrieves names of all snippets that belong to a category.
-        @param Cat [in] Category for which snippet names are requested.
-        @return Required list of snippet names.
-      }
-    function GetSnippetProps(const Snippet: TSnippet): TSnippetData;
-      {Retrieves all the properties of a snippet.
-        @param Snippet [in] Snippet for which data is requested.
-        @return Record containing property data.
-      }
-    function GetSnippetRefs(const Snippet: TSnippet): TSnippetReferences;
-      {Retrieves information about all the references of a snippet.
-        @param Snippet [in] Snippet for which information is requested.
-        @return Record containing references.
-      }
-  end;
-
-  {
   IDatabaseChangeEventInfo:
     Interface supported by objects passed to Database object's change event
     handler that provides information about a change event. Some properites
@@ -156,31 +127,6 @@ type
     property Info: TObject read GetInfo;
       {Provides additional information about the event. Actual type of object
       depends on Kind. May be nil}
-  end;
-
-  {
-  IDataItemFactory:
-    Interface to factory object that creates snippet and category objects. For
-    use by database loader objects.
-  }
-  IDBDataItemFactory = interface(IInterface)
-    ['{C6DD85BD-E649-4A90-961C-4011D2714B3E}']
-    function CreateCategory(const CatID: string; const Data: TCategoryData):
-      TCategory;
-      {Creates a new category object.
-        @param CatID [in] ID of new category. Must be unique.
-        @param UserDefined [in] True if category is user defined, False if not.
-        @param Data [in] Record describing category's properties.
-        @return Instance of new category object.
-      }
-    function CreateSnippet(const Name: string; const Props: TSnippetData):
-      TSnippet;
-      {Creates a new snippet object.
-        @param Name [in] Name of new snippet. Must not exist in database
-          specified by UserDefined parameter.
-        @param Props [in] Record describing snippet's properties.
-        @return Instance of new snippet with no references.
-      }
   end;
 
   {
@@ -292,30 +238,6 @@ var
 
 
 type
-
-  {
-  TDBDataItemFactory:
-    Class that can create category and snippet objects.
-  }
-  TDBDataItemFactory = class(TInterfacedObject, IDBDataItemFactory)
-  public
-    function CreateCategory(const CatID: string;
-      const Data: TCategoryData): TCategory;
-      {Creates a new category object.
-        @param CatID [in] ID of new category. Must be unique.
-        @param UserDefined [in] True if category is user defined, False if not.
-        @param Data [in] Record describing category's properties.
-        @return Instance of new category object.
-      }
-    function CreateSnippet(const Name: string; const Props: TSnippetData):
-      TSnippet;
-      {Creates a new snippet object.
-        @param Name [in] Name of new snippet. Must not exist in database
-          specified by UserDefined parameter.
-        @param Props [in] Record describing snippet's properties.
-        @return Instance of new snippet with no references.
-      }
-  end;
 
   {
   _TDatabase:
@@ -457,36 +379,6 @@ type
     procedure DeleteSnippet(const Snippet: TSnippet);
       {Deletes a snippet from the user database.
         @param Snippet [in] Snippet to be deleted.
-      }
-  end;
-
-  {
-  TUserDataProvider:
-    Class that provides data about the categories and snippets in the user-
-    defined database.
-  }
-  TUserDataProvider = class(TInterfacedObject, IDBDataProvider)
-  public
-    { IDBDataProvider methods }
-    function GetCategoryProps(const Cat: TCategory): TCategoryData;
-      {Retrieves all the properties of a category.
-        @param Cat [in] Category for which data is requested.
-        @return Record containing property data.
-      }
-    function GetCategorySnippets(const Cat: TCategory): IStringList;
-      {Retrieves names of all user-defined snippets that belong to a category.
-        @param Cat [in] Category for which snippet names are requested.
-        @return Required list of snippet names.
-      }
-    function GetSnippetProps(const Snippet: TSnippet): TSnippetData;
-      {Retrieves all the properties of a snippet.
-        @param Snippet [in] Snippet for which data is requested.
-        @return Record containing property data.
-      }
-    function GetSnippetRefs(const Snippet: TSnippet): TSnippetReferences;
-      {Retrieves information about all the references of a snippet.
-        @param Snippet [in] Snippet for which information is requested.
-        @return Record containing references.
       }
   end;
 
@@ -841,79 +733,6 @@ function _TDatabase.TEventInfo.GetKind: TDatabaseChangeEventKind;
   }
 begin
   Result := fKind;
-end;
-
-{ TDBDataItemFactory }
-
-function TDBDataItemFactory.CreateCategory(const CatID: string;
-  const Data: TCategoryData): TCategory;
-  {Creates a new category object.
-    @param CatID [in] ID of new category. Must be unique.
-    @param UserDefined [in] True if category is user defined, False if not.
-    @param Data [in] Record describing category's properties.
-    @return Instance of new category object.
-  }
-begin
-  Result := TCategoryEx.Create(CatID, Data);
-end;
-
-function TDBDataItemFactory.CreateSnippet(const Name: string;
-  const Props: TSnippetData): TSnippet;
-  {Creates a new snippet object.
-    @param Name [in] Name of new snippet. Must not exist in database specified
-      by UserDefined parameter.
-    @param Props [in] Record describing snippet's properties.
-    @return Instance of new snippet with no references.
-  }
-begin
-  Result := TSnippet.Create(TSnippetID.Create(Name));
-  Result.SetProps(Props);
-end;
-
-{ TUserDataProvider }
-
-function TUserDataProvider.GetCategoryProps(const Cat: TCategory):
-  TCategoryData;
-  {Retrieves all the properties of a category.
-    @param Cat [in] Category for which data is requested.
-    @return Record containing property data.
-  }
-begin
-  Result.Desc := Cat.Description;
-end;
-
-function TUserDataProvider.GetCategorySnippets(const Cat: TCategory):
-  IStringList;
-  {Retrieves names of all user-defined snippets that belong to a category.
-    @param Cat [in] Category for which snippet names are requested.
-    @return Required list of snippet names.
-  }
-var
-  SnippetID: TSnippetID;  // references ID of each snippet in category
-begin
-  Result := TIStringList.Create;
-  for SnippetID in Cat.SnippetIDs do
-    Result.Add(SnippetID.ToString);
-end;
-
-function TUserDataProvider.GetSnippetProps(const Snippet: TSnippet):
-  TSnippetData;
-  {Retrieves all the properties of a snippet.
-    @param Snippet [in] Snippet for which data is requested.
-    @return Record containing property data.
-  }
-begin
-  Result := Snippet.GetProps;
-end;
-
-function TUserDataProvider.GetSnippetRefs(const Snippet: TSnippet):
-  TSnippetReferences;
-  {Retrieves information about all the references of a snippet.
-    @param Snippet [in] Snippet for which information is requested.
-    @return Record containing references.
-  }
-begin
-  Result := Snippet.GetReferences;
 end;
 
 { TDatabase }
