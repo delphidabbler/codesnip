@@ -9,7 +9,7 @@
  * $Date$
  *
  * Defines a singleton object and subsidiary classes that encapsulate the
- * snippets and categories in the CodeSnip database and user defined databases.
+ * snippets and tags in the snippets database.
 }
 
 
@@ -127,11 +127,6 @@ type
       depends on Kind. May be nil}
   end;
 
-  {
-  _IDatabase:
-    Interface to object that encapsulates the whole (main and user) databases
-    and provides access to all snippets and all categories.
-  }
   _IDatabase = interface(IInterface)
     ['{A280DEEF-0336-4264-8BD0-7CDFBB207D2E}']
     function Lookup(const SnippetID: TSnippetID): TSnippet;
@@ -149,7 +144,7 @@ type
 
   {
   IDatabaseEdit:
-    Interface to object that can be used to edit the user database.
+    Interface to object that can be used to edit the database.
   }
   IDatabaseEdit = interface(IInterface)
     ['{CBF6FBB0-4C18-481F-A378-84BB09E5ECF4}']
@@ -234,12 +229,6 @@ var
 
 type
 
-  {
-  _TDatabase:
-    Class that encapsulates the main and user databases. Provides access to all
-    snippets and all categories via the IDatabase interface. Also enables user
-    defined database to be modified via IDatabaseEdit interface.
-  }
   _TDatabase = class(TInterfacedObject,
     _IDatabase,
     IDatabaseEdit
@@ -287,7 +276,6 @@ type
         @param SnippetID [in] ID of new snippet.
         @param Data [in] Properties and references of new snippet.
         @return Reference to new snippet object.
-        @except Exception raised if snippet's category does not exist.
       }
     procedure InternalDeleteSnippet(const Snippet: TSnippet);
       {Deletes a snippet from the user database.
@@ -565,7 +553,6 @@ function _TDatabase.InternalAddSnippet(const SnippetID: TSnippetID;
     @param SnippetID [in] ID of new snippet.
     @param Data [in] Properties and references of new snippet.
     @return Reference to new snippet object.
-    @except Exception raised if snippet's category does not exist.
   }
 resourcestring
   // Error message
@@ -657,8 +644,6 @@ begin
     Snippet.SetModified(TUTCDateTime.Now);
     // ensure any new, unknown, tags are added to set of all tags
     Database.__AllTags.Include(Snippet.Tags);
-    // NOTE: since categories can no longer be changed, there is no need to
-    // update TCategory.SnippetIDs like we used to.
     Query.Update;
     TriggerEvent(evSnippetChanged, Snippet);
   finally
