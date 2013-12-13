@@ -521,7 +521,7 @@ var
 begin
   UserDBBackup := TUserDBBackup.Create(fBakFileName);
   try
-    UserDBBackup.Restore;
+    UserDBBackup.Restore(True);
   finally
     UserDBBackup.Free;
   end;

@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2009-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2009-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -52,13 +52,14 @@ type
     procedure Backup;
     ///  <summary>
     ///  Restores files from backup file into source folder passed to
-    ///  constructor
+    ///  constructor. If ClearDir is True then all files in the source folder
+    ///  are deleted before the folder is restored.
     ///  </summary>
     ///  <remarks>
     ///  An exception is raised if file type id is not the one passed to the
     ///  constructor or if any checksum errors are detected.
     ///  </remarks>
-    procedure Restore;
+    procedure Restore(const ClearDir: Boolean = False);
   end;
 
 
@@ -296,7 +297,7 @@ begin
   fFileID := FileID;
 end;
 
-procedure TFolderBackup.Restore;
+procedure TFolderBackup.Restore(const ClearDir: Boolean);
 var
   BakFileStream: TStream;                 // stream onto backup file
   BakFileLoader: TBackupFileLoader;       // loads & analyses backup file
@@ -309,6 +310,8 @@ resourcestring
 begin
   // Make sure restore folder exists
   EnsureFolders(fSrcFolder);
+  if ClearDir then
+    DeleteFiles(fSrcFolder, '*');
   // Load backup file contents
   BakFileLoader := nil;
   BakFileStream := TFileStream.Create(fBakFile, fmOpenRead or fmShareDenyNone);
