@@ -218,7 +218,7 @@ procedure TCodeImportMgr.Import(const FileName: string);
 var
   Data: TBytes; // content of import file as bytes
 begin
-  fUserInfo := TUserInfo.CreateNul;
+  fUserInfo := TUserInfo.CreateNull;
   fImportInfoList.Clear;
   try
     Data := TFileIO.ReadAllBytes(FileName);

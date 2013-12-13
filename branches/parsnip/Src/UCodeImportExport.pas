@@ -55,21 +55,22 @@ type
 type
   ///  <summary>Encapsulates user info from export files.</summary>
   TUserInfo = record
+  strict private
+    var
+      fDetails: TUserDetails;
+      fComments: string;
+  public
     ///  <summary>User's personal details.</summary>
-    Details: TUserDetails;
+    property Details: TUserDetails read fDetails;// write fDetails;
     ///  <summary>User's comments.</summary>
-    Comments: string;
+    property Comments: string read fComments;// write fComments;
     ///  <summary>Initialises record to given values.</summary>
     constructor Create(const UserDetails: TUserDetails;
       const UserComments: string);
     ///  <summary>Returns a new record with null field values.</summary>
-    class function CreateNul: TUserInfo; static;
-    ///  <summary>Copies given TUserInfo record to this one.</summary>
-    procedure Assign(const Src: TUserInfo);
-    ///  <summary>Initialises record to null value.</summary>
-    procedure Init;
+    class function CreateNull: TUserInfo; static;
     ///  <summary>Checks if record is null, i.e. empty.</summary>
-    function IsNul: Boolean;
+    function IsNull: Boolean;
   end;
 
 type
@@ -231,31 +232,19 @@ const
 
 { TUserInfo }
 
-procedure TUserInfo.Assign(const Src: TUserInfo);
-begin
-  Details := Src.Details;
-  Comments := Src.Comments;
-end;
-
 constructor TUserInfo.Create(const UserDetails: TUserDetails;
   const UserComments: string);
 begin
-  Details := UserDetails;
-  Comments := UserComments;
+  fDetails := UserDetails;
+  fComments := UserComments;
 end;
 
-class function TUserInfo.CreateNul: TUserInfo;
+class function TUserInfo.CreateNull: TUserInfo;
 begin
-  Result.Init;
+  Result := TUserInfo.Create(TUserDetails.CreateNull, '');
 end;
 
-procedure TUserInfo.Init;
-begin
-  Details := TUserDetails.CreateNull;
-  Comments := '';
-end;
-
-function TUserInfo.IsNul: Boolean;
+function TUserInfo.IsNull: Boolean;
 begin
   Result := Details.IsNull and (Comments = '');
 end;
@@ -289,7 +278,7 @@ begin
 
     // Write document content
     WriteProgInfo(RootNode);
-    if not fUserInfo.IsNul then
+    if not fUserInfo.IsNull then
       WriteUserInfo(RootNode);
     WriteSnippets(RootNode);
 
@@ -523,12 +512,12 @@ begin
     UserNode :=  fXMLDoc.FindNode(cExportRootNode + '\' + cUserInfoNode);
     if Assigned(UserNode) then
     begin
-      fUserInfo.Details := TUserDetails.Create(
-        TXMLDocHelper.GetSubTagText(fXMLDoc, UserNode, cUserNameNode),
-        TXMLDocHelper.GetSubTagText(fXMLDoc, UserNode, cUserEmailNode)
-      );
-      fUserInfo.Comments := TXMLDocHelper.GetSubTagText(
-        fXMLDoc, UserNode, cUserCommentsNode
+      fUserInfo := TUserInfo.Create(
+        TUserDetails.Create(
+          TXMLDocHelper.GetSubTagText(fXMLDoc, UserNode, cUserNameNode),
+          TXMLDocHelper.GetSubTagText(fXMLDoc, UserNode, cUserEmailNode)
+        ),
+        TXMLDocHelper.GetSubTagText(fXMLDoc, UserNode, cUserCommentsNode)
       );
     end;
 
@@ -616,7 +605,7 @@ begin
   with InternalCreate do
     try
       Execute(Data);
-      UserInfo.Assign(fUserInfo);
+      UserInfo := fUserInfo;
       SetLength(SnippetInfo, Length(fSnippetInfo));
       for Idx := Low(fSnippetInfo) to High(fSnippetInfo) do
         SnippetInfo[Idx].Assign(fSnippetInfo[Idx]);
@@ -633,7 +622,7 @@ begin
   fXMLDoc := TXMLDocHelper.CreateXMLDoc;
   // Initialise fields that receive imported data
   SetLength(fSnippetInfo, 0);
-  fUserInfo.Init;
+  fUserInfo := TUserInfo.CreateNull;
 end;
 
 function TCodeImporter.ValidateDoc: Integer;

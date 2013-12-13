@@ -238,7 +238,7 @@ var
   OutData: TEncodedData;  // receives export file content
 begin
   OutData := TCodeExporter.ExportSnippets(
-    TUserInfo.CreateNul, frmSnippets.GetSelection
+    TUserInfo.CreateNull, frmSnippets.GetSelection
   );
   TFileIO.WriteAllBytes(StrTrim(edFile.Text), OutData.Data);
 end;
