@@ -233,7 +233,7 @@ const
 
 procedure TUserInfo.Assign(const Src: TUserInfo);
 begin
-  Details.Assign(Src.Details);
+  Details := Src.Details;
   Comments := Src.Comments;
 end;
 
@@ -251,13 +251,13 @@ end;
 
 procedure TUserInfo.Init;
 begin
-  Details.Init;
+  Details := TUserDetails.CreateNull;
   Comments := '';
 end;
 
 function TUserInfo.IsNul: Boolean;
 begin
-  Result := Details.IsNul and (Comments = '');
+  Result := Details.IsNull and (Comments = '');
 end;
 
 { TCodeExporter }
@@ -523,11 +523,9 @@ begin
     UserNode :=  fXMLDoc.FindNode(cExportRootNode + '\' + cUserInfoNode);
     if Assigned(UserNode) then
     begin
-      fUserInfo.Details.Name := TXMLDocHelper.GetSubTagText(
-        fXMLDoc, UserNode, cUserNameNode
-      );
-      fUserInfo.Details.Email := TXMLDocHelper.GetSubTagText(
-        fXMLDoc, UserNode, cUserEmailNode
+      fUserInfo.Details := TUserDetails.Create(
+        TXMLDocHelper.GetSubTagText(fXMLDoc, UserNode, cUserNameNode),
+        TXMLDocHelper.GetSubTagText(fXMLDoc, UserNode, cUserEmailNode)
       );
       fUserInfo.Comments := TXMLDocHelper.GetSubTagText(
         fXMLDoc, UserNode, cUserCommentsNode
