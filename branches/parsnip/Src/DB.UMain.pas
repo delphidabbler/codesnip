@@ -208,10 +208,10 @@ implementation
 
 uses
   // Project
+  CS.Database.IO.Factory,
   CS.Database.IO.Types,
   CS.Database.Snippets,
   CS.Database.Tags,
-  DB.UDatabaseIO,
   UExceptions,
   UQuery,
   UStrUtils,
