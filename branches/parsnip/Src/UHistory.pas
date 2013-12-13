@@ -156,11 +156,11 @@ var
 begin
   EventInfo := EvtInfo as IDatabaseChangeEventInfo;
   // Clear history if snippet changed or removed
+  // TODO: add support for changes to tags when such events are added
   case EventInfo.Kind of
-    evSnippetDeleted, evSnippetChanged,
-    evCategoryDeleted, evCategoryChanged:
+    evSnippetDeleted, evSnippetChanged:
       Clear;
-    evSnippetAdded, evCategoryAdded:
+    evSnippetAdded:
       NewItem(TViewFactory.CreateDBItemView(EventInfo.Info));
   end;
 end;

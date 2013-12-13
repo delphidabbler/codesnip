@@ -96,12 +96,8 @@ type
     evBeforeSnippetDelete,  // a snippet is about to be deleted
     evSnippetDeleted,       // a snippet has been deleted
     evBeforeSnippetChange,  // a snippet is about to be changed
-    evSnippetChanged,       // a snippet's properties / references have changed
-    evCategoryAdded,        // a category has been added
-    evBeforeCategoryDelete, // a category is about to be deleted
-    evCategoryDeleted,      // a category has been deleted
-    evBeforeCategoryChange, // a category is about to be changed
-    evCategoryChanged       // a category's properties have changed
+    evSnippetChanged        // a snippet's properties / references have changed
+    // TODO: add suitable event kinds for changes to tags as required
   );
 
   {

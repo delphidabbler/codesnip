@@ -417,24 +417,23 @@ var
   EventInfo: IDatabaseChangeEventInfo;  // information about the event
 begin
   EventInfo := EvtInfo as IDatabaseChangeEventInfo;
+  // TODO: add support for changes to tags when such events are added
   case EventInfo.Kind of
     evChangeBegin:
       PrepareForDBChange;
 
-    evBeforeSnippetChange, evBeforeSnippetDelete,
-    evBeforeCategoryChange, evBeforeCategoryDelete:
+    evBeforeSnippetChange, evBeforeSnippetDelete:
       PrepareForDBViewChange(TViewFactory.CreateDBItemView(EventInfo.Info));
 
-    evSnippetChanged, evCategoryChanged:
+    evSnippetChanged:
       UpdateDBView(
         fChangingDetailPageIdx, TViewFactory.CreateDBItemView(EventInfo.Info)
       );
 
-    evSnippetDeleted, evCategoryDeleted:
+    evSnippetDeleted:
       DeleteDBView(fChangingDetailPageIdx);
 
     evSnippetAdded:
-      // TODO -cComment: removed evCategoryAdded from case statement
       AddDBView(TViewFactory.CreateDBItemView(EventInfo.Info));
   end;
 end;
