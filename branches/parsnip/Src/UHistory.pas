@@ -155,7 +155,7 @@ var
   EventInfo: IDatabaseChangeEventInfo;  // information about the event
 begin
   EventInfo := EvtInfo as IDatabaseChangeEventInfo;
-  // Clear history if snippet or category changed or removed
+  // Clear history if snippet changed or removed
   case EventInfo.Kind of
     evSnippetDeleted, evSnippetChanged,
     evCategoryDeleted, evCategoryChanged:

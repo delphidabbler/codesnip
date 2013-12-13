@@ -126,14 +126,14 @@ type
     property ShowEmptySections: Boolean
       read GetShowEmptySections write SetShowEmptySections;
 
-    ///  <summary>Gets flag that indicates whether new snippets and categories
-    ///  are displayed in new tabs in details pane.</summary>
+    ///  <summary>Gets flag that indicates whether new snippets are displayed in
+    ///  new tabs in details pane.</summary>
     function GetShowNewSnippetsInNewTabs: Boolean;
-    ///  <summary>Sets flag that indicates whether new snippets and categories
-    ///  are displayed in new tabs in details pane.</summary>
+    ///  <summary>Sets flag that indicates whether new snippets are displayed in
+    ///  new tabs in details pane.</summary>
     procedure SetShowNewSnippetsInNewTabs(const Value: Boolean);
-    ///  <summary>Indicates whether new snippets and ca-tegories are displayed
-    ///  in new tabs in details pane.</summary>
+    ///  <summary>Indicates whether new snippets are displayed in new tabs in
+    ///  details pane.</summary>
     property ShowNewSnippetsInNewTabs: Boolean
       read GetShowNewSnippetsInNewTabs write SetShowNewSnippetsInNewTabs;
 
@@ -445,13 +445,13 @@ type
     ///  <remarks>Method of IPreferences.</remarks>
     procedure SetShowEmptySections(const Value: Boolean);
 
-    ///  <summary>Gets flag that indicates whether new snippets and categories
-    ///  are displayed in new tabs in details pane.</summary>
+    ///  <summary>Gets flag that indicates whether new snippets are displayed in
+    ///  new tabs in details pane.</summary>
     ///  <remarks>Method of IPreferences.</remarks>
     function GetShowNewSnippetsInNewTabs: Boolean;
 
-    ///  <summary>Sets flag that indicates whether new snippets and categories
-    ///  are displayed in new tabs in details pane.</summary>
+    ///  <summary>Sets flag that indicates whether new snippets are displayed in
+    ///  new tabs in details pane.</summary>
     ///  <remarks>Method of IPreferences.</remarks>
     procedure SetShowNewSnippetsInNewTabs(const Value: Boolean);
 

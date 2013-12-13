@@ -8,8 +8,8 @@
  * $Rev$
  * $Date$
  *
- * Provides an abstract base class for frames that enable categorised snippets
- * to be selected by means of a tree view displaying check boxes.
+ * Provides an abstract base class for frames that enable snippets grouped
+ * alphabetically to be selected by means of a tree view displaying check boxes.
 }
 
 
@@ -79,8 +79,8 @@ type
       }
   strict protected
     procedure AddNodes; override;
-      {Adds nodes for each category and the snippets it contains to empty tree
-      view.
+      {Adds nodes for each initial letter and the snippets it contains to empty
+      tree view.
       }
     procedure RecordChanges; override;
       {Updates tree view's underlying data when state of treeview changes.
@@ -141,16 +141,18 @@ uses
 { TSelectSnippetsFrame }
 
 procedure TSelectSnippetsFrame.AddNodes;
-  {Adds nodes for each category and the snippets it contains to empty tree view.
+  {Adds nodes for each initial letter and the snippets it contains to empty tree
+  view.
   }
 var
   Initial: TInitialLetter;        // reference to an initial
   InitialNode: TCheckedTreeNode;  // tree node representing an initial letter
-  Snippet: TSnippet;              // reference to snippets in a category
-  Grouping: TGrouping;            // groups/sorts snippets by category
-  Group: TGroupItem;              // group representing a category
+  Snippet: TSnippet;              // references snippets with an initial letter
+  Grouping: TGrouping;            // groups/sorts snippets by initial letter
+  Group: TGroupItem;              // group representing an initial letter
 begin
-  // Create grouping of all snippets by category, with categories alpha sorted
+  // Create grouping of all snippets by initial letter, with initials sorted
+  // in ascending order alphabetically
   Grouping := TAlphaGrouping.Create(Database.GetAllSnippets);
   try
     for Group in Grouping do
@@ -225,17 +227,17 @@ procedure TSelectSnippetsFrame.RecordChanges;
   {Updates tree view's underlying data when state of treeview changes.
   }
 var
-  CatNode: TCheckedTreeNode;     // loops thru all category nodes
-  SnippetNode: TCheckedTreeNode; // loops thru all snippet nodes in a category
+  CatNode: TCheckedTreeNode;     // loops thru all initial nodes
+  SnippetNode: TCheckedTreeNode; // loops thru all snippet nodes for intial
 begin
   fSelectedSnippets.Clear;
-  // Loop through all categories
+  // Loop through all initial letters
   CatNode := FirstNode;
   while Assigned(CatNode) do
   begin
     Assert(not IsSnippetNode(CatNode),
       ClassName + '.RecordChanges: CatNode is a snippet node');
-    // Loop through each snippet in category, updating list if node checked
+    // Loop through each snippet in initial group, updating list if node checked
     SnippetNode := CatNode.GetFirstChild;
     while Assigned(SnippetNode) do
     begin
@@ -301,7 +303,7 @@ function TSelectSnippetsFrame.TTVDraw.IsSectionHeadNode(
     @return True if node is a section header, False if not.
   }
 begin
-  // Header section is a category
+  // Header section is an initial
   Result := TObject(Node.Data) is TBox<TInitialLetter>;
 end;
 

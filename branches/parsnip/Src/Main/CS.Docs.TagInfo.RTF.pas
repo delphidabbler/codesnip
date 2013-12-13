@@ -9,7 +9,7 @@
  * $Date$
  *
  * Implements a class that renders a rich text document that lists the snippets
- * in a category.
+ * associated with a tag.
 }
 
 

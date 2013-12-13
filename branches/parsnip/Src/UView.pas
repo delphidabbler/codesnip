@@ -190,8 +190,8 @@ type
     class function CreateInitialLetterView(const Letter: TInitialLetter): IView;
     ///  <summary>Creates a view of given database object. View type depends on
     ///  the object's type.</summary>
-    ///  <remarks>Database object type must be valid, i.e. either TSnippet or
-    ///  TCategory, or nil.</remarks>
+    ///  <remarks>DBObj must be of a type that is valid database object type or
+    ///  be nil.</remarks>
     class function CreateDBItemView(const DBObj: TObject): IView;
   end;
 
@@ -340,7 +340,7 @@ type
   end;
 
 type
-  ///  <summary>View associated with a category.</summary>
+  ///  <summary>View associated with a tag.</summary>
   TTagView = class sealed(TInterfacedObject,
     IView, ITagView
   )
@@ -648,7 +648,6 @@ var
 begin
   if not Supports(View, ITagView, TagView) then
     Exit(False);
-  // don't compare category IDs directly in case equality test changes
   Result := fTag = TagView.Tag;
 end;
 
