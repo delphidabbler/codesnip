@@ -550,10 +550,6 @@ function _TDatabase.InternalAddSnippet(const SnippetID: TSnippetID;
     @param Data [in] Properties and references of new snippet.
     @return Reference to new snippet object.
   }
-resourcestring
-  // Error message
-  sCatNotFound = 'Category "%0:s" referenced by new snippet named "%1:s" does '
-    + 'not exist';
 begin
   Result := TSnippet.Create(SnippetID);
   Result.SetProps(Data.Props);
