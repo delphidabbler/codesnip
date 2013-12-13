@@ -74,7 +74,7 @@ begin
   if Result.DatabaseExists then
     Exit;
   Result := TDBLegacyUserDBReader.Create(TAppInfo.UserDataDir);
-  if not Result.DatabaseExists then
+  if Result.DatabaseExists then
     Exit;
   Result := TEmptyDBReader.Create;
 end;
