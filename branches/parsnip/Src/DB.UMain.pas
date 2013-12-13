@@ -44,6 +44,7 @@ type
       fAllTags: ITagSet;
       fLastModified: TUTCDateTime;
       fDirty: Boolean;
+    procedure FlagUpdate;
   strict protected
     procedure Initialize; override;
     procedure Finalize; override;
@@ -55,8 +56,8 @@ type
     //       DON'T make this section strict.
     property __SnippetsTable: TDBSnippetsTable read fSnippetsTable;
     property __AllTags: ITagSet read fAllTags;
-    property __Updated: Boolean read fDirty write fDirty;
-
+    procedure __SetDirty(Dirty: Boolean);
+    property __Updated: Boolean read fDirty write __SetDirty;
   public
     class property Instance: TDatabase read GetInstance;
   public
@@ -683,6 +684,12 @@ begin
   inherited;
 end;
 
+procedure TDatabase.FlagUpdate;
+begin
+  fDirty := True;
+  fLastModified := TUTCDateTime.Now;
+end;
+
 function TDatabase.GetAllSnippets: ISnippetIDList;
 var
   Snippet: TDBSnippet;
@@ -818,6 +825,14 @@ begin
     ASnippet := fSnippetsTable.Get(ASnippetID).CloneAsReadOnly
   else
     ASnippet := nil;
+end;
+
+procedure TDatabase.__SetDirty(Dirty: Boolean);
+begin
+  if Dirty then
+    FlagUpdate
+  else
+    fDirty := False;
 end;
 
 initialization
