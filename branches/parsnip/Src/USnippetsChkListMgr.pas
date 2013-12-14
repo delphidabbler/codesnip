@@ -44,6 +44,8 @@ type
       in check list box are ignored.
         @param Snippet [in] Snippet to be checked.
       }
+    { TODO: Revise (and re-comment) this method: concept of user-defined is
+            meaningless. }
     procedure DrawItem(Control: TWinControl;
       Index: Integer; Rect: TRect; State: TOwnerDrawState);
       {OnDrawItem event handler for associated check list box. Draws user

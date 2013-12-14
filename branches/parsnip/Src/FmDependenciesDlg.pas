@@ -403,6 +403,7 @@ var
   LB: TListBox;
   Canvas: TCanvas;
 
+  { TODO -cSynchSpaces: Revisit this method in the light of synch spaces. }
   function IsUserDefinedItem: Boolean;
   begin
     Result := (LB.Items.Objects[Index] as TBox<Boolean>).Value;
@@ -412,6 +413,8 @@ begin
   LB := Control as TListBox;
   Canvas := LB.Canvas;
   if not (odSelected in State) then
+    { TODO -cSynchSpaces: Revisit colour selection in the light of synch spaces.
+    }
     Canvas.Font.Color := Preferences.DBHeadingColours[IsUserDefinedItem];
   Canvas.TextRect(
     Rect,

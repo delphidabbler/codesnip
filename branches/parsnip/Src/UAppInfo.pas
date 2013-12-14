@@ -64,6 +64,7 @@ type
       data directory.
         @return Full path to common application data directory.
       }
+    // TODO: Check if AppDataDir is needed anymore
     class function AppDataDir: string;
       {Returns the directory where CodeSnip stores the "database" files.
         @return Full path to database sub directory.

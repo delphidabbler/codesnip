@@ -137,6 +137,9 @@ type
     property ShowNewSnippetsInNewTabs: Boolean
       read GetShowNewSnippetsInNewTabs write SetShowNewSnippetsInNewTabs;
 
+    { TODO: Remove "user-defined" parameters below: either delete them and
+            associated settings or replace with something based on synch-spaces.
+    }
     ///  <summary>Gets heading colour used for snippets from a specified
     ///  database.</summary>
     ///  <param name="UserDefined">Boolean [in] Required database: True for user
@@ -156,6 +159,9 @@ type
     property DBHeadingColours[UserDefined: Boolean]: TColor
       read GetDBHeadingColour write SetDBHeadingColour;
 
+    { TODO: Merge all custom colours into one entry for colour dialogue box,
+            either globally or as used here. Either way get rid of user-define
+            parameter.}
     ///  <summary>Gets custom colours available for headings for specified
     ///  database.</summary>
     ///  <param name="UserDefined">Boolean [in] Required database: True for user
@@ -952,6 +958,7 @@ begin
   );
 
   // Read display section
+  // TODO: change some names where "main" of "user" db are referred to
   Storage := Settings.ReadSection(ssPreferences, cDisplay);
   fOverviewStartState := TOverviewStartState(
     Storage.GetInteger('OverviewStartState', Ord(ossExpanded))

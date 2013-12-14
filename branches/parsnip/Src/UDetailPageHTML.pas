@@ -680,6 +680,8 @@ end;
 
 function TTagsPageHTML.GetH1ClassName: string;
 begin
+  { TODO -cSynch Spaces: rethink following placeholder re synch-spaces: may need
+                         style attrib to set required colour. }
   Result := 'userdb';
 end;
 

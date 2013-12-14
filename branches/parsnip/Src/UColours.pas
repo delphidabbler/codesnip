@@ -64,6 +64,7 @@ const
   clNewTabText          = cl3DLight;    // color of text displayed in new tabs
 
   // colours of snippet titles / heading
+  { TODO -cSyncSpaces : rethink following colours in light of synch-spaces }
   clMainSnippet         = clWindowText; // main database snippets
   clUserSnippet         = clBlue;       // user database snippets
 

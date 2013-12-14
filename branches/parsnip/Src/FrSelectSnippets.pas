@@ -50,6 +50,8 @@ type
       }
       TTVDraw = class(TSnippetsTVDraw)
       strict protected
+        { TODO: re-implement and re-comment this method re synch spaces or
+                remove it }
         function IsUserDefinedNode(const Node: TTreeNode): Boolean; override;
           {Checks if a node represents a user defined snippets object.
             @param Node [in] Node to be checked.
