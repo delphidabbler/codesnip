@@ -169,6 +169,7 @@ type
     ['{CE0E8AB9-0EA0-431D-87B0-E60264E398EE}']
     function GetEnumerator: IEnumerator<TTag>;
     function Contains(const ATag: TTag): Boolean;
+    function ContainsSubSet(ASubSet: ITagSet): Boolean;
     function GetCount: Integer;
     function IsEmpty: Boolean;
     function Filter(const AFilterFn: TTagFilter): ITagSet;

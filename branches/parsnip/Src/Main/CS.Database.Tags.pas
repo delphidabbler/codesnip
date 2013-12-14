@@ -33,6 +33,7 @@ type
     destructor Destroy; override;
     function GetEnumerator: IEnumerator<TTag>;
     function Contains(const ATag: TTag): Boolean;
+    function ContainsSubSet(ASubSet: ITagSet): Boolean;
     function GetCount: Integer;
     function IsEmpty: Boolean;
     function Filter(const AFilterFn: TTagFilter): ITagSet;
@@ -77,6 +78,16 @@ end;
 function TTagSet.Contains(const ATag: TTag): Boolean;
 begin
   Result := fTags.Contains(ATag);
+end;
+
+function TTagSet.ContainsSubSet(ASubSet: ITagSet): Boolean;
+var
+  Tag: TTag;
+begin
+  for Tag in ASubSet do
+    if not fTags.Contains(Tag) then
+      Exit(False);
+  Result := True;
 end;
 
 constructor TTagSet.Create;
