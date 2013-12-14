@@ -188,11 +188,6 @@ type
     ///  <summary>Creates an initial letter view instance associated with a
     ///  given letter.</summary>
     class function CreateInitialLetterView(const Letter: TInitialLetter): IView;
-    ///  <summary>Creates a view of given database object. View type depends on
-    ///  the object's type.</summary>
-    ///  <remarks>DBObj must be of a type that is valid database object type or
-    ///  be nil.</remarks>
-    class function CreateDBItemView(const DBObj: TObject): IView;
   end;
 
 
@@ -816,17 +811,6 @@ begin
     raise EBug.CreateFmt(
       '%s.CreateCopy: View does not support a valid interface', [ClassName]
     );
-end;
-
-class function TViewFactory.CreateDBItemView(const DBObj: TObject): IView;
-begin
-  Result := nil;
-  if not Assigned(DBObj) then
-    Result := TViewFactory.CreateNullView
-  else if DBObj is TSnippet then
-    Result := TViewFactory.CreateSnippetView(DBObj as TSnippet);
-  Assert(Assigned(Result),
-    ClassName + '.CreateDBItemView: DBObj is not valid type');
 end;
 
 class function TViewFactory.CreateDBUpdateInfoView: IView;
