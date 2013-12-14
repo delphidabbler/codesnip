@@ -162,7 +162,7 @@ begin
   // Clear history if snippet changed or removed
   // TODO: add support for changes to tags when such events are added
   case EventInfo.Kind of
-    evSnippetDeleted, evSnippetChanged:
+    evSnippetDeleted:
       Clear;
     evSnippetAdded:
       NewItem(
