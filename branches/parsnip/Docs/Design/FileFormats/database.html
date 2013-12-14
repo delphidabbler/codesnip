@@ -182,11 +182,12 @@
 
 <dl>
   <dt>
-    <em>Watermark</em> (<kbd>FixedString[14]</kbd>)
+    <em>Watermark</em> (<kbd>FixedString[44]</kbd>)
   </dt>
   <dd>
     Identifies the file as a master database file. The field always has the
-    value &quot;<kbd>CSUSERDBMASTER</kbd>&quot; (without the quotes).
+    value &quot;<kbd>CSDB-MASTER-0562C0E6F20B4C2F945D1FDEC6393C4C</kbd>&quot;
+    (without the quotes).
   </dd>
   <dt>
     <em>FileVersion</em> (<kbd>FixedString[4]</kbd>)
@@ -271,16 +272,17 @@
 </h4>
 
 <p>
-  The fixed fields are as follows. They appear in the given order.
+  The fixed fields are as follows. They must appear in the given order.
 </p>
 
 <dl>
   <dt>
-    <em>Watermark</em> (<kbd>FixedString[15]</kbd>)
+    <em>Watermark</em> (<kbd>FixedString[45]</kbd>)
   </dt>
   <dd>
     Identifies the file as a snippet file. The field always has the value
-    &quot;<kbd>CSUSERDBSNIPPET</kbd>&quot; (without the quotes).
+    &quot;<kbd>CSDB-SNIPPET-0562C0E6F20B4C2F945D1FDEC6393C4C</kbd>&quot;
+    (without the quotes).
   </dd>
   <dt>
     <em>FileVersion</em> (<kbd>FixedString[4]</kbd>)
