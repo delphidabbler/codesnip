@@ -191,8 +191,9 @@ uses
   UUtils;
 
 const
-  MasterFileWatermark = 'CSUSERDBMASTER';
-  SnippetFileWatermark = 'CSUSERDBSNIPPET';
+  WatermarkUID = '0562C0E6F20B4C2F945D1FDEC6393C4C';
+  MasterFileWatermark  = 'CSDB-MASTER-' + WatermarkUID;
+  SnippetFileWatermark = 'CSDB-SNIPPET-' + WatermarkUID;
   CurrentVersion = 7;
   DBFileNamePrefix = 'csdb';
   MasterFileName = DBFileNamePrefix + '.master.dat';
@@ -374,7 +375,6 @@ end;
 
 procedure TDBNativeWriter.RemoveUnwantedFiles(const ATable: TDBSnippetsTable);
 var
-  SnippetID: TSnippetID;
   Snippet: TDBSnippet;
   AllFiles: TStringList;
   WantedFiles: THashSet<string>;
