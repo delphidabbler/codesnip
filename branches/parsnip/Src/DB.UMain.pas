@@ -115,8 +115,6 @@ type
     procedure FlagUpdate;
     procedure TriggerSnippetChangeEvent(const Kind: TDatabaseChangeEventKind;
       const SnippetID: TSnippetID);
-    procedure TriggerTagChangeEvent(const Kind: TDatabaseChangeEventKind;
-      const Tag: TTag);
     procedure TriggerNullDataEvent(const Kind: TDatabaseChangeEventKind);
     procedure TriggerChangeEvent(const Kind: TDatabaseChangeEventKind;
       const Info: TObject = nil);
@@ -165,6 +163,10 @@ type
     // Returns a list of IDs of all snippet that refer to (i.e. cross-reference)
     // the snippet with the given ID.
     function GetReferrersTo(const ASnippetID: TSnippetID): ISnippetIDList;
+
+    function NewSnippet: IEditableSnippet;
+    procedure AddSnippet(ASnippet: IEditableSnippet);
+
     procedure AddChangeEventHandler(const Handler: TNotifyEventInfo);
       {Adds a change event handler to list of listeners.
         @param Handler [in] Event handler to be added.
@@ -597,6 +599,39 @@ begin
   fChangeEvents.AddHandler(Handler);
 end;
 
+procedure TDatabase.AddSnippet(ASnippet: IEditableSnippet);
+var
+  DBSnippet: TDBSnippet;
+resourcestring
+  // Error message
+  sNameExists = 'Snippet "%s" already exists in database';
+begin
+  if fSnippetsTable.Contains(ASnippet.ID) then
+      raise ECodeSnip.CreateFmt(sNameExists, [ASnippet.ID.ToString]);
+  if not fAllTags.ContainsSubSet(ASnippet.Tags) then
+  begin
+    { TODO: Add TriggerNullDataEvent(evChangeBegin); }
+    fAllTags.Include(ASnippet.Tags);
+    { TODO: Add change event for all tags added. Something like:
+       for Tag in ASnippet.Tags do
+        TriggerTagChangeEvent(evTagAdded, Tag);  }
+    { TODO: Add TriggerNullDataEvent(evChangeEnd); }
+  end;
+  TriggerNullDataEvent(evChangeBegin);
+  try
+    // TODO: Do we need to check snippet references and xrefs here?
+    DBSnippet := TDBSnippet.CreateFrom(ASnippet);
+    FlagUpdate; // sets fLastModifed
+    DBSnippet.SetCreated(fLastModified);
+    DBSnippet.SetModified(fLastModified);
+    fSnippetsTable.Add(DBSnippet);
+    Query.Update;
+    TriggerSnippetChangeEvent(evSnippetAdded, ASnippet.ID);
+  finally
+    TriggerNullDataEvent(evChangeEnd);
+  end;
+end;
+
 procedure TDatabase.Finalize;
 begin
   fChangeEvents.Free;
@@ -699,6 +734,15 @@ begin
   Result := Row.CloneAsReadOnly;
 end;
 
+function TDatabase.NewSnippet: IEditableSnippet;
+begin
+  // Snippet IDs created in TEditableSnippet.CreateNew *should* be unique, but
+  // we make sure the ID is unique, just in case!
+  repeat
+    Result := TEditableSnippet.CreateNew;
+  until not fSnippetsTable.Contains(Result.ID);
+end;
+
 procedure TDatabase.RemoveChangeEventHandler(const Handler: TNotifyEventInfo);
 begin
   fChangeEvents.RemoveHandler(Handler);
@@ -753,19 +797,6 @@ var
   Obj: TBox<TSnippetID>;
 begin
   Obj := TBox<TSnippetID>.Create(SnippetID);
-  try
-    TriggerChangeEvent(Kind, Obj);
-  finally
-    Obj.Free;
-  end;
-end;
-
-procedure TDatabase.TriggerTagChangeEvent(const Kind: TDatabaseChangeEventKind;
-  const Tag: TTag);
-var
-  Obj: TBox<TTag>;
-begin
-  Obj := TBox<TTag>.Create(Tag);
   try
     TriggerChangeEvent(Kind, Obj);
   finally
