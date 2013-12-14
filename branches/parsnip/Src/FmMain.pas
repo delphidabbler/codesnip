@@ -1365,7 +1365,7 @@ begin
     Database.Save;
 
   // Unhook snippets event handler
-  _Database.RemoveChangeEventHandler(DBChangeHandler);
+  Database.RemoveChangeEventHandler(DBChangeHandler);
   // Save window state
   fWindowSettings.SplitterPos := pnlLeft.Width;
   fWindowSettings.OverviewGrouping := fMainDisplayMgr.SelectedOverviewGrouping;
@@ -1585,7 +1585,7 @@ begin
     fIsAppRegistered := TAppInfo.IsRegistered;
 
     // Set event handler for snippets database
-    _Database.AddChangeEventHandler(DBChangeHandler);
+    Database.AddChangeEventHandler(DBChangeHandler);
 
     // Load snippets database
     LoadSnippets(

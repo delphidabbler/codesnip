@@ -147,7 +147,7 @@ begin
   inherited;
   fItems := THistoryList.Create;
   Clear;
-  _Database.AddChangeEventHandler(DBChangeHandler);
+  Database.AddChangeEventHandler(DBChangeHandler);
 end;
 
 procedure THistory.DBChangeHandler(Sender: TObject; const EvtInfo: IInterface);
@@ -167,7 +167,7 @@ end;
 
 destructor THistory.Destroy;
 begin
-  _Database.RemoveChangeEventHandler(DBChangeHandler);
+  Database.RemoveChangeEventHandler(DBChangeHandler);
   fItems.Free;
   inherited;
 end;

@@ -162,7 +162,7 @@ constructor TCompileMgr.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
   fCompilers := TCompilersFactory.CreateAndLoadCompilers;
-  _Database.AddChangeEventHandler(DBChangeEventHandler);
+  Database.AddChangeEventHandler(DBChangeEventHandler);
 end;
 
 procedure TCompileMgr.DBChangeEventHandler(Sender: TObject;
@@ -187,7 +187,7 @@ destructor TCompileMgr.Destroy;
   {Class destructor. Tears down object.
   }
 begin
-  _Database.RemoveChangeEventHandler(DBChangeEventHandler);
+  Database.RemoveChangeEventHandler(DBChangeEventHandler);
   fLastCompiledSnippet.Free;
   fCompilers := nil;
   inherited;

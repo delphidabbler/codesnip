@@ -110,7 +110,7 @@ begin
   fFavourites := TFavourites.Create;
   fNotifier := Notifier;
   TFavouritesPersist.Load(fFavourites);
-  _Database.AddChangeEventHandler(DBChangeEventHandler);
+  Database.AddChangeEventHandler(DBChangeEventHandler);
 end;
 
 procedure TFavouritesManager.DBChangeEventHandler(Sender: TObject;

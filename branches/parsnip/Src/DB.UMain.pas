@@ -31,60 +31,6 @@ uses
 
 type
 
-  TDBFilterFn = reference to function (ASnippet: ISnippet): Boolean;
-
-  TDatabase = class(TSingleton)
-  strict private
-    class var
-      fInstance: TDatabase;
-    class function GetInstance: TDatabase; static;
-  strict private
-    var
-      fSnippetsTable: TDBSnippetsTable;
-      fAllTags: ITagSet;
-      fLastModified: TUTCDateTime;
-      fDirty: Boolean;
-    procedure FlagUpdate;
-  strict protected
-    procedure Initialize; override;
-    procedure Finalize; override;
-  protected
-    { TODO: Remove these properties when _TDatabase no longer needs access to
-            them }
-    // NOTE: These properties have been made protected so that _TDatabase can
-    //       directly access them using unit scope.
-    //       DON'T make this section strict.
-    property __SnippetsTable: TDBSnippetsTable read fSnippetsTable;
-    property __AllTags: ITagSet read fAllTags;
-    procedure __SetDirty(Dirty: Boolean);
-    property __Updated: Boolean read fDirty write __SetDirty;
-  public
-    class property Instance: TDatabase read GetInstance;
-  public
-    procedure Load;
-    procedure Save;
-    function IsDirty: Boolean;
-    function LookupEditableSnippet(const ASnippetID: TSnippetID):
-      IEditableSnippet;
-    function TryLookupEditableSnippet(const ASnippetID: TSnippetID;
-      out ASnippet: IEditableSnippet): Boolean;
-    function LookupSnippet(const ASnippetID: TSnippetID): ISnippet;
-    function TryLookupSnippet(const ASnippetID: TSnippetID;
-      out ASnippet: ISnippet): Boolean;
-    function SelectSnippets(FilterFn: TDBFilterFn): ISnippetIDList;
-    function GetAllSnippets: ISnippetIDList;
-    function GetAllTags: ITagSet;
-    function SnippetExists(const ASnippetID: TSnippetID): Boolean;
-    function SnippetCount: Integer;
-    function IsEmpty: Boolean;
-    // Returns a list of IDs of all snippets that depend on the snippet with
-    // the given ID.
-    function GetDependentsOf(const ASnippetID: TSnippetID): ISnippetIDList;
-    // Returns a list of IDs of all snippet that refer to (i.e. cross-reference)
-    // the snippet with the given ID.
-    function GetReferrersTo(const ASnippetID: TSnippetID): ISnippetIDList;
-  end;
-
   {
   TDatabaseChangeEventKind:
     Enumeration that specifies the different kind of change events triggered by
@@ -124,11 +70,96 @@ type
       depends on Kind. May be nil}
   end;
 
-  _IDatabase = interface(IInterface)
-    ['{A280DEEF-0336-4264-8BD0-7CDFBB207D2E}']
-    function Lookup(const SnippetID: TSnippetID): TSnippet;
-    function TryLookup(const SnippetID: TSnippetID; out Snippet: TSnippet):
-      Boolean;
+  TDBFilterFn = reference to function (ASnippet: ISnippet): Boolean;
+
+  TDatabase = class(TSingleton)
+  strict private
+    type
+      {
+      TEventInfo:
+        Class that provides information about a change event.
+      }
+      TEventInfo = class(TInterfacedObject, IDatabaseChangeEventInfo)
+      strict private
+        fKind: TDatabaseChangeEventKind;  // Kind of event
+        fInfo: TObject;                   // Extra info about event
+      public
+        constructor Create(const Kind: TDatabaseChangeEventKind;
+          const Info: TObject = nil);
+          {Constructor. Creates an event information object.
+            @param Kind [in] Kind of event.
+            @param Info [in] Reference to further information about the event.
+               May be nil if event doesn't have additional information.
+          }
+        { IDatabaseChangeEventInfo methods }
+        function GetKind: TDatabaseChangeEventKind;
+          {Gets kind (type) of event.
+            @return Event kind.
+          }
+        function GetInfo: TObject;
+          {Gets additional information about event.
+            @return Object that provides required information.
+          }
+      end;
+  strict private
+    class var
+      fInstance: TDatabase;
+    class function GetInstance: TDatabase; static;
+  strict private
+    var
+      fSnippetsTable: TDBSnippetsTable;
+      fAllTags: ITagSet;
+      fLastModified: TUTCDateTime;
+      fDirty: Boolean;
+      fChangeEvents: TMulticastEvents;  // List of change event handlers
+    procedure FlagUpdate;
+    procedure TriggerChangeEvent(const Kind: TDatabaseChangeEventKind;
+      const Info: TObject = nil);
+      {Triggers a change event. Notifies all registered listeners.
+        @param Kind [in] Kind of event.
+        @param Info [in] Reference to any further information for event. May be
+          nil.
+      }
+  strict protected
+    procedure Initialize; override;
+    procedure Finalize; override;
+  protected
+    { TODO: Remove these properties when _TDatabase no longer needs access to
+            them }
+    // NOTE: These properties have been made protected so that _TDatabase can
+    //       directly access them using unit scope.
+    //       DON'T make this section strict.
+    property __SnippetsTable: TDBSnippetsTable read fSnippetsTable;
+    property __AllTags: ITagSet read fAllTags;
+    procedure __SetDirty(Dirty: Boolean);
+    property __Updated: Boolean read fDirty write __SetDirty;
+    procedure __TriggerEvent(const Kind: TDatabaseChangeEventKind;
+      const Info: TObject = nil);
+  public
+    class property Instance: TDatabase read GetInstance;
+  public
+    procedure Load;
+    procedure Save;
+    function IsDirty: Boolean;
+    function LookupEditableSnippet(const ASnippetID: TSnippetID):
+      IEditableSnippet;
+    function TryLookupEditableSnippet(const ASnippetID: TSnippetID;
+      out ASnippet: IEditableSnippet): Boolean;
+    function LookupSnippet(const ASnippetID: TSnippetID): ISnippet;
+    function TryLookupSnippet(const ASnippetID: TSnippetID;
+      out ASnippet: ISnippet): Boolean;
+    function SelectSnippets(FilterFn: TDBFilterFn): ISnippetIDList;
+    function GetAllSnippets: ISnippetIDList;
+    function GetAllTags: ITagSet;
+    function SnippetExists(const ASnippetID: TSnippetID): Boolean;
+    function SnippetCount: Integer;
+    function IsEmpty: Boolean;
+    // Returns a list of IDs of all snippets that depend on the snippet with
+    // the given ID.
+    function GetDependentsOf(const ASnippetID: TSnippetID): ISnippetIDList;
+    // Returns a list of IDs of all snippet that refer to (i.e. cross-reference)
+    // the snippet with the given ID.
+    function GetReferrersTo(const ASnippetID: TSnippetID): ISnippetIDList;
     procedure AddChangeEventHandler(const Handler: TNotifyEventInfo);
       {Adds a change event handler to list of listeners.
         @param Handler [in] Event handler to be added.
@@ -137,6 +168,13 @@ type
       {Removes a change event handler from list of listeners.
         @param Handler [in] Handler to remove from list.
       }
+  end;
+
+  _IDatabase = interface(IInterface)
+    ['{A280DEEF-0336-4264-8BD0-7CDFBB207D2E}']
+    function Lookup(const SnippetID: TSnippetID): TSnippet;
+    function TryLookup(const SnippetID: TSnippetID; out Snippet: TSnippet):
+      Boolean;
   end;
 
   {
@@ -229,41 +267,6 @@ type
     IDatabaseEdit
   )
   strict private
-    fChangeEvents: TMulticastEvents;  // List of change event handlers
-    type
-      {
-      TEventInfo:
-        Class that provides information about a change event.
-      }
-      TEventInfo = class(TInterfacedObject, IDatabaseChangeEventInfo)
-      strict private
-        fKind: TDatabaseChangeEventKind;  // Kind of event
-        fInfo: TObject;                   // Extra info about event
-      public
-        constructor Create(const Kind: TDatabaseChangeEventKind;
-          const Info: TObject = nil);
-          {Constructor. Creates an event information object.
-            @param Kind [in] Kind of event.
-            @param Info [in] Reference to further information about the event.
-               May be nil if event doesn't have additional information.
-          }
-        { IDatabaseChangeEventInfo methods }
-        function GetKind: TDatabaseChangeEventKind;
-          {Gets kind (type) of event.
-            @return Event kind.
-          }
-        function GetInfo: TObject;
-          {Gets additional information about event.
-            @return Object that provides required information.
-          }
-      end;
-    procedure TriggerEvent(const Kind: TDatabaseChangeEventKind;
-      const Info: TObject = nil);
-      {Triggers a change event. Notifies all registered listeners.
-        @param Kind [in] Kind of event.
-        @param Info [in] Reference to any further information for event. May be
-          nil.
-      }
     function InternalAddSnippet(const SnippetID: TSnippetID;
       const Data: TSnippetEditData): TSnippet;
       {Adds a new snippet to the database. Assumes snippet not already in
@@ -287,21 +290,7 @@ type
       }
     function MakeValidRefs(const Refs: TSnippetReferences): TSnippetReferences;
   public
-    constructor Create;
-      {Constructor. Sets up new empty object.
-      }
-    destructor Destroy; override;
-      {Destructor. Tidies up and tears down object.
-      }
     { IDatabase methods }
-    procedure AddChangeEventHandler(const Handler: TNotifyEventInfo);
-      {Adds a change event handler to list of listeners.
-        @param Handler [in] Event handler to be added.
-      }
-    procedure RemoveChangeEventHandler(const Handler: TNotifyEventInfo);
-      {Removes a change event handler from list of listeners.
-        @param Handler [in] Handler to remove from list.
-      }
     function Lookup(const SnippetID: TSnippetID): TSnippet;
     function TryLookup(const SnippetID: TSnippetID; out Snippet: TSnippet):
       Boolean;
@@ -372,14 +361,6 @@ end;
 
 { _TDatabase }
 
-procedure _TDatabase.AddChangeEventHandler(const Handler: TNotifyEventInfo);
-  {Adds a change event handler to list of listeners.
-    @param Handler [in] Event handler to be added.
-  }
-begin
-  fChangeEvents.AddHandler(Handler);
-end;
-
 function _TDatabase.AddSnippet(Data: TSnippetEditData): TSnippet;
   {Adds a new snippet to the database.
     @param Data [in] Record storing new snippet's properties and references.
@@ -392,7 +373,7 @@ var
   NewSnippetID: TSnippetID;
 begin
   Result := nil;  // keeps compiler happy
-  TriggerEvent(evChangeBegin);
+  Database.__TriggerEvent(evChangeBegin);
   try
     NewSnippetID := TSnippetID.Create(UniqueSnippetName);
     // Check if snippet with same name exists in database: error if so
@@ -401,10 +382,10 @@ begin
     CleanUpRefs(Data.Refs);
     Result := InternalAddSnippet(NewSnippetID, Data);
     Query.Update;
-    TriggerEvent(evSnippetAdded, Result);
+    Database.__TriggerEvent(evSnippetAdded, Result);
   finally
     Database.__Updated := True;
-    TriggerEvent(evChangeEnd);
+    Database.__TriggerEvent(evChangeEnd);
   end;
 end;
 
@@ -423,14 +404,6 @@ procedure _TDatabase.CleanUpRefs(var Refs: TSnippetReferences);
 begin
   Refs.RequiredSnippets := CleanSnippetList(Refs.RequiredSnippets);
   Refs.XRefs := CleanSnippetList(Refs.XRefs);
-end;
-
-constructor _TDatabase.Create;
-  {Constructor. Sets up new empty object.
-  }
-begin
-  inherited Create;
-  fChangeEvents := TMultiCastEvents.Create(Self);
 end;
 
 function _TDatabase.CreateTempSnippet(const Snippet: TSnippet): TSnippet;
@@ -480,8 +453,8 @@ var
 begin
   Assert(Database.__SnippetsTable.Contains(Snippet.ID),
     ClassName + '.DeleteSnippet: Snippet is not in the database');
-  TriggerEvent(evChangeBegin);
-  TriggerEvent(evBeforeSnippetDelete, Snippet);
+  Database.__TriggerEvent(evChangeBegin);
+  Database.__TriggerEvent(evBeforeSnippetDelete, Snippet);
   // Get list of referencing and dependent snippets
   Dependents := nil;
   Referrers := nil;
@@ -501,17 +474,9 @@ begin
     Query.Update;
   finally
     Database.__Updated := True;
-    TriggerEvent(evSnippetDeleted);
-    TriggerEvent(evChangeEnd);
+    Database.__TriggerEvent(evSnippetDeleted);
+    Database.__TriggerEvent(evChangeEnd);
   end;
-end;
-
-destructor _TDatabase.Destroy;
-  {Destructor. Tidies up and tears down object.
-  }
-begin
-  fChangeEvents.Free;
-  inherited;
 end;
 
 function _TDatabase.DuplicateSnippet(const Snippet: TSnippet;
@@ -581,27 +546,6 @@ begin
   CleanUpRefs(Result);
 end;
 
-procedure _TDatabase.RemoveChangeEventHandler(const Handler: TNotifyEventInfo);
-  {Removes a change event handler from list of listeners.
-    @param Handler [in] Handler to remove from list.
-  }
-begin
-  fChangeEvents.RemoveHandler(Handler);
-end;
-
-procedure _TDatabase.TriggerEvent(const Kind: TDatabaseChangeEventKind;
-  const Info: TObject);
-  {Triggers a change event. Notifies all registered listeners.
-    @param Kind [in] Kind of event.
-    @param Info [in] Reference to any further information for event. May be nil.
-  }
-var
-  EvtInfo: IDatabaseChangeEventInfo;  // event information object
-begin
-  EvtInfo := TEventInfo.Create(Kind, Info);
-  fChangeEvents.TriggerEvents(EvtInfo);
-end;
-
 function _TDatabase.TryLookup(const SnippetID: TSnippetID;
   out Snippet: TSnippet): Boolean;
 begin
@@ -624,8 +568,8 @@ procedure _TDatabase.UpdateSnippet(const Snippet: TSnippet;
     @param Data [in] Record containing revised data.
   }
 begin
-  TriggerEvent(evChangeBegin);
-  TriggerEvent(evBeforeSnippetChange, Snippet);
+  Database.__TriggerEvent(evChangeBegin);
+  Database.__TriggerEvent(evBeforeSnippetChange, Snippet);
   try
     CleanUpRefs(Data.Refs);
     Snippet.Update(Data);
@@ -633,48 +577,23 @@ begin
     // ensure any new, unknown, tags are added to set of all tags
     Database.__AllTags.Include(Snippet.Tags);
     Query.Update;
-    TriggerEvent(evSnippetChanged, Snippet);
+    Database.__TriggerEvent(evSnippetChanged, Snippet);
   finally
     Database.__Updated := True;
-    TriggerEvent(evChangeEnd);
+    Database.__TriggerEvent(evChangeEnd);
   end;
-end;
-
-{ TSnippets.TEventInfo }
-
-constructor _TDatabase.TEventInfo.Create(const Kind: TDatabaseChangeEventKind;
-  const Info: TObject);
-  {Constructor. Creates an event information object.
-    @param Kind [in] Kind of event.
-    @param Info [in] Reference to further information about the event. May be
-      nil if event doesn't have additional information.
-  }
-begin
-  inherited Create;
-  fKind := Kind;
-  fInfo := Info;
-end;
-
-function _TDatabase.TEventInfo.GetInfo: TObject;
-  {Gets additional information about event.
-    @return Object that provides required information.
-  }
-begin
-  Result := fInfo;
-end;
-
-function _TDatabase.TEventInfo.GetKind: TDatabaseChangeEventKind;
-  {Gets kind (type) of event.
-    @return Event kind.
-  }
-begin
-  Result := fKind;
 end;
 
 { TDatabase }
 
+procedure TDatabase.AddChangeEventHandler(const Handler: TNotifyEventInfo);
+begin
+  fChangeEvents.AddHandler(Handler);
+end;
+
 procedure TDatabase.Finalize;
 begin
+  fChangeEvents.Free;
   fSnippetsTable.Free;
   inherited;
 end;
@@ -734,6 +653,7 @@ begin
   inherited;
   fSnippetsTable := TDBSnippetsTable.Create;
   fAllTags := TTagSet.Create;
+  fChangeEvents := TMultiCastEvents.Create(Self);
 end;
 
 function TDatabase.IsDirty: Boolean;
@@ -773,6 +693,11 @@ begin
   Result := Row.CloneAsReadOnly;
 end;
 
+procedure TDatabase.RemoveChangeEventHandler(const Handler: TNotifyEventInfo);
+begin
+  fChangeEvents.RemoveHandler(Handler);
+end;
+
 procedure TDatabase.Save;
 var
   Writer: IDatabaseWriter;
@@ -802,6 +727,15 @@ begin
   Result := fSnippetsTable.Contains(ASnippetID);
 end;
 
+procedure TDatabase.TriggerChangeEvent(const Kind: TDatabaseChangeEventKind;
+  const Info: TObject);
+var
+  EvtInfo: IDatabaseChangeEventInfo;  // event information object
+begin
+  EvtInfo := TEventInfo.Create(Kind, Info);
+  fChangeEvents.TriggerEvents(EvtInfo);
+end;
+
 function TDatabase.TryLookupEditableSnippet(const ASnippetID: TSnippetID;
   out ASnippet: IEditableSnippet): Boolean;
 begin
@@ -828,6 +762,32 @@ begin
     FlagUpdate
   else
     fDirty := False;
+end;
+
+procedure TDatabase.__TriggerEvent(const Kind: TDatabaseChangeEventKind;
+  const Info: TObject);
+begin
+  TriggerChangeEvent(Kind, Info);
+end;
+
+{ TDatabase.TEventInfo }
+
+constructor TDatabase.TEventInfo.Create(const Kind: TDatabaseChangeEventKind;
+  const Info: TObject);
+begin
+  inherited Create;
+  fKind := Kind;
+  fInfo := Info;
+end;
+
+function TDatabase.TEventInfo.GetInfo: TObject;
+begin
+  Result := fInfo;
+end;
+
+function TDatabase.TEventInfo.GetKind: TDatabaseChangeEventKind;
+begin
+  Result := fKind;
 end;
 
 initialization
