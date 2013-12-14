@@ -24,7 +24,7 @@ uses
   Generics.Collections,
   // Project
   CS.ActiveText,
-  DB.USnippet,
+  CS.Database.Types,
   SWAG.UCommon;
 
 
@@ -56,7 +56,7 @@ type
     ///  <summary>Records the data from the given SWAG snippet into a data
     ///  structure suitable for adding to the snippets database.</summary>
     function BuildSnippetInfo(const SWAGSnippet: TSWAGSnippet):
-      TSnippetEditData;
+      IEditableSnippet;
     ///  <summary>Imports (i.e. adds) the given SWAG snippet into the database.
     ///  </summary>
     procedure ImportSnippet(const SWAGSnippet: TSWAGSnippet);
@@ -94,7 +94,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  CS.Database.Types,
+  CS.Database.Tags,
   CS.SourceCode.Languages,
   DB.UMain,
   USnippetValidator;
@@ -103,7 +103,7 @@ uses
 { TSWAGImporter }
 
 function TSWAGImporter.BuildSnippetInfo(const SWAGSnippet: TSWAGSnippet):
-  TSnippetEditData;
+  IEditableSnippet;
 
   // Constructs and returns the new snippet's description as active text.
   function BuildDescription: IActiveText;
@@ -132,19 +132,27 @@ function TSWAGImporter.BuildSnippetInfo(const SWAGSnippet: TSWAGSnippet):
     Result.AddElem(TActiveTextFactory.CreateActionElem(ekPara, fsClose));
   end;
 
+  function BuildTags: ITagSet;
+  begin
+    Result := TTagSet.Create;
+    Result.Add(TTag.Create(SWAGTagName));
+  end;
+
 begin
-  Result.Init;
-  Result.Props.Kind := skFreeform;
-  Result.Props.Tags.Add(TTag.Create(SWAGTagName));
-  Result.Props.Desc := BuildDescription;
-  Result.Props.SourceCode := SWAGSnippet.SourceCode;
+  Result := Database.NewSnippet;
+  Result.Kind := skFreeform;
+  Result.Tags := BuildTags;
+  Result.Description := BuildDescription;
+  Result.SourceCode := SWAGSnippet.SourceCode;
   if SWAGSnippet.IsDocument then
-    Result.Props.LanguageID := TSourceCodeLanguageID.Create('Text')
+    Result.LanguageID := TSourceCodeLanguageID.Create('Text')
   else
-    Result.Props.LanguageID := TSourceCodeLanguageID.Create('Pascal');
-  Result.Props.Title := SWAGSnippet.Title;
-  Result.Props.Notes := BuildNotes;
-  // TSnippetEditData.Refs properties can keep default values
+    Result.LanguageID := TSourceCodeLanguageID.Create('Pascal');
+  Result.Title := SWAGSnippet.Title;
+  Result.Notes := BuildNotes;
+  // NOTE: Snippet has no required units, required snippets or cross-references
+  { TODO: add SWAG snippet ID (passed through MakeValidSnippetName to snippet's
+          LinkInfo property, when implemented. }
 end;
 
 constructor TSWAGImporter.Create;
@@ -172,13 +180,9 @@ begin
 end;
 
 procedure TSWAGImporter.ImportSnippet(const SWAGSnippet: TSWAGSnippet);
-var
-  SnippetDetails: TSnippetEditData;   // data describing new snippet
 begin
-  SnippetDetails := BuildSnippetInfo(SWAGSnippet);
-  { TODO: add SWAG snippet ID (passed through MakeValidSnippetName to snippet's
-          LinkInfo property, when implemented. }
-  (_Database as IDatabaseEdit).AddSnippet(SnippetDetails);
+  // TODO: implement a "bulk add snippet" option into TDatabase
+  Database.AddSnippet(BuildSnippetInfo(SWAGSnippet));
 end;
 
 procedure TSWAGImporter.IncludeSnippet(const SWAGSnippet: TSWAGSnippet);
