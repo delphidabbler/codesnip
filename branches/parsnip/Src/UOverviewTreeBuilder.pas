@@ -40,7 +40,7 @@ type
   strict private
     var
       fTreeView: TTreeView;           // Value of TreeView property
-      fSnippetIDList: ISnippetIDList; // Value of SnippetList property
+      fSnippetIDList: ISnippetIDList; // Value of SnippetIDList property
   strict protected
     property TreeView: TTreeView read fTreeView;
       {Reference to treeview populated by class}
