@@ -9,7 +9,6 @@
  * $Date$
  *
  * Singleton object that gives access to persistent configuration information.
- * the user.
 }
 
 
