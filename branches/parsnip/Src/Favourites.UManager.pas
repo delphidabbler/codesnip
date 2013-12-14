@@ -84,7 +84,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  DB.UMain, DB.USnippet, Favourites.UPersist, FmFavouritesDlg;
+  DB.UMain, DB.USnippet, Favourites.UPersist, FmFavouritesDlg, UBox;
 
 
 { TFavouritesManager }
@@ -121,7 +121,7 @@ var
   ///  <summary>Extracts snippet ID from EvtInfo object.</summary>
   function EvtInfoToSnippetID: TSnippetID;
   begin
-    Result := (EventInfo.Info as TSnippet).ID;
+    Result := (EventInfo.Info as TBox<TSnippetID>).Value;
   end;
 
 begin

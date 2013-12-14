@@ -298,7 +298,10 @@ uses
   // Delphi
   SysUtils,
   // Project
+  CS.Database.Types,
   DB.UMain,
+  DB.USnippet,
+  UBox,
   UPreferences,
   UQuery,
   UUtils;
@@ -415,6 +418,14 @@ procedure TMainDisplayMgr.DBChangeEventHandler(Sender: TObject;
   const EvtInfo: IInterface);
 var
   EventInfo: IDatabaseChangeEventInfo;  // information about the event
+  Snippet: TSnippet;
+
+  ///  <summary>Extracts snippet ID from EvtInfo object.</summary>
+  function EvtInfoToSnippetID: TSnippetID;
+  begin
+    Result := (EventInfo.Info as TBox<TSnippetID>).Value;
+  end;
+
 begin
   EventInfo := EvtInfo as IDatabaseChangeEventInfo;
   // TODO: add support for changes to tags when such events are added
@@ -423,18 +434,23 @@ begin
       PrepareForDBChange;
 
     evBeforeSnippetChange, evBeforeSnippetDelete:
-      PrepareForDBViewChange(TViewFactory.CreateDBItemView(EventInfo.Info));
+      PrepareForDBViewChange(
+        TViewFactory.CreateSnippetView(_Database.Lookup(EvtInfoToSnippetID))
+      );
 
     evSnippetChanged:
       UpdateDBView(
-        fChangingDetailPageIdx, TViewFactory.CreateDBItemView(EventInfo.Info)
+        fChangingDetailPageIdx,
+        TViewFactory.CreateSnippetView(_Database.Lookup(EvtInfoToSnippetID))
       );
 
     evSnippetDeleted:
       DeleteDBView(fChangingDetailPageIdx);
 
     evSnippetAdded:
-      AddDBView(TViewFactory.CreateDBItemView(EventInfo.Info));
+      AddDBView(
+        TViewFactory.CreateSnippetView(_Database.Lookup(EvtInfoToSnippetID))
+      );
   end;
 end;
 

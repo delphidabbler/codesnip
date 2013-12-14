@@ -125,7 +125,12 @@ uses
   // Delphi
   SysUtils,
   // Project
-  Compilers.UCompilers, DB.UMain, FmCompErrorDlg, FmCompilersDlg,
+  CS.Database.Types,
+  Compilers.UCompilers,
+  DB.UMain,
+  FmCompErrorDlg,
+  FmCompilersDlg,
+  UBox,
   UTestCompileUI;
 
 
@@ -169,15 +174,17 @@ procedure TCompileMgr.DBChangeEventHandler(Sender: TObject;
   const EvtInfo: IInterface);
 var
   EventInfo: IDatabaseChangeEventInfo;  // information about the event
+  ChangingSnippetID: TSnippetID;
 begin
   if not Assigned(fLastCompiledSnippet) then
     Exit;
   EventInfo := EvtInfo as IDatabaseChangeEventInfo;
   if not (EventInfo.Kind in [evBeforeSnippetChange, evBeforeSnippetDelete]) then
     Exit;
-  Assert(EventInfo.Info is TSnippet,
-    ClassName + '.DBChangeEventHandler: EventInfo is not TSnippet');
-  if (EventInfo.Info as TSnippet).IsEqual(fLastCompiledSnippet) then
+  Assert(EventInfo.Info is TBox<TSnippetID>,
+    ClassName + '.DBChangeEventHandler: EventInfo is not TBox<TSnippetID>');
+  ChangingSnippetID := (EventInfo.Info as TBox<TSnippetID>).Value;
+  if ChangingSnippetID = fLastCompiledSnippet.ID then
     // Snippet being changed is last compiled snippet: we use FreeAndNil instead
     // of .Free to signal that there is no stored compiled snippet to view.
     FreeAndNil(fLastCompiledSnippet);

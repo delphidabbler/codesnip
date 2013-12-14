@@ -111,7 +111,11 @@ uses
   // Delphi
   SysUtils,
   // Project
-  DB.UMain, UExceptions;
+  CS.Database.Types,
+  DB.UMain,
+  DB.USnippet,
+  UBox,
+  UExceptions;
 
 
 { THistory }
@@ -153,6 +157,7 @@ end;
 procedure THistory.DBChangeHandler(Sender: TObject; const EvtInfo: IInterface);
 var
   EventInfo: IDatabaseChangeEventInfo;  // information about the event
+  NewSnippet: TSnippet;
 begin
   EventInfo := EvtInfo as IDatabaseChangeEventInfo;
   // Clear history if snippet changed or removed
@@ -161,7 +166,12 @@ begin
     evSnippetDeleted, evSnippetChanged:
       Clear;
     evSnippetAdded:
-      NewItem(TViewFactory.CreateDBItemView(EventInfo.Info));
+    begin
+      NewSnippet := _Database.Lookup(
+        (EventInfo.Info as TBox<TSnippetID>).Value
+      );
+      NewItem(TViewFactory.CreateSnippetView(NewSnippet));
+    end;
   end;
 end;
 

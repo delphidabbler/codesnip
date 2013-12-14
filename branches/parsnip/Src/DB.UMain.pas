@@ -113,6 +113,11 @@ type
       fDirty: Boolean;
       fChangeEvents: TMulticastEvents;  // List of change event handlers
     procedure FlagUpdate;
+    procedure TriggerSnippetChangeEvent(const Kind: TDatabaseChangeEventKind;
+      const SnippetID: TSnippetID);
+    procedure TriggerTagChangeEvent(const Kind: TDatabaseChangeEventKind;
+      const Tag: TTag);
+    procedure TriggerNullDataEvent(const Kind: TDatabaseChangeEventKind);
     procedure TriggerChangeEvent(const Kind: TDatabaseChangeEventKind;
       const Info: TObject = nil);
       {Triggers a change event. Notifies all registered listeners.
@@ -249,6 +254,7 @@ uses
   CS.Database.IO.Types,
   CS.Database.Snippets,
   CS.Database.Tags,
+  UBox,
   UExceptions,
   UQuery,
   UStrUtils,
@@ -736,6 +742,37 @@ begin
   fChangeEvents.TriggerEvents(EvtInfo);
 end;
 
+procedure TDatabase.TriggerNullDataEvent(const Kind: TDatabaseChangeEventKind);
+begin
+  TriggerChangeEvent(Kind, nil);
+end;
+
+procedure TDatabase.TriggerSnippetChangeEvent(
+  const Kind: TDatabaseChangeEventKind; const SnippetID: TSnippetID);
+var
+  Obj: TBox<TSnippetID>;
+begin
+  Obj := TBox<TSnippetID>.Create(SnippetID);
+  try
+    TriggerChangeEvent(Kind, Obj);
+  finally
+    Obj.Free;
+  end;
+end;
+
+procedure TDatabase.TriggerTagChangeEvent(const Kind: TDatabaseChangeEventKind;
+  const Tag: TTag);
+var
+  Obj: TBox<TTag>;
+begin
+  Obj := TBox<TTag>.Create(Tag);
+  try
+    TriggerChangeEvent(Kind, Obj);
+  finally
+    Obj.Free;
+  end;
+end;
+
 function TDatabase.TryLookupEditableSnippet(const ASnippetID: TSnippetID;
   out ASnippet: IEditableSnippet): Boolean;
 begin
@@ -767,7 +804,12 @@ end;
 procedure TDatabase.__TriggerEvent(const Kind: TDatabaseChangeEventKind;
   const Info: TObject);
 begin
-  TriggerChangeEvent(Kind, Info);
+  if not Assigned(Info) then
+    TriggerNullDataEvent(Kind)
+  else if (Info is TSnippet) then
+    TriggerSnippetChangeEvent(Kind, (Info as TSnippet).ID)
+  else
+    raise EBug.CreateFmt('Unexpected Info object type "%s"', [Info.ClassName]);
 end;
 
 { TDatabase.TEventInfo }
