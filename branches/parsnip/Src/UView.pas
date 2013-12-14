@@ -560,7 +560,7 @@ end;
 
 function TSnippetView.GetDescription: string;
 begin
-  Database.LookupSnippet(fSnippetID).Title;
+  Result := Database.LookupSnippet(fSnippetID).Title;
 end;
 
 function TSnippetView.GetKey: IViewKey;
