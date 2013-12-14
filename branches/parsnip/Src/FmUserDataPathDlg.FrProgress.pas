@@ -10,11 +10,14 @@
  *
  * Implements a frame that displays a message and progress bar. Designed for use
  * with the TUserDataPathDlg dialogue box to indicate progress when moving the
- * user database.
+ * snippets database.
 }
 
 
 unit FmUserDataPathDlg.FrProgress;
+
+
+// TODO: Rename this unit to remove "user" from namespaced name
 
 
 interface
@@ -29,7 +32,7 @@ uses
 type
   ///  <summary>Frame that displays a message and a progress bar.</summary>
   ///  <remarks>For use from TUserDataPathDlg to indicate progress when moving
-  ///  the user database.</remarks>
+  ///  the snippets database.</remarks>
   TUserDataPathDlgProgressFrame = class(TFrame)
     pnlBody: TPanel;
     prgProgress: TProgressBar;

@@ -88,7 +88,7 @@ type
   {
   TDatabaseChangeEventKind:
     Enumeration that specifies the different kind of change events triggered by
-    the user database.
+    the database.
   }
   TDatabaseChangeEventKind = (
     evChangeBegin,          // a change to the database is about to take place
@@ -154,13 +154,12 @@ type
         @return Required data.
       }
     procedure UpdateSnippet(const Snippet: TSnippet; Data: TSnippetEditData);
-      {Updates a user defined snippet's properties and references using provided
-      data.
-        @param Snippet [in] Snippet to be updated. Must be user-defined.
+      {Updates a snippet's properties and references using provided data.
+        @param Snippet [in] Snippet to be updated.
         @param Data [in] Record containing revised data.
       }
     function AddSnippet(Data: TSnippetEditData): TSnippet;
-      {Adds a new snippet to the user database.
+      {Adds a new snippet to the database.
         @param Data [in] Record storing new snippet's properties and references.
         @return Reference to new snippet.
       }
@@ -189,15 +188,14 @@ type
         @return Reference to new copied snippet.
       }
     procedure DeleteSnippet(const Snippet: TSnippet);
-      {Deletes a snippet from the user database.
+      {Deletes a snippet from the database.
         @param Snippet [in] Snippet to be deleted.
       }
   end;
 
 
 function _Database: _IDatabase;
-  {Returns singleton instance of object that encapsulates main and user
-  databases.
+  {Returns singleton instance of object that encapsulates the snippets database.
     @return Singleton object.
   }
 
@@ -268,14 +266,14 @@ type
       }
     function InternalAddSnippet(const SnippetID: TSnippetID;
       const Data: TSnippetEditData): TSnippet;
-      {Adds a new snippet to the user database. Assumes snippet not already in
-      user database.
+      {Adds a new snippet to the database. Assumes snippet not already in
+      database.
         @param SnippetID [in] ID of new snippet.
         @param Data [in] Properties and references of new snippet.
         @return Reference to new snippet object.
       }
     procedure InternalDeleteSnippet(const Snippet: TSnippet);
-      {Deletes a snippet from the user database.
+      {Deletes a snippet from database.
         @param Snippet [in] Snippet to delete from database.
       }
     function UniqueSnippetName: string;
@@ -317,13 +315,12 @@ type
         @return Required data.
       }
     procedure UpdateSnippet(const Snippet: TSnippet; Data: TSnippetEditData);
-      {Updates a user defined snippet's properties and references using provided
-      data.
-        @param Snippet [in] Snippet to be updated. Must be user-defined.
+      {Updates a snippet's properties and references using provided data.
+        @param Snippet [in] Snippet to be updated.
         @param Data [in] Record containing revised data.
       }
     function AddSnippet(Data: TSnippetEditData): TSnippet;
-      {Adds a new snippet to the user database.
+      {Adds a new snippet to the database.
         @param Data [in] Record storing new snippet's properties and references.
         @return Reference to new snippet.
       }
@@ -353,7 +350,7 @@ type
         @return Reference to new snippet.
       }
     procedure DeleteSnippet(const Snippet: TSnippet);
-      {Deletes a snippet from the user database.
+      {Deletes a snippet from the database.
         @param Snippet [in] Snippet to be deleted.
       }
   end;
@@ -364,8 +361,7 @@ begin
 end;
 
 function _Database: _IDatabase;
-  {Returns singleton instance of object that encapsulates main and user
-  databases.
+  {Returns singleton instance of object that encapsulates the snippets database.
     @return Singleton object.
   }
 begin
@@ -385,13 +381,13 @@ begin
 end;
 
 function _TDatabase.AddSnippet(Data: TSnippetEditData): TSnippet;
-  {Adds a new snippet to the user database.
+  {Adds a new snippet to the database.
     @param Data [in] Record storing new snippet's properties and references.
     @return Reference to new snippet.
   }
 resourcestring
   // Error message
-  sNameExists = 'Snippet "%s" already exists in user database';
+  sNameExists = 'Snippet "%s" already exists in database';
 var
   NewSnippetID: TSnippetID;
 begin
@@ -399,7 +395,7 @@ begin
   TriggerEvent(evChangeBegin);
   try
     NewSnippetID := TSnippetID.Create(UniqueSnippetName);
-    // Check if snippet with same name exists in user database: error if so
+    // Check if snippet with same name exists in database: error if so
     if Database.__SnippetsTable.Contains(NewSnippetID) then
       raise ECodeSnip.CreateFmt(sNameExists, [NewSnippetID.ToString]);
     CleanUpRefs(Data.Refs);
@@ -473,7 +469,7 @@ begin
 end;
 
 procedure _TDatabase.DeleteSnippet(const Snippet: TSnippet);
-  {Deletes a snippet from the user database.
+  {Deletes a snippet from the database.
     @param Snippet [in] Snippet to be deleted.
   }
 var
@@ -545,7 +541,7 @@ end;
 
 function _TDatabase.InternalAddSnippet(const SnippetID: TSnippetID;
   const Data: TSnippetEditData): TSnippet;
-  {Adds a new snippet to the user database. Assumes snippet not already in user
+  {Adds a new snippet to the database. Assumes snippet not already in the
   database.
     @param SnippetID [in] ID of new snippet.
     @param Data [in] Properties and references of new snippet.
@@ -563,7 +559,7 @@ begin
 end;
 
 procedure _TDatabase.InternalDeleteSnippet(const Snippet: TSnippet);
-  {Deletes a snippet from the user database.
+  {Deletes a snippet from the database.
     @param Snippet [in] Snippet to delete from database.
   }
 begin
@@ -623,9 +619,8 @@ end;
 
 procedure _TDatabase.UpdateSnippet(const Snippet: TSnippet;
   Data: TSnippetEditData);
-  {Updates a user defined snippet's properties and references using provided
-  data.
-    @param Snippet [in] Snippet to be updated. Must be user-defined.
+  {Updates a defined snippet's properties and references using provided data.
+    @param Snippet [in] Snippet to be updated.
     @param Data [in] Record containing revised data.
   }
 begin

@@ -8,9 +8,8 @@
  * $Rev$
  * $Date$
  *
- * Implements a wizard dialogue box that handles the import of user defined
- * snippets into the database. Permits snippets from the import file to be
- * renamed or rejected.
+ * Implements a wizard dialogue box that handles the import of snippets into the
+ * database. Permits snippets from the import file to be renamed or rejected.
 }
 
 
@@ -26,9 +25,8 @@ uses
 
 type
   ///  <summary>
-  ///  Wizard dialog box that handles the import of user defined snippets into
-  ///  the user database. Permits snippets from the import file to be renamed or
-  ///  rejected.
+  ///  Wizard dialog box that handles the import of snippets into the database.
+  ///  Permits snippets from the import file to be renamed or rejected.
   ///  </summary>
   TCodeImportDlg = class(TWizardDlg, INoPublicConstruct)
     tsInfo: TTabSheet;
@@ -593,7 +591,7 @@ resourcestring
 var
   LI: TListItem;  // each list item in list view
 begin
-  // Checks snippet name for being well formed and not already in user database
+  // Checks snippet name for being well formed and not already in database
   Result := TSnippetValidator.ValidateName(Name, True, ErrMsg);
   if not Result then
     Exit;

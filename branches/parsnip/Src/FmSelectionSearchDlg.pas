@@ -72,8 +72,7 @@ type
   strict protected
     procedure ConfigForm; override;
     procedure InitForm; override;
-      {Initialises form. Disables User Defined button if there are no user
-      defined snippets in database.
+      {Initialises form by ensuring treeview is collapsed.
       }
     procedure AfterShowForm; override;
       {Restores default cursor after form shown.
@@ -201,8 +200,7 @@ begin
 end;
 
 procedure TSelectionSearchDlg.InitForm;
-  {Initialises form. Disables User Defined button if there are no user defined
-  snippets in database.
+  {Initialises form by ensuring treeview is collapsed.
   }
 begin
   inherited;

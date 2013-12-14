@@ -9,7 +9,7 @@
  * $Date$
  *
  * Implements a static class that handles import of a codesnip export file into
- * the user-defined database.
+ * the snippets database.
 }
 
 
@@ -85,7 +85,7 @@ type
 
 type
   ///  <summary>
-  ///  Manages import of a codesnip export file into the user-defined database.
+  ///  Manages import of a codesnip export file into the snippets database.
   ///  </summary>
   ///  <remarks>
   ///  Designed for ease of interaction with a suitable UI.
@@ -107,16 +107,16 @@ type
     ///  <param name="ExcludedName">string [in] Name of snippet to be excluded
     ///  from import list.</param>
     ///  <returns>IStringList: List of disallowed snippet names.</returns>
-    ///  <remarks>List is made up of all names of snippets in user database plus
+    ///  <remarks>List is made up of all names of snippets in database plus
     ///  names of all imported snippets except for ExcludedName. ExcludedName
     ///  should be the name of a snippet being renamed.</remarks>
     function DisallowedNames(const ExcludedName: string): IStringList;
     ///  <summary>Returns a name for snippet SnippetName that does not already
-    ///  exist in user database or imported snippet list.</summary>
+    ///  exist in database or imported snippet list.</summary>
     ///  <remarks>
-    ///  <para>If SnippetName is not in user database then it is returned
-    ///  unchanged.</para>
-    ///  <para>If SnippetName is in user database then numbers are appended
+    ///  <para>If SnippetName is not in database then it is returned unchanged.
+    ///  </para>
+    ///  <para>If SnippetName is in database then numbers are appended
     ///  sequentially until a unique name is found.</para>
     ///  </remarks>
     function GetUniqueSnippetName(const SnippetName: string): string;
@@ -186,7 +186,7 @@ end;
 function TCodeImportMgr.DisallowedNames(const ExcludedName: string):
   IStringList;
 var
-  SnippetID: TSnippetID;      // each snippet in user database
+  SnippetID: TSnippetID;      // each snippet in database
   SnippetInfo: TSnippetInfo;  // info about each imported snippet
 begin
   Result := TIStringList.Create;
@@ -268,7 +268,7 @@ procedure TCodeImportMgr.UpdateDatabase;
   // ---------------------------------------------------------------------------
 
 var
-  Editor: IDatabaseEdit;      // object used to update user database
+  Editor: IDatabaseEdit;      // object used to update database
   Snippet: TSnippet;          // reference any existing snippet to overwrite
   SnippetInfo: TSnippetInfo;  // info about each snippet from import file
   ImportInfo: TImportInfo;    // info about how / whether to import a snippet

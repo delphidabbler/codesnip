@@ -65,7 +65,6 @@ type
 
     ///  <summary>Edits a snippet in Snippets Editor.</summary>
     ///  <param name="SnippetID">TSnippetID [in] ID of snippet.</param>
-    ///  <remarks>Snippet must be user defined.</remarks>
     procedure EditSnippet(const SnippetID: TSnippetID);
 
     ///  <summary>Displays Donate dialogue box.</summary>

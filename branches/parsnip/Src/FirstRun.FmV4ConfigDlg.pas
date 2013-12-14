@@ -9,12 +9,14 @@
  * $Date$
  *
  * Implements a wizard dialogue box that may be displayed on the first run of
- * CodeSnip v4 to get user to decide whether what data to bring forward from
- * earlier versions of the program.
+ * CodeSnip v5 to offer the user a choice whether to bring forward preferences
+ * and/or a snippets database.
 }
 
 
 unit FirstRun.FmV4ConfigDlg;
+
+// TODO: Rename any controls that refer to "user" DB
 
 interface
 
@@ -27,7 +29,7 @@ uses
 type
   ///  <summary>Wizard dialogue box for display on first run of program if there
   ///  is a need to offer user a choice whether to bring forward preferences
-  ///  and/or a user database.</summary>
+  ///  and/or a snippets database.</summary>
   TV4ConfigDlg = class(TWizardDlg, INoPublicConstruct)
     chkCopyConfig: TCheckBox;
     chkCopyDB: TCheckBox;
@@ -61,13 +63,14 @@ type
       ///  preferences.</summary>
       ConfigPageIdx = 1;
       ///  <summary>Index of page dealing with bringing forward an earlier
-      ///  user database.</summary>
+      ///  snippets database.</summary>
       DBPageIdx = 2;
       ///  <summary>Index of page that summarises actions to be taken.</summary>
       SummaryPageIdx = 3;
       ///  <summary>Index of last page.</summary>
       FinishPageIdx = 4;
     type
+      // TODO: rename uaCopyUserDB as uaCopyDB
       ///  <summary>Set of actions to be taken as a result of user input.
       ///  </summary>
       TUpdateActions = set of (uaCopyCfgFile, uaCopyUserDB);
@@ -84,7 +87,7 @@ type
     ///  <summary>Checks if an old user config file is available for copying.
     ///  </summary>
     function ConfigFileAvailable: Boolean;
-    ///  <summary>Checks if an old user database is available for copying.
+    ///  <summary>Checks if an old snippets database is available for copying.
     ///  </summary>
     function DatabaseAvailable: Boolean;
     ///  <summary>Creates a bullet list on a tab sheet.</summary>
@@ -152,8 +155,8 @@ type
     procedure UpdateButtons(const PageIdx: Integer); override;
   public
     ///  <summary>Displays wizard with given owner. Wizard uses given FirstRun
-    ///  object to get info about user config file and database and performs
-    ///  any required actions.</summary>
+    ///  object to get info about user config file and snippets database and
+    ///  performs any required actions.</summary>
     class procedure Execute(AOwner: TComponent; const FirstRun: TFirstRun);
   end;
 
@@ -392,7 +395,7 @@ end;
 function TV4ConfigDlg.NextPage(const PageIdx: Integer): Integer;
 begin
   Result := inherited NextPage(PageIdx);
-  // Don't display related pages if no config file or no user database
+  // Don't display related pages if no config file or no snippets database
   if (Result = ConfigPageIdx) and not ConfigFileAvailable then
     Exit(NextPage(Result));
   if (Result = DBPageIdx) and not DatabaseAvailable then
@@ -402,7 +405,7 @@ end;
 function TV4ConfigDlg.PrevPage(const PageIdx: Integer): Integer;
 begin
   Result := inherited PrevPage(PageIdx);
-  // Don't display related pages if no config file or no user database
+  // Don't display related pages if no config file or no snippets database
   if (Result = DBPageIdx) and not DatabaseAvailable then
     Exit(PrevPage(Result));
   if (Result = ConfigPageIdx) and not ConfigFileAvailable then
@@ -426,8 +429,8 @@ procedure TV4ConfigDlg.UpdateChoices;
 resourcestring
   sBFConfigYes = 'Bring forward preferences from earlier version';
   sBFConfigNo = 'Use default settings, ignoring earlier preferences';
-  sCopyDBYes = 'Copy user snippets database from earlier version';
-  sCopyDBNo = 'Start program with an empty user snippets database';
+  sCopyDBYes = 'Copy snippets database from earlier version';
+  sCopyDBNo = 'Start program with an empty snippets database';
 var
   Actions: TUpdateActions;
   Bullets: IStringList;

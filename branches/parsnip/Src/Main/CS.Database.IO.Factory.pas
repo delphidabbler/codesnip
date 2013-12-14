@@ -8,11 +8,8 @@
  * $Rev$
  * $Date$
  *
- * Implements objects that can load data into the Database object from both the
- * user and main databases. Also provides a class that can write the user
- * database to storage.
- *
- * Uses file I/O interface implementations to read / write the physical files.
+ * Implements objects that can create suitable objects that can be used to load
+ * and save the snippets database.
 }
 
 
@@ -30,11 +27,6 @@ uses
 
 type
 
-  {
-  TDatabaseIOFactory:
-    Factory class that can create instances of writer and loader objects for the
-    Database object.
-  }
   ///  <summary>Factory class used to create database loader and writer objects
   ///  for use in loading and saving the snippets database.</summary>
   TDatabaseIOFactory = class(TNoConstructObject)

@@ -8,13 +8,15 @@
  * $Rev$
  * $Date$
  *
- * Implements classes that can import and export user defined snippets and user
- * information from and to XML.
+ * Implements classes that can import and export snippets and user information
+ * from and to export files.
 }
 
 
 unit UCodeImportExport;
 
+// TODO: change to support export to new db format
+// TODO: revisit some commenting re XML when support added for new db format
 
 interface
 
@@ -61,9 +63,9 @@ type
       fComments: string;
   public
     ///  <summary>User's personal details.</summary>
-    property Details: TUserDetails read fDetails;// write fDetails;
+    property Details: TUserDetails read fDetails;
     ///  <summary>User's comments.</summary>
-    property Comments: string read fComments;// write fComments;
+    property Comments: string read fComments;
     ///  <summary>Initialises record to given values.</summary>
     constructor Create(const UserDetails: TUserDetails;
       const UserComments: string);
@@ -74,7 +76,7 @@ type
   end;
 
 type
-  ///  <summary>Imports code snippets and user info from XML.</summary>
+  ///  <summary>Imports code snippets and user info from export files.</summary>
   TCodeImporter = class(TNoPublicConstructObject)
   strict private
     ///  <summary>Version of file being imported.</summary>
@@ -454,8 +456,6 @@ procedure TCodeImporter.Execute(const Data: TBytes);
     TXMLDocHelper.GetPascalNameList(fXMLDoc, DependsNode, SnippetNames);
     Depends.Clear;
     for SnippetName in SnippetNames do
-      // Note: in building snippet ID list we assume each snippet is user-
-      // defined. It may not be, but there is no way of telling from XML.
       Depends.Add(TSnippetID.Create(SnippetName));
   end;
 

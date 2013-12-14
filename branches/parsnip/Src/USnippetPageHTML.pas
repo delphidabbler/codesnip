@@ -10,7 +10,7 @@
  *
  * Defines classes etc that render different fragments of information about a
  * snippet as HTML for display in the detail pane. Page content is flexible and
- * user defined.
+ * user configurable.
 }
 
 

@@ -9,8 +9,8 @@
  * $Date$
  *
  * Implements classes that handle application start up, determine if it the
- * first run of the current version and perform necessary updates to per-user
- * config file and database.
+ * first run of the current version and perform necessary updates to snippets
+ * database and per-user config file.
 }
 
 
@@ -57,7 +57,7 @@ type
       ///  <summary>Object that interogates and updates common config file.
       ///  </summary>
       fCommonConfigFile: TCommonConfigFileUpdater;
-      ///  <summary>Object used to copy forward older versions of user database.
+      ///  <summary>Object used to copy forward older versions of database.
       ///  </summary>
       fDatabase: TUserDatabaseUpdater;
     ///  <summary>Checks if config file uses earlier format for storing proxy
@@ -78,12 +78,16 @@ type
     ///  necessary and notifies caller of changes via Changes parameter.
     /// </summary>
     procedure UpdateUserCfgFile(out Changes: TFirstRunCfgChangeSet);
-    ///  <summary>Checks if a user database exist for an earlier CodeSnip
+    ///  <summary>Checks if a database exist for an earlier CodeSnip
     ///  installation.</summary>
-    function HaveOldUserDB: Boolean;
-    ///  <summary>Copies user database from an earlier CodeSnip installation.
+    ///  <remarks>Prior to CodeSnip 5 this database will be the legacy "user"
+    ///  database.</remarks>
+    function HaveOldUserDB: Boolean;  // TODO: rename this method to HaveOldDB
+    ///  <summary>Copies database from an earlier CodeSnip installation.
     ///  </summary>
-    procedure BringForwardUserDB;
+    ///  <remarks>Prior to CodeSnip 5 this database will be the legacy "user"
+    ///  database.</remarks>
+    procedure BringForwardUserDB; // TODO: rename this method to BringForwardDB
     ///  <summary>Creates a new, empty, Unicode encoded per-user config file for
     ///  current installation.</summary>
     procedure CreateEmptyUserCfgFile;
@@ -116,8 +120,7 @@ type
     class function IsProgramUpdated: Boolean;
   public
     ///  <summary>Runs start-up checks to detect if program has been run before
-    ///  and performs any required user config and user database updates.
-    ///  </summary>
+    ///  and performs any required user config and database updates.</summary>
     class procedure Execute;
   end;
 
@@ -150,7 +153,7 @@ end;
 procedure TFirstRun.BringForwardUserDB;
 begin
   Assert(HaveOldUserDB,
-    ClassName + '.BringForwardUserDB: Old user database does not exist');
+    ClassName + '.BringForwardUserDB: Old database does not exist');
   fDatabase.CopyDatabase(fInstallInfo.PreviousUserDatabaseDir);
 end;
 

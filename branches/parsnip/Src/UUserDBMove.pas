@@ -8,8 +8,11 @@
  * $Rev$
  * $Date$
  *
- * Implements a class that moves the user defined database to a new location.
+ * Implements a class that moves the snippets database to a new location.
 }
+
+
+// TODO: Rename this unit to remove "user" from name (CS.Database.Relocate ?)
 
 
 unit UUserDBMove;
@@ -24,9 +27,9 @@ uses
 
 
 type
-  ///  <summary>Class that moves the user defined database to a new location.
+  ///  <summary>Class that moves the snippets database to a new location.
   ///  </summary>
-  TUserDBMove = class(TObject)
+  TUserDBMove = class(TObject)  // TODO: rename this class to remove "User"
   public
     type
       ///  <summary>Type of event triggered by TUserDBMove to report progress
@@ -45,7 +48,7 @@ type
       fOnDeleteFile: TProgress;
       ///  <summary>List of files in the database.</summary>
       fDBFiles: TStrings;
-      ///  <summary>Directory of existing user database.</summary>
+      ///  <summary>Existing database directory.</summary>
       fSourceDir: string;
       ///  <summary>Required new database directory.</summary>
       fDestDir: string;
@@ -84,8 +87,8 @@ type
     constructor Create;
     ///  <summary>Destroys current object instance.</summary>
     destructor Destroy; override;
-    ///  <summary>Moves user database from its current directory to the given
-    ///  new directory.</summary>
+    ///  <summary>Moves database from its current directory to the given new
+    ///  directory.</summary>
     ///  <exceptions>Raises EInOutError exceptions if an error occurs.
     ///  </exceptions>
     procedure MoveTo(const ADirectory: string);
@@ -194,7 +197,7 @@ procedure TUserDBMove.ValidateDirectories;
 resourcestring
   sSameNames = 'The new database directory is the same as the current '
     + 'directory.';
-  sSourceMissing = 'No user database found';
+  sSourceMissing = 'No database found';
   sCantMoveToSubDir = 'Can''t move database into a sub-directory of the '
     + 'existing database directory';
   sDestMustBeRooted = 'A full path to the new database directory must be '

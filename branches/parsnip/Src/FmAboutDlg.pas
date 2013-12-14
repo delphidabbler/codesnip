@@ -95,7 +95,8 @@ type
     procedure pcDetailMouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
   strict private
-    fUserDBPathGp: TPathInfoBox;  // control that displays user database folder
+    // TODO: rename following field
+    fUserDBPathGp: TPathInfoBox;  // control that displays database folder
     fInstallPathGp: TPathInfoBox; // control that displays program install path
     procedure HTMLEventHandler(Sender: TObject;
       const EventInfo: THTMLEventInfo);
@@ -246,8 +247,7 @@ procedure TAboutDlg.ConfigForm;
 resourcestring
   // Captions for custom controls
   sInstallPathGpCaption = 'Install Directory';
-  sMainDBPathGpCaption = 'Main Database Directory';
-  sUserDBPathGpCaption = 'User Database Directory';
+  sUserDBPathGpCaption = 'Snippets Database Directory';
 begin
   inherited;
   // Creates required custom controls

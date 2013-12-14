@@ -52,8 +52,8 @@ type
   strict private
     procedure SelectSnippet(const Snippet: TSnippet);
       {Selects a snippet in the snippets check list.
-        @param Snippet [in] Snippet to be selected. If nil, or not user-defined,
-          no snippet is selected.
+        @param Snippet [in] Snippet to be selected. If nil no snippet is
+          selected.
       }
     procedure WriteOutputFile;
       {Writes export file.
@@ -69,8 +69,7 @@ type
       {Displays export dialog box and writes export file if user OKs entries.
         @param AOwner [in] Reference to control that owns the dialog box.
         @param Snippet [in] Reference to a snippet to pre-select in snippets
-          check list box. If nil or not user-defined then no snippet is pre-
-          selected.
+          check list box. If nil then no snippet is pre-selected.
       }
   end;
 
@@ -206,7 +205,7 @@ class procedure TCodeExportDlg.Execute(const AOwner: TComponent;
   {Displays export dialog box and writes export file if user OKs entries.
     @param AOwner [in] Reference to control that owns the dialog box.
     @param Snippet [in] Reference to a snippet to pre-select in snippets check
-      list box. If nil or not user-defined then no snippet is pre-selected.
+      list box. If nil then no snippet is pre-selected.
   }
 begin
   with InternalCreate(AOwner) do
@@ -220,8 +219,7 @@ end;
 
 procedure TCodeExportDlg.SelectSnippet(const Snippet: TSnippet);
   {Selects a snippet in the snippets check list.
-    @param Snippet [in] Snippet to be selected. If nil, or not user-defined, no
-      snippet is selected.
+    @param Snippet [in] Snippet to be selected. If nil no snippet is selected.
   }
 begin
   if not Assigned(Snippet) then

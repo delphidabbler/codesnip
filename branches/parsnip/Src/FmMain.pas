@@ -18,6 +18,7 @@ unit FmMain;
 
 interface
 
+{TODO: rename actions that refer to "user" database }
 
 uses
   // Delphi
@@ -240,10 +241,10 @@ type
     ///  <summary>Determines whether AddFavourites action can be enabled.
     ///  </summary>
     procedure actAddFavouriteUpdate(Sender: TObject);
-    ///  <summary>Opens Snippets Editor to add a new user defined snippet to the
-    ///  database.</summary>
+    ///  <summary>Opens Snippets Editor to add a new snippet to the database.
+    ///  </summary>
     procedure actAddSnippetExecute(Sender: TObject);
-    ///  <summary>Makes a backup of the user database.</summary>
+    ///  <summary>Makes a backup of the snippets database.</summary>
     procedure actBackupDatabaseExecute(Sender: TObject);
     ///  <summary>Displays Bug Report dialogue box.</summary>
     procedure actBugReportExecute(Sender: TObject);
@@ -278,8 +279,8 @@ type
     procedure actCopySourceUpdate(Sender: TObject);
     ///  <summary>Determines whether Copy action can be enabled.</summary>
     procedure actCopyUpdate(Sender: TObject);
-    ///  <summary>Attempts to delete the current user defined snippet from the
-    ///  database.</summary>
+    ///  <summary>Attempts to delete the current snippet from the database.
+    ///  </summary>
     procedure actDeleteSnippetExecute(Sender: TObject);
     ///  <summary>Displays Donate dialogue box.</summary>
     procedure actDonateExecute(Sender: TObject);
@@ -292,10 +293,10 @@ type
     ///  <summary>Determines whether the DeleteSnippet or EditSnippet actions
     ///  can be enabled.</summary>
     procedure ActEditDeleteSnippetUpdate(Sender: TObject);
-    ///  <summary>Displays a dialogue box that can be used to export one or
-    ///  more user defined snippets.</summary>
+    ///  <summary>Displays a dialogue box that can be used to export one or more
+    ///  snippets.</summary>
     procedure actExportCodeExecute(Sender: TObject);
-    ///  <summary>Opens current user defined snippet in Snippets Editor for
+    ///  <summary>Opens currently selected snippet in Snippets Editor for
     ///  editing.</summary>
     procedure actEditSnippetExecute(Sender: TObject);
     ///  <summary>Displays the Favourites non-modal dialogue box.</summary>
@@ -339,7 +340,7 @@ type
     ///  <summary>Displays Load Selection dialogue box from where user can
     ///  load a snippet selection from file and display the selection.</summary>
     procedure actLoadSelectionExecute(Sender: TObject);
-    ///  <summary>Displays a dialogue box that can be used to move the user
+    ///  <summary>Displays a dialogue box that can be used to move the snippets
     ///  database to a user defined directory.</summary>
     ///  <remarks>This action must be hidden when running in portable mode.
     ///  </remarks>
@@ -390,10 +391,9 @@ type
     ///  registered.</remarks>
     procedure actRegisterUpdate(Sender: TObject);
     ///  <summary>Displays a dialogue box from which a backup file can be
-    ///  selected and used to restore the user defined database.</summary>
+    ///  selected and used to restore the snippets database.</summary>
     procedure actRestoreDatabaseExecute(Sender: TObject);
-    ///  <summary>Save any changes in the user defined database to disk.
-    ///  </summary>
+    ///  <summary>Save any changes in the snippets database to disk.</summary>
     procedure actSaveDatabaseExecute(Sender: TObject);
     ///  <summary>Determines whether the SaveDatabase action can be enabled.
     ///  </summary>
@@ -422,14 +422,14 @@ type
     ///  <summary>Displays the Select Snippets dialogue box where the snippets
     ///  to be displayed can be chosen.</summary>
     procedure actSelectSnippetsExecute(Sender: TObject);
-    ///  <summary>Displays the Code Submission Wizard that enables user defined
-    ///  snippets to be submitted for inclusion in the main database.</summary>
+    ///  <summary>Displays the Code Submission Wizard that enables snippets to
+    ///  be submitted for inclusion in the main database.</summary>
     procedure actSubmitExecute(Sender: TObject);
     ///  <summary>Determines whether the Submit or ExportCode actions can be
     ///  enabled.</summary>
     procedure ActSubmitOrExportUpdate(Sender: TObject);
     ///  <summary>Displays the SWAG import dialogue box that enables the user to
-    ///  import snippets from the SWAG database into the user-defined database.
+    ///  import snippets from the SWAG database into the snippets database.
     ///  </summary>
     procedure actSWAGImportExecute(Sender: TObject);
     ///  <summary>Generates an exception that simulates an uncaught exception.
@@ -527,9 +527,9 @@ type
     ///  <summary>Displays view item from history list given by TViewItemAction
     ///  instance referenced by Sender.</summary>
     procedure ActViewHistoryItemExecute(Sender: TObject);
-    ///  <summary>Opens a named user defined snippet in Snippets Editor for
-    ///  editing. The snippet name is provided by the TEditSnippetAction
-    ///  instance referenced by Sender.</summary>
+    ///  <summary>Opens a named snippet in Snippets Editor for editing. The
+    ///  snippet name is provided by the TEditSnippetAction instance referenced
+    ///  by Sender.</summary>
     procedure ActEditSnippetByNameExecute(Sender: TObject);
     ///  <summary>Selects a tab in the details pane where the tab is provided by
     ///  the TDetailTabAction instance referenced by Sender.</summary>
@@ -1189,13 +1189,13 @@ procedure TMainForm.actUpdateDbaseExecute(Sender: TObject);
                         linked spaces.
                         NOTE: associated action has been made invisible. }
 //resourcestring
-//  sConfirmSave = 'The user database has been changed. Do you wish to save it '
+//  sConfirmSave = 'The database has been changed. Do you wish to save it '
 //    + 'before updating the database?' + EOL2 + 'Clicking No will cause all '
 //    + 'recent changes to be lost.';
 begin
 //  if fDialogMgr.ExecDBUpdateDlg then
 //  begin
-//    // Database was updated: check if user database needs saving
+//    // Database was updated: check if database needs saving
 //    if (Database as IDatabaseEdit).Updated
 //      and TMessageBox.Confirm(Self, sConfirmSave) then
 //      TUserDBMgr.Save(Self);
@@ -1360,7 +1360,7 @@ begin
   // Stop notification display sub-system
   TNotificationDisplayMgr.Stop;
 
-  // Save any changes to user database
+  // Save any changes to snippets database
   if Database.IsDirty then
     Database.Save;
 
@@ -1436,7 +1436,7 @@ begin
     actViewGroupByTags.Tag := cTagsGrouping;
     actViewGroupAlphabetically.Tag := cAlphabeticGrouping;
     actViewGroupBySnippetKinds.Tag := cKindGrouping;
-    // Move user database option not available in portable mode
+    // Move database option not available in portable mode
     actMoveUserDatabase.Visible := not TCommandLineOpts.IsPortable;
 
     // Create notifier object and assign actions triggered by its methods

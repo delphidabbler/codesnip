@@ -30,11 +30,11 @@ uses
 
 type
   ///  <summary>Class that converts snippets from the SWAG database into
-  ///  CodeSnip database format and imports them into the user defined
-  ///  database.</summary>
-  ///  <remarks>This class creates new user-defined snippets from records that
-  ///  define a SWAF snippet. It is for the caller to acquire the required SWAG
-  ///  snippets from the SWAG database.</remarks>
+  ///  CodeSnip database format and imports them into the snippets database.
+  ///  </summary>
+  ///  <remarks>This class creates new snippets from records that define a SWAG
+  ///  snippet. It is for the caller to acquire the required SWAG snippets from
+  ///  the SWAG database.</remarks>
   TSWAGImporter = class(TObject)
   strict private
     type
@@ -54,11 +54,11 @@ type
     ///  Notes property of each imported snippet.</summary>
     function NotesBoilerplate: IActiveText;
     ///  <summary>Records the data from the given SWAG snippet into a data
-    ///  structure suitable for adding to CodeSnip's user database.</summary>
+    ///  structure suitable for adding to the snippets database.</summary>
     function BuildSnippetInfo(const SWAGSnippet: TSWAGSnippet):
       TSnippetEditData;
-    ///  <summary>Imports (i.e. adds) the given SWAG snippet into the user
-    ///  database.</summary>
+    ///  <summary>Imports (i.e. adds) the given SWAG snippet into the database.
+    ///  </summary>
     procedure ImportSnippet(const SWAGSnippet: TSWAGSnippet);
   public
     ///  <summary>Constructs new object instance.</summary>
@@ -69,10 +69,10 @@ type
     ///  <remarks>After calling this method no snippets are recorded for
     ///  inclusion in the import.</remarks>
     procedure Reset;
-    ///  <summary>Records the given SWAG snippet ready for import into the user
+    ///  <summary>Records the given SWAG snippet ready for import into the
     ///  database.</summary>
     procedure IncludeSnippet(const SWAGSnippet: TSWAGSnippet);
-    ///  <summary>Imports all the required SWAG snippets into the user database.
+    ///  <summary>Imports all the required SWAG snippets into the database.
     ///  </summary>
     ///  <param name="Callback">TProgressCallback [in] Optional callback to be
     ///  called after each SWAG snippet is imported.</param>
@@ -80,7 +80,7 @@ type
     ///  recorded by calling IncludeSnippet.</remarks>
     procedure Import(const Callback: TProgressCallback = nil);
     ///  <summary>Creates and returns a valid snippet name, based on the given
-    ///  SWAG snippet ID, that is unique in the user database.</summary>
+    ///  SWAG snippet ID, that is unique in the snippets database.</summary>
     class function MakeValidSnippetName(SWAGSnippetID: Cardinal): string;
     ///  <summary>Name of tag applied to all imported SWAG snippets.</summary>
     class function SWAGTagName: string;

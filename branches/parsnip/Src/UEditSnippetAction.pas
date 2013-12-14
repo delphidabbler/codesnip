@@ -8,7 +8,7 @@
  * $Rev$
  * $Date$
  *
- * Custom action used to request editing of a named user-defined snippet.
+ * Custom action used to request editing of a specfied snippet.
 }
 
 
@@ -26,8 +26,8 @@ uses
 
 
 type
-  ///  <summary>Custom action used to request that a named user defined snippet
-  ///  is edited.</summary>
+  ///  <summary>Custom action used to request that a specified snippet is
+  ///  edited.</summary>
   TEditSnippetAction = class(TBasicAction)
   strict private
     var

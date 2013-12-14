@@ -115,7 +115,7 @@ type
       ///  </summary>
       fSelectedSnippets: TSortedList<TSWAGSnippet>;
       ///  <summary>Object that imports selected SWAG snippets into CodeSnip's
-      ///  user database.</summary>
+      ///  database.</summary>
       fImporter: TSWAGImporter;
       ///  <summary>ID of currently selected category.</summary>
       ///  <remarks>Set to empty string if no category is selected.</remarks>
@@ -153,7 +153,7 @@ type
     procedure GetImportSnippets(const SnipList:
       Generics.Collections.TList<TSWAGSnippet>);
     ///  <summary>Performs the import of the selected snippets into CodeSnip's
-    ///  user database.</summary>
+    ///  database.</summary>
     ///  <remarks>Displays a wait dialogue box while the import is proceeding.
     ///  </remarks>
     procedure UpdateDatabase;

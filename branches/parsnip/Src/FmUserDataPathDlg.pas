@@ -8,12 +8,15 @@
  * $Rev$
  * $Date$
  *
- * Implements a dialogue box that can be used to move the user database to a
+ * Implements a dialogue box that can be used to move the snippets database to a
  * different directory.
 }
 
 
 unit FmUserDataPathDlg;
+
+
+// TODO: Rename this unit to remove "user" from name
 
 
 interface
@@ -27,7 +30,7 @@ uses
   UControlStateMgr, UUserDBMove;
 
 type
-  ///  <summary>Dialogue box that is used to move the user database to a new
+  ///  <summary>Dialogue box that is used to move the snippets database to a new
   ///  directory or to restore a previously moved database to its default
   ///  directory.</summary>
   ///  <remarks>IMPORTANT: This dialogue box is for use only when running in
@@ -52,7 +55,7 @@ type
     ///  <summary>Dispays Browse For Folder dialogue box and copies any chosen
     ///  folder to the edPath edit control.</summary>
     procedure actBrowseExecute(Sender: TObject);
-    ///  <summary>Moves user database back to default directory and records the
+    ///  <summary>Moves database back to default directory and records the
     ///  changed path.</summary>
     ///  <exception>Raises exception if default path can't be used for any
     ///  reason or if there was an error copying the database.</exception>
@@ -60,8 +63,8 @@ type
     ///  <summary>Enables / disables Default Path action according to whether
     ///  database is already in default path.</summary>
     procedure actDefaultPathUpdate(Sender: TObject);
-    ///  <summary>Moves user database to path entered by user and records the
-    ///  changed path.</summary>
+    ///  <summary>Moves database to path entered by user and records the changed
+    ///  path.</summary>
     ///  <exception>Raises exception given path can't be used for any reason or
     ///  if there was an error copying the database.</exception>
     procedure actMoveExecute(Sender: TObject);
@@ -74,7 +77,7 @@ type
     procedure FormDestroy(Sender: TObject);
   strict private
     var
-      ///  <summary>Object that moves the user database to a new location.
+      ///  <summary>Object that moves the snippets database to a new location.
       ///  </summary>
       fMover: TUserDBMove;
       ///  <summary>Object used to disable and enable all controls on the form.
@@ -107,7 +110,7 @@ type
     ///  ECodeSnip and re-raising all other unchanged.</summary>
     ///  <exception>Always raises a new exception.</exception>
     ///  <remarks>This method is designed to handle exceptions raised when the
-    ///  user database is moved.</remarks>
+    ///  database is moved.</remarks>
     procedure HandleException(const E: Exception);
   strict protected
     ///  <summary>Sets controls with ParentFont=False to use system default

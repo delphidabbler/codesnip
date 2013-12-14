@@ -175,11 +175,12 @@ type
     ///  associated favourite's snippet to be displayed.</summary>
     procedure LVDoubleClick(Sender: TObject);
 
+    { TODO -cSynchSpaces: Revisit this method in light of synch spaces: may nee
+                          to re-implement, may need to remove if custom drawing
+                          is no longer needed. }
     ///  <summary>Overrides default drawing of given list view item caption by
     ///  ensuring the associated favourite's snippet display name is rendered in
     ///  correct colour.</summary>
-    ///  <remarks>Colour used depends on whether snippet is user defined.
-    ///  </remarks>
     procedure LVCustomDrawItem(Sender: TCustomListView; Item: TListItem;
       State: TCustomDrawState; var DefaultDraw: Boolean);
 

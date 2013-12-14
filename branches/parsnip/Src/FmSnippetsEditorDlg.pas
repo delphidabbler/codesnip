@@ -8,8 +8,7 @@
  * $Rev$
  * $Date$
  *
- * Implements a dialogue box that enables the user to create or edit user
- * defined snippets.
+ * Implements a dialogue box that enables the user to create or edit snippets.
 }
 
 
@@ -53,8 +52,7 @@ type
 
   {
   TSnippetsEditorDlg:
-    Dialog box class that enables the user to create or edit a user defined
-    snippet.
+    Dialog box class that enables the user to create or edit a snippet.
   }
   TSnippetsEditorDlg = class(TGenericOKDlg, INoPublicConstruct)
     alMain: TActionList;

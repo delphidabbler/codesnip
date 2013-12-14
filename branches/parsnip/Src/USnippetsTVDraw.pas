@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2009-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2009-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -33,6 +33,7 @@ type
   }
   TSnippetsTVDraw = class abstract(TObject)
   strict protected
+    // TODO: rename (and re-comment) or remove this method
     function IsUserDefinedNode(const Node: TTreeNode): Boolean;
       virtual; abstract;
       {Checks if a node represents a user defined snippets object.
@@ -55,8 +56,7 @@ type
     procedure CustomDrawItem(Sender: TCustomTreeView; Node: TTreeNode;
       State: TCustomDrawState; var DefaultDraw: Boolean);
       {Handles event triggered when a snippets tree view item is to be
-      displayed. Draws nodes depending on whether group heading, snippet, user
-      defined, selected or focussed.
+      displayed. Draws nodes depending taking account of state.
         @param Sender [in] Reference to treeview being drawn.
         @param Node [in] Node to be displayed.
         @param State [in] State of node.
@@ -81,8 +81,7 @@ uses
 procedure TSnippetsTVDraw.CustomDrawItem(Sender: TCustomTreeView;
   Node: TTreeNode; State: TCustomDrawState; var DefaultDraw: Boolean);
   {Handles event triggered when a snippets tree view item is to be displayed.
-  Draws nodes depending on whether group heading, snippet, user defined,
-  selected or focussed.
+  Draws nodes depending taking account of state.
     @param Sender [in] Reference to treeview being drawn.
     @param Node [in] Node to be displayed.
     @param State [in] State of node.

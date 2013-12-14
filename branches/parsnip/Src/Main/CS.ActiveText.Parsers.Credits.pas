@@ -27,10 +27,10 @@ uses
 
 type
 
-  ///  <summary>Class that parses markup used in Credits element read from
-  ///  snippets data files. Markup is translated into active text.</summary>
-  ///  <remarks>The Credits element may occur in main database files and v1 of
-  ///  the user database and export files.</remarks>
+  ///  <summary>Class that parses markup used in a Credits element read from
+  ///  snippets data files. The markup is translated into active text.</summary>
+  ///  <remarks>A Credits element may be found when read v1 of the legacy "user"
+  ///  database and export files.</remarks>
   TActiveTextCreditsParser = class(TInterfacedObject, IActiveTextParser)
   strict private
     var

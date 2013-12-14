@@ -57,8 +57,7 @@ type
       ///  <summary>List of actions triggered when current pane in detail view
       ///  changes.</summary>
       fDisplayPaneChangeAction: TBasicAction;
-      ///  <summary>Action that causes a user defined snippet to be
-      ///  edited.</summary>
+      ///  <summary>Action that causes a snippet to be edited.</summary>
       fEditSnippetAction: TBasicAction;
       ///  <summary>Action that displays donate dialogue box.</summary>
       fDonateAction: TBasicAction;
@@ -123,10 +122,7 @@ type
 
     ///  <summary>Edits a snippet in Snippets Editor.</summary>
     ///  <param name="SnippetID">TSnippetID [in] ID of snippet.</param>
-    ///  <remarks>
-    ///  <para>Snippet must be user defined.</para>
-    ///  <para>Methods of INotifier.</para>
-    ///  </remarks>
+    ///  <remarks>Methods of INotifier.</remarks>
     procedure EditSnippet(const SnippetID: TSnippetID);
 
     ///  <summary>Displays Donate dialogue box.</summary>

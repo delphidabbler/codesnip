@@ -212,7 +212,7 @@ type
         @return Reference to required snippet or nil if not found.
       }
     function Find(const SnippetName: string): TSnippet; overload;
-      {Finds a named snippet in list with a matching user defined property.
+      {Finds a snippet in list with a matching ID name.
         @param SnippetName [in] Name of required snippet.
         @return Reference to required snippet or nil if not found.
       }
@@ -547,9 +547,8 @@ begin
 end;
 
 function _TSnippetList.Find(const SnippetName: string): TSnippet;
-  {Finds a named snippet in list with a matching user defined property.
+  {Finds a snippet in list with a matching ID name.
     @param SnippetName [in] Name of required snippet.
-      user defined snippet or one from main database.
     @return Reference to required snippet or nil if not found.
   }
 begin

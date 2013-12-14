@@ -3,16 +3,20 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2008-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2008-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
  *
- * Implements a class that can create and restore backups of the user database.
+ * Implements a class that can create and restore backups of the snippets
+ * database.
 }
 
 
 unit UUserDBBackup;
+
+
+// TODO: Rename this unit to remove "user" from name (CS.Database.Backup ?)
 
 
 interface
@@ -25,18 +29,19 @@ uses
 
 type
 
+  // TODO: rename this class to remove the term "user"
   {
   TUserDBBackup:
-    Sealed class that can create and restore backups of the user database.
+    Sealed class that can create and restore backups of the snippets database.
     Backups are single files. See UFolderBackup for details of file format.
   }
   TUserDBBackup = class sealed(TFolderBackup)
   strict private
-    const cFileID = SmallInt($DBAC);  // User database backup file ID
+    const cFileID = SmallInt($DBAC);  // Database backup file ID
   public
     constructor Create(const BackupFile: string);
-      {Class constructor. Sets up object to backup user database to a specified
-      file.
+      {Class constructor. Sets up object to backup snippets database to a
+      specified file.
         @param BackupFile [in] Name of backup file.
       }
   end;
@@ -53,7 +58,7 @@ uses
 { TUserDBBackup }
 
 constructor TUserDBBackup.Create(const BackupFile: string);
-  {Class constructor. Sets up object to backup user database to a specified
+  {Class constructor. Sets up object to backup snippets database to a specified
   file.
     @param BackupFile [in] Name of backup file.
   }

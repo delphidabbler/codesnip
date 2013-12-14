@@ -38,15 +38,16 @@ type
       fSearchGlyph: TBitmap;
         {Stores reference to glyph used to indicate kind of latest search}
       fModifiedGlyph: TBitmap;
-        {Stores glyph displayed when user database has been modified}
+        {Stores glyph displayed when database has been modified}
       fSearchInfoVisible: Boolean;
         {Flag noting whether search information is to be displayed or not}
-      fUserDBInfoVisible: Boolean;
-        {Flag noting whether user database modification indicator is displayed}
+      fUserDBInfoVisible: Boolean; // TODO: rename this field
+        {Flag noting whether database modification indicator is displayed}
     const
       cDBPanel = 0;             // index of database info panel
       cSearchPanel = 1;         // index of search info panel
-      cUserPanel = 2;           // index of user-defined database info panel
+      // TODO: rename this const
+      cUserPanel = 2;           // index of database info panel
       cSimplePanel = cDBPanel;  // index of simple message panel
     procedure DrawPanel(StatusBar: TStatusBar; Panel: TStatusPanel;
       const Rect: TRect);
@@ -65,12 +66,13 @@ type
     procedure HideSearchInfo;
       {Prevents search information from being displayed in status bar.
       }
+    // TODO: rename this method to remove the term "user"
     procedure ShowUserDBInfo;
-      {Displays information about state of user defined database.
+      {Displays information about state of database.
       }
+    // TODO: rename this method to remove the term "user"
     procedure HideUserDBInfo;
-      {Prevents user defined database information from being displayed in status
-      bar.
+      {Prevents database information from being displayed in status bar.
       }
   public
     constructor Create(const SB: TStatusBar);
@@ -107,9 +109,9 @@ implementation
     database.
   + Panel[1]: Displays information about latest search. A glyph indicating
     search type is displayed.
-  + Panel[2]: Displays a modification flag and glyph if user defined database
-    has been modified since last save. Nothing is displayed when database is
-    not modified.
+  + Panel[2]: Displays a modification flag and glyph if snippets database has
+    been modified since last save. Nothing is displayed when database is not
+    modified.
 
   The status bar is also used to display hints when the mouse passes over
   various UI elements. This is done by switching the status bar into SimplePanel
@@ -133,7 +135,7 @@ constructor TStatusBarMgr.Create(const SB: TStatusBar);
     @param SB [in] Status bar to be managed.
   }
 resourcestring
-  // Message displayed when user database has been modified
+  // Message displayed when database has been modified
   sModified = 'Modified';
 begin
   Assert(Assigned(SB), ClassName + '.Create: SB is nil');
@@ -238,7 +240,7 @@ begin
     end;
     cUserPanel:
     begin
-      // We do nothing else if there's no glyph or user db info not to be shown
+      // We do nothing else if there's no glyph or database info not to be shown
       if not Assigned(fModifiedGlyph) or not fUserDBInfoVisible then
         Exit;
       DrawGlyphInPanel(fModifiedGlyph, clWhite);
@@ -260,8 +262,7 @@ begin
 end;
 
 procedure TStatusBarMgr.HideUserDBInfo;
-  {Prevents user defined database information from being displayed in status
-  bar.
+  {Prevents database information from being displayed in status bar.
   }
 begin
   // This method does not directly hide the information, but flags that it
@@ -365,7 +366,7 @@ begin
 end;
 
 procedure TStatusBarMgr.ShowUserDBInfo;
-  {Displays information about state of user defined database.
+  {Displays information about state of database.
   }
 begin
   // This method does not directly display the information, but records whether

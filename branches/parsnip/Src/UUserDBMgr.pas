@@ -8,11 +8,15 @@
  * $Rev$
  * $Date$
  *
- * Implements a static class that manages user's interaction with user database.
+ * Implements a static class that manages user's interaction with the snippets
+ * database.
 }
 
 
 unit UUserDBMgr;
+
+
+// TODO: Rename this unit to remove "user" from name (CS.UI.DBMgr ?)
 
 
 interface
@@ -28,9 +32,9 @@ uses
 
 
 type
-
-  ///  <summary>Static class that manages user's interaction with user database
-  ///  and performs move and backup operations on it.</summary>
+  // TODO: rename this class to remove the term "user"
+  ///  <summary>Static class that manages user's interaction with the snippets
+  ///  database.</summary>
   TUserDBMgr = class(TNoConstructObject)
   strict private
     ///  <summary>OnClose event handler for open dialogue box. Checks if
@@ -48,19 +52,17 @@ type
     ///  to close or False to inhibit closure.</param>
     class procedure CanSaveDialogClose(Sender: TObject; var CanClose: Boolean);
   public
-    ///  <summary>Enables user to adds a new user defined snippet to the
-    ///  database using the snippets editor.</summary>
+    ///  <summary>Enables user to adds a new snippet to the database using the
+    ///  snippets editor.</summary>
     class procedure AddSnippet;
     ///  <summary>Enables user to edit the snippet with the given name using the
     ///  snippets editor.</summary>
-    ///  <remarks>The named snippet must be user defined.</remarks>
     class procedure EditSnippet(const SnippetID: TSnippetID);
-    ///  <summary>Duplicates the snippet specified by the given view as a user
-    ///  defined snippet with name specified by user.</summary>
+    ///  <summary>Duplicates the snippet specified by the given view as a new
+    ///  snippet with the title defined by the user.</summary>
     class procedure DuplicateSnippet(ViewItem: IView);
     ///  <summary>Deletes the snippet specified by the given view from the
     ///  database.</summary>
-    ///  <remarks>The given snippet must be user defined.</remarks>
     class procedure DeleteSnippet(ViewItem: IView);
     ///  <summary>Checks if given view item can be duplicated.</summary>
     ///  <remarks>To be duplicated view must be a snippet.</summary>
@@ -72,18 +74,18 @@ type
     ///  </summary>
     class procedure RemoveTagFromSnippet(const SnippetID: TSnippetID;
       const Tag: TTag);
-    ///  <summary>Saves the current user database to disk.</summary>
+    ///  <summary>Saves the current database to disk.</summary>
     class procedure Save(ParentCtrl: TComponent);
-    ///  <summary>Checks if the user database can be saved.</summary>
+    ///  <summary>Checks if the database can be saved.</summary>
     class function CanSave: Boolean;
-    ///  <summary>Creates a backup of the user database in a file specified by
-    ///  the user.</summary>
+    ///  <summary>Creates a backup of the database in a file specified by the
+    ///  user.</summary>
     class procedure BackupDatabase(ParentCtrl: TComponent);
-    ///  <summary>Restores the user database from a backup file specified by the
+    ///  <summary>Restores the database from a backup file specified by the
     ///  user.</summary>
     class function RestoreDatabase(ParentCtrl: TComponent): Boolean;
-    ///  <summary>Moves the user database to a new location specified by the
-    ///  user.</summary>
+    ///  <summary>Moves the database to a new location specified by the user.
+    ///  </summary>
     class procedure MoveDatabase;
   end;
 
@@ -114,7 +116,8 @@ uses
   UWaitForThreadUI;
 
 type
-  ///  <summary>Base class for classes that execute a user database management
+  // TODO: rename this class to remove the term "user"
+  ///  <summary>Base class for classes that execute a database management
   ///  function in a thread while displaying a "wait" dialogue box if necessary.
   ///  </summary>
   ///  <remarks>The class is marked abstract because it cannot be used directly.
@@ -140,32 +143,34 @@ type
   end;
 
 type
-  ///  <summary>Class that saves user database to disk in a thread while
-  ///  displaying a "wait" dialogue box if necessary.</summary>
+  // TODO: rename this class to remove the term "user"
+  ///  <summary>Class that saves database to disk in a thread while displaying a
+  ///  "wait" dialogue box if necessary.</summary>
   TUserDBSaveUI = class sealed(TUserDBWaitUI)
   strict private
     type
-      ///  <summary>Thread that performs user database save operation.</summary>
+      ///  <summary>Thread that performs database save operation.</summary>
       TSaveThread = class(TThread)
       strict protected
-        ///  <summary>Saves the user database.</summary>
+        ///  <summary>Saves the database.</summary>
         procedure Execute; override;
       public
         ///  <summary>Constructs a new, suspended, thread instance.</summary>
         constructor Create;
       end;
   public
-    ///  <summary>Performs the user database save operation in a background
-    ///  thread and displays a wait diaogue box if the operation takes more than
-    ///  a given time to execute. Blocks until the thread terminates.</summary>
+    ///  <summary>Performs the database save operation in a background thread
+    ///  and displays a wait diaogue box if the operation takes more than a
+    ///  given time to execute. Blocks until the thread terminates.</summary>
     ///  <param name="AOwner">TComponent [in] Component that owns the dialogue
     ///  box, over which it is aligned.</param>
     class procedure Execute(AOwner: TComponent);
   end;
 
 type
-  ///  <summary>Class that restores a backup of the user database in a thread
-  ///  while displaying a "wait" dialogue box if necessary.</summary>
+  // TODO: rename this class to remove the term "user"
+  ///  <summary>Class that restores a backup of the database in a thread while
+  ///  displaying a "wait" dialogue box if necessary.</summary>
   TUserDBRestoreUI = class sealed(TUserDBWaitUI)
   strict private
     type
@@ -176,7 +181,7 @@ type
           ///  <summary>Name of backup file to be restored.</summary>
           fBakFileName: string;
       strict protected
-        ///  <summary>Restores the user database from a backup.</summary>
+        ///  <summary>Restores the database from a backup.</summary>
         procedure Execute; override;
       public
         ///  <summary>Constructs a new, suspended, thread that can restore the
@@ -184,10 +189,9 @@ type
         constructor Create(const BakFileName: string);
       end;
   public
-    ///  <summary>Performs a user database restoration operation from in a
-    ///  background thread and displays a wait diaogue box if the operation
-    ///  takes more than a given time to execute. Blocks until the thread
-    ///  terminates.</summary>
+    ///  <summary>Performs a database restoration operation from in a background
+    ///  thread and displays a wait diaogue box if the operation takes more than
+    ///  a given time to execute. Blocks until the thread terminates.</summary>
     ///  <param name="AOwner">TComponent [in] Component that owns the dialogue
     ///  box, over which it is aligned.</param>
     ///  <param name="BakFileName">string [in] Name of backup file to be
@@ -196,8 +200,9 @@ type
   end;
 
 type
-  ///  <summary>Class that creates a backup of the user database in a thread
-  ///  while displaying a "wait" dialogue box if necessary.</summary>
+  // TODO: rename this class to remove the term "user"
+  ///  <summary>Class that creates a backup of the database in a thread while
+  ///  displaying a "wait" dialogue box if necessary.</summary>
   TUserDBBackupUI = class sealed(TUserDBWaitUI)
   strict private
     type
@@ -208,7 +213,7 @@ type
           ///  <summary>Name of backup file to be created.</summary>
           fBakFileName: string;
       strict protected
-        ///  <summary>Backs up the user database.</summary>
+        ///  <summary>Backs up the database.</summary>
         procedure Execute; override;
       public
         ///  <summary>Constructs a new, suspended, thread that can backup the
@@ -216,7 +221,7 @@ type
         constructor Create(const BakFileName: string);
       end;
   public
-    ///  <summary>Performs a user database backup operation from in a background
+    ///  <summary>Performs a database backup operation from in a background
     ///  thread and displays a wait diaogue box if the operation takes more than
     ///  a given time to execute. Blocks until the thread terminates.</summary>
     ///  <param name="AOwner">TComponent [in] Component that owns the dialogue
@@ -236,12 +241,12 @@ end;
 
 class procedure TUserDBMgr.BackupDatabase(ParentCtrl: TComponent);
 var
-  SaveDlg: TSaveDialogEx;       // save dialog box used to name backup file
+  SaveDlg: TSaveDialogEx; // save dialogue box used to name backup file
 resourcestring
   // Dialog box caption
   sCaption = 'Save Backup';
 begin
-  // Get backup file name from user via standard save dialog box
+  // Get backup file name from user via standard save dialogue box
   SaveDlg := TSaveDialogEx.Create(nil);
   try
     SaveDlg.OnCanClose := CanSaveDialogClose;
@@ -301,7 +306,7 @@ end;
 class procedure TUserDBMgr.CanSaveDialogClose(Sender: TObject;
   var CanClose: Boolean);
 var
-  FileName: string;   // name of file entered in dialog box
+  FileName: string;   // name of file entered in dialogue box
 resourcestring
   // Error message
   sOverwritePrompt = '"%s" already exists. OK to overwrite?';
@@ -464,8 +469,8 @@ end;
 
 class procedure TUserDBSaveUI.Execute(AOwner: TComponent);
 resourcestring
-  // Caption for wait dialog
-  sWaitCaption = 'Saving user database...';
+  // Caption for wait dialogue
+  sWaitCaption = 'Saving database...';
 var
   Thread: TSaveThread;   // thread that performs save operation
 begin

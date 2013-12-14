@@ -45,8 +45,8 @@ type
     ///  <summary>Maps given install IDs to relative paths to user config file
     ///  for that installation version.</summary>
     class function UserConfigFileNames(const InstID: TInstallId): string;
-    ///  <summary>Maps given install IDs to relative paths to user database
-    ///  directory for that installation version.</summary>
+    ///  <summary>Maps given install IDs to relative paths to database directory
+    ///  for that installation version.</summary>
     class function DatabaseDirs(const InstID: TInstallId): string;
     ///  <summary>Converts given relative directory path or file name into an
     ///  absolute path by pre-prending the user's application data folder.
@@ -77,14 +77,22 @@ type
     ///  <summary>Informs if user config file returned by
     ///  PreviousUserConfigFileName is in ANSI format.</summary>
     function IsPreviousUserConfigFileANSI: Boolean;
-    ///  <summary>Returns full path to user database directory for latest
-    ///  version of CodeSnip for which a user database is available.</summary>
-    ///  <remarks>This can be current version's database directory if present.
+    ///  <summary>Returns full path to database directory for latest version of
+    ///  CodeSnip for which a snippets database is available.</summary>
+    ///  <remarks>
+    ///  <para>This can be current version's database directory if present.
+    ///  </para>
+    ///  <para>Prior to CodeSnip 5 the database in question will be the legacy
+    ///  "user" database.</para>
     ///  </remarks>
     function PreviousUserDatabaseDir: string;
-    ///  <summary>Returns full path on user database file for latest version of
-    ///  CodeSnip for which a user database is available.</summary>
-    ///  <remarks>This can be current version's database file if present.
+    ///  <summary>Returns full path of snippets database file for latest version
+    ///  of CodeSnip for which a user database is available.</summary>
+    ///  <remarks>
+    ///  <para>This can be current version's database directory if present.
+    ///  </para>
+    ///  <para>Prior to CodeSnip 5 the database in question will be the legacy
+    ///  "user" database.</para>
     ///  </remarks>
     function PreviousUserDatabaseFileName: string;
     ///  <summary>Returns full path to common config file for current version of
@@ -138,7 +146,7 @@ end;
 
 class function TInstallInfo.DatabaseDirs(const InstID: TInstallId): string;
 
-  // Gets user database directory from config file associated with InstID.
+  // Gets database directory from config file associated with InstID.
   // Returns DefaultDir if config file doesn't reference database directory.
   function DBDirFromCfg(const DefaultDir: string): string;
   begin
@@ -163,7 +171,7 @@ begin
   else
   begin
     case InstID of
-      // v1 and earlier did not have a user database
+      // v1 and earlier did not have a "user" database
       piV2:
         Result := MakeFullUserPath('DelphiDabbler\CodeSnip\UserData');
       piV3:
