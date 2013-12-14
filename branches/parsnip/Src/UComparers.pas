@@ -94,8 +94,8 @@ type
   end;
 
   ///  <summary>Concrete implementation of TComparator that delegates all method
-  ///  calls to user-provide callback functions or to user-provided instances of
-  ///  TComparer and TEqualityComparer.</summary>
+  ///  calls to user-provided callback functions or to user-provided instances
+  ///  of TComparer and TEqualityComparer.</summary>
   ///  <remarks>Note TDelegatedComparator is used by TComparator to provide a
   ///  concrete implementation of TComparator as return from it Construct
   ///  methods.</remarks>
