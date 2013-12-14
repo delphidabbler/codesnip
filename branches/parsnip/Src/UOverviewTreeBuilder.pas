@@ -177,7 +177,7 @@ begin
         ParentNode := AddViewItemNode(nil, CreateViewItemForGroup(Group));
         for Snippet in Group.SnippetList do
           AddViewItemNode(
-            ParentNode, TViewFactory.CreateSnippetView(Snippet)
+            ParentNode, TViewFactory.CreateSnippetView(Snippet.ID)
           );
       end;
     end;

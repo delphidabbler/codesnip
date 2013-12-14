@@ -157,7 +157,6 @@ end;
 procedure THistory.DBChangeHandler(Sender: TObject; const EvtInfo: IInterface);
 var
   EventInfo: IDatabaseChangeEventInfo;  // information about the event
-  NewSnippet: TSnippet;
 begin
   EventInfo := EvtInfo as IDatabaseChangeEventInfo;
   // Clear history if snippet changed or removed
@@ -166,12 +165,11 @@ begin
     evSnippetDeleted, evSnippetChanged:
       Clear;
     evSnippetAdded:
-    begin
-      NewSnippet := _Database.Lookup(
-        (EventInfo.Info as TBox<TSnippetID>).Value
+      NewItem(
+        TViewFactory.CreateSnippetView(
+          (EventInfo.Info as TBox<TSnippetID>).Value
+        )
       );
-      NewItem(TViewFactory.CreateSnippetView(NewSnippet));
-    end;
   end;
 end;
 

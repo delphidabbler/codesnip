@@ -113,6 +113,8 @@ type
     function GetSnippet: TSnippet;
     ///  <summary>Snippet associated with view.</summary>
     property Snippet: TSnippet read GetSnippet;
+    { TODO: Change this view to provide ID of associated snippet instead of
+            snippet itself. }
   end;
 
 type
@@ -175,9 +177,9 @@ type
     ///  <summary>Creates a database update information view instance.
     ///  </summary>
     class function CreateDBUpdateInfoView: IView;
-    ///  <summary>Creates a snippet view instance associated with a given
-    ///  snippet.</summary>
-    class function CreateSnippetView(const Snippet: TSnippet): IView;
+    ///  <summary>Creates a snippet view instance associated with snippet with
+    ///  given ID.</summary>
+    class function CreateSnippetView(const SnippetID: TSnippetID): IView;
     ///  <summary>Creates a tag view instance associated with a given tag.
     ///  </summary>
     class function CreateTagView(const Tag: TTag): IView;
@@ -312,8 +314,8 @@ type
         function IsEqual(const Key: IViewKey): Boolean;
       end;
   public
-    ///  <summary>Constructs view for a specified snippet.</summary>
-    constructor Create(const Snippet: TSnippet);
+    ///  <summary>Constructs view for snippet with given ID.</summary>
+    constructor Create(const SnippetID: TSnippetID);
     ///  <summary>Checks if this view is equal to the one passed as a parameter.
     ///  </summary>
     ///  <remarks>Method of IView.</remarks>
@@ -553,10 +555,10 @@ end;
 
 { TSnippetView }
 
-constructor TSnippetView.Create(const Snippet: TSnippet);
+constructor TSnippetView.Create(const SnippetID: TSnippetID);
 begin
   inherited Create;
-  fSnippetID := Snippet.ID;
+  fSnippetID := SnippetID;
 end;
 
 function TSnippetView.GetDescription: string;
@@ -794,7 +796,7 @@ begin
   else if Supports(View, IStartPageView) then
     Result := CreateStartPageView
   else if Supports(View, ISnippetView) then
-    Result := CreateSnippetView((View as ISnippetView).Snippet)
+    Result := CreateSnippetView((View as ISnippetView).Snippet.ID)
   else if Supports(View, ITagView) then
     Result := CreateTagView((View as ITagView).Tag)
   else if Supports(View, ISnippetKindView) then
@@ -841,9 +843,9 @@ begin
 end;
 
 class function TViewFactory.CreateSnippetView(
-  const Snippet: TSnippet): IView;
+  const SnippetID: TSnippetID): IView;
 begin
-  Result := TSnippetView.Create(Snippet);
+  Result := TSnippetView.Create(SnippetID);
 end;
 
 class function TViewFactory.CreateStartPageView: IView;

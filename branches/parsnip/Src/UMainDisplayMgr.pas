@@ -435,22 +435,20 @@ begin
 
     evBeforeSnippetChange, evBeforeSnippetDelete:
       PrepareForDBViewChange(
-        TViewFactory.CreateSnippetView(_Database.Lookup(EvtInfoToSnippetID))
+        TViewFactory.CreateSnippetView(EvtInfoToSnippetID)
       );
 
     evSnippetChanged:
       UpdateDBView(
         fChangingDetailPageIdx,
-        TViewFactory.CreateSnippetView(_Database.Lookup(EvtInfoToSnippetID))
+        TViewFactory.CreateSnippetView(EvtInfoToSnippetID)
       );
 
     evSnippetDeleted:
       DeleteDBView(fChangingDetailPageIdx);
 
     evSnippetAdded:
-      AddDBView(
-        TViewFactory.CreateSnippetView(_Database.Lookup(EvtInfoToSnippetID))
-      );
+      AddDBView(TViewFactory.CreateSnippetView(EvtInfoToSnippetID));
   end;
 end;
 

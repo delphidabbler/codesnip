@@ -72,13 +72,10 @@ uses
 { TSnippetAction }
 
 function TSnippetAction.Execute: Boolean;
-var
-  Snippet: TSnippet;    // snippet to be displayed
 begin
   Assert(Assigned(fNotifier), ClassName + '.Execute: Notifier not set');
-  Snippet := _Database.Lookup(SnippetID);
   // Create a view item for snippet and get notifier to display it
-  fNotifier.ShowViewItem(TViewFactory.CreateSnippetView(Snippet), NewTab);
+  fNotifier.ShowViewItem(TViewFactory.CreateSnippetView(SnippetID), NewTab);
   Result := False;
 end;
 
