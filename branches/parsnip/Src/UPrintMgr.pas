@@ -68,6 +68,7 @@ uses
   // Delphi
   SysUtils,
   // Project
+  DB.UMain,
   UPrintEngine;
 
 
@@ -101,7 +102,9 @@ var
 begin
   Result := nil;
   if Supports(fViewItem, ISnippetView, SnippetView) then
-    Result := TSnippetPrintDocument.Create(SnippetView.Snippet)
+    Result := TSnippetPrintDocument.Create(
+      _Database.Lookup(SnippetView.SnippetID)
+    )
   else if Supports(fViewItem, ITagView, TagView) then
     Result := TTagPrintDocument.Create(TagView.Tag);
   Assert(Assigned(Result), ClassName + '.GetPrintDocument: Invalid view');

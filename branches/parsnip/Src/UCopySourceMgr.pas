@@ -99,6 +99,7 @@ uses
   CS.SourceCode.Hiliter.Brushes,
   CS.SourceCode.Hiliter.Renderers,
   CS.SourceCode.Hiliter.Themes,
+  DB.UMain,
   DB.USnippet, // for class helper
   UPreferences,
   USnippetSourceGen;
@@ -138,7 +139,7 @@ end;
 
 class function TCopySourceMgr.GenerateSourceCode(View: IView): string;
 begin
-  Result := (View as ISnippetView).Snippet.SourceCode;
+  Result := Database.LookupSnippet((View as ISnippetView).SnippetID).SourceCode;
 end;
 
 class function TCopySourceMgr.HiliteBrushID(View: IView): string;
@@ -146,7 +147,7 @@ var
   Language: TSourceCodeLanguage;
 begin
   Language := TConfig.Instance.SourceCodeLanguages[
-    (View as ISnippetView).Snippet.LanguageID
+    Database.LookupSnippet((View as ISnippetView).SnippetID).LanguageID
   ];
   Result := Language.HiliterBrushID;
 end;

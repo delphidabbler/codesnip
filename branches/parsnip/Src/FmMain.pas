@@ -788,7 +788,7 @@ begin
   Assert(TUserDBMgr.CanEdit(fMainDisplayMgr.CurrentView),
     ClassName + '.actEditSnippetExecute: Can''t edit current view item');
   fNotifier.EditSnippet(
-    (fMainDisplayMgr.CurrentView as ISnippetView).Snippet.ID
+    (fMainDisplayMgr.CurrentView as ISnippetView).SnippetID
   );
   // display of updated snippet is handled by snippets change event handler
 end;
@@ -848,7 +848,10 @@ begin
   // criteria (dialogue box creates and returns search object from entered
   // criteria)
   if fDialogMgr.ExecFindXRefsDlg(
-    (fMainDisplayMgr.CurrentView as ISnippetView).Snippet, Search
+    _Database.Lookup(
+      (fMainDisplayMgr.CurrentView as ISnippetView).SnippetID
+    ),
+    Search
   ) then
     DoSearchFilter(Search);
 end;
@@ -1157,7 +1160,9 @@ begin
     ClassName + '.actTestCompileExecute: Can''t compile current view');
   fDialogMgr.ShowTestCompileDlg(
     fCompileMgr,
-    (fMainDisplayMgr.CurrentView as ISnippetView).Snippet
+    _Database.Lookup(
+      (fMainDisplayMgr.CurrentView as ISnippetView).SnippetID
+    )
   );
 end;
 
@@ -1224,7 +1229,8 @@ begin
   Assert(Supports(fMainDisplayMgr.CurrentView, ISnippetView),
     ClassName + '.actViewDependenciesExecute: Snippet view expected');
   Search := fDialogMgr.ShowDependenciesDlg(
-    (fMainDisplayMgr.CurrentView as ISnippetView).Snippet, 'DependenciesDlg'
+    _Database.Lookup((fMainDisplayMgr.CurrentView as ISnippetView).SnippetID),
+    'DependenciesDlg'
   );
   if Assigned(Search) then
     DoSearchFilter(Search);
@@ -1257,7 +1263,9 @@ var
 begin
   Assert(Supports(fMainDisplayMgr.CurrentView, ISnippetView),
     ClassName + '.actViewTestUnitExecute: Snippet view expected');
-  SelectedSnippet := (fMainDisplayMgr.CurrentView as ISnippetView).Snippet;
+  SelectedSnippet := _Database.Lookup(
+    (fMainDisplayMgr.CurrentView as ISnippetView).SnippetID
+  );
   Assert(SelectedSnippet.CanCompile,
     ClassName + '.actViewTestUnitExecute: Snippet is not compilable');
   fDialogMgr.ShowTestUnitDlg(SelectedSnippet);
@@ -1269,7 +1277,7 @@ var
 begin
   (Sender as TAction).Enabled :=
     Supports(fMainDisplayMgr.CurrentView, ISnippetView, SnippetView)
-    and SnippetView.Snippet.CanCompile;
+    and _Database.Lookup(SnippetView.SnippetID).CanCompile;
 end;
 
 procedure TMainForm.actWelcomeExecute(Sender: TObject);

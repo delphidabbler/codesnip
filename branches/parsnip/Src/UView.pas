@@ -109,12 +109,10 @@ type
   ///  </summary>
   ISnippetView = interface(IView)
     ['{E0BD3AB7-2CB8-4B07-84D9-D7625DD020B0}']
-    ///  <summary>Gets reference to snippet associated with view.</summary>
-    function GetSnippet: TSnippet;
-    ///  <summary>Snippet associated with view.</summary>
-    property Snippet: TSnippet read GetSnippet;
-    { TODO: Change this view to provide ID of associated snippet instead of
-            snippet itself. }
+    ///  <summary>Gets ID of snippet associated with view.</summary>
+    function GetSnippetID: TSnippetID;
+    ///  <summary>ID of snippet associated with view.</summary>
+    property SnippetID: TSnippetID read GetSnippetID;
   end;
 
 type
@@ -331,9 +329,8 @@ type
     ///  <summary>Checks if view is a grouping.</summary>
     ///  <remarks>Method of IView.</remarks>
     function IsGrouping: Boolean;
-    ///  <summary>Gets reference to snippet associated with view.</summary>
-    ///  <remarks>Method of ISnippetView.</remarks>
-    function GetSnippet: TSnippet;
+    ///  <summary>Gets ID of snippet associated with view.</summary>
+    function GetSnippetID: TSnippetID;
   end;
 
 type
@@ -563,7 +560,7 @@ end;
 
 function TSnippetView.GetDescription: string;
 begin
-  Result := GetSnippet.Title;
+  Database.LookupSnippet(fSnippetID).Title;
 end;
 
 function TSnippetView.GetKey: IViewKey;
@@ -571,9 +568,9 @@ begin
   Result := TKey.Create(fSnippetID);
 end;
 
-function TSnippetView.GetSnippet: TSnippet;
+function TSnippetView.GetSnippetID: TSnippetID;
 begin
-  Result := _Database.Lookup(fSnippetID);
+  Result := fSnippetID;
 end;
 
 function TSnippetView.IsEqual(View: IView): Boolean;
@@ -583,7 +580,7 @@ begin
   if not Supports(View, ISnippetView, SnippetView) then
     Exit(False);
   // don't compare snippet IDs directly in case snippet equality test changes
-  Result := GetSnippet.IsEqual(SnippetView.Snippet);
+  Result := GetSnippetID = SnippetView.SnippetID;
 end;
 
 function TSnippetView.IsGrouping: Boolean;
@@ -796,7 +793,7 @@ begin
   else if Supports(View, IStartPageView) then
     Result := CreateStartPageView
   else if Supports(View, ISnippetView) then
-    Result := CreateSnippetView((View as ISnippetView).Snippet.ID)
+    Result := CreateSnippetView((View as ISnippetView).SnippetID)
   else if Supports(View, ITagView) then
     Result := CreateTagView((View as ITagView).Tag)
   else if Supports(View, ISnippetKindView) then

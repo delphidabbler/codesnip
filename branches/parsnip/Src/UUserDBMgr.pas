@@ -352,7 +352,7 @@ resourcestring
 begin
   Assert(Supports(ViewItem, ISnippetView),
     ClassName + '.Delete: Current view is not a snippet');
-  Snippet := (ViewItem as ISnippetView).Snippet;
+  Snippet := _Database.Lookup((ViewItem as ISnippetView).SnippetID);
   // Check if snippet has dependents: don't allow deletion if so
   Dependents := Database.GetDependentsOf(Snippet.ID);
   if Dependents.Count > 0 then
@@ -386,7 +386,10 @@ class procedure TUserDBMgr.DuplicateSnippet(ViewItem: IView);
 begin
   Assert(CanDuplicate(ViewItem),
     ClassName + '.DuplicateSnippet: ViewItem can''t be duplicated');
-  TDuplicateSnippetDlg.Execute(nil, (ViewItem as ISnippetView).Snippet);
+  TDuplicateSnippetDlg.Execute(
+    nil,
+    _Database.Lookup((ViewItem as ISnippetView).SnippetID)
+  );
 end;
 
 class procedure TUserDBMgr.EditSnippet(const SnippetID: TSnippetID);

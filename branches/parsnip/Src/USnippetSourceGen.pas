@@ -134,7 +134,7 @@ var
   TagView: ITagView;      // tag view if supported
 begin
   if Supports(View, ISnippetView, SnipView) then
-    Result := SnipView.Snippet.Kind = skRoutine
+    Result := Database.LookupSnippet(SnipView.SnippetID).Kind = skRoutine
   else if Supports(View, ITagView, TagView) then
     Result := not GetTagSnippets(TagView.Tag).IsEmpty
   else
@@ -212,7 +212,7 @@ begin
   // Record required snippet(s)
   if Supports(View, ISnippetView) then
     // view is single snippet: just record that
-    fGenerator.IncludeSnippet((View as ISnippetView).Snippet.ID)
+    fGenerator.IncludeSnippet((View as ISnippetView).SnippetID)
   else
     // view is tag: record all skRoutine snippets for tag in current query
     fGenerator.IncludeSnippets(GetTagSnippets((View as ITagView).Tag));

@@ -247,11 +247,14 @@ function TMainCompileMgr.CanCompile(View: IView): Boolean;
   }
 var
   SnippetView: ISnippetView;  // view as snippet view if supported
+  Snippet: TSnippet;          // snippet associated with view
 begin
-  Result := Assigned(View)
-    and HaveCompilers
-    and Supports(View, ISnippetView, SnippetView)
-    and SnippetView.Snippet.CanCompile;
+  if not HaveCompilers then
+    Exit(False);
+  if not Supports(View, ISnippetView, SnippetView) then
+    Exit(False);
+  Snippet := _Database.Lookup(SnippetView.SnippetID);
+  Result := Snippet.CanCompile;
 end;
 
 function TMainCompileMgr.ConfigCompilers: Boolean;
@@ -275,7 +278,7 @@ begin
   Result := Assigned(View)
     and Assigned(LastCompiledSnippet)
     and Supports(View, ISnippetView, SnippetView)
-    and SnippetView.Snippet.IsEqual(LastCompiledSnippet);
+    and (SnippetView.SnippetID = LastCompiledSnippet.ID);
 end;
 
 end.

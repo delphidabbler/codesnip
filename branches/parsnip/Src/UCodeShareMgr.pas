@@ -104,7 +104,7 @@ var
   SnippetView: ISnippetView;  // ViewItem as snippet view if supported
 begin
   if Supports(ViewItem, ISnippetView, SnippetView) then
-    Result := SnippetView.Snippet
+    Result := _Database.Lookup(SnippetView.SnippetID)
   else
     Result := nil;
 end;

@@ -518,7 +518,7 @@ function TSnippetInfoPageHTML.GetSnippet: TSnippet;
 begin
   Assert(Supports(View, ISnippetView),
     ClassName + '.Create: View is not snippet');
-  Result := (View as ISnippetView).Snippet;
+  Result := _Database.Lookup((View as ISnippetView).SnippetID);
 end;
 
 function TSnippetInfoPageHTML.GetTemplateResName: string;

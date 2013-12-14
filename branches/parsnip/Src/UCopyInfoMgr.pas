@@ -67,6 +67,7 @@ uses
   CS.Config,
   CS.SourceCode.Languages,
   CS.SourceCode.Hiliter.Brushes,
+  DB.UMain,
   DB.USnippet,  // for class helper
   UPreferences,
   URTFSnippetDoc,
@@ -83,7 +84,7 @@ end;
 class function TCopyInfoMgr.GenerateDoc(View: IView; const Doc: TSnippetDoc):
   TEncodedData;
 begin
-  Result := Doc.Generate((View as ISnippetView).Snippet);
+  Result := Doc.Generate(_Database.Lookup((View as ISnippetView).SnippetID));
 end;
 
 class function TCopyInfoMgr.GeneratePlainText(View: IView): TEncodedData;
@@ -110,7 +111,7 @@ begin
   Assert(Supports(View, ISnippetView),
     ClassName + '.GenerateRichText: View is not a snippet view');
   Language := TConfig.Instance.SourceCodeLanguages[
-    (View as ISnippetView).Snippet.LanguageID
+    Database.LookupSnippet((View as ISnippetView).SnippetID).LanguageID
   ];
   Brush := TSyntaxHiliterBrushes.CreateBrush(Language.HiliterBrushID);
   try

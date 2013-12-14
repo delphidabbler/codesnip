@@ -93,7 +93,7 @@ procedure TFavouritesManager.AddFavourite(View: IView);
 begin
   Assert(CanAddFavourite(View),
     ClassName + '.AddFavourite: invalid view or already favourite');
-  fFavourites.Add((View as ISnippetView).Snippet.ID, Now);
+  fFavourites.Add((View as ISnippetView).SnippetID, Now);
 end;
 
 function TFavouritesManager.CanAddFavourite(View: IView): Boolean;
@@ -101,7 +101,7 @@ var
   SnippetView: ISnippetView;
 begin
   Result := Supports(View, ISnippetView, SnippetView)
-    and not fFavourites.IsFavourite(SnippetView.Snippet.ID);
+    and not fFavourites.IsFavourite(SnippetView.SnippetID);
 end;
 
 constructor TFavouritesManager.Create(Notifier: INotifier);
