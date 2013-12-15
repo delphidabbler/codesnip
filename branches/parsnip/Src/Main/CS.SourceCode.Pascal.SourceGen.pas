@@ -767,9 +767,8 @@ var
 begin
   // NOTE: this method must not be called from any other method of this class
   // Validate the snippet
-  // TODO: reinstate this check once method can accept an ISnippet
-//  if not TSnippetValidator.Validate(Snippet, ErrorMsg) then
-//    raise ECodeSnip.Create(ErrorMsg);
+  if not TSnippetValidator.Validate(Snippet, ErrorMsg) then
+    raise ECodeSnip.Create(ErrorMsg);
   // Process the snippet
   case Snippet.Kind of
     skRoutine:
@@ -796,9 +795,8 @@ begin
   if fTypesAndConsts.Contains(TypeOrConst) then
     Exit;
   // Validate dependency list
-  // TODO: reinstate this method when it can take an ISnippet parameter
-//  if not TSnippetValidator.ValidateDependsList(TypeOrConst, ErrorMsg) then
-//    raise ECodeSnip.Create(ErrorMsg);
+  if not TSnippetValidator.ValidateDependsList(TypeOrConst, ErrorMsg) then
+    raise ECodeSnip.Create(ErrorMsg);
   // Add all required snippets to list before adding this one: this ensures
   // required snippets preceed those that depend on them
   RequireSnippets(TypeOrConst.RequiredSnippets);
