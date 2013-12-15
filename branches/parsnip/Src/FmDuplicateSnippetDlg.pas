@@ -20,9 +20,16 @@ interface
 
 uses
   // Delphi
-  SysUtils, Controls, StdCtrls, ExtCtrls, Classes,
+  SysUtils,
+  Controls,
+  StdCtrls,
+  ExtCtrls,
+  Classes,
   // Project
-  DB.USnippet, FmGenericOKDlg, UBaseObjects;
+  CS.Database.Types,
+  DB.USnippet,
+  FmGenericOKDlg,
+  UBaseObjects;
 
 
 type
@@ -47,8 +54,8 @@ type
       end;
   strict private
     var
-      fSnippet: TSnippet;
-      fNewSnippet: TSnippet;
+      fSnippet: ISnippet;
+      fNewSnippetID: TSnippetID;
       fOptions: TPersistentOptions;
     procedure ValidateData;
     procedure HandleException(const E: Exception);
@@ -62,7 +69,7 @@ type
     procedure ArrangeForm; override;
   public
     class function Execute(const AOwner: TComponent;
-      const ASnippet: TSnippet): Boolean;
+      ASnippet: ISnippet): Boolean;
   end;
 
 
@@ -110,7 +117,7 @@ begin
 end;
 
 class function TDuplicateSnippetDlg.Execute(const AOwner: TComponent;
-  const ASnippet: TSnippet): Boolean;
+  ASnippet: ISnippet): Boolean;
 resourcestring
   sCaption = 'Duplicate %s';   // dialog box caption
 begin
@@ -154,12 +161,13 @@ end;
 
 procedure TDuplicateSnippetDlg.UpdateDatabase;
 var
-  Title: string;
+  NewSnippet: IEditableSnippet;
 begin
-  Title := StrTrim(edTitle.Text);
-  fNewSnippet := (_Database as IDatabaseEdit).DuplicateSnippet(
-    fSnippet, Title
-  );
+  NewSnippet := Database.NewSnippet;
+  NewSnippet.UpdateFrom(fSnippet);
+  NewSnippet.Title := StrTrim(edTitle.Text);
+  Database.AddSnippet(NewSnippet);
+  fNewSnippetID := NewSnippet.ID;
 end;
 
 procedure TDuplicateSnippetDlg.ValidateData;
@@ -179,7 +187,7 @@ end;
 procedure TDuplicateSnippetDlg.FormDestroy(Sender: TObject);
 begin
   if (ModalResult = mrOK) and chkEdit.Checked then
-    TUserDBMgr.EditSnippet(fNewSnippet.ID);
+    TUserDBMgr.EditSnippet(fNewSnippetID);
   fOptions.EditSnippetOnClose := chkEdit.Checked;
   inherited;
   fOptions.Free;
@@ -207,4 +215,5 @@ begin
 end;
 
 end.
+
 

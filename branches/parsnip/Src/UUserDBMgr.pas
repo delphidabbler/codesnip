@@ -388,7 +388,7 @@ begin
     ClassName + '.DuplicateSnippet: ViewItem can''t be duplicated');
   TDuplicateSnippetDlg.Execute(
     nil,
-    _Database.Lookup((ViewItem as ISnippetView).SnippetID)
+    Database.LookupSnippet((ViewItem as ISnippetView).SnippetID)
   );
 end;
 
