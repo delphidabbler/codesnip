@@ -45,9 +45,7 @@ type
     ///  <summary>Snippet name.</summary>
     Name: string;
     ///  <summary>Description of snippet.</summary>
-    Data: TSnippetEditData;
-    ///  <summary>Copies given TSnippetInfo record to this one.</summary>
-    procedure Assign(const Src: TSnippetInfo);
+    Snippet: IEditableSnippet;
   end;
 
 type
@@ -212,6 +210,8 @@ uses
   CS.ActiveText,
   CS.ActiveText.Helper,
   CS.ActiveText.Renderers.REML,
+  CS.Database.Snippets,
+  CS.Database.Tags,
   CS.SourceCode.Languages,
   DB.UMain,
   IntfCommon,
@@ -432,20 +432,22 @@ end;
 
 procedure TCodeImporter.Execute(const Data: TBytes);
 
-  ///  Reads list of units from under SnippetNode into Units list.
-  procedure GetUnits(const SnippetNode: IXMLNode; Units: IStringList);
+  // Returns list of required modules (units) from under SnippetNode.
+  { TODO: the following code that builds required snippets list is broken:
+          imported snippet IDs are wrong if required snippet is also in import
+          file (the ID it had when exported is used. Some magic with linked
+          spaces is probably needed. }
+  function GetRequiredModules(const SnippetNode: IXMLNode): IStringList;
   var
     UnitNode: IXMLNode; // unit list node: nil if no list
   begin
     UnitNode := fXMLDoc.FindFirstChildNode(SnippetNode, cUnitsNode);
-    Units.Clear;
-    TXMLDocHelper.GetPascalNameList(fXMLDoc, UnitNode, Units);
+    Result := TIStringList.Create;
+    TXMLDocHelper.GetPascalNameList(fXMLDoc, UnitNode, Result);
   end;
 
-  ///  Reads list of a snippet's required snippets from under SnippetNode into
-  ///  Depends list.
-  procedure GetDepends(const SnippetNode: IXMLNode;
-    const Depends: ISnippetIDList);
+  // Returns list of required snippets from under SnippetNode.
+  function GetRequiredSnippets(const SnippetNode: IXMLNode): ISnippetIDList;
   var
     DependsNode: IXMLNode;      // depends node list: nil if no list
     SnippetNames: IStringList;  // list of names of snippets in depends list
@@ -454,9 +456,9 @@ procedure TCodeImporter.Execute(const Data: TBytes);
     DependsNode := fXMLDoc.FindFirstChildNode(SnippetNode, cDependsNode);
     SnippetNames := TIStringList.Create;
     TXMLDocHelper.GetPascalNameList(fXMLDoc, DependsNode, SnippetNames);
-    Depends.Clear;
+    Result := TSnippetIDList.Create;
     for SnippetName in SnippetNames do
-      Depends.Add(TSnippetID.Create(SnippetName));
+      Result.Add(TSnippetID.Create(SnippetName));
   end;
 
   // Reads description node and converts to active text.
@@ -490,15 +492,23 @@ procedure TCodeImporter.Execute(const Data: TBytes);
       Result := IDStr;
   end;
 
+  // Constructs a tag set containing a single "imported" tag.
+  function BuildTags: ITagSet;
+  resourcestring
+    sImportTagStr = 'Imported';
+  begin
+    Result := TTagSet.Create;
+    Result.Add(TTag.Create(sImportTagStr));
+  end;
 
 resourcestring
   sParseError = 'Import file has an invalid format';
-  sImportTagStr = 'Imported';
 var
   UserNode: IXMLNode;               // node containing any user info
   SnippetNodes: IXMLSimpleNodeList; // list of snippet nodes
   SnippetNode: IXMLNode;            // each snippet node in list
   Idx: Integer;                     // loops thru snippet node list
+  Snippet: IEditableSnippet;        // each snippet read from file
 begin
   // Load XML document
   try
@@ -529,55 +539,52 @@ begin
       // Read a snippet node
       SnippetNode := SnippetNodes[Idx];
       fSnippetInfo[Idx].Name := SnippetNode.Attributes[cSnippetNameAttr];
-      fSnippetInfo[Idx].Data :=
-        (_Database as IDatabaseEdit).GetEditableSnippetInfo;
-      with fSnippetInfo[Idx].Data do
-      begin
-        Props.Tags.Add(TTag.Create(sImportTagStr));
-        Props.Desc := GetDescription(SnippetNode);
-        Props.Title := GetTitleProperty(SnippetNode, fSnippetInfo[Idx].Name);
-        Props.SourceCode := TXMLDocHelper.GetSubTagText(
-          fXMLDoc, SnippetNode, cSourceCodeTextNode
-        );
-        if TXMLDocHelper.GetHiliteSource(fXMLDoc, SnippetNode, True) then
-          Props.LanguageID := TSourceCodeLanguageID.Create('Pascal')
-        else
-          Props.LanguageID := TSourceCodeLanguageID.Create('Text');
-        // how we read Notes property depends on version of file
-        case fVersion of
-          1:
-            Props.Notes := TActiveTextHelper.ParseCommentsAndCredits(
-              TXMLDocHelper.GetSubTagText(fXMLDoc, SnippetNode, cCommentsNode),
-              TXMLDocHelper.GetSubTagText(fXMLDoc, SnippetNode, cCreditsNode),
-              TXMLDocHelper.GetSubTagText(fXMLDoc, SnippetNode, cCreditsUrlNode)
-            );
-          else // later versions
-            Props.Notes := TActiveTextHelper.ParseREML(
-              TXMLDocHelper.GetSubTagText(fXMLDoc, SnippetNode, cExtraNode)
-            );
-        end;
-        // how we read kind property depends on version of file
-        case fVersion of
-          1, 2:
-            // for version 1 and 2, we have StandardFormat instead of Kind:
-            // map standard format value onto a kind
-            if TXMLDocHelper.GetStandardFormat(fXMLDoc, SnippetNode, False) then
-              Props.Kind := skRoutine
-            else
-              Props.Kind := skFreeform;
-          else // later versions
-            // for later versions we have Kind value: use Freeform if missing
-            Props.Kind := TXMLDocHelper.GetSnippetKind(
-              fXMLDoc, SnippetNode, skFreeForm
-            );
-        end;
-        Props.CompilerResults := TXMLDocHelper.GetCompilerResults(
-          fXMLDoc, SnippetNode
-        );
-        GetUnits(SnippetNode, Refs.RequiredModules);
-        GetDepends(SnippetNode, Refs.RequiredSnippets);
-        Refs.XRefs.Clear;
+      Snippet := Database.NewSnippet;
+      Snippet.Tags := BuildTags;
+      Snippet.Description := GetDescription(SnippetNode);
+      Snippet.Title := GetTitleProperty(SnippetNode, fSnippetInfo[Idx].Name);
+      Snippet.SourceCode := TXMLDocHelper.GetSubTagText(
+        fXMLDoc, SnippetNode, cSourceCodeTextNode
+      );
+      if TXMLDocHelper.GetHiliteSource(fXMLDoc, SnippetNode, True) then
+        Snippet.LanguageID := TSourceCodeLanguageID.Create('Pascal')
+      else
+        Snippet.LanguageID := TSourceCodeLanguageID.Create('Text');
+      // how we read Notes property depends on version of file
+      case fVersion of
+        1:
+          Snippet.Notes := TActiveTextHelper.ParseCommentsAndCredits(
+            TXMLDocHelper.GetSubTagText(fXMLDoc, SnippetNode, cCommentsNode),
+            TXMLDocHelper.GetSubTagText(fXMLDoc, SnippetNode, cCreditsNode),
+            TXMLDocHelper.GetSubTagText(fXMLDoc, SnippetNode, cCreditsUrlNode)
+          );
+        else // later versions
+          Snippet.Notes := TActiveTextHelper.ParseREML(
+            TXMLDocHelper.GetSubTagText(fXMLDoc, SnippetNode, cExtraNode)
+          );
       end;
+      // how we read kind property depends on version of file
+      case fVersion of
+        1, 2:
+          // for version 1 and 2, we have StandardFormat instead of Kind:
+          // map standard format value onto a kind
+          if TXMLDocHelper.GetStandardFormat(fXMLDoc, SnippetNode, False) then
+            Snippet.Kind := skRoutine
+          else
+            Snippet.Kind := skFreeform;
+        else // later versions
+          // for later versions we have Kind value: use Freeform if missing
+          Snippet.Kind := TXMLDocHelper.GetSnippetKind(
+            fXMLDoc, SnippetNode, skFreeForm
+          );
+      end;
+      Snippet.CompileResults := TXMLDocHelper.GetCompilerResults(
+        fXMLDoc, SnippetNode
+      );
+      Snippet.RequiredModules := GetRequiredModules(SnippetNode);
+      Snippet.RequiredSnippets := GetRequiredSnippets(SnippetNode);
+      // No cross references stored in export file
+      fSnippetInfo[Idx].Snippet := Snippet;
     end;
   except
     on E: EDOMParseError do
@@ -608,7 +615,7 @@ begin
       UserInfo := fUserInfo;
       SetLength(SnippetInfo, Length(fSnippetInfo));
       for Idx := Low(fSnippetInfo) to High(fSnippetInfo) do
-        SnippetInfo[Idx].Assign(fSnippetInfo[Idx]);
+        SnippetInfo[Idx] := fSnippetInfo[Idx];
     finally
       Free;
     end;
@@ -648,14 +655,6 @@ begin
   SnippetNodes := fXMLDoc.FindChildNodes(SnippetsNode, cSnippetNode);
   if SnippetNodes.Count = 0 then
     raise ECodeImporter.CreateFmt(sMissingNode, [cSnippetNode]);
-end;
-
-{ TSnippetInfo }
-
-procedure TSnippetInfo.Assign(const Src: TSnippetInfo);
-begin
-  Name := Src.Name;
-  Data.Assign(Src.Data);
 end;
 
 end.
