@@ -66,8 +66,8 @@ type
         @param ErrorSel [out] Selection that can be used to highlight error.
         @return True if description is valid or False if not.
       }
-    class function ValidateSnippet(const Snippet: TSnippet;
-      out ErrorMsg: string; out ErrorSel: TSelection): Boolean;
+    class function ValidateSnippet(Snippet: ISnippet; out ErrorMsg: string;
+      out ErrorSel: TSelection): Boolean;
       {Checks a snippet for validity.
         @param Snippet [in] Snippet to be checked.
         @param ErrorMsg [out] Message that describes error. Undefined if True
@@ -76,8 +76,8 @@ type
         @return True if snippet valid or False if not.
       }
   public
-    class function ValidateDependsList(const Snippet: TSnippet;
-      out ErrorMsg: string): Boolean;
+    class function ValidateDependsList(Snippet: ISnippet; out ErrorMsg: string):
+      Boolean;
       {Recursively checks dependency list of a snippet for validity.
         @param Snippet [in] Snippet for which dependencies are to be checked.
         @param ErrorMsg [out] Message that describes error. Undefined if True
@@ -120,7 +120,7 @@ type
     ///  </returns>
     class function ValidateTitle(const Title: string; out ErrorMsg: string):
       Boolean;
-    class function Validate(const Snippet: TSnippet; out ErrorMsg: string):
+    class function Validate(Snippet: ISnippet; out ErrorMsg: string):
       Boolean;
       {Checks a snippet for validity.
         @param Snippet [in] Snippet to be checked.
@@ -153,7 +153,7 @@ uses
 
 { TSnippetValidator }
 
-class function TSnippetValidator.Validate(const Snippet: TSnippet;
+class function TSnippetValidator.Validate(Snippet: ISnippet;
   out ErrorMsg: string): Boolean;
   {Checks a snippet for validity.
     @param Snippet [in] Snippet to be checked.
@@ -167,7 +167,7 @@ begin
   Result := ValidateSnippet(Snippet, ErrorMsg, DummySel);
 end;
 
-class function TSnippetValidator.ValidateDependsList(const Snippet: TSnippet;
+class function TSnippetValidator.ValidateDependsList(Snippet: ISnippet;
   out ErrorMsg: string): Boolean;
   {Recursively checks dependency list of a snippet for validity.
     @param Snippet [in] Snippet for which dependencies are to be checked.
@@ -177,7 +177,7 @@ class function TSnippetValidator.ValidateDependsList(const Snippet: TSnippet;
   }
 
   // ---------------------------------------------------------------------------
-  function DependsListIsCircular(const Snippet: TSnippet;
+  function DependsListIsCircular(Snippet: ISnippet;
     DependsList: ISnippetIDList): Boolean;
     {Checks if dependency list is circular, i.e. a snippet is referenced in own
     chain of dependencies. Recursive function.
@@ -392,7 +392,7 @@ begin
     ErrorMsg := Format(sErrorStub, [ErrorInfo.Description]);
 end;
 
-class function TSnippetValidator.ValidateSnippet(const Snippet: TSnippet;
+class function TSnippetValidator.ValidateSnippet(Snippet: ISnippet;
   out ErrorMsg: string; out ErrorSel: TSelection): Boolean;
 begin
   Result := ValidateName(Snippet.ID.ToString, False, ErrorMsg, ErrorSel)

@@ -1059,7 +1059,7 @@ begin
     );
     try
       if not TSnippetValidator.ValidateDependsList(
-        TempSnippet, ErrorMessage
+        TempSnippet.CloneAsReadOnly, ErrorMessage
       ) then
         raise EDataEntry.Create(  // selection not applicable to list boxes
           StrMakeSentence(ErrorMessage) + EOL2 + sDependencyPrompt, clbDepends
