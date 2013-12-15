@@ -86,33 +86,35 @@ type
   strict private
     var
       ///  <summary>Value of TypesAndConsts property.</summary>
-      fTypesAndConsts: TObjectList<TSnippet>;
+      fTypesAndConsts: TList<ISnippet>;
       ///  <summary>Value of IntfRoutines property.</summary>
-      fIntfRoutines: TObjectList<TSnippet>;
+      fIntfRoutines: TList<ISnippet>;
       ///  <summary>Value of AllRoutines property.</summary>
-      fAllRoutines: TObjectList<TSnippet>;
+      fAllRoutines: TList<ISnippet>;
       ///  <summary>Value of ForwardRoutines property.</summary>
-      fForwardRoutines: TObjectList<TSnippet>;
+      fForwardRoutines: TList<ISnippet>;
       ///  <summary>Value of RequiredRoutines property.</summary>
-      fRequiredRoutines: TObjectList<TSnippet>;
+      fRequiredRoutines: TList<ISnippet>;
       ///  <summary>Value of Units property.</summary>
       fUnits: TStringList;
 
     ///  <summary>Adds given user-specified routine to the analysis.</summary>
     ///  <remarks>Duplicates are ignored.</remarks>
-    procedure AddIntfRoutine(const Routine: TSnippet);
+    procedure AddIntfRoutine(Routine: ISnippet);
 
     ///  <summary>Adds the given type or constant to the analysis.</summary>
     ///  <remarks>Duplicates are ignored.</remarks>
-    procedure AddTypeOrConst(const TypeOrConst: TSnippet);
+    procedure AddTypeOrConst(TypeOrConst: ISnippet);
 
     ///  <summary>Adds all snippets in given list to a list of required
     ///  snippets, according to type.</summary>
+    ///  <remarks>Snippets with the given IDs MUST be in the snippets database.
+    ///  </remarks>
     procedure RequireSnippets(Snips: ISnippetIDList);
 
     ///  <summary>Adds given snippet to appropriate list of required snippets,
     ///  according to type.</summary>
-    procedure RequireSnippet(const Snippet: TSnippet);
+    procedure RequireSnippet(Snippet: ISnippet);
 
     ///  <summary>Adds each unit in given list to list of required units.
     ///  </summary>
@@ -126,7 +128,7 @@ type
     ///  <summary>Adds given routine, that has not been directly required by
     ///  user, to the analysis.</summary>
     ///  <remarks>Duplicates are ignored.</remarks>
-    procedure RequireRoutine(const Routine: TSnippet);
+    procedure RequireRoutine(Routine: ISnippet);
 
   public
 
@@ -137,8 +139,13 @@ type
     destructor Destroy; override;
 
     ///  <summary>Adds the snippet with the given ID to the analysis.</summary>
-    ///  <remarks>Freeform snippets are ignored.</remarks>
-    procedure AddSnippet(const SnippetID: TSnippetID);
+    ///  <remarks>
+    ///  <para>Any snippet can be added even if it is not in the snippet
+    ///  database, providing all its required snippets are in the database.
+    ///  </para>
+    ///  <para>Freeform snippets are ignored.</para>
+    ///  </remarks>
+    procedure AddSnippet(Snippet: ISnippet);
 
     ///  <summary>Performs analysis and generates data structures that are
     ///  exposed via the object's properties.</summary>
@@ -148,21 +155,21 @@ type
 
     ///  <summary>List of types and constants that have either been added by the
     ///  user or required by other snippets.</summary>
-    property TypesAndConsts: TObjectList<TSnippet> read fTypesAndConsts;
+    property TypesAndConsts: TList<ISnippet> read fTypesAndConsts;
 
     ///  <summary>List of routines added by the user.</summary>
     ///  <remarks>These routines are those which would appear in a unit's
     ///  interface section.</remarks>
-    property IntfRoutines: TObjectList<TSnippet> read fIntfRoutines;
+    property IntfRoutines: TList<ISnippet> read fIntfRoutines;
 
     ///  <summary>List of routines that have been required by other snippets.
     ///  </summary>
-    property RequiredRoutines: TObjectList<TSnippet> read fRequiredRoutines;
+    property RequiredRoutines: TList<ISnippet> read fRequiredRoutines;
 
     ///  <summary>List of all routines, both added and required.</summary>
     ///  <remarks>Not valid until Generate has been called. Invalidated if
     ///  further snippets are added without calling Generate again.</remarks>
-    property AllRoutines: TObjectList<TSnippet> read fAllRoutines;
+    property AllRoutines: TList<ISnippet> read fAllRoutines;
 
     ///  <summary>List of required routines that have not also been added by the
     ///  user.</summary>
@@ -172,7 +179,7 @@ type
     ///  <para>Not valid until Generate has been called. Invalidated if further
     ///  snippets are added without calling Generate again.</para>
     ///  </remarks>
-    property ForwardRoutines: TObjectList<TSnippet> read fForwardRoutines;
+    property ForwardRoutines: TList<ISnippet> read fForwardRoutines;
 
     ///  <summary>List of required units.</summary>
     property Units: TStringList read fUnits;
@@ -198,10 +205,18 @@ type
 
     ///  <summary>Includes the snippet with the given ID in the source code.
     ///  </summary>
-    procedure IncludeSnippet(const SnippetID: TSnippetID);
+    ///  <remarks>
+    ///  <para>Any snippet can be included, even if it is not in the snippet
+    ///  database, providing all its required snippets are in the database.
+    ///  </para>
+    ///  <para>Freeform snippets are ignored.</para>
+    ///  </remarks>
+    procedure IncludeSnippet(Snippet: ISnippet);
 
     ///  <summary>Includes snippets with the given IDs in the source code.
     ///  </summary>
+    ///  <remarks>All the given snippet IDs MUST have a corresponding snippet in
+    ///  the snippets database.</remarks>
     procedure IncludeSnippets(SnipIDs: ISnippetIDList);
 
     ///  <summary>Generates source code of a Pascal unit containing all the
@@ -288,12 +303,12 @@ type
 
     ///  <summary>Splits source code of a routine snippet into the head (routine
     ///  prototype) and body.</summary>
-    ///  <param name="Routine">TSnippet [in] Routine whose source code is to be
+    ///  <param name="Routine">ISnippet [in] Routine whose source code is to be
     ///  split.</param>
     ///  <param name="Head">string [out] Set to routine prototype.</param>
     ///  <param name="Body">string [out] Body of routine that follows the
     ///  prototype.</param>
-    class procedure Split(const Routine: TSnippet; out Head, Body: string);
+    class procedure Split(Routine: ISnippet; out Head, Body: string);
 
     ///  <summary>Creates and returns a comment containing a routine's
     ///  description.</summary>
@@ -302,20 +317,20 @@ type
     ///  <param name="TruncateComments">Boolean [in] Flag indicating whether or
     ///  not comment is to be truncated at the end of the first paragraph of
     ///  multi-paragraph text.</param>
-    ///  <param name="Routine">TSnippet [in] Routine for which comments are to
+    ///  <param name="Routine">ISnippet [in] Routine for which comments are to
     ///  be rendered. Snippet kind must be skRoutine.</param>
     ///  <returns>string. Formatted comments.</returns>
     class function RenderDescComment(CommentStyle: TPascalCommentStyle;
-      const TruncateComments: Boolean; const Routine: TSnippet): string;
+      const TruncateComments: Boolean; Routine: ISnippet): string;
 
   public
     ///  <summary>Extracts and returns the given routine snippet's prototype
     ///  from its source code.</summary>
-    class function ExtractPrototype(const Routine: TSnippet): string;
+    class function ExtractPrototype(Routine: ISnippet): string;
 
     ///  <summary>Format's a routine snippet's prototype, including a comment
     ///  containing its description if required.</summary>
-    ///  <param name="Routine">TSnippet [in] Routine whose prototype is to be
+    ///  <param name="Routine">ISnippet [in] Routine whose prototype is to be
     ///  formatted. Snippet kind must be skRoutine.</param>
     ///  <param name="CommentStyle">TPascalCommentStyle [in] Style of commenting
     ///  to be used for routine's description.</param>
@@ -323,7 +338,7 @@ type
     ///  not description comment is to be truncated at the end of the first
     ///  paragraph of multi-paragraph text.</param>
     ///  <returns>string. Formatted prototype.</returns>
-    class function FormatRoutinePrototype(const Routine: TSnippet;
+    class function FormatRoutinePrototype(Routine: ISnippet;
       CommentStyle: TPascalCommentStyle; const TruncateComments: Boolean):
       string;
 
@@ -334,11 +349,11 @@ type
     ///  <param name="TruncateComments">Boolean [in] Flag indicating whether or
     ///  not description comment is to be truncated at the end of the first
     ///  paragraph of multi-paragraph text.</param>
-    ///  <param name="Routine">TSnippet [in] Routine whose source code is to be
+    ///  <param name="Routine">ISnippet [in] Routine whose source code is to be
     ///  formatted.</param>
     ///  <returns>string. Formatted source code.</returns>
     class function FormatRoutine(CommentStyle: TPascalCommentStyle;
-      const TruncateComments: Boolean; const Routine: TSnippet): string;
+      const TruncateComments: Boolean; Routine: ISnippet): string;
   end;
 
 type
@@ -349,13 +364,13 @@ type
     ///  <summary>Splits source code of a constant or simple type snippet into
     ///  the prefix (text up to 'const' or 'type' and the following definition.
     ///  </summary>
-    ///  <param name="ConstOrType">TSnippet [in] Constant or simple type snippet
+    ///  <param name="ConstOrType">ISnippet [in] Constant or simple type snippet
     ///  whose source code is to be split.</param>
     ///  <param name="Prefix">string [out] Text up to 'const' or 'type' keyword.
     ///  </param>
     ///  <param name="Body">string [out] Remainder of source code without
     ///  prefix.</param>
-    class procedure Split(const ConstOrType: TSnippet; out Prefix,
+    class procedure Split(ConstOrType: ISnippet; out Prefix,
       Body: string);
 
     ///  <summary>Creates and returns a comment containing a constant or simple
@@ -365,12 +380,12 @@ type
     ///  <param name="TruncateComments">Boolean [in] Flag indicating whether or
     ///  not comment is to be truncated at the end of the first paragraph of
     ///  multi-paragraph text.</param>
-    ///  <param name="ConstOrType">TSnippet [in] Constant or simple type for
+    ///  <param name="ConstOrType">ISnippet [in] Constant or simple type for
     ///  which comments are to be rendered. Snippet kind must be skConstant or
     ///  skTypeDef.</param>
     ///  <returns>string. Formatted comments.</returns>
     class function RenderDescComment(CommentStyle: TPascalCommentStyle;
-      const TruncateComments: Boolean; const ConstOrType: TSnippet): string;
+      const TruncateComments: Boolean; ConstOrType: ISnippet): string;
 
   public
     ///  <summary>Formats the source code of a constant or simple type snippet,
@@ -380,11 +395,11 @@ type
     ///  <param name="TruncateComments">Boolean [in] Flag indicating whether or
     ///  not description comment is to be truncated at the end of the first
     ///  paragraph of multi-paragraph text.</param>
-    ///  <param name="ConstOrType">TSnippet [in] Constant or simple type whose
+    ///  <param name="ConstOrType">ISnippet [in] Constant or simple type whose
     ///  source code is to be formatted.</param>
     ///  <returns>string. Formatted source code.</returns>
     class function FormatConstOrType(CommentStyle: TPascalCommentStyle;
-      const TruncateComments: Boolean; const ConstOrType: TSnippet): string;
+      const TruncateComments: Boolean; ConstOrType: ISnippet): string;
   end;
 
 type
@@ -404,11 +419,11 @@ type
     ///  <param name="TruncateComments">Boolean [in] Flag indicating whether or
     ///  not comment is to be truncated at the end of the first paragraph of
     ///  multi-paragraph text.</param>
-    ///  <param name="Snippet">TSnippet [in] Class or advanced record type for
+    ///  <param name="Snippet">ISnippet [in] Class or advanced record type for
     ///  which comments are to be rendered.</param>
     ///  <returns>string. Formatted comments.</returns>
     class function RenderDescComment(CommentStyle: TPascalCommentStyle;
-      const TruncateComments: Boolean; const Snippet: TSnippet): string;
+      const TruncateComments: Boolean; Snippet: ISnippet): string;
 
     ///  <summary>Removes any introductory 'type' keyword from a class or
     ///  advanced record type declaration, if possible.</summary>
@@ -442,11 +457,11 @@ type
     ///  <param name="TruncateComments">Boolean [in] Flag indicating whether or
     ///  not description comment is to be truncated at the end of the first
     ///  paragraph of multi-paragraph text.</param>
-    ///  <param name="Snippet">TSnippet [in] Class or advanced record type whose
+    ///  <param name="Snippet">ISnippet [in] Class or advanced record type whose
     ///  declaration is to be formatted.</param>
     ///  <returns>string. Formatted declaration source code.</returns>
     class function FormatClassDeclaration(CommentStyle: TPascalCommentStyle;
-      const TruncateComments: Boolean; const Snippet: TSnippet): string;
+      const TruncateComments: Boolean; Snippet: ISnippet): string;
 
     ///  <summary>Formats source code of a class or advanced record snippet's
     ///  definition, including a comment containing its description if required.
@@ -456,10 +471,10 @@ type
     ///  <param name="TruncateComments">Boolean [in] Flag indicating whether or
     ///  not description comment is to be truncated at the end of the first
     ///  paragraph of multi-paragraph text.</param>
-    ///  <param name="Snippet">TSnippet [in] Class or advanced record type whose
+    ///  <param name="Snippet">ISnippet [in] Class or advanced record type whose
     ///  definition is to be formatted.</param>
     ///  <returns>string. Formatted definition source code.</returns>
-    class function FormatClassDefinition(const Snippet: TSnippet): string;
+    class function FormatClassDefinition(Snippet: ISnippet): string;
   end;
 
 { TPascalSourceGen }
@@ -490,7 +505,7 @@ var
   Writer: TStringBuilder;   // used to build source code string
   ForwardWritten: Boolean;  // flag true if forward decls have been written
   FirstForward: Boolean;    // flag true when first forward decl to be written
-  Snippet: TSnippet;        // accesses various snippet objects
+  Snippet: ISnippet;        // accesses various snippet objects
   UnitName: string;         // accesses unit names from a list
 begin
   // Generate the unit data
@@ -579,9 +594,9 @@ begin
   end;
 end;
 
-procedure TPascalSourceGen.IncludeSnippet(const SnippetID: TSnippetID);
+procedure TPascalSourceGen.IncludeSnippet(Snippet: ISnippet);
 begin
-  fSourceAnalyser.AddSnippet(SnippetID);
+  fSourceAnalyser.AddSnippet(Snippet);
 end;
 
 procedure TPascalSourceGen.IncludeSnippets(SnipIDs: ISnippetIDList);
@@ -589,7 +604,7 @@ var
   SnippetID: TSnippetID;  // iterates through snippet UDs to be added
 begin
   for SnippetID in SnipIDs do
-    IncludeSnippet(SnippetID);
+    IncludeSnippet(Database.LookupSnippet(SnippetID));
 end;
 
 class function TPascalSourceGen.IsFileNameValidUnitName(const FileName: string):
@@ -604,7 +619,7 @@ function TPascalSourceGen.UnitAsString(const UnitName: string;
   const HeaderComments: IStringList = nil): string;
 var
   Writer: TStringBuilder;   // used to build source code string
-  Snippet: TSnippet;        // reference to a snippet object
+  Snippet: ISnippet;        // reference to a snippet object
   Warnings: IWarnings;      // object giving info about any inhibited warnings
 begin
   // Generate the unit data
@@ -734,7 +749,7 @@ end;
 
 { TPascalSourceAnalyser }
 
-procedure TPascalSourceAnalyser.AddIntfRoutine(const Routine: TSnippet);
+procedure TPascalSourceAnalyser.AddIntfRoutine(Routine: ISnippet);
 begin
   Assert(Routine.Kind = skRoutine,
     ClassName + '.AddIntfRoutine: Routine must have kind skRoutine');
@@ -746,16 +761,15 @@ begin
   end;
 end;
 
-procedure TPascalSourceAnalyser.AddSnippet(const SnippetID: TSnippetID);
+procedure TPascalSourceAnalyser.AddSnippet(Snippet: ISnippet);
 var
   ErrorMsg: string;
-  Snippet: TSnippet;
 begin
   // NOTE: this method must not be called from any other method of this class
   // Validate the snippet
-  Snippet := _Database.Lookup(SnippetID);
-  if not TSnippetValidator.Validate(Snippet, ErrorMsg) then
-    raise ECodeSnip.Create(ErrorMsg);
+  // TODO: reinstate this check once method can accept an ISnippet
+//  if not TSnippetValidator.Validate(Snippet, ErrorMsg) then
+//    raise ECodeSnip.Create(ErrorMsg);
   // Process the snippet
   case Snippet.Kind of
     skRoutine:
@@ -771,7 +785,7 @@ begin
   end;
 end;
 
-procedure TPascalSourceAnalyser.AddTypeOrConst(const TypeOrConst: TSnippet);
+procedure TPascalSourceAnalyser.AddTypeOrConst(TypeOrConst: ISnippet);
 var
   ErrorMsg: string;       // any error message
 begin
@@ -782,8 +796,9 @@ begin
   if fTypesAndConsts.Contains(TypeOrConst) then
     Exit;
   // Validate dependency list
-  if not TSnippetValidator.ValidateDependsList(TypeOrConst, ErrorMsg) then
-    raise ECodeSnip.Create(ErrorMsg);
+  // TODO: reinstate this method when it can take an ISnippet parameter
+//  if not TSnippetValidator.ValidateDependsList(TypeOrConst, ErrorMsg) then
+//    raise ECodeSnip.Create(ErrorMsg);
   // Add all required snippets to list before adding this one: this ensures
   // required snippets preceed those that depend on them
   RequireSnippets(TypeOrConst.RequiredSnippets);
@@ -794,11 +809,11 @@ end;
 constructor TPascalSourceAnalyser.Create;
 begin
   inherited;
-  fTypesAndConsts := TObjectList<TSnippet>.Create(False);
-  fIntfRoutines := TObjectList<TSnippet>.Create(False);
-  fAllRoutines := TObjectList<TSnippet>.Create(False);
-  fForwardRoutines := TObjectList<TSnippet>.Create(False);
-  fRequiredRoutines := TObjectList<TSnippet>.Create(False);
+  fTypesAndConsts := TList<ISnippet>.Create;
+  fIntfRoutines := TList<ISnippet>.Create;
+  fAllRoutines := TList<ISnippet>.Create;
+  fForwardRoutines := TList<ISnippet>.Create;
+  fRequiredRoutines := TList<ISnippet>.Create;
   fUnits := TStringList.Create;
 end;
 
@@ -815,7 +830,7 @@ end;
 
 procedure TPascalSourceAnalyser.Generate;
 var
-  Routine: TSnippet;  // iterates through various routine lists
+  Routine: ISnippet;  // iterates through various routine lists
 begin
   fForwardRoutines.Clear;
   fAllRoutines.Clear;
@@ -831,7 +846,7 @@ begin
     fAllRoutines.Add(Routine);
 end;
 
-procedure TPascalSourceAnalyser.RequireRoutine(const Routine: TSnippet);
+procedure TPascalSourceAnalyser.RequireRoutine(Routine: ISnippet);
 begin
   if not fRequiredRoutines.Contains(Routine) then
   begin
@@ -841,7 +856,7 @@ begin
   end;
 end;
 
-procedure TPascalSourceAnalyser.RequireSnippet(const Snippet: TSnippet);
+procedure TPascalSourceAnalyser.RequireSnippet(Snippet: ISnippet);
 resourcestring
   // Error message
   sCantDependOnFreeform = 'Can''t depend on "%s" - it is freeform code';
@@ -861,7 +876,7 @@ var
   SnippetID: TSnippetID;  // iterates through snippets list
 begin
   for SnippetID in Snips do
-    RequireSnippet(_Database.Lookup(SnippetID));
+    RequireSnippet(Database.LookupSnippet(SnippetID));
 end;
 
 procedure TPascalSourceAnalyser.RequireUnit(const UnitName: string);
@@ -880,8 +895,7 @@ end;
 
 { TRoutineFormatter }
 
-class function TRoutineFormatter.ExtractPrototype(const
-  Routine: TSnippet): string;
+class function TRoutineFormatter.ExtractPrototype(Routine: ISnippet): string;
 var
   DummyBody: string;  // stores unused routine body retrieved from Split
 begin
@@ -891,7 +905,7 @@ end;
 
 class function TRoutineFormatter.FormatRoutine(
   CommentStyle: TPascalCommentStyle; const TruncateComments: Boolean;
-  const Routine: TSnippet): string;
+  Routine: ISnippet): string;
 var
   Prototype, Body: string;  // prototype and body of routine
 begin
@@ -919,7 +933,7 @@ begin
   end;
 end;
 
-class function TRoutineFormatter.FormatRoutinePrototype(const Routine: TSnippet;
+class function TRoutineFormatter.FormatRoutinePrototype(Routine: ISnippet;
   CommentStyle: TPascalCommentStyle; const TruncateComments: Boolean): string;
 var
   Prototype: string;  // prototype of given routine
@@ -948,7 +962,7 @@ end;
 
 class function TRoutineFormatter.RenderDescComment(
   CommentStyle: TPascalCommentStyle; const TruncateComments: Boolean;
-  const Routine: TSnippet): string;
+  Routine: ISnippet): string;
 begin
   Assert(Routine.Kind = skRoutine,
     ClassName + '.RenderDescComment: Routine must have kind skRoutine');
@@ -958,7 +972,7 @@ begin
   );
 end;
 
-class procedure TRoutineFormatter.Split(const Routine: TSnippet; out Head,
+class procedure TRoutineFormatter.Split(Routine: ISnippet; out Head,
   Body: string);
 
   // Checks if given symbol is a calling convention directive.
@@ -1040,7 +1054,7 @@ end;
 
 class function TConstAndTypeFormatter.FormatConstOrType(
   CommentStyle: TPascalCommentStyle; const TruncateComments: Boolean;
-  const ConstOrType: TSnippet): string;
+  ConstOrType: ISnippet): string;
 var
   Keyword: string;  // keyword that preceeds source code body
   Body: string;     // source code that follows keyword
@@ -1073,7 +1087,7 @@ end;
 
 class function TConstAndTypeFormatter.RenderDescComment(
   CommentStyle: TPascalCommentStyle; const TruncateComments: Boolean;
-  const ConstOrType: TSnippet): string;
+  ConstOrType: ISnippet): string;
 begin
   Assert(ConstOrType.Kind in [skConstant, skTypeDef],
     ClassName + '.RenderDescComment: ConstOrType must have kind skTypeDef or '
@@ -1083,7 +1097,7 @@ begin
   );
 end;
 
-class procedure TConstAndTypeFormatter.Split(const ConstOrType: TSnippet;
+class procedure TConstAndTypeFormatter.Split(ConstOrType: ISnippet;
   out Prefix, Body: string);
 
   // Splits the given source code and the first occurence of keyword KW,
@@ -1256,7 +1270,7 @@ end;
 
 class function TClassFormatter.FormatClassDeclaration(
   CommentStyle: TPascalCommentStyle; const TruncateComments: Boolean;
-  const Snippet: TSnippet): string;
+  Snippet: ISnippet): string;
 var
   Dummy: string;
   Decl: string;
@@ -1285,7 +1299,7 @@ begin
   end;
 end;
 
-class function TClassFormatter.FormatClassDefinition(const Snippet: TSnippet):
+class function TClassFormatter.FormatClassDefinition(Snippet: ISnippet):
   string;
 var
   Dummy: string;
@@ -1308,7 +1322,7 @@ end;
 
 class function TClassFormatter.RenderDescComment(
   CommentStyle: TPascalCommentStyle; const TruncateComments: Boolean;
-  const Snippet: TSnippet): string;
+  Snippet: ISnippet): string;
 begin
   Result := TPascalComments.FormatSnippetComment(
     CommentStyle, TruncateComments, Snippet.Description
