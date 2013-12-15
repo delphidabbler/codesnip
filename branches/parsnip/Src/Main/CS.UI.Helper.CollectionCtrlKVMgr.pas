@@ -79,7 +79,6 @@ type
       fKeyEqualFn: TEqualityComparison<TKey>;
       fCollectionCtrl: TCollectionCtrlAdapter;
       fOwnsCollectionCtrl: Boolean;
-    function IndexOfKey(const AKey: TKey): Integer;
   strict protected
     function GetList: IList<TPair<TKey,string>>; virtual; abstract;
     function GetIndexedList: IEnexIndexedCollection<TPair<TKey,string>>;
@@ -96,6 +95,7 @@ type
     function ContainsKey(const AKey: TKey): Boolean;
     function Count: Integer;
     function Empty: Boolean;
+    function IndexOfKey(const AKey: TKey): Integer;
     function GetKeyAt(const Idx: Integer): TKey;
     function GetFirstKey: TKey;
     function GetLastKey: TKey;
