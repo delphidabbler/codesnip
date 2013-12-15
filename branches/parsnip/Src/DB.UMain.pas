@@ -166,6 +166,7 @@ type
 
     function NewSnippet: IEditableSnippet;
     procedure AddSnippet(ASnippet: IEditableSnippet);
+    procedure UpdateSnippet(ASnippet: IEditableSnippet);
 
     procedure AddChangeEventHandler(const Handler: TNotifyEventInfo);
       {Adds a change event handler to list of listeners.
@@ -822,6 +823,36 @@ begin
     ASnippet := fSnippetsTable.Get(ASnippetID).CloneAsReadOnly
   else
     ASnippet := nil;
+end;
+
+procedure TDatabase.UpdateSnippet(ASnippet: IEditableSnippet);
+var
+  DBSnippet: TDBSnippet;
+begin
+  // TODO: refactor out this common in common with AddSnippet
+  if not fAllTags.ContainsSubSet(ASnippet.Tags) then
+  begin
+    { TODO: Add TriggerNullDataEvent(evChangeBegin); }
+    fAllTags.Include(ASnippet.Tags);
+    { TODO: Add change event for all tags added. Something like:
+       for Tag in ASnippet.Tags do
+        TriggerTagChangeEvent(evTagAdded, Tag);  }
+    { TODO: Add TriggerNullDataEvent(evChangeEnd); }
+  end;
+  TriggerNullDataEvent(evChangeBegin);
+  TriggerSnippetChangeEvent(evBeforeSnippetChange, ASnippet.ID);
+  DBSnippet := TDBSnippet.CreateFrom(ASnippet);
+  try
+    // TODO: Do we need to check snippet references and xrefs here?
+    FlagUpdate;
+    DBSnippet.SetModified(fLastModified);
+    fSnippetsTable.Update(DBSnippet);
+    Query.Update;
+  finally
+    TriggerSnippetChangeEvent(evSnippetChanged, ASnippet.ID);
+    TriggerNullDataEvent(evChangeEnd);
+    DBSnippet.Free;
+  end;
 end;
 
 procedure TDatabase.__SetDirty(Dirty: Boolean);
