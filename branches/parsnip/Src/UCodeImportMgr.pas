@@ -268,15 +268,13 @@ procedure TCodeImportMgr.UpdateDatabase;
   // ---------------------------------------------------------------------------
 
 var
-  Editor: IDatabaseEdit;      // object used to update database
-  Snippet: TSnippet;          // reference any existing snippet to overwrite
   SnippetInfo: TSnippetInfo;  // info about each snippet from import file
   ImportInfo: TImportInfo;    // info about how / whether to import a snippet
+  Notes: IActiveText;         // used to add to snippet's note property
 resourcestring
   // Error message
   sBadNameError = 'Can''t find snippet "%s" in import data';
 begin
-  Editor := _Database as IDatabaseEdit;
   for SnippetInfo in fSnippetInfoList do
   begin
     if not fImportInfoList.FindByName(SnippetInfo.Name, ImportInfo) then
@@ -286,19 +284,21 @@ begin
       Continue;
 
     if UserInfo.Details.ToString <> '' then
-      SnippetInfo.Data.Props.Notes.Append(UserDetailsActiveText);
+    begin
+      Notes := SnippetInfo.Snippet.Notes;
+      Notes.Append(UserDetailsActiveText);
+      SnippetInfo.Snippet.Notes := Notes;
+    end;
 
-    { TODO: fix this code - ImportAsName will not longer have correct snippet
-                            ID: will need to implement LinkInfo property of
-                            snippet for this to work }
-    if _Database.TryLookup(
-      TSnippetID.Create(ImportInfo.ImportAsName), Snippet
-    ) then
+    { TODO: fix this code - as written, imported snippet will always have a
+            unique id, so AddSnippet will always be called. Need to implement
+            llinked spaces for this to work correctly. }
+    if Database.SnippetExists(SnippetInfo.Snippet.ID) then
       // snippet already exists: overwrite it
-      Editor.UpdateSnippet(Snippet, SnippetInfo.Data)
+      Database.UpdateSnippet(SnippetInfo.Snippet)
     else
       // snippet is new: add to database
-      Editor.AddSnippet(SnippetInfo.Data);
+      Database.AddSnippet(SnippetInfo.Snippet);
   end;
 end;
 
