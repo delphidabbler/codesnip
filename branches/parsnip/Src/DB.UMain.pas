@@ -209,13 +209,6 @@ type
         @param Data [in] Record storing new snippet's properties and references.
         @return Reference to new snippet.
       }
-    ///  <summary>Creates new snippet that duplicates the given snippet, except
-    ///  that its is a given a new unique name and the given title.</summary>
-    ///  <param name="Snippet">TSnippet [in] Snippet to be duplicated.</param>
-    ///  <param name="Title">string [in] Title of duplicated snippet.</param>
-    ///  <return>TSnippet. Duplicated snippet.</return>
-    function DuplicateSnippet(const Snippet: TSnippet; const Title: string):
-      TSnippet;
     function CreateTempSnippet(const Data: TSnippetEditData;
       const Name: string = ''): TSnippet; overload;
       {Creates a new temporary snippet without adding it to the Snippets
@@ -322,14 +315,6 @@ type
         @param Data [in] Record storing new snippet's properties and references.
         @return Reference to new snippet.
       }
-    ///  <summary>Creates new snippet that duplicates the given snippet, except
-    ///  that its is a given a new unique name and the given title.</summary>
-    ///  <param name="Snippet">TSnippet [in] Snippet to be duplicated.</param>
-    ///  <param name="Title">string [in] Title of duplicated snippet.</param>
-    ///  <return>TSnippet. Duplicated snippet.</return>
-    ///  <remarks>Method of IDatabaseEdit.</remarks>
-    function DuplicateSnippet(const Snippet: TSnippet; const Title: string):
-      TSnippet;
     function CreateTempSnippet(const Data: TSnippetEditData;
       const Name: string = ''): TSnippet; overload;
       {Creates a new temporary snippet without adding it to the Snippets
@@ -486,16 +471,6 @@ begin
     Database.__TriggerEvent(evSnippetDeleted);
     Database.__TriggerEvent(evChangeEnd);
   end;
-end;
-
-function _TDatabase.DuplicateSnippet(const Snippet: TSnippet;
-  const Title: string): TSnippet;
-var
-  Data: TSnippetEditData;
-begin
-  Data := Snippet.GetEditData;
-  Data.Props.Title := Title;
-  Result := AddSnippet(Data);
 end;
 
 function _TDatabase.GetEditableSnippetInfo(
