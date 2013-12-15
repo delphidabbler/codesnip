@@ -24,7 +24,7 @@ uses
   Controls, CheckLst, Windows,
   // Project
   CS.Database.Types,
-  DB.USnippet;
+  CS.UI.Helper.CollectionCtrlKVMgr;
 
 
 type
@@ -37,14 +37,18 @@ type
   }
   TSnippetsChkListMgr = class(TObject)
   strict private
-    fCLB: TCheckListBox;        // Reference to check list box being managed
-    fSaveList: ISnippetIDList;  // Internal snaphot of checked snippets
-    procedure CheckSnippet(const Snippet: TSnippet);
+    var
+      fCLB: TCheckListBox;        // Reference to check list box being managed
+      /// <summary>Maps list box text to associated snippet and ensures the list
+      ///  box is sorted.</summary>
+      fCLBKVMgr: TSortedCollectionCtrlKVMgr<ISnippet>;
+      fSaveList: ISnippetIDList;  // Internal snaphot of checked snippets
+    procedure CheckSnippet(Snippet: ISnippet);
       {Checks entry corresponding to a snippet in check list box. Snippets not
       in check list box are ignored.
         @param Snippet [in] Snippet to be checked.
       }
-    { TODO: Revise (and re-comment) this method: concept of user-defined is
+    { TODO: Revise (and re-comment) following method: concept of user-defined is
             meaningless. }
     procedure DrawItem(Control: TWinControl;
       Index: Integer; Rect: TRect; State: TOwnerDrawState);
@@ -77,7 +81,7 @@ type
       other entries in check list box a cleared. Any snippets in snapshot that
       are not in the check list box are ignored.
       }
-    procedure AddSnippet(const Snippet: TSnippet);
+    procedure AddSnippet(Snippet: ISnippet);
       {Adds a snippet to the check box list, unchecked.
         @param Snippet [in] Snippet to be added to list.
       }
@@ -116,15 +120,15 @@ uses
 
 { TSnippetsChkListMgr }
 
-procedure TSnippetsChkListMgr.AddSnippet(const Snippet: TSnippet);
+procedure TSnippetsChkListMgr.AddSnippet(Snippet: ISnippet);
   {Adds a snippet to the check box list, unchecked.
     @param Snippet [in] Snippet to be added to list.
   }
 begin
-  fCLB.Items.AddObject(Snippet.Title, Snippet);
+  fCLBKVMgr.Add(Snippet, Snippet.Title);
 end;
 
-procedure TSnippetsChkListMgr.CheckSnippet(const Snippet: TSnippet);
+procedure TSnippetsChkListMgr.CheckSnippet(Snippet: ISnippet);
   {Checks entry corresponding to a snippet in check list box. Snippets not in
   check list box are ignored.
     @param Snippet [in] Snippet to be checked.
@@ -132,7 +136,7 @@ procedure TSnippetsChkListMgr.CheckSnippet(const Snippet: TSnippet);
 var
   Idx: Integer; // index of snippet in check list box
 begin
-  Idx := fCLB.Items.IndexOfObject(Snippet);
+  Idx := fCLBKVMgr.IndexOfKey(Snippet);
   if Idx >= 0 then
     fCLB.Checked[Idx] := True;
 end;
@@ -146,14 +150,14 @@ var
   SnippetID: TSnippetID;  // each snippet in list
 begin
   for SnippetID in SnipList do
-    CheckSnippet(_Database.Lookup(SnippetID));
+    CheckSnippet(Database.LookupSnippet(SnippetID));
 end;
 
 procedure TSnippetsChkListMgr.Clear;
   {Clears the check box list.
   }
 begin
-  fCLB.Clear;
+  fCLBKVMgr.Clear;
 end;
 
 procedure TSnippetsChkListMgr.ClearChecks;
@@ -178,6 +182,15 @@ begin
   fCLB.OnDrawItem := DrawItem;
   fCLB.Style := lbOwnerDrawFixed;
   fCLB.ItemHeight := StringExtent('Xy', fCLB.Font).cy;
+  fCLBKVMgr := TSortedCollectionCtrlKVMgr<ISnippet>.Create(
+    TListBoxAdapter.Create(fCLB),
+    True,
+    function (const Left, Right: ISnippet): Boolean
+      begin
+        Result := Left.ID = Right.ID;
+      end,
+    stIgnoreCase
+  );
   fSaveList := TSnippetIDList.Create;
 end;
 
@@ -185,6 +198,7 @@ destructor TSnippetsChkListMgr.Destroy;
   {Class destructor. Tears down object.
   }
 begin
+  fCLBKVMgr.Free;
   fCLB.OnDrawItem := nil;
   inherited;
 end;
@@ -227,7 +241,7 @@ begin
   Result := TSnippetIDList.Create;
   for Idx := 0 to Pred(fCLB.Count) do
     if fCLB.Checked[Idx] then
-      Result.Add((fCLB.Items.Objects[Idx] as TSnippet).ID);
+      Result.Add(fCLBKVMgr.GetKeyAt(Idx).ID);
 end;
 
 function TSnippetsChkListMgr.HasCheckedItems: Boolean;
