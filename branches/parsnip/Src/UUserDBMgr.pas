@@ -411,16 +411,14 @@ end;
 class procedure TUserDBMgr.RemoveTagFromSnippet(const SnippetID: TSnippetID;
   const Tag: TTag);
 var
-  Snippet: TSnippet;
+  Snippet: IEditableSnippet;
   Tags: ITagSet;
-  EditData: TSnippetEditData;
 begin
-  Snippet := _Database.Lookup(SnippetID);
+  Snippet := Database.LookupEditableSnippet(SnippetID);
   Tags := Snippet.Tags;
   Tags.Remove(Tag);
-  EditData := (_Database as IDatabaseEdit).GetEditableSnippetInfo(Snippet);
-  EditData.Props.Tags := Tags;
-  (_Database as IDatabaseEdit).UpdateSnippet(Snippet, EditData);
+  Snippet.Tags := Tags;
+  Database.UpdateSnippet(Snippet);
 end;
 
 class function TUserDBMgr.RestoreDatabase(ParentCtrl: TComponent): Boolean;
