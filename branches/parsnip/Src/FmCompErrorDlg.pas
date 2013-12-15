@@ -20,11 +20,23 @@ interface
 
 uses
   // Delphi
-  Forms, StdCtrls, Controls, ExtCtrls, Classes, Tabs, ActnList, ImgList,
+  Forms,
+  StdCtrls,
+  Controls,
+  ExtCtrls,
+  Classes,
+  Tabs,
+  ActnList,
+  ImgList,
   Generics.Collections,
   // Project
-  Compilers.UGlobals, DB.USnippet, FmGenericViewDlg, FrBrowserBase, FrHTMLDlg,
-  FrHTMLTpltDlg, UBaseObjects;
+  CS.Database.Types,
+  Compilers.UGlobals,
+  FmGenericViewDlg,
+  FrBrowserBase,
+  FrHTMLDlg,
+  FrHTMLTpltDlg,
+  UBaseObjects;
 
 
 type
@@ -83,7 +95,7 @@ type
       end;
   strict private
     ///  <summary>Snippet for which last compilation took place.</summary>
-    fSnippet: TSnippet;
+    fSnippet: ISnippet;
     ///  <summary>List of compilers for which errors or warnings are to be
     ///  displayed.</summary>
     fRequiredCompilers: TList<ICompiler>;
@@ -122,7 +134,7 @@ type
     ///  <param name="ACompilers">ICompilers [in] List of all supported
     ///  compilers.</param>
     class procedure Execute(const AOwner: TComponent;
-      const ASnippet: TSnippet; const ACompilers: ICompilers);
+      ASnippet: ISnippet; const ACompilers: ICompilers);
   end;
 
 
@@ -180,7 +192,7 @@ begin
 end;
 
 class procedure TCompErrorDlg.Execute(const AOwner: TComponent;
-  const ASnippet: TSnippet; const ACompilers: ICompilers);
+  ASnippet: ISnippet; const ACompilers: ICompilers);
 var
   Compiler: ICompiler;  // each supported compiler
 begin
