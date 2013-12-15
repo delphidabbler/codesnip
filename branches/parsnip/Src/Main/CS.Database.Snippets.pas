@@ -54,6 +54,7 @@ type
     constructor Create(const ASourceSnippet: TSnippetBase); overload;
     destructor Destroy; override;
     procedure UpdateFrom(const ASourceSnippet: TSnippetBase);
+    function CanCompile: Boolean;
     function GetID: TSnippetID; virtual;
     function GetCreated: TUTCDateTime;
     procedure SetCreated(const Value: TUTCDateTime);
@@ -282,6 +283,12 @@ begin
 end;
 
 { TSnippetBase }
+
+function TSnippetBase.CanCompile: Boolean;
+begin
+  Result := (fKind <> skFreeform)
+    and (fLanguageID = TSourceCodeLanguageID.Create('Pascal'));
+end;
 
 constructor TSnippetBase.Create(const ASourceSnippet: TSnippetBase);
 begin

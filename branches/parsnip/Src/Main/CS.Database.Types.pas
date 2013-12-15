@@ -225,6 +225,8 @@ type
     function GetTestInfo: TSnippetTestInfo;
     function GetStarred: Boolean;
 
+    function CanCompile: Boolean;
+
     property ID: TSnippetID read GetID;
     property Created: TUTCDateTime read GetCreated;
     property Modified: TUTCDateTime read GetModified;
