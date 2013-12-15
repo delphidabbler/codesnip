@@ -265,6 +265,9 @@ type
     procedure SetTestInfo(ATestInfo: TSnippetTestInfo);
     procedure SetStarred(AStarred: Boolean);
 
+    procedure UpdateFrom(AOther: IEditableSnippet); overload;
+    procedure UpdateFrom(AOther: ISnippet); overload;
+
     property Title: string read GetTitle write SetTitle;
     property Description: IActiveText read GetDescription write SetDescription;
     property SourceCode: string read GetSourceCode write SetSourceCode;

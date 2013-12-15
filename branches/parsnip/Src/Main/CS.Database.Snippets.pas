@@ -93,6 +93,8 @@ type
   public
     class function CreateNew: TEditableSnippet;
     destructor Destroy; override;
+    procedure UpdateFrom(AOther: IEditableSnippet); overload;
+    procedure UpdateFrom(AOther: ISnippet); overload;
   end;
 
   TReadOnlySnippet = class(TSnippetBase, ISnippet);
@@ -526,8 +528,7 @@ end;
 
 procedure TSnippetBase.UpdateFrom(const ASourceSnippet: TSnippetBase);
 begin
-  Assert(fID = ASourceSnippet.fID,
-    ClassName + '.UpdateFrom: source snippet must have same ID');
+  // Never change snippet ID
   SetCreated(ASourceSnippet.fCreated);
   SetModified(ASourceSnippet.fModified);
   SetTitle(ASourceSnippet.fTitle);
@@ -556,6 +557,16 @@ end;
 destructor TEditableSnippet.Destroy;
 begin
   inherited;
+end;
+
+procedure TEditableSnippet.UpdateFrom(AOther: IEditableSnippet);
+begin
+  UpdateFrom(AOther as TEditableSnippet);
+end;
+
+procedure TEditableSnippet.UpdateFrom(AOther: ISnippet);
+begin
+  UpdateFrom(AOther as TReadOnlySnippet);
 end;
 
 end.
