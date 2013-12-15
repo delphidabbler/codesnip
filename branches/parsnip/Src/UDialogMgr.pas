@@ -155,10 +155,10 @@ type
     ///  <summary>Displays the Test Compile dialogue box.</summary>
     ///  <param name="CompileMgr">TCompileMgr [in] Object used to manage test
     ///  compilation and to retain results.</param>
-    ///  <param name="Snippet">TSnippet [in] Snippet to be test compiled.
+    ///  <param name="Snippet">ISnippet [in] Snippet to be test compiled.
     ///  </param>
     procedure ShowTestCompileDlg(const CompileMgr: TCompileMgr;
-      const Snippet: TSnippet);
+      Snippet: ISnippet);
 
     ///  <summary>Displays the Check For Program Updates dialogue box.</summary>
     procedure ShowProgramUpdatesDlg;
@@ -303,7 +303,7 @@ begin
 end;
 
 procedure TDialogMgr.ShowTestCompileDlg(const CompileMgr: TCompileMgr;
-  const Snippet: TSnippet);
+  Snippet: ISnippet);
 begin
   TTestCompileDlg.Execute(Owner, CompileMgr, Snippet);
 end;

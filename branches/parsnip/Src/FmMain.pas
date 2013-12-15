@@ -1160,7 +1160,7 @@ begin
     ClassName + '.actTestCompileExecute: Can''t compile current view');
   fDialogMgr.ShowTestCompileDlg(
     fCompileMgr,
-    _Database.Lookup(
+    Database.LookupSnippet(
       (fMainDisplayMgr.CurrentView as ISnippetView).SnippetID
     )
   );
