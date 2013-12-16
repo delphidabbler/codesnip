@@ -24,7 +24,6 @@ uses
   Classes,
   // Project
   CS.Database.Types,
-  DB.USnippet,
   URTFUtils;
 
 
@@ -48,11 +47,11 @@ type
   strict private
     var
       ///  <summary>Reference to snippet described by print document.</summary>
-      fSnippet: TSnippet;
+      fSnippet: ISnippet;
   public
     ///  <summary>Constructs object to create print document for given snippet.
     ///  </summary>
-    constructor Create(const Snippet: TSnippet);
+    constructor Create(Snippet: ISnippet);
     ///  <summary>Generates and returns print document.</summary>
     ///  <remarks>Method of IPrintDocument.</remarks>
     function Generate: TRTF;
@@ -93,7 +92,7 @@ uses
 
 { TSnippetPrintDocument }
 
-constructor TSnippetPrintDocument.Create(const Snippet: TSnippet);
+constructor TSnippetPrintDocument.Create(Snippet: ISnippet);
 begin
   inherited Create;
   fSnippet := Snippet;
@@ -119,7 +118,7 @@ begin
       poUseColour in PrintInfo.PrintOptions
     );
     try
-      Result := TRTF.Create(Doc.Generate(fSnippet.CloneAsReadOnly));
+      Result := TRTF.Create(Doc.Generate(fSnippet));
     finally
       Doc.Free;
     end;

@@ -23,7 +23,11 @@ uses
   // Delphi
   Classes,
   // Project
-  DB.USnippet, UBaseObjects, UPrintDocuments, UPrintInfo, URTFUtils, UView;
+  UBaseObjects,
+  UPrintDocuments,
+  UPrintInfo,
+  URTFUtils,
+  UView;
 
 
 type
@@ -103,7 +107,7 @@ begin
   Result := nil;
   if Supports(fViewItem, ISnippetView, SnippetView) then
     Result := TSnippetPrintDocument.Create(
-      _Database.Lookup(SnippetView.SnippetID)
+      Database.LookupSnippet(SnippetView.SnippetID)
     )
   else if Supports(fViewItem, ITagView, TagView) then
     Result := TTagPrintDocument.Create(TagView.Tag);
