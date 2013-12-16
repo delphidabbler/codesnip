@@ -29,6 +29,8 @@ uses
   CS.Database.Types,
   DB.USnippet,
   FrCheckedTV,
+  UBox,
+  UInitialLetter,
   USnippetsTVDraw;
 
 
@@ -43,6 +45,9 @@ type
   }
   TSelectSnippetsFrame = class(TCheckedTVFrame)
   strict private
+    type
+      TInitialLetterBox = TBox<TInitialLetter>;
+      TSnippetBox = TBox<TSnippet>;
     type
       {
       TTVDraw:
@@ -93,7 +98,8 @@ type
         @param Node [in] Leaf node whose state to set.
       }
     procedure FinalizeNode(const Node: TCheckedTreeNode); override;
-      {Frees any TBox<TInitialLetter> instance associated with Node.
+      {Frees any TInitialLetterBox or TSnippetBox instances associated with
+      Node.
         @param Node [in] Node being finalised.
       }
   public
@@ -132,9 +138,7 @@ uses
   CS.Database.Snippets,
   DB.UMain,
   IntfCommon,
-  UBox,
-  UGroups,
-  UInitialLetter;
+  UGroups;
 
 
 {$R *.dfm}
@@ -163,10 +167,10 @@ begin
         Continue;
       Initial := (Group as TAlphaGroupItem).Letter;
       InitialNode := AddNode(
-        nil, Group.Title, TBox<TInitialLetter>.Create(Initial)
+        nil, Group.Title, TInitialLetterBox.Create(Initial)
       );
       for Snippet in Group.SnippetList do
-        AddNode(InitialNode, Snippet.Title, Snippet);
+        AddNode(InitialNode, Snippet.Title, TSnippetBox.Create(Snippet));
     end;
   finally
     Grouping.Free;
@@ -200,8 +204,9 @@ end;
 
 procedure TSelectSnippetsFrame.FinalizeNode(const Node: TCheckedTreeNode);
 begin
-  if TObject(Node.Data) is TBox<TInitialLetter> then
-    TObject(Node.Data).Free;
+  if (TObject(Node.Data) is TInitialLetterBox)
+    or (TObject(Node.Data) is TSnippetBox) then
+    TObject(Node.Data).Free
 end;
 
 function TSelectSnippetsFrame.GetSelection: ISnippetIDList;
@@ -222,7 +227,7 @@ function TSelectSnippetsFrame.IsSnippetNode(
   }
 begin
   Result := Assigned(Node) and Assigned(Node.Data) and
-    (TObject(Node.Data) is TSnippet);
+    (TObject(Node.Data) is TSnippetBox);
 end;
 
 procedure TSelectSnippetsFrame.RecordChanges;
@@ -293,7 +298,7 @@ function TSelectSnippetsFrame.SnippetFromNode(
 begin
   Assert(IsSnippetNode(Node),
     ClassName + '.SnippetFromNode: Node is not a snippet node');
-  Result := TSnippet(Node.Data);
+  Result := TSnippetBox(Node.Data).Value;
 end;
 
 { TSelectSnippetsBaseFrame.TTVDraw }
@@ -306,7 +311,7 @@ function TSelectSnippetsFrame.TTVDraw.IsSectionHeadNode(
   }
 begin
   // Header section is an initial
-  Result := TObject(Node.Data) is TBox<TInitialLetter>;
+  Result := TObject(Node.Data) is TInitialLetterBox;
 end;
 
 function TSelectSnippetsFrame.TTVDraw.IsUserDefinedNode(
@@ -316,13 +321,13 @@ function TSelectSnippetsFrame.TTVDraw.IsUserDefinedNode(
     @return True if node represents user defined object, False if not.
   }
 var
-  SnipObj: TObject; // object referenced in Node.Data
+  DataObj: TObject; // object referenced in Node.Data
 begin
-  SnipObj := TObject(Node.Data);
+  DataObj := TObject(Node.Data);
   Result := False;
-  if SnipObj is TSnippet then
+  if DataObj is TSnippetBox then
     Result := True
-  else if SnipObj is TBox<TInitialLetter> then
+  else if DataObj is TInitialLetterBox then
     Result := True;
 end;
 
