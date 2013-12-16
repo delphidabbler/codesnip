@@ -285,10 +285,18 @@ implementation
 
 uses
   // Delphi
-  SysUtils, DateUtils, Windows, Graphics,
+  SysUtils,
+  DateUtils,
+  Windows,
+  Graphics,
   // Project
-  DB.UMain, DB.USnippet, UCtrlArranger, UMessageBox, UPreferences, USettings,
-  UStructs, UStrUtils;
+  DB.UMain,
+  UCtrlArranger,
+  UMessageBox,
+  UPreferences,
+  USettings,
+  UStructs,
+  UStrUtils;
 
 {$R *.dfm}
 
@@ -369,10 +377,10 @@ end;
 procedure TFavouritesDlg.AddLVItem(const Favourite: TFavourite);
 var
   LI: TFavouriteListItem;
-  Snippet: TSnippet;
+  Snippet: ISnippet;
 begin
   LI := fLVFavs.Items.Add as TFavouriteListItem;
-  if _Database.TryLookup(Favourite.SnippetID, Snippet) then
+  if Database.TryLookupSnippet(Favourite.SnippetID, Snippet) then
     LI.Caption := Snippet.Title
   else
     LI.Caption := Favourite.SnippetID.ToString;
