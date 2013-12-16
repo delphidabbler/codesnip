@@ -68,7 +68,6 @@ uses
   CS.SourceCode.Languages,
   CS.SourceCode.Hiliter.Brushes,
   DB.UMain,
-  DB.USnippet,  // for class helper
   UPreferences,
   URTFSnippetDoc,
   UTextSnippetDoc;
@@ -84,7 +83,9 @@ end;
 class function TCopyInfoMgr.GenerateDoc(View: IView; const Doc: TSnippetDoc):
   TEncodedData;
 begin
-  Result := Doc.Generate(_Database.Lookup((View as ISnippetView).SnippetID));
+  Result := Doc.Generate(
+    Database.LookupSnippet((View as ISnippetView).SnippetID)
+  );
 end;
 
 class function TCopyInfoMgr.GeneratePlainText(View: IView): TEncodedData;

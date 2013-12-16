@@ -119,7 +119,7 @@ begin
       poUseColour in PrintInfo.PrintOptions
     );
     try
-      Result := TRTF.Create(Doc.Generate(fSnippet));
+      Result := TRTF.Create(Doc.Generate(fSnippet.CloneAsReadOnly));
     finally
       Doc.Free;
     end;

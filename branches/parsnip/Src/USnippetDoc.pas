@@ -27,7 +27,6 @@ uses
   CS.ActiveText,
   CS.Database.Types,
   Compilers.UGlobals,
-  DB.USnippet,
   UEncodings,
   UIStringList;
 
@@ -62,7 +61,7 @@ type
     function TagsToStrings(TagSet: ITagSet): IStringList;
     ///  <summary>Creates and returns an array of compiler compatibility
     ///  information for given snippet.</summary>
-    function CompilerInfo(const Snippet: TSnippet): TCompileDocInfoArray;
+    function CompilerInfo(Snippet: ISnippet): TCompileDocInfoArray;
   strict protected
     ///  <summary>Initialise document.</summary>
     ///  <remarks>Does nothing. Descendant classes should perform any required
@@ -100,7 +99,7 @@ type
     ///  <summary>Generates a document that describes given snippet and returns
     ///  as encoded data using an encoding that suits type of document.
     ///  </summary>
-    function Generate(const Snippet: TSnippet): TEncodedData;
+    function Generate(Snippet: ISnippet): TEncodedData;
   end;
 
 
@@ -131,7 +130,7 @@ begin
     Result := sNone;
 end;
 
-function TSnippetDoc.CompilerInfo(const Snippet: TSnippet):
+function TSnippetDoc.CompilerInfo(Snippet: ISnippet):
   TCompileDocInfoArray;
 var
   Compilers: ICompilers;  // provided info about compilers
@@ -144,13 +143,13 @@ begin
   for Compiler in Compilers do
   begin
     Result[InfoIdx] := TCompileDocInfo.Create(
-      Compiler.GetName, Snippet.Compatibility[Compiler.GetID]
+      Compiler.GetName, Snippet.CompileResults[Compiler.GetID]
     );
     Inc(InfoIdx);
   end;
 end;
 
-function TSnippetDoc.Generate(const Snippet: TSnippet): TEncodedData;
+function TSnippetDoc.Generate(Snippet: ISnippet): TEncodedData;
 resourcestring
   // Literal string required in output
   sKindTitle = 'Snippet Type:';
@@ -195,7 +194,7 @@ var
 begin
   Result := TIStringList.Create;
   for SnippetID in SnippetList do
-    Result.Add(_Database.Lookup(SnippetID).Title);
+    Result.Add(Database.LookupSnippet(SnippetID).Title);
 end;
 
 function TSnippetDoc.TagsToStrings(TagSet: ITagSet): IStringList;
