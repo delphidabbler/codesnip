@@ -21,8 +21,7 @@ interface
 uses
   // Project
   CS.ActiveText,
-  CS.Database.Types,
-  DB.USnippet;
+  CS.Database.Types;
 
 
 type
@@ -34,7 +33,7 @@ type
     var
       ///  <summary>Reference to snippet for which HTML is being generated.
       ///  </summary>
-      fSnippet: TSnippet;
+      fSnippet: ISnippet;
     ///  <summary>Generates HTML of a comma separated list of snippets, where
     ///  each snippet name is a link to the snippet.</summary>
     ///  <param name="Snippets">TSnippetList [in] List of snippets.</param>
@@ -46,7 +45,7 @@ type
     ///  <summary>Renders given active text as HTML and returns it.</summary>
     function RenderActiveText(ActiveText: IActiveText): string;
     ///  <summary>Returns HTML of link to given snippet.</summary>
-    class function SnippetALink(const Snippet: TSnippet): string; overload;
+    class function SnippetALink(Snippet: ISnippet): string; overload;
     ///  <summary>Returns HTML of a link that performs its action using
     ///  JavaScript.</summary>
     ///  <param name="JSFn">string [in] Javascript function to be called when
@@ -59,7 +58,7 @@ type
   public
     ///  <summary>Object constructor. Sets up object to provide HTML for given
     ///  snippet.</summary>
-    constructor Create(const Snippet: TSnippet);
+    constructor Create(Snippet: ISnippet);
     ///  <summary>Returns snippet display name as HTML.</summary>
     function SnippetName: string;
     ///  <summary>Returns snippet description as HTML.</summary>
@@ -123,10 +122,10 @@ uses
 
 function TSnippetHTML.CompileResults: string;
 begin
-  Result := TCompResHTML.TableRows(fSnippet.Compatibility);
+  Result := TCompResHTML.TableRows(fSnippet.CompileResults);
 end;
 
-constructor TSnippetHTML.Create(const Snippet: TSnippet);
+constructor TSnippetHTML.Create(Snippet: ISnippet);
 begin
   inherited Create;
   fSnippet := Snippet;
@@ -187,7 +186,7 @@ begin
     begin
       if Result <> '' then
         Result := Result + ', ';
-      Result := Result + SnippetALink(_Database.Lookup(SnippetID));
+      Result := Result + SnippetALink(Database.LookupSnippet(SnippetID));
     end;
     Result := StrMakeSentence(Result);
   end;
@@ -198,7 +197,7 @@ begin
   Result := THTML.Entities(fSnippet.Title);
 end;
 
-class function TSnippetHTML.SnippetALink(const Snippet: TSnippet): string;
+class function TSnippetHTML.SnippetALink(Snippet: ISnippet): string;
 begin
   // Create javascript link enclosing snippet name
   Result := JSALink(

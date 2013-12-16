@@ -22,7 +22,9 @@ interface
 
 uses
   // Project
-  DB.USnippet, USnippetHTML, USnippetPageStructure;
+  CS.Database.Types,
+  USnippetHTML,
+  USnippetPageStructure;
 
 
 type
@@ -35,7 +37,7 @@ type
   public
     ///  <summary>Renders HTML description of given snippet, using the fragments
     ///  specified in preferences.</summary>
-    class function Render(const Snippet: TSnippet): string; static;
+    class function Render(Snippet: ISnippet): string; static;
   end;
 
 type
@@ -55,7 +57,7 @@ type
   public
     ///  <summary>Constructs object to render fragment of given snippet.
     ///  </summary>
-    constructor Create(Snippet: TSnippet);
+    constructor Create(Snippet: ISnippet);
     ///  <summary>Destroys fragement object.</summary>
     destructor Destroy; override;
   end;
@@ -73,7 +75,7 @@ type
     ///  rendered.</param>
     ///  <returns>TSnippetHTMLFragment. Required renderer object.</returns>
     ///  <remarks>Caller is responsible for freeing returned object.</remarks>
-    class function Create(FragKind: TSnippetPagePartId; Snippet: TSnippet):
+    class function Create(FragKind: TSnippetPagePartId; Snippet: ISnippet):
       TSnippetHTMLFragment; static;
   end;
 
@@ -189,7 +191,7 @@ type
 
 { TSnippetHTMLFragment }
 
-constructor TSnippetHTMLFragment.Create(Snippet: TSnippet);
+constructor TSnippetHTMLFragment.Create(Snippet: ISnippet);
 begin
   Assert(Assigned(Snippet), ClassName + '.Create: Snippet is nil');
   inherited Create;
@@ -310,7 +312,7 @@ end;
 { TSnippetHTMLFragmentFactory }
 
 class function TSnippetHTMLFragmentFactory.Create(FragKind: TSnippetPagePartId;
-  Snippet: TSnippet): TSnippetHTMLFragment;
+  Snippet: ISnippet): TSnippetHTMLFragment;
 const
   Map: array[TSnippetPagePartId] of TSnippetHTMLFragmentClass = (
     TSnippetDescHTMLFragment,           // sppDescription,
@@ -329,8 +331,7 @@ end;
 
 { TSnippetPageHTML }
 
-class function TSnippetPageHTML.Render(const Snippet: TSnippet):
-  string;
+class function TSnippetPageHTML.Render(Snippet: ISnippet): string;
 var
   SB: TStringBuilder;
   PageStruct: TSnippetPageStructure;

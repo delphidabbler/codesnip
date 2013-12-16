@@ -72,11 +72,11 @@ uses
   Collections.Base,
   Collections.Lists,
   // Project
+  CS.Database.Snippets,
   CS.Database.Types,
   Compilers.UGlobals,
   Compilers.UCompilers,
   DB.UMain,
-  DB.USnippet,
   UConsts,
   UCSSUtils,
   UEncodings,
@@ -197,7 +197,7 @@ type
   strict private
     ///  <summary>Returns reference to snippet that is being rendered.</summary>
     ///  <remarks>Snippet is recorded in View property.</remarks>
-    function GetSnippet: TSnippet;
+    function GetSnippet: ISnippet;
   strict protected
     ///  <summary>Returns name of snippet information template resource.
     ///  </summary>
@@ -219,7 +219,7 @@ type
   strict private
     var
       ///  <summary>Sorted list of snippets to be displayed.</summary>
-      fSnippetList: TObjectSortedList<TSnippet>;
+      fSnippetList: TSortedList<ISnippet>;
     ///  <summary>Constructs sorted list of snippets to be displayed.</summary>
     procedure BuildSnippetList;
   strict protected
@@ -230,7 +230,7 @@ type
     ///  <summary>Creates and returns an HTML table row containing one cell that
     ///  links to given snippet and another containing snippet's description.
     ///  </summary>
-    function SnippetTableRow(const Snippet: TSnippet): string;
+    function SnippetTableRow(Snippet: ISnippet): string;
     ///  <summary>Returns name of template resource for either an empty or none-
     ///  empty list of snippets.</summary>
     function GetTemplateResName: string; override;
@@ -241,8 +241,7 @@ type
     function HaveSnippets: Boolean;
     ///  <summary>Checks if the given snippet should be included in the list of
     ///  snippets to be displayed.</summary>
-    function IsSnippetRequired(const Snippet: TSnippet): Boolean; virtual;
-      abstract;
+    function IsSnippetRequired(Snippet: ISnippet): Boolean; virtual; abstract;
       // TODO: change Snippet param of IsSnippetRequired to TSnippetID
     ///  <summary>Returns name of CSS class to be used for page heading.
     ///  </summary>
@@ -283,7 +282,7 @@ type
     ///  snippets to be displayed.</summary>
     ///  <remarks>The snippet is to be displayed if it is in the tag being
     ///  displayed.</remarks>
-    function IsSnippetRequired(const Snippet: TSnippet): Boolean; override;
+    function IsSnippetRequired(Snippet: ISnippet): Boolean; override;
     ///  <summary>Returns name of CSS class to be used for page heading.
     ///  </summary>
     function GetH1ClassName: string; override;
@@ -309,7 +308,7 @@ type
     ///  snippets to be displayed.</summary>
     ///  <remarks>The snippet is to be displayed if its display name starts with
     ///  the initial letter being displayed.</remarks>
-    function IsSnippetRequired(const Snippet: TSnippet): Boolean; override;
+    function IsSnippetRequired(Snippet: ISnippet): Boolean; override;
     ///  <summary>Returns narrative to be used at top of any page that displays
     ///  a snippet list.</summary>
     function GetNarrative: string; override;
@@ -332,7 +331,7 @@ type
     ///  snippets to be displayed.</summary>
     ///  <remarks>The snippet is to be displayed if its kind is the same as that
     ///  being displayed.</remarks>
-    function IsSnippetRequired(const Snippet: TSnippet): Boolean; override;
+    function IsSnippetRequired(Snippet: ISnippet): Boolean; override;
     ///  <summary>Returns page's heading text.</summary>
     function GetHeading: string; override;
     ///  <summary>Returns narrative to be used at top of any page that displays
@@ -514,11 +513,11 @@ end;
 
 { TSnippetInfoPageHTML }
 
-function TSnippetInfoPageHTML.GetSnippet: TSnippet;
+function TSnippetInfoPageHTML.GetSnippet: ISnippet;
 begin
   Assert(Supports(View, ISnippetView),
     ClassName + '.Create: View is not snippet');
-  Result := _Database.Lookup((View as ISnippetView).SnippetID);
+  Result := Database.LookupSnippet((View as ISnippetView).SnippetID);
 end;
 
 function TSnippetInfoPageHTML.GetTemplateResName: string;
@@ -564,12 +563,12 @@ end;
 procedure TSnippetListPageHTML.BuildSnippetList;
 var
   SnippetID: TSnippetID;  // ID of each snippet in current query
-  Snippet: TSnippet;      // each snippet in current query
+  Snippet: ISnippet;      // each snippet in current query
 begin
   fSnippetList.Clear;
   for SnippetID in Query.Selection do
   begin
-    Snippet := _Database.Lookup(SnippetID);
+    Snippet := Database.LookupSnippet(SnippetID);
     if IsSnippetRequired(Snippet) then
       fSnippetList.Add(Snippet);
   end;
@@ -578,12 +577,11 @@ end;
 constructor TSnippetListPageHTML.Create(View: IView);
 begin
   inherited;
-  fSnippetList := TObjectSortedList<TSnippet>.Create(
-    TRules<TSnippet>.Create(
-      TSnippetTitleComparer.Create, TSnippetTitleEqualityComparer.Create
+  fSnippetList := TSortedList<ISnippet>.Create(
+    TRules<ISnippet>.Create(
+      TSnippetTitleComparator.Create, TSnippetTitleComparator.Create
     )
   );
-  fSnippetList.OwnsObjects := False;
   BuildSnippetList;
 end;
 
@@ -635,14 +633,14 @@ end;
 
 function TSnippetListPageHTML.SnippetTableInner: string;
 var
-  Snippet: TSnippet;  // each snippet in list
+  Snippet: ISnippet;  // each snippet in list
 begin
   Result := '';
   for Snippet in fSnippetList do
     Result := Result + SnippetTableRow(Snippet);
 end;
 
-function TSnippetListPageHTML.SnippetTableRow(const Snippet: TSnippet): string;
+function TSnippetListPageHTML.SnippetTableRow(Snippet: ISnippet): string;
 var
   SnippetHTML: TSnippetHTML;
   NameCellAttrs: IHTMLAttributes;
@@ -695,7 +693,7 @@ begin
   Result := sNarrative;
 end;
 
-function TTagsPageHTML.IsSnippetRequired(const Snippet: TSnippet): Boolean;
+function TTagsPageHTML.IsSnippetRequired(Snippet: ISnippet): Boolean;
 begin
   if not (View as ITagView).Tag.IsNull then
     Result := Snippet.Tags.Contains((View as ITagView).Tag)
@@ -722,7 +720,7 @@ begin
   );
 end;
 
-function TAlphaListPageHTML.IsSnippetRequired(const Snippet: TSnippet): Boolean;
+function TAlphaListPageHTML.IsSnippetRequired(Snippet: ISnippet): Boolean;
 begin
   Result := StrStartsText(
     (View as IInitialLetterView).InitialLetter, Snippet.Title
@@ -752,7 +750,7 @@ begin
   Result := Format(sNarrative, [StrToLower(View.Description)])
 end;
 
-function TSnipKindPageHTML.IsSnippetRequired(const Snippet: TSnippet): Boolean;
+function TSnipKindPageHTML.IsSnippetRequired(Snippet: ISnippet): Boolean;
 begin
   Result := (View as ISnippetKindView).KindInfo.Kind = Snippet.Kind;
 end;
