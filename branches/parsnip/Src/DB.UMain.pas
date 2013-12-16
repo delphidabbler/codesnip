@@ -210,7 +210,7 @@ type
         @return Reference to new snippet.
       }
     function CreateTempSnippet(const Data: TSnippetEditData;
-      const Name: string = ''): TSnippet; overload;
+      const Name: string = ''): TSnippet;
       {Creates a new temporary snippet without adding it to the Snippets
       object's snippets list. The new instance may not be added to the
       Snippets object.
@@ -218,13 +218,6 @@ type
         @param Name [in] Required snippet name. If ommitted then the snippet is
           created with a new, unique, name.
         @return Reference to new snippet.
-      }
-    function CreateTempSnippet(const Snippet: TSnippet): TSnippet; overload;
-      {Creates a new temporary copy of a snippet without adding it to the
-      Snippets object's snippets list. The new instance may not be added to the
-      Snippets object.
-        @param Snippet [in] Snippet to be copied.
-        @return Reference to new copied snippet.
       }
     procedure DeleteSnippet(const Snippet: TSnippet);
       {Deletes a snippet from the database.
@@ -316,20 +309,13 @@ type
         @return Reference to new snippet.
       }
     function CreateTempSnippet(const Data: TSnippetEditData;
-      const Name: string = ''): TSnippet; overload;
+      const Name: string = ''): TSnippet;
       {Creates a new temporary snippet without adding it to the Snippets
       object's snippets list. The new instance may not be added to the
       Snippets object.
         @param Data [in] Record storing new snippet's properties and references.
         @param Name [in] Required snippet name. If ommitted then the snippet is
           created with a new, unique, name.
-        @return Reference to new snippet.
-      }
-    function CreateTempSnippet(const Snippet: TSnippet): TSnippet; overload;
-      {Creates a new temporary copy of a snippet without adding it to the
-      Snippets object's snippets list. The new instance may not be added to the
-      Snippets object.
-        @param Snippet [in] Snippet to be copied.
         @return Reference to new snippet.
       }
     procedure DeleteSnippet(const Snippet: TSnippet);
@@ -398,22 +384,6 @@ procedure _TDatabase.CleanUpRefs(var Refs: TSnippetReferences);
 begin
   Refs.RequiredSnippets := CleanSnippetList(Refs.RequiredSnippets);
   Refs.XRefs := CleanSnippetList(Refs.XRefs);
-end;
-
-function _TDatabase.CreateTempSnippet(const Snippet: TSnippet): TSnippet;
-  {Creates a new temporary copy of a snippet without adding it to the
-  Snippets object's snippets list. The new instance may not be added to the
-  Snippets object.
-    @param Snippet [in] Snippet to be copied.
-    @return Reference to new snippet.
-  }
-begin
-  Assert(Assigned(Snippet), ClassName + '.CreateTempSnippet: Snippet is nil');
-  Result := TSnippet.Create(Snippet.ID);
-  Result.SetProps(Snippet.GetProps);
-  Result.SetCreated(TUTCDateTime.Now);
-  Result.SetModified(Result.GetCreated);
-  Result.UpdateRefs(MakeValidRefs(Snippet.GetReferences));
 end;
 
 function _TDatabase.CreateTempSnippet(const Data: TSnippetEditData;
