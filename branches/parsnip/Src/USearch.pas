@@ -26,7 +26,6 @@ uses
   // Project
   CS.Database.Types,
   Compilers.UGlobals,
-  DB.USnippet,
   UBaseObjects;
 
 
@@ -751,19 +750,19 @@ const
     [crQuery]                 // soUnkown
   );
 
-  // Checks if a snippet's compiler result for given compiler ID matches
+  // Checks if a snippet's compiler results for given compiler ID matches
   // expected results.
-  function CompatibilityMatches(const Snippet: TSnippet;
+  function CompileResultsMatch(Snippet: ISnippet;
     const CompID: TCompilerID): Boolean;
   begin
-    Result := Snippet.Compatibility[CompID] in cCompatMap[fOption];
+    Result := Snippet.CompileResults[CompID] in cCompatMap[fOption];
   end;
 
 var
   CompID: TCompilerID;  // loops thru supported compilers
-  Snippet: TSnippet;    //
+  Snippet: ISnippet;    //
 begin
-  Snippet := _Database.Lookup(SnippetID);
+  Snippet := Database.LookupSnippet(SnippetID);
   if fLogic = slOr then
   begin
     // Find any compiler: we return true as soon as any compiler compatibility
@@ -771,7 +770,7 @@ begin
     Result := False;
     for CompID in fCompilers do
     begin
-      if CompatibilityMatches(Snippet, CompID) then
+      if CompileResultsMatch(Snippet, CompID) then
         Exit(True);
     end;
   end
@@ -782,7 +781,7 @@ begin
     Result := True;
     for CompID in fCompilers do
     begin
-      if not CompatibilityMatches(Snippet, CompID) then
+      if not CompileResultsMatch(Snippet, CompID) then
         Exit(False);
     end;
   end;
@@ -931,9 +930,9 @@ var
   SearchWord: string;                      // a word we're searching for
   ActiveTextRenderer: IActiveTextRenderer; // converts active text to plain text
   StrBuilder: TStringBuilder;              // constructs search text
-  Snippet: TSnippet;                       // snippet we're matching
+  Snippet: ISnippet;                       // snippet we're matching
 begin
-  Snippet := _Database.Lookup(SnippetID);
+  Snippet := Database.LookupSnippet(SnippetID);
   // Build search text
   StrBuilder := TStringBuilder.Create;
   try
@@ -1089,12 +1088,12 @@ end;
 
 procedure TXRefSearchFilter.ReferenceRequired(const ASnippetID: TSnippetID);
 var
-  ASnippet: TSnippet;
+  ASnippet: ISnippet;
   SnippetID: TSnippetID;
 begin
   if not (soRequired in fOptions) then
     Exit;
-  ASnippet := _Database.Lookup(ASnippetID);
+  ASnippet := Database.LookupSnippet(ASnippetID);
   for SnippetID in ASnippet.RequiredSnippets do
     ReferenceSnippet(SnippetID);
 end;
@@ -1117,12 +1116,12 @@ end;
 
 procedure TXRefSearchFilter.ReferenceSeeAlso(const ASnippetID: TSnippetID);
 var
-  ASnippet: TSnippet;
+  ASnippet: ISnippet;
   SnippetID: TSnippetID;
 begin
   if not (soSeeAlso in fOptions) then
     Exit;
-  ASnippet := _Database.Lookup(ASnippetID);
+  ASnippet := Database.LookupSnippet(ASnippetID);
   for SnippetID in ASnippet.XRefs do
     ReferenceSnippet(SnippetID);
 end;
