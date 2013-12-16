@@ -1280,7 +1280,7 @@ var
 begin
   (Sender as TAction).Enabled :=
     Supports(fMainDisplayMgr.CurrentView, ISnippetView, SnippetView)
-    and _Database.Lookup(SnippetView.SnippetID).CanCompile;
+    and Database.LookupSnippet(SnippetView.SnippetID).CanCompile;
 end;
 
 procedure TMainForm.actWelcomeExecute(Sender: TObject);
