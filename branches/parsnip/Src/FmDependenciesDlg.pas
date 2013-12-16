@@ -64,6 +64,7 @@ type
       var AllowCollapse: Boolean);
     procedure actSelectAndCloseExecute(Sender: TObject);
     procedure actSelectAndCloseUpdate(Sender: TObject);
+    procedure tvDependenciesDeletion(Sender: TObject; Node: TTreeNode);
   public
     type
       TTabID = (tiDependsUpon, tiRequiredBy);
@@ -148,7 +149,7 @@ type
         @param Tabs [in] Tabs to be displayed in dialogue box.
         @param AHelpKeyword [in] A-link help keyword ofrequired help topic.
       }
-    class function Execute(const AOwner: TComponent; const Snippet: TSnippet;
+    class function Execute(const AOwner: TComponent; Snippet: ISnippet;
       const Tabs: TTabIDs; const PermitSelection: Boolean;
       const AHelpKeyword: string): ISearch; overload;
       {Displays dialogue box containing details of a snippet's dependencies.
@@ -229,17 +230,18 @@ procedure TDependenciesDlg.AddDependencies(const Parent: TTreeNode;
   }
 var
   RequiredSnippetID: TSnippetID;
-  RequiredSnippet: TSnippet;
+  RequiredSnippet: ISnippet;
   ChildNode: TTreeNode;
 begin
   for RequiredSnippetID in DependsList do
   begin
-    RequiredSnippet := _Database.Lookup(RequiredSnippetID);
+    RequiredSnippet := Database.LookupSnippet(RequiredSnippetID);
     // Add node for snippet from dependency list
     ChildNode := tvDependencies.Items.AddChild(
       Parent, RequiredSnippet.Title
     );
-    ChildNode.Data := RequiredSnippet;  // reference to associated snippet
+    // Store reference to associated snippet
+    ChildNode.Data := TBox<TSnippetID>.Create(RequiredSnippetID);
     // Check for circular reference. If detetected display warning otherwise
     // recursively add child nodes for snippet's dependency list
     if (RequiredSnippet.ID <> fSnippetID) then
@@ -330,7 +332,7 @@ begin
 end;
 
 class function TDependenciesDlg.Execute(const AOwner: TComponent;
-  const Snippet: TSnippet; const Tabs: TTabIDs; const PermitSelection: Boolean;
+  Snippet: ISnippet; const Tabs: TTabIDs; const PermitSelection: Boolean;
   const AHelpKeyword: string): ISearch;
 begin
   Assert(Tabs <> [], ClassName + '.Execute: Tabs is []');
@@ -435,20 +437,18 @@ procedure TDependenciesDlg.PopulateRequiredByList;
 var
   Dependents: ISnippetIDList;
   SnippetID: TSnippetID;
-  ThisSnippet: TSnippet;
-  ASnippet: TSnippet;
+  ASnippet: ISnippet;
 begin
   lbDependents.Items.BeginUpdate;
   try
     lbDependents.Clear;
-    ThisSnippet := _Database.Lookup(fSnippetID);
     // must only try to get dependents for snippet if it is in database
-    if (tiRequiredBy in fTabs) and Assigned(ThisSnippet) then
+    if (tiRequiredBy in fTabs) and Database.SnippetExists(fSnippetID) then
     begin
       Dependents := Database.GetDependentsOf(fSnippetID);
       for SnippetID in Dependents do
       begin
-        ASnippet := _Database.Lookup(SnippetID);
+        ASnippet := Database.LookupSnippet(SnippetID);
         // TODO: rethink lbDependants: TBox value is always same (i.e. True)
         lbDependents.Items.AddObject(
           ASnippet.Title, TBox<Boolean>.Create(True)
@@ -489,10 +489,20 @@ begin
   AllowCollapse := False;
 end;
 
+procedure TDependenciesDlg.tvDependenciesDeletion(Sender: TObject;
+  Node: TTreeNode);
+  {Frees object associated with tree node when node is deleted.
+    @param Sender [in] Not used.
+    @param Node [in] Tree node being deleted.
+  }
+begin
+  if Assigned(Node.Data) then
+    TObject(Node.Data).Free;
+end;
+
 { TDependenciesDlg.TTVDraw }
 
-constructor TDependenciesDlg.TTVDraw.Create(
-  const RootID: TSnippetID);
+constructor TDependenciesDlg.TTVDraw.Create(const RootID: TSnippetID);
   {Class constructor. Sets up object.
     @param ID [in] ID snippet for which dependencies are displayed.
   }
@@ -501,18 +511,18 @@ begin
   fRootID := RootID;
 end;
 
-function TDependenciesDlg.TTVDraw.IsErrorNode(
-  const Node: TTreeNode): Boolean;
+function TDependenciesDlg.TTVDraw.IsErrorNode(const Node: TTreeNode): Boolean;
   {Checks if a node represents an error condition.
     @param Node [in] Node to be checked.
     @return True if node represents error condition, False if not.
   }
 begin
-  Result := Assigned(Node.Data) and (TSnippet(Node.Data).ID = fRootID);
+  Result := Assigned(Node.Data)
+    and (TBox<TSnippetID>(Node.Data).Value = fRootID);
 end;
 
-function TDependenciesDlg.TTVDraw.IsUserDefinedNode(
-  const Node: TTreeNode): Boolean;
+function TDependenciesDlg.TTVDraw.IsUserDefinedNode(const Node: TTreeNode):
+  Boolean;
   {Checks if a node represents a user defined snippets object.
     @param Node [in] Node to be checked.
     @return True if node represents user defined object, False if not.

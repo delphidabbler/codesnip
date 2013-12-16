@@ -133,15 +133,15 @@ type
     procedure ShowTestUnitDlg(Snippet: ISnippet);
 
     ///  <summary>Shows Dependencies dialogue box.</summary>
-    ///  <param name="Snippet">TSnippets [in] Snippet for which dependencies are
+    ///  <param name="Snippet">ISnippet [in] Snippet for which dependencies are
     ///  to be displayed.</param>
     ///  <param name="HelpKeyword">string [in] Keyword of help topic to be
     ///  associated with the dialogue box.</param>
     ///  <returns>ISearch. Search containing details of any snippets to be
     ///  selected when the dialogue box closes. May be nil if no search is to be
     ///  performed.</returns>
-    function ShowDependenciesDlg(const Snippet: TSnippet;
-      const HelpKeyword: string): ISearch;
+    function ShowDependenciesDlg(Snippet: ISnippet; const HelpKeyword: string):
+      ISearch;
 
     ///  <summary>Displays the Proxy Server configuration dialogue box.
     ///  </summary>
@@ -274,7 +274,7 @@ begin
   TUserBugReportDlg.Execute(Owner);
 end;
 
-function TDialogMgr.ShowDependenciesDlg(const Snippet: TSnippet;
+function TDialogMgr.ShowDependenciesDlg(Snippet: ISnippet;
   const HelpKeyword: string): ISearch;
 begin
   Result := TDependenciesDlg.Execute(

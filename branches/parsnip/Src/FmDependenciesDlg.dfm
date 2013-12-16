@@ -16,10 +16,6 @@ inherited DependenciesDlg: TDependenciesDlg
       OnMouseDown = pcBodyMouseDown
       object tsDependsUpon: TTabSheet
         Caption = 'Depends Upon'
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         object lblCircularRef: TLabel
           Left = 0
           Top = 240
@@ -47,15 +43,12 @@ inherited DependenciesDlg: TDependenciesDlg
           ShowRoot = False
           TabOrder = 0
           OnCollapsing = tvDependenciesCollapsing
+          OnDeletion = tvDependenciesDeletion
         end
       end
       object tsRequiredBy: TTabSheet
         Caption = 'Required By'
         ImageIndex = 1
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         object lblNoDependents: TLabel
           Left = 8
           Top = 8

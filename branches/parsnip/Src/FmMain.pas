@@ -1230,7 +1230,9 @@ begin
   Assert(Supports(fMainDisplayMgr.CurrentView, ISnippetView),
     ClassName + '.actViewDependenciesExecute: Snippet view expected');
   Search := fDialogMgr.ShowDependenciesDlg(
-    _Database.Lookup((fMainDisplayMgr.CurrentView as ISnippetView).SnippetID),
+    Database.LookupSnippet(
+      (fMainDisplayMgr.CurrentView as ISnippetView).SnippetID
+    ),
     'DependenciesDlg'
   );
   if Assigned(Search) then
