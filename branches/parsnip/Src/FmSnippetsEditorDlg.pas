@@ -536,7 +536,7 @@ begin
     end;
   end;
   try
-    TTestUnitDlgMgr.DisplayTestUnit(Self, TempSnippet);
+    TTestUnitDlgMgr.DisplayTestUnit(Self, TempSnippet.CloneAsReadOnly);
   finally
     TempSnippet.Free;
   end;

@@ -130,7 +130,7 @@ type
     ///  <summary>Displays the Test Unit dialogue box.</summary>
     ///  <param name="Snippet">TSnippet [in] Snippet for which test unit is to
     ///  be generated.</param>
-    procedure ShowTestUnitDlg(const Snippet: TSnippet);
+    procedure ShowTestUnitDlg(Snippet: ISnippet);
 
     ///  <summary>Shows Dependencies dialogue box.</summary>
     ///  <param name="Snippet">TSnippets [in] Snippet for which dependencies are
@@ -308,7 +308,7 @@ begin
   TTestCompileDlg.Execute(Owner, CompileMgr, Snippet);
 end;
 
-procedure TDialogMgr.ShowTestUnitDlg(const Snippet: TSnippet);
+procedure TDialogMgr.ShowTestUnitDlg(Snippet: ISnippet);
 begin
   TTestUnitDlgMgr.DisplayTestUnit(Owner, Snippet);
 end;

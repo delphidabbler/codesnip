@@ -592,6 +592,7 @@ uses
   Graphics,
   // Project
   CS.Actions.RemoveTag,
+  CS.Database.Types,
   CS.Init.CommandLineOpts,
   DB.UMain,
   DB.USnippet,
@@ -1259,11 +1260,11 @@ end;
 
 procedure TMainForm.actViewTestUnitExecute(Sender: TObject);
 var
-  SelectedSnippet: TSnippet;  // currently selected snippet
+  SelectedSnippet: ISnippet;  // currently selected snippet
 begin
   Assert(Supports(fMainDisplayMgr.CurrentView, ISnippetView),
     ClassName + '.actViewTestUnitExecute: Snippet view expected');
-  SelectedSnippet := _Database.Lookup(
+  SelectedSnippet := Database.LookupSnippet(
     (fMainDisplayMgr.CurrentView as ISnippetView).SnippetID
   );
   Assert(SelectedSnippet.CanCompile,

@@ -23,8 +23,8 @@ uses
   // Delphi
   Classes,
   // Project
+  CS.Database.Types,
   CS.SourceCode.Languages,
-  DB.USnippet,
   UBaseObjects,
   UEncodings;
 
@@ -36,7 +36,7 @@ type
   strict private
     ///  <summary>Generates source code a test unit for the given snippet's
     ///  source code.</summary>
-    class function GenerateTestUnit(const Snippet: TSnippet): string;
+    class function GenerateTestUnit(Snippet: ISnippet): string;
     ///  <summary>Syntax highlights the given source code with a highlighter
     ///  suitable for the given language and returns the highlighted code as
     ///  XHTML.</summary>
@@ -49,8 +49,7 @@ type
     ///  box.</param>
     ///  <param name="Snippet">TSnippet [in] Snippet for which test unit is to
     ///  be displayed.</param>
-    class procedure DisplayTestUnit(const Owner: TComponent;
-      const Snippet: TSnippet);
+    class procedure DisplayTestUnit(const Owner: TComponent; Snippet: ISnippet);
   end;
 
 
@@ -73,7 +72,7 @@ uses
 { TTestUnitDlgMgr }
 
 class procedure TTestUnitDlgMgr.DisplayTestUnit(const Owner: TComponent;
-  const Snippet: TSnippet);
+  Snippet: ISnippet);
 var
   XHTMLDoc: TEncodedData;         // syntax highlighted source code XHTML
 resourcestring
@@ -88,10 +87,10 @@ begin
   );
 end;
 
-class function TTestUnitDlgMgr.GenerateTestUnit(const Snippet: TSnippet):
+class function TTestUnitDlgMgr.GenerateTestUnit(Snippet: ISnippet):
   string;
 begin
-  with TPascalTestUnit.Create(Snippet.CloneAsReadOnly) do
+  with TPascalTestUnit.Create(Snippet) do
     try
       Result := GenerateUnitSource;
     finally
