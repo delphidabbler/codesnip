@@ -136,7 +136,6 @@ uses
   // Project
   CS.Database.Snippets,
   DB.UMain,
-  DB.USnippet,
   IntfCommon,
   UGroups;
 
@@ -153,7 +152,7 @@ procedure TSelectSnippetsFrame.AddNodes;
 var
   Initial: TInitialLetter;        // reference to an initial
   InitialNode: TCheckedTreeNode;  // tree node representing an initial letter
-  Snippet: TSnippet;              // references snippets with an initial letter
+  Snippet: ISnippet;              // references snippets with an initial letter
   Grouping: TGrouping;            // groups/sorts snippets by initial letter
   Group: TGroupItem;              // group representing an initial letter
 begin
@@ -169,8 +168,6 @@ begin
       InitialNode := AddNode(
         nil, Group.Title, TInitialLetterBox.Create(Initial)
       );
-      { TODO: Change type of Snippet to ISnippet once Group.SnippetList type has
-              been changed. }
       for Snippet in Group.SnippetList do
         AddNode(
           InitialNode,
