@@ -91,7 +91,7 @@ end;
 class function TTestUnitDlgMgr.GenerateTestUnit(const Snippet: TSnippet):
   string;
 begin
-  with TPascalTestUnit.Create(Snippet) do
+  with TPascalTestUnit.Create(Snippet.CloneAsReadOnly) do
     try
       Result := GenerateUnitSource;
     finally

@@ -169,7 +169,7 @@ procedure TTestCompile.GenerateSourceFile(out FileName: string);
     @param FileName [out] Name of the generated file.
   }
 begin
-  with TPascalTestUnit.Create(fSnippet) do
+  with TPascalTestUnit.Create(fSnippet.CloneAsReadOnly) do
     try
       SaveUnit(FileName);
     finally

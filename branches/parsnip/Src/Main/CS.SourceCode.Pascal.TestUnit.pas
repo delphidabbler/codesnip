@@ -23,7 +23,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  DB.USnippet;
+  CS.Database.Types;
 
 
 type
@@ -38,7 +38,7 @@ type
     var
       ///  <summary>Reference to snippet for which test unit is required.
       ///  </summary>
-      fSnippet: TSnippet;
+      fSnippet: ISnippet;
     ///  <summary>Builds and returns fully specified unit file name.</summary>
     function UnitFileName: string;
     ///  <summary>Returns the type of encoding needed to store the given unit
@@ -50,7 +50,7 @@ type
   public
     ///  <summary>Sets up object to create Pascal test unit for given snippet.
     ///  </summary>
-    constructor Create(const Snippet: TSnippet);
+    constructor Create(Snippet: ISnippet);
     ///  <summary>Generates source code of test unit.</summary>
     function GenerateUnitSource: string;
     ///  <summary>Saves generated source to file.</summary>
@@ -71,7 +71,6 @@ implementation
 
 uses
   // Project
-  CS.Database.Types,
   CS.SourceCode.Pascal.SourceGen,
   UEncodings,
   UIOUtils,
@@ -81,7 +80,7 @@ uses
 
 { TPascalTestUnit }
 
-constructor TPascalTestUnit.Create(const Snippet: TSnippet);
+constructor TPascalTestUnit.Create(Snippet: ISnippet);
 begin
   Assert(Assigned(Snippet), ClassName + '.Create: Snippet is nil');
   inherited Create;
@@ -94,7 +93,7 @@ begin
   begin
     with TPascalSourceGen.Create do
       try
-        IncludeSnippet(fSnippet.CloneAsReadOnly);
+        IncludeSnippet(fSnippet);
         Result := UnitAsString(TestUnitName);
       finally
         Free;
