@@ -849,7 +849,7 @@ begin
   // criteria (dialogue box creates and returns search object from entered
   // criteria)
   if fDialogMgr.ExecFindXRefsDlg(
-    _Database.Lookup(
+    Database.LookupSnippet(
       (fMainDisplayMgr.CurrentView as ISnippetView).SnippetID
     ),
     Search

@@ -70,14 +70,14 @@ type
       Boolean;
 
     ///  <summary>Displays Find Cross References dialogue box.</summary>
-    ///  <param name="ASnippet">TSnippet [in] Snippet for which cross-references
+    ///  <param name="ASnippet">ISnippet [in] Snippet for which cross-references
     ///  are required.</param>
     ///  <param name="ASearch">ISearch [out] Set to object containing search
     ///  details. Undefined if user cancelled dialogue.</param>
     ///  <returns>Boolean. True if user OKd dialogue or False if user cancelled.
     ///  </returns>
-    function ExecFindXRefsDlg(const ASnippet: TSnippet;
-      out ASearch: ISearch): Boolean;
+    function ExecFindXRefsDlg(ASnippet: ISnippet; out ASearch: ISearch):
+      Boolean;
 
     ///  <summary>Displays Preferences dialogue box showing all tabs.</summary>
     ///  <param name="UpdateUI">Boolean [out] Flag that indicates if the UI
@@ -128,7 +128,7 @@ type
     procedure ShowDonateDlg;
 
     ///  <summary>Displays the Test Unit dialogue box.</summary>
-    ///  <param name="Snippet">TSnippet [in] Snippet for which test unit is to
+    ///  <param name="Snippet">ISnippet [in] Snippet for which test unit is to
     ///  be generated.</param>
     procedure ShowTestUnitDlg(Snippet: ISnippet);
 
@@ -226,8 +226,8 @@ begin
   Result := TFindTextDlg.Execute(Owner, ASearch, RefineExisting);
 end;
 
-function TDialogMgr.ExecFindXRefsDlg(const ASnippet: TSnippet;
-  out ASearch: ISearch): Boolean;
+function TDialogMgr.ExecFindXRefsDlg(ASnippet: ISnippet; out ASearch: ISearch):
+  Boolean;
 begin
   Result := TFindXRefsDlg.Execute(Owner, ASnippet, ASearch);
 end;

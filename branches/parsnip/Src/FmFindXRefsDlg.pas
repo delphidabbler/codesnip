@@ -23,9 +23,15 @@ interface
 
 uses
   // Delphi
-  StdCtrls, Controls, ExtCtrls, Classes,
+  StdCtrls,
+  Controls,
+  ExtCtrls,
+  Classes,
   // Project
-  DB.USnippet, FmGenericOKDlg, UBaseObjects, USearch;
+  CS.Database.Types,
+  FmGenericOKDlg,
+  UBaseObjects,
+  USearch;
 
 
 type
@@ -55,7 +61,7 @@ type
   strict private
     fSearchParams: TXRefSearchParams; // Persists XRef search options
     fSearch: ISearch;                 // Search for user's criteria
-    fSnippet: TSnippet;               // Snippet whose x-refs to be found
+    fSnippet: ISnippet;               // Snippet whose x-refs to be found
     procedure UpdateControls;
       {Updates state of controls.
       }
@@ -70,7 +76,7 @@ type
       {Populates and initialises controls.
       }
   public
-    class function Execute(const AOwner: TComponent; const Snippet: TSnippet;
+    class function Execute(const AOwner: TComponent; Snippet: ISnippet;
       out ASearch: ISearch): Boolean;
       {Displays dialog and returns search object based on entered criteria.
         @param AOwner [in] Component that owns this dialog.
@@ -243,7 +249,7 @@ begin
 end;
 
 class function TFindXRefsDlg.Execute(const AOwner: TComponent;
-  const Snippet: TSnippet; out ASearch: ISearch): Boolean;
+  Snippet: ISnippet; out ASearch: ISearch): Boolean;
   {Displays dialog and returns search object based on entered criteria.
     @param AOwner [in] Component that owns this dialog.
     @param Snippet [in] Snippet whose cross references are to be found.
