@@ -17,15 +17,30 @@ unit CS.Database.Snippets;
 interface
 
 uses
+  // Delphi
   Generics.Collections,
+  // Project
   CS.ActiveText,
-  Compilers.UGlobals,
   CS.Database.Types,
   CS.SourceCode.Languages,
   CS.Utils.Dates,
+  Compilers.UGlobals,
   IntfCommon,
+  UComparers,
   UExceptions,
   UIStringList;
+
+type
+  ///  <summary>Comparer for snippets by title.</summary>
+  TSnippetTitleComparator = class(TComparator<ISnippet>)
+  public
+    ///  <summary>Compares snippets Left and Right. Returns -ve if Left's
+    ///  title sorts before Right's, 0 if the same or +ve if Left's title is
+    ///  greater than Right's.</summary>
+    function Compare(const Left, Right: ISnippet): Integer; override;
+    function Equals(const Left, Right: ISnippet): Boolean; override;
+    function GetHashCode(const Snippet: ISnippet): Integer; override;
+  end;
 
 type
   TSnippetBase = class(TInterfacedObject)
@@ -179,12 +194,16 @@ type
 implementation
 
 uses
+  // Delphi
   SysUtils,
   Generics.Defaults,
   Classes,
   RTLConsts,
+  // Project
   CS.Database.SnippetLinks,
-  CS.Database.Tags;
+  CS.Database.Tags,
+  CS.Utils.Hashes,
+  UStrUtils;
 
 { TSnippetIDList }
 
@@ -574,6 +593,23 @@ end;
 procedure TEditableSnippet.UpdateFrom(AOther: ISnippet);
 begin
   UpdateFrom(AOther as TReadOnlySnippet);
+end;
+
+{ TSnippetTitleComparator }
+
+function TSnippetTitleComparator.Compare(const Left, Right: ISnippet): Integer;
+begin
+  Result := StrCompareText(Left.Title, Right.Title);
+end;
+
+function TSnippetTitleComparator.Equals(const Left, Right: ISnippet): Boolean;
+begin
+  Result := StrSameText(Left.Title, Right.Title);
+end;
+
+function TSnippetTitleComparator.GetHashCode(const Snippet: ISnippet): Integer;
+begin
+  Result := TextHash(Snippet.Title);
 end;
 
 end.
