@@ -25,7 +25,6 @@ uses
   // Project
   CS.ActiveText.Renderers.RTF,
   CS.Database.Types,
-  DB.USnippet,
   UEncodings,
   URTFBuilder,
   URTFStyles;
@@ -69,10 +68,10 @@ type
     ///  </remarks>
     procedure OutputTagHeading(const Tag: TTag);
     ///  <summary>Outputs name of given snippet as sub-heading as RTF.</summary>
-    procedure OutputSnippetSubHeading(const Snippet: TSnippet);
+    procedure OutputSnippetSubHeading(Snippet: ISnippet);
     ///  <summary>Outputs description of given snippet as RTF paragraph.
     ///  </summary>
-    procedure OutputSnippetText(const Snippet: TSnippet);
+    procedure OutputSnippetText(Snippet: ISnippet);
     ///  <summary>Output given text as RTF paragraph.</summary>
     procedure OutputPlainTextPara(const Text: string);
     ///  <summary>Uses given font colour for subsequent text unless caller has
@@ -137,7 +136,7 @@ end;
 
 function TTagInfoRTFDoc.Generate(const Tag: TTag): TEncodedData;
 var
-  Snippet: TSnippet;
+  Snippet: ISnippet;
   SnippetID: TSnippetID;
   SnippetIDs: ISnippetIDList;
 resourcestring
@@ -165,7 +164,7 @@ begin
   begin
     for SnippetID in SnippetIDs do
     begin
-      Snippet := _Database.Lookup(SnippetID);
+      Snippet := Database.LookupSnippet(SnippetID);
       OutputSnippetSubHeading(Snippet);
       OutputSnippetText(Snippet);
     end;
@@ -265,7 +264,7 @@ begin
   fBuilder.EndGroup;
 end;
 
-procedure TTagInfoRTFDoc.OutputSnippetSubHeading(const Snippet: TSnippet);
+procedure TTagInfoRTFDoc.OutputSnippetSubHeading(Snippet: ISnippet);
 begin
   fBuilder.BeginGroup;
   fBuilder.SetParaSpacing(TRTFParaSpacing.Create(SubHeadingSpacing, 0.0));
@@ -279,7 +278,7 @@ begin
   fBuilder.EndGroup;
 end;
 
-procedure TTagInfoRTFDoc.OutputSnippetText(const Snippet: TSnippet);
+procedure TTagInfoRTFDoc.OutputSnippetText(Snippet: ISnippet);
 var
   RTFRenderer: TActiveTextRTFRenderer;
 begin
