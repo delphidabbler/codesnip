@@ -150,7 +150,7 @@ procedure TCompileMgr.Compile(const UIParent: TWinControl;
 begin
   Assert(Assigned(Snippet), ClassName + '.Compile: Snippet is nil');
   // Compile snippet and optionally display result
-  TTestCompileUI.Execute(UIParent, fCompilers, Snippet);
+  TTestCompileUI.Execute(UIParent, fCompilers, Snippet.CloneAsReadOnly);
   if Assigned(DisplayProc) then
     DisplayProc(fCompilers);
   // Copy snippet to LastCompiledSnippet property
