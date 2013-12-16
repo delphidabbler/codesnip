@@ -28,7 +28,6 @@ uses
   XMLIntf,
   // Project
   CS.Database.Types,
-  DB.USnippet,
   UBaseObjects,
   UEncodings,
   UExceptions,
@@ -351,9 +350,9 @@ procedure TCodeExporter.WriteSnippet(const ParentNode: IXMLNode;
   const SnippetID: TSnippetID);
 var
   SnippetNode: IXMLNode;  // new snippet node
-  Snippet: TSnippet;      // snippet being written out
+  Snippet: ISnippet;      // snippet being written out
 begin
-  Snippet := _Database.Lookup(SnippetID);
+  Snippet := Database.LookupSnippet(SnippetID);
   // Create snippet node with attribute that specifies snippet name
   SnippetNode := fXMLDoc.CreateElement(ParentNode, cSnippetNode);
   SnippetNode.Attributes[cSnippetNameAttr] := SnippetID.ToString;
@@ -386,7 +385,7 @@ begin
   TXMLDocHelper.WriteSnippetKind(fXMLDoc, SnippetNode, Snippet.Kind);
   // compiler results value: only write known results
   TXMLDocHelper.WriteCompilerResults(
-    fXMLDoc, SnippetNode, Snippet.Compatibility
+    fXMLDoc, SnippetNode, Snippet.CompileResults
   );
   // depends and units lists
   WriteReferenceList(
