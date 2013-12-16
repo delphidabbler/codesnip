@@ -21,9 +21,12 @@ interface
 
 uses
   // Delphi
-  Classes, Controls,
+  Classes,
+  Controls,
   // Project
-  Compilers.UGlobals, DB.USnippet, UView;
+  CS.Database.Types,
+  Compilers.UGlobals,
+  UView;
 
 
 type
@@ -43,7 +46,7 @@ type
   }
   TCompileMgr = class(TComponent)
   strict private
-    fLastCompiledSnippet: TSnippet; // Value of LastCompiledSnippet property
+    fLastCompiledSnippet: ISnippet; // Value of LastCompiledSnippet property
     fCompilers: ICompilers;         // Value of Compilers property
     ///  <summary>Handles database change events. Clears test compilation if
     ///  related snippet is changed or deleted.</summary>
@@ -53,7 +56,7 @@ type
     ///  about the database change event.</param>
     procedure DBChangeEventHandler(Sender: TObject; const EvtInfo: IInterface);
   strict protected
-    property LastCompiledSnippet: TSnippet read fLastCompiledSnippet;
+    property LastCompiledSnippet: ISnippet read fLastCompiledSnippet;
       {Last compiled snippet. May not be added to Snippets object}
   public
     constructor Create(AOwner: TComponent); override;
@@ -67,7 +70,7 @@ type
       {Checks if any compilers are set up to work with CodeSnip.
         @return True if at least one compiler is available, False otherwise.
       }
-    procedure Compile(const UIParent: TWinControl; const Snippet: TSnippet;
+    procedure Compile(const UIParent: TWinControl; Snippet: ISnippet;
       const DisplayProc: TCompileResultDisplay = nil);
       {Test compiles a snippet and then displays the compilation results. Shows
       a wait dialog box if compilation takes a long time.
@@ -125,7 +128,6 @@ uses
   // Delphi
   SysUtils,
   // Project
-  CS.Database.Types,
   Compilers.UCompilers,
   DB.UMain,
   FmCompErrorDlg,
@@ -136,8 +138,8 @@ uses
 
 { TCompileMgr }
 
-procedure TCompileMgr.Compile(const UIParent: TWinControl;
-  const Snippet: TSnippet; const DisplayProc: TCompileResultDisplay);
+procedure TCompileMgr.Compile(const UIParent: TWinControl; Snippet: ISnippet;
+  const DisplayProc: TCompileResultDisplay);
   {Test compiles a snippet and then displays the compilation results. Shows a
   wait dialog box if compilation takes a long time.
     @param UIParent [in] Control that parents any wait window that is displayed.
@@ -150,14 +152,11 @@ procedure TCompileMgr.Compile(const UIParent: TWinControl;
 begin
   Assert(Assigned(Snippet), ClassName + '.Compile: Snippet is nil');
   // Compile snippet and optionally display result
-  TTestCompileUI.Execute(UIParent, fCompilers, Snippet.CloneAsReadOnly);
+  TTestCompileUI.Execute(UIParent, fCompilers, Snippet);
   if Assigned(DisplayProc) then
     DisplayProc(fCompilers);
   // Copy snippet to LastCompiledSnippet property
-  fLastCompiledSnippet.Free;
-  fLastCompiledSnippet := (_Database as IDatabaseEdit).CreateTempSnippet(
-    Snippet
-  );
+  fLastCompiledSnippet := Snippet;
 end;
 
 constructor TCompileMgr.Create(AOwner: TComponent);
@@ -195,7 +194,6 @@ destructor TCompileMgr.Destroy;
   }
 begin
   Database.RemoveChangeEventHandler(DBChangeEventHandler);
-  fLastCompiledSnippet.Free;
   fCompilers := nil;
   inherited;
 end;
@@ -235,9 +233,7 @@ begin
     ClassName + '.ShowErrors: No compilers have errors or warnings');
   Assert(Assigned(fLastCompiledSnippet),
     ClassName + '.ShowErrors: LastCompiledSnippet is nil');
-  TCompErrorDlg.Execute(
-    Owner, fLastCompiledSnippet.CloneAsReadOnly, fCompilers
-  );
+  TCompErrorDlg.Execute(Owner, fLastCompiledSnippet, fCompilers);
 end;
 
 { TMainCompileMgr }
@@ -249,14 +245,12 @@ function TMainCompileMgr.CanCompile(View: IView): Boolean;
   }
 var
   SnippetView: ISnippetView;  // view as snippet view if supported
-  Snippet: TSnippet;          // snippet associated with view
 begin
   if not HaveCompilers then
     Exit(False);
   if not Supports(View, ISnippetView, SnippetView) then
     Exit(False);
-  Snippet := _Database.Lookup(SnippetView.SnippetID);
-  Result := Snippet.CanCompile;
+  Result := Database.LookupSnippet(SnippetView.SnippetID).CanCompile;
 end;
 
 function TMainCompileMgr.ConfigCompilers: Boolean;

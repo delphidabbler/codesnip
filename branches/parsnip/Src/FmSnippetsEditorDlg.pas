@@ -388,7 +388,9 @@ begin
     end;
     // Test compile snippet
     try
-      fCompileMgr.Compile(tsCompileResults, TempSnippet, DisplayCompileResults);
+      fCompileMgr.Compile(
+        tsCompileResults, TempSnippet.CloneAsReadOnly, DisplayCompileResults
+      );
     finally
       TempSnippet.Free;
     end;

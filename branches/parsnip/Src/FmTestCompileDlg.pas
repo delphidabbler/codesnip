@@ -221,9 +221,7 @@ begin
   Enabled := False;
   try
     fCompileMgr.Compile(
-      pnlBody,
-      _Database.Lookup(fSnippet.ID),
-      DisplayCompileResults
+      pnlBody, Database.LookupSnippet(fSnippet.ID), DisplayCompileResults
     );
   finally
     Enabled := True;
