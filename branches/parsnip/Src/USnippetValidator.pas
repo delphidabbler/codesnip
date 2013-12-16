@@ -22,7 +22,6 @@ uses
   // Project
   CS.ActiveText,
   CS.Database.Types,
-  DB.USnippet,
   UBaseObjects,
   UStructs;
 
@@ -195,7 +194,7 @@ class function TSnippetValidator.ValidateDependsList(Snippet: ISnippet;
         Result := True
       else
         Result := DependsListIsCircular(
-          Snippet, _Database.Lookup(RequiredSnippet).RequiredSnippets
+          Snippet, Database.LookupSnippet(RequiredSnippet).RequiredSnippets
         );
       if Result then
         Exit;
@@ -212,14 +211,14 @@ class function TSnippetValidator.ValidateDependsList(Snippet: ISnippet;
     }
   var
     RequiredSnippetID: TSnippetID;
-    RequiredSnippet: TSnippet;
+    RequiredSnippet: ISnippet;
   begin
     Result := False;
     if Kinds = [] then
       Exit; // no kinds specified so depends list can't have these kinds!
     for RequiredSnippetID in DependsList do
     begin
-      RequiredSnippet := _Database.Lookup(RequiredSnippetID);
+      RequiredSnippet := Database.LookupSnippet(RequiredSnippetID);
       if RequiredSnippet.Kind in Kinds then
         Result := True
       else
