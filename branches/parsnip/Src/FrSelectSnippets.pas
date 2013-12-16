@@ -27,7 +27,6 @@ uses
   ComCtrls,
   // Project
   CS.Database.Types,
-  DB.USnippet,
   FrCheckedTV,
   UBox,
   UInitialLetter,
@@ -47,7 +46,7 @@ type
   strict private
     type
       TInitialLetterBox = TBox<TInitialLetter>;
-      TSnippetBox = TBox<TSnippet>;
+      TSnippetIDBox = TBox<TSnippetID>;
     type
       {
       TTVDraw:
@@ -79,10 +78,10 @@ type
         @param Node [in] Node to be checked.
         @return True if node represents a snippet.
       }
-    function SnippetFromNode(const Node: TCheckedTreeNode): TSnippet;
-      {Gets snippet object associated with a node.
+    function SnippetIDFromNode(const Node: TCheckedTreeNode): TSnippetID;
+      {Gets snippet ID associated with a node.
         @param Node [in] Node associated with snippet. Must be a valid node.
-        @return Reference to snippet.
+        @return Required snippet ID.
       }
   strict protected
     procedure AddNodes; override;
@@ -98,7 +97,7 @@ type
         @param Node [in] Leaf node whose state to set.
       }
     procedure FinalizeNode(const Node: TCheckedTreeNode); override;
-      {Frees any TInitialLetterBox or TSnippetBox instances associated with
+      {Frees any TInitialLetterBox or TSnippetIDBox instances associated with
       Node.
         @param Node [in] Node being finalised.
       }
@@ -137,6 +136,7 @@ uses
   // Project
   CS.Database.Snippets,
   DB.UMain,
+  DB.USnippet,
   IntfCommon,
   UGroups;
 
@@ -169,8 +169,14 @@ begin
       InitialNode := AddNode(
         nil, Group.Title, TInitialLetterBox.Create(Initial)
       );
+      { TODO: Change type of Snippet to ISnippet once Group.SnippetList type has
+              been changed. }
       for Snippet in Group.SnippetList do
-        AddNode(InitialNode, Snippet.Title, TSnippetBox.Create(Snippet));
+        AddNode(
+          InitialNode,
+          Snippet.Title,
+          TSnippetIDBox.Create(Snippet.ID)
+        );
     end;
   finally
     Grouping.Free;
@@ -205,7 +211,7 @@ end;
 procedure TSelectSnippetsFrame.FinalizeNode(const Node: TCheckedTreeNode);
 begin
   if (TObject(Node.Data) is TInitialLetterBox)
-    or (TObject(Node.Data) is TSnippetBox) then
+    or (TObject(Node.Data) is TSnippetIDBox) then
     TObject(Node.Data).Free
 end;
 
@@ -227,7 +233,7 @@ function TSelectSnippetsFrame.IsSnippetNode(
   }
 begin
   Result := Assigned(Node) and Assigned(Node.Data) and
-    (TObject(Node.Data) is TSnippetBox);
+    (TObject(Node.Data) is TSnippetIDBox);
 end;
 
 procedure TSelectSnippetsFrame.RecordChanges;
@@ -251,7 +257,7 @@ begin
       Assert(IsSnippetNode(SnippetNode),
         ClassName + 'RecordChanges: SnippetNode is not a snippet node');
       if SnippetNode.IsChecked then
-        fSelectedSnippets.Add(SnippetFromNode(SnippetNode).ID);
+        fSelectedSnippets.Add(SnippetIDFromNode(SnippetNode));
       SnippetNode := SnippetNode.GetNextSibling;
     end;
     CatNode := CatNode.GetNextSibling;
@@ -283,22 +289,22 @@ begin
   Assert(IsSnippetNode(Node),
     ClassName + '.SetLeafNodeState: Node is not a snippet node');
   // check the snippet node if its snippet is in currently selected snippets
-  if fSelectedSnippets.Contains(SnippetFromNode(Node).ID) then
+  if fSelectedSnippets.Contains(SnippetIDFromNode(Node)) then
     Node.Check := cbChecked
   else
     Node.Check := cbUnchecked;
 end;
 
-function TSelectSnippetsFrame.SnippetFromNode(
-  const Node: TCheckedTreeNode): TSnippet;
-  {Gets snippet object associated with a node.
+function TSelectSnippetsFrame.SnippetIDFromNode(const Node: TCheckedTreeNode):
+  TSnippetID;
+  {Gets snippet ID associated with a node.
     @param Node [in] Node associated with snippet. Must be a valid node.
-    @return Reference to snippet.
+    @return Required snippet ID.
   }
 begin
   Assert(IsSnippetNode(Node),
     ClassName + '.SnippetFromNode: Node is not a snippet node');
-  Result := TSnippetBox(Node.Data).Value;
+  Result := TSnippetIDBox(Node.Data).Value;
 end;
 
 { TSelectSnippetsBaseFrame.TTVDraw }
@@ -325,7 +331,7 @@ var
 begin
   DataObj := TObject(Node.Data);
   Result := False;
-  if DataObj is TSnippetBox then
+  if DataObj is TSnippetIDBox then
     Result := True
   else if DataObj is TInitialLetterBox then
     Result := True;
