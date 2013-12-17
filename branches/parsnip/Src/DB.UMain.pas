@@ -167,6 +167,7 @@ type
     function NewSnippet: IEditableSnippet;
     procedure AddSnippet(ASnippet: IEditableSnippet);
     procedure UpdateSnippet(ASnippet: IEditableSnippet);
+    procedure DeleteSnippet(ASnippetID: TSnippetID);
 
     procedure AddChangeEventHandler(const Handler: TNotifyEventInfo);
       {Adds a change event handler to list of listeners.
@@ -574,6 +575,41 @@ begin
     Query.Update;
     TriggerSnippetChangeEvent(evSnippetAdded, ASnippet.ID);
   finally
+    TriggerNullDataEvent(evChangeEnd);
+  end;
+end;
+
+procedure TDatabase.DeleteSnippet(ASnippetID: TSnippetID);
+var
+  Dependent: TSnippetID;      // each snippet that depends on Snippet
+  Dependents: ISnippetIDList; // list of dependent snippets
+  Referrer: TSnippetID;       // each snippet that cross references Snippet
+  Referrers: ISnippetIDList;  // list of referencing snippets
+begin
+  Assert(Database.SnippetExists(ASnippetID),
+    ClassName + '.DeleteSnippet: Snippet is not in the database');
+  TriggerNullDataEvent(evChangeBegin);
+  TriggerSnippetChangeEvent(evBeforeSnippetDelete, ASnippetID);
+  // Get list of referencing and dependent snippets
+  Dependents := nil;
+  Referrers := nil;
+  try
+    Dependents := Database.GetDependentsOf(ASnippetID);
+    Referrers := Database.GetReferrersTo(ASnippetID);
+    // TODO: scan all snippets and remove references that match snippet ID
+    // Delete snippet for XRef or Depends list of referencing snippets
+    for Referrer in Referrers do
+      Database.__SnippetsTable.Get(Referrer).XRefs.Remove(ASnippetID);
+    for Dependent in Dependents do
+      Database.__SnippetsTable.Get(Dependent).RequiredSnippets.Remove(
+        ASnippetID
+      );
+    // Delete snippet itself
+    fSnippetsTable.Delete(ASnippetID);
+    Query.Update;
+  finally
+    FlagUpdate;
+    TriggerSnippetChangeEvent(evSnippetDeleted, ASnippetID);
     TriggerNullDataEvent(evChangeEnd);
   end;
 end;

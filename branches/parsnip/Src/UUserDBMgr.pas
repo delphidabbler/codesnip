@@ -323,6 +323,7 @@ end;
 class procedure TUserDBMgr.DeleteSnippet(ViewItem: IView);
 
   // Builds a list of snippet names from a given snippet ID list.
+  // TODO: change name of this function to SnippetTitles
   function SnippetNames(const IDList: ISnippetIDList): IStringList;
   var
     ID: TSnippetID;     // loops through all IDs in list
@@ -379,7 +380,7 @@ begin
       ]
     );
   if TMessageBox.Confirm(nil, ConfirmMsg) then
-    (_Database as IDatabaseEdit).DeleteSnippet(Snippet);
+    Database.DeleteSnippet(Snippet.ID);
 end;
 
 class procedure TUserDBMgr.DuplicateSnippet(ViewItem: IView);
