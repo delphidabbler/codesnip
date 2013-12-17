@@ -179,9 +179,9 @@ uses
   // Project
   CS.Database.IO.Factory,
   CS.Database.IO.Types,
+  CS.Database.SnippetKinds,
   CS.Database.Snippets,
   CS.Database.Tags,
-  DB.USnippetKind,
   UBox,
   UExceptions,
   UQuery,

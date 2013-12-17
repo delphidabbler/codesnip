@@ -14,7 +14,7 @@
 }
 
 
-unit DB.USnippetKind;
+unit CS.Database.SnippetKinds;
 
 
 interface
