@@ -166,7 +166,7 @@ begin
   RenderDescription(Snippet.Description);
   RenderSourceCode(Snippet.SourceCode);
   RenderTitledText(
-    sKindTitle, Database.GetAllSnippetKinds[Snippet.Kind].DisplayName
+    sKindTitle, Database.GetAllSnippetKinds[Snippet.KindID].DisplayName
   );
   RenderTitledList(sTagsTitle, TagsToStrings(Snippet.Tags));
   RenderTitledList(sUnitListTitle, Snippet.RequiredModules);
@@ -174,7 +174,7 @@ begin
     sDependListTitle, SnippetsToStrings(Snippet.RequiredSnippets)
   );
   RenderTitledList(sXRefListTitle, SnippetsToStrings(Snippet.XRefs));
-  if Snippet.Kind <> skFreeform then
+  if Snippet.KindID <> skFreeform then
     RenderCompilerInfo(sCompilers, CompilerInfo(Snippet));
   if not Snippet.Notes.IsEmpty then
     RenderNotes(Snippet.Notes);

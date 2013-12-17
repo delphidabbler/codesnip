@@ -601,7 +601,7 @@ begin
     );
     WriteSnippetIDListProp(Writer, spXRefs, ASnippet.GetXRefs, True);
     WriteMarkupProp(Writer, spNotes, ASnippet.GetNotes, True);
-    WriteKindProp(Writer, spKind, ASnippet.GetKind, True);
+    WriteKindProp(Writer, spKind, ASnippet.GetKindID, True);
     WriteCompileResultsProp(
       Writer, spCompileResults, ASnippet.GetCompileResults, True
     );
@@ -855,7 +855,7 @@ begin
       spNotes:
         ASnippet.SetNotes(ReadMarkup(Reader));
       spKind:
-        ASnippet.SetKind(TSnippetKindID(Reader.ReadByte));
+        ASnippet.SetKindID(TSnippetKindID(Reader.ReadByte));
       spCompileResults:
         ASnippet.SetCompileResults(ReadCompileResults(Reader));
       spTags:

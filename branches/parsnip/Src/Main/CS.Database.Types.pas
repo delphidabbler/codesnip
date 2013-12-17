@@ -246,8 +246,7 @@ type
     function GetRequiredSnippets: ISnippetIDList;
     function GetXRefs: ISnippetIDList;
     function GetNotes: IActiveText;
-    // TODO: rename GetKind as GetKindID
-    function GetKind: TSnippetKindID;
+    function GetKindID: TSnippetKindID;
     function GetCompileResults: TCompileResults;
     function GetTags: ITagSet;
     function GetLinkInfo: ISnippetLinkInfo;
@@ -271,8 +270,7 @@ type
     property RequiredSnippets: ISnippetIDList read GetRequiredSnippets;
     property XRefs: ISnippetIDList read GetXRefs;
     property Notes: IActiveText read GetNotes;
-    // TODO: Rename Kind property as KindID
-    property Kind: TSnippetKindID read GetKind;
+    property KindID: TSnippetKindID read GetKindID;
     property CompileResults: TCompileResults read GetCompileResults;
     property Tags: ITagSet read GetTags;
     property LinkInfo: ISnippetLinkInfo read GetLinkInfo;
@@ -290,8 +288,7 @@ type
     procedure SetRequiredSnippets(AIDList: ISnippetIDList);
     procedure SetXRefs(AIDList: ISnippetIDList);
     procedure SetNotes(ANotes: IActiveText);
-    // TODO: rename SetKind as SetKindID
-    procedure SetKind(const ASnippetKind: TSnippetKindID);
+    procedure SetKindID(const ASnippetKind: TSnippetKindID);
     procedure SetCompileResults(const AResults: TCompileResults);
     procedure SetTags(ATagList: ITagSet);
     procedure SetLinkInfo(ALinkInfo: ISnippetLinkInfo);
@@ -313,8 +310,7 @@ type
       write SetRequiredSnippets;
     property XRefs: ISnippetIDList read GetXRefs write SetXRefs;
     property Notes: IActiveText read GetNotes write SetNotes;
-    // TODO: rename property Kind as KindID
-    property Kind: TSnippetKindID read GetKind write SetKind;
+    property KindID: TSnippetKindID read GetKindID write SetKindID;
     property CompileResults: TCompileResults read GetCompileResults
       write SetCompileResults;
     property Tags: ITagSet read GetTags write SetTags;

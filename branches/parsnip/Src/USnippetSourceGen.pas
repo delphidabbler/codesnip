@@ -133,7 +133,7 @@ var
   TagView: ITagView;      // tag view if supported
 begin
   if Supports(View, ISnippetView, SnipView) then
-    Result := Database.LookupSnippet(SnipView.SnippetID).Kind = skRoutine
+    Result := Database.LookupSnippet(SnipView.SnippetID).KindID = skRoutine
   else if Supports(View, ITagView, TagView) then
     Result := not GetTagSnippets(TagView.Tag).IsEmpty
   else
@@ -189,7 +189,7 @@ begin
     Result := Query.FilterSelection(
       function (Snippet: ISnippet): Boolean
       begin
-        Result := Snippet.Tags.Contains(Tag) and (Snippet.Kind = skRoutine);
+        Result := Snippet.Tags.Contains(Tag) and (Snippet.KindID = skRoutine);
       end
     )
   else
@@ -197,7 +197,7 @@ begin
     Result := Query.FilterSelection(
       function (Snippet: ISnippet): Boolean
       begin
-        Result := Snippet.Tags.IsEmpty and (Snippet.Kind = skRoutine);
+        Result := Snippet.Tags.IsEmpty and (Snippet.KindID = skRoutine);
       end
     );
 end;

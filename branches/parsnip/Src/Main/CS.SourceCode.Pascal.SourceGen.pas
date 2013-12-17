@@ -664,7 +664,7 @@ begin
     // consts and types
     for Snippet in fSourceAnalyser.TypesAndConsts do
     begin
-      case Snippet.Kind of
+      case Snippet.KindID of
         skTypeDef, skConstant:
           Writer.AppendLine(
             TConstAndTypeFormatter.FormatConstOrType(
@@ -718,7 +718,7 @@ begin
 
     for Snippet in fSourceAnalyser.TypesAndConsts do
     begin
-      if Snippet.Kind = skClass then
+      if Snippet.KindID = skClass then
       begin
         Writer.AppendLine(TClassFormatter.FormatClassDefinition(Snippet));
         Writer.AppendLine;
@@ -750,8 +750,8 @@ end;
 
 procedure TPascalSourceAnalyser.AddIntfRoutine(Routine: ISnippet);
 begin
-  Assert(Routine.Kind = skRoutine,
-    ClassName + '.AddIntfRoutine: Routine must have kind skRoutine');
+  Assert(Routine.KindID = skRoutine,
+    ClassName + '.AddIntfRoutine: Routine.KindID must be skRoutine');
   if not fIntfRoutines.Contains(Routine) then
   begin
     fIntfRoutines.Add(Routine);
@@ -769,7 +769,7 @@ begin
   if not TSnippetValidator.Validate(Snippet, ErrorMsg) then
     raise ECodeSnip.Create(ErrorMsg);
   // Process the snippet
-  case Snippet.Kind of
+  case Snippet.KindID of
     skRoutine:
       AddIntfRoutine(Snippet);
     skTypeDef, skConstant:
@@ -788,8 +788,8 @@ var
   ErrorMsg: string;       // any error message
 begin
   Assert(Assigned(TypeOrConst), ClassName + '.Add: ConstOrType in nil');
-  Assert(TypeOrConst.Kind in [skTypeDef, skConstant, skClass],
-    ClassName + '.Add: ConstOrType.Kind is not valid');
+  Assert(TypeOrConst.KindID in [skTypeDef, skConstant, skClass],
+    ClassName + '.Add: ConstOrType.KindID is not valid');
   // Ignore if already in list
   if fTypesAndConsts.Contains(TypeOrConst) then
     Exit;
@@ -858,7 +858,7 @@ resourcestring
   // Error message
   sCantDependOnFreeform = 'Can''t depend on "%s" - it is freeform code';
 begin
-  case Snippet.Kind of
+  case Snippet.KindID of
     skRoutine:                      // require routine
       RequireRoutine(Snippet);
     skConstant, skTypeDef, skClass: // add type/const allowing for dependencies
@@ -906,8 +906,8 @@ class function TRoutineFormatter.FormatRoutine(
 var
   Prototype, Body: string;  // prototype and body of routine
 begin
-  Assert(Routine.Kind = skRoutine,
-    ClassName + '.FormatRoutine: Routine must have kind skRoutine');
+  Assert(Routine.KindID = skRoutine,
+    ClassName + '.FormatRoutine: Routine.KindID must be skRoutine');
   case CommentStyle of
     csAfter:
     begin
@@ -935,8 +935,8 @@ class function TRoutineFormatter.FormatRoutinePrototype(Routine: ISnippet;
 var
   Prototype: string;  // prototype of given routine
 begin
-  Assert(Routine.Kind = skRoutine,
-    ClassName + '.FormatRoutinePrototype: Routine must have kind skRoutine');
+  Assert(Routine.KindID = skRoutine,
+    ClassName + '.FormatRoutinePrototype: Routine.KindID must be skRoutine');
   // Get prototype
   Prototype := ExtractPrototype(Routine);
   // Write comment depending on style
@@ -961,8 +961,8 @@ class function TRoutineFormatter.RenderDescComment(
   CommentStyle: TPascalCommentStyle; const TruncateComments: Boolean;
   Routine: ISnippet): string;
 begin
-  Assert(Routine.Kind = skRoutine,
-    ClassName + '.RenderDescComment: Routine must have kind skRoutine');
+  Assert(Routine.KindID = skRoutine,
+    ClassName + '.RenderDescComment: Routine.KindID must be skRoutine');
   // Format the output
   Result := TPascalComments.FormatSnippetComment(
     CommentStyle, TruncateComments, Routine.Description
@@ -1056,8 +1056,8 @@ var
   Keyword: string;  // keyword that preceeds source code body
   Body: string;     // source code that follows keyword
 begin
-  Assert(ConstOrType.Kind in [skConstant, skTypeDef],
-    ClassName + '.FormatConstOrType: ConstOrType must have kind skTypeDef or '
+  Assert(ConstOrType.KindID in [skConstant, skTypeDef],
+    ClassName + '.FormatConstOrType: ConstOrType.KindID must be skTypeDef or '
     + 'skConstant');
   Result := '';
   case CommentStyle of
@@ -1086,8 +1086,8 @@ class function TConstAndTypeFormatter.RenderDescComment(
   CommentStyle: TPascalCommentStyle; const TruncateComments: Boolean;
   ConstOrType: ISnippet): string;
 begin
-  Assert(ConstOrType.Kind in [skConstant, skTypeDef],
-    ClassName + '.RenderDescComment: ConstOrType must have kind skTypeDef or '
+  Assert(ConstOrType.KindID in [skConstant, skTypeDef],
+    ClassName + '.RenderDescComment: ConstOrType.KindID must be skTypeDef or '
       + 'skConstant');
   Result := TPascalComments.FormatSnippetComment(
     CommentStyle, TruncateComments, ConstOrType.Description
@@ -1145,7 +1145,7 @@ class procedure TConstAndTypeFormatter.Split(ConstOrType: ISnippet;
   end;
 
 begin
-  if ConstOrType.Kind = skConstant then
+  if ConstOrType.KindID = skConstant then
     SplitAtKeyword(ConstOrType.SourceCode, 'const', Prefix, Body)
   else // if ConstOrType.Kind = skTypeDef
     SplitAtKeyword(ConstOrType.SourceCode, 'type', Prefix, Body)

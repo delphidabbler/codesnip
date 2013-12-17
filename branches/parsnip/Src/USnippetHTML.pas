@@ -214,7 +214,7 @@ end;
 function TSnippetHTML.SnippetKind: string;
 begin
   Result := THTML.Entities(
-    StrMakeSentence(Database.GetAllSnippetKinds[fSnippet.Kind].DisplayName)
+    StrMakeSentence(Database.GetAllSnippetKinds[fSnippet.KindID].DisplayName)
   );
 end;
 

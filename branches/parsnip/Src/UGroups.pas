@@ -560,7 +560,7 @@ begin
   begin
     // find group item and add snippet to it
     Snippet := Database.LookupSnippet(SnippetID);
-    Item := Lookup[Snippet.Kind];
+    Item := Lookup[Snippet.KindID];
     Assert(Assigned(Item), ClassName + '.Populate: Item not found');
     Item.AddSnippet(Snippet);
   end;

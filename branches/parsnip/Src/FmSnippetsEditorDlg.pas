@@ -850,7 +850,7 @@ begin
     edTitle.Text := fSnippet.Title;
     frmNotes.DefaultEditMode := emAuto;
     frmNotes.ActiveText := fSnippet.Notes;
-    fKindCBMgr.Select(fSnippet.Kind);
+    fKindCBMgr.Select(fSnippet.KindID);
     // check required items in references check list boxes
     UpdateReferences;
     fDependsCLBMgr.CheckSnippets(fSnippet.RequiredSnippets);
@@ -966,7 +966,7 @@ begin
     begin
       Snippet := Database.LookupSnippet(SnippetID);
       // Decide if snippet can be added to depends list: must be correct kind
-      if Snippet.Kind in
+      if Snippet.KindID in
         TSnippetValidator.ValidDependsKinds(fKindCBMgr.GetSelected) then
         fDependsCLBMgr.AddSnippet(Snippet);
       // Anything can be in XRefs list
@@ -985,7 +985,7 @@ var
   Tags: ITagSet;
 begin
   ASnippet.Title := StrTrim(edTitle.Text);
-  ASnippet.Kind := fKindCBMgr.GetSelected;
+  ASnippet.KindID := fKindCBMgr.GetSelected;
   ASnippet.Description := frmDescription.ActiveText;
   ASnippet.SourceCode := StrTrimRight(frmSourceEditor.SourceCode);
   if chkUseHiliter.Checked then

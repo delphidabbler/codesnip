@@ -57,8 +57,7 @@ type
       fRequiredSnippets: ISnippetIDList;
       fXRefs: ISnippetIDList;
       fNotes: IActiveText;
-      // TODO: rename field as fKindID
-      fKind: TSnippetKindID;
+      fKindID: TSnippetKindID;
       fCompileResults: TCompileResults;
       fTags: ITagSet;
       fLinkInfo: ISnippetLinkInfo;
@@ -92,9 +91,8 @@ type
     procedure SetXRefs(Value: ISnippetIDList);
     function GetNotes: IActiveText; virtual;
     procedure SetNotes(Value: IActiveText);
-    // TODO: Rename GetKind and SetKind as GetKindID and SetKindID
-    function GetKind: TSnippetKindID; virtual;
-    procedure SetKind(const Value: TSnippetKindID);
+    function GetKindID: TSnippetKindID; virtual;
+    procedure SetKindID(const Value: TSnippetKindID);
     function GetCompileResults: TCompileResults; virtual;
     procedure SetCompileResults(const Value: TCompileResults);
     function GetTags: ITagSet; virtual;
@@ -308,7 +306,7 @@ end;
 
 function TSnippetBase.CanCompile: Boolean;
 begin
-  Result := (fKind <> skFreeform)
+  Result := (fKindID <> skFreeform)
     and (fLanguageID = TSourceCodeLanguageID.Create('Pascal'));
 end;
 
@@ -334,7 +332,7 @@ begin
   fRequiredSnippets := nil;
   fXRefs := nil;
   fNotes := nil;
-  fKind := skFreeForm;
+  fKindID := skFreeForm;
   for CompID := Low(TCompilerID) to High(TCompilerID) do
     fCompileResults[CompID] := crQuery;
   fTags := nil;
@@ -377,9 +375,9 @@ begin
   Result := fID;
 end;
 
-function TSnippetBase.GetKind: TSnippetKindID;
+function TSnippetBase.GetKindID: TSnippetKindID;
 begin
-  Result := fKind;
+  Result := fKindID;
 end;
 
 function TSnippetBase.GetLanguageID: TSourceCodeLanguageID;
@@ -472,9 +470,9 @@ begin
     fDescription := TActiveTextFactory.CloneActiveText(Value);
 end;
 
-procedure TSnippetBase.SetKind(const Value: TSnippetKindID);
+procedure TSnippetBase.SetKindID(const Value: TSnippetKindID);
 begin
-  fKind := Value;
+  fKindID := Value;
 end;
 
 procedure TSnippetBase.SetLanguageID(const Value: TSourceCodeLanguageID);
@@ -568,7 +566,7 @@ begin
   SetRequiredSnippets(ASourceSnippet.fRequiredSnippets);
   SetXRefs(ASourceSnippet.fXRefs);
   SetNotes(ASourceSnippet.fNotes);
-  SetKind(ASourceSnippet.fKind);
+  SetKindID(ASourceSnippet.fKindID);
   SetCompileResults(ASourceSnippet.fCompileResults);
   SetTags(ASourceSnippet.fTags);
   SetLinkInfo(ASourceSnippet.fLinkInfo);

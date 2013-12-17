@@ -382,7 +382,7 @@ begin
       TActiveTextREMLRenderer.Render(Snippet.Notes, EOL)
     );
   // write kind
-  TXMLDocHelper.WriteSnippetKind(fXMLDoc, SnippetNode, Snippet.Kind);
+  TXMLDocHelper.WriteSnippetKind(fXMLDoc, SnippetNode, Snippet.KindID);
   // compiler results value: only write known results
   TXMLDocHelper.WriteCompilerResults(
     fXMLDoc, SnippetNode, Snippet.CompileResults
@@ -568,12 +568,12 @@ begin
           // for version 1 and 2, we have StandardFormat instead of Kind:
           // map standard format value onto a kind
           if TXMLDocHelper.GetStandardFormat(fXMLDoc, SnippetNode, False) then
-            Snippet.Kind := skRoutine
+            Snippet.KindID := skRoutine
           else
-            Snippet.Kind := skFreeform;
+            Snippet.KindID := skFreeform;
         else // later versions
           // for later versions we have Kind value: use Freeform if missing
-          Snippet.Kind := TXMLDocHelper.GetSnippetKind(
+          Snippet.KindID := TXMLDocHelper.GetSnippetKind(
             fXMLDoc, SnippetNode, skFreeForm
           );
       end;

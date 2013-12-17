@@ -455,7 +455,7 @@ begin
     ConvertSnippetIDList(GetPascalNameListFor(cXRefNode))
   );
   ASnippet.SetNotes(GetNotesProperty);
-  ASnippet.SetKind(GetKindProperty);
+  ASnippet.SetKindID(GetKindProperty);
   ASnippet.SetCompileResults(GetCompileResultsProperty);
   ASnippet.SetTags(GetTagsProperty);
   // We create a link back to the snippet's original ID in case it might be

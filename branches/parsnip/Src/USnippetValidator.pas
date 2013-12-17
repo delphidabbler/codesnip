@@ -209,7 +209,7 @@ class function TSnippetValidator.ValidateDependsList(Snippet: ISnippet;
     for RequiredSnippetID in DependsList do
     begin
       RequiredSnippet := Database.LookupSnippet(RequiredSnippetID);
-      if RequiredSnippet.Kind in Kinds then
+      if RequiredSnippet.KindID in Kinds then
         Result := True
       else
         Result := DependsListHasKinds(RequiredSnippet.RequiredSnippets, Kinds);
@@ -236,18 +236,18 @@ begin
   if not Result then
   begin
     ErrorMsg := Format(
-      sCircular, [AllKinds[Snippet.Kind].DisplayName, Snippet.Title]
+      sCircular, [AllKinds[Snippet.KindID].DisplayName, Snippet.Title]
     );
     Exit;
   end;
   // Now check kinds of snippets in dependency list for validity.
   // determine which snippet kinds can't appear in a dependency list
-  DeniedDepends := cAllSnippetKinds - ValidDependsKinds(Snippet.Kind);
+  DeniedDepends := cAllSnippetKinds - ValidDependsKinds(Snippet.KindID);
   // check dependency list for invalid kinds
   Result := not DependsListHasKinds(Snippet.RequiredSnippets, DeniedDepends);
   if not Result then
     ErrorMsg := Format(
-      sInvalidKind, [AllKinds[Snippet.Kind].DisplayName, Snippet.Title]
+      sInvalidKind, [AllKinds[Snippet.KindID].DisplayName, Snippet.Title]
     );
 end;
 

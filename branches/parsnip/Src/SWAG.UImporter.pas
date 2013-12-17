@@ -140,7 +140,7 @@ function TSWAGImporter.BuildSnippetInfo(const SWAGSnippet: TSWAGSnippet):
 
 begin
   Result := Database.NewSnippet;
-  Result.Kind := skFreeform;
+  Result.KindID := skFreeform;
   Result.Tags := BuildTags;
   Result.Description := BuildDescription;
   Result.SourceCode := SWAGSnippet.SourceCode;

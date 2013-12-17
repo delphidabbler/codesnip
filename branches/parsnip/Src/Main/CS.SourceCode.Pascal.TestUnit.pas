@@ -89,7 +89,7 @@ end;
 
 function TPascalTestUnit.GenerateUnitSource: string;
 begin
-  if fSnippet.Kind <> skUnit then
+  if fSnippet.KindID <> skUnit then
   begin
     with TPascalSourceGen.Create do
       try
