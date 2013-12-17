@@ -265,7 +265,6 @@ uses
   CS.Config,
   CS.SourceCode.Languages,
   DB.UMain,
-  DB.USnippetKind,
   FmDependenciesDlg,
   IntfCommon,
   UColours,
@@ -938,11 +937,11 @@ procedure TSnippetsEditorDlg.PopulateControls;
   {Populates controls with dynamic data.
   }
 var
-  KindInfo: TSnippetKindInfo;
+  SnippetKind: TSnippetKindInfo;
 begin
   // Display all kinds in drop down list
-  for KindInfo in TSnippetKindInfoList.Items do
-    fKindCBMgr.Add(KindInfo.Kind, KindInfo.DisplayName);
+  for SnippetKind in Database.GetAllSnippetKinds do
+    fKindCBMgr.Add(SnippetKind.Kind, SnippetKind.DisplayName);
   // TODO: display all tags in a check list box or similar
 end;
 

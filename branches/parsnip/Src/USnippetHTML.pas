@@ -107,7 +107,6 @@ uses
   CS.SourceCode.Hiliter.Brushes,
   CS.SourceCode.Hiliter.Renderers,
   DB.UMain,
-  DB.USnippetKind,
   UCompResHTML,
   UHTMLBuilder,
   UHTMLUtils,
@@ -215,7 +214,7 @@ end;
 function TSnippetHTML.SnippetKind: string;
 begin
   Result := THTML.Entities(
-    StrMakeSentence(TSnippetKindInfoList.Items[fSnippet.Kind].DisplayName)
+    StrMakeSentence(Database.GetAllSnippetKinds[fSnippet.Kind].DisplayName)
   );
 end;
 

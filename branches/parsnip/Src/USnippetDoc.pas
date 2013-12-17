@@ -112,7 +112,6 @@ uses
   // Project
   Compilers.UCompilers,
   DB.UMain,
-  DB.USnippetKind,
   UStrUtils,
   Web.UInfo;
 
@@ -167,7 +166,7 @@ begin
   RenderDescription(Snippet.Description);
   RenderSourceCode(Snippet.SourceCode);
   RenderTitledText(
-    sKindTitle, TSnippetKindInfoList.Items[Snippet.Kind].DisplayName
+    sKindTitle, Database.GetAllSnippetKinds[Snippet.Kind].DisplayName
   );
   RenderTitledList(sTagsTitle, TagsToStrings(Snippet.Tags));
   RenderTitledList(sUnitListTitle, Snippet.RequiredModules);

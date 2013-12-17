@@ -26,7 +26,6 @@ uses
   Collections.Lists,
   // Project
   CS.Database.Types,
-  DB.USnippetKind,
   UInitialLetter;
 
 
@@ -538,7 +537,7 @@ procedure TSnipKindGrouping.Populate;
   snippets.
   }
 var
-  SnipKind: TSnippetKind;           // each snippet kind
+  SnippetKind: TSnippetKindInfo;    // each snippet kind
   Item: TGroupItem;                 // group item for each snippet kind
   SnippetID: TSnippetID;            // each of each snippet to be grouped
   Snippet: ISnippet;                // each snippet to be grouped
@@ -547,11 +546,11 @@ var
 begin
   // Create all group items, one for each snippet kind along with a lookup table
   // to ease finding the required group item from a snippet's kind
-  for SnipKind := Low(TSnippetKind) to High(TSnippetKind) do
+  for SnippetKind in Database.GetAllSnippetKinds do
   begin
-    Item := TSnipKindGroupItem.Create(TSnippetKindInfoList.Items[SnipKind]);
+    Item := TSnipKindGroupItem.Create(SnippetKind);
     AddItem(Item);
-    Lookup[SnipKind] := Item;
+    Lookup[SnippetKind.Kind] := Item;
   end;
   // Add each snippet to required group
   for SnippetID in SnippetIDList do

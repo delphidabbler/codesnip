@@ -96,7 +96,7 @@ uses
   Windows,
   Graphics,
   // Project
-  DB.USnippetKind,
+  DB.UMain,
   FmPreferencesDlg,
   UClassHelpers,
   UCtrlArranger;
@@ -268,7 +268,8 @@ end;
 
 constructor TSnippetLayoutPrefsFrame.Create(AOwner: TComponent);
 var
-  SKInfo: TSnippetKindInfo;
+  SnippetKind: TSnippetKindInfo;
+  SnippetKinds: ISnippetKindList;
 begin
   inherited;
   ilFrame.LoadFromResource(RT_RCDATA, 'ACTIONIMAGES', 16, clFuchsia);
@@ -283,9 +284,10 @@ begin
       Result := Left = Right;
     end
   );
-  for SKInfo in TSnippetKindInfoList.Items do
-    fSnippetKindsCBMgr.Add(SKInfo.Kind, SKInfo.DisplayName);
-  fSnippetKindsCBMgr.Select(Low(TSnippetKind));
+  SnippetKinds := Database.GetAllSnippetKinds;
+  for SnippetKind in SnippetKinds do
+    fSnippetKindsCBMgr.Add(SnippetKind.Kind, SnippetKind.DisplayName);
+  fSnippetKindsCBMgr.Select(SnippetKinds.First.Kind);
 end;
 
 procedure TSnippetLayoutPrefsFrame.Deactivate(const Prefs: IPreferences);
