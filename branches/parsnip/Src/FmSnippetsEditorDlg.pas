@@ -213,6 +213,10 @@ type
       {Checks all user-entered data in all tabs of the form.
         @except EDataEntry raised if data is not valid.
       }
+    ///  <summary>Updates given snippet's properties from data entered by the
+    ///  user.</summary>
+    ///  <remarks>Assumes the data has been validated.</remarks>
+    procedure UpdateSnippet(ASnippet: IEditableSnippet);
     function UpdateData: TSnippetEditData;
       {Updates snippet's data from user entries. Assumes data has been
       validated.
@@ -222,7 +226,7 @@ type
       {Updates dependencies and cross-references check lists for snippet being
       edited, depending on kind.
       }
-    function CreateTempSnippet: TSnippet;
+    function CreateTempSnippet: ISnippet;
       {Creates a temporary snippet from data entered in dialog box.
         @return Required snippet instance.
         @except EDataEntry raised if any of entered data is invalid.
@@ -268,6 +272,7 @@ uses
   // Delphi
   Windows {for inlining},
   // Project
+  CS.Database.Snippets,
   CS.Database.Tags,
   CS.Config,
   CS.SourceCode.Languages,
@@ -369,7 +374,7 @@ procedure TSnippetsEditorDlg.actCompileExecute(Sender: TObject);
     @param Sender [in] Not used.
   }
 var
-  TempSnippet: TSnippet;  // temp snippet object for compilation
+  TempSnippet: ISnippet;  // temp snippet object for compilation
 begin
   // Hide view compile errors link
   pnlViewCompErrs.Hide;
@@ -377,7 +382,7 @@ begin
   Enabled := False;
   try
     try
-      TempSnippet := CreateTempSnippet;
+      TempSnippet := CreateTempSnippet; // this validates data
     except
       on E: Exception do
       begin
@@ -387,13 +392,9 @@ begin
       end;
     end;
     // Test compile snippet
-    try
-      fCompileMgr.Compile(
-        tsCompileResults, TempSnippet.CloneAsReadOnly, DisplayCompileResults
-      );
-    finally
-      TempSnippet.Free;
-    end;
+    fCompileMgr.Compile(
+      tsCompileResults, TempSnippet, DisplayCompileResults
+    );
   finally
     // Re-enable dialog and controls
     Enabled := True;
@@ -525,10 +526,10 @@ procedure TSnippetsEditorDlg.actViewTestUnitExecute(Sender: TObject);
     @param Sender [in] Not used.
   }
 var
-  TempSnippet: TSnippet;  // temp snippet object for compilation
+  TempSnippet: ISnippet;  // temp snippet object for compilation
 begin
   try
-    TempSnippet := CreateTempSnippet;
+    TempSnippet := CreateTempSnippet; // this validates data
   except
     on E: Exception do
     begin
@@ -537,11 +538,7 @@ begin
       Exit;
     end;
   end;
-  try
-    TTestUnitDlgMgr.DisplayTestUnit(Self, TempSnippet.CloneAsReadOnly);
-  finally
-    TempSnippet.Free;
-  end;
+  TTestUnitDlgMgr.DisplayTestUnit(Self, TempSnippet);
 end;
 
 procedure TSnippetsEditorDlg.actViewTestUnitUpdate(Sender: TObject);
@@ -699,18 +696,19 @@ begin
   ];
 end;
 
-function TSnippetsEditorDlg.CreateTempSnippet: TSnippet;
+function TSnippetsEditorDlg.CreateTempSnippet: ISnippet;
   {Creates a temporary snippet from data entered in dialog box.
     @return Required snippet instance.
     @except EDataEntry raised if any of entered data is invalid.
   }
 var
-  EditData: TSnippetEditData; // stores snippet's properties and references
+  EditableSnippet: IEditableSnippet;
 begin
   ValidateData;
   // Create snippet object from entered data
-  EditData.Assign(UpdateData);
-  Result := (_Database as IDatabaseEdit).CreateTempSnippet(EditData);
+  EditableSnippet := TEditableSnippet.Create(TSnippetID.CreateNew);
+  UpdateSnippet(EditableSnippet);
+  Result := EditableSnippet.CloneAsReadOnly;
 end;
 
 procedure TSnippetsEditorDlg.DisplayCompileResults(const Compilers: ICompilers);
@@ -1032,6 +1030,36 @@ begin
   edUnit.Enabled := fKindCBMgr.GetSelected <> skUnit;
 end;
 
+procedure TSnippetsEditorDlg.UpdateSnippet(ASnippet: IEditableSnippet);
+var
+  Tags: ITagSet;
+begin
+  ASnippet.Title := StrTrim(edTitle.Text);
+  ASnippet.Kind := fKindCBMgr.GetSelected;
+  ASnippet.Description := frmDescription.ActiveText;
+  ASnippet.SourceCode := StrTrimRight(frmSourceEditor.SourceCode);
+  if chkUseHiliter.Checked then
+    ASnippet.LanguageID := TSourceCodeLanguageID.Create('Pascal')
+  else
+    ASnippet.LanguageID := TSourceCodeLanguageID.Create('Text');
+  ASnippet.Notes := frmNotes.ActiveText;
+  // TODO: Permit user to set required tag(s)
+  // In this temporary code we preserve tags of an existing snippet and give
+  // an arbitrary "NEW" tag to new snippets.
+  if Assigned(fSnippet) then
+    ASnippet.Tags := TTagSet.Create(fSnippet.Tags)
+  else
+  begin
+    Tags := TTagSet.Create;
+    Tags.Add(TTag.Create('NEW'));
+    ASnippet.Tags := Tags;
+  end;
+  ASnippet.CompileResults := fCompilersLBMgr.GetCompileResults;
+  ASnippet.RequiredModules := fUnitsCLBMgr.GetCheckedUnits;
+  ASnippet.RequiredSnippets := fDependsCLBMgr.GetCheckedSnippets;
+  ASnippet.XRefs := fXRefsCLBMgr.GetCheckedSnippets;
+end;
+
 procedure TSnippetsEditorDlg.ValidateData;
   {Checks all user-entered data in all tabs of the form.
     @except EDataEntry raised if data is not valid.
@@ -1040,9 +1068,9 @@ resourcestring
   sDependencyPrompt = 'See the dependencies by clicking the View Dependencies '
     + 'button on the References tab.';
 var
-  ErrorMessage: string;       // receives validation error messages
-  ErrorSelection: TSelection; // receives selection containing errors
-  TempSnippet: TSnippet;  // temporary snippet that is checked for dependencies
+  ErrorMessage: string;           // receives validation error messages
+  ErrorSelection: TSelection;     // receives selection containing errors
+  TempSnippet: IEditableSnippet;  // temporary snippet checked for dependencies
 begin
   if not TSnippetValidator.ValidateTitle(
     edTitle.Text, ErrorMessage
@@ -1056,20 +1084,17 @@ begin
   frmNotes.Validate;
   if Assigned(fSnippet) then
   begin
-    TempSnippet := (_Database as IDatabaseEdit).CreateTempSnippet(
-      UpdateData, fSnippet.ID.ToString
-    );
-    try
-      if not TSnippetValidator.ValidateDependsList(
-        TempSnippet.CloneAsReadOnly, ErrorMessage
-      ) then
-        raise EDataEntry.Create(  // selection not applicable to list boxes
-          StrMakeSentence(ErrorMessage) + EOL2 + sDependencyPrompt, clbDepends
-        );
-    finally
-      TempSnippet.Free;
+    // NOTE: Don't use CreateTempSnippet method of this class here since it
+    // calls this method and will create an endless loop.
+    TempSnippet := TEditableSnippet.Create(fSnippet.ID);
+    UpdateSnippet(TempSnippet);
+    if not TSnippetValidator.ValidateDependsList(
+      TempSnippet.CloneAsReadOnly, ErrorMessage
+    ) then
+      raise EDataEntry.Create(  // selection not applicable to list boxes
+        StrMakeSentence(ErrorMessage) + EOL2 + sDependencyPrompt, clbDepends
+      );
     end;
-  end;
 end;
 
 end.
