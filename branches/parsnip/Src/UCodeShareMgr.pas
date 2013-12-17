@@ -22,7 +22,9 @@ interface
 
 uses
   // Project
-  DB.USnippet, UBaseObjects, UView;
+  CS.Database.Types,
+  UBaseObjects,
+  UView;
 
 
 type
@@ -35,7 +37,7 @@ type
   }
   TCodeShareMgr = class sealed(TNoConstructObject)
   strict private
-    class function GetSnippetFromView(ViewItem: IView): TSnippet;
+    class function GetSnippetFromView(ViewItem: IView): ISnippet;
       {Gets reference to any snippet represented by a view item.
         @param ViewItem [in] View item for which snippet is required.
         @return Reference to required snippet or nil if view item does not
@@ -94,7 +96,7 @@ begin
 end;
 
 class function TCodeShareMgr.GetSnippetFromView(
-  ViewItem: IView): TSnippet;
+  ViewItem: IView): ISnippet;
   {Gets reference to any snippet represented by a view item.
     @param ViewItem [in] View item for which snippet is required.
     @return Reference to required snippet or nil if view item does not represent
@@ -104,7 +106,7 @@ var
   SnippetView: ISnippetView;  // ViewItem as snippet view if supported
 begin
   if Supports(ViewItem, ISnippetView, SnippetView) then
-    Result := _Database.Lookup(SnippetView.SnippetID)
+    Result := Database.LookupSnippet(SnippetView.SnippetID)
   else
     Result := nil;
 end;

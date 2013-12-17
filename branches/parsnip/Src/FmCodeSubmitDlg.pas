@@ -28,7 +28,7 @@ uses
   ExtCtrls,
   Classes,
   // Project
-  DB.USnippet,
+  CS.Database.Types,
   FmWizardDlg,
   FrBrowserBase,
   FrCheckedTV,
@@ -71,7 +71,7 @@ type
   strict private
     var
       fData: TEncodedData; // Contains submission as XML document
-    procedure SelectSnippet(const Snippet: TSnippet);
+    procedure SelectSnippet(Snippet: ISnippet);
       {Selects the specified snippet in the check list of snippets or clears
       selections.
         @param Snippet [in] Snippet to be selected in the list. If Snippet is
@@ -141,7 +141,7 @@ type
       {Protected class constructor. Initialise objects required by this wizard.
       }
   public
-    class procedure Execute(const AOwner: TComponent; const Snippet: TSnippet);
+    class procedure Execute(const AOwner: TComponent; Snippet: ISnippet);
       {Excutes code submission dialog box. Submits code snippet to DelphiDabbler
       web service if user OKs.
         @param AOwner [in] Component that owns and parent's dialog box.
@@ -303,7 +303,7 @@ begin
 end;
 
 class procedure TCodeSubmitDlg.Execute(const AOwner: TComponent;
-  const Snippet: TSnippet);
+  Snippet: ISnippet);
   {Excutes code submission dialog box. Submits code snippet to DelphiDabbler
   web service if user OKs.
     @param AOwner [in] Component that owns and parent's dialog box.
@@ -408,7 +408,7 @@ begin
   TUserDetailsPersist.Update(TUserDetails.Create(edName.Text, edEMail.Text));
 end;
 
-procedure TCodeSubmitDlg.SelectSnippet(const Snippet: TSnippet);
+procedure TCodeSubmitDlg.SelectSnippet(Snippet: ISnippet);
   {Selects the specified snippet in the check list of snippets or clears
   selections.
     @param Snippet [in] Snippet to be selected in the list. If Snippet is nil

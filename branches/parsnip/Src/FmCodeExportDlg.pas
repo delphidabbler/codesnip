@@ -27,7 +27,7 @@ uses
   Forms,
   ExtCtrls,
   // Project
-  DB.USnippet,
+  CS.Database.Types,
   FmGenericOKDlg,
   FrCheckedTV,
   FrSelectSnippets,
@@ -50,7 +50,7 @@ type
     procedure btnBrowseClick(Sender: TObject);
     procedure btnOKClick(Sender: TObject);
   strict private
-    procedure SelectSnippet(const Snippet: TSnippet);
+    procedure SelectSnippet(Snippet: ISnippet);
       {Selects a snippet in the snippets check list.
         @param Snippet [in] Snippet to be selected. If nil no snippet is
           selected.
@@ -65,7 +65,7 @@ type
       controls that depend on UI font.
       }
   public
-    class procedure Execute(const AOwner: TComponent; const Snippet: TSnippet);
+    class procedure Execute(const AOwner: TComponent; Snippet: ISnippet);
       {Displays export dialog box and writes export file if user OKs entries.
         @param AOwner [in] Reference to control that owns the dialog box.
         @param Snippet [in] Reference to a snippet to pre-select in snippets
@@ -201,7 +201,7 @@ begin
 end;
 
 class procedure TCodeExportDlg.Execute(const AOwner: TComponent;
-  const Snippet: TSnippet);
+  Snippet: ISnippet);
   {Displays export dialog box and writes export file if user OKs entries.
     @param AOwner [in] Reference to control that owns the dialog box.
     @param Snippet [in] Reference to a snippet to pre-select in snippets check
@@ -217,7 +217,7 @@ begin
     end;
 end;
 
-procedure TCodeExportDlg.SelectSnippet(const Snippet: TSnippet);
+procedure TCodeExportDlg.SelectSnippet(Snippet: ISnippet);
   {Selects a snippet in the snippets check list.
     @param Snippet [in] Snippet to be selected. If nil no snippet is selected.
   }
