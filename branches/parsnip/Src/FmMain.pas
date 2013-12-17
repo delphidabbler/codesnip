@@ -681,12 +681,12 @@ end;
 
 procedure TMainForm.actAddSnippetExecute(Sender: TObject);
 begin
-  TUserDBMgr.AddSnippet;
+  TDBModificationMgr.AddSnippet;
 end;
 
 procedure TMainForm.actBackupDatabaseExecute(Sender: TObject);
 begin
-  TUserDBMgr.BackupDatabase(Self);
+  TDBModificationMgr.BackupDatabase(Self);
 end;
 
 procedure TMainForm.actBugReportExecute(Sender: TObject);
@@ -773,9 +773,9 @@ end;
 
 procedure TMainForm.actDeleteSnippetExecute(Sender: TObject);
 begin
-  Assert(TUserDBMgr.CanEdit(fMainDisplayMgr.CurrentView),
+  Assert(TDBModificationMgr.CanEdit(fMainDisplayMgr.CurrentView),
     ClassName + '.actDeleteSnippetExecute: Can''t delete current view item');
-  TUserDBMgr.DeleteSnippet(fMainDisplayMgr.CurrentView);
+  TDBModificationMgr.DeleteSnippet(fMainDisplayMgr.CurrentView);
   // display update is handled by snippets change event handler
 end;
 
@@ -786,29 +786,29 @@ end;
 
 procedure TMainForm.actDuplicateSnippetExecute(Sender: TObject);
 begin
-  TUserDBMgr.DuplicateSnippet(fMainDisplayMgr.CurrentView);
+  TDBModificationMgr.DuplicateSnippet(fMainDisplayMgr.CurrentView);
 end;
 
 procedure TMainForm.actDuplicateSnippetUpdate(Sender: TObject);
 begin
   (Sender as TAction).Enabled :=
-    TUserDBMgr.CanDuplicate(fMainDisplayMgr.CurrentView);
+    TDBModificationMgr.CanDuplicate(fMainDisplayMgr.CurrentView);
 end;
 
 procedure TMainForm.ActEditDeleteSnippetUpdate(Sender: TObject);
 begin
   (Sender as TAction).Enabled :=
-    TUserDBMgr.CanEdit(fMainDisplayMgr.CurrentView);
+    TDBModificationMgr.CanEdit(fMainDisplayMgr.CurrentView);
 end;
 
 procedure TMainForm.ActEditSnippetByNameExecute(Sender: TObject);
 begin
-  TUserDBMgr.EditSnippet((Sender as TEditSnippetAction).SnippetID);
+  TDBModificationMgr.EditSnippet((Sender as TEditSnippetAction).SnippetID);
 end;
 
 procedure TMainForm.actEditSnippetExecute(Sender: TObject);
 begin
-  Assert(TUserDBMgr.CanEdit(fMainDisplayMgr.CurrentView),
+  Assert(TDBModificationMgr.CanEdit(fMainDisplayMgr.CurrentView),
     ClassName + '.actEditSnippetExecute: Can''t edit current view item');
   fNotifier.EditSnippet(
     (fMainDisplayMgr.CurrentView as ISnippetView).SnippetID
@@ -964,7 +964,7 @@ end;
 
 procedure TMainForm.actMoveUserDatabaseExecute(Sender: TObject);
 begin
-  TUserDBMgr.MoveDatabase;
+  TDBModificationMgr.MoveDatabase;
 end;
 
 procedure TMainForm.actNewDetailsTabExecute(Sender: TObject);
@@ -1065,7 +1065,7 @@ end;
 
 procedure TMainForm.ActRemoveTagExecute(Sender: TObject);
 begin
-  TUserDBMgr.RemoveTagFromSnippet(
+  TDBModificationMgr.RemoveTagFromSnippet(
     (Sender as TRemoveTagAction).SnippetID, (Sender as TRemoveTagAction).Tag
   );
   fMainDisplayMgr.Refresh;
@@ -1073,19 +1073,19 @@ end;
 
 procedure TMainForm.actRestoreDatabaseExecute(Sender: TObject);
 begin
-  if TUserDBMgr.RestoreDatabase(Self) then
+  if TDBModificationMgr.RestoreDatabase(Self) then
     ReloadDatabase;
 end;
 
 procedure TMainForm.actSaveDatabaseExecute(Sender: TObject);
 begin
-  TUserDBMgr.Save(Self);
+  TDBModificationMgr.Save(Self);
   fStatusBarMgr.Update;
 end;
 
 procedure TMainForm.actSaveDatabaseUpdate(Sender: TObject);
 begin
-  (Sender as TAction).Enabled := TUserDBMgr.CanSave;
+  (Sender as TAction).Enabled := TDBModificationMgr.CanSave;
 end;
 
 procedure TMainForm.actSaveSelectionExecute(Sender: TObject);

@@ -16,7 +16,8 @@
 unit UUserDBMgr;
 
 
-// TODO: Rename this unit to remove "user" from name (CS.UI.DBMgr ?)
+{ TODO -cRenameUnit: Rename this unit to be based on main class name
+        (CS.Controllers.DBModificationMgr ?) }
 
 
 interface
@@ -32,10 +33,9 @@ uses
 
 
 type
-  // TODO: rename this class to remove the term "user"
   ///  <summary>Static class that manages user's interaction with the snippets
   ///  database.</summary>
-  TUserDBMgr = class(TNoConstructObject)
+  TDBModificationMgr = class(TNoConstructObject)
   strict private
     ///  <summary>OnClose event handler for open dialogue box. Checks if
     ///  dialogue box can close.</summary>
@@ -115,13 +115,12 @@ uses
   UWaitForThreadUI;
 
 type
-  // TODO: rename this class to remove the term "user"
   ///  <summary>Base class for classes that execute a database management
   ///  function in a thread while displaying a "wait" dialogue box if necessary.
   ///  </summary>
   ///  <remarks>The class is marked abstract because it cannot be used directly.
   ///  </remarks>
-  TUserDBWaitUI = class abstract(TNoConstructObject)
+  TDBWaitUI = class abstract(TNoConstructObject)
   strict private
     const
       ///  <summary>Time to elapse before wait dialogue is displayed.</summary>
@@ -142,10 +141,9 @@ type
   end;
 
 type
-  // TODO: rename this class to remove the term "user"
   ///  <summary>Class that saves database to disk in a thread while displaying a
   ///  "wait" dialogue box if necessary.</summary>
-  TUserDBSaveUI = class sealed(TUserDBWaitUI)
+  TDBSaveUI = class sealed(TDBWaitUI)
   strict private
     type
       ///  <summary>Thread that performs database save operation.</summary>
@@ -167,10 +165,9 @@ type
   end;
 
 type
-  // TODO: rename this class to remove the term "user"
   ///  <summary>Class that restores a backup of the database in a thread while
   ///  displaying a "wait" dialogue box if necessary.</summary>
-  TUserDBRestoreUI = class sealed(TUserDBWaitUI)
+  TDBRestoreUI = class sealed(TDBWaitUI)
   strict private
     type
       ///  <summary>Thread that performs restore operation.</summary>
@@ -199,10 +196,9 @@ type
   end;
 
 type
-  // TODO: rename this class to remove the term "user"
   ///  <summary>Class that creates a backup of the database in a thread while
   ///  displaying a "wait" dialogue box if necessary.</summary>
-  TUserDBBackupUI = class sealed(TUserDBWaitUI)
+  TDBBackupUI = class sealed(TDBWaitUI)
   strict private
     type
       ///  <summary>Thread that performs backup operation.</summary>
@@ -230,15 +226,15 @@ type
     class procedure Execute(AOwner: TComponent; const BakFileName: string);
   end;
 
-{ TUserDBMgr }
+{ TDBModificationMgr }
 
-class procedure TUserDBMgr.AddSnippet;
+class procedure TDBModificationMgr.AddSnippet;
 begin
   // Display Add Snippet dialog box which performs update of database.
   TSnippetsEditorDlg.AddNewSnippet(nil);
 end;
 
-class procedure TUserDBMgr.BackupDatabase(ParentCtrl: TComponent);
+class procedure TDBModificationMgr.BackupDatabase(ParentCtrl: TComponent);
 var
   SaveDlg: TSaveDialogEx; // save dialogue box used to name backup file
 resourcestring
@@ -255,25 +251,25 @@ begin
     SaveDlg.HelpKeyword := 'SaveBackupDlg';
     if SaveDlg.Execute then
       // Perform backup
-      TUserDBBackupUI.Execute(ParentCtrl, SaveDlg.FileName);
+      TDBBackupUI.Execute(ParentCtrl, SaveDlg.FileName);
   finally
     SaveDlg.Free;
   end;
 end;
 
-class function TUserDBMgr.CanDuplicate(ViewItem: IView): Boolean;
+class function TDBModificationMgr.CanDuplicate(ViewItem: IView): Boolean;
 begin
   Assert(Assigned(ViewItem), ClassName + '.CanDuplicate: ViewItem is nil');
   Result := Supports(ViewItem, ISnippetView);
 end;
 
-class function TUserDBMgr.CanEdit(ViewItem: IView): Boolean;
+class function TDBModificationMgr.CanEdit(ViewItem: IView): Boolean;
 begin
   Assert(Assigned(ViewItem), ClassName + '.CanEdit: ViewItem is nil');
   Result := Supports(ViewItem, ISnippetView);
 end;
 
-class procedure TUserDBMgr.CanOpenDialogClose(Sender: TObject;
+class procedure TDBModificationMgr.CanOpenDialogClose(Sender: TObject;
   var CanClose: Boolean);
 var
   FileName: string;     // name of file entered in dialog box
@@ -296,13 +292,13 @@ begin
   CanClose := True;
 end;
 
-class function TUserDBMgr.CanSave: Boolean;
+class function TDBModificationMgr.CanSave: Boolean;
 begin
   // We can save database if it's been changed, i.e. it is dirty
   Result := Database.IsDirty
 end;
 
-class procedure TUserDBMgr.CanSaveDialogClose(Sender: TObject;
+class procedure TDBModificationMgr.CanSaveDialogClose(Sender: TObject;
   var CanClose: Boolean);
 var
   FileName: string;   // name of file entered in dialogue box
@@ -319,11 +315,10 @@ begin
     );
 end;
 
-class procedure TUserDBMgr.DeleteSnippet(ViewItem: IView);
+class procedure TDBModificationMgr.DeleteSnippet(ViewItem: IView);
 
-  // Builds a list of snippet names from a given snippet ID list.
-  // TODO: change name of this function to SnippetTitles
-  function SnippetNames(const IDList: ISnippetIDList): IStringList;
+  // Builds a list of snippet titles from a given snippet ID list.
+  function SnippetTitles(const IDList: ISnippetIDList): IStringList;
   var
     ID: TSnippetID;     // loops through all IDs in list
     Snippet: ISnippet;  // snippet corresponding to ID
@@ -361,7 +356,7 @@ begin
       nil,
       Format(
         sHasDependents,
-        [SnippetNames(Dependents).GetText(',' + EOL + '    ', False)]
+        [SnippetTitles(Dependents).GetText(',' + EOL + '    ', False)]
       )
     );
     Exit;
@@ -375,14 +370,14 @@ begin
       sConfirmDeleteEx,
       [
         Snippet.Title,
-        SnippetNames(Referrers).GetText(',' + EOL + '    ', False)
+        SnippetTitles(Referrers).GetText(',' + EOL + '    ', False)
       ]
     );
   if TMessageBox.Confirm(nil, ConfirmMsg) then
     Database.DeleteSnippet(Snippet.ID);
 end;
 
-class procedure TUserDBMgr.DuplicateSnippet(ViewItem: IView);
+class procedure TDBModificationMgr.DuplicateSnippet(ViewItem: IView);
 begin
   Assert(CanDuplicate(ViewItem),
     ClassName + '.DuplicateSnippet: ViewItem can''t be duplicated');
@@ -392,7 +387,7 @@ begin
   );
 end;
 
-class procedure TUserDBMgr.EditSnippet(const SnippetID: TSnippetID);
+class procedure TDBModificationMgr.EditSnippet(const SnippetID: TSnippetID);
 var
   Snippet: ISnippet;    // reference to snippet to be edited
 begin
@@ -401,15 +396,15 @@ begin
   TSnippetsEditorDlg.EditSnippet(nil, Snippet);
 end;
 
-class procedure TUserDBMgr.MoveDatabase;
+class procedure TDBModificationMgr.MoveDatabase;
 begin
   // This dialogue box not available in portable mode
   if not TCommandLineOpts.IsPortable then
     TDBMoveDlg.Execute(nil);
 end;
 
-class procedure TUserDBMgr.RemoveTagFromSnippet(const SnippetID: TSnippetID;
-  const Tag: TTag);
+class procedure TDBModificationMgr.RemoveTagFromSnippet(
+  const SnippetID: TSnippetID; const Tag: TTag);
 var
   Snippet: IEditableSnippet;
   Tags: ITagSet;
@@ -421,7 +416,8 @@ begin
   Database.UpdateSnippet(Snippet);
 end;
 
-class function TUserDBMgr.RestoreDatabase(ParentCtrl: TComponent): Boolean;
+class function TDBModificationMgr.RestoreDatabase(
+  ParentCtrl: TComponent): Boolean;
 var
   Dlg: TOpenDialogEx;             // open dialog box used to select backup file
 resourcestring
@@ -438,20 +434,20 @@ begin
     Result := Dlg.Execute;
     if Result then
       // Perform restoration
-      TUserDBRestoreUI.Execute(ParentCtrl, Dlg.FileName);
+      TDBRestoreUI.Execute(ParentCtrl, Dlg.FileName);
   finally
     Dlg.Free;
   end;
 end;
 
-class procedure TUserDBMgr.Save(ParentCtrl: TComponent);
+class procedure TDBModificationMgr.Save(ParentCtrl: TComponent);
 begin
-  TUserDBSaveUI.Execute(ParentCtrl);
+  TDBSaveUI.Execute(ParentCtrl);
 end;
 
-{ TUserDBWaitUI }
+{ TDBWaitUI }
 
-class procedure TUserDBWaitUI.RunThreadWithWaitDlg(const Thread: TThread;
+class procedure TDBWaitUI.RunThreadWithWaitDlg(const Thread: TThread;
   const DlgOwner: TComponent; const WaitCaption: string);
 begin
   try
@@ -466,9 +462,9 @@ begin
   end;
 end;
 
-{ TUserDBSaveUI }
+{ TDBSaveUI }
 
-class procedure TUserDBSaveUI.Execute(AOwner: TComponent);
+class procedure TDBSaveUI.Execute(AOwner: TComponent);
 resourcestring
   // Caption for wait dialogue
   sWaitCaption = 'Saving database...';
@@ -483,21 +479,21 @@ begin
   end;
 end;
 
-{ TUserDBSaveUI.TSaveThread }
+{ TDBSaveUI.TSaveThread }
 
-constructor TUserDBSaveUI.TSaveThread.Create;
+constructor TDBSaveUI.TSaveThread.Create;
 begin
   inherited Create(True);
 end;
 
-procedure TUserDBSaveUI.TSaveThread.Execute;
+procedure TDBSaveUI.TSaveThread.Execute;
 begin
   Database.Save;
 end;
 
-{ TUserDBRestoreUI }
+{ TDBRestoreUI }
 
-class procedure TUserDBRestoreUI.Execute(AOwner: TComponent;
+class procedure TDBRestoreUI.Execute(AOwner: TComponent;
   const BakFileName: string);
 resourcestring
   // Caption for wait dialog
@@ -513,15 +509,15 @@ begin
   end;
 end;
 
-{ TUserDBRestoreUI.TRestoreThread }
+{ TDBRestoreUI.TRestoreThread }
 
-constructor TUserDBRestoreUI.TRestoreThread.Create(const BakFileName: string);
+constructor TDBRestoreUI.TRestoreThread.Create(const BakFileName: string);
 begin
   inherited Create(True);
   fBakFileName := BakFileName;
 end;
 
-procedure TUserDBRestoreUI.TRestoreThread.Execute;
+procedure TDBRestoreUI.TRestoreThread.Execute;
 var
   UserDBBackup: TUserDBBackup;
 begin
@@ -533,9 +529,9 @@ begin
   end;
 end;
 
-{ TUserDBBackupUI }
+{ TDBBackupUI }
 
-class procedure TUserDBBackupUI.Execute(AOwner: TComponent;
+class procedure TDBBackupUI.Execute(AOwner: TComponent;
   const BakFileName: string);
 resourcestring
   // Caption for wait dialog
@@ -551,15 +547,15 @@ begin
   end;
 end;
 
-{ TUserDBBackupUI.TBackupThread }
+{ TDBBackupUI.TBackupThread }
 
-constructor TUserDBBackupUI.TBackupThread.Create(const BakFileName: string);
+constructor TDBBackupUI.TBackupThread.Create(const BakFileName: string);
 begin
   inherited Create(True);
   fBakFileName := BakFileName;
 end;
 
-procedure TUserDBBackupUI.TBackupThread.Execute;
+procedure TDBBackupUI.TBackupThread.Execute;
 var
   UserDBBackup: TUserDBBackup;  // object used to perform backup
 resourcestring
