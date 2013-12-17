@@ -151,10 +151,12 @@ type
     ['{7C6C9E75-F17F-4BF2-AA63-DE8C8070A348}']
     function GetEnumerator: IEnumerator<TSnippetKind>;
     function GetItem(const KindID: TSnippetKindID): TSnippetKind;
+    function GetIDs: TSnippetKindIDs;
     function First: TSnippetKind;
     function Last: TSnippetKind;
     property Items[const KindID: TSnippetKindID]: TSnippetKind read GetItem;
       default;
+    property IDs: TSnippetKindIDs read GetIDs;
   end;
 
   ETag = class(Exception);

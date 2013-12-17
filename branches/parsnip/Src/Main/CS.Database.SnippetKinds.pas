@@ -51,6 +51,7 @@ type
     destructor Destroy; override;
     function GetEnumerator: IEnumerator<TSnippetKind>;
     function GetItem(const KindID: TSnippetKindID): TSnippetKind;
+    function GetIDs: TSnippetKindIDs;
     function First: TSnippetKind;
     function Last: TSnippetKind;
   end;
@@ -96,6 +97,15 @@ end;
 function TSnippetKindList.GetEnumerator: IEnumerator<TSnippetKind>;
 begin
   Result := TEnumerator.Create(Self);
+end;
+
+function TSnippetKindList.GetIDs: TSnippetKindIDs;
+var
+  Kind: TSnippetKind;
+begin
+  Result := [];
+  for Kind in fMap do
+    Include(Result, Kind.ID);
 end;
 
 function TSnippetKindList.GetItem(const KindID: TSnippetKindID):
