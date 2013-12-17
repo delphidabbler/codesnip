@@ -592,7 +592,7 @@ var
   LI: TListItem;  // each list item in list view
 begin
   // Checks snippet name for being well formed and not already in database
-  Result := TSnippetValidator.ValidateName(Name, True, ErrMsg);
+  Result := TSnippetValidator.ValidateSnippetID(Name, True, ErrMsg);
   if not Result then
     Exit;
   // Checks name not already used for other imported snippets

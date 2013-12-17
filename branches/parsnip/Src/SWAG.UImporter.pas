@@ -201,7 +201,7 @@ begin
     + '.GetValidSnippetName: RootName is not a valid Pascal identifier');
   Result := RootName;
   Appendix := 0;
-  while not TSnippetValidator.ValidateName(Result, True) do
+  while not TSnippetValidator.ValidateSnippetID(Result, True) do
   begin
     Inc(Appendix);
     Result := RootName + '_' + IntToStr(Appendix);

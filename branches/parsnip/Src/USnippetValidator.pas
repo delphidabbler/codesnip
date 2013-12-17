@@ -74,24 +74,21 @@ type
         @param ErrorSel [out] Selection that can be used to highlight error.
         @return True if source code is valid or False if not.
       }
-    class function ValidateName(const Name: string;
+    class function ValidateSnippetID(const IDStr: string;
       const CheckForUniqueness: Boolean): Boolean; overload;
-      {Validates a snippet's name.
-        @param Name [in] Snippet name to be checked.
+      {Validates a string as valid for use as a snippet ID.
+        @param IDStr [in] String representation of snippet ID to be checked.
         @param CheckForUniqueness [in] Flag indicating whether a check should
           be made to see if snippet name is already in database.
         @return True if name is valid or False if not.
       }
-    { TODO: Rename following method and its overloads as ValidateSnippetID }
-    { TODO: Rename Name parameter of following method and its overloads as
-            IDStr }
-    class function ValidateName(const Name: string;
+    class function ValidateSnippetID(const IDStr: string;
       const CheckForUniqueness: Boolean; out ErrorMsg: string): Boolean;
       overload;
-      {Validates a snippet's name.
-        @param Name [in] Snippet name to be checked.
+      {Validates a string as valid for use as a snippet ID.
+        @param IDStr [in] String representation of snippet ID to be checked.
         @param CheckForUniqueness [in] Flag indicating whether a check should
-          be made to see if snippet name is already in database.
+          be made to see if snippet ID is already in database.
         @param ErrorMsg [out] Message that describes error. Undefined if True
           returned.
         @return True if name is valid or False if not.
@@ -295,51 +292,6 @@ begin
   Result := True;
 end;
 
-class function TSnippetValidator.ValidateName(const Name: string;
-  const CheckForUniqueness: Boolean; out ErrorMsg: string): Boolean;
-  {Validates a snippet's name.
-    @param Name [in] Snippet name to be checked.
-    @param CheckForUniqueness [in] Flag indicating whether a check should be
-      made to see if snippet name is already in database.
-    @param ErrorMsg [out] Message that describes error. Undefined if True
-      returned.
-    @return True if name is valid or False if not.
-  }
-resourcestring
-  // Error messages
-  sErrNoName = 'A name must be provided';
-  sErrDupName = '"%s" is already in the database. Please choose another name';
-  sErrBadID = '"%s" is not a valid snippet identifier';
-var
-  TrimmedName: string;  // Name param trimmed of leading trailing spaces
-begin
-  Result := False;
-  TrimmedName := StrTrim(Name);
-  if TrimmedName = '' then
-    ErrorMsg := sErrNoName
-  else if not TSnippetID.IsValidIDString(TrimmedName) then
-    ErrorMsg := Format(sErrBadID, [TrimmedName])
-  else if CheckForUniqueness
-    and Database.SnippetExists(TSnippetID.Create(TrimmedName)) then
-    ErrorMsg := Format(sErrDupName, [TrimmedName])
-  else
-    Result := True;
-end;
-
-class function TSnippetValidator.ValidateName(const Name: string;
-  const CheckForUniqueness: Boolean): Boolean;
-  {Validates a snippet's name.
-    @param Name [in] Snippet name to be checked.
-    @param CheckForUniqueness [in] Flag indicating whether a check should be
-      made to see if snippet name is already in database.
-    @return True if name is valid or False if not.
-  }
-var
-  DummyErrMsg: string;
-begin
-  Result := ValidateName(Name, CheckForUniqueness, DummyErrMsg);
-end;
-
 class function TSnippetValidator.ValidateNotes(Notes: IActiveText;
   out ErrorMsg: string): Boolean;
   {Validates a snippet's notes.
@@ -356,6 +308,38 @@ begin
   Result := TActiveTextValidator.Validate(Notes, ErrorInfo);
   if not Result then
     ErrorMsg := Format(sErrorStub, [ErrorInfo.Description]);
+end;
+
+class function TSnippetValidator.ValidateSnippetID(const IDStr: string;
+  const CheckForUniqueness: Boolean; out ErrorMsg: string): Boolean;
+resourcestring
+  // Error messages
+  sErrNoID = 'A snippet ID must be provided';
+  sErrDupID = 'A snippet with ID "%s" is already in the database. Please '
+    + 'choose another ID';
+  sErrBadID = '"%s" is not a valid snippet identifier';
+var
+  TrimmedIDStr: string;  // IDStr param trimmed of leading trailing spaces
+begin
+  Result := False;
+  TrimmedIDStr := StrTrim(IDStr);
+  if TrimmedIDStr = '' then
+    ErrorMsg := sErrNoID
+  else if not TSnippetID.IsValidIDString(TrimmedIDStr) then
+    ErrorMsg := Format(sErrBadID, [TrimmedIDStr])
+  else if CheckForUniqueness
+    and Database.SnippetExists(TSnippetID.Create(TrimmedIDStr)) then
+    ErrorMsg := Format(sErrDupID, [TrimmedIDStr])
+  else
+    Result := True;
+end;
+
+class function TSnippetValidator.ValidateSnippetID(const IDStr: string;
+  const CheckForUniqueness: Boolean): Boolean;
+var
+  DummyErrMsg: string;
+begin
+  Result := ValidateSnippetID(IDStr, CheckForUniqueness, DummyErrMsg);
 end;
 
 class function TSnippetValidator.ValidateSourceCode(const Source: string;
