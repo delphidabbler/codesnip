@@ -79,7 +79,7 @@ type
     var
       ///  <summary>Object that moves the snippets database to a new location.
       ///  </summary>
-      fMover: TUserDBMove;
+      fMover: TDBMove;
       ///  <summary>Object used to disable and enable all controls on the form.
       ///  </summary>
       fControlStateMgr: TControlStateMgr;
@@ -298,7 +298,7 @@ end;
 procedure TUserDataPathDlg.FormCreate(Sender: TObject);
 begin
   inherited;
-  fMover := TUserDBMove.Create;
+  fMover := TDBMove.Create;
   fMover.OnCopyFile := CopyFileHandler;
   fMover.OnDeleteFile := DeleteFileHandler;
   fControlStateMgr := TControlStateMgr.Create(Self);

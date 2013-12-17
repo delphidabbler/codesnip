@@ -29,17 +29,16 @@ uses
 type
   ///  <summary>Class that moves the snippets database to a new location.
   ///  </summary>
-  TUserDBMove = class(TObject)  // TODO: rename this class to remove "User"
+  TDBMove = class(TObject)
   public
     type
-      ///  <summary>Type of event triggered by TUserDBMove to report progress
-      ///  when moving the database files.</summary>
-      ///  <param name="Sender">TObject [in] TUserDBMove instance that triggered
-      ///  the event.</param>
+      ///  <summary>Type of event triggered by TDBMove to report progress when
+      ///  moving the database files.</summary>
+      ///  <param name="Sender">TObject [in] TDBMove instance that triggered the
+      ///  event.</param>
       ///  <param name="Percent">Byte [in] Percentage of operation that has been
       ///  completed.</param>
-      TProgress = procedure(Sender: TObject; const Percent: Byte)
-        of object;
+      TProgress = procedure(Sender: TObject; const Percent: Byte) of object;
   strict private
     var
       ///  <summary>Reference to event handler for OnCopyFile event.</summary>
@@ -108,14 +107,21 @@ implementation
 
 uses
   // Delphi
-  SysUtils, IOUtils, Math, Windows {for inlining},
+  SysUtils,
+  IOUtils,
+  Math,
+  Windows {for inlining},
   // Project
-  UAppInfo, UDOSDateTime, UIOUtils, UStrUtils, UUtils;
+  UAppInfo,
+  UDOSDateTime,
+  UIOUtils,
+  UStrUtils,
+  UUtils;
 
 
-{ TUserDBMove }
+{ TDBMove }
 
-procedure TUserDBMove.CopyFile(const FileIdx: Cardinal);
+procedure TDBMove.CopyFile(const FileIdx: Cardinal);
 var
   SrcFile, DestFile: string;
   FileDate: IDOSDateTime;
@@ -128,25 +134,25 @@ begin
   NotifyCopyFile(FileIdx);
 end;
 
-constructor TUserDBMove.Create;
+constructor TDBMove.Create;
 begin
   inherited Create;
   fDBFiles := TStringList.Create;
 end;
 
-procedure TUserDBMove.DeleteFile(const FileIdx: Cardinal);
+procedure TDBMove.DeleteFile(const FileIdx: Cardinal);
 begin
   SysUtils.DeleteFile(fSourceDir + PathDelim + fDBFiles[FileIdx]);
   NotifyDeleteFile(FileIdx);
 end;
 
-destructor TUserDBMove.Destroy;
+destructor TDBMove.Destroy;
 begin
   fDBFiles.Free;
   inherited;
 end;
 
-procedure TUserDBMove.DoMove;
+procedure TDBMove.DoMove;
 var
   FileIdx: Cardinal;
 begin
@@ -166,14 +172,14 @@ begin
   SysUtils.RemoveDir(fSourceDir);
 end;
 
-function TUserDBMove.GetProgress(Count, Goal: Cardinal): Byte;
+function TDBMove.GetProgress(Count, Goal: Cardinal): Byte;
 begin
   Assert(Goal > 0, ClassName + '.GetProgress: Goal is zero');
   Count := Min(Goal, Count);
   Result := Round(100 * Count / Goal);
 end;
 
-procedure TUserDBMove.MoveTo(const ADirectory: string);
+procedure TDBMove.MoveTo(const ADirectory: string);
 begin
   fSourceDir := ExcludeTrailingPathDelimiter(TAppInfo.UserDataDir);
   fDestDir := ExcludeTrailingPathDelimiter(ADirectory);
@@ -181,19 +187,19 @@ begin
   DoMove;
 end;
 
-procedure TUserDBMove.NotifyCopyFile(FileCount: Cardinal);
+procedure TDBMove.NotifyCopyFile(FileCount: Cardinal);
 begin
   if Assigned(fOnCopyFile) then
     fOnCopyFile(Self, GetProgress(FileCount, fDBFiles.Count));
 end;
 
-procedure TUserDBMove.NotifyDeleteFile(FileCount: Cardinal);
+procedure TDBMove.NotifyDeleteFile(FileCount: Cardinal);
 begin
   if Assigned(fOnDeleteFile) then
     fOnDeleteFile(Self, GetProgress(FileCount, fDBFiles.Count));
 end;
 
-procedure TUserDBMove.ValidateDirectories;
+procedure TDBMove.ValidateDirectories;
 resourcestring
   sSameNames = 'The new database directory is the same as the current '
     + 'directory.';
