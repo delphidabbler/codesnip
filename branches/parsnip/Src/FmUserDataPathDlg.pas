@@ -16,7 +16,7 @@
 unit FmUserDataPathDlg;
 
 
-// TODO: Rename this unit to remove "user" from name
+// TODO: Rename this unit to relate to form class name
 
 
 interface
@@ -24,10 +24,19 @@ interface
 
 uses
   // Delphi
-  SysUtils, Forms, Classes, ActnList, StdCtrls, Controls, ExtCtrls,
+  SysUtils,
+  Forms,
+  Classes,
+  ActnList,
+  StdCtrls,
+  Controls,
+  ExtCtrls,
   // Project
-  FmGenericViewDlg, FmUserDataPathDlg.FrProgress, UBaseObjects, 
-  UControlStateMgr, UUserDBMove;
+  FmGenericViewDlg,
+  FmUserDataPathDlg.FrProgress,
+  UBaseObjects,
+  UControlStateMgr,
+  UUserDBMove;
 
 type
   ///  <summary>Dialogue box that is used to move the snippets database to a new
@@ -35,7 +44,7 @@ type
   ///  directory.</summary>
   ///  <remarks>IMPORTANT: This dialogue box is for use only when running in
   ///  standard mode. It MUST NOT be displayed when in portable mode.</remarks>
-  TUserDataPathDlg = class(TGenericViewDlg, INoPublicConstruct)
+  TDBMoveDlg = class(TGenericViewDlg, INoPublicConstruct)
     actBrowse: TAction;
     actDefaultPath: TAction;
     actMove: TAction;
@@ -51,7 +60,7 @@ type
     lblPath: TLabel;
     lblWarning: TLabel;
     edPath: TEdit;
-    frmProgress: TUserDataPathDlgProgressFrame;
+    frmProgress: TDBMoveDlgProgressFrame;
     ///  <summary>Dispays Browse For Folder dialogue box and copies any chosen
     ///  folder to the edPath edit control.</summary>
     procedure actBrowseExecute(Sender: TObject);
@@ -149,7 +158,7 @@ uses
 
 { TUserDataPathDlg }
 
-procedure TUserDataPathDlg.actBrowseExecute(Sender: TObject);
+procedure TDBMoveDlg.actBrowseExecute(Sender: TObject);
 var
   Dlg: TBrowseForFolderDlg; // browse for folder standard dialogue box
 resourcestring
@@ -168,31 +177,31 @@ begin
   end;
 end;
 
-procedure TUserDataPathDlg.actDefaultPathExecute(Sender: TObject);
+procedure TDBMoveDlg.actDefaultPathExecute(Sender: TObject);
 begin
   DoMove(TAppInfo.DefaultUserDataDir, gbRestore);
 end;
 
-procedure TUserDataPathDlg.actDefaultPathUpdate(Sender: TObject);
+procedure TDBMoveDlg.actDefaultPathUpdate(Sender: TObject);
 begin
   actDefaultPath.Enabled :=
     not StrSameText(TAppInfo.UserDataDir, TAppInfo.DefaultUserDataDir)
     and Self.Enabled;
 end;
 
-procedure TUserDataPathDlg.actMoveExecute(Sender: TObject);
+procedure TDBMoveDlg.actMoveExecute(Sender: TObject);
 begin
   DoMove(NewDirFromEditCtrl, gbMove);
 end;
 
-procedure TUserDataPathDlg.actMoveUpdate(Sender: TObject);
+procedure TDBMoveDlg.actMoveUpdate(Sender: TObject);
 begin
   actMove.Enabled := (NewDirFromEditCtrl <> '')
     and not StrSameText(NewDirFromEditCtrl, TAppInfo.UserDataDir)
     and Self.Enabled;
 end;
 
-procedure TUserDataPathDlg.ArrangeForm;
+procedure TDBMoveDlg.ArrangeForm;
 begin
   TCtrlArranger.SetLabelHeights(Self);
 
@@ -216,7 +225,7 @@ begin
   inherited;
 end;
 
-procedure TUserDataPathDlg.ConfigForm;
+procedure TDBMoveDlg.ConfigForm;
 begin
   inherited;
   TFontHelper.SetDefaultBaseFonts([
@@ -231,7 +240,7 @@ begin
   frmProgress.Range := TRange.Create(0, 100);
 end;
 
-procedure TUserDataPathDlg.CopyFileHandler(Sender: TObject;
+procedure TDBMoveDlg.CopyFileHandler(Sender: TObject;
   const Percent: Byte);
 resourcestring
   sCopying = 'Copying files...';
@@ -242,7 +251,7 @@ begin
   Application.ProcessMessages;
 end;
 
-procedure TUserDataPathDlg.DeleteFileHandler(Sender: TObject;
+procedure TDBMoveDlg.DeleteFileHandler(Sender: TObject;
   const Percent: Byte);
 resourcestring
   sDeleting = 'Deleting files...';
@@ -253,7 +262,7 @@ begin
   Application.ProcessMessages;
 end;
 
-procedure TUserDataPathDlg.DoMove(const NewDir: string;
+procedure TDBMoveDlg.DoMove(const NewDir: string;
   const ProgressHostCtrl: TWinControl);
 resourcestring
   sNonEmptyDir = 'The specified directory is not empty.';
@@ -283,7 +292,7 @@ begin
   end;
 end;
 
-class procedure TUserDataPathDlg.Execute(AOwner: TComponent);
+class procedure TDBMoveDlg.Execute(AOwner: TComponent);
 begin
   Assert(not TCommandLineOpts.IsPortable,
     ClassName + '.Execute: Call forbidden in portable mode');
@@ -295,7 +304,7 @@ begin
     end;
 end;
 
-procedure TUserDataPathDlg.FormCreate(Sender: TObject);
+procedure TDBMoveDlg.FormCreate(Sender: TObject);
 begin
   inherited;
   fMover := TDBMove.Create;
@@ -304,14 +313,14 @@ begin
   fControlStateMgr := TControlStateMgr.Create(Self);
 end;
 
-procedure TUserDataPathDlg.FormDestroy(Sender: TObject);
+procedure TDBMoveDlg.FormDestroy(Sender: TObject);
 begin
   fControlStateMgr.Free;
   fMover.Free;
   inherited;
 end;
 
-procedure TUserDataPathDlg.HandleException(const E: Exception);
+procedure TDBMoveDlg.HandleException(const E: Exception);
 begin
   if (E is EInOutError) or (E is ENotSupportedException)
     or (E is EDirectoryNotFoundException) or (E is EPathTooLongException)
@@ -320,12 +329,12 @@ begin
   raise E;
 end;
 
-function TUserDataPathDlg.NewDirFromEditCtrl: string;
+function TDBMoveDlg.NewDirFromEditCtrl: string;
 begin
   Result := ExcludeTrailingPathDelimiter(StrTrim(edPath.Text));
 end;
 
-procedure TUserDataPathDlg.SetVisibility(const ParentCtrl: TWinControl;
+procedure TDBMoveDlg.SetVisibility(const ParentCtrl: TWinControl;
   const Show: Boolean);
 var
   I: Integer;

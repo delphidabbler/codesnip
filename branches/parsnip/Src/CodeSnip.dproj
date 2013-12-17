@@ -210,10 +210,10 @@
 				<Form>UserBugReportDlg</Form>
 			</DCCReference>
 			<DCCReference Include="FmUserDataPathDlg.pas">
-				<Form>UserDataPathDlg</Form>
+				<Form>DBMoveDlg</Form>
 			</DCCReference>
 			<DCCReference Include="FmUserDataPathDlg.FrProgress.pas">
-				<Form>UserDataPathDlgProgressFrame</Form>
+				<Form>DBMoveDlgProgressFrame</Form>
 				<DesignClass>TFrame</DesignClass>
 			</DCCReference>
 			<DCCReference Include="FmWaitDlg.pas">

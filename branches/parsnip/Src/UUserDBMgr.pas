@@ -405,7 +405,7 @@ class procedure TUserDBMgr.MoveDatabase;
 begin
   // This dialogue box not available in portable mode
   if not TCommandLineOpts.IsPortable then
-    TUserDataPathDlg.Execute(nil);
+    TDBMoveDlg.Execute(nil);
 end;
 
 class procedure TUserDBMgr.RemoveTagFromSnippet(const SnippetID: TSnippetID;
