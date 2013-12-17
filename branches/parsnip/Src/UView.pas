@@ -24,7 +24,6 @@ uses
   Generics.Collections,
   // Project
   CS.Database.Types,
-  DB.USnippetKind,
   UBaseObjects,
   UInitialLetter;
 
