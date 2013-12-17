@@ -16,7 +16,8 @@
 unit UUserDBBackup;
 
 
-// TODO: Rename this unit to remove "user" from name (CS.Database.Backup ?)
+{ TODO -cRenameUnit: Rename this unit to remove "user" from name
+                    (CS.Database.Backup ?) }
 
 
 interface
@@ -29,18 +30,17 @@ uses
 
 type
 
-  // TODO: rename this class to remove the term "user"
   {
-  TUserDBBackup:
+  TDatabaseBackup:
     Sealed class that can create and restore backups of the snippets database.
     Backups are single files. See UFolderBackup for details of file format.
   }
-  TUserDBBackup = class sealed(TFolderBackup)
+  TDatabaseBackup = class sealed(TFolderBackup)
   strict private
     const cFileID = SmallInt($DBAC);  // Database backup file ID
   public
     constructor Create(const BackupFile: string);
-      {Class constructor. Sets up object to backup snippets database to a
+      {Object constructor. Sets up object to backup snippets database to a
       specified file.
         @param BackupFile [in] Name of backup file.
       }
@@ -55,9 +55,9 @@ uses
   UAppInfo;
 
 
-{ TUserDBBackup }
+{ TDatabaseBackup }
 
-constructor TUserDBBackup.Create(const BackupFile: string);
+constructor TDatabaseBackup.Create(const BackupFile: string);
   {Class constructor. Sets up object to backup snippets database to a specified
   file.
     @param BackupFile [in] Name of backup file.
