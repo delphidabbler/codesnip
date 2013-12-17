@@ -220,10 +220,6 @@ type
           created with a new, unique, name.
         @return Reference to new snippet.
       }
-    procedure DeleteSnippet(const Snippet: TSnippet);
-      {Deletes a snippet from the database.
-        @param Snippet [in] Snippet to be deleted.
-      }
   end;
 
 
@@ -271,10 +267,6 @@ type
         @param Data [in] Properties and references of new snippet.
         @return Reference to new snippet object.
       }
-    procedure InternalDeleteSnippet(const Snippet: TSnippet);
-      {Deletes a snippet from database.
-        @param Snippet [in] Snippet to delete from database.
-      }
     function UniqueSnippetName: string;
       {Generates a snippet "name" that is unique in the database.
         @return Required unique snippet "name".
@@ -318,10 +310,6 @@ type
         @param Name [in] Required snippet name. If ommitted then the snippet is
           created with a new, unique, name.
         @return Reference to new snippet.
-      }
-    procedure DeleteSnippet(const Snippet: TSnippet);
-      {Deletes a snippet from the database.
-        @param Snippet [in] Snippet to be deleted.
       }
   end;
 
@@ -406,44 +394,6 @@ begin
   Result.UpdateRefs(MakeValidRefs(Data.Refs));
 end;
 
-procedure _TDatabase.DeleteSnippet(const Snippet: TSnippet);
-  {Deletes a snippet from the database.
-    @param Snippet [in] Snippet to be deleted.
-  }
-var
-  Dependent: TSnippetID;      // each snippet that depends on Snippet
-  Dependents: ISnippetIDList; // list of dependent snippets
-  Referrer: TSnippetID;       // each snippet that cross references Snippet
-  Referrers: ISnippetIDList;  // list of referencing snippets
-begin
-  Assert(Database.__SnippetsTable.Contains(Snippet.ID),
-    ClassName + '.DeleteSnippet: Snippet is not in the database');
-  Database.__TriggerEvent(evChangeBegin);
-  Database.__TriggerEvent(evBeforeSnippetDelete, Snippet);
-  // Get list of referencing and dependent snippets
-  Dependents := nil;
-  Referrers := nil;
-  try
-    Dependents := Database.GetDependentsOf(Snippet.ID);
-    Referrers := Database.GetReferrersTo(Snippet.ID);
-    // TODO: scan all snippets and remove references that match snippet ID
-    // Delete snippet for XRef or Depends list of referencing snippets
-    for Referrer in Referrers do
-      Database.__SnippetsTable.Get(Referrer).XRefs.Remove(Snippet.ID);
-    for Dependent in Dependents do
-      Database.__SnippetsTable.Get(Dependent).RequiredSnippets.Remove(
-        Snippet.ID
-      );
-    // Delete snippet itself
-    InternalDeleteSnippet(Snippet);
-    Query.Update;
-  finally
-    Database.__Updated := True;
-    Database.__TriggerEvent(evSnippetDeleted);
-    Database.__TriggerEvent(evChangeEnd);
-  end;
-end;
-
 function _TDatabase.GetEditableSnippetInfo(
   const Snippet: TSnippet): TSnippetEditData;
   {Provides details of all a snippet's data (properties and references) that may
@@ -476,16 +426,6 @@ begin
   // ensure any unknown tags are added to set of all known tags
   Database.__AllTags.Include(Result.Tags);
   Database.__SnippetsTable.Add(Result);
-end;
-
-procedure _TDatabase.InternalDeleteSnippet(const Snippet: TSnippet);
-  {Deletes a snippet from the database.
-    @param Snippet [in] Snippet to delete from database.
-  }
-begin
-  // Don't remove snippets tags from tag list - leave them there
-  // Delete from "master" list: this frees Snippet
-  Database.__SnippetsTable.Delete(Snippet.ID);
 end;
 
 function _TDatabase.Lookup(const SnippetID: TSnippetID): TSnippet;
