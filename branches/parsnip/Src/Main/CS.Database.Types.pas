@@ -269,6 +269,7 @@ type
 
     procedure UpdateFrom(AOther: IEditableSnippet); overload;
     procedure UpdateFrom(AOther: ISnippet); overload;
+    function CloneAsReadOnly: ISnippet;
 
     property Title: string read GetTitle write SetTitle;
     property Description: IActiveText read GetDescription write SetDescription;

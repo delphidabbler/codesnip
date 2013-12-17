@@ -111,6 +111,7 @@ type
     destructor Destroy; override;
     procedure UpdateFrom(AOther: IEditableSnippet); overload;
     procedure UpdateFrom(AOther: ISnippet); overload;
+    function CloneAsReadOnly: ISnippet;
   end;
 
   TReadOnlySnippet = class(TSnippetBase, ISnippet);
@@ -574,6 +575,11 @@ begin
 end;
 
 { TEditableSnippet }
+
+function TEditableSnippet.CloneAsReadOnly: ISnippet;
+begin
+  Result := TReadOnlySnippet.Create(Self);
+end;
 
 class function TEditableSnippet.CreateNew: TEditableSnippet;
 begin
