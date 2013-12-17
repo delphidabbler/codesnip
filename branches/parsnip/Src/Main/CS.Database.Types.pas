@@ -126,9 +126,8 @@ type
     skClass       // Delphi class or record with methods
   );
 
-  // TODO: Rename as TSnippetKindIDs
   ///  <summary>Set of supported snippet kind IDs.</summary>
-  TSnippetKinds = set of TSnippetKindID;
+  TSnippetKindIDs = set of TSnippetKindID;
 
 type
   // TODO: Rename as TSnippetKind once TSnippetKind renamed as TSnippetKindID

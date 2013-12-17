@@ -34,7 +34,10 @@ type
   TSnippetValidator = class(TNoConstructObject)
   strict private
     const
-      cAllSnippetKinds: TSnippetKinds =   // Set of all possible snippet kinds
+      { TODO: rename this const OR eliminate it in favour of db's
+              GetAllSnippetKinds method }
+      ///  <summary>Set of all possible snippet kinds.</summary>
+      cAllSnippetKinds: TSnippetKindIDs =
         [skFreeform, skRoutine, skConstant, skTypeDef, skUnit, skClass];
     class function ValidateNotes(Notes: IActiveText; out ErrorMsg: string):
       Boolean;
@@ -110,7 +113,8 @@ type
         @return True if snippet valid or False if not.
       }
     // TODO: rename Kind parameter as KindID
-    class function ValidDependsKinds(const Kind: TSnippetKindID): TSnippetKinds;
+    class function ValidDependsKinds(const Kind: TSnippetKindID):
+      TSnippetKindIDs;
       {Gets set of snippet kinds that are valid in a snippet's dependency list.
         @param Kind [in] Kind of snippet for which valid dependency kinds
           required.
@@ -186,8 +190,9 @@ class function TSnippetValidator.ValidateDependsList(Snippet: ISnippet;
     end;
   end;
 
+  // TODO: rename Kinds parameter as KindIDs
   function DependsListHasKinds(DependsList: ISnippetIDList;
-    const Kinds: TSnippetKinds): Boolean;
+    const Kinds: TSnippetKindIDs): Boolean;
     {Recursively checks if a dependency list contains snippets of specified
     kinds.
       @param DependsList [in] A dependency list.
@@ -220,8 +225,8 @@ resourcestring
     + 'named "%1:s"';
   sCircular = '%0:s Snippet named "%1:s" cannot depend on itself.';
 var
-  DeniedDepends: TSnippetKinds; // snippet kinds that can't be in depends list
-  AllKinds: ISnippetKindList;   // all possible snippet kinds
+  DeniedDepends: TSnippetKindIDs;
+  AllKinds: ISnippetKindList;
 begin
   AllKinds := Database.GetAllSnippetKinds;
   // No snippets kinds may depend on themselves
@@ -386,7 +391,7 @@ begin
 end;
 
 class function TSnippetValidator.ValidDependsKinds(
-  const Kind: TSnippetKindID): TSnippetKinds;
+  const Kind: TSnippetKindID): TSnippetKindIDs;
   {Gets set of snippet kinds that are valid in a snippet's dependency list.
     @param Kind [in] Kind of snippet for which valid dependency kinds required.
     @return Set of valid kinds for snippets in dependenc list.
