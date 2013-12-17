@@ -76,12 +76,22 @@ const
   Descriptions: array[TSnippetKindID] of string = (
     sFreeform, sRoutine, sConstant, sTypeDef, sUnit, sClass
   );
+  DependIDs: array[TSnippetKindID] of TSnippetKindIDs = (
+    [skRoutine, skConstant, skTypeDef, skFreeform], // skFreeform
+    [skRoutine, skConstant, skTypeDef, skClass],    // skRoutine
+    [skConstant, skTypeDef],                        // skConstant
+    [skConstant, skTypeDef, skClass],               // skTypeDef
+    [],                                             // skUnit
+    [skRoutine, skConstant, skTypeDef, skClass]     // skClass
+  );
 var
-  Kind: TSnippetKindID;
+  KindID: TSnippetKindID;
 begin
   inherited Create;
-  for Kind := Low(TSnippetKindID) to High(TSnippetKindID) do
-    fMap[Kind] := TSnippetKind.Create(Kind, Descriptions[Kind]);
+  for KindID := Low(TSnippetKindID) to High(TSnippetKindID) do
+    fMap[KindID] := TSnippetKind.Create(
+      KindID, Descriptions[KindID], DependIDs[KindID]
+    );
 end;
 
 destructor TSnippetKindList.Destroy;

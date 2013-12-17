@@ -138,13 +138,20 @@ type
       fID: TSnippetKindID;
       ///  <summary>Value of DisplayName property.</summary>
       fDisplayName: string;
+      ///  <summary>Set of IDs of the snippet kinds a snippet with this kind
+      ///  can depend upon.</summary>
+      fValidDependIDs: TSnippetKindIDs;
   public
     ///  <summary>Initialises record with required property values.</summary>
-    constructor Create(AID: TSnippetKindID; const ADisplayName: string);
+    constructor Create(AID: TSnippetKindID; const ADisplayName: string;
+      const AValidDependIDs: TSnippetKindIDs);
     ///  <summary>ID of snippet kind.</summary>
     property ID: TSnippetKindID read fID;
     ///  <summary>Display name (description) of snippet kind.</summary>
     property DisplayName: string read fDisplayName;
+    ///  <summary>Set of IDs of the snippet kinds a snippet with this kind can
+    ///  depend upon.</summary>
+    property ValidDependIDs: TSnippetKindIDs read fValidDependIDs;
   end;
 
   ISnippetKindList = interface(IInterface)
@@ -433,11 +440,12 @@ end;
 
 { TSnippetKind }
 
-constructor TSnippetKind.Create(AID: TSnippetKindID;
-  const ADisplayName: string);
+constructor TSnippetKind.Create(AID: TSnippetKindID; const ADisplayName: string;
+  const AValidDependIDs: TSnippetKindIDs);
 begin
   fID := AID;
   fDisplayName := ADisplayName;
+  fValidDependIDs := AValidDependIDs;
 end;
 
 { TTag }
