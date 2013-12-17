@@ -173,8 +173,7 @@ type
     procedure actClearUnitsUpdate(Sender: TObject);
     procedure chkUseHiliterClick(Sender: TObject);
   strict private
-    fSnippet: TSnippet;             // Snippet being edited: nil for new snippet
-    fEditData: TSnippetEditData;    // Record storing a snippet's editable data
+    fSnippet: ISnippet;             // Snippet being edited: nil for new snippet
     fCompileMgr: TCompileMgr;       // Manages compilation and results display
     fDependsCLBMgr:
       TSnippetsChkListMgr;          // Manages dependencies check list box
@@ -205,10 +204,6 @@ type
         @param E [in] Exception to be handled.
         @except Exceptions re-raised if not EDataEntry.
       }
-    procedure SetAllCompilerResults(const CompRes: TCompileResult);
-      {Sets all compiler results to same value.
-        @param CompRes [in] Required compiler result.
-      }
     procedure ValidateData;
       {Checks all user-entered data in all tabs of the form.
         @except EDataEntry raised if data is not valid.
@@ -217,11 +212,6 @@ type
     ///  user.</summary>
     ///  <remarks>Assumes the data has been validated.</remarks>
     procedure UpdateSnippet(ASnippet: IEditableSnippet);
-    function UpdateData: TSnippetEditData;
-      {Updates snippet's data from user entries. Assumes data has been
-      validated.
-        @return Record containing snippet's data.
-      }
     procedure UpdateReferences;
       {Updates dependencies and cross-references check lists for snippet being
       edited, depending on kind.
@@ -431,7 +421,7 @@ procedure TSnippetsEditorDlg.actSetAllQueryExecute(Sender: TObject);
     @param Sender [in] Not used.
   }
 begin
-  SetAllCompilerResults(crQuery);
+  fCompilersLBMgr.SetCompileResults(crQuery);
 end;
 
 procedure TSnippetsEditorDlg.actSetAllSuccessExecute(Sender: TObject);
@@ -439,7 +429,7 @@ procedure TSnippetsEditorDlg.actSetAllSuccessExecute(Sender: TObject);
     @param Sender [in] Not used.
   }
 begin
-  SetAllCompilerResults(crSuccess);
+  fCompilersLBMgr.SetCompileResults(crSuccess);
 end;
 
 procedure TSnippetsEditorDlg.actViewDependenciesExecute(Sender: TObject);
@@ -637,17 +627,26 @@ procedure TSnippetsEditorDlg.btnOKClick(Sender: TObject);
   snippet if all is well.
     @param Sender [in] Not used.
   }
+var
+  EditedSnippet: IEditableSnippet;
 begin
   inherited;
   try
     // Validate and record entered data
     ValidateData;
-    fEditData.Assign(UpdateData);
     // Add or update snippet
     if Assigned(fSnippet) then
-      (_Database as IDatabaseEdit).UpdateSnippet(fSnippet, fEditData)
+    begin
+      EditedSnippet := TEditableSnippet.Create(fSnippet.ID);
+      UpdateSnippet(EditedSnippet);
+      Database.UpdateSnippet(EditedSnippet);
+    end
     else
-      fSnippet := (_Database as IDatabaseEdit).AddSnippet(fEditData)
+    begin
+      EditedSnippet := Database.NewSnippet;
+      UpdateSnippet(EditedSnippet);
+      Database.AddSnippet(EditedSnippet);
+    end;
   except
     on E: Exception do
       HandleException(E);
@@ -706,7 +705,7 @@ var
 begin
   ValidateData;
   // Create snippet object from entered data
-  EditableSnippet := TEditableSnippet.Create(TSnippetID.CreateNew);
+  EditableSnippet := TEditableSnippet.CreateNew;
   UpdateSnippet(EditableSnippet);
   Result := EditableSnippet.CloneAsReadOnly;
 end;
@@ -741,7 +740,7 @@ begin
   with InternalCreate(AOwner) do
     try
       Caption := sCaption;
-      fSnippet := Snippet;
+      fSnippet := Snippet.CloneAsReadOnly;
       Result := ShowModal = mrOK;
     finally
       Free;
@@ -860,12 +859,15 @@ begin
     fXRefsCLBMgr.CheckSnippets(fSnippet.XRefs);
     // ensure snippet's units are displayed checked in units check list box
     fUnitsCLBMgr.IncludeUnits(fSnippet.RequiredModules, True);
+    fCompilersLBMgr.SetCompileResults(fSnippet.CompileResults);
   end
   else
   begin
     // We are adding a new snippet: clear all controls or set default values
     frmSourceEditor.Clear;
     chkUseHiliter.Checked := True;
+    { TODO: Permit default language to be customisable by user: modify
+            Preferences dialogue box and Preferences object ? }
     Language := TConfig.Instance.SourceCodeLanguages[
       TSourceCodeLanguageID.Create('Pascal')
     ];
@@ -876,10 +878,9 @@ begin
     frmNotes.DefaultEditMode := emPlainText;
     frmNotes.Clear;
     UpdateReferences;
+    fCompilersLBMgr.SetCompileResults(crQuery);
   end;
   frmSourceEditor.ApplyLanguage(Language);
-  // Display all compiler results
-  fCompilersLBMgr.SetCompileResults(fEditData.Props.CompilerResults);
   Assert(cbKind.ItemIndex >= 0,
     ClassName + '.InitControls: no selection in cbKind');
   Assert(cbCategories.ItemIndex >= 0,
@@ -893,14 +894,8 @@ procedure TSnippetsEditorDlg.InitForm;
   }
 begin
   inherited;
-  // Get data associated with snippet, or blank / default data if adding a new
-  // snippet
-  fEditData := (_Database as IDatabaseEdit).GetEditableSnippetInfo(fSnippet);
-  // Populate controls with dynamic data
   PopulateControls;
-  // Initialise controls to default values
   InitControls;
-  // Select first tab sheet
   pcMain.ActivePageIndex := 0;
 end;
 
@@ -951,49 +946,6 @@ begin
   for KindInfo in TSnippetKindInfoList.Items do
     fKindCBMgr.Add(KindInfo.Kind, KindInfo.DisplayName);
   // TODO: display all tags in a check list box or similar
-end;
-
-procedure TSnippetsEditorDlg.SetAllCompilerResults(
-  const CompRes: TCompileResult);
-  {Sets all compiler results to same value.
-    @param CompRes [in] Required compiler result.
-  }
-begin
-  fCompilersLBMgr.SetCompileResults(CompRes);
-end;
-
-function TSnippetsEditorDlg.UpdateData: TSnippetEditData;
-  {Updates snippet's data from user entries. Assumes data has been validated.
-    @return Record containing snippet's data.
-  }
-begin
-  Result.Init;
-  with Result do
-  begin
-    Props.Title := StrTrim(edTitle.Text);
-    Props.Kind := fKindCBMgr.GetSelected;
-    (Props.Desc as IAssignable).Assign(frmDescription.ActiveText);
-    Props.SourceCode := StrTrimRight(frmSourceEditor.SourceCode);
-    if chkUseHiliter.Checked then
-      Props.LanguageID := TSourceCodeLanguageID.Create('Pascal')
-    else
-      Props.LanguageID := TSourceCodeLanguageID.Create('Text');
-    (Props.Notes as IAssignable).Assign(frmNotes.ActiveText);
-    // TODO: Permit user to set requied tag(s)
-    // In this temporary code we preserve tags of an existing snippet and give
-    // an arbitrary "NEW" tag to new snippets.
-    if Assigned(fSnippet) then
-      Props.Tags := TTagSet.Create(fSnippet.Tags)
-    else
-    begin
-      Props.Tags := TTagSet.Create;
-      Props.Tags.Add(TTag.Create('NEW'));
-    end;
-    Props.CompilerResults := fCompilersLBMgr.GetCompileResults;
-    Refs.RequiredModules := fUnitsCLBMgr.GetCheckedUnits;
-    Refs.RequiredSnippets := fDependsCLBMgr.GetCheckedSnippets;
-    Refs.XRefs := fXRefsCLBMgr.GetCheckedSnippets;
-  end;
 end;
 
 procedure TSnippetsEditorDlg.UpdateReferences;
