@@ -116,8 +116,7 @@ type
     procedure WriteSnippetIDListProp(const Writer: TBinaryStreamWriter;
       const PropCode: TDBSnippetProp; IDs: ISnippetIDList;
       const Optional: Boolean);
-    // TODO: rename WriteKindProp method as WriteKindIDProp
-    procedure WriteKindProp(const Writer: TBinaryStreamWriter;
+    procedure WriteKindIDProp(const Writer: TBinaryStreamWriter;
       const PropCode: TDBSnippetProp; const Kind: TSnippetKindID;
       const Optional: Boolean);
     procedure WriteCompileResultsProp(const Writer: TBinaryStreamWriter;
@@ -486,7 +485,7 @@ begin
   Writer.WriteSizedString16(Date.ToISO8601String);
 end;
 
-procedure TDBNativeWriter.WriteKindProp(const Writer: TBinaryStreamWriter;
+procedure TDBNativeWriter.WriteKindIDProp(const Writer: TBinaryStreamWriter;
   const PropCode: TDBSnippetProp; const Kind: TSnippetKindID;
   const Optional: Boolean);
 begin
@@ -601,7 +600,7 @@ begin
     );
     WriteSnippetIDListProp(Writer, spXRefs, ASnippet.GetXRefs, True);
     WriteMarkupProp(Writer, spNotes, ASnippet.GetNotes, True);
-    WriteKindProp(Writer, spKind, ASnippet.GetKindID, True);
+    WriteKindIDProp(Writer, spKind, ASnippet.GetKindID, True);
     WriteCompileResultsProp(
       Writer, spCompileResults, ASnippet.GetCompileResults, True
     );

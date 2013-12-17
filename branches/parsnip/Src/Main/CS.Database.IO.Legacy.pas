@@ -320,8 +320,7 @@ procedure TDBLegacyUserDBReader.LoadSnippetProperties(SnippetNode: IXMLNode;
 
   // Returns the value of the snippet's Kind property. This is a direct match
   // with legacy snippet's property of the same name.
-  // TODO: rename function as GetKindIDProperty
-  function GetKindProperty: TSnippetKindID;
+  function GetKindIDProperty: TSnippetKindID;
     {Gets value of Kind node.
       @return Kind that matches node value.
     }
@@ -453,7 +452,7 @@ begin
     ConvertSnippetIDList(GetPascalNameListFor(cXRefNode))
   );
   ASnippet.SetNotes(GetNotesProperty);
-  ASnippet.SetKindID(GetKindProperty);
+  ASnippet.SetKindID(GetKindIDProperty);
   ASnippet.SetCompileResults(GetCompileResultsProperty);
   ASnippet.SetTags(GetTagsProperty);
   // We create a link back to the snippet's original ID in case it might be
