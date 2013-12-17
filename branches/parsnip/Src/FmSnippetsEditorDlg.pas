@@ -968,7 +968,8 @@ begin
     begin
       Snippet := Database.LookupSnippet(SnippetID);
       // Decide if snippet can be added to depends list: must be correct kind
-      if Snippet.KindID in AllSnippetKinds[Snippet.KindID].ValidDependIDs then
+      if Snippet.KindID
+        in AllSnippetKinds[fKindCBMgr.GetSelected].ValidDependIDs then
         fDependsCLBMgr.AddSnippet(Snippet);
       // Anything can be in XRefs list
       fXRefsCLBMgr.AddSnippet(Snippet);
