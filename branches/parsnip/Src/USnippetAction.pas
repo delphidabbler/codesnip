@@ -66,7 +66,8 @@ implementation
 
 uses
   // Project
-  DB.UMain, DB.USnippet, UView;
+  DB.UMain,
+  UView;
 
 
 { TSnippetAction }

@@ -28,7 +28,6 @@ uses
   Classes,
   // Project
   CS.Database.Types,
-  DB.USnippet,
   FmGenericOKDlg,
   FrCheckedTV,
   FrSelectSnippets,

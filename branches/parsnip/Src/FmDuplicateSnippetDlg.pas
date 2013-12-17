@@ -27,7 +27,6 @@ uses
   Classes,
   // Project
   CS.Database.Types,
-  DB.USnippet,
   FmGenericOKDlg,
   UBaseObjects;
 
@@ -80,8 +79,14 @@ uses
   // Delphi
   Math,
   // Project
-  DB.UMain, UCtrlArranger, UExceptions, UMessageBox, USettings,
-  USnippetValidator, UStrUtils, UUserDBMgr;
+  DB.UMain,
+  UCtrlArranger,
+  UExceptions,
+  UMessageBox,
+  USettings,
+  USnippetValidator,
+  UStrUtils,
+  UUserDBMgr;
 
 {$R *.dfm}
 

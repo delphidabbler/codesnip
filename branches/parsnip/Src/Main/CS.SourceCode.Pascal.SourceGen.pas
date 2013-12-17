@@ -26,7 +26,6 @@ uses
   // Project
   CS.ActiveText,
   CS.Database.Types,
-  DB.USnippet,
   UBaseObjects,
   UIStringList;
 

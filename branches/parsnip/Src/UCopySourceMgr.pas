@@ -22,7 +22,9 @@ interface
 
 uses
   // Project
-  UCopyViewMgr, UEncodings, UView;
+  UCopyViewMgr,
+  UEncodings,
+  UView;
 
 
 type
@@ -100,7 +102,6 @@ uses
   CS.SourceCode.Hiliter.Renderers,
   CS.SourceCode.Hiliter.Themes,
   DB.UMain,
-  DB.USnippet, // for class helper
   UPreferences,
   USnippetSourceGen;
 

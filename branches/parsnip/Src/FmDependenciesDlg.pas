@@ -30,7 +30,6 @@ uses
   ActnList,
   // Project
   CS.Database.Types,
-  DB.USnippet,
   FmGenericViewDlg,
   UBaseObjects,
   USearch,
@@ -172,9 +171,14 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Graphics,
+  SysUtils,
+  Graphics,
   // Project
-  DB.UMain, DB.USnippetKind, UBox, UColours, UCtrlArranger, UFontHelper,
+  DB.UMain,
+  DB.USnippetKind,
+  UBox, UColours,
+  UCtrlArranger,
+  UFontHelper,
   UPreferences;
 
 {$R *.dfm}

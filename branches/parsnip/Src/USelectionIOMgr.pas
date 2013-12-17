@@ -21,7 +21,8 @@ interface
 
 uses
   // Project
-  UBaseObjects, USearch;
+  UBaseObjects,
+  USearch;
 
 
 type
@@ -50,7 +51,6 @@ uses
   // Project
   CS.Database.Snippets,
   CS.Database.Types,
-  DB.USnippet,
   UConsts,
   UMessageBox,
   UOpenDialogEx,

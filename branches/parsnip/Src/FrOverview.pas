@@ -32,7 +32,6 @@ uses
   // Project
   CS.Database.Types,
   CS.UI.Helper.CollectionCtrlKVMgr,
-  DB.USnippet,
   FrTitled,
   IntfFrameMgrs,
   IntfNotifier,

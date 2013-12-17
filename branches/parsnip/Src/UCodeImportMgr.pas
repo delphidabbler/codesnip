@@ -21,9 +21,12 @@ interface
 
 uses
   // Delphi
-  Generics.Collections, Generics.Defaults,
+  Generics.Collections,
+  Generics.Defaults,
   // Project
-  UCodeImportExport, UExceptions, UIStringList;
+  UCodeImportExport,
+  UExceptions,
+  UIStringList;
 
 
 type
@@ -162,7 +165,6 @@ uses
   CS.ActiveText,
   CS.Database.Types,
   DB.UMain,
-  DB.USnippet,
   UIOUtils,
   UStrUtils;
 

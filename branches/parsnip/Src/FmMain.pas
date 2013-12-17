@@ -22,12 +22,35 @@ interface
 
 uses
   // Delphi
-  SysUtils, Menus, ExtActns, StdActns, Classes, ActnList, ImgList, Controls,
-  Forms, ExtCtrls, ComCtrls, ToolWin, Messages, AppEvnts,
+  SysUtils,
+  Menus,
+  ExtActns,
+  StdActns,
+  Classes,
+  ActnList,
+  ImgList,
+  Controls,
+  Forms,
+  ExtCtrls,
+  ComCtrls,
+  ToolWin,
+  Messages,
+  AppEvnts,
   // Project
-  Favourites.UManager, FmHelpAware, FrDetail, FrOverview, FrTitled,
-  IntfNotifier, UCompileMgr, UDialogMgr, UHistory, UMainDisplayMgr, USearch,
-  UStatusBarMgr, UUpdateCheckers, UWindowSettings;
+  Favourites.UManager,
+  FmHelpAware,
+  FrDetail,
+  FrOverview,
+  FrTitled,
+  IntfNotifier,
+  UCompileMgr,
+  UDialogMgr,
+  UHistory,
+  UMainDisplayMgr,
+  USearch,
+  UStatusBarMgr,
+  UUpdateCheckers,
+  UWindowSettings;
 
 
 type
@@ -595,7 +618,6 @@ uses
   CS.Database.Types,
   CS.Init.CommandLineOpts,
   DB.UMain,
-  DB.USnippet,
   FmSplash,
   FmTrappedBugReportDlg,
   FmWaitDlg,

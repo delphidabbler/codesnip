@@ -27,7 +27,6 @@ uses
   Classes,
   // Project
   CS.Database.Types,
-  DB.USnippet,
   UCompileMgr,
   USearch;
 

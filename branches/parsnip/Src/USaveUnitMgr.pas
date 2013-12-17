@@ -23,7 +23,6 @@ uses
   // Project
   CS.Database.Types,
   CS.SourceCode.Pascal.SourceGen,
-  DB.USnippet,
   UIStringList,
   USourceFileInfo,
   USaveSourceMgr;

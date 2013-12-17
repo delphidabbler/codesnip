@@ -113,7 +113,6 @@ uses
   // Project
   CS.Database.Types,
   DB.UMain,
-  DB.USnippet,
   UBox,
   UExceptions;
 
