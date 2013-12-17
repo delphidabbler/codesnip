@@ -33,12 +33,6 @@ type
   }
   TSnippetValidator = class(TNoConstructObject)
   strict private
-    const
-      { TODO: rename this const OR eliminate it in favour of db's
-              GetAllSnippetKinds method }
-      ///  <summary>Set of all possible snippet kinds.</summary>
-      cAllSnippetKinds: TSnippetKindIDs =
-        [skFreeform, skRoutine, skConstant, skTypeDef, skUnit, skClass];
     class function ValidateNotes(Notes: IActiveText; out ErrorMsg: string):
       Boolean;
       {Validates a snippet's notes.
@@ -109,14 +103,6 @@ type
           returned.
         @return True if snippet valid or False if not.
       }
-    // TODO: rename Kind parameter as KindID
-    class function ValidDependsKinds(const Kind: TSnippetKindID):
-      TSnippetKindIDs;
-      {Gets set of snippet kinds that are valid in a snippet's dependency list.
-        @param Kind [in] Kind of snippet for which valid dependency kinds
-          required.
-        @return Set of valid kinds for snippets in dependency list.
-      }
   end;
 
 
@@ -161,7 +147,6 @@ class function TSnippetValidator.ValidateDependsList(Snippet: ISnippet;
     @return True if dependency list is valid or False if not.
   }
 
-  // ---------------------------------------------------------------------------
   function DependsListIsCircular(Snippet: ISnippet;
     DependsList: ISnippetIDList): Boolean;
     {Checks if dependency list is circular, i.e. a snippet is referenced in own
@@ -187,40 +172,40 @@ class function TSnippetValidator.ValidateDependsList(Snippet: ISnippet;
     end;
   end;
 
-  // TODO: rename Kinds parameter as KindIDs
   function DependsListHasKinds(DependsList: ISnippetIDList;
-    const Kinds: TSnippetKindIDs): Boolean;
-    {Recursively checks if a dependency list contains snippets of specified
-    kinds.
+    const KindIDs: TSnippetKindIDs): Boolean;
+    {Recursively checks if a dependency list contains only snippets of the given
+    kind IDs.
       @param DependsList [in] A dependency list.
-      @param Kinds [in] Set of snippet kinds to check for.
-      @return True if one or more of specified kinds are found, false if not.
+      @param KindIDs [in] Set of IDs of snippets to check for.
+      @return True if one or more of specified KindIDs are found, false if not.
     }
   var
     RequiredSnippetID: TSnippetID;
     RequiredSnippet: ISnippet;
   begin
     Result := False;
-    if Kinds = [] then
-      Exit; // no kinds specified so depends list can't have these kinds!
+    if KindIDs = [] then
+      Exit; // no KindIDs specified so depends list can't have these kinds!
     for RequiredSnippetID in DependsList do
     begin
       RequiredSnippet := Database.LookupSnippet(RequiredSnippetID);
-      if RequiredSnippet.KindID in Kinds then
+      if RequiredSnippet.KindID in KindIDs then
         Result := True
       else
-        Result := DependsListHasKinds(RequiredSnippet.RequiredSnippets, Kinds);
+        Result := DependsListHasKinds(
+          RequiredSnippet.RequiredSnippets, KindIDs
+        );
       if Result then
         Exit;
     end;
   end;
-  // ---------------------------------------------------------------------------
 
 resourcestring
   // Error messages
   sInvalidKind = 'Invalid snippet kind "%0:s" in depends list for snippet '
-    + 'named "%1:s"';
-  sCircular = '%0:s Snippet named "%1:s" cannot depend on itself.';
+    + '"%1:s"';
+  sCircular = '%0:s Snippet "%1:s" cannot depend on itself.';
 var
   DeniedDepends: TSnippetKindIDs;
   AllKinds: ISnippetKindList;
@@ -239,7 +224,7 @@ begin
   end;
   // Now check kinds of snippets in dependency list for validity.
   // determine which snippet kinds can't appear in a dependency list
-  DeniedDepends := cAllSnippetKinds - ValidDependsKinds(Snippet.KindID);
+  DeniedDepends := AllKinds.IDs - AllKinds[Snippet.KindID].ValidDependIDs;
   // check dependency list for invalid kinds
   Result := not DependsListHasKinds(Snippet.RequiredSnippets, DeniedDepends);
   if not Result then
@@ -372,23 +357,6 @@ begin
   Result := not StrIsBlank(Title);
   if not Result then
     ErrorMsg := sErrNoName;
-end;
-
-class function TSnippetValidator.ValidDependsKinds(
-  const Kind: TSnippetKindID): TSnippetKindIDs;
-  {Gets set of snippet kinds that are valid in a snippet's dependency list.
-    @param Kind [in] Kind of snippet for which valid dependency kinds required.
-    @return Set of valid kinds for snippets in dependenc list.
-  }
-begin
-  case Kind of
-    skFreeform: Result := [skRoutine, skConstant, skTypeDef, skFreeform];
-    skRoutine: Result := [skRoutine, skConstant, skTypeDef, skClass];
-    skConstant: Result := [skConstant, skTypeDef];
-    skTypeDef: Result := [skConstant, skTypeDef, skClass];
-    skUnit: Result := [];
-    skClass: Result := [skRoutine, skConstant, skTypeDef, skClass];
-  end;
 end;
 
 end.
