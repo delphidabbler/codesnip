@@ -24,7 +24,6 @@ uses
   CS.Database.SnippetsTable,
   CS.Database.Types,
   CS.Utils.Dates,
-  DB.USnippet,
   UMultiCastEvents,
   USingleton;
 
@@ -252,9 +251,9 @@ begin
     // TODO: scan all snippets and remove references that match snippet ID
     // Delete snippet for XRef or Depends list of referencing snippets
     for Referrer in Referrers do
-      fSnippetsTable.Get(Referrer).XRefs.Remove(ASnippetID);
+      fSnippetsTable.Get(Referrer).GetXRefs.Remove(ASnippetID);
     for Dependent in Dependents do
-      fSnippetsTable.Get(Dependent).RequiredSnippets.Remove(
+      fSnippetsTable.Get(Dependent).GetRequiredSnippets.Remove(
         ASnippetID
       );
     // Delete snippet itself
@@ -286,7 +285,7 @@ var
 begin
   Result := TSnippetIDList.Create(fSnippetsTable.Size);
   for Snippet in fSnippetsTable do
-    Result.Add(Snippet.ID);
+    Result.Add(Snippet.GetID);
 end;
 
 function TDatabase.GetAllTags: ITagSet;
@@ -399,7 +398,7 @@ begin
   Result := TSnippetIDList.Create;
   for Snippet in fSnippetsTable do
     if FilterFn(Snippet.CloneAsReadOnly) then
-      Result.Add(Snippet.ID)
+      Result.Add(Snippet.GetID)
 end;
 
 function TDatabase.SnippetCount: Integer;
