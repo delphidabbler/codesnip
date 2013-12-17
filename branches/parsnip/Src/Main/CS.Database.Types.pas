@@ -130,22 +130,18 @@ type
   TSnippetKindIDs = set of TSnippetKindID;
 
 type
-  // TODO: Rename as TSnippetKind once TSnippetKind renamed as TSnippetKindID
-  // TODO: Rename fields and parameters of type TSnippetKindID with better names
-  ///  <summary>
-  ///  Provides read only information about a snippet kind
-  ///  </summary>
+  ///  <summary>Encapsulates information about a snippet kind.</summary>
   TSnippetKind = record
   strict private
     var
-      ///  <summary>Value of Kind property.</summary>
+      ///  <summary>Value of ID property.</summary>
       fID: TSnippetKindID;
       ///  <summary>Value of DisplayName property.</summary>
       fDisplayName: string;
   public
     ///  <summary>Initialises record with required property values.</summary>
     constructor Create(AID: TSnippetKindID; const ADisplayName: string);
-    ///  <summary>Snippet kind.</summary>
+    ///  <summary>ID of snippet kind.</summary>
     property ID: TSnippetKindID read fID;
     ///  <summary>Display name (description) of snippet kind.</summary>
     property DisplayName: string read fDisplayName;
