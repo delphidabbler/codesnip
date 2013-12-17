@@ -25,7 +25,6 @@ uses
   // Project
   CS.Database.Types,
   Compilers.UGlobals,
-  DB.USnippetKind,
   UExceptions,
   UIStringList,
   UStructs,

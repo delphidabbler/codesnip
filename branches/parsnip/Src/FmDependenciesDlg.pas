@@ -175,7 +175,6 @@ uses
   Graphics,
   // Project
   DB.UMain,
-  DB.USnippetKind,
   UBox, UColours,
   UCtrlArranger,
   UFontHelper,

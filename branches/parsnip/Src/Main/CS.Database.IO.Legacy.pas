@@ -91,7 +91,6 @@ uses
   CS.Database.Tags,
   CS.SourceCode.Languages,
   Compilers.UGlobals,
-  DB.USnippetKind,
   UComparers,
   UConsts,
   UDOSDateTime,

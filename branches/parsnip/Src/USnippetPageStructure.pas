@@ -22,7 +22,6 @@ uses
   Generics.Collections,
   // Project
   CS.Database.Types,
-  DB.USnippetKind,
   IntfCommon,
   UBaseObjects,
   UContainers,
