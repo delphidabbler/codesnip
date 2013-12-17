@@ -300,7 +300,6 @@ uses
   // Project
   CS.Database.Types,
   DB.UMain,
-  DB.USnippet,
   UBox,
   UPreferences,
   UQuery,
@@ -418,7 +417,6 @@ procedure TMainDisplayMgr.DBChangeEventHandler(Sender: TObject;
   const EvtInfo: IInterface);
 var
   EventInfo: IDatabaseChangeEventInfo;  // information about the event
-  Snippet: TSnippet;
 
   ///  <summary>Extracts snippet ID from EvtInfo object.</summary>
   function EvtInfoToSnippetID: TSnippetID;
