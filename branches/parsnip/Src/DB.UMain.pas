@@ -108,6 +108,7 @@ type
     var
       fSnippetsTable: TDBSnippetsTable;
       fAllTags: ITagSet;
+      fAllSnippetKinds: ISnippetKindList;
       fLastModified: TUTCDateTime;
       fDirty: Boolean;
       fChangeEvents: TMulticastEvents;  // List of change event handlers
@@ -141,6 +142,7 @@ type
     function SelectSnippets(FilterFn: TDBFilterFn): ISnippetIDList;
     function GetAllSnippets: ISnippetIDList;
     function GetAllTags: ITagSet;
+    function GetAllSnippetKinds: ISnippetKindList;
     function SnippetExists(const ASnippetID: TSnippetID): Boolean;
     function SnippetCount: Integer;
     function IsEmpty: Boolean;
@@ -179,6 +181,7 @@ uses
   CS.Database.IO.Types,
   CS.Database.Snippets,
   CS.Database.Tags,
+  DB.USnippetKind,
   UBox,
   UExceptions,
   UQuery,
@@ -279,6 +282,11 @@ begin
   fLastModified := TUTCDateTime.Now;
 end;
 
+function TDatabase.GetAllSnippetKinds: ISnippetKindList;
+begin
+  Result := fAllSnippetKinds;
+end;
+
 function TDatabase.GetAllSnippets: ISnippetIDList;
 var
   Snippet: TDBSnippet;
@@ -328,6 +336,7 @@ begin
   inherited;
   fSnippetsTable := TDBSnippetsTable.Create;
   fAllTags := TTagSet.Create;
+  fAllSnippetKinds := TSnippetKindList.Create;
   fChangeEvents := TMultiCastEvents.Create(Self);
 end;
 
