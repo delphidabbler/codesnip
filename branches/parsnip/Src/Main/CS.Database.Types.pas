@@ -129,6 +129,26 @@ type
   ///  <summary>Set of supported snippet kinds.</summary>
   TSnippetKinds = set of TSnippetKind;
 
+type
+  ///  <summary>
+  ///  Provides read only information about a snippet kind
+  ///  </summary>
+  TSnippetKindInfo = record
+  strict private
+    var
+      ///  <summary>Value of Kind property.</summary>
+      fKind: TSnippetKind;
+      ///  <summary>Value of DisplayName property.</summary>
+      fDisplayName: string;
+  public
+    ///  <summary>Initialises record with required property values.</summary>
+    constructor Create(AKind: TSnippetKind; const ADisplayName: string);
+    ///  <summary>Snippet kind.</summary>
+    property Kind: TSnippetKind read fKind;
+    ///  <summary>Display name (description) of snippet kind.</summary>
+    property DisplayName: string read fDisplayName;
+  end;
+
   ETag = class(Exception);
 
   TTag = record
@@ -399,6 +419,15 @@ end;
 function TSnippetID.TComparator.GetHashCode(const Value: TSnippetID): Integer;
 begin
   Result := Value.Hash;
+end;
+
+{ TSnippetKindInfo }
+
+constructor TSnippetKindInfo.Create(AKind: TSnippetKind;
+  const ADisplayName: string);
+begin
+  fKind := AKind;
+  fDisplayName := ADisplayName;
 end;
 
 { TTag }

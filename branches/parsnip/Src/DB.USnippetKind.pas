@@ -28,25 +28,6 @@ uses
 
 type
   ///  <summary>
-  ///  Provides read only information about a snippet kind
-  ///  </summary>
-  TSnippetKindInfo = record
-  strict private
-    ///  <summary>Value of Kind property.</summary>
-    fKind: TSnippetKind;
-    ///  <summary>Value of DisplayName property.</summary>
-    fDisplayName: string;
-  public
-    ///  <summary>Initialises record with required property values.</summary>
-    constructor Create(AKind: TSnippetKind; const ADisplayName: string);
-    ///  <summary>Snippet kind.</summary>
-    property Kind: TSnippetKind read fKind;
-    ///  <summary>Display name (description) of snippet kind.</summary>
-    property DisplayName: string read fDisplayName;
-  end;
-
-type
-  ///  <summary>
   ///  Static class that provides a read-only, enumerable, list of
   ///  TSnippetKindInfo records, one for each snippet kind.
   ///  </summary>
@@ -75,15 +56,6 @@ type
 
 implementation
 
-
-{ TSnippetKindInfo }
-
-constructor TSnippetKindInfo.Create(AKind: TSnippetKind;
-  const ADisplayName: string);
-begin
-  fKind := AKind;
-  fDisplayName := ADisplayName;
-end;
 
 { TSnippetKindInfoList }
 
