@@ -126,18 +126,6 @@ type
   strict protected
     procedure Initialize; override;
     procedure Finalize; override;
-  protected
-    { TODO: Remove these properties when _TDatabase no longer needs access to
-            them }
-    // NOTE: These properties have been made protected so that _TDatabase can
-    //       directly access them using unit scope.
-    //       DON'T make this section strict.
-    property __SnippetsTable: TDBSnippetsTable read fSnippetsTable;
-    property __AllTags: ITagSet read fAllTags;
-    procedure __SetDirty(Dirty: Boolean);
-    property __Updated: Boolean read fDirty write __SetDirty;
-    procedure __TriggerEvent(const Kind: TDatabaseChangeEventKind;
-      const Info: TObject = nil);
   public
     class property Instance: TDatabase read GetInstance;
   public
@@ -499,25 +487,6 @@ begin
     TriggerNullDataEvent(evChangeEnd);
     DBSnippet.Free;
   end;
-end;
-
-procedure TDatabase.__SetDirty(Dirty: Boolean);
-begin
-  if Dirty then
-    FlagUpdate
-  else
-    fDirty := False;
-end;
-
-procedure TDatabase.__TriggerEvent(const Kind: TDatabaseChangeEventKind;
-  const Info: TObject);
-begin
-  if not Assigned(Info) then
-    TriggerNullDataEvent(Kind)
-  else if (Info is TSnippet) then
-    TriggerSnippetChangeEvent(Kind, (Info as TSnippet).ID)
-  else
-    raise EBug.CreateFmt('Unexpected Info object type "%s"', [Info.ClassName]);
 end;
 
 { TDatabase.TEventInfo }
