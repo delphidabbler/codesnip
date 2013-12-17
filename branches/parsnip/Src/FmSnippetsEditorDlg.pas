@@ -36,7 +36,6 @@ uses
   CS.UI.Frames.CodeEditor,
   CS.UI.Helper.CollectionCtrlKVMgr,
   Compilers.UGlobals,
-  DB.USnippet,
   FmGenericOKDlg,
   FmSnippetsEditorDlg.FrActiveTextEditor,
   UBaseObjects,
@@ -244,8 +243,7 @@ type
           dialog is aligned. May be nil.
         @return True if user OKs, False if cancels.
       }
-    class function EditSnippet(AOwner: TComponent;
-      const Snippet: TSnippet): Boolean;
+    class function EditSnippet(AOwner: TComponent; Snippet: ISnippet): Boolean;
       {Displays dialog box to enable user to edit a snippet.
         @param AOwner [in] Control that owns the dialog box, over which the
           dialog is aligned. May be nil.
@@ -727,7 +725,7 @@ begin
 end;
 
 class function TSnippetsEditorDlg.EditSnippet(AOwner: TComponent;
-  const Snippet: TSnippet): Boolean;
+  Snippet: ISnippet): Boolean;
   {Displays dialog box to enable user to edit a snippet.
     @param AOwner [in] Control that owns the dialog box, over which the dialog
       is aligned. May be nil.
@@ -740,7 +738,7 @@ begin
   with InternalCreate(AOwner) do
     try
       Caption := sCaption;
-      fSnippet := Snippet.CloneAsReadOnly;
+      fSnippet := Snippet;
       Result := ShowModal = mrOK;
     finally
       Free;
