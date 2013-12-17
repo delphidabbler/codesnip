@@ -32,7 +32,7 @@ type
   TSnippetKindList = class(TInterfacedObject, ISnippetKindList)
   strict private
     type
-      TEnumerator = class(TInterfacedObject, IEnumerator<TSnippetKindInfo>)
+      TEnumerator = class(TInterfacedObject, IEnumerator<TSnippetKind>)
       strict private
         var
           fAtStart: Boolean;
@@ -40,19 +40,19 @@ type
           fMap: TSnippetKindList;
       public
         constructor Create(const AMap: TSnippetKindList);
-        function GetCurrent: TSnippetKindInfo;
+        function GetCurrent: TSnippetKind;
         function MoveNext: Boolean;
       end;
   strict private
     var
-      fMap: array[TSnippetKindID] of TSnippetKindInfo;
+      fMap: array[TSnippetKindID] of TSnippetKind;
   public
     constructor Create;
     destructor Destroy; override;
-    function GetEnumerator: IEnumerator<TSnippetKindInfo>;
-    function GetItem(const KindID: TSnippetKindID): TSnippetKindInfo;
-    function First: TSnippetKindInfo;
-    function Last: TSnippetKindInfo;
+    function GetEnumerator: IEnumerator<TSnippetKind>;
+    function GetItem(const KindID: TSnippetKindID): TSnippetKind;
+    function First: TSnippetKind;
+    function Last: TSnippetKind;
   end;
 
 
@@ -80,7 +80,7 @@ var
 begin
   inherited Create;
   for Kind := Low(TSnippetKindID) to High(TSnippetKindID) do
-    fMap[Kind] := TSnippetKindInfo.Create(Kind, Descriptions[Kind]);
+    fMap[Kind] := TSnippetKind.Create(Kind, Descriptions[Kind]);
 end;
 
 destructor TSnippetKindList.Destroy;
@@ -88,23 +88,23 @@ begin
   inherited;
 end;
 
-function TSnippetKindList.First: TSnippetKindInfo;
+function TSnippetKindList.First: TSnippetKind;
 begin
   Result := fMap[Low(TSnippetKindID)];
 end;
 
-function TSnippetKindList.GetEnumerator: IEnumerator<TSnippetKindInfo>;
+function TSnippetKindList.GetEnumerator: IEnumerator<TSnippetKind>;
 begin
   Result := TEnumerator.Create(Self);
 end;
 
 function TSnippetKindList.GetItem(const KindID: TSnippetKindID):
-  TSnippetKindInfo;
+  TSnippetKind;
 begin
   Result := fMap[KindID];
 end;
 
-function TSnippetKindList.Last: TSnippetKindInfo;
+function TSnippetKindList.Last: TSnippetKind;
 begin
   Result := fMap[High(TSnippetKindID)];
 end;
@@ -116,21 +116,21 @@ begin
   inherited Create;
   fMap := AMap;
   fAtStart := True;
-  fCurrent := AMap.First.Kind;
+  fCurrent := AMap.First.ID;
 end;
 
-function TSnippetKindList.TEnumerator.GetCurrent: TSnippetKindInfo;
+function TSnippetKindList.TEnumerator.GetCurrent: TSnippetKind;
 begin
   Result := fMap.GetItem(fCurrent);
 end;
 
 function TSnippetKindList.TEnumerator.MoveNext: Boolean;
 begin
-  if fCurrent = fMap.Last.Kind then
+  if fCurrent = fMap.Last.ID then
     Exit(False);
   if fAtStart then
   begin
-    fCurrent := fMap.First.Kind;
+    fCurrent := fMap.First.ID;
     fAtStart := False;
   end
   else

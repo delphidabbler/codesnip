@@ -131,10 +131,12 @@ type
   ///  </summary>
   ISnippetKindView = interface(IView)
     ['{FE074E72-857F-4D43-A17D-A951830B78E4}']
+    // TODO: rename GetKindInfo and GetKind
+    // TODO: rename KindInfo property as Kind
     ///  <summary>Gets info about snippet kind associated with view.</summary>
-    function GetKindInfo: TSnippetKindInfo;
+    function GetKindInfo: TSnippetKind;
     ///  <summary>Info about snippet kind associated with view.</summary>
-    property KindInfo: TSnippetKindInfo read GetKindInfo;
+    property KindInfo: TSnippetKind read GetKindInfo;
   end;
 
 type
@@ -179,9 +181,10 @@ type
     ///  <summary>Creates a tag view instance associated with a given tag.
     ///  </summary>
     class function CreateTagView(const Tag: TTag): IView;
+    // TODO: rename KindInfo parameter ans Kind
     ///  <summary>Creates a snippet kind view instance associated with a given
     ///  snippet kind.</summary>
-    class function CreateSnippetKindView(const KindInfo: TSnippetKindInfo):
+    class function CreateSnippetKindView(const KindInfo: TSnippetKind):
       IView;
     ///  <summary>Creates an initial letter view instance associated with a
     ///  given letter.</summary>
@@ -386,8 +389,9 @@ type
   )
   strict private
     var
+      // TODO: rename fKindInfo field as fKind
       ///  <summary>Snippet kind associated with view.</summary>
-      fKindInfo: TSnippetKindInfo;
+      fKindInfo: TSnippetKind;
     type
       ///  <summary>Implementation of IViewKey for snippet kind view.
       ///  </summary>
@@ -406,8 +410,9 @@ type
         function IsEqual(const Key: IViewKey): Boolean;
       end;
   public
+    // TODO: rename KindInfo parameter as Kind
     ///  <summary>Constructs view for a specified snippet kind.</summary>
-    constructor Create(const KindInfo: TSnippetKindInfo);
+    constructor Create(const KindInfo: TSnippetKind);
     ///  <summary>Checks if this view is equal to the one passed as a parameter.
     ///  </summary>
     ///  <remarks>Method of IView.</remarks>
@@ -424,9 +429,10 @@ type
     ///  <summary>Checks if view is a grouping.</summary>
     ///  <remarks>Method of IView.</remarks>
     function IsGrouping: Boolean;
+    // TODO: rename method as GetKind
     ///  <summary>Gets info about snippet kind associated with view.</summary>
     ///  <remarks>Method of ISnippetKindView.</remarks>
-    function GetKindInfo: TSnippetKindInfo;
+    function GetKindInfo: TSnippetKind;
   end;
 
 type
@@ -670,7 +676,7 @@ end;
 
 { TSnippetKindView }
 
-constructor TSnippetKindView.Create(const KindInfo: TSnippetKindInfo);
+constructor TSnippetKindView.Create(const KindInfo: TSnippetKind);
 begin
   inherited Create;
   fKindInfo := KindInfo;
@@ -683,10 +689,10 @@ end;
 
 function TSnippetKindView.GetKey: IViewKey;
 begin
-  Result := TKey.Create(GetKindInfo.Kind);
+  Result := TKey.Create(GetKindInfo.ID);
 end;
 
-function TSnippetKindView.GetKindInfo: TSnippetKindInfo;
+function TSnippetKindView.GetKindInfo: TSnippetKind;
 begin
   Result := fKindInfo;
 end;
@@ -697,7 +703,7 @@ var
 begin
   if not Supports(View, ISnippetKindView, SnipKindView) then
     Exit(False);
-  Result := GetKindInfo.Kind = SnipKindView.KindInfo.Kind;
+  Result := GetKindInfo.ID = SnipKindView.KindInfo.ID;
 end;
 
 function TSnippetKindView.IsGrouping: Boolean;
@@ -831,8 +837,8 @@ begin
   Result := TNullView.Create;
 end;
 
-class function TViewFactory.CreateSnippetKindView(
-  const KindInfo: TSnippetKindInfo): IView;
+class function TViewFactory.CreateSnippetKindView(const KindInfo: TSnippetKind):
+  IView;
 begin
   Result := TSnippetKindView.Create(KindInfo);
 end;

@@ -938,11 +938,11 @@ procedure TSnippetsEditorDlg.PopulateControls;
   {Populates controls with dynamic data.
   }
 var
-  SnippetKind: TSnippetKindInfo;
+  SnippetKind: TSnippetKind;
 begin
   // Display all kinds in drop down list
   for SnippetKind in Database.GetAllSnippetKinds do
-    fKindCBMgr.Add(SnippetKind.Kind, SnippetKind.DisplayName);
+    fKindCBMgr.Add(SnippetKind.ID, SnippetKind.DisplayName);
   // TODO: display all tags in a check list box or similar
 end;
 

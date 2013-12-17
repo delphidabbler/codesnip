@@ -269,7 +269,7 @@ end;
 
 constructor TSnippetLayoutPrefsFrame.Create(AOwner: TComponent);
 var
-  SnippetKind: TSnippetKindInfo;
+  SnippetKind: TSnippetKind;
   SnippetKinds: ISnippetKindList;
 begin
   inherited;
@@ -287,8 +287,8 @@ begin
   );
   SnippetKinds := Database.GetAllSnippetKinds;
   for SnippetKind in SnippetKinds do
-    fSnippetKindsCBMgr.Add(SnippetKind.Kind, SnippetKind.DisplayName);
-  fSnippetKindsCBMgr.Select(SnippetKinds.First.Kind);
+    fSnippetKindsCBMgr.Add(SnippetKind.ID, SnippetKind.DisplayName);
+  fSnippetKindsCBMgr.Select(SnippetKinds.First.ID);
 end;
 
 procedure TSnippetLayoutPrefsFrame.Deactivate(const Prefs: IPreferences);

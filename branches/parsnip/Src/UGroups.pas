@@ -143,14 +143,16 @@ type
   }
   TSnipKindGroupItem = class(TGroupItem)
   strict private
-    var fSnipKindInfo: TSnippetKindInfo;  // Snippet kind associated with group
+    // TODO: rename field as fSnippetKind
+    var fSnipKindInfo: TSnippetKind;  // Snippet kind associated with group
   strict protected
     function GetTitle: string; override;
       {Gets group title from snippet kind description.
         @return Required title.
       }
   public
-    constructor Create(const SnipKindInfo: TSnippetKindInfo);
+    // TODO: rename parameter as ASnippetKind
+    constructor Create(const SnipKindInfo: TSnippetKind);
       {Object constructor. Sets up group for a kind of snippet.
         @param SnippetKindInfo [in] Information about snippet kind represented
           by the group.
@@ -163,7 +165,8 @@ type
         @return -ve if this item sorts before Item, 0 if same and +ve if this
           item sorts after Item.
       }
-    property SnipKindInfo: TSnippetKindInfo read fSnipKindInfo;
+    // TODO: rename property as SnippetKind
+    property SnipKindInfo: TSnippetKind read fSnipKindInfo;
       {Kind of snippet represented by this group}
   end;
 
@@ -537,7 +540,7 @@ procedure TSnipKindGrouping.Populate;
   snippets.
   }
 var
-  SnippetKind: TSnippetKindInfo;    // each snippet kind
+  SnippetKind: TSnippetKind;        // each snippet kind
   Item: TGroupItem;                 // group item for each snippet kind
   SnippetID: TSnippetID;            // each of each snippet to be grouped
   Snippet: ISnippet;                // each snippet to be grouped
@@ -550,7 +553,7 @@ begin
   begin
     Item := TSnipKindGroupItem.Create(SnippetKind);
     AddItem(Item);
-    Lookup[SnippetKind.Kind] := Item;
+    Lookup[SnippetKind.ID] := Item;
   end;
   // Add each snippet to required group
   for SnippetID in SnippetIDList do
@@ -576,7 +579,7 @@ begin
   Result := StrCompareText(GetTitle, (Item as TSnipKindGroupItem).GetTitle);
 end;
 
-constructor TSnipKindGroupItem.Create(const SnipKindInfo: TSnippetKindInfo);
+constructor TSnipKindGroupItem.Create(const SnipKindInfo: TSnippetKind);
   {Object constructor. Sets up group for a kind of snippet.
     @param SnippetKindInfo [in] Information about snippet kind represented by
       the group.

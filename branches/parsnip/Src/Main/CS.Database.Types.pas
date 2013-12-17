@@ -135,29 +135,29 @@ type
   ///  <summary>
   ///  Provides read only information about a snippet kind
   ///  </summary>
-  TSnippetKindInfo = record
+  TSnippetKind = record
   strict private
     var
       ///  <summary>Value of Kind property.</summary>
-      fKind: TSnippetKindID;
+      fID: TSnippetKindID;
       ///  <summary>Value of DisplayName property.</summary>
       fDisplayName: string;
   public
     ///  <summary>Initialises record with required property values.</summary>
-    constructor Create(AKind: TSnippetKindID; const ADisplayName: string);
+    constructor Create(AID: TSnippetKindID; const ADisplayName: string);
     ///  <summary>Snippet kind.</summary>
-    property Kind: TSnippetKindID read fKind;   // TODO: rename as "ID"
+    property ID: TSnippetKindID read fID;
     ///  <summary>Display name (description) of snippet kind.</summary>
     property DisplayName: string read fDisplayName;
   end;
 
   ISnippetKindList = interface(IInterface)
     ['{7C6C9E75-F17F-4BF2-AA63-DE8C8070A348}']
-    function GetEnumerator: IEnumerator<TSnippetKindInfo>;
-    function GetItem(const KindID: TSnippetKindID): TSnippetKindInfo;
-    function First: TSnippetKindInfo;
-    function Last: TSnippetKindInfo;
-    property Items[const KindID: TSnippetKindID]: TSnippetKindInfo read GetItem;
+    function GetEnumerator: IEnumerator<TSnippetKind>;
+    function GetItem(const KindID: TSnippetKindID): TSnippetKind;
+    function First: TSnippetKind;
+    function Last: TSnippetKind;
+    property Items[const KindID: TSnippetKindID]: TSnippetKind read GetItem;
       default;
   end;
 
@@ -437,12 +437,12 @@ begin
   Result := Value.Hash;
 end;
 
-{ TSnippetKindInfo }
+{ TSnippetKind }
 
-constructor TSnippetKindInfo.Create(AKind: TSnippetKindID;
+constructor TSnippetKind.Create(AID: TSnippetKindID;
   const ADisplayName: string);
 begin
-  fKind := AKind;
+  fID := AID;
   fDisplayName := ADisplayName;
 end;
 
