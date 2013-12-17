@@ -106,8 +106,7 @@ type
           non-standard value.
         @return Value of node, or default value.
       }
-    // TODO: rename GetSnippetKind method as GetSnippetKindID
-    class function GetSnippetKind(const XMLDoc: IXMLDocumentEx;
+    class function GetSnippetKindID(const XMLDoc: IXMLDocumentEx;
       const SnippetNode: IXMLNode; const Default: TSnippetKindID):
       TSnippetKindID;
       {Gets value of <kind> node of a snippet in an XML document.
@@ -115,7 +114,7 @@ type
         @param SnippetNode [in] Snippet node that contains kind tag.
         @param Default [in] Value to use if node doesn't exist or has
           non-standard value.
-        @return Required snippet kind.
+        @return Required snippet kind's ID.
       }
     class function GetHiliteSource(const XMLDoc: IXMLDocumentEx;
       const SnippetNode: IXMLNode; const Default: Boolean): Boolean;
@@ -372,14 +371,14 @@ begin
       NameList.Add(NameNode.Text);
 end;
 
-class function TXMLDocHelper.GetSnippetKind(const XMLDoc: IXMLDocumentEx;
+class function TXMLDocHelper.GetSnippetKindID(const XMLDoc: IXMLDocumentEx;
   const SnippetNode: IXMLNode; const Default: TSnippetKindID): TSnippetKindID;
   {Gets value of <kind> node of a snippet in an XML document.
     @param XMLDoc [in] XML document containing snippet.
     @param SnippetNode [in] Snippet node that contains kind tag.
     @param Default [in] Value to use if node doesn't exist or has non-standard
       value.
-    @return Required snippet kind.
+    @return Required snippet kind's ID.
   }
 var
   Value: string;  // text value of Kind node

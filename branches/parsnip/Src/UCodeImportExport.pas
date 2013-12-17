@@ -573,7 +573,7 @@ begin
             Snippet.KindID := skFreeform;
         else // later versions
           // for later versions we have Kind value: use Freeform if missing
-          Snippet.KindID := TXMLDocHelper.GetSnippetKind(
+          Snippet.KindID := TXMLDocHelper.GetSnippetKindID(
             fXMLDoc, SnippetNode, skFreeForm
           );
       end;

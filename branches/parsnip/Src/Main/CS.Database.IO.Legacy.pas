@@ -335,9 +335,7 @@ procedure TDBLegacyUserDBReader.LoadSnippetProperties(SnippetNode: IXMLNode;
       Default := skRoutine
     else
       Default := skFreeform;
-    Result := TXMLDocHelper.GetSnippetKind(
-      fXMLDoc, SnippetNode, Default
-    );
+    Result := TXMLDocHelper.GetSnippetKindID(fXMLDoc, SnippetNode, Default);
   end;
 
   // Returns mark-up of snippet's Notes property. This value is derived from
