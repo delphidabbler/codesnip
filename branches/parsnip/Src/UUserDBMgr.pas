@@ -100,7 +100,6 @@ uses
   // Project
   CS.Init.CommandLineOpts,
   DB.UMain,
-  DB.USnippet,
   FmDuplicateSnippetDlg,
   FmSnippetsEditorDlg,
   FmUserDataPathDlg,
@@ -327,12 +326,12 @@ class procedure TUserDBMgr.DeleteSnippet(ViewItem: IView);
   function SnippetNames(const IDList: ISnippetIDList): IStringList;
   var
     ID: TSnippetID;     // loops through all IDs in list
-    Snippet: TSnippet;  // snippet corresponding to ID
+    Snippet: ISnippet;  // snippet corresponding to ID
   begin
     Result := TIStringList.Create;
     for ID in IDList do
     begin
-      Snippet := _Database.Lookup(ID);
+      Snippet := Database.LookupSnippet(ID);
       Result.Add(Snippet.Title);
     end;
   end;
@@ -341,7 +340,7 @@ var
   Dependents: ISnippetIDList; // list of dependent snippet IDs
   Referrers: ISnippetIDList;  // list referring snippet IDs
   ConfirmMsg: string;         // message displayed to confirm deletion
-  Snippet: TSnippet;          // snippet being deleted
+  Snippet: ISnippet;          // snippet being deleted
 resourcestring
   // Prompts & error messages
   sConfirmDelete = 'Please confirm you wish to delete %s';
@@ -353,7 +352,7 @@ resourcestring
 begin
   Assert(Supports(ViewItem, ISnippetView),
     ClassName + '.Delete: Current view is not a snippet');
-  Snippet := _Database.Lookup((ViewItem as ISnippetView).SnippetID);
+  Snippet := Database.LookupSnippet((ViewItem as ISnippetView).SnippetID);
   // Check if snippet has dependents: don't allow deletion if so
   Dependents := Database.GetDependentsOf(Snippet.ID);
   if Dependents.Count > 0 then
@@ -395,9 +394,9 @@ end;
 
 class procedure TUserDBMgr.EditSnippet(const SnippetID: TSnippetID);
 var
-  Snippet: TSnippet;    // reference to snippet to be edited
+  Snippet: ISnippet;    // reference to snippet to be edited
 begin
-  if not _Database.TryLookup(SnippetID, Snippet) then
+  if not Database.TryLookupSnippet(SnippetID, Snippet) then
     raise EBug.Create(ClassName + '.EditSnippet: Snippet not in database');
   TSnippetsEditorDlg.EditSnippet(nil, Snippet);
 end;
