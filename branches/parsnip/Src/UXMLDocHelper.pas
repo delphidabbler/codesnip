@@ -141,7 +141,7 @@ type
         @param ListName [in] Name of new list node that is parent of list.
         @param Names [in] List of Pascal names.
       }
-    class procedure WriteSnippetKind(const XMLDoc: IXMLDocumentEx;
+    class procedure WriteSnippetKindID(const XMLDoc: IXMLDocumentEx;
       const SnippetNode: IXMLNode; const Value: TSnippetKindID);
       {Writes a <kind> node to a an XML document.
         @param XMLDoc [in] XML document to receive the node.
@@ -537,7 +537,7 @@ begin
     XMLDoc.CreateElement(ListNode, cPascalNameNode, Name);
 end;
 
-class procedure TXMLDocHelper.WriteSnippetKind(const XMLDoc: IXMLDocumentEx;
+class procedure TXMLDocHelper.WriteSnippetKindID(const XMLDoc: IXMLDocumentEx;
   const SnippetNode: IXMLNode; const Value: TSnippetKindID);
   {Writes a <kind> node to a an XML document.
     @param XMLDoc [in] XML document to receive the node.

@@ -382,7 +382,7 @@ begin
       TActiveTextREMLRenderer.Render(Snippet.Notes, EOL)
     );
   // write kind
-  TXMLDocHelper.WriteSnippetKind(fXMLDoc, SnippetNode, Snippet.KindID);
+  TXMLDocHelper.WriteSnippetKindID(fXMLDoc, SnippetNode, Snippet.KindID);
   // compiler results value: only write known results
   TXMLDocHelper.WriteCompilerResults(
     fXMLDoc, SnippetNode, Snippet.CompileResults
