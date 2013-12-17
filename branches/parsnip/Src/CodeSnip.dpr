@@ -54,7 +54,6 @@ uses
   Compilers.URunner in 'Compilers.URunner.pas',
   Compilers.USearchDirs in 'Compilers.USearchDirs.pas',
   DB.UMain in 'DB.UMain.pas',
-  DB.USnippet in 'DB.USnippet.pas',
   DB.USnippetKind in 'DB.USnippetKind.pas',
   Favourites.UManager in 'Favourites.UManager.pas',
   Favourites.UFavourites in 'Favourites.UFavourites.pas',
