@@ -128,7 +128,6 @@ uses
   CS.ActiveText.Renderers.PlainText,
   CS.ActiveText.Validator,
   DB.UMain,
-  DB.USnippetKind,
   UStrUtils;
 
 
@@ -221,7 +220,9 @@ resourcestring
   sCircular = '%0:s Snippet named "%1:s" cannot depend on itself.';
 var
   DeniedDepends: TSnippetKinds; // snippet kinds that can't be in depends list
+  AllKinds: ISnippetKindList;   // all possible snippet kinds
 begin
+  AllKinds := Database.GetAllSnippetKinds;
   // No snippets kinds may depend on themselves
   // ** MUST do circularity test before any other. Other tests MUST NOT be
   // applied if this test fails: endless loop could result
@@ -229,10 +230,7 @@ begin
   if not Result then
   begin
     ErrorMsg := Format(
-      sCircular, [
-        TSnippetKindInfoList.Items[Snippet.Kind].DisplayName,
-        Snippet.Title
-      ]
+      sCircular, [AllKinds[Snippet.Kind].DisplayName, Snippet.Title]
     );
     Exit;
   end;
@@ -243,11 +241,7 @@ begin
   Result := not DependsListHasKinds(Snippet.RequiredSnippets, DeniedDepends);
   if not Result then
     ErrorMsg := Format(
-      sInvalidKind,
-      [
-        TSnippetKindInfoList.Items[Snippet.Kind].DisplayName,
-        Snippet.Title
-      ]
+      sInvalidKind, [AllKinds[Snippet.Kind].DisplayName, Snippet.Title]
     );
 end;
 
