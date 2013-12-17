@@ -68,10 +68,11 @@ type
     var
       fPageStructs: TSnippetPageStructures;
       fUIUpdated: Boolean;
-      fSnippetKindsCBMgr: TUnsortedCollectionCtrlKVMgr<TSnippetKind>;
+      fSnippetKindsCBMgr: TUnsortedCollectionCtrlKVMgr<TSnippetKindID>;
     function PartIdFromStrings(Strings: TStrings; Idx: Integer):
       TSnippetPagePartId;
-    function SelectedKind: TSnippetKind;
+    // TODO: rename SelectedKind as SelectedKindID or similar
+    function SelectedKind: TSnippetKindID;
     procedure UpdateFragmentInfo;
     procedure Changed;
   public
@@ -276,10 +277,10 @@ begin
   RefreshActions;
   HelpKeyword := 'SnippetLayoutPrefs';
   fPageStructs := TSnippetPageStructures.Create;
-  fSnippetKindsCBMgr := TUnsortedCollectionCtrlKVMgr<TSnippetKind>.Create(
+  fSnippetKindsCBMgr := TUnsortedCollectionCtrlKVMgr<TSnippetKindID>.Create(
     TComboBoxAdapter.Create(cbSnippetKinds),
     True,
-    function (const Left, Right: TSnippetKind): Boolean
+    function (const Left, Right: TSnippetKindID): Boolean
     begin
       Result := Left = Right;
     end
@@ -320,7 +321,7 @@ begin
   Result := TSnippetPagePartId(Strings.Objects[Idx]);
 end;
 
-function TSnippetLayoutPrefsFrame.SelectedKind: TSnippetKind;
+function TSnippetLayoutPrefsFrame.SelectedKind: TSnippetKindID;
 begin
   Assert(fSnippetKindsCBMgr.HasSelection,
     ClassName + '.SelectedKind: No snippet kind selected');

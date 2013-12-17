@@ -116,9 +116,8 @@ type
     function Count: Integer;
   end;
 
-  // TODO: Rename as TSnippetKindID
   ///  <summary>Enumeration of IDs of supported kinds of snippets.</summary>
-  TSnippetKind = (
+  TSnippetKindID = (
     skFreeform,   // free-form code - not in any of other supported formats
     skRoutine,    // procedure or function in standard format
     skConstant,   // constant definition in standard format
@@ -129,10 +128,11 @@ type
 
   // TODO: Rename as TSnippetKindIDs
   ///  <summary>Set of supported snippet kind IDs.</summary>
-  TSnippetKinds = set of TSnippetKind;
+  TSnippetKinds = set of TSnippetKindID;
 
 type
   // TODO: Rename as TSnippetKind once TSnippetKind renamed as TSnippetKindID
+  // TODO: Rename fields and parameters of type TSnippetKindID with better names
   ///  <summary>
   ///  Provides read only information about a snippet kind
   ///  </summary>
@@ -140,14 +140,14 @@ type
   strict private
     var
       ///  <summary>Value of Kind property.</summary>
-      fKind: TSnippetKind;
+      fKind: TSnippetKindID;
       ///  <summary>Value of DisplayName property.</summary>
       fDisplayName: string;
   public
     ///  <summary>Initialises record with required property values.</summary>
-    constructor Create(AKind: TSnippetKind; const ADisplayName: string);
+    constructor Create(AKind: TSnippetKindID; const ADisplayName: string);
     ///  <summary>Snippet kind.</summary>
-    property Kind: TSnippetKind read fKind;   // TODO: rename as "ID"
+    property Kind: TSnippetKindID read fKind;   // TODO: rename as "ID"
     ///  <summary>Display name (description) of snippet kind.</summary>
     property DisplayName: string read fDisplayName;
   end;
@@ -155,10 +155,10 @@ type
   ISnippetKindList = interface(IInterface)
     ['{7C6C9E75-F17F-4BF2-AA63-DE8C8070A348}']
     function GetEnumerator: IEnumerator<TSnippetKindInfo>;
-    function GetItem(const KindID: TSnippetKind): TSnippetKindInfo;
+    function GetItem(const KindID: TSnippetKindID): TSnippetKindInfo;
     function First: TSnippetKindInfo;
     function Last: TSnippetKindInfo;
-    property Items[const KindID: TSnippetKind]: TSnippetKindInfo read GetItem;
+    property Items[const KindID: TSnippetKindID]: TSnippetKindInfo read GetItem;
       default;
   end;
 
@@ -251,7 +251,8 @@ type
     function GetRequiredSnippets: ISnippetIDList;
     function GetXRefs: ISnippetIDList;
     function GetNotes: IActiveText;
-    function GetKind: TSnippetKind;
+    // TODO: rename GetKind as GetKindID
+    function GetKind: TSnippetKindID;
     function GetCompileResults: TCompileResults;
     function GetTags: ITagSet;
     function GetLinkInfo: ISnippetLinkInfo;
@@ -275,7 +276,8 @@ type
     property RequiredSnippets: ISnippetIDList read GetRequiredSnippets;
     property XRefs: ISnippetIDList read GetXRefs;
     property Notes: IActiveText read GetNotes;
-    property Kind: TSnippetKind read GetKind;
+    // TODO: Rename Kind property as KindID
+    property Kind: TSnippetKindID read GetKind;
     property CompileResults: TCompileResults read GetCompileResults;
     property Tags: ITagSet read GetTags;
     property LinkInfo: ISnippetLinkInfo read GetLinkInfo;
@@ -293,7 +295,8 @@ type
     procedure SetRequiredSnippets(AIDList: ISnippetIDList);
     procedure SetXRefs(AIDList: ISnippetIDList);
     procedure SetNotes(ANotes: IActiveText);
-    procedure SetKind(const ASnippetKind: TSnippetKind);
+    // TODO: rename SetKind as SetKindID
+    procedure SetKind(const ASnippetKind: TSnippetKindID);
     procedure SetCompileResults(const AResults: TCompileResults);
     procedure SetTags(ATagList: ITagSet);
     procedure SetLinkInfo(ALinkInfo: ISnippetLinkInfo);
@@ -315,7 +318,8 @@ type
       write SetRequiredSnippets;
     property XRefs: ISnippetIDList read GetXRefs write SetXRefs;
     property Notes: IActiveText read GetNotes write SetNotes;
-    property Kind: TSnippetKind read GetKind write SetKind;
+    // TODO: rename property Kind as KindID
+    property Kind: TSnippetKindID read GetKind write SetKind;
     property CompileResults: TCompileResults read GetCompileResults
       write SetCompileResults;
     property Tags: ITagSet read GetTags write SetTags;
@@ -436,7 +440,7 @@ end;
 
 { TSnippetKindInfo }
 
-constructor TSnippetKindInfo.Create(AKind: TSnippetKind;
+constructor TSnippetKindInfo.Create(AKind: TSnippetKindID;
   const ADisplayName: string);
 begin
   fKind := AKind;

@@ -395,11 +395,11 @@ type
       strict private
         var
           ///  <summary>Snippet kind used as key.</summary>
-          fID: TSnippetKind;
+          fID: TSnippetKindID;
       public
         ///  <summary>Constructs object with given snippet kind as key.
         ///  </summary>
-        constructor Create(const ID: TSnippetKind);
+        constructor Create(const ID: TSnippetKindID);
         ///  <summary>Checks if this key is equal to one passed as a parameter.
         ///  </summary>
         ///  <remarks>Method of IViewKey.</remarks>
@@ -712,7 +712,7 @@ end;
 
 { TSnippetKindView.TKey }
 
-constructor TSnippetKindView.TKey.Create(const ID: TSnippetKind);
+constructor TSnippetKindView.TKey.Create(const ID: TSnippetKindID);
 begin
   inherited Create;
   fID := ID;

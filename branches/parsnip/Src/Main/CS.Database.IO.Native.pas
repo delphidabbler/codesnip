@@ -116,8 +116,9 @@ type
     procedure WriteSnippetIDListProp(const Writer: TBinaryStreamWriter;
       const PropCode: TDBSnippetProp; IDs: ISnippetIDList;
       const Optional: Boolean);
+    // TODO: rename WriteKindProp method as WriteKindIDProp
     procedure WriteKindProp(const Writer: TBinaryStreamWriter;
-      const PropCode: TDBSnippetProp; const Kind: TSnippetKind;
+      const PropCode: TDBSnippetProp; const Kind: TSnippetKindID;
       const Optional: Boolean);
     procedure WriteCompileResultsProp(const Writer: TBinaryStreamWriter;
       const PropCode: TDBSnippetProp; const Results: TCompileResults;
@@ -486,7 +487,7 @@ begin
 end;
 
 procedure TDBNativeWriter.WriteKindProp(const Writer: TBinaryStreamWriter;
-  const PropCode: TDBSnippetProp; const Kind: TSnippetKind;
+  const PropCode: TDBSnippetProp; const Kind: TSnippetKindID;
   const Optional: Boolean);
 begin
   if Optional and (Kind = skFreeform) then
@@ -854,7 +855,7 @@ begin
       spNotes:
         ASnippet.SetNotes(ReadMarkup(Reader));
       spKind:
-        ASnippet.SetKind(TSnippetKind(Reader.ReadByte));
+        ASnippet.SetKind(TSnippetKindID(Reader.ReadByte));
       spCompileResults:
         ASnippet.SetCompileResults(ReadCompileResults(Reader));
       spTags:

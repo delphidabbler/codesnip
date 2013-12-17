@@ -541,7 +541,7 @@ var
   Item: TGroupItem;                 // group item for each snippet kind
   SnippetID: TSnippetID;            // each of each snippet to be grouped
   Snippet: ISnippet;                // each snippet to be grouped
-  Lookup: array[TSnippetKind]
+  Lookup: array[TSnippetKindID]
     of TGroupItem;                  // lookup table of group kinds for searching
 begin
   // Create all group items, one for each snippet kind along with a lookup table

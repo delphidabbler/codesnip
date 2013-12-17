@@ -36,7 +36,7 @@ type
       strict private
         var
           fAtStart: Boolean;
-          fCurrent: TSnippetKind;
+          fCurrent: TSnippetKindID;
           fMap: TSnippetKindList;
       public
         constructor Create(const AMap: TSnippetKindList);
@@ -45,12 +45,12 @@ type
       end;
   strict private
     var
-      fMap: array[TSnippetKind] of TSnippetKindInfo;
+      fMap: array[TSnippetKindID] of TSnippetKindInfo;
   public
     constructor Create;
     destructor Destroy; override;
     function GetEnumerator: IEnumerator<TSnippetKindInfo>;
-    function GetItem(const KindID: TSnippetKind): TSnippetKindInfo;
+    function GetItem(const KindID: TSnippetKindID): TSnippetKindInfo;
     function First: TSnippetKindInfo;
     function Last: TSnippetKindInfo;
   end;
@@ -72,14 +72,14 @@ resourcestring
   sClass            = 'Class / Advanced Record';
 const
   // Map of snippet kinds onto their descriptions
-  Descriptions: array[TSnippetKind] of string = (
+  Descriptions: array[TSnippetKindID] of string = (
     sFreeform, sRoutine, sConstant, sTypeDef, sUnit, sClass
   );
 var
-  Kind: TSnippetKind;
+  Kind: TSnippetKindID;
 begin
   inherited Create;
-  for Kind := Low(TSnippetKind) to High(TSnippetKind) do
+  for Kind := Low(TSnippetKindID) to High(TSnippetKindID) do
     fMap[Kind] := TSnippetKindInfo.Create(Kind, Descriptions[Kind]);
 end;
 
@@ -90,7 +90,7 @@ end;
 
 function TSnippetKindList.First: TSnippetKindInfo;
 begin
-  Result := fMap[Low(TSnippetKind)];
+  Result := fMap[Low(TSnippetKindID)];
 end;
 
 function TSnippetKindList.GetEnumerator: IEnumerator<TSnippetKindInfo>;
@@ -98,14 +98,15 @@ begin
   Result := TEnumerator.Create(Self);
 end;
 
-function TSnippetKindList.GetItem(const KindID: TSnippetKind): TSnippetKindInfo;
+function TSnippetKindList.GetItem(const KindID: TSnippetKindID):
+  TSnippetKindInfo;
 begin
   Result := fMap[KindID];
 end;
 
 function TSnippetKindList.Last: TSnippetKindInfo;
 begin
-  Result := fMap[High(TSnippetKind)];
+  Result := fMap[High(TSnippetKindID)];
 end;
 
 { TSnippetKindList.TEnumerator }

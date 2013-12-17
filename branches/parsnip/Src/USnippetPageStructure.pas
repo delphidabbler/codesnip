@@ -62,10 +62,12 @@ type
   strict private
     var
       fParts: TList<TSnippetPagePart>;
-      fKind: TSnippetKind;
+      // TODO: rename field as fKindID
+      fKind: TSnippetKindID;
     function GetParts: TArray<TSnippetPagePart>;
   public
-    constructor Create(Kind: TSnippetKind);
+    // TODO: rename parameter as KindID
+    constructor Create(Kind: TSnippetKindID);
     destructor Destroy; override;
     procedure Clear;
     function AppendPart(PartId: TSnippetPagePartId): Integer;
@@ -75,7 +77,8 @@ type
     procedure DeletePart(Idx: Integer);
     procedure Assign(const Src: TSnippetPageStructure);
     function IsEmpty: Boolean;
-    property Kind: TSnippetKind read fKind;
+    // TODO: rename property as KindID
+    property Kind: TSnippetKindID read fKind;
     property Parts: TArray<TSnippetPagePart> read GetParts;
     function HasPart(PartId: TSnippetPagePartId): Boolean;
   end;
@@ -86,9 +89,10 @@ type
   TSnippetPageStructures = class(TObject)
   strict private
     var
-      fPages: array[TSnippetKind] of TSnippetPageStructure;
+      fPages: array[TSnippetKindID] of TSnippetPageStructure;
     function GetPages: TArray<TSnippetPageStructure>;
-    function GetPage(Kind: TSnippetKind): TSnippetPageStructure;
+    // TODO: rename parameter as KindID
+    function GetPage(Kind: TSnippetKindID): TSnippetPageStructure;
   public
     constructor Create;
     destructor Destroy; override;
@@ -96,7 +100,7 @@ type
     ///  to this object.</summary>
     procedure Assign(const Src: TSnippetPageStructures);
     function GetEnumerator: TArrayEnumerator<TSnippetPageStructure>;
-    property Pages[Kind: TSnippetKind]: TSnippetPageStructure
+    property Pages[Kind: TSnippetKindID]: TSnippetPageStructure
       read GetPage; default;
   end;
 
@@ -120,7 +124,8 @@ type
 type
   TDefaultPageStructures = class(TNoConstructObject)
   public
-    class function GetParts(Kind: TSnippetKind): TArray<TSnippetPagePartId>;
+    // TODO: rename parameter as KindID
+    class function GetParts(Kind: TSnippetKindID): TArray<TSnippetPagePartId>;
     class procedure SetDefaults(PS: TSnippetPageStructures);
   end;
 
@@ -173,7 +178,7 @@ begin
   fParts.Clear;
 end;
 
-constructor TSnippetPageStructure.Create(Kind: TSnippetKind);
+constructor TSnippetPageStructure.Create(Kind: TSnippetKindID);
 begin
   inherited Create;
   fKind := Kind;
@@ -226,27 +231,30 @@ end;
 
 procedure TSnippetPageStructures.Assign(const Src: TSnippetPageStructures);
 var
-  Kind: TSnippetKind;
+  // TODO: rename as KindID
+  Kind: TSnippetKindID;
 begin
   Assert(Assigned(Src), ClassName + '.Assign: Src is nil');
-  for Kind := Low(TSnippetKind) to High(TSnippetKind) do
+  for Kind := Low(TSnippetKindID) to High(TSnippetKindID) do
     fPages[Kind].Assign(Src.fPages[Kind]);
 end;
 
 constructor TSnippetPageStructures.Create;
 var
-  Kind: TSnippetKind;
+  // TODO: rename as KindID
+  Kind: TSnippetKindID;
 begin
   inherited Create;
-  for Kind := Low(TSnippetKind) to High(TSnippetKind) do
+  for Kind := Low(TSnippetKindID) to High(TSnippetKindID) do
     fPages[Kind] := TSnippetPageStructure.Create(Kind);
 end;
 
 destructor TSnippetPageStructures.Destroy;
 var
-  Kind: TSnippetKind;
+  // TODO: rename as KindID
+  Kind: TSnippetKindID;
 begin
-  for Kind := Low(TSnippetKind) to High(TSnippetKind) do
+  for Kind := Low(TSnippetKindID) to High(TSnippetKindID) do
     fPages[Kind].Free;
   inherited;
 end;
@@ -257,8 +265,8 @@ begin
   Result := TArrayEnumerator<TSnippetPageStructure>.Create(GetPages);
 end;
 
-function TSnippetPageStructures.GetPage(
-  Kind: TSnippetKind): TSnippetPageStructure;
+function TSnippetPageStructures.GetPage(Kind: TSnippetKindID):
+  TSnippetPageStructure;
 begin
   Result := fPages[Kind];
 end;
@@ -425,7 +433,7 @@ end;
 
 { TDefaultPageStructures }
 
-class function TDefaultPageStructures.GetParts(Kind: TSnippetKind):
+class function TDefaultPageStructures.GetParts(Kind: TSnippetKindID):
   TArray<TSnippetPagePartId>;
 begin
   case Kind of

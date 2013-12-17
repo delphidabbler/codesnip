@@ -183,7 +183,8 @@ type
       TCompileResultsLBMgr;         // Manages compilers list box
     fMemoCaretPosDisplayMgr: TMemoCaretPosDisplayMgr;
                                     // Manages display of memo caret positions
-    fKindCBMgr: TSortedCollectionCtrlKVMgr<TSnippetKind>;
+    // TODO: rename field as fSnippetKindCBMgr
+    fKindCBMgr: TSortedCollectionCtrlKVMgr<TSnippetKindID>;
                                     // Manages snippet kind combo box
     procedure PopulateControls;
       {Populates controls with dynamic data.
@@ -780,10 +781,10 @@ begin
   fCompilersLBMgr := TCompileResultsLBMgr.Create(
     lbCompilers, fCompileMgr.Compilers
   );
-  fKindCBMgr := TSortedCollectionCtrlKVMgr<TSnippetKind>.Create(
+  fKindCBMgr := TSortedCollectionCtrlKVMgr<TSnippetKindID>.Create(
     TComboBoxAdapter.Create(cbKind),
     True,
-    function (const Left, Right: TSnippetKind): Boolean
+    function (const Left, Right: TSnippetKindID): Boolean
     begin
       Result := Left = Right;
     end,

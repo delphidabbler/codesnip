@@ -109,7 +109,8 @@ type
           returned.
         @return True if snippet valid or False if not.
       }
-    class function ValidDependsKinds(const Kind: TSnippetKind): TSnippetKinds;
+    // TODO: rename Kind parameter as KindID
+    class function ValidDependsKinds(const Kind: TSnippetKindID): TSnippetKinds;
       {Gets set of snippet kinds that are valid in a snippet's dependency list.
         @param Kind [in] Kind of snippet for which valid dependency kinds
           required.
@@ -385,7 +386,7 @@ begin
 end;
 
 class function TSnippetValidator.ValidDependsKinds(
-  const Kind: TSnippetKind): TSnippetKinds;
+  const Kind: TSnippetKindID): TSnippetKinds;
   {Gets set of snippet kinds that are valid in a snippet's dependency list.
     @param Kind [in] Kind of snippet for which valid dependency kinds required.
     @return Set of valid kinds for snippets in dependenc list.

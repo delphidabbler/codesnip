@@ -57,7 +57,8 @@ type
       fRequiredSnippets: ISnippetIDList;
       fXRefs: ISnippetIDList;
       fNotes: IActiveText;
-      fKind: TSnippetKind;
+      // TODO: rename field as fKindID
+      fKind: TSnippetKindID;
       fCompileResults: TCompileResults;
       fTags: ITagSet;
       fLinkInfo: ISnippetLinkInfo;
@@ -91,8 +92,9 @@ type
     procedure SetXRefs(Value: ISnippetIDList);
     function GetNotes: IActiveText; virtual;
     procedure SetNotes(Value: IActiveText);
-    function GetKind: TSnippetKind; virtual;
-    procedure SetKind(const Value: TSnippetKind);
+    // TODO: Rename GetKind and SetKind as GetKindID and SetKindID
+    function GetKind: TSnippetKindID; virtual;
+    procedure SetKind(const Value: TSnippetKindID);
     function GetCompileResults: TCompileResults; virtual;
     procedure SetCompileResults(const Value: TCompileResults);
     function GetTags: ITagSet; virtual;
@@ -375,7 +377,7 @@ begin
   Result := fID;
 end;
 
-function TSnippetBase.GetKind: TSnippetKind;
+function TSnippetBase.GetKind: TSnippetKindID;
 begin
   Result := fKind;
 end;
@@ -470,7 +472,7 @@ begin
     fDescription := TActiveTextFactory.CloneActiveText(Value);
 end;
 
-procedure TSnippetBase.SetKind(const Value: TSnippetKind);
+procedure TSnippetBase.SetKind(const Value: TSnippetKindID);
 begin
   fKind := Value;
 end;

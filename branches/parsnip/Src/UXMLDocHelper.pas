@@ -106,8 +106,10 @@ type
           non-standard value.
         @return Value of node, or default value.
       }
+    // TODO: rename GetSnippetKind method as GetSnippetKindID
     class function GetSnippetKind(const XMLDoc: IXMLDocumentEx;
-      const SnippetNode: IXMLNode; const Default: TSnippetKind): TSnippetKind;
+      const SnippetNode: IXMLNode; const Default: TSnippetKindID):
+      TSnippetKindID;
       {Gets value of <kind> node of a snippet in an XML document.
         @param XMLDoc [in] XML document containing snippet.
         @param SnippetNode [in] Snippet node that contains kind tag.
@@ -141,7 +143,7 @@ type
         @param Names [in] List of Pascal names.
       }
     class procedure WriteSnippetKind(const XMLDoc: IXMLDocumentEx;
-      const SnippetNode: IXMLNode; const Value: TSnippetKind);
+      const SnippetNode: IXMLNode; const Value: TSnippetKindID);
       {Writes a <kind> node to a an XML document.
         @param XMLDoc [in] XML document to receive the node.
         @param SnippetNode [in] Node containing snippet that receives kind node.
@@ -371,7 +373,7 @@ begin
 end;
 
 class function TXMLDocHelper.GetSnippetKind(const XMLDoc: IXMLDocumentEx;
-  const SnippetNode: IXMLNode; const Default: TSnippetKind): TSnippetKind;
+  const SnippetNode: IXMLNode; const Default: TSnippetKindID): TSnippetKindID;
   {Gets value of <kind> node of a snippet in an XML document.
     @param XMLDoc [in] XML document containing snippet.
     @param SnippetNode [in] Snippet node that contains kind tag.
@@ -537,14 +539,14 @@ begin
 end;
 
 class procedure TXMLDocHelper.WriteSnippetKind(const XMLDoc: IXMLDocumentEx;
-  const SnippetNode: IXMLNode; const Value: TSnippetKind);
+  const SnippetNode: IXMLNode; const Value: TSnippetKindID);
   {Writes a <kind> node to a an XML document.
     @param XMLDoc [in] XML document to receive the node.
     @param SnippetNode [in] Node containing snippet that receives kind node.
     @param Value [in] Value of <kind> node.
   }
 const
-  cValues: array[TSnippetKind] of string = (
+  cValues: array[TSnippetKindID] of string = (
     'freeform', 'routine', 'const', 'type', 'unit', 'class'
   );
 begin

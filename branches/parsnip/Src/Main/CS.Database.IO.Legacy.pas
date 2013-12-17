@@ -320,12 +320,13 @@ procedure TDBLegacyUserDBReader.LoadSnippetProperties(SnippetNode: IXMLNode;
 
   // Returns the value of the snippet's Kind property. This is a direct match
   // with legacy snippet's property of the same name.
-  function GetKindProperty: TSnippetKind;
+  // TODO: rename function as GetKindIDProperty
+  function GetKindProperty: TSnippetKindID;
     {Gets value of Kind node.
       @return Kind that matches node value.
     }
   var
-    Default: TSnippetKind;            // default value
+    Default: TSnippetKindID;            // default value
   begin
     // In earlier file format versions we have no Kind node, so we calculate
     // kind from StandardFormat value. If Kind node is present StandardFormat is
