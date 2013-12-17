@@ -264,9 +264,9 @@ begin
     // TODO: scan all snippets and remove references that match snippet ID
     // Delete snippet for XRef or Depends list of referencing snippets
     for Referrer in Referrers do
-      Database.__SnippetsTable.Get(Referrer).XRefs.Remove(ASnippetID);
+      fSnippetsTable.Get(Referrer).XRefs.Remove(ASnippetID);
     for Dependent in Dependents do
-      Database.__SnippetsTable.Get(Dependent).RequiredSnippets.Remove(
+      fSnippetsTable.Get(Dependent).RequiredSnippets.Remove(
         ASnippetID
       );
     // Delete snippet itself
