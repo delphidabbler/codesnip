@@ -116,7 +116,8 @@ type
     function Count: Integer;
   end;
 
-  ///  <summary>Enumeration of various supported kinds of snippets.</summary>
+  // TODO: Rename as TSnippetKindID
+  ///  <summary>Enumeration of IDs of supported kinds of snippets.</summary>
   TSnippetKind = (
     skFreeform,   // free-form code - not in any of other supported formats
     skRoutine,    // procedure or function in standard format
@@ -126,10 +127,12 @@ type
     skClass       // Delphi class or record with methods
   );
 
-  ///  <summary>Set of supported snippet kinds.</summary>
+  // TODO: Rename as TSnippetKindIDs
+  ///  <summary>Set of supported snippet kind IDs.</summary>
   TSnippetKinds = set of TSnippetKind;
 
 type
+  // TODO: Rename as TSnippetKind once TSnippetKind renamed as TSnippetKindID
   ///  <summary>
   ///  Provides read only information about a snippet kind
   ///  </summary>
@@ -144,9 +147,19 @@ type
     ///  <summary>Initialises record with required property values.</summary>
     constructor Create(AKind: TSnippetKind; const ADisplayName: string);
     ///  <summary>Snippet kind.</summary>
-    property Kind: TSnippetKind read fKind;
+    property Kind: TSnippetKind read fKind;   // TODO: rename as "ID"
     ///  <summary>Display name (description) of snippet kind.</summary>
     property DisplayName: string read fDisplayName;
+  end;
+
+  ISnippetKindList = interface(IInterface)
+    ['{7C6C9E75-F17F-4BF2-AA63-DE8C8070A348}']
+    function GetEnumerator: IEnumerator<TSnippetKindInfo>;
+    function GetItem(const KindID: TSnippetKind): TSnippetKindInfo;
+    function First: TSnippetKindInfo;
+    function Last: TSnippetKindInfo;
+    property Items[const KindID: TSnippetKind]: TSnippetKindInfo read GetItem;
+      default;
   end;
 
   ETag = class(Exception);
