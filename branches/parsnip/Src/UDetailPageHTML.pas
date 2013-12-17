@@ -752,7 +752,7 @@ end;
 
 function TSnipKindPageHTML.IsSnippetRequired(Snippet: ISnippet): Boolean;
 begin
-  Result := (View as ISnippetKindView).KindInfo.ID = Snippet.KindID;
+  Result := (View as ISnippetKindView).Kind.ID = Snippet.KindID;
 end;
 
 { TBasicPageTpltHTML }
