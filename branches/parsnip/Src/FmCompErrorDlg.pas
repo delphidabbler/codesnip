@@ -158,7 +158,7 @@ uses
   by values in this code:
 
   <%Status%>        log status - Error(s) or Warning(s)
-  <%SnippetName%>   name of snippet being compiled
+  <%SnippetTitle%>  title of snippet being compiled
   <%CompilerID%>    if of compiler that caused warning/error
   <%ErrorList%>     a CRLF delimited list of the errors/warnings from the log as
                     HTML list items in form <li>log-line</li>
@@ -267,7 +267,7 @@ begin
       begin
         Tplt.ResolvePlaceholderText('Status', Log.Status);
         Tplt.ResolvePlaceholderHTML('ErrorList', Log.LogListHTML);
-        Tplt.ResolvePlaceholderText('SnippetName', fSnippet.Title);
+        Tplt.ResolvePlaceholderText('SnippetTitle', fSnippet.Title);
         Tplt.ResolvePlaceholderText('CompilerID', Compiler.GetName);
       end
     );
