@@ -20,11 +20,9 @@ interface
 
 
 type
-  // TODO: Rename this class as TDatabaseUpdater
-
   ///  <summary>Class that handles updating of snippets database from an earlier
   ///  version.</summary>
-  TUserDatabaseUpdater = class(TObject)
+  TDatabaseUpdater = class(TObject)
   strict private
     var
       ///  <summary>Database directory.</summary>
@@ -47,14 +45,16 @@ implementation
 
 uses
   // Delphi
-  SysUtils, IOUtils,
+  SysUtils,
+  IOUtils,
   // Project
-  UIOUtils, UStrUtils;
+  UIOUtils,
+  UStrUtils;
 
 
-{ TUserDatabaseUpdater }
+{ TDatabaseUpdater }
 
-procedure TUserDatabaseUpdater.CopyDatabase(const SrcDir: string);
+procedure TDatabaseUpdater.CopyDatabase(const SrcDir: string);
 begin
   if (SrcDir = '')
     or not TDirectory.Exists(ExcludeTrailingPathDelimiter(SrcDir)) then
@@ -62,7 +62,7 @@ begin
   CopyDirectory(SrcDir);
 end;
 
-procedure TUserDatabaseUpdater.CopyDirectory(const SrcDir: string);
+procedure TDatabaseUpdater.CopyDirectory(const SrcDir: string);
 var
   SourcePath: string;
   DestPath: string;
@@ -86,7 +86,7 @@ begin
   end;
 end;
 
-constructor TUserDatabaseUpdater.Create(const DatabaseDir: string);
+constructor TDatabaseUpdater.Create(const DatabaseDir: string);
 begin
   inherited Create;
   fDatabaseDir := ExcludeTrailingPathDelimiter(DatabaseDir);

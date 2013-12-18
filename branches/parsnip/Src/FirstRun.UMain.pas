@@ -59,7 +59,7 @@ type
       fCommonConfigFile: TCommonConfigFileUpdater;
       ///  <summary>Object used to copy forward older versions of database.
       ///  </summary>
-      fDatabase: TUserDatabaseUpdater;
+      fDatabase: TDatabaseUpdater;
     ///  <summary>Checks if config file uses earlier format for storing proxy
     ///  server passwords.</summary>
     function HasOldStyleProxyPwd: Boolean;
@@ -143,7 +143,7 @@ uses
 procedure TFirstRun.BringForwardDB;
 begin
   Assert(HaveOldDB, ClassName + '.BringForwardDB: Old database does not exist');
-  fDatabase.CopyDatabase(fInstallInfo.PreviousUserDatabaseDir);
+  fDatabase.CopyDatabase(fInstallInfo.PreviousDatabaseDir);
 end;
 
 procedure TFirstRun.BringForwardUserCfgFile;
@@ -166,9 +166,7 @@ begin
   fCommonConfigFile := TCommonConfigFileUpdater.Create(
     fInstallInfo.CurrentCommonConfigFileName
   );
-  fDatabase := TUserDatabaseUpdater.Create(
-    fInstallInfo.CurrentUserDatabaseDir
-  );
+  fDatabase := TDatabaseUpdater.Create(fInstallInfo.CurrentDatabaseDir);
 end;
 
 procedure TFirstRun.CreateEmptyUserCfgFile;
@@ -192,7 +190,7 @@ end;
 
 function TFirstRun.HaveOldDB: Boolean;
 begin
-  Result := TFile.Exists(fInstallInfo.PreviousUserDatabaseFileName, False);
+  Result := TFile.Exists(fInstallInfo.PreviousDatabaseFileName, False);
 end;
 
 function TFirstRun.HaveOldUserCfgFile: Boolean;

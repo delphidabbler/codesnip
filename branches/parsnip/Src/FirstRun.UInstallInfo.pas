@@ -68,7 +68,7 @@ type
     class function CurrentUserConfigFileName: string;
     ///  <summary>Returns full path to database directory for current version of
     ///  CodeSnip.</summary>
-    class function CurrentUserDatabaseDir: string;
+    class function CurrentDatabaseDir: string;
     ///  <summary>Returns full path to user config file version of CodeSnip for
     ///  which user data is available.</summary>
     ///  <remarks>This can be current version's config file if present.
@@ -85,16 +85,16 @@ type
     ///  <para>Prior to CodeSnip 5 the database in question will be the legacy
     ///  "user" database.</para>
     ///  </remarks>
-    function PreviousUserDatabaseDir: string;
+    function PreviousDatabaseDir: string;
     ///  <summary>Returns full path of snippets database file for latest version
-    ///  of CodeSnip for which a user database is available.</summary>
+    ///  of CodeSnip for which a database is available.</summary>
     ///  <remarks>
     ///  <para>This can be current version's database directory if present.
     ///  </para>
     ///  <para>Prior to CodeSnip 5 the database in question will be the legacy
     ///  "user" database.</para>
     ///  </remarks>
-    function PreviousUserDatabaseFileName: string;
+    function PreviousDatabaseFileName: string;
     ///  <summary>Returns full path to common config file for current version of
     ///  CodeSnip.</summary>
     function CurrentCommonConfigFileName: string;
@@ -134,14 +134,14 @@ begin
     + 'Common.config';
 end;
 
+class function TInstallInfo.CurrentDatabaseDir: string;
+begin
+  Result := DatabaseDirs(CurrentVersionID);
+end;
+
 class function TInstallInfo.CurrentUserConfigFileName: string;
 begin
   Result := UserConfigFileNames(CurrentVersionID);
-end;
-
-class function TInstallInfo.CurrentUserDatabaseDir: string;
-begin
-  Result := DatabaseDirs(CurrentVersionID);
 end;
 
 class function TInstallInfo.DatabaseDirs(const InstID: TInstallId): string;
@@ -252,20 +252,19 @@ begin
   ) + Name;
 end;
 
-function TInstallInfo.PreviousUserConfigFileName: string;
-begin
-  Result := UserConfigFileNames(fInstallID);
-end;
-
-function TInstallInfo.PreviousUserDatabaseDir: string;
+function TInstallInfo.PreviousDatabaseDir: string;
 begin
   Result := DatabaseDirs(fInstallID);
 end;
 
-function TInstallInfo.PreviousUserDatabaseFileName: string;
+function TInstallInfo.PreviousDatabaseFileName: string;
 begin
-  Result := IncludeTrailingPathDelimiter(PreviousUserDatabaseDir)
-    + 'database.xml';
+  Result := IncludeTrailingPathDelimiter(PreviousDatabaseDir) + 'database.xml';
+end;
+
+function TInstallInfo.PreviousUserConfigFileName: string;
+begin
+  Result := UserConfigFileNames(fInstallID);
 end;
 
 class function TInstallInfo.UserConfigFileNames(const InstID: TInstallId):
