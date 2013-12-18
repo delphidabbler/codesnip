@@ -69,6 +69,11 @@ type
       const AFriendlyName: string; const AIsBuiltIn: Boolean);
     // NOTE: DO NOT MAKE CreateDefault inline: causes internal compiler error!
     class function CreateDefault: TSourceCodeLanguage; static;
+    class operator Equal(const Left, Right: TSourceCodeLanguage): Boolean;
+      inline;
+    class operator NotEqual(const Left, Right: TSourceCodeLanguage): Boolean;
+      inline;
+    function CompareFriendlyNameTo(const Other: TSourceCodeLanguage): Integer;
     ///  <summary>Updates the record's properties to those of Lang except that
     ///  the BuiltIn property remains unchanged.</summary>
     procedure Update(const Lang: TSourceCodeLanguage);
@@ -205,6 +210,12 @@ end;
 
 { TSourceCodeLanguage }
 
+function TSourceCodeLanguage.CompareFriendlyNameTo(
+  const Other: TSourceCodeLanguage): Integer;
+begin
+  Result := StrCompareText(Self.fFriendlyName, Other.fFriendlyName);
+end;
+
 constructor TSourceCodeLanguage.Create(const AID: TSourceCodeLanguageID;
   const AFriendlyName: string; const AIsBuiltIn: Boolean);
 begin
@@ -224,6 +235,18 @@ begin
     sDefaultFriendlyName,
     True
   );
+end;
+
+class operator TSourceCodeLanguage.Equal(const Left,
+  Right: TSourceCodeLanguage): Boolean;
+begin
+  Result := Left.ID = Right.ID;
+end;
+
+class operator TSourceCodeLanguage.NotEqual(const Left,
+  Right: TSourceCodeLanguage): Boolean;
+begin
+  Result := Left.ID <> Right.ID;
 end;
 
 procedure TSourceCodeLanguage.Update(
