@@ -183,8 +183,7 @@ type
       TCompileResultsLBMgr;         // Manages compilers list box
     fMemoCaretPosDisplayMgr: TMemoCaretPosDisplayMgr;
                                     // Manages display of memo caret positions
-    // TODO: rename field as fSnippetKindCBMgr
-    fKindCBMgr: TSortedCollectionCtrlKVMgr<TSnippetKindID>;
+    fSnippetKindCBMgr: TSortedCollectionCtrlKVMgr<TSnippetKindID>;
                                     // Manages snippet kind combo box
     procedure PopulateControls;
       {Populates controls with dynamic data.
@@ -396,7 +395,7 @@ procedure TSnippetsEditorDlg.actCompileUpdate(Sender: TObject);
   }
 begin
   (Sender as TAction).Enabled := fCompileMgr.HaveCompilers
-    and (fKindCBMgr.GetSelected <> skFreeForm);
+    and (fSnippetKindCBMgr.GetSelected <> skFreeForm);
 end;
 
 procedure TSnippetsEditorDlg.actDeleteUnitExecute(Sender: TObject);
@@ -535,7 +534,7 @@ procedure TSnippetsEditorDlg.actViewTestUnitUpdate(Sender: TObject);
     @param Sender [in] Action triggering this event.
   }
 begin
-  (Sender as TAction).Enabled := fKindCBMgr.GetSelected <> skFreeForm;
+  (Sender as TAction).Enabled := fSnippetKindCBMgr.GetSelected <> skFreeForm;
 end;
 
 class function TSnippetsEditorDlg.AddNewSnippet(AOwner: TComponent): Boolean;
@@ -781,7 +780,7 @@ begin
   fCompilersLBMgr := TCompileResultsLBMgr.Create(
     lbCompilers, fCompileMgr.Compilers
   );
-  fKindCBMgr := TSortedCollectionCtrlKVMgr<TSnippetKindID>.Create(
+  fSnippetKindCBMgr := TSortedCollectionCtrlKVMgr<TSnippetKindID>.Create(
     TComboBoxAdapter.Create(cbKind),
     True,
     function (const Left, Right: TSnippetKindID): Boolean
@@ -798,7 +797,7 @@ procedure TSnippetsEditorDlg.FormDestroy(Sender: TObject);
   }
 begin
   inherited;
-  fKindCBMgr.Free;
+  fSnippetKindCBMgr.Free;
   fCompilersLBMgr.Free;
   fUnitsCLBMgr.Free;
   fXRefsCLBMgr.Free;
@@ -850,7 +849,7 @@ begin
     edTitle.Text := fSnippet.Title;
     frmNotes.DefaultEditMode := emAuto;
     frmNotes.ActiveText := fSnippet.Notes;
-    fKindCBMgr.Select(fSnippet.KindID);
+    fSnippetKindCBMgr.Select(fSnippet.KindID);
     // check required items in references check list boxes
     UpdateReferences;
     fDependsCLBMgr.CheckSnippets(fSnippet.RequiredSnippets);
@@ -872,7 +871,7 @@ begin
     frmDescription.DefaultEditMode := emPlainText;
     frmDescription.Clear;
     edTitle.Clear;
-    fKindCBMgr.Select(skFreeForm);
+    fSnippetKindCBMgr.Select(skFreeForm);
     frmNotes.DefaultEditMode := emPlainText;
     frmNotes.Clear;
     UpdateReferences;
@@ -942,7 +941,7 @@ var
 begin
   // Display all kinds in drop down list
   for SnippetKind in Database.GetAllSnippetKinds do
-    fKindCBMgr.Add(SnippetKind.ID, SnippetKind.DisplayName);
+    fSnippetKindCBMgr.Add(SnippetKind.ID, SnippetKind.DisplayName);
   // TODO: display all tags in a check list box or similar
 end;
 
@@ -969,7 +968,7 @@ begin
       Snippet := Database.LookupSnippet(SnippetID);
       // Decide if snippet can be added to depends list: must be correct kind
       if Snippet.KindID
-        in AllSnippetKinds[fKindCBMgr.GetSelected].ValidDependIDs then
+        in AllSnippetKinds[fSnippetKindCBMgr.GetSelected].ValidDependIDs then
         fDependsCLBMgr.AddSnippet(Snippet);
       // Anything can be in XRefs list
       fXRefsCLBMgr.AddSnippet(Snippet);
@@ -978,8 +977,8 @@ begin
   // Restore checks to any saved checked item that still exist in new list
   fDependsCLBMgr.Restore;
   fXRefsCLBMgr.Restore;
-  clbUnits.Enabled := fKindCBMgr.GetSelected <> skUnit;
-  edUnit.Enabled := fKindCBMgr.GetSelected <> skUnit;
+  clbUnits.Enabled := fSnippetKindCBMgr.GetSelected <> skUnit;
+  edUnit.Enabled := fSnippetKindCBMgr.GetSelected <> skUnit;
 end;
 
 procedure TSnippetsEditorDlg.UpdateSnippet(ASnippet: IEditableSnippet);
@@ -987,7 +986,7 @@ var
   Tags: ITagSet;
 begin
   ASnippet.Title := StrTrim(edTitle.Text);
-  ASnippet.KindID := fKindCBMgr.GetSelected;
+  ASnippet.KindID := fSnippetKindCBMgr.GetSelected;
   ASnippet.Description := frmDescription.ActiveText;
   ASnippet.SourceCode := StrTrimRight(frmSourceEditor.SourceCode);
   if chkUseHiliter.Checked then
