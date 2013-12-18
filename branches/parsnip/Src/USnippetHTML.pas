@@ -59,8 +59,8 @@ type
     ///  <summary>Object constructor. Sets up object to provide HTML for given
     ///  snippet.</summary>
     constructor Create(Snippet: ISnippet);
-    ///  <summary>Returns snippet display name as HTML.</summary>
-    function SnippetName: string; // TODO -cRename: Rename as SnippetTitle
+    ///  <summary>Returns snippet title as HTML.</summary>
+    function SnippetTitle: string;
     ///  <summary>Returns snippet description as HTML.</summary>
     function Description: string;
     ///  <summary>Returns description of snippet's kind as HTML.</summary>
@@ -202,7 +202,7 @@ begin
   end;
 end;
 
-function TSnippetHTML.SnippetName: string;
+function TSnippetHTML.SnippetTitle: string;
 begin
   Result := THTML.Entities(fSnippet.Title);
 end;
