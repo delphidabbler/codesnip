@@ -16,15 +16,22 @@
 
 unit FirstRun.FmV4ConfigDlg;
 
-// TODO: Rename any controls that refer to "user" DB
-
 interface
 
 uses
   // Delphi
-  StdCtrls, ComCtrls, Controls, ExtCtrls, Classes, Forms,
+  StdCtrls,
+  ComCtrls,
+  Controls,
+  ExtCtrls,
+  Classes,
+  Forms,
   // Project
-  FmWizardDlg, FirstRun.UMain, UBaseObjects, IntfAligner, UIStringList;
+  FmWizardDlg,
+  FirstRun.UMain,
+  UBaseObjects,
+  IntfAligner,
+  UIStringList;
 
 type
   ///  <summary>Wizard dialogue box for display on first run of program if there
@@ -45,13 +52,13 @@ type
     lblSummaryPrefix: TLabel;
     lblSummaryPostfix1: TLabel;
     lblSummaryPostfix2: TLabel;
-    lblUserDB1: TLabel;
-    lblUserDB2: TLabel;
+    lblDatabase1: TLabel;
+    lblDatabase2: TLabel;
     tsConfigFile: TTabSheet;
     tsFinish: TTabSheet;
     tsIntro: TTabSheet;
     tsSummary: TTabSheet;
-    tsUserDB: TTabSheet;
+    tsDatabase: TTabSheet;
     ///  <summary>Determines if form can close.</summary>
     ///  <remarks>Permits closure only if wizard has been completed.</remarks>
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
@@ -64,16 +71,15 @@ type
       ConfigPageIdx = 1;
       ///  <summary>Index of page dealing with bringing forward an earlier
       ///  snippets database.</summary>
-      DBPageIdx = 2;
+      DatabasePageIdx = 2;
       ///  <summary>Index of page that summarises actions to be taken.</summary>
       SummaryPageIdx = 3;
       ///  <summary>Index of last page.</summary>
       FinishPageIdx = 4;
     type
-      // TODO: rename uaCopyUserDB as uaCopyDB
       ///  <summary>Set of actions to be taken as a result of user input.
       ///  </summary>
-      TUpdateActions = set of (uaCopyCfgFile, uaCopyUserDB);
+      TUpdateActions = set of (uaCopyCfgFile, uaCopyDB);
   strict private
     var
       ///  <summary>Object that provides info about user config file and
@@ -91,7 +97,7 @@ type
     ///  </summary>
     function DatabaseAvailable: Boolean;
     ///  <summary>Creates a bullet list on a tab sheet.</summary>
-    ///  <param name="TS">TTabSheet [in] Tab sheet where buller list is to be
+    ///  <param name="TS">TTabSheet [in] Tab sheet where bullet list is to be
     ///  placed.</param>
     ///  <param name="Prefix">array of TLabel [in] List of labels to be
     ///  positioned before bullet list.</param>
@@ -166,7 +172,10 @@ implementation
 
 uses
   // Project
-  UConsts, UCtrlArranger, UMessageBox, UStructs;
+  UConsts,
+  UCtrlArranger,
+  UMessageBox,
+  UStructs;
 
 
 {$R *.dfm}
@@ -186,19 +195,15 @@ begin
   TCtrlArranger.MoveBelow(lblIntro4, lblIntro5, 6);
 
   // tsConfigFile
-  TCtrlArranger.AlignLefts(
-    [lblCopyConfig, chkCopyConfig], 0
-  );
+  TCtrlArranger.AlignLefts([lblCopyConfig, chkCopyConfig], 0);
   lblCopyConfig.Top := 4;
   TCtrlArranger.MoveBelow(lblCopyConfig, chkCopyConfig, 12);
 
-  // tsUserDB
-  TCtrlArranger.AlignLefts(
-    [lblUserDB1, lblUserDB2, chkCopyDB], 0
-  );
-  lblUserDB1.Top := 4;
-  TCtrlArranger.MoveBelow(lblUserDB1, chkCopyDB, 12);
-  TCtrlArranger.MoveBelow(chkCopyDB, lblUserDB2, 12);
+  // tsDatabase
+  TCtrlArranger.AlignLefts([lblDatabase1, lblDatabase2, chkCopyDB], 0);
+  lblDatabase1.Top := 4;
+  TCtrlArranger.MoveBelow(lblDatabase1, chkCopyDB, 12);
+  TCtrlArranger.MoveBelow(chkCopyDB, lblDatabase2, 12);
 
   // tsSummary & tsFinish are arranged on the fly when displayed
   inherited;
@@ -314,7 +319,7 @@ begin
   if ConfigFileAvailable and chkCopyConfig.Checked then
     Include(Result, uaCopyCfgFile);
   if DatabaseAvailable and chkCopyDB.Checked then
-    Include(Result, uaCopyUserDB);
+    Include(Result, uaCopyDB);
 end;
 
 function TV4ConfigDlg.HeadingText(const PageIdx: Integer): string;
@@ -331,7 +336,7 @@ begin
       Result := sIntroHeading;
     ConfigPageIdx:
       Result := sConfigHeading;
-    DBPageIdx:
+    DatabasePageIdx:
       Result := sDBHeading;
     SummaryPageIdx:
       Result := sSummaryHeading;
@@ -398,7 +403,7 @@ begin
   // Don't display related pages if no config file or no snippets database
   if (Result = ConfigPageIdx) and not ConfigFileAvailable then
     Exit(NextPage(Result));
-  if (Result = DBPageIdx) and not DatabaseAvailable then
+  if (Result = DatabasePageIdx) and not DatabaseAvailable then
     Exit(NextPage(Result));
 end;
 
@@ -406,7 +411,7 @@ function TV4ConfigDlg.PrevPage(const PageIdx: Integer): Integer;
 begin
   Result := inherited PrevPage(PageIdx);
   // Don't display related pages if no config file or no snippets database
-  if (Result = DBPageIdx) and not DatabaseAvailable then
+  if (Result = DatabasePageIdx) and not DatabaseAvailable then
     Exit(PrevPage(Result));
   if (Result = ConfigPageIdx) and not ConfigFileAvailable then
     Exit(PrevPage(Result));
@@ -446,7 +451,7 @@ begin
   end;
   if DatabaseAvailable then
   begin
-    if uaCopyUserDB in Actions then
+    if uaCopyDB in Actions then
       Bullets.Add(sCopyDBYes)
     else
       Bullets.Add(sCopyDBNo);
@@ -469,7 +474,7 @@ begin
     fFirstRun.BringForwardUserCfgFile;
     fFirstRun.UpdateUserCfgFile(fCfgChanges);
   end;
-  if uaCopyUserDB in Actions then
+  if uaCopyDB in Actions then
     fFirstRun.BringForwardDB;
 end;
 

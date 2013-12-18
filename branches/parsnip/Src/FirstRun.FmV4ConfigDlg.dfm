@@ -11,7 +11,7 @@ inherited V4ConfigDlg: TV4ConfigDlg
   TextHeight = 13
   inherited pnlBody: TPanel
     inherited pcWizard: TPageControl
-      ActivePage = tsUserDB
+      ActivePage = tsIntro
       object tsIntro: TTabSheet
         Caption = 'tsIntro'
         TabVisible = False
@@ -23,7 +23,7 @@ inherited V4ConfigDlg: TV4ConfigDlg
           AutoSize = False
           Caption = 
             'This appears to be the first time you have run CodeSnip since up' +
-            'dating to version 4.'
+            'dating to version 5.'
           WordWrap = True
         end
         object lblIntro2: TLabel
@@ -93,24 +93,24 @@ inherited V4ConfigDlg: TV4ConfigDlg
           TabOrder = 0
         end
       end
-      object tsUserDB: TTabSheet
-        Caption = 'tsUserDB'
+      object tsDatabase: TTabSheet
+        Caption = 'tsDatabase'
         ImageIndex = 2
         TabVisible = False
-        object lblUserDB1: TLabel
+        object lblDatabase1: TLabel
           Left = 0
           Top = 3
           Width = 369
           Height = 38
           AutoSize = False
           Caption = 
-            'A user defined snippets database that was created by an earlier ' +
-            'version of CodeSnip has been found. This database can be copied ' +
-            'for use by CodeSnip 4. Clear the following check box if you do n' +
-            'ot want to do this.'
+            'A snippets database that was created by an earlier version of Co' +
+            'deSnip has been found. This database can be copied for use by Co' +
+            'deSnip 5. Clear the following check box if you do not want to do' +
+            ' this.'
           WordWrap = True
         end
-        object lblUserDB2: TLabel
+        object lblDatabase2: TLabel
           Left = 0
           Top = 89
           Width = 369
@@ -176,7 +176,7 @@ inherited V4ConfigDlg: TV4ConfigDlg
           Width = 369
           Height = 13
           AutoSize = False
-          Caption = 'CodeSnip 4 is now configured.'
+          Caption = 'CodeSnip 5 is now configured.'
           WordWrap = True
         end
         object lblFinish2: TLabel
