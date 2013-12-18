@@ -352,10 +352,10 @@ procedure TRTFSnippetDoc.RenderSourceCode(const SourceCode: string);
 var
   Renderer: IHiliteRenderer;  // renders highlighted source as RTF
 begin
-  fBuilder.ClearParaFormatting;
+  // Syntax highlighted code is in its own block that starts by clearing para
+  // formatting and ends with a para-end immediately before the end of block.
   Renderer := TRTFHiliteRenderer.Create(fBuilder, fBrush, fTheme);
   TSyntaxHiliter.Hilite(SourceCode, fBrush, Renderer);
-  fBuilder.EndPara;
 end;
 
 procedure TRTFSnippetDoc.RenderTitledList(const Title: string;
