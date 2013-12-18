@@ -152,8 +152,8 @@ begin
   Result.Title := SWAGSnippet.Title;
   Result.Notes := BuildNotes;
   // NOTE: Snippet has no required units, required snippets or cross-references
-  { TODO: add SWAG snippet ID (passed through MakeValidSnippetName to snippet's
-          LinkInfo property, when implemented. }
+  { TODO: add SWAG snippet ID (passed through MakeValidSnippetIDString to
+          snippet's LinkInfo property, when implemented. }
 end;
 
 constructor TSWAGImporter.Create;
@@ -199,7 +199,7 @@ var
 begin
   RootIDStr := 'SWAG_' + IntToStr(SWAGSnippetID);
   Assert(TSnippetID.IsValidIDString(RootIDStr), ClassName
-    + '.GetValidSnippetName: RootName is not a valid Pascal identifier');
+    + '.MakeValidSnippetIDString: RootIDStr is not a valid snippet ID string');
   Result := RootIDStr;
   Appendix := 0;
   while not TSnippetValidator.ValidateSnippetID(Result, True) do
