@@ -1473,8 +1473,8 @@ begin
     // Move database option not available in portable mode
     actMoveDatabase.Visible := not TCommandLineOpts.IsPortable;
 
-    // Create notifier object and assign actions triggered by its methods
-    // note that actions created on fly are automatically freed
+    // Create notifier object and assign actions triggered by its methods note
+    // that actions created on fly are automatically freed
     fNotifier := TNotifier.Create;
     with fNotifier as ISetActions do
     begin
@@ -1511,6 +1511,9 @@ begin
       SetDisplayTagAction(TActionFactory.CreateDisplayTagAction(Self));
       SetRemoveTagAction(
         TActionFactory.CreateRemoveTagAction(Self, ActRemoveTagExecute)
+      );
+      SetDisplayLanguageAction(
+        TActionFactory.CreateDisplayLanguageAction(Self)
       );
     end;
 

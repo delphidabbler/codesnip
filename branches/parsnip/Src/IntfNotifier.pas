@@ -25,6 +25,7 @@ uses
   ActiveX,
   Windows,
   // Project
+  CS.SourceCode.Languages,
   CS.Database.Types,
   UView;
 
@@ -99,6 +100,14 @@ type
     ///  <param name="Tag">TTag [in] Tag to be removed.</param>
     ///  <remarks>Method of INotifier.</remarks>
     procedure RemoveTag(const SnippetID: TSnippetID; const Tag: TTag);
+
+    ///  <summary>Displays the source code language with the given ID.</summary>
+    ///  <param name="LangID">TSourceCodeLanguageID [in] ID of language to be
+    ///  displayed.</param>
+    ///  <param name="NewTab">WordBool [in] Whether to display language in a new
+    ///  tab.</param>
+    procedure DisplayLanguage(const LangID: TSourceCodeLanguageID;
+      NewTab: WordBool);
   end;
 
 type
@@ -179,8 +188,11 @@ type
     ///  <summary>Sets action used to remove a tag from a snippet's tag list.
     ///  </summary>
     ///  <param name="Action">TBasicAction [in] Required action.</param>
-    ///  <remarks>Method of ISetActions.</remarks>
     procedure SetRemoveTagAction(const Action: TBasicAction);
+
+    ///  <summary>Sets action used to display a source code language.</summary>
+    ///  <param name="Action">TBasicAction [in] Required action.</param>
+    procedure SetDisplayLanguageAction(const Action: TBasicAction);
   end;
 
 type

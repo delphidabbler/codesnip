@@ -23,6 +23,7 @@ uses
   Classes,
   ActiveX,
   // Project
+  CS.SourceCode.Languages,
   CS.Database.Types,
   IntfNotifier,
   UView;
@@ -81,7 +82,9 @@ type
       ///  <summary>Action that causes a specified tag to be removed from a
       ///  specified snippet's tag list.</summary>
       fRemoveTagAction: TBasicAction;
-
+      ///  <summary>Action that causes the source code language with the
+      ///  specified ID to be displayed.</summary>
+      fDisplayLanguageAction: TBasicAction;
   public
 
     ///  <summary>Requests a database update.</summary>
@@ -164,6 +167,15 @@ type
     ///  <param name="Tag">TTag [in] Tag to be removed.</param>
     ///  <remarks>Method of INotifier.</remarks>
     procedure RemoveTag(const SnippetID: TSnippetID; const Tag: TTag);
+
+    ///  <summary>Displays the source code language with the given ID.</summary>
+    ///  <param name="LangID">TSourceCodeLanguageID [in] ID of language to be
+    ///  displayed.</param>
+    ///  <param name="NewTab">WordBool [in] Whether to display language in a new
+    ///  tab.</param>
+    ///  <remarks>Method of INotifier.</remarks>
+    procedure DisplayLanguage(const LangID: TSourceCodeLanguageID;
+      NewTab: WordBool);
 
     ///  <summary>Sets action used to request a database update.</summary>
     ///  <param name="Action">TBasicAction [in] Required action.</param>
@@ -254,6 +266,11 @@ type
     ///  <remarks>Method of ISetActions.</remarks>
     procedure SetRemoveTagAction(const Action: TBasicAction);
 
+    ///  <summary>Sets action used to display a source code language.</summary>
+    ///  <param name="Action">TBasicAction [in] Required action.</param>
+    ///  <remarks>Method of ISetActions.</remarks>
+    procedure SetDisplayLanguageAction(const Action: TBasicAction);
+
   end;
 
 
@@ -264,6 +281,7 @@ uses
   // Delphi
   SysUtils, StdActns,
   // Project
+  CS.Actions.DisplayLanguage,
   CS.Actions.DisplayTag,
   CS.Actions.RemoveTag,
   Compilers.UGlobals,
@@ -304,6 +322,17 @@ procedure TNotifier.ConfigCompilers;
 begin
   if Assigned(fConfigCompilersAction) then
     fConfigCompilersAction.Execute;
+end;
+
+procedure TNotifier.DisplayLanguage(const LangID: TSourceCodeLanguageID;
+  NewTab: WordBool);
+begin
+  if Assigned(fDisplayLanguageAction) then
+  begin
+    (fDisplayLanguageAction as TDisplayLanguageAction).LanguageID := LangID;
+    (fDisplayLanguageAction as TDisplayLanguageAction).NewTab := NewTab;
+    fDisplayLanguageAction.Execute;
+  end;
 end;
 
 procedure TNotifier.DisplaySnippet(const SnippetID: TSnippetID;
@@ -378,6 +407,16 @@ begin
   Assert(Action is TDetailTabAction,
     ClassName + '.SetDetailPaneChangeAction: Action is not TDetailTabAction');
   fDisplayPaneChangeAction := Action;
+end;
+
+procedure TNotifier.SetDisplayLanguageAction(const Action: TBasicAction);
+begin
+  Assert(Action is TDisplayLanguageAction, ClassName +
+    '.SetDisplayLanguageAction: Action is not TDisplayLanguageAction');
+  Assert(Supports(Action, ISetNotifier),
+    ClassName + '.SetDisplayLanguageAction: Action must support ISetNotifier');
+  fDisplayLanguageAction := Action;
+  (fDisplayLanguageAction as ISetNotifier).SetNotifier(Self);
 end;
 
 procedure TNotifier.SetDisplaySnippetAction(
