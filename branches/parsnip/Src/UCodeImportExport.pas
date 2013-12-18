@@ -356,7 +356,7 @@ begin
   Snippet := Database.LookupSnippet(SnippetID);
   // Create snippet node with attribute that specifies snippet ID string
   SnippetNode := fXMLDoc.CreateElement(ParentNode, cSnippetNode);
-  SnippetNode.Attributes[cSnippetNameAttr] := SnippetID.ToString;
+  SnippetNode.Attributes[cSnippetIDAttr] := SnippetID.ToString;
   // Add nodes for properties: (ignore category and xrefs)
   // description node is written even if empty (which it shouldn't be)
   fXMLDoc.CreateElement(
@@ -366,7 +366,7 @@ begin
   );
   // Snippet's display name is only written if different to Snippet's ID
   if Snippet.ID.ToString <> Snippet.Title then
-    fXMLDoc.CreateElement(SnippetNode, cDisplayNameNode, Snippet.Title);
+    fXMLDoc.CreateElement(SnippetNode, cTitleNode, Snippet.Title);
   // source code is stored directly in XML, not in external file
   fXMLDoc.CreateElement(SnippetNode, cSourceCodeTextNode, Snippet.SourceCode);
   // write highlight source flag
@@ -485,9 +485,7 @@ procedure TCodeImporter.Execute(const Data: TBytes);
   function GetTitleProperty(const SnippetNode: IXMLNode; const IDStr: string):
     string;
   begin
-    Result := TXMLDocHelper.GetSubTagText(
-      fXMLDoc, SnippetNode, cDisplayNameNode
-    );
+    Result := TXMLDocHelper.GetSubTagText(fXMLDoc, SnippetNode, cTitleNode);
     if StrIsBlank(Result) then
       Result := IDStr;
   end;
@@ -538,7 +536,7 @@ begin
     begin
       // Read a snippet node
       SnippetNode := SnippetNodes[Idx];
-      fSnippetInfo[Idx].IDStr := SnippetNode.Attributes[cSnippetNameAttr];
+      fSnippetInfo[Idx].IDStr := SnippetNode.Attributes[cSnippetIDAttr];
       Snippet := Database.NewSnippet;
       Snippet.Tags := BuildTags;
       Snippet.Description := GetDescription(SnippetNode);

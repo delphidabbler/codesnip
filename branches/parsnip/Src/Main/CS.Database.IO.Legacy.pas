@@ -200,10 +200,11 @@ begin
   raise E;
 end;
 
+// TODO: rename this method
 function TDBLegacyUserDBReader.LegacySnippetName(SnippetNode: IXMLNode):
   string;
 begin
-  Result := SnippetNode.Attributes[cSnippetNameAttr];
+  Result := SnippetNode.Attributes[cSnippetIDAttr];
 end;
 
 procedure TDBLegacyUserDBReader.Load(const ATable: TDBSnippetsTable;
@@ -388,7 +389,7 @@ procedure TDBLegacyUserDBReader.LoadSnippetProperties(SnippetNode: IXMLNode;
   // property.
   function GetTitleProperty: string;
   begin
-    Result := GetPropertyText(cDisplayNameNode);
+    Result := GetPropertyText(cTitleNode);
     if StrIsBlank(Result) then
       Result := LegacySnippetName(SnippetNode);
   end;

@@ -50,10 +50,10 @@ const
   cRootVersionAttr            = 'version';
   cRootWatermarkAttr          = 'watermark';
   cPascalNameNode             = 'pascal-name';
-  cDisplayNameNode            = 'display-name';
+  cTitleNode                  = 'display-name';
   cSnippetsNode               = 'routines';
   cSnippetNode                = 'routine';
-  cSnippetNameAttr            = 'name';
+  cSnippetIDAttr              = 'name';
   cCatIdNode                  = 'cat-id';
   cDescriptionNode            = 'description';
   cUnitsNode                  = 'units';
