@@ -276,7 +276,7 @@ end;
 
 function TV4ConfigDlg.DatabaseAvailable: Boolean;
 begin
-  Result := fFirstRun.HaveOldUserDB;
+  Result := fFirstRun.HaveOldDB;
 end;
 
 class procedure TV4ConfigDlg.Execute(AOwner: TComponent;
@@ -470,7 +470,7 @@ begin
     fFirstRun.UpdateUserCfgFile(fCfgChanges);
   end;
   if uaCopyUserDB in Actions then
-    fFirstRun.BringForwardUserDB;
+    fFirstRun.BringForwardDB;
 end;
 
 { TFirstRunDlg.TAligner }

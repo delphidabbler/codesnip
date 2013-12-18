@@ -82,12 +82,12 @@ type
     ///  installation.</summary>
     ///  <remarks>Prior to CodeSnip 5 this database will be the legacy "user"
     ///  database.</remarks>
-    function HaveOldUserDB: Boolean;  // TODO: rename this method to HaveOldDB
+    function HaveOldDB: Boolean;
     ///  <summary>Copies database from an earlier CodeSnip installation.
     ///  </summary>
     ///  <remarks>Prior to CodeSnip 5 this database will be the legacy "user"
     ///  database.</remarks>
-    procedure BringForwardUserDB; // TODO: rename this method to BringForwardDB
+    procedure BringForwardDB;
     ///  <summary>Creates a new, empty, Unicode encoded per-user config file for
     ///  current installation.</summary>
     procedure CreateEmptyUserCfgFile;
@@ -140,6 +140,12 @@ uses
 
 { TFirstRun }
 
+procedure TFirstRun.BringForwardDB;
+begin
+  Assert(HaveOldDB, ClassName + '.BringForwardDB: Old database does not exist');
+  fDatabase.CopyDatabase(fInstallInfo.PreviousUserDatabaseDir);
+end;
+
 procedure TFirstRun.BringForwardUserCfgFile;
 begin
   Assert(HaveOldUserCfgFile,
@@ -148,13 +154,6 @@ begin
     fInstallInfo.PreviousUserConfigFileName,
     fInstallInfo.IsPreviousUserConfigFileANSI
   );
-end;
-
-procedure TFirstRun.BringForwardUserDB;
-begin
-  Assert(HaveOldUserDB,
-    ClassName + '.BringForwardUserDB: Old database does not exist');
-  fDatabase.CopyDatabase(fInstallInfo.PreviousUserDatabaseDir);
 end;
 
 constructor TFirstRun.Create;
@@ -191,14 +190,14 @@ begin
   Result := (fUserConfigFile.FileVer <= 6) and fUserConfigFile.HasProxyPassword;
 end;
 
+function TFirstRun.HaveOldDB: Boolean;
+begin
+  Result := TFile.Exists(fInstallInfo.PreviousUserDatabaseFileName, False);
+end;
+
 function TFirstRun.HaveOldUserCfgFile: Boolean;
 begin
   Result := TFile.Exists(fInstallInfo.PreviousUserConfigFileName, False);
-end;
-
-function TFirstRun.HaveOldUserDB: Boolean;
-begin
-  Result := TFile.Exists(fInstallInfo.PreviousUserDatabaseFileName, False);
 end;
 
 function TFirstRun.IsProgramUpdated: Boolean;
@@ -281,7 +280,7 @@ begin
     try
       if not TCommandLineOpts.IsPortable then
       begin
-        if FR.HaveOldUserCfgFile or FR.HaveOldUserDB then
+        if FR.HaveOldUserCfgFile or FR.HaveOldDB then
           TV4ConfigDlg.Execute(Application, FR);
       end;
       if not UserCfgFileExists then
