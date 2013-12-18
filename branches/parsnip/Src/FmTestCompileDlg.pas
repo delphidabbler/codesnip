@@ -40,8 +40,8 @@ type
   ///  displays the results.</summary>
   TTestCompileDlg = class(TGenericViewDlg, INoPublicConstruct)
     sbCompilers: TScrollBox;
-    lblSnippetName: TLabel;
-    lblSnippetNameDesc: TLabel;
+    lblSnippetTitle: TLabel;
+    lblSnippetTitleDesc: TLabel;
     alMain: TActionList;
     actScrollPageUp: TAction;
     actScrollPageDown: TAction;
@@ -243,10 +243,10 @@ var
   NextTop: Integer;           // top of next compiler control in scroll box
   MaxCompListHeight: Integer; // max height of compiler list
 begin
-  TCtrlArranger.SetLabelHeight(lblSnippetNameDesc);
+  TCtrlArranger.SetLabelHeight(lblSnippetTitleDesc);
 
   // Set horizontal alignments
-  TCtrlArranger.MoveToRightOf(lblSnippetNameDesc, lblSnippetName);
+  TCtrlArranger.MoveToRightOf(lblSnippetTitleDesc, lblSnippetTitle);
   btnViewErrors.Left := pnlBody.Left;
 
   // Set widths
@@ -254,8 +254,8 @@ begin
     Max(
       pnlBody.ClientWidth,
       Max(
-        // allow room for long snippet names
-        TCtrlArranger.RightOf(lblSnippetName),
+        // allow room for long snippet titles
+        TCtrlArranger.RightOf(lblSnippetTitle),
         // allow room for button at bottom
         btnViewErrors.Width + ViewErrorsBtnRightMargin
           + TCtrlArranger.RightOf(btnHelp)- btnClose.Left
@@ -267,10 +267,10 @@ begin
 
   // Set vertical alignments
   TCtrlArranger.AlignVCentres(
-    SnippetLblTop, [lblSnippetName, lblSnippetNameDesc]
+    SnippetLblTop, [lblSnippetTitle, lblSnippetTitleDesc]
   );
   sbCompilers.Top := TCtrlArranger.BottomOf(
-    lblSnippetName, SnippetLblBottomMargin
+    lblSnippetTitle, SnippetLblBottomMargin
   );
   if fCompilerCtrlList.Count > 0 then
     MaxCompListHeight := Min(MaxCompilersBeforeScroll, fCompilerCtrlList.Count)
@@ -303,10 +303,10 @@ begin
   inherited;
   CreateCompilerCtrls;
   // Set required label fonts and captions
-  TFontHelper.SetDefaultBaseFont(lblSnippetName.Font);
+  TFontHelper.SetDefaultBaseFont(lblSnippetTitle.Font);
   // Rethinl following in light of synch spaces: no always same colour
-  lblSnippetName.Font.Color := Preferences.DBHeadingColours[True];
-  lblSnippetName.Caption := fSnippet.Title;
+  lblSnippetTitle.Font.Color := Preferences.DBHeadingColours[True];
+  lblSnippetTitle.Caption := fSnippet.Title;
 end;
 
 procedure TTestCompileDlg.CreateCompilerCtrls;
