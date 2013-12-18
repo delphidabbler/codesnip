@@ -20,10 +20,20 @@ interface
 
 uses
   // Delphi
-  Forms, ComCtrls, StdCtrls, Controls, ExtCtrls, Classes, Messages,
+  Forms,
+  ComCtrls,
+  StdCtrls,
+  Controls,
+  ExtCtrls,
+  Classes,
+  Messages,
   // Project
-  Browser.UHTMLEvents, FmGenericViewDlg, FrBrowserBase, FrHTMLDlg,
-  FrHTMLTpltDlg, UCSSBuilder;
+  Browser.UHTMLEvents,
+  FmGenericViewDlg,
+  FrBrowserBase,
+  FrHTMLDlg,
+  FrHTMLTpltDlg,
+  UCSSBuilder;
 
 
 type
@@ -95,9 +105,8 @@ type
     procedure pcDetailMouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
   strict private
-    // TODO: rename following field
-    fUserDBPathGp: TPathInfoBox;  // control that displays database folder
-    fInstallPathGp: TPathInfoBox; // control that displays program install path
+    fDatabasePathGp: TPathInfoBox; // control that displays database folder
+    fInstallPathGp: TPathInfoBox;  // control that displays program install path
     procedure HTMLEventHandler(Sender: TObject;
       const EventInfo: THTMLEventInfo);
       {Handles title frame's OnHTMLEvent event. Checks for easter-egg related
@@ -149,11 +158,26 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Graphics, Math, Windows, ShellAPI, IOUtils,
+  SysUtils,
+  Graphics,
+  Math,
+  Windows,
+  ShellAPI,
+  IOUtils,
   // Project
-  FmEasterEgg, FmRegistrationDlg, UAppInfo, UColours, UConsts, UCSSUtils,
-  UCtrlArranger, UFontHelper, UGraphicUtils, UHTMLUtils, UHTMLTemplate,
-  UResourceUtils, UThemesEx;
+  FmEasterEgg,
+  FmRegistrationDlg,
+  UAppInfo,
+  UColours,
+  UConsts,
+  UCSSUtils,
+  UCtrlArranger,
+  UFontHelper,
+  UGraphicUtils,
+  UHTMLUtils,
+  UHTMLTemplate,
+  UResourceUtils,
+  UThemesEx;
 
 
 {
@@ -201,8 +225,8 @@ procedure TAboutDlg.ArrangeForm;
 var
   PathTabHeight: Integer;
 begin
-  fUserDBPathGp.Top := TCtrlArranger.BottomOf(fInstallPathGp, 8);
-  PathTabHeight := TCtrlArranger.BottomOf(fUserDBPathGp);
+  fDatabasePathGp.Top := TCtrlArranger.BottomOf(fInstallPathGp, 8);
+  PathTabHeight := TCtrlArranger.BottomOf(fDatabasePathGp);
   // Set height of title frame and page control
   pnlTitle.Height := frmTitle.DocHeight;
   pcDetail.ClientHeight :=
@@ -247,15 +271,15 @@ procedure TAboutDlg.ConfigForm;
 resourcestring
   // Captions for custom controls
   sInstallPathGpCaption = 'Install Directory';
-  sUserDBPathGpCaption = 'Snippets Database Directory';
+  sDatabasePathGpCaption = 'Snippets Database Directory';
 begin
   inherited;
   // Creates required custom controls
   fInstallPathGp := CreatePathInfoBox(
     sInstallPathGpCaption, TAppInfo.AppExeDir
   );
-  fUserDBPathGp := CreatePathInfoBox(
-    sUserDBPathGpCaption, TAppInfo.UserDataDir
+  fDatabasePathGp := CreatePathInfoBox(
+    sDatabasePathGpCaption, TAppInfo.UserDataDir
   );
   // Load content into HTML frames
   InitHTMLFrames;
@@ -291,7 +315,7 @@ procedure TAboutDlg.FormDestroy(Sender: TObject);
 begin
   inherited;
   fInstallPathGp.Free;
-  fUserDBPathGp.Free;
+  fDatabasePathGp.Free;
 end;
 
 procedure TAboutDlg.HTMLEventHandler(Sender: TObject;

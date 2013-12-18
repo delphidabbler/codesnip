@@ -27,7 +27,7 @@ inherited AboutDlg: TAboutDlg
       Top = 47
       Width = 409
       Height = 218
-      ActivePage = tsPaths
+      ActivePage = tsProgram
       Align = alTop
       TabOrder = 0
       OnMouseDown = pcDetailMouseDown
