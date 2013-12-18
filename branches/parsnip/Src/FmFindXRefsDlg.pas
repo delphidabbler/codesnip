@@ -45,7 +45,7 @@ type
   }
   TFindXRefsDlg = class(TGenericOKDlg, INoPublicConstruct)
     lblDesc: TLabel;
-    lblSnippetName: TLabel;
+    lblSnippetTitle: TLabel;
     chkRequired: TCheckBox;
     chkSeeAlso: TCheckBox;
     chkIncludeSnippet: TCheckBox;
@@ -67,7 +67,7 @@ type
       }
   strict protected
     procedure ConfigForm; override;
-      {Style labels and record name of snippet in labels and checkboxes.
+      {Style labels and record snippet title in labels and checkboxes.
       }
     procedure ArrangeForm; override;
       {Arranges components on form and rezize form as required.
@@ -151,7 +151,7 @@ procedure TFindXRefsDlg.ArrangeForm;
   }
 begin
   // Horizontal alignment & sizing
-  // Place snippet name after end of description label
+  // Place snippet title after end of description label
   TCtrlArranger.AlignLefts(
     [
       lblDesc, chkRequired, chkSeeAlso, chkIncludeSnippet, chkSeeAlsoReverse,
@@ -160,18 +160,18 @@ begin
     0
   );
   TCtrlArranger.AlignLefts([chkRequiredRecurse, chkSeeAlsoRecurse], 24);
-  TCtrlArranger.MoveToRightOf(lblDesc, lblSnippetName);
-  // Check if snippet name is clipped at right of dialog box and increase
+  TCtrlArranger.MoveToRightOf(lblDesc, lblSnippetTitle);
+  // Check if snippet title is clipped at right of dialog box and increase
   // available body panel space if so
   // Don't use TCtrlArranger.TotalControlWidth here
-  if lblSnippetName.Left + lblSnippetName.Width > pnlBody.ClientWidth then
-    pnlBody.ClientWidth := lblSnippetName.Left + lblSnippetName.Width;
+  if lblSnippetTitle.Left + lblSnippetTitle.Width > pnlBody.ClientWidth then
+    pnlBody.ClientWidth := lblSnippetTitle.Left + lblSnippetTitle.Width;
   lblOverwriteSearch.Width := pnlBody.ClientWidth;
   TCtrlArranger.SetLabelHeight(lblOverwriteSearch);
 
   // Vertical alignment & sizing
-  TCtrlArranger.AlignVCentres(0, [lblDesc, lblSnippetName]);
-  TCtrlArranger.MoveBelow([lblDesc, lblSnippetName], chkRequired, 12);
+  TCtrlArranger.AlignVCentres(0, [lblDesc, lblSnippetTitle]);
+  TCtrlArranger.MoveBelow([lblDesc, lblSnippetTitle], chkRequired, 12);
   TCtrlArranger.MoveBelow(chkRequired, chkRequiredRecurse, 6);
   TCtrlArranger.MoveBelow(chkRequiredRecurse, chkRequiredReverse, 6);
   TCtrlArranger.MoveBelow(chkRequiredReverse, chkSeeAlso, 16);
@@ -231,16 +231,16 @@ begin
 end;
 
 procedure TFindXRefsDlg.ConfigForm;
-  {Style labels and record name of snippet in labels and checkboxes.
+  {Style labels and record snippet title in labels and checkboxes.
   }
 begin
   inherited;
   // Set label font styles and colours
-  lblSnippetName.Font.Style := [fsBold];
+  lblSnippetTitle.Font.Style := [fsBold];
   // TODO: rethink following DBHeadingColours is always same
-  lblSnippetName.Font.Color := Preferences.DBHeadingColours[True];
-  // Display selected snippet name in appropriate controls
-  lblSnippetName.Caption := fSnippet.Title;
+  lblSnippetTitle.Font.Color := Preferences.DBHeadingColours[True];
+  // Display selected snippet title in appropriate controls
+  lblSnippetTitle.Caption := fSnippet.Title;
   chkIncludeSnippet.Caption := Format(
     chkIncludeSnippet.Caption, [fSnippet.Title]
   );
