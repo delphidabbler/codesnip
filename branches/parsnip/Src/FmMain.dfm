@@ -483,6 +483,8 @@ inherited MainForm: TMainForm
       Hint = 
         'Group Snippets By Source Code Language|Display snippets in overv' +
         'iew pane grouped by their source code language'
+      OnExecute = ActOverviewGroupingExecute
+      OnUpdate = ActOverviewGroupingUpdate
     end
     object actViewGroupAlphabetically: TAction
       Category = 'View'

@@ -1470,6 +1470,7 @@ begin
     actViewGroupByTags.Tag := cTagsGrouping;
     actViewGroupAlphabetically.Tag := cAlphabeticGrouping;
     actViewGroupBySnippetKinds.Tag := cKindGrouping;
+    actViewGroupByLanguage.Tag := cSourceCodeLanguageGrouping;
     // Move database option not available in portable mode
     actMoveDatabase.Visible := not TCommandLineOpts.IsPortable;
 
