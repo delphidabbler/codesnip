@@ -635,17 +635,17 @@ end;
 
 procedure TSWAGImportDlg.PopulateImportsLV;
 var
-  Snippet: TSWAGSnippet;
+  SWAGSnippet: TSWAGSnippet;
   LI: TListItem;
 begin
   lvImports.Items.BeginUpdate;
   try
     lvImports.Clear;
-    for Snippet in fSelectedSnippets do
+    for SWAGSnippet in fSelectedSnippets do
     begin
       LI := lvImports.Items.Add;
-      LI.Caption := Snippet.Title;
-      LI.SubItems.Add(TSWAGImporter.MakeValidSnippetName(Snippet.ID));
+      LI.Caption := SWAGSnippet.Title;
+      LI.SubItems.Add(TSWAGImporter.MakeValidSnippetIDString(SWAGSnippet.ID));
     end;
   finally
     lvImports.Items.EndUpdate;

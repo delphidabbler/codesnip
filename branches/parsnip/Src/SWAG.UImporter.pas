@@ -79,9 +79,10 @@ type
     ///  <remarks>The snippets that are imported are those that have been
     ///  recorded by calling IncludeSnippet.</remarks>
     procedure Import(const Callback: TProgressCallback = nil);
-    ///  <summary>Creates and returns a valid snippet name, based on the given
-    ///  SWAG snippet ID, that is unique in the snippets database.</summary>
-    class function MakeValidSnippetName(SWAGSnippetID: Cardinal): string;
+    ///  <summary>Creates and returns a valid snippet ID string, based on the
+    ///  given SWAG snippet ID, that is unique in the snippets database.
+    ///  </summary>
+    class function MakeValidSnippetIDString(SWAGSnippetID: Cardinal): string;
     ///  <summary>Name of tag applied to all imported SWAG snippets.</summary>
     class function SWAGTagName: string;
   end;
@@ -190,21 +191,21 @@ begin
   fImportList.Add(SWAGSnippet);
 end;
 
-class function TSWAGImporter.MakeValidSnippetName(SWAGSnippetID: Cardinal):
+class function TSWAGImporter.MakeValidSnippetIDString(SWAGSnippetID: Cardinal):
   string;
 var
   Appendix: Integer;
-  RootName: string;
+  RootIDStr: string;
 begin
-  RootName := 'SWAG_' + IntToStr(SWAGSnippetID);
-  Assert(IsValidIdent(RootName, False), ClassName
+  RootIDStr := 'SWAG_' + IntToStr(SWAGSnippetID);
+  Assert(TSnippetID.IsValidIDString(RootIDStr), ClassName
     + '.GetValidSnippetName: RootName is not a valid Pascal identifier');
-  Result := RootName;
+  Result := RootIDStr;
   Appendix := 0;
   while not TSnippetValidator.ValidateSnippetID(Result, True) do
   begin
     Inc(Appendix);
-    Result := RootName + '_' + IntToStr(Appendix);
+    Result := RootIDStr + '_' + IntToStr(Appendix);
   end;
 end;
 
