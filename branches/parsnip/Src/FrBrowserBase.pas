@@ -211,14 +211,14 @@ begin
   begin
     AddProperty(TCSS.ColorProp(clHelpLink));
   end;
-  // <a class="snippet-link"> and override
-  with CSSBuilder.AddSelector('a.snippet-link') do
+  // <a class="snippet-link"> and <a class="language-link"> and overrides
+  with CSSBuilder.AddSelector('a.snippet-link, a.language-link') do
   begin
     AddProperty(TCSS.ColorProp(clDBLink));
     AddProperty(TCSS.FontStyleProp(cfsItalic));
     AddProperty(TCSS.TextDecorationProp([ctdNone]));
   end;
-  with CSSBuilder.AddSelector('a:hover.snippet-link') do
+  with CSSBuilder.AddSelector('a:hover.snippet-link, a:hover.language-link') do
   begin
     AddProperty(TCSS.BorderProp(cssBottom, 1, cbsDotted, clDBLink));
   end;

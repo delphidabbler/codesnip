@@ -164,11 +164,14 @@ end;
 
 function TSnippetHTML.Language: string;
 begin
-  Result := THTML.Entities(
-    StrMakeSentence(
+  Result := JSALink(
+    TJavaScript.LiteralFunc('displayLanguage', [fSnippet.LanguageID.ToString]),
+    'language-link',
+    THTML.Entities(
       TConfig.Instance.SourceCodeLanguages[fSnippet.LanguageID].FriendlyName
     )
   );
+  Result := StrMakeSentence(Result);
 end;
 
 function TSnippetHTML.Notes: string;

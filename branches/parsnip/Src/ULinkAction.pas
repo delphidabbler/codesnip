@@ -77,6 +77,7 @@ resourcestring
   sOpenInBrowser = 'Open Link In Browser';
   sDisplaySnippet = 'Display Snippet';
   sDisplayTag = 'Display Tag';
+  sDisplayLanguage = 'Display Language';
   sExecCommand = 'Execute Command';
   sShowHelp = 'Show Help Topic';
 
@@ -87,6 +88,7 @@ const
     sOpenInBrowser,   // akExternal
     sDisplaySnippet,  // akSnippet
     sDisplayTag,      // akTag
+    sDisplayLanguage, // akLanguage
     sExecCommand,     // akCommand
     sShowHelp,        // akHelp
     sOpen,            // akUnknown

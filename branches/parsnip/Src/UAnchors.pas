@@ -35,6 +35,7 @@ type
     akExternal,   // external link: class name = 'external-link'
     akSnippet,    // link to a snippet: class name = 'snippet-link'
     akTag,        // link to a tag: class name = 'tag-link'
+    akLanguage,   // link to a source code language: class name 'language-link'
     akCommand,    // link to a JS command: class name = 'command-link'
     akHelp,       // link to help topic: class name = 'help-link'
     akUnknown,    // unknown link kind
@@ -118,6 +119,8 @@ begin
     Result := akSnippet
   else if ClassNames.Contains('tag-link') then
     Result := akTag
+  else if ClassNames.Contains('language-link') then
+    Result := akLanguage
   else
     Result := akUnknown;
 end;
