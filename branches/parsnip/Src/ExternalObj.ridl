@@ -46,8 +46,9 @@ library ExternalObj
     HRESULT _stdcall UpdateDbase(void);
 
     /*
-     * Display named snippet.
+     * Displays a snippet.
      *    @param SnippetID [in] ID of snippet to display.
+     *    @param NewTab [in] Whether to display snippet in a new tab.
      */
     [id(0x00000066)]
     HRESULT _stdcall DisplaySnippet([in] BSTR SnippetID,
@@ -98,8 +99,9 @@ library ExternalObj
     HRESULT _stdcall ShowPrefsPage([in] BSTR ClsName);
 
     /*
-     * Display given tag.
+     * Displays given tag.
      *    @param Tag [in] Tag to be displayed.
+     *    @param NewTab [in] Whether to display tag in a new tab.
      */
     [id(0x00000074)]
     HRESULT _stdcall DisplayTag([in] BSTR Tag, [in] VARIANT_BOOL NewTab);
@@ -111,6 +113,15 @@ library ExternalObj
      */
     [id(0x00000075)]
     HRESULT _stdcall RemoveTag([in] BSTR SnippetID, [in] BSTR Tag);
+
+    /*
+     * Display given source code language.
+     *    @param Tag [in] ID of language to be displayed.
+      *    @param NewTab [in] Whether to display language in a new tab.
+    */
+    [id(0x00000076)]
+    HRESULT _stdcall DisplayLanguage([in] BSTR LangID,
+      [in] VARIANT_BOOL NewTab);
 
   };
 

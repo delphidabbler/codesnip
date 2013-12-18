@@ -126,3 +126,16 @@ function removeTag(snippetID, tag) {
   external.RemoveTag(snippetID, tag);
   return false;
 }
+
+/*
+ * Calls external object to get the host application to display a specified
+ * source code language.
+ *  @param string langId [in] ID of language to be displayed.
+ *  @return False.
+ */
+function displayLanguage(langId) {
+  var e = window.event;
+  external.DisplayLanguage(langId, e.ctrlKey);
+  return false;
+}
+

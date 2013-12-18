@@ -113,6 +113,15 @@ type
     procedure RemoveTag(const SnippetID: WideString; const Tag: WideString);
       safecall;
 
+    ///  <summary>Displays the source code language with the given ID.</summary>
+    ///  <param name="LangID">WideSting [in] ID of language to be displayed.
+    ///  </param>
+    ///  <param name="NewTab">WordBool [in] Whether to display language in a new
+    ///  tab.</param>
+    ///  <remarks>Method of IWBExternal13.</remarks>
+    procedure DisplayLanguage(const LangID: WideString; NewTab: WordBool);
+      safecall;
+
     ///  <summary>Records the notifier object that is used to call application
     ///  code in response to JavaScript calls running in browser documents.
     ///  </summary>
@@ -129,6 +138,7 @@ uses
   // Delphi
   Forms,
   // Project
+  CS.SourceCode.Languages,
   CS.Database.Types,
   UAppInfo;
 
@@ -165,6 +175,17 @@ begin
   OleCheck(LoadTypeLib(PWideChar(ExeName), TypeLib));
   // Create the object using type library
   inherited Create(TypeLib, IWBExternal13);
+end;
+
+procedure TWBExternal.DisplayLanguage(const LangID: WideString;
+  NewTab: WordBool);
+begin
+  try
+    if Assigned(fNotifier) then
+      fNotifier.DisplayLanguage(TSourceCodeLanguageID.Create(LangID), NewTab);
+  except
+    HandleException;
+  end;
 end;
 
 procedure TWBExternal.DisplaySnippet(const SnippetID: WideString;
