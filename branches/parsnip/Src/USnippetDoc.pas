@@ -110,6 +110,7 @@ uses
   // Delphi
   SysUtils,
   // Project
+  CS.Config,
   Compilers.UCompilers,
   DB.UMain,
   UStrUtils,
@@ -153,6 +154,7 @@ resourcestring
   // Literal string required in output
   sKindTitle = 'Snippet Type:';
   sTagsTitle = 'Tags:';
+  sLanguageTitle = 'Language:';
   sUnitListTitle = 'Required units:';
   sDependListTitle = 'Required snippets:';
   sXRefListTitle = 'See also:';
@@ -165,6 +167,10 @@ begin
   RenderHeading(Snippet.Title);
   RenderDescription(Snippet.Description);
   RenderSourceCode(Snippet.SourceCode);
+  RenderTitledText(
+    sLanguageTitle,
+    TConfig.Instance.SourceCodeLanguages[Snippet.LanguageID].FriendlyName
+  );
   RenderTitledText(
     sKindTitle, Database.GetAllSnippetKinds[Snippet.KindID].DisplayName
   );
