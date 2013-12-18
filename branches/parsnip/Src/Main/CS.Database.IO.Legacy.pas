@@ -52,7 +52,7 @@ type
       fCategoryMap: TDictionary<string,string>;
     procedure HandleException(E: Exception);
     function XMLFileName: string;
-    function LegacySnippetName(SnippetNode: IXMLNode): string;
+    function LegacySnippetID(SnippetNode: IXMLNode): string;
     procedure OpenXMLDoc;
     procedure ReadCategoryInfo;
     procedure ReadSnippets(const ATable: TDBSnippetsTable);
@@ -106,8 +106,7 @@ uses
 resourcestring
   // Error message
   sMissingNode = 'Document has no %s node.';
-  sMissingSource = 'Source code file name missing for legacy snippet named '
-    + '"%s"';
+  sMissingSource = 'Source code file name missing for legacy snippet "%s"';
   sFileNotFound = 'Database file "%s" missing.';
 
 function TDBLegacyUserDBReader.BuildTagSet: ITagSet;
@@ -200,9 +199,7 @@ begin
   raise E;
 end;
 
-// TODO: rename this method
-function TDBLegacyUserDBReader.LegacySnippetName(SnippetNode: IXMLNode):
-  string;
+function TDBLegacyUserDBReader.LegacySnippetID(SnippetNode: IXMLNode): string;
 begin
   Result := SnippetNode.Attributes[cSnippetIDAttr];
 end;
@@ -229,9 +226,7 @@ procedure TDBLegacyUserDBReader.LoadSnippet(SnippetNode: IXMLNode;
 var
   Snippet: TDBSnippet;
 begin
-  Snippet := TDBSnippet.Create(
-    TSnippetID.Create(LegacySnippetName(SnippetNode))
-  );
+  Snippet := TDBSnippet.Create(TSnippetID.Create(LegacySnippetID(SnippetNode)));
   try
     LoadSnippetProperties(SnippetNode, Snippet);
     ATable.Add(Snippet);
@@ -385,13 +380,13 @@ procedure TDBLegacyUserDBReader.LoadSnippetProperties(SnippetNode: IXMLNode;
   end;
 
   // Returns the text of the snippet's Title property. This is derived from the
-  // the legacy snippet's DisplayName or, if that is not provided, its Name
-  // property.
+  // the legacy snippet's display name or, if that is not provided, its ID
+  // string.
   function GetTitleProperty: string;
   begin
     Result := GetPropertyText(cTitleNode);
     if StrIsBlank(Result) then
-      Result := LegacySnippetName(SnippetNode);
+      Result := LegacySnippetID(SnippetNode);
   end;
 
   // Returns the snippet's LanguageID property value which is deduced to be
@@ -405,15 +400,15 @@ procedure TDBLegacyUserDBReader.LoadSnippetProperties(SnippetNode: IXMLNode;
       Result := TSourceCodeLanguageID.Create('Text');
   end;
 
-  // Converts the given list of legacy snippet names into a list of snippets
-  // with IDs based on the legacy names.
-  function ConvertSnippetIDList(LegacyNameList: IStringList): ISnippetIDList;
+  // Converts the given list of legacy snippet ID strings into a list of
+  // snippets with IDs based on the legacy IDs.
+  function ConvertSnippetIDList(LegacyIDList: IStringList): ISnippetIDList;
   var
-    LegacyName: string;
+    LegacyID: string;
   begin
     Result := TSnippetIDList.Create;
-    for LegacyName in LegacyNameList do
-      Result.Add(TSnippetID.Create(LegacyName));
+    for LegacyID in LegacyIDList do
+      Result.Add(TSnippetID.Create(LegacyID));
   end;
 
   // Reads a list of Pascal names from the given sub-tag of the current
@@ -461,7 +456,7 @@ begin
   ASnippet.SetLinkInfo(
     TSnippetLinkInfo.Create(
       TSnippetSynchSpaceIDs.LegacyDB,
-      TSnippetID.Create(LegacySnippetName(SnippetNode))
+      TSnippetID.Create(LegacySnippetID(SnippetNode))
     )
   );
   // Note that the snippet's TestInfo and Starred properties have no equivalent
