@@ -71,7 +71,6 @@ type
       fSnippetKindsCBMgr: TUnsortedCollectionCtrlKVMgr<TSnippetKindID>;
     function PartIdFromStrings(Strings: TStrings; Idx: Integer):
       TSnippetPagePartId;
-    // TODO: rename SelectedKind as SelectedKindID or similar
     function SelectedKindID: TSnippetKindID;
     procedure UpdateFragmentInfo;
     procedure Changed;
