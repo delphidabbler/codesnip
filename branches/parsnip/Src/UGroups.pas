@@ -143,16 +143,15 @@ type
   }
   TSnipKindGroupItem = class(TGroupItem)
   strict private
-    // TODO: rename field as fSnippetKind
-    var fSnipKindInfo: TSnippetKind;  // Snippet kind associated with group
+    var
+      fSnippetKind: TSnippetKind;  // Snippet kind associated with group
   strict protected
     function GetTitle: string; override;
       {Gets group title from snippet kind description.
         @return Required title.
       }
   public
-    // TODO: rename parameter as ASnippetKind
-    constructor Create(const SnipKindInfo: TSnippetKind);
+    constructor Create(const ASnippetKind: TSnippetKind);
       {Object constructor. Sets up group for a kind of snippet.
         @param SnippetKindInfo [in] Information about snippet kind represented
           by the group.
@@ -165,8 +164,7 @@ type
         @return -ve if this item sorts before Item, 0 if same and +ve if this
           item sorts after Item.
       }
-    // TODO: rename property as SnippetKind
-    property SnipKindInfo: TSnippetKind read fSnipKindInfo;
+    property SnippetKind: TSnippetKind read fSnippetKind;
       {Kind of snippet represented by this group}
   end;
 
@@ -579,14 +577,14 @@ begin
   Result := StrCompareText(GetTitle, (Item as TSnipKindGroupItem).GetTitle);
 end;
 
-constructor TSnipKindGroupItem.Create(const SnipKindInfo: TSnippetKind);
+constructor TSnipKindGroupItem.Create(const ASnippetKind: TSnippetKind);
   {Object constructor. Sets up group for a kind of snippet.
     @param SnippetKindInfo [in] Information about snippet kind represented by
       the group.
   }
 begin
   inherited Create;
-  fSnipKindInfo := SnipKindInfo;
+  fSnippetKind := ASnippetKind;
 end;
 
 function TSnipKindGroupItem.GetTitle: string;
@@ -594,7 +592,7 @@ function TSnipKindGroupItem.GetTitle: string;
     @return Required title.
   }
 begin
-  Result := fSnipKindInfo.DisplayName;
+  Result := fSnippetKind.DisplayName;
 end;
 
 end.

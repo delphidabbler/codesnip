@@ -253,7 +253,7 @@ function TOverviewSnipKindTreeBuilder.CreateViewItemForGroup(
   }
 begin
   Result := TViewFactory.CreateSnippetKindView(
-    (Group as TSnipKindGroupItem).SnipKindInfo
+    (Group as TSnipKindGroupItem).SnippetKind
   );
 end;
 
