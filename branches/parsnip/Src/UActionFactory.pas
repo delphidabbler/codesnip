@@ -104,6 +104,13 @@ type
         @param OnExecHandler [in] Handler for action's OnExecute event.
         @return Reference to newly created action.
       }
+    class function CreateDisplayLanguageAction(const AOwner: TComponent;
+      const OnExecHandler: TNotifyEvent = nil): TBasicAction;
+      {Creates a Display Language action and sets OnExecute handler if provided.
+        @param AOwner [in] Owner of action.
+        @param OnExecHandler [in] Handler for action's OnExecute event.
+        @return Reference to newly created action.
+      }
   end;
 
 
@@ -114,6 +121,7 @@ uses
   // Delphi
   StdActns,
   // Project
+  CS.Actions.DisplayLanguage,
   CS.Actions.DisplayTag,
   CS.Actions.RemoveTag,
   UDetailTabAction,
@@ -150,6 +158,17 @@ class function TActionFactory.CreateDetailTabAction(const AOwner: TComponent;
   }
 begin
   Result := CreateAction(TDetailTabAction, AOwner, OnExecHandler);
+end;
+
+class function TActionFactory.CreateDisplayLanguageAction(
+  const AOwner: TComponent; const OnExecHandler: TNotifyEvent): TBasicAction;
+  {Creates a Display Language action and sets OnExecute handler if provided.
+    @param AOwner [in] Owner of action.
+    @param OnExecHandler [in] Handler for action's OnExecute event.
+    @return Reference to newly created action.
+  }
+begin
+  Result := CreateAction(TDisplayLanguageAction, AOwner, OnExecHandler);
 end;
 
 class function TActionFactory.CreateDisplayTagAction(const AOwner: TComponent;
