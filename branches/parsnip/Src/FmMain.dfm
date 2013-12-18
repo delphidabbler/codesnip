@@ -647,24 +647,22 @@ inherited MainForm: TMainForm
     end
     object actBackupDatabase: TAction
       Category = 'Database'
-      Caption = 'Backup User Database...'
-      Hint = 'Backup Database|Backup all user-defined entries in the database'
+      Caption = 'Backup Database...'
+      Hint = 'Backup Database|Backs up the entire database to a file'
       ImageIndex = 33
       OnExecute = actBackupDatabaseExecute
     end
     object actRestoreDatabase: TAction
       Category = 'Database'
-      Caption = 'Restore User Database...'
-      Hint = 
-        'Restore User Database|Restore user-defined database from a backu' +
-        'p'
+      Caption = 'Restore Database...'
+      Hint = 'Restore Database|Restores the database from a backup file'
       ImageIndex = 32
       OnExecute = actRestoreDatabaseExecute
     end
     object actSaveDatabase: TAction
       Category = 'Database'
-      Caption = 'Save User Database'
-      Hint = 'Save Database|Save all changes to user database'
+      Caption = 'Save Database'
+      Hint = 'Save Database|Save all changes to the database'
       ImageIndex = 25
       ShortCut = 16467
       OnExecute = actSaveDatabaseExecute
@@ -878,11 +876,11 @@ inherited MainForm: TMainForm
       OnExecute = actAddFavouriteExecute
       OnUpdate = actAddFavouriteUpdate
     end
-    object actMoveUserDatabase: TAction
+    object actMoveDatabase: TAction
       Category = 'Database'
-      Caption = 'Move User Database...'
-      Hint = 'Move User Database|Move the user database to a new directory'
-      OnExecute = actMoveUserDatabaseExecute
+      Caption = 'Move Database...'
+      Hint = 'Move Database|Move the database to a new directory'
+      OnExecute = actMoveDatabaseExecute
     end
     object actSWAGImport: TAction
       Category = 'Snippets'
@@ -1099,16 +1097,12 @@ inherited MainForm: TMainForm
       Caption = 'Database'
       object miSaveDatabase: TMenuItem
         Action = actSaveDatabase
-        Hint = 'Save User Database|Saves all changes to user database'
       end
       object miSpacer11: TMenuItem
         Caption = '-'
       end
       object miBackupDatabase: TMenuItem
         Action = actBackupDatabase
-        Hint = 
-          'Backup User Database|Backup all user-defined entries in the data' +
-          'base'
       end
       object miRestoreDatabase: TMenuItem
         Action = actRestoreDatabase
@@ -1122,8 +1116,8 @@ inherited MainForm: TMainForm
       object miSpacer20: TMenuItem
         Caption = '-'
       end
-      object miMoveUserDatabase: TMenuItem
-        Action = actMoveUserDatabase
+      object miMoveDatabase: TMenuItem
+        Action = actMoveDatabase
       end
     end
     object miCompile: TMenuItem

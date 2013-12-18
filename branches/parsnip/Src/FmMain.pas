@@ -18,7 +18,6 @@ unit FmMain;
 
 interface
 
-{TODO: rename actions that refer to "user" database }
 
 uses
   // Delphi
@@ -94,7 +93,7 @@ type
     actImportCode: TAction;
     actLicense: TAction;
     actLoadSelection: TAction;
-    actMoveUserDatabase: TAction;
+    actMoveDatabase: TAction;
     actNextTab: TAction;
     actNewDetailsTab: TAction;
     actNews: TAction;
@@ -171,7 +170,7 @@ type
     miImportCode: TMenuItem;
     miLicense: TMenuItem;
     miLoadSelection: TMenuItem;
-    miMoveUserDatabase: TMenuItem;
+    miMoveDatabase: TMenuItem;
     miNewDetailsTab: TMenuItem;
     miNews: TMenuItem;
     miPreferences: TMenuItem;
@@ -367,7 +366,7 @@ type
     ///  database to a user defined directory.</summary>
     ///  <remarks>This action must be hidden when running in portable mode.
     ///  </remarks>
-    procedure actMoveUserDatabaseExecute(Sender: TObject);
+    procedure actMoveDatabaseExecute(Sender: TObject);
     ///  <summary>Creates a new empty tab in details pane.</summary>
     procedure actNewDetailsTabExecute(Sender: TObject);
     ///  <summary>Displays a dialogue box containing latest news from CodeSnip's
@@ -962,7 +961,7 @@ begin
     DoSearchFilter(Search);
 end;
 
-procedure TMainForm.actMoveUserDatabaseExecute(Sender: TObject);
+procedure TMainForm.actMoveDatabaseExecute(Sender: TObject);
 begin
   TDBModificationMgr.MoveDatabase;
 end;
@@ -1470,7 +1469,7 @@ begin
     actViewGroupAlphabetically.Tag := cAlphabeticGrouping;
     actViewGroupBySnippetKinds.Tag := cKindGrouping;
     // Move database option not available in portable mode
-    actMoveUserDatabase.Visible := not TCommandLineOpts.IsPortable;
+    actMoveDatabase.Visible := not TCommandLineOpts.IsPortable;
 
     // Create notifier object and assign actions triggered by its methods
     // note that actions created on fly are automatically freed
