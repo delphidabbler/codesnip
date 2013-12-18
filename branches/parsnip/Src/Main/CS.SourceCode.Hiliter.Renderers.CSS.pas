@@ -38,12 +38,12 @@ type
   }
   THiliterCSS = class(TObject)
   strict private
-    fTheme: TSyntaxHiliteTheme;
+    var
+      fTheme: TSyntaxHiliteTheme;
       {Highlighter for which CSS is to be generated}
-    // TODO: rename BuildElemCSS as BuildAttrCSS
-    procedure BuildElemCSS(const BrushID, AttrID: string;
+    procedure BuildAttrCSS(const BrushID, AttrID: string;
       const CSSBuilder: TCSSBuilder);
-      {Builds CSS class for a highlighter element.
+      {Builds CSS class for an attribute.
         @param Elem [in] Highlighter element for which CSS is required.
         @param CSSBuilder [in] Object used to build and store the CSS.
       }
@@ -83,42 +83,8 @@ uses
 
 { THiliterCSS }
 
-procedure THiliterCSS.BuildBrushCSS(const ABrush: TSyntaxHiliterBrush;
+procedure THiliterCSS.BuildAttrCSS(const BrushID, AttrID: string;
   const CSSBuilder: TCSSBuilder);
-var
-  Attrs: TArray<TSyntaxHiliterAttr>;
-  Attr: TSyntaxHiliterAttr;
-begin
-  // Add font definition in main class
-  BuildCommonThemeCSS(CSSBuilder);
-  Attrs := ABrush.SupportedAttrs;
-  for Attr in Attrs do
-    BuildElemCSS(ABrush.ID, Attr.ID, CSSBuilder);
-end;
-
-procedure THiliterCSS.BuildCommonThemeCSS(const CSSBuilder: TCSSBuilder);
-begin
-  // Add font definition in main class
-  if CSSBuilder.Selectors['.' + GetMainCSSClassName] = nil then
-  begin
-    with CSSBuilder.AddSelector('.' + GetMainCSSClassName) do
-    begin
-      AddProperty(TCSS.FontFamilyProp(fTheme.FontName, cfgMonoSpace));
-      AddProperty(TCSS.FontSizeProp(fTheme.FontSize));
-      if fTheme.DefaultBackground <> clNone then
-        AddProperty(TCSS.BackgroundColorProp(fTheme.DefaultBackground));
-      if fTheme.DefaultForeground <> clNone then
-        AddProperty(TCSS.BackgroundColorProp(fTheme.DefaultForeground));
-    end;
-  end;
-end;
-
-procedure THiliterCSS.BuildElemCSS(const BrushID, AttrID: string;
-  const CSSBuilder: TCSSBuilder);
-  {Builds CSS class for a highlighter element.
-    @param Elem [in] Highlighter element for which CSS is required.
-    @param CSSBuilder [in] Object used to build and output the CSS.
-  }
 var
   AttrStyle: TSyntaxHiliteAttrStyle;
 begin
@@ -138,6 +104,36 @@ begin
   end;
 end;
 
+procedure THiliterCSS.BuildBrushCSS(const ABrush: TSyntaxHiliterBrush;
+  const CSSBuilder: TCSSBuilder);
+var
+  Attrs: TArray<TSyntaxHiliterAttr>;
+  Attr: TSyntaxHiliterAttr;
+begin
+  // Add font definition in main class
+  BuildCommonThemeCSS(CSSBuilder);
+  Attrs := ABrush.SupportedAttrs;
+  for Attr in Attrs do
+    BuildAttrCSS(ABrush.ID, Attr.ID, CSSBuilder);
+end;
+
+procedure THiliterCSS.BuildCommonThemeCSS(const CSSBuilder: TCSSBuilder);
+begin
+  // Add font definition in main class
+  if CSSBuilder.Selectors['.' + GetMainCSSClassName] = nil then
+  begin
+    with CSSBuilder.AddSelector('.' + GetMainCSSClassName) do
+    begin
+      AddProperty(TCSS.FontFamilyProp(fTheme.FontName, cfgMonoSpace));
+      AddProperty(TCSS.FontSizeProp(fTheme.FontSize));
+      if fTheme.DefaultBackground <> clNone then
+        AddProperty(TCSS.BackgroundColorProp(fTheme.DefaultBackground));
+      if fTheme.DefaultForeground <> clNone then
+        AddProperty(TCSS.BackgroundColorProp(fTheme.DefaultForeground));
+    end;
+  end;
+end;
+
 procedure THiliterCSS.BuildThemeCSS(const CSSBuilder: TCSSBuilder);
 var
   BrushID: string;
@@ -150,7 +146,7 @@ begin
     Brush := TSyntaxHiliterBrushes.CreateBrush(BrushID);
     try
       for Attr in Brush.SupportedAttrs do
-        BuildElemCSS(Brush.ID, Attr.ID, CSSBuilder);
+        BuildAttrCSS(Brush.ID, Attr.ID, CSSBuilder);
     finally
       Brush.Free;
     end;
