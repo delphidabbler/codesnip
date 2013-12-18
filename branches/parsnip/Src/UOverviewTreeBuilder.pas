@@ -94,6 +94,18 @@ type
       override;
   end;
 
+  ///  <summary>Class that populates the overview treeview with a list of
+  ///  snippets grouped by programming language.</summary>
+  TOverviewSourceCodeLanguageTreeBuilder = class sealed(TOverviewTreeBuilder)
+  strict protected
+    ///  <summary>Creates and returns a language grouping object.</summary>
+    function CreateGrouping: TGrouping; override;
+    ///  <summary>Createa and returns a source code language view item from a
+    ///  group item.</summary>
+    function CreateViewItemForGroup(const Group: TGroupItem): IView;
+      override;
+  end;
+
   {
   TOverviewAlphabeticTreeBuilder:
     Class that populates the overview treeview with a list of snippets grouped
@@ -210,6 +222,21 @@ function TOverviewTagTreeBuilder.CreateViewItemForGroup(
 begin
   Result := TViewFactory.CreateTagView(
     (Group as TTagGroupItem).Tag
+  );
+end;
+
+{ TOverviewSourceCodeLanguageTreeBuilder }
+
+function TOverviewSourceCodeLanguageTreeBuilder.CreateGrouping: TGrouping;
+begin
+  Result := TSourceCodeLanguageGrouping.Create(SnippetIDList);
+end;
+
+function TOverviewSourceCodeLanguageTreeBuilder.CreateViewItemForGroup(
+  const Group: TGroupItem): IView;
+begin
+  Result := TViewFactory.CreateSourceCodeLanguageView(
+    (Group as TSourceCodeLanguageGroupItem).Language
   );
 end;
 

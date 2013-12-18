@@ -312,6 +312,7 @@ var
   GroupingIdx: Integer;  // loops through all supported groupings
 resourcestring
   sTagsGrouping = 'By Tags';
+  sSourceCodeLanguageGrouping = 'By Source Code Language';
   sAlphaGrouping = 'Alphabetically';
   sKindGrouping = 'By Snippet Kind';
 begin
@@ -334,6 +335,7 @@ begin
   );
   fPreviousGrouping := -1;
   fGroupingCBMgr.Add(cTagsGrouping, sTagsGrouping);
+  fGroupingCBMgr.Add(cSourceCodeLanguageGrouping, sSourceCodeLanguageGrouping);
   fGroupingCBMgr.Add(cAlphabeticGrouping, sAlphaGrouping);
   fGroupingCBMgr.Add(cKindGrouping, sKindGrouping);
   fGroupingCBMgr.Select(cTagsGrouping);
@@ -567,6 +569,8 @@ begin
   BuilderClasses[cTagsGrouping] := TOverviewTagTreeBuilder;
   BuilderClasses[cAlphabeticGrouping] := TOverviewAlphabeticTreeBuilder;
   BuilderClasses[cKindGrouping] := TOverviewSnipKindTreeBuilder;
+  BuilderClasses[cSourceCodeLanguageGrouping] :=
+    TOverviewSourceCodeLanguageTreeBuilder;
   tvSnippets.Items.BeginUpdate;
   try
     // Clear tree view

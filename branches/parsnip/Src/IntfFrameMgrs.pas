@@ -35,6 +35,7 @@ const
   cTagsGrouping = 0;
   cAlphabeticGrouping = 1;
   cKindGrouping = 2;
+  cSourceCodeLanguageGrouping = 3;
 
   // Identifiers for Overview Pane's command bars
   cOverviewToolBar: TCommandBarID = 1;

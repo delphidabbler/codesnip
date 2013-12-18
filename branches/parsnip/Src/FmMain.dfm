@@ -477,6 +477,13 @@ inherited MainForm: TMainForm
       OnExecute = ActOverviewGroupingExecute
       OnUpdate = ActOverviewGroupingUpdate
     end
+    object actViewGroupByLanguage: TAction
+      Category = 'View'
+      Caption = 'Group Snippets By Source Code Language'
+      Hint = 
+        'Group Snippets By Source Code Language|Display snippets in overv' +
+        'iew pane grouped by their source code language'
+    end
     object actViewGroupAlphabetically: TAction
       Category = 'View'
       AutoCheck = True
@@ -974,6 +981,10 @@ inherited MainForm: TMainForm
         AutoCheck = True
         GroupIndex = 100
         RadioItem = True
+      end
+      object miViewGroupByLanguage: TMenuItem
+        Action = actViewGroupByLanguage
+        GroupIndex = 100
       end
       object miViewGroupAlphabetically: TMenuItem
         Action = actViewGroupAlphabetically

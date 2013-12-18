@@ -24,8 +24,10 @@ uses
   // 3rd party
   Collections.Base,
   Collections.Lists,
+  Collections.MultiMaps,
   // Project
   CS.Database.Types,
+  CS.SourceCode.Languages,
   UInitialLetter;
 
 
@@ -105,6 +107,33 @@ type
     function CompareTo(const Item: TGroupItem): Integer; override;
     ///  <summary>Tag associated with group item.</summary>
     property Tag: TTag read fTag;
+  end;
+
+  ///  <summary>Defines a group heading for snippets organised by source code
+  ///  language. Contains all snippets that use the associated language.
+  ///  </summary>
+  TSourceCodeLanguageGroupItem = class(TGroupItem)
+  strict private
+    var
+      ///  <summary>Read accessor of language property.</summary>
+      fLanguage: TSourceCodeLanguage;
+  strict protected
+    ///  <summary>Gets group title from language name.</summary>
+    function GetTitle: string; override;
+  public
+    ///  <summary>Constructs a group item instance associated with the given
+    ///  language.</summary>
+    constructor Create(const ALanguage: TSourceCodeLanguage);
+    ///  <summary>Compares this group item against another. Comparison is
+    ///  alphabetic and case insensitive based on the associated language's
+    ///  "friendly name".</summary>
+    ///  <param name="Item">TGroupItem [in] Group item to be compared against.
+    ///  This must be a TSourceCodeLanguageGroupItem instance.</param>
+    ///  <returns>Integer. -ve if this item sorts before Item, 0 if same and +ve
+    ///  if this item sorts after Item.</returns>
+    function CompareTo(const Item: TGroupItem): Integer; override;
+    ///  <summary>Source code language associated with group item.</summary>
+    property Language: TSourceCodeLanguage read fLanguage;
   end;
 
   {
@@ -213,8 +242,8 @@ type
       {Number of group items in grouping}
   end;
 
-  ///  <summary>Class that groups snippets by tag, except that the special "no
-  ///  tags" group sorts first.</summary>
+  ///  <summary>Class that groups snippets by tag. Groups are sorted by tag
+  ///  except that the special "no tags" group sorts first.</summary>
   ///  <remarks>The "no tags" group is used for snippets that have no tags.
   ///  </remarks>
   TTagGrouping = class(TGrouping)
@@ -222,6 +251,14 @@ type
     ///  <summary>Populates grouping with sorted tag group items and associated
     ///  snippets. Also adds a "no tags" group used for snippets which have no
     ///  tag.</summary>
+    procedure Populate; override;
+  end;
+
+  ///  <summary>Class that groups snippets by source code language.</summary>
+  TSourceCodeLanguageGrouping = class(TGrouping)
+  strict protected
+    ///  <summary>Populates grouping with sorted source code language group
+    ///  items and associated snippets.</summary>
     procedure Populate; override;
   end;
 
@@ -233,7 +270,7 @@ type
   TAlphaGrouping = class(TGrouping)
   strict private
     type
-      // Sorted map of letter objects onto group items
+      // Map of letter objects onto group items
       TLetterGroupMap = TObjectDictionary<TInitialLetter,TGroupItem>;
   strict protected
     procedure Populate; override;
@@ -263,6 +300,7 @@ uses
   // Delphi
   Generics.Defaults,
   // Project
+  CS.Config,
   CS.Database.Snippets,
   DB.UMain,
   UStrUtils;
@@ -438,6 +476,58 @@ end;
 function TTagGroupItem.GetTitle: string;
 begin
   Result := fTag.ToString;
+end;
+
+{ TSourceCodeLanguageGrouping }
+
+procedure TSourceCodeLanguageGrouping.Populate;
+var
+  Lang: TSourceCodeLanguage;
+  GroupItem: TGroupItem;    // a group item
+  SnippetID: TSnippetID;    // each snippet ID in database
+  SelectedSnippetIDs: ISnippetIDList;
+  Snippet: ISnippet;        // each snippet in database
+begin
+  for Lang in TConfig.Instance.SourceCodeLanguages do
+  begin
+    SelectedSnippetIDs := Database.SelectSnippets(
+      function (Snippet: ISnippet): Boolean
+      begin
+        Result := (Snippet.LanguageID = Lang.ID) and
+          SnippetIDList.Contains(Snippet.ID);
+      end
+    );
+    GroupItem := TSourceCodeLanguageGroupItem.Create(Lang);
+    for SnippetID in SelectedSnippetIDs do
+    begin
+      Snippet := Database.LookupSnippet(SnippetID);
+      GroupItem.AddSnippet(Snippet);
+    end;
+    AddItem(GroupItem);
+  end;
+end;
+
+{ TSourceCodeLanguageGroupItem }
+
+function TSourceCodeLanguageGroupItem.CompareTo(const Item: TGroupItem):
+  Integer;
+var
+  ThatLanguage: TSourceCodeLanguage;
+begin
+  ThatLanguage := (Item as TSourceCodeLanguageGroupItem).fLanguage;
+  Result := fLanguage.CompareFriendlyNameTo(ThatLanguage);
+end;
+
+constructor TSourceCodeLanguageGroupItem.Create(
+  const ALanguage: TSourceCodeLanguage);
+begin
+  inherited Create;
+  fLanguage := ALanguage;
+end;
+
+function TSourceCodeLanguageGroupItem.GetTitle: string;
+begin
+  Result := fLanguage.FriendlyName;
 end;
 
 { TAlphaGrouping }

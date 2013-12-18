@@ -256,6 +256,8 @@ type
     tbUpdateDbase: TToolButton;
     actConfigDiffProg: TAction;
     miConfigDiffProg: TMenuItem;
+    actViewGroupByLanguage: TAction;
+    miViewGroupByLanguage: TMenuItem;
     ///  <summary>Displays About Box.</summary>
     procedure actAboutExecute(Sender: TObject);
     ///  <summary>Adds current snippet to favourites.</summary>
@@ -1486,7 +1488,8 @@ begin
         [
           actViewGroupByTags,
           actViewGroupAlphabetically,
-          actViewGroupBySnippetKinds
+          actViewGroupBySnippetKinds,
+          actViewGroupByLanguage
         ]
       );
       SetDetailPaneChangeAction(

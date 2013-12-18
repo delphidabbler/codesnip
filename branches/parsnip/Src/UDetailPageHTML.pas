@@ -296,6 +296,32 @@ type
 
 type
   ///  <summary>
+  ///  Generates HTML body of a page that displays information about a grouping
+  ///  of snippets by source code language.
+  ///  </summary>
+  ///  <remarks>
+  ///  List of snippets contained in grouping may be empty.
+  ///  </remarks>
+  TSourceCodeLanguagePageHTML = class sealed(TSnippetListPageHTML)
+  strict protected
+    ///  <summary>Checks if the given snippet should be included in the list of
+    ///  snippets to be displayed.</summary>
+    ///  <remarks>The snippet is to be displayed if its source code language is
+    ///  the same as that being displayed.</remarks>
+    function IsSnippetRequired(Snippet: ISnippet): Boolean; override;
+    ///  <summary>Returns name of CSS class to be used for page heading.
+    ///  </summary>
+    function GetH1ClassName: string; override;
+    ///  <summary>Returns narrative to be used at top of any page that displays
+    ///  a snippet list.</summary>
+    function GetNarrative: string; override;
+    ///  <summary>Returns text to be displayed on a page that has no snippets to
+    ///  display.</summary>
+    function GetEmptyListNote: string; override;
+  end;
+
+type
+  ///  <summary>
   ///  Generates HTML body of a page that displays information about an
   ///  alphabetical grouping of snippets.
   ///  </summary>
@@ -356,6 +382,8 @@ begin
     Result := TSnippetInfoPageHTML.Create(View)
   else if Supports(View, ITagView) then
     Result := TTagsPageHTML.Create(View)
+  else if Supports(View, ISourceCodeLanguageView) then
+    Result := TSourceCodeLanguagePageHTML.Create(View)
   else if Supports(View, ISnippetKindView) then
     Result := TSnipKindPageHTML.Create(View)
   else if Supports(View, IInitialLetterView) then
@@ -699,6 +727,43 @@ begin
     Result := Snippet.Tags.Contains((View as ITagView).Tag)
   else
     Result := Snippet.Tags.IsEmpty;
+end;
+
+{ TSourceCodeLanguagePageHTML }
+
+function TSourceCodeLanguagePageHTML.GetEmptyListNote: string;
+resourcestring
+  sNote = 'The are no snippets in the current selection whose source code '
+    + 'language is %s';
+begin
+  Result := Format(sNote, [View.Description]);
+end;
+
+function TSourceCodeLanguagePageHTML.GetH1ClassName: string;
+begin
+  { TODO -cSynch Spaces: rethink following placeholder re synch-spaces: although
+                         the user-defined concept does not apply to snippets it
+                         DOES still apply to source code languages. Maybe best
+                         approach is never to distinguish them. Alternative is
+                         to choose a colour for built-in and user-defined
+                         separately to synch spaces. }
+  if (View as ISourceCodeLanguageView).Language.BuiltIn then
+    Result := 'maindb'
+  else
+    Result := 'userdb';
+end;
+
+function TSourceCodeLanguagePageHTML.GetNarrative: string;
+resourcestring
+  sNarrative = 'List of selected snippets whose source code language is %s.';
+begin
+  Result := Format(sNarrative, [View.Description]);
+end;
+
+function TSourceCodeLanguagePageHTML.IsSnippetRequired(Snippet: ISnippet):
+  Boolean;
+begin
+  Result := Snippet.LanguageID = (View as ISourceCodeLanguageView).Language.ID;
 end;
 
 { TAlphaListPageHTML }

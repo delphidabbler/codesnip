@@ -23,6 +23,7 @@ uses
   // Delphi
   Generics.Collections,
   // Project
+  CS.SourceCode.Languages,
   CS.Database.Types,
   UBaseObjects,
   UInitialLetter;
@@ -127,6 +128,18 @@ type
 
 type
   ///  <summary>
+  ///  Interface supported by source code language views.
+  ///  </summary>
+  ISourceCodeLanguageView = interface(IView)
+    ['{16DF5ABA-07EB-4E6B-87F2-C215556C6387}']
+    ///  <summary>Gets language associated with view.</summary>
+    function GetLanguage: TSourceCodeLanguage;
+    ///  <summary>Language associated with view.</summary>
+    property Language: TSourceCodeLanguage read GetLanguage;
+  end;
+
+type
+  ///  <summary>
   ///  Interface supported by snippet kind views.
   ///  </summary>
   ISnippetKindView = interface(IView)
@@ -179,6 +192,10 @@ type
     ///  <summary>Creates a tag view instance associated with a given tag.
     ///  </summary>
     class function CreateTagView(const Tag: TTag): IView;
+    ///  <summary>Creates a source code language view instance associated with a
+    ///  given language.</summary>
+    class function CreateSourceCodeLanguageView(
+      const Lang: TSourceCodeLanguage): IView;
     ///  <summary>Creates a snippet kind view instance associated with a given
     ///  snippet kind.</summary>
     class function CreateSnippetKindView(const AKind: TSnippetKind):
@@ -377,6 +394,57 @@ type
     ///  <summary>Gets tag associated with view.</summary>
     ///  <remarks>Method of ITagView.</remarks>
     function GetTag: TTag;
+  end;
+
+type
+  ///  <summary>View associated with a tag.</summary>
+  TSourceCodeLanguageView = class sealed(TInterfacedObject,
+    IView, ISourceCodeLanguageView
+  )
+  strict private
+    var
+      ///  <summary>Language associated with view.</summary>
+      fLang: TSourceCodeLanguage;
+    type
+      ///  <summary>Implementation of IViewKey for source code language view.
+      ///  </summary>
+      TKey = class(TInterfacedObject, IViewKey)
+      strict private
+        var
+          ///  <summary>Source code language used as key.</summary>
+          fID: TSourceCodeLanguage;
+      public
+        ///  <summary>Constructs object with given source code language as key.
+        ///  </summary>
+        constructor Create(const ID: TSourceCodeLanguage);
+        ///  <summary>Checks if this key is equal to one passed as a parameter.
+        ///  </summary>
+        ///  <remarks>Method of IViewKey.</remarks>
+        function IsEqual(const Key: IViewKey): Boolean;
+      end;
+  public
+    ///  <summary>Constructs view for a specified source code language.
+    ///  </summary>
+    constructor Create(const Lang: TSourceCodeLanguage);
+    ///  <summary>Checks if this view is equal to the one passed as a parameter.
+    ///  </summary>
+    ///  <remarks>Method of IView.</remarks>
+    function IsEqual(View: IView): Boolean;
+    ///  <summary>Gets description of view.</summary>
+    ///  <remarks>Method of IView.</remarks>
+    function GetDescription: string;
+    ///  <summary>Gets object containing view's unique key.</summary>
+    ///  <remarks>Method of IView.</remarks>
+    function GetKey: IViewKey;
+    ///  <summary>Checks if view is user-defined.</summary>
+    ///  <remarks>Method of IView.</remarks>
+    function IsUserDefined: Boolean;
+    ///  <summary>Checks if view is a grouping.</summary>
+    ///  <remarks>Method of IView.</remarks>
+    function IsGrouping: Boolean;
+    ///  <summary>Gets source code language associated with view.</summary>
+    ///  <remarks>Method of ISourceCodeLanguageView.</remarks>
+    function GetLanguage: TSourceCodeLanguage;
   end;
 
 type
@@ -668,6 +736,63 @@ begin
   Result := (Key as TKey).fID = fID;
 end;
 
+{ TSourceCodeLanguageView }
+
+constructor TSourceCodeLanguageView.Create(const Lang: TSourceCodeLanguage);
+begin
+  inherited Create;
+  fLang := Lang;
+end;
+
+function TSourceCodeLanguageView.GetDescription: string;
+begin
+  Result := fLang.FriendlyName;
+end;
+
+function TSourceCodeLanguageView.GetKey: IViewKey;
+begin
+  Result := TKey.Create(fLang);
+end;
+
+function TSourceCodeLanguageView.GetLanguage: TSourceCodeLanguage;
+begin
+  Result := fLang;
+end;
+
+function TSourceCodeLanguageView.IsEqual(View: IView): Boolean;
+var
+  LangView: ISourceCodeLanguageView;
+begin
+  if not Supports(View, ITagView, LangView) then
+    Exit(False);
+  Result := fLang = LangView.Language;
+end;
+
+function TSourceCodeLanguageView.IsGrouping: Boolean;
+begin
+  Result := True;
+end;
+
+function TSourceCodeLanguageView.IsUserDefined: Boolean;
+begin
+  Result := not fLang.BuiltIn;
+end;
+
+{ TSourceCodeLanguageView.TKey }
+
+constructor TSourceCodeLanguageView.TKey.Create(const ID: TSourceCodeLanguage);
+begin
+  inherited Create;
+  fID := ID;
+end;
+
+function TSourceCodeLanguageView.TKey.IsEqual(const Key: IViewKey): Boolean;
+begin
+  if not (Key is TKey) then
+    Exit(False);
+  Result := (Key as TKey).fID = fID;
+end;
+
 { TSnippetKindView }
 
 constructor TSnippetKindView.Create(const AKind: TSnippetKind);
@@ -794,6 +919,10 @@ begin
     Result := CreateSnippetView((View as ISnippetView).SnippetID)
   else if Supports(View, ITagView) then
     Result := CreateTagView((View as ITagView).Tag)
+  else if Supports(View, ISourceCodeLanguageView) then
+    Result := CreateSourceCodeLanguageView(
+      (View as ISourceCodeLanguageView).Language
+    )
   else if Supports(View, ISnippetKindView) then
     Result := CreateSnippetKindView((View as ISnippetKindView).Kind)
   else if Supports(View, IInitialLetterView) then
@@ -841,6 +970,12 @@ class function TViewFactory.CreateSnippetView(
   const SnippetID: TSnippetID): IView;
 begin
   Result := TSnippetView.Create(SnippetID);
+end;
+
+class function TViewFactory.CreateSourceCodeLanguageView(
+  const Lang: TSourceCodeLanguage): IView;
+begin
+  Result := TSourceCodeLanguageView.Create(Lang);
 end;
 
 class function TViewFactory.CreateStartPageView: IView;
