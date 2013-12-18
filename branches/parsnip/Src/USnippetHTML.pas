@@ -60,7 +60,7 @@ type
     ///  snippet.</summary>
     constructor Create(Snippet: ISnippet);
     ///  <summary>Returns snippet display name as HTML.</summary>
-    function SnippetName: string;
+    function SnippetName: string; // TODO -cRename: Rename as SnippetTitle
     ///  <summary>Returns snippet description as HTML.</summary>
     function Description: string;
     ///  <summary>Returns description of snippet's kind as HTML.</summary>
@@ -71,6 +71,8 @@ type
     ///  <summary>Highlights snippet's source code and returns it as HTML.
     ///  </summary>
     function SourceCode: string;
+    ///  <summary>Returns snippet's programming language as HTML.</summary>
+    function Language: string;
     ///  <summary>Returns HTML of a comma separated list of links to snippets on
     ///  which the snippet depends, or a message if list is empty.</summary>
     function Depends: string;
@@ -158,6 +160,15 @@ begin
     THTMLAttribute.Create('class', CSSClass)
   ]);
   Result := THTML.CompoundTag('a', Attrs, HTML);
+end;
+
+function TSnippetHTML.Language: string;
+begin
+  Result := THTML.Entities(
+    StrMakeSentence(
+      TConfig.Instance.SourceCodeLanguages[fSnippet.LanguageID].FriendlyName
+    )
+  );
 end;
 
 function TSnippetHTML.Notes: string;

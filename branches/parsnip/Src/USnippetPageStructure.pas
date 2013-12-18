@@ -40,7 +40,8 @@ type
     sppDepends,
     sppXRefs,
     sppCompileResults,
-    sppNotes
+    sppNotes,
+    sppLanguage
   );
 
 type
@@ -365,6 +366,7 @@ resourcestring
   sXRefs = 'Cross Reference List';
   sCompileResults = 'Compile Results Table';
   sNotes = 'Notes';
+  sLanguage = 'Programming Language';
 
 class constructor TAllSnippetPageParts.Create;
 var
@@ -396,6 +398,9 @@ begin
   );
   fParts[sppNotes] := TSnippetPagePart.Create(
     sppNotes, 'Notes', sNotes
+  );
+  fParts[sppLanguage] := TSnippetPagePart.Create(
+    sppLanguage, 'Language', sLanguage
   );
   for Part in fParts do
     Assert(Part.DisplayName <> '',
@@ -432,18 +437,18 @@ begin
   case ASnippetKindID of
     skFreeform:
       Result := TArray<TSnippetPagePartId>.Create(
-        sppDescription, sppSourceCode, sppKind, sppTags, sppUnits, sppDepends,
-        sppXRefs, sppNotes
+        sppDescription, sppSourceCode, sppKind, sppTags, sppLanguage, sppUnits,
+        sppDepends, sppXRefs, sppNotes
       );
     skUnit:
       Result := TArray<TSnippetPagePartId>.Create(
-        sppDescription, sppSourceCode, sppKind, sppTags, sppXRefs,
+        sppDescription, sppSourceCode, sppKind, sppTags, sppLanguage, sppXRefs,
         sppCompileResults, sppNotes
       );
     else
       Result := TArray<TSnippetPagePartId>.Create(
-        sppDescription, sppSourceCode, sppKind, sppTags, sppUnits, sppDepends,
-        sppXRefs, sppCompileResults, sppNotes
+        sppDescription, sppSourceCode, sppKind, sppTags, sppLanguage, sppUnits,
+        sppDepends, sppXRefs, sppCompileResults, sppNotes
       );
   end;
 end;

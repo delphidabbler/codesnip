@@ -172,6 +172,13 @@ type
   end;
 
 type
+  TSnippetLanguageHTMLFragment = class(TPrefixedSnippetHTMLFragment)
+  public
+    ///  <summary>Renders "Language" fragment as HTML.</summary>
+    function ToString: string; override;
+  end;
+
+type
   ///  <summary>Class that renders "Compile Results Table" HTML fragment for a
   ///  snippet.</summary>
   TSnippetCompileResultsHTMLFragment = class(TSnippetHTMLFragment)
@@ -279,6 +286,15 @@ begin
   Result := Render(sPrefix, 'xrefs', SnippetHTML.XRefs);
 end;
 
+{ TSnippetLanguageHTMLFragment }
+
+function TSnippetLanguageHTMLFragment.ToString: string;
+resourcestring
+  sPrefix = 'Language:';
+begin
+  Result := Render(sPrefix, 'language', SnippetHTML.Language);
+end;
+
 { TSnippetCompileResultsHTMLFragment }
 
 function TSnippetCompileResultsHTMLFragment.ToString: string;
@@ -323,7 +339,8 @@ const
     TSnippetDependsHTMLFragment,        // sppDepends,
     TSnippetXRefsHTMLFragment,          // sppXRefs,
     TSnippetCompileResultsHTMLFragment, // sppCompileResults,
-    TSnippetNotesHTMLFragment           // sppNotes
+    TSnippetNotesHTMLFragment,          // sppNotes
+    TSnippetLanguageHTMLFragment        // sppLanguage
   );
 begin
   Result := Map[FragKind].Create(Snippet);
