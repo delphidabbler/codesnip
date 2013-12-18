@@ -80,19 +80,19 @@ begin
   Result.Font := Font;
 end;
 
-procedure FreeDisplayCanvas(var Canvas: TCanvas);
+procedure FreeDisplayCanvas(const Canvas: TCanvas);
   {Releases resources and frees a canvas object created by CreateDisplayCanvas.
-    @param Canvas [in/out] Canvas to be freed. Set to nil once freed.
+    @param Canvas [in] Canvas to be freed.
   }
 begin
-  if Assigned(Canvas) then
-    try
-      DeleteDC(Canvas.Handle);
-      Canvas.Handle := 0;
-    finally
-      // TODO: Change method to have const parameter andget rid of FreeAndNil
-      FreeAndNil(Canvas); // FreeAndNil is necessary here per documentation
-    end;
+  if not Assigned(Canvas) then
+    Exit;
+  try
+    DeleteDC(Canvas.Handle);
+    Canvas.Handle := 0;
+  finally
+    Canvas.Free;
+  end;
 end;
 
 { Public routines }
