@@ -196,8 +196,8 @@ begin
   for SnippetID in Database.GetAllSnippets do
     Result.Add(SnippetID.ToString);
   for SnippetInfo in fSnippetInfoList do
-    if not StrSameText(SnippetInfo.Name, ExcludedName) then
-      Result.Add(SnippetInfo.Name);
+    if not StrSameText(SnippetInfo.IDStr, ExcludedName) then
+      Result.Add(SnippetInfo.IDStr);
 end;
 
 function TCodeImportMgr.GetUniqueSnippetName(
@@ -243,7 +243,7 @@ begin
   begin
     fImportInfoList.Add(
       TImportInfo.Create(
-        SnippetInfo.Name, GetUniqueSnippetName(SnippetInfo.Name)
+        SnippetInfo.IDStr, GetUniqueSnippetName(SnippetInfo.IDStr)
       )
     );
   end;
@@ -279,8 +279,8 @@ resourcestring
 begin
   for SnippetInfo in fSnippetInfoList do
   begin
-    if not fImportInfoList.FindByName(SnippetInfo.Name, ImportInfo) then
-      raise EBug.CreateFmt(sBadNameError, [SnippetInfo.Name]);
+    if not fImportInfoList.FindByName(SnippetInfo.IDStr, ImportInfo) then
+      raise EBug.CreateFmt(sBadNameError, [SnippetInfo.IDStr]);
 
     if ImportInfo.Skip then
       Continue;
