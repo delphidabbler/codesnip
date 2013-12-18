@@ -437,17 +437,17 @@ begin
   case ASnippetKindID of
     skFreeform:
       Result := TArray<TSnippetPagePartId>.Create(
-        sppDescription, sppSourceCode, sppKind, sppTags, sppLanguage, sppUnits,
+        sppDescription, sppSourceCode, sppLanguage, sppKind, sppTags, sppUnits,
         sppDepends, sppXRefs, sppNotes
       );
     skUnit:
       Result := TArray<TSnippetPagePartId>.Create(
-        sppDescription, sppSourceCode, sppKind, sppTags, sppLanguage, sppXRefs,
+        sppDescription, sppSourceCode, sppLanguage, sppKind, sppTags, sppXRefs,
         sppCompileResults, sppNotes
       );
     else
       Result := TArray<TSnippetPagePartId>.Create(
-        sppDescription, sppSourceCode, sppKind, sppTags, sppLanguage, sppUnits,
+        sppDescription, sppSourceCode, sppLanguage, sppKind, sppTags, sppUnits,
         sppDepends, sppXRefs, sppCompileResults, sppNotes
       );
   end;
