@@ -38,7 +38,8 @@ type
       // Database file name
       DatabaseFileName = 'database.xml';
       // watermark (never changes for all versions)
-      Watermark = '531257EA-1EE3-4B0F-8E46-C6E7F7140106';
+      DatabaseFileWatermark = '531257EA-1EE3-4B0F-8E46-C6E7F7140106';
+      FavouritesFileWatermark = #$25BA + ' CodeSnip Favourites v1 ' + #$25C4;
       // supported file format versions
       EarliestVersion = 1;
       LatestVersion = 6;
@@ -255,7 +256,7 @@ begin
     Exit;
   end;
   Line := Lines[0];
-  if Line <> Watermark then
+  if Line <> FavouritesFileWatermark then
     Exit;
   Lines.Delete(0);
   for Line in Lines do
@@ -532,7 +533,7 @@ begin
   fVersion := TXMLDocHelper.ValidateRootNode(
     fXMLDoc,
     cUserDataRootNode,
-    Watermark,
+    DatabaseFileWatermark,
     TRange.Create(EarliestVersion, LatestVersion)
   );
   // Both a categories and a snippets node must exist
