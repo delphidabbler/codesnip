@@ -27,6 +27,7 @@ uses
   Classes,
   // Project
   CS.Database.Types,
+  IntfNotifier,
   UCompileMgr,
   USearch;
 
@@ -170,6 +171,12 @@ type
     ///  <returns>Boolean. True if user OKd dialogue or False if user cancelled.
     ///  </returns>
     function ExecConfigDiffProgDlg: Boolean;
+
+    ///  <summary>Displays the Favourites dialogue box non-modally.</summary>
+    ///  <param name="ANotifier">INotifier [in] Notifier object use by dialogue
+    ///  box to notify application of commands initiated by the dialogue box.
+    ///  </param>
+    procedure ShowFavouritesDlg(ANotifier: INotifier);
   end;
 
 
@@ -185,6 +192,7 @@ uses
 //  FmDBUpdateDlg,
   FmDependenciesDlg,
   FmDonateDlg,
+  FmFavouritesDlg,
   FmFindCompilerDlg,
   FmFindTextDlg,
   FmFindXRefsDlg,
@@ -284,6 +292,11 @@ end;
 procedure TDialogMgr.ShowDonateDlg;
 begin
   TDonateDlg.Execute(Owner);
+end;
+
+procedure TDialogMgr.ShowFavouritesDlg(ANotifier: INotifier);
+begin
+  TFavouritesDlg.Display(Owner, ANotifier);
 end;
 
 procedure TDialogMgr.ShowNewsDlg;
