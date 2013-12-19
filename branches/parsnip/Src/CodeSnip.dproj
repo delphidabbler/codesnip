@@ -536,6 +536,7 @@
 			<DCCReference Include="Main\Imports\GIFImage.pas"/>
 			<DCCReference Include="Main\Imports\LVEx.pas"/>
 			<DCCReference Include="Main\Imports\UEncrypt.pas"/>
+			<DCCReference Include="Main\CS.Actions.ChangeSnippetStar.pas"/>
 			<DCCReference Include="Main\CS.Actions.DisplayLanguage.pas"/>
 			<DCCReference Include="Main\CS.Actions.DisplayTag.pas"/>
 			<DCCReference Include="Main\CS.Actions.RemoveTag.pas"/>

@@ -350,6 +350,7 @@ uses
   GIFImage in 'Main\Imports\GIFImage.pas',
   LVEx in 'Main\Imports\LVEx.pas',
   UEncrypt in 'Main\Imports\UEncrypt.pas',
+  CS.Actions.ChangeSnippetStar in 'Main\CS.Actions.ChangeSnippetStar.pas',
   CS.Actions.DisplayLanguage in 'Main\CS.Actions.DisplayLanguage.pas',
   CS.Actions.DisplayTag in 'Main\CS.Actions.DisplayTag.pas',
   CS.Actions.RemoveTag in 'Main\CS.Actions.RemoveTag.pas',

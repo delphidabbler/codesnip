@@ -70,10 +70,17 @@ type
     ///  <summary>Checks if the given view item specifies an editable snippet.
     ///  </summary>
     class function CanEdit(ViewItem: IView): Boolean;
+    { TODO: revise TRemoveTagAction to call the following method directly OR
+            move the functionality into TRemoveTagAction itself. }
     ///  <summary>Removes given tag from tag list of snippet with given ID.
     ///  </summary>
     class procedure RemoveTagFromSnippet(const SnippetID: TSnippetID;
       const Tag: TTag);
+    { TODO: Move following method into action that calls the method ?? }
+    ///  <summary>Updates Starred property associated with given snippet ID to
+    ///  the given state.</summary>
+    class procedure UpdateSnippetStarredState(const SnippetID: TSnippetID;
+      const NewState: Boolean);
     ///  <summary>Saves the current database to disk.</summary>
     class procedure Save(ParentCtrl: TComponent);
     ///  <summary>Checks if the database can be saved.</summary>
@@ -443,6 +450,18 @@ end;
 class procedure TDBModificationMgr.Save(ParentCtrl: TComponent);
 begin
   TDBSaveUI.Execute(ParentCtrl);
+end;
+
+class procedure TDBModificationMgr.UpdateSnippetStarredState(
+  const SnippetID: TSnippetID; const NewState: Boolean);
+var
+  Snippet: IEditableSnippet;
+begin
+  Snippet := Database.LookupEditableSnippet(SnippetID);
+  if NewState = Snippet.Starred then
+    Exit;
+  Snippet.Starred := NewState;
+  Database.UpdateSnippet(Snippet);
 end;
 
 { TDBWaitUI }
