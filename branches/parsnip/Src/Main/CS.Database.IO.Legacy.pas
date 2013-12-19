@@ -47,6 +47,11 @@ type
       fDBPath: string;
       fXMLDoc: IXMLDocumentEx;  // Extended XML document object
       fVersion: Integer;
+      ///  <summary>List of (user-defined) favourite snippets read from any
+      ///  available Favourites file.</summary>
+      ///  <remarks>Any snippets read from XML file whose ID is in this list
+      ///  will have their Starred property set to True.</remarks>
+      fFavourites: ISnippetIDList;
       ///  <summary>Maps category IDs to tag name based on category name.
       ///  </summary>
       fCategoryMap: TDictionary<string,string>;
@@ -55,6 +60,9 @@ type
     function LegacySnippetID(SnippetNode: IXMLNode): string;
     procedure OpenXMLDoc;
     procedure ReadCategoryInfo;
+    ///  <summary>Loads information about user's favourites and records each
+    ///  user-defined favourite snippet's ID.</summary>
+    procedure LoadFavourites;
     procedure ReadSnippets(const ATable: TDBSnippetsTable);
     procedure LoadSnippet(SnippetNode: IXMLNode;
       const ATable: TDBSnippetsTable);
@@ -91,6 +99,7 @@ uses
   CS.Database.Tags,
   CS.SourceCode.Languages,
   Compilers.UGlobals,
+  UAppInfo,
   UComparers,
   UConsts,
   UDOSDateTime,
@@ -130,6 +139,7 @@ begin
   fCategoryMap := TDictionary<string,string>.Create(
     StrRules, StrRules
   );
+  fFavourites := TSnippetIDList.Create;
   fVersion := -1; // dummy value changed by OpenXMLDoc when Load is called
   // For some reason we must call OleInitialize here rather than in
   // initialization section
@@ -209,6 +219,8 @@ procedure TDBLegacyUserDBReader.Load(const ATable: TDBSnippetsTable;
 begin
   ATable.Clear;
   try
+    // NOTE: Favourites and Category info must be loaded before
+    LoadFavourites;
     OpenXMLDoc;
     ReadCategoryInfo;
     ReadSnippets(ATable);
@@ -221,6 +233,47 @@ begin
   end;
 end;
 
+procedure TDBLegacyUserDBReader.LoadFavourites;
+var
+  Lines: IStringList;
+  Line: string;
+  Fields: IStringList;
+  SnippetID: TSnippetID;
+  UserDefined: Boolean;
+begin
+  // NOTE: If any error is encountered we simply abandon the method rather than
+  // reporting the error via an exception. This is because an exception would
+  // crash the database load process: it's better to simply loose the favourite
+  // information.
+  if not TFile.Exists(TAppInfo.FavouritesFileName, False) then
+    Exit;
+  try
+    Lines := TIStringList.Create(
+      TFileIO.ReadAllLines(TAppInfo.FavouritesFileName, TEncoding.UTF8, True)
+    );
+  except
+    Exit;
+  end;
+  Line := Lines[0];
+  if Line <> Watermark then
+    Exit;
+  Lines.Delete(0);
+  for Line in Lines do
+  begin
+    if StrIsBlank(Line) then
+      Continue;
+    Fields := TIStringList.Create(Line, TAB, False, True);
+    if Fields.Count <> 3 then
+      Exit;
+    SnippetID := TSnippetID.Create(Fields[0]);
+    // We only record snippets that are user defined because all legacy XML
+    // databases contained only user-defined snippets.
+    UserDefined := StrSameText(Fields[1], 'True');
+    if UserDefined then
+      fFavourites.Add(SnippetID);
+  end;
+end;
+
 procedure TDBLegacyUserDBReader.LoadSnippet(SnippetNode: IXMLNode;
   const ATable: TDBSnippetsTable);
 var
@@ -229,6 +282,8 @@ begin
   Snippet := TDBSnippet.Create(TSnippetID.Create(LegacySnippetID(SnippetNode)));
   try
     LoadSnippetProperties(SnippetNode, Snippet);
+    if fFavourites.Contains(Snippet.GetID) then
+      Snippet.SetStarred(True);
     ATable.Add(Snippet);
   except
     Snippet.Free;
