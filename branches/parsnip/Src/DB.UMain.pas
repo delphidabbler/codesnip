@@ -113,6 +113,7 @@ type
       fDirty: Boolean;
       fChangeEvents: TMulticastEvents;  // List of change event handlers
     procedure FlagUpdate;
+    procedure FixUpSnippetRefs;
     procedure TriggerSnippetChangeEvent(const Kind: TDatabaseChangeEventKind;
       const SnippetID: TSnippetID);
     procedure TriggerNullDataEvent(const Kind: TDatabaseChangeEventKind);
@@ -276,6 +277,28 @@ begin
   inherited;
 end;
 
+procedure TDatabase.FixUpSnippetRefs;
+
+  function StripBadRefs(SnippetList: ISnippetIDList): ISnippetIDList;
+  var
+    SnippetID: TSnippetID;
+  begin
+    Result := TSnippetIDList.Create(SnippetList.Count);
+    for SnippetID in SnippetList do
+      if fSnippetsTable.Contains(SnippetID) then
+        Result.Add(SnippetID);
+  end;
+
+var
+  Snippet: TDBSnippet;
+begin
+  for Snippet in fSnippetsTable do
+  begin
+    Snippet.SetRequiredSnippets(StripBadRefs(Snippet.GetRequiredSnippets));
+    Snippet.SetXRefs(StripBadRefs(Snippet.GetXRefs));
+  end;
+end;
+
 procedure TDatabase.FlagUpdate;
 begin
   fDirty := True;
@@ -357,6 +380,7 @@ begin
   fSnippetsTable.Clear; // TODO: decide if loaders should clear this table
   Loader := TDatabaseIOFactory.CreateLoader;
   Loader.Load(fSnippetsTable, fAllTags, fLastModified);
+  FixUpSnippetRefs;
   fDirty := False;
 end;
 
