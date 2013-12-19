@@ -108,6 +108,11 @@ type
     ///  tab.</param>
     procedure DisplayLanguage(const LangID: TSourceCodeLanguageID;
       NewTab: WordBool);
+
+    ///  <summary>Sets the the Starred property of the snippet with the given ID
+    ///  to the given State.</summary>
+    procedure ChangeSnippetStar(const SnippetID: TSnippetID;
+      const State: Boolean);
   end;
 
 type
@@ -193,6 +198,10 @@ type
     ///  <summary>Sets action used to display a source code language.</summary>
     ///  <param name="Action">TBasicAction [in] Required action.</param>
     procedure SetDisplayLanguageAction(const Action: TBasicAction);
+
+    ///  <summary>Sets action used to update the Starred property of a snippet.
+    ///  </summary>
+    procedure SetChangeSnippetStarAction(const Action: TBasicAction);
   end;
 
 type

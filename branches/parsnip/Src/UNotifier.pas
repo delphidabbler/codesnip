@@ -82,9 +82,12 @@ type
       ///  <summary>Action that causes a specified tag to be removed from a
       ///  specified snippet's tag list.</summary>
       fRemoveTagAction: TBasicAction;
-      ///  <summary>Action that causes the source code language with the
-      ///  specified ID to be displayed.</summary>
+      ///  <summary>Action that causes a specified source code language to be
+      ///  displayed.</summary>
       fDisplayLanguageAction: TBasicAction;
+      ///  <summary>Action that changes the value of a specified snippet's
+      ///  Starred property.</summary>
+      fChangeSnippetStarAction: TBasicAction;
   public
 
     ///  <summary>Requests a database update.</summary>
@@ -176,6 +179,12 @@ type
     ///  <remarks>Method of INotifier.</remarks>
     procedure DisplayLanguage(const LangID: TSourceCodeLanguageID;
       NewTab: WordBool);
+
+    ///  <summary>Sets the the Starred property of the snippet with the given ID
+    ///  to the given State.</summary>
+    ///  <remarks>Method of INotifier.</remarks>
+    procedure ChangeSnippetStar(const SnippetID: TSnippetID;
+      const State: Boolean);
 
     ///  <summary>Sets action used to request a database update.</summary>
     ///  <param name="Action">TBasicAction [in] Required action.</param>
@@ -271,6 +280,11 @@ type
     ///  <remarks>Method of ISetActions.</remarks>
     procedure SetDisplayLanguageAction(const Action: TBasicAction);
 
+    ///  <summary>Sets action used to update the Starred property of a snippet.
+    ///  </summary>
+    ///  <remarks>Method of ISetActions.</remarks>
+    procedure SetChangeSnippetStarAction(const Action: TBasicAction);
+
   end;
 
 
@@ -281,6 +295,7 @@ uses
   // Delphi
   SysUtils, StdActns,
   // Project
+  CS.Actions.ChangeSnippetStar,
   CS.Actions.DisplayLanguage,
   CS.Actions.DisplayTag,
   CS.Actions.RemoveTag,
@@ -310,6 +325,18 @@ begin
     ClassName + '.ChangeOverviewStyle: Pane out of range');
   if Assigned(fOverviewStyleChangeActions[Style]) then
     fOverviewStyleChangeActions[Style].Execute;
+end;
+
+procedure TNotifier.ChangeSnippetStar(const SnippetID: TSnippetID;
+  const State: Boolean);
+begin
+  if Assigned(fChangeSnippetStarAction) then
+  begin
+    (fChangeSnippetStarAction as TChangeSnippetStarAction).SnippetID :=
+      SnippetID;
+    (fChangeSnippetStarAction as TChangeSnippetStarAction).State := State;
+    fChangeSnippetStarAction.Execute;
+  end;
 end;
 
 procedure TNotifier.CheckForUpdates;
@@ -390,6 +417,13 @@ end;
 procedure TNotifier.SetAboutBoxAction(const Action: TBasicAction);
 begin
   fAboutBoxAction := Action;
+end;
+
+procedure TNotifier.SetChangeSnippetStarAction(const Action: TBasicAction);
+begin
+  Assert(Action is TChangeSnippetStarAction, ClassName +
+    '.SetChangeSnippetStarAction: Action is not TChangeSnippetStarAction');
+  fChangeSnippetStarAction := Action;
 end;
 
 procedure TNotifier.SetCheckForUpdatesAction(const Action: TBasicAction);
