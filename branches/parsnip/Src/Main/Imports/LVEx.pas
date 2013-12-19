@@ -6,6 +6,10 @@
 {       Copyright (c) 1999-2009 Vadim Crits             }
 {                                                       }
 {*******************************************************}
+{ Modified by DelphiDabbler - see commented out code    }
+{ below.                                                }
+{ Note: LVEx.res was also deleted on 2013/12/19         }
+{*******************************************************}
 
 unit LVEx;
 
@@ -13,7 +17,7 @@ interface
 
 uses
   Windows, Messages, Classes, CommCtrl, ComCtrls;
-  
+
 type
   TSortOrder = (soNone, soUp, soDown);
 
@@ -35,16 +39,24 @@ type
       FSortImmediately default True;
   end;
 
+(*
+>> Change by DelphiDabbler 2013/12/19
 procedure Register;
+<< End of change
+*)
 
 implementation
 
+(*
+>> Change by DelphiDabbler 2013/12/19
 {$R LVEx.res}
 
 procedure Register;
 begin
   RegisterComponents('Win32', [TListViewEx]);
 end;
+<< End of change
+*)
 
 constructor TListViewEx.Create(AOwner: TComponent);
 begin
