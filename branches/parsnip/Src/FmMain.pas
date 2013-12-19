@@ -671,6 +671,11 @@ end;
 procedure TMainForm.actAddFavouriteExecute(Sender: TObject);
 begin
   fFavouritesMgr.AddFavourite(fMainDisplayMgr.CurrentView);
+  { TODO: get required snippet ID from favourites manager OR get favourites
+          manager to execute the following code }
+  fNotifier.ChangeSnippetStar(
+    (fMainDisplayMgr.CurrentView as ISnippetView).SnippetID, True
+  );
 end;
 
 procedure TMainForm.actAddFavouriteUpdate(Sender: TObject);
@@ -1515,6 +1520,9 @@ begin
       );
       SetDisplayLanguageAction(
         TActionFactory.CreateDisplayLanguageAction(Self)
+      );
+      SetChangeSnippetStarAction(
+        TActionFactory.CreateChangeSnippetStarAction(Self)
       );
     end;
 
