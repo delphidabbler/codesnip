@@ -143,7 +143,7 @@ inherited MainForm: TMainForm
     object tbFavourites: TToolButton
       Left = 361
       Top = 0
-      Action = actAddFavourite
+      Action = actToggleFavourite
     end
     object tbSpacer5: TToolButton
       Left = 384
@@ -876,14 +876,17 @@ inherited MainForm: TMainForm
       ShortCut = 115
       OnExecute = actFavouritesExecute
     end
-    object actAddFavourite: TAction
+    object actToggleFavourite: TAction
       Category = 'Snippets'
-      Caption = 'Add To Favourites'
-      Hint = 'Add to Favourites|Make the selected snippet a Favourite'
-      ImageIndex = 48
+      Caption = 'Favourite'
+      Hint = 
+        'Favourite|Toggle the selected snippet'#39's status as a favourite on' +
+        ' and off'
       ShortCut = 41030
-      OnExecute = actAddFavouriteExecute
-      OnUpdate = actAddFavouriteUpdate
+      SecondaryShortCuts.Strings = (
+        'Ctrl+*')
+      OnExecute = actToggleFavouriteExecute
+      OnUpdate = actToggleFavouriteUpdate
     end
     object actMoveDatabase: TAction
       Category = 'Database'
@@ -1099,8 +1102,8 @@ inherited MainForm: TMainForm
       object miSpacer19: TMenuItem
         Caption = '-'
       end
-      object miAddFavourite: TMenuItem
-        Action = actAddFavourite
+      object miToggleFavourite: TMenuItem
+        Action = actToggleFavourite
       end
       object miFavourites: TMenuItem
         Action = actFavourites

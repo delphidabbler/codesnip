@@ -56,7 +56,7 @@ type
   ///  <summary>Form that provides the application's main window.</summary>
   TMainForm = class(THelpAwareForm)
     actAbout: TAction;
-    actAddFavourite: TAction;
+    actToggleFavourite: TAction;
     actAddSnippet: TAction;
     actBackupDatabase: TAction;
     actBugReport: TAction;
@@ -130,7 +130,7 @@ type
     frmOverview: TOverviewFrame;
     ilMain: TImageList;
     miAbout: TMenuItem;
-    miAddFavourite: TMenuItem;
+    miToggleFavourite: TMenuItem;
     miAddSnippet: TMenuItem;
     miBackupDatabase: TMenuItem;
     miCheckUpdates: TMenuItem;
@@ -261,10 +261,10 @@ type
     ///  <summary>Displays About Box.</summary>
     procedure actAboutExecute(Sender: TObject);
     ///  <summary>Adds current snippet to favourites.</summary>
-    procedure actAddFavouriteExecute(Sender: TObject);
+    procedure actToggleFavouriteExecute(Sender: TObject);
     ///  <summary>Determines whether AddFavourites action can be enabled.
     ///  </summary>
-    procedure actAddFavouriteUpdate(Sender: TObject);
+    procedure actToggleFavouriteUpdate(Sender: TObject);
     ///  <summary>Opens Snippets Editor to add a new snippet to the database.
     ///  </summary>
     procedure actAddSnippetExecute(Sender: TObject);
@@ -668,23 +668,6 @@ begin
     fIsAppRegistered := TAppInfo.IsRegistered;
 end;
 
-procedure TMainForm.actAddFavouriteExecute(Sender: TObject);
-begin
-  fFavouritesMgr.AddFavourite(fMainDisplayMgr.CurrentView);
-  { TODO: get required snippet ID from favourites manager OR get favourites
-          manager to execute the following code }
-  fNotifier.ChangeSnippetStar(
-    (fMainDisplayMgr.CurrentView as ISnippetView).SnippetID, True
-  );
-end;
-
-procedure TMainForm.actAddFavouriteUpdate(Sender: TObject);
-begin
-  (Sender as TAction).Enabled := fFavouritesMgr.CanAddFavourite(
-    fMainDisplayMgr.CurrentView
-  );
-end;
-
 procedure TMainForm.actAddSnippetExecute(Sender: TObject);
 begin
   TDBModificationMgr.AddSnippet;
@@ -829,7 +812,7 @@ end;
 
 procedure TMainForm.actFavouritesExecute(Sender: TObject);
 begin
-  fFavouritesMgr.ShowDialogue;
+  fDialogMgr.ShowFavouritesDlg(fNotifier);
 end;
 
 procedure TMainForm.actFindClearExecute(Sender: TObject);
@@ -1198,6 +1181,31 @@ procedure TMainForm.actTestCompileUpdate(Sender: TObject);
 begin
   (Sender as TAction).Enabled :=
     fCompileMgr.CanCompile(fMainDisplayMgr.CurrentView);
+end;
+
+procedure TMainForm.actToggleFavouriteExecute(Sender: TObject);
+begin
+  { TODO: get required snippet ID from favourites manager OR get favourites
+          manager (TDBModificationMgr ?) to execute the following code }
+  actToggleFavourite.Checked := not actToggleFavourite.Checked;
+  fNotifier.ChangeSnippetStar(
+    (fMainDisplayMgr.CurrentView as ISnippetView).SnippetID,
+    actToggleFavourite.Checked
+  );
+end;
+
+procedure TMainForm.actToggleFavouriteUpdate(Sender: TObject);
+var
+  SnippetView: ISnippetView;
+begin
+  { TODO: get required states from favourites manager (TDBModificationMgr?) }
+  actToggleFavourite.Enabled :=
+    Supports(fMainDisplayMgr.CurrentView, ISnippetView, SnippetView);
+  if actToggleFavourite.Enabled then
+    actToggleFavourite.Checked :=
+      Database.LookupSnippet(
+        (fMainDisplayMgr.CurrentView as ISnippetView).SnippetID
+      ).Starred;
 end;
 
 procedure TMainForm.ActTreeStateChangeExecute(Sender: TObject);
