@@ -54,9 +54,6 @@
 			<DCCReference Include="Compilers.URunner.pas"/>
 			<DCCReference Include="Compilers.USearchDirs.pas"/>
 			<DCCReference Include="DB.UMain.pas"/>
-			<DCCReference Include="Favourites.UManager.pas"/>
-			<DCCReference Include="Favourites.UFavourites.pas"/>
-			<DCCReference Include="Favourites.UPersist.pas"/>
 			<DCCReference Include="FirstRun.FmV4ConfigDlg.pas">
 				<Form>V4ConfigDlg</Form>
 			</DCCReference>
