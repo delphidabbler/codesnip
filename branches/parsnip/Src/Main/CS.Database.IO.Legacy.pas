@@ -85,7 +85,6 @@ implementation
 
 uses
   // Delphi
-  Character,
   Classes,
   IOUtils,
   ActiveX,
@@ -100,7 +99,8 @@ uses
   CS.Database.Tags,
   CS.SourceCode.Languages,
   Compilers.UGlobals,
-  UAppInfo,
+  Favourites.UFavourites,
+  Favourites.UPersist,
   UComparers,
   UConsts,
   UDOSDateTime,
@@ -220,7 +220,7 @@ procedure TDBLegacyUserDBReader.Load(const ATable: TDBSnippetsTable;
 begin
   ATable.Clear;
   try
-    // NOTE: Favourites and Category info must be loaded before
+    // NOTE: Favourites and Category info must be loaded before snippets
     LoadFavourites;
     OpenXMLDoc;
     ReadCategoryInfo;
@@ -236,42 +236,25 @@ end;
 
 procedure TDBLegacyUserDBReader.LoadFavourites;
 var
-  Lines: IStringList;
-  Line: string;
-  Fields: IStringList;
-  SnippetID: TSnippetID;
-  UserDefined: Boolean;
+  Favs: TFavourites;
+  Fav: TFavourite;
 begin
   // NOTE: If any error is encountered we simply abandon the method rather than
   // reporting the error via an exception. This is because an exception would
   // crash the database load process: it's better to simply loose the favourite
   // information.
-  if not TFile.Exists(TAppInfo.FavouritesFileName, False) then
-    Exit;
+  Favs := TFavourites.Create;
   try
-    Lines := TIStringList.Create(
-      TFileIO.ReadAllLines(TAppInfo.FavouritesFileName, TEncoding.UTF8, True)
-    );
-  except
-    Exit;
-  end;
-  Line := Lines[0];
-  if Line <> FavouritesFileWatermark then
-    Exit;
-  Lines.Delete(0);
-  for Line in Lines do
-  begin
-    if StrIsBlank(Line) then
-      Continue;
-    Fields := TIStringList.Create(Line, TAB, False, True);
-    if Fields.Count <> 3 then
+    try
+      TFavouritesPersist.Load(Favs);
+    except
       Exit;
-    SnippetID := TSnippetID.Create(Fields[0]);
-    // We only record snippets that are user defined because all legacy XML
-    // databases contained only user-defined snippets.
-    UserDefined := StrSameText(Fields[1], 'True');
-    if UserDefined then
-      fFavourites.Add(SnippetID);
+    end;
+    fFavourites.Clear;
+    for Fav in Favs do
+      fFavourites.Add(Fav.SnippetID);
+  finally
+    Favs.Free;
   end;
 end;
 
