@@ -36,7 +36,6 @@ uses
   Messages,
   AppEvnts,
   // Project
-  Favourites.UManager,
   FmHelpAware,
   FrDetail,
   FrOverview,
@@ -539,8 +538,6 @@ type
       fDialogMgr: TDialogMgr;
       ///  <summary>Object that manages test compilations.</summary>
       fCompileMgr: TMainCompileMgr;
-      ///  <summary>Object that manages favourites.</summary>
-      fFavouritesMgr: TFavouritesManager;
       ///  <summary>Object that checks for program and database updates in a
       ///  background thread.</summary>
       fUpdateChecker: TUpdateCheckerMgr;
@@ -1420,7 +1417,6 @@ begin
   // Free owned objects
   fHistory.Free;
   fMainDisplayMgr.Free;
-  fFavouritesMgr.Free;
   // fStatusBarMgr MUST be nilled: otherwise it can be called after status bar
   // control has been freed and so cause AV when trying to use the control
   FreeAndNil(fStatusBarMgr);
@@ -1653,10 +1649,6 @@ begin
         end;
       end
     );
-
-    // Create favourites manager
-    // *** Must be done AFTER database has loaded ***
-    fFavouritesMgr := TFavouritesManager.Create(fNotifier);
 
     // Start notification display sub-system
     TNotificationDisplayMgr.Start(Self);
