@@ -90,9 +90,12 @@ type
     function CompileResults: string;
     ///  <summary>Returns HTML of link to snippet.</summary>
     function SnippetALink: string; overload;
-    ///  <summary>Returns an image tag referenceing the image used to display
-    ///  the snippet's test information.</summary>
+    ///  <summary>Returns an image tag referencing the image used to display the
+    ///  snippet's test information.</summary>
     function TestingImage: string;
+    ///  <summary>Returns an image tag referencing the image used to show
+    ///  whether the snippet is starred or not.</summary>
+    function StarredImage: string;
   end;
 
 
@@ -261,6 +264,30 @@ begin
   finally
     Builder.Free;
   end;
+end;
+
+function TSnippetHTML.StarredImage: string;
+resourcestring
+  sStarred = 'Starred';
+  sUnstarred = 'Not starred';
+const
+  ImgWidth = 16;
+  ImgHeight = 16;
+  ImgSrcs: array[Boolean] of record
+    ResName: string;    // name of image resource
+    Title: string;      // value of image tag title attribute
+  end =(
+    (ResName: 'unstarred-snippet.png'; Title: sUnstarred),
+    (ResName: 'starred-snippet.png'; Title: sStarred)
+  );
+var
+  Attrs: IHTMLAttributes; // image's attributes
+begin
+  Attrs := THTMLAttributes.Create;
+  Attrs.Add('src', MakeResourceURL(ImgSrcs[fSnippet.Starred].ResName));
+  Attrs.Add('title', THTML.Entities(ImgSrcs[fSnippet.Starred].Title));
+  Attrs.Add('class', 'testing-img');
+  Result := THTML.SimpleTag('img', Attrs);
 end;
 
 function TSnippetHTML.Tags: string;

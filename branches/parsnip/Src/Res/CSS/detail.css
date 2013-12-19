@@ -153,3 +153,10 @@ pre {
   margin: 2px 0 0 8px;
 }
 
+.starred-img {
+  float: right;
+  width: 16px;
+  height: 16px;
+  padding: 0;
+  margin: 2px 0 0 8px;
+}

@@ -577,6 +577,7 @@ begin
   SnippetHTML := TSnippetHTML.Create(GetSnippet);
   try
     Tplt.ResolvePlaceholderHTML('TestingInfoImg', SnippetHTML.TestingImage);
+    Tplt.ResolvePlaceholderHTML('StarredImg', SnippetHTML.StarredImage);
     Tplt.ResolvePlaceholderHTML('SnippetTitle', SnippetHTML.SnippetTitle);
   finally
     SnippetHTML.Free;
