@@ -1074,7 +1074,6 @@ begin
   TDBModificationMgr.RemoveTagFromSnippet(
     (Sender as TRemoveTagAction).SnippetID, (Sender as TRemoveTagAction).Tag
   );
-  fMainDisplayMgr.Refresh;
 end;
 
 procedure TMainForm.actRestoreDatabaseExecute(Sender: TObject);
