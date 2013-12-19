@@ -21,7 +21,8 @@ interface
 
 uses
   // Project
-  Favourites.UFavourites, UExceptions;
+  Favourites.UFavourites,
+  UExceptions;
 
 
 type
@@ -66,7 +67,6 @@ uses
   Classes,
   /// Project
   CS.Database.Types,
-  DB.UMain,
   UAppInfo,
   UConsts,
   UIOUtils,
