@@ -1,10 +1,11 @@
 inherited FavouritesDlg: TFavouritesDlg
   AlphaBlend = True
   Caption = 'Favourites'
+  ClientWidth = 569
   OnActivate = FormActivate
   OnClose = FormClose
   OnDeactivate = FormDeactivate
-  ExplicitWidth = 474
+  ExplicitWidth = 575
   ExplicitHeight = 374
   PixelsPerInch = 96
   TextHeight = 13
@@ -17,8 +18,10 @@ inherited FavouritesDlg: TFavouritesDlg
     FocusControl = tbTransparency
   end
   inherited pnlBody: TPanel
+    Width = 473
+    ExplicitWidth = 473
     object btnDisplay: TButton
-      Left = 293
+      Left = 370
       Top = -1
       Width = 85
       Height = 25
@@ -27,7 +30,7 @@ inherited FavouritesDlg: TFavouritesDlg
       TabOrder = 1
     end
     object btnDelete: TButton
-      Left = 293
+      Left = 370
       Top = 30
       Width = 85
       Height = 25
@@ -36,7 +39,7 @@ inherited FavouritesDlg: TFavouritesDlg
       TabOrder = 2
     end
     object btnDeleteAll: TButton
-      Left = 293
+      Left = 370
       Top = 63
       Width = 85
       Height = 25
@@ -51,6 +54,15 @@ inherited FavouritesDlg: TFavouritesDlg
       Height = 17
       Caption = 'Open favourites in new &tabs'
       TabOrder = 0
+    end
+    object lbFavs: TListBox
+      Left = 0
+      Top = 0
+      Width = 360
+      Height = 240
+      ItemHeight = 13
+      TabOrder = 4
+      OnDblClick = lbFavsDblClick
     end
   end
   inherited btnHelp: TButton
