@@ -30,6 +30,9 @@ uses
   Forms,
   Types,
   Generics.Defaults,
+  // 3rd party
+  Collections.Base,
+  Collections.Lists,
   // Project
   CS.Database.Types,
   FmGenericNonModalDlg,
@@ -132,9 +135,8 @@ type
 
       TListBoxMgr = class(TObject)
       strict private
-        type
-          TSnippetBox = TBox<ISnippet>;
         var
+          fSnippetList: TSortedList<ISnippet>;
           fLB: TListBox;
           fSortFn: TComparison<ISnippet>;
         function IndexOfSnippet(const SnippetID: TSnippetID): Integer;
@@ -144,6 +146,8 @@ type
         procedure InternalDeleteSnippetAt(const Idx: Integer);
         procedure LBDrawItem(Control: TWinControl; Index: Integer; Rect: TRect;
           State: TOwnerDrawState);
+        procedure LBData(Control: TWinControl; Index: Integer;
+          var Data: string);
       public
         constructor Create(LB: TListBox);
         destructor Destroy; override;
@@ -158,6 +162,8 @@ type
       end;
   strict private
     var
+      ///  <summary>Object that manages display and painting of list box that
+      ///  displays favourite snippets.</summary>
       fFavsLBMgr: TListBoxMgr;
       ///  <summary>Object encapsulating favourites.</summary>
       fFavourites: ISnippetIDList;
@@ -255,6 +261,7 @@ uses
   // Project
   CS.Database.Snippets,
   DB.UMain,
+  IntfCommon,
   UCtrlArranger,
   UMessageBox,
   UPreferences,
@@ -282,8 +289,22 @@ var
 begin
   if not TMessageBox.Confirm(Self, sQuery) then
     Exit;
-  for SnippetID in fFavourites do
-    fNotifier.ChangeSnippetStar(SnippetID, False);
+  // To avoid lots of flicker as items are deleted one by one, we disable
+  // handling of database change events: we know what the outcome of clearing
+  // all favourites is, so can put display into correct state.
+  Database.RemoveChangeEventHandler(DBChangeEventHandler);
+  try
+    fFavsLBMgr.Clear;
+    // NOTE: if this method is re-implemented with the database change handler
+    // still in place, then the following iteration will need to be done on a
+    // copy of fFavourites because DBChangeEventHandler will update fFavourites,
+    // which is not allowed while it is being enumerated.
+    for SnippetID in fFavourites do
+      fNotifier.ChangeSnippetStar(SnippetID, False);
+    fFavourites.Clear;
+  finally
+    Database.AddChangeEventHandler(DBChangeEventHandler);
+  end;
 end;
 
 procedure TFavouritesDlg.actDeleteAllUpdate(Sender: TObject);
@@ -576,24 +597,30 @@ end;
 { TFavouritesDlg.TListBoxMgr }
 
 procedure TFavouritesDlg.TListBoxMgr.Add(Snippet: ISnippet);
+var
+  SelSnippet: ISnippet;
 begin
   fLB.Items.BeginUpdate;
   try
+    if HasSelection then
+      SelSnippet := GetSnippetAt(fLB.ItemIndex)
+    else
+      SelSnippet := nil;
     InternalAddSnippet(Snippet);
+    if Assigned(SelSnippet) then
+      fLB.ItemIndex := fSnippetList.IndexOf(SelSnippet);
   finally
     fLB.Items.EndUpdate;
   end;
 end;
 
 procedure TFavouritesDlg.TListBoxMgr.Clear;
-var
-  Idx: Integer;
 begin
   fLB.Items.BeginUpdate;
   try
-    for Idx := Pred(fLB.Count) downto 0 do
-      fLB.Items.Objects[Idx].Free;
-    fLB.Clear;
+    fLB.ItemIndex := -1;
+    fLB.Count := 0;
+    fSnippetList.Clear;
   finally
     fLB.Items.EndUpdate;
   end;
@@ -604,10 +631,11 @@ begin
   Assert(Assigned(LB), ClassName + '.Create: LB is nil');
   inherited Create;
   fLB := LB;
-  SetSortFn(nil);
-  fLB.Style := lbOwnerDrawFixed;
+  SetSortFn(nil); // this creates fSnippetList so don't need to do it here
+  fLB.Style := lbVirtualOwnerDraw;
   fLB.ItemHeight := 19;
   fLB.OnDrawItem := LBDrawItem;
+  fLB.OnData := LBData;
 end;
 
 procedure TFavouritesDlg.TListBoxMgr.Delete(const SnippetID: TSnippetID);
@@ -631,6 +659,7 @@ end;
 destructor TFavouritesDlg.TListBoxMgr.Destroy;
 begin
   Clear;
+  fSnippetList.Free;
   inherited;
 end;
 
@@ -643,7 +672,7 @@ end;
 
 function TFavouritesDlg.TListBoxMgr.GetSnippetAt(const Idx: Integer): ISnippet;
 begin
-  Result := (fLB.Items.Objects[Idx] as TSnippetBox).Value;
+  Result := fSnippetList[Idx];
 end;
 
 function TFavouritesDlg.TListBoxMgr.HasSelection: Boolean;
@@ -656,28 +685,29 @@ function TFavouritesDlg.TListBoxMgr.IndexOfSnippet(const SnippetID: TSnippetID):
 var
   Idx: Integer;
 begin
-  for Idx := 0 to Pred(fLB.Count) do
-    if SnippetID = GetSnippetAt(Idx).ID then
+  for Idx := 0 to Pred(fSnippetList.Count) do
+    if SnippetID = fSnippetList[Idx].ID then
       Exit(Idx);
   Result := -1;
 end;
 
 procedure TFavouritesDlg.TListBoxMgr.InternalAddSnippet(Snippet: ISnippet);
 begin
-  // TODO: place snippet in correct sorted position
-  // Note: list box is owner draw and gets its title from Snippet, so we don't
-  // need to set any text in list item.
-  fLB.AddItem('', TSnippetBox.Create(Snippet));
+  fSnippetList.Add(Snippet);
+  fLB.Count := fSnippetList.Count;
 end;
 
 procedure TFavouritesDlg.TListBoxMgr.InternalDeleteSnippetAt(
   const Idx: Integer);
-var
-  OldSnippetBox: TObject;
 begin
-  OldSnippetBox := fLB.Items.Objects[Idx];
-  fLB.Items.Delete(Idx);
-  OldSnippetBox.Free;
+  fLB.Count := fSnippetList.Count - 1;
+  fSnippetList.RemoveAt(Idx);
+end;
+
+procedure TFavouritesDlg.TListBoxMgr.LBData(Control: TWinControl;
+  Index: Integer; var Data: string);
+begin
+  Data := fSnippetList[Index].Title;
 end;
 
 procedure TFavouritesDlg.TListBoxMgr.LBDrawItem(Control: TWinControl;
@@ -713,7 +743,6 @@ procedure TFavouritesDlg.TListBoxMgr.Populate(SnippetIDs: ISnippetIDList);
 var
   SnippetID: TSnippetID;
 begin
-  // TODO: sort the snippets as they're added
   fLB.Items.BeginUpdate;
   try
     for SnippetID in SnippetIDs do
@@ -725,18 +754,25 @@ end;
 
 procedure TFavouritesDlg.TListBoxMgr.ReSort(
   const SortFn: TComparison<ISnippet>);
+var
+  SelSnippet: ISnippet;
 begin
+  if HasSelection then
+    SelSnippet := GetSnippetAt(fLB.ItemIndex)
+  else
+    SelSnippet := nil;
   SetSortFn(SortFn);
-  // TODO: Do sort here
+  fLB.Invalidate;
+  if Assigned(SelSnippet) then
+    fLB.ItemIndex := fSnippetList.IndexOf(SelSnippet);
 end;
-
-//procedure TFavouritesDlg.TListBoxMgr.Select(const SnippetID: TSnippetID);
-//begin
-//  fLB.ItemIndex := IndexOfSnippet(SnippetID);
-//end;
 
 procedure TFavouritesDlg.TListBoxMgr.SetSortFn(
   const SortFn: TComparison<ISnippet>);
+var
+  NewList: TSortedList<ISnippet>;
+  OldList: TSortedList<ISnippet>;
+  Rules: TRules<ISnippet>;
 begin
   if not Assigned(SortFn) then
     fSortFn := function(const Left, Right: ISnippet): Integer
@@ -745,6 +781,29 @@ begin
       end
   else
     fSortFn := SortFn;
+
+  Rules := TRules<ISnippet>.Create(
+    TComparer<ISnippet>.Construct(fSortFn),
+    TEqualityComparer<ISnippet>.Construct(
+      function (const Left, Right: ISnippet): Boolean
+      begin
+        Result := fSortFn(Left, Right) = 0;
+      end,
+      function (const Value: ISnippet): Integer
+      begin
+        Result := Value.ID.Hash;
+      end
+    )
+  );
+  if Assigned(fSnippetList) then
+  begin
+    OldList := fSnippetList;
+    NewList := TSortedList<ISnippet>.Create(Rules, OldList);
+    fSnippetList := NewList;
+    OldList.Free;
+  end
+  else
+    fSnippetList := TSortedList<ISnippet>.Create(Rules);
 end;
 
 procedure TFavouritesDlg.TListBoxMgr.Update(Snippet: ISnippet);
