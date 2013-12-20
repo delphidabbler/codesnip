@@ -72,7 +72,8 @@ type
     ['{79F8BCAB-4C3F-4935-B5BF-9E5B9B32D88A}']
     /// <summary>Return currently selected view.</summary>
     function SelectedView: IView;
-    ///  <summary>Select tab with given index.</summary>
+    ///  <summary>Select tab with given index and display its associated view.
+    ///  </summary>
     procedure SelectTab(const TabIdx: Integer);
     ///  <summary>Get index of currently selected tab.</summary>
     function SelectedTab: Integer;
@@ -91,8 +92,11 @@ type
     procedure Reload;
     ///  <summary>Close all tabs and delete all views.</summary>
     procedure Clear;
-    ///  <summary>Create a new tab displaying given view and return its index.
-    ///  </summary>
+    ///  <summary>Create a new tab displaying given view in its caption and
+    ///  return its index.</summary>
+    ///  <remarks>The view should not be displayed in the main body of the pane:
+    ///  any existing view should be left in place. Call SelectTab with this
+    ///  tab's index to display the view in full.</remarks>
     function CreateTab(View: IView): Integer;
     ///  <summary>Check if tab set is empty, i.e. there are no tabs displayed.
     ///  </summary>

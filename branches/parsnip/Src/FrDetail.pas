@@ -91,7 +91,8 @@ type
     ///  <remarks>Method of IDetailPaneDisplayMgr.</remarks>
     function SelectedView: IView;
 
-    ///  <summary>Selects tab with given index.</summary>
+    ///  <summary>Selects tab with given index and displays its associated view.
+    ///  </summary>
     ///  <remarks>Method of IDetailPaneDisplayMgr.</remarks>
     procedure SelectTab(const TabIdx: Integer);
 
@@ -126,9 +127,14 @@ type
     ///  <remarks>Method of IDetailPaneDisplayMgr.</remarks>
     procedure Clear;
 
-    ///  <summary>Creates a new tab displaying given view and returns its index.
-    ///  </summary>
-    ///  <remarks>Method of IDetailPaneDisplayMgr.</remarks>
+    ///  <summary>Creates a new tab displaying given view in its caption and
+    ///  returns its index.</summary>
+    ///  <remarks>
+    ///  <para>The view is not displayed in the main body of the pane: the
+    ///  existing view is left in place. Call SelectTab with this tab's index
+    ///  to display the view in full.</para>
+    ///  <para>Method of IDetailPaneDisplayMgr.</para>
+    ///  </remarks>
     function CreateTab(View: IView): Integer;
 
     ///  <summary>Checks if tab set is empty, i.e. there are no tabs displayed.
@@ -333,7 +339,6 @@ function TDetailFrame.CreateTab(View: IView): Integer;
 begin
   Result := tcViews.Tabs.Add(View.Description);
   fViews.Add(View);
-  InternalDisplay(View); // stores View in fViews again
 end;
 
 destructor TDetailFrame.Destroy;
