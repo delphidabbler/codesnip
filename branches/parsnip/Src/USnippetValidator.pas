@@ -115,6 +115,7 @@ uses
   // Project
   CS.ActiveText.Renderers.PlainText,
   CS.ActiveText.Validator,
+  CS.Database.Snippets,
   DB.UMain,
   UStrUtils;
 
@@ -353,10 +354,19 @@ class function TSnippetValidator.ValidateTitle(const Title: string;
   out ErrorMsg: string): Boolean;
 resourcestring
   sErrNoName = 'A title must be provided';
+  sErrTooLong = 'Title too long: maximum length is %d characters';
 begin
-  Result := not StrIsBlank(Title);
-  if not Result then
+  if StrIsBlank(Title) then
+  begin
     ErrorMsg := sErrNoName;
+    Exit(False);
+  end;
+  if Length(Title) > TSnippetBase.MaxTitleLength then
+  begin
+    ErrorMsg := Format(sErrTooLong, [TSnippetBase.MaxTitleLength]);
+    Exit(False);
+  end;
+  Result := True;
 end;
 
 end.

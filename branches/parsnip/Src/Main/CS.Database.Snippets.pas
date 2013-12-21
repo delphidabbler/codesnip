@@ -44,6 +44,9 @@ type
 
 type
   TSnippetBase = class(TInterfacedObject)
+  public
+    const
+      MaxTitleLength = 64;
   strict private
     var
       fID: TSnippetID;
@@ -542,7 +545,10 @@ end;
 
 procedure TSnippetBase.SetTitle(const Value: string);
 begin
-  fTitle := Value;
+  if Length(Value) > MaxTitleLength then
+    fTitle := StrSliceLeft(Value, MaxTitleLength)
+  else
+    fTitle := Value;
 end;
 
 procedure TSnippetBase.SetXRefs(Value: ISnippetIDList);

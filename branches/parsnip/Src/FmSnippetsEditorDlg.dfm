@@ -141,7 +141,6 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
           Top = 8
           Width = 298
           Height = 21
-          MaxLength = 64
           PopupMenu = mnuEditCtrls
           TabOrder = 0
         end

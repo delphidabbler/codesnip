@@ -837,17 +837,19 @@ procedure TSnippetsEditorDlg.InitControls;
 var
   Language: TSourceCodeLanguage;
 resourcestring
-  sTitleCueText = 'Snippet title (max 64 characters)';
+  sTitleCueText = 'Snippet title (max %d characters)';
   sUnitCueText = 'New unit name';
   sDescriptionCueText = 'Snippet description';
   sNotesCueText = 'Additional notes about the snippet';
 begin
   // Set TextHint properties here, not at design-time, to take advantage of
   // hacks in CS.UI.Components.EditCtrls.
-  edTitle.TextHint := sTitleCueText;
+  edTitle.TextHint := Format(sTitleCueText, [TSnippetBase.MaxTitleLength]);
   edUnit.TextHint := sUnitCueText;
   frmDescription.TextHint := sDescriptionCueText;
   frmNotes.TextHint := sNotesCueText;
+  // Limits
+  edTitle.MaxLength := TSnippetBase.MaxTitleLength;
   if Assigned(fSnippet) then
   begin
     // We are editing a snippet: initialise controls from snippet's properties
