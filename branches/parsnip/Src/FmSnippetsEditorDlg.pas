@@ -32,6 +32,7 @@ uses
   StdActns,
   Menus,
   // Project
+  CS.Components.EditCtrls,
   CS.Database.Types,
   CS.UI.Frames.CodeEditor,
   CS.UI.Helper.CollectionCtrlKVMgr,
@@ -42,7 +43,6 @@ uses
   UCompileMgr,
   UCompileResultsLBMgr,
   UMemoCaretPosDisplayMgr,
-  UMemoHelper,
   USnippetsChkListMgr,
   UUnitsChkListMgr;
 
@@ -836,7 +836,18 @@ procedure TSnippetsEditorDlg.InitControls;
   }
 var
   Language: TSourceCodeLanguage;
+resourcestring
+  sTitleCueText = 'Snippet title (max 64 characters)';
+  sUnitCueText = 'New unit name';
+  sDescriptionCueText = 'Snippet description';
+  sNotesCueText = 'Additional notes about the snippet';
 begin
+  // Set TextHint properties here, not at design-time, to take advantage of
+  // hacks in CS.UI.Components.EditCtrls.
+  edTitle.TextHint := sTitleCueText;
+  edUnit.TextHint := sUnitCueText;
+  frmDescription.TextHint := sDescriptionCueText;
+  frmNotes.TextHint := sNotesCueText;
   if Assigned(fSnippet) then
   begin
     // We are editing a snippet: initialise controls from snippet's properties
