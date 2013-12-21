@@ -361,6 +361,7 @@ uses
   CS.ActiveText.Renderers.REML in 'Main\CS.ActiveText.Renderers.REML.pas',
   CS.ActiveText.Renderers.RTF in 'Main\CS.ActiveText.Renderers.RTF.pas',
   CS.ActiveText.Validator in 'Main\CS.ActiveText.Validator.pas',
+  CS.Components.EditCtrls in 'Main\CS.Components.EditCtrls.pas',
   CS.Config in 'Main\CS.Config.pas',
   CS.Docs.TagInfo.RTF in 'Main\CS.Docs.TagInfo.RTF.pas',
   CS.Database.IO.Empty in 'Main\CS.Database.IO.Empty.pas',
