@@ -33,7 +33,8 @@ uses
   ImgList,
   StdActns,
   // Project
-  CS.ActiveText;
+  CS.ActiveText,
+  CS.Components.EditCtrls;
 
 
 type
@@ -80,6 +81,8 @@ type
     function GetActiveText: IActiveText;
     procedure SetActiveText(Value: IActiveText);
     procedure SetEditMode(AMode: TEditMode);
+    function GetTextHint: string;
+    procedure SetTextHint(const Value: string);
   public
     procedure Validate;
     procedure Clear;
@@ -88,6 +91,7 @@ type
     property ActiveText: IActiveText read GetActiveText write SetActiveText;
     property DefaultEditMode: TEditMode
       read fDefaultEditMode write fDefaultEditMode;
+    property TextHint: string read GetTextHint write SetTextHint;
   end;
 
 
@@ -202,6 +206,11 @@ begin
     );
 end;
 
+function TSnippetsActiveTextEdFrame.GetTextHint: string;
+begin
+  Result := edText.TextHint;
+end;
+
 function TSnippetsActiveTextEdFrame.Parse: IActiveText;
 var
   Text: string;
@@ -289,6 +298,11 @@ begin
       TFontHelper.SetDefaultMonoFont(edText.Font);
     end;
   end;
+end;
+
+procedure TSnippetsActiveTextEdFrame.SetTextHint(const Value: string);
+begin
+  edText.TextHint := Value;
 end;
 
 procedure TSnippetsActiveTextEdFrame.tcEditModeChange(Sender: TObject);
