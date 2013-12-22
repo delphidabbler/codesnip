@@ -23,6 +23,7 @@ uses
   SynEdit,
   SynEditHighlighter,
 
+  CS.Components.EditCtrls,
   CS.SourceCode.Languages,
   CS.SourceCode.Hiliter.Brushes,
   CS.SourceCode.Hiliter.Themes;
@@ -31,7 +32,7 @@ type
   TCodeEditorFrame = class(TFrame)
   strict private
     var
-      fSynEditCmp: TSynEdit;
+      fSynEditCmp: TSynEditEx;
       fTheme: TSyntaxHiliteTheme;
       fBrush: TSyntaxHiliterBrush;
       fFontSize: Integer;
@@ -45,10 +46,13 @@ type
     procedure SetUseThemeFontSize(const AFlag: Boolean);
     function GetFontSize: Integer;
     procedure SetFontSize(const ASize: Integer);
+    function GetTextHint: string;
+    procedure SetTextHint(const ATextHint: string);
     procedure ApplyTheme;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
+    procedure SetFocus; override;
     procedure Clear;
     procedure ApplyLanguage(const Language: TSourceCodeLanguage);
     property Theme: TSyntaxHiliteTheme read fTheme write SetTheme;
@@ -58,6 +62,7 @@ type
     property UseThemeFontSize: Boolean read fUseThemeFontSize write
       SetUseThemeFontSize default True;
     property FontSize: Integer read GetFontSize write SetFontSize;
+    property TextHint: string read GetTextHint write SetTextHint;
   end;
 
 implementation
@@ -130,7 +135,7 @@ begin
   inherited;
   fTheme := TSyntaxHiliteThemes.NullTheme;
   fBrush := TSyntaxHiliterBrushes.CreateNullBrush;
-  fSynEditCmp := TSynEdit.Create(Self);
+  fSynEditCmp := TSynEditEx.Create(Self);
   fSynEditCmp.Parent := Self;
   fSynEditCmp.Align := alClient;
   fSynEditCmp.WantReturns := True;
@@ -201,6 +206,11 @@ begin
   Result := fSynEditCmp.TabWidth;
 end;
 
+function TCodeEditorFrame.GetTextHint: string;
+begin
+  Result := fSynEditCmp.TextHint;
+end;
+
 procedure TCodeEditorFrame.SetBrush(const ABrush: TSyntaxHiliterBrush);
 var
   OldBrush: TSyntaxHiliterBrush;
@@ -214,6 +224,12 @@ begin
   fSynEditCmp.Highlighter := ABrush.CreateHighlighter;
   OldHighlighter.Free;  // may be nil, but that's OK with Free
   ApplyTheme;
+end;
+
+procedure TCodeEditorFrame.SetFocus;
+begin
+  inherited;
+  fSynEditCmp.SetFocus;
 end;
 
 procedure TCodeEditorFrame.SetFontSize(const ASize: Integer);
@@ -230,6 +246,11 @@ end;
 procedure TCodeEditorFrame.SetTabSize(const ATabSize: Integer);
 begin
   fSynEditCmp.TabWidth := ATabSize;
+end;
+
+procedure TCodeEditorFrame.SetTextHint(const ATextHint: string);
+begin
+  fSynEditCmp.TextHint := ATextHint;
 end;
 
 procedure TCodeEditorFrame.SetTheme(const ATheme: TSyntaxHiliteTheme);
