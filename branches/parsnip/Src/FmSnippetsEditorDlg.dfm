@@ -40,6 +40,7 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
           Width = 63
           Height = 13
           Caption = '&Source code:'
+          FocusControl = frmSourceEditor
         end
         object lblCategories: TLabel
           Left = 0
