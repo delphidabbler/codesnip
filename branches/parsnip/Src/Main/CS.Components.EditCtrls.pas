@@ -26,7 +26,11 @@ interface
 
 uses
   // Delphi
-  Classes, StdCtrls, Messages, Graphics;
+  StdCtrls,
+  Messages,
+  Graphics,
+  // 3rd party
+  SynEdit;
 
 
 type
@@ -78,6 +82,40 @@ type
     procedure DoSetTextHint(const Value: string); override;
   end;
 
+  ///  <summary>Sub-class of TSynEdit that adds TextHint property that displays
+  ///  "cue text" in the control body when the control does not have focus and
+  ///  no text has been entered.</summary>
+  ///  <remarks>SynEdit controls in CodeSnip are created on the fly at run time.
+  ///  Code that creates the controls should construct instances of TSynEditEx
+  ///  instead of TSynEdit to get this additional functionality.</remarks>
+  TSynEditEx = class(SynEdit.TSynEdit)
+  strict private
+    var
+      ///  <summary>Value of TextHint property.</summary>
+      fTextHint: string;
+      ///  <summary>Flag that indicates whether the control currently has focus.
+      ///  </summary>
+      ///  <remarks>Used instead of the control's Focused property to determine
+      ///  when cue text can be displayed. This is because Focused does not
+      ///  always seem to have the expected value when the control gets focus.
+      ///  </remarks>
+      fHasFocus: Boolean;
+  protected
+    ///  <summary>Records that the control has lost focus and forces a repaint
+    ///  cue text needs to be displayed.</summary>
+    procedure WMKillFocus(var Msg: TWMKillFocus); message WM_KILLFOCUS;
+    ///  <summary>Records that the control has focus and forces a repaint if
+    ///  if cue text was displayed and must be cleared.</summary>
+    procedure WMSetFocus(var Msg: TWMSetFocus); message WM_SETFOCUS;
+    ///  <summary>Paints any required cue text in grey italics using the
+    ///  control's font.</summary>
+    procedure Paint; override;
+  public
+    ///  <summary>Specifies the "cue text" to be displayed when the control is
+    ///  empty and does not have focus.</summary>
+    property TextHint: string read fTextHint write fTextHint;
+  end;
+
 
 implementation
 
@@ -85,23 +123,26 @@ implementation
 uses
   // Delphi
   Controls,
+  Types,
   // Project
-  UClassHelpers;
+  UFontHelper,
+  UStrUtils;
 
 
 ///  <summary>Renders the given "cue" text on the canvas of the given control
 ///  using the control's font but in grey italics.</summary>
-procedure RenderCueText(Ctrl: TWinControl; const ACueText: string);
+procedure RenderCueText(ACtrl: TWinControl; const ATopLeft: TPoint;
+  const AFont: TFont; const ACueText: string);
 var
   CtrlCanvas: TControlCanvas;
 begin
   CtrlCanvas := TControlCanvas.Create;
   try
-    CtrlCanvas.Control := Ctrl;
-    CtrlCanvas.Font := Ctrl.GetFont;   // requires TControl class helper
+    CtrlCanvas.Control := ACtrl;
+    CtrlCanvas.Font := AFont;   // requires TControl class helper
     CtrlCanvas.Font.Color := clGray;
     CtrlCanvas.Font.Style := [fsItalic];
-    CtrlCanvas.TextOut(1, 1, ACueText);
+    CtrlCanvas.TextOut(ATopLeft.X, ATopLeft.Y, ACueText);
   finally
     CtrlCanvas.Free;
   end;
@@ -113,7 +154,7 @@ procedure TMemo.WMPaint(var Message: TWMPaint);
 begin
   inherited;
   if (Text = '') and not Focused then
-    RenderCueText(Self, TextHint);
+    RenderCueText(Self, Point(1, 1), Font, TextHint);
 end;
 
 { TEdit }
@@ -127,7 +168,43 @@ procedure TEdit.WMPaint(var Message: TWMPaint);
 begin
   inherited;
   if (Text = '') and not Focused then
-    RenderCueText(Self, TextHint);
+    RenderCueText(Self, Point(1, 1), Font, TextHint);
+end;
+
+{ TSynEditEx }
+
+procedure TSynEditEx.Paint;
+var
+  CueFont: TFont;
+begin
+  inherited;
+  if not fHasFocus and StrIsBlank(Text) then
+  begin
+    CueFont := TFont.Create;
+    try
+      TFontHelper.SetDefaultFont(CueFont);
+      RenderCueText(Self, Point(fGutterWidth + 2, 1), CueFont, TextHint);
+    finally
+      CueFont.Free;
+    end;
+  end;
+end;
+
+procedure TSynEditEx.WMKillFocus(var Msg: TWMKillFocus);
+begin
+  inherited;
+  fHasFocus := False;
+  if StrIsBlank(Text) then
+    Paint;
+end;
+
+procedure TSynEditEx.WMSetFocus(var Msg: TWMSetFocus);
+begin
+  fHasFocus := True;
+  if StrIsBlank(Text) then
+    Paint;
+  inherited
 end;
 
 end.
+
