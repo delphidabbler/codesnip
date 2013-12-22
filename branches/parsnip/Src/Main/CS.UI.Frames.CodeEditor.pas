@@ -14,19 +14,22 @@
 
 unit CS.UI.Frames.CodeEditor;
 
+
 interface
 
+
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs,
-
+  // Delphi
+  Classes,
+  Forms,
+  // 3rd party
   SynEdit,
-  SynEditHighlighter,
-
+  // Project
   CS.Components.EditCtrls,
   CS.SourceCode.Languages,
   CS.SourceCode.Hiliter.Brushes,
   CS.SourceCode.Hiliter.Themes;
+
 
 type
   TCodeEditorFrame = class(TFrame)
@@ -65,13 +68,19 @@ type
     property TextHint: string read GetTextHint write SetTextHint;
   end;
 
+
 implementation
 
 
 uses
+  // Delphi
+  SysUtils,
+  Graphics,
+  Controls,
+  // 3rd party
+  SynEditHighlighter,
   // Project
   UStrUtils;
-
 
 {$R *.dfm}
 
