@@ -841,6 +841,7 @@ resourcestring
   sUnitCueText = 'New unit name';
   sDescriptionCueText = 'Snippet description';
   sNotesCueText = 'Additional notes about the snippet';
+  sSourceCodeCueText = 'Snippet''s source code';
 begin
   // Set TextHint properties here, not at design-time, to take advantage of
   // hacks in CS.UI.Components.EditCtrls.
@@ -848,6 +849,7 @@ begin
   edUnit.TextHint := sUnitCueText;
   frmDescription.TextHint := sDescriptionCueText;
   frmNotes.TextHint := sNotesCueText;
+  frmSourceEditor.TextHint := sSourceCodeCueText;
   // Limits
   edTitle.MaxLength := TSnippetBase.MaxTitleLength;
   if Assigned(fSnippet) then
