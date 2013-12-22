@@ -197,11 +197,11 @@ type
   ///  <remarks>TRules records are required by the constructors of collection
   ///  classes from the Delphi Collections library. This helper make it possible
   ///  to write less verbose code in the collection constructors.</remarks>
-  TRulesFactory = record
+  TRulesFactory<T> = record
   public
     ///  <summary>Constructs a TRules record using the given comparator.
     ///  </summary>
-    class function Construct<T>(Comparator: TBaseComparator<T>): TRules<T>;
+    class function Construct(Comparator: TBaseComparator<T>): TRules<T>;
       overload; static;
     ///  <summary>Constructs a TRules record using the given closures.</summary>
     ///  <param name="ACompareFn">TComparison [in] Reference to a function that
@@ -211,7 +211,7 @@ type
     ///  <param name="AHasherFn">THasher [in] Reference to a function that will
     ///  handle hash generation.</param>
     ///  <returns>TRules. Required rules record.</returns>
-    class function Construct<T>(const ACompareFn: TComparison<T>;
+    class function Construct(const ACompareFn: TComparison<T>;
       const AEqualsFn: TEqualityComparison<T>; const AHasherFn: THasher<T>):
       TRules<T>; overload; static;
     ///  <summary>Constructs a TRules record using the given closures.</summary>
@@ -223,7 +223,7 @@ type
     ///  made that for two equal items ACompareFn will return zero and for two
     ///  unequal items the function will return non-zero.</remarks>
     ///  <returns>TRules. Required rules record.</returns>
-    class function Construct<T>(const ACompareFn: TComparison<T>;
+    class function Construct(const ACompareFn: TComparison<T>;
       const AHasherFn: THasher<T>): TRules<T>; overload; static;
   end;
 
@@ -337,15 +337,15 @@ begin
   Result := TextHash(Value);
 end;
 
-{ TRulesFactory }
+{ TRulesFactory<T> }
 
-class function TRulesFactory.Construct<T>(Comparator: TBaseComparator<T>):
+class function TRulesFactory<T>.Construct(Comparator: TBaseComparator<T>):
   TRules<T>;
 begin
   Result := TRules<T>.Create(Comparator, Comparator);
 end;
 
-class function TRulesFactory.Construct<T>(const ACompareFn: TComparison<T>;
+class function TRulesFactory<T>.Construct(const ACompareFn: TComparison<T>;
   const AEqualsFn: TEqualityComparison<T>; const AHasherFn: THasher<T>):
   TRules<T>;
 var
@@ -357,24 +357,19 @@ begin
   Result := TRules<T>.Create(Comparator, Comparator);
 end;
 
-class function TRulesFactory.Construct<T>(const ACompareFn: TComparison<T>;
+class function TRulesFactory<T>.Construct(const ACompareFn: TComparison<T>;
   const AHasherFn: THasher<T>): TRules<T>;
 var
   Comparator: TComparator<T>;
-  EqualsFn: TEqualityComparison<T>;
 begin
-  // NOTE: Obvious solution would be to call Construct method that takes three
-  // closures as parameters passing ACompareFn, EqualsFn and AHasherFn, but for
-  // some reason compiler can't find correct overload to call. This means we
-  // have to duplicate the TRules construction code in each overloaded method.
-  EqualsFn := function (const Left, Right: T): Boolean
+  Result := Construct(
+    ACompareFn,
+    function (const Left, Right: T): Boolean
     begin
       Result := ACompareFn(Left, Right) = 0;
-    end;
-  Comparator := TDelegatedComparator<T>.Create(
-    ACompareFn, EqualsFn, AHasherFn
+    end,
+    AHasherFn
   );
-  Result := TRules<T>.Create(Comparator, Comparator);
 end;
 
 end.
