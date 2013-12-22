@@ -77,6 +77,7 @@ uses
   Compilers.UGlobals,
   Compilers.UCompilers,
   DB.UMain,
+  UComparers,
   UConsts,
   UCSSUtils,
   UEncodings,
@@ -607,9 +608,7 @@ constructor TSnippetListPageHTML.Create(View: IView);
 begin
   inherited;
   fSnippetList := TSortedList<ISnippet>.Create(
-    TRules<ISnippet>.Create(
-      TSnippetTitleComparator.Create, TSnippetTitleComparator.Create
-    )
+    TRulesFactory<ISnippet>.CreateFromComparator(TSnippetTitleComparator.Create)
   );
   BuildSnippetList;
 end;
