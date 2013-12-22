@@ -19,7 +19,8 @@ unit CS.Database.SnippetLinks;
 interface
 
 uses
-  CS.Database.Types;
+  CS.Database.Types,
+  CS.Utils.Dates;
 
 type
   // TODO: May need to be in a separate Synch Space unit, or in Types
@@ -33,13 +34,16 @@ type
     var
       fSynchSpaceID: TGUID;
       fLinkedSnippetID: TSnippetID;
+      fModified: TUTCDateTime;
   public
     constructor Create(const ASynchSpaceID: TGUID;
-      const ALinkedSnippetID: TSnippetID); overload;
+      const ALinkedSnippetID: TSnippetID; const AModified: TUTCDateTime);
+      overload;
     constructor Create(Src: ISnippetLinkInfo); overload;
     function IsLinked: Boolean;
     function GetSynchSpaceID: TGUID;
     function GetLinkedSnippetID: TSnippetID;
+    function GetModified: TUTCDateTime;
   end;
 
   TNullSnippetLinkInfo = class(TInterfacedObject, ISnippetLinkInfo)
@@ -47,6 +51,7 @@ type
     function IsLinked: Boolean;
     function GetSynchSpaceID: TGUID;
     function GetLinkedSnippetID: TSnippetID;
+    function GetModified: TUTCDateTime;
   end;
 
 implementation
@@ -57,21 +62,27 @@ uses
 { TSnippetLinkInfo }
 
 constructor TSnippetLinkInfo.Create(const ASynchSpaceID: TGUID;
-  const ALinkedSnippetID: TSnippetID);
+  const ALinkedSnippetID: TSnippetID; const AModified: TUTCDateTime);
 begin
   inherited Create;
   fSynchSpaceID := ASynchSpaceID;
   fLinkedSnippetID := ALinkedSnippetID;
+  fModified := AModified;
 end;
 
 constructor TSnippetLinkInfo.Create(Src: ISnippetLinkInfo);
 begin
-  Create(Src.SynchSpaceID, Src.LinkedSnippetID);
+  Create(Src.SynchSpaceID, Src.LinkedSnippetID, Src.Modified);
 end;
 
 function TSnippetLinkInfo.GetLinkedSnippetID: TSnippetID;
 begin
   Result := fLinkedSnippetID;
+end;
+
+function TSnippetLinkInfo.GetModified: TUTCDateTime;
+begin
+  Result := fModified;
 end;
 
 function TSnippetLinkInfo.GetSynchSpaceID: TGUID;
@@ -90,6 +101,13 @@ function TNullSnippetLinkInfo.GetLinkedSnippetID: TSnippetID;
 begin
   raise ENotSupportedException.Create(
     'GetLinkedSnippetID is not implemented in ' + ClassName
+  );
+end;
+
+function TNullSnippetLinkInfo.GetModified: TUTCDateTime;
+begin
+  raise ENotImplemented.Create(
+    'GetModified is not implemented in ' + ClassName
   );
 end;
 

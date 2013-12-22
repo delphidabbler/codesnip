@@ -223,15 +223,15 @@ type
     soUser, soImport, soSWAG, soSynchSpace
   );
 
-  { TODO: Implement these (Null implementation would be useful since it will
-          apply to all user-defined snippets. }
   ISnippetLinkInfo = interface(IInterface)
     ['{F98BBE9C-B9F1-4FC7-BDE2-BBC90958BF52}']
     function IsLinked: Boolean;
     function GetSynchSpaceID: TGUID;
     function GetLinkedSnippetID: TSnippetID;
+    function GetModified: TUTCDateTime;
     property SynchSpaceID: TGUID read GetSynchSpaceID;
     property LinkedSnippetID: TSnippetID read GetLinkedSnippetID;
+    property Modified: TUTCDateTime read GetModified;
   end;
 
   ///  <summary>Enumeration providing information about the level to which a

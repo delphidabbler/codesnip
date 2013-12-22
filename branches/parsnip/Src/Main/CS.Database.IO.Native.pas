@@ -482,6 +482,7 @@ begin
   if Optional and Date.IsNull then
     Exit;
   WritePropCode(Writer, PropCode);
+  // TODO: create WriteISODate method to use where code like following appears
   Writer.WriteSizedString16(Date.ToISO8601String);
 end;
 
@@ -516,6 +517,7 @@ begin
   SynchSpaceID := LinkInfo.SynchSpaceID;
   Writer.WriteBuffer(SynchSpaceID, SizeOf(SynchSpaceID));
   Writer.WriteSizedString16(LinkInfo.LinkedSnippetID.ToString);
+  Writer.WriteSizedString16(LinkInfo.Modified.ToISO8601String);
 end;
 
 procedure TDBNativeWriter.WriteMarkupProp(const Writer: TBinaryStreamWriter;
@@ -901,13 +903,16 @@ function TDBNativeReader.ReadLinkInfo(const Reader: TBinaryStreamReader):
 var
   SynchSpaceID: TGUID;
   LinkedSnippetID: TSnippetID;
+  Modified: TUTCDateTime;
 begin
   // If this property is present snippet is linked to space: the property is
   // never present in file if snippet is not linked. Therefore return value is
   // never a null instance.
   Reader.ReadBuffer(SynchSpaceID, SizeOf(SynchSpaceID));
   LinkedSnippetID := TSnippetID.Create(Reader.ReadSizedString16);
-  Result := TSnippetLinkInfo.Create(SynchSpaceID, LinkedSnippetID);
+  // TODO: Create a ReadUTCDate method and use whereever following code appears.
+  Modified := TUTCDateTime.CreateFromISO8601String(Reader.ReadSizedString16);
+  Result := TSnippetLinkInfo.Create(SynchSpaceID, LinkedSnippetID, Modified);
 end;
 
 function TDBNativeReader.ReadMarkup(const Reader: TBinaryStreamReader):

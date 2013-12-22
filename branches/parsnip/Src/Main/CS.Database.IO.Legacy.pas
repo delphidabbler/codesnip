@@ -510,7 +510,8 @@ begin
   ASnippet.SetLinkInfo(
     TSnippetLinkInfo.Create(
       TSnippetSynchSpaceIDs.LegacyDB,
-      TSnippetID.Create(LegacySnippetID(SnippetNode))
+      TSnippetID.Create(LegacySnippetID(SnippetNode)),
+      ASnippet.GetCreated
     )
   );
   // Note that the snippet's TestInfo and Starred properties have no equivalent
