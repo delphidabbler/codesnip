@@ -134,12 +134,10 @@ var
 begin
   inherited Create;
   fDBPath := DBPath;
-  StrRules := TRules<string>.Create(
-    TTextComparator.Create, TTextComparator.Create
+  StrRules := TRulesFactory<string>.CreateFromComparator(
+    TTextComparator.Create
   );
-  fCategoryMap := TDictionary<string,string>.Create(
-    StrRules, StrRules
-  );
+  fCategoryMap := TDictionary<string,string>.Create(StrRules, StrRules);
   fFavourites := TSnippetIDList.Create;
   fVersion := -1; // dummy value changed by OpenXMLDoc when Load is called
   // For some reason we must call OleInitialize here rather than in

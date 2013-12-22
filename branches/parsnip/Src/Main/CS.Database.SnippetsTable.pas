@@ -61,8 +61,11 @@ implementation
   time snippet with same ID is snippet table is modified. }
 
 uses
+  // Delphi
   SysUtils,
-  Generics.Defaults;
+  Generics.Defaults,
+  // Project
+  UComparers;
 
 { TDBSnippet }
 
@@ -108,26 +111,18 @@ constructor TDBSnippetsTable.Create;
 begin
   inherited Create;
   fTable := TObjectDictionary<TSnippetID,TDBSnippet>.Create(
-    TRules<TSnippetID>.Create(
-      TSnippetID.TComparator.Create, TSnippetID.TComparator.Create
+    TRulesFactory<TSnippetID>.CreateFromComparator(
+      TSnippetID.TComparator.Create
     ),
-    TRules<TDBSnippet>.Create(
-      TDelegatedComparer<TDBSnippet>.Create(
-        function (const Left, Right: TDBSnippet): Integer
-        begin
-          Result := TSnippetID.Compare(Left.GetID, Right.GetID);
-        end
-      ),
-      TDelegatedEqualityComparer<TDBSnippet>.Create(
-        function (const Left, Right: TDBSnippet): Boolean
-        begin
-          Result := Left.GetID = Right.GetID;
-        end,
-        function (const Snippet: TDBSnippet): Integer
-        begin
-          Result := Snippet.GetID.Hash;
-        end
-      )
+    TRulesFactory<TDBSnippet>.Construct(
+      function (const Left, Right: TDBSnippet): Integer
+      begin
+        Result := TSnippetID.Compare(Left.GetID, Right.GetID);
+      end,
+      function (const Snippet: TDBSnippet): Integer
+      begin
+        Result := Snippet.GetID.Hash;
+      end
     )
   );
   fTable.OwnsKeys := False;

@@ -303,6 +303,7 @@ uses
   CS.Config,
   CS.Database.Snippets,
   DB.UMain,
+  UComparers,
   UStrUtils;
 
 
@@ -324,23 +325,15 @@ begin
   inherited Create;
   fSnippetIDList := ASnippetList;
   fItems := TGroupItemList.Create(
-    TRules<TGroupItem>.Create(
-      TDelegatedComparer<TGroupItem>.Create(
-        function (const Left, Right: TGroupItem): Integer
-        begin
-          Result := Left.CompareTo(Right);
-        end
-      ),
-      TDelegatedEqualityComparer<TGroupItem>.Create(
-        function (const Left, Right: TGroupItem): Boolean
-        begin
-          Result := Left.CompareTo(Right) = 0;
-        end,
-        function (const GroupItem: TGroupItem): Integer
-        begin
-          Result := Integer(GroupItem);
-        end
-      )
+    TRulesFactory<TGroupItem>.Construct(
+      function (const Left, Right: TGroupItem): Integer
+      begin
+        Result := Left.CompareTo(Right);
+      end,
+      function (const GroupItem: TGroupItem): Integer
+      begin
+        Result := Integer(GroupItem);
+      end
     )
   );
   fItems.OwnsObjects := True;
@@ -389,9 +382,7 @@ constructor TGroupItem.Create;
 begin
   inherited Create;
   fSnippetList := TSortedSnippetList.Create(
-    TRules<ISnippet>.Create(
-      TSnippetTitleComparator.Create, TSnippetTitleComparator.Create
-    )
+    TRulesFactory<ISnippet>.CreateFromComparator(TSnippetTitleComparator.Create)
   );
 end;
 

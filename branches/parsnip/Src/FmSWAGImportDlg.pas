@@ -214,6 +214,7 @@ uses
   CS.Utils.Hashes,
   FmPreviewDlg,
   FmWaitDlg,
+  UComparers,
   UConsts,
   UCtrlArranger,
   UEncodings,
@@ -528,66 +529,46 @@ resourcestring
 begin
   inherited;
   fSortedCategories := TSortedList<TSWAGCategory>.Create(
-    TRules<TSWAGCategory>.Create(
-      TDelegatedComparer<TSWAGCategory>.Create(
-        function (const Left, Right: TSWAGCategory): Integer
-        begin
-          Result := StrCompareStr(Left.Title, Right.Title);
-        end
-      ),
-      TDelegatedEqualityComparer<TSWAGCategory>.Create(
-        function (const Left, Right: TSWAGCategory): Boolean
-        begin
-          Result := StrSameStr(Left.Title, Right.Title);
-        end,
-        function (const Cat: TSWAGCategory): Integer
-        begin
-          Result := StrHash(Cat.Title);
-        end
-      )
+    TRulesFactory<TSWAGCategory>.Construct(
+      function (const Left, Right: TSWAGCategory): Integer
+      begin
+        Result := StrCompareStr(Left.Title, Right.Title);
+      end,
+      function (const Cat: TSWAGCategory): Integer
+      begin
+        Result := StrHash(Cat.Title);
+      end
     )
   );
 
   fCurrentCatSnippets := TSortedList<TSWAGSnippet>.Create(
-    TRules<TSWAGSnippet>.Create(
-      TDelegatedComparer<TSWAGSnippet>.Create(
-        function (const Left, Right: TSWAGSnippet): Integer
-        begin
-          Result := StrCompareStr(Left.Title, Right.Title);
-        end
-      ),
-      TDelegatedEqualityComparer<TSWAGSnippet>.Create(
-        function (const Left, Right: TSWAGSnippet): Boolean
-        begin
-          Result := StrSameStr(Left.Title, Right.Title);
-        end,
-        function (const Snippet: TSWAGSnippet): Integer
-        begin
-          Result := StrHash(Snippet.Title);
-        end
-      )
+    TRulesFactory<TSWAGSnippet>.Construct(
+      function (const Left, Right: TSWAGSnippet): Integer
+      begin
+        Result := StrCompareStr(Left.Title, Right.Title);
+      end,
+      function (const Snippet: TSWAGSnippet): Integer
+      begin
+        Result := StrHash(Snippet.Title);
+      end
     )
   );
 
   // TODO: change to some structure that doesn't permit duplicates.
   fSelectedSnippets := TSortedList<TSWAGSnippet>.Create(
-    TRules<TSWAGSnippet>.Create(
-      TDelegatedComparer<TSWAGSnippet>.Create(
-        function (const Left, Right: TSWAGSnippet): Integer
-        begin
-          Result := Left.ID - Right.ID;
-        end
-      ),
-      TDelegatedEqualityComparer<TSWAGSnippet>.Create(
-        function (const Left, Right: TSWAGSnippet): Boolean
-        begin
-          Result := Left.ID = Right.ID;
-        end,
-        function (const Snippet: TSWAGSnippet): Integer
-        begin
-          Result := Integer(Snippet.ID);
-        end
-      )
+    TRulesFactory<TSWAGSnippet>.Construct(
+      function (const Left, Right: TSWAGSnippet): Integer
+      begin
+        Result := Left.ID - Right.ID;
+      end,
+      function (const Left, Right: TSWAGSnippet): Boolean
+      begin
+        Result := Left.ID = Right.ID;
+      end,
+      function (const Snippet: TSWAGSnippet): Integer
+      begin
+        Result := Integer(Snippet.ID);
+      end
     )
   );
 

@@ -383,7 +383,7 @@ begin
   // Build list of files that are supposed to be in directory. These are the
   // master database file and a snippet file for all existing snippets.
   WantedFiles := THashSet<string>.Create(
-    TRules<string>.Create(TTextComparator.Create, TTextComparator.Create)
+    TRulesFactory<string>.CreateFromComparator(TTextComparator.Create)
   );
   try
     WantedFiles.Add(MasterFileName);

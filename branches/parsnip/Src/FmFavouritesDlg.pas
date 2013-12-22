@@ -262,6 +262,7 @@ uses
   CS.Database.Snippets,
   DB.UMain,
   IntfCommon,
+  UComparers,
   UCtrlArranger,
   UMessageBox,
   UPreferences,
@@ -781,19 +782,12 @@ begin
       end
   else
     fSortFn := SortFn;
-
-  Rules := TRules<ISnippet>.Create(
-    TComparer<ISnippet>.Construct(fSortFn),
-    TEqualityComparer<ISnippet>.Construct(
-      function (const Left, Right: ISnippet): Boolean
-      begin
-        Result := fSortFn(Left, Right) = 0;
-      end,
-      function (const Value: ISnippet): Integer
-      begin
-        Result := Value.ID.Hash;
-      end
-    )
+  Rules := TRulesFactory<ISnippet>.Construct(
+    fSortFn,
+    function (const Value: ISnippet): Integer
+    begin
+      Result := Value.ID.Hash;
+    end
   );
   if Assigned(fSnippetList) then
   begin

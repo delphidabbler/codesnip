@@ -49,6 +49,10 @@ type
 
 implementation
 
+uses
+  // Project
+  UComparers;
+
 { TTagSet }
 
 procedure TTagSet.Add(const ATag: TTag);
@@ -94,7 +98,7 @@ constructor TTagSet.Create;
 begin
   inherited Create;
   fTags := TArraySet<TTag>.Create(
-    TRules<TTag>.Create(TTag.TComparator.Create, TTag.TComparator.Create)
+    TRulesFactory<TTag>.CreateFromComparator(TTag.TComparator.Create)
   );
 end;
 

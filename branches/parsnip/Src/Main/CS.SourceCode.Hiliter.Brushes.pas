@@ -138,20 +138,20 @@ implementation
 
 
 uses
+  // Delphi
   SysUtils,
   Generics.Defaults,
-
+  // 3rd party
   Collections.Base,
   Collections.Sets,
-
   SynEditStrConst,
   SynHighlighterHtml,
   SynHighlighterJScript,
   SynHighlighterPas,
   SynHighlighterPHP,
-
+  // Project
   CS.Utils.Hashes,
-
+  UComparers,
   UStrUtils;
 
 
@@ -240,23 +240,15 @@ var
   Attr: TSyntaxHiliterAttr;
 begin
   AllAttrs := TLinkedSet<TSyntaxHiliterAttr>.Create(
-    TRules<TSyntaxHiliterAttr>.Create(
-      TDelegatedComparer<TSyntaxHiliterAttr>.Create(
-        function (const Left, Right: TSyntaxHiliterAttr): Integer
-        begin
-          Result := TSyntaxHiliterAttr.Compare(Left, Right);
-        end
-      ),
-      TDelegatedEqualityComparer<TSyntaxHiliterAttr>.Create(
-        function (const Left, Right: TSyntaxHiliterAttr): Boolean
-        begin
-          Result := TSyntaxHiliterAttr.Compare(Left, Right) = 0;
-        end,
-        function (const Value: TSyntaxHiliterAttr): Integer
-        begin
-          Result := Value.Hash;
-        end
-      )
+    TRulesFactory<TSyntaxHiliterAttr>.Construct(
+      function (const Left, Right: TSyntaxHiliterAttr): Integer
+      begin
+        Result := TSyntaxHiliterAttr.Compare(Left, Right);
+      end,
+      function (const Value: TSyntaxHiliterAttr): Integer
+      begin
+        Result := Value.Hash;
+      end
     )
   );
   try

@@ -152,6 +152,7 @@ uses
   SysUtils,
   Classes,
   CS.Utils.Hashes,
+  UComparers,
   UStrUtils;
 
 { TListBoxAdapter }
@@ -420,54 +421,39 @@ constructor TSortedCollectionCtrlKVMgr<TKey>.Create(
   const AOwnsCollectionCtrl: Boolean;
   const AKeyEqualFn: TEqualityComparison<TKey>; const ASortType: TSortType);
 var
-  CompareFn: TComparison<TPair<TKey,string>>;
-  EqualsFn: TEqualityComparison<TPair<TKey,string>>;
-  HashFn: THasher<TPair<TKey,string>>;
+  Rules: TRules<TPair<TKey,string>>;
 begin
   inherited Create(ACollectionCtrl, AOwnsCollectionCtrl, AKeyEqualFn);
   fSortType := ASortType;
-  CompareFn := nil;
-  HashFn := nil;
   case ASortType of
     stRespectCase:
     begin
-      CompareFn := function (const Left, Right: TPair<TKey,string>): Integer
+      Rules := TRulesFactory<TPair<TKey,string>>.Construct(
+        function (const Left, Right: TPair<TKey,string>): Integer
         begin
           Result := StrCompareStr(Left.Value, Right.Value);
-        end;
-      HashFn := function (const Value: TPair<TKey,string>): Integer
+        end,
+        function (const Value: TPair<TKey,string>): Integer
         begin
           Result := StrHash(Value.Value);
-        end;
-      EqualsFn := function (const Left, Right: TPair<TKey,string>): Boolean
-        begin
-          Result := StrSameStr(Left.Value, Right.Value);
-        end;
+        end
+      )
     end;
     stIgnoreCase:
     begin
-      CompareFn := function (const Left, Right: TPair<TKey,string>): Integer
+      Rules := TRulesFactory<TPair<TKey,string>>.Construct(
+        function (const Left, Right: TPair<TKey,string>): Integer
         begin
           Result := StrCompareText(Left.Value, Right.Value);
-        end;
-      HashFn := function (const Value: TPair<TKey,string>): Integer
+        end,
+        function (const Value: TPair<TKey,string>): Integer
         begin
           Result := TextHash(Value.Value);
-        end;
-      EqualsFn := function (const Left, Right: TPair<TKey,string>): Boolean
-        begin
-          Result := StrSameText(Left.Value, Right.Value);
-        end;
+        end
+      )
     end;
   end;
-  Assert(Assigned(CompareFn) and Assigned(HashFn) and Assigned(EqualsFn),
-    ClassName + '.Create: Invalid sort type');
-  fKVList := TSortedList<TPair<TKey,string>>.Create(
-    TRules<TPair<TKey,string>>.Create(
-      TDelegatedComparer<TPair<TKey,string>>.Create(CompareFn),
-      TDelegatedEqualityComparer<TPair<TKey,string>>.Create(EqualsFn, HashFn)
-    )
-  );
+  fKVList := TSortedList<TPair<TKey,string>>.Create(Rules);
   // following assignment to interface type mean that fKVList will be freed
   // automatically when reference count hits zero: don't free explicitly
   fListIntf := fKVList;
