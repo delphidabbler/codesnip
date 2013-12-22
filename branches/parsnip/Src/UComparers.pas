@@ -199,10 +199,6 @@ type
   ///  to write less verbose code in the collection constructors.</remarks>
   TRulesFactory<T> = record
   public
-    ///  <summary>Constructs a TRules record using the given comparator.
-    ///  </summary>
-    class function Construct(Comparator: TBaseComparator<T>): TRules<T>;
-      overload; static;
     ///  <summary>Constructs a TRules record using the given closures.</summary>
     ///  <param name="ACompareFn">TComparison [in] Reference to a function that
     ///  will handle comparision requests.</param>
@@ -225,6 +221,18 @@ type
     ///  <returns>TRules. Required rules record.</returns>
     class function Construct(const ACompareFn: TComparison<T>;
       const AHasherFn: THasher<T>): TRules<T>; overload; static;
+    ///  <summary>Constructs a TRules record from the given Comparator.
+    ///  </summary>
+    ///  <remarks>
+    ///  <para>This method has to have a unique name within the class because
+    ///  the compile can fail to find the corrected overload when an IComparator
+    ///  object is created on the fly in the method call.</para>
+    ///  <para>NOTE: Comparator in parameter list must be declared "const" or
+    ///  else a memory leak can occur when Comparer is created on the fly in the
+    ///  method call.</para>
+    ///  </remarks>
+    class function CreateFromComparator(const Comparator: IComparator<T>):
+      TRules<T>; static;
   end;
 
 
@@ -339,12 +347,6 @@ end;
 
 { TRulesFactory<T> }
 
-class function TRulesFactory<T>.Construct(Comparator: TBaseComparator<T>):
-  TRules<T>;
-begin
-  Result := TRules<T>.Create(Comparator, Comparator);
-end;
-
 class function TRulesFactory<T>.Construct(const ACompareFn: TComparison<T>;
   const AEqualsFn: TEqualityComparison<T>; const AHasherFn: THasher<T>):
   TRules<T>;
@@ -369,6 +371,29 @@ begin
       Result := ACompareFn(Left, Right) = 0;
     end,
     AHasherFn
+  );
+end;
+
+class function TRulesFactory<T>.CreateFromComparator(
+  const Comparator: IComparator<T>): TRules<T>;
+begin
+  Result := TRules<T>.Create(
+    TComparer<T>.Construct(
+      function (const Left, Right: T): Integer
+      begin
+        Result := Comparator.Compare(Left, Right);
+      end
+    ),
+    TEqualityComparer<T>.Construct(
+      function (const Left, Right: T): Boolean
+      begin
+        Result := Comparator.Equals(Left, Right);
+      end,
+      function (const Value: T): Integer
+      begin
+        Result := Comparator.GetHashCode(Value)
+      end
+    )
   );
 end;
 
