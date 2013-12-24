@@ -36,6 +36,16 @@ uses
   UIStringList;
 
 type
+  TBinaryStreamReaderEx = class(TBinaryStreamReader)
+  public
+    function ReadISO8601Date: TUTCDateTime;
+  end;
+
+  TBinaryStreamWriterEx = class(TBinaryStreamWriter)
+  public
+    procedure WriteISO8601Date(const ADate: TUTCDateTime);
+  end;
+
   TDBSnippetProp = (
     spID, spTitle, spDescription, spSourceCode, spLanguageID, spModified,
     spCreated, spRequiredModules, spRequiredSnippets, spXRefs, spNotes, spKind,
@@ -62,7 +72,7 @@ type
       public
         constructor Create;
         destructor Destroy; override;
-        procedure Parse(const Reader: TBinaryStreamReader);
+        procedure Parse(const Reader: TBinaryStreamReaderEx);
         property Watermark: string read fWatermark;
         property Version: Integer read fVersion;
         property LastModified: TUTCDateTime read fLastModified;
@@ -90,45 +100,45 @@ type
       fExistingSnippets: TDictionary<TSnippetID,TUTCDateTime>;
       fLastModified: TUTCDateTime;
     procedure ReadMasterFileData;
-    procedure WritePropCode(const Writer: TBinaryStreamWriter;
+    procedure WritePropCode(const Writer: TBinaryStreamWriterEx;
       const Code: TDBSnippetProp);
-    procedure WriteString32Prop(const Writer: TBinaryStreamWriter;
+    procedure WriteString32Prop(const Writer: TBinaryStreamWriterEx;
       const PropCode: TDBSnippetProp; const Str: string;
       const Optional: Boolean);
-    procedure WriteString16Prop(const Writer: TBinaryStreamWriter;
+    procedure WriteString16Prop(const Writer: TBinaryStreamWriterEx;
       const PropCode: TDBSnippetProp; const Str: string;
       const Optional: Boolean);
-    procedure WriteBooleanProp(const Writer: TBinaryStreamWriter;
+    procedure WriteBooleanProp(const Writer: TBinaryStreamWriterEx;
       const PropCode: TDBSnippetProp; const AValue: Boolean;
       const Optional: Boolean);
-    procedure WriteLanguageIDProp(const Writer: TBinaryStreamWriter;
+    procedure WriteLanguageIDProp(const Writer: TBinaryStreamWriterEx;
       const PropCode: TDBSnippetProp; const LangID: TSourceCodeLanguageID;
       const Optional: Boolean);
-    procedure WriteDateProp(const Writer: TBinaryStreamWriter;
+    procedure WriteDateProp(const Writer: TBinaryStreamWriterEx;
       const PropCode: TDBSnippetProp; const Date: TUTCDateTime;
       const Optional: Boolean);
-    procedure WriteMarkupProp(const Writer: TBinaryStreamWriter;
+    procedure WriteMarkupProp(const Writer: TBinaryStreamWriterEx;
       const PropCode: TDBSnippetProp; ActiveText: IActiveText;
       const Optional: Boolean);
-    procedure WriteStringsProp(const Writer: TBinaryStreamWriter;
+    procedure WriteStringsProp(const Writer: TBinaryStreamWriterEx;
       const PropCode: TDBSnippetProp; Strings: IStringList;
       const Optional: Boolean);
-    procedure WriteSnippetIDListProp(const Writer: TBinaryStreamWriter;
+    procedure WriteSnippetIDListProp(const Writer: TBinaryStreamWriterEx;
       const PropCode: TDBSnippetProp; IDs: ISnippetIDList;
       const Optional: Boolean);
-    procedure WriteKindIDProp(const Writer: TBinaryStreamWriter;
+    procedure WriteKindIDProp(const Writer: TBinaryStreamWriterEx;
       const PropCode: TDBSnippetProp; const Kind: TSnippetKindID;
       const Optional: Boolean);
-    procedure WriteCompileResultsProp(const Writer: TBinaryStreamWriter;
+    procedure WriteCompileResultsProp(const Writer: TBinaryStreamWriterEx;
       const PropCode: TDBSnippetProp; const Results: TCompileResults;
       const Optional: Boolean);
-    procedure WriteTagsProp(const Writer: TBinaryStreamWriter;
+    procedure WriteTagsProp(const Writer: TBinaryStreamWriterEx;
       const PropCode: TDBSnippetProp; Tags: ITagSet;
       const Optional: Boolean);
     // WriteLinkInfoProp is always "optional": it is never output if not linked.
-    procedure WriteLinkInfoProp(const Writer: TBinaryStreamWriter;
+    procedure WriteLinkInfoProp(const Writer: TBinaryStreamWriterEx;
       const PropCode: TDBSnippetProp; LinkInfo: ISnippetLinkInfo);
-    procedure WriteTestInfoProp(const Writer: TBinaryStreamWriter;
+    procedure WriteTestInfoProp(const Writer: TBinaryStreamWriterEx;
       const PropCode: TDBSnippetProp; const TestInfo: TSnippetTestInfo;
       const Optional: Boolean);
     procedure WriteSnippetFile(const ASnippet: TDBSnippet);
@@ -147,18 +157,19 @@ type
   TDBNativeReader = class sealed(TDBNativeIOBase, IDatabaseLoader)
   strict private
     procedure HandleException(const E: Exception);
-    procedure ValidateSnippetFileHeader(const Reader: TBinaryStreamReader);
+    procedure ValidateSnippetFileHeader(const Reader: TBinaryStreamReaderEx);
     procedure LoadSnippet(const AID: TSnippetID;
       const ATable: TDBSnippetsTable);
     procedure LoadSnippetProperties(const ASnippet: TDBSnippet;
-      const Reader: TBinaryStreamReader);
-    function ReadMarkup(const Reader: TBinaryStreamReader): IActiveText;
-    function ReadSnippetIDs(const Reader: TBinaryStreamReader):
+      const Reader: TBinaryStreamReaderEx);
+    function ReadMarkup(const Reader: TBinaryStreamReaderEx): IActiveText;
+    function ReadSnippetIDs(const Reader: TBinaryStreamReaderEx):
       ISnippetIDList;
-    function ReadCompileResults(const Reader: TBinaryStreamReader):
+    function ReadCompileResults(const Reader: TBinaryStreamReaderEx):
       TCompileResults;
-    function ReadTags(const Reader: TBinaryStreamReader): ITagSet;
-    function ReadLinkInfo(const Reader: TBinaryStreamReader): ISnippetLinkInfo;
+    function ReadTags(const Reader: TBinaryStreamReaderEx): ITagSet;
+    function ReadLinkInfo(const Reader: TBinaryStreamReaderEx):
+      ISnippetLinkInfo;
   public
     constructor Create(const DBPath: string);
     destructor Destroy; override;
@@ -215,9 +226,9 @@ end;
 
 procedure TDBNativeIOBase.LoadMasterFile(const MI: TMasterInfo);
 var
-  Reader: TBinaryStreamReader;
+  Reader: TBinaryStreamReaderEx;
 begin
-  Reader := TBinaryStreamReader.Create(
+  Reader := TBinaryStreamReaderEx.Create(
     TFileStream.Create(
       MakeFullPath(MasterFileName), fmOpenRead or fmShareDenyWrite
     ),
@@ -294,7 +305,8 @@ begin
   fTags.Clear;
 end;
 
-procedure TDBNativeIOBase.TMasterInfo.Parse(const Reader: TBinaryStreamReader);
+procedure TDBNativeIOBase.TMasterInfo.Parse(
+  const Reader: TBinaryStreamReaderEx);
 var
   SnippetCount: Integer;
   SnippetInfo: TSnippetInfo;
@@ -309,17 +321,13 @@ begin
       Reader.ReadBytes(Length(MasterFileWatermark))
     );
     fVersion := StrToIntDef(TEncoding.UTF8.GetString(Reader.ReadBytes(4)), 0);
-    fLastModified := TUTCDateTime.CreateFromISO8601String(
-      Reader.ReadSizedString16
-    );
+    fLastModified := Reader.ReadISO8601Date;
     fSnippets.Clear;
     SnippetCount := Reader.ReadInt32;
     for I := 1 to SnippetCount do
     begin
       SnippetInfo.ID := TSnippetID.Create(Reader.ReadSizedString16);
-      SnippetInfo.LastModified := TUTCDateTime.CreateFromISO8601String(
-        Reader.ReadSizedString16
-      );
+      SnippetInfo.LastModified := Reader.ReadISO8601Date;
       fSnippets.Add(SnippetInfo);
     end;
     fTags.Clear;
@@ -426,7 +434,7 @@ begin
   RemoveUnwantedFiles(ATable);
 end;
 
-procedure TDBNativeWriter.WriteBooleanProp(const Writer: TBinaryStreamWriter;
+procedure TDBNativeWriter.WriteBooleanProp(const Writer: TBinaryStreamWriterEx;
   const PropCode: TDBSnippetProp; const AValue, Optional: Boolean);
 begin
   if Optional and not AValue then
@@ -449,7 +457,7 @@ begin
 end;
 
 procedure TDBNativeWriter.WriteCompileResultsProp(
-  const Writer: TBinaryStreamWriter; const PropCode: TDBSnippetProp;
+  const Writer: TBinaryStreamWriterEx; const PropCode: TDBSnippetProp;
   const Results: TCompileResults; const Optional: Boolean);
 var
   Success, Failure: IStringList;
@@ -475,18 +483,17 @@ begin
   Writer.WriteSizedString16List(Failure);
 end;
 
-procedure TDBNativeWriter.WriteDateProp(const Writer: TBinaryStreamWriter;
+procedure TDBNativeWriter.WriteDateProp(const Writer: TBinaryStreamWriterEx;
   const PropCode: TDBSnippetProp; const Date: TUTCDateTime;
   const Optional: Boolean);
 begin
   if Optional and Date.IsNull then
     Exit;
   WritePropCode(Writer, PropCode);
-  // TODO: create WriteISODate method to use where code like following appears
-  Writer.WriteSizedString16(Date.ToISO8601String);
+  Writer.WriteISO8601Date(Date);
 end;
 
-procedure TDBNativeWriter.WriteKindIDProp(const Writer: TBinaryStreamWriter;
+procedure TDBNativeWriter.WriteKindIDProp(const Writer: TBinaryStreamWriterEx;
   const PropCode: TDBSnippetProp; const Kind: TSnippetKindID;
   const Optional: Boolean);
 begin
@@ -496,9 +503,9 @@ begin
   Writer.WriteByte(Ord(Kind));
 end;
 
-procedure TDBNativeWriter.WriteLanguageIDProp(const Writer: TBinaryStreamWriter;
-  const PropCode: TDBSnippetProp; const LangID: TSourceCodeLanguageID;
-  const Optional: Boolean);
+procedure TDBNativeWriter.WriteLanguageIDProp(
+  const Writer: TBinaryStreamWriterEx; const PropCode: TDBSnippetProp;
+  const LangID: TSourceCodeLanguageID; const Optional: Boolean);
 begin
   if Optional and LangID.IsDefault then
     Exit;
@@ -506,7 +513,7 @@ begin
   Writer.WriteSizedString16(LangID.ToString);
 end;
 
-procedure TDBNativeWriter.WriteLinkInfoProp(const Writer: TBinaryStreamWriter;
+procedure TDBNativeWriter.WriteLinkInfoProp(const Writer: TBinaryStreamWriterEx;
   const PropCode: TDBSnippetProp; LinkInfo: ISnippetLinkInfo);
 var
   SynchSpaceID: TGUID;
@@ -517,10 +524,10 @@ begin
   SynchSpaceID := LinkInfo.SynchSpaceID;
   Writer.WriteBuffer(SynchSpaceID, SizeOf(SynchSpaceID));
   Writer.WriteSizedString16(LinkInfo.LinkedSnippetID.ToString);
-  Writer.WriteSizedString16(LinkInfo.Modified.ToISO8601String);
+  Writer.WriteISO8601Date(LinkInfo.Modified);
 end;
 
-procedure TDBNativeWriter.WriteMarkupProp(const Writer: TBinaryStreamWriter;
+procedure TDBNativeWriter.WriteMarkupProp(const Writer: TBinaryStreamWriterEx;
   const PropCode: TDBSnippetProp; ActiveText: IActiveText;
   const Optional: Boolean);
 begin
@@ -535,11 +542,11 @@ end;
 procedure TDBNativeWriter.WriteMasterFile(const ATable: TDBSnippetsTable;
   ATagSet: ITagSet; const ALastModified: TUTCDateTime);
 var
-  Writer: TBinaryStreamWriter;
+  Writer: TBinaryStreamWriterEx;
   Snippet: TDBSnippet;
   Tag: TTag;
 begin
-  Writer := TBinaryStreamWriter.Create(
+  Writer := TBinaryStreamWriterEx.Create(
     TFileStream.Create(MakeFullPath(MasterFileName), fmCreate),
     TEncoding.UTF8,
     [dsOwnsStream]
@@ -549,12 +556,12 @@ begin
     Writer.WriteBytes(
       TEncoding.ASCII.GetBytes(Format('%.4d', [CurrentVersion]))
     );
-    Writer.WriteSizedString16(ALastModified.ToISO8601String);
+    Writer.WriteISO8601Date(ALastModified);
     Writer.WriteInt32(ATable.Size);
     for Snippet in ATable do
     begin
       Writer.WriteSizedString16(Snippet.GetID.ToString);
-      Writer.WriteSizedString16(Snippet.GetModified.ToISO8601String);
+      Writer.WriteISO8601Date(Snippet.GetModified);
     end;
     Writer.WriteInt32(ATagSet.Count);
     for Tag in ATagSet do
@@ -567,7 +574,7 @@ begin
   end;
 end;
 
-procedure TDBNativeWriter.WritePropCode(const Writer: TBinaryStreamWriter;
+procedure TDBNativeWriter.WritePropCode(const Writer: TBinaryStreamWriterEx;
   const Code: TDBSnippetProp);
 begin
   Writer.WriteByte(Ord(Code));
@@ -575,9 +582,9 @@ end;
 
 procedure TDBNativeWriter.WriteSnippetFile(const ASnippet: TDBSnippet);
 var
-  Writer: TBinaryStreamWriter;
+  Writer: TBinaryStreamWriterEx;
 begin
-  Writer := TBinaryStreamWriter.Create(
+  Writer := TBinaryStreamWriterEx.Create(
     TFileStream.Create(MakeFullPath(SnippetFileName(ASnippet.GetID)), fmCreate),
     TEncoding.UTF8,
     [dsOwnsStream]
@@ -619,7 +626,7 @@ begin
 end;
 
 procedure TDBNativeWriter.WriteSnippetIDListProp(
-  const Writer: TBinaryStreamWriter; const PropCode: TDBSnippetProp;
+  const Writer: TBinaryStreamWriterEx; const PropCode: TDBSnippetProp;
   IDs: ISnippetIDList; const Optional: Boolean);
 var
   ID: TSnippetID;
@@ -631,7 +638,7 @@ begin
   WriteStringsProp(Writer, PropCode, IDStrs, Optional);
 end;
 
-procedure TDBNativeWriter.WriteString16Prop(const Writer: TBinaryStreamWriter;
+procedure TDBNativeWriter.WriteString16Prop(const Writer: TBinaryStreamWriterEx;
   const PropCode: TDBSnippetProp; const Str: string; const Optional: Boolean);
 begin
   if Optional and (Str = EmptyStr) then
@@ -640,7 +647,7 @@ begin
   Writer.WriteSizedString16(Str);
 end;
 
-procedure TDBNativeWriter.WriteString32Prop(const Writer: TBinaryStreamWriter;
+procedure TDBNativeWriter.WriteString32Prop(const Writer: TBinaryStreamWriterEx;
   const PropCode: TDBSnippetProp; const Str: string; const Optional: Boolean);
 begin
   if Optional and (Str = EmptyStr) then
@@ -649,7 +656,7 @@ begin
   Writer.WriteSizedString32(Str);
 end;
 
-procedure TDBNativeWriter.WriteStringsProp(const Writer: TBinaryStreamWriter;
+procedure TDBNativeWriter.WriteStringsProp(const Writer: TBinaryStreamWriterEx;
   const PropCode: TDBSnippetProp; Strings: IStringList;
   const Optional: Boolean);
 begin
@@ -659,7 +666,7 @@ begin
   Writer.WriteSizedString16List(Strings);
 end;
 
-procedure TDBNativeWriter.WriteTagsProp(const Writer: TBinaryStreamWriter;
+procedure TDBNativeWriter.WriteTagsProp(const Writer: TBinaryStreamWriterEx;
   const PropCode: TDBSnippetProp; Tags: ITagSet; const Optional: Boolean);
 var
   Tag: TTag;
@@ -671,7 +678,7 @@ begin
   WriteStringsProp(Writer, PropCode, TagStrs, Optional);
 end;
 
-procedure TDBNativeWriter.WriteTestInfoProp(const Writer: TBinaryStreamWriter;
+procedure TDBNativeWriter.WriteTestInfoProp(const Writer: TBinaryStreamWriterEx;
   const PropCode: TDBSnippetProp; const TestInfo: TSnippetTestInfo;
   const Optional: Boolean);
 begin
@@ -696,13 +703,13 @@ const
 var
   WaterMark: string;
   Version: Integer;
-  Reader: TBinaryStreamReader;
+  Reader: TBinaryStreamReaderEx;
 begin
   Result := False;
   try
     if not TFile.Exists(MakeFullPath(MasterFileName), False) then
       Exit;
-    Reader := TBinaryStreamReader.Create(
+    Reader := TBinaryStreamReaderEx.Create(
       TFileStream.Create(
         MakeFullPath(MasterFileName), fmOpenRead or fmShareDenyWrite
       ),
@@ -779,10 +786,10 @@ end;
 procedure TDBNativeReader.LoadSnippet(const AID: TSnippetID;
   const ATable: TDBSnippetsTable);
 var
-  Reader: TBinaryStreamReader;
+  Reader: TBinaryStreamReaderEx;
   Snippet: TDBSnippet;
 begin
-  Reader := TBinaryStreamReader.Create(
+  Reader := TBinaryStreamReaderEx.Create(
     TFileStream.Create(
       MakeFullPath(SnippetFileName(AID)), fmOpenRead or fmShareDenyWrite
     ),
@@ -806,7 +813,7 @@ begin
 end;
 
 procedure TDBNativeReader.LoadSnippetProperties(const ASnippet: TDBSnippet;
-  const Reader: TBinaryStreamReader);
+  const Reader: TBinaryStreamReaderEx);
 
   function NextPropCode(out PropCode: TDBSnippetProp): Boolean;
   var
@@ -840,13 +847,9 @@ begin
           TSourceCodeLanguageID.Create(Reader.ReadSizedString16)
         );
       spModified:
-        ASnippet.SetModified(
-          TUTCDateTime.CreateFromISO8601String(Reader.ReadSizedString16)
-        );
+        ASnippet.SetModified(Reader.ReadISO8601Date);
       spCreated:
-        ASnippet.SetCreated(
-          TUTCDateTime.CreateFromISO8601String(Reader.ReadSizedString16)
-        );
+        ASnippet.SetCreated(Reader.ReadISO8601Date);
       spRequiredModules:
         ASnippet.SetRequiredModules(Reader.ReadSizedString16List);
       spRequiredSnippets:
@@ -873,8 +876,8 @@ begin
   end;
 end;
 
-function TDBNativeReader.ReadCompileResults(const Reader: TBinaryStreamReader):
-  TCompileResults;
+function TDBNativeReader.ReadCompileResults(
+  const Reader: TBinaryStreamReaderEx): TCompileResults;
 var
   Succeeds, Fails: IStringList;
   CompilerID: TCompilerID;
@@ -898,7 +901,7 @@ begin
   end;
 end;
 
-function TDBNativeReader.ReadLinkInfo(const Reader: TBinaryStreamReader):
+function TDBNativeReader.ReadLinkInfo(const Reader: TBinaryStreamReaderEx):
   ISnippetLinkInfo;
 var
   SynchSpaceID: TGUID;
@@ -910,12 +913,11 @@ begin
   // never a null instance.
   Reader.ReadBuffer(SynchSpaceID, SizeOf(SynchSpaceID));
   LinkedSnippetID := TSnippetID.Create(Reader.ReadSizedString16);
-  // TODO: Create a ReadUTCDate method and use whereever following code appears.
-  Modified := TUTCDateTime.CreateFromISO8601String(Reader.ReadSizedString16);
+  Modified := Reader.ReadISO8601Date;
   Result := TSnippetLinkInfo.Create(SynchSpaceID, LinkedSnippetID, Modified);
 end;
 
-function TDBNativeReader.ReadMarkup(const Reader: TBinaryStreamReader):
+function TDBNativeReader.ReadMarkup(const Reader: TBinaryStreamReaderEx):
   IActiveText;
 begin
   try
@@ -926,7 +928,7 @@ begin
   end;
 end;
 
-function TDBNativeReader.ReadSnippetIDs(const Reader: TBinaryStreamReader):
+function TDBNativeReader.ReadSnippetIDs(const Reader: TBinaryStreamReaderEx):
   ISnippetIDList;
 var
   IDStr: string;
@@ -938,7 +940,7 @@ begin
     Result.Add(TSnippetID.Create(IDStr));
 end;
 
-function TDBNativeReader.ReadTags(const Reader: TBinaryStreamReader):
+function TDBNativeReader.ReadTags(const Reader: TBinaryStreamReaderEx):
   ITagSet;
 var
   TagStr: string;
@@ -951,7 +953,7 @@ begin
 end;
 
 procedure TDBNativeReader.ValidateSnippetFileHeader(
-  const Reader: TBinaryStreamReader);
+  const Reader: TBinaryStreamReaderEx);
 var
   Watermark: string;
   Version: Integer;
@@ -967,6 +969,20 @@ begin
   Version := StrToIntDef(TEncoding.UTF8.GetString(Reader.ReadBytes(4)), 0);
   if not IsSupportedVersion(Version) then
     raise EDBNativeIO.CreateFmt(sBadVersion, [Version]);
+end;
+
+{ TBinaryStreamReaderEx }
+
+function TBinaryStreamReaderEx.ReadISO8601Date: TUTCDateTime;
+begin
+  Result := TUTCDateTime.CreateFromISO8601String(ReadSizedString16);
+end;
+
+{ TBinaryStreamWriterEx }
+
+procedure TBinaryStreamWriterEx.WriteISO8601Date(const ADate: TUTCDateTime);
+begin
+  WriteSizedString16(ADate.ToISO8601String);
 end;
 
 end.
