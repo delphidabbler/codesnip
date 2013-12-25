@@ -138,7 +138,7 @@ type
 
 type
   ///  <summary>Class that renders "Tags" HTML fragment for a snippet.</summary>
-  TSnippetTagsHTMLFragment = class(TPrefixedSnippetHTMLFragment)
+  TSnippetTagsHTMLFragment = class(TSnippetHTMLFragment)
   public
     ///  <summary>Renders "Tags" fragment as HTML.</summary>
     function ToString: string; override;
@@ -253,10 +253,10 @@ end;
 { TSnippetTagsHTMLFragment }
 
 function TSnippetTagsHTMLFragment.ToString: string;
-resourcestring
-  sPrefix = 'Tags:';
 begin
-  Result := Render(sPrefix, 'tags', SnippetHTML.Tags);
+  Result := THTML.CompoundTag(
+    'p', THTMLAttributes.Create('id', 'tags'), SnippetHTML.Tags
+  );
 end;
 
 { TSnippetUnitsHTMLFragment }

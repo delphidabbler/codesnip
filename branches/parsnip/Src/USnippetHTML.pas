@@ -321,18 +321,29 @@ function TSnippetHTML.Tags: string;
     );
   end;
 
+resourcestring
+  sImgTitle = 'Tags';
 var
   Tag: TTag;
+  ImgHTML: string;
+  ImgAttrs: IHTMLAttributes;
+  TagsHTML: string;
 begin
+  ImgAttrs := THTMLAttributes.Create;
+  ImgAttrs.Add('src', MakeResourceURL('tags.png'));
+  ImgAttrs.Add('title', THTML.Entities(sImgTitle));
+  ImgAttrs.Add('class', 'tags-img');
+  ImgHTML := THTML.SimpleTag('img', ImgAttrs);
   if fSnippet.Tags.IsEmpty then
-    Exit(EmptyListSentence);
-  Result := '';
+    Exit(ImgHTML + EmptyListSentence);
+  TagsHTML := '';
   for Tag in fSnippet.Tags do
   begin
-    if Result <> '' then
-      Result := Result + ' ';
-    Result := Result + TagHTML(Tag);
+    if TagsHTML <> '' then
+      TagsHTML := TagsHTML + ' ';
+    TagsHTML := TagsHTML + TagHTML(Tag);
   end;
+  Result := ImgHTML + TagsHTML;
 end;
 
 function TSnippetHTML.TestingImage: string;
