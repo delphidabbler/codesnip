@@ -418,7 +418,6 @@
 			<DCCReference Include="UMainDisplayMgr.pas"/>
 			<DCCReference Include="UMarquee.pas"/>
 			<DCCReference Include="UMeasurement.pas"/>
-			<DCCReference Include="UMemoCaretPosDisplayMgr.pas"/>
 			<DCCReference Include="UMemoHelper.pas"/>
 			<DCCReference Include="UMenus.pas"/>
 			<DCCReference Include="UMessageBox.pas"/>

@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2005-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -232,7 +232,6 @@ uses
   UMainDisplayMgr in 'UMainDisplayMgr.pas',
   UMarquee in 'UMarquee.pas',
   UMeasurement in 'UMeasurement.pas',
-  UMemoCaretPosDisplayMgr in 'UMemoCaretPosDisplayMgr.pas',
   UMemoHelper in 'UMemoHelper.pas',
   UMenus in 'UMenus.pas',
   UMessageBox in 'UMessageBox.pas',
