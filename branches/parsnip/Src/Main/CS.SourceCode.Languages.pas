@@ -27,6 +27,7 @@ type
     const
       DefaultLanguageID = '_Default_';
       PascalLanguageID = 'Pascal';
+      PlainTextLanguageID = 'Text';
     var
       fID: string;
   public
@@ -48,6 +49,7 @@ type
       static; inline;
     class function CreateDefault: TSourceCodeLanguageID; static; inline;
     class function CreatePascal: TSourceCodeLanguageID; static; inline;
+    class function CreatePlainText: TSourceCodeLanguageID; static; inline;
     class function IsValidIDString(const S: string): Boolean; static;
     function CompareTo(const Other: TSourceCodeLanguageID): Integer; inline;
     function ToString: string; inline;
@@ -159,6 +161,11 @@ end;
 class function TSourceCodeLanguageID.CreatePascal: TSourceCodeLanguageID;
 begin
   Result := TSourceCodeLanguageID.Create(PascalLanguageID);
+end;
+
+class function TSourceCodeLanguageID.CreatePlainText: TSourceCodeLanguageID;
+begin
+  Result := TSourceCodeLanguageID.Create(PlainTextLanguageID);
 end;
 
 class operator TSourceCodeLanguageID.Equal(const Left,
