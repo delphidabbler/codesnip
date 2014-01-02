@@ -43,7 +43,6 @@ uses
   UBaseObjects,
   UCompileMgr,
   UCompileResultsLBMgr,
-  UMemoCaretPosDisplayMgr,
   USnippetsChkListMgr,
   UUnitsChkListMgr;
 
@@ -89,7 +88,6 @@ type
     lblDepends: TLabel;
     lblDescription: TLabel;
     lblNotes: TLabel;
-    lblNotesCaretPos: TLabel;
     lblKind: TLabel;
     lblSourceCode: TLabel;
     lblSnippetKindHelp: TLabel;
@@ -181,8 +179,6 @@ type
     fUnitsCLBMgr: TUnitsChkListMgr; // Manages units check list box
     fCompilersLBMgr:
       TCompileResultsLBMgr;         // Manages compilers list box
-    fMemoCaretPosDisplayMgr: TMemoCaretPosDisplayMgr;
-                                    // Manages display of memo caret positions
     fSnippetKindCBMgr: TSortedCollectionCtrlKVMgr<TSnippetKindID>;
                                     // Manages snippet kind combo box
     fLanguageCBMgr: TSortedCollectionCtrlKVMgr<TSourceCodeLanguageID>;
@@ -597,9 +593,8 @@ begin
   frmNotes.Width := tsComments.ClientWidth - 8;
   frmNotes.Height := clbDepends.Height;
   TCtrlArranger.AlignLefts([lblNotes, frmNotes, btnViewNotes], 3);
-  TCtrlArranger.AlignVCentres(3, [lblNotes, lblNotesCaretPos]);
-  TCtrlArranger.AlignRights([frmNotes, lblNotesCaretPos]);
-  TCtrlArranger.MoveBelow([lblNotes, lblNotesCaretPos], frmNotes, 4);
+  lblNotes.Top := 3;
+  TCtrlArranger.MoveBelow(lblNotes, frmNotes, 4);
   TCtrlArranger.MoveBelow(frmNotes, btnViewNotes, 8);
 
   // tsCompileResults
@@ -767,7 +762,6 @@ procedure TSnippetsEditorDlg.FormCreate(Sender: TObject);
 begin
   inherited;
   fCompileMgr := TCompileMgr.Create(Self);  // auto-freed
-  fMemoCaretPosDisplayMgr := TMemoCaretPosDisplayMgr.Create;
   fDependsCLBMgr := TSnippetsChkListMgr.Create(clbDepends);
   fXRefsCLBMgr := TSnippetsChkListMgr.Create(clbXRefs);
   fUnitsCLBMgr := TUnitsChkListMgr.Create(clbUnits);
@@ -806,7 +800,6 @@ begin
   fUnitsCLBMgr.Free;
   fXRefsCLBMgr.Free;
   fDependsCLBMgr.Free;
-  fMemoCaretPosDisplayMgr.Free;
 end;
 
 procedure TSnippetsEditorDlg.HandleException(const E: Exception);
@@ -900,8 +893,6 @@ begin
     ClassName + '.InitControls: no selection in cbKind');
   Assert(cbLanguages.ItemIndex >= 0,
     ClassName + '.InitControls: no selection in cbLanguages');
-  // Auto-update caret position display for Notes mark-up editor
-  fMemoCaretPosDisplayMgr.Manage(frmNotes, lblNotesCaretPos);
 end;
 
 procedure TSnippetsEditorDlg.InitForm;

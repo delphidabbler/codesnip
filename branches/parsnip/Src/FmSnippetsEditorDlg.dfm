@@ -238,15 +238,6 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
           Caption = '&Notes:'
           FocusControl = frmNotes
         end
-        object lblNotesCaretPos: TLabel
-          Left = 560
-          Top = 3
-          Width = 91
-          Height = 13
-          Alignment = taRightJustify
-          AutoSize = False
-          Caption = 'lblNotesCaretPos'
-        end
         object btnViewNotes: TButton
           Left = 3
           Top = 409
