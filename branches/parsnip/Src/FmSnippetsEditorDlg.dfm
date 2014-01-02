@@ -42,13 +42,13 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
           Caption = '&Source code:'
           FocusControl = frmSourceEditor
         end
-        object lblCategories: TLabel
+        object lblLanguages: TLabel
           Left = 0
           Top = 157
-          Width = 49
+          Width = 51
           Height = 13
-          Caption = '&Category:'
-          FocusControl = cbCategories
+          Caption = '&Language:'
+          FocusControl = cbLanguages
         end
         object lblSnippetKindHelp: TLabel
           Left = 330
@@ -81,17 +81,14 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
           Caption = '&Title:'
           FocusControl = edTitle
         end
-        object cbCategories: TComboBox
+        object cbLanguages: TComboBox
           Left = 93
           Top = 153
           Width = 209
           Height = 21
           Style = csDropDownList
-          ItemIndex = 0
           TabOrder = 4
-          Text = '** NOT IN USE **'
-          Items.Strings = (
-            '** NOT IN USE **')
+          OnChange = cbLanguagesChange
         end
         object cbKind: TComboBox
           Left = 93
@@ -144,15 +141,6 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
           Height = 21
           PopupMenu = mnuEditCtrls
           TabOrder = 0
-        end
-        object chkUseHiliter: TCheckBox
-          Left = 3
-          Top = 455
-          Width = 478
-          Height = 17
-          Caption = 'Synta&x highlight this snippet as Pascal code'
-          TabOrder = 6
-          OnClick = chkUseHiliterClick
         end
         inline frmSourceEditor: TCodeEditorFrame
           Left = 0

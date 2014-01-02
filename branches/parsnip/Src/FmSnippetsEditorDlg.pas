@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2008-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2008-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -34,6 +34,7 @@ uses
   // Project
   CS.Components.EditCtrls,
   CS.Database.Types,
+  CS.SourceCode.Languages,
   CS.UI.Frames.CodeEditor,
   CS.UI.Helper.CollectionCtrlKVMgr,
   Compilers.UGlobals,
@@ -74,14 +75,14 @@ type
     btnSetAllSuccess: TButton;
     btnViewNotes: TButton;
     btnViewTestUnit: TButton;
-    cbCategories: TComboBox;
+    cbLanguages: TComboBox;
     cbKind: TComboBox;
     clbDepends: TCheckListBox;
     clbUnits: TCheckListBox;
     clbXRefs: TCheckListBox;
     edUnit: TEdit;
     lbCompilers: TListBox;
-    lblCategories: TLabel;
+    lblLanguages: TLabel;
     lblCompilers: TLabel;
     lblCompileShortcuts: TLabel;
     lblCompResDesc: TLabel;
@@ -116,7 +117,6 @@ type
     frmNotes: TSnippetsActiveTextEdFrame;
     lblTitle: TLabel;
     edTitle: TEdit;
-    chkUseHiliter: TCheckBox;
     actClearDependencies: TAction;
     actClearXRefs: TAction;
     mnuDependencies: TPopupMenu;
@@ -170,7 +170,7 @@ type
     procedure actRestoreUnitsExecute(Sender: TObject);
     procedure actClearUnitsExecute(Sender: TObject);
     procedure actClearUnitsUpdate(Sender: TObject);
-    procedure chkUseHiliterClick(Sender: TObject);
+    procedure cbLanguagesChange(Sender: TObject);
   strict private
     fSnippet: ISnippet;             // Snippet being edited: nil for new snippet
     fCompileMgr: TCompileMgr;       // Manages compilation and results display
@@ -185,6 +185,8 @@ type
                                     // Manages display of memo caret positions
     fSnippetKindCBMgr: TSortedCollectionCtrlKVMgr<TSnippetKindID>;
                                     // Manages snippet kind combo box
+    fLanguageCBMgr: TSortedCollectionCtrlKVMgr<TSourceCodeLanguageID>;
+                                    // Manages source code language combo box
     procedure PopulateControls;
       {Populates controls with dynamic data.
       }
@@ -263,7 +265,6 @@ uses
   CS.Database.Snippets,
   CS.Database.Tags,
   CS.Config,
-  CS.SourceCode.Languages,
   DB.UMain,
   FmDependenciesDlg,
   IntfCommon,
@@ -564,7 +565,7 @@ begin
   frmSourceEditor.Width := tsCode.ClientWidth - 8;
   TCtrlArranger.AlignLefts(
     [
-      lblTitle, lblDescription, lblKind, lblCategories,
+      lblTitle, lblDescription, lblKind, lblLanguages,
       lblSourceCode, frmSourceEditor
     ],
     3
@@ -584,12 +585,11 @@ begin
   );
   TCtrlArranger.AlignVCentres(
     TCtrlArranger.BottomOf([lblKind, cbKind, lblSnippetKindHelp], 8),
-    [lblCategories, cbCategories]
+    [lblLanguages, cbLanguages]
   );
   TCtrlArranger.MoveToRightOf(cbKind, lblSnippetKindHelp, 12);
-  TCtrlArranger.MoveBelow([lblCategories, cbCategories], lblSourceCode, 8);
+  TCtrlArranger.MoveBelow([lblLanguages, cbLanguages], lblSourceCode, 8);
   TCtrlArranger.MoveBelow(lblSourceCode, frmSourceEditor, 4);
-  TCtrlArranger.MoveBelow(frmSourceEditor, chkUseHiliter, 8);
 
   // tsReferences
   clbDepends.Height := clbXRefs.Height;
@@ -659,17 +659,13 @@ begin
   UpdateReferences;
 end;
 
-procedure TSnippetsEditorDlg.chkUseHiliterClick(Sender: TObject);
-var
-  Language: TSourceCodeLanguage;
+procedure TSnippetsEditorDlg.cbLanguagesChange(Sender: TObject);
 begin
-  if chkUseHiliter.Checked then
-    Language := TConfig.Instance.SourceCodeLanguages[
-      TSourceCodeLanguageID.Create('Pascal')
-    ]
-  else
-    Language := TSourceCodeLanguage.CreateDefault;
-  frmSourceEditor.ApplyLanguage(Language);
+  cbKind.Enabled := TSourceCodeLanguage.HasExtendedSupport(
+    fLanguageCBMgr.GetSelected
+  );
+  if not cbKind.Enabled then
+    fSnippetKindCBMgr.Select(skFreeform);
 end;
 
 procedure TSnippetsEditorDlg.ConfigForm;
@@ -789,6 +785,15 @@ begin
     end,
     stIgnoreCase
   );
+  fLanguageCBMgr := TSortedCollectionCtrlKVMgr<TSourceCodeLanguageID>.Create(
+    TComboBoxAdapter.Create(cbLanguages),
+    True,
+    function (const Left, Right: TSourceCodeLanguageID): Boolean
+    begin
+      Result := Left = Right;
+    end,
+    stIgnoreCase
+  );
 end;
 
 procedure TSnippetsEditorDlg.FormDestroy(Sender: TObject);
@@ -797,6 +802,7 @@ procedure TSnippetsEditorDlg.FormDestroy(Sender: TObject);
   }
 begin
   inherited;
+  fLanguageCBMgr.Free;
   fSnippetKindCBMgr.Free;
   fCompilersLBMgr.Free;
   fUnitsCLBMgr.Free;
@@ -856,8 +862,6 @@ begin
   begin
     // We are editing a snippet: initialise controls from snippet's properties
     frmSourceEditor.SourceCode := fSnippet.SourceCode;
-    chkUseHiliter.Checked :=
-      fSnippet.LanguageID = TSourceCodeLanguageID.Create('Pascal');
     Language := TConfig.Instance.SourceCodeLanguages[fSnippet.LanguageID];
     frmDescription.DefaultEditMode := emAuto;
     frmDescription.ActiveText := fSnippet.Description;
@@ -877,7 +881,6 @@ begin
   begin
     // We are adding a new snippet: clear all controls or set default values
     frmSourceEditor.Clear;
-    chkUseHiliter.Checked := True;
     { TODO: Permit default language to be customisable by user: modify
             Preferences dialogue box and Preferences object ? }
     Language := TConfig.Instance.SourceCodeLanguages[
@@ -892,11 +895,13 @@ begin
     UpdateReferences;
     fCompilersLBMgr.SetCompileResults(crQuery);
   end;
+  cbKind.Enabled := TSourceCodeLanguage.HasExtendedSupport(Language.ID);
+  fLanguageCBMgr.Select(Language.ID);
   frmSourceEditor.ApplyLanguage(Language);
   Assert(cbKind.ItemIndex >= 0,
     ClassName + '.InitControls: no selection in cbKind');
-  Assert(cbCategories.ItemIndex >= 0,
-    ClassName + '.InitControls: no selection in cbCategories');
+  Assert(cbLanguages.ItemIndex >= 0,
+    ClassName + '.InitControls: no selection in cbLanguages');
   // Auto-update caret position display for Notes mark-up editor
   fMemoCaretPosDisplayMgr.Manage(frmNotes, lblNotesCaretPos);
 end;
@@ -953,10 +958,12 @@ procedure TSnippetsEditorDlg.PopulateControls;
   }
 var
   SnippetKind: TSnippetKind;
+  Language: TSourceCodeLanguage;
 begin
-  // Display all kinds in drop down list
   for SnippetKind in Database.GetAllSnippetKinds do
     fSnippetKindCBMgr.Add(SnippetKind.ID, SnippetKind.DisplayName);
+  for Language in TConfig.Instance.SourceCodeLanguages do
+    fLanguageCBMgr.Add(Language.ID, Language.FriendlyName);
   // TODO: display all tags in a check list box or similar
 end;
 
@@ -1004,10 +1011,7 @@ begin
   ASnippet.KindID := fSnippetKindCBMgr.GetSelected;
   ASnippet.Description := frmDescription.ActiveText;
   ASnippet.SourceCode := StrTrimRight(frmSourceEditor.SourceCode);
-  if chkUseHiliter.Checked then
-    ASnippet.LanguageID := TSourceCodeLanguageID.Create('Pascal')
-  else
-    ASnippet.LanguageID := TSourceCodeLanguageID.Create('Text');
+  ASnippet.LanguageID := fLanguageCBMgr.GetSelected;
   ASnippet.Notes := frmNotes.ActiveText;
   // TODO: Permit user to set required tag(s)
   // In this temporary code we preserve tags of an existing snippet and give
