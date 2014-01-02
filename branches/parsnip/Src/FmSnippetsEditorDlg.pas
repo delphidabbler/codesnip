@@ -661,6 +661,9 @@ begin
   );
   if not cbKind.Enabled then
     fSnippetKindCBMgr.Select(skFreeform);
+  frmSourceEditor.ApplyLanguage(
+    TConfig.Instance.SourceCodeLanguages[fLanguageCBMgr.GetSelected]
+  );
 end;
 
 procedure TSnippetsEditorDlg.ConfigForm;
