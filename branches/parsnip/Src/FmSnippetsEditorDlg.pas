@@ -884,7 +884,7 @@ begin
     { TODO: Permit default language to be customisable by user: modify
             Preferences dialogue box and Preferences object ? }
     Language := TConfig.Instance.SourceCodeLanguages[
-      TSourceCodeLanguageID.Create('Pascal')
+      TSourceCodeLanguageID.CreatePascal
     ];
     frmDescription.DefaultEditMode := emPlainText;
     frmDescription.Clear;

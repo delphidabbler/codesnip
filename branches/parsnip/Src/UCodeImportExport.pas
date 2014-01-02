@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2008-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2008-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -373,7 +373,7 @@ begin
   fXMLDoc.CreateElement(
     SnippetNode,
     cHighlightSource,
-    IntToStr(Ord(Snippet.LanguageID = TSourceCodeLanguageID.Create('Pascal')))
+    IntToStr(Ord(Snippet.LanguageID = TSourceCodeLanguageID.CreatePascal))
   );
   // "extra" tag is written only if snippet has a non-empty Notes property
   if not Snippet.Notes.IsEmpty then
@@ -545,9 +545,9 @@ begin
         fXMLDoc, SnippetNode, cSourceCodeTextNode
       );
       if TXMLDocHelper.GetHiliteSource(fXMLDoc, SnippetNode, True) then
-        Snippet.LanguageID := TSourceCodeLanguageID.Create('Pascal')
+        Snippet.LanguageID := TSourceCodeLanguageID.CreatePascal
       else
-        Snippet.LanguageID := TSourceCodeLanguageID.Create('Text');
+        Snippet.LanguageID := TSourceCodeLanguageID.CreatePlainText;
       // how we read Notes property depends on version of file
       case fVersion of
         1:
