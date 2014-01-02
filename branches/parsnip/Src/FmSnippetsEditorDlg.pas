@@ -564,10 +564,7 @@ begin
   // tsCode
   frmSourceEditor.Width := tsCode.ClientWidth - 8;
   TCtrlArranger.AlignLefts(
-    [
-      lblTitle, lblDescription, lblKind, lblLanguages,
-      lblSourceCode, frmSourceEditor
-    ],
+    [lblTitle, lblDescription, lblLanguages, lblSourceCode, frmSourceEditor],
     3
   );
   TCtrlArranger.AlignRights([frmSourceEditor, btnViewDescription]);
@@ -581,13 +578,11 @@ begin
     TCtrlArranger.BottomOf(
       [lblDescription, frmDescription, btnViewDescription], 8
     ),
-    [lblKind, cbKind, lblSnippetKindHelp]
+    [lblLanguages, cbLanguages, lblKind, cbKind, lblSnippetKindHelp]
   );
-  TCtrlArranger.AlignVCentres(
-    TCtrlArranger.BottomOf([lblKind, cbKind, lblSnippetKindHelp], 8),
-    [lblLanguages, cbLanguages]
-  );
-  TCtrlArranger.MoveToRightOf(cbKind, lblSnippetKindHelp, 12);
+  TCtrlArranger.MoveToRightOf(cbLanguages, lblKind, 18);
+  TCtrlArranger.MoveToRightOf(lblKind, cbKind, 12);
+  TCtrlArranger.MoveToRightOf(cbKind, lblSnippetKindHelp, 6);
   TCtrlArranger.MoveBelow([lblLanguages, cbLanguages], lblSourceCode, 8);
   TCtrlArranger.MoveBelow(lblSourceCode, frmSourceEditor, 4);
 

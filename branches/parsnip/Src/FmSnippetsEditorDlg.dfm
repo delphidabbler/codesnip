@@ -43,20 +43,20 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
           FocusControl = frmSourceEditor
         end
         object lblLanguages: TLabel
-          Left = 0
-          Top = 157
+          Left = 3
+          Top = 125
           Width = 51
           Height = 13
           Caption = '&Language:'
           FocusControl = cbLanguages
         end
         object lblSnippetKindHelp: TLabel
-          Left = 330
+          Left = 576
           Top = 120
-          Width = 117
+          Width = 58
           Height = 13
           Cursor = crHandPoint
-          Caption = 'What are Snippet Kinds?'
+          Caption = 'What'#39's this?'
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
           Font.Height = -11
@@ -66,7 +66,7 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
           OnClick = lblSnippetKindHelpClick
         end
         object lblKind: TLabel
-          Left = 0
+          Left = 316
           Top = 125
           Width = 24
           Height = 13
@@ -83,20 +83,20 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
         end
         object cbLanguages: TComboBox
           Left = 93
-          Top = 153
-          Width = 209
-          Height = 21
-          Style = csDropDownList
-          TabOrder = 4
-          OnChange = cbLanguagesChange
-        end
-        object cbKind: TComboBox
-          Left = 93
-          Top = 120
-          Width = 209
+          Top = 125
+          Width = 164
           Height = 21
           Style = csDropDownList
           TabOrder = 3
+          OnChange = cbLanguagesChange
+        end
+        object cbKind: TComboBox
+          Left = 349
+          Top = 125
+          Width = 188
+          Height = 21
+          Style = csDropDownList
+          TabOrder = 4
           OnChange = cbKindChange
         end
         inline frmDescription: TSnippetsActiveTextEdFrame
