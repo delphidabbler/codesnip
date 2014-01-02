@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2013-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -26,6 +26,7 @@ type
   strict private
     const
       DefaultLanguageID = '_Default_';
+      PascalLanguageID = 'Pascal';
     var
       fID: string;
   public
@@ -46,6 +47,7 @@ type
     class function Compare(const Left, Right: TSourceCodeLanguageID): Integer;
       static; inline;
     class function CreateDefault: TSourceCodeLanguageID; static; inline;
+    class function CreatePascal: TSourceCodeLanguageID; static; inline;
     class function IsValidIDString(const S: string): Boolean; static;
     function CompareTo(const Other: TSourceCodeLanguageID): Integer; inline;
     function ToString: string; inline;
@@ -73,6 +75,8 @@ type
       inline;
     class operator NotEqual(const Left, Right: TSourceCodeLanguage): Boolean;
       inline;
+    class function HasExtendedSupport(const LanguageID: TSourceCodeLanguageID):
+      Boolean; inline; static;
     function CompareFriendlyNameTo(const Other: TSourceCodeLanguage): Integer;
     ///  <summary>Updates the record's properties to those of Lang except that
     ///  the BuiltIn property remains unchanged.</summary>
@@ -150,6 +154,11 @@ begin
   // DefaultLanguageID to be validated and to fail, which is behaviour we want
   // when Create is called externally.
   Result := TSourceCodeLanguageID.Create('');
+end;
+
+class function TSourceCodeLanguageID.CreatePascal: TSourceCodeLanguageID;
+begin
+  Result := TSourceCodeLanguageID.Create(PascalLanguageID);
 end;
 
 class operator TSourceCodeLanguageID.Equal(const Left,
@@ -243,14 +252,19 @@ begin
   Result := Left.ID = Right.ID;
 end;
 
+class function TSourceCodeLanguage.HasExtendedSupport(
+  const LanguageID: TSourceCodeLanguageID): Boolean;
+begin
+  Result := LanguageID = TSourceCodeLanguageID.CreatePascal;
+end;
+
 class operator TSourceCodeLanguage.NotEqual(const Left,
   Right: TSourceCodeLanguage): Boolean;
 begin
   Result := Left.ID <> Right.ID;
 end;
 
-procedure TSourceCodeLanguage.Update(
-  const Lang: TSourceCodeLanguage);
+procedure TSourceCodeLanguage.Update(const Lang: TSourceCodeLanguage);
 var
   OrigBuiltIn: Boolean;
 begin
@@ -300,7 +314,7 @@ function TSourceCodeLanguages.GetLanguage(const LangID: TSourceCodeLanguageID):
 begin
   if HasLanguage(LangID) then
     Result := fLanguages[LangID]
-  else if HasLanguage(TSourceCodeLanguage.CreateDefault.ID) then
+  else
     Result := TSourceCodeLanguage.CreateDefault;
 end;
 
