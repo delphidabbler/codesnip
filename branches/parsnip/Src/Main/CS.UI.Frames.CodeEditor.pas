@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2013-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -156,8 +156,8 @@ begin
   fSynEditCmp.ActiveLineColor := clNone; {default} // TODO: make option
   fSynEditCmp.Options := [
     eoAutoIndent, eoDragDropEditing, eoEnhanceEndKey, eoGroupUndo,
-    eoScrollPastEol, eoShowScrollHint, eoSmartTabDelete, eoTabsToSpaces
-  ];  // = default - [eoSmartTab]
+    eoScrollPastEol, eoShowScrollHint, eoTabIndent, eoTabsToSpaces
+  ];
   // No highligher (default): setting .Highlighter = nil turns off highlighting
   fSynEditCmp.Highlighter := nil;
   // Turn off book mark keys & glyphs
