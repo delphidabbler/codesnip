@@ -395,7 +395,8 @@ uses
   CS.UI.Frames.CodeEditor in 'Main\CS.UI.Frames.CodeEditor.pas' {CodeEditorFrame: TFrame},
   CS.Utils.Dates in 'Main\CS.Utils.Dates.pas',
   CS.Utils.Hashes in 'Main\CS.Utils.Hashes.pas',
-  CS.Utils.Sound in 'Main\CS.Utils.Sound.pas';
+  CS.Utils.Sound in 'Main\CS.Utils.Sound.pas',
+  CS.Utils.COM in 'Main\CS.Utils.COM.pas';
 
 // Include resources
 {$Resource ExternalObj.tlb}       // Type library file

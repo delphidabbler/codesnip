@@ -591,6 +591,7 @@
 			<DCCReference Include="Main\CS.Utils.Dates.pas"/>
 			<DCCReference Include="Main\CS.Utils.Hashes.pas"/>
 			<DCCReference Include="Main\CS.Utils.Sound.pas"/>
+			<DCCReference Include="Main\CS.Utils.COM.pas"/>
 			<None Include="CodeSnip.todo"/>
 			<BuildConfiguration Include="Base">
 				<Key>Base</Key>
