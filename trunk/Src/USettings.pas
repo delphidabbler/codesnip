@@ -584,7 +584,7 @@ var
   FileName: string; // name if ini file
 begin
   FileName := StorageName(Storage);
-  if not TFile.Exists(FileName) then
+  if not TFile.Exists(FileName, False) then
     // create empty Unicode text file with BOM to force Win API to write Unicode
     TFileIO.WriteAllText(FileName, '', TEncoding.Unicode, True);
   Result := TIniFile.Create(FileName);
