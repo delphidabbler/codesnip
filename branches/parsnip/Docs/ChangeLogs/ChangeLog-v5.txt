@@ -11,17 +11,20 @@
 ; Change Log for CodeSnip Release 5
 ; ------------------------------------------------------------------------------
 
-Summary of changes in SVN parsnip branch up to REVISION 4400.
+Summary of changes in SVN parsnip branch up to REVISION 4497.
 Changes relate to v4.8.5 (#### may need to update this if new v4 release is merged in###)
 + User interface changes:
   - The link used to edit the displayed snippet has been removed from the Detail pane and replaced by a glyph showing the snippet's level of testing. (### may need to change this in light of further redesigns###)
   - The overview pane now uses a drop-down list instead of tabs to select the required snippet.
   - The category grouping in the overview pane has been removed now that categories are no longer supported (see details of database changes).
-  - A new "tags" grouping has been added to the overview pane. Clicking on a tag heading displays a list of snippets that use that tag in the detail panes. These pages are included in the history list.
+  - A new "tags" grouping has been added to the overview pane. Clicking on a tag heading displays a list of snippets that use that tag in the details pane. These pages are included in the history list.
+  - A new "source code language" grouping has been added to the overview pane. Clicking a language heading displays a list of snippets using that programming language in the details pane. These pages are included in the history list.
   - The detail pane now displays, by default, a list of tags associated with displayed snippets, in place of the category displayed in earlier versions. Tags can be deleted directly from the detail pane.
-  - A snippet's source code language is now displayed in the detail pane by default.
+  - A snippet's source code language is now displayed in the detail pane by default. Clicking the language displays a list of all snippets with that language in the details pane.
+  - A star is now displayed in details pane to indicate whether a snippet is a favourite (gold star) or not (grey star). Clicking the star toggles the snippet's favourite state.
   - Welcome page revised re change from two to one logical databases. (### may need to change this in light of further redesigns###)
   - "Categories" main menu was removed along with its sub menu items and associated dialogue boxes.
+  - Revised various menu items, hints and dialogue boxes to refer to "database" instead of "user database".
   - Main window and task bar captions changed.
   - Splash screen updated.
   - "About the Database" tab removed from About box and "Paths" tab modified.
@@ -30,24 +33,31 @@ Changes relate to v4.8.5 (#### may need to update this if new v4 release is merg
   - Print dialogue box now displays a preview of selected document formatting options.
   - Select Snippets dialogue box modified re change from two to one logical databases.
   - "Printing" tab removed from Preferences dialogue box. The button in the Print dialogue box that displayed this tab was removed.
-  - In the "Snippet Layout" tab of the Preferences dialogue box the "Category" page section was replaced by a "Tags" section and the "Extra Information" page section was renamed as "Notes".
+  - In the "Snippet Layout" tab of the Preferences dialogue box the "Category" page section was replaced by a "Tags" section, the "Extra Information" page section was renamed as "Notes" and a "Programming Language" page section was added. The current row and column in the "notes" edit control is no longer displayed.
   - "Syntax Highlighter" tab of Preferences dialogue box totally redesigned. It is now used to select syntax highlighter styles for various output types. Highlighter themes are no longer customised on the tab.
   - Duplicate Snippet dialogue box overhauled to remove option to select duplicated snippet's category and to edit the snippet's ID (name).
   - New dialogue box to enable user to customise and create syntax highlighter themes. This dialogue box is accessed via the "Syntax Highlighter" tab of the Preferences dialogue box.
   - Snippet editor enlarged and controls changed re revised snippet properties.
+  - Ability to select categories removed from snippets editor.
+  - A combo box was added to snippets editor that enables the snippet's source code language to be selected. Snippet kind combo now disabled unless programming language is Pascal.
+  - The "syntax highlight" check box was removed from the snippets editor because highlighting is now determined by source code language.
+  - Edit and memo controls (including active text and source code editors) in Snippets Editor now display cue text when empty and unfocussed.
   - Splash screen can be hidden by passing the new -no-splash switch on CodeSnip's command line.
   - Pressing Ctrl+Tab and Shift+Ctrl+Tab now always moves between tabs in the detail pane: it no longer changes the snippet grouping when the overview has focus.
   - Lists of snippets in "Select Snippets", "Export Snippets" and "Code Submission Wizard" dialogue boxes are now grouping by initial letter instead of category. (### this may change again before release ##).
   - The SWAG Import Wizard now informs the user which tag has been assigned to the imported snippets, instead of the category information displayed previously.
   - The history list is no longer cleared every time a snippet is edited.
+  - Favourites dialogue box overhauled. Snippets are no longer sorted (### may change: code hooks are present ###) and have no "last accessed" date.
+  - "Add To Favourites" menu option on "Snippets" menu now is labelled "Favourite" and displays a tick mark if the displayed snippet is a favourite. Clicking the menu item toggles the selected snippet's "Starred" (favourite) state.
 + Database changes:
   - All new database "engine".
   - New database file format. Support included for reading, but not writing the user database format used by CodeSnip 2 to 4. The database file format is automatically detected.
+  - A new "Starred" field added to each snippet that records if the snippet is a favourite. Favourites are no longer recorded in a separate file. Legacy favourites files are used to set the "Starred" field when reading legacy database files.
   - Writing of database changes is now much more efficient in that only the files that have been updated are written to disk (previously all files were overwritten). This makes saving database changes quicker, especially on slow external storage, and reduces bandwidth requirements for cloud storage of database files.
   - Online Code Snippets Database is no longer treated differently to the database of user-defined snippets: all snippets are now editable.
   - Changed location of (user) database in portable mode and default location in standard mode. All database files are now per-user.
   - Snippet IDs (formerly "names") are now generated automatically instead of being provided by the user. The IDs can no longer be edited. This means that a snippet's ID can never be changed.
-  - Snippet titles (formerly "display names") are now required rather than optional.
+  - Snippet titles (formerly "display names") are now required rather than optional and hae maximum length of 64 characters.
   - Snippet titles are now used in the UI in places where the snippet name used to be used.
   - Snippet can now have zero or more "tags".
   - Snippets now have an associated programming language (see below).
