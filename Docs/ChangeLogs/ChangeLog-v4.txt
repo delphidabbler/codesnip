@@ -3,13 +3,18 @@
 ; v. 2.0. If a copy of the MPL was not distributed with this file, You can
 ; obtain one at http://mozilla.org/MPL/2.0/
 ;
-; Copyright (C) 2012-2013, Peter Johnson (www.delphidabbler.com).
+; Copyright (C) 2012-2014, Peter Johnson (www.delphidabbler.com).
 ;
 ; $Rev$
 ; $Date$
 ;
 ; Change Log for CodeSnip Release 4
 ; ------------------------------------------------------------------------------
+
+Release v4.8.5 of 13 January 2014
++ Fixed bug #91 "Generated units won't compile on Delphi XE5" (http://bit.ly/1eBjym2). Compiler directives that are used to change compiler warnings now includes a conditionally compiled $LEGACYIFEND ON directive.
++ Fixed potential bug when checking for the existence of files. It had been possible that a "sym-link" to a file could give misleading results.
++ Updated program copyright date in license file, about box, help file and installer.
 
 Release v4.8.4 of 28 November 2013
 + Improved user interface of SWAG Import Wizard.

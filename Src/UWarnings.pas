@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2010-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2010-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -217,7 +217,7 @@ uses
   // Delphi
   SysUtils, Generics.Defaults, Math,
   // Project
-  UConsts, UExceptions, UStrUtils;
+  UExceptions, UStrUtils;
 
 
 { TWarning }
@@ -355,6 +355,10 @@ begin
 end;
 
 function TWarnings.Render: string;
+const
+  // Version number of Delphi XE3 compiler: this is the first version that
+  // supports the $LEGACYIFEND directive.
+  DelphiXE3Compiler = 24.0;
 var
   SB: TStringBuilder;           // used to construct source code string
   W: TWarning;                  // each warning in list
@@ -392,33 +396,43 @@ begin
     try
       SB.AppendLine('{$IFNDEF FPC}');
       SB.AppendLine('  {$IFDEF CONDITIONALEXPRESSIONS}');
+      // Write directives to ensure $IFEND directives are valid: uses
+      // $LEGACYIFEND directive supported from Delphi XE3 that is switched on by
+      // default in XE3 and XE4 but off by default in XE5. $LEGACYIFEND must
+      // be placed before the first $IFEND statement.
+      SB.AppendFormat('    {$IF CompilerVersion >= %.2f}', [DelphiXE3Compiler]);
+      SB.AppendLine;
+      SB.AppendLine('      {$LEGACYIFEND ON}');
+      SB.AppendLine('    {$IFEND}');
       for W in SortedList do
       begin
         if not Math.SameValue(W.MinCompiler, CurrentVer) then
         begin
-          // required compiler version has changed
+          // Required compiler version has changed
           if InsideVer then
           begin
-            // we were writing warnings for previous version: close statement
+            // We were writing warnings for previous version: close statement
             SB.AppendLine('    {$IFEND}');
             InsideVer := False;
           end;
-          // create new condition for new version
+          // Create new condition for new version
           SB.AppendFormat(
-            '    {$IF CompilerVersion >= %.2f}' + EOL, [W.MinCompiler]
+            '    {$IF CompilerVersion >= %.2f}', [W.MinCompiler]
           );
+          SB.AppendLine;
           InsideVer := True;
           CurrentVer := W.MinCompiler;
         end;
-        // write directive to turn warning off
+        // Write directive to turn warning off
         SB.AppendFormat(
-          '      {$WARN %0:s %1:s}' + EOL, [W.Symbol, StateStrings[W.State]]
+          '      {$WARN %0:s %1:s}', [W.Symbol, StateStrings[W.State]]
         );
+        SB.AppendLine;
       end;
-      // close off any open conditional statement
+      // Close off any open conditional statement
       if InsideVer then
         SB.AppendLine('    {$IFEND}');
-      // close bounding $IFDEFs
+      // Close bounding $IFDEFs
       SB.AppendLine('  {$ENDIF}');
       SB.AppendLine('{$ENDIF}');
       Result := SB.ToString;

@@ -196,12 +196,12 @@ end;
 
 function TFirstRun.HaveOldUserCfgFile: Boolean;
 begin
-  Result := TFile.Exists(fInstallInfo.PreviousUserConfigFileName);
+  Result := TFile.Exists(fInstallInfo.PreviousUserConfigFileName, False);
 end;
 
 function TFirstRun.HaveOldUserDB: Boolean;
 begin
-  Result := TFile.Exists(fInstallInfo.PreviousUserDatabaseFileName);
+  Result := TFile.Exists(fInstallInfo.PreviousUserDatabaseFileName, False);
 end;
 
 function TFirstRun.IsProgramUpdated: Boolean;
@@ -318,7 +318,7 @@ end;
 
 class function TFirstRunMgr.UserCfgFileExists: Boolean;
 begin
-  Result := TFile.Exists(TInstallInfo.CurrentUserConfigFileName);
+  Result := TFile.Exists(TInstallInfo.CurrentUserConfigFileName, False);
 end;
 
 end.
