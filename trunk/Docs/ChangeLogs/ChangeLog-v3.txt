@@ -21,7 +21,7 @@ Release v3.13.1 of 18 September 2013
 + Updated help file re changes.
 
 Release v3.13.0 of 12 September 2013
-+ Added support for Delphi XE4 compiler.
++ Added support for Delphi XE5 compiler.
 + Updated documentation re changes.
 + Updated help file re changes.
 
