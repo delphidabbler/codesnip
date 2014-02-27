@@ -5,13 +5,15 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2012-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
  *
- * Manifest file specifying UI for use in XP and execution level required for
- * Vista.
+ * CodeSnip's Windows manifest file.
+ *
+ * GUIDs used in compatibility section taken from
+ * http://msdn.microsoft.com/en-us/library/windows/desktop/dn481241.aspx
 -->
 
 <assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0">
@@ -39,4 +41,12 @@
       </requestedPrivileges>
     </security>
   </trustInfo>
+  <compatibility xmlns="urn:schemas-microsoft-com:compatibility.v1">
+    <application>
+      <!-- App has been tested on Windows 7 -->
+      <supportedOS Id="{35138b9a-5d96-4fbd-8e2d-a2440225f93a}"/>
+      <!-- App has been tested on Windows Vista -->
+      <supportedOS Id="{e2011457-1546-43c5-a5fe-008deee3d3f0}"/>
+    </application>
+  </compatibility>
 </assembly>
