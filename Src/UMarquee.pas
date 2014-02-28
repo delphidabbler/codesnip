@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2008-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2008-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -50,6 +50,8 @@ type
     ///  </summary>
     ///  <param name="AOwner">TComponent [in] Reference to owning component.
     ///  </param>
+    ///  <exception>ENoConstructException raised if constructor called directly
+    ///  on TMarquee instead of via sub-classes.</exception>
     ///  <remarks>This constructor must not be called directly, only by
     ///  sub-classes. Users of TMarquee must call CreateInstance instead.
     ///  </remarks>
@@ -153,7 +155,8 @@ end;
 class function TMarquee.IsBuiltInMarqueeAvailable: Boolean;
 begin
   // We only use built in marquee on Vista or later when themes are enabled
-  Result := TOSInfo.IsVistaOrLater and ThemeServicesEx.ThemesEnabled;
+  Result := TOSInfo.IsReallyWindowsVistaOrGreater
+    and ThemeServicesEx.ThemesEnabled;
 end;
 
 { TEmulatedMarquee }
