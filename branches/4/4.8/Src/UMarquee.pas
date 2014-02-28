@@ -50,6 +50,8 @@ type
     ///  </summary>
     ///  <param name="AOwner">TComponent [in] Reference to owning component.
     ///  </param>
+    ///  <exception>ENoConstructException raised if constructor called directly
+    ///  on TMarquee instead of via sub-classes.</exception>
     ///  <remarks>This constructor must not be called directly, only by
     ///  sub-classes. Users of TMarquee must call CreateInstance instead.
     ///  </remarks>
