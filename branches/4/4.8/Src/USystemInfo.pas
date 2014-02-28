@@ -53,9 +53,9 @@ type
 
   {
   TOSInfo:
-    Exposes TPJOSInfo class to rest of program under a new name and extends to
-    add new methods. Adds a constructor that enforces nature as static class by
-    causing and assertion failure when called.
+    Exposes TPJOSInfo class to rest of program under a new name and add new
+    methods. Also adds a constructor that enforces nature as static class by
+    raising an exception if an attempt is made to construct an instance.
   }
   TOSInfo = class(TPJOSInfo)
   public
@@ -66,8 +66,8 @@ type
     const WinVista: TOSVer = (VerHi: 6; VerLo: 0);
       {Identifies Windows Vista}
     constructor Create;
-      {Class constructor. Causes an assertion failure if called. The object must
-      not be, and is never, constructed.
+      {Constructor override that prevents the class from being instantiated.
+      Raises an ENoConstructException if called.
       }
     class function CheckReportedOS(const MinVer: TOSVer): Boolean;
       {Checks if the OS reported by Windows is the same as or later than a
@@ -233,11 +233,13 @@ begin
 end;
 
 constructor TOSInfo.Create;
-  {Class constructor. Causes an assertion failure if called. The object must not
-  be, and is never, constructed.
+  {Constructor override that prevents the class from being instantiated. Raises
+  an ENoConstructException if called.
   }
 begin
-  Assert(False, ClassName + '.Create: Constructor can''t be called');
+  raise ENoConstructException.Create(
+    ClassName + '.Create: Constructor can''t be called'
+  );
 end;
 
 { TComputerInfo }
