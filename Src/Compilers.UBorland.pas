@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2006-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2006-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -180,7 +180,7 @@ function TBorlandCompiler.InstallPathFromReg(const RootKey: HKEY): string;
 var
   Reg: TRegistry; // registry accessor
 begin
-  if TOSInfo.CheckReportedOS(TOSInfo.WinXP) then
+  if TOSInfo.IsReallyWindowsXPOrGreater then
     Reg := TRegistry.Create(KEY_READ or KEY_WOW64_64KEY)
   else
     // KEY_WOW64_64KEY is not supported on Windows 2000
