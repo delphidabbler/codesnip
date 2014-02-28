@@ -3,14 +3,14 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2006-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2006-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
  *
  * Static classes that provide information about the host system.
  *
- * Requires DelphiDabbler System information unit v3 or later.
+ * Requires DelphiDabbler System information unit v5.0.0 or later.
 }
 
 
@@ -53,17 +53,11 @@ type
 
   {
   TOSInfo:
-    Exposes TPJOSInfo class to rest of program under a new name and extends to
-    add new methods. Adds a constructor that enforces nature as static class by
-    causing and assertion failure when called.
+    Exposes TPJOSInfo class to rest of program under a new name and add new
+    methods. Also adds a constructor that enforces nature as static class by
+    raising an exception if an attempt is made to construct an instance.
   }
   TOSInfo = class(TPJOSInfo)
-  strict private
-    class function CheckForKernelFn(const FnName: string): Boolean;
-      {Checks if a specified function exists in OSs kernel.
-        @param FnName [in] Name of required function.
-        @return True if function is present in kernel, false if not.
-      }
   public
     const Win2K: TOSVer = (VerHi: 5; VerLo: 0);
       {Identifies Windows 2K}
@@ -72,22 +66,16 @@ type
     const WinVista: TOSVer = (VerHi: 6; VerLo: 0);
       {Identifies Windows Vista}
     constructor Create;
-      {Class constructor. Causes an assertion failure if called. The object must
-      not be, and is never, constructed.
-      }
-    class function IsVistaOrLater: Boolean;
-      {Checks if the underlying operating system is Windows Vista or later.
-      Ignores any OS emulation.
-        @return True if OS is Vista or later, False if not.
-      }
-    class function IsXPOrLater: Boolean;
-      {Checks if the underlying operating system is Windows XP or later. Ignores
-      any OS emulation.
-        @return True if OS is XP or later, False if not.
+      {Constructor override that prevents the class from being instantiated.
+      Raises an ENoConstructException if called.
       }
     class function CheckReportedOS(const MinVer: TOSVer): Boolean;
       {Checks if the OS reported by Windows is the same as or later than a
       specified version number.
+      NOTE: If the program is run in a Windows compatibility mode this method
+      performs its OS version check against the emulated OS version when the
+      actual OS is Windows 8 or earlier. It ignores the emulated OS version when
+      run on Windows 8.1 or later.
         @param MinVer [in] Minimum OS version required.
         @return True if OS reported by Windows is same as or later than MinVer.
       }
@@ -144,21 +132,21 @@ type
   {
   TComputerInfo:
     Exposes TPJComputerInfo class to rest of program under a new name with no
-    additions or changes other than to enforce nature as static class by adding
-    a constructor that causes an assertion failure when called.
+    additions or changes other than a constructor that enforces nature as static
+    class by raising an exception if an attempt is made to construct an instance.
   }
   TComputerInfo = class(TPJComputerInfo)
     constructor Create;
-      {Class constructor. Causes an assertion failure if called. The object must
-      not be, and is never, constructed.
+      {Constructor override that prevents the class from being instantiated.
+      Raises an ENoConstructException if called.
       }
   end;
 
   {
   TSystemFolders:
-    Exposes TPJSystemFolders class to rest of program under a new name and
-    extends to add new methods. Adds a constructor that enforces nature as
-    static class by causing and assertion failure when called.
+    Exposes TPJSystemFolders class to rest of program under a new name and adds
+    new methods. Also adds a constructor that enforces nature as static class by
+    raising an exception if an attempt is made to construct an instance.
   }
   TSystemFolders = class(TPJSystemFolders)
   strict protected
@@ -180,8 +168,8 @@ type
       }
   public
     constructor Create;
-      {Class constructor. Causes an assertion failure if called. The object must
-      not be, and is never, constructed.
+      {Constructor override that prevents the class from being instantiated.
+      Raises an ENoConstructException if called.
       }
     class function CommonAppData: string;
       {Gets common application data directory.
@@ -229,24 +217,13 @@ end;
 
 { TOSInfo }
 
-class function TOSInfo.CheckForKernelFn(const FnName: string): Boolean;
-  {Checks if a specified function exists in OSs kernel.
-    @param FnName [in] Name of required function.
-    @return True if function is present in kernel, false if not.
-  }
-const
-  cKernelDLL = 'kernel32.dll';  // name of kernel DLL
-var
-  PFunction: Pointer; // pointer to required function if exists
-begin
-  // Try to load GetProductInfo func from Kernel32: present if Vista
-  PFunction := GetProcAddress(GetModuleHandle(cKernelDLL), PChar(FnName));
-  Result := Assigned(PFunction);
-end;
-
 class function TOSInfo.CheckReportedOS(const MinVer: TOSVer): Boolean;
   {Checks if the OS reported by Windows is the same as or later than a specified
   version number.
+  NOTE: If the program is run in a Windows compatibility mode this method
+  performs its OS version check against the emulated OS version when the actual
+  OS is Windows 8 or earlier. It ignores the emulated OS version when run on
+  Windows 8.1 or later.
     @param MinVer [in] Minimum OS version required.
     @return True if OS reported by Windows is same as or later than MinVer.
   }
@@ -256,43 +233,25 @@ begin
 end;
 
 constructor TOSInfo.Create;
-  {Class constructor. Causes an assertion failure if called. The object must not
-  be, and is never, constructed.
+  {Constructor override that prevents the class from being instantiated. Raises
+  an ENoConstructException if called.
   }
 begin
-  Assert(False, ClassName + '.Create: Constructor can''t be called');
-end;
-
-class function TOSInfo.IsVistaOrLater: Boolean;
-  {Checks if the underlying operating system is Windows Vista or later. Ignores
-  any OS emulation.
-    @return True if OS is Vista or later, False if not.
-  }
-begin
-  // The "GetProductInfo" API function only exists in the kernel of Vista and
-  // Win 2008 server and later
-  Result := CheckForKernelFn('GetProductInfo');
-end;
-
-class function TOSInfo.IsXPOrLater: Boolean;
-  {Checks if the underlying operating system is Windows XP or later. Ignores
-  any OS emulation.
-    @return True if OS is XP or later, False if not.
-  }
-begin
-  // The "ActivateActCtx" API function only exists in the kernel of XP and Win
-  // 2003 server and later
-  Result := CheckForKernelFn('ActivateActCtx');
+  raise ENoConstructException.Create(
+    ClassName + '.Create: Constructor can''t be called'
+  );
 end;
 
 { TComputerInfo }
 
 constructor TComputerInfo.Create;
-  {Class constructor. Causes an assertion failure if called. The object must not
-  be, and is never, constructed.
+  {Constructor override that prevents the class from being instantiated. Raises
+  an ENoConstructException if called.
   }
 begin
-  Assert(False, ClassName + '.Create: Constructor can''t be called');
+  raise ENoConstructException.Create(
+    ClassName + '.Create: Constructor can''t be called'
+  );
 end;
 
 { TSystemFolders }
@@ -306,11 +265,13 @@ begin
 end;
 
 constructor TSystemFolders.Create;
-  {Class constructor. Causes an assertion failure if called. The object must not
-  be, and is never, constructed.
+  {Constructor override that prevents the class from being instantiated. Raises
+  an ENoConstructException if called.
   }
 begin
-  Assert(False, ClassName + '.Create: Constructor can''t be called');
+  raise ENoConstructException.Create(
+    ClassName + '.Create: Constructor can''t be called'
+  );
 end;
 
 class procedure TSystemFolders.FreePIDL(PIDL: PItemIDList);
@@ -382,7 +343,7 @@ const
   RegValNameIE10 = 'svcVersion';  // name of registry value for IE 10
 begin
   Result := '';
-  if TOSInfo.CheckReportedOS(TOSInfo.WinXP) then
+  if TOSInfo.IsReallyWindowsXPOrGreater then
     Reg := TRegistry.Create(KEY_READ or KEY_WOW64_64KEY)
   else
     // KEY_WOW64_64KEY is not supported on Windows 2000
