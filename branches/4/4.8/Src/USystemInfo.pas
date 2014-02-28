@@ -58,12 +58,6 @@ type
     causing and assertion failure when called.
   }
   TOSInfo = class(TPJOSInfo)
-  strict private
-    class function CheckForKernelFn(const FnName: string): Boolean;
-      {Checks if a specified function exists in OSs kernel.
-        @param FnName [in] Name of required function.
-        @return True if function is present in kernel, false if not.
-      }
   public
     const Win2K: TOSVer = (VerHi: 5; VerLo: 0);
       {Identifies Windows 2K}
@@ -74,16 +68,6 @@ type
     constructor Create;
       {Class constructor. Causes an assertion failure if called. The object must
       not be, and is never, constructed.
-      }
-    class function IsVistaOrLater: Boolean;
-      {Checks if the underlying operating system is Windows Vista or later.
-      Ignores any OS emulation.
-        @return True if OS is Vista or later, False if not.
-      }
-    class function IsXPOrLater: Boolean;
-      {Checks if the underlying operating system is Windows XP or later. Ignores
-      any OS emulation.
-        @return True if OS is XP or later, False if not.
       }
     class function CheckReportedOS(const MinVer: TOSVer): Boolean;
       {Checks if the OS reported by Windows is the same as or later than a
@@ -233,21 +217,6 @@ end;
 
 { TOSInfo }
 
-class function TOSInfo.CheckForKernelFn(const FnName: string): Boolean;
-  {Checks if a specified function exists in OSs kernel.
-    @param FnName [in] Name of required function.
-    @return True if function is present in kernel, false if not.
-  }
-const
-  cKernelDLL = 'kernel32.dll';  // name of kernel DLL
-var
-  PFunction: Pointer; // pointer to required function if exists
-begin
-  // Try to load GetProductInfo func from Kernel32: present if Vista
-  PFunction := GetProcAddress(GetModuleHandle(cKernelDLL), PChar(FnName));
-  Result := Assigned(PFunction);
-end;
-
 class function TOSInfo.CheckReportedOS(const MinVer: TOSVer): Boolean;
   {Checks if the OS reported by Windows is the same as or later than a specified
   version number.
@@ -269,28 +238,6 @@ constructor TOSInfo.Create;
   }
 begin
   Assert(False, ClassName + '.Create: Constructor can''t be called');
-end;
-
-class function TOSInfo.IsVistaOrLater: Boolean;
-  {Checks if the underlying operating system is Windows Vista or later. Ignores
-  any OS emulation.
-    @return True if OS is Vista or later, False if not.
-  }
-begin
-  // The "GetProductInfo" API function only exists in the kernel of Vista and
-  // Win 2008 server and later
-  Result := CheckForKernelFn('GetProductInfo');
-end;
-
-class function TOSInfo.IsXPOrLater: Boolean;
-  {Checks if the underlying operating system is Windows XP or later. Ignores
-  any OS emulation.
-    @return True if OS is XP or later, False if not.
-  }
-begin
-  // The "ActivateActCtx" API function only exists in the kernel of XP and Win
-  // 2003 server and later
-  Result := CheckForKernelFn('ActivateActCtx');
 end;
 
 { TComputerInfo }
