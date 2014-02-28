@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2008-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2008-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -153,7 +153,8 @@ end;
 class function TMarquee.IsBuiltInMarqueeAvailable: Boolean;
 begin
   // We only use built in marquee on Vista or later when themes are enabled
-  Result := TOSInfo.IsVistaOrLater and ThemeServicesEx.ThemesEnabled;
+  Result := TOSInfo.IsReallyWindowsVistaOrGreater
+    and ThemeServicesEx.ThemesEnabled;
 end;
 
 { TEmulatedMarquee }

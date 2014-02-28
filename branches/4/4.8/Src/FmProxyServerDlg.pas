@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2009-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2009-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -143,7 +143,7 @@ begin
   TFontHelper.SetDefaultBaseFont(lblIPAddressReq.Font);
   TFontHelper.SetDefaultBaseFont(lblPortReq.Font);
   TFontHelper.SetDefaultBaseFont(lblReqSymbol.Font);
-  if TOSInfo.IsVistaOrLater then
+  if TOSInfo.IsReallyWindowsVistaOrGreater then
   begin
     edPassword1.PasswordChar := '•';
     edPassword2.PasswordChar := '•';

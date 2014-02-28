@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2006-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2006-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -88,6 +88,10 @@ type
     class function CheckReportedOS(const MinVer: TOSVer): Boolean;
       {Checks if the OS reported by Windows is the same as or later than a
       specified version number.
+      NOTE: If the program is run in a Windows compatibility mode this method
+      performs its OS version check against the emulated OS version when the
+      actual OS is Windows 8 or earlier. It ignores the emulated OS version when
+      run on Windows 8.1 or later.
         @param MinVer [in] Minimum OS version required.
         @return True if OS reported by Windows is same as or later than MinVer.
       }
@@ -247,6 +251,10 @@ end;
 class function TOSInfo.CheckReportedOS(const MinVer: TOSVer): Boolean;
   {Checks if the OS reported by Windows is the same as or later than a specified
   version number.
+  NOTE: If the program is run in a Windows compatibility mode this method
+  performs its OS version check against the emulated OS version when the actual
+  OS is Windows 8 or earlier. It ignores the emulated OS version when run on
+  Windows 8.1 or later.
     @param MinVer [in] Minimum OS version required.
     @return True if OS reported by Windows is same as or later than MinVer.
   }
@@ -382,7 +390,7 @@ const
   RegValNameIE10 = 'svcVersion';  // name of registry value for IE 10
 begin
   Result := '';
-  if TOSInfo.CheckReportedOS(TOSInfo.WinXP) then
+  if TOSInfo.IsReallyWindowsXPOrGreater then
     Reg := TRegistry.Create(KEY_READ or KEY_WOW64_64KEY)
   else
     // KEY_WOW64_64KEY is not supported on Windows 2000
