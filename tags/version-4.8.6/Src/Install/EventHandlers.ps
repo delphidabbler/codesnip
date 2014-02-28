@@ -1,0 +1,227 @@
+{
+ * This Source Code Form is subject to the terms of the Mozilla Public License,
+ * v. 2.0. If a copy of the MPL was not distributed with this file, You can
+ * obtain one at http://mozilla.org/MPL/2.0/
+ *
+ * Copyright (C) 2008-2013, Peter Johnson (www.delphidabbler.com).
+ *
+ * $Rev$
+ * $Date$
+ *
+ * Pascal script for use in [Code] Section of CodeSnip's Install.iss.
+ *
+ * Implements all event handlers that hook into Setup program to perform
+ * required customisations.
+}
+
+
+var
+  // Reference to custom wizard page that gets info from user about whether to
+  // preserve config data and database. Whether page is displayed depends on
+  // whether we can update config files and database.
+  gConfigPage: TInputOptionWizardPage;
+
+  // Reference to custom memo page that displays instructions for updating from
+  // a v4 preview release.
+  gUpdateFromPreviewPage: TOutputMsgMemoWizardPage;
+
+  // Reference to custom memo page that displays information about automatic
+  // update checking.
+  gAutoUpdateCheckPage: TOutputMsgMemoWizardPage;
+
+  // Flag true if user wants to bring forward a copy of the main database
+  gDatabaseCopyingRequested: Boolean;
+
+// Called during Setup's initialization. Initialises global variables that
+// provide information location of data folders and database and about any
+// earlier installation that has been detected.
+function InitializeSetup: Boolean;
+begin
+  InitGlobals;
+  gDatabaseCopyingRequested := False;
+  Result := True;
+end;
+
+// Called when wizard is initialising. Creates required custom pages.
+procedure InitializeWizard;
+var
+  RTFFile: string;
+  RTF: AnsiString;
+begin
+  // Create custom pages
+  // page used to determine if main database is to be brought forward
+  gConfigPage := CreateInputOptionPage(
+    wpSelectProgramGroup,
+    'Code Snippets Online Database',
+    'Should Setup make a copy of your old installation''s online database?',
+    'Setup has detected that no copy of the Code Snippets online database is '
+      + 'available to this new installation. However a copy from an an older '
+      + 'version of CodeSnip has been detected and can be installed. Clear the '
+      + 'check box below if you prefer not to do this.'
+      + #13#10#13#10
+      + 'NOTE: This does not copy any user defined database you may have. '
+      + 'You will be given an opportunity to do that when you run your new '
+      + 'version of CodeSnip for the first time.',
+    False,
+    False
+  );
+  gConfigPage.Add('Copy existing database');
+  gConfigPage.Values[0] := True;
+
+  // page that displays notes about updating from v4 preview release
+  gUpdateFromPreviewPage := CreateOutputMsgMemoPage(
+    wpWelcome,
+    'Updating from v4 Preview Release',
+    'Important notes about updating from a preview release of CodeSnip 4.',
+    '',
+    ''
+  );
+  gUpdateFromPreviewPage.RichEditViewer.UseRichEdit := True;
+  ExtractTemporaryFile('UpdatingPreview.rtf');
+  RTFFile := ExpandConstant('{tmp}\UpdatingPreview.rtf');
+  if LoadStringFromFile(RTFFile, RTF) then
+    gUpdateFromPreviewPage.RichEditViewer.RTFText := RTF;
+
+  // page that displays information about automatic updatw checking
+  gAutoUpdateCheckPage := CreateOutputMsgMemoPage(
+    wpLicense,
+    'Information',
+    'CodeSnip''s new Automatic Update Checking feature.',
+    '',
+    ''
+  );
+  ExtractTemporaryFile('AutoUpdateChecks.rtf');
+  RTFFile := ExpandConstant('{tmp}\AutoUpdateChecks.rtf');
+  if LoadStringFromFile(RTFFile, RTF) then
+    gAutoUpdateCheckPage.RichEditViewer.RTFText := RTF;
+end;
+
+// Called to determine whether page specified by PageID should be displayed.
+function ShouldSkipPage(PageID: Integer): Boolean;
+var
+  ProgVer: string;
+begin
+  Result := False;
+  // decide if page used to decide whether to display page that gives user
+  // option to copy older version of main database
+  if PageID = gConfigPage.ID then
+  begin
+    if not DataConversionRequired or MainDatabaseExists then
+      Result := True;
+  end
+  // decide if page is displayed that gives instructions on updating from v4
+  // preview
+  else if PageId = gUpdateFromPreviewPage.ID then
+  begin
+    ProgVer := GetIniString(
+      'Application', 'Version', '', gCurrentCommonConfigFile
+    );
+    if Pos('alpha', ProgVer) = 0 then
+      Result := True;
+  end
+  else if PageId = gAutoUpdateCheckPage.ID then
+  begin
+    ProgVer := GetIniString(
+      'Application', 'Version', '', gCurrentCommonConfigFile
+    );
+    if CompareVerNums(
+      StrToVersionInfo(ProgVer), CreateVersionNumber(4, 4, 0, 0)
+    ) >= 0 then
+      Result := True;
+  end;
+end;
+
+// Called when "Next" button is clicked on page specified by CurPageID. Used to
+// record state of check boxes on custom page.
+function NextButtonClick(CurPageID: Integer): Boolean;
+begin
+  Result := True;
+  if CurPageID = gConfigPage.ID then
+    gDatabaseCopyingRequested := gConfigPage.Values[0];
+end;
+
+// Helper routine for UpdateReadyMemo. Appends text to a string followed by two
+// newlines (per NewLine parameter) providing text is not an empty string.
+// Returns updated string in Res.
+procedure AddTextToMemo(Text: string; var Res: string; NewLine: string);
+begin
+  if Text <> '' then
+    Res := Res + Text + NewLine + NewLine;
+end;
+
+// Called to determine text to be displayed on "Ready to install" wizard page.
+// We use all given information and add information about any data conversion to
+// be carried out.
+// See Inno Setup docs for details of parameters.
+function UpdateReadyMemo(Space, NewLine, MemoUserInfoInfo, MemoDirInfo,
+  MemoTypeInfo, MemoComponentsInfo, MemoGroupInfo,
+  MemoTasksInfo: String): String;
+begin
+  Result := '';
+  // Use all given info: empty strings ignored
+  AddTextToMemo(MemoUserInfoInfo, Result, NewLine);
+  AddTextToMemo(MemoDirInfo, Result, NewLine);
+  AddTextToMemo(MemoTypeInfo, Result, NewLine);
+  AddTextToMemo(MemoComponentsInfo, Result, NewLine);
+  AddTextToMemo(MemoGroupInfo, Result, NewLine);
+  AddTextToMemo(MemoTasksInfo, Result, NewLine);
+  // Add custom information
+  if DataConversionRequired and not MainDatabaseExists then
+  begin
+    Result := Result +  'Database preservation:';
+    Result := Result + NewLine + Space;
+    if gDatabaseCopyingRequested then
+      Result := Result + 'Copy existing Code Snippets database'
+    else
+      Result := Result + 'Don''t copy database'
+        + NewLine + Space + Space
+        + 'The database can still be downloaded when CodeSnip is run';
+    Result := Result + NewLine + Space;
+  end;
+end;
+
+// Called to perform pre-install and post-install tasks. We performs any
+// required data conversion at the post-install stage.
+procedure CurStepChanged(CurStep: TSetupStep);
+begin
+  // We perform ini file post-install
+  if CurStep <> ssPostInstall then
+    Exit;
+
+  // Update config file and copy database if necessary
+  if DataConversionRequired then
+  begin
+    // Check if user has requested data conversion
+    case gPrevInstallID of
+      piOriginal:
+        {Do nothing: per user config files only};
+      piV1_9:
+      begin
+        CopyCommonConfigFile(piV1_9);
+        if gDatabaseCopyingRequested then
+          CopyMainDatabase(piV1_9);
+      end;
+      piV2V3:
+      begin
+        CopyCommonConfigFile(piV2V3);
+        if gDatabaseCopyingRequested then
+          CopyMainDatabase(piV2V3);
+      end;
+    end;
+  end;
+
+  // Ensure common config has correct config file and program version
+  // information. This creates the config file if it doesn't exist
+  StampCommonConfigFile;
+
+  // Display message if no database is installed
+  if not MainDatabaseExists then
+    MsgBox(
+      'The is no copy of the online Code Snippets database installed.'#10#10
+        + 'You can download the database at any time using the program''s '
+        + '"Database | Update From Web" menu option.',
+      mbInformation,
+      MB_OK
+    );
+end;
+
