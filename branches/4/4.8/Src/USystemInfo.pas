@@ -10,7 +10,7 @@
  *
  * Static classes that provide information about the host system.
  *
- * Requires DelphiDabbler System information unit v3 or later.
+ * Requires DelphiDabbler System information unit v5.0.0 or later.
 }
 
 
@@ -132,21 +132,21 @@ type
   {
   TComputerInfo:
     Exposes TPJComputerInfo class to rest of program under a new name with no
-    additions or changes other than to enforce nature as static class by adding
-    a constructor that causes an assertion failure when called.
+    additions or changes other than a constructor that enforces nature as static
+    class by raising an exception if an attempt is made to construct an instance.
   }
   TComputerInfo = class(TPJComputerInfo)
     constructor Create;
-      {Class constructor. Causes an assertion failure if called. The object must
-      not be, and is never, constructed.
+      {Constructor override that prevents the class from being instantiated.
+      Raises an ENoConstructException if called.
       }
   end;
 
   {
   TSystemFolders:
-    Exposes TPJSystemFolders class to rest of program under a new name and
-    extends to add new methods. Adds a constructor that enforces nature as
-    static class by causing and assertion failure when called.
+    Exposes TPJSystemFolders class to rest of program under a new name and adds
+    new methods. Also adds a constructor that enforces nature as static class by
+    raising an exception if an attempt is made to construct an instance.
   }
   TSystemFolders = class(TPJSystemFolders)
   strict protected
@@ -168,8 +168,8 @@ type
       }
   public
     constructor Create;
-      {Class constructor. Causes an assertion failure if called. The object must
-      not be, and is never, constructed.
+      {Constructor override that prevents the class from being instantiated.
+      Raises an ENoConstructException if called.
       }
     class function CommonAppData: string;
       {Gets common application data directory.
@@ -245,11 +245,13 @@ end;
 { TComputerInfo }
 
 constructor TComputerInfo.Create;
-  {Class constructor. Causes an assertion failure if called. The object must not
-  be, and is never, constructed.
+  {Constructor override that prevents the class from being instantiated. Raises
+  an ENoConstructException if called.
   }
 begin
-  Assert(False, ClassName + '.Create: Constructor can''t be called');
+  raise ENoConstructException.Create(
+    ClassName + '.Create: Constructor can''t be called'
+  );
 end;
 
 { TSystemFolders }
@@ -263,11 +265,13 @@ begin
 end;
 
 constructor TSystemFolders.Create;
-  {Class constructor. Causes an assertion failure if called. The object must not
-  be, and is never, constructed.
+  {Constructor override that prevents the class from being instantiated. Raises
+  an ENoConstructException if called.
   }
 begin
-  Assert(False, ClassName + '.Create: Constructor can''t be called');
+  raise ENoConstructException.Create(
+    ClassName + '.Create: Constructor can''t be called'
+  );
 end;
 
 class procedure TSystemFolders.FreePIDL(PIDL: PItemIDList);
