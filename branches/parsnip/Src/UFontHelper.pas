@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2006-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2006-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -174,7 +174,7 @@ begin
   Font.Name := FallbackContentFontName;
   Font.Size := FallbackContentFontSize;
   Font.Style := [];
-  if TOSInfo.CheckReportedOS(TOSInfo.WinVista) then
+  if TOSInfo.IsReallyWindowsVistaOrGreater then
   begin
     // We have Vista or later - use Calibri if installed
     if FontExists(VistaContentFontName) then
@@ -228,7 +228,7 @@ begin
   Font.Name := FallbackUIFontName;
   Font.Size := FallbackUIFontSize;
   Font.Style := [];
-  if TOSInfo.CheckReportedOS(TOSInfo.WinVista) then
+  if TOSInfo.IsReallyWindowsVistaOrGreater then
   begin
     // Vista or later
     if FontExists(VistaUIFontName) then

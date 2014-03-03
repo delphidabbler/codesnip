@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2005-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -53,14 +53,15 @@ type
 
   {
   TNoConstructObject:
-    Class that fails if its constructor is called. Provided as a base class for
-    classes that contain only class methods and should never be constructed.
+    Class that raises an exception if its constructor is called. Provided as a
+    base class for classes that contain only class methods and should never be
+    constructed.
   }
   TNoConstructObject = class(TObject)
   public
     constructor Create;
-      {Class constructor. Causes an assertion failure if called. The object is
-      never constructed.
+      {Prevents construction of an object instance by raising an
+      ENoConstructException if called.
       }
   end;
 
@@ -79,8 +80,8 @@ type
       }
   public
     constructor Create;
-      {Class constructor. Causes an assertion failure if called. The object is
-      never constructed.
+      {Prevents construction of an object instance by raising an
+      ENoConstructException if called.
       }
   end;
 
@@ -100,8 +101,8 @@ type
       }
   public
     constructor Create;
-      {Class constructor. Causes an assertion failure if called. The object is
-      never constructed.
+      {Prevents construction of an object instance by raising an
+      ENoConstructException if called.
       }
   end;
 
@@ -249,8 +250,8 @@ uses
 { TNoConstructObject }
 
 constructor TNoConstructObject.Create;
-  {Class constructor. Causes an assertion failure if called. The object is never
-  constructed.
+  {Prevents construction of an object instance by raising an
+  ENoConstructException if called.
   }
 begin
   raise ENoConstructException.Create(
@@ -261,8 +262,8 @@ end;
 { TNoPublicConstructObject }
 
 constructor TNoPublicConstructObject.Create;
-  {Class constructor. Causes an assertion failure if called. The object is
-  never constructed.
+  {Prevents construction of an object instance by raising an
+  ENoConstructException if called.
   }
 begin
   raise ENoConstructException.Create(
@@ -282,8 +283,8 @@ end;
 { TNoPublicConstructIntfObject }
 
 constructor TNoPublicConstructIntfObject.Create;
-  {Class constructor. Causes an assertion failure if called. The object is never
-  constructed.
+  {Prevents construction of an object instance by raising an
+  ENoConstructException if called.
   }
 begin
   raise ENoConstructException.Create(
