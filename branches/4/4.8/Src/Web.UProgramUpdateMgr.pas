@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2012-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2012-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -36,8 +36,12 @@ type
       ScriptURLTplt = 'http://codesnip.%s/websvc/prog-update';
       ///  <summary>User agent sent to web service.</summary>
       UserAgent = 'CodeSnip';
+      ///  <summary>API version of web service.</summary>
+      ApiVersion = '2';
       ///  <summary>API key required for all calls to web service.</summary>
       ApiKey = '9EE3A4D85A2F46F79AE2AAB1012A7678';
+      ///  <summary>Release channel sent to web service.</summary>
+      Channel = '4';
       ///  <summary>Program edition sent to web service.</summary>
       {$IFDEF PORTABLE}
       Edition = 'portable';
@@ -91,6 +95,7 @@ end;
 function TProgramUpdateMgr.CreateParams: TURIParams;
 begin
   Result := TURIParams.Create;
+  Result.Add('api', ApiVersion);
   Result.Add('key', ApiKey);
   Result.Add('prog-id', TAppInfo.ProgramKey);
 end;
@@ -102,6 +107,7 @@ var
 begin
   Params := CreateParams;
   try
+    Params.Add('channel', Channel);
     Params.Add('edition', Edition);
     Response := TStringList.Create;
     try
@@ -122,6 +128,7 @@ var
 begin
   Params := CreateParams;
   try
+    Params.Add('channel', Channel);
     Params.Add('edition', Edition);
     Response := TStringList.Create;
     try
