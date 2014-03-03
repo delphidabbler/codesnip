@@ -80,7 +80,7 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Messages, Controls, ExtCtrls,
+  SysUtils, Messages, Controls, ExtCtrls, Windows,
   // Project
   USystemInfo, UThemesEx;
 
