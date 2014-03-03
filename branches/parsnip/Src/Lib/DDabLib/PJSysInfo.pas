@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2001-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2001-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -21,14 +21,38 @@
  *  2: The code has been tested with the Delphi 64 bit compiler (introduced
  *     in Delphi XE2) and functions correctly.
  *
+ *  3: When run on operating systems up to and including Windows 8 running the
+ *     host program in compatibility mode causes some variables and TPJOSInfo
+ *     methods to be "spoofed" into returning information about the emulated
+ *     OS. When run on Windows 8.1 and later details of the actual host
+ *     operating system are always returned and the emaulated OS is ignored.
+ *
  * ACKNOWLEDGEMENTS
  *
  * Thanks to the following who have contributed to this project:
  *
- *   Guillermo Fazzolari (bug fix in v2.0.1)
- *   Laurent Pierre (PRODUCT_* constants and suggested GetProductInfo API code
+ *   - Guillermo Fazzolari (bug fix in v2.0.1)
+ *
+ *   - Laurent Pierre (PRODUCT_* constants and suggested GetProductInfo API code
  *     used in v3.0)
- *   Rich Habedank (bug fix in revision 228)
+ *
+ *   - Rich Habedank (bug fix in revision 228)
+ *
+ * The project also draws on the work of:
+ *
+ *   - Achim Kalwa <delphi@achim-kalwa.de> who translated the versionhelpers.h
+ *     header into Pascal. Some of the IsReallyWindowsXXXXOrGreater methods of
+ *     TPJOSInfo and the TestWindowsVersion routine are based closely on his
+ *     work.
+ *
+ *   - Brendan grant for his ideas presented in the Code Project article at
+ *     http://bit.ly/1mDKTu3
+ *
+ *   - Kendall Sullivan for the code on which TPJComputerInfo.IsAdmin is based.
+ *     See http://edn.embarcadero.com/article/26752.
+ *
+ *   - norgepaul for the code which TPJComputerInfo.IsUACActive is based. See
+ *     his anser on Stack Overflow at http://tinyurl.com/avlztmg.
  *
  * ***** END LICENSE BLOCK *****
 }
@@ -37,26 +61,29 @@
 unit PJSysInfo;
 
 
+// Define DEBUG_NEW_API if debugging on Windows Vista to Windows 8 in order to
+// check that the new version API used for Windows 8.1 and later is working.
+// This will cause the new API to be used for Windows Vista and later instead
+// of only Windows 8.1 and later.
+// *** IMPORTANT: Ensure that DEBUG_NEW_API is NOT defined in production code.
+
+{.$DEFINE DEBUG_NEW_API}
+
+
 // Conditional defines
+// ===================
 
 // Assume all required facilities available
-{$DEFINE REGOPENREADONLY}     // TRegistry.OpenKeyReadOnly available
 {$DEFINE REGACCESSFLAGS}      // TRegistry access flags available
 {$DEFINE WARNDIRS}            // $WARN compiler directives available
 {$DEFINE EXCLUDETRAILING}     // SysUtils.ExcludeTrailingPathDelimiter available
-{$DEFINE HASLONGWORD}         // LongWord type defined
 {$UNDEF RTLNAMESPACES}        // No support for RTL namespaces in unit names
+{$UNDEF HASUNIT64}            // UInt64 type not defined
+{$UNDEF INLINEMETHODS}        // No support for inline methods
 
 // Undefine facilities not available in earlier compilers
-// Note: Delphi 1/2 is not included since the code will not compile on these
+// Note: Delphi 1 to 3 is not included since the code will not compile on these
 // compilers
-{$IFDEF VER100} // Delphi 3
-  {$UNDEF REGOPENREADONLY}
-  {$UNDEF REGACCESSFLAGS}
-  {$UNDEF WARNDIRS}
-  {$UNDEF EXCLUDETRAILING}
-  {$UNDEF HASLONGWORD}
-{$ENDIF}
 {$IFDEF VER120} // Delphi 4
   {$UNDEF REGACCESSFLAGS}
   {$UNDEF WARNDIRS}
@@ -71,8 +98,17 @@ unit PJSysInfo;
   {$UNDEF WARNDIRS}
 {$ENDIF}
 {$IFDEF CONDITIONALEXPRESSIONS}
-  {$IF CompilerVersion >= 23.0} // Delphi XE2
+  {$IF CompilerVersion >= 24.0} // Delphi XE3 and later
+    {$LEGACYIFEND ON}  // NOTE: this must come before all $IFEND directives
+  {$IFEND}
+  {$IF CompilerVersion >= 23.0} // Delphi XE2 and later
     {$DEFINE RTLNAMESPACES}
+  {$IFEND}
+  {$IF CompilerVersion >= 17.0} // Delphi 2005 and later
+    {$DEFINE INLINEMETHODS}
+  {$IFEND}
+  {$IF Declared(UInt64)}
+    {$DEFINE HASUINT64}
   {$IFEND}
 {$ENDIF}
 
@@ -150,7 +186,39 @@ type
   {$ENDIF}
 
 const
+
   // Windows constants possibly not defined in all supported Delphi VCLs
+
+  // Conditional consts ued in VerSetConditionMask calls
+  VER_EQUAL         = 1; // current value = specified value.
+  VER_GREATER       = 2; // current value > specified value.
+  VER_GREATER_EQUAL = 3; // current value >= specified value.
+  VER_LESS          = 4; // current value < specified value.
+  VER_LESS_EQUAL    = 5; // current value <= specified value.
+
+  // Platform ID defines
+  // these are not included in Windows unit of all supported Delphis
+  VER_BUILDNUMBER       = $00000004;
+  VER_MAJORVERSION      = $00000002;
+  VER_MINORVERSION      = $00000001;
+  VER_PLATFORMID        = $00000008;
+  VER_SERVICEPACKMAJOR  = $00000020;
+  VER_SERVICEPACKMINOR  = $00000010;
+  VER_SUITENAME         = $00000040;
+  VER_PRODUCT_TYPE      = $00000080;
+
+  // Constants from sdkddkver.h
+  _WIN32_WINNT_NT4      = $0400; // Windows NT 4
+  _WIN32_WINNT_WIN2K    = $0500; // Windows 2000
+  _WIN32_WINNT_WINXP    = $0501; // Windows XP
+  _WIN32_WINNT_WS03     = $0502; // Windows Server 2003
+  _WIN32_WINNT_WIN6     = $0600; // Windows Vista
+  _WIN32_WINNT_VISTA    = $0600; // Windows Vista
+  _WIN32_WINNT_WS08     = $0600; // Windows Server 2008
+  _WIN32_WINNT_LONGHORN = $0600; // Windows 7
+  _WIN32_WINNT_WIN7     = $0601; // Windows 7
+  _WIN32_WINNT_WIN8     = $0602; // Windows 8
+  _WIN32_WINNT_WINBLUE  = $0603; // Windows 8.1
 
   // These Windows-defined constants are required for use with TOSVersionInfoEx
   // NT Product types
@@ -177,7 +245,7 @@ const
   VER_SUITE_WH_SERVER                         = $00008000;
 
   // These Windows-defined constants are required for use with the
-  // GetProductInfo API call (Vista and later)
+  // GetProductInfo API call used with Windows Vista and later
   // ** Thanks to Laurent Pierre for providing these defintions.
   // ** Additional definitions were obtained from
   //    http://msdn.microsoft.com/en-us/library/ms724358
@@ -353,7 +421,9 @@ type
     osWin7,                 // Windows 7
     osWinSvr2008R2,         // Windows Server 2008 R2
     osWin8,                 // Windows 8
-    osWinSvr2012            // Windows Server 2012
+    osWinSvr2012,           // Windows Server 2012
+    osWin8Point1,           // Windows 8.1
+    osWinSvr2012R2          // Windows Server 2012 R2
   );
 
 type
@@ -406,7 +476,29 @@ type
     ///  <remarks>Used to get product type for NT4 SP5 and earlier.</remarks>
     class function ProductTypeFromReg: string;
 
+    ///  <summary>Checks if the underlying operating system either has the given
+    ///  major and minor version number and service pack major version numbers
+    ///  or is a later version.</summary>
+    ///  <remarks>
+    ///  <para>MajorVersion version must be greater than or equal to 5,
+    ///  otherwise the method always returns False.</para>
+    ///  <para>This method is immune to spoofing: it always returns information
+    ///  about the actual operating system.</para>
+    ///  </remarks>
+    class function IsReallyWindowsVersionOrGreater(MajorVersion, MinorVersion,
+      ServicePackMajor: Word): Boolean;
+
   public
+
+    ///  <summary>Checks if the OS can be "spoofed" by specifying a
+    ///  compatibility mode for the program.</summary>
+    ///  <remarks>When this method returns True public methods of TPJOSInfo
+    ///  will return the details of OS emulated by the compatibility mode OS
+    ///  instead of the actual OS, unless the method is documented to the
+    ///  contrary. When False is returned the reported OS is the real underlying
+    ///  OS and any compatibility mode is ignored.</remarks>
+    class function CanSpoof: Boolean;
+
     ///  <summary>Checks if the OS is on the Windows 9x platform.</summary>
     class function IsWin9x: Boolean;
 
@@ -424,6 +516,7 @@ type
 
     ///  <summary>Checks if the program is running on a server operating system.
     ///  </summary>
+    ///  <remarks>Use IsWindowsServer in preference.</remarks>
     class function IsServer: Boolean;
 
     ///  <summary>Checks if Windows Media Center is installed.</summary>
@@ -472,8 +565,7 @@ type
     ///  <remarks>Invalid is ServicePackMinor returns 0.</remarks>
     class function ServicePackMinor: Integer;
 
-    ///  <summary>Returns the production edition for an NT platform OS.
-    ///  </summary>
+    ///  <summary>Returns the product edition for an NT platform OS.</summary>
     ///  <remarks>The empty string is returned if the OS is not on the NT
     ///  platform.</remarks>
     class function Edition: string;
@@ -489,6 +581,124 @@ type
 
     ///  <summary>Owner to which Windows is registered.</summary>
     class function RegisteredOwner: string;
+
+    ///  <summary>Date the operating system was installed.</summary>
+    ///  <remarks>If this information is not available then <c>0.0</c> is
+    ///  returned (i.e. 1899/12/30).</remarks>
+    class function InstallationDate: TDateTime;
+
+    ///  <summary>Checks whether the OS is Windows 2000 or greater.</summary>
+    ///  <remarks>This method always returns information about the true OS,
+    ///  regardless of any compatibility mode in force.</remarks>
+    class function IsReallyWindows2000OrGreater: Boolean;
+      {$IFDEF INLINEMETHODS}inline;{$ENDIF}
+
+    ///  <summary>Checks whether the OS is Windows 2000 Service Pack 1 or
+    ///  greater.</summary>
+    ///  <remarks>This method always returns information about the true OS,
+    ///  regardless of any compatibility mode in force.</remarks>
+    class function IsReallyWindows2000SP1OrGreater: Boolean;
+      {$IFDEF INLINEMETHODS}inline;{$ENDIF}
+
+    ///  <summary>Checks whether the OS is Windows 2000 Service Pack 2 or
+    ///  greater.</summary>
+    ///  <remarks>This method always returns information about the true OS,
+    ///  regardless of any compatibility mode in force.</remarks>
+    class function IsReallyWindows2000SP2OrGreater: Boolean;
+      {$IFDEF INLINEMETHODS}inline;{$ENDIF}
+
+    ///  <summary>Checks whether the OS is Windows 2000 Service Pack 3 or
+    ///  greater.</summary>
+    ///  <remarks>This method always returns information about the true OS,
+    ///  regardless of any compatibility mode in force.</remarks>
+    class function IsReallyWindows2000SP3OrGreater: Boolean;
+      {$IFDEF INLINEMETHODS}inline;{$ENDIF}
+
+    ///  <summary>Checks whether the OS is Windows 2000 Service Pack 4 or
+    ///  greater.</summary>
+    ///  <remarks>This method always returns information about the true OS,
+    ///  regardless of any compatibility mode in force.</remarks>
+    class function IsReallyWindows2000SP4OrGreater: Boolean;
+      {$IFDEF INLINEMETHODS}inline;{$ENDIF}
+
+    ///  <summary>Checks whether the OS is Windows XP or greater.</summary>
+    ///  <remarks>This method always returns information about the true OS,
+    ///  regardless of any compatibility mode in force.</remarks>
+    class function IsReallyWindowsXPOrGreater: Boolean;
+      {$IFDEF INLINEMETHODS}inline;{$ENDIF}
+
+    ///  <summary>Checks whether the OS is Windows XP Service Pack 1 or greater.
+    ///  </summary>
+    ///  <remarks>This method always returns information about the true OS,
+    ///  regardless of any compatibility mode in force.</remarks>
+    class function IsReallyWindowsXPSP1OrGreater: Boolean;
+      {$IFDEF INLINEMETHODS}inline;{$ENDIF}
+
+    ///  <summary>Checks whether the OS is Windows XP Service Pack 2 or greater.
+    ///  </summary>
+    ///  <remarks>This method always returns information about the true OS,
+    ///  regardless of any compatibility mode in force.</remarks>
+    class function IsReallyWindowsXPSP2OrGreater: Boolean;
+      {$IFDEF INLINEMETHODS}inline;{$ENDIF}
+
+    ///  <summary>Checks whether the OS is Windows XP Service Pack 3 or greater.
+    ///  </summary>
+    ///  <remarks>This method always returns information about the true OS,
+    ///  regardless of any compatibility mode in force.</remarks>
+    class function IsReallyWindowsXPSP3OrGreater: Boolean;
+      {$IFDEF INLINEMETHODS}inline;{$ENDIF}
+
+    ///  <summary>Checks whether the OS is Windows Vista or greater.</summary>
+    ///  <remarks>This method always returns information about the true OS,
+    ///  regardless of any compatibility mode in force.</remarks>
+    class function IsReallyWindowsVistaOrGreater: Boolean;
+      {$IFDEF INLINEMETHODS}inline;{$ENDIF}
+
+    ///  <summary>Checks whether the OS is Windows Vista Service Pack 1 or
+    ///  greater.</summary>
+    ///  <remarks>This method always returns information about the true OS,
+    ///  regardless of any compatibility mode in force.</remarks>
+    class function IsReallyWindowsVistaSP1OrGreater: Boolean;
+      {$IFDEF INLINEMETHODS}inline;{$ENDIF}
+
+    ///  <summary>Checks whether the OS is Windows Vista Service Pack 2 or
+    ///  greater.</summary>
+    ///  <remarks>This method always returns information about the true OS,
+    ///  regardless of any compatibility mode in force.</remarks>
+    class function IsReallyWindowsVistaSP2OrGreater: Boolean;
+      {$IFDEF INLINEMETHODS}inline;{$ENDIF}
+
+    ///  <summary>Checks whether the OS is Windows 7 or greater.</summary>
+    ///  <remarks>This method always returns information about the true OS,
+    ///  regardless of any compatibility mode in force.</remarks>
+    class function IsReallyWindows7OrGreater: Boolean;
+      {$IFDEF INLINEMETHODS}inline;{$ENDIF}
+
+    ///  <summary>Checks whether the OS is Windows 7 Service Pack 1 or greater.
+    ///  </summary>
+    ///  <remarks>This method always returns information about the true OS,
+    ///  regardless of any compatibility mode in force.</remarks>
+    class function IsReallyWindows7SP1OrGreater: Boolean;
+      {$IFDEF INLINEMETHODS}inline;{$ENDIF}
+
+    ///  <summary>Checks whether the OS is Windows 8 or greater.</summary>
+    ///  <remarks>This method always returns information about the true OS,
+    ///  regardless of any compatibility mode in force.</remarks>
+    class function IsReallyWindows8OrGreater: Boolean;
+      {$IFDEF INLINEMETHODS}inline;{$ENDIF}
+
+    ///  <summary>Checks whether the OS is Windows 8.1 or greater.</summary>
+    ///  <remarks>This method always returns information about the true OS,
+    ///  regardless of any compatibility mode in force.</remarks>
+    class function IsReallyWindows8Point1OrGreater: Boolean;
+      {$IFDEF INLINEMETHODS}inline;{$ENDIF}
+
+    ///  <summary>Checks if the OS is a server version.</summary>
+    ///  <remarks>For Windows 2000 and later the result always relates to the
+    ///  actual OS, regardless of any compatibility mode in force. For versions
+    ///  prior to Windows 2000 this method will take note of compatibility modes
+    ///  and returns the same value as TPJOSInfo.IsServer.</remarks>
+    class function IsWindowsServer: Boolean;
   end;
 
 type
@@ -638,24 +848,37 @@ type
     class function Temp: string;
   end;
 
-{$IFNDEF HASLONGWORD}
-type
-  // Define LongWord for compilers that don't have it
-  LongWord = Windows.DWORD;
-{$ENDIF}
-
 var
   // Global variables providing extended information about the OS version
+
+  // The following five variables are analogues of the similarly named variables
+  // (without the "Ex" appendix) from SysUtils. If the OS is spoofed and
+  // TOSInfo.CanSpoof = False then these variable will reflect the values from
+  // the true OS, whereas their SysUtils equivalents will have the spoof values.
+  // When TOSInfo.CanSpoof = True then both sets of variables will have the
+  // same value.
+
+  // OS platform: one of VER_PLATFORM_WIN32_NT, VER_PLATFORM_WIN32_WINDOWS or
+  // (very unlikely) VER_PLATFORM_WIN32s.
+  Win32PlatformEx: Integer = 0;
+  // Major version number of OS.
+  Win32MajorVersionEx: LongWord = 0;
+  // Minor version number of OS.
+  Win32MinorVersionEx: LongWord = 0;
+  // OS Build number.
+  Win32BuildNumberEx: Integer = 0;
+  // Description of any OS service pack.
+  Win32CSDVersionEx: string = '';
 
   // Flag that indicates if extended version information is available.
   Win32HaveExInfo: Boolean = False;
   // Major version number of the latest Service Pack installed on the system. If
   // no service pack has been installed the value is 0. Invalid if
   // Win32HaveExInfo is False.
-  Win32ServicePackMajor: Integer = 0;
+  Win32ServicePackMajor: Word = 0;
   // Minor version number of the latest Service Pack installed on the system.
   // Invalid if Win32HaveExInfo is False.
-  Win32ServicePackMinor: Integer = 0;
+  Win32ServicePackMinor: Word = 0;
   // Bit flags that identify the product suites available on the system. Value
   // is a combination of the VER_SUITE_* flags defined above. Invalid if
   // Win32HaveExInfo is False.
@@ -691,6 +914,15 @@ resourcestring
   sBadRegType =  'Unsupported registry type';
   sBadProcHandle = 'Bad process handle';
 
+
+{$IFNDEF HASUINT64}
+// Defined a fake UInt64 of correct size for used with compilers that don't
+// define the type.
+type
+  UInt64 = Int64;
+{$ENDIF}
+
+
 const
   // Map of product codes per GetProductInfo API to product names
   // ** Laurent Pierre supplied original code on which this map is based
@@ -701,7 +933,7 @@ const
     Name: string; // product name
   end = (
     (Id: PRODUCT_BUSINESS;
-      Name: 'Business Edition';),
+      Name: 'Business';),
     (Id: PRODUCT_BUSINESS_N;
       Name: 'Business N Edition';),
     (Id: PRODUCT_CLUSTER_SERVER;
@@ -877,18 +1109,43 @@ const
     'Software\Microsoft\Windows NT\CurrentVersion'
   );
 
-var
-  // Records processor architecture information
-  pvtProcessorArchitecture: Word = 0;
-
 type
   // Function type of the GetNativeSystemInfo and GetSystemInfo functions
   TGetSystemInfo = procedure(var lpSystemInfo: TSystemInfo); stdcall;
+  // Function type of the VerSetConditionMask API function
+  TVerSetConditionMask = function(dwlConditionMask: UInt64;
+    dwTypeBitMask: LongWord; dwConditionMask: Byte): UInt64; stdcall;
+  // Function type of the VerifyVersionInfo API function
+  TVerifyVersionInfo = function(lpVersionInfo: POSVersionInfoEx;
+    dwTypeMask: LongWord; dwlConditionMask: UInt64): LongBool; stdcall;
 
 var
   // Function used to get system info: initialised to GetNativeSystemInfo API
   // function if available, otherwise set to GetSystemInfo API function.
   GetSystemInfoFn: TGetSystemInfo;
+
+  // Function used to specify conditional to use in tests in VerifyVersionInfo:
+  // initialised to VerSetConditionMask API function if available, undefined
+  // otherwise.
+  VerSetConditionMask: TVerSetConditionMask;
+
+  // Function used to query operating system version: initialised to
+  // VerifyVersionInfo API function if available, undefined otherwise.
+  VerifyVersionInfo: TVerifyVersionInfo;
+
+var
+  // Internal variables recording version information.
+  // When using the GetVersionEx API function to get version information these
+  // variables have the same value as the similarly named Win32XXX function in
+  // SysUtils. When the old API funtion aren't being used these value *may* vary
+  // from the SysUtils versions.
+  InternalPlatform: Integer = 0;
+  InternalMajorVersion: LongWord = 0;
+  InternalMinorVersion: LongWord = 0;
+  InternalBuildNumber: Integer = 0;
+  InternalCSDVersion: string = '';
+  // Internal variable recording processor architecture information
+  InternalProcessorArchitecture: Word = 0;
 
 // Flag required when opening registry with specified access flags
 {$IFDEF REGACCESSFLAGS}
@@ -896,65 +1153,117 @@ const
   KEY_WOW64_64KEY = $0100;  // registry access flag not defined in all Delphis
 {$ENDIF}
 
+// Tests Windows version (major, minor, service pack major & service pack minor)
+// against the given values using the given comparison condition and return
+// True if the given version matches the current one or False if not
+// Assumes VerifyVersionInfo API function is available
+// Adapted from code from VersionHelpers.pas
+// by Achim Kalwa <delphi@achim-kalwa.de> 2014-01-05
+function TestWindowsVersion(wMajorVersion, wMinorVersion,
+  wServicePackMajor, wServicePackMinor: Word; Condition: Byte): Boolean;
+var
+  OSVI: TOSVersionInfoEx;
+  POSVI: POSVersionInfoEx;
+  ConditionalMask: UInt64;
+begin
+  Assert(Assigned(VerSetConditionMask) and Assigned(VerifyVersionInfo));
+  FillChar(OSVI, SizeOf(OSVI), 0);
+  OSVI.dwOSVersionInfoSize := SizeOf(OSVI);
+  OSVI.dwMajorVersion := wMajorVersion;
+  OSVI.dwMinorVersion := wMinorVersion;
+  OSVI.wServicePackMajor := wServicePackMajor;
+  OSVI.wServicePackMinor := wServicePackMinor;
+  POSVI := @OSVI;
+  ConditionalMask :=
+    VerSetConditionMask(
+      VerSetConditionMask(
+        VerSetConditionMask(
+          VerSetConditionMask(
+            0,
+            VER_MAJORVERSION,
+            Condition
+          ),
+          VER_MINORVERSION,
+          Condition
+        ),
+        VER_SERVICEPACKMAJOR,
+        Condition
+      ),
+      VER_SERVICEPACKMINOR,
+      Condition
+    );
+  Result := VerifyVersionInfo(
+    POSVI,
+    VER_MAJORVERSION or VER_MINORVERSION
+      or VER_SERVICEPACKMAJOR or VER_SERVICEPACKMINOR,
+    ConditionalMask
+  );
+end;
+
+// Checks if the OS has the given product type.
+// Assumes VerifyVersionInfo API function is available
+function IsWindowsProductType(ProductType: Byte): Boolean;
+var
+  ConditionalMask: UInt64;
+  OSVI: TOSVersionInfoEx;
+  POSVI: POSVersionInfoEx;
+begin
+  FillChar(OSVI, SizeOf(OSVI), 0);
+  OSVI.dwOSVersionInfoSize := SizeOf(OSVI);
+  OSVI.wProductType := ProductType;
+  POSVI := @OSVI;
+  ConditionalMask := VerSetConditionMask(0, VER_PRODUCT_TYPE, VER_EQUAL);
+  Result := VerifyVersionInfo(POSVI, VER_PRODUCT_TYPE, ConditionalMask);
+end;
+
+// Checks if we are to use the GetVersionEx API function to get version
+// information. (GetVersionEx was deprecated in Windows 8.1).
+function UseGetVersionAPI: Boolean;
+
+  // Checks if the current OS major and minor version is strictly less than the
+  // given major and minor version numbers
+  function TestOSLT(Major, Minor: LongWord): Boolean;
+  begin
+    Result := Assigned(VerSetConditionMask) and Assigned(VerifyVersionInfo)
+      and TestWindowsVersion(Major, Minor, 0, 0, VER_LESS);
+  end;
+
+begin
+  {$IFNDEF DEBUG_NEW_API}
+  // Production code uses GetVersionEx if OS earlier than Windows 8.1
+  Result := TestOSLT(6, 3);
+  {$ELSE}
+  // Debug code uses GetVersionEx if OS earlier than Windows Vista
+  Result := TestOSLT(6, 0);
+  {$ENDIF}
+end;
+
+// Gets Windows version by probing for possible versions using
+procedure NewGetVersion(out Major, Minor: LongWord; out SPMajor, SPMinor: Word);
+begin
+  Major := 6;   // lowest version to use this code has major version 6
+  Minor := High(LongWord);
+  SPMajor := High(Word);
+  SPMinor := High(Word);
+  while TestWindowsVersion(Major, Minor, SPMajor, SPMinor, VER_GREATER) do
+    Inc(Major);
+  Minor := 0;
+  while TestWindowsVersion(Major, Minor, SPMajor, SPMinor, VER_GREATER) do
+    Inc(Minor);
+  SPMajor := 0;
+  while TestWindowsVersion(Major, Minor, SPMajor, SPMinor, VER_GREATER) do
+    Inc(SPMajor);
+  SPMinor := 0;
+  while TestWindowsVersion(Major, Minor, SPMajor, SPMinor, VER_GREATER) do
+    Inc(SPMinor);
+end;
+
 // Loads a function from the OS kernel.
 function LoadKernelFunc(const FuncName: string): Pointer;
 const
   cKernel = 'kernel32.dll'; // kernel DLL
 begin
   Result := GetProcAddress(GetModuleHandle(cKernel), PChar(FuncName));
-end;
-
-// Initialise global variables with extended OS version information if possible.
-procedure InitPlatformIdEx;
-type
-  // Function type of the GetProductInfo API function
-  TGetProductInfo = function(OSMajor, OSMinor, SPMajor, SPMinor: DWORD;
-    out ProductType: DWORD): BOOL; stdcall;
-var
-  OSVI: TOSVersionInfoEx;           // extended OS version info structure
-  POSVI: POSVersionInfo;            // pointer to OS version info structure
-  GetProductInfo: TGetProductInfo;  // pointer to GetProductInfo API function
-  SI: TSystemInfo;                  // structure from GetSystemInfo API call
-begin
-  // Clear the structure
-  FillChar(OSVI, SizeOf(OSVI), 0);
-  // Get pointer to structure of non-extended type (GetVersionEx
-  // requires a non-extended structure and we need this pointer to get
-  // it to accept our extended structure!!)
-  {$TYPEDADDRESS OFF}
-  POSVI := @OSVI;
-  {$TYPEDADDRESS ON}
-  // Try to get exended information
-  OSVI.dwOSVersionInfoSize := SizeOf(TOSVersionInfoEx);
-  Win32HaveExInfo := GetVersionEx(POSVI^);
-  if Win32HaveExInfo then
-  begin
-    // We have extended info: store details in global vars
-    Win32ServicePackMajor := OSVI.wServicePackMajor;
-    Win32ServicePackMinor := OSVI.wServicePackMinor;
-    Win32SuiteMask := OSVI.wSuiteMask;
-    Win32ProductType := OSVI.wProductType;
-    // Try to get product info
-    GetProductInfo := LoadKernelFunc('GetProductInfo');
-    Win32HaveProductInfo := Assigned(GetProductInfo);
-    if Win32HaveProductInfo then
-    begin
-      if not GetProductInfo(
-        Win32MajorVersion, Win32MinorVersion,
-        Win32ServicePackMajor, Win32ServicePackMinor,
-        Win32ProductInfo
-      ) then
-        Win32ProductInfo := PRODUCT_UNDEFINED;
-    end;
-  end;
-  // Set GetSystemInfoFn to GetNativeSystemInfo() API if available, otherwise
-  // use GetSystemInfo().
-  GetSystemInfoFn := LoadKernelFunc('GetNativeSystemInfo');
-  if not Assigned(GetSystemInfoFn) then
-    GetSystemInfoFn := GetSystemInfo;
-  GetSystemInfoFn(SI);
-  // Get processor architecture
-  pvtProcessorArchitecture := SI.wProcessorArchitecture;
 end;
 
 {$IFNDEF EXCLUDETRAILING}
@@ -971,7 +1280,7 @@ end;
 // Returns the value of the given environment variable.
 function GetEnvVar(const VarName: string): string;
 var
-  BufSize: Integer;  // size (in chars) of value + terminal #0
+  BufSize: Integer;
 begin
   BufSize := GetEnvironmentVariable(PChar(VarName), nil, 0);
   if BufSize > 0 then
@@ -983,16 +1292,16 @@ begin
     Result := '';
 end;
 
-// Checks if host OS is Windows 2000 or earlier, included any Win9x OS.
+// Checks if host OS is Windows 2000 or earlier, including any Win9x OS.
 // This is a helper function for RegCreate and RegOpenKeyReadOnly and avoids
 // avoids using TPJOSInfo to ensure that an infinite loop is not set up with
 // TPJOSInfo calling back into RegCreate.
 function IsWin2000OrEarlier: Boolean;
 begin
-  // NOTE: all Win9x OSs have Win32MajorVersion < 5, so we don't need to check
-  // platform.
-  Result := (Win32MajorVersion < 5) or
-    ((Win32MajorVersion = 5) and (Win32MinorVersion = 0));
+  // NOTE: all Win9x OSs have InternalMajorVersion < 5, so we don't need to
+  // check platform.
+  Result := (InternalMajorVersion < 5) or
+    ((InternalMajorVersion = 5) and (InternalMinorVersion = 0));
 end;
 
 // Creates a read only TRegistry instance. On versions of Delphi or OSs that
@@ -1016,18 +1325,6 @@ end;
 // Uses registry object to open a key as read only. On versions of Delphi that
 // can't open keys as read only the key is opened normally.
 function RegOpenKeyReadOnly(const Reg: TRegistry; const Key: string): Boolean;
-
-  // Opens registry key using TRegistry.OpenKeyReadOnly if supported, otherwise
-  // uses TRegistry.OpenKey.
-  function TryOpenKeyReadOnly: Boolean;
-  begin
-    {$IFDEF REGOPENREADONLY}
-    Result := Reg.OpenKeyReadOnly(Key);
-    {$ELSE}
-    Result := Reg.OpenKey(Key, False);
-    {$ENDIF}
-  end;
-
 begin
   {$IFDEF REGACCESSFLAGS}
   //! Fix for problem with OpenKeyReadOnly on 64 bit Windows requires Reg has
@@ -1035,13 +1332,13 @@ begin
   //! Even though these flags aren't provided on Windows 2000 and earlier, the
   //! following code should still work
   if IsWin2000OrEarlier then
-    Result := TryOpenKeyReadOnly
+    Result := Reg.OpenKeyReadOnly(Key)
   else
     Result := Reg.OpenKey(Key, False);
   {$ELSE}
   // Can't fix Win 64 problem since this version of Delphi does not support
   // customisation of registry access flags.
-  Result := TryOpenKeyReadOnly;
+  Result := Reg.OpenKeyReadOnly(Key);
   {$ENDIF}
 end;
 
@@ -1059,8 +1356,7 @@ begin
   try
     Reg.RootKey := RootKey;
     // Open registry key and check value exists
-    if RegOpenKeyReadOnly(Reg, SubKey)
-      and Reg.ValueExists(Name) then
+    if RegOpenKeyReadOnly(Reg, SubKey) and Reg.ValueExists(Name) then
     begin
       // Check if registry value is string or integer
       Reg.GetDataInfo(Name, ValueInfo);
@@ -1093,11 +1389,178 @@ begin
   Result := GetRegistryString(HKEY_LOCAL_MACHINE, cWdwCurrentVer, ValName);
 end;
 
+// Reads build number from registry for NT OSs only.
+function GetNTBuildNumberFromReg: LongWord;
+var
+  BuildStr: string;
+begin
+  BuildStr := GetRegistryString(
+    HKEY_LOCAL_MACHINE, CurrentVersionRegKeys[True], 'CurrentBuildNumber'
+  );
+  Result := StrToIntDef(BuildStr, 0);
+  if Result <> 0 then
+    Exit;
+  BuildStr := GetRegistryString(
+    HKEY_LOCAL_MACHINE, CurrentVersionRegKeys[True], 'CurrentBuild'
+  );
+  Result := StrToIntDef(BuildStr, 0);
+end;
+
+// Initialise global variables with extended OS version information if possible.
+procedure InitPlatformIdEx;
+
+type
+  // Function type of the GetProductInfo API function
+  TGetProductInfo = function(OSMajor, OSMinor, SPMajor, SPMinor: DWORD;
+    out ProductType: DWORD): BOOL; stdcall;
+  // Function type of the GetVersionEx API function
+  TGetVersionEx = function(var lpVersionInformation: TOSVersionInfoEx): BOOL;
+    stdcall;
+var
+  OSVI: TOSVersionInfoEx;           // extended OS version info structure
+  GetVersionEx: TGetVersionEx;      // pointer to GetVersionEx API function
+  GetProductInfo: TGetProductInfo;  // pointer to GetProductInfo API function
+  SI: TSystemInfo;                  // structure from GetSystemInfo API call
+begin
+  // Load version query functions used externally to this routine
+  VerSetConditionMask := LoadKernelFunc('VerSetConditionMask');
+  {$IFDEF UNICODE}
+  VerifyVersionInfo := LoadKernelFunc('VerifyVersionInfoW');
+  {$ELSE}
+  VerifyVersionInfo := LoadKernelFunc('VerifyVersionInfoA');
+  {$ENDIF}
+
+  if not UseGetVersionAPI then
+  begin
+    // Not using GetVersion and GetVersionEx functions to get version info
+    InternalMajorVersion := 0;
+    InternalMinorVersion := 0;
+    InternalBuildNumber := 0;
+    InternalCSDVersion := '';
+    Win32ServicePackMajor := 0;
+    Win32ServicePackMinor := 0;
+    // we don't use suite mask any more!
+    Win32SuiteMask := 0;
+    // platform for all OSs tested for this way are NT: the NewGetVersion calls
+    // below indirectly call VerifyVersionInfo API, which is only defined for
+    // Windows 2000 and later.
+    InternalPlatform := VER_PLATFORM_WIN32_NT;
+    Win32HaveExInfo := True;
+    NewGetVersion(
+      InternalMajorVersion, InternalMinorVersion,
+      Win32ServicePackMajor, Win32ServicePackMinor
+    );
+    if Win32ServicePackMajor > 0 then
+      // tried to read this info from registry, but for some weird reason the
+      // required value is reported as not existant by TRegistry, even though it
+      // is present in registry
+      InternalCSDVersion := Format('Service Pack %d', [Win32ServicePackMajor]);
+    // NOTE: It's going to be very slow to test for all possible build numbers,
+    // so I've just hard wired them using the information at
+    // http://en.wikipedia.org/wiki/Windows_NT
+    case InternalMajorVersion of
+      6:
+      begin
+        case InternalMinorVersion of
+          {$IFDEF DEBUG_NEW_API}
+          0:
+            InternalBuildNumber := 6000 + Win32ServicePackMajor; // Vista
+          1:
+            InternalBuildNumber := 7600 + Win32ServicePackMajor; // Windows 7
+          2:
+            if Win32ServicePackMajor = 0 then
+              InternalBuildNumber := 9200;  // Windows 8 (no known SPs)
+          {$ENDIF}
+          3:
+            if Win32ServicePackMajor = 0 then
+              InternalBuildNumber := 9600;  // Windows 8.1 (no known SPs)
+        end;
+      end
+    end;
+    // Failed to "guess" at build number: get it from registry
+    if InternalBuildNumber = 0 then
+      InternalBuildNumber := GetNTBuildNumberFromReg;
+
+    // Test possible product types to see which one we have
+    if IsWindowsProductType(VER_NT_WORKSTATION) then
+      Win32ProductType := VER_NT_WORKSTATION
+    else if IsWindowsProductType(VER_NT_DOMAIN_CONTROLLER) then
+      Win32ProductType := VER_NT_DOMAIN_CONTROLLER
+    else if IsWindowsProductType(VER_NT_SERVER) then
+      Win32ProductType := VER_NT_SERVER
+    else
+      Win32ProductType := 0;
+  end
+  else
+  begin
+    // Get internal OS version information from SysUtils.Win32XXX routines,
+    // which in turn gets it from GetVersion or GetVersionEx API call in
+    // SysUtils.
+    InternalPlatform := Win32Platform;
+    InternalMajorVersion := Win32MajorVersion;
+    InternalMinorVersion := Win32MinorVersion;
+    InternalBuildNumber := Win32BuildNumber;
+    InternalCSDVersion := Win32CSDVersion;
+    // Try to get extended information
+    {$IFDEF UNICODE}
+    GetVersionEx := LoadKernelFunc('GetVersionExW');
+    {$ELSE}
+    GetVersionEx := LoadKernelFunc('GetVersionExA');
+    {$ENDIF}
+    FillChar(OSVI, SizeOf(OSVI), 0);
+    OSVI.dwOSVersionInfoSize := SizeOf(TOSVersionInfoEx);
+    Win32HaveExInfo := GetVersionEx(OSVI);
+    if Win32HaveExInfo then
+    begin
+      // We have extended info: store details in global vars
+      Win32ServicePackMajor := OSVI.wServicePackMajor;
+      Win32ServicePackMinor := OSVI.wServicePackMinor;
+      Win32SuiteMask := OSVI.wSuiteMask;
+      Win32ProductType := OSVI.wProductType;
+    end;
+  end;
+
+  Win32PlatformEx := InternalPlatform;
+  Win32MajorVersionEx := InternalMajorVersion;
+  Win32MinorVersionEx := InternalMinorVersion;
+  Win32BuildNumberEx := InternalBuildNumber;
+  Win32CSDVersionEx := InternalCSDVersion;
+
+  // Try to get product info (API introduced with Windows Vista)
+  GetProductInfo := LoadKernelFunc('GetProductInfo');
+  Win32HaveProductInfo := Assigned(GetProductInfo);
+  if Win32HaveProductInfo then
+  begin
+    if not GetProductInfo(
+      InternalMajorVersion, InternalMinorVersion,
+      Win32ServicePackMajor, Win32ServicePackMinor,
+      Win32ProductInfo
+    ) then
+      Win32ProductInfo := PRODUCT_UNDEFINED;
+  end
+  else
+    Win32ProductInfo := PRODUCT_UNDEFINED;
+
+  // Set GetSystemInfoFn to GetNativeSystemInfo() API if available, otherwise
+  // use GetSystemInfo().
+  GetSystemInfoFn := LoadKernelFunc('GetNativeSystemInfo');
+  if not Assigned(GetSystemInfoFn) then
+    GetSystemInfoFn := GetSystemInfo;
+  GetSystemInfoFn(SI);
+  // Get processor architecture
+  InternalProcessorArchitecture := SI.wProcessorArchitecture;
+end;
+
 { TPJOSInfo }
 
 class function TPJOSInfo.BuildNumber: Integer;
 begin
-  Result := Win32BuildNumber;
+  Result := InternalBuildNumber;
+end;
+
+class function TPJOSInfo.CanSpoof: Boolean;
+begin
+  Result := UseGetVersionAPI;
 end;
 
 class function TPJOSInfo.CheckSuite(const Suite: Integer): Boolean;
@@ -1151,31 +1614,32 @@ begin
   case Product of
     osWinVista, osWinSvr2008,
     osWin7, osWinSvr2008R2,
-    osWin8, osWinSvr2012:
+    osWin8, osWinSvr2012,
+    osWin8Point1, osWinSvr2012R2:
     begin
       // For v6.0 and later we ignore the suite mask and use the new
       // PRODUCT_ flags from the GetProductInfo() function to determine the
       // edition
       Result := EditionFromProductInfo;
       // append 64-bit if 64 bit system
-      if pvtProcessorArchitecture = PROCESSOR_ARCHITECTURE_AMD64 then
+      if InternalProcessorArchitecture = PROCESSOR_ARCHITECTURE_AMD64 then
         Result := Result + ' (64-bit)';
       // can detect 32-bit if required by checking if
-      // pvtProcessorArchitecture = PROCESSOR_ARCHITECTURE_INTEL
+      // InternalProcessorArchitecture = PROCESSOR_ARCHITECTURE_INTEL
     end;
     osWinSvr2003, osWinSvr2003R2:
     begin
       // We check different processor architectures and act accordingly
       // This code closely based on MS's sample code found at
       // http://msdn2.microsoft.com/en-us/library/ms724429
-      if pvtProcessorArchitecture = PROCESSOR_ARCHITECTURE_IA64 then
+      if InternalProcessorArchitecture = PROCESSOR_ARCHITECTURE_IA64 then
       begin
         if CheckSuite(VER_SUITE_DATACENTER) then
           Result := 'Datacenter Edition for Itanium-based Systems'
         else if CheckSuite(VER_SUITE_ENTERPRISE) then
           Result := 'Enterprise Edition for Itanium-based Systems';
       end
-      else if (pvtProcessorArchitecture = PROCESSOR_ARCHITECTURE_AMD64) then
+      else if InternalProcessorArchitecture = PROCESSOR_ARCHITECTURE_AMD64 then
       begin
         if CheckSuite(VER_SUITE_DATACENTER) then
           Result := 'Datacenter x64 Edition'
@@ -1186,7 +1650,9 @@ begin
       end
       else
       begin
-        if CheckSuite(VER_SUITE_COMPUTE_SERVER) then
+        if CheckSuite(VER_SUITE_WH_SERVER) then
+          Result := 'Home Server'
+        else if CheckSuite(VER_SUITE_COMPUTE_SERVER) then
           Result := 'Compute Cluster Edition'
         else if CheckSuite(VER_SUITE_DATACENTER) then
           Result := 'Datacenter Edition'
@@ -1197,7 +1663,7 @@ begin
         // According to MSDN we can't rely on VER_SUITE_SMALLBUSINESS since it
         // is not removed when upgrading to standard or enterprises editions.
         // When installing Small Business edition both VER_SUITE_SMALLBUSINESS
-        // and VER_SUITE_SMALLBUSINESS_RESTRICTED are set. When installed
+        // and VER_SUITE_SMALLBUSINESS_RESTRICTED are set. When installing
         // standard edition VER_SUITE_SMALLBUSINESS_RESTRICTED gets unset while
         // VER_SUITE_SMALLBUSINESS remains. So, we first check for the
         // Enterprise edition and exclude Small Business if we find that.
@@ -1218,9 +1684,9 @@ begin
     begin
       if GetSystemMetrics(SM_STARTER) <> 0 then
         Result := 'Starter Edition'
-      else if (Win32MajorVersion = 5) and (Win32MinorVersion = 2) and
+      else if (InternalMajorVersion = 5) and (InternalMinorVersion = 2) and
         not IsServer and  // XP Pro 64 has version 5.2 not 5.1!
-        (pvtProcessorArchitecture = PROCESSOR_ARCHITECTURE_AMD64) then
+        (InternalProcessorArchitecture = PROCESSOR_ARCHITECTURE_AMD64) then
         Result := 'Professional x64 Edition'
       else if CheckSuite(VER_SUITE_PERSONAL) then
         Result := 'Home Edition'
@@ -1290,13 +1756,32 @@ begin
   else if CompareText(EditionCode, 'SERVERNT') = 0 then
     Result := 'Advanced Server';
   Result := Result + Format(
-    ' %d.%d', [Win32MajorVersion, Win32MinorVersion]
+    ' %d.%d', [InternalMajorVersion, InternalMinorVersion]
   );
 end;
 
 class function TPJOSInfo.HasPenExtensions: Boolean;
 begin
   Result := GetSystemMetrics(SM_PENWINDOWS) <> 0;
+end;
+
+class function TPJOSInfo.InstallationDate: TDateTime;
+var
+  DateStr: string;
+  UnixDate: LongWord;
+const
+  UnixStartDate: TDateTime = 25569.0; // 1970/01/01
+begin
+  DateStr := GetRegistryString(
+    HKEY_LOCAL_MACHINE, CurrentVersionRegKeys[IsWinNT], 'InstallDate'
+  );
+  Result := 0.0;
+  if DateStr = '' then
+    Exit;
+  UnixDate := StrToIntDef(DateStr, 0);
+  if UnixDate = 0 then
+    Exit;
+  Result := (UnixDate / 86400) + UnixStartDate
 end;
 
 class function TPJOSInfo.IsMediaCenter: Boolean;
@@ -1309,8 +1794,8 @@ var
   Reg: TRegistry; // registry access object
 begin
   if (Product = osWinNT)
-    and (Win32MajorVersion = 4)
-    and (CompareText(Win32CSDVersion, 'Service Pack 6') = 0) then
+    and (InternalMajorVersion = 4)
+    and (CompareText(InternalCSDVersion, 'Service Pack 6') = 0) then
   begin
     // System is reporting NT4 SP6
     // we have SP 6a if particular registry key exists
@@ -1327,6 +1812,130 @@ begin
   else
     // System not reporting NT4 SP6, so not SP6a!
     Result := False;
+end;
+
+class function TPJOSInfo.IsReallyWindows2000OrGreater: Boolean;
+begin
+  Result := IsReallyWindowsVersionOrGreater(
+    HiByte(_WIN32_WINNT_WIN2K), LoByte(_WIN32_WINNT_WIN2K), 0
+  );
+end;
+
+class function TPJOSInfo.IsReallyWindows2000SP1OrGreater: Boolean;
+begin
+  Result := IsReallyWindowsVersionOrGreater(
+    HiByte(_WIN32_WINNT_WIN2K), LoByte(_WIN32_WINNT_WIN2K), 1
+  );
+end;
+
+class function TPJOSInfo.IsReallyWindows2000SP2OrGreater: Boolean;
+begin
+  Result := IsReallyWindowsVersionOrGreater(
+    HiByte(_WIN32_WINNT_WIN2K), LoByte(_WIN32_WINNT_WIN2K), 2
+  );
+end;
+
+class function TPJOSInfo.IsReallyWindows2000SP3OrGreater: Boolean;
+begin
+  Result := IsReallyWindowsVersionOrGreater(
+    HiByte(_WIN32_WINNT_WIN2K), LoByte(_WIN32_WINNT_WIN2K), 3
+  );
+end;
+
+class function TPJOSInfo.IsReallyWindows2000SP4OrGreater: Boolean;
+begin
+  Result := IsReallyWindowsVersionOrGreater(
+    HiByte(_WIN32_WINNT_WIN2K), LoByte(_WIN32_WINNT_WIN2K), 4
+  );
+end;
+
+class function TPJOSInfo.IsReallyWindows7OrGreater: Boolean;
+begin
+  Result := IsReallyWindowsVersionOrGreater(
+    HiByte(_WIN32_WINNT_WIN7), LoByte(_WIN32_WINNT_WIN7), 0
+  );
+end;
+
+class function TPJOSInfo.IsReallyWindows7SP1OrGreater: Boolean;
+begin
+  Result := IsReallyWindowsVersionOrGreater(
+    HiByte(_WIN32_WINNT_WIN7), LoByte(_WIN32_WINNT_WIN7), 1
+  );
+end;
+
+class function TPJOSInfo.IsReallyWindows8OrGreater: Boolean;
+begin
+  Result := IsReallyWindowsVersionOrGreater(
+    HiByte(_WIN32_WINNT_WIN8), LoByte(_WIN32_WINNT_WIN8), 0
+  );
+end;
+
+class function TPJOSInfo.IsReallyWindows8Point1OrGreater: Boolean;
+begin
+  Result := IsReallyWindowsVersionOrGreater(
+    HiByte(_WIN32_WINNT_WINBLUE), LoByte(_WIN32_WINNT_WINBLUE), 0
+  );
+end;
+
+class function TPJOSInfo.IsReallyWindowsVersionOrGreater(MajorVersion,
+  MinorVersion, ServicePackMajor: Word): Boolean;
+begin
+  Assert(MajorVersion >= HiByte(_WIN32_WINNT_WIN2K));
+  if Assigned(VerSetConditionMask) and Assigned(VerifyVersionInfo) then
+    Result := TestWindowsVersion(
+      MajorVersion, MinorVersion, ServicePackMajor, 0, VER_GREATER_EQUAL
+    )
+  else
+    Result := False;
+end;
+
+class function TPJOSInfo.IsReallyWindowsVistaOrGreater: Boolean;
+begin
+  Result := IsReallyWindowsVersionOrGreater(
+    HiByte(_WIN32_WINNT_VISTA), LoByte(_WIN32_WINNT_VISTA), 0
+  );
+end;
+
+class function TPJOSInfo.IsReallyWindowsVistaSP1OrGreater: Boolean;
+begin
+  Result := IsReallyWindowsVersionOrGreater(
+    HiByte(_WIN32_WINNT_VISTA), LoByte(_WIN32_WINNT_VISTA), 1
+  );
+end;
+
+class function TPJOSInfo.IsReallyWindowsVistaSP2OrGreater: Boolean;
+begin
+  Result := IsReallyWindowsVersionOrGreater(
+    HiByte(_WIN32_WINNT_VISTA), LoByte(_WIN32_WINNT_VISTA), 2
+  );
+end;
+
+class function TPJOSInfo.IsReallyWindowsXPOrGreater: Boolean;
+begin
+  Result := IsReallyWindowsVersionOrGreater(
+    HiByte(_WIN32_WINNT_WINXP), LoByte(_WIN32_WINNT_WINXP), 0
+  );
+end;
+
+class function TPJOSInfo.IsReallyWindowsXPSP1OrGreater: Boolean;
+begin
+  Result := IsReallyWindowsVersionOrGreater(
+    HiByte(_WIN32_WINNT_WINXP), LoByte(_WIN32_WINNT_WINXP), 1
+  );
+end;
+
+class function TPJOSInfo.IsReallyWindowsXPSP2OrGreater: Boolean;
+begin
+  Result := IsReallyWindowsVersionOrGreater(
+    HiByte(_WIN32_WINNT_WINXP), LoByte(_WIN32_WINNT_WINXP), 2
+  );
+end;
+
+class function TPJOSInfo.IsReallyWindowsXPSP3OrGreater: Boolean;
+begin
+  Result := IsReallyWindowsVersionOrGreater(
+    HiByte(_WIN32_WINNT_WINXP), LoByte(_WIN32_WINNT_WINXP), 3
+  );
 end;
 
 class function TPJOSInfo.IsRemoteSession: Boolean;
@@ -1357,6 +1966,23 @@ end;
 class function TPJOSInfo.IsWin9x: Boolean;
 begin
   Result := Platform = ospWin9x;
+end;
+
+class function TPJOSInfo.IsWindowsServer: Boolean;
+var
+  OSVI: TOSVersionInfoEx;
+  ConditionMask: UInt64;
+begin
+  if Assigned(VerSetConditionMask) and Assigned(VerifyVersionInfo) then
+  begin
+    FillChar(OSVI, SizeOf(OSVI), 0);
+    OSVI.dwOSVersionInfoSize := SizeOf(OSVI);
+    OSVI.wProductType := VER_NT_WORKSTATION;
+    ConditionMask := VerSetConditionMask(0, VER_PRODUCT_TYPE, VER_EQUAL);
+    Result := not VerifyVersionInfo(@OSVI, VER_PRODUCT_TYPE, ConditionMask);
+  end
+  else
+    Result := IsServer;
 end;
 
 class function TPJOSInfo.IsWinNT: Boolean;
@@ -1391,17 +2017,17 @@ end;
 
 class function TPJOSInfo.MajorVersion: Integer;
 begin
-  Result := Win32MajorVersion;
+  Result := InternalMajorVersion;
 end;
 
 class function TPJOSInfo.MinorVersion: Integer;
 begin
-  Result := Win32MinorVersion;
+  Result := InternalMinorVersion;
 end;
 
 class function TPJOSInfo.Platform: TPJOSPlatform;
 begin
-  case Win32Platform of
+  case InternalPlatform of
     VER_PLATFORM_WIN32_NT: Result := ospWinNT;
     VER_PLATFORM_WIN32_WINDOWS: Result := ospWin9x;
     VER_PLATFORM_WIN32s: Result := ospWin32s;
@@ -1417,10 +2043,10 @@ begin
     begin
       // Win 9x platform: only major version is 4
       Result := osUnknownWin9x;
-      case Win32MajorVersion of
+      case InternalMajorVersion of
         4:
         begin
-          case Win32MinorVersion of
+          case InternalMinorVersion of
             0: Result := osWin95;
             10: Result := osWin98;
             90: Result := osWinMe;
@@ -1432,18 +2058,18 @@ begin
     begin
       // NT platform OS
       Result := osUnknownWinNT;
-      case Win32MajorVersion of
+      case InternalMajorVersion of
         3, 4:
         begin
           // NT 3 or 4
-          case Win32MinorVersion of
+          case InternalMinorVersion of
             0: Result := osWinNT;
           end;
         end;
         5:
         begin
           // Windows 2000 or XP
-          case Win32MinorVersion of
+          case InternalMinorVersion of
             0:
               Result := osWin2K;
             1:
@@ -1455,7 +2081,8 @@ begin
               else
               begin
                 if not IsServer and
-                  (pvtProcessorArchitecture = PROCESSOR_ARCHITECTURE_AMD64) then
+                  (InternalProcessorArchitecture
+                    = PROCESSOR_ARCHITECTURE_AMD64) then
                   Result := osWinXP // XP Pro X64
                 else
                   Result := osWinSvr2003
@@ -1465,7 +2092,7 @@ begin
         end;
         6:
         begin
-          case Win32MinorVersion of
+          case InternalMinorVersion of
             0:
               if not IsServer then
                 Result := osWinVista
@@ -1481,6 +2108,16 @@ begin
                 Result := osWin8
               else
                 Result := osWinSvr2012;
+            3:
+              // NOTE: Version 6.3 may only be reported by Windows if the
+              // application is "manifested" for Windows 8.1. See
+              // http://bit.ly/MJSO8Q. I'm not clear whether getting the OS
+              // via VerifyVersionInfo instead of GetVersion or GetVersionEx
+              // works round this
+              if not IsServer then
+                Result := osWin8Point1
+              else
+                Result := osWinSvr2012R2;
             else
               // Higher minor version: must be an unknown later OS
               Result := osWinLater
@@ -1519,12 +2156,14 @@ begin
     osWinSvr2003: Result := 'Windows Server 2003';
     osWinSvr2003R2: Result := 'Windows Server 2003 R2';
     osWinLater: Result := Format(
-      'Windows Version %d.%d', [Win32MajorVersion, Win32MinorVersion]
+      'Windows Version %d.%d', [InternalMajorVersion, InternalMinorVersion]
     );
     osWin7: Result := 'Windows 7';
     osWinSvr2008R2: Result := 'Windows Server 2008 R2';
     osWin8: Result := 'Windows 8';
     osWinSvr2012: Result := 'Windows Server 2012';
+    osWin8Point1: Result := 'Windows 8.1';
+    osWinSvr2012R2: Result := 'Windows Server 2012 R2';
     else
       raise EPJSysInfo.Create(sUnknownProduct);
   end;
@@ -1560,21 +2199,21 @@ begin
   case Platform of
     ospWin9x:
       // On the Windows 9x platform we decode the service pack info
-      if Win32CSDVersion <> '' then
+      if InternalCSDVersion <> '' then
       begin
         case Product of
           osWin95:
             {$IFDEF UNICODE}
-            if CharInSet(Win32CSDVersion[1], ['B', 'b', 'C', 'c']) then
+            if CharInSet(InternalCSDVersion[1], ['B', 'b', 'C', 'c']) then
             {$ELSE}
-            if Win32CSDVersion[1] in ['B', 'b', 'C', 'c'] then
+            if InternalCSDVersion[1] in ['B', 'b', 'C', 'c'] then
             {$ENDIF}
               Result := 'OSR2';
           osWin98:
             {$IFDEF UNICODE}
-            if CharInSet(Win32CSDVersion[1], ['A', 'a']) then
+            if CharInSet(InternalCSDVersion[1], ['A', 'a']) then
             {$ELSE}
-            if Win32CSDVersion[1] in ['A', 'a'] then
+            if InternalCSDVersion[1] in ['A', 'a'] then
             {$ENDIF}
               Result := 'SE';
         end;
@@ -1585,7 +2224,7 @@ begin
       if IsNT4SP6a then
         Result := 'Service Pack 6a' // do not localize
       else
-        Result := Win32CSDVersion;
+        Result := InternalCSDVersion;
   end;
 end;
 
@@ -1804,7 +2443,7 @@ end;
 
 class function TPJComputerInfo.Processor: TPJProcessorArchitecture;
 begin
-  case pvtProcessorArchitecture of
+  case InternalProcessorArchitecture of
     PROCESSOR_ARCHITECTURE_INTEL: Result := paX86;
     PROCESSOR_ARCHITECTURE_AMD64: Result := paX64;
     PROCESSOR_ARCHITECTURE_IA64:  Result := paIA64;
