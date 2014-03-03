@@ -396,6 +396,7 @@ uses
   CS.Utils.Dates in 'Main\CS.Utils.Dates.pas',
   CS.Utils.Hashes in 'Main\CS.Utils.Hashes.pas',
   CS.Utils.Sound in 'Main\CS.Utils.Sound.pas',
+  CS.UI.Frames.TagsEditor in 'Main\CS.UI.Frames.TagsEditor.pas' {TagsEditorFrame: TFrame},
   CS.Utils.COM in 'Main\CS.Utils.COM.pas';
 
 // Include resources

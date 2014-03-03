@@ -591,6 +591,10 @@
 			<DCCReference Include="Main\CS.Utils.Dates.pas"/>
 			<DCCReference Include="Main\CS.Utils.Hashes.pas"/>
 			<DCCReference Include="Main\CS.Utils.Sound.pas"/>
+			<DCCReference Include="Main\CS.UI.Frames.TagsEditor.pas">
+				<Form>TagsEditorFrame</Form>
+				<DesignClass>TFrame</DesignClass>
+			</DCCReference>
 			<DCCReference Include="Main\CS.Utils.COM.pas"/>
 			<None Include="CodeSnip.todo"/>
 			<BuildConfiguration Include="Base">

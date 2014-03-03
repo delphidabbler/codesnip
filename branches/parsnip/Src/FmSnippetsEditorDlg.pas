@@ -36,6 +36,7 @@ uses
   CS.Database.Types,
   CS.SourceCode.Languages,
   CS.UI.Frames.CodeEditor,
+  CS.UI.Frames.TagsEditor,
   CS.UI.Helper.CollectionCtrlKVMgr,
   Compilers.UGlobals,
   FmGenericOKDlg,
@@ -131,6 +132,8 @@ type
     miClearUnits: TMenuItem;
     miSpacer3: TMenuItem;
     frmSourceEditor: TCodeEditorFrame;
+    lblTags: TLabel;
+    frmTagsEditor: TTagsEditorFrame;
     procedure actAddUnitExecute(Sender: TObject);
     procedure actAddUnitUpdate(Sender: TObject);
     procedure actCompileExecute(Sender: TObject);
@@ -560,7 +563,10 @@ begin
   // tsCode
   frmSourceEditor.Width := tsCode.ClientWidth - 8;
   TCtrlArranger.AlignLefts(
-    [lblTitle, lblDescription, lblLanguages, lblSourceCode, frmSourceEditor],
+    [
+      lblTitle, lblDescription, lblLanguages, lblSourceCode, frmSourceEditor,
+      lblTags
+    ],
     3
   );
   TCtrlArranger.AlignRights([frmSourceEditor, btnViewDescription]);
@@ -579,8 +585,12 @@ begin
   TCtrlArranger.MoveToRightOf(cbLanguages, lblKind, 18);
   TCtrlArranger.MoveToRightOf(lblKind, cbKind, 12);
   TCtrlArranger.MoveToRightOf(cbKind, lblSnippetKindHelp, 6);
+  TCtrlArranger.MoveToRightOf(lblTags, frmTagsEditor, 8);
   TCtrlArranger.MoveBelow([lblLanguages, cbLanguages], lblSourceCode, 8);
   TCtrlArranger.MoveBelow(lblSourceCode, frmSourceEditor, 4);
+  TCtrlArranger.AlignTops(
+    [lblTags, frmTagsEditor], TCtrlArranger.BottomOf(frmSourceEditor, 8)
+  );
 
   // tsReferences
   clbDepends.Height := clbXRefs.Height;
@@ -860,6 +870,7 @@ begin
     frmNotes.DefaultEditMode := emAuto;
     frmNotes.ActiveText := fSnippet.Notes;
     fSnippetKindCBMgr.Select(fSnippet.KindID);
+    frmTagsEditor.Tags := fSnippet.Tags;
     // check required items in references check list boxes
     UpdateReferences;
     fDependsCLBMgr.CheckSnippets(fSnippet.RequiredSnippets);
@@ -883,6 +894,7 @@ begin
     fSnippetKindCBMgr.Select(skFreeForm);
     frmNotes.DefaultEditMode := emPlainText;
     frmNotes.Clear;
+    frmTagsEditor.Clear;
     UpdateReferences;
     fCompilersLBMgr.SetCompileResults(crQuery);
   end;
@@ -993,8 +1005,6 @@ begin
 end;
 
 procedure TSnippetsEditorDlg.UpdateSnippet(ASnippet: IEditableSnippet);
-var
-  Tags: ITagSet;
 begin
   ASnippet.Title := StrTrim(edTitle.Text);
   ASnippet.KindID := fSnippetKindCBMgr.GetSelected;
@@ -1002,17 +1012,7 @@ begin
   ASnippet.SourceCode := StrTrimRight(frmSourceEditor.SourceCode);
   ASnippet.LanguageID := fLanguageCBMgr.GetSelected;
   ASnippet.Notes := frmNotes.ActiveText;
-  // TODO: Permit user to set required tag(s)
-  // In this temporary code we preserve tags of an existing snippet and give
-  // an arbitrary "NEW" tag to new snippets.
-  if Assigned(fSnippet) then
-    ASnippet.Tags := TTagSet.Create(fSnippet.Tags)
-  else
-  begin
-    Tags := TTagSet.Create;
-    Tags.Add(TTag.Create('NEW'));
-    ASnippet.Tags := Tags;
-  end;
+  ASnippet.Tags := TTagSet.Create(frmTagsEditor.Tags);
   ASnippet.CompileResults := fCompilersLBMgr.GetCompileResults;
   ASnippet.RequiredModules := fUnitsCLBMgr.GetCheckedUnits;
   ASnippet.RequiredSnippets := fDependsCLBMgr.GetCheckedSnippets;

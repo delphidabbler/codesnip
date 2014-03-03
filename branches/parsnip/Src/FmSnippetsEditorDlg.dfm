@@ -11,14 +11,14 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
   TextHeight = 13
   inherited pnlBody: TPanel
     Width = 662
-    Height = 504
+    Height = 523
     ExplicitWidth = 662
-    ExplicitHeight = 504
+    ExplicitHeight = 523
     object pcMain: TPageControl
       Left = 0
       Top = 0
       Width = 662
-      Height = 504
+      Height = 523
       ActivePage = tsCode
       Align = alClient
       TabOrder = 0
@@ -80,6 +80,14 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
           Height = 13
           Caption = '&Title:'
           FocusControl = edTitle
+        end
+        object lblTags: TLabel
+          Left = 3
+          Top = 450
+          Width = 27
+          Height = 13
+          Caption = 'Ta&gs:'
+          FocusControl = frmTagsEditor
         end
         object cbLanguages: TComboBox
           Left = 93
@@ -146,11 +154,32 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
           Left = 0
           Top = 194
           Width = 652
-          Height = 250
+          Height = 249
           TabOrder = 5
           ExplicitTop = 194
           ExplicitWidth = 652
-          ExplicitHeight = 250
+          ExplicitHeight = 249
+        end
+        inline frmTagsEditor: TTagsEditorFrame
+          Left = 62
+          Top = 427
+          Width = 577
+          Height = 59
+          TabOrder = 6
+          ExplicitLeft = 62
+          ExplicitTop = 427
+          ExplicitWidth = 577
+          ExplicitHeight = 59
+          inherited sbTagEditors: TScrollBox
+            Width = 577
+            Height = 59
+            ExplicitWidth = 577
+            ExplicitHeight = 59
+            inherited pnlEditors: TPanel
+              Width = 577
+              ExplicitWidth = 577
+            end
+          end
         end
       end
       object tsReferences: TTabSheet
