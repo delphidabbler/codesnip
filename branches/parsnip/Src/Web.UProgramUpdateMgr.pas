@@ -140,12 +140,17 @@ end;
 class function TProgramUpdateMgr.ProgramEdition: string;
 begin
   // NOTE: CodeSnip 4 used 'standard' in the standard edition and 'portable' in
-  //       the portable edition. From CodeSnip 5 there was only one edition,
-  //       labelled by its major version number.
-  { TODO -cPRERELEASE: Change the following result to
-    Result := Format('%d', [TVersionInfo.ProductVerNum.V1]);
-    once the major version number in version information is changed to "5" }
-  Result := '5';
+  //       the portable edition. From CodeSnip 5 there is to be only one
+  //       edition, "main". Program update web service also needs to be updated
+  //       to take an update "stream" as well as an edition. We would then send
+  //       "v5" as stream and "main" as edition.
+
+  { TODO -cPRERELEASE: Change to pass required info for preview, beta or final
+                       release. }
+  if TCommandLineOpts.IsPortable then
+    Result := 'portable'
+  else
+    Result := 'standard';
 end;
 
 procedure TProgramUpdateMgr.SignOn(const Caller: string);
