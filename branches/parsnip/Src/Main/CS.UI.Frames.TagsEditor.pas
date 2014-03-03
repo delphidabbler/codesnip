@@ -1,6 +1,22 @@
+{
+ * This Source Code Form is subject to the terms of the Mozilla Public License,
+ * v. 2.0. If a copy of the MPL was not distributed with this file, You can
+ * obtain one at http://mozilla.org/MPL/2.0/
+ *
+ * Copyright (C) 2014, Peter Johnson (www.delphidabbler.com).
+ *
+ * $Rev$
+ * $Date$
+ *
+ * Implements a frame that is used to edit a snippet's tags.
+}
+
+
 unit CS.UI.Frames.TagsEditor;
 
+
 interface
+
 
 uses
   // Delphi
@@ -21,6 +37,7 @@ uses
   UComparers,
   UExceptions,
   UIStringList;
+
 
 type
   TAutoCompleteEditMgr = class(TObject)
@@ -64,7 +81,9 @@ type
 
   ETagsEditor = class(EDataEntry);
 
+
 implementation
+
 
 uses
   // Delphi
