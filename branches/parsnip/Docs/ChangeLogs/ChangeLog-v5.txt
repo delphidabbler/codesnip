@@ -3,7 +3,7 @@
 ; v. 2.0. If a copy of the MPL was not distributed with this file, You can
 ; obtain one at http://mozilla.org/MPL/2.0/
 ;
-; Copyright (C) 2013, Peter Johnson (www.delphidabbler.com).
+; Copyright (C) 2013-2014, Peter Johnson (www.delphidabbler.com).
 ;
 ; $Rev$
 ; $Date$
@@ -12,7 +12,7 @@
 ; ------------------------------------------------------------------------------
 
 Summary of changes in SVN parsnip branch up to REVISION 4497.
-Changes relate to v4.8.5 (#### may need to update this if new v4 release is merged in###)
+Changes relate to v4.8.6 (#### may need to update this if new v4 release is merged in###)
 + User interface changes:
   - The link used to edit the displayed snippet has been removed from the Detail pane and replaced by a glyph showing the snippet's level of testing. (### may need to change this in light of further redesigns###)
   - The overview pane now uses a drop-down list instead of tabs to select the required snippet.
