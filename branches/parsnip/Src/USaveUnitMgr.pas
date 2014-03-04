@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2006-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2006-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -155,7 +155,7 @@ begin
   Result := TIStringList.Create;
   Result.Add(sUserDescription);
   Result.Add('');
-  Result.Add(Format(sGenerated, [RFC1123DateStamp]));
+  Result.Add(Format(sGenerated, [TUTCDateTime.Now.ToRFC1123String]));
   Result.Add(
     Format(
       sGenerator, [TAppInfo.FullProgramName, TAppInfo.ProgramReleaseInfo]

@@ -45,6 +45,7 @@ type
     class function IsValidISO8601String(const Str: string): Boolean; static;
     function ToDateTime: TDateTime; inline;
     function ToISO8601String(const RoundToSec: Boolean = False): string;
+    function ToRFC1123String: string;
     function ToString(const AFormat: string): string; overload;
     function ToString(const AFormat: string;
       const AFormatSettings: TFormatSettings): string; overload;
@@ -60,11 +61,8 @@ type
 
   EUTCDateTime = class(Exception);
 
-// TODO: re-implement some of these routines in terms of TUTCDataTime.
-
-///  <summary>Creates a date stamp for current date in RFC1123 format.</summary>
-///  <returns>string. Required date and time as date stamp in UTC/GMT.</returns>
-function RFC1123DateStamp: string; inline;
+{ TODO: re-implement ParseSQLDateTime as a method of TUTCDateTime or as a
+        class helper method for TDateTime ? }
 
 ///  <summary>Converts a date-time value in SQL format into a TDateTime.
 ///  </summary>
@@ -81,14 +79,6 @@ implementation
 uses
   Types,
   UUtils;
-
-function RFC1123DateStamp: string;
-const
-  // Pattern to create RFC1123 date formats
-  cRFC1123Pattern = 'ddd, dd mmm yyyy HH'':''nn'':''ss ''GMT''';
-begin
-  Result := FormatDateTime(cRFC1123Pattern, TUTCDateTime.Now.ToDateTime);
-end;
 
 function ParseSQLDateTime(const SQLDate: string): TDateTime;
 begin
@@ -227,6 +217,14 @@ begin
     Result := FormatDateTime(
       'yyyy"-"mm"-"dd"T"hh":"nn":"ss"."zzz"Z"', fValue
     );
+end;
+
+function TUTCDateTime.ToRFC1123String: string;
+const
+  // Pattern to create RFC1123 date formats
+  RFC1123Pattern = 'ddd, dd mmm yyyy HH":"nn":"ss "GMT"';
+begin
+  Result := FormatDateTime(RFC1123Pattern, RoundDTToNearestSec(fValue));
 end;
 
 function TUTCDateTime.ToString(const AFormat: string): string;
