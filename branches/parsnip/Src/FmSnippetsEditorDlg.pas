@@ -965,7 +965,6 @@ begin
     fSnippetKindCBMgr.Add(SnippetKind.ID, SnippetKind.DisplayName);
   for Language in TConfig.Instance.SourceCodeLanguages do
     fLanguageCBMgr.Add(Language.ID, Language.FriendlyName);
-  // TODO: display all tags in a check list box or similar
 end;
 
 procedure TSnippetsEditorDlg.UpdateReferences;
