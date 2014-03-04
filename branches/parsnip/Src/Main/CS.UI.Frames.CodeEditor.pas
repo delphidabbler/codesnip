@@ -22,13 +22,16 @@ uses
   // Delphi
   Classes,
   Forms,
+  StdActns,
+  ActnList,
+  Menus,
   // 3rd party
   SynEdit,
   // Project
   CS.Components.EditCtrls,
   CS.SourceCode.Languages,
   CS.SourceCode.Hiliter.Brushes,
-  CS.SourceCode.Hiliter.Themes, StdActns, ActnList, Menus;
+  CS.SourceCode.Hiliter.Themes;
 
 
 type
