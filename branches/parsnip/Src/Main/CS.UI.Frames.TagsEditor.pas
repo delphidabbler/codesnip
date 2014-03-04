@@ -21,8 +21,6 @@ interface
 uses
   // Delphi
   Classes,
-  Types,
-  Grids,
   Forms,
   Controls,
   StdCtrls,
@@ -30,24 +28,13 @@ uses
   ExtCtrls,
   // 3rd party
   Collections.Lists,
-  Collections.Base,
   // Project
-  CS.Components.EditCtrls,
+  CS.Components.EditCtrls,  // required to sub-class TEdit
   CS.Database.Types,
   UComparers,
   UExceptions,
   UIStringList;
 
-
-type
-  TAutoCompleteEditMgr = class(TObject)
-  strict private
-    var
-      fEdit: TEdit;
-  public
-    constructor Create(const AEdit: TEdit);
-    property Control: TEdit read fEdit;
-  end;
 
 type
   TTagsEditorFrame = class(TFrame)
@@ -61,8 +48,9 @@ type
     const
       RowSize = 3;
     var
-      fEditMgrs: TObjectList<TAutoCompleteEditMgr>;
+      fEditCtrls: TObjectList<TEdit>;
       fMoreLbl: TLabel;
+      fAllTagNames: TStrings;
     function GetEnteredTagNames: IStringList;
     function GetTags: ITagSet;
     procedure SetTags(const Value: ITagSet);
@@ -87,10 +75,13 @@ implementation
 
 uses
   // Delphi
-  Math,
   Graphics,
+  ActiveX,
+  ShlObj,
+  ComObj,
   // Project
   CS.Database.Tags,
+  CS.Utils.COM,
   DB.UMain,
   UColours,
   UCtrlArranger,
@@ -109,7 +100,7 @@ procedure TTagsEditorFrame.AddEditRow;
 var
   I: Integer;
   CtrlLeft: Integer;
-  EditCtrl: TEdit;
+  NewEditCtrl: TEdit;
   LastEditCtrl: TEdit;
   CtrlTop: Integer;
 begin
@@ -118,14 +109,14 @@ begin
   CtrlTop := TCtrlArranger.TotalControlHeight(pnlEditors);
   for I := 1 to RowSize do
   begin
-    EditCtrl := CreateEditCtrl;
-    EditCtrl.Top := CtrlTop;
-    EditCtrl.Left := CtrlLeft;
-    EditCtrl.TabOrder := fEditMgrs.Count;
-    fEditMgrs.Add(TAutoCompleteEditMgr.Create(EditCtrl));
-    CtrlLeft := CtrlLeft + EditCtrl.Width + 2;
+    NewEditCtrl := CreateEditCtrl;
+    NewEditCtrl.Top := CtrlTop;
+    NewEditCtrl.Left := CtrlLeft;
+    NewEditCtrl.TabOrder := fEditCtrls.Count;
+    fEditCtrls.Add(NewEditCtrl);
+    CtrlLeft := CtrlLeft + NewEditCtrl.Width + 2;
   end;
-  LastEditCtrl := fEditMgrs[Pred(fEditMgrs.Count)].Control;
+  LastEditCtrl := fEditCtrls.Last;
   fMoreLbl := CreateMoreLbl;
   TCtrlArranger.MoveToRightOf(LastEditCtrl, fMoreLbl, 8);
   TCtrlArranger.AlignVCentresTo([LastEditCtrl], [fMoreLbl]);
@@ -135,31 +126,43 @@ end;
 
 procedure TTagsEditorFrame.ArrangeControls;
 begin
+  // TODO: remove this method if remains empty
 end;
 
 procedure TTagsEditorFrame.Clear;
-var
-  EditMgr: TAutoCompleteEditMgr;
 begin
-  for EditMgr in fEditMgrs do
-    EditMgr.Control.Clear;
-end;
-
-constructor TTagsEditorFrame.Create(AOwner: TComponent);
-begin
-  inherited;
-  fEditMgrs := TObjectList<TAutoCompleteEditMgr>.Create;
-  fEditMgrs.OwnsObjects := True;
-  fMoreLbl := CreateMoreLbl;
+  fEditCtrls.Clear;
   AddEditRow;
 end;
 
+constructor TTagsEditorFrame.Create(AOwner: TComponent);
+var
+  Tag: TTag;
+begin
+  inherited;
+  fAllTagNames := TStringList.Create;
+  for Tag in Database.GetAllTags do
+    fAllTagNames.Add(Tag.ToString);
+  fEditCtrls := TObjectList<TEdit>.Create;
+  fEditCtrls.OwnsObjects := True;
+  fMoreLbl := CreateMoreLbl;
+end;
+
 function TTagsEditorFrame.CreateEditCtrl: TEdit;
+var
+  Enum: IEnumString;
+  AutoComp: IAutoComplete2;
 begin
   Result := TEdit.Create(Self);
   Result.Parent := pnlEditors;
   Result.Width := 160;
   Result.TextHint := 'Add a tag';
+  Enum := TCOMEnumString.Create(fAllTagNames);
+  AutoComp := CreateComObject(CLSID_AutoComplete) as IAutoComplete2;
+  AutoComp.SetOptions(
+    ACO_AUTOSUGGEST or ACO_UPDOWNKEYDROPSLIST or ACO_AUTOAPPEND
+  );
+  AutoComp.Init(Result.Handle, Enum, nil, nil);
 end;
 
 function TTagsEditorFrame.CreateMoreLbl: TLabel;
@@ -176,7 +179,8 @@ end;
 
 destructor TTagsEditorFrame.Destroy;
 begin
-  fEditMgrs.Free; // frees owned manager objects
+  fEditCtrls.Free; // frees owned manager objects
+  fAllTagNames.Free;
   inherited;
 end;
 
@@ -187,13 +191,13 @@ end;
 
 function TTagsEditorFrame.GetEnteredTagNames: IStringList;
 var
-  EditMgr: TAutoCompleteEditMgr;
+  EditCtrl: TEdit;
   TagName: string;
 begin
   Result := TIStringList.Create;
-  for EditMgr in fEditMgrs do
+  for EditCtrl in fEditCtrls do
   begin
-    TagName := StrTrim(EditMgr.Control.Text);
+    TagName := StrTrim(EditCtrl.Text);
     if TTag.IsValidTagString(TagName) then
       Result.Add(TagName);
   end;
@@ -214,8 +218,8 @@ end;
 procedure TTagsEditorFrame.SetFocus;
 begin
   inherited;
-  if not fEditMgrs.Empty then
-    fEditMgrs.First.Control.SetFocus;
+  if not fEditCtrls.Empty then
+    fEditCtrls.First.SetFocus;
 end;
 
 procedure TTagsEditorFrame.SetTags(const Value: ITagSet);
@@ -226,9 +230,9 @@ begin
   I := 0;
   for Tag in Value do
   begin
-    if I >= fEditMgrs.Count then
+    if I >= fEditCtrls.Count then
       AddEditRow;
-    fEditMgrs[I].Control.Text := Tag.ToString;
+    fEditCtrls[I].Text := Tag.ToString;
     Inc(I);
   end;
   if Value.Count mod RowSize = 0 then
@@ -237,26 +241,17 @@ end;
 
 procedure TTagsEditorFrame.ValidateEnteredTagNames;
 var
-  EditMgr: TAutoCompleteEditMgr;
+  EditCtrl: TEdit;
   TagName: string;
 resourcestring
   sBadTag = 'Invalid tag name: "%s"';
 begin
-  for EditMgr in fEditMgrs do
+  for EditCtrl in fEditCtrls do
   begin
-    TagName := StrTrim(EditMgr.Control.Text);
+    TagName := StrTrim(EditCtrl.Text);
     if (TagName <> '') and not TTag.IsValidTagString(TagName) then
-      raise ETagsEditor.CreateFmt(sBadTag, [TagName], EditMgr.Control);
+      raise ETagsEditor.CreateFmt(sBadTag, [TagName], EditCtrl);
   end;
-end;
-
-{ TAutoCompleteEditMgr }
-
-constructor TAutoCompleteEditMgr.Create(const AEdit: TEdit);
-begin
-  Assert(Assigned(AEdit), ClassName + '.Create: AEdit is nil');
-  inherited Create;
-  fEdit := AEdit;
 end;
 
 end.
