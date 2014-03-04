@@ -26,6 +26,8 @@ uses
   StdCtrls,
   ActnList,
   ExtCtrls,
+  StdActns,
+  Menus,
   // 3rd party
   Collections.Lists,
   // Project
@@ -38,10 +40,25 @@ uses
 
 type
   TTagsEditorFrame = class(TFrame)
-    alEditor: TActionList;
-    actMore: TAction;
     sbTagEditors: TScrollBox;
     pnlEditors: TPanel;
+    mnuEditor: TPopupMenu;
+    miCut: TMenuItem;
+    miCopy: TMenuItem;
+    miPaste: TMenuItem;
+    miSpace1: TMenuItem;
+    miSelectAll: TMenuItem;
+    miSpacer2: TMenuItem;
+    miUndo: TMenuItem;
+    alEditor: TActionList;
+    actCut: TEditCut;
+    actCopy: TEditCopy;
+    actPaste: TEditPaste;
+    actSelectAll: TEditSelectAll;
+    actUndo: TEditUndo;
+    actMore: TAction;
+    miSpacer3: TMenuItem;
+    miMore: TMenuItem;
     procedure FrameResize(Sender: TObject);
     procedure actMoreExecute(Sender: TObject);
   strict private
@@ -152,11 +169,14 @@ function TTagsEditorFrame.CreateEditCtrl: TEdit;
 var
   Enum: IEnumString;
   AutoComp: IAutoComplete2;
+resourcestring
+  sTextHint = 'Enter a tag';
 begin
   Result := TEdit.Create(Self);
   Result.Parent := pnlEditors;
   Result.Width := 160;
-  Result.TextHint := 'Add a tag';
+  Result.TextHint := sTextHint;
+  Result.PopupMenu := mnuEditor;
   Enum := TCOMEnumString.Create(fAllTagNames);
   AutoComp := CreateComObject(CLSID_AutoComplete) as IAutoComplete2;
   AutoComp.SetOptions(
@@ -174,7 +194,7 @@ begin
   Result.Font.Style := [fsUnderline];
   Result.Font.Color := clCommandLink;
   Result.Cursor := crHandPoint;
-  Result.Caption := 'Add a row';
+  Result.Caption := actMore.Caption;
 end;
 
 destructor TTagsEditorFrame.Destroy;
