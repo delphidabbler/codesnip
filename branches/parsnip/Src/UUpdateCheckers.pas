@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2013-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -207,7 +207,9 @@ begin
     Exit(False);
   Storage := Settings.ReadSection(ssUpdateChecks);
   LastUpdateCheck := Storage.GetDateTime(LastUpdateSettingsName);
-  Result := DaysBetween(NowGMT, LastUpdateCheck) >= Frequency;
+  Result := DaysBetween(
+    TUTCDateTime.Now.ToDateTime, LastUpdateCheck
+  ) >= Frequency;
 end;
 
 function TUpdateCheckerThread.GetNotification(out N: TNotificationData):
@@ -231,7 +233,7 @@ var
   Storage: ISettingsSection;
 begin
   Storage := Settings.ReadSection(ssUpdateChecks);
-  Storage.SetDateTime(LastUpdateSettingsName, NowGMT);
+  Storage.SetDateTime(LastUpdateSettingsName, TUTCDateTime.Now.ToDateTime);
   Storage.Save;
 end;
 

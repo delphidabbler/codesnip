@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2013-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -66,9 +66,6 @@ type
 ///  <returns>string. Required date and time as date stamp in UTC/GMT.</returns>
 function RFC1123DateStamp: string; inline;
 
-///  <summary>Returns the current date and time in GMT/UTC.</summary>
-function NowGMT: TDateTime;
-
 ///  <summary>Converts a date-time value in SQL format into a TDateTime.
 ///  </summary>
 ///  <param name="SQLDate">string [in] SQL format date-time value to be
@@ -85,22 +82,12 @@ uses
   Types,
   UUtils;
 
-function NowGMT: TDateTime;
-var
-  ST: TSystemTime;
-begin
-  // This Windows API function gets system time in UTC/GMT
-  // see http://msdn.microsoft.com/en-us/library/ms724390
-  GetSystemTime(ST);
-  Result := SystemTimeToDateTime(ST);
-end;
-
 function RFC1123DateStamp: string;
 const
   // Pattern to create RFC1123 date formats
   cRFC1123Pattern = 'ddd, dd mmm yyyy HH'':''nn'':''ss ''GMT''';
 begin
-  Result := FormatDateTime(cRFC1123Pattern, NowGMT);
+  Result := FormatDateTime(cRFC1123Pattern, TUTCDateTime.Now.ToDateTime);
 end;
 
 function ParseSQLDateTime(const SQLDate: string): TDateTime;
