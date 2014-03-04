@@ -28,11 +28,29 @@ uses
   CS.Components.EditCtrls,
   CS.SourceCode.Languages,
   CS.SourceCode.Hiliter.Brushes,
-  CS.SourceCode.Hiliter.Themes;
+  CS.SourceCode.Hiliter.Themes, StdActns, ActnList, Menus;
 
 
 type
   TCodeEditorFrame = class(TFrame)
+    mnuEditor: TPopupMenu;
+    miCut: TMenuItem;
+    miCopy: TMenuItem;
+    miPaste: TMenuItem;
+    miSpace1: TMenuItem;
+    miSelectAll: TMenuItem;
+    miSpacer2: TMenuItem;
+    miUndo: TMenuItem;
+    alEditor: TActionList;
+    actCut: TEditCut;
+    actCopy: TEditCopy;
+    actPaste: TEditPaste;
+    actSelectAll: TEditSelectAll;
+    actUndo: TEditUndo;
+    actRedo: TAction;
+    miRedo: TMenuItem;
+    procedure actRedoExecute(Sender: TObject);
+    procedure actRedoUpdate(Sender: TObject);
   strict private
     var
       fSynEditCmp: TSynEditEx;
@@ -85,6 +103,16 @@ uses
 {$R *.dfm}
 
 { TTCodeEditorFrame }
+
+procedure TCodeEditorFrame.actRedoExecute(Sender: TObject);
+begin
+  fSynEditCmp.Redo;
+end;
+
+procedure TCodeEditorFrame.actRedoUpdate(Sender: TObject);
+begin
+  (Sender as TAction).Enabled := fSynEditCmp.CanRedo;
+end;
 
 procedure TCodeEditorFrame.ApplyLanguage(const Language: TSourceCodeLanguage);
 var
@@ -167,6 +195,7 @@ begin
   fSynEditCmp.BookMarkOptions.EnableKeys := False;
   fSynEditCmp.BookMarkOptions.GlyphsVisible := False;
   fSynEditCmp.Gutter.Font.Color := clGray;
+  fSynEditCmp.PopupMenu := mnuEditor;
   fFontSize := fTheme.FontSize; // default FontSize = default theme font size
   fUseThemeFontSize := True;
   ApplyTheme;
