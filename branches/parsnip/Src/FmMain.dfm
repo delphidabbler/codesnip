@@ -140,13 +140,8 @@ inherited MainForm: TMainForm
       Top = 0
       Action = actSaveDatabase
     end
-    object tbFavourites: TToolButton
-      Left = 361
-      Top = 0
-      Action = actToggleFavourite
-    end
     object tbSpacer5: TToolButton
-      Left = 384
+      Left = 361
       Top = 0
       Width = 8
       Caption = 'tbSpacer5'
@@ -154,12 +149,12 @@ inherited MainForm: TMainForm
       Style = tbsSeparator
     end
     object tbTestCompile: TToolButton
-      Left = 392
+      Left = 369
       Top = 0
       Action = actTestCompile
     end
     object tbSpacer6: TToolButton
-      Left = 415
+      Left = 392
       Top = 0
       Width = 8
       Caption = 'tbSpacer6'
@@ -167,12 +162,12 @@ inherited MainForm: TMainForm
       Style = tbsSeparator
     end
     object tbUpdateDbase: TToolButton
-      Left = 423
+      Left = 400
       Top = 0
       Action = actUpdateDbase
     end
     object tbSpacer4: TToolButton
-      Left = 446
+      Left = 423
       Top = 0
       Width = 8
       Caption = 'tbSpacer4'
@@ -180,7 +175,7 @@ inherited MainForm: TMainForm
       Style = tbsSeparator
     end
     object tbHelpContents: TToolButton
-      Left = 454
+      Left = 431
       Top = 0
       Action = actHelpContents
     end

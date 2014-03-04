@@ -232,7 +232,6 @@ type
     tbAddSnippet: TToolButton;
     tbDeleteSnippet: TToolButton;
     tbEditSnippet: TToolButton;
-    tbFavourites: TToolButton;
     tbFindClear: TToolButton;
     tbFindCompiler: TToolButton;
     tbFindText: TToolButton;
