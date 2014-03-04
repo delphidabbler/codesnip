@@ -510,7 +510,7 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
     object actSelectAll: TEditSelectAll
       Category = 'Edit'
       Caption = 'Select &All'
-      Hint = 'Select All|Selects the entire document'
+      Hint = 'Select All|Selects all the text'
       ShortCut = 16449
     end
     object actUndo: TEditUndo
