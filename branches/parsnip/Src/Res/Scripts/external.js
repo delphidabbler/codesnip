@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2006-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2006-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -139,3 +139,15 @@ function displayLanguage(langId) {
   return false;
 }
 
+/*
+ * Calls external object to get the host application to change the starred state
+ * of a snippet.
+ *  @param string snippetID [in] ID of snippet.
+ *  @param Boolean state [in] New star state: True if snippet is to be starred,
+ *    False if not.
+ *  @return False.
+ */
+function changeSnippetStar(snippetID, state) {
+  external.ChangeSnippetStar(snippetID, state);
+  return false;
+}

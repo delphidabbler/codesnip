@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2005-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -122,6 +122,13 @@ type
     procedure DisplayLanguage(const LangID: WideString; NewTab: WordBool);
       safecall;
 
+    ///  <summary>Sets the the Starred property of a snippet.</summary>
+    ///  <param name="SnippetID">WideString [in] ID of snippet.</param>
+    ///  <param name="State">WordBool [in] New star state: True if snippet is to
+    ///  be starred, False if not.</param>
+    procedure ChangeSnippetStar(const SnippetID: WideString;
+      State: WordBool); safecall;
+
     ///  <summary>Records the notifier object that is used to call application
     ///  code in response to JavaScript calls running in browser documents.
     ///  </summary>
@@ -144,6 +151,17 @@ uses
 
 
 { TWBExternal }
+
+procedure TWBExternal.ChangeSnippetStar(const SnippetID: WideString;
+  State: WordBool);
+begin
+  try
+    if Assigned(fNotifier) then
+      fNotifier.ChangeSnippetStar(TSnippetID.Create(SnippetID), State);
+  except
+    HandleException;
+  end;
+end;
 
 procedure TWBExternal.CheckForUpdates;
 begin

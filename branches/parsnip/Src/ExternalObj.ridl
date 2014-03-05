@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2006-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2006-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -117,11 +117,20 @@ library ExternalObj
     /*
      * Display given source code language.
      *    @param Tag [in] ID of language to be displayed.
-      *    @param NewTab [in] Whether to display language in a new tab.
+     *    @param NewTab [in] Whether to display language in a new tab.
     */
     [id(0x00000076)]
     HRESULT _stdcall DisplayLanguage([in] BSTR LangID,
       [in] VARIANT_BOOL NewTab);
+
+    /*
+     * Set snippet's starred state.
+     *    @param SnippetID [in] ID of snippet.
+     *    @param State [in] Whether snippet is to be starred.
+    */
+    [id(0x00000077)]
+    HRESULT _stdcall ChangeSnippetStar([in] BSTR SnippetID,
+      [in] VARIANT_BOOL State);
 
   };
 
