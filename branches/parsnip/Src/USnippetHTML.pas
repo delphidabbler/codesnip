@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2006-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2006-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -93,9 +93,10 @@ type
     ///  <summary>Returns an image tag referencing the image used to display the
     ///  snippet's test information.</summary>
     function TestingImage: string;
-    ///  <summary>Returns an image tag referencing the image used to show
-    ///  whether the snippet is starred or not.</summary>
-    function StarredImage: string;
+    ///  <summary>Returns an image referencing the image used to show whether
+    ///  the snippet is starred or not wrapped in a JavaScript link that toggles
+    ///  the starred state.</summary>
+    function Star: string;
   end;
 
 
@@ -266,28 +267,43 @@ begin
   end;
 end;
 
-function TSnippetHTML.StarredImage: string;
-resourcestring
-  sStarred = 'Starred';
-  sUnstarred = 'Not starred';
-const
-  ImgWidth = 16;
-  ImgHeight = 16;
-  ImgSrcs: array[Boolean] of record
-    ResName: string;    // name of image resource
-    Title: string;      // value of image tag title attribute
-  end =(
-    (ResName: 'unstarred-snippet.png'; Title: sUnstarred),
-    (ResName: 'starred-snippet.png'; Title: sStarred)
-  );
-var
-  Attrs: IHTMLAttributes; // image's attributes
+function TSnippetHTML.Star: string;
+
+  // Return the image tag that references the image used to indicate the
+  // snippet's starred state
+  function StarredImage: string;
+  resourcestring
+    sStarred = 'Starred.'#10'Click to un-star.';
+    sUnstarred = 'Not starred'#10'Click to star.';
+  const
+    ImgWidth = 16;
+    ImgHeight = 16;
+    ImgSrcs: array[Boolean] of record
+      ResName: string;    // name of image resource
+      Title: string;      // value of image tag title attribute
+    end =(
+      (ResName: 'unstarred-snippet.png'; Title: sUnstarred),
+      (ResName: 'starred-snippet.png'; Title: sStarred)
+    );
+  var
+    Attrs: IHTMLAttributes; // image's attributes
+  begin
+    Attrs := THTMLAttributes.Create;
+    Attrs.Add('src', MakeResourceURL(ImgSrcs[fSnippet.Starred].ResName));
+    Attrs.Add('title', THTML.Entities(ImgSrcs[fSnippet.Starred].Title));
+    Attrs.Add('class', 'testing-img');
+    Result := THTML.SimpleTag('img', Attrs);
+  end;
+
 begin
-  Attrs := THTMLAttributes.Create;
-  Attrs.Add('src', MakeResourceURL(ImgSrcs[fSnippet.Starred].ResName));
-  Attrs.Add('title', THTML.Entities(ImgSrcs[fSnippet.Starred].Title));
-  Attrs.Add('class', 'testing-img');
-  Result := THTML.SimpleTag('img', Attrs);
+  Result := JSALink(
+    TJavaScript.LiteralFunc(
+      'changeSnippetStar',
+      [fSnippet.ID.ToString, not fSnippet.Starred]
+    ),
+    'command-link',
+    StarredImage
+  );
 end;
 
 function TSnippetHTML.Tags: string;
