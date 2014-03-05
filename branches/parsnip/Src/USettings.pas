@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2006-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2006-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -176,31 +176,32 @@ type
   ///  <summary>
   ///  <para>Enumeration of recognised sections within persistent storage.
   ///  </para>
-  ///  <para>-ssFindText - info about last text search</para>
-  ///  <para>-ssFindCompiler - info about last compiler search</para>
-  ///  <para>-ssFindXRefs - info about last XRef search</para>
-  ///  <para>-ssCompilerInfo - info about each supported compiler</para>
-  ///  <para>-ssApplication - info about the application</para>
-  ///  <para>-ssPreferences - info about program preferences</para>
-  ///  <para>-ssUserInfo - info about user</para>
-  ///  <para>-ssProxyServer - info about any proxy server</para>
-  ///  <para>-ssUnits - list of default units</para>
+  ///  <para>-ssFindText - info about last text search.</para>
+  ///  <para>-ssFindCompiler - info about last compiler search.</para>
+  ///  <para>-ssFindXRefs - info about last XRef search.</para>
+  ///  <para>-ssCompilerInfo - info about each supported compiler.</para>
+  ///  <para>-ssApplication - info about the application.</para>
+  ///  <para>-ssPreferences - info about program preferences.</para>
+  ///  <para>-ssUserInfo - info about user.</para>
+  ///  <para>-ssProxyServer - info about any proxy server.</para>
+  ///  <para>-ssUnits - list of default units.</para>
   ///  <para>-ssDuplicateSnippet - persistent settings from Duplicate Snippets
-  ///  dlg</para>
+  ///  dlg.</para>
   ///  <para>-ssFavourites - persistent settings from Favourites dlg</para>
   ///  <para>-ssWindowState - info about the size and state of various
-  ///  windows</para>
-  ///  <para>-ssDatabase - database customisation info</para>
-  ///  <para>-ssUpdateChecks - info about update checks</para>
-  ///  <para>-ssPrinting - printing preferences</para>
+  ///  windows.</para>
+  ///  <para>-ssDatabase - database customisation info.</para>
+  ///  <para>-ssUpdateChecks - info about update checks.</para>
+  ///  <para>-ssPrinting - printing preferences.</para>
   ///  <para>-ssExternalApps - information about external applicatios used by
   ///  CodeSnip.</para>
+  ///  <para>-ssFindTags = info about last tags search.</para>
   ///  </summary>
   TSettingsSectionId = (
     ssFindText, ssFindCompiler, ssFindXRefs, ssCompilerInfo, ssApplication,
     ssPreferences, ssUserInfo, ssProxyServer, ssUnits, ssDuplicateSnippet,
     ssFavourites, ssWindowState, ssDatabase, ssUpdateChecks, ssPrinting,
-    ssExternalApps
+    ssExternalApps, ssFindTags
   );
 
 type
@@ -568,7 +569,8 @@ const
     ssUser,     // ssDatabase
     ssUser,     // ssUpdateChecks
     ssUser,     // ssPrinting
-    ssUser      // ssExternalApps
+    ssUser,     // ssExternalApps
+    ssUser      // ssFindTags
   );
 begin
   Result := cSectionStorageMap[Section];
@@ -653,7 +655,8 @@ const
     'Database',         // ssDatabase
     'UpdateChecks',     // ssUpdateChecks
     'Printing',         // ssPrinting
-    'ExternalApps'      // ssExternalApps
+    'ExternalApps',     // ssExternalApps
+    'FindTags'          // ssFindTags
   );
 begin
   Result := cSectionNames[Id];
