@@ -868,6 +868,7 @@ inherited MainForm: TMainForm
       Category = 'Snippets'
       Caption = 'Show Favourites...'
       Hint = 'Show Favourites|Display Favourites dialogue box'
+      ImageIndex = 48
       ShortCut = 115
       OnExecute = actFavouritesExecute
     end
