@@ -564,6 +564,13 @@ inherited MainForm: TMainForm
       Hint = 'Home Page|Visit CodeSnip'#39's web page'
       ImageIndex = 6
     end
+    object actFindTags: TAction
+      Category = 'Search'
+      Caption = 'Find Tags...'
+      Hint = 'Find tags|Search for all snippets with specified tags'
+      ShortCut = 24660
+      OnExecute = actFindTagsExecute
+    end
     object actFindXRefs: TAction
       Category = 'Search'
       Caption = 'Find Cross Refs...'
@@ -1046,6 +1053,9 @@ inherited MainForm: TMainForm
       Caption = 'Search'
       object miFindText: TMenuItem
         Action = actFindText
+      end
+      object miFindTags: TMenuItem
+        Action = actFindTags
       end
       object miFindCompiler: TMenuItem
         Action = actFindCompiler

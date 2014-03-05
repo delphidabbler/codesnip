@@ -596,6 +596,9 @@
 				<DesignClass>TFrame</DesignClass>
 			</DCCReference>
 			<DCCReference Include="Main\CS.Utils.COM.pas"/>
+			<DCCReference Include="Main\CS.UI.Dialogs.TagsSearch.pas">
+				<Form>TagsSearchDlg</Form>
+			</DCCReference>
 			<None Include="CodeSnip.todo"/>
 			<BuildConfiguration Include="Base">
 				<Key>Base</Key>

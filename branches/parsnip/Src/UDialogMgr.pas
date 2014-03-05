@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2007-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2007-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -68,6 +68,17 @@ type
     ///  </returns>
     function ExecFindTextDlg(out ASearch: ISearch; out RefineExisting: Boolean):
       Boolean;
+
+    ///  <summary>Displays the Find Tags dialogue box.</summary>
+    ///  <param name="ASearch">ISearch [out] Set to object containing search
+    ///  details. Undefined if user cancelled dialogue.</param>
+    ///  <param name="RefineExisting">Boolean [out] Set to flag indicating if
+    ///  any existing search is to be refined (True) or if this search is to
+    ///  apply to whole database. Undefined if user cancelled dialogue.</param>
+    ///  <returns>Boolean. True if user OKd dialogue or False if user cancelled.
+    ///  </returns>
+    function ExecFindTagsDlg(out ASearch: ISearch;
+      out RefineExisting: Boolean): Boolean;
 
     ///  <summary>Displays Find Cross References dialogue box.</summary>
     ///  <param name="ASnippet">ISnippet [in] Snippet for which cross-references
@@ -188,6 +199,7 @@ uses
   Forms,
   // Project
   CS.UI.Dialogs.ConfigDiffProg,
+  CS.UI.Dialogs.TagsSearch,
   FmAboutDlg,
 //  FmDBUpdateDlg,
   FmDependenciesDlg,
@@ -225,6 +237,12 @@ function TDialogMgr.ExecFindCompilerDlg(out ASearch: ISearch;
   out RefineExisting: Boolean): Boolean;
 begin
   Result := TFindCompilerDlg.Execute(Owner, ASearch, RefineExisting);
+end;
+
+function TDialogMgr.ExecFindTagsDlg(out ASearch: ISearch;
+  out RefineExisting: Boolean): Boolean;
+begin
+  Result := TTagsSearchDlg.Execute(Owner, ASearch, RefineExisting);
 end;
 
 function TDialogMgr.ExecFindTextDlg(out ASearch: ISearch;

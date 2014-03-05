@@ -256,6 +256,8 @@ type
     miConfigDiffProg: TMenuItem;
     actViewGroupByLanguage: TAction;
     miViewGroupByLanguage: TMenuItem;
+    actFindTags: TAction;
+    miFindTags: TMenuItem;
     ///  <summary>Displays About Box.</summary>
     procedure actAboutExecute(Sender: TObject);
     ///  <summary>Adds current snippet to favourites.</summary>
@@ -282,6 +284,9 @@ type
     procedure actCloseUnselectedDetailsTabsExecute(Sender: TObject);
     ///  <summary>Displays Configure Compilers dialogue box.</summary>
     procedure actCompilersExecute(Sender: TObject);
+    ///  <summary>Displays the Configure Diff Viewer Program dialogue box.
+    ///  </summary>
+    procedure actConfigDiffProgExecute(Sender: TObject);
     ///  <summary>Copies selected text from details pane to clipboard.</summary>
     procedure actCopyExecute(Sender: TObject);
     ///  <summary>Copies information about current snippet to clipboard.
@@ -331,6 +336,9 @@ type
     ///  <summary>Performs compiler search. Displays Find Compiler dialogue box
     ///  to get search critria then executes the search.</summary>
     procedure actFindCompilerExecute(Sender: TObject);
+    ///  <summary>Performs tags search. Displays Find Tags dialogue box
+    ///  to get search critria then executes the search.</summary>
+    procedure actFindTagsExecute(Sender: TObject);
     ///  <summary>Performs plain text search. Displays Find Text dialogue box
     ///  to get search critria then executes the search.</summary>
     procedure actFindTextExecute(Sender: TObject);
@@ -516,7 +524,6 @@ type
     ///  position is permitted and blocks the move if not.</summary>
     procedure splitVertCanResize(Sender: TObject; var NewSize: Integer;
       var Accept: Boolean);
-    procedure actConfigDiffProgExecute(Sender: TObject);
   strict private
     var
       ///  <summary>Flag denoting if application is registered.</summary>
@@ -832,6 +839,17 @@ begin
   // Display Find Compiler dialogue box to enable user to enter search criteria
   // (dialogue box creates and returns search object from entered criteria)
   if fDialogMgr.ExecFindCompilerDlg(Search, Refine) then
+    DoSearchFilter(Search, Refine);
+end;
+
+procedure TMainForm.actFindTagsExecute(Sender: TObject);
+var
+  Search: USearch.ISearch;  // text search object
+  Refine: Boolean;          // flag indicating if existing search to be refined
+begin
+  // Display Find Tags dialogue box to enable user to enter search criteria
+  // (dialogue box creates and returns search object from entered criteria)
+  if fDialogMgr.ExecFindTagsDlg(Search, Refine) then
     DoSearchFilter(Search, Refine);
 end;
 

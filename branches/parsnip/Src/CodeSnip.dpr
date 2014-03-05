@@ -397,7 +397,8 @@ uses
   CS.Utils.Hashes in 'Main\CS.Utils.Hashes.pas',
   CS.Utils.Sound in 'Main\CS.Utils.Sound.pas',
   CS.UI.Frames.TagsEditor in 'Main\CS.UI.Frames.TagsEditor.pas' {TagsEditorFrame: TFrame},
-  CS.Utils.COM in 'Main\CS.Utils.COM.pas';
+  CS.Utils.COM in 'Main\CS.Utils.COM.pas',
+  CS.UI.Dialogs.TagsSearch in 'Main\CS.UI.Dialogs.TagsSearch.pas' {TagsSearchDlg};
 
 // Include resources
 {$Resource ExternalObj.tlb}       // Type library file

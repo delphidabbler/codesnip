@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2005-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -99,6 +99,28 @@ type
     ///  <summary>Set of options used to modify the operation of the filter.
     ///  </summary>
     property Options: TTextSearchOptions read GetOptions;
+  end;
+
+type
+  ///  <summary>Interface defining search operations and search criteria for a
+  ///  tag search filter.</summary>
+  ///  <remarks>Must be supported by all tag search filters.</remarks>
+  ITagSearchFilter = interface(ISearchFilter)
+    ['{20698658-F545-4875-9703-9408EDDEE049}']
+    ///  <summary>Read accessor for Logic property.</summary>
+    ///  <returns>TSearchLogic. Search logic to be used: "and" which requires
+    ///  that all tags in Tags property are found in a snippet or "or" which
+    ///  permits snippets to contain any one or more such tags.</returns>
+    function GetLogic: TSearchLogic;
+    ///  <summary>Read accessor for Tags property.</summary>
+    ///  <returns>ITagSet. Set of tags to be included in search.</returns>
+    function GetTags: ITagSet;
+    ///  <summary>Search logic to be used: "and" which requires that all tags
+    ///  in Tags property are found in a snippet or "or" which permits snippets
+    ///  to contain any one or more such tags.</summary>
+    property Logic: TSearchLogic read GetLogic;
+    ///  <summary>Set of tags to be included in search.</summary>
+    property Tags: ITagSet read GetTags;
   end;
 
 type
@@ -267,6 +289,13 @@ type
     class function CreateTextSearchFilter(const Words: string;
       const Logic: TSearchLogic; const Options: TTextSearchOptions):
       ITextSearchFilter;
+    ///  <summary>Creates and returns a tag search filter object.</summary>
+    ///  <param name="Tags">ITagSet [in] Set of search tags.</param>
+    ///  <param name="Logic">TSearchLogic [in] Search logic to be used: AND or
+    ///  OR.</param>
+    ///  <returns>ITagSearchFilter. Interface to filter object.</returns>
+    class function CreateTagSearchFilter(Tags: ITagSet;
+      const Logic: TSearchLogic): ITagSearchFilter;
     ///  <summary>Creates and returns a search filter that selects from a given
     ///  list of snippets provided by a user.</summary>
     ///  <param name="SelectedSnippets">ISnippetIDList [in] IDs of snippets to
@@ -309,6 +338,7 @@ uses
   DB.UMain,
   IntfCommon,
   UConsts,
+  UExceptions,
   UStrUtils;
 
 
@@ -427,7 +457,7 @@ type
     ISearchFilter,
     ITextSearchFilter,
     ISearchUIInfo
-    )
+  )
   strict private
     var
       ///  <summary>List of search words.</summary>
@@ -470,6 +500,49 @@ type
     ///  </summary>
     ///  <remarks>Method of ITextSearchFilter.</remarks>
     function GetOptions: TTextSearchOptions;
+  end;
+
+type
+  ///  <summary>Class that implements a tag search filter.</summary>
+  TTagSearchFilter = class(TBaseSearchFilter,
+    ISearchFilter,
+    ITagSearchFilter,
+    ISearchUIInfo
+  )
+  strict private
+    var
+      ///  <summary>Set of search tags.</summary>
+      fTags: ITagSet;
+      ///  <summary>Search logic.</summary>
+      fLogic: TSearchLogic;
+  strict protected
+    ///  <summary>Returns resource id of glyph bitmap.</summary>
+    function GlyphResourceName: string; override;
+  public
+    ///  <summary>Constructs filter object with given criteria.</summary>
+    ///  <param name="Tags">ITagSet [in] Set of search tags.</param>
+    ///  <param name="Logic">TSearchLogic [in] Search logic to be used: AND or
+    ///  OR.</param>
+    constructor Create(Tags: ITagSet; const Logic: TSearchLogic);
+    ///  <summary>Checks whether the snippet with the given ID matches the
+    ///  filter's search criteria, returning True if so or False if not.
+    ///  </summary>
+    ///  <remarks>Method of ISearchFilter.</remarks>
+    function Match(const SnippetID: TSnippetID): Boolean;
+    ///  <summary>Indicates whether the object is a null filter. Returns False.
+    ///  </summary>
+    ///  <remarks>Method of ISearchFilter.</remarks>
+    function IsNull: Boolean;
+    ///  <summary>Read accessor for Logic property.</summary>
+    ///  <returns>TSearchLogic. Search logic to be used: "and" which requires
+    ///  that all tags in Tags property are found in a snippet or "or" which
+    ///  permits snippets to contain any one or more such tags.</returns>
+    ///  <remarks>Method of ITagSearchFilter.</remarks>
+    function GetLogic: TSearchLogic;
+    ///  <summary>Read accessor for Tags property.</summary>
+    ///  <returns>ITagSet. Set of tags to be included in search.</returns>
+    ///  <remarks>Method of ITagSearchFilter.</remarks>
+    function GetTags: ITagSet;
   end;
 
 type
@@ -969,6 +1042,63 @@ begin
   end;
 end;
 
+{ TTagSearchFilter }
+
+constructor TTagSearchFilter.Create(Tags: ITagSet; const Logic: TSearchLogic);
+begin
+  Assert(Assigned(Tags), ClassName + '.Create: Tags is nil');
+  inherited Create;
+  fTags := Tags;
+  fLogic := Logic;
+end;
+
+function TTagSearchFilter.GetLogic: TSearchLogic;
+begin
+  Result := fLogic;
+end;
+
+function TTagSearchFilter.GetTags: ITagSet;
+begin
+  Result := fTags;
+end;
+
+function TTagSearchFilter.GlyphResourceName: string;
+begin
+  // TODO: Create a new glyph and use that instead of steeling text search glyph
+  Result := 'TEXTSEARCH';
+end;
+
+function TTagSearchFilter.IsNull: Boolean;
+begin
+  Result := False;
+end;
+
+function TTagSearchFilter.Match(const SnippetID: TSnippetID): Boolean;
+var
+  Tag: TTag;
+  Snippet: ISnippet;
+begin
+  Snippet := Database.LookupSnippet(SnippetID);
+  case fLogic of
+    slAnd:
+    begin
+      for Tag in Snippet.Tags do
+        if not fTags.Contains(Tag) then
+          Exit(False);
+      Result := True;
+    end;
+    slOr:
+    begin
+      for Tag in Snippet.Tags do
+        if fTags.Contains(Tag) then
+          Exit(True);
+      Result := False;
+    end;
+    else
+      raise EBug.Create(ClassName + '.Match: Invalid TSearchLogic value');
+  end;
+end;
+
 { TBaseSelectionSearchFilter }
 
 constructor TBaseSelectionSearchFilter.Create(
@@ -1187,6 +1317,12 @@ class function TSearchFilterFactory.CreateStoredSelectionSearchFilter(
   SelectedSnippets: ISnippetIDList): ISelectionSearchFilter;
 begin
   Result := TStoredSelectionSearchFilter.Create(SelectedSnippets);
+end;
+
+class function TSearchFilterFactory.CreateTagSearchFilter(Tags: ITagSet;
+  const Logic: TSearchLogic): ITagSearchFilter;
+begin
+  Result := TTagSearchFilter.Create(Tags, Logic);
 end;
 
 class function TSearchFilterFactory.CreateTextSearchFilter(
