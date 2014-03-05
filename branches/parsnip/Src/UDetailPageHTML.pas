@@ -243,7 +243,6 @@ type
     ///  <summary>Checks if the given snippet should be included in the list of
     ///  snippets to be displayed.</summary>
     function IsSnippetRequired(Snippet: ISnippet): Boolean; virtual; abstract;
-      // TODO: change Snippet param of IsSnippetRequired to TSnippetID
     ///  <summary>Returns name of CSS class to be used for page heading.
     ///  </summary>
     ///  <remarks>Provides default class name. Descendant classes should
