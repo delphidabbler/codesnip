@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2005-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -39,6 +39,7 @@ TVCHECKBOXES BITMAP "Res/Img/TVCheckBoxes.bmp"
 */
 COMPILERSEARCH BITMAP "Res/Img/CompilerSearch.bmp"
 TEXTSEARCH BITMAP "Res/Img/TextSearch.bmp"
+TAGSSEARCH BITMAP "Main/Assets/Img/TagsSearch.bmp"
 SELECTIONSEARCH BITMAP "Res/Img/SelectionSearch.bmp"
 XREFSEARCH BITMAP "Res/Img/XRefSearch.bmp"
 NULSEARCH BITMAP "Res/Img/NulSearch.bmp"

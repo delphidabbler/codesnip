@@ -1064,8 +1064,7 @@ end;
 
 function TTagSearchFilter.GlyphResourceName: string;
 begin
-  // TODO: Create a new glyph and use that instead of steeling text search glyph
-  Result := 'TEXTSEARCH';
+  Result := 'TAGSSEARCH';
 end;
 
 function TTagSearchFilter.IsNull: Boolean;

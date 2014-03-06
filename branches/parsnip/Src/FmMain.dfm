@@ -568,6 +568,7 @@ inherited MainForm: TMainForm
       Category = 'Search'
       Caption = 'Find Tags...'
       Hint = 'Find tags|Search for all snippets with specified tags'
+      ImageIndex = 49
       ShortCut = 24660
       OnExecute = actFindTagsExecute
     end
