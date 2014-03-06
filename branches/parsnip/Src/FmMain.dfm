@@ -32,7 +32,7 @@ inherited MainForm: TMainForm
     Left = 0
     Top = 0
     Width = 605
-    Height = 30
+    Height = 60
     AutoSize = True
     BorderWidth = 1
     Caption = 'tbarMain'
@@ -77,23 +77,28 @@ inherited MainForm: TMainForm
       Top = 0
       Action = actFindText
     end
-    object tbFindCompiler: TToolButton
+    object tbFindTags: TToolButton
       Left = 108
+      Top = 0
+      Action = actFindTags
+    end
+    object tbFindCompiler: TToolButton
+      Left = 131
       Top = 0
       Action = actFindCompiler
     end
     object tbSelectSnippets: TToolButton
-      Left = 131
+      Left = 154
       Top = 0
       Action = actSelectSnippets
     end
     object tbFindClear: TToolButton
-      Left = 154
+      Left = 177
       Top = 0
       Action = actFindClear
     end
     object tbSpacer3: TToolButton
-      Left = 177
+      Left = 200
       Top = 0
       Width = 8
       Caption = 'tbSpacer3'
@@ -101,19 +106,19 @@ inherited MainForm: TMainForm
       Style = tbsSeparator
     end
     object tbGoBack: TToolButton
-      Left = 185
+      Left = 208
       Top = 0
       Action = actGoBack
       Style = tbsDropDown
     end
     object tbGoForward: TToolButton
-      Left = 223
+      Left = 246
       Top = 0
       Action = actGoForward
       Style = tbsDropDown
     end
     object tbSpacer8: TToolButton
-      Left = 261
+      Left = 284
       Top = 0
       Width = 8
       Caption = 'tbSpacer8'
@@ -121,27 +126,27 @@ inherited MainForm: TMainForm
       Style = tbsSeparator
     end
     object tbAddSnippet: TToolButton
-      Left = 269
+      Left = 292
       Top = 0
       Action = actAddSnippet
     end
     object tbEditSnippet: TToolButton
-      Left = 292
+      Left = 315
       Top = 0
       Action = actEditSnippet
     end
     object tbDeleteSnippet: TToolButton
-      Left = 315
+      Left = 338
       Top = 0
       Action = actDeleteSnippet
     end
     object tbSaveDatabase: TToolButton
-      Left = 338
+      Left = 361
       Top = 0
       Action = actSaveDatabase
     end
     object tbSpacer5: TToolButton
-      Left = 361
+      Left = 384
       Top = 0
       Width = 8
       Caption = 'tbSpacer5'
@@ -149,12 +154,12 @@ inherited MainForm: TMainForm
       Style = tbsSeparator
     end
     object tbTestCompile: TToolButton
-      Left = 369
+      Left = 392
       Top = 0
       Action = actTestCompile
     end
     object tbSpacer6: TToolButton
-      Left = 392
+      Left = 415
       Top = 0
       Width = 8
       Caption = 'tbSpacer6'
@@ -162,38 +167,41 @@ inherited MainForm: TMainForm
       Style = tbsSeparator
     end
     object tbUpdateDbase: TToolButton
-      Left = 400
+      Left = 423
       Top = 0
       Action = actUpdateDbase
     end
     object tbSpacer4: TToolButton
-      Left = 423
+      Left = 0
       Top = 0
       Width = 8
       Caption = 'tbSpacer4'
       ImageIndex = 12
+      Wrap = True
       Style = tbsSeparator
     end
     object tbHelpContents: TToolButton
-      Left = 431
-      Top = 0
+      Left = 0
+      Top = 30
       Action = actHelpContents
     end
   end
   object pnlBody: TPanel
     Left = 0
-    Top = 30
+    Top = 60
     Width = 605
-    Height = 394
+    Height = 364
     Align = alClient
     BevelOuter = bvNone
     BorderWidth = 2
     TabOrder = 2
+    ExplicitTop = 30
+    ExplicitHeight = 394
     object splitVert: TSplitter
       Left = 187
       Top = 2
       Width = 6
-      Height = 390
+      Height = 360
       Beveled = True
       OnCanResize = splitVertCanResize
       ExplicitHeight = 292
@@ -202,15 +210,16 @@ inherited MainForm: TMainForm
       Left = 2
       Top = 2
       Width = 185
-      Height = 390
+      Height = 360
       Align = alLeft
       BevelOuter = bvLowered
       TabOrder = 0
+      ExplicitHeight = 390
       inline frmOverview: TOverviewFrame
         Left = 1
         Top = 1
         Width = 183
-        Height = 388
+        Height = 358
         Align = alClient
         TabOrder = 0
         TabStop = True
@@ -236,14 +245,14 @@ inherited MainForm: TMainForm
         end
         inherited pnlSnippets: TPanel
           Width = 183
-          Height = 320
+          Height = 290
           ExplicitLeft = 0
           ExplicitTop = 68
           ExplicitWidth = 183
           ExplicitHeight = 320
           inherited tvSnippets: TTreeView
             Width = 181
-            Height = 316
+            Height = 286
             ExplicitLeft = 0
             ExplicitTop = 2
             ExplicitWidth = 181
@@ -256,15 +265,16 @@ inherited MainForm: TMainForm
       Left = 193
       Top = 2
       Width = 410
-      Height = 390
+      Height = 360
       Align = alClient
       BevelOuter = bvLowered
       TabOrder = 1
+      ExplicitHeight = 390
       inline frmDetail: TDetailFrame
         Left = 1
         Top = 1
         Width = 408
-        Height = 388
+        Height = 358
         Align = alClient
         TabOrder = 0
         TabStop = True
@@ -282,21 +292,21 @@ inherited MainForm: TMainForm
         end
         inherited frmDetailView: TDetailViewFrame
           Width = 408
-          Height = 338
+          Height = 308
           ExplicitWidth = 408
           ExplicitHeight = 338
           inherited pnlBrowser: TPanel
             Width = 408
-            Height = 338
+            Height = 308
             ExplicitWidth = 408
             ExplicitHeight = 338
             inherited wbBrowser: TWebBrowser
               Width = 408
-              Height = 338
+              Height = 308
               ExplicitWidth = 408
               ExplicitHeight = 318
               ControlData = {
-                4C0000002B2A0000EF2200000000000000000000000000000000000000000000
+                4C0000002B2A0000D51F00000000000000000000000000000000000000000000
                 000000004C000000000000000000000001000000E0D057007335CF11AE690800
                 2B2E126208000000000000004C0000000114020000000000C000000000000046
                 8000000000000000000000000000000000000000000000000000000000000000

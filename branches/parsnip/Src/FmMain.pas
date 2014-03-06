@@ -258,6 +258,7 @@ type
     miViewGroupByLanguage: TMenuItem;
     actFindTags: TAction;
     miFindTags: TMenuItem;
+    tbFindTags: TToolButton;
     ///  <summary>Displays About Box.</summary>
     procedure actAboutExecute(Sender: TObject);
     ///  <summary>Adds current snippet to favourites.</summary>
