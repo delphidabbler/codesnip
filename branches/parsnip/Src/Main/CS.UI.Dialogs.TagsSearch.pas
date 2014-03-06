@@ -86,6 +86,7 @@ uses
   DB.UMain,
   UCtrlArranger,
   UIStringList,
+  UQuery,
   USettings,
   UStrUtils {for inlining};
 
@@ -214,6 +215,12 @@ begin
   // Select appropriate search logic radio button
   // radio button index is ordinal value of Logic
   rgLogic.ItemIndex := Ord(fSearchParams.Logic);
+  // Set search scope enabled state and selected appropriate default button
+  rgScope.Enabled := Query.IsSearchActive;
+  if Query.IsSearchActive then
+    rgScope.ItemIndex := 0
+  else
+    rgScope.ItemIndex := 1;
 end;
 
 procedure TTagsSearchDlg.UpdateOKBtn;
