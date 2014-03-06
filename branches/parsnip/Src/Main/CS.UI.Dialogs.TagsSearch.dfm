@@ -16,6 +16,7 @@ inherited TagsSearchDlg: TTagsSearchDlg
       Top = 24
       Width = 336
       Height = 160
+      OnClickCheck = clbTagsClickCheck
       IntegralHeight = True
       ItemHeight = 13
       TabOrder = 0

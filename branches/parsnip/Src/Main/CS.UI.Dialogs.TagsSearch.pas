@@ -38,6 +38,7 @@ type
     procedure btnOKClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
+    procedure clbTagsClickCheck(Sender: TObject);
   strict private
     type
       TSearchParams = class(TObject)
@@ -68,6 +69,8 @@ type
       fRefinePreviousSearch: Boolean;
       fTagListMgr: TSortedCollectionCtrlKVMgr<TTag>;
       fSearchParams: TSearchParams;
+    procedure UpdateOKBtn;
+    function HaveTagsSelected: Boolean;
   strict protected
     procedure InitForm; override;
     procedure ArrangeForm; override;
@@ -138,6 +141,11 @@ begin
   fSearchParams.Tags := Filter.Tags;
 end;
 
+procedure TTagsSearchDlg.clbTagsClickCheck(Sender: TObject);
+begin
+  UpdateOKBtn;
+end;
+
 class function TTagsSearchDlg.Execute(const AOwner: TComponent;
   out ASearch: ISearch; out RefineExisting: Boolean): Boolean;
 begin
@@ -176,6 +184,16 @@ begin
   inherited;
 end;
 
+function TTagsSearchDlg.HaveTagsSelected: Boolean;
+var
+  I: Integer;
+begin
+  for I := 0 to Pred(clbTags.Count) do
+    if clbTags.Checked[I] then
+      Exit(True);
+  Result := False;
+end;
+
 procedure TTagsSearchDlg.InitForm;
 var
   Tag: TTag;
@@ -186,15 +204,22 @@ begin
   // Populate tags check list box
   for Tag in Database.GetAllTags do
     fTagListMgr.Add(Tag, Tag.ToString);
-  // Select tags per persistent storage
+  // Check tags per persistent storage and enable OK button if and are checked
   for CheckedTag in fSearchParams.Tags do
   begin
     I := fTagListMgr.IndexOfKey(CheckedTag);
     clbTags.Checked[I] := True;
   end;
+  UpdateOKBtn;
   // Select appropriate search logic radio button
   // radio button index is ordinal value of Logic
   rgLogic.ItemIndex := Ord(fSearchParams.Logic);
+end;
+
+procedure TTagsSearchDlg.UpdateOKBtn;
+begin
+  // OK button enabled if at least one tag is checked
+  btnOK.Enabled := HaveTagsSelected;
 end;
 
 { TTagsSearchDlg.TSearchParams }
