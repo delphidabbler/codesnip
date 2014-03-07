@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2012-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2012-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -26,7 +26,7 @@ uses
 
 type
   ///  <summary>Provides an interface to the DelphiDabbler CodeSnip program
-  ///  update web service.</summary>
+  ///  update web service using the v2 API.</summary>
   ///  <remarks>This class provides a public method for every command exposed by
   ///  the web service.</remarks>
   TProgramUpdateMgr = class sealed(TStdWebService)
@@ -36,8 +36,12 @@ type
       ScriptURLTplt = 'http://codesnip.%s/websvc/prog-update';
       ///  <summary>User agent sent to web service.</summary>
       UserAgent = 'CodeSnip';
+      ///  <summary>API version of web service.</summary>
+      ApiVersion = '2';
       ///  <summary>API key required for all calls to web service.</summary>
       ApiKey = '9EE3A4D85A2F46F79AE2AAB1012A7678';
+      ///  <summary>Release channel sent to web service.</summary>
+      Channel = '4';
       ///  <summary>Program edition sent to web service.</summary>
       {$IFDEF PORTABLE}
       Edition = 'portable';
@@ -50,6 +54,9 @@ type
     ///  </summary>
     ///  <remarks>Callers must free the returned object.</remarks>
     function CreateParams: TURIParams;
+    ///  <summary>Adds channel and edition parameters to the given parameters.
+    ///  </summary>
+    procedure AddUpdateStreamParams(Params: TURIParams);
   public
     ///  <summary>Creates a new object instance with the correct URL and
     ///  suitable user agent.</summary>
@@ -83,6 +90,13 @@ uses
 
 { TProgramUpdateMgr }
 
+procedure TProgramUpdateMgr.AddUpdateStreamParams(Params: TURIParams);
+begin
+  Assert(Assigned(Params), ClassName + '.AddUpdateStreamParams: Params is nil');
+  Params.Add('channel', Channel);
+  Params.Add('edition', Edition);
+end;
+
 constructor TProgramUpdateMgr.Create;
 begin
   inherited Create(TWebServiceInfo.Create(ScriptURLTplt, UserAgent));
@@ -91,6 +105,7 @@ end;
 function TProgramUpdateMgr.CreateParams: TURIParams;
 begin
   Result := TURIParams.Create;
+  Result.Add('api', ApiVersion);
   Result.Add('key', ApiKey);
   Result.Add('prog-id', TAppInfo.ProgramKey);
 end;
@@ -102,7 +117,7 @@ var
 begin
   Params := CreateParams;
   try
-    Params.Add('edition', Edition);
+    AddUpdateStreamParams(Params);
     Response := TStringList.Create;
     try
       PostCommand('downloadurl', Params, Response);
@@ -122,7 +137,7 @@ var
 begin
   Params := CreateParams;
   try
-    Params.Add('edition', Edition);
+    AddUpdateStreamParams(Params);
     Response := TStringList.Create;
     try
       PostCommand('version', Params, Response);
