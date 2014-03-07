@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2013-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -207,10 +207,8 @@ begin
   try
     if not CanUpdate then
       Exit(False);
-    if not DoCheck(N) then
-      Exit(False);
+    Result := DoCheck(N);
     RecordUpdate;
-    Result := True;
   except
     // Swallow any exception and return false to indicate "no update"
     Result := False;
