@@ -218,10 +218,8 @@ begin
   try
     if not CanUpdate then
       Exit(False);
-    if not DoCheck(N) then
-      Exit(False);
+    Result := DoCheck(N);
     RecordUpdate;
-    Result := True;
   except
     // Swallow any exception and return false to indicate "no update"
     Result := False;

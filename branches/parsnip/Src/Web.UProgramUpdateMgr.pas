@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2012-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2012-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -26,7 +26,7 @@ uses
 
 type
   ///  <summary>Provides an interface to the DelphiDabbler CodeSnip program
-  ///  update web service.</summary>
+  ///  update web service using the v2 API.</summary>
   ///  <remarks>This class provides a public method for every command exposed by
   ///  the web service.</remarks>
   TProgramUpdateMgr = class sealed(TStdWebService)
@@ -36,17 +36,25 @@ type
       ScriptURLTplt = 'http://codesnip.%s/websvc/prog-update';
       ///  <summary>User agent sent to web service.</summary>
       UserAgent = 'CodeSnip';
+      ///  <summary>API version of web service.</summary>
+      ApiVersion = '2';
       ///  <summary>API key required for all calls to web service.</summary>
       ApiKey = '9EE3A4D85A2F46F79AE2AAB1012A7678';
+      { TODO -cPRERELEASE: Change "Channel" to have required channel for
+                         previews, beta or final release as necessary. }
+      ///  <summary>Release channel sent to web service.</summary>
+      Channel = 'parsnip';
+      ///  <summary>Program edition sent to web service.</summary>
+      Edition = 'main';
   strict private
-      ///  <summary>Returns value to be passed to web service to specify the
-      ///  edition of the program making the request.</summary>
-    class function ProgramEdition: string;
     ///  <summary>Creates and returns a parameters object containing standard
     ///  parameters that are required on every call to the web service.
     ///  </summary>
     ///  <remarks>Callers must free the returned object.</remarks>
     function CreateParams: TURIParams;
+    ///  <summary>Adds channel and edition parameters to the given parameters.
+    ///  </summary>
+    procedure AddUpdateStreamParams(Params: TURIParams);
   public
     ///  <summary>Creates a new object instance with the correct URL and
     ///  suitable user agent.</summary>
@@ -85,6 +93,13 @@ uses
 
 { TProgramUpdateMgr }
 
+procedure TProgramUpdateMgr.AddUpdateStreamParams(Params: TURIParams);
+begin
+  Assert(Assigned(Params), ClassName + '.AddUpdateStreamParams: Params is nil');
+  Params.Add('channel', Channel);
+  Params.Add('edition', Edition);
+end;
+
 constructor TProgramUpdateMgr.Create;
 begin
   inherited Create(TWebServiceInfo.Create(ScriptURLTplt, UserAgent));
@@ -93,6 +108,7 @@ end;
 function TProgramUpdateMgr.CreateParams: TURIParams;
 begin
   Result := TURIParams.Create;
+  Result.Add('api', ApiVersion);
   Result.Add('key', ApiKey);
   Result.Add('prog-id', TAppInfo.ProgramKey);
 end;
@@ -104,7 +120,7 @@ var
 begin
   Params := CreateParams;
   try
-    Params.Add('edition', ProgramEdition);
+    AddUpdateStreamParams(Params);
     Response := TStringList.Create;
     try
       PostCommand('downloadurl', Params, Response);
@@ -124,7 +140,7 @@ var
 begin
   Params := CreateParams;
   try
-    Params.Add('edition', ProgramEdition);
+    AddUpdateStreamParams(Params);
     Response := TStringList.Create;
     try
       PostCommand('version', Params, Response);
@@ -135,22 +151,6 @@ begin
   finally
     Params.Free;
   end;
-end;
-
-class function TProgramUpdateMgr.ProgramEdition: string;
-begin
-  // NOTE: CodeSnip 4 used 'standard' in the standard edition and 'portable' in
-  //       the portable edition. From CodeSnip 5 there is to be only one
-  //       edition, "main". Program update web service also needs to be updated
-  //       to take an update "stream" as well as an edition. We would then send
-  //       "v5" as stream and "main" as edition.
-
-  { TODO -cPRERELEASE: Change to pass required info for preview, beta or final
-                       release. }
-  if TCommandLineOpts.IsPortable then
-    Result := 'portable'
-  else
-    Result := 'standard';
 end;
 
 procedure TProgramUpdateMgr.SignOn(const Caller: string);

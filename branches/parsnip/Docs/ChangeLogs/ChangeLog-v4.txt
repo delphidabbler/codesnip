@@ -11,6 +11,11 @@
 ; Change Log for CodeSnip Release 4
 ; ------------------------------------------------------------------------------
 
+Release v4.8.7 of 06 March 2014
++ Changed so that automatic bug checker now correctly records last update date. This fixes bug #93 (http://bit.ly/NmSQUt).
++ Updated to use v2 of the DelphiDabbler CodeSnip update web service when checking for availability of program updates.
++ Minor corrections to help file.
+
 Release v4.8.6 of 28 February 2014
 + Improved operating system detection to handle Windows 8.1.
 + Added compatibility section to application manifest that declares the program has been tested with Windows Vista and Windows 7.
