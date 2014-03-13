@@ -5,7 +5,7 @@ inherited DisplayPrefsFrame: TDisplayPrefsFrame
   ExplicitHeight = 311
   object lblOverviewTree: TLabel
     Left = 16
-    Top = 3
+    Top = 6
     Width = 161
     Height = 13
     Caption = 'Start &overview pane treeview as:'
@@ -34,7 +34,7 @@ inherited DisplayPrefsFrame: TDisplayPrefsFrame
   end
   object cbOverviewTree: TComboBox
     Left = 192
-    Top = -1
+    Top = 2
     Width = 113
     Height = 21
     Style = csDropDownList

@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2012-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2012-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -145,7 +145,7 @@ begin
       8
     )
   );
-  TCtrlArranger.AlignVCentres(0, [lblOverviewTree, cbOverviewTree]);
+  TCtrlArranger.AlignVCentres(3, [lblOverviewTree, cbOverviewTree]);
   TCtrlArranger.MoveBelow(
     [lblOverviewTree, cbOverviewTree], chkSnippetsInNewTab, 24
   );
