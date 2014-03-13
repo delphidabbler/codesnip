@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2008-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2008-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -158,7 +158,9 @@ resourcestring
   sDependListTitle = 'Required snippets:';
   sXRefListTitle = 'See also:';
   sCompilers = 'Supported compilers:';
-  sMainDatabaseInfo = 'A snippet from the DelphiDabbler CodeSnip Database (%s)';
+  sMainDatabaseInfo = 'A snippet from the DelphiDabbler CodeSnip Database '
+   + '(%s), licensed under the MIT License '
+   + '(http://opensource.org/licenses/MIT).';
 begin
   Assert(Assigned(Snippet), ClassName + '.Create: Snippet is nil');
   // generate document
