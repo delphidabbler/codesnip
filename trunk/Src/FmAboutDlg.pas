@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2005-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -184,6 +184,7 @@ uses
   <%Registered%>      info about whether program is registered
   <%ContribList%>     list of program contributors
   <%TesterList%>      list of program testers
+  <%Year%>            current year
 }
 
 
@@ -450,6 +451,9 @@ procedure TAboutDlg.InitHTMLFrames;
         );
         Tplt.ResolvePlaceholderHTML(
           'TesterList', ContribListHTML(TTesters)
+        );
+        Tplt.ResolvePlaceholderText(
+          'Year', FormatDateTime('YYYY', Now)
         );
       end
     );
