@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2006-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2006-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -137,6 +137,8 @@ begin
       Result := 'DXE4';
     ciDXE5:
       Result := 'DXE5';
+    ciDXE6:
+      Result := 'DXE6';
     else raise EBug.Create(ClassName + '.GetIDString: Invalid ID');
   end;
 end;
@@ -149,6 +151,7 @@ resourcestring
   sDelphiXE3 = 'Delphi XE3';    // name of Delphi XE3 compiler
   sDelphiXE4 = 'Delphi XE4';    // name of Delphi XE4 compiler
   sDelphiXE5 = 'Delphi XE5';    // name of Delphi XE5 compiler
+  sDelphiXE6 = 'Delphi XE6';    // name of Delphi XE6 compiler
 begin
   case GetID of
     ciDXE:
@@ -161,6 +164,8 @@ begin
       Result := sDelphiXE4;
     ciDXE5:
       Result := sDelphiXE5;
+    ciDXE6:
+      Result := sDelphiXE6;
     else
       Result := Format(sCompilerName, [ProductVersion]);
   end;
@@ -186,6 +191,7 @@ begin
     ciDXE3    : Result := '\Software\Embarcadero\BDS\10.0';
     ciDXE4    : Result := '\Software\Embarcadero\BDS\11.0';
     ciDXE5    : Result := '\Software\Embarcadero\BDS\12.0';
+    ciDXE6    : Result := '\Software\Embarcadero\BDS\14.0';
     else raise EBug.Create(ClassName + '.InstallationRegKey: Invalid ID');
   end;
 end;

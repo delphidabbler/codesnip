@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2008-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2008-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -73,7 +73,7 @@ const
   cCompilerIDs: array[TCompilerID] of string = (
     'd2', 'd3', 'd4', 'd5', 'd6', 'd7',
     'd2005', 'd2006', 'd2007', 'd2009', 'd2010',
-    'dXE', 'dXE2', 'dXE3', 'dDX4' {error, but in use}, 'dXE5',
+    'dXE', 'dXE2', 'dXE3', 'dDX4' {error, but in use}, 'dXE5', 'dXE6',
     'fpc'
   );
 

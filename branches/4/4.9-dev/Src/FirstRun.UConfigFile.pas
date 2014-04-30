@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2007-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2007-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -479,6 +479,7 @@ begin
   UpdateForCompiler('DXE3');
   UpdateForCompiler('DXE4');
   UpdateForCompiler('DXE5');
+  UpdateForCompiler('DXE6');
 end;
 
 { TCommonConfigFileUpdater }

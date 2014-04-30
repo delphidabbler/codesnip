@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2005-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -38,6 +38,7 @@ type
     ciDXE3,                             // Delphi XE3
     ciDXE4,                             // Delphi XE4
     ciDXE5,                             // Delphi XE5
+    ciDXE6,                             // Delphi XE6
     ciFPC                               // Free Pascal
   );
 
@@ -50,7 +51,7 @@ const
   ///  compilers.</summary>
   cBDSCompilers = [
     ciD2005w32, ciD2006w32, ciD2007, ciD2009w32, ciD2010, ciDXE, ciDXE2,
-    ciDXE3, ciDXE4, ciDXE5
+    ciDXE3, ciDXE4, ciDXE5, ciDXE6
   ];
 
 const
