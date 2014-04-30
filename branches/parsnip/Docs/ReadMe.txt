@@ -14,7 +14,7 @@ online DelphiDabbler Code Snippets database as well as maintain a database of
 user-defined snippets.
 
 It displays details of each snippet in the database and can test-compile them
-with each installed Win32 version of Delphi from v2 to XE5 along with Free
+with each installed Win32 version of Delphi from v2 to XE6 along with Free
 Pascal.
 
 Compilable Pascal units can be created that contain selected snippets.
@@ -225,7 +225,7 @@ dialogue" in the help file index).
 
 Each user can configure compilers differently.
 
-Delphi XE2 to XE5 may need to be configured to search for required units in the
+Delphi XE2 to XE6 may need to be configured to search for required units in the
 correct namespaces. This is explained in the Add/Edit Snippet Dialogue Box help
 topic and in the FAQ at http://delphidabbler.com/url/codesnip-and-xe2.
 

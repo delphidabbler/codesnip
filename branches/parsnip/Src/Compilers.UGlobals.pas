@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2005-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -44,6 +44,7 @@ type
   ///  <para>- ciDXE3 - Delphi XE3 Win 32 compiler.</para>
   ///  <para>- ciDXE4 - Delphi XE4 Win 32 compiler.</para>
   ///  <para>- ciDXE5 - Delphi XE5 Win 32 compiler.</para>
+  ///  <para>- ciDXE6 - Delphi XE6 Win 32 compiler.</para>
   ///  <para>- ciFPC - Free Pascal Compiler.</para>
   ///  <para>IMPORTANT NOTE: Any new compiler IDs must be added to the END of
   ///  the enumeration. Some code depends on the ordering of this enueration
@@ -51,7 +52,7 @@ type
   ///  </remarks>
   TCompilerID = (
     ciD2, ciD3, ciD4, ciD5, ciD6, ciD7, ciD2005, ciD2006, ciD2007, ciD2009,
-    ciD2010, ciDXE, ciDXE2, ciDXE3, ciDXE4, ciDXE5, ciFPC
+    ciD2010, ciDXE, ciDXE2, ciDXE3, ciDXE4, ciDXE5, ciDXE6, ciFPC
     // NOTE: enter any new compiler IDs here
   );
 
@@ -68,7 +69,7 @@ const
   ///  compilers.</summary>
   cBDSCompilers = [
     ciD2005, ciD2006, ciD2007, ciD2009, ciD2010, ciDXE, ciDXE2, ciDXE3, ciDXE4,
-    ciDXE5
+    ciDXE5, ciDXE6
   ];
 
 const
