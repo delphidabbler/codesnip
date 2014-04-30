@@ -11,6 +11,11 @@
 ; Change Log for CodeSnip Release 4
 ; ------------------------------------------------------------------------------
 
+Release v4.9.0 of 30 April 2014
++ Added support for test compilation with, and detection of, Delphi XE6 compiler.
++ Updated documentation re changes.
++ Updated help file re changes.
+
 Release v4.8.7 of 06 March 2014
 + Changed so that automatic bug checker now correctly records last update date. This fixes bug #93 (http://bit.ly/NmSQUt).
 + Updated to use v2 of the DelphiDabbler CodeSnip update web service when checking for availability of program updates.
@@ -117,7 +122,7 @@ Release v4.5.0 of 02 May 2013
 Release v4.4.2 of 26 April 2013
 + Fixed bugs:
   - #76 (http://bit.ly/12Loz5o) - An advanced record snippet with a method name that clashes with a directive is not test compiling correctly.
-  - #77 (http://bit.ly/11I9wXI) - Syntax highlighter highlights "contains", "requires" and "package" directives when used in method names.
+  - #77 (http://bit.ly/11I9wXI) Syntax highlighter highlights "contains", "requires" and "package" directives when used in method names.
   - #78 (http://bit.ly/ZQl3T4) - CodeSnip doesn't restore window in correct position when task bar on left or top of screen.
 
 Release v4.4.1 of 09 April 2013
