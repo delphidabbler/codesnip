@@ -17,7 +17,7 @@ Release v4.9.0 of 30 April 2014
 + Updated help file re changes.
 
 Release v4.8.7 of 06 March 2014
-+ Changed so that automatic bug checker now correctly records last update date. This fixes bug #93 (http://bit.ly/NmSQUt).
++ Fixed automatic update checker so that it correctly records last update date. This fixes bug #93 (http://bit.ly/NmSQUt).
 + Updated to use v2 of the DelphiDabbler CodeSnip update web service when checking for availability of program updates.
 + Minor corrections to help file.
 
