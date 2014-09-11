@@ -39,6 +39,7 @@ type
     ciDXE4,                             // Delphi XE4
     ciDXE5,                             // Delphi XE5
     ciDXE6,                             // Delphi XE6
+    ciDXE7,                             // Delphi XE7
     ciFPC                               // Free Pascal
   );
 
@@ -51,7 +52,7 @@ const
   ///  compilers.</summary>
   cBDSCompilers = [
     ciD2005w32, ciD2006w32, ciD2007, ciD2009w32, ciD2010, ciDXE, ciDXE2,
-    ciDXE3, ciDXE4, ciDXE5, ciDXE6
+    ciDXE3, ciDXE4, ciDXE5, ciDXE6, ciDXE7
   ];
 
 const
