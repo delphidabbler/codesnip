@@ -11,6 +11,11 @@
 ; Change Log for CodeSnip Release 4
 ; ------------------------------------------------------------------------------
 
+Release v4.10.0 of 12 September 2014
++ Added support for test compilation with, and detection of, Delphi XE7 compiler.
++ Updated documentation re changes.
++ Updated help file re changes.
+
 Release v4.9.0 of 30 April 2014
 + Added support for test compilation with, and detection of, Delphi XE6 compiler.
 + Updated documentation re changes.
