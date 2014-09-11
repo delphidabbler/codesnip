@@ -2,7 +2,7 @@
 # v. 2.0. If a copy of the MPL was not distributed with this file, You can
 # obtain one at http://mozilla.org/MPL/2.0/
 #
-# Copyright (C) 2005-2014, Peter Johnson (www.delphidabbler.com).
+# Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
 #
 # $Rev$
 # $Date$
@@ -11,7 +11,7 @@
 
 
 # Dialogue box templates and fixed code
-# =====================================
+# ===================================
 
 # about box
 Res\HTML\dlg-about-head-tplt.html
@@ -44,11 +44,6 @@ Res\HTML\dlg-rssnews.html
 Res\HTML\dlg-swag-import-intro.html
 Res\HTML\dlg-swag-import-outro-tplt.html
 
-# code submission wizard
-Res\HTML\dlg-codesubmit-intro.html
-Res\HTML\dlg-codesubmit-license.html
-Res\HTML\dlg-codesubmit-submit.html
-Res\HTML\dlg-codesubmit-finished.html
 
 # Detail pane pages, scripts and CSS
 # ==================================
@@ -99,6 +94,7 @@ Res\Img\help.gif
 
 # edit snippet
 Res\Img\editsnippet.gif
+
 
 # compiler compatibility / compilation results
 # --------------------------------------------

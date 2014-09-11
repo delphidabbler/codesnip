@@ -1,38 +1,29 @@
 inherited CodeSubmitDlg: TCodeSubmitDlg
   Caption = 'Code Submission Wizard'
   ExplicitWidth = 565
-  ExplicitHeight = 435
+  ExplicitHeight = 433
   PixelsPerInch = 96
   TextHeight = 13
   inherited pnlBody: TPanel
     inherited pcWizard: TPageControl
-      ActivePage = tsFinished
+      ActivePage = tsSnippets
       object tsIntro: TTabSheet
         Caption = 'tsIntro'
         TabVisible = False
-        inline frmIntro: TFixedHTMLDlgFrame
+        object lblIntro: TLabel
           Left = 0
-          Top = 0
+          Top = 8
           Width = 369
-          Height = 238
-          Align = alClient
-          TabOrder = 0
-          TabStop = True
-          ExplicitWidth = 369
-          inherited pnlBrowser: TPanel
-            Width = 369
-            Height = 238
-            inherited wbBrowser: TWebBrowser
-              Width = 369
-              Height = 238
-              ControlData = {
-                4C00000023260000991800000000000000000000000000000000000000000000
-                000000004C000000000000000000000001000000E0D057007335CF11AE690800
-                2B2E126208000000000000004C0000000114020000000000C000000000000046
-                8000000000000000000000000000000000000000000000000000000000000000
-                00000000000000000100000000000000000000000000000000000000}
-            end
-          end
+          Height = 227
+          AutoSize = False
+          Caption = 
+            'Thanks for deciding to submit code for inclusion in the Code Sni' +
+            'ppets database.'#13#10#13#10'This wizard collects some information from yo' +
+            'u then contacts the DelphiDabbler.com website to submit the code' +
+            '.'#13#10#13#10'Please note that you must have the right to donate this cod' +
+            'e and you must be prepared to release the code into the public d' +
+            'omain.'#13#10#13#10'Click the Next button below to begin.'
+          WordWrap = True
         end
       end
       object tsSnippets: TTabSheet
@@ -42,7 +33,7 @@ inherited CodeSubmitDlg: TCodeSubmitDlg
         object lblSnippets: TLabel
           Left = 0
           Top = 8
-          Width = 198
+          Width = 190
           Height = 13
           Caption = '&Select the snippet(s) you want to submit:'
           FocusControl = frmSnippets
@@ -50,15 +41,9 @@ inherited CodeSubmitDlg: TCodeSubmitDlg
         object lblSnippetPrompt: TLabel
           Left = 0
           Top = 221
-          Width = 221
+          Width = 183
           Height = 13
           Caption = 'One or more snippets must be selected'
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -11
-          Font.Name = 'Tahoma'
-          Font.Style = [fsBold]
-          ParentFont = False
           Visible = False
         end
         inline frmSnippets: TSelectUserSnippetsFrame
@@ -94,7 +79,7 @@ inherited CodeSubmitDlg: TCodeSubmitDlg
         object lblEmail: TLabel
           Left = 0
           Top = 43
-          Width = 70
+          Width = 69
           Height = 13
           Caption = '&Email Address:'
           FocusControl = edEMail
@@ -102,7 +87,7 @@ inherited CodeSubmitDlg: TCodeSubmitDlg
         object lblComments: TLabel
           Left = 0
           Top = 104
-          Width = 79
+          Width = 77
           Height = 13
           Caption = 'Your &Comments:'
           FocusControl = edComments
@@ -132,71 +117,26 @@ inherited CodeSubmitDlg: TCodeSubmitDlg
           Left = 0
           Top = 69
           Width = 369
-          Height = 5
+          Height = 18
           TabOrder = 2
           TabStop = True
           ExplicitTop = 69
           ExplicitWidth = 369
-          ExplicitHeight = 5
+          ExplicitHeight = 18
           inherited pnlBrowser: TPanel
             Width = 369
-            Height = 5
+            Height = 18
             ExplicitWidth = 369
             ExplicitHeight = 18
             inherited wbBrowser: TWebBrowser
               Width = 369
-              Height = 5
+              Height = 18
               TabStop = False
               ExplicitTop = -2
               ExplicitWidth = 369
               ExplicitHeight = 18
               ControlData = {
-                4C00000023260000840000000000000000000000000000000000000000000000
-                000000004C000000000000000000000001000000E0D057007335CF11AE690800
-                2B2E126208000000000000004C0000000114020000000000C000000000000046
-                8000000000000000000000000000000000000000000000000000000000000000
-                00000000000000000100000000000000000000000000000000000000}
-            end
-          end
-        end
-      end
-      object tsLicense: TTabSheet
-        Caption = 'tsLicense'
-        ImageIndex = 5
-        TabVisible = False
-        ExplicitLeft = 8
-        ExplicitTop = 11
-        object chkAgreeLicense: TCheckBox
-          Left = 3
-          Top = 200
-          Width = 363
-          Height = 17
-          Caption = 'I confirm my &agreement with statements 1 and 2 above'
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -11
-          Font.Name = 'Tahoma'
-          Font.Style = [fsBold]
-          ParentFont = False
-          TabOrder = 0
-        end
-        inline frmLicenseTerms: TFixedHTMLDlgFrame
-          Left = 0
-          Top = 0
-          Width = 369
-          Height = 169
-          TabOrder = 1
-          TabStop = True
-          ExplicitWidth = 369
-          ExplicitHeight = 169
-          inherited pnlBrowser: TPanel
-            Width = 369
-            Height = 169
-            inherited wbBrowser: TWebBrowser
-              Width = 369
-              Height = 169
-              ControlData = {
-                4C00000023260000771100000000000000000000000000000000000000000000
+                4C00000023260000DC0100000000000000000000000000000000000000000000
                 000000004C000000000000000000000001000000E0D057007335CF11AE690800
                 2B2E126208000000000000004C0000000114020000000000C000000000000046
                 8000000000000000000000000000000000000000000000000000000000000000
@@ -209,67 +149,48 @@ inherited CodeSubmitDlg: TCodeSubmitDlg
         Caption = 'tsSubmit'
         ImageIndex = 4
         TabVisible = False
-        ExplicitLeft = 0
+        object lblSubmit: TLabel
+          Left = 0
+          Top = 3
+          Width = 369
+          Height = 127
+          AutoSize = False
+          Caption = 
+            'Ready to submit the code.'#13#10#13#10'The data that will be sent contains' +
+            ' the specified snippet(s), the information your gave on the prev' +
+            'ious page and your program'#39's version number.'#13#10#13#10'If you want to s' +
+            'ee the data before sending it, click the Preview Data button.'#13#10#13 +
+            #10'To proceed please ensure you are connected to the internet and ' +
+            'click the Submit button.'
+          WordWrap = True
+        end
         object btnPreview: TButton
           Left = 136
-          Top = 164
+          Top = 144
           Width = 98
           Height = 25
           Caption = '&Preview Data...'
           TabOrder = 0
           OnClick = btnPreviewClick
         end
-        inline frmSubmit: TFixedHTMLDlgFrame
-          Left = 0
-          Top = 0
-          Width = 366
-          Height = 145
-          TabOrder = 1
-          TabStop = True
-          ExplicitWidth = 366
-          ExplicitHeight = 145
-          inherited pnlBrowser: TPanel
-            Width = 366
-            Height = 145
-            inherited wbBrowser: TWebBrowser
-              Width = 366
-              Height = 145
-              ControlData = {
-                4C000000D4250000FC0E00000000000000000000000000000000000000000000
-                000000004C000000000000000000000001000000E0D057007335CF11AE690800
-                2B2E126208000000000000004C0000000114020000000000C000000000000046
-                8000000000000000000000000000000000000000000000000000000000000000
-                00000000000000000100000000000000000000000000000000000000}
-            end
-          end
-        end
       end
       object tsFinished: TTabSheet
         Caption = 'tsFinished'
         ImageIndex = 3
         TabVisible = False
-        inline frmFinished: TFixedHTMLDlgFrame
+        object lblFinished: TLabel
           Left = 0
           Top = 0
           Width = 369
-          Height = 238
-          Align = alClient
-          TabOrder = 0
-          TabStop = True
-          inherited pnlBrowser: TPanel
-            Width = 369
-            Height = 238
-            inherited wbBrowser: TWebBrowser
-              Width = 369
-              Height = 238
-              ControlData = {
-                4C00000023260000991800000000000000000000000000000000000000000000
-                000000004C000000000000000000000001000000E0D057007335CF11AE690800
-                2B2E126208000000000000004C0000000114020000000000C000000000000046
-                8000000000000000000000000000000000000000000000000000000000000000
-                00000000000000000100000000000000000000000000000000000000}
-            end
-          end
+          Height = 201
+          AutoSize = False
+          Caption = 
+            'Thank you. Your submission has been sent successfully.'#13#10#13#10'The da' +
+            'tabase editor will review the code and, if it is in a suitable f' +
+            'ormat and it works as advertised, it will be included in the onl' +
+            'ine Code Snippets database in due course. You may be contacted i' +
+            'f there are any queries.'
+          WordWrap = True
         end
       end
     end

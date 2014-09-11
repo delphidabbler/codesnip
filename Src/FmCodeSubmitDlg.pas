@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2008-2014, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2008-2012, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -43,21 +43,18 @@ type
     frmSnippets: TSelectUserSnippetsFrame;
     lblComments: TLabel;
     lblEmail: TLabel;
+    lblFinished: TLabel;
+    lblIntro: TLabel;
     lblName: TLabel;
     lblSnippetPrompt: TLabel;
     lblSnippets: TLabel;
+    lblSubmit: TLabel;
     tsFinished: TTabSheet;
     tsIntro: TTabSheet;
     tsSnippets: TTabSheet;
     tsUserInfo: TTabSheet;
     tsSubmit: TTabSheet;
     frmPrivacy: TFixedHTMLDlgFrame;
-    tsLicense: TTabSheet;
-    chkAgreeLicense: TCheckBox;
-    frmLicenseTerms: TFixedHTMLDlgFrame;
-    frmIntro: TFixedHTMLDlgFrame;
-    frmSubmit: TFixedHTMLDlgFrame;
-    frmFinished: TFixedHTMLDlgFrame;
     procedure btnPreviewClick(Sender: TObject);
   strict private
     var
@@ -155,8 +152,8 @@ uses
   // Delphi
   Graphics,
   // Project
-  FmPreviewDlg, UCodeImportExport, UConsts, UCtrlArranger, UEmailHelper,
-  UFontHelper, UMessageBox, UStrUtils, UUserDetails, UUserDetailsPersist,
+  FmPreviewDlg, UCodeImportExport, UCtrlArranger,
+  UEmailHelper, UMessageBox, UStrUtils, UUserDetails, UUserDetailsPersist,
   Web.UCodeSubmitter, Web.UExceptions;
 
 
@@ -167,9 +164,8 @@ const
   cIntroPageIdx = 0;
   cSnippetsPageIdx = 1;
   cUserInfoPageIdx = 2;
-  cLicensePageIdx = 3;
-  cSubmitPageIdx = 4;
-  cFinishPageIdx = 5;
+  cSubmitPageIdx = 3;
+  cFinishPageIdx = 4;
 
 
 { TCodeSubmitDlg }
@@ -193,19 +189,8 @@ begin
   lblComments.Top := TCtrlArranger.BottomOf(frmPrivacy, 8);
   edComments.Top := TCtrlArranger.BottomOf(lblComments, 4);
   edComments.Height := tsUserInfo.Height - edComments.Top;
-  // tsLicense
-  frmLicenseTerms.Left := 0;
-  frmLicenseTerms.Top := 0;
-  frmLicenseTerms.Width := tsLicense.ClientWidth;
-  frmLicenseTerms.Height := frmLicenseTerms.DocHeight;
-  chkAgreeLicense.Top := TCtrlArranger.BottomOf(frmLicenseTerms, 16);
   // tsSubmit
-  frmSubmit.Left := 0;
-  frmSubmit.Top := 0;
-  frmSubmit.Width := tsSubmit.ClientWidth;
-  frmSubmit.Height := frmSubmit.DocHeight;
-  btnPreview.Top := TCtrlArranger.BottomOf(frmSubmit, 8);
-  TCtrlArranger.AlignHCentresTo([frmSubmit], [btnPreview]);
+  btnPreview.Top := TCtrlArranger.BottomOf(lblSubmit, 8);
   // tsFinished
   { nothing to do }
 end;
@@ -257,22 +242,10 @@ procedure TCodeSubmitDlg.ConfigForm;
   }
 begin
   inherited;
-  pcWizard.ActivePage := tsFinished;
-  frmFinished.Initialise('dlg-codesubmit-finished.html');
-  pcWizard.ActivePage := tsSubmit;
-  frmSubmit.Initialise('dlg-codesubmit-submit.html');
-  pcWizard.ActivePage := tsLicense;
-  frmLicenseTerms.Initialise('dlg-codesubmit-license.html');
-  pcWizard.ActivePage := tsUserInfo;
+  pcWizard.ActivePage := tsUserInfo;  // show page so that HTML can load
   frmPrivacy.Initialise('frm-emailprivacy.html');
-  pcWizard.ActivePage := tsIntro;
-  frmIntro.Initialise('dlg-codesubmit-intro.html');
-
+  lblSnippetPrompt.Font.Style := [fsBold];
   frmSnippets.CanCollapse := True;
-
-  TFontHelper.SetDefaultBaseFonts(
-    [chkAgreeLicense.Font, lblSnippetPrompt.Font]
-  );
 end;
 
 procedure TCodeSubmitDlg.DoSubmit;
@@ -349,7 +322,6 @@ resourcestring
   sIntroHeading = 'Submit code to the online database';
   sSnippetsHeading = 'Select snippets';
   sUserInfoHeading = 'About you';
-  sLicenseHeading = 'License agreement';
   sSubmitHeading = 'Ready to submit';
   sFinishHeading = 'Submission complete';
 begin
@@ -357,7 +329,6 @@ begin
     cIntroPageIdx:      Result := sIntroHeading;
     cSnippetsPageIdx:   Result := sSnippetsHeading;
     cUserInfoPageIdx:   Result := sUserInfoHeading;
-    cLicensePageIdx:    Result := sLicenseHeading;
     cSubmitPageIdx:     Result := sSubmitHeading;
     cFinishPageIdx:     Result := sFinishHeading;
   end;
@@ -478,11 +449,6 @@ resourcestring
   sNoName = 'Please enter your name or nickname';
   sNoEmail = 'Please enter an email address';
   sBadEmail = 'Email address is not valid';
-  sNoLicenseAgreement = 'You can''t submit the snippet(s) unless you agree '
-    + 'to the licensing and authority conditions on this page.' + EOL2
-    + 'If you agree please tick the checkbox the press Next.' + EOL2
-    + 'If you are unable to agree please click Cancel to abort your '
-    + 'submission.';
 begin
   case PageIdx of
     cSnippetsPageIdx:
@@ -497,9 +463,6 @@ begin
       if not IsValidEmailAddress(StrTrim(edEmail.Text)) then
         raise EDataEntry.Create(sBadEmail, edEmail);
     end;
-    cLicensePageIdx:
-      if not chkAgreeLicense.Checked then
-        raise EDataEntry.Create(sNoLicenseAgreement, chkAgreeLicense);
   end;
 end;
 

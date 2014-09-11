@@ -139,7 +139,10 @@ begin
       Result := 'DXE5';
     ciDXE6:
       Result := 'DXE6';
-    else raise EBug.Create(ClassName + '.GetIDString: Invalid ID');
+    ciDXE7:
+      Result := 'DXE7';
+    else
+      raise EBug.Create(ClassName + '.GetIDString: Invalid ID');
   end;
 end;
 
@@ -152,6 +155,7 @@ resourcestring
   sDelphiXE4 = 'Delphi XE4';    // name of Delphi XE4 compiler
   sDelphiXE5 = 'Delphi XE5';    // name of Delphi XE5 compiler
   sDelphiXE6 = 'Delphi XE6';    // name of Delphi XE6 compiler
+  sDelphiXE7 = 'Delphi XE7';    // name of Delphi XE7 compiler
 begin
   case GetID of
     ciDXE:
@@ -166,6 +170,8 @@ begin
       Result := sDelphiXE5;
     ciDXE6:
       Result := sDelphiXE6;
+    ciDXE7:
+      Result := sDelphiXE7;
     else
       Result := Format(sCompilerName, [ProductVersion]);
   end;
@@ -192,6 +198,7 @@ begin
     ciDXE4    : Result := '\Software\Embarcadero\BDS\11.0';
     ciDXE5    : Result := '\Software\Embarcadero\BDS\12.0';
     ciDXE6    : Result := '\Software\Embarcadero\BDS\14.0';
+    ciDXE7    : Result := '\Software\Embarcadero\BDS\15.0';
     else raise EBug.Create(ClassName + '.InstallationRegKey: Invalid ID');
   end;
 end;
