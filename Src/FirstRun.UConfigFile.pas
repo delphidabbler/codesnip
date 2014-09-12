@@ -480,6 +480,7 @@ begin
   UpdateForCompiler('DXE4');
   UpdateForCompiler('DXE5');
   UpdateForCompiler('DXE6');
+  UpdateForCompiler('DXE7');
 end;
 
 { TCommonConfigFileUpdater }
