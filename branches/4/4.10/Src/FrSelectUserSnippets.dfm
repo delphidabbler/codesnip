@@ -1,0 +1,2 @@
+inherited SelectUserSnippetsFrame: TSelectUserSnippetsFrame
+end
