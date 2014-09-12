@@ -73,7 +73,7 @@ const
   cCompilerIDs: array[TCompilerID] of string = (
     'd2', 'd3', 'd4', 'd5', 'd6', 'd7',
     'd2005', 'd2006', 'd2007', 'd2009', 'd2010',
-    'dXE', 'dXE2', 'dXE3', 'dDX4' {error, but in use}, 'dXE5', 'dXE6',
+    'dXE', 'dXE2', 'dXE3', 'dDX4' {error, but in use}, 'dXE5', 'dXE6', 'dXE7',
     'fpc'
   );
 
