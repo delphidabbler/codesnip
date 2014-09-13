@@ -176,7 +176,7 @@ is also emailed to the database maintainer (currently the author of CodeSnip).
 The snippets may be edited and published on the Code Snippets online database
 and distributed to CodeSnip users. Your name may be used to credit the snippets.
 Your email address will not be published and is used only to contact you with
-any queries about the submitted code.
+any queries about the submitted code or its licensing.
 
 
 Displaying the latest news
