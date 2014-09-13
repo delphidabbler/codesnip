@@ -37,13 +37,17 @@ type
       ///  <summary>User agent sent to web service.</summary>
       UserAgent = 'CodeSnip';
       ///  <summary>API version of web service.</summary>
-      ApiVersion = '2';
+      ApiVersion = '3';
       ///  <summary>API key required for all calls to web service.</summary>
       ApiKey = '9EE3A4D85A2F46F79AE2AAB1012A7678';
       { TODO -cPRERELEASE: Change "Channel" to have required channel for
                          previews, beta or final release as necessary. }
       ///  <summary>Release channel sent to web service.</summary>
       Channel = 'parsnip';
+      { TODO -cPRERELEASE: Change "Stream" to have required stream to one of
+                           "stable", "beta", "alpha" or "rc" as required. }
+      ///  <summary>Release stream sent to web service.</summary>
+      Stream = 'experimental';
       ///  <summary>Program edition sent to web service.</summary>
       Edition = 'main';
   strict private
@@ -97,6 +101,7 @@ procedure TProgramUpdateMgr.AddUpdateStreamParams(Params: TURIParams);
 begin
   Assert(Assigned(Params), ClassName + '.AddUpdateStreamParams: Params is nil');
   Params.Add('channel', Channel);
+  Params.Add('stream', Stream);
   Params.Add('edition', Edition);
 end;
 
