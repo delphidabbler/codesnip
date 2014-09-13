@@ -26,7 +26,7 @@ uses
 
 type
   ///  <summary>Provides an interface to the DelphiDabbler CodeSnip program
-  ///  update web service using the v2 API.</summary>
+  ///  update web service using the v3 API.</summary>
   ///  <remarks>This class provides a public method for every command exposed by
   ///  the web service.</remarks>
   TProgramUpdateMgr = class sealed(TStdWebService)
