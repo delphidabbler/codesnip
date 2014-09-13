@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2005-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -158,7 +158,8 @@ uses
   UStrUtils,
   USystemID,
   USystemInfo,
-  UVersionInfo;
+  UVersionInfo,
+  Web.UInfo;
 
 
 { TAppInfo }
@@ -284,7 +285,7 @@ begin
   if TCommandLineOpts.IsPortable then
     Result := Result + ' ' + sPortableMode;
   if TCommandLineOpts.UseLocalHost then
-    Result := Result + ' [localhost]';
+    Result := Result + Format(' [%s]', [TWebInfo.LocalHost]);
 end;
 
 class function TAppInfo.ProgramFileVersion: string;

@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2009-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2009-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -83,9 +83,13 @@ type
     class function Host: string;
   public
     const
+      { TODO: change to get localhost server name from external file or config.
+              We could even extend this to get server name from file and use
+              delphidabbler.com if file not present. This way we can get rid of
+              -localhost switch }
       ///  <summary>Local web server.</summary>
       ///  <remarks>Used for test purposes.</remarks>
-      LocalHost = 'localhost';
+      LocalHost = 'localhost:8080';
       ///  <summary>URL of home page on DelphiDabbler website.</summary>
       DelphiDabblerHomeURL = WebsiteURL + '/';
       ///  <summary>URL of home page of the CodeSnip project.</summary>
