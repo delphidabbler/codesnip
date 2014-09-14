@@ -75,7 +75,7 @@
 </h2>
 
 <p>
-  CodeSnip 4 stores all main database files, including the subsidiary text
+  CodeSnip v4 stores all main database files, including the subsidiary text
   files, using UTF-8 encoding. Files are saved with the UTF-8 preamble (BOM).
 </p>
 
@@ -173,11 +173,16 @@ MinVer=&lt;version-number&gt;</pre>
     <em>DisplayName</em>
   </dt>
   <dd>
-    Display name of snippet. If present this value is used in the program GUI as
-    the snippet's name. The value is optional. If not present the name of the
-    section is used as the display name. There are no restriction on the
-    characters used. Supported from CodeSnip v4.0 beta 1 and ignored by earler
-    versions which always use the section name as display name.
+    <div class="half-spaced">
+      Display name of snippet. If present this value is used in the program GUI
+      as the snippet's name. The value is optional. If not present the name of
+      the section is used as the display name. There are no restriction on the
+      characters used.
+    </div>
+    <div class="half-spaced">
+      Supported from CodeSnip v4.0 beta 1 and ignored by earlier versions which
+      always use the section name as display name.
+    </div>
   </dd>
   <dt>
     <em>Desc</em>
@@ -190,11 +195,16 @@ MinVer=&lt;version-number&gt;</pre>
     <em>DescEx</em>
   </dt>
   <dd>
-    Formatted description of the snippet using <acronym
-      title="REML is decribed in the program's help file"
-    >REML</acronym> code. This value was supported from CodeSnip v4.0 beta 1.
-    May be empty, in which case the <em>Desc</em> field is used. The
-    <em>Desc</em> field is ignored if <em>DescEx</em> has a value.
+    <div class="half-spaced">
+      Formatted description of the snippet using <acronym
+        title="REML is decribed in the program's help file"
+      >REML</acronym> code. May be empty, in which case the <em>Desc</em> field
+      is used. The <em>Desc</em> field is ignored if <em>DescEx</em> has a
+      value.
+    </div>
+    <div class="half-spaced">
+      Supported from CodeSnip v4.0 beta 1.
+    </div>
   </dd>
   <dt>
     <em>Snip</em>
@@ -247,16 +257,21 @@ MinVer=&lt;version-number&gt;</pre>
     <em>Credits_URL</em>
   </dt>
   <dd>
-    The URL used in any hyperlink present in the <em>Credits</em> field. May be
-    empty if <em>Credits</em> contains no hyperlink section.
+    The URL used in any hyperlink present in the <em>Credits</em> field. Should
+    be empty if <em>Credits</em> contains no hyperlink section.
   </dd>
   <dt>
     <em>Comments</em>
   </dt>
   <dd>
-    Text string containing any additional comments about the snippet. May be
-    empty. Ignored by versions of CodeSnip that recognise the <em>Extra</em>
-    field unless the <em>Extra</em> field is empty.
+    <div class="half-spaced">
+      Text string containing any additional comments about the snippet. May be
+      empty.
+    </div>
+    <div class="half-spaced">
+      Ignored by versions of CodeSnip that recognise the <em>Extra</em> field
+      unless the <em>Extra</em> field is empty.
+    </div>
   </dd>
   <dt>
     <em>DelphiXXX</em> &amp; <em>FPC</em>
@@ -346,11 +361,14 @@ MinVer=&lt;version-number&gt;</pre>
       </li>
     </ul>
     <div class="half-spaced">
-      If not present, the compile results is assumed to be &quot;Q&quot;
+      If not present, the compile result is assumed to be &quot;Q&quot;
     </div>
     <div class="half-spaced">
       From CodeSnip v3.8.9 a compile result of &quot;W&quot; is treated as if it
       were &quot;Y&quot;.
+    </div>
+    <div class="half-spaced">
+      Any compiler not recognised by a given version of CodeSnip is ignored.
     </div>
   </dd>
   <dt>
@@ -361,11 +379,14 @@ MinVer=&lt;version-number&gt;</pre>
       Provides extra information about the snippet. Can be empty or be a string
       of <acronym
         title="REML is decribed in the program's help file"
-      >REML</acronym> code. This value was supported from CodeSnip v2.2.5.
+      >REML</acronym> code.
     </div>
     <div class="half-spaced">
-      If empty the extra information is generated from the <em>Comments</em> and
+      If empty the extra information is generated from any <em>Comments</em> and
       <em>Credits</em> / <em>Credits_URL</em> values.
+    </div>
+    <div class="half-spaced">
+      This value was supported from CodeSnip v2.2.5.
     </div>
   </dd>
   <dt>
@@ -373,8 +394,8 @@ MinVer=&lt;version-number&gt;</pre>
   </dt>
   <dd>
     <div class="half-spaced">
-      Flag indicating if a snippet is in &quot;standard format&quot;. This value
-      was supported from CodeSnip v2.0. Valid values are:
+      Flag indicating if a snippet is in &quot;standard format&quot;. Valid
+      values are:
     </div>
     <ul class="unspaced">
       <li>
@@ -386,6 +407,9 @@ MinVer=&lt;version-number&gt;</pre>
     </ul>
     <div class="half-spaced">
       If not present then <em>StandardFormat</em> = &quot;1&quot; is assumed.
+    </div>
+    <div class="half-spaced">
+      This value was supported from CodeSnip v2.0.
     </div>
     <div class="half-spaced">
       From CodeSnip v3.0 <em>StandardFormat</em> is ignored if the <em>Kind</em>
@@ -400,8 +424,7 @@ MinVer=&lt;version-number&gt;</pre>
   </dt>
   <dd>
     <div class="half-spaced">
-      Kind of code snippet. This value was supported from CodeSnip v3.0. Valid
-      values are:
+      Kind of code snippet. Valid values are:
     </div>
     <ul class="unspaced">
       <li>
@@ -433,14 +456,16 @@ MinVer=&lt;version-number&gt;</pre>
       <em>StandardFormat</em> are present then <em>Kind</em> defaults to
       &quot;routine&quot;.
     </div>
+    <div class="half-spaced">
+      This value was supported from CodeSnip v3.0.
+    </div>
   </dd>
   <dt>
     <em>TestInfo</em>
   </dt>
   <dd>
     <div class="half-spaced">
-      Testing information for snippets. This value was supported from CodeSnip
-      v4.0. Valid values are:
+      Testing information for snippets. Valid values are:
     </div>
     <ul class="unspaced">
       <li>
@@ -459,30 +484,20 @@ MinVer=&lt;version-number&gt;</pre>
       &quot;basic&quot;. This is because, until the release of CodeSnip v4.0,
       all snippets had undergone at least basic testing.
     </div>
+    <div class="half-spaced">
+      This value was supported from CodeSnip v4.0.
+    </div>
   </dd>
   <dt>
     <em>MinVer</em>
   </dt>
   <dd>
-    <div class="pullout">
-      Used only by the online database and ignored by the CodeSnip program.
+    <div class="half-spaced">
+      Ignored.
     </div>
     <div class="half-spaced">
-      Minimum program version or equivalent on which this snippet can be
-      included in a generated unit.
-    </div>
-    <div class="half-spaced">
-      <em>MinVer</em>'s value is a dotted quad representing a program version
-      number where any omitted numbers are treated as zeros (e.g. 1, 1.0, 1.0.0
-      and 1.0.0.0 are all eqivalent).
-    </div>
-    <div class="half-spaced">
-      The online database uses this value so that it can display snippets that
-      it doesn't know how to include in units. The online database adopts an
-      equivalent version number to the CodeSnip release with similar qualities
-      and tests that against <em>MinVer</em>. If <em>MinVer</em> is greater than
-      the database's assumed version number, the snippet can't be included in
-      a generated unit.
+      This value was used by a now defunct version of the online Code Snippets
+      Database, but is no longer used.
     </div>
   </dd>
 </dl>
@@ -570,10 +585,10 @@ MinVer=&lt;version-number&gt;</pre>
   and <em>if-ver-lte</em> have never worked correctly: they have always been
   interpreted as <em>if-ver-gt</em> and <em>if-ver-lt</em> respectively. A fix
   to this could now cause more problems than it solves in older version of
-  <em>CodeSnip</em>, so the implementation of the directives has been removed
-  from later versions of the program and all occurrences of the directives in
-  the database have been replaced by suitable <em>if-ver-inrange</em>
-  directives.
+  <em>CodeSnip</em>, so the implementation of the problematic directives has
+  been removed from later versions of the program and all occurrences of the
+  directives in the database have been replaced by suitable
+  <em>if-ver-inrange</em> directives.
 </p>
 
 <p>
@@ -655,7 +670,7 @@ Snip=044.3.dat
   Finally, it is possible that a <code>name.3.ini</code> or
   <code>name.4.ini</code> file will exist with no matching
   <code>name.ini</code>. In this case <code>categories.ini</code> (or
-  <code>categories.3.ini</code> must still refer to <code>name.ini</code>, not
+  <code>categories.3.ini</code>) must still refer to <code>name.ini</code>, not
   <code>name.3.ini</code> or <code>name.4.ini</code>. The program works out
   which files to load.
 </p>
@@ -667,7 +682,7 @@ Snip=044.3.dat
 <p>
   Source code is stored separately from the category .ini files. Each snippet
   has its own uniquely named file. Files can have any name providing it doesn't
-  clash with the master file name or the names of the category file. By
+  clash with the master file name or the names of the category files. By
   convention, source code files are named numerically in sequence and have a
   .dat file extension. So <code>102.dat</code> is a typical source code file
   name. Sometimes there is a separate file for later versions of CodeSnip, so
@@ -694,8 +709,8 @@ Snip=044.3.dat
 </p>
 
 <p>
-  The credits file stand alone from the other files in the database in that they
-  are not referenced by, and do not reference, any of the other files.
+  The credits files stand alone from the other files in the database in that
+  they are not referenced by, and do not reference, any of the other files.
 </p>
 
 </body>
