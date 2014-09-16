@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2006-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2006-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -124,23 +124,25 @@ resourcestring
 
   Format is:
 
-    FileCount: SmallInt;      - number of files encoded in datastream
+    FileCount: Int16;         - number of files encoded in datastream
 
   followed by FileCount file records of:
 
-    Name: SizedString;        - name of file
+    Name: SizedString16;      - name of file
     UnixDate: Int64;          - file's modification date (GMT) in Unix format
                                 (must be converted to local time and DOS date
                                 stamp format)
-    Content: SizedString;     - file contents
+    Content: SizedString32;   - file contents
 
   Data types are:
 
-    SmallInt      - 16 bit integer encoded as 4 hex digits
+    Int16         - 16 bit integer encoded as 4 hex digits
+    Int32         - 32 bit integer encoded as 8 hex digits
     Int64         - 64 bit integer encoded as 16 hex digits
-    SizedString   - SmallInt specifying string length followed by specified
-                    number of characters
-    String[32]    - 32 character fixed length string
+    SizedString16 - Int16 specifying string length followed by specified number
+                    of characters
+    SizedString32 - Int32 specifying string length followed by specified number
+                    of characters
 }
 
 
@@ -212,7 +214,7 @@ begin
   // Get info about file from data stream
   Name := fReader.ReadSizedString16;
   UnixDate := fReader.ReadInt64;
-  Content := fReader.ReadSizedString16;
+  Content := fReader.ReadSizedString32;
   // and create file
   WriteFile(Name, Content, UnixDate);
 end;
