@@ -123,8 +123,8 @@
     <code>FileCount</code>
   </dt>
   <dd>
-    Number of files encoded in the data stream. SmallInt encoded as four hex
-    digits. Maximum number of files is 32,767.
+    Number of files encoded in the data stream. 16 bit integer encoded as four
+    hex digits. Maximum number of files is 32,767.
   </dd>
 </dl>
 
@@ -138,7 +138,7 @@
   </dt>
   <dd>
     Name of file without path information. AnsiString preceded by its size in
-    bytes as a SmallInt encoded as four hex digits.
+    bytes as a 16 bit integer encoded as four hex digits.
   </dd>
   <dt>
     <code>UnixDate</code>
@@ -151,8 +151,19 @@
     <code>Content</code>
   </dt>
   <dd>
-    File contents. AnsiString preceded by its size in bytes as a SmallInt
-    encoded as four hex digits. File size is limited to 32kB.
+    <div class="half-spaced">
+      File contents.
+    </div>
+    <div class="half-spaced">
+      <em>For web service version 5</em> this is an AnsiString preceded by its
+      size in bytes as a 16 bit integer encoded as four hex digits. File size is
+      limited to 32kB.
+    </div>
+    <div class="half-spaced">
+      <em>For web service version 6</em> this is an AnsiString preceded by its
+      size in bytes as a 32 bit integer encoded as eight hex digits. File size
+      limit is raised to 2 Gb.
+    </div>
   </dd>
 </dl>
 
