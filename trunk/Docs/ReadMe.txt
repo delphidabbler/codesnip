@@ -134,8 +134,8 @@ No files are written to the host computer and the registry is not modified.
 Uninstallation
 ================================================================================
 
-Unistalling the Standard Edition
---------------------------------
+Uninstalling the Standard Edition
+---------------------------------
 
 CodeSnip can be uninstalled via "Programs and Features" (a.k.a. "Add/Remove
 Programs") from the Windows Control Panel or by choosing "Uninstall
@@ -152,8 +152,8 @@ delete the %AppData%\DelphiDabbler\CodeSnip.4 directory and all its contents for
 each user who ran CodeSnip. If any user has moved the user database directory
 those directories also need to be deleted.
 
-Unistalling the Portable Edition
---------------------------------
+Uninstalling the Portable Edition
+---------------------------------
 
 Simply delete the folder where you installed CodeSnip and all its contents.
 
