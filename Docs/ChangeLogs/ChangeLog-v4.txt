@@ -11,6 +11,17 @@
 ; Change Log for CodeSnip Release 4
 ; ------------------------------------------------------------------------------
 
+Release v4.11.0 of
++ Changes re licensing of snippets from online Code Snippets Database under MIT license:
+  - Generated code now carries a reference to the MIT license where relevant.
+  - Submit Snippets wizard has a new page where user must confirm that any submitted snippets may be MIT licensed.
+  - "About the Database" of the About Box now refers to the license.
+  - Documentation and help file updated accordingly.
++ Now uses version 6 of the Code Snippets Database update web service which supports the downloading of category and source code files larger than 32Kb.
++ The undocumented -localhost command line option now causes CodeSnip to expect web services to be on localhost port 8080 instead of port 80. This change has no effect on normal operation and is used only in testing.
++ Minor layout tweaks in in Display tab of Preferences dialogue box.
++ Minor changes to help file and documentation.
+
 Release v4.10.0 of 12 September 2014
 + Added support for test compilation with, and detection of, Delphi XE7 compiler.
 + Updated documentation re changes.
