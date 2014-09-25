@@ -159,9 +159,6 @@ resourcestring
   sDependListTitle = 'Required snippets:';
   sXRefListTitle = 'See also:';
   sCompilers = 'Supported compilers:';
-  sMainDatabaseInfo = 'A snippet from the DelphiDabbler CodeSnip Database '
-   + '(%s), licensed under the MIT License '
-   + '(http://opensource.org/licenses/MIT).';
 begin
   Assert(Assigned(Snippet), ClassName + '.Create: Snippet is nil');
   // generate document
