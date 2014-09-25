@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2005-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -172,7 +172,7 @@ uses
 
 
 {
-  Web service notes: codesnip-updt.php v5
+  Web service notes: codesnip-updt.php v6
   =======================================
 
   This web service enables CodeSnip to check if updated files are available in
@@ -182,13 +182,13 @@ uses
     cmd=<command> [<params>]
   where <params> is a list of parameters in form param-name=param-value.
 
-  All responses from the v5 service have two parts:
+  All responses from the v6 service have two parts:
   + Successful responses have '0' on first line followed by optional lines of
     data resulting from command.
   + Error responses have +ve error code on first line and error message on 2nd
     line.
 
-  The web service expects a user agent of "DelphiDabbler-CodeSnip-Updater-v5"
+  The web service expects a user agent of "DelphiDabbler-CodeSnip-Updater-v6"
   and will return a 403 "Forbidden" error if this is not provided.
 
   Table of Commands
@@ -197,42 +197,44 @@ uses
   +-----------+-------|----------------------+---------------------------------|
   |logon      |cmd    |"logon"               |OK: Stream of news items which   |
   |           |progid |unique id of program  |is ignored                       |
-  |           |version|program version number|ERROR: CSUPDT_ERR_STDPARAMS if   |
-  |           |os     |operating system info |required params not provided     |
+  |           |version|program version number|ERROR: CSUPDT_ERR_STDPARAMS (8)  |
+  |           |os     |operating system info |if required params not provided  |
   |           |browser|version of IE browser |                                 |
   |           |caller |application defined   |                                 |
   |           |       |string                |                                 |
   +-----------+-------+----------------------+---------------------------------+
   |filecount  |cmd    |"filecount"           |OK: Integer indication number of |
   |           |progid |unique id of program  |files in remote database         |
-  |           |version|program version number|ERROR: CSUPDT_ERR_STDPARAMS if   |
-  |           |       |                      |required params not provided     |
-  |           |       |                      |ERROR: CSUPDT_ERR_LIST if can't  |
-  |           |       |                      |list files in database           |
+  |           |version|program version number|ERROR: CSUPDT_ERR_STDPARAMS (8)  |
+  |           |       |                      |if required params not provided  |
+  |           |       |                      |ERROR: CSUPDT_ERR_LIST (2) if    |
+  |           |       |                      |can't list files in database     |
   +-----------+-------+----------------------+---------------------------------+
   |lastupdate |cmd    |"lastupdate"          |OK: Unix time stamp representing |
   |           |progid |unique id of program  |date on which online database was|
   |           |version|program version number|last updated                     |
-  |           |       |                      |ERROR: CSUPDT_ERR_STDPARAMS if   |
-  |           |       |                      |required params not provided     |
-  |           |       |                      |ERROR: CSUPDT_ERR_LIST if can't  |
-  |           |       |                      |list files in database           |
-  |           |       |                      |ERROR: CSUPDT_ERR_NOTFOUND if    |
-  |           |       |                      |can't access a file in database  |
+  |           |       |                      |ERROR: CSUPDT_ERR_STDPARAMS (8)  |
+  |           |       |                      |if required params not provided  |
+  |           |       |                      |ERROR: CSUPDT_ERR_LIST (2) if    |
+  |           |       |                      |can't list files in database     |
+  |           |       |                      |ERROR: CSUPDT_ERR_NOTFOUND (7)   |
+  |           |       |                      |if can't access a file in        |
+  |           |       |                      |database                         |
   +-----------+-------+----------------------+---------------------------------+
   |getdatabase|cmd    |"getdatabase"         |OK: All files from on-line       |
   |           |progid |unique id of program  |database combined in single      |
   |           |version|program version number|stream of data.                  |
-  |           |       |                      |ERROR: CSUPDT_ERR_STDPARAMS if   |
-  |           |       |                      |required params not provided     |
-  |           |       |                      |ERROR: CSUPDT_ERR_LIST if can't  |
-  |           |       |                      |list files in database           |
-  |           |       |                      |ERROR: CSUPDT_ERR_NOTFOUND if    |
-  |           |       |                      |can't access a file in database  |
+  |           |       |                      |ERROR: CSUPDT_ERR_STDPARAMS (8)  |
+  |           |       |                      |if required params not provided  |
+  |           |       |                      |ERROR: CSUPDT_ERR_LIST (2) if    |
+  |           |       |                      |can't list files in database     |
+  |           |       |                      |ERROR: CSUPDT_ERR_NOTFOUND (7)   |
+  |           |       |                      |if can't access a file in        |
+  |           |       |                      |database                         |
   +-----------+-------+----------------------+---------------------------------+
   |logoff     |cmd    |"logoff"              |OK: No data                      |
-  |           |progid |unique id of program  |ERRORS: CSUPDT_ERR_STDPARAMS if  |                          |
-  |           |version|program version number|required params not provided     |
+  |           |progid |unique id of program  |ERRORS: CSUPDT_ERR_STDPARAMS (8) |                          |
+  |           |version|program version number|if required params not provided  |
   +-----------+-------+----------------------+---------------------------------+
   If any other command (or no command) is specified then error code
   CSUPDT_ERR_CMD (1) is returned.
@@ -242,7 +244,7 @@ uses
 const
   // Web service info
   cScriptURLTplt = 'http://%s/websvc/codesnip-updt';
-  cUserAgent = 'DelphiDabbler-CodeSnip-Updater-v5';
+  cUserAgent = 'DelphiDabbler-CodeSnip-Updater-v6';
 
 
 resourcestring
