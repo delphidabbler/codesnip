@@ -1,0 +1,51 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<!--
+ * This Source Code Form is subject to the terms of the Mozilla Public License,
+ * v. 2.0. If a copy of the MPL was not distributed with this file, You can
+ * obtain one at http://mozilla.org/MPL/2.0/
+ *
+ * Copyright (C) 2013, Peter Johnson (www.delphidabbler.com).
+ *
+ * $Rev$
+ * $Date$
+ *
+ * Help topic for Dependencies dialogue box displayed from Snippets Editor.
+-->
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text-html; charset=Windows-1252">
+    <title>
+      Snippets Editor: Dependencies Dialogue Box
+    </title>
+    <link rel="stylesheet" href="../css/codesnip.css" type="text/css">
+  </head>
+  <body>
+    <object
+      type="application/x-oleobject"
+      classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e"
+    >
+      <param name="ALink Name" value="SnippetsEditorDependenciesDlg">
+    </object>
+    <h1>
+      Snippets Editor: Dependencies Dialogue Box
+    </h1>
+    <p>
+      This dialogue box is displayed when the <em>View Dependencies</em> option
+      is selected from the context menu of the <em>Dependencies</em> list box on
+      the <em>References</em> tab of the
+      <a href="dlg_editsnippet.htm">Snippets Editor</a>.
+    </p>
+    <p>
+      If the snippet being edited has dependenciess selected in the
+      <em>Dependencies</em> list box then a tree of those snippets is displayed
+      that shows both the direct and indirect dependencies. When there are no
+      dependencies a message is displayed to that effect.
+    </p>
+    <p>
+      If a circular reference is detected (i.e. the snippet depends directly or
+      indirectly upon itself) the circular reference is displayed in red and an
+      error message is displayed. Circular references are not permitted and must
+      be corrected.
+    </p>
+  </body>
+</html>
