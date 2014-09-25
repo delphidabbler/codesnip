@@ -11,7 +11,7 @@
 ; Change Log for CodeSnip Release 5
 ; ------------------------------------------------------------------------------
 
-Summary of changes in SVN parsnip branch up to REVISION 4497.
+Summary of changes in SVN parsnip branch up to REVISION 4625.
 Changes relate to v4.11.0 (#### may need to update this if there are further v4.x releases before first v5 preview release ###)
 + User interface changes:
   - The link used to edit the displayed snippet has been removed from the Detail pane and replaced by a glyph showing the snippet's level of testing. (### may need to change this in light of further redesigns###)
@@ -37,6 +37,7 @@ Changes relate to v4.11.0 (#### may need to update this if there are further v4.
   - "Syntax Highlighter" tab of Preferences dialogue box totally redesigned. It is now used to select syntax highlighter styles for various output types. Highlighter themes are no longer customised on the tab.
   - Duplicate Snippet dialogue box overhauled to remove option to select duplicated snippet's category and to edit the snippet's ID (name).
   - New dialogue box to enable user to customise and create syntax highlighter themes. This dialogue box is accessed via the "Syntax Highlighter" tab of the Preferences dialogue box.
+  - New tag search dialogue box.
   - Snippet editor enlarged and controls changed re revised snippet properties.
   - Ability to select categories removed from snippets editor.
   - A combo box was added to snippets editor that enables the snippet's source code language to be selected. Snippet kind combo now disabled unless programming language is Pascal.
@@ -48,7 +49,9 @@ Changes relate to v4.11.0 (#### may need to update this if there are further v4.
   - The SWAG Import Wizard now informs the user which tag has been assigned to the imported snippets, instead of the category information displayed previously.
   - The history list is no longer cleared every time a snippet is edited.
   - Favourites dialogue box overhauled. Snippets are no longer sorted (### may change: code hooks are present ###) and have no "last accessed" date.
-  - "Add To Favourites" menu option on "Snippets" menu now is labelled "Favourite" and displays a tick mark if the displayed snippet is a favourite. Clicking the menu item toggles the selected snippet's "Starred" (favourite) state.
+  - "Add To Favourites" menu option on "Snippets" menu now is labelled "Favourite" and displays a tick mark if the displayed snippet is a favourite. Clicking the menu item toggles the selected snippet's "Starred" (favourite) state. The starred state can also be toggle by clicking a star in the snippet display, so the Favourite tool button was removed as redundant.
+  - A snippet's tags can now be edited in the Snippets Editor via a special tags editor.
+  -
 + Database changes:
   - All new database "engine".
   - New database file format. Support included for reading, but not writing the user database format used by CodeSnip 2 to 4. The database file format is automatically detected.
@@ -59,7 +62,7 @@ Changes relate to v4.11.0 (#### may need to update this if there are further v4.
   - Snippet IDs (formerly "names") are now generated automatically instead of being provided by the user. The IDs can no longer be edited. This means that a snippet's ID can never be changed.
   - Snippet titles (formerly "display names") are now required rather than optional and hae maximum length of 64 characters.
   - Snippet titles are now used in the UI in places where the snippet name used to be used.
-  - Snippet can now have zero or more "tags".
+  - Snippet can now have zero or more searchable "tags".
   - Snippets now have an associated programming language (see below).
   - The creation and last modification date of each snippet is now recorded.
   - Categories have been removed from the database. Categories read from legacy database and import files are converted to tags.
@@ -72,6 +75,8 @@ Changes relate to v4.11.0 (#### may need to update this if there are further v4.
   - User designed themes are now saved in a themes file alongside the per-user config file, instead of in the config file.
 + A list snippets that belong to a selected tag can now be printed and, for snippets that are routines, written to file or copied to the clipboard. These features replace those that previously worked with categories.
 + Printed snippet information and snippet information that is copied to the clipboard has been revised to remove the section that displayed the snippet's category and add sections that display the snippet's tags and source code language.
++ Generated code no longer contains license information in file header. (### this is because there's no way to tell if code is private or from Code Snippets Database ... update this as changes are made ###).
++ Modified to work with revised program update manager web service.
 + Portable application changes:
   - CodeSnip no acts in portable mode when -portable switch is passed on command line. There is no longer a separate build for the portable version.
   - New launcher application that starts CodeSnip in portable mode.
