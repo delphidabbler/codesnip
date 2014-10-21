@@ -347,8 +347,7 @@ procedure TAboutDlg.InitHTMLFrames;
       procedure(Tplt: THTMLTemplate)
       begin
         Tplt.ResolvePlaceholderText('Release', TAppInfo.ProgramReleaseInfo);
-        // MakeResourceURL('') provides just URL part before resource name
-        Tplt.ResolvePlaceholderHTML('ResURL', MakeResourceURL(''));
+        Tplt.ResolvePlaceholderHTML('ResURL', MakeResourcePath(HInstance));
       end
     );
     frmTitle.OnHTMLEvent := HTMLEventHandler;
