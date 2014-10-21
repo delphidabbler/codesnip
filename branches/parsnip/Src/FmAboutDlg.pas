@@ -32,6 +32,7 @@ uses
   FmGenericViewDlg,
   FrBrowserBase,
   FrHTMLDlg,
+  FrFixedHTMLDlg,
   FrHTMLTpltDlg,
   UCSSBuilder;
 
@@ -88,7 +89,7 @@ type
   }
   TAboutDlg = class(TGenericViewDlg)
     bvlSeparator: TBevel;
-    frmProgram: THTMLTpltDlgFrame;
+    frmProgram: TFixedHTMLDlgFrame;
     pcDetail: TPageControl;
     tsProgram: TTabSheet;
     pnlTitle: TPanel;
@@ -358,13 +359,7 @@ procedure TAboutDlg.InitHTMLFrames;
     }
   begin
     pcDetail.ActivePage := tsProgram;   // display page to let browser load OK
-    frmProgram.Initialise(
-      'dlg-about-program-tplt.html',
-      procedure(Tplt: THTMLTemplate)
-      begin
-        // TODO: replace dlg-about-program-tplt.html with non-templated version.
-      end
-    );
+    frmProgram.Initialise('dlg-about-program.html');
   end;
   // ---------------------------------------------------------------------------
 

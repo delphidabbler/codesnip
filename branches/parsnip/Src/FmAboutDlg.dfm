@@ -33,7 +33,7 @@ inherited AboutDlg: TAboutDlg
       OnMouseDown = pcDetailMouseDown
       object tsProgram: TTabSheet
         Caption = 'About The Program'
-        inline frmProgram: THTMLTpltDlgFrame
+        inline frmProgram: TFixedHTMLDlgFrame
           Left = 0
           Top = 0
           Width = 401
