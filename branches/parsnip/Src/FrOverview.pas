@@ -92,11 +92,6 @@ type
       }
       TTVDraw = class(TSnippetsTVDraw)
       strict protected
-        function IsUserDefinedNode(const Node: TTreeNode): Boolean; override;
-          {Checks if a node represents a user defined snippets object.
-            @param Node [in] Node to be checked.
-            @return True if node represents user defined object, False if not.
-          }
         function IsSectionHeadNode(const Node: TTreeNode): Boolean;
           override;
           {Checks if a node represents a section header.
@@ -982,17 +977,6 @@ var
 begin
   ViewItem := (Node as TViewItemTreeNode).ViewItem;
   Result := ViewItem.IsGrouping;
-end;
-
-function TOverviewFrame.TTVDraw.IsUserDefinedNode(
-  const Node: TTreeNode): Boolean;
-  {Checks if a node represents a user defined snippets object.
-    @param Node [in] Node to be checked.
-    @return True if node represents user defined object, False if not.
-  }
-begin
-  // TODO: remove this method and modify calling code to assume "True" result.
-  Result := True;
 end;
 
 end.

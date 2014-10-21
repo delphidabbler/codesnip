@@ -78,12 +78,6 @@ type
       strict private
         fRootID: TSnippetID;  // ID of snippet whose dependency nodes displayed
       strict protected
-        function IsUserDefinedNode(const Node: TTreeNode): Boolean;
-          override;
-          {Checks if a node represents a user defined snippets object.
-            @param Node [in] Node to be checked.
-            @return True if node represents user defined object, False if not.
-          }
         function IsErrorNode(const Node: TTreeNode): Boolean;
           override;
           {Checks if a node represents an error condition.
@@ -522,17 +516,6 @@ function TDependenciesDlg.TTVDraw.IsErrorNode(const Node: TTreeNode): Boolean;
 begin
   Result := Assigned(Node.Data)
     and (TBox<TSnippetID>(Node.Data).Value = fRootID);
-end;
-
-function TDependenciesDlg.TTVDraw.IsUserDefinedNode(const Node: TTreeNode):
-  Boolean;
-  {Checks if a node represents a user defined snippets object.
-    @param Node [in] Node to be checked.
-    @return True if node represents user defined object, False if not.
-  }
-begin
-  // TODO: rethink this method: always returns true
-  Result := True;
 end;
 
 end.

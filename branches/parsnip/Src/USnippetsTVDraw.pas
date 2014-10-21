@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2009-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2009-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -33,13 +33,6 @@ type
   }
   TSnippetsTVDraw = class abstract(TObject)
   strict protected
-    // TODO: rename (and re-comment) or remove this method
-    function IsUserDefinedNode(const Node: TTreeNode): Boolean;
-      virtual; abstract;
-      {Checks if a node represents a user defined snippets object.
-        @param Node [in] Node to be checked.
-        @return True if node represents user defined object, False if not.
-      }
     function IsSectionHeadNode(const Node: TTreeNode): Boolean;
       virtual;
       {Checks if a node represents a section header.
@@ -119,7 +112,7 @@ begin
         TV.Canvas.Font.Color := clWarningText
       else
         TV.Canvas.Font.Color :=
-          Preferences.DBHeadingColours[IsUserDefinedNode(Node)];
+          Preferences.DBHeadingColours[True];
       TV.Canvas.Brush.Color := TV.Color;
     end;
     if IsSectionHeadNode(Node) then

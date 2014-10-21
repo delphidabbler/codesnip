@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2009-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2009-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -54,13 +54,6 @@ type
       }
       TTVDraw = class(TSnippetsTVDraw)
       strict protected
-        { TODO: re-implement and re-comment this method re synch spaces or
-                remove it }
-        function IsUserDefinedNode(const Node: TTreeNode): Boolean; override;
-          {Checks if a node represents a user defined snippets object.
-            @param Node [in] Node to be checked.
-            @return True if node represents user defined object, False if not.
-          }
         function IsSectionHeadNode(const Node: TTreeNode): Boolean;
           override;
           {Checks if a node represents a section header.
@@ -315,23 +308,6 @@ function TSelectSnippetsFrame.TTVDraw.IsSectionHeadNode(
 begin
   // Header section is an initial
   Result := TObject(Node.Data) is TInitialLetterBox;
-end;
-
-function TSelectSnippetsFrame.TTVDraw.IsUserDefinedNode(
-  const Node: TTreeNode): Boolean;
-  {Checks if a node represents a user defined snippets object.
-    @param Node [in] Node to be checked.
-    @return True if node represents user defined object, False if not.
-  }
-var
-  DataObj: TObject; // object referenced in Node.Data
-begin
-  DataObj := TObject(Node.Data);
-  Result := False;
-  if DataObj is TSnippetIDBox then
-    Result := True
-  else if DataObj is TInitialLetterBox then
-    Result := True;
 end;
 
 end.
