@@ -576,7 +576,7 @@ resourcestring
   // Colour dialogue style
   sDlgTitle = 'Choose Element Colour';  // colour dialogue title
 begin
-  // Create and initialise custom color dialogue box
+  // Create and initialise custom colour dialogue box
   dlgColour := TColorDialogEx.Create(Self);
   dlgColour.Title := sDlgTitle;
   // cdShowHelp not included in fColorDlg.Options since setting HelpKeyword

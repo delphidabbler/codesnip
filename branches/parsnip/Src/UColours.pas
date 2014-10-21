@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2006-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2006-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -61,7 +61,7 @@ const
   clSplashShadowText    = clWhite;      // splash screen text shadow
 
   // new tab
-  clNewTabText          = cl3DLight;    // color of text displayed in new tabs
+  clNewTabText          = cl3DLight;    // colour of text displayed in new tabs
 
   // colours of snippet titles / heading
   { TODO -cSyncSpaces : rethink following colours in light of synch-spaces }

@@ -231,7 +231,7 @@ type
       {Arranges controls on form and sizes it.
       }
     procedure ConfigForm; override;
-      {Configures form's controls. Sets font and colors of "link" labels. Also
+      {Configures form's controls. Sets font and colours of "link" labels. Also
       sets item height of owner draw check list boxes.
       }
     procedure InitForm; override;
@@ -672,7 +672,7 @@ begin
 end;
 
 procedure TSnippetsEditorDlg.ConfigForm;
-  {Configures form's controls. Sets font and colors of "link" labels. Also sets
+  {Configures form's controls. Sets font and colours of "link" labels. Also sets
   item height of owner draw check list boxes.
   }
 begin
