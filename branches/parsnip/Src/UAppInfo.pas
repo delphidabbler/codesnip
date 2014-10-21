@@ -45,9 +45,7 @@ type
       {Name of program}
     const FullProgramName = CompanyName + ' ' + ProgramName;
       {Full name of program, including company name}
-    const ProgramID = 'codesnip';
   public
-      {Machine readable identifier of program}
     class function ProgramCaption: string;
       {Returns caption to use in main window and task bar}
     class function UserAppDir: string;
@@ -59,11 +57,6 @@ type
       {Gets the CodeSnip data directory stored within the common application
       data directory.
         @return Full path to common application data directory.
-      }
-    // TODO: Check if AppDataDir is needed anymore
-    class function AppDataDir: string;
-      {Returns the directory where CodeSnip stores the "database" files.
-        @return Full path to database sub directory.
       }
     class function UserDataDir: string;
       {Returns the directory where CodeSnip stores the user's "database" files.
@@ -145,15 +138,6 @@ uses
 
 
 { TAppInfo }
-
-class function TAppInfo.AppDataDir: string;
-  {Returns the directory where CodeSnip stores the "database" files.
-    @return Full path to database sub directory.
-  }
-begin
-  Result := CommonAppDir +
-    StrIf(TCommandLineOpts.IsPortable, '\CSDB', '\Database');
-end;
 
 class function TAppInfo.AppExeDir: string;
   {Returns the directory of CodeSnip's executable files.
