@@ -80,7 +80,7 @@ var
   CSSFont: TFont; // font used to set CSS properties
 begin
   inherited;
-  // Set body style to use dialogu box colour and font with no margin
+  // Set body style to use dialogue box colour and font with no margin
   CSSFont := TFont.Create;
   try
     with CSSBuilder.AddSelector('body') do

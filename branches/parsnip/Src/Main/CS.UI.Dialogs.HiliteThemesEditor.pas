@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2013-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -159,7 +159,7 @@ type
     procedure InitForm; override;
   public
     ///  <summary>Displays highlight themes editor dialogue box.</summary>
-    ///  <param name="AOwner">[in] Component that owns this dialogus box.
+    ///  <param name="AOwner">[in] Component that owns this dialogue box.
     ///  </param>
     ///  <param name="AThemesInUse">[in] String array of IDs of themes that are
     ///  currently in use and therefore musn't be deleted.</param>
