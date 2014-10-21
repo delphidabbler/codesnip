@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2005-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -62,8 +62,6 @@ type
     ///  without having have an instance of any object wrapped by the view.
     ///  </remarks>
     function GetKey: IViewKey;
-    ///  <summary>Checks if view is user-defined.</summary>
-    function IsUserDefined: Boolean;  // TODO: remove this method
     ///  <summary>Checks if view is a grouping.</summary>
     ///  <remarks>A grouping is a view that groups views together.
     ///  </remarks>
@@ -249,9 +247,6 @@ type
     ///  <summary>Gets object containing view's unique key.</summary>
     ///  <remarks>Method of IView.</remarks>
     function GetKey: IViewKey;
-    ///  <summary>Checks if view is user-defined.</summary>
-    ///  <remarks>Method of IView.</remarks>
-    function IsUserDefined: Boolean;
     ///  <summary>Checks if view is a grouping.</summary>
     ///  <remarks>Method of IView.</remarks>
     function IsGrouping: Boolean;
@@ -339,8 +334,6 @@ type
     ///  <summary>Gets object containing view's unique key.</summary>
     ///  <remarks>Method of IView.</remarks>
     function GetKey: IViewKey;
-    ///  <summary>Checks if view is user-defined.</summary>
-    function IsUserDefined: Boolean;
     ///  <summary>Checks if view is a grouping.</summary>
     ///  <remarks>Method of IView.</remarks>
     function IsGrouping: Boolean;
@@ -385,9 +378,6 @@ type
     ///  <summary>Gets object containing view's unique key.</summary>
     ///  <remarks>Method of IView.</remarks>
     function GetKey: IViewKey;
-    ///  <summary>Checks if view is user-defined.</summary>
-    ///  <remarks>Method of IView.</remarks>
-    function IsUserDefined: Boolean;
     ///  <summary>Checks if view is a grouping.</summary>
     ///  <remarks>Method of IView.</remarks>
     function IsGrouping: Boolean;
@@ -436,9 +426,6 @@ type
     ///  <summary>Gets object containing view's unique key.</summary>
     ///  <remarks>Method of IView.</remarks>
     function GetKey: IViewKey;
-    ///  <summary>Checks if view is user-defined.</summary>
-    ///  <remarks>Method of IView.</remarks>
-    function IsUserDefined: Boolean;
     ///  <summary>Checks if view is a grouping.</summary>
     ///  <remarks>Method of IView.</remarks>
     function IsGrouping: Boolean;
@@ -486,9 +473,6 @@ type
     ///  <summary>Gets object containing view's unique key.</summary>
     ///  <remarks>Method of IView.</remarks>
     function GetKey: IViewKey;
-    ///  <summary>Checks if view is user-defined.</summary>
-    ///  <remarks>Method of IView.</remarks>
-    function IsUserDefined: Boolean;
     ///  <summary>Checks if view is a grouping.</summary>
     ///  <remarks>Method of IView.</remarks>
     function IsGrouping: Boolean;
@@ -536,9 +520,6 @@ type
     ///  <summary>Gets object containing view's unique key.</summary>
     ///  <remarks>Method of IView.</remarks>
     function GetKey: IViewKey;
-    ///  <summary>Checks if view is user-defined.</summary>
-    ///  <remarks>Method of IView.</remarks>
-    function IsUserDefined: Boolean;
     ///  <summary>Checks if view is a grouping.</summary>
     ///  <remarks>Method of IView.</remarks>
     function IsGrouping: Boolean;
@@ -560,11 +541,6 @@ begin
 end;
 
 function TSimpleView.IsGrouping: Boolean;
-begin
-  Result := False;
-end;
-
-function TSimpleView.IsUserDefined: Boolean;
 begin
   Result := False;
 end;
@@ -654,12 +630,6 @@ begin
   Result := False;
 end;
 
-function TSnippetView.IsUserDefined: Boolean;
-begin
-  // TODO: no need for this method: replace with synch space?
-  Result := True;
-end;
-
 { TSnippetView.TKey }
 
 constructor TSnippetView.TKey.Create(const ID: TSnippetID);
@@ -716,11 +686,6 @@ begin
   Result := True;
 end;
 
-function TTagView.IsUserDefined: Boolean;
-begin
-  Result := True;
-end;
-
 { TTagView.TKey }
 
 constructor TTagView.TKey.Create(const ID: TTag);
@@ -771,11 +736,6 @@ end;
 function TSourceCodeLanguageView.IsGrouping: Boolean;
 begin
   Result := True;
-end;
-
-function TSourceCodeLanguageView.IsUserDefined: Boolean;
-begin
-  Result := not fLang.BuiltIn;
 end;
 
 { TSourceCodeLanguageView.TKey }
@@ -830,11 +790,6 @@ begin
   Result := True;
 end;
 
-function TSnippetKindView.IsUserDefined: Boolean;
-begin
-  Result := False;
-end;
-
 { TSnippetKindView.TKey }
 
 constructor TSnippetKindView.TKey.Create(const ID: TSnippetKindID);
@@ -885,11 +840,6 @@ end;
 function TInitialLetterView.IsGrouping: Boolean;
 begin
   Result := True;
-end;
-
-function TInitialLetterView.IsUserDefined: Boolean;
-begin
-  Result := False;
 end;
 
 { TInitialLetterView.TKey }
