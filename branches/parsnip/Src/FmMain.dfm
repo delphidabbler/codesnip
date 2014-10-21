@@ -194,8 +194,6 @@ inherited MainForm: TMainForm
     BevelOuter = bvNone
     BorderWidth = 2
     TabOrder = 2
-    ExplicitTop = 60
-    ExplicitHeight = 364
     object splitVert: TSplitter
       Left = 187
       Top = 2
@@ -213,7 +211,6 @@ inherited MainForm: TMainForm
       Align = alLeft
       BevelOuter = bvLowered
       TabOrder = 0
-      ExplicitHeight = 360
       inline frmOverview: TOverviewFrame
         Left = 1
         Top = 1
@@ -225,7 +222,7 @@ inherited MainForm: TMainForm
         ExplicitLeft = 1
         ExplicitTop = 1
         ExplicitWidth = 183
-        ExplicitHeight = 358
+        ExplicitHeight = 388
         inherited pnlTitle: TPanel
           Width = 183
           ExplicitWidth = 183
@@ -268,7 +265,6 @@ inherited MainForm: TMainForm
       Align = alClient
       BevelOuter = bvLowered
       TabOrder = 1
-      ExplicitHeight = 360
       inline frmDetail: TDetailFrame
         Left = 1
         Top = 1
@@ -280,7 +276,7 @@ inherited MainForm: TMainForm
         ExplicitLeft = 1
         ExplicitTop = 1
         ExplicitWidth = 408
-        ExplicitHeight = 358
+        ExplicitHeight = 388
         inherited pnlTitle: TPanel
           Width = 408
           ExplicitWidth = 408
@@ -527,8 +523,8 @@ inherited MainForm: TMainForm
       Category = 'Tools'
       Caption = 'Configure Compilers...'
       Hint = 
-        'Configure Compilers|Display dialog box where required compilers ' +
-        'can be configured'
+        'Configure Compilers|Display dialogue box where required compiler' +
+        's can be configured'
       ImageIndex = 15
       OnExecute = actCompilersExecute
     end
