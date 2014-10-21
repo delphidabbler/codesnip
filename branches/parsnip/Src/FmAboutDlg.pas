@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2005-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -87,7 +87,6 @@ type
     provides access to the program's Easter egg.
   }
   TAboutDlg = class(TGenericViewDlg)
-    btnRegister: TButton;
     bvlSeparator: TBevel;
     frmProgram: THTMLTpltDlgFrame;
     pcDetail: TPageControl;
@@ -95,7 +94,6 @@ type
     pnlTitle: TPanel;
     frmTitle: THTMLTpltDlgFrame;
     tsPaths: TTabSheet;
-    procedure btnRegisterClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     ///  <summary>Handles event triggered when user clicks on one of page
@@ -114,25 +112,17 @@ type
         @param Sender [in] Not used.
         @param EventInfo [in] Object providing information about the event.
       }
-    function RegistrationHTML: string;
-      {Builds HTML used to display registration information.
-        @return Required HTML.
-      }
   strict protected
     procedure ConfigForm; override;
       {Configures form by creating custom controls and initialising HTML frames.
       Called from ancestor class.
-      }
-    procedure InitForm; override;
-      {Initialises form's controls. Called from ancestor class.
       }
     procedure InitHTMLFrames;
       {Initialises HTML frames to use required template document with
       placeholders replaced by required values.
       }
     procedure ArrangeForm; override;
-      {Adjusts position of registration button on bottom button line. Called
-      from ancestor class.
+      {Adjusts controls on form. Called from ancestor class.
       }
     procedure UpdateTitleCSS(Sender: TObject; const CSSBuilder: TCSSBuilder);
       {Updates CSS used for HTML displayed in title frame.
@@ -166,7 +156,6 @@ uses
   IOUtils,
   // Project
   FmEasterEgg,
-  FmRegistrationDlg,
   UAppInfo,
   UColours,
   UConsts,
@@ -194,7 +183,6 @@ uses
 
   <%Release%>         program release number
   <%ResURL%>          url of programs HTML resources
-  <%Registered%>      info about whether program is registered
   <%ContribList%>     list of program contributors
   <%TesterList%>      list of program testers
 }
@@ -219,8 +207,7 @@ end;
 { TAboutDlg }
 
 procedure TAboutDlg.ArrangeForm;
-  {Adjusts position of registration button on bottom button line. Called from
-  ancestor class.
+  {Adjusts controls on form. Called from ancestor class.
   }
 var
   PathTabHeight: Integer;
@@ -236,17 +223,6 @@ begin
   pnlBody.ClientHeight := pnlTitle.Height + bvlSeparator.Height +
     pcDetail.Height;
   inherited;
-  btnRegister.Left := pnlBody.Left;
-  btnRegister.Top := btnHelp.Top;
-end;
-
-procedure TAboutDlg.btnRegisterClick(Sender: TObject);
-  {Displays registration wizard when "Register CodeSnip" button is clicked.
-    @param Sender [in] Not used.
-  }
-begin
-  if TRegistrationDlg.Execute(Self) then
-    btnRegister.Hide; // hide registration button now that program registered OK
 end;
 
 procedure TAboutDlg.ConfigForm;
@@ -355,15 +331,6 @@ begin
   end;
 end;
 
-procedure TAboutDlg.InitForm;
-  {Initialises form's controls.
-  }
-begin
-  inherited;
-  // Decide whether to display register button
-  btnRegister.Visible := not TAppInfo.IsRegistered;
-end;
-
 procedure TAboutDlg.InitHTMLFrames;
   {Initialises HTML frames to use required template document with placeholders
   replaced by required values.
@@ -395,7 +362,7 @@ procedure TAboutDlg.InitHTMLFrames;
       'dlg-about-program-tplt.html',
       procedure(Tplt: THTMLTemplate)
       begin
-        Tplt.ResolvePlaceholderHTML('Registered', RegistrationHTML);
+        // TODO: replace dlg-about-program-tplt.html with non-templated version.
       end
     );
   end;
@@ -411,33 +378,6 @@ procedure TAboutDlg.pcDetailMouseDown(Sender: TObject; Button: TMouseButton;
 begin
   if htOnItem in pcDetail.GetHitTestInfoAt(X, Y) then
     pcDetail.SetFocus;
-end;
-
-function TAboutDlg.RegistrationHTML: string;
-  {Builds HTML used to display registration information.
-    @return Required HTML.
-  }
-resourcestring
-  // Registration messages
-  sRegisteredMessage = 'Registered to %0:s.';
-  sUnregisteredMessage  = 'Unregistered copy:';
-  sRegistrationPrompt = 'Please click the button below to register CodeSnip.';
-var
-  SpanAttrs: IHTMLAttributes; // attributes of span tag
-begin
-  if TAppInfo.IsRegistered then
-    Result := THTML.Entities(
-      Format(sRegisteredMessage, [TAppInfo.RegisteredUser])
-    )
-  else
-  begin
-    SpanAttrs := THTMLAttributes.Create('class', 'warning');
-    Result :=
-      THTML.CompoundTag(
-        'span', SpanAttrs, THTML.Entities(sUnregisteredMessage)
-      ) +
-      THTML.Entities(' ' + sRegistrationPrompt);
-  end;
 end;
 
 procedure TAboutDlg.UpdateDetailCSS(Sender: TObject;

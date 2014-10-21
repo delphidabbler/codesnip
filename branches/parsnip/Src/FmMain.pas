@@ -102,7 +102,6 @@ type
     actPrivacy: TAction;
     actProgramUpdates: TAction;
     actProxyServer: TAction;
-    actRegister: TAction;
     actRestoreDatabase: TAction;
     actSaveDatabase: TAction;
     actSaveSelection: TAction;
@@ -176,7 +175,6 @@ type
     miPrint: TMenuItem;
     miPrivacy: TMenuItem;
     miProxyServer: TMenuItem;
-    miRegister: TMenuItem;
     miReportBug: TMenuItem;
     miRestoreDatabase: TMenuItem;
     miSaveDatabase: TMenuItem;
@@ -196,7 +194,6 @@ type
     miSpacer6: TMenuItem;
     miSpacer7: TMenuItem;
     miSpacer8: TMenuItem;
-    miSpacer9: TMenuItem;
     miSpacer10: TMenuItem;
     miSpacer11: TMenuItem;
     miSpacer12: TMenuItem;
@@ -414,13 +411,6 @@ type
     ///  <summary>Displays the Proxy Server Configuration dialogue box that can
     ///  be used to specify a proxy server to use for internet access.</summary>
     procedure actProxyServerExecute(Sender: TObject);
-    ///  <summary>Displays the Registration Wizard that can be used to register
-    ///  CodeSnip.</summary>
-    procedure actRegisterExecute(Sender: TObject);
-    ///  <summary>Determines whether the Register action is visible.</summary>
-    ///  <remarks>The action is visible iff the program is not already
-    ///  registered.</remarks>
-    procedure actRegisterUpdate(Sender: TObject);
     ///  <summary>Displays a dialogue box from which a backup file can be
     ///  selected and used to restore the snippets database.</summary>
     procedure actRestoreDatabaseExecute(Sender: TObject);
@@ -527,8 +517,6 @@ type
       var Accept: Boolean);
   strict private
     var
-      ///  <summary>Flag denoting if application is registered.</summary>
-      fIsAppRegistered: Boolean;
       ///  <summary>Object that notifies user-initiated events by triggering
       ///  actions.</summary>
       fNotifier: INotifier;
@@ -668,8 +656,6 @@ uses
 procedure TMainForm.actAboutExecute(Sender: TObject);
 begin
   fDialogMgr.ShowAboutDlg;
-  if not fIsAppRegistered then
-    fIsAppRegistered := TAppInfo.IsRegistered;
 end;
 
 procedure TMainForm.actAddSnippetExecute(Sender: TObject);
@@ -1050,21 +1036,6 @@ end;
 procedure TMainForm.actProxyServerExecute(Sender: TObject);
 begin
   fDialogMgr.ExecProxyServerDlg;
-end;
-
-procedure TMainForm.actRegisterExecute(Sender: TObject);
-begin
-  if fDialogMgr.ExecRegistrationDlg then
-    fIsAppRegistered := True;
-end;
-
-procedure TMainForm.actRegisterUpdate(Sender: TObject);
-begin
-  with Sender as TAction do
-  begin
-    Visible := not fIsAppRegistered;
-    Enabled := True;
-  end;
 end;
 
 procedure TMainForm.ActRemoveTagExecute(Sender: TObject);
@@ -1648,9 +1619,6 @@ begin
 
     // Create object to handle compilation and assoicated UI and dialogues
     fCompileMgr := TMainCompileMgr.Create(Self);  // auto-freed
-
-    // Record if app is registered
-    fIsAppRegistered := TAppInfo.IsRegistered;
 
     // Set event handler for snippets database
     Database.AddChangeEventHandler(DBChangeHandler);

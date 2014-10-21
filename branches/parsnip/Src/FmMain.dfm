@@ -32,7 +32,7 @@ inherited MainForm: TMainForm
     Left = 0
     Top = 0
     Width = 605
-    Height = 60
+    Height = 30
     AutoSize = True
     BorderWidth = 1
     Caption = 'tbarMain'
@@ -172,36 +172,35 @@ inherited MainForm: TMainForm
       Action = actUpdateDbase
     end
     object tbSpacer4: TToolButton
-      Left = 0
+      Left = 446
       Top = 0
       Width = 8
       Caption = 'tbSpacer4'
       ImageIndex = 12
-      Wrap = True
       Style = tbsSeparator
     end
     object tbHelpContents: TToolButton
-      Left = 0
-      Top = 30
+      Left = 454
+      Top = 0
       Action = actHelpContents
     end
   end
   object pnlBody: TPanel
     Left = 0
-    Top = 60
+    Top = 30
     Width = 605
-    Height = 364
+    Height = 394
     Align = alClient
     BevelOuter = bvNone
     BorderWidth = 2
     TabOrder = 2
-    ExplicitTop = 30
-    ExplicitHeight = 394
+    ExplicitTop = 60
+    ExplicitHeight = 364
     object splitVert: TSplitter
       Left = 187
       Top = 2
       Width = 6
-      Height = 360
+      Height = 390
       Beveled = True
       OnCanResize = splitVertCanResize
       ExplicitHeight = 292
@@ -210,23 +209,23 @@ inherited MainForm: TMainForm
       Left = 2
       Top = 2
       Width = 185
-      Height = 360
+      Height = 390
       Align = alLeft
       BevelOuter = bvLowered
       TabOrder = 0
-      ExplicitHeight = 390
+      ExplicitHeight = 360
       inline frmOverview: TOverviewFrame
         Left = 1
         Top = 1
         Width = 183
-        Height = 358
+        Height = 388
         Align = alClient
         TabOrder = 0
         TabStop = True
         ExplicitLeft = 1
         ExplicitTop = 1
         ExplicitWidth = 183
-        ExplicitHeight = 388
+        ExplicitHeight = 358
         inherited pnlTitle: TPanel
           Width = 183
           ExplicitWidth = 183
@@ -245,14 +244,14 @@ inherited MainForm: TMainForm
         end
         inherited pnlSnippets: TPanel
           Width = 183
-          Height = 290
+          Height = 320
           ExplicitLeft = 0
           ExplicitTop = 68
           ExplicitWidth = 183
           ExplicitHeight = 320
           inherited tvSnippets: TTreeView
             Width = 181
-            Height = 286
+            Height = 316
             ExplicitLeft = 0
             ExplicitTop = 2
             ExplicitWidth = 181
@@ -265,23 +264,23 @@ inherited MainForm: TMainForm
       Left = 193
       Top = 2
       Width = 410
-      Height = 360
+      Height = 390
       Align = alClient
       BevelOuter = bvLowered
       TabOrder = 1
-      ExplicitHeight = 390
+      ExplicitHeight = 360
       inline frmDetail: TDetailFrame
         Left = 1
         Top = 1
         Width = 408
-        Height = 358
+        Height = 388
         Align = alClient
         TabOrder = 0
         TabStop = True
         ExplicitLeft = 1
         ExplicitTop = 1
         ExplicitWidth = 408
-        ExplicitHeight = 388
+        ExplicitHeight = 358
         inherited pnlTitle: TPanel
           Width = 408
           ExplicitWidth = 408
@@ -292,21 +291,21 @@ inherited MainForm: TMainForm
         end
         inherited frmDetailView: TDetailViewFrame
           Width = 408
-          Height = 308
+          Height = 338
           ExplicitWidth = 408
           ExplicitHeight = 338
           inherited pnlBrowser: TPanel
             Width = 408
-            Height = 308
+            Height = 338
             ExplicitWidth = 408
             ExplicitHeight = 338
             inherited wbBrowser: TWebBrowser
               Width = 408
-              Height = 308
+              Height = 338
               ExplicitWidth = 408
-              ExplicitHeight = 318
+              ExplicitHeight = 308
               ControlData = {
-                4C0000002B2A0000D51F00000000000000000000000000000000000000000000
+                4C0000002B2A0000EF2200000000000000000000000000000000000000000000
                 000000004C000000000000000000000001000000E0D057007335CF11AE690800
                 2B2E126208000000000000004C0000000114020000000000C000000000000046
                 8000000000000000000000000000000000000000000000000000000000000000
@@ -553,13 +552,6 @@ inherited MainForm: TMainForm
       Hint = 'Preferences|Customise the program'
       ImageIndex = 16
       OnExecute = actPreferencesExecute
-    end
-    object actRegister: TAction
-      Category = 'Tools'
-      Caption = '&Register CodeSnip...'
-      Hint = 'Register|Register CodeSnip online'
-      OnExecute = actRegisterExecute
-      OnUpdate = actRegisterUpdate
     end
     object actLicense: TAction
       Category = 'Help'
@@ -1191,13 +1183,6 @@ inherited MainForm: TMainForm
       end
       object miReportBug: TMenuItem
         Action = actBugReport
-      end
-      object miSpacer9: TMenuItem
-        Caption = '-'
-      end
-      object miRegister: TMenuItem
-        Action = actRegister
-        Default = True
       end
     end
     object miHelp: TMenuItem

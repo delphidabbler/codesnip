@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2008-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2008-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -29,7 +29,6 @@ type
   ///  <summary>Enumeration of changes that can be made to brought forward
   ///  config files that result in data loss.</summary>
   TFirstRunCfgChanges = (
-    frcRegistration,    // local registration record lost
     frcHiliter,         // syntax highlighter customisation lost
     frcProxyPwd,        // internet proxy password lost
     frcSourceFormat     // source code output formatting lost
@@ -214,7 +213,6 @@ begin
       begin
         fUserConfigFile.UpdateFromOriginal;
         Include(Changes, frcHiliter);
-        Include(Changes, frcRegistration);
         Include(Changes, frcSourceFormat);
       end;
       piV1_9, piV2:

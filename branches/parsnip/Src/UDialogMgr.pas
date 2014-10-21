@@ -108,11 +108,6 @@ type
     function ExecPreferencesDlg(const PageClassName: string;
       out UpdateUI: Boolean): Boolean; overload;
 
-    ///  <summary>Displays Registration dialogue box.</summary>
-    ///  <returns>Boolean. True if user OKd dialogue or False if user cancelled.
-    ///  </returns>
-    function ExecRegistrationDlg: Boolean;
-
     ///  <summary>Displays Select Snippets dialogue box.</summary>
     ///  <param name="SelectedSnippets">ISnippetIDList [in] IDs of pre-selected
     ///  snippets.</param>
@@ -213,7 +208,6 @@ uses
   FmPrintDlg,
   FmProgramUpdatesDlg,
   FmProxyServerDlg,
-  FmRegistrationDlg,
   FmSelectionSearchDlg,
   FmSWAGImportDlg,
   FmTestCompileDlg,
@@ -276,11 +270,6 @@ end;
 function TDialogMgr.ExecProxyServerDlg: Boolean;
 begin
   Result := TProxyServerDlg.Execute(Owner);
-end;
-
-function TDialogMgr.ExecRegistrationDlg: Boolean;
-begin
-  Result := TRegistrationDlg.Execute(Owner);
 end;
 
 function TDialogMgr.ExecSelectionSearchDlg(SelectedSnippets: ISnippetIDList;

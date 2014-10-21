@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2011-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2011-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -49,7 +49,7 @@ implementation
 
 uses
   // Project
-  UAppInfo, USettings, UStrUtils, USystemInfo;
+  USettings, UStrUtils, USystemInfo;
 
 
 { TUserDetailsPersist }
@@ -63,8 +63,6 @@ begin
   inherited;
   UserData := Settings.ReadSection(ssUserInfo);
   Name := StrTrim(UserData.GetString('Name'));
-  if Name = '' then
-    Name := StrTrim(TAppInfo.RegisteredUser);
   if Name = '' then
     Name := StrTrim(TComputerInfo.UserName);
   Email := StrTrim(UserData.GetString('Email'));

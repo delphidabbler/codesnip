@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2012-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2012-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -349,7 +349,6 @@ end;
 
 procedure TV4ConfigDlg.ListChanges;
 resourcestring
-  sRegistration = 'Program registration information has been lost.';
   sHiliter = 'Syntax highlighter customisations have been lost.';
   sProxyPwd = 'Your proxy server password needs to be re-entered.';
   sSourceFormat = 'Source code formatting preferences may have been lost.';
@@ -361,8 +360,6 @@ begin
     // there are changes to config file: show in bullet list
     lblFinish2.Visible := True;
     Changes := TIStringList.Create;
-    if frcRegistration in fCfgChanges then
-      Changes.Add(sRegistration);
     if frcHiliter in fCfgChanges then
       Changes.Add(sHiliter);
     if frcProxyPwd in fCfgChanges then
