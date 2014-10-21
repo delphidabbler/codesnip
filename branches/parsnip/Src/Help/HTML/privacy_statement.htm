@@ -47,22 +47,9 @@
       directory for the portable edition.
     </p>
     <p>
-      The data that is stored in <code>Common.config</code> includes:
-    </p>
-    <ul class="unspaced">
-      <li>
-        A unique 32 digit key based on attributes of your computer.
-      </li>
-      <li>
-        A 32 digit registration key (registered programs only).
-      </li>
-      <li>
-        The registered user name or nickname (registered programs only).
-      </li>
-    </ul>
-    <p>
-      The data that is used to create the hexadecimal keys cannot be recovered
-      from those keys.
+      This file includes a unique 32 digit key based on attributes of your
+      computer. The data that is used to create this key cannot be recovered
+      from the key.
     </p>
     <h3>
       <code style="text-decoration:underline;">User.config</code>
@@ -121,9 +108,6 @@
     <ol class="unspaced">
       <li>
         Updating the database.
-      </li>
-      <li>
-        Registering the program.
       </li>
       <li>
         Submitting code for inclusion in the main database.
@@ -225,49 +209,8 @@
       </li>
     </ol>
     <p>
-      This information may also be used to update the registered program
-      database.
-    </p>
-    <p>
       None of these records store any information that can be tracked back to an
       individual.
-    </p>
-    <h3>
-      Registering the Program
-    </h3>
-    <p>
-      This activity is started when the user chooses to register <em>
-      CodeSnip</em>. A wizard appears that guides the user through the
-      registration process. The wizard displays the data that is to be sent to
-      the registration web service. The data is only sent if the user clicks
-      the wizard's &quot;Submit&quot; button. The data is:
-    </p>
-    <ul class="unspaced">
-      <li>
-        The program's id, name and version information.
-      </li>
-      <li>
-        The unique 32 digit program key (see Common.config above for details).
-      </li>
-      <li>
-        The user name or nickname.
-      </li>
-      <li>
-        A description of the operating system and version of Internet Explorer
-        being used.
-      </li>
-    </ul>
-    <p>
-      The registration data is recorded in a database on the DelphiDabbler web
-      server. The data is only used to keep track of the number of people using
-      the different versions of the program and what operating systems are being
-      used. The registration web service returns a registration code to the
-      program. <em>CodeSnip</em> records this code, with the user name, in
-      <code>Common.config</code>.
-    </p>
-    <p>
-      Registration information may be updated when the user updates the database
-      (see &quot;Updating the Database&quot; above).
     </p>
     <h3>
       Submitting code to the main database
