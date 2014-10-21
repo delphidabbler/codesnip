@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2008-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2008-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -237,7 +237,7 @@ type
 
 class procedure TDBModificationMgr.AddSnippet;
 begin
-  // Display Add Snippet dialog box which performs update of database.
+  // Display Add Snippet dialogue box which performs update of database.
   TSnippetsEditorDlg.AddNewSnippet(nil);
 end;
 
@@ -245,7 +245,7 @@ class procedure TDBModificationMgr.BackupDatabase(ParentCtrl: TComponent);
 var
   SaveDlg: TSaveDialogEx; // save dialogue box used to name backup file
 resourcestring
-  // Dialog box caption
+  // Dialogue box caption
   sCaption = 'Save Backup';
 begin
   // Get backup file name from user via standard save dialogue box
@@ -279,7 +279,7 @@ end;
 class procedure TDBModificationMgr.CanOpenDialogClose(Sender: TObject;
   var CanClose: Boolean);
 var
-  FileName: string;     // name of file entered in dialog box
+  FileName: string;     // name of file entered in dialogue box
 resourcestring
   // Error message
   sFileDoesNotExist = '"%s" does not exist.';
@@ -426,11 +426,11 @@ end;
 class function TDBModificationMgr.RestoreDatabase(
   ParentCtrl: TComponent): Boolean;
 var
-  Dlg: TOpenDialogEx;             // open dialog box used to select backup file
+  Dlg: TOpenDialogEx; // open dialogue box used to select backup file
 resourcestring
-  sCaption = 'Open Backup File';  // dialog box caption
+  sCaption = 'Open Backup File';  // dialogue box caption
 begin
-  // Get name of backup file from user via standard open dialog box
+  // Get name of backup file from user via standard open dialogue box
   Dlg := TOpenDialogEx.Create(nil);
   try
     Dlg.OnCanClose := CanOpenDialogClose;
@@ -515,7 +515,7 @@ end;
 class procedure TDBRestoreUI.Execute(AOwner: TComponent;
   const BakFileName: string);
 resourcestring
-  // Caption for wait dialog
+  // Caption for wait dialogue
   sWaitCaption = 'Restoring database files...';
 var
   Thread: TRestoreThread;   // thread that performs restore operation
@@ -553,7 +553,7 @@ end;
 class procedure TDBBackupUI.Execute(AOwner: TComponent;
   const BakFileName: string);
 resourcestring
-  // Caption for wait dialog
+  // Caption for wait dialogue
   sWaitCaption = 'Backing up database...';
 var
   Thread: TBackupThread;   // thread that performs restore operation
@@ -578,7 +578,7 @@ procedure TDBBackupUI.TBackupThread.Execute;
 var
   DBBackup: TDatabaseBackup;  // object used to perform backup
 resourcestring
-  // Dialog box caption
+  // Dialogue box caption
   sCaption = 'Save Backup';
 begin
   DBBackup := TDatabaseBackup.Create(fBakFileName);

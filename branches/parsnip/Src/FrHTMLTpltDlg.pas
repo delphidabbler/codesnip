@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2005-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -31,7 +31,7 @@ type
   ///  <summary>
   ///  Frame containing a web browser control that displays content generated
   ///  from a HTML template. By default the frame takes on the appearance of a
-  ///  dialog box.
+  ///  dialogue box.
   ///  </summary>
   THTMLTpltDlgFrame = class(THTMLDlgFrame)
   public

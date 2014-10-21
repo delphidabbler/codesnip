@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2013-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -33,7 +33,7 @@ uses
 type
   ///  <summary>Frame that allows the user to set their application and database
   ///  update preferences.</summary>
-  ///  <remarks>Designed for use within the preferences dialog box.</remarks>
+  ///  <remarks>Designed for use within the preferences dialogue box.</remarks>
   TUpdatePrefsFrame = class(TPrefsBaseFrame)
     lblProgAutoCheckFreq: TLabel;
     lblDBAutoCheckFreq: TLabel;
@@ -74,7 +74,8 @@ type
     ///  <summary>Checks if preference changes require that main window UI is
     ///  updated.</summary>
     ///  <returns>Boolean. Always False.</returns>
-    ///  <remarks>Called when dialog box containing frame is closing.</remarks>
+    ///  <remarks>Called when dialogue box containing frame is closing.
+    ///  </remarks>
     function UIUpdated: Boolean; override;
     ///  <summary>Arranges the frame's controls.</summary>
     ///  <remarks>Called after frame has been (re)sized.</remarks>
@@ -213,7 +214,7 @@ end;
 
 initialization
 
-// Register frame with preferences dialog box
+// Register frame with preferences dialogue box
 TPreferencesDlg.RegisterPage(TUpdatePrefsFrame);
 
 end.

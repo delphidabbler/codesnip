@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2006-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2006-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -51,8 +51,8 @@ type
     ///  <summary>Handles OnChange events on the three theme combo boxes.
     ///  Records the newly selected theme.</summary>
     procedure ThemeComboChange(Sender: TObject);
-    ///  <summary>Displays syntax highilight themes editor dialog box to permit
-    ///  themes to be edited.</summary>
+    ///  <summary>Displays syntax highilight themes editor dialogue box to
+    ///  permit themes to be edited.</summary>
     procedure btnEditThemesClick(Sender: TObject);
   strict private
     var

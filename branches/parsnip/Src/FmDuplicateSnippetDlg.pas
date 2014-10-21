@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2012-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2012-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -124,7 +124,7 @@ end;
 class function TDuplicateSnippetDlg.Execute(const AOwner: TComponent;
   ASnippet: ISnippet): Boolean;
 resourcestring
-  sCaption = 'Duplicate %s';   // dialog box caption
+  sCaption = 'Duplicate %s';   // dialogue box caption
 begin
   Assert(Assigned(ASnippet), ClassName + '.Execute: ASnippet is nil');
   with InternalCreate(AOwner) do

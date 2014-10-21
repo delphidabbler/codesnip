@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2005-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -29,8 +29,8 @@ interface
   The EBug exception class is also provided for explicitly generating bug
   exceptions.
 
-  Untrapped ECodeSnip exceptions result in the display of an error dialog box
-  while all others lead to display of a bug report dialog box.
+  Untrapped ECodeSnip exceptions result in the display of an error dialogue box
+  while all others lead to display of a bug report dialogue box.
 }
 
 

@@ -30,8 +30,8 @@ type
 
   {
   TProxyServerDlg:
-    Ddialog box that enables users to specify (or remove) a proxy server for use
-    by CodeSnip's web services.
+    Dialogue box that enables users to specify (or remove) a proxy server for
+    use by CodeSnip's web services.
   }
   TProxyServerDlg = class(TGenericOKDlg)
     cbUseProxy: TCheckBox;
@@ -81,8 +81,8 @@ type
       }
   public
     class function Execute(const AOwner: TComponent): Boolean;
-      {Creates and displays the proxy server dialog box.
-        @param AOwner [in] Component that owns the dialog box.
+      {Creates and displays the proxy server dialogue box.
+        @param AOwner [in] Component that owns the dialogue box.
       }
   end;
 
@@ -188,8 +188,8 @@ begin
 end;
 
 class function TProxyServerDlg.Execute(const AOwner: TComponent): Boolean;
-  {Creates and displays the proxy server dialog box.
-    @param AOwner [in] Component that owns the dialog box.
+  {Creates and displays the proxy server dialogue box.
+    @param AOwner [in] Component that owns the dialogue box.
   }
 begin
   with Create(AOwner) do

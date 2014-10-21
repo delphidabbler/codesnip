@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2005-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -123,7 +123,7 @@ type
     ///  <remarks>
     ///  <para>Parameters are used in exception error message.</para>
     ///  <para>Handles parameter is set True to inhibit browser control's script
-    ///  error dialog box.</para>
+    ///  error dialogue box.</para>
     ///  </remarks>
     procedure HTMLWindowErrorHandler(Sender: TObject; const Desc, URL: string;
       const Line: Integer; var Handled: Boolean); virtual;

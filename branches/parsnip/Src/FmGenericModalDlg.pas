@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2013-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -30,7 +30,7 @@ type
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
   strict protected
     function ModalResultOnEsc: Integer; virtual; abstract;
-      {Gets modal result returned from dialog when user presses ESC key. Set
+      {Gets modal result returned from dialogue when user presses ESC key. Set
       to mrNone to disable special handling of ESC key.
         @return Required modal result.
       }
@@ -49,8 +49,8 @@ uses
 
 procedure TGenericModalDlg.FormKeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
-  {Checks for escape key press, with no modifiers, and closes dialog with a
-  descendant supplied modal result. If modal result is mrNone then dialog is
+  {Checks for escape key press, with no modifiers, and closes dialogue with a
+  descendant supplied modal result. If modal result is mrNone then dialogue is
   not closed.
     @param Sender [in] Not used.
     @param Key [in/out] Key pressed.

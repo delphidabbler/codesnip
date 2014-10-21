@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2013-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -171,7 +171,7 @@ type
     ///  <summary>Constructs and intialises a wizard instance.</summary>
     constructor InternalCreate(AOwner: TComponent); override;
     ///  <summary>Aligns and arranges controls in each tab sheet and sizes
-    ///  dialog box to accomodate controls.</summary>
+    ///  dialogue box to accomodate controls.</summary>
     ///  <remarks>Overridden method called from ancestor class.</remarks>
     procedure ArrangeForm; override;
     ///  <summary>Initialises wizard pages that display HTML content.</summary>

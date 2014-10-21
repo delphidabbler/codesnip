@@ -8,7 +8,7 @@
  * $Rev$
  * $Date$
  *
- * Resource file containing images, dialog boxes and manifest for CodeSnip
+ * Resource file containing images, dialogue boxes and manifest for CodeSnip
  * program.
  */
 
@@ -64,7 +64,7 @@ SPLASHIMAGE RCDATA "Res/Img/Branding/Splash.gif"
 MAINICON ICON "Res/Img/Branding/CodeSnip.ico"
 
 /*
-  Dialog resource used to extend save dialog box
+  DIALOG resource used to extend save dialogue box
 */
 SAVESNIPPETEXT DIALOG 0, 0, 0, 142
 STYLE WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | DS_3DLOOK | DS_CONTROL
@@ -72,8 +72,9 @@ FONT 8, "MS Sans Serif"
 LANGUAGE LANG_NEUTRAL , SUBLANG_NEUTRAL
 {
   /*
-    Hidden static control required by Windows to extend dialog. Dialog is
-    extended by difference between dialog size and size of this static control
+    Hidden static control required by Windows to extend dialogue. Dialogue is
+    extended by difference between dialogue size and size of this static
+    control.
   */
   LTEXT "", 1119, 0, 0, 0, 84, SS_LEFT | WS_CHILD | NOT WS_VISIBLE | WS_GROUP
 }

@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2007-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2007-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -31,7 +31,7 @@ type
   {
   TGeneralPrefsFrame:
     Frame that allows user to set general application preferences. Can persist
-    preferences entered by user. Note: Designed for use in preferences dialog
+    preferences entered by user. Note: Designed for use in preferences dialogue
     box.
   }
   TGeneralPrefsFrame = class(TPrefsBaseFrame)
@@ -58,19 +58,20 @@ type
       }
     ///  <summary>Checks if preference changes require that main window UI is
     ///  updated.</summary>
-    ///  <remarks>Called when dialog box containing frame is closing.</remarks>
+    ///  <remarks>Called when dialogue box containing frame is closing.
+    ///  </remarks>
     function UIUpdated: Boolean; override;
     procedure ArrangeControls; override;
       {Arranges controls on frame. Called after frame has been sized.
       }
     function DisplayName: string; override;
       {Caption that is displayed in the tab sheet that contains this frame when
-      displayed in the preference dialog box.
+      displayed in the preference dialogue box.
         @return Required display name.
       }
     class function Index: Byte; override;
       {Index number that determines the location of the tab containing this
-      frame when displayed in the preferences dialog box.
+      frame when displayed in the preferences dialogue box.
         @return Required index number.
       }
   end;
@@ -139,7 +140,7 @@ end;
 
 function TGeneralPrefsFrame.DisplayName: string;
   {Caption that is displayed in the tab sheet that contains this frame when
-  displayed in the preference dialog box.
+  displayed in the preference dialogue box.
     @return Required display name.
   }
 resourcestring
@@ -150,7 +151,7 @@ end;
 
 class function TGeneralPrefsFrame.Index: Byte;
   {Index number that determines the location of the tab containing this frame
-  when displayed in the preferences dialog box.
+  when displayed in the preferences dialogue box.
     @return Required index number.
   }
 begin
@@ -181,7 +182,7 @@ end;
 
 initialization
 
-// Register frame with preferences dialog box
+// Register frame with preferences dialogue box
 TPreferencesDlg.RegisterPage(TGeneralPrefsFrame);
 
 end.

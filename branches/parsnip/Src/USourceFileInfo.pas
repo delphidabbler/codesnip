@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2006-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2006-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -38,7 +38,7 @@ type
 type
   ///  <summary>
   ///  Record that stores information about an encoding for use by save source
-  ///  dialog boxes.
+  ///  dialogue boxes.
   ///  </summary>
   TSourceFileEncoding = record
   strict private
@@ -50,7 +50,7 @@ type
       const ADisplayName: string);
     ///  <summary>Type of this encoding.</summary>
     property EncodingType: TEncodingType read fEncodingType;
-    ///  <summary>Description of encoding for display in dialog box.</summary>
+    ///  <summary>Description of encoding for display in dialogue box.</summary>
     property DisplayName: string read fDisplayName;
   end;
 
@@ -61,7 +61,7 @@ type
 type
   ///  <summary>
   ///  Record that stores information about a source file type required by save
-  ///  source dialog boxes.
+  ///  source dialogue boxes.
   ///  </summary>
   TSourceFileTypeInfo = record
   strict private
@@ -74,7 +74,7 @@ type
       const AEncodings: array of TSourceFileEncoding);
     ///  <summary>File extension associated with this file type.</summary>
     property Extension: string read fExtension;
-    ///  <summary>Name of file extension to display in save dialog box.
+    ///  <summary>Name of file extension to display in save dialogue box.
     ///  </summary>
     property DisplayName: string read fDisplayName;
     ///  <summary>Encodings supported by this file type.</summary>
@@ -90,7 +90,7 @@ type
   strict private
     var
       ///  <summary>Stores information about the different source code output
-      //   types required by save source dialog boxes.</summary>
+      //   types required by save source dialogue boxes.</summary>
       fFileTypeInfo: array[TSourceOutputFileType] of TSourceFileTypeInfo;
       //   <summary>Value of DefaultFileName property.</summary>
       fDefaultFileName: string;
@@ -105,14 +105,15 @@ type
     ///  necessary.</remarks>
     procedure SetDefaultFileName(const Value: string);
   public
-    ///  <summary>Builds filter string for use in open / save dialog boxes from
-    ///  descriptions and file extensions of each supported file type.</summary>
+    ///  <summary>Builds filter string for use in open / save dialogue boxes
+    ///  from descriptions and file extensions of each supported file type.
+    ///  </summary>
     function FilterString: string;
     ///  <summary>Finds source file type associated with a file extension.
     ///  </summary>
     function FileTypeFromExt(const Ext: string): TSourceOutputFileType;
     ///  <summary>Array of information about each supported file type that is
-    ///  of use to save source dialog boxes.</summary>
+    ///  of use to save source dialogue boxes.</summary>
     property FileTypeInfo[const FileType: TSourceOutputFileType]:
       TSourceFileTypeInfo
       read GetFileTypeInfo write SetFileTypeInfo;

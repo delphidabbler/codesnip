@@ -9,7 +9,7 @@
  * $Date$
  *
  * Implements a frame that allows user to set application display preferences.
- * Designed for use as one of the tabs in the preferences dialog box.
+ * Designed for use as one of the tabs in the preferences dialogue box.
 }
 
 
@@ -79,19 +79,20 @@ type
       }
     ///  <summary>Checks if preference changes require that main window UI is
     ///  updated.</summary>
-    ///  <remarks>Called when dialog box containing frame is closing.</remarks>
+    ///  <remarks>Called when dialogue box containing frame is closing.
+    ///  </remarks>
     function UIUpdated: Boolean; override;
     procedure ArrangeControls; override;
       {Arranges controls on frame. Called after frame has been sized.
       }
     function DisplayName: string; override;
       {Caption that is displayed in the tab sheet that contains this frame when
-      displayed in the preference dialog box.
+      displayed in the preference dialogue box.
         @return Required display name.
       }
     class function Index: Byte; override;
       {Index number that determines the location of the tab containing this
-      frame when displayed in the preferences dialog box.
+      frame when displayed in the preferences dialogue box.
         @return Required index number.
       }
   end;
@@ -276,7 +277,7 @@ end;
 
 function TDisplayPrefsFrame.DisplayName: string;
   {Caption that is displayed in the tab sheet that contains this frame when
-  displayed in the preference dialog box.
+  displayed in the preference dialogue box.
     @return Required display name.
   }
 resourcestring
@@ -287,7 +288,7 @@ end;
 
 class function TDisplayPrefsFrame.Index: Byte;
   {Index number that determines the location of the tab containing this frame
-  when displayed in the preferences dialog box.
+  when displayed in the preferences dialogue box.
     @return Required index number.
   }
 begin
@@ -338,7 +339,7 @@ end;
 
 initialization
 
-// Register frame with preferences dialog box
+// Register frame with preferences dialogue box
 TPreferencesDlg.RegisterPage(TDisplayPrefsFrame);
 
 end.

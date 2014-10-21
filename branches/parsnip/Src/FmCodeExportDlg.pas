@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2008-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2008-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -38,7 +38,7 @@ type
 
   {
   TCodeExportDlg:
-    A dialog box that gets snippets to be exported and creates an export file
+    A dialogue box that gets snippets to be exported and creates an export file
     containing the selected snippets.
   }
   TCodeExportDlg = class(TGenericOKDlg, INoPublicConstruct)
@@ -66,8 +66,8 @@ type
       }
   public
     class procedure Execute(const AOwner: TComponent; Snippet: ISnippet);
-      {Displays export dialog box and writes export file if user OKs entries.
-        @param AOwner [in] Reference to control that owns the dialog box.
+      {Displays export dialogue box and writes export file if user OKs entries.
+        @param AOwner [in] Reference to control that owns the dialogue box.
         @param Snippet [in] Reference to a snippet to pre-select in snippets
           check list box. If nil then no snippet is pre-selected.
       }
@@ -113,14 +113,14 @@ begin
 end;
 
 procedure TCodeExportDlg.btnBrowseClick(Sender: TObject);
-  {Handles clicks on browse (ellipsis) button by displaying file save dialog box
-  and copies chosen file name to file name edit control.
+  {Handles clicks on browse (ellipsis) button by displaying file save dialogue
+  box and copies chosen file name to file name edit control.
     @param Sender [in] Not used.
   }
 var
-  Dlg: TSaveDialogEx; // save dialog box
+  Dlg: TSaveDialogEx; // save dialogue box
 resourcestring
-  sCaption = 'Export File';                             // dialog box caption
+  sCaption = 'Export File';                             // dialogue box caption
   sFilter = 'CodeSnip export files (*.csexp)|*.csexp|'  // file filter
     + 'All files (*.*)|*.*';
 begin
@@ -140,7 +140,7 @@ begin
 end;
 
 procedure TCodeExportDlg.btnOKClick(Sender: TObject);
-  {Handles click on OK button. Validates entries in dialog box and writes
+  {Handles click on OK button. Validates entries in dialogue box and writes
   export file.
     @param Sender [in] Not used.
   }
@@ -202,8 +202,8 @@ end;
 
 class procedure TCodeExportDlg.Execute(const AOwner: TComponent;
   Snippet: ISnippet);
-  {Displays export dialog box and writes export file if user OKs entries.
-    @param AOwner [in] Reference to control that owns the dialog box.
+  {Displays export dialogue box and writes export file if user OKs entries.
+    @param AOwner [in] Reference to control that owns the dialogue box.
     @param Snippet [in] Reference to a snippet to pre-select in snippets check
       list box. If nil then no snippet is pre-selected.
   }

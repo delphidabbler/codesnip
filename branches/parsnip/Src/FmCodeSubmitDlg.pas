@@ -44,7 +44,7 @@ type
 
   {
   TCodeSubmitDlg:
-    Implements a wizard dialog that gathers data about and submits a user's
+    Implements a wizard dialogue that gathers data about and submits a user's
     code submission for inclusion in the database.
   }
   TCodeSubmitDlg = class(TWizardDlg, INoPublicConstruct)
@@ -145,9 +145,9 @@ type
       }
   public
     class procedure Execute(const AOwner: TComponent; Snippet: ISnippet);
-      {Excutes code submission dialog box. Submits code snippet to DelphiDabbler
-      web service if user OKs.
-        @param AOwner [in] Component that owns and parent's dialog box.
+      {Excutes code submission dialogue box. Submits code snippet to
+      DelphiDabbler web service if user OKs.
+        @param AOwner [in] Component that owns and parent's dialogue box.
         @param Snippet [in] Reference to any snippet to be selected in snippets
           list. If nil nothing is selected.
       }
@@ -246,7 +246,7 @@ end;
 
 procedure TCodeSubmitDlg.btnPreviewClick(Sender: TObject);
   {Handles Preview button click event. Displays XML data to be submitted in a
-  preview dialog box.
+  preview dialogue box.
     @param Sender [in] Not used.
   }
 begin
@@ -322,7 +322,8 @@ begin
     end;
   except
     // handle any exceptions from submission: we convert expected exceptions to
-    // ECodeSubmitDlg to save triggering this dialog again: others are re-raised
+    // ECodeSubmitDlg to save triggering this dialogue again: others are re-
+    // raised
     on E: EHTTPError do
       // error on web server: make more friendly
       raise ECodeSubmitDlg.CreateFmt(
@@ -333,9 +334,9 @@ end;
 
 class procedure TCodeSubmitDlg.Execute(const AOwner: TComponent;
   Snippet: ISnippet);
-  {Excutes code submission dialog box. Submits code snippet to DelphiDabbler
+  {Excutes code submission dialogue box. Submits code snippet to DelphiDabbler
   web service if user OKs.
-    @param AOwner [in] Component that owns and parent's dialog box.
+    @param AOwner [in] Component that owns and parent's dialogue box.
     @param Snippet [in] Reference to any snippet to be selected in snippets
       list. If nil nothing is selected.
   }

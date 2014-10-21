@@ -3,14 +3,14 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2008-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2008-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
  *
- * Implements a subclass of the Save dialog box to enable the dialog to align
- * itself over its owner and to work correctly with the Vista task bar. Also
- * adds support for help keywords and help button.
+ * Implements a subclass of the Save dialogue box to enable the dialogue to
+ * align itself over its owner and to work correctly with the Vista task bar.
+ * Also adds support for help keywords and help button.
  *
  * Requires that Application.ModalPopupMode <> pmNone.
 }
@@ -33,9 +33,9 @@ type
 
   {
   TSaveDialogEx:
-    Subclasses the Save dialog box to enable the dialog to align itself over its
-    owner and to work correctly with the Vista task bar. Also adds support for
-    help keywords and help button.
+    Subclasses the Save dialogue box to enable the dialogue to align itself over
+    its owner and to work correctly with the Vista task bar. Also adds support
+    for help keywords and help button.
   }
   TSaveDialogEx = class(TSaveDialog)
   strict private
@@ -47,23 +47,23 @@ type
       override;
       {Overridden method that updates the DialogData structure to route message
       processing through a custom explorer hook object.
-        @param DialogFunc [in] Windows function to be called to execute dialog
+        @param DialogFunc [in] Windows function to be called to execute dialogue
           box (GetOpenFileName() in this case).
-        @param DialogData [in] Data describing dialog box to be passed to
+        @param DialogData [in] Data describing dialogue box to be passed to
           DialogFunc (in this case of type TOpenFileName).
       }
     function MessageHook(var Msg: TMessage): Boolean; override;
-      {Intercepts messages sent to the dialog window before the dialog’s window
-      procedure. This implementation changes default support for the help button
-      to include the new HelpKeyword property and to use the program's own help
-      manager.
+      {Intercepts messages sent to the dialogue window before the dialogue's
+      window procedure. This implementation changes default support for the help
+      button to include the new HelpKeyword property and to use the program's
+      own help manager.
         @param Msg [in/out] Specifies message. Unchanged by this method. May be
           modified by inherited implementation(s).
         @return False to pass message on to dilog's window procedure, True to
           prevent this.
       }
     procedure DoShow; override;
-      {Sets up dialog just before it is displayed.
+      {Sets up dialogue just before it is displayed.
       }
     function DisplayHelp: Boolean; virtual;
       {Calls program's help manager to display help if HelpKeyword property is
@@ -74,19 +74,19 @@ type
     property WantDefaultHelpSupport: Boolean
       read fWantDefaultHelpSupport write fWantDefaultHelpSupport;
       {Indicates if support for default help processing is required. When false
-      the dialog never displays the help button. When true display depends on
+      the dialogue never displays the help button. When true display depends on
       state of HelpKeyword property}
   public
     constructor Create(AOwner: TComponent); override;
-      {Class constructor. Creates dialog box.
-        @param AOwner [in] Owning component. Dialog box will be aligned over
+      {Class constructor. Creates dialogue box.
+        @param AOwner [in] Owning component. Dialogue box will be aligned over
           AOwner.
       }
     destructor Destroy; override;
       {Class destructor. Tears down object.
       }
     function Execute: Boolean; override;
-      {Displays dialog box. Ensures help button is displayed if HelpKeyword
+      {Displays dialogue box. Ensures help button is displayed if HelpKeyword
       property is set.
         @return True if user OKs and False if cancels.
       }
@@ -110,8 +110,9 @@ uses
 { TSaveDialogEx }
 
 constructor TSaveDialogEx.Create(AOwner: TComponent);
-  {Class constructor. Creates dialog box.
-    @param AOwner [in] Owning component. Dialog box will be aligned over AOwner.
+  {Class constructor. Creates dialogue box.
+    @param AOwner [in] Owning component. Dialogue box will be aligned over
+      AOwner.
   }
 begin
   inherited;
@@ -138,7 +139,7 @@ begin
 end;
 
 procedure TSaveDialogEx.DoShow;
-  {Sets up dialog just before it is displayed.
+  {Sets up dialogue just before it is displayed.
   }
 begin
   // Prevent task bar button press bringing owner window to foreground
@@ -147,7 +148,7 @@ begin
 end;
 
 function TSaveDialogEx.Execute: Boolean;
-  {Displays dialog box. Ensures help button is displayed if HelpKeyword property
+  {Displays dialogue box. Ensures help button is displayed if HelpKeyword property
   is set.
     @return True if user OKs and False if cancels.
   }
@@ -160,7 +161,7 @@ begin
 end;
 
 function TSaveDialogEx.MessageHook(var Msg: TMessage): Boolean;
-  {Intercepts messages sent to the dialog window before the dialog’s window
+  {Intercepts messages sent to the dialogue window before the dialogue's window
   procedure. This implementation changes default support for the help button
   to include the new HelpKeyword property and to use the program's own help
   manager.
@@ -180,10 +181,10 @@ function TSaveDialogEx.TaskModalDialog(DialogFunc: Pointer;
   var DialogData): Bool;
   {Overridden method that updates the DialogData structure to route message
   processing through a custom explorer hook object.
-    @param DialogFunc [in] Windows function to be called to execute dialog box
+    @param DialogFunc [in] Windows function to be called to execute dialogue box
       (GetOpenFileName() in this case).
-    @param DialogData [in] Data describing dialog box to be passed to DialogFunc
-      (in this case of type TOpenFilename).
+    @param DialogData [in] Data describing dialogue box to be passed to
+      DialogFunc (in this case of type TOpenFilename).
   }
 begin
   if NewStyleControls and not (ofOldStyleDialog in Options) then

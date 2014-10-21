@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2005-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -93,7 +93,8 @@ begin
 end;
 
 procedure TGenericDlg.btnHelpClick(Sender: TObject);
-  {Displays default help for the dialog box using inherited DisplayHelp method.
+  {Displays default help for the dialogue box using inherited DisplayHelp
+  method.
     @param Sender [in] Not used.
   }
 begin

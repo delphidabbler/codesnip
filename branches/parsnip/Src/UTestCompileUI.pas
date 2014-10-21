@@ -3,13 +3,13 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2008-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2008-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
  *
  * Defines a static class that test compiles a snippet in a thread and displays
- * a wait dialog if the compilation is taking more than a specified amount of
+ * a wait dialogue if the compilation is taking more than a specified amount of
  * time.
 }
 
@@ -35,12 +35,12 @@ type
   {
   TTestCompileUI:
     Static class that test compiles a snippet in a thread and displays a wait
-    dialog if the compilation is taking more than a specified amount of time.
+    dialogue if the compilation is taking more than a specified amount of time.
   }
   TTestCompileUI = class(TNoConstructObject)
   strict private
-    const PauseBeforeDisplay = 500; // time elapsed before dialog is displayed
-    const MinDisplayTime = 1000;    // minimum time that dialog is displayed
+    const PauseBeforeDisplay = 500; // time elapsed before dialogue is displayed
+    const MinDisplayTime = 1000;    // minimum time that dialogue is displayed
     class procedure HandleException(const E: Exception);
       {Handles exception thrown during compilation. Re-raises exception with
       message that depends on an analysis of the exception. Compiler generated

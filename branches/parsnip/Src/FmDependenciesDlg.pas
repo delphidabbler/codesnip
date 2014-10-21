@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2009-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2009-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -39,7 +39,7 @@ uses
 type
   {
   TDependenciesDlg:
-    Tabbed dialog box that displays all the dependencies and dependents of a
+    Tabbed dialogue box that displays all the dependencies and dependents of a
     snippet.
   }
   TDependenciesDlg = class(TGenericViewDlg, INoPublicConstruct)
@@ -139,7 +139,7 @@ type
       DependsList: ISnippetIDList; const Tabs: TTabIDs;
       const AHelpKeyword: string); overload;
       {Displays dialogue box containing details of a snippet's dependencies.
-        @param AOwner [in] Component that owns the dialog box.
+        @param AOwner [in] Component that owns the dialogue box.
         @param SnippetID [in] ID of snippet for which dependencies are to be
           displayed.
         @param Title [in] Title of snippet for which dependencies are to be
@@ -152,7 +152,7 @@ type
       const Tabs: TTabIDs; const PermitSelection: Boolean;
       const AHelpKeyword: string): ISearch; overload;
       {Displays dialogue box containing details of a snippet's dependencies.
-        @param AOwner [in] Component that owns the dialog box.
+        @param AOwner [in] Component that owns the dialogue box.
         @param Snippet [in] Snippet for which dependencies are to be displayed.
         @param Tabs [in] Tabs to be displayed in dialogue box.
         @param PermitSelection [in] Determines whether listed dependencies can

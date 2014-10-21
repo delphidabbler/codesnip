@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2009-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2009-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -73,7 +73,7 @@ type
     procedure Compile(const UIParent: TWinControl; Snippet: ISnippet;
       const DisplayProc: TCompileResultDisplay = nil);
       {Test compiles a snippet and then displays the compilation results. Shows
-      a wait dialog box if compilation takes a long time.
+      a wait dialogue box if compilation takes a long time.
         @param UIParent [in] Control that parents any wait window that is
           displayed. Wait window aligned above this control.
         @param Snippet [in] Snippet to be compiled. Stored in
@@ -87,7 +87,7 @@ type
         @return True if there are any errors, False otherwise.
       }
     procedure ShowErrors;
-      {Shows dialog box containing all errors and warnings for last compiled
+      {Shows dialogue box containing all errors and warnings for last compiled
       snippet.
       }
     property Compilers: ICompilers read fCompilers;
@@ -114,7 +114,7 @@ type
           otherwise.
       }
     function ConfigCompilers: Boolean;
-      {Displays Configure Compilers dialog to permit user to update compiler
+      {Displays Configure Compilers dialogue to permit user to update compiler
       properties.
         @return True if user accepts changes, False if not.
       }
@@ -141,7 +141,7 @@ uses
 procedure TCompileMgr.Compile(const UIParent: TWinControl; Snippet: ISnippet;
   const DisplayProc: TCompileResultDisplay);
   {Test compiles a snippet and then displays the compilation results. Shows a
-  wait dialog box if compilation takes a long time.
+  wait dialogue box if compilation takes a long time.
     @param UIParent [in] Control that parents any wait window that is displayed.
       Wait window aligned above this control.
     @param Snippet [in] Snippet to be compiled. Stored in LastCompiledSnippet
@@ -225,7 +225,7 @@ begin
 end;
 
 procedure TCompileMgr.ShowErrors;
-  {Shows dialog box containing all errors and warnings for last compiled
+  {Shows dialogue box containing all errors and warnings for last compiled
   snippet.
   }
 begin
@@ -254,7 +254,7 @@ begin
 end;
 
 function TMainCompileMgr.ConfigCompilers: Boolean;
-  {Displays Configure Compilers dialog to permit user to update compiler
+  {Displays Configure Compilers dialogue to permit user to update compiler
   properties.
     @return True if user accepts changes, False if not.
   }

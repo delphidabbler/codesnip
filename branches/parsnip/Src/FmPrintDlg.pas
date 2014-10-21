@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2007-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2007-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -39,7 +39,7 @@ type
 
   {
   TPrintDlg:
-    Class that implements a print dialog box.
+    Class that implements a print dialogue box.
   }
   TPrintDlg = class(TGenericOKDlg)
     btnSetup: TButton;
@@ -100,13 +100,13 @@ type
       }
   strict protected
     procedure InitForm; override;
-      {Initialises dialog box controls.
+      {Initialises dialogue box controls.
       }
   public
     class function Execute(const AOwner: TComponent): Boolean;
-      {Displays print dialog box and gets information entered by user.
-        @param AOwner [in] Owner of dialog box.
-        @return True if user OKs dialog box and False if user cancels.
+      {Displays print dialogue box and gets information entered by user.
+        @param AOwner [in] Owner of dialogue box.
+        @return True if user OKs dialogue box and False if user cancels.
       }
   end;
 
@@ -286,9 +286,9 @@ begin
 end;
 
 class function TPrintDlg.Execute(const AOwner: TComponent): Boolean;
-  {Displays print dialog box and gets information entered by user.
-    @param AOwner [in] Owner of dialog box.
-    @return True if user OKs dialog box and False if user cancels.
+  {Displays print dialogue box and gets information entered by user.
+    @param AOwner [in] Owner of dialogue box.
+    @return True if user OKs dialogue box and False if user cancels.
   }
 begin
   with Create(AOwner) do
@@ -311,7 +311,7 @@ begin
 end;
 
 procedure TPrintDlg.InitForm;
-  {Initialises dialog box controls.
+  {Initialises dialogue box controls.
   }
 begin
   inherited;

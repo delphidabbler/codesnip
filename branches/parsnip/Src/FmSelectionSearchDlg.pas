@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2006-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2006-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -39,8 +39,8 @@ type
 
   {
   TSelectionSearchDlg:
-    Defines a dialog box that is used to select snippets manually by placing
-    check marks next to the required snippet names. The dialog creates search
+    Defines a dialogue box that is used to select snippets manually by placing
+    check marks next to the required snippet names. The dialogue creates search
     criteria based on the selected snippets.
   }
   TSelectionSearchDlg = class(TGenericOKDlg, INoPublicConstruct)
@@ -79,8 +79,8 @@ type
   public
     class function Execute(const AOwner: TComponent;
       SelectedSnippets: ISnippetIDList; out ASearch: ISearch): Boolean;
-      {Displays dialog and returns search object based on entered criteria.
-        @param AOwner [in] Component that owns this dialog.
+      {Displays dialogue and returns search object based on entered criteria.
+        @param AOwner [in] Component that owns this dialogue.
         @param SelectedSnippets [in] Default list of IDs of selected snippets.
         @param ASearch [out] Search to be performed if user OKs. Has filter
           that causes all snippets selected by user to be returned by search.
@@ -168,8 +168,8 @@ end;
 
 class function TSelectionSearchDlg.Execute(const AOwner: TComponent;
   SelectedSnippets: ISnippetIDList; out ASearch: ISearch): Boolean;
-  {Displays dialog and returns search object based on entered criteria.
-    @param AOwner [in] Component that owns this dialog.
+  {Displays dialogue and returns search object based on entered criteria.
+    @param AOwner [in] Component that owns this dialogue.
     @param SelectedSnippets [in] Default list of IDs of selected snippets.
     @param ASearch [out] Search to be performed if user OKs. Has filter that
       causes all snippets selected by user to be returned by search. Set to nil
@@ -189,7 +189,7 @@ end;
 
 procedure TSelectionSearchDlg.FormCreate(Sender: TObject);
   {Form creation event handler. Sets up form and displays hourglass cursor while
-  dialog box loads.
+  dialogue box loads.
     @param Sender [in] Not used.
   }
 begin

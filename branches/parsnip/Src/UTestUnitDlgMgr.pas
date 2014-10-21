@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2009-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2009-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -76,7 +76,7 @@ class procedure TTestUnitDlgMgr.DisplayTestUnit(const Owner: TComponent;
 var
   XHTMLDoc: TEncodedData;         // syntax highlighted source code XHTML
 resourcestring
-  sDlgTitle = 'Test Unit for %s'; // caption of dialog box
+  sDlgTitle = 'Test Unit for %s'; // caption of dialogue box
 begin
   XHTMLDoc := HighlightSource(
     GenerateTestUnit(Snippet),
@@ -104,7 +104,7 @@ var
   Brush: TSyntaxHiliterBrush;     // syntax highlighter brush for language
   Theme: TSyntaxHiliteTheme;      // syntax highlighter theme
 resourcestring
-  sDlgTitle = 'Test Unit for %s'; // caption of dialog box
+  sDlgTitle = 'Test Unit for %s'; // caption of dialogue box
 begin
   Theme := TConfig.Instance.HiliterThemes[
     Preferences.CurrentHiliteThemeIds[htkUI]

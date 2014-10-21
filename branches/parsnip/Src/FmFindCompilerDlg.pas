@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2005-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -34,7 +34,7 @@ type
 
   {
   TFindCompilerDlg:
-    Defines a dialog box that is used to select criteria for searches for
+    Defines a dialogue box that is used to select criteria for searches for
     snippets that compile or don't compile with selected compilers.
   }
   TFindCompilerDlg = class(TGenericOKDlg, INoPublicConstruct)
@@ -61,7 +61,7 @@ type
 
     procedure UpdateOKBtn;
       {Updates state of OK button according to whether valid entries made in
-      dialog.
+      dialogue.
       }
     function CheckedCompilerCount: Integer;
       {Returns number of compilers selected in check list box.
@@ -75,8 +75,8 @@ type
   public
     class function Execute(const AOwner: TComponent;
       out ASearch: ISearch; out RefineExisting: Boolean): Boolean;
-      {Displays dialog and returns search object based on entered criteria.
-        @param AOwner [in] Component that owns this dialog.
+      {Displays dialogue and returns search object based on entered criteria.
+        @param AOwner [in] Component that owns this dialogue.
         @param ASearch [out] Set to value of Search property: nil if user
           cancels.
         @param RefineExisting [out] Set to flag indicating if any existing
@@ -262,7 +262,7 @@ procedure TFindCompilerDlg.btnOKClick(Sender: TObject);
 var
   Filter: ICompilerSearchFilter;  // search filter
 begin
-  // Create search filter from entries made in dialog box
+  // Create search filter from entries made in dialogue box
   Filter := TSearchFilterFactory.CreateCompilerSearchFilter(
     GetCompilerVersions, GetLogic, GetOption
   );
@@ -314,8 +314,8 @@ end;
 
 class function TFindCompilerDlg.Execute(const AOwner: TComponent;
   out ASearch: ISearch; out RefineExisting: Boolean): Boolean;
-  {Displays dialog and returns search object based on entered criteria.
-    @param AOwner [in] Component that owns this dialog.
+  {Displays dialogue and returns search object based on entered criteria.
+    @param AOwner [in] Component that owns this dialogue.
     @param ASearch [out] Set to value of Search property: nil if user
       cancels.
     @param RefineExisting [out] Set to flag indicating if any existing
@@ -411,7 +411,8 @@ begin
 end;
 
 procedure TFindCompilerDlg.UpdateOKBtn;
-  {Updates state of OK button according to whether valid entries made in dialog.
+  {Updates state of OK button according to whether valid entries made in
+  dialogue.
   }
 begin
   // OK button enabled if at least one compiler is checked and if a search

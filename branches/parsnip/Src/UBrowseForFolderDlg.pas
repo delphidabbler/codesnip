@@ -3,12 +3,12 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2011-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2011-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
  *
- * Implements a class that displays a browse for folder dialog box.
+ * Implements a class that displays a browse for folder dialogue box.
 }
 
 
@@ -27,7 +27,8 @@ uses
 
 type
   ///  <summary>
-  ///  Displays browse for folder dialog box aligned over a given host control.
+  ///  Displays browse for folder dialogue box aligned over a given host
+  ///  control.
   ///  </summary>
   ///  <remarks>
   ///  Wraps a TPJBrowseDialog component.
@@ -35,16 +36,16 @@ type
   TBrowseForFolderDlg = class(TObject)
   strict private
     var
-      ///  <summary>Reference to dialog box component.</summary>
+      ///  <summary>Reference to dialogue box component.</summary>
       fDialog: TPJBrowseDialog;
-      ///  <summary>Reference to component above which dialog box is to be
+      ///  <summary>Reference to component above which dialogue box is to be
       ///  aligned.</summary>
       fHost: TComponent;
   strict private
-    ///  <summary>Handles dialog's OnInitialise event. Aligns dialog box over
-    ///  parent form.</summary>
+    ///  <summary>Handles dialogue's OnInitialise event. Aligns dialogue box
+    ///  over parent form.</summary>
     procedure DlgInitHandler(Sender: TObject);
-    ///  <summary>Handles dialog's OnHelp event. Displays help using keyword
+    ///  <summary>Handles dialogue's OnHelp event. Displays help using keyword
     ///  recorded in HelpKeyword property.</summary>
     procedure DlgHelpHandler(Sender: TObject; var Cancel: Boolean);
     ///  <summary>Getter for FolderName property.</summary>
@@ -66,20 +67,20 @@ type
     ///  <summary>Setter for MakeFolderBtnVisible property.</summary>
     procedure SetMakeFolderBtnVisible(const Value: Boolean);
   public
-    ///  <summary>Constructs object and initialise dialog box.</summary>
+    ///  <summary>Constructs object and initialise dialogue box.</summary>
     ///  <param name="AHost">TComponent [in] Reference to component over which
-    ///  the dialog box will be aligned.</param>
+    ///  the dialogue box will be aligned.</param>
     constructor Create(AHost: TComponent);
     ///  <summary>Object destructor. Tidies up object.</summary>
     destructor Destroy; override;
-    ///  <summary>Displays dialog box and returns True if user OKs, False if
+    ///  <summary>Displays dialogue box and returns True if user OKs, False if
     ///  user cancels.</summary>
     function Execute: Boolean;
-    ///  <summary>Text display in dialog window caption.</summary>
+    ///  <summary>Text display in dialogue window caption.</summary>
     property Title: string read GetTitle write SetTitle;
-    ///  <summary>Heading line display in dialog box.</summary>
+    ///  <summary>Heading line display in dialogue box.</summary>
     property Headline: string read GetHeadline write SetHeadline;
-    ///  <summary>Name of folder selected in dialog box.</summary>
+    ///  <summary>Name of folder selected in dialogue box.</summary>
     property FolderName: string read GetFolderName;
     ///  <summary>Help keyword. No help button is displayed: help topic is
     ///  displayed if F1 key is pressed.</summary>

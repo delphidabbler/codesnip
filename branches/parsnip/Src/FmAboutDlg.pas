@@ -84,7 +84,7 @@ type
 
   {
   TAboutDlg:
-    Implements an about dialog box displays information about the program and
+    Implements an about dialogue box displays information about the program and
     provides access to the program's Easter egg.
   }
   TAboutDlg = class(TGenericViewDlg)
@@ -138,8 +138,8 @@ type
       }
   public
     class procedure Execute(AOwner: TComponent);
-      {Displays dialog box.
-        @param AOwner [in] Component that owns this dialog box.
+      {Displays dialogue box.
+        @param AOwner [in] Component that owns this dialogue box.
       }
   end;
 
@@ -263,8 +263,8 @@ begin
 end;
 
 class procedure TAboutDlg.Execute(AOwner: TComponent);
-  {Displays dialog box.
-    @param AOwner [in] Component that owns this dialog box.
+  {Displays dialogue box.
+    @param AOwner [in] Component that owns this dialogue box.
   }
 begin
   with Create(AOwner) do

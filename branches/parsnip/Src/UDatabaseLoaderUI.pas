@@ -3,13 +3,13 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2010-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2010-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
  *
  * Defines a static class that loads the database in a thread and displays a
- * wait dialog if the loading is taking more than a specified amount of time.
+ * wait dialogue if the loading is taking more than a specified amount of time.
 }
 
 
@@ -30,18 +30,18 @@ type
 
   {
   TDatabaseLoaderUI:
-    Static class that loads the database in a thread and displays a wait dialog
-    if the loading is taking more than a specified amount of time.
+    Static class that loads the database in a thread and displays a wait
+    dialogue if the loading is taking more than a specified amount of time.
   }
   TDatabaseLoaderUI = class(TNoConstructObject)
   strict private
-    const PauseBeforeDisplay = 500; // time elapsed before dialog is displayed
-    const MinDisplayTime = 1000;    // minimum time that dialog is displayed
+    const PauseBeforeDisplay = 500; // time elapsed before dialogue is displayed
+    const MinDisplayTime = 1000;    // minimum time that dialogue is displayed
   public
     class procedure Execute(AOwner: TComponent);
       {Loads the database in a thread, displaying a wait message if the process
       takes more than a certain time.
-        @param AOwner [in] Control that owns the wait dialog box. Dialog is
+        @param AOwner [in] Control that owns the wait dialogue box. Dialogue is
           aligned over this control.
       }
   end;
@@ -60,8 +60,8 @@ uses
 class procedure TDatabaseLoaderUI.Execute(AOwner: TComponent);
   {Loads the database in a thread, displaying a wait message if the process
   takes more than a certain time.
-    @param AOwner [in] Control that owns the wait dialog box. Dialog is aligned
-      over this control.
+    @param AOwner [in] Control that owns the wait dialogue box. Dialogue is
+      aligned over this control.
   }
 resourcestring
   sLoadingDatabase  = 'Loading database...';  // wait dialogue caption

@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2009-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2009-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -40,7 +40,7 @@ uses
 type
   {
   TActiveTextPreviewDlg:
-    Dialog box that displays active text rendered from REML markup or plain
+    Dialogue box that displays active text rendered from REML markup or plain
     text.
     Active text is rendered as HTML. Link URLs can be viewed and tested.
   }
@@ -49,7 +49,7 @@ type
   strict private
     fActiveText: IActiveText; // Active text to be displayed.
     procedure UpdateCSS(Sender: TObject; const CSSBuilder: TCSSBuilder);
-      {Modifies CSS used to display dialog box body to achieve required
+      {Modifies CSS used to display dialogue box body to achieve required
       appearance.
         @param Sender [in] Not used.
         @param CSSBuilder [in] Object used to modify CSS.
@@ -57,7 +57,7 @@ type
     procedure HTMLEventHandler(Sender: TObject;
       const EventInfo: THTMLEventInfo);
       {Handles HTML frame's OnHTMLEvent event. Cancels any clicks on links and
-      handles these by displaying dialog and acting on user's response.
+      handles these by displaying dialogue and acting on user's response.
         @param Sender [in] Not used.
         @param EventInfo [in] Object providing information about the event.
       }
@@ -76,8 +76,8 @@ type
   public
     class procedure Execute(const AOwner: TComponent;
       const ActiveText: IActiveText);
-      {Displays dialog box to display HTML representation of some active text.
-        @param AOwner [in] Component that owns this dialog box.
+      {Displays dialogue box to display HTML representation of some active text.
+        @param AOwner [in] Component that owns this dialogue box.
         @param ActiveText [in] Active text to be displayed as HTML.
       }
   end;
@@ -106,7 +106,7 @@ uses
 { TActiveTextPreviewDlg }
 
 procedure TActiveTextPreviewDlg.ArrangeForm;
-  {Sizes dialog box to fit content.
+  {Sizes dialogue box to fit content.
   }
 begin
   pnlBody.Height := frmPreview.DocHeight;
@@ -152,8 +152,8 @@ end;
 
 class procedure TActiveTextPreviewDlg.Execute(const AOwner: TComponent;
   const ActiveText: IActiveText);
-  {Displays dialog box to display HTML representation of some active text.
-    @param AOwner [in] Component that owns this dialog box.
+  {Displays dialogue box to display HTML representation of some active text.
+    @param AOwner [in] Component that owns this dialogue box.
     @param ActiveText [in] Active text to be displayed as HTML.
   }
 begin
@@ -169,22 +169,22 @@ end;
 procedure TActiveTextPreviewDlg.HTMLEventHandler(Sender: TObject;
   const EventInfo: THTMLEventInfo);
   {Handles HTML frame's OnHTMLEvent event. Cancels any clicks on links and
-  handles these by displaying dialog and acting on user's response.
+  handles these by displaying dialogue and acting on user's response.
     @param Sender [in] Not used.
     @param EventInfo [in] Object providing information about the event.
   }
 var
   ALink: IDispatch;   // reference to the any link that was clicked
 resourcestring
-  // Button captions for choice dialog box
+  // Button captions for choice dialogue box
   sClose = 'Close';
   sViewLink = '&View Link';
-  // Title & text to display in choice dialog box
+  // Title & text to display in choice dialogue box
   sDlgTitle = 'Link Information';
   sDlgText = 'Link URL:' + EOL2 + '%s';
 const
-  cCloseRes = mrCancel; // modal result of choice dialog's close button
-  cViewLinkRes = $FF;   // modal result of choice dialog's view button
+  cCloseRes = mrCancel; // modal result of choice dialogue's close button
+  cViewLinkRes = $FF;   // modal result of choice dialogue's view button
 begin
   if EventInfo.IsEvent(
     THTMLDocumentEvents2Sink.EventIntf, THTMLDocumentEvents2Sink.DISPID_OnClick
@@ -220,7 +220,8 @@ end;
 
 procedure TActiveTextPreviewDlg.UpdateCSS(Sender: TObject;
   const CSSBuilder: TCSSBuilder);
-  {Modifies CSS used to display dialog box body to achieve required appearance.
+  {Modifies CSS used to display dialogue box body to achieve required
+  appearance.
     @param Sender [in] Not used.
     @param CSSBuilder [in] Object used to modify CSS.
   }

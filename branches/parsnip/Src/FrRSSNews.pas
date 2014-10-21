@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2010-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2010-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -132,7 +132,7 @@ begin
   WBController.UIMgr.ScrollbarStyle := sbsNormal; // normal scroll bars
   WBController.UIMgr.Show3dBorder := False;       // we'll handle border
   WBController.UIMgr.AllowTextSelection := False; // can't select text
-  WBController.UIMgr.DropTarget :=                // inhibit drag drop in dialog
+  WBController.UIMgr.DropTarget :=                // inhibit drag drop
     TNulDropTarget.Create;
 end;
 

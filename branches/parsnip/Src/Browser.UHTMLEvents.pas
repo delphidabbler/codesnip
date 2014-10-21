@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2007-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2007-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -262,7 +262,7 @@ type
   ///  handled. Always passed in as False. Set to True if error handled and
   ///  further processing is to be inhibited.</param>
   ///  <remarks>In the case of script errors, setting Handled to True inhibits
-  ///  the browser control's script error dialog box.</remarks>
+  ///  the browser control's script error dialogue box.</remarks>
   THTMLWindowErrorEvent = procedure(Sender: TObject; const Desc, URL: string;
     const Line: Integer; var Handled: Boolean) of object;
 

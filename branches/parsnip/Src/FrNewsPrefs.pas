@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2011-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2011-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -32,7 +32,7 @@ type
   TNewsPrefsFrame:
     Frame that allows user to set preferences that relate to news items. Can
     persist preferences entered by user. Note: Designed for use in preferences
-    dialog box.
+    dialogue box.
   }
   TNewsPrefsFrame = class(TPrefsBaseFrame)
     lblAgePrefix: TLabel;
@@ -53,7 +53,7 @@ type
       }
     ///  <summary>Checks if preference changes require that main window UI is
     ///  updated.</summary>
-    ///  <remarks>Called when dialog box containing frame is closing. Always
+    ///  <remarks>Called when dialogue box containing frame is closing. Always
     ///  returns False because these preferences never affect UI.</remarks>
     function UIUpdated: Boolean; override;
     procedure ArrangeControls; override;
@@ -61,12 +61,12 @@ type
       }
     function DisplayName: string; override;
       {Caption that is displayed in the tab sheet that contains this frame when
-      displayed in the preference dialog box.
+      displayed in the preference dialogue box.
         @return Required display name.
       }
     class function Index: Byte; override;
       {Index number that determines the location of the tab containing this
-      frame when displayed in the preferences dialog box.
+      frame when displayed in the preferences dialogue box.
         @return Required index number.
       }
   end;
@@ -121,7 +121,7 @@ end;
 
 function TNewsPrefsFrame.DisplayName: string;
   {Caption that is displayed in the tab sheet that contains this frame when
-  displayed in the preference dialog box.
+  displayed in the preference dialogue box.
     @return Required display name.
   }
 resourcestring
@@ -132,7 +132,7 @@ end;
 
 class function TNewsPrefsFrame.Index: Byte;
   {Index number that determines the location of the tab containing this frame
-  when displayed in the preferences dialog box.
+  when displayed in the preferences dialogue box.
     @return Required index number.
   }
 begin
@@ -146,7 +146,7 @@ end;
 
 initialization
 
-// Register frame with preferences dialog box
+// Register frame with preferences dialogue box
 TPreferencesDlg.RegisterPage(TNewsPrefsFrame);
 
 end.

@@ -52,7 +52,7 @@ type
 
   {
   TSnippetsEditorDlg:
-    Dialog box class that enables the user to create or edit a snippet.
+    Dialogue box class that enables the user to create or edit a snippet.
   }
   TSnippetsEditorDlg = class(TGenericOKDlg, INoPublicConstruct)
     alMain: TActionList;
@@ -217,7 +217,7 @@ type
       edited, depending on kind.
       }
     function CreateTempSnippet: ISnippet;
-      {Creates a temporary snippet from data entered in dialog box.
+      {Creates a temporary snippet from data entered in dialogue box.
         @return Required snippet instance.
         @except EDataEntry raised if any of entered data is invalid.
       }
@@ -239,15 +239,15 @@ type
       }
   public
     class function AddNewSnippet(AOwner: TComponent): Boolean;
-      {Displays dialog box to enable user to enter a new snippet.
-        @param AOwner [in] Control that owns the dialog box, over which the
-          dialog is aligned. May be nil.
+      {Displays dialogue box to enable user to enter a new snippet.
+        @param AOwner [in] Control that owns the dialogue box, over which the
+          dialogue is aligned. May be nil.
         @return True if user OKs, False if cancels.
       }
     class function EditSnippet(AOwner: TComponent; Snippet: ISnippet): Boolean;
-      {Displays dialog box to enable user to edit a snippet.
-        @param AOwner [in] Control that owns the dialog box, over which the
-          dialog is aligned. May be nil.
+      {Displays dialogue box to enable user to edit a snippet.
+        @param AOwner [in] Control that owns the dialogue box, over which the
+          dialogue is aligned. May be nil.
         @param Snippet [in] Reference to snippet to be edited.
         @return True if user OKs, False if cancels.
       }
@@ -365,7 +365,7 @@ var
 begin
   // Hide view compile errors link
   pnlViewCompErrs.Hide;
-  // Disable dialog box and all its controls and actions
+  // Disable dialogue box and all its controls and actions
   Enabled := False;
   try
     try
@@ -383,7 +383,7 @@ begin
       tsCompileResults, TempSnippet, DisplayCompileResults
     );
   finally
-    // Re-enable dialog and controls
+    // Re-enable dialogue and controls
     Enabled := True;
   end;
 end;
@@ -538,13 +538,13 @@ begin
 end;
 
 class function TSnippetsEditorDlg.AddNewSnippet(AOwner: TComponent): Boolean;
-  {Displays dialog box to enable user to enter a new snippet.
-    @param AOwner [in] Control that owns the dialog box, over which the dialog
-      is aligned. May be nil.
+  {Displays dialogue box to enable user to enter a new snippet.
+    @param AOwner [in] Control that owns the dialogue box, over which the
+      dialogue is aligned. May be nil.
     @return True if user OKs, False if cancels.
   }
 resourcestring
-  sCaption = 'Add a Snippet';   // dialog box caption
+  sCaption = 'Add a Snippet';   // dialogue box caption
 begin
   with InternalCreate(AOwner) do
     try
@@ -692,7 +692,7 @@ begin
 end;
 
 function TSnippetsEditorDlg.CreateTempSnippet: ISnippet;
-  {Creates a temporary snippet from data entered in dialog box.
+  {Creates a temporary snippet from data entered in dialogue box.
     @return Required snippet instance.
     @except EDataEntry raised if any of entered data is invalid.
   }
@@ -724,9 +724,9 @@ end;
 
 class function TSnippetsEditorDlg.EditSnippet(AOwner: TComponent;
   Snippet: ISnippet): Boolean;
-  {Displays dialog box to enable user to edit a snippet.
-    @param AOwner [in] Control that owns the dialog box, over which the dialog
-      is aligned. May be nil.
+  {Displays dialogue box to enable user to edit a snippet.
+    @param AOwner [in] Control that owns the dialogue box, over which the
+      dialogue is aligned. May be nil.
     @param Snippet [in] Reference to snippet to be edited.
     @return True if user OKs, False if cancels.
   }
@@ -928,7 +928,7 @@ end;
 
 procedure TSnippetsEditorDlg.lblViewCompErrsClick(Sender: TObject);
   {OnClick event handler for compiler errors link label. Displays compiler
-  warnings and errors in a dialog box.
+  warnings and errors in a dialogue box.
     @param Sender [in] Not used.
   }
 begin

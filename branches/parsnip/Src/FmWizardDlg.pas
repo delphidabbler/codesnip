@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2006-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2006-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -29,7 +29,7 @@ type
 
   {
   TWizardDlg:
-    Base class for multi-page modal "wizard" dialog boxes.
+    Base class for multi-page modal "wizard" dialogue boxes.
   }
   TWizardDlg = class(TGenericModalDlg)
     btnBack: TButton;
@@ -57,7 +57,7 @@ type
       {Positions controls and sets form size according to body panel dimensions.
       }
     function ModalResultOnEsc: Integer; override;
-      {Gets modal result returned from dialog when user presses ESC key.
+      {Gets modal result returned from dialogue when user presses ESC key.
         @return Required modal result.
       }
     procedure ConfigForm; override;
@@ -267,7 +267,7 @@ begin
 end;
 
 function TWizardDlg.ModalResultOnEsc: Integer;
-  {Gets modal result returned from dialog when user presses ESC key.
+  {Gets modal result returned from dialogue when user presses ESC key.
     @return Required modal result.
   }
 begin

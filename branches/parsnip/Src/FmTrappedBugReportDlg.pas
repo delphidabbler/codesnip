@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2009-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2009-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -30,7 +30,7 @@ type
 
   {
   TTrappedBugReportDlg:
-    Bug report dialog box for display when unexpected exceptions are detected.
+    Bug report dialogue box for display when unexpected exceptions are detected.
   }
   TTrappedBugReportDlg = class(TBugReportBaseDlg, INoPublicConstruct)
     bvlBugDesc: TBevel;
@@ -62,11 +62,11 @@ type
       }
   public
     class procedure Execute(Owner: TComponent; const ErrorObj: Exception);
-      {Creates and displays bug report dialog box.
-        @param Owner [in] Component that owns dialog box. Dialog box is aligned
-          over this component if it is a form. If Owner it is nil or not a form
-          the dialog is aligned over the active form.
-        @param ErrorObj [in] Exception that caused dialog box to be displayed.
+      {Creates and displays bug report dialogue box.
+        @param Owner [in] Component that owns dialogue box. Dialogue box is
+          aligned over this component if it is a form. If Owner it is nil or not
+          a form the dialogue is aligned over the active form.
+        @param ErrorObj [in] Exception that caused dialogue box to be displayed.
       }
   end;
 
@@ -90,7 +90,7 @@ procedure TTrappedBugReportDlg.actTerminateExecute(Sender: TObject);
     @param Sender [in] Not used.
   }
 resourcestring
-  // Text for custom confirmation dialog box
+  // Text for custom confirmation dialogue box
   sTitle = 'Confirm';
   sConfirmMsg = 'Please confirm that you want to terminate the application.'
     + EOL2
@@ -163,11 +163,11 @@ end;
 
 class procedure TTrappedBugReportDlg.Execute(Owner: TComponent;
   const ErrorObj: Exception);
-  {Creates and displays bug report dialog box.
-    @param Owner [in] Component that owns dialog box. Dialog box is aligned
+  {Creates and displays bug report dialogue box.
+    @param Owner [in] Component that owns dialogue box. Dialogue box is aligned
       over this component if it is a form. If Owner it is nil or not a form the
-      dialog is aligned over the active form.
-    @param ErrorObj [in] Exception that caused dialog box to be displayed.
+      dialogue is aligned over the active form.
+    @param ErrorObj [in] Exception that caused dialogue box to be displayed.
   }
 begin
   Assert(Assigned(ErrorObj), ClassName + '.Execute: ErrorObj is nil');

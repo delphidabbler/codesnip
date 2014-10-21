@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2006-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2006-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -39,10 +39,10 @@ type
       ///  <summary>Records information about supported source file types.
       ///  </summary>
       fSourceFileInfo: TSourceFileInfo;
-      ///  <summary>Dialog box used to get information from user about type of
+      ///  <summary>Dialogue box used to get information from user about type of
       ///  source file to be saved.</summary>
       fSaveDlg: TSaveSourceDlg;
-    ///  <summary>Handles custom save dialog box's OnHiliteQuery event.
+    ///  <summary>Handles custom save dialogue box's OnHiliteQuery event.
     ///  Determines whether syntax highlighting is supported for a given file
     ///  extension.</summary>
     ///  <param name="Sender">TObject [in] Reference to object that triggered
@@ -52,7 +52,7 @@ type
     ///  supported for extension or False if not.</param>
     procedure HiliteQueryHandler(Sender: TObject; const Ext: string;
       var CanHilite: Boolean);
-    ///  <summary>Handles custom save dialog box's OnEncodingQuery event.
+    ///  <summary>Handles custom save dialogue box's OnEncodingQuery event.
     ///  Provides array of encodings supported for a file extension.</summary>
     ///  <param name="Sender">TObject [in] Reference to object that triggered
     ///  event.</param>
@@ -61,20 +61,21 @@ type
     ///  supported encodings.</param>
     procedure EncodingQueryHandler(Sender: TObject; const Ext: string;
       var Encodings: TSourceFileEncodings);
-    ///  <summary>Handles custom save dialog's OnPreview event. Displays source
-    ///  code appropriately formatted in preview dialog box.</summary>
+    ///  <summary>Handles custom save dialogue's OnPreview event. Displays
+    ///  source code appropriately formatted in preview dialogue box.</summary>
     ///  <param name="Sender">TObject [in] Reference to object that triggered
     ///  event.</param>
     procedure PreviewHandler(Sender: TObject);
-    ///  <summary>Handles custom save dialog's OnCanClose event. Permits dialog
-    ///  to close if filename entered in dialog box is acceptable.</summary>
+    ///  <summary>Handles custom save dialogue's OnCanClose event. Permits
+    ///  dialogue to close if filename entered in dialogue box is acceptable.
+    ///  </summary>
     ///  <param name="Sender">TObject [in] Reference to object that triggered
     ///  event.</param>
-    ///  <param name="CanClose">Boolean [in/out] Set to True to allow dialog to
-    ///  close or false to inhibit.</param>
+    ///  <param name="CanClose">Boolean [in/out] Set to True to allow dialogue
+    ///  to close or false to inhibit.</param>
     procedure CanCloseHandler(Sender: TObject; var CanClose: Boolean);
-    ///  <summary>Checks if file name entered in save dialog box is acceptable.
-    ///  </summary>
+    ///  <summary>Checks if file name entered in save dialogue box is
+    ///  acceptable.</summary>
     ///  <returns>True if file name is acceptable, False if not.</returns>
     function CheckEnteredFileName: Boolean;
     ///  <summary>Generates source code in desired format.</summary>
@@ -85,20 +86,20 @@ type
     function GenerateOutput(const FileType: TSourceOutputFileType):
       TEncodedData;
   strict protected
-    ///  <summary>Internal constructor. Initialises managed save source dialog
+    ///  <summary>Internal constructor. Initialises managed save source dialogue
     ///  box and records information about supported file types.</summary>
     constructor InternalCreate;
-    ///  <summary>Displays save dialog box and creates required type of source
+    ///  <summary>Displays save dialogue box and creates required type of source
     ///  code file if user OKs.</summary>
     procedure DoExecute;
     ///  <summary>Gets description of given source code file type.</summary>
     function GetFileTypeDesc(const FileType: TSourceOutputFileType): string;
       virtual; abstract;
-    ///  <summary>Gets default file name to display in dialog box.</summary>
+    ///  <summary>Gets default file name to display in dialogue box.</summary>
     function GetDefaultFileName: string; virtual; abstract;
-    ///  <summary>Gets dialog box title.</summary>
+    ///  <summary>Gets dialogue box title.</summary>
     function GetDlgTitle: string; virtual; abstract;
-    ///  <summary>Get dialog box's help keyword.</summary>
+    ///  <summary>Get dialogue box's help keyword.</summary>
     function GetDlgHelpKeyword: string; virtual; abstract;
     ///  <summary>Gets title to be used for source document.</summary>
     function GetDocTitle: string; virtual; abstract;
@@ -165,7 +166,7 @@ begin
   CheckFileName(fSaveDlg.FileName, Result, ErrMsg);
   if not Result then
   begin
-    // File name not acceptable: display message aligned over dialog box
+    // File name not acceptable: display message aligned over dialogue box
     if ErrMsg = '' then
       ErrMsg := sDefaultErrMsg;
     TMessageBox.Error(fSaveDlg, ErrMsg);
@@ -185,7 +186,7 @@ var
   FileContent: string;              // output file content before encoding
   FileType: TSourceOutputFileType;  // type of source file
 begin
-  // Set up dialog box
+  // Set up dialogue box
   fSaveDlg.Filter := fSourceFileInfo.FilterString;
   fSaveDlg.FilterIndex := ExtToFilterIndex(
     fSaveDlg.Filter,
@@ -193,7 +194,7 @@ begin
     1
   );
   fSaveDlg.FileName := fSourceFileInfo.DefaultFileName;
-  // Display dialog box and save file if user OKs
+  // Display dialogue box and save file if user OKs
   if fSaveDlg.Execute then
   begin
     FileType := fSourceFileInfo.FileTypeFromExt(
@@ -325,8 +326,8 @@ var
   FileType: TSourceOutputFileType;  // type of source file to preview
 begin
   FileType := fSourceFileInfo.FileTypeFromExt(fSaveDlg.SelectedExt);
-  // Display preview dialog box. We use save dialog as owner to ensure preview
-  // dialog box is aligned over save dialog box
+  // Display preview dialogue box. We use save dialogue as owner to ensure
+  // preview dialogue box is aligned over save dialogue box
   TPreviewDlg.Execute(
     fSaveDlg,
     GenerateOutput(FileType),

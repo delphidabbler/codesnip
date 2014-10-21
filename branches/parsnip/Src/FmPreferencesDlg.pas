@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2006-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2006-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -27,11 +27,11 @@ uses
 
 type
   ///  <summary>
-  ///  Dialog box that sets user preferences.
+  ///  Dialogue box that sets user preferences.
   ///  </summary>
   ///  <remarks>
-  ///  This dialog box displays tabs for preferences frames registered with the
-  ///  dialog box.
+  ///  This dialogue box displays tabs for preferences frames registered with the
+  ///  dialogue box.
   ///  </remarks>
   TPreferencesDlg = class(TGenericOKDlg, INoPublicConstruct)
     pcMain: TPageControl;
@@ -92,20 +92,20 @@ type
     ///  <remarks>Keyword depends on which preferences page is displayed to
     ///  permit each preferences page to have its own help topic.</remarks>
     function CustomHelpKeyword: string; override;
-    ///  <summary>Sizes frames providing content of pages of dialog and gets
+    ///  <summary>Sizes frames providing content of pages of dialogue and gets
     ///  each to arrange its controls.</summary>
     procedure ArrangeForm; override;
     ///  <summary>Displays and initialises frames used to display pages of
-    ///  dialog.</summary>
+    ///  dialogue.</summary>
     procedure InitForm; override;
   public
     ///  <summary>Creates empty registered page frame list object.</summary>
     class constructor Create;
     ///  <summary>Frees registered page frame list object.</summary>
     class destructor Destroy;
-    ///  <summary>Displays dialog with pages for each specified preferences
+    ///  <summary>Displays dialogue with pages for each specified preferences
     ///  frame.</summary>
-    ///  <param name="AOwner">TComponent [in] Component that owns dialog.
+    ///  <param name="AOwner">TComponent [in] Component that owns dialogue.
     ///  </param>
     ///  <param name="Pages">array of TPrefsFrameClass [in] Class references of
     ///  frames to be displayed.</param>
@@ -116,9 +116,9 @@ type
     class function Execute(AOwner: TComponent;
       const Pages: array of TPrefsFrameClass; out UpdateUI: Boolean): Boolean;
       overload;
-    ///  <summary>Displays dialog with pages for each specified preferences
+    ///  <summary>Displays dialogue with pages for each specified preferences
     ///  frame.</summary>
-    ///  <param name="AOwner">TComponent [in] Component that owns dialog.
+    ///  <param name="AOwner">TComponent [in] Component that owns dialogue.
     ///  </param>
     ///  <param name="Pages">array of TPrefsFrameClass [in] Class references of
     ///  frames to be displayed.</param>
@@ -126,9 +126,9 @@ type
     ///  user cancels and no changes made.</returns>
     class function Execute(AOwner: TComponent;
       const Pages: array of TPrefsFrameClass): Boolean; overload;
-    ///  <summary>Displays preferences dialog with all registered preference
+    ///  <summary>Displays preferences dialogue with all registered preference
     ///  frames.</summary>
-    ///  <param name="AOwner">TComponent [in] Component that owns dialog.
+    ///  <param name="AOwner">TComponent [in] Component that owns dialogue.
     ///  </param>
     ///  <param name="UpdateUI">Boolean [out] Indicates if main UI needs to
     ///  be updated as a result of preference changes.</param>
@@ -138,7 +138,7 @@ type
       overload;
     ///  <summary>Displays dialogue with showing a single frame, specified by
     ///  its class name.</summary>
-    ///  <param name="AOwner">TComponent [in] Component that owns dialog.
+    ///  <param name="AOwner">TComponent [in] Component that owns dialogue.
     ///  </param>
     ///  <param name="PageClsName">string [in] Class name of the frame to be
     ///  displayed.</param>
@@ -149,9 +149,9 @@ type
     class function Execute(AOwner: TComponent; const PageClsName: string;
       out UpdateUI: Boolean): Boolean; overload;
     ///  <summary>Registers given preferences frame class for inclusion in the
-    ///  preferences dialog box.</summary>
-    ///  <remarks>Registered frames are created when the dialog box is displayed
-    ///  and freed when it closes.</remarks>
+    ///  preferences dialogue box.</summary>
+    ///  <remarks>Registered frames are created when the dialogue box is
+    ///  displayed and freed when it closes.</remarks>
     class procedure RegisterPage(const FrameCls: TPrefsFrameClass);
   end;
 
@@ -163,16 +163,16 @@ implementation
   Design notes
   ------------
 
-  This dialog box is a multi-page preferences dialog that provides access to
-  each page via a tab. The dialog box does not provide an implementation of each
-  page of the dialog. This representation must be provided by a frame descended
-  from TPrefsBaseFrame. Such frames must:
-    (a) register themselves with the dialog box by passing their class to the
+  This dialogue box is a multi-page preferences dialogue that provides access to
+  each page via a tab. The dialogue box does not provide an implementation of
+  each page of the dialogue. This representation must be provided by a frame
+  descended from TPrefsBaseFrame. Such frames must:
+    (a) register themselves with the dialogue box by passing their class to the
         TPreferencesDlg.RegisterPage class method.
     (b) implement all the abstract methods of TPrefsBaseFrame.
 
-  The dialog box will create registered frames when needed and host them within
-  a tab sheet in the main page control.
+  The dialogue box will create registered frames when needed and host them
+  within a tab sheet in the main page control.
 
   There is no need to modify this unit when a new frame is to be addded to it.
 }

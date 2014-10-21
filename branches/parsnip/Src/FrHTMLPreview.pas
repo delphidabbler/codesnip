@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2005-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -42,7 +42,7 @@ type
   public
     { IPreview }
     procedure Display(const DocContent: TEncodedData);
-      {Displays document in preview dialog box.
+      {Displays document in preview dialogue box.
         @param DocContent [in] Content of document to be displayed.
       }
     procedure SetPopupMenu(const Menu: TPopupMenu);
@@ -78,7 +78,7 @@ begin
 end;
 
 procedure THTMLPreviewFrame.Display(const DocContent: TEncodedData);
-  {Displays document in preview dialog box.
+  {Displays document in preview dialogue box.
     @param DocContent [in] Content of document to be displayed.
   }
 begin

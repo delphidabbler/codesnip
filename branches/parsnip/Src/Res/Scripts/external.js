@@ -46,7 +46,7 @@ function displaySnippet(snippetID) {
 }
 
 /*
- * Calls external object to get host application to display Donate dialog box.
+ * Calls external object to get host application to display Donate dialogue box.
  *  @return False.
  */
 function donate() {

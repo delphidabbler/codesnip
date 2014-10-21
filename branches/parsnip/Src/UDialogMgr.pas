@@ -8,7 +8,7 @@
  * $Rev$
  * $Date$
  *
- * Implements class that manages the display of dialog boxes.
+ * Implements class that manages the display of dialogue boxes.
 }
 
 

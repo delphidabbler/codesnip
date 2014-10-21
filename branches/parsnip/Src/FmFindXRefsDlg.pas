@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2006-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2006-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -40,7 +40,7 @@ type
 
   {
   TFindXRefsDlg:
-    Defines a dialog box that is used to select criteria for searches for
+    Defines a dialogue box that is used to select criteria for searches for
     cross referenced snippets.
   }
   TFindXRefsDlg = class(TGenericOKDlg, INoPublicConstruct)
@@ -78,8 +78,8 @@ type
   public
     class function Execute(const AOwner: TComponent; Snippet: ISnippet;
       out ASearch: ISearch): Boolean;
-      {Displays dialog and returns search object based on entered criteria.
-        @param AOwner [in] Component that owns this dialog.
+      {Displays dialogue and returns search object based on entered criteria.
+        @param AOwner [in] Component that owns this dialogue.
         @param Snippet [in] Snippet whose cross references are to be found.
         @param ASearch [out] Search to be performed if user OKs. Has filter
           that causes specified cross references be returned by search. Set to
@@ -161,7 +161,7 @@ begin
   );
   TCtrlArranger.AlignLefts([chkRequiredRecurse, chkSeeAlsoRecurse], 24);
   TCtrlArranger.MoveToRightOf(lblDesc, lblSnippetTitle);
-  // Check if snippet title is clipped at right of dialog box and increase
+  // Check if snippet title is clipped at right of dialogue box and increase
   // available body panel space if so
   // Don't use TCtrlArranger.TotalControlWidth here
   if lblSnippetTitle.Left + lblSnippetTitle.Width > pnlBody.ClientWidth then
@@ -184,7 +184,7 @@ begin
     lblOverwriteSearch.SetBounds(0, 0, 0, 0); // hide from panel sizing
   pnlBody.ClientHeight := TCtrlArranger.TotalControlHeight(pnlBody) + 8;
 
-  // Inherited arrangement: will set dialog width based on body panel width
+  // Inherited arrangement: will set dialogue width based on body panel width
   inherited;
 end;
 
@@ -220,7 +220,7 @@ procedure TFindXRefsDlg.btnOKClick(Sender: TObject);
 var
   Filter: IXRefSearchFilter;  // search filter
 begin
-  // Create search filter from entries made in dialog box
+  // Create search filter from entries made in dialogue box
   Filter := TSearchFilterFactory.CreateXRefSearchFilter(
     fSnippet.ID, GetOptionsFromUI
   );
@@ -250,8 +250,8 @@ end;
 
 class function TFindXRefsDlg.Execute(const AOwner: TComponent;
   Snippet: ISnippet; out ASearch: ISearch): Boolean;
-  {Displays dialog and returns search object based on entered criteria.
-    @param AOwner [in] Component that owns this dialog.
+  {Displays dialogue and returns search object based on entered criteria.
+    @param AOwner [in] Component that owns this dialogue.
     @param Snippet [in] Snippet whose cross references are to be found.
     @param ASearch [out] Search to be performed if user OKs. Has filter that
       causes specified cross references be returned by search. Set to nil if

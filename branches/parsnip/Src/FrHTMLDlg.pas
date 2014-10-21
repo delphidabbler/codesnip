@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2005-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -31,7 +31,7 @@ type
   {
   THTMLDlgFrame:
     Frame containing a web browser control that displays HTML content and takes
-    on the appearance of a dialog box.
+    on the appearance of a dialogue box.
   }
   THTMLDlgFrame = class(TBrowserBaseFrame)
   strict private
@@ -40,8 +40,8 @@ type
       frame's HTML }
   strict protected
     procedure BuildCSS(const CSSBuilder: TCSSBuilder); override;
-      {Generates CSS classes specific to HTML dialog boxes. This CSS is added to
-      that provided by parent class.
+      {Generates CSS classes specific to HTML dialogue boxes. This CSS is added
+      to that provided by parent class.
         @param CSSBuilder [in] Object used to build the CSS code.
       }
   public
@@ -72,7 +72,7 @@ uses
 { THTMLDlgFrame }
 
 procedure THTMLDlgFrame.BuildCSS(const CSSBuilder: TCSSBuilder);
-  {Generates CSS classes specific to HTML dialog boxes. This CSS is added to
+  {Generates CSS classes specific to HTML dialogue boxes. This CSS is added to
   that provided by parent class.
     @param CSSBuilder [in] Object used to build the CSS code.
   }
@@ -80,7 +80,7 @@ var
   CSSFont: TFont; // font used to set CSS properties
 begin
   inherited;
-  // Set body style to use dialog box colour and font with no margin
+  // Set body style to use dialogu box colour and font with no margin
   CSSFont := TFont.Create;
   try
     with CSSBuilder.AddSelector('body') do
@@ -122,10 +122,10 @@ begin
   inherited;
   // Record parent form instance
   fOwner := (AOwner as TForm);
-  // Set up browser control to take on dialog box's appearance
+  // Set up browser control to take on dialogue box's appearance
   WBController.UIMgr.ScrollbarStyle := sbsHide;   // no scroll bars
   WBController.UIMgr.AllowTextSelection := False; // can't select text
-  WBController.UIMgr.DropTarget :=                // inhibit drag drop in dialog
+  WBController.UIMgr.DropTarget :=                // inhibit drag drop
     TNulDropTarget.Create;
 end;
 

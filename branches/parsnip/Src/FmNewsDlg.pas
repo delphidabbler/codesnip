@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2010-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2010-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -31,7 +31,7 @@ type
 
   {
   TNewsDlg:
-    Dialog box that displays news items from CodeSnip's RSS news feed.
+    Dialogue box that displays news items from CodeSnip's RSS news feed.
   }
   TNewsDlg = class(TGenericViewDlg, INoPublicConstruct)
     actConfig: TAction;
@@ -44,7 +44,7 @@ type
     lblDays: TLabel;
     pnlTop: TPanel;
     ///  <summary>Configure action handler. Displays news prefs page of
-    ///  Preferences dialog box to enable number of days to display in news
+    ///  Preferences dialogue box to enable number of days to display in news
     procedure actConfigExecute(Sender: TObject);
     ///  <summary>Action handler that displays RSS feed in default web browser.
     ///  </summary>
@@ -92,8 +92,8 @@ type
     ///  <remarks>Called from ancestor class.</remarks>
     procedure AfterShowForm; override;
   public
-    ///  <summary>Displays dialog box.</summary>
-    ///  <param name="AOwner">TComponent [in] Control that owns dialog box.
+    ///  <summary>Displays dialogue box.</summary>
+    ///  <param name="AOwner">TComponent [in] Control that owns dialogue box.
     ///  </param>
     class procedure Execute(AOwner: TComponent);
   end;

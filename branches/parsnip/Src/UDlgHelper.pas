@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2007-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2007-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -293,7 +293,7 @@ type
   public
     ///  <summary>Sets up object for given open dialogue component.</summary>
     constructor Create(const Dlg: TOpenDialog);
-    ///  <summary>Gets dialog box's window handle.</summary>
+    ///  <summary>Gets dialogue box's window handle.</summary>
     ///  <remarks>
     ///  <para>Deals correctly with dialogues with explorer hooks and/or
     ///  customisation templates.</para>

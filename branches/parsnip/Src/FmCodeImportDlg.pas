@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2011-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2011-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -25,8 +25,9 @@ uses
 
 type
   ///  <summary>
-  ///  Wizard dialog box that handles the import of snippets into the database.
-  ///  Permits snippets from the import file to be renamed or rejected.
+  ///  Wizard dialogue box that handles the import of snippets into the
+  ///  database. Permits snippets from the import file to be renamed or
+  ///  rejected.
   ///  </summary>
   TCodeImportDlg = class(TWizardDlg, INoPublicConstruct)
     tsInfo: TTabSheet;
@@ -66,8 +67,8 @@ type
     procedure actRenameUpdate(Sender: TObject);
     ///  <summary>Handles event that requests renaming of a snippet.</summary>
     procedure actRenameExecute(Sender: TObject);
-    ///  <summary>Handles request to display open file dialog box to get import
-    ///  file name.</summary>
+    ///  <summary>Handles request to display open file dialogue box to get
+    ///  import file name.</summary>
     procedure actBrowseExecute(Sender: TObject);
   strict private
     const
@@ -97,8 +98,8 @@ type
     ///  <summary>Retrieves import file name from edit control where it is
     ///  entered.</summary>
     function GetFileNameFromEditCtrl: string;
-    ///  <summary>Checks if an open file open dialog box can close. Displays an
-    ///  error message if not.</summary>
+    ///  <summary>Checks if an open file open dialogue box can close. Displays
+    ///  an error message if not.</summary>
     class procedure CanOpenDialogClose(Sender: TObject;
       var CanClose: Boolean);
     ///  <summary>Populates controls on user information page.</summary>
@@ -135,7 +136,7 @@ type
     constructor InternalCreate(AOwner: TComponent;
       const ImportMgr: TCodeImportMgr); reintroduce;
     ///  <summary>Aligns and arranges controls in each tab sheet and sizes
-    ///  dialog box to accomodate controls.</summary>
+    ///  dialogue box to accomodate controls.</summary>
     ///  <remarks>Overridden method called from ancestor class.</remarks>
     procedure ArrangeForm; override;
     ///  <summary>Returns text of heading on page indexed by PageIdx.</summary>
@@ -188,11 +189,11 @@ uses
 
 procedure TCodeImportDlg.actBrowseExecute(Sender: TObject);
 var
-  OpenDlg: TOpenDialogEx; // self-aligning enhanced open dialog box
+  OpenDlg: TOpenDialogEx; // self-aligning enhanced open dialogue box
 resourcestring
   sFilter = 'CodeSnip export files (*.csexp)|*.csexp|'  // file filter
     + 'All files (*.*)|*.*';
-  sTitle = 'Import File';                               // dialog box title
+  sTitle = 'Import File';                               // dialogue box title
 begin
   OpenDlg := TOpenDialogEx.Create(nil);
   try
@@ -279,7 +280,7 @@ end;
 class procedure TCodeImportDlg.CanOpenDialogClose(Sender: TObject;
   var CanClose: Boolean);
 var
-  Dlg: TOpenDialogEx; // dialog box instance triggering this event
+  Dlg: TOpenDialogEx; // dialogue box instance triggering this event
   FileSpec: string;   // full path to entered or selected file name
 resourcestring
   // Error messages

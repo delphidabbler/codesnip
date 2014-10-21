@@ -3,14 +3,14 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2008-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2008-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
  *
- * Implements a colour dialog box subclass that aligns itself over its owner,
+ * Implements a colour dialogue box subclass that aligns itself over its owner,
  * works correctly with the Vista task bar, provides a Title property and uses
- * UK English. Dialog also supports help keywords.
+ * UK English. Dialogue also supports help keywords.
 }
 
 
@@ -31,7 +31,7 @@ type
 
   {
   TColorDialogEx:
-    Subclass of the colour dialog box that aligns itself over its owner, works
+    Subclass of the colour dialogue box that aligns itself over its owner, works
     correctly with the Vista task bar, provides a Title property and uses UK
     English. Also adds support for help keywords and help button.
   }
@@ -39,48 +39,48 @@ type
   strict private
     var fTitle: TCaption;     // Value of Title property
     var fHelpKeyword: string; // Value of HelpKeyword property
-    var fHook: TColorDlgHook; // Object that wraps dialog and hook function
+    var fHook: TColorDlgHook; // Object that wraps dialogue and hook function
   strict protected
     function TaskModalDialog(DialogFunc: Pointer; var DialogData): Bool;
       override;
       {Overridden method that updates the DialogData structure to route message
       processing through a custom hook object.
-        @param DialogFunc [in] Windows function to be called to execute dialog
+        @param DialogFunc [in] Windows function to be called to execute dialogue
           box (ChooseColor() in this case).
-        @param DialogData [in] Data describing dialog box to be passed to
+        @param DialogData [in] Data describing dialogue box to be passed to
           DialogFunc (in this case of type TChooseColour).
       }
     function MessageHook(var Msg: TMessage): Boolean; override;
-      {Intercepts messages sent to the dialog window before the dialog’s window
-      procedure. This implementation changes default support for the help button
-      to include the new HelpKeyword property and to use the program's own help
-      manager.
+      {Intercepts messages sent to the dialogue window before the dialogue's
+      window procedure. This implementation changes default support for the help
+      button to include the new HelpKeyword property and to use the program's
+      own help manager.
         @param Msg [in/out] Specifies message. Unchanged by this method. May be
           modified by inherited implementation(s).
         @return False to pass message on to dilog's window procedure, True to
           prevent this.
       }
     procedure DoShow; override;
-      {Sets up dialog just before it is displayed.
+      {Sets up dialogue just before it is displayed.
       }
   public
     constructor Create(AOwner: TComponent); override;
-      {Object constructor. Creates dialog box.
-        @param AOwner [in] Owning component. Dialog box will be aligned over
+      {Object constructor. Creates dialogue box.
+        @param AOwner [in] Owning component. Dialogue box will be aligned over
           AOwner.
       }
     destructor Destroy; override;
       {Object desctructor. Tears down object.
       }
     function Execute: Boolean; override;
-      {Displays dialog box. Ensures help button is displayed if HelpKeyword
+      {Displays dialogue box. Ensures help button is displayed if HelpKeyword
       property is not set.
         @return True if user OKs and False if cancels.
       }
   published
     property Title: TCaption read fTitle write fTitle;
-      {Enables dialog box title to be customised. If Title is left blank the
-      default dialog box title is used}
+      {Enables dialogue box title to be customised. If Title is left blank the
+      default dialogue box title is used}
     property HelpKeyword: string
       read fHelpKeyword write fHelpKeyword;
       {Help keyword used to access help topic when help button clicked}
@@ -98,8 +98,9 @@ uses
 { TColorDialogEx }
 
 constructor TColorDialogEx.Create(AOwner: TComponent);
-  {Object constructor. Creates dialog box.
-    @param AOwner [in] Owning component. Dialog box will be aligned over AOwner.
+  {Object constructor. Creates dialogue box.
+    @param AOwner [in] Owning component. Dialogue box will be aligned over
+      AOwner.
   }
 begin
   inherited;
@@ -115,7 +116,7 @@ begin
 end;
 
 procedure TColorDialogEx.DoShow;
-  {Sets up dialog just before it is displayed.
+  {Sets up dialogue just before it is displayed.
   }
 const
   // Identifiers of controls using American spelling of "colour" (per ColorDlg.h
@@ -124,7 +125,7 @@ const
   COLOR_MIX        = 719;
   COLOR_SOLID_LEFT = 730;
 resourcestring
-  // UK English strings to replace American in dialog box
+  // UK English strings to replace American in dialogue box
   sAddToCustomColors = '&Add to Custom Colours';
   sDefineCustomColors = '&Define Custom Colours >>';
   sBasicColors = '&Basic colours:';
@@ -134,7 +135,7 @@ resourcestring
 begin
   // Prevent task bar button press bringing owner window to foreground
   TDlgHelper.SetDlgParentToOwner(Self);
-  // Set dialog title
+  // Set dialogue title
   if Title <> '' then
     SetWindowText(Handle, PChar(Title));
   // Replace all occurences of "Color" with "Colour" if using English
@@ -162,8 +163,8 @@ begin
 end;
 
 function TColorDialogEx.Execute: Boolean;
-  {Displays dialog box. Ensures help button is displayed if HelpKeyword property
-  is not set.
+  {Displays dialogue box. Ensures help button is displayed if HelpKeyword
+  property is not set.
     @return True if user OKs and False if cancels.
   }
 begin
@@ -175,7 +176,7 @@ begin
 end;
 
 function TColorDialogEx.MessageHook(var Msg: TMessage): Boolean;
-  {Intercepts messages sent to the dialog window before the dialog’s window
+  {Intercepts messages sent to the dialogue window before the dialogue's window
   procedure. This implementation changes default support for the help button
   to include the new HelpKeyword property and to use the program's own help
   manager.
@@ -195,10 +196,10 @@ function TColorDialogEx.TaskModalDialog(DialogFunc: Pointer;
   var DialogData): Bool;
   {Overridden method that updates the DialogData structure to route message
   processing through a custom hook object.
-    @param DialogFunc [in] Windows function to be called to execute dialog box
+    @param DialogFunc [in] Windows function to be called to execute dialogue box
       (ChooseColor() in this case).
-    @param DialogData [in] Data describing dialog box to be passed to DialogFunc
-      (in this case of type TChooseColour).
+    @param DialogData [in] Data describing dialogue box to be passed to
+      DialogFunc (in this case of type TChooseColour).
   }
 begin
   if NewStyleControls then

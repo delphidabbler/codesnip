@@ -57,11 +57,11 @@ type
     ///  <summary>Gets description of given source code file type.</summary>
     function GetFileTypeDesc(const FileType: TSourceOutputFileType): string;
       override;
-    ///  <summary>Gets default file name to display in dialog box.</summary>
+    ///  <summary>Gets default file name to display in dialogue box.</summary>
     function GetDefaultFileName: string; override;
-    ///  <summary>Gets dialog box title.</summary>
+    ///  <summary>Gets dialogue box title.</summary>
     function GetDlgTitle: string; override;
-    ///  <summary>Get dialog box's help keyword.</summary>
+    ///  <summary>Get dialogue box's help keyword.</summary>
     function GetDlgHelpKeyword: string; override;
     ///  <summary>Gets title to be used for source document.</summary>
     function GetDocTitle: string; override;
@@ -107,7 +107,7 @@ uses
 
 
 resourcestring
-  // Dialog box title
+  // Dialogue box title
   sSaveDlgTitle = 'Save Unit';
   // File filter strings
   sHTMLDesc = 'HTML file';

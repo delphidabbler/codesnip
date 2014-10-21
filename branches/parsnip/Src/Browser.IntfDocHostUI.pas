@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2005-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -216,7 +216,7 @@ type
     function EnableModeless(const fEnable: BOOL): HResult; stdcall;
       {Called by the MSHTML implementation of IOleInPlaceActiveObject.
       EnableModeless. Also called when MSHTML displays a modal UI.
-        @param fEnable [in] Indicates if the host's modeless dialog boxes are
+        @param fEnable [in] Indicates if the host's modeless dialogue boxes are
           enabled (true) or disabled (false).
         @return S_OK on success or error value on failure.
       }

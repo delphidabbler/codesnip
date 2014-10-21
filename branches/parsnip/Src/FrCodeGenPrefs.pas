@@ -32,7 +32,7 @@ uses
 type
   ///  <summary>Frame that allows user to set source code generation
   ///  preferences.</summary>
-  ///  <remarks>Designed for use in preferences dialog box.</remarks>
+  ///  <remarks>Designed for use in preferences dialogue box.</remarks>
   TCodeGenPrefsFrame = class(TPrefsBaseFrame)
     chkWARNEnabled: TCheckBox;
     lblSymbol: TLabel;
@@ -186,7 +186,7 @@ type
     procedure Deactivate(const Prefs: IPreferences); override;
     ///  <summary>Checks if preference changes require that main window UI is
     ///  updated.</summary>
-    ///  <remarks>Called when dialog box containing frame is closing. Always
+    ///  <remarks>Called when dialogue box containing frame is closing. Always
     ///  returns False because these preferences never affect UI.</remarks>
     function UIUpdated: Boolean; override;
     ///  <summary>Arranges controls on frame.</summary>
@@ -194,11 +194,11 @@ type
     procedure ArrangeControls; override;
     ///  <summary>Returns a descriptive name for this frame.</summary>
     ///  <remarks>Used for display in the tab sheet that contains this frame
-    ///  when displayed in the preferences dialog box.</remarks>
+    ///  when displayed in the preferences dialogue box.</remarks>
     function DisplayName: string; override;
     ///  <summary>Returns an index number that determines this frame's position
     ///  in relation to other preferences frames.</summary>
-    ///  <remarks>Used by preferences dialog box to determine ordering of tabs
+    ///  <remarks>Used by preferences dialogue box to determine ordering of tabs
     ///  that contain the different preferences frames.</remarks>
     class function Index: Byte; override;
   end;
@@ -762,7 +762,7 @@ end;
 
 initialization
 
-// Register frame with preferences dialog box
+// Register frame with preferences dialogue box
 TPreferencesDlg.RegisterPage(TCodeGenPrefsFrame);
 
 end.

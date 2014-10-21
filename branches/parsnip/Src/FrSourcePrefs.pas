@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2006-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2006-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -40,7 +40,7 @@ type
   {
   TSourcePrefsFrame:
     Frame that allows user to set source code preferences. Can persist
-    preferences entered by user. Note: Designed for use in preferences dialog
+    preferences entered by user. Note: Designed for use in preferences dialogue
     box.
   }
   TSourcePrefsFrame = class(TPrefsBaseFrame)
@@ -71,7 +71,7 @@ type
       ///  list to the number of days each item represents.</summary>
       fCommentStyleMgr: TCommentStyleMgr;
     procedure UpdateControlState;
-      {Updates state of dialog's controls depending on values entered.
+      {Updates state of dialogue's controls depending on values entered.
       }
     procedure UpdatePreview;
       {Updates source code preview according to user selections.
@@ -91,7 +91,7 @@ type
       }
     ///  <summary>Checks if preference changes require that main window UI is
     ///  updated.</summary>
-    ///  <remarks>Called when dialog box containing frame is closing. Always
+    ///  <remarks>Called when dialogue box containing frame is closing. Always
     ///  returns False because these preferences never affect UI.</remarks>
     function UIUpdated: Boolean; override;
     procedure ArrangeControls; override;
@@ -99,12 +99,12 @@ type
       }
     function DisplayName: string; override;
       {Caption that is displayed in the tab sheet that contains this frame when
-      displayed in the preference dialog box.
+      displayed in the preference dialogue box.
         @return Required display name.
       }
     class function Index: Byte; override;
       {Index number that determines the location of the tab containing this
-      frame when displayed in the preferences dialog box.
+      frame when displayed in the preferences dialogue box.
         @return Required index number.
       }
   end;
@@ -246,7 +246,7 @@ end;
 
 procedure TSourcePrefsFrame.cbSnippetFileTypeChange(Sender: TObject);
   {Handles OnChange event in Snippets File Type combo box by updating other
-  dialog controls with respect to changed value.
+  dialogue controls with respect to changed value.
     @param Sender [in] Not used.
   }
 begin
@@ -311,7 +311,7 @@ end;
 
 function TSourcePrefsFrame.DisplayName: string;
   {Caption that is displayed in the tab sheet that contains this frame when
-  displayed in the preference dialog box.
+  displayed in the preference dialogue box.
     @return Required display name.
   }
 resourcestring
@@ -322,7 +322,7 @@ end;
 
 class function TSourcePrefsFrame.Index: Byte;
   {Index number that determines the location of the tab containing this
-  frame when displayed in the preferences dialog box.
+  frame when displayed in the preferences dialogue box.
     @return Required index number.
   }
 begin
@@ -335,7 +335,7 @@ begin
 end;
 
 procedure TSourcePrefsFrame.UpdateControlState;
-  {Updates state of dialog's controls depending on values entered.
+  {Updates state of dialogue's controls depending on values entered.
   }
 begin
   chkSyntaxHighlighting.Enabled :=
@@ -430,7 +430,7 @@ end;
 
 initialization
 
-// Register frame with preferences dialog box
+// Register frame with preferences dialogue box
 TPreferencesDlg.RegisterPage(TSourcePrefsFrame);
 
 end.

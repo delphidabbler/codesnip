@@ -3,14 +3,14 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2005-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
  *
- * Implements customised Save dialog box for source code. Dialog has additional
- * controls to allow user to choose output file format, commenting style and
- * syntax highlighting.
+ * Implements customised Save dialogue box for source code. Dialogue has
+ * additional controls to allow user to choose output file format, commenting
+ * style and syntax highlighting.
 }
 
 
@@ -55,16 +55,16 @@ type
 
 type
   ///  <summary>
-  ///  Extended save dialog box used when saving code snippets. It displays
+  ///  Extended save dialogue box used when saving code snippets. It displays
   ///  additional controls used to specify attributes of source code and which
-  ///  encoding to use to save file. SAVESNIPPETEXT dialog resource. Dialog also
-  ///  adjusts any file name entered without extension to include extension
+  ///  encoding to use to save file. SAVESNIPPETEXT dialogue resource. Dialogue
+  ///  also adjusts any file name entered without extension to include extension
   ///  associated with any current filter.
   ///  </summary>
   TSaveSourceDlg = class(TSaveDialogEx)
   strict private
     var
-      ///  <summary>Panel thats hold controls added to dialog.</summary>
+      ///  <summary>Panel thats hold controls added to dialogue.</summary>
       fPanel: TPanel;
       ///  <summary>Label for comment style combo.</summary>
       fLblCommentStyle: TLabel;
@@ -80,9 +80,9 @@ type
       fLblEncoding: TLabel;
       ///  <summary>Combo box used to select encoding.</summary>
       fCmbEncoding: TComboBox;
-      ///  <summary>Custom Help button added to dialog.</summary>
+      ///  <summary>Custom Help button added to dialogue.</summary>
       fHelpBtn: TButton;
-      ///  <summary>Preview button added to dialog.</summary>
+      ///  <summary>Preview button added to dialogue.</summary>
       fPreviewBtn: TButton;
       ///  <summary>Style of commenting to be used in source code.</summary>
       fCommentStyle: TPascalCommentStyle;
@@ -105,7 +105,7 @@ type
     ///  <remarks>Calls help with required keyword.</remarks>
     procedure HelpClickHandler(Sender: TObject);
     ///  <summary>Handles click on preview button.</summary>
-    ///  <remarks>Triggers dialog's OnPreview event.</remarks>
+    ///  <remarks>Triggers dialogue's OnPreview event.</remarks>
     procedure PreviewClickHandler(Sender: TObject);
     ///  <summary>Handles style combo box's OnChange event.</summary>
     ///  <remarks>Updates CommentStyle property per selected item in combo box.
@@ -133,7 +133,7 @@ type
     ///  <returns>Adjusted file name.</returns>
     function AdjustFileName(const AFileName: string): string;
     ///  <summary>Returns index of a specified encoding type in the the encoding
-    ///  dialog box.</summary>
+    ///  dialogue box.</summary>
     function IndexOfEncodingType(const EncType: TEncodingType): Integer;
     ///  <summary>Write accessor for OnPreview event.</summary>
     ///  <remarks>Enables / disables preview button depending on whether event
@@ -148,16 +148,16 @@ type
     ///  <summary>Write accessor for FilterIndex property.</summary>
     procedure SetFilterIndex(const Value: Integer);
   strict protected
-    ///  <summary>Tidies up and sets properties from controls when dialog is
+    ///  <summary>Tidies up and sets properties from controls when dialogue is
     ///  about to close.</summary>
     procedure DoClose; override;
-    ///  <summary>Called to check if dialog box can close. Returns True if so,
+    ///  <summary>Called to check if dialogue box can close. Returns True if so,
     ///  False if not.</summary>
     ///  <remarks>We check for existing file (after adding required extension)
     ///  and inhibit closure if file exists and user doesn't want to overwrite.
     ///  </remarks>
     function DoCanClose: Boolean; override;
-    ///  <summary>Sets up dialog just before it is displayed.</summary>
+    ///  <summary>Sets up dialogue just before it is displayed.</summary>
     procedure DoShow; override;
     ///  <summary>Notifies when a different file type is selected in file type
     ///  combo box.</summary>
@@ -169,12 +169,12 @@ type
     ///  <remarks>Records type of newly selected encoding.</remarks>
     procedure DoEncodingChange; virtual;
   public
-    ///  <summary>Creates dialog box and adds custom controls to it.</summary>
+    ///  <summary>Creates dialogue box and adds custom controls to it.</summary>
     constructor Create(AOwner: TComponent); override;
-    ///  <summary>Displays dialog box. Returns True if user OKs or False if user
-    ///  cancels.</summary>
-    ///  <remarks>Sets required dialog box template if new style dialogs being
-    ///  used. Adjusts any extension-less file name to have extension of
+    ///  <summary>Displays dialogue box. Returns True if user OKs or False if
+    ///  user cancels.</summary>
+    ///  <remarks>Sets required dialogue box template if new style dialogues
+    ///  being used. Adjusts any extension-less file name to have extension of
     ///  selected file type.</remarks>
     function Execute: Boolean; override;
     ///  <summary>Extension relating to selected file type.</summary>
@@ -210,7 +210,7 @@ type
     property OnEncodingQuery: TEncodingQuery
       read fOnEncodingQuery write fOnEncodingQuery;
     ///  <summary>Re-implementation of inherited property to overcome apparent
-    ///  bug where property forgets selected filter when dialog box is closed.
+    ///  bug where property forgets selected filter when dialogue box is closed.
     ///  </summary>
     property FilterIndex: Integer read GetFilterIndex write SetFilterIndex;
   end;
@@ -247,7 +247,7 @@ resourcestring
 
 
 const
-  // Name of dialog box template resource
+  // Name of dialogue box template resource
   cTemplateName = 'SAVESNIPPETEXT';
 
 
@@ -325,12 +325,12 @@ begin
   fChkSyntaxHilite.Parent := fPanel;
   fChkSyntaxHilite.Caption := sChkSyntaxHilite;
 
-  // Set dialog box properties
+  // Set dialogue box properties
 
   // set default button values and states
   SetOnPreview(nil);  // updates state of preview button
 
-  // set dialog options
+  // set dialogue options
   Options := [ofPathMustExist, ofEnableIncludeNotify];
 
   // inhibit default help processing: we provide own help button and handling
@@ -340,11 +340,11 @@ end;
 function TSaveSourceDlg.DoCanClose: Boolean;
 
   // ---------------------------------------------------------------------------
-  ///  <summary>Displays a dialog box asking permission to overwrite a file.
+  ///  <summary>Displays a dialogue box asking permission to overwrite a file.
   ///  Returns True if user OKs, False if not.</summary>
   function QueryOverwrite(const FileName: string): Boolean;
   resourcestring
-    // Text of query displayed in dialog box
+    // Text of query displayed in dialogue box
     sQueryMsg = '%s already exists.' + EOL + 'Do you want to replace it?';
   begin
     Result := TMessageBox.Confirm(Self, Format(sQueryMsg, [FileName]));
@@ -404,8 +404,8 @@ var
   PanelBounds: TRect;         // bounds of panel we add to dlg
   CSIdx: TPascalCommentStyle; // loops thru comment styles
 begin
-  // Get bounding rectangle of various dialog box controls
-  // bounds of hidden static text control per our custom dialog resource
+  // Get bounding rectangle of various dialogue box controls
+  // bounds of hidden static text control per our custom dialogue resource
   StaticBounds := inherited GetStaticRect;
   // bounds of file type combo and associated text (used to align added ctrls)
   FileTypeCmbBounds := GetDlgCtrlRect(cmb1);
@@ -523,7 +523,7 @@ begin
     Template := cTemplateName
   else
     Template := nil;
-  // Display dialog box
+  // Display dialogue box
   Result := inherited Execute;
   if Result then
     // Adjust file name, adding any missing extension
@@ -533,10 +533,10 @@ end;
 function TSaveSourceDlg.GetFilterIndex: Integer;
 begin
   if Handle <> 0 then
-    // dialog box is open: use inherited FilterIndex property
+    // dialogue box is open: use inherited FilterIndex property
     Result := inherited FilterIndex
   else
-    // dialog box is closed: use recorded index to overcome apparent bug
+    // dialogue box is closed: use recorded index to overcome apparent bug
     Result := fSelectedFilterIdx;
 end;
 

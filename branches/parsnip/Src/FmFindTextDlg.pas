@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2005-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -33,7 +33,7 @@ type
 
   {
   TFindTextDlg:
-    Defines a dialog box that is used to select criteria for searches for
+    Defines a dialogue box that is used to select criteria for searches for
     snippets containing specified text.
   }
   TFindTextDlg = class(TGenericOKDlg, INoPublicConstruct)
@@ -55,7 +55,7 @@ type
     fRefinePreviousSearch: Boolean;   // Whether to refine previous search
   strict protected
     procedure ArrangeForm; override;
-      {Sizes and arrange controls in dialog box and determine size of dialog
+      {Sizes and arrange controls in dialogue box and determine size of dialogue
       box.
       }
     procedure InitForm; override;
@@ -64,8 +64,8 @@ type
   public
     class function Execute(const AOwner: TComponent;
       out ASearch: ISearch; out RefineExisting: Boolean): Boolean;
-      {Displays dialog and returns search object based on entered criteria.
-        @param AOwner [in] Component that owns this dialog.
+      {Displays dialogue and returns search object based on entered criteria.
+        @param AOwner [in] Component that owns this dialogue.
         @param ASearch [out] Set to value of Search property: nil if user
           cancels.
         @param RefineExisting [out] Set to flag indicating if any existing
@@ -166,7 +166,8 @@ uses
 { TFindTextDlg }
 
 procedure TFindTextDlg.ArrangeForm;
-  {Sizes and arrange controls in dialog box and determine size of dialog box.
+  {Sizes and arrange controls in dialogue box and determine size of dialogue
+  box.
   }
 begin
   TCtrlArranger.SetLabelHeight(lblDesc);
@@ -215,7 +216,7 @@ var
   Filter: ITextSearchFilter;  // search filter
 begin
   inherited;
-  // Create search filter object containing info from dialog controls
+  // Create search filter object containing info from dialogue controls
   Filter := TSearchFilterFactory.CreateTextSearchFilter(
     cbFindText.Text,
     ParseLogicControls,
@@ -243,8 +244,8 @@ end;
 
 class function TFindTextDlg.Execute(const AOwner: TComponent;
   out ASearch: ISearch; out RefineExisting: Boolean): Boolean;
-  {Displays dialog and returns search object based on entered criteria.
-    @param AOwner [in] Component that owns this dialog.
+  {Displays dialogue and returns search object based on entered criteria.
+    @param AOwner [in] Component that owns this dialogue.
     @param ASearch [out] Set to value of Search property: nil if user
       cancels.
     @param RefineExisting [out] Set to flag indicating if any existing
