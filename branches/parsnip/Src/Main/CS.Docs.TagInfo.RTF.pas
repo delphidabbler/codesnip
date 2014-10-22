@@ -74,10 +74,6 @@ type
     procedure OutputSnippetText(Snippet: ISnippet);
     ///  <summary>Output given text as RTF paragraph.</summary>
     procedure OutputPlainTextPara(const Text: string);
-    ///  <summary>Uses given font colour for subsequent text unless caller has
-    ///  specified that colour is not to be used.</summary>
-    ///  <remarks>Font colour is used until next call to this method.</remarks>
-    procedure SetColour(const Colour: TColor);
     ///  <summary>Initialises RTF styles used when writing active text of
     ///  a snippet description.</summary>
     procedure InitStyles;
@@ -309,12 +305,6 @@ begin
     fBuilder.AddText(Format(sNormalHeading, [Tag.ToString]));
   fBuilder.EndPara;
   fBuilder.EndGroup;
-end;
-
-procedure TTagInfoRTFDoc.SetColour(const Colour: TColor);
-begin
-  if fUseColour then
-    fBuilder.SetColour(Colour);
 end;
 
 end.
