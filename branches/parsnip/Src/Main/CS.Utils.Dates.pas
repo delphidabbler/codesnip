@@ -30,6 +30,8 @@ type
     class function RoundDTToNearestSec(const DT: TDateTime): TDateTime; static;
     class function TryConvertISO8601String(const Str: string;
       out Y, M, D, H, N, S, MS: Word): Boolean; static;
+    class function TryConvertSQLDateTime(const SQLDateTime: string;
+      out Y, M, D, H, N, S: Word): Boolean; static;
   public
     constructor Create(const UTC: TDateTime; const RoundToSec: Boolean = False);
       overload;
@@ -41,6 +43,8 @@ type
     class function CreateNull: TUTCDateTime; static; inline;
     class function CreateFromISO8601String(const Str: string): TUTCDateTime;
       static;
+    class function CreateFromSQLDateTime(const SQLDateTime: string):
+      TUTCDateTime; static;
     class function Now(const RoundToSec: Boolean = False): TUTCDateTime; static;
     class function IsValidISO8601String(const Str: string): Boolean; static;
     function ToDateTime: TDateTime; inline;
@@ -61,40 +65,11 @@ type
 
   EUTCDateTime = class(Exception);
 
-{ TODO: re-implement ParseSQLDateTime as a method of TUTCDateTime or as a
-        class helper method for TDateTime ? }
-
-///  <summary>Converts a date-time value in SQL format into a TDateTime.
-///  </summary>
-///  <param name="SQLDate">string [in] SQL format date-time value to be
-///  converted.</param>
-///  <returns>TDateTime. Converted value.</returns>
-///  <remarks>SQLDate must be in YYYY-MM-DD hh:mm:ss format.</remarks>
-function ParseSQLDateTime(const SQLDate: string): TDateTime;
-
-
-
 implementation
 
 uses
   Types,
   UUtils;
-
-function ParseSQLDateTime(const SQLDate: string): TDateTime;
-begin
-  Result := SysUtils.EncodeDate(
-    SysUtils.StrToInt(Copy(SQLDate, 1, 4)),
-    SysUtils.StrToInt(Copy(SQLDate, 6, 2)),
-    SysUtils.StrToInt(Copy(SQLDate, 9, 2))
-  )
-  +
-  SysUtils.EncodeTime(
-    SysUtils.StrToInt(Copy(SQLDate, 12, 2)),
-    SysUtils.StrToInt(Copy(SQLDate, 15, 2)),
-    SysUtils.StrToInt(Copy(SQLDate, 18, 2)),
-    0
-  );
-end;
 
 { TUTCDateTime }
 
@@ -121,7 +96,7 @@ var
   Y, M, D, H, N, S, MS: Word;
 begin
   if not TryConvertISO8601String(Str, Y, M, D, H, N, S, MS) then
-    raise EConvertError.CreateFmt('"%s" is not a valid date', [Str]);
+    raise EConvertError.CreateFmt('"%s" is not a valid ISO8601 date', [Str]);
   Result := TUTCDateTime.Create(Y, M, D, H, N, S, MS);
 end;
 
@@ -131,6 +106,18 @@ begin
   Result := TUTCDateTime.Create(
     TTimeZone.Local.ToUniversalTime(DT), RoundToSec
   );
+end;
+
+class function TUTCDateTime.CreateFromSQLDateTime(
+  const SQLDateTime: string): TUTCDateTime;
+var
+  Y, M, D, H, N, S: Word;
+begin
+  if not TryConvertSQLDateTime(SQLDateTime, Y, M, D, H, N, S) then
+    raise EConvertError.CreateFmt(
+      '"%s" is not a valid SQL DATETIME value', [SQLDateTime]
+    );
+  Result := TUTCDateTime.Create(Y, M, D, H, N, S, 0);
 end;
 
 class function TUTCDateTime.CreateNull: TUTCDateTime;
@@ -243,7 +230,6 @@ class function TUTCDateTime.TryConvertISO8601String(const Str: string; out Y, M,
 begin
   // We only support ISO 8601 string in form YYYY-MM-DD"T"HH:MM:SS"Z" and
   // YYYY-MM-DD"T"HH:MM:SS.XXX"Z" or YYYY-MM-DD"T"HH:MM:SS,XXX"Z"
-  // 1234567890 1 234567890123 4
   if Length(Str) < 20 then
     Exit(False);
   if not TryStrToWord(Copy(Str, 1, 4), Y) or not
@@ -260,7 +246,23 @@ begin
   end
   else
     MS := 0;
-  Result := True;
+  Result := IsValidDateTime(Y, M, D, H, N, S, MS);
+end;
+
+class function TUTCDateTime.TryConvertSQLDateTime(const SQLDateTime: string;
+  out Y, M, D, H, N, S: Word): Boolean;
+begin
+  // Expected string format is YYYY-MM-DD HH:MM:SS
+  // We'll accept any date and hour delimiters, but all values MUST be provided.
+  if Length(SQLDateTime) <> 19 then  // Length('YYYY-MM-DD HH:MM:SS') = 19
+    Exit(False);
+  Result := TryStrToWord(Copy(SQLDateTime, 1, 4), Y) and
+    TryStrToWord(Copy(SQLDateTime, 6, 2), M) and
+    TryStrToWord(Copy(SQLDateTime, 9, 2), D) and
+    TryStrToWord(Copy(SQLDateTime, 12, 2), H) and
+    TryStrToWord(Copy(SQLDateTime, 15, 2), N) and
+    TryStrToWord(Copy(SQLDateTime, 18, 2), S) and
+    IsValidDateTime(Y, M, D, H, N, S, 0);
 end;
 
 end.
