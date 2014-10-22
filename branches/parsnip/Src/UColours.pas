@@ -46,12 +46,6 @@ const
   clTagLinkHoverBG      = $999999;      // tag links hover background
   clTagBorder           = clBorder;     // border of tag links
 
-  // news pane
-  clNewsHeading         = clHotLight;   // headings in news frames
-  clNewsHighlight       = clHotLight;   // hilited text in news frames
-  clNewsBodyBorder      = clBorder;     // border round news frame
-  clNewsDateText        = clGrayText;   // dates in news frame
-
   // text search
   clTextSearchHighlight = $77FFFF;      // background of info pane search text
   clTextSearchText      = clNone;       // search text in info pane
@@ -63,13 +57,9 @@ const
   // new tab
   clNewTabText          = cl3DLight;    // colour of text displayed in new tabs
 
-  // colours of snippet titles / heading
-  { TODO -cSyncSpaces : rethink following colours in light of synch-spaces }
-  clMainSnippet         = clWindowText; // main database snippets
-  clUserSnippet         = clBlue;       // user database snippets
-
   // markup tags
   clVarText             = clPurple;     // <var> tag text
+
 
 implementation
 
