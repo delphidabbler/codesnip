@@ -8,8 +8,8 @@
  * $Rev$
  * $Date$
  *
- * Implements class that manages and draws check list box controls that display
- * lists of snippets.
+ * Implements class that manages list box controls that display lists of
+ * snippets.
 }
 
 
@@ -33,9 +33,9 @@ type
 
   {
   TSnippetsChkListMgr:
-    Manages and draws check list box controls that display lists of snippets.
-    Builds and clears list, sets check marks for specified snippets and
-    maintains and restores snapshots of checked items.
+    Manages check list box controls that display lists of snippets. Builds and
+    clears list, sets check marks for specified snippets and maintains and
+    restores snapshots of checked items.
   }
   TSnippetsChkListMgr = class(TObject)
   strict private
@@ -49,19 +49,6 @@ type
       {Checks entry corresponding to a snippet in check list box. Snippets not
       in check list box are ignored.
         @param Snippet [in] Snippet to be checked.
-      }
-    { TODO: Revise (and re-comment) following method: concept of user-defined is
-            meaningless. }
-    procedure DrawItem(Control: TWinControl;
-      Index: Integer; Rect: TRect; State: TOwnerDrawState);
-      {OnDrawItem event handler for associated check list box. Draws user
-      defined snippet names in a different colour to main database snippets.
-        @param Control [in] Check list box that triggered the event. Must be the
-          managed control.
-        @param Index [in] Index if item being drawn.
-        @param Rect [in] Rectangle in check list box's canvas where item is to
-          be drawn.
-        @param State [in] State of list item.
       }
   public
     constructor Create(const CLB: TCheckListBox);
@@ -179,10 +166,6 @@ begin
   Assert(Assigned(CLB), ClassName + '.Create: CLB is nil');
   inherited Create;
   fCLB := CLB;
-  // make list box owner drawn and set correct height to allow for check boxes
-  fCLB.OnDrawItem := DrawItem;
-  fCLB.Style := lbOwnerDrawFixed;
-  fCLB.ItemHeight := StringExtent('Xy', fCLB.Font).cy;
   fCLBKVMgr := TSortedCollectionCtrlKVMgr<ISnippet>.Create(
     TListBoxAdapter.Create(fCLB),
     True,
@@ -200,33 +183,7 @@ destructor TSnippetsChkListMgr.Destroy;
   }
 begin
   fCLBKVMgr.Free;
-  fCLB.OnDrawItem := nil;
   inherited;
-end;
-
-procedure TSnippetsChkListMgr.DrawItem(Control: TWinControl; Index: Integer;
-  Rect: TRect; State: TOwnerDrawState);
-  {OnDrawItem event handler for associated check list box. Draws user defined
-  snippet names in a different colour to main database snippets.
-    @param Control [in] Check list box that triggered the event. Must be the
-      managed control.
-    @param Index [in] Index if item being drawn.
-    @param Rect [in] Rectangle in check list box's canvas where item is to be
-      drawn.
-    @param State [in] State of list item.
-  }
-var
-  Canvas: TCanvas;      // check list box's canvas
-begin
-  inherited;
-  Assert(fCLB = Control, ClassName + '.DrawItem: Control <> fCLB');
-  Canvas := fCLB.Canvas;
-  Canvas.TextRect(
-    Rect,
-    Rect.Left + 2,
-    (Rect.Top + Rect.Bottom - Canvas.TextHeight(fCLB.Items[Index])) div 2,
-    fCLB.Items[Index]
-  );
 end;
 
 function TSnippetsChkListMgr.GetCheckedSnippets: ISnippetIDList;
