@@ -1024,8 +1024,8 @@ procedure TSnippetsEditorDlg.ValidateData;
   }
 resourcestring
   sDependencyPrompt = 'See the dependencies by right-clicking in the '
-    + 'Dependencies list box and selecting "View Dependencies" from the pop-up '
-    + 'menu.';
+    + 'Dependencies list box on the References tab and selecting "View '
+    + 'Dependencies" from the pop-up menu.';
 var
   ErrorMessage: string;           // receives validation error messages
   ErrorSelection: TSelection;     // receives selection containing errors
