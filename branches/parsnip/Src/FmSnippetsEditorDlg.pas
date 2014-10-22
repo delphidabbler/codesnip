@@ -1023,8 +1023,9 @@ procedure TSnippetsEditorDlg.ValidateData;
     @except EDataEntry raised if data is not valid.
   }
 resourcestring
-  sDependencyPrompt = 'See the dependencies by clicking the View Dependencies '
-    + 'button on the References tab.';
+  sDependencyPrompt = 'See the dependencies by right-clicking in the '
+    + 'Dependencies list box and selecting "View Dependencies" from the pop-up '
+    + 'menu.';
 var
   ErrorMessage: string;           // receives validation error messages
   ErrorSelection: TSelection;     // receives selection containing errors
