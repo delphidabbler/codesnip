@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2013-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -265,7 +265,6 @@ uses
   UComparers,
   UCtrlArranger,
   UMessageBox,
-  UPreferences,
   USettings,
   UStrUtils;
 
@@ -716,22 +715,11 @@ procedure TFavouritesDlg.TListBoxMgr.LBDrawItem(Control: TWinControl;
 var
   Canvas: TCanvas;
   DisplayText: string;
-
-  { TODO -cSynchSpaces: Revisit this method in the light of synch spaces. }
-  function IsUserDefinedItem: Boolean;
-  begin
-    Result := True;
-  end;
-
 begin
   Assert(Control = fLB,
     ClassName + '.LBDrawItem: Event handler called for wrong list box');
   Canvas := fLB.Canvas;
   DisplayText := GetSnippetAt(Index).Title;
-  if not (odSelected in State) then
-    { TODO -cSynchSpaces: Revisit colour selection in the light of synch spaces.
-    }
-    Canvas.Font.Color := Preferences.DBHeadingColours[IsUserDefinedItem];
   Canvas.TextRect(
     Rect,
     Rect.Left + 2,

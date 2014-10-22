@@ -136,9 +136,13 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Graphics,
+  SysUtils,
+  Graphics,
   // Project
-  UColours, UCtrlArranger, UPreferences, UQuery, USettings;
+  UColours,
+  UCtrlArranger,
+  UQuery,
+  USettings;
 
 
 {$R *.dfm}
@@ -237,8 +241,6 @@ begin
   inherited;
   // Set label font styles and colours
   lblSnippetTitle.Font.Style := [fsBold];
-  // TODO: rethink following DBHeadingColours is always same
-  lblSnippetTitle.Font.Color := Preferences.DBHeadingColours[True];
   // Display selected snippet title in appropriate controls
   lblSnippetTitle.Caption := fSnippet.Title;
   chkIncludeSnippet.Caption := Format(

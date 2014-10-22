@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2011-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2011-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -177,8 +177,7 @@ uses
   DB.UMain,
   UColours,
   UCtrlArranger,
-  UFontHelper,
-  UPreferences;
+  UFontHelper;
 
 {$R *.dfm}
 
@@ -304,8 +303,6 @@ begin
   CreateCompilerCtrls;
   // Set required label fonts and captions
   TFontHelper.SetDefaultBaseFont(lblSnippetTitle.Font);
-  // Rethinl following in light of synch spaces: no always same colour
-  lblSnippetTitle.Font.Color := Preferences.DBHeadingColours[True];
   lblSnippetTitle.Caption := fSnippet.Title;
 end;
 

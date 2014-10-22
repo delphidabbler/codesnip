@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2009-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2009-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -21,7 +21,9 @@ interface
 
 uses
   // Delphi
-  Controls, CheckLst, Windows,
+  Controls,
+  CheckLst,
+  Windows,
   // Project
   CS.Database.Types,
   CS.UI.Helper.CollectionCtrlKVMgr;
@@ -114,8 +116,7 @@ uses
   CS.Database.Snippets,
   DB.UMain,
   UColours,
-  UGraphicUtils,
-  UPreferences;
+  UGraphicUtils;
 
 
 { TSnippetsChkListMgr }
@@ -220,9 +221,6 @@ begin
   inherited;
   Assert(fCLB = Control, ClassName + '.DrawItem: Control <> fCLB');
   Canvas := fCLB.Canvas;
-  if not (odSelected in State) then
-    // TODO: rethink this: DBHeadingColours[True] always used
-    Canvas.Font.Color := Preferences.DBHeadingColours[True];
   Canvas.TextRect(
     Rect,
     Rect.Left + 2,

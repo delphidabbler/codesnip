@@ -171,8 +171,7 @@ uses
   DB.UMain,
   UBox, UColours,
   UCtrlArranger,
-  UFontHelper,
-  UPreferences;
+  UFontHelper;
 
 {$R *.dfm}
 
@@ -374,13 +373,9 @@ procedure TDependenciesDlg.FormDestroy(Sender: TObject);
   {Form destruction event handler. Frees owned object.
     @param Sender [in] Not used.
   }
-var
-  Idx: Integer;
 begin
   inherited;
   fTVDraw.Free;
-  for Idx := Pred(lbDependents.Items.Count) downto 0 do
-    lbDependents.Items.Objects[Idx].Free;
 end;
 
 function TDependenciesDlg.GetTitle: string;
@@ -401,20 +396,9 @@ procedure TDependenciesDlg.lbDependentsDrawItem(Control: TWinControl;
 var
   LB: TListBox;
   Canvas: TCanvas;
-
-  { TODO -cSynchSpaces: Revisit this method in the light of synch spaces. }
-  function IsUserDefinedItem: Boolean;
-  begin
-    Result := (LB.Items.Objects[Index] as TBox<Boolean>).Value;
-  end;
-
 begin
   LB := Control as TListBox;
   Canvas := LB.Canvas;
-  if not (odSelected in State) then
-    { TODO -cSynchSpaces: Revisit colour selection in the light of synch spaces.
-    }
-    Canvas.Font.Color := Preferences.DBHeadingColours[IsUserDefinedItem];
   Canvas.TextRect(
     Rect,
     Rect.Left + 2,
@@ -446,10 +430,7 @@ begin
       for SnippetID in Dependents do
       begin
         ASnippet := Database.LookupSnippet(SnippetID);
-        // TODO: rethink lbDependants: TBox value is always same (i.e. True)
-        lbDependents.Items.AddObject(
-          ASnippet.Title, TBox<Boolean>.Create(True)
-        );
+        lbDependents.Items.Add(ASnippet.Title);
       end;
     end;
   finally
