@@ -501,9 +501,7 @@ inherited MainForm: TMainForm
     object actCompilers: TAction
       Category = 'Tools'
       Caption = 'Configure Compilers...'
-      Hint = 
-        'Configure Compilers|Display dialog box where required compilers ' +
-        'can be configured'
+      Hint = 'F'
       ImageIndex = 15
       OnExecute = actCompilersExecute
     end
