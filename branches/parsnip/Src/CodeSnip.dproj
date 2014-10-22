@@ -384,7 +384,6 @@
 			<DCCReference Include="UExceptions.pas"/>
 			<DCCReference Include="UExeFileType.pas"/>
 			<DCCReference Include="UFileProtocol.pas"/>
-			<DCCReference Include="UFolderBackup.pas"/>
 			<DCCReference Include="UFontHelper.pas"/>
 			<DCCReference Include="UFormAligner.pas"/>
 			<DCCReference Include="UGIFImageList.pas"/>
@@ -494,7 +493,6 @@
 			<DCCReference Include="UURIEncode.pas"/>
 			<DCCReference Include="UURIParams.pas"/>
 			<DCCReference Include="UUrlMonEx.pas"/>
-			<DCCReference Include="UUserDBBackup.pas"/>
 			<DCCReference Include="UUserDBMgr.pas"/>
 			<DCCReference Include="UUserDBMove.pas"/>
 			<DCCReference Include="UUserDetails.pas"/>
@@ -546,6 +544,7 @@
 			<DCCReference Include="Main\CS.Components.StringGridEx.pas"/>
 			<DCCReference Include="Main\CS.Config.pas"/>
 			<DCCReference Include="Main\CS.Docs.TagInfo.RTF.pas"/>
+			<DCCReference Include="Main\CS.Database.Backup.pas"/>
 			<DCCReference Include="Main\CS.Database.IO.Empty.pas"/>
 			<DCCReference Include="Main\CS.Database.IO.Factory.pas"/>
 			<DCCReference Include="Main\CS.Database.IO.Legacy.pas"/>

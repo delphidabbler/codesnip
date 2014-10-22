@@ -107,6 +107,7 @@ uses
   SysUtils,
   Dialogs,
   // Project
+  CS.Database.Backup,
   CS.Init.CommandLineOpts,
   DB.UMain,
   FmDuplicateSnippetDlg,
@@ -120,7 +121,6 @@ uses
   UOpenDialogEx,
   UOpenDialogHelper,
   USaveDialogEx,
-  UUserDBBackup,
   UWaitForThreadUI;
 
 type
@@ -550,7 +550,7 @@ var
 begin
   DBBackup := TDatabaseBackup.Create(fBakFileName);
   try
-    DBBackup.Restore(True);
+    DBBackup.Restore;
   finally
     DBBackup.Free;
   end;

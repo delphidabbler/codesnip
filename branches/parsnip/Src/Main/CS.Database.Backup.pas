@@ -3,18 +3,18 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2009-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2009-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
  *
- * Code that that can back up and restore all the files in a folder to or from a
- * single file. Legacy support for restoring data from legacy backup file
- * formats is provided.
+ * Code that that can back up and restore all the files in the database folder
+ * to or from a single file. Legacy support for restoring database from legacy
+ * backup file formats is provided.
 }
 
 
-unit UFolderBackup;
+unit CS.Database.Backup;
 
 
 interface
@@ -23,43 +23,32 @@ interface
 type
 
   ///  <summary>
-  ///  Class that can back up and restore all the files in a folder to or from
-  ///  a single file.
+  ///  Class that can create and restore single file backups of the snippets
+  ///  database.
   ///  </summary>
-  TFolderBackup = class(TObject)
+  TDatabaseBackup = class(TObject)
   strict private
-    var fSrcFolder: string;   // Folder to be backed up or restored
-    var fBakFile: string;     // Full path to backup file
-    var fFileID: SmallInt;    // Identifies the type of file
+    const
+      ///  <summary>Database backup file ID.</summary>
+      FileID = SmallInt($DBAC);
+    var
+      ///  <summary>Records database directory.</summary>
+      fDatabaseDir: string;
+      ///  <summary>Full path to backup file.</summary>
+      fBackupFile: string;
   public
-    ///  <summary>
-    ///  Creates object for a specific folder and backup file type.
-    ///  </summary>
-    ///  <param name="SrcFolder">Folder containing files to be backed up.
-    ///  Sub-directories are ignored.</param>
-    ///  <param name="BakFile">Name of backup file.</param>
-    ///  <param name="FileID">Backup file type identifier. Specified backup file
-    ///  must have this identifier.</param>
-    constructor Create(const SrcFolder, BakFile: string;
-      const FileID: SmallInt);
-    ///  <summary>
-    ///  Backs up the files from the source folder passed to constructor into a
-    ///  single backup file.
-    ///  </summary>
-    ///  <remarks>
-    ///  Backup file is marked with the file ID passed to constructor.
-    ///  </remarks>
+    ///  <summary>Creates object to backup or restore database from or to the
+    ///  given backup file.</summary>
+    constructor Create(const BackupFile: string);
+    ///  <summary>Backs up the files from the database directory into a single
+    ///  backup file.</summary>
+    ///  <remarks>Backup file is marked with a unqiue file ID.</remarks>
     procedure Backup;
-    ///  <summary>
-    ///  Restores files from backup file into source folder passed to
-    ///  constructor. If ClearDir is True then all files in the source folder
-    ///  are deleted before the folder is restored.
+    ///  <summary>Restores files from backup file into database directory.
     ///  </summary>
-    ///  <remarks>
-    ///  An exception is raised if file type id is not the one passed to the
-    ///  constructor or if any checksum errors are detected.
-    ///  </remarks>
-    procedure Restore(const ClearDir: Boolean = False);
+    ///  <remarks>An exception is raised if file type id is not correct for the
+    ///  database or if any checksum errors are detected.</remarks>
+    procedure Restore;
   end;
 
 
@@ -68,11 +57,19 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Classes, Generics.Collections,
+  SysUtils,
+  Classes,
+  Generics.Collections,
   // DelphiDabbler library
   PJMD5,
   // Project
-  UBaseObjects, UDataStreamIO, UDOSDateTime, UEncodings, UExceptions, UIOUtils,
+  UAppInfo,
+  UBaseObjects,
+  UDataStreamIO,
+  UDOSDateTime,
+  UEncodings,
+  UExceptions,
+  UIOUtils,
   UUtils;
 
 
@@ -261,9 +258,9 @@ type
   ///  Type of exception raised by backup file loader objects.
   EBackupFileLoader = class(ECodeSnip);
 
-{ TFolderBackup }
+{ TDatabaseBackup }
 
-procedure TFolderBackup.Backup;
+procedure TDatabaseBackup.Backup;
 var
   Files: TStringList;             // list of files to back up
   FS: TFileStream;                // stream onto backup file
@@ -271,10 +268,10 @@ var
 begin
   Files := TStringList.Create;
   try
-    ListFiles(fSrcFolder, '*.*', Files, False);
-    FS := TFileStream.Create(fBakFile, fmCreate);
+    ListFiles(fDatabaseDir, '*.*', Files, False);
+    FS := TFileStream.Create(fBackupFile, fmCreate);
     try
-      FileWriter := TBackupFileWriter.Create(Files, FS, fFileID);
+      FileWriter := TBackupFileWriter.Create(Files, FS, FileID);
       try
         FileWriter.Generate;
       finally
@@ -288,16 +285,14 @@ begin
   end;
 end;
 
-constructor TFolderBackup.Create(const SrcFolder, BakFile: string;
-  const FileID: SmallInt);
+constructor TDatabaseBackup.Create(const BackupFile: string);
 begin
   inherited Create;
-  fSrcFolder := ExcludeTrailingPathDelimiter(SrcFolder);
-  fBakFile := BakFile;
-  fFileID := FileID;
+  fDatabaseDir := ExcludeTrailingPathDelimiter(TAppInfo.UserDataDir);
+  fBackupFile := BackupFile;
 end;
 
-procedure TFolderBackup.Restore(const ClearDir: Boolean);
+procedure TDatabaseBackup.Restore;
 var
   BakFileStream: TStream;                 // stream onto backup file
   BakFileLoader: TBackupFileLoader;       // loads & analyses backup file
@@ -308,24 +303,23 @@ resourcestring
   // Error message
   sBadFileID = 'Invalid file ID for file "%s"';
 begin
-  // Make sure restore folder exists
-  EnsureFolders(fSrcFolder);
-  if ClearDir then
-    DeleteFiles(fSrcFolder, '*');
+  // Make sure database folder exists and is empty
+  EnsureFolders(fDatabaseDir);
+  DeleteFiles(fDatabaseDir, '*');
   // Load backup file contents
   BakFileLoader := nil;
-  BakFileStream := TFileStream.Create(fBakFile, fmOpenRead or fmShareDenyNone);
+  BakFileStream := TFileStream.Create(fBackupFile, fmOpenRead or fmShareDenyNone);
   try
     BakFileLoader := TBackupFileLoaderFactory.Create(BakFileStream);
     BakFileLoader.Load;
     // Test for correct file ID if present (NulFileID indicates not present)
     if (BakFileLoader.FileID <> TBackupFileLoader.NulFileID)
-      and (BakFileLoader.FileID <> fFileID) then
+      and (BakFileLoader.FileID <> FileID) then
       raise EBackupFileLoader.CreateFmt(sBadFileID, [FileSpec]);
     // Restore each file
     for FileInfo in BakFileLoader do
     begin
-      FileSpec := IncludeTrailingPathDelimiter(fSrcFolder) + FileInfo.Name;
+      FileSpec := IncludeTrailingPathDelimiter(fDatabaseDir) + FileInfo.Name;
       DOSDateTime := TDOSDateTimeFactory.CreateFromDOSTimeStamp(
         FileInfo.TimeStamp
       );
