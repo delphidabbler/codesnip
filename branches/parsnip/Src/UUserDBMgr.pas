@@ -81,6 +81,8 @@ type
     ///  the given state.</summary>
     class procedure UpdateSnippetStarredState(const SnippetID: TSnippetID;
       const NewState: Boolean);
+    ///  <summary>Checks if snippet with given ID is starred.</summary>
+    class function IsSnippetStarred(const SnippetID: TSnippetID): Boolean;
     ///  <summary>Saves the current database to disk.</summary>
     class procedure Save(ParentCtrl: TComponent);
     ///  <summary>Checks if the database can be saved.</summary>
@@ -401,6 +403,12 @@ begin
   if not Database.TryLookupSnippet(SnippetID, Snippet) then
     raise EBug.Create(ClassName + '.EditSnippet: Snippet not in database');
   TSnippetsEditorDlg.EditSnippet(nil, Snippet);
+end;
+
+class function TDBModificationMgr.IsSnippetStarred(
+  const SnippetID: TSnippetID): Boolean;
+begin
+  Result := Database.LookupSnippet(SnippetID).Starred;
 end;
 
 class procedure TDBModificationMgr.MoveDatabase;

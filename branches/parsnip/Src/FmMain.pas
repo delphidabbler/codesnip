@@ -1171,8 +1171,6 @@ end;
 
 procedure TMainForm.actToggleFavouriteExecute(Sender: TObject);
 begin
-  { TODO: get required snippet ID from favourites manager OR get favourites
-          manager (TDBModificationMgr ?) to execute the following code }
   actToggleFavourite.Checked := not actToggleFavourite.Checked;
   fNotifier.ChangeSnippetStar(
     (fMainDisplayMgr.CurrentView as ISnippetView).SnippetID,
@@ -1181,17 +1179,17 @@ begin
 end;
 
 procedure TMainForm.actToggleFavouriteUpdate(Sender: TObject);
-var
-  SnippetView: ISnippetView;
 begin
-  { TODO: get required states from favourites manager (TDBModificationMgr?) }
-  actToggleFavourite.Enabled :=
-    Supports(fMainDisplayMgr.CurrentView, ISnippetView, SnippetView);
+  actToggleFavourite.Enabled := TDBModificationMgr.CanEdit(
+    fMainDisplayMgr.CurrentView
+  );
   if actToggleFavourite.Enabled then
     actToggleFavourite.Checked :=
-      Database.LookupSnippet(
+      TDBModificationMgr.IsSnippetStarred(
         (fMainDisplayMgr.CurrentView as ISnippetView).SnippetID
-      ).Starred;
+      )
+  else
+    actToggleFavourite.Checked := False;
 end;
 
 procedure TMainForm.ActTreeStateChangeExecute(Sender: TObject);
