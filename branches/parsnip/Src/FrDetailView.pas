@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2005-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -196,10 +196,6 @@ begin
     // Style of box that appears around clickable options (or actions)
     with CSSBuilder.AddSelector('.optionbox') do
       AddProperty(TCSS.BorderProp(cssAll, 1, cbsSolid, clBorder));
-    with CSSBuilder.AddSelector('.userdb') do
-      AddProperty(TCSS.ColorProp(Preferences.DBHeadingColours[True]));
-    with CSSBuilder.AddSelector('.maindb') do
-      AddProperty(TCSS.ColorProp(Preferences.DBHeadingColours[False]));
     // Sets CSS for style of New Tab text
     with CSSBuilder.AddSelector('#newtab') do
     begin

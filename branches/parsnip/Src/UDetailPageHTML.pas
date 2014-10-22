@@ -243,11 +243,6 @@ type
     ///  <summary>Checks if the given snippet should be included in the list of
     ///  snippets to be displayed.</summary>
     function IsSnippetRequired(Snippet: ISnippet): Boolean; virtual; abstract;
-    ///  <summary>Returns name of CSS class to be used for page heading.
-    ///  </summary>
-    ///  <remarks>Provides default class name. Descendant classes should
-    ///  override as necessary.</remarks>
-    function GetH1ClassName: string; virtual;
     ///  <summary>Returns page's heading text.</summary>
     ///  <remarks>Returns view's description by default. Descendants can
     ///  override if different behaviour is required.</remarks>
@@ -283,9 +278,6 @@ type
     ///  <remarks>The snippet is to be displayed if it is in the tag being
     ///  displayed.</remarks>
     function IsSnippetRequired(Snippet: ISnippet): Boolean; override;
-    ///  <summary>Returns name of CSS class to be used for page heading.
-    ///  </summary>
-    function GetH1ClassName: string; override;
     ///  <summary>Returns narrative to be used at top of any page that displays
     ///  a snippet list.</summary>
     function GetNarrative: string; override;
@@ -309,9 +301,6 @@ type
     ///  <remarks>The snippet is to be displayed if its source code language is
     ///  the same as that being displayed.</remarks>
     function IsSnippetRequired(Snippet: ISnippet): Boolean; override;
-    ///  <summary>Returns name of CSS class to be used for page heading.
-    ///  </summary>
-    function GetH1ClassName: string; override;
     ///  <summary>Returns narrative to be used at top of any page that displays
     ///  a snippet list.</summary>
     function GetNarrative: string; override;
@@ -571,9 +560,6 @@ begin
       'overflowXFixScript',
       'window.onload = null;'
     );
-  { TODO -cSynch Spaces: rethink following placeholder re synch-spaces: may need
-                         style attrib to set required colour. }
-  Tplt.ResolvePlaceholderHTML('SnippetCSSClass', 'userdb');
   SnippetHTML := TSnippetHTML.Create(GetSnippet);
   try
     Tplt.ResolvePlaceholderHTML('TestingInfoImg', SnippetHTML.TestingImage);
@@ -618,11 +604,6 @@ begin
   inherited;
 end;
 
-function TSnippetListPageHTML.GetH1ClassName: string;
-begin
-  Result := 'maindb';
-end;
-
 function TSnippetListPageHTML.GetHeading: string;
 begin
   Result := View.Description;
@@ -644,7 +625,6 @@ end;
 procedure TSnippetListPageHTML.ResolvePlaceholders(const Tplt: THTMLTemplate);
 begin
   inherited;
-  Tplt.ResolvePlaceholderHTML('H1Class', GetH1ClassName);
   Tplt.ResolvePlaceholderText('Heading', GetHeading);
   if HaveSnippets then
   begin
@@ -703,13 +683,6 @@ begin
   Result := sNote;
 end;
 
-function TTagsPageHTML.GetH1ClassName: string;
-begin
-  { TODO -cSynch Spaces: rethink following placeholder re synch-spaces: may need
-                         style attrib to set required colour. }
-  Result := 'userdb';
-end;
-
 function TTagsPageHTML.GetNarrative: string;
 resourcestring
   sNarrative = 'List of selected snippets with this tag.';
@@ -736,20 +709,6 @@ resourcestring
     + 'language is %s';
 begin
   Result := Format(sNote, [View.Description]);
-end;
-
-function TSourceCodeLanguagePageHTML.GetH1ClassName: string;
-begin
-  { TODO -cSynch Spaces: rethink following placeholder re synch-spaces: although
-                         the user-defined concept does not apply to snippets it
-                         DOES still apply to source code languages. Maybe best
-                         approach is never to distinguish them. Alternative is
-                         to choose a colour for built-in and user-defined
-                         separately to synch spaces. }
-  if (View as ISourceCodeLanguageView).Language.BuiltIn then
-    Result := 'maindb'
-  else
-    Result := 'userdb';
 end;
 
 function TSourceCodeLanguagePageHTML.GetNarrative: string;
