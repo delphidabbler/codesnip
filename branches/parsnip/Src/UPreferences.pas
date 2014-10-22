@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2006-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2006-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -137,51 +137,6 @@ type
     property ShowNewSnippetsInNewTabs: Boolean
       read GetShowNewSnippetsInNewTabs write SetShowNewSnippetsInNewTabs;
 
-    { TODO: Remove "user-defined" parameters below: either delete them and
-            associated settings or replace with something based on synch-spaces.
-    }
-    ///  <summary>Gets heading colour used for snippets from a specified
-    ///  database.</summary>
-    ///  <param name="UserDefined">Boolean [in] Required database: True for user
-    ///  database and False for inline database.</param>
-    ///  <returns>TColor. Required colour.</returns>
-    function GetDBHeadingColour(UserDefined: Boolean): TColor;
-    ///  <summary>Sets heading colour used for snippets from a specified
-    ///  database.</summary>
-    ///  <param name="UserDefined">Boolean [in] Required database: True for user
-    ///  database and False for online database.</param>
-    ///  <param name="Value">TColor [in] Required heading colour.</param>
-    procedure SetDBHeadingColour(UserDefined: Boolean;
-      const Value: TColor);
-    ///  <summary>Records colour to be used for headings of items from either
-    ///  online database (UserDefined = False) or user database (UserDefined =
-    ///  True).</summary>
-    property DBHeadingColours[UserDefined: Boolean]: TColor
-      read GetDBHeadingColour write SetDBHeadingColour;
-
-    { TODO: Merge all custom colours into one entry for colour dialogue box,
-            either globally or as used here. Either way get rid of user-define
-            parameter.}
-    ///  <summary>Gets custom colours available for headings for specified
-    ///  database.</summary>
-    ///  <param name="UserDefined">Boolean [in] Required database: True for user
-    ///  database and False for online database.</param>
-    ///  <returns>IStringList. String list containing custom colours.</returns>
-    function GetDBHeadingCustomColours(UserDefined: Boolean): IStringList;
-    ///  <summary>Sets custom colours available for headings for specified
-    ///  database.</summary>
-    ///  <param name="UserDefined">Boolean [in] Required database: True for user
-    ///  database and False for online database.</param>
-    ///  <param name="Value">IStringList [in] String list containing custom
-    ///  colours.</param>
-    procedure SetDBHeadingCustomColours(UserDefined: Boolean;
-      Value: IStringList);
-    ///  <summary>Records custom colours available for headings of items from
-    ///  either online database (UserDefined = False) or user database
-    ///  (UserDefined = True).</summary>
-    property DBHeadingCustomColours[UserDefined: Boolean]: IStringList
-      read GetDBHeadingCustomColours write SetDBHeadingCustomColours;
-
     ///  <summary>Gets colour used for background of source code in main
     ///  display.</summary>
     function GetSourceCodeBGColour: TColor;
@@ -193,6 +148,7 @@ type
     property SourceCodeBGColour: TColor
       read GetSourceCodeBGColour write SetSourceCodeBGColour;
 
+    { TODO: Merge all custom colours into one entry for colour dialogue box. }
     ///  <summary>Gets custom colours available for use as background colour of
     ///  source code in main display as a string list.</summary>
     function GetSourceCodeBGCustomColours: IStringList;
@@ -341,14 +297,6 @@ type
       ///  <summary>Indicates whether new snippets and ca-tegories are displayed
       ///  in new tabs in details pane.</summary>
       fShowNewSnippetsInNewTabs: Boolean;
-      ///  <summary>Records colour to be used for headings of items from either
-      ///  online database (UserDefined = False) or user database (UserDefined =
-      ///  True).</summary>
-      fDBHeadingColours: array[Boolean] of TColor;
-      ///  <summary>Records custom colours available for headings of items from
-      ///  either online database (UserDefined = False) or user database
-      ///  (UserDefined = True).</summary>
-      fDBHeadingCustomColours: array[Boolean] of IStringList;
       ///  <summary>Records colour used for background of source code in main
       ///  display.</summary>
       fSourceCodeBGColour: TColor;
@@ -460,41 +408,6 @@ type
     ///  new tabs in details pane.</summary>
     ///  <remarks>Method of IPreferences.</remarks>
     procedure SetShowNewSnippetsInNewTabs(const Value: Boolean);
-
-    ///  <summary>Gets heading colour used for snippets from a specified
-    ///  database.</summary>
-    ///  <param name="UserDefined">Boolean [in] Required database: True for user
-    ///  database and False for inline database.</param>
-    ///  <returns>TColor. Required colour.</returns>
-    ///  <remarks>Method of IPreferences.</remarks>
-    function GetDBHeadingColour(UserDefined: Boolean): TColor;
-
-    ///  <summary>Sets heading colour used for snippets from a specified
-    ///  database.</summary>
-    ///  <param name="UserDefined">Boolean [in] Required database: True for user
-    ///  database and False for online database.</param>
-    ///  <param name="Value">TColor [in] Required heading colour.</param>
-    ///  <remarks>Method of IPreferences.</remarks>
-    procedure SetDBHeadingColour(UserDefined: Boolean;
-      const Value: TColor);
-
-    ///  <summary>Gets custom colours available for headings for specified
-    ///  database.</summary>
-    ///  <param name="UserDefined">Boolean [in] Required database: True for user
-    ///  database and False for online database.</param>
-    ///  <returns>IStringList. String list containing custom colours.</returns>
-    ///  <remarks>Method of IPreferences.</remarks>
-    function GetDBHeadingCustomColours(UserDefined: Boolean): IStringList;
-
-    ///  <summary>Sets custom colours available for headings for specified
-    ///  database.</summary>
-    ///  <param name="UserDefined">Boolean [in] Required database: True for user
-    ///  database and False for online database.</param>
-    ///  <param name="Value">IStringList [in] String list containing custom
-    ///  colours.</param>
-    ///  <remarks>Method of IPreferences.</remarks>
-    procedure SetDBHeadingCustomColours(UserDefined: Boolean;
-      Value: IStringList);
 
     ///  <summary>Gets colour used for background of source code in main
     ///  display.</summary>
@@ -662,10 +575,6 @@ begin
   Self.fOverviewStartState := SrcPref.OverviewStartState;
   Self.fShowEmptySections := SrcPref.ShowEmptySections;
   Self.fShowNewSnippetsInNewTabs := SrcPref.ShowNewSnippetsInNewTabs;
-  Self.fDBHeadingColours[False] := SrcPref.DBHeadingColours[False];
-  Self.fDBHeadingCustomColours[False] := SrcPref.DBHeadingCustomColours[False];
-  Self.fDBHeadingColours[True] := SrcPref.DBHeadingColours[True];
-  Self.fDBHeadingCustomColours[True] := SrcPref.DBHeadingCustomColours[True];
   Self.fSourceCodeBGColour := SrcPref.SourceCodeBGColour;
   Self.fSourceCodeBGCustomColours := SrcPref.SourceCodeBGCustomColours;
   for HiliteThemeKind := Low(TCurrentHiliteThemeKind) to
@@ -685,8 +594,6 @@ begin
   inherited Create;
   fHiliteCustomColours := TIStringList.Create;
   fWarnings := TWarnings.Create;
-  fDBHeadingCustomColours[False] := TIStringList.Create;
-  fDBHeadingCustomColours[True] := TIStringList.Create;
   fPageStructures := TSnippetPageStructures.Create;
   TDefaultPageStructures.SetDefaults(fPageStructures);
 end;
@@ -718,17 +625,6 @@ end;
 function TPreferences.GetCustomHiliteColours: IStringList;
 begin
   Result := fHiliteCustomColours;
-end;
-
-function TPreferences.GetDBHeadingColour(UserDefined: Boolean): TColor;
-begin
-  Result := fDBHeadingColours[UserDefined];
-end;
-
-function TPreferences.GetDBHeadingCustomColours(
-  UserDefined: Boolean): IStringList;
-begin
-  Result := fDBHeadingCustomColours[UserDefined];
 end;
 
 function TPreferences.GetMeasurementUnits: TMeasurementUnits;
@@ -815,18 +711,6 @@ end;
 procedure TPreferences.SetCustomHiliteColours(const Colours: IStringList);
 begin
   fHiliteCustomColours := Colours;
-end;
-
-procedure TPreferences.SetDBHeadingColour(UserDefined: Boolean;
-  const Value: TColor);
-begin
-  fDBHeadingColours[UserDefined] := Value;
-end;
-
-procedure TPreferences.SetDBHeadingCustomColours(UserDefined: Boolean;
-  Value: IStringList);
-begin
-  fDBHeadingCustomColours[UserDefined] := Value;
 end;
 
 procedure TPreferences.SetMeasurementUnits(const Value: TMeasurementUnits);
@@ -921,10 +805,6 @@ begin
   NewPref.OverviewStartState := Self.fOverviewStartState;
   NewPref.ShowEmptySections := Self.fShowEmptySections;
   NewPref.ShowNewSnippetsInNewTabs := Self.fShowNewSnippetsInNewTabs;
-  NewPref.DBHeadingColours[False] := Self.fDBHeadingColours[False];
-  NewPref.DBHeadingCustomColours[False] := Self.fDBHeadingCustomColours[False];
-  NewPref.DBHeadingColours[True] := Self.fDBHeadingColours[True];
-  NewPref.DBHeadingCustomColours[True] := Self.fDBHeadingCustomColours[True];
   NewPref.SourceCodeBGColour := Self.fSourceCodeBGColour;
   NewPref.SourceCodeBGCustomColours := Self.fSourceCodeBGCustomColours;
   for HiliteThemeKind := Low(TCurrentHiliteThemeKind) to
@@ -958,7 +838,6 @@ begin
   );
 
   // Read display section
-  // TODO: change some names where "main" of "user" db are referred to
   Storage := Settings.ReadSection(ssPreferences, cDisplay);
   fOverviewStartState := TOverviewStartState(
     Storage.GetInteger('OverviewStartState', Ord(ossExpanded))
@@ -967,20 +846,8 @@ begin
   fShowNewSnippetsInNewTabs := Storage.GetBoolean(
     'ShowNewSnippetsInNewTabs', False
   );
-  fDBHeadingColours[False] := TColor(
-    Storage.GetInteger('MainDBHeadingColour', clMainSnippet)
-  );
-  fDBHeadingColours[True] := TColor(
-    Storage.GetInteger('UserDBHeadingColour', clUserSnippet)
-  );
   fSourceCodeBGColour := TColor(
     Storage.GetInteger('SourceCodeBGColour', clSourceBg)
-  );
-  fDBHeadingCustomColours[False] := Storage.GetStrings(
-    'MainDBHeadingCustomColourCount', 'MainDBHeadingCustomColour%d'
-  );
-  fDBHeadingCustomColours[True] := Storage.GetStrings(
-    'UserDBHeadingCustomColourCount', 'UserDBHeadingCustomColour%d'
   );
   fSourceCodeBGCustomColours := Storage.GetStrings(
     'SourceCodeBGCustomColourCount', 'SourceCodeBGCustomColour%d'
@@ -1053,19 +920,7 @@ begin
   Storage.SetInteger('OverviewStartState', Ord(fOverviewStartState));
   Storage.SetBoolean('ShowEmptySections', fShowEmptySections);
   Storage.SetBoolean('ShowNewSnippetsInNewTabs', fShowNewSnippetsInNewTabs);
-  Storage.SetInteger('MainDBHeadingColour', fDBHeadingColours[False]);
-  Storage.SetInteger('UserDBHeadingColour', fDBHeadingColours[True]);
   Storage.SetInteger('SourceCodeBGColour', fSourceCodeBGColour);
-  Storage.SetStrings(
-    'MainDBHeadingCustomColourCount',
-    'MainDBHeadingCustomColour%d',
-    fDBHeadingCustomColours[False]
-  );
-  Storage.SetStrings(
-    'UserDBHeadingCustomColourCount',
-    'UserDBHeadingCustomColour%d',
-    fDBHeadingCustomColours[True]
-  );
   Storage.SetStrings(
     'SourceCodeBGCustomColourCount',
     'SourceCodeBGCustomColour%d',
