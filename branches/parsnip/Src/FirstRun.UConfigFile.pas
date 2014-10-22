@@ -268,15 +268,17 @@ end;
 procedure TUserConfigFileUpdater.DeleteDetailsPaneIndex;
 begin
   if not TFile.Exists(CfgFileName, False) then
-    CreateNewFile;
-  DeleteIniKey('MainWindow', 'DetailTab', CfgFileName);
+    CreateNewFile
+  else
+    DeleteIniKey('MainWindow', 'DetailTab', CfgFileName);
 end;
 
 procedure TUserConfigFileUpdater.DeleteHighligherPrefs;
 begin
   if not TFile.Exists(CfgFileName, False) then
-    CreateNewFile;
-  DeleteIniSection('Prefs:Hiliter', CfgFileName);
+    CreateNewFile
+  else
+    DeleteIniSection('Prefs:Hiliter', CfgFileName);
 end;
 
 procedure TUserConfigFileUpdater.DeleteProxyPassword;
@@ -398,22 +400,25 @@ var
   I: Integer; // loops thru all highlight elements
 begin
   if not TFile.Exists(CfgFileName, False) then
-    CreateNewFile;
-  // Delete unwanted sections:
-  // - Application section: now in common config file
-  // - Source code output format: format lost when updating from CodeSnip pre
-  //   1.7 since section was SourceOutput, but format preserved from v1.7 since
-  //   current Prefs:SourceCode section used
-  // - Highlighting style is deliberately lost since CodeSnip v3 & v4 have
-  //   different default style and main display uses that style, therefore
-  //   section's HiliteOutput (pre v1.7.5) and Prefs:Hiliter (v1.7.5 and later)
-  //   deleted.
-  DeleteIniSection('Application', CfgFileName);
-  DeleteIniSection('SourceOutput', CfgFileName);
-  DeleteIniSection('HiliteOutput', CfgFileName);
-  for I := 0 to 11 do
-    DeleteIniSection('HiliteOutput:Elem' + IntToStr(I), CfgFileName);
-  DeleteHighligherPrefs;
+    CreateNewFile
+  else
+  begin
+    // Delete unwanted sections in existing config file:
+    // - Application section: now in common config file
+    // - Source code output format: format lost when updating from CodeSnip pre
+    //   1.7 since section was SourceOutput, but format preserved from v1.7
+    //   since current Prefs:SourceCode section used
+    // - Highlighting style is deliberately lost since CodeSnip v3 & v4 have
+    //   different default style and main display uses that style, therefore
+    //   section's HiliteOutput (pre v1.7.5) and Prefs:Hiliter (v1.7.5 and
+    //   later) deleted.
+    DeleteIniSection('Application', CfgFileName);
+    DeleteIniSection('SourceOutput', CfgFileName);
+    DeleteIniSection('HiliteOutput', CfgFileName);
+    for I := 0 to 11 do
+      DeleteIniSection('HiliteOutput:Elem' + IntToStr(I), CfgFileName);
+    DeleteHighligherPrefs;
+  end;
   // Main window's overview tabs changed at v3: so we reset to 0 (default)
   SetIniInt('MainWindow', 'OverviewTab', 0, CfgFileName);
 end;
