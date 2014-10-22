@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2012-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2012-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -120,8 +120,6 @@ begin
   fBuilder.FontTable.Add(MainFontName, rgfSwiss, 0);
   fBuilder.FontTable.Add(MonoFontName, rgfModern, 0);
   // Set up colour table
-  fBuilder.ColourTable.Add(Preferences.DBHeadingColours[False]);
-  fBuilder.ColourTable.Add(Preferences.DBHeadingColours[True]);
   fBuilder.ColourTable.Add(clExternalLink);
   fDescStyles := TActiveTextRTFStyleMap.Create;
   InitStyles;
@@ -271,8 +269,6 @@ begin
   fBuilder.SetFont(MainFontName);
   fBuilder.SetFontSize(SubHeadingFontSize);
   fBuilder.SetFontStyle([fsBold]);
-  // TODO: reconsider following code in light of synch spaces
-  SetColour(Preferences.DBHeadingColours[True]);
   fBuilder.AddText(Snippet.Title);
   fBuilder.EndPara;
   fBuilder.EndGroup;
