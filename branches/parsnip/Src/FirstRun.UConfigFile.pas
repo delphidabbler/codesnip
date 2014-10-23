@@ -97,6 +97,8 @@ type
     ///  <summary>Deletes unused key that determines detail pane index.
     ///  </summary>
     procedure DeleteDetailsPaneIndex;
+    ///  <summary>Deletes unused keys from Prefs:Display section.</summary>
+    procedure DeleteRedundantDisplayOptions;
     ///  <summary>Effectively renames MainWindow section used prior to version
     ///  11 as WindowState:MainForm.</summary>
     procedure RenameMainWindowSection;
@@ -108,6 +110,12 @@ type
     procedure UpdateFindXRefs;
     ///  <summary>Adds Prefs:CodeGen section along with default data.</summary>
     procedure CreateDefaultCodeGenEntries;
+    ///  <summary>Resets database directory to the default.</summary>
+    ///  <remarks>This is done to ensure that an old version 4 database in a
+    ///  custom location is not accidentally overwritten by a version 5
+    ///  database. It is up to user to move the database to a new location.
+    ///  </remarks>
+    procedure ResetCustomDatabaseDirectory;
     ///  <summary>Stamps config file with current program and file versions.
     ///  </summary>
     ///  <remarks>Note that the user config file has program version written to
@@ -129,6 +137,8 @@ type
     ///  <summary>Returns current common config file version.</summary>
     class function GetFileVersion: Integer; override;
   public
+    ///  <summary>Deletes any program registration information.</summary>
+    procedure DeleteRedundantRegistrationInfo;
     ///  <summary>Stamps config file with current program and file versions.
     ///  </summary>
     ///  <remarks>Note that the user config file has program version written to
@@ -288,6 +298,40 @@ begin
   SetIniString('ProxyServer', 'Password', '', CfgFileName);
 end;
 
+procedure TUserConfigFileUpdater.DeleteRedundantDisplayOptions;
+var
+  I: Integer;
+  ColourCount: Integer;
+begin
+  if TFile.Exists(CfgFileName, False) then
+  begin
+    DeleteIniKey('Prefs:Display', 'MainDBHeadingColour', CfgFileName);
+    DeleteIniKey('Prefs:Display', 'UserDBHeadingColour', CfgFileName);
+    ColourCount := GetIniInt(
+      'Prefs:Display', 'MainDBHeadingCustomColourCount', 0, CfgFileName
+    );
+    for I := 0 to Pred(ColourCount) do
+      DeleteIniKey(
+        'Prefs:Display', Format('MainDBHeadingCustomColour%d', [I]), CfgFileName
+      );
+    DeleteIniKey(
+      'Prefs:Display', 'MainDBHeadingCustomColourCount', CfgFileName
+    );
+    ColourCount := GetIniInt(
+      'Prefs:Display', 'UserDBHeadingCustomColourCount', 0, CfgFileName
+    );
+    for I := 0 to Pred(ColourCount) do
+      DeleteIniKey(
+        'Prefs:Display', Format('UserDBHeadingCustomColour%d', [I]), CfgFileName
+      );
+    DeleteIniKey(
+      'Prefs:Display', 'UserDBHeadingCustomColourCount', CfgFileName
+    );
+  end
+  else
+    CreateNewFile;
+end;
+
 class function TUserConfigFileUpdater.GetFileVersion: Integer;
 begin
   Result := FileVersion;
@@ -347,6 +391,14 @@ begin
     CfgFileName
   );
   DeleteIniSection('MainWindow', CfgFileName);
+end;
+
+procedure TUserConfigFileUpdater.ResetCustomDatabaseDirectory;
+begin
+  if TFile.Exists(CfgFileName, False) then
+    DeleteIniKey('Database', 'UserDataDir', CfgFileName)
+  else
+    CreateNewFile;
 end;
 
 procedure TUserConfigFileUpdater.Stamp;
@@ -475,6 +527,14 @@ begin
 end;
 
 { TCommonConfigFileUpdater }
+
+procedure TCommonConfigFileUpdater.DeleteRedundantRegistrationInfo;
+begin
+  if not TFile.Exists(CfgFileName) then
+    Exit;
+  DeleteIniKey('Application', 'RegCode', CfgFileName);
+  DeleteIniKey('Application', 'RegName', CfgFileName);
+end;
 
 class function TCommonConfigFileUpdater.GetFileVersion: Integer;
 begin

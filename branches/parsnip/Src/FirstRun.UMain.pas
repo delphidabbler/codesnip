@@ -256,6 +256,15 @@ begin
   if fUserConfigFile.FileVer < 15 then
     fUserConfigFile.UpdateFindXRefs;
 
+  if fUserConfigFile.FileVer < 16 then
+  begin
+    fUserConfigFile.DeleteRedundantDisplayOptions;
+    fUserConfigFile.ResetCustomDatabaseDirectory;
+  end;
+
+  if fCommonConfigFile.FileVer < 7 then
+    fCommonConfigFile.DeleteRedundantRegistrationInfo;
+
   fUserConfigFile.Stamp;
   // NOTE: strictly speaking we only need to stamp common config file when in
   // portable mode. Installer does this in normal version. However, it does no
