@@ -352,6 +352,8 @@ resourcestring
   sHiliter = 'Syntax highlighter customisations have been lost.';
   sProxyPwd = 'Your proxy server password needs to be re-entered.';
   sSourceFormat = 'Source code formatting preferences may have been lost.';
+  sPageStructure = 'Any page structure or layout customisations will have been '
+    + 'lost.';
 var
   Changes: IStringList;
 begin
@@ -366,6 +368,8 @@ begin
       Changes.Add(sProxyPwd);
     if frcSourceFormat in fCfgChanges then
       Changes.Add(sSourceFormat);
+    if frcPageStructure in fCfgChanges then
+      Changes.Add(sPageStructure);
     CreateBulletPage(
       tsFinish,
       [lblFinish1, lblFinish2],

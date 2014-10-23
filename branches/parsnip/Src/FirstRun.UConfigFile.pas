@@ -99,6 +99,12 @@ type
     procedure DeleteDetailsPaneIndex;
     ///  <summary>Deletes unused keys from Prefs:Display section.</summary>
     procedure DeleteRedundantDisplayOptions;
+    ///  <summary>Checks if config file contains any page structure
+    ///  customisation information.</summary>
+    function HasPageStructureInfo: Boolean;
+    ///  <summary>Deletes all page structure customisation information from
+    ///  Prefs:SnippetPageStructure section.</summary>
+    procedure DeletePageStructureInfo;
     ///  <summary>Effectively renames MainWindow section used prior to version
     ///  11 as WindowState:MainForm.</summary>
     procedure RenameMainWindowSection;
@@ -291,6 +297,16 @@ begin
     DeleteIniSection('Prefs:Hiliter', CfgFileName);
 end;
 
+procedure TUserConfigFileUpdater.DeletePageStructureInfo;
+var
+  I: Integer;
+begin
+  for I := 0 to 5 do
+    DeleteIniKey(
+      'Prefs:SnippetPageStructure', Format('PageKind%d', [I]), CfgFileName
+    );
+end;
+
 procedure TUserConfigFileUpdater.DeleteProxyPassword;
 begin
   if not TFile.Exists(CfgFileName, False) then
@@ -335,6 +351,13 @@ end;
 class function TUserConfigFileUpdater.GetFileVersion: Integer;
 begin
   Result := FileVersion;
+end;
+
+function TUserConfigFileUpdater.HasPageStructureInfo: Boolean;
+begin
+  Result := IniKeyExists(
+    'Prefs:SnippetPageStructure', 'PageKind0', CfgFileName
+  );
 end;
 
 function TUserConfigFileUpdater.HasProxyPassword: Boolean;

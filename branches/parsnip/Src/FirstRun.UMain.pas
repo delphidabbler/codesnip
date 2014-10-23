@@ -31,7 +31,8 @@ type
   TFirstRunCfgChanges = (
     frcHiliter,         // syntax highlighter customisation lost
     frcProxyPwd,        // internet proxy password lost
-    frcSourceFormat     // source code output formatting lost
+    frcSourceFormat,    // source code output formatting lost
+    frcPageStructure    // any custom page structure customisations lost
   );
 
 type
@@ -260,21 +261,15 @@ begin
   begin
     fUserConfigFile.DeleteRedundantDisplayOptions;
     fUserConfigFile.ResetCustomDatabaseDirectory;
+    if fUserConfigFile.HasPageStructureInfo then
+    begin
+      fUserConfigFile.DeletePageStructureInfo;
+      Include(Changes, frcPageStructure);
+    end;
     { TODO: Rename Prefs:Printing section as Printing and rename keys as
             noted in file documentation. }
     { TODO: Rename OverviewTab key to OverviewGrouping in WindowState:MainForm
             section. }
-    { TODO: Rename identifier of notes page section from "ExtraInfo" to
-            "Notes" in PageKindXXX values in [Prefs:SnippetPageStructure]
-            section. }
-    { TODO: Rename "category" identifier as "tags" in PageKindXXX values in
-            [Prefs:SnippetPageStructure] section. }
-    { TODO: Add "language" identifier to PageKindXXX values in
-            [Prefs:SnippetPageStructure] section. }
-    { TODO: Given complexity of above changes to PageKindXXX values in
-            [Prefs:SnippetPageStructure] section need to decide whether to
-            provide suitable conversions or whether to simply delete all
-            page structure customisations. }
     { TODO: Rename compiler identifiers in [Cmp:XXX] and [FindCompiler] as
             follows: D2005w32 => D2005, D2006w32 => D2006, D2009w32 => D2009. }
   end;
