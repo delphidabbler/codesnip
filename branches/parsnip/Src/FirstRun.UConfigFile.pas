@@ -124,7 +124,7 @@ type
   strict private
     const
       ///  <summary>Current common config file version.</summary>
-      FileVersion = 6;
+      FileVersion = 7;
   strict protected
     ///  <summary>Returns current common config file version.</summary>
     class function GetFileVersion: Integer; override;
