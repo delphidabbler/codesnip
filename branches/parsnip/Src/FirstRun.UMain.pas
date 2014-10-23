@@ -32,6 +32,7 @@ type
     frcHiliter,         // syntax highlighter customisation lost
     frcProxyPwd,        // internet proxy password lost
     frcSourceFormat,    // source code output formatting lost
+    frcCustomDBPath,    // custom database path ignored: default path used
     frcPageStructure    // any custom page structure customisations lost
   );
 
@@ -260,7 +261,11 @@ begin
   if fUserConfigFile.FileVer < 16 then
   begin
     fUserConfigFile.DeleteRedundantDisplayOptions;
-    fUserConfigFile.ResetCustomDatabaseDirectory;
+    if fUserConfigFile.HasV4CustomDatabaseDirectory then
+    begin
+      fUserConfigFile.ResetCustomDatabaseDirectory;
+      Include(Changes, frcCustomDBPath);
+    end;
     if fUserConfigFile.HasPageStructureInfo then
     begin
       fUserConfigFile.DeletePageStructureInfo;

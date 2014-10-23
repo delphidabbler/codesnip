@@ -352,8 +352,14 @@ resourcestring
   sHiliter = 'Syntax highlighter customisations have been lost.';
   sProxyPwd = 'Your proxy server password needs to be re-entered.';
   sSourceFormat = 'Source code formatting preferences may have been lost.';
-  sPageStructure = 'Any page structure or layout customisations will have been '
-    + 'lost.';
+  sCustomDBPath = 'The custom database path used by CodeSnip 4 is being '
+    + 'ignored. CodeSnip 5 will use its default path. You can move the '
+    + 'database to your desired location later by using the program''s '
+    + 'Database | Move Database menu option.';
+  sPageStructure = 'Any detail pane layout customisations you may have created '
+    + 'have been lost. You can re-create them by using the program''s Tools | '
+    + 'Preferences menu option then selecting the Snippet Layout tab of the '
+    + 'resulting dialogue box';
 var
   Changes: IStringList;
 begin
@@ -368,6 +374,8 @@ begin
       Changes.Add(sProxyPwd);
     if frcSourceFormat in fCfgChanges then
       Changes.Add(sSourceFormat);
+    if frcCustomDBPath in fCfgChanges then
+      Changes.Add(sCustomDBPath);
     if frcPageStructure in fCfgChanges then
       Changes.Add(sPageStructure);
     CreateBulletPage(

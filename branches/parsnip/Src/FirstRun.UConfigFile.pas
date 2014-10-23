@@ -116,6 +116,9 @@ type
     procedure UpdateFindXRefs;
     ///  <summary>Adds Prefs:CodeGen section along with default data.</summary>
     procedure CreateDefaultCodeGenEntries;
+    ///  <summary>Checks if a CodeSnip 4 style custom database directory has
+    ///  been set created.</summary>
+    function HasV4CustomDatabaseDirectory: Boolean;
     ///  <summary>Resets database directory to the default.</summary>
     ///  <remarks>This is done to ensure that an old version 4 database in a
     ///  custom location is not accidentally overwritten by a version 5
@@ -363,6 +366,11 @@ end;
 function TUserConfigFileUpdater.HasProxyPassword: Boolean;
 begin
   Result := GetIniString('ProxyServer', 'Password', '', CfgFileName) <> '';
+end;
+
+function TUserConfigFileUpdater.HasV4CustomDatabaseDirectory: Boolean;
+begin
+  Result := GetIniString('Database', 'UserDataDir', '', CfgFileName) <> '';
 end;
 
 procedure TUserConfigFileUpdater.RenameMainWindowSection;
