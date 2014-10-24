@@ -85,6 +85,17 @@ function IniKeyExists(const Section, Key, FileName: string): Boolean;
 ///  <param name="FileName">string [in] Name of ini file.</param>
 procedure RenameIniSection(const OldSection, NewSection, FileName: string);
 
+///  <summary>Renames a key in a given section of an ini file if the key exists.
+///  </summary>
+///  <param name="Section">string [in] Ini file section containing key.</param>
+///  <param name="OldKey">string [in] Name of key to be renamed.</param>
+///  <param name="NewKey">string [in] New name of key.</param>
+///  <param name="FileName">string [in] Name of ini file.</param>
+///  <returns>Boolean. True if key exists and was renamed, False if key does not
+///  exist and no action was taken.</returns>
+function RenameIniKey(const Section, OldKey, NewKey, FileName: string):
+  Boolean;
+
 
 implementation
 
@@ -213,6 +224,23 @@ begin
     Ini.EraseSection(OldSection);
   finally
     AllValues.Free;
+    Ini.Free;
+  end;
+end;
+
+function RenameIniKey(const Section, OldKey, NewKey, FileName: string):
+  Boolean;
+var
+  Ini: TIniFile;
+begin
+  Ini := TIniFile.Create(FileName);
+  try
+    Result := Ini.ValueExists(Section, OldKey);
+    if not Result then
+      Exit;
+    Ini.WriteString(Section, NewKey, Ini.ReadString(Section, OldKey, ''));
+    Ini.DeleteKey(Section, OldKey);
+  finally
     Ini.Free;
   end;
 end;
