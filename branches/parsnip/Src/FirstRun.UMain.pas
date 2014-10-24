@@ -261,6 +261,7 @@ begin
   if fUserConfigFile.FileVer < 16 then
   begin
     fUserConfigFile.DeleteRedundantDisplayOptions;
+    fUserConfigFile.RenameCompilerIdentifiers;
     if fUserConfigFile.HasV4CustomDatabaseDirectory then
     begin
       fUserConfigFile.ResetCustomDatabaseDirectory;
@@ -275,8 +276,6 @@ begin
             noted in file documentation. }
     { TODO: Rename OverviewTab key to OverviewGrouping in WindowState:MainForm
             section. }
-    { TODO: Rename compiler identifiers in [Cmp:XXX] and [FindCompiler] as
-            follows: D2005w32 => D2005, D2006w32 => D2006, D2009w32 => D2009. }
   end;
 
   if fCommonConfigFile.FileVer < 7 then

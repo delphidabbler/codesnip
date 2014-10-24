@@ -108,6 +108,10 @@ type
     ///  <summary>Effectively renames MainWindow section used prior to version
     ///  11 as WindowState:MainForm.</summary>
     procedure RenameMainWindowSection;
+    ///  <summary>Renames compiler identifiers used for Delphi 2005, 2006 and
+    ///  2009 used to name value in FindCompiler section and in section names in
+    ///  Cmp:XXX section names.</summary>
+    procedure RenameCompilerIdentifiers;
     ///  <summary>Replaces any -NS switch in [Cmp:XXXX] sections' Switches value
     ///  with an equivalent entry in new Namespaces value, only if compiler XXX
     ///  is Delphi XE2 or later.</summary>
@@ -371,6 +375,38 @@ end;
 function TUserConfigFileUpdater.HasV4CustomDatabaseDirectory: Boolean;
 begin
   Result := GetIniString('Database', 'UserDataDir', '', CfgFileName) <> '';
+end;
+
+procedure TUserConfigFileUpdater.RenameCompilerIdentifiers;
+type
+  TNameChangeInfo = record
+    OldName: string;
+    NewName: string;
+  end;
+const
+  NameChanges: array[1..3] of TNameChangeInfo = (
+    (OldName: 'D2005w32'; NewName: 'D2005'),
+    (OldName: 'D2006w32'; NewName: 'D2006'),
+    (OldName: 'D2009w32'; NewName: 'D2009')
+  );
+var
+  NameChangeInfo: TNameChangeInfo;
+begin
+// TODO: later revise other code that renames values to use RenameIniKey
+  for NameChangeInfo in NameChanges do
+  begin
+    RenameIniSection(
+      Format('Cmp:%s', [NameChangeInfo.OldName]),
+      Format('Cmp:%s', [NameChangeInfo.NewName]),
+      CfgFileName
+    );
+    RenameIniKey(
+      'FindCompiler',
+      NameChangeInfo.OldName,
+      NameChangeInfo.NewName,
+      CfgFileName
+    );
+  end;
 end;
 
 procedure TUserConfigFileUpdater.RenameMainWindowSection;
