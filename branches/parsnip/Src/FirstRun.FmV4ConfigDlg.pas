@@ -515,7 +515,7 @@ begin
   if uaCopyCfgFile in Actions then
   begin
     fFirstRun.BringForwardUserCfgFile;
-    fFirstRun.UpdateUserCfgFile(fCfgChanges);
+    fFirstRun.UpdateCfgFiles(fCfgChanges);
   end;
   if uaCopyDB in Actions then
     fFirstRun.BringForwardDB;

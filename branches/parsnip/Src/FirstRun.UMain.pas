@@ -75,10 +75,10 @@ type
     ///  <summary>Copies user config file from an earlier CodeSnip installation.
     ///  </summary>
     procedure BringForwardUserCfgFile;
-    ///  <summary>Updates current version's user config file in place as
-    ///  necessary and notifies caller of changes via Changes parameter.
-    /// </summary>
-    procedure UpdateUserCfgFile(out Changes: TFirstRunCfgChangeSet);
+    ///  <summary>Updates current version's user and common config files in
+    ///  place as necessary and notifies caller of changes via Changes
+    ///  parameter.</summary>
+    procedure UpdateCfgFiles(out Changes: TFirstRunCfgChangeSet);
     ///  <summary>Checks if a database exist for an earlier CodeSnip
     ///  installation.</summary>
     ///  <remarks>Prior to CodeSnip 5 this database will be the legacy "user"
@@ -204,7 +204,7 @@ begin
   Result := fUserConfigFile.IsCurrentProgramVer;
 end;
 
-procedure TFirstRun.UpdateUserCfgFile(out Changes: TFirstRunCfgChangeSet);
+procedure TFirstRun.UpdateCfgFiles(out Changes: TFirstRunCfgChangeSet);
 begin
   Changes := [];
 
@@ -305,7 +305,7 @@ begin
       if not UserCfgFileExists then
       begin
         FR.CreateEmptyUserCfgFile;
-        FR.UpdateUserCfgFile(Changes);
+        FR.UpdateCfgFiles(Changes);
       end;
     finally
       FR.Free;
@@ -315,7 +315,7 @@ begin
   begin
     FR := TFirstRun.Create;
     try
-      FR.UpdateUserCfgFile(Changes);
+      FR.UpdateCfgFiles(Changes);
     finally
       FR.Free;
     end;
