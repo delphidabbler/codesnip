@@ -400,7 +400,6 @@ const
 var
   NameChangeInfo: TNameChangeInfo;
 begin
-// TODO: later revise other code that renames values to use RenameIniKey
   for NameChangeInfo in NameChanges do
   begin
     RenameIniSection(
@@ -460,17 +459,9 @@ begin
   // to EmitWarnDirs.
   if not TFile.Exists(CfgFileName, False) then
     CreateNewFile;
-  if IniKeyExists('Prefs:CodeGen', 'SwitchOffWarnings', CfgFileName) then
-  begin
-    SetIniInt(
-      'Prefs:CodeGen',
-      'EmitWarnDirs',
-      GetIniInt('Prefs:CodeGen', 'SwitchOffWarnings', 0, CfgFileName),
-      CfgFileName
-    );
-    DeleteIniKey('Prefs:CodeGen', 'SwitchOffWarnings', CfgFileName);
-  end
-  else
+  if not RenameIniKey(
+    'Prefs:CodeGen', 'SwitchOffWarnings', 'EmitWarnDirs', CfgFileName
+  ) then
     SetIniInt('Prefs:CodeGen', 'EmitWarnDirs', 0, CfgFileName);
 end;
 
@@ -478,17 +469,9 @@ procedure TUserConfigFileUpdater.UpdateFindXRefs;
 begin
   // From file ver 14, "IncludeRoutine" in FindXRefs was renamed as
   // "IncludeSnippet"
-  if IniKeyExists('FindXRefs', 'IncludeRoutine', CfgFileName) then
-  begin
-    SetIniInt(
-      'FindXRefs',
-      'IncludeSnippet',
-      GetIniInt('FindXRefs', 'IncludeRoutine', 1, CfgFileName),
-      CfgFileName
-    );
-    DeleteIniKey('FindXRefs', 'IncludeRoutine', CfgFileName);
-  end
-  else
+  if not RenameIniKey(
+    'FindXRefs', 'IncludeRoutine', 'IncludeSnippet', CfgFileName
+  ) then
     SetIniInt('FindXRefs', 'IncludeSnippet', 1, CfgFileName);
 end;
 
