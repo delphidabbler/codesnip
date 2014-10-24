@@ -274,8 +274,6 @@ begin
       fUserConfigFile.DeletePageStructureInfo;
       Include(Changes, frcPageStructure);
     end;
-    { TODO: Rename OverviewTab key to OverviewGrouping in WindowState:MainForm
-            section. }
   end;
 
   if fCommonConfigFile.FileVer < 7 then
