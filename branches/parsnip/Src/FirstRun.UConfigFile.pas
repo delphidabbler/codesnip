@@ -105,9 +105,14 @@ type
     ///  <summary>Deletes all page structure customisation information from
     ///  Prefs:SnippetPageStructure section.</summary>
     procedure DeletePageStructureInfo;
-    ///  <summary>Effectively renames MainWindow section used prior to version
-    ///  11 as WindowState:MainForm.</summary>
+    ///  <summary>Renames MainWindow section used prior to version 11 as
+    ///  WindowState:MainForm.</summary>
     procedure RenameMainWindowSection;
+    ///  <summary>Renames OverviewTab key in WindowState:MainForm as
+    ///  OverviewGrouping.</summary>
+    ///  <remarks>Must be run after RenameMainWindowSection if that method is
+    ///  called.</remarks>
+    procedure RenameMainWindowSectionOverviewGrouping;
     ///  <summary>Renames compiler identifiers used for Delphi 2005, 2006 and
     ///  2009 used to name value in FindCompiler section and in section names in
     ///  Cmp:XXX section names.</summary>
@@ -417,6 +422,13 @@ begin
   if not TFile.Exists(CfgFileName, False) then
     Exit;
   RenameIniSection('MainWindow', 'WindowState:MainForm', CfgFileName);
+end;
+
+procedure TUserConfigFileUpdater.RenameMainWindowSectionOverviewGrouping;
+begin
+  RenameIniKey(
+    'WindowState:MainForm', 'OverviewTab', 'OverviewGrouping', CfgFileName
+  );
 end;
 
 procedure TUserConfigFileUpdater.RenamePrintingSectionAndValues;

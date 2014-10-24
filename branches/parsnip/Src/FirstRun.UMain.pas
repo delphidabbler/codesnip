@@ -263,6 +263,7 @@ begin
     fUserConfigFile.DeleteRedundantDisplayOptions;
     fUserConfigFile.RenameCompilerIdentifiers;
     fUserConfigFile.RenamePrintingSectionAndValues;
+    fUserConfigFile.RenameMainWindowSectionOverviewGrouping;
     if fUserConfigFile.HasV4CustomDatabaseDirectory then
     begin
       fUserConfigFile.ResetCustomDatabaseDirectory;
