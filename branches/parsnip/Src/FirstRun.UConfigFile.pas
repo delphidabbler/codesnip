@@ -299,23 +299,23 @@ end;
 procedure TUserConfigFileUpdater.DeleteDetailsPaneIndex;
 begin
   if not TFile.Exists(CfgFileName, False) then
-    CreateNewFile
-  else
-    DeleteIniKey('MainWindow', 'DetailTab', CfgFileName);
+    Exit;
+  DeleteIniKey('MainWindow', 'DetailTab', CfgFileName);
 end;
 
 procedure TUserConfigFileUpdater.DeleteHighligherPrefs;
 begin
   if not TFile.Exists(CfgFileName, False) then
-    CreateNewFile
-  else
-    DeleteIniSection('Prefs:Hiliter', CfgFileName);
+    Exit;
+  DeleteIniSection('Prefs:Hiliter', CfgFileName);
 end;
 
 procedure TUserConfigFileUpdater.DeletePageStructureInfo;
 var
   I: Integer;
 begin
+  if not TFile.Exists(CfgFileName, False) then
+    Exit;
   for I := 0 to 5 do
     DeleteIniKey(
       'Prefs:SnippetPageStructure', Format('PageKind%d', [I]), CfgFileName
@@ -325,7 +325,7 @@ end;
 procedure TUserConfigFileUpdater.DeleteProxyPassword;
 begin
   if not TFile.Exists(CfgFileName, False) then
-    CreateNewFile;
+    Exit;
   SetIniString('ProxyServer', 'Password', '', CfgFileName);
 end;
 
@@ -334,33 +334,30 @@ var
   I: Integer;
   ColourCount: Integer;
 begin
-  if TFile.Exists(CfgFileName, False) then
-  begin
-    DeleteIniKey('Prefs:Display', 'MainDBHeadingColour', CfgFileName);
-    DeleteIniKey('Prefs:Display', 'UserDBHeadingColour', CfgFileName);
-    ColourCount := GetIniInt(
-      'Prefs:Display', 'MainDBHeadingCustomColourCount', 0, CfgFileName
-    );
-    for I := 0 to Pred(ColourCount) do
-      DeleteIniKey(
-        'Prefs:Display', Format('MainDBHeadingCustomColour%d', [I]), CfgFileName
-      );
+  if not TFile.Exists(CfgFileName, False) then
+    Exit;
+  DeleteIniKey('Prefs:Display', 'MainDBHeadingColour', CfgFileName);
+  DeleteIniKey('Prefs:Display', 'UserDBHeadingColour', CfgFileName);
+  ColourCount := GetIniInt(
+    'Prefs:Display', 'MainDBHeadingCustomColourCount', 0, CfgFileName
+  );
+  for I := 0 to Pred(ColourCount) do
     DeleteIniKey(
-      'Prefs:Display', 'MainDBHeadingCustomColourCount', CfgFileName
+      'Prefs:Display', Format('MainDBHeadingCustomColour%d', [I]), CfgFileName
     );
-    ColourCount := GetIniInt(
-      'Prefs:Display', 'UserDBHeadingCustomColourCount', 0, CfgFileName
-    );
-    for I := 0 to Pred(ColourCount) do
-      DeleteIniKey(
-        'Prefs:Display', Format('UserDBHeadingCustomColour%d', [I]), CfgFileName
-      );
+  DeleteIniKey(
+    'Prefs:Display', 'MainDBHeadingCustomColourCount', CfgFileName
+  );
+  ColourCount := GetIniInt(
+    'Prefs:Display', 'UserDBHeadingCustomColourCount', 0, CfgFileName
+  );
+  for I := 0 to Pred(ColourCount) do
     DeleteIniKey(
-      'Prefs:Display', 'UserDBHeadingCustomColourCount', CfgFileName
+      'Prefs:Display', Format('UserDBHeadingCustomColour%d', [I]), CfgFileName
     );
-  end
-  else
-    CreateNewFile;
+  DeleteIniKey(
+    'Prefs:Display', 'UserDBHeadingCustomColourCount', CfgFileName
+  );
 end;
 
 class function TUserConfigFileUpdater.GetFileVersion: Integer;
@@ -400,6 +397,8 @@ const
 var
   NameChangeInfo: TNameChangeInfo;
 begin
+  if not TFile.Exists(CfgFileName, False) then
+    Exit;
   for NameChangeInfo in NameChanges do
   begin
     RenameIniSection(
@@ -425,6 +424,8 @@ end;
 
 procedure TUserConfigFileUpdater.RenameMainWindowSectionOverviewGrouping;
 begin
+  if not TFile.Exists(CfgFileName, False) then
+    Exit;
   RenameIniKey(
     'WindowState:MainForm', 'OverviewTab', 'OverviewGrouping', CfgFileName
   );
@@ -432,6 +433,8 @@ end;
 
 procedure TUserConfigFileUpdater.RenamePrintingSectionAndValues;
 begin
+  if not TFile.Exists(CfgFileName, False) then
+    Exit;
   RenameIniSection('Prefs:Printing', 'Printing', CfgFileName);
   RenameIniKey('Printing', 'UseColor', 'UseColour', CfgFileName);
   RenameIniKey('Printing', 'SyntaxPrint', 'SyntaxHighlight', CfgFileName);
@@ -439,15 +442,14 @@ end;
 
 procedure TUserConfigFileUpdater.ResetCustomDatabaseDirectory;
 begin
-  if TFile.Exists(CfgFileName, False) then
-    DeleteIniKey('Database', 'UserDataDir', CfgFileName)
-  else
-    CreateNewFile;
+  if not TFile.Exists(CfgFileName, False) then
+    Exit;
+  DeleteIniKey('Database', 'UserDataDir', CfgFileName)
 end;
 
 procedure TUserConfigFileUpdater.Stamp;
 begin
-  inherited;
+  inherited;  // creates ini file if it doesn't exist
   SetIniString(
     'IniFile', 'ProgramVersion', TAppInfo.ProgramReleaseVersion, CfgFileName
   );
@@ -469,6 +471,8 @@ procedure TUserConfigFileUpdater.UpdateFindXRefs;
 begin
   // From file ver 14, "IncludeRoutine" in FindXRefs was renamed as
   // "IncludeSnippet"
+  if not TFile.Exists(CfgFileName, False) then
+    CreateNewFile;
   if not RenameIniKey(
     'FindXRefs', 'IncludeRoutine', 'IncludeSnippet', CfgFileName
   ) then
@@ -546,6 +550,8 @@ procedure TUserConfigFileUpdater.UpdateNamespaces;
   end;
 
 begin
+  if not TFile.Exists(CfgFileName, False) then
+    Exit;
   UpdateForCompiler('DXE2');
   UpdateForCompiler('DXE3');
   UpdateForCompiler('DXE4');
@@ -571,7 +577,7 @@ end;
 
 procedure TCommonConfigFileUpdater.Stamp;
 begin
-  inherited;
+  inherited;  // creates ini file if it doesn't exist
   SetIniString(
     'Application', 'Version', TAppInfo.ProgramReleaseVersion, CfgFileName
   );
