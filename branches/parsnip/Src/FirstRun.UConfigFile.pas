@@ -377,51 +377,7 @@ procedure TUserConfigFileUpdater.RenameMainWindowSection;
 begin
   if not TFile.Exists(CfgFileName, False) then
     Exit;
-  if not IniSectionExists('MainWindow', CfgFileName) then
-    Exit;
-  SetIniInt(
-    'WindowState:MainForm',
-    'Left',
-    GetIniInt('MainWindow', 'Left', 0, CfgFileName),
-    CfgFileName
-  );
-  SetIniInt(
-    'WindowState:MainForm',
-    'Top',
-    GetIniInt('MainWindow', 'Top', 0, CfgFileName),
-    CfgFileName
-  );
-  SetIniInt(
-    'WindowState:MainForm',
-    'Width',
-    GetIniInt('MainWindow', 'Width', 0, CfgFileName),
-    CfgFileName
-  );
-  SetIniInt(
-    'WindowState:MainForm',
-    'Height',
-    GetIniInt('MainWindow', 'Height', 0, CfgFileName),
-    CfgFileName
-  );
-  SetIniInt(
-    'WindowState:MainForm',
-    'State',
-    GetIniInt('MainWindow', 'State', 0, CfgFileName),
-    CfgFileName
-  );
-  SetIniInt(
-    'WindowState:MainForm',
-    'SplitterPos',
-    GetIniInt('MainWindow', 'SplitterPos', 0, CfgFileName),
-    CfgFileName
-  );
-  SetIniInt(
-    'WindowState:MainForm',
-    'OverviewTab',
-    GetIniInt('MainWindow', 'OverviewTab', 0, CfgFileName),
-    CfgFileName
-  );
-  DeleteIniSection('MainWindow', CfgFileName);
+  RenameIniSection('MainWindow', 'WindowState:MainForm', CfgFileName);
 end;
 
 procedure TUserConfigFileUpdater.ResetCustomDatabaseDirectory;
