@@ -11,7 +11,7 @@ inherited V4ConfigDlg: TV4ConfigDlg
   TextHeight = 13
   inherited pnlBody: TPanel
     inherited pcWizard: TPageControl
-      ActivePage = tsIntro
+      ActivePage = tsFinish
       object tsIntro: TTabSheet
         Caption = 'tsIntro'
         TabVisible = False
@@ -170,32 +170,43 @@ inherited V4ConfigDlg: TV4ConfigDlg
         Caption = 'tsFinish'
         ImageIndex = 4
         TabVisible = False
-        object lblFinish1: TLabel
+        object sbFinish: TScrollBox
           Left = 0
-          Top = 3
+          Top = 0
           Width = 369
-          Height = 13
-          AutoSize = False
-          Caption = 'CodeSnip 5 is now configured.'
-          WordWrap = True
-        end
-        object lblFinish2: TLabel
-          Left = 0
-          Top = 22
-          Width = 369
-          Height = 13
-          AutoSize = False
-          Caption = 'Your old preferences have been kept, with the following changes:'
-          WordWrap = True
-        end
-        object lblFinish3: TLabel
-          Left = 0
-          Top = 41
-          Width = 369
-          Height = 13
-          AutoSize = False
-          Caption = 'Click "Finish" to close this Wizard and start CodeSnip.'
-          WordWrap = True
+          Height = 238
+          Align = alClient
+          BevelInner = bvNone
+          BevelOuter = bvNone
+          BorderStyle = bsNone
+          TabOrder = 0
+          object lblFinish1: TLabel
+            Left = 0
+            Top = 3
+            Width = 369
+            Height = 13
+            AutoSize = False
+            Caption = 'CodeSnip 5 is now configured.'
+            WordWrap = True
+          end
+          object lblFinish2: TLabel
+            Left = 0
+            Top = 22
+            Width = 369
+            Height = 13
+            AutoSize = False
+            Caption = 'Your old preferences have been kept, with the following changes:'
+            WordWrap = True
+          end
+          object lblFinish3: TLabel
+            Left = 0
+            Top = 41
+            Width = 369
+            Height = 13
+            AutoSize = False
+            Caption = 'Click "Finish" to close this Wizard and start CodeSnip.'
+            WordWrap = True
+          end
         end
       end
     end

@@ -41,9 +41,6 @@ type
     chkCopyConfig: TCheckBox;
     chkCopyDB: TCheckBox;
     lblCopyConfig: TLabel;
-    lblFinish1: TLabel;
-    lblFinish2: TLabel;
-    lblFinish3: TLabel;
     lblIntro1: TLabel;
     lblIntro2: TLabel;
     lblIntro4: TLabel;
@@ -59,6 +56,10 @@ type
     tsIntro: TTabSheet;
     tsSummary: TTabSheet;
     tsDatabase: TTabSheet;
+    sbFinish: TScrollBox;
+    lblFinish1: TLabel;
+    lblFinish2: TLabel;
+    lblFinish3: TLabel;
     ///  <summary>Determines if form can close.</summary>
     ///  <remarks>Permits closure only if wizard has been completed.</remarks>
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
@@ -97,16 +98,17 @@ type
     ///  </summary>
     function DatabaseAvailable: Boolean;
     ///  <summary>Creates a bullet list on a tab sheet.</summary>
-    ///  <param name="TS">TTabSheet [in] Tab sheet where bullet list is to be
-    ///  placed.</param>
+    ///  <param name="ParentCtrl">TWinControl [in] Control where bullet list is
+    ///  to be parented.</param>
     ///  <param name="Prefix">array of TLabel [in] List of labels to be
     ///  positioned before bullet list.</param>
     ///  <param name="BulletPoints">IStringList [in] List of bullet item text.
     ///  </param>
     ///  <param name="PostFix">array of TLabel [in] List of labels to be
     ///  positioned after bullet list.</param>
-    procedure CreateBulletPage(TS: TTabSheet; const Prefix: array of TLabel;
-      BulletPoints: IStringList; const PostFix: array of TLabel);
+    procedure CreateBulletPage(ParentCtrl: TWinControl;
+      const Prefix: array of TLabel; BulletPoints: IStringList;
+      const PostFix: array of TLabel);
     ///  <summary>Gets description of choices made and displays them in a bullet
     ///  list on summary page.</summary>
     procedure UpdateChoices;
@@ -171,6 +173,8 @@ implementation
 
 
 uses
+  // Delphi
+  Windows,
   // Project
   UConsts,
   UCtrlArranger,
@@ -227,13 +231,16 @@ begin
   fCfgChanges := [];
 end;
 
-procedure TV4ConfigDlg.CreateBulletPage(TS: TTabSheet;
+procedure TV4ConfigDlg.CreateBulletPage(ParentCtrl: TWinControl;
   const Prefix: array of TLabel; BulletPoints: IStringList;
   const PostFix: array of TLabel);
 var
-  Lbl: TLabel;
+  PrefixLbl: TLabel;
+  PostfixLbl: TLabel;
+  BulletTextLbl: TLabel;
+  BulletLbl: TLabel;
   NextTop: Integer;
-  BulletPoint: string;
+  BulletPointText: string;
 const
   Spacing = 6;
   Bullet: Char = #$2022;
@@ -243,39 +250,66 @@ const
   var
     Idx: Integer;
   begin
-    for Idx := Pred(TS.ControlCount) downto 0 do
+    for Idx := Pred(ParentCtrl.ControlCount) downto 0 do
     begin
-      if (TS.Controls[Idx] is TLabel) and (TS.Controls[Idx].Name = '') then
-        TS.Controls[Idx].Free;
+      if (ParentCtrl.Controls[Idx] is TLabel)
+        and (ParentCtrl.Controls[Idx].Name = '') then
+        ParentCtrl.Controls[Idx].Free;
     end;
+  end;
+
+  function CreateBulletLbl(const ATop: Integer): TLabel;
+  begin
+    Result := TLabel.Create(Self);
+    Result.Parent := ParentCtrl;
+    Result.Left := 10;
+    Result.Top := ATop;
+    Result.Caption := Bullet;
+  end;
+
+  function CreateBulletTextLbl(const ATop: Integer; const AText: string):
+    TLabel;
+  begin
+    Result := TLabel.Create(Self);
+    Result.Parent := ParentCtrl;
+    Result.Left := 20;
+    Result.WordWrap := True;
+    Result.AutoSize := True;
+    Result.Width := ParentCtrl.ClientWidth - 22
+      - GetSystemMetrics(SM_CXVSCROLL);
+    Result.Top := ATop;
+    Result.Caption := AText;
+    Result.ShowAccelChar := False;
   end;
 
 begin
   FreeDynLabels;
   NextTop := 4;
-  for Lbl in Prefix do
+  for PrefixLbl in Prefix do
   begin
-    Lbl.Top := NextTop;
-    Lbl.Left := 0;
-    NextTop := TCtrlArranger.BottomOf(Lbl, Spacing);
+    PrefixLbl.Top := NextTop;
+    PrefixLbl.Left := 0;
+    PrefixLbl.WordWrap := True;
+    PrefixLbl.AutoSize := True;
+    PrefixLbl.Width := ParentCtrl.ClientWidth - 2
+      - GetSystemMetrics(SM_CXVSCROLL);
+    NextTop := TCtrlArranger.BottomOf(PrefixLbl, Spacing);
   end;
-  for BulletPoint in BulletPoints do
+  for BulletPointText in BulletPoints do
   begin
-    Lbl := TLabel.Create(Self);
-    // Don't give label a name or FreeDynLabels will not work
-    Lbl.Parent := TS;
-    Lbl.Left := 12;
-    Lbl.Top := NextTop;
-    Lbl.Caption := Bullet + '  ' + BulletPoint;
-    Lbl.ShowAccelChar := False;
-    NextTop := TCtrlArranger.BottomOf(Lbl);
+    BulletLbl := CreateBulletLbl(NextTop);
+    BulletTextLbl := CreateBulletTextLbl(NextTop, BulletPointText);
+    NextTop := TCtrlArranger.BottomOf([BulletLbl, BulletTextLbl], Spacing);
   end;
-  Inc(NextTop, Spacing);
-  for Lbl in Postfix do
+  for PostfixLbl in Postfix do
   begin
-    Lbl.Top := NextTop;
-    Lbl.Left := 0;
-    NextTop := TCtrlArranger.BottomOf(Lbl, Spacing);
+    PostfixLbl.Top := NextTop;
+    PostfixLbl.Left := 0;
+    PostfixLbl.WordWrap := True;
+    PostfixLbl.AutoSize := True;
+    PostfixLbl.Width := ParentCtrl.ClientWidth - 2
+      - GetSystemMetrics(SM_CXVSCROLL);
+    NextTop := TCtrlArranger.BottomOf(PostfixLbl, Spacing);
   end;
 end;
 
@@ -379,7 +413,7 @@ begin
     if frcPageStructure in fCfgChanges then
       Changes.Add(sPageStructure);
     CreateBulletPage(
-      tsFinish,
+      sbFinish,
       [lblFinish1, lblFinish2],
       Changes,
       [lblFinish3]
