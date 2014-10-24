@@ -112,6 +112,9 @@ type
     ///  2009 used to name value in FindCompiler section and in section names in
     ///  Cmp:XXX section names.</summary>
     procedure RenameCompilerIdentifiers;
+    ///  <summary>Renames Prefs:PrintingSection as Printing and renames some
+    ///  values within the section</summary>
+    procedure RenamePrintingSectionAndValues;
     ///  <summary>Replaces any -NS switch in [Cmp:XXXX] sections' Switches value
     ///  with an equivalent entry in new Namespaces value, only if compiler XXX
     ///  is Delphi XE2 or later.</summary>
@@ -414,6 +417,13 @@ begin
   if not TFile.Exists(CfgFileName, False) then
     Exit;
   RenameIniSection('MainWindow', 'WindowState:MainForm', CfgFileName);
+end;
+
+procedure TUserConfigFileUpdater.RenamePrintingSectionAndValues;
+begin
+  RenameIniSection('Prefs:Printing', 'Printing', CfgFileName);
+  RenameIniKey('Printing', 'UseColor', 'UseColour', CfgFileName);
+  RenameIniKey('Printing', 'SyntaxPrint', 'SyntaxHighlight', CfgFileName);
 end;
 
 procedure TUserConfigFileUpdater.ResetCustomDatabaseDirectory;

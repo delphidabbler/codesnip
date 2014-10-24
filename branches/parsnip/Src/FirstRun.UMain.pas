@@ -262,6 +262,7 @@ begin
   begin
     fUserConfigFile.DeleteRedundantDisplayOptions;
     fUserConfigFile.RenameCompilerIdentifiers;
+    fUserConfigFile.RenamePrintingSectionAndValues;
     if fUserConfigFile.HasV4CustomDatabaseDirectory then
     begin
       fUserConfigFile.ResetCustomDatabaseDirectory;
@@ -272,8 +273,6 @@ begin
       fUserConfigFile.DeletePageStructureInfo;
       Include(Changes, frcPageStructure);
     end;
-    { TODO: Rename Prefs:Printing section as Printing and rename keys as
-            noted in file documentation. }
     { TODO: Rename OverviewTab key to OverviewGrouping in WindowState:MainForm
             section. }
   end;
