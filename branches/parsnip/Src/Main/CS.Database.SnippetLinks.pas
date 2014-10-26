@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2013-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -24,9 +24,19 @@ uses
 
 type
   // TODO: May need to be in a separate Synch Space unit, or in Types
+  ///  <summary>Defines constants that identify different synch spaces.
+  ///  </summary>
   TSnippetSynchSpaceIDs = record
   public
-    const LegacyDB: TGUID = '{04AE1B53-6D60-48FA-B81F-E8CF15222F6D}';
+    const
+      ///  <summary>Synch space used for snippets loaded directly from legacy
+      ///  database.</summary>
+      LegacyDB: TGUID = '{04AE1B53-6D60-48FA-B81F-E8CF15222F6D}';
+      ///  <summary>Synch space used for snippets imported from files exported
+      ///  from CodeSnip.</summary>
+      Imports: TGUID = '{F2FBD770-EDD9-4A08-96DB-1621EED7C933}';
+      ///  <summary>Synch space used for snippets imported from SWAG.</summary>
+      SWAG: TGUID = '{6F5A3861-F322-47E3-9897-83B2669C144E}';
   end;
 
   TSnippetLinkInfo = class(TInterfacedObject, ISnippetLinkInfo)
