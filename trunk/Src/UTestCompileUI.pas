@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2008-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2008-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -113,8 +113,8 @@ var
 resourcestring
   // Error messages for if a compiler fails to run
   sBadCompilerExe = 'Can''t run %0:s.' + EOL2
-    + 'Please open the Configure Compilers dialog box from the Tools menu and '
-    + 'change the path to the compiler''s executable file.';
+    + 'Please open the Configure Compilers dialogue box from the Tools menu '
+    + 'and change the path to the compiler''s executable file.';
   sCantRunCompiler = '%0:s failed to run with message:' + EOL2 + '"%1:s"';
 begin
   if E is ECompilerError then
