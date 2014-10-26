@@ -177,7 +177,7 @@ By default CodeSnip checks online periodically to find out whether the database
 has been updated. The checking process runs behind the scenes unless an update
 is available when CodeSnip will display a notification window at the bottom
 right of the main window. From the window you can display the "Update From Web"
-dialoge box which you can use to download the updated database.
+dialogue which you can use to download the updated database.
 
 You can also check for updates manually by using the program's "Database |
 Update From Web" menu option. This displays the same "Update From Web" dialogue

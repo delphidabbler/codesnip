@@ -11,7 +11,12 @@
 ; Change Log for CodeSnip Release 4
 ; ------------------------------------------------------------------------------
 
-Release v4.11.0 of
+Release v4.11.1 of 26 October 2014
++ Corrected an erroneous error message that is displayed when circular snippet references are detected in the snippets editor (no bug report filed).
++ Corrected some spelling errors in UI.
++ Some documentation corrections.
+
+Release v4.11.0 of 25 September 2014
 + Changes re licensing of snippets from online Code Snippets Database under MIT license:
   - Generated code now carries a reference to the MIT license where relevant.
   - Submit Snippets wizard has a new page where user must confirm that any submitted snippets may be MIT licensed.
