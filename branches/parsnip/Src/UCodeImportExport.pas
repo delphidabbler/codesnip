@@ -433,10 +433,6 @@ end;
 procedure TCodeImporter.Execute(const Data: TBytes);
 
   // Returns list of required modules (units) from under SnippetNode.
-  { TODO: the following code that builds required snippets list is broken:
-          imported snippet IDs are wrong if required snippet is also in import
-          file (the ID it had when exported is used. Some magic with linked
-          spaces is probably needed. }
   function GetRequiredModules(const SnippetNode: IXMLNode): IStringList;
   var
     UnitNode: IXMLNode; // unit list node: nil if no list
@@ -447,6 +443,27 @@ procedure TCodeImporter.Execute(const Data: TBytes);
   end;
 
   // Returns list of required snippets from under SnippetNode.
+  { TODO: the following code that builds required snippets list is broken:
+          imported snippet IDs are wrong if required snippet is also in import
+          file (the ID it had when exported is used. Some magic with linked
+          spaces is probably needed.
+
+          What we need to do is to create required snippets list using
+          IDs in import file then, when all snippets are imported do a sweep of
+          each snippet looking at depends lists and doing a fix up as
+          follows:
+
+          1) If a snippet exists in import list with a matching ORIGINAL ID,
+             replace its entry in dependslist with that snippet's new
+             ID.
+          2) If there is no matching imported snippet, assume snippet exists in
+             current database. Check this assumption and if there is no such
+             snippet, delete from list.
+
+          Possible additional step is to walk through database checking for
+          original ID of snippets from same special "import" synch space and
+          performing ID translation for any found.
+  }
   function GetRequiredSnippets(const SnippetNode: IXMLNode): ISnippetIDList;
   var
     DependsNode: IXMLNode;        // depends node list: nil if no list
