@@ -1,0 +1,1561 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!--
+ * This Source Code Form is subject to the terms of the Mozilla Public License,
+ * v. 2.0. If a copy of the MPL was not distributed with this file, You can
+ * obtain one at http://mozilla.org/MPL/2.0/
+ *
+ * Copyright (C) 2012-2014, Peter Johnson (www.delphidabbler.com).
+ *
+ * $Rev$
+ * $Date$
+ *
+ * CodeSnip File Format Documentation: Configuration Files
+-->
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+
+<head>
+
+<title>
+  CodeSnip File Format Documentation - Configuration Files
+</title>
+
+<link
+  rel="stylesheet"
+  type="text/css"
+  media="screen"
+  href="main.css"
+/>
+
+</head>
+
+<body>
+
+<div class="title">
+  <div>
+    DelphiDabbler CodeSnip
+  </div>
+  <div class="subtitle">
+    File Format Documentation
+  </div>
+</div>
+
+<h1>
+  Configuration Files
+</h1>
+
+<h2>
+  Introduction
+</h2>
+
+<p>
+  CodeSnip uses two config files &ndash; one system wide application file named
+  <code>Common.config</code> and another per-user file named
+  <code>User.config</code>. There will be a different one of the latter for each
+  user account on the system where CodeSnip is used.
+</p>
+
+<p>
+  Config files use the standard .ini file format and are written and read using
+  Windows API calls.
+</p>
+
+<p>
+  The following data types are supported:
+</p>
+
+<ul>
+  <li>
+    <em>String</em> &ndash; stored as a sequence of characters, optionally
+    enclosed in double quotes.
+  </li>
+  <li>
+    <em>Boolean</em> &ndash; stored as the text <code>False</code> and
+    <code>True</code> (although <code>0</code>, <code>No</code> and
+    <code>N</code> are all read as false.
+  </li>
+  <li>
+    <em>Integer</em> &ndash; stored as positive or negative whole numbers or
+    zero.
+  </li>
+  <li>
+    <em>Float</em> &ndash; stored as positive or negative floating point numbers
+    or zero. Floating point representations of whole numbers are stored as
+    integers.
+  </li>
+  <li>
+    <em>Date-Time</em> &ndash; stored in the <code>YYYY-MM-DD hh:mm:ss</code>
+    format in all locales (i.e. the date and time separators are always '-' and
+    ':' respectively.
+  </li>
+</ul>
+
+<h2>
+  Encoding
+</h2>
+
+<p>
+  From CodeSnip v4 config files are little endian Unicode text files with a byte
+  order mark. This encoding is used because the international support is
+  required and because the Windows API, which is used to read and write the
+  files, understands this file format.
+</p>
+
+<p>
+  On earlier versions of CodeSnip the config files were ANSI text files using
+  the system's default encoding. The installer takes care of converting the
+  older files to Unicode.
+</p>
+
+<h2>
+  File Format
+</h2>
+
+<h3>
+  Common Config File
+</h3>
+
+<p>
+  This file stores information about CodeSnip that is common to all users. There
+  is just one file named <code>Common.config</code> that is stored in the
+  <code>%ProgramData%\DelphiDabbler\CodeSnip.4</code> directory.
+</p>
+
+<p>
+  There have been several versions of this file. The current one is version 6.
+  The change to version 6 came with CodeSnip v4 and the change to Unicode
+  encoding.
+</p>
+
+<p>
+  The file is in INI file format. It has the following sections.
+</p>
+
+<h4>
+  [Application] section
+</h4>
+
+<p>
+  Provides information about the application.
+</p>
+
+<p>
+  Name / Value pairs:
+</p>
+
+<dl class="indent">
+  <dt>
+    <strong>Key</strong> (String)
+  </dt>
+  <dd>
+    Unique application ID. String of 32 hex digits.
+  </dd>
+  <dt>
+    <strong>RegCode</strong> (String)
+  </dt>
+  <dd>
+    Registration code. String of 32 hex digits. May be empty string or missing
+    if application not registered.
+  </dd>
+  <dt>
+    <strong>RegName</strong> (String)
+  </dt>
+  <dd>
+    Name of person who registered program. May be empty string or missing if
+    application not registered.
+  </dd>
+  <dt>
+    <strong>Version</strong> (String)
+  </dt>
+  <dd>
+    Version of installed program as dotted quad string.
+  </dd>
+</dl>
+
+<h4>
+  [IniFile] section
+</h4>
+
+<p>
+  Provides information about the config file itself.
+</p>
+
+<p>
+  Name / Value pairs:
+</p>
+
+<dl class="indent">
+  <dt>
+    <strong>Version</strong> (Integer)
+  </dt>
+  <dd>
+    <div class="half-spaced">
+      Version number of file. Incremented whenever the config file format
+      changes. If this section or this value is missing then the default value
+      is 1. The installer takes care of converting earlier file versions and
+      stamping config file with the correct version number.
+    </div>
+    <div class="half-spaced">
+      Current value is <strong>6</strong>.
+    </div>
+  </dd>
+</dl>
+
+<h3>
+  Per User Config File
+</h3>
+
+<p>
+  This file records configuration information that is unique to each user of the
+  application. Some sections correspond to user preferences while others record
+  details of previous operations or the layout of the GUI. The file is named
+  <code>User.config</code> and is stored in the logged on user's
+  <code>%AppData%\DelphiDabbler\CodeSnip.4</code> directory.
+</p>
+
+<p>
+  There have been several versions of this file. The current one is version 15.
+ </p>
+
+<p>
+  The file is in INI file format. It has the following sections.
+</p>
+
+<h4>
+  [Cmp:<em>XXX</em>] sections
+</h4>
+
+<p>
+  There is one of these section for each compiler known to CodeSnip. Each
+  section describes how CodeSnip should use the compiler, or indicates that the
+  compiler is not available.
+</p>
+
+<p>
+  The actual name of a section is found by replacing <em>XXX</em> with one of
+  the following values:
+</p>
+
+<ul>
+  <li>
+    <em>D2</em> &ndash; Delphi 2
+  </li>
+  <li>
+    <em>D3</em> &ndash; Delphi 3
+  </li>
+    <li>
+    <em>D4</em> &ndash; Delphi 4
+  </li>
+  <li>
+    <em>D5</em> &ndash; Delphi 5
+  </li>
+  <li>
+    <em>D6</em> &ndash; Delphi 6
+  </li>
+  <li>
+    <em>D2005w32</em> &ndash; Windows 32 personality of Delphi 2005
+  </li>
+  <li>
+    <em>D2006w32</em> &ndash; Windows 32 personality of Delphi 2006
+  </li>
+  <li>
+    <em>D2007</em> &ndash; Windows 32 personality of Delphi 2007
+  </li>
+  <li>
+    <em>D2009w32</em> &ndash; Windows 32 personality of Delphi 2009
+  </li>
+  <li>
+    <em>D2010</em> &ndash; Delphi 2010
+  </li>
+  <li>
+    <em>DXE</em> &ndash; Delphi XE
+  </li>
+  <li>
+    <em>DXE2</em> &ndash; Delphi XE2
+  </li>
+  <li>
+    <em>DXE3</em> &ndash; Delphi XE3
+  </li>
+  <li>
+    <em>DXE4</em> &ndash; Delphi XE4
+  </li>
+  <li>
+    <em>DXE5</em> &ndash; Delphi XE5
+  </li>
+  <li>
+    <em>DXE6</em> &ndash; Delphi XE6
+  </li>
+  <li>
+    <em>DXE7</em> &ndash; Delphi XE7
+  </li>
+  <li>
+    <em>FPC</em> &ndash; Free Pascal
+  </li>
+</ul>
+
+<p>
+  Name / Value pairs (same for all sections unless noted otherwise):
+</p>
+
+<dl class="indent">
+  <dt>
+    <strong>ExePath</strong> (String)
+  </dt>
+  <dd>
+    Path to compiler. Empty string if compiler not configured.
+  </dd>
+  <dt>
+    <strong>Displayable</strong> (Boolean)
+  </dt>
+  <dd>
+    Indicates whether compiler's compilation results for a snippet can be
+    displayed in detail pane.
+  </dd>
+  <dt>
+    <strong>Namespaces</strong> (String)
+  </dt>
+  <dd>
+    <div class="half-spaced">
+      Space separated list of namespaces containing Delphi RTL units. Missing or
+      empty string value &rArr; use default RTL namespaces for compiler.
+    </div>
+    <div class="half-spaced">
+      Relates to the Delphi XE2 and later compilers. If the value present, it is
+      ignored for earlier compilers and Free Pascal.
+    </div>
+  </dd>
+  <dt>
+    <strong>Prefix0</strong> (String)
+  </dt>
+  <dd>
+    Double quoted prefix to text output by the compiler to indicate fatal
+    compiler errors. If not present the default is &quot;Fatal: &quot;.
+  </dd>
+  <dt>
+    <strong>Prefix1</strong> (String)
+  </dt>
+  <dd>
+    Double quoted prefix to text output by the compiler to indicate standard
+    compiler errors. If not present the default is &quot;Error: &quot;.
+  </dd>
+  <dt>
+    <strong>Prefix2</strong> (String)
+  </dt>
+  <dd>
+    Double quoted prefix to text output by the compiler to indicate warnings. If
+    not present the default is &quot;Warning: &quot;.
+  </dd>
+  <dt>
+    <strong>Switches</strong> (String)
+  </dt>
+  <dd>
+    Comma separated list of compiler switches. Empty string value &rArr; use
+    default switches for compiler. A missing value is the same as an empty
+    string value.
+  </dd>
+  <dt>
+    <strong>SearchDirCount</strong> (Integer)
+  </dt>
+  <dd>
+    Count of number of search directories configured for compiler.
+  </dd>
+  <dt>
+    <strong>SearchDir<em>XXX</em></strong> (String)
+  </dt>
+  <dd>
+    <div class="half-spaced">
+      Once entry for each search directory configured for compiler where
+      <em>XXX</em> ranges from 0 to <strong>SearchDirCount</strong> - 1.
+    </div>
+    <div class="half-spaced">
+      Each entry contains a fully specified directory path.
+    </div>
+  </dd>
+</dl>
+
+<h4>
+  [Database] section
+</h4>
+
+<p>
+  This section records database customisations.
+</p>
+
+<p>
+  Name / Value pairs:
+</p>
+
+<dl class="indent">
+  <dt>
+    <strong>UserDataDir</strong> (String)
+  </dt>
+  <dd>
+    <div class="half-spaced">
+      Specifies the directory that contains the user database. This value is
+      only  present if the user has moved the database from its default
+      location.
+    </div>
+    <div class="spaced">
+      <strong>Note:</strong> The value is ignored in the portable version of
+      CodeSnip.
+    </div>
+  </dd>
+</dl>
+
+<h4>
+  [DuplicateSnippet] section
+</h4>
+
+<p>
+  Persists state of controls in Duplicate Snippet dialogue box.
+</p>
+
+<p>
+  Name / Value pairs:
+</p>
+
+<dl class="indent">
+  <dt>
+    <strong>EditSnippetOnClose</strong> (Boolean)
+  </dt>
+  <dd>
+    Stores state of <em>Edit in Snippets Editor</em> check box.
+  </dd>
+</dl>
+
+<h4>
+  [Favourites] section
+</h4>
+
+<p>
+  Persists state of controls in Favourites dialogue box.
+</p>
+
+<p>
+  Name / Value pairs:
+</p>
+
+<dl class="indent">
+  <dt>
+    <strong>DisplayInNewTabs</strong> (Boolean)
+  </dt>
+  <dd>
+    Stores state of <em>Open favourites in new tabs</em> check box.
+  </dd>
+  <dt>
+    <strong>InactiveAlphaBlendValue</strong> (Integer)
+  </dt>
+  <dd>
+    Stores alpha blend value (i.e. degree of transparency) of Favourites
+    dialogue box when it is not active. Values should be in range 128 to 255.
+  </dd>
+</dl>
+
+<h4>
+  [FindCompiler] section
+</h4>
+
+<p>
+  Provides information about the last compiler search that was run.
+</p>
+
+<p>
+  Name / Value pairs:
+</p>
+
+<dl class="indent">
+  <dt>
+    <strong>D2</strong> (Boolean)
+  </dt>
+  <dd>
+    Indicates whether Delphi 2 was included in search.
+  </dd>
+  <dt>
+    <strong>D3</strong> (Boolean)
+  </dt>
+  <dd>
+    Indicates whether Delphi 3 was included in search.
+  </dd>
+  <dt>
+    <strong>D4</strong> (Boolean)
+  </dt>
+  <dd>
+    Indicates whether Delphi 4 was included in search.
+  </dd>
+  <dt>
+    <strong>D5</strong> (Boolean)
+  </dt>
+  <dd>
+    Indicates whether Delphi 5 was included in search.
+  </dd>
+  <dt>
+    <strong>D6</strong> (Boolean)
+  </dt>
+  <dd>
+    Indicates whether Delphi 6 was included in search.
+  </dd>
+  <dt>
+    <strong>D7</strong> (Boolean)
+  </dt>
+  <dd>
+    Indicates whether Delphi 7 was included in search.
+  </dd>
+  <dt>
+    <strong>D2005w32</strong> (Boolean)
+  </dt>
+  <dd>
+    Indicates whether the Win32 personality of Delphi 2005 was included in
+    search.
+  </dd>
+  <dt>
+    <strong>D2006w32</strong> (Boolean)
+  </dt>
+  <dd>
+    Indicates whether the Win32 personality of Delphi 2006 was included in
+    search.
+  </dd>
+  <dt>
+    <strong>D2007</strong> (Boolean)
+  </dt>
+  <dd>
+    Indicates whether the Win32 personality of Delphi 2007 was included in
+    search.
+  </dd>
+  <dt>
+    <strong>D2009w32</strong> (Boolean)
+  </dt>
+  <dd>
+    Indicates whether the Win32 personality of Delphi 2009 was included in
+    search.
+  </dd>
+  <dt>
+    <strong>D2010</strong> (Boolean)
+  </dt>
+  <dd>
+    Indicates whether Delphi 2010 was included in search.
+  </dd>
+  <dt>
+    <strong>DXE</strong> (Boolean)
+  </dt>
+  <dd>
+    Indicates whether Delphi XE was included in search.
+  </dd>
+  <dt>
+    <strong>DXE2</strong> (Boolean)
+  </dt>
+  <dd>
+    Indicates whether Delphi XE2 was included in search.
+  </dd>
+  <dt>
+    <strong>DXE3</strong> (Boolean)
+  </dt>
+  <dd>
+    Indicates whether Delphi XE3 was included in search.
+  </dd>
+  <dt>
+    <strong>DXE4</strong> (Boolean)
+  </dt>
+  <dd>
+    Indicates whether Delphi XE4 was included in search.
+  </dd>
+  <dt>
+    <strong>DXE5</strong> (Boolean)
+  </dt>
+  <dd>
+    Indicates whether Delphi XE5 was included in search.
+  </dd>
+  <dt>
+    <strong>DXE6</strong> (Boolean)
+  </dt>
+  <dd>
+    Indicates whether Delphi XE6 was included in search.
+  </dd>
+  <dt>
+    <strong>DXE7</strong> (Boolean)
+  </dt>
+  <dd>
+    Indicates whether Delphi XE7 was included in search.
+  </dd>
+  <dt>
+    <strong>FPC</strong> (Boolean)
+  </dt>
+  <dd>
+    Indicates whether Free Pascal was included in search.
+  </dd>
+  <dt>
+    <strong>Option</strong> (Integer)
+  </dt>
+  <dd>
+    Code that describes the kind of compilation result to be searched for: 0
+    &rArr; snippet compiles OK; 1 &rArr; snippet compiles without warnings; 2
+    &rArr; snippet compiles with warning(s); 3 &rArr; snippet fails to compile;
+    4 &rArr; snippet not tested.
+  </dd>
+  <dt>
+  <dt>
+    <strong>Logic</strong> (Integer)
+  </dt>
+  <dd>
+    Code that describes search logic to use: 0 &rArr; &quot;and&quot;; 1 &rArr;
+    &quot;or&quot;.
+  </dd>
+</dl>
+
+<h4>
+  [FindText] section
+</h4>
+
+<p>
+  Provides information about last the last text search that was run and records
+  a history of search terms.
+</p>
+
+<p>
+  Name / Value pairs:
+</p>
+
+<dl class="indent">
+  <dt>
+    <strong>HistoryCount</strong> (Integer)
+  </dt>
+  <dd>
+    Count of items in search term history.
+  </dd>
+  <dt>
+    <strong>History<em>XXX</em></strong> (String)
+  </dt>
+  <dd>
+    <div class="half-spaced">
+      One entry for each search term in history where <em>XXX</em> ranges from 0
+      to <strong>HistoryCount</strong> - 1.
+    </div>
+    <div class="half-spaced">
+      Each entry contains one or more spaced separated search words.
+    </div>
+  </dd>
+  <dt>
+    <strong>MatchCase</strong> (Boolean)
+  </dt>
+  <dd>
+    One of the search options. Indicates whether searches are case sensitive.
+  </dd>
+  <dt>
+    <strong>WholeWord</strong> (Boolean)
+  </dt>
+  <dd>
+    One of the search options. Indicates whether searches match whole words
+    only.
+  </dd>
+  <dt>
+    <strong>Logic</strong> (Integer)
+  </dt>
+  <dd>
+    Code that describes search logic to use: 0 &rArr; &quot;and&quot;; 1 &rArr;
+    &quot;or&quot;.
+  </dd>
+</dl>
+
+<h4>
+  [FindXRefs] section
+</h4>
+
+<p>
+  Provides information about the last snippet cross reference search that was
+  run.
+</p>
+
+<p>
+  Name / Value pairs:
+</p>
+
+<dl class="indent">
+  <dt>
+    <strong>IncludeSnippet</strong> (Boolean)
+  </dt>
+  <dd>
+    Indicates whether to include the snippet for which the search is being
+    performed in the search result.
+  </dd>
+  <dt>
+    <strong>Required</strong> (Boolean)
+  </dt>
+  <dd>
+    Indicates whether to include snippets that are required to compile the
+    selected snippet are included in search result.
+  </dd>
+  <dt>
+    <strong>RequiredRecurse</strong> (Boolean)
+  </dt>
+  <dd>
+    Indicates whether to recurse required snippets to search for required
+    snippets of each required snippet and so on. Ignored if
+    <strong>Required</strong> = False.
+  </dd>
+  <dt>
+    <strong>RequiredReverse</strong> (Boolean)
+  </dt>
+  <dd>
+    Indicates whether to include snippets that depend on the searched for
+    snippet.
+  </dd>
+  <dt>
+    <strong>SeeAlso</strong> (Boolean)
+  </dt>
+  <dd>
+    Indicates whether to include snippets that are cross referenced by the
+    selected snippet in search results.
+  </dd>
+  <dt>
+    <strong>SeeAlsoRecurse</strong> (Boolean)
+  </dt>
+  <dd>
+    Indicates whether to recurse cross-referenced snippets to search for their
+    own cross references and so on. Ignored if <strong>SeeAlso</strong> = False.
+  </dd>
+  <dt>
+    <strong>SeeAlsoReverse</strong> (Boolean)
+  </dt>
+  <dd>
+    Indicates whether to include snippets that cross-reference searched for
+    snippet.
+  </dd>
+</dl>
+
+<h4>
+  [IniFile] section
+</h4>
+
+<p>
+  Provides information about the config file itself.
+</p>
+
+<p>
+  Name / Value pairs:
+</p>
+
+<dl class="indent">
+  <dt>
+    <strong>Version</strong> (Integer)
+  </dt>
+  <dd>
+    <div class="half-spaced">
+      Version number of file. Incremented whenever the config file format
+      changes. If this section or this value is missing then the default value
+      is 1. The installer takes care of converting earlier file versions and
+      stamping config file with the correct version number.
+    </div>
+    <div class="half-spaced">
+      Current value is <strong>15</strong>.
+    </div>
+  </dd>
+  <dt>
+    <strong>ProgramVersion</strong> (String)
+  </dt>
+  <dd>
+    Internal version number of currently installed program as a dotted quad.
+  </dd>
+</dl>
+
+<h4>
+  [Prefs:CodeGen] section
+</h4>
+
+<p>
+  Stores source code generation preferences. Used in test compilations or when
+  generating user defined units.
+</p>
+
+<p>
+  Name / Value pairs:
+</p>
+
+<dl class="indent">
+  <dt>
+    <strong>EmitWarnings</strong> (Boolean)
+  </dt>
+  <dd>
+    Flag indicating whether directives are emitted to switch specified warnings
+    on or off. True &rArr; emit directives; False &rArr; do emit directives.
+  </dd>
+  <dt>
+    <strong>WarningCount</strong> (Integer)
+  </dt>
+  <dd>
+    Number of warning directives supported.
+  </dd>
+  <dt>
+    <strong>Warning<em>XXX</em>.Symbol</strong> (String)
+  </dt>
+  <dd>
+    <div class="half-spaced">
+      One entry for each supported warning where <em>XXX</em> ranges from 0 to
+      <strong>WarningCount</strong> - 1.
+    </div>
+    <div class="half-spaced">
+      Each entry contains the symbol representing a warning as used in Delphi's
+      $WARN directive.
+    </div>
+  </dd>
+  <dt>
+    <strong>Warning<em>XXX</em>.MinCompiler</strong> (Float)
+  </dt>
+  <dd>
+    <div class="half-spaced">
+      One entry for each supported warning where <em>XXX</em> ranges from 0 to
+      <strong>WarningCount</strong> - 1.
+    </div>
+    <div class="half-spaced">
+      Records the earliest version of Delphi that supports the warning. This
+      version number is a decimal value containing compiler version number as
+      specified by Delphi's <var>CompilerVersion</var> constant. Must be 14.0
+      (Delphi 6) or higher.
+    </div>
+  </dd>
+  <dt>
+    <strong>Warning<em>XXX</em>.State</strong> (Boolean)
+  </dt>
+  <dd>
+    <div class="half-spaced">
+      One entry for each supported warning where <em>XXX</em> ranges from 0 to
+      <strong>WarningCount</strong> - 1.
+    </div>
+    <div class="half-spaced">
+      Indicates whether the warning should be switched on or off. True &rArr;
+      switch on; False &rArr; switch off.
+    </div>
+  </dd>
+</dl>
+
+<h4>
+  [Prefs:Display] section
+</h4>
+
+<p>
+  Stores main display preferences.
+</p>
+
+<p>
+  Name / Value pairs:
+</p>
+
+<dl class="indent">
+  <dt>
+    <strong>OverviewStartState</strong> (Integer)
+  </dt>
+  <dd>
+    Code that indicates the desired start state of the overview pane treeview:
+    0 &rArr; fully expanded; 1 &rArr; fully collapsed.
+  </dd>
+  <dt>
+    <strong>ShowEmptySections</strong> (Boolean)
+  </dt>
+  <dd>
+    Flag that specifies whether empty sections should be displayed in overview
+    pane. True &rArr; display empty sections; False &rArr; hide empty
+    sections.
+  </dd>
+  <dt>
+    <strong>ShowNewSnippetsInNewTabs</strong> (Boolean)
+  </dt>
+  <dd>
+    Flag that specifies how newly created snippets and categories are displayed
+    in detail pane. True &rArr; new tab created for each new item; False &rArr;
+    new items overwrite item in selected tab.
+  </dd>
+  <dt>
+    <strong>MainDBHeadingColour</strong> (Integer)
+  </dt>
+  <dd>
+    Colour to be used to display headings of items from main database.
+  </dd>
+  <dt>
+    <strong>UserDBHeadingColour</strong> (Integer)
+  </dt>
+  <dd>
+    Colour to be used to display headings of items from user database.
+  </dd>
+  <dt>
+    <strong>SourceCodeBGColour</strong> (Integer)
+  </dt>
+  <dd>
+    Colour to be used for background of source code in the main display.
+  </dd>
+  <dt>
+    <strong>MainDBHeadingCustomColourCount</strong> (Integer)
+  </dt>
+  <dd>
+    Number of recorded custom colours for main database item headings.
+  </dd>
+  <dt>
+    <strong>MainDBHeadingCustomColour<em>XXX</em></strong> (String)
+  </dt>
+  <dd>
+    <div class="half-spaced">
+      One entry for each recorded custom colours for main database item
+      headings, where <em>XXX</em> ranges from 0 to
+      <strong>MainDBHeadingCustomColourCount</strong> - 1.
+    </div>
+    <div class="half-spaced">
+      The value is a definition of a custom colour in the format used by the
+      <var>TColorDialog</var> dialogue box. This format is
+      <em>ColourID</em>=<em>ColourNum</em> where <em>ColourID</em> is a value
+      from &quot;ColorA&quot; to &quot;ColorP&quot; and <em>ColourNum</em> is
+      the hex representation of the colour.
+    </div>
+  </dd>
+  <dt>
+    <strong>UserDBHeadingCustomColourCount</strong> (Integer)
+  </dt>
+  <dd>
+    Number of recorded custom colours for user database item headings.
+  </dd>
+  <dt>
+    <strong>UserDBHeadingCustomColour<em>XXX</em></strong> (String)
+  </dt>
+  <dd>
+    <div class="half-spaced">
+      One entry for each recorded custom colours for user database item
+      headings, where <em>XXX</em> ranges from 0 to
+      <strong>UserDBHeadingCustomColourCount</strong> - 1.
+    </div>
+    <div class="half-spaced">
+      The value is a definition of a custom colour in the format used by the
+      <var>TColorDialog</var> dialogue box. This format is
+      <em>ColourID</em>=<em>ColourNum</em> where <em>ColourID</em> is a value
+      from &quot;ColorA&quot; to &quot;ColorP&quot; and <em>ColourNum</em> is
+      the hex representation of the colour.
+    </div>
+  </dd>
+  <dt>
+    <strong>SourceCodeBGCustomColourCount</strong> (Integer)
+  </dt>
+  <dd>
+    Number of recorded custom colours for source code background in the main
+    display.
+  </dd>
+  <dt>
+    <strong>SourceCodeBGCustomColour<em>XXX</em></strong> (String)
+  </dt>
+  <dd>
+    <div class="half-spaced">
+      One entry for each recorded custom colours for source code background in
+      the main display, where <em>XXX</em> ranges from 0 to
+      <strong>SourceCodeBGCustomColourCount</strong> - 1.
+    </div>
+    <div class="half-spaced">
+      The value is a definition of a custom colour in the format used by the
+      <var>TColorDialog</var> dialogue box. This format is
+      <em>ColourID</em>=<em>ColourNum</em> where <em>ColourID</em> is a value
+      from &quot;ColorA&quot; to &quot;ColorP&quot; and <em>ColourNum</em> is
+      the hex representation of the colour.
+    </div>
+  </dd>
+</dl>
+
+<h4>
+  [Prefs:General] section
+</h4>
+
+<p>
+  Stores general (miscellaneous) application preferences.
+</p>
+
+<p>
+  Name / Value pairs:
+</p>
+
+<dl class="indent">
+  <dt>
+    <strong>Units</strong> (Integer)
+  </dt>
+  <dd>
+    A code that records the units of measurement used by the application: 0
+    &rArr; inches; 1 &rArr; millimeters.
+  </dd>
+</dl>
+
+<h4>
+  [Prefs:Hiliter] section
+</h4>
+
+<p>
+  Stores preferences that define the properties of one or more syntax
+  highlighters. Also records information about the custom colours available when
+  configuring the highlighters.
+</p>
+
+<p>
+  Name / Value pairs:
+</p>
+
+<dl class="indent">
+  <dt>
+    <strong>FontSize</strong> (Integer)
+  </dt>
+  <dd>
+    Size of current highlighter font in points.
+  </dd>
+  <dt>
+    <strong>FontName</strong> (String)
+  </dt>
+  <dd>
+    Name of current highlighter font.
+  </dd>
+  <dt>
+    <strong>Elem<em>XXX</em>.Color</strong> (Integer)
+  </dt>
+  <dd>
+    <div class="half-spaced">
+      One entry for each of the 12 source code elements recognised by the
+      current syntax highlighter. <em>XXX</em> ranges from 0 to 11.
+    </div>
+    <div class="half-spaced">
+      Colour of source code element. Integer representation of a Delphi
+      <var>TColor</var> value. If the colour is not specified the value is the
+      integer representation of <var>clNone</var>.
+    </div>
+  </dd>
+  <dt>
+    <strong>Elem<em>XXX</em>.Style</strong> (Integer)
+  </dt>
+  <dd>
+    <div class="half-spaced">
+      One entry for each of the 12 source code elements recognised by the
+      current syntax highlighter. <em>XXX</em> ranges from 0 to 11.
+    </div>
+    <div class="half-spaced">
+      Bitmask representing the font styles used for the source code element.
+    </div>
+  </dd>
+  <dt>
+    <strong>NamedHiliterCount</strong> (Integer)
+  </dt>
+  <dd>
+    Number of custom (or &quot;Named&quot;) syntax highlighters defined by user.
+  </dd>
+  <dt>
+    <strong>HilterName<em>XXX</em></strong> (String).
+  </dt>
+  <dd>
+    <div class="half-spaced">
+      One entry for each custom syntax highlighter, where <em>XXX</em> ranges
+      from 0 to <strong>NamedHiliterCount</strong> - 1.
+    </div>
+    <div class="half-spaced">
+      Each value is the name used to identify the syntax highlighter with the
+      same index. (See the various NamedHiliter<em>XXX</em> entries below.)
+    </div>
+  </dd>
+  <dt>
+    <strong>NamedHiliter<em>XXX</em>.FontSize</strong> (Integer)
+  </dt>
+  <dd>
+    <div class="half-spaced">
+      One entry for each custom syntax highlighter, where <em>XXX</em> ranges
+      from 0 to <strong>NamedHiliterCount</strong> - 1.
+    </div>
+    <div class="half-spaced">
+      Each value is the size of the corresponding syntax highlighter's font, in
+      points.
+    </div>
+  </dd>
+  <dt>
+    <strong>NamedHiliter<em>XXX</em>.FontName</strong>
+  </dt>
+  <dd>
+    <div class="half-spaced">
+      One entry for each custom syntax highlighter, where <em>XXX</em> ranges
+      from 0 to <strong>NamedHiliterCount</strong> - 1.
+    </div>
+    <div class="half-spaced">
+      Each value is the name of the corresponding syntax highlighter's font.
+    </div>
+  </dd>
+  <dt>
+    <strong>NamedHiliter<em>XXX</em>.Elem<em>YYY</em>.Color</strong> (Integer)
+  </dt>
+  <dd>
+    <div class="half-spaced">
+      There is an entry for each source code element of each custom synax
+      highliter. <em>XXX</em> represents the index of the corresponding syntax
+      highlighter and ranges from 0 to <strong>NamedHiliterCount</strong> - 1.
+      For each value of <em>XXX</em> there are 12
+      <strong>.Elem<em>YYY</em></strong>  values, with <em>YYY</em> ranging from
+      0 to 11.
+    </div>
+    <div class="half-spaced">
+      Each value specifies the colour of a source code element. The values are
+      integer representations of a Delphi <var>TColor</var> value. If the colour
+      is not specified the value is the integer representation of
+      <var>clNone</var>.
+    </div>
+  </dd>
+  <dt>
+    <strong>NamedHiliter<em>XXX</em>.Elem<em>YYY</em>.Style</strong> (Integer)
+  </dt>
+  <dd>
+    <div class="half-spaced">
+      There is an entry for each source code element of each custom synax
+      highliter. <em>XXX</em> represents the index of the corresponding syntax
+      highlighter and ranges from 0 to <strong>NamedHiliterCount</strong> - 1.
+      For each value of <em>XXX</em> there are 12
+      <strong>.Elem<em>YYY</em></strong>  values, with <em>YYY</em> ranging from
+      0 to 11.
+    </div>
+    <div class="half-spaced">
+      Each value contains a bitmask representing the font style of a source code
+      element.
+    </div>
+  </dd>
+  <dt>
+    <strong>CustomColourCount</strong> (Integer)
+  </dt>
+  <dd>
+    Number of recorded custom colours available for use by highlighter elements.
+  </dd>
+  <dl>
+    <strong>CustomColour<em>XXX</em></strong> (String)
+  </dl>
+  <dd>
+    <div class="half-spaced">
+      One entry for each recorded custom colour, where <em>XXX</em> ranges from
+      0 to <strong>CustomColourCount</strong> - 1.
+    </div>
+    <div class="half-spaced">
+      The value is a definition of a custom colour in the format used by the
+      <var>TColorDialog</var> dialogue box. This format is
+      <em>ColourID</em>=<em>ColourNum</em> where <em>ColourID</em> is a value
+      from &quot;ColorA&quot; to &quot;ColorP&quot; and <em>ColourNum</em> is
+      the hex representation of the colour.
+    </div>
+  </dd>
+</dl>
+
+<h4>
+  [Prefs:News] section
+</h4>
+
+<p>
+  Stores preferences that determine how items from the CodeSnip news feed are
+  displayed.
+</p>
+
+<p>
+  Name / Value pairs:
+</p>
+
+<dl class="indent">
+  <dt>
+    <strong>MaxAge</strong> (Integer)
+  </dt>
+  <dd>
+    Maximum age of a news item that can appear in CodeSnip News dialogue box in
+    days. Default is 92 days.
+  </dd>
+</dl>
+
+<h4>
+  [Prefs:Printing] section
+</h4>
+
+<p>
+  Stores preferences that determine printing defaults.
+</p>
+
+<p>
+  Name / Value pairs:
+</p>
+
+<dl class="indent">
+  <dt>
+    <strong>UseColor</strong> (Boolean)
+  </dt>
+  <dd>
+    Flag that indicates whether printing is to be in colour.
+  </dd>
+  <dt>
+    <strong>SyntaxPrint</strong> (Boolean)
+  </dt>
+  <dd>
+    Flag that indicates whether source code in printed output is to be syntax
+    highlighted.
+  </dd>
+  <dt>
+    <strong>LeftMargin</strong> (Float)
+  </dt>
+  <dd>
+    Size of printed page's left margin in mm.
+  </dd>
+  <dt>
+    <strong>TopMargin</strong> (Float)
+  </dt>
+  <dd>
+    Size of printed page's top margin in mm.
+  </dd>
+  <dt>
+    <strong>RightMargin</strong> (Float)
+  </dt>
+  <dd>
+    Size of printed page's right margin in mm.
+  </dd>
+  <dt>
+    <strong>BottomMargin</strong> (Float)
+  </dt>
+  <dd>
+    Size of printed page's bottom margin in mm.
+  </dd>
+</dl>
+
+<h4>
+  [Prefs:SnippetPageStructure] section
+</h4>
+
+<p>
+  Stores preferences that describes customisations of snippet pages displayed in
+  details pane.
+</p>
+
+<p>
+  Name / Value pairs:
+</p>
+
+<dl class="indent">
+  <dt>
+    <strong>PageKind<em>XXX</em></strong> (String)
+  </dt>
+  <dd>
+    <div class="half-spaced">
+      One entry for each snippet kind where <em>XXX</em> is the ordinal value of
+      the snippet kind.
+    </div>
+    <div class="half-spaced">
+      Each entry's value describes the structure of the details pane page that
+      snippets of the kind given by the key name. The value is a comma separated
+      list of zero or more names, each of which denotes a page component.
+      Components are displayed in the order they are listed. Valid component
+      names are:
+    </div>
+    <ul class="unspaced">
+      <li>
+        <em>Description</em>
+      </li>
+      <li>
+        <em>SourceCode</em>
+      </li>
+      <li>
+        <em>Kind</em>
+      </li>
+      <li>
+        <em>Category</em>
+      </li>
+      <li>
+        <em>Units</em>
+      </li>
+      <li>
+        <em>Depends</em>
+      </li>
+      <li>
+        <em>XRefs</em>
+      </li>
+      <li>
+        <em>CompileResults</em>
+      </li>
+      <li>
+        <em>ExtraInfo</em>
+      </li>
+    </ul>
+  </dd>
+</dl>
+
+<h4>
+  [Prefs:SourceCode] section
+</h4>
+
+<p>
+  Stores preferences that govern the way source code is stored in exported
+  documents by default.
+</p>
+
+<p>
+  Name / Value pairs:
+</p>
+
+<dl class="indent">
+  <dt>
+    <strong>FileType</strong> (Integer)
+  </dt>
+  <dd>
+    Code that determines type of exported files: 0 &rArr; plain text; 1 &rArr;
+    Pascal; 2 &rArr; HTML; 3 &rArr; rich text (RTF).
+  </dd>
+  <dt>
+    <strong>CommentStyle</strong> (Integer)
+  </dt>
+  <dd>
+    Code that determines style of commenting used for documentation of snippets
+    in output files: 0 &rArr; no documentation comment; 1 &rArr; description of
+    snippet between prototype and body; 2 &rArr; description of snippet
+    immediately precedes snippet.
+  </dd>
+  <dt>
+    <strong>TruncateComments</strong> (Boolean)
+  </dt>
+  <dd>
+    Flag indicating whether multi-paragraph snippet descriptions are to be
+    truncated to first paragraph only in snippet documentation comments.
+  </dd>
+  <dt>
+    <strong>UseSyntaxHiliting</strong> (Boolean)
+  </dt>
+  <dd>
+    Flag indicating whether source code is to be syntax highlighted.
+  </dd>
+</dl>
+
+<h4>
+  [Prefs:Updating] section
+</h4>
+
+<p>
+  Stores preferences relating to updating CodeSnip and the local copy of the
+  online database.
+</p>
+
+<p>
+  Name / Value pairs:
+</p>
+
+<dl class="indent">
+  <dt>
+    <strong>AutoCheckProgramFrequency</strong> (Integer)
+  </dt>
+  <dd>
+    Specifies frequency, in days, with which CodeSnip automatically checks
+    online for program updates. A value of 0 indicates that CodeSnip will not
+    check for program updates automatically.
+  </dd>
+  <dt>
+    <strong>AutoCheckDatabaseFrequency</strong> (Integer)
+  </dt>
+  <dd>
+    Specifies frequency, in days, with which CodeSnip automatically checks
+    online for database updates. A value of 0 indicates that CodeSnip will not
+    check for database updates automatically.
+  </dd>
+</dl>
+
+<h4>
+  [ProxyServer] section
+</h4>
+
+<p>
+  Stores information about any proxy internet server that is to be used.
+</p>
+
+<p>
+  Name / Value pairs:
+</p>
+
+<dl class="indent">
+  <dt>
+    <strong>UseProxy</strong> (Boolean)
+  </dt>
+  <dd>
+    Flag that indicates whether to use a proxy server or not. If false the
+    remaining name / value pairs in this section are ignored.
+  </dd>
+  <dt>
+    <strong>IPAddress</strong> (String)
+  </dt>
+  <dd>
+    IP address of proxy server in dotted quad format, e.g. 127.0.0.1.
+  </dd>
+  <dt>
+    <strong>Port</strong> (Integer)
+  </dt>
+  <dd>
+    Port on which to access proxy server.
+  </dd>
+  <dt>
+    <strong>UserName</strong> (String)
+  </dt>
+  <dd>
+    Username for proxy server access. Empty if server doesn't require a user
+    name.
+  </dd>
+  <dt>
+    <strong>Password</strong> (String)
+  </dt>
+  <dd>
+    Encrypted form of any password required to access proxy server. Empty if no
+    password is required. This value is a hex representation of the bytes of
+    the encrypted password.
+  </dd>
+</dl>
+
+<h4>
+  [UpdateChecks] section
+</h4>
+
+<p>
+  Records date of last (automatic) update checks for different items. These
+  values are used to determine when to perform the next check. (Checks are made
+  within a fixed interval of the preceding check).
+</p>
+
+<p>
+  Name / Value pairs:
+</p>
+
+<dl class="indent">
+  <dt>
+    <strong>LastProgramCheck</strong> (Date-Time)
+  </dt>
+  <dd>
+    Date (in GMT) that the program last checked to see if a new version of
+    CodeSnip is available.
+  </dd>
+  <dt>
+    <strong>LastDatabaseCheck</strong> (Date-Time)
+  </dt>
+  <dd>
+    Date (in GMT) that the program last checked to see if the online version of
+    the Code Snippets Database had been updated.
+  </dd>
+</dl>
+
+<h4>
+  [UserInfo] section
+</h4>
+
+<p>
+  Stores personal information about the user.
+</p>
+
+<p>
+  Name / Value pairs:
+</p>
+
+<dl class="indent">
+  <dt>
+    <strong>Name</strong> (String)
+  </dt>
+  <dd>
+    User's name.
+  </dd>
+  <dt>
+    <strong>Email</strong> (String)
+  </dt>
+  <dd>
+    User's email address.
+  </dd>
+</dl>
+
+<h4>
+  [WindowState:<em>XXX</em>] sections
+</h4>
+
+<p>
+  There is one of these section for each window that stores its state and size
+  in the config file. <em>XXX</em> is a sub-section placeholder and is replaced
+  by a unique name representing the window whose state is stored.
+</p>
+
+<p>
+  Some windows also store custom information in their sub-section that is not
+  used in all sub-sections.
+</p>
+
+<h5>
+  Common values
+</h5>
+
+<p>
+  These values do, or can, appear in any sub-section.
+</p>
+
+<p>
+  Name / Value pairs:
+</p>
+
+<dl class="indent">
+  <dt>
+    <strong>Left</strong> (Integer)
+  </dt>
+  <dd>
+    Location of left side of window on screen in pixels.
+  </dd>
+  <dt>
+    <strong>Top</strong> (Integer)
+  </dt>
+  <dd>
+    Location of top of window on screen in pixels.
+  </dd>
+  <dt>
+    <strong>Width</strong> (Integer)
+  </dt>
+  <dd>
+    <div class="half-spaced">
+      Width of window in pixels.
+    </div>
+    <div class="half-spaced">
+      Not used for fixed size windows.
+    </div>
+  </dd>
+  <dt>
+    <strong>Height</strong> (Integer)
+  </dt>
+  <dd>
+    <div class="half-spaced">
+      Height of window in pixels.
+    </div>
+    <div class="half-spaced">
+      Not used for fixed size windows.
+    </div>
+  </dd>
+  <dt>
+    <strong>State</strong> (Integer)
+  </dt>
+  <dd>
+    <div class="half-spaced">
+      Value of that describes state of window: 0 &rArr; normal state; 1 &rArr;
+      minimized; 2 &rArr; maximized.
+    </div>
+    <div class="half-spaced">
+      Not used for dialogue boxes and other windows that are always displayed in
+      the normal state.
+    </div>
+  </dd>
+</dl>
+
+<h5>
+  [WindowState:MainForm] sub-section
+</h5>
+
+<p>
+  These values are used only in the <em>MainForm</em> sub-section.
+</p>
+
+<p>
+  Name / Value pairs:
+</p>
+
+<dl class="indent">
+  <dt>
+    <strong>SplitterPos</strong> (Integer)
+  </dt>
+  <dd>
+    Position of vertical splitter control in main window, in pixels from left
+    of window client area.
+  </dd>
+  <dt>
+    <strong>OverviewTab</strong> (Integer)
+  </dt>
+  <dd>
+    Index of selected tab in overview pane.
+  </dd>
+</dl>
+
+</body>
+
+</html>
