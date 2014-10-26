@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2008-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2008-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -1012,8 +1012,9 @@ procedure TSnippetsEditorDlg.ValidateData;
     @except EDataEntry raised if data is not valid.
   }
 resourcestring
-  sDependencyPrompt = 'See the dependencies by clicking the View Dependencies '
-    + 'button on the References tab.';
+  sDependencyPrompt = 'See the dependencies by right-clicking in the '
+    + 'Dependencies list box on the References tab and selecting "View '
+    + 'Dependencies" from the pop-up menu.';
 var
   ErrorMessage: string;       // receives validation error messages
   ErrorSelection: TSelection; // receives selection containing errors
