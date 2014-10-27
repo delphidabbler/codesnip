@@ -95,8 +95,10 @@ uses
   // Delphi
   SysUtils,
   // Project
+  CS.Database.SnippetLinks,
   CS.Database.Tags,
   CS.SourceCode.Languages,
+  CS.Utils.Dates,
   DB.UMain,
   USnippetValidator;
 
@@ -152,8 +154,11 @@ begin
   Result.Title := SWAGSnippet.Title;
   Result.Notes := BuildNotes;
   // NOTE: Snippet has no required units, required snippets or cross-references
-  { TODO: add SWAG snippet ID (passed through MakeValidSnippetIDString to
-          snippet's LinkInfo property, when implemented. }
+  Result.LinkInfo := TSnippetLinkInfo.Create(
+    TSnippetSynchSpaceIDs.SWAG,
+    TSnippetID.Create(MakeValidSnippetIDString(SWAGSnippet.ID)),
+    TUTCDateTime.Create(SWAGSnippet.DateStamp)
+  );
 end;
 
 constructor TSWAGImporter.Create;
