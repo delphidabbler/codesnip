@@ -27,10 +27,6 @@ uses
 
 
 type
-
-  { TODO -cSynchSpaces: rethink custom colours for different snippet sources in
-                        terms of synch spaces or remove the option. }
-
   TDisplayPrefsFrame = class(TPrefsBaseFrame)
     lblOverviewTree: TLabel;
     cbOverviewTree: TComboBox;
