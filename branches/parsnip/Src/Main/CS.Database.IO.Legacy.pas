@@ -283,6 +283,13 @@ begin
     LoadSnippetProperties(SnippetNode, Snippet);
     if fFavourites.Contains(Snippet.GetID) then
       Snippet.SetStarred(True);
+    Snippet.SetLinkInfo(
+      TSnippetLinkInfo.Create(
+        TSnippetSynchSpaceIDs.LegacyDB,
+        TSnippetID.Create(LegacySnippetID(SnippetNode)),
+        TUTCDateTime.Now()
+      )
+    );
     ATable.Add(Snippet);
   except
     Snippet.Free;
