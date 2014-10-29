@@ -95,7 +95,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  CS.Database.SnippetLinks,
+  CS.Database.SnippetOrigins,
   CS.Database.Tags,
   CS.SourceCode.Languages,
   CS.Utils.Dates,

@@ -14,7 +14,7 @@
 }
 
 
-unit CS.Database.SnippetLinks;
+unit CS.Database.SnippetOrigins;
 
 interface
 

@@ -204,7 +204,7 @@ uses
   Classes,
   RTLConsts,
   // Project
-  CS.Database.SnippetLinks,
+  CS.Database.SnippetOrigins,
   CS.Database.Tags,
   CS.Utils.Hashes,
   UStrUtils;

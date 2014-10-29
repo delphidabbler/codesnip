@@ -95,7 +95,7 @@ uses
   // Project
   CS.ActiveText,
   CS.ActiveText.Helper,
-  CS.Database.SnippetLinks,
+  CS.Database.SnippetOrigins,
   CS.Database.Snippets,
   CS.Database.Tags,
   CS.SourceCode.Languages,

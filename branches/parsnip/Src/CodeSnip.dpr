@@ -367,7 +367,7 @@ uses
   CS.Database.IO.Native in 'Main\CS.Database.IO.Native.pas',
   CS.Database.IO.Types in 'Main\CS.Database.IO.Types.pas',
   CS.Database.SnippetKinds in 'Main\CS.Database.SnippetKinds.pas',
-  CS.Database.SnippetLinks in 'Main\CS.Database.SnippetLinks.pas',
+  CS.Database.SnippetOrigins in 'Main\CS.Database.SnippetOrigins.pas',
   CS.Database.Snippets in 'Main\CS.Database.Snippets.pas',
   CS.Database.SnippetsTable in 'Main\CS.Database.SnippetsTable.pas',
   CS.Database.Tags in 'Main\CS.Database.Tags.pas',
