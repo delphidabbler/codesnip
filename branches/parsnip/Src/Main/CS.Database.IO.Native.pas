@@ -917,14 +917,16 @@ var
   OriginSource: TSnippetOriginSource;
   OriginalID: string;
   Modified: TUTCDateTime;
+resourcestring
+  sError = 'Invalid origin record found for snippet with local origin';
 begin
   // If this property is present snippet is linked to space: the property is
   // never present in file if snippet is not linked. Therefore return value is
-  // never a null instance.
+  // never a local origin instance.
   Reader.ReadBuffer(OriginSource, SizeOf(OriginSource));
   OriginalID := Reader.ReadSizedString16;
   Modified := Reader.ReadISO8601Date;
-  Result := TSnippetOrigin.Create(OriginSource, OriginalID, Modified);
+  Result := TRemoteSnippetOrigin.Create(OriginSource, OriginalID, Modified);
 end;
 
 function TDBNativeReader.ReadSnippetIDs(const Reader: TBinaryStreamReaderEx):

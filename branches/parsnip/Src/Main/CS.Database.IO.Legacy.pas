@@ -515,7 +515,7 @@ begin
   // to record value was read from there and use snippet's last modification
   // date in record.
   ASnippet.SetOrigin(
-    TSnippetOrigin.Create(
+    TRemoteSnippetOrigin.Create(
       sosLegacy,
       LegacySnippetID(SnippetNode),
       ASnippet.GetModified

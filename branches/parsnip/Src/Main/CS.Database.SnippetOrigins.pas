@@ -23,7 +23,7 @@ uses
 
 type
 
-  TSnippetOrigin = class(TInterfacedObject, ISnippetOrigin)
+  TRemoteSnippetOrigin = class(TInterfacedObject, ISnippetOrigin)
   strict private
     var
       fOriginalID: string;
@@ -39,7 +39,7 @@ type
     function GetModified: TUTCDateTime;
   end;
 
-  TNullSnippetOrigin = class(TInterfacedObject, ISnippetOrigin)
+  TLocalSnippetOrigin = class(TInterfacedObject, ISnippetOrigin)
   public
     function IsLinked: Boolean;
     function GetSource: TSnippetOriginSource;
@@ -52,9 +52,9 @@ implementation
 uses
   SysUtils;
 
-{ TSnippetOrigin }
+{ TRemoteSnippetOrigin }
 
-constructor TSnippetOrigin.Create(const ASource: TSnippetOriginSource;
+constructor TRemoteSnippetOrigin.Create(const ASource: TSnippetOriginSource;
   const AOriginalID: string; const AModified: TUTCDateTime);
 begin
   inherited Create;
@@ -63,55 +63,53 @@ begin
   fModified := AModified;
 end;
 
-constructor TSnippetOrigin.Create(Src: ISnippetOrigin);
+constructor TRemoteSnippetOrigin.Create(Src: ISnippetOrigin);
 begin
   Create(Src.Source, Src.OriginalID, Src.Modified);
 end;
 
-function TSnippetOrigin.GetModified: TUTCDateTime;
+function TRemoteSnippetOrigin.GetModified: TUTCDateTime;
 begin
   Result := fModified;
 end;
 
-function TSnippetOrigin.GetOriginalID: string;
+function TRemoteSnippetOrigin.GetOriginalID: string;
 begin
   Result := fOriginalID;
 end;
 
-function TSnippetOrigin.GetSource: TSnippetOriginSource;
+function TRemoteSnippetOrigin.GetSource: TSnippetOriginSource;
 begin
   Result := fSource;
 end;
 
-function TSnippetOrigin.IsLinked: Boolean;
+function TRemoteSnippetOrigin.IsLinked: Boolean;
 begin
   Result := True;
 end;
 
-{ TNullSnippetOrigin }
+{ TLocalSnippetOrigin }
 
-function TNullSnippetOrigin.GetModified: TUTCDateTime;
+function TLocalSnippetOrigin.GetModified: TUTCDateTime;
 begin
   raise ENotImplemented.Create(
     'GetModified is not implemented in ' + ClassName
   );
 end;
 
-function TNullSnippetOrigin.GetOriginalID: string;
+function TLocalSnippetOrigin.GetOriginalID: string;
 begin
   raise ENotSupportedException.Create(
     'GetOriginalID is not implemented in ' + ClassName
   );
 end;
 
-function TNullSnippetOrigin.GetSource: TSnippetOriginSource;
+function TLocalSnippetOrigin.GetSource: TSnippetOriginSource;
 begin
-  raise ENotSupportedException.Create(
-    'GetSource is not implemented in ' + ClassName
-  );
+  Result := sosLocal;
 end;
 
-function TNullSnippetOrigin.IsLinked: Boolean;
+function TLocalSnippetOrigin.IsLinked: Boolean;
 begin
   Result := False;
 end;

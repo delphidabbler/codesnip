@@ -403,8 +403,8 @@ end;
 function TSnippetBase.GetOrigin: ISnippetOrigin;
 begin
   if not Assigned(fOrigin) then
-    Exit(TNullSnippetOrigin.Create);
-  Result := TSnippetOrigin.Create(fOrigin);
+    Exit(TLocalSnippetOrigin.Create);
+  Result := TRemoteSnippetOrigin.Create(fOrigin);
 end;
 
 function TSnippetBase.GetRequiredModules: IStringList;
@@ -501,7 +501,7 @@ begin
   if not Assigned(AOrigin) then
     fOrigin := nil
   else
-    fOrigin := TSnippetOrigin.Create(AOrigin);
+    fOrigin := TRemoteSnippetOrigin.Create(AOrigin);
 end;
 
 procedure TSnippetBase.SetRequiredModules(Value: IStringList);

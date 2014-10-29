@@ -220,7 +220,11 @@ type
   end;
 
   TSnippetOriginSource = (
-    sosLegacy, sosImport, sosSWAG, sosCSOnline
+    sosLocal, // snippet created locally
+    sosLegacy,
+    sosImport,
+    sosSWAG,
+    sosCSOnline
   );
 
   ISnippetOrigin = interface(IInterface)
