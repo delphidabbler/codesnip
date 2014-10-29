@@ -281,15 +281,13 @@ begin
   Snippet := TDBSnippet.Create(TSnippetID.Create(LegacySnippetID(SnippetNode)));
   try
     LoadSnippetProperties(SnippetNode, Snippet);
+    // Starred property has no equivalent property in legacy database. However
+    // the CodeSnip 4 concept of "favourite" snippets maps nicely onto the
+    // Starred property. Favourites were not in the legacy database but in a
+    // "Favourites" file. Therefore any snippet listed in any inherited
+    // "Favourites" file has its Starred property set to True.
     if fFavourites.Contains(Snippet.GetID) then
       Snippet.SetStarred(True);
-    Snippet.SetOrigin(
-      TSnippetOrigin.Create(
-        sosLegacy,
-        LegacySnippetID(SnippetNode),
-        TUTCDateTime.Now()
-      )
-    );
     ATable.Add(Snippet);
   except
     Snippet.Free;
@@ -512,17 +510,20 @@ begin
   ASnippet.SetKindID(GetKindIDProperty);
   ASnippet.SetCompileResults(GetCompileResultsProperty);
   ASnippet.SetTags(GetTagsProperty);
-  // We create a link back to the snippet's original ID
-  // We use the special "Legacy" origin.
+
+  // Origin property has no equivalent in legacy database, but we create one
+  // to record value was read from there and use snippet's last modification
+  // date in record.
   ASnippet.SetOrigin(
     TSnippetOrigin.Create(
       sosLegacy,
       LegacySnippetID(SnippetNode),
-      ASnippet.GetCreated
+      ASnippet.GetModified
     )
   );
+
   // Note that the snippet's TestInfo and Starred properties have no equivalent
-  // property in legacy snippets.
+  // property in legacy snippets database so they are not set here.
 end;
 
 procedure TDBLegacyUserDBReader.OpenXMLDoc;
