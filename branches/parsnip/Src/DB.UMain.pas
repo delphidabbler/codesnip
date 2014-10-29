@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2005-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -141,6 +141,11 @@ type
     function TryLookupSnippet(const ASnippetID: TSnippetID;
       out ASnippet: ISnippet): Boolean;
     function SelectSnippets(FilterFn: TDBFilterFn): ISnippetIDList;
+    // Selects 1st snippet for which FilterFn returns True. Returns True and
+    // passes snippet out in FoundSnippet if found. Returns False and
+    // FoundSnippet is undefined if no snippet found
+    function TrySelectSnippet(FilterFn: TDBFilterFn;
+      out FoundSnippet: ISnippet): Boolean;
     function GetAllSnippets: ISnippetIDList;
     function GetAllTags: ITagSet;
     function GetAllSnippetKinds: ISnippetKindList;
@@ -489,6 +494,20 @@ begin
     ASnippet := fSnippetsTable.Get(ASnippetID).CloneAsReadOnly
   else
     ASnippet := nil;
+end;
+
+function TDatabase.TrySelectSnippet(FilterFn: TDBFilterFn;
+  out FoundSnippet: ISnippet): Boolean;
+var
+  Snippet: TDBSnippet;
+begin
+  for Snippet in fSnippetsTable do
+    if FilterFn(Snippet.CloneAsReadOnly) then
+    begin
+      FoundSnippet := Snippet.CloneAsReadOnly;
+      Exit(True);
+    end;
+  Result := False;
 end;
 
 procedure TDatabase.UpdateSnippet(ASnippet: IEditableSnippet);
