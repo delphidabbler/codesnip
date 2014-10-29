@@ -72,6 +72,12 @@ type
     ///  <summary>Records the given SWAG snippet ready for import into the
     ///  database.</summary>
     procedure IncludeSnippet(const SWAGSnippet: TSWAGSnippet);
+    ///  <summary>Removes the given SWAG snippet from the list of snippets
+    ///  awaiting import into the database.</summary>
+    procedure ExcludeSnippet(const SWAGSnippet: TSWAGSnippet);
+    ///  <summary>Checks if the given SWAG snippet had already been imported
+    ///  into the database.</summary>
+    function SnippetExistsInDB(const SWAGSnippet: TSWAGSnippet): Boolean;
     ///  <summary>Imports all the required SWAG snippets into the database.
     ///  </summary>
     ///  <param name="Callback">TProgressCallback [in] Optional callback to be
@@ -99,8 +105,7 @@ uses
   CS.Database.Tags,
   CS.SourceCode.Languages,
   CS.Utils.Dates,
-  DB.UMain,
-  USnippetValidator;
+  DB.UMain;
 
 
 { TSWAGImporter }
@@ -173,6 +178,11 @@ begin
   inherited;
 end;
 
+procedure TSWAGImporter.ExcludeSnippet(const SWAGSnippet: TSWAGSnippet);
+begin
+  fImportList.Remove(SWAGSnippet);
+end;
+
 procedure TSWAGImporter.Import(const Callback: TProgressCallback);
 var
   SWAGSnippet: TSWAGSnippet;
@@ -193,25 +203,14 @@ end;
 
 procedure TSWAGImporter.IncludeSnippet(const SWAGSnippet: TSWAGSnippet);
 begin
-  fImportList.Add(SWAGSnippet);
+  if not fImportList.Contains(SWAGSnippet) then
+    fImportList.Add(SWAGSnippet);
 end;
 
 class function TSWAGImporter.MakeValidSnippetIDString(SWAGSnippetID: Cardinal):
   string;
-var
-  Appendix: Integer;
-  RootIDStr: string;
 begin
-  RootIDStr := 'SWAG_' + IntToStr(SWAGSnippetID);
-  Assert(TSnippetID.IsValidIDString(RootIDStr), ClassName
-    + '.MakeValidSnippetIDString: RootIDStr is not a valid snippet ID string');
-  Result := RootIDStr;
-  Appendix := 0;
-  while not TSnippetValidator.ValidateSnippetID(Result, True) do
-  begin
-    Inc(Appendix);
-    Result := RootIDStr + '_' + IntToStr(Appendix);
-  end;
+  Result := IntToStr(SWAGSnippetID);
 end;
 
 function TSWAGImporter.NotesBoilerplate: IActiveText;
@@ -284,6 +283,23 @@ end;
 procedure TSWAGImporter.Reset;
 begin
   fImportList.Clear;
+end;
+
+function TSWAGImporter.SnippetExistsInDB(const SWAGSnippet: TSWAGSnippet):
+  Boolean;
+var
+  Dummy: ISnippet;
+  IDStr: string;
+begin
+  IDStr := MakeValidSnippetIDString(SWAGSnippet.ID);
+  Result := Database.TrySelectSnippet(
+    function (TestSnippet: ISnippet): Boolean
+    begin
+      Result := (TestSnippet.Origin.Source = sosSWAG)
+        and (TestSnippet.Origin.OriginalID = IDStr);
+    end,
+    Dummy
+  );
 end;
 
 class function TSWAGImporter.SWAGTagName: string;
