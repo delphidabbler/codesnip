@@ -135,7 +135,8 @@ type
     procedure WriteTagsProp(const Writer: TBinaryStreamWriterEx;
       const PropCode: TDBSnippetProp; Tags: ITagSet;
       const Optional: Boolean);
-    // WriteOriginProp is always "optional": it is never output if not linked.
+    // WriteOriginProp is always "optional": it is never output if origin is
+    // local.
     procedure WriteOriginProp(const Writer: TBinaryStreamWriterEx;
       const PropCode: TDBSnippetProp; Origin: ISnippetOrigin);
     procedure WriteTestInfoProp(const Writer: TBinaryStreamWriterEx;
@@ -564,7 +565,7 @@ procedure TDBNativeWriter.WriteOriginProp(const Writer: TBinaryStreamWriterEx;
 var
   OriginSource: TSnippetOriginSource;
 begin
-  if not Origin.IsLinked then
+  if Origin.Source = sosLocal then
     Exit;
   WritePropCode(Writer, PropCode);
   OriginSource := Origin.Source;
@@ -924,6 +925,8 @@ begin
   // never present in file if snippet is not linked. Therefore return value is
   // never a local origin instance.
   Reader.ReadBuffer(OriginSource, SizeOf(OriginSource));
+  if OriginSource = sosLocal then
+    raise EConvertError.Create(sError);
   OriginalID := Reader.ReadSizedString16;
   Modified := Reader.ReadISO8601Date;
   Result := TRemoteSnippetOrigin.Create(OriginSource, OriginalID, Modified);
