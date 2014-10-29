@@ -154,9 +154,9 @@ begin
   Result.Title := SWAGSnippet.Title;
   Result.Notes := BuildNotes;
   // NOTE: Snippet has no required units, required snippets or cross-references
-  Result.LinkInfo := TSnippetLinkInfo.Create(
-    TSnippetSynchSpaceIDs.SWAG,
-    TSnippetID.Create(MakeValidSnippetIDString(SWAGSnippet.ID)),
+  Result.Origin := TSnippetOrigin.Create(
+    sosSWAG,
+    MakeValidSnippetIDString(SWAGSnippet.ID),
     TUTCDateTime.Create(SWAGSnippet.DateStamp)
   );
 end;

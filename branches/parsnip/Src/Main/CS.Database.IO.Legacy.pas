@@ -283,10 +283,10 @@ begin
     LoadSnippetProperties(SnippetNode, Snippet);
     if fFavourites.Contains(Snippet.GetID) then
       Snippet.SetStarred(True);
-    Snippet.SetLinkInfo(
-      TSnippetLinkInfo.Create(
-        TSnippetSynchSpaceIDs.LegacyDB,
-        TSnippetID.Create(LegacySnippetID(SnippetNode)),
+    Snippet.SetOrigin(
+      TSnippetOrigin.Create(
+        sosLegacy,
+        LegacySnippetID(SnippetNode),
         TUTCDateTime.Now()
       )
     );
@@ -512,18 +512,17 @@ begin
   ASnippet.SetKindID(GetKindIDProperty);
   ASnippet.SetCompileResults(GetCompileResultsProperty);
   ASnippet.SetTags(GetTagsProperty);
-  // We create a link back to the snippet's original ID in case it might be
-  // useful. We use the special "LegacyDB" synch space.
-  ASnippet.SetLinkInfo(
-    TSnippetLinkInfo.Create(
-      TSnippetSynchSpaceIDs.LegacyDB,
-      TSnippetID.Create(LegacySnippetID(SnippetNode)),
+  // We create a link back to the snippet's original ID
+  // We use the special "Legacy" origin.
+  ASnippet.SetOrigin(
+    TSnippetOrigin.Create(
+      sosLegacy,
+      LegacySnippetID(SnippetNode),
       ASnippet.GetCreated
     )
   );
   // Note that the snippet's TestInfo and Starred properties have no equivalent
-  // property in legacy snippets, so the values are not set here: defaults are
-  // acceptable.
+  // property in legacy snippets.
 end;
 
 procedure TDBLegacyUserDBReader.OpenXMLDoc;

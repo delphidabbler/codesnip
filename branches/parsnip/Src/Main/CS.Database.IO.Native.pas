@@ -49,7 +49,7 @@ type
   TDBSnippetProp = (
     spID, spTitle, spDescription, spSourceCode, spLanguageID, spModified,
     spCreated, spRequiredModules, spRequiredSnippets, spXRefs, spNotes, spKind,
-    spCompileResults, spTags, spLinkInfo, spTestInfo, spStarred
+    spCompileResults, spTags, spOrigin, spTestInfo, spStarred
   );
 
   TDBNativeIOBase = class abstract(TInterfacedObject)
@@ -135,9 +135,9 @@ type
     procedure WriteTagsProp(const Writer: TBinaryStreamWriterEx;
       const PropCode: TDBSnippetProp; Tags: ITagSet;
       const Optional: Boolean);
-    // WriteLinkInfoProp is always "optional": it is never output if not linked.
-    procedure WriteLinkInfoProp(const Writer: TBinaryStreamWriterEx;
-      const PropCode: TDBSnippetProp; LinkInfo: ISnippetLinkInfo);
+    // WriteOriginProp is always "optional": it is never output if not linked.
+    procedure WriteOriginProp(const Writer: TBinaryStreamWriterEx;
+      const PropCode: TDBSnippetProp; Origin: ISnippetOrigin);
     procedure WriteTestInfoProp(const Writer: TBinaryStreamWriterEx;
       const PropCode: TDBSnippetProp; const TestInfo: TSnippetTestInfo;
       const Optional: Boolean);
@@ -168,8 +168,7 @@ type
     function ReadCompileResults(const Reader: TBinaryStreamReaderEx):
       TCompileResults;
     function ReadTags(const Reader: TBinaryStreamReaderEx): ITagSet;
-    function ReadLinkInfo(const Reader: TBinaryStreamReaderEx):
-      ISnippetLinkInfo;
+    function ReadOrigin(const Reader: TBinaryStreamReaderEx): ISnippetOrigin;
   public
     constructor Create(const DBPath: string);
     destructor Destroy; override;
@@ -513,20 +512,6 @@ begin
   Writer.WriteSizedString16(LangID.ToString);
 end;
 
-procedure TDBNativeWriter.WriteLinkInfoProp(const Writer: TBinaryStreamWriterEx;
-  const PropCode: TDBSnippetProp; LinkInfo: ISnippetLinkInfo);
-var
-  SynchSpaceID: TGUID;
-begin
-  if not LinkInfo.IsLinked then
-    Exit;
-  WritePropCode(Writer, PropCode);
-  SynchSpaceID := LinkInfo.SynchSpaceID;
-  Writer.WriteBuffer(SynchSpaceID, SizeOf(SynchSpaceID));
-  Writer.WriteSizedString16(LinkInfo.LinkedSnippetID.ToString);
-  Writer.WriteISO8601Date(LinkInfo.Modified);
-end;
-
 procedure TDBNativeWriter.WriteMarkupProp(const Writer: TBinaryStreamWriterEx;
   const PropCode: TDBSnippetProp; ActiveText: IActiveText;
   const Optional: Boolean);
@@ -574,6 +559,20 @@ begin
   end;
 end;
 
+procedure TDBNativeWriter.WriteOriginProp(const Writer: TBinaryStreamWriterEx;
+  const PropCode: TDBSnippetProp; Origin: ISnippetOrigin);
+var
+  OriginSource: TSnippetOriginSource;
+begin
+  if not Origin.IsLinked then
+    Exit;
+  WritePropCode(Writer, PropCode);
+  OriginSource := Origin.Source;
+  Writer.WriteBuffer(OriginSource, SizeOf(OriginSource));
+  Writer.WriteSizedString16(Origin.OriginalID);
+  Writer.WriteISO8601Date(Origin.Modified);
+end;
+
 procedure TDBNativeWriter.WritePropCode(const Writer: TBinaryStreamWriterEx;
   const Code: TDBSnippetProp);
 begin
@@ -614,7 +613,7 @@ begin
       Writer, spCompileResults, ASnippet.GetCompileResults, True
     );
     WriteTagsProp(Writer, spTags, ASnippet.GetTags, True);
-    WriteLinkInfoProp(Writer, spLinkInfo, ASnippet.GetLinkInfo);
+    WriteOriginProp(Writer, spOrigin, ASnippet.GetOrigin);
     WriteTestInfoProp(Writer, spTestInfo, ASnippet.GetTestInfo, True);
     WriteBooleanProp(Writer, spStarred, ASnippet.GetStarred, True);
 
@@ -864,8 +863,8 @@ begin
         ASnippet.SetCompileResults(ReadCompileResults(Reader));
       spTags:
         ASnippet.SetTags(ReadTags(Reader));
-      spLinkInfo:
-        ASnippet.SetLinkInfo(ReadLinkInfo(Reader));
+      spOrigin:
+        ASnippet.SetOrigin(ReadOrigin(Reader));
       spTestInfo:
         ASnippet.SetTestInfo(TSnippetTestInfo(Reader.ReadByte));
       spStarred:
@@ -901,22 +900,6 @@ begin
   end;
 end;
 
-function TDBNativeReader.ReadLinkInfo(const Reader: TBinaryStreamReaderEx):
-  ISnippetLinkInfo;
-var
-  SynchSpaceID: TGUID;
-  LinkedSnippetID: TSnippetID;
-  Modified: TUTCDateTime;
-begin
-  // If this property is present snippet is linked to space: the property is
-  // never present in file if snippet is not linked. Therefore return value is
-  // never a null instance.
-  Reader.ReadBuffer(SynchSpaceID, SizeOf(SynchSpaceID));
-  LinkedSnippetID := TSnippetID.Create(Reader.ReadSizedString16);
-  Modified := Reader.ReadISO8601Date;
-  Result := TSnippetLinkInfo.Create(SynchSpaceID, LinkedSnippetID, Modified);
-end;
-
 function TDBNativeReader.ReadMarkup(const Reader: TBinaryStreamReaderEx):
   IActiveText;
 begin
@@ -926,6 +909,22 @@ begin
     // error: provide an empty property value
     Result := TActiveTextFactory.CreateActiveText;
   end;
+end;
+
+function TDBNativeReader.ReadOrigin(const Reader: TBinaryStreamReaderEx):
+  ISnippetOrigin;
+var
+  OriginSource: TSnippetOriginSource;
+  OriginalID: string;
+  Modified: TUTCDateTime;
+begin
+  // If this property is present snippet is linked to space: the property is
+  // never present in file if snippet is not linked. Therefore return value is
+  // never a null instance.
+  Reader.ReadBuffer(OriginSource, SizeOf(OriginSource));
+  OriginalID := Reader.ReadSizedString16;
+  Modified := Reader.ReadISO8601Date;
+  Result := TSnippetOrigin.Create(OriginSource, OriginalID, Modified);
 end;
 
 function TDBNativeReader.ReadSnippetIDs(const Reader: TBinaryStreamReaderEx):

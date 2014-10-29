@@ -8,8 +8,7 @@
  * $Rev$
  * $Date$
  *
- * Provides a class that encapsulates information about a snippet's links to
- * other snippets, along with a null class that represents the absence of such a
+ * Provides a class that encapsulates information about a snippet's origins.
  * link.
 }
 
@@ -23,44 +22,28 @@ uses
   CS.Utils.Dates;
 
 type
-  // TODO: May need to be in a separate Synch Space unit, or in Types
-  ///  <summary>Defines constants that identify different synch spaces.
-  ///  </summary>
-  TSnippetSynchSpaceIDs = record
-  public
-    const
-      ///  <summary>Synch space used for snippets loaded directly from legacy
-      ///  database.</summary>
-      LegacyDB: TGUID = '{04AE1B53-6D60-48FA-B81F-E8CF15222F6D}';
-      ///  <summary>Synch space used for snippets imported from files exported
-      ///  from CodeSnip.</summary>
-      Imports: TGUID = '{F2FBD770-EDD9-4A08-96DB-1621EED7C933}';
-      ///  <summary>Synch space used for snippets imported from SWAG.</summary>
-      SWAG: TGUID = '{6F5A3861-F322-47E3-9897-83B2669C144E}';
-  end;
 
-  TSnippetLinkInfo = class(TInterfacedObject, ISnippetLinkInfo)
+  TSnippetOrigin = class(TInterfacedObject, ISnippetOrigin)
   strict private
     var
-      fSynchSpaceID: TGUID;
-      fLinkedSnippetID: TSnippetID;
+      fOriginalID: string;
+      fSource: TSnippetOriginSource;
       fModified: TUTCDateTime;
   public
-    constructor Create(const ASynchSpaceID: TGUID;
-      const ALinkedSnippetID: TSnippetID; const AModified: TUTCDateTime);
-      overload;
-    constructor Create(Src: ISnippetLinkInfo); overload;
+    constructor Create(const ASource: TSnippetOriginSource;
+      const AOriginalID: string; const AModified: TUTCDateTime); overload;
+    constructor Create(Src: ISnippetOrigin); overload;
     function IsLinked: Boolean;
-    function GetSynchSpaceID: TGUID;
-    function GetLinkedSnippetID: TSnippetID;
+    function GetSource: TSnippetOriginSource;
+    function GetOriginalID: string;
     function GetModified: TUTCDateTime;
   end;
 
-  TNullSnippetLinkInfo = class(TInterfacedObject, ISnippetLinkInfo)
+  TNullSnippetOrigin = class(TInterfacedObject, ISnippetOrigin)
   public
     function IsLinked: Boolean;
-    function GetSynchSpaceID: TGUID;
-    function GetLinkedSnippetID: TSnippetID;
+    function GetSource: TSnippetOriginSource;
+    function GetOriginalID: string;
     function GetModified: TUTCDateTime;
   end;
 
@@ -69,66 +52,66 @@ implementation
 uses
   SysUtils;
 
-{ TSnippetLinkInfo }
+{ TSnippetOrigin }
 
-constructor TSnippetLinkInfo.Create(const ASynchSpaceID: TGUID;
-  const ALinkedSnippetID: TSnippetID; const AModified: TUTCDateTime);
+constructor TSnippetOrigin.Create(const ASource: TSnippetOriginSource;
+  const AOriginalID: string; const AModified: TUTCDateTime);
 begin
   inherited Create;
-  fSynchSpaceID := ASynchSpaceID;
-  fLinkedSnippetID := ALinkedSnippetID;
+  fSource := ASource;
+  fOriginalID := AOriginalID;
   fModified := AModified;
 end;
 
-constructor TSnippetLinkInfo.Create(Src: ISnippetLinkInfo);
+constructor TSnippetOrigin.Create(Src: ISnippetOrigin);
 begin
-  Create(Src.SynchSpaceID, Src.LinkedSnippetID, Src.Modified);
+  Create(Src.Source, Src.OriginalID, Src.Modified);
 end;
 
-function TSnippetLinkInfo.GetLinkedSnippetID: TSnippetID;
-begin
-  Result := fLinkedSnippetID;
-end;
-
-function TSnippetLinkInfo.GetModified: TUTCDateTime;
+function TSnippetOrigin.GetModified: TUTCDateTime;
 begin
   Result := fModified;
 end;
 
-function TSnippetLinkInfo.GetSynchSpaceID: TGUID;
+function TSnippetOrigin.GetOriginalID: string;
 begin
-  Result := fSynchSpaceID;
+  Result := fOriginalID;
 end;
 
-function TSnippetLinkInfo.IsLinked: Boolean;
+function TSnippetOrigin.GetSource: TSnippetOriginSource;
+begin
+  Result := fSource;
+end;
+
+function TSnippetOrigin.IsLinked: Boolean;
 begin
   Result := True;
 end;
 
-{ TNullSnippetLinkInfo }
+{ TNullSnippetOrigin }
 
-function TNullSnippetLinkInfo.GetLinkedSnippetID: TSnippetID;
-begin
-  raise ENotSupportedException.Create(
-    'GetLinkedSnippetID is not implemented in ' + ClassName
-  );
-end;
-
-function TNullSnippetLinkInfo.GetModified: TUTCDateTime;
+function TNullSnippetOrigin.GetModified: TUTCDateTime;
 begin
   raise ENotImplemented.Create(
     'GetModified is not implemented in ' + ClassName
   );
 end;
 
-function TNullSnippetLinkInfo.GetSynchSpaceID: TGUID;
+function TNullSnippetOrigin.GetOriginalID: string;
 begin
-  raise ENotImplemented.Create(
-    'GetSynchSpaceID is not implemented in ' + ClassName
+  raise ENotSupportedException.Create(
+    'GetOriginalID is not implemented in ' + ClassName
   );
 end;
 
-function TNullSnippetLinkInfo.IsLinked: Boolean;
+function TNullSnippetOrigin.GetSource: TSnippetOriginSource;
+begin
+  raise ENotSupportedException.Create(
+    'GetSource is not implemented in ' + ClassName
+  );
+end;
+
+function TNullSnippetOrigin.IsLinked: Boolean;
 begin
   Result := False;
 end;

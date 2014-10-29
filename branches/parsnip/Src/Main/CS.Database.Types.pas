@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2013-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -219,18 +219,18 @@ type
     property Count: Integer read GetCount;
   end;
 
-  TSnippetOriginKind = (
-    soUser, soImport, soSWAG, soSynchSpace
+  TSnippetOriginSource = (
+    sosLegacy, sosImport, sosSWAG, sosCSOnline
   );
 
-  ISnippetLinkInfo = interface(IInterface)
-    ['{F98BBE9C-B9F1-4FC7-BDE2-BBC90958BF52}']
-    function IsLinked: Boolean;
-    function GetSynchSpaceID: TGUID;
-    function GetLinkedSnippetID: TSnippetID;
+  ISnippetOrigin = interface(IInterface)
+    ['{2155B208-D00F-4C43-A897-823F9AE91739}']
+    function GetSource: TSnippetOriginSource;
+    function GetOriginalID: string;
     function GetModified: TUTCDateTime;
-    property SynchSpaceID: TGUID read GetSynchSpaceID;
-    property LinkedSnippetID: TSnippetID read GetLinkedSnippetID;
+    function IsLinked: Boolean;
+    property Source: TSnippetOriginSource read GetSource;
+    property OriginalID: string read GetOriginalID;
     property Modified: TUTCDateTime read GetModified;
   end;
 
@@ -258,7 +258,7 @@ type
     function GetKindID: TSnippetKindID;
     function GetCompileResults: TCompileResults;
     function GetTags: ITagSet;
-    function GetLinkInfo: ISnippetLinkInfo;
+    function GetOrigin: ISnippetOrigin;
     function GetTestInfo: TSnippetTestInfo;
     function GetStarred: Boolean;
 
@@ -282,7 +282,7 @@ type
     property KindID: TSnippetKindID read GetKindID;
     property CompileResults: TCompileResults read GetCompileResults;
     property Tags: ITagSet read GetTags;
-    property LinkInfo: ISnippetLinkInfo read GetLinkInfo;
+    property Origin: ISnippetOrigin read GetOrigin;
     property TestInfo: TSnippetTestInfo read GetTestInfo;
     property Starred: Boolean read GetStarred;
   end;
@@ -300,7 +300,7 @@ type
     procedure SetKindID(const ASnippetKind: TSnippetKindID);
     procedure SetCompileResults(const AResults: TCompileResults);
     procedure SetTags(ATagList: ITagSet);
-    procedure SetLinkInfo(ALinkInfo: ISnippetLinkInfo);
+    procedure SetOrigin(AOrigin: ISnippetOrigin);
     procedure SetTestInfo(ATestInfo: TSnippetTestInfo);
     procedure SetStarred(AStarred: Boolean);
 
@@ -323,7 +323,7 @@ type
     property CompileResults: TCompileResults read GetCompileResults
       write SetCompileResults;
     property Tags: ITagSet read GetTags write SetTags;
-    property LinkInfo: ISnippetLinkInfo read GetLinkInfo write SetLinkInfo;
+    property Origin: ISnippetOrigin read GetOrigin write SetOrigin;
     property TestInfo: TSnippetTestInfo read GetTestInfo write SetTestInfo;
     property Starred: Boolean read GetStarred write SetStarred;
   end;

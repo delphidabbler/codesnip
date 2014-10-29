@@ -63,7 +63,7 @@ type
       fKindID: TSnippetKindID;
       fCompileResults: TCompileResults;
       fTags: ITagSet;
-      fLinkInfo: ISnippetLinkInfo;
+      fOrigin: ISnippetOrigin;
       fTestInfo: TSnippetTestInfo;
       fStarred: Boolean;
   public
@@ -100,8 +100,8 @@ type
     procedure SetCompileResults(const Value: TCompileResults);
     function GetTags: ITagSet; virtual;
     procedure SetTags(Value: ITagSet);
-    function GetLinkInfo: ISnippetLinkInfo; virtual;
-    procedure SetLinkInfo(ALinkInfo: ISnippetLinkInfo);
+    function GetOrigin: ISnippetOrigin; virtual;
+    procedure SetOrigin(AOrigin: ISnippetOrigin);
     function GetTestInfo: TSnippetTestInfo; virtual;
     procedure SetTestInfo(ATestInfo: TSnippetTestInfo);
     function GetStarred: Boolean; virtual;
@@ -339,7 +339,7 @@ begin
   for CompID := Low(TCompilerID) to High(TCompilerID) do
     fCompileResults[CompID] := crQuery;
   fTags := nil;
-  fLinkInfo := nil;
+  fOrigin := nil;
   fTestInfo := stiNone;
   fStarred := False;
 end;
@@ -388,13 +388,6 @@ begin
   Result := fLanguageID;
 end;
 
-function TSnippetBase.GetLinkInfo: ISnippetLinkInfo;
-begin
-  if not Assigned(fLinkInfo) then
-    Exit(TNullSnippetLinkInfo.Create);
-  Result := TSnippetLinkInfo.Create(fLinkInfo);
-end;
-
 function TSnippetBase.GetModified: TUTCDateTime;
 begin
   Result := fModified;
@@ -405,6 +398,13 @@ begin
   if not Assigned(fNotes) then
     Exit(TActiveTextFactory.CreateActiveText);
   Result := TActiveTextFactory.CloneActiveText(fNotes);
+end;
+
+function TSnippetBase.GetOrigin: ISnippetOrigin;
+begin
+  if not Assigned(fOrigin) then
+    Exit(TNullSnippetOrigin.Create);
+  Result := TSnippetOrigin.Create(fOrigin);
 end;
 
 function TSnippetBase.GetRequiredModules: IStringList;
@@ -483,14 +483,6 @@ begin
   fLanguageID := Value;
 end;
 
-procedure TSnippetBase.SetLinkInfo(ALinkInfo: ISnippetLinkInfo);
-begin
-  if not Assigned(ALinkInfo) then
-    fLinkInfo := nil
-  else
-    fLinkInfo := TSnippetLinkInfo.Create(ALinkInfo);
-end;
-
 procedure TSnippetBase.SetModified(const Value: TUTCDateTime);
 begin
   fModified := Value;
@@ -502,6 +494,14 @@ begin
     fNotes := nil
   else
     fNotes := TActiveTextFactory.CloneActiveText(Value);
+end;
+
+procedure TSnippetBase.SetOrigin(AOrigin: ISnippetOrigin);
+begin
+  if not Assigned(AOrigin) then
+    fOrigin := nil
+  else
+    fOrigin := TSnippetOrigin.Create(AOrigin);
 end;
 
 procedure TSnippetBase.SetRequiredModules(Value: IStringList);
@@ -575,7 +575,7 @@ begin
   SetKindID(ASourceSnippet.fKindID);
   SetCompileResults(ASourceSnippet.fCompileResults);
   SetTags(ASourceSnippet.fTags);
-  SetLinkInfo(ASourceSnippet.fLinkInfo);
+  SetOrigin(ASourceSnippet.fOrigin);
   SetTestInfo(ASourceSnippet.fTestInfo);
   SetStarred(ASourceSnippet.fStarred);
 end;
