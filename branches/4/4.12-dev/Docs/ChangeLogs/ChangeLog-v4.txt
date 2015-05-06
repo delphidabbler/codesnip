@@ -11,6 +11,11 @@
 ; Change Log for CodeSnip Release 4
 ; ------------------------------------------------------------------------------
 
+Release v4.12.0 of 6 May 2015
++ Added support for test compilation with, and detection of, Delphi XE8 compiler.
++ Updated documentation re changes.
++ Updated help file re changes and fixed some spelling mistakes.
+
 Release v4.11.1 of 26 October 2014
 + Corrected an erroneous error message that is displayed when circular snippet references are detected in the snippets editor (no bug report filed).
 + Corrected some spelling errors in UI.
