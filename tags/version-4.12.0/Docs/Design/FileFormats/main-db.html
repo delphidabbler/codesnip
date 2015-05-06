@@ -1,0 +1,722 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!--
+ * This Source Code Form is subject to the terms of the Mozilla Public License,
+ * v. 2.0. If a copy of the MPL was not distributed with this file, You can
+ * obtain one at http://mozilla.org/MPL/2.0/
+ *
+ * Copyright (C) 2012-2015, Peter Johnson (www.delphidabbler.com).
+ *
+ * $Rev$
+ * $Date$
+ *
+ * CodeSnip File Format Documentation: Main Database
+-->
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+
+<head>
+
+<title>
+  CodeSnip File Format Documentation - Main Database
+</title>
+
+<link
+  rel="stylesheet"
+  type="text/css"
+  media="screen"
+  href="main.css"
+/>
+
+</head>
+
+<body>
+
+<div class="title">
+  <div>
+    DelphiDabbler CodeSnip
+  </div>
+  <div class="subtitle">
+    File Format Documentation
+  </div>
+</div>
+
+<h1>
+  Main Database Files
+</h1>
+
+<h2>
+  Introduction
+</h2>
+
+<p>
+  The Code Snippets database is stored in a set of .ini files with associated
+  data files located in the main database directory. Two subsidiary text files
+  containing credits are also included.
+</p>
+
+<p>
+  The master data file is named <code>categories.ini</code>. This lists the
+  database categories. There is another .ini file for each category which stores
+  information about all the snippets in the category.
+</p>
+
+<p>
+  The source code for each snippet is stored in separate data files &ndash; one
+  or more per snippet. This snippet file is referenced in the relevant category
+  .ini file.
+</p>
+
+<p>
+  The credits text files contain lists of names.
+</p>
+
+<h2>
+  Encoding
+</h2>
+
+<p>
+  CodeSnip v4 stores all main database files, including the subsidiary text
+  files, using UTF-8 encoding. Files are saved with the UTF-8 preamble (BOM).
+</p>
+
+<p>
+  Prior to CodeSnip v4 local database files were encoded using the system
+  default ANSI code page.
+</p>
+
+<p>
+  CodeSnip v4 must be able to work with both encodings because it may inherit or
+  have to use a database downloaded by a v3 or earlier version of the program.
+</p>
+
+<h2>
+  File Format
+</h2>
+
+<h3>
+  Master Data File
+</h3>
+
+<p>
+  This file has a simple format. Each section is named after a category id, i.e.
+  the id by which the category is referred to in the database. Each section of
+  the .ini file has a value containing the description of the category and
+  another that names the category's .ini file. Here is the format of a
+  section:
+</p>
+
+<pre class="indent">[cat-id]
+Desc=Category description
+Ini=ini-file-name</pre>
+
+<p>
+  and here is an example (this is a copy of the &quot;Date and Time&quot;
+  category's entry):
+</p>
+
+<pre class="indent">[date]
+Desc=Date and Time
+Ini=date.ini</pre>
+
+<h3>
+  Category ini files
+</h3>
+
+<p>
+  Each section in these files defines a snippet and has the following content:
+</p>
+
+<pre class="indent">[snippet-name]
+DisplayName=&lt;snippet-display-name&gt;
+Desc=&lt;description-text&gt;
+DescEx=&lt;description-REML&gt;
+Snip=&lt;snippet-file-name&gt;
+Units=&lt;required-units&gt;
+Depends=&lt;required-snippets&gt;
+SeeAlso=&lt;cross-referenced-snippets&gt;
+Credits=&lt;credits-text&gt;
+Credits_URL=&lt;url-used-in-credits&gt;
+Comments=&lt;comments-text&gt;
+Delphi2=&lt;Y|N|Q|W&gt;
+Delphi3=&lt;Y|N|Q|W&gt;
+Delphi4=&lt;Y|N|Q|W&gt;
+Delphi5=&lt;Y|N|Q|W&gt;
+Delphi6=&lt;Y|N|Q|W&gt;
+Delphi7=&lt;Y|N|Q|W&gt;
+Delphi2005Win32=&lt;Y|N|Q|W&gt;
+Delphi2006Win32=&lt;Y|N|Q|W&gt;
+Delphi2007=&lt;Y|N|Q|W&gt;
+Delphi2009Win32=&lt;Y|N|Q|W&gt;
+Delphi2010=&lt;Y|N|Q|W&gt;
+DelphiXE=&lt;Y|N|Q|W&gt;
+DelphiXE2=&lt;Y|N|Q|W&gt;
+DelphiXE3=&lt;Y|N|Q|W&gt;
+DelphiXE4=&lt;Y|N|Q|W&gt;
+DelphiXE5=&lt;Y|N|Q|W&gt;
+DelphiXE6=&lt;Y|N|Q|W&gt;
+DelphiXE7=&lt;Y|N|Q|W&gt;
+DelphiXE8=&lt;Y|N|Q|W&gt;
+FPC=&lt;Y|N|Q|W&gt;
+Extra=&lt;extra-info-REML&gt;
+StandardFormat=&lt;0|1&gt;
+Kind=&lt;freeform|routine|type|const|class|unit&gt;
+TestInfo=&lt;none|basic|advanced&gt;
+MinVer=&lt;version-number&gt;</pre>
+
+<p>
+  The sections in these files are named with a unique name that identifies a
+  snippet. This must be a valid Unicode Pascal identifier. The values have the
+  following purpose:
+</p>
+
+<dl>
+  <dt>
+    <em>DisplayName</em>
+  </dt>
+  <dd>
+    <div class="half-spaced">
+      Display name of snippet. If present this value is used in the program GUI
+      as the snippet's name. The value is optional. If not present the name of
+      the section is used as the display name. There are no restriction on the
+      characters used.
+    </div>
+    <div class="half-spaced">
+      Supported from CodeSnip v4.0 beta 1 and ignored by earlier versions which
+      always use the section name as display name.
+    </div>
+  </dd>
+  <dt>
+    <em>Desc</em>
+  </dt>
+  <dd>
+    Description of the snippet as plain text. Ignored by versions of CodeSnip
+    that recognise <em>DescEx</em> if that field is present.
+  </dd>
+  <dt>
+    <em>DescEx</em>
+  </dt>
+  <dd>
+    <div class="half-spaced">
+      Formatted description of the snippet using <acronym
+        title="REML is decribed in the program's help file"
+      >REML</acronym> code. May be empty, in which case the <em>Desc</em> field
+      is used. The <em>Desc</em> field is ignored if <em>DescEx</em> has a
+      value.
+    </div>
+    <div class="half-spaced">
+      Supported from CodeSnip v4.0 beta 1.
+    </div>
+  </dd>
+  <dt>
+    <em>Snip</em>
+  </dt>
+  <dd>
+    Name of file containing source code. Contains no file path information.
+  </dd>
+  <dt>
+    <em>Units</em>
+  </dt>
+  <dd>
+    Comma separated list of units required by the snippet. May be empty if no
+    units are required. The System unit is assumed and does not need to be
+    specified.
+  </dd>
+  <dt>
+    <em>Depends</em>
+  </dt>
+  <dd>
+    Comma separated list of snippets that are required to compile this snippet.
+    May be empty if there are no dependencies. Must not cause a circular
+    reference back to this snippet.
+  </dd>
+  <dt>
+    <em>SeeAlso</em>
+  </dt>
+  <dd>
+    Comma separated list of cross-referenced snippets. May be empty.
+  </dd>
+  <dt>
+    <em>Credits</em>
+  </dt>
+  <dd>
+    <div class="half-spaced">
+      Text string that notes any credits / acknowledgements. May be empty.
+    </div>
+    <div class="half-spaced">
+      <em>Credits</em> may optionally contain one (and only one) section of text
+      delimited by &quot;[&quot; and &quot;]&quot; characters that indicate the
+      presence of a hyperlink. The text enclosed by &quot;[&quot; and
+      &quot;]&quot; is used for the text of the hyperlink. If present the
+      <em>Credits_URL</em> field  must contain the URL of the hyperlink.
+    </div>
+    <div class="half-spaced">
+      <em>Credits</em> is ignored by versions of CodeSnip that recognise the
+      <em>Extra</em> field unless the <em>Extra</em> field is empty.
+    </div>
+  </dd>
+  <dt>
+    <em>Credits_URL</em>
+  </dt>
+  <dd>
+    The URL used in any hyperlink present in the <em>Credits</em> field. Should
+    be empty if <em>Credits</em> contains no hyperlink section.
+  </dd>
+  <dt>
+    <em>Comments</em>
+  </dt>
+  <dd>
+    <div class="half-spaced">
+      Text string containing any additional comments about the snippet. May be
+      empty.
+    </div>
+    <div class="half-spaced">
+      Ignored by versions of CodeSnip that recognise the <em>Extra</em> field
+      unless the <em>Extra</em> field is empty.
+    </div>
+  </dd>
+  <dt>
+    <em>DelphiXXX</em> &amp; <em>FPC</em>
+  </dt>
+  <dd>
+    <div class="half-spaced">
+      This related group of values describe compilation results for the snippets
+      on various compilers. Valid value names are:
+    </div>
+    <ul class="unspaced">
+      <li>
+        <em>Delphi2</em> &ndash; Delphi 2 compiler
+      </li>
+      <li>
+        <em>Delphi3</em> &ndash; Delphi 3 compiler
+      </li>
+      <li>
+        <em>Delphi4</em> &ndash; Delphi 4 compiler
+      </li>
+      <li>
+        <em>Delphi5</em> &ndash; Delphi 5 compiler
+      </li>
+      <li>
+        <em>Delphi6</em> &ndash; Delphi 6 compiler
+      </li>
+      <li>
+        <em>Delphi7</em> &ndash; Delphi 7 compiler
+      </li>
+      <li>
+        <em>Delphi2005Win32</em> &ndash; Win32 personality of Delphi 2005
+        compiler
+      </li>
+      <li>
+        <em>Delphi2006Win32</em> &ndash; Win32 personality of Delphi 2006
+        compiler
+      </li>
+      <li>
+        <em>Delphi2007</em> &ndash; Delphi 2007 compiler
+      </li>
+      <li>
+        <em>Delphi2009Win32</em> &ndash; Win32 personality of Delphi 2009
+        compiler
+      </li>
+      <li>
+        <em>Delphi2010</em> &ndash; Delphi 2010 compiler
+      </li>
+      <li>
+        <em>DelphiXE</em> &ndash; Delphi XE compiler
+      </li>
+      <li>
+        <em>DelphiXE2</em> &ndash; Delphi XE2 compiler
+      </li>
+      <li>
+        <em>DelphiXE3</em> &ndash; Delphi XE3 compiler
+      </li>
+      <li>
+        <em>DelphiXE4</em> &ndash; Delphi XE4 compiler
+      </li>
+      <li>
+        <em>DelphiXE5</em> &ndash; Delphi XE5 compiler
+      </li>
+      <li>
+        <em>DelphiXE6</em> &ndash; Delphi XE6 compiler
+      </li>
+      <li>
+        <em>DelphiXE7</em> &ndash; Delphi XE7 compiler
+      </li>
+      <li>
+        <em>DelphiXE8</em> &ndash; Delphi XE8 compiler
+      </li>
+      <li>
+        <em>FPC</em> &ndash; Free Pascal compiler
+      </li>
+    </ul>
+    <div class="half-spaced">
+      Valid values for these fields are:
+    </div>
+    <ul class="unspaced">
+      <li>
+        &quot;Y&quot; &ndash; compiles on the compiler
+      </li>
+      <li>
+        &quot;N&quot; &ndash; does not compile on the compiler
+      </li>
+      <li>
+        &quot;W&quot; &ndash; compiles with warnings on the compiler
+      </li>
+      <li>
+        &quot;Q&quot; &ndash; compilation result unknown
+      </li>
+    </ul>
+    <div class="half-spaced">
+      If not present, the compile result is assumed to be &quot;Q&quot;
+    </div>
+    <div class="half-spaced">
+      From CodeSnip v3.8.9 a compile result of &quot;W&quot; is treated as if it
+      were &quot;Y&quot;.
+    </div>
+    <div class="half-spaced">
+      Any compiler not recognised by a given version of CodeSnip is ignored.
+    </div>
+  </dd>
+  <dt>
+    <em>Extra</em>
+  </dt>
+  <dd>
+    <div class="half-spaced">
+      Provides extra information about the snippet. Can be empty or be a string
+      of <acronym
+        title="REML is decribed in the program's help file"
+      >REML</acronym> code.
+    </div>
+    <div class="half-spaced">
+      If empty the extra information is generated from any <em>Comments</em> and
+      <em>Credits</em> / <em>Credits_URL</em> values.
+    </div>
+    <div class="half-spaced">
+      This value was supported from CodeSnip v2.2.5.
+    </div>
+  </dd>
+  <dt>
+    <em>StandardFormat</em>
+  </dt>
+  <dd>
+    <div class="half-spaced">
+      Flag indicating if a snippet is in &quot;standard format&quot;. Valid
+      values are:
+    </div>
+    <ul class="unspaced">
+      <li>
+        &quot;0&quot &ndash; no
+      </li>
+      <li>
+        &quot;1&quot; &ndash; yes.
+      </li>
+    </ul>
+    <div class="half-spaced">
+      If not present then <em>StandardFormat</em> = &quot;1&quot; is assumed.
+    </div>
+    <div class="half-spaced">
+      This value was supported from CodeSnip v2.0.
+    </div>
+    <div class="half-spaced">
+      From CodeSnip v3.0 <em>StandardFormat</em> is ignored if the <em>Kind</em>
+      value is present. If <em>Kind</em> is not present then
+      <em>StandardFormat</em> = &quot;0&quot; is read as <em>Kind</em> =
+      &quot;freeform&quot; and <em>StandardFormat</em> = &quot;1&quot; is read
+      as <em>Kind</em> = &quot;routine&quot;.
+    </div>
+  </dd>
+  <dt>
+    <em>Kind</em>
+  </dt>
+  <dd>
+    <div class="half-spaced">
+      Kind of code snippet. Valid values are:
+    </div>
+    <ul class="unspaced">
+      <li>
+        &quot;freeform&quot; &ndash; a freeform snippet that doesn't conform to
+        any type other supported type
+      </li>
+      <li>
+        &quot;routine&quot; &ndash; a Pascal routine (function or procedure)
+      </li>
+      <li>
+        &quot;type&quot; &ndash; a simple Pascal type definition
+      </li>
+      <li>
+        &quot;const&quot; &ndash; a Pascal constant definition
+      </li>
+      <li>
+        &quot;class&quot; &ndash; a Pascal class or advanced record definition
+        and implementation.
+      </li>
+      <li>
+        &quot;unit&quot; &ndash; a complete Pascal unit
+      </li>
+    </ul>
+    <div class="half-spaced">
+      If <em>Kind</em> is not present and <em>StandardFormat</em> is then
+      <em>StandardFormat</em> = &quot;1&quot; implies <em>Kind</em> =
+      &quot;routine&quot; and <em>StandardFormat</em> = "0" implies
+      <em>Kind</em> = &quot;freeform&quot;. If neither <em>Kind</em> nor
+      <em>StandardFormat</em> are present then <em>Kind</em> defaults to
+      &quot;routine&quot;.
+    </div>
+    <div class="half-spaced">
+      This value was supported from CodeSnip v3.0.
+    </div>
+  </dd>
+  <dt>
+    <em>TestInfo</em>
+  </dt>
+  <dd>
+    <div class="half-spaced">
+      Testing information for snippets. Valid values are:
+    </div>
+    <ul class="unspaced">
+      <li>
+        &quot;none&quot; &ndash; the snippet has not been tested
+      </li>
+      <li>
+        &quot;basic&quot; &ndash; the snippet has passed some simple testing
+      </li>
+      <li>
+        &quot;advanced&quot; &ndash; the snippet has passed more advanced
+        testing, usually unit tests
+      </li>
+    </ul>
+    <div class="half-spaced">
+      If <em>TestInfo</em> is not present then its value defaults to
+      &quot;basic&quot;. This is because, until the release of CodeSnip v4.0,
+      all snippets had undergone at least basic testing.
+    </div>
+    <div class="half-spaced">
+      This value was supported from CodeSnip v4.0.
+    </div>
+  </dd>
+  <dt>
+    <em>MinVer</em>
+  </dt>
+  <dd>
+    <div class="half-spaced">
+      Ignored.
+    </div>
+    <div class="half-spaced">
+      This value was used by a now defunct version of the online Code Snippets
+      Database, but is no longer used.
+    </div>
+  </dd>
+</dl>
+
+<p>
+  Each value should occur only once. If more than one value of the same type is
+  present the result is not defined and may change between program versions.
+</p>
+
+<h4>
+  Pre-processor directives
+</h4>
+
+<p>
+  A simple pre-processor was added to CodeSnip v3 and later that can process
+  special pre-processor instructions contained in .ini files. The pre-processor
+  symbols are ignored by CodeSnip versions earlier than v3. These symbols allow
+  the program's version number to be tested and different parts of the file to
+  be read or ignored accordingly.
+</p>
+
+<p>
+  Pre-processor instructions all begin with &quot;;&quot;, the .ini file comment
+  character, followed by a &quot;#&quot; and then the instruction name. Valid
+  instructions are:
+</p>
+
+<dl>
+  <dt>
+    <em>if-ver-eq &lt;version&gt;</em>
+  </dt>
+  <dd>
+    Checks if application version is equal to &lt;version&gt;.
+  </dd>
+  <dt>
+    <em>if-ver-neq &lt;version&gt;</em>
+  </dt>
+  <dd>
+    Checks if application version is not equal to &lt;version&gt;.
+  </dd>
+  <dt>
+    <em>if-ver-lt &lt;version&gt;</em>
+  </dt>
+  <dd>
+    Checks if application version is less than &lt;version&gt;.
+  </dd>
+  <dt>
+    <del><em>if-ver-lte &lt;version&gt;</em></del>
+  </dt>
+  <dd>
+    <del>Checks if application version is less than or equal to
+    &lt;version&gt;.</del> &dagger;
+  </dd>
+  <dt>
+    <em>if-ver-gt &lt;version&gt;</em>
+  </dt>
+  <dd>
+    Checks if application version is greater than &lt;version&gt;.
+  </dd>
+  <dt>
+    <del><em>if-ver-gte &lt;version&gt;</em></del>
+  </dt>
+  <dd>
+    <del>Checks if application version is greater than or equal to
+    &lt;version&gt;.</del> &dagger;
+  </dd>
+  <dt>
+    <em>if-ver-inrange &lt;version-lo&gt; &lt;version-hi&gt;</em>
+  </dt>
+  <dd>
+    Checks if application version is in the range of versions specified from
+    &lt;version-lo&gt; to &lt;version-hi&gt;, inclusive.
+  </dd>
+  <dt>
+    <em>end-if</em>
+  </dt>
+  <dd>
+    Ends a block started by any of the if-xxx instructions above. The block of
+    text is only evaluated if the if-xxx instruction evaluates true.
+  </dd>
+</dl>
+
+<p>
+  &dagger; Due to a bug going back to <em>CodeSnip</em> v3.0 <em>if-ver-gte</em>
+  and <em>if-ver-lte</em> have never worked correctly: they have always been
+  interpreted as <em>if-ver-gt</em> and <em>if-ver-lt</em> respectively. A fix
+  to this could now cause more problems than it solves in older version of
+  <em>CodeSnip</em>, so the implementation of the problematic directives has
+  been removed from later versions of the program and all occurrences of the
+  directives in the database have been replaced by suitable
+  <em>if-ver-inrange</em> directives.
+</p>
+
+<p>
+  In all cases version numbers are dotted quads of the form X.X.X.X where X is
+  a sequence of digits. All except the first digit can be left out: omitted
+  digits are assumed to be zero, so that 1.0.0.0, 1.0.0, 1.0 and 1 are all
+  equivalent.
+</p>
+
+<p>
+  <em>if-ver-lt 3</em> can be used to ignore a whole snippet definition in a
+  normal .ini file, leaving the possibility of having a duplicate definition for
+  CodeSnip v3 or later stored in a matching .3.ini file. E.g.
+</p>
+
+<p>
+  <code>date.ini</code>:
+</p>
+
+<pre class="indent">
+;#if-ver-lt 3
+[Snippet1]
+Desc=&quot;My description&quot;
+Snip=044.dat
+...
+;#end-if</pre>
+
+<p>
+  <code>date.3.ini</code>:
+</p>
+
+<pre class="indent">[Snippet1]
+Desc=&quot;My second description&quot;
+Snip=044.3.dat
+...</pre>
+
+<h4>
+  Additional .ini Files For CodeSnip v3 and v4
+</h4>
+
+<p>
+  From CodeSnip v3 additional .ini files with .3 interposed between the file
+  name and extension are supported (e.g. <code>category.3.ini</code> and
+  <code>date.3.ini</code> are valid names).
+</p>
+
+<p>
+  From v4 similar files using the interposed .4 extension are supported in
+  addition to the .3 files (e.g <code>winsys.4.ini</code>).
+</p>
+
+<p>
+  CodeSnip concatenates all .ini files with the same base name before analysing
+  the file. For example if <code>date.ini</code>, <code>date.3.ini</code> and
+  <code>date.4.ini</code> all exist then <code>date.3.ini</code> and
+  <code>date.4.ini</code> are appended to <code>date.ini</code> before the files
+  are analysed.
+</p>
+
+<p>
+  The .3 &quot;inner&quot; extension was provided for category files so that
+  constant and type definition snippets could be hidden from CodeSnip versions
+  below v3 but be visible to CodeSnip v3 and later. The new style constant and
+  type definition snippets are only recorded in .3 style files.
+</p>
+
+<p>
+  <code>categories.3.ini</code> has been provided to add any sections that need
+  to be hidden from CodeSnip versions before v3. The &quot;types&quot; and
+  &quot;consts&quot; sections are recorded in this file.
+</p>
+
+<p>
+  .4 &quot;inner&quot; extensions are there to support any CodeSnip v4 specific
+  features that can't be hidden from earlier versions.
+</p>
+
+<p>
+  Finally, it is possible that a <code>name.3.ini</code> or
+  <code>name.4.ini</code> file will exist with no matching
+  <code>name.ini</code>. In this case <code>categories.ini</code> (or
+  <code>categories.3.ini</code>) must still refer to <code>name.ini</code>, not
+  <code>name.3.ini</code> or <code>name.4.ini</code>. The program works out
+  which files to load.
+</p>
+
+<h3>
+  Source Code Files
+</h3>
+
+<p>
+  Source code is stored separately from the category .ini files. Each snippet
+  has its own uniquely named file. Files can have any name providing it doesn't
+  clash with the master file name or the names of the category files. By
+  convention, source code files are named numerically in sequence and have a
+  .dat file extension. So <code>102.dat</code> is a typical source code file
+  name. Sometimes there is a separate file for later versions of CodeSnip, so
+  an occasional file named, for example, <code>102.3.dat</code> may be found.
+</p>
+
+<p>
+  Source code files are referenced by the <em>Snip</em> field in category .ini
+  files.
+</p>
+
+<h3>
+  Subsidiary &quot;Credits&quot; Text Files
+</h3>
+
+<p>
+  There are two credits files, <code>contrib.txt</code> and
+  <code>testers.txt</code> that list the people who have contributed code to the
+  main database or helped to test the code, respectively.
+</p>
+
+<p>
+  Each file is simply a list of names, each name on a separate line.
+</p>
+
+<p>
+  The credits files stand alone from the other files in the database in that
+  they are not referenced by, and do not reference, any of the other files.
+</p>
+
+</body>
+
+</html>
