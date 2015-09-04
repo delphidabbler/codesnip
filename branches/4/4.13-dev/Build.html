@@ -6,7 +6,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2009-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2009-2015, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -554,7 +554,11 @@ set PATHSET=1
         <div>
           Check out the source using the following command:
         </div>
-        <pre class="cmd"><span class="prompt">&gt;</span> svn checkout http://codesnip.googlecode.com/svn/trunk/ PATH</pre>
+        <pre class="cmd"><span class="prompt">&gt;</span> svn checkout https://svn.code.sf.net/p/codesnip/code/trunk PATH</pre>
+        <div>
+          or
+        </div>
+        <pre class="cmd"><span class="prompt">&gt;</span> svn checkout svn://svn.code.sf.net/p/codesnip/code/trunk PATH</pre>
         <div>
           Where <code>PATH</code> is the directory where you want to place the
           working copy. You will not be able to commit changes unless you join
@@ -565,7 +569,11 @@ set PATHSET=1
         <div>
           Export the code using this command:
         </div>
-        <pre class="cmd"><span class="prompt">&gt;</span> svn export http://codesnip.googlecode.com/svn/trunk/ PATH</pre>
+        <pre class="cmd"><span class="prompt">&gt;</span> svn export https://svn.code.sf.net/p/codesnip/code/trunk PATH</pre>
+        <div>
+          or
+        </div>
+        <pre class="cmd"><span class="prompt">&gt;</span> svn export svn://svn.code.sf.net/p/codesnip/code/trunk PATH</pre>
         <div>
           where <code>PATH</code> is the directory where you wish to store the
           code.
