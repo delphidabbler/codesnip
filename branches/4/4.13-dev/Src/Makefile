@@ -2,7 +2,7 @@
 # v. 2.0. If a copy of the MPL was not distributed with this file, You can
 # obtain one at http://mozilla.org/MPL/2.0/
 #
-# Copyright (C) 2009-2014, Peter Johnson (www.delphidabbler.com).
+# Copyright (C) 2009-2015, Peter Johnson (www.delphidabbler.com).
 #
 # $Rev$
 # $Date$
@@ -31,6 +31,8 @@ DELPHIROOT = $(DELPHIXE)
 # Define macros for required tools
 
 TLIBIMP = "$(DELPHIROOT)\Bin\TLibImp.exe"
+
+GENTLB = "$(DELPHIROOT)\Bin\GenTLB.exe"
 
 MAKE = "$(MAKEDIR)\Make.exe" -$(MAKEFLAGS)
 
@@ -69,18 +71,6 @@ HHC = HHC.exe
 ZIP = "$(ZIPROOT)\Zip.exe"
 !else
 ZIP = Zip.exe
-!endif
-
-!ifndef IGNOREMIDL
-!ifdef MSSDK
-MIDL = "$(MSSDK)\Bin\MIDL.exe"
-!else
-# MSSDK is required
-!error MSSDK environment variable required.
-!endif
-!else
-# MIDL.exe can be ignored if IGNOREMIDL macro is defined: replace with echo
-MIDL = @echo *** IGNORING MIDL
 !endif
 
 # Command line options
@@ -165,7 +155,7 @@ HTML.res: HTML.hrc
 
 # Compiles type library from IDL
 typelib:
-  @$(MIDL) .\ExternalObj.idl /tlb $(BIN)\ExternalObj.tlb /I "$(MSSDK)\Include"
+  @$(GENTLB) .\ExternalObj.ridl -D$(BIN) -TExternalObj.tlb
 
 # Builds setup program
 setup:
