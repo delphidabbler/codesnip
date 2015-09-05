@@ -237,7 +237,7 @@ const
     'Delphi2', 'Delphi3', 'Delphi4', 'Delphi5', 'Delphi6', 'Delphi7',
     'Delphi2005Win32', 'Delphi2006Win32', 'Delphi2007', 'Delphi2009Win32',
     'Delphi2010', 'DelphiXE', 'DelphiXE2', 'DelphiXE3', 'DelphiXE4',
-    'DelphiXE5', 'DelphiXE6', 'DelphiXE7', 'DelphiXE8', 'FPC'
+    'DelphiXE5', 'DelphiXE6', 'DelphiXE7', 'DelphiXE8', 'Delphi10S', 'FPC'
   );
 
 { TIniDataReader }

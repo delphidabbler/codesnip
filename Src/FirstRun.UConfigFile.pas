@@ -482,6 +482,7 @@ begin
   UpdateForCompiler('DXE6');
   UpdateForCompiler('DXE7');
   UpdateForCompiler('DXE8');
+  UpdateForCompiler('D10S');
 end;
 
 { TCommonConfigFileUpdater }
