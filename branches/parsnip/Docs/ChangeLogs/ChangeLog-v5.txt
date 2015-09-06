@@ -11,7 +11,7 @@
 ; Change Log for CodeSnip Release 5
 ; ------------------------------------------------------------------------------
 
-Summary of changes in SVN parsnip branch up to REVISION 4625.
+Summary of changes in SVN parsnip branch up to REVISION 4745.
 Changes relate to v4.13.0 (#### may need to update this if there are further v4.x releases before first v5 preview release ###)
 + User interface changes:
   - The link used to edit the displayed snippet has been removed from the Detail pane and replaced by a glyph showing the snippet's level of testing. (### may need to change this in light of further redesigns###)
@@ -51,7 +51,7 @@ Changes relate to v4.13.0 (#### may need to update this if there are further v4.
   - Favourites dialogue box overhauled. Snippets are no longer sorted (### may change: code hooks are present ###) and have no "last accessed" date.
   - "Add To Favourites" menu option on "Snippets" menu now is labelled "Favourite" and displays a tick mark if the displayed snippet is a favourite. Clicking the menu item toggles the selected snippet's "Starred" (favourite) state. The starred state can also be toggle by clicking a star in the snippet display, so the Favourite tool button was removed as redundant.
   - A snippet's tags can now be edited in the Snippets Editor via a special tags editor.
-  -
+  - Colour of snippet titles and group headings can no longer be customised.
 + Database changes:
   - All new database "engine".
   - New database file format. Support included for reading, but not writing the user database format used by CodeSnip 2 to 4. The database file format is automatically detected.
@@ -76,14 +76,19 @@ Changes relate to v4.13.0 (#### may need to update this if there are further v4.
 + A list snippets that belong to a selected tag can now be printed and, for snippets that are routines, written to file or copied to the clipboard. These features replace those that previously worked with categories.
 + Printed snippet information and snippet information that is copied to the clipboard has been revised to remove the section that displayed the snippet's category and add sections that display the snippet's tags and source code language.
 + Generated code no longer contains license information in file header. (### this is because there's no way to tell if code is private or from Code Snippets Database ... update this as changes are made ###).
++ The option to register the program is no longer offered (### consider offering this in v4, and delete this entry if done ###)
 + Modified to work with revised program update manager web service.
 + Portable application changes:
   - CodeSnip no acts in portable mode when -portable switch is passed on command line. There is no longer a separate build for the portable version.
   - New launcher application that starts CodeSnip in portable mode.
-+ Common and per-user configuration file names and locations changed for both standard and portable modes. Per-user configuration file format changed and version bumped to v16.
++ Common and per-user configuration file names and locations changed for both standard and portable modes. Per-user and common configuration file formats changed and versions bumped to v16 and v7 respectively.
 + Changes to "first run" detection and configuration code:
   - Modified to detect v5 installs and to treat v4 installs as legacy.
   - Fixed bug where databases moved by user were not being detected.
+  - Various redundant sections and identifiers removed from config files.
+  - Custom database directories are reset to default to avoid overwriting v4 database files with v5 database files.
+  - Text of "Finish" page of first run dialogue box will now scroll when text excedes available height.
+  - Rename various sections, identifiers and values in config files to comply with new formats.
   - *** ADD CHANGES HERE AS THEY HAPPEN ***
 + Documentation changes:
   - Help file updated re changes.
