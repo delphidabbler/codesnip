@@ -680,6 +680,7 @@ begin
   AddMenuItem('Delphi XE6', 27.0);
   AddMenuItem('Delphi XE7', 28.0);
   AddMenuItem('Delphi XE8', 29.0);
+  AddMenuItem('Delphi 10 Seattle', 30.0);
 end;
 
 procedure TCodeGenPrefsFrame.PreDefCompilerMenuClick(Sender: TObject);

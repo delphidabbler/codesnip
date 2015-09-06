@@ -143,6 +143,8 @@ begin
       Result := 'DXE7';
     ciDXE8:
       Result := 'DXE8';
+    ciD10S:
+      Result := 'D10S';
     else
       raise EBug.Create(ClassName + '.GetIDString: Invalid ID');
   end;
@@ -150,15 +152,16 @@ end;
 
 function TBDSCompiler.GetName: string;
 resourcestring
-  sCompilerName = 'Delphi %d';  // template for name of compiler
-  sDelphiXE = 'Delphi XE';      // name of Delphi XE compiler
-  sDelphiXE2 = 'Delphi XE2';    // name of Delphi XE2 compiler
-  sDelphiXE3 = 'Delphi XE3';    // name of Delphi XE3 compiler
-  sDelphiXE4 = 'Delphi XE4';    // name of Delphi XE4 compiler
-  sDelphiXE5 = 'Delphi XE5';    // name of Delphi XE5 compiler
-  sDelphiXE6 = 'Delphi XE6';    // name of Delphi XE6 compiler
-  sDelphiXE7 = 'Delphi XE7';    // name of Delphi XE7 compiler
-  sDelphiXE8 = 'Delphi XE8';    // name of Delphi XE8 compiler
+  sCompilerName = 'Delphi %d';      // template for name of compiler
+  sDelphiXE = 'Delphi XE';          // name of Delphi XE compiler
+  sDelphiXE2 = 'Delphi XE2';        // name of Delphi XE2 compiler
+  sDelphiXE3 = 'Delphi XE3';        // name of Delphi XE3 compiler
+  sDelphiXE4 = 'Delphi XE4';        // name of Delphi XE4 compiler
+  sDelphiXE5 = 'Delphi XE5';        // name of Delphi XE5 compiler
+  sDelphiXE6 = 'Delphi XE6';        // name of Delphi XE6 compiler
+  sDelphiXE7 = 'Delphi XE7';        // name of Delphi XE7 compiler
+  sDelphiXE8 = 'Delphi XE8';        // name of Delphi XE8 compiler
+  sDelphi10S = 'Delphi 10 Seattle'; // name of Delphi 10 compiler
 begin
   case GetID of
     ciDXE:
@@ -177,6 +180,8 @@ begin
       Result := sDelphiXE7;
     ciDXE8:
       Result := sDelphiXE8;
+    ciD10S:
+      Result := sDelphi10S;
     else
       Result := Format(sCompilerName, [ProductVersion]);
   end;
@@ -205,6 +210,7 @@ begin
     ciDXE6    : Result := '\Software\Embarcadero\BDS\14.0';
     ciDXE7    : Result := '\Software\Embarcadero\BDS\15.0';
     ciDXE8    : Result := '\Software\Embarcadero\BDS\16.0';
+    ciD10S    : Result := '\Software\Embarcadero\BDS\17.0';
     else raise EBug.Create(ClassName + '.InstallationRegKey: Invalid ID');
   end;
 end;
