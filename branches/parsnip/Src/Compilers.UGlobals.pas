@@ -47,6 +47,7 @@ type
   ///  <para>- ciDXE6 - Delphi XE6 Win 32 compiler.</para>
   ///  <para>- ciDXE7 - Delphi XE7 Win 32 compiler.</para>
   ///  <para>- ciDXE8 - Delphi XE8 Win 32 compiler.</para>
+  ///  <para>- ciD10S - Delphi 10 Seattle Win 32 compiler.</para>
   ///  <para>- ciFPC - Free Pascal Compiler.</para>
   ///  <para>IMPORTANT NOTE: Any new compiler IDs must be added to the END of
   ///  the enumeration. Some code depends on the ordering of this enumeration
@@ -55,8 +56,7 @@ type
   TCompilerID = (
     ciD2, ciD3, ciD4, ciD5, ciD6, ciD7, ciD2005, ciD2006, ciD2007, ciD2009,
     ciD2010, ciDXE, ciDXE2, ciDXE3, ciDXE4, ciDXE5, ciDXE6, ciDXE7, ciDXE8,
-    ciFPC
-    // NOTE: enter any new compiler IDs here
+    ciD10S, ciFPC
   );
 
   ///  <summary>Set of compiler ID identifiers from TCompilerID enumeration.
@@ -72,7 +72,7 @@ const
   ///  compilers.</summary>
   cBDSCompilers = [
     ciD2005, ciD2006, ciD2007, ciD2009, ciD2010, ciDXE, ciDXE2, ciDXE3, ciDXE4,
-    ciDXE5, ciDXE6, ciDXE7, ciDXE8
+    ciDXE5, ciDXE6, ciDXE7, ciDXE8, ciD10S
   ];
 
 const
