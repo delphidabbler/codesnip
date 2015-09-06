@@ -11,6 +11,12 @@
 ; Change Log for CodeSnip Release 4
 ; ------------------------------------------------------------------------------
 
+Release v4.13.0 of 5 September 2015
++ Added support for test compilation with, and detection of, Delphi 10 Seattle compiler.
++ Made some minor changes to method used to build required type library to remove dependency on the MS MIDL compiler, greatly simplifying build process.
++ Updated documentation re changes.
++ Updated help file re changes.
+
 Release v4.12.0 of 6 May 2015
 + Added support for test compilation with, and detection of, Delphi XE8 compiler.
 + Updated documentation re changes.
