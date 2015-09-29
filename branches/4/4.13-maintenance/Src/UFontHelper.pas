@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2006-2014, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2006-2015, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -80,25 +80,21 @@ type
       }
   strict private
     const
-      DefaultFontName = 'Arial';                // Default font name
-      DefaultFontSize = 8;                      // Default font size
+      FallbackFontName = 'Arial';                 // Fallback font name
+      FallbackFontSize = 8;                       // Fallback font size
 
-      DefaultContentFontName = DefaultFontName; // Default content font name
-      DefaultContentFontSize = DefaultFontSize; // Default content font size
+      VistaFontName = 'Segoe UI';                 // Vista default font name
+      VistaFontSize = 9;                          // Vista default font size
+      VistaContentFontName = 'Calibri';           // Vista content font name
+      VistaContentFontSize = 10;                  // Vista content font size
 
-      VistaFontName = 'Segoe UI';               // Vista default font name
-      VistaFontSize = 9;                        // Vista default font size
-      VistaContentFontName = 'Calibri';         // Vista content font name
-      VistaContentFontSize = 10;                // Vista content font size
+      XPFontName = 'Tahoma';                      // XP default font name
+      XPFontSize = FallbackFontSize;              // XP default font size
+      XPContentFontName = 'Verdana';              // XP content font name
+      XPContentFontSize = FallbackFontSize;       // XP content font size
 
-      XPFontName = 'Tahoma';                    // XP default font name
-      XPFontSize = DefaultFontSize;             // XP default font size
-      XPContentFontName = 'Verdana';            // XP content font name
-      XPContentFontSize                         // XP content font size
-        = DefaultContentFontSize;
-
-      DefaultMonoFontName = 'Courier New';      // Default mono font name
-      DefaultMonoFontSize = 8;                  // Default mono font size
+      DefaultMonoFontName = 'Courier New';        // Default mono font name
+      DefaultMonoFontSize = 8;                    // Default mono font size
   end;
 
 
@@ -109,7 +105,7 @@ uses
   // Delphi
   SysUtils, Windows, Forms,
   // Project
-  UGraphicUtils, UStrUtils, USystemInfo;
+  UGraphicUtils, UStrUtils;
 
 
 { TFontHelper }
@@ -193,28 +189,25 @@ class procedure TFontHelper.SetContentFont(const Font: TFont);
     @param Font [in] Font to be set.
   }
 begin
-  // Set default content font, size and style
-  Font.Name := DefaultContentFontName;
-  Font.Size := DefaultContentFontSize;
-  Font.Style := [];
-  if TOSInfo.IsReallyWindowsVistaOrGreater then
+  // Try Vista & later content font. If that fails try XP/Win2k font. One of the
+  // two should always work, but in case fonts have been uninstalled, use a
+  // fallback font.
+  if FontExists(VistaContentFontName) then
   begin
-    // We have Vista or later - use Calibri if installed
-    if FontExists(VistaContentFontName) then
-    begin
-      Font.Name := VistaContentFontName;
-      Font.Size := VistaContentFontSize;
-    end;
+    Font.Name := VistaContentFontName;
+    Font.Size := VistaContentFontSize;
+  end
+  else if FontExists(XPContentFontName) then
+  begin
+    Font.Name := XPContentFontName;
+    Font.Size := XPContentFontSize;
   end
   else
   begin
-    // Earlier OS than Vista (i.e. 2000 or XP)
-    if FontExists(XPContentFontName) then
-    begin
-      Font.Name := XPContentFontName;
-      Font.Size := XPContentFontSize;
-    end;
+    Font.Name := FallbackFontName;
+    Font.Size := FallbackFontSize;
   end;
+  Font.Style := [];
 end;
 
 class procedure TFontHelper.SetDefaultBaseFont(const BaseFont: TFont);
@@ -233,7 +226,7 @@ begin
     SetDefaultFont(DefaultFont);
     // font delta is difference between normal default font size and that used
     // on a specific OS (e.g. Vista uses Segoe UI 9 rather than MS Sans Serif 8)
-    FontDelta := DefaultFont.Size - DefaultFontSize;
+    FontDelta := DefaultFont.Size - FallbackFontSize;
     // change base font name and size as required
     BaseFont.Name := DefaultFont.Name;
     BaseFont.Size := BaseFont.Size + FontDelta;
@@ -255,28 +248,25 @@ class procedure TFontHelper.SetDefaultFont(const Font: TFont);
     @param Font [in] Font to be set.
   }
 begin
-  // Set default font, size and style
-  Font.Name := DefaultFontName;
-  Font.Size := DefaultFontSize;
-  Font.Style := [];
-  if TOSInfo.IsReallyWindowsVistaOrGreater then
+  // Try Vista & later default font. If that fails try XP/Win2k font. One of the
+  // two should always work, but in case fonts have been uninstalled, use a
+  // fallback font.
+  if FontExists(VistaFontName) then
   begin
-    // Vista or later
-    if FontExists(VistaFontName) then
-    begin
-      Font.Name := VistaFontName;
-      Font.Size := VistaFontSize;
-    end;
+    Font.Name := VistaFontName;
+    Font.Size := VistaFontSize;
+  end
+  else if FontExists(XPFontName) then
+  begin
+    Font.Name := XPFontName;
+    Font.Size := XPFontSize;
   end
   else
   begin
-    // Earlier OS than Vista (i.e. 2000 or XP)
-    if FontExists(XPFontName) then
-    begin
-      Font.Name := XPFontName;
-      Font.Size := XPFontSize;
-    end;
+    Font.Name := FallbackFontName;
+    Font.Size := FallbackFontSize;
   end;
+  Font.Style := [];
 end;
 
 class procedure TFontHelper.SetDefaultFonts(const Fonts: array of TFont);
