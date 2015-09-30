@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2006-2014, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2006-2015, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -107,7 +107,7 @@ uses
   // Delphi
   SysUtils, Windows, Forms,
   // Project
-  UGraphicUtils, UStrUtils, USystemInfo;
+  UGraphicUtils, UStrUtils;
 
 
 ///  <summary>EnumFontFamilies() callback function used to add mono-spaced fonts
@@ -170,28 +170,25 @@ end;
 
 class procedure TFontHelper.SetContentFont(const Font: TFont);
 begin
-  // Set default content font, size and style
-  Font.Name := FallbackContentFontName;
-  Font.Size := FallbackContentFontSize;
-  Font.Style := [];
-  if TOSInfo.IsReallyWindowsVistaOrGreater then
+  // Try Vista & later content font. If that fails try font used pre-Vista. One
+  // of the two should always work, but in case fonts have been uninstalled, use
+  // a fallback font.
+  if FontExists(VistaContentFontName) then
   begin
-    // We have Vista or later - use Calibri if installed
-    if FontExists(VistaContentFontName) then
-    begin
-      Font.Name := VistaContentFontName;
-      Font.Size := VistaContentFontSize;
-    end;
+    Font.Name := VistaContentFontName;
+    Font.Size := VistaContentFontSize;
+  end
+  else if FontExists(PreVistaContentFontName) then
+  begin
+    Font.Name := PreVistaContentFontName;
+    Font.Size := PreVistaContentFontSize;
   end
   else
   begin
-    // Earlier OS than Vista (i.e. 2000 or XP)
-    if FontExists(PreVistaContentFontName) then
-    begin
-      Font.Name := PreVistaContentFontName;
-      Font.Size := PreVistaContentFontSize;
-    end;
+    Font.Name := FallbackContentFontName;
+    Font.Size := FallbackContentFontSize;
   end;
+  Font.Style := [];
 end;
 
 class procedure TFontHelper.SetDefaultBaseFont(const BaseFont: TFont);
@@ -224,28 +221,25 @@ end;
 
 class procedure TFontHelper.SetDefaultFont(const Font: TFont);
 begin
-  // Set default font, size and style
-  Font.Name := FallbackUIFontName;
-  Font.Size := FallbackUIFontSize;
-  Font.Style := [];
-  if TOSInfo.IsReallyWindowsVistaOrGreater then
+  // Try Vista & later UI font. If that fails try font used pre-Vista. One of
+  // the two should always work, but in case fonts have been uninstalled, use a
+  // fallback font.
+  if FontExists(VistaUIFontName) then
   begin
-    // Vista or later
-    if FontExists(VistaUIFontName) then
-    begin
-      Font.Name := VistaUIFontName;
-      Font.Size := VistaUIFontSize;
-    end;
+    Font.Name := VistaUIFontName;
+    Font.Size := VistaUIFontSize;
+  end
+  else if FontExists(PreVistaUIFontName) then
+  begin
+    Font.Name := PreVistaUIFontName;
+    Font.Size := PreVistaUIFontSize;
   end
   else
   begin
-    // Earlier OS than Vista (i.e. 2000 or XP)
-    if FontExists(PreVistaUIFontName) then
-    begin
-      Font.Name := PreVistaUIFontName;
-      Font.Size := PreVistaUIFontSize;
-    end;
+    Font.Name := FallbackUIFontName;
+    Font.Size := FallbackUIFontSize;
   end;
+  Font.Style := [];
 end;
 
 class procedure TFontHelper.SetDefaultFonts(const Fonts: array of TFont);

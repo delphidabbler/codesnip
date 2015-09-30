@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2001-2014, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2001-2015, Peter Johnson (@delphidabbler).
  *
  * $Rev$
  * $Date$
@@ -25,7 +25,13 @@
  *     host program in compatibility mode causes some variables and TPJOSInfo
  *     methods to be "spoofed" into returning information about the emulated
  *     OS. When run on Windows 8.1 and later details of the actual host
- *     operating system are always returned and the emaulated OS is ignored.
+ *     operating system are always returned and the emulated OS is ignored.
+ *
+ *  4: ** IMPORTANT **
+ *     This version of the code was an attempt to get it to detect and report
+ *     Windows 10. Try as I might, I can't get this to work. So this version
+ *     is released as beta code to use at your own risk. If anyone can fix it,
+ *     please let me know.
  *
  * ACKNOWLEDGEMENTS
  *
@@ -33,10 +39,12 @@
  *
  *   - Guillermo Fazzolari (bug fix in v2.0.1)
  *
- *   - Laurent Pierre (PRODUCT_* constants and suggested GetProductInfo API code
- *     used in v3.0)
+ *   - Laurent Pierre (Many PRODUCT_* constants and suggested GetProductInfo API
+ *     code used in v3.0 and later)
  *
- *   - Rich Habedank (bug fix in revision 228)
+ *   - Rich Habedank (bug fix in r228 and testing of bug fixes reported as
+ *     issues #31 (https://code.google.com/p/ddab-lib/issues/detail?id=31) and
+ *     #33 (https://code.google.com/p/ddab-lib/issues/detail?id=33)
  *
  * The project also draws on the work of:
  *
@@ -51,8 +59,8 @@
  *   - Kendall Sullivan for the code on which TPJComputerInfo.IsAdmin is based.
  *     See http://edn.embarcadero.com/article/26752.
  *
- *   - norgepaul for the code which TPJComputerInfo.IsUACActive is based. See
- *     his anser on Stack Overflow at http://tinyurl.com/avlztmg.
+ *   - norgepaul for the code on which TPJComputerInfo.IsUACActive is based. See
+ *     his answer on Stack Overflow at http://tinyurl.com/avlztmg.
  *
  * ***** END LICENSE BLOCK *****
 }
@@ -61,12 +69,15 @@
 unit PJSysInfo;
 
 
+// Define DEBUG whenever debugging.
+// *** IMPORTANT: Ensure that DEBUG is NOT defined in production code.
+{.$DEFINE DEBUG}
+
 // Define DEBUG_NEW_API if debugging on Windows Vista to Windows 8 in order to
 // check that the new version API used for Windows 8.1 and later is working.
 // This will cause the new API to be used for Windows Vista and later instead
 // of only Windows 8.1 and later.
 // *** IMPORTANT: Ensure that DEBUG_NEW_API is NOT defined in production code.
-
 {.$DEFINE DEBUG_NEW_API}
 
 
@@ -116,6 +127,12 @@ unit PJSysInfo;
 {$IFDEF WARNDIRS}
   {$WARN UNSAFE_TYPE OFF}
   {$WARN UNSAFE_CODE OFF}
+{$ENDIF}
+
+// Switch on range checking when debugging. In production code it's the user's
+// choice whether to use range checking or not
+{$IFDEF DEBUG}
+  {$RANGECHECKS ON}
 {$ENDIF}
 
 
@@ -189,7 +206,7 @@ const
 
   // Windows constants possibly not defined in all supported Delphi VCLs
 
-  // Conditional consts ued in VerSetConditionMask calls
+  // Conditional consts used in VerSetConditionMask calls
   VER_EQUAL         = 1; // current value = specified value.
   VER_GREATER       = 2; // current value > specified value.
   VER_GREATER_EQUAL = 3; // current value >= specified value.
@@ -208,17 +225,20 @@ const
   VER_PRODUCT_TYPE      = $00000080;
 
   // Constants from sdkddkver.h
-  _WIN32_WINNT_NT4      = $0400; // Windows NT 4
-  _WIN32_WINNT_WIN2K    = $0500; // Windows 2000
-  _WIN32_WINNT_WINXP    = $0501; // Windows XP
-  _WIN32_WINNT_WS03     = $0502; // Windows Server 2003
-  _WIN32_WINNT_WIN6     = $0600; // Windows Vista
-  _WIN32_WINNT_VISTA    = $0600; // Windows Vista
-  _WIN32_WINNT_WS08     = $0600; // Windows Server 2008
-  _WIN32_WINNT_LONGHORN = $0600; // Windows 7
-  _WIN32_WINNT_WIN7     = $0601; // Windows 7
-  _WIN32_WINNT_WIN8     = $0602; // Windows 8
-  _WIN32_WINNT_WINBLUE  = $0603; // Windows 8.1
+  _WIN32_WINNT_NT4          = $0400; // Windows NT 4
+  _WIN32_WINNT_WIN2K        = $0500; // Windows 2000
+  _WIN32_WINNT_WINXP        = $0501; // Windows XP
+  _WIN32_WINNT_WS03         = $0502; // Windows Server 2003
+  _WIN32_WINNT_WIN6         = $0600; // Windows Vista
+  _WIN32_WINNT_VISTA        = $0600; // Windows Vista
+  _WIN32_WINNT_WS08         = $0600; // Windows Server 2008
+  _WIN32_WINNT_LONGHORN     = $0600; // Windows Vista
+  _WIN32_WINNT_WIN7         = $0601; // Windows 7
+  _WIN32_WINNT_WIN8         = $0602; // Windows 8
+  _WIN32_WINNT_WINBLUE      = $0603; // Windows 8.1
+  _WIN32_WINNT_WINTHRESHOLD = $0A00; // Windows 10
+  _WIN32_WINNT_WIN10        = $0A00; // Windows 10
+
 
   // These Windows-defined constants are required for use with TOSVersionInfoEx
   // NT Product types
@@ -246,7 +266,7 @@ const
 
   // These Windows-defined constants are required for use with the
   // GetProductInfo API call used with Windows Vista and later
-  // ** Thanks to Laurent Pierre for providing these defintions.
+  // ** Thanks to Laurent Pierre for providing these definitions.
   // ** Additional definitions were obtained from
   //    http://msdn.microsoft.com/en-us/library/ms724358
   PRODUCT_BUSINESS                            = $00000006;
@@ -262,6 +282,8 @@ const
   PRODUCT_DATACENTER_SERVER_CORE              = $0000000C;
   PRODUCT_DATACENTER_SERVER_CORE_V            = $00000027;
   PRODUCT_DATACENTER_SERVER_V                 = $00000025;
+  PRODUCT_EDUCATION                           = $00000079;
+  PRODUCT_EDUCATION_N                         = $0000007A;
   PRODUCT_ENTERPRISE                          = $00000004;
   PRODUCT_ENTERPRISE_E                        = $00000046;
   PRODUCT_ENTERPRISE_N_EVALUATION             = $00000054;
@@ -288,19 +310,21 @@ const
   PRODUCT_MEDIUMBUSINESS_SERVER_MANAGEMENT    = $0000001E;
   PRODUCT_MEDIUMBUSINESS_SERVER_MESSAGING     = $00000020;
   PRODUCT_MEDIUMBUSINESS_SERVER_SECURITY      = $0000001F;
+  PRODUCT_MOBILE_CORE                         = $00000068;
+  PRODUCT_MOBILE_ENTERPRISE                   = $00000085;
   PRODUCT_MULTIPOINT_STANDARD_SERVER          = $0000004C;
   PRODUCT_MULTIPOINT_PREMIUM_SERVER           = $0000004D;
   PRODUCT_PROFESSIONAL                        = $00000030;
   PRODUCT_PROFESSIONAL_E                      = $00000045;
   PRODUCT_PROFESSIONAL_N                      = $00000031;
   PRODUCT_PROFESSIONAL_WMC                    = $00000067;
+  PRODUCT_SB_SOLUTION_SERVER                  = $00000032;
   PRODUCT_SB_SOLUTION_SERVER_EM               = $00000036;
   PRODUCT_SERVER_FOR_SB_SOLUTIONS             = $00000033;
   PRODUCT_SERVER_FOR_SB_SOLUTIONS_EM          = $00000037;
   PRODUCT_SERVER_FOR_SMALLBUSINESS            = $00000018;
   PRODUCT_SERVER_FOR_SMALLBUSINESS_V          = $00000023;
   PRODUCT_SERVER_FOUNDATION                   = $00000021;
-  PRODUCT_SB_SOLUTION_SERVER                  = $00000032;
   PRODUCT_SMALLBUSINESS_SERVER                = $00000009;
   PRODUCT_SMALLBUSINESS_SERVER_PREMIUM        = $00000019;
   PRODUCT_SMALLBUSINESS_SERVER_PREMIUM_CORE   = $0000003F;
@@ -423,7 +447,10 @@ type
     osWin8,                 // Windows 8
     osWinSvr2012,           // Windows Server 2012
     osWin8Point1,           // Windows 8.1
-    osWinSvr2012R2          // Windows Server 2012 R2
+    osWinSvr2012R2,         // Windows Server 2012 R2
+    osWin10,                // Windows 10
+    // TODO: Update following comment to correct name once released
+    osWin10Svr              // Windows 10 Server Technical Preview
   );
 
 type
@@ -570,7 +597,7 @@ type
     ///  platform.</remarks>
     class function Edition: string;
 
-    ///  <summary>Returns a full descriptuon of the host OS.</summary>
+    ///  <summary>Returns a full description of the host OS.</summary>
     class function Description: string;
 
     ///  <summary>Returns the Windows product ID of the host OS.</summary>
@@ -623,81 +650,102 @@ type
 
     ///  <summary>Checks whether the OS is Windows XP or greater.</summary>
     ///  <remarks>This method always returns information about the true OS,
-    ///  regardless of any compatibility mode in force.</remarks>
+    ///  regardless of any compatibility mode in force or whether a suitable
+    ///  manifest file is present.</remarks>
     class function IsReallyWindowsXPOrGreater: Boolean;
       {$IFDEF INLINEMETHODS}inline;{$ENDIF}
 
     ///  <summary>Checks whether the OS is Windows XP Service Pack 1 or greater.
     ///  </summary>
     ///  <remarks>This method always returns information about the true OS,
-    ///  regardless of any compatibility mode in force.</remarks>
+    ///  regardless of any compatibility mode in force or whether a suitable
+    ///  manifest file is present.</remarks>
     class function IsReallyWindowsXPSP1OrGreater: Boolean;
       {$IFDEF INLINEMETHODS}inline;{$ENDIF}
 
     ///  <summary>Checks whether the OS is Windows XP Service Pack 2 or greater.
     ///  </summary>
     ///  <remarks>This method always returns information about the true OS,
-    ///  regardless of any compatibility mode in force.</remarks>
+    ///  regardless of any compatibility mode in force or whether a suitable
+    ///  manifest file is present.</remarks>
     class function IsReallyWindowsXPSP2OrGreater: Boolean;
       {$IFDEF INLINEMETHODS}inline;{$ENDIF}
 
     ///  <summary>Checks whether the OS is Windows XP Service Pack 3 or greater.
     ///  </summary>
     ///  <remarks>This method always returns information about the true OS,
-    ///  regardless of any compatibility mode in force.</remarks>
+    ///  regardless of any compatibility mode in force or whether a suitable
+    ///  manifest file is present.</remarks>
     class function IsReallyWindowsXPSP3OrGreater: Boolean;
       {$IFDEF INLINEMETHODS}inline;{$ENDIF}
 
     ///  <summary>Checks whether the OS is Windows Vista or greater.</summary>
     ///  <remarks>This method always returns information about the true OS,
-    ///  regardless of any compatibility mode in force.</remarks>
+    ///  regardless of any compatibility mode in force or whether a suitable
+    ///  manifest file is present.</remarks>
     class function IsReallyWindowsVistaOrGreater: Boolean;
       {$IFDEF INLINEMETHODS}inline;{$ENDIF}
 
     ///  <summary>Checks whether the OS is Windows Vista Service Pack 1 or
     ///  greater.</summary>
     ///  <remarks>This method always returns information about the true OS,
-    ///  regardless of any compatibility mode in force.</remarks>
+    ///  regardless of any compatibility mode in force or whether a suitable
+    ///  manifest file is present.</remarks>
     class function IsReallyWindowsVistaSP1OrGreater: Boolean;
       {$IFDEF INLINEMETHODS}inline;{$ENDIF}
 
     ///  <summary>Checks whether the OS is Windows Vista Service Pack 2 or
     ///  greater.</summary>
     ///  <remarks>This method always returns information about the true OS,
-    ///  regardless of any compatibility mode in force.</remarks>
+    ///  regardless of any compatibility mode in force or whether a suitable
+    ///  manifest file is present.</remarks>
     class function IsReallyWindowsVistaSP2OrGreater: Boolean;
       {$IFDEF INLINEMETHODS}inline;{$ENDIF}
 
     ///  <summary>Checks whether the OS is Windows 7 or greater.</summary>
     ///  <remarks>This method always returns information about the true OS,
-    ///  regardless of any compatibility mode in force.</remarks>
+    ///  regardless of any compatibility mode in force or whether a suitable
+    ///  manifest file is present.</remarks>
     class function IsReallyWindows7OrGreater: Boolean;
       {$IFDEF INLINEMETHODS}inline;{$ENDIF}
 
     ///  <summary>Checks whether the OS is Windows 7 Service Pack 1 or greater.
     ///  </summary>
     ///  <remarks>This method always returns information about the true OS,
-    ///  regardless of any compatibility mode in force.</remarks>
+    ///  regardless of any compatibility mode in force or whether a suitable
+    ///  manifest file is present.</remarks>
     class function IsReallyWindows7SP1OrGreater: Boolean;
       {$IFDEF INLINEMETHODS}inline;{$ENDIF}
 
     ///  <summary>Checks whether the OS is Windows 8 or greater.</summary>
     ///  <remarks>This method always returns information about the true OS,
-    ///  regardless of any compatibility mode in force.</remarks>
+    ///  regardless of any compatibility mode in force or whether a suitable
+    ///  manifest file is present.</remarks>
     class function IsReallyWindows8OrGreater: Boolean;
       {$IFDEF INLINEMETHODS}inline;{$ENDIF}
 
     ///  <summary>Checks whether the OS is Windows 8.1 or greater.</summary>
     ///  <remarks>This method always returns information about the true OS,
-    ///  regardless of any compatibility mode in force.</remarks>
+    ///  regardless of any compatibility mode in force or whether a suitable
+    ///  manifest file is present.</remarks>
     class function IsReallyWindows8Point1OrGreater: Boolean;
       {$IFDEF INLINEMETHODS}inline;{$ENDIF}
 
+    ///  <summary>Checks whether the OS is Windows 10 or greater.</summary>
+    ///  <remarks>This method always returns information about the true OS,
+    ///  regardless of any compatibility mode in force, but DOES require that
+    ///  the correct manifest file is present.</remarks>
+    class function IsReallyWindows10OrGreater: Boolean;
+      {$IFDEF INLINEMETHODS}inline;{$ENDIF}
+
     ///  <summary>Checks if the OS is a server version.</summary>
-    ///  <remarks>For Windows 2000 and later the result always relates to the
+    ///  <remarks>
+    ///  <para>For Windows 2000 and later the result always relates to the
     ///  actual OS, regardless of any compatibility mode in force. For versions
     ///  prior to Windows 2000 this method will take note of compatibility modes
-    ///  and returns the same value as TPJOSInfo.IsServer.</remarks>
+    ///  and returns the same value as TPJOSInfo.IsServer.</para>
+    ///  <para>WARNING: For Windows 10 this method is likely to succeed only if
+    ///  the application is correctly manifested.</para>
     class function IsWindowsServer: Boolean;
   end;
 
@@ -712,7 +760,7 @@ type
     ///  <summary>Returns name of currently logged on user.</summary>
     class function UserName: string;
 
-    ///  <summary>Returns MAC address of 1st ethernet adapter on host computer.
+    ///  <summary>Returns MAC address of 1st Ethernet adapter on host computer.
     ///  or empty string if no such adapter is found.
     ///  </summary>
     ///  <remarks>**WARNING** may be unreliable - see comments in
@@ -909,7 +957,7 @@ uses
 
 resourcestring
   // Error messages
-  sUnknownPlatform = 'Unrecognized operating system platform';
+  sUnknownPlatform = 'Unrecognised operating system platform';
   sUnknownProduct = 'Unrecognised operating system product';
   sBadRegType =  'Unsupported registry type';
   sBadProcHandle = 'Bad process handle';
@@ -928,56 +976,64 @@ const
   // ** Laurent Pierre supplied original code on which this map is based
   //    It has been modified and extended using MSDN documentation at
   //    http://msdn.microsoft.com/en-us/library/ms724358
-  cProductMap: array[1..83] of record
+  cProductMap: array[1..87] of record
     Id: Cardinal; // product ID
     Name: string; // product name
   end = (
     (Id: PRODUCT_BUSINESS;
       Name: 'Business';),
     (Id: PRODUCT_BUSINESS_N;
-      Name: 'Business N Edition';),
+      Name: 'Business N';),
     (Id: PRODUCT_CLUSTER_SERVER;
-      Name: 'Cluster Server Edition';),
+      Name: 'Cluster Server / HPC';),
     (Id: PRODUCT_CLUSTER_SERVER_V;
       Name: 'Server Hyper Core V';),
     (Id: PRODUCT_CORE;
-      Name: 'Windows 8';),
+      Name: 'Core / Home';),
     (Id: PRODUCT_CORE_N;
-      Name: 'Windows 8N';),
+      Name: 'Core N or Home N';),
     (Id: PRODUCT_CORE_COUNTRYSPECIFIC;
-      Name: 'Windows 8 China';),
+      Name: 'Core / Home China';),
     (Id: PRODUCT_CORE_SINGLELANGUAGE;
-      Name: 'Windows 8 Single Language';),
+      Name: 'Core / Home Single Language';),
+    (Id: PRODUCT_MOBILE_CORE;
+      Name: 'Mobile'),
+    (Id: PRODUCT_MOBILE_ENTERPRISE;
+      Name: 'Mobile Enterprise'),
+    (Id: PRODUCT_EDUCATION;
+      Name: 'Education'),
+    (Id: PRODUCT_EDUCATION_N;
+      Name: 'Education N'),
     (Id: PRODUCT_DATACENTER_EVALUATION_SERVER;
       Name: 'Server Datacenter (evaluation installation)';),
     (Id: PRODUCT_DATACENTER_SERVER;
-      Name: 'Server Datacenter Edition (full installation)';),
+      Name: 'Server Datacenter (full installation)';),
     (Id: PRODUCT_DATACENTER_SERVER_CORE;
-      Name: 'Server Datacenter Edition (core installation)';),
+      Name: 'Server Datacenter (core installation)';),
     (Id: PRODUCT_DATACENTER_SERVER_CORE_V;
-      Name: 'Server Datacenter Edition without Hyper-V (core installation)';),
+      Name: 'Server Datacenter without Hyper-V (core installation)';),
     (Id: PRODUCT_DATACENTER_SERVER_V;
-      Name: 'Server Datacenter Edition without Hyper-V (full installation)';),
+      Name: 'Server Datacenter without Hyper-V (full installation)';),
     (Id: PRODUCT_ENTERPRISE;
-      Name: 'Enterprise Edition';),
+      Name: 'Enterprise';),
     (Id: PRODUCT_ENTERPRISE_E;
-      Name: 'Enterprise E Edition';),
+      Name: 'Enterprise E';),
     (Id: PRODUCT_ENTERPRISE_N_EVALUATION;
       Name: 'Enterprise N (evaluation installation)';),
     (Id: PRODUCT_ENTERPRISE_N;
-      Name: 'Enterprise N Edition';),
+      Name: 'Enterprise N';),
     (Id: PRODUCT_ENTERPRISE_EVALUATION;
       Name: 'Server Enterprise (evaluation installation)';),
     (Id: PRODUCT_ENTERPRISE_SERVER;
-      Name: 'Server Enterprise Edition (full installation)';),
+      Name: 'Server Enterprise (full installation)';),
     (Id: PRODUCT_ENTERPRISE_SERVER_CORE;
-      Name: 'Server Enterprise Edition (core installation)';),
+      Name: 'Server Enterprise (core installation)';),
     (Id: PRODUCT_ENTERPRISE_SERVER_CORE_V;
-      Name: 'Server Enterprise Edition without Hyper-V (core installation)';),
+      Name: 'Server Enterprise without Hyper-V (core installation)';),
     (Id: PRODUCT_ENTERPRISE_SERVER_IA64;
-      Name: 'Server Enterprise Edition for Itanium-based Systems';),
+      Name: 'Server Enterprise for Itanium-based Systems';),
     (Id: PRODUCT_ENTERPRISE_SERVER_V;
-      Name: 'Server Enterprise Edition without Hyper-V (full installation)';),
+      Name: 'Server Enterprise without Hyper-V (full installation)';),
     (Id: PRODUCT_ESSENTIALBUSINESS_SERVER_MGMT;
       Name: 'Windows Essential Server Solution Management'),
     (Id: PRODUCT_ESSENTIALBUSINESS_SERVER_ADDL;
@@ -987,39 +1043,39 @@ const
     (Id: PRODUCT_ESSENTIALBUSINESS_SERVER_ADDLSVC;
       Name: 'Windows Essential Server Solution Additional SVC'),
     (Id: PRODUCT_HOME_BASIC;
-      Name: 'Home Basic Edition';),
+      Name: 'Home Basic';),
     (Id: PRODUCT_HOME_BASIC_E;
-      Name: 'Home Basic E Edition';),
+      Name: 'Home Basic E';),
     (Id: PRODUCT_HOME_BASIC_N;
-      Name: 'Home Basic N Edition';),
+      Name: 'Home Basic N';),
     (Id: PRODUCT_HOME_PREMIUM;
-      Name: 'Home Premium Edition';),
+      Name: 'Home Premium';),
     (Id: PRODUCT_HOME_PREMIUM_E;
-      Name: 'Home Premium E Edition';),
+      Name: 'Home Premium E';),
     (Id: PRODUCT_HOME_PREMIUM_N;
-      Name: 'Home Premium N Edition';),
+      Name: 'Home Premium N';),
     (Id: PRODUCT_HOME_PREMIUM_SERVER;
-      Name: 'Windows Home Server 2011';),
+      Name: 'Home Server';),
     (Id: PRODUCT_HOME_SERVER;
-      Name: 'Home Server Edition';),
+      Name: 'Home Storage Server';),
     (Id: PRODUCT_HYPERV;
-      Name: 'Microsoft Hyper-V Server'),
+      Name: 'Hyper-V Server'),
     (Id: PRODUCT_MEDIUMBUSINESS_SERVER_MANAGEMENT;
-      Name: 'Windows Essential Business Server Management Server';),
+      Name: 'Essential Business Server Management Server';),
     (Id: PRODUCT_MEDIUMBUSINESS_SERVER_MESSAGING;
-      Name: 'Windows Essential Business Server Messaging Server';),
+      Name: 'Essential Business Server Messaging Server';),
     (Id: PRODUCT_MEDIUMBUSINESS_SERVER_SECURITY;
-      Name: 'Windows Essential Business Server Security Server';),
+      Name: 'Essential Business Server Security Server';),
     (Id: PRODUCT_MULTIPOINT_STANDARD_SERVER;
-      Name: 'Windows MultiPoint Server Standard (full installation)';),
+      Name: 'MultiPoint Server Standard (full installation)';),
     (Id: PRODUCT_MULTIPOINT_PREMIUM_SERVER;
-      Name: 'Windows MultiPoint Server Premium (full installation)';),
+      Name: 'MultiPoint Server Premium (full installation)';),
     (Id: PRODUCT_PROFESSIONAL;
-      Name: 'Professional Edition';),
+      Name: 'Professional';),
     (Id: PRODUCT_PROFESSIONAL_E;
-      Name: 'Professional E Edition';),
+      Name: 'Professional E';),
     (Id: PRODUCT_PROFESSIONAL_N;
-      Name: 'Professional N Edition';),
+      Name: 'Professional N';),
     (Id: PRODUCT_PROFESSIONAL_WMC;
       Name: 'Professional with Media Center';),
     (Id: PRODUCT_SB_SOLUTION_SERVER_EM;
@@ -1029,18 +1085,17 @@ const
     (Id: PRODUCT_SERVER_FOR_SB_SOLUTIONS_EM;
       Name: 'Server For SB Solutions EM';),
     (Id: PRODUCT_SERVER_FOR_SMALLBUSINESS;
-      Name: 'Server for Small Business Edition';),
+      Name: 'Server for Essential Server Solutions';),
     (Id: PRODUCT_SERVER_FOR_SMALLBUSINESS_V;
-      Name: 'Windows Server 2008 without Hyper-V for Windows Essential Server '
-        + 'Solutions';),
+      Name: 'Server 2008 without Hyper-V for Essential Server Solutions';),
     (Id: PRODUCT_SERVER_FOUNDATION;
       Name: 'Server Foundation';),
     (Id: PRODUCT_SB_SOLUTION_SERVER;
-      Name: 'Windows Small Business Server 2011 Essentials';),
+      Name: 'Small Business Server Essentials';),
     (Id: PRODUCT_SMALLBUSINESS_SERVER;
       Name: 'Small Business Server';),
     (Id: PRODUCT_SMALLBUSINESS_SERVER_PREMIUM;
-      Name: 'Small Business Server Premium Edition';),
+      Name: 'Small Business Server Premium';),
     (Id: PRODUCT_SMALLBUSINESS_SERVER_PREMIUM_CORE;
       Name: 'Small Business Server Premium (core installation)';),
     (Id: PRODUCT_SOLUTION_EMBEDDEDSERVER;
@@ -1048,55 +1103,55 @@ const
     (Id: PRODUCT_STANDARD_EVALUATION_SERVER;
       Name: 'Server Standard (evaluation installation)';),
     (Id: PRODUCT_STANDARD_SERVER;
-      Name: 'Server Standard Edition (full installation)';),
+      Name: 'Server Standard';),
     (Id: PRODUCT_STANDARD_SERVER_CORE;
-      Name: 'Server Standard Edition (core installation)';),
+      Name: 'Server Standard (core installation)';),
     (Id: PRODUCT_STANDARD_SERVER_CORE_V;
-      Name: 'Server Standard Edition without Hyper-V (core installation)';),
+      Name: 'Server Standard without Hyper-V (core installation)';),
     (Id: PRODUCT_STANDARD_SERVER_V;
-      Name: 'Server Standard Edition without Hyper-V (full installation)';),
+      Name: 'Server Standard without Hyper-V (full installation)';),
     (Id: PRODUCT_STANDARD_SERVER_SOLUTIONS;
       Name: 'Server Solutions Premium';),
     (Id: PRODUCT_STANDARD_SERVER_SOLUTIONS_CORE;
       Name: 'Server Solutions Premium (core installation)';),
     (Id: PRODUCT_STARTER;
-      Name: 'Starter Edition';),
+      Name: 'Starter';),
     (Id: PRODUCT_STARTER_E;
-      Name: 'Starter E Edition';),
+      Name: 'Starter E';),
     (Id: PRODUCT_STARTER_N;
-      Name: 'Starter N Edition';),
+      Name: 'Starter N';),
     (Id: PRODUCT_STORAGE_ENTERPRISE_SERVER;
-      Name: 'Storage Server Enterprise Edition';),
+      Name: 'Storage Server Enterprise';),
     (Id: PRODUCT_STORAGE_ENTERPRISE_SERVER_CORE;
       Name: 'Storage Server Enterprise (core installation)';),
     (Id: PRODUCT_STORAGE_EXPRESS_SERVER;
-      Name: 'Storage Server Express Edition';),
+      Name: 'Storage Server Express';),
     (Id: PRODUCT_STORAGE_EXPRESS_SERVER_CORE;
       Name: 'Storage Server Express (core installation)';),
     (Id: PRODUCT_STORAGE_STANDARD_EVALUATION_SERVER;
       Name: 'Storage Server Standard (evaluation installation)';),
     (Id: PRODUCT_STORAGE_STANDARD_SERVER;
-      Name: 'Storage Server Standard Edition';),
+      Name: 'Storage Server Standard';),
     (Id: PRODUCT_STORAGE_STANDARD_SERVER_CORE;
       Name: 'Storage Server Standard (core installation)';),
     (Id: PRODUCT_STORAGE_WORKGROUP_EVALUATION_SERVER;
       Name: 'Storage Server Workgroup (evaluation installation)';),
     (Id: PRODUCT_STORAGE_WORKGROUP_SERVER;
-      Name: 'Storage Server Workgroup Edition';),
+      Name: 'Storage Server Workgroup';),
     (Id: PRODUCT_STORAGE_WORKGROUP_SERVER_CORE;
       Name: 'Storage Server Workgroup (core installation)';),
     (Id: PRODUCT_UNDEFINED;
       Name: 'An unknown product';),
     (Id: PRODUCT_ULTIMATE;
-      Name: 'Ultimate Edition';),
+      Name: 'Ultimate';),
     (Id: PRODUCT_ULTIMATE_E;
-      Name: 'Ultimate E Edition';),
+      Name: 'Ultimate E';),
     (Id: PRODUCT_ULTIMATE_N;
-      Name: 'Ultimate N Edition';),
+      Name: 'Ultimate N';),
     (Id: PRODUCT_WEB_SERVER;
-      Name: 'Web Server Edition';),
+      Name: 'Web Server (full installation)';),
     (Id: PRODUCT_WEB_SERVER_CORE;
-      Name: 'Web Server Edition (core installation)';),
+      Name: 'Web Server (core installation)';),
     (Id: Cardinal(PRODUCT_UNLICENSED);
       Name: 'Unlicensed product';)
   );
@@ -1137,8 +1192,8 @@ var
   // Internal variables recording version information.
   // When using the GetVersionEx API function to get version information these
   // variables have the same value as the similarly named Win32XXX function in
-  // SysUtils. When the old API funtion aren't being used these value *may* vary
-  // from the SysUtils versions.
+  // SysUtils. When the old API function aren't being used these value *may*
+  // vary from the SysUtils versions.
   InternalPlatform: Integer = 0;
   InternalMajorVersion: LongWord = 0;
   InternalMinorVersion: LongWord = 0;
@@ -1201,7 +1256,7 @@ begin
 end;
 
 // Checks if the OS has the given product type.
-// Assumes VerifyVersionInfo API function is available
+// Assumes VerifyVersionInfo and VerSetConditionMask API functions are available
 function IsWindowsProductType(ProductType: Byte): Boolean;
 var
   ConditionalMask: UInt64;
@@ -1224,25 +1279,26 @@ function UseGetVersionAPI: Boolean;
   // given major and minor version numbers
   function TestOSLT(Major, Minor: LongWord): Boolean;
   begin
-    Result := Assigned(VerSetConditionMask) and Assigned(VerifyVersionInfo)
-      and TestWindowsVersion(Major, Minor, 0, 0, VER_LESS);
+    Result := not Assigned(VerSetConditionMask)
+      or not Assigned(VerifyVersionInfo)
+      or TestWindowsVersion(Major, Minor, 0, 0, VER_LESS);
   end;
 
 begin
   {$IFNDEF DEBUG_NEW_API}
-  // Production code uses GetVersionEx if OS earlier than Windows 8.1
-  Result := TestOSLT(6, 3);
+  // Production code uses GetVersionEx if OS earlier than Windows 8.0
+  Result := TestOSLT(6, 2);
   {$ELSE}
   // Debug code uses GetVersionEx if OS earlier than Windows Vista
   Result := TestOSLT(6, 0);
   {$ENDIF}
 end;
 
-// Gets Windows version by probing for possible versions using
+// Gets Windows version by probing for possible versions
 procedure NewGetVersion(out Major, Minor: LongWord; out SPMajor, SPMinor: Word);
 begin
   Major := 6;   // lowest version to use this code has major version 6
-  Minor := High(LongWord);
+  Minor := High(Word);
   SPMajor := High(Word);
   SPMinor := High(Word);
   while TestWindowsVersion(Major, Minor, SPMajor, SPMinor, VER_GREATER) do
@@ -1310,7 +1366,7 @@ end;
 function RegCreate: TRegistry;
 begin
   {$IFDEF REGACCESSFLAGS}
-  //! Fix for issue #14 (http://bit.ly/eWkw9X) suggested by Steffen Schaff.
+  //! Fix for issue #14 (http://bit.n/eWkw9X) suggested by Steffen Schaff.
   //! Later modified to allow for fact that Windows 2000 fails if
   //! KEY_WOW64_64KEY is used.
   if IsWin2000OrEarlier then
@@ -1429,7 +1485,6 @@ begin
   {$ELSE}
   VerifyVersionInfo := LoadKernelFunc('VerifyVersionInfoA');
   {$ENDIF}
-
   if not UseGetVersionAPI then
   begin
     // Not using GetVersion and GetVersionEx functions to get version info
@@ -1474,8 +1529,21 @@ begin
           3:
             if Win32ServicePackMajor = 0 then
               InternalBuildNumber := 9600;  // Windows 8.1 (no known SPs)
+
         end;
-      end
+      end;
+      10:
+      begin
+        case InternalMinorVersion of
+          0:
+          begin
+            // TODO: Revist when server version released to check if same build
+            // number
+            if Win32ServicePackMajor = 0 then
+              InternalBuildNumber := 10240;  // Windows 10 (no known SPs)
+          end;
+        end;
+      end;
     end;
     // Failed to "guess" at build number: get it from registry
     if InternalBuildNumber = 0 then
@@ -1570,7 +1638,7 @@ end;
 
 class function TPJOSInfo.Description: string;
 
-  // Adds a non-empty string to end of result, preceeded by space.
+  // Adds a non-empty string to end of result, preceded by space.
   procedure AppendToResult(const Str: string);
   begin
     if Str <> '' then
@@ -1615,7 +1683,8 @@ begin
     osWinVista, osWinSvr2008,
     osWin7, osWinSvr2008R2,
     osWin8, osWinSvr2012,
-    osWin8Point1, osWinSvr2012R2:
+    osWin8Point1, osWinSvr2012R2,
+    osWin10, osWin10Svr:
     begin
       // For v6.0 and later we ignore the suite mask and use the new
       // PRODUCT_ flags from the GetProductInfo() function to determine the
@@ -1877,6 +1946,13 @@ begin
   );
 end;
 
+class function TPJOSInfo.IsReallyWindows10OrGreater: Boolean;
+begin
+  Result := IsReallyWindowsVersionOrGreater(
+    HiByte(_WIN32_WINNT_WIN10), LoByte(_WIN32_WINNT_WIN10), 0
+  );
+end;
+
 class function TPJOSInfo.IsReallyWindowsVersionOrGreater(MajorVersion,
   MinorVersion, ServicePackMajor: Word): Boolean;
 begin
@@ -1945,9 +2021,13 @@ end;
 
 class function TPJOSInfo.IsServer: Boolean;
 begin
-  if Win32HaveExInfo then
+  if InternalPlatform <> VER_PLATFORM_WIN32_NT then
+    // Not WinNT platform => can't be a server
+    Result := False
+  else if Win32HaveExInfo then
     // Check product type from extended OS info
-    Result := Win32ProductType <> VER_NT_WORKSTATION
+    Result := (Win32ProductType = VER_NT_DOMAIN_CONTROLLER)
+      or (Win32ProductType = VER_NT_SERVER)
   else
     // Check product type stored in registry
     Result := CompareText(ProductTypeFromReg, 'WINNT') <> 0;;
@@ -2111,9 +2191,9 @@ begin
             3:
               // NOTE: Version 6.3 may only be reported by Windows if the
               // application is "manifested" for Windows 8.1. See
-              // http://bit.ly/MJSO8Q. I'm not clear whether getting the OS
-              // via VerifyVersionInfo instead of GetVersion or GetVersionEx
-              // works round this
+              // http://bit.ly/MJSO8Q. Getting the OS via VerifyVersionInfo
+              // instead of GetVersion or GetVersionEx should work round this
+              // for Windows 8.1 (i.e. version 6.3).
               if not IsServer then
                 Result := osWin8Point1
               else
@@ -2121,6 +2201,22 @@ begin
             else
               // Higher minor version: must be an unknown later OS
               Result := osWinLater
+          end;
+        end;
+        10:
+        begin
+          // NOTE: Version 10 and later may only be reported by Windows if the
+          // application is "manifested" for the correct Windows version. See
+          // http://bit.ly/MJSO8Q. Previously, getting the OS from
+          // VerifyVersionInfo instead of GetVersion or GetVersionEx worked
+          // round this, but MS deprecated this in Windows 10, reverting
+          // VerifyVersionInfo to work like GetVersion. WHY????!!!!
+          case InternalMinorVersion of
+            0:
+              if not IsServer then
+                Result := osWin10
+              else
+                Result := osWin10Svr;
           end;
         end;
         else
@@ -2164,6 +2260,9 @@ begin
     osWinSvr2012: Result := 'Windows Server 2012';
     osWin8Point1: Result := 'Windows 8.1';
     osWinSvr2012R2: Result := 'Windows Server 2012 R2';
+    osWin10: Result := 'Windows 10';
+    // TODO: Update osWin10Svr description once OS is released and named
+    osWin10Svr: Result := 'Windows Server Technical Preview';
     else
       raise EPJSysInfo.Create(sUnknownProduct);
   end;
