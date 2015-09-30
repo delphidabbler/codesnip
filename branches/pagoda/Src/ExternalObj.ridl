@@ -1,0 +1,137 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public License,
+ * v. 2.0. If a copy of the MPL was not distributed with this file, You can
+ * obtain one at http://mozilla.org/MPL/2.0/
+ *
+ * Copyright (C) 2006-2014, Peter Johnson (www.delphidabbler.com).
+ *
+ * $Rev$
+ * $Date$
+ *
+ * Source for type library that defines the interface to extensions to the
+ * browser control DOM's "external object".
+ */
+
+
+[
+  uuid(DA95AEFB-3FB5-4A9E-9F9D-A53DD05CA7D4),
+  version(13.0),
+  helpstring("CodeSnip DOM External Object Extender Type Library"),
+  custom(DE77BA63-517C-11D1-A2DA-0000F8773CE9, 1377743270),
+  custom(DE77BA64-517C-11D1-A2DA-0000F8773CE9, 117441067)
+]
+library ExternalObj
+{
+
+  importlib("stdole2.tlb");
+
+  interface IWBExternal13;
+
+  /*
+   * V13 interface of extension to browser DOM's "external" object.
+   */
+  [
+    uuid(3E708CFD-B522-4122-9C0A-3209B4C5A573),
+    version(13.0),
+    helpstring("DOM external object extender"),
+    dual,
+    oleautomation
+  ]
+  interface IWBExternal13: IDispatch
+  {
+    /*
+     * Update database from internet.
+     */
+    [id(0x00000065)]
+    HRESULT _stdcall UpdateDbase(void);
+
+    /*
+     * Displays a snippet.
+     *    @param SnippetID [in] ID of snippet to display.
+     *    @param NewTab [in] Whether to display snippet in a new tab.
+     */
+    [id(0x00000066)]
+    HRESULT _stdcall DisplaySnippet([in] BSTR SnippetID,
+      [in] VARIANT_BOOL NewTab);
+
+    /*
+     * Displays configure compilers dialogue box.
+     */
+    [id(0x0000006A)]
+    HRESULT _stdcall ConfigCompilers(void);
+
+    /*
+     * Displays Donate dialogue box.
+     */
+    [id(0x0000006D)]
+    HRESULT _stdcall Donate(void);
+
+    /*
+     * Open Snippets Editor ready to create a new snippet.
+     */
+    [id(0x0000006F)]
+    HRESULT _stdcall NewSnippet(void);
+
+    /*
+     * Show news items from CodeSnip news feed.
+     */
+    [id(0x00000070)]
+    HRESULT _stdcall ShowNews(void);
+
+    /*
+     * Check for program updates.
+     */
+    [id(0x00000071)]
+    HRESULT _stdcall CheckForUpdates(void);
+
+    /*
+     * Display the program's About box.
+     */
+    [id(0x00000072)]
+    HRESULT _stdcall ShowAboutBox(void);
+
+    /*
+     * Displays a tab in the Preferences dialogue box.
+     *    @param ClsName [in] Class name of frame hosting required dialogue box
+     *      page.
+     */
+    [id(0x00000073)]
+    HRESULT _stdcall ShowPrefsPage([in] BSTR ClsName);
+
+    /*
+     * Displays given tag.
+     *    @param Tag [in] Tag to be displayed.
+     *    @param NewTab [in] Whether to display tag in a new tab.
+     */
+    [id(0x00000074)]
+    HRESULT _stdcall DisplayTag([in] BSTR Tag, [in] VARIANT_BOOL NewTab);
+
+    /*
+     * Removes a tag from a snippet's tag list.
+     *    @param SnippetID [in] ID of snippet.
+     *    @param Tag [in] Tag to be removed.
+     */
+    [id(0x00000075)]
+    HRESULT _stdcall RemoveTag([in] BSTR SnippetID, [in] BSTR Tag);
+
+    /*
+     * Display given source code language.
+     *    @param Tag [in] ID of language to be displayed.
+     *    @param NewTab [in] Whether to display language in a new tab.
+    */
+    [id(0x00000076)]
+    HRESULT _stdcall DisplayLanguage([in] BSTR LangID,
+      [in] VARIANT_BOOL NewTab);
+
+    /*
+     * Set snippet's starred state.
+     *    @param SnippetID [in] ID of snippet.
+     *    @param State [in] Whether snippet is to be starred.
+    */
+    [id(0x00000077)]
+    HRESULT _stdcall ChangeSnippetStar([in] BSTR SnippetID,
+      [in] VARIANT_BOOL State);
+
+  };
+
+};

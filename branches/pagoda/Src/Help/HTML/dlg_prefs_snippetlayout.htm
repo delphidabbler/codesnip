@@ -1,0 +1,234 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<!--
+ * This Source Code Form is subject to the terms of the Mozilla Public License,
+ * v. 2.0. If a copy of the MPL was not distributed with this file, You can
+ * obtain one at http://mozilla.org/MPL/2.0/
+ *
+ * Copyright (C) 2012-2013, Peter Johnson (www.delphidabbler.com).
+ *
+ * $Rev$
+ * $Date$
+ *
+ * Help topic for Snippet Layout tab of Preferences dialogue box.
+-->
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text-html; charset=Windows-1252">
+    <title>
+      Snippet Layout Preferences
+    </title>
+    <link rel="stylesheet" href="../css/codesnip.css" type="text/css">
+  </head>
+  <body>
+    <object
+      type="application/x-oleobject"
+      classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e"
+    >
+      <param name="ALink Name" value="SnippetLayoutPrefs">
+    </object>
+    <h1>
+      <a name="dlg_prefs_snippetlayout"></a>Snippet Layout Preferences
+    </h1>
+    <p>
+      This tab of the <a
+        href="dlg_preferences.htm"
+      >Preferences</a> dialogue box is used to customise the layout of pages
+      that display the various kinds of snippet in the <a
+        href="detail_pane.htm"
+      >Detail Pane</a>.
+    </p>
+    <p>
+      The tab is accessed by selecting the <em>Tools | Preferences</em> menu
+      item then clicking the <em>Display</em> tab in the <a
+        href="dlg_preferences.htm"
+      >Preferences</a> dialogue box.
+    </p>
+    <h2>
+      Overview
+    </h2>
+    <p>
+      Each different kind of snippet has its own page customisation. This makes
+      sense because some page &quot;components&quot; do not make sense for all
+      snippet kinds. For example, <a
+        href="snippet_freeform.htm"
+      >free-form</a> snippets can't be compiled, so there's little point in
+      displaying the compiler results table for that kind of snippet.
+    </p>
+    <p>
+      Page components can be re-ordered, added and removed from a page. The
+      available components are:
+    </p>
+    <ul>
+      <li>
+        <div>
+          <em>Description</em>
+        </div>
+        <div>
+          Snippet's description: one or more paragraphs of text.
+        </div>
+      </li>
+      <li>
+        <div>
+          <em>Source Code</em>
+        </div>
+        <div>
+          Syntax-highlighted block of source code. Does not word-wrap.
+        </div>
+      </li>
+      <li>
+        <div>
+          <em>Type</em>
+        </div>
+        <div>
+          Snippet's type or kind, e.g. &quot;Routine&quot; or &quot;Type
+          Definition&quot;
+        </div>
+      </li>
+      <li>
+        <div>
+          <em>Tags</em>
+        </div>
+        <div>
+          Set of tags associated with the snippet. Renders as a sequence of
+          links that display all snippets that have the tag, along with a link
+          to delete the tag.
+        </div>
+      </li>
+      <li>
+        <div>
+          <em>Required Units List</em>
+        </div>
+        <div>
+          Always empty for <a
+            href="snippet_unit.htm"
+          >Unit</a> snippets.
+        </div>
+      </li>
+      <li>
+        <div>
+          <em>Required Snippets List</em>
+        </div>
+        <div>
+          Contains links to any required snippets. Always empty for <a
+            href="snippet_unit.htm"
+          >Unit</a> snippets.
+        </div>
+      </li>
+      <li>
+        <div>
+          <em>Cross Reference List</em>
+        </div>
+        <div>
+          Contains links to any cross referenced snippets.
+        </div>
+      </li>
+      <li>
+        <div>
+          <em>Compiler Results Table</em>
+        </div>
+        <div>
+          Displays compilation results for all compilers that have been
+          configured to display this information. Never provides useful
+          information for <a
+            href="snippet_freeform.htm"
+          >free-form</a> snippets.
+        </div>
+        <div>
+          <strong class="warning">Important Note:</strong> If no compilers have
+          been set up to display compilation results then this component will
+          display a warning message in place of the table. <a
+            href="explain_all_compilers_hidden.htm"
+          >More information</a>.
+        </div>
+      </li>
+      <li>
+        <div>
+          <em>Notes</em>
+        </div>
+        <div>
+          Additional information about the snippet. Not all snippet's have such
+          notes.
+        </div>
+      </li>
+    </ul>
+    <h2>
+      Usage
+    </h2>
+    <p>
+      To customise the page layout for a chosen kind of snippet first choose the
+      required snippet kind from the <em>Edit page layout for snippet kind</em>
+      drop-down list.
+    </p>
+    <p>
+      The current page components will be displayed in the right hand
+      <em>Displayed page components</em> list box. Any unused page components
+      are listed in the <em>Unused page components</em> list box.
+    </p>
+    <p>
+      You customise the page using this list boxes. Here are the available
+      actions:
+    </p>
+    <ul class="spaced">
+      <li>
+        <div>
+          Remove a page component from the display
+        </div>
+        <div>
+          Select the page component in the <em>Displayed page components</em>
+          list box and click the <img
+            alt="Left button"
+            src="../Images/ArrowLeft.png"
+            class="glyph"
+          > button or press <span
+            class="smallcaps"
+          >Ctrl+Left</span>. The component will be moved to the <em>Unused page
+          components</em> list box.
+        </div>
+      </li>
+      <li>
+        <div>
+          Add a page component to the display
+        </div>
+        <div>
+          Select the required page component in the <em>Unused page
+          components</em> list box and click the <img
+            alt="Right button"
+            src="../Images/ArrowRight.png"
+            class="glyph"
+          > button or press
+          <span
+            class="smallcaps"
+          >Ctrl+Right</span>. The selected component is moved to the end of the
+          <em>Displayed page components</em> list box.
+        </div>
+      </li>
+      <li>
+        <div>
+          Order the components on the page
+        </div>
+        <div>
+          The page components are displayed in the order they appear in the
+          <em>Displayed page components</em> list box. To move a page component
+          up or down the page select it then click either the <img
+            alt="Up button"
+            src="../Images/ArrowUp.png"
+            class="glyph"
+          > or <img
+            alt="Down button"
+            src="../Images/ArrowDown.png"
+            class="glyph"
+          >
+          buttons respectively. Alternatively press <span
+            class="smallcaps"
+          >Ctrl+Up</span> or <span
+            class="smallcaps"
+          >Ctrl+Down</span>.
+        </div>
+      </li>
+    </ul>
+    <p>
+      Finally, you can reset all page layouts to their defaults by clicking the
+      <em>Restore Defaults</em> button.
+    </p>
+  </body>
+</html>

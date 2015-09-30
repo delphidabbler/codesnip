@@ -1,0 +1,23 @@
+This file describes the licenses that apply to source code files in the Src
+directory and its sub-directories, unless the sub-directory or its closest
+parent directory also contains a LICENSE file, in which case that file takes
+precedence.
+
+Most files contain a comment that provides license information.
+
+Exceptions are:
+
+* All .dfm files are licensed under the same license as the related .pas file.
+  For example, if Foo.pas is licensed under the Mozilla Public License v2.0 then
+  the same license also applies to Foo.dfm.
+
+* The following files have any copyright dedicated to the Public Domain
+  http://creativecommons.org/publicdomain/zero/1.0/
+
+    - Src/CodeSnip.cfg.tplt
+    - Src/CodeSnip.dproj
+    - Src/CodeSnip.groupproj
+    - Src/CodeSnip.todo
+
+    - Src/Portable/CodeSnipPortable.cfg.tplt
+    - Src/Portable/CodeSnipPortable.dproj

@@ -1,0 +1,97 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<!--
+ * This Source Code Form is subject to the terms of the Mozilla Public License,
+ * v. 2.0. If a copy of the MPL was not distributed with this file, You can
+ * obtain one at http://mozilla.org/MPL/2.0/
+ *
+ * Copyright (C) 2006-2013, Peter Johnson (www.delphidabbler.com).
+ *
+ * $Rev$
+ * $Date$
+ *
+ * Help topic for Save Unit dialogue box.
+-->
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text-html; charset=Windows-1252">
+    <title>
+      Save Unit Dialogue Box
+    </title>
+    <link rel="stylesheet" href="../css/codesnip.css" type="text/css">
+  </head>
+  <body>
+    <object
+      type="application/x-oleobject"
+      classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e"
+    >
+      <param name="ALink Name" value="SaveUnitDlg">
+    </object>
+    <h1>
+      <a name="dlg_savesnippet"></a>Save Unit Dialogue Box
+    </h1>
+    <p>
+      This dialogue box is displayed when the <em>File | Save Unit</em> menu
+      option is clicked. It is used to specify the file name, file type and
+      formatting information for the source code unit that is to be saved.
+    </p>
+    <p>
+      All currently selected snippets, with the exception of any
+      <a href="snippet_freeform.htm">free-form</a> snippets, are included in the
+      generated unit. (See the <a href="task_search.htm">Search Database</a>
+      task for information on how to select the required snippets).
+    </p>
+    <p>
+      The dialogue is a standard Windows save dialogue box with a few added
+      options.
+    </p>
+    <p>
+      You specify the name and folder for the file where the unit will be saved
+      in in the usual way. Note that the chosen file name, minus its extension
+      must be a valid Pascal unit name.
+    </p>
+    <p>
+      Use the <em>Save as type</em> drop down list to specify the type of file
+      to be saved. Options are:
+    </p>
+    <ul>
+      <li>
+        A Pascal unit file (.pas) - The code is written to a file with
+        extension .pas. The unit is given a name based on the file name.
+      </li>
+      <li>
+        A plain text file (.txt) - This is the same as the Pascal unit file
+        except that the extension is .txt rather than .pas.
+      </li>
+      <li>
+        An HTML file (.html) - This option writes the source code out as a
+        valid XHTML document that uses CSS to format the code. The document can
+        contain syntax highlighting if the <em>Use syntax highlighting</em>
+        check box is checked.
+      </li>
+      <li>
+        A rich text file (.rtf) - The source code is written out as an RTF
+        document. Again syntax highlighting can be used if the <em>Use syntax
+        highlighting</em> check box is checked.
+      </li>
+    </ul>
+    <p>
+      Each snippet's description can be written as a Pascal comment to the
+      output file. Use the <em>Comment style</em> drop down list to specify the
+      style of commenting to be used. Comments can be inhibited using by
+      selecting the <em>No comments</em> option from the list. If the
+      <em>Truncate comments to 1st paragraph</em> check box is ticked then only
+      the first paragraph of the snippet's description is used. Clearing this
+      check box means that all of the description is used.
+    </p>
+    <p>
+      The output can be previewed by clicking the <em>Preview</em> button. This
+      displays the source code in a dialogue box, formatted according to your
+      selections. Text in the preview can be selected and copied to the
+      clipboard if required.
+    </p>
+    <p>
+      Use the <em>Save</em> button to write the source code to disk or <em>
+      Cancel</em> to abort.
+    </p>
+  </body>
+</html>

@@ -1,0 +1,99 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public License,
+ * v. 2.0. If a copy of the MPL was not distributed with this file, You can
+ * obtain one at http://mozilla.org/MPL/2.0/
+ *
+ * Copyright (C) 2005-2014, Peter Johnson (www.delphidabbler.com).
+ *
+ * $Rev$
+ * $Date$
+ *
+ * Resource file containing images, dialogue boxes and manifest for CodeSnip
+ * program.
+ */
+
+
+/*
+  Images representing compiler results as "LEDs"
+  Note: added to RCDATA instead of BITMAP resources since the resource compiler
+  doesn't recognise the 32 bit bitmap file type, which this is.
+*/
+LEDS RCDATA "Res/Img/LEDs32.bmp"
+
+/*
+  Images used for program's actions in menus, toolbars, buttons etc.
+  Note: added to RCDATA instead of BITMAP resources since the resource compiler
+  doesn't recognise the 32 bit bitmap file type, which this is.
+*/
+ACTIONIMAGES RCDATA "Res/Img/ActionImages.bmp"
+
+
+/*
+  Check boxes used in treeviews
+*/
+TVCHECKBOXES BITMAP "Res/Img/TVCheckBoxes.bmp"
+
+
+/*
+  Search glyphs and modified for display in status bar
+*/
+COMPILERSEARCH BITMAP "Res/Img/CompilerSearch.bmp"
+TEXTSEARCH BITMAP "Res/Img/TextSearch.bmp"
+TAGSSEARCH BITMAP "Main/Assets/Img/TagsSearch.bmp"
+SELECTIONSEARCH BITMAP "Res/Img/SelectionSearch.bmp"
+XREFSEARCH BITMAP "Res/Img/XRefSearch.bmp"
+NULSEARCH BITMAP "Res/Img/NulSearch.bmp"
+STOREDSELECTIONSEARCH BITMAP "Res/Img/StoredSelection.bmp"
+MODIFIED BITMAP "Res/Img/Modified.bmp"
+
+/*
+  Glyph used in notification window
+*/
+NOTIFICATION BITMAP "Res/Img/Notification.bmp"
+
+
+/*
+  Splash screen image
+*/
+SPLASHIMAGE RCDATA "Res/Img/Branding/Splash.gif"
+
+
+/*
+  Program's icon
+*/
+MAINICON ICON "Res/Img/Branding/CodeSnip.ico"
+
+/*
+  DIALOG resource used to extend save dialogue box
+*/
+SAVESNIPPETEXT DIALOG 0, 0, 0, 142
+STYLE WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | DS_3DLOOK | DS_CONTROL
+FONT 8, "MS Sans Serif"
+LANGUAGE LANG_NEUTRAL , SUBLANG_NEUTRAL
+{
+  /*
+    Hidden static control required by Windows to extend dialogue. Dialogue is
+    extended by difference between dialogue size and size of this static
+    control.
+  */
+  LTEXT "", 1119, 0, 0, 0, 84, SS_LEFT | WS_CHILD | NOT WS_VISIBLE | WS_GROUP
+}
+
+
+/*
+  Default syntax highlighter description file.
+  Note: UTF-8 format text file.
+*/
+HILITETHEMES RCDATA "Main/Assets/Misc/DefaultHighlighterThemes.dat"
+
+/*
+  Default source code languages recognised by CodeSnip.
+  Note: UTF-8 format text file.
+*/
+SOURCECODELANGUAGES RCDATA "Main/Assets/Misc/DefaultSourceCodeLanguages.dat"
+
+/*
+  XP and later manifest file
+*/
+1 24 "Res/Misc/CodeSnip.manifest"
+

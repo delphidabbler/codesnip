@@ -1,0 +1,57 @@
+package SynEdit_RXE;
+
+{$R *.res}
+{$ALIGN 8}
+{$ASSERTIONS ON}
+{$BOOLEVAL OFF}
+{$DEBUGINFO ON}
+{$EXTENDEDSYNTAX ON}
+{$IMPORTEDDATA ON}
+{$IOCHECKS ON}
+{$LOCALSYMBOLS ON}
+{$LONGSTRINGS ON}
+{$OPENSTRINGS ON}
+{$OPTIMIZATION ON}
+{$OVERFLOWCHECKS OFF}
+{$RANGECHECKS OFF}
+{$REFERENCEINFO ON}
+{$SAFEDIVIDE OFF}
+{$STACKFRAMES OFF}
+{$TYPEDADDRESS OFF}
+{$VARSTRINGCHECKS ON}
+{$WRITEABLECONST ON}
+{$MINENUMSIZE 1}
+{$IMAGEBASE $400000}
+{$DESCRIPTION 'SynEdit component suite runtime (Modified)'}
+{$RUNONLY}
+{$IMPLICITBUILD OFF}
+
+requires
+  vcl,
+  vcldb,
+  vclx,
+  rtl;
+
+contains
+  SynEdit in 'SynEdit.pas',
+  SynEditHighlighter in 'SynEditHighlighter.pas',
+  SynEditHighlighterOptions in 'SynEditHighlighterOptions.pas',
+  SynEditKbdHandler in 'SynEditKbdHandler.pas',
+  SynEditKeyCmds in 'SynEditKeyCmds.pas',
+  SynEditKeyConst in 'SynEditKeyConst.pas',
+  SynEditMiscClasses in 'SynEditMiscClasses.pas',
+  SynEditMiscProcs in 'SynEditMiscProcs.pas',
+  SynEditStrConst in 'SynEditStrConst.pas',
+  SynEditTextBuffer in 'SynEditTextBuffer.pas',
+  SynEditTypes in 'SynEditTypes.pas',
+  SynEditWordWrap in 'SynEditWordWrap.pas',
+  SynHighlighterMulti in 'SynHighlighterMulti.pas',
+  SynRegExpr in 'SynRegExpr.pas',
+  SynTextDrawer in 'SynTextDrawer.pas',
+  SynUnicode in 'SynUnicode.pas',
+  SynHighlighterHtml in 'SynHighlighterHtml.pas',
+  SynHighlighterJScript in 'SynHighlighterJScript.pas',
+  SynHighlighterPas in 'SynHighlighterPas.pas',
+  SynHighlighterPHP in 'SynHighlighterPHP.pas';
+
+end.

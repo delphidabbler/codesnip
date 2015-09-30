@@ -1,0 +1,112 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<!--
+ * This Source Code Form is subject to the terms of the Mozilla Public License,
+ * v. 2.0. If a copy of the MPL was not distributed with this file, You can
+ * obtain one at http://mozilla.org/MPL/2.0/
+ *
+ * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
+ *
+ * $Rev$
+ * $Date$
+ *
+ * Help topic for Update From Web dialogue box.
+-->
+<html>
+  <head>
+    <title>
+      Update From Web Dialogue Box
+    </title>
+    <meta http-equiv="Content-Type" content="text-html; charset=Windows-1252">
+    <link rel="stylesheet" href="../css/codesnip.css" type="text/css">
+  </head>
+  <body>
+    <object
+      type="application/x-oleobject"
+      classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e"
+    >
+      <param name="ALink Name" value="UpdateDlg">
+    </object>
+    <h1>
+      <a name="dlg_update"></a>Update From Web Dialogue Box
+    </h1>
+    <p>
+      This dialogue box is used to update the <em>CodeSnip</em> database from
+      the internet. It is displayed using the <em>Database | Update From
+      Web</em> menu option.
+    </p>
+    <p>
+      The <em>Update from Web</em> button should be clicked to initiate the
+      update. <strong>Note:</strong> you must ensure you are connected to the
+      internet before clicking this button otherwise a &quot;Connection
+      Error&quot; message will be displayed.
+    </p>
+    <p>
+      Once the <em>Update from Web</em> button has been clicked it will be
+      replaced by a progress report pane. The update will then begin.
+    </p>
+    <p>
+      <em>CodeSnip</em> first logs on to the web server and then determines if
+      your copy of the database is out of date. If so the latest version is
+      downloaded. A progress bar is displayed while the database is being
+      downloaded. A confirmatory message is displayed once the process is
+      complete.
+    </p>
+    <p>
+      <strong>Note:</strong> The database will be updated for all users, since
+      each user accesses the same copy of the database.
+    </p>
+    <h2>
+      Cancelling the update
+    </h2>
+    <p>
+      The <em>Close</em> button is replaced by a larger <em>Cancel Update</em>
+      button while the update is in progress. This button can be clicked at any
+      time to cancel the update. <em>CodeSnip</em> will restore the previous
+      database. <strong>Note:</strong> database downloads can't be interrupted.
+    </p>
+    <h2>
+      Update errors
+    </h2>
+    <p>
+      If <em>CodeSnip</em> detects an error while updating it aborts the
+      update, restores the old database and displays a brief error message at
+      the top of the the dialogue box. More details of the error are displayed
+      in the progress report pane.
+    </p>
+    <p>
+      If you see a &quot;Connection Error&quot; check your internet connection
+      and try again. If you receive web server or time out errors this may be
+      due to the server being down or busy so it is worth trying later.
+    </p>
+    <p>
+      If a server or time-out error persists please inform the author via the
+      DelphiDabbler website's
+      <a
+        class="weblink"
+        href="http://delphidabbler.com/contact"
+        target="_blank"
+      >contact page</a>.
+    </p>
+    <h2>
+      Latest <em>CodeSnip</em> News
+    </h2>
+    <p>
+      Click the <em>Latest News</em> button at the bottom left of the dialogue
+      box to see the latest news about <em>CodeSnip</em> and the online
+      database. If this button is clicked while an update is in progress the
+      update is paused until the dialogue box is closed.
+    </p>
+    <p class="bordered">
+      <strong>Note:</strong> By default <em>CodeSnip</em> checks online
+      from time to time to check if any database updates are available. A pop-up
+      notification window is displayed in the main window if an update is
+      available. This dialogue box can then be used to download the update. You
+      can switch this feature off, or change the frequency with which checks are
+      made, by using the <a
+        href="dlg_prefs_updates.htm"
+      >Updates</a> tab of the <a
+        href="dlg_preferences.htm"
+      >Preferences</a> dialogue box.
+    </p>
+  </body>
+</html>

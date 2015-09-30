@@ -1,0 +1,167 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<!--
+ * This Source Code Form is subject to the terms of the Mozilla Public License,
+ * v. 2.0. If a copy of the MPL was not distributed with this file, You can
+ * obtain one at http://mozilla.org/MPL/2.0/
+ *
+ * Copyright (C) 2012-2013, Peter Johnson (www.delphidabbler.com).
+ *
+ * $Rev$
+ * $Date$
+ *
+ * Help topic describing the use of the Mark-up Editor.
+-->
+<html>
+  <head>
+    <meta
+     http-equiv="Content-Type"
+     content="text-html; charset=Windows-1252">
+    <title>
+      Mark-up Editor
+    </title>
+    <link
+     rel="stylesheet"
+     href="../css/codesnip.css"
+     type="text/css">
+  </head>
+  <body>
+    <h1>
+      Mark-up Editor
+    </h1>
+    <p>
+      The mark-up editor is used in the <a href="dlg_editsnippet.htm">Edit
+      Snippet</a> dialogue box to enter text that can optionally be formatted.
+      It is used to enter and edit snippet descriptions and notes.
+    </p>
+    <p>
+      The editor has two modes of operation: <em><a href="#plain-text">Plain
+      Text</a></em> and <em><a href="#markup">Mark-up</a></em>. The modes are
+      selected by using the buttons below the edit control. Each mode causes
+      the text entered in the edit control to be interpreted in a different way,
+      as explained below.
+    </p>
+    <p>
+      Switching between the modes of operation does not change the text: it is
+      simply interpreted differently. However, you can convert text between the
+      two types as is explained in the <a href="#conversions">Conversions</a>
+      section.
+    </p>
+    <h2 id="plain-text">
+      Plain text
+    </h2>
+    <p>
+      Selecting the <em>Plain Text</em> button causes the text entered in the
+      edit control to be interpreted as plain text.
+    </p>
+    <p>
+      All characters you enter are treated literally. You cannot style the text.
+      Any URLs you enter are treated as plain text and are not interpreted as
+      hyperlinks.
+    </p>
+    <p>
+      You can enter multiple paragraphs of text by separating each paragraph
+      with a blank line. Any text on consecutive lines is otherwise treated as
+      a single line. For example:
+    </p>
+    <p class="indent bordered">
+      Lorem ipsum dolor sit amet<br>
+      consectetur adipiscing elit.
+    </p>
+    <p>
+      is interpreted as:
+    </p>
+    <p class="indent">
+      Lorem ipsum dolor sit amet consectetur adipiscing elit.
+    </p>
+    <p>
+      but
+    </p>
+    <p class="indent bordered">
+      Lorem ipsum dolor sit amet<br><br>
+      consectetur adipiscing elit.
+    </p>
+    <p>
+      yields:
+    </p>
+    <p class="indent">
+      Lorem ipsum dolor sit amet
+    </p>
+    <p class="indent">
+      consectetur adipiscing elit.
+    </p>
+    <p>
+      Visual feedback that you are editing plain text comes from the fact the
+      text is displayed in the default proportional font.
+    </p>
+    <h2 id="markup">
+      Mark-up
+    </h2>
+    <p>
+      Choosing the <em>Markup</em> tab causes the entered text to be treated as
+      mark-up language, which is a very simple, HTML-like, language that allows
+      for a limited amount of text formatting and for the inclusion of
+      hyperlinks. For full details see the <a href="reml.htm">REML</a> help
+      topic.
+    </p>
+    <p>
+      A fixed width font is used to indicate you are editing
+      <a href="reml.htm">REML</a> source code instead of plain text.
+    </p>
+    <h2 id="conversions">
+      Conversions
+    </h2>
+    <p>
+      Normally, if you switch between <em>Plain Text</em> and <em>Mark-up</em>
+      modes, the text in the edit control does not change. However you can
+      convert plain text into the equivalent <a href="reml.htm">REML</a> mark-up
+      and vice versa. This is done from the mark-up editor's pop-up context
+      menu.
+    </p>
+    <p>
+      There are two menu options:
+    </p>
+    <ul>
+      <li>
+        <div>
+          <em>Convert To Plain Text</em>
+        </div>
+        <div>
+          This option is only available when the editor is in <em>Mark-up</em>
+          mode. It replaces the <a href="reml.htm">REML</a> mark-up in the edit
+          control with the plain text equivalent.
+        </div>
+        <div>
+          All in-line styling and hyperlinks are lost. Paragraphs and headings
+          are converted to plain text paragraphs, separated by blank lines.
+        </div>
+        <div>
+          The editor is switched into <em>Plain Text</em> mode.
+        </div>
+        <div>
+          If there is an error in the mark-up an error message will be
+          displayed, no conversion will take place and the mode will not be
+          changed.
+        </div>
+      </li>
+      <li>
+        <div>
+          <em>Convert To Markup</em>
+        </div>
+        <div>
+          This option is only available when the editor is in <em>Plain
+          Text</em> mode. It replaces the text entered in the edit control with
+          the equivalent <a href="reml.htm">REML</a> code.
+        </div>
+        <div>
+          Illegal <a href="reml.htm">REML</a> characters are converted to
+          character attributes. Paragraphs (i.e. blocks of text separated by
+          blanks lines) are converted to <a href="reml.htm">REML</a> paragraphs
+          using the &lt;p&gt; tag.
+        </div>
+        <div>
+          The editor is switched into <em>Mark-up</em> mode.
+        </div>
+      </li>
+    </ul>
+  </body>
+</html>

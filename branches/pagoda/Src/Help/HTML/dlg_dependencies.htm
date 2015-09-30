@@ -1,0 +1,61 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<!--
+ * This Source Code Form is subject to the terms of the Mozilla Public License,
+ * v. 2.0. If a copy of the MPL was not distributed with this file, You can
+ * obtain one at http://mozilla.org/MPL/2.0/
+ *
+ * Copyright (C) 2009-2013, Peter Johnson (www.delphidabbler.com).
+ *
+ * $Rev$
+ * $Date$
+ *
+ * Help topic for Dependencies dialogue box.
+-->
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text-html; charset=Windows-1252">
+    <title>
+      Dependencies Dialogue Box
+    </title>
+    <link rel="stylesheet" href="../css/codesnip.css" type="text/css">
+  </head>
+  <body>
+    <object
+      type="application/x-oleobject"
+      classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e"
+    >
+      <param name="ALink Name" value="DependenciesDlg">
+    </object>
+    <h1>
+      Dependencies Dialogue Box
+    </h1>
+    <p>
+      This dialogue box is displayed by choosing the <em>View |
+      Dependencies</em> main menu item. It has two tabs: <em>Depends Upon</em>
+      and <em>Required By</em>.
+    </p>
+    <h2>
+      <em>Depends Upon</em> Tab
+    </h2>
+    <p>
+      If the selected snippet has dependencies (i.e. snippets it requires in
+      order to compile) a tree of snippets is displayed that shows the direct
+      and indirect dependencies. When there are no dependencies a message is
+      displayed to that effect.
+    </p>
+    <p>
+      If a circular reference is detected (i.e. the snippet depends directly or
+      indirectly upon itself) the circular reference is displayed in red and an
+      error message is displayed. Such a dependency indicates there is an error
+      in the database.
+    </p>
+    <h2>
+      <em>Required By</em> Tab
+    </h2>
+    <p>
+      This tab displays a simple list of snippets that immediately depend on the
+      selected snippet. Again, if there are no snippets to list a message is
+      displayed to that effect.
+    </p>
+  </body>
+</html>

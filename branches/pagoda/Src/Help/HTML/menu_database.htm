@@ -1,0 +1,109 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<!--
+ * This Source Code Form is subject to the terms of the Mozilla Public License,
+ * v. 2.0. If a copy of the MPL was not distributed with this file, You can
+ * obtain one at http://mozilla.org/MPL/2.0/
+ *
+ * Copyright (C) 2008-2013, Peter Johnson (www.delphidabbler.com).
+ *
+ * $Rev$
+ * $Date$
+ *
+ * Help topic describing Database menu.
+-->
+<html>
+  <head>
+    <title>
+      Database Menu
+    </title>
+    <meta http-equiv="Content-Type" content="text-html; charset=Windows-1252">
+    <link rel="stylesheet" href="../css/codesnip.css" type="text/css">
+  </head>
+  <body>
+    <h1>
+      <a name="menu_database"></a>Database&nbsp;Menu
+    </h1>
+    <p>
+      The Database menu contains the following options:
+    </p>
+    <table class="menu" cellspacing="1" cellpadding="0">
+      <tr>
+        <td class="img">
+          <img alt="Menu icon" src="../images/SaveDatabase.png" class="glyph">
+        </td>
+        <td class="item">
+          Save User Database<br>
+          [<span class="smallcaps">Ctrl+S</span>]
+        </td>
+        <td class="desc">
+          Saves the user defined database. Not available if the database has not
+          changed.
+        </td>
+      </tr>
+      <tr>
+        <td class="img">
+          <img
+            alt="Menu item" src="../images/BackupDatabase.png" class="glyph"
+          >
+        </td>
+        <td class="item">
+          Backup User Database
+        </td>
+        <td class="desc">
+          Creates a backup of the user defined database. The backup is stored in
+          a file specified by the user via the <a href="dlg_backup.htm">Save
+          Backup</a> dialogue box.
+        </td>
+      </tr>
+      <tr>
+        <td class="img">
+          <img
+            alt="Menu item" src="../images/RestoreDatabase.png" class="glyph"
+          >
+        </td>
+        <td class="item">
+          Restore User Database
+        </td>
+        <td class="desc">
+          Restores the local database from a backup. The backup file to be
+          restored is chosen by the user via the <a href="dlg_restore.htm">Open
+          Backup File</a> dialogue box.
+        </td>
+      </tr>
+      <tr>
+        <td class="img">
+          <img alt="Menu icon" src="../images/Download.png" class="glyph">
+        </td>
+        <td class="item">
+          Update From Web
+        </td>
+        <td class="desc">
+          Displays the <a href="dlg_update.htm">Update from Web</a> dialogue box
+          that enables the main code snippets database to be updated.
+        </td>
+      </tr>
+      <tr>
+        <td class="img">
+          &nbsp;
+        </td>
+        <td class="item">
+          Move User Database&dagger;
+        </td>
+        <td class="desc">
+          Displays the <a href="dlg_moveuserdb.htm">Move User Database</a>
+          dialogue box from where the user defined database files can be moved
+          to a different folder. The main reason for this option is so that the
+          user can locate the database in a suitable location for backing up,
+          such as a <em>DropBox</em> or <em>Google Drive</em> sub-directory.
+        </td>
+      </tr>
+    </table>
+    <p>
+      &dagger; The <em>Move User Database</em> option is not available in the
+      portable edition of <em>CodeSnip</em>.
+    </p>
+    <p>
+      Return to the <a href="main_menu.htm">main menu</a>.
+    </p>
+  </body>
+</html>

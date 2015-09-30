@@ -1,0 +1,111 @@
+﻿	<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+		<PropertyGroup>
+			<ProjectGuid>{1CFA3E60-3C3F-4143-AE0C-F3589BC740AE}</ProjectGuid>
+			<ProjectVersion>12.3</ProjectVersion>
+			<Config Condition="'$(Config)'==''">Base</Config>
+			<DCC_DCCCompiler>DCC32</DCC_DCCCompiler>
+			<MainSource>CodeSnipTests.dpr</MainSource>
+			<Base>True</Base>
+			<Platform>Win32</Platform>
+			<AppType>Application</AppType>
+			<FrameworkType>VCL</FrameworkType>
+		</PropertyGroup>
+		<PropertyGroup Condition="'$(Config)'=='Base' or '$(Base)'!=''">
+			<Base>true</Base>
+		</PropertyGroup>
+		<PropertyGroup Condition="'$(Base)'!=''">
+			<DCC_DependencyCheckOutputName>..\..\Exe\CodeSnipTests.exe</DCC_DependencyCheckOutputName>
+			<DCC_UnitSearchPath>$(BDS)\Source\DUnit\src;..\..\..\Bin\Lib;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
+			<DCC_UnitAlias>WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;$(DCC_UnitAlias)</DCC_UnitAlias>
+			<DCC_Define>TESTING;_CONSOLE_TESTRUNNER;$(DCC_Define)</DCC_Define>
+			<DCC_ExeOutput>.\Exe</DCC_ExeOutput>
+			<DCC_ImageBase>00400000</DCC_ImageBase>
+			<DCC_CVT_WIDENING_STRING_LOST>true</DCC_CVT_WIDENING_STRING_LOST>
+			<DCC_CVT_ACHAR_TO_WCHAR>true</DCC_CVT_ACHAR_TO_WCHAR>
+			<DCC_EXPLICIT_STRING_CAST_LOSS>true</DCC_EXPLICIT_STRING_CAST_LOSS>
+			<DCC_SYMBOL_PLATFORM>false</DCC_SYMBOL_PLATFORM>
+			<DCC_Platform>x86</DCC_Platform>
+			<DCC_DcuOutput>.\Bin</DCC_DcuOutput>
+			<DCC_SymbolReferenceInfo>1</DCC_SymbolReferenceInfo>
+		</PropertyGroup>
+		<ItemGroup>
+			<DelphiCompile Include="CodeSnipTests.dpr">
+				<MainSource>MainSource</MainSource>
+			</DelphiCompile>
+			<DCCReference Include="TestUStrUtils.pas"/>
+			<DCCReference Include="..\..\UStrUtils.pas"/>
+			<DCCReference Include="..\..\UConsts.pas"/>
+			<DCCReference Include="TestUUtils.pas"/>
+			<DCCReference Include="..\..\UUtils.pas"/>
+			<DCCReference Include="..\..\UBaseObjects.pas"/>
+			<DCCReference Include="TestUBaseObjects.pas"/>
+			<DCCReference Include="..\..\USingleton.pas"/>
+			<DCCReference Include="TestUSingleton.pas"/>
+			<DCCReference Include="TestUURIEncode.pas"/>
+			<DCCReference Include="..\..\UURIEncode.pas"/>
+			<BuildConfiguration Include="Base">
+				<Key>Base</Key>
+			</BuildConfiguration>
+		</ItemGroup>
+		<Import Condition="Exists('$(BDS)\Bin\CodeGear.Delphi.Targets')" Project="$(BDS)\Bin\CodeGear.Delphi.Targets"/>
+		<Import Condition="Exists('$(APPDATA)\Embarcadero\$(BDSAPPDATABASEDIR)\$(PRODUCTVERSION)\UserTools.proj')" Project="$(APPDATA)\Embarcadero\$(BDSAPPDATABASEDIR)\$(PRODUCTVERSION)\UserTools.proj"/>
+		<ProjectExtensions>
+			<Borland.Personality>Delphi.Personality.12</Borland.Personality>
+			<Borland.ProjectType/>
+			<BorlandProject>
+				<Delphi.Personality>
+					<Parameters>
+						<Parameters Name="RunParams">-localhost</Parameters>
+					</Parameters>
+					<VersionInfo>
+						<VersionInfo Name="IncludeVerInfo">False</VersionInfo>
+						<VersionInfo Name="AutoIncBuild">False</VersionInfo>
+						<VersionInfo Name="MajorVer">1</VersionInfo>
+						<VersionInfo Name="MinorVer">0</VersionInfo>
+						<VersionInfo Name="Release">0</VersionInfo>
+						<VersionInfo Name="Build">0</VersionInfo>
+						<VersionInfo Name="Debug">False</VersionInfo>
+						<VersionInfo Name="PreRelease">False</VersionInfo>
+						<VersionInfo Name="Special">False</VersionInfo>
+						<VersionInfo Name="Private">False</VersionInfo>
+						<VersionInfo Name="DLL">False</VersionInfo>
+						<VersionInfo Name="Locale">2057</VersionInfo>
+						<VersionInfo Name="CodePage">1252</VersionInfo>
+					</VersionInfo>
+					<VersionInfoKeys>
+						<VersionInfoKeys Name="CompanyName"/>
+						<VersionInfoKeys Name="FileDescription"/>
+						<VersionInfoKeys Name="FileVersion">1.0.0.0</VersionInfoKeys>
+						<VersionInfoKeys Name="InternalName"/>
+						<VersionInfoKeys Name="LegalCopyright"/>
+						<VersionInfoKeys Name="LegalTrademarks"/>
+						<VersionInfoKeys Name="OriginalFilename"/>
+						<VersionInfoKeys Name="ProductName"/>
+						<VersionInfoKeys Name="ProductVersion">1.0.0.0</VersionInfoKeys>
+						<VersionInfoKeys Name="Comments"/>
+					</VersionInfoKeys>
+					<Excluded_Packages>
+						<Excluded_Packages Name="$(BDSBIN)\dclib140.bpl">Embarcadero InterBase Express Components</Excluded_Packages>
+						<Excluded_Packages Name="$(BDSBIN)\dclado140.bpl">Embarcadero ADO DB Components</Excluded_Packages>
+						<Excluded_Packages Name="$(BDSBIN)\dclwebsnap140.bpl">Embarcadero WebSnap Components</Excluded_Packages>
+						<Excluded_Packages Name="$(BDSBIN)\dclwbm140.bpl">Embarcadero InternetExpress Components</Excluded_Packages>
+						<Excluded_Packages Name="$(BDSBIN)\dcloffice2k140.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
+						<Excluded_Packages Name="$(BDSBIN)\dclofficexp140.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
+					</Excluded_Packages>
+					<Source>
+						<Source Name="MainSource">CodeSnipTests.dpr</Source>
+					</Source>
+				</Delphi.Personality>
+				<UnitTesting>
+					<TestFramework>DUnit / Delphi Win32</TestFramework>
+					<TestRunner>GUI</TestRunner>
+					<TestProjectName/>
+					<SourceProjectName/>
+				</UnitTesting>
+				<Platforms>
+					<Platform value="Win32">True</Platform>
+				</Platforms>
+			</BorlandProject>
+			<ProjectFileVersion>12</ProjectFileVersion>
+		</ProjectExtensions>
+	</Project>

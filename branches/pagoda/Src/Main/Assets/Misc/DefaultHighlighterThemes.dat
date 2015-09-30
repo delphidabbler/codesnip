@@ -1,0 +1,84 @@
+﻿► CodeSnip Syntax Highlight Themes v1 ◄
+
+# ------------------------------------------------------------------------------
+# This Source Code Form is subject to the terms of the Mozilla Public License,
+# v. 2.0. If a copy of the MPL was not distributed with this file, You can
+# obtain one at http://mozilla.org/MPL/2.0/
+#
+# Copyright (C) 2013, Peter Johnson (www.delphidabbler.com).
+#
+# $Rev$
+# $Date$
+#
+# Defines built in syntax highlighter themes.
+#
+# Must be included in program resources in UTF-8 format.
+# ------------------------------------------------------------------------------
+
+Theme _Legacy_ CodeSnip Classic
+  Brush *
+    Attr Space *,*,{}
+    Attr Comment *,800000,{italic}
+    Attr ReservedWord *,000000,{bold}
+    Attr NonreservedKeyword *,000000,{italic}
+    Attr Event *,000000,{italic}
+    Attr Identifier *,000000,{}
+    Attr Symbol *,000000,{}
+    Attr String *,800080,{}
+    Attr Character *,800080,{}
+    Attr Number *,000080,{}
+    Attr Float *,000080,{}
+    Attr Hexadecimal *,000080,{}
+    Attr Preprocessor *,008000,{}
+    Attr Assembler *,000000,{italic}
+
+Theme _Delphi7_ Delphi 7
+  Brush *
+    Attr Space *,*,{}
+    Attr Comment *,800000,{italic}
+    Attr ReservedWord *,000000,{bold}
+    Attr NonreservedKeyword *,000000,{italic}
+    Attr Event *,000000,{italic}
+    Attr Identifier *,000000,{}
+    Attr Symbol *,000000,{}
+    Attr String *,800000,{}
+    Attr Character *,800000,{}
+    Attr Number *,800000,{}
+    Attr Float *,800000,{}
+    Attr Hexadecimal *,800000,{}
+    Attr Preprocessor *,800000,{}
+    Attr Assembler *,000000,{}
+
+Theme _DEFAULT_ RAD Studio
+  Brush *
+    Attr Space *,*,{}
+    Attr Comment *,008000,{italic}
+    Attr ReservedWord *,800000,{bold}
+    Attr NonreservedKeyword *,800000,{italic}
+    Attr Event *,800000,{italic}
+    Attr Identifier *,000000,{}
+    Attr Symbol *,000000,{}
+    Attr String *,FF0000,{}
+    Attr Character *,FF0000,{}
+    Attr Number *,FF0000,{}
+    Attr Float *,FF0000,{}
+    Attr Hexadecimal *,FF0000,{}
+    Attr Preprocessor *,808000,{}
+    Attr Assembler *,000000,{}
+
+Theme _VisualStudio_ Visual Studio™
+  Brush *
+    Attr Space *,*,{}
+    Attr Comment *,008000,{}
+    Attr ReservedWord *,FF0000,{bold}
+    Attr NonreservedKeyword *,FF0000,{italic}
+    Attr Event *,FF0000,{italic}
+    Attr Identifier *,000000,{}
+    Attr Symbol *,000000,{}
+    Attr String *,000000,{}
+    Attr Character *,000000,{}
+    Attr Number *,000000,{}
+    Attr Float *,000000,{}
+    Attr Hexadecimal *,000000,{}
+    Attr Preprocessor *,FF0000,{}
+    Attr Assembler *,000000,{}

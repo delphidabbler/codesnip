@@ -1,0 +1,1115 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<!--
+ * This Source Code Form is subject to the terms of the Mozilla Public License,
+ * v. 2.0. If a copy of the MPL was not distributed with this file, You can
+ * obtain one at http://mozilla.org/MPL/2.0/
+ *
+ * Copyright (C) 2009-2013, Peter Johnson (www.delphidabbler.com).
+ *
+ * $Rev$
+ * $Date$
+ *
+ * Instructions for building CodeSnip from source.
+-->
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+
+<head>
+  <title>
+    Building CodeSnip
+  </title>
+  <style type="text/css">
+    body {
+      font-family: sans-serif;
+    }
+    dt.spaced {
+      margin-top: 0.5em;
+    }
+    h1 {
+      text-align: center;
+    }
+    h2 {
+      padding-bottom: 0.25em;
+      border-bottom: 1px silver solid;
+    }
+    .indent {
+      margin-left: 2em;
+    }
+    ul.spaced li,
+    ol.spaced li {
+      margin-top: 0.5em;
+    }
+    p, div.spaced {
+      padding: 0;
+      margin: 0.5em 0;
+    }
+    .box, .cmd {
+      padding: 0.25em;
+      background-color: #eef;
+      border: 1px solid silver;
+    }
+    .cmd {
+      margin-left: 2em;
+      margin-right: 2em;
+      font-weight: bold;
+    }
+    .warning {
+      background-color: #f99;
+    }
+    .prompt {
+      color: blue;
+    }
+  </style>
+</head>
+
+<body>
+
+<h1>
+  CodeSnip Build Instructions
+</h1>
+
+<div class="box warning">
+  <strong>NOTE:</strong> The build system is currently being overhauled and is
+  in a state of flux. All make commands referred to in this document may be
+  incorrect. They will be corrected once the build system has stabilised.
+</div>
+
+<h2>
+  Introduction
+</h2>
+
+<p>
+  <em>CodeSnip</em> is written in Object Pascal and is targeted at Delphi
+  XE. Compilation with earlier compilers is not guaranteed. The code will
+  require some changes to compile on Delphi XE2 or later.
+</p>
+
+<p>
+  The are currently two editions of <em>CodeSnip</em>: the standard edition and
+  the portable edition. They both share the same code base and the different
+  editions are created using conditional compilation. These instructions show
+  how to build either edition.
+</p>
+
+<p>
+  The Delphi XE IDE can be used to modify the source and to perform test builds.
+  Final builds should be created using the provided makefile.
+</p>
+
+<h2>
+  Dependencies
+</h2>
+
+<p>
+  Several DelphiDabbler and other 3rd party libraries and components are
+  required to compile <em>CodeSnip</em>, most of which can be built from the
+  code repository tree.
+</p>
+
+<p>
+  All the libraries must be available before building <em>CodeSnip</em> itself.
+</p>
+
+<h3 id="indy10">
+  Indy v10
+</h3>
+
+<p>
+  The Indy 10 Internet components ship are not included in the code repository,
+  since they are included with Delphi XE.
+</p>
+
+<p>
+  If you prefer to work with the latest release you can download it from <a
+    href="http://www.indyproject.org/"
+  >http://www.indyproject.org/</a>. If you download a copy of Indy 10 you
+  should compile the source code separately with the same version of Delphi
+  that is being used to compile <em>CodeSnip</em>.
+</p>
+
+<p>
+  Regardless of whether you are using the version of Indy 10 supplied with
+  Delphi or if you have downloaded and compiled your own version, you must set
+  the <code>INDY10</code> environment variable to the directory where you
+  placed the compiled code.
+</p>
+
+<h4 id="indychanges">
+  Changes between different Indy 10 releases
+</h4>
+
+<p>
+  Changes were made to the parameter lists of the <var>TWorkBeginEvent</var>
+  and <var>TWorkEvent</var> events between early and later releases of Indy
+  10. Specifically, earlier versions use type <var>Integer</var> for the
+  <var>AWorkCount</var> parameter of <var>TWorkEvent</var> and the
+  <var>AWorkCountMax</var> parameter of <var>TWorkBeginEvent</var>, while
+  later versions use <var>Int64</var>.
+<p>
+
+<p>
+  <em>CodeSnip</em>'s source code uses conditional compilation to provide the
+  correct event handler signatures &ndash; and it makes an intelligent guess
+  at which signature to use depending on the version number provided by the
+  Indy library code. Should the program fail to compile with an error in the
+  <var>Web.UDownloadMonitor</var> unit, you should check the event signatures in
+  your Indy <var>IdComponent</var> unit and then define the
+  <code>INDY_WORKEVENT_INT64</code> environment variable if <var>Int64</var>
+  parameters are required or <code>INDY_WORKEVENT_INT32</code> if
+  <var>Integer</var> parameters are used.
+</p>
+
+<h3>
+  DelphiDabbler Code Library
+</h3>
+
+<p>
+  Several units from the <a
+    href="http://code.google.com/p/ddab-lib/"
+  >DelphiDabbler Code Library</a> are required. These files are included in the
+  code repository in the <code>Src\Lib\3rdParty\DDabLib</code> directory.
+</p>
+
+<p>
+  The Makefile provides an option to build this library. <a
+    href="#make-libraries"
+  >See below</a> for details.
+</p>
+
+<h3>
+  SynEdit
+</h3>
+
+<p>
+  Several units from the <a
+    href="http://synedit.sourceforge.net/"
+  >SynEdit</a> project are required. The required files are included in the code
+  repository in the <code>Src\Lib\3rdParty\SynEdit</code> directory.
+</p>
+
+<p>
+  The Makefile provides an option to build this library. <a
+    href="#make-libraries"
+  >See below</a> for details.
+</p>
+
+<h3>
+  delphi-coll Delphi Collections Library
+</h3>
+
+<p>
+  Units from the <a
+    href="http://code.google.com/p/delphi-coll/"
+  >Delphi Collections</a> project are required. The necessary files are included
+  in the code repository in the <code>Src\Lib\3rdParty\DelphiColl</code> directory.
+</p>
+
+<p>
+  The Makefile provides an option to build this library. <a
+    href="#make-libraries"
+  >See below</a> for details.
+</p>
+
+<h3>
+  Delphi RTL &amp; VCL
+</h3>
+
+<p>
+  Goes without saying really, but you also need the RTL and VCL that ships with
+  Delphi.
+</p>
+
+<h2>
+  Build Tools
+</h2>
+
+<p>
+  The following tools are required to build <em>CodeSnip</em>.
+</p>
+
+<h3>
+  Delphi
+</h3>
+
+<p>
+  A copy of the Delphi XE command line compiler is required to build the
+  object Pascal code from the provided makefile.
+</p>
+
+<p>
+  You can use the Delphi IDE to edit the code and test compile it, but final
+  builds should be created using the makefile, which requires the following
+  tools that are supplied with Delphi:
+</p>
+
+<dl>
+  <dt class="spaced">
+    <code>DCC32</code>
+  </dt>
+  <dd>
+    The Delphi command line compiler.
+  </dd>
+  <dt class="spaced">
+    <code>BRCC32</code>
+  </dt>
+  <dd>
+    The Borland resource compiler. Used to compile various resource source
+    (<code>.rc</code>) files.
+  </dd>
+  <dt class="spaced">
+    <code>GenTLB</code>
+  </dt>
+  <dd>
+    Type library generator. Used to create the <code>ExternalObj.tlb</code> type
+    library from source code in <code>ExternalObj.ridl</code>.
+  </dd>
+  <dt class="spaced">
+    <code>TLibImpl</code>
+  </dt>
+  <dd>
+    Type library importer tool. Used to create a Pascal unit that describes
+    code contained in the <code>ExternalObj.tlb</code> type library.
+  </dd>
+</dl>
+
+<p>
+  The following environment variables are associated with these tools:
+</p>
+
+<dl>
+  <dt class="spaced">
+    <code>DELPHIROOT</code> - required unless <code>DELPHIXE</code> is set.
+  </dt>
+  <dd>
+    Should be set to the install directory of the version of Delphi being
+    used. <code>DCC32</code>, <code>BRCC32</code> and <code>TLibImpl</code>
+    are expected to be in the <code>Bin</code> sub-directory of
+    <code>DELPHIROOT</code>.
+  </dd>
+  <dt class="spaced">
+    <code>DELPHIXE</code> - optional
+  </dt>
+  <dd>
+    This environment variable can be set to the Delphi XE install
+    directory. When <code>DELPHIXE</code> is defined
+    <code>DELPHIROOT</code> will be set to the value of
+    <code>DELPHIXE</code>.
+  </dd>
+  <dt class="spaced">
+    <code>INDY10</code> - required
+  </dt>
+  <dd>
+    Must be set to the directory where the Indy 10 components are installed.
+    The code must have been built with the same version of Delphi used to
+    compile <em>CodeSnip</em>.
+  </dd>
+  <dt class="spaced">
+    <code>INDY_WORKEVENT_INT64</code> <strong>or</strong>
+    <code>INDY_WORKEVENT_INT32</code> - optional
+  </dt>
+  <dd>
+    <a href="#indychanges">See above</a> for details. If used, only one of
+    the environment variables may be defined. Defining both causes
+    compilation to fail.
+  </dd>
+</dl>
+
+<h3>
+  MAKE
+</h3>
+
+<p>
+  This is the make tool that ships with Delphi. You can use any version that
+  works but the version that ships with Delphi XE is preferred. See the <a
+    href="#config-env"
+  >Configure the environment</a> section below for details of how to set the
+  environment to use Delphi XE's version of Make by default.
+</p>
+
+<h3>
+  DelphiDabbler Version Information Editor (VIEd)
+</h3>
+
+<p>
+  This tool is used to compile version information (<code>.vi</code>) files
+  into intermediate resource source (<code>.rc</code>) files. Version 2.11.2
+  or later is required.
+  Version Information Editor can be obtained from
+  <a
+    href="http://www.delphidabbler.com/software/vied"
+  >http://www.delphidabbler.com/software/vied</a>.
+</p>
+
+<p>
+  The program is expected to be on the path unless its install directory is
+  specified by the <code>VIEDROOT</code> environment variable.
+</p>
+
+<h3>
+  DelphiDabbler HTML Resource Compiler (HTMLRes)
+</h3>
+
+<p>
+  HTMLRes is used to compile <code>HTML.hrc</code> which stores various
+  HTML, JavaScript, CSS and images into HTML resources. Version 1.1 or later
+  is required.
+  The HTML Resource Compiler can be obtained from
+  <a
+    href="http://www.delphidabbler.com/software/htmlres"
+  >http://www.delphidabbler.com/software/htmlres</a>.
+</p>
+
+<p>
+  The program is expected to be on the path unless its install directory is
+  specified by the <code>HTMLRESROOT</code> environment variable.
+</p>
+
+<h3>
+  Inno Setup
+</h3>
+
+<p>
+  The Unicode version on the Inno setup command line compiler is needed to
+  create <em>CodeSnip</em>'s install program. v5.5.2 (u) or later is required.
+  Earlier (Unicode) versions may work, but this is not guaranteed.
+</p>
+
+<p>
+  You can get Inno Setup at <a
+    href="http://www.jrsoftware.org/isinfo.php"
+  >http://www.jrsoftware.org/isinfo.php</a>. Choose the Unicode version and
+  ensure that the ISPP pre-processor is installed. If you already have the ANSI
+  version the Unicode version can be installed alongside it - just use a
+  different install directory and program group name.
+</p>
+
+<p>
+  The path to Unicode Inno Setup's install directory will be looked for in the
+  <code>INNOSETUP_U</code> environment variable, or, if that is not set, in the
+  <code>INNOSETUP</code> environment variable. If neither of these is set then
+  the correct version of Inno Setup is expected to be on the path.
+</p>
+
+<p>
+  <strong>Note:</strong> Inno Setup is not required if you are creating only the
+  portable edition of <em>CodeSnip</em> since that edition does not have an
+  install program.
+</p>
+
+<h3>
+  Microsoft HTML Help Compiler (HHC)
+</h3>
+
+<p>
+  This command line compiler is supplied with Microsoft HTML Help Workshop. It
+  is used to compile the <em>CodeSnip</em> help file.
+</p>
+
+<p>
+  The program is expected to be on the path unless its install directory is
+  specified by the <code>HHCROOT</code> environment variable.
+</p>
+
+<h3>
+  Zip
+</h3>
+
+<p>
+  This program is used to create <em>CodeSnip</em>'s release file.
+  You can get a Windows command line version at
+  <a
+    href="http://stahlforce.com/dev/index.php?tool=zipunzip"
+  >http://stahlforce.com/dev/index.php?tool=zipunzip</a>.
+</p>
+
+<p>
+  The program is expected to be on the path unless its install directory is
+  specified by the <code>ZIPROOT</code> environment variable.
+</p>
+
+<p>
+  <strong>Note:</strong> You do not need Zip if you do not intend to create
+  release files.
+</p>
+
+<h2>
+  Preparation
+</h2>
+
+<h3 id="config-env">
+  Configure the environment.
+</h3>
+
+<p>
+  You can configure environment variables either by modifying your system
+  environment variables or by creating a batch file that you run before
+  performing the build.
+</p>
+
+<h4>
+  Step 1
+</h4>
+
+<p>
+  Configure the required environment variables. Compilation will fail if these
+  environment variables are not set:
+</p>
+
+<ul>
+  <li>
+    <code>DELPHIROOT</code> <strong>or</strong> <code>DELPHIXE</code>
+  </li>
+  <li>
+    <code>INDY10</code>
+  </li>
+</ul>
+
+<h4>
+  Step 2
+</h4>
+
+<p>
+  Update the <code>PATH</code> environment variable to include
+  <code>%DELPHIROOT%\Bin</code> as its first path, i.e. do:
+</p>
+
+<pre class="cmd"><span class="prompt">&gt;</span> set PATH=%DELPHIROOT%\Bin;%PATH%</pre>
+
+<p>
+  You do not have to do this but it means you can run the preferred version of
+  <code>Make</code> from the command line without having to specify its path
+  every time.
+</p>
+
+<h4>
+  Step 3
+</h4>
+
+<p>
+  Set any of the following environment variables that are needed to specify
+  the path to any tools that cannot be found on the path:
+</p>
+
+<ul>
+  <li>
+    <code>VIEDROOT</code>
+  </li>
+  <li>
+    <code>HTMLRESROOT</code>
+  </li>
+  <li>
+    <code>INNOSETUP_U</code> or <code>INNOSETUP</code>
+  </li>
+  <li>
+    <code>HHCROOT</code>
+  </li>
+  <li>
+    <code>ZIPROOT</code>
+  </li>
+</ul>
+
+<h4>
+  Step 4
+</h4>
+
+<p>
+  Set <code>INDY_WORKEVENT_INT64</code> or <code>INDY_WORKEVENT_INT32</code>
+  if necessary (explained <a
+    href="#indychanges"
+  >above</a>).
+</p>
+
+<h3>
+  Get the Source Code
+</h3>
+
+<p>
+  If you don't already have it, download or checkout the <em>CodeSnip</em>
+  source code. There are several options:
+</p>
+
+<ol class="spaced">
+  <li>
+    <div>
+      If you are a Subversion user you can:
+    </div>
+    <ul class="spaced">
+      <li>
+        <div>
+          Check out the source using the following command:
+        </div>
+        <pre class="cmd"><span class="prompt">&gt;</span> svn checkout http://codesnip.googlecode.com/svn/trunk/ PATH</pre>
+        <div>
+          Where <code>PATH</code> is the directory where you want to place the
+          working copy. You will not be able to commit changes unless you join
+          the project, when a different check out URL is used.
+        </div>
+      </li>
+      <li>
+        <div>
+          Export the code using this command:
+        </div>
+        <pre class="cmd"><span class="prompt">&gt;</span> svn export http://codesnip.googlecode.com/svn/trunk/ PATH</pre>
+        <div>
+          where <code>PATH</code> is the directory where you wish to store the
+          code.
+        </div>
+      </li>
+    </ul>
+    <div class="spaced">
+      These commands get code from the repository trunk. To get the code of a
+      stable release replace <code>trunk</code> with <code>tags/XXXX</code>
+      where <code>XXX</code> specifies the version.
+    </div>
+  </li>
+  <li>
+    Download source files for the current many older releases from the <a
+      href="https://sourceforge.net/projects/codesnip/files/"
+    >CodeSnip SourceForge Files Page</a>.
+  </li>
+  <li>
+    Grab the source code of the latest release from <a
+      href="http://www.delphidabbler.com/software/codesnip/download"
+    >DelphiDabbler.com</a>.
+  </li>
+</ol>
+
+<h3>
+  Configure the Source Tree
+</h3>
+
+<div class="box warning">
+  <strong>NOTE:</strong> The <em>CodeSnip</em> repo directory structure and
+  build directory structure are currently being overhauled so the following
+  directory trees are out of date. They will be updated once the new structures
+  are fully implemented.
+</div>
+
+<p>
+  After checking out or downloading and extracting the source code you should
+  have the following directory structure:
+</p>
+
+<pre>./
+  |
+  +-- Docs                    - documentation
+  |   |
+  |   +-- ChangeLogs          - program change log files
+  |   |
+  |   +-- Design              - documents concerning program design
+  |      |
+  |      +-- FileFormats      - documentation of CodeSnip's file formats
+  |
+  +-- Src                     - main CodeSnip source code
+  |   |
+  |   +-- 3rdParty            - third party source code included directly in CodeSnip
+  |   |
+  |   +-- AutoGen             - receives automatically generated code
+  |   |
+  |   +-- Help                - help source files
+  |   |   |
+  |   |   +-- CSS             - CSS code for help files
+  |   |   |
+  |   |   +-- HTML            - HTML files included in help file
+  |   |   |
+  |   |   +-- Images          - images included in help file
+  |   |
+  |   +-- Install             - setup script and support code
+  |   |   |
+  |   |   +-- Assets          - files required for inclusion in install program
+  |   |
+  |   +-- Lib                 - library source code, not included in CodeSnip project file
+  |   |   |
+  |   |   +-- 3rdParty        - 3rd party library source code
+  |   |       |
+  |   |       +-- DDabLib     - DelphiDabbler Code Library files
+  |   |       |
+  |   |       +-- DelphiColl  - delphi-coll collections files
+  |   |       |
+  |   |       +-- SynEdit     - SynEdit highlighted edit control files
+  |   |
+  |   +-- Portable            - source file for CodeSnip portable loader program
+  |   |
+  |   +-- Res                 - container for files that are embedded in resources
+  |       |
+  |       +-- CSS             - CSS files
+  |       |
+  |       +-- HTML            - HTML files
+  |       |
+  |       +-- Img             - image files
+  |       |   |
+  |       |   +-- Branding    - image files used for CodeSnip branding
+  |       |   |
+  |       |   +-- Egg         - image files for 'Easter Egg'
+  |       |
+  |       +-- Misc            - other resources
+  |       |
+  |       +-- Scripts         - scripting files
+  |           |
+  |           +-- 3rdParty    - 3rd party scripting files
+  |
+  +-- Tests                   - contains test code
+      |
+      +-- Src                 - test source code
+          |
+          +-- DUnit           - test source code that uses the DUnit framework</pre>
+<p>
+  If, by chance you also have <code>Bin</code>, <code>Exe</code> and / or
+  <code>Release</code> directories don't worry - all will become clear.
+  Subversion users may also see the usual <code>.svn</code> hidden
+  directories. If you have done some editing in the Delphi IDE you may also see
+  occasional hidden <code>__history</code> folders.
+</p>
+
+<p>
+  Before you can get hacking, you need to prepare the code tree. Open a command
+  console and navigate into the <code>Src</code> sub-folder. Run any script you
+  have created to set environment variables then do:
+</p>
+
+<pre class="cmd"><span class="prompt">&gt;</span> Make config</pre>
+
+<p>
+  You may need to replace <code>Make</code> with the full path to
+  <code>Make</code> if it isn't on the path, or if the <code>Make</code> that
+  runs isn't the CodeGear / Embarcadero version. If this is the case try:
+</p>
+
+<pre class="cmd"><span class="prompt">&gt;</span> %DELPHIROOT%\Bin\Make config</pre>
+
+<p>
+  or
+</p>
+
+<pre class="cmd"><span class="prompt">&gt;</span> %DELPHIXE%\Bin\Make config</pre>
+
+<p>
+  depending on which environment variable you have set.
+</p>
+
+<p>
+  Once <code>Make config</code> has completed your folder structure should
+  have acquired the following new folders, if they weren't present already:
+</p>
+
+<pre>./
+  |
+  +-- Bin                     - receives object files for CodeSnip
+  |
+  ...
+  |
+  +-- Exe                     - receives executable code and compiled help file
+  |
+  +-- Release                 - receives release files
+  |
+  ...</pre>
+
+<p>
+  If <code>Bin</code> existed before <code>Make</code> was run, and the
+  required libraries have been built then <code>Bin</code> may have
+  <code>Lib</code> and <code>Lib\Pkg</code> sub-directories.
+</p>
+
+<p>
+  Furthermore if the portable loader for <em>CodeSnip</em> has been built then
+  there will also be a <code>Portable</code> sub-directory of <code>Bin</code>.
+
+<p>
+  If the <code>Bin</code> folder already existed it will have been emptied but
+  any sub-directories will be left intact.
+</p>
+
+<p>
+  In addition, <code>Make</code> will have created a <code>.cfg</code> file from
+  template in the <code>Src</code> folder. This <code>.cfg</code> file is needed
+  for DCC32 to run correctly. The file will be ignored by Subversion.
+</p>
+
+<h4>
+  Using the Delphi IDE
+</h4>
+
+<p>
+  If you are intending to use the Delphi IDE to compile code, you should also
+  do:
+</p>
+
+<pre class="cmd"><span class="prompt">&gt;</span> Make libraries
+<span class="prompt">&gt;</span> Make resources
+<span class="prompt">&gt;</span> Make typelib
+<span class="prompt">&gt;</span> Make autogen</pre>
+
+<p>
+  This compiles the resource files that the IDE needs to link into compiled
+  executables, compiles the type library from IDL code and generates the
+  Pascal file that provides an interface to the type library.
+</p>
+
+<p>
+  If you wish to build the portable edition of <em>CodeSnip</em> you also need
+  to do:
+</p>
+
+<pre class="cmd"><span class="prompt">&gt;</span> Make -DPORTABLE resources</pre>
+
+<p>
+  and define the <code>PORTABLE</code> conditional define in <em>Project
+  Options</em>. The standard name for the portable exe file is
+  <code>CodeSnip-p.exe</code>, but the IDE will generate
+  <code>CodeSnip.exe</code>. You can rename the file manually.
+</p>
+
+<p>
+  Note that building with the make file instead of the IDE performs all the
+  above steps automatically.
+</p>
+
+<h2>
+  Building CodeSnip
+</h2>
+
+<p>
+  This section guides you through building <em>CodeSnip</em> from the command
+  line, not from the IDE.
+</p>
+
+<p>
+  You have several options:
+</p>
+
+<ul>
+  <li>
+    Build the Required Libraries.
+  </li>
+  <li>
+    Build the <em>CodeSnip</em> Executable.
+  </li>
+  <li>
+    Build the Help File.
+  </li>
+  <li>
+    Build the Setup Program.
+  </li>
+  <li>
+    Build the Release Zip File.
+  </li>
+  <li>
+    Build and Release Everything.
+  </li>
+  <li>
+    Clean Up.
+  </li>
+</ul>
+
+<p>
+  Each of these options is described below. All except the last assume that
+  <code>Make config</code> has been run.
+</p>
+
+<p class="box">
+  <em><strong>Note:</strong> This information applies only to building
+  </em>CodeSnip<em> itself, not to building and using the code in the
+  <code>Test</code> directory.</em>
+</p>
+
+<h3 id="make-libraries">
+  Build the Required Libraries
+</h3>
+
+<p>
+  Before the <em>CodeSnip</em> executable can be built you need to make sure the
+  required libraries are available.
+</p>
+
+<p>
+  In the case of the Indy components you have to ensure these are available as
+  described <a
+    href="#indy10"
+  >above</a> - the makefile does not know how to build them.
+</p>
+
+<p>
+  All the other libraries that have source code included in the code repository
+  can be built using this command:
+</p>
+
+<pre class="cmd"><span class="prompt">&gt;</span> Make libraries</pre>
+
+<p>
+  You can also build the libraries individually by using one or more of the
+  following commands:
+</p>
+
+<pre class="cmd"><span class="prompt">&gt;</span> Make Collections.bpl
+<span class="prompt">&gt;</span> Make SynEdit_RXE.bpl
+<span class="prompt">&gt;</span> Make DDabLib.bpl</pre>
+
+<h3>
+  Build the CodeSnip Executable
+</h3>
+
+<p>
+  This is the most common build and has a simple command:
+</p>
+
+<pre class="cmd"><span class="prompt">&gt;</span> Make codesnip</pre>
+
+<p>
+  This is the same as doing this sequence of commands:
+</p>
+
+<pre class="cmd"><span class="prompt">&gt;</span> Make typelib
+<span class="prompt">&gt;</span> Make resources
+<span class="prompt">&gt;</span> Make autogen
+<span class="prompt">&gt;</span> Make pascal</pre>
+
+<p>
+  The <em>CodeSnip</em> executable, named <code>CodeSnip.exe</code> will be
+  placed in the <code>Exe</code> folder.
+</p>
+
+<p>
+  There is a shortcut that helps if you're not sure if the required libraries
+  have been built and are up to date.
+</p>
+
+<pre class="cmd"><span class="prompt">&gt;</span> Make bin</pre>
+
+<p>
+  is the same as doing:
+</p>
+
+<pre class="cmd"><span class="prompt">&gt;</span> Make libraries
+<span class="prompt">&gt;</span> Make codesnip</pre>
+
+<h4>
+  Portable edition
+</h4>
+
+<p>
+  To build the portable edition of <em>CodeSnip</em> you must either define the
+  <code>PORTABLE</code> environment variable or do:
+</p>
+
+<pre class="cmd"><span class="prompt">&gt;</span> Make -DPORTABLE codesnip</pre>
+
+<p>
+  Again the executable is placed in the <code>Exe</code> folder, but this time
+  it is named <code>CodeSnip-p.exe</code>
+</p>
+
+<h3>
+  Build the Help File
+</h3>
+
+<p>
+  To build the help file just do
+</p>
+
+<pre class="cmd"><span class="prompt">&gt;</span> Make help</pre>
+
+<h3>
+  Build the Setup Program
+</h3>
+
+<p>
+  The setup program requires that the <em>CodeSnip</em> excutable and the
+  compiled help file are already present in the <code>Exe</code> directory.
+</p>
+
+<p>
+  As an aside, you can make all the required files by doing:
+</p>
+
+<pre class="cmd"><span class="prompt">&gt;</span> Make libraries
+<span class="prompt">&gt;</span> Make exes</pre>
+
+<p>
+  Once you have built all the required files you build the setup file by
+  doing:
+</p>
+
+<pre class="cmd"><span class="prompt">&gt;</span> Make setup</pre>
+
+<p>
+  The setup program is named <code>CodeSnip-Setup-x.x.x.exe</code>, where
+  x.x.x is the version number extracted from <em>CodeSnip</em>'s version
+  information. It is placed in the <code>Exe</code> directory.
+</p>
+
+<p>
+  If the <em>SpecialBuild</em> string is defined in <em>CodeSnip</em>'s
+  version information the string will be appended to the setup file name like
+  this <code>CodeSnip-Setup-x.x.x-SPECIALBUILD</code>.
+</p>
+
+<h4>
+  Portable edition
+</h4>
+
+<p>
+  <em>CodeSnip</em>'s portable edition does not use a setup file so <code>Make
+  setup</code> does nothing except print a message if it is run when the
+  <code>PORTABLE</code> symbol is defined.
+</p>
+
+<h3>
+  Build the Release Zip File
+</h3>
+
+<p>
+  Make can create zip files containing the files that are included in a release.
+</p>
+
+<h4>
+  Standard edition
+</h4>
+
+<p>
+  The release file for the standard edition of <em>CodeSnip</em> includes the
+  setup file along with  <code>ReadMe.txt</code> from the <code>Docs</code>
+  directory. Both must be present.
+</p>
+
+<p>
+  Build the release by doing:
+</p>
+
+<pre class="cmd"><span class="prompt">&gt;</span> Make release</pre>
+
+<p>
+  By default the release file is named <code>dd-codesnip.zip</code>. You can
+  change this name by defining the <code>RELEASEFILENAME</code> macro or
+  enviroment variable. For example, you can name the file
+  <code>MyRelease.zip</code> by doing:
+</p>
+
+<pre class="cmd"><span class="prompt">&gt;</span> Make -DRELEASEFILENAME=MyRelease.zip release</pre>
+
+<h4>
+  Portable edition
+</h4>
+
+<p>
+  The release file for the portable edition includes the portable executable
+  file, <code>CodeSnip-p.exe</code>, the help file <code>CodeSnip.chm</code> and
+  several files from the <code>Docs</code> directory. All must be present.
+</p>
+
+<p>
+  Build the portable release by doing:
+</p>
+
+<pre class="cmd"><span class="prompt">&gt;</span> Make -DPORTABLE release</pre>
+
+<p>
+  By default the release file is named <code>dd-codesnip-portable.zip</code>.
+  You can change this name by defining the <code>RELEASEFILENAME</code> macro or
+  enviroment variable. For example, you can name the file
+  <code>MyPortableRelease.zip</code> by doing:
+</p>
+
+<pre class="cmd"><span class="prompt">&gt;</span> Make -DPORTABLE -DRELEASEFILENAME=MyPortableRelease.zip release</pre>
+
+<p>
+  <strong>Warning:</strong> If you are building both the standard and portable
+  releases with custom file names, make sure you supply a different value of
+  the <code>RELEASEFILENAME</code> macro for each release, otherwise the last
+  built release will overwrite the first.
+</p>
+
+
+<h3>
+  Build and Release Everything
+</h3>
+
+<p>
+  You can do a complete build of everything, and generate the release zip file
+  simply by doing:
+</p>
+
+<pre class="cmd"><span class="prompt">&gt;</span> Make</pre>
+
+<p>
+  without specifying a target. This is the equivalent of:
+</p>
+
+<pre class="cmd"><span class="prompt">&gt;</span> Make config
+<span class="prompt">&gt;</span> Make libraries
+<span class="prompt">&gt;</span> Make exes
+<span class="prompt">&gt;</span> Make setup
+<span class="prompt">&gt;</span> Make release</pre>
+
+<h4>
+  Portable edition
+</h4>
+
+<p>
+  To perform a complete build of the portable edition of <em>CodeSnip</em> do
+</p>
+
+<pre class="cmd"><span class="prompt">&gt;</span> Make -DPORTABLE</pre>
+
+<h3>
+  Clean Up
+</h3>
+
+<p>
+  Various temporary files and directories are created by the IDE. These can be
+  deleted by running.
+</p>
+
+<pre class="cmd"><span class="prompt">&gt;</span> Make clean</pre>
+
+<p>
+  <strong>Warning:</strong> This command removes the <code>__history</code>
+  folders that Delphi uses to maintain earlier versions of files.
+</p>
+
+<h2>
+  Running the Tests
+</h2>
+
+<p>
+  At present all tests use the <em>DUnit</em> unit testing framework and are
+  combined into a single test application.
+</p>
+
+<p>
+  To compile the tests, open the <code>.\Src\CodeSnip.groupproj</code> group
+  project file in the Delphi XE IDE. Now select the <em>CodeSnipTests.exe</em>
+  target in the project manager and compile.
+</p>
+
+<p>
+  If they were not already present <code>Bin</code> and <code>Exe</code>
+  sub-directories will have been created in the <code>.\Tests</code> directory.
+  The <code>Exe</code> directory contains the <em>DUnit</em> test program while
+  <code>Bin</code> contains intermediate binaries.
+</p>
+
+<p>
+  You can compile the tests as either a GUI application (default) or as a
+  console application. For details please see the comments in
+  <code>.\Tests\Src\DUnit\CodeSnipTests.dpr</code>.
+</p>
+
+<h2>
+  License
+</h2>
+
+<p>
+  The majority of <em>CodeSnip</em>'s original source code is licensed under the
+  <a
+    href="https://www.mozilla.org/MPL/2.0/"
+  >Mozilla Public License v2.0</a>. The are a few exceptions, mainly relating to
+  third party source code and image files. For full details of all applicable
+  licenses please read <code>License.html</code> in the <code>Docs</code>
+  directory.
+</p>
+
+</body>
+
+</html>

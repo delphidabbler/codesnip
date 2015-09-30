@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<!--
+ * This Source Code Form is subject to the terms of the Mozilla Public License,
+ * v. 2.0. If a copy of the MPL was not distributed with this file, You can
+ * obtain one at http://mozilla.org/MPL/2.0/
+ *
+ * Copyright (C) 2005-2014, Peter Johnson (www.delphidabbler.com).
+ *
+ * $Rev$
+ * $Date$
+ *
+ * Template for content displayed in compiler errors dialogue box.
+-->
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+  <head>
+    <title>dlg-comperror-tplt</title>
+  </head>
+
+  <body>
+
+    <div>
+
+      <div style="margin-bottom: 8px;">
+        <%Status%> when compiling <strong><%SnippetTitle%></strong> with
+        <strong><%CompilerID%></strong>
+      </div>
+      <ul style="margin-top: 0px; margin-bottom: 0px;">
+        <%ErrorList%>
+      </ul>
+
+    </div>
+
+  </body>
+
+</html>

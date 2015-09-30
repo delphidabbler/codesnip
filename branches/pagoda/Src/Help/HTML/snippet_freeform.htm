@@ -1,0 +1,106 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<!--
+ * This Source Code Form is subject to the terms of the Mozilla Public License,
+ * v. 2.0. If a copy of the MPL was not distributed with this file, You can
+ * obtain one at http://mozilla.org/MPL/2.0/
+ *
+ * Copyright (C) 2009-2013, Peter Johnson (www.delphidabbler.com).
+ *
+ * $Rev$
+ * $Date$
+ *
+ * Help topic describing free-form snippet kind.
+-->
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text-html; charset=Windows-1252">
+    <title>
+      Free-form Snippets
+    </title>
+    <link rel="stylesheet" href="../css/codesnip.css" type="text/css">
+  </head>
+  <body>
+    <object
+      type="application/x-oleobject"
+      classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e"
+    >
+      <param name="ALink Name" value="SnippetFreeform">
+    </object>
+    <h1>
+      <a name="snippet_freeform"></a>Free-form Snippets
+    </h1>
+    <p>
+      Unlike the other <a href="snippet_kinds.htm">snippet kinds</a>,
+      <em>free-form</em> code snippets can contain any kind of source code. The
+      code does not need to compilable, and nor does its layout need to conform
+      to any rules.
+    </p>
+    <p>
+      Because of the nature of free-form snippets, <em>CodeSnip</em> can make no
+      assumptions about them, and therefore cannot include the code in a
+      compilable unit. This has two major implications:
+    </p>
+    <ol>
+      <li>
+        Free-form snippets are never included in generated units.
+      </li>
+      <li>
+        The snippets cannot be test-compiled (because <em>CodeSnip</em> cannot
+        generate a test unit.
+      </li>
+    </ol>
+    <p>
+      If you can live without these features and just want to use
+      <em>CodeSnip</em> as a simple code repository, free-form snippets are by
+      far the easiest way to create your own snippets as there are no rules
+      to conform to.
+    </p>
+    <p>
+      <strong>Note:</strong> You will never find free-form code in the online
+      database.
+    </p>
+    <h2>
+      When should free-form be used?
+    </h2>
+    <p>
+      You should use free-form snippets if:
+    </p>
+    <ul>
+      <li>
+        You don't need <em>CodeSnip</em>'s unit generation or test compilation
+        features for the code.
+      </li>
+      <li>
+        You don't want the hassle of working out the code's dependencies on
+        other units and routines, although you can if you wish.
+      </li>
+      <li>
+        The code doesn't conform with one of <em>CodeSnip</em>'s other snippet
+        kinds, for example if the code is a class or a complete unit.
+      </li>
+    </ul>
+    <h2>
+      How do I check if code is free-form?
+    </h2>
+    <p>
+      Select the snippet in the <a href="overview_pane.htm">Overview Pane</a>
+      and look in the <a href="detail_pane.htm">Detail Pane</a>. Look for the
+      &quot;Kind&quot; section below the source code.
+    </p>
+    <h2>
+      How do I change the snippet to another kind?
+    </h2>
+    <p>
+      Select the snippet in the <a href="overview_pane.htm">Overview Pane</a>
+      then select the <em>Snippets | Edit Snippet</em> menu item to open the
+      <a href="dlg_editsnippet.htm">Edit Snippet</a> dialogue box. On the
+      <em>Code</em> tab select a value in the <em>Kind</em> drop down list and
+      press OK.
+    </p>
+    <p>
+      <strong class="warning">Warning:</strong> Don't change the kind unless you
+      are happy that the snippet conforms to the requirements of the new kind.
+      (<a href="snippet_kinds.htm">Learn more</a>).
+    </p>
+  </body>
+</html>

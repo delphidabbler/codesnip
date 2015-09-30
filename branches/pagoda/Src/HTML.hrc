@@ -1,0 +1,148 @@
+# This Source Code Form is subject to the terms of the Mozilla Public License,
+# v. 2.0. If a copy of the MPL was not distributed with this file, You can
+# obtain one at http://mozilla.org/MPL/2.0/
+#
+# Copyright (C) 2005-2014, Peter Johnson (www.delphidabbler.com).
+#
+# $Rev$
+# $Date$
+#
+# Manifest file used to generate HTML.res resource file.
+
+
+# Dialogue box templates and fixed code
+# =====================================
+
+# about box
+Res\HTML\dlg-about-head-tplt.html
+Res\HTML\dlg-about-program.html
+
+# easter egg
+Res\HTML\dlg-easter-egg.html
+Res\CSS\easteregg.css
+Res\Scripts\easteregg.js
+Res\Scripts\3rdParty\jquery-1.8.0.min.js
+Res\Scripts\3rdParty\jquery.cycle.lite.js
+
+# compiler error log
+Res\HTML\dlg-comperror-tplt.html
+
+# donate dialogue
+Res\HTML\dlg-donate.html
+
+# email privacy information for display in frames
+Res\HTML\frm-emailprivacy.html
+
+# active text preview dialogueue
+Res\HTML\dlg-activetext-preview-tplt.html
+
+# news dialogue
+Res\HTML\dlg-rssnews.html
+
+# SWAG import dialogue
+Res\HTML\dlg-swag-import-intro.html
+Res\HTML\dlg-swag-import-outro-tplt.html
+
+# code submission wizard
+Res\HTML\dlg-codesubmit-intro.html
+Res\HTML\dlg-codesubmit-license.html
+Res\HTML\dlg-codesubmit-submit.html
+Res\HTML\dlg-codesubmit-finished.html
+
+# Detail pane pages, scripts and CSS
+# ==================================
+
+# common
+# ------
+
+# style sheet
+Res\CSS\detail.css
+
+# routines that call external object
+Res\Scripts\external.js
+
+# other scripts
+Res\Scripts\overflowXFix.js
+
+# snippet information pages
+# -------------------------
+
+# lists of snippets
+Res\HTML\info-snippet-list-tplt.html
+
+# empty snippet list
+Res\HTML\info-empty-selection-tplt.html
+
+# snippet information
+Res\HTML\info-snippet-tplt.html
+
+# welcome page
+# -------------
+
+Res\HTML\welcome-tplt.html
+
+# basic pages
+# -----------
+
+Res\HTML\info-basic-tplt.html
+
+
+# Images
+# ======
+
+# action links
+# ------------
+
+# display quick start help
+Res\Img\help.gif
+
+
+# compiler compatibility / compilation results
+# --------------------------------------------
+
+Res\Img\led-green.png
+Res\Img\led-off.png
+Res\Img\led-red.png
+Res\Img\led-yellow.png
+
+# test results
+# ------------
+
+Res\Img\testing-none.png
+Res\Img\testing-basic.png
+Res\Img\testing-advanced.png
+
+# starred snippets
+# ----------------
+Res\Img\starred-snippet.png
+Res\Img\unstarred-snippet.png
+
+# tags
+# ----
+Res\Img\tags.png
+
+# dialogue box images
+# -------------------
+
+# about box - CodeSnip icon
+Res\Img\Branding\icon.gif
+
+# easter egg
+Res\Img\Egg\cancel-btn.png
+Res\Img\Egg\cancel-btn-hover.png
+Res\Img\Egg\screen-top.png
+Res\Img\Egg\screen-middle.png
+Res\Img\Egg\screen-bottom.png
+Res\Img\Egg\dogs-1.jpg
+Res\Img\Egg\dogs-2.jpg
+Res\Img\Egg\dogs-3.jpg
+Res\Img\Egg\dogs-4.jpg
+Res\Img\Egg\prompt-arrow.png
+Res\Img\Egg\play-btn.png
+Res\Img\Egg\play-btn-hover.png
+Res\Img\Egg\doggy-pics.png
+Res\Img\Egg\blue-paper.png
+
+# donate dialogue - £ sign image
+Res\Img\pound-sign.png
+

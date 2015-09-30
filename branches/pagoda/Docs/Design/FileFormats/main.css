@@ -1,0 +1,192 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public License,
+ * v. 2.0. If a copy of the MPL was not distributed with this file, You can
+ * obtain one at http://mozilla.org/MPL/2.0/
+ *
+ * Copyright (C) 2012-2013, Peter Johnson (www.delphidabbler.com).
+ *
+ * $Rev$
+ * $Date$
+ *
+ * CodeSnip File Format Documentation: CSS used by all documentation HTML files.
+ */
+
+body {
+  margin: 1em;
+  padding: 0;
+  font-family: Verdana, Arial, sans-serif;
+  font-size: 9pt;
+  line-height: 150%;
+}
+
+.title {
+  margin: 0 0 1em 0;
+  padding: 0.5em;
+  border: 1px silver solid;
+  background-color: #eee;
+  font-size: 16pt;
+  font-weight: bold;
+  text-align: center;
+}
+.title .subtitle {
+  margin-top: 0.5em;
+  font-style: italic;
+  color: #336;
+}
+.title div.index-link {
+  position: absolute;
+  top: 1em;
+  right: 1em;
+  text-align: right;
+  float: right;
+  padding: 0;
+  margin: 0;
+}
+.title div.index-link a {
+  font-weight: normal;
+  font-size: 10pt;
+  text-decoration: none;
+  background-color: #f7f7f7;
+  padding: 0.25em;
+}
+.title div.index-link a:hover {
+  background-color: silver;
+  color: white;
+}
+
+h1, h2, h3, h4, h5 {
+  font-family: Georgia, Garamond, "Times New Roman", Times, serif;
+  font-weight: bold;
+  color: navy;
+  padding: 0;
+}
+h1 {
+  margin: 1.5em 0 0 0;
+  padding-bottom: 0.5em;
+  border-bottom: 2px silver solid;
+  font-size: 18pt;
+  font-style: italic;
+}
+h2 {
+  margin: 1em 0 0 0;
+  padding-bottom: 0.5em;
+  border-bottom: 1px silver solid;
+  font-size: 16pt;
+  font-style: italic;
+}
+h3 {
+  margin: 0.5em 0 0.5em 0;
+  font-size: 14pt;
+}
+h4 {
+  margin: 0.5em 0 0 0;
+  font-size: 12pt;
+}
+h5 {
+  margin: 0.5em 0 0 0;
+  font-size: 10pt;
+}
+
+p,
+div.spaced  {
+  margin: 0.5em 0 0 0;
+  padding: 0;
+}
+div.half-spaced {
+  margin: 0.25em 0 0 0;
+  padding: 0;
+}
+div.reader-note {
+  background-color: #f7f7f7;
+  padding: 2px 4px;
+  border: 1px silver dotted;
+}
+
+dl {
+  margin: 0.5em 0 0 0;
+  padding: 0;
+}
+dt {
+  margin-left: 0;
+  margin-top: 0.5em;
+}
+dd {
+  margin: 0.25em 0 0 3em;
+}
+
+ul, ol {
+  margin: 0.5em 0 0 3em;
+  padding: 0;
+}
+ul {
+  list-style-type: square;
+}
+ul li,
+ol li {
+  margin-top: 0.5em;
+}
+ul.squashed,
+ol.squashed {
+  margin-top: 0;
+}
+ul.squashed li,
+ol.squashed li {
+  margin-top: 0;
+}
+ul.unspaced li,
+ol.unspaced li {
+  margin-top: 0;
+}
+
+code, kbd {
+  font-family: Consolas, "Courier New", Courier, monospace;
+}
+
+del {
+  text-decoration: line-through;
+  color: gray;
+}
+
+a:link {
+  color: #336;
+  text-decoration: underline;
+}
+a:visited {
+  color: #669;
+  text-decoration: underline;
+}
+a:active {
+  color: #336;
+  text-decoration: underline;
+}
+a:hover {
+  text-decoration: underline;
+}
+
+.pullout {
+  border: 1px silver solid;
+  border-left: 8px silver solid;
+  background-color: #ddd;
+  margin: 0.5em 0 0 0;
+  padding: 0.25em 0.5em;
+}
+
+acronym {
+  color: purple;
+  border-bottom: 1px dotted purple;
+}
+
+.box {
+  border: 1px silver solid;
+  padding: 0.5em;
+}
+
+.indent {
+  margin-left: 3em;
+}
+
+.highlight {
+  color: #336;
+  font-style: italic;
+  font-weight: bold;
+}

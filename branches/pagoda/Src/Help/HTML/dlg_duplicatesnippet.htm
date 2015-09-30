@@ -1,0 +1,75 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<!--
+ * This Source Code Form is subject to the terms of the Mozilla Public License,
+ * v. 2.0. If a copy of the MPL was not distributed with this file, You can
+ * obtain one at http://mozilla.org/MPL/2.0/
+ *
+ * Copyright (C) 2012-2013, Peter Johnson (www.delphidabbler.com).
+ *
+ * $Rev$
+ * $Date$
+ *
+ * Help topic for Duplicate Snippet dialogue box.
+-->
+<html>
+  <head>
+    <meta
+     http-equiv="Content-Type"
+     content="text-html; charset=Windows-1252">
+    <title>
+      Duplicate Snippet Dialogue Box
+    </title>
+    <link
+     rel="stylesheet"
+     href="../css/codesnip.css"
+     type="text/css">
+  </head>
+  <body>
+    <object
+     type="application/x-oleobject"
+     classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+      <param
+       name="ALink Name"
+       value="DuplicateSnippetDlg">
+    </object>
+    <h1>
+      <a
+       name="dlg_duplicatesnippet"></a>Duplicate Snippet Dialogue Box
+    </h1>
+    <p>
+      This dialogue box is used to duplicate the currently selected snippet,
+      creating a new user defined snippet. The dialogue box is accessed from the
+      <em>Snippet | Duplicate Snippet</em> menu option.
+    </p>
+    <p>
+      Enter a title for the duplicated snippet in the <em>Title</em> edit
+      control. The current snippet's title will be displayed in the control.
+      You <strong>may</strong> use the same title for the duplicated snippet but
+      it is best to change it to make it easier to distinguish between different
+      snippets.
+    </p>
+    <p>
+      The newly duplicated snippet can be edited in the <a
+        href="dlg_editsnippet.htm"
+      >Snippets Editor</a> immediately after clicking the <em>OK</em> button. To
+      do this tick the <em>Edit in Snippets Editor</em> check box. If you don't
+      want to display the <em>Snippets Editor</em> leave the check box clear.
+    </p>
+    <p>
+      Click <em>OK</em> to create the duplicate snippet or click <em>Cancel</em>
+      to abandon the process.
+    </p>
+    <p>
+      <strong>Note:</strong> Upon clicking <em>OK</em> the duplicated snippet is
+      added to the database immediately. If you have chosen to open the
+      <em>Snippet Editor</em> automatically, this is done <strong>after</strong>
+      the snippet has been added to the database. Therefore cancelling the
+      <em>Snippets Editor</em> will <strong>not</strong> remove the duplicated
+      snippet from the database: it merely cancels any changes you made in the
+      editor. To remove the snippet select it and choose the <em>Snippet |
+      Delete Snippet</em> menu option or press
+      <span class="smallcaps">Ctrl+Del</span>.
+    </p>
+  </body>
+</html>
+

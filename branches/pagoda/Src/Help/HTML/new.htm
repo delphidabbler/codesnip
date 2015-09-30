@@ -1,0 +1,293 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<!--
+ * This Source Code Form is subject to the terms of the Mozilla Public License,
+ * v. 2.0. If a copy of the MPL was not distributed with this file, You can
+ * obtain one at http://mozilla.org/MPL/2.0/
+ *
+ * Copyright (C) 2012-2013, Peter Johnson (www.delphidabbler.com).
+ *
+ * $Rev$
+ * $Date$
+ *
+ * Help topic listing key new features of CodeSnip 4.
+-->
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text-html; charset=Windows-1252">
+    <title>
+      What's New
+    </title>
+    <link rel="stylesheet" href="../css/codesnip.css" type="text/css">
+  </head>
+  <body>
+    <h1>
+      What's New in CodeSnip 4
+    </h1>
+    <p>
+      <em>CodeSnip</em> v4 is a substantial update over previous versions.
+      Here is a list of key new features of this version. All new features were
+      introduced in v4.0 unless otherwise noted.
+    </p>
+    <h2>
+      Database Changes
+    </h2>
+    <ul class="spaced">
+      <li>
+        New &quot;<a href="snippet_unit.htm">unit</a>&quot; and
+        &quot;<a href="snippet_class.htm">class</a>&quot; snippet kinds that can
+        include complete units and classes (and advanced records) in the
+        database. Both can be test compiled and classes / advanced records can
+        also be included in generated units.
+      </li>
+      <li>
+        <div>
+          Snippets from both the main and user databases can now be duplicated
+          using the <em>Snippets | Duplicate Snippet</em> menu option or
+          <img src="..\Images\DuplicateSnippet.gif" class="glyph"> tool button.
+        </div>
+        <div>
+          This is very useful if you have created a snippet and want to create
+          another one that shares a lot of the source code, dependencies etc.
+          Just duplicate the first one with a new name and edit it as required.
+          It saves a lot of time.
+        <div>
+          There's a second use where you can duplicate a snippet from the main
+          database under the same name and make any tweaks you like to the new
+          version: duplicate snippets are always editable.
+        </div>
+        <div>
+          Use the <em>Snippets | Duplicate Snippet</em> menu option, press
+          <span class="smallcaps">Shift+Ctrl+D</span> or click the
+          <img src="..\Images\DuplicateSnippet.gif" class="glyph"> tool button.
+        </div>
+      </li>
+      <li>
+        The Database now supports Unicode text for snippet names, descriptions
+        etc., and for source code. Using Unicode for snippet names and source
+        code will mean that the code will not compile on older compilers that
+        don't understand Unicode source code or unit file names.
+      </li>
+      <li>
+        There is now finer control over the control of warnings in generated
+        code via the <code>$WARN</code> directive. This is controlled on the
+        <a href="dlg_prefs_codegen.htm">Code Generation</a> tab of the
+        <a href="dlg_preferences.htm">Preferences</a> dialogue box.
+      </li>
+      <li>
+        <strong>[v4.1]</strong> There is also finer control over the comments
+        written to exported snippets and units, in that snippet comments can be
+        restricted to display only the first paragraph of multi-paragraph
+        snippet descriptions. Select this option from the
+        <a href="dlg_prefs_sourcecode.htm">Code Formatting</a> tab of the
+        <a href="dlg_preferences.htm">Preferences</a> dialogue box.
+      </li>
+      <li>
+        The names of referenced units may now contain dots so that Delphi
+        namespaces can be used.
+      </li>
+      <li>
+        <strong>[v4.3]</strong> The user defined snippets database can now be
+        moved to a user specified directory. This useful for ensuring the
+        database is backed up, for example by placing it in a <em>Dropbox</em>
+        or <em>GoogleDrive</em> sub-folder. (This option is not available in the
+        portable edition.)
+      </li>
+    </ul>
+    <h2>
+      User Interface
+    </h2>
+    <ul class="spaced">
+      <li>
+        The new multi-tab display can display details of more than one snippet,
+        category etc. in the main display. <span class="smallcaps">Ctrl</span>
+        click items in the overview pane, or links in the details pane, to
+        display them in a new tab. See the <a href="detail_pane.htm">Detail
+        Pane</a> help topic for more information.
+      </li>
+      <li>
+        The main menu has been re-organised and there are new menu and toolbar
+        glyphs.
+      </li>
+      <li>
+        The structure of snippet pages in the details pane is now customisable:
+        various page elements can be omitted and the order of elements can be
+        changed. Each snippet type has its own page customisation. Use the
+        <a href="dlg_prefs_snippetlayout.htm">Snippet Layout</a> tab of the
+        <a href="dlg_preferences.htm">Preferences</a> dialogue box to do the
+        customisation.
+      </li>
+      <li>
+        <strong>[v4.1]</strong> The list of required units displayed on the
+        <em>References</em> tab of the <a href="dlg_editsnippet.htm">Snippets
+        Editor</a>, is now persistent and can be edited. (The rest of the
+        <em>References</em> received a makeover at the same time).
+      </li>
+      <li>
+        The number of compilers that appear in the compile results table in the
+        details pane can now be limited. Use the <em>Compiler</em> tab of the
+        <a href="dlg_configcompilers.htm">Configure Compilers</a> dialogue box
+        to do this.
+      </li>
+      <li>
+        The colours used for Snippet and other headings can now be customised
+        using the <a href="dlg_prefs_display.htm">Display</a> tab of the
+        <a href="dlg_preferences.htm">Preferences</a> dialogue box.
+      </li>
+      <li>
+        <div>
+          Snippets can now have an optional &quot;display name&quot; that,
+          unlike the snippet's name, does not need to be unique. This is useful
+          for giving meaningful names to snippets such as overloaded functions.
+        </div>
+        <div>
+          For example snippets <em>ResizeRect_A</em> and <em>ResizeRect_B</em>
+          in the online database now have display names <em>ResizeRect (TSize
+          overload)</em> and <em>ResizeRect (Longint overload)</em> which are
+          much more meaningful.
+        </div>
+      </li>
+      <li>
+        Snippet descriptions can now be formatted and can contain multiple
+        paragraphs, just like &quot;extra&quot; text. Both are edited using the
+        new <a href="markup_editor.htm">Mark-up Editor</a>.
+      </li>
+      <li>
+        Syntax highlighting of source code of user defined snippets can now be
+        switched off on a per-snippet basis. This mainly of use for
+        <a href="snippet_freeform.htm">free-form</a> snippets that may be used
+        for notes or snippets in languages other than Pascal.
+      </li>
+      <li>
+        <div>
+          Information about how a snippet from the online Code Snippets Database
+          was tested is now displayed by means of a glyph at the top right of
+          the detail pane, as follows:
+        </div>
+        <ul style="list-style: none;" class="unspaced">
+          <li>
+            <img
+              src="..\Images\TestingBasic.png"
+              class="glyph"
+            >&nbsp;&nbsp;the snippet has been given some basic testing before
+            uploading to the database.
+          </li>
+          <li>
+            <img
+              src="..\Images\TestingAdvanced.png"
+              class="glyph"
+            >&nbsp;&nbsp;the snippet has been more rigorously tested, for
+            example by unit testing.
+          </li>
+          <li>
+            <img
+              src="..\Images\TestingNone.png"
+              class="glyph"
+            >&nbsp;&nbsp;the snippet has not been tested and should be used with
+            care.
+          </li>
+        </ul>
+      <li>
+        The Welcome page has been completely redesigned to be cleaner and to
+        provide more useful information about the databases and program.
+      </li>
+    </ul>
+    <h2>
+      Favourites [v4.2]
+    </h2>
+    <ul class="spaced">
+      <li>
+        User's can now flag snippets as &quot;Favourites&quot;. Press
+        <span class="smallcaps">Shift+Alt+F</span> or click the
+        <img alt="Menu icon" src="../images/Favourites.png" class="glyph">
+        toolbar button to make the displayed snippet a favourite.
+      </li>
+      <li>
+        A new non-modal <a href="dlg_favourites.htm">dialogue box</a> can be
+        displayed alongside the main <em>CodeSnip</em> window where favourite
+        snippets are listed. Snippets be quickly displayed from here. Display
+        the dialogue box by pressing <span class="smallcaps">F4</span>. Snippets
+        can also be &quot;un-favourited&quot; from the dialogue box.
+      </li>
+    </ul>
+    <h2>
+      Test Compilation
+    </h2>
+    <ul class="spaced">
+      <li>
+        <div>
+          You can specify the paths to be searched by the Delphi compilers when
+          looking for used units. This lets you compile snippets that use units
+          other than those provided in the VCL and RTL. For example you can
+          specify a path to the Indy components to compile them.
+        </div>
+        <div>
+          Use the <a href="dlg_configcompilers.htm">Configure Compilers</a>
+          dialogue box to set the paths on a per-compiler basis.
+        </div>
+      </li>
+      <li>
+        Results of test compilations (<span class="smallcaps">F9</span>) now
+        appear in a <a href="dlg_testcompile.htm">dialogue box</a> instead of
+        in a tab in the detail pane.
+      </li>
+      <li>
+        <strong>[v4.3]</strong> It is easier to specify the namespaces to be
+        searched for unqualified RTL and VCL units names by entering the
+        required namespaces in the <em>Namespaces</em> tab of the
+        <a href="dlg_configcompilers.htm">Configure Compilers</a> dialogue box.
+      </li>
+    </ul>
+    <h2>
+      Other Features
+    </h2>
+    <ul class="spaced">
+      <li>
+        <strong>[v4.1]</strong> <em>CodeSnip</em> is now available in both
+        <em>standard</em> and <em>portable</em> editions. The former is the
+        normal version which is designed to run on one computer and be able to
+        maintain difference user databases for each logged on user. The new
+        <em>portable</em> edition will run from removable storage and maintains
+        a single copy of the main and user database on the same storage device.
+        This make it suitable for use by a single user on more than one
+        computer.
+      </li>
+      <li>
+        There is a new option on the <em>Tools</em> menu that checks
+        availability of new versions of CodeSnip. [From v4.4 this process can be
+        automated - see below.]
+      </li>
+      <li>
+        <div>
+          <strong>[v4.4]</strong> <em>CodeSnip</em> now automatically checks
+          online for any program or online Code Snippets Database updates and
+          shows a small notification window at the bottom right of the main
+          window if such an update is available. Both notifications display a
+          button that can be used to download the relevant update.
+        </div>
+        <div>
+          Automatic update checking is switched on by default but you can
+          disable it, or change the default frequency, from the
+          <a href="dlg_prefs_updates.htm">Updates</a> tab of the
+          <a href="dlg_preferences.htm">Preferences</a> dialogue box.
+        </div>
+      </li>
+      <li>
+        Text and compiler searches can now optionally refine a previous search
+        rather than always searching the entire database.
+        <a href="task_search.htm">More information</a>.
+      </li>
+      <li>
+        The contents of a category can now be printed.
+      </li>
+    </ul>
+    <p>
+      For other features of v4 please read the <a
+        href="http://delphidabbler.com/url/codesnip-log-4"
+        class="weblink"
+        target="_blank"
+      >change log</a> for this release and all preceding v4 releases, including
+      alpha (preview) and beta releases and release candidates.
+    </p>
+  </body>
+</html>
+
