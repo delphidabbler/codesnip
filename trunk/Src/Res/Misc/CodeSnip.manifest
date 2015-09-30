@@ -5,18 +5,19 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2012-2014, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2012-2015, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
  *
- * CodeSnip's Windows manifest file.
- *
- * GUIDs used in compatibility section taken from
- * http://msdn.microsoft.com/en-us/library/windows/desktop/dn481241.aspx
+ * Application manifest file.
 -->
 
-<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0">
+<assembly
+  manifestVersion="1.0"
+  xmlns="urn:schemas-microsoft-com:asm.v1"
+  xmlns:asmv3="urn:schemas-microsoft-com:asm.v3"
+>
   <assemblyIdentity
     type="win32"
     name="CodeSnip"
@@ -31,21 +32,31 @@
         version="6.0.0.0"
         publicKeyToken="6595b64144ccf1df"
         language="*"
-        processorArchitecture="*"/>
+        processorArchitecture="*"
+      />
     </dependentAssembly>
   </dependency>
-  <trustInfo xmlns="urn:schemas-microsoft-com:asm.v2">
+  <trustInfo xmlns="urn:schemas-microsoft-com:asm.v3">
     <security>
       <requestedPrivileges>
-        <requestedExecutionLevel level="asInvoker" />
+        <requestedExecutionLevel
+          level="asInvoker"
+          uiAccess="false"
+        />
       </requestedPrivileges>
     </security>
   </trustInfo>
   <compatibility xmlns="urn:schemas-microsoft-com:compatibility.v1">
     <application>
-      <!-- App has been tested on Windows 7 -->
+      <!-- Windows 10 -->
+      <supportedOS Id="{8e0f7a12-bfb3-4fe8-b9a5-48fd50a15a9a}"/>
+      <!-- Windows 8.1 -->
+      <supportedOS Id="{1f676c76-80e1-4239-95bb-83d0f6d0da78}"/>
+      <!-- Windows 8 -->
+      <supportedOS Id="{4a2f28e3-53b9-4441-ba9c-d69d4a4a6e38}"/>
+      <!-- Windows 7 -->
       <supportedOS Id="{35138b9a-5d96-4fbd-8e2d-a2440225f93a}"/>
-      <!-- App has been tested on Windows Vista -->
+      <!-- Windows Vista -->
       <supportedOS Id="{e2011457-1546-43c5-a5fe-008deee3d3f0}"/>
     </application>
   </compatibility>
