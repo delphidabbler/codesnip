@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2006-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2006-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -40,12 +40,11 @@ const
   clHelpLink            = clGreen;      // help links
   clDBLink              = clNavy;       // database links (cat. and snippet)
   clCommandLink         = clMaroon;     // links that execute program commands
-
-  // news pane
-  clNewsHeading         = clHotLight;   // headings in news frames
-  clNewsHighlight       = clHotLight;   // hilited text in news frames
-  clNewsBodyBorder      = clBorder;     // border round news frame
-  clNewsDateText        = clGrayText;   // dates in news frame
+  clTagLinkFG           = clWindowText; // tag links foreground
+  clTagLinkHoverFG      = clWHite;      // tag links hover foreground
+  clTagLinkBG           = clBtnFace;    // tag link foreground
+  clTagLinkHoverBG      = $999999;      // tag links hover background
+  clTagBorder           = clBorder;     // border of tag links
 
   // text search
   clTextSearchHighlight = $77FFFF;      // background of info pane search text
@@ -56,14 +55,11 @@ const
   clSplashShadowText    = clWhite;      // splash screen text shadow
 
   // new tab
-  clNewTabText          = cl3DLight;    // color of text displayed in new tabs
-
-  // colours of snippet titles / heading
-  clMainSnippet         = clWindowText; // main database snippets
-  clUserSnippet         = clBlue;       // user database snippets
+  clNewTabText          = cl3DLight;    // colour of text displayed in new tabs
 
   // markup tags
   clVarText             = clPurple;     // <var> tag text
+
 
 implementation
 

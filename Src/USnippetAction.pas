@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -22,25 +22,19 @@ uses
   // Delphi
   Classes,
   // Project
+  CS.Database.Types,
   IntfNotifier;
 
 
 type
 
-  ///  <summary>
-  ///  Custom action used to request display of a snippet.
-  ///  </summary>
-  ///  <remarks>
-  ///  Required snippet is uniquely identified by its name and whether it is
-  ///  user defined or not.
-  ///  </remarks>
+  ///  <summary>Custom action used to request display of a snippet.</summary>
+  ///  <remarks>Required snippet is uniquely identified by its ID.</remarks>
   TSnippetAction = class(TBasicAction, ISetNotifier)
   strict private
     var
-      ///  <summary>Value of SnippetName property.</summary>
-      fSnippetName: string;
-      ///  <summary>Value of UserDefined property.</summary>
-      fUserDefined: Boolean;
+      ///  <summary>Value of SnippetID property.</summary>
+      fSnippetID: TSnippetID;
       ///  <summary>Value of NewTab property.</summary>
       fNewTab: Boolean;
       ///  <summary>Reference to Notifier object.</summary>
@@ -59,11 +53,8 @@ type
     ///  <summary>Stores reference to given notifier object.</summary>
     ///  <remarks>Implements ISetNotifier.SetNotifier</remarks>
     procedure SetNotifier(const Notifier: INotifier);
-    ///  <summary>Name of snippet to be displayed.</summary>
-    property SnippetName: string read fSnippetName write fSnippetName;
-    ///  <summary>Flag indicating whether snippet to be displayed is user
-    ///  defined.</summary>
-    property UserDefined: Boolean read fUserDefined write fUserDefined;
+    ///  <summary>ID of snippet to be displayed.</summary>
+    property SnippetID: TSnippetID read fSnippetID write fSnippetID;
     ///  <summary>Flag indicating if snippet is to be displayed in new detail
     ///  pane tab.</summary>
     property NewTab: Boolean read fNewTab write fNewTab;
@@ -75,21 +66,17 @@ implementation
 
 uses
   // Project
-  DB.UMain, DB.USnippet, UView;
+  DB.UMain,
+  UView;
 
 
 { TSnippetAction }
 
 function TSnippetAction.Execute: Boolean;
-var
-  Snippet: TSnippet;    // snippet to be displayed
 begin
   Assert(Assigned(fNotifier), ClassName + '.Execute: Notifier not set');
-  Assert(SnippetName <> '', ClassName + '.Execute: SnippetName not provided');
-  Snippet := Database.Snippets.Find(SnippetName, UserDefined);
-  Assert(Assigned(Snippet), ClassName + '.Execute: SnippetName not valid');
   // Create a view item for snippet and get notifier to display it
-  fNotifier.ShowViewItem(TViewFactory.CreateSnippetView(Snippet), NewTab);
+  fNotifier.ShowViewItem(TViewFactory.CreateSnippetView(SnippetID), NewTab);
   Result := False;
 end;
 

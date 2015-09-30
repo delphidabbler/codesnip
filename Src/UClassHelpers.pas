@@ -38,6 +38,9 @@ type
     ///  <summary>Refreshes all owned controls to reflect any changes in their
     ///  associated actions.</summary>
     procedure RefreshActions;
+    ///  <summary>Gets reference to the control's protected Font property.
+    ///  </summary>
+    function GetFont: TFont;
   end;
 
 type
@@ -83,6 +86,11 @@ uses
 
 
 { TControlHelper }
+
+function TControlHelper.GetFont: TFont;
+begin
+  Result := Font;
+end;
 
 function TControlHelper.GetPopupMenu: TPopupMenu;
 begin

@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2007-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2007-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -34,7 +34,8 @@ type
   TAnchorKind = (
     akExternal,   // external link: class name = 'external-link'
     akSnippet,    // link to a snippet: class name = 'snippet-link'
-    akCategory,   // link to a category: class name = 'category-link'
+    akTag,        // link to a tag: class name = 'tag-link'
+    akLanguage,   // link to a source code language: class name 'language-link'
     akCommand,    // link to a JS command: class name = 'command-link'
     akHelp,       // link to help topic: class name = 'help-link'
     akUnknown,    // unknown link kind
@@ -116,8 +117,10 @@ begin
     Result := akExternal
   else if ClassNames.Contains('snippet-link') then
     Result := akSnippet
-  else if ClassNames.Contains('category-link') then
-    Result := akCategory
+  else if ClassNames.Contains('tag-link') then
+    Result := akTag
+  else if ClassNames.Contains('language-link') then
+    Result := akLanguage
   else
     Result := akUnknown;
 end;

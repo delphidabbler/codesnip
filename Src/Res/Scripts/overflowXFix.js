@@ -24,7 +24,7 @@
         var i;
         sourceCodeParent = document.getElementById('sourcecode');
         if (sourceCodeParent)
-            elemProps = getElementsByClass('pas-source', sourceCodeParent);
+            elemProps = getElementsByClass('highlighted-source', sourceCodeParent);
         else
             elemProps = [];
         compileResultsElem = document.getElementById('compile-results');
@@ -74,7 +74,7 @@
                 elems[i].props.style['paddingBottom'] = '18px';
                 elems[i].props.style['overflowY'] = 'hidden';
             } else {
-                elems[i].props.style['paddingBottom'] = 
+                elems[i].props.style['paddingBottom'] =
                     elems[i].oldPaddingBottom;
             }
         }

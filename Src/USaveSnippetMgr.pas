@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2005-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -21,13 +21,16 @@ interface
 
 uses
   // Project
-  USourceFileInfo, USaveSourceMgr, USourceGen, UView;
+  CS.SourceCode.Pascal.SourceGen,
+  USourceFileInfo,
+  USaveSourceMgr,
+  UView;
 
 
 type
   ///  <summary>
   ///  Manages generation, previewing and saving of a suitable code snippet or
-  ///  category to disk.
+  ///  tag to disk.
   ///  </summary>
   ///  <remarks>
   ///  Generated file can be a Pascal include file, a plain text file, an HTML
@@ -44,22 +47,23 @@ type
     ///  encapsulated by a view.</summary>
     constructor InternalCreate(View: IView);
     ///  <summary>Gets description of given source code file type.</summary>
-    function GetFileTypeDesc(const FileType: TSourceFileType): string; override;
-    ///  <summary>Gets default file name to display in dialog box.</summary>
+    function GetFileTypeDesc(const FileType: TSourceOutputFileType): string;
+      override;
+    ///  <summary>Gets default file name to display in dialogue box.</summary>
     function GetDefaultFileName: string; override;
-    ///  <summary>Gets dialog box title.</summary>
+    ///  <summary>Gets dialogue box title.</summary>
     function GetDlgTitle: string; override;
-    ///  <summary>Get dialog box's help keyword.</summary>
+    ///  <summary>Get dialogue box's help keyword.</summary>
     function GetDlgHelpKeyword: string; override;
     ///  <summary>Gets title to be used for source document.</summary>
     function GetDocTitle: string; override;
     ///  <summary>Generates raw, un-highlighted, source code.</summary>
-    ///  <param name="CommentStyle">TCommentStyle [in] Style of commenting to be
-    ///  used in source code.</param>
+    ///  <param name="CommentStyle">TPascalCommentStyle [in] Style of commenting
+    ///  to be used in source code.</param>
     ///  <param name="TruncateComments">Boolean [in] Indicates whether multi
     ///  paragraph comments are to be truncated to first paragraph.</param>
     ///  <returns>String containing generated source code.</returns>
-    function GenerateSource(const CommentStyle: TCommentStyle;
+    function GenerateSource(const CommentStyle: TPascalCommentStyle;
       const TruncateComments: Boolean): string;
       override;
     ///  <summary>Checks if a file name is valid for the kind of file being
@@ -94,11 +98,11 @@ uses
 
 
 resourcestring
-  // Dialog box title
+  // Dialogue box title
   sSaveDlgTitle = 'Save %0:s Snippet';
-  // Output document title for snippets and categories
+  // Output document title for snippets and tags
   sDocTitle = '"%0:s" %1:s';
-  sCategory = 'category';
+  sTag = 'tag';
   sSnippet = 'routine';
   // File filter strings
   sHtmExtDesc = 'HTML file';
@@ -130,7 +134,7 @@ begin
     end;
 end;
 
-function TSaveSnippetMgr.GenerateSource(const CommentStyle: TCommentStyle;
+function TSaveSnippetMgr.GenerateSource(const CommentStyle: TPascalCommentStyle;
   const TruncateComments: Boolean): string;
 begin
   Result := TSnippetSourceGen.Generate(fView, CommentStyle, TruncateComments);
@@ -153,8 +157,8 @@ end;
 
 function TSaveSnippetMgr.GetDocTitle: string;
 begin
-  if Supports(fView, ICategoryView) then
-    Result := Format(sDocTitle, [fView.Description, sCategory])
+  if Supports(fView, ITagView) then
+    Result := Format(sDocTitle, [fView.Description, sTag])
   else if Supports(fView, ISnippetView) then
     Result := Format(sDocTitle, [fView.Description, sSnippet])
   else
@@ -162,9 +166,9 @@ begin
 end;
 
 function TSaveSnippetMgr.GetFileTypeDesc(
-  const FileType: TSourceFileType): string;
+  const FileType: TSourceOutputFileType): string;
 const
-  Descriptions: array[TSourceFileType] of string = (
+  Descriptions: array[TSourceOutputFileType] of string = (
     sTxtExtDesc, sIncExtDesc, sHtmExtDesc, sRtfExtDesc
   );
 begin

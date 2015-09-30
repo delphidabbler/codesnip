@@ -77,12 +77,16 @@ type
       NewsFeedTplt = WebSiteURL + '/feeds/site-news-feed?id=codesnip&days=%d';
   strict private
     ///  <summary>Returns the name of the host server to be used.</summary>
-    ///  <remarks>This is the remote web server unless the '-localhost# switch
-    ///  was passed on the command line when localhost server is returned.
-    ///  </remarks>
+    ///  <remarks>This is the remote web server unless the the user has passed a
+    ///  command line option requesting that localhost is used, when that is
+    ///  returned.</remarks>
     class function Host: string;
   public
     const
+      { TODO: change to get localhost server name from external file or config.
+              We could even extend this to get server name from file and use
+              delphidabbler.com if file not present. This way we can get rid of
+              -localhost switch }
       ///  <summary>Local web server.</summary>
       ///  <remarks>Used for test purposes.</remarks>
       LocalHost = 'localhost:8080';
@@ -114,17 +118,6 @@ type
     ///  <summary>Gets information about any required web proxy.</summary>
     ///  <remarks>The web proxy information is read from settings.</remarks>
     class function WebProxyInfo: TWebProxyInfo;
-    ///  <summary>Checks if the program is using the web server on localhost.
-    ///  </summary>
-    ///  <returns>Boolean. True if localhost is being used, False if the remote,
-    ///  production, server is being used.</returns>
-    ///  <remarks>
-    ///  <para>True is returned iff the '-localhost' switch was passed on the
-    ///  command line.</para>
-    ///  <para>Localhost should only be used by developers with access to a
-    ///  suitable test server running as 'locahost'.</para>
-    ///  </remarks>
-    class function UsingLocalHost: Boolean;
   end;
 
 
@@ -135,14 +128,16 @@ uses
   // Delphi
   SysUtils,
   // Project
-  USettings, UStrUtils;
+  CS.Init.CommandLineOpts,
+  USettings,
+  UStrUtils;
 
 
 { TWebInfo }
 
 class function TWebInfo.Host: string;
 begin
-  if UsingLocalHost then
+  if TCommandLineOpts.UseLocalHost then
     Result := LocalHost
   else
     Result := RemoteHost;
@@ -151,11 +146,6 @@ end;
 class function TWebInfo.NewsFeedURL(const Age: Word): string;
 begin
   Result := Format(NewsFeedTplt, [Age]);
-end;
-
-class function TWebInfo.UsingLocalHost: Boolean;
-begin
-  Result := FindCmdLineSwitch('localhost', True);
 end;
 
 class function TWebInfo.WebProxyInfo: TWebProxyInfo;

@@ -1,5 +1,5 @@
-inherited UserDataPathDlg: TUserDataPathDlg
-  Caption = 'Move User Database'
+inherited DBMoveDlg: TDBMoveDlg
+  Caption = 'Move Database'
   ExplicitWidth = 474
   ExplicitHeight = 374
   PixelsPerInch = 96
@@ -16,9 +16,9 @@ inherited UserDataPathDlg: TUserDataPathDlg
       Height = 25
       AutoSize = False
       Caption = 
-        'Use this dialogue box to move the user database to a new directo' +
-        'ry or to restore the directory to its default location. Choose t' +
-        'he appropriate option below.'
+        'Use this dialogue box to move the database to a new directory or' +
+        ' to restore the directory to its default location. Choose the ap' +
+        'propriate option below.'
       WordWrap = True
     end
     object lblWarning: TLabel
@@ -170,14 +170,20 @@ inherited UserDataPathDlg: TUserDataPathDlg
         TabOrder = 0
       end
     end
-    inline frmProgress: TUserDataPathDlgProgressFrame
+    inline frmProgress: TDBMoveDlgProgressFrame
       Left = 57
       Top = 0
       Width = 320
       Height = 82
+      ParentBackground = False
       TabOrder = 2
       Visible = False
       ExplicitLeft = 57
+      ExplicitHeight = 82
+      inherited pnlBody: TPanel
+        Height = 82
+        ExplicitHeight = 82
+      end
     end
   end
   object alDlg: TActionList

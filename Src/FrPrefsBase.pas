@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2006-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2006-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -38,7 +38,7 @@ type
   {
   TPrefsBaseFrame:
     Frame that forms an abstract base class for all frames displayed in
-    preferences dialog box.
+    preferences dialogue box.
   }
   TPrefsBaseFrame = class(TFrame)
   public
@@ -63,19 +63,19 @@ type
       }
     ///  <summary>Checks if preference changes require that main window UI is
     ///  updated.</summary>
-    ///  <remarks>Called when dialog box containing frame is closing.</remarks>
+    ///  <remarks>Called when dialogue box containing frame is closing.</remarks>
     function UIUpdated: Boolean; virtual; abstract;
     procedure ArrangeControls; virtual; abstract;
       {Arranges controls on frame. Called after frame has been sized.
       }
     function DisplayName: string; virtual; abstract;
       {Provides caption that is displayed in the tab sheet that contains this
-      frame when displayed in the preference dialog box.
+      frame when displayed in the preference dialogue box.
         @return Required display name.
       }
     class function Index: Byte; virtual; abstract;
       {Provides an index number that determines the order in which the tabs
-      containing frames are displayed in the preferences dialog box. Gaps
+      containing frames are displayed in the preferences dialogue box. Gaps
       between indexes should be left where possible to allow for insertion of
       new entries at a later date.
         @return Required index number.

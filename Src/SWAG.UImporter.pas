@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2013-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -23,18 +23,18 @@ uses
   // Delphi
   Generics.Collections,
   // Project
-  ActiveText.UMain,
-  DB.USnippet,
+  CS.ActiveText,
+  CS.Database.Types,
   SWAG.UCommon;
 
 
 type
   ///  <summary>Class that converts snippets from the SWAG database into
-  ///  CodeSnip database format and imports them into the user defined
-  ///  database.</summary>
-  ///  <remarks>This class creates new user-defined snippets from records that
-  ///  define a SWAF snippet. It is for the caller to acquire the required SWAG
-  ///  snippets from the SWAG database.</remarks>
+  ///  CodeSnip database format and imports them into the snippets database.
+  ///  </summary>
+  ///  <remarks>This class creates new snippets from records that define a SWAG
+  ///  snippet. It is for the caller to acquire the required SWAG snippets from
+  ///  the SWAG database.</remarks>
   TSWAGImporter = class(TObject)
   strict private
     type
@@ -47,18 +47,18 @@ type
     var
       ///  <summary>List of SWAG snippets to be imported.</summary>
       fImportList: TList<TSWAGSnippet>;
-      ///  <summary>Records the common active text that is included in the Extra
+      ///  <summary>Records the common active text that is included in the Notes
       ///  property of each imported snippet.</summary>
-      fExtraBoilerplate: IActiveText;
+      fNotesBoilerplate: IActiveText;
     ///  <summary>Returns the common active text that will be included in the
-    ///  Extra property of each imported snippet.</summary>
-    function ExtraBoilerplate: IActiveText;
+    ///  Notes property of each imported snippet.</summary>
+    function NotesBoilerplate: IActiveText;
     ///  <summary>Records the data from the given SWAG snippet into a data
-    ///  structure suitable for adding to CodeSnip's user database.</summary>
+    ///  structure suitable for adding to the snippets database.</summary>
     function BuildSnippetInfo(const SWAGSnippet: TSWAGSnippet):
-      TSnippetEditData;
-    ///  <summary>Imports (i.e. adds) the given SWAG snippet into the user
-    ///  database.</summary>
+      IEditableSnippet;
+    ///  <summary>Imports (i.e. adds) the given SWAG snippet into the database.
+    ///  </summary>
     procedure ImportSnippet(const SWAGSnippet: TSWAGSnippet);
   public
     ///  <summary>Constructs new object instance.</summary>
@@ -69,22 +69,28 @@ type
     ///  <remarks>After calling this method no snippets are recorded for
     ///  inclusion in the import.</remarks>
     procedure Reset;
-    ///  <summary>Records the given SWAG snippet ready for import into the user
+    ///  <summary>Records the given SWAG snippet ready for import into the
     ///  database.</summary>
     procedure IncludeSnippet(const SWAGSnippet: TSWAGSnippet);
-    ///  <summary>Imports all the required SWAG snippets into the user database.
+    ///  <summary>Removes the given SWAG snippet from the list of snippets
+    ///  awaiting import into the database.</summary>
+    procedure ExcludeSnippet(const SWAGSnippet: TSWAGSnippet);
+    ///  <summary>Checks if the given SWAG snippet had already been imported
+    ///  into the database.</summary>
+    function SnippetExistsInDB(const SWAGSnippet: TSWAGSnippet): Boolean;
+    ///  <summary>Imports all the required SWAG snippets into the database.
     ///  </summary>
     ///  <param name="Callback">TProgressCallback [in] Optional callback to be
     ///  called after each SWAG snippet is imported.</param>
     ///  <remarks>The snippets that are imported are those that have been
     ///  recorded by calling IncludeSnippet.</remarks>
     procedure Import(const Callback: TProgressCallback = nil);
-    ///  <summary>Creates and returns a valid snippet name, based on the given
-    ///  SWAG snippet ID, that is unique in the user database.</summary>
-    class function MakeValidSnippetName(SWAGSnippetID: Cardinal): string;
-    ///  <summary>Description of the category in the user database used for all
-    ///  imported SWAG snippets.</summary>
-    class function SWAGCategoryDesc: string;
+    ///  <summary>Creates and returns a valid snippet ID string, based on the
+    ///  given SWAG snippet ID, that is unique in the snippets database.
+    ///  </summary>
+    class function MakeValidSnippetIDString(SWAGSnippetID: Cardinal): string;
+    ///  <summary>Name of tag applied to all imported SWAG snippets.</summary>
+    class function SWAGTagName: string;
   end;
 
 
@@ -95,17 +101,17 @@ uses
   // Delphi
   SysUtils,
   // Project
-  DB.UCategory,
-  DB.UMain,
-  DB.USnippetKind,
-  UReservedCategories,
-  USnippetValidator;
+  CS.Database.SnippetOrigins,
+  CS.Database.Tags,
+  CS.SourceCode.Languages,
+  CS.Utils.Dates,
+  DB.UMain;
 
 
 { TSWAGImporter }
 
 function TSWAGImporter.BuildSnippetInfo(const SWAGSnippet: TSWAGSnippet):
-  TSnippetEditData;
+  IEditableSnippet;
 
   // Constructs and returns the new snippet's description as active text.
   function BuildDescription: IActiveText;
@@ -121,12 +127,12 @@ function TSWAGImporter.BuildSnippetInfo(const SWAGSnippet: TSWAGSnippet):
   end;
 
   // Constructs and returns the active text to be stored in the new snippet's
-  // Extra field.
-  function BuildExtra: IActiveText;
+  // Notes field.
+  function BuildNotes: IActiveText;
   resourcestring
     sAuthor = 'Author(s): %s';
   begin
-    Result := TActiveTextFactory.CloneActiveText(ExtraBoilerplate);
+    Result := TActiveTextFactory.CloneActiveText(NotesBoilerplate);
     Result.AddElem(TActiveTextFactory.CreateActionElem(ekPara, fsOpen));
     Result.AddElem(
       TActiveTextFactory.CreateTextElem(Format(sAuthor, [SWAGSnippet.Author]))
@@ -134,16 +140,30 @@ function TSWAGImporter.BuildSnippetInfo(const SWAGSnippet: TSWAGSnippet):
     Result.AddElem(TActiveTextFactory.CreateActionElem(ekPara, fsClose));
   end;
 
+  function BuildTags: ITagSet;
+  begin
+    Result := TTagSet.Create;
+    Result.Add(TTag.Create(SWAGTagName));
+  end;
+
 begin
-  Result.Init;
-  Result.Props.Kind := skFreeform;
-  Result.Props.Cat := TReservedCategories.SWAGCatID;
-  Result.Props.Desc := BuildDescription;
-  Result.Props.SourceCode := SWAGSnippet.SourceCode;
-  Result.Props.HiliteSource := not SWAGSnippet.IsDocument;
-  Result.Props.DisplayName := SWAGSnippet.Title;
-  Result.Props.Extra := BuildExtra;
-  // TSnippetEditData.Refs properties can keep default values
+  Result := Database.NewSnippet;
+  Result.KindID := skFreeform;
+  Result.Tags := BuildTags;
+  Result.Description := BuildDescription;
+  Result.SourceCode := SWAGSnippet.SourceCode;
+  if SWAGSnippet.IsDocument then
+    Result.LanguageID := TSourceCodeLanguageID.CreatePlainText
+  else
+    Result.LanguageID := TSourceCodeLanguageID.CreatePascal;
+  Result.Title := SWAGSnippet.Title;
+  Result.Notes := BuildNotes;
+  // NOTE: Snippet has no required units, required snippets or cross-references
+  Result.Origin := TRemoteSnippetOrigin.Create(
+    sosSWAG,
+    MakeValidSnippetIDString(SWAGSnippet.ID),
+    TUTCDateTime.Create(SWAGSnippet.DateStamp)
+  );
 end;
 
 constructor TSWAGImporter.Create;
@@ -158,7 +178,42 @@ begin
   inherited;
 end;
 
-function TSWAGImporter.ExtraBoilerplate: IActiveText;
+procedure TSWAGImporter.ExcludeSnippet(const SWAGSnippet: TSWAGSnippet);
+begin
+  fImportList.Remove(SWAGSnippet);
+end;
+
+procedure TSWAGImporter.Import(const Callback: TProgressCallback);
+var
+  SWAGSnippet: TSWAGSnippet;
+begin
+  for SWAGSnippet in fImportList do
+  begin
+    if Assigned(Callback) then
+      Callback(SWAGSnippet);
+    ImportSnippet(SWAGSnippet);
+  end;
+end;
+
+procedure TSWAGImporter.ImportSnippet(const SWAGSnippet: TSWAGSnippet);
+begin
+  // TODO: implement a "bulk add snippet" option into TDatabase
+  Database.AddSnippet(BuildSnippetInfo(SWAGSnippet));
+end;
+
+procedure TSWAGImporter.IncludeSnippet(const SWAGSnippet: TSWAGSnippet);
+begin
+  if not fImportList.Contains(SWAGSnippet) then
+    fImportList.Add(SWAGSnippet);
+end;
+
+class function TSWAGImporter.MakeValidSnippetIDString(SWAGSnippetID: Cardinal):
+  string;
+begin
+  Result := IntToStr(SWAGSnippetID);
+end;
+
+function TSWAGImporter.NotesBoilerplate: IActiveText;
 resourcestring
   sStatementPrefix = 'This snippet was imported from the ';
   sStatementLinkText = 'SWAG Pascal Archive';
@@ -176,7 +231,7 @@ var
   SWAGDBURIAttr: IActiveTextAttrs;
   BSD3URIAttr: IActiveTextAttrs;
 begin
-  if not Assigned(fExtraBoilerplate) then
+  if not Assigned(fNotesBoilerplate) then
   begin
     SWAGDBURIAttr := TActiveTextFactory.CreateAttrs(
       TActiveTextAttr.Create('href', SWAGDBURI)
@@ -184,90 +239,45 @@ begin
     BSD3URIAttr := TActiveTextFactory.CreateAttrs(
       TActiveTextAttr.Create('href', BSD3URI)
     );
-    fExtraBoilerplate := TActiveTextFactory.CreateActiveText;
-    fExtraBoilerplate.AddElem(
+    fNotesBoilerplate := TActiveTextFactory.CreateActiveText;
+    fNotesBoilerplate.AddElem(
       TActiveTextFactory.CreateActionElem(ekPara, fsOpen)
     );
-    fExtraBoilerplate.AddElem(
+    fNotesBoilerplate.AddElem(
       TActiveTextFactory.CreateTextElem(sStatementPrefix)
     );
-    fExtraBoilerplate.AddElem(
+    fNotesBoilerplate.AddElem(
       TActiveTextFactory.CreateActionElem(ekLink, SWAGDBURIAttr, fsOpen)
     );
-    fExtraBoilerplate.AddElem(
+    fNotesBoilerplate.AddElem(
       TActiveTextFactory.CreateTextElem(sStatementLinkText)
     );
-    fExtraBoilerplate.AddElem(
+    fNotesBoilerplate.AddElem(
       TActiveTextFactory.CreateActionElem(ekLink, SWAGDBURIAttr, fsClose)
     );
-    fExtraBoilerplate.AddElem(
+    fNotesBoilerplate.AddElem(
       TActiveTextFactory.CreateTextElem(sStatementPostfix)
     );
-    fExtraBoilerplate.AddElem(
+    fNotesBoilerplate.AddElem(
       TActiveTextFactory.CreateTextElem(sLicensePrefix)
     );
-    fExtraBoilerplate.AddElem(
+    fNotesBoilerplate.AddElem(
       TActiveTextFactory.CreateActionElem(ekLink, BSD3URIAttr, fsOpen)
     );
-    fExtraBoilerplate.AddElem(
+    fNotesBoilerplate.AddElem(
       TActiveTextFactory.CreateTextElem(sLicenseLinkText)
     );
-    fExtraBoilerplate.AddElem(
+    fNotesBoilerplate.AddElem(
       TActiveTextFactory.CreateActionElem(ekLink, BSD3URIAttr, fsClose)
     );
-    fExtraBoilerplate.AddElem(
+    fNotesBoilerplate.AddElem(
       TActiveTextFactory.CreateTextElem(sLicensePostfix)
     );
-    fExtraBoilerplate.AddElem(
+    fNotesBoilerplate.AddElem(
       TActiveTextFactory.CreateActionElem(ekPara, fsClose)
     );
   end;
-  Result := fExtraBoilerplate;
-end;
-
-procedure TSWAGImporter.Import(const Callback: TProgressCallback);
-var
-  SWAGSnippet: TSWAGSnippet;
-begin
-  for SWAGSnippet in fImportList do
-  begin
-    if Assigned(Callback) then
-      Callback(SWAGSnippet);
-    ImportSnippet(SWAGSnippet);
-  end;
-end;
-
-procedure TSWAGImporter.ImportSnippet(const SWAGSnippet: TSWAGSnippet);
-var
-  SnippetName: string;                // unique name of new snippet
-  SnippetDetails: TSnippetEditData;   // data describing new snippet
-begin
-  SnippetName := MakeValidSnippetName(SWAGSnippet.ID);
-  SnippetDetails := BuildSnippetInfo(SWAGSnippet);
-  (Database as IDatabaseEdit).AddSnippet(SnippetName, SnippetDetails);
-end;
-
-procedure TSWAGImporter.IncludeSnippet(const SWAGSnippet: TSWAGSnippet);
-begin
-  fImportList.Add(SWAGSnippet);
-end;
-
-class function TSWAGImporter.MakeValidSnippetName(SWAGSnippetID: Cardinal):
-  string;
-var
-  Appendix: Integer;
-  RootName: string;
-begin
-  RootName := 'SWAG_' + IntToStr(SWAGSnippetID);
-  Assert(IsValidIdent(RootName, False), ClassName
-    + '.GetValidSnippetName: RootName is not a valid Pascal identifier');
-  Result := RootName;
-  Appendix := 0;
-  while not TSnippetValidator.ValidateName(Result, True) do
-  begin
-    Inc(Appendix);
-    Result := RootName + '_' + IntToStr(Appendix);
-  end;
+  Result := fNotesBoilerplate;
 end;
 
 procedure TSWAGImporter.Reset;
@@ -275,14 +285,28 @@ begin
   fImportList.Clear;
 end;
 
-class function TSWAGImporter.SWAGCategoryDesc: string;
+function TSWAGImporter.SnippetExistsInDB(const SWAGSnippet: TSWAGSnippet):
+  Boolean;
 var
-  Cat: TCategory; // reserved SWAG category in code snippets database
+  Dummy: ISnippet;
+  IDStr: string;
 begin
-  Cat := Database.Categories.Find(TReservedCategories.SWAGCatID);
-  Assert(Assigned(Cat),
-    ClassName + '.SWAGCategoryDesc: Can''t find SWAG category');
-  Result := Cat.Description;
+  IDStr := MakeValidSnippetIDString(SWAGSnippet.ID);
+  Result := Database.TrySelectSnippet(
+    function (TestSnippet: ISnippet): Boolean
+    begin
+      Result := (TestSnippet.Origin.Source = sosSWAG)
+        and (TestSnippet.Origin.OriginalID = IDStr);
+    end,
+    Dummy
+  );
+end;
+
+class function TSWAGImporter.SWAGTagName: string;
+resourcestring
+  sTagName = 'SWAG';
+begin
+  Result := sTagName;
 end;
 
 end.

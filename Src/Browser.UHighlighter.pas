@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -220,7 +220,7 @@ begin
   Assert(Assigned(Range), ClassName + '.IsRangeInSearchSection: Range is nil');
   // Check if we have any specified search sections to search - if none provided
   // then we class whole document as a single search section
-  if fSearchSectionIDs.Count > 0 then
+  if not fSearchSectionIDs.IsEmpty then
   begin
     Result := False;
     // Loop thru all HTML elements from current range up to <body> tag, looking

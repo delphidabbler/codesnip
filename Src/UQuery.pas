@@ -21,7 +21,9 @@ interface
 
 uses
   // Project
-  DB.UCategory, DB.USnippet, USearch;
+  CS.Database.Types,
+  DB.UMain,
+  USearch;
 
 
 type
@@ -61,21 +63,16 @@ type
       {Gets value of LatestSearch property.
         @return Search object used to generate latest search.
       }
-    function GetSelection: TSnippetList;
+    function GetSelection: ISnippetIDList;
       {Gets value of Selection property.
         @return List of snippets matching current query.
       }
-    procedure GetCatSelection(const Cat: TCategory;
-      const Snippets: TSnippetList);
-      {Provides list of snippets selected by last search that are in a specified
-      category.
-        @param Cat [in] Reference to required category.
-        @param Snippets [in] Object to receive snippet list. List is emptied
-          before snippets are copied in.
-      }
+    ///  <summary>Applies the given filter function to the current selection
+    ///  and returns the IDs of snippets that pass the filter.</summary>
+    function FilterSelection(FilterFn: TDBFilterFn): ISnippetIDList;
     property LatestSearch: ISearch read GetLatestSearch;
       {Reference to search object used to generate current query}
-    property Selection: TSnippetList read GetSelection;
+    property Selection: ISnippetIDList read GetSelection;
       {List of snippets that match current query. This records all snippets in
       database if there is no search}
   end;
@@ -93,9 +90,13 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Generics.Collections,
+  SysUtils,
+  Generics.Collections,
   // Project
-  DB.UMain, UBaseObjects, USingleton;
+  CS.Database.Snippets,
+  IntfCommon,
+  UBaseObjects,
+  USingleton;
 
 
 type
@@ -106,13 +107,11 @@ type
     search to be run against the database and makes the found snippets
     available. Must only be instantiated once as a singleton.
   }
-  TQuery = class(TSingleton,
-    IQuery
-  )
+  TQuery = class(TSingleton, IQuery)
   strict private
     var
-      fSelection: TSnippetList;   // List of snippets selected by current query
-      fActiveSearches: TList<ISearch>; // List of currently active searches
+      fSelection: ISnippetIDList;   // IDs of snippets selected by current query
+      fActiveSearches: TList<ISearch>;      // List of currently active searches
     class function GetInstance: IQuery; static;
       {Gets singleton instance of class, creating it if necessary
         @return Singleton instance.
@@ -134,8 +133,11 @@ type
         @return True if search succeeds and False if it fails.
       }
     ///  <summary>Checks if there is an active search.</summary>
-    ///  <remarks>A search is active if the latest search is not the null
-    ///  search.</remarks>
+    ///  <remarks>
+    ///  <para>A search is active if the latest search is not the null
+    ///  search.</para>
+    ///  <para>Method of IQuery.</para>
+    ///  </remarks>
     function IsSearchActive: Boolean;
     function Refresh: Boolean;
       {Re-applies the latest search if one exists.
@@ -153,18 +155,14 @@ type
       {Gets reference to latest search object.
         @return Required search object.
       }
-    function GetSelection: TSnippetList;
+    function GetSelection: ISnippetIDList;
       {Gets reference to list of snippets selected by last search.
         @return Reference to required list of snippets.
       }
-    procedure GetCatSelection(const Cat: TCategory;
-      const SnipList: TSnippetList);
-      {Provides list of snippets selected by last search that are in a specified
-      category.
-        @param Cat [in] Reference to required category.
-        @param SnipList [in] Object to receive snippet list. List is emptied
-          before snippets are copied in.
-      }
+    ///  <summary>Applies the given filter function to the current selection
+    ///  and returns the IDs of snippets that pass the filter.</summary>
+    ///  <remarks>Method of IQuery.</remarks>
+    function FilterSelection(FilterFn: TDBFilterFn): ISnippetIDList;
   end;
 
 function Query: IQuery;
@@ -204,30 +202,20 @@ begin
   fActiveSearches.Add(Search);
 end;
 
-procedure TQuery.Finalize;
+function TQuery.FilterSelection(FilterFn: TDBFilterFn): ISnippetIDList;
 begin
-  fSelection.Free;
-  fActiveSearches.Free;
-  inherited;
+  Result := Database.SelectSnippets(
+    function (Snippet: ISnippet): Boolean
+    begin
+      Result := fSelection.Contains(Snippet.ID) and FilterFn(Snippet)
+    end
+  );
 end;
 
-procedure TQuery.GetCatSelection(const Cat: TCategory;
-  const SnipList: TSnippetList);
-  {Provides list of snippets selected by last search that are in a specified
-  category.
-    @param Cat [in] Reference to required category.
-    @param SnipList [in] Object to receive snippet list. List is emptied before
-      snippets are copied in.
-  }
-var
-  Idx: Integer; // Loops thru all snippets in selection
+procedure TQuery.Finalize;
 begin
-  SnipList.Clear;
-  for Idx := 0 to Pred(fSelection.Count) do
-  begin
-    if Cat.Snippets.Contains(fSelection[Idx]) then
-      SnipList.Add(fSelection[Idx]);
-  end;
+  fActiveSearches.Free;
+  inherited;
 end;
 
 function TQuery.GetLatestSearch: ISearch;
@@ -249,7 +237,7 @@ begin
   Result := TQuery.Create;  // OK since multiple calls return same instance
 end;
 
-function TQuery.GetSelection: TSnippetList;
+function TQuery.GetSelection: ISnippetIDList;
   {Gets reference to list of snippets selected by last search.
     @return Reference to required list of snippets.
   }
@@ -260,7 +248,7 @@ end;
 procedure TQuery.Initialize;
 begin
   inherited;
-  fSelection := TSnippetList.Create;
+  fSelection := TSnippetIDList.Create;
   fActiveSearches := TList<ISearch>.Create;
   Reset;
 end;
@@ -281,7 +269,7 @@ var
 begin
   if not IsSearchActive then
     Exit(False);
-  fSelection.Assign(Database.Snippets);
+  (fSelection as IAssignable).Assign(Database.GetAllSnippets);
   for Search in fActiveSearches do
     RunSearch(Search);
   Result := True;
@@ -292,23 +280,18 @@ procedure TQuery.Reset;
   Search property is set to nul search.
   }
 begin
-  fSelection.Assign(Database.Snippets);
+  (fSelection as IAssignable).Assign(Database.GetAllSnippets);
   fActiveSearches.Clear;
 end;
 
 function TQuery.RunSearch(Search: ISearch): Boolean;
 var
-  FoundList: TSnippetList;
+  FoundList: ISnippetIDList;
 begin
-  FoundList := TSnippetList.Create;
-  try
-    Result := Search.Execute(fSelection, FoundList);
-    if not Result then
-      Exit;
-    fSelection.Assign(FoundList);
-  finally
-    FoundList.Free;
-  end;
+  Result := Search.Execute(fSelection, FoundList);
+  if not Result then
+    Exit;
+  (fSelection as IAssignable).Assign(FoundList);
 end;
 
 procedure TQuery.Update;

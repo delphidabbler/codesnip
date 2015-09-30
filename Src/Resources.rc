@@ -3,12 +3,12 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2005-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
  *
- * Resource file containing images, dialog boxes and manifest for CodeSnip
+ * Resource file containing images, dialogue boxes and manifest for CodeSnip
  * program.
  */
 
@@ -39,6 +39,7 @@ TVCHECKBOXES BITMAP "Res/Img/TVCheckBoxes.bmp"
 */
 COMPILERSEARCH BITMAP "Res/Img/CompilerSearch.bmp"
 TEXTSEARCH BITMAP "Res/Img/TextSearch.bmp"
+TAGSSEARCH BITMAP "Main/Assets/Img/TagsSearch.bmp"
 SELECTIONSEARCH BITMAP "Res/Img/SelectionSearch.bmp"
 XREFSEARCH BITMAP "Res/Img/XRefSearch.bmp"
 NULSEARCH BITMAP "Res/Img/NulSearch.bmp"
@@ -62,9 +63,8 @@ SPLASHIMAGE RCDATA "Res/Img/Branding/Splash.gif"
 */
 MAINICON ICON "Res/Img/Branding/CodeSnip.ico"
 
-
 /*
-  Dialog resource used to extend save dialog box
+  DIALOG resource used to extend save dialogue box
 */
 SAVESNIPPETEXT DIALOG 0, 0, 0, 142
 STYLE WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | DS_3DLOOK | DS_CONTROL
@@ -72,12 +72,25 @@ FONT 8, "MS Sans Serif"
 LANGUAGE LANG_NEUTRAL , SUBLANG_NEUTRAL
 {
   /*
-    Hidden static control required by Windows to extend dialog. Dialog is
-    extended by difference between dialog size and size of this static control
+    Hidden static control required by Windows to extend dialogue. Dialogue is
+    extended by difference between dialogue size and size of this static
+    control.
   */
   LTEXT "", 1119, 0, 0, 0, 84, SS_LEFT | WS_CHILD | NOT WS_VISIBLE | WS_GROUP
 }
 
+
+/*
+  Default syntax highlighter description file.
+  Note: UTF-8 format text file.
+*/
+HILITETHEMES RCDATA "Main/Assets/Misc/DefaultHighlighterThemes.dat"
+
+/*
+  Default source code languages recognised by CodeSnip.
+  Note: UTF-8 format text file.
+*/
+SOURCECODELANGUAGES RCDATA "Main/Assets/Misc/DefaultSourceCodeLanguages.dat"
 
 /*
   XP and later manifest file

@@ -10,11 +10,14 @@
  *
  * Implements a frame that displays a message and progress bar. Designed for use
  * with the TUserDataPathDlg dialogue box to indicate progress when moving the
- * user database.
+ * snippets database.
 }
 
 
 unit FmUserDataPathDlg.FrProgress;
+
+
+// TODO: Rename this unit to relate to frame class name
 
 
 interface
@@ -22,15 +25,20 @@ interface
 
 uses
   // Delphi
-  Controls, StdCtrls, ComCtrls, Classes, ExtCtrls, Forms,
+  Controls,
+  StdCtrls,
+  ComCtrls,
+  Classes,
+  ExtCtrls,
+  Forms,
   // Project
   UStructs;
 
 type
   ///  <summary>Frame that displays a message and a progress bar.</summary>
-  ///  <remarks>For use from TUserDataPathDlg to indicate progress when moving
-  ///  the user database.</remarks>
-  TUserDataPathDlgProgressFrame = class(TFrame)
+  ///  <remarks>For use from TMoveDatabaseDlg to indicate progress when moving
+  ///  the snippets database.</remarks>
+  TDBMoveDlgProgressFrame = class(TFrame)
     pnlBody: TPanel;
     prgProgress: TProgressBar;
     lblDescription: TLabel;
@@ -80,39 +88,39 @@ uses
 
 { TUserDataPathDlgProgressFrame }
 
-function TUserDataPathDlgProgressFrame.GetDescription: string;
+function TDBMoveDlgProgressFrame.GetDescription: string;
 begin
   Result := lblDescription.Caption;
 end;
 
-function TUserDataPathDlgProgressFrame.GetProgress: Integer;
+function TDBMoveDlgProgressFrame.GetProgress: Integer;
 begin
   Result := prgProgress.Position;
 end;
 
-function TUserDataPathDlgProgressFrame.GetRange: TRange;
+function TDBMoveDlgProgressFrame.GetRange: TRange;
 begin
   Result := TRange.Create(prgProgress.Min, prgProgress.Max);
 end;
 
-procedure TUserDataPathDlgProgressFrame.SetDescription(const Value: string);
+procedure TDBMoveDlgProgressFrame.SetDescription(const Value: string);
 begin
   lblDescription.Caption := Value;
 end;
 
-procedure TUserDataPathDlgProgressFrame.SetProgress(const Value: Integer);
+procedure TDBMoveDlgProgressFrame.SetProgress(const Value: Integer);
 begin
   prgProgress.Position := GetRange.Constrain(Value);
 end;
 
-procedure TUserDataPathDlgProgressFrame.SetRange(const Value: TRange);
+procedure TDBMoveDlgProgressFrame.SetRange(const Value: TRange);
 begin
   prgProgress.Min := Value.Min;
   prgProgress.Max := Value.Max;
   prgProgress.Position := Value.Constrain(prgProgress.Position);
 end;
 
-procedure TUserDataPathDlgProgressFrame.Show(const AlignToCtrl: TWinControl);
+procedure TDBMoveDlgProgressFrame.Show(const AlignToCtrl: TWinControl);
 begin
   TCtrlArranger.SetLabelHeight(lblDescription);
   lblDescription.Top := 8;
@@ -133,3 +141,4 @@ begin
 end;
 
 end.
+

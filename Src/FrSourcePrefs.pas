@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2006-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2006-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -21,10 +21,18 @@ interface
 
 uses
   // Delphi
-  StdCtrls, Forms, Controls, Classes,
+  StdCtrls,
+  Forms,
+  Controls,
+  Classes,
   // Project
-  FrPrefsBase, FrRTFShowCase, Hiliter.UGlobals, UPreferences, USourceFileInfo,
-  USourceGen;
+  CS.SourceCode.Hiliter.Themes,
+  CS.SourceCode.Pascal.SourceGen,
+  CS.UI.Helper.CollectionCtrlKVMgr,
+  FrPrefsBase,
+  FrRTFShowCase,
+  UPreferences,
+  USourceFileInfo;
 
 
 type
@@ -32,7 +40,7 @@ type
   {
   TSourcePrefsFrame:
     Frame that allows user to set source code preferences. Can persist
-    preferences entered by user. Note: Designed for use in preferences dialog
+    preferences entered by user. Note: Designed for use in preferences dialogue
     box.
   }
   TSourcePrefsFrame = class(TPrefsBaseFrame)
@@ -48,27 +56,22 @@ type
     procedure cbCommentStyleChange(Sender: TObject);
     procedure cbSnippetFileTypeChange(Sender: TObject);
   strict private
-    fHiliteAttrs: IHiliteAttrs;
-      {Style of syntax highlighting to use in sample output}
-    procedure SelectSourceFileType(const FT: TSourceFileType);
-      {Selects entry in file type combo box that matches specified source code
-      file type.
-        @param FT [in] File type to select.
-      }
-    procedure SelectCommentStyle(const CommentStyle: TCommentStyle);
-      {Selects entry in comment style combo box that matches specified style.
-        @param CommentStyle [in] Comment style to select.
-      }
-    function GetSourceFileType: TSourceFileType;
-      {Gets source file type selected by user.
-        @return Source file type.
-      }
-    function GetCommentStyle: TCommentStyle;
-      {Gets comment style selected by user.
-        @return Comment style.
-      }
+    type
+      TSnippetFileTypeMgr = TUnsortedCollectionCtrlKVMgr<TSourceOutputFileType>;
+      TCommentStyleMgr = TUnsortedCollectionCtrlKVMgr<TPascalCommentStyle>;
+  strict private
+    var
+      ///  <summary>Theme that provides styling for syntax highlighting of
+      ///  preview.</summary>
+      fTheme: TSyntaxHiliteTheme;
+      ///  <summary>Manages mapping of items in "output file type" drop-down
+      ///  list to the number of days each item represents.</summary>
+      fSnippetFileTypeMgr: TSnippetFileTypeMgr;
+      ///  <summary>Manages mapping of items in "commentint style" drop-down
+      ///  list to the number of days each item represents.</summary>
+      fCommentStyleMgr: TCommentStyleMgr;
     procedure UpdateControlState;
-      {Updates state of dialog's controls depending on values entered.
+      {Updates state of dialogue's controls depending on values entered.
       }
     procedure UpdatePreview;
       {Updates source code preview according to user selections.
@@ -77,6 +80,7 @@ type
     constructor Create(AOwner: TComponent); override;
       {Class constructor. Initialises controls.
       }
+    destructor Destroy; override;
     procedure Activate(const Prefs: IPreferences); override;
       {Called when page activated. Updates controls.
         @param Prefs [in] Object that provides info used to update controls.
@@ -87,7 +91,7 @@ type
       }
     ///  <summary>Checks if preference changes require that main window UI is
     ///  updated.</summary>
-    ///  <remarks>Called when dialog box containing frame is closing. Always
+    ///  <remarks>Called when dialogue box containing frame is closing. Always
     ///  returns False because these preferences never affect UI.</remarks>
     function UIUpdated: Boolean; override;
     procedure ArrangeControls; override;
@@ -95,12 +99,12 @@ type
       }
     function DisplayName: string; override;
       {Caption that is displayed in the tab sheet that contains this frame when
-      displayed in the preference dialog box.
+      displayed in the preference dialogue box.
         @return Required display name.
       }
     class function Index: Byte; override;
       {Index number that determines the location of the tab containing this
-      frame when displayed in the preferences dialog box.
+      frame when displayed in the preferences dialogue box.
         @return Required index number.
       }
   end;
@@ -111,10 +115,16 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Math,
+  SysUtils,
+  Math,
   // Project
-  FmPreferencesDlg, Hiliter.UAttrs, Hiliter.UFileHiliter, Hiliter.UHiliters,
-  IntfCommon, UConsts, UCtrlArranger, URTFUtils;
+  CS.Config,
+  CS.SourceCode.Hiliter.Brushes,
+  CS.SourceCode.Hiliter.Renderers,
+  FmPreferencesDlg,
+  UConsts,
+  UCtrlArranger,
+  URTFUtils;
 
 
 {$R *.dfm}
@@ -130,7 +140,7 @@ resourcestring
 
 const
   // Maps source code file types to descriptions
-  cFileDescs: array[TSourceFileType] of string = (
+  cFileDescs: array[TSourceOutputFileType] of string = (
     sTextFileDesc, sPascalFileDesc, sHTMLFileDesc, sRTFFileDesc
   );
 
@@ -143,21 +153,20 @@ type
   }
   TSourcePrefsPreview = class(TObject)
   strict private
-    fHiliteAttrs: IHiliteAttrs;
-      {Attributes of syntax highlighter to use to render preview}
-    fCommentStyle: TCommentStyle;
+    fTheme: TSyntaxHiliteTheme;
+      {Theme providing highlighter style to use when rendering preview}
+    fCommentStyle: TPascalCommentStyle;
       {Value of CommentStyle property}
     function SourceCode: string;
       {Create raw source code used in preview.
         @return Required raw source code.
       }
   public
-    constructor Create(const CommentStyle: TCommentStyle;
-      const HiliteAttrs: IHiliteAttrs);
+    constructor Create(const CommentStyle: TPascalCommentStyle;
+      const ATheme: TSyntaxHiliteTheme);
       {Class constructor. Sets up object.
         @param CommentStyle [in] Style of commenting to use in preview.
-        @param HiliteAttrs [in] Attributes of highlighter used to render
-          preview.
+        @param ATheme [in] Theme that defines syntax highlighting style.
       }
     function Generate: TRTF;
       {Generate RTF code used to render preview.
@@ -174,12 +183,18 @@ procedure TSourcePrefsFrame.Activate(const Prefs: IPreferences);
   }
 begin
   // Update control values per settings
-  SelectSourceFileType(Prefs.SourceDefaultFileType);
-  SelectCommentStyle(Prefs.SourceCommentStyle);
+  fSnippetFileTypeMgr.Select(Prefs.SourceDefaultFileType);
+  fCommentStyleMgr.Select(Prefs.SourceCommentStyle);
   chkTruncateComments.Checked := Prefs.TruncateSourceComments;
   chkSyntaxHighlighting.Checked := Prefs.SourceSyntaxHilited;
-  (fHiliteAttrs as IAssignable).Assign(Prefs.HiliteAttrs);
-  fHiliteAttrs.ResetDefaultFont;
+  // Record current theme but with default font
+  fTheme.Assign(
+    TConfig.Instance.HiliterThemes[
+      Prefs.CurrentHiliteThemeIds[htkUI]
+    ]
+  );
+  fTheme.ResetDefaultFont;
+
   // Update state of controls and preview
   UpdateControlState;
   UpdatePreview;
@@ -231,7 +246,7 @@ end;
 
 procedure TSourcePrefsFrame.cbSnippetFileTypeChange(Sender: TObject);
   {Handles OnChange event in Snippets File Type combo box by updating other
-  dialog controls with respect to changed value.
+  dialogue controls with respect to changed value.
     @param Sender [in] Not used.
   }
 begin
@@ -243,21 +258,36 @@ constructor TSourcePrefsFrame.Create(AOwner: TComponent);
     @param AOwner [in] Not used.
   }
 var
-  FileType: TSourceFileType;  // loops thru source file types
-  CSIdx: TCommentStyle;       // loops thru comment styles
+  FileType: TSourceOutputFileType;  // loops thru source file types
+  CSIdx: TPascalCommentStyle;       // loops thru comment styles
 begin
   inherited;
   HelpKeyword := 'SourceCodePrefs';
-  // Create syntax highlighter object for use in sample output
-  fHiliteAttrs := THiliteAttrsFactory.CreateDefaultAttrs;
+  // Create syntax highlighter theme for use in sample output
+  fTheme := TSyntaxHiliteThemes.NullTheme.Clone;
+  // Create object that manage combo boxes
+  fSnippetFileTypeMgr := TSnippetFileTypeMgr.Create(
+    TComboBoxAdapter.Create(cbSnippetFileType),
+    True,
+    function (const Left, Right: TSourceOutputFileType): Boolean
+    begin
+      Result := Left = Right;
+    end
+  );
+  fCommentStyleMgr := TCommentStyleMgr.Create(
+    TComboBoxAdapter.Create(cbCommentStyle),
+    True,
+    function (const Left, Right: TPascalCommentStyle): Boolean
+    begin
+      Result := Left = Right;
+    end
+  );
   // Populate file type combo
-  for FileType := Low(TSourceFileType) to High(TSourceFileType) do
-    cbSnippetFileType.Items.AddObject(cFileDescs[FileType], TObject(FileType));
+  for FileType := Low(TSourceOutputFileType) to High(TSourceOutputFileType) do
+    fSnippetFileTypeMgr.Add(FileType, cFileDescs[FileType]);
   // Populate comment style combo
-  for CSIdx := Low(TCommentStyle) to High(TCommentStyle) do
-    cbCommentStyle.Items.AddObject(
-      TSourceComments.CommentStyleDesc(CSIdx), TObject(CSIdx)
-    );
+  for CSIdx := Low(TPascalCommentStyle) to High(TPascalCommentStyle) do
+    fCommentStyleMgr.Add(CSIdx, TPascalComments.CommentStyleDesc(CSIdx));
 end;
 
 procedure TSourcePrefsFrame.Deactivate(const Prefs: IPreferences);
@@ -265,15 +295,23 @@ procedure TSourcePrefsFrame.Deactivate(const Prefs: IPreferences);
     @param Prefs [in] Object used to store information.
   }
 begin
-  Prefs.SourceCommentStyle := GetCommentStyle;
+  Prefs.SourceCommentStyle := fCommentStyleMgr.GetSelected;
   Prefs.TruncateSourceComments := chkTruncateComments.Checked;
-  Prefs.SourceDefaultFileType := GetSourceFileType;
+  Prefs.SourceDefaultFileType := fSnippetFileTypeMgr.GetSelected;
   Prefs.SourceSyntaxHilited := chkSyntaxHighlighting.Checked;
+end;
+
+destructor TSourcePrefsFrame.Destroy;
+begin
+  fCommentStyleMgr.Free;
+  fSnippetFileTypeMgr.Free;
+  fTheme.Free;
+  inherited;
 end;
 
 function TSourcePrefsFrame.DisplayName: string;
   {Caption that is displayed in the tab sheet that contains this frame when
-  displayed in the preference dialog box.
+  displayed in the preference dialogue box.
     @return Required display name.
   }
 resourcestring
@@ -282,54 +320,13 @@ begin
   Result := sDisplayName;
 end;
 
-function TSourcePrefsFrame.GetCommentStyle: TCommentStyle;
-  {Gets comment style selected by user.
-    @return Comment style.
-  }
-begin
-  Result := TCommentStyle(
-    cbCommentStyle.Items.Objects[cbCommentStyle.ItemIndex]
-  );
-end;
-
-function TSourcePrefsFrame.GetSourceFileType: TSourceFileType;
-  {Gets source file type selected by user.
-    @return Source file type.
-  }
-begin
-  Result := TSourceFileType(
-    cbSnippetFileType.Items.Objects[cbSnippetFileType.ItemIndex]
-  );
-end;
-
 class function TSourcePrefsFrame.Index: Byte;
   {Index number that determines the location of the tab containing this
-  frame when displayed in the preferences dialog box.
+  frame when displayed in the preferences dialogue box.
     @return Required index number.
   }
 begin
   Result := 20;
-end;
-
-procedure TSourcePrefsFrame.SelectCommentStyle(
-  const CommentStyle: TCommentStyle);
-  {Selects entry in comment style combo box that matches specified style.
-    @param CommentStyle [in] Comment style to select.
-  }
-begin
-  cbCommentStyle.ItemIndex :=
-    cbCommentStyle.Items.IndexOfObject(TObject(CommentStyle));
-end;
-
-procedure TSourcePrefsFrame.SelectSourceFileType(
-  const FT: TSourceFileType);
-  {Selects entry in file type combo box that matches specified source code file
-  type.
-    @param FT [in] File type to select.
-  }
-begin
-  cbSnippetFileType.ItemIndex :=
-    cbSnippetFileType.Items.IndexOfObject(TObject(FT));
 end;
 
 function TSourcePrefsFrame.UIUpdated: Boolean;
@@ -338,12 +335,12 @@ begin
 end;
 
 procedure TSourcePrefsFrame.UpdateControlState;
-  {Updates state of dialog's controls depending on values entered.
+  {Updates state of dialogue's controls depending on values entered.
   }
 begin
   chkSyntaxHighlighting.Enabled :=
-    TFileHiliter.IsHilitingSupported(GetSourceFileType);
-  chkTruncateComments.Enabled := GetCommentStyle <> csNone;
+    TDocumentHiliterHelper.IsHilitingSupported(fSnippetFileTypeMgr.GetSelected);
+  chkTruncateComments.Enabled := fCommentStyleMgr.GetSelected <> csNone;
 end;
 
 procedure TSourcePrefsFrame.UpdatePreview;
@@ -352,10 +349,10 @@ procedure TSourcePrefsFrame.UpdatePreview;
 var
   Preview: TSourcePrefsPreview; // object that creates preview
 begin
-  // We always use same font size, regardless of user preferences
-  fHiliteAttrs.FontSize := Font.Size;
+  // We always use same font size as frame, regardless of user preferences
+  fTheme.FontSize := Font.Size;
   // Generate and display preview with required comment style
-  Preview := TSourcePrefsPreview.Create(GetCommentStyle, fHiliteAttrs);
+  Preview := TSourcePrefsPreview.Create(fCommentStyleMgr.GetSelected, fTheme);
   try
     // Display preview
     TRichEditHelper.Load(frmPreview.RichEdit, Preview.Generate);
@@ -378,7 +375,7 @@ const
   cPrevProcBody = 'begin' + EOL +'  %1:s;'+ EOL + 'end;';
 
   // Map of comment style to sample code
-  cPrevSamples: array[TCommentStyle] of string = (
+  cPrevSamples: array[TPascalCommentStyle] of string = (
     // no comments: just prototype followed by body
     cPrevProcProto + cPrevProcBody,
     // comments after snippet header: prototype then comments then body
@@ -387,24 +384,36 @@ const
     '{' + EOL + '  %2:s' + EOL + '}' + EOL + cPrevProcProto + cPrevProcBody
   );
 
-constructor TSourcePrefsPreview.Create(const CommentStyle: TCommentStyle;
-  const HiliteAttrs: IHiliteAttrs);
+constructor TSourcePrefsPreview.Create(const CommentStyle: TPascalCommentStyle;
+  const ATheme: TSyntaxHiliteTheme);
   {Class constructor. Sets up object.
     @param CommentStyle [in] Style of commenting to use in preview.
-    @param HiliteAttrs [in] Attributes of highlighter used to render preview.
+    @param ATheme [in] Theme that defines syntax highlighting style.
   }
 begin
   inherited Create;
   fCommentStyle := CommentStyle;
-  fHiliteAttrs := HiliteAttrs;
+  fTheme := ATheme;
 end;
 
 function TSourcePrefsPreview.Generate: TRTF;
   {Generate RTF code used to render preview.
     @return Required RTF code.
   }
+var
+  Brush: TSyntaxHiliterBrush;
 begin
-  Result := TRTF.Create(TRTFDocumentHiliter.Hilite(SourceCode, fHiliteAttrs));
+  // This preview displays Pascal code
+  Brush := TSyntaxHiliterBrushes.CreateBrush(
+    TSyntaxHiliterBrushes.PascalBrushID
+  );
+  try
+    Result := TRTF.Create(
+      TRTFDocumentHiliter.Hilite(SourceCode, Brush, fTheme)
+    );
+  finally
+    Brush.Free;
+  end;
 end;
 
 function TSourcePrefsPreview.SourceCode: string;
@@ -421,8 +430,9 @@ end;
 
 initialization
 
-// Register frame with preferences dialog box
+// Register frame with preferences dialogue box
 TPreferencesDlg.RegisterPage(TSourcePrefsFrame);
 
 end.
+
 

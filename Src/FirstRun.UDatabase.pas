@@ -3,12 +3,12 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2008-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2008-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
  *
- * Implements a class that handles updating of user database from an earlier
+ * Implements a class that handles updating of snippets database from an earlier
  * version.
 }
 
@@ -20,12 +20,12 @@ interface
 
 
 type
-  ///  <summary>Class that handles updating of user database from an earlier
+  ///  <summary>Class that handles updating of snippets database from an earlier
   ///  version.</summary>
-  TUserDatabaseUpdater = class(TObject)
+  TDatabaseUpdater = class(TObject)
   strict private
     var
-      ///  <summary>User database directory.</summary>
+      ///  <summary>Database directory.</summary>
       fDatabaseDir: string;
     ///  <summary>Copies content of given database directory to current database
     ///  directory.</summary>
@@ -45,14 +45,16 @@ implementation
 
 uses
   // Delphi
-  SysUtils, IOUtils,
+  SysUtils,
+  IOUtils,
   // Project
-  UIOUtils, UStrUtils;
+  UIOUtils,
+  UStrUtils;
 
 
-{ TUserDatabaseUpdater }
+{ TDatabaseUpdater }
 
-procedure TUserDatabaseUpdater.CopyDatabase(const SrcDir: string);
+procedure TDatabaseUpdater.CopyDatabase(const SrcDir: string);
 begin
   if (SrcDir = '')
     or not TDirectory.Exists(ExcludeTrailingPathDelimiter(SrcDir)) then
@@ -60,7 +62,7 @@ begin
   CopyDirectory(SrcDir);
 end;
 
-procedure TUserDatabaseUpdater.CopyDirectory(const SrcDir: string);
+procedure TDatabaseUpdater.CopyDirectory(const SrcDir: string);
 var
   SourcePath: string;
   DestPath: string;
@@ -84,7 +86,7 @@ begin
   end;
 end;
 
-constructor TUserDatabaseUpdater.Create(const DatabaseDir: string);
+constructor TDatabaseUpdater.Create(const DatabaseDir: string);
 begin
   inherited Create;
   fDatabaseDir := ExcludeTrailingPathDelimiter(DatabaseDir);

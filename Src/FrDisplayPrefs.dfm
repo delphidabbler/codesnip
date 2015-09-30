@@ -11,20 +11,6 @@ inherited DisplayPrefsFrame: TDisplayPrefsFrame
     Caption = 'Start &overview pane treeview as:'
     FocusControl = cbOverviewTree
   end
-  object lblMainColour: TLabel
-    Left = 16
-    Top = 96
-    Width = 193
-    Height = 13
-    Caption = 'Heading colour for &main database items:'
-  end
-  object lblUserColour: TLabel
-    Left = 16
-    Top = 115
-    Width = 192
-    Height = 13
-    Caption = 'Heading colour for &user database items:'
-  end
   object lblSourceBGColour: TLabel
     Left = 16
     Top = 134

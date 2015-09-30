@@ -20,10 +20,21 @@ interface
 
 uses
   // Delphi
-  Forms, ComCtrls, StdCtrls, Controls, ExtCtrls, Classes, Messages,
+  Forms,
+  ComCtrls,
+  StdCtrls,
+  Controls,
+  ExtCtrls,
+  Classes,
+  Messages,
   // Project
-  Browser.UHTMLEvents, FmGenericViewDlg, FrBrowserBase, FrHTMLDlg,
-  FrHTMLTpltDlg, UContributors, UCSSBuilder;
+  Browser.UHTMLEvents,
+  FmGenericViewDlg,
+  FrBrowserBase,
+  FrHTMLDlg,
+  FrFixedHTMLDlg,
+  FrHTMLTpltDlg,
+  UCSSBuilder;
 
 
 type
@@ -73,23 +84,17 @@ type
 
   {
   TAboutDlg:
-    Implements an about dialog box that uses web browser controls to display
-    information about the program and the database. HTML templates containing
-    the dialog box content are loaded from resources. Also provides access to
-    the program's easter egg.
+    Implements an about dialogue box displays information about the program and
+    provides access to the program's Easter egg.
   }
   TAboutDlg = class(TGenericViewDlg)
-    btnRegister: TButton;
     bvlSeparator: TBevel;
-    frmDatabase: THTMLTpltDlgFrame;
-    frmProgram: THTMLTpltDlgFrame;
+    frmProgram: TFixedHTMLDlgFrame;
     pcDetail: TPageControl;
-    tsDatabase: TTabSheet;
     tsProgram: TTabSheet;
     pnlTitle: TPanel;
     frmTitle: THTMLTpltDlgFrame;
     tsPaths: TTabSheet;
-    procedure btnRegisterClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     ///  <summary>Handles event triggered when user clicks on one of page
@@ -99,9 +104,8 @@ type
     procedure pcDetailMouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
   strict private
-    fMainDBPathGp: TPathInfoBox;  // control that displays main database folder
-    fUserDBPathGp: TPathInfoBox;  // control that displays user database folder
-    fInstallPathGp: TPathInfoBox; // control that displays program install path
+    fDatabasePathGp: TPathInfoBox; // control that displays database folder
+    fInstallPathGp: TPathInfoBox;  // control that displays program install path
     procedure HTMLEventHandler(Sender: TObject;
       const EventInfo: THTMLEventInfo);
       {Handles title frame's OnHTMLEvent event. Checks for easter-egg related
@@ -109,32 +113,17 @@ type
         @param Sender [in] Not used.
         @param EventInfo [in] Object providing information about the event.
       }
-    function RegistrationHTML: string;
-      {Builds HTML used to display registration information.
-        @return Required HTML.
-      }
-    function ContribListHTML(const ContribClass: TContributorsClass): string;
-      {Builds HTML used to display list of contributors or creates an error
-      message if contributor list is not available.
-        @param ContribClass [in] Type of contributor class to use. This
-          determines names that are displayed.
-        @return Required HTML.
-      }
   strict protected
     procedure ConfigForm; override;
       {Configures form by creating custom controls and initialising HTML frames.
       Called from ancestor class.
-      }
-    procedure InitForm; override;
-      {Initialises form's controls. Called from ancestor class.
       }
     procedure InitHTMLFrames;
       {Initialises HTML frames to use required template document with
       placeholders replaced by required values.
       }
     procedure ArrangeForm; override;
-      {Adjusts position of registration button on bottom button line. Called
-      from ancestor class.
+      {Adjusts controls on form. Called from ancestor class.
       }
     procedure UpdateTitleCSS(Sender: TObject; const CSSBuilder: TCSSBuilder);
       {Updates CSS used for HTML displayed in title frame.
@@ -142,15 +131,15 @@ type
         @param CSSBuilder [in] Object used to update CSS.
       }
     procedure UpdateDetailCSS(Sender: TObject; const CSSBuilder: TCSSBuilder);
-      {Updates CSS used for HTML displayed in detail (i.e. program and database)
-      frames.
+      {Updates CSS used for HTML displayed in HTML frame used to display program
+      description and credits.
         @param Sender [in] Not used.
         @param CSSBuilder [in] Object used to update CSS.
       }
   public
     class procedure Execute(AOwner: TComponent);
-      {Displays dialog box.
-        @param AOwner [in] Component that owns this dialog box.
+      {Displays dialogue box.
+        @param AOwner [in] Component that owns this dialogue box.
       }
   end;
 
@@ -160,11 +149,25 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Graphics, Math, Windows, ShellAPI, IOUtils,
+  SysUtils,
+  Graphics,
+  Math,
+  Windows,
+  ShellAPI,
+  IOUtils,
   // Project
-  FmEasterEgg, FmRegistrationDlg, UAppInfo, UColours, UConsts, UCSSUtils,
-  UCtrlArranger, UFontHelper, UGraphicUtils, UHTMLUtils, UHTMLTemplate,
-  UResourceUtils, UThemesEx;
+  FmEasterEgg,
+  UAppInfo,
+  UColours,
+  UConsts,
+  UCSSUtils,
+  UCtrlArranger,
+  UFontHelper,
+  UGraphicUtils,
+  UHTMLUtils,
+  UHTMLTemplate,
+  UResourceUtils,
+  UThemesEx;
 
 
 {
@@ -181,10 +184,8 @@ uses
 
   <%Release%>         program release number
   <%ResURL%>          url of programs HTML resources
-  <%Registered%>      info about whether program is registered
   <%ContribList%>     list of program contributors
   <%TesterList%>      list of program testers
-  <%Year%>            current year
 }
 
 
@@ -207,37 +208,22 @@ end;
 { TAboutDlg }
 
 procedure TAboutDlg.ArrangeForm;
-  {Adjusts position of registration button on bottom button line. Called from
-  ancestor class.
+  {Adjusts controls on form. Called from ancestor class.
   }
 var
   PathTabHeight: Integer;
 begin
-  fMainDBPathGp.Top := TCtrlArranger.BottomOf(fInstallPathGp, 8);
-  fUserDBPathGp.Top := TCtrlArranger.BottomOf(fMainDBPathGp, 8);
-  PathTabHeight := TCtrlArranger.BottomOf(fUserDBPathGp);
+  fDatabasePathGp.Top := TCtrlArranger.BottomOf(fInstallPathGp, 8);
+  PathTabHeight := TCtrlArranger.BottomOf(fDatabasePathGp);
   // Set height of title frame and page control
   pnlTitle.Height := frmTitle.DocHeight;
   pcDetail.ClientHeight :=
-    pcDetail.Height - tsProgram.ClientHeight +
-    Max(
-      PathTabHeight,
-      Max(frmProgram.DocHeight, frmDatabase.DocHeight)
-    ) + 8;
+    pcDetail.Height - tsProgram.ClientHeight
+    + Max(PathTabHeight, frmProgram.DocHeight)
+    + 8;
   pnlBody.ClientHeight := pnlTitle.Height + bvlSeparator.Height +
     pcDetail.Height;
   inherited;
-  btnRegister.Left := pnlBody.Left;
-  btnRegister.Top := btnHelp.Top;
-end;
-
-procedure TAboutDlg.btnRegisterClick(Sender: TObject);
-  {Displays registration wizard when "Register CodeSnip" button is clicked.
-    @param Sender [in] Not used.
-  }
-begin
-  if TRegistrationDlg.Execute(Self) then
-    btnRegister.Hide; // hide registration button now that program registered OK
 end;
 
 procedure TAboutDlg.ConfigForm;
@@ -262,67 +248,23 @@ procedure TAboutDlg.ConfigForm;
 resourcestring
   // Captions for custom controls
   sInstallPathGpCaption = 'Install Directory';
-  sMainDBPathGpCaption = 'Main Database Directory';
-  sUserDBPathGpCaption = 'User Database Directory';
+  sDatabasePathGpCaption = 'Snippets Database Directory';
 begin
   inherited;
   // Creates required custom controls
   fInstallPathGp := CreatePathInfoBox(
     sInstallPathGpCaption, TAppInfo.AppExeDir
   );
-  fMainDBPathGp := CreatePathInfoBox(
-    sMainDBPathGpCaption, TAppInfo.AppDataDir
-  );
-  fUserDBPathGp := CreatePathInfoBox(
-    sUserDBPathGpCaption, TAppInfo.UserDataDir
+  fDatabasePathGp := CreatePathInfoBox(
+    sDatabasePathGpCaption, TAppInfo.UserDataDir
   );
   // Load content into HTML frames
   InitHTMLFrames;
 end;
 
-function TAboutDlg.ContribListHTML(const ContribClass: TContributorsClass):
-  string;
-  {Builds HTML used to display list of contributors or creates an error
-  message if contributor list is not available.
-    @param ContribClass [in] Type of contributor class to use. This determines
-      names that are displayed.
-    @return Required HTML.
-  }
-resourcestring
-  // Error string used when contributor file not available
-  sNoContributors       = 'List not available, please update database.';
-var
-  Contributors: TContributors;  // contributors to database
-  Contributor: string;          // name of a contributor
-  DivAttrs: IHTMLAttributes;    // attributes of div tag
-begin
-  Result := '';
-  // Get list of contributors
-  Contributors := ContribClass.Create;
-  try
-    if not Contributors.IsError then
-    begin
-      for Contributor in Contributors do
-        Result := Result
-          + THTML.CompoundTag('div', THTML.Entities(Contributor))
-          + EOL;
-    end
-    else
-    begin
-      // List couldn't be found: display warning message
-      DivAttrs := THTMLAttributes.Create('class', 'warning');
-      Result := THTML.CompoundTag(
-        'div', DivAttrs, THTML.Entities(sNoContributors)
-      );
-    end;
-  finally
-    FreeAndNil(Contributors);
-  end;
-end;
-
 class procedure TAboutDlg.Execute(AOwner: TComponent);
-  {Displays dialog box.
-    @param AOwner [in] Component that owns this dialog box.
+  {Displays dialogue box.
+    @param AOwner [in] Component that owns this dialogue box.
   }
 begin
   with Create(AOwner) do
@@ -341,7 +283,6 @@ begin
   inherited;
   frmTitle.OnBuildCSS := UpdateTitleCSS;
   frmProgram.OnBuildCSS := UpdateDetailCSS;
-  frmDatabase.OnBuildCSS := UpdateDetailCSS;
 end;
 
 procedure TAboutDlg.FormDestroy(Sender: TObject);
@@ -351,8 +292,7 @@ procedure TAboutDlg.FormDestroy(Sender: TObject);
 begin
   inherited;
   fInstallPathGp.Free;
-  fMainDBPathGp.Free;
-  fUserDBPathGp.Free;
+  fDatabasePathGp.Free;
 end;
 
 procedure TAboutDlg.HTMLEventHandler(Sender: TObject;
@@ -392,15 +332,6 @@ begin
   end;
 end;
 
-procedure TAboutDlg.InitForm;
-  {Initialises form's controls.
-  }
-begin
-  inherited;
-  // Decide whether to display register button
-  btnRegister.Visible := not TAppInfo.IsRegistered;
-end;
-
 procedure TAboutDlg.InitHTMLFrames;
   {Initialises HTML frames to use required template document with placeholders
   replaced by required values.
@@ -416,8 +347,7 @@ procedure TAboutDlg.InitHTMLFrames;
       procedure(Tplt: THTMLTemplate)
       begin
         Tplt.ResolvePlaceholderText('Release', TAppInfo.ProgramReleaseInfo);
-        // MakeResourceURL('') provides just URL part before resource name
-        Tplt.ResolvePlaceholderHTML('ResURL', MakeResourceURL(''));
+        Tplt.ResolvePlaceholderHTML('ResURL', MakeResourcePath(HInstance));
       end
     );
     frmTitle.OnHTMLEvent := HTMLEventHandler;
@@ -428,41 +358,12 @@ procedure TAboutDlg.InitHTMLFrames;
     }
   begin
     pcDetail.ActivePage := tsProgram;   // display page to let browser load OK
-    frmProgram.Initialise(
-      'dlg-about-program-tplt.html',
-      procedure(Tplt: THTMLTemplate)
-      begin
-        Tplt.ResolvePlaceholderHTML('Registered', RegistrationHTML);
-      end
-    );
-  end;
-
-  procedure InitDatabaseFrame;
-    {Initialises and loads HTML into database frame.
-    }
-  begin
-    pcDetail.ActivePage := tsDatabase;  // display page to let browser load OK
-    frmDatabase.Initialise(
-      'dlg-about-database-tplt.html',
-      procedure(Tplt: THTMLTemplate)
-      begin
-        Tplt.ResolvePlaceholderHTML(
-          'ContribList', ContribListHTML(TCodeContributors)
-        );
-        Tplt.ResolvePlaceholderHTML(
-          'TesterList', ContribListHTML(TTesters)
-        );
-        Tplt.ResolvePlaceholderText(
-          'Year', FormatDateTime('YYYY', Now)
-        );
-      end
-    );
+    frmProgram.Initialise('dlg-about-program.html');
   end;
   // ---------------------------------------------------------------------------
 
 begin
   InitTitleFrame;
-  InitDatabaseFrame;
   InitProgramFrame;
 end;
 
@@ -471,33 +372,6 @@ procedure TAboutDlg.pcDetailMouseDown(Sender: TObject; Button: TMouseButton;
 begin
   if htOnItem in pcDetail.GetHitTestInfoAt(X, Y) then
     pcDetail.SetFocus;
-end;
-
-function TAboutDlg.RegistrationHTML: string;
-  {Builds HTML used to display registration information.
-    @return Required HTML.
-  }
-resourcestring
-  // Registration messages
-  sRegisteredMessage = 'Registered to %0:s.';
-  sUnregisteredMessage  = 'Unregistered copy:';
-  sRegistrationPrompt = 'Please click the button below to register CodeSnip.';
-var
-  SpanAttrs: IHTMLAttributes; // attributes of span tag
-begin
-  if TAppInfo.IsRegistered then
-    Result := THTML.Entities(
-      Format(sRegisteredMessage, [TAppInfo.RegisteredUser])
-    )
-  else
-  begin
-    SpanAttrs := THTMLAttributes.Create('class', 'warning');
-    Result :=
-      THTML.CompoundTag(
-        'span', SpanAttrs, THTML.Entities(sUnregisteredMessage)
-      ) +
-      THTML.Entities(' ' + sRegistrationPrompt);
-  end;
 end;
 
 procedure TAboutDlg.UpdateDetailCSS(Sender: TObject;
@@ -521,19 +395,12 @@ begin
         AddProperty(TCSS.BackgroundColorProp(ThemeServicesEx.GetTabBodyColour));
       AddProperty(UCSSUtils.TCSS.MarginProp(0, 2, 6, 2));
     finally
-      FreeAndNil(ContentFont);
+      ContentFont.Free;
     end;
   end;
   // Put border round scroll box
   with CSSBuilder.AddSelector('.scrollbox') do
     AddProperty(UCSSUtils.TCSS.BorderProp(cssAll, 1, cbsSolid, clBorder));
-  // Set colours and font style of contributors and testers headings
-  with CSSBuilder.AddSelector('.contrib-head, .tester-head') do
-  begin
-    AddProperty(TCSS.BackgroundColorProp(clBtnFace));
-    AddProperty(TCSS.ColorProp(clBtnText));
-    AddProperty(TCSS.FontWeightProp(cfwBold));
-  end;
 end;
 
 procedure TAboutDlg.UpdateTitleCSS(Sender: TObject;

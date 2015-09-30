@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2008-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2008-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -21,32 +21,39 @@ interface
 
 uses
   // Delphi
-  Classes, StdCtrls, Controls, Forms, ExtCtrls,
+  Classes,
+  StdCtrls,
+  Controls,
+  Forms,
+  ExtCtrls,
   // Project
-  DB.USnippet, FmGenericOKDlg, FrCheckedTV, FrSelectUserSnippets,
-  FrSelectSnippets, FrSelectSnippetsBase, UBaseObjects;
+  CS.Database.Types,
+  FmGenericOKDlg,
+  FrCheckedTV,
+  FrSelectSnippets,
+  UBaseObjects;
 
 
 type
 
   {
   TCodeExportDlg:
-    A dialog box that gets snippets to be exported and creates an export file
+    A dialogue box that gets snippets to be exported and creates an export file
     containing the selected snippets.
   }
   TCodeExportDlg = class(TGenericOKDlg, INoPublicConstruct)
     btnBrowse: TButton;
     edFile: TEdit;
-    frmSnippets: TSelectUserSnippetsFrame;
+    frmSnippets: TSelectSnippetsFrame;
     lblFile: TLabel;
     lblSnippets: TLabel;
     procedure btnBrowseClick(Sender: TObject);
     procedure btnOKClick(Sender: TObject);
   strict private
-    procedure SelectSnippet(const Snippet: TSnippet);
+    procedure SelectSnippet(Snippet: ISnippet);
       {Selects a snippet in the snippets check list.
-        @param Snippet [in] Snippet to be selected. If nil, or not user-defined,
-          no snippet is selected.
+        @param Snippet [in] Snippet to be selected. If nil no snippet is
+          selected.
       }
     procedure WriteOutputFile;
       {Writes export file.
@@ -58,12 +65,11 @@ type
       controls that depend on UI font.
       }
   public
-    class procedure Execute(const AOwner: TComponent; const Snippet: TSnippet);
-      {Displays export dialog box and writes export file if user OKs entries.
-        @param AOwner [in] Reference to control that owns the dialog box.
+    class procedure Execute(const AOwner: TComponent; Snippet: ISnippet);
+      {Displays export dialogue box and writes export file if user OKs entries.
+        @param AOwner [in] Reference to control that owns the dialogue box.
         @param Snippet [in] Reference to a snippet to pre-select in snippets
-          check list box. If nil or not user-defined then no snippet is pre-
-          selected.
+          check list box. If nil then no snippet is pre-selected.
       }
   end;
 
@@ -73,10 +79,19 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Dialogs,
+  SysUtils,
+  Dialogs,
   // Project
-  UCodeImportExport, UCtrlArranger, UEncodings, UExceptions, UIOUtils,
-  UMessageBox, UOpenDialogHelper, USaveDialogEx, UStrUtils, UUtils;
+  UCodeImportExport,
+  UCtrlArranger,
+  UEncodings,
+  UExceptions,
+  UIOUtils,
+  UMessageBox,
+  UOpenDialogHelper,
+  USaveDialogEx,
+  UStrUtils,
+  UUtils;
 
 
 {$R *.dfm}
@@ -98,14 +113,14 @@ begin
 end;
 
 procedure TCodeExportDlg.btnBrowseClick(Sender: TObject);
-  {Handles clicks on browse (ellipsis) button by displaying file save dialog box
-  and copies chosen file name to file name edit control.
+  {Handles clicks on browse (ellipsis) button by displaying file save dialogue
+  box and copies chosen file name to file name edit control.
     @param Sender [in] Not used.
   }
 var
-  Dlg: TSaveDialogEx; // save dialog box
+  Dlg: TSaveDialogEx; // save dialogue box
 resourcestring
-  sCaption = 'Export File';                             // dialog box caption
+  sCaption = 'Export File';                             // dialogue box caption
   sFilter = 'CodeSnip export files (*.csexp)|*.csexp|'  // file filter
     + 'All files (*.*)|*.*';
 begin
@@ -120,12 +135,12 @@ begin
       // user selected file name: copy to edit control
       edFile.Text := FileOpenFileNameWithExt(Dlg);
   finally
-    FreeAndNil(Dlg);
+    Dlg.Free;
   end;
 end;
 
 procedure TCodeExportDlg.btnOKClick(Sender: TObject);
-  {Handles click on OK button. Validates entries in dialog box and writes
+  {Handles click on OK button. Validates entries in dialogue box and writes
   export file.
     @param Sender [in] Not used.
   }
@@ -147,7 +162,7 @@ begin
 
     // Validate entries
     // must have at least one snippet
-    if frmSnippets.SelectedSnippets.IsEmpty then
+    if not frmSnippets.HasSelection then
       raise EDataEntry.Create(sNoSnippets, frmSnippets);
     // must have a file name
     if FileName = '' then
@@ -186,11 +201,11 @@ begin
 end;
 
 class procedure TCodeExportDlg.Execute(const AOwner: TComponent;
-  const Snippet: TSnippet);
-  {Displays export dialog box and writes export file if user OKs entries.
-    @param AOwner [in] Reference to control that owns the dialog box.
+  Snippet: ISnippet);
+  {Displays export dialogue box and writes export file if user OKs entries.
+    @param AOwner [in] Reference to control that owns the dialogue box.
     @param Snippet [in] Reference to a snippet to pre-select in snippets check
-      list box. If nil or not user-defined then no snippet is pre-selected.
+      list box. If nil then no snippet is pre-selected.
   }
 begin
   with InternalCreate(AOwner) do
@@ -202,29 +217,16 @@ begin
     end;
 end;
 
-procedure TCodeExportDlg.SelectSnippet(const Snippet: TSnippet);
+procedure TCodeExportDlg.SelectSnippet(Snippet: ISnippet);
   {Selects a snippet in the snippets check list.
-    @param Snippet [in] Snippet to be selected. If nil, or not user-defined, no
-      snippet is selected.
+    @param Snippet [in] Snippet to be selected. If nil no snippet is selected.
   }
-var
-  List: TSnippetList; // list containing only the provided snippet
 begin
-  if not Assigned(Snippet) or not Snippet.UserDefined then
-    // Snippet is nil or not user-defined: select nothing
-    frmSnippets.SelectedSnippets := nil
+  if not Assigned(Snippet) then
+    // Snippet is nil: select nothing
+    frmSnippets.Clear
   else
-  begin
-    // Snippet is user-defined. We make a snippet list containing only this
-    // snippet because frmSnippets requires a list of snippets to select.
-    List := TSnippetList.Create;
-    try
-      List.Add(Snippet);
-      frmSnippets.SelectedSnippets := List;
-    finally
-      FreeAndNil(List);
-    end;
-  end;
+    frmSnippets.SelectSnippet(Snippet.ID);
 end;
 
 procedure TCodeExportDlg.WriteOutputFile;
@@ -234,7 +236,7 @@ var
   OutData: TEncodedData;  // receives export file content
 begin
   OutData := TCodeExporter.ExportSnippets(
-    TUserInfo.CreateNul, frmSnippets.SelectedSnippets
+    TUserInfo.CreateNull, frmSnippets.GetSelection
   );
   TFileIO.WriteAllBytes(StrTrim(edFile.Text), OutData.Data);
 end;

@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2006-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2006-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -24,7 +24,9 @@ uses
   // Delphi
   SysUtils, Classes,
   // DelphiDabbler library
-  PJStreamWrapper;
+  PJStreamWrapper,
+  // Project
+  UIStringList;
 
 
 type
@@ -106,6 +108,16 @@ type
     ///  converts them into a Unicode string using the encoding specified by
     ///  the Encoding property.
     function ReadSizedString32: UnicodeString;
+    ///  Reads a list of strings where the size of the list is specified by a
+    ///  32 bit integer and each string is comprised of a number of bytes
+    ///  specified by a preceding 16 bit integer that are converted to into a
+    ///  Unicode string using the encoding given by the Encoding property.
+    function ReadSizedString16List: IStringList;
+    ///  Reads a list of strings where the size of the list is specified by a
+    ///  32 bit integer and each string is comprised of a number of bytes
+    ///  specified by a preceding 32 bit integer that are converted to into a
+    ///  Unicode string using the encoding given by the Encoding property.
+    function ReadSizedString32List: IStringList;
   end;
 
   ///  <summary>
@@ -179,6 +191,8 @@ type
   ///  </remarks>
   TBinaryStreamWriter = class(TDataStreamIO)
   public
+    ///  Writes a single byte in binary.
+    procedure WriteByte(const B: Byte);
     ///  Writes a 16 bit integer in binary.
     procedure WriteInt16(const I: SmallInt);
     ///  Writes a 32 bit integer in binary.
@@ -198,6 +212,16 @@ type
     ///  Encodes the string into an array of bytes and writes it, prepended by
     ///  a 32 bit integer specifying the number of bytes written.
     procedure WriteSizedString32(const Str: UnicodeString);
+    ///  Writes a list of strings, prepended by a 32 bit integer the gives the
+    ///  number of string in the list. Each string is encoded as an array of
+    ///  bytes and preceded by a 16 bit integer giving the number of bytes in
+    ///  the string.
+    procedure WriteSizedString16List(StrList: IStringList);
+    ///  Writes a list of strings, prepended by a 32 bit integer the gives the
+    ///  number of string in the list. Each string is encoded as an array of
+    ///  bytes and preceded by a 32 bit integer giving the number of bytes in
+    ///  the string.
+    procedure WriteSizedString32List(StrList: IStringList);
   end;
 
 
@@ -282,9 +306,31 @@ begin
   Result := ReadString(ReadInt16);
 end;
 
+function TDataStreamReader.ReadSizedString16List: IStringList;
+var
+  Count: Integer;
+  I: Integer;
+begin
+  Count := ReadInt32;
+  Result := TIStringList.Create;
+  for I := 1 to Count do
+    Result.Add(ReadSizedString16);
+end;
+
 function TDataStreamReader.ReadSizedString32: UnicodeString;
 begin
   Result := ReadString(ReadInt32);
+end;
+
+function TDataStreamReader.ReadSizedString32List: IStringList;
+var
+  Count: Integer;
+  I: Integer;
+begin
+  Count := ReadInt32;
+  Result := TIStringList.Create;
+  for I := 1 to Count do
+    Result.Add(ReadSizedString32);
 end;
 
 function TDataStreamReader.ReadString(CharCount: Integer): UnicodeString;
@@ -375,6 +421,11 @@ end;
 
 { TBinaryStreamWriter }
 
+procedure TBinaryStreamWriter.WriteByte(const B: Byte);
+begin
+  BaseStream.WriteBuffer(B, SizeOf(B));
+end;
+
 procedure TBinaryStreamWriter.WriteBytes(const B: TBytes);
 begin
   if Length(B) = 0 then
@@ -409,9 +460,27 @@ begin
   WriteSizedBytes16(Encoding.GetBytes(Str));
 end;
 
+procedure TBinaryStreamWriter.WriteSizedString16List(StrList: IStringList);
+var
+  S: string;
+begin
+  WriteInt32(StrList.Count);
+  for S in StrList do
+    WriteSizedString16(S);
+end;
+
 procedure TBinaryStreamWriter.WriteSizedString32(const Str: UnicodeString);
 begin
   WriteSizedBytes32(Encoding.GetBytes(Str));
+end;
+
+procedure TBinaryStreamWriter.WriteSizedString32List(StrList: IStringList);
+var
+  S: string;
+begin
+  WriteInt32(StrList.Count);
+  for S in StrList do
+    WriteSizedString32(S);
 end;
 
 end.

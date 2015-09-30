@@ -4,7 +4,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2005-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -26,20 +26,12 @@
     <param name="Local" value="HTML\dlg_about.htm">
     </OBJECT>
   <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="add category dialogue">
-    <param name="Local" value="HTML\dlg_addcategory.htm">
-    </OBJECT>
-  <LI> <OBJECT type="text/sitemap">
     <param name="Name" value="add snippet dialogue">
     <param name="Local" value="HTML\dlg_editsnippet.htm">
     </OBJECT>
   <LI> <OBJECT type="text/sitemap">
     <param name="Name" value="bug report dialogue">
     <param name="Local" value="HTML\dlg_userbugreport.htm">
-    </OBJECT>
-  <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="categories menu">
-    <param name="Local" value="HTML\menu_categories.htm">
     </OBJECT>
   <LI> <OBJECT type="text/sitemap">
     <param name="Name" value="check for program updates dialogue">
@@ -128,10 +120,6 @@
     <param name="Local" value="HTML\task_customise.htm">
     </OBJECT>
   <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="delete category dialogue">
-    <param name="Local" value="HTML\dlg_deletecategory.htm">
-    </OBJECT>
-  <LI> <OBJECT type="text/sitemap">
     <param name="Name" value="dependencies dialogue">
     <param name="Local" value="HTML\dlg_dependencies.htm">
     </OBJECT>
@@ -202,6 +190,10 @@
     <param name="Local" value="HTML\dlg_findxrefs.htm">
     </OBJECT>
   <LI> <OBJECT type="text/sitemap">
+    <param name="Name" value="find tags dialogue">
+    <param name="Local" value="HTML\dlg_findtags.htm">
+    </OBJECT>
+  <LI> <OBJECT type="text/sitemap">
     <param name="Name" value="find text dialogue">
     <param name="Local" value="HTML\dlg_findtext.htm">
     </OBJECT>
@@ -222,7 +214,7 @@
     <param name="Local" value="HTML\license.htm">
     </OBJECT>
   <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="markup editor">
+    <param name="Name" value="mark-up editor">
     <param name="Local" value="HTML\markup_editor.htm">
     </OBJECT>
   <LI> <OBJECT type="text/sitemap">
@@ -230,10 +222,6 @@
     <param name="Local" value="HTML\main_menu.htm">
     </OBJECT>
   <UL>
-    <LI> <OBJECT type="text/sitemap">
-      <param name="Name" value="categories">
-      <param name="Local" value="HTML\menu_categories.htm">
-      </OBJECT>
     <LI> <OBJECT type="text/sitemap">
       <param name="Name" value="compile">
       <param name="Local" value="HTML\menu_compile.htm">
@@ -300,7 +288,7 @@
     <param name="Local" value="HTML\overview_pane.htm">
     </OBJECT>
   <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="page setup dialogue">
+    <param name="Name" value="page set-up dialogue">
     <param name="Local" value="HTML\dlg_pagesetup.htm">
     </OBJECT>
   <LI> <OBJECT type="text/sitemap">
@@ -316,10 +304,6 @@
     <param name="Local" value="HTML\task_printroutine.htm">
     </OBJECT>
   <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="printing preferences">
-    <param name="Local" value="HTML\dlg_prefs_printing.htm">
-    </OBJECT>
-  <LI> <OBJECT type="text/sitemap">
     <param name="Name" value="privacy statement">
     <param name="Local" value="HTML\privacy_statement.htm">
     </OBJECT>
@@ -328,16 +312,8 @@
     <param name="Local" value="HTML\dlg_proxyserver.htm">
     </OBJECT>
   <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="quickstart guide">
+    <param name="Name" value="quick-start guide">
     <param name="Local" value="HTML\quickstart.htm">
-    </OBJECT>
-  <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="registration wizard">
-    <param name="Local" value="HTML\dlg_register.htm">
-    </OBJECT>
-  <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="rename category dialogue">
-    <param name="Local" value="HTML\dlg_renamecategory.htm">
     </OBJECT>
   <LI> <OBJECT type="text/sitemap">
     <param name="Name" value="save annotated source dialogue">

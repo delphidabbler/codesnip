@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2009-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2009-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -135,8 +135,7 @@ begin
   BtnBmp := TBitmap.Create;
   try
     BtnBmp.Handle := LoadBitmap(0, MakeIntResource(OBM_DNARROW));
-    Result.cx := BtnBmp.Width;
-    Result.cy := BtnBmp.Height;
+    Result := TSizeEx.Create(BtnBmp.Width, BtnBmp.Height);
   finally
     BtnBmp.Free;
   end;

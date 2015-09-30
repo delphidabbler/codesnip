@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2010-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2010-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -96,7 +96,9 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Generics.Collections;
+  SysUtils,
+  // 3rd party
+  Collections.Dictionaries;
 
 
 type
@@ -112,7 +114,7 @@ type
   strict private
     class var fDestroying: Boolean;
       {Flag that indicates if manager is destroying singletons}
-    class var fMap: TDictionary<TClass,TSingleton>;
+    class var fMap: TLinkedDictionary<TClass,TSingleton>;
       {Map of class names to singleton instances}
   {$IFNDEF TESTING}strict{$ENDIF}
   protected
@@ -242,7 +244,7 @@ class procedure TSingletonManager.CreateMap;
   }
 begin
   if not Assigned(fMap) then
-    fMap := TDictionary<TClass,TSingleton>.Create;
+    fMap := TLinkedDictionary<TClass,TSingleton>.Create;
 end;
 
 class destructor TSingletonManager.Destroy;
@@ -263,10 +265,10 @@ begin
   // free the singletons in the map, then the map itself
   for Singleton in fMap.Values do
     Singleton.Free;
-  FreeAndNil(fMap);
+  FreeAndNil(fMap); // FreeAndNil necessary here: see note below
   Destroying := False;
-  // setting fMap nil and Destroying False make it safe to re-create map when
-  // testing
+  // NOTE: setting fMap to nil and Destroying False make it safe to re-create
+  // map when testing
 end;
 
 class function TSingletonManager.Lookup(const Cls: TClass): TSingleton;

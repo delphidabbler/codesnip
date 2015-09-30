@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2007-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2007-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -13,8 +13,8 @@
  * Creates application-wide config files in correct data folder. Brings forward
  * information from versions including and after v1.9.
  *
- * Config files of version 1.8.11 and earlier are ignored. This means
- * application will get a new key and registration info may be lost.
+ * Config files of version 1.8.11 and earlier are ignored. This means that the
+ * application will get a new key.
 }
 
 
@@ -91,7 +91,7 @@ begin
   // Set ini file version
   if not FileExists(gCurrentCommonConfigFile) then
     CreateUnicodeConfigFile(gCurrentCommonConfigFile);
-  SetIniInt('IniFile', 'Version', 6, gCurrentCommonConfigFile);
+  SetIniInt('IniFile', 'Version', 7, gCurrentCommonConfigFile);
   // Record application version in common ini file
   SetIniString(
     'Application',

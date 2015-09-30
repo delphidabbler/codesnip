@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2009-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2009-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -50,7 +50,7 @@ type
     procedure BrowserEventHandler(Sender: TObject;
       const EventInfo: THTMLEventInfo);
       {Handles easter egg frame's OnHTMLEvent event. Checks for a click on the
-      'cancel-btn' image and closes dialog if detected.
+      'cancel-btn' image and closes dialogue if detected.
         @param Sender [in] Not used.
         @param EventInfo [in] Object providing information about the event.
       }
@@ -86,7 +86,7 @@ uses
 procedure TEasterEggForm.BrowserEventHandler(Sender: TObject;
   const EventInfo: THTMLEventInfo);
   {Handles easter egg frame's OnHTMLEvent event. Checks for a click on the
-  'cancel-btn' image and closes dialog if detected.
+  'cancel-btn' image and closes dialogue if detected.
     @param Sender [in] Not used.
     @param EventInfo [in] Object providing information about the event.
   }
@@ -100,7 +100,7 @@ begin
     and EventInfo.ElemHasId(cCancelImgId) then
   begin
     // Click on cancel image detected. Prevent event from bubbling up and close
-    // dialog
+    // dialogue
     EventInfo.Cancelled := True;
     Close;
   end;

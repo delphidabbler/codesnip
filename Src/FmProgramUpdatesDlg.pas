@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2012-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2012-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -30,7 +30,7 @@ type
   ///  <summary>Dialogue box that checks if a program update is available and
   ///  reports the result, providing a link to download any available update.
   ///  </summary>
-  ///  <remarks>This dialogus box indirectly accesses the CodeSnip program
+  ///  <remarks>This dialogue box indirectly accesses the CodeSnip program
   ///  update we service to get the update information.</remarks>
   TProgramUpdatesDlg = class(TGenericViewDlg, INoPublicConstruct)
     lblProgram: TLabel;

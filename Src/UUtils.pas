@@ -80,21 +80,6 @@ function IsDirectory(const DirName: string): Boolean;
 ///  <returns>Integer. Rounded value.</returns>
 function FloatToInt(const F: Double): Int64;
 
-///  <summary>Creates a date stamp for current date in RFC1123 format.</summary>
-///  <returns>string. Required date and time as date stamp in UTC/GMT.</returns>
-function RFC1123DateStamp: string; inline;
-
-///  <summary>Returns the current date and time in GMT/UTC.</summary>
-function NowGMT: TDateTime;
-
-///  <summary>Converts a date-time value in SQL format into a TDateTime.
-///  </summary>
-///  <param name="SQLDate">string [in] SQL format date-time value to be
-///  converted.</param>
-///  <returns>TDateTime. Converted value.</returns>
-///  <remarks>SQLDate must be in YYYY-MM-DD hh:mm:ss format.</remarks>
-function ParseSQLDateTime(const SQLDate: string): TDateTime;
-
 ///  <summary>Get a desired interface pointer to an object instance.</summary>
 ///  <param name="Instance">IInterface [in] Instance for which an interface is
 ///  requested. May be nil.</param>
@@ -123,9 +108,6 @@ procedure Pause(const ADelay: Cardinal);
 ///  </returns>
 function IsValidDriveLetter(const C: Char): Boolean;
 
-///  <summary>Emits a sound indicating a keypress error.</summary>
-procedure KeyErrorBeep;
-
 ///  <summary>Checks whether a character is a valid hex digit.</summary>
 ///  <param name="C">Char [in] Character to be tested.</param>
 ///  <returns>Boolean. True if character is a hex digit, False if not.</returns>
@@ -143,6 +125,13 @@ function URIBaseName(const URI: string): string;
 ///  conversion fails.</param>
 ///  <returns>Boolean. True if conversion succeeds, False if not.</returns>
 function TryStrToCardinal(const S: string; out Value: Cardinal): Boolean;
+
+///  <summary>Attempts to convert string S into a Word value.</summary>
+///  <param name="S">string [in] String to be converted.</param>
+///  <param name="Value">Word [out] Value of converted string. Undefined if
+///  conversion fails.</param>
+///  <returns>Boolean. True if conversion succeeds, False if not.</returns>
+function TryStrToWord(const S: string; out Value: Word): Boolean;
 
 
 implementation
@@ -198,7 +187,7 @@ begin
       end;
     end;
   finally
-    FreeAndNil(Files);
+    Files.Free;
   end;
 end;
 
@@ -271,40 +260,6 @@ begin
   Result := Round(SimpleRoundTo(F, 0));
 end;
 
-function NowGMT: TDateTime;
-var
-  ST: TSystemTime;
-begin
-  // This Windows API function gets system time in UTC/GMT
-  // see http://msdn.microsoft.com/en-us/library/ms724390
-  GetSystemTime(ST);
-  Result := SystemTimeToDateTime(ST);
-end;
-
-function RFC1123DateStamp: string;
-const
-  // Pattern to create RFC1123 date formats
-  cRFC1123Pattern = 'ddd, dd mmm yyyy HH'':''nn'':''ss ''GMT''';
-begin
-  Result := FormatDateTime(cRFC1123Pattern, NowGMT);
-end;
-
-function ParseSQLDateTime(const SQLDate: string): TDateTime;
-begin
-  Result := SysUtils.EncodeDate(
-    SysUtils.StrToInt(Copy(SQLDate, 1, 4)),
-    SysUtils.StrToInt(Copy(SQLDate, 6, 2)),
-    SysUtils.StrToInt(Copy(SQLDate, 9, 2))
-  )
-  +
-  SysUtils.EncodeTime(
-    SysUtils.StrToInt(Copy(SQLDate, 12, 2)),
-    SysUtils.StrToInt(Copy(SQLDate, 15, 2)),
-    SysUtils.StrToInt(Copy(SQLDate, 18, 2)),
-    0
-  );
-end;
-
 procedure GetIntf(const Instance: IInterface; const IID: TGUID; out Intf);
 begin
   if not Supports(Instance, IID, Intf) then
@@ -356,11 +311,6 @@ begin
   Result := CharInSet(C, ['A'..'Z', 'a'..'z']);
 end;
 
-procedure KeyErrorBeep;
-begin
-  MessageBeep(UINT(-1));
-end;
-
 function IsHexDigit(C: Char): Boolean;
 begin
   Result := CharInSet(C, ['A'..'F', 'a'..'f', '0'..'9']);
@@ -384,6 +334,15 @@ begin
     and (Int64Rec(Value64).Hi = 0);
   if Result then
     Value := Int64Rec(Value64).Lo;
+end;
+
+function TryStrToWord(const S: string; out Value: Word): Boolean;
+var
+  Value32: Integer; // receives 32 bit integer value of conversion
+begin
+  Result := TryStrToInt(S, Value32) and (LongRec(Value32).Hi = 0);
+  if Result then
+    Value := LongRec(Value32).Lo;
 end;
 
 end.

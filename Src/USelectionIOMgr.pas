@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2012-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2012-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -21,7 +21,8 @@ interface
 
 uses
   // Project
-  UBaseObjects, USearch;
+  UBaseObjects,
+  USearch;
 
 
 type
@@ -48,8 +49,15 @@ uses
   // Delphi
   SysUtils, Dialogs,
   // Project
-  DB.USnippet, UConsts, UMessageBox, UOpenDialogEx, UOpenDialogHelper,
-  UQuery, USaveDialogEx, USnippetIDListIOHandler, USnippetIDs;
+  CS.Database.Snippets,
+  CS.Database.Types,
+  UConsts,
+  UMessageBox,
+  UOpenDialogEx,
+  UOpenDialogHelper,
+  UQuery,
+  USaveDialogEx,
+  USnippetIDListIOHandler;
 
 const
   ///  <summary>Watermark for selection files. Uses characters that will be
@@ -61,7 +69,7 @@ const
 class procedure TSelectionIOMgr.CanOpenDialogClose(Sender: TObject;
   var CanClose: Boolean);
 var
-  Dlg: TOpenDialogEx; // dialog box instance triggering this event
+  Dlg: TOpenDialogEx; // dialogue box instance triggering this event
   FileSpec: string;   // full path to entered or selected file name
 resourcestring
   // Error messages
@@ -82,12 +90,12 @@ end;
 class procedure TSelectionIOMgr.CanSaveDialogClose(Sender: TObject;
   var CanClose: Boolean);
 var
-  Dlg: TSaveDialogEx; // dialog box instance triggering this event
+  Dlg: TSaveDialogEx; // dialogue box instance triggering this event
   FileSpec: string;   // full path to entered or selected file name
 
   function QueryOverwrite: Boolean;
   resourcestring
-    // Text of query displayed in dialog box
+    // Text of query displayed in dialogue box
     sQueryMsg = '%s already exists.' + EOL + 'Do you want to replace it?';
   begin
     Result := TMessageBox.Confirm(Dlg, Format(sQueryMsg, [FileSpec]));
@@ -179,15 +187,15 @@ var
   FileName: string;
   Writer: TSnippetIDListFileWriter;
   SnippetIDs: ISnippetIDList;
-  Snippet: TSnippet;
+  SnippetID: TSnippetID;
 begin
   if not GetSaveFileName(FileName) then
     Exit;
   Writer := TSnippetIDListFileWriter.Create(SelectionFileWatermark);
   try
     SnippetIDs := TSnippetIDList.Create;
-    for Snippet in Query.Selection do
-      SnippetIDs.Add(Snippet.ID);
+    for SnippetID in Query.Selection do
+      SnippetIDs.Add(SnippetID);
     Writer.WriteFile(FileName, SnippetIDs);
   finally
     Writer.Free;

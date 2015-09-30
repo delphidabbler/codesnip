@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2013-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -28,6 +28,9 @@ uses
   ExtCtrls,
   Classes,
   Generics.Collections,
+  // 3rd party
+  Collections.Base,
+  Collections.Lists,
   // Project
   FmWizardDlg,
   FrBrowserBase,
@@ -35,7 +38,6 @@ uses
   FrHTMLDlg,
   FrHTMLTpltDlg,
   UBaseObjects,
-  UContainers,
   SWAG.UCommon,
   SWAG.UImporter,
   SWAG.UReader, ActnList;
@@ -113,7 +115,7 @@ type
       ///  </summary>
       fSelectedSnippets: TSortedList<TSWAGSnippet>;
       ///  <summary>Object that imports selected SWAG snippets into CodeSnip's
-      ///  user database.</summary>
+      ///  database.</summary>
       fImporter: TSWAGImporter;
       ///  <summary>ID of currently selected category.</summary>
       ///  <remarks>Set to empty string if no category is selected.</remarks>
@@ -148,9 +150,10 @@ type
     procedure PreviewSelectedSnippet;
     ///  <summary>Gets the complete information for each snippet selected for
     ///  import and stores in the given list.</summary>
-    procedure GetImportSnippets(const SnipList: TList<TSWAGSnippet>);
+    procedure GetImportSnippets(const SnipList:
+      Generics.Collections.TList<TSWAGSnippet>);
     ///  <summary>Performs the import of the selected snippets into CodeSnip's
-    ///  user database.</summary>
+    ///  database.</summary>
     ///  <remarks>Displays a wait dialogue box while the import is proceeding.
     ///  </remarks>
     procedure UpdateDatabase;
@@ -168,7 +171,7 @@ type
     ///  <summary>Constructs and intialises a wizard instance.</summary>
     constructor InternalCreate(AOwner: TComponent); override;
     ///  <summary>Aligns and arranges controls in each tab sheet and sizes
-    ///  dialog box to accomodate controls.</summary>
+    ///  dialogue box to accomodate controls.</summary>
     ///  <remarks>Overridden method called from ancestor class.</remarks>
     procedure ArrangeForm; override;
     ///  <summary>Initialises wizard pages that display HTML content.</summary>
@@ -208,8 +211,10 @@ uses
   Generics.Defaults,
   Windows,
   // Project
+  CS.Utils.Hashes,
   FmPreviewDlg,
   FmWaitDlg,
+  UComparers,
   UConsts,
   UCtrlArranger,
   UEncodings,
@@ -319,7 +324,7 @@ begin
   begin
     DelIdx := fSelectedSnippets.IndexOf(fCurrentCatSnippets[SelIdx]);
     if DelIdx >= 0 then
-      fSelectedSnippets.Delete(DelIdx);
+      fSelectedSnippets.RemoveAt(DelIdx);
   end;
 end;
 
@@ -343,10 +348,7 @@ begin
     'dlg-swag-import-outro-tplt.html',
     procedure (Tplt: THTMLTemplate)
     begin
-      Tplt.ResolvePlaceholderText(
-        'SWAGCategory',
-        TSWAGImporter.SWAGCategoryDesc
-      );
+      Tplt.ResolvePlaceholderText('SWAGTag', TSWAGImporter.SWAGTagName);
     end
   );
   pcWizard.ActivePage := tsIntro;
@@ -370,7 +372,8 @@ var
   CatIdx: Integer;
   Idx: Integer;
   N: Integer;
-  Snippets: TList<TSWAGSnippet>;
+  Snippets: Generics.Collections.TList<TSWAGSnippet>;
+  Snippet: TSWAGSnippet;
 begin
   CatIdx := lbCategories.ItemIndex;
   if CatIdx = -1 then
@@ -382,10 +385,10 @@ begin
     // nothing to do if current category selected again
     Exit;
   fCurrentCatID := fSortedCategories[CatIdx].ID;
+  Snippets := Generics.Collections.TList<TSWAGSnippet>.Create;
   lblSelectSnippets.Caption := Format(
     sSnippetListCaption, [fSortedCategories[CatIdx].Title]
   );
-  Snippets := TList<TSWAGSnippet>.Create;
   try
     fSWAGReader.GetPartialSnippets(fCurrentCatID, Snippets);
     clbSelectSnippets.Items.BeginUpdate;
@@ -396,7 +399,10 @@ begin
       // means indices of new items added are not sequential, and we must have
       // displayed title at same index in clbSelectSnippets as its snippet is in
       // fCurrentCatSnippets.
-      fCurrentCatSnippets.AddRange(Snippets);
+      { TODO: When conversion to Delphi Collections complete, try to assign
+              Snippets to fCurrentCatSnippets in one operation. }
+      for Snippet in Snippets do
+        fCurrentCatSnippets.Add(Snippet);
       for Idx := 0 to Pred(fCurrentCatSnippets.Count) do
       begin
         N := clbSelectSnippets.Items.Add(fCurrentCatSnippets[Idx].Title);
@@ -423,14 +429,15 @@ begin
     end;
 end;
 
-procedure TSWAGImportDlg.GetImportSnippets(const SnipList: TList<TSWAGSnippet>);
+procedure TSWAGImportDlg.GetImportSnippets(const SnipList:
+  Generics.Collections.TList<TSWAGSnippet>);
 var
-  SnipIDs: TList<Cardinal>;
+  SnipIDs: Generics.Collections.TList<Cardinal>;
   PartialSnippet: TSWAGSnippet;
 resourcestring
   sWaitMsg = 'Downloading Snippets From SWAG...';
 begin
-  SnipIDs := TList<Cardinal>.Create;
+  SnipIDs := Generics.Collections.TList<Cardinal>.Create;
   try
     for PartialSnippet in fSelectedSnippets do
       SnipIDs.Add(PartialSnippet.ID);
@@ -464,14 +471,15 @@ end;
 
 procedure TSWAGImportDlg.InitSelectionPage;
 var
-  Cats: TList<TSWAGCategory>;
+  Cats: Generics.Collections.TList<TSWAGCategory>;
+  Cat: TSWAGCategory;
   Idx: Integer;
 begin
   Application.ProcessMessages;
   if lbCategories.Count > 0 then
     Exit;
 
-  Cats := TList<TSWAGCategory>.Create;
+  Cats := Generics.Collections.TList<TSWAGCategory>.Create;
   try
     fSWAGReader.GetCategories(Cats);
     lbCategories.Items.BeginUpdate;
@@ -480,7 +488,10 @@ begin
       // indices of new items added are not sequential, and we must have
       // displayed title at same index in lbCategories as its category is in
       // fSortedCategories.
-      fSortedCategories.AddRange(Cats);
+      { TODO: When conversion to Delphi Collections complete, try to assign
+              Cats to fSortedCategories in one operation. }
+      for Cat in Cats do
+        fSortedCategories.Add(Cat);
       for Idx := 0 to Pred(fSortedCategories.Count) do
         lbCategories.Items.Add(fSortedCategories[Idx].Title);
       lbCategories.ItemIndex := -1;
@@ -494,13 +505,13 @@ end;
 
 procedure TSWAGImportDlg.InitUpdatePage;
 var
-  FullSnippets: TList<TSWAGSnippet>;
+  FullSnippets: Generics.Collections.TList<TSWAGSnippet>;
   Snippet: TSWAGSnippet;
 resourcestring
   sWaitMsg = 'Downloading Snippets From SWAG...';
 begin
   Application.ProcessMessages;
-  FullSnippets := TList<TSWAGSnippet>.Create;
+  FullSnippets := Generics.Collections.TList<TSWAGSnippet>.Create;
   try
     GetImportSnippets(FullSnippets);
     fImporter.Reset;
@@ -518,34 +529,48 @@ resourcestring
 begin
   inherited;
   fSortedCategories := TSortedList<TSWAGCategory>.Create(
-    TDelegatedComparer<TSWAGCategory>.Create(
+    TRulesFactory<TSWAGCategory>.Construct(
       function (const Left, Right: TSWAGCategory): Integer
       begin
         Result := StrCompareStr(Left.Title, Right.Title);
+      end,
+      function (const Cat: TSWAGCategory): Integer
+      begin
+        Result := StrHash(Cat.Title);
       end
     )
   );
-  fSortedCategories.PermitDuplicates := True;
 
   fCurrentCatSnippets := TSortedList<TSWAGSnippet>.Create(
-    TDelegatedComparer<TSWAGSnippet>.Create(
+    TRulesFactory<TSWAGSnippet>.Construct(
       function (const Left, Right: TSWAGSnippet): Integer
       begin
         Result := StrCompareStr(Left.Title, Right.Title);
+      end,
+      function (const Snippet: TSWAGSnippet): Integer
+      begin
+        Result := StrHash(Snippet.Title);
       end
     )
   );
-  fCurrentCatSnippets.PermitDuplicates := True;
 
+  // TODO: change to some structure that doesn't permit duplicates.
   fSelectedSnippets := TSortedList<TSWAGSnippet>.Create(
-    TDelegatedComparer<TSWAGSnippet>.Create(
+    TRulesFactory<TSWAGSnippet>.Construct(
       function (const Left, Right: TSWAGSnippet): Integer
       begin
         Result := Left.ID - Right.ID;
+      end,
+      function (const Left, Right: TSWAGSnippet): Boolean
+      begin
+        Result := Left.ID = Right.ID;
+      end,
+      function (const Snippet: TSWAGSnippet): Integer
+      begin
+        Result := Integer(Snippet.ID);
       end
     )
   );
-  fSelectedSnippets.PermitDuplicates := False;
 
   fImporter := TSWAGImporter.Create;
 
@@ -591,17 +616,17 @@ end;
 
 procedure TSWAGImportDlg.PopulateImportsLV;
 var
-  Snippet: TSWAGSnippet;
+  SWAGSnippet: TSWAGSnippet;
   LI: TListItem;
 begin
   lvImports.Items.BeginUpdate;
   try
     lvImports.Clear;
-    for Snippet in fSelectedSnippets do
+    for SWAGSnippet in fSelectedSnippets do
     begin
       LI := lvImports.Items.Add;
-      LI.Caption := Snippet.Title;
-      LI.SubItems.Add(TSWAGImporter.MakeValidSnippetName(Snippet.ID));
+      LI.Caption := SWAGSnippet.Title;
+      LI.SubItems.Add(TSWAGImporter.MakeValidSnippetIDString(SWAGSnippet.ID));
     end;
   finally
     lvImports.Items.EndUpdate;
@@ -634,6 +659,7 @@ begin
       WaitWrapper(Self, CallProc, sWaitMsg);
     end
   );
+  // TODO: Display snippet as HTML, highlighted if necessary
   Content := Format(
     sContentTplt,
     [
@@ -704,7 +730,7 @@ begin
   case PageIdx of
     cSelectionPage:
     begin
-      if fSelectedSnippets.Count = 0 then
+      if fSelectedSnippets.Empty then
         raise EDataEntry.Create(sEmptySelection);
     end;
   end;

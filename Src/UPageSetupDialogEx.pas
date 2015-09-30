@@ -3,12 +3,12 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2007-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2007-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
  *
- * Implements an extension of TPageSetupDialog that customises the dialog box.
+ * Implements an extension of TPageSetupDialog that customises the dialogue box.
 }
 
 
@@ -27,36 +27,36 @@ type
 
   {
   TPageSetupDialogEx:
-    An extension of the TPageSetupDialog common dialog box that customises the
-    dialog box. The class aligns the dialog box over a "host" window, provides
-    custom help handling and relocates some buttons.
+    An extension of the TPageSetupDialog common dialogue box that customises the
+    dialogue box. The class aligns the dialogue box over a "host" window,
+    provides custom help handling and relocates some buttons.
   }
   TPageSetupDialogEx = class(TPageSetupDialog)
   strict private
     fHelpKeyword: string; // Value of HelpKeyword property
   strict protected
     procedure DoShow; override;
-      {Sets parent of dialog box, aligns and focuses it and customises the
-      dialog box when it is shown.
+      {Sets parent of dialogue box, aligns and focuses it and customises the
+      dialogue box when it is shown.
       }
     function MessageHook(var Msg: TMessage): Boolean; override;
-      {Intercepts dialog box messages. Intercepts help messages to perform
+      {Intercepts dialogue box messages. Intercepts help messages to perform
       custom help handling.
-        @param Msg [in/out] Dialog box message. Not changed in this method, but
-          ancestor methods may make changes.
+        @param Msg [in/out] Dialogue box message. Not changed in this method,
+          but ancestor methods may make changes.
         @return False to pass message on to dilog's window procedure, True to
           prevent this.
       }
     procedure AlignDlg; virtual;
-      {Aligns dialog box over another window.
+      {Aligns dialogue box over another window.
       }
     procedure AdjustParent; virtual;
-      {Sets parent of dialog box to window handle of Owner. If Owner has no
+      {Sets parent of dialogue box to window handle of Owner. If Owner has no
       handle then either active form or main form are used as parent.
       }
     procedure RealignCtrls;
       {Moves help button from bottom left to bottom right of window and hides
-      printers button only if printers button is disabled. This tidies dialog
+      printers button only if printers button is disabled. This tidies dialogue
       and places help in logical position given its place in tab order.
       }
   published
@@ -78,7 +78,7 @@ uses
 { TPageSetupDialogEx }
 
 procedure TPageSetupDialogEx.AdjustParent;
-  {Sets parent of dialog box to window handle of Owner. If Owner has no handle
+  {Sets parent of dialogue box to window handle of Owner. If Owner has no handle
   then either active form or main form are used as parent.
   }
 begin
@@ -86,33 +86,33 @@ begin
 end;
 
 procedure TPageSetupDialogEx.AlignDlg;
-  {Aligns dialog box over another window.
+  {Aligns dialogue box over another window.
   }
 begin
   TDlgAligner.AlignToOwner(Self);
 end;
 
 procedure TPageSetupDialogEx.DoShow;
-  {Sets parent of dialog box, aligns and focuses it and customises the dialog
-  box when it is shown.
+  {Sets parent of dialogue box, aligns and focuses it and customises the
+  dialogue box when it is shown.
   }
 begin
   inherited;
   // Adjust window's parent to be window handle of owning control
   AdjustParent;
-  // Align dialog over "parent" window
+  // Align dialogue over "parent" window
   AlignDlg;
-  // Tweak the dialog's controls
+  // Tweak the dialogue's controls
   RealignCtrls;
-  // We need to set focus expicitly because dialog box doesn't handle keyboard
+  // We need to set focus expicitly because dialogue box doesn't handle keyboard
   // input correctly if we don't
   SetFocus(Handle);
 end;
 
 function TPageSetupDialogEx.MessageHook(var Msg: TMessage): Boolean;
-  {Intercepts dialog box messages. Intercepts help messages to perform custom
+  {Intercepts dialogue box messages. Intercepts help messages to perform custom
   help handling.
-    @param Msg [in/out] Dialog box message. Not changed in this method, but
+    @param Msg [in/out] Dialogue box message. Not changed in this method, but
       ancestor methods may make changes.
     @return False to pass message on to dilog's window procedure, True to
       prevent this.
@@ -127,8 +127,8 @@ end;
 procedure TPageSetupDialogEx.RealignCtrls;
   {Moves help button to bottom right of window only if Printers button either
   does not exist or is disabled. OK and cancel buttons are moved as required.
-  This tidies the dialog and places help in logical position given its place in
-  tab order.
+  This tidies the dialogue and places help in logical position given its place
+  in tab order.
   }
 const
   // Ids of buttons to be manipulated. Ids found by experimentation
@@ -139,7 +139,7 @@ const
 
   // ---------------------------------------------------------------------------
   procedure ScreenToClientRect(var R: TRect);
-    {Converts a rectangle in screen co-ordinates to dialog box client area
+    {Converts a rectangle in screen co-ordinates to dialogue box client area
     co-ordinates.
       @param R [in/out] Converted rectangle. Passed in in screen co-ordinates
         and out in client co-ordinates.
@@ -150,8 +150,8 @@ const
   end;
 
   function GetWindowClientRect(const Wnd: HWND): TRectEx;
-    {Gets bounding rectangle of a window in co-ordinates relative to dialog box
-    client area.
+    {Gets bounding rectangle of a window in co-ordinates relative to dialogue
+    box client area.
       @param Wnd [in] Handle of window whose bounds are required.
       @return Required bounding rectangle.
     }
@@ -179,7 +179,7 @@ const
   end;
 
   procedure ReplacePrinterBtnWithHelp(const HPrinterBtn, HHelpBtn: HWND);
-    {Replaces dialog's printer button with help button.
+    {Replaces dialogue's printer button with help button.
       @param HPrinterBtn [in] Window handle of printer button.
       @param HHelpBtn [in] Window handle of help button.
     }

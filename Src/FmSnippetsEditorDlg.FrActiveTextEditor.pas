@@ -23,10 +23,18 @@ interface
 
 uses
   // Delphi
-  Forms, ComCtrls, Menus, Classes, ActnList, Controls, StdCtrls, ImgList,
+  Forms,
+  ComCtrls,
+  Menus,
+  Classes,
+  ActnList,
+  Controls,
+  StdCtrls,
+  ImgList,
   StdActns,
   // Project
-  ActiveText.UMain;
+  CS.ActiveText,
+  CS.Components.EditCtrls;
 
 
 type
@@ -67,12 +75,14 @@ type
       fDefaultEditMode: TEditMode;
     function ActiveTextToPlainText(ActiveText: IActiveText): string;
     function ActiveTextToREML(ActiveText: IActiveText): string;
-    function PlainTextToActiveText(Text: string): IActiveText;
-    function REMLToActiveText(const Text: string): IActiveText;
+    function PlainTextToActiveText(PlainText: string): IActiveText;
+    function REMLToActiveText(const REML: string): IActiveText;
     function Parse: IActiveText;
     function GetActiveText: IActiveText;
     procedure SetActiveText(Value: IActiveText);
     procedure SetEditMode(AMode: TEditMode);
+    function GetTextHint: string;
+    procedure SetTextHint(const Value: string);
   public
     procedure Validate;
     procedure Clear;
@@ -81,6 +91,7 @@ type
     property ActiveText: IActiveText read GetActiveText write SetActiveText;
     property DefaultEditMode: TEditMode
       read fDefaultEditMode write fDefaultEditMode;
+    property TextHint: string read GetTextHint write SetTextHint;
   end;
 
 
@@ -89,8 +100,17 @@ implementation
 
 uses
   // Project
-  ActiveText.UValidator, FmActiveTextPreviewDlg, UConsts, UExceptions,
-  UFontHelper, UIStringList, USnippetExtraHelper, UStrUtils;
+  CS.ActiveText.Helper,
+  CS.ActiveText.Parsers.PlainText,
+  CS.ActiveText.Renderers.PlainText,
+  CS.ActiveText.Renderers.REML,
+  CS.ActiveText.Validator,
+  FmActiveTextPreviewDlg,
+  UConsts,
+  UExceptions,
+  UFontHelper,
+  UIStringList,
+  UStrUtils;
 
 
 {$R *.dfm}
@@ -127,25 +147,21 @@ end;
 
 function TSnippetsActiveTextEdFrame.ActiveTextToPlainText(
   ActiveText: IActiveText): string;
-var
-  Lines: IStringList;
 begin
-  // NOTE: we use IActiveText.ToString here, because there may be text not in
-  // blocks and we want to see that: usual renderer will ignore that text.
-  // However all lines are trimmed and empty blanks are ingored.
-  Lines := TIStringList.Create(ActiveText.ToString, EOL, False, True);
-  Result := Lines.GetText(EOL2, False); // insert blank line between paras
+  Result := TActiveTextPlainTextRenderer.Render(
+    ActiveText, EOL2, [ptrIgnoreEmptyBlocks, ptrTrimLines]
+  );
 end;
 
 function TSnippetsActiveTextEdFrame.ActiveTextToREML(ActiveText: IActiveText):
   string;
 begin
-  Result := TSnippetExtraHelper.BuildREMLMarkup(ActiveText);
+  Result := TActiveTextREMLRenderer.Render(ActiveText, EOL);
 end;
 
 function TSnippetsActiveTextEdFrame.CanPreview: Boolean;
 begin
-  Result := StrTrim(edText.Text) <> '';
+  Result := not StrIsBlank(edText.Text);
 end;
 
 procedure TSnippetsActiveTextEdFrame.Clear;
@@ -165,7 +181,7 @@ var
   ParseError: EDataEntry; // parser error
 resourcestring
   // parse error message
-  sActiveTextErr = 'Error parsing extra information markup:' + EOL2 + '%s';
+  sActiveTextErr = 'Error parsing markup:' + EOL2 + '%s';
 begin
   try
     Result := Parse;
@@ -190,6 +206,11 @@ begin
     );
 end;
 
+function TSnippetsActiveTextEdFrame.GetTextHint: string;
+begin
+  Result := edText.TextHint;
+end;
+
 function TSnippetsActiveTextEdFrame.Parse: IActiveText;
 var
   Text: string;
@@ -211,28 +232,16 @@ begin
   end;
 end;
 
-function TSnippetsActiveTextEdFrame.PlainTextToActiveText(Text: string):
+function TSnippetsActiveTextEdFrame.PlainTextToActiveText(PlainText: string):
   IActiveText;
-var
-  Paragraphs: IStringList;  // list of paragraphs (separated by newlines pairs)
-  Paragraph: string;        // each paragraph in paragraphs
 begin
-  // NOTE: TSnippetExtraHelper.PlainTextToActiveText is not sufficient for use
-  // here since it ignores newlines and we want double newlines to separated
-  // paragraphs.
-  Result := TActiveTextFactory.CreateActiveText;
-  Text := StrTrim(Text);
-  if Text = '' then
-    Exit;
-  Paragraphs := TIStringList.Create(Text, EOL2, False, True);
-  for Paragraph in Paragraphs do
-  begin
-    Result.AddElem(TActiveTextFactory.CreateActionElem(ekPara, fsOpen));
-    Result.AddElem(
-      TActiveTextFactory.CreateTextElem(StrCompressWhiteSpace(Paragraph))
-    );
-    Result.AddElem(TActiveTextFactory.CreateActionElem(ekPara, fsClose));
-  end;
+  Result := TActiveTextFactory.CreateActiveText(
+    PlainText,
+    TActiveTextPlainTextParser.Create(
+      EOL2,
+      [ptpSplitIntoParas, ptpIgnoreEmptyParas, ptpTrim, ptpCompressWhiteSpace]
+    )
+  );
 end;
 
 procedure TSnippetsActiveTextEdFrame.Preview;
@@ -243,10 +252,10 @@ begin
   TActiveTextPreviewDlg.Execute(nil, ActiveText);
 end;
 
-function TSnippetsActiveTextEdFrame.REMLToActiveText(const Text: string):
+function TSnippetsActiveTextEdFrame.REMLToActiveText(const REML: string):
   IActiveText;
 begin
-  Result := TSnippetExtraHelper.BuildActiveText(StrTrim(Text));
+  Result := TActiveTextHelper.ParseREML(StrTrim(REML));
 end;
 
 procedure TSnippetsActiveTextEdFrame.SetActiveText(Value: IActiveText);
@@ -289,6 +298,11 @@ begin
       TFontHelper.SetDefaultMonoFont(edText.Font);
     end;
   end;
+end;
+
+procedure TSnippetsActiveTextEdFrame.SetTextHint(const Value: string);
+begin
+  edText.TextHint := Value;
 end;
 
 procedure TSnippetsActiveTextEdFrame.tcEditModeChange(Sender: TObject);

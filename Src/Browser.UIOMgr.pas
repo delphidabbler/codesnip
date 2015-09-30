@@ -179,9 +179,9 @@ end;
 destructor TWBIOMgr.Destroy;
 begin
   fWdwEvents.Disconnect;
-  FreeAndNil(fWdwEvents);
+  fWdwEvents.Free;
   fDocEvents.Disconnect;
-  FreeAndNil(fDocEvents);
+  fDocEvents.Free;
   inherited;
 end;
 

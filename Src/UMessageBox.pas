@@ -195,6 +195,7 @@ uses
   // Delphi
   SysUtils, Windows, Forms, StdCtrls, ExtCtrls, Consts, Math,
   // Project
+  CS.Utils.Sound,
   UConsts, UDlgHelper, UFontHelper, UGraphicUtils, UStructs, UStrUtils;
 
 
@@ -206,9 +207,9 @@ type
       ///  <summary>Image control used to display any icon.</summary>
       fImage: TImage;
       ///  <summary>Array of dialogue box's buttons.</summary>
-      fButtons: array of TButton;
+      fButtons: TArray<TButton>;
       ///  <summary>Array of lables that display dialogue box's text.</summary>
-      fLabels: array of TLabel;
+      fLabels: TArray<TLabel>;
     const
       ///  <summary>Left and right dialogue box margins.</summary>
       cXPadding = 16;
@@ -346,7 +347,7 @@ begin
     // Display the dialogue and return result
     Result := Dlg.ShowModal;
   finally
-    FreeAndNil(Dlg);
+    Dlg.Free;
   end;
 end;
 
@@ -374,7 +375,7 @@ end;
 
 class procedure TMessageBox.Error(const Parent: TComponent; const Msg: string);
 begin
-  MessageBeep(MB_ICONERROR);
+  KeyErrorBeep;
   Display(
     Parent,
     Msg,
@@ -469,7 +470,7 @@ constructor TMessageBoxForm.Create(const Owner: TComponent;
   const InhibitCancel: Boolean);
 begin
   Assert(Length(Buttons) > 0, ClassName + '.Create: Buttons array is empty');
-  Assert(Assigned(Text) and (Text.Count > 0),
+  Assert(Assigned(Text) and not Text.IsEmpty,
     ClassName + '.Ctreate: No message text provided');
   inherited CreateNew(Owner);
   Position := poDesigned;   // must be poDesgined to enable alignment
@@ -523,8 +524,9 @@ procedure TMessageBoxForm.InitButtons(
     begin
       Btn := fButtons[Idx];
       BtnTextExtent := StringExtent(Btn.Caption, Btn.Font);
-      Result.cx := Max(Result.cx, BtnTextExtent.cx);
-      Result.cy := Max(Result.cy, BtnTextExtent.cy);
+      Result := TSizeEx.Create(
+        Max(Result.cx, BtnTextExtent.cx), Max(Result.cy, BtnTextExtent.cy)
+      );
     end;
   end;
 
@@ -555,8 +557,10 @@ begin
   TextExtent := ButtonTextExtent;
   // Size of each button to be large enough to hold largest caption, but ensure
   // buttons are no smaller than default size. All buttons have same size.
-  BtnSize.cx := Max(fButtons[0].Width, TextExtent.cx + 12);
-  BtnSize.cy := Max(fButtons[0].Height, TextExtent.cy + 10);
+  BtnSize := TSizeEx.Create(
+    Max(fButtons[0].Width, TextExtent.cx + 12),
+    Max(fButtons[0].Height, TextExtent.cy + 10)
+  );
   SizeButtons(BtnSize);
 end;
 

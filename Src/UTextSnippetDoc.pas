@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2009-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2009-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -23,7 +23,10 @@ uses
   // Delphi
   Classes,
   // Project
-  ActiveText.UMain, UEncodings, UIStringList, USnippetDoc;
+  CS.ActiveText,
+  UEncodings,
+  UIStringList,
+  USnippetDoc;
 
 
 type
@@ -49,12 +52,8 @@ type
   strict protected
     ///  <summary>Initialises plain text document.</summary>
     procedure InitialiseDoc; override;
-    ///  <summary>Adds given heading (i.e. snippet name) to document. Can be
-    ///  user defined or from main database.</summary>
-    ///  <remarks>Heading is output the same whether user defined or not, so
-    ///  UserDefined parameter is ignored.</remarks>
-    procedure RenderHeading(const Heading: string; const UserDefined: Boolean);
-      override;
+    ///  <summary>Adds given heading to document.</summary>
+    procedure RenderHeading(const Heading: string); override;
     ///  <summary>Interprets and adds given snippet description to document.
     ///  </summary>
     ///  <remarks>Active text is converted to word-wrapped plain text
@@ -72,14 +71,10 @@ type
     ///  document.</summary>
     procedure RenderCompilerInfo(const Heading: string;
       const Info: TCompileDocInfoArray); override;
-    ///  <summary>Interprets and adds given extra information to document.
-    ///  </summary>
+    ///  <summary>Interprets and adds given notes to document.</summary>
     ///  <remarks>Active text is converted to word-wrapped plain text
     ///  paragraphs.</remarks>
-    procedure RenderExtra(const ExtraText: IActiveText); override;
-    ///  <summary>Adds given information about code snippets database to
-    ///  document.</summary>
-    procedure RenderDBInfo(const Text: string); override;
+    procedure RenderNotes(const NotesText: IActiveText); override;
     ///  <summary>Finalises document and returns content as encoded data.
     ///  </summary>
     function FinaliseDoc: TEncodedData; override;
@@ -93,7 +88,9 @@ uses
   // Delphi
   SysUtils,
   // Project
-  ActiveText.UTextRenderer, UStrUtils;
+  CS.ActiveText.Renderers.PlainText,
+  UConsts,
+  UStrUtils;
 
 
 { TTextSnippetDoc }
@@ -112,27 +109,20 @@ end;
 procedure TTextSnippetDoc.RenderActiveText(ActiveText: IActiveText;
   const Indent: Cardinal; const SpaceParas: Boolean);
 var
-  Renderer: TActiveTextTextRenderer;
   Lines: TStringList;
 begin
-  Renderer := TActiveTextTextRenderer.Create;
+  Lines := TStringList.Create;
   try
-    Renderer.DisplayURLs := True;
-    Lines := TStringList.Create;
-    try
-      Lines.Text := Renderer.Render(ActiveText);
-      fWriter.WriteLine(
-        StrTrimRight(
-          StrWrap(
-            Lines, cPageWidth - Indent, Indent, True
-          )
-        )
-      );
-    finally
-      Lines.Free;
-    end;
+    Lines.Text := TActiveTextPlainTextRenderer.Render(
+      ActiveText, EOL, [ptrIgnoreInterBlockText, ptrIncludeURLs]
+    );
+    fWriter.WriteLine(
+      StrTrimRight(
+        StrWrap(Lines, cPageWidth - Indent, Indent, True)
+      )
+    );
   finally
-    Renderer.Free;
+    Lines.Free;
   end;
 end;
 
@@ -147,29 +137,22 @@ begin
     fWriter.WriteLine('%-20s%s', [Info[Idx].Compiler, Info[Idx].Result]);
 end;
 
-procedure TTextSnippetDoc.RenderDBInfo(const Text: string);
-begin
-  fWriter.WriteLine;
-  fWriter.WriteLine(StrWrap(Text, cPageWidth, 0));
-end;
-
 procedure TTextSnippetDoc.RenderDescription(const Desc: IActiveText);
 begin
   fWriter.WriteLine;
   RenderActiveText(Desc, 0, True);
 end;
 
-procedure TTextSnippetDoc.RenderExtra(const ExtraText: IActiveText);
-begin
-  Assert(not ExtraText.IsEmpty, ClassName + '.RenderExtra: ExtraText is empty');
-  fWriter.WriteLine;
-  RenderActiveText(ExtraText, 0, True);
-end;
-
-procedure TTextSnippetDoc.RenderHeading(const Heading: string;
-  const UserDefined: Boolean);
+procedure TTextSnippetDoc.RenderHeading(const Heading: string);
 begin
   fWriter.WriteLine(Heading);
+end;
+
+procedure TTextSnippetDoc.RenderNotes(const NotesText: IActiveText);
+begin
+  Assert(not NotesText.IsEmpty, ClassName + '.RenderNotes: NotesText is empty');
+  fWriter.WriteLine;
+  RenderActiveText(NotesText, 0, True);
 end;
 
 procedure TTextSnippetDoc.RenderSourceCode(const SourceCode: string);

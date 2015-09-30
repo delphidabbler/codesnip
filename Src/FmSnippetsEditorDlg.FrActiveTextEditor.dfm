@@ -37,11 +37,17 @@ object SnippetsActiveTextEdFrame: TSnippetsActiveTextEdFrame
     Top = 32
     object actConvertToPlainText: TAction
       Caption = 'Convert To Plain Text'
+      Hint = 
+        'Convert To Plain Text|Converts REML text into plain text, loosin' +
+        'g any formatting'
       OnExecute = actConvertToPlainTextExecute
       OnUpdate = actConvertToPlainTextUpdate
     end
     object actConvertToREML: TAction
       Caption = 'Convert To Markup'
+      Hint = 
+        'Convert To Markup|Converts the plain text into the equivalent RE' +
+        'ML markup'
       OnExecute = actConvertToREMLExecute
       OnUpdate = actConvertToREMLUpdate
     end
@@ -66,7 +72,7 @@ object SnippetsActiveTextEdFrame: TSnippetsActiveTextEdFrame
     object actSelectAll: TEditSelectAll
       Category = 'Edit'
       Caption = 'Select &All'
-      Hint = 'Select All|Selects the entire document'
+      Hint = 'Select All|Selects all the text'
       ShortCut = 16449
     end
     object actUndo: TEditUndo

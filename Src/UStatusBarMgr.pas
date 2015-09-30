@@ -21,7 +21,9 @@ interface
 
 uses
   // Delphi
-  Windows, Graphics, ComCtrls;
+  Windows,
+  Graphics,
+  ComCtrls;
 
 
 type
@@ -38,16 +40,16 @@ type
       fSearchGlyph: TBitmap;
         {Stores reference to glyph used to indicate kind of latest search}
       fModifiedGlyph: TBitmap;
-        {Stores glyph displayed when user database has been modified}
+        {Stores glyph displayed when database has been modified}
       fSearchInfoVisible: Boolean;
         {Flag noting whether search information is to be displayed or not}
-      fUserDBInfoVisible: Boolean;
-        {Flag noting whether user database modification indicator is displayed}
+      fModificationIndicatorVisible: Boolean;
+        {Flag noting whether database modification indicator is displayed}
     const
-      cDBPanel = 0;             // index of database info panel
-      cSearchPanel = 1;         // index of search info panel
-      cUserPanel = 2;           // index of user-defined database info panel
-      cSimplePanel = cDBPanel;  // index of simple message panel
+      StatsPanelIdx = 0;              // index of database statistics panel
+      SearchPanelIDx = 1;             // index of search info panel
+      ModificationPanelIDx = 2;       // index database modification info panel
+      SimplePanelIDx = StatsPanelIDx; // index of simple message panel
     procedure DrawPanel(StatusBar: TStatusBar; Panel: TStatusPanel;
       const Rect: TRect);
       {Handles status bar's OnDrawPanel event called whenever an owner-draw
@@ -65,11 +67,11 @@ type
     procedure HideSearchInfo;
       {Prevents search information from being displayed in status bar.
       }
-    procedure ShowUserDBInfo;
-      {Displays information about state of user defined database.
+    procedure ShowModificationInfo;
+      {Displays database modification information in status bar.
       }
-    procedure HideUserDBInfo;
-      {Prevents user defined database information from being displayed in status
+    procedure HideModificationInfo;
+      {Prevents database modification information from being displayed in status
       bar.
       }
   public
@@ -107,9 +109,9 @@ implementation
     database.
   + Panel[1]: Displays information about latest search. A glyph indicating
     search type is displayed.
-  + Panel[2]: Displays a modification flag and glyph if user defined database
-    has been modified since last save. Nothing is displayed when database is
-    not modified.
+  + Panel[2]: Displays a modification flag and glyph if snippets database has
+    been modified since last save. Nothing is displayed when database is not
+    modified.
 
   The status bar is also used to display hints when the mouse passes over
   various UI elements. This is done by switching the status bar into SimplePanel
@@ -121,9 +123,13 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Forms,
+  SysUtils,
+  Forms,
   // Project
-  DB.UMain, UQuery, USearch, UStructs;
+  DB.UMain,
+  UQuery,
+  USearch,
+  UStructs;
 
 
 { TStatusBarMgr }
@@ -133,13 +139,13 @@ constructor TStatusBarMgr.Create(const SB: TStatusBar);
     @param SB [in] Status bar to be managed.
   }
 resourcestring
-  // Message displayed when user database has been modified
+  // Message displayed when database has been modified
   sModified = 'Modified';
 begin
   Assert(Assigned(SB), ClassName + '.Create: SB is nil');
   inherited Create;
-  fSearchInfoVisible := False;  // we don't display search info by default
-  fUserDBInfoVisible := False;  // we don't display modified flag by default
+  fSearchInfoVisible := False;
+  fModificationIndicatorVisible := False;
   fSearchGlyph := TBitmap.Create;
   fModifiedGlyph := TBitmap.Create;
   fModifiedGlyph.LoadFromResourceName(HInstance, 'MODIFIED');
@@ -147,20 +153,20 @@ begin
   fStatusBar := SB;
   // Ensure auto-hinting is switched off
   fStatusBar.AutoHint := False;
-  // Enable owner drawing for second panel in status bar
+  // Enable owner drawing
   fStatusBar.OnDrawPanel := DrawPanel;
-  fStatusBar.Panels[cDBPanel].Style := psOwnerDraw;
-  fStatusBar.Panels[cSearchPanel].Style := psOwnerDraw;
-  fStatusBar.Panels[cUserPanel].Style := psOwnerDraw;
-  fStatusBar.Panels[cUserPanel].Text := sModified;
+  fStatusBar.Panels[StatsPanelIdx].Style := psOwnerDraw;
+  fStatusBar.Panels[SearchPanelIdx].Style := psOwnerDraw;
+  fStatusBar.Panels[ModificationPanelIdx].Style := psOwnerDraw;
+  fStatusBar.Panels[ModificationPanelIdx].Text := sModified;
 end;
 
 destructor TStatusBarMgr.Destroy;
   {Class destructor. Tears down object.
   }
 begin
-  FreeAndNil(fModifiedGlyph);
-  FreeAndNil(fSearchGlyph);
+  fModifiedGlyph.Free;
+  fSearchGlyph.Free;
   inherited;
 end;
 
@@ -226,9 +232,9 @@ begin
   // Clear the panel
   StatusBar.Canvas.FillRect(Rect);
   case Panel.ID of
-    cDBPanel:
+    StatsPanelIdx:
       DrawTextInPanel(2, 2, Panel.Text);
-    cSearchPanel:
+    SearchPanelIdx:
     begin
       // We do nothing else if there's no glyph or search info not to be shown
       if not Assigned(fSearchGlyph) or not fSearchInfoVisible then
@@ -236,15 +242,28 @@ begin
       DrawGlyphInPanel(fSearchGlyph, clFuchsia);
       DrawTextInPanel(fSearchGlyph.Width + 6, 0, Panel.Text);
     end;
-    cUserPanel:
+    ModificationPanelIdx:
     begin
-      // We do nothing else if there's no glyph or user db info not to be shown
-      if not Assigned(fModifiedGlyph) or not fUserDBInfoVisible then
+      // We do nothing else if there's no glyph or database info not to be shown
+      if not Assigned(fModifiedGlyph) or not fModificationIndicatorVisible then
         Exit;
       DrawGlyphInPanel(fModifiedGlyph, clWhite);
       DrawTextInPanel(fModifiedGlyph.Width + 6, 12, Panel.Text);
     end;
   end;
+end;
+
+procedure TStatusBarMgr.HideModificationInfo;
+  {Prevents database modification information from being displayed in status
+  bar.
+  }
+begin
+  // This method does not directly hide the information, but flags that it
+  // should be hidden then causes the status bar to update itself using stored
+  // data. The DrawPanel method is called by the status bar to draw the required
+  // panel.
+  fModificationIndicatorVisible := False;
+  fStatusBar.Repaint;
 end;
 
 procedure TStatusBarMgr.HideSearchInfo;
@@ -256,19 +275,6 @@ begin
   // data. The DrawPanel method is called by the status bar to draw the required
   // panel.
   fSearchInfoVisible := False;
-  fStatusBar.Repaint;
-end;
-
-procedure TStatusBarMgr.HideUserDBInfo;
-  {Prevents user defined database information from being displayed in status
-  bar.
-  }
-begin
-  // This method does not directly hide the information, but flags that it
-  // should be hidden then causes the status bar to update itself using stored
-  // data. The DrawPanel method is called by the status bar to draw the required
-  // panel.
-  fUserDBInfoVisible := False;
   fStatusBar.Repaint;
 end;
 
@@ -295,6 +301,17 @@ begin
   Application.ProcessMessages;
 end;
 
+procedure TStatusBarMgr.ShowModificationInfo;
+  {Displays database modification information in status bar.
+  }
+begin
+  // This method does not directly display the information, but records whether
+  // panel needs to be drawn or hidden. The DrawPanel method is called by the
+  // status bar to draw the panel.
+  fModificationIndicatorVisible := Database.IsDirty;
+  fStatusBar.Repaint;
+end;
+
 procedure TStatusBarMgr.ShowSearchInfo;
   {Causes information about a search to be displayed in status bar.
   }
@@ -314,12 +331,12 @@ begin
 
   // Store text describing search result
   if Query.LatestSearch.Filter.IsNull then
-    fStatusBar.Panels[cSearchPanel].Text := sNoSearch
+    fStatusBar.Panels[SearchPanelIdx].Text := sNoSearch
   else
   begin
     SelectionCount := Query.Selection.Count;
-    fStatusBar.Panels[cSearchPanel].Text
-      := Format(SearchActiveStr[SelectionCount <> 1], [Query.Selection.Count]);
+    fStatusBar.Panels[SearchPanelIdx].Text
+      := Format(SearchActiveStr[SelectionCount <> 1], [SelectionCount]);
   end;
   // Store glyph that indicates latest search type
   fSearchGlyph.Assign((Query.LatestSearch.Filter as ISearchUIInfo).Glyph);
@@ -336,11 +353,11 @@ procedure TStatusBarMgr.ShowSimpleMessage(const Msg: string);
   }
 begin
   // Set first panel of status bar to message and force repaint
-  fStatusBar.Panels[cSimplePanel].Text := Msg;
+  fStatusBar.Panels[SimplePanelIdx].Text := Msg;
   Application.ProcessMessages;
   // Hide any info displayed in other panels
   HideSearchInfo;
-  HideUserDBInfo;
+  HideModificationInfo;
 end;
 
 procedure TStatusBarMgr.ShowSnippetsInfo;
@@ -348,43 +365,20 @@ procedure TStatusBarMgr.ShowSnippetsInfo;
   }
 var
   TotalSnippets: Integer;     // number of snippets in database
-  TotalUserSnippets: Integer; // number of snippets in user database
-  TotalMainSnippets: Integer; // number of snippets in main database
 resourcestring
   // status bar message strings
   sSnippet = 'snippet';
   sSnippets = 'snippets';
-  sStats = '%0:d %1:s (%2:d main / %3:d user defined)';
+  sStats = '%0:d %1:s';
 const
   SnippetsStr: array[Boolean] of string = (sSnippet, sSnippets);
 begin
   // Calculate database stats
-  TotalSnippets := Database.Snippets.Count;
-  TotalUserSnippets := Database.Snippets.Count(True);
-  TotalMainSnippets := TotalSnippets - TotalUserSnippets;
+  TotalSnippets := Database.SnippetCount;
   // Build display text and display it
-  fStatusBar.Panels[cDBPanel].Text := Format(
-    sStats,
-    [
-      TotalSnippets,
-      SnippetsStr[TotalSnippets <> 1],
-      TotalMainSnippets,
-      TotalUserSnippets
-    ]
+  fStatusBar.Panels[StatsPanelIdx].Text := Format(
+    sStats, [TotalSnippets, SnippetsStr[TotalSnippets <> 1]]
   );
-end;
-
-procedure TStatusBarMgr.ShowUserDBInfo;
-  {Displays information about state of user defined database.
-  }
-begin
-  // This method does not directly display the information, but records whether
-  // panel needs to be drawn or hidden. The DrawPanel method is called by the
-  // status bar to draw the panel.
-
-  // We hide message if database not updated
-  fUserDBInfoVisible := (Database as IDatabaseEdit).Updated;
-  fStatusBar.Repaint;
 end;
 
 procedure TStatusBarMgr.Update;
@@ -392,7 +386,7 @@ procedure TStatusBarMgr.Update;
   }
 begin
   ShowSnippetsInfo;
-  ShowUserDBInfo;
+  ShowModificationInfo;
   ShowSearchInfo;
 end;
 

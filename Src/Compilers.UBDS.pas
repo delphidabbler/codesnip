@@ -123,9 +123,7 @@ end;
 function TBDSCompiler.GetIDString: string;
 begin
   case GetID of
-    ciD2005w32, ciD2006w32, ciD2009w32:
-      Result := Format('D%dw32', [ProductVersion]);
-    ciD2007, ciD2010:
+    ciD2005, ciD2006, ciD2007, ciD2009, ciD2010:
       Result := Format('D%d', [ProductVersion]);
     ciDXE:
       Result := 'DXE';
@@ -145,14 +143,13 @@ begin
       Result := 'DXE8';
     ciD10S:
       Result := 'D10S';
-    else
-      raise EBug.Create(ClassName + '.GetIDString: Invalid ID');
+    else raise EBug.Create(ClassName + '.GetIDString: Invalid ID');
   end;
 end;
 
 function TBDSCompiler.GetName: string;
 resourcestring
-  sCompilerName = 'Delphi %d';      // template for name of compiler
+  sCompilerName = 'Delphi %d';      // template for Delpi 2005-2010 names
   sDelphiXE = 'Delphi XE';          // name of Delphi XE compiler
   sDelphiXE2 = 'Delphi XE2';        // name of Delphi XE2 compiler
   sDelphiXE3 = 'Delphi XE3';        // name of Delphi XE3 compiler
@@ -161,7 +158,7 @@ resourcestring
   sDelphiXE6 = 'Delphi XE6';        // name of Delphi XE6 compiler
   sDelphiXE7 = 'Delphi XE7';        // name of Delphi XE7 compiler
   sDelphiXE8 = 'Delphi XE8';        // name of Delphi XE8 compiler
-  sDelphi10S = 'Delphi 10 Seattle'; // name of Delphi 10 compiler
+  sDelphi10S = 'Delphi 10 Seattle'; // name of Delphi 10 Seattle compiler
 begin
   case GetID of
     ciDXE:
@@ -197,20 +194,20 @@ end;
 function TBDSCompiler.InstallationRegKey: string;
 begin
   case GetID of
-    ciD2005w32: Result := '\SOFTWARE\Borland\BDS\3.0';
-    ciD2006w32: Result := '\SOFTWARE\Borland\BDS\4.0';
-    ciD2007   : Result := '\SOFTWARE\Borland\BDS\5.0';
-    ciD2009w32: Result := '\SOFTWARE\CodeGear\BDS\6.0';
-    ciD2010   : Result := '\SOFTWARE\CodeGear\BDS\7.0';
-    ciDXE     : Result := '\Software\Embarcadero\BDS\8.0';
-    ciDXE2    : Result := '\Software\Embarcadero\BDS\9.0';
-    ciDXE3    : Result := '\Software\Embarcadero\BDS\10.0';
-    ciDXE4    : Result := '\Software\Embarcadero\BDS\11.0';
-    ciDXE5    : Result := '\Software\Embarcadero\BDS\12.0';
-    ciDXE6    : Result := '\Software\Embarcadero\BDS\14.0';
-    ciDXE7    : Result := '\Software\Embarcadero\BDS\15.0';
-    ciDXE8    : Result := '\Software\Embarcadero\BDS\16.0';
-    ciD10S    : Result := '\Software\Embarcadero\BDS\17.0';
+    ciD2005: Result := '\SOFTWARE\Borland\BDS\3.0';
+    ciD2006: Result := '\SOFTWARE\Borland\BDS\4.0';
+    ciD2007: Result := '\SOFTWARE\Borland\BDS\5.0';
+    ciD2009: Result := '\SOFTWARE\CodeGear\BDS\6.0';
+    ciD2010: Result := '\SOFTWARE\CodeGear\BDS\7.0';
+    ciDXE  : Result := '\Software\Embarcadero\BDS\8.0';
+    ciDXE2 : Result := '\Software\Embarcadero\BDS\9.0';
+    ciDXE3 : Result := '\Software\Embarcadero\BDS\10.0';
+    ciDXE4 : Result := '\Software\Embarcadero\BDS\11.0';
+    ciDXE5 : Result := '\Software\Embarcadero\BDS\12.0';
+    ciDXE6 : Result := '\Software\Embarcadero\BDS\14.0';
+    ciDXE7 : Result := '\Software\Embarcadero\BDS\15.0';
+    ciDXE8 : Result := '\Software\Embarcadero\BDS\16.0';
+    ciD10S : Result := '\Software\Embarcadero\BDS\17.0';
     else raise EBug.Create(ClassName + '.InstallationRegKey: Invalid ID');
   end;
 end;
@@ -222,7 +219,7 @@ begin
   if not RequiresRTLNamespaces then
     Exit('');
   Namespaces := TIStringList.Create(fRTLNamespaces, ' ', False, True);
-  if Namespaces.Count = 0 then
+  if Namespaces.IsEmpty then
     Exit('');
   Result := '-NS' + Namespaces.GetText(';', False);
 end;
@@ -230,20 +227,18 @@ end;
 function TBDSCompiler.ProductVersion: Integer;
 begin
   case GetID of
-    ciD2005w32: Result := 2005;
-    ciD2006w32: Result := 2006;
-    ciD2007:    Result := 2007;
-    ciD2009w32: Result := 2009;
-    ciD2010:    Result := 2010;
-    else        Result := 0;      // not used for Delphi XE and later
+    ciD2005: Result := 2005;
+    ciD2006: Result := 2006;
+    ciD2007: Result := 2007;
+    ciD2009: Result := 2009;
+    ciD2010: Result := 2010;
+    else     Result := 0;      // not used for Delphi XE and later
   end;
 end;
 
 function TBDSCompiler.RequiresRTLNamespaces: Boolean;
 begin
-  Result := not (
-    GetID in [ciD2005w32, ciD2006w32, ciD2007, ciD2009w32, ciD2010, ciDXE]
-  );
+  Result := not (GetID in [ciD2005, ciD2006, ciD2007, ciD2009, ciD2010, ciDXE]);
 end;
 
 procedure TBDSCompiler.SetRTLNamespaces(const Namespaces: string);

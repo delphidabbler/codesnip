@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2005-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -110,11 +110,24 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Graphics, Menus,
+  SysUtils,
+  Graphics,
+  Menus,
   // Project
-  ActiveText.UHTMLRenderer, Browser.UHighlighter, Hiliter.UAttrs, Hiliter.UCSS,
-  Hiliter.UGlobals, UColours, UCSSUtils, UFontHelper, UPreferences, UQuery,
-  USystemInfo, UUtils, UWBCommandBars;
+  CS.Config,
+  CS.SourceCode.Languages,
+  CS.SourceCode.Hiliter.Brushes,
+  CS.SourceCode.Hiliter.Renderers.CSS,
+  CS.SourceCode.Hiliter.Themes,
+  Browser.UHighlighter,
+  UColours,
+  UCSSUtils,
+  UFontHelper,
+  UPreferences,
+  UQuery,
+  USystemInfo,
+  UUtils,
+  UWBCommandBars;
 
 {$R *.dfm}
 
@@ -122,8 +135,8 @@ uses
 
 procedure TDetailViewFrame.BuildCSS(const CSSBuilder: TCSSBuilder);
 var
-  HiliteAttrs: IHiliteAttrs;  // syntax highlighter used to build CSS
-  CSSFont: TFont;             // font used to set CSS properties
+  HiliteTheme: TSyntaxHiliteTheme;  // syntax highlighter theme used build CSS
+  CSSFont: TFont;                   // font used to set CSS properties
 begin
   // NOTE:
   // We only set CSS properties that may need to use system colours or fonts
@@ -183,10 +196,6 @@ begin
     // Style of box that appears around clickable options (or actions)
     with CSSBuilder.AddSelector('.optionbox') do
       AddProperty(TCSS.BorderProp(cssAll, 1, cbsSolid, clBorder));
-    with CSSBuilder.AddSelector('.userdb') do
-      AddProperty(TCSS.ColorProp(Preferences.DBHeadingColours[True]));
-    with CSSBuilder.AddSelector('.maindb') do
-      AddProperty(TCSS.ColorProp(Preferences.DBHeadingColours[False]));
     // Sets CSS for style of New Tab text
     with CSSBuilder.AddSelector('#newtab') do
     begin
@@ -195,15 +204,18 @@ begin
       CSSFont.Color := clNewTabText;
       AddProperty(TCSS.FontProps(CSSFont));
     end;
-    // Sets text styles and colours used by syntax highlighter
-    HiliteAttrs := THiliteAttrsFactory.CreateUserAttrs;
-    with THiliterCSS.Create(HiliteAttrs) do
+    // Sets CSS required to style using any highlighter brush in current
+    // highlighter theme
+    HiliteTheme := TConfig.Instance.HiliterThemes[
+      Preferences.CurrentHiliteThemeIds[htkUI]
+    ];
+    with THiliterCSS.Create(HiliteTheme) do
       try
-        BuildCSS(CSSBuilder);
+        BuildThemeCSS(CSSBuilder);
       finally
         Free;
       end;
-    // Adjust .pas-source class to use required background colour
+    // Adjust main highlighter CSS class to use required background colour
     with CSSBuilder.Selectors['.' + THiliterCSS.GetMainCSSClassName] do
     begin
       AddProperty(TCSS.BackgroundColorProp(Preferences.SourceCodeBGcolour));
@@ -303,13 +315,13 @@ begin
   // Create and configure highlighter object
   Highlighter := TWBHighlighter.Create(wbBrowser);
   try
-    // only a snippet's description and source code are included in a text
-    // search. These sections are enclosed in tags with ids 'description',
-    // 'sourcecode' and 'extra' respectively in the document's HTML so we
+    // only a snippet's description, notes and source code are included in a
+    // text search. These sections are enclosed in tags with ids 'description',
+    // 'notes' and 'sourcecode' respectively in the document's HTML so we
     // restrict highlighting to these sections
     Highlighter.SearchSectionIDs.Add('description');
+    Highlighter.SearchSectionIDs.Add('notes');
     Highlighter.SearchSectionIDs.Add('sourcecode');
-    Highlighter.SearchSectionIDs.Add('extra');
     Highlighter.HighlightSearchResults(Filter);
   finally
     Highlighter.Free;

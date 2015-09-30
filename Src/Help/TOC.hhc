@@ -78,10 +78,6 @@
       <param name="Local" value="HTML\menu_snippets.htm">
       </OBJECT>
     <LI> <OBJECT type="text/sitemap">
-      <param name="Name" value="Categories Menu">
-      <param name="Local" value="HTML\menu_categories.htm">
-      </OBJECT>
-    <LI> <OBJECT type="text/sitemap">
       <param name="Name" value="Database Menu">
       <param name="Local" value="HTML\menu_database.htm">
       </OBJECT>
@@ -174,7 +170,7 @@
       <param name="Local" value="HTML\snippet_unit.htm">
       </OBJECT>
     <LI> <OBJECT type="text/sitemap">
-      <param name="Name" value="Freeform">
+      <param name="Name" value="Free-form">
       <param name="Local" value="HTML\snippet_freeform.htm">
       </OBJECT>
   </UL>

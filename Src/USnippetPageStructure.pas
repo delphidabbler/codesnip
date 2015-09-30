@@ -18,8 +18,15 @@ unit USnippetPageStructure;
 interface
 
 uses
+  // Delphi
   Generics.Collections,
-  DB.USnippetKind, IntfCommon, UBaseObjects, UContainers, USettings, USingleton;
+  // Project
+  CS.Database.Types,
+  IntfCommon,
+  UBaseObjects,
+  UContainers,
+  USettings,
+  USingleton;
 
 type
 
@@ -28,12 +35,13 @@ type
     sppDescription,
     sppSourceCode,
     sppKind,
-    sppCategory,
+    sppTags,
     sppUnits,
     sppDepends,
     sppXRefs,
     sppCompileResults,
-    sppExtra
+    sppNotes,
+    sppLanguage
   );
 
 type
@@ -55,10 +63,10 @@ type
   strict private
     var
       fParts: TList<TSnippetPagePart>;
-      fKind: TSnippetKind;
+      fSnippetKindID: TSnippetKindID;
     function GetParts: TArray<TSnippetPagePart>;
   public
-    constructor Create(Kind: TSnippetKind);
+    constructor Create(ASnippetKindID: TSnippetKindID);
     destructor Destroy; override;
     procedure Clear;
     function AppendPart(PartId: TSnippetPagePartId): Integer;
@@ -68,7 +76,7 @@ type
     procedure DeletePart(Idx: Integer);
     procedure Assign(const Src: TSnippetPageStructure);
     function IsEmpty: Boolean;
-    property Kind: TSnippetKind read fKind;
+    property SnippetKindID: TSnippetKindID read fSnippetKindID;
     property Parts: TArray<TSnippetPagePart> read GetParts;
     function HasPart(PartId: TSnippetPagePartId): Boolean;
   end;
@@ -79,9 +87,9 @@ type
   TSnippetPageStructures = class(TObject)
   strict private
     var
-      fPages: array[TSnippetKind] of TSnippetPageStructure;
+      fPages: array[TSnippetKindID] of TSnippetPageStructure;
     function GetPages: TArray<TSnippetPageStructure>;
-    function GetPage(Kind: TSnippetKind): TSnippetPageStructure;
+    function GetPage(ASnippetKindID: TSnippetKindID): TSnippetPageStructure;
   public
     constructor Create;
     destructor Destroy; override;
@@ -89,7 +97,7 @@ type
     ///  to this object.</summary>
     procedure Assign(const Src: TSnippetPageStructures);
     function GetEnumerator: TArrayEnumerator<TSnippetPageStructure>;
-    property Pages[Kind: TSnippetKind]: TSnippetPageStructure
+    property Pages[SnippetKindID: TSnippetKindID]: TSnippetPageStructure
       read GetPage; default;
   end;
 
@@ -113,7 +121,8 @@ type
 type
   TDefaultPageStructures = class(TNoConstructObject)
   public
-    class function GetParts(Kind: TSnippetKind): TArray<TSnippetPagePartId>;
+    class function GetParts(ASnippetKindID: TSnippetKindID):
+      TArray<TSnippetPagePartId>;
     class procedure SetDefaults(PS: TSnippetPageStructures);
   end;
 
@@ -158,7 +167,7 @@ begin
   Assert(Assigned(Src), ClassName + '.Assign: Src is nil');
   Clear;
   fParts.AddRange(Src.fParts);
-  fKind := Src.fKind;
+  fSnippetKindID := Src.fSnippetKindID;
 end;
 
 procedure TSnippetPageStructure.Clear;
@@ -166,10 +175,10 @@ begin
   fParts.Clear;
 end;
 
-constructor TSnippetPageStructure.Create(Kind: TSnippetKind);
+constructor TSnippetPageStructure.Create(ASnippetKindID: TSnippetKindID);
 begin
   inherited Create;
-  fKind := Kind;
+  fSnippetKindID := ASnippetKindID;
   fParts := TList<TSnippetPagePart>.Create;
 end;
 
@@ -219,28 +228,28 @@ end;
 
 procedure TSnippetPageStructures.Assign(const Src: TSnippetPageStructures);
 var
-  Kind: TSnippetKind;
+  SnippetKindID: TSnippetKindID;
 begin
   Assert(Assigned(Src), ClassName + '.Assign: Src is nil');
-  for Kind := Low(TSnippetKind) to High(TSnippetKind) do
-    fPages[Kind].Assign(Src.fPages[Kind]);
+  for SnippetKindID := Low(TSnippetKindID) to High(TSnippetKindID) do
+    fPages[SnippetKindID].Assign(Src.fPages[SnippetKindID]);
 end;
 
 constructor TSnippetPageStructures.Create;
 var
-  Kind: TSnippetKind;
+  SnippetKindID: TSnippetKindID;
 begin
   inherited Create;
-  for Kind := Low(TSnippetKind) to High(TSnippetKind) do
-    fPages[Kind] := TSnippetPageStructure.Create(Kind);
+  for SnippetKindID := Low(TSnippetKindID) to High(TSnippetKindID) do
+    fPages[SnippetKindID] := TSnippetPageStructure.Create(SnippetKindID);
 end;
 
 destructor TSnippetPageStructures.Destroy;
 var
-  Kind: TSnippetKind;
+  SnippetKindID: TSnippetKindID;
 begin
-  for Kind := Low(TSnippetKind) to High(TSnippetKind) do
-    fPages[Kind].Free;
+  for SnippetKindID := Low(TSnippetKindID) to High(TSnippetKindID) do
+    fPages[SnippetKindID].Free;
   inherited;
 end;
 
@@ -250,10 +259,10 @@ begin
   Result := TArrayEnumerator<TSnippetPageStructure>.Create(GetPages);
 end;
 
-function TSnippetPageStructures.GetPage(
-  Kind: TSnippetKind): TSnippetPageStructure;
+function TSnippetPageStructures.GetPage(ASnippetKindID: TSnippetKindID):
+  TSnippetPageStructure;
 begin
-  Result := fPages[Kind];
+  Result := fPages[ASnippetKindID];
 end;
 
 function TSnippetPageStructures.GetPages: TArray<TSnippetPageStructure>;
@@ -275,7 +284,7 @@ end;
 class function TSnippetPageStructuresPersist.KindValueName(
   const Page: TSnippetPageStructure): string;
 begin
-  Result := Format('PageKind%d', [Ord(Page.Kind)]);
+  Result := Format('PageKind%d', [Ord(Page.SnippetKindID)]);
 end;
 
 class procedure TSnippetPageStructuresPersist.Load(Storage: ISettingsSection;
@@ -309,7 +318,7 @@ begin
     PartIds := ParsePartsStr(Storage.GetString(KindValueName(Page)));
     Page.AppendParts(PartIds);
     if Page.IsEmpty then
-      Page.AppendParts(TDefaultPageStructures.GetParts(Page.Kind));
+      Page.AppendParts(TDefaultPageStructures.GetParts(Page.SnippetKindID));
   end;
 end;
 
@@ -351,12 +360,13 @@ resourcestring
   sDescription = 'Description';
   sSourceCode = 'Source Code';
   sKind = 'Type';
-  sCategory = 'Category';
+  sTags = 'Tags';
   sUnits = 'Required Units List';
   sDepends = 'Required Snippets List';
   sXRefs = 'Cross Reference List';
   sCompileResults = 'Compile Results Table';
-  sExtra = 'Extra Information';
+  sNotes = 'Notes';
+  sLanguage = 'Programming Language';
 
 class constructor TAllSnippetPageParts.Create;
 var
@@ -371,8 +381,8 @@ begin
   fParts[sppKind] := TSnippetPagePart.Create(
     sppKind, 'Kind', sKind
   );
-  fParts[sppCategory] := TSnippetPagePart.Create(
-    sppCategory, 'Category', sCategory
+  fParts[sppTags] := TSnippetPagePart.Create(
+    sppTags, 'Tags', sTags
   );
   fParts[sppUnits] := TSnippetPagePart.Create(
     sppUnits, 'Units', sUnits
@@ -386,8 +396,11 @@ begin
   fParts[sppCompileResults] := TSnippetPagePart.Create(
     sppCompileResults, 'CompileResults', sCompileResults
   );
-  fParts[sppExtra] := TSnippetPagePart.Create(
-    sppExtra, 'ExtraInfo', sExtra
+  fParts[sppNotes] := TSnippetPagePart.Create(
+    sppNotes, 'Notes', sNotes
+  );
+  fParts[sppLanguage] := TSnippetPagePart.Create(
+    sppLanguage, 'Language', sLanguage
   );
   for Part in fParts do
     Assert(Part.DisplayName <> '',
@@ -418,24 +431,24 @@ end;
 
 { TDefaultPageStructures }
 
-class function TDefaultPageStructures.GetParts(Kind: TSnippetKind):
+class function TDefaultPageStructures.GetParts(ASnippetKindID: TSnippetKindID):
   TArray<TSnippetPagePartId>;
 begin
-  case Kind of
+  case ASnippetKindID of
     skFreeform:
       Result := TArray<TSnippetPagePartId>.Create(
-        sppDescription, sppSourceCode, sppKind, sppCategory, sppUnits,
-        sppDepends, sppXRefs, sppExtra
+        sppDescription, sppSourceCode, sppLanguage, sppKind, sppTags, sppUnits,
+        sppDepends, sppXRefs, sppNotes
       );
     skUnit:
       Result := TArray<TSnippetPagePartId>.Create(
-        sppDescription, sppSourceCode, sppKind, sppCategory, sppXRefs,
-        sppCompileResults, sppExtra
+        sppDescription, sppSourceCode, sppLanguage, sppKind, sppTags, sppXRefs,
+        sppCompileResults, sppNotes
       );
     else
       Result := TArray<TSnippetPagePartId>.Create(
-        sppDescription, sppSourceCode, sppKind, sppCategory, sppUnits,
-        sppDepends, sppXRefs, sppCompileResults, sppExtra
+        sppDescription, sppSourceCode, sppLanguage, sppKind, sppTags, sppUnits,
+        sppDepends, sppXRefs, sppCompileResults, sppNotes
       );
   end;
 end;
@@ -447,7 +460,7 @@ begin
   for Page in PS do
   begin
     Page.Clear;
-    Page.AppendParts(GetParts(Page.Kind));
+    Page.AppendParts(GetParts(Page.SnippetKindID));
   end;
 end;
 

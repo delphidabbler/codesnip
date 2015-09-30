@@ -20,7 +20,8 @@ interface
 
 uses
   // Delphi
-  Classes, ActnList,
+  Classes,
+  ActnList,
   // Project
   UBaseObjects;
 
@@ -73,13 +74,6 @@ type
         @param OnExecHandler [in] Handler for action's OnExecute event.
         @return Reference to newly created action.
       }
-    class function CreateCategoryAction(const AOwner: TComponent;
-      const OnExecHandler: TNotifyEvent = nil): TBasicAction;
-      {Creates a Category action and sets OnExecute handler if provided.
-        @param AOwner [in] Owner of action.
-        @param OnExecHandler [in] Handler for action's OnExecute event.
-        @return Reference to newly created action.
-      }
     class function CreateDetailTabAction(const AOwner: TComponent;
       const OnExecHandler: TNotifyEvent = nil): TBasicAction;
       {Creates a Detail Pane Tab Selection action and sets OnExecute handler if
@@ -96,6 +90,37 @@ type
         @param OnExecHandler [in] Handler for action's OnExecute event.
         @return Reference to newly created action.
       }
+    class function CreateDisplayTagAction(const AOwner: TComponent;
+      const OnExecHandler: TNotifyEvent = nil): TBasicAction;
+      {Creates a Display Tag action and sets OnExecute handler if provided.
+        @param AOwner [in] Owner of action.
+        @param OnExecHandler [in] Handler for action's OnExecute event.
+        @return Reference to newly created action.
+      }
+    class function CreateRemoveTagAction(const AOwner: TComponent;
+      const OnExecHandler: TNotifyEvent = nil): TBasicAction;
+      {Creates a Remove Tag action and sets OnExecute handler if provided.
+        @param AOwner [in] Owner of action.
+        @param OnExecHandler [in] Handler for action's OnExecute event.
+        @return Reference to newly created action.
+      }
+    class function CreateDisplayLanguageAction(const AOwner: TComponent;
+      const OnExecHandler: TNotifyEvent = nil): TBasicAction;
+      {Creates a Display Language action and sets OnExecute handler if provided.
+        @param AOwner [in] Owner of action.
+        @param OnExecHandler [in] Handler for action's OnExecute event.
+        @return Reference to newly created action.
+      }
+// TODO: remove OnExecHandler - never called by this action
+// TODO: check for other actions that don't call OnExecHandler and remove param
+    class function CreateChangeSnippetStarAction(const AOwner: TComponent;
+      const OnExecHandler: TNotifyEvent = nil): TBasicAction;
+      {Creates a Change Snippet Star action and sets OnExecute handler if
+      provided.
+        @param AOwner [in] Owner of action.
+        @param OnExecHandler [in] Handler for action's OnExecute event.
+        @return Reference to newly created action.
+      }
   end;
 
 
@@ -106,8 +131,16 @@ uses
   // Delphi
   StdActns,
   // Project
-  UCategoryAction, UDetailTabAction, UEditSnippetAction, ULinkAction,
-  UShowPrefsPageAction, USnippetAction, UViewItemAction;
+  CS.Actions.ChangeSnippetStar,
+  CS.Actions.DisplayLanguage,
+  CS.Actions.DisplayTag,
+  CS.Actions.RemoveTag,
+  UDetailTabAction,
+  UEditSnippetAction,
+  ULinkAction,
+  UShowPrefsPageAction,
+  USnippetAction,
+  UViewItemAction;
 
 
 { TActionFactory }
@@ -126,15 +159,15 @@ begin
   Result.OnExecute := OnExecHandler;
 end;
 
-class function TActionFactory.CreateCategoryAction(const AOwner: TComponent;
-  const OnExecHandler: TNotifyEvent): TBasicAction;
-  {Creates a Category action and sets OnExecute handler if provided.
+class function TActionFactory.CreateChangeSnippetStarAction(
+  const AOwner: TComponent; const OnExecHandler: TNotifyEvent): TBasicAction;
+  {Creates a Change Snippet Star action and sets OnExecute handler if provided.
     @param AOwner [in] Owner of action.
     @param OnExecHandler [in] Handler for action's OnExecute event.
     @return Reference to newly created action.
   }
 begin
-  Result := CreateAction(TCategoryAction, AOwner, OnExecHandler);
+  Result := CreateAction(TChangeSnippetStarAction, AOwner, OnExecHandler);
 end;
 
 class function TActionFactory.CreateDetailTabAction(const AOwner: TComponent;
@@ -147,6 +180,28 @@ class function TActionFactory.CreateDetailTabAction(const AOwner: TComponent;
   }
 begin
   Result := CreateAction(TDetailTabAction, AOwner, OnExecHandler);
+end;
+
+class function TActionFactory.CreateDisplayLanguageAction(
+  const AOwner: TComponent; const OnExecHandler: TNotifyEvent): TBasicAction;
+  {Creates a Display Language action and sets OnExecute handler if provided.
+    @param AOwner [in] Owner of action.
+    @param OnExecHandler [in] Handler for action's OnExecute event.
+    @return Reference to newly created action.
+  }
+begin
+  Result := CreateAction(TDisplayLanguageAction, AOwner, OnExecHandler);
+end;
+
+class function TActionFactory.CreateDisplayTagAction(const AOwner: TComponent;
+  const OnExecHandler: TNotifyEvent): TBasicAction;
+  {Creates a Display Tag action and sets OnExecute handler if provided.
+    @param AOwner [in] Owner of action.
+    @param OnExecHandler [in] Handler for action's OnExecute event.
+    @return Reference to newly created action.
+  }
+begin
+  Result := CreateAction(TDisplayTagAction, AOwner, OnExecHandler);
 end;
 
 class function TActionFactory.CreateEditSnippetAction(const AOwner: TComponent;
@@ -169,6 +224,17 @@ class function TActionFactory.CreateLinkAction(const AOwner: TComponent;
   }
 begin
   Result := CreateAction(TLinkAction, AOwner, OnExecHandler) as TCustomAction;
+end;
+
+class function TActionFactory.CreateRemoveTagAction(const AOwner: TComponent;
+  const OnExecHandler: TNotifyEvent): TBasicAction;
+  {Creates a Remove Tag action and sets OnExecute handler if provided.
+    @param AOwner [in] Owner of action.
+    @param OnExecHandler [in] Handler for action's OnExecute event.
+    @return Reference to newly created action.
+  }
+begin
+  Result := CreateAction(TRemoveTagAction, AOwner, OnExecHandler);
 end;
 
 class function TActionFactory.CreateShowPrefsPageAction(

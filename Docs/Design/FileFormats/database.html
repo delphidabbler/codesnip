@@ -1,0 +1,476 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!--
+ * This Source Code Form is subject to the terms of the Mozilla Public License,
+ * v. 2.0. If a copy of the MPL was not distributed with this file, You can
+ * obtain one at http://mozilla.org/MPL/2.0/
+ *
+ * Copyright (C) 2013, Peter Johnson (www.delphidabbler.com).
+ *
+ * $Rev$
+ * $Date$
+ *
+ * CodeSnip File Format Documentation: Database
+-->
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+
+<head>
+
+<title>
+  CodeSnip File Format Documentation - Database
+</title>
+
+<link
+  rel="stylesheet"
+  type="text/css"
+  media="screen"
+  href="main.css"
+/>
+
+</head>
+
+<body>
+
+<div class="title">
+  <div class="index-link">
+    <a href="index.html">Back to Index</a>
+  </div>
+  <div>
+    DelphiDabbler CodeSnip
+  </div>
+  <div class="subtitle">
+    File Format Documentation
+  </div>
+</div>
+
+<h1>
+  Database
+</h1>
+
+
+<h2>
+  Introduction
+</h2>
+
+<p>
+  From CodeSnip version 5 the program stores its database as a series of binary
+  files in the program's database directory.
+</p>
+
+<p>
+  When using CodeSnip in standard mode each logged on user has a separate
+  database directory, which can be changed by the user. In portable mode the
+  database is located in a fixed sub-directory of the program directory.
+</p>
+
+<p>
+  At present there is only a single version of the binary database format
+  &ndash; version 7.
+</p>
+
+<p class="pullout">
+  Database versions 1 to 6 were XML based and are
+  <a href="legacy-user-database.html">documented elsewhere</a>. CodeSnip 5
+  retains the ability to read, but not write, all the XML formats.
+</p>
+
+<h2>
+  Encoding
+</h2>
+
+<p>
+  These files are stored in binary format. Text included in within the binary
+  data is stored in UTF-8 or ASCII format. The file format details below make
+  it clear which encoding is used.
+</p>
+
+<h2>
+  File Format
+</h2>
+
+<p>
+  There are types of file in use. There is a single &quot;master&quot; database
+  file and a separate file for each snippet. the &quot;master&quot; and
+  &quot;snippet&quot; files are described separately in the sub-sections below.
+</p>
+
+<p>
+  There are several &quot;data types&quot; used in the files, which are as
+  follows:
+</p>
+
+<dl>
+  <dt>
+    <kbd>Byte</kbd>
+  </dt>
+  <dd>
+    Unsigned 8 bit integer value.
+  </dd>
+  <dt>
+    <kbd>Word</kbd>
+  </dt>
+  <dd>
+    Unsigned 16 bit integer value.
+  </dd>
+  <dt>
+    <kbd>LongWord</kbd>
+  </dt>
+  <dd>
+    Unsigned 32 bit integer value.
+  </dd>
+  <dt>
+    <kbd>SizedString</kbd>
+  </dt>
+  <dd>
+    This is a variable length UTF-8 string that is preceded by its length as a
+    <kbd>Word</kbd>.
+  </dd>
+  <dt>
+    <kbd>SizedLongString</kbd>
+  </dt>
+  <dd>
+    This is a variable length UTF-8 string that is preceded by its length as a
+    <kbd>LongWord</kbd>.
+  </dd>
+  <dt>
+    <kbd>StringList</kbd>
+  </dt>
+  <dd>
+    This is a representation of a list of <kbd>SizedString</kbd> values. It is a
+    sequence of zero or more <kbd>SizedString</kbd> values preceded by the
+    number of strings in the list as a <kbd>LongWord</kbd>.
+  </dd>
+  <dt>
+    <kbd>FixedString[<em>X</em>]</kbd>
+  </dt>
+  <dd>
+    This is a chunk of UTF-8 text whose length is specified by
+    <kbd><em>X</em></kbd>.
+  </dd>
+  <dt>
+    <kbd>FixedBytes[<em>X</em>]</kbd>
+  </dt>
+  <dd>
+    This is a fixed size chunk of <kbd>Byte</kbd> values whose size is
+    specified by <kbd><em>X</em></kbd>.
+  </dd>
+  <dt>
+    <kbd>Date</kbd>
+  </dt>
+  <dd>
+    This is a UTC date in <a
+      href="http://www.cl.cam.ac.uk/~mgk25/iso-time.html"
+    >ISO-8601 format</a> written as a <kbd>SizedString</kbd> value. The string
+    will always have the format
+    <kbd>YYYY-MM-DD&quot;T&quot;HH:MM:SS.XXX&quot;Z&quot;</kbd> or
+    <kbd>YYYY-MM-DD&quot;T&quot;HH:MM:SS,XXX&quot;Z&quot;</kbd>.
+  </dd>
+</dl>
+
+<h3>
+  Master File Format
+</h3>
+
+<p>
+  There is a single master database file in the database. It is named
+  <kbd>csdb.master.dat</kbd>.
+</p>
+
+<p>
+  The file consists of a number of fields in a fixed order, as follows:
+</p>
+
+<dl>
+  <dt>
+    <em>Watermark</em> (<kbd>FixedString[44]</kbd>)
+  </dt>
+  <dd>
+    Identifies the file as a master database file. The field always has the
+    value &quot;<kbd>CSDB-MASTER-0562C0E6F20B4C2F945D1FDEC6393C4C</kbd>&quot;
+    (without the quotes).
+  </dd>
+  <dt>
+    <em>FileVersion</em> (<kbd>FixedString[4]</kbd>)
+  </dt>
+  <dd>
+    The version of the database as a four character string of digits. At present
+    only version 7 is supported and the field always has the value
+    &quot;<kbd>0007</kbd>&quot; (without the quotes).
+  </dd>
+  <dt>
+    <em>LastModificationDate</em> (<kbd>Date</kbd>)
+  </dt>
+  <dd>
+    Date the file was last modified.
+  </dd>
+  <dt>
+    <em>SnippetCount</em> (<kbd>LongWord</kbd>)
+  </dt>
+  <dd>
+    <div>
+      The number of snippets in the database, followed by <em>SnippetCount</em>
+      - 1 copies of the following fields:
+    </div>
+    <dl>
+      <dt>
+        <em>ID</em> (<kbd>SizedString</kbd>)
+      </dt>
+      <dd>
+        Text representation the snippet's unique identifier.
+      </dd>
+      <dt>
+        <em>LastModificationDate</em> (<kbd>Date</kbd>)
+      </dt>
+      <dd>
+        Date the snippet was last modified.
+      </dd>
+    </dl>
+  </dd>
+  <dt>
+    <em>TagCount</em> (<kbd>LongWord</kbd>)
+  </dt>
+  <dd>
+    <div>
+      The number of tags in the database, followed by <em>TagCount</em> - 1
+      copies of the following fields:
+    </div>
+    <dl>
+      <dt>
+        <em>TagName</em> (<kbd>SizedString</kbd>)
+      </dt>
+      <dd>
+        The name of the tag as a string.
+      </dd>
+      <dt>
+        <em>Reserved</em> (<kbd>LongWord</kbd>)
+      </dt>
+      <dd>
+        A 32 bit field reserved for future use. Must be zero.
+      </dd>
+    </dl>
+  </dd>
+</dl>
+
+<h3>
+  Snippet File Format
+</h3>
+
+<p>
+  There is one snippet file for each snippet in the database. The files are
+  named <kbd>csdb.snippet.<em>ID</em>.dat</kbd> where <kbd><em>ID</em></kbd> is
+  a string representation of the snippet's ID.
+</p>
+
+<p>
+  The file consists of a number of required fields in a pre-determined order,
+  followed by the snippet's property data in any order, some of which are
+  optional.
+</p>
+
+<h4>
+  Fixed Fields
+</h4>
+
+<p>
+  The fixed fields are as follows. They must appear in the given order.
+</p>
+
+<dl>
+  <dt>
+    <em>Watermark</em> (<kbd>FixedString[45]</kbd>)
+  </dt>
+  <dd>
+    Identifies the file as a snippet file. The field always has the value
+    &quot;<kbd>CSDB-SNIPPET-0562C0E6F20B4C2F945D1FDEC6393C4C</kbd>&quot;
+    (without the quotes).
+  </dd>
+  <dt>
+    <em>FileVersion</em> (<kbd>FixedString[4]</kbd>)
+  </dt>
+  <dd>
+    The version of the database as a four character string of digits. At
+    present only version 7 is supported and the field always has the value
+    &quot;<kbd>0007</kbd>&quot; (without the quotes).
+  </dd>
+</dl>
+
+<h4>
+  Property Data
+</h4>
+
+<p>
+  Following the fixed fields comes a list of property data. Properties can
+  appear in any order and, with the exception of the ID property, may be omitted
+  if they have their default value.
+</p>
+
+<p>
+  The property data is organised as follows, one record for each property:
+</p>
+
+<dl>
+  <dt>
+    <em>PropertyID</em> (<kbd>Byte</kbd>)
+  </dt>
+  <dd>
+    A unique code that identifies the property.
+  </dd>
+  <dt>
+    <em>PropertyData</em> (type is property dependent)
+  </dt>
+  <dd>
+    <div>
+      Data describing the property. The data is property dependant, as follows:
+    </div>
+    <dl class="indent">
+      <dt>
+        ID property
+      </dt>
+      <dd>
+        A <kbd>SizedString</kbd> value that is a text representation of the
+        snippet's ID.
+      </dd>
+      <dt>
+        Title property
+      </dt>
+      <dd>
+        A <kbd>SizedString</kbd> value containing the required title.
+      </dd>
+      <dt>
+        Description property
+      </dt>
+      <dd>
+        A <kbd>SizedLongString</kbd> value containing the required description
+        in REML mark-up.
+      </dd>
+      <dt>
+        SourceCode property
+      </dt>
+      <dd>
+        A <kbd>SizedLongString</kbd> value containing the required source code.
+      </dd>
+      <dt>
+        LanguageID property
+      </dt>
+      <dd>
+        A <kbd>SizedString</kbd> value that is a text representation of the
+        required language ID.
+      </dd>
+      <dt>
+        Modified property
+      </dt>
+      <dd>
+        A <kbd>Date</kbd> value that is the date the snippet was last modified.
+      </dd>
+      <dt>
+        Created property
+      </dt>
+      <dd>
+        A <kbd>Date</kbd> value that is the date the snippet was created.
+      </dd>
+      <dt>
+        RequiredModules property
+      </dt>
+      <dd>
+        A <kbd>StringList</kbd> value containing a list of module names.
+      </dd>
+      <dt>
+        RequiredSnippets property
+      </dt>
+      <dd>
+        A <kbd>StringList</kbd> value containing a list of string
+        representations of the IDs of required snippets.
+      </dd>
+      <dt>
+        XRefs property
+      </dt>
+      <dd>
+        A <kbd>StringList</kbd> value containing a list of string
+        representations of the IDs of the cross referenced snippets.
+      </dd>
+      <dt>
+        Notes property
+      </dt>
+      <dd>
+        A <kbd>SizedLongString</kbd> value containing the notes in REML mark-up.
+      </dd>
+      <dt>
+        Kind property
+      </dt>
+      <dd>
+        A <kbd>Byte</kbd> value containing a code that specifies the snippet's
+        kind.
+      </dd>
+      <dt>
+        CompileResults property
+      </dt>
+      <dd>
+        <div>
+          There are two consecutive fields:
+        </div>
+        <ol class="squashed">
+          <li>
+            A <kbd>StringList</kbd> containing the ID strings of compilers with
+            which the snippet compiles successfully.
+          </li>
+          <li>
+            A <kbd>StringList</kbd> containing the ID strings of compilers with
+            which the snippet fails to compile.
+          </li>
+        </ol>
+      </dd>
+      <dt>
+        Tags property
+      </dt>
+      <dd>
+        A <kbd>StringList</kbd> value containing a list of names of the
+        snippet's tags.
+      </dd>
+      <dt>
+        LinkInfo property
+      </dt>
+      <dd>
+        <div>
+          There are three consecutive fields:
+        </div>
+        <ol class="squashed">
+          <li>
+            A <kbd>FixedBytes[16]</kbd> value that stores a GUID that identifies
+            the link's synch space.
+          </li>
+          <li>
+            A <kbd>SizedString</kbd> value that is a string representation of ID
+            of the linked snippet.
+          </li>
+          <li>
+            A <kbd>Date</kbd> value that stores the date the snippet was last
+            updated from the linked synch space.
+          </li>
+        </ol>
+      </dd>
+      <dt>
+        TestInfo property
+      </dt>
+      <dd>
+        A <kbd>Byte</kbd> value containing a code that specifies the snippet's
+        testing level.
+      </dd>
+      <dt>
+        Starred property
+      </dt>
+      <dd>
+        A <kbd>Byte</kbd> representation of a Boolean value that determines if
+        the snippet is starred.
+      </dd>
+    </dl>
+  </dd>
+</dl>
+
+<p class="pullout">
+  Note that all properties except ID are optional. Optional properties are not
+  written if they retain their default values.
+</p>
+
+</body>
+
+</html>

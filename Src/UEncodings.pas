@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2009-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2009-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -304,7 +304,7 @@ type
     ///  Returns an array names of supported character sets.
     ///  </summary>
     ///  <returns>String array of required character set names.</returns>
-    class function CharSets: TStringDynArray;
+    class function CharSets: TArray<string>;
   end;
 
   ///  Ansi string using the ASCII code page.
@@ -361,6 +361,23 @@ function CodePageSupportsString(const S: UnicodeString;
 ///  </remarks>
 function WideCharToChar(const Source: WideChar; const CodePage: Integer;
   out Dest: TArray<AnsiChar>): Boolean;
+
+///  <summary>Checks if the given byte array starts with the byte order mark
+///  associated with the given encoding. If the encoding has no BOM then False
+///  is always returned.</summary>
+function CheckBOM(const Bytes: TBytes; const Encoding: TEncoding): Boolean;
+
+///  <summary>Converts an array of bytes into a Unicode string.</summary>
+///  <param name="Bytes">TBytes [in] Byte array to be converted.</param>
+///  <param name="Encoding">TEncoding [in] Encoding of the byte array.</param>
+///  <param name="HasBOM">Boolean [in] Flag indicating if the byte array begins
+///  with a byte order mark. Ignored if Encoding has no BOM.</param>
+///  <returns>UnicodeString. Converted Unicode string.</returns>
+///  <remarks>When HasBOM is true and Encoding has a BOM then the byte array
+///  must begin with the correct BOM, otherwise an exception is raised.
+/// </remarks>
+function BytesToString(const Bytes: TBytes; const Encoding: TEncoding;
+  const HasBOM: Boolean): UnicodeString;
 
 
 implementation
@@ -460,7 +477,7 @@ resourcestring
   sBadCharSet = 'Character set %s not supported';
   sBadCodePage = 'Code page %d not supported';
 
-class function TEncodingHelper.CharSets: TStringDynArray;
+class function TEncodingHelper.CharSets: TArray<string>;
 var
   I: Integer;
   EncInfo: TEncodingInfo;
@@ -726,6 +743,38 @@ begin
   finally
     TEncodingHelper.FreeEncoding(Encoding);
   end;
+end;
+
+function CheckBOM(const Bytes: TBytes; const Encoding: TEncoding): Boolean;
+var
+  Preamble: TBytes;
+  I: Integer;
+begin
+  Preamble := Encoding.GetPreamble;
+  if Length(Preamble) = 0 then
+    Exit(False);
+  if Length(Bytes) < Length(Preamble) then
+    Exit(False);
+  for I := 0 to Pred(Length(Preamble)) do
+    if Bytes[I] <> Preamble[I] then
+      Exit(False);
+  Result := True;
+end;
+
+function BytesToString(const Bytes: TBytes; const Encoding: TEncoding;
+  const HasBOM: Boolean): UnicodeString;
+var
+  SizeOfBOM: Integer;
+begin
+  if HasBOM then
+  begin
+    SizeOfBOM := Length(Encoding.GetPreamble);
+    if (SizeOfBOM > 0) and not CheckBOM(Bytes, Encoding) then
+      raise EConvertError.Create('BytesToString: Invalid BOM for encoding');
+  end
+  else
+    SizeOfBOM := 0;
+  Result := Encoding.GetString(Bytes, SizeOfBOM, Length(Bytes) - SizeOfBOM);
 end;
 
 end.

@@ -98,12 +98,8 @@ pre {
   border-bottom: 1px solid silver;
 }
 
-#user-db .caption {
+#database .caption {
   background-color: #D5E0FF;
-}
-
-#main-db .caption {
-  background-color: #DBD1FF;
 }
 
 #compilers .caption {
@@ -157,3 +153,18 @@ pre {
   margin: 2px 0 0 8px;
 }
 
+.starred-img {
+  float: right;
+  width: 16px;
+  height: 16px;
+  padding: 0;
+  margin: 2px 0 0 8px;
+}
+
+.tags-img {
+  width: 16px;
+  height: 16px;
+  padding: 0;
+  margin: 0 8px 0 0;
+  vertical-align: bottom;
+}

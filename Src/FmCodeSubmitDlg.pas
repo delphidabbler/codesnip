@@ -21,18 +21,30 @@ interface
 
 uses
   // Delphi
-  StdCtrls, Forms, ComCtrls, Controls, ExtCtrls, Classes,
+  StdCtrls,
+  Forms,
+  ComCtrls,
+  Controls,
+  ExtCtrls,
+  Classes,
   // Project
-  DB.USnippet, FmWizardDlg, FrBrowserBase, FrCheckedTV, FrFixedHTMLDlg,
-  FrHTMLDlg, FrSelectSnippetsBase, FrSelectUserSnippets, UBaseObjects,
-  UEncodings, UExceptions;
+  CS.Database.Types,
+  FmWizardDlg,
+  FrBrowserBase,
+  FrCheckedTV,
+  FrFixedHTMLDlg,
+  FrHTMLDlg,
+  FrSelectSnippets,
+  UBaseObjects,
+  UEncodings,
+  UExceptions;
 
 
 type
 
   {
   TCodeSubmitDlg:
-    Implements a wizard dialog that gathers data about and submits a user's
+    Implements a wizard dialogue that gathers data about and submits a user's
     code submission for inclusion in the database.
   }
   TCodeSubmitDlg = class(TWizardDlg, INoPublicConstruct)
@@ -40,7 +52,7 @@ type
     edComments: TMemo;
     edEMail: TEdit;
     edName: TEdit;
-    frmSnippets: TSelectUserSnippetsFrame;
+    frmSnippets: TSelectSnippetsFrame;
     lblComments: TLabel;
     lblEmail: TLabel;
     lblName: TLabel;
@@ -62,7 +74,7 @@ type
   strict private
     var
       fData: TEncodedData; // Contains submission as XML document
-    procedure SelectSnippet(const Snippet: TSnippet);
+    procedure SelectSnippet(Snippet: ISnippet);
       {Selects the specified snippet in the check list of snippets or clears
       selections.
         @param Snippet [in] Snippet to be selected in the list. If Snippet is
@@ -132,10 +144,10 @@ type
       {Protected class constructor. Initialise objects required by this wizard.
       }
   public
-    class procedure Execute(const AOwner: TComponent; const Snippet: TSnippet);
-      {Excutes code submission dialog box. Submits code snippet to DelphiDabbler
-      web service if user OKs.
-        @param AOwner [in] Component that owns and parent's dialog box.
+    class procedure Execute(const AOwner: TComponent; Snippet: ISnippet);
+      {Excutes code submission dialogue box. Submits code snippet to
+      DelphiDabbler web service if user OKs.
+        @param AOwner [in] Component that owns and parent's dialogue box.
         @param Snippet [in] Reference to any snippet to be selected in snippets
           list. If nil nothing is selected.
       }
@@ -155,9 +167,18 @@ uses
   // Delphi
   Graphics,
   // Project
-  FmPreviewDlg, UCodeImportExport, UConsts, UCtrlArranger, UEmailHelper,
-  UFontHelper, UMessageBox, UStrUtils, UUserDetails, UUserDetailsPersist,
-  Web.UCodeSubmitter, Web.UExceptions;
+  FmPreviewDlg,
+  UCodeImportExport,
+  UConsts,
+  UCtrlArranger,
+  UEmailHelper,
+  UFontHelper,
+  UMessageBox,
+  UStrUtils,
+  UUserDetails,
+  UUserDetailsPersist,
+  Web.UCodeSubmitter,
+  Web.UExceptions;
 
 
 {$R *.dfm}
@@ -225,7 +246,7 @@ end;
 
 procedure TCodeSubmitDlg.btnPreviewClick(Sender: TObject);
   {Handles Preview button click event. Displays XML data to be submitted in a
-  preview dialog box.
+  preview dialogue box.
     @param Sender [in] Not used.
   }
 begin
@@ -236,7 +257,7 @@ procedure TCodeSubmitDlg.BuildSubmission;
   {Builds XML document containing details of submission and stores in a stream.
   }
 begin
-  Assert(not frmSnippets.SelectedSnippets.IsEmpty,
+  Assert(frmSnippets.HasSelection,
     ClassName + '.BuildSubmission: No snippets selected');
   Assert(edName.Text <> '',
     ClassName + '.BuildSubmission: No user name provided');
@@ -248,7 +269,7 @@ begin
       TUserDetails.Create(edName.Text, edEmail.Text),
       StrTrim(edComments.Text)
     ),
-    frmSnippets.SelectedSnippets
+    frmSnippets.GetSelection
   );
 end;
 
@@ -301,7 +322,8 @@ begin
     end;
   except
     // handle any exceptions from submission: we convert expected exceptions to
-    // ECodeSubmitDlg to save triggering this dialog again: others are re-raised
+    // ECodeSubmitDlg to save triggering this dialogue again: others are re-
+    // raised
     on E: EHTTPError do
       // error on web server: make more friendly
       raise ECodeSubmitDlg.CreateFmt(
@@ -311,10 +333,10 @@ begin
 end;
 
 class procedure TCodeSubmitDlg.Execute(const AOwner: TComponent;
-  const Snippet: TSnippet);
-  {Excutes code submission dialog box. Submits code snippet to DelphiDabbler
+  Snippet: ISnippet);
+  {Excutes code submission dialogue box. Submits code snippet to DelphiDabbler
   web service if user OKs.
-    @param AOwner [in] Component that owns and parent's dialog box.
+    @param AOwner [in] Component that owns and parent's dialogue box.
     @param Snippet [in] Reference to any snippet to be selected in snippets
       list. If nil nothing is selected.
   }
@@ -418,27 +440,17 @@ begin
   TUserDetailsPersist.Update(TUserDetails.Create(edName.Text, edEMail.Text));
 end;
 
-procedure TCodeSubmitDlg.SelectSnippet(const Snippet: TSnippet);
+procedure TCodeSubmitDlg.SelectSnippet(Snippet: ISnippet);
   {Selects the specified snippet in the check list of snippets or clears
   selections.
     @param Snippet [in] Snippet to be selected in the list. If Snippet is nil
       then list is cleared of selections.
   }
-var
-  List: TSnippetList; // list containing only one snippet
 begin
-  if not Assigned(Snippet) or not Snippet.UserDefined then
-    frmSnippets.SelectedSnippets := nil
+  if not Assigned(Snippet) then
+    frmSnippets.Clear
   else
-  begin
-    List := TSnippetList.Create;
-    try
-      List.Add(Snippet);
-      frmSnippets.SelectedSnippets := List;
-    finally
-      List.Free;
-    end;
-  end;
+    frmSnippets.SelectSnippet(Snippet.ID);
 end;
 
 procedure TCodeSubmitDlg.SnippetListChange(Sender: TObject);
@@ -449,7 +461,7 @@ procedure TCodeSubmitDlg.SnippetListChange(Sender: TObject);
 begin
   if CurrentPage = cSnippetsPageIdx then
     UpdateButtons(CurrentPage);
-  lblSnippetPrompt.Visible := frmSnippets.SelectedSnippets.IsEmpty;
+  lblSnippetPrompt.Visible := not frmSnippets.HasSelection;
 end;
 
 procedure TCodeSubmitDlg.UpdateButtons(const PageIdx: Integer);
@@ -486,7 +498,7 @@ resourcestring
 begin
   case PageIdx of
     cSnippetsPageIdx:
-      if frmSnippets.SelectedSnippets.Count = 0 then
+      if not frmSnippets.HasSelection then
         raise EDataEntry.Create(sNoSnippets, frmSnippets);
     cUserInfoPageIdx:
     begin

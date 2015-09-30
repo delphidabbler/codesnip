@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2008-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2008-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -33,8 +33,17 @@ type
     fkExe16,    // 16 bit executable
     fkDLL32,    // 32 bit DLL
     fkDLL16,    // 16 bit DLL
-    fkVXD       // virtual device driver
+    fkVXD,      // virtual device driver
+    fkExe64,    // 64 bit executable
+    fkDLL64,    // 64 bit DLL
+    fkROM       // ROM image (PE format)
   );
+
+  {
+  TExeFileKinds:
+    Set of TExeFileKind values.
+  }
+  TExeFileKinds = set of TExeFileKind;
 
 
 function ExeFileType(const FileName: string): TExeFileKind;
@@ -50,17 +59,13 @@ implementation
 
 uses
   // Delphi
-  Classes, SysUtils, Windows;
+  Classes,
+  SysUtils,
+  Windows;
 
 
 function ExeFileType(const FileName: string): TExeFileKind;
-  {Examines a file and checks if it is an executable file, and if so what kind
-  of executable file it is.
-    @param FileName [in] Name of file to examine.
-    @return Kind of executable or error code if file does not exist.
-  }
 const
-  cDOSRelocOffset = $18;  // offset of "pointer" to DOS relocation table
   cWinHeaderOffset = $3C; // offset of "pointer" to windows header in file
   cNEAppTypeOffset = $0D; // offset in NE windows header app type field
   cDOSMagic = $5A4D;      // magic number identifying a DOS executable
@@ -68,20 +73,26 @@ const
   cPEMagic = $4550;       // magic nunber identifying a PE executable (Win 32)
   cLEMagic = $454C;       // magic number identifying a Virtual Device Driver
   cNEDLLFlag = $80;       // flag in NE app type field indicating a DLL
+  cPEDLLFlag = $2000;     // flag in PE Characteristics field indicating s DLL
+  cPE32Magic = $10B;      // magic number identifying 32 bit PE executable
+  cPE64Magic = $20B;      // magic number identifying 64 bit executable
+  cPEROMMagic = $107;     // magic number identifying ROM image
 var
-  FS: TFileStream;            // stream to executable file
-  WinMagic: Word;             // word that contains PE or NE magic numbers
-  HdrOffset: LongInt;         // offset of windows header in exec file
-  ImgHdrPE: TImageFileHeader; // PE file header record
-  DOSHeader: TImageDosHeader; // DOS header
-  AppFlagsNE: Byte;           // byte defining DLLs in NE format
-  DOSFileSize: Integer;       // size of DOS file
+  FS: TFileStream;                      // stream onto executable file
+  WinMagic: Word;                       // word that contains PE/NE/LE magic #s
+  HdrOffset: LongInt;                   // offset of windows header in exec file
+  DOSHeader: IMAGE_DOS_HEADER;          // DOS header record
+  PEFileHdr: IMAGE_FILE_HEADER;         // PE file header record
+  PEOptHdrMagic: Word;                  // PE "optional" header magic #
+  AppFlagsNE: Byte;                     // byte defining DLLs in NE format
+  DOSFileSize: Integer;                 // size of DOS file
+  IsPEDLL: Boolean;                     // whether PE file is DLL
 begin
   try
     // Open stream onto file: raises exception if can't be read
     FS := TFileStream.Create(FileName, fmOpenRead + fmShareDenyNone);
     try
-      // Assume unknown file
+      // Assume unkown file
       Result := fkUnknown;
       // Any exec file is at least size of DOS header long
       if FS.Size < SizeOf(DOSHeader) then
@@ -121,19 +132,39 @@ begin
       case WinMagic of
         cPEMagic:
         begin
-          // 32 bit Windows application: now check whether app or DLL
-          if FS.Size < HdrOffset + SizeOf(LongWord) + SizeOf(ImgHdrPE) then
-            // file not large enough for image header: assume DOS
+          // 'PE' signature followed by to 0 bytes
+          FS.ReadBuffer(WinMagic, SizeOf(Word));
+          if WinMagic <> 0 then
             Exit;
-          // read Windows image header
+          // 32 or 64 bit Windows application: now check whether app or DLL
+          // by reading file header record and checking Characteristics field
+          if FS.Size < HdrOffset + SizeOf(LongWord) + SizeOf(PEFileHdr)
+            + SizeOf(PEOptHdrMagic) then
+            Exit;
           FS.Position := HdrOffset + SizeOf(LongWord);
-          FS.ReadBuffer(ImgHdrPE, SizeOf(ImgHdrPE));
-          if (ImgHdrPE.Characteristics and IMAGE_FILE_DLL) = IMAGE_FILE_DLL then
-            // characteristics indicate a 32 bit DLL
-            Result := fkDLL32
-          else
-            // characteristics indicate a 32 bit application
-            Result := fkExe32;
+          FS.ReadBuffer(PEFileHdr, SizeOf(PEFileHdr));
+          IsPEDLL := (PEFileHdr.Characteristics and cPEDLLFlag)
+            = cPEDLLFlag;
+          // check if 32 bit, 64 bit (or ROM) by reading Word value following
+          // file header (actually this is first field of "optional" PE header)
+          // read magic number at start of "optional" PE header that follows
+          FS.ReadBuffer(PEOptHdrMagic, SizeOf(PEOptHdrMagic));
+          case PEOptHdrMagic of
+            cPE32Magic:
+              if IsPEDLL then
+                Result := fkDLL32
+              else
+                Result := fkExe32;
+            cPE64Magic:
+              if IsPEDLL then
+                Result := fkDLL64
+              else
+                Result := fkExe64;
+            cPEROMMagic:
+              Result := fkROM;
+            else
+              Result := fkUnknown;  // unknown PE magic number
+          end;
         end;
         cNEMagic:
         begin

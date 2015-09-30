@@ -17,49 +17,18 @@ unit FirstRun.UInstallInfo;
 
 interface
 
-{
-  User config file and database locations in different CodeSnip versions
-  ----------------------------------------------------------------------
-
-  Version numbers refer to the CodeSnip release.
-
-  + Versions up to v1.8.11:
-    - Config file: %AppData%\DelphiDabbler\CodeSnip\CodeSnip.ini
-    - No user database.
-
-  + From v1.9 to v1.9.4:
-    - Config file: %AppData%\DelphiDabbler\CodeSnip\User.ini
-    - No user database.
-
-  + All v2 versions:
-    - Config file: %AppData%\DelphiDabbler\CodeSnip\User.ini
-    - Database directory: %AppData%\DelphiDabbler\CodeSnip\UserData
-
-  + All v3 versions:
-    - Config file: %AppData%\DelphiDabbler\CodeSnip\User.3.ini
-    - Database directory: %AppData%\DelphiDabbler\CodeSnip\UserData.3
-
-  + From v4.0 (standard version):
-    - Config file: %AppData%\DelphiDabbler\CodeSnip.4\User.config
-    - Database directory: %AppData%\DelphiDabbler\CodeSnip.4\UserDatabase
-  + From v4.0 (portable version):
-    - Config file: <exe-dir>\AppData\User.config
-    - Database directory: <exe-dir>\AppData\UserDB
-    where <exe-dir> is the directory from which the program is executing.
-}
 
 type
   ///  <summary>Identifiers for different type of CodeSnip installations that
   ///  can be detected.</summary>
   TInstallId = (
     piNone,       // CodeSnip not installed
-    {$IFNDEF PORTABLE}
     piOriginal,   // "original" installation up to v1.8.11
     piV1_9,       // v1.9 to v1.9.4
     piV2,         // all v2 versions
     piV3,         // all v3 versions
-    {$ENDIF}
-    piV4          // from v4.0 (including alpha & beta code v3.98.x & v3.99.x
+    piV4,         // from v4.0 (including alpha & beta code v3.98.x & v3.99.x
+    piV5          // v5 (including all alpha and beta code from v4.97)
   );
 
 type
@@ -70,46 +39,23 @@ type
     const
       ///  <summary>ID of current version of CodeSnip.</summary>
       CurrentVersionID = High(TInstallId);
-      ///  <summary>Array mapping install IDs to relative paths to user config
-      ///  file for for that installation version.</summary>
-      UserConfigFileNames: array[Low(TInstallId)..CurrentVersionID] of string =
-        (
-          {$IFNDEF PORTABLE}
-          '',
-          'DelphiDabbler\CodeSnip\CodeSnip.ini',
-          'DelphiDabbler\CodeSnip\User.ini',
-          'DelphiDabbler\CodeSnip\User.ini',
-          'DelphiDabbler\CodeSnip\User.3.ini',
-          'DelphiDabbler\CodeSnip.4\User.config'
-          {$ELSE}
-          '',
-          'AppData\User.config'
-          {$ENDIF}
-        );
-      ///  <summary>Array mapping install IDs to relative paths to user database
-      ///  directories for for that installation version.</summary>
-      DatabaseDirs: array[Low(TInstallId)..CurrentVersionID] of string =
-        (
-          {$IFNDEF PORTABLE}
-          '',
-          '',
-          '',
-          'DelphiDabbler\CodeSnip\UserData',
-          'DelphiDabbler\CodeSnip\UserData.3',
-          'DelphiDabbler\CodeSnip.4\UserDatabase'
-          {$ELSE}
-          '',
-          'AppData\UserDB'
-          {$ENDIF}
-        );
     var
       ///  <summary>Value of InstallID property.</summary>
       fInstallID: TInstallId;
+    ///  <summary>Maps given install IDs to relative paths to user config file
+    ///  for that installation version.</summary>
+    class function UserConfigFileNames(const InstID: TInstallId): string;
+    ///  <summary>Maps given install IDs to relative paths to database directory
+    ///  for that installation version.</summary>
+    class function DatabaseDirs(const InstID: TInstallId): string;
     ///  <summary>Converts given relative directory path or file name into an
     ///  absolute path by pre-prending the user's application data folder.
     ///  </summary>
     ///  <remarks>If Name = '' then '' is returned.</remarks>
     class function MakeFullUserPath(const Name: string): string;
+    ///  <summary>Informs if user config file used by given installation ID is
+    ///  in ANSI format.</summary>
+    class function IsUserConfigFileANSI(const InstallID: TInstallId): Boolean;
     ///  <summary>Detects latest version of CodeSnip for which user data can be
     ///  found and sets InstallID property accordingly.</summary>
     procedure DetectInstall;
@@ -122,7 +68,7 @@ type
     class function CurrentUserConfigFileName: string;
     ///  <summary>Returns full path to database directory for current version of
     ///  CodeSnip.</summary>
-    class function CurrentUserDatabaseDir: string;
+    class function CurrentDatabaseDir: string;
     ///  <summary>Returns full path to user config file version of CodeSnip for
     ///  which user data is available.</summary>
     ///  <remarks>This can be current version's config file if present.
@@ -131,16 +77,24 @@ type
     ///  <summary>Informs if user config file returned by
     ///  PreviousUserConfigFileName is in ANSI format.</summary>
     function IsPreviousUserConfigFileANSI: Boolean;
-    ///  <summary>Returns full path to user database directory for latest
-    ///  version of CodeSnip for which a user database is available.</summary>
-    ///  <remarks>This can be current version's database directory if present.
+    ///  <summary>Returns full path to database directory for latest version of
+    ///  CodeSnip for which a snippets database is available.</summary>
+    ///  <remarks>
+    ///  <para>This can be current version's database directory if present.
+    ///  </para>
+    ///  <para>Prior to CodeSnip 5 the database in question will be the legacy
+    ///  "user" database.</para>
     ///  </remarks>
-    function PreviousUserDatabaseDir: string;
-    ///  <summary>Returns full path on user database file for latest version of
-    ///  CodeSnip for which a user database is available.</summary>
-    ///  <remarks>This can be current version's database file if present.
+    function PreviousDatabaseDir: string;
+    ///  <summary>Returns full path of snippets database file for latest version
+    ///  of CodeSnip for which a database is available.</summary>
+    ///  <remarks>
+    ///  <para>This can be current version's database directory if present.
+    ///  </para>
+    ///  <para>Prior to CodeSnip 5 the database in question will be the legacy
+    ///  "user" database.</para>
     ///  </remarks>
-    function PreviousUserDatabaseFileName: string;
+    function PreviousDatabaseFileName: string;
     ///  <summary>Returns full path to common config file for current version of
     ///  CodeSnip.</summary>
     function CurrentCommonConfigFileName: string;
@@ -155,9 +109,15 @@ implementation
 
 uses
   // Delphi
-  SysUtils, IOUtils,
+  SysUtils,
+  IOUtils,
   // Project
-  UAppInfo, UIOUtils, UStrUtils, USystemInfo;
+  CS.Init.CommandLineOpts,
+  FirstRun.UIniFile,
+  UAppInfo,
+  UIOUtils,
+  UStrUtils,
+  USystemInfo;
 
 
 { TInstallInfo }
@@ -174,83 +134,164 @@ begin
     + 'Common.config';
 end;
 
-class function TInstallInfo.CurrentUserConfigFileName: string;
+class function TInstallInfo.CurrentDatabaseDir: string;
 begin
-  Result := MakeFullUserPath(UserConfigFileNames[CurrentVersionID]);
+  Result := DatabaseDirs(CurrentVersionID);
 end;
 
-class function TInstallInfo.CurrentUserDatabaseDir: string;
+class function TInstallInfo.CurrentUserConfigFileName: string;
 begin
-  Result := MakeFullUserPath(DatabaseDirs[CurrentVersionID]);
+  Result := UserConfigFileNames(CurrentVersionID);
+end;
+
+class function TInstallInfo.DatabaseDirs(const InstID: TInstallId): string;
+
+  // Gets database directory from config file associated with InstID.
+  // Returns DefaultDir if config file doesn't reference database directory.
+  function DBDirFromCfg(const DefaultDir: string): string;
+  begin
+    Result := GetIniString(
+      'Database',
+      'UserDataDir',
+      DefaultDir,
+      UserConfigFileNames(InstID)
+    );
+  end;
+
+begin
+  if InstID = piV5 then
+    Exit(TAppInfo.UserDataDir);
+  Result := '';
+  if TCommandLineOpts.IsPortable then
+  begin
+    if InstID = piV4 then
+      // v3 and earlier did not support portability
+      Result := MakeFullUserPath('AppData\UserDB');
+  end
+  else
+  begin
+    case InstID of
+      // v1 and earlier did not have a "user" database
+      piV2:
+        Result := MakeFullUserPath('DelphiDabbler\CodeSnip\UserData');
+      piV3:
+        Result := MakeFullUserPath('DelphiDabbler\CodeSnip\UserData.3');
+      piV4:
+        Result := DBDirFromCfg(
+          MakeFullUserPath('DelphiDabbler\CodeSnip.4\UserDatabase')
+        );
+    end;
+  end;
 end;
 
 procedure TInstallInfo.DetectInstall;
 
-  // Checks if given Unicode format file is empty.
-  function IsEmptyUnicodeCfgFile(const FileName: string): Boolean;
+  // Checks if user config file for given installation exists and is non-empty.
+  function NonEmptyCfgFileExists(const InstID: TInstallID): Boolean;
   var
-    Content: string;  // content of file
+    CfgFileName: string;  // cfg file name
+    Content: string;      // content of cfg file
+    Encoding: TEncoding;  // encoding of cfg file
   begin
-    Content := StrTrim(TFileIO.ReadAllText(FileName, TEncoding.Unicode, True));
-    Result := Content = '';
+    CfgFileName := UserConfigFileNames(InstID);
+    if (CfgFileName = EmptyStr) or not TFile.Exists(CfgFileName, False) then
+      Exit(False);
+    if IsUserConfigFileANSI(InstID) then
+      Encoding := TEncoding.Default
+    else
+      Encoding := TEncoding.Unicode;
+    Content := StrTrim(
+      TFileIO.ReadAllText(CfgFileName, Encoding, True)
+    );
+    Result := Content <> '';
   end;
 
 begin
-  if TFile.Exists(MakeFullUserPath(UserConfigFileNames[piV4]), False) and not
-    IsEmptyUnicodeCfgFile(MakeFullUserPath(UserConfigFileNames[piV4])) then
+  fInstallID := piNone;
+  if NonEmptyCfgFileExists(piV5) then
+    fInstallID := piV5
+  else if NonEmptyCfgFileExists(piV4) then
     fInstallID := piV4
-  {$IFNDEF PORTABLE}
-  else if TFile.Exists(MakeFullUserPath(UserConfigFileNames[piV3]), False) then
-    fInstallID := piV3
-  else if TDirectory.Exists(MakeFullUserPath(DatabaseDirs[piV2])) then
-    fInstallID := piV2
-  else if TFile.Exists(
-    MakeFullUserPath(UserConfigFileNames[piV1_9]), False
-  ) then
-    fInstallID := piV1_9
-  else if TFile.Exists(
-    MakeFullUserPath(UserConfigFileNames[piOriginal]), False
-  ) then
-    fInstallID := piOriginal
-  {$ENDIF}
-  else
-    fInstallID := piNone;
+  else if not TCommandLineOpts.IsPortable then
+  begin
+    if NonEmptyCfgFileExists(piV3) then
+      fInstallID := piV3
+    else if TDirectory.Exists(DatabaseDirs(piV2)) then
+      fInstallID := piV2
+    else if NonEmptyCfgFileExists(piV1_9) then
+      fInstallID := piV1_9
+    else if NonEmptyCfgFileExists(piOriginal) then
+      fInstallID := piOriginal;
+  end;
 end;
 
 function TInstallInfo.IsPreviousUserConfigFileANSI: Boolean;
 begin
-  {$IFNDEF PORTABLE}
-  Result := fInstallID <= piV3;
-  {$ELSE}
-  Result := False;
-  {$ENDIF}
+  Result := IsUserConfigFileANSI(fInstallID);
+end;
+
+class function TInstallInfo.IsUserConfigFileANSI(const InstallID: TInstallId):
+  Boolean;
+begin
+  if TCommandLineOpts.IsPortable then
+    Result := False
+  else
+    Result := InstallID <= piV3;
 end;
 
 class function TInstallInfo.MakeFullUserPath(const Name: string): string;
 begin
   if Name = '' then
     Exit('');
-  {$IFNDEF PORTABLE}
-  Result := IncludeTrailingPathDelimiter(TSystemFolders.PerUserAppData) + Name;
-  {$ELSE}
-  Result := IncludeTrailingPathDelimiter(TAppInfo.AppExeDir) + Name;
-  {$ENDIF}
+  Result := IncludeTrailingPathDelimiter(
+    StrIf(
+      TCommandLineOpts.IsPortable,
+      TAppInfo.AppExeDir,
+      TSystemFolders.PerUserAppData
+    )
+  ) + Name;
+end;
+
+function TInstallInfo.PreviousDatabaseDir: string;
+begin
+  Result := DatabaseDirs(fInstallID);
+end;
+
+function TInstallInfo.PreviousDatabaseFileName: string;
+begin
+  Result := IncludeTrailingPathDelimiter(PreviousDatabaseDir) + 'database.xml';
 end;
 
 function TInstallInfo.PreviousUserConfigFileName: string;
 begin
-  Result := MakeFullUserPath(UserConfigFileNames[fInstallID]);
+  Result := UserConfigFileNames(fInstallID);
 end;
 
-function TInstallInfo.PreviousUserDatabaseDir: string;
+class function TInstallInfo.UserConfigFileNames(const InstID: TInstallId):
+  string;
 begin
-  Result := MakeFullUserPath(DatabaseDirs[fInstallID]);
-end;
-
-function TInstallInfo.PreviousUserDatabaseFileName: string;
-begin
-  Result := IncludeTrailingPathDelimiter(PreviousUserDatabaseDir)
-    + 'database.xml';
+  if InstID = piV5 then
+    Exit(TAppInfo.UserConfigFileName);
+  Result := '';
+  if TCommandLineOpts.IsPortable then
+  begin
+    if InstID = piV4 then
+      // v3 and earlier did not support portability
+      Result := MakeFullUserPath('AppData\User.config');
+  end
+  else
+  begin
+    case InstID of
+      piOriginal:
+        Result := MakeFullUserPath('DelphiDabbler\CodeSnip\CodeSnip.ini');
+      piV1_9, piV2:
+        Result := MakeFullUserPath('DelphiDabbler\CodeSnip\User.ini');
+      piV3:
+        Result := MakeFullUserPath('DelphiDabbler\CodeSnip\User.3.ini');
+      piV4:
+        Result := MakeFullUserPath('DelphiDabbler\CodeSnip.4\User.config');
+    end;
+  end;
 end;
 
 end.

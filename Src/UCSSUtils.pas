@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2006-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2006-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -49,8 +49,8 @@ type
   TCSSTextDecoration = (
     ctdNone,          // no decoration
     ctdUnderline,     // text is underlines
-    ctdOverline,      // text has overline
-    ctdLineThrough,   // text is stirck through
+    ctdOverline,      // text has over-line
+    ctdLineThrough,   // text is struck through
     ctdBlink          // text is blinking
   );
 
@@ -79,10 +79,10 @@ type
     cbsDashed,        // dashed line border
     cbsSolid,         // solid line border
     cbsDouble,        // double line border
-    cbsGroove,        // 3D groove: colours based on color property
-    cbsRidge,         // 3D ridge: colours based on color property
-    cbsInset,         // 3D inset: colours based on color property
-    cbsOutset         // 3D outset: colours based on color property
+    cbsGroove,        // 3D groove: colours based on CSS "color" property
+    cbsRidge,         // 3D ridge: colours based on CSS "color" property
+    cbsInset,         // 3D inset: colours based on CSS "color" property
+    cbsOutset         // 3D outset: colours based on CSS "color" property
   );
 
 type
@@ -126,7 +126,7 @@ type
   TCSSDisplayStyle = (
     cdsNone,          // element not displayed
     cdsBlock,         // element displayed as a block
-    cdsInline         // element displayed inline
+    cdsInline         // element displayed in-line
   );
 
 type
@@ -167,8 +167,8 @@ type
     ///  <summary>Converts a Delphi TColor to a CSS compatible colour string.
     ///  </summary>
     ///  <param name="Color">TColor [in] Colour to map to CSS colour.</param>
-    ///  <returns>string. CSS code for Color.</returns>
-    ///  <remarks>Any system colors (like clBtnFace) are mapped to the actual
+    ///  <returns>string. CSS colour code.</returns>
+    ///  <remarks>Any system colours (like clBtnFace) are mapped to the actual
     ///  colour according to the current Windows settings.</remarks>
     class function ColorToCSS(const Color: TColor): string; static;
 
@@ -206,7 +206,7 @@ type
     ///  <returns>string. Required CSS property.</returns>
     class function ColorProp(const Color: TColor): string; static;
 
-    ///  <summary>Creates a CSS "background color" property.</summary>
+    ///  <summary>Creates a CSS "background-color" property.</summary>
     ///  <param name="Color">TColor [in] Desired background colour.</param>
     ///  <returns>string. Required CSS property.</returns>
     class function BackgroundColorProp(const Color: TColor): string; static;
@@ -261,10 +261,6 @@ type
     ///  <returns>string. Required CSS property.</returns>
     class function FontWeightProp(const FS: TFontStyles): string; overload;
       static;
-      {Creates a CSS "font-weight" property from set of styles.
-        @param FS [in] Set of font styles.
-        @return Required property.
-      }
 
     ///  <summary>Creates CSS "border" or "border-xxx" property (where "xxx"
     ///  denotes a side).</summary>
@@ -584,7 +580,7 @@ end;
 class function TCSS.LengthList(const List: array of Integer;
   const LU: TCSSLengthUnit): string;
 var
-  Idx: Integer;     // loops thru list of values
+  Idx: Integer;     // loops through list of values
   ALength: Integer; // a length from list
 begin
   Assert((LU <> cluAuto) or (Length(List) = 1),
@@ -737,7 +733,7 @@ end;
 
 class function TCSS.VerticalAlignProp(const VA: TCSSVerticalAlign): string;
 const
-  // Map of vertical alignement ids to associated property values
+  // Map of vertical alignment ids to associated property values
   VerticalAligns: array[TCSSVerticalAlign] of string = (
     'baseline', 'sub', 'super', 'top', 'text-top', 'middle', 'bottom',
     'text-bottom'

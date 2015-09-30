@@ -42,7 +42,7 @@ type
     ///  because the operating system or IE version is not supported.</para>
     ///  <para>Performs special processing on first run of a new version of the
     ///  program.</para>
-    ///  <para>For the portable edition only, ensures a user data directory has
+    ///  <para>For the portable mode only, ensures a user data directory has
     ///  been created.</para>
     ///  </remarks>
     class function Execute: Boolean; static;
@@ -55,14 +55,15 @@ implementation
 uses
   // Delphi
   Windows,
-  {$IFDEF PORTABLE}
-  // Delphi
   IOUtils,
   // Project
-  UAppInfo, UUtils,
-  {$ENDIF}
-  // Project
-  FirstRun.UMain, UConsts, USystemInfo;
+  CS.Init.CommandLineOpts,
+  CS.Utils.Sound,
+  FirstRun.UMain,
+  UAppInfo,
+  UConsts,
+  USystemInfo,
+  UUtils;
 
 
 { TStartUp }
@@ -72,7 +73,7 @@ resourcestring
   sTitle = 'CodeSnip';
   sPrefix = 'CODESNIP CANNOT START!';
 begin
-  MessageBeep(MB_ICONERROR);
+  KeyErrorBeep;
   MessageBox(0, PChar(sPrefix + EOL2 + Msg), PChar(sTitle), MB_OK);
 end;
 
@@ -80,10 +81,8 @@ class function TStartUp.Execute: Boolean;
 resourcestring
   sOSError = 'Windows 2000 or later is required';
   sIEError = 'Internet Explorer v%d or later is required.';
-{$IFDEF PORTABLE}
 var
   WorkingDir: string;
-{$ENDIF}
 begin
   // Check if program can be run. Exit if not.
   if not TOSInfo.IsWinNT or not TOSInfo.CheckReportedOS(TOSInfo.Win2K) then
@@ -102,14 +101,15 @@ begin
   // Do any required "first run" processing
   TFirstRunMgr.Execute;
 
-  {$IFDEF PORTABLE}
-  // Ensure and use user data directory for portable
-  WorkingDir := TAppInfo.AppExeDir + '\UserData';
-  // don't use TDirectory.CreateDirectory: don't want an exception here
-  EnsureFolders(WorkingDir);
-  if TDirectory.Exists(WorkingDir) then
-    TDirectory.SetCurrentDirectory(WorkingDir);
-  {$ENDIF}
+  if TCommandLineOpts.IsPortable then
+  begin
+    // Ensure and use user data directory for portable mode
+    WorkingDir := TAppInfo.AppExeDir + '\UserData';
+    // don't use TDirectory.CreateDirectory: don't want an exception here
+    EnsureFolders(WorkingDir);
+    if TDirectory.Exists(WorkingDir) then
+      TDirectory.SetCurrentDirectory(WorkingDir);
+  end;
 end;
 
 end.

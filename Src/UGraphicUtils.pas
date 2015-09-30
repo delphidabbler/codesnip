@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2006-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2006-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -80,18 +80,19 @@ begin
   Result.Font := Font;
 end;
 
-procedure FreeDisplayCanvas(var Canvas: TCanvas);
+procedure FreeDisplayCanvas(const Canvas: TCanvas);
   {Releases resources and frees a canvas object created by CreateDisplayCanvas.
-    @param Canvas [in/out] Canvas to be freed. Set to nil once freed.
+    @param Canvas [in] Canvas to be freed.
   }
 begin
-  if Assigned(Canvas) then
-    try
-      DeleteDC(Canvas.Handle);
-      Canvas.Handle := 0;
-    finally
-      FreeAndNil(Canvas);
-    end;
+  if not Assigned(Canvas) then
+    Exit;
+  try
+    DeleteDC(Canvas.Handle);
+    Canvas.Handle := 0;
+  finally
+    Canvas.Free;
+  end;
 end;
 
 { Public routines }
@@ -122,8 +123,7 @@ begin
     Rect := GetTextRect(
       S, Canvas, TRectEx.Create(0, 0, MaxWidth, 0), DT_WORDBREAK
     );
-    Result.cx := Rect.Width;
-    Result.cy := Rect.Height;
+    Result := TSizeEx.Create(Rect.Width, Rect.Height);
   finally
     FreeDisplayCanvas(Canvas);
   end;

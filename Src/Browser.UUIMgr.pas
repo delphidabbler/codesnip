@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2005-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -22,9 +22,14 @@ interface
 
 uses
   // Delphi
-  Classes, Windows, ActiveX, SHDocVw, Menus,
+  Classes,
+  Windows,
+  ActiveX,
+  SHDocVw,
+  Menus,
   // Project
-  Browser.IntfDocHostUI, Browser.UNulUIHandler;
+  Browser.IntfDocHostUI,
+  Browser.UNulUIHandler;
 
 
 type
@@ -341,28 +346,12 @@ uses
   // Delphi
   SysUtils,
   // Project
-  Browser.UControlHelper, UHTMLDOMHelper, UThemesEx, UUrlMonEx;
+  CS.Utils.COM,
+  Browser.UControlHelper,
+  UHTMLDOMHelper,
+  UThemesEx,
+  UUrlMonEx;
 
-
-function TaskAllocWideString(const S: string): PWChar;
-  {Allocates memory for a wide string using the Shell's task allocator and
-  copies a given string into the memory as a wide string. Caller is responsible
-  for freeing the buffer and must use the shell's allocator to do this.
-    @param S [in] String to convert.
-    @return Pointer to buffer containing wide string.
-  }
-var
-  StrLen: Integer;  // length of string in bytes
-begin
-  // Store length of string, allowing for terminal #0
-  StrLen := Length(S) + 1;
-  // Allocate buffer for wide string using task allocator
-  Result := CoTaskMemAlloc(StrLen * SizeOf(WideChar));
-  if not Assigned(Result) then
-    raise EOutOfMemory.Create('TaskAllocWideString: can''t allocate buffer.');
-  // Convert string to wide string and store in buffer
-  StringToWideChar(S, Result, StrLen);
-end;
 
 { TWBUIMgr }
 
@@ -526,27 +515,27 @@ begin
   // Update flags depending on property values
   pInfo.dwFlags := 0;
   if fUseThemes and ThemeServicesEx.ThemesEnabled then
-    pInfo.dwFlags := pInfo.dwFlags or DOCHOSTUIFLAG_THEME
+    pInfo.dwFlags := pInfo.dwFlags or TDocHostUIFlag.THEME
   else if ThemeServicesEx.ThemesAvailable then
-    pInfo.dwFlags := pInfo.dwFlags or DOCHOSTUIFLAG_NOTHEME;
+    pInfo.dwFlags := pInfo.dwFlags or TDocHostUIFlag.NOTHEME;
   // scroll bar style
   case fScrollbarStyle of
     sbsHide:
       // hide the scroll bars
-      pInfo.dwFlags := pInfo.dwFlags or DOCHOSTUIFLAG_SCROLL_NO;
+      pInfo.dwFlags := pInfo.dwFlags or TDocHostUIFlag.SCROLL_NO;
     sbsFlat:
       // use flat scroll bars (has effect in classic UI only)
-      pInfo.dwFlags := pInfo.dwFlags or DOCHOSTUIFLAG_FLAT_SCROLLBAR;
+      pInfo.dwFlags := pInfo.dwFlags or TDocHostUIFlag.FLAT_SCROLLBAR;
     sbsNormal:
       // use standard scroll bars: this is default
       {Do nothing};
   end;
   // 3d border
   if not fShow3dBorder then
-    pInfo.dwFlags := pInfo.dwFlags or DOCHOSTUIFLAG_NO3DBORDER;
+    pInfo.dwFlags := pInfo.dwFlags or TDocHostUIFlag.NO3DBORDER;
   // text selection
   if not fAllowTextSelection then
-    pInfo.dwFlags := pInfo.dwFlags or DOCHOSTUIFLAG_DIALOG;
+    pInfo.dwFlags := pInfo.dwFlags or TDocHostUIFlag.DIALOG;
 
   // Record default style sheet if provided
   CSS := fCSS;
@@ -639,7 +628,7 @@ begin
   BodyElem := THTMLDOMHelper.GetBodyElem(fWebBrowser.Document);
   if not Assigned(BodyElem) then
     Exit;
-  DisplayPopupMenu(Pt, CONTEXT_MENU_DEFAULT, BodyElem);
+  DisplayPopupMenu(Pt, TDocHostUIContextMenu.DEFAULT, BodyElem);
 end;
 
 function TWBUIMgr.ShowUI(const dwID: DWORD;

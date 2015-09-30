@@ -3,13 +3,13 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2009-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2009-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
  *
- * Implements a static class that manages and displays a test unit in a dialog
- * box.
+ * Implements a static class that creates and displays a Pascal test unit in a
+ * dialogue box.
 }
 
 
@@ -23,23 +23,33 @@ uses
   // Delphi
   Classes,
   // Project
-  DB.USnippet, UBaseObjects;
+  CS.Database.Types,
+  CS.SourceCode.Languages,
+  UBaseObjects,
+  UEncodings;
 
 
 type
-
-  {
-  TTestUnitDlgMgr:
-    Static class that manages and displays a test unit in a dialog box.
-  }
+  ///  <summary>Static class that creates and displays a Pascal test unit in a
+  ///  dialogue box.</summary>
   TTestUnitDlgMgr = class(TNoConstructObject)
+  strict private
+    ///  <summary>Generates source code a test unit for the given snippet's
+    ///  source code.</summary>
+    class function GenerateTestUnit(Snippet: ISnippet): string;
+    ///  <summary>Syntax highlights the given source code with a highlighter
+    ///  suitable for the given language and returns the highlighted code as
+    ///  XHTML.</summary>
+    class function HighlightSource(const SourceCode: string;
+      const Language: TSourceCodeLanguage): TEncodedData;
   public
-    class procedure DisplayTestUnit(const Owner: TComponent;
-      const Snippet: TSnippet);
-      {Generates and displays a highlighted test compile unit in a dialog box.
-        @param Owner [in] Component that owns the dialog box.
-        @param Snippet [in] Snippet for which test unit is to be displayed.
-      }
+    ///  <summary>Generates and displays a syntax highlighted test compile unit
+    ///  in a dialogue box.</summary>
+    ///  <param name="Owner">TComponent [in] Component that owns the dialogue
+    ///  box.</param>
+    ///  <param name="Snippet">TSnippet [in] Snippet for which test unit is to
+    ///  be displayed.</param>
+    class procedure DisplayTestUnit(const Owner: TComponent; Snippet: ISnippet);
   end;
 
 
@@ -50,38 +60,61 @@ uses
   // Delphi
   SysUtils,
   // Project
-  FmPreviewDlg, Hiliter.UAttrs, Hiliter.UGlobals, Hiliter.UHiliters, UTestUnit;
+  CS.Config,
+  CS.SourceCode.Hiliter.Brushes,
+  CS.SourceCode.Hiliter.Renderers,
+  CS.SourceCode.Hiliter.Themes,
+  FmPreviewDlg,
+  UPreferences,
+  CS.SourceCode.Pascal.TestUnit;
 
 
 { TTestUnitDlgMgr }
 
 class procedure TTestUnitDlgMgr.DisplayTestUnit(const Owner: TComponent;
-  const Snippet: TSnippet);
-  {Generates and displays a highlighted test compile unit in a dialog box.
-    @param Owner [in] Component that owns the dialog box.
-    @param Snippet [in] Snippet for which test unit is to be displayed.
-  }
+  Snippet: ISnippet);
 var
-  TestUnitSource: string;   // source code of test unit
+  XHTMLDoc: TEncodedData;         // syntax highlighted source code XHTML
 resourcestring
-  sDlgTitle = 'Test Unit for %s'; // caption of dialog box
+  sDlgTitle = 'Test Unit for %s'; // caption of dialogue box
 begin
-  // Generate unit source code
-  with TTestUnit.Create(Snippet) do
+  XHTMLDoc := HighlightSource(
+    GenerateTestUnit(Snippet),
+    TConfig.Instance.SourceCodeLanguages[Snippet.LanguageID]
+  );
+  TPreviewDlg.Execute(
+    Owner, XHTMLDoc, dtHTML, Format(sDlgTitle, [Snippet.Title])
+  );
+end;
+
+class function TTestUnitDlgMgr.GenerateTestUnit(Snippet: ISnippet):
+  string;
+begin
+  with TPascalTestUnit.Create(Snippet) do
     try
-      TestUnitSource := GenerateUnitSource;
+      Result := GenerateUnitSource;
     finally
       Free;
     end;
-  // Convert source to higlighted XHTML document and display it
-  TPreviewDlg.Execute(
-    Owner,
-    TXHTMLDocumentHiliter.Hilite(
-      TestUnitSource, THiliteAttrsFactory.CreateUserAttrs
-    ),
-    dtHTML,
-    Format(sDlgTitle, [Snippet.DisplayName])
-  );
+end;
+
+class function TTestUnitDlgMgr.HighlightSource(const SourceCode: string;
+  const Language: TSourceCodeLanguage): TEncodedData;
+var
+  Brush: TSyntaxHiliterBrush;     // syntax highlighter brush for language
+  Theme: TSyntaxHiliteTheme;      // syntax highlighter theme
+resourcestring
+  sDlgTitle = 'Test Unit for %s'; // caption of dialogue box
+begin
+  Theme := TConfig.Instance.HiliterThemes[
+    Preferences.CurrentHiliteThemeIds[htkUI]
+  ];
+  Brush := TSyntaxHiliterBrushes.CreateBrush(Language.HiliterBrushID);
+  try
+    Result := TXHTMLDocumentHiliter.Hilite(SourceCode, Brush, Theme);
+  finally
+    Brush.Free;
+  end;
 end;
 
 end.

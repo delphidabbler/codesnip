@@ -23,29 +23,34 @@ uses
   // Delphi
   SHDocVw, ActiveX,
   // Project
-  Browser.IntfDocHostUI, DB.USnippet, Compilers.UGlobals, UCommandBars, UView;
+  CS.Database.Types,
+  Browser.IntfDocHostUI,
+  Compilers.UGlobals,
+  UCommandBars,
+  UView;
 
 
 const
-  // Indexes of tabs in Overview Pane
-  cCategorisedTab = 0;
-  cAlphabeticTab = 1;
-  cKindTab = 2; // snippet kind tab
+  // Indexes of groupings in Overview Pane
+  cTagsGrouping = 0;
+  cAlphabeticGrouping = 1;
+  cKindGrouping = 2;
+  cSourceCodeLanguageGrouping = 3;
 
   // Identifiers for Overview Pane's command bars
   cOverviewToolBar: TCommandBarID = 1;
   cOverviewPopupMenu: TCommandBarID = 2;
 
   // Identifiers for Detail Pane's main view command bars
-  cDetailPopupMenuDefault: TCommandBarID = CONTEXT_MENU_DEFAULT;
-  cDetailPopupMenuImage: TCommandBarID = CONTEXT_MENU_IMAGE;
-  cDetailPopupMenuControl: TCommandBarID = CONTEXT_MENU_CONTROL;
-  cDetailPopupMenuTable: TCommandBarID = CONTEXT_MENU_TABLE;
-  cDetailPopupMenuTextSelect: TCommandBarID = CONTEXT_MENU_TEXTSELECT;
-  cDetailPopupMenuAnchor: TCommandBarID = CONTEXT_MENU_ANCHOR;
-  cDetailPopupMenuUnknown: TCommandBarID = CONTEXT_MENU_UNKNOWN;
-  cDetailPopupMenuFirst = CONTEXT_MENU_DEFAULT;
-  cDetailPopupMenuLast = CONTEXT_MENU_UNKNOWN;
+  cDetailPopupMenuDefault: TCommandBarID = TDocHostUIContextMenu.DEFAULT;
+  cDetailPopupMenuImage: TCommandBarID = TDocHostUIContextMenu.IMAGE;
+  cDetailPopupMenuControl: TCommandBarID = TDocHostUIContextMenu.CONTROL;
+  cDetailPopupMenuTable: TCommandBarID = TDocHostUIContextMenu.TABLE;
+  cDetailPopupMenuTextSelect: TCommandBarID = TDocHostUIContextMenu.TEXTSELECT;
+  cDetailPopupMenuAnchor: TCommandBarID = TDocHostUIContextMenu.ANCHOR;
+  cDetailPopupMenuUnknown: TCommandBarID = TDocHostUIContextMenu.UNKNOWN;
+  cDetailPopupMenuFirst = TDocHostUIContextMenu.DEFAULT;
+  cDetailPopupMenuLast = TDocHostUIContextMenu.UNKNOWN;
 
   // Set of all Detail Pane popup menu command bars
   cDetailPopupMenuIDs: TCommandBarIDs =
@@ -61,11 +66,14 @@ const
 ////////////////////////////////////////////////////////////////////////////////
 
 type
-  ///  <summary>Interface that defines methods for use in managing tab sets.
-  ///  </summary>
-  ITabbedDisplayMgr = interface(IInterface)
-    ['{5445BF4F-0A02-48E6-A6FA-AE0FFC2F9939}']
-    ///  <summary>Select tab with given index in set.</summary>
+  ///  <summary>Interface that defines operations on Detail Pane relating to
+  ///  display of views in one or more tabs.</summary>
+  IDetailPaneDisplayMgr = interface(IInterface)
+    ['{79F8BCAB-4C3F-4935-B5BF-9E5B9B32D88A}']
+    /// <summary>Return currently selected view.</summary>
+    function SelectedView: IView;
+    ///  <summary>Select tab with given index and display its associated view.
+    ///  </summary>
     procedure SelectTab(const TabIdx: Integer);
     ///  <summary>Get index of currently selected tab.</summary>
     function SelectedTab: Integer;
@@ -75,19 +83,8 @@ type
     ///  <summary>Switch to previous tab in sequence or go to last tab if
     ///  current tab is first.</summary>
     procedure PreviousTab;
-  end;
-
-type
-  ///  <summary>Interface that defines operations on Detail Pane relating to
-  ///  display of views in one or more tabs.</summary>
-  IDetailPaneDisplayMgr = interface(IInterface)
-    ['{79F8BCAB-4C3F-4935-B5BF-9E5B9B32D88A}']
-    /// <summary>Return currently selected view.</summary>
-    function SelectedView: IView;
-    ///  <summary>Select detail pane tab with given index.</summary>
-    procedure SelectTab(const TabIdx: Integer);
-    ///  <summary>Find index of tab displaying given view or -1 if no such tab.
-    ///  </summary>
+    ///  <summary>Find index of tab displaying given view or return -1 if no
+    ///  such tab exists.</summary>
     function FindTab(ViewKey: IViewKey): Integer;
     ///  <summary>Display given view in tab with given index.</summary>
     procedure Display(View: IView; const TabIdx: Integer);
@@ -95,8 +92,11 @@ type
     procedure Reload;
     ///  <summary>Close all tabs and delete all views.</summary>
     procedure Clear;
-    ///  <summary>Create a new tab displaying given view and return its index.
-    ///  </summary>
+    ///  <summary>Create a new tab displaying given view in its caption and
+    ///  return its index.</summary>
+    ///  <remarks>The view should not be displayed in the main body of the pane:
+    ///  any existing view should be left in place. Call SelectTab with this
+    ///  tab's index to display the view in full.</remarks>
     function CreateTab(View: IView): Integer;
     ///  <summary>Check if tab set is empty, i.e. there are no tabs displayed.
     ///  </summary>
@@ -124,13 +124,17 @@ type
   ///  snippets.</summary>
   IOverviewDisplayMgr = interface(IInterface)
     ['{AD5D5A0F-E7D3-4173-A4F9-04D43909B0F5}']
-    ///  <summary>Initialise frame with given tab selected.</summary>
-    procedure Initialise(const TabIdx: Integer);
-    ///  <summary>Display given list of snippets in the current overview tab.
+    ///  <summary>Initialise frame with grouping with given index selected.
     ///  </summary>
-    ///  <remarks>If given snippet list is same as that displayed it may not
+    procedure Initialise(const GroupingIdx: Integer);
+    ///  <summary>Display snippets with the given IDs.</summary>
+    ///  <remarks>If snippet ID list is same as that displayed it may not
     ///  be redisplayed unless Force parameter is True.</remarks>
-    procedure Display(const SnippetList: TSnippetList; const Force: Boolean);
+    procedure Display(Snippets: ISnippetIDList; const Force: Boolean);
+    ///  <summary>Select grouping with given index.</summary>
+    procedure SelectGrouping(const Idx: Integer);
+    ///  <summary>Get index of currently displayed grouping.</summary>
+    function SelectedGroupingIdx: Integer;
     ///  <summary>Clear the display.</summary>
     procedure Clear;
     ///  <summary>Select given view item in tree view.</summary>

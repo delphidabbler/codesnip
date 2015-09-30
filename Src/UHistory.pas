@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -111,7 +111,10 @@ uses
   // Delphi
   SysUtils,
   // Project
-  DB.UMain, UExceptions;
+  CS.Database.Types,
+  DB.UMain,
+  UBox,
+  UExceptions;
 
 
 { THistory }
@@ -155,13 +158,17 @@ var
   EventInfo: IDatabaseChangeEventInfo;  // information about the event
 begin
   EventInfo := EvtInfo as IDatabaseChangeEventInfo;
-  // Clear history if snippet or category changed or removed
+  // Clear history if snippet changed or removed
+  // TODO: add support for changes to tags when such events are added
   case EventInfo.Kind of
-    evSnippetDeleted, evSnippetChanged,
-    evCategoryDeleted, evCategoryChanged:
+    evSnippetDeleted:
       Clear;
-    evSnippetAdded, evCategoryAdded:
-      NewItem(TViewFactory.CreateDBItemView(EventInfo.Info));
+    evSnippetAdded:
+      NewItem(
+        TViewFactory.CreateSnippetView(
+          (EventInfo.Info as TBox<TSnippetID>).Value
+        )
+      );
   end;
 end;
 
@@ -221,7 +228,7 @@ begin
   Assert(fCursor <= fItems.Count, ClassName + '.NewItem: fCursor too large');
   Assert(fCursor >= -1, ClassName + '.NewItem: fCursor too small');
   // Create copy of given view item
-  if Supports(ViewItem, INulView) then
+  if Supports(ViewItem, INullView) then
     Exit; // don't record nul views
   ClonedItem := TViewFactory.Clone(ViewItem);
   // Increment cursor if possible - it will reference new item

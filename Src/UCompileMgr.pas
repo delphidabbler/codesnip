@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2009-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2009-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -21,9 +21,12 @@ interface
 
 uses
   // Delphi
-  Classes, Controls,
+  Classes,
+  Controls,
   // Project
-  Compilers.UGlobals, DB.USnippet, UView;
+  CS.Database.Types,
+  Compilers.UGlobals,
+  UView;
 
 
 type
@@ -43,7 +46,7 @@ type
   }
   TCompileMgr = class(TComponent)
   strict private
-    fLastCompiledSnippet: TSnippet; // Value of LastCompiledSnippet property
+    fLastCompiledSnippet: ISnippet; // Value of LastCompiledSnippet property
     fCompilers: ICompilers;         // Value of Compilers property
     ///  <summary>Handles database change events. Clears test compilation if
     ///  related snippet is changed or deleted.</summary>
@@ -53,7 +56,7 @@ type
     ///  about the database change event.</param>
     procedure DBChangeEventHandler(Sender: TObject; const EvtInfo: IInterface);
   strict protected
-    property LastCompiledSnippet: TSnippet read fLastCompiledSnippet;
+    property LastCompiledSnippet: ISnippet read fLastCompiledSnippet;
       {Last compiled snippet. May not be added to Snippets object}
   public
     constructor Create(AOwner: TComponent); override;
@@ -67,10 +70,10 @@ type
       {Checks if any compilers are set up to work with CodeSnip.
         @return True if at least one compiler is available, False otherwise.
       }
-    procedure Compile(const UIParent: TWinControl; const Snippet: TSnippet;
+    procedure Compile(const UIParent: TWinControl; Snippet: ISnippet;
       const DisplayProc: TCompileResultDisplay = nil);
       {Test compiles a snippet and then displays the compilation results. Shows
-      a wait dialog box if compilation takes a long time.
+      a wait dialogue box if compilation takes a long time.
         @param UIParent [in] Control that parents any wait window that is
           displayed. Wait window aligned above this control.
         @param Snippet [in] Snippet to be compiled. Stored in
@@ -84,7 +87,7 @@ type
         @return True if there are any errors, False otherwise.
       }
     procedure ShowErrors;
-      {Shows dialog box containing all errors and warnings for last compiled
+      {Shows dialogue box containing all errors and warnings for last compiled
       snippet.
       }
     property Compilers: ICompilers read fCompilers;
@@ -111,7 +114,7 @@ type
           otherwise.
       }
     function ConfigCompilers: Boolean;
-      {Displays Configure Compilers dialog to permit user to update compiler
+      {Displays Configure Compilers dialogue to permit user to update compiler
       properties.
         @return True if user accepts changes, False if not.
       }
@@ -125,16 +128,20 @@ uses
   // Delphi
   SysUtils,
   // Project
-  Compilers.UCompilers, DB.UMain, FmCompErrorDlg, FmCompilersDlg,
+  Compilers.UCompilers,
+  DB.UMain,
+  FmCompErrorDlg,
+  FmCompilersDlg,
+  UBox,
   UTestCompileUI;
 
 
 { TCompileMgr }
 
-procedure TCompileMgr.Compile(const UIParent: TWinControl;
-  const Snippet: TSnippet; const DisplayProc: TCompileResultDisplay);
+procedure TCompileMgr.Compile(const UIParent: TWinControl; Snippet: ISnippet;
+  const DisplayProc: TCompileResultDisplay);
   {Test compiles a snippet and then displays the compilation results. Shows a
-  wait dialog box if compilation takes a long time.
+  wait dialogue box if compilation takes a long time.
     @param UIParent [in] Control that parents any wait window that is displayed.
       Wait window aligned above this control.
     @param Snippet [in] Snippet to be compiled. Stored in LastCompiledSnippet
@@ -149,10 +156,7 @@ begin
   if Assigned(DisplayProc) then
     DisplayProc(fCompilers);
   // Copy snippet to LastCompiledSnippet property
-  fLastCompiledSnippet.Free;
-  fLastCompiledSnippet := (Database as IDatabaseEdit).CreateTempSnippet(
-    Snippet
-  );
+  fLastCompiledSnippet := Snippet;
 end;
 
 constructor TCompileMgr.Create(AOwner: TComponent);
@@ -169,17 +173,19 @@ procedure TCompileMgr.DBChangeEventHandler(Sender: TObject;
   const EvtInfo: IInterface);
 var
   EventInfo: IDatabaseChangeEventInfo;  // information about the event
+  ChangingSnippetID: TSnippetID;
 begin
   if not Assigned(fLastCompiledSnippet) then
     Exit;
   EventInfo := EvtInfo as IDatabaseChangeEventInfo;
   if not (EventInfo.Kind in [evBeforeSnippetChange, evBeforeSnippetDelete]) then
     Exit;
-  Assert(EventInfo.Info is TSnippet,
-    ClassName + '.DBChangeEventHandler: EventInfo is not TSnippet');
-  if (EventInfo.Info as TSnippet).IsEqual(fLastCompiledSnippet) then
-    // Snippet being changed is last compiled snippet: free and nil it so to
-    // ensure incorrect results can't be viewed.
+  Assert(EventInfo.Info is TBox<TSnippetID>,
+    ClassName + '.DBChangeEventHandler: EventInfo is not TBox<TSnippetID>');
+  ChangingSnippetID := (EventInfo.Info as TBox<TSnippetID>).Value;
+  if ChangingSnippetID = fLastCompiledSnippet.ID then
+    // Snippet being changed is last compiled snippet: we use FreeAndNil instead
+    // of .Free to signal that there is no stored compiled snippet to view.
     FreeAndNil(fLastCompiledSnippet);
 end;
 
@@ -188,7 +194,6 @@ destructor TCompileMgr.Destroy;
   }
 begin
   Database.RemoveChangeEventHandler(DBChangeEventHandler);
-  fLastCompiledSnippet.Free;
   fCompilers := nil;
   inherited;
 end;
@@ -220,7 +225,7 @@ begin
 end;
 
 procedure TCompileMgr.ShowErrors;
-  {Shows dialog box containing all errors and warnings for last compiled
+  {Shows dialogue box containing all errors and warnings for last compiled
   snippet.
   }
 begin
@@ -241,14 +246,15 @@ function TMainCompileMgr.CanCompile(View: IView): Boolean;
 var
   SnippetView: ISnippetView;  // view as snippet view if supported
 begin
-  Result := Assigned(View)
-    and HaveCompilers
-    and Supports(View, ISnippetView, SnippetView)
-    and SnippetView.Snippet.CanCompile;
+  if not HaveCompilers then
+    Exit(False);
+  if not Supports(View, ISnippetView, SnippetView) then
+    Exit(False);
+  Result := Database.LookupSnippet(SnippetView.SnippetID).CanCompile;
 end;
 
 function TMainCompileMgr.ConfigCompilers: Boolean;
-  {Displays Configure Compilers dialog to permit user to update compiler
+  {Displays Configure Compilers dialogue to permit user to update compiler
   properties.
     @return True if user accepts changes, False if not.
   }
@@ -268,7 +274,7 @@ begin
   Result := Assigned(View)
     and Assigned(LastCompiledSnippet)
     and Supports(View, ISnippetView, SnippetView)
-    and SnippetView.Snippet.IsEqual(LastCompiledSnippet);
+    and (SnippetView.SnippetID = LastCompiledSnippet.ID);
 end;
 
 end.

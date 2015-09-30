@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2012-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2012-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -79,13 +79,30 @@ function IniSectionExists(const Section, FileName: string): Boolean;
 ///  <returns>Boolean. True if key exists, False if not.</returns>
 function IniKeyExists(const Section, Key, FileName: string): Boolean;
 
+///  <summary>Renames a section of an ini file, preserving all values.</summary>
+///  <param name="OldSection">string [in] Name of section to be renamed.</param>
+///  <param name="NewSection">string [in] New name of section.</param>
+///  <param name="FileName">string [in] Name of ini file.</param>
+procedure RenameIniSection(const OldSection, NewSection, FileName: string);
+
+///  <summary>Renames a key in a given section of an ini file if the key exists.
+///  </summary>
+///  <param name="Section">string [in] Ini file section containing key.</param>
+///  <param name="OldKey">string [in] Name of key to be renamed.</param>
+///  <param name="NewKey">string [in] New name of key.</param>
+///  <param name="FileName">string [in] Name of ini file.</param>
+///  <returns>Boolean. True if key exists and was renamed, False if key does not
+///  exist and no action was taken.</returns>
+function RenameIniKey(const Section, OldKey, NewKey, FileName: string):
+  Boolean;
+
 
 implementation
 
 
 uses
   // Delphi
-  IniFiles;
+  IniFiles, Classes;
 
 
 function GetIniString(const Section, Key: string; Default: string;
@@ -182,6 +199,47 @@ begin
   Ini := TIniFile.Create(FileName);
   try
     Result := Ini.SectionExists(Section);
+  finally
+    Ini.Free;
+  end;
+end;
+
+procedure RenameIniSection(const OldSection, NewSection, FileName: string);
+var
+  Ini: TIniFile;
+  AllValues: TStringList;
+  I: Integer;
+begin
+  AllValues := nil;
+  Ini := TIniFile.Create(FileName);
+  try
+    if not Ini.SectionExists(OldSection) then
+      Exit;
+    AllValues := TStringList.Create;
+    Ini.ReadSectionValues(OldSection, AllValues);
+    for I := 0 to Pred(AllValues.Count) do
+      Ini.WriteString(
+        NewSection, AllValues.Names[I], AllValues.ValueFromIndex[I]
+      );
+    Ini.EraseSection(OldSection);
+  finally
+    AllValues.Free;
+    Ini.Free;
+  end;
+end;
+
+function RenameIniKey(const Section, OldKey, NewKey, FileName: string):
+  Boolean;
+var
+  Ini: TIniFile;
+begin
+  Ini := TIniFile.Create(FileName);
+  try
+    Result := Ini.ValueExists(Section, OldKey);
+    if not Result then
+      Exit;
+    Ini.WriteString(Section, NewKey, Ini.ReadString(Section, OldKey, ''));
+    Ini.DeleteKey(Section, OldKey);
   finally
     Ini.Free;
   end;

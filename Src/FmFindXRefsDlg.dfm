@@ -18,12 +18,12 @@ inherited FindXRefsDlg: TFindXRefsDlg
       Height = 13
       Caption = 'Find cross references for '
     end
-    object lblSnippetName: TLabel
+    object lblSnippetTitle: TLabel
       Left = 119
       Top = 0
-      Width = 73
+      Width = 66
       Height = 13
-      Caption = 'lblSnippetName'
+      Caption = 'lblSnippetTitle'
     end
     object lblOverwriteSearch: TLabel
       Left = 0

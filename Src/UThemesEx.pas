@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2006-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2006-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -179,8 +179,8 @@ destructor TThemeServicesEx.Destroy;
   {Class destructor. Tears down object.
   }
 begin
-  FreeAndNil(fThemeChanges);
-  FreeAndNil(fMessageWdw);
+  fThemeChanges.Free;
+  fMessageWdw.Free;
   inherited;
 end;
 
@@ -258,7 +258,7 @@ begin
     // take a representative colour from drawn pane
     Result := Bmp.Canvas.Pixels[2, 3];
   finally
-    FreeAndNil(Bmp);
+    Bmp.Free;
   end;
 end;
 
@@ -331,9 +331,9 @@ begin
   if Assigned(fThemeChanges) then
   begin
     fThemeChanges.RemoveHandler(Evt);
-    // we free list if it is empty
+    // free list if empty
     if fThemeChanges.Count = 0 then
-      FreeAndNil(fThemeChanges);
+      FreeAndNil(fThemeChanges);  // NOTE: FreeAndNil necessary here
   end;
 end;
 

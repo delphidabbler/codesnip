@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2005-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -21,9 +21,12 @@ interface
 
 uses
   // Delphi
-  Classes, Graphics,
+  Classes,
+  Graphics,
   // Project
-  Compilers.UGlobals, DB.USnippet, UBaseObjects, USnippetIDs;
+  CS.Database.Types,
+  Compilers.UGlobals,
+  UBaseObjects;
 
 
 type
@@ -46,9 +49,10 @@ type
     ///  <summary>Performs any required tidying up of filter after a search
     ///  finishes.</summary>
     procedure Finalise;
-    ///  <summary>Checks whether the given snippet matches the filter's search
-    ///  criteria, returning True if so or False if not.</summary>
-    function Match(const Snippet: TSnippet): Boolean;
+    ///  <summary>Checks whether the snippet with the given ID matches the
+    ///  filter's search criteria, returning True if so or False if not.
+    ///  </summary>
+    function Match(const SnippetID: TSnippetID): Boolean;
     ///  <summary>Indicates whether the object is a null filter or not.
     ///  </summary>
     ///  <remarks>A null filter is a no-op - every snippet is passed through.
@@ -98,9 +102,26 @@ type
   end;
 
 type
-  ///  <summary>Set of ids of compilers to be included in a compiler search.
-  ///  </summary>
-  TCompilerSearchCompilers = set of TCompilerID;
+  ///  <summary>Interface defining search operations and search criteria for a
+  ///  tag search filter.</summary>
+  ///  <remarks>Must be supported by all tag search filters.</remarks>
+  ITagSearchFilter = interface(ISearchFilter)
+    ['{20698658-F545-4875-9703-9408EDDEE049}']
+    ///  <summary>Read accessor for Logic property.</summary>
+    ///  <returns>TSearchLogic. Search logic to be used: "and" which requires
+    ///  that all tags in Tags property are found in a snippet or "or" which
+    ///  permits snippets to contain any one or more such tags.</returns>
+    function GetLogic: TSearchLogic;
+    ///  <summary>Read accessor for Tags property.</summary>
+    ///  <returns>ITagSet. Set of tags to be included in search.</returns>
+    function GetTags: ITagSet;
+    ///  <summary>Search logic to be used: "and" which requires that all tags
+    ///  in Tags property are found in a snippet or "or" which permits snippets
+    ///  to contain any one or more such tags.</summary>
+    property Logic: TSearchLogic read GetLogic;
+    ///  <summary>Set of tags to be included in search.</summary>
+    property Tags: ITagSet read GetTags;
+  end;
 
 type
   ///  <summary>Options that can be used to customise a compiler search by
@@ -120,9 +141,9 @@ type
   ICompilerSearchFilter = interface(ISearchFilter)
     ['{6DFAD486-C142-4B0F-873A-51075E285C0C}']
     ///  <summary>Read accessor for Compilers property.</summary>
-    ///  <returns>TCompilerSearchCompilers. Set of compilers to be included in
+    ///  <returns>TCompilerIDs. Set of compilers to be included in
     ///  search.</returns>
-    function GetCompilers: TCompilerSearchCompilers;
+    function GetCompilers: TCompilerIDs;
     ///  <summary>Read accessor for Logic property.</summary>
     ///  <returns>TSearchLogic. Search logic to be used: "and" which requires
     ///  that all compilers in Compilers property are found or "or" which
@@ -133,7 +154,7 @@ type
     ///  outcome to be searched for.</returns>
     function GetOption: TCompilerSearchOption;
     ///  <summary>Set of compilers to be included in the search.</summary>
-    property Compilers: TCompilerSearchCompilers read GetCompilers;
+    property Compilers: TCompilerIDs read GetCompilers;
     ///  <summary>Search logic to be used: "and" which requires all a matched
     ///  snippet to have the compile result that matches the Option property for
     ///  all compilers specified in the Compilers property, or "or" which
@@ -181,16 +202,17 @@ type
   ///  cross-reference filter.</summary>
   IXRefSearchFilter = interface(ISearchFilter)
     ['{92277B2B-AB48-4B3B-8C4F-6DCC71716D79}']
-    ///  <summary>Read accessor for BaseSnippet property.</summary>
-    ///  <returns>TSnippet. Snippet for which cross-references are to be found.
-    ///  </returns>
-    function GetBaseSnippet: TSnippet;
+    ///  <summary>Read accessor for BaseSnippetID property.</summary>
+    ///  <returns>TSnippetID. ID of snippet for which cross-references are to be
+    ///  found.</returns>
+    function GetBaseSnippetID: TSnippetID;
     ///  <summary>Read accessor for Options property.</summary>
     ///  <returns>TXRefSearchOptions. Set of search options used to customise
     ///  the filter.</returns>
     function GetOptions: TXRefSearchOptions;
-    ///  <summary>Snippet for which cross-references are to be found.</summary>
-    property BaseSnippet: TSnippet read GetBaseSnippet;
+    ///  <summary>ID of snippet for which cross-references are to be found.
+    ///  </summary>
+    property BaseSnippetID: TSnippetID read GetBaseSnippetID;
     ///  <summary>Set of search options used to customise the filter.</summary>
     property Options: TXRefSearchOptions read GetOptions;
   end;
@@ -215,13 +237,14 @@ type
     function GetFilter: ISearchFilter;
     ///  <summary>Executes the search selecting the snippets that pass the
     ///  filter referenced by the Filter property.</summary>
-    ///  <param name="InList">TSnippetList [in] List of snippets to be searched.
-    ///  </param>
-    ///  <param name="FoundList">TSnippetList [in] Receives list of snippets
+    ///  <param name="InList">ISnippetIDList [in] IDs of snippets to be
+    ///  searched.</param>
+    ///  <param name="FoundList">ISnippetIDList [out] Receives IDs of snippets
     ///  that pass the search filter.</param>
     ///  <returns>Boolean. True if some snippets were found or False if not.
     ///  </returns>
-    function Execute(const InList, FoundList: TSnippetList): Boolean;
+    function Execute(InList: ISnippetIDList; out FoundList: ISnippetIDList):
+      Boolean;
     ///  <summary>Reference to the search filter.</summary>
     property Filter: ISearchFilter read GetFilter;
   end;
@@ -245,7 +268,7 @@ type
   TSearchFilterFactory = class(TNoConstructObject)
   public
     ///  <summary>Creates and returns a compiler search filter object.</summary>
-    ///  <param name="Compilers">TCompilerSearchCompilers [in] Set of compilers
+    ///  <param name="Compilers">TCompilerIDs [in] Set of compilers
     ///  to be included in search.</param>
     ///  <param name="Logic">TSearchLogic [in] Search logic to be used: AND or
     ///  OR.</param>
@@ -253,7 +276,7 @@ type
     ///  outcome.</param>.
     ///  <returns>ICompilerSearchFilter. Interface to filter object.</returns>
     class function CreateCompilerSearchFilter(
-      const Compilers: TCompilerSearchCompilers; const Logic: TSearchLogic;
+      const Compilers: TCompilerIDs; const Logic: TSearchLogic;
       const Option: TCompilerSearchOption): ICompilerSearchFilter;
     ///  <summary>Creates and returns a text search filter object.</summary>
     ///  <param name="Words">string [in] List of words to be searched for.
@@ -266,30 +289,37 @@ type
     class function CreateTextSearchFilter(const Words: string;
       const Logic: TSearchLogic; const Options: TTextSearchOptions):
       ITextSearchFilter;
+    ///  <summary>Creates and returns a tag search filter object.</summary>
+    ///  <param name="Tags">ITagSet [in] Set of search tags.</param>
+    ///  <param name="Logic">TSearchLogic [in] Search logic to be used: AND or
+    ///  OR.</param>
+    ///  <returns>ITagSearchFilter. Interface to filter object.</returns>
+    class function CreateTagSearchFilter(Tags: ITagSet;
+      const Logic: TSearchLogic): ITagSearchFilter;
     ///  <summary>Creates and returns a search filter that selects from a given
     ///  list of snippets provided by a user.</summary>
-    ///  <param name="SelectedItems">TSnippetList [in] List of snippets to be
-    ///  included in search.</param>
+    ///  <param name="SelectedSnippets">ISnippetIDList [in] IDs of snippets to
+    ///  be included in search.</param>
     ///  <returns>ISelectionSearchFilter. Interface to filter object.
     ///  </returns>
     class function CreateManualSelectionSearchFilter(
-      const SelectedSnippets: TSnippetList): ISelectionSearchFilter;
+      SelectedSnippets: ISnippetIDList): ISelectionSearchFilter;
     ///  <summary>Creates and returns a search filter that selects from a given
     ///  list of snippets provided from file.</summary>
-    ///  <param name="SelectedItems">TSnippetList [in] List of snippets to be
-    ///  included in search.</param>
+    ///  <param name="SelectedSnippets">ISnippetIDList [in] IDs of snippets to
+    ///  be included in search.</param>
     ///  <returns>ISelectionSearchFilter. Interface to filter object.
     ///  </returns>
     class function CreateStoredSelectionSearchFilter(
-      const SelectedSnippets: ISnippetIDList): ISelectionSearchFilter;
+      SelectedSnippets: ISnippetIDList): ISelectionSearchFilter;
     ///  <summary>Creates and returns a cross-reference search filter object.
     ///  </summary>
-    ///  <param name="BaseSnippet">TSnippet [in] Snippet whose cross references
-    ///  are to be searched for.</param>
+    ///  <param name="BaseSnippetID">TSnippetID [in] ID of snippet whose cross
+    ///  references are to be searched for.</param>
     ///  <param name="Options">TXRefSearchOptions [in] Set of search
     ///  customisation options.</param>
     ///  <returns>IXRefSearchFilter. Interface to filter object.</returns>
-    class function CreateXRefSearchFilter(const BaseSnippet: TSnippet;
+    class function CreateXRefSearchFilter(const BaseSnippetID: TSnippetID;
       const Options: TXRefSearchOptions): IXRefSearchFilter;
  end;
 
@@ -299,9 +329,17 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Character,
+  SysUtils,
+  Character,
   // Project
-  DB.UMain, IntfCommon, UConsts, UStrUtils;
+  CS.ActiveText,
+  CS.ActiveText.Renderers.PlainText,
+  CS.Database.Snippets,
+  DB.UMain,
+  IntfCommon,
+  UConsts,
+  UExceptions,
+  UStrUtils;
 
 
 type
@@ -314,15 +352,17 @@ type
   public
     ///  <summary>Constructs search object to use given search filter.</summary>
     constructor Create(const Filter: ISearchFilter);
-    ///  <summary>Executes the search.</summary>
-    ///  <param name="InList">TSnippetList [in] List of snippets to be searched.
-    ///  </param>
-    ///  <param name="FoundList">TSnippetList [in] Receives list of snippets
+    ///  <summary>Executes the search selecting the snippets that pass the
+    ///  filter referenced by the Filter property.</summary>
+    ///  <param name="InList">ISnippetIDList [in] IDs of snippets to be
+    ///  searched.</param>
+    ///  <param name="FoundList">ISnippetIDList [out] Receives IDs of snippets
     ///  that pass the search filter.</param>
     ///  <returns>Boolean. True if some snippets were found or False if not.
     ///  </returns>
     ///  <remarks>Method of ISearch.</remarks>
-    function Execute(const InList, FoundList: TSnippetList): Boolean;
+    function Execute(InList: ISnippetIDList; out FoundList: ISnippetIDList):
+      Boolean;
     ///  <summary>Returns search filter that is used for search.</summary>
     ///  <remarks>Method of ISearch</remarks>
     function GetFilter: ISearchFilter;
@@ -373,7 +413,7 @@ type
   strict private
     var
       ///  <summary>Compilers to include in search.</summary>
-      fCompilers: TCompilerSearchCompilers;
+      fCompilers: TCompilerIDs;
       ///  <summary>Search logic.</summary>
       fLogic: TSearchLogic;
       ///  <summary>Required compilation result.</summary>
@@ -383,25 +423,26 @@ type
     function GlyphResourceName: string; override;
   public
     ///  <summary>Constructs filter object with given criteria.</summary>
-    ///  <param name="Compilers">TCompilerSearchCompilers [in] Set of compilers
+    ///  <param name="Compilers">TCompilerIDs [in] Set of compilers
     ///  to be included in search.</param>
     ///  <param name="Logic">TSearchLogic [in] Search logic to be used: AND or
     ///  OR.</param>
     ///  <param name="Option">TCompilerSearchOption [in] Compiler result to be
     ///  searched for.</param>
-    constructor Create(const Compilers: TCompilerSearchCompilers;
+    constructor Create(const Compilers: TCompilerIDs;
       const Logic: TSearchLogic; const Option: TCompilerSearchOption);
-    ///  <summary>Checks whether the given snippet matches the filter's search
-    ///  criteria, returning True if so or False if not.</summary>
+    ///  <summary>Checks whether the snippet with the given ID matches the
+    ///  filter's search criteria, returning True if so or False if not.
+    ///  </summary>
     ///  <remarks>Method of ISearchFilter.</remarks>
-    function Match(const Snippet: TSnippet): Boolean;
+    function Match(const SnippetID: TSnippetID): Boolean;
     ///  <summary>Indicates whether the object is a null filter. Returns False.
     ///  </summary>
     ///  <remarks>Method of ISearchFilter.</remarks>
     function IsNull: Boolean;
     ///  <summary>Returns sets of compilers to be included in search.</summary>
     ///  <remarks>Method of ICompilerSearchFilter.</remarks>
-    function GetCompilers: TCompilerSearchCompilers;
+    function GetCompilers: TCompilerIDs;
     ///  <summary>Returns search logic to be used.</summary>
     ///  <remarks>Method of ICompilerSearchFilter.</remarks>
     function GetLogic: TSearchLogic;
@@ -416,7 +457,7 @@ type
     ISearchFilter,
     ITextSearchFilter,
     ISearchUIInfo
-    )
+  )
   strict private
     var
       ///  <summary>List of search words.</summary>
@@ -440,10 +481,11 @@ type
       const Options: TTextSearchOptions);
     ///  <summary>Destroys filter object.</summary>
     destructor Destroy; override;
-    ///  <summary>Checks whether the given snippet matches the filter's search
-    ///  criteria, returning True if so or False if not.</summary>
+    ///  <summary>Checks whether the snippet with the given ID matches the
+    ///  filter's search criteria, returning True if so or False if not.
+    ///  </summary>
     ///  <remarks>Method of ISearchFilter.</remarks>
-    function Match(const Snippet: TSnippet): Boolean;
+    function Match(const SnippetID: TSnippetID): Boolean;
     ///  <summary>Indicates whether the object is a null filter. Returns False.
     ///  </summary>
     ///  <remarks>Method of ISearchFilter.</remarks>
@@ -458,6 +500,49 @@ type
     ///  </summary>
     ///  <remarks>Method of ITextSearchFilter.</remarks>
     function GetOptions: TTextSearchOptions;
+  end;
+
+type
+  ///  <summary>Class that implements a tag search filter.</summary>
+  TTagSearchFilter = class(TBaseSearchFilter,
+    ISearchFilter,
+    ITagSearchFilter,
+    ISearchUIInfo
+  )
+  strict private
+    var
+      ///  <summary>Set of search tags.</summary>
+      fTags: ITagSet;
+      ///  <summary>Search logic.</summary>
+      fLogic: TSearchLogic;
+  strict protected
+    ///  <summary>Returns resource id of glyph bitmap.</summary>
+    function GlyphResourceName: string; override;
+  public
+    ///  <summary>Constructs filter object with given criteria.</summary>
+    ///  <param name="Tags">ITagSet [in] Set of search tags.</param>
+    ///  <param name="Logic">TSearchLogic [in] Search logic to be used: AND or
+    ///  OR.</param>
+    constructor Create(Tags: ITagSet; const Logic: TSearchLogic);
+    ///  <summary>Checks whether the snippet with the given ID matches the
+    ///  filter's search criteria, returning True if so or False if not.
+    ///  </summary>
+    ///  <remarks>Method of ISearchFilter.</remarks>
+    function Match(const SnippetID: TSnippetID): Boolean;
+    ///  <summary>Indicates whether the object is a null filter. Returns False.
+    ///  </summary>
+    ///  <remarks>Method of ISearchFilter.</remarks>
+    function IsNull: Boolean;
+    ///  <summary>Read accessor for Logic property.</summary>
+    ///  <returns>TSearchLogic. Search logic to be used: "and" which requires
+    ///  that all tags in Tags property are found in a snippet or "or" which
+    ///  permits snippets to contain any one or more such tags.</returns>
+    ///  <remarks>Method of ITagSearchFilter.</remarks>
+    function GetLogic: TSearchLogic;
+    ///  <summary>Read accessor for Tags property.</summary>
+    ///  <returns>ITagSet. Set of tags to be included in search.</returns>
+    ///  <remarks>Method of ITagSearchFilter.</remarks>
+    function GetTags: ITagSet;
   end;
 
 type
@@ -476,10 +561,11 @@ type
     ///  <param name="SelectedItems">ISnippetIDList [in] List of snippets to be
     ///  selected in search.</param>
     constructor Create(const SelectedItems: ISnippetIDList);
-     ///  <summary>Checks whether the given snippet matches the filter's search
-    ///  criteria, returning True if so or False if not.</summary>
+    ///  <summary>Checks whether the snippet with the given ID matches the
+    ///  filter's search criteria, returning True if so or False if not.
+    ///  </summary>
     ///  <remarks>Method of ISearchFilter.</remarks>
-    function Match(const Snippet: TSnippet): Boolean;
+    function Match(const SnippetID: TSnippetID): Boolean;
     ///  <summary>Indicates whether the object is a null filter. Returns False.
     ///  </summary>
     ///  <remarks>Method of ISearchFilter.</remarks>
@@ -528,57 +614,55 @@ type
   )
   strict private
     var
-      ///  <summary>Snippet to which the cross-reference filter applies.
+      ///  <summary>ID of snippet to which the cross-reference filter applies.
       ///  </summary>
-      fBaseSnippet: TSnippet;
+      fBaseSnippetID: TSnippetID;
       ///  <summary>Set of options used to modify the operation of the filter.
       ///  </summary>
       fOptions: TXRefSearchOptions;
       ///  <summary>Stores list of cross-referenced snippets.</summary>
-      fXRefs: TSnippetList;
-    ///  <summary>Adds given snippet to list of x-refs if snippet is not already
-    ///  in the list. Returns True if snippet added, False if not.</summary>
-    function AddToXRefs(const Snippet: TSnippet): Boolean; overload;
+      fXRefs: ISnippetIDList;
+    ///  <summary>Adds given snippet ID to list of x-refs if ID is not already
+    ///  in the list. Returns True if ID added, False if not.</summary>
+    function AddToXRefs(const ASnippetID: TSnippetID): Boolean; overload;
     ///  <summary>Adds all snippets with all the given IDs to the x-ref list
     ///  unless the snippet is already in the list.</summary>
-    procedure AddToXRefs(SnippetIDs: ISnippetIDList); overload;
+    procedure AddToXRefs(ASnippetIDs: ISnippetIDList); overload;
     ///  <summary>Adds all the given snippet's required snippets to the x-ref
     ///  list.</summary>
     ///  <remarks>References are only added if appropriate search option is set.
     ///  </remarks>
-    procedure ReferenceRequired(const Snippet: TSnippet);
+    procedure ReferenceRequired(const ASnippetID: TSnippetID);
     ///  <summary>Adds all snippets that require (depend upon) the given snippet
     ///  is selected.</summary>
     ///  <remarks>References are only added if appropriate search option is set.
     ///  </remarks>
-    procedure ReferenceReverseRequired(const Snippet: TSnippet);
+    procedure ReferenceReverseRequired(const ASnippetID: TSnippetID);
     ///  <summary>Adds all the given snippet's required snippets to x-ref list.
     ///  </summary>
     ///  <remarks>References are only added if appropriate search option is set.
     ///  </remarks>
-    procedure ReferenceSeeAlso(const Snippet: TSnippet);
+    procedure ReferenceSeeAlso(const ASnippetID: TSnippetID);
     ///  <summary>Adds all snippets that cross-reference the given snippet is
     ///  selected.</summary>
     ///  <remarks>References are only added if appropriate search option is set.
     ///  </remarks>
-    procedure ReferenceReverseSeeAlso(const Snippet: TSnippet);
+    procedure ReferenceReverseSeeAlso(const ASnippetID: TSnippetID);
     ///  <summary>Adds a snippet to x-ref list if it is not already present.
     ///  Also recursively adds the snippet's all its cross-referenced snippets
     ///  if appropriate search options are set.</summary>
-    procedure ReferenceSnippet(const Snippet: TSnippet);
+    procedure ReferenceSnippet(const ASnippetID: TSnippetID);
   strict protected
     ///  <summary>Returns resource id of glyph bitmap.</summary>
     function GlyphResourceName: string; override;
   public
     ///  <summary>Constructs filter object with given criteria.</summary>
-    ///  <param name="BaseSnippet">TSnippet [in] Snippet whose cross references
-    ///  are to be searched.</param>
+    ///  <param name="BaseSnippetID">TSnippetID [in] ID of snippet whose cross
+    ///  references are to be searched.</param>
     ///  <param name="Options">TXRefSearchOptions [in] Set of options used to
     ///  modify the operation of the filter.</param>
-    constructor Create(const BaseSnippet: TSnippet;
+    constructor Create(const BaseSnippetID: TSnippetID;
       const Options: TXRefSearchOptions);
-    ///  <summary>Destroys filter object.</summary>
-    destructor Destroy; override;
     ///  <summary>Called to initialise filter before a search is commenced.
     ///  Prepares list of XRefs.</summary>
     ///  <remarks>Method of ISearchFilter.</remarks>
@@ -587,18 +671,19 @@ type
     ///  list of XRefs.</summary>
     ///  <remarks>Method of ISearchFilter.</remarks>
     procedure Finalise; override;
-    ///  <summary>Checks whether the given snippet matches the filter's search
-    ///  criteria, returning True if so or False if not.</summary>
+    ///  <summary>Checks whether the snippet with the given ID matches the
+    ///  filter's search criteria, returning True if so or False if not.
+    ///  </summary>
     ///  <remarks>Method of ISearchFilter.</remarks>
-    function Match(const Snippet: TSnippet): Boolean;
+    function Match(const SnippetID: TSnippetID): Boolean;
     ///  <summary>Indicates whether the object is a null filter. Returns False.
     ///  </summary>
     ///  <remarks>Method of ISearchFilter.</remarks>
     function IsNull: Boolean;
-    ///  <summary>Returns snippet whose cross references are to be searched.
+    ///  <summary>Returns ID snippet whose cross references are to be searched.
     ///  </summary>
     ///  <remarks>Method of IXRefSearchFilter.</remarks>
-    function GetBaseSnippet: TSnippet;
+    function GetBaseSnippetID: TSnippetID;
     ///  <summary>Returns set of options used to modify operation of the filter.
     ///  </summary>
     ///  <remarks>Method of IXRefSearchFilter.</remarks>
@@ -616,10 +701,10 @@ type
     ///  <summary>Returns resource id of glyph bitmap.</summary>
     function GlyphResourceName: string; override;
   public
-    ///  <summary>Checks whether the given snippet matches the filter's search
-    ///  criteria. Always returns True.</summary>
+    ///  <summary>Checks whether the snippet with the given ID matches the
+    ///  filter's search criteria. Always returns True.</summary>
     ///  <remarks>Method of ISearchFilter.</remarks>
-    function Match(const Snippet: TSnippet): Boolean;
+    function Match(const SnippetID: TSnippetID): Boolean;
     ///  <summary>Indicates whether the object is a null filter. Returns True.
     ///  </summary>
     ///  <remarks>Method of ISearchFilter.</remarks>
@@ -635,24 +720,24 @@ begin
   fFilter := Filter;
 end;
 
-function TSearch.Execute(const InList, FoundList: TSnippetList): Boolean;
+function TSearch.Execute(InList: ISnippetIDList; out FoundList: ISnippetIDList):
+  Boolean;
 var
-  Snippet: TSnippet;    // each snippet in InList
+  SnippetID: TSnippetID;    // each snippet ID in InList
 begin
   Assert(Assigned(InList), ClassName + '.Execute: InList is nil');
-  Assert(Assigned(FoundList), ClassName + '.Execute: FoundList is nil');
-  Assert(InList <> FoundList, ClassName + '.Execute: InList = FoundList');
-
-  FoundList.Clear;
+  FoundList := TSnippetIDList.Create;
+  if InList.IsEmpty then
+    Exit(False);
   GetFilter.Initialise;
   try
-    for Snippet in InList do
-      if GetFilter.Match(Snippet) then
-        FoundList.Add(Snippet);
+    for SnippetID in InList do
+      if GetFilter.Match(SnippetID) then
+        FoundList.Add(SnippetID);
   finally
     GetFilter.Finalise;
   end;
-  Result := FoundList.Count > 0;
+  Result := not FoundList.IsEmpty;
 end;
 
 function TSearch.GetFilter: ISearchFilter;
@@ -692,7 +777,7 @@ end;
 { TCompilerSearchFilter }
 
 constructor TCompilerSearchFilter.Create(
-  const Compilers: TCompilerSearchCompilers; const Logic: TSearchLogic;
+  const Compilers: TCompilerIDs; const Logic: TSearchLogic;
   const Option: TCompilerSearchOption);
 begin
   inherited Create;
@@ -702,7 +787,7 @@ begin
   fOption := Option;
 end;
 
-function TCompilerSearchFilter.GetCompilers: TCompilerSearchCompilers;
+function TCompilerSearchFilter.GetCompilers: TCompilerIDs;
 begin
   Result := fCompilers;
 end;
@@ -727,7 +812,7 @@ begin
   Result := False;
 end;
 
-function TCompilerSearchFilter.Match(const Snippet: TSnippet): Boolean;
+function TCompilerSearchFilter.Match(const SnippetID: TSnippetID): Boolean;
 const
   // Maps compiler search option onto set of compiler results it describes
   cCompatMap: array[TCompilerSearchOption] of set of TCompileResult = (
@@ -738,16 +823,19 @@ const
     [crQuery]                 // soUnkown
   );
 
-  // Checks if a snippet's compiler result for given compiler ID matches
+  // Checks if a snippet's compiler results for given compiler ID matches
   // expected results.
-  function CompatibilityMatches(const CompID: TCompilerID): Boolean;
+  function CompileResultsMatch(Snippet: ISnippet;
+    const CompID: TCompilerID): Boolean;
   begin
-    Result := Snippet.Compatibility[CompID] in cCompatMap[fOption];
+    Result := Snippet.CompileResults[CompID] in cCompatMap[fOption];
   end;
 
 var
   CompID: TCompilerID;  // loops thru supported compilers
+  Snippet: ISnippet;    //
 begin
+  Snippet := Database.LookupSnippet(SnippetID);
   if fLogic = slOr then
   begin
     // Find any compiler: we return true as soon as any compiler compatibility
@@ -755,7 +843,7 @@ begin
     Result := False;
     for CompID in fCompilers do
     begin
-      if CompatibilityMatches(CompID) then
+      if CompileResultsMatch(Snippet, CompID) then
         Exit(True);
     end;
   end
@@ -766,7 +854,7 @@ begin
     Result := True;
     for CompID in fCompilers do
     begin
-      if not CompatibilityMatches(CompID) then
+      if not CompileResultsMatch(Snippet, CompID) then
         Exit(False);
     end;
   end;
@@ -818,7 +906,7 @@ begin
   Result := False;
 end;
 
-function TTextSearchFilter.Match(const Snippet: TSnippet): Boolean;
+function TTextSearchFilter.Match(const SnippetID: TSnippetID): Boolean;
 
   // Converts the text to be searched into a standard format.
   function NormaliseSearchText(const RawText: string): string;
@@ -911,16 +999,30 @@ function TTextSearchFilter.Match(const Snippet: TSnippet): Boolean;
   end;
 
 var
-  SearchText: string; // text we're searching in
-  SearchWord: string; // a word we're searching for
+  SearchText: string;                      // text we're searching in
+  SearchWord: string;                      // a word we're searching for
+  ActiveTextRenderer: IActiveTextRenderer; // converts active text to plain text
+  StrBuilder: TStringBuilder;              // constructs search text
+  Snippet: ISnippet;                       // snippet we're matching
 begin
+  Snippet := Database.LookupSnippet(SnippetID);
   // Build search text
-  SearchText := NormaliseSearchText(
-    ' ' + StrMakeSentence(Snippet.Description.ToString) +
-    ' ' + Snippet.SourceCode +
-    ' ' + StrMakeSentence(Snippet.Extra.ToString) +
-    ' '
-  );
+  StrBuilder := TStringBuilder.Create;
+  try
+    ActiveTextRenderer := TActiveTextPlainTextRenderer.Create(
+      StrBuilder, ' ', [ptrIgnoreEmptyBlocks]
+    );
+    StrBuilder.Append(' ');
+    Snippet.Description.Render(ActiveTextRenderer);
+    StrBuilder.Append(' ');
+    Snippet.Notes.Render(ActiveTextRenderer);
+    StrBuilder.Append(' ');
+    StrBuilder.Append(Snippet.SourceCode);
+    StrBuilder.Append(' ');
+    SearchText := NormaliseSearchText(StrBuilder.ToString);
+  finally
+    StrBuilder.Free;
+  end;
   if fLogic = slOr then
   begin
     // Find any of words in search text: return True as soon as any word matches
@@ -937,6 +1039,62 @@ begin
     for SearchWord in fWords do
       if not StrContainsStr(NormaliseSearchWord(SearchWord), SearchText) then
         Exit(False);
+  end;
+end;
+
+{ TTagSearchFilter }
+
+constructor TTagSearchFilter.Create(Tags: ITagSet; const Logic: TSearchLogic);
+begin
+  Assert(Assigned(Tags), ClassName + '.Create: Tags is nil');
+  inherited Create;
+  fTags := Tags;
+  fLogic := Logic;
+end;
+
+function TTagSearchFilter.GetLogic: TSearchLogic;
+begin
+  Result := fLogic;
+end;
+
+function TTagSearchFilter.GetTags: ITagSet;
+begin
+  Result := fTags;
+end;
+
+function TTagSearchFilter.GlyphResourceName: string;
+begin
+  Result := 'TAGSSEARCH';
+end;
+
+function TTagSearchFilter.IsNull: Boolean;
+begin
+  Result := False;
+end;
+
+function TTagSearchFilter.Match(const SnippetID: TSnippetID): Boolean;
+var
+  Tag: TTag;
+  Snippet: ISnippet;
+begin
+  Snippet := Database.LookupSnippet(SnippetID);
+  case fLogic of
+    slAnd:
+    begin
+      for Tag in Snippet.Tags do
+        if not fTags.Contains(Tag) then
+          Exit(False);
+      Result := True;
+    end;
+    slOr:
+    begin
+      for Tag in Snippet.Tags do
+        if fTags.Contains(Tag) then
+          Exit(True);
+      Result := False;
+    end;
+    else
+      raise EBug.Create(ClassName + '.Match: Invalid TSearchLogic value');
   end;
 end;
 
@@ -960,9 +1118,9 @@ begin
   Result := False;
 end;
 
-function TBaseSelectionSearchFilter.Match(const Snippet: TSnippet): Boolean;
+function TBaseSelectionSearchFilter.Match(const SnippetID: TSnippetID): Boolean;
 begin
-  Result := fSelectedItems.Contains(Snippet.ID);
+  Result := fSelectedItems.Contains(SnippetID);
 end;
 
 { TManualSelectionSearchFilter }
@@ -981,40 +1139,30 @@ end;
 
 { TXRefSearchFilter }
 
-function TXRefSearchFilter.AddToXRefs(const Snippet: TSnippet): Boolean;
+function TXRefSearchFilter.AddToXRefs(const ASnippetID: TSnippetID): Boolean;
 begin
-  Result := not fXRefs.Contains(Snippet);
+  Result := not fXRefs.Contains(ASnippetID);
   if Result then
-    fXRefs.Add(Snippet);
+    fXRefs.Add(ASnippetID);
 end;
 
-procedure TXRefSearchFilter.AddToXRefs(SnippetIDs: ISnippetIDList);
+procedure TXRefSearchFilter.AddToXRefs(ASnippetIDs: ISnippetIDList);
 var
   SnippetID: TSnippetID;
-  Snippet: TSnippet;
 begin
-  for SnippetID in SnippetIDs do
-  begin
-    Snippet := Database.Snippets.Find(SnippetID);
-    if Assigned(Snippet) then
-      AddToXRefs(Snippet);
-  end;
+  for SnippetID in ASnippetIDs do
+    AddToXRefs(SnippetID);
 end;
 
-constructor TXRefSearchFilter.Create(const BaseSnippet: TSnippet;
+constructor TXRefSearchFilter.Create(const BaseSnippetID: TSnippetID;
   const Options: TXRefSearchOptions);
 begin
-  Assert(Assigned(BaseSnippet), ClassName + '.Create: BaseSnippet is nil');
+  Assert(not BaseSnippetID.IsNull,
+    ClassName + '.Create: BaseSnippetID is null');
   inherited Create;
-  fBaseSnippet := BaseSnippet;
+  fBaseSnippetID := BaseSnippetID;
   fOptions := Options;
-  fXRefs := TSnippetList.Create;
-end;
-
-destructor TXRefSearchFilter.Destroy;
-begin
-  fXRefs.Free;
-  inherited;
+  fXRefs := TSnippetIDList.Create;
 end;
 
 procedure TXRefSearchFilter.Finalise;
@@ -1022,9 +1170,9 @@ begin
   fXRefs.Clear;
 end;
 
-function TXRefSearchFilter.GetBaseSnippet: TSnippet;
+function TXRefSearchFilter.GetBaseSnippetID: TSnippetID;
 begin
-  Result := fBaseSnippet;
+  Result := fBaseSnippetID;
 end;
 
 function TXRefSearchFilter.GetOptions: TXRefSearchOptions;
@@ -1041,12 +1189,12 @@ procedure TXRefSearchFilter.Initialise;
 begin
   Assert(Assigned(fXRefs), ClassName + '.Initialise: fXRefs is nil');
   fXRefs.Clear;
-  ReferenceRequired(fBaseSnippet);
-  ReferenceReverseRequired(fBaseSnippet);
-  ReferenceSeeAlso(fBaseSnippet);
-  ReferenceReverseSeeAlso(fBaseSnippet);
+  ReferenceRequired(fBaseSnippetID);
+  ReferenceReverseRequired(fBaseSnippetID);
+  ReferenceSeeAlso(fBaseSnippetID);
+  ReferenceReverseSeeAlso(fBaseSnippetID);
   if soIncludeSnippet in fOptions then
-    AddToXRefs(fBaseSnippet);
+    AddToXRefs(fBaseSnippetID);
 end;
 
 function TXRefSearchFilter.IsNull: Boolean;
@@ -1054,62 +1202,70 @@ begin
   Result := False;
 end;
 
-function TXRefSearchFilter.Match(const Snippet: TSnippet): Boolean;
+function TXRefSearchFilter.Match(const SnippetID: TSnippetID): Boolean;
 begin
   // Check if cross references are still to be calcaluted and do it if so
   // We do this here to avoid the overhead if just using object to store / read
   // persistent settings.
   if not Assigned(fXRefs) then
   begin
-    fXRefs := TSnippetList.Create;
+    fXRefs := TSnippetIDList.Create;
     Initialise;
   end;
-  Result := fXRefs.Contains(Snippet);
+  Result := fXRefs.Contains(SnippetID);
 end;
 
-procedure TXRefSearchFilter.ReferenceRequired(const Snippet: TSnippet);
+procedure TXRefSearchFilter.ReferenceRequired(const ASnippetID: TSnippetID);
 var
-  Idx: Integer; // loops thru all required snippets
+  ASnippet: ISnippet;
+  SnippetID: TSnippetID;
 begin
-  if soRequired in fOptions then
-    for Idx := 0 to Pred(Snippet.Depends.Count) do
-      ReferenceSnippet(Snippet.Depends[Idx]);
+  if not (soRequired in fOptions) then
+    Exit;
+  ASnippet := Database.LookupSnippet(ASnippetID);
+  for SnippetID in ASnippet.RequiredSnippets do
+    ReferenceSnippet(SnippetID);
 end;
 
-procedure TXRefSearchFilter.ReferenceReverseRequired(const Snippet: TSnippet);
+procedure TXRefSearchFilter.ReferenceReverseRequired(
+  const ASnippetID: TSnippetID);
 begin
   if not (soRequiredReverse in fOptions) then
     Exit;
-  AddToXRefs((Database as IDatabaseEdit).GetDependents(Snippet));
+  AddToXRefs(Database.GetDependentsOf(ASnippetID));
 end;
 
-procedure TXRefSearchFilter.ReferenceReverseSeeAlso(const Snippet: TSnippet);
+procedure TXRefSearchFilter.ReferenceReverseSeeAlso(
+  const ASnippetID: TSnippetID);
 begin
   if not (soSeeAlsoReverse in fOptions) then
     Exit;
-  AddToXRefs((Database as IDatabaseEdit).GetReferrers(Snippet));
+  AddToXRefs(Database.GetReferrersTo(ASnippetID));
 end;
 
-procedure TXRefSearchFilter.ReferenceSeeAlso(const Snippet: TSnippet);
+procedure TXRefSearchFilter.ReferenceSeeAlso(const ASnippetID: TSnippetID);
 var
-  Idx: Integer; // loops thru all "see also" snippets
+  ASnippet: ISnippet;
+  SnippetID: TSnippetID;
 begin
-  if soSeeAlso in fOptions then
-    for Idx := 0 to Pred(Snippet.XRef.Count) do
-      ReferenceSnippet(Snippet.XRef[Idx]);
+  if not (soSeeAlso in fOptions) then
+    Exit;
+  ASnippet := Database.LookupSnippet(ASnippetID);
+  for SnippetID in ASnippet.XRefs do
+    ReferenceSnippet(SnippetID);
 end;
 
-procedure TXRefSearchFilter.ReferenceSnippet(const Snippet: TSnippet);
+procedure TXRefSearchFilter.ReferenceSnippet(const ASnippetID: TSnippetID);
 begin
   // Add snippet to list if not present. Quit if snippet already referenced.
-  if not AddToXRefs(Snippet) then
+  if not AddToXRefs(ASnippetID) then
     Exit;
   // Recurse required snippets if specified in options
   if soRequiredRecurse in fOptions then
-    ReferenceRequired(Snippet);
+    ReferenceRequired(ASnippetID);
   // Recurse "see also" snippets if specified in options
   if soSeeAlsoRecurse in fOptions then
-    ReferenceSeeAlso(Snippet);
+    ReferenceSeeAlso(ASnippetID);
 end;
 
 { TNullSearchFilter }
@@ -1124,7 +1280,7 @@ begin
   Result := True;
 end;
 
-function TNullSearchFilter.Match(const Snippet: TSnippet): Boolean;
+function TNullSearchFilter.Match(const SnippetID: TSnippetID): Boolean;
 begin
   Result := True;
 end;
@@ -1144,28 +1300,28 @@ end;
 { TSearchFilterFactory }
 
 class function TSearchFilterFactory.CreateCompilerSearchFilter(
-  const Compilers: TCompilerSearchCompilers; const Logic: TSearchLogic;
+  const Compilers: TCompilerIDs; const Logic: TSearchLogic;
   const Option: TCompilerSearchOption): ICompilerSearchFilter;
 begin
   Result := TCompilerSearchFilter.Create(Compilers, Logic, Option);
 end;
 
 class function TSearchFilterFactory.CreateManualSelectionSearchFilter(
-  const SelectedSnippets: TSnippetList): ISelectionSearchFilter;
-var
-  SnippetIDs: ISnippetIDList; // snippet id list
-  Snippet: TSnippet;          // each snippet in SelectedSnippets
+  SelectedSnippets: ISnippetIDList): ISelectionSearchFilter;
 begin
-  SnippetIDs := TSnippetIDList.Create;
-  for Snippet in SelectedSnippets do
-    SnippetIDs.Add(Snippet.ID);
-  Result := TManualSelectionSearchFilter.Create(SnippetIDs);
+  Result := TManualSelectionSearchFilter.Create(SelectedSnippets);
 end;
 
 class function TSearchFilterFactory.CreateStoredSelectionSearchFilter(
-  const SelectedSnippets: ISnippetIDList): ISelectionSearchFilter;
+  SelectedSnippets: ISnippetIDList): ISelectionSearchFilter;
 begin
   Result := TStoredSelectionSearchFilter.Create(SelectedSnippets);
+end;
+
+class function TSearchFilterFactory.CreateTagSearchFilter(Tags: ITagSet;
+  const Logic: TSearchLogic): ITagSearchFilter;
+begin
+  Result := TTagSearchFilter.Create(Tags, Logic);
 end;
 
 class function TSearchFilterFactory.CreateTextSearchFilter(
@@ -1176,10 +1332,10 @@ begin
 end;
 
 class function TSearchFilterFactory.CreateXRefSearchFilter(
-  const BaseSnippet: TSnippet;
+  const BaseSnippetID: TSnippetID;
   const Options: TXRefSearchOptions): IXRefSearchFilter;
 begin
-  Result := TXRefSearchFilter.Create(BaseSnippet, Options);
+  Result := TXRefSearchFilter.Create(BaseSnippetID, Options);
 end;
 
 end.

@@ -25,10 +25,8 @@ Title=CodeSnip Help
 HTML\about_compiler_checks.htm
 HTML\detail_pane.htm
 HTML\dlg_about.htm
-HTML\dlg_addcategory.htm
 HTML\dlg_backup.htm
 HTML\dlg_configcompilers.htm
-HTML\dlg_deletecategory.htm
 HTML\dlg_dependencies.htm
 HTML\dlg_duplicatesnippet.htm
 HTML\dlg_editsnippet.htm
@@ -50,14 +48,11 @@ HTML\dlg_prefs_display.htm
 HTML\dlg_prefs_general.htm
 HTML\dlg_prefs_hiliter.htm
 HTML\dlg_prefs_news.htm
-HTML\dlg_prefs_printing.htm
 HTML\dlg_prefs_snippetlayout.htm
 HTML\dlg_prefs_sourcecode.htm
 HTML\dlg_print.htm
 HTML\dlg_programupdates.htm
 HTML\dlg_proxyserver.htm
-HTML\dlg_register.htm
-HTML\dlg_renamecategory.htm
 HTML\dlg_restore.htm
 HTML\dlg_saveselection.htm
 HTML\dlg_savesnippet.htm
@@ -74,7 +69,6 @@ HTML\license.htm
 HTML\main_display.htm
 HTML\main_menu.htm
 HTML\markup_editor.htm
-HTML\menu_categories.htm
 HTML\menu_compile.htm
 HTML\menu_database.htm
 HTML\menu_edit.htm
@@ -120,4 +114,5 @@ HTML\notifiy_database_update.htm
 HTML\dlg_dependencies_edit.htm
 HTML\about_swag.htm
 HTML\dlg_swagimport.htm
+HTML\dlg_findtags.htm
 HTML\submission-rights.htm

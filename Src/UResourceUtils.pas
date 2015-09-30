@@ -71,12 +71,15 @@ function MakeResourceURL(const ResName: string): string; overload;
   }
 
 function LoadResourceAsString(const Inst: HMODULE; const ResName: string;
-  const ResType: PChar; const EncType: TEncodingType): string;
+  const ResType: PChar; const EncType: TEncodingType;
+  const HasBOM: Boolean = False): string;
   {Loads a resource as a string.
     @param Inst [in] Handle of module containing resource.
     @param ResName [in] Name of resource.
     @param ResType [in] Type of resource.
     @param EncType [in] Type of encoding used for resource text.
+    @param HasBOM [in] Indicates whether resource data is preceded by a byte
+      order mark.
     @return Content of resource as a string.
   }
 
@@ -180,32 +183,32 @@ begin
 end;
 
 function LoadResourceAsString(const Inst: HMODULE; const ResName: string;
-  const ResType: PChar; const EncType: TEncodingType): string;
+  const ResType: PChar; const EncType: TEncodingType; const HasBOM: Boolean):
+  string;
   {Loads a resource as a string.
     @param Inst [in] Handle of module containing resource.
     @param ResName [in] Name of resource.
     @param ResType [in] Type of resource.
     @param EncType [in] Type of encoding used for resource text.
+    @param HasBOM [in] Indicates whether resource data is preceded by a byte
+      order mark.
     @return Content of resource as a string.
   }
 var
   RS: TResourceStream;  // stream onto resource
-  SS: TStringStream;    // stream used to convert resource stream to string
+  Content: TBytes;      // resource contents as byte array
   Encoding: TEncoding;  // encoding to use for string conversion
 begin
   Encoding := TEncodingHelper.GetEncoding(EncType);
   try
-    SS := TStringStream.Create('', Encoding, False);
+    RS := TResourceStream.Create(Inst, ResName, ResType);
     try
-      RS := TResourceStream.Create(Inst, ResName, ResType);
-      try
-        SS.CopyFrom(RS, 0);
-      finally
-        RS.Free;
-      end;
-      Result := SS.DataString
+      SetLength(Content, RS.Size);
+      if RS.Size > 0 then
+        RS.ReadBuffer(Pointer(Content)^, Length(Content));
+      Result := BytesToString(Content, Encoding, HasBOM);
     finally
-      SS.Free;
+      RS.Free;
     end;
   finally
     TEncodingHelper.FreeEncoding(Encoding);

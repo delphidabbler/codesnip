@@ -22,6 +22,7 @@ object CheckedTVFrame: TCheckedTVFrame
     TabOrder = 0
     OnCollapsing = tvCheckedCollapsing
     OnCreateNodeClass = tvCheckedCreateNodeClass
+    OnDeletion = tvCheckedDeletion
     OnKeyPress = tvCheckedKeyPress
     OnMouseDown = tvCheckedMouseDown
     OnMouseMove = tvCheckedMouseMove

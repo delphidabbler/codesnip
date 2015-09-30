@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2009-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2009-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -33,12 +33,6 @@ type
   }
   TSnippetsTVDraw = class abstract(TObject)
   strict protected
-    function IsUserDefinedNode(const Node: TTreeNode): Boolean;
-      virtual; abstract;
-      {Checks if a node represents a user defined snippets object.
-        @param Node [in] Node to be checked.
-        @return True if node represents user defined object, False if not.
-      }
     function IsSectionHeadNode(const Node: TTreeNode): Boolean;
       virtual;
       {Checks if a node represents a section header.
@@ -55,8 +49,7 @@ type
     procedure CustomDrawItem(Sender: TCustomTreeView; Node: TTreeNode;
       State: TCustomDrawState; var DefaultDraw: Boolean);
       {Handles event triggered when a snippets tree view item is to be
-      displayed. Draws nodes depending on whether group heading, snippet, user
-      defined, selected or focussed.
+      displayed. Draws nodes depending taking account of state.
         @param Sender [in] Reference to treeview being drawn.
         @param Node [in] Node to be displayed.
         @param State [in] State of node.
@@ -73,7 +66,7 @@ uses
   // Delphi
   Graphics,
   // Project
-  UColours, UPreferences;
+  UColours;
 
 
 { TSnippetsTVDraw }
@@ -81,8 +74,7 @@ uses
 procedure TSnippetsTVDraw.CustomDrawItem(Sender: TCustomTreeView;
   Node: TTreeNode; State: TCustomDrawState; var DefaultDraw: Boolean);
   {Handles event triggered when a snippets tree view item is to be displayed.
-  Draws nodes depending on whether group heading, snippet, user defined,
-  selected or focussed.
+  Draws nodes depending taking account of state.
     @param Sender [in] Reference to treeview being drawn.
     @param Node [in] Node to be displayed.
     @param State [in] State of node.
@@ -117,10 +109,7 @@ begin
       // not selected
       if IsErrorNode(Node) then
         // colour unselected error nodes differently
-        TV.Canvas.Font.Color := clWarningText
-      else
-        TV.Canvas.Font.Color :=
-          Preferences.DBHeadingColours[IsUserDefinedNode(Node)];
+        TV.Canvas.Font.Color := clWarningText;
       TV.Canvas.Brush.Color := TV.Color;
     end;
     if IsSectionHeadNode(Node) then

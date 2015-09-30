@@ -23,7 +23,11 @@ uses
   // Delphi
   XMLIntf,
   // Project
-  Compilers.UGlobals, DB.USnippetKind, UExceptions, UIStringList, UStructs,
+  CS.Database.Types,
+  Compilers.UGlobals,
+  UExceptions,
+  UIStringList,
+  UStructs,
   UXMLDocumentEx;
 
 
@@ -102,14 +106,15 @@ type
           non-standard value.
         @return Value of node, or default value.
       }
-    class function GetSnippetKind(const XMLDoc: IXMLDocumentEx;
-      const SnippetNode: IXMLNode; const Default: TSnippetKind): TSnippetKind;
+    class function GetSnippetKindID(const XMLDoc: IXMLDocumentEx;
+      const SnippetNode: IXMLNode; const Default: TSnippetKindID):
+      TSnippetKindID;
       {Gets value of <kind> node of a snippet in an XML document.
         @param XMLDoc [in] XML document containing snippet.
         @param SnippetNode [in] Snippet node that contains kind tag.
         @param Default [in] Value to use if node doesn't exist or has
           non-standard value.
-        @return Required snippet kind.
+        @return Required snippet kind's ID.
       }
     class function GetHiliteSource(const XMLDoc: IXMLDocumentEx;
       const SnippetNode: IXMLNode; const Default: Boolean): Boolean;
@@ -136,8 +141,8 @@ type
         @param ListName [in] Name of new list node that is parent of list.
         @param Names [in] List of Pascal names.
       }
-    class procedure WriteSnippetKind(const XMLDoc: IXMLDocumentEx;
-      const SnippetNode: IXMLNode; const Value: TSnippetKind);
+    class procedure WriteSnippetKindID(const XMLDoc: IXMLDocumentEx;
+      const SnippetNode: IXMLNode; const Value: TSnippetKindID);
       {Writes a <kind> node to a an XML document.
         @param XMLDoc [in] XML document to receive the node.
         @param SnippetNode [in] Node containing snippet that receives kind node.
@@ -318,9 +323,8 @@ begin
       ) then
       begin
         case CompResultStr[1] of
-          'Y': Result[CompID] := crSuccess;
+          'Y', 'W': Result[CompID] := crSuccess;
           'N': Result[CompID] := crError;
-          'W': Result[CompiD] := crWarning;
           else Result[CompID] := crQuery;
         end;
       end;
@@ -367,14 +371,14 @@ begin
       NameList.Add(NameNode.Text);
 end;
 
-class function TXMLDocHelper.GetSnippetKind(const XMLDoc: IXMLDocumentEx;
-  const SnippetNode: IXMLNode; const Default: TSnippetKind): TSnippetKind;
+class function TXMLDocHelper.GetSnippetKindID(const XMLDoc: IXMLDocumentEx;
+  const SnippetNode: IXMLNode; const Default: TSnippetKindID): TSnippetKindID;
   {Gets value of <kind> node of a snippet in an XML document.
     @param XMLDoc [in] XML document containing snippet.
     @param SnippetNode [in] Snippet node that contains kind tag.
     @param Default [in] Value to use if node doesn't exist or has non-standard
       value.
-    @return Required snippet kind.
+    @return Required snippet kind's ID.
   }
 var
   Value: string;  // text value of Kind node
@@ -533,15 +537,15 @@ begin
     XMLDoc.CreateElement(ListNode, cPascalNameNode, Name);
 end;
 
-class procedure TXMLDocHelper.WriteSnippetKind(const XMLDoc: IXMLDocumentEx;
-  const SnippetNode: IXMLNode; const Value: TSnippetKind);
+class procedure TXMLDocHelper.WriteSnippetKindID(const XMLDoc: IXMLDocumentEx;
+  const SnippetNode: IXMLNode; const Value: TSnippetKindID);
   {Writes a <kind> node to a an XML document.
     @param XMLDoc [in] XML document to receive the node.
     @param SnippetNode [in] Node containing snippet that receives kind node.
     @param Value [in] Value of <kind> node.
   }
 const
-  cValues: array[TSnippetKind] of string = (
+  cValues: array[TSnippetKindID] of string = (
     'freeform', 'routine', 'const', 'type', 'unit', 'class'
   );
 begin

@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2009-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2009-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -20,7 +20,7 @@ interface
 
 uses
   // Delphi
-  SysUtils, Classes, Types;
+  SysUtils, Classes;
 
 type
   ///  <summary>
@@ -33,17 +33,23 @@ type
   ///  </remarks>
   TFileIO = record
   strict private
-    class function CheckBOM(const Bytes: TBytes; const Encoding: TEncoding):
-      Boolean; static;
     ///  <summary>
     ///  Appends whole contents of a byte array to a stream.
     ///  </summary>
     class procedure BytesToStream(const Bytes: TBytes; const Stream: TStream);
       static;
     ///  <summary>
-    ///  Copies content of a whole stream into a byte array.
+    ///  Copies all or part of the content of a stream into a byte array.
     ///  </summary>
-    class function StreamToBytes(const Stream: TStream): TBytes; static;
+    ///  <param name="Stream">TStream [in] Stream to read from.</param>
+    ///  <param name="Count">Int64 [in] Number of bytes to read from stream. If
+    ///  Count is zero or negative then the whole stream is read from the
+    ///  beginning, otherwise at most Count bytes are read from the current
+    ///  stream position.</param>
+    ///  <returns>TBytes. Array of bytes read. There may be fewer than Count
+    ///  bytes returns if there was insufficient data in the stream.</returns>
+    class function StreamToBytes(const Stream: TStream; Count: Int64 = 0):
+      TBytes; overload; static;
   public
     ///  <summary>
     ///  Writes all the bytes from a byte array to a file.
@@ -86,8 +92,20 @@ type
     ///  Reads all bytes from a file into a byte array.
     ///  </summary>
     ///  <param name="FileName">string [in] Name of file.</param>
-    ///  <returns>TBytes array containing the file's contents.</returns>
+    ///  <returns>TBytes. Array containing the file's contents.</returns>
     class function ReadAllBytes(const FileName: string): TBytes; static;
+
+    ///  <summary>
+    ///  Reads a specified number of bytes from the beginning of a file into a
+    ///  byte array.
+    ///  </summary>
+    ///  <param name="FileName">string [in] Name of file.</param>
+    ///  <param name="Count">Int64 [in] Number of bytes to read from file. If
+    ///  Count is less than or equal to 0 then nothing is read.</param>
+    ///  <returns>TBytes. Array containing bytes read. There may be fewer than
+    ///  Count bytes returned if Count is greater than the file size.</returns>
+    class function ReadBytes(const FileName: string; Count: Int64): TBytes;
+      static;
 
     ///  <summary>
     ///  Reads all the text from a text file.
@@ -97,7 +115,7 @@ type
     ///  </param>
     ///  <param name="HasBOM">Boolean [in] Flag indicating if file has a byte
     ///  order mark. Ignored if Encoding has no BOM.</param>
-    ///  <returns>String containing contents of file.</returns>
+    ///  <returns>String. String containing contents of file.</returns>
     ///  <remarks>When HasBOM is true and Encoding has a BOM then the BOM must
     ///  begin the file, otherwise an exception is raised.</remarks>
     class function ReadAllText(const FileName: string;
@@ -111,12 +129,13 @@ type
     ///  </param>
     ///  <param name="HasBOM">Boolean [in] Flag indicating if file has a byte
     ///  order mark. Ignored if Encoding has no BOM.</param>
-    ///  <returns>TStringDynArray containing lines from file.</returns>
+    ///  <returns>TArray&lt;string&gt;. Array containing lines from file.
+    ////  </returns>
     ///  <remarks>When HasBOM is true and Encoding has a BOM then the BOM must
     ///  begin the file, otherwise an exception is raised.</remarks>
     class function ReadAllLines(const FileName: string;
-      const Encoding: TEncoding; const HasBOM: Boolean = False):
-      TStringDynArray; static;
+      const Encoding: TEncoding; const HasBOM: Boolean = False): TArray<string>;
+      static;
 
     ///  <summary>
     ///  Copies content of one file to another.
@@ -138,6 +157,13 @@ type
 implementation
 
 
+uses
+  // Delphi
+  Math,
+  // Project
+  UEncodings;
+
+
 resourcestring
   // Error messages
   sBadBOM = 'Preamble of file %s does not match expected encoding';
@@ -150,23 +176,6 @@ class procedure TFileIO.BytesToStream(const Bytes: TBytes;
 begin
   if Length(Bytes) > 0 then
     Stream.WriteBuffer(Pointer(Bytes)^, Length(Bytes));
-end;
-
-class function TFileIO.CheckBOM(const Bytes: TBytes; const Encoding: TEncoding):
-  Boolean;
-var
-  Preamble: TBytes;
-  I: Integer;
-begin
-  Preamble := Encoding.GetPreamble;
-  if Length(Preamble) = 0 then
-    Exit(False);
-  if Length(Bytes) < Length(Preamble) then
-    Exit(False);
-  for I := 0 to Pred(Length(Preamble)) do
-    if Bytes[I] <> Preamble[I] then
-      Exit(False);
-  Result := True;
 end;
 
 class procedure TFileIO.CopyFile(const SrcFileName, DestFileName: string);
@@ -187,18 +196,15 @@ begin
 end;
 
 class function TFileIO.ReadAllLines(const FileName: string;
-  const Encoding: TEncoding; const HasBOM: Boolean): TStringDynArray;
+  const Encoding: TEncoding; const HasBOM: Boolean): TArray<string>;
 var
   Lines: TStrings;
-  I: Integer;
 begin
   Assert(Assigned(Encoding), 'TFileIO.ReadAllLines: Encoding is nil');
   Lines := TStringList.Create;
   try
     Lines.Text := ReadAllText(FileName, Encoding, HasBOM);
-    SetLength(Result, Lines.Count);
-    for I := 0 to Pred(Lines.Count) do
-      Result[I] := Lines[I];
+    Result := Lines.ToStringArray;
   finally
     Lines.Free;
   end;
@@ -208,26 +214,41 @@ class function TFileIO.ReadAllText(const FileName: string;
   const Encoding: TEncoding; const HasBOM: Boolean): string;
 var
   Content: TBytes;
-  SizeOfBOM: Integer;
 begin
   Assert(Assigned(Encoding), 'TFileIO.ReadAllBytes: Encoding is nil');
   Content := ReadAllBytes(FileName);
-  if HasBOM then
-  begin
-    SizeOfBOM := Length(Encoding.GetPreamble);
-    if (SizeOfBOM > 0) and not CheckBOM(Content, Encoding) then
-      raise EIOUtils.CreateFmt(sBadBOM, [FileName]);
-  end
-  else
-    SizeOfBOM := 0;
-  Result := Encoding.GetString(Content, SizeOfBOM, Length(Content) - SizeOfBOM);
+  Result := BytesToString(Content, Encoding, HasBOM);
 end;
 
-class function TFileIO.StreamToBytes(const Stream: TStream): TBytes;
+class function TFileIO.ReadBytes(const FileName: string; Count: Int64): TBytes;
+var
+  FS: TFileStream;
 begin
-  Stream.Position := 0;
-  SetLength(Result, Stream.Size);
-  if Stream.Size > 0 then
+  if Count <= 0 then
+  begin
+    SetLength(Result, 0);
+    Exit;
+  end;
+  FS := TFileStream.Create(FileName, fmOpenRead or fmShareDenyNone);
+  try
+    Result := StreamToBytes(FS, Count);
+  finally
+    FS.Free;
+  end;
+end;
+
+class function TFileIO.StreamToBytes(const Stream: TStream;
+  Count: Int64): TBytes;
+begin
+  if Count <= 0 then
+  begin
+    Count := Stream.Size;
+    Stream.Position := 0;
+  end
+  else
+    Count := Min(Count, Stream.Size - Stream.Position);
+  SetLength(Result, Count);
+  if Count > 0 then
     Stream.ReadBuffer(Pointer(Result)^, Length(Result));
 end;
 

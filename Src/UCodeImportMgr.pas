@@ -3,13 +3,13 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2008-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2008-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
  *
  * Implements a static class that handles import of a codesnip export file into
- * the user-defined database.
+ * the snippets database.
 }
 
 
@@ -21,9 +21,12 @@ interface
 
 uses
   // Delphi
-  Generics.Collections, Generics.Defaults,
+  Generics.Collections,
+  Generics.Defaults,
   // Project
-  UCodeImportExport, UExceptions, UIStringList;
+  UCodeImportExport,
+  UExceptions,
+  UIStringList;
 
 
 type
@@ -85,7 +88,7 @@ type
 
 type
   ///  <summary>
-  ///  Manages import of a codesnip export file into the user-defined database.
+  ///  Manages import of a codesnip export file into the snippets database.
   ///  </summary>
   ///  <remarks>
   ///  Designed for ease of interaction with a suitable UI.
@@ -107,16 +110,16 @@ type
     ///  <param name="ExcludedName">string [in] Name of snippet to be excluded
     ///  from import list.</param>
     ///  <returns>IStringList: List of disallowed snippet names.</returns>
-    ///  <remarks>List is made up of all names of snippets in user database plus
+    ///  <remarks>List is made up of all names of snippets in database plus
     ///  names of all imported snippets except for ExcludedName. ExcludedName
     ///  should be the name of a snippet being renamed.</remarks>
     function DisallowedNames(const ExcludedName: string): IStringList;
     ///  <summary>Returns a name for snippet SnippetName that does not already
-    ///  exist in user database or imported snippet list.</summary>
+    ///  exist in database or imported snippet list.</summary>
     ///  <remarks>
-    ///  <para>If SnippetName is not in user database then it is returned
-    ///  unchanged.</para>
-    ///  <para>If SnippetName is in user database then numbers are appended
+    ///  <para>If SnippetName is not in database then it is returned unchanged.
+    ///  </para>
+    ///  <para>If SnippetName is in database then numbers are appended
     ///  sequentially until a unique name is found.</para>
     ///  </remarks>
     function GetUniqueSnippetName(const SnippetName: string): string;
@@ -156,9 +159,14 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Classes,
+  SysUtils,
+  Classes,
   // Project
-  ActiveText.UMain, DB.UMain, DB.USnippet, UIOUtils, USnippetIDs, UStrUtils;
+  CS.ActiveText,
+  CS.Database.Types,
+  DB.UMain,
+  UIOUtils,
+  UStrUtils;
 
 
 { TCodeImportMgr }
@@ -180,17 +188,16 @@ end;
 function TCodeImportMgr.DisallowedNames(const ExcludedName: string):
   IStringList;
 var
-  Snippet: TSnippet;          // each snippet in user database
+  SnippetID: TSnippetID;      // each snippet in database
   SnippetInfo: TSnippetInfo;  // info about each imported snippet
 begin
   Result := TIStringList.Create;
   Result.CaseSensitive := False;
-  for Snippet in Database.Snippets do
-    if Snippet.UserDefined then
-      Result.Add(Snippet.Name);
+  for SnippetID in Database.GetAllSnippets do
+    Result.Add(SnippetID.ToString);
   for SnippetInfo in fSnippetInfoList do
-    if not StrSameText(SnippetInfo.Name, ExcludedName) then
-      Result.Add(SnippetInfo.Name);
+    if not StrSameText(SnippetInfo.IDStr, ExcludedName) then
+      Result.Add(SnippetInfo.IDStr);
 end;
 
 function TCodeImportMgr.GetUniqueSnippetName(
@@ -213,7 +220,7 @@ procedure TCodeImportMgr.Import(const FileName: string);
 var
   Data: TBytes; // content of import file as bytes
 begin
-  fUserInfo := TUserInfo.CreateNul;
+  fUserInfo := TUserInfo.CreateNull;
   fImportInfoList.Clear;
   try
     Data := TFileIO.ReadAllBytes(FileName);
@@ -236,7 +243,7 @@ begin
   begin
     fImportInfoList.Add(
       TImportInfo.Create(
-        SnippetInfo.Name, GetUniqueSnippetName(SnippetInfo.Name)
+        SnippetInfo.IDStr, GetUniqueSnippetName(SnippetInfo.IDStr)
       )
     );
   end;
@@ -245,25 +252,6 @@ end;
 procedure TCodeImportMgr.UpdateDatabase;
 
   // ---------------------------------------------------------------------------
-  // Adjusts a snippet's dependency list so that main database is searched for a
-  // required snippet if it is not in the user database.
-  procedure AdjustDependsList(const Depends: ISnippetIDList);
-  var
-    Idx: Integer;           // loops through dependencies
-    SnippetID: TSnippetID;  // each snippet ID in dependency list
-  begin
-    // NOTE: The data file format does not record which database a required
-    // snippet belongs to, so we first look in the user database and if it's
-    // not there, we assume the main database
-    for Idx := 0 to Pred(Depends.Count) do
-    begin
-      SnippetID := Depends[Idx];
-      SnippetID.UserDefined :=
-        Database.Snippets.Find(SnippetID.Name, True) <> nil;
-      Depends[Idx] := SnippetID;
-    end;
-  end;
-
   ///  Builds an active text representation of the contributing user's details.
   function UserDetailsActiveText: IActiveText;
   resourcestring
@@ -282,35 +270,37 @@ procedure TCodeImportMgr.UpdateDatabase;
   // ---------------------------------------------------------------------------
 
 var
-  Editor: IDatabaseEdit;      // object used to update user database
-  Snippet: TSnippet;          // reference any existing snippet to overwrite
   SnippetInfo: TSnippetInfo;  // info about each snippet from import file
   ImportInfo: TImportInfo;    // info about how / whether to import a snippet
+  Notes: IActiveText;         // used to add to snippet's note property
 resourcestring
   // Error message
   sBadNameError = 'Can''t find snippet "%s" in import data';
 begin
-  Editor := Database as IDatabaseEdit;
   for SnippetInfo in fSnippetInfoList do
   begin
-    if not fImportInfoList.FindByName(SnippetInfo.Name, ImportInfo) then
-      raise EBug.CreateFmt(sBadNameError, [SnippetInfo.Name]);
+    if not fImportInfoList.FindByName(SnippetInfo.IDStr, ImportInfo) then
+      raise EBug.CreateFmt(sBadNameError, [SnippetInfo.IDStr]);
 
     if ImportInfo.Skip then
       Continue;
 
-    AdjustDependsList(SnippetInfo.Data.Refs.Depends);
-
     if UserInfo.Details.ToString <> '' then
-      SnippetInfo.Data.Props.Extra.Append(UserDetailsActiveText);
+    begin
+      Notes := SnippetInfo.Snippet.Notes;
+      Notes.Append(UserDetailsActiveText);
+      SnippetInfo.Snippet.Notes := Notes;
+    end;
 
-    Snippet := Database.Snippets.Find(ImportInfo.ImportAsName, True);
-    if Assigned(Snippet) then
+    { TODO: fix this code - as written, imported snippet will always have a
+            unique id, so AddSnippet will always be called. Need to implement
+            llinked spaces for this to work correctly. }
+    if Database.SnippetExists(SnippetInfo.Snippet.ID) then
       // snippet already exists: overwrite it
-      Editor.UpdateSnippet(Snippet, SnippetInfo.Data)
+      Database.UpdateSnippet(SnippetInfo.Snippet)
     else
       // snippet is new: add to database
-      Editor.AddSnippet(ImportInfo.ImportAsName, SnippetInfo.Data);
+      Database.AddSnippet(SnippetInfo.Snippet);
   end;
 end;
 
@@ -328,7 +318,9 @@ end;
 
 function TImportInfoComparer.Compare(const Left, Right: TImportInfo): Integer;
 begin
-  Result := TSnippetID.CompareNames(Left.OrigName, Right.OrigName);
+  Result := TSnippetID.Compare(
+    TSnippetID.Create(Left.OrigName), TSnippetID.Create(Right.OrigName)
+  );
 end;
 
 { TImportInfoList }

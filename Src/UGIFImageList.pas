@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2008-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2008-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -121,7 +121,7 @@ constructor TGIFImageList.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
   // Set up map: we ignore case of resource names
-  fGIFResNames := TResNamesMap.Create(TTextEqualityComparer.Create);
+  fGIFResNames := TResNamesMap.Create(TTextComparator.Create);
 end;
 
 function TGIFImageList.CreateBMPFromGIFRes(const GIFResName: string): TBitmap;

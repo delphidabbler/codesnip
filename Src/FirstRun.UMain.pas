@@ -3,14 +3,14 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2008-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2008-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
  *
  * Implements classes that handle application start up, determine if it the
- * first run of the current version and perform necessary updates to per-user
- * config file and database.
+ * first run of the current version and perform necessary updates to snippets
+ * database and per-user config file.
 }
 
 
@@ -29,10 +29,11 @@ type
   ///  <summary>Enumeration of changes that can be made to brought forward
   ///  config files that result in data loss.</summary>
   TFirstRunCfgChanges = (
-    frcRegistration,    // local registration record lost
     frcHiliter,         // syntax highlighter customisation lost
     frcProxyPwd,        // internet proxy password lost
-    frcSourceFormat     // source code output formatting lost
+    frcSourceFormat,    // source code output formatting lost
+    frcCustomDBPath,    // custom database path ignored: default path used
+    frcPageStructure    // any custom page structure customisations lost
   );
 
 type
@@ -57,14 +58,12 @@ type
       ///  <summary>Object that interogates and updates common config file.
       ///  </summary>
       fCommonConfigFile: TCommonConfigFileUpdater;
-      ///  <summary>Object used to copy forward older versions of user database.
+      ///  <summary>Object used to copy forward older versions of database.
       ///  </summary>
-      fDatabase: TUserDatabaseUpdater;
-    {$IFNDEF PORTABLE}
+      fDatabase: TDatabaseUpdater;
     ///  <summary>Checks if config file uses earlier format for storing proxy
     ///  server passwords.</summary>
     function HasOldStyleProxyPwd: Boolean;
-    {}{$ENDIF}
   public
     ///  <summary>Constructs object and owned object.</summary>
     constructor Create;
@@ -76,16 +75,20 @@ type
     ///  <summary>Copies user config file from an earlier CodeSnip installation.
     ///  </summary>
     procedure BringForwardUserCfgFile;
-    ///  <summary>Updates current version's user config file in place as
-    ///  necessary and notifies caller of changes via Changes parameter.
-    /// </summary>
-    procedure UpdateUserCfgFile(out Changes: TFirstRunCfgChangeSet);
-    ///  <summary>Checks if a user database exist for an earlier CodeSnip
+    ///  <summary>Updates current version's user and common config files in
+    ///  place as necessary and notifies caller of changes via Changes
+    ///  parameter.</summary>
+    procedure UpdateCfgFiles(out Changes: TFirstRunCfgChangeSet);
+    ///  <summary>Checks if a database exist for an earlier CodeSnip
     ///  installation.</summary>
-    function HaveOldUserDB: Boolean;
-    ///  <summary>Copies user database from an earlier CodeSnip installation.
+    ///  <remarks>Prior to CodeSnip 5 this database will be the legacy "user"
+    ///  database.</remarks>
+    function HaveOldDB: Boolean;
+    ///  <summary>Copies database from an earlier CodeSnip installation.
     ///  </summary>
-    procedure BringForwardUserDB;
+    ///  <remarks>Prior to CodeSnip 5 this database will be the legacy "user"
+    ///  database.</remarks>
+    procedure BringForwardDB;
     ///  <summary>Creates a new, empty, Unicode encoded per-user config file for
     ///  current installation.</summary>
     procedure CreateEmptyUserCfgFile;
@@ -118,8 +121,7 @@ type
     class function IsProgramUpdated: Boolean;
   public
     ///  <summary>Runs start-up checks to detect if program has been run before
-    ///  and performs any required user config and user database updates.
-    ///  </summary>
+    ///  and performs any required user config and database updates.</summary>
     class procedure Execute;
   end;
 
@@ -129,17 +131,21 @@ implementation
 
 uses
   // Delphi
-  SysUtils, IOUtils, Forms
-  {$IFNDEF PORTABLE}
+  SysUtils,
+  IOUtils,
+  Forms,
   // Project
-  ,
+  CS.Init.CommandLineOpts,
   FirstRun.FmV4ConfigDlg;
-  {$ELSE}
-  ;
-  {$ENDIF}
 
 
 { TFirstRun }
+
+procedure TFirstRun.BringForwardDB;
+begin
+  Assert(HaveOldDB, ClassName + '.BringForwardDB: Old database does not exist');
+  fDatabase.CopyDatabase(fInstallInfo.PreviousDatabaseDir);
+end;
 
 procedure TFirstRun.BringForwardUserCfgFile;
 begin
@@ -149,13 +155,6 @@ begin
     fInstallInfo.PreviousUserConfigFileName,
     fInstallInfo.IsPreviousUserConfigFileANSI
   );
-end;
-
-procedure TFirstRun.BringForwardUserDB;
-begin
-  Assert(HaveOldUserDB,
-    ClassName + '.BringForwardUserDB: Old user database does not exist');
-  fDatabase.CopyDatabase(fInstallInfo.PreviousUserDatabaseDir);
 end;
 
 constructor TFirstRun.Create;
@@ -168,9 +167,7 @@ begin
   fCommonConfigFile := TCommonConfigFileUpdater.Create(
     fInstallInfo.CurrentCommonConfigFileName
   );
-  fDatabase := TUserDatabaseUpdater.Create(
-    fInstallInfo.CurrentUserDatabaseDir
-  );
+  fDatabase := TDatabaseUpdater.Create(fInstallInfo.CurrentDatabaseDir);
 end;
 
 procedure TFirstRun.CreateEmptyUserCfgFile;
@@ -187,21 +184,19 @@ begin
   inherited;
 end;
 
-{$IFNDEF PORTABLE}
 function TFirstRun.HasOldStyleProxyPwd: Boolean;
 begin
   Result := (fUserConfigFile.FileVer <= 6) and fUserConfigFile.HasProxyPassword;
 end;
-{$ENDIF}
+
+function TFirstRun.HaveOldDB: Boolean;
+begin
+  Result := TFile.Exists(fInstallInfo.PreviousDatabaseFileName, False);
+end;
 
 function TFirstRun.HaveOldUserCfgFile: Boolean;
 begin
   Result := TFile.Exists(fInstallInfo.PreviousUserConfigFileName, False);
-end;
-
-function TFirstRun.HaveOldUserDB: Boolean;
-begin
-  Result := TFile.Exists(fInstallInfo.PreviousUserDatabaseFileName, False);
 end;
 
 function TFirstRun.IsProgramUpdated: Boolean;
@@ -209,49 +204,50 @@ begin
   Result := fUserConfigFile.IsCurrentProgramVer;
 end;
 
-procedure TFirstRun.UpdateUserCfgFile(out Changes: TFirstRunCfgChangeSet);
+procedure TFirstRun.UpdateCfgFiles(out Changes: TFirstRunCfgChangeSet);
 begin
   Changes := [];
 
-  {$IFNDEF PORTABLE}
-  case fInstallInfo.InstallID of
-    piOriginal:
-    begin
-      fUserConfigFile.UpdateFromOriginal;
-      Include(Changes, frcHiliter);
-      Include(Changes, frcRegistration);
-      Include(Changes, frcSourceFormat);
-    end;
-    piV1_9, piV2:
-    begin
-      fUserConfigFile.DeleteHighligherPrefs;
-      Include(Changes, frcHiliter);
-    end;
-    piV3:
-    begin
-      if HasOldStyleProxyPwd then
+  if not TCommandLineOpts.IsPortable then
+  begin
+    case fInstallInfo.InstallID of
+      piOriginal:
       begin
-        fUserConfigFile.DeleteProxyPassword;
-        Include(Changes, frcProxyPwd);
+        fUserConfigFile.UpdateFromOriginal;
+        Include(Changes, frcHiliter);
+        Include(Changes, frcSourceFormat);
+      end;
+      piV1_9, piV2:
+      begin
+        fUserConfigFile.DeleteHighligherPrefs;
+        Include(Changes, frcHiliter);
+      end;
+      piV3:
+      begin
+        if HasOldStyleProxyPwd then
+        begin
+          fUserConfigFile.DeleteProxyPassword;
+          Include(Changes, frcProxyPwd);
+        end;
       end;
     end;
   end;
-  {$ENDIF}
 
   if fUserConfigFile.FileVer < 6 then
     // User ini file versions before 6 don't have the Prefs:CodeGen section and
     // default entries for predefined warnings.
     // NOTE: This works for a new config file providing it has not been stamped:
-    // we rely on this for portable version.
+    // we rely on this when in portable mode.
     fUserConfigFile.CreateDefaultCodeGenEntries;
 
-  {$IFNDEF PORTABLE}
-  if fUserConfigFile.FileVer < 9 then
+  if not TCommandLineOpts.IsPortable then
   begin
-    fUserConfigFile.DeleteDetailsPaneIndex;
-    fUserConfigFile.UpdateCodeGenEntries;
+    if fUserConfigFile.FileVer < 9 then
+    begin
+      fUserConfigFile.DeleteDetailsPaneIndex;
+      fUserConfigFile.UpdateCodeGenEntries;
+    end;
   end;
-  {$ENDIF}
 
   if fUserConfigFile.FileVer < 11 then
     fUserConfigFile.RenameMainWindowSection;
@@ -262,10 +258,31 @@ begin
   if fUserConfigFile.FileVer < 15 then
     fUserConfigFile.UpdateFindXRefs;
 
+  if fUserConfigFile.FileVer < 16 then
+  begin
+    fUserConfigFile.DeleteRedundantDisplayOptions;
+    fUserConfigFile.RenameCompilerIdentifiers;
+    fUserConfigFile.RenamePrintingSectionAndValues;
+    fUserConfigFile.RenameMainWindowSectionOverviewGrouping;
+    if fUserConfigFile.HasV4CustomDatabaseDirectory then
+    begin
+      fUserConfigFile.ResetCustomDatabaseDirectory;
+      Include(Changes, frcCustomDBPath);
+    end;
+    if fUserConfigFile.HasPageStructureInfo then
+    begin
+      fUserConfigFile.DeletePageStructureInfo;
+      Include(Changes, frcPageStructure);
+    end;
+  end;
+
+  if fCommonConfigFile.FileVer < 7 then
+    fCommonConfigFile.DeleteRedundantRegistrationInfo;
+
   fUserConfigFile.Stamp;
-  // NOTE: strictly speaking we only need to stamp common config file in
-  // portable version. Installer does this in normal version. However, it does
-  // no harm to stamp this file twice - belt and braces!
+  // NOTE: strictly speaking we only need to stamp common config file when in
+  // portable mode. Installer does this in normal version. However, it does no
+  // harm to stamp this file twice - belt and braces!
   fCommonConfigFile.Stamp;
 end;
 
@@ -280,14 +297,15 @@ begin
   begin
     FR := TFirstRun.Create;
     try
-      {$IFNDEF PORTABLE}
-      if FR.HaveOldUserCfgFile or FR.HaveOldUserDB then
-        TV4ConfigDlg.Execute(Application, FR);
-      {$ENDIF}
+      if not TCommandLineOpts.IsPortable then
+      begin
+        if FR.HaveOldUserCfgFile or FR.HaveOldDB then
+          TV4ConfigDlg.Execute(Application, FR);
+      end;
       if not UserCfgFileExists then
       begin
         FR.CreateEmptyUserCfgFile;
-        FR.UpdateUserCfgFile(Changes);
+        FR.UpdateCfgFiles(Changes);
       end;
     finally
       FR.Free;
@@ -297,7 +315,7 @@ begin
   begin
     FR := TFirstRun.Create;
     try
-      FR.UpdateUserCfgFile(Changes);
+      FR.UpdateCfgFiles(Changes);
     finally
       FR.Free;
     end;

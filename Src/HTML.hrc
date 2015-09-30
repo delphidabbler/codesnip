@@ -15,8 +15,7 @@
 
 # about box
 Res\HTML\dlg-about-head-tplt.html
-Res\HTML\dlg-about-program-tplt.html
-Res\HTML\dlg-about-database-tplt.html
+Res\HTML\dlg-about-program.html
 
 # easter egg
 Res\HTML\dlg-easter-egg.html
@@ -97,8 +96,6 @@ Res\HTML\info-basic-tplt.html
 # display quick start help
 Res\Img\help.gif
 
-# edit snippet
-Res\Img\editsnippet.gif
 
 # compiler compatibility / compilation results
 # --------------------------------------------
@@ -114,6 +111,15 @@ Res\Img\led-yellow.png
 Res\Img\testing-none.png
 Res\Img\testing-basic.png
 Res\Img\testing-advanced.png
+
+# starred snippets
+# ----------------
+Res\Img\starred-snippet.png
+Res\Img\unstarred-snippet.png
+
+# tags
+# ----
+Res\Img\tags.png
 
 # dialogue box images
 # -------------------

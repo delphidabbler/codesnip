@@ -23,7 +23,9 @@ uses
   // Delphi
   Classes,
   // Project
-  Compilers.UGlobals, DB.USnippet, UBaseObjects;
+  CS.Database.Types,
+  Compilers.UGlobals,
+  UBaseObjects;
 
 
 type
@@ -35,7 +37,7 @@ type
   }
   TTestCompile = class(TNoPublicConstructObject)
   strict private
-    fSnippet: TSnippet;
+    fSnippet: ISnippet;
       {The snippet we are to compile}
     fCompilers: ICompilers;
       {Object used to perform compilation}
@@ -58,14 +60,14 @@ type
       }
   strict protected
     constructor InternalCreate(const ACompilers: ICompilers;
-      const ASnippet: TSnippet);
+      ASnippet: ISnippet);
       {Class constructor. Sets up object that can test compile a snippet.
         @param ACompilers [in] Compilers object used to perform compilation.
         @param ASnippet [in] Snippet to be test compiled.
       }
   public
-    class function Compile(const ACompilers: ICompilers;
-      const ASnippet: TSnippet): TCompileResults;
+    class function Compile(const ACompilers: ICompilers; ASnippet: ISnippet):
+      TCompileResults;
       {Compiles a specified snippet with all installed and supported compilers.
         @param ACompilers [in] Compilers object used to perform compilation.
         @param ASnippet [in] Snippet to be compiled.
@@ -81,13 +83,13 @@ type
   TTestCompileThread = class(TThread)
   strict private
     var fCompilers: ICompilers; // Compilers used for test compilation
-    var fSnippet: TSnippet;     // Snippet to be compiled
+    var fSnippet: ISnippet;     // Snippet to be compiled
   strict protected
     procedure Execute; override;
       {Performs test compilation in a thread.
       }
   public
-    constructor Create(ACompilers: ICompilers; ASnippet: TSnippet);
+    constructor Create(ACompilers: ICompilers; ASnippet: ISnippet);
       {Object constructor. Sets up suspended thread.
         @param ACompilers [in] Compilers to be used for test compilation.
         @param ASnippet [in] Snippet to be compiled.
@@ -100,15 +102,16 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Windows {for inlining},
+  SysUtils,
+  Windows {for inlining},
   // Project
-  UTestUnit;
+  CS.SourceCode.Pascal.TestUnit;
 
 
 { TTestCompile }
 
 class function TTestCompile.Compile(const ACompilers: ICompilers;
-  const ASnippet: TSnippet): TCompileResults;
+  ASnippet: ISnippet): TCompileResults;
   {Compiles a specified snippet with all installed and supported compilers.
     @param ACompilers [in] Compilers object used to perform compilation.
     @param ASnippet [in] Snippet to be compiled.
@@ -166,7 +169,7 @@ procedure TTestCompile.GenerateSourceFile(out FileName: string);
     @param FileName [out] Name of the generated file.
   }
 begin
-  with TTestUnit.Create(fSnippet) do
+  with TPascalTestUnit.Create(fSnippet) do
     try
       SaveUnit(FileName);
     finally
@@ -175,7 +178,7 @@ begin
 end;
 
 constructor TTestCompile.InternalCreate(const ACompilers: ICompilers;
-  const ASnippet: TSnippet);
+  ASnippet: ISnippet);
   {Class constructor. Sets up object that can test compile a snippet.
     @param ACompilers [in] Compilers object used to perform compilation.
     @param ASnippet [in] Snippet to be test compiled.
@@ -192,7 +195,7 @@ end;
 { TTestCompileThread }
 
 constructor TTestCompileThread.Create(ACompilers: ICompilers;
-  ASnippet: TSnippet);
+  ASnippet: ISnippet);
   {Object constructor. Sets up suspended thread.
     @param ACompilers [in] Compilers to be used for test compilation.
     @param ASnippet [in] Snippet to be compiled.

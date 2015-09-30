@@ -9,7 +9,7 @@
  * $Date$
  *
  * Defines a static class that test compiles a snippet in a thread and displays
- * a wait dialog if the compilation is taking more than a specified amount of
+ * a wait dialogue if the compilation is taking more than a specified amount of
  * time.
 }
 
@@ -22,9 +22,12 @@ interface
 
 uses
   // Delphi
-  SysUtils, Classes,
+  SysUtils,
+  Classes,
   // Project
-  Compilers.UGlobals, DB.USnippet, UBaseObjects;
+  CS.Database.Types,
+  Compilers.UGlobals,
+  UBaseObjects;
 
 
 type
@@ -32,12 +35,12 @@ type
   {
   TTestCompileUI:
     Static class that test compiles a snippet in a thread and displays a wait
-    dialog if the compilation is taking more than a specified amount of time.
+    dialogue if the compilation is taking more than a specified amount of time.
   }
   TTestCompileUI = class(TNoConstructObject)
   strict private
-    const PauseBeforeDisplay = 500; // time elapsed before dialog is displayed
-    const MinDisplayTime = 1000;    // minimum time that dialog is displayed
+    const PauseBeforeDisplay = 500; // time elapsed before dialogue is displayed
+    const MinDisplayTime = 1000;    // minimum time that dialogue is displayed
     class procedure HandleException(const E: Exception);
       {Handles exception thrown during compilation. Re-raises exception with
       message that depends on an analysis of the exception. Compiler generated
@@ -46,7 +49,7 @@ type
       }
   public
     class procedure Execute(const AOwner: TComponent;
-      const ACompilers: ICompilers; const ASnippet: TSnippet);
+      const ACompilers: ICompilers; ASnippet: ISnippet);
       {Test compiles a snippet in a thread and displays a wait dialogue if
       compilation takes some time.
         @param AOwner [in] Control that owns the wait dialogue box. Dialogue is
@@ -71,7 +74,7 @@ uses
 { TTestCompileUI }
 
 class procedure TTestCompileUI.Execute(const AOwner: TComponent;
-  const ACompilers: ICompilers; const ASnippet: TSnippet);
+  const ACompilers: ICompilers; ASnippet: ISnippet);
   {Test compiles a snippet in a thread and displays a wait dialogue if
   compilation takes some time.
     @param AOwner [in] Control that owns the wait dialogue box. Dialogue is

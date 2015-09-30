@@ -30,8 +30,8 @@ type
 
   {
   TProxyServerDlg:
-    Ddialog box that enables users to specify (or remove) a proxy server for use
-    by CodeSnip's web services.
+    Dialogue box that enables users to specify (or remove) a proxy server for
+    use by CodeSnip's web services.
   }
   TProxyServerDlg = class(TGenericOKDlg)
     cbUseProxy: TCheckBox;
@@ -81,8 +81,8 @@ type
       }
   public
     class function Execute(const AOwner: TComponent): Boolean;
-      {Creates and displays the proxy server dialog box.
-        @param AOwner [in] Component that owns the dialog box.
+      {Creates and displays the proxy server dialogue box.
+        @param AOwner [in] Component that owns the dialogue box.
       }
   end;
 
@@ -94,8 +94,9 @@ uses
   // Delphi
   SysUtils, Windows, Character,
   // Project
+  CS.Utils.Sound,
   UConsts, UExceptions, UFontHelper, UMessageBox, USettings, UStructs,
-  USystemInfo, UStrUtils, UUtils;
+  USystemInfo, UStrUtils;
 
 
 {$R *.dfm}
@@ -187,8 +188,8 @@ begin
 end;
 
 class function TProxyServerDlg.Execute(const AOwner: TComponent): Boolean;
-  {Creates and displays the proxy server dialog box.
-    @param AOwner [in] Component that owns the dialog box.
+  {Creates and displays the proxy server dialogue box.
+    @param AOwner [in] Component that owns the dialogue box.
   }
 begin
   with Create(AOwner) do
@@ -278,7 +279,7 @@ procedure TProxyServerDlg.Validate;
           Exit; // each quad must be storable in a byte
       end;
     finally
-      FreeAndNil(Quads);
+      Quads.Free;
     end;
     Result := True;
   end;

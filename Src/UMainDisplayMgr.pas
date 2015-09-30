@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -87,14 +87,6 @@ type
       ///  </remarks>
       fPendingChange: Boolean;
 
-    ///  <summary>Gets reference to manager object for tab set that is currently
-    ///  "interactive".</summary>
-    ///  <returns>ITabbedDisplayMgr. Reference to required tab set manager
-    ///  object, or nil if no tab set in interactive.</returns>
-    ///  <remarks>Both overview and detail pane has a tab set. The tab set in
-    ///  the frame that has (keyboard) focus is "interactive".</remarks>
-    function GetInteractiveTabMgr: ITabbedDisplayMgr;
-
     ///  <summary>Redisplays the current grouping in overview pane's tree-view
     ///  using the snippets included in the current database query.</summary>
     procedure RedisplayOverview;
@@ -140,7 +132,7 @@ type
     ///  PrepareForDBChange has been made.</remarks>
     procedure AddDBView(View: IView);
 
-    ///  <summary>Updates that display to reflect changes to a database view.
+    ///  <summary>Updates the display to reflect changes to a database view.
     ///  </summary>
     ///  <param name="TabIdx">Integer [in] Index of detail pane tab where view
     ///  is displayed. May be -1 if view not displayed in detail pane.</param>
@@ -181,7 +173,9 @@ type
     destructor Destroy; override;
 
     ///  <summary>Performs start-up initialisation of display.</summary>
-    procedure Initialise(const OverviewTab: Integer);
+    ///  <param name="OverviewGroupingIdx">Integer [in] Index of grouping to
+    ///  be used by overview frame.</param>
+    procedure Initialise(const OverviewGroupingIdx: Integer);
 
     ///  <summary>Re-starts display.</summary>
     ///  <remarks>All snippets in current query are shown in overview pane and
@@ -215,13 +209,13 @@ type
     ///  Detail pane is refreshed.</remarks>
     procedure UpdateDisplayedQuery;
 
-    ///  <summary>Selects next tab in currently active tab set.</summary>
-    ///  <remarks>Does nothing if there is no active tab set.</remarks>
-    procedure SelectNextActiveTab;
+    ///  <summary>Selects next tab in detail pane.</summary>
+    ///  <remarks>Does nothing when there are less than 2 tabs.</remarks>
+    procedure SelectNextDetailsTab;
 
-    ///  <summary>Selects previous tab in currently active tab set.</summary>
-    ///  <remarks>Does nothing if there is no active tab set.</remarks>
-    procedure SelectPreviousActiveTab;
+    ///  <summary>Selects previous tab in detail pane.</summary>
+    ///  <remarks>Does nothing when there are less than 2 tabs.</remarks>
+    procedure SelectPreviousDetailsTab;
 
     ///  <summary>Closes one or more tabs in detail pane, according to value
     ///  of Options parameter.</summary>
@@ -273,11 +267,11 @@ type
     ///  <summary>Selects all text in current detail tab.</summary>
     procedure SelectAll;
 
-    ///  <summary>Selects tab with given index in overview pane.</summary>
-    procedure SelectOverviewTab(TabIdx: Integer);
+    ///  <summary>Selects grouping with given index in overview pane.</summary>
+    procedure SelectOverviewGrouping(GroupingIdx: Integer);
 
-    ///  <summary>Returns index of selected tab in overview pane.</summary>
-    function SelectedOverviewTab: Integer;
+    ///  <summary>Returns index of current grouping in overview pane.</summary>
+    function SelectedOverviewGrouping: Integer;
 
     ///  <summary>Selects tab with given index in detail pane.</summary>
     procedure SelectDetailTab(TabIdx: Integer);
@@ -304,7 +298,12 @@ uses
   // Delphi
   SysUtils,
   // Project
-  DB.UMain, UPreferences, UQuery;
+  CS.Database.Types,
+  DB.UMain,
+  UBox,
+  UPreferences,
+  UQuery,
+  UUtils;
 
 
 { TMainDisplayMgr }
@@ -312,7 +311,7 @@ uses
 procedure TMainDisplayMgr.AddDBView(View: IView);
 begin
   Assert(fPendingChange, ClassName + '.AddView: no change pending');
-  Assert(Supports(View, ISnippetView) or Supports(View, ICategoryView),
+  Assert(Supports(View, ISnippetView),
     ClassName + '.AddView: View not a database item');
   RedisplayOverview;
   (fOverviewMgr as IOverviewDisplayMgr).SelectItem(View);
@@ -349,7 +348,7 @@ begin
   case Option of
     dtcSelected:
       (fDetailsMgr as IDetailPaneDisplayMgr).CloseTab(
-        (fDetailsMgr as ITabbedDisplayMgr).SelectedTab
+        (fDetailsMgr as IDetailPaneDisplayMgr).SelectedTab
       );
     dtcAllExceptSelected:
       (fDetailsMgr as IDetailPaneDisplayMgr).CloseMultipleTabs(True);
@@ -376,8 +375,6 @@ constructor TMainDisplayMgr.Create(const OverviewMgr, DetailsMgr: IInterface);
 begin
   Assert(Assigned(OverviewMgr),
     ClassName + '.Create: OverviewMgr is nil');
-  Assert(Supports(OverviewMgr, ITabbedDisplayMgr),
-    ClassName + '.Create: OverviewMgr must support ITabbedDisplayMgr');
   Assert(Supports(OverviewMgr, IPaneInfo),
     ClassName + '.Create: OverviewMgr must support IPaneInfo');
   Assert(Supports(OverviewMgr, IOverviewDisplayMgr),
@@ -385,8 +382,6 @@ begin
 
   Assert(Assigned(DetailsMgr),
     ClassName + '.Create: DetailsMgr is nil');
-  Assert(Supports(DetailsMgr, ITabbedDisplayMgr),
-    ClassName + '.Create: DetailsMgr must support ITabbedDisplayMgr');
   Assert(Supports(DetailsMgr, IPaneInfo),
     ClassName + '.Create: DetailsMgr must support IPaneInfo');
   Assert(Supports(DetailsMgr, IDetailPaneDisplayMgr),
@@ -422,26 +417,36 @@ procedure TMainDisplayMgr.DBChangeEventHandler(Sender: TObject;
   const EvtInfo: IInterface);
 var
   EventInfo: IDatabaseChangeEventInfo;  // information about the event
+
+  ///  <summary>Extracts snippet ID from EvtInfo object.</summary>
+  function EvtInfoToSnippetID: TSnippetID;
+  begin
+    Result := (EventInfo.Info as TBox<TSnippetID>).Value;
+  end;
+
 begin
   EventInfo := EvtInfo as IDatabaseChangeEventInfo;
+  // TODO: add support for changes to tags when such events are added
   case EventInfo.Kind of
     evChangeBegin:
       PrepareForDBChange;
 
-    evBeforeSnippetChange, evBeforeSnippetDelete,
-    evBeforeCategoryChange, evBeforeCategoryDelete:
-      PrepareForDBViewChange(TViewFactory.CreateDBItemView(EventInfo.Info));
-
-    evSnippetChanged, evCategoryChanged:
-      UpdateDBView(
-        fChangingDetailPageIdx, TViewFactory.CreateDBItemView(EventInfo.Info)
+    evBeforeSnippetChange, evBeforeSnippetDelete:
+      PrepareForDBViewChange(
+        TViewFactory.CreateSnippetView(EvtInfoToSnippetID)
       );
 
-    evSnippetDeleted, evCategoryDeleted:
+    evSnippetChanged:
+      UpdateDBView(
+        fChangingDetailPageIdx,
+        TViewFactory.CreateSnippetView(EvtInfoToSnippetID)
+      );
+
+    evSnippetDeleted:
       DeleteDBView(fChangingDetailPageIdx);
 
-    evSnippetAdded, evCategoryAdded:
-      AddDBView(TViewFactory.CreateDBItemView(EventInfo.Info));
+    evSnippetAdded:
+      AddDBView(TViewFactory.CreateSnippetView(EvtInfoToSnippetID));
   end;
 end;
 
@@ -470,7 +475,7 @@ end;
 procedure TMainDisplayMgr.DisplayInSelectedDetailView(View: IView);
 begin
   (fDetailsMgr as IDetailPaneDisplayMgr).Display(
-    View, (fDetailsMgr as ITabbedDisplayMgr).SelectedTab
+    View, (fDetailsMgr as IDetailPaneDisplayMgr).SelectedTab
   );
 end;
 
@@ -486,7 +491,7 @@ end;
 procedure TMainDisplayMgr.DisplayViewItem(ViewItem: IView;
   Mode: TDetailPageDisplayMode);
 var
-  TabIdx: Integer;  // index of tab showing given view (-1 if no such tab)
+  TabIdx: Integer;  // index of details tab showing given view (-1 if no tab)
 begin
   (fOverviewMgr as IOverviewDisplayMgr).SelectItem(ViewItem);
   if (fDetailsMgr as IDetailPaneDisplayMgr).IsEmptyTabSet
@@ -520,18 +525,9 @@ begin
   end;
 end;
 
-function TMainDisplayMgr.GetInteractiveTabMgr: ITabbedDisplayMgr;
+procedure TMainDisplayMgr.Initialise(const OverviewGroupingIdx: Integer);
 begin
-  Result := nil;
-  if (fOverviewMgr as IPaneInfo).IsInteractive then
-    Result := fOverviewMgr as ITabbedDisplayMgr
-  else if (fDetailsMgr as IPaneInfo).IsInteractive then
-    Result := fDetailsMgr as ITabbedDisplayMgr;
-end;
-
-procedure TMainDisplayMgr.Initialise(const OverviewTab: Integer);
-begin
-  (fOverviewMgr as IOverviewDisplayMgr).Initialise(OverviewTab);
+  (fOverviewMgr as IOverviewDisplayMgr).Initialise(OverviewGroupingIdx);
 end;
 
 procedure TMainDisplayMgr.PrepareForDBChange;
@@ -557,14 +553,17 @@ begin
     View.GetKey
   );
   if (fChangingDetailPageIdx >= 0) and
-    (fChangingDetailPageIdx = (fDetailsMgr as ITabbedDisplayMgr).SelectedTab)
+    (
+      fChangingDetailPageIdx =
+        (fDetailsMgr as IDetailPaneDisplayMgr).SelectedTab
+    )
     then
     begin
       // NOTE: Clear overview pane here to ensure no hanging references to
       // deleted views. Same principle applies to overwriting view in detail
       // pane.
       (fOverviewMgr as IOverviewDisplayMgr).Clear;
-      DisplayInSelectedDetailView(TViewFactory.CreateNulView);
+      DisplayInSelectedDetailView(TViewFactory.CreateNullView);
     end;
   fPendingViewChange := True;
 end;
@@ -576,7 +575,7 @@ end;
 
 procedure TMainDisplayMgr.Refresh;
 begin
-  // Redisplays current view in overview pane and active tab of detail pane
+  // Redisplays current view in overview pane and current tab of detail pane
   (fOverviewMgr as IOverviewDisplayMgr).SelectItem(CurrentView);
   RefreshDetailPage;
 end;
@@ -591,7 +590,7 @@ end;
 
 procedure TMainDisplayMgr.ReStart;
 begin
-  // Clear all tabs and force re-displayed of overview
+  // Clear all detail pane tabs and force re-displayed of overview
   (fDetailsMgr as IDetailPaneDisplayMgr).CloseMultipleTabs(False);
   (fOverviewMgr as IOverviewDisplayMgr).Display(Query.Selection, True);
 end;
@@ -604,7 +603,7 @@ end;
 
 procedure TMainDisplayMgr.SelectDetailTab(TabIdx: Integer);
 begin
-  (fDetailsMgr as ITabbedDisplayMgr).SelectTab(TabIdx);
+  (fDetailsMgr as IDetailPaneDisplayMgr).SelectTab(TabIdx);
   (fOverviewMgr as IOverviewDisplayMgr).SelectItem(
     (fDetailsMgr as IDetailPaneDisplayMgr).SelectedView
   );
@@ -612,40 +611,33 @@ end;
 
 function TMainDisplayMgr.SelectedDetailTab: Integer;
 begin
-  Result := (fDetailsMgr as ITabbedDisplayMgr).SelectedTab;
+  Result := (fDetailsMgr as IDetailPaneDisplayMgr).SelectedTab;
 end;
 
-function TMainDisplayMgr.SelectedOverviewTab: Integer;
+function TMainDisplayMgr.SelectedOverviewGrouping: Integer;
 begin
-  Result := (fOverviewMgr as ITabbedDisplayMgr).SelectedTab;
+  Result := (fOverviewMgr as IOVerviewDisplayMgr).SelectedGroupingIdx;
 end;
 
-procedure TMainDisplayMgr.SelectNextActiveTab;
-var
-  TabMgr: ITabbedDisplayMgr;  // reference to active tab manager object
+procedure TMainDisplayMgr.SelectNextDetailsTab;
 begin
-  TabMgr := GetInteractiveTabMgr;
-  if Assigned(TabMgr) then
-    TabMgr.NextTab;
+  (fDetailsMgr as IDetailPaneDisplayMgr).NextTab;
 end;
 
-procedure TMainDisplayMgr.SelectOverviewTab(TabIdx: Integer);
+procedure TMainDisplayMgr.SelectOverviewGrouping(GroupingIdx: Integer);
 begin
-  (fOverviewMgr as ITabbedDisplayMgr).SelectTab(TabIdx);
+  (fOverviewMgr as IOVerviewDisplayMgr).SelectGrouping(GroupingIdx);
 end;
 
-procedure TMainDisplayMgr.SelectPreviousActiveTab;
-var
-  TabMgr: ITabbedDisplayMgr;  // reference to active tab manager object
+procedure TMainDisplayMgr.SelectPreviousDetailsTab;
 begin
-  TabMgr := GetInteractiveTabMgr;
-  if Assigned(TabMgr) then
-    TabMgr.PreviousTab;
+  (fDetailsMgr as IDetailPaneDisplayMgr).PreviousTab;
 end;
 
 procedure TMainDisplayMgr.ShowDBUpdatedPage;
 begin
-  // NOTE: Normally this page is only shown when there are no tabs displayed
+  // NOTE: Normally this page is only shown when there are no tab displayed in
+  // details pane.
   DisplayViewItem(TViewFactory.CreateDBUpdateInfoView, ddmForceNewTab);
 end;
 
@@ -654,7 +646,7 @@ var
   NewTabIdx: Integer; // index of new detail pane tab
 begin
   NewTabIdx := (fDetailsMgr as IDetailPaneDisplayMgr).CreateTab(View);
-  (fDetailsMgr as ITabbedDisplayMgr).SelectTab(NewTabIdx);
+  (fDetailsMgr as IDetailPaneDisplayMgr).SelectTab(NewTabIdx);
 end;
 
 procedure TMainDisplayMgr.ShowWelcomePage;

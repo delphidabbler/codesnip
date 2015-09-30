@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2009-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2009-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -23,7 +23,10 @@ uses
   // Delphu
   ComCtrls,
   // Project
-  DB.USnippet, UGroups, UView, UViewItemTreeNode;
+  CS.Database.Types,
+  UGroups,
+  UView,
+  UViewItemTreeNode;
 
 
 type
@@ -35,13 +38,13 @@ type
   TOverviewTreeBuilder = class abstract(TObject)
   strict private
     var
-      fTreeView: TTreeView;       // Value of TreeView property
-      fSnippetList: TSnippetList; // Value of SnippetList property
+      fTreeView: TTreeView;           // Value of TreeView property
+      fSnippetIDList: ISnippetIDList; // Value of SnippetIDList property
   strict protected
     property TreeView: TTreeView read fTreeView;
       {Reference to treeview populated by class}
-    property SnippetList: TSnippetList read fSnippetList;
-      {List of snippets to be displayed in treeview}
+    property SnippetIDList: ISnippetIDList read fSnippetIDList;
+      {List of IDs of snippets to be displayed in treeview}
     function AddViewItemNode(const ParentNode: TViewItemTreeNode;
       ViewItem: IView): TViewItemTreeNode;
       {Adds a new node to the tree view that represents a view item.
@@ -60,11 +63,11 @@ type
         @return Required view item object.
       }
   public
-    constructor Create(const TV: TTreeView; const SnippetList: TSnippetList);
+    constructor Create(const TV: TTreeView; SnippetIDList: ISnippetIDList);
       {Class constructor. Sets up object to populate a treeview with a list of
       snippets.
         @param TV [in] Treeview control to be populated.
-        @param SnippetList [in] List of snippets to be added to TV.
+        @param SnippetIDList [in] List of IDs of snippets to be added to TV.
       }
     procedure Build;
       {Populates the treeview.
@@ -77,23 +80,30 @@ type
   }
   TOverviewTreeBuilderClass = class of TOverviewTreeBuilder;
 
-  {
-  TOverviewCategorisedTreeBuilder:
-    Class that populates the overview treeview with a list of snippets grouped
-    by category.
-  }
-  TOverviewCategorisedTreeBuilder = class sealed(TOverviewTreeBuilder)
+
+  ///  <summary>Class that populates the overview treeview with a list of
+  ///  snippets grouped by tags.</summary>
+  ///  <remarks>Snippets are repeated once per tag.</remarks>
+  TOverviewTagTreeBuilder = class sealed(TOverviewTreeBuilder)
   strict protected
+    ///  <summary>Creates and returns a tag grouping object.</summary>
     function CreateGrouping: TGrouping; override;
-      {Creates a categorised grouping object.
-        @return Required grouping object.
-      }
+    ///  <summary>Createa and returns a tag view item from a group item.
+    ///  </summary>
     function CreateViewItemForGroup(const Group: TGroupItem): IView;
       override;
-      {Creates a category view item from group item.
-        @param Group [in] Group item containing category data.
-        @return Required category view item for group.
-      }
+  end;
+
+  ///  <summary>Class that populates the overview treeview with a list of
+  ///  snippets grouped by programming language.</summary>
+  TOverviewSourceCodeLanguageTreeBuilder = class sealed(TOverviewTreeBuilder)
+  strict protected
+    ///  <summary>Creates and returns a language grouping object.</summary>
+    function CreateGrouping: TGrouping; override;
+    ///  <summary>Createa and returns a source code language view item from a
+    ///  group item.</summary>
+    function CreateViewItemForGroup(const Group: TGroupItem): IView;
+      override;
   end;
 
   {
@@ -143,20 +153,6 @@ uses
   UPreferences;
 
 
-{
-  NOTE:
-
-  Early version of this code, that were contained in the FrOverview unit used
-  to add a section head tree node for every category and then delete empty ones.
-  However, attempts to delete the first node from a tree causes an endless loop,
-  freezing the program. This could be a bug in the Delphi treeview component.
-
-  Therefore the code in this unit now builds or uses a list of snippets for
-  each section and does not create a section header node for sections that
-  contain no snippets.
-}
-
-
 { TOverviewTreeBuilder }
 
 function TOverviewTreeBuilder.AddViewItemNode(
@@ -176,7 +172,7 @@ procedure TOverviewTreeBuilder.Build;
   {Populates the treeview.
   }
 var
-  Snippet: TSnippet;              // each snippet in a list
+  Snippet: ISnippet;              // each snippet in a list
   ParentNode: TViewItemTreeNode;  // each section node in tree
   Grouping: TGrouping;            // groups snippets
   Group: TGroupItem;              // each group of snippets
@@ -192,7 +188,7 @@ begin
         ParentNode := AddViewItemNode(nil, CreateViewItemForGroup(Group));
         for Snippet in Group.SnippetList do
           AddViewItemNode(
-            ParentNode, TViewFactory.CreateSnippetView(Snippet)
+            ParentNode, TViewFactory.CreateSnippetView(Snippet.ID)
           );
       end;
     end;
@@ -202,37 +198,45 @@ begin
 end;
 
 constructor TOverviewTreeBuilder.Create(const TV: TTreeView;
-  const SnippetList: TSnippetList);
+  SnippetIDList: ISnippetIDList);
   {Class constructor. Sets up object to populate a treeview with a list of
   snippets.
     @param TV [in] Treeview control to be populated.
-    @param SnippetList [in] List of snippets to be added to TV.
+    @param SnippetIDList [in] List of IDs of snippets to be added to TV.
   }
 begin
   inherited Create;
   fTreeView := TV;
-  fSnippetList := SnippetList;
+  fSnippetIDList := SnippetIDList;
 end;
 
-{ TOverviewCategorisedTreeBuilder }
+{ TOverviewTagTreeBuilder }
 
-function TOverviewCategorisedTreeBuilder.CreateGrouping: TGrouping;
-  {Creates a categorised grouping object.
-    @return Required grouping object.
-  }
+function TOverviewTagTreeBuilder.CreateGrouping: TGrouping;
 begin
-  Result := TCategoryGrouping.Create(SnippetList);
+  Result := TTagGrouping.Create(SnippetIDList);
 end;
 
-function TOverviewCategorisedTreeBuilder.CreateViewItemForGroup(
+function TOverviewTagTreeBuilder.CreateViewItemForGroup(
   const Group: TGroupItem): IView;
-  {Creates a category view item from group item.
-    @param Group [in] Group item containing category data.
-    @return Required category view item for group.
-  }
 begin
-  Result := TViewFactory.CreateCategoryView(
-    (Group as TCategoryGroupItem).Category
+  Result := TViewFactory.CreateTagView(
+    (Group as TTagGroupItem).Tag
+  );
+end;
+
+{ TOverviewSourceCodeLanguageTreeBuilder }
+
+function TOverviewSourceCodeLanguageTreeBuilder.CreateGrouping: TGrouping;
+begin
+  Result := TSourceCodeLanguageGrouping.Create(SnippetIDList);
+end;
+
+function TOverviewSourceCodeLanguageTreeBuilder.CreateViewItemForGroup(
+  const Group: TGroupItem): IView;
+begin
+  Result := TViewFactory.CreateSourceCodeLanguageView(
+    (Group as TSourceCodeLanguageGroupItem).Language
   );
 end;
 
@@ -243,7 +247,7 @@ function TOverviewAlphabeticTreeBuilder.CreateGrouping: TGrouping;
     @return Required grouping object.
   }
 begin
-  Result := TAlphaGrouping.Create(SnippetList);
+  Result := TAlphaGrouping.Create(SnippetIDList);
 end;
 
 function TOverviewAlphabeticTreeBuilder.CreateViewItemForGroup(
@@ -265,7 +269,7 @@ function TOverviewSnipKindTreeBuilder.CreateGrouping: TGrouping;
     @return Required grouping object.
   }
 begin
-  Result := TSnipKindGrouping.Create(SnippetList);
+  Result := TSnipKindGrouping.Create(SnippetIDList);
 end;
 
 function TOverviewSnipKindTreeBuilder.CreateViewItemForGroup(
@@ -276,7 +280,7 @@ function TOverviewSnipKindTreeBuilder.CreateViewItemForGroup(
   }
 begin
   Result := TViewFactory.CreateSnippetKindView(
-    (Group as TSnipKindGroupItem).SnipKindInfo
+    (Group as TSnipKindGroupItem).SnippetKind
   );
 end;
 

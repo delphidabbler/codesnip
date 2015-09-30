@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2006-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2006-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -22,8 +22,13 @@ uses
   // Delphi
   Graphics,
   // Project
-  Hiliter.UGlobals, UIStringList, UMeasurement, UPrintInfo,
-  USnippetPageStructure, USourceFileInfo, USourceGen, UWarnings;
+  CS.SourceCode.Hiliter.Themes,
+  CS.SourceCode.Pascal.SourceGen,
+  UIStringList,
+  UMeasurement,
+  USnippetPageStructure,
+  USourceFileInfo,
+  UWarnings;
 
 
 type
@@ -35,6 +40,16 @@ type
   );
 
 type
+  ///  <summary>Defines possible kinds of syntax highlighter theme that can be
+  ///  recorded as current themes in preferences.</summary>
+  TCurrentHiliteThemeKind = (htkUI, htkExport, htkPrint);
+
+type
+  ///  <summary>Type of array that maps each kind of current syntax highlighter
+  ///  theme to its current theme ID.</summary>
+  TCurrentHiliteThemes = array[TCurrentHiliteThemeKind] of TSyntaxHiliteThemeID;
+
+type
   ///  <summary>Interface supported by objects that maintain user preferences.
   ///  </summary>
   IPreferences = interface(IInterface)
@@ -42,13 +57,13 @@ type
 
     ///  <summary>Gets style of commenting used to describe snippets in
     ///  generated code.</summary>
-    function GetSourceCommentStyle: TCommentStyle;
+    function GetSourceCommentStyle: TPascalCommentStyle;
     ///  <summary>Sets style of commenting to be used describe snippets in
     ///  generated code.</summary>
-    procedure SetSourceCommentStyle(const Value: TCommentStyle);
+    procedure SetSourceCommentStyle(const Value: TPascalCommentStyle);
     ///  <summary>Commenting style used to describe snippets in generated source
     ///  code.</summary>
-    property SourceCommentStyle: TCommentStyle
+    property SourceCommentStyle: TPascalCommentStyle
       read GetSourceCommentStyle write SetSourceCommentStyle;
 
     ///  <summary>Gets flag that determines whether multi-paragraph source code
@@ -64,13 +79,13 @@ type
 
     ///  <summary>Gets current default file extension / type used when writing
     ///  code snippets to file.</summary>
-    function GetSourceDefaultFileType: TSourceFileType;
+    function GetSourceDefaultFileType: TSourceOutputFileType;
     ///  <summary>Sets default file extension / type to be used when writing
     ///  code snippets to file.</summary>
-    procedure SetSourceDefaultFileType(const Value: TSourceFileType);
+    procedure SetSourceDefaultFileType(const Value: TSourceOutputFileType);
     ///  <summary>Default file extension / type used when writing code snippets
     ///  to file.</summary>
-    property SourceDefaultFileType: TSourceFileType
+    property SourceDefaultFileType: TSourceOutputFileType
       read GetSourceDefaultFileType write SetSourceDefaultFileType;
 
     ///  <summary>Gets current indicator of whether generated source is
@@ -111,55 +126,16 @@ type
     property ShowEmptySections: Boolean
       read GetShowEmptySections write SetShowEmptySections;
 
-    ///  <summary>Gets flag that indicates whether new snippets and categories
-    ///  are displayed in new tabs in details pane.</summary>
+    ///  <summary>Gets flag that indicates whether new snippets are displayed in
+    ///  new tabs in details pane.</summary>
     function GetShowNewSnippetsInNewTabs: Boolean;
-    ///  <summary>Sets flag that indicates whether new snippets and categories
-    ///  are displayed in new tabs in details pane.</summary>
+    ///  <summary>Sets flag that indicates whether new snippets are displayed in
+    ///  new tabs in details pane.</summary>
     procedure SetShowNewSnippetsInNewTabs(const Value: Boolean);
-    ///  <summary>Indicates whether new snippets and ca-tegories are displayed
-    ///  in new tabs in details pane.</summary>
+    ///  <summary>Indicates whether new snippets are displayed in new tabs in
+    ///  details pane.</summary>
     property ShowNewSnippetsInNewTabs: Boolean
       read GetShowNewSnippetsInNewTabs write SetShowNewSnippetsInNewTabs;
-
-    ///  <summary>Gets heading colour used for snippets from a specified
-    ///  database.</summary>
-    ///  <param name="UserDefined">Boolean [in] Required database: True for user
-    ///  database and False for inline database.</param>
-    ///  <returns>TColor. Required colour.</returns>
-    function GetDBHeadingColour(UserDefined: Boolean): TColor;
-    ///  <summary>Sets heading colour used for snippets from a specified
-    ///  database.</summary>
-    ///  <param name="UserDefined">Boolean [in] Required database: True for user
-    ///  database and False for online database.</param>
-    ///  <param name="Value">TColor [in] Required heading colour.</param>
-    procedure SetDBHeadingColour(UserDefined: Boolean;
-      const Value: TColor);
-    ///  <summary>Records colour to be used for headings of items from either
-    ///  online database (UserDefined = False) or user database (UserDefined =
-    ///  True).</summary>
-    property DBHeadingColours[UserDefined: Boolean]: TColor
-      read GetDBHeadingColour write SetDBHeadingColour;
-
-    ///  <summary>Gets custom colours available for headings for specified
-    ///  database.</summary>
-    ///  <param name="UserDefined">Boolean [in] Required database: True for user
-    ///  database and False for online database.</param>
-    ///  <returns>IStringList. String list containing custom colours.</returns>
-    function GetDBHeadingCustomColours(UserDefined: Boolean): IStringList;
-    ///  <summary>Sets custom colours available for headings for specified
-    ///  database.</summary>
-    ///  <param name="UserDefined">Boolean [in] Required database: True for user
-    ///  database and False for online database.</param>
-    ///  <param name="Value">IStringList [in] String list containing custom
-    ///  colours.</param>
-    procedure SetDBHeadingCustomColours(UserDefined: Boolean;
-      Value: IStringList);
-    ///  <summary>Records custom colours available for headings of items from
-    ///  either online database (UserDefined = False) or user database
-    ///  (UserDefined = True).</summary>
-    property DBHeadingCustomColours[UserDefined: Boolean]: IStringList
-      read GetDBHeadingCustomColours write SetDBHeadingCustomColours;
 
     ///  <summary>Gets colour used for background of source code in main
     ///  display.</summary>
@@ -172,6 +148,7 @@ type
     property SourceCodeBGColour: TColor
       read GetSourceCodeBGColour write SetSourceCodeBGColour;
 
+    { TODO: Merge all custom colours into one entry for colour dialogue box. }
     ///  <summary>Gets custom colours available for use as background colour of
     ///  source code in main display as a string list.</summary>
     function GetSourceCodeBGCustomColours: IStringList;
@@ -183,41 +160,18 @@ type
     property SourceCodeBGCustomColours: IStringList
       read GetSourceCodeBGCustomColours write SetSourceCodeBGCustomColours;
 
-    ///  <summary>Gets default print options.</summary>
-    function GetPrinterOptions: TPrintOptions;
-    ///  <summary>Sets default print options.</summary>
-    procedure SetPrinterOptions(const Options: TPrintOptions);
-    ///  <summary>Default print options.</summary>
-    property PrinterOptions: TPrintOptions
-      read GetPrinterOptions write SetPrinterOptions;
-
-    ///  <summary>Gets default printer page margins.</summary>
-    function GetPrinterPageMargins: TPageMargins;
-    ///  <summary>Sets new default printer page margins.</summary>
-    procedure SetPrinterPageMargins(const Margins: TPageMargins);
-    ///  <summary>Default printer page margins.</summary>
-    property PrinterPageMargins: TPageMargins
-      read GetPrinterPageMargins write SetPrinterPageMargins;
-
-    ///  <summary>Gets current user defined syntax highlighter.</summary>
-    function GetHiliteAttrs: IHiliteAttrs;
-    ///  <summary>Sets current user defined syntax highlighter.</summary>
-    procedure SetHiliteAttrs(const Attrs: IHiliteAttrs);
-    ///  <summary>Attributes of current user defined syntax highlighter.
-    ///  </summary>
-    property HiliteAttrs: IHiliteAttrs
-      read GetHiliteAttrs write SetHiliteAttrs;
-
-    ///  <summary>Gets object containing the attributes of all the named user
-    ///  defined syntax highlighters.</summary>
-    function GetNamedHiliteAttrs: INamedHiliteAttrs;
-    ///  <summary>Stores a copy of the given object containing the attributes of
-    ///  all the 'named' user defined syntax highlighters.</summary>
-    procedure SetNamedHiliteAttrs(NamedHiliteAttrs: INamedHiliteAttrs);
-    ///  <summary>Reference tp object containing attributes of all the 'named'
-    ///  user defined syntax highlighters.</summary>
-    property NamedHiliteAttrs: INamedHiliteAttrs
-      read GetNamedHiliteAttrs write SetNamedHiliteAttrs;
+    ///  <summary>Gets current highlighter theme of given kind.</summary>
+    function GetCurrentHiliteThemeId(Kind: TCurrentHiliteThemeKind):
+      TSyntaxHiliteThemeID;
+    ///  <summary>Gets current highlighter theme of given kind to given theme
+    ///  ID.</summary>
+    procedure SetCurrentHiliteThemeId(Kind: TCurrentHiliteThemeKind;
+      const ThemeId: TSyntaxHiliteThemeID);
+    ///  <summary>IDs of currently selected syntax highlighters of all supported
+    ///  kinds.</summary>
+    property CurrentHiliteThemeIds[Kind: TCurrentHiliteThemeKind]:
+      TSyntaxHiliteThemeID
+      read GetCurrentHiliteThemeId write SetCurrentHiliteThemeId;
 
     ///  <summary>Gets custom colours available for syntax highlighter.
     ///  </summary>
@@ -299,7 +253,9 @@ uses
   // Delphi
   SysUtils,
   // Project
-  Hiliter.UAttrs, Hiliter.UPersist, IntfCommon, UExceptions, UColours,
+  IntfCommon,
+  UExceptions,
+  UColours,
   USettings;
 
 
@@ -321,10 +277,10 @@ type
     var
       ///  <summary>Default file extension / type used when writing code
       ///  snippets  file.</summary>
-      fSourceDefaultFileType: TSourceFileType;
+      fSourceDefaultFileType: TSourceOutputFileType;
       ///  <summary>Commenting style used to describe snippets in generated
       ///  source code.</summary>
-      fSourceCommentStyle: TCommentStyle;
+      fSourceCommentStyle: TPascalCommentStyle;
       ///  <summary>Flag determining whether multi-paragraph source code is
       ///  truncated to first paragraph in source code comments.</summary>
       fTruncateSourceComments: Boolean;
@@ -341,30 +297,15 @@ type
       ///  <summary>Indicates whether new snippets and ca-tegories are displayed
       ///  in new tabs in details pane.</summary>
       fShowNewSnippetsInNewTabs: Boolean;
-      ///  <summary>Records colour to be used for headings of items from either
-      ///  online database (UserDefined = False) or user database (UserDefined =
-      ///  True).</summary>
-      fDBHeadingColours: array[Boolean] of TColor;
-      ///  <summary>Records custom colours available for headings of items from
-      ///  either online database (UserDefined = False) or user database
-      ///  (UserDefined = True).</summary>
-      fDBHeadingCustomColours: array[Boolean] of IStringList;
       ///  <summary>Records colour used for background of source code in main
       ///  display.</summary>
       fSourceCodeBGColour: TColor;
       ///  <summary>Records custom colours available for use as background
       ///  colour of source code in main display.</summary>
       fSourceCodeBGCustomColours: IStringList;
-      ///  <summary>Default print options.</summary>
-      fPrinterOptions: TPrintOptions;
-      ///  <summary>Default printer page margins.</summary>
-      fPrinterPageMargins: TPageMargins;
-      ///  <summary>Attributes of current user defined syntax highlighter.
+      ///  <summary>Map of current theme kinds to IDs of required highlighters.
       ///  </summary>
-      fHiliteAttrs: IHiliteAttrs;
-      ///  <summary>Reference tp object containing attributes of all the 'named'
-      ///  user defined syntax highlighters.</summary>
-      fNamedHiliteAttrs: INamedHiliteAttrs;
+      fCurrentHiliteThemeIds: TCurrentHiliteThemes;
       ///  <summary>Custom colours available for syntax highlighters.</summary>
       fHiliteCustomColours: IStringList;
       ///  <summary>Reference to object containing information about warnings to
@@ -395,12 +336,12 @@ type
     ///  <summary>Gets style of commenting used to describe snippets in
     ///  generated code.</summary>
     ///  <remarks>Method of IPreferences.</remarks>
-    function GetSourceCommentStyle: TCommentStyle;
+    function GetSourceCommentStyle: TPascalCommentStyle;
 
     ///  <summary>Sets style of commenting to be used describe snippets in
     ///  generated code.</summary>
     ///  <remarks>Method of IPreferences.</remarks>
-    procedure SetSourceCommentStyle(const Value: TCommentStyle);
+    procedure SetSourceCommentStyle(const Value: TPascalCommentStyle);
 
     ///  <summary>Gets flag that determines whether multi-paragraph source code
     ///  is truncated to first paragraph in source code comments.</summary>
@@ -415,12 +356,12 @@ type
     ///  <summary>Gets current default file extension / type used when writing
     ///  code snippets to file.</summary>
     ///  <remarks>Method of IPreferences.</remarks>
-    function GetSourceDefaultFileType: TSourceFileType;
+    function GetSourceDefaultFileType: TSourceOutputFileType;
 
     ///  <summary>Sets default file extension / type to be used when writing
     ///  code snippets to file.</summary>
     ///  <remarks>Method of IPreferences.</remarks>
-    procedure SetSourceDefaultFileType(const Value: TSourceFileType);
+    procedure SetSourceDefaultFileType(const Value: TSourceOutputFileType);
 
     ///  <summary>Gets current indicator of whether generated source is
     ///  highlighted by default.</summary>
@@ -458,50 +399,15 @@ type
     ///  <remarks>Method of IPreferences.</remarks>
     procedure SetShowEmptySections(const Value: Boolean);
 
-    ///  <summary>Gets flag that indicates whether new snippets and categories
-    ///  are displayed in new tabs in details pane.</summary>
+    ///  <summary>Gets flag that indicates whether new snippets are displayed in
+    ///  new tabs in details pane.</summary>
     ///  <remarks>Method of IPreferences.</remarks>
     function GetShowNewSnippetsInNewTabs: Boolean;
 
-    ///  <summary>Sets flag that indicates whether new snippets and categories
-    ///  are displayed in new tabs in details pane.</summary>
+    ///  <summary>Sets flag that indicates whether new snippets are displayed in
+    ///  new tabs in details pane.</summary>
     ///  <remarks>Method of IPreferences.</remarks>
     procedure SetShowNewSnippetsInNewTabs(const Value: Boolean);
-
-    ///  <summary>Gets heading colour used for snippets from a specified
-    ///  database.</summary>
-    ///  <param name="UserDefined">Boolean [in] Required database: True for user
-    ///  database and False for inline database.</param>
-    ///  <returns>TColor. Required colour.</returns>
-    ///  <remarks>Method of IPreferences.</remarks>
-    function GetDBHeadingColour(UserDefined: Boolean): TColor;
-
-    ///  <summary>Sets heading colour used for snippets from a specified
-    ///  database.</summary>
-    ///  <param name="UserDefined">Boolean [in] Required database: True for user
-    ///  database and False for online database.</param>
-    ///  <param name="Value">TColor [in] Required heading colour.</param>
-    ///  <remarks>Method of IPreferences.</remarks>
-    procedure SetDBHeadingColour(UserDefined: Boolean;
-      const Value: TColor);
-
-    ///  <summary>Gets custom colours available for headings for specified
-    ///  database.</summary>
-    ///  <param name="UserDefined">Boolean [in] Required database: True for user
-    ///  database and False for online database.</param>
-    ///  <returns>IStringList. String list containing custom colours.</returns>
-    ///  <remarks>Method of IPreferences.</remarks>
-    function GetDBHeadingCustomColours(UserDefined: Boolean): IStringList;
-
-    ///  <summary>Sets custom colours available for headings for specified
-    ///  database.</summary>
-    ///  <param name="UserDefined">Boolean [in] Required database: True for user
-    ///  database and False for online database.</param>
-    ///  <param name="Value">IStringList [in] String list containing custom
-    ///  colours.</param>
-    ///  <remarks>Method of IPreferences.</remarks>
-    procedure SetDBHeadingCustomColours(UserDefined: Boolean;
-      Value: IStringList);
 
     ///  <summary>Gets colour used for background of source code in main
     ///  display.</summary>
@@ -523,39 +429,14 @@ type
     ///  <remarks>Method of IPreferences.</remarks>
     procedure SetSourceCodeBGCustomColours(Value: IStringList);
 
-    ///  <summary>Gets default print options.</summary>
-    ///  <remarks>Method of IPreferences.</remarks>
-    function GetPrinterOptions: TPrintOptions;
+    ///  <summary>Gets ID of current highlighter theme of given kind.</summary>
+    function GetCurrentHiliteThemeId(Kind: TCurrentHiliteThemeKind):
+      TSyntaxHiliteThemeID;
 
-    ///  <summary>Sets default print options.</summary>
-    ///  <remarks>Method of IPreferences.</remarks>
-    procedure SetPrinterOptions(const Options: TPrintOptions);
-
-    ///  <summary>Gets default printer page margins.</summary>
-    ///  <remarks>Method of IPreferences.</remarks>
-    function GetPrinterPageMargins: TPageMargins;
-
-    ///  <summary>Sets new default printer page margins.</summary>
-    ///  <remarks>Method of IPreferences.</remarks>
-    procedure SetPrinterPageMargins(const Margins: TPageMargins);
-
-    ///  <summary>Gets current user defined syntax highlighter.</summary>
-    ///  <remarks>Method of IPreferences.</remarks>
-    function GetHiliteAttrs: IHiliteAttrs;
-
-    ///  <summary>Sets current user defined syntax highlighter.</summary>
-    ///  <remarks>Method of IPreferences.</remarks>
-    procedure SetHiliteAttrs(const Attrs: IHiliteAttrs);
-
-    ///  <summary>Gets object containing the attributes of all the named user
-    ///  defined syntax highlighters.</summary>
-    ///  <remarks>Method of IPreferences.</remarks>
-    function GetNamedHiliteAttrs: INamedHiliteAttrs;
-
-    ///  <summary>Stores a copy of the given object containing the attributes of
-    ///  all the 'named' user defined syntax highlighters.</summary>
-    ///  <remarks>Method of IPreferences.</remarks>
-    procedure SetNamedHiliteAttrs(NamedHiliteAttrs: INamedHiliteAttrs);
+    ///  <summary>Sets current highlighter theme ID of given kind to given
+    ///  value.</summary>
+    procedure SetCurrentHiliteThemeId(Kind: TCurrentHiliteThemeKind;
+      const ThemeId: TSyntaxHiliteThemeID);
 
     ///  <summary>Gets custom colours available for syntax highlighter.
     ///  </summary>
@@ -638,7 +519,6 @@ type
       // Sub-sections of ssPreferences ini file section
       cGeneral = 'General';
       cSourceCode = 'SourceCode';
-      cPrinting = 'Printing';
       cHiliter = 'Hiliter';
       cCodeGenerator = 'CodeGen';
       cNews = 'News';
@@ -681,6 +561,7 @@ end;
 procedure TPreferences.Assign(const Src: IInterface);
 var
   SrcPref: IPreferences;  // IPreferences interface of Src
+  HiliteThemeKind: TCurrentHiliteThemeKind;
 begin
   // Get IPreferences interface of given object
   if not Supports(Src, IPreferences, SrcPref) then
@@ -694,16 +575,12 @@ begin
   Self.fOverviewStartState := SrcPref.OverviewStartState;
   Self.fShowEmptySections := SrcPref.ShowEmptySections;
   Self.fShowNewSnippetsInNewTabs := SrcPref.ShowNewSnippetsInNewTabs;
-  Self.fDBHeadingColours[False] := SrcPref.DBHeadingColours[False];
-  Self.fDBHeadingCustomColours[False] := SrcPref.DBHeadingCustomColours[False];
-  Self.fDBHeadingColours[True] := SrcPref.DBHeadingColours[True];
-  Self.fDBHeadingCustomColours[True] := SrcPref.DBHeadingCustomColours[True];
   Self.fSourceCodeBGColour := SrcPref.SourceCodeBGColour;
   Self.fSourceCodeBGCustomColours := SrcPref.SourceCodeBGCustomColours;
-  Self.fPrinterOptions := SrcPref.PrinterOptions;
-  Self.fPrinterPageMargins := SrcPref.PrinterPageMargins;
-  Self.SetHiliteAttrs(SrcPref.HiliteAttrs);
-  Self.SetNamedHiliteAttrs(SrcPref.NamedHiliteAttrs);
+  for HiliteThemeKind := Low(TCurrentHiliteThemeKind) to
+    High(TCurrentHiliteThemeKind) do
+    Self.fCurrentHiliteThemeIds[HiliteThemeKind] :=
+      SrcPref.CurrentHiliteThemeIds[HiliteThemeKind];
   Self.SetCustomHiliteColours(SrcPref.CustomHiliteColours);
   Self.SetWarnings(SrcPref.Warnings);
   Self.SetNewsAge(SrcPref.NewsAge);
@@ -715,12 +592,8 @@ end;
 constructor TPreferences.Create;
 begin
   inherited Create;
-  fHiliteAttrs := THiliteAttrsFactory.CreateDefaultAttrs;
-  fNamedHiliteAttrs := THiliteAttrsFactory.CreateNamedAttrs;
   fHiliteCustomColours := TIStringList.Create;
   fWarnings := TWarnings.Create;
-  fDBHeadingCustomColours[False] := TIStringList.Create;
-  fDBHeadingCustomColours[True] := TIStringList.Create;
   fPageStructures := TSnippetPageStructures.Create;
   TDefaultPageStructures.SetDefaults(fPageStructures);
 end;
@@ -741,35 +614,22 @@ begin
   Result := fAutoCheckProgramFrequency;
 end;
 
+function TPreferences.GetCurrentHiliteThemeId(Kind: TCurrentHiliteThemeKind):
+  TSyntaxHiliteThemeID;
+begin
+  Result := fCurrentHiliteThemeIds[Kind];
+  if Result.IsNull then
+    Result := TSyntaxHiliteThemeID.CreateDefault;
+end;
+
 function TPreferences.GetCustomHiliteColours: IStringList;
 begin
   Result := fHiliteCustomColours;
 end;
 
-function TPreferences.GetDBHeadingColour(UserDefined: Boolean): TColor;
-begin
-  Result := fDBHeadingColours[UserDefined];
-end;
-
-function TPreferences.GetDBHeadingCustomColours(
-  UserDefined: Boolean): IStringList;
-begin
-  Result := fDBHeadingCustomColours[UserDefined];
-end;
-
-function TPreferences.GetHiliteAttrs: IHiliteAttrs;
-begin
-  Result := fHiliteAttrs;
-end;
-
 function TPreferences.GetMeasurementUnits: TMeasurementUnits;
 begin
   Result := fMeasurementUnits;
-end;
-
-function TPreferences.GetNamedHiliteAttrs: INamedHiliteAttrs;
-begin
-  Result := fNamedHiliteAttrs;
 end;
 
 function TPreferences.GetNewsAge: Integer;
@@ -785,16 +645,6 @@ end;
 function TPreferences.GetPageStructures: TSnippetPageStructures;
 begin
   Result := fPageStructures;
-end;
-
-function TPreferences.GetPrinterOptions: TPrintOptions;
-begin
-  Result := fPrinterOptions;
-end;
-
-function TPreferences.GetPrinterPageMargins: TPageMargins;
-begin
-  Result := fPrinterPageMargins;
 end;
 
 function TPreferences.GetShowEmptySections: Boolean;
@@ -817,12 +667,12 @@ begin
   Result := fSourceCodeBGCustomColours;
 end;
 
-function TPreferences.GetSourceCommentStyle: TCommentStyle;
+function TPreferences.GetSourceCommentStyle: TPascalCommentStyle;
 begin
   Result := fSourceCommentStyle;
 end;
 
-function TPreferences.GetSourceDefaultFileType: TSourceFileType;
+function TPreferences.GetSourceDefaultFileType: TSourceOutputFileType;
 begin
   Result := fSourceDefaultFileType;
 end;
@@ -852,36 +702,20 @@ begin
   fAutoCheckProgramFrequency := Value;
 end;
 
+procedure TPreferences.SetCurrentHiliteThemeId(Kind: TCurrentHiliteThemeKind;
+  const ThemeId: TSyntaxHiliteThemeID);
+begin
+  fCurrentHiliteThemeIds[Kind] := ThemeId;
+end;
+
 procedure TPreferences.SetCustomHiliteColours(const Colours: IStringList);
 begin
   fHiliteCustomColours := Colours;
 end;
 
-procedure TPreferences.SetDBHeadingColour(UserDefined: Boolean;
-  const Value: TColor);
-begin
-  fDBHeadingColours[UserDefined] := Value;
-end;
-
-procedure TPreferences.SetDBHeadingCustomColours(UserDefined: Boolean;
-  Value: IStringList);
-begin
-  fDBHeadingCustomColours[UserDefined] := Value;
-end;
-
-procedure TPreferences.SetHiliteAttrs(const Attrs: IHiliteAttrs);
-begin
-  (fHiliteAttrs as IAssignable).Assign(Attrs);
-end;
-
 procedure TPreferences.SetMeasurementUnits(const Value: TMeasurementUnits);
 begin
   fMeasurementUnits := Value;
-end;
-
-procedure TPreferences.SetNamedHiliteAttrs(NamedHiliteAttrs: INamedHiliteAttrs);
-begin
-  (fNamedHiliteAttrs as IAssignable).Assign(NamedHiliteAttrs);
 end;
 
 procedure TPreferences.SetNewsAge(const Age: Integer);
@@ -898,16 +732,6 @@ procedure TPreferences.SetPageStructures(
   PageStructures: TSnippetPageStructures);
 begin
   fPageStructures.Assign(PageStructures);
-end;
-
-procedure TPreferences.SetPrinterOptions(const Options: TPrintOptions);
-begin
-  fPrinterOptions := Options;
-end;
-
-procedure TPreferences.SetPrinterPageMargins(const Margins: TPageMargins);
-begin
-  fPrinterPageMargins := Margins;
 end;
 
 procedure TPreferences.SetShowEmptySections(const Value: Boolean);
@@ -930,12 +754,13 @@ begin
   fSourceCodeBGCustomColours := Value;
 end;
 
-procedure TPreferences.SetSourceCommentStyle(const Value: TCommentStyle);
+procedure TPreferences.SetSourceCommentStyle(const Value: TPascalCommentStyle);
 begin
   fSourceCommentStyle := Value;
 end;
 
-procedure TPreferences.SetSourceDefaultFileType(const Value: TSourceFileType);
+procedure TPreferences.SetSourceDefaultFileType(
+  const Value: TSourceOutputFileType);
 begin
   fSourceDefaultFileType := Value;
 end;
@@ -957,9 +782,16 @@ end;
 
 { TPreferencesPersist }
 
+const
+  CurrentHiliterThemeKeyNames: array[TCurrentHiliteThemeKind] of string = (
+    'CurrentUITheme', 'CurrentExportTheme', 'CurrentPrintTheme'
+  );
+
+
 function TPreferencesPersist.Clone: IInterface;
 var
   NewPref: IPreferences;  // reference to new object's IPreferences interface
+  HiliteThemeKind: TCurrentHiliteThemeKind;
 begin
   // Create new object
   Result := TPreferences.Create;
@@ -973,16 +805,12 @@ begin
   NewPref.OverviewStartState := Self.fOverviewStartState;
   NewPref.ShowEmptySections := Self.fShowEmptySections;
   NewPref.ShowNewSnippetsInNewTabs := Self.fShowNewSnippetsInNewTabs;
-  NewPref.DBHeadingColours[False] := Self.fDBHeadingColours[False];
-  NewPref.DBHeadingCustomColours[False] := Self.fDBHeadingCustomColours[False];
-  NewPref.DBHeadingColours[True] := Self.fDBHeadingColours[True];
-  NewPref.DBHeadingCustomColours[True] := Self.fDBHeadingCustomColours[True];
   NewPref.SourceCodeBGColour := Self.fSourceCodeBGColour;
   NewPref.SourceCodeBGCustomColours := Self.fSourceCodeBGCustomColours;
-  NewPref.PrinterOptions := Self.fPrinterOptions;
-  NewPref.PrinterPageMargins := Self.fPrinterPageMargins;
-  NewPref.HiliteAttrs := Self.GetHiliteAttrs;
-  NewPref.NamedHiliteAttrs := Self.GetNamedHiliteAttrs;
+  for HiliteThemeKind := Low(TCurrentHiliteThemeKind) to
+    High(TCurrentHiliteThemeKind) do
+    NewPref.CurrentHiliteThemeIds[HiliteThemeKind] :=
+      Self.fCurrentHiliteThemeIds[HiliteThemeKind];
   NewPref.CustomHiliteColours := Self.GetCustomHiliteColours;
   NewPref.Warnings := Self.GetWarnings;
   NewPref.NewsAge := Self.fNewsAge;
@@ -994,6 +822,7 @@ end;
 constructor TPreferencesPersist.Create;
 var
   Storage: ISettingsSection;  // object used to access persistent storage
+  HiliteThemeKind: TCurrentHiliteThemeKind;
 const
   // Default margin size in millimeters
   cPrintPageMarginSizeMM = 25.0;
@@ -1017,20 +846,8 @@ begin
   fShowNewSnippetsInNewTabs := Storage.GetBoolean(
     'ShowNewSnippetsInNewTabs', False
   );
-  fDBHeadingColours[False] := TColor(
-    Storage.GetInteger('MainDBHeadingColour', clMainSnippet)
-  );
-  fDBHeadingColours[True] := TColor(
-    Storage.GetInteger('UserDBHeadingColour', clUserSnippet)
-  );
   fSourceCodeBGColour := TColor(
     Storage.GetInteger('SourceCodeBGColour', clSourceBg)
-  );
-  fDBHeadingCustomColours[False] := Storage.GetStrings(
-    'MainDBHeadingCustomColourCount', 'MainDBHeadingCustomColour%d'
-  );
-  fDBHeadingCustomColours[True] := Storage.GetStrings(
-    'UserDBHeadingCustomColourCount', 'UserDBHeadingCustomColour%d'
   );
   fSourceCodeBGCustomColours := Storage.GetStrings(
     'SourceCodeBGCustomColourCount', 'SourceCodeBGCustomColour%d'
@@ -1038,34 +855,29 @@ begin
 
   // Read source code section
   Storage := Settings.ReadSection(ssPreferences, cSourceCode);
-  fSourceDefaultFileType := TSourceFileType(
+  fSourceDefaultFileType := TSourceOutputFileType(
     Storage.GetInteger('FileType', Ord(sfPascal))
   );
-  fSourceCommentStyle := TCommentStyle(
+  fSourceCommentStyle := TPascalCommentStyle(
     Storage.GetInteger('CommentStyle', Ord(csAfter))
   );
   fTruncateSourceComments := Storage.GetBoolean('TruncateComments', False);
   fSourceSyntaxHilited := Storage.GetBoolean('UseSyntaxHiliting', False);
 
-  // Read printing section
-  Storage := Settings.ReadSection(ssPreferences, cPrinting);
-  fPrinterOptions := [];
-  if Storage.GetBoolean('UseColor', True) then
-    Include(fPrinterOptions, poUseColor);
-  if Storage.GetBoolean('SyntaxPrint', True) then
-    Include(fPrinterOptions, poSyntaxPrint);
-  fPrinterPageMargins := TPageMargins.Create(
-    Storage.GetFloat('LeftMargin', cPrintPageMarginSizeMM),
-    Storage.GetFloat('TopMargin', cPrintPageMarginSizeMM),
-    Storage.GetFloat('RightMargin', cPrintPageMarginSizeMM),
-    Storage.GetFloat('BottomMargin', cPrintPageMarginSizeMM)
-  );
-
   // Read syntax highlighter section
   Storage := Settings.ReadSection(ssPreferences, cHiliter);
-  // syntax highlighter attributes
-  THiliterPersist.Load(Storage, fHiliteAttrs);
-  THiliterPersist.LoadNamed(Storage, fNamedHiliteAttrs);
+  // current theme IDs
+  for HiliteThemeKind := Low(TCurrentHiliteThemeKind) to
+    High(TCurrentHiliteThemeKind) do
+  begin
+    fCurrentHiliteThemeIds[HiliteThemeKind] :=
+      TSyntaxHiliteThemeID.Create(
+        Storage.GetString(
+          CurrentHiliterThemeKeyNames[HiliteThemeKind],
+          TSyntaxHiliteThemeID.CreateDefault.ToString
+        )
+      );
+  end;
   // custom colours
   fHiliteCustomColours := Storage.GetStrings(
     'CustomColourCount', 'CustomColour%d'
@@ -1096,6 +908,7 @@ end;
 destructor TPreferencesPersist.Destroy;
 var
   Storage: ISettingsSection;  // object used to access persistent storage
+  HiliteThemeKind: TCurrentHiliteThemeKind;
 begin
   // Write general section
   Storage := Settings.EmptySection(ssPreferences, cGeneral);
@@ -1107,19 +920,7 @@ begin
   Storage.SetInteger('OverviewStartState', Ord(fOverviewStartState));
   Storage.SetBoolean('ShowEmptySections', fShowEmptySections);
   Storage.SetBoolean('ShowNewSnippetsInNewTabs', fShowNewSnippetsInNewTabs);
-  Storage.SetInteger('MainDBHeadingColour', fDBHeadingColours[False]);
-  Storage.SetInteger('UserDBHeadingColour', fDBHeadingColours[True]);
   Storage.SetInteger('SourceCodeBGColour', fSourceCodeBGColour);
-  Storage.SetStrings(
-    'MainDBHeadingCustomColourCount',
-    'MainDBHeadingCustomColour%d',
-    fDBHeadingCustomColours[False]
-  );
-  Storage.SetStrings(
-    'UserDBHeadingCustomColourCount',
-    'UserDBHeadingCustomColour%d',
-    fDBHeadingCustomColours[True]
-  );
   Storage.SetStrings(
     'SourceCodeBGCustomColourCount',
     'SourceCodeBGCustomColour%d',
@@ -1135,21 +936,17 @@ begin
   Storage.SetBoolean('UseSyntaxHiliting', fSourceSyntaxHilited);
   Storage.Save;
 
-  // Write printing section
-  Storage := Settings.EmptySection(ssPreferences, cPrinting);
-  Storage.SetBoolean('UseColor', poUseColor in fPrinterOptions);
-  Storage.SetBoolean('SyntaxPrint', poSyntaxPrint in fPrinterOptions);
-  Storage.SetFloat('LeftMargin', fPrinterPageMargins.Left);
-  Storage.SetFloat('TopMargin', fPrinterPageMargins.Top);
-  Storage.SetFloat('RightMargin', fPrinterPageMargins.Right);
-  Storage.SetFloat('BottomMargin', fPrinterPageMargins.Bottom);
-  Storage.Save;
-
   // Write syntax highlighter section
   Storage := Settings.EmptySection(ssPreferences, cHiliter);
-  // syntax highlighter attributes
-  THiliterPersist.Save(Storage, fHiliteAttrs);
-  THiliterPersist.SaveNamed(Storage, fNamedHiliteAttrs);
+  // current theme IDs
+  for HiliteThemeKind := Low(TCurrentHiliteThemeKind) to
+    High(TCurrentHiliteThemeKind) do
+  begin
+    Storage.SetString(
+      CurrentHiliterThemeKeyNames[HiliteThemeKind],
+      GetCurrentHiliteThemeId(HiliteThemeKind).ToString
+    );
+  end;
   // custom colours
   Storage.SetStrings(
     'CustomColourCount', 'CustomColour%d', fHiliteCustomColours

@@ -1,0 +1,117 @@
+CodeSnip Data Directories
+=========================
+
+This file notes the paths of CodeSnip's configuration files and database
+directories for each version of the program.
+
+Configuration files
+-------------------
+
+For the whole of the life of the program there has been a per-user config file
+to store settings that are different for each user. Since v1.9 there has also a
+common config file to store application wide settings. The files were:
+
+Up to v1.8.11
+  %AppData%\DelphiDabbler\CodeSnip\CodeSnip.ini
+
+From v1.9 to v1.9.4
+  %ProgramData%\DelphiDabbler\CodeSnip\Common.ini
+  %AppData%\DelphiDabbler\CodeSnip\User.ini
+
+All v2
+  %ProgramData%\DelphiDabbler\CodeSnip\Common.ini
+  %AppData%\DelphiDabbler\CodeSnip\User.ini
+
+All v3
+  %ProgramData%\DelphiDabbler\CodeSnip\Common.ini
+  %AppData%\DelphiDabbler\CodeSnip\User.3.ini
+
+From v4.0.0 to v4.0.2
+  %ProgramData%\DelphiDabbler\CodeSnip.4\Common.config
+  %AppData%\DelphiDabbler\CodeSnip.4\User.config
+
+All v4 from v4.1.0
+  standard edition:
+    %ProgramData%\DelphiDabbler\CodeSnip.4\Common.config
+    %AppData%\DelphiDabbler\CodeSnip.4\User.config
+  portable edition:
+    <exe-dir>\AppData\Common.config
+    <exe-dir>\AppData\User.config
+
+v5
+  standard mode:
+    %ProgramData%\DelphiDabbler\CodeSnip.5\Common.config
+    %AppData%\DelphiDabbler\CodeSnip.5\User.config
+  portable mode:
+    <exe-dir>\AppData.5\Common.config
+    <exe-dir>\AppData.5\User.config
+
+Database directories
+--------------------
+
+The early beta and v1 releases of CodeSnip were simply viewer applications for
+the online Code Snippets database and as such had a single directory containing
+a read-only copy of the database. This is referred to below as the "Main"
+database. For versions up to v1.8.11 each user had their own copy of the
+database but from v1.9 a single copy of the database was shared among all users.
+
+Version 2 added support for the user to enter their own snippets which were
+maintained in a separate directory to the Code Snippets database files. This
+arrangement continued through versions 3 and 4. The user-defined database is
+referred to below as the "User" database. Each user had their own copy of the
+user database while a single copy of the main database continued to be shared by
+all users.
+
+From version 5 there is only a single, user-editable, database. Each user has
+their own copy.
+
+The directories are:
+
+To v1.8.11:
+  Main: %AppData%\DelphiDabbler\CodeSnip\Data
+
+From v1.9 to v1.9.4:
+  Main: %ProgramData%\DelphiDabbler\CodeSnip\Data
+
+All v2:
+  Main: %ProgramData%\DelphiDabbler\CodeSnip\Data
+  User: %AppData%\DelphiDabbler\CodeSnip\UserData
+
+All v3:
+  Main: %ProgramData%\DelphiDabbler\CodeSnip\Data
+  User: %AppData%\DelphiDabbler\CodeSnip\UserData.3
+
+From v4.0.0 to v4.0.2:
+  Main: %ProgramData%\DelphiDabbler\CodeSnip.4\Database
+  User: %AppData%\DelphiDabbler\CodeSnip.4\UserDatabase
+
+From v4.1.0 to v4.2.1
+  Standard edition:
+    Main: %ProgramData%\DelphiDabbler\CodeSnip.4\Database
+    User: %AppData%\DelphiDabbler\CodeSnip.4\UserDatabase
+  Portable edition:
+    Main: <exe-dir>\AppData\CSDB
+    User: <exe-dir>\AppData\UserDB
+
+All v4 from v4.3.0
+  Standard edition:
+    Main: %ProgramData%\DelphiDabbler\CodeSnip.4\Database
+    User: Specified by "UserDataDir" key in "Database" section of user config
+          file. If the key doesn't exist then uses
+          %AppData%\DelphiDabbler\CodeSnip.4\UserDatabase
+  Portable edition:
+    Main: <exe-dir>\AppData\CSDB
+    User: <exe-dir>\AppData\UserDB
+
+v5:
+  Standard mode:
+    User: Specified by "Path" key in "Database" section of user config file. If
+          the key doesn't exist then uses
+          %AppData%\DelphiDabbler\CodeSnip.5\Database
+  Portable mode:
+    User: <exe-dir>\AppData.5\Database
+
+--------------------------------------------------------------------------------
+$Rev$
+$Date$
+--------------------------------------------------------------------------------

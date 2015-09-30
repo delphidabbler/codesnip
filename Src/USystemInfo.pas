@@ -369,7 +369,7 @@ begin
   if fMajorVersion <> UnsetMajorVersion then
     Exit;
   Vers := TIStringList.Create(GetIEVersionStr, '.', False, True);
-  if Vers.Count > 0 then
+  if not Vers.IsEmpty then
     fMajorVersion := StrToIntDef(Vers[0], 0)
   else
     fMajorVersion := 0;

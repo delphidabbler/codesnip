@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2006-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2006-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -28,7 +28,7 @@ type
   ///  <summary>
   ///  Enumeration of file types that can be used for source code output.
   ///  </summary>
-  TSourceFileType = (
+  TSourceOutputFileType = (
     sfText,     // plain text files
     sfPascal,   // pascal files (either .pas for units or .inc for include files
     sfHTML,     // HTML files
@@ -38,7 +38,7 @@ type
 type
   ///  <summary>
   ///  Record that stores information about an encoding for use by save source
-  ///  dialog boxes.
+  ///  dialogue boxes.
   ///  </summary>
   TSourceFileEncoding = record
   strict private
@@ -50,18 +50,18 @@ type
       const ADisplayName: string);
     ///  <summary>Type of this encoding.</summary>
     property EncodingType: TEncodingType read fEncodingType;
-    ///  <summary>Description of encoding for display in dialog box.</summary>
+    ///  <summary>Description of encoding for display in dialogue box.</summary>
     property DisplayName: string read fDisplayName;
   end;
 
 type
   ///  <summary>Array of source file encoding records.</summary>
-  TSourceFileEncodings = array of TSourceFileEncoding;
+  TSourceFileEncodings = TArray<TSourceFileEncoding>;
 
 type
   ///  <summary>
   ///  Record that stores information about a source file type required by save
-  ///  source dialog boxes.
+  ///  source dialogue boxes.
   ///  </summary>
   TSourceFileTypeInfo = record
   strict private
@@ -74,7 +74,7 @@ type
       const AEncodings: array of TSourceFileEncoding);
     ///  <summary>File extension associated with this file type.</summary>
     property Extension: string read fExtension;
-    ///  <summary>Name of file extension to display in save dialog box.
+    ///  <summary>Name of file extension to display in save dialogue box.
     ///  </summary>
     property DisplayName: string read fDisplayName;
     ///  <summary>Encodings supported by this file type.</summary>
@@ -90,30 +90,32 @@ type
   strict private
     var
       ///  <summary>Stores information about the different source code output
-      //   types required by save source dialog boxes.</summary>
-      fFileTypeInfo: array[TSourceFileType] of TSourceFileTypeInfo;
+      //   types required by save source dialogue boxes.</summary>
+      fFileTypeInfo: array[TSourceOutputFileType] of TSourceFileTypeInfo;
       //   <summary>Value of DefaultFileName property.</summary>
       fDefaultFileName: string;
     ///  <summary>Read accessor for FileTypeInfo property.</summary>
-    function GetFileTypeInfo(const FileType: TSourceFileType):
+    function GetFileTypeInfo(const FileType: TSourceOutputFileType):
       TSourceFileTypeInfo;
     ///  <summary>Write accessor for FileTypeInfo property.</summary>
-    procedure SetFileTypeInfo(const FileType: TSourceFileType;
+    procedure SetFileTypeInfo(const FileType: TSourceOutputFileType;
       const Info: TSourceFileTypeInfo);
     ///  <summary>Write access for DefaultFileName property.</summary>
     ///  <remarks>Converts new property value into a valid Pascal identifier if
     ///  necessary.</remarks>
     procedure SetDefaultFileName(const Value: string);
   public
-    ///  <summary>Builds filter string for use in open / save dialog boxes from
-    ///  descriptions and file extensions of each supported file type.</summary>
+    ///  <summary>Builds filter string for use in open / save dialogue boxes
+    ///  from descriptions and file extensions of each supported file type.
+    ///  </summary>
     function FilterString: string;
     ///  <summary>Finds source file type associated with a file extension.
     ///  </summary>
-    function FileTypeFromExt(const Ext: string): TSourceFileType;
+    function FileTypeFromExt(const Ext: string): TSourceOutputFileType;
     ///  <summary>Array of information about each supported file type that is
-    ///  of use to save source dialog boxes.</summary>
-    property FileTypeInfo[const FileType: TSourceFileType]: TSourceFileTypeInfo
+    ///  of use to save source dialogue boxes.</summary>
+    property FileTypeInfo[const FileType: TSourceOutputFileType]:
+      TSourceFileTypeInfo
       read GetFileTypeInfo write SetFileTypeInfo;
     ///  <summary>Default source code file name.</summary>
     ///  <remarks>Must be a valid Pascal identifier. Invalid characters are
@@ -130,18 +132,19 @@ uses
   // Delphi
   SysUtils, Windows {for inlining}, Character,
   // Project
-  UStrUtils;
+  UContainers, UStrUtils;
 
 
 { TSourceFileInfo }
 
-function TSourceFileInfo.FileTypeFromExt(const Ext: string): TSourceFileType;
+function TSourceFileInfo.FileTypeFromExt(const Ext: string):
+  TSourceOutputFileType;
 var
-  FT: TSourceFileType;  // loops thru all source file types
+  FT: TSourceOutputFileType;  // loops thru all source file types
 begin
   // Assume text file type if extension not recognised
   Result := sfText;
-  for FT := Low(TSourceFileType) to High(TSourceFileType) do
+  for FT := Low(TSourceOutputFileType) to High(TSourceOutputFileType) do
   begin
     if StrSameText(Ext, fFileTypeInfo[FT].Extension) then
     begin
@@ -155,10 +158,10 @@ function TSourceFileInfo.FilterString: string;
 const
   cFilterFmt = '%0:s (*%1:s)|*%1:s';  // format string for creating file filter
 var
-  FT: TSourceFileType;  // loops thru all source file types
+  FT: TSourceOutputFileType;  // loops thru all source file types
 begin
   Result := '';
-  for FT := Low(TSourceFileType) to High(TSourceFileType) do
+  for FT := Low(TSourceOutputFileType) to High(TSourceOutputFileType) do
   begin
     if Result <> '' then
       Result := Result + '|';
@@ -169,7 +172,7 @@ begin
 end;
 
 function TSourceFileInfo.GetFileTypeInfo(
-  const FileType: TSourceFileType): TSourceFileTypeInfo;
+  const FileType: TSourceOutputFileType): TSourceFileTypeInfo;
 begin
   Result := fFileTypeInfo[FileType];
 end;
@@ -193,7 +196,7 @@ begin
     ClassName + '.SetFileName: Not a valid identifier');
 end;
 
-procedure TSourceFileInfo.SetFileTypeInfo(const FileType: TSourceFileType;
+procedure TSourceFileInfo.SetFileTypeInfo(const FileType: TSourceOutputFileType;
   const Info: TSourceFileTypeInfo);
 begin
   fFileTypeInfo[FileType] := Info;
@@ -203,14 +206,10 @@ end;
 
 constructor TSourceFileTypeInfo.Create(const AExtension, ADisplayName: string;
   const AEncodings: array of TSourceFileEncoding);
-var
-  I: Integer;
 begin
   fExtension := AExtension;
   fDisplayName := ADisplayName;
-  SetLength(fEncodings, Length(AEncodings));
-  for I := 0 to Pred(Length(AEncodings)) do
-    fEncodings[I] := AEncodings[I];
+  fEncodings := TArrayHelper.Copy<TSourceFileEncoding>(AEncodings);
 end;
 
 { TSourceFileEncoding }

@@ -36,8 +36,8 @@ type
     var
       ///  <summary>Value of SplitterPos property.</summary>
       fSplitterPos: Integer;
-      ///  <summary>Value of OverviewTab property.</summary>
-      fOverviewTab: Integer;
+      ///  <summary>Value of OverviewGrouping property.</summary>
+      fOverviewGrouping: Integer;
     const
       ///  <summary>Default width of form's left hand panel.</summary>
       cDefLeftPanelWidth  = 186;
@@ -103,9 +103,9 @@ type
     property SplitterPos: Integer
       read fSplitterPos write fSplitterPos default cDefLeftPanelWidth;
 
-    ///  <summary>Index of selected tab in overview pane.</summary>
-    property OverviewTab: Integer
-      read fOverviewTab write fOverviewTab;
+    ///  <summary>Index of selected grouping in overview pane.</summary>
+    property OverviewGrouping: Integer
+      read fOverviewGrouping write fOverviewGrouping;
   end;
 
 type
@@ -215,7 +215,9 @@ begin
   if TWindowState(State) = wsMinimized then
     State := Ord(wsNormal);   // we don't allow minimized: use normal
   fSplitterPos := Section.GetInteger('SplitterPos', fSplitterPos);
-  fOverviewTab := Section.GetInteger('OverviewTab', fOverviewTab);
+  fOverviewGrouping := Section.GetInteger(
+    'OverviewGrouping', fOverviewGrouping
+  );
 end;
 
 procedure TMainWindowSettings.SaveWdwState(const Left, Top, Width, Height,
@@ -232,7 +234,7 @@ begin
   Section.SetInteger('Height', Height);
   Section.SetInteger('State', State);
   Section.SetInteger('SplitterPos', fSplitterPos);
-  Section.SetInteger('OverviewTab', fOverviewTab);
+  Section.SetInteger('OverviewGrouping', fOverviewGrouping);
   Section.Save;
 end;
 

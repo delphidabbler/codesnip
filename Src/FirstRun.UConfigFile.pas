@@ -77,12 +77,11 @@ type
   strict private
     const
       ///  <summary>Current user config file version.</summary>
-      FileVersion = 15;
+      FileVersion = 16;
   strict protected
     ///  <summary>Returns current user config file version.</summary>
     class function GetFileVersion: Integer; override;
   public
-    {$IFNDEF PORTABLE}
     ///  <summary>Updates config file currently in original (pre v1.9) format to
     ///  current format.</summary>
     procedure UpdateFromOriginal;
@@ -98,10 +97,29 @@ type
     ///  <summary>Deletes unused key that determines detail pane index.
     ///  </summary>
     procedure DeleteDetailsPaneIndex;
-    {}{$ENDIF}
-    ///  <summary>Effectively renames MainWindow section used prior to version
-    ///  11 as WindowState:MainForm.</summary>
+    ///  <summary>Deletes unused keys from Prefs:Display section.</summary>
+    procedure DeleteRedundantDisplayOptions;
+    ///  <summary>Checks if config file contains any page structure
+    ///  customisation information.</summary>
+    function HasPageStructureInfo: Boolean;
+    ///  <summary>Deletes all page structure customisation information from
+    ///  Prefs:SnippetPageStructure section.</summary>
+    procedure DeletePageStructureInfo;
+    ///  <summary>Renames MainWindow section used prior to version 11 as
+    ///  WindowState:MainForm.</summary>
     procedure RenameMainWindowSection;
+    ///  <summary>Renames OverviewTab key in WindowState:MainForm as
+    ///  OverviewGrouping.</summary>
+    ///  <remarks>Must be run after RenameMainWindowSection if that method is
+    ///  called.</remarks>
+    procedure RenameMainWindowSectionOverviewGrouping;
+    ///  <summary>Renames compiler identifiers used for Delphi 2005, 2006 and
+    ///  2009 used to name value in FindCompiler section and in section names in
+    ///  Cmp:XXX section names.</summary>
+    procedure RenameCompilerIdentifiers;
+    ///  <summary>Renames Prefs:PrintingSection as Printing and renames some
+    ///  values within the section</summary>
+    procedure RenamePrintingSectionAndValues;
     ///  <summary>Replaces any -NS switch in [Cmp:XXXX] sections' Switches value
     ///  with an equivalent entry in new Namespaces value, only if compiler XXX
     ///  is Delphi XE2 or later.</summary>
@@ -110,6 +128,15 @@ type
     procedure UpdateFindXRefs;
     ///  <summary>Adds Prefs:CodeGen section along with default data.</summary>
     procedure CreateDefaultCodeGenEntries;
+    ///  <summary>Checks if a CodeSnip 4 style custom database directory has
+    ///  been set created.</summary>
+    function HasV4CustomDatabaseDirectory: Boolean;
+    ///  <summary>Resets database directory to the default.</summary>
+    ///  <remarks>This is done to ensure that an old version 4 database in a
+    ///  custom location is not accidentally overwritten by a version 5
+    ///  database. It is up to user to move the database to a new location.
+    ///  </remarks>
+    procedure ResetCustomDatabaseDirectory;
     ///  <summary>Stamps config file with current program and file versions.
     ///  </summary>
     ///  <remarks>Note that the user config file has program version written to
@@ -126,11 +153,13 @@ type
   strict private
     const
       ///  <summary>Current common config file version.</summary>
-      FileVersion = 6;
+      FileVersion = 7;
   strict protected
     ///  <summary>Returns current common config file version.</summary>
     class function GetFileVersion: Integer; override;
   public
+    ///  <summary>Deletes any program registration information.</summary>
+    procedure DeleteRedundantRegistrationInfo;
     ///  <summary>Stamps config file with current program and file versions.
     ///  </summary>
     ///  <remarks>Note that the user config file has program version written to
@@ -154,7 +183,7 @@ uses
 
 procedure TConfigFileUpdater.CopyANSIFile(const SrcFileName: string);
 var
-  Lines: TStringDynArray;  // lines of text read from ANSI .ini file
+  Lines: TArray<string>;  // lines of text read from ANSI .ini file
 begin
   if StrSameText(SrcFileName, fCfgFileName) then
     Exit;
@@ -267,170 +296,216 @@ begin
   SetIniString('Prefs:CodeGen', 'Warning7.MinCompiler', '20.00', CfgFileName);
 end;
 
-{$IFNDEF PORTABLE}
 procedure TUserConfigFileUpdater.DeleteDetailsPaneIndex;
 begin
   if not TFile.Exists(CfgFileName, False) then
-    CreateNewFile;
+    Exit;
   DeleteIniKey('MainWindow', 'DetailTab', CfgFileName);
 end;
-{$ENDIF}
 
-{$IFNDEF PORTABLE}
 procedure TUserConfigFileUpdater.DeleteHighligherPrefs;
 begin
   if not TFile.Exists(CfgFileName, False) then
-    CreateNewFile;
+    Exit;
   DeleteIniSection('Prefs:Hiliter', CfgFileName);
 end;
-{$ENDIF}
 
-{$IFNDEF PORTABLE}
+procedure TUserConfigFileUpdater.DeletePageStructureInfo;
+var
+  I: Integer;
+begin
+  if not TFile.Exists(CfgFileName, False) then
+    Exit;
+  for I := 0 to 5 do
+    DeleteIniKey(
+      'Prefs:SnippetPageStructure', Format('PageKind%d', [I]), CfgFileName
+    );
+end;
+
 procedure TUserConfigFileUpdater.DeleteProxyPassword;
 begin
   if not TFile.Exists(CfgFileName, False) then
-    CreateNewFile;
+    Exit;
   SetIniString('ProxyServer', 'Password', '', CfgFileName);
 end;
-{$ENDIF}
+
+procedure TUserConfigFileUpdater.DeleteRedundantDisplayOptions;
+var
+  I: Integer;
+  ColourCount: Integer;
+begin
+  if not TFile.Exists(CfgFileName, False) then
+    Exit;
+  DeleteIniKey('Prefs:Display', 'MainDBHeadingColour', CfgFileName);
+  DeleteIniKey('Prefs:Display', 'UserDBHeadingColour', CfgFileName);
+  ColourCount := GetIniInt(
+    'Prefs:Display', 'MainDBHeadingCustomColourCount', 0, CfgFileName
+  );
+  for I := 0 to Pred(ColourCount) do
+    DeleteIniKey(
+      'Prefs:Display', Format('MainDBHeadingCustomColour%d', [I]), CfgFileName
+    );
+  DeleteIniKey(
+    'Prefs:Display', 'MainDBHeadingCustomColourCount', CfgFileName
+  );
+  ColourCount := GetIniInt(
+    'Prefs:Display', 'UserDBHeadingCustomColourCount', 0, CfgFileName
+  );
+  for I := 0 to Pred(ColourCount) do
+    DeleteIniKey(
+      'Prefs:Display', Format('UserDBHeadingCustomColour%d', [I]), CfgFileName
+    );
+  DeleteIniKey(
+    'Prefs:Display', 'UserDBHeadingCustomColourCount', CfgFileName
+  );
+end;
 
 class function TUserConfigFileUpdater.GetFileVersion: Integer;
 begin
   Result := FileVersion;
 end;
 
-{$IFNDEF PORTABLE}
+function TUserConfigFileUpdater.HasPageStructureInfo: Boolean;
+begin
+  Result := IniKeyExists(
+    'Prefs:SnippetPageStructure', 'PageKind0', CfgFileName
+  );
+end;
+
 function TUserConfigFileUpdater.HasProxyPassword: Boolean;
 begin
   Result := GetIniString('ProxyServer', 'Password', '', CfgFileName) <> '';
 end;
-{$ENDIF}
+
+function TUserConfigFileUpdater.HasV4CustomDatabaseDirectory: Boolean;
+begin
+  Result := GetIniString('Database', 'UserDataDir', '', CfgFileName) <> '';
+end;
+
+procedure TUserConfigFileUpdater.RenameCompilerIdentifiers;
+type
+  TNameChangeInfo = record
+    OldName: string;
+    NewName: string;
+  end;
+const
+  NameChanges: array[1..3] of TNameChangeInfo = (
+    (OldName: 'D2005w32'; NewName: 'D2005'),
+    (OldName: 'D2006w32'; NewName: 'D2006'),
+    (OldName: 'D2009w32'; NewName: 'D2009')
+  );
+var
+  NameChangeInfo: TNameChangeInfo;
+begin
+  if not TFile.Exists(CfgFileName, False) then
+    Exit;
+  for NameChangeInfo in NameChanges do
+  begin
+    RenameIniSection(
+      Format('Cmp:%s', [NameChangeInfo.OldName]),
+      Format('Cmp:%s', [NameChangeInfo.NewName]),
+      CfgFileName
+    );
+    RenameIniKey(
+      'FindCompiler',
+      NameChangeInfo.OldName,
+      NameChangeInfo.NewName,
+      CfgFileName
+    );
+  end;
+end;
 
 procedure TUserConfigFileUpdater.RenameMainWindowSection;
 begin
   if not TFile.Exists(CfgFileName, False) then
     Exit;
-  if not IniSectionExists('MainWindow', CfgFileName) then
+  RenameIniSection('MainWindow', 'WindowState:MainForm', CfgFileName);
+end;
+
+procedure TUserConfigFileUpdater.RenameMainWindowSectionOverviewGrouping;
+begin
+  if not TFile.Exists(CfgFileName, False) then
     Exit;
-  SetIniInt(
-    'WindowState:MainForm',
-    'Left',
-    GetIniInt('MainWindow', 'Left', 0, CfgFileName),
-    CfgFileName
+  RenameIniKey(
+    'WindowState:MainForm', 'OverviewTab', 'OverviewGrouping', CfgFileName
   );
-  SetIniInt(
-    'WindowState:MainForm',
-    'Top',
-    GetIniInt('MainWindow', 'Top', 0, CfgFileName),
-    CfgFileName
-  );
-  SetIniInt(
-    'WindowState:MainForm',
-    'Width',
-    GetIniInt('MainWindow', 'Width', 0, CfgFileName),
-    CfgFileName
-  );
-  SetIniInt(
-    'WindowState:MainForm',
-    'Height',
-    GetIniInt('MainWindow', 'Height', 0, CfgFileName),
-    CfgFileName
-  );
-  SetIniInt(
-    'WindowState:MainForm',
-    'State',
-    GetIniInt('MainWindow', 'State', 0, CfgFileName),
-    CfgFileName
-  );
-  SetIniInt(
-    'WindowState:MainForm',
-    'SplitterPos',
-    GetIniInt('MainWindow', 'SplitterPos', 0, CfgFileName),
-    CfgFileName
-  );
-  SetIniInt(
-    'WindowState:MainForm',
-    'OverviewTab',
-    GetIniInt('MainWindow', 'OverviewTab', 0, CfgFileName),
-    CfgFileName
-  );
-  DeleteIniSection('MainWindow', CfgFileName);
+end;
+
+procedure TUserConfigFileUpdater.RenamePrintingSectionAndValues;
+begin
+  if not TFile.Exists(CfgFileName, False) then
+    Exit;
+  RenameIniSection('Prefs:Printing', 'Printing', CfgFileName);
+  RenameIniKey('Printing', 'UseColor', 'UseColour', CfgFileName);
+  RenameIniKey('Printing', 'SyntaxPrint', 'SyntaxHighlight', CfgFileName);
+end;
+
+procedure TUserConfigFileUpdater.ResetCustomDatabaseDirectory;
+begin
+  if not TFile.Exists(CfgFileName, False) then
+    Exit;
+  DeleteIniKey('Database', 'UserDataDir', CfgFileName)
 end;
 
 procedure TUserConfigFileUpdater.Stamp;
 begin
-  inherited;
+  inherited;  // creates ini file if it doesn't exist
   SetIniString(
     'IniFile', 'ProgramVersion', TAppInfo.ProgramReleaseVersion, CfgFileName
   );
 end;
 
-{$IFNDEF PORTABLE}
 procedure TUserConfigFileUpdater.UpdateCodeGenEntries;
 begin
   // Key that determines if warnings are emitted changes from SwitchOffWarnings
   // to EmitWarnDirs.
   if not TFile.Exists(CfgFileName, False) then
     CreateNewFile;
-  if IniKeyExists('Prefs:CodeGen', 'SwitchOffWarnings', CfgFileName) then
-  begin
-    SetIniInt(
-      'Prefs:CodeGen',
-      'EmitWarnDirs',
-      GetIniInt('Prefs:CodeGen', 'SwitchOffWarnings', 0, CfgFileName),
-      CfgFileName
-    );
-    DeleteIniKey('Prefs:CodeGen', 'SwitchOffWarnings', CfgFileName);
-  end
-  else
+  if not RenameIniKey(
+    'Prefs:CodeGen', 'SwitchOffWarnings', 'EmitWarnDirs', CfgFileName
+  ) then
     SetIniInt('Prefs:CodeGen', 'EmitWarnDirs', 0, CfgFileName);
 end;
-{$ENDIF}
 
 procedure TUserConfigFileUpdater.UpdateFindXRefs;
 begin
   // From file ver 14, "IncludeRoutine" in FindXRefs was renamed as
   // "IncludeSnippet"
-  if IniKeyExists('FindXRefs', 'IncludeRoutine', CfgFileName) then
-  begin
-    SetIniInt(
-      'FindXRefs',
-      'IncludeSnippet',
-      GetIniInt('FindXRefs', 'IncludeRoutine', 1, CfgFileName),
-      CfgFileName
-    );
-    DeleteIniKey('FindXRefs', 'IncludeRoutine', CfgFileName);
-  end
-  else
+  if not TFile.Exists(CfgFileName, False) then
+    CreateNewFile;
+  if not RenameIniKey(
+    'FindXRefs', 'IncludeRoutine', 'IncludeSnippet', CfgFileName
+  ) then
     SetIniInt('FindXRefs', 'IncludeSnippet', 1, CfgFileName);
 end;
 
-{$IFNDEF PORTABLE}
 procedure TUserConfigFileUpdater.UpdateFromOriginal;
 var
   I: Integer; // loops thru all highlight elements
 begin
   if not TFile.Exists(CfgFileName, False) then
-    CreateNewFile;
-  // Delete unwanted sections:
-  // - Application section: now in common config file
-  // - Source code output format: format lost when updating from CodeSnip pre
-  //   1.7 since section was SourceOutput, but format preserved from v1.7 since
-  //   current Prefs:SourceCode section used
-  // - Highlighting style is deliberately lost since CodeSnip v3 & v4 have
-  //   different default style and main display uses that style, therefore
-  //   section's HiliteOutput (pre v1.7.5) and Prefs:Hiliter (v1.7.5 and later)
-  //   deleted.
-  DeleteIniSection('Application', CfgFileName);
-  DeleteIniSection('SourceOutput', CfgFileName);
-  DeleteIniSection('HiliteOutput', CfgFileName);
-  for I := 0 to 11 do
-    DeleteIniSection('HiliteOutput:Elem' + IntToStr(I), CfgFileName);
-  DeleteHighligherPrefs;
+    CreateNewFile
+  else
+  begin
+    // Delete unwanted sections in existing config file:
+    // - Application section: now in common config file
+    // - Source code output format: format lost when updating from CodeSnip pre
+    //   1.7 since section was SourceOutput, but format preserved from v1.7
+    //   since current Prefs:SourceCode section used
+    // - Highlighting style is deliberately lost since CodeSnip v3 & v4 have
+    //   different default style and main display uses that style, therefore
+    //   section's HiliteOutput (pre v1.7.5) and Prefs:Hiliter (v1.7.5 and
+    //   later) deleted.
+    DeleteIniSection('Application', CfgFileName);
+    DeleteIniSection('SourceOutput', CfgFileName);
+    DeleteIniSection('HiliteOutput', CfgFileName);
+    for I := 0 to 11 do
+      DeleteIniSection('HiliteOutput:Elem' + IntToStr(I), CfgFileName);
+    DeleteHighligherPrefs;
+  end;
   // Main window's overview tabs changed at v3: so we reset to 0 (default)
   SetIniInt('MainWindow', 'OverviewTab', 0, CfgFileName);
 end;
-{$ENDIF}
 
 procedure TUserConfigFileUpdater.UpdateNamespaces;
 
@@ -468,13 +543,15 @@ procedure TUserConfigFileUpdater.UpdateNamespaces;
     SetIniString(
       Section, 'Switches', Switches.GetText(',', False), CfgFileName
     );
-    if Namespaces.Count > 0 then
+    if not Namespaces.IsEmpty then
       SetIniString(
         Section, 'Namespaces', Namespaces.GetText(' ', False), CfgFileName
       );
   end;
 
 begin
+  if not TFile.Exists(CfgFileName, False) then
+    Exit;
   UpdateForCompiler('DXE2');
   UpdateForCompiler('DXE3');
   UpdateForCompiler('DXE4');
@@ -487,6 +564,14 @@ end;
 
 { TCommonConfigFileUpdater }
 
+procedure TCommonConfigFileUpdater.DeleteRedundantRegistrationInfo;
+begin
+  if not TFile.Exists(CfgFileName) then
+    Exit;
+  DeleteIniKey('Application', 'RegCode', CfgFileName);
+  DeleteIniKey('Application', 'RegName', CfgFileName);
+end;
+
 class function TCommonConfigFileUpdater.GetFileVersion: Integer;
 begin
   Result := FileVersion;
@@ -494,7 +579,7 @@ end;
 
 procedure TCommonConfigFileUpdater.Stamp;
 begin
-  inherited;
+  inherited;  // creates ini file if it doesn't exist
   SetIniString(
     'Application', 'Version', TAppInfo.ProgramReleaseVersion, CfgFileName
   );

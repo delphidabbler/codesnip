@@ -109,9 +109,9 @@ destructor TWBController.Destroy;
   }
 begin
   SetBrowserOleClientSite(nil);
-  FreeAndNil(fOleClientSite);   // unregister as browser's OLE container
-  FreeAndNil(fUIMgr);
-  FreeAndNil(fIOMgr);
+  fOleClientSite.Free;   // unregister as browser's OLE container
+  fUIMgr.Free;
+  fIOMgr.Free;
   inherited;
 end;
 

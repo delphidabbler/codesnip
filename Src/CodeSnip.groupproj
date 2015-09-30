@@ -6,7 +6,10 @@
 			<Projects Include="CodeSnip.dproj">
 				<Dependencies/>
 			</Projects>
-			<Projects Include="..\Tests\Src\DUnit\CodeSnipTests.dproj">
+			<Projects Include="Portable\CodeSnipPortable.dproj">
+				<Dependencies/>
+			</Projects>
+			<Projects Include="Tests\DUnit\CodeSnipTests.dproj">
 				<Dependencies/>
 			</Projects>
 		</ItemGroup>
@@ -21,28 +24,37 @@
 			<MSBuild Projects="CodeSnip.dproj"/>
 		</Target>
 		<Target Name="CodeSnip:Clean">
-			<MSBuild Targets="Clean" Projects="CodeSnip.dproj"/>
+			<MSBuild Projects="CodeSnip.dproj" Targets="Clean"/>
 		</Target>
 		<Target Name="CodeSnip:Make">
-			<MSBuild Targets="Make" Projects="CodeSnip.dproj"/>
+			<MSBuild Projects="CodeSnip.dproj" Targets="Make"/>
+		</Target>
+		<Target Name="CodeSnipPortable">
+			<MSBuild Projects="Portable\CodeSnipPortable.dproj"/>
+		</Target>
+		<Target Name="CodeSnipPortable:Clean">
+			<MSBuild Projects="Portable\CodeSnipPortable.dproj" Targets="Clean"/>
+		</Target>
+		<Target Name="CodeSnipPortable:Make">
+			<MSBuild Projects="Portable\CodeSnipPortable.dproj" Targets="Make"/>
 		</Target>
 		<Target Name="CodeSnipTests">
-			<MSBuild Projects="..\Tests\Src\DUnit\CodeSnipTests.dproj"/>
+			<MSBuild Projects="Tests\DUnit\CodeSnipTests.dproj"/>
 		</Target>
 		<Target Name="CodeSnipTests:Clean">
-			<MSBuild Targets="Clean" Projects="..\Tests\Src\DUnit\CodeSnipTests.dproj"/>
+			<MSBuild Projects="Tests\DUnit\CodeSnipTests.dproj" Targets="Clean"/>
 		</Target>
 		<Target Name="CodeSnipTests:Make">
-			<MSBuild Targets="Make" Projects="..\Tests\Src\DUnit\CodeSnipTests.dproj"/>
+			<MSBuild Projects="Tests\DUnit\CodeSnipTests.dproj" Targets="Make"/>
 		</Target>
 		<Target Name="Build">
-			<CallTarget Targets="CodeSnip;CodeSnipTests"/>
+			<CallTarget Targets="CodeSnip;CodeSnipPortable;CodeSnipTests"/>
 		</Target>
 		<Target Name="Clean">
-			<CallTarget Targets="CodeSnip:Clean;CodeSnipTests:Clean"/>
+			<CallTarget Targets="CodeSnip:Clean;CodeSnipPortable:Clean;CodeSnipTests:Clean"/>
 		</Target>
 		<Target Name="Make">
-			<CallTarget Targets="CodeSnip:Make;CodeSnipTests:Make"/>
+			<CallTarget Targets="CodeSnip:Make;CodeSnipPortable:Make;CodeSnipTests:Make"/>
 		</Target>
-		<Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+		<Import Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')" Project="$(BDS)\Bin\CodeGear.Group.Targets"/>
 	</Project>

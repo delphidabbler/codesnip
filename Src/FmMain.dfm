@@ -77,23 +77,28 @@ inherited MainForm: TMainForm
       Top = 0
       Action = actFindText
     end
-    object tbFindCompiler: TToolButton
+    object tbFindTags: TToolButton
       Left = 108
+      Top = 0
+      Action = actFindTags
+    end
+    object tbFindCompiler: TToolButton
+      Left = 131
       Top = 0
       Action = actFindCompiler
     end
     object tbSelectSnippets: TToolButton
-      Left = 131
+      Left = 154
       Top = 0
       Action = actSelectSnippets
     end
     object tbFindClear: TToolButton
-      Left = 154
+      Left = 177
       Top = 0
       Action = actFindClear
     end
     object tbSpacer3: TToolButton
-      Left = 177
+      Left = 200
       Top = 0
       Width = 8
       Caption = 'tbSpacer3'
@@ -101,19 +106,19 @@ inherited MainForm: TMainForm
       Style = tbsSeparator
     end
     object tbGoBack: TToolButton
-      Left = 185
+      Left = 208
       Top = 0
       Action = actGoBack
       Style = tbsDropDown
     end
     object tbGoForward: TToolButton
-      Left = 223
+      Left = 246
       Top = 0
       Action = actGoForward
       Style = tbsDropDown
     end
     object tbSpacer8: TToolButton
-      Left = 261
+      Left = 284
       Top = 0
       Width = 8
       Caption = 'tbSpacer8'
@@ -121,29 +126,24 @@ inherited MainForm: TMainForm
       Style = tbsSeparator
     end
     object tbAddSnippet: TToolButton
-      Left = 269
+      Left = 292
       Top = 0
       Action = actAddSnippet
     end
     object tbEditSnippet: TToolButton
-      Left = 292
+      Left = 315
       Top = 0
       Action = actEditSnippet
     end
     object tbDeleteSnippet: TToolButton
-      Left = 315
+      Left = 338
       Top = 0
       Action = actDeleteSnippet
     end
     object tbSaveDatabase: TToolButton
-      Left = 338
-      Top = 0
-      Action = actSaveDatabase
-    end
-    object tbFavourites: TToolButton
       Left = 361
       Top = 0
-      Action = actAddFavourite
+      Action = actSaveDatabase
     end
     object tbSpacer5: TToolButton
       Left = 384
@@ -235,18 +235,24 @@ inherited MainForm: TMainForm
             ExplicitLeft = 89
           end
         end
-        inherited tcDisplayStyle: TTabControl
+        inherited pnlGroupings: TPanel
           Width = 183
-          Height = 361
           ExplicitWidth = 183
-          ExplicitHeight = 361
+        end
+        inherited pnlSnippets: TPanel
+          Width = 183
+          Height = 320
+          ExplicitLeft = 0
+          ExplicitTop = 68
+          ExplicitWidth = 183
+          ExplicitHeight = 320
           inherited tvSnippets: TTreeView
-            Top = 42
-            Width = 175
-            Height = 315
-            ExplicitTop = 42
-            ExplicitWidth = 175
-            ExplicitHeight = 315
+            Width = 181
+            Height = 316
+            ExplicitLeft = 0
+            ExplicitTop = 2
+            ExplicitWidth = 181
+            ExplicitHeight = 316
           end
         end
       end
@@ -293,7 +299,7 @@ inherited MainForm: TMainForm
               Width = 408
               Height = 338
               ExplicitWidth = 408
-              ExplicitHeight = 318
+              ExplicitHeight = 308
               ControlData = {
                 4C0000002B2A0000EF2200000000000000000000000000000000000000000000
                 000000004C000000000000000000000001000000E0D057007335CF11AE690800
@@ -459,32 +465,47 @@ inherited MainForm: TMainForm
       OnExecute = actSelectAllExecute
       OnUpdate = actSelectAllUpdate
     end
-    object actViewCategorised: TAction
+    object actViewGroupByTags: TAction
       Category = 'View'
       AutoCheck = True
-      Caption = 'Categorised Snippets'
+      Caption = 'Group Snippets By Tags'
       Checked = True
       GroupIndex = 100
-      Hint = 'Categorised Snippets|View snippets in categories'
-      OnExecute = ActOverviewTabExecute
-      OnUpdate = ActOverviewTabUpdate
+      Hint = 
+        'Group Snippets By Tags|Display snippets in overview pane grouped' +
+        ' by their associated tags'
+      OnExecute = ActOverviewGroupingExecute
+      OnUpdate = ActOverviewGroupingUpdate
     end
-    object actViewAlphabetical: TAction
+    object actViewGroupByLanguage: TAction
+      Category = 'View'
+      Caption = 'Group Snippets By Source Code Language'
+      Hint = 
+        'Group Snippets By Source Code Language|Display snippets in overv' +
+        'iew pane grouped by their source code language'
+      OnExecute = ActOverviewGroupingExecute
+      OnUpdate = ActOverviewGroupingUpdate
+    end
+    object actViewGroupAlphabetically: TAction
       Category = 'View'
       AutoCheck = True
-      Caption = 'Alphabetical Snippets'
+      Caption = 'Group Snippets Alphabetically'
       GroupIndex = 100
-      Hint = 'Alphabetical Snippets|View snippets in alphabetical order'
-      OnExecute = ActOverviewTabExecute
-      OnUpdate = ActOverviewTabUpdate
+      Hint = 
+        'Group Snippets Alphabetically|Display snippets in overview pane ' +
+        'grouped by the initial letter of their title'
+      OnExecute = ActOverviewGroupingExecute
+      OnUpdate = ActOverviewGroupingUpdate
     end
-    object actViewSnippetKinds: TAction
+    object actViewGroupBySnippetKinds: TAction
       Category = 'View'
-      Caption = 'Snippets By Kind'
+      Caption = 'Group Snippets By Kind'
       GroupIndex = 100
-      Hint = 'Snippets By Kind|View snippets by kind'
-      OnExecute = ActOverviewTabExecute
-      OnUpdate = ActOverviewTabUpdate
+      Hint = 
+        'Group Snippets By Kind|Display snippets in overview pane grouped' +
+        ' by kind'
+      OnExecute = ActOverviewGroupingExecute
+      OnUpdate = ActOverviewGroupingUpdate
     end
     object actWebSite: TBrowseURL
       Category = 'Help'
@@ -501,7 +522,9 @@ inherited MainForm: TMainForm
     object actCompilers: TAction
       Category = 'Tools'
       Caption = 'Configure Compilers...'
-      Hint = 'F'
+      Hint = 
+        'Configure Compilers|Display dialogue box where required compiler' +
+        's can be configured'
       ImageIndex = 15
       OnExecute = actCompilersExecute
     end
@@ -526,13 +549,6 @@ inherited MainForm: TMainForm
       ImageIndex = 16
       OnExecute = actPreferencesExecute
     end
-    object actRegister: TAction
-      Category = 'Tools'
-      Caption = '&Register CodeSnip...'
-      Hint = 'Register|Register CodeSnip online'
-      OnExecute = actRegisterExecute
-      OnUpdate = actRegisterUpdate
-    end
     object actLicense: TAction
       Category = 'Help'
       Caption = 'License'
@@ -545,6 +561,14 @@ inherited MainForm: TMainForm
       Caption = 'CodeSnip Home Page'
       Hint = 'Home Page|Visit CodeSnip'#39's web page'
       ImageIndex = 6
+    end
+    object actFindTags: TAction
+      Category = 'Search'
+      Caption = 'Find Tags...'
+      Hint = 'Find tags|Search for all snippets with specified tags'
+      ImageIndex = 49
+      ShortCut = 24660
+      OnExecute = actFindTagsExecute
     end
     object actFindXRefs: TAction
       Category = 'Search'
@@ -633,24 +657,22 @@ inherited MainForm: TMainForm
     end
     object actBackupDatabase: TAction
       Category = 'Database'
-      Caption = 'Backup User Database...'
-      Hint = 'Backup Database|Backup all user-defined entries in the database'
+      Caption = 'Backup Database...'
+      Hint = 'Backup Database|Backs up the entire database to a file'
       ImageIndex = 33
       OnExecute = actBackupDatabaseExecute
     end
     object actRestoreDatabase: TAction
       Category = 'Database'
-      Caption = 'Restore User Database...'
-      Hint = 
-        'Restore User Database|Restore user-defined database from a backu' +
-        'p'
+      Caption = 'Restore Database...'
+      Hint = 'Restore Database|Restores the database from a backup file'
       ImageIndex = 32
       OnExecute = actRestoreDatabaseExecute
     end
     object actSaveDatabase: TAction
       Category = 'Database'
-      Caption = 'Save User Database'
-      Hint = 'Save Database|Save all changes to user database'
+      Caption = 'Save Database'
+      Hint = 'Save Database|Save all changes to the database'
       ImageIndex = 25
       ShortCut = 16467
       OnExecute = actSaveDatabaseExecute
@@ -661,6 +683,7 @@ inherited MainForm: TMainForm
       Caption = 'Update From Web...'
       Hint = 'Update Database from Web|Update the database from the internet'
       ImageIndex = 7
+      Visible = False
       OnExecute = actUpdateDbaseExecute
     end
     object actSubmit: TAction
@@ -761,29 +784,6 @@ inherited MainForm: TMainForm
         'ing web services'
       OnExecute = actProxyServerExecute
     end
-    object actAddCategory: TAction
-      Category = 'Categories'
-      Caption = 'New Category...'
-      Hint = 'New Category|Add a new category to the database'
-      ImageIndex = 8
-      OnExecute = actAddCategoryExecute
-    end
-    object actRenameCategory: TAction
-      Category = 'Categories'
-      Caption = 'Rename Category...'
-      Hint = 'Rename Category|Rename a user defined category in the database'
-      ImageIndex = 21
-      OnExecute = actRenameCategoryExecute
-      OnUpdate = actRenameCategoryUpdate
-    end
-    object actDeleteCategory: TAction
-      Category = 'Categories'
-      Caption = 'Delete Category...'
-      Hint = 'Delete Category|Delete an empty category from the database'
-      ImageIndex = 13
-      OnExecute = actDeleteCategoryExecute
-      OnUpdate = actDeleteCategoryUpdate
-    end
     object actNews: TAction
       Category = 'Help'
       Caption = 'CodeSnip News...'
@@ -874,23 +874,27 @@ inherited MainForm: TMainForm
       Category = 'Snippets'
       Caption = 'Show Favourites...'
       Hint = 'Show Favourites|Display Favourites dialogue box'
+      ImageIndex = 48
       ShortCut = 115
       OnExecute = actFavouritesExecute
     end
-    object actAddFavourite: TAction
+    object actToggleFavourite: TAction
       Category = 'Snippets'
-      Caption = 'Add To Favourites'
-      Hint = 'Add to Favourites|Make the selected snippet a Favourite'
-      ImageIndex = 48
+      Caption = 'Favourite'
+      Hint = 
+        'Favourite|Toggle the selected snippet'#39's status as a favourite on' +
+        ' and off'
       ShortCut = 41030
-      OnExecute = actAddFavouriteExecute
-      OnUpdate = actAddFavouriteUpdate
+      SecondaryShortCuts.Strings = (
+        'Ctrl+*')
+      OnExecute = actToggleFavouriteExecute
+      OnUpdate = actToggleFavouriteUpdate
     end
-    object actMoveUserDatabase: TAction
+    object actMoveDatabase: TAction
       Category = 'Database'
-      Caption = 'Move User Database...'
-      Hint = 'Move User Database|Move the user database to a new directory'
-      OnExecute = actMoveUserDatabaseExecute
+      Caption = 'Move Database...'
+      Hint = 'Move Database|Move the database to a new directory'
+      OnExecute = actMoveDatabaseExecute
     end
     object actSWAGImport: TAction
       Category = 'Snippets'
@@ -899,6 +903,14 @@ inherited MainForm: TMainForm
         'Import Snippets From SWAG|Import one or more snippets from the o' +
         'nline SWAG database'
       OnExecute = actSWAGImportExecute
+    end
+    object actConfigDiffProg: TAction
+      Category = 'Tools'
+      Caption = 'Configure Diff Viewer Program...'
+      Hint = 
+        'Configure Diff Viewer|Display dialogue box where an externl diff' +
+        ' viewer program can be configured'
+      OnExecute = actConfigDiffProgExecute
     end
   end
   object mnuMain: TMainMenu
@@ -971,20 +983,24 @@ inherited MainForm: TMainForm
         Caption = '-'
         GroupIndex = 2
       end
-      object miViewCategorised: TMenuItem
-        Action = actViewCategorised
+      object miViewGroupByTags: TMenuItem
+        Action = actViewGroupByTags
         AutoCheck = True
         GroupIndex = 100
         RadioItem = True
       end
-      object miViewAlphabetical: TMenuItem
-        Action = actViewAlphabetical
+      object miViewGroupByLanguage: TMenuItem
+        Action = actViewGroupByLanguage
+        GroupIndex = 100
+      end
+      object miViewGroupAlphabetically: TMenuItem
+        Action = actViewGroupAlphabetically
         AutoCheck = True
         GroupIndex = 100
         RadioItem = True
       end
-      object miViewSnippetKinds: TMenuItem
-        Action = actViewSnippetKinds
+      object miViewGroupBySnippetKinds: TMenuItem
+        Action = actViewGroupBySnippetKinds
         GroupIndex = 100
       end
       object miSpacer4: TMenuItem
@@ -1037,6 +1053,9 @@ inherited MainForm: TMainForm
       object miFindText: TMenuItem
         Action = actFindText
       end
+      object miFindTags: TMenuItem
+        Action = actFindTags
+      end
       object miFindCompiler: TMenuItem
         Action = actFindCompiler
       end
@@ -1088,39 +1107,23 @@ inherited MainForm: TMainForm
       object miSpacer19: TMenuItem
         Caption = '-'
       end
-      object miAddFavourite: TMenuItem
-        Action = actAddFavourite
+      object miToggleFavourite: TMenuItem
+        Action = actToggleFavourite
       end
       object miFavourites: TMenuItem
         Action = actFavourites
-      end
-    end
-    object miCategories: TMenuItem
-      Caption = 'Categories'
-      object miAddCategory: TMenuItem
-        Action = actAddCategory
-      end
-      object miRenameCategory: TMenuItem
-        Action = actRenameCategory
-      end
-      object miDeleteCategory: TMenuItem
-        Action = actDeleteCategory
       end
     end
     object miDatabase: TMenuItem
       Caption = 'Database'
       object miSaveDatabase: TMenuItem
         Action = actSaveDatabase
-        Hint = 'Save User Database|Saves all changes to user database'
       end
       object miSpacer11: TMenuItem
         Caption = '-'
       end
       object miBackupDatabase: TMenuItem
         Action = actBackupDatabase
-        Hint = 
-          'Backup User Database|Backup all user-defined entries in the data' +
-          'base'
       end
       object miRestoreDatabase: TMenuItem
         Action = actRestoreDatabase
@@ -1134,8 +1137,8 @@ inherited MainForm: TMainForm
       object miSpacer20: TMenuItem
         Caption = '-'
       end
-      object miMoveUserDatabase: TMenuItem
-        Action = actMoveUserDatabase
+      object miMoveDatabase: TMenuItem
+        Action = actMoveDatabase
       end
     end
     object miCompile: TMenuItem
@@ -1159,6 +1162,9 @@ inherited MainForm: TMainForm
       object miCompilers: TMenuItem
         Action = actCompilers
       end
+      object miConfigDiffProg: TMenuItem
+        Action = actConfigDiffProg
+      end
       object miProxyServer: TMenuItem
         Action = actProxyServer
       end
@@ -1173,13 +1179,6 @@ inherited MainForm: TMainForm
       end
       object miReportBug: TMenuItem
         Action = actBugReport
-      end
-      object miSpacer9: TMenuItem
-        Caption = '-'
-      end
-      object miRegister: TMenuItem
-        Action = actRegister
-        Default = True
       end
     end
     object miHelp: TMenuItem

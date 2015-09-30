@@ -4,7 +4,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2012-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -51,7 +51,7 @@
       sense because some page &quot;components&quot; do not make sense for all
       snippet kinds. For example, <a
         href="snippet_freeform.htm"
-      >freeform</a> snippets can't be compiled, so there's little point in
+      >free-form</a> snippets can't be compiled, so there's little point in
       displaying the compiler results table for that kind of snippet.
     </p>
     <p>
@@ -86,10 +86,12 @@
       </li>
       <li>
         <div>
-          <em>Category</em>
+          <em>Tags</em>
         </div>
         <div>
-          Category that snippet belongs to. Renders as a link.
+          Set of tags associated with the snippet. Renders as a sequence of
+          links that display all snippets that have the tag, along with a link
+          to delete the tag.
         </div>
       </li>
       <li>
@@ -129,7 +131,7 @@
           configured to display this information. Never provides useful
           information for <a
             href="snippet_freeform.htm"
-          >Freeform</a> snippets.
+          >free-form</a> snippets.
         </div>
         <div>
           <strong class="warning">Important Note:</strong> If no compilers have
@@ -141,11 +143,11 @@
       </li>
       <li>
         <div>
-          <em>Extra Information</em>
+          <em>Notes</em>
         </div>
         <div>
-          Additional information about the snippet. Not all snippet's have extra
-          information.
+          Additional information about the snippet. Not all snippet's have such
+          notes.
         </div>
       </li>
     </ul>

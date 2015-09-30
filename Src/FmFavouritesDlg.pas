@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2013-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -21,12 +21,23 @@ interface
 
 uses
   // Delphi
-  Classes, ActnList, StdCtrls, Controls, ExtCtrls, Forms, ComCtrls, Types,
-  Generics.Collections {must be listed after Classes},
+  ExtCtrls,
+  Controls,
+  StdCtrls,
+  Classes,
+  ActnList,
+  ComCtrls,
+  Forms,
+  Types,
+  Generics.Defaults,
   // 3rd party
-  LVEx,
+  Collections.Base,
+  Collections.Lists,
   // Project
-  FmGenericNonModalDlg, Favourites.UFavourites, IntfNotifier, USnippetIDs,
+  CS.Database.Types,
+  FmGenericNonModalDlg,
+  IntfNotifier,
+  UBox,
   UWindowSettings;
 
 
@@ -46,6 +57,7 @@ type
     chkNewTab: TCheckBox;
     lblTransparency: TLabel;
     tbTransparency: TTrackBar;
+    lbFavs: TListBox;
     ///  <summary>Clears all favourites.</summary>
     ///  <remarks>Prompts user for permission before proceeding.</remarks>
     procedure actDeleteAllExecute(Sender: TObject);
@@ -87,6 +99,7 @@ type
     ///  over the trackbar and fades the form back up to full opacity.</summary>
     procedure tbTransparencyKeyUp(Sender: TObject; var Key: Word;
       Shift: TShiftState);
+    procedure lbFavsDblClick(Sender: TObject);
   strict private
     type
       ///  <summary>Reads and stores persistent options in settings.</summary>
@@ -119,13 +132,41 @@ type
         property InactiveAlphaBlendValue: Byte
           read fInactiveAlphaBlendValue write fInactiveAlphaBlendValue;
       end;
+
+      TListBoxMgr = class(TObject)
+      strict private
+        var
+          fSnippetList: TSortedList<ISnippet>;
+          fLB: TListBox;
+          fSortFn: TComparison<ISnippet>;
+        function IndexOfSnippet(const SnippetID: TSnippetID): Integer;
+        function GetSnippetAt(const Idx: Integer): ISnippet;
+        procedure SetSortFn(const SortFn: TComparison<ISnippet>);
+        procedure InternalAddSnippet(Snippet: ISnippet);
+        procedure InternalDeleteSnippetAt(const Idx: Integer);
+        procedure LBDrawItem(Control: TWinControl; Index: Integer; Rect: TRect;
+          State: TOwnerDrawState);
+        procedure LBData(Control: TWinControl; Index: Integer;
+          var Data: string);
+      public
+        constructor Create(LB: TListBox);
+        destructor Destroy; override;
+        procedure Populate(SnippetIDs: ISnippetIDList);
+        procedure Clear;
+        procedure Delete(const SnippetID: TSnippetID);
+        procedure Add(Snippet: ISnippet);
+        procedure Update(Snippet: ISnippet);
+        function HasSelection: Boolean;
+        function GetSelected: TSnippetID;
+        procedure ReSort(const SortFn: TComparison<ISnippet>);
+      end;
   strict private
     var
-      ///  <summary>Custom list view control used to display favourites.
-      ///  </summary>
-      fLVFavs: TListViewEx;
+      ///  <summary>Object that manages display and painting of list box that
+      ///  displays favourite snippets.</summary>
+      fFavsLBMgr: TListBoxMgr;
       ///  <summary>Object encapsulating favourites.</summary>
-      fFavourites: TFavourites;
+      fFavourites: ISnippetIDList;
       ///  <summary>Notifier object used to request display of snippets in main
       ///  form.</summary>
       fNotifier: INotifier;
@@ -145,67 +186,7 @@ type
       ///  <remarks>Set to nil if there is no instance of the form.</remarks>
       fInstance: TFavouritesDlg;
   strict private
-    ///  <summary>Specifies class to be used to create favourites list view
-    ///  items.</summary>
-    ///  <param name="Sender">TCustomListView [in] List view control for which
-    ///  list item class is required.</param>
-    ///  <param name="ItemClass">TListItemClass [in/out] Set to required class:
-    ///  TFavouriteListItem in all cases.</param>
-    procedure LVFavouriteCreateItemClass(Sender: TCustomListView;
-      var ItemClass: TListItemClass);
-
-    ///  <summary>Compares two list items, Item1 and Item2 and records the
-    ///  result of the comparison in the Compare parameter.</summary>
-    ///  <remarks>Comparison depends on which column of data is being sorted.
-    ///  </remarks>
-    procedure LVFavouritesCompare(Sender: TObject; Item1, Item2: TListItem;
-      Data: Integer; var Compare: Integer);
-
-    ///  <summary>Handles double clicks on list view items by causing the
-    ///  associated favourite's snippet to be displayed.</summary>
-    procedure LVDoubleClick(Sender: TObject);
-
-    ///  <summary>Overrides default drawing of given list view item caption by
-    ///  ensuring the associated favourite's snippet display name is rendered in
-    ///  correct colour.</summary>
-    ///  <remarks>Colour used depends on whether snippet is user defined.
-    ///  </remarks>
-    procedure LVCustomDrawItem(Sender: TCustomListView; Item: TListItem;
-      State: TCustomDrawState; var DefaultDraw: Boolean);
-
-    ///  <summary>Ensures that given list view sub item is drawn in correct
-    ///  colour.</summary>
-    ///  <remarks>Colour is reverted to window text instead of colour set in
-    ///  LVCustomDrawItem method.</remarks>
-    procedure LVCustomDrawSubItem(Sender: TCustomListView; Item: TListItem;
-      SubItem: Integer; State: TCustomDrawState; var DefaultDraw: Boolean);
-
-    ///  <summary>Creates and initialises properties of custom list view control
-    ///  that is used to display favourites.</summary>
-    procedure CreateLV;
-
-    ///  <summary>Displays all favourites in favourites list view.</summary>
-    procedure PopulateLV;
-
-    ///  <summary>Resorts favourites list view according to current sort column.
-    ///  </summary>
-    procedure ReSortLV;
-
-    ///  <summary>Adds given favourite to favourites list view.</summary>
-    procedure AddLVItem(const Favourite: TFavourite);
-
-    ///  <summary>Removes given favourite from favourites list view.</summary>
-    ///  <remarks>Does nothing if favourite is not in list view.</remarks>
-    procedure RemoveLVItem(const Favourite: TFavourite);
-
-    ///  <summary>Listener method that receives and acts on change events
-    ///  triggered by favourites object.</summary>
-    ///  <param name="Sender">TObject [in] Reference to favourites object that
-    ///  triggered event.</param>
-    ///  <param name="EvtInfo">IInterface [in] Reference to object that carries
-    ///  information about the event.</param>
-    ///  <remarks>EvtInfo must support IFavouritesChangeEventInfo.</remarks>
-    procedure FavouritesListener(Sender: TObject; const EvtInfo: IInterface);
+    procedure LoadFavourites;
 
     ///  <summary>Changes the transparency of the form from its current level to
     ///  the given new transparency level.</summary>
@@ -221,11 +202,6 @@ type
     ///  indicated by the transparency trackbar.</summary>
     procedure FadeOut;
 
-    ///  <summary>Finds the favourites list view item that is associated with
-    ///  the favourite with the given snippet ID.</summary>
-    ///  <remarks>Returns nil if no matching list item exists.</remarks>
-    function FindListItem(const SnippetID: TSnippetID): TListItem;
-
     ///  <summary>Records that a mouse button has been pressed over the
     ///  transparency trackbar and fades the form down to the transparency
     ///  specified by the trackbar.</summary>
@@ -237,6 +213,14 @@ type
     ///  opacity.</summary>
     procedure TBTransparencyMouseUp(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
+
+    ///  <summary>Handles database change events by updating the favorites list
+    ///  as necessary.</summary>
+    ///  <param name="Sender">TObject [in] Object that triggered event. Not
+    ///  used.</param>
+    ///  <param name="EvtInfo">IInterface [in] Object that carries information
+    ///  about the database change event.</param>
+    procedure DBChangeEventHandler(Sender: TObject; const EvtInfo: IInterface);
 
   strict protected
     ///  <summary>Configures some of the form's objects.</summary>
@@ -254,12 +238,9 @@ type
     ///  re-activates it if it is already displayed.</summary>
     ///  <param name="AOwner">TComponent [in] Reference to any owning component.
     ///  May be nil.</param>
-    ///  <param name="Favourites">TFavourites [in] Reference to favourites
-    ///  object to be displayed and managed.</param>
     ///  <param name="Notifier">INotifier [in] Reference to notifier object used
     ///  to cause a favourite snippet to be displayed in main window.</param>
-    class procedure Display(AOwner: TComponent; const Favourites: TFavourites;
-      Notifier: INotifier);
+    class procedure Display(AOwner: TComponent; Notifier: INotifier);
 
     ///  <summary>Closes the dialogue box, freeing any form instance.</summary>
     class procedure Close;
@@ -274,26 +255,21 @@ implementation
 
 uses
   // Delphi
-  SysUtils, DateUtils, Windows, Graphics,
+  SysUtils,
+  Windows,
+  Graphics,
   // Project
-  DB.UMain, DB.USnippet, UCtrlArranger, UMessageBox, UPreferences, USettings,
-  UStructs, UStrUtils;
+  CS.Database.Snippets,
+  DB.UMain,
+  IntfCommon,
+  UComparers,
+  UCtrlArranger,
+  UMessageBox,
+  USettings,
+  UStrUtils;
 
 {$R *.dfm}
 
-
-type
-  ///  <summary>Custom list item class that adds ability to associate a
-  ///  TFavourite record with list item.</summary>
-  TFavouriteListItem = class(TListItem)
-  strict private
-    var
-      ///  <summary>Value of Favourite property.</summary>
-      fFavourite: TFavourite;
-  public
-    ///  <summary>Favourite associated with list item.</summary>
-    property Favourite: TFavourite read fFavourite write fFavourite;
-  end;
 
 type
   ///  <summary>Hack to enable OnMouseUp and OnMouseDown events of TTrackBar to
@@ -308,15 +284,26 @@ type
 procedure TFavouritesDlg.actDeleteAllExecute(Sender: TObject);
 resourcestring
   sQuery = 'Do you really want to delete all your favourites?';
+var
+  SnippetID: TSnippetID;
 begin
-  if TMessageBox.Confirm(Self, sQuery) then
-  begin
-    fLVFavs.Items.BeginUpdate;
-    try
-      fFavourites.Clear;
-    finally
-      fLVFavs.Items.EndUpdate;
-    end;
+  if not TMessageBox.Confirm(Self, sQuery) then
+    Exit;
+  // To avoid lots of flicker as items are deleted one by one, we disable
+  // handling of database change events: we know what the outcome of clearing
+  // all favourites is, so can put display into correct state.
+  Database.RemoveChangeEventHandler(DBChangeEventHandler);
+  try
+    fFavsLBMgr.Clear;
+    // NOTE: if this method is re-implemented with the database change handler
+    // still in place, then the following iteration will need to be done on a
+    // copy of fFavourites because DBChangeEventHandler will update fFavourites,
+    // which is not allowed while it is being enumerated.
+    for SnippetID in fFavourites do
+      fNotifier.ChangeSnippetStar(SnippetID, False);
+    fFavourites.Clear;
+  finally
+    Database.AddChangeEventHandler(DBChangeEventHandler);
   end;
 end;
 
@@ -326,66 +313,34 @@ begin
 end;
 
 procedure TFavouritesDlg.actDeleteExecute(Sender: TObject);
-var
-  LI: TFavouriteListItem;
 begin
-  LI := fLVFavs.Selected as TFavouriteListItem;
-  fFavourites.Remove(LI.Favourite.SnippetID);
+  fNotifier.ChangeSnippetStar(fFavsLBMgr.GetSelected, False);
 end;
 
 procedure TFavouritesDlg.actDeleteUpdate(Sender: TObject);
 begin
-  actDelete.Enabled := Assigned(fLVFavs.Selected);
+  actDelete.Enabled := fFavsLBMgr.HasSelection;
 end;
 
 procedure TFavouritesDlg.actDisplayExecute(Sender: TObject);
-var
-  LI: TFavouriteListItem;
-  SelectedSnippet: TSnippetID;
 begin
-  LI := fLVFavs.Selected as TFavouriteListItem;
-  SelectedSnippet := LI.Favourite.SnippetID;
-  fNotifier.DisplaySnippet(
-    SelectedSnippet.Name,
-    SelectedSnippet.UserDefined,
-    chkNewTab.Checked
-  );
-  fFavourites.Touch(SelectedSnippet);
-  fLVFavs.Selected := FindListItem(SelectedSnippet);
+  fNotifier.DisplaySnippet(fFavsLBMgr.GetSelected, chkNewTab.Checked);
 end;
 
 procedure TFavouritesDlg.actDisplayUpdate(Sender: TObject);
 begin
-  actDisplay.Enabled := Assigned(fLVFavs.Selected);
-end;
-
-procedure TFavouritesDlg.AddLVItem(const Favourite: TFavourite);
-var
-  LI: TFavouriteListItem;
-  Snippet: TSnippet;
-begin
-  LI := fLVFavs.Items.Add as TFavouriteListItem;
-  Snippet := Database.Snippets.Find(Favourite.SnippetID);
-  if Assigned(Snippet) then
-    LI.Caption := Snippet.DisplayName
-  else
-    LI.Caption := Favourite.SnippetID.Name;
-  if IsToday(Favourite.LastAccessed) then
-    LI.SubItems.Add(TimeToStr(Favourite.LastAccessed))
-  else
-    LI.SubItems.Add(DateTimeToStr(Favourite.LastAccessed));
-  LI.Favourite := Favourite;
+  actDisplay.Enabled := fFavsLBMgr.HasSelection;
 end;
 
 procedure TFavouritesDlg.ArrangeForm;
 begin
-  TCtrlArranger.AlignTops([fLVFavs, btnDisplay], 0);
-  TCtrlArranger.AlignLefts([fLVFavs, chkNewTab], 0);
+  TCtrlArranger.AlignTops([lbFavs, btnDisplay], 0);
+  TCtrlArranger.AlignLefts([lbFavs, chkNewTab], 0);
   TCtrlArranger.AlignLefts(
     [btnDisplay, btnDelete, btnDeleteAll],
-    TCtrlArranger.RightOf(fLVFavs, 8)
+    TCtrlArranger.RightOf(lbFavs, 8)
   );
-  TCtrlArranger.MoveBelow(fLVFavs, chkNewTab, 8);
+  TCtrlArranger.MoveBelow(lbFavs, chkNewTab, 8);
   pnlBody.ClientWidth := TCtrlArranger.TotalControlWidth(pnlBody) + 4;
   pnlBody.ClientHeight := TCtrlArranger.TotalControlHeight(pnlBody);
   inherited;
@@ -397,59 +352,88 @@ end;
 class procedure TFavouritesDlg.Close;
 begin
   if IsDisplayed then
-    FreeAndNil(fInstance);
+    FreeAndNil(fInstance);  // FreeAndNil is necessary here
 end;
 
 procedure TFavouritesDlg.ConfigForm;
 begin
   inherited;
-  fFavourites.AddListener(FavouritesListener);
+  LoadFavourites;
   TTrackBarHack(tbTransparency).OnMouseDown := TBTransparencyMouseDown;
   TTrackBarHack(tbTransparency).OnMouseUp := TBTransparencyMouseUp;
+  Database.AddChangeEventHandler(DBChangeEventHandler);
 end;
 
-procedure TFavouritesDlg.CreateLV;
-resourcestring
-  sSnippetName = 'Snippet';
-  sLastAccessed = 'Last used';
-begin
-  fLVFavs := TListViewEx.Create(Self);
-  with fLVFavs do
+procedure TFavouritesDlg.DBChangeEventHandler(Sender: TObject;
+  const EvtInfo: IInterface);
+var
+  EventInfo: IDatabaseChangeEventInfo;  // information about the event
+  Snippet: ISnippet;                    // snippet referenced in event
+
+  ///  <summary>Extracts snippet ID from EvtInfo object.</summary>
+  function EvtInfoToSnippetID: TSnippetID;
   begin
-    Parent := pnlBody;
-    Height := 240;
-    Width := 360;
-    HideSelection := False;
-    ReadOnly := True;
-    RowSelect := True;
-    TabOrder := 0;
-    TabStop := True;
-    ViewStyle := vsReport;
-    SortImmediately := False;
-    with Columns.Add do
+    Result := (EventInfo.Info as TBox<TSnippetID>).Value;
+  end;
+
+begin
+  EventInfo := EvtInfo as IDatabaseChangeEventInfo;
+  case EventInfo.Kind of
+    evSnippetAdded:
     begin
-      Caption := sSnippetName;
-      Width := 180;
+      Snippet := Database.LookupSnippet(EvtInfoToSnippetID);
+      if Snippet.Starred then
+      begin
+        fFavourites.Add(Snippet.ID);
+        fFavsLBMgr.Add(Snippet);
+      end;
     end;
-    with Columns.Add do
+    evBeforeSnippetDelete:
     begin
-      Caption := sLastAccessed;
-      Width := 140;
+      if fFavourites.Contains(EvtInfoToSnippetID) then
+      begin
+        // Starred snippet was deleted: remove from list
+        fFavsLBMgr.Delete(EvtInfoToSnippetID);
+        fFavourites.Remove(EvtInfoToSnippetID);
+      end;
     end;
-    OnDblClick := LVDoubleClick;
-    OnCompare := LVFavouritesCompare;
-    OnCreateItemClass := LVFavouriteCreateItemClass;
-    OnCustomDrawItem := LVCustomDrawItem;
-    OnCustomDrawSubItem := LVCustomDrawSubItem;
+    evSnippetChanged:
+    begin
+      Snippet := Database.LookupSnippet(EvtInfoToSnippetID);
+      if fFavourites.Contains(Snippet.ID) then
+      begin
+        if not Snippet.Starred then
+        begin
+          // Snippet that is in favourites list is no longer starred, so remove
+          // it.
+          fFavsLBMgr.Delete(Snippet.ID);
+          fFavourites.Remove(Snippet.ID);
+        end
+        else
+        begin
+          // Snippet in list is still starred, but has changed in some other
+          // way, so update list in case sort order affected.
+          fFavsLBMgr.Update(Snippet);
+        end;
+      end
+      else
+      begin
+        if Snippet.Starred then
+        begin
+          // Snippet that wasn't in snippet list has been starred, so add it to
+          // list.
+          fFavourites.Add(Snippet.ID);
+          fFavsLBMgr.Add(Snippet);
+        end;
+      end;
+    end;
   end;
 end;
 
-class procedure TFavouritesDlg.Display(AOwner: TComponent;
-  const Favourites: TFavourites; Notifier: INotifier);
+class procedure TFavouritesDlg.Display(AOwner: TComponent; Notifier: INotifier);
 begin
   if not Assigned(fInstance) then
     fInstance := Create(AOwner);
-  fInstance.fFavourites := Favourites;
   fInstance.fNotifier := Notifier;
   if not fInstance.Visible then
   begin
@@ -482,52 +466,6 @@ begin
   end;
 end;
 
-procedure TFavouritesDlg.FavouritesListener(Sender: TObject;
-  const EvtInfo: IInterface);
-var
-  Evt: IFavouritesChangeEventInfo;
-  SelectedSnippet: TSnippetID;
-  HaveSelection: Boolean;
-begin
-  Evt := EvtInfo as IFavouritesChangeEventInfo;
-  case Evt.Action of
-    cnAdded:
-    begin
-      HaveSelection := Assigned(fLVFavs.Selected);
-      if HaveSelection then
-        SelectedSnippet :=
-          (fLVFavs.Selected as TFavouriteListItem).Favourite.SnippetID;
-      AddLVItem(Evt.Favourite);
-      ReSortLV;
-      if HaveSelection then
-        fLVFavs.Selected := FindListItem(SelectedSnippet);
-    end;
-    cnRemoved:
-    begin
-      HaveSelection := Assigned(fLVFavs.Selected);
-      if HaveSelection then
-        SelectedSnippet :=
-          (fLVFavs.Selected as TFavouriteListItem).Favourite.SnippetID;
-      RemoveLVItem(Evt.Favourite);
-      ReSortLV;
-      if HaveSelection and (Evt.Favourite.SnippetID <> SelectedSnippet) then
-        fLVFavs.Selected := FindListItem(SelectedSnippet);
-    end;
-  end;
-end;
-
-function TFavouritesDlg.FindListItem(const SnippetID: TSnippetID): TListItem;
-var
-  LI: TListItem;
-begin
-  for LI in fLVFavs.Items do
-  begin
-    if (LI as TFavouriteListItem).Favourite.SnippetID = SnippetID then
-      Exit(LI);
-  end;
-  Result := nil;
-end;
-
 procedure TFavouritesDlg.FormActivate(Sender: TObject);
 begin
   FadeIn;
@@ -543,10 +481,11 @@ end;
 procedure TFavouritesDlg.FormCreate(Sender: TObject);
 begin
   inherited;
-  CreateLV;
+  fFavsLBMgr := TListBoxMgr.Create(lbFavs);
   fOptions := TPersistentOptions.Create;
   fWindowSettings := TDlgWindowSettings.CreateStandAlone(Self);
   AlphaBlendValue := High(Byte);
+  fFavourites := TSnippetIDList.Create;
 end;
 
 procedure TFavouritesDlg.FormDeactivate(Sender: TObject);
@@ -556,7 +495,8 @@ end;
 
 procedure TFavouritesDlg.FormDestroy(Sender: TObject);
 begin
-  fFavourites.RemoveListener(FavouritesListener);
+  Database.RemoveChangeEventHandler(DBChangeEventHandler);
+  fFavsLBMgr.Free;
   fOptions.DisplayInNewTabs := chkNewTab.Checked;
   fOptions.InactiveAlphaBlendValue := tbTransparency.Position;
   fOptions.Free;
@@ -568,7 +508,7 @@ procedure TFavouritesDlg.InitForm;
 begin
   inherited;
   fWindowSettings.Restore;
-  PopulateLV;
+  fFavsLBMgr.Populate(fFavourites);
   chkNewTab.Checked := fOptions.DisplayInNewTabs;
   tbTransparency.OnChange := nil;
   tbTransparency.Position := fOptions.InactiveAlphaBlendValue;
@@ -580,85 +520,19 @@ begin
   Result := Assigned(fInstance) and fInstance.Visible;
 end;
 
-procedure TFavouritesDlg.LVCustomDrawItem(Sender: TCustomListView;
-  Item: TListItem; State: TCustomDrawState; var DefaultDraw: Boolean);
-var
-  UserDefined: Boolean;
-begin
-  UserDefined := (Item as TFavouriteListItem).Favourite.SnippetID.UserDefined;
-  fLVFavs.Canvas.Font.Color := Preferences.DBHeadingColours[UserDefined];
-end;
-
-procedure TFavouritesDlg.LVCustomDrawSubItem(Sender: TCustomListView;
-  Item: TListItem; SubItem: Integer; State: TCustomDrawState;
-  var DefaultDraw: Boolean);
-begin
-  // required to force colour change on following line
-  fLVFavs.Canvas.Font.Color := clNone;
-  fLVFavs.Canvas.Font.Color := clWindowText;
-end;
-
-procedure TFavouritesDlg.LVDoubleClick(Sender: TObject);
+procedure TFavouritesDlg.lbFavsDblClick(Sender: TObject);
 begin
   actDisplay.Execute;
 end;
 
-procedure TFavouritesDlg.LVFavouriteCreateItemClass(Sender: TCustomListView;
-  var ItemClass: TListItemClass);
+procedure TFavouritesDlg.LoadFavourites;
 begin
-  ItemClass := TFavouriteListItem;
-end;
-
-procedure TFavouritesDlg.LVFavouritesCompare(Sender: TObject; Item1,
-  Item2: TListItem; Data: Integer; var Compare: Integer);
-var
-  Fav1, Fav2: TFavourite;
-begin
-  case fLVFavs.SortColumn of
-    0:
-      // use item Caption here since it is set to snippet display name
-      // which is not recorded in the item's associated TFavourite record
-      Compare := StrCompareText(Item1.Caption, Item2.Caption);
-    1:
+  fFavourites := Database.SelectSnippets(
+    function (Snippet: ISnippet): Boolean
     begin
-      Fav1 := (Item1 as TFavouriteListItem).Favourite;
-      Fav2 := (Item2 as TFavouriteListItem).Favourite;
-      Compare := CompareDateTime(Fav1.LastAccessed, Fav2.LastAccessed);
-    end;
-  end;
-  if fLVFavs.SortOrder = soDown then
-    Compare := -Compare;
-end;
-
-procedure TFavouritesDlg.PopulateLV;
-var
-  Fav: TFavourite;
-begin
-  fLVFavs.Clear;
-  for Fav in fFavourites do
-    AddLVItem(Fav);
-  fLVFavs.Selected := nil;
-  ReSortLV;
-end;
-
-procedure TFavouritesDlg.RemoveLVItem(const Favourite: TFavourite);
-var
-  LI: TListItem;
-begin
-  for LI in fLVFavs.Items do
-  begin
-    if (LI as TFavouriteListItem).Favourite.SnippetID = Favourite.SnippetID then
-    begin
-      LI.Free;
-      Exit;
-    end;
-  end;
-end;
-
-procedure TFavouritesDlg.ReSortLV;
-begin
-  if fLVFavs.SortColumn <> -1 then
-    fLVFavs.CustomSort(nil, fLVFavs.SortColumn);
+      Result := Snippet.Starred;
+    end
+  );
 end;
 
 procedure TFavouritesDlg.tbTransparencyChange(Sender: TObject);
@@ -718,6 +592,215 @@ begin
   Section.SetInteger(InactiveAlphaBlendValueKey, fInactiveAlphaBlendValue);
   Section.Save;
   inherited;
+end;
+
+{ TFavouritesDlg.TListBoxMgr }
+
+procedure TFavouritesDlg.TListBoxMgr.Add(Snippet: ISnippet);
+var
+  SelSnippet: ISnippet;
+begin
+  fLB.Items.BeginUpdate;
+  try
+    if HasSelection then
+      SelSnippet := GetSnippetAt(fLB.ItemIndex)
+    else
+      SelSnippet := nil;
+    InternalAddSnippet(Snippet);
+    if Assigned(SelSnippet) then
+      fLB.ItemIndex := fSnippetList.IndexOf(SelSnippet);
+  finally
+    fLB.Items.EndUpdate;
+  end;
+end;
+
+procedure TFavouritesDlg.TListBoxMgr.Clear;
+begin
+  fLB.Items.BeginUpdate;
+  try
+    fLB.ItemIndex := -1;
+    fLB.Count := 0;
+    fSnippetList.Clear;
+  finally
+    fLB.Items.EndUpdate;
+  end;
+end;
+
+constructor TFavouritesDlg.TListBoxMgr.Create(LB: TListBox);
+begin
+  Assert(Assigned(LB), ClassName + '.Create: LB is nil');
+  inherited Create;
+  fLB := LB;
+  SetSortFn(nil); // this creates fSnippetList so don't need to do it here
+  fLB.Style := lbVirtualOwnerDraw;
+  fLB.ItemHeight := 19;
+  fLB.OnDrawItem := LBDrawItem;
+  fLB.OnData := LBData;
+end;
+
+procedure TFavouritesDlg.TListBoxMgr.Delete(const SnippetID: TSnippetID);
+var
+  SnippetIdx: Integer;
+begin
+  fLB.Items.BeginUpdate;
+  try
+    SnippetIdx := IndexOfSnippet(SnippetID);
+    if SnippetIdx = -1 then
+      Exit;
+    InternalDeleteSnippetAt(SnippetIdx);
+    if SnippetIdx >= fLB.Count then
+      SnippetIdx := Pred(fLB.Count);
+    fLB.ItemIndex := SnippetIdx;
+  finally
+    fLB.Items.EndUpdate;
+  end;
+end;
+
+destructor TFavouritesDlg.TListBoxMgr.Destroy;
+begin
+  Clear;
+  fSnippetList.Free;
+  inherited;
+end;
+
+function TFavouritesDlg.TListBoxMgr.GetSelected: TSnippetID;
+begin
+  if not HasSelection then
+    Exit(TSnippetID.CreateNull);
+  Result := GetSnippetAt(fLB.ItemIndex).ID;
+end;
+
+function TFavouritesDlg.TListBoxMgr.GetSnippetAt(const Idx: Integer): ISnippet;
+begin
+  Result := fSnippetList[Idx];
+end;
+
+function TFavouritesDlg.TListBoxMgr.HasSelection: Boolean;
+begin
+  Result := fLB.ItemIndex >= 0;
+end;
+
+function TFavouritesDlg.TListBoxMgr.IndexOfSnippet(const SnippetID: TSnippetID):
+  Integer;
+var
+  Idx: Integer;
+begin
+  for Idx := 0 to Pred(fSnippetList.Count) do
+    if SnippetID = fSnippetList[Idx].ID then
+      Exit(Idx);
+  Result := -1;
+end;
+
+procedure TFavouritesDlg.TListBoxMgr.InternalAddSnippet(Snippet: ISnippet);
+begin
+  fSnippetList.Add(Snippet);
+  fLB.Count := fSnippetList.Count;
+end;
+
+procedure TFavouritesDlg.TListBoxMgr.InternalDeleteSnippetAt(
+  const Idx: Integer);
+begin
+  fLB.Count := fSnippetList.Count - 1;
+  fSnippetList.RemoveAt(Idx);
+end;
+
+procedure TFavouritesDlg.TListBoxMgr.LBData(Control: TWinControl;
+  Index: Integer; var Data: string);
+begin
+  Data := fSnippetList[Index].Title;
+end;
+
+procedure TFavouritesDlg.TListBoxMgr.LBDrawItem(Control: TWinControl;
+  Index: Integer; Rect: TRect; State: TOwnerDrawState);
+var
+  Canvas: TCanvas;
+  DisplayText: string;
+begin
+  Assert(Control = fLB,
+    ClassName + '.LBDrawItem: Event handler called for wrong list box');
+  Canvas := fLB.Canvas;
+  DisplayText := GetSnippetAt(Index).Title;
+  Canvas.TextRect(
+    Rect,
+    Rect.Left + 2,
+    (Rect.Top + Rect.Bottom - Canvas.TextHeight(DisplayText)) div 2,
+    DisplayText
+  );
+end;
+
+procedure TFavouritesDlg.TListBoxMgr.Populate(SnippetIDs: ISnippetIDList);
+var
+  SnippetID: TSnippetID;
+begin
+  fLB.Items.BeginUpdate;
+  try
+    for SnippetID in SnippetIDs do
+      InternalAddSnippet(Database.LookupSnippet(SnippetID));
+  finally
+    fLB.Items.EndUpdate
+  end;
+end;
+
+procedure TFavouritesDlg.TListBoxMgr.ReSort(
+  const SortFn: TComparison<ISnippet>);
+var
+  SelSnippet: ISnippet;
+begin
+  if HasSelection then
+    SelSnippet := GetSnippetAt(fLB.ItemIndex)
+  else
+    SelSnippet := nil;
+  SetSortFn(SortFn);
+  fLB.Invalidate;
+  if Assigned(SelSnippet) then
+    fLB.ItemIndex := fSnippetList.IndexOf(SelSnippet);
+end;
+
+procedure TFavouritesDlg.TListBoxMgr.SetSortFn(
+  const SortFn: TComparison<ISnippet>);
+var
+  NewList: TSortedList<ISnippet>;
+  OldList: TSortedList<ISnippet>;
+  Rules: TRules<ISnippet>;
+begin
+  if not Assigned(SortFn) then
+    fSortFn := function(const Left, Right: ISnippet): Integer
+      begin
+        Result := StrCompareText(Left.Title, Right.Title);
+      end
+  else
+    fSortFn := SortFn;
+  Rules := TRulesFactory<ISnippet>.Construct(
+    fSortFn,
+    function (const Value: ISnippet): Integer
+    begin
+      Result := Value.ID.Hash;
+    end
+  );
+  if Assigned(fSnippetList) then
+  begin
+    OldList := fSnippetList;
+    NewList := TSortedList<ISnippet>.Create(Rules, OldList);
+    fSnippetList := NewList;
+    OldList.Free;
+  end
+  else
+    fSnippetList := TSortedList<ISnippet>.Create(Rules);
+end;
+
+procedure TFavouritesDlg.TListBoxMgr.Update(Snippet: ISnippet);
+var
+  Idx: Integer;
+begin
+  fLB.Items.BeginUpdate;
+  try
+    Idx := IndexOfSnippet(Snippet.ID);
+    InternalDeleteSnippetAt(Idx);
+    InternalAddSnippet(Snippet);
+    fLB.ItemIndex := IndexOfSnippet(Snippet.ID); // index may have changed
+  finally
+    fLB.Items.EndUpdate;
+  end;
 end;
 
 end.

@@ -6,7 +6,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2009-2015, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2009-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -55,6 +55,9 @@
       margin-right: 2em;
       font-weight: bold;
     }
+    .warning {
+      background-color: #f99;
+    }
     .prompt {
       color: blue;
     }
@@ -66,6 +69,12 @@
 <h1>
   CodeSnip Build Instructions
 </h1>
+
+<div class="box warning">
+  <strong>NOTE:</strong> The build system is currently being overhauled and is
+  in a state of flux. All make commands referred to in this document may be
+  incorrect. They will be corrected once the build system has stabilised.
+</div>
 
 <h2>
   Introduction
@@ -95,17 +104,24 @@
 
 <p>
   Several DelphiDabbler and other 3rd party libraries and components are
-  required to compile <em>CodeSnip</em>, most of which are included in the code
-  repository in the <code>Src/3rdParty</code> directory. Code not included in
-  the repository is noted below.
+  required to compile <em>CodeSnip</em>, most of which can be built from the
+  code repository tree.
 </p>
 
-<h3>
-  Indy libraries v10
+<p>
+  All the libraries must be available before building <em>CodeSnip</em> itself.
+</p>
+
+<h3 id="indy10">
+  Indy v10
 </h3>
 
 <p>
-  The Indy 10 Internet components ship with Delphi XE.
+  The Indy 10 Internet components ship are not included in the code repository,
+  since they are included with Delphi XE.
+</p>
+
+<p>
   If you prefer to work with the latest release you can download it from <a
     href="http://www.indyproject.org/"
   >http://www.indyproject.org/</a>. If you download a copy of Indy 10 you
@@ -146,11 +162,62 @@
 </p>
 
 <h3>
+  DelphiDabbler Code Library
+</h3>
+
+<p>
+  Several units from the <a
+    href="http://code.google.com/p/ddab-lib/"
+  >DelphiDabbler Code Library</a> are required. These files are included in the
+  code repository in the <code>Src\Lib\3rdParty\DDabLib</code> directory.
+</p>
+
+<p>
+  The Makefile provides an option to build this library. <a
+    href="#make-libraries"
+  >See below</a> for details.
+</p>
+
+<h3>
+  SynEdit
+</h3>
+
+<p>
+  Several units from the <a
+    href="http://synedit.sourceforge.net/"
+  >SynEdit</a> project are required. The required files are included in the code
+  repository in the <code>Src\Lib\3rdParty\SynEdit</code> directory.
+</p>
+
+<p>
+  The Makefile provides an option to build this library. <a
+    href="#make-libraries"
+  >See below</a> for details.
+</p>
+
+<h3>
+  delphi-coll Delphi Collections Library
+</h3>
+
+<p>
+  Units from the <a
+    href="http://code.google.com/p/delphi-coll/"
+  >Delphi Collections</a> project are required. The necessary files are included
+  in the code repository in the <code>Src\Lib\3rdParty\DelphiColl</code> directory.
+</p>
+
+<p>
+  The Makefile provides an option to build this library. <a
+    href="#make-libraries"
+  >See below</a> for details.
+</p>
+
+<h3>
   Delphi RTL &amp; VCL
 </h3>
 
 <p>
-  Goes without saying really, but you need the RTL and VCL that ships with
+  Goes without saying really, but you also need the RTL and VCL that ships with
   Delphi.
 </p>
 
@@ -203,7 +270,7 @@
   </dt>
   <dd>
     Type library importer tool. Used to create a Pascal unit that describes
-    code contained in <code>ExternalObj.idl</code>.
+    code contained in the <code>ExternalObj.tlb</code> type library.
   </dd>
 </dl>
 
@@ -255,7 +322,10 @@
 
 <p>
   This is the make tool that ships with Delphi. You can use any version that
-  works.
+  works but the version that ships with Delphi XE is preferred. See the <a
+    href="#config-env"
+  >Configure the environment</a> section below for details of how to set the
+  environment to use Delphi XE's version of Make by default.
 </p>
 
 <h3>
@@ -368,7 +438,7 @@
   Preparation
 </h2>
 
-<h3>
+<h3 id="config-env">
   Configure the environment.
 </h3>
 
@@ -470,11 +540,7 @@
         <div>
           Check out the source using the following command:
         </div>
-        <pre class="cmd"><span class="prompt">&gt;</span> svn checkout https://svn.code.sf.net/p/codesnip/code/trunk PATH</pre>
-        <div>
-          or
-        </div>
-        <pre class="cmd"><span class="prompt">&gt;</span> svn checkout svn://svn.code.sf.net/p/codesnip/code/trunk PATH</pre>
+        <pre class="cmd"><span class="prompt">&gt;</span> svn checkout http://codesnip.googlecode.com/svn/trunk/ PATH</pre>
         <div>
           Where <code>PATH</code> is the directory where you want to place the
           working copy. You will not be able to commit changes unless you join
@@ -485,11 +551,7 @@
         <div>
           Export the code using this command:
         </div>
-        <pre class="cmd"><span class="prompt">&gt;</span> svn export https://svn.code.sf.net/p/codesnip/code/trunk PATH</pre>
-        <div>
-          or
-        </div>
-        <pre class="cmd"><span class="prompt">&gt;</span> svn export svn://svn.code.sf.net/p/codesnip/code/trunk PATH</pre>
+        <pre class="cmd"><span class="prompt">&gt;</span> svn export http://codesnip.googlecode.com/svn/trunk/ PATH</pre>
         <div>
           where <code>PATH</code> is the directory where you wish to store the
           code.
@@ -518,6 +580,13 @@
   Configure the Source Tree
 </h3>
 
+<div class="box warning">
+  <strong>NOTE:</strong> The <em>CodeSnip</em> repo directory structure and
+  build directory structure are currently being overhauled so the following
+  directory trees are out of date. They will be updated once the new structures
+  are fully implemented.
+</div>
+
 <p>
   After checking out or downloading and extracting the source code you should
   have the following directory structure:
@@ -525,55 +594,67 @@
 
 <pre>./
   |
-  +-- Docs                  - documentation
+  +-- Docs                    - documentation
   |   |
-  |   +-- ChangeLogs        - program change log files
+  |   +-- ChangeLogs          - program change log files
   |   |
-  |   +-- Design            - documents concerning program design
+  |   +-- Design              - documents concerning program design
   |      |
-  |      +-- FileFormats    - documentation of CodeSnip's file formats
+  |      +-- FileFormats      - documentation of CodeSnip's file formats
   |
-  +-- Src                   - main CodeSnip source code
+  +-- Src                     - main CodeSnip source code
   |   |
-  |   +-- 3rdParty          - third party &amp; DelphiDabbler library source code
+  |   +-- 3rdParty            - third party source code included directly in CodeSnip
   |   |
-  |   +-- AutoGen           - receives automatically generated code
+  |   +-- AutoGen             - receives automatically generated code
   |   |
-  |   +-- Help              - help source files
+  |   +-- Help                - help source files
   |   |   |
-  |   |   +-- CSS           - CSS code for help files
+  |   |   +-- CSS             - CSS code for help files
   |   |   |
-  |   |   +-- HTML          - HTML files included in help file
+  |   |   +-- HTML            - HTML files included in help file
   |   |   |
-  |   |   +-- Images        - images included in help file
+  |   |   +-- Images          - images included in help file
   |   |
-  |   +-- Install           - setup script and support code
+  |   +-- Install             - setup script and support code
   |   |   |
-  |   |   +-- Assets        - files required for inclusion in install program
+  |   |   +-- Assets          - files required for inclusion in install program
   |   |
-  |   +-- Res               - container for files that are embedded in resources
+  |   +-- Lib                 - library source code, not included in CodeSnip project file
+  |   |   |
+  |   |   +-- 3rdParty        - 3rd party library source code
+  |   |       |
+  |   |       +-- DDabLib     - DelphiDabbler Code Library files
+  |   |       |
+  |   |       +-- DelphiColl  - delphi-coll collections files
+  |   |       |
+  |   |       +-- SynEdit     - SynEdit highlighted edit control files
+  |   |
+  |   +-- Portable            - source file for CodeSnip portable loader program
+  |   |
+  |   +-- Res                 - container for files that are embedded in resources
   |       |
-  |       +-- CSS           - CSS files
+  |       +-- CSS             - CSS files
   |       |
-  |       +-- HTML          - HTML files
+  |       +-- HTML            - HTML files
   |       |
-  |       +-- Img           - image files
+  |       +-- Img             - image files
   |       |   |
-  |       |   +-- Branding  - image files used for CodeSnip branding
+  |       |   +-- Branding    - image files used for CodeSnip branding
   |       |   |
-  |       |   +-- Egg       - image files for 'Easter Egg'
+  |       |   +-- Egg         - image files for 'Easter Egg'
   |       |
-  |       +-- Misc          - other resources
+  |       +-- Misc            - other resources
   |       |
-  |       +-- Scripts       - scripting files
+  |       +-- Scripts         - scripting files
   |           |
-  |           +-- 3rdParty  - 3rd party scripting files
+  |           +-- 3rdParty    - 3rd party scripting files
   |
-  +-- Tests                 - contains test code
+  +-- Tests                   - contains test code
       |
-      +-- Src               - test source code
+      +-- Src                 - test source code
           |
-          +-- DUnit         - test source code that uses the DUnit framework</pre>
+          +-- DUnit           - test source code that uses the DUnit framework</pre>
 <p>
   If, by chance you also have <code>Bin</code>, <code>Exe</code> and / or
   <code>Release</code> directories don't worry - all will become clear.
@@ -615,18 +696,32 @@
 
 <pre>./
   |
-  +-- Bin                   - receives object files for CodeSnip
+  +-- Bin                     - receives object files for CodeSnip
   |
   ...
   |
-  +-- Exe                   - receives executable code and compiled help file
+  +-- Exe                     - receives executable code and compiled help file
   |
-  +-- Release               - receives release files
+  +-- Release                 - receives release files
   |
   ...</pre>
 
 <p>
-  If the <code>Bin</code> folder already existed, it will have been emptied.
+  If <code>Bin</code> existed before <code>Make</code> was run, and the
+  required libraries have been built then <code>Bin</code> may have
+  <code>Lib</code> and <code>Lib\Pkg</code> sub-directories.
+</p>
+
+<p>
+  Furthermore if the portable loader for <em>CodeSnip</em> has been built then
+  there will also be a <code>Portable</code> sub-directory of <code>Bin</code>.
+
+<p>
+  If the <code>Bin</code> folder already existed it will have been emptied but
+  any sub-directories will be left intact.
+</p>
+
+<p>
   In addition, <code>Make</code> will have created a <code>.cfg</code> file from
   template in the <code>Src</code> folder. This <code>.cfg</code> file is needed
   for DCC32 to run correctly. The file will be ignored by Subversion.
@@ -641,7 +736,8 @@
   do:
 </p>
 
-<pre class="cmd"><span class="prompt">&gt;</span> Make resources
+<pre class="cmd"><span class="prompt">&gt;</span> Make libraries
+<span class="prompt">&gt;</span> Make resources
 <span class="prompt">&gt;</span> Make typelib
 <span class="prompt">&gt;</span> Make autogen</pre>
 
@@ -666,8 +762,8 @@
 </p>
 
 <p>
-  Note that building with the make file insted of the IDE performs all the above
-  steps automatically.
+  Note that building with the make file instead of the IDE performs all the
+  above steps automatically.
 </p>
 
 <h2>
@@ -685,7 +781,10 @@
 
 <ul>
   <li>
-    Build the <em>CodeSnip</em> Executable
+    Build the Required Libraries.
+  </li>
+  <li>
+    Build the <em>CodeSnip</em> Executable.
   </li>
   <li>
     Build the Help File.
@@ -715,6 +814,38 @@
   <code>Test</code> directory.</em>
 </p>
 
+<h3 id="make-libraries">
+  Build the Required Libraries
+</h3>
+
+<p>
+  Before the <em>CodeSnip</em> executable can be built you need to make sure the
+  required libraries are available.
+</p>
+
+<p>
+  In the case of the Indy components you have to ensure these are available as
+  described <a
+    href="#indy10"
+  >above</a> - the makefile does not know how to build them.
+</p>
+
+<p>
+  All the other libraries that have source code included in the code repository
+  can be built using this command:
+</p>
+
+<pre class="cmd"><span class="prompt">&gt;</span> Make libraries</pre>
+
+<p>
+  You can also build the libraries individually by using one or more of the
+  following commands:
+</p>
+
+<pre class="cmd"><span class="prompt">&gt;</span> Make Collections.bpl
+<span class="prompt">&gt;</span> Make SynEdit_RXE.bpl
+<span class="prompt">&gt;</span> Make DDabLib.bpl</pre>
+
 <h3>
   Build the CodeSnip Executable
 </h3>
@@ -738,6 +869,20 @@
   The <em>CodeSnip</em> executable, named <code>CodeSnip.exe</code> will be
   placed in the <code>Exe</code> folder.
 </p>
+
+<p>
+  There is a shortcut that helps if you're not sure if the required libraries
+  have been built and are up to date.
+</p>
+
+<pre class="cmd"><span class="prompt">&gt;</span> Make bin</pre>
+
+<p>
+  is the same as doing:
+</p>
+
+<pre class="cmd"><span class="prompt">&gt;</span> Make libraries
+<span class="prompt">&gt;</span> Make codesnip</pre>
 
 <h4>
   Portable edition
@@ -778,7 +923,8 @@
   As an aside, you can make all the required files by doing:
 </p>
 
-<pre class="cmd"><span class="prompt">&gt;</span> Make exes</pre>
+<pre class="cmd"><span class="prompt">&gt;</span> Make libraries
+<span class="prompt">&gt;</span> Make exes</pre>
 
 <p>
   Once you have built all the required files you build the setup file by
@@ -891,6 +1037,7 @@
 </p>
 
 <pre class="cmd"><span class="prompt">&gt;</span> Make config
+<span class="prompt">&gt;</span> Make libraries
 <span class="prompt">&gt;</span> Make exes
 <span class="prompt">&gt;</span> Make setup
 <span class="prompt">&gt;</span> Make release</pre>

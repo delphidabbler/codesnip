@@ -8,8 +8,8 @@
  * $Rev$
  * $Date$
  *
- * Constants defined node names and attributes used in the various XML documents
- * used by CodeSnip.
+ * Constants defined node names and attributes used in the various legacy XML
+ * documents used by CodeSnip.
 }
 
 
@@ -30,7 +30,7 @@ const
   cXMLNodeText                = 'version="1.0"';
 
   // Document nodes and attribute names
-  // user-database XML only
+  // legacy "user" database XML only
   cUserDataRootNode           = 'codesnip-data';
   cCategoriesNode             = 'categories';
   cCategoryNode               = 'category';
@@ -46,14 +46,14 @@ const
   cUserEmailNode              = 'email';
   cUserCommentsNode           = 'comments';
   cSourceCodeTextNode         = 'source-code-text';
-  // common to user-database and export XML
+  // common to legacy "user" database and export XML
   cRootVersionAttr            = 'version';
   cRootWatermarkAttr          = 'watermark';
   cPascalNameNode             = 'pascal-name';
-  cDisplayNameNode            = 'display-name';
+  cTitleNode                  = 'display-name';
   cSnippetsNode               = 'routines';
   cSnippetNode                = 'routine';
-  cSnippetNameAttr            = 'name';
+  cSnippetIDAttr              = 'name';
   cCatIdNode                  = 'cat-id';
   cDescriptionNode            = 'description';
   cUnitsNode                  = 'units';
@@ -69,7 +69,7 @@ const
   cCompilerResultNode         = 'compiler-result';
   cCompilerResultIdAttr       = 'id';
 
-  // ID values: common to user-database and export XML
+  // ID values: common to legacy "user" database and export XML
   cCompilerIDs: array[TCompilerID] of string = (
     'd2', 'd3', 'd4', 'd5', 'd6', 'd7',
     'd2005', 'd2006', 'd2007', 'd2009', 'd2010',

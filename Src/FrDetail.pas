@@ -36,7 +36,6 @@ type
     application of user-initiated events via a notifier object.
     }
   TDetailFrame = class(TTitledFrame,
-    ITabbedDisplayMgr,
     IPaneInfo,
     IDetailPaneDisplayMgr,
     IWBCustomiser,
@@ -84,70 +83,58 @@ type
   public
     ///  <summary>Constructs frame and its owned objects.</summary>
     constructor Create(AOwner: TComponent); override;
+
     ///  <summary>Destroys frame and its owned objects.</summary>
     destructor Destroy; override;
 
-    ///  <summary>Selects tab with given index and displays associated view.
+    /// <summary>Returns currently selected view.</summary>
+    ///  <remarks>Method of IDetailPaneDisplayMgr.</remarks>
+    function SelectedView: IView;
+
+    ///  <summary>Selects tab with given index and displays its associated view.
     ///  </summary>
-    ///  <remarks>Method of ITabbedDisplayMgr and IDetailPaneDisplayMgr.
-    ///  </remarks>
+    ///  <remarks>Method of IDetailPaneDisplayMgr.</remarks>
     procedure SelectTab(const TabIdx: Integer);
-    procedure ITabbedDisplayMgr.SelectTab = SelectTab;
-    procedure IDetailPaneDisplayMgr.SelectTab = SelectTab;
 
     ///  <summary>Gets index of currently selected tab.</summary>
-    ///  <remarks>Method of ITabbedDisplayMgr.</remarks>
+    ///  <remarks>Method of IDetailPaneDisplayMgr.</remarks>
     function SelectedTab: Integer;
 
     ///  <summary>Switches to next tab in sequence or goes to first tab if
     ///  current tab is last.</summary>
-    ///  <remarks>Method of ITabbedDisplayMgr.</remarks>
+    ///  <remarks>Method of IDetailPaneDisplayMgr.</remarks>
     procedure NextTab;
 
     ///  <summary>Switches to previous tab in sequence or goes to last tab if
     ///  current tab is first.</summary>
-    ///  <remarks>Method of ITabbedDisplayMgr.</remarks>
+    ///  <remarks>Method of IDetailPaneDisplayMgr.</remarks>
     procedure PreviousTab;
 
-    ///  <summary>Checks if the frame, or one of its child controls, is
-    ///  currently interactive with the user.</summary>
-    ///  <remarks>Method of IPaneInfo.</remarks>
-    function IsInteractive: Boolean;
-
-    ///  <summary>Returns view associated with currently selected tab.</summary>
-    ///  <remarks>
-    ///  <para>If tab set is empty, a null view is returned.</para>
-    ///  <para>Method of IDetailPaneDisplayMgr.</para>
-    ///  </remarks>
-    function SelectedView: IView;
-
-    ///  <summary>Finds index of tab displaying given view or -1 if no such tab.
-    ///  </summary>
+    ///  <summary>Finds index of tab displaying given view or returns -1 if no
+    ///  such tab exists.</summary>
     ///  <remarks>Method of IDetailPaneDisplayMgr.</remarks>
     function FindTab(ViewKey: IViewKey): Integer;
 
-    ///  <summary>Associates given view with tab at given index.</summary>
-    ///  <remarks>
-    ///  <para>If specified tab is currently selected the view is displayed.
-    ///  </para>
-    ///  <para>Method of IDetailPaneDisplayMgr.</para>
-    ///  </remarks>
+    ///  <summary>Displays given view in tab with given index.</summary>
+    ///  <remarks>Method of IDetailPaneDisplayMgr.</remarks>
     procedure Display(View: IView; const TabIdx: Integer);
 
-    ///  <summary>Reloads the currently displayed view.</summary>
-    ///  <remarks>
-    ///  <para>If tab set is empty, null view is reloaded.</para>
-    ///  <para>Method of IDetailPaneDisplayMgr.</para>
-    ///  </remarks>
+    ///  <summary>Reloads the currently displayed views.</summary>
+    ///  <remarks>Method of IDetailPaneDisplayMgr.</remarks>
     procedure Reload;
 
     ///  <summary>Closes all tabs and deletes all views.</summary>
     ///  <remarks>Method of IDetailPaneDisplayMgr.</remarks>
     procedure Clear;
 
-    ///  <summary>Creates a new tab displaying given view and returns its index.
-    ///  </summary>
-    ///  <remarks>Method of IDetailPaneDisplayMgr.</remarks>
+    ///  <summary>Creates a new tab displaying given view in its caption and
+    ///  returns its index.</summary>
+    ///  <remarks>
+    ///  <para>The view is not displayed in the main body of the pane: the
+    ///  existing view is left in place. Call SelectTab with this tab's index
+    ///  to display the view in full.</para>
+    ///  <para>Method of IDetailPaneDisplayMgr.</para>
+    ///  </remarks>
     function CreateTab(View: IView): Integer;
 
     ///  <summary>Checks if tab set is empty, i.e. there are no tabs displayed.
@@ -156,17 +143,18 @@ type
     function IsEmptyTabSet: Boolean;
 
     ///  <summary>Closes tab at given index.</summary>
-    ///  <remarks>
-    ///  <para>If closed tab was selected, another tab is selected and its view
-    ///  displayed, otherwise currently selected tab remains unchanged.</para>
-    ///  <para>Method of IDetailPaneDisplayMgr.</para>
-    ///  </remarks>
+    ///  <remarks>Method of IDetailPaneDisplayMgr.</remarks>
     procedure CloseTab(const TabIdx: Integer);
 
     ///  <summary>Closes all tabs, or all except selected tabs, depending on
     ///  whether KeepSelected is False or True, respectively.</summary>
     ///  <remarks>Method of IDetailPaneDisplayMgr.</remarks>
     procedure CloseMultipleTabs(const KeepSelected: Boolean);
+
+    ///  <summary>Checks if the frame, or one of its child controls, is
+    ///  currently interactive with the user.</summary>
+    ///  <remarks>Method of IPaneInfo.</remarks>
+    function IsInteractive: Boolean;
 
     ///  <summary>Uses the given object to extend the browser control's
     ///  'external object'.</summary>
@@ -286,7 +274,7 @@ end;
 
 procedure TDetailFrame.Clear;
 begin
-  InternalDisplay(TViewFactory.CreateNulView);
+  InternalDisplay(TViewFactory.CreateNullView);
 end;
 
 procedure TDetailFrame.CloseMultipleTabs(const KeepSelected: Boolean);
@@ -351,7 +339,6 @@ function TDetailFrame.CreateTab(View: IView): Integer;
 begin
   Result := tcViews.Tabs.Add(View.Description);
   fViews.Add(View);
-  InternalDisplay(View); // stores View in fViews again
 end;
 
 destructor TDetailFrame.Destroy;
@@ -475,7 +462,7 @@ end;
 function TDetailFrame.SelectedView: IView;
 begin
   if IsEmptyTabSet then
-    Result := TViewFactory.CreateNulView
+    Result := TViewFactory.CreateNullView
   else
     Result := fViews[SelectedTab];
 end;

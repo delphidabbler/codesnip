@@ -80,7 +80,7 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Messages, Controls, ExtCtrls,
+  SysUtils, Messages, Controls, ExtCtrls, Windows,
   // Project
   USystemInfo, UThemesEx;
 
@@ -184,7 +184,7 @@ begin
   if Assigned(fTimer) then
   begin
     fTimer.Enabled := False;
-    FreeAndNil(fTimer);
+    FreeAndNil(fTimer); // FreeAndNil is necessary here
   end;
 end;
 

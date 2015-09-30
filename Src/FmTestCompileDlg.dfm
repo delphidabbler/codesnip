@@ -7,12 +7,12 @@ inherited TestCompileDlg: TTestCompileDlg
     Width = 209
     ExplicitTop = 9
     ExplicitWidth = 209
-    object lblSnippetName: TLabel
+    object lblSnippetTitle: TLabel
       Left = 96
       Top = 8
-      Width = 89
+      Width = 81
       Height = 13
-      Caption = 'lblSnippetName'
+      Caption = 'lblSnippetTitle'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
@@ -20,10 +20,10 @@ inherited TestCompileDlg: TTestCompileDlg
       Font.Style = [fsBold]
       ParentFont = False
     end
-    object lblSnippetNameDesc: TLabel
+    object lblSnippetTitleDesc: TLabel
       Left = 0
       Top = 8
-      Width = 53
+      Width = 55
       Height = 13
       Caption = 'Results for '
     end

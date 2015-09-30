@@ -51,6 +51,14 @@
 
 #define SetupName CreateSetupName(ExeProg)
 
+; ---------------------------------------------------------
+; For v5 development versions only, set version number here
+; Delete this block of lines when version 5 is released
+#define AppVersion "5.DEV"
+#define RealVersion "4.97.0"
+; ---------------------------------------------------------
+
+
 [Setup]
 AppID={{578D0FFE-5873-4457-95F2-AAB38F52B622}
 AppName={#AppName}
@@ -73,7 +81,13 @@ SolidCompression=true
 InternalCompressLevel=ultra
 OutputDir={#OutDir}
 OutputBaseFilename={#SetupName}
-VersionInfoVersion={#AppVersion}
+; --------------------------------------------------------------------------
+; VersionInfoVersion changed for v5 development versions only
+; Restore commented out line following this block when version 5 is released
+; then delete this block
+VersionInfoVersion={#RealVersion}
+; --------------------------------------------------------------------------
+;VersionInfoVersion={#AppVersion}
 VersionInfoCompany={#Company}
 VersionInfoDescription=Installer for {#AppName}
 VersionInfoTextVersion=Release {#AppVersion}

@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2008-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2008-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -30,11 +30,11 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Windows,
+  SysUtils,
+  Windows,
   // Project
-  {$IFDEF PORTABLE}
+  CS.Init.CommandLineOpts,
   UAppInfo,
-  {$ENDIF}
   USystemInfo;
 
 
@@ -49,7 +49,7 @@ var
   Unused: DWORD;        // unused parameters
   PrevErrorMode: UINT;  // stores Windows error mode
 begin
-  // Inhibit system dialog appearing on error
+  // Inhibit system dialogue appearing on error
   PrevErrorMode := SetErrorMode(SEM_FAILCRITICALERRORS);
   try
     Result := 0;
@@ -107,15 +107,16 @@ var
   Drive: Byte;    // loops through all drive numbers
   Serial: DWORD;  // serial number of a hard diak
 begin
-  {$IFDEF PORTABLE}
-  // Get serial for removable disk if possible. Fall thru and get hard disk if
-  // not.
-  Serial := HardDiskSerial(
-    IncludeTrailingPathDelimiter(ExtractFileDrive(TAppInfo.AppExeDir))
-  );
-  if Serial <> 0 then
-    Exit(TOSInfo.ProductID + IntToHex(Serial, 8));
-  {$ENDIF}
+  if TCommandLineOpts.IsPortable then
+  begin
+    // Get serial for removable disk if possible. Fall thru and get hard disk if
+    // not.
+    Serial := HardDiskSerial(
+      IncludeTrailingPathDelimiter(ExtractFileDrive(TAppInfo.AppExeDir))
+    );
+    if Serial <> 0 then
+      Exit(TOSInfo.ProductID + IntToHex(Serial, 8));
+  end;
   // Append serial number of first fixed hard drive as 8 digit hex string
   for Drive := 0 to 25 do
   begin

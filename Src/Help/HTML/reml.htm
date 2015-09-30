@@ -4,12 +4,12 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2009-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2009-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
  *
- * Help topic describing REML markup language.
+ * Help topic describing REML mark-up language.
 -->
 <html>
   <head>
@@ -45,12 +45,12 @@
       <param name="ALink Name" value="REML">
     </object>
     <h1>
-      <a name="reml"></a>About the REML markup language
+      <a name="reml"></a>About the REML mark-up language
     </h1>
     <p>
-      <em>REML</em> is <em>CodeSnip</em>'s own little markup language that can
-      be used to style the text of a snippet's description and / or extra
-      information.
+      <em>REML</em> is <em>CodeSnip</em>'s own little mark-up language that can
+      be used to style the text of a snippet's description and / or additional
+      notes.
     </p>
     <h2>
       Language Details
@@ -59,7 +59,7 @@
       The <em>REML</em> language is a SGML language similar to a greatly
       simplified XHTML. The are a small number of tags you can use. Firstly
       there are two block-level tags that render text in paragraphs, while the
-      other tags format text inline or embed hyplerlinks.
+      other tags format text in-line or embed hyperlinks.
     </p>
     <h3>
       Block level tags
@@ -67,11 +67,11 @@
     <dl>
       <dt class="code">&lt;p&gt;...&lt/p&gt;</dt>
       <dd>
-        Renders the enclosed markup as a simple paragraph.
+        Renders the enclosed mark-up as a simple paragraph.
       </dd>
       <dt class="code">&lt;heading&gt;...&lt;/heading&gt;</dt>
       <dd>
-        Renders the enclosed markup as a heading.
+        Renders the enclosed mark-up as a heading.
       </dd>
     </dl>
     <p>
@@ -101,7 +101,7 @@
       Here are some valid examples:
     </p>
     <ol>
-      <li class="extra-spacing">
+      <li>
         <span class="code">&lt;p&gt;Hello World&lt;/p&gt;</span>
       </li>
       <li>
@@ -110,7 +110,7 @@
       </li>
     </ol>
     <p>
-      Srictly speaking, the following example is invalid code &ndash; the
+      Strictly speaking, the following example is invalid code &ndash; the
       highlighted sections are in error, because they are not contained within
       block tags.
     </p>
@@ -136,27 +136,27 @@
       &lt;p&gt;<span class="hilite">blah</span>&lt;/p&gt;
     </p>
     <h3>
-      Inline tags
+      In-line tags
     </h3>
     <p>
-      Here are the available inline tags:
+      Here are the available in-line tags:
     </p>
     <dl>
       <dt class="code">&lt;strong&gt;...&lt/strong&gt;</dt>
       <dd>
-        Renders the enclosed markup with strong emphasis.<br>
+        Renders the enclosed mark-up with strong emphasis.<br>
         <em>Example:</em> <span class="code">&lt;p&gt;Make stuff
         &lt;strong&gt;stand out&lt;/strong&gt;.&lt;/p&gt;</span>
       </dd>
       <dt class="code">&lt;em&gt;...&lt;/em&gt;</dt>
       <dd>
-        Emphasises the enclosed markup.<br>
+        Emphasises the enclosed mark-up.<br>
         <em>Example:</em> <span class="code">&lt;p&gt;Draw
         &lt;em&gt;attention&lt;/em&gt; to something.&lt;/p&gt;</span>
       </dd>
       <dt class="code">&lt;var&gt;...&lt;/var&gt;</dt>
       <dd>
-        Used to indicate the enclosed markup is a variable.<br>
+        Used to indicate the enclosed mark-up is a variable.<br>
         <em>Example:</em> <span class="code">&lt;p&gt;Refer to a function
         &lt;var&gt;parameter&lt;/var&gt;.&lt;/p&gt;</span>
       </dd>
@@ -169,7 +169,7 @@
       </dd>
       <dt class="code">&lt;mono&gt;...&lt;/mono&gt;</dt>
       <dd>
-        Renders markup in a mono-spaced font.<br>
+        Renders mark-up in a mono-spaced font.<br>
         <em>Example:</em> <span class="code">&lt;p&gt;Use the:
         &lt;mono&gt;Windows&lt;/mono&gt; unit.&lt;/p&gt;</span>
       </dd>
@@ -193,7 +193,7 @@
     </h3>
     <p>
       The &quot;&lt;&quot; and &quot;&amp;&quot; characters are special within
-      the markup and must not be used directly, even when you are just entering
+      the mark-up and must not be used directly, even when you are just entering
       plain text. You must use the <span class="code">&amp;lt;</span> character
       entity in place of &quot;&lt;&quot; and
       <span class="code">&amp;amp;</span> instead of &quot;&amp;&quot;.

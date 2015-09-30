@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2007-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2007-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -23,7 +23,8 @@ uses
   // Delphi
   Classes,
   // Project
-  DB.UCategory, DB.USnippet, Hiliter.UGlobals, URTFUtils;
+  CS.Database.Types,
+  URTFUtils;
 
 
 type
@@ -46,33 +47,30 @@ type
   strict private
     var
       ///  <summary>Reference to snippet described by print document.</summary>
-      fSnippet: TSnippet;
-    ///  <summary>Gets highlighter attributes required to render source code,
-    ///  depending on printer properties.</summary>
-    function GetHiliteAttrs: IHiliteAttrs;
+      fSnippet: ISnippet;
   public
     ///  <summary>Constructs object to create print document for given snippet.
     ///  </summary>
-    constructor Create(const Snippet: TSnippet);
+    constructor Create(Snippet: ISnippet);
     ///  <summary>Generates and returns print document.</summary>
     ///  <remarks>Method of IPrintDocument.</remarks>
     function Generate: TRTF;
   end;
 
 type
-  ///  <summary>Class that generates a print document that describes a category.
-  ///  </summary>
-  TCategoryPrintDocument = class(TInterfacedObject,
+  ///  <summary>Class that generates a print document that describes a tag and
+  ///  the snippets it contains.</summary>
+  TTagPrintDocument = class(TInterfacedObject,
     IPrintDocument
   )
   strict private
     var
-      ///  <summary>Reference to category described by print document.</summary>
-      fCategory: TCategory;
+      ///  <summary>Reference to tag described by print document.</summary>
+      fTag: TTag;
   public
-    ///  <summary>Constructs object to create print document for given category.
+    ///  <summary>Constructs object to create print document for given tag.
     ///  </summary>
-    constructor Create(const Category: TCategory);
+    constructor Create(const Tag: TTag);
     ///  <summary>Generates and returns print document.</summary>
     ///  <remarks>Method of IPrintDocument.</remarks>
     function Generate: TRTF;
@@ -83,12 +81,18 @@ implementation
 
 uses
   // Project
-  Hiliter.UAttrs, URTFCategoryDoc, URTFSnippetDoc, UPrintInfo;
+  CS.Config,
+  CS.Docs.TagInfo.RTF,
+  CS.SourceCode.Languages,
+  CS.SourceCode.Hiliter.Brushes,
+  URTFSnippetDoc,
+  UPreferences,
+  UPrintInfo;
 
 
 { TSnippetPrintDocument }
 
-constructor TSnippetPrintDocument.Create(const Snippet: TSnippet);
+constructor TSnippetPrintDocument.Create(Snippet: ISnippet);
 begin
   inherited Create;
   fSnippet := Snippet;
@@ -96,47 +100,48 @@ end;
 
 function TSnippetPrintDocument.Generate: TRTF;
 var
-  Doc: TRTFSnippetDoc;  // object that renders snippet document in RTF
+  Doc: TRTFSnippetDoc;            // object that renders snippet document in RTF
+  Language: TSourceCodeLanguage;  // programming language used by snippet
+  Brush: TSyntaxHiliterBrush;     // brush used to syntax highlight snippet
 begin
-  Doc := TRTFSnippetDoc.Create(
-    GetHiliteAttrs, poUseColor in PrintInfo.PrintOptions
-  );
+  Language := TConfig.Instance.SourceCodeLanguages[fSnippet.LanguageID];
+  if (poSyntaxHilite in PrintInfo.PrintOptions) then
+    Brush := TSyntaxHiliterBrushes.CreateBrush(Language.HiliterBrushID)
+  else
+    Brush := TSyntaxHiliterBrushes.CreateNullBrush;
   try
-    Result := TRTF.Create(Doc.Generate(fSnippet));
+    Doc := TRTFSnippetDoc.Create(
+      TConfig.Instance.HiliterThemes[
+        Preferences.CurrentHiliteThemeIds[htkPrint]
+      ],
+      Brush,
+      poUseColour in PrintInfo.PrintOptions
+    );
+    try
+      Result := TRTF.Create(Doc.Generate(fSnippet));
+    finally
+      Doc.Free;
+    end;
   finally
-    Doc.Free;
+    Brush.Free;
   end;
 end;
 
-function TSnippetPrintDocument.GetHiliteAttrs: IHiliteAttrs;
-begin
-  if fSnippet.HiliteSource then
-    if not (poSyntaxPrint in PrintInfo.PrintOptions) then
-      Result := THiliteAttrsFactory.CreatePrintAttrs(nil, False)
-    else
-      Result := THiliteAttrsFactory.CreatePrintAttrs(
-        THiliteAttrsFactory.CreateUserAttrs,
-        poUseColor in PrintInfo.PrintOptions
-      )
-  else
-    Result := THiliteAttrsFactory.CreateNulAttrs;
-end;
+{ TTagPrintDocument }
 
-{ TCategoryPrintDocument }
-
-constructor TCategoryPrintDocument.Create(const Category: TCategory);
+constructor TTagPrintDocument.Create(const Tag: TTag);
 begin
   inherited Create;
-  fCategory := Category;
+  fTag := Tag;
 end;
 
-function TCategoryPrintDocument.Generate: TRTF;
+function TTagPrintDocument.Generate: TRTF;
 var
-  Doc: TRTFCategoryDoc; // object that renders category document in RTF
+  Doc: TTagInfoRTFDoc; // object that renders tag document in RTF
 begin
-  Doc := TRTFCategoryDoc.Create(poUseColor in PrintInfo.PrintOptions);
+  Doc := TTagInfoRTFDoc.Create(poUseColour in PrintInfo.PrintOptions);
   try
-    Result := TRTF.Create(Doc.Generate(fCategory));
+    Result := TRTF.Create(Doc.Generate(fTag));
   finally
     Doc.Free;
   end;

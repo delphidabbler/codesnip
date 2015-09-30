@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2009-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2009-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -29,7 +29,7 @@ type
 
   {
   TUserBugReportDlg:
-    dialog box that informs users how to report bugs.
+    Dialogue box that informs users how to report bugs.
   }
   TUserBugReportDlg = class(TBugReportBaseDlg)
     lblInstruct1: TLabel;
@@ -41,10 +41,10 @@ type
       }
   public
     class procedure Execute(AOwner: TComponent);
-      {Creates and displays bug report dialog box.
-        @param Owner [in] Component that owns dialog box. Dialog box is aligned
-          over this component if it is a form. If Owner it is nil or not a form
-          the dialog is aligned over the active form.
+      {Creates and displays bug report dialogue box.
+        @param Owner [in] Component that owns dialogue box. Dialogue box is
+          aligned over this component if it is a form. If Owner it is nil or not
+          a form the dialogue is aligned over the active form.
       }
   end;
 
@@ -73,10 +73,10 @@ begin
 end;
 
 class procedure TUserBugReportDlg.Execute(AOwner: TComponent);
-  {Creates and displays bug report dialog box.
-    @param Owner [in] Component that owns dialog box. Dialog box is aligned over
-      this component if it is a form. If Owner it is nil or not a form the
-      dialog is aligned over the active form.
+  {Creates and displays bug report dialogue box.
+    @param Owner [in] Component that owns dialogue box. Dialogue box is aligned
+      over this component if it is a form. If Owner it is nil or not a form the
+      dialogue is aligned over the active form.
   }
 begin
   with Create(AOwner) do

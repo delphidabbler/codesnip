@@ -3,13 +3,13 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2006-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2006-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
  *
- * Implements a class that executes a thread and displays a dialog box if thread
- * takes more than a specified time to complete.
+ * Implements a class that executes a thread and displays a dialogue box if
+ * thread takes more than a specified time to complete.
 }
 
 
@@ -30,8 +30,8 @@ type
 
   {
   TWaitForThreadUI:
-    Class that executes a thread and displays a dialog box if thread takes more
-    than a specified time to complete.
+    Class that executes a thread and displays a dialogue box if thread takes
+    more than a specified time to complete.
   }
   TWaitForThreadUI = class(TNoPublicConstructObject)
   strict private
@@ -83,7 +83,7 @@ type
         @param AMinDisplayTime [in] Minimum time to display form (optional).
       }
     procedure Execute;
-      {Executes thread and displays dialog box if necessary.
+      {Executes thread and displays dialogue box if necessary.
       }
   public
     class constructor Create;
@@ -99,7 +99,7 @@ type
       const APauseBeforeDisplay: Cardinal = DefaultPauseBeforeDisplay;
       const AMinDisplayTime: Cardinal = DefaultMinDisplayTime); overload;
       {Creates and executes a TWaitForThreadUI object that executes a thread,
-      displaying dialog box if necessary.
+      displaying dialogue box if necessary.
         @param AThread [in] Thread to be executed.
         @param AForm [in] Form to be displayed while thread executes.
         @param APauseBeforeDisplay [in] Time thread given to execute before form
@@ -111,7 +111,7 @@ type
       const APauseBeforeDisplay: Cardinal = DefaultPauseBeforeDisplay;
       const AMinDisplayTime: Cardinal = DefaultMinDisplayTime); overload;
       {Creates and executes a TWaitForThreadUI object that executes a closure in
-      a thread, displaying dialog box if necessary.
+      a thread, displaying dialogue box if necessary.
         @param AProc [in] Closure to be executed in thread.
         @param AIsThreadSage [in] Indicates if AProc is thread safe. If True
           AProc is excuted in context of thread. If False closure is executed
@@ -199,7 +199,7 @@ begin
 end;
 
 procedure TWaitForThreadUI.Execute;
-  {Executes thread and displays dialog box if necessary.
+  {Executes thread and displays dialogue box if necessary.
   }
 begin
   // Flag that form closure not yet requested
@@ -210,10 +210,10 @@ begin
   // Execute thread
   fThread.OnTerminate := ThreadTerminated;
   fThread.Start;
-  // Pause before displayng dialog by PauseBeforeDisplay ms
+  // Pause before displayng dialogue by PauseBeforeDisplay ms
   Pause;
   if not fThread.Finished then
-    // Show dialog if thread not completed. Dialog blocks until thread
+    // Show dialogue if thread not completed. Dialogue blocks until thread
     // terminates.
     ShowForm;
   // Re-raise any exception that was raised by thread: must be a clone and not
@@ -286,7 +286,7 @@ class procedure TWaitForThreadUI.Run(const AProc: TProc;
   const AIsThreadSafe: Boolean; const AForm: TForm;
   const APauseBeforeDisplay, AMinDisplayTime: Cardinal);
   {Creates and executes a TWaitForThreadUI object that executes a closure in a
-  thread, displaying dialog box if necessary.
+  thread, displaying dialogue box if necessary.
     @param AProc [in] Closure to be executed in thread.
     @param AIsThreadSage [in] Indicates if AProc is thread safe. If True AProc
       is excuted in context of thread. If False closure is executed in context
@@ -310,7 +310,7 @@ end;
 class procedure TWaitForThreadUI.Run(const AThread: TThread;
   const AForm: TForm; const APauseBeforeDisplay, AMinDisplayTime: Cardinal);
   {Creates and executes a TWaitForThreadUI object that executes a thread,
-  displaying dialog box if necessary.
+  displaying dialogue box if necessary.
     @param AThread [in] Thread to be executed.
     @param AForm [in] Form to be displayed while thread executes.
     @param APauseBeforeDisplay [in] Time thread given to execute before form is

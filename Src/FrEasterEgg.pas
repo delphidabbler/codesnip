@@ -80,7 +80,7 @@ begin
     with CSSBuilder.AddSelector('body') do
       AddProperty(TCSS.FontProps(CSSFont));
   finally
-    FreeAndNil(CSSFont);
+    CSSFont.Free;
   end;
 end;
 

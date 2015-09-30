@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2009-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2009-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -30,7 +30,7 @@ uses
 type
   {
   TDonateDlg:
-    Dialog box that displays information about donating to support CodeSnip
+    Dialogue box that displays information about donating to support CodeSnip
     along with a button to display the Paypal donation web page.
   }
   TDonateDlg = class(TGenericViewDlg)
@@ -39,7 +39,7 @@ type
     procedure FormCreate(Sender: TObject);
   strict private
     procedure UpdateCSS(Sender: TObject; const CSSBuilder: TCSSBuilder);
-      {Modifies CSS used to display dialog box body to achieve required
+      {Modifies CSS used to display dialogue box body to achieve required
       appearance.
         @param Sender [in] Not used.
         @param CSSBuilder [in] Object used to modify CSS.
@@ -50,13 +50,13 @@ type
       Called from ancestor class.
       }
     procedure ArrangeForm; override;
-      {Sizes dialog to fit content and adjusts position of donation button on
+      {Sizes dialogue to fit content and adjusts position of donation button on
       bottom line. Called from ancestor class.
       }
   public
     class procedure Execute(const AOwner: TComponent);
-      {Displays dialog box.
-        @param AOwner [in] Component that owns this dialog box.
+      {Displays dialogue box.
+        @param AOwner [in] Component that owns this dialogue box.
       }
   end;
 
@@ -75,13 +75,13 @@ uses
 { TDonateDlg }
 
 procedure TDonateDlg.ArrangeForm;
-  {Sizes dialog to fit content and adjusts position of donation button on bottom
-  line. Called from ancestor class.
+  {Sizes dialogue to fit content and adjusts position of donation button on
+  bottom line. Called from ancestor class.
   }
 begin
   // set body panel height from size of content
   pnlBody.Height := frmContent.DocHeight;
-  // size dialog box
+  // size dialogue box
   inherited;
   btnDoDonate.Left := pnlBody.Left;
   btnDoDonate.Top := btnClose.Top;
@@ -98,8 +98,8 @@ begin
 end;
 
 class procedure TDonateDlg.Execute(const AOwner: TComponent);
-  {Displays dialog box.
-    @param AOwner [in] Component that owns this dialog box.
+  {Displays dialogue box.
+    @param AOwner [in] Component that owns this dialogue box.
   }
 begin
   with Create(AOwner) do
@@ -119,12 +119,13 @@ begin
 end;
 
 procedure TDonateDlg.UpdateCSS(Sender: TObject; const CSSBuilder: TCSSBuilder);
-  {Modifies CSS used to display dialog box body to achieve required appearance.
+  {Modifies CSS used to display dialogue box body to achieve required
+  appearance.
     @param Sender [in] Not used.
     @param CSSBuilder [in] Object used to modify CSS.
   }
 var
-  ContentFont: TFont; // font used for dialog box content (not controls)
+  ContentFont: TFont; // font used for dialogue box content (not controls)
 begin
   // Build content font and apply to HTML frame
   ContentFont := TFont.Create;
@@ -137,7 +138,7 @@ begin
       AddProperty(TCSS.PaddingProp(0, 6, 6, 6));
     end;
   finally
-    FreeAndNil(ContentFont);
+    ContentFont.Free;
   end;
 end;
 

@@ -231,7 +231,7 @@ end;
 
 procedure TBaseForm.FormDestroy(Sender: TObject);
 begin
-  FreeAndNil(fCtrlStateMgr);
+  fCtrlStateMgr.Free;
 end;
 
 procedure TBaseForm.FormKeyDown(Sender: TObject; var Key: Word;

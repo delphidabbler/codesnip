@@ -2,7 +2,7 @@
 # v. 2.0. If a copy of the MPL was not distributed with this file, You can
 # obtain one at http://mozilla.org/MPL/2.0/
 #
-# Copyright (C) 2009-2015, Peter Johnson (www.delphidabbler.com).
+# Copyright (C) 2009-2014, Peter Johnson (www.delphidabbler.com).
 #
 # $Rev$
 # $Date$
@@ -13,6 +13,8 @@
 # Define macros giving relative paths to other directories from location of
 # makefile
 BIN = ..\Bin
+LIBBIN = $(BIN)\Lib
+PKGBIN = $(LIBBIN)\Pkg
 EXE = ..\Exe
 
 # Check for required environment variables
@@ -74,11 +76,7 @@ ZIP = Zip.exe
 !endif
 
 # Command line options
-!ifdef PORTABLE
-DELPHIDEFINES = "-DPORTABLE"
-!else
 DELPHIDEFINES =
-!endif
 
 # Implicit rules
 
@@ -96,10 +94,13 @@ DELPHIDEFINES =
 # Explicit rules
 
 # Default is to build everything and release
-everything: config exes setup release
+everything: config libraries exes setup release
 
 # Builds CodeSnip exe file + help
 exes: codesnip help
+
+# Builds libraries and CodeSnip exe
+bin: libraries codesnip
 
 # Build CodeSnip executable
 codesnip: typelib resources autogen pascal
@@ -111,8 +112,8 @@ config:
   @copy /Y CodeSnip.cfg.tplt CodeSnip.cfg
   # Create build folders
   @cd ..
-  @if exist Bin rmdir /S /Q Bin
-  @mkdir Bin
+  @if exist Bin del /Q Bin\*.*
+  @if not exist Bin mkdir Bin
   @if not exist Exe mkdir Exe
   @if not exist Release mkdir Release
   @cd Src
@@ -124,27 +125,14 @@ pascal: CodeSnip.exe
 # locations in the project options .cfg file.
 CodeSnip.exe:
   @echo +++ Compiling Pascal +++
-!ifdef PORTABLE
-  @if exist $(EXE)\$(@F) copy $(EXE)\$(@F) $(EXE)\$(@F).bak
-!endif
   @$(DCC32) $(@B).dpr -B -U"$(INDY10)" $(DELPHIDEFINES)
-!ifdef PORTABLE
-  @copy $(EXE)\$(@F) $(EXE)\$(@B)-p.exe /Y
-  @del $(EXE)\$(@F)
-  @if exist $(EXE)\$(@F).bak copy $(EXE)\$(@F).bak $(EXE)\$(@F)
-  @if exist $(EXE)\$(@F).bak del $(EXE)\$(@F).bak
-!endif
 
 # Builds help file
 help:
   -1 @$(HHC) .\Help\CodeSnip.chm
 
 # Compiles the resources and deletes intermediate file created by VIED
-!ifndef PORTABLE
 VERINFOFILEBASE = VCodeSnip
-!else
-VERINFOFILEBASE = VCodeSnipPortable
-!endif
 resources: $(VERINFOFILEBASE).res Resources.res HTML.res
   -@del $(VERINFOFILEBASE).rc
 
@@ -159,41 +147,33 @@ typelib:
 
 # Builds setup program
 setup:
-!ifndef PORTABLE
   @del ..\Exe\CodeSnip-Setup-*
   @$(ISCC) Install\CodeSnip.iss
-!else
-  @echo **** Portable build - no setup file created ****
-!endif
 
 # Creates auto generated files
+AUTOGENDIR = .\Main\AutoGen
 autogen:
-  @$(TLIBIMP) -P+ -Ps+ -D.\AutoGen -FtIntfExternalObj $(BIN)\ExternalObj.tlb
-  @if exist .\AutoGen\IntfExternalObj.dcr del .\AutoGen\IntfExternalObj.dcr
+  @$(TLIBIMP) -P+ -Ps+ -D$(AUTOGENDIR) -FtIntfExternalObj $(BIN)\ExternalObj.tlb
+  @if exist $(AUTOGENDIR)\IntfExternalObj.dcr del $(AUTOGENDIR)\IntfExternalObj.dcr
 
 # Build release files (.zip)
 !ifndef RELEASEFILENAME
 RELEASEFILENAME = dd-codesnip
-!ifdef PORTABLE
-RELEASEFILENAME = $(RELEASEFILENAME)-portable
 !endif
-!endif
-OUTFILE = Release\$(RELEASEFILENAME).zip
+STANDARDOUTFILE = Release\$(RELEASEFILENAME).zip
+PORTABLEOUTFILE = Release\$(RELEASEFILENAME)-portable.zip
 release:
-  @echo ---------------------
-  @echo Creating Release File
-  @echo ---------------------
+  @echo ----------------------
+  @echo Creating Release Files
+  @echo ----------------------
   @cd ..
-  -@if exist $(OUTFILE) del $(OUTFILE)
-!ifndef PORTABLE
-  @$(ZIP) -j -9 $(OUTFILE) Exe\CodeSnip-Setup-*.exe Docs\ReadMe.txt
-!else
-  @$(ZIP) -j -9 $(OUTFILE) Exe\CodeSnip-p.exe
-  @$(ZIP) -j -9 $(OUTFILE) Exe\CodeSnip.chm
-  @$(ZIP) -j -9 $(OUTFILE) Docs\ReadMe.txt
-  @$(ZIP) -j -9 $(OUTFILE) Docs\Privacy.txt
-  @$(ZIP) -j -9 $(OUTFILE) Docs\License.html
-!endif
+  -@if exist $(STANDARDOUTFILE) del $(STANDARDOUTFILE)
+  @$(ZIP) -j -9 $(STANDARDOUTFILE) Exe\CodeSnip-Setup-*.exe Docs\ReadMe.txt
+  @$(ZIP) -j -9 $(PORTABLEOUTFILE) Exe\CodeSnip.exe
+  @$(ZIP) -j -9 $(PORTABLEOUTFILE) Exe\CodeSnip.chm
+  @$(ZIP) -j -9 $(PORTABLEOUTFILE) Docs\ReadMe.txt
+  @$(ZIP) -j -9 $(PORTABLEOUTFILE) Docs\Privacy.txt
+  @$(ZIP) -j -9 $(PORTABLEOUTFILE) Docs\License.html
   @cd Src
 
 # Clean up unwanted files
@@ -209,3 +189,9 @@ clean:
   # remove __history folders
   -@for /F "usebackq" %i in (`dir /S /B /A:D ..\__history`) do @rmdir /S /Q %i
   @cd Src
+
+# Make libraries
+libraries:
+  @cd Lib
+  Make
+  @cd ..

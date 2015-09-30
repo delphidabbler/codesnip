@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2005-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -203,7 +203,8 @@ procedure THistoryMenuItem.SetViewItem(Value: IView);
 resourcestring
   // Menu caption templates
   sSnippetDesc = 'Snippet: %s';
-  sCategoryDesc = 'Category: %s';
+  sTagDesc = 'Tag: %s';
+  sSourceCodeLanguageDesc = 'Language: %s';
   sSnipKindDesc = 'Snippets type: %s';
   sAlphabetDesc = 'Alphabetic section: %s';
 const
@@ -216,8 +217,10 @@ begin
     Caption := ViewItem.Description
   else if Supports(fViewItem, ISnippetView) then
     Caption := Format(sSnippetDesc, [ViewItem.Description])
-  else if Supports(fViewItem, ICategoryView) then
-    Caption := Format(sCategoryDesc, [ViewItem.Description])
+  else if Supports(fViewItem, ITagView) then
+    Caption := Format(sTagDesc, [ViewItem.Description])
+  else if Supports(fViewItem, ISourceCodeLanguageView) then
+    Caption := Format(sSourceCodeLanguageDesc, [ViewItem.Description])
   else if Supports(fViewItem, ISnippetKindView) then
     Caption := Format(sSnipKindDesc, [ViewItem.Description])
   else if Supports(fViewItem, IInitialLetterView) then

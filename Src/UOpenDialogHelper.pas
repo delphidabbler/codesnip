@@ -3,13 +3,13 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2008-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2008-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
  *
  * Helper routines for use when working with standard windows open and save file
- * dialog boxes.
+ * dialogue boxes.
 }
 
 
@@ -25,32 +25,33 @@ uses
 
 
 function FileOpenEditedFileName(const Dlg: TOpenDialog): string;
-  {Gets full path to the file that is currently entered in a file open dialog
+  {Gets full path to the file that is currently entered in a file open dialogue
   box.
-    @param Dlg [in] Dialog box for which file name is required.
+    @param Dlg [in] Dialogue box for which file name is required.
     @return Required file path.
   }
 
 function FileOpenFileNameWithExt(Dlg: TOpenDialog): string;
-  {Ensures a file name entered in a dialog box has a default extension if none
+  {Ensures a file name entered in a dialogue box has a default extension if none
   provided.
-    @param Dlg [in] Dialog box containing required file name and extension info.
+    @param Dlg [in] Dialogue box containing required file name and extension
+      info.
     @return File name, with default extension if (1) file name has no extension,
-      (2) current filter is not *.* (3) dialog has a filter string.
+      (2) current filter is not *.* (3) dialogue has a filter string.
   }
 
 function FilterIndexToExt(const Dlg: TOpenDialog): string;
-  {Extracts extension associated with a standard file open dialog's selected
+  {Extracts extension associated with a standard file open dialogue's selected
   file type from its "|" delimited Filter property.
-    @param Dlg [in] Dialog box for which current extension is to be extracted.
-    @return Extension specified by dialog's FilterIndex property with a
+    @param Dlg [in] Dialogue box for which current extension is to be extracted.
+    @return Extension specified by dialogue's FilterIndex property with a
       prepended '.'.
   }
 
 function ExtToFilterIndex(const FilterStr, Ext: string;
   const DefValue: Integer): Integer;
   {Calculates index of a file extension in a "|" delimited file filter string as
-  used in standard file dialog boxes.
+  used in standard file dialogue boxes.
     @param FilterStr [in] List of file types and extensions. Has format
       "file desc 1|ext 1|file desc 2|ext 2 etc...".
     @param Ext [in] Extension to be found.
@@ -61,9 +62,9 @@ function ExtToFilterIndex(const FilterStr, Ext: string;
   }
 
 function FileOpenEditedFileNameWithExt(const Dlg: TOpenDialog): string;
-  {Gets full path to the file that is currently entered in a file open dialog
+  {Gets full path to the file that is currently entered in a file open dialogue
   box, with default extension added if necessary.
-    @param Dlg [in] Dialog box for which file name is required.
+    @param Dlg [in] Dialogue box for which file name is required.
     @return Required file path.
   }
 
@@ -79,10 +80,10 @@ uses
 
 
 function FilterIndexToExt(const Dlg: TOpenDialog): string;
-  {Extracts extension associated with a standard file open dialog's selected
+  {Extracts extension associated with a standard file open dialogue's selected
   file type from its "|" delimited Filter property.
-    @param Dlg [in] Dialog box for which current extension is to be extracted.
-    @return Extension specified by dialog's FilterIndex property with a
+    @param Dlg [in] Dialogue box for which current extension is to be extracted.
+    @return Extension specified by dialogue's FilterIndex property with a
       prepended '.'.
   }
 var
@@ -95,14 +96,14 @@ begin
     StrExplode(Dlg.Filter, '|', FilterParts);
     Result := ExtractFileExt(FilterParts[2 * (Dlg.FilterIndex - 1) + 1]);
   finally
-    FreeAndNil(FilterParts);
+    FilterParts.Free;
   end;
 end;
 
 function ExtToFilterIndex(const FilterStr, Ext: string;
   const DefValue: Integer): Integer;
   {Calculates index of a file extension in a "|" delimited file filter string as
-  used in standard file dialog boxes.
+  used in standard file dialogue boxes.
     @param FilterStr [in] List of file types and extensions. Has format
       "file desc 1|ext 1|file desc 2|ext 2 etc...".
     @param Ext [in] Extension to be found.
@@ -138,17 +139,18 @@ begin
     else
       Result := DefValue;
   finally
-    FreeAndNil(Extensions);
-    FreeAndNil(FilterParts);
+    Extensions.Free;
+    FilterParts.Free;
   end;
 end;
 
 function FileOpenFileNameWithExt(Dlg: TOpenDialog): string;
-  {Ensures a file name entered in a dialog box has a default extension if none
+  {Ensures a file name entered in a dialogue box has a default extension if none
   provided.
-    @param Dlg [in] Dialog box containing required file name and extension info.
+    @param Dlg [in] Dialogue box containing required file name and extension
+      info.
     @return File name, with default extension if (1) file name has no extension,
-      (2) current filter is not *.* (3) dialog has a filter string.
+      (2) current filter is not *.* (3) dialogue has a filter string.
   }
 var
   DefaultExt: string; // default extension for current filter
@@ -163,8 +165,8 @@ begin
 end;
 
 function FileOpenEditText(const Dlg: TOpenDialog): string;
-  {Gets text from file edit control in a file open dialog box.
-    @param Dlg [in] Reference to dialog box for which text is required.
+  {Gets text from file edit control in a file open dialogue box.
+    @param Dlg [in] Reference to dialogue box for which text is required.
     @return Required text.
   }
 var
@@ -172,7 +174,7 @@ var
   Text: array[0..MAX_PATH] of Char; // buffer to receive edit control text
 begin
   Result := '';
-  // File name entered by user or selected in dialog is displayed either in
+  // File name entered by user or selected in dialogue is displayed either in
   // edit control edt1 or in combo box cmb13. We try to get text first from
   // edt1 and if that fails, from cmb13. If we fail to find both we bail out.
   DlgItemWnd := GetDlgItem(GetParent(Dlg.Handle), edt1);
@@ -186,8 +188,8 @@ begin
 end;
 
 function FileOpenFolderPath(const Dlg: TOpenDialog): string;
-  {Gets name of currently selected folder in a file open dialog box.
-    @param Dlg [in] Reference to dialog box for which folder is required.
+  {Gets name of currently selected folder in a file open dialogue box.
+    @param Dlg [in] Reference to dialogue box for which folder is required.
     @return Path to folder.
   }
 var
@@ -200,9 +202,9 @@ begin
 end;
 
 function FileOpenEditedFileName(const Dlg: TOpenDialog): string;
-  {Gets full path to the file that is currently entered in a file open dialog
+  {Gets full path to the file that is currently entered in a file open dialogue
   box.
-    @param Dlg [in] Dialog box for which file name is required.
+    @param Dlg [in] Dialogue box for which file name is required.
     @return Required file path.
   }
 begin
@@ -214,11 +216,12 @@ begin
 end;
 
 function FileOpenEditedFileNameWithExt(const Dlg: TOpenDialog): string;
-  {Gets full path to the file that is currently entered in a file open dialog
+  {Gets full path to the file that is currently entered in a file open dialogue
   box, with default extension added if necessary.
-    @param Dlg [in] Dialog box containing required file name and extension info.
+    @param Dlg [in] Dialogue box containing required file name and extension
+      info.
     @return File name, with default extension if (1) file name has no extension,
-      (2) current filter is not *.* (3) dialog has a filter string.
+      (2) current filter is not *.* (3) dialogue has a filter string.
   }
 var
   DefaultExt: string; // default extension for current filter

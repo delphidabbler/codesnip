@@ -1,0 +1,60 @@
+﻿	<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+		<PropertyGroup>
+			<ProjectGuid>{219B8E91-268C-434E-A5C2-4FEBD2D37C17}</ProjectGuid>
+		</PropertyGroup>
+		<ItemGroup>
+			<Projects Include="DDabLib\DDabLib.dproj">
+				<Dependencies/>
+			</Projects>
+			<Projects Include="DelphiColl\Collections.dproj">
+				<Dependencies/>
+			</Projects>
+			<Projects Include="SynEdit\SynEdit_RXE.dproj">
+				<Dependencies/>
+			</Projects>
+		</ItemGroup>
+		<ProjectExtensions>
+			<Borland.Personality>Default.Personality.12</Borland.Personality>
+			<Borland.ProjectType/>
+			<BorlandProject>
+				<Default.Personality/>
+			</BorlandProject>
+		</ProjectExtensions>
+		<Target Name="DDabLib">
+			<MSBuild Projects="DDabLib\DDabLib.dproj"/>
+		</Target>
+		<Target Name="DDabLib:Clean">
+			<MSBuild Projects="DDabLib\DDabLib.dproj" Targets="Clean"/>
+		</Target>
+		<Target Name="DDabLib:Make">
+			<MSBuild Projects="DDabLib\DDabLib.dproj" Targets="Make"/>
+		</Target>
+		<Target Name="Collections">
+			<MSBuild Projects="DelphiColl\Collections.dproj"/>
+		</Target>
+		<Target Name="Collections:Clean">
+			<MSBuild Projects="DelphiColl\Collections.dproj" Targets="Clean"/>
+		</Target>
+		<Target Name="Collections:Make">
+			<MSBuild Projects="DelphiColl\Collections.dproj" Targets="Make"/>
+		</Target>
+		<Target Name="SynEdit_RXE">
+			<MSBuild Projects="SynEdit\SynEdit_RXE.dproj"/>
+		</Target>
+		<Target Name="SynEdit_RXE:Clean">
+			<MSBuild Projects="SynEdit\SynEdit_RXE.dproj" Targets="Clean"/>
+		</Target>
+		<Target Name="SynEdit_RXE:Make">
+			<MSBuild Projects="SynEdit\SynEdit_RXE.dproj" Targets="Make"/>
+		</Target>
+		<Target Name="Build">
+			<CallTarget Targets="DDabLib;Collections;SynEdit_RXE"/>
+		</Target>
+		<Target Name="Clean">
+			<CallTarget Targets="DDabLib:Clean;Collections:Clean;SynEdit_RXE:Clean"/>
+		</Target>
+		<Target Name="Make">
+			<CallTarget Targets="DDabLib:Make;Collections:Make;SynEdit_RXE:Make"/>
+		</Target>
+		<Import Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')" Project="$(BDS)\Bin\CodeGear.Group.Targets"/>
+	</Project>

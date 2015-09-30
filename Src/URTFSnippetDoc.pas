@@ -23,8 +23,16 @@ uses
   // Delphi
   Graphics,
   // Project
-  ActiveText.UMain, ActiveText.URTFRenderer, Hiliter.UGlobals, UEncodings,
-  UIStringList, USnippetDoc, URTFBuilder, URTFStyles, URTFUtils;
+  CS.ActiveText,
+  CS.ActiveText.Renderers.RTF,
+  CS.SourceCode.Hiliter.Brushes,
+  CS.SourceCode.Hiliter.Themes,
+  UEncodings,
+  UIStringList,
+  USnippetDoc,
+  URTFBuilder,
+  URTFStyles,
+  URTFUtils;
 
 
 type
@@ -35,16 +43,18 @@ type
   TRTFSnippetDoc = class(TSnippetDoc)
   strict private
     var
-      ///  <summary>Attributes that determine formatting of highlighted source
-      ///  code formatting.</summary>
-      fHiliteAttrs: IHiliteAttrs;
+      ///  <summary>Theme used for styling syntax highlighting.</summary>
+      fTheme: TSyntaxHiliteTheme;
+      ///  <summary>Brush used to perform syntax highlighting.</summary>
+      fBrush: TSyntaxHiliterBrush;
       ///  <summary>Object used to build rich text document.</summary>
       fBuilder: TRTFBuilder;
       ///  <summary>Flag indicates whether to output in colour.</summary>
       fUseColour: Boolean;
-
+      ///  <summary>RTF styles used for snippet's description.</summary>
       fDescStyles: TActiveTextRTFStyleMap;
-      fExtraStyles: TActiveTextRTFStyleMap;
+      ///  <summary>RTF styles used for snippet's notes.</summary>
+      fNotesStyles: TActiveTextRTFStyleMap;
       ///  <summary>Styling applied to URLs.</summary>
       fURLStyle: TRTFStyle;
     const
@@ -67,12 +77,8 @@ type
   strict protected
     ///  <summary>Initialises rich text document.</summary>
     procedure InitialiseDoc; override;
-    ///  <summary>Adds given heading (i.e. snippet name) to document. Can be
-    ///  user defined or from main database.</summary>
-    ///  <remarks>Heading is coloured according to whether user defined or not.
-    ///  </remarks>
-    procedure RenderHeading(const Heading: string; const UserDefined: Boolean);
-      override;
+    ///  <summary>Adds given heading to document.</summary>
+    procedure RenderHeading(const Heading: string); override;
     ///  <summary>Adds given snippet description to document.</summary>
     ///  <remarks>Active text formatting is observed and styled to suit
     ///  document.</remarks>
@@ -89,24 +95,26 @@ type
     ///  document.</summary>
     procedure RenderCompilerInfo(const Heading: string;
       const Info: TCompileDocInfoArray); override;
-    ///  <summary>Interprets and adds given extra information to document.
-    ///  </summary>
+    ///  <summary>Interprets and adds given notes to document.</summary>
     ///  <remarks>Active text formatting is observed and styled to suit
     ///  document.</remarks>
-    procedure RenderExtra(const ExtraText: IActiveText); override;
-    ///  <summary>Adds given information about code snippets database to
-    ///  document.</summary>
-    procedure RenderDBInfo(const Text: string); override;
+    procedure RenderNotes(const NotesText: IActiveText); override;
     ///  <summary>Finalises document and returns content as encoded data.
     ///  </summary>
     function FinaliseDoc: TEncodedData; override;
+
+    function CreateActiveTextRenderer(const Styles: TActiveTextRTFStyleMap):
+      IActiveTextRenderer;
   public
     ///  <summary>Constructs object to render a snippet.</summary>
-    ///  <param name="HiliteAttrs">IHiliteAttrs [in] Defines style of syntax
-    ///  highlighting used for source code.</param>
+    ///  <param name="ATheme">TSyntaxHiliteTheme [in] Theme to be used when
+    ///  syntax highlighting source code.</param>
+    ///  <param name="ABrush">TSyntaxHiliterBrush [in] Brush to be used to
+    ///  syntax highlight source code.</param>
     ///  <param name="UseColour">Boolean [in] Flag that whether document is
     ///  printed in colour (True) or black and white (False).</param>
-    constructor Create(const HiliteAttrs: IHiliteAttrs;
+    constructor Create(const ATheme: TSyntaxHiliteTheme;
+      const ABrush: TSyntaxHiliterBrush;
       const UseColour: Boolean = True);
     ///  <summary>Destroys object.</summary>
     destructor Destroy; override;
@@ -119,26 +127,46 @@ implementation
 uses
   // Delphi
   SysUtils,
+  Generics.Collections,
   // Project
-  Hiliter.UHiliters, UColours, UConsts, UPreferences, UStrUtils;
+  CS.SourceCode.Hiliter.Renderers,
+  UColours,
+  UConsts,
+  UStrUtils;
 
 
 { TRTFSnippetDoc }
 
-constructor TRTFSnippetDoc.Create(const HiliteAttrs: IHiliteAttrs;
-  const UseColour: Boolean = True);
+constructor TRTFSnippetDoc.Create(const ATheme: TSyntaxHiliteTheme;
+  const ABrush: TSyntaxHiliterBrush; const UseColour: Boolean = True);
 begin
+  Assert(Assigned(ATheme), ClassName + '.Create: ATheme is nil');
+  Assert(Assigned(ABrush), ClassName + '.Create: ABrush is nil');
   inherited Create;
-  fHiliteAttrs := HiliteAttrs;
+  fTheme := ATheme.Clone(not UseColour);
+  fBrush := ABrush;
   fUseColour := UseColour;
   fDescStyles := TActiveTextRTFStyleMap.Create;
-  fExtraStyles := TActiveTextRTFStyleMap.Create;
+  fNotesStyles := TActiveTextRTFStyleMap.Create;
   InitStyles;
+end;
+
+function TRTFSnippetDoc.CreateActiveTextRenderer(
+  const Styles: TActiveTextRTFStyleMap): IActiveTextRenderer;
+var
+  Renderer: TActiveTextRTFRenderer;
+begin
+  Renderer := TActiveTextRTFRenderer.Create(fBuilder);
+  Renderer.Options.ElemStyleMap := Styles;
+  Renderer.Options.DisplayURLs := True;
+  Renderer.Options.URLStyle := fURLStyle;
+  Result := Renderer;
 end;
 
 destructor TRTFSnippetDoc.Destroy;
 begin
-  fExtraStyles.Free;
+  fTheme.Free;
+  fNotesStyles.Free;
   fDescStyles.Free;
   inherited;
 end;
@@ -155,13 +183,11 @@ begin
   fBuilder := TRTFBuilder.Create(0);  // Use default code page
   // Set up font table
   fBuilder.FontTable.Add(MainFontName, rgfSwiss, 0);
-  fBuilder.FontTable.Add(fHiliteAttrs.FontName, rgfModern, 0);
+  fBuilder.FontTable.Add(fTheme.FontName, rgfModern, 0);
   // set up colour table
   fBuilder.ColourTable.Add(clWarningText);
   fBuilder.ColourTable.Add(clVarText);
   fBuilder.ColourTable.Add(clExternalLink);
-  fBuilder.ColourTable.Add(Preferences.DBHeadingColours[False]);
-  fBuilder.ColourTable.Add(Preferences.DBHeadingColours[True]);
 end;
 
 procedure TRTFSnippetDoc.InitStyles;
@@ -170,7 +196,7 @@ begin
     [scColour], TRTFFont.CreateNull, 0.0, [], clExternalLink
   );
 
-  fExtraStyles.Add(
+  fNotesStyles.Add(
      ekPara,
      TRTFStyle.Create(
        TRTFParaSpacing.Create(ParaSpacing, 0.0)
@@ -183,7 +209,7 @@ begin
      )
   );
 
-  fExtraStyles.Add(
+  fNotesStyles.Add(
     ekHeading,
     TRTFStyle.Create(
       [scParaSpacing, scFontStyles],
@@ -206,7 +232,7 @@ begin
     )
   );
 
-  fExtraStyles.Add(
+  fNotesStyles.Add(
     ekStrong,
     TRTFStyle.Create(
       [scFontStyles],
@@ -216,9 +242,9 @@ begin
       clNone
     )
   );
-  fDescStyles.Add(ekStrong, fExtraStyles[ekStrong]);
+  fDescStyles.Add(ekStrong, fNotesStyles[ekStrong]);
 
-  fExtraStyles.Add(
+  fNotesStyles.Add(
     ekEm,
     TRTFStyle.Create(
       [scFontStyles],
@@ -228,9 +254,9 @@ begin
       clNone
     )
   );
-  fDescStyles.Add(ekEm, fExtraStyles[ekEm]);
+  fDescStyles.Add(ekEm, fNotesStyles[ekEm]);
 
-  fExtraStyles.Add(
+  fNotesStyles.Add(
     ekVar,
     TRTFStyle.Create(
       [scFontStyles, scColour],
@@ -240,9 +266,9 @@ begin
       clVarText
     )
   );
-  fDescStyles.Add(ekVar, fExtraStyles[ekVar]);
+  fDescStyles.Add(ekVar, fNotesStyles[ekVar]);
 
-  fExtraStyles.Add(
+  fNotesStyles.Add(
     ekWarning,
     TRTFStyle.Create(
       [scFontStyles, scColour],
@@ -252,9 +278,9 @@ begin
       clWarningText
     )
   );
-  fDescStyles.Add(ekWarning, fExtraStyles[ekWarning]);
+  fDescStyles.Add(ekWarning, fNotesStyles[ekWarning]);
 
-  fExtraStyles.Add(
+  fNotesStyles.Add(
     ekMono,
     TRTFStyle.Create(
       [scFont],
@@ -264,12 +290,12 @@ begin
       clNone
     )
   );
-  fDescStyles.Add(ekMono, fExtraStyles[ekMono]);
+  fDescStyles.Add(ekMono, fNotesStyles[ekMono]);
 
   if not fUseColour then
   begin
     fDescStyles.MakeMonochrome;
-    fExtraStyles.MakeMonochrome;
+    fNotesStyles.MakeMonochrome;
     fURLStyle.MakeMonochrome;
   end;
 end;
@@ -300,70 +326,36 @@ begin
   end;
 end;
 
-procedure TRTFSnippetDoc.RenderDBInfo(const Text: string);
-begin
-  fBuilder.SetParaSpacing(TRTFParaSpacing.Create(ParaSpacing, 0.0));
-  fBuilder.SetFontSize(DBInfoFontSize);
-  fBuilder.SetFontStyle([fsItalic]);
-  fBuilder.AddText(Text);
-  fBuilder.EndPara;
-  fBuilder.ClearParaFormatting;
-  fBuilder.ResetCharStyle;
-end;
-
 procedure TRTFSnippetDoc.RenderDescription(const Desc: IActiveText);
-var
-  RTFWriter: TActiveTextRTF;  // Object that generates RTF from active text
 begin
   fBuilder.ResetCharStyle;
   fBuilder.SetFontSize(ParaFontSize);
-  RTFWriter := TActiveTextRTF.Create;
-  try
-    RTFWriter.ElemStyleMap := fDescStyles;
-    RTFWriter.DisplayURLs := True;
-    RTFWriter.URLStyle := fURLStyle;
-    RTFWriter.Render(Desc, fBuilder);
-  finally
-    RTFWriter.Free;
-  end;
+  Desc.Render(CreateActiveTextRenderer(fDescStyles));
 end;
 
-procedure TRTFSnippetDoc.RenderExtra(const ExtraText: IActiveText);
-var
-  RTFWriter: TActiveTextRTF;  // Object that generates RTF from active text
-begin
-  Assert(not ExtraText.IsEmpty, ClassName + '.RenderExtra: ExtraText is empty');
-  RTFWriter := TActiveTextRTF.Create;
-  try
-    RTFWriter.ElemStyleMap := fExtraStyles;
-    RTFWriter.DisplayURLs := True;
-    RTFWriter.URLStyle := fURLStyle;
-    RTFWriter.Render(ExtraText, fBuilder);
-  finally
-    RTFWriter.Free;
-  end;
-end;
-
-procedure TRTFSnippetDoc.RenderHeading(const Heading: string;
-  const UserDefined: Boolean);
+procedure TRTFSnippetDoc.RenderHeading(const Heading: string);
 begin
   fBuilder.SetFontStyle([fsBold]);
   fBuilder.SetFontSize(HeadingFontSize);
-  if fUseColour then
-    fBuilder.SetColour(Preferences.DBHeadingColours[UserDefined]);
   fBuilder.SetParaSpacing(TRTFParaSpacing.Create(0.0, ParaSpacing));
   fBuilder.AddText(Heading);
   fBuilder.EndPara;
+end;
+
+procedure TRTFSnippetDoc.RenderNotes(const NotesText: IActiveText);
+begin
+  Assert(not NotesText.IsEmpty, ClassName + '.RenderNotes: NotesText is empty');
+  NotesText.Render(CreateActiveTextRenderer(fNotesStyles));
 end;
 
 procedure TRTFSnippetDoc.RenderSourceCode(const SourceCode: string);
 var
   Renderer: IHiliteRenderer;  // renders highlighted source as RTF
 begin
-  fBuilder.ClearParaFormatting;
-  Renderer := TRTFHiliteRenderer.Create(fBuilder, fHiliteAttrs);
-  TSyntaxHiliter.Hilite(SourceCode, Renderer);
-  fBuilder.EndPara;
+  // Syntax highlighted code is in its own block that starts by clearing para
+  // formatting and ends with a para-end immediately before the end of block.
+  Renderer := TRTFHiliteRenderer.Create(fBuilder, fBrush, fTheme);
+  TSyntaxHiliter.Hilite(SourceCode, fBrush, Renderer);
 end;
 
 procedure TRTFSnippetDoc.RenderTitledList(const Title: string;

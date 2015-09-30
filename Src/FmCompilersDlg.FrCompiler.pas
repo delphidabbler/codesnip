@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2011-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2011-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -37,8 +37,8 @@ type
     btnBrowse: TButton;
     btnClear: TButton;
     chkShowInMain: TCheckBox;
-    ///  <summary>Displays file open dialog box and places entered file name in
-    ///  compiler file name edit control.</summary>
+    ///  <summary>Displays file open dialogue box and places entered file name
+    ///  in compiler file name edit control.</summary>
     procedure btnBrowseClick(Sender: TObject);
     ///  <summary>Clears compiler file name edit control.</summary>
     procedure btnClearClick(Sender: TObject);
@@ -48,13 +48,13 @@ type
   strict private
     ///  <summary>Gets compiler path from edit control.</summary>
     function GetCompilerPath: string;
-    ///  <summary>Handles open dialog box's OnCanClose event. Prevents dialog
-    ///  from closing if selected file does not exist or is not a suitable
-    ///  executable file.</summary>
-    ///  <param name="Sender">TObject [in] Reference to dialog box that
+    ///  <summary>Handles open dialogue box's OnCanClose event. Prevents
+    ///  dialogue from closing if selected file does not exist or is not a
+    ///  suitable executable file.</summary>
+    ///  <param name="Sender">TObject [in] Reference to dialogue box that
     ///  triggered event. Must be of type TOpenDialogEx.</param>
-    ///  <param name="CanClose">Boolean [in/out] Flag that determines if dialog
-    ///  can close.</param>
+    ///  <param name="CanClose">Boolean [in/out] Flag that determines if
+    ///  dialogue can close.</param>
     procedure CanOpenDialogClose(Sender: TObject;
       var CanClose: Boolean);
     ///  <summary>Checks if given file name is a valid executable.</summary>
@@ -105,11 +105,11 @@ end;
 
 procedure TCompilersDlgCompilerFrame.btnBrowseClick(Sender: TObject);
 var
-  OpenDlg: TOpenDialogEx; // self-aligning enhanced open dialog box
+  OpenDlg: TOpenDialogEx; // self-aligning enhanced open dialogue box
 resourcestring
   sFilter = 'Executable files (*.exe)|*.exe|' // file filter
     + 'All files (*.*)|*.*';
-  sTitle = 'Select Compiler';                 // dialog box title
+  sTitle = 'Select Compiler';                 // dialogue box title
 begin
   // Create and initialise
   OpenDlg := TOpenDialogEx.Create(Self);
@@ -120,7 +120,7 @@ begin
     OpenDlg.InitialDir := '';
     // we don't include ofFileMustExist in Options below since we handle
     // non-existant files ourselves
-    // we don't include ofShowHelp since the dialog box automatically displays
+    // we don't include ofShowHelp since the dialogue box automatically displays
     // help if HelpKeyword property is set.
     OpenDlg.Options := [ofHideReadOnly, ofEnableSizing];
     OpenDlg.OptionsEx := [];
@@ -143,7 +143,7 @@ end;
 procedure TCompilersDlgCompilerFrame.CanOpenDialogClose(Sender: TObject;
   var CanClose: Boolean);
 var
-  Dlg: TOpenDialogEx; // dialog box instance triggering this event
+  Dlg: TOpenDialogEx; // dialogue box instance triggering this event
   ErrMsg: string;     // error message to be displayed on error
 begin
   Dlg := Sender as TOpenDialogEx;

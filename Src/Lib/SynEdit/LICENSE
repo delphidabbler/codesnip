@@ -1,0 +1,33 @@
+Most files in the SynEdit project are dual licensed under the terms of the
+Mozilla Public License v1.1 and the GPL v2.0 or later. Files using this dual
+license have header comments to that effect.
+
+Any files without header comments should be treated as using this license.
+
+Files not using the MPL 1.1 / GPL 2 dual license are:
+
+* SynEdit.inc - adapted from Brad Stowers' DFS.INC file and used with
+  permission.
+
+* SynEditHighlighter.pas - MPL 1.1.
+
+* SynEditHighlighterOptions.pas - MPL 1.1.
+
+* SynEditJedi.inc - MPL 1.1 / LGPL dual-license.
+
+* SynRegExpr.pas - Custom license (see comments in file).
+
+* SynTextDrawer.pas - MPL 1.0.
+
+The SynEdit project is based on the mwEdit component suite.
+
+Key:
+  MPL = Mozilla Public License
+  GPL = GNU General Public License
+  LGPL = GNU Lesser General Public License
+
+Modifications
+-------------
+
+Any modifications to the files are detailed in the SVN change log and/or by
+comments in the source files.

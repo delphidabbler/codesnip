@@ -20,9 +20,13 @@ interface
 
 uses
   // Delphi
-  Classes, ActiveX,
+  Classes,
+  ActiveX,
   // Project
-  IntfNotifier, UView;
+  CS.SourceCode.Languages,
+  CS.Database.Types,
+  IntfNotifier,
+  UView;
 
 
 type
@@ -50,17 +54,14 @@ type
       fShowViewItemAction: TBasicAction;
       ///  <summary>List of actions triggered when display style in overview
       ///  pane changes.</summary>
-      fOverviewStyleChangeActions: array of TBasicAction;
+      fOverviewStyleChangeActions: TArray<TBasicAction>;
       ///  <summary>List of actions triggered when current pane in detail view
       ///  changes.</summary>
       fDisplayPaneChangeAction: TBasicAction;
-      ///  <summary>Action that causes a user defined snippet to be
-      ///  edited.</summary>
+      ///  <summary>Action that causes a snippet to be edited.</summary>
       fEditSnippetAction: TBasicAction;
       ///  <summary>Action that displays donate dialogue box.</summary>
       fDonateAction: TBasicAction;
-      ///  <summary>Action that causes a category to be displayed.</summary>
-      fDisplayCategoryAction: TBasicAction;
       ///  <summary>Action that causes the Snippets Editor to be opened ready to
       ///  create a new snippet.</summary>
       fNewSnippetAction: TBasicAction;
@@ -75,7 +76,18 @@ type
       ///  <summary>Action that displays a specified page in the preferences
       ///  dialogue box.</summary>
       fShowPrefsPageAction: TBasicAction;
-
+      ///  <summary>Action that causes a specified tag to be displayed.
+      ///  </summary>
+      fDisplayTagAction: TBasicAction;
+      ///  <summary>Action that causes a specified tag to be removed from a
+      ///  specified snippet's tag list.</summary>
+      fRemoveTagAction: TBasicAction;
+      ///  <summary>Action that causes a specified source code language to be
+      ///  displayed.</summary>
+      fDisplayLanguageAction: TBasicAction;
+      ///  <summary>Action that changes the value of a specified snippet's
+      ///  Starred property.</summary>
+      fChangeSnippetStarAction: TBasicAction;
   public
 
     ///  <summary>Requests a database update.</summary>
@@ -83,22 +95,12 @@ type
     procedure UpdateDbase;
 
     ///  <summary>Displays a snippet.</summary>
-    ///  <param name="SnippetName">WideString [in] Name of required snippet.
+    ///  <param name="SnippetID">TSnippetID [in] ID of required snippet.
     ///  </param>
-    ///  <param name="UserDefined">WordBool [in] Indicates whether snippet is
-    ///  user defined.</param>
     ///  <param name="NewTab">WordBool [in] Whether to display snippet in a new
     ///  detail pane tab.</param>
     ///  <remarks>Methods of INotifier.</remarks>
-    procedure DisplaySnippet(const SnippetName: WideString;
-      UserDefined: WordBool; NewTab: WordBool);
-
-    ///  <summary>Displays a category.</summary>
-    ///  <param name="CatId">WideString [in] ID of required category.</param>
-    ///  <param name="NewTab">WordBool [in] Whether to display category in a new
-    ///  detail pane tab.</param>
-    ///  <remarks>Methods of INotifier.</remarks>
-    procedure DisplayCategory(const CatID: WideString; NewTab: WordBool);
+    procedure DisplaySnippet(const SnippetID: TSnippetID; NewTab: WordBool);
 
     ///  <summary>Displays Configure Compilers dialogue box.</summary>
     ///  <remarks>Methods of INotifier.</remarks>
@@ -125,12 +127,9 @@ type
     procedure ChangeDetailPane(const Pane: Integer);
 
     ///  <summary>Edits a snippet in Snippets Editor.</summary>
-    ///  <param name="SnippetName">WideString [in] Name of snippet.</param>
-    ///  <remarks>
-    ///  <para>Snippet must be user defined.</para>
-    ///  <para>Methods of INotifier.</para>
-    ///  </remarks>
-    procedure EditSnippet(const SnippetName: WideString);
+    ///  <param name="SnippetID">TSnippetID [in] ID of snippet.</param>
+    ///  <remarks>Methods of INotifier.</remarks>
+    procedure EditSnippet(const SnippetID: TSnippetID);
 
     ///  <summary>Displays Donate dialogue box.</summary>
     ///  <remarks>Methods of INotifier.</remarks>
@@ -158,6 +157,34 @@ type
     ///  implements the required preferences page.</param>
     ///  <remarks>Method of INotifier.</remarks>
     procedure ShowPrefsPage(const ClsName: string);
+
+    ///  <summary>Displays the given tag.</summary>
+    ///  <param name="Tag">TTag [in] Tag to be displayed.</param>
+    ///  <param name="NewTab">WordBool [in] Whether to display tag in a new tab.
+    ///  </param>
+    ///  <remarks>Method of INotifier.</remarks>
+    procedure DisplayTag(const Tag: TTag; NewTab: WordBool);
+
+    ///  <summary>Removes a tag from a snippet's tag list.<summary>
+    ///  <param name="SnippetID">TSnippetID [in] ID of snippet.</param>
+    ///  <param name="Tag">TTag [in] Tag to be removed.</param>
+    ///  <remarks>Method of INotifier.</remarks>
+    procedure RemoveTag(const SnippetID: TSnippetID; const Tag: TTag);
+
+    ///  <summary>Displays the source code language with the given ID.</summary>
+    ///  <param name="LangID">TSourceCodeLanguageID [in] ID of language to be
+    ///  displayed.</param>
+    ///  <param name="NewTab">WordBool [in] Whether to display language in a new
+    ///  tab.</param>
+    ///  <remarks>Method of INotifier.</remarks>
+    procedure DisplayLanguage(const LangID: TSourceCodeLanguageID;
+      NewTab: WordBool);
+
+    ///  <summary>Sets the the Starred property of the snippet with the given ID
+    ///  to the given State.</summary>
+    ///  <remarks>Method of INotifier.</remarks>
+    procedure ChangeSnippetStar(const SnippetID: TSnippetID;
+      const State: Boolean);
 
     ///  <summary>Sets action used to request a database update.</summary>
     ///  <param name="Action">TBasicAction [in] Required action.</param>
@@ -209,11 +236,6 @@ type
     ///  <remarks>Methods of ISetActions.</remarks>
     procedure SetDonateAction(const Action: TBasicAction);
 
-    ///  <summary>Sets action used to display a category.</summary>
-    ///  <param name="Action">TBasicAction [in] Required action.</param>
-    ///  <remarks>Methods of ISetActions.</remarks>
-    procedure SetDisplayCategoryAction(const Action: TBasicAction);
-
     ///  <summary>Sets action used to open snippets editor to create a new
     ///  snippet.</summary>
     ///  <param name="Action">TBasicAction [in] Required action.</param>
@@ -241,6 +263,28 @@ type
     ///  <param name="Action">TBasicAction [in] Required action.</param>
     ///  <remarks>Method of ISetActions.</remarks>
     procedure SetShowPrefsPageAction(const Action: TBasicAction);
+
+    ///  <summary>Sets action used to display a tag.</summary>
+    ///  <param name="Action">TBasicAction [in] Required action.</param>
+    ///  <remarks>Method of ISetActions.</remarks>
+    procedure SetDisplayTagAction(const Action: TBasicAction);
+
+    ///  <summary>Sets action used to remove a tag from a snippet's tag list.
+    ///  </summary>
+    ///  <param name="Action">TBasicAction [in] Required action.</param>
+    ///  <remarks>Method of ISetActions.</remarks>
+    procedure SetRemoveTagAction(const Action: TBasicAction);
+
+    ///  <summary>Sets action used to display a source code language.</summary>
+    ///  <param name="Action">TBasicAction [in] Required action.</param>
+    ///  <remarks>Method of ISetActions.</remarks>
+    procedure SetDisplayLanguageAction(const Action: TBasicAction);
+
+    ///  <summary>Sets action used to update the Starred property of a snippet.
+    ///  </summary>
+    ///  <remarks>Method of ISetActions.</remarks>
+    procedure SetChangeSnippetStarAction(const Action: TBasicAction);
+
   end;
 
 
@@ -251,8 +295,17 @@ uses
   // Delphi
   SysUtils, StdActns,
   // Project
-  Compilers.UGlobals, UCategoryAction, UDetailTabAction, UEditSnippetAction,
-  UShowPrefsPageAction, USnippetAction, UViewItemAction;
+  CS.Actions.ChangeSnippetStar,
+  CS.Actions.DisplayLanguage,
+  CS.Actions.DisplayTag,
+  CS.Actions.RemoveTag,
+  Compilers.UGlobals,
+  UContainers,
+  UDetailTabAction,
+  UEditSnippetAction,
+  UShowPrefsPageAction,
+  USnippetAction,
+  UViewItemAction;
 
 
 { TNotifier }
@@ -274,6 +327,18 @@ begin
     fOverviewStyleChangeActions[Style].Execute;
 end;
 
+procedure TNotifier.ChangeSnippetStar(const SnippetID: TSnippetID;
+  const State: Boolean);
+begin
+  if Assigned(fChangeSnippetStarAction) then
+  begin
+    (fChangeSnippetStarAction as TChangeSnippetStarAction).SnippetID :=
+      SnippetID;
+    (fChangeSnippetStarAction as TChangeSnippetStarAction).State := State;
+    fChangeSnippetStarAction.Execute;
+  end;
+end;
+
 procedure TNotifier.CheckForUpdates;
 begin
   if Assigned(fCheckForUpdatesAction) then
@@ -286,25 +351,35 @@ begin
     fConfigCompilersAction.Execute;
 end;
 
-procedure TNotifier.DisplayCategory(const CatID: WideString; NewTab: WordBool);
+procedure TNotifier.DisplayLanguage(const LangID: TSourceCodeLanguageID;
+  NewTab: WordBool);
 begin
-  if Assigned(fDisplayCategoryAction) then
+  if Assigned(fDisplayLanguageAction) then
   begin
-    (fDisplayCategoryAction as TCategoryAction).CatID := CatID;
-    (fDisplayCategoryAction as TCategoryAction).NewTab := NewTab;
-    fDisplayCategoryAction.Execute;
+    (fDisplayLanguageAction as TDisplayLanguageAction).LanguageID := LangID;
+    (fDisplayLanguageAction as TDisplayLanguageAction).NewTab := NewTab;
+    fDisplayLanguageAction.Execute;
   end;
 end;
 
-procedure TNotifier.DisplaySnippet(const SnippetName: WideString;
-  UserDefined: WordBool; NewTab: WordBool);
+procedure TNotifier.DisplaySnippet(const SnippetID: TSnippetID;
+  NewTab: WordBool);
 begin
   if Assigned(fDisplaySnippetAction) then
   begin
-    (fDisplaySnippetAction as TSnippetAction).SnippetName := SnippetName;
-    (fDisplaySnippetAction as TSnippetAction).UserDefined := UserDefined;
+    (fDisplaySnippetAction as TSnippetAction).SnippetID := SnippetID;
     (fDisplaySnippetAction as TSnippetAction).NewTab := NewTab;
     fDisplaySnippetAction.Execute;
+  end;
+end;
+
+procedure TNotifier.DisplayTag(const Tag: TTag; NewTab: WordBool);
+begin
+  if Assigned(fDisplayTagAction) then
+  begin
+    (fDisplayTagAction as TDisplayTagAction).Tag := Tag;
+    (fDisplayTagAction as TDisplayTagAction).NewTab := NewTab;
+    fDisplayTagAction.Execute;
   end;
 end;
 
@@ -314,11 +389,11 @@ begin
     fDonateAction.Execute;
 end;
 
-procedure TNotifier.EditSnippet(const SnippetName: WideString);
+procedure TNotifier.EditSnippet(const SnippetID: TSnippetID);
 begin
   if Assigned(fEditSnippetAction) then
   begin
-    (fEditSnippetAction as TEditSnippetAction).SnippetName := SnippetName;
+    (fEditSnippetAction as TEditSnippetAction).SnippetID := SnippetID;
     fEditSnippetAction.Execute;
   end;
 end;
@@ -329,9 +404,26 @@ begin
     fNewSnippetAction.Execute;
 end;
 
+procedure TNotifier.RemoveTag(const SnippetID: TSnippetID; const Tag: TTag);
+begin
+  if Assigned(fRemoveTagAction) then
+  begin
+    (fRemoveTagAction as TRemoveTagAction).SnippetID := SnippetID;
+    (fRemoveTagAction as TRemoveTagAction).Tag := Tag;
+    fRemoveTagAction.Execute;
+  end;
+end;
+
 procedure TNotifier.SetAboutBoxAction(const Action: TBasicAction);
 begin
   fAboutBoxAction := Action;
+end;
+
+procedure TNotifier.SetChangeSnippetStarAction(const Action: TBasicAction);
+begin
+  Assert(Action is TChangeSnippetStarAction, ClassName +
+    '.SetChangeSnippetStarAction: Action is not TChangeSnippetStarAction');
+  fChangeSnippetStarAction := Action;
 end;
 
 procedure TNotifier.SetCheckForUpdatesAction(const Action: TBasicAction);
@@ -351,14 +443,14 @@ begin
   fDisplayPaneChangeAction := Action;
 end;
 
-procedure TNotifier.SetDisplayCategoryAction(const Action: TBasicAction);
+procedure TNotifier.SetDisplayLanguageAction(const Action: TBasicAction);
 begin
-  Assert(Action is TCategoryAction,
-    ClassName + '.SetDisplayCategoryAction: Action is not TCategoryAction');
+  Assert(Action is TDisplayLanguageAction, ClassName +
+    '.SetDisplayLanguageAction: Action is not TDisplayLanguageAction');
   Assert(Supports(Action, ISetNotifier),
-    ClassName + '.SetDisplayCategoryAction: Action must support ISetNotifier');
-  fDisplayCategoryAction := Action;
-  (fDisplayCategoryAction as ISetNotifier).SetNotifier(Self);
+    ClassName + '.SetDisplayLanguageAction: Action must support ISetNotifier');
+  fDisplayLanguageAction := Action;
+  (fDisplayLanguageAction as ISetNotifier).SetNotifier(Self);
 end;
 
 procedure TNotifier.SetDisplaySnippetAction(
@@ -370,6 +462,16 @@ begin
     ClassName + '.SetDisplaySnippetAction: Action must support ISetNotifier');
   fDisplaySnippetAction := Action;
   (fDisplaySnippetAction as ISetNotifier).SetNotifier(Self);
+end;
+
+procedure TNotifier.SetDisplayTagAction(const Action: TBasicAction);
+begin
+  Assert(Action is TDisplayTagAction,
+    ClassName + '.SetDisplayTagAction: Action is not TDisplayTagAction');
+  Assert(Supports(Action, ISetNotifier),
+    ClassName + '.SetDisplayTagAction: Action must support ISetNotifier');
+  fDisplayTagAction := Action;
+  (fDisplayTagAction as ISetNotifier).SetNotifier(Self);
 end;
 
 procedure TNotifier.SetDonateAction(const Action: TBasicAction);
@@ -396,12 +498,15 @@ end;
 
 procedure TNotifier.SetOverviewStyleChangeActions(
   const Actions: array of TBasicAction);
-var
-  Idx: Integer; // loops thru actions
 begin
-  SetLength(fOverviewStyleChangeActions, Length(Actions));
-  for Idx := Low(Actions) to High(Actions) do
-    fOverviewStyleChangeActions[Idx] := Actions[Idx];
+  fOverviewStyleChangeActions := TArrayHelper.Copy<TBasicAction>(Actions);
+end;
+
+procedure TNotifier.SetRemoveTagAction(const Action: TBasicAction);
+begin
+  Assert(Action is TRemoveTagAction,
+    ClassName + '.SetRemoveTagAction: Action is not TRemoveTagAction');
+  fRemoveTagAction := Action;
 end;
 
 procedure TNotifier.SetShowPrefsPageAction(const Action: TBasicAction);

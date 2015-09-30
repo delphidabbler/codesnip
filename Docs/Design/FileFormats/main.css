@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2012-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -32,6 +32,26 @@ body {
   margin-top: 0.5em;
   font-style: italic;
   color: #336;
+}
+.title div.index-link {
+  position: absolute;
+  top: 1em;
+  right: 1em;
+  text-align: right;
+  float: right;
+  padding: 0;
+  margin: 0;
+}
+.title div.index-link a {
+  font-weight: normal;
+  font-size: 10pt;
+  text-decoration: none;
+  background-color: #f7f7f7;
+  padding: 0.25em;
+}
+.title div.index-link a:hover {
+  background-color: silver;
+  color: white;
 }
 
 h1, h2, h3, h4, h5 {
@@ -76,6 +96,11 @@ div.half-spaced {
   margin: 0.25em 0 0 0;
   padding: 0;
 }
+div.reader-note {
+  background-color: #f7f7f7;
+  padding: 2px 4px;
+  border: 1px silver dotted;
+}
 
 dl {
   margin: 0.5em 0 0 0;
@@ -113,8 +138,8 @@ ol.unspaced li {
   margin-top: 0;
 }
 
-code {
-  font-family: "Courier New", Courier, monospace;
+code, kbd {
+  font-family: Consolas, "Courier New", Courier, monospace;
 }
 
 del {

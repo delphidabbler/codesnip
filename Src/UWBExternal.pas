@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2005-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -29,7 +29,7 @@ uses
 
 
 type
-  ///  <summary>COM object that implements the methods of the IWBExternal12
+  ///  <summary>COM object that implements the methods of the IWBExternal13
   ///  interface that extend the browser control's 'external' object.</summary>
   ///  <remarks>
   ///  <para>This class enables application code to be called from JavaScript
@@ -37,7 +37,7 @@ type
   ///  <para>The methods a declared in the type library that is defined in
   ///  External.idl.</para>
   ///  </remarks>
-  TWBExternal = class(TAutoIntfObject, IWBExternal12, ISetNotifier)
+  TWBExternal = class(TAutoIntfObject, IWBExternal13, ISetNotifier)
   strict private
     var
       ///  <summary>Object used to call application code in response to
@@ -57,67 +57,77 @@ type
     constructor Create;
 
     ///  <summary>Updates database from internet.</summary>
-    ///  <remarks>Method of IWBExternal12.</remarks>
+    ///  <remarks>Method of IWBExternal13.</remarks>
     procedure UpdateDbase; safecall;
 
-    ///  <summary>Displays a named snippet.</summary>
-    ///  <param name="SnippetName">WideString [in] Name of snippet to be
-    ///  displayed.</param>
-    ///  <param name="UserDefined">WordBool [in] Whether the snippet is user
-    ///  defined.</param>
+    ///  <summary>Displays the given snippet.</summary>
+    ///  <param name="SnippetID">WideString [in] ID of snippet to be displayed.
+    ///  </param>
     ///  <param name="NewTab">WordBool [in] Whether to display snippet in a new
     ///  tab.</param>
-    ///  <remarks>Method of IWBExternal12.</remarks>
-    procedure DisplaySnippet(const SnippetName: WideString;
-      UserDefined: WordBool; NewTab: WordBool); safecall;
-
-    ///  <summary>Displays the Configure Compilers dialogue box.</summary>
-    ///  <remarks>Method of IWBExternal12.</remarks>
-    procedure ConfigCompilers; safecall;
-
-    ///  <summary>Edits a named snippet.</summary>
-    ///  <param name="SnippetName">WideString [in] Name of snippet to be edited.
-    ///  </param>
-    ///  <remarks>
-    ///  <para>The named snippet must be user defined.</para>
-    ///  <para>Method of IWBExternal12.</para>
-    ///  </remarks>
-    procedure EditSnippet(const SnippetName: WideString); safecall;
-
-    ///  <summary>Displays the Donate dialogue box.</summary>
-    ///  <remarks>Method of IWBExternal12.</remarks>
-    procedure Donate; safecall;
-
-    ///  <summary>Displays a named category.</summary>
-    ///  <param name="CatID">WideString [in] ID of category to be displayed.
-    ///  </param>
-    ///  <param name="NewTab">WordBool [in] Whether to display category in a new
-    ///  tab.</param>
-    ///  <remarks>Method of IWBExternal12.</remarks>
-    procedure DisplayCategory(const CatID: WideString; NewTab: WordBool);
+    ///  <remarks>Method of IWBExternal13.</remarks>
+    procedure DisplaySnippet(const SnippetID: WideString; NewTab: WordBool);
       safecall;
 
+    ///  <summary>Displays the Configure Compilers dialogue box.</summary>
+    ///  <remarks>Method of IWBExternal13.</remarks>
+    procedure ConfigCompilers; safecall;
+
+    ///  <summary>Displays the Donate dialogue box.</summary>
+    ///  <remarks>Method of IWBExternal13.</remarks>
+    procedure Donate; safecall;
+
     ///  <summary>Opens Snippet Editor ready to create a new snippet.</summary>
-    ///  <remarks>Method of IWBExternal12.</remarks>
+    ///  <remarks>Method of IWBExternal13.</remarks>
     procedure NewSnippet; safecall;
 
     ///  <summary>Shows latest news items from CodeSnip news feed.</summary>
-    ///  <remarks>Method of IWBExternal12.</remarks>
+    ///  <remarks>Method of IWBExternal13.</remarks>
     procedure ShowNews; safecall;
 
     ///  <summary>Checks for program updates.</summary>
-    ///  <remarks>Method of IWBExternal12.</remarks>
+    ///  <remarks>Method of IWBExternal13.</remarks>
     procedure CheckForUpdates; safecall;
 
     ///  <summary>Displays the program's About Box.</summary>
-    ///  <remarks>Method of IWBExternal12.</remarks>
+    ///  <remarks>Method of IWBExternal13.</remarks>
     procedure ShowAboutBox; safecall;
 
     ///  <summary>Displays specified page of the Preferences dialogue.</summary>
     ///  <param name="ClsName">WideString [in] Class name of the frame that
     ///  implements the required preferences page.</param>
-    ///  <remarks>Method of IWBExternal12.</remarks>
+    ///  <remarks>Method of IWBExternal13.</remarks>
     procedure ShowPrefsPage(const ClsName: WideString); safecall;
+
+    ///  <summary>Displays the given tag.</summary>
+    ///  <param name="Tag">WideString [in] Tag to be displayed.</param>
+    ///  <param name="NewTab">WordBool [in] Whether to display tag in a new tab.
+    ///  </param>
+    ///  <remarks>Method of IWBExternal13.</remarks>
+    procedure DisplayTag(const Tag: WideString; NewTab: WordBool); safecall;
+
+    ///  <summary>Removes a tag from a snippet's tag list.<summary>
+    ///  <param name="SnippetID">WideString [in] ID of snippet.</param>
+    ///  <param name="Tag">WideString [in] Tag to be removed.</param>
+    ///  <remarks>Method of IWBExternal13.</remarks>
+    procedure RemoveTag(const SnippetID: WideString; const Tag: WideString);
+      safecall;
+
+    ///  <summary>Displays the source code language with the given ID.</summary>
+    ///  <param name="LangID">WideSting [in] ID of language to be displayed.
+    ///  </param>
+    ///  <param name="NewTab">WordBool [in] Whether to display language in a new
+    ///  tab.</param>
+    ///  <remarks>Method of IWBExternal13.</remarks>
+    procedure DisplayLanguage(const LangID: WideString; NewTab: WordBool);
+      safecall;
+
+    ///  <summary>Sets the the Starred property of a snippet.</summary>
+    ///  <param name="SnippetID">WideString [in] ID of snippet.</param>
+    ///  <param name="State">WordBool [in] New star state: True if snippet is to
+    ///  be starred, False if not.</param>
+    procedure ChangeSnippetStar(const SnippetID: WideString;
+      State: WordBool); safecall;
 
     ///  <summary>Records the notifier object that is used to call application
     ///  code in response to JavaScript calls running in browser documents.
@@ -135,10 +145,23 @@ uses
   // Delphi
   Forms,
   // Project
+  CS.SourceCode.Languages,
+  CS.Database.Types,
   UAppInfo;
 
 
 { TWBExternal }
+
+procedure TWBExternal.ChangeSnippetStar(const SnippetID: WideString;
+  State: WordBool);
+begin
+  try
+    if Assigned(fNotifier) then
+      fNotifier.ChangeSnippetStar(TSnippetID.Create(SnippetID), State);
+  except
+    HandleException;
+  end;
+end;
 
 procedure TWBExternal.CheckForUpdates;
 begin
@@ -169,26 +192,36 @@ begin
   ExeName := TAppInfo.AppExeFilePath;
   OleCheck(LoadTypeLib(PWideChar(ExeName), TypeLib));
   // Create the object using type library
-  inherited Create(TypeLib, IWBExternal12);
+  inherited Create(TypeLib, IWBExternal13);
 end;
 
-procedure TWBExternal.DisplayCategory(const CatID: WideString;
+procedure TWBExternal.DisplayLanguage(const LangID: WideString;
   NewTab: WordBool);
 begin
   try
     if Assigned(fNotifier) then
-      fNotifier.DisplayCategory(CatID, NewTab);
+      fNotifier.DisplayLanguage(TSourceCodeLanguageID.Create(LangID), NewTab);
   except
     HandleException;
   end;
 end;
 
-procedure TWBExternal.DisplaySnippet(const SnippetName: WideString;
-  UserDefined: WordBool; NewTab: WordBool);
+procedure TWBExternal.DisplaySnippet(const SnippetID: WideString;
+  NewTab: WordBool);
 begin
   try
     if Assigned(fNotifier) then
-      fNotifier.DisplaySnippet(SnippetName, UserDefined, NewTab);
+      fNotifier.DisplaySnippet(TSnippetID.Create(SnippetID), NewTab);
+  except
+    HandleException;
+  end;
+end;
+
+procedure TWBExternal.DisplayTag(const Tag: WideString; NewTab: WordBool);
+begin
+  try
+    if Assigned(fNotifier) then
+      fNotifier.DisplayTag(TTag.Create(Tag), NewTab);
   except
     HandleException;
   end;
@@ -204,16 +237,6 @@ begin
   end;
 end;
 
-procedure TWBExternal.EditSnippet(const SnippetName: WideString);
-begin
-  try
-    if Assigned(fNotifier) then
-      fNotifier.EditSnippet(SnippetName);
-  except
-    HandleException;
-  end;
-end;
-
 procedure TWBExternal.HandleException;
 begin
   Application.HandleException(ExceptObject);
@@ -224,6 +247,16 @@ begin
   try
     if Assigned(fNotifier) then
       fNotifier.NewSnippet;
+  except
+    HandleException;
+  end;
+end;
+
+procedure TWBExternal.RemoveTag(const SnippetID, Tag: WideString);
+begin
+  try
+    if Assigned(fNotifier) then
+      fNotifier.RemoveTag(TSnippetID.Create(SnippetID), TTag.Create(Tag));
   except
     HandleException;
   end;

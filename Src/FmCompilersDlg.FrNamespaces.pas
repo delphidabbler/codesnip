@@ -171,7 +171,7 @@ end;
 
 procedure TCompilersDlgNamespacesFrame.UpdateButtons;
 begin
-  btnAdd.Enabled := (StrTrim(edNamespace.Text) <> '') and
+  btnAdd.Enabled := not StrIsBlank(edNamespace.Text) and
     (lbNamespaces.Items.IndexOf(StrTrim(edNamespace.Text)) = -1);
   btnReplace.Enabled := btnAdd.Enabled and (lbNamespaces.ItemIndex >= 0);
   btnDelete.Enabled := lbNamespaces.ItemIndex >= 0;

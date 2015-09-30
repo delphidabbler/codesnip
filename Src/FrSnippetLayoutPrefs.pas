@@ -3,14 +3,14 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2012-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
  *
  * Implements a frame that allows user to customise appearance of different
  * kinds of snippets in main display.
- * Designed for use as one of the tabs in the preferences dialog box.
+ * Designed for use as one of the tabs in the preferences dialogue box.
 }
 
 
@@ -20,9 +20,18 @@ interface
 
 uses
   // Delphi
-  StdCtrls, ImgList, Controls, Classes, ActnList, Buttons,
+  StdCtrls,
+  ImgList,
+  Controls,
+  Classes,
+  ActnList,
+  Buttons,
   // Project
-  DB.USnippetKind, FrPrefsBase, UPreferences, USnippetPageStructure;
+  CS.Database.Types,
+  CS.UI.Helper.CollectionCtrlKVMgr,
+  FrPrefsBase,
+  UPreferences,
+  USnippetPageStructure;
 
 type
   TSnippetLayoutPrefsFrame = class(TPrefsBaseFrame)
@@ -59,9 +68,10 @@ type
     var
       fPageStructs: TSnippetPageStructures;
       fUIUpdated: Boolean;
+      fSnippetKindsCBMgr: TUnsortedCollectionCtrlKVMgr<TSnippetKindID>;
     function PartIdFromStrings(Strings: TStrings; Idx: Integer):
       TSnippetPagePartId;
-    function SelectedKind: TSnippetKind;
+    function SelectedKindID: TSnippetKindID;
     procedure UpdateFragmentInfo;
     procedure Changed;
   public
@@ -71,7 +81,8 @@ type
     procedure Deactivate(const Prefs: IPreferences); override;
     ///  <summary>Checks if preference changes require that main window UI is
     ///  updated.</summary>
-    ///  <remarks>Called when dialog box containing frame is closing.</remarks>
+    ///  <remarks>Called when dialogue box containing frame is closing.
+    ///  </remarks>
     function UIUpdated: Boolean; override;
     procedure ArrangeControls; override;
     function DisplayName: string; override;
@@ -83,9 +94,13 @@ implementation
 
 uses
   // Delphi
-  Windows, Graphics,
+  Windows,
+  Graphics,
   // Project
-  FmPreferencesDlg, UClassHelpers, UCtrlArranger;
+  DB.UMain,
+  FmPreferencesDlg,
+  UClassHelpers,
+  UCtrlArranger;
 
 {$R *.dfm}
 
@@ -104,7 +119,7 @@ begin
   DestIdx := lbAvailableFragments.Items.AddObject(
     TAllSnippetPageParts.Parts[SrcPartId].DisplayName, TObject(SrcPartId)
   );
-  fPageStructs[SelectedKind].DeletePart(SrcIdx);
+  fPageStructs[SelectedKindID].DeletePart(SrcIdx);
   lbAvailableFragments.ItemIndex := DestIdx;
   lbUsedFragments.Items.Delete(SrcIdx);
   if SrcIdx >= lbUsedFragments.Items.Count then
@@ -133,7 +148,7 @@ begin
   DestIdx := lbUsedFragments.Items.AddObject(
     TAllSnippetPageParts.Parts[SrcPartId].DisplayName, TObject(SrcPartId)
   );
-  fPageStructs[SelectedKind].InsertPart(DestIdx, SrcPartId);
+  fPageStructs[SelectedKindID].InsertPart(DestIdx, SrcPartId);
   lbUsedFragments.ItemIndex := DestIdx;
   lbAvailableFragments.Items.Delete(SrcIdx);
   if SrcIdx >= lbAvailableFragments.Items.Count then
@@ -162,7 +177,7 @@ var
 begin
   OldIdx := lbUsedFragments.ItemIndex;
   NewIdx := Succ(OldIdx);
-  fPageStructs[SelectedKind].MovePart(OldIdx, NewIdx);
+  fPageStructs[SelectedKindID].MovePart(OldIdx, NewIdx);
   lbUsedFragments.Items.Move(OldIdx, NewIdx);
   lbUsedFragments.ItemIndex := NewIdx;
   Changed;
@@ -181,7 +196,7 @@ var
 begin
   OldIdx := lbUsedFragments.ItemIndex;
   NewIdx := Pred(OldIdx);
-  fPageStructs[SelectedKind].MovePart(OldIdx, NewIdx);
+  fPageStructs[SelectedKindID].MovePart(OldIdx, NewIdx);
   lbUsedFragments.Items.Move(OldIdx, NewIdx);
   lbUsedFragments.ItemIndex := NewIdx;
   Changed;
@@ -254,16 +269,26 @@ end;
 
 constructor TSnippetLayoutPrefsFrame.Create(AOwner: TComponent);
 var
-  SKInfo: TSnippetKindInfo;
+  SnippetKind: TSnippetKind;
+  SnippetKinds: ISnippetKindList;
 begin
   inherited;
   ilFrame.LoadFromResource(RT_RCDATA, 'ACTIONIMAGES', 16, clFuchsia);
   RefreshActions;
   HelpKeyword := 'SnippetLayoutPrefs';
   fPageStructs := TSnippetPageStructures.Create;
-  for SKInfo in TSnippetKindInfoList.Items do
-    cbSnippetKinds.Items.AddObject(SKInfo.DisplayName, TObject(SKInfo.Kind));
-  cbSnippetKinds.ItemIndex := 0;
+  fSnippetKindsCBMgr := TUnsortedCollectionCtrlKVMgr<TSnippetKindID>.Create(
+    TComboBoxAdapter.Create(cbSnippetKinds),
+    True,
+    function (const Left, Right: TSnippetKindID): Boolean
+    begin
+      Result := Left = Right;
+    end
+  );
+  SnippetKinds := Database.GetAllSnippetKinds;
+  for SnippetKind in SnippetKinds do
+    fSnippetKindsCBMgr.Add(SnippetKind.ID, SnippetKind.DisplayName);
+  fSnippetKindsCBMgr.Select(SnippetKinds.First.ID);
 end;
 
 procedure TSnippetLayoutPrefsFrame.Deactivate(const Prefs: IPreferences);
@@ -273,6 +298,7 @@ end;
 
 destructor TSnippetLayoutPrefsFrame.Destroy;
 begin
+  fSnippetKindsCBMgr.Free;
   fPageStructs.Free;
   inherited;
 end;
@@ -295,13 +321,11 @@ begin
   Result := TSnippetPagePartId(Strings.Objects[Idx]);
 end;
 
-function TSnippetLayoutPrefsFrame.SelectedKind: TSnippetKind;
-var
-  SelIdx: Integer;
+function TSnippetLayoutPrefsFrame.SelectedKindID: TSnippetKindID;
 begin
-  SelIdx := cbSnippetKinds.ItemIndex;
-  Assert(SelIdx >= 0, ClassName + '.SelectedKind: No snippet kind selected');
-  Result := TSnippetKind(cbSnippetKinds.Items.Objects[SelIdx]);
+  Assert(fSnippetKindsCBMgr.HasSelection,
+    ClassName + '.SelectedKindID: No snippet kind selected');
+  Result := fSnippetKindsCBMgr.GetSelected;
 end;
 
 function TSnippetLayoutPrefsFrame.UIUpdated: Boolean;
@@ -318,7 +342,7 @@ begin
   try
     lbAvailableFragments.Items.Clear;
     for PartId := Low(TSnippetPagePartId) to High(TSnippetPagePartId) do
-      if not fPageStructs[SelectedKind].HasPart(PartId) then
+      if not fPageStructs[SelectedKindID].HasPart(PartId) then
         lbAvailableFragments.Items.AddObject(
           TAllSnippetPageParts.Parts[PartId].DisplayName, TObject(PartId)
         );
@@ -331,7 +355,7 @@ begin
   lbUsedFragments.Items.BeginUpdate;
   try
     lbUsedFragments.Items.Clear;
-    for Part in fPageStructs[SelectedKind].Parts do
+    for Part in fPageStructs[SelectedKindID].Parts do
       lbUsedFragments.Items.AddObject(Part.DisplayName, TObject(Part.Id));
     if lbUsedFragments.Items.Count >= 0 then
       lbUsedFragments.ItemIndex := 0;
@@ -342,7 +366,7 @@ end;
 
 initialization
 
-// Register frame with preferences dialog box
+// Register frame with preferences dialogue box
 TPreferencesDlg.RegisterPage(TSnippetLayoutPrefsFrame);
 
 end.

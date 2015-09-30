@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2006-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2006-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -16,7 +16,7 @@
 
 /*
  * Calls external object to get host application to display Configure Compilers
- * dialog box.
+ * dialogue box.
  *  @return False.
  */
 function configCompilers() {
@@ -26,7 +26,7 @@ function configCompilers() {
 
 /*
  * Calls external object to get host application to display Update Database
- * dialog box.
+ * dialogue box.
  *  @return False.
  */
 function updateDbase() {
@@ -35,41 +35,18 @@ function updateDbase() {
 }
 
 /*
- * Calls external object to get host application to display a named snippet.
- *  @param string snippet [in] Name of snippet to be displayed.
- *  @param boolean userdefined [in] Whether snippet is user defined.
+ * Calls external object to get host application to display a given snippet.
+ *  @param string snippetID [in] ID of snippet to be displayed.
  *  @return False.
  */
-function displaySnippet(snippet, userdefined) {
+function displaySnippet(snippetID) {
   var e = window.event;
-  external.DisplaySnippet(snippet, userdefined, e.ctrlKey);
+  external.DisplaySnippet(snippetID, e.ctrlKey);
   return false;
 }
 
 /*
- * Calls external object to get host application to display a category.
- *  @param string catid [in] ID of category to be displayed.
- *  @return False.
- */
-function displayCategory(catid) {
-  var e = window.event;
-  external.DisplayCategory(catid, e.ctrlKey);
-  return false;
-}
-
-/*
- * Calls external object to get host application to edit a named snippet.
- *  @param string snippet [in] Name of snippet to be edited. Must be user
- *    defined.
- *  @return False.
- */
-function editSnippet(snippet) {
-  external.EditSnippet(snippet);
-  return false;
-}
-
-/*
- * Calls external object to get host application to display Donate dialog box.
+ * Calls external object to get host application to display Donate dialogue box.
  *  @return False.
  */
 function donate() {
@@ -124,5 +101,53 @@ function showAboutBox() {
  */
 function showPrefsPage(tabCls) {
   external.ShowPrefsPage(tabCls);
+  return false;
+}
+
+/*
+ * Calls external object to get the host application to display a specified tag.
+ *  @param string tag [in] Tag to be displayed.
+ *  @return False.
+ */
+function displayTag(tag) {
+  var e = window.event;
+  external.DisplayTag(tag, e.ctrlKey);
+  return false;
+}
+
+/*
+ * Calls external object to get host application to remove a tag from a
+ * snippet's tag list.
+ *  @param string snippetID [in] ID of snippet.
+ *  @param string tag [in] Tag to be removed.
+ *  @return False.
+ */
+function removeTag(snippetID, tag) {
+  external.RemoveTag(snippetID, tag);
+  return false;
+}
+
+/*
+ * Calls external object to get the host application to display a specified
+ * source code language.
+ *  @param string langId [in] ID of language to be displayed.
+ *  @return False.
+ */
+function displayLanguage(langId) {
+  var e = window.event;
+  external.DisplayLanguage(langId, e.ctrlKey);
+  return false;
+}
+
+/*
+ * Calls external object to get the host application to change the starred state
+ * of a snippet.
+ *  @param string snippetID [in] ID of snippet.
+ *  @param Boolean state [in] New star state: True if snippet is to be starred,
+ *    False if not.
+ *  @return False.
+ */
+function changeSnippetStar(snippetID, state) {
+  external.ChangeSnippetStar(snippetID, state);
   return false;
 }

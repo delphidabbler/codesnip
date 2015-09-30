@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2005-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -42,7 +42,7 @@ type
       {Positions OK and Cancel buttons.
       }
     function ModalResultOnEsc: Integer; override;
-      {Gets modal result returned from dialog when user presses ESC key.
+      {Gets modal result returned from dialogue when user presses ESC key.
         @return Required modal result.
       }
   end;
@@ -78,7 +78,7 @@ begin
 end;
 
 function TGenericOKDlg.ModalResultOnEsc: Integer;
-  {Gets modal result returned from dialog when user presses ESC key.
+  {Gets modal result returned from dialogue when user presses ESC key.
     @return Required modal result.
   }
 begin

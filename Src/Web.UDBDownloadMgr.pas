@@ -162,7 +162,13 @@ uses
   // Delphi
   SysUtils,
   // Project
-  UAppInfo, UConsts, UStrUtils, USystemInfo, Web.UCharEncodings, Web.UInfo;
+  CS.Init.CommandLineOpts,
+  UAppInfo,
+  UConsts,
+  UStrUtils,
+  USystemInfo,
+  Web.UCharEncodings,
+  Web.UInfo;
 
 
 {
@@ -365,7 +371,11 @@ begin
       IncludeStdParams(Params);
       Params.Add('os', SanitiseString(TOSInfo.Description));
       Params.Add('browser', IntToStr(TIEInfo.MajorVersion));
-      Params.Add('caller', SanitiseString(Caller));
+      Params.Add(
+        'caller',
+        SanitiseString(Caller) + ',' +
+          StrIf(TCommandLineOpts.IsPortable, 'Portable', 'Standard')
+      );
       SafePostCommand('logon', Params, Response);
     finally
       Params.Free;

@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2006-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2006-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -23,9 +23,15 @@ interface
 
 uses
   // Delphi
-  StdCtrls, Controls, ExtCtrls, Classes,
+  StdCtrls,
+  Controls,
+  ExtCtrls,
+  Classes,
   // Project
-  DB.USnippet, FmGenericOKDlg, UBaseObjects, USearch;
+  CS.Database.Types,
+  FmGenericOKDlg,
+  UBaseObjects,
+  USearch;
 
 
 type
@@ -34,12 +40,12 @@ type
 
   {
   TFindXRefsDlg:
-    Defines a dialog box that is used to select criteria for searches for
+    Defines a dialogue box that is used to select criteria for searches for
     cross referenced snippets.
   }
   TFindXRefsDlg = class(TGenericOKDlg, INoPublicConstruct)
     lblDesc: TLabel;
-    lblSnippetName: TLabel;
+    lblSnippetTitle: TLabel;
     chkRequired: TCheckBox;
     chkSeeAlso: TCheckBox;
     chkIncludeSnippet: TCheckBox;
@@ -55,13 +61,13 @@ type
   strict private
     fSearchParams: TXRefSearchParams; // Persists XRef search options
     fSearch: ISearch;                 // Search for user's criteria
-    fSnippet: TSnippet;               // Snippet whose x-refs to be found
+    fSnippet: ISnippet;               // Snippet whose x-refs to be found
     procedure UpdateControls;
       {Updates state of controls.
       }
   strict protected
     procedure ConfigForm; override;
-      {Style labels and record name of snippet in labels and checkboxes.
+      {Style labels and record snippet title in labels and checkboxes.
       }
     procedure ArrangeForm; override;
       {Arranges components on form and rezize form as required.
@@ -70,10 +76,10 @@ type
       {Populates and initialises controls.
       }
   public
-    class function Execute(const AOwner: TComponent; const Snippet: TSnippet;
+    class function Execute(const AOwner: TComponent; Snippet: ISnippet;
       out ASearch: ISearch): Boolean;
-      {Displays dialog and returns search object based on entered criteria.
-        @param AOwner [in] Component that owns this dialog.
+      {Displays dialogue and returns search object based on entered criteria.
+        @param AOwner [in] Component that owns this dialogue.
         @param Snippet [in] Snippet whose cross references are to be found.
         @param ASearch [out] Search to be performed if user OKs. Has filter
           that causes specified cross references be returned by search. Set to
@@ -130,9 +136,13 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Graphics,
+  SysUtils,
+  Graphics,
   // Project
-  UColours, UCtrlArranger, UPreferences, UQuery, USettings;
+  UColours,
+  UCtrlArranger,
+  UQuery,
+  USettings;
 
 
 {$R *.dfm}
@@ -145,7 +155,7 @@ procedure TFindXRefsDlg.ArrangeForm;
   }
 begin
   // Horizontal alignment & sizing
-  // Place snippet name after end of description label
+  // Place snippet title after end of description label
   TCtrlArranger.AlignLefts(
     [
       lblDesc, chkRequired, chkSeeAlso, chkIncludeSnippet, chkSeeAlsoReverse,
@@ -154,18 +164,18 @@ begin
     0
   );
   TCtrlArranger.AlignLefts([chkRequiredRecurse, chkSeeAlsoRecurse], 24);
-  TCtrlArranger.MoveToRightOf(lblDesc, lblSnippetName);
-  // Check if snippet name is clipped at right of dialog box and increase
+  TCtrlArranger.MoveToRightOf(lblDesc, lblSnippetTitle);
+  // Check if snippet title is clipped at right of dialogue box and increase
   // available body panel space if so
   // Don't use TCtrlArranger.TotalControlWidth here
-  if lblSnippetName.Left + lblSnippetName.Width > pnlBody.ClientWidth then
-    pnlBody.ClientWidth := lblSnippetName.Left + lblSnippetName.Width;
+  if lblSnippetTitle.Left + lblSnippetTitle.Width > pnlBody.ClientWidth then
+    pnlBody.ClientWidth := lblSnippetTitle.Left + lblSnippetTitle.Width;
   lblOverwriteSearch.Width := pnlBody.ClientWidth;
   TCtrlArranger.SetLabelHeight(lblOverwriteSearch);
 
   // Vertical alignment & sizing
-  TCtrlArranger.AlignVCentres(0, [lblDesc, lblSnippetName]);
-  TCtrlArranger.MoveBelow([lblDesc, lblSnippetName], chkRequired, 12);
+  TCtrlArranger.AlignVCentres(0, [lblDesc, lblSnippetTitle]);
+  TCtrlArranger.MoveBelow([lblDesc, lblSnippetTitle], chkRequired, 12);
   TCtrlArranger.MoveBelow(chkRequired, chkRequiredRecurse, 6);
   TCtrlArranger.MoveBelow(chkRequiredRecurse, chkRequiredReverse, 6);
   TCtrlArranger.MoveBelow(chkRequiredReverse, chkSeeAlso, 16);
@@ -178,7 +188,7 @@ begin
     lblOverwriteSearch.SetBounds(0, 0, 0, 0); // hide from panel sizing
   pnlBody.ClientHeight := TCtrlArranger.TotalControlHeight(pnlBody) + 8;
 
-  // Inherited arrangement: will set dialog width based on body panel width
+  // Inherited arrangement: will set dialogue width based on body panel width
   inherited;
 end;
 
@@ -214,9 +224,9 @@ procedure TFindXRefsDlg.btnOKClick(Sender: TObject);
 var
   Filter: IXRefSearchFilter;  // search filter
 begin
-  // Create search filter from entries made in dialog box
+  // Create search filter from entries made in dialogue box
   Filter := TSearchFilterFactory.CreateXRefSearchFilter(
-    fSnippet, GetOptionsFromUI
+    fSnippet.ID, GetOptionsFromUI
   );
   // Persist the search criteria
   fSearchParams.Options := Filter.Options;
@@ -225,27 +235,25 @@ begin
 end;
 
 procedure TFindXRefsDlg.ConfigForm;
-  {Style labels and record name of snippet in labels and checkboxes.
+  {Style labels and record snippet title in labels and checkboxes.
   }
 begin
   inherited;
   // Set label font styles and colours
-  lblSnippetName.Font.Style := [fsBold];
-  lblSnippetName.Font.Color :=
-    Preferences.DBHeadingColours[fSnippet.UserDefined];
-  // Display selected snippet name in appropriate controls
-  lblSnippetName.Caption := fSnippet.DisplayName;
+  lblSnippetTitle.Font.Style := [fsBold];
+  // Display selected snippet title in appropriate controls
+  lblSnippetTitle.Caption := fSnippet.Title;
   chkIncludeSnippet.Caption := Format(
-    chkIncludeSnippet.Caption, [fSnippet.DisplayName]
+    chkIncludeSnippet.Caption, [fSnippet.Title]
   );
   // Display or hide warning about overwriting searches
   lblOverwriteSearch.Visible := Query.IsSearchActive;
 end;
 
 class function TFindXRefsDlg.Execute(const AOwner: TComponent;
-  const Snippet: TSnippet; out ASearch: ISearch): Boolean;
-  {Displays dialog and returns search object based on entered criteria.
-    @param AOwner [in] Component that owns this dialog.
+  Snippet: ISnippet; out ASearch: ISearch): Boolean;
+  {Displays dialogue and returns search object based on entered criteria.
+    @param AOwner [in] Component that owns this dialogue.
     @param Snippet [in] Snippet whose cross references are to be found.
     @param ASearch [out] Search to be performed if user OKs. Has filter that
       causes specified cross references be returned by search. Set to nil if
@@ -281,7 +289,7 @@ procedure TFindXRefsDlg.FormDestroy(Sender: TObject);
   }
 begin
   inherited;
-  FreeAndNil(fSearchParams);
+  fSearchParams.Free;
 end;
 
 procedure TFindXRefsDlg.InitForm;

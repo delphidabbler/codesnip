@@ -10,7 +10,7 @@
  *
  * Defines classes etc that render different fragments of information about a
  * snippet as HTML for display in the detail pane. Page content is flexible and
- * user defined.
+ * user configurable.
 }
 
 
@@ -22,7 +22,9 @@ interface
 
 uses
   // Project
-  DB.USnippet, USnippetHTML, USnippetPageStructure;
+  CS.Database.Types,
+  USnippetHTML,
+  USnippetPageStructure;
 
 
 type
@@ -35,7 +37,7 @@ type
   public
     ///  <summary>Renders HTML description of given snippet, using the fragments
     ///  specified in preferences.</summary>
-    class function Render(const Snippet: TSnippet): string; static;
+    class function Render(Snippet: ISnippet): string; static;
   end;
 
 type
@@ -55,7 +57,7 @@ type
   public
     ///  <summary>Constructs object to render fragment of given snippet.
     ///  </summary>
-    constructor Create(Snippet: TSnippet);
+    constructor Create(Snippet: ISnippet);
     ///  <summary>Destroys fragement object.</summary>
     destructor Destroy; override;
   end;
@@ -73,7 +75,7 @@ type
     ///  rendered.</param>
     ///  <returns>TSnippetHTMLFragment. Required renderer object.</returns>
     ///  <remarks>Caller is responsible for freeing returned object.</remarks>
-    class function Create(FragKind: TSnippetPagePartId; Snippet: TSnippet):
+    class function Create(FragKind: TSnippetPagePartId; Snippet: ISnippet):
       TSnippetHTMLFragment; static;
   end;
 
@@ -135,11 +137,10 @@ type
   end;
 
 type
-  ///  <summary>Class that renders "Category" HTML fragment for a snippet.
-  ///  </summary>
-  TSnippetCategoryHTMLFragment = class(TPrefixedSnippetHTMLFragment)
+  ///  <summary>Class that renders "Tags" HTML fragment for a snippet.</summary>
+  TSnippetTagsHTMLFragment = class(TSnippetHTMLFragment)
   public
-    ///  <summary>Renders "Category" fragment as HTML.</summary>
+    ///  <summary>Renders "Tags" fragment as HTML.</summary>
     function ToString: string; override;
   end;
 
@@ -171,6 +172,13 @@ type
   end;
 
 type
+  TSnippetLanguageHTMLFragment = class(TPrefixedSnippetHTMLFragment)
+  public
+    ///  <summary>Renders "Language" fragment as HTML.</summary>
+    function ToString: string; override;
+  end;
+
+type
   ///  <summary>Class that renders "Compile Results Table" HTML fragment for a
   ///  snippet.</summary>
   TSnippetCompileResultsHTMLFragment = class(TSnippetHTMLFragment)
@@ -182,15 +190,15 @@ type
 type
   ///  <summary>Class that renders "Extra Information" HTML fragment for a
   ///  snippet.</summary>
-  TSnippetExtraHTMLFragment = class(TSnippetHTMLFragment)
+  TSnippetNotesHTMLFragment = class(TSnippetHTMLFragment)
   public
-    ///  <summary>Renders "Extra Information" fragment as HTML.</summary>
+    ///  <summary>Renders "Notes" fragment as HTML.</summary>
     function ToString: string; override;
   end;
 
 { TSnippetHTMLFragment }
 
-constructor TSnippetHTMLFragment.Create(Snippet: TSnippet);
+constructor TSnippetHTMLFragment.Create(Snippet: ISnippet);
 begin
   Assert(Assigned(Snippet), ClassName + '.Create: Snippet is nil');
   inherited Create;
@@ -242,13 +250,13 @@ begin
   Result := Render(sPrefix, 'kind', SnippetHTML.SnippetKind);
 end;
 
-{ TSnippetCategoryHTMLFragment }
+{ TSnippetTagsHTMLFragment }
 
-function TSnippetCategoryHTMLFragment.ToString: string;
-resourcestring
-  sPrefix = 'Category:';
+function TSnippetTagsHTMLFragment.ToString: string;
 begin
-  Result := Render(sPrefix, 'category', SnippetHTML.Category);
+  Result := THTML.CompoundTag(
+    'p', THTMLAttributes.Create('id', 'tags'), SnippetHTML.Tags
+  );
 end;
 
 { TSnippetUnitsHTMLFragment }
@@ -278,6 +286,15 @@ begin
   Result := Render(sPrefix, 'xrefs', SnippetHTML.XRefs);
 end;
 
+{ TSnippetLanguageHTMLFragment }
+
+function TSnippetLanguageHTMLFragment.ToString: string;
+resourcestring
+  sPrefix = 'Language:';
+begin
+  Result := Render(sPrefix, 'language', SnippetHTML.Language);
+end;
+
 { TSnippetCompileResultsHTMLFragment }
 
 function TSnippetCompileResultsHTMLFragment.ToString: string;
@@ -299,30 +316,31 @@ begin
   );
 end;
 
-{ TSnippetExtraHTMLFragment }
+{ TSnippetNotesHTMLFragment }
 
-function TSnippetExtraHTMLFragment.ToString: string;
+function TSnippetNotesHTMLFragment.ToString: string;
 begin
   Result := THTML.CompoundTag(
-    'div', THTMLAttributes.Create('id', 'extra'), SnippetHTML.Extra
+    'div', THTMLAttributes.Create('id', 'notes'), SnippetHTML.Notes
   );
 end;
 
 { TSnippetHTMLFragmentFactory }
 
 class function TSnippetHTMLFragmentFactory.Create(FragKind: TSnippetPagePartId;
-  Snippet: TSnippet): TSnippetHTMLFragment;
+  Snippet: ISnippet): TSnippetHTMLFragment;
 const
   Map: array[TSnippetPagePartId] of TSnippetHTMLFragmentClass = (
     TSnippetDescHTMLFragment,           // sppDescription,
     TSnippetSourceCodeHTMLFragment,     // sppSourceCode,
     TSnippetKindHTMLFragment,           // sppKind,
-    TSnippetCategoryHTMLFragment,       // sppCategory,
+    TSnippetTagsHTMLFragment,           // sppTags,
     TSnippetUnitsHTMLFragment,          // sppUnits,
     TSnippetDependsHTMLFragment,        // sppDepends,
     TSnippetXRefsHTMLFragment,          // sppXRefs,
     TSnippetCompileResultsHTMLFragment, // sppCompileResults,
-    TSnippetExtraHTMLFragment           // sppExtra
+    TSnippetNotesHTMLFragment,          // sppNotes
+    TSnippetLanguageHTMLFragment        // sppLanguage
   );
 begin
   Result := Map[FragKind].Create(Snippet);
@@ -330,8 +348,7 @@ end;
 
 { TSnippetPageHTML }
 
-class function TSnippetPageHTML.Render(const Snippet: TSnippet):
-  string;
+class function TSnippetPageHTML.Render(Snippet: ISnippet): string;
 var
   SB: TStringBuilder;
   PageStruct: TSnippetPageStructure;
@@ -339,7 +356,7 @@ var
   Fragment: TSnippetHTMLFragment;
 
 begin
-  PageStruct := Preferences.PageStructures[Snippet.Kind];
+  PageStruct := Preferences.PageStructures[Snippet.KindID];
   SB := TStringBuilder.Create;
   try
     for Part in PageStruct.Parts do

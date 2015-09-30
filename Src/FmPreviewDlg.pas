@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2005-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -30,8 +30,8 @@ uses
 
 type
   ///  <summary>
-  ///  Enumeration of types of document that can be displayed by preview dialog
-  ///  box.
+  ///  Enumeration of types of document that can be displayed by preview
+  ///  dialogue box.
   ///  </summary>
   TPreviewDocType = (
     dtPlainText,  // plain text document
@@ -41,7 +41,7 @@ type
 
 type
   ///  <summary>
-  ///  Dialog box used to preview text, HTML and Rich text documents.
+  ///  Dialogue box used to preview text, HTML and Rich text documents.
   ///  </summary>
   TPreviewDlg = class(TGenericViewDlg, INoPublicConstruct)
     actCopy: TAction;
@@ -77,7 +77,7 @@ type
       fDocContent: TEncodedData;
       ///  <summary>Type (format) of document to be displayed.</summary>
       fDocType: TPreviewDocType;
-      ///  <summary>Dialog box title.</summary>
+      ///  <summary>Dialogue box title.</summary>
       fDlgTitle: string;
     ///  <summary>Gets information about required document viewer and tab sheet
     ///  that contains it.</summary>
@@ -103,14 +103,14 @@ type
     ///  <summary>Loads and displays the document being previewed.</summary>
     procedure InitForm; override;
   public
-    ///  <summary>Displays a document in preview dialog box.</summary>
-    ///  <param name="AOwner">TComponent [in] Component that owns dialog box.
+    ///  <summary>Displays a document in preview dialogue box.</summary>
+    ///  <param name="AOwner">TComponent [in] Component that owns dialogue box.
     ///  </param>
     ///  <param name="ADocContent">TEncodedData [in] Content of document to be
     ///  displayed.</param>
     ///  <param name="ADocType">TPreviewDocType [in] Type or format of document
     ///  to be displayed: HTML, RTF or plain text.</param>
-    ///  <param name="ADlgTitle">string [in] Optional dialog box title. If not
+    ///  <param name="ADlgTitle">string [in] Optional dialogue box title. If not
     ///  supplied default title is used.</param>
     class procedure Execute(AOwner: TComponent; const ADocContent: TEncodedData;
       const ADocType: TPreviewDocType; const ADlgTitle: string = '');
@@ -232,7 +232,7 @@ begin
   pcViews.ActivePage := TabSheet;
   // update required frame's popup menu and display document in it
   (fViewer as IPreview).SetPopupMenu(mnuPreview);
-  // load content into preview and set dialog caption
+  // load content into preview and set dialogue caption
   (fViewer as IPreview).Display(fDocContent);
   if fDlgTitle <> '' then
     Caption := fDlgTitle; // caller specified title - use it

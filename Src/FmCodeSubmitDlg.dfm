@@ -61,7 +61,7 @@ inherited CodeSubmitDlg: TCodeSubmitDlg
           ParentFont = False
           Visible = False
         end
-        inline frmSnippets: TSelectUserSnippetsFrame
+        inline frmSnippets: TSelectSnippetsFrame
           Left = 0
           Top = 32
           Width = 369
@@ -83,6 +83,10 @@ inherited CodeSubmitDlg: TCodeSubmitDlg
         Caption = 'tsUserInfo'
         ImageIndex = 2
         TabVisible = False
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object lblName: TLabel
           Left = 0
           Top = 8

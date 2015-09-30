@@ -3,12 +3,12 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2012-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2012-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
  *
- * Implements a dialogue box which can create a duplicate copy of asnippet.
+ * Implements a dialogue box which can create a duplicate copy of a snippet.
 }
 
 
@@ -20,21 +20,22 @@ interface
 
 uses
   // Delphi
-  SysUtils, Controls, StdCtrls, ExtCtrls, Classes,
+  SysUtils,
+  Controls,
+  StdCtrls,
+  ExtCtrls,
+  Classes,
   // Project
-  DB.USnippet, FmGenericOKDlg, UBaseObjects, UCategoryListAdapter,
-  UIStringList;
+  CS.Database.Types,
+  FmGenericOKDlg,
+  UBaseObjects;
 
 
 type
   TDuplicateSnippetDlg = class(TGenericOKDlg, INoPublicConstruct)
-    cbCategory: TComboBox;
     chkEdit: TCheckBox;
-    edDisplayName: TEdit;
-    edUniqueName: TEdit;
-    lblCategory: TLabel;
-    lblDisplayName: TLabel;
-    lblUniqueName: TLabel;
+    edTitle: TEdit;
+    lblTitle: TLabel;
     procedure btnOKClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -52,11 +53,9 @@ type
       end;
   strict private
     var
-      fSnippet: TSnippet;
-      fCatList: TCategoryListAdapter;
+      fSnippet: ISnippet;
+      fNewSnippetID: TSnippetID;
       fOptions: TPersistentOptions;
-    function DisallowedNames: IStringList;
-    function UniqueSnippetName(const BaseName: string): string;
     procedure ValidateData;
     procedure HandleException(const E: Exception);
     procedure UpdateDatabase;
@@ -69,7 +68,7 @@ type
     procedure ArrangeForm; override;
   public
     class function Execute(const AOwner: TComponent;
-      const ASnippet: TSnippet): Boolean;
+      ASnippet: ISnippet): Boolean;
   end;
 
 
@@ -80,8 +79,14 @@ uses
   // Delphi
   Math,
   // Project
-  DB.UCategory, DB.UMain, UCtrlArranger, UExceptions, UMessageBox, USettings,
-  USnippetValidator, UStructs, UStrUtils, UUserDBMgr;
+  DB.UMain,
+  UCtrlArranger,
+  UExceptions,
+  UMessageBox,
+  USettings,
+  USnippetValidator,
+  UStrUtils,
+  UUserDBMgr;
 
 {$R *.dfm}
 
@@ -90,28 +95,17 @@ uses
 procedure TDuplicateSnippetDlg.ArrangeForm;
 begin
   TCtrlArranger.SetLabelHeights(Self);
-
   TCtrlArranger.AlignLefts(
-    [
-      lblUniqueName, lblDisplayName, lblCategory, edUniqueName, edDisplayName,
-      cbCategory, chkEdit
-    ],
-    0
+    [lblTitle, edTitle, chkEdit], 0
   );
-
-  lblUniqueName.Top := 0;
-  TCtrlArranger.MoveBelow(lblUniqueName, edUniqueName, 4);
-  TCtrlArranger.MoveBelow(edUniqueName, lblDisplayName, 8);
-  TCtrlArranger.MoveBelow(lblDisplayName, edDisplayName, 4);
-  TCtrlArranger.MoveBelow(edDisplayName, lblCategory, 8);
-  TCtrlArranger.MoveBelow(lblCategory, cbCategory, 4);
-  TCtrlArranger.MoveBelow(cbCategory, chkEdit, 20);
-
+  lblTitle.Top := 0;
+  TCtrlArranger.MoveBelow(lblTitle, edTitle, 4);
+  TCtrlArranger.MoveBelow(edTitle, chkEdit, 16);
   pnlBody.ClientWidth := Max(
     TCtrlArranger.TotalControlWidth(pnlBody) + 8,
     TCtrlArranger.RightOf(btnHelp) - btnOK.Left
   );
-
+  pnlBody.ClientHeight := TCtrlArranger.TotalControlHeight(pnlBody) + 8;
   // Arrange inherited controls and size the form
   inherited;
 end;
@@ -127,26 +121,15 @@ begin
   end;
 end;
 
-function TDuplicateSnippetDlg.DisallowedNames: IStringList;
-var
-  Snippet: TSnippet;
-begin
-  Result := TIStringList.Create;
-  Result.CaseSensitive := False;
-  for Snippet in Database.Snippets do
-    if Snippet.UserDefined then
-      Result.Add(Snippet.Name);
-end;
-
 class function TDuplicateSnippetDlg.Execute(const AOwner: TComponent;
-  const ASnippet: TSnippet): Boolean;
+  ASnippet: ISnippet): Boolean;
 resourcestring
-  sCaption = 'Duplicate %s';   // dialog box caption
+  sCaption = 'Duplicate %s';   // dialogue box caption
 begin
   Assert(Assigned(ASnippet), ClassName + '.Execute: ASnippet is nil');
   with InternalCreate(AOwner) do
     try
-      Caption := Format(sCaption, [ASnippet.DisplayName]);
+      Caption := Format(sCaption, [ASnippet.Title]);
       fSnippet := ASnippet;
       Result := ShowModal = mrOK;
     finally
@@ -175,84 +158,44 @@ begin
 end;
 
 procedure TDuplicateSnippetDlg.InitForm;
-var
-  SnippetCat: TCategory;
 begin
   inherited;
-  edUniqueName.Text := UniqueSnippetName(fSnippet.Name);
-  edDisplayName.Text := StrIf(
-    StrSameStr(fSnippet.Name, fSnippet.DisplayName), '', fSnippet.DisplayName
-  );
-  fCatList.ToStrings(cbCategory.Items);
-  SnippetCat := Database.Categories.Find(fSnippet.Category);
-  if Assigned(SnippetCat) then
-    cbCategory.ItemIndex := cbCategory.Items.IndexOf(SnippetCat.Description)
-  else
-    cbCategory.ItemIndex := -1;
+  edTitle.Text := fSnippet.Title;
   chkEdit.Checked := fOptions.EditSnippetOnClose;
-end;
-
-function TDuplicateSnippetDlg.UniqueSnippetName(const BaseName: string): string;
-var
-  ExistingNames: IStringList;
-  Postfix: Cardinal;
-begin
-  ExistingNames := DisallowedNames;
-  if not ExistingNames.Contains(BaseName) then
-    Exit(BaseName);
-  // BaseName exists: find number to append to it to make name unique
-  Postfix := 1;
-  repeat
-    Inc(PostFix);
-    Result := BaseName + IntToStr(PostFix);
-  until not ExistingNames.Contains(Result);
 end;
 
 procedure TDuplicateSnippetDlg.UpdateDatabase;
 var
-  UniqueName: string;
-  DisplayName: string;
+  NewSnippet: IEditableSnippet;
 begin
-  UniqueName := StrTrim(edUniqueName.Text);
-  DisplayName := StrTrim(edDisplayName.Text);
-  (Database as IDatabaseEdit).DuplicateSnippet(
-    fSnippet,
-    UniqueName,
-    StrIf(StrSameStr(UniqueName, DisplayName), '', DisplayName),
-    fCatList.CatID(cbCategory.ItemIndex)
-  );
+  NewSnippet := Database.NewSnippet;
+  NewSnippet.UpdateFrom(fSnippet);
+  NewSnippet.Title := StrTrim(edTitle.Text);
+  Database.AddSnippet(NewSnippet);
+  fNewSnippetID := NewSnippet.ID;
 end;
 
 procedure TDuplicateSnippetDlg.ValidateData;
 var
   ErrMsg: string;
-  ErrSel: TSelection;
-resourcestring
-  sNoCategory = 'You must choose a category';
 begin
-  if not TSnippetValidator.ValidateName(
-    StrTrim(edUniqueName.Text), True, ErrMsg, ErrSel
-  ) then
-    raise EDataEntry.Create(ErrMsg, edUniqueName, ErrSel);
-  if cbCategory.ItemIndex = -1 then
-    raise EDataEntry.Create(sNoCategory, cbCategory);
+  if not TSnippetValidator.ValidateTitle(edTitle.Text, ErrMsg) then
+    raise EDataEntry.Create(ErrMsg, edTitle);
 end;
 
 procedure TDuplicateSnippetDlg.FormCreate(Sender: TObject);
 begin
   inherited;
-  fCatList := TCategoryListAdapter.Create(Database.Categories);
   fOptions := TPersistentOptions.Create;
 end;
 
 procedure TDuplicateSnippetDlg.FormDestroy(Sender: TObject);
 begin
   if (ModalResult = mrOK) and chkEdit.Checked then
-    TUserDBMgr.EditSnippet(StrTrim(edUniqueName.Text));
+    TDBModificationMgr.EditSnippet(fNewSnippetID);
   fOptions.EditSnippetOnClose := chkEdit.Checked;
   inherited;
   fOptions.Free;
-  fCatList.Free;
 end;
 
 { TDuplicateSnippetDlg.TPersistentOptions }
@@ -277,4 +220,5 @@ begin
 end;
 
 end.
+
 

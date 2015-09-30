@@ -3,14 +3,13 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2011-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2011-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
  *
- * Implements a wizard dialogue box that handles the import of user defined
- * snippets into the database. Permits snippets from the import file to be
- * renamed or rejected.
+ * Implements a wizard dialogue box that handles the import of snippets into the
+ * database. Permits snippets from the import file to be renamed or rejected.
 }
 
 
@@ -26,8 +25,8 @@ uses
 
 type
   ///  <summary>
-  ///  Wizard dialog box that handles the import of user defined snippets into
-  ///  the user database. Permits snippets from the import file to be renamed or
+  ///  Wizard dialogue box that handles the import of snippets into the
+  ///  database. Permits snippets from the import file to be renamed or
   ///  rejected.
   ///  </summary>
   TCodeImportDlg = class(TWizardDlg, INoPublicConstruct)
@@ -68,8 +67,8 @@ type
     procedure actRenameUpdate(Sender: TObject);
     ///  <summary>Handles event that requests renaming of a snippet.</summary>
     procedure actRenameExecute(Sender: TObject);
-    ///  <summary>Handles request to display open file dialog box to get import
-    ///  file name.</summary>
+    ///  <summary>Handles request to display open file dialogue box to get
+    ///  import file name.</summary>
     procedure actBrowseExecute(Sender: TObject);
   strict private
     const
@@ -99,8 +98,8 @@ type
     ///  <summary>Retrieves import file name from edit control where it is
     ///  entered.</summary>
     function GetFileNameFromEditCtrl: string;
-    ///  <summary>Checks if an open file open dialog box can close. Displays an
-    ///  error message if not.</summary>
+    ///  <summary>Checks if an open file open dialogue box can close. Displays
+    ///  an error message if not.</summary>
     class procedure CanOpenDialogClose(Sender: TObject;
       var CanClose: Boolean);
     ///  <summary>Populates controls on user information page.</summary>
@@ -137,7 +136,7 @@ type
     constructor InternalCreate(AOwner: TComponent;
       const ImportMgr: TCodeImportMgr); reintroduce;
     ///  <summary>Aligns and arranges controls in each tab sheet and sizes
-    ///  dialog box to accomodate controls.</summary>
+    ///  dialogue box to accomodate controls.</summary>
     ///  <remarks>Overridden method called from ancestor class.</remarks>
     procedure ArrangeForm; override;
     ///  <summary>Returns text of heading on page indexed by PageIdx.</summary>
@@ -190,11 +189,11 @@ uses
 
 procedure TCodeImportDlg.actBrowseExecute(Sender: TObject);
 var
-  OpenDlg: TOpenDialogEx; // self-aligning enhanced open dialog box
+  OpenDlg: TOpenDialogEx; // self-aligning enhanced open dialogue box
 resourcestring
   sFilter = 'CodeSnip export files (*.csexp)|*.csexp|'  // file filter
     + 'All files (*.*)|*.*';
-  sTitle = 'Import File';                               // dialog box title
+  sTitle = 'Import File';                               // dialogue box title
 begin
   OpenDlg := TOpenDialogEx.Create(nil);
   try
@@ -281,7 +280,7 @@ end;
 class procedure TCodeImportDlg.CanOpenDialogClose(Sender: TObject;
   var CanClose: Boolean);
 var
-  Dlg: TOpenDialogEx; // dialog box instance triggering this event
+  Dlg: TOpenDialogEx; // dialogue box instance triggering this event
   FileSpec: string;   // full path to entered or selected file name
 resourcestring
   // Error messages
@@ -434,7 +433,7 @@ function TCodeImportDlg.NextPage(const PageIdx: Integer): Integer;
 begin
   case PageIdx of
     cFilePage:
-      if fImportMgr.UserInfo.IsNul then
+      if fImportMgr.UserInfo.IsNull then
         Exit(cUpdatePage);
   end;
   Result := inherited NextPage(PageIdx);
@@ -475,7 +474,7 @@ function TCodeImportDlg.PrevPage(const PageIdx: Integer): Integer;
 begin
   case PageIdx of
     cUpdatePage:
-      if fImportMgr.UserInfo.IsNul then
+      if fImportMgr.UserInfo.IsNull then
         Exit(cFilePage);
   end;
   Result := inherited PrevPage(PageIdx);
@@ -593,8 +592,8 @@ resourcestring
 var
   LI: TListItem;  // each list item in list view
 begin
-  // Checks snippet name for being well formed and not already in user database
-  Result := TSnippetValidator.ValidateName(Name, True, ErrMsg);
+  // Checks snippet name for being well formed and not already in database
+  Result := TSnippetValidator.ValidateSnippetID(Name, True, ErrMsg);
   if not Result then
     Exit;
   // Checks name not already used for other imported snippets

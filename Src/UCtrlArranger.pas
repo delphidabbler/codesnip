@@ -50,6 +50,11 @@ type
     class function BottomOf(const Ctrls: array of TControl;
       const Margin: Integer = 0): Integer; overload;
 
+    ///  <summary>Returns Y co-ordinate of top of top-most control in given
+    ///  array, allowing space for optional margin.</summary>
+    class function TopOf(const Ctrls: array of TControl;
+      const Margin: Integer = 0): Integer;
+
     ///  <summary>Returns X co-ordinate of right hand side of given control,
     ///  allowing space for optional margin.</summary>
     class function RightOf(const Ctrl: TControl; const Margin: Integer = 0):
@@ -101,6 +106,12 @@ type
     class function AlignVCentres(const ATop: Integer;
       const Ctrls: array of TControl): Integer;
 
+    ///  <summary>Vertically centres all controls in the Ctrls array within the
+    ///  range defined by the top-most and bottom-most co-ordinates of the
+    ///  controls in the RefCtrls array.</summary>
+    class procedure AlignVCentresTo(const RefCtrls: array of TControl;
+      const Ctrls: array of TControl);
+
     ///  <summary>Horizontally centres all controls in the Ctrls array within
     ///  the range defined by the left-most and right-most co-ordinates of the
     ///  controls in the RefCtrls array.</summary>
@@ -151,6 +162,18 @@ type
     ///  <remarks>Array of controls must not be empty.</remarks>
     class function AlignRights(const Ctrls: array of TControl): Integer;
       overload;
+
+    ///  <summary>Grows or shrinks the given control so that its right hand side
+    ///  is aligned with the given position, leaving the position of the left
+    ///  hand side of the control unchanged.</summary>
+    class procedure StretchRightTo(const Ctrl: TControl; const ARight: Integer);
+      overload;
+
+    ///  <summary>Grows or shrinks each of the controls in Ctrls so that its
+    ///  right hand side is aligned with the given position, leaving the
+    ///  positions of the left hand side of the controls unchanged.</summary>
+    class procedure StretchRightTo(const Ctrls: array of TControl;
+      const ARight: Integer); overload;
 
     ///  <summary>Returns the total height needed to display all the controls
     ///  parented by given container.</summary>
@@ -273,6 +296,18 @@ begin
     Ctrl.Top := ATop + (Result - Ctrl.Height) div 2;
 end;
 
+class procedure TCtrlArranger.AlignVCentresTo(const RefCtrls,
+  Ctrls: array of TControl);
+var
+  Top, Bottom: Integer;
+  Ctrl: TControl;
+begin
+  Top := TopOf(RefCtrls);
+  Bottom := BottomOf(RefCtrls);
+  for Ctrl in Ctrls do
+    Ctrl.Top := (Top + Bottom - Ctrl.Height) div 2;
+end;
+
 class function TCtrlArranger.BottomOf(const Ctrl: TControl;
   const Margin: Integer): Integer;
 begin
@@ -387,6 +422,32 @@ begin
         SetLabelHeight(Lbl);
     end;
   end;
+end;
+
+class procedure TCtrlArranger.StretchRightTo(const Ctrls: array of TControl;
+  const ARight: Integer);
+var
+  Ctrl: TControl;
+begin
+  for Ctrl in Ctrls do
+    StretchRightTo(Ctrl, ARight);
+end;
+
+class procedure TCtrlArranger.StretchRightTo(const Ctrl: TControl;
+  const ARight: Integer);
+begin
+  Ctrl.Width := ARight - Ctrl.Left;
+end;
+
+class function TCtrlArranger.TopOf(const Ctrls: array of TControl;
+  const Margin: Integer): Integer;
+var
+  Ctrl: TControl;
+begin
+  Result := MaxInt;
+  for Ctrl in Ctrls do
+    Result := Min(Result, Ctrl.Top);
+  Dec(Result, Margin);
 end;
 
 class function TCtrlArranger.TotalControlHeight(const Container: TWinControl):

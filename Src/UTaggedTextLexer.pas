@@ -445,7 +445,7 @@ constructor TTaggedTextEntityHandler.Create;
 begin
   inherited;
   fSymbolicEntities := TDictionary<string, Char>.Create(
-    TStringEqualityComparer.Create
+    TStringComparator.Create
   );
 end;
 
@@ -615,9 +615,7 @@ constructor TTaggedTextTagHandler.Create(const EH: TTaggedTextEntityHandler);
 begin
   Assert(Assigned(EH), ClassName + '.Create: EH is not assigned');
   inherited Create;
-  fTags := TDictionary<string, TTagInfo>.Create(
-    TTextEqualityComparer.Create
-  );
+  fTags := TDictionary<string, TTagInfo>.Create(TTextComparator.Create);
   fEntityHandler := EH;
 end;
 
@@ -706,7 +704,7 @@ begin
     Inc(NextChPos);
   // Copy the name from the string
   Result := StrSlice(TagStr, StartPos, NextChPos - StartPos);
-  if StrTrim(Result) = '' then
+  if StrIsBlank(Result) then
     raise ETaggedTextTagHandler.Create(sTagEmpty);
 end;
 

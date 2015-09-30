@@ -208,7 +208,7 @@ begin
   begin
     // Error response: raise web service error exception unless data doesn't
     // contain expected error message when failure exception is raised
-    if StrTrim(Response.Text) = '' then
+    if StrIsBlank(Response.Text) then
       raise EWebServiceFailure.Create(sUnrecognizedError);
     raise EWebServiceError.Create(StrTrim(Response.Text), StatusCode);
   end

@@ -9,7 +9,7 @@
  * $Date$
  *
  * Implements a frame that allows user to set application display preferences.
- * Designed for use as one of the tabs in the preferences dialog box.
+ * Designed for use as one of the tabs in the preferences dialogue box.
 }
 
 
@@ -27,14 +27,11 @@ uses
 
 
 type
-
   TDisplayPrefsFrame = class(TPrefsBaseFrame)
     lblOverviewTree: TLabel;
     cbOverviewTree: TComboBox;
     chkHideEmptySections: TCheckBox;
     chkSnippetsInNewTab: TCheckBox;
-    lblMainColour: TLabel;
-    lblUserColour: TLabel;
     btnDefColours: TButton;
     lblSourceBGColour: TLabel;
     procedure chkHideEmptySectionsClick(Sender: TObject);
@@ -43,10 +40,6 @@ type
     var
       ///  <summary>Flag indicating if changes affect UI.</summary>
       fUIChanged: Boolean;
-      fMainColourBox: TColorBoxEx;
-      fMainColourDlg: TColorDialogEx;
-      fUserColourBox: TColorBoxEx;
-      fUserColourDlg: TColorDialogEx;
       fSourceBGColourBox: TColorBoxEx;
       fSourceBGColourDlg: TColorDialogEx;
     procedure SelectOverviewTreeState(const State: TOverviewStartState);
@@ -76,19 +69,20 @@ type
       }
     ///  <summary>Checks if preference changes require that main window UI is
     ///  updated.</summary>
-    ///  <remarks>Called when dialog box containing frame is closing.</remarks>
+    ///  <remarks>Called when dialogue box containing frame is closing.
+    ///  </remarks>
     function UIUpdated: Boolean; override;
     procedure ArrangeControls; override;
       {Arranges controls on frame. Called after frame has been sized.
       }
     function DisplayName: string; override;
       {Caption that is displayed in the tab sheet that contains this frame when
-      displayed in the preference dialog box.
+      displayed in the preference dialogue box.
         @return Required display name.
       }
     class function Index: Byte; override;
       {Index number that determines the location of the tab containing this
-      frame when displayed in the preferences dialog box.
+      frame when displayed in the preferences dialogue box.
         @return Required index number.
       }
   end;
@@ -119,11 +113,7 @@ begin
   chkHideEmptySections.Checked := not Prefs.ShowEmptySections;
   chkHideEmptySections.OnClick := chkHideEmptySectionsClick;
   chkSnippetsInNewTab.Checked := Prefs.ShowNewSnippetsInNewTabs;
-  fMainColourBox.Selected := Prefs.DBHeadingColours[False];
-  fUserColourBox.Selected := Prefs.DBHeadingColours[True];
   fSourceBGColourBox.Selected := Prefs.SourceCodeBGcolour;
-  Prefs.DBHeadingCustomColours[False].CopyTo(fMainColourDlg.CustomColors, True);
-  Prefs.DBHeadingCustomColours[True].CopyTo(fUserColourDlg.CustomColors, True);
   Prefs.SourceCodeBGCustomColours.CopyTo(fSourceBGColourDlg.CustomColors, True);
 end;
 
@@ -134,14 +124,14 @@ begin
   TCtrlArranger.AlignLefts(
     [
       lblOverviewTree, chkHideEmptySections, chkSnippetsInNewTab,
-      lblMainColour, lblUserColour, lblSourceBGColour, btnDefColours
+      lblSourceBGColour, btnDefColours
     ],
     0
   );
   TCtrlArranger.AlignLefts(
-    [cbOverviewTree, fMainColourBox, fUserColourBox, fSourceBGColourBox],
+    [cbOverviewTree, fSourceBGColourBox],
     TCtrlArranger.RightOf(
-      [lblOverviewTree, lblMainColour, lblUserColour, lblSourceBGColour],
+      [lblOverviewTree, lblSourceBGColour],
       8
     )
   );
@@ -152,14 +142,6 @@ begin
   TCtrlArranger.MoveBelow(chkSnippetsInNewTab, chkHideEmptySections, 8);
   TCtrlArranger.AlignVCentres(
     TCtrlArranger.BottomOf(chkHideEmptySections, 24),
-    [lblMainColour, fMainColourBox]
-  );
-  TCtrlArranger.AlignVCentres(
-    TCtrlArranger.BottomOf([lblMainColour, fMainColourBox], 8),
-    [lblUserColour, fUserColourBox]
-  );
-  TCtrlArranger.AlignVCentres(
-    TCtrlArranger.BottomOf([lblUserColour, fUserColourBox], 8),
     [lblSourceBGColour, fSourceBGColourBox]
   );
   TCtrlArranger.MoveBelow(
@@ -171,10 +153,7 @@ end;
 
 procedure TDisplayPrefsFrame.btnDefColoursClick(Sender: TObject);
 begin
-  // Restores default heading and source code background colours in colour
-  // combo boxes
-  fMainColourBox.Selected := clMainSnippet;
-  fUserColourBox.Selected := clUserSnippet;
+  // Restores source code background colour in colour combo box
   fSourceBGColourBox.Selected := clSourceBg;
   fUIChanged := True;
 end;
@@ -198,7 +177,6 @@ constructor TDisplayPrefsFrame.Create(AOwner: TComponent);
     @param AOwner [in] Component that owns frame.
   }
 resourcestring
-  sHeadingColourDlgTitle = 'Heading Colour';
   sSourceBGColourDlgTitle = 'Source Code Background Colour';
 var
   OTStateIdx: TOverviewStartState;  // loops thru each overview tree start state
@@ -210,22 +188,12 @@ begin
     cbOverviewTree.Items.AddObject(
       OverviewTreeStateDesc(OTStateIdx), TObject(OTStateIdx)
     );
-  // Create colour dialogue boxes
-  fMainColourDlg := TColorDialogEx.Create(Self);
-  fMainColourDlg.Title := sHeadingColourDlgTitle;
-  fUserColourDlg := TColorDialogEx.Create(Self);
-  fUserColourDlg.Title := sHeadingColourDlgTitle;
+  // Create colour dialogue box
   fSourceBGColourDlg := TColorDialogEx.Create(Self);
   fSourceBGColourDlg.Title := sSourceBGColourDlgTitle;
-  // Create colour combo boxes
-  fMainColourBox := CreateCustomColourBox(fMainColourDlg);
-  fMainColourBox.TabOrder := 3;
-  lblMainColour.FocusControl := fMainColourBox;
-  fUserColourBox := CreateCustomColourBox(fUserColourDlg);
-  fUserColourBox.TabOrder := 4;
-  lblUserColour.FocusControl := fUserColourBox;
+  // Create colour combo box
   fSourceBGColourBox := CreateCustomColourBox(fSourceBGColourDlg);
-  fSourceBGColourBox.TabOrder := 5;
+  fSourceBGColourBox.TabOrder := 3;
   lblSourceBGColour.FocusControl := fSourceBGColourBox;
 end;
 
@@ -257,15 +225,7 @@ begin
   Prefs.OverviewStartState := TOverviewStartState(
     cbOverviewTree.Items.Objects[cbOverviewTree.ItemIndex]
   );
-  Prefs.DBHeadingColours[False] := fMainColourBox.Selected;
-  Prefs.DBHeadingColours[True] := fUserColourBox.Selected;
   Prefs.SourceCodeBGcolour := fSourceBGColourBox.Selected;
-  Prefs.DBHeadingCustomColours[False].CopyFrom(
-    fMainColourDlg.CustomColors, True
-  );
-  Prefs.DBHeadingCustomColours[True].CopyFrom(
-    fUserColourDlg.CustomColors, True
-  );
   Prefs.SourceCodeBGCustomColours.CopyFrom(
     fSourceBGColourDlg.CustomColors, True
   );
@@ -273,7 +233,7 @@ end;
 
 function TDisplayPrefsFrame.DisplayName: string;
   {Caption that is displayed in the tab sheet that contains this frame when
-  displayed in the preference dialog box.
+  displayed in the preference dialogue box.
     @return Required display name.
   }
 resourcestring
@@ -284,7 +244,7 @@ end;
 
 class function TDisplayPrefsFrame.Index: Byte;
   {Index number that determines the location of the tab containing this frame
-  when displayed in the preferences dialog box.
+  when displayed in the preferences dialogue box.
     @return Required index number.
   }
 begin
@@ -335,7 +295,7 @@ end;
 
 initialization
 
-// Register frame with preferences dialog box
+// Register frame with preferences dialogue box
 TPreferencesDlg.RegisterPage(TDisplayPrefsFrame);
 
 end.

@@ -26,7 +26,7 @@ uses
 
 type
   ///  <summary>Provides an interface to the DelphiDabbler CodeSnip program
-  ///  update web service using the v2 API.</summary>
+  ///  update web service using the v3 API.</summary>
   ///  <remarks>This class provides a public method for every command exposed by
   ///  the web service.</remarks>
   TProgramUpdateMgr = class sealed(TStdWebService)
@@ -37,17 +37,19 @@ type
       ///  <summary>User agent sent to web service.</summary>
       UserAgent = 'CodeSnip';
       ///  <summary>API version of web service.</summary>
-      ApiVersion = '2';
+      ApiVersion = '3';
       ///  <summary>API key required for all calls to web service.</summary>
       ApiKey = '9EE3A4D85A2F46F79AE2AAB1012A7678';
+      { TODO -cPRERELEASE: Change "Channel" to have required channel for
+                         previews, beta or final release as necessary. }
       ///  <summary>Release channel sent to web service.</summary>
-      Channel = '4';
+      Channel = 'parsnip';
+      { TODO -cPRERELEASE: Change "Stream" to have required stream to one of
+                           "stable", "beta", "alpha" or "rc" as required. }
+      ///  <summary>Release stream sent to web service.</summary>
+      Stream = 'experimental';
       ///  <summary>Program edition sent to web service.</summary>
-      {$IFDEF PORTABLE}
-      Edition = 'portable';
-      {$ELSE}
-      Edition = 'standard';
-      {$ENDIF}
+      Edition = 'main';
   strict private
     ///  <summary>Creates and returns a parameters object containing standard
     ///  parameters that are required on every call to the web service.
@@ -68,7 +70,7 @@ type
     ///  <summary>Gets the latest version of the program from the web service.
     ///  </summary>
     ///  <remarks>The version returned is the latest one for the program edition
-    ///  specified by the Edition constant.</remarks>
+    ///  specified by the ProgramMode constant.</remarks>
     function LatestProgramVersion: string;
     ///  <summary>Gets the URL to use to download the latest version of the
     ///  program.</summary>
@@ -85,7 +87,12 @@ uses
   // Delphi
   SysUtils, Classes,
   // Project
-  UAppInfo, UStrUtils, USystemInfo, Web.UInfo;
+  CS.Init.CommandLineOpts,
+  UAppInfo,
+  UStrUtils,
+  USystemInfo,
+  UVersionInfo,
+  Web.UInfo;
 
 
 { TProgramUpdateMgr }
@@ -94,6 +101,7 @@ procedure TProgramUpdateMgr.AddUpdateStreamParams(Params: TURIParams);
 begin
   Assert(Assigned(Params), ClassName + '.AddUpdateStreamParams: Params is nil');
   Params.Add('channel', Channel);
+  Params.Add('stream', Stream);
   Params.Add('edition', Edition);
 end;
 
@@ -160,7 +168,11 @@ begin
     Params.Add('prog-ver', TAppInfo.ProgramReleaseVersion);
     Params.Add('os', SanitiseString(TOSInfo.Description));
     Params.Add('ie-ver', IntToStr(TIEInfo.MajorVersion));
-    Params.Add('caller', SanitiseString(Caller));
+    Params.Add(
+      'caller',
+      SanitiseString(Caller) + ',' +
+        StrIf(TCommandLineOpts.IsPortable, 'Portable', 'Standard')
+    );
     Response := TStringList.Create;
     try
       PostCommand('stats', Params, Response);

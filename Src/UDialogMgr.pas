@@ -3,13 +3,17 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2007-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2007-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
  *
- * Implements class that manages the display of dialog boxes.
+ * Implements class that manages the display of dialogue boxes.
 }
+
+
+{ TODO -cCommented Out: Reinstate TDialogMgr.ExecDBUpdateDlg or similar to
+                        check for updates to linked spaces. }
 
 
 unit UDialogMgr;
@@ -22,7 +26,10 @@ uses
   // Delphi
   Classes,
   // Project
-  DB.USnippet, UCompileMgr, USearch;
+  CS.Database.Types,
+  IntfNotifier,
+  UCompileMgr,
+  USearch;
 
 
 type
@@ -62,15 +69,26 @@ type
     function ExecFindTextDlg(out ASearch: ISearch; out RefineExisting: Boolean):
       Boolean;
 
+    ///  <summary>Displays the Find Tags dialogue box.</summary>
+    ///  <param name="ASearch">ISearch [out] Set to object containing search
+    ///  details. Undefined if user cancelled dialogue.</param>
+    ///  <param name="RefineExisting">Boolean [out] Set to flag indicating if
+    ///  any existing search is to be refined (True) or if this search is to
+    ///  apply to whole database. Undefined if user cancelled dialogue.</param>
+    ///  <returns>Boolean. True if user OKd dialogue or False if user cancelled.
+    ///  </returns>
+    function ExecFindTagsDlg(out ASearch: ISearch;
+      out RefineExisting: Boolean): Boolean;
+
     ///  <summary>Displays Find Cross References dialogue box.</summary>
-    ///  <param name="ASnippet">TSnippet [in] Snippet for which cross-references
+    ///  <param name="ASnippet">ISnippet [in] Snippet for which cross-references
     ///  are required.</param>
     ///  <param name="ASearch">ISearch [out] Set to object containing search
     ///  details. Undefined if user cancelled dialogue.</param>
     ///  <returns>Boolean. True if user OKd dialogue or False if user cancelled.
     ///  </returns>
-    function ExecFindXRefsDlg(const ASnippet: TSnippet;
-      out ASearch: ISearch): Boolean;
+    function ExecFindXRefsDlg(ASnippet: ISnippet; out ASearch: ISearch):
+      Boolean;
 
     ///  <summary>Displays Preferences dialogue box showing all tabs.</summary>
     ///  <param name="UpdateUI">Boolean [out] Flag that indicates if the UI
@@ -90,28 +108,23 @@ type
     function ExecPreferencesDlg(const PageClassName: string;
       out UpdateUI: Boolean): Boolean; overload;
 
-    ///  <summary>Displays Registration dialogue box.</summary>
-    ///  <returns>Boolean. True if user OKd dialogue or False if user cancelled.
-    ///  </returns>
-    function ExecRegistrationDlg: Boolean;
-
     ///  <summary>Displays Select Snippets dialogue box.</summary>
-    ///  <param name="SelectedSnippets">TSnippetList [in] List of pre-selected
+    ///  <param name="SelectedSnippets">ISnippetIDList [in] IDs of pre-selected
     ///  snippets.</param>
     ///  <param name="ASearch">ISearch [out] Set to object containing search
     ///  details. Undefined if user cancelled dialogue.</param>
     ///  <returns>Boolean. True if user OKd dialogue or False if user cancelled.
     ///  </returns>
-    function ExecSelectionSearchDlg(const SelectedSnippets: TSnippetList;
+    function ExecSelectionSearchDlg(SelectedSnippets: ISnippetIDList;
       out ASearch: ISearch): Boolean;
 
-    ///  <summary>Displays Update From Web dialogue box used to update the local
-    ///  copy of the online database.</summary>
-    ///  <returns>Boolean. True if the database was updated successfully or
-    ///  False if the local database is up to date, if the update failed or if
-    ///  the user cancelled.</returns>
-    function ExecDBUpdateDlg: Boolean;
-
+//    ///  <summary>Displays Update From Web dialogue box used to update the local
+//    ///  copy of the online database.</summary>
+//    ///  <returns>Boolean. True if the database was updated successfully or
+//    ///  False if the local database is up to date, if the update failed or if
+//    ///  the user cancelled.</returns>
+//    function ExecDBUpdateDlg: Boolean;
+//
     ///  <summary>Displays the Print dialogue box.</summary>
     ///  <returns>Boolean. True if user OKd dialogue or False if user cancelled.
     ///  </returns>
@@ -121,20 +134,20 @@ type
     procedure ShowDonateDlg;
 
     ///  <summary>Displays the Test Unit dialogue box.</summary>
-    ///  <param name="Snippet">TSnippet [in] Snippet for which test unit is to
+    ///  <param name="Snippet">ISnippet [in] Snippet for which test unit is to
     ///  be generated.</param>
-    procedure ShowTestUnitDlg(const Snippet: TSnippet);
+    procedure ShowTestUnitDlg(Snippet: ISnippet);
 
     ///  <summary>Shows Dependencies dialogue box.</summary>
-    ///  <param name="Snippet">TSnippets [in] Snippet for which dependencies are
+    ///  <param name="Snippet">ISnippet [in] Snippet for which dependencies are
     ///  to be displayed.</param>
     ///  <param name="HelpKeyword">string [in] Keyword of help topic to be
     ///  associated with the dialogue box.</param>
     ///  <returns>ISearch. Search containing details of any snippets to be
     ///  selected when the dialogue box closes. May be nil if no search is to be
     ///  performed.</returns>
-    function ShowDependenciesDlg(const Snippet: TSnippet;
-      const HelpKeyword: string): ISearch;
+    function ShowDependenciesDlg(Snippet: ISnippet; const HelpKeyword: string):
+      ISearch;
 
     ///  <summary>Displays the Proxy Server configuration dialogue box.
     ///  </summary>
@@ -148,16 +161,28 @@ type
     ///  <summary>Displays the Test Compile dialogue box.</summary>
     ///  <param name="CompileMgr">TCompileMgr [in] Object used to manage test
     ///  compilation and to retain results.</param>
-    ///  <param name="Snippet">TSnippet [in] Snippet to be test compiled.
+    ///  <param name="Snippet">ISnippet [in] Snippet to be test compiled.
     ///  </param>
     procedure ShowTestCompileDlg(const CompileMgr: TCompileMgr;
-      const Snippet: TSnippet);
+      Snippet: ISnippet);
 
     ///  <summary>Displays the Check For Program Updates dialogue box.</summary>
     procedure ShowProgramUpdatesDlg;
 
     ///  <summary>Displays the SWAG Import Wizard dialogue box.</summary>
     procedure ShowSWAGImportDlg;
+
+    ///  <summary>Displays the Configure Diff Viewer Program dialogue box.
+    ///  </summary>
+    ///  <returns>Boolean. True if user OKd dialogue or False if user cancelled.
+    ///  </returns>
+    function ExecConfigDiffProgDlg: Boolean;
+
+    ///  <summary>Displays the Favourites dialogue box non-modally.</summary>
+    ///  <param name="ANotifier">INotifier [in] Notifier object use by dialogue
+    ///  box to notify application of commands initiated by the dialogue box.
+    ///  </param>
+    procedure ShowFavouritesDlg(ANotifier: INotifier);
   end;
 
 
@@ -168,24 +193,50 @@ uses
   // Delphi
   Forms,
   // Project
-  FmAboutDlg, FmDBUpdateDlg, FmDependenciesDlg, FmDonateDlg, FmFindCompilerDlg,
-  FmFindTextDlg, FmFindXRefsDlg, FmNewsDlg, FmPreferencesDlg, FmPrintDlg,
-  FmProgramUpdatesDlg, FmProxyServerDlg, FmRegistrationDlg,
-  FmSelectionSearchDlg, FmSWAGImportDlg, FmTestCompileDlg, FmUserBugReportDlg,
+  CS.UI.Dialogs.ConfigDiffProg,
+  CS.UI.Dialogs.TagsSearch,
+  FmAboutDlg,
+//  FmDBUpdateDlg,
+  FmDependenciesDlg,
+  FmDonateDlg,
+  FmFavouritesDlg,
+  FmFindCompilerDlg,
+  FmFindTextDlg,
+  FmFindXRefsDlg,
+  FmNewsDlg,
+  FmPreferencesDlg,
+  FmPrintDlg,
+  FmProgramUpdatesDlg,
+  FmProxyServerDlg,
+  FmSelectionSearchDlg,
+  FmSWAGImportDlg,
+  FmTestCompileDlg,
+  FmUserBugReportDlg,
   UTestUnitDlgMgr;
 
 
 { TDialogMgr }
 
-function TDialogMgr.ExecDBUpdateDlg: Boolean;
+function TDialogMgr.ExecConfigDiffProgDlg: Boolean;
 begin
-  Result := TDBUpdateDlg.Execute(Owner);
+  Result := TConfigDiffProgDlg.Execute(Owner);
 end;
+
+//function TDialogMgr.ExecDBUpdateDlg: Boolean;
+//begin
+//  Result := TDBUpdateDlg.Execute(Owner);
+//end;
 
 function TDialogMgr.ExecFindCompilerDlg(out ASearch: ISearch;
   out RefineExisting: Boolean): Boolean;
 begin
   Result := TFindCompilerDlg.Execute(Owner, ASearch, RefineExisting);
+end;
+
+function TDialogMgr.ExecFindTagsDlg(out ASearch: ISearch;
+  out RefineExisting: Boolean): Boolean;
+begin
+  Result := TTagsSearchDlg.Execute(Owner, ASearch, RefineExisting);
 end;
 
 function TDialogMgr.ExecFindTextDlg(out ASearch: ISearch;
@@ -194,8 +245,8 @@ begin
   Result := TFindTextDlg.Execute(Owner, ASearch, RefineExisting);
 end;
 
-function TDialogMgr.ExecFindXRefsDlg(const ASnippet: TSnippet;
-  out ASearch: ISearch): Boolean;
+function TDialogMgr.ExecFindXRefsDlg(ASnippet: ISnippet; out ASearch: ISearch):
+  Boolean;
 begin
   Result := TFindXRefsDlg.Execute(Owner, ASnippet, ASearch);
 end;
@@ -221,13 +272,8 @@ begin
   Result := TProxyServerDlg.Execute(Owner);
 end;
 
-function TDialogMgr.ExecRegistrationDlg: Boolean;
-begin
-  Result := TRegistrationDlg.Execute(Owner);
-end;
-
-function TDialogMgr.ExecSelectionSearchDlg(
-  const SelectedSnippets: TSnippetList; out ASearch: ISearch): Boolean;
+function TDialogMgr.ExecSelectionSearchDlg(SelectedSnippets: ISnippetIDList;
+  out ASearch: ISearch): Boolean;
 begin
   Result := TSelectionSearchDlg.Execute(Owner, SelectedSnippets, ASearch);
 end;
@@ -242,7 +288,7 @@ begin
   TUserBugReportDlg.Execute(Owner);
 end;
 
-function TDialogMgr.ShowDependenciesDlg(const Snippet: TSnippet;
+function TDialogMgr.ShowDependenciesDlg(Snippet: ISnippet;
   const HelpKeyword: string): ISearch;
 begin
   Result := TDependenciesDlg.Execute(
@@ -253,6 +299,11 @@ end;
 procedure TDialogMgr.ShowDonateDlg;
 begin
   TDonateDlg.Execute(Owner);
+end;
+
+procedure TDialogMgr.ShowFavouritesDlg(ANotifier: INotifier);
+begin
+  TFavouritesDlg.Display(Owner, ANotifier);
 end;
 
 procedure TDialogMgr.ShowNewsDlg;
@@ -271,12 +322,12 @@ begin
 end;
 
 procedure TDialogMgr.ShowTestCompileDlg(const CompileMgr: TCompileMgr;
-  const Snippet: TSnippet);
+  Snippet: ISnippet);
 begin
   TTestCompileDlg.Execute(Owner, CompileMgr, Snippet);
 end;
 
-procedure TDialogMgr.ShowTestUnitDlg(const Snippet: TSnippet);
+procedure TDialogMgr.ShowTestUnitDlg(Snippet: ISnippet);
 begin
   TTestUnitDlgMgr.DisplayTestUnit(Owner, Snippet);
 end;

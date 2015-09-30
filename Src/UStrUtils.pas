@@ -213,12 +213,19 @@ function StrExplode(Str: UnicodeString; const Delim: UnicodeString;
   const TrimStrs: Boolean = False): Integer;
 
 ///  <summary>Splits string Str at the first occurence of Delim setting Left to
-///  the string preceeding Delim and Right to the string following Delim.
+///  the string preceding Delim and Right to the string following Delim.
 ///  Returns True if Delim was found in Str, False if not.</summary>
 ///  <remarks>Left and Right be empty if Delim is found at the start or end of
 ///  Str respectively.</remarks>
 function StrSplit(const Str: UnicodeString; const Delim: UnicodeString;
   out Left, Right: UnicodeString): Boolean;
+
+///  <summary>Returns the portion of string Str preceding the first occurence of
+///  string Str and removes the returned string and Delim from Str.</summary>
+///  <remarks>The empty string is returned if Str is empty or begins with Delim.
+///  Str can be set to the empty string if Delim ends the string of if Str was
+///  empty when the routine was called.</remarks>
+function StrPop(var Str: string; const Delim: string): string;
 
 ///  <summary>Word wraps text Str to form lines of maximum length MaxLen and
 ///  offsets each line using spaces to form a left margin of size given by
@@ -250,6 +257,11 @@ function StrIf(const Condition: Boolean; const TrueStr, FalseStr: string):
 ///  Escapable with the backslash character followed by the matching character
 ///  in Escapes.</summary>
 function StrBackslashEscape(const S, Escapable, Escapes: string): string;
+
+///  <summary>Checks if the given string S is blank.</summary>
+///  <remarks>A string is considered blank if it is the empty string or if it
+///  comprises only of white space characters.</remarks>
+function StrIsBlank(const S: string): Boolean;
 
 
 implementation
@@ -611,6 +623,14 @@ begin
   end;
 end;
 
+function StrPop(var Str: string; const Delim: string): string;
+var
+  Right: string;  // part of Str to right of Delim
+begin
+  StrSplit(Str, Delim, Result, Right);
+  Str := Right;
+end;
+
 function StrStartsStr(const SubStr, Str: UnicodeString): Boolean;
 begin
   if SubStr = '' then
@@ -842,6 +862,18 @@ begin
       PRes^ := Ch;
     Inc(PRes);
   end;
+end;
+
+function StrIsBlank(const S: string): Boolean;
+var
+  Ch: Char;
+begin
+  if S = EmptyStr then
+    Exit(True);
+  for Ch in S do
+    if not TCharacter.IsWhiteSpace(Ch) then
+      Exit(False);
+  Result := True;
 end;
 
 end.

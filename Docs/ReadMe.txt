@@ -8,14 +8,14 @@ DELPHIDABBLER CODESNIP v4 README
 What is CodeSnip?
 ================================================================================
 
-DelphiDabbler CodeSnip 4 is a code snippets repository targetted at the Pascal /
+DelphiDabbler CodeSnip 4 is a code snippets repository targeted at the Pascal /
 Delphi programming languages. It can download and display code snippets from the
 online DelphiDabbler Code Snippets database as well as maintain a database of
 user-defined snippets.
 
 It displays details of each snippet in the database and can test-compile them
-with each installed Win32 version of Delphi from Delphi 2 to Delphi 10 Seattle
-along with Free Pascal.
+with each installed Win32 version from Delphi 2 to Delphi 10 Seattle along with
+Free Pascal.
 
 Compilable Pascal units can be created that contain selected snippets.
 
@@ -52,12 +52,12 @@ V6 or later, but IE 8, 9 or 10 are strongly recommended.
 Installing the Standard Edition
 -------------------------------
 
-You will need administrator privileges to run the setup program for the standard
-edition. If you are using a non-admin user account on Windows 2000 or XP you
-should run setup as administrator. By default Windows Vista and Windows 7 will
-require an admin password if running as a standard user and setup will attempt
-to elevate the process. If UAC prompts are disabled you must run setup as
-administrator.
+You will need administrator privileges to run the set-up program for the
+standard edition. If you are using a non-admin user account on Windows 2000 or
+XP you should run set-up as administrator. By default Windows Vista and Windows
+7 will require an admin password if running as a standard user and set-up will
+attempt to elevate the process. If UAC prompts are disabled you must run set-up
+as administrator.
 
 CodeSnip v4 will install alongside any v3 or earlier release that may already be
 installed. If you want to replace the earlier version simply uninstall it in the
@@ -135,7 +135,7 @@ Uninstallation
 ================================================================================
 
 Uninstalling the Standard Edition
----------------------------------
+--------------------------------
 
 CodeSnip can be uninstalled via "Programs and Features" (a.k.a. "Add/Remove
 Programs") from the Windows Control Panel or by choosing "Uninstall
@@ -153,7 +153,7 @@ each user who ran CodeSnip. If any user has moved the user database directory
 those directories also need to be deleted.
 
 Uninstalling the Portable Edition
----------------------------------
+--------------------------------
 
 Simply delete the folder where you installed CodeSnip and all its contents.
 
@@ -177,7 +177,7 @@ By default CodeSnip checks online periodically to find out whether the database
 has been updated. The checking process runs behind the scenes unless an update
 is available when CodeSnip will display a notification window at the bottom
 right of the main window. From the window you can display the "Update From Web"
-dialogue which you can use to download the updated database.
+dialogue box which you can use to download the updated database.
 
 You can also check for updates manually by using the program's "Database |
 Update From Web" menu option. This displays the same "Update From Web" dialogue
@@ -195,9 +195,9 @@ internet otherwise the automatic updating may not work.
 Standard Edition Only
 ---------------------
 
-When installing the standard edition, the setup program will detect if an older
+When installing the standard edition, the set-up program will detect if an older
 database installation is present and will give the option to carry it forward.
-When setup completes it checks for the presence of the database and puts up a
+When set-up completes it checks for the presence of the database and puts up a
 message if it is not present.
 
 Database updates will apply to all users of the computer the next time they
@@ -225,9 +225,9 @@ dialogue" in the help file index).
 
 Each user can configure compilers differently.
 
-Delphi XE2 to XE8 and Delphi 10 Seattle may need to be configured to search for
-required units in the correct namespaces. This is explained in the Add/Edit
-Snippet Dialogue Box help topic and in the FAQ at
+Delphi XE2 to Delphi 10 Seattle may need to be configured to search for required
+units in the correct namespaces. This is explained in the Add/Edit Snippet
+Dialogue Box help topic and in the FAQ at
 http://delphidabbler.com/url/codesnip-and-xe2.
 
 

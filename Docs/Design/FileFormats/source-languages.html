@@ -1,0 +1,333 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!--
+ * This Source Code Form is subject to the terms of the Mozilla Public License,
+ * v. 2.0. If a copy of the MPL was not distributed with this file, You can
+ * obtain one at http://mozilla.org/MPL/2.0/
+ *
+ * Copyright (C) 2013, Peter Johnson (www.delphidabbler.com).
+ *
+ * $Rev$
+ * $Date$
+ *
+ * CodeSnip File Format Documentation: Source Code Language Definition Files
+-->
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; UTF-8" />
+
+<title>
+  CodeSnip File Format Documentation - Source Code Language Definition Files
+</title>
+
+<link
+  rel="stylesheet"
+  type="text/css"
+  media="screen"
+  href="main.css"
+/>
+
+</head>
+
+<body>
+
+<div class="title">
+  <div class="index-link">
+    <a href="index.html">Back to Index</a>
+  </div>
+  <div>
+    DelphiDabbler CodeSnip
+  </div>
+  <div class="subtitle">
+    File Format Documentation
+  </div>
+</div>
+
+<h1>
+  Source Code Language Definition Files
+</h1>
+
+<h2>
+  Introduction
+</h2>
+
+<p>
+  CodeSnip uses this file format to record details of the source code languages
+  it supports. The format is used for two slightly different purposes:
+</p>
+
+<ul>
+  <li>
+    <em>Predefined languages</em> &ndash; These are source code languages that
+    CodeSnip knows about by default. The languages are recorded definition
+    &quot;file&quot; that is included in the program resources.
+  </li>
+  <li>
+    <em>User-defined languages</em> &ndash; These are source code languages
+    defined by the user. They are recorded in a physical file that is stored in
+    CodeSnip's per-user application data directory.
+  </li>
+</ul>
+
+<h2>
+  Encoding
+</h2>
+
+<p>
+  This is a simple plain text file format encoded as UTF-8 with byte order mark,
+  regardless of how the data is stored.
+</p>
+
+<h2>
+  File Format
+</h2>
+
+<p>
+  The file is introduced by a header line followed by zero or more
+  <em>Language</em> statements, each of which defines a single source code
+  language.
+</p>
+
+<h3>
+  Header Line
+</h3>
+
+<p>
+  The header line must occupy the first line, with no preceding white space or
+  comments. This line must be:
+</p>
+
+<pre class="indent">► CodeSnip Source Code Languages v1 ◄</pre>
+
+<p class="pullout">
+  <strong>NOTE:</strong>
+  The ► and ◄ characters were chosen for the header line because they encode in
+  a unique way in UTF-8 &ndash; ANSI files will not encode them correctly. This
+  provides a second check for the correct file format in addition to the byte
+  order mark.
+</p>
+
+<h3 id="language">
+  Language Statements
+</h3>
+
+<p>
+  The remainder of the file a sequence of <em>Language</em> statements,
+  optionally interspersed with <a href="#comments">blank</a> and
+  <a href="#comments">comment</a> lines.
+</p>
+
+<p>
+  Each <em>Language</em> statement is introduced by the <code>Language</code>
+  keyword as the first non <a href="#white-space">white space</a> token on a
+  line.
+</p>
+
+<p>
+  <code>Language</code> is immediately followed by white space then a unique
+  language identifier. The identifier <strong>must</strong> start with a valid
+  Unicode letter or digit and be followed by a sequence of zero or more Unicode
+  letters, digits and punctuation characters. It <strong>must</strong> also be
+  unique within the file in which it is defined. However an identifier in the
+  user-defined theme file can be the same as one in the pre-defined
+  &quot;file&quot;. In such a case the definition in the user-defined file
+  updates the pre-defined value.
+</p>
+
+<p>
+  Optionally a human-readable language name follows the language identifier and
+  is separated from it by white space. The human-readable name continues up to
+  the end of the line, and may contain white space. If the human-readable name
+  is omitted then the language identifier is also used as the human readable
+  name.
+</p>
+
+<p>
+  Examples:
+</p>
+
+<div class="indent">
+
+  <p>
+    <code>Language CPP C Plus Plus</code>
+  </p>
+
+  <p class="indent">
+    introduces a language with identifier <code>CPP</code> and with human
+    readable name <code>C Plus Plus</code>.
+  </p>
+
+  <p>
+    <code>Language HTML</code>
+  </p>
+
+  <p class="indent">
+    introduces a language with identifier <code>HTML</code> and with the human
+    readable name also set to <code>HTML</code>.
+  </p>
+
+</div>
+
+<p>
+  Following the <code>Language</code> line comes a sequence of other optional
+  statements that provide additional information about the language. They are,
+  in any order:
+</p>
+
+<ul>
+  <li>
+    <a href="#tab-size"><em>Tab Size</em></a> statement.
+  </li>
+  <li>
+    <a href="#brush"><em>Brush</em></a> statement.
+  </li>
+</ul>
+
+<p>
+  A <em>Language</em> statement is terminated by the next <code>Language</code>
+  keyword or by the end of the file.
+</p>
+
+<h3 id="tab-size">
+  Tab Size Statement
+</h3>
+
+<p>
+  This statement always occurs as part of a
+  <a href="#language"><em>Language</em></a> statement. It defines the size of
+  a tab used when editing code in the related language. The tab size is
+  specified as a number of spaces.
+</p>
+
+<p>
+  The statement is introduced by the <code>TabSize</code> keyword, which must be
+  the first non <a href="#white-space">white space</a> token on the line.
+  <code>TabSize</code> is followed by white space and then the required tab size
+  as a base 10 integer in the range 1 to 255. The statement is closed at the end
+  of the line.
+</p>
+
+<p>
+  The <em>Tab Size</em> statement may be omitted, in which case the language is
+  given a default tab size of 4 spaces.
+</p>
+
+<p>
+  A maximum of one <em>Tab Size</em> statement is required in each
+  <a href="#language"><em>Language</em></a> statement. If the statement is
+  duplicated the tab size is taken from the last occurrence.
+</p>
+
+<p>
+  Example:
+</p>
+
+<p class="indent">
+  <code>TabSize 2</code>
+</p>
+
+<h3 id="brush">
+  Brush Statement
+</h3>
+
+<p>
+  This statement always occurs as part of a
+  <a href="#language"><em>Language</em></a> statement. It specifies the
+  identifier of the &quot;brush&quot; used to syntax highlight code in the
+  language.
+</p>
+
+<p>
+  The statement is introduced by the <code>Brush</code> keyword which must be
+  the first non <a href="#white-space">white space</a> token on the line.
+  The keyword is followed by the required brush identifier. This
+  <strong>must</strong> be either &quot;<code>&lt;Unknown&gt;</code>&quot; or be
+  made up of one or more of the following characters:
+  '<code>A</code>'..'<code>Z</code>', '<code>a</code>'..'<code>z</code>',
+  '<code>0</code>'..'<code>9</code>', '<code>-</code>' or '<code>_</code>'. It
+  <em>should</em> identify a brush that is supported by CodeSnip.
+</p>
+
+<p>
+  If the <em>Brush</em> statement is omitted the <em>null</em> brush is assumed.
+  This has identifier &quot;<code>_Null_</code>&quot;.
+</p>
+
+<p>
+  A maximum of one <em>Brush</em> statement is required in each
+  <a href="#language"><em>Language</em></a> statement. If the statement is
+  duplicated the brush identifier is taken from the last occurrence.
+</p>
+
+<h3 id="comments">
+  Comments
+</h3>
+
+<p>
+  Comments can be included on any line of the file <strong>after</strong> the
+  header line. Comments occupy a line by themselves and a introduced by a
+  &quot;<code>#</code>&quot; (hash) character as the first non white space on a
+  line.
+</p>
+
+<p>
+  Comment lines are ignored and are stripped from the file before parsing.
+</p>
+
+<p>
+  Note that comments cannot be placed on the same line as a command.
+</p>
+
+<h3 id="white-space">
+  White Space, End-Of-Line &amp; Blank Lines
+</h3>
+
+<p>
+  The End-of-line characters, <em>CR</em> and <em>LF</em> are used to terminate
+  command lines.
+</p>
+
+<p>
+  Leading and trailing white space is ignored: it is always stripped off before
+  parsing begins. This means that white space can be used to indent commands to
+  make their relationship to one another more apparent.
+</p>
+
+<p>
+  Blank lines can be inserted anywhere in the language definition file after the
+  header line and are ignored. They are stripped out before processing the
+  file contents.
+</p>
+
+<h3 id="full-example">
+  Example user-defined file
+</h3>
+
+<p>
+  Here is an example of a user-defined source code language definition file.
+</p>
+
+<pre class="box">► CodeSnip Source Code Languages v1 ◄
+
+# Defines language &quot;XHTML&quot; named &quot;(X)HTML&quot; using the HTML brush and tab size 4
+Language XHTML (X)HTML
+  TabSize 4
+  Brush HTML
+
+# Defines language &quot;PS&quot; named &quot;Pascal Script&quot; using the ObjectPascal brush and tab size 2
+Language PS Pascal Script
+  Brush ObjectPascal
+  TabSize 2
+
+# Defines language &quot;CSS&quot; named &quot;CSS&quot; using the _Null_ brush and default tab size
+Language CSS
+
+# Defines language &quot;Text&quot; named &quot;Plain Text&quot; using the _Null_ brush and tab size 8
+Language Text Plain Text
+  TabSize 8</pre>
+
+</body>
+
+</html>

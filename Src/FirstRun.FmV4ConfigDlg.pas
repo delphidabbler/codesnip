@@ -3,14 +3,14 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2012-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2012-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
  *
  * Implements a wizard dialogue box that may be displayed on the first run of
- * CodeSnip v4 to get user to decide whether what data to bring forward from
- * earlier versions of the program.
+ * CodeSnip v5 to offer the user a choice whether to bring forward preferences
+ * and/or a snippets database.
 }
 
 
@@ -20,21 +20,27 @@ interface
 
 uses
   // Delphi
-  StdCtrls, ComCtrls, Controls, ExtCtrls, Classes, Forms,
+  StdCtrls,
+  ComCtrls,
+  Controls,
+  ExtCtrls,
+  Classes,
+  Forms,
   // Project
-  FmWizardDlg, FirstRun.UMain, UBaseObjects, IntfAligner, UIStringList;
+  FmWizardDlg,
+  FirstRun.UMain,
+  UBaseObjects,
+  IntfAligner,
+  UIStringList;
 
 type
   ///  <summary>Wizard dialogue box for display on first run of program if there
   ///  is a need to offer user a choice whether to bring forward preferences
-  ///  and/or a user database.</summary>
+  ///  and/or a snippets database.</summary>
   TV4ConfigDlg = class(TWizardDlg, INoPublicConstruct)
     chkCopyConfig: TCheckBox;
     chkCopyDB: TCheckBox;
     lblCopyConfig: TLabel;
-    lblFinish1: TLabel;
-    lblFinish2: TLabel;
-    lblFinish3: TLabel;
     lblIntro1: TLabel;
     lblIntro2: TLabel;
     lblIntro4: TLabel;
@@ -43,13 +49,17 @@ type
     lblSummaryPrefix: TLabel;
     lblSummaryPostfix1: TLabel;
     lblSummaryPostfix2: TLabel;
-    lblUserDB1: TLabel;
-    lblUserDB2: TLabel;
+    lblDatabase1: TLabel;
+    lblDatabase2: TLabel;
     tsConfigFile: TTabSheet;
     tsFinish: TTabSheet;
     tsIntro: TTabSheet;
     tsSummary: TTabSheet;
-    tsUserDB: TTabSheet;
+    tsDatabase: TTabSheet;
+    sbFinish: TScrollBox;
+    lblFinish1: TLabel;
+    lblFinish2: TLabel;
+    lblFinish3: TLabel;
     ///  <summary>Determines if form can close.</summary>
     ///  <remarks>Permits closure only if wizard has been completed.</remarks>
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
@@ -61,8 +71,8 @@ type
       ///  preferences.</summary>
       ConfigPageIdx = 1;
       ///  <summary>Index of page dealing with bringing forward an earlier
-      ///  user database.</summary>
-      DBPageIdx = 2;
+      ///  snippets database.</summary>
+      DatabasePageIdx = 2;
       ///  <summary>Index of page that summarises actions to be taken.</summary>
       SummaryPageIdx = 3;
       ///  <summary>Index of last page.</summary>
@@ -70,7 +80,7 @@ type
     type
       ///  <summary>Set of actions to be taken as a result of user input.
       ///  </summary>
-      TUpdateActions = set of (uaCopyCfgFile, uaCopyUserDB);
+      TUpdateActions = set of (uaCopyCfgFile, uaCopyDB);
   strict private
     var
       ///  <summary>Object that provides info about user config file and
@@ -84,20 +94,21 @@ type
     ///  <summary>Checks if an old user config file is available for copying.
     ///  </summary>
     function ConfigFileAvailable: Boolean;
-    ///  <summary>Checks if an old user database is available for copying.
+    ///  <summary>Checks if an old snippets database is available for copying.
     ///  </summary>
     function DatabaseAvailable: Boolean;
     ///  <summary>Creates a bullet list on a tab sheet.</summary>
-    ///  <param name="TS">TTabSheet [in] Tab sheet where buller list is to be
-    ///  placed.</param>
+    ///  <param name="ParentCtrl">TWinControl [in] Control where bullet list is
+    ///  to be parented.</param>
     ///  <param name="Prefix">array of TLabel [in] List of labels to be
     ///  positioned before bullet list.</param>
     ///  <param name="BulletPoints">IStringList [in] List of bullet item text.
     ///  </param>
     ///  <param name="PostFix">array of TLabel [in] List of labels to be
     ///  positioned after bullet list.</param>
-    procedure CreateBulletPage(TS: TTabSheet; const Prefix: array of TLabel;
-      BulletPoints: IStringList; const PostFix: array of TLabel);
+    procedure CreateBulletPage(ParentCtrl: TWinControl;
+      const Prefix: array of TLabel; BulletPoints: IStringList;
+      const PostFix: array of TLabel);
     ///  <summary>Gets description of choices made and displays them in a bullet
     ///  list on summary page.</summary>
     procedure UpdateChoices;
@@ -152,8 +163,8 @@ type
     procedure UpdateButtons(const PageIdx: Integer); override;
   public
     ///  <summary>Displays wizard with given owner. Wizard uses given FirstRun
-    ///  object to get info about user config file and database and performs
-    ///  any required actions.</summary>
+    ///  object to get info about user config file and snippets database and
+    ///  performs any required actions.</summary>
     class procedure Execute(AOwner: TComponent; const FirstRun: TFirstRun);
   end;
 
@@ -162,8 +173,13 @@ implementation
 
 
 uses
+  // Delphi
+  Windows,
   // Project
-  UConsts, UCtrlArranger, UMessageBox, UStructs;
+  UConsts,
+  UCtrlArranger,
+  UMessageBox,
+  UStructs;
 
 
 {$R *.dfm}
@@ -183,19 +199,15 @@ begin
   TCtrlArranger.MoveBelow(lblIntro4, lblIntro5, 6);
 
   // tsConfigFile
-  TCtrlArranger.AlignLefts(
-    [lblCopyConfig, chkCopyConfig], 0
-  );
+  TCtrlArranger.AlignLefts([lblCopyConfig, chkCopyConfig], 0);
   lblCopyConfig.Top := 4;
   TCtrlArranger.MoveBelow(lblCopyConfig, chkCopyConfig, 12);
 
-  // tsUserDB
-  TCtrlArranger.AlignLefts(
-    [lblUserDB1, lblUserDB2, chkCopyDB], 0
-  );
-  lblUserDB1.Top := 4;
-  TCtrlArranger.MoveBelow(lblUserDB1, chkCopyDB, 12);
-  TCtrlArranger.MoveBelow(chkCopyDB, lblUserDB2, 12);
+  // tsDatabase
+  TCtrlArranger.AlignLefts([lblDatabase1, lblDatabase2, chkCopyDB], 0);
+  lblDatabase1.Top := 4;
+  TCtrlArranger.MoveBelow(lblDatabase1, chkCopyDB, 12);
+  TCtrlArranger.MoveBelow(chkCopyDB, lblDatabase2, 12);
 
   // tsSummary & tsFinish are arranged on the fly when displayed
   inherited;
@@ -219,13 +231,16 @@ begin
   fCfgChanges := [];
 end;
 
-procedure TV4ConfigDlg.CreateBulletPage(TS: TTabSheet;
+procedure TV4ConfigDlg.CreateBulletPage(ParentCtrl: TWinControl;
   const Prefix: array of TLabel; BulletPoints: IStringList;
   const PostFix: array of TLabel);
 var
-  Lbl: TLabel;
+  PrefixLbl: TLabel;
+  PostfixLbl: TLabel;
+  BulletTextLbl: TLabel;
+  BulletLbl: TLabel;
   NextTop: Integer;
-  BulletPoint: string;
+  BulletPointText: string;
 const
   Spacing = 6;
   Bullet: Char = #$2022;
@@ -235,45 +250,72 @@ const
   var
     Idx: Integer;
   begin
-    for Idx := Pred(TS.ControlCount) downto 0 do
+    for Idx := Pred(ParentCtrl.ControlCount) downto 0 do
     begin
-      if (TS.Controls[Idx] is TLabel) and (TS.Controls[Idx].Name = '') then
-        TS.Controls[Idx].Free;
+      if (ParentCtrl.Controls[Idx] is TLabel)
+        and (ParentCtrl.Controls[Idx].Name = '') then
+        ParentCtrl.Controls[Idx].Free;
     end;
+  end;
+
+  function CreateBulletLbl(const ATop: Integer): TLabel;
+  begin
+    Result := TLabel.Create(Self);
+    Result.Parent := ParentCtrl;
+    Result.Left := 10;
+    Result.Top := ATop;
+    Result.Caption := Bullet;
+  end;
+
+  function CreateBulletTextLbl(const ATop: Integer; const AText: string):
+    TLabel;
+  begin
+    Result := TLabel.Create(Self);
+    Result.Parent := ParentCtrl;
+    Result.Left := 20;
+    Result.WordWrap := True;
+    Result.AutoSize := True;
+    Result.Width := ParentCtrl.ClientWidth - 22
+      - GetSystemMetrics(SM_CXVSCROLL);
+    Result.Top := ATop;
+    Result.Caption := AText;
+    Result.ShowAccelChar := False;
   end;
 
 begin
   FreeDynLabels;
   NextTop := 4;
-  for Lbl in Prefix do
+  for PrefixLbl in Prefix do
   begin
-    Lbl.Top := NextTop;
-    Lbl.Left := 0;
-    NextTop := TCtrlArranger.BottomOf(Lbl, Spacing);
+    PrefixLbl.Top := NextTop;
+    PrefixLbl.Left := 0;
+    PrefixLbl.WordWrap := True;
+    PrefixLbl.AutoSize := True;
+    PrefixLbl.Width := ParentCtrl.ClientWidth - 2
+      - GetSystemMetrics(SM_CXVSCROLL);
+    NextTop := TCtrlArranger.BottomOf(PrefixLbl, Spacing);
   end;
-  for BulletPoint in BulletPoints do
+  for BulletPointText in BulletPoints do
   begin
-    Lbl := TLabel.Create(Self);
-    // Don't give label a name or FreeDynLabels will not work
-    Lbl.Parent := TS;
-    Lbl.Left := 12;
-    Lbl.Top := NextTop;
-    Lbl.Caption := Bullet + '  ' + BulletPoint;
-    Lbl.ShowAccelChar := False;
-    NextTop := TCtrlArranger.BottomOf(Lbl);
+    BulletLbl := CreateBulletLbl(NextTop);
+    BulletTextLbl := CreateBulletTextLbl(NextTop, BulletPointText);
+    NextTop := TCtrlArranger.BottomOf([BulletLbl, BulletTextLbl], Spacing);
   end;
-  Inc(NextTop, Spacing);
-  for Lbl in Postfix do
+  for PostfixLbl in Postfix do
   begin
-    Lbl.Top := NextTop;
-    Lbl.Left := 0;
-    NextTop := TCtrlArranger.BottomOf(Lbl, Spacing);
+    PostfixLbl.Top := NextTop;
+    PostfixLbl.Left := 0;
+    PostfixLbl.WordWrap := True;
+    PostfixLbl.AutoSize := True;
+    PostfixLbl.Width := ParentCtrl.ClientWidth - 2
+      - GetSystemMetrics(SM_CXVSCROLL);
+    NextTop := TCtrlArranger.BottomOf(PostfixLbl, Spacing);
   end;
 end;
 
 function TV4ConfigDlg.DatabaseAvailable: Boolean;
 begin
-  Result := fFirstRun.HaveOldUserDB;
+  Result := fFirstRun.HaveOldDB;
 end;
 
 class procedure TV4ConfigDlg.Execute(AOwner: TComponent;
@@ -311,7 +353,7 @@ begin
   if ConfigFileAvailable and chkCopyConfig.Checked then
     Include(Result, uaCopyCfgFile);
   if DatabaseAvailable and chkCopyDB.Checked then
-    Include(Result, uaCopyUserDB);
+    Include(Result, uaCopyDB);
 end;
 
 function TV4ConfigDlg.HeadingText(const PageIdx: Integer): string;
@@ -328,7 +370,7 @@ begin
       Result := sIntroHeading;
     ConfigPageIdx:
       Result := sConfigHeading;
-    DBPageIdx:
+    DatabasePageIdx:
       Result := sDBHeading;
     SummaryPageIdx:
       Result := sSummaryHeading;
@@ -341,10 +383,17 @@ end;
 
 procedure TV4ConfigDlg.ListChanges;
 resourcestring
-  sRegistration = 'Program registration information has been lost.';
   sHiliter = 'Syntax highlighter customisations have been lost.';
   sProxyPwd = 'Your proxy server password needs to be re-entered.';
   sSourceFormat = 'Source code formatting preferences may have been lost.';
+  sCustomDBPath = 'The custom database path used by CodeSnip 4 is being '
+    + 'ignored. CodeSnip 5 will use its default path. You can move the '
+    + 'database to your desired location later by using the program''s '
+    + 'Database | Move Database menu option.';
+  sPageStructure = 'Any detail pane layout customisations you may have created '
+    + 'have been lost. You can re-create them by using the program''s Tools | '
+    + 'Preferences menu option then selecting the Snippet Layout tab of the '
+    + 'resulting dialogue box';
 var
   Changes: IStringList;
 begin
@@ -353,16 +402,18 @@ begin
     // there are changes to config file: show in bullet list
     lblFinish2.Visible := True;
     Changes := TIStringList.Create;
-    if frcRegistration in fCfgChanges then
-      Changes.Add(sRegistration);
     if frcHiliter in fCfgChanges then
       Changes.Add(sHiliter);
     if frcProxyPwd in fCfgChanges then
       Changes.Add(sProxyPwd);
     if frcSourceFormat in fCfgChanges then
       Changes.Add(sSourceFormat);
+    if frcCustomDBPath in fCfgChanges then
+      Changes.Add(sCustomDBPath);
+    if frcPageStructure in fCfgChanges then
+      Changes.Add(sPageStructure);
     CreateBulletPage(
-      tsFinish,
+      sbFinish,
       [lblFinish1, lblFinish2],
       Changes,
       [lblFinish3]
@@ -392,18 +443,18 @@ end;
 function TV4ConfigDlg.NextPage(const PageIdx: Integer): Integer;
 begin
   Result := inherited NextPage(PageIdx);
-  // Don't display related pages if no config file or no user database
+  // Don't display related pages if no config file or no snippets database
   if (Result = ConfigPageIdx) and not ConfigFileAvailable then
     Exit(NextPage(Result));
-  if (Result = DBPageIdx) and not DatabaseAvailable then
+  if (Result = DatabasePageIdx) and not DatabaseAvailable then
     Exit(NextPage(Result));
 end;
 
 function TV4ConfigDlg.PrevPage(const PageIdx: Integer): Integer;
 begin
   Result := inherited PrevPage(PageIdx);
-  // Don't display related pages if no config file or no user database
-  if (Result = DBPageIdx) and not DatabaseAvailable then
+  // Don't display related pages if no config file or no snippets database
+  if (Result = DatabasePageIdx) and not DatabaseAvailable then
     Exit(PrevPage(Result));
   if (Result = ConfigPageIdx) and not ConfigFileAvailable then
     Exit(PrevPage(Result));
@@ -426,8 +477,8 @@ procedure TV4ConfigDlg.UpdateChoices;
 resourcestring
   sBFConfigYes = 'Bring forward preferences from earlier version';
   sBFConfigNo = 'Use default settings, ignoring earlier preferences';
-  sCopyDBYes = 'Copy user snippets database from earlier version';
-  sCopyDBNo = 'Start program with an empty user snippets database';
+  sCopyDBYes = 'Copy snippets database from earlier version';
+  sCopyDBNo = 'Start program with an empty snippets database';
 var
   Actions: TUpdateActions;
   Bullets: IStringList;
@@ -443,7 +494,7 @@ begin
   end;
   if DatabaseAvailable then
   begin
-    if uaCopyUserDB in Actions then
+    if uaCopyDB in Actions then
       Bullets.Add(sCopyDBYes)
     else
       Bullets.Add(sCopyDBNo);
@@ -464,10 +515,10 @@ begin
   if uaCopyCfgFile in Actions then
   begin
     fFirstRun.BringForwardUserCfgFile;
-    fFirstRun.UpdateUserCfgFile(fCfgChanges);
+    fFirstRun.UpdateCfgFiles(fCfgChanges);
   end;
-  if uaCopyUserDB in Actions then
-    fFirstRun.BringForwardUserDB;
+  if uaCopyDB in Actions then
+    fFirstRun.BringForwardDB;
 end;
 
 { TFirstRunDlg.TAligner }

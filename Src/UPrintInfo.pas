@@ -20,11 +20,16 @@ unit UPrintInfo;
 interface
 
 
+uses
+  // Project
+  USingleton;
+
+
 type
 
   {
   TPageMargins:
-    Record defines page margins in millimeters.
+    Record that defines page margins in millimeters.
   }
   TPageMargins = record
     Left, Top, Right, Bottom: Double; // size of each page margin
@@ -42,8 +47,8 @@ type
     Enumeration of possible print options.
   }
   TPrintOption = (
-    poSyntaxPrint,  // printed source code will be syntax highlighted
-    poUseColor      // colour will be used in printed document
+    poSyntaxHilite, // printed source code will be syntax highlighted
+    poUseColour     // colour will be used in printed document
   );
 
   {
@@ -53,42 +58,40 @@ type
   TPrintOptions = set of TPrintOption;
 
   {
-  IPrintInfo:
-    Interface supported by print info singleton object that maintains printer
-    and page setup information for lifetime of application that is not
-    maintained by the Printer object.
+  TPrintInfo:
+    Class that maintains printer and page information for lifetime of
+    application. This class stores information that the Printer object doesn't
+    maintain.
   }
-  IPrintInfo = interface(IInterface)
-    ['{BEE68732-A74D-4502-9627-63BBDC6C04FB}']
-    procedure LoadDefaults;
-      {Loads default property values from user preferences.
-      }
-    function GetPageMargins: TPageMargins;
-      {Gets current page margins.
-        @return Margins in millimeters.
+  TPrintInfo = class(TSingleton)
+  strict private
+    var
+      fPageMargins: TPageMargins;
+        {Stores current page margins in millimeters}
+      fPrintOptions: TPrintOptions;
+        {Stores current print options}
+    class function GetInstance: TPrintInfo; static;
+      {Returns singletion IPrintInfo object initialised from persistent storage.
+        @return Object instance.
       }
     procedure SetPageMargins(const Margins: TPageMargins);
-      {Sets page margins.
-        @param Margins [in] New margins in millimeters.
-      }
-    property PageMargins: TPageMargins
-      read GetPageMargins write SetPageMargins;
-      {Stores current page margins, in millimeters}
-    function GetPrintOptions: TPrintOptions;
-      {Gets current print options.
-        @return Current options.
-      }
     procedure SetPrintOptions(const Options: TPrintOptions);
-      {Sets print options.
-        @param Options [in] New options.
-      }
+  strict protected
+    ///  <summary>Initialises singleton object on creation.</summary>
+    procedure Initialize; override;
+  public
+    class property Instance: TPrintInfo read GetInstance;
+      {Reference to singleton instance of this class}
+    property PageMargins: TPageMargins
+      read fPageMargins write SetPageMargins;
+      {Stores current page margins, in millimeters}
     property PrintOptions: TPrintOptions
-      read GetPrintOptions write SetPrintOptions;
+      read fPrintOptions write SetPrintOptions;
       {Stores current print options}
   end;
 
 
-function PrintInfo: IPrintInfo;
+function PrintInfo: TPrintInfo;
   {Provides access to a singleton implementation of IPrintInfo.
     @return Singletion object instance.
   }
@@ -99,60 +102,10 @@ implementation
 
 uses
   // Delphi
-  UPreferences, USingleton;
+  USettings;
 
 
-type
-
-  {
-  TPrintInfo:
-    Class that maintains printer and page information for lifetime of
-    application. This class stores information that the Printer object doesn't
-    maintain.
-  }
-  TPrintInfo = class(TSingleton,
-    IPrintInfo
-  )
-  strict private
-    var
-      fPageMargins: TPageMargins;
-        {Stores current page margins in millimeters}
-      fPrintOptions: TPrintOptions;
-        {Stores current print options}
-    class function GetInstance: IPrintInfo; static;
-      {Returns singletion IPrintInfo object initialised from persistent storage.
-        @return Object instance.
-      }
-  strict protected
-    ///  <summary>Initialises singleton object on creation.</summary>
-    procedure Initialize; override;
-  public
-    class property Instance: IPrintInfo read GetInstance;
-      {Reference to singleton instance of this class}
-    { IPrintInfo methods }
-    procedure LoadDefaults;
-      {Loads default property values from user preferences.
-      }
-    function GetPageMargins: TPageMargins;
-      {Gets current page margins.
-        @return Margins in millimeters.
-      }
-    procedure SetPageMargins(const Margins: TPageMargins);
-      {Sets page margins.
-        @param Margins [in] New margins in millimeters.
-      }
-    function GetPrintOptions: TPrintOptions;
-      {Gets current print options.
-        @return Current options.
-      }
-    procedure SetPrintOptions(const Options: TPrintOptions);
-      {Sets print options.
-        @param Options [in] New options.
-      }
-  end;
-
-
-function PrintInfo: IPrintInfo;
+function PrintInfo: TPrintInfo;
   {Provides access to a singleton implementation of IPrintInfo.
     @return Singletion object instance.
   }
@@ -163,7 +116,7 @@ end;
 
 { TPrintInfo }
 
-class function TPrintInfo.GetInstance: IPrintInfo;
+class function TPrintInfo.GetInstance: TPrintInfo;
   {Returns singletion IPrintInfo object initialised from persistent storage.
     @return Object instance.
   }
@@ -171,52 +124,57 @@ begin
   Result := TPrintInfo.Create;
 end;
 
-function TPrintInfo.GetPageMargins: TPageMargins;
-  {Gets current page margins.
-    @return Margins in millimeters.
-  }
-begin
-  Result := fPageMargins;
-end;
-
-function TPrintInfo.GetPrintOptions: TPrintOptions;
-  {Gets current print options.
-    @return Current options.
-  }
-begin
-  Result := fPrintOptions;
-end;
-
 procedure TPrintInfo.Initialize;
+const
+  // Default margin size in millimeters
+  cPageMarginSizeMM = 25.0;
+var
+  Storage: ISettingsSection;
 begin
   inherited;
-  LoadDefaults;
-end;
-
-procedure TPrintInfo.LoadDefaults;
-  {Loads default property values from user preferences.
-  }
-begin
-  fPrintOptions := Preferences.PrinterOptions;
-  fPageMargins := Preferences.PrinterPageMargins;
+  // Read printing section
+  Storage := Settings.ReadSection(ssPrinting);
+  fPrintOptions := [];
+  if Storage.GetBoolean('UseColour', True) then
+    Include(fPrintOptions, poUseColour);
+  if Storage.GetBoolean('SyntaxHighlight', True) then
+    Include(fPrintOptions, poSyntaxHilite);
+  fPageMargins := TPageMargins.Create(
+    Storage.GetFloat('LeftMargin', cPageMarginSizeMM),
+    Storage.GetFloat('TopMargin', cPageMarginSizeMM),
+    Storage.GetFloat('RightMargin', cPageMarginSizeMM),
+    Storage.GetFloat('BottomMargin', cPageMarginSizeMM)
+  );
 end;
 
 procedure TPrintInfo.SetPageMargins(const Margins: TPageMargins);
-  {Sets page margins.
-    @param Margins [in] New margins in millimeters.
-  }
+var
+  Storage: ISettingsSection;
 begin
   fPageMargins := Margins;
+  // NOTE: must write to settings storage when property is set: attempting to
+  // write in a Finalize method fails and writes to an empty section.
+  Storage := Settings.ReadSection(ssPrinting);
+  Storage.SetFloat('LeftMargin', fPageMargins.Left);
+  Storage.SetFloat('TopMargin', fPageMargins.Top);
+  Storage.SetFloat('RightMargin', fPageMargins.Right);
+  Storage.SetFloat('BottomMargin', fPageMargins.Bottom);
+  Storage.Save;
 end;
 
 procedure TPrintInfo.SetPrintOptions(const Options: TPrintOptions);
-  {Sets print options.
-    @param Options [in] New options.
-  }
+var
+  Storage: ISettingsSection;
 begin
+  inherited;
   fPrintOptions := Options;
+  // NOTE: must write to settings storage when property is set: attempting to
+  // write in a Finalize method fails and writes to an empty section.
+  Storage := Settings.ReadSection(ssPrinting);
+  Storage.SetBoolean('UseColour', poUseColour in fPrintOptions);
+  Storage.SetBoolean('SyntaxHighlight', poSyntaxHilite in fPrintOptions);
+  Storage.Save;
 end;
-
 
 { TPageMargins }
 

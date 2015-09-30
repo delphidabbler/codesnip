@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2011-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2011-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -18,10 +18,21 @@ unit FmTestCompileDlg;
 interface
 
 uses
-  Classes, ActnList, StdCtrls, Forms, Controls, ExtCtrls, Messages,
+  // Delphi
+  Classes,
+  ActnList,
+  StdCtrls,
+  Forms,
+  Controls,
+  ExtCtrls,
+  Messages,
   Generics.Collections,
-
-  Compilers.UGlobals, DB.USnippet, FmGenericViewDlg, UBaseObjects, UCompileMgr,
+  // Projet
+  CS.Database.Types,
+  Compilers.UGlobals,
+  FmGenericViewDlg,
+  UBaseObjects,
+  UCompileMgr,
   ULEDImageList;
 
 type
@@ -29,8 +40,8 @@ type
   ///  displays the results.</summary>
   TTestCompileDlg = class(TGenericViewDlg, INoPublicConstruct)
     sbCompilers: TScrollBox;
-    lblSnippetName: TLabel;
-    lblSnippetNameDesc: TLabel;
+    lblSnippetTitle: TLabel;
+    lblSnippetTitleDesc: TLabel;
     alMain: TActionList;
     actScrollPageUp: TAction;
     actScrollPageDown: TAction;
@@ -113,7 +124,7 @@ type
   strict private
     var
       ///  <summary>Reference to snippet to be test compiled.</summary>
-      fSnippet: TSnippet;
+      fSnippet: ISnippet;
       ///  <summary>Reference to compiler manager object used to perform and
       ///  record results of test compilation.</summary>
       fCompileMgr: TCompileMgr;
@@ -149,7 +160,7 @@ type
     ///  <param name="ASnippet">TSnippet [in] Snippet to be test compiled.
     ///  </param>
     class procedure Execute(const AOwner: TComponent;
-      const ACompileMgr: TCompileMgr; const ASnippet: TSnippet);
+      const ACompileMgr: TCompileMgr; ASnippet: ISnippet);
   end;
 
 
@@ -158,9 +169,15 @@ implementation
 
 uses
   // Delphi
-  Math, Windows, Graphics, Types {for inlining},
+  Math,
+  Windows,
+  Graphics,
+  Types {for inlining},
   // Project
-  UColours, UCtrlArranger, UFontHelper, UPreferences;
+  DB.UMain,
+  UColours,
+  UCtrlArranger,
+  UFontHelper;
 
 {$R *.dfm}
 
@@ -202,7 +219,9 @@ begin
   inherited;
   Enabled := False;
   try
-    fCompileMgr.Compile(pnlBody, fSnippet, DisplayCompileResults);
+    fCompileMgr.Compile(
+      pnlBody, Database.LookupSnippet(fSnippet.ID), DisplayCompileResults
+    );
   finally
     Enabled := True;
   end;
@@ -223,10 +242,10 @@ var
   NextTop: Integer;           // top of next compiler control in scroll box
   MaxCompListHeight: Integer; // max height of compiler list
 begin
-  TCtrlArranger.SetLabelHeight(lblSnippetNameDesc);
+  TCtrlArranger.SetLabelHeight(lblSnippetTitleDesc);
 
   // Set horizontal alignments
-  TCtrlArranger.MoveToRightOf(lblSnippetNameDesc, lblSnippetName);
+  TCtrlArranger.MoveToRightOf(lblSnippetTitleDesc, lblSnippetTitle);
   btnViewErrors.Left := pnlBody.Left;
 
   // Set widths
@@ -234,8 +253,8 @@ begin
     Max(
       pnlBody.ClientWidth,
       Max(
-        // allow room for long snippet names
-        TCtrlArranger.RightOf(lblSnippetName),
+        // allow room for long snippet titles
+        TCtrlArranger.RightOf(lblSnippetTitle),
         // allow room for button at bottom
         btnViewErrors.Width + ViewErrorsBtnRightMargin
           + TCtrlArranger.RightOf(btnHelp)- btnClose.Left
@@ -247,10 +266,10 @@ begin
 
   // Set vertical alignments
   TCtrlArranger.AlignVCentres(
-    SnippetLblTop, [lblSnippetName, lblSnippetNameDesc]
+    SnippetLblTop, [lblSnippetTitle, lblSnippetTitleDesc]
   );
   sbCompilers.Top := TCtrlArranger.BottomOf(
-    lblSnippetName, SnippetLblBottomMargin
+    lblSnippetTitle, SnippetLblBottomMargin
   );
   if fCompilerCtrlList.Count > 0 then
     MaxCompListHeight := Min(MaxCompilersBeforeScroll, fCompilerCtrlList.Count)
@@ -283,10 +302,8 @@ begin
   inherited;
   CreateCompilerCtrls;
   // Set required label fonts and captions
-  TFontHelper.SetDefaultBaseFont(lblSnippetName.Font);
-  lblSnippetName.Font.Color :=
-    Preferences.DBHeadingColours[fSnippet.UserDefined];
-  lblSnippetName.Caption := fSnippet.DisplayName;
+  TFontHelper.SetDefaultBaseFont(lblSnippetTitle.Font);
+  lblSnippetTitle.Caption := fSnippet.Title;
 end;
 
 procedure TTestCompileDlg.CreateCompilerCtrls;
@@ -316,7 +333,7 @@ begin
 end;
 
 class procedure TTestCompileDlg.Execute(const AOwner: TComponent;
-  const ACompileMgr: TCompileMgr; const ASnippet: TSnippet);
+  const ACompileMgr: TCompileMgr; ASnippet: ISnippet);
 begin
   Assert(Assigned(ACompileMgr), ClassName + '.Execute: ACompileMgr is nil');
   Assert(Assigned(ASnippet), ClassName + '.Execute: ASnippet is nil');

@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2005-2014, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -67,12 +67,30 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Generics.Defaults,
+  SysUtils,
+  // 3rd party
+  Collections.Base,
+  Collections.Lists,
   // Project
-  Compilers.UGlobals, Compilers.UCompilers, DB.UMain, DB.USnippet, UConsts,
-  UContainers, UCSSUtils, UEncodings, UHTMLTemplate, UHTMLUtils,
-  UJavaScriptUtils, UPreferences, UQuery, UResourceUtils, USnippetHTML,
-  USnippetPageHTML, UStrUtils, USystemInfo;
+  CS.Database.Snippets,
+  CS.Database.Types,
+  Compilers.UGlobals,
+  Compilers.UCompilers,
+  DB.UMain,
+  UComparers,
+  UConsts,
+  UCSSUtils,
+  UEncodings,
+  UHTMLTemplate,
+  UHTMLUtils,
+  UJavaScriptUtils,
+  UPreferences,
+  UQuery,
+  UResourceUtils,
+  USnippetHTML,
+  USnippetPageHTML,
+  UStrUtils,
+  USystemInfo;
 
 
 type
@@ -180,7 +198,7 @@ type
   strict private
     ///  <summary>Returns reference to snippet that is being rendered.</summary>
     ///  <remarks>Snippet is recorded in View property.</remarks>
-    function GetSnippet: TSnippet;
+    function GetSnippet: ISnippet;
   strict protected
     ///  <summary>Returns name of snippet information template resource.
     ///  </summary>
@@ -202,7 +220,7 @@ type
   strict private
     var
       ///  <summary>Sorted list of snippets to be displayed.</summary>
-      fSnippetList: TSortedObjectList<TSnippet>;
+      fSnippetList: TSortedList<ISnippet>;
     ///  <summary>Constructs sorted list of snippets to be displayed.</summary>
     procedure BuildSnippetList;
   strict protected
@@ -213,7 +231,7 @@ type
     ///  <summary>Creates and returns an HTML table row containing one cell that
     ///  links to given snippet and another containing snippet's description.
     ///  </summary>
-    function SnippetTableRow(const Snippet: TSnippet): string;
+    function SnippetTableRow(Snippet: ISnippet): string;
     ///  <summary>Returns name of template resource for either an empty or none-
     ///  empty list of snippets.</summary>
     function GetTemplateResName: string; override;
@@ -224,13 +242,7 @@ type
     function HaveSnippets: Boolean;
     ///  <summary>Checks if the given snippet should be included in the list of
     ///  snippets to be displayed.</summary>
-    function IsSnippetRequired(const Snippet: TSnippet): Boolean; virtual;
-      abstract;
-    ///  <summary>Returns name of CSS class to be used for page heading.
-    ///  </summary>
-    ///  <remarks>Provides default class name. Descendant classes should
-    ///  override as necessary.</remarks>
-    function GetH1ClassName: string; virtual;
+    function IsSnippetRequired(Snippet: ISnippet): Boolean; virtual; abstract;
     ///  <summary>Returns page's heading text.</summary>
     ///  <remarks>Returns view's description by default. Descendants can
     ///  override if different behaviour is required.</remarks>
@@ -253,22 +265,42 @@ type
 
 type
   ///  <summary>
-  ///  Generates HTML body of a page that displays information about a category
-  ///  grouping of snippets.
+  ///  Generates HTML body of a page that displays information about a grouping
+  ///  of snippets by tag.
   ///  </summary>
   ///  <remarks>
   ///  List of snippets contained in grouping may be empty.
   ///  </remarks>
-  TCategoryPageHTML = class sealed(TSnippetListPageHTML)
+  TTagsPageHTML = class sealed(TSnippetListPageHTML)
   strict protected
     ///  <summary>Checks if the given snippet should be included in the list of
     ///  snippets to be displayed.</summary>
-    ///  <remarks>The snippet is to be displayed if it is in the category being
+    ///  <remarks>The snippet is to be displayed if it is in the tag being
     ///  displayed.</remarks>
-    function IsSnippetRequired(const Snippet: TSnippet): Boolean; override;
-    ///  <summary>Returns name of CSS class to be used for page heading.
-    ///  </summary>
-    function GetH1ClassName: string; override;
+    function IsSnippetRequired(Snippet: ISnippet): Boolean; override;
+    ///  <summary>Returns narrative to be used at top of any page that displays
+    ///  a snippet list.</summary>
+    function GetNarrative: string; override;
+    ///  <summary>Returns text to be displayed on a page that has no snippets to
+    ///  display.</summary>
+    function GetEmptyListNote: string; override;
+  end;
+
+type
+  ///  <summary>
+  ///  Generates HTML body of a page that displays information about a grouping
+  ///  of snippets by source code language.
+  ///  </summary>
+  ///  <remarks>
+  ///  List of snippets contained in grouping may be empty.
+  ///  </remarks>
+  TSourceCodeLanguagePageHTML = class sealed(TSnippetListPageHTML)
+  strict protected
+    ///  <summary>Checks if the given snippet should be included in the list of
+    ///  snippets to be displayed.</summary>
+    ///  <remarks>The snippet is to be displayed if its source code language is
+    ///  the same as that being displayed.</remarks>
+    function IsSnippetRequired(Snippet: ISnippet): Boolean; override;
     ///  <summary>Returns narrative to be used at top of any page that displays
     ///  a snippet list.</summary>
     function GetNarrative: string; override;
@@ -291,7 +323,7 @@ type
     ///  snippets to be displayed.</summary>
     ///  <remarks>The snippet is to be displayed if its display name starts with
     ///  the initial letter being displayed.</remarks>
-    function IsSnippetRequired(const Snippet: TSnippet): Boolean; override;
+    function IsSnippetRequired(Snippet: ISnippet): Boolean; override;
     ///  <summary>Returns narrative to be used at top of any page that displays
     ///  a snippet list.</summary>
     function GetNarrative: string; override;
@@ -314,7 +346,7 @@ type
     ///  snippets to be displayed.</summary>
     ///  <remarks>The snippet is to be displayed if its kind is the same as that
     ///  being displayed.</remarks>
-    function IsSnippetRequired(const Snippet: TSnippet): Boolean; override;
+    function IsSnippetRequired(Snippet: ISnippet): Boolean; override;
     ///  <summary>Returns page's heading text.</summary>
     function GetHeading: string; override;
     ///  <summary>Returns narrative to be used at top of any page that displays
@@ -327,18 +359,20 @@ type
 
 { TDetailPageHTMLFactory }
 
-class function TDetailPageHTMLFactory.CreateGenerator(
-  View: IView): TDetailPageHTML;
+class function TDetailPageHTMLFactory.CreateGenerator(View: IView):
+  TDetailPageHTML;
 begin
   Result := nil;
-  if Supports(View, INulView) then
+  if Supports(View, INullView) then
     Result := TNulPageHTML.Create(View)
   else if Supports(View, IStartPageView) then
     Result := TWelcomePageHTML.Create(View)
   else if Supports(View, ISnippetView) then
     Result := TSnippetInfoPageHTML.Create(View)
-  else if Supports(View, ICategoryView) then
-    Result := TCategoryPageHTML.Create(View)
+  else if Supports(View, ITagView) then
+    Result := TTagsPageHTML.Create(View)
+  else if Supports(View, ISourceCodeLanguageView) then
+    Result := TSourceCodeLanguagePageHTML.Create(View)
   else if Supports(View, ISnippetKindView) then
     Result := TSnipKindPageHTML.Create(View)
   else if Supports(View, IInitialLetterView) then
@@ -410,8 +444,7 @@ end;
 
 procedure TWelcomePageHTML.ResolvePlaceholders(const Tplt: THTMLTemplate);
 var
-  UserDBCount: Integer;
-  MainDBCount: Integer;
+  DBSize: Integer;
   Compilers: ICompilers;
   Compiler: ICompiler;
   CompilerList: TStringBuilder;
@@ -441,27 +474,15 @@ begin
     'externalScript', TJavaScript.LoadScript('external.js', etWindows1252)
   );
 
-  UserDBCount := Database.Snippets.Count(True);
+  DBSize := Database.SnippetCount;
   Tplt.ResolvePlaceholderHTML(
-    'HaveUserDB', TCSS.BlockDisplayProp(UserDBCount > 0)
+    'HaveSnippets', TCSS.BlockDisplayProp(DBSize > 0)
   );
   Tplt.ResolvePlaceholderHTML(
-    'NoUserDB', TCSS.BlockDisplayProp(UserDBCount <= 0)
+    'NoSnippets', TCSS.BlockDisplayProp(DBSize <= 0)
   );
-  Tplt.ResolvePlaceholderText(
-    'UserDBCount', IntToStr(UserDBCount)
-  );
+  Tplt.ResolvePlaceholderText('SnippetCount', IntToStr(DBSize));
 
-  MainDBCount := Database.Snippets.Count(False);
-  Tplt.ResolvePlaceholderHTML(
-    'HaveMainDB', TCSS.BlockDisplayProp(MainDBCount > 0)
-  );
-  Tplt.ResolvePlaceholderHTML(
-    'NoMainDB', TCSS.BlockDisplayProp(MainDBCount <= 0)
-  );
-  Tplt.ResolvePlaceholderText(
-    'MainDBCount', IntToStr(MainDBCount)
-  );
 
   Compilers := TCompilersFactory.CreateAndLoadCompilers;
   Tplt.ResolvePlaceholderHTML(
@@ -488,10 +509,11 @@ begin
     'ProgramAutoCheckFrequency',
     UpdateFrequencyText(Preferences.AutoCheckProgramFrequency)
   );
-  Tplt.ResolvePlaceholderText(
-    'DatabaseAutoCheckFrequency',
-    UpdateFrequencyText(Preferences.AutoCheckDatabaseFrequency)
-  );
+  // TODO: Restore line similar to following when synch spaces can auto-update
+//  Tplt.ResolvePlaceholderText(
+//    'DatabaseAutoCheckFrequency',
+//    UpdateFrequencyText(Preferences.AutoCheckDatabaseFrequency)
+//  );
 end;
 
 { TDBUpdatedPageHTML }
@@ -508,11 +530,11 @@ end;
 
 { TSnippetInfoPageHTML }
 
-function TSnippetInfoPageHTML.GetSnippet: TSnippet;
+function TSnippetInfoPageHTML.GetSnippet: ISnippet;
 begin
   Assert(Supports(View, ISnippetView),
     ClassName + '.Create: View is not snippet');
-  Result := (View as ISnippetView).Snippet;
+  Result := Database.LookupSnippet((View as ISnippetView).SnippetID);
 end;
 
 function TSnippetInfoPageHTML.GetTemplateResName: string;
@@ -538,25 +560,11 @@ begin
       'overflowXFixScript',
       'window.onload = null;'
     );
-  if GetSnippet.UserDefined then
-    Tplt.ResolvePlaceholderHTML('SnippetCSSClass', 'userdb')
-  else
-    Tplt.ResolvePlaceholderHTML('SnippetCSSClass', 'maindb');
-  Tplt.ResolvePlaceholderHTML(
-    'TestingInfo', TCSS.BlockDisplayProp(not GetSnippet.UserDefined)
-  );
-  Tplt.ResolvePlaceholderHTML(
-    'EditLink', TCSS.BlockDisplayProp(GetSnippet.UserDefined)
-  );
-  Tplt.ResolvePlaceholderText(
-    'EditEventHandler',
-    TJavaScript.LiteralFunc('editSnippet', [GetSnippet.Name])
-  );
   SnippetHTML := TSnippetHTML.Create(GetSnippet);
   try
-    if not GetSnippet.UserDefined then
-      Tplt.ResolvePlaceholderHTML('TestingInfoImg', SnippetHTML.TestingImage);
-    Tplt.ResolvePlaceholderHTML('SnippetName', SnippetHTML.SnippetName);
+    Tplt.ResolvePlaceholderHTML('TestingInfoImg', SnippetHTML.TestingImage);
+    Tplt.ResolvePlaceholderHTML('Star', SnippetHTML.Star);
+    Tplt.ResolvePlaceholderHTML('SnippetTitle', SnippetHTML.SnippetTitle);
   finally
     SnippetHTML.Free;
   end;
@@ -569,11 +577,13 @@ end;
 
 procedure TSnippetListPageHTML.BuildSnippetList;
 var
-  Snippet: TSnippet;  // each snippet in current query
+  SnippetID: TSnippetID;  // ID of each snippet in current query
+  Snippet: ISnippet;      // each snippet in current query
 begin
   fSnippetList.Clear;
-  for Snippet in Query.Selection do
+  for SnippetID in Query.Selection do
   begin
+    Snippet := Database.LookupSnippet(SnippetID);
     if IsSnippetRequired(Snippet) then
       fSnippetList.Add(Snippet);
   end;
@@ -582,9 +592,8 @@ end;
 constructor TSnippetListPageHTML.Create(View: IView);
 begin
   inherited;
-  fSnippetList := TSortedObjectList<TSnippet>.Create(
-    TSnippet.TDisplayNameComparer.Create,
-    False
+  fSnippetList := TSortedList<ISnippet>.Create(
+    TRulesFactory<ISnippet>.CreateFromComparator(TSnippetTitleComparator.Create)
   );
   BuildSnippetList;
 end;
@@ -593,11 +602,6 @@ destructor TSnippetListPageHTML.Destroy;
 begin
   fSnippetList.Free;
   inherited;
-end;
-
-function TSnippetListPageHTML.GetH1ClassName: string;
-begin
-  Result := 'maindb';
 end;
 
 function TSnippetListPageHTML.GetHeading: string;
@@ -615,13 +619,12 @@ end;
 
 function TSnippetListPageHTML.HaveSnippets: Boolean;
 begin
-  Result := not fSnippetList.IsEmpty;
+  Result := not fSnippetList.Empty;
 end;
 
 procedure TSnippetListPageHTML.ResolvePlaceholders(const Tplt: THTMLTemplate);
 begin
   inherited;
-  Tplt.ResolvePlaceholderHTML('H1Class', GetH1ClassName);
   Tplt.ResolvePlaceholderText('Heading', GetHeading);
   if HaveSnippets then
   begin
@@ -637,14 +640,14 @@ end;
 
 function TSnippetListPageHTML.SnippetTableInner: string;
 var
-  Snippet: TSnippet;  // each snippet in list
+  Snippet: ISnippet;  // each snippet in list
 begin
   Result := '';
   for Snippet in fSnippetList do
     Result := Result + SnippetTableRow(Snippet);
 end;
 
-function TSnippetListPageHTML.SnippetTableRow(const Snippet: TSnippet): string;
+function TSnippetListPageHTML.SnippetTableRow(Snippet: ISnippet): string;
 var
   SnippetHTML: TSnippetHTML;
   NameCellAttrs: IHTMLAttributes;
@@ -668,33 +671,57 @@ begin
   end;
 end;
 
-{ TCategoryPageHTML }
+{ TTagsPageHTML }
 
-function TCategoryPageHTML.GetEmptyListNote: string;
+function TTagsPageHTML.GetEmptyListNote: string;
 resourcestring
-  sNote = 'The current selection contains no snippets in this category.';
+  sNote = 'The current selection contains no snippets with this tag.';
+  sNullNote = 'The current selection contains no snippets that have no tags.';
 begin
+  if (View as ITagView).Tag.IsNull then
+    Exit(sNullNote);
   Result := sNote;
 end;
 
-function TCategoryPageHTML.GetH1ClassName: string;
-begin
-  if (View as ICategoryView).Category.UserDefined then
-    Result := 'userdb'
-  else
-    Result := inherited GetH1ClassName;
-end;
-
-function TCategoryPageHTML.GetNarrative: string;
+function TTagsPageHTML.GetNarrative: string;
 resourcestring
-  sNarrative = 'List of selected snippets in this category.';
+  sNarrative = 'List of selected snippets with this tag.';
+  sNullNarrative = 'List of selected snippets that have no tags.';
 begin
+  if (View as ITagView).Tag.IsNull then
+    Exit(sNullNarrative);
   Result := sNarrative;
 end;
 
-function TCategoryPageHTML.IsSnippetRequired(const Snippet: TSnippet): Boolean;
+function TTagsPageHTML.IsSnippetRequired(Snippet: ISnippet): Boolean;
 begin
-  Result := (View as ICategoryView).Category.Snippets.Contains(Snippet);
+  if not (View as ITagView).Tag.IsNull then
+    Result := Snippet.Tags.Contains((View as ITagView).Tag)
+  else
+    Result := Snippet.Tags.IsEmpty;
+end;
+
+{ TSourceCodeLanguagePageHTML }
+
+function TSourceCodeLanguagePageHTML.GetEmptyListNote: string;
+resourcestring
+  sNote = 'The are no snippets in the current selection whose source code '
+    + 'language is %s';
+begin
+  Result := Format(sNote, [View.Description]);
+end;
+
+function TSourceCodeLanguagePageHTML.GetNarrative: string;
+resourcestring
+  sNarrative = 'List of selected snippets whose source code language is %s.';
+begin
+  Result := Format(sNarrative, [View.Description]);
+end;
+
+function TSourceCodeLanguagePageHTML.IsSnippetRequired(Snippet: ISnippet):
+  Boolean;
+begin
+  Result := Snippet.LanguageID = (View as ISourceCodeLanguageView).Language.ID;
 end;
 
 { TAlphaListPageHTML }
@@ -716,10 +743,10 @@ begin
   );
 end;
 
-function TAlphaListPageHTML.IsSnippetRequired(const Snippet: TSnippet): Boolean;
+function TAlphaListPageHTML.IsSnippetRequired(Snippet: ISnippet): Boolean;
 begin
   Result := StrStartsText(
-    (View as IInitialLetterView).InitialLetter, Snippet.DisplayName
+    (View as IInitialLetterView).InitialLetter, Snippet.Title
   );
 end;
 
@@ -746,9 +773,9 @@ begin
   Result := Format(sNarrative, [StrToLower(View.Description)])
 end;
 
-function TSnipKindPageHTML.IsSnippetRequired(const Snippet: TSnippet): Boolean;
+function TSnipKindPageHTML.IsSnippetRequired(Snippet: ISnippet): Boolean;
 begin
-  Result := (View as ISnippetKindView).KindInfo.Kind = Snippet.Kind;
+  Result := (View as ISnippetKindView).Kind.ID = Snippet.KindID;
 end;
 
 { TBasicPageTpltHTML }
