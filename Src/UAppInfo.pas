@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2014, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2005-2015, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -234,8 +234,9 @@ end;
 class function TAppInfo.ProgramCaption: string;
   {Returns caption to use in main window and task bar}
 const
-  // TODO -cPRERELEASE: Remove DEV flag from ProgramCaption before release
-  CaptionBase = 'CodeSnip 5 <<<DEV>>>';
+  { TODO -cPRERELEASE: Remove text in chevrons from ProgramCaption before
+                       release }
+  CaptionBase = 'CodeSnip 5 <<<Pagoda - dev>>>';
 resourcestring
   sPortableMode = '(Portable mode)';
 begin
