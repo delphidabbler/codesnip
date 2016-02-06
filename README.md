@@ -22,6 +22,8 @@ CodeSnip is installed and removed using a standard Windows installer. Administra
 
 Up to and including release 4.13.1 the project's source code was maintained in a Subversion repository on [SourceForge](https://sourceforge.net/p/codesnip/code/). The Subversion repo was converted to Git on 21 5 October 2015 and imported to GitHub. All releases from v3.0.0 are marked by tags in the form `version-x.x.x` where `x.x.x` is the version number.
 
+> Note that any branches that were created and deleted in the Subversion repo are missing from the Git history. So, for full details of the the project's history from v3.0.0 to v4.13.1 please refer to the old Subversion repo on SourceForge. 
+
 Following tag `version-4.13.1` the [Git Flow](http://nvie.com/posts/a-successful-git-branching-model/) methodology was adopted, with the exception that development work on CodeSnip v5 exists outside Git Flow in the `pagoda` and `parsnip` branches (See below for details).
 
 Up to and including release 4.13.1, `master` is simply a copy of the old Subversion `trunk` and, as such, contains various development commits. After release 4.13.1, and the addition of this read-me file, `master` contains only commits relating to an actual release.
