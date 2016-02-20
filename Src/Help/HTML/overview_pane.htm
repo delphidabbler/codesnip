@@ -4,7 +4,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2005-2016, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -64,8 +64,8 @@
       >Ctrl</span> key, the item is displayed in a new tab in the detail pane.
     </p>
     <p>
-      The nodes of the tree used to display the routines can be expanded and
-      collapsed in several ways:
+      The tree used to display the snippets can be expanded and collapsed in
+      several ways:
     </p>
     <ul class="unspaced">
       <li>
@@ -79,14 +79,14 @@
       <li>
         Clicking the <img
           src="../images/ExpandAll.png"
-          alt="Expand All toolbar button"
+          alt="Expand All Sections toolbar button"
           class="glyph"
-        > button in the title of the pane fully expands the tree while clicking
-        the <img
+        > button in the title of the pane fully expands all sections, while
+        clicking the <img
           src="../images/CollapseAll.png"
-          alt="Collapse All toolbar button"
+          alt="Collapse All Sections toolbar button"
           class="glyph"
-        > button fully collapses the tree.
+        > button fully collapses all sections.
       </li>
       <li>
         Menu items on the <a href="menu_view.htm">View</a> menu and the overview
@@ -148,9 +148,9 @@
           Shift+Down
         </td>
         <td class="desc">
-          Selects the section header below the selected item and displays the
-          section's details in the details pane. If the selected item is part of
-          the last section, its own section header is selected.
+          Selects the section header below the currently selected item and
+          displays the section's details in the details pane. If the selected
+          item is part of the last section, its own section header is selected.
         </td>
       </tr>
       <tr>
@@ -176,15 +176,15 @@
         <td class="desc">
           <ul>
             <li>
-              If a sub item is currently selected, the item's parent node is
-              selected.
+              If a snippet item is currently selected, the snippets's section
+              header is selected.
             </li>
             <li>
-              If an expanded section head item is currently selected, it's
-              section is collapsed.
+              If an expanded section header is currently selected, its section
+              is collapsed.
             </li>
             <li>
-              If a collapsed section head is currently selected, no action is
+              If a collapsed section header is currently selected, no action is
               taken.
             </li>
           </ul>
@@ -197,14 +197,15 @@
         <td class="desc">
           <ul>
             <li>
-              If a collapsed section header is selected the section is expanded.
+              If a collapsed section header is selected the section is expanded
+              to display all the snippets in the section.
             </li>
             <li>
               If an expanded section header is selected the section's first
-              child node is selected.
+              snippet is selected.
             </li>
             <li>
-              If a child node or an empty section header is selected no action
+              If a snippet or an empty section header is selected no action
               is taken.
             </li>
           </ul>
@@ -273,7 +274,7 @@
               and collapsed state.
             </li>
             <li>
-              When a child node is selected no action is taken.
+              When a snippet is selected no action is taken.
             </li>
           </ul>
         </td>
@@ -283,7 +284,7 @@
           Ctrl+Num&nbsp;Sub
         </td>
         <td class="desc">
-          Collapses an expanded section  and selects the section header.
+          Collapses an expanded section and selects the section header.
         </td>
       </tr>
       <tr>
@@ -313,4 +314,3 @@
     </table>
   </body>
 </html>
-

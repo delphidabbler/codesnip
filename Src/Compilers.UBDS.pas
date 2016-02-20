@@ -117,7 +117,7 @@ function TBDSCompiler.GetDefaultRTLNamespaces: string;
 begin
   if not RequiresRTLNamespaces then
     Exit('');
-  Result := 'System Vcl winapi Vcl.Imaging';
+  Result := 'System Vcl winapi Vcl.Imaging System.Win';
 end;
 
 function TBDSCompiler.GetIDString: string;
