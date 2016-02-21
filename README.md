@@ -89,3 +89,7 @@ At present the direction CodeSnip is being taken is to:
 3. Remove the program's dependency on web services provided by [DelphiDabbler.com](http://delphidabbler.com) given the current uncertainty over that websites future.
 
 Comments on these ideas are welcome - just create a [feature request](https://sourceforge.net/p/codesnip/feature-requests/) and select the `v5 (pagoda)` milestone.
+
+## Donate
+
+If you've found the program useful please consider making a donation to help cover costs. Donations are accepted by [PayPal](http://delphidabbler.com/url/donate-cs) in British Pounds (GBP) -- [see  common exchange rates](http://www.xe.com/currency/gbp-british-pound).
