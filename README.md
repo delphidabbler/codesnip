@@ -26,6 +26,18 @@ Feature requests can be made on the [Feature Request Tracker](https://sourceforg
 
 > In time the bug and feature request trackers will be moved to GitHub.
 
+## Support
+
+There's quite a lot of support available for CodeSnip:
+
+* A comprehensive help file.
+* A dedicated set of [web pages](http://delphidabbler.com/url/codesnip-home).
+* An [FAQ](http://wiki.delphidabbler.com/index.php/FAQs/CodeSnipAppUsing).
+* A [discussion group](https://sourceforge.net/p/codesnip/discussion) on SourceForge (albeit barely used!).
+* An [RSS news feed](http://delphidabbler.com/feeds/site-news-feed?id=codesnip). This can also be accessed via the program.
+* A [Google+ page](https://plus.google.com/u/0/b/108251259814638768561/108251259814638768561/posts).
+* A [Blog](http://codesnip-app.blogspot.co.uk/).
+
 ## Source Code
 
 Up to and including release 4.13.1 the project's source code was maintained in a Subversion repository on [SourceForge](https://sourceforge.net/p/codesnip/code/). The Subversion repo was converted to Git on 21 5 October 2015 and imported to GitHub. All releases from v3.0.0 are marked by tags in the form `version-x.x.x` where `x.x.x` is the version number.
