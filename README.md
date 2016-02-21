@@ -18,6 +18,14 @@ CodeSnip requires Windows 2000 or later and Internet Explorer 6 or later, althou
 
 CodeSnip is installed and removed using a standard Windows installer. Administrator privileges are required for installation.
 
+## Bugs & Feature Requests
+
+Bugs can be reported using the [Bug Tracker](https://sourceforge.net/p/codesnip/bugs/) on SourceForge. Info on how best to report bugs is provided on the tracker.
+
+Feature requests can be made on the [Feature Request Tracker](https://sourceforge.net/p/codesnip/feature-requests/) on SourceForge. Once again info on how to proceed is provided.
+
+> In time the bug and feature request trackers will be moved to GitHub.
+
 ## Source Code
 
 Up to and including release 4.13.1 the project's source code was maintained in a Subversion repository on [SourceForge](https://sourceforge.net/p/codesnip/code/). The Subversion repo was converted to Git on 21 5 October 2015 and imported to GitHub. All releases from v3.0.0 are marked by tags in the form `version-x.x.x` where `x.x.x` is the version number.
