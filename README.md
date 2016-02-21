@@ -46,7 +46,7 @@ The program's current change log can be found in the file `Docs/ChangeLogs/Chang
 
 ## License
 
-The program's EULA which gives full details of the license applying to the latest release can be found in the file `Docs\License.html` in the `master` branch. The license has changed between releases, so if you need to see an older one, select the appropriate `version-x.x.x` and read the older version of the file.
+The program's EULA which gives full details of the license applying to the latest release can be found in the file `Docs\License.html` in the `master` branch. The license has changed between releases, so if you need to see an older one, select the appropriate `version-x.x.x` tag and read the older version of the file.
 
 Most of the original code is made available under the [Mozilla Public License v2](https://www.mozilla.org/MPL/2.0/).
 
@@ -62,4 +62,4 @@ At present the direction CodeSnip is being taken is to:
 2. Increase the focus on the user's own code while downplaying the importance of code downloaded from the DelphiDabbler [Code Snippets database](http://snippets.delphidabbler.com/). This will still be available but will be very much an add on, like [SWAG](http://swag.delphidabbler.com/) is at present.
 3. Remove the program's dependency on web services provided by [DelphiDabbler.com](http://delphidabbler.com) given the current uncertainty over that websites future.
 
-Comments on these ideas are welcome - just create an [issue](https://github.com/delphidabbler/codesnip/issues) and label it "CodeSnip 5 pagoda".
+Comments on these ideas are welcome - just create a [feature request](https://sourceforge.net/p/codesnip/feature-requests/) and select the `v5 (pagoda)` milestone.
