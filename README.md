@@ -24,15 +24,15 @@ Up to and including release 4.13.1 the project's source code was maintained in a
 
 > Note that any branches that were created and deleted in the Subversion repo are missing from the Git history. So, for full details of the the project's history from v3.0.0 to v4.13.1 please refer to the old Subversion repo on SourceForge. 
 
-Following tag `version-4.13.1` the [Git Flow](http://nvie.com/posts/a-successful-git-branching-model/) methodology was adopted, with the exception that development work on CodeSnip v5 exists outside Git Flow in the `pagoda` and `parsnip` branches (See below for details).
+Following tag `version-4.13.1` the [Git Flow](http://nvie.com/posts/a-successful-git-branching-model/) methodology was adopted, with the exception that development work on CodeSnip v5 exists outside Git Flow in the `pagoda` branch (See below for details).
 
-Up to and including release 4.13.1, `master` is simply a copy of the old Subversion `trunk` and, as such, contains various development commits. After release 4.13.1, and the addition of this read-me file, `master` contains only commits relating to an actual release.
+Up to and including release 4.13.1, `master` is simply a copy of the old Subversion `trunk` and, as such, contains various development commits along with numerous commits related to management of Subversion. After release 4.13.1, and the addition of this read-me file, `master` contains only commits relating to an actual release.
 
 ### Contributions
 
 Contributions are welcome. Just fork the repo and create a feature branch off the `develop` branch. Commit your changes to your feature branch then submit a pull request when ready.
 
-If you are contributing to CodeSnip 5 development please create your feature branch off the `pagoda` branch instead. **Don't use the `parsnip` branch.**
+If you are contributing to CodeSnip 5 development please create your feature branch off the `pagoda` branch instead.
 
 ### Compiling
 
