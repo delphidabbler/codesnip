@@ -3,13 +3,20 @@
 ; v. 2.0. If a copy of the MPL was not distributed with this file, You can
 ; obtain one at http://mozilla.org/MPL/2.0/
 ;
-; Copyright (C) 2012-2015, Peter Johnson (www.delphidabbler.com).
+; Copyright (C) 2012-2016, Peter Johnson (www.delphidabbler.com).
 ;
 ; $Rev$
 ; $Date$
 ;
 ; Change Log for CodeSnip Release 4
 ; ------------------------------------------------------------------------------
+
+Release v4.13.2 of 20 February 2016
++ Updated and corrected hints displayed in main window.
++ Changed some menu options and associated dialogue box captions.
++ Tweaked some button captions in Select Snippets dialogue box.
++ Updated help file re the menu and caption changes.
++ Updated copyright date in program license as displayed in help, about box, installer and documentation.
 
 Release v4.13.1 of 29 September 2015
 + Improved operating system detection to detect Windows 10.
