@@ -65,8 +65,8 @@ inherited SelectionSearchDlg: TSelectionSearchDlg
       Top = 86
       Width = 82
       Height = 25
-      Caption = 'E&xpand Tree'
-      TabOrder = 3
+      Caption = 'E&xpand All'
+      TabOrder = 5
       OnClick = btnExpandAllClick
     end
     object btnCollapseAll: TButton
@@ -74,8 +74,8 @@ inherited SelectionSearchDlg: TSelectionSearchDlg
       Top = 117
       Width = 82
       Height = 25
-      Caption = 'C&ollapse Tree'
-      TabOrder = 4
+      Caption = 'C&ollapse All'
+      TabOrder = 6
       OnClick = btnCollapseAllClick
     end
   end

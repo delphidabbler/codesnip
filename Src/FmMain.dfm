@@ -8,8 +8,8 @@ inherited MainForm: TMainForm
   Constraints.MinWidth = 480
   Menu = mnuMain
   OnResize = FormResize
-  ExplicitWidth = 621
-  ExplicitHeight = 502
+  ExplicitWidth = 613
+  ExplicitHeight = 495
   PixelsPerInch = 96
   TextHeight = 13
   object sbStatusBar: TStatusBar
@@ -328,8 +328,8 @@ inherited MainForm: TMainForm
       Category = 'File'
       Caption = 'Save Annotated Source...'
       Hint = 
-        'Save the annotated source code of the selected routine or catego' +
-        'ry to a file'
+        'Save annotated source code|Save the annotated source code of the' +
+        ' selected snippet or category to a file'
       ImageIndex = 18
       ShortCut = 24654
       OnExecute = actSaveSnippetExecute
@@ -338,7 +338,8 @@ inherited MainForm: TMainForm
     object actAddSnippet: TAction
       Category = 'Snippets'
       Caption = 'New Snippet...'
-      Hint = 'New Snippet|Add a new snippet to the database.'
+      Hint = 
+        'Create new snippet|Create a new snippet and add it to the database'
       ImageIndex = 27
       ShortCut = 16429
       OnExecute = actAddSnippetExecute
@@ -346,7 +347,8 @@ inherited MainForm: TMainForm
     object actDeleteSnippet: TAction
       Category = 'Snippets'
       Caption = 'Delete Snippet'
-      Hint = 'Delete Snippet|Delete the selected snippet from the database'
+      Hint = 
+        'Delete snippet|Delete the selected snippet from the database'
       ImageIndex = 26
       ShortCut = 16430
       OnExecute = actDeleteSnippetExecute
@@ -356,8 +358,8 @@ inherited MainForm: TMainForm
       Category = 'File'
       Caption = 'Save Unit...'
       Hint = 
-        'Save unit|Generates and saves a Pascal unit containing snippets ' +
-        'from the current selection'
+        'Save unit|Generate and save a Pascal unit containing the snippet' +
+        's in the current selection'
       ImageIndex = 14
       ShortCut = 16469
       OnExecute = actSaveUnitExecute
@@ -375,7 +377,7 @@ inherited MainForm: TMainForm
     object actEditSnippet: TAction
       Category = 'Snippets'
       Caption = 'Edit Snippet...'
-      Hint = 'Edit Snippet|Edit the selected snippet'
+      Hint = 'Edit snippet|Edit the selected snippet'
       ImageIndex = 28
       ShortCut = 16497
       OnExecute = actEditSnippetExecute
@@ -390,7 +392,7 @@ inherited MainForm: TMainForm
     object actAbout: TAction
       Category = 'Help'
       Caption = 'About...'
-      Hint = 'About|Display the program'#39's about box'
+      Hint = 'About box|Display the program'#39's about box'
       ImageIndex = 2
       OnExecute = actAboutExecute
     end
@@ -405,16 +407,16 @@ inherited MainForm: TMainForm
     object actBugReport: TAction
       Category = 'Tools'
       Caption = 'Report Bug Online...'
-      Hint = 'Report Bug|Report a bug online'
+      Hint = 'Report a bug|Report a bug using the online bug tracker'
       ImageIndex = 17
       OnExecute = actBugReportExecute
     end
     object actFindCompiler: TAction
       Category = 'Search'
-      Caption = 'Find Compiler...'
+      Caption = 'Find Compiler(s)...'
       Hint = 
-        'Find compiler|Search for all snippets with specified compiler co' +
-        'mpatibility'
+        'Find compiler(s)|Search for all snippets with a given compiler c' +
+        'ompatibility'
       ImageIndex = 4
       ShortCut = 24646
       OnExecute = actFindCompilerExecute
@@ -432,7 +434,7 @@ inherited MainForm: TMainForm
     object actGoBack: TAction
       Category = 'View'
       Caption = 'Previous'
-      Hint = 'Previous|Display the previous item in the history list'
+      Hint = 'Previous item|Display the previous item in the history list'
       ImageIndex = 10
       ShortCut = 32805
       OnExecute = actGoBackExecute
@@ -441,7 +443,7 @@ inherited MainForm: TMainForm
     object actGoForward: TAction
       Category = 'View'
       Caption = 'Next'
-      Hint = 'Next|Display the next item in the history list'
+      Hint = 'Next item|Display the next item in the history list'
       ImageIndex = 11
       ShortCut = 32807
       OnExecute = actGoForwardExecute
@@ -451,8 +453,8 @@ inherited MainForm: TMainForm
       Category = 'Edit'
       Caption = 'Copy Annotated Source'
       Hint = 
-        'Copy the annotated source code of the selected routine or catego' +
-        'ry to the clipboard'
+        'Copy annotated source code|Copy the annotated source code of the' +
+        ' selected snippet or category to the clipboard'
       ShortCut = 16462
       OnExecute = actCopySnippetExecute
       OnUpdate = actCopySnippetUpdate
@@ -460,7 +462,7 @@ inherited MainForm: TMainForm
     object actSelectAll: TAction
       Category = 'Edit'
       Caption = 'Select All'
-      Hint = 'Select all|Select all text'
+      Hint = 'Select all text|Select all text in the Details pane'
       ShortCut = 16449
       OnExecute = actSelectAllExecute
       OnUpdate = actSelectAllUpdate
@@ -510,34 +512,36 @@ inherited MainForm: TMainForm
     object actWebSite: TBrowseURL
       Category = 'Help'
       Caption = 'DelphiDabbler Website'
-      Hint = 'Visit website|Visit the DelphiDabbler website'
+      Hint = 
+        'Visit DelphiDabbler website|Display the DelphiDabbler website in' +
+        ' the default web browser'
       ImageIndex = 6
     end
     object actHelpQuickStart: TAction
       Category = 'Help'
       Caption = 'QuickStart Guide'
-      Hint = 'QuickStart Guide|Display the QuickStart help page'
+      Hint = 'QuickStart guide|Display the QuickStart help page'
       OnExecute = actHelpQuickStartExecute
     end
     object actCompilers: TAction
       Category = 'Tools'
       Caption = 'Configure Compilers...'
       Hint = 
-        'Configure Compilers|Display dialogue box where required compiler' +
-        's can be configured'
+        'Configure compilers|Configure the program to use installed Delph' +
+        'i or Free Pascal compilers'
       ImageIndex = 15
       OnExecute = actCompilersExecute
     end
     object actHelpCompChecks: TAction
       Category = 'Help'
       Caption = 'About Compiler Checks'
-      Hint = 'About Compiler Checks|Display help about test-compiling snippets'
+      Hint = 'About compiler checks|Display help about test-compiling snippets'
       OnExecute = actHelpCompChecksExecute
     end
     object actHelpContents: TAction
       Category = 'Help'
       Caption = 'Contents'
-      Hint = 'Help|Display the help contents page'
+      Hint = 'Help contents|Display the help contents page'
       ImageIndex = 1
       ShortCut = 112
       OnExecute = actHelpContentsExecute
@@ -552,14 +556,16 @@ inherited MainForm: TMainForm
     object actLicense: TAction
       Category = 'Help'
       Caption = 'License'
-      Hint = 'View License|View the end user license agreement'
+      Hint = 'View license|View the end user license agreement'
       ImageIndex = 35
       OnExecute = actLicenseExecute
     end
     object actHomePage: TBrowseURL
       Category = 'Help'
       Caption = 'CodeSnip Home Page'
-      Hint = 'Home Page|Visit CodeSnip'#39's web page'
+      Hint = 
+        'Codesnip home page|Display CodeSnip'#39's web page in the default we' +
+        'b browser'
       ImageIndex = 6
     end
     object actFindTags: TAction
@@ -574,8 +580,8 @@ inherited MainForm: TMainForm
       Category = 'Search'
       Caption = 'Find Cross Refs...'
       Hint = 
-        'Find X Refs|Search for cross references from the selected snippe' +
-        't'
+        'Find X-refs|Search for cross references to and/or from the selec' +
+        'ted snippet'
       ImageIndex = 20
       ShortCut = 16466
       OnExecute = actFindXRefsExecute
@@ -584,7 +590,7 @@ inherited MainForm: TMainForm
     object actSelectSnippets: TAction
       Category = 'Search'
       Caption = 'Select Snippets...'
-      Hint = 'Select Snippets|Specify the snippets to be displayed'
+      Hint = 'Select snippets|Manually select the snippets to be displayed'
       ImageIndex = 19
       ShortCut = 24659
       OnExecute = actSelectSnippetsExecute
@@ -593,7 +599,7 @@ inherited MainForm: TMainForm
     object actFindClear: TAction
       Category = 'Search'
       Caption = 'Show All'
-      Hint = 'Show all|Clear the last search and display all snippets'
+      Hint = 'Show all snippets|Clear the last search and display all snippets'
       ImageIndex = 9
       ShortCut = 24641
       OnExecute = actFindClearExecute
@@ -602,7 +608,9 @@ inherited MainForm: TMainForm
     object actTestCompile: TAction
       Category = 'Compile'
       Caption = 'Test Compile Snippet...'
-      Hint = 'Test Compile|Test compile the currently selected snippet'
+      Hint = 
+        'Test compile|Test compile the currently selected snippet using a' +
+        'll configured compilers'
       ImageIndex = 12
       ShortCut = 120
       OnExecute = actTestCompileExecute
@@ -612,8 +620,8 @@ inherited MainForm: TMainForm
       Category = 'Compile'
       Caption = 'View Compile Errors...'
       Hint = 
-        'View Compile Errors|Display any errors and warnings resulting fr' +
-        'om last test compilation'
+        'View compile errors|Display any errors and warnings resulting fr' +
+        'om the last test compilation'
       ImageIndex = 34
       OnExecute = actViewCompErrsExecute
       OnUpdate = actViewCompErrsUpdate
@@ -621,7 +629,9 @@ inherited MainForm: TMainForm
     object actViewTestUnit: TAction
       Category = 'Compile'
       Caption = 'View Test Unit...'
-      Hint = 'View Test Unit|Display test unit for selected snippet.'
+      Hint = 
+        'View test unit|Display the unit used to test compile the selecte' +
+        'd snippet'
       ImageIndex = 22
       OnExecute = actViewTestUnitExecute
       OnUpdate = actViewTestUnitUpdate
@@ -652,7 +662,7 @@ inherited MainForm: TMainForm
     object actPrivacy: TAction
       Category = 'Help'
       Caption = 'Privacy Statement'
-      Hint = 'View Privacy Statement|View the privacy statement'
+      Hint = 'View privacy statement|View the program'#39's privacy statement'
       OnExecute = actPrivacyExecute
     end
     object actBackupDatabase: TAction
@@ -690,30 +700,30 @@ inherited MainForm: TMainForm
       Category = 'Snippets'
       Caption = 'Submit Snippets...'
       Hint = 
-        'Submit|Submit one or more snippets for inclusion in the main dat' +
-        'abase'
+        'Submit|Submit one or more snippets for possible inclusion in the' +
+        ' main database'
       OnExecute = actSubmitExecute
       OnUpdate = ActSubmitOrExportUpdate
     end
     object actExportCode: TAction
       Category = 'Snippets'
       Caption = 'Export Snippets...'
-      Hint = 'Export Snippets|Export one or more snippets to a file'
+      Hint = 'Export snippets|Export one or more snippets to a file'
       OnExecute = actExportCodeExecute
       OnUpdate = ActSubmitOrExportUpdate
     end
     object actImportCode: TAction
       Category = 'Snippets'
       Caption = 'Import Snippets...'
-      Hint = 'Import Snippets|Import one or more snippets from a file'
+      Hint = 'Import snippets|Import one or more snippets from a file'
       OnExecute = actImportCodeExecute
     end
     object actCopyInfo: TAction
       Category = 'Edit'
       Caption = 'Copy Information'
       Hint = 
-        'Copy Information|Copy information about the selected snippet to ' +
-        'the keyboard.'
+        'Copy information|Copy information about the selected snippet to ' +
+        'the clipboard'
       ShortCut = 16457
       OnExecute = actCopyInfoExecute
       OnUpdate = actCopyInfoUpdate
@@ -721,7 +731,7 @@ inherited MainForm: TMainForm
     object actDonate: TAction
       Category = 'Help'
       Caption = 'Donate...'
-      Hint = 'Donate|Make a donation to support CodeSnip development'
+      Hint = 'Donate|Make a PayPal donation to support CodeSnip development'
       ImageIndex = 23
       OnExecute = actDonateExecute
     end
@@ -729,8 +739,8 @@ inherited MainForm: TMainForm
       Category = 'View'
       Caption = 'Dependencies...'
       Hint = 
-        'View Dependencies|Display the dependency tree for the selected s' +
-        'nippet'
+        'View dependencies|Display the names of snippets that depend on, ' +
+        'or are required, by the selected snippet'
       ImageIndex = 31
       ShortCut = 16452
       OnExecute = actViewDependenciesExecute
@@ -738,32 +748,34 @@ inherited MainForm: TMainForm
     end
     object actCollapseTree: TAction
       Category = 'View'
-      Caption = 'Collapse All'
-      Hint = 'Collapse All|Collapse all sections in the Overview pane'
+      Caption = 'Collapse All Sections'
+      Hint = 'Collapse all sections|Collapse all sections in the Overview pane'
       ImageIndex = 47
       OnExecute = ActTreeStateChangeExecute
       OnUpdate = ActTreeStateChangeUpdate
     end
     object actExpandTree: TAction
       Category = 'View'
-      Caption = 'Expand All'
-      Hint = 'Expand All|Expand all sections in the Overview pane'
+      Caption = 'Expand All Sections'
+      Hint = 'Expand all sections|Expand all sections in the Overview pane'
       ImageIndex = 46
       OnExecute = ActTreeStateChangeExecute
       OnUpdate = ActTreeStateChangeUpdate
     end
     object actExpandNode: TAction
       Category = 'View'
-      Caption = 'Expand Tree Node'
-      Hint = 'Expand Tree Node|Expand current section in Overview pane'
+      Caption = 'Expand Section'
+      Hint = 'Expand section|Expand the current section of the Overview pane'
       ImageIndex = 30
       OnExecute = ActTreeStateChangeExecute
       OnUpdate = ActTreeStateChangeUpdate
     end
     object actCollapseNode: TAction
       Category = 'View'
-      Caption = 'Collapse Tree Node'
-      Hint = 'Collapse Tree Node|Collapse current section in Overview pane'
+      Caption = 'Collapse Section'
+      Hint = 
+        'Collapse section|Collapse the current section of the Overview pa' +
+        'ne'
       ImageIndex = 29
       OnExecute = ActTreeStateChangeExecute
       OnUpdate = ActTreeStateChangeUpdate
@@ -771,7 +783,9 @@ inherited MainForm: TMainForm
     object actCopySource: TAction
       Category = 'Edit'
       Caption = 'Copy Source Code'
-      Hint = 'Copy Source|Copy the source code of a snippet to the clipboard'
+      Hint = 
+        'Copy source code|Copy the source code of the selected snippet to' +
+        ' the clipboard'
       ShortCut = 24643
       OnExecute = actCopySourceExecute
       OnUpdate = actCopySourceUpdate
@@ -780,23 +794,23 @@ inherited MainForm: TMainForm
       Category = 'Tools'
       Caption = 'Proxy Server...'
       Hint = 
-        'Proxy Server|Configure proxy server used by CodeSnip when access' +
-        'ing web services'
+        'Configure proxy server|Configure any proxy server to be used by ' +
+        'CodeSnip when accessing web services'
       OnExecute = actProxyServerExecute
     end
     object actNews: TAction
       Category = 'Help'
       Caption = 'CodeSnip News...'
       Hint = 
-        'CodeSnip News|Display news about updates to CodeSnip and the onl' +
-        'ine database'
+        'CodeSnip news|Display news about CodeSnip and the online databas' +
+        'e'
       ImageIndex = 36
       OnExecute = actNewsExecute
     end
     object actNewDetailsTab: TAction
       Category = 'View'
       Caption = 'New Tab'
-      Hint = 'New Tab|Create a new empty tab the Details pane'
+      Hint = 'New tab|Create a new, empty, tab the Details pane'
       ImageIndex = 39
       ShortCut = 16468
       OnExecute = actNewDetailsTabExecute
@@ -804,7 +818,7 @@ inherited MainForm: TMainForm
     object actCloseDetailsTab: TAction
       Category = 'View'
       Caption = 'Close Tab'
-      Hint = 'Close Tab|Close the currently selected tab in the Details pane'
+      Hint = 'Close tab|Close the currently selected tab in the Details pane'
       ImageIndex = 38
       ShortCut = 16499
       SecondaryShortCuts.Strings = (
@@ -815,13 +829,17 @@ inherited MainForm: TMainForm
     object actFAQs: TBrowseURL
       Category = 'Help'
       Caption = 'FAQs'
-      Hint = 'FAQs|See CodeSnip'#39's online Frequently Asked Questions'
+      Hint = 
+        'FAQs|Display CodeSnip'#39's online Frequently Asked Questions in the' +
+        ' default browser'
       ImageIndex = 6
     end
     object actDuplicateSnippet: TAction
       Category = 'Snippets'
       Caption = 'Duplicate Snippet'
-      Hint = 'Duplicate Snippet|Duplicate selected snippet'
+      Hint = 
+        'Duplicate snippet|Duplicate the selected snippet and add it to t' +
+        'he database'
       ImageIndex = 37
       ShortCut = 24644
       OnExecute = actDuplicateSnippetExecute
@@ -831,8 +849,8 @@ inherited MainForm: TMainForm
       Category = 'File'
       Caption = 'Save Selection...'
       Hint = 
-        'Save Current Selection|Save the currently selected snippets to d' +
-        'isk'
+        'Save current selection|Save information about the current snippe' +
+        't selection to a file'
       ShortCut = 41043
       OnExecute = actSaveSelectionExecute
       OnUpdate = actSaveSelectionUpdate
@@ -841,8 +859,8 @@ inherited MainForm: TMainForm
       Category = 'File'
       Caption = 'Load Selection...'
       Hint = 
-        'Load Current Selection|Load a saved selection of snippets from d' +
-        'isk'
+        'Load saved selection|Restore the snippet selection recorded in a' +
+        ' previously saved file'
       ShortCut = 41036
       OnExecute = actLoadSelectionExecute
       OnUpdate = ActNonEmptyDBUpdate
@@ -850,15 +868,17 @@ inherited MainForm: TMainForm
     object actProgramUpdates: TAction
       Category = 'Tools'
       Caption = 'Check For Program Updates...'
-      Hint = 'Check for program updates|Check for the latest program updates'
+      Hint = 
+        'Check for program updates|Check online for newer versions of Cod' +
+        'eSnip'
       OnExecute = actProgramUpdatesExecute
     end
     object actCloseUnselectedDetailsTabs: TAction
       Category = 'View'
       Caption = 'Close All Other Tabs'
       Hint = 
-        'Close All Other Tabs|Close all tabs in the Details pane except t' +
-        'he current tab'
+        'Close all other tabs|Close all tabs in the Details pane except f' +
+        'or the current tab'
       ShortCut = 24691
       OnExecute = actCloseUnselectedDetailsTabsExecute
       OnUpdate = actCloseDetailsTabsUpdate
@@ -866,14 +886,14 @@ inherited MainForm: TMainForm
     object actCloseAllDetailsTabs: TAction
       Category = 'View'
       Caption = 'Close All Tabs'
-      Hint = 'Close All Tabs|Close all tabs in the Details pane'
+      Hint = 'Close all tabs|Close all tabs in the Details pane'
       OnExecute = actCloseAllDetailsTabsExecute
       OnUpdate = actCloseDetailsTabsUpdate
     end
     object actFavourites: TAction
       Category = 'Snippets'
       Caption = 'Show Favourites...'
-      Hint = 'Show Favourites|Display Favourites dialogue box'
+      Hint = 'Show favourites|Display the Favourites dialogue box'
       ImageIndex = 48
       ShortCut = 115
       OnExecute = actFavouritesExecute
@@ -900,7 +920,7 @@ inherited MainForm: TMainForm
       Category = 'Snippets'
       Caption = 'Import Snippets From SWAG...'
       Hint = 
-        'Import Snippets From SWAG|Import one or more snippets from the o' +
+        'Import snippets from SWAG|Import one or more snippets from the o' + 
         'nline SWAG database'
       OnExecute = actSWAGImportExecute
     end

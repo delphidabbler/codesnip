@@ -4,7 +4,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2014, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2005-2016, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -182,7 +182,7 @@
     <param name="Local" value="HTML\menu_file.htm">
     </OBJECT>
   <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="find compiler dialogue">
+    <param name="Name" value="find compiler(s) dialogue">
     <param name="Local" value="HTML\dlg_findcompiler.htm">
     </OBJECT>
   <LI> <OBJECT type="text/sitemap">

@@ -1,9 +1,9 @@
 inherited FindCompilerDlg: TFindCompilerDlg
   Left = 268
   Top = 121
-  Caption = 'Find Compiler'
+  Caption = 'Find Compiler(s)'
   ExplicitWidth = 474
-  ExplicitHeight = 356
+  ExplicitHeight = 375
   PixelsPerInch = 96
   TextHeight = 13
   inherited pnlBody: TPanel

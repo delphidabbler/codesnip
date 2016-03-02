@@ -1,0 +1,17 @@
+﻿# .gitignore file for CodeSnip project
+
+# Delphi generated temporary files and directories
+*.local
+*.identcache
+*.projdata
+*.tvsconfig
+*.dsk
+*.~*
+__history/
+
+# Project specific directories & files
+Bin
+Exe
+Release
+Src/CodeSnip.cfg
+Src/AutoGen/IntfExternalObj.pas
