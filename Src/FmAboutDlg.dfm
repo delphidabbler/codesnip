@@ -97,7 +97,7 @@ inherited AboutDlg: TAboutDlg
         end
       end
       object tsPaths: TTabSheet
-        Caption = 'Paths'
+        Caption = 'Paths && Files'
         ImageIndex = 2
         object btnViewAppConfig: TButton
           Left = 3
