@@ -5,7 +5,7 @@ inherited AboutDlg: TAboutDlg
   ClientHeight = 384
   ClientWidth = 485
   ExplicitWidth = 491
-  ExplicitHeight = 410
+  ExplicitHeight = 413
   PixelsPerInch = 96
   TextHeight = 13
   inherited pnlBody: TPanel
@@ -33,10 +33,6 @@ inherited AboutDlg: TAboutDlg
       OnMouseDown = pcDetailMouseDown
       object tsProgram: TTabSheet
         Caption = 'About The Program'
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         inline frmProgram: THTMLTpltDlgFrame
           Left = 0
           Top = 0
@@ -70,10 +66,6 @@ inherited AboutDlg: TAboutDlg
       object tsDatabase: TTabSheet
         Caption = 'About The Database'
         ImageIndex = 1
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         inline frmDatabase: THTMLTpltDlgFrame
           Left = 0
           Top = 0
@@ -107,10 +99,24 @@ inherited AboutDlg: TAboutDlg
       object tsPaths: TTabSheet
         Caption = 'Paths'
         ImageIndex = 2
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
+        object btnViewAppConfig: TButton
+          Left = 3
+          Top = 144
+          Width = 170
+          Height = 25
+          Caption = 'View Application Config File...'
+          TabOrder = 1
+          OnClick = btnViewAppConfigClick
+        end
+        object btnViewUserConfig: TButton
+          Left = 192
+          Top = 144
+          Width = 170
+          Height = 25
+          Caption = 'View Per-User Config File...'
+          TabOrder = 0
+          OnClick = btnViewUserConfigClick
+        end
       end
     end
     object pnlTitle: TPanel
