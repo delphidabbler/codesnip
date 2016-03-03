@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2005-2016, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -97,6 +97,12 @@ type
       {Returns fully specified name of CodeSnip's help file.
         @return Name of help file.
       }
+    class function AppConfigFileName: string;
+      {Returns fully specified name of application config file.
+      }
+    class function UserConfigFileName: string;
+      {Returns fully specified name of per-user config file.
+      }
     class function ProgramReleaseInfo: string;
       {Gets information about the current program release. Includes any special
       build information if present in version information.
@@ -145,6 +151,11 @@ uses
 
 
 { TAppInfo }
+
+class function TAppInfo.AppConfigFileName: string;
+begin
+  Result := CommonAppDir + '\Common.config';
+end;
 
 class function TAppInfo.AppDataDir: string;
   {Returns the directory where CodeSnip stores the "database" files.
@@ -345,6 +356,11 @@ begin
   {$ELSE}
   Result := CommonAppDir;
   {$ENDIF}
+end;
+
+class function TAppInfo.UserConfigFileName: string;
+begin
+  Result := UserAppDir + '\User.config';
 end;
 
 class function TAppInfo.UserDataDir: string;
