@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2014, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2005-2016, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -1081,15 +1081,15 @@ begin
   case fLogic of
     slAnd:
     begin
-      for Tag in Snippet.Tags do
-        if not fTags.Contains(Tag) then
+      for Tag in fTags do
+        if not Snippet.Tags.Contains(Tag) then
           Exit(False);
       Result := True;
     end;
     slOr:
     begin
-      for Tag in Snippet.Tags do
-        if fTags.Contains(Tag) then
+      for Tag in fTags do
+        if Snippet.Tags.Contains(Tag) then
           Exit(True);
       Result := False;
     end;
