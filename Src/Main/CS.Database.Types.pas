@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2013-2014, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2013-2016, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -186,6 +186,10 @@ type
   strict private
     var
       fTag: string;
+    const
+      ///  <summary>Maximum size, in characters, of string representation of
+      ///  tag.</summary>
+      MaxTagStringLength = 64;
     class function IsValidTagChar(const Ch: Char): Boolean; static; inline;
   public
     constructor Create(const ATagStr: string);
@@ -501,7 +505,7 @@ var
 begin
   if AStr = EmptyStr then
     Exit(False);
-  if Length(AStr) > 64 then
+  if Length(AStr) > MaxTagStringLength then
     Exit(False);
   for Ch in AStr do
     if not IsValidTagChar(Ch) then
