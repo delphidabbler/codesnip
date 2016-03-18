@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2014, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2014-2016, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -37,29 +37,60 @@ type
   TCOMEnumString = class(TInterfacedObject, IEnumString)
   strict private
     var
+      ///  <summary>String list being enumerated.</summary>
       fStrings: TStringList;
+      ///  <summary>Current index in enueration.</summary>
       fCurrentIdx: Integer;
   public
+    ///  <summary>Constructs a new instance of the enumerator.</summary>
     constructor Create(AStrings: TStrings);
+    ///  <summary>Tidies up and destroys a the enumerator instances</summary>
     destructor Destroy; override;
-    ///  <remarks>Method of IStringEnum.</remarks>
+    ///  <summary>Retrieves a specified number of items in the enumeration
+    ///  sequence.</summary>
+    ///  <param name="celt">LongInt [in] Number of elements to fetch from
+    ///  enumeration.</param>
+    ///  <param name="elt">Untyped [out] Wide string array of elements fetched
+    ///  from enumeration. Strings must be freed using task allocator.</param>
+    ///  <param name="pceltFetched">PLongint [in] Pointer to LongInt that
+    ///  receives count of number of elements actually fetched. This parameter
+    ///  may be nil if the count is not required.</param>
+    ///  <returns>S_OK if number of strings fetched is the same as were
+    ///  requested or S_FALSE otherwise.</returns>
+    ///  <remarks>Method of IEnumString.</remarks>
     function Next(celt: Longint; out elt; pceltFetched: PLongint): HResult;
       stdcall;
-    ///  <remarks>Method of IStringEnum.</remarks>
+    ///  <summary>Skips a specified number of items in the enumeration sequence.
+    ///  </summary>
+    ///  <param name="celt">LongInt [in] Number of elements to skip in the
+    ///  enumeration.</param>
+    ///  <returns>S_OK if the number of elements skipped equals the number
+    ///  requested of S_FALSE otherwise.</returns>
+    ///  <remarks>Method of IEnumString.</remarks>
     function Skip(celt: Longint): HResult; stdcall;
-    ///  <remarks>Method of IStringEnum.</remarks>
+    ///  <summary>Resets the enumeration sequence to the beginning.</summary>
+    ///  <returns>S_OK</returns>
+    ///  <remarks>Method of IEnumString.</remarks>
     function Reset: HResult; stdcall;
-    ///  <remarks>Method of IStringEnum.</remarks>
+    ///  <summary>Creates a new enumerator that contains the same enumeration
+    ///  state as the current one.</summary>
+    ///  <param name="enm">IEnumString [out] Contains reference to cloned
+    ///  enumerator.</param>
+    ///  <returns>S_OK on success, E_OUTOFMEMORY if unsufficient memory to
+    ///  create enumerator or E_UNEXPECTED for any other error.</returns>
+    ///  <remarks>Method of IEnumString.</remarks>
     function Clone(out enm: IEnumString): HResult; stdcall;
   end;
 
+///  <summary>Allocates memory for a wide string using the Shell's task
+///  allocator and copies a given string into the memory as a wide string.
+///  </summary>
+///  <param name="S">string [in] String to convert.</param>
+///  <returns>Pointer to buffer containing the converted wide string.</returns>
+///  <remarks>Caller is responsible for freeing the buffer and must use the
+///  shell's allocator to do this.</remarks>
 function TaskAllocWideString(const S: string): PWideChar;
-  {Allocates memory for a wide string using the Shell's task allocator and
-  copies a given string into the memory as a wide string. Caller is responsible
-  for freeing the buffer and must use the shell's allocator to do this.
-    @param S [in] String to convert.
-    @return Pointer to buffer containing wide string.
-  }
+
 
 implementation
 
@@ -70,12 +101,6 @@ uses
   Windows;
 
 function TaskAllocWideString(const S: string): PWideChar;
-  {Allocates memory for a wide string using the Shell's task allocator and
-  copies a given string into the memory as a wide string. Caller is responsible
-  for freeing the buffer and must use the shell's allocator to do this.
-    @param S [in] String to convert.
-    @return Pointer to buffer containing wide string.
-  }
 var
   StrLen: Integer;  // length of string in bytes
 begin
@@ -93,9 +118,6 @@ end;
 
 function TCOMEnumString.Clone(out enm: IEnumString): HResult;
 begin
-  Result := E_NOTIMPL;
-  pointer(enm) := nil;
-exit;
   try
     enm := TCOMEnumString.Create(fStrings);
     Result := S_OK;
