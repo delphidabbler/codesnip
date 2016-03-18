@@ -14,4 +14,4 @@ Bin
 Exe
 Release
 Src/CodeSnip.cfg
-Src/AutoGen/IntfExternalObj.pas
+Src/Main/AutoGen/IntfExternalObj.pas
