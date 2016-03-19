@@ -243,8 +243,8 @@ begin
   Result := CaptionBase;
   if TCommandLineOpts.IsPortable then
     Result := Result + ' ' + sPortableMode;
-  if TCommandLineOpts.UseLocalHost then
-    Result := Result + Format(' [%s]', [TWebInfo.TestServerHost]);
+  if TCommandLineOpts.UseTestServer then
+    Result := Result + Format(' [%s]', [TCommandLineOpts.TestServerHost]);
 end;
 
 class function TAppInfo.ProgramFileVersion: string;
