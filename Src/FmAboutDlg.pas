@@ -117,17 +117,6 @@ type
         @param Sender [in] Not used.
         @param EventInfo [in] Object providing information about the event.
       }
-    function RegistrationHTML: string;
-      {Builds HTML used to display registration information.
-        @return Required HTML.
-      }
-    function ContribListHTML(const ContribClass: TContributorsClass): string;
-      {Builds HTML used to display list of contributors or creates an error
-      message if contributor list is not available.
-        @param ContribClass [in] Type of contributor class to use. This
-          determines names that are displayed.
-        @return Required HTML.
-      }
     procedure ViewConfigFile(const FileName, DlgTitle: string);
       {Displays content of a config file in a preview dialogue box. If file
       does not exist an error message is displayed.
@@ -262,7 +251,7 @@ procedure TAboutDlg.btnViewAppConfigClick(Sender: TObject);
 resourcestring
   sTitle = 'Application Config File';
 begin
-  ViewConfigFile(TAppInfo.AppConfigFileName, sTitle);
+  ViewConfigFile(TAppInfo.CommonConfigFileName, sTitle);
 end;
 
 procedure TAboutDlg.btnViewUserConfigClick(Sender: TObject);

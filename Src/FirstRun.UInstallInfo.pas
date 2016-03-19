@@ -130,7 +130,7 @@ end;
 
 function TInstallInfo.CurrentCommonConfigFileName: string;
 begin
-  Result := TAppInfo.AppConfigFileName;
+  Result := TAppInfo.CommonConfigFileName;
 end;
 
 class function TInstallInfo.CurrentDatabaseDir: string;
