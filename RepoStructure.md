@@ -7,7 +7,7 @@ These notes apply to the _pagoda_ branch of the CodeSnip SVN repo and explain th
 
 This document presents the new structure I'm aiming at, lists the original structure, still used in _trunk_, and shows both how I'm proposing to change over without breaking too much at once and how far I've got (see: _Process for Converting to New Directory Structure_ below).
 
-The new structure should be in place in the _parsnip_ branch by before the end of the early development of CodeSnip 5.
+The new structure should be in place in the _pagoda_ branch by before the end of the early development of CodeSnip 5.
 
 New Directory Structure
 -----------------------
@@ -271,11 +271,11 @@ The _Docs_ directory remains unchanged in moving to the new structure.
 
 ### Src Directory
 
-Migration from the old structure to the new is complicated by the need to merge changes from SVN _trunk_ into the _parsnip_ code tree.
+Migration from the old structure to the new is complicated by the need to merge changes from SVN _trunk_ into the _pagoda_ code tree.
 
-This means that, while the need to perform such merges continues, it is difficult to make all the changes. Only when the divergence between _parsnip_ and  _trunk_ becomes so great that future merges are too problematic can thefinal transition be made.
+This means that, while the need to perform such merges continues, it is difficult to make all the changes. Only when the divergence between _pagoda_ and  _trunk_ becomes so great that future merges are too problematic can thefinal transition be made.
 
-The structure of _Src_ in _parsnip_ before the restructuring began was as follows:
+The structure of _Src_ in _pagoda_ before the restructuring began was as follows:
 
     Src
       3rdParty
@@ -324,7 +324,7 @@ To complete the migration the following tasks need to be performed on the old so
 
     - **_DONE:_** Create new _Main_ sub-directory.
 
-    - **_DONE:_** Move existing files created in _parsnip_ since it was branched from _trunk_ into _Src\Main_, updating project files as required.
+    - **_DONE:_** Move existing files created in _pagoda_ since it was branched from _trunk_ into _Src\Main_, updating project files as required.
 
     - **_IN PROGRESS_** Add any new CodeSnip project files directly into _Src\Main_ instead of _Src_.
 
@@ -340,7 +340,7 @@ To complete the migration the following tasks need to be performed on the old so
 
     The contents of _Src\3rdParty_ were moved into a new _Src\Main\Imports_ directory and _Src\3rdParty_ was deleted. Related project files were revised. No changes to make files were necessary.
 
-    **_Warning re merge conflicts:_** _Src\3rdParty_ was branched from _trunk_ so any merges involving changes to the directory will cause a tree conflict, because _Src\3rdParty_ has been deleted. Such a conflict should be resolved by rejecting the change. If any of the changes to _trunk\Src\3rdParty_ are desirable then merge _trunk\Src\3rdParty_ into _parsnip\Src\Main\Imports_.
+    **_Warning re merge conflicts:_** _Src\3rdParty_ was branched from _trunk_ so any merges involving changes to the directory will cause a tree conflict, because _Src\3rdParty_ has been deleted. Such a conflict should be resolved by rejecting the change. If any of the changes to _trunk\Src\3rdParty_ are desirable then merge _trunk\Src\3rdParty_ into _pagoda\Src\Main\Imports_.
 
 + **Src\AutoGen**
 
@@ -349,7 +349,7 @@ To complete the migration the following tasks need to be performed on the old so
     The versioned contents of _Src\AutoGen_ were moved into a new
     _Src\Main\AutoGen_ directory and _Src\AutoGen_ was deleted. Related project and make files were revised.
 
-    **_Warning re merge conflicts:_** _Src\AutoGen_ was branched from _trunk_ so any merges involving changes to the directory will cause a tree conflict, because _Src\AutoGen_ has been deleted. Such a conflict should be resolved by rejecting the change. If any of the changes to _trunk\Src\AutoGen_ are desirable then merge _trunk\Src\AutoGen_ into _parsnip\Src\Main\AutoGen_.
+    **_Warning re merge conflicts:_** _Src\AutoGen_ was branched from _trunk_ so any merges involving changes to the directory will cause a tree conflict, because _Src\AutoGen_ has been deleted. Such a conflict should be resolved by rejecting the change. If any of the changes to _trunk\Src\AutoGen_ are desirable then merge _trunk\Src\AutoGen_ into _pagoda\Src\Main\AutoGen_.
 
 + **Src\Help and sub-directories**
 
@@ -369,13 +369,13 @@ To complete the migration the following tasks need to be performed on the old so
 
     All sub-directories of _Src\Lib\3rdParty_ were moved up into _Src\Lib_ and _Src\Lib\3rdParty_ was deleted.
 
-    This was safe because _Src\Lib_ was added to the _parsnip_ branch after it branched from _trunk_ so the directory isn't affected by merges from _trunk_.
+    This was safe because _Src\Lib_ was added to the _pagoda_ branch after it branched from _trunk_ so the directory isn't affected by merges from _trunk_.
 
 + **Src\Portable**
 
     **_This directory does not need to be moved or changed._**
 
-    _Src\Portable_ was added to _parsnip_ after it was branched from _trunk_ so the directory is not affected by any merges from _trunk_.
+    _Src\Portable_ was added to _pagoda_ after it was branched from _trunk_ so the directory is not affected by any merges from _trunk_.
 
 + **Src\Res and its sub-directories**
 
@@ -407,9 +407,9 @@ To complete the migration the following tasks need to be performed on the old so
 
     The _DUnit_ sub-directory of _Tests\Src_, along with its contents, was moved into a new  _Src\Tests_ and _Tests_ and all its content was then deleted.
 
-    **_Warning re merge conflicts:_** The _Tests_ directory, and its only sub-directory, _Tests\Src\DUnit_ was branched from _trunk_. Therefore so any merges involving changes within the directory will cause a tree conflict because _Tests_ has been deleted. Such a conflict should be resolved by rejecting the change. If any changes to _trunk\Tests\Src\DUnit_ are desirable then merge _trunk\Tests\Src\DUnit_ into _parsnip\Src\Tests\DUnit_.
+    **_Warning re merge conflicts:_** The _Tests_ directory, and its only sub-directory, _Tests\Src\DUnit_ was branched from _trunk_. Therefore so any merges involving changes within the directory will cause a tree conflict because _Tests_ has been deleted. Such a conflict should be resolved by rejecting the change. If any changes to _trunk\Tests\Src\DUnit_ are desirable then merge _trunk\Tests\Src\DUnit_ into _pagoda\Src\Tests\DUnit_.
     If any other  directories have been added to _trunk\Tests_ or
-    _trunk\Tests\Src_ then a decision needs to be made as to if or how to reflect those changes in _parsnip\Src\Tests_
+    _trunk\Tests\Src_ then a decision needs to be made as to if or how to reflect those changes in _pagoda\Src\Tests_
 
 --------------------------------------------------------------------------------
 
