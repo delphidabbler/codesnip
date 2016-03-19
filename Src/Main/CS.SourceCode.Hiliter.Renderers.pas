@@ -592,12 +592,10 @@ begin
   if not IsEmptyGroup(AttrStyle) then
   begin
     fBuilder.BeginGroup;
-    { TODO: Find a way of displaying background colour in RTF
-        if AttrStyle.Background <> clNone then
-          fBuilder.SetColour(AttrStyle.Foreground);
-    }
     if AttrStyle.Foreground <> Theme.DefaultForeground then
       fBuilder.SetColour(AttrStyle.Foreground);
+    if AttrStyle.Background <> Theme.DefaultBackground then
+      fBuilder.SetBgColour(AttrStyle.Background);
     if AttrStyle.FontStyles.Styles <> [] then
       fBuilder.SetFontStyle(AttrStyle.FontStyles);
   end;
@@ -609,6 +607,7 @@ begin
   fBuilder.SetFont(Theme.FontName);
   fBuilder.SetFontSize(Theme.FontSize);
   fBuilder.SetColour(Theme.DefaultForeground);
+  fBuilder.SetBgColour(Theme.DefaultBackground);
 end;
 
 constructor TRTFHiliteRenderer.Create(const Builder: TRTFBuilder;
@@ -644,6 +643,7 @@ begin
   begin
     AttrStyle := Theme.GetStyle(Brush.ID, Attr.ID);
     fBuilder.ColourTable.Add(AttrStyle.Foreground);
+    fBuilder.ColourTable.Add(AttrStyle.Background);
   end;
   // Begin group containing all source code
   fBuilder.BeginGroup;
@@ -656,8 +656,11 @@ function TRTFHiliteRenderer.IsEmptyGroup(
 begin
   { TODO: if and when Style.Background is supported, replace this with test on
           Theme.IsBaseStyle }
+  (*
   Result := (Style.Foreground = Theme.DefaultForeground)
     and Style.FontStyles.IsNull;
+  *)
+  Result := Theme.IsBaseStyle(Style);
 end;
 
 procedure TRTFHiliteRenderer.WriteElemText(const Text: string);
