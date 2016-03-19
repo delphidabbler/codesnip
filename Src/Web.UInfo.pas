@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2009-2014, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2009-2016, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -67,25 +67,29 @@ type
   TWebInfo = class(TNoConstructObject)
   strict private
     const
-      ///  <summary>Remote DelphiDabbler web server.</summary>
-      RemoteHost = 'delphidabbler.com';
+      ///  <summary>Name of server that hosts tested and released web services
+      ///  that are used by CodeSnip.</summary>
+      ///  <remarks>There is also a test server that can be used by CodeSnip
+      ///  where new and updated web services are tested - see
+      ///  <c>TestServerHost</c> below.</remarks>
+      ProductionServerHost = 'delphidabbler.com';
       ///  <summary>URL of DelphiDabbler website.</summary>
-      WebsiteURL = 'http://' + RemoteHost;
+      WebsiteURL = 'http://' + ProductionServerHost;
       ///  <summary>Template for URL of Code Snippets news feed.</summary>
       ///  <remarks>'%d' placeholder must be replaced by the required number of
       ///  days into the past the news feed should cover.</remarks>
       NewsFeedTplt = WebSiteURL + '/feeds/site-news-feed?id=codesnip&days=%d';
   strict private
-    ///  <summary>Returns the name of the host server to be used.</summary>
-    ///  <remarks>This is the remote web server unless the '-localhost# switch
-    ///  was passed on the command line when localhost server is returned.
-    ///  </remarks>
+    ///  <summary>Returns the name of the server that hosts web services that
+    ///  are used by CodeSnip.</summary>
+    ///  <remarks>By default is the production server (as specified by the
+    ///  <c>ProductionServerHost</c> constant. CodeSnip will instead use a
+    ///  test server (as returned by the <c>TestServerHost</c> method) if the
+    ///  name and port of the test server is passed on the command line via the
+    ///  <c>--test-server</c> command line option.</remarks>
     class function Host: string;
   public
     const
-      ///  <summary>Local web server.</summary>
-      ///  <remarks>Used for test purposes.</remarks>
-      LocalHost = 'localhost:8080';
       ///  <summary>URL of home page on DelphiDabbler website.</summary>
       DelphiDabblerHomeURL = WebsiteURL + '/';
       ///  <summary>URL of home page of the CodeSnip project.</summary>
@@ -101,6 +105,24 @@ type
       ///  <summary>URL of CodeSnip's FAQ web page.</summary>
       FAQsURL = WebsiteURL + '/url/codesnip-faq';
   public
+    ///  <summary>Returns the name of the server that hosts web services used by
+    ///  CodeSnip when under testing. This server receives updated web services
+    ///  before they are released to the production server.</summary>
+    ///  <remarks>
+    ///  <para>The name of this server must be passed on the command line via
+    ///  the <c>--test-server</c> option. If this option is not specified then
+    ///  <c>TestServerHost</c> returns the empty string.</para>
+    ///  <para>The format of the command line switch is
+    ///  <c>--test-server=server-name</c> or
+    ///  <c>--test-server=server-name:port</c> where <c>server-name</c> is the
+    ///  name of the test server and <c>port</c> is the port number it is
+    ///  operating on, for example <c>--test-server=localhost:8080</c> or
+    ///  <c>--test-server=test.delphidabbler.com</c>. The
+    ///  port number and its preceding ':' character can be omitted if the
+    ///  server is on port 80.</para>
+    ///  <para>The server must be using the <c>http://</c> protocol.</para>
+    ///  </remarks>
+    class function TestServerHost: string;
     ///  <summary>Builds the URL of the CodeSnip news feed.</summary>
     ///  <param name="Age">Word [in] Maximum age, in days, of news items to be
     ///  included in the feed.</param>
@@ -114,17 +136,18 @@ type
     ///  <summary>Gets information about any required web proxy.</summary>
     ///  <remarks>The web proxy information is read from settings.</remarks>
     class function WebProxyInfo: TWebProxyInfo;
-    ///  <summary>Checks if the program is using the web server on localhost.
-    ///  </summary>
-    ///  <returns>Boolean. True if localhost is being used, False if the remote,
-    ///  production, server is being used.</returns>
+    ///  <summary>Checks if the program is using a test web server.</summary>
+    ///  <returns><c>Boolean</c>. <c>True</c> if a test web server is being
+    ///  used, <c>False</c> if the production web server is being used.
+    ///  </returns>
     ///  <remarks>
-    ///  <para>True is returned iff the '-localhost' switch was passed on the
-    ///  command line.</para>
-    ///  <para>Localhost should only be used by developers with access to a
-    ///  suitable test server running as 'locahost'.</para>
+    ///  <para><c>True</c> is returned iff a valid <c>--test-server</c> command
+    ///  line option was supplied on the command line.</para>
+    ///  <para><c>--test-server</c> should only be specified by developers with
+    ///  access to a suitable test server.</para>
+
     ///  </remarks>
-    class function UsingLocalHost: Boolean;
+    class function UsingTestServer: Boolean;
   end;
 
 
@@ -142,10 +165,10 @@ uses
 
 class function TWebInfo.Host: string;
 begin
-  if UsingLocalHost then
-    Result := LocalHost
+  if UsingTestServer then
+    Result := TestServerHost
   else
-    Result := RemoteHost;
+    Result := ProductionServerHost;
 end;
 
 class function TWebInfo.NewsFeedURL(const Age: Word): string;
@@ -153,9 +176,32 @@ begin
   Result := Format(NewsFeedTplt, [Age]);
 end;
 
-class function TWebInfo.UsingLocalHost: Boolean;
+class function TWebInfo.TestServerHost: string;
+const
+  TestServerSwitch = '--test-server';
+  Separator = '=';
+var
+  Idx: Integer;
+  ParamName: string;
+  ParamValue: string;
 begin
-  Result := FindCmdLineSwitch('localhost', True);
+  for Idx := 1 to ParamCount do
+  begin
+    if not StrContainsStr(Separator, ParamStr(Idx)) then
+      Continue;
+    StrSplit(ParamStr(Idx), Separator, ParamName, ParamValue);
+    if not StrSameStr(TestServerSwitch, ParamName) then
+      Continue;
+    if ParamValue = EmptyStr then
+      Continue;
+    Exit(ParamValue);
+  end;
+  Result := EmptyStr;
+end;
+
+class function TWebInfo.UsingTestServer: Boolean;
+begin
+  Result := TestServerHost <> EmptyStr;
 end;
 
 class function TWebInfo.WebProxyInfo: TWebProxyInfo;
