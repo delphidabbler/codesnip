@@ -35,12 +35,13 @@ type
     ///  <summary>MIME type of media used by web service.</summary>
     MediaType: string;
     ///  <summary>Constructs a record with given field values.</summary>
-    ///  <param name="AScriptURLTplt">string [in] Template for web service's
-    ///  URI.</param>
-    ///  <param name="AUserAgent">string [in] User agent to use when accessing
-    ///  web service.</param>
-    ///  <param name="AMediaType">string [in] Optional. Media type used by web
-    ///  service.</param>
+    ///  <param name="AScriptURLTplt"><c>string</c> [in] Template for web
+    ///  service's URI. Must contain a single '%s' placeholder for web host.
+    ///  </param>
+    ///  <param name="AUserAgent"><c>string</c> [in] User agent to use when
+    ///  accessing web service.</param>
+    ///  <param name="AMediaType"><c>string</c> [in] Optional. Media type used
+    ///  by web service.</param>
     constructor Create(const AScriptURLTplt, AUserAgent: string;
       const AMediaType: string = 'text/*');
   end;
@@ -77,13 +78,15 @@ type
       WebsiteURL = 'http://' + ProductionServerHost;
       ///  <summary>Template for URL of Code Snippets news feed.</summary>
       ///  <remarks>'%d' placeholder must be replaced by the required number of
-      ///  days into the past the news feed should cover.</remarks>
+      ///  days into the past the news feed should cover. Passing <c>0</c> as
+      ///  the number of days results in all news items being returned.
+      ///  </remarks>
       NewsFeedTplt = WebSiteURL + '/feeds/site-news-feed?id=codesnip&days=%d';
   strict private
     ///  <summary>Returns the name of the server that hosts web services that
     ///  are used by CodeSnip.</summary>
     ///  <remarks>By default is the production server (as specified by the
-    ///  <c>ProductionServerHost</c> constant. CodeSnip will instead use a
+    ///  <c>ProductionServerHost</c> constant). CodeSnip will instead use a
     ///  test server (as returned by the <c>TestServerHost</c> method) if the
     ///  name and port of the test server is passed on the command line via the
     ///  <c>--test-server</c> command line option.</remarks>
@@ -98,11 +101,15 @@ type
       DatabaseURL = WebsiteURL + '/url/csdb';
       ///  <summary>URL used to make donations towards the CodeSnip project.
       ///  </summary>
-      ///  <summary>This URL redirects to the correct page on PayPal.</summary>
+      ///  <remarks>This URL redirects to the correct page on PayPal.</remarks>
       DonateURL = WebsiteURL + '/url/donate-cs';
       ///  <summary>URL used to view and report CodeSnip bugs.</summary>
+      ///  <remarks>This URL will redirect to the actual bug tracker which may
+      ///  be on an external site such as SourceForge or GitHub.</remarks>
       BugTrackerURL = WebsiteURL + '/url/codesnip-bugs';
       ///  <summary>URL of CodeSnip's FAQ web page.</summary>
+      ///  <remarks>This URL will redirect to the FAQ location which may be on
+      ///  an external site such as GitHub or SourceForge.</remarks>
       FAQsURL = WebsiteURL + '/url/codesnip-faq';
   public
     ///  <summary>Returns the name of the server that hosts web services used by
@@ -124,14 +131,14 @@ type
     ///  </remarks>
     class function TestServerHost: string;
     ///  <summary>Builds the URL of the CodeSnip news feed.</summary>
-    ///  <param name="Age">Word [in] Maximum age, in days, of news items to be
-    ///  included in the feed.</param>
-    ///  <returns>string. Required URL.</returns>
+    ///  <param name="Age"><c>Word</c> [in] Maximum age, in days, of news items
+    ///  to be included in the feed.</param>
+    ///  <returns><c>string</c>. Required URL.</returns>
     class function NewsFeedURL(const Age: Word): string;
     ///  <summary>Builds the URL of a web service.</summary>
-    ///  <param name="URLTplt">string. [in] Template of URL of web service
-    ///  script. Must contain a '%s' placeholder for host name.</param>
-    ///  <returns>string. Required URL.</returns>
+    ///  <param name="URLTplt"><c>string</c>. [in] Template of URL of web
+    ///  service script. Must contain a '%s' placeholder for host name.</param>
+    ///  <returns><c>string</c>. Required URL.</returns>
     class function WebServiceURL(const URLTplt: string): string;
     ///  <summary>Gets information about any required web proxy.</summary>
     ///  <remarks>The web proxy information is read from settings.</remarks>
@@ -142,10 +149,9 @@ type
     ///  </returns>
     ///  <remarks>
     ///  <para><c>True</c> is returned iff a valid <c>--test-server</c> command
-    ///  line option was supplied on the command line.</para>
+    ///  line option was supplied.</para>
     ///  <para><c>--test-server</c> should only be specified by developers with
     ///  access to a suitable test server.</para>
-
     ///  </remarks>
     class function UsingTestServer: Boolean;
   end;
