@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2013-2016, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -23,20 +23,43 @@ type
   TCommandLineOpts = record
   strict private
     const
-      LocalHostSwitch = 'localhost';
       PortableSwitch = 'portable';
       NoSplashSwitch = 'no-splash';
     class var
-      fUseLocalHost: Boolean;
       fIsPortable: Boolean;
       fNoSplash: Boolean;
+      fTestServerHost: string;
   public
     ///  <summary>Parses the command line on startup.</summary>
     class constructor Create;
-    ///  <summary>Checks if the program is to use a test web server on localhost
-    ///  when accessing the internet.</summary>
-    ///  <returns>True if localhost is to be used or False otherwise.</returns>
-    class function UseLocalHost: Boolean; static; inline;
+    ///  <summary>Returns the name of the server that hosts web services used by
+    ///  CodeSnip when under testing. This server receives updated web services
+    ///  before they are released to the production server.</summary>
+    ///  <remarks>
+    ///  <para>The name of this server must be passed on the command line via
+    ///  the <c>--test-server</c> option. If this option is not specified then
+    ///  <c>TestServerHost</c> returns the empty string.</para>
+    ///  <para>The format of the command line switch is
+    ///  <c>--test-server=server-name</c> or
+    ///  <c>--test-server=server-name:port</c> where <c>server-name</c> is the
+    ///  name of the test server and <c>port</c> is the port number it is
+    ///  operating on, for example <c>--test-server=localhost:8080</c> or
+    ///  <c>--test-server=test.delphidabbler.com</c>. The
+    ///  port number and its preceding ':' character can be omitted if the
+    ///  server is on port 80.</para>
+    ///  </remarks>
+    class function TestServerHost: string; static; inline;
+    ///  <summary>Checks if the program is using a test web server.</summary>
+    ///  <returns><c>Boolean</c>. <c>True</c> if a test web server is being
+    ///  used, <c>False</c> if the production web server is being used.
+    ///  </returns>
+    ///  <remarks>
+    ///  <para><c>True</c> is returned iff a valid <c>--test-server</c> command
+    ///  line option was supplied.</para>
+    ///  <para><c>--test-server</c> should only be specified by developers with
+    ///  access to a suitable test server.</para>
+    ///  </remarks>
+    class function UseTestServer: Boolean; static; inline;
     ///  <summary>Checks whether the program is to run in portable mode.
     ///  </summary>
     ///  <returns>True if the program is to run in portable mode or False if it
@@ -52,13 +75,40 @@ type
 implementation
 
 uses
-  SysUtils;
+  // Delphi
+  SysUtils,
+  // Project
+  UStrUtils;
 
 { TCommandLineOpts }
 
 class constructor TCommandLineOpts.Create;
+
+  function ParseTestServerCommand: string;
+  const
+    TestServerSwitch = '--test-server';
+    Separator = '=';
+  var
+    Idx: Integer;
+    ParamName: string;
+    ParamValue: string;
+  begin
+    for Idx := 1 to ParamCount do
+    begin
+      if not StrContainsStr(Separator, ParamStr(Idx)) then
+        Continue;
+      StrSplit(ParamStr(Idx), Separator, ParamName, ParamValue);
+      if not StrSameStr(TestServerSwitch, ParamName) then
+        Continue;
+      if ParamValue = EmptyStr then
+        Continue;
+      Exit(ParamValue);
+    end;
+    Result := EmptyStr;
+  end;
+
 begin
-  fUseLocalHost := FindCmdLineSwitch(LocalHostSwitch, True);
+  fTestServerHost := ParseTestServerCommand;
   fIsPortable := FindCmdLineSwitch(PortableSwitch, True);
   fNoSplash := FindCmdLineSwitch(NoSplashSwitch, True);
 end;
@@ -73,9 +123,14 @@ begin
   Result := fNoSplash;
 end;
 
-class function TCommandLineOpts.UseLocalHost: Boolean;
+class function TCommandLineOpts.TestServerHost: string;
 begin
-  Result := fUseLocalHost;
+  Result := fTestServerHost;
+end;
+
+class function TCommandLineOpts.UseTestServer: Boolean;
+begin
+  Result := fTestServerHost <> EmptyStr;
 end;
 
 end.
