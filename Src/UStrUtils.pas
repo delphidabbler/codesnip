@@ -215,8 +215,8 @@ function StrExplode(Str: UnicodeString; const Delim: UnicodeString;
 ///  <summary>Splits string Str at the first occurence of Delim setting Left to
 ///  the string preceeding Delim and Right to the string following Delim.
 ///  Returns True if Delim was found in Str, False if not.</summary>
-///  <remarks>Left and Right be empty if Delim is found at the start or end of
-///  Str respectively.</remarks>
+///  <remarks>Either Left or Right will be empty if Delim is found at the start 
+///  or end of Str respectively.</remarks>
 function StrSplit(const Str: UnicodeString; const Delim: UnicodeString;
   out Left, Right: UnicodeString): Boolean;
 
