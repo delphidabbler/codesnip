@@ -654,12 +654,6 @@ end;
 function TRTFHiliteRenderer.IsEmptyGroup(
   const Style: TSyntaxHiliteAttrStyle): Boolean;
 begin
-  { TODO: if and when Style.Background is supported, replace this with test on
-          Theme.IsBaseStyle }
-  (*
-  Result := (Style.Foreground = Theme.DefaultForeground)
-    and Style.FontStyles.IsNull;
-  *)
   Result := Theme.IsBaseStyle(Style);
 end;
 
