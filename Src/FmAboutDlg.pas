@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2014, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2005-2016, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -95,6 +95,8 @@ type
     pnlTitle: TPanel;
     frmTitle: THTMLTpltDlgFrame;
     tsPaths: TTabSheet;
+    btnViewAppConfig: TButton;
+    btnViewUserConfig: TButton;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     ///  <summary>Handles event triggered when user clicks on one of page
@@ -103,6 +105,8 @@ type
     ///  a tab is clicked.</remarks>
     procedure pcDetailMouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
+    procedure btnViewAppConfigClick(Sender: TObject);
+    procedure btnViewUserConfigClick(Sender: TObject);
   strict private
     fDatabasePathGp: TPathInfoBox; // control that displays database folder
     fInstallPathGp: TPathInfoBox;  // control that displays program install path
@@ -112,6 +116,23 @@ type
       mouse events on icon image and acts accordingly.
         @param Sender [in] Not used.
         @param EventInfo [in] Object providing information about the event.
+      }
+    function RegistrationHTML: string;
+      {Builds HTML used to display registration information.
+        @return Required HTML.
+      }
+    function ContribListHTML(const ContribClass: TContributorsClass): string;
+      {Builds HTML used to display list of contributors or creates an error
+      message if contributor list is not available.
+        @param ContribClass [in] Type of contributor class to use. This
+          determines names that are displayed.
+        @return Required HTML.
+      }
+    procedure ViewConfigFile(const FileName, DlgTitle: string);
+      {Displays content of a config file in a preview dialogue box. If file
+      does not exist an error message is displayed.
+        @param FileName [in] Name of config file.
+        @param DlgTitle [in] Title of preview dialogue box.
       }
   strict protected
     procedure ConfigForm; override;
@@ -157,18 +178,21 @@ uses
   IOUtils,
   // Project
   FmEasterEgg,
+  FmPreviewDlg,
   UAppInfo,
   UColours,
   UConsts,
   UCSSUtils,
   UCtrlArranger,
+  UEncodings,
   UFontHelper,
   UGraphicUtils,
   UHTMLUtils,
   UHTMLTemplate,
+  UIOUtils,
+  UMessageBox,
   UResourceUtils,
   UThemesEx;
-
 
 {
   NOTE:
@@ -214,7 +238,15 @@ var
   PathTabHeight: Integer;
 begin
   fDatabasePathGp.Top := TCtrlArranger.BottomOf(fInstallPathGp, 8);
-  PathTabHeight := TCtrlArranger.BottomOf(fDatabasePathGp);
+  TCtrlArranger.AlignTops(
+    [btnViewAppConfig, btnViewUserConfig],
+    TCtrlArranger.BottomOf(fDatabasePathGp, 8)
+  );
+  PathTabHeight := TCtrlArranger.BottomOf(
+    [btnViewUserConfig, btnViewAppConfig]
+  );
+  TCtrlArranger.AlignLefts([fDatabasePathGp, btnViewAppConfig]);
+  TCtrlArranger.AlignRights([fDatabasePathGp, btnViewUserConfig]);
   // Set height of title frame and page control
   pnlTitle.Height := frmTitle.DocHeight;
   pcDetail.ClientHeight :=
@@ -226,15 +258,31 @@ begin
   inherited;
 end;
 
+procedure TAboutDlg.btnViewAppConfigClick(Sender: TObject);
+resourcestring
+  sTitle = 'Application Config File';
+begin
+  ViewConfigFile(TAppInfo.AppConfigFileName, sTitle);
+end;
+
+procedure TAboutDlg.btnViewUserConfigClick(Sender: TObject);
+resourcestring
+  sTitle = 'Per-User Config File';
+begin
+  ViewConfigFile(TAppInfo.UserConfigFileName, sTitle);
+end;
+
 procedure TAboutDlg.ConfigForm;
   {Configures form by creating custom controls and initialising HTML frames.
   Called from ancestor class.
   }
 
-  function CreatePathInfoBox(const Caption, Path: string): TPathInfoBox;
+  function CreatePathInfoBox(const Caption, Path: string;
+    const TabOrder: Integer): TPathInfoBox;
     {Creates and initialises a custom path information control.
       @param Caption [in] Group box caption.
       @param Path [in] Path to be displayed.
+      @param TabOrder [in] Tab order of info box.
       @return New control.
     }
   begin
@@ -243,6 +291,7 @@ procedure TAboutDlg.ConfigForm;
     Result.SetBounds(8, 8, tsPaths.ClientWidth - 16, 0);
     Result.Caption := Caption;
     Result.Path := Path;
+    Result.TabOrder := TabOrder;
   end;
 
 resourcestring
@@ -253,11 +302,13 @@ begin
   inherited;
   // Creates required custom controls
   fInstallPathGp := CreatePathInfoBox(
-    sInstallPathGpCaption, TAppInfo.AppExeDir
+    sInstallPathGpCaption, TAppInfo.AppExeDir, 0
   );
   fDatabasePathGp := CreatePathInfoBox(
-    sDatabasePathGpCaption, TAppInfo.UserDataDir
+    sDatabasePathGpCaption, TAppInfo.UserDataDir, 1
   );
+  btnViewAppConfig.TabOrder := fDatabasePathGp.TabOrder + 1;
+  btnViewUserConfig.TabOrder := btnViewAppConfig.TabOrder + 1;
   // Load content into HTML frames
   InitHTMLFrames;
 end;
@@ -416,6 +467,24 @@ begin
     AddProperty(TCSS.BackgroundColorProp(clWindow));
     AddProperty(TCSS.PaddingProp(4));
   end;
+end;
+
+procedure TAboutDlg.ViewConfigFile(const FileName, DlgTitle: string);
+var
+  Data: TEncodedData;
+resourcestring
+  sErrorMsg = 'Sorry, this config file does not (yet) exist.';
+begin
+  if not TFile.Exists(FileName) then
+  begin
+    TMessageBox.Error(Self, sErrorMsg);
+    Exit;
+  end;
+  Data := TEncodedData.Create(
+    TFileIO.ReadAllText(FileName, TEncoding.Unicode, True),
+    etUTF16LE
+  );
+  TPreviewDlg.Execute(Self, Data, dtPlainText, DlgTitle);
 end;
 
 { TPathInfoBox }

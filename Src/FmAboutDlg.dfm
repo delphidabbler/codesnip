@@ -64,8 +64,26 @@ inherited AboutDlg: TAboutDlg
         end
       end
       object tsPaths: TTabSheet
-        Caption = 'Paths'
+        Caption = 'Paths && Files'
         ImageIndex = 2
+        object btnViewAppConfig: TButton
+          Left = 3
+          Top = 144
+          Width = 170
+          Height = 25
+          Caption = 'View Application Config File...'
+          TabOrder = 1
+          OnClick = btnViewAppConfigClick
+        end
+        object btnViewUserConfig: TButton
+          Left = 192
+          Top = 144
+          Width = 170
+          Height = 25
+          Caption = 'View Per-User Config File...'
+          TabOrder = 0
+          OnClick = btnViewUserConfigClick
+        end
       end
     end
     object pnlTitle: TPanel

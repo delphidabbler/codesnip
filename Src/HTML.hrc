@@ -2,7 +2,7 @@
 # v. 2.0. If a copy of the MPL was not distributed with this file, You can
 # obtain one at http://mozilla.org/MPL/2.0/
 #
-# Copyright (C) 2005-2014, Peter Johnson (www.delphidabbler.com).
+# Copyright (C) 2005-2016, Peter Johnson (www.delphidabbler.com).
 #
 # $Rev$
 # $Date$
@@ -136,6 +136,7 @@ Res\Img\Egg\screen-bottom.png
 Res\Img\Egg\dogs-1.jpg
 Res\Img\Egg\dogs-2.jpg
 Res\Img\Egg\dogs-3.jpg
+Res\Img\Egg\dogs-sophie.jpg
 Res\Img\Egg\dogs-4.jpg
 Res\Img\Egg\prompt-arrow.png
 Res\Img\Egg\play-btn.png

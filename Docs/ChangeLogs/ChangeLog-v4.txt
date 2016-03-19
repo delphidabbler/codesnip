@@ -11,6 +11,16 @@
 ; Change Log for CodeSnip Release 4
 ; ------------------------------------------------------------------------------
 
+Release v4.14.0 of 19 March 2016
++ Changes to About Box's "Paths" tab:
+  - Added new buttons to display the contents of the system and per-user config files.
+  - Renamed tab as "Paths & Files".
++ Implemented feature request #83 (https://sourceforge.net/p/codesnip/feature-requests/83/) to enable the name and port of any web service test server to be passed on command line by using the new "--test-server" command line option. This replaces hard-wired test server name & port that was activated using the now removed "-localhost" command line switch.
++ Fixed bug #96: "Some open / save dialogues too small" (https://sourceforge.net/p/codesnip/bugs/96/). The height of customised dialogue boxes was increased.
++ Updated operating system detection code to detect Windows 10 TH2.
++ New photo of Sophie the dog added to the Easter egg slide show!
++ Updated help file re About Box changes.
+
 Release v4.13.2 of 20 February 2016
 + Updated and corrected hints displayed in main window.
 + Changed some menu options and associated dialogue box captions.
