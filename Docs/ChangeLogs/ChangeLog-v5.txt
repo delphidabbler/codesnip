@@ -12,7 +12,7 @@
 ; ------------------------------------------------------------------------------
 
 Summary of changes in Git pagoda (formerly SVN parsnip) branch up to Git commit 631bedf
-Changes relate to v4.13.2 (#### may need to update this if there are further v4.x releases before first v5 preview release ###)
+Changes relate to v4.14.0 (#### may need to update this if there are further v4.x releases before first v5 preview release ###)
 + User interface changes:
   - The link used to edit the displayed snippet has been removed from the Detail pane and replaced by a glyph showing the snippet's level of testing. (### may need to change this in light of further redesigns###)
   - The overview pane now uses a drop-down list instead of tabs to select the required snippet.
