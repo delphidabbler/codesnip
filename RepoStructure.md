@@ -1,20 +1,13 @@
 Source Code Repo Structure
 ==========================
 
-These notes apply to the _parsnip_ branch of the CodeSnip SVN repo and explain
-the design of the directory structure.
+These notes apply to the _pagoda_ branch of the CodeSnip SVN repo and explain the design of the directory structure.
 
-**At present the _parsnip_ repo is quite messy - that's because I'm slowly
-changing it over to a new structure, and for reasons of not wanting to clobber
-the merging of changes from the repo _trunk_, I can't do it all in one go.**
+> **At present the _pagoda_ repo is quite messy - that's because I'm slowly changing it over to a new structure, and for reasons of not wanting to clobber the merging of changes from the repo _trunk_, I can't do it all in one go.**
 
-This document presents the new structure I'm aiming at, lists the original
-structure, still used in _trunk_, and shows both how I'm proposing to change
-over without breaking too much at once and how far I've got (see: _Process for
-Converting to New Directory Structure_ below).
+This document presents the new structure I'm aiming at, lists the original structure, still used in _trunk_, and shows both how I'm proposing to change over without breaking too much at once and how far I've got (see: _Process for Converting to New Directory Structure_ below).
 
-The new structure should be in place in the _parsnip_ branch by before the end
-of the early development of CodeSnip 5.
+The new structure should be in place in the _parsnip_ branch by before the end of the early development of CodeSnip 5.
 
 New Directory Structure
 -----------------------
@@ -53,9 +46,7 @@ The code committed to the SVN repo will ultimately have this structure:
       Tests
         DUnit
 
-In addition to _Docs_ and _Src_ top level directories there will also be a
-_Build_ directory that stores files output by the build process. This directory
-will not be included in SVN. The structure of _Build_ is:
+In addition to _Docs_ and _Src_ top level directories there will also be a _Build_ directory that stores files output by the build process. This directory will not be included in SVN. The structure of _Build_ is:
 
     Build
       Distrib
@@ -81,8 +72,7 @@ The directories have the following purposes:
 
 + **Docs**
 
-    Contains the program's documentation, excluding help, which is included in
-    _Src\Help_.
+    Contains the program's documentation, excluding help, which is included in _Src\Help_.
 
     Some of the files in this folder are included in releases, but most are not.
 
@@ -96,17 +86,13 @@ The directories have the following purposes:
 
 + **Src**
 
-    All of CodeSnip's source code, with the exception of the Delphi VCL and the
-    _Indy_ components, is stored in the _Src_ folder and its sub-folders.
+    All of CodeSnip's source code, with the exception of the Delphi VCL and the _Indy_ components, is stored in the _Src_ folder and its sub-folders.
 
-    The only files stored directly in _Src_ will be makefiles, project group
-    files and license files. The remaining source is grouped into sub-projects,
-    each stored in its own sub-folder of _Src_. These sub-projects are:
+    The only files stored directly in _Src_ will be makefiles, project group files and license files. The remaining source is grouped into sub-projects, each stored in its own sub-folder of _Src_. These sub-projects are:
 
     + **Src\Help**
 
-        The project's HTML help file. It stores project files in the root.
-        Content is divided amongst its sub-folders.
+        The project's HTML help file. It stores project files in the root. Content is divided amongst its sub-folders.
 
         + **Src\Help\CSS**
 
@@ -122,8 +108,7 @@ The directories have the following purposes:
 
     + **Src\Install**
 
-        Source files for generating CodeSnip's set-up program. Contains the
-        _Inno Setup_ project file and associated Pascal Script files.
+        Source files for generating CodeSnip's set-up program. Contains the _Inno Setup_ project file and associated Pascal Script files.
 
         + **Src\Install\Assets**
 
@@ -131,10 +116,7 @@ The directories have the following purposes:
 
     + **Src\Lib**
 
-        Source code of various libraries imported from 3rd party sources that
-        are required to build CodeSnip. This folder contains only files that
-        related to all the library. Each library has its own sub-directory,
-        named appropriately.
+        Source code of various libraries imported from 3rd party sources that are required to build CodeSnip. This folder contains only files that related to all the library. Each library has its own sub-directory, named appropriately.
 
         + **Src\Lib\DDabLib**
 
@@ -150,23 +132,17 @@ The directories have the following purposes:
 
     + **Src\Main**
 
-        Source code of the main CodeSnip application. All Pascal source code and
-        associated project / make files are stored in this directory.
+        Source code of the main CodeSnip application. All Pascal source code and associated project / make files are stored in this directory.
 
         + **Src\Main\AutoGen**
 
-            Contains any intermediate files generated by the makefile along with
-            a read-me and license files.
+            Contains any intermediate files generated by the makefile along with a read-me and license files.
 
-            Only the read-me and license files are recorded in SVN. Generated
-            files are not since they can be regenerated from the makefile at
-            will.
+            Only the read-me and license files are recorded in SVN. Generated files are not since they can be regenerated from the makefile at will.
 
         + **Src\Main\Assets**
 
-            Container for any assets, including scripts, that are to be included
-            in the program's resources. This directory does not contain any
-            files: all the files are contained in sub-directories.
+            Container for any assets, including scripts, that are to be included in the program's resources. This directory does not contain any files: all the files are contained in sub-directories.
 
             + **Src\Main\Assets\CSS**
 
@@ -176,32 +152,23 @@ The directories have the following purposes:
 
                  HTML files that are displayed in the program's UI.
 
-            + **Src\Main\Assets\Img**, **Src\Main\Assets\Img\Branding** &
-              **Src\Main\Assets\Img\Egg**
+            + **Src\Main\Assets\Img**, **Src\Main\Assets\Img\Branding** & **Src\Main\Assets\Img\Egg**
 
-                Stores any images that are embedded in the program's resources.
-                General images are in _Img_ while _Branding_ contains restricted
-                images relating to the program's branding and _Egg_ contains
-                images used by the program's Easter Egg.
+                Stores any images that are embedded in the program's resources. General images are in _Img_ while _Branding_ contains restricted images relating to the program's branding and _Egg_ contains images used by the program's Easter Egg.
 
             + **Src\Main\Assets\Misc**
 
-                Contains any assets that don't fit into the other _Assets_
-                sub-directories.
+                Contains any assets that don't fit into the other _Assets_ sub-directories.
 
-            + **Src\Main\Assets\Scripts and Src\Main\Assets\Scripts\Imports**
+            + **Src\Main\Assets\Scripts & Src\Main\Assets\Scripts\Imports**
 
-                Contains scripts that are executed from within HTML display in
-                the program. The _Import_ sub-directory contains scripts
-                imported from 3rd party sources.
+                Contains scripts that are executed from within HTML display in the program. The _Import_ sub-directory contains scripts imported from 3rd party sources.
 
         + **Src\Main\Imports**
 
-             Contains source files referenced directly in CodeSnip's project
-             file that have been imported from other sources.
+            Contains source files referenced directly in CodeSnip's project file that have been imported from other sources.
 
-            _Note:_ Other imported source code that is not referenced in
-            CodeSnip's project file is included in the main _Src\Lib_ directory.
+            _Note:_ Other imported source code that is not referenced in CodeSnip's project file is included in the main _Src\Lib_ directory.
 
     + **Src\Portable**
 
@@ -215,18 +182,15 @@ The directories have the following purposes:
 
             Contains all DUnit tests
 
-    In addition, there is the following directory (which may or may not be
-    required).
+    In addition, there is the following directory (which may or may not be required).
 
     + **Src\Common**
 
         To be used to store any files used by more than one sub-project.
 
-        This directory could have sub-directories similar to those in _Src\Main_
-        if required.
+        This directory could have sub-directories similar to those in _Src\Main_ if required.
 
-        At present there are no common files that would not be stored directly
-        in _Src_, so this directory could be omitted.
+        At present there are no common files that would not be stored directly in _Src_, so this directory could be omitted.
 
 + **Build**
 
@@ -234,8 +198,7 @@ The directories have the following purposes:
 
     + **Build\Distrib**
 
-        Contains sub-directories that accumulate the files that are to be
-        included in each distribution.
+        Contains sub-directories that accumulate the files that are to be included in each distribution.
 
         + **Build\Dist\Standard**
 
@@ -247,44 +210,35 @@ The directories have the following purposes:
 
     + **Build\Exe**
 
-        Contains sub-directories that receive executable files created by the
-        build process.
+        Contains sub-directories that receive executable files created by the build process.
 
         + **Build\Exe\Release**
 
-            Contains files that are destined for release in one or more of the
-            distributions. They include the CodeSnip and CodeSnipPortable loader
-            executables, set-up program and help file.
+            Contains files that are destined for release in one or more of the distributions. They include the CodeSnip and CodeSnipPortable loader executables, set-up program and help file.
 
         + **Build\Exe\Tests**
 
-             Contains executable files compiled from test suites that are not
-             for distribution.
+             Contains executable files compiled from test suites that are not for distribution.
 
     + **Build\Obj**
 
-        Contains sub-directories that receive intermediate binary (object) files
-        generated by compilers.
+        Contains sub-directories that receive intermediate binary (object) files generated by compilers.
 
         + **Build\Obj\Lib**
 
-            Contains the package and related files generated when libraries are
-            built.
+            Contains the package and related files generated when libraries are built.
 
             + **Build\Obj\Lib\DDabLib**
 
-                Contains binary files for the DelphiDabbler Code Library
-                project, other than package files.
+                Contains binary files for the DelphiDabbler Code Library  project, other than package files.
 
             + **Build\Obj\Lib\DelphiColl**
 
-                Contains binary files for the Delphi Collections project, other
-                than package files.
+                Contains binary files for the Delphi Collections project, other than package files.
 
             + **Build\Obj\Lib\SynEdit**
 
-                Contains binary files for the SynEdit project, other than
-                package files.
+                Contains binary files for the SynEdit project, other than package files.
 
         + **Build\Obj\Main**
 
@@ -296,25 +250,20 @@ The directories have the following purposes:
 
         + **Build\Obj\Tests**
 
-            Contains sub-directories that contain binary files resulting from
-            test compilations.
+            Contains sub-directories that contain binary files resulting from test compilations.
 
             + **Build\Obj\Tests\DUnit**
 
-              Contains binaries resulting from compilation of DUnit tests.
+                Contains binaries resulting from compilation of DUnit tests.
 
 Process for Converting to New Directory Structure
 -------------------------------------------------
 
 ### Build Directory
 
-The _Build_ directory structure is entirely new and replaces the _Bin_, _Exe_
-and _Release_ directories in the old structure.
+The _Build_ directory structure is entirely new and replaces the _Bin_, _Exe_ and _Release_ directories in the old structure.
 
-Make files, _.cfg_ and Delphi project files will be updated over time to store
-binary files into the new _Build_ directory. This process can proceed at any
-time since the affected folders are not part of SVN and non consideration of
-merges has to take place.
+Make files, _.cfg_ and Delphi project files will be updated over time to store binary files into the new _Build_ directory. This process can proceed at any time since the affected folders are not part of SVN and non consideration of merges has to take place.
 
 ### Docs Directory
 
@@ -322,16 +271,11 @@ The _Docs_ directory remains unchanged in moving to the new structure.
 
 ### Src Directory
 
-Migration from the old structure to the new is complicated by the need to merge
-changes from SVN _trunk_ into the _parsnip_ code tree.
+Migration from the old structure to the new is complicated by the need to merge changes from SVN _trunk_ into the _parsnip_ code tree.
 
-This means that, while the need to perform such merges continues, it is
-difficult to make all the changes. Only when the divergence between _parsnip_
-and  _trunk_ becomes so great that future merges are too problematic can the
-final transition be made.
+This means that, while the need to perform such merges continues, it is difficult to make all the changes. Only when the divergence between _parsnip_ and  _trunk_ becomes so great that future merges are too problematic can thefinal transition be made.
 
-The structure of _Src_ in _parsnip_ before the restructuring began was as
-follows:
+The structure of _Src_ in _parsnip_ before the restructuring began was as follows:
 
     Src
       3rdParty
@@ -358,8 +302,7 @@ follows:
         Scripts
           3rdParty
 
-In addition there was a _Test_ top level sub-directory with the following
-structure:
+In addition there was a _Test_ top level sub-directory with the following structure:
 
     Test
       Bin
@@ -371,30 +314,23 @@ Of these directories _Test\Bin_ and _Test\Exe_ were excluded from SVN.
 
 **Action required**
 
-To complete the migration the following tasks need to be performed on the old
-source tree:
+To complete the migration the following tasks need to be performed on the old source tree:
 
 + **Src**
 
-    Ideally a new _Main_ sub-directory would be created in _Src_ and all
-    CodeSnip files would be moved from _Src_ into _Main_, leaving behind files
-    that continue to belong in _Src_.
+    Ideally a new _Main_ sub-directory would be created in _Src_ and all CodeSnip files would be moved from _Src_ into _Main_, leaving behind files that continue to belong in _Src_.
 
     Since _Src_ is affected by merges from _trunk_ a staged approach is needed:
 
     - **_DONE:_** Create new _Main_ sub-directory.
 
-    - **_DONE:_** Move existing files created in _parsnip_ since it was branched
-      from _trunk_ into _Src\Main_, updating project files as required.
+    - **_DONE:_** Move existing files created in _parsnip_ since it was branched from _trunk_ into _Src\Main_, updating project files as required.
 
-    - **_IN PROGRESS_** Add any new CodeSnip project files directly into
-      _Src\Main_ instead of _Src_.
+    - **_IN PROGRESS_** Add any new CodeSnip project files directly into _Src\Main_ instead of _Src_.
 
     - When merging from _trunk_ has ceased do the following:
 
-        - Move remaining CodeSnip files from _Src_ to _Src\Main_. **Be careful
-          to leave behind those files that continue to belong in _Src_ such as
-          the group project file, make file etc.**
+        - Move remaining CodeSnip files from _Src_ to _Src\Main_. **Be careful to leave behind those files that continue to belong in _Src_ such as the group project file, make file etc.**
 
         - Update relevant project files as required.
 
@@ -402,90 +338,66 @@ source tree:
 
     **_All changes now complete_**
 
-    The contents of _Src\3rdParty_ were moved into a new _Src\Main\Imports_
-    directory and _Src\3rdParty_ was deleted. Related project files were
-    revised. No changes to make files were necessary.
+    The contents of _Src\3rdParty_ were moved into a new _Src\Main\Imports_ directory and _Src\3rdParty_ was deleted. Related project files were revised. No changes to make files were necessary.
 
-    **_Warning re merge conflicts:_** _Src\3rdParty_ was branched from _trunk_
-    so any merges involving changes to the directory will cause a tree conflict,
-    because _Src\3rdParty_ has been deleted. Such a conflict should be resolved
-    by rejecting the change. If any of the changes to _trunk\Src\3rdParty_ are
-    desirable then merge _trunk\Src\3rdParty_ into _parsnip\Src\Main\Imports_.
+    **_Warning re merge conflicts:_** _Src\3rdParty_ was branched from _trunk_ so any merges involving changes to the directory will cause a tree conflict, because _Src\3rdParty_ has been deleted. Such a conflict should be resolved by rejecting the change. If any of the changes to _trunk\Src\3rdParty_ are desirable then merge _trunk\Src\3rdParty_ into _parsnip\Src\Main\Imports_.
 
 + **Src\AutoGen**
 
     **_All changes now complete_**
 
     The versioned contents of _Src\AutoGen_ were moved into a new
-    _Src\Main\AutoGen_ directory and _Src\AutoGen_ was deleted. Related project
-    and make files were revised.
+    _Src\Main\AutoGen_ directory and _Src\AutoGen_ was deleted. Related project and make files were revised.
 
-    **_Warning re merge conflicts:_** _Src\AutoGen_ was branched from _trunk_ so
-    any merges involving changes to the directory will cause a tree conflict,
-    because _Src\AutoGen_ has been deleted. Such a conflict should be resolved
-    by rejecting the change. If any of the changes to _trunk\Src\AutoGen_ are
-    desirable then merge _trunk\Src\AutoGen_ into _parsnip\Src\Main\AutoGen_.
+    **_Warning re merge conflicts:_** _Src\AutoGen_ was branched from _trunk_ so any merges involving changes to the directory will cause a tree conflict, because _Src\AutoGen_ has been deleted. Such a conflict should be resolved by rejecting the change. If any of the changes to _trunk\Src\AutoGen_ are desirable then merge _trunk\Src\AutoGen_ into _parsnip\Src\Main\AutoGen_.
 
 + **Src\Help and sub-directories**
 
     **_These directories do not need to be moved or changed._**
 
-    They are affected by merges from _trunk_, so **do not rename** any
-    directories until merges have ceased.
+    They are affected by merges from _trunk_, so **do not rename** any directories until merges have ceased.
 
 + **Src\Install and sub-directories**
 
     **_These directories do not need to be moved or changed._**
 
-    They are affected by merges from _trunk_, so **do not rename** any
-    directories until merges have ceased.
+    They are affected by merges from _trunk_, so **do not rename** any directories until merges have ceased.
 
 + **Src\Lib and sub-directories**
 
     **_All changes now complete_**
 
-    All sub-directories of _Src\Lib\3rdParty_ were moved up into _Src\Lib_ and
-    _Src\Lib\3rdParty_ was deleted.
+    All sub-directories of _Src\Lib\3rdParty_ were moved up into _Src\Lib_ and _Src\Lib\3rdParty_ was deleted.
 
-    This was safe because _Src\Lib_ was added to the _parsnip_ branch after it
-    branched from _trunk_ so the directory isn't affected by merges from
-    _trunk_.
+    This was safe because _Src\Lib_ was added to the _parsnip_ branch after it branched from _trunk_ so the directory isn't affected by merges from _trunk_.
 
 + **Src\Portable**
 
     **_This directory does not need to be moved or changed._**
 
-    _Src\Portable_ was added to _parsnip_ after it was branched from _trunk_ so
-    the directory is not affected by any merges from _trunk_.
+    _Src\Portable_ was added to _parsnip_ after it was branched from _trunk_ so the directory is not affected by any merges from _trunk_.
 
 + **Src\Res and its sub-directories**
 
-    Ideally this directory and its contents would be renamed and moved to
-    _Src\Main\Assets_.
+    Ideally this directory and its contents would be renamed and moved to _Src\Main\Assets_.
 
-    All sub-directories would retain the names and relative structure except
-    _Src\Res\Scripts\3rdParty_ which would be renamed as
+    All sub-directories would retain the names and relative structure except _Src\Res\Scripts\3rdParty_ which would be renamed as
     _Src\Main\Assets\Scripts\Imports_.
 
-    Since _Src\Res_ is affected by merges from _trunk_ a staged approach is
-    needed:
+    Since _Src\Res_ is affected by merges from _trunk_ a staged approach is needed:
 
     - **_DONE:_** Create the new _Assets_ directory structure in _Src\Main_.
 
-    - If and when any new assets are added to the project, add them to the
-      appropriate sub-directory of _Src\Assets_ instead of _Src\Res_, where
-      possible.
+    - If and when any new assets are added to the project, add them to the appropriate sub-directory of _Src\Assets_ instead of _Src\Res_, where possible.
 
     - When merging from _trunk_ has ceased proceed as follows as follows:
 
         - Move files from _Src\Res\Scripts\3rdParty_ into
-          _Src\Assets\Scripts\Imports_.
+        _Src\Assets\Scripts\Imports_.
 
-        - Move files from the remaining sub-directories of _Src\Res_ into the
-          correspondingly named sub-directories of _Src\Assets_.
+        - Move files from the remaining sub-directories of _Src\Res_ into the correspondingly named sub-directories of _Src\Assets_.
 
-        - Delete _Src\Res_ and all the sub-directories, which should now be
-          empty.
+        - Delete _Src\Res_ and all the sub-directories, which should now be empty.
 
         - Update any referencing project files and makefiles.
 
@@ -493,18 +405,11 @@ source tree:
 
     **_All changes now complete_**
 
-    The _DUnit_ sub-directory of _Tests\Src_, along with its contents, was moved
-    into a new  _Src\Tests_ and _Tests_ and all its content was then deleted.
+    The _DUnit_ sub-directory of _Tests\Src_, along with its contents, was moved into a new  _Src\Tests_ and _Tests_ and all its content was then deleted.
 
-    **_Warning re merge conflicts:_** The _Tests_ directory, and its only
-    sub-directory, _Tests\Src\DUnit_ was branched from _trunk_. Therefore so any
-    merges involving changes within the directory will cause a tree conflict
-    because _Tests_ has been deleted. Such a conflict should be resolved by
-    rejecting the change. If any changes to _trunk\Tests\Src\DUnit_ are
-    desirable then merge _trunk\Tests\Src\DUnit_ into _parsnip\Src\Tests\DUnit_.
+    **_Warning re merge conflicts:_** The _Tests_ directory, and its only sub-directory, _Tests\Src\DUnit_ was branched from _trunk_. Therefore so any merges involving changes within the directory will cause a tree conflict because _Tests_ has been deleted. Such a conflict should be resolved by rejecting the change. If any changes to _trunk\Tests\Src\DUnit_ are desirable then merge _trunk\Tests\Src\DUnit_ into _parsnip\Src\Tests\DUnit_.
     If any other  directories have been added to _trunk\Tests_ or
-    _trunk\Tests\Src_ then a decision needs to be made as to if or how to
-    reflect those changes in _parsnip\Src\Tests_
+    _trunk\Tests\Src_ then a decision needs to be made as to if or how to reflect those changes in _parsnip\Src\Tests_
 
 --------------------------------------------------------------------------------
 
