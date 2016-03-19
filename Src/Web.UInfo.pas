@@ -112,24 +112,6 @@ type
       ///  an external site such as GitHub or SourceForge.</remarks>
       FAQsURL = WebsiteURL + '/url/codesnip-faq';
   public
-    ///  <summary>Returns the name of the server that hosts web services used by
-    ///  CodeSnip when under testing. This server receives updated web services
-    ///  before they are released to the production server.</summary>
-    ///  <remarks>
-    ///  <para>The name of this server must be passed on the command line via
-    ///  the <c>--test-server</c> option. If this option is not specified then
-    ///  <c>TestServerHost</c> returns the empty string.</para>
-    ///  <para>The format of the command line switch is
-    ///  <c>--test-server=server-name</c> or
-    ///  <c>--test-server=server-name:port</c> where <c>server-name</c> is the
-    ///  name of the test server and <c>port</c> is the port number it is
-    ///  operating on, for example <c>--test-server=localhost:8080</c> or
-    ///  <c>--test-server=test.delphidabbler.com</c>. The
-    ///  port number and its preceding ':' character can be omitted if the
-    ///  server is on port 80.</para>
-    ///  <para>The server must be using the <c>http://</c> protocol.</para>
-    ///  </remarks>
-    class function TestServerHost: string;
     ///  <summary>Builds the URL of the CodeSnip news feed.</summary>
     ///  <param name="Age"><c>Word</c> [in] Maximum age, in days, of news items
     ///  to be included in the feed.</param>
@@ -143,17 +125,6 @@ type
     ///  <summary>Gets information about any required web proxy.</summary>
     ///  <remarks>The web proxy information is read from settings.</remarks>
     class function WebProxyInfo: TWebProxyInfo;
-    ///  <summary>Checks if the program is using a test web server.</summary>
-    ///  <returns><c>Boolean</c>. <c>True</c> if a test web server is being
-    ///  used, <c>False</c> if the production web server is being used.
-    ///  </returns>
-    ///  <remarks>
-    ///  <para><c>True</c> is returned iff a valid <c>--test-server</c> command
-    ///  line option was supplied.</para>
-    ///  <para><c>--test-server</c> should only be specified by developers with
-    ///  access to a suitable test server.</para>
-    ///  </remarks>
-    class function UsingTestServer: Boolean;
   end;
 
 
@@ -173,8 +144,8 @@ uses
 
 class function TWebInfo.Host: string;
 begin
-  if UsingTestServer then
-    Result := TestServerHost
+  if TCommandLineOpts.UseTestServer then
+    Result := TCommandLineOpts.TestServerHost
   else
     Result := ProductionServerHost;
 end;
@@ -182,36 +153,6 @@ end;
 class function TWebInfo.NewsFeedURL(const Age: Word): string;
 begin
   Result := Format(NewsFeedTplt, [Age]);
-end;
-
-// TODO: Move this code into TCommandLineOpts
-class function TWebInfo.TestServerHost: string;
-const
-  TestServerSwitch = '--test-server';
-  Separator = '=';
-var
-  Idx: Integer;
-  ParamName: string;
-  ParamValue: string;
-begin
-  for Idx := 1 to ParamCount do
-  begin
-    if not StrContainsStr(Separator, ParamStr(Idx)) then
-      Continue;
-    StrSplit(ParamStr(Idx), Separator, ParamName, ParamValue);
-    if not StrSameStr(TestServerSwitch, ParamName) then
-      Continue;
-    if ParamValue = EmptyStr then
-      Continue;
-    Exit(ParamValue);
-  end;
-  Result := EmptyStr;
-end;
-
-// TODO: Move this code into TCommandLineOpts
-class function TWebInfo.UsingTestServer: Boolean;
-begin
-  Result := TestServerHost <> EmptyStr;
 end;
 
 class function TWebInfo.WebProxyInfo: TWebProxyInfo;
