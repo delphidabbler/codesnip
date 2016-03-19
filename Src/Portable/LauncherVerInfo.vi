@@ -2,7 +2,7 @@
 ; v. 2.0. If a copy of the MPL was not distributed with this file, You can
 ; obtain one at http://mozilla.org/MPL/2.0/
 ;
-; Copyright (C) 2013, Peter Johnson (www.delphidabbler.com).
+; Copyright (C) 2013-2016, Peter Johnson (www.delphidabbler.com).
 ;
 ; $Rev$
 ; $Date$
@@ -11,8 +11,8 @@
 
 
 [Fixed File Info]
-File Version #=0, 0, 0, 0
-Product Version #=0, 0, 0, 0
+File Version #=0, 1, 0, 1
+Product Version #=0, 1, 0, 0
 File OS=4
 File Type=1
 File Sub-Type=0
