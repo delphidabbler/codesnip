@@ -5,8 +5,8 @@
  *
  * Copyright (C) 2001-2015, Peter Johnson (@delphidabbler).
  *
- * $Rev$
- * $Date$
+ * $Rev: 2002 $
+ * $Date: 2015-11-30 14:45:35 +0000 (Mon, 30 Nov 2015) $
  *
  * This unit contains various static classes, constants, type definitions and
  * global variables for use in providing information about the host computer and
@@ -26,12 +26,6 @@
  *     methods to be "spoofed" into returning information about the emulated
  *     OS. When run on Windows 8.1 and later details of the actual host
  *     operating system are always returned and the emulated OS is ignored.
- *
- *  4: ** IMPORTANT **
- *     This version of the code was an attempt to get it to detect and report
- *     Windows 10. Try as I might, I can't get this to work. So this version
- *     is released as beta code to use at your own risk. If anyone can fix it,
- *     please let me know.
  *
  * ACKNOWLEDGEMENTS
  *
@@ -576,10 +570,24 @@ type
     class function MinorVersion: Integer;
 
     ///  <summary>Returns the host OS's build number.</summary>
+    ///  <remarks>A return value of 0 indicates that the build number can't be
+    ///  found.</remarks>
     class function BuildNumber: Integer;
 
     ///  <summary>Returns the name of any installed OS service pack.</summary>
     class function ServicePack: string;
+
+    ///  <summary>Returns the name of any installed OS service pack along with
+    ///  other similar, detectable, updates.</summary>
+    ///  <remarks>
+    ///  <para>Windows has added significant OS updates that bump the build
+    ///  number but do not declare themselves as service packs: e.g. the Windows
+    ///  10 TH2 update.</para>
+    ///  <para>This method is used to report such updates in addition to
+    ///  updates that declare themselves as service packs, while the ServicePack
+    ///  method only reports declared 'official' service packs.</para>
+    ///  </remarks>
+    class function ServicePackEx: string;
 
     ///  <summary>Returns the major version number of any NT platform service
     ///  pack.</summary>
@@ -1201,6 +1209,11 @@ var
   InternalCSDVersion: string = '';
   // Internal variable recording processor architecture information
   InternalProcessorArchitecture: Word = 0;
+  // Internal variable recording additional update information.
+  // ** This was added because Windows 10 TH2 doesn't declare itself as a
+  //    service pack, but is a significant update.
+  // ** At present this variable is only used for Windows 10.
+  InternalExtraUpdateInfo: string = '';
 
 // Flag required when opening registry with specified access flags
 {$IFDEF REGACCESSFLAGS}
@@ -1211,7 +1224,7 @@ const
 // Tests Windows version (major, minor, service pack major & service pack minor)
 // against the given values using the given comparison condition and return
 // True if the given version matches the current one or False if not
-// Assumes VerifyVersionInfo API function is available
+// Assumes VerifyVersionInfo & VerSetConditionMask APIs functions are available
 // Adapted from code from VersionHelpers.pas
 // by Achim Kalwa <delphi@achim-kalwa.de> 2014-01-05
 function TestWindowsVersion(wMajorVersion, wMinorVersion,
@@ -1255,8 +1268,25 @@ begin
   );
 end;
 
+// Checks if given build number matches that of the current OS.
+// Assumes VerifyVersionInfo & VerSetConditionMask APIs functions are available
+function IsBuildNumber(BuildNumber: DWORD): Boolean;
+var
+  OSVI: TOSVersionInfoEx;
+  POSVI: POSVersionInfoEx;
+  ConditionalMask: UInt64;
+begin
+  Assert(Assigned(VerSetConditionMask) and Assigned(VerifyVersionInfo));
+  FillChar(OSVI, SizeOf(OSVI), 0);
+  OSVI.dwOSVersionInfoSize := SizeOf(OSVI);
+  OSVI.dwBuildNumber := BuildNumber;
+  POSVI := @OSVI;
+  ConditionalMask := VerSetConditionMask(0, VER_BUILDNUMBER, VER_EQUAL);
+  Result := VerifyVersionInfo(POSVI, VER_BUILDNUMBER, ConditionalMask);
+end;
+
 // Checks if the OS has the given product type.
-// Assumes VerifyVersionInfo and VerSetConditionMask API functions are available
+// Assumes VerifyVersionInfo & VerSetConditionMask APIs functions are available
 function IsWindowsProductType(ProductType: Byte): Boolean;
 var
   ConditionalMask: UInt64;
@@ -1445,23 +1475,6 @@ begin
   Result := GetRegistryString(HKEY_LOCAL_MACHINE, cWdwCurrentVer, ValName);
 end;
 
-// Reads build number from registry for NT OSs only.
-function GetNTBuildNumberFromReg: LongWord;
-var
-  BuildStr: string;
-begin
-  BuildStr := GetRegistryString(
-    HKEY_LOCAL_MACHINE, CurrentVersionRegKeys[True], 'CurrentBuildNumber'
-  );
-  Result := StrToIntDef(BuildStr, 0);
-  if Result <> 0 then
-    Exit;
-  BuildStr := GetRegistryString(
-    HKEY_LOCAL_MACHINE, CurrentVersionRegKeys[True], 'CurrentBuild'
-  );
-  Result := StrToIntDef(BuildStr, 0);
-end;
-
 // Initialise global variables with extended OS version information if possible.
 procedure InitPlatformIdEx;
 
@@ -1477,6 +1490,18 @@ var
   GetVersionEx: TGetVersionEx;      // pointer to GetVersionEx API function
   GetProductInfo: TGetProductInfo;  // pointer to GetProductInfo API function
   SI: TSystemInfo;                  // structure from GetSystemInfo API call
+const
+  // Known windows build numbers.
+  // Source: https://en.wikipedia.org/wiki/Windows_NT
+  // for Vista and Win 7 we have to add service pack number to these values to
+  // get actual build number
+  WinVistaBaseBuild = 6000;
+  Win7BaseBuild = 7600;
+  // for Win 8 onwards we just use the build numbers as is
+  Win8Build = 9200;
+  Win8Point1Build = 9600;
+  Win10TH1Build = 10240;
+  Win10TH2Build = 10586;
 begin
   // Load version query functions used externally to this routine
   VerSetConditionMask := LoadKernelFunc('VerSetConditionMask');
@@ -1505,32 +1530,38 @@ begin
       InternalMajorVersion, InternalMinorVersion,
       Win32ServicePackMajor, Win32ServicePackMinor
     );
-    if Win32ServicePackMajor > 0 then
-      // tried to read this info from registry, but for some weird reason the
-      // required value is reported as not existant by TRegistry, even though it
-      // is present in registry
-      InternalCSDVersion := Format('Service Pack %d', [Win32ServicePackMajor]);
     // NOTE: It's going to be very slow to test for all possible build numbers,
-    // so I've just hard wired them using the information at
+    // so I've just narrowed the search down using the information at
     // http://en.wikipedia.org/wiki/Windows_NT
     case InternalMajorVersion of
       6:
       begin
         case InternalMinorVersion of
-          {$IFDEF DEBUG_NEW_API}
           0:
-            InternalBuildNumber := 6000 + Win32ServicePackMajor; // Vista
+            // Vista
+            InternalBuildNumber := WinVistaBaseBuild + Win32ServicePackMajor;
           1:
-            InternalBuildNumber := 7600 + Win32ServicePackMajor; // Windows 7
+            // Windows 7
+            InternalBuildNumber := Win7BaseBuild + Win32ServicePackMajor;
           2:
+            // Windows 8 (no known SPs)
             if Win32ServicePackMajor = 0 then
-              InternalBuildNumber := 9200;  // Windows 8 (no known SPs)
-          {$ENDIF}
+              InternalBuildNumber := Win8Build;
           3:
+            // Windows 8.1 (no known SPs)
             if Win32ServicePackMajor = 0 then
-              InternalBuildNumber := 9600;  // Windows 8.1 (no known SPs)
+              InternalBuildNumber := Win8Point1Build;
 
         end;
+        if Win32ServicePackMajor > 0 then
+          // ** Tried to read this info from registry, but for some weird
+          //    reason the required value is reported as non-existant by
+          //    TRegistry, even though it is present in registry.
+          // ** Seems there is some kind of regitry "spoofing" going on (see
+          //    below.
+          InternalCSDVersion := Format(
+            'Service Pack %d', [Win32ServicePackMajor]
+          );
       end;
       10:
       begin
@@ -1538,16 +1569,29 @@ begin
           0:
           begin
             // TODO: Revist when server version released to check if same build
-            // number
-            if Win32ServicePackMajor = 0 then
-              InternalBuildNumber := 10240;  // Windows 10 (no known SPs)
+            // number(s)
+            // Windows 10 TH1 branch release
+            if IsBuildNumber(Win10TH1Build) then
+              InternalBuildNumber := Win10TH1Build
+            // Windows 10 TH2 branch release
+            else if IsBuildNumber(Win10TH2Build) then
+            begin
+              InternalBuildNumber := Win10TH2Build;
+              InternalExtraUpdateInfo := 'TH2: November Update';
+            end;
           end;
         end;
       end;
     end;
-    // Failed to "guess" at build number: get it from registry
-    if InternalBuildNumber = 0 then
-      InternalBuildNumber := GetNTBuildNumberFromReg;
+
+    // ** If InternalBuildNumber is 0 when we get here then we failed to get it
+    //    We no longer look in registry as of SVN commit r2001, because this is
+    //    can get spoofed. E.g. when running on Windows 10 TH2 registry call is
+    //    returning build number of 7600 even though regedit reveals it to be
+    //    10586 !
+    //    So we must now consider a build number of 0 as indicating an unknown
+    //    build number.
+    // ** Seems like more registry spoofing (see above).
 
     // Test possible product types to see which one we have
     if IsWindowsProductType(VER_NT_WORKSTATION) then
@@ -2325,6 +2369,15 @@ begin
       else
         Result := InternalCSDVersion;
   end;
+end;
+
+class function TPJOSInfo.ServicePackEx: string;
+begin
+  Result := ServicePack;
+  if Result = '' then
+    Result := InternalExtraUpdateInfo
+  else
+    Result := Result + ', ' + InternalExtraUpdateInfo;
 end;
 
 class function TPJOSInfo.ServicePackMajor: Integer;
