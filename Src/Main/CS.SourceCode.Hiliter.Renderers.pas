@@ -174,8 +174,7 @@ type
   ///  <summary>
   ///  Creates a Unicode plain text source code document.
   ///  </summary>
-  // TODO: Rename class with Null spelled correctly!
-  TNulDocumentHiliter = class sealed(TDocumentHiliter)
+  TNullDocumentHiliter = class sealed(TDocumentHiliter)
   public
     ///  <summary>Creates a plain, unhighlighted, text document containing
     ///  source code.</summary>
@@ -490,9 +489,9 @@ begin
   fRenderer := Renderer;
 end;
 
-{ TNulDocumentHiliter }
+{ TNullDocumentHiliter }
 
-class function TNulDocumentHiliter.Hilite(const RawCode: string;
+class function TNullDocumentHiliter.Hilite(const RawCode: string;
   const Brush: TSyntaxHiliterBrush; const Theme: TSyntaxHiliteTheme;
   const Title: string): TEncodedData;
 begin
@@ -735,7 +734,7 @@ begin
     sfRTF: Result := TRTFDocumentHiliter;
     sfHTML: Result := TXHTMLDocumentHiliter;
   else
-    Result := TNulDocumentHiliter;
+    Result := TNullDocumentHiliter;
   end;
 end;
 
