@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2005-2016, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -60,6 +60,9 @@ type
     rcPlain,                // reset font (character) formatting properties
     rcFontNum,              // font number (index to font table)
     rcForeColorNum,         // foreground colour number (index to colour table)
+    rcBackColorNum,         // background colour number (index to colour table)
+    rcCharShading,          // character shading
+    rcBackPatternColorNum,  // colour of background pattern
     rcBold,                 // sets or toggles bold style
     rcItalic,               // sets or toggles italic style
     rcUnderline,            // sets or toggles underline style
@@ -196,7 +199,8 @@ const
     'rtf', 'ansi', 'ansicpg', 'deff', 'deflang', 'fonttbl', 'fprq', 'fcharset',
     'fnil', 'froman', 'fswiss', 'fmodern', 'fscript', 'fdecor', 'ftech',
     'colortbl', 'red', 'green', 'blue', 'info', 'title', 'pard', 'par', 'plain',
-    'f', 'cf', 'b', 'i', 'ul', 'fs', 'sb', 'sa', 'u', 'upr', 'ud', '*'
+    'f', 'cf', 'cb', 'chshdng', 'chcbpat', 'b', 'i', 'ul', 'fs', 'sb', 'sa',
+    'u', 'upr', 'ud', '*'
   );
 
 function RTFControl(const Ctrl: TRTFControl): ASCIIString;

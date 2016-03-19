@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2006-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2006-2016, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -171,6 +171,10 @@ type
     ///  text.</summary>.
     ///  <exception>EBug raised if colour not in colour table.</exception>
     procedure SetColour(const Colour: TColor);
+    ///  <summary>Sets colour to be used as background colour for subsequent
+    ///  text.</summary>.
+    ///  <exception>EBug raised if colour not in colour table.</exception>
+    procedure SetBgColour(const Colour: TColor);
     ///  <summary>Sets name of font to be used for subsequent text.</summary>
     ///  <exception>EBug raised if font name is not in font table.</exception>
     procedure SetFont(const FontName: string);
@@ -325,6 +329,16 @@ end;
 procedure TRTFBuilder.ResetCharStyle;
 begin
   AddControl(RTFControl(rcPlain));
+end;
+
+procedure TRTFBuilder.SetBgColour(const Colour: TColor);
+begin
+  // background colour per RTFspec: ignored by MS Word!
+  AddControl(RTFControl(rcBackColorNum, fColourTable.ColourRef(Colour)));
+  // MS Word uses a solid character shading and coloured background pattern for
+  // background colour!
+  AddControl(RTFControl(rcCharShading, 0));   // 0 => 0% shading
+  AddControl(RTFControl(rcBackPatternColorNum, fColourTable.ColourRef(Colour)));
 end;
 
 procedure TRTFBuilder.SetColour(const Colour: TColor);
