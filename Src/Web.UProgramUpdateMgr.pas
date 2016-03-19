@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2012-2014, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2012-2016, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -43,7 +43,7 @@ type
       { TODO -cPRERELEASE: Change "Channel" to have required channel for
                          previews, beta or final release as necessary. }
       ///  <summary>Release channel sent to web service.</summary>
-      Channel = 'parsnip';
+      Channel = 'pagoda';
       { TODO -cPRERELEASE: Change "Stream" to have required stream to one of
                            "stable", "beta", "alpha" or "rc" as required. }
       ///  <summary>Release stream sent to web service.</summary>
