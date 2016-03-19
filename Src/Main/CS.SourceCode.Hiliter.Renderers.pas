@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2005-2016, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -33,7 +33,6 @@ uses
   URTFBuilder,
   USourceFileInfo;
 
-// TODO: fix documentation comments re changes
 
 type
   ///  <summary>Interface implemented by objects that format different source
@@ -56,21 +55,26 @@ type
     procedure EndLine;
     ///  <summary>Called by syntax highlighter just before a source code
     ///  element is to be output.</summary>
-    ///  <param name="Elem">THiliteElement [in] Type of element to be output.
-    ///  </param>
+    ///  <param name="ElemInfo"><c>TSyntaxHiliteElemInfo</c> [in] Provides
+    ///  information about the brush and attribute of the source code element
+    ///  to be highlighted.</param>
     procedure BeforeElem(const ElemInfo: TSyntaxHiliteElemInfo);
-    // TODO: revise comment for BeforeElem
     ///  <summary>Called by syntax highlighter for each element of source code
-    ///  read. All the given text should be formatted in same style.</summary>
-    ///  <remarks>Type of the element will have been specified in prior call to
-    ///  BeforeElem.</remarks>
+    ///  read.</summary>
+    ///  <param name="Text"><c>string</c> [in] Text of the source code element.
+    ///  </param>
+    ///  <remarks>
+    ///  <para>The type of the element will have been specified in a prior call
+    ///  to <c>BeforeElem</c>.</para>
+    ///  <para>All the given text should be formatted in the same style.</para>
+    ///  </remarks>
     procedure WriteElemText(const Text: string);
     ///  <summary>Called by syntax highlighter just after an element of source
     ///  code has been written.</summary>
-    ///  <param name="Elem">THiliteElement [in] Type of element that has just
-    ///  been output.</param>
+    ///  <param name="ElemInfo"><c>TSyntaxHiliteElemInfo</c> [in] Provides
+    ///  information about the brush and attribute of the source code element
+    ///  that has just been written.</param>
     procedure AfterElem(const ElemInfo: TSyntaxHiliteElemInfo);
-    // TODO: revise comment for AfterElem
   end;
 
 type
@@ -87,27 +91,27 @@ type
       ///  <summary>Object used to render parsed code in required format.
       ///  </summary>
       fRenderer: IHiliteRenderer;
-    ///  <summary>Handles Pascal parser's OnElement event.</summary>
-    ///  <param name="Parser">THilitePasParser [in] Reference to parser object.
-    ///  Not used.</param>
-    ///  <param name="Elem">THiliteElement [in] Type of element to be output.
-    ///  </param>
-    ///  <param name="ElemText">string [in] Name of element to be output.
+    ///  <summary>Handles Pascal parser's <c>OnElement</c> event.</summary>
+    ///  <param name="Parser"><c>THilitePasParser</c> [in] Reference to parser
+    ///  object. Not used.</param>
+    ///  <param name="Elem"><c>THiliteElement</c> [in] Type of element to be
+    ///  output.</param>
+    ///  <param name="ElemText"><c>string</c> [in] Name of element to be output.
     ///  </param>
     ///  <remarks>Event triggered by parser for each different source code
     ///  element encountered.</remarks>
     procedure ElementHandler(Parser: TObject;
       const ElemInfo: TSyntaxHiliteElemInfo; const ElemText: string);
-    ///  <summary>Handles Pascal parser's OnLineBegin event.</summary>
-    ///  <param name="Parser">THilitePasParser [in] Reference to parser object.
-    ///  Not used.</param>
+    ///  <summary>Handles Pascal parser's <c>OnLineBegin</c> event.</summary>
+    ///  <param name="Parser"><c>THilitePasParser</c> [in] Reference to parser
+    ///  object. Not used.</param>
     ///  <remarks>Called when a new line of source code is about to be started.
     ///  </remarks>
     procedure LineBeginHandler(Parser: TObject);
-    ///  <summary>Handles Pascal parser's OnLineEnd event.</summary>
-    ///  <param name="Parser">THilitePasParser [in] Reference to parser object.
-    ///  Not used.</param>
-    ///  <remarks>Called when a new line of source code has ended.</remarks>
+    ///  <summary>Handles Pascal parser's <c>OnLineEnd</c> event.</summary>
+    ///  <param name="Parser"><c>THilitePasParser</c> [in] Reference to parser
+    ///  object. Not used.</param>
+    ///  <remarks>Called when a line of source code has ended.</remarks>
     procedure LineEndHandler(Parser: TObject);
     ///  <summary>Performs syntax highlighting of given source code.</summary>
     procedure DoHilite(const RawCode: string; const Brush: TSyntaxHiliterBrush);
@@ -118,12 +122,17 @@ type
   public
     ///  <summary>Syntax highlights source code in an output format specified by
     ///  caller.</summary>
-    ///  <param name="RawCode">string [in] Plain text source code to be
+    ///  <param name="RawCode"><c>string</c> [in] Plain text source code to be
     ///  highlighted.</param>
-    ///  <param name="Renderer">IHiliteRenderer [in] Object used to format and
-    ///  record output.</param>
-    ///  <remarks>Output is written via renderer in some user defined way. This
-    ///  may update an object associated with the renderer.</remarks>
+    ///  <param name="Brush"><c>TSyntaxHiliterBrush</c> [in] Syntax highlighter
+    ///  brush used determine how highlighting is performed.</param>
+    ///  <param name="Renderer"><c>IHiliteRenderer</c> [in] Object that renders
+    ///  highlighted source code.</param>
+    ///  <remarks>The <c>Brush</c> object interprets the source code (e.g. as
+    ///  Pascal or JavaScript) and creates a stream of tokens along with details
+    ///  of the highlighting to be applied to each one. The <c>Renderer</c>
+    ///  object takes this information and renders the tokens in a particular
+    ///  format (e.g. HTML).</remarks>
     class procedure Hilite(const RawCode: string;
       const Brush: TSyntaxHiliterBrush; Renderer: IHiliteRenderer);
   end;
@@ -136,21 +145,22 @@ type
   TDocumentHiliter = class abstract(TNoConstructObject)
   public
     ///  <summary>Creates document containing highlighted source code.</summary>
-    ///  <param name="RawCode">string [in] Source code to be processed.</param>
-    ///  <param name="Brush">TSyntaxHiliterBrush [in] Specifies highlighter
-    ///  brush to be used to perform highlighting.</param>
-    ///  <param name="Theme">TSyntaxHiliteTheme [in] Specifies highlighter
-    ///  styling to be used by highlighter brush.</param>
-    ///  <param name="Title">string [in] Title of document to be included in
-    ///  document as meta data. Defaults may be used if Title not specified.
+    ///  <param name="RawCode"><c>string</c> [in] Source code to be processed.
     ///  </param>
-    ///  <returns>TEncodedData. Highlighted source code in format applicable to
-    ///  output type.</returns>
+    ///  <param name="Brush"><c>TSyntaxHiliterBrush</c> [in] Specifies
+    ///  highlighter brush to be used to perform highlighting.</param>
+    ///  <param name="Theme"><c>TSyntaxHiliteTheme</c> [in] Specifies styling
+    ///  to be used by highlighter brush.</param>
+    ///  <param name="Title"><c>string</c> [in] Title of document to be included
+    ///  in document as meta data. Defaults may be used if not specified.
+    ///  </param>
+    ///  <returns><c>TEncodedData</c>. Highlighted source code in format
+    ///  applicable to output type.</returns>
     ///  <remarks>
-    ///  <para>Not all document types support formatting, in which case Brush
-    ///  and Theme will be ignored.</para>
-    ///  <para>Not all document types support meta data, in which case Title
-    ///  will be ignored.</para>
+    ///  <para>Not all document types support formatting, in which case
+    ///  <c>Brush</c> and <c>Theme</c> will be ignored.</para>
+    ///  <para>Not all document types support meta data, in which case
+    ///  <c>Title</c> will be ignored.</para>
     ///  </remarks>
     class function Hilite(const RawCode: string;
       const Brush: TSyntaxHiliterBrush; const Theme: TSyntaxHiliteTheme;
@@ -164,20 +174,23 @@ type
   ///  <summary>
   ///  Creates a Unicode plain text source code document.
   ///  </summary>
+  // TODO: Rename class with Null spelled correctly!
   TNulDocumentHiliter = class sealed(TDocumentHiliter)
   public
-    ///  <summary>Creates a plain text document containing source code.
-    ///  </summary>
-    ///  <param name="RawCode">string [in] Source code to be processed.</param>
-    ///  <param name="Brush">TSyntaxHiliterBrush [in] Specifies highlighter
-    ///  brush to be used to perform highlighting. Ignored because plain text
-    ///  documents do not support syntax highlighting.</param>
-    ///  <param name="Theme">TSyntaxHiliteTheme [in] Specifies highlighter
+    ///  <summary>Creates a plain, unhighlighted, text document containing
+    ///  source code.</summary>
+    ///  <param name="RawCode"><c>string</c> [in] Source code to be processed.
+    ///  </param>
+    ///  <param name="Brush"><c>TSyntaxHiliterBrush</c> [in] Specifies
+    ///  highlighter brush to be used to perform highlighting. Ignored because
+    ///  plain text documents do not support syntax highlighting.</param>
+    ///  <param name="Theme"><c>TSyntaxHiliteTheme</c> [in] Specifies styling
     ///  styling to be used by highlighter brush. Ignored because plain text
     ///  documents do not support syntax highlighting.</param>
-    ///  <param name="Title">string [in] Title of document. Ignored because
-    ///  plain text documents do not support meta-data.</param>
-    ///  <returns>TEncodedData. Plain text in Unicode LE format.</returns>
+    ///  <param name="Title"><c>string</c> [in] Title of document. Ignored
+    ///  because plain text documents do not support meta-data.</param>
+    ///  <returns><c>TEncodedData</c>. Plain text in Unicode LE format.
+    ///  </returns>
     class function Hilite(const RawCode: string;
       const Brush: TSyntaxHiliterBrush; const Theme: TSyntaxHiliteTheme;
       const Title: string = ''): TEncodedData; override;
@@ -190,25 +203,26 @@ type
   TXHTMLDocumentHiliter = class sealed(TDocumentHiliter)
   strict private
     ///  <summary>Generates the CSS rules to be used in the document.</summary>
-    ///  <param name="Brush">TSyntaxHiliterBrush [in] Highlighter brush to be
-    ///  used to perform highlighting.</param>
-    ///  <param name="Theme">TSyntaxHiliteTheme [in] Styling to be used by
-    ///  highlighter brush.</param>
-    ///  <returns>string. CSS rules that apply styles specified in Attrs.
-    ///  </returns>
+    ///  <param name="Brush"><c>TSyntaxHiliterBrush</c> [in] Highlighter brush
+    ///  to be used to perform highlighting.</param>
+    ///  <param name="Theme"><c>TSyntaxHiliteTheme</c> [in] Styling to be used
+    ///  by highlighter brush.</param>
+    ///  <returns><c>string</c>. CSS rules that apply the styles specified by
+    ///  <c>Theme</c> for the given <c>Brush</c>.</returns>
     class function GenerateCSSRules(const Brush: TSyntaxHiliterBrush;
       const Theme: TSyntaxHiliteTheme): string;
   public
     ///  <summary>Creates XHTML document containing highlighted source code.
     ///  </summary>
-    ///  <param name="RawCode">string [in] Source code to be processed.</param>
-    ///  <param name="Brush">TSyntaxHiliterBrush [in] Specifies highlighter
-    ///  brush to be used to perform highlighting.</param>
-    ///  <param name="Theme">TSyntaxHiliteTheme [in] Specifies highlighter
-    ///  styling to be used by highlighter brush.</param>
-    ///  <param name="Title">string [in] Title of document to be included in
-    ///  document header. If empty string a default title is used.</param>
-    ///  <returns>TEncodedData. XHTML code in UTF-8 format.</returns>
+    ///  <param name="RawCode"><c>string</c> [in] Source code to be processed.
+    ///  </param>
+    ///  <param name="Brush"><c>TSyntaxHiliterBrush</c> [in] Specifies
+    ///  highlighter brush to be used to perform highlighting.</param>
+    ///  <param name="Theme"><c>TSyntaxHiliteTheme</c> [in] Specifies styling to
+    ///  be used by highlighter brush.</param>
+    ///  <param name="Title"><c>string</c> [in] Title of document to be included
+    ///  in document header. If empty string a default title is used.</param>
+    ///  <returns><c>TEncodedData</c>. XHTML code in UTF-8 format.</returns>
     class function Hilite(const RawCode: string;
       const Brush: TSyntaxHiliterBrush; const Theme: TSyntaxHiliteTheme;
       const Title: string = ''): TEncodedData;
@@ -223,15 +237,15 @@ type
   public
     ///  <summary>Creates rich text format document containing highlighted
     ///  source code.</summary>
-    ///  <param name="RawCode">string [in] Source code to be processed.</param>
-    ///  <param name="Brush">TSyntaxHiliterBrush [in] Specifies highlighter
-    ///  brush to be used to perform highlighting.</param>
-    ///  <param name="Theme">TSyntaxHiliteTheme [in] Specifies highlighter
-    ///  styling to be used by highlighter brush.</param>
-    ///  <param name="Title">string [in] Title of document to be included in
-    ///  document header. No title written if Title is empty string.
+    ///  <param name="RawCode"><c>string</c> [in] Source code to be processed.
     ///  </param>
-    ///  <returns>TEncodedData. RTF code in ASCII format.</returns>
+    ///  <param name="Brush"><c>TSyntaxHiliterBrush</c> [in] Specifies
+    ///  highlighter brush to be used to perform highlighting.</param>
+    ///  <param name="Theme"><c>TSyntaxHiliteTheme</c> [in] Specifies styling to
+    ///  be used by highlighter brush.</param>
+    ///  <param name="Title"><c>string</c> [in] Title of document to be included
+    ///  in document header. No title is written if empty string.</param>
+    ///  <returns><c>TEncodedData</c>. RTF code in ASCII format.</returns>
     class function Hilite(const RawCode: string;
       const Brush: TSyntaxHiliterBrush; const Theme: TSyntaxHiliteTheme;
       const Title: string = ''): TEncodedData; override;
@@ -262,15 +276,19 @@ type
   THiliteRenderer = class abstract(TInterfacedObject)
   strict private
     var
+      ///  <summary>Value of <c>Theme</c> property.</summary>
       fTheme: TSyntaxHiliteTheme;
+      ///  <summary>Value of <c>Brush</c> property.</summary>
       fBrush: TSyntaxHiliterBrush;
   strict protected
-    ///  <summary>Highlighting styles to be used in rendering.</summary>
+    ///  <summary>Styling to be applied to highlighted document.</summary>
     property Theme: TSyntaxHiliteTheme read fTheme;
+    ///  <summary>Syntax highlighter brush used to determine how highlighting is
+    ///  performed.</summary>
     property Brush: TSyntaxHiliterBrush read fBrush;
   public
-    ///  <summary>Object constructor. Records a copy of highlighter style
-    ///  attributes passed in Attrs parameter.</summary>
+    ///  <summary>Object constructor. Sets up object to use given theme and
+    ///  syntax highlighter brush.</summary>
     constructor Create(const Brush: TSyntaxHiliterBrush;
       const Theme: TSyntaxHiliteTheme);
   end;
@@ -281,51 +299,59 @@ type
   ///  recorded in a given rich text code builder object.
   ///  </summary>
   ///  <remarks>
-  ///  Designed for use with TSyntaxHiliter objects.
+  ///  Designed for use with <c>TSyntaxHiliter</c> objects.
   ///  </remarks>
   TRTFHiliteRenderer = class(THiliteRenderer, IHiliteRenderer)
   strict private
     var
       ///  <summary>Object used to record generated RTF code.</summary>
       fBuilder: TRTFBuilder;
+    ///  <summary>Checks if the RTF group required to apply formatting specified
+    ///  by <c>Style</c> would be empty.</summary>
     function IsEmptyGroup(const Style: TSyntaxHiliteAttrStyle): Boolean;
   public
-    ///  <summary>Object constructor. Sets up object to render documents.
-    ///  </summary>
-    ///  <param name="Builder">TRTFBuilder [in] Object that receives generated
-    ///  RTF code.</param>
-    ///  <param name="Brush">TSyntaxHiliterBrush [in] Highlighter brush to be
-    ///  used to perform highlighting.</param>
-    ///  <param name="Theme">TSyntaxHiliteTheme [in] Styling to be used by
-    ///  highlighter brush.</param>
+    ///  <summary>Creates object instance to render RTF documents using a given
+    ///  syntax highlighter brush styled according to a given theme.</summary>
+    ///  <param name="Builder"><c>TRTFBuilder</c> [in] Object that receives
+    ///  generated RTF code.</param>
+    ///  <param name="Brush"><c>TSyntaxHiliterBrush</c> [in] Highlighter brush
+    ///  to be used to perform highlighting.</param>
+    ///  <param name="Theme"><c>TSyntaxHiliteTheme</c> [in] Styling to be
+    ///  applied to highlighted document.</param>
     constructor Create(const Builder: TRTFBuilder;
       const Brush: TSyntaxHiliterBrush; const Theme: TSyntaxHiliteTheme);
     ///  <summary>Initialises RTF ready to receive highlighted code.</summary>
-    ///  <remarks>Method of IHiliteRenderer.</remarks>
+    ///  <remarks>Method of <c>IHiliteRenderer</c>.</remarks>
     procedure Initialise;
     ///  <summary>Tidies up RTF after all highlighted code processed.</summary>
-    ///  <remarks>Method of IHiliteRenderer.</remarks>
+    ///  <remarks>Method of <c>IHiliteRenderer</c>.</remarks>
     procedure Finalise;
     ///  <summary>Resets styles ready for a new line (paragraph) of highlighted
     ///  code.</summary>
-    ///  <remarks>Method of IHiliteRenderer.</remarks>
+    ///  <remarks>Method of <c>IHiliteRenderer</c>.</remarks>
     procedure BeginLine;
     ///  <summary>Closes current RTF paragraph.</summary>
-    ///  <remarks>Method of IHiliteRenderer.</remarks>
+    ///  <remarks>Method of <c>IHiliteRenderer</c>.</remarks>
     procedure EndLine;
     ///  <summary>Sets any highlighting style required for following source code
-    ///  element as specified by Elem.</summary>
-    ///  <remarks>Method of IHiliteRenderer.</remarks>
+    ///  element.</summary>
+    ///  <param name="ElemInfo"><c>TSyntaxHiliteElemInfo</c> [in] Provides
+    ///  information about the highlighting to be applied to the following
+    ///  source code element.</param>
+    ///  <remarks>Method of <c>IHiliteRenderer</c>.</remarks>
     procedure BeforeElem(const ElemInfo: TSyntaxHiliteElemInfo);
-    // TODO: revise comment for BeforeElem
-    ///  <summary>Writes given source code element text.</summary>
-    ///  <remarks>Method of IHiliteRenderer.</remarks>
+    ///  <summary>Writes source code element text.</summary>
+    ///  <param name="Text"><c>string</c> [in] Text of the source code element.
+    ///  </param>
+    ///  <remarks>Method of <c>IHiliteRenderer</c>.</remarks>
     procedure WriteElemText(const Text: string);
-    ///  <summary>Switches off any highlighting styles used for source code
-    ///  element specified by Elem.</summary>
-    ///  <remarks>Method of IHiliteRenderer.</remarks>
+    ///  <summary>Switches off any highlighting styles that were used for source
+    ///  code element just written.</summary>
+    ///  <param name="ElemInfo"><c>TSyntaxHiliteElemInfo</c> [in] Provides
+    ///  information about the highlighting that was applied to the source code
+    ///  element just written.</param>
+    ///  <remarks>Method of <c>IHiliteRenderer</c>.</remarks>
     procedure AfterElem(const ElemInfo: TSyntaxHiliteElemInfo);
-    // TODO: revise comment for AfterElem
   end;
 
 type
@@ -334,7 +360,7 @@ type
   ///  recorded in a given HTML code builder object.
   ///  </summary>
   ///  <remarks>
-  ///  Designed for use with TSyntaxHiliter objects.
+  ///  Designed for use with <c>TSyntaxHiliter</c> objects.
   ///  </remarks>
   THTMLHiliteRenderer = class(THiliteRenderer, IHiliteRenderer)
   strict private
@@ -346,40 +372,48 @@ type
   public
     ///  <summary>Object constructor. Sets up object to render documents.
     ///  </summary>
-    ///  <param name="Builder">THTMLBuilder [in] Object that receives generated
-    ///  XHTML code.</param>
-    ///  <param name="Brush">TSyntaxHiliterBrush [in] Highlighter brush to be
-    ///  used to perform highlighting.</param>
-    ///  <param name="Theme">TSyntaxHiliteTheme [in] Styling to be used by
-    ///  highlighter brush.</param>
+    ///  <param name="Builder"><c>THTMLBuilder</c> [in] Object that receives
+    ///  generated XHTML code.</param>
+    ///  <param name="Brush"><c>TSyntaxHiliterBrush</c> [in] Highlighter brush
+    ///  to be used to perform highlighting.</param>
+    ///  <param name="Theme"><c>TSyntaxHiliteTheme</c> [in] Styling to be
+    ///  applied to highlighted document.</param>
     constructor Create(const Builder: THTMLBuilder;
       const Brush: TSyntaxHiliterBrush; const Theme: TSyntaxHiliteTheme);
     ///  <summary>Initialises XHTML ready to receive highlighted code.</summary>
-    ///  <remarks>Method of IHiliteRenderer.</remarks>
+    ///  <remarks>Method of <c>IHiliteRenderer</c>.</remarks>
     procedure Initialise;
     ///  <summary>Tidies up XHTML after all highlighted code processed.
     ///  </summary>
-    ///  <remarks>Method of IHiliteRenderer.</remarks>
+    ///  <remarks>Method of <c>IHiliteRenderer</c>.</remarks>
     procedure Finalise;
     ///  <summary>Emits new line if necessary.</summary>
-    ///  <remarks>Method of IHiliteRenderer.</remarks>
+    ///  <remarks>Method of <c>IHiliteRenderer</c>.</remarks>
     procedure BeginLine;
     ///  <summary>Does nothing.</summary>
     ///  <remarks>
-    ///  <para>Handling of new lines is all done by BeginLine.</para>
-    ///  <para>Method of IHiliteRenderer.</para>
+    ///  <para>Handling of new lines is all done by <c>BeginLine</c>.</para>
+    ///  <para>Method of <c>IHiliteRenderer</c>.</para>
     ///  </remarks>
     procedure EndLine;
     ///  <summary>Emits any span tag required to style following source code
-    ///  element as specified by Elem.</summary>
-    ///  <remarks>Method of IHiliteRenderer.</remarks>
+    ///  element.</summary>
+    ///  <param name="ElemInfo"><c>TSyntaxHiliteElemInfo</c> [in] Provides
+    ///  information about the highlighting to be applied to the following
+    ///  source code element.</param>
+    ///  <remarks>Method of <c>IHiliteRenderer</c>.</remarks>
     procedure BeforeElem(const ElemInfo: TSyntaxHiliteElemInfo);
-    ///  <summary>Writes given source code element text.</summary>
-    ///  <remarks>Method of IHiliteRenderer.</remarks>
+    ///  <summary>Writes source code element text.</summary>
+    ///  <param name="Text"><c>string</c> [in] Text of the source code element.
+    ///  </param>
+    ///  <remarks>Method of <c>IHiliteRenderer</c>.</remarks>
     procedure WriteElemText(const Text: string);
-    ///  <summary>Closes any span tag used to style source code element
-    ///  specified by Elem.</summary>
-    ///  <remarks>Method of IHiliteRenderer.</remarks>
+    ///  <summary>Closes any span tag used to style source code element just
+    ///  written.</summary>
+    ///  <param name="ElemInfo"><c>TSyntaxHiliteElemInfo</c> [in] Provides
+    ///  information about the highlighting that was applied to the source code
+    ///  element just written.</param>
+    ///  <remarks>Method of <c>IHiliteRenderer</c>.</remarks>
     procedure AfterElem(const ElemInfo: TSyntaxHiliteElemInfo);
   end;
 
@@ -559,9 +593,10 @@ begin
   if not IsEmptyGroup(AttrStyle) then
   begin
     fBuilder.BeginGroup;
-    // TODO: Find a way of displaying background colour in RTF
-    //    if AttrStyle.Background <> clNone then
-    //      fBuilder.SetColour(AttrStyle.Foreground);
+    { TODO: Find a way of displaying background colour in RTF
+        if AttrStyle.Background <> clNone then
+          fBuilder.SetColour(AttrStyle.Foreground);
+    }
     if AttrStyle.Foreground <> Theme.DefaultForeground then
       fBuilder.SetColour(AttrStyle.Foreground);
     if AttrStyle.FontStyles.Styles <> [] then
