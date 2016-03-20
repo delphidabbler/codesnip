@@ -3,7 +3,7 @@
 ; v. 2.0. If a copy of the MPL was not distributed with this file, You can
 ; obtain one at http://mozilla.org/MPL/2.0/
 ;
-; Copyright (C) 2013-2014, Peter Johnson (www.delphidabbler.com).
+; Copyright (C) 2013-2016, Peter Johnson (www.delphidabbler.com).
 ;
 ; $Rev$
 ; $Date$
@@ -11,8 +11,8 @@
 ; Change Log for CodeSnip Release 5
 ; ------------------------------------------------------------------------------
 
-Summary of changes in Git pagoda (formerly SVN parsnip) branch up to Git commit 631bedf
-Changes relate to v4.14.0 (#### may need to update this if there are further v4.x releases before first v5 preview release ###)
+Summary of changes in Git pagoda (formerly SVN parsnip) branch up to Git commit 09671b2. <<<<<#### Update this commit id every time this document is updated.
+Changes relate to v4.14.0 <<<<<#### Update this version for every v4.x release before 1st v5 alpha.
 + User interface changes:
   - The link used to edit the displayed snippet has been removed from the Detail pane and replaced by a glyph showing the snippet's level of testing. (### may need to change this in light of further redesigns###)
   - The overview pane now uses a drop-down list instead of tabs to select the required snippet.
@@ -76,10 +76,11 @@ Changes relate to v4.14.0 (#### may need to update this if there are further v4.
 + A list snippets that belong to a selected tag can now be printed and, for snippets that are routines, written to file or copied to the clipboard. These features replace those that previously worked with categories.
 + Printed snippet information and snippet information that is copied to the clipboard has been revised to remove the section that displayed the snippet's category and add sections that display the snippet's tags and source code language.
 + Generated code no longer contains license information in file header. (### this is because there's no way to tell if code is private or from Code Snippets Database ... update this as changes are made ###).
++ Rich text formatted documents and highlighting now support background colours. NOTE: whether background colours are displayed depends on program or control used to display it. At present WordPad and LibreOffice display background colour correctly, but it is ignored in a TRichEdit control.
 + The option to register the program is no longer offered (### consider offering this in v4, and delete this entry if done ###)
 + Modified to work with revised program update manager web service.
 + Portable application changes:
-  - CodeSnip no acts in portable mode when -portable switch is passed on command line. There is no longer a separate build for the portable version.
+  - CodeSnip now acts in portable mode when -portable switch is passed on command line. There is no longer a separate build for the portable version.
   - New launcher application that starts CodeSnip in portable mode.
 + Common and per-user configuration file names and locations changed for both standard and portable modes. Per-user and common configuration file formats changed and versions bumped to v16 and v7 respectively.
 + Changes to "first run" detection and configuration code:
