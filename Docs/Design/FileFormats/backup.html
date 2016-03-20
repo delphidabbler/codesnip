@@ -5,7 +5,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2012-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2012-2016, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -90,8 +90,8 @@
   </dt>
   <dd>
     Similar to Versions 1 and 2. Now used for backing up both the user database
-    and the main database. An file ID field was added to allows which database
-    was backed up. The file ID generalises to any file.
+    and the main database. An file ID field was added to indicate which database
+    was backed up. The file ID generalises to any type of file.
   </dd>
   <dt>
     Version 4
@@ -360,8 +360,8 @@
   <dd>
     Padding field. LongInt(0) encoded as eight hex digits. The first four
     characters of this field are where v2 file readers look for the file count.
-    The second four characters are where v3 file reader for the same
-    information. Both readers interpret the appropriate value as meaning their
+    The second four characters are where v3 file readers look for the same
+    information. Both readers interpret the appropriate value as meaning there
     are no files in the backup and will not try to read any further in the file.
   </dd>
   <dt>
@@ -415,8 +415,8 @@
     <code>Content</code>
   </dt>
   <dd>
-    File contents. Bytes of literal copy of file contents preceded by the
-    number of bytes as a LongInt in binary.
+    File contents. A literal byte by byte copy of the file contents preceded by
+    number of bytes in the file as a LongInt in binary.
   </dd>
 </dl>
 
@@ -431,10 +431,11 @@
 </p>
 
 <p>
-  Code that restores backup files be able to interpret all earlier formats in
-  addition to the current one because the program may to restore data from an
-  old backup file. If the code detects a later version than it was designed for
-  it should display an error message and terminate.
+  Code that restores backup files should  be able to interpret all earlier
+  formats in addition to the current one because the program may attempt to
+  restore data from an old backup file. If the code detects a later backup file
+  version than it was designed for it should display an error message and
+  terminate.
 </p>
 
 <h3>
@@ -444,9 +445,9 @@
 <p>
   Some earlier versions of the backup restoration code have faults in that they
   will attempt to read later backup file versions than those they were designed
-  for. By good fortune factors in the design of later file formats mean that the
-  reading code always abandons the reading, albeit with no error message. These
-  problems are:
+  for. By good fortune, factors in the design of later file formats mean that
+  the reading code always abandons the reading, albeit with no error message.
+  These problems are:
 </p>
 
 <dl>
@@ -511,16 +512,19 @@
 </dl>
 
 <p>
-  The file reader designed to work with the v4 file format does recognise newer
+  The file reader designed to work with the v4 file format recognises newer
   versions of the file format and <em>does not</em> try to read them. Instead it
   raises an exception.
 </p>
 
 <p>
-  In summary, all future backup files should begin with these ANSI / ASCII
-  characters: <code>'FFFFxxxx00000000'</code> where xxxx is the file version
-  number as a SmallInt encoded as four hex characters. For example for file
-  format v4 we use <code>'FFFF000400000000'</code>.
+  In summary, all future backup file version should begin with these characters:
+  <code>'FFFFxxxx00000000'</code> where xxxx is the file version number as a
+  SmallInt encoded as four hex characters. For example for file format v4 we
+  use <code>'FFFF000400000000'</code>. Note that all these characters are the
+  same in all the text encoding used by backup formats v1 to v4, that is: ANSI,
+  ASCII and UTF-8. Future file formats must ensure that the characters are
+  written in UTF-8.
 </p>
 
 <h3>
@@ -531,7 +535,7 @@
   Each file version can be considered to have a unique "watermark" at the start
   of the file if we consider an empty watermark to be valid. This is fine as
   long as only one file version has the empty watermark. Here are the current
-  watermarks as strings of ASCII characters:
+  watermarks as strings of ASCII/UTF-8 characters:
 </p>
 
 <dl>
