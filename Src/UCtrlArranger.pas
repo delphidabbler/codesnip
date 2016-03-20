@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2009-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2009-2016, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -98,6 +98,16 @@ type
     ///  <summary>Locates control Ctrl below bottom-most of reference controls
     ///  in RefCtrls, optionally separated by given margin.</summary>
     class procedure MoveBelow(const RefCtrls: array of TControl;
+      const Ctrl: TControl; const Margin: Integer = 0); overload;
+
+    ///  <summary>Locates control Ctrl above reference control RefCtrl,
+    ///  optionally separated by given margin.</summary>
+    class procedure MoveAbove(const RefCtrl, Ctrl: TControl;
+      const Margin: Integer = 0); overload;
+
+    ///  <summary>Locates control Ctrl above top-most of reference controls in
+    ///  RefCtrls, optionally separated by given margin.</summary>
+    class procedure MoveAbove(const RefCtrls: array of TControl;
       const Ctrl: TControl; const Margin: Integer = 0); overload;
 
     ///  <summary>Vertically centres all controls in Ctrls array aligned so that
@@ -344,6 +354,18 @@ begin
   Result := 0;
   for Container in Containers do
     Result := Max(Result, TotalControlHeight(Container));
+end;
+
+class procedure TCtrlArranger.MoveAbove(const RefCtrl, Ctrl: TControl;
+  const Margin: Integer);
+begin
+  Ctrl.Top := RefCtrl.Top - Ctrl.Height - Margin;
+end;
+
+class procedure TCtrlArranger.MoveAbove(const RefCtrls: array of TControl;
+  const Ctrl: TControl; const Margin: Integer);
+begin
+  Ctrl.Top := TopOf(RefCtrls, Margin) - Ctrl.Height;
 end;
 
 class procedure TCtrlArranger.MoveBelow(const RefCtrl, Ctrl: TControl;
