@@ -5,7 +5,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2013-2016, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -80,8 +80,7 @@
 
 <p>
   These files are stored in binary format. Text included in within the binary
-  data is stored in UTF-8 or ASCII format. The file format details below make
-  it clear which encoding is used.
+  data is stored in UTF-8 format.
 </p>
 
 <h2>
@@ -89,8 +88,8 @@
 </h2>
 
 <p>
-  There are types of file in use. There is a single &quot;master&quot; database
-  file and a separate file for each snippet. the &quot;master&quot; and
+  There are two types of file in use. There is a single &quot;master&quot;
+  database file and a separate file for each snippet. the &quot;master&quot; and
   &quot;snippet&quot; files are described separately in the sub-sections below.
 </p>
 
@@ -334,7 +333,8 @@
         Title property
       </dt>
       <dd>
-        A <kbd>SizedString</kbd> value containing the required title.
+        A <kbd>SizedString</kbd> value containing the required title in plain
+        text.
       </dd>
       <dt>
         Description property
@@ -347,7 +347,8 @@
         SourceCode property
       </dt>
       <dd>
-        A <kbd>SizedLongString</kbd> value containing the required source code.
+        A <kbd>SizedLongString</kbd> value containing the required source code
+        in plain text.
       </dd>
       <dt>
         LanguageID property
@@ -372,7 +373,8 @@
         RequiredModules property
       </dt>
       <dd>
-        A <kbd>StringList</kbd> value containing a list of module names.
+        A <kbd>StringList</kbd> value containing a list of module names each of
+        which is in plain text.
       </dd>
       <dt>
         RequiredSnippets property
@@ -424,7 +426,7 @@
       </dt>
       <dd>
         A <kbd>StringList</kbd> value containing a list of names of the
-        snippet's tags.
+        snippet's tags, each in plain text.
       </dd>
       <dt>
         LinkInfo property
