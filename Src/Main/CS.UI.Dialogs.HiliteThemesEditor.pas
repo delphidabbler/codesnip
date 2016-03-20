@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2013-2014, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2013-2016, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -122,7 +122,7 @@ type
       ///  </summary>
       fThemes: TSyntaxHiliteThemes;
       fBlockedThemeIDs: TArray<TSyntaxHiliteThemeID>;
-      fUsedThemeChanged: Boolean;
+      fThemesChanged: Boolean;
       fWorkingTheme: TSyntaxHiliteTheme;
       fWorkingAttrStyle: TAttrStyleInfo;
       fWorkingThemeDirty: Boolean;
@@ -216,6 +216,7 @@ begin
   SelTheme := fThemesComboMgr.GetSelected;
   fThemesComboMgr.Delete(SelTheme);
   fThemes.Delete(SelTheme.ID);
+  fThemesChanged := True;
   ChangeTheme;
 end;
 
@@ -279,6 +280,7 @@ begin
   );
   fThemesComboMgr.GetSelected.Assign(fWorkingTheme, False, True);
   fWorkingThemeDirty := False;
+  fThemesChanged := True;
 end;
 
 procedure THiliteThemesEditorDlg.actUpdateUpdate(Sender: TObject);
@@ -513,6 +515,7 @@ begin
   fWorkingTheme := TSyntaxHiliteTheme.Create(
     TSyntaxHiliteThemeID.CreateNull, ''
   );
+  fWorkingThemeDirty := False;
   CreateColourCombos;
   fThemesComboMgr := TSortedCollectionCtrlKVMgr<TSyntaxHiliteTheme>.Create(
     TComboBoxAdapter.Create(cbThemes),
@@ -557,6 +560,7 @@ begin
     end,
     stIgnoreCase
   );
+  fThemesChanged := False;
 end;
 
 procedure THiliteThemesEditorDlg.CreateColourCombos;
@@ -642,7 +646,7 @@ begin
         BlockedThemeIDs
       );
       ShowModal;
-      Result := fUsedThemeChanged;
+      Result := fThemesChanged;
     finally
       Free;
     end;
@@ -791,6 +795,7 @@ begin
     fThemes.Add(Theme);
     fThemesComboMgr.Add(Theme, Theme.FriendlyName);
   end;
+  fThemesChanged := True;
   fWorkingTheme.Assign(Theme);
   if not fThemesComboMgr.HasSelection or
     (Theme.ID <> fThemesComboMgr.GetSelected.ID) then
