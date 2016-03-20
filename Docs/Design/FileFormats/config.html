@@ -5,7 +5,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2012-2015, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2012-2016, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -119,9 +119,11 @@
 </h3>
 
 <p>
-  This file stores information about CodeSnip that is common to all users. There
-  is just one file named <code>Common.config</code> that is stored in the
-  <code>%ProgramData%\DelphiDabbler\CodeSnip.4</code> directory.
+  This file stores information about CodeSnip 5 that is common to all users.
+  There is just one file named <code>Common.config</code> that is stored in the
+  <code>%ProgramData%\DelphiDabbler\CodeSnip.5</code> directory when CodeSnip is
+  running in standard mode and in the <code>AppData.5</code> subdirectory of the
+  directory where CodeSnip is executed when running in portable mode.
 </p>
 
 <p>
@@ -198,8 +200,10 @@
   This file records configuration information that is unique to each user of the
   application. Some sections correspond to user preferences while others record
   details of previous operations or the layout of the GUI. The file is named
-  <code>User.config</code> and is stored in the logged on user's
-  <code>%AppData%\DelphiDabbler\CodeSnip.4</code> directory.
+  <code>User.config</code> and it is stored in the logged on user's
+  <code>%AppData%\DelphiDabbler\CodeSnip.5</code> directory when CodeSnip is
+  running in standard mode and in the <code>AppData.5</code> subdirectory of the
+  directory where CodeSnip is executed when running in portable mode.
 </p>
 
 <p>
@@ -395,8 +399,8 @@
       location.
     </div>
     <div class="spaced">
-      <strong>Note:</strong> The value is ignored in the portable version of
-      CodeSnip.
+      <strong>Note:</strong> The value is ignored when CodeSnip is run in
+      portable mode.
     </div>
   </dd>
 </dl>
@@ -961,6 +965,12 @@
   [Prefs:Hiliter] section
 </h4>
 
+<p class="pullout highlight">
+  <strong>NOTE:</strong> The [Prefs:Hiliter] section is likely to be redundant
+  in CodeSnip 5 where sytax highlighting styles are to be recorded in their own
+  file.
+</p>
+
 <p>
   Stores preferences that define the properties of one or more syntax
   highlighters. Also records information about the custom colours available when
@@ -1293,9 +1303,15 @@
     <strong>AutoCheckDatabaseFrequency</strong> (Integer)
   </dt>
   <dd>
-    Specifies frequency, in days, with which CodeSnip automatically checks
-    online for database updates. A value of 0 indicates that CodeSnip will not
-    check for database updates automatically.
+    <p class="pullout highlight">
+      <strong>NOTE:</strong> AutoCheckDatabaseFrequency is not currently used in
+      CodeSnip 5. However, it is possible that the setting may be re-instated.
+    </p>
+    <div>
+      Specifies frequency, in days, with which CodeSnip automatically checks
+      online for database updates. A value of 0 indicates that CodeSnip will not
+      check for database updates automatically.
+    </div>
   </dd>
 </dl>
 
@@ -1441,8 +1457,14 @@
     <strong>LastDatabaseCheck</strong> (Date-Time)
   </dt>
   <dd>
-    Date (in GMT) that the program last checked to see if the online version of
-    the Code Snippets Database had been updated.
+    <p class="pullout highlight">
+      <strong>NOTE:</strong> LastDatabaseCheck is not currently used in
+      CodeSnip 5. However, it is possible that the setting may be re-instated.
+    </p>
+    <div>
+      Date (in GMT) that the program last checked to see if the online version of
+      the Code Snippets Database had been updated.
+    </div>
   </dd>
 </dl>
 
