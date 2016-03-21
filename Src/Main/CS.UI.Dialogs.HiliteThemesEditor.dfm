@@ -4,7 +4,7 @@ inherited HiliteThemesEditorDlg: THiliteThemesEditorDlg
   ClientWidth = 609
   OnCloseQuery = FormCloseQuery
   ExplicitWidth = 615
-  ExplicitHeight = 515
+  ExplicitHeight = 516
   PixelsPerInch = 96
   TextHeight = 13
   inherited bvlBottom: TBevel
@@ -204,30 +204,44 @@ inherited HiliteThemesEditorDlg: THiliteThemesEditorDlg
           OnClick = chkUnderlineClick
         end
       end
-      inline frmExample: TRTFShowCaseFrame
-        Left = 206
-        Top = 146
-        Width = 227
-        Height = 51
-        TabOrder = 3
-        ExplicitLeft = 206
-        ExplicitTop = 146
-        ExplicitWidth = 227
-        ExplicitHeight = 51
-        inherited reView: TRichEdit
-          Width = 227
-          Height = 51
-          ExplicitWidth = 227
-          ExplicitHeight = 51
-        end
-      end
       object btnDefaultStyle: TButton
         Left = 464
-        Top = 144
+        Top = 88
         Width = 115
         Height = 25
         Action = actDefaultStyle
         TabOrder = 2
+      end
+      inline frmExample: THiliteThemesExampleFrame
+        Left = 206
+        Top = 145
+        Width = 323
+        Height = 55
+        TabOrder = 3
+        ExplicitLeft = 206
+        ExplicitTop = 145
+        ExplicitWidth = 323
+        ExplicitHeight = 55
+        inherited pnlBrowser: TPanel
+          Width = 323
+          Height = 55
+          ExplicitWidth = 374
+          ExplicitHeight = 55
+          inherited wbBrowser: TWebBrowser
+            Width = 323
+            Height = 55
+            ExplicitLeft = 96
+            ExplicitTop = 56
+            ExplicitWidth = 220
+            ExplicitHeight = 180
+            ControlData = {
+              4C000000A7260000AF0500000000000000000000000000000000000000000000
+              000000004C000000000000000000000001000000E0D057007335CF11AE690800
+              2B2E126208000000000000004C0000000114020000000000C000000000000046
+              8000000000000000000000000000000000000000000000000000000000000000
+              00000000000000000100000000000000000000000000000000000000}
+          end
+        end
       end
     end
     object btnPreview: TButton

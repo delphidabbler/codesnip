@@ -29,9 +29,11 @@ uses
   // Project
   CS.SourceCode.Hiliter.Brushes,
   CS.SourceCode.Hiliter.Themes,
+  CS.UI.Dialogs.HiliteThemesEditor.ExampleFrame,
   CS.UI.Helper.CollectionCtrlKVMgr,
   FmGenericViewDlg,
-  FrRTFShowCase,
+  FrBrowserBase,
+  FrHTMLPreview,
   UBaseObjects,
   UColorBoxEx,
   UColorDialogEx;
@@ -60,7 +62,6 @@ type
     chkBold: TCheckBox;
     chkItalics: TCheckBox;
     chkUnderline: TCheckBox;
-    frmExample: TRTFShowCaseFrame;
     lblBackground: TLabel;
     btnPreview: TButton;
     alDlg: TActionList;
@@ -73,6 +74,7 @@ type
     actDefaultStyle: TAction;
     btnUpdate: TButton;
     actUpdate: TAction;
+    frmExample: THiliteThemesExampleFrame;
     procedure actDeleteExecute(Sender: TObject);
     procedure actSaveExecute(Sender: TObject);
     procedure actPreviewExecute(Sender: TObject);
@@ -150,6 +152,7 @@ type
     procedure UpdateAttrControls;
     procedure UpdateAttrFontStyle(const Checked: Boolean;
       const FontStyle: TFontStyle);
+    procedure UpdateAttrExample;
     procedure UpdateWorkingThemeStyles;
     procedure SaveWorkingTheme;
     procedure SetWorkingThemeDirty;
@@ -357,8 +360,8 @@ begin
   TCtrlArranger.AlignVCentres(22, [lblElements, lblForeground, cbForeground]);
   gbFontStyle.Top := lblElements.Top;
   TCtrlArranger.MoveBelow(lblElements, lbElements, 6);
-  TCtrlArranger.AlignBottoms([frmExample], TCtrlArranger.BottomOf(lbElements));
-  lblExample.Top := frmExample.Top - lblExample.Height - 6;
+  TCtrlArranger.AlignBottoms([lbElements, frmExample]);
+  TCtrlArranger.MoveAbove(frmExample, lblExample, 6);
   TCtrlArranger.AlignVCentres(
     TCtrlArranger.BottomOf([lblForeground, cbForeground], 12),
     [lblBackground, cbBackground]
@@ -374,6 +377,11 @@ begin
       - Max(lblForeground.Width, lblBackground.Width) - 8
   );
   TCtrlArranger.AlignRights([cbForeground, btnDefaultStyle]);
+  TCtrlArranger.AlignLefts([gbFontStyle, lblExample, frmExample]);
+  TCtrlArranger.StretchRightTo(
+    frmExample,
+    TCtrlArranger.RightOf([cbForeground, cbBackground, btnDefaultStyle])
+  );
   gbElements.Height := TCtrlArranger.TotalControlHeight(gbElements) + 10;
 
   // Size body panel
@@ -400,6 +408,7 @@ end;
 
 procedure THiliteThemesEditorDlg.cbDefForegroundChange(Sender: TObject);
 begin
+  // TODO: fix how fg and bg element colours reflect default fg and bg colours
   fWorkingTheme.DefaultForeground := cbDefForeground.Selected;
   SetWorkingThemeDirty;
 end;
@@ -410,6 +419,7 @@ begin
   begin
     fWorkingTheme.FontName := fFontNameComboMgr.GetSelected;
     SetWorkingThemeDirty;
+    UpdateAttrExample;
   end;
 end;
 
@@ -419,6 +429,7 @@ begin
   begin
     fWorkingTheme.FontSize := fFontSizeComboMgr.GetSelected;
     SetWorkingThemeDirty;
+    UpdateAttrExample;
   end;
 end;
 
@@ -565,14 +576,16 @@ end;
 
 procedure THiliteThemesEditorDlg.CreateColourCombos;
 
+  // NOTE: MUST be called after setting parent of CB
   procedure SetCommonProps(CB: TColorBoxEx);
   begin
-    // cbCustomColor not included in fColorBox.Style since assigning ColorDialog
+    // cbCustomColor not included in CB.Style since assigning ColorDialog
     // property sets this style
     CB.Style := [cbStandardColors, cbExtendedColors, cbSystemColors,
-      cbIncludeNone, cbPrettyNames];
+      cbPrettyNames];
     CB.ItemHeight := 16;
-    CB.NoneColorColor := clNone;
+    CB.NoneColorColor := clBlack;
+    CB.DefaultColorColor := clBlack;
     CB.ColorDialog := dlgColour;
   end;
 
@@ -592,48 +605,55 @@ begin
   with cbDefForeground do
   begin
     Parent := gbThemeProps;
+    SetCommonProps(cbDefForeground);
     Width := 127;
     Height := 21;
     TabOrder := 2;
+    Style := Style + [cbIncludeNone]; // default colour not allowed
     OnChange := cbDefForegroundChange;
   end;
-  SetCommonProps(cbDefForeground);
+
   lblDefForeground.FocusControl := cbDefForeground;
 
   cbDefBackground := TColorBoxEx.Create(Self);
   with cbDefBackground do
   begin
     Parent := gbThemeProps;
+    SetCommonProps(cbDefBackground);
     Width := 127;
     Height := 21;
     TabOrder := 3;
+    Style := Style + [cbIncludeNone]; // default colour not allowed
     OnChange := cbDefBackgroundChange;
   end;
-  SetCommonProps(cbDefBackground);
   lblDefBackground.FocusControl := cbDefBackground;
 
   cbForeground := TColorBoxEx.Create(Self);
   with cbForeground do
   begin
     Parent := gbElements;
+    SetCommonProps(cbForeground);
     Width := 127;
     Height := 21;
     TabOrder := 2;
+    // TODO: remove Style statement if default radio button used
+    Style := Style + [cbIncludeDefault];  // "None" colour not allowed
     OnChange := cbForegroundChange;
   end;
-  SetCommonProps(cbForeground);
   lblForeground.FocusControl := cbForeground;
 
   cbBackground := TColorBoxEx.Create(Self);
   with cbBackground do
   begin
     Parent := gbElements;
+    SetCommonProps(cbBackground);
     Width := 127;
     Height := 21;
     TabOrder := 3;
+    // TODO: remove Style statement if default radio button used
+    Style := Style + [cbIncludeDefault];  // "None" colour not allowed
     OnChange := cbBackgroundChange;
   end;
-  SetCommonProps(cbBackground);
   lblBackground.FocusControl := cbBackground;
 end;
 
@@ -840,6 +860,9 @@ begin
   else
     gbFontStyle.Font.Style := [fsItalic];
   // Foreground colour
+  { TODO: Change to recognise clDefault as indication of default colour, not
+          testing for same colour as default - this is WRONG. Also need to add
+          cldefault to colour combos - not same as clNone }
   cbForeground.Selected := fWorkingAttrStyle.AttrStyle.Foreground;
   if IsDefaultBrushID(fWorkingAttrStyle.BrushID)
     or (fWorkingAttrStyle.AttrStyle.Foreground
@@ -855,6 +878,14 @@ begin
     lblBackground.Font.Style := []
   else
     lblBackground.Font.Style := [fsItalic];
+  UpdateAttrExample;
+end;
+
+procedure THiliteThemesEditorDlg.UpdateAttrExample;
+begin
+  frmExample.Display(
+    fWorkingTheme, fWorkingAttrStyle.BrushID, fWorkingAttrStyle.AttrID
+  );
 end;
 
 procedure THiliteThemesEditorDlg.UpdateAttrFontStyle(const Checked: Boolean;
@@ -876,7 +907,6 @@ procedure THiliteThemesEditorDlg.UpdateThemePropControls;
 begin
   fFontNameComboMgr.Select(fWorkingTheme.FontName);
   fFontSizeComboMgr.Select(fWorkingTheme.FontSize);
-
 end;
 
 procedure THiliteThemesEditorDlg.UpdateWorkingThemeStyles;
