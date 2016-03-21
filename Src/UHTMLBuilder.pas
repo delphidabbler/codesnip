@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2007-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2007-2016, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -63,6 +63,14 @@ type
     ///  <remarks>Returns default title if title is empty string.</remarks>
     function GetTitle: string;
 
+    ///  <summary>Appends an opening tag with given name and with given class to
+    ///  document body.</summary>
+    procedure OpenTag(const TagName, ClassName: string);
+
+    ///  <summary>Appends a closing tag with given name to document body.
+    ///  </summary>
+    procedure CloseTag(const TagName: string);
+
   public
     ///  <summary>Object constructor. Initialises object with empty body.
     ///  </summary>
@@ -77,6 +85,13 @@ type
 
     ///  <summary>Appends a closing &lt;/pre&gt; tag to document body.</summary>
     procedure ClosePre;
+
+    ///  <summary>Appends an opening &lt;div&gt; tag with specified class to
+    ///  document body.</summary>
+    procedure OpenDiv(const ClassName: string);
+
+    ///  <summary>Appends a closing &lt;/div&gt; tag to document body.</summary>
+    procedure CloseDiv;
 
     ///  <summary>Appends an opening &lt;span&gt; tag with specified class to
     ///  document body.</summary>
@@ -134,6 +149,7 @@ const
   cBodyTag = 'body';
   cPreTag = 'pre';
   cSpanTag = 'span';
+  cDivTag = 'div';
 
 
 resourcestring
@@ -153,14 +169,24 @@ begin
   Result := THTML.CompoundTag(cBodyTag, EOL + HTMLFragment + EOL);
 end;
 
+procedure THTMLBuilder.CloseDiv;
+begin
+  CloseTag(cDivTag);
+end;
+
 procedure THTMLBuilder.ClosePre;
 begin
-  fBodyInner.Append(THTML.ClosingTag(cPreTag));
+  CloseTag(cPreTag);
 end;
 
 procedure THTMLBuilder.CloseSpan;
 begin
-  fBodyInner.Append(THTML.ClosingTag(cSpanTag));
+  CloseTag(cSpanTag);
+end;
+
+procedure THTMLBuilder.CloseTag(const TagName: string);
+begin
+  fBodyInner.Append(THTML.ClosingTag(TagName));
 end;
 
 constructor THTMLBuilder.Create;
@@ -259,14 +285,24 @@ begin
   fBodyInner.AppendLine;
 end;
 
+procedure THTMLBuilder.OpenDiv(const ClassName: string);
+begin
+  OpenTag(cDivTag, ClassName);
+end;
+
 procedure THTMLBuilder.OpenPre(const ClassName: string);
 begin
-  fBodyInner.Append(THTML.OpeningTag(cPreTag, MakeClassAttr(ClassName)));
+  OpenTag(cPreTag, ClassName);
 end;
 
 procedure THTMLBuilder.OpenSpan(const ClassName: string);
 begin
-  fBodyInner.Append(THTML.OpeningTag(cSpanTag, MakeClassAttr(ClassName)));
+  OpenTag(cSpanTag, ClassName);
+end;
+
+procedure THTMLBuilder.OpenTag(const TagName, ClassName: string);
+begin
+  fBodyInner.Append(THTML.OpeningTag(TagName, MakeClassAttr(ClassName)));
 end;
 
 end.
