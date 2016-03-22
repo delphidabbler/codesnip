@@ -395,7 +395,8 @@ uses
   CS.Utils.Sound in 'Main\CS.Utils.Sound.pas',
   CS.UI.Frames.TagsEditor in 'Main\CS.UI.Frames.TagsEditor.pas' {TagsEditorFrame: TFrame},
   CS.Utils.COM in 'Main\CS.Utils.COM.pas',
-  CS.UI.Dialogs.TagsSearch in 'Main\CS.UI.Dialogs.TagsSearch.pas' {TagsSearchDlg};
+  CS.UI.Dialogs.TagsSearch in 'Main\CS.UI.Dialogs.TagsSearch.pas' {TagsSearchDlg},
+  CS.UI.Dialogs.HiliteThemesEditor.ExampleFrame in 'Main\CS.UI.Dialogs.HiliteThemesEditor.ExampleFrame.pas' {HiliteThemesExampleFrame: TFrame};
 
 // Include resources
 {$Resource ExternalObj.tlb}       // Type library file

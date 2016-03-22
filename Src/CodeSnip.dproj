@@ -594,6 +594,10 @@
 			<DCCReference Include="Main\CS.UI.Dialogs.TagsSearch.pas">
 				<Form>TagsSearchDlg</Form>
 			</DCCReference>
+			<DCCReference Include="Main\CS.UI.Dialogs.HiliteThemesEditor.ExampleFrame.pas">
+				<Form>HiliteThemesExampleFrame</Form>
+				<DesignClass>TFrame</DesignClass>
+			</DCCReference>
 			<None Include="CodeSnip.todo"/>
 			<BuildConfiguration Include="Base">
 				<Key>Base</Key>
