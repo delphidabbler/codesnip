@@ -600,9 +600,7 @@ end;
 function TSyntaxHiliteTheme.GetDefaultStyle(const AttrID: string):
   TSyntaxHiliteAttrStyle;
 begin
-  Result := TSyntaxHiliteAttrStyle.Create(
-    fDefaultBackground, fDefaultForeground, TSyntaxHiliteFontStyles.CreateNull
-  );
+  Result := GetBaseStyle;
   if fDefaultBrushStyle.IsAttrSupported(AttrId) then
     Result := CascadeAttrStyles(Result, fDefaultBrushStyle.AttrStyles[AttrId]);
 end;
