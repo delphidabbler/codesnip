@@ -75,6 +75,7 @@ type
     btnUpdate: TButton;
     actUpdate: TAction;
     frmExample: THiliteThemesExampleFrame;
+    chkDefaultFS: TCheckBox;
     procedure actDeleteExecute(Sender: TObject);
     procedure actSaveExecute(Sender: TObject);
     procedure actPreviewExecute(Sender: TObject);
@@ -87,15 +88,13 @@ type
     procedure cbThemesChange(Sender: TObject);
     procedure cbFontNameChange(Sender: TObject);
     procedure lbElementsClick(Sender: TObject);
-    procedure chkBoldClick(Sender: TObject);
-    procedure chkItalicsClick(Sender: TObject);
-    procedure chkUnderlineClick(Sender: TObject);
     procedure actDefaultStyleUpdate(Sender: TObject);
     procedure cbFontSizeChange(Sender: TObject);
     procedure actDefaultStyleExecute(Sender: TObject);
     procedure actUpdateExecute(Sender: TObject);
     procedure actUpdateUpdate(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+    procedure FontStyleCheckBoxClick(Sender: TObject);
   strict private
     type
       TAttrStyleInfo = record
@@ -105,15 +104,9 @@ type
         InheritedAttrStyle: TSyntaxHiliteAttrStyle;
         constructor Create(const ABrushID, AAttrID: string;
           const AAttrStyle, AInheritedAttrStyle: TSyntaxHiliteAttrStyle);
-        class function CreateNull: TAttrStyleInfo; static;
         function IsDefaultStyle: Boolean;
-        function IsNull: Boolean;
       end;
   strict private
-    const
-      ///  <summary>Value used to identify that a theme's default brush is
-      ///  being edited.</summary>
-      DefaultBrushID = '<DEFAULT>';
     var
       cbDefForeground: TColorBoxEx;
       cbDefBackground: TColorBoxEx;
@@ -150,8 +143,7 @@ type
     procedure ChangeAttrStyle;
     procedure UpdateThemePropControls;
     procedure UpdateAttrControls;
-    procedure UpdateAttrFontStyle(const Checked: Boolean;
-      const FontStyle: TFontStyle);
+    function GetFontStyleFromCheckBoxes: TSyntaxHiliteFontStyles;
     procedure UpdateAttrExample;
     procedure UpdateWorkingThemeStyles;
     procedure SaveWorkingTheme;
@@ -208,8 +200,8 @@ end;
 
 procedure THiliteThemesEditorDlg.actDefaultStyleUpdate(Sender: TObject);
 begin
-  actDefaultStyle.Enabled := not IsDefaultBrushSelected and
-    not fWorkingAttrStyle.IsDefaultStyle;
+//  actDefaultStyle.Enabled := not IsDefaultBrushSelected and
+//    not fWorkingAttrStyle.IsDefaultStyle;
 end;
 
 procedure THiliteThemesEditorDlg.actDeleteExecute(Sender: TObject);
@@ -456,21 +448,37 @@ end;
 
 procedure THiliteThemesEditorDlg.ChangeAttrStyle;
 var
-  DefaultStyle: TSyntaxHiliteAttrStyle;
-  SelStyle: TSyntaxHiliteAttrStyle;
+  AttrStyle: TSyntaxHiliteAttrStyle;
+  InheritedAttrStyle: TSyntaxHiliteAttrStyle;
+  BrushID: string;
   AttrID: string;
 begin
+  BrushID := fBrushesComboMgr.GetSelected;
   AttrID := fElementsLBMgr.GetSelected.ID;
-  DefaultStyle := fWorkingTheme.GetDefaultStyle(AttrID);
   if IsDefaultBrushSelected then
-    SelStyle := DefaultStyle
+  begin
+    // Using default brush - inherits from theme's base style
+    if fWorkingTheme.DefaultBrushStyle.IsAttrSupported(AttrID) then
+      AttrStyle := fWorkingTheme.DefaultBrushStyle.AttrStyles[AttrID]
+    else
+      AttrStyle := TSyntaxHiliteAttrStyle.CreateDefault;
+    InheritedAttrStyle := fWorkingTheme.BaseStyle;
+  end
   else
-    SelStyle := fWorkingTheme.GetStyle(fBrushesComboMgr.GetSelected, AttrID);
+  begin
+    // Using language brush - inherits from theme's default brush
+    if fWorkingTheme.IsBrushSupported(BrushID)
+      and fWorkingTheme.BrushStyles[BrushID].IsAttrSupported(AttrID) then
+      AttrStyle := fWorkingTheme.BrushStyles[BrushID].AttrStyles[AttrID]
+    else
+      AttrStyle := TSyntaxHiliteAttrStyle.CreateDefault;
+    if fWorkingTheme.DefaultBrushStyle.IsAttrSupported(AttrID) then
+      InheritedAttrStyle := fWorkingTheme.DefaultBrushStyle.AttrStyles[AttrID]
+    else
+      InheritedAttrStyle := TSyntaxHiliteAttrStyle.CreateDefault;
+  end;
   fWorkingAttrStyle := TAttrStyleInfo.Create(
-    fBrushesComboMgr.GetSelected,
-    AttrID,
-    SelStyle,
-    DefaultStyle
+    BrushID, AttrID, AttrStyle, InheritedAttrStyle
   );
   UpdateAttrControls;
 end;
@@ -501,22 +509,7 @@ begin
   else
     fWorkingTheme.Assign(fThemes.NullTheme);
   UpdateThemePropControls;
-  ChangeBrush(DefaultBrushID);
-end;
-
-procedure THiliteThemesEditorDlg.chkBoldClick(Sender: TObject);
-begin
-  UpdateAttrFontStyle(chkBold.Checked, fsBold);
-end;
-
-procedure THiliteThemesEditorDlg.chkItalicsClick(Sender: TObject);
-begin
-  UpdateAttrFontStyle(chkItalics.Checked, fsItalic);
-end;
-
-procedure THiliteThemesEditorDlg.chkUnderlineClick(Sender: TObject);
-begin
-  UpdateAttrFontStyle(chkUnderline.Checked, fsUnderline);
+  ChangeBrush(TSyntaxHiliteTheme.DefaultBrushID);
 end;
 
 procedure THiliteThemesEditorDlg.ConfigForm;
@@ -672,6 +665,12 @@ begin
     end;
 end;
 
+procedure THiliteThemesEditorDlg.FontStyleCheckBoxClick(Sender: TObject);
+begin
+  fWorkingAttrStyle.AttrStyle.FontStyles := GetFontStyleFromCheckBoxes;
+  UpdateWorkingThemeStyles;
+end;
+
 procedure THiliteThemesEditorDlg.FormCloseQuery(Sender: TObject;
   var CanClose: Boolean);
 resourcestring
@@ -695,6 +694,26 @@ begin
   inherited;
 end;
 
+function THiliteThemesEditorDlg.GetFontStyleFromCheckBoxes:
+  TSyntaxHiliteFontStyles;
+var
+  FS: TFontStyles;
+begin
+  if chkDefaultFS.Checked then
+    Result := TSyntaxHiliteFontStyles.CreateDefault
+  else
+  begin
+    FS := [];
+    if chkBold.Checked then
+      Include(FS, fsBold);
+    if chkItalics.Checked then
+      Include(FS, fsItalic);
+    if chkUnderline.Checked then
+      Include(FS, fsUnderline);
+    Result := TSyntaxHiliteFontStyles.CreateStyles(FS);
+  end;
+end;
+
 procedure THiliteThemesEditorDlg.InitForm;
 begin
   inherited;
@@ -712,7 +731,7 @@ end;
 function THiliteThemesEditorDlg.IsDefaultBrushID(const BrushID: string):
   Boolean;
 begin
-  Result := StrSameText(BrushID, DefaultBrushID);
+  Result := StrSameText(BrushID, TSyntaxHiliteTheme.DefaultBrushID);
 end;
 
 function THiliteThemesEditorDlg.IsDefaultBrushSelected: Boolean;
@@ -734,7 +753,9 @@ resourcestring
   sDefaultBrushFriendlyName = 'Default';
 begin
   fBrushesComboMgr.Clear;
-  fBrushesComboMgr.Add(DefaultBrushID, sDefaultBrushFriendlyName);
+  fBrushesComboMgr.Add(
+    TSyntaxHiliteTheme.DefaultBrushID, sDefaultBrushFriendlyName
+  );
   for BrushID in TSyntaxHiliterBrushes.SupportedBrushIDs do
   begin
     Brush := TSyntaxHiliterBrushes.CreateBrush(BrushID);
@@ -744,7 +765,7 @@ begin
       Brush.Free;
     end;
   end;
-  fBrushesComboMgr.Select(DefaultBrushID);
+  fBrushesComboMgr.Select(TSyntaxHiliteTheme.DefaultBrushID);
   PopulateElementsList(fBrushesComboMgr.GetSelected);
 end;
 
@@ -754,7 +775,7 @@ var
   Attrs: TArray<TSyntaxHiliterAttr>;
   Attr: TSyntaxHiliterAttr;
 begin
-  if StrSameText(BrushID, DefaultBrushID) then
+  if IsDefaultBrushID(BrushID) then
     Attrs := TSyntaxHiliterBrushes.AllSupportedAttrs
   else
   begin
@@ -847,37 +868,34 @@ procedure THiliteThemesEditorDlg.UpdateAttrControls;
 
 var
   FontStyles: TFontStyles;
+  UseDefFontStyles: Boolean;
 begin
   // Font style group
-  FontStyles := fWorkingAttrStyle.AttrStyle.FontStyles.Styles;
+  UseDefFontStyles := fWorkingAttrStyle.AttrStyle.FontStyles.IsDefault;
+  if UseDefFontStyles then
+  begin
+    if not fWorkingAttrStyle.InheritedAttrStyle.FontStyles.IsDefault then
+      FontStyles := fWorkingAttrStyle.InheritedAttrStyle.FontStyles
+    else
+      FontStyles := fWorkingTheme.BaseStyle.FontStyles;
+  end
+  else
+    FontStyles := fWorkingAttrStyle.AttrStyle.FontStyles;
+  SafeCheck(chkDefaultFS, UseDefFontStyles);
   SafeCheck(chkBold, fsBold in FontStyles);
   SafeCheck(chkItalics, fsItalic in FontStyles);
   SafeCheck(chkUnderline, fsUnderline in FontStyles);
-  if IsDefaultBrushID(fWorkingAttrStyle.BrushID)
-    or (FontStyles
-      <> fWorkingAttrStyle.InheritedAttrStyle.FontStyles.Styles) then
-    gbFontStyle.Font.Style := []
-  else
-    gbFontStyle.Font.Style := [fsItalic];
+  chkBold.Enabled := not UseDefFontStyles;
+  chkItalics.Enabled := not UseDefFontStyles;
+  chkUnderline.Enabled := not UseDefFontStyles;
+
   // Foreground colour
-  { TODO: Change to recognise clDefault as indication of default colour, not
-          testing for same colour as default - this is WRONG. Also need to add
-          cldefault to colour combos - not same as clNone }
   cbForeground.Selected := fWorkingAttrStyle.AttrStyle.Foreground;
-  if IsDefaultBrushID(fWorkingAttrStyle.BrushID)
-    or (fWorkingAttrStyle.AttrStyle.Foreground
-      <> fWorkingAttrStyle.InheritedAttrStyle.Foreground) then
-    lblForeground.Font.Style := []
-  else
-    lblForeground.Font.Style := [fsItalic];
+
   // Background colour
   cbBackground.Selected := fWorkingAttrStyle.AttrStyle.Background;
-  if IsDefaultBrushID(fWorkingAttrStyle.BrushID)
-    or (fWorkingAttrStyle.AttrStyle.Background
-      <> fWorkingAttrStyle.InheritedAttrStyle.Background) then
-    lblBackground.Font.Style := []
-  else
-    lblBackground.Font.Style := [fsItalic];
+
+  // Example
   UpdateAttrExample;
 end;
 
@@ -888,25 +906,12 @@ begin
   );
 end;
 
-procedure THiliteThemesEditorDlg.UpdateAttrFontStyle(const Checked: Boolean;
-  const FontStyle: TFontStyle);
-var
-  FS: TFontStyles;
-begin
-  FS := fWorkingAttrStyle.AttrStyle.FontStyles.Styles;
-  if Checked then
-    Include(FS, FontStyle)
-  else
-    Exclude(FS, FontStyle);
-  fWorkingAttrStyle.AttrStyle.FontStyles :=
-    TSyntaxHiliteFontStyles.CreateStyles(FS);
-  UpdateWorkingThemeStyles;
-end;
-
 procedure THiliteThemesEditorDlg.UpdateThemePropControls;
 begin
   fFontNameComboMgr.Select(fWorkingTheme.FontName);
   fFontSizeComboMgr.Select(fWorkingTheme.FontSize);
+  cbDefForeground.Selected := fWorkingTheme.DefaultForeground;
+  cbDefBackground.Selected := fWorkingTheme.DefaultBackground;
 end;
 
 procedure THiliteThemesEditorDlg.UpdateWorkingThemeStyles;
@@ -944,24 +949,9 @@ begin
   InheritedAttrStyle := AInheritedAttrStyle;
 end;
 
-class function THiliteThemesEditorDlg.TAttrStyleInfo.CreateNull: TAttrStyleInfo;
-begin
-  Result := TAttrStyleInfo.Create(
-    EmptyStr,
-    EmptyStr,
-    TSyntaxHiliteAttrStyle.CreateNull,
-    TSyntaxHiliteAttrStyle.CreateNull
-  );
-end;
-
 function THiliteThemesEditorDlg.TAttrStyleInfo.IsDefaultStyle: Boolean;
 begin
-  Result := AttrStyle = InheritedAttrStyle;
-end;
-
-function THiliteThemesEditorDlg.TAttrStyleInfo.IsNull: Boolean;
-begin
-  Result := AttrID = EmptyStr;
+  Result := AttrStyle.IsDefault;
 end;
 
 end.

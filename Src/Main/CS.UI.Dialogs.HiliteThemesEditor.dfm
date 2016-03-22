@@ -128,7 +128,7 @@ inherited HiliteThemesEditorDlg: THiliteThemesEditorDlg
       Left = 0
       Top = 214
       Width = 594
-      Height = 214
+      Height = 226
       Caption = 'Element style'
       TabOrder = 8
       object lblElements: TLabel
@@ -148,7 +148,7 @@ inherited HiliteThemesEditorDlg: THiliteThemesEditorDlg
       end
       object lblExample: TLabel
         Left = 206
-        Top = 127
+        Top = 144
         Width = 44
         Height = 13
         Caption = 'Example:'
@@ -164,7 +164,7 @@ inherited HiliteThemesEditorDlg: THiliteThemesEditorDlg
         Left = 8
         Top = 37
         Width = 173
-        Height = 164
+        Height = 181
         ItemHeight = 13
         TabOrder = 0
         OnClick = lbElementsClick
@@ -172,54 +172,63 @@ inherited HiliteThemesEditorDlg: THiliteThemesEditorDlg
       object gbFontStyle: TGroupBox
         Left = 206
         Top = 20
-        Width = 112
-        Height = 95
+        Width = 111
+        Height = 114
         Caption = ' Font style '
         TabOrder = 1
         object chkBold: TCheckBox
           Left = 8
-          Top = 18
+          Top = 40
           Width = 89
           Height = 17
           Caption = '&Bold'
-          TabOrder = 0
-          OnClick = chkBoldClick
+          TabOrder = 1
+          OnClick = FontStyleCheckBoxClick
         end
         object chkItalics: TCheckBox
           Left = 8
-          Top = 44
+          Top = 62
           Width = 89
           Height = 17
           Caption = '&Italics'
-          TabOrder = 1
-          OnClick = chkItalicsClick
+          TabOrder = 2
+          OnClick = FontStyleCheckBoxClick
         end
         object chkUnderline: TCheckBox
           Left = 8
-          Top = 66
+          Top = 84
           Width = 89
           Height = 21
           Caption = '&Underline'
-          TabOrder = 2
-          OnClick = chkUnderlineClick
+          TabOrder = 3
+          OnClick = FontStyleCheckBoxClick
+        end
+        object chkDefaultFS: TCheckBox
+          Left = 8
+          Top = 18
+          Width = 97
+          Height = 17
+          Caption = 'Default'
+          TabOrder = 0
+          OnClick = FontStyleCheckBoxClick
         end
       end
       object btnDefaultStyle: TButton
-        Left = 464
+        Left = 424
         Top = 88
-        Width = 115
+        Width = 155
         Height = 25
         Action = actDefaultStyle
         TabOrder = 2
       end
       inline frmExample: THiliteThemesExampleFrame
         Left = 206
-        Top = 145
+        Top = 163
         Width = 323
         Height = 55
         TabOrder = 3
         ExplicitLeft = 206
-        ExplicitTop = 145
+        ExplicitTop = 163
         ExplicitWidth = 323
         ExplicitHeight = 55
         inherited pnlBrowser: TPanel
@@ -230,10 +239,9 @@ inherited HiliteThemesEditorDlg: THiliteThemesEditorDlg
           inherited wbBrowser: TWebBrowser
             Width = 323
             Height = 55
-            ExplicitLeft = 96
-            ExplicitTop = 56
-            ExplicitWidth = 220
-            ExplicitHeight = 180
+            ExplicitTop = 18
+            ExplicitWidth = 323
+            ExplicitHeight = 55
             ControlData = {
               4C000000A7260000AF0500000000000000000000000000000000000000000000
               000000004C000000000000000000000001000000E0D057007335CF11AE690800
