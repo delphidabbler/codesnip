@@ -78,7 +78,7 @@ type
     class function IsValidIDString(const S: string): Boolean;
     function GetEnumerator: TEnumerator<TPair<string,TSyntaxHiliteAttrStyle>>;
     property SupportedAttrs: TArray<string> read GetSupportedAttrs;
-    // AttrStyles => return null attr if style doesn't exist
+    // AttrStyles => return default attr if style doesn't exist
     property AttrStyles[const AttrId: string]: TSyntaxHiliteAttrStyle
       read GetAttrStyle write SetAttrStyle;
   end;
