@@ -458,24 +458,17 @@ begin
   if IsDefaultBrushSelected then
   begin
     // Using default brush - inherits from theme's base style
-    if fWorkingTheme.DefaultBrushStyle.IsAttrSupported(AttrID) then
-      AttrStyle := fWorkingTheme.DefaultBrushStyle.AttrStyles[AttrID]
-    else
-      AttrStyle := TSyntaxHiliteAttrStyle.CreateDefault;
+    AttrStyle := fWorkingTheme.DefaultBrushStyle.AttrStyles[AttrID];
     InheritedAttrStyle := fWorkingTheme.BaseStyle;
   end
   else
   begin
     // Using language brush - inherits from theme's default brush
-    if fWorkingTheme.IsBrushSupported(BrushID)
-      and fWorkingTheme.BrushStyles[BrushID].IsAttrSupported(AttrID) then
+    if fWorkingTheme.IsBrushSupported(BrushID) then
       AttrStyle := fWorkingTheme.BrushStyles[BrushID].AttrStyles[AttrID]
     else
       AttrStyle := TSyntaxHiliteAttrStyle.CreateDefault;
-    if fWorkingTheme.DefaultBrushStyle.IsAttrSupported(AttrID) then
-      InheritedAttrStyle := fWorkingTheme.DefaultBrushStyle.AttrStyles[AttrID]
-    else
-      InheritedAttrStyle := TSyntaxHiliteAttrStyle.CreateDefault;
+    InheritedAttrStyle := fWorkingTheme.DefaultBrushStyle.AttrStyles[AttrID]
   end;
   fWorkingAttrStyle := TAttrStyleInfo.Create(
     BrushID, AttrID, AttrStyle, InheritedAttrStyle
