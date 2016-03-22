@@ -206,7 +206,7 @@ inherited HiliteThemesEditorDlg: THiliteThemesEditorDlg
         object chkDefaultFS: TCheckBox
           Left = 8
           Top = 18
-          Width = 97
+          Width = 89
           Height = 17
           Caption = 'Default'
           TabOrder = 0
