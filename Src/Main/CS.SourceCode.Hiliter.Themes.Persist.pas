@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2013-2016, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -154,6 +154,9 @@ const
     KwdDefaultBackground, KwdDefaultForeground
   );
 
+  DefaultValueIndicator = '*';
+  NoColourIndicator = '-';
+
 resourcestring
   // I/O and parsing error messages
   sMissingThemeStatement = 'THEME statement expected';
@@ -227,7 +230,7 @@ var
   function FormatDefaultColour(const Colour: TColor): string;
   begin
     if Colour = clNone then
-      Exit('-');
+      Exit(NoColourIndicator);
     Result := IntToHex(Integer(Colour), 8);
   end;
 
@@ -262,7 +265,7 @@ begin
       SB.AppendLine(
         Format('  %s %d', [KwdFontSize, Theme.FontSize])
       );
-      WriteBrushStyle(SB, '*', Theme.DefaultBrushStyle);
+      WriteBrushStyle(SB, Theme.DefaultBrushID, Theme.DefaultBrushStyle);
       for BrushID in Theme.SupportedBrushes do
         WriteBrushStyle(SB, BrushID, Theme.BrushStyles[BrushID]);
       SB.AppendLine;
@@ -291,7 +294,7 @@ var
   function FormatAttrColour(const Colour: TColor): string;
   begin
     if Colour = clDefault then
-      Exit('*');
+      Exit(DefaultValueIndicator);
     Result := IntToHex(Integer(Colour), 8);
   end;
 
@@ -302,7 +305,7 @@ var
     SL: IStringList;
   begin
     if FontStyles.IsDefault then
-      Exit('*');
+      Exit(DefaultValueIndicator);
     SL := TIStringList.Create;
     for FontStyle in FontStyles.Styles do
       SL.Add(FontStyleMap[FontStyle]);
@@ -425,7 +428,7 @@ function TSyntaxHiliteThemesParser.ParseAttrStyle(const AttrID, Data: string):
   begin
     if Field = EmptyStr then
       raise ESyntaxHiliteThemesIO.CreateFmt(sBadAttrColour, [AttrID]);
-    if Field = '*' then
+    if Field = DefaultValueIndicator then
       Exit(clDefault);
     if not TryStrToInt(HexDisplayPrefix + Field, ColourInt) then
       raise ESyntaxHiliteThemesIO.CreateFmt(sBadAttrColour, [AttrID]);
@@ -460,7 +463,7 @@ function TSyntaxHiliteThemesParser.ParseAttrStyle(const AttrID, Data: string):
   begin
     if Field = EmptyStr then
       raise ESyntaxHiliteThemesIO.CreateFmt(sBadFontStyle, [AttrID]);
-    if Field = '*' then
+    if Field = DefaultValueIndicator then
       Exit(TSyntaxHiliteFontStyles.CreateDefault);
     if (Length(Field) < 2)
       or (Field[1] <> '{') or (Field[Length(Field)] <> '}') then
@@ -541,12 +544,13 @@ begin
       BrushIDs,
       function (S: string): Boolean
       begin
-        Result := (S = '*') or TSyntaxHiliteBrushStyle.IsValidIDString(S)
+        Result := (S = Theme.DefaultBrushID)
+          or TSyntaxHiliteBrushStyle.IsValidIDString(S)
       end
     );
     BrushIDs.Add(BrushID);
     NextLine;
-    if BrushID = '*' then
+    if BrushID = Theme.DefaultBrushID then
       ParseAttrStyles(Theme.DefaultBrushStyle)
     else
     begin
@@ -568,11 +572,11 @@ procedure TSyntaxHiliteThemesParser.ParseTheme(const Theme: TSyntaxHiliteTheme);
   var
     ColourInt: Integer;
   begin
-    if (Field = EmptyStr) or (Field = '*') then
+    if (Field = EmptyStr) or (Field = DefaultValueIndicator) then
       raise ESyntaxHiliteThemesIO.CreateFmt(
         sBadDefaultColour, [CurrentStatement]
       );
-    if Field = '-' then
+    if Field = NoColourIndicator then
       Exit(clNone);
     if not TryStrToInt(HexDisplayPrefix + Field, ColourInt) then
       raise ESyntaxHiliteThemesIO.CreateFmt(
