@@ -71,7 +71,7 @@ var
   Style: TSyntaxHiliteAttrStyle;
   HTML: string;
 begin
-  if BrushID = EmptyStr then
+  if BrushID = TSyntaxHiliteTheme.DefaultBrushID then
     Style := Theme.GetDefaultStyle(AttrID)
   else
     Style := Theme.GetStyle(BrushID, AttrID);
