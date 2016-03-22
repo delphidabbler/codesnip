@@ -234,16 +234,15 @@ inherited HiliteThemesEditorDlg: THiliteThemesEditorDlg
         inherited pnlBrowser: TPanel
           Width = 323
           Height = 55
-          ExplicitWidth = 374
+          ExplicitWidth = 323
           ExplicitHeight = 55
           inherited wbBrowser: TWebBrowser
             Width = 323
             Height = 55
-            ExplicitTop = 18
-            ExplicitWidth = 323
+            ExplicitWidth = 374
             ExplicitHeight = 55
             ControlData = {
-              4C000000A7260000AF0500000000000000000000000000000000000000000000
+              4C00000062210000AF0500000000000000000000000000000000000000000000
               000000004C000000000000000000000001000000E0D057007335CF11AE690800
               2B2E126208000000000000004C0000000114020000000000C000000000000046
               8000000000000000000000000000000000000000000000000000000000000000
