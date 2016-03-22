@@ -66,7 +66,7 @@
   </li>
   <li>
     <em>User-defined themes</em> &ndash; These are themes defined by the user.
-    They are stored in a physical file stored in CodeSnip's per-user application
+    They are saved to a physical file stored in CodeSnip's per-user application
     data directory.
   </li>
 </ul>
@@ -103,9 +103,9 @@
 <p class="pullout">
   <strong>NOTE:</strong>
   The ► and ◄ characters were chosen for the header line because they encode in
-  a unique way in UTF-8 &ndash; ANSI files will not encode them correctly. This
-  provides a second check for the correct file format in addition to the byte
-  order mark.
+  a unique way in UTF-8 &ndash; files saved in other formats encode them
+  correctly. This provides a second check for the correct file format in
+  addition to the byte order mark.
 </p>
 
 <h3 id="theme">
@@ -113,16 +113,16 @@
 </h3>
 
 <p>
-  The remainder of the file a sequence of <em>Theme</em> statements, optionally
-  interspersed with blank and <a href="#comments">comment</a> lines.
+  The remainder of the file is a sequence of <em>Theme</em> statements,
+  optionally interspersed with blank and <a href="#comments">comment</a> lines.
 </p>
 
 <p>
   Each <em>Theme</em> statement is introduced by the keyword <code>Theme</code>
   as the first non <a href="#white-space">white space</a> token on a line.
   <code>Theme</code> is immediately followed by white space then a unique
-  theme <a href="#identifiers">identifier</a>, some more white space and the
-  human readable name of the theme. The human readable theme name continues
+  theme <a href="#identifiers">identifier</a>, some more white space followed by
+  a human readable name of the theme. The human readable theme name continues
   until the end of the line, and may contain white space. For example:
 </p>
 
@@ -135,15 +135,9 @@
   name <code>My New Theme</code>.
 </p>
 
-<p class="pullout">
-  <strong>NOTE:</strong> The theme identifier <code>_DEFAULT_</code> is special
-  and denotes the theme that is to be used as the program's default theme. This
-  identifier may only by used in program's pre-defined themes.
-</p>
-
 <p>
-  Immediately following the <code>Theme</code> comes a sequence of other
-  statements in any order. They are:
+  Immediately following the <code>Theme</code> statement comes a sequence of
+  other statements in any order. They are:
 </p>
 
 <ul>
@@ -184,28 +178,33 @@
 <p>
   The statement is introduced by the <code>DefaultBackground</code> keyword
   which must be the first non <a href="#white-space">white space</a> token on a
-  line. <code>DefaultBackground</code> is followed by white space and then an up
-  eight digit hexadecimal representation of the colour in Delphi's TColor
-  format. The end of the line terminates the statement.
+  line. <code>DefaultBackground</code> is followed by white space and then a hex
+  <a href="#colours">colour number</a>. The end of the line terminates the
+  statement.
 </p>
 
 <p>
   For example:
 </p>
 
-<p class="indent">
-  <code>DefaultBackground 0000FF00</code>
-</p>
+<div class="indent">
 
-<p>
-  sets the theme's default background colour to <code>TColor($0000FF00)</code>.
-</p>
+  <p>
+    <code>DefaultBackground 0000FF00</code>
+  </p>
+
+  <p class="indent">
+    sets the theme's default background colour to <code>TColor($00FF00)</code>,
+    i.e. lime.
+  </p>
+
+</div>
 
 <p>
   Omitting this statement means that the theme's background is transparent. This
   can be made explicit by supplying the <code>DefaultBackground</code> keyword
-  followed by a dash (&quot;<code>-</code>&quot;) instead of the colour number,
-  i.e.:
+  followed by a dash (&quot;<code>-</code>&quot;) instead of the
+  <a href="#colours">colour number</a>, i.e.:
 </p>
 
 <p class="indent">
@@ -225,30 +224,35 @@
 <p>
   The statement is introduced by the <code>DefaultForeground</code> keyword
   which must be the first non <a href="#white-space">white space</a> token on a
-  line. <code>DefaultForeground</code> is followed by white space and then an up
-  to eight digit hexadecimal representation of the colour in Delphi's TColor
-  format. The end of the line terminates the statement.
+  line. <code>DefaultForeground</code> is followed by white space and then a
+  <a href="#colours">colour number</a>. The end of the line terminates the
+  statement.
 </p>
 
 <p>
   For example:
 </p>
 
-<p class="indent">
-  <code>DefaultForeground 00000000</code>
-</p>
+<div class="indent">
 
-<p>
-  sets the theme's default background colour to <code>TColor(0)</code>, i.e.
-  black.
-</p>
+  <p>
+    <code>DefaultForeground 0</code>
+  </p>
+
+  <p class="indent">
+    sets the theme's default background colour to <code>TColor(0)</code>, i.e.
+    black.
+  </p>
+
+</div>
 
 <p>
   Omitting this statement means that the theme uses as its default foreground
   colour the font colour of the surface where the syntax highlighted code is to
   be displayed. This can be made explicit by supplying the
   <code>DefaultForeground</code> keyword followed by a dash
-  (&quot;<code>-</code>&quot;) instead of the six digit colour number, i.e.:
+  (&quot;<code>-</code>&quot;) instead of the
+  <a href="#colours">colour number</a>, i.e.:
 </p>
 
 <p class="indent">
@@ -262,7 +266,8 @@
 <p>
   Each <a href="#theme"><em>Theme</em></a> statement can contain an optional
   <em>Font Name</em> statement. This statement defines the name of the font to
-  be used in rendering syntax highlighted code when using the theme.
+  be used in rendering syntax highlighted code. The same base font is used
+  throughout the highlighted code.
 </p>
 
 <p>
@@ -276,13 +281,17 @@
   For example:
 </p>
 
-<p class="indent">
-  <code>FontName Lucida Console</code>
-</p>
+<div class="indent">
 
-<p>
-  Causes the theme to use &quot;Lucida Console&quot; font.
-</p>
+  <p>
+    <code>FontName Lucida Console</code>
+  </p>
+
+  <p class="indent">
+    causes the theme to use &quot;Lucida Console&quot; font.
+  </p>
+
+</div>
 
 <p>
   Omitting the <em>Font Name</em> statement causes the default theme font to be
@@ -296,28 +305,32 @@
 <p>
   Each <a href="#theme"><em>Theme</em></a> statement can contain an optional
   <em>Font Size</em> statement. This statement defines the size, in points, of
-  the font to be used when rendering syntax highlighted code using the
-  theme.
+  the font to be used when rendering syntax highlighted code. The same font size
+  is used throughout the highlighted code.
 </p>
 
 <p>
   The statement is introduced by the <code>FontSize</code> keyword as the first
   non <a href="#white-space">white space</a> token on a line. The keyword is
-  followed by white space and then the size of the required font as a base 10
-  positive integer. The end of line terminates the statement.
+  followed by white space and then the point size of the required font as a base
+  10 positive integer. The end of line terminates the statement.
 </p>
 
 <p>
   For example:
 </p>
 
-<p class="indent">
-  <code>FontSize 10</code>
-</p>
+<div class="indent">
 
-<p>
-  Causes the theme to use a font size of 10pt.
-</p>
+  <p>
+    <code>FontSize 10</code>
+  </p>
+
+  <p class="indent">
+    causes the theme to use a font size of 10pt.
+  </p>
+
+</div>
 
 <p>
   Omitting the <em>Font Size</em> statement causes the default theme font size
@@ -350,9 +363,9 @@
 
 <p>
   An asterisk indicates that the brush is the theme's default brush. This brush
-  provides default styling used by any brush that does not have its styling
-  defined in its own <em>Brush</em> statement. When the default brush is defined
-  it <strong>must</strong> be defined only once in each theme.
+  provides default styling for any brush that does not have its styling defined
+  in its own <em>Brush</em> statement. There <strong>must</strong> be no more
+  than one default brush defined for each theme.
 </p>
 
 <p>
@@ -366,22 +379,26 @@
   Examples:
 </p>
 
-<p class="indent">
-  <code>Brush ObjectPascal</code>
-</p>
+<div class="indent">
 
-<p>
-  introduces the definition of the styles applied to the <em>ObjectPascal</em>
-  brush.
-</p>
+  <p>
+    <code>Brush ObjectPascal</code>
+  </p>
 
-<p class="indent">
-  <code>Brush *</code>
-</p>
+  <p class="indent">
+    introduces the definition of the styles to be applied to the
+    <em>ObjectPascal</em> in the theme.
+  </p>
 
-<p>
-  introduces the definition of the theme's default brush.
-</p>
+  <p>
+    <code>Brush *</code>
+  </p>
+
+  <p class="indent">
+    introduces the definition of the theme's default brush.
+  </p>
+
+</div>
 
 <p>
   Each brush statement contains zero or more
@@ -399,9 +416,9 @@
 </p>
 
 <p>
-  The statement is introduced by the <code>Attr</code> keyword as the first
-  token on a line. <code>Attr</code> is followed by two
-  <a href="#white-space">white space</a> separated parameters.
+  The statement is introduced by the <code>Attr</code> keyword as the first non
+  <a href="#white-space">white space</a> token on a line. <code>Attr</code> is
+  followed by two <a href="#white-space">white space</a> separated parameters.
 </p>
 
 <p>
@@ -428,14 +445,12 @@
 
 <ul>
   <li>
-    <code>&lt;background-colour&gt;</code> is the colour to use for the
-    attribute's background. This is an up to eight digit hexadecimal
-    representation of the colour in Delphi's <var>TColor</var> format.
+    <code>&lt;background-colour&gt;</code> - a <a href="#colours">colour
+    number</a> that defines the colour to use for the attribute's background.
   </li>
   <li>
-    <code>&lt;foreground-colour&gt;</code> is the colour to use for the
-    attribute's foreground. This is also an up to eight six digit hexadecimal
-    representation of the colour in Delphi's <var>TColor</var> format.
+    <code>&lt;foreground-colour&gt;</code> - a <a href="#colours">colour
+    number</a> that defines the colour to use for the attribute's foreground.
   </li>
   <li>
     <code>&lt;font-style&gt;</code> is the styling to be applied to the
@@ -449,7 +464,7 @@
 
 <p>
   Any component part of the style parameter can have the special value
-  &quot;<code>*</code>&quot; (asterisk) to indicate that the default value for
+  &quot;<code>*</code>&quot; (asterisk) to indicate that a default value for
   that part should be used. For instance specifying
   &quot;<code>*,00880088,*</code>&quot; means that the default values for
   background colour and font style should be used. Default values are determined
@@ -458,23 +473,33 @@
 
 <ul>
   <li>
-    For named brush styles the default is the style provided by the theme's
-    default style for the same attribute. If the default style is not defined
-    or does not have the required attribute then the theme default values are
+    For named brush styles the default is the style defined by the theme's
+    default brush for the same attribute. If the default brush is not defined
+    or does not have the required attribute then the theme's default values are
     used.
   </li>
   <li>
-    Theme defaults are used as default values in the default theme.
+    For the default brush the theme's default values are used as defaults.
   </li>
   <li>
-    When theme defaults are used the attributes foreground and background
-    colours are set to the values specified in the
-    <a href="#theme"><em>Theme</em></a> statement's
-    <a href="#default-foreground"><em>Default Foreground</em></a> and
-    <a href="#default-background"><em>Default Background</em></a> statements
-    where specified. Otherwise the system's default foreground and background
-    colours are used. The theme default font style is always <code>{}</code>,
-    i.e. normal text.
+    <div>
+      A theme's default values are as follows:
+    </div>
+    <ul>
+      <li>
+        Background colour - as defined by the <a href="#theme"><em>Theme</em></a>
+        statement's <a href="#default-foreground"><em>Default
+        Foreground</em></a> statement.
+      </li>
+      <li>
+        Foreground (font) colour - as defined by the
+        <a href="#theme"><em>Theme</em></a> statement's
+        <a href="#default-background"><em>Default Background</em></a> statement.
+      </li>
+      <li>
+        Font style - this always defaults to <code>{}</code>, i.e. normal text.
+      </li>
+    </ul>
   </li>
 </ul>
 
@@ -482,35 +507,47 @@
   Some examples:
 </p>
 
-<p class="indent">
-  <code>Attr Comment *,*,{italic}</code>
-</p>
+<div class="indent">
 
-<p>
-  sets the <code>Comment</code> attribute's font style to italic, leaving the
-  background and foreground colours with their default values.
-</p>
+  <p>
+    <code>Attr Comment *,*,{italic}</code>
+  </p>
 
-<p class="indent">
-  <code>Attr ReservedWord *,00800000,{bold}</code>
-</p>
+  <p class="indent">
+    sets the <code>Comment</code> attribute's font style to italic, leaving the
+    background and foreground colours with their default values.
+  </p>
 
-<p>
-  sets the <code>ReservedWord</code> attribute's foreground colour to
-  <code>00800000</code> (hex) and the font style to bold, leaving the background
-  colour with its default value.
-</p>
+  <p>
+    <code>Attr ReservedWord *,00800000,{bold}</code>
+  </p>
 
-<p class="indent">
-  <code>Attr Identifier *,*,{}</code>
-</p>
+  <p class="indent">
+    sets the <code>ReservedWord</code> attribute's foreground colour to
+    <code>00800000</code> (hex) and the font style to bold, leaving the background
+    colour with its default value.
+  </p>
 
-<p>
-  means that the background and foreground colours retain their default values
-  and the font is styled normally. Note that a font style of <code>{}</code>
-  explicitly removes all styles, while a style of <code>*</code> inherits any
-  default font styling.
-</p>
+  <p>
+    <code>Attr Identifier *,0,*</code>
+  </p>
+
+  <p class="indent">
+    means that the background colour retains its default value, the foreground
+    colour is <code>00000000</code> and the default font style is used.
+  </p>
+
+  <p>
+    <code>Attr Preprocessor FAFAFF,*,{}</code>
+  </p>
+
+  <p class="indent">
+    explicitly defines a background colour of <code>00FAFAFF</code> while using a
+    default value for the foreground colour and requiring that no font styling is
+    applied.
+  </p>
+
+</div>
 
 <h3 id="identifiers">
   Identifiers
@@ -536,16 +573,17 @@
 </h4>
 
 <p>
-  Theme identifiers used in user-defined theme files
-  <strong>must</strong> begin with a valid Unicode letter and be followed by
-  zero or more Unicode letters, digits or punctuation characters.
+  Theme identifiers used in user-defined theme files <strong>must</strong> begin
+  with a valid Unicode letter and be followed by zero or more Unicode letters,
+  digits or punctuation characters.
 </p>
 
 <p>
   Identifiers used in the pre-defined themes &quot;file&quot; have the same
   format as user-defined themes except that the whole identifier
   <strong>must</strong> be enclosed by a pair of underscore ('<code>_</code>')
-  characters.
+  characters. The theme identifier <code>_DEFAULT_</code> is special and denotes
+  the program's default theme: it <strong>must</strong> exist.
 </p>
 
 <h4>
@@ -565,8 +603,50 @@
 
 <p>
   An <em>Attribute</em> identifier <strong>must</strong> be made up of a
-  sequence of one or  more ASCII letters, ASCII digits and the punctuation
+  sequence of one or more ASCII letters, ASCII digits and the punctuation
   characters '<code>-</code>' or '<code>_</code>'.
+</p>
+
+<h3 id="colours">
+  Colour Numbers
+</h3>
+
+<p>
+  Colours are represented in a theme as an (up to) eight digit hexadecimal
+  number in the same format used for Delphi's <var>TColor</var> type.
+</p>
+
+<p>
+  The use of <var>TColor</var> values means that both RGB and Windows System
+  colours can be used.
+</p>
+
+<p>
+  Some examples:
+</p>
+
+<ul>
+  <li>
+    <code>F0CAA6</code> or <code>00F0CAA6</code> - sky blue.
+  </li>
+  <li>
+    <code>FF</code> or <code>000000FF</code> etc. - red.
+  <li>
+    <code>0</code> or <code>00000000</code> etc. - black.
+  </li>
+  <li>
+    <code>FFFFFF</code> or <code>00FFFFFF</code> - white.
+  </li>
+  <li>
+    <code>FF000008</code> - window text colour in current Windows theme.
+  </li>
+</ul>
+
+<p class="pullout">
+  <strong>NOTE:</strong> The order of RGB bytes in a <var>TColor</var> differs
+  from the order used in other colour type, e.g. in CSS. For example the
+  <var>TColor</var> value for red is <code>000000FF</code> whereas in CSS the
+  same color is <code>#FF0000</code>.
 </p>
 
 <h3 id="comments">
@@ -575,9 +655,9 @@
 
 <p>
   Comments can be included on any line of the file <strong>after</strong> the
-  header line. Comments occupy a line by themselves and a introduced by a
-  &quot;<code>#</code>&quot; (hash) character as the first non white space on a
-  line.
+  header line. Comments occupy a line by themselves and are introduced by a
+  &quot;<code>#</code>&quot; (hash) character as the first non white space
+  character on a line.
 </p>
 
 <p>
