@@ -49,9 +49,9 @@ type
     FontStyles: TSyntaxHiliteFontStyles;
     constructor Create(ABackground, AForeground: TColor;
       AFontStyles: TSyntaxHiliteFontStyles);
-    class function CreateNull: TSyntaxHiliteAttrStyle; static;
+    class function CreateDefault: TSyntaxHiliteAttrStyle; static;
+    function IsDefault: Boolean;
     class function IsValidIDString(const S: string): Boolean; static;
-    function IsNull: Boolean;
     function Clone(const IgnoreColour: Boolean = False): TSyntaxHiliteAttrStyle;
     class operator Equal(const Left, Right: TSyntaxHiliteAttrStyle): Boolean;
     class operator NotEqual(const Left, Right: TSyntaxHiliteAttrStyle): Boolean;
@@ -305,10 +305,10 @@ begin
   FontStyles := AFontStyles;
 end;
 
-class function TSyntaxHiliteAttrStyle.CreateNull: TSyntaxHiliteAttrStyle;
+class function TSyntaxHiliteAttrStyle.CreateDefault: TSyntaxHiliteAttrStyle;
 begin
   Result := TSyntaxHiliteAttrStyle.Create(
-    clNone, clNone, TSyntaxHiliteFontStyles.CreateNull
+    clDefault, clDefault, TSyntaxHiliteFontStyles.CreateDefault
   );
 end;
 
@@ -320,11 +320,10 @@ begin
     and (Left.FontStyles.Styles = Right.FontStyles.Styles);
 end;
 
-function TSyntaxHiliteAttrStyle.IsNull: Boolean;
+function TSyntaxHiliteAttrStyle.IsDefault: Boolean;
 begin
-  Result := (Background = clNone)
-    and (ForeGround = clNone)
-    and FontStyles.IsNull;
+  Result := (Foreground = clDefault) and (Background = clDefault)
+    and FontStyles.IsDefault;
 end;
 
 class function TSyntaxHiliteAttrStyle.IsValidIDString(const S: string): Boolean;
@@ -399,7 +398,7 @@ begin
   if fAttrStyles.ContainsKey(AttrId) then
     Result := fAttrStyles[AttrId]
   else
-    Result := TSyntaxHiliteAttrStyle.CreateNull;
+    Result := TSyntaxHiliteAttrStyle.CreateDefault;
 end;
 
 function TSyntaxHiliteBrushStyle.GetEnumerator:
