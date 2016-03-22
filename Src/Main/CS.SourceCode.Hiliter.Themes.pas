@@ -137,6 +137,8 @@ type
       fDefaultBrushStyle: TSyntaxHiliteBrushStyle;
       fBrushStyles: TObjectDictionary<string,TSyntaxHiliteBrushStyle>;
       fBuiltIn: Boolean;
+    procedure SetDefaultBackground(const Value: TColor);
+    procedure SetDefaultForeground(const Value: TColor);
     procedure SetFontName(const FontName: string);
     procedure SetFontSize(const FontSize: Integer);
     function GetBrushStyle(const BrushID: string): TSyntaxHiliteBrushStyle;
@@ -177,9 +179,9 @@ type
     property FontName: string read fFontName write SetFontName;
     property FontSize: Integer read fFontSize write SetFontSize;
     property DefaultBackground: TColor
-      read fDefaultBackground write fDefaultBackground;
+      read fDefaultBackground write SetDefaultBackground;
     property DefaultForeground: TColor
-      read fDefaultForeground write fDefaultForeground;
+      read fDefaultForeground write SetDefaultForeground;
     property DefaultBrushStyle: TSyntaxHiliteBrushStyle
       read fDefaultBrushStyle write SetDefaultBrushStyle;
     // This makes copy of given style
@@ -685,10 +687,26 @@ begin
   fFontSize := DefaultFontSize;
 end;
 
+procedure TSyntaxHiliteTheme.SetDefaultBackground(const Value: TColor);
+begin
+  Assert(Value <> clDefault,
+    ClassName + '.SetDefaultBackground: Default background colour can''t be '
+      + 'clDefault');
+  fDefaultBackground := Value;
+end;
+
 procedure TSyntaxHiliteTheme.SetDefaultBrushStyle(
   const Value: TSyntaxHiliteBrushStyle);
 begin
   fDefaultBrushStyle.Assign(Value);
+end;
+
+procedure TSyntaxHiliteTheme.SetDefaultForeground(const Value: TColor);
+begin
+  Assert(Value <> clDefault,
+    ClassName + '.SetDefaultForeground: Default foreground colour can''t be '
+      + 'clDefault');
+  fDefaultForeground := Value;
 end;
 
 procedure TSyntaxHiliteTheme.SetFontName(const FontName: string);
