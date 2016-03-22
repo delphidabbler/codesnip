@@ -867,11 +867,11 @@ procedure THiliteThemesEditorDlg.UpdateAttrControls;
 
 var
   FontStyles: TFontStyles;
-  UseDefFontStyles: Boolean;
+  UsingDefFontStyles: Boolean;
 begin
   // Font style group
-  UseDefFontStyles := fWorkingAttrStyle.AttrStyle.FontStyles.IsDefault;
-  if UseDefFontStyles then
+  UsingDefFontStyles := fWorkingAttrStyle.AttrStyle.FontStyles.IsDefault;
+  if UsingDefFontStyles then
   begin
     if not fWorkingAttrStyle.InheritedAttrStyle.FontStyles.IsDefault then
       FontStyles := fWorkingAttrStyle.InheritedAttrStyle.FontStyles
@@ -880,13 +880,13 @@ begin
   end
   else
     FontStyles := fWorkingAttrStyle.AttrStyle.FontStyles;
-  SafeCheck(chkDefaultFS, UseDefFontStyles);
+  SafeCheck(chkDefaultFS, UsingDefFontStyles);
   SafeCheck(chkBold, fsBold in FontStyles);
   SafeCheck(chkItalics, fsItalic in FontStyles);
   SafeCheck(chkUnderline, fsUnderline in FontStyles);
-  chkBold.Enabled := not UseDefFontStyles;
-  chkItalics.Enabled := not UseDefFontStyles;
-  chkUnderline.Enabled := not UseDefFontStyles;
+  chkBold.Enabled := not UsingDefFontStyles;
+  chkItalics.Enabled := not UsingDefFontStyles;
+  chkUnderline.Enabled := not UsingDefFontStyles;
 
   // Foreground colour
   cbForeground.Selected := fWorkingAttrStyle.AttrStyle.Foreground;
