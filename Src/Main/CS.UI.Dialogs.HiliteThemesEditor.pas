@@ -194,14 +194,13 @@ uses
 
 procedure THiliteThemesEditorDlg.actDefaultStyleExecute(Sender: TObject);
 begin
-  fWorkingAttrStyle.AttrStyle := fWorkingAttrStyle.InheritedAttrStyle;
+  fWorkingAttrStyle.AttrStyle := TSyntaxHiliteAttrStyle.CreateDefault;
   UpdateWorkingThemeStyles;
 end;
 
 procedure THiliteThemesEditorDlg.actDefaultStyleUpdate(Sender: TObject);
 begin
-//  actDefaultStyle.Enabled := not IsDefaultBrushSelected and
-//    not fWorkingAttrStyle.IsDefaultStyle;
+  actDefaultStyle.Enabled := not fWorkingAttrStyle.IsDefaultStyle;
 end;
 
 procedure THiliteThemesEditorDlg.actDeleteExecute(Sender: TObject);
