@@ -164,7 +164,6 @@ type
       const BlockedThemeIDs: array of TSyntaxHiliteThemeID): Boolean;
   end;
 
-// TODO: Implement example pane
 
 implementation
 
@@ -622,7 +621,6 @@ begin
     Width := 127;
     Height := 21;
     TabOrder := 2;
-    // TODO: remove Style statement if default radio button used
     Style := Style + [cbIncludeDefault];  // "None" colour not allowed
     OnChange := cbForegroundChange;
   end;
@@ -636,7 +634,6 @@ begin
     Width := 127;
     Height := 21;
     TabOrder := 3;
-    // TODO: remove Style statement if default radio button used
     Style := Style + [cbIncludeDefault];  // "None" colour not allowed
     OnChange := cbBackgroundChange;
   end;
