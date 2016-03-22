@@ -104,7 +104,7 @@ begin
       if Style.Foreground <> clNone then
         AddProperty(TCSS.ColorProp(Style.Foreground))
       else
-        AddProperty(TCSS.BackgroundColorProp(clWindowText));
+        AddProperty(TCSS.ColorProp(clWindowText));
       AddProperty(TCSS.FontWeightProp(Style.FontStyles));
       AddProperty(TCSS.FontStyleProp(Style.FontStyles));
       AddProperty(TCSS.TextDecorationProp(Style.FontStyles));
