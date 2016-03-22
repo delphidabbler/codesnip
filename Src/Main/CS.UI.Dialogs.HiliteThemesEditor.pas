@@ -395,13 +395,14 @@ procedure THiliteThemesEditorDlg.cbDefBackgroundChange(Sender: TObject);
 begin
   fWorkingTheme.DefaultBackground := cbDefBackground.Selected;
   SetWorkingThemeDirty;
+  UpdateAttrExample;
 end;
 
 procedure THiliteThemesEditorDlg.cbDefForegroundChange(Sender: TObject);
 begin
-  // TODO: fix how fg and bg element colours reflect default fg and bg colours
   fWorkingTheme.DefaultForeground := cbDefForeground.Selected;
   SetWorkingThemeDirty;
+  UpdateAttrExample;
 end;
 
 procedure THiliteThemesEditorDlg.cbFontNameChange(Sender: TObject);
