@@ -129,7 +129,7 @@ begin
       if fTheme.DefaultBackground <> clNone then
         AddProperty(TCSS.BackgroundColorProp(fTheme.DefaultBackground));
       if fTheme.DefaultForeground <> clNone then
-        AddProperty(TCSS.BackgroundColorProp(fTheme.DefaultForeground));
+        AddProperty(TCSS.ColorProp(fTheme.DefaultForeground));
     end;
   end;
 end;
