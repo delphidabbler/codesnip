@@ -212,8 +212,7 @@ uses
 
 procedure TSnippetIDList.Add(const SnippetID: TSnippetID);
 begin
-  if not fList.Contains(SnippetID) then
-    fList.Add(SnippetID);
+  fList.Add(SnippetID); // fList.Add ignores duplicates
 end;
 
 procedure TSnippetIDList.Assign(const Src: IInterface);
