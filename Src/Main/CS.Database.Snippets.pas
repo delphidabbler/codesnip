@@ -487,7 +487,7 @@ end;
 
 procedure TSnippetBase.SetOrigin(AOrigin: ISnippetOrigin);
 begin
-  if not Assigned(AOrigin) then
+  if not Assigned(AOrigin) or not AOrigin.IsLinked then
     fOrigin := nil
   else
     fOrigin := TRemoteSnippetOrigin.Create(AOrigin);
