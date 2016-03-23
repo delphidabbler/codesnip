@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2012-2014, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2012-2016, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -102,6 +102,7 @@ uses
   DB.UMain,
   UColours,
   UPreferences,
+  UQuery,
   UStrUtils;
 
 
@@ -136,18 +137,20 @@ var
 resourcestring
   sEmptySnippetPara = 'There are no snippets with this tag.';
   sEmptySnippetNullPara = 'All snippets have at least one tag.';
+  sEmptySnippetParaSel
+    = 'There are no snippets with this tag in the current selection.';
+  sEmptySnippetNullParaSel
+    = 'All snippets in the current selection have at least one tag.';
 begin
-  { TODO: change this to print only the currently selected snippets in the tag:
-          this will be a change from v4. }
   if not Tag.IsNull then
-    SnippetIDs := Database.SelectSnippets(
+    SnippetIDs := Query.FilterSelection(
       function (Snippet: ISnippet): Boolean
       begin
         Result := Snippet.Tags.Contains(Tag)
       end
     )
   else
-    SnippetIDs := Database.SelectSnippets(
+    SnippetIDs := Query.FilterSelection(
       function (Snippet: ISnippet): Boolean
       begin
         Result := Snippet.Tags.IsEmpty;
@@ -165,8 +168,19 @@ begin
   end
   else
     OutputPlainTextPara(
-      StrIf(Tag.IsNull, sEmptySnippetNullPara, sEmptySnippetPara)
+      StrIf(
+        Tag.IsNull,
+        StrIf(
+          Query.IsSearchActive, sEmptySnippetNullParaSel, sEmptySnippetNullPara
+        ),
+        StrIf(
+          Query.IsSearchActive, sEmptySnippetParaSel, sEmptySnippetPara
+        )
+      )
     );
+//    OutputPlainTextPara(
+//      StrIf(Tag.IsNull, sEmptySnippetNullPara, sEmptySnippetPara)
+//    );
   Result := TEncodedData.Create(fBuilder.Render.ToBytes, etASCII);
 end;
 
