@@ -132,12 +132,11 @@ type
       ///  <summary>Internal list if snippet ID records.</summary>
       fList: TLinkedSet<TSnippetID>;
   public
-    ///  <summary>Constructs empty list object.</summary>
-    constructor Create; overload;
-
-    ///  <summary>Constructs empty list object with the given capacity.
-    ///  </summary>
-    constructor Create(const ACapacity: Integer); overload;
+    ///  <summary>Constructs empty snippet ID list object.</summary>
+    ///  <param name="ACapacity"><c>Integer</c> [in] Initial capacity of list.
+    ///  Omitting this parameter, or passing a value of zero or lower causes the
+    ///  default capacity to be used.</param>
+    constructor Create(const ACapacity: Integer = 0);
 
     ///  <summary>Destroys object.</summary>
     destructor Destroy; override;
@@ -258,11 +257,6 @@ begin
     ),
     ACapacity
   );
-end;
-
-constructor TSnippetIDList.Create;
-begin
-  Create(0);
 end;
 
 destructor TSnippetIDList.Destroy;
