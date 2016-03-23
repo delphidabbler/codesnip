@@ -19,8 +19,6 @@ interface
 uses
   // Delphi
   SysUtils,
-  Generics.Defaults,
-  Generics.Collections,
   // 3rd party
   Collections.Base,
   // Project
@@ -91,10 +89,8 @@ type
   ///  TSnippetID records.</summary>
   ISnippetIDList = interface(IInterface)
     ['{238CFDCC-E84E-4D29-9BC6-10FBCECBC4FA}']
-    { TODO: When implementation changes to use DelphiColl, remove
-            Generics.Collections. specifier from GetEnumerator. }
     ///  <summary>Gets new list enumerator.</summary>
-    function GetEnumerator: Generics.Collections.TEnumerator<TSnippetID>;
+    function GetEnumerator: IEnumerator<TSnippetID>;
     ///  <summary>Clears the list.</summary>
     procedure Clear;
     ///  <summary>Adds given snippet ID to list and returns its index in list.
@@ -339,10 +335,10 @@ type
 implementation
 
 uses
+  // Delphi
   Character,
-
+  // Project
   CS.Utils.Hashes,
-  UConsts,
   UStrUtils;
 
 { TSnippetID }

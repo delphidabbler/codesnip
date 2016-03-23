@@ -17,8 +17,9 @@ unit CS.Database.Snippets;
 interface
 
 uses
-  // Delphi
-  Generics.Collections,
+  // Library
+  Collections.Base,
+  Collections.Sets,
   // Project
   CS.ActiveText,
   CS.Database.Types,
@@ -128,9 +129,8 @@ type
   )
   strict private
     var
-      // TODO: Change implementation to use DelphiColl - use TLinkedSet
       ///  <summary>Internal list if snippet ID records.</summary>
-      fList: TList<TSnippetID>;
+      fList: TLinkedSet<TSnippetID>;
   public
     ///  <summary>Constructs empty list object.</summary>
     constructor Create; overload;
@@ -144,7 +144,7 @@ type
 
     ///  <summary>Gets new list enumerator.</summary>
     ///  <remarks>Method of ISnippetIDList.</remarks>
-    function GetEnumerator: TEnumerator<TSnippetID>;
+    function GetEnumerator: IEnumerator<TSnippetID>;
 
     ///  <summary>Clears the list.</summary>
     ///  <remarks>Method of ISnippetIDList.</remarks>
@@ -225,7 +225,6 @@ begin
   if not Supports(Src, ISnippetIDList, SrcList) then
     raise EBug.Create(ClassName + '.Assign: Src must support ISnippetIDList');
   Clear;
-  fList.Capacity := SrcList.Count;
   for SrcID in SrcList do
     Add(SrcID);
 end;
@@ -253,21 +252,17 @@ end;
 
 constructor TSnippetIDList.Create(const ACapacity: Integer);
 begin
-  Create;
-  fList.Capacity := ACapacity;
+  fList := TLinkedSet<TSnippetID>.Create(
+    TRulesFactory<TSnippetID>.CreateFromComparator(
+      TSnippetID.TComparator.Create
+    ),
+    ACapacity
+  );
 end;
 
 constructor TSnippetIDList.Create;
 begin
-  inherited;
-  fList := TList<TSnippetID>.Create(
-    TDelegatedComparer<TSnippetID>.Create(
-      function(const Left, Right: TSnippetID): Integer
-      begin
-        Result := TSnippetID.Compare(Left, Right);
-      end
-    )
-  );
+  Create(0);
 end;
 
 destructor TSnippetIDList.Destroy;
@@ -276,7 +271,7 @@ begin
   inherited;
 end;
 
-function TSnippetIDList.GetEnumerator: TEnumerator<TSnippetID>;
+function TSnippetIDList.GetEnumerator: IEnumerator<TSnippetID>;
 begin
   Result := fList.GetEnumerator;
 end;
