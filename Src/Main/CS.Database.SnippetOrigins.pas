@@ -3,13 +3,12 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2013-2014, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2013-2016, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
  *
- * Provides a class that encapsulates information about a snippet's origins.
- * link.
+ * Provides classes that encapsulate information about a snippet's origins.
 }
 
 
@@ -99,7 +98,7 @@ end;
 
 function TLocalSnippetOrigin.GetOriginalID: string;
 begin
-  raise ENotSupportedException.Create(
+  raise ENotImplemented.Create(
     'GetOriginalID is not implemented in ' + ClassName
   );
 end;
