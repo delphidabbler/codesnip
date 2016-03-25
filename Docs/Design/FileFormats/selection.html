@@ -5,7 +5,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2012-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2012-2016, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -54,7 +54,7 @@
 </h2>
 
 <p>
-  CodeSnip uses this file format when it saves the selection / search result set
+  CodeSnip uses this file format when it saves the current selection of snippets
   to disk. The files use a custom format.
 </p>
 
@@ -71,35 +71,47 @@
 </h2>
 
 <p>
-  The file is introduced by a header line, which must occupy the first line.
-  This line must be:
+  The file is introduced by a header, which must occupy the first line. This
+  line must be:
 </p>
 
-<pre class="indent">► CodeSnip Selections v1 ◄</pre>
+<pre class="indent">► CodeSnip Selections v2 ◄</pre>
 
 <p>
-  Immediately following the header line comes a list of information about the
-  snippets included in the saved selection. Each snippet's information occupies
-  a line and is comprised of the snippet name, followed by a tab character,
-  followed by a 0 if the snippet is from the main (on-line) database or a 1 if
-  it is user defined.
+  No blank lines or white space may precede the header line.
+</p>
+
+<p>
+  Immediately following the header line comes a list of snippet IDs for the
+  snippets in the selection. There is one snippet per line. Snippets IDs must be
+  well formed, but do not have to exist in the database. There must be at least
+  one snippet line.
+</p>
+
+<p>
+  Blanks lines are permitted anywhere after the header line. They are ignored.
 </p>
 
 <p>
   Lines are separated by a CR / LF pair.
 </p>
 
-<p>
-  The header line must be the first line in the file and there must be at least
-  one snippet line. Blank lines are allowed anywhere after the header line and
-  are ignored. However blank lines are not written by the program.
-</p>
-
 <p class="pullout">
   <strong>NOTE:</strong>
-  The ► and ◄ characters were chosen because they encode in a unique way in
-  UTF-8 and ANSI files will not encode them correctly. This provides a second
-  way to check for the correct file format in addition to the byte order mark.
+  The ► and ◄ characters were chosen for the header line because they encode in
+  a unique way in UTF-8 so that ANSI and UTF-16 format files will not encode
+  them correctly. This provides a second way to check for the correct file
+  format in addition to the file's byte order mark.
+</p>
+
+<h2>Program Support</h2>
+
+<p>
+  This file format is supported by CodeSnip 5.
+</p>
+
+<p>
+  CodeSnip 4 used a similar but incompatible file format.
 </p>
 
 </body>
