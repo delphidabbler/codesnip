@@ -38,9 +38,6 @@ type
       ///  <remarks>Must be stripped of blank lines.</remarks>
       fLines: IStringList;
     ///  <summary>Parses watermark and non-blank lines in file.</summary>
-    ///  <remarks>Can handle both old-style files (that had a tab-separated
-    ///  snippet ID and a user-defined flag on each line) and new-style files
-    ///  that simply have one snippet ID per line.</remarks>
     procedure Parse;
   public
     constructor Create(const Watermark: string);
