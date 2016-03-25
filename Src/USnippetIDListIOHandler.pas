@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2013-2016, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -37,6 +37,10 @@ type
       ///  <summary>Lines of text from file.</summary>
       ///  <remarks>Must be stripped of blank lines.</remarks>
       fLines: IStringList;
+    ///  <summary>Parses watermark and non-blank lines in file.</summary>
+    ///  <remarks>Can handle both old-style files (that had a tab-separated
+    ///  snippet ID and a user-defined flag on each line) and new-style files
+    ///  that simply have one snippet ID per line.</remarks>
     procedure Parse;
   public
     constructor Create(const Watermark: string);
@@ -93,34 +97,22 @@ procedure TSnippetIDListFileReader.Parse;
 resourcestring
   sBadFileFormat = 'Invalid snippet ID list file format';
   sMissingName = 'Snippet name missing on line' + EOL2 + '"%s"';
-  sMissingUserDef = 'Snippet database specifier missing on line'
-    + EOL2 + '"%s"';
-  sBadUserDef = 'Unknown snippet database specifier on line'
-    + EOL2 + '"%s"';
+  sBadSnippetID = 'Malformed snippet ID' + EOL2 + '"%s"';
 var
-  Line: string;         // each line in fLines
-  Name: string;         // name of each snippet
-  // Following values are now ignored
-  UserDefStr: string;   // user defined value of each snippet as string
-  UserDefInt: Integer;  // user defined value of each snippet as integer
+  Line: string;       // each line in fLines
+  Name: string;       // name of each snippet
 begin
-  // TODO: change file format so that User-defined field not required
   fSnippetIDs.Clear;
   if (fLines.Count <= 1) or (fLines[0] <> fWatermark) then
     raise ESnippetIDListFileReader.Create(sBadFileFormat);
   fLines.Delete(0);
   for Line in fLines do
   begin
-    StrSplit(Line, TAB, Name, UserDefStr);
-    Name := StrTrim(Name);
-    UserDefStr := StrTrim(UserDefStr);
+    Name := StrTrim(Line);
     if Name = '' then
       raise ESnippetIDListFileReader.CreateFmt(sMissingName, [Line]);
-    if UserDefStr = '' then
-      raise ESnippetIDListFileReader.CreateFmt(sMissingUserDef, [Line]);
-    if not TryStrToInt(UserDefStr, UserDefInt)
-      or not (UserDefInt in [0, 1]) then
-      raise ESnippetIDListFileReader.CreateFmt(sBadUserDef, [Line]);
+    if not TSnippetID.IsValidIDString(Name) then
+      raise ESnippetIDListFileReader.CreateFmt(sBadSnippetID, [Name]);
     fSnippetIDs.Add(TSnippetID.Create(Name));
   end;
 end;
@@ -163,16 +155,9 @@ var
 begin
   fBuilder.Clear;
   fBuilder.AppendLine(fWatermark);
+  // One snippet ID is written per line
   for SnippetID in SnippetIDs do
-  begin
-    fBuilder.Append(SnippetID.ToString);
-    fBuilder.Append(TAB);
-    // NOTE: TStringBuilder.Append(Boolean) override not used here since ordinal
-    // value wanted instead of "True" or "False" or localised equivalent.
-    // TODO: Create a revised file format without this redundant field
-    fBuilder.Append(Ord(True));
-    fBuilder.AppendLine;
-  end;
+    fBuilder.AppendLine(SnippetID.ToString);
 end;
 
 destructor TSnippetIDListFileWriter.Destroy;
