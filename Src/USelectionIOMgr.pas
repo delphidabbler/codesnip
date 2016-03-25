@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2012-2014, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2012-2016, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -62,7 +62,7 @@ uses
 const
   ///  <summary>Watermark for selection files. Uses characters that will be
   ///  interpreted wrongly if the file is not in UTF8 format.</summary>
-  SelectionFileWatermark = #$25BA + ' CodeSnip Selections v1 ' + #$25C4;
+  SelectionFileWatermark = #$25BA + ' CodeSnip Selections v2 ' + #$25C4;
 
 { TSelectionIOMgr }
 
