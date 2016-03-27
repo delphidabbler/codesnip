@@ -33,6 +33,9 @@ type
     function IsEqual(const AOther: TDBSnippet): Boolean;
   end;
 
+  TDBSnippetsTableFilterFn = reference to function(const ASnippet: TDBSnippet):
+    Boolean;
+
   TDBSnippetsTable = class(TObject)
   strict private
     var
@@ -43,6 +46,9 @@ type
     function GetEnumerator: IEnumerator<TDBSnippet>;
     function Contains(const ASnippetID: TSnippetID): Boolean;
     function Get(const ASnippetID: TSnippetID): TDBSnippet;
+    function GetAllIDs: ISnippetIDList;
+    function FilterIDs(const FilterFn: TDBSnippetsTableFilterFn):
+      ISnippetIDList;
     procedure Add(const ASnippet: TDBSnippet);
     procedure Update(const ASnippet: TDBSnippet);
     procedure Delete(const ASnippetID: TSnippetID);
@@ -140,9 +146,29 @@ begin
   inherited;
 end;
 
+function TDBSnippetsTable.FilterIDs(
+  const FilterFn: TDBSnippetsTableFilterFn): ISnippetIDList;
+var
+  Snippet: TDBSnippet;
+begin
+  Result := TSnippetIDList.Create(Size);
+  for Snippet in fTable.Values do
+    if FilterFn(Snippet) then
+      Result.Add(Snippet.GetID);
+end;
+
 function TDBSnippetsTable.Get(const ASnippetID: TSnippetID): TDBSnippet;
 begin
   Result := fTable[ASnippetID];
+end;
+
+function TDBSnippetsTable.GetAllIDs: ISnippetIDList;
+var
+  Snippet: TDBSnippet;
+begin
+  Result := TSnippetIDList.Create(Size);
+  for Snippet in fTable.Values do
+    Result.Add(Snippet.GetID);
 end;
 
 function TDBSnippetsTable.GetEnumerator: IEnumerator<TDBSnippet>;

@@ -262,9 +262,7 @@ begin
     for Referrer in Referrers do
       fSnippetsTable.Get(Referrer).GetXRefs.Remove(ASnippetID);
     for Dependent in Dependents do
-      fSnippetsTable.Get(Dependent).GetRequiredSnippets.Remove(
-        ASnippetID
-      );
+      fSnippetsTable.Get(Dependent).GetRequiredSnippets.Remove(ASnippetID);
     // Delete snippet itself
     fSnippetsTable.Delete(ASnippetID);
     Query.Update;
@@ -316,12 +314,8 @@ begin
 end;
 
 function TDatabase.GetAllSnippets: ISnippetIDList;
-var
-  Snippet: TDBSnippet;
 begin
-  Result := TSnippetIDList.Create(fSnippetsTable.Size);
-  for Snippet in fSnippetsTable do
-    Result.Add(Snippet.GetID);
+  Result := fSnippetsTable.GetAllIDs;
 end;
 
 function TDatabase.GetAllTags: ITagSet;
@@ -331,14 +325,14 @@ end;
 
 function TDatabase.GetDependentsOf(const ASnippetID: TSnippetID):
   ISnippetIDList;
-var
-  Snippet: TDBSnippet;
 begin
-  Result := TSnippetIDList.Create;
-  for Snippet in fSnippetsTable do
-    if (Snippet.GetID <> ASnippetID)
-      and Snippet.GetRequiredSnippets.Contains(ASnippetID) then
-      Result.Add(Snippet.GetID);
+  Result := fSnippetsTable.FilterIDs(
+    function (const Snippet: TDBSnippet): Boolean
+    begin
+      Result := (Snippet.GetID <> ASnippetID)
+        and Snippet.GetRequiredSnippets.Contains(ASnippetID);
+    end
+  );
 end;
 
 class function TDatabase.GetInstance: TDatabase;
@@ -349,14 +343,14 @@ begin
 end;
 
 function TDatabase.GetReferrersTo(const ASnippetID: TSnippetID): ISnippetIDList;
-var
-  Snippet: TDBSnippet;  // references each snippet in database
 begin
-  Result := TSnippetIDList.Create;
-  for Snippet in fSnippetsTable do
-    if (Snippet.GetID <> ASnippetID)
-      and Snippet.GetXRefs.Contains(ASnippetID) then
-      Result.Add(Snippet.GetID);
+  Result := fSnippetsTable.FilterIDs(
+    function (const Snippet: TDBSnippet): Boolean
+    begin
+      Result := (Snippet.GetID <> ASnippetID)
+        and Snippet.GetXRefs.Contains(ASnippetID);
+    end
+  );
 end;
 
 procedure TDatabase.Initialize;
@@ -430,13 +424,13 @@ begin
 end;
 
 function TDatabase.SelectSnippets(FilterFn: TDBFilterFn): ISnippetIDList;
-var
-  Snippet: TDBSnippet;
 begin
-  Result := TSnippetIDList.Create;
-  for Snippet in fSnippetsTable do
-    if FilterFn(Snippet.CloneAsReadOnly) then
-      Result.Add(Snippet.GetID)
+  Result := fSnippetsTable.FilterIDs(
+    function (const Snippet: TDBSnippet): Boolean
+    begin
+      Result := FilterFn(Snippet.CloneAsReadOnly);
+    end
+  );
 end;
 
 function TDatabase.SnippetCount: Integer;
