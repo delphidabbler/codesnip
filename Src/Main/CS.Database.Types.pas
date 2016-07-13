@@ -230,10 +230,12 @@ type
   ISnippetOrigin = interface(IInterface)
     ['{2155B208-D00F-4C43-A897-823F9AE91739}']
     function GetSource: TSnippetOriginSource;
+//    function GetFriendlyName: string;
     function GetOriginalID: string;
     function GetModified: TUTCDateTime;
     function IsLinked: Boolean;
     property Source: TSnippetOriginSource read GetSource;
+//    property FriendlyName: string read GetFriendlyName;
     property OriginalID: string read GetOriginalID;
     property Modified: TUTCDateTime read GetModified;
   end;
