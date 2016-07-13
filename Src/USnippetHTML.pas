@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2006-2014, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2006-2016, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -80,11 +80,13 @@ type
     ///  cross-referenced snippets, or a message if list is empty.</summary>
     function XRefs: string;
     ///  <summary>Returns HTML of a comma separated list of units required by
-    ///  snippet, or a messafe if list is empty.</summary>
+    ///  snippet, or a message if list is empty.</summary>
     function Units: string;
     ///  <summary>Returns HTML representation of active text from snippet's
     ///  Notes property.</summary>
     function Notes: string;
+    ///  <summary>Returns HTML representation of snippet's origin.</summary>
+    function Origin: string;
     ///  <summary>Returns HTML containing rows of a table representing snippet's
     ///  compilation results for each supported compiler.</summary>
     function CompileResults: string;
@@ -181,6 +183,13 @@ end;
 function TSnippetHTML.Notes: string;
 begin
   Result := RenderActiveText(fSnippet.Notes);
+end;
+
+function TSnippetHTML.Origin: string;
+
+begin
+//fSnippet.Origin.Source
+  Result := '#### placeholder ###';
 end;
 
 function TSnippetHTML.RenderActiveText(ActiveText: IActiveText): string;
