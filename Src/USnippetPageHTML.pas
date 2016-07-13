@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2012-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2012-2016, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -196,6 +196,15 @@ type
     function ToString: string; override;
   end;
 
+type
+  ///  <summary>Class that renders "Origin" HTML fragment for a snippet.
+  ///  </summary>
+  TSnippetOriginHTMLFragment = class(TPrefixedSnippetHTMLFragment)
+  public
+    ///  <summary>Renders "Origin" fragment as HTML.</summary>
+    function ToString: string; override;
+  end;
+
 { TSnippetHTMLFragment }
 
 constructor TSnippetHTMLFragment.Create(Snippet: ISnippet);
@@ -325,6 +334,15 @@ begin
   );
 end;
 
+{ TSnippetOriginHTMLFragment }
+
+function TSnippetOriginHTMLFragment.ToString: string;
+resourcestring
+  sPrefix = 'Origin:';
+begin
+  Result := Render(sPrefix, 'origin', SnippetHTML.Origin);
+end;
+
 { TSnippetHTMLFragmentFactory }
 
 class function TSnippetHTMLFragmentFactory.Create(FragKind: TSnippetPagePartId;
@@ -340,7 +358,8 @@ const
     TSnippetXRefsHTMLFragment,          // sppXRefs,
     TSnippetCompileResultsHTMLFragment, // sppCompileResults,
     TSnippetNotesHTMLFragment,          // sppNotes
-    TSnippetLanguageHTMLFragment        // sppLanguage
+    TSnippetLanguageHTMLFragment,       // sppLanguage
+    TSnippetOriginHTMLFragment          // sppOrigin
   );
 begin
   Result := Map[FragKind].Create(Snippet);
