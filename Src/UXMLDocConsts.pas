@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2008-2015, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2008-2016, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -74,7 +74,7 @@ const
     'd2', 'd3', 'd4', 'd5', 'd6', 'd7',
     'd2005', 'd2006', 'd2007', 'd2009', 'd2010',
     'dXE', 'dXE2', 'dXE3', 'dDX4' {error, but in use},
-    'dXE5', 'dXE6', 'dXE7', 'dXE8', 'd10s',
+    'dXE5', 'dXE6', 'dXE7', 'dXE8', 'd10s', 'd101b',
     'fpc'
   );
 
