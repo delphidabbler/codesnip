@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2006-2015, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2006-2016, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -145,6 +145,8 @@ begin
       Result := 'DXE8';
     ciD10S:
       Result := 'D10S';
+    ciD101B:
+      Result := 'D101B';
     else
       raise EBug.Create(ClassName + '.GetIDString: Invalid ID');
   end;
@@ -152,16 +154,17 @@ end;
 
 function TBDSCompiler.GetName: string;
 resourcestring
-  sCompilerName = 'Delphi %d';      // template for name of compiler
-  sDelphiXE = 'Delphi XE';          // name of Delphi XE compiler
-  sDelphiXE2 = 'Delphi XE2';        // name of Delphi XE2 compiler
-  sDelphiXE3 = 'Delphi XE3';        // name of Delphi XE3 compiler
-  sDelphiXE4 = 'Delphi XE4';        // name of Delphi XE4 compiler
-  sDelphiXE5 = 'Delphi XE5';        // name of Delphi XE5 compiler
-  sDelphiXE6 = 'Delphi XE6';        // name of Delphi XE6 compiler
-  sDelphiXE7 = 'Delphi XE7';        // name of Delphi XE7 compiler
-  sDelphiXE8 = 'Delphi XE8';        // name of Delphi XE8 compiler
-  sDelphi10S = 'Delphi 10 Seattle'; // name of Delphi 10 compiler
+  sCompilerName = 'Delphi %d';          // template for name of compiler
+  sDelphiXE = 'Delphi XE';              // name of Delphi XE compiler
+  sDelphiXE2 = 'Delphi XE2';            // name of Delphi XE2 compiler
+  sDelphiXE3 = 'Delphi XE3';            // name of Delphi XE3 compiler
+  sDelphiXE4 = 'Delphi XE4';            // name of Delphi XE4 compiler
+  sDelphiXE5 = 'Delphi XE5';            // name of Delphi XE5 compiler
+  sDelphiXE6 = 'Delphi XE6';            // name of Delphi XE6 compiler
+  sDelphiXE7 = 'Delphi XE7';            // name of Delphi XE7 compiler
+  sDelphiXE8 = 'Delphi XE8';            // name of Delphi XE8 compiler
+  sDelphi10S = 'Delphi 10 Seattle';     // name of Delphi 10 compiler
+  sDelphi101B = 'Delphi 10.1 Berlin';   // name of Delphi 10.1 compiler
 begin
   case GetID of
     ciDXE:
@@ -182,6 +185,8 @@ begin
       Result := sDelphiXE8;
     ciD10S:
       Result := sDelphi10S;
+    ciD101B:
+      Result := sDelphi101B;
     else
       Result := Format(sCompilerName, [ProductVersion]);
   end;
@@ -211,6 +216,7 @@ begin
     ciDXE7    : Result := '\Software\Embarcadero\BDS\15.0';
     ciDXE8    : Result := '\Software\Embarcadero\BDS\16.0';
     ciD10S    : Result := '\Software\Embarcadero\BDS\17.0';
+    ciD101B   : Result := '\Software\Embarcadero\BDS\18.0';
     else raise EBug.Create(ClassName + '.InstallationRegKey: Invalid ID');
   end;
 end;

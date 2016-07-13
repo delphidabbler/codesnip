@@ -3,16 +3,16 @@ inherited CompilersDlg: TCompilersDlg
   ClientHeight = 381
   ClientWidth = 524
   ExplicitWidth = 530
-  ExplicitHeight = 409
+  ExplicitHeight = 410
   PixelsPerInch = 96
   TextHeight = 13
   inherited pnlBody: TPanel
-    Width = 497
-    ExplicitWidth = 497
+    Width = 505
+    ExplicitWidth = 505
     object pbBanner: TPaintBox
-      Left = 128
+      Left = 135
       Top = 0
-      Width = 369
+      Width = 370
       Height = 23
       Color = clActiveCaption
       Font.Charset = DEFAULT_CHARSET
@@ -26,7 +26,7 @@ inherited CompilersDlg: TCompilersDlg
     object lbCompilers: TListBox
       Left = 0
       Top = 0
-      Width = 121
+      Width = 129
       Height = 292
       Style = lbOwnerDrawFixed
       Ctl3D = True
@@ -36,7 +36,7 @@ inherited CompilersDlg: TCompilersDlg
       TabOrder = 0
     end
     object pcCompiler: TPageControl
-      Left = 127
+      Left = 135
       Top = 29
       Width = 370
       Height = 263
@@ -45,8 +45,6 @@ inherited CompilersDlg: TCompilersDlg
       OnMouseDown = pcCompilerMouseDown
       object tsCompiler: TTabSheet
         Caption = 'Compiler'
-        ExplicitWidth = 313
-        ExplicitHeight = 199
         inline frmCompiler: TCompilersDlgCompilerFrame
           Left = 0
           Top = 0
@@ -54,14 +52,11 @@ inherited CompilersDlg: TCompilersDlg
           Height = 235
           Align = alClient
           TabOrder = 0
-          ExplicitHeight = 199
         end
       end
       object tsSwitches: TTabSheet
         Caption = 'Switches'
         ImageIndex = 2
-        ExplicitWidth = 313
-        ExplicitHeight = 199
         inline frmSwitches: TCompilersDlgSwitchesFrame
           Left = 0
           Top = 0
@@ -69,14 +64,23 @@ inherited CompilersDlg: TCompilersDlg
           Height = 235
           Align = alClient
           TabOrder = 0
-          ExplicitHeight = 199
+          inherited btnDefSwitches: TButton
+            ExplicitLeft = 293
+          end
+          inherited btnAdd: TButton
+            ExplicitLeft = 222
+          end
+          inherited btnReplace: TButton
+            ExplicitLeft = 293
+          end
+          inherited btnDelete: TButton
+            ExplicitLeft = 222
+          end
         end
       end
       object tsNamespaces: TTabSheet
         Caption = 'Namespaces'
         ImageIndex = 4
-        ExplicitWidth = 313
-        ExplicitHeight = 199
         inline frmNamespaces: TCompilersDlgNamespacesFrame
           Left = 0
           Top = 0
@@ -84,15 +88,23 @@ inherited CompilersDlg: TCompilersDlg
           Height = 235
           Align = alClient
           TabOrder = 0
-          ExplicitWidth = 313
-          ExplicitHeight = 199
+          inherited btnDefSwitches: TButton
+            ExplicitLeft = 293
+          end
+          inherited btnAdd: TButton
+            ExplicitLeft = 222
+          end
+          inherited btnReplace: TButton
+            ExplicitLeft = 293
+          end
+          inherited btnDelete: TButton
+            ExplicitLeft = 222
+          end
         end
       end
       object tsSearchDirs: TTabSheet
         Caption = 'Search Paths'
         ImageIndex = 3
-        ExplicitWidth = 313
-        ExplicitHeight = 199
         inline frmSearchDirs: TCompilersDlgSearchDirsFrame
           Left = 0
           Top = 0
@@ -100,14 +112,21 @@ inherited CompilersDlg: TCompilersDlg
           Height = 235
           Align = alClient
           TabOrder = 0
-          ExplicitHeight = 199
+          inherited edPath: TEdit
+            ExplicitWidth = 322
+          end
+          inherited btnBrowse: TButton
+            ExplicitLeft = 331
+          end
         end
       end
       object tsLog: TTabSheet
         Caption = 'Output Log'
         ImageIndex = 1
-        ExplicitWidth = 313
-        ExplicitHeight = 199
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         inline frmLog: TCompilersDlgLogFrame
           Left = 0
           Top = 0
@@ -115,7 +134,9 @@ inherited CompilersDlg: TCompilersDlg
           Height = 235
           Align = alClient
           TabOrder = 0
-          ExplicitHeight = 199
+          inherited vleLogPrefixes: TValueListEditor
+            ExplicitWidth = 354
+          end
         end
       end
     end
