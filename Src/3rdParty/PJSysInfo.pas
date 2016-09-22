@@ -3,10 +3,10 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2001-2015, Peter Johnson (@delphidabbler).
+ * Copyright (C) 2001-2016, Peter Johnson (@delphidabbler).
  *
- * $Rev: 2002 $
- * $Date: 2015-11-30 14:45:35 +0000 (Mon, 30 Nov 2015) $
+ * $Rev: 2015 $
+ * $Date: 2016-09-12 00:47:45 +0100 (Mon, 12 Sep 2016) $
  *
  * This unit contains various static classes, constants, type definitions and
  * global variables for use in providing information about the host computer and
@@ -443,8 +443,7 @@ type
     osWin8Point1,           // Windows 8.1
     osWinSvr2012R2,         // Windows Server 2012 R2
     osWin10,                // Windows 10
-    // TODO: Update following comment to correct name once released
-    osWin10Svr              // Windows 10 Server Technical Preview
+    osWin10Svr              // Windows 2016 Server
   );
 
 type
@@ -582,7 +581,7 @@ type
     ///  <remarks>
     ///  <para>Windows has added significant OS updates that bump the build
     ///  number but do not declare themselves as service packs: e.g. the Windows
-    ///  10 TH2 update.</para>
+    ///  10 TH2 update, aka Version 1511.</para>
     ///  <para>This method is used to report such updates in addition to
     ///  updates that declare themselves as service packs, while the ServicePack
     ///  method only reports declared 'official' service packs.</para>
@@ -1498,10 +1497,16 @@ const
   WinVistaBaseBuild = 6000;
   Win7BaseBuild = 7600;
   // for Win 8 onwards we just use the build numbers as is
-  Win8Build = 9200;
-  Win8Point1Build = 9600;
-  Win10TH1Build = 10240;
-  Win10TH2Build = 10586;
+  Win8Build = 9200;         // Only build number used for Win 8 / Svr 2012
+  Win8Point1Build = 9600;   // Only build number used for Win 8.1 / Svr 2012 R2
+  Win10TH1Build = 10240;    // Initial Windows 10 release (not Server 2016)
+  Win10TH2Build = 10586;    // Windows 10 TH2 (shared with Win 2016 TP4 - below)
+  Win10RS1Build = 14393;    // Windows 10 RS1
+  Win2016TP1Build = 9841;   // Windows 2016 Server Technical Preview 1
+  Win2016TP2Build = 10074;  // Windows 2016 Server Technical Preview 2
+  Win2016TP3Build = 10514;  // Windows 2016 Server Technical Preview 3
+  Win2016TP4Build = 10586;  // Windows 2016 Server Technical Preview 4
+  Win2016TP5Build = 14300;  // Windows 2016 Server Technical Preview 5
 begin
   // Load version query functions used externally to this routine
   VerSetConditionMask := LoadKernelFunc('VerSetConditionMask');
@@ -1530,6 +1535,15 @@ begin
       InternalMajorVersion, InternalMinorVersion,
       Win32ServicePackMajor, Win32ServicePackMinor
     );
+    // Test possible product types to see which one we have
+    if IsWindowsProductType(VER_NT_WORKSTATION) then
+      Win32ProductType := VER_NT_WORKSTATION
+    else if IsWindowsProductType(VER_NT_DOMAIN_CONTROLLER) then
+      Win32ProductType := VER_NT_DOMAIN_CONTROLLER
+    else if IsWindowsProductType(VER_NT_SERVER) then
+      Win32ProductType := VER_NT_SERVER
+    else
+      Win32ProductType := 0;
     // NOTE: It's going to be very slow to test for all possible build numbers,
     // so I've just narrowed the search down using the information at
     // http://en.wikipedia.org/wiki/Windows_NT
@@ -1551,7 +1565,14 @@ begin
             // Windows 8.1 (no known SPs)
             if Win32ServicePackMajor = 0 then
               InternalBuildNumber := Win8Point1Build;
-
+          4:
+            if (Win32ProductType = VER_NT_DOMAIN_CONTROLLER)
+              or (Win32ProductType = VER_NT_SERVER) then
+            begin
+              // Windows 2016 Server tech preview 1
+              InternalBuildNumber := Win2016TP1Build;
+              InternalExtraUpdateInfo := 'Technical Preview 6';
+            end;
         end;
         if Win32ServicePackMajor > 0 then
           // ** Tried to read this info from registry, but for some weird
@@ -1567,9 +1588,9 @@ begin
       begin
         case InternalMinorVersion of
           0:
+          if (Win32ProductType <> VER_NT_DOMAIN_CONTROLLER)
+            and (Win32ProductType <> VER_NT_SERVER) then
           begin
-            // TODO: Revist when server version released to check if same build
-            // number(s)
             // Windows 10 TH1 branch release
             if IsBuildNumber(Win10TH1Build) then
               InternalBuildNumber := Win10TH1Build
@@ -1577,8 +1598,42 @@ begin
             else if IsBuildNumber(Win10TH2Build) then
             begin
               InternalBuildNumber := Win10TH2Build;
-              InternalExtraUpdateInfo := 'TH2: November Update';
+              InternalExtraUpdateInfo := 'Version 1511';
+            end
+            else if IsBuildNumber(Win10RS1Build) then
+            begin
+              InternalBuildNumber := Win10RS1Build;
+              InternalExtraUpdateInfo := 'Version 1607';
             end;
+          end
+          else
+          begin
+            { TODO: Revisit when Windows 2016 Server is released to add its
+                    build number }
+            // Check for Technical previews. We don't check for TP1 here because
+            // that reported version 6.4, not version 10!
+            // Source of these build numbers:
+            // https://en.wikipedia.org/wiki/Windows_Server_2016#Version_history
+            if IsBuildNumber(Win2016TP2Build) then
+            begin
+              InternalBuildNumber := Win2016TP2Build;
+              InternalExtraUpdateInfo := 'Technical Preview 2';
+            end
+            else if IsBuildNumber(Win2016TP3Build) then
+            begin
+              InternalBuildNumber := Win2016TP3Build;
+              InternalExtraUpdateInfo := 'Technical Preview 3';
+            end
+            else if IsBuildNumber(Win2016TP4Build) then
+            begin
+              InternalBuildNumber := Win2016TP4Build;
+              InternalExtraUpdateInfo := 'Technical Preview 4';
+            end
+            else if IsBuildNumber(Win2016TP5Build) then
+            begin
+              InternalBuildNumber := Win2016TP5Build;
+              InternalExtraUpdateInfo := 'Technical Preview 5';
+            end
           end;
         end;
       end;
@@ -1591,17 +1646,10 @@ begin
     //    10586 !
     //    So we must now consider a build number of 0 as indicating an unknown
     //    build number.
+    //    But note that some users report that their registry is returning
+    //    correct value. I really hate Windows!!!
     // ** Seems like more registry spoofing (see above).
 
-    // Test possible product types to see which one we have
-    if IsWindowsProductType(VER_NT_WORKSTATION) then
-      Win32ProductType := VER_NT_WORKSTATION
-    else if IsWindowsProductType(VER_NT_DOMAIN_CONTROLLER) then
-      Win32ProductType := VER_NT_DOMAIN_CONTROLLER
-    else if IsWindowsProductType(VER_NT_SERVER) then
-      Win32ProductType := VER_NT_SERVER
-    else
-      Win32ProductType := 0;
   end
   else
   begin
@@ -1702,14 +1750,14 @@ begin
         // For NT3/4 append version number after product
         AppendToResult(Format('%d.%d', [MajorVersion, MinorVersion]));
         AppendToResult(Edition);
-        AppendToResult(ServicePack);  // does nothing if no service pack
+        AppendToResult(ServicePackEx);  // does nothing if no service pack etc
         AppendToResult(Format('(Build %d)', [BuildNumber]));
       end
       else
       begin
         // Windows 2000 and later: don't include version number
         AppendToResult(Edition);
-        AppendToResult(ServicePack);  // does nothing if no service pack
+        AppendToResult(ServicePackEx);  // does nothing if no service pack
         AppendToResult(Format('(Build %d)', [BuildNumber]));
       end;
     end;
@@ -2242,6 +2290,13 @@ begin
                 Result := osWin8Point1
               else
                 Result := osWinSvr2012R2;
+            4:
+              // Version 6.4 was used for Windows 2016 server tech preview 1.
+              // This version *may* only be detected by Windows if the
+              // application is "manifested" for the correct Windows version.
+              // See http://bit.ly/MJSO8Q.
+              if IsServer then
+                Result := osWin10Svr;
             else
               // Higher minor version: must be an unknown later OS
               Result := osWinLater
@@ -2305,8 +2360,7 @@ begin
     osWin8Point1: Result := 'Windows 8.1';
     osWinSvr2012R2: Result := 'Windows Server 2012 R2';
     osWin10: Result := 'Windows 10';
-    // TODO: Update osWin10Svr description once OS is released and named
-    osWin10Svr: Result := 'Windows Server Technical Preview';
+    osWin10Svr: Result := 'Windows Server 2016';
     else
       raise EPJSysInfo.Create(sUnknownProduct);
   end;
@@ -2337,7 +2391,7 @@ end;
 
 class function TPJOSInfo.ServicePack: string;
 begin
-  // Assume to service pack
+  // Assume no service pack
   Result := '';
   case Platform of
     ospWin9x:
