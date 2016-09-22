@@ -11,6 +11,9 @@
 ; Change Log for CodeSnip Release 4
 ; ------------------------------------------------------------------------------
 
+Release v4.15.1 of 22 September 2016
++ Updated OS detection code to detect Windows 10 Version 1607 (Anniversary update) and all technical previews of Windows 2016 Server to date.
+
 Release v4.15.0 of 13 July 2016
 + Added support for test compilation with, and detection of, Delphi 10.1 Berlin compiler.
 + Tweaked size of compiler list in Configure Compilers dialogue box to accommodate length of Delphi 10.1 Berline compiler name!
