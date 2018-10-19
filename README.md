@@ -45,7 +45,6 @@ There's quite a lot of support available for CodeSnip:
 * An [FAQ](http://wiki.delphidabbler.com/index.php/FAQs/CodeSnipAppUsing).
 * A [discussion group](https://sourceforge.net/p/codesnip/discussion) on SourceForge (albeit barely used!).
 * An [RSS news feed](http://delphidabbler.com/feeds/site-news-feed?id=codesnip). This can also be accessed via the program.
-* A [Google+ page](https://plus.google.com/u/0/b/108251259814638768561/108251259814638768561/posts).
 * A [Blog](http://codesnip-app.blogspot.co.uk/).
 * A [privacy statement](https://raw.githubusercontent.com/delphidabbler/codesnip/master/Docs/Privacy.txt)<sup>*</sup> that provides information about any personal information stored by the program and what info is transmitted over the net.
 
