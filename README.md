@@ -13,3 +13,5 @@ The idea behind v5 was to:
 3. Remove the program's dependency on web services provided by [DelphiDabbler.com](http://delphidabbler.com) given the current uncertainty over that websites future.
 
 <sup>†</sup> It is hoped to move the Code Snippets database to GitHub before DelphiDabbler closes down on 15 June 2020.
+
+> If you decide to continue with this development please fork the repo. Do not submit changes back here - no pull requests will be accepted. Thanks.
