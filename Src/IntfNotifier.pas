@@ -161,7 +161,7 @@ type
 
     ///  <summary>Sets action used to display Donate dialogue box.</summary>
     ///  <param name="Action">TBasicAction [in] Required action.</param>
-    procedure SetDonateAction(const Action: TBasicAction);
+    procedure SetDonateAction(const Action: TBasicAction);  // TODO -cwebsvc: remove this
 
     ///  <summary>Sets action used to open snippets editor to create a new
     ///  snippet.</summary>
@@ -171,11 +171,11 @@ type
     ///  <summary>Sets action used to display news items from the CodeSnip news
     ///  feed.</summary>
     ///  <param name="Action">TBasicAction [in] Required action.</param>
-    procedure SetNewsAction(const Action: TBasicAction);
+    procedure SetNewsAction(const Action: TBasicAction);   // TODO -cwebsvc: remove this
 
     ///  <summary>Sets action used to check for program updates.</summary>
     ///  <param name="Action">TBasicAction [in] Required action.</param>
-    procedure SetCheckForUpdatesAction(const Action: TBasicAction);
+    procedure SetCheckForUpdatesAction(const Action: TBasicAction);   // TODO -cwebsvc: remove this
 
     ///  <summary>Sets action used to display the program's About Box.</summary>
     ///  <param name="Action">TBasicAction [in] Required action.</param>

@@ -12,6 +12,7 @@
  * snippets from the DelphiDabbler implementation of the SWAG Pascal archive.
 }
 
+// TODO -cwebsvc: change to import SWAG from local file - user must download and extract
 
 unit FmSWAGImportDlg;
 

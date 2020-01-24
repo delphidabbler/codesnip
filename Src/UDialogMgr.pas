@@ -131,7 +131,7 @@ type
     function ExecPrintDlg: Boolean;
 
     ///  <summary>Displays the Donate dialogue box.</summary>
-    procedure ShowDonateDlg;
+    procedure ShowDonateDlg;  // TODO -cwebsvc: remove this
 
     ///  <summary>Displays the Test Unit dialogue box.</summary>
     ///  <param name="Snippet">ISnippet [in] Snippet for which test unit is to
@@ -153,10 +153,10 @@ type
     ///  </summary>
     ///  <returns>Boolean. True if user OKd dialogue or False if user cancelled.
     ///  </returns>
-    function ExecProxyServerDlg: Boolean;
+    function ExecProxyServerDlg: Boolean; // TODO -cwebsvc: remove this
 
     ///  <summary>Displays the News dialogue box.</summary>
-    procedure ShowNewsDlg;
+    procedure ShowNewsDlg;  // TODO -cwebsvc: remove this
 
     ///  <summary>Displays the Test Compile dialogue box.</summary>
     ///  <param name="CompileMgr">TCompileMgr [in] Object used to manage test
@@ -167,7 +167,7 @@ type
       Snippet: ISnippet);
 
     ///  <summary>Displays the Check For Program Updates dialogue box.</summary>
-    procedure ShowProgramUpdatesDlg;
+    procedure ShowProgramUpdatesDlg;    // TODO -cwebsvc: remove this
 
     ///  <summary>Displays the SWAG Import Wizard dialogue box.</summary>
     procedure ShowSWAGImportDlg;
