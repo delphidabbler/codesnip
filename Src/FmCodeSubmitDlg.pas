@@ -13,6 +13,8 @@
 }
 
 
+// TODO -cwebsvc: Remove this form unit
+
 unit FmCodeSubmitDlg;
 
 
@@ -177,7 +179,6 @@ uses
   UStrUtils,
   UUserDetails,
   UUserDetailsPersist,
-  Web.UCodeSubmitter,
   Web.UExceptions;
 
 
@@ -304,32 +305,32 @@ resourcestring
   // Web service / server error meesage
   sWebServerError = 'Submission failed because web server reported '
     + 'HTTP Error %0:d: %1:s';
-var
-  WebSvc: TCodeSubmitter;  // communicates with web service
+//var
+//  WebSvc: TCodeSubmitter;  // communicates with web service
 begin
-  try
-    // Do the submission
-    WebSvc := TCodeSubmitter.Create;
-    try
-      Screen.Cursor := crHourglass;
-      Enabled := False;
-      // POST the data
-      WebSvc.SubmitData(fData.Data);
-    finally
-      WebSvc.Free;
-      Enabled := True;
-      Screen.Cursor := crDefault;
-    end;
-  except
-    // handle any exceptions from submission: we convert expected exceptions to
-    // ECodeSubmitDlg to save triggering this dialogue again: others are re-
-    // raised
-    on E: EHTTPError do
-      // error on web server: make more friendly
-      raise ECodeSubmitDlg.CreateFmt(
-        sWebServerError, [E.HTTPErrorCode, StrTrim(E.Message)]
-      );
-  end;
+//  try
+//    // Do the submission
+//    WebSvc := TCodeSubmitter.Create;
+//    try
+//      Screen.Cursor := crHourglass;
+//      Enabled := False;
+//      // POST the data
+//      WebSvc.SubmitData(fData.Data);
+//    finally
+//      WebSvc.Free;
+//      Enabled := True;
+//      Screen.Cursor := crDefault;
+//    end;
+//  except
+//    // handle any exceptions from submission: we convert expected exceptions to
+//    // ECodeSubmitDlg to save triggering this dialogue again: others are re-
+//    // raised
+//    on E: EHTTPError do
+//      // error on web server: make more friendly
+//      raise ECodeSubmitDlg.CreateFmt(
+//        sWebServerError, [E.HTTPErrorCode, StrTrim(E.Message)]
+//      );
+//  end;
 end;
 
 class procedure TCodeSubmitDlg.Execute(const AOwner: TComponent;

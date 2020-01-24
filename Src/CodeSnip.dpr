@@ -326,7 +326,6 @@ uses
   UXMLDocumentEx in 'UXMLDocumentEx.pas',
   Web.UBaseWebService in 'Web.UBaseWebService.pas',
   Web.UCharEncodings in 'Web.UCharEncodings.pas',
-  Web.UCodeSubmitter in 'Web.UCodeSubmitter.pas',
   Web.UDownloadMonitor in 'Web.UDownloadMonitor.pas',
   Web.UExceptions in 'Web.UExceptions.pas',
   Web.UHTTPEx in 'Web.UHTTPEx.pas',
