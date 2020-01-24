@@ -720,13 +720,6 @@ inherited MainForm: TMainForm
       OnExecute = actCopyInfoExecute
       OnUpdate = actCopyInfoUpdate
     end
-    object actDonate: TAction
-      Category = 'Help'
-      Caption = 'Donate...'
-      Hint = 'Donate|Make a PayPal donation to support CodeSnip development'
-      ImageIndex = 23
-      OnExecute = actDonateExecute
-    end
     object actViewDependencies: TAction
       Category = 'View'
       Caption = 'Dependencies...'
@@ -1201,9 +1194,6 @@ inherited MainForm: TMainForm
       end
       object miSpacer5: TMenuItem
         Caption = '-'
-      end
-      object miDonate: TMenuItem
-        Action = actDonate
       end
       object miAbout: TMenuItem
         Action = actAbout

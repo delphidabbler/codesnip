@@ -70,7 +70,6 @@ type
     actCopySnippet: TAction;
     actCopySource: TAction;
     actDeleteSnippet: TAction;
-    actDonate: TAction;
     actDuplicateSnippet: TAction;
     actEditSnippet: TAction;
     actExit: TFileExit;
@@ -140,7 +139,6 @@ type
     miCopySnippet: TMenuItem;
     miDatabase: TMenuItem;
     miDeleteSnippet: TMenuItem;
-    miDonate: TMenuItem;
     miDuplicateSnippet: TMenuItem;
     miEdit: TMenuItem;
     miEditSnippet: TMenuItem;
@@ -301,8 +299,6 @@ type
     ///  <summary>Attempts to delete the current snippet from the database.
     ///  </summary>
     procedure actDeleteSnippetExecute(Sender: TObject);
-    ///  <summary>Displays Donate dialogue box.</summary>
-    procedure actDonateExecute(Sender: TObject);
     ///  <summary>Displays a dialogue box that can be used to duplicate the
     ///  selected snippet.</summary>
     procedure actDuplicateSnippetExecute(Sender: TObject);
@@ -747,11 +743,6 @@ begin
     ClassName + '.actDeleteSnippetExecute: Can''t delete current view item');
   TDBModificationMgr.DeleteSnippet(fMainDisplayMgr.CurrentView);
   // display update is handled by snippets change event handler
-end;
-
-procedure TMainForm.actDonateExecute(Sender: TObject);
-begin
-  fDialogMgr.ShowDonateDlg
 end;
 
 procedure TMainForm.actDuplicateSnippetExecute(Sender: TObject);
@@ -1480,9 +1471,7 @@ begin
           Self, ActEditSnippetByNameExecute
         )
       );
-      SetDonateAction(actDonate);
       SetNewSnippetAction(actAddSnippet);
-      SetNewsAction(actNews);
       SetCheckForUpdatesAction(actProgramUpdates);
       SetAboutBoxAction(actAbout);
       SetShowPrefsPageAction(
