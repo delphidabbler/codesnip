@@ -877,6 +877,14 @@ inherited MainForm: TMainForm
         ' viewer program can be configured'
       OnExecute = actConfigDiffProgExecute
     end
+    object actBlog: TBrowseURL
+      Category = 'Help'
+      Caption = 'CodeSnip News Blog'
+      Hint = 
+        'Codesnip blog|Display the CodeSnip news blog in the default web ' +
+        'browser'
+      ImageIndex = 6
+    end
   end
   object mnuMain: TMainMenu
     Images = ilMain
@@ -1153,6 +1161,9 @@ inherited MainForm: TMainForm
       end
       object miHomePage: TMenuItem
         Action = actHomePage
+      end
+      object miBlog: TMenuItem
+        Action = actBlog
       end
       object miSpacer5: TMenuItem
         Caption = '-'

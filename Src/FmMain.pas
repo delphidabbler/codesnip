@@ -240,6 +240,8 @@ type
     actFindTags: TAction;
     miFindTags: TMenuItem;
     tbFindTags: TToolButton;
+    miBlog: TMenuItem;
+    actBlog: TBrowseURL;
     ///  <summary>Displays About Box.</summary>
     procedure actAboutExecute(Sender: TObject);
     ///  <summary>Adds current snippet to favourites.</summary>
@@ -1395,6 +1397,7 @@ begin
     // Initialise actions
     // Browse actions have to have URLs set dynamically
     actHomePage.URL := TWebInfo.ProgramHomeURL;
+    actBlog.URL := TWebInfo.ProgramBlogURL;
     // Tree control actions need shortcuts adding dynamically, and state stored
     // in Tag property
     actExpandNode.ShortCut := ShortCut(VK_ADD, [ssCtrl]);
