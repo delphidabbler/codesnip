@@ -404,13 +404,6 @@ inherited MainForm: TMainForm
       OnExecute = actCopyExecute
       OnUpdate = actCopyUpdate
     end
-    object actBugReport: TAction
-      Category = 'Tools'
-      Caption = 'Report Bug Online...'
-      Hint = 'Report a bug|Report a bug using the online bug tracker'
-      ImageIndex = 17
-      OnExecute = actBugReportExecute
-    end
     object actFindCompiler: TAction
       Category = 'Search'
       Caption = 'Find Compiler(s)...'
@@ -775,14 +768,6 @@ inherited MainForm: TMainForm
       OnExecute = actCopySourceExecute
       OnUpdate = actCopySourceUpdate
     end
-    object actProxyServer: TAction
-      Category = 'Tools'
-      Caption = 'Proxy Server...'
-      Hint = 
-        'Configure proxy server|Configure any proxy server to be used by ' +
-        'CodeSnip when accessing web services'
-      OnExecute = actProxyServerExecute
-    end
     object actNewDetailsTab: TAction
       Category = 'View'
       Caption = 'New Tab'
@@ -832,14 +817,6 @@ inherited MainForm: TMainForm
       ShortCut = 41036
       OnExecute = actLoadSelectionExecute
       OnUpdate = ActNonEmptyDBUpdate
-    end
-    object actProgramUpdates: TAction
-      Category = 'Tools'
-      Caption = 'Check For Program Updates...'
-      Hint = 
-        'Check for program updates|Check online for newer versions of Cod' +
-        'eSnip'
-      OnExecute = actProgramUpdatesExecute
     end
     object actCloseUnselectedDetailsTabs: TAction
       Category = 'View'
@@ -1152,21 +1129,6 @@ inherited MainForm: TMainForm
       end
       object miConfigDiffProg: TMenuItem
         Action = actConfigDiffProg
-      end
-      object miProxyServer: TMenuItem
-        Action = actProxyServer
-      end
-      object miSpacer18: TMenuItem
-        Caption = '-'
-      end
-      object miCheckUpdates: TMenuItem
-        Action = actProgramUpdates
-      end
-      object miSpacer7: TMenuItem
-        Caption = '-'
-      end
-      object miReportBug: TMenuItem
-        Action = actBugReport
       end
     end
     object miHelp: TMenuItem

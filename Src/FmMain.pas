@@ -58,7 +58,6 @@ type
     actToggleFavourite: TAction;
     actAddSnippet: TAction;
     actBackupDatabase: TAction;
-    actBugReport: TAction;
     actCloseAllDetailsTabs: TAction;
     actCloseDetailsTab: TAction;
     actCloseUnselectedDetailsTabs: TAction;
@@ -97,8 +96,6 @@ type
     actPreviousTab: TAction;
     actPrint: TAction;
     actPrivacy: TAction;
-    actProgramUpdates: TAction;
-    actProxyServer: TAction;
     actRestoreDatabase: TAction;
     actSaveDatabase: TAction;
     actSaveSelection: TAction;
@@ -127,7 +124,6 @@ type
     miToggleFavourite: TMenuItem;
     miAddSnippet: TMenuItem;
     miBackupDatabase: TMenuItem;
-    miCheckUpdates: TMenuItem;
     miCloseAllDetailsTabs: TMenuItem;
     miCloseDetailsTab: TMenuItem;
     miCollapseNode: TMenuItem;
@@ -167,8 +163,6 @@ type
     miPreferences: TMenuItem;
     miPrint: TMenuItem;
     miPrivacy: TMenuItem;
-    miProxyServer: TMenuItem;
-    miReportBug: TMenuItem;
     miRestoreDatabase: TMenuItem;
     miSaveDatabase: TMenuItem;
     miSaveSelection: TMenuItem;
@@ -185,7 +179,6 @@ type
     miSpacer4: TMenuItem;
     miSpacer5: TMenuItem;
     miSpacer6: TMenuItem;
-    miSpacer7: TMenuItem;
     miSpacer8: TMenuItem;
     miSpacer10: TMenuItem;
     miSpacer11: TMenuItem;
@@ -195,7 +188,6 @@ type
     miSpacer15: TMenuItem;
     miSpacer16: TMenuItem;
     miSpacer17: TMenuItem;
-    miSpacer18: TMenuItem;
     miSpacer19: TMenuItem;
     miSpacer20: TMenuItem;
     miSubmit: TMenuItem;
@@ -260,8 +252,6 @@ type
     procedure actAddSnippetExecute(Sender: TObject);
     ///  <summary>Makes a backup of the snippets database.</summary>
     procedure actBackupDatabaseExecute(Sender: TObject);
-    ///  <summary>Displays Bug Report dialogue box.</summary>
-    procedure actBugReportExecute(Sender: TObject);
     ///  <summary>Closes all open tabs in details pane.</summary>
     procedure actCloseAllDetailsTabsExecute(Sender: TObject);
     ///  <summary>Closes current tab in details pane.</summary>
@@ -392,12 +382,6 @@ type
     procedure actPrintUpdate(Sender: TObject);
     ///  <summary>Displays the Privacy Statement help topic.</summary>
     procedure actPrivacyExecute(Sender: TObject);
-    ///  <summary>Displays the Check For Program Updates dialogue box that
-    ///  displays the availability of any program updates.</summary>
-    procedure actProgramUpdatesExecute(Sender: TObject);
-    ///  <summary>Displays the Proxy Server Configuration dialogue box that can
-    ///  be used to specify a proxy server to use for internet access.</summary>
-    procedure actProxyServerExecute(Sender: TObject);
     ///  <summary>Displays a dialogue box from which a backup file can be
     ///  selected and used to restore the snippets database.</summary>
     procedure actRestoreDatabaseExecute(Sender: TObject);
@@ -653,11 +637,6 @@ end;
 procedure TMainForm.actBackupDatabaseExecute(Sender: TObject);
 begin
   TDBModificationMgr.BackupDatabase(Self);
-end;
-
-procedure TMainForm.actBugReportExecute(Sender: TObject);
-begin
-  fDialogMgr.ShowBugReportDlg;
 end;
 
 procedure TMainForm.actCloseAllDetailsTabsExecute(Sender: TObject);
@@ -1003,16 +982,6 @@ end;
 procedure TMainForm.actPrivacyExecute(Sender: TObject);
 begin
   DisplayHelp('PrivacyStatement');
-end;
-
-procedure TMainForm.actProgramUpdatesExecute(Sender: TObject);
-begin
-  fDialogMgr.ShowProgramUpdatesDlg;
-end;
-
-procedure TMainForm.actProxyServerExecute(Sender: TObject);
-begin
-  fDialogMgr.ExecProxyServerDlg;
 end;
 
 procedure TMainForm.ActRemoveTagExecute(Sender: TObject);
@@ -1472,7 +1441,6 @@ begin
         )
       );
       SetNewSnippetAction(actAddSnippet);
-      SetCheckForUpdatesAction(actProgramUpdates);
       SetAboutBoxAction(actAbout);
       SetShowPrefsPageAction(
         TActionFactory.CreateShowPrefsPageAction(Self, ActShowPrefsPageExecute)
