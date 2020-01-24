@@ -305,7 +305,6 @@ uses
   UUIWidgetImages in 'UUIWidgetImages.pas',
   UUniqueID in 'UUniqueID.pas',
   UUnitsChkListMgr in 'UUnitsChkListMgr.pas',
-  UUpdateCheckers in 'UUpdateCheckers.pas',
   UURIEncode in 'UURIEncode.pas',
   UURIParams in 'UURIParams.pas',
   UUrlMonEx in 'UUrlMonEx.pas',

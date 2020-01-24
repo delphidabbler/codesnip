@@ -47,7 +47,6 @@ uses
   UMainDisplayMgr,
   USearch,
   UStatusBarMgr,
-  UUpdateCheckers,
   UWindowSettings;
 
 
@@ -506,9 +505,6 @@ type
       fDialogMgr: TDialogMgr;
       ///  <summary>Object that manages test compilations.</summary>
       fCompileMgr: TMainCompileMgr;
-      ///  <summary>Object that checks for program and database updates in a
-      ///  background thread.</summary>
-      fUpdateChecker: TUpdateCheckerMgr;
 
     ///  <summary>Displays view item given by TViewItemAction instance
     ///  referenced by Sender and adds to history list.</summary>
@@ -1331,10 +1327,6 @@ end;
 procedure TMainForm.FormDestroy(Sender: TObject);
 begin
   inherited;
-  // Stop update checking threads
-  fUpdateChecker.StopThreads;
-  fUpdateChecker.Free;
-
   // Stop notification display sub-system
   TNotificationDisplayMgr.Stop;
 
@@ -1581,10 +1573,6 @@ begin
     // Start notification display sub-system
     TNotificationDisplayMgr.Start(Self);
 
-    // Start update checking manager
-    // *** Should be done after notification window listener starts
-    fUpdateChecker := TUpdateCheckerMgr.Create;
-    fUpdateChecker.StartThreads;
   finally
     // Ready to start using app: request splash form closes and enable form
     SplashForm.RequestClose;
