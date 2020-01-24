@@ -330,7 +330,6 @@ uses
   Web.UExceptions in 'Web.UExceptions.pas',
   Web.UHTTPEx in 'Web.UHTTPEx.pas',
   Web.UInfo in 'Web.UInfo.pas',
-  Web.UStdWebService in 'Web.UStdWebService.pas',
   Web.USWAGRESTMgr in 'Web.USWAGRESTMgr.pas',
   Web.UXMLRequestor in 'Web.UXMLRequestor.pas',
   IntfExternalObj in 'Main\AutoGen\IntfExternalObj.pas',

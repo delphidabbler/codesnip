@@ -514,7 +514,6 @@
 			<DCCReference Include="Web.UExceptions.pas"/>
 			<DCCReference Include="Web.UHTTPEx.pas"/>
 			<DCCReference Include="Web.UInfo.pas"/>
-			<DCCReference Include="Web.UStdWebService.pas"/>
 			<DCCReference Include="Web.USWAGRESTMgr.pas"/>
 			<DCCReference Include="Web.UXMLRequestor.pas"/>
 			<DCCReference Include="Main\AutoGen\IntfExternalObj.pas"/>
