@@ -15,6 +15,8 @@
 unit FmBugReportBaseDlg;
 
 
+// TODO: Need to revise bug report dialogue once we have bug reporter on GitHub
+
 interface
 
 
