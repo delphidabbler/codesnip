@@ -252,7 +252,6 @@ uses
   UPrintEngine in 'UPrintEngine.pas',
   UPrintInfo in 'UPrintInfo.pas',
   UPrintMgr in 'UPrintMgr.pas',
-  UProgramUpdateChecker in 'UProgramUpdateChecker.pas',
   UProtocols in 'UProtocols.pas',
   UQuery in 'UQuery.pas',
   UREMLDataIO in 'UREMLDataIO.pas',

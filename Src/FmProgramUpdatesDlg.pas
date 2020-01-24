@@ -12,6 +12,7 @@
  * reports if a new version of CodeSnip is available.
 }
 
+// TODO -remove -websvc: Remove this unit
 
 unit FmProgramUpdatesDlg;
 
@@ -23,7 +24,7 @@ uses
   // Delphi
   StdCtrls, Controls, ExtCtrls, Classes,
   // Project
-  FmGenericViewDlg, UBaseObjects, UProgramUpdateChecker;
+  FmGenericViewDlg, UBaseObjects;
 
 
 type
@@ -48,7 +49,7 @@ type
     var
       ///  <summary>Object that checks whether an update is available and
       ///  provides information about it if so.</summary>
-      fUpdateChecker: TProgramUpdateChecker;
+//      fUpdateChecker: TProgramUpdateChecker;
     ///  <summary>Checks if a program update is available and updates the UI
     ///  according to the result.</summary>
     procedure CheckProgramUpdates;
@@ -114,36 +115,36 @@ begin
 end;
 
 procedure TProgramUpdatesDlg.btnProgUpdateClick(Sender: TObject);
-var
-  BrowseAction: TBrowseURL; // action that displays RSS feed URL in browser
+//var
+//  BrowseAction: TBrowseURL; // action that displays RSS feed URL in browser
 begin
-  BrowseAction := TBrowseURL.Create(nil);
-  try
-    BrowseAction.URL := fUpdateChecker.DownloadURL;
-    BrowseAction.Execute;
-  finally
-    BrowseAction.Free;
-  end;
+//  BrowseAction := TBrowseURL.Create(nil);
+//  try
+//    BrowseAction.URL := fUpdateChecker.DownloadURL;
+//    BrowseAction.Execute;
+//  finally
+//    BrowseAction.Free;
+//  end;
 end;
 
 procedure TProgramUpdatesDlg.CheckProgramUpdates;
 begin
-  btnProgUpdate.Visible := False;
-  lblProgram.Caption := sChecking;
-  Application.ProcessMessages;
-  fUpdateChecker.Execute;
-  if fUpdateChecker.IsUpdateAvailable then
-  begin
-    lblProgram.Caption := Format(
-      sProgNeedsUpdating, [string(fUpdateChecker.LatestVersion)]
-    );
-    btnProgUpdate.Visible := True;
-  end
-  else
-  begin
-    lblProgram.Caption := sProgUpToDate;
-    lblPreReleaseMsg.Visible := True;
-  end;
+//  btnProgUpdate.Visible := False;
+//  lblProgram.Caption := sChecking;
+//  Application.ProcessMessages;
+//  fUpdateChecker.Execute;
+//  if fUpdateChecker.IsUpdateAvailable then
+//  begin
+//    lblProgram.Caption := Format(
+//      sProgNeedsUpdating, [string(fUpdateChecker.LatestVersion)]
+//    );
+//    btnProgUpdate.Visible := True;
+//  end
+//  else
+//  begin
+//    lblProgram.Caption := sProgUpToDate;
+//    lblPreReleaseMsg.Visible := True;
+//  end;
 end;
 
 class procedure TProgramUpdatesDlg.Execute(AOwner: TComponent);
@@ -159,12 +160,12 @@ end;
 procedure TProgramUpdatesDlg.FormCreate(Sender: TObject);
 begin
   inherited;
-  fUpdateChecker := TProgramUpdateChecker.Create('Manual');
+//  fUpdateChecker := TProgramUpdateChecker.Create('Manual');
 end;
 
 procedure TProgramUpdatesDlg.FormDestroy(Sender: TObject);
 begin
-  fUpdateChecker.Free;
+//  fUpdateChecker.Free;
   inherited;
 end;
 
