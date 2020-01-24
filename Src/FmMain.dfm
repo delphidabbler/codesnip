@@ -339,7 +339,8 @@ inherited MainForm: TMainForm
       Category = 'Snippets'
       Caption = 'New Snippet...'
       Hint = 
-        'Create new snippet|Create a new snippet and add it to the database'
+        'Create new snippet|Create a new snippet and add it to the databa' +
+        'se'
       ImageIndex = 27
       ShortCut = 16429
       OnExecute = actAddSnippetExecute
@@ -347,8 +348,7 @@ inherited MainForm: TMainForm
     object actDeleteSnippet: TAction
       Category = 'Snippets'
       Caption = 'Delete Snippet'
-      Hint = 
-        'Delete snippet|Delete the selected snippet from the database'
+      Hint = 'Delete snippet|Delete the selected snippet from the database'
       ImageIndex = 26
       ShortCut = 16430
       OnExecute = actDeleteSnippetExecute
@@ -508,14 +508,6 @@ inherited MainForm: TMainForm
         ' by kind'
       OnExecute = ActOverviewGroupingExecute
       OnUpdate = ActOverviewGroupingUpdate
-    end
-    object actWebSite: TBrowseURL
-      Category = 'Help'
-      Caption = 'DelphiDabbler Website'
-      Hint = 
-        'Visit DelphiDabbler website|Display the DelphiDabbler website in' +
-        ' the default web browser'
-      ImageIndex = 6
     end
     object actHelpQuickStart: TAction
       Category = 'Help'
@@ -798,15 +790,6 @@ inherited MainForm: TMainForm
         'CodeSnip when accessing web services'
       OnExecute = actProxyServerExecute
     end
-    object actNews: TAction
-      Category = 'Help'
-      Caption = 'CodeSnip News...'
-      Hint = 
-        'CodeSnip news|Display news about CodeSnip and the online databas' +
-        'e'
-      ImageIndex = 36
-      OnExecute = actNewsExecute
-    end
     object actNewDetailsTab: TAction
       Category = 'View'
       Caption = 'New Tab'
@@ -825,14 +808,6 @@ inherited MainForm: TMainForm
         'Ctrl+W')
       OnExecute = actCloseDetailsTabExecute
       OnUpdate = actCloseDetailsTabsUpdate
-    end
-    object actFAQs: TBrowseURL
-      Category = 'Help'
-      Caption = 'FAQs'
-      Hint = 
-        'FAQs|Display CodeSnip'#39's online Frequently Asked Questions in the' +
-        ' default browser'
-      ImageIndex = 6
     end
     object actDuplicateSnippet: TAction
       Category = 'Snippets'
@@ -920,7 +895,7 @@ inherited MainForm: TMainForm
       Category = 'Snippets'
       Caption = 'Import Snippets From SWAG...'
       Hint = 
-        'Import snippets from SWAG|Import one or more snippets from the o' + 
+        'Import snippets from SWAG|Import one or more snippets from the o' +
         'nline SWAG database'
       OnExecute = actSWAGImportExecute
     end
@@ -1221,20 +1196,11 @@ inherited MainForm: TMainForm
       object miSpacer3: TMenuItem
         Caption = '-'
       end
-      object miFAQs: TMenuItem
-        Action = actFAQs
-      end
       object miHomePage: TMenuItem
         Action = actHomePage
       end
-      object miWebSite: TMenuItem
-        Action = actWebSite
-      end
       object miSpacer5: TMenuItem
         Caption = '-'
-      end
-      object miNews: TMenuItem
-        Action = actNews
       end
       object miDonate: TMenuItem
         Action = actDonate

@@ -78,7 +78,6 @@ type
     actExpandTree: TAction;
     actExportCode: TAction;
     actFavourites: TAction;
-    actFAQs: TBrowseURL;
     actFindClear: TAction;
     actFindCompiler: TAction;
     actFindText: TAction;
@@ -95,7 +94,6 @@ type
     actMoveDatabase: TAction;
     actNextTab: TAction;
     actNewDetailsTab: TAction;
-    actNews: TAction;
     actPreferences: TAction;
     actPreviousTab: TAction;
     actPrint: TAction;
@@ -120,7 +118,6 @@ type
     actViewDependencies: TAction;
     actViewGroupBySnippetKinds: TAction;
     actViewTestUnit: TAction;
-    actWebSite: TBrowseURL;
     actWelcome: TAction;
     alMain: TActionList;
     appEvents: TApplicationEvents;
@@ -152,7 +149,6 @@ type
     miExpandTree: TMenuItem;
     miExportCode: TMenuItem;
     miFavourites: TMenuItem;
-    miFAQs: TMenuItem;
     miFile: TMenuItem;
     miFindClear: TMenuItem;
     miFindCompiler: TMenuItem;
@@ -170,7 +166,6 @@ type
     miLoadSelection: TMenuItem;
     miMoveDatabase: TMenuItem;
     miNewDetailsTab: TMenuItem;
-    miNews: TMenuItem;
     miPreferences: TMenuItem;
     miPrint: TMenuItem;
     miPrivacy: TMenuItem;
@@ -217,7 +212,6 @@ type
     miViewGroupBySnippetKinds: TMenuItem;
     miViewTestUnit: TMenuItem;
     miViewGroupAlphabetically: TMenuItem;
-    miWebSite: TMenuItem;
     miWelcome: TMenuItem;
     mnuMain: TMainMenu;
     pnlBody: TPanel;
@@ -375,9 +369,6 @@ type
     procedure actMoveDatabaseExecute(Sender: TObject);
     ///  <summary>Creates a new empty tab in details pane.</summary>
     procedure actNewDetailsTabExecute(Sender: TObject);
-    ///  <summary>Displays a dialogue box containing latest news from CodeSnip's
-    ///  RSS feed.</summary>
-    procedure actNewsExecute(Sender: TObject);
     ///  <summary>Displays next tab in either overview or details pane depending
     ///  which pane is active.</summary>
     procedure actNextTabExecute(Sender: TObject);
@@ -962,11 +953,6 @@ begin
   fMainDisplayMgr.CreateNewDetailsTab;
 end;
 
-procedure TMainForm.actNewsExecute(Sender: TObject);
-begin
-  fDialogMgr.ShowNewsDlg;
-end;
-
 procedure TMainForm.actNextTabExecute(Sender: TObject);
 begin
   fMainDisplayMgr.SelectNextDetailsTab;
@@ -1449,8 +1435,6 @@ begin
     // Initialise actions
     // Browse actions have to have URLs set dynamically
     actHomePage.URL := TWebInfo.ProgramHomeURL;
-    actWebSite.URL := TWebInfo.DelphiDabblerHomeURL;
-    actFAQs.URL := TWebInfo.FAQsURL;
     // Tree control actions need shortcuts adding dynamically, and state stored
     // in Tag property
     actExpandNode.ShortCut := ShortCut(VK_ADD, [ssCtrl]);
