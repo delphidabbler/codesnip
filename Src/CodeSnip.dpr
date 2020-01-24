@@ -245,7 +245,6 @@ uses
   UOverviewTreeState in 'UOverviewTreeState.pas',
   UPageSetupDialogEx in 'UPageSetupDialogEx.pas',
   UPageSetupDlgMgr in 'UPageSetupDlgMgr.pas',
-  UPaypalDonateAction in 'UPaypalDonateAction.pas',
   UPipe in 'UPipe.pas',
   UPreferences in 'UPreferences.pas',
   UPrintDocuments in 'UPrintDocuments.pas',

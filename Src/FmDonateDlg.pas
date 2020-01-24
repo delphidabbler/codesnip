@@ -14,6 +14,8 @@
 }
 
 
+// TODO -websvc: remove this form unit
+
 unit FmDonateDlg;
 
 
@@ -36,7 +38,6 @@ type
   TDonateDlg = class(TGenericViewDlg)
     btnDoDonate: TButton;
     frmContent: TFixedHTMLDlgFrame;
-    procedure FormCreate(Sender: TObject);
   strict private
     procedure UpdateCSS(Sender: TObject; const CSSBuilder: TCSSBuilder);
       {Modifies CSS used to display dialogue box body to achieve required
@@ -68,7 +69,7 @@ uses
   // Delphi
   SysUtils, Graphics,
   // Project
-  UCSSUtils, UFontHelper, UPaypalDonateAction;
+  UCSSUtils, UFontHelper;
 
 {$R *.dfm}
 
@@ -108,14 +109,6 @@ begin
     finally
       Free;
     end;
-end;
-
-procedure TDonateDlg.FormCreate(Sender: TObject);
-  {Form construction event handler. Assigns donation button's action.
-  }
-begin
-  inherited;
-  btnDoDonate.Action := TPaypalDonateAction.Create(Self);
 end;
 
 procedure TDonateDlg.UpdateCSS(Sender: TObject; const CSSBuilder: TCSSBuilder);
