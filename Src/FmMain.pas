@@ -510,10 +510,6 @@ type
     ///  <summary>Selects a tab in the details pane where the tab is provided by
     ///  the TDetailTabAction instance referenced by Sender.</summary>
     procedure ActSelectDetailTabExecute(Sender: TObject);
-    ///  <summary>Displays Preferences dialogue box containing the single page
-    ///  specified by the TShowPrefsPageAction instance referenced by Sender.
-    ///  </summary>
-    procedure ActShowPrefsPageExecute(Sender: TObject);
     ///  <summary>Removes a tag from a snippet where both the tag and snippet ID
     ///  are specified by the TRemoveTagAction instance referenced by Sender.
     ///  </summary>
@@ -600,7 +596,6 @@ uses
   USaveSnippetMgr,
   USaveUnitMgr,
   USelectionIOMgr,
-  UShowPrefsPageAction,
   UUserDBMgr,
   UView,
   UViewItemAction,
@@ -1054,17 +1049,6 @@ begin
     DoSearchFilter(Search);
 end;
 
-procedure TMainForm.ActShowPrefsPageExecute(Sender: TObject);
-var
-  UpdateUI: Boolean;  // flag true if preference changes affect main window UI
-begin
-  fDialogMgr.ExecPreferencesDlg(
-    (Sender as TShowPrefsPageAction).FrameClassName, UpdateUI
-  );
-  if UpdateUI then
-    fMainDisplayMgr.CompleteRefresh;
-end;
-
 procedure TMainForm.actSWAGImportExecute(Sender: TObject);
 begin
   fDialogMgr.ShowSWAGImportDlg;
@@ -1422,9 +1406,6 @@ begin
       );
       SetNewSnippetAction(actAddSnippet);
       SetAboutBoxAction(actAbout);
-      SetShowPrefsPageAction(
-        TActionFactory.CreateShowPrefsPageAction(Self, ActShowPrefsPageExecute)
-      );
       SetDisplayTagAction(TActionFactory.CreateDisplayTagAction(Self));
       SetRemoveTagAction(
         TActionFactory.CreateRemoveTagAction(Self, ActRemoveTagExecute)
