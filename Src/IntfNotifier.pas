@@ -65,9 +65,6 @@ type
     ///  <param name="SnippetID">TSnippetID [in] ID of snippet.</param>
     procedure EditSnippet(const SnippetID: TSnippetID);
 
-    ///  <summary>Displays Donate dialogue box.</summary>
-    procedure Donate; // TODO -cwebsvc: remove this
-
     ///  <summary>Opens Snippets Editor ready to create a new snippet.</summary>
     procedure NewSnippet;
 
@@ -148,10 +145,6 @@ type
     ///  </summary>
     ///  <param name="Action">TBasicAction [in] Required action.</param>
     procedure SetEditSnippetAction(const Action: TBasicAction);
-
-    ///  <summary>Sets action used to display Donate dialogue box.</summary>
-    ///  <param name="Action">TBasicAction [in] Required action.</param>
-    procedure SetDonateAction(const Action: TBasicAction);  // TODO -cwebsvc: remove this
 
     ///  <summary>Sets action used to open snippets editor to create a new
     ///  snippet.</summary>
