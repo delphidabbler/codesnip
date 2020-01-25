@@ -163,9 +163,6 @@
 			<DCCReference Include="FmPrintDlg.pas">
 				<Form>PrintDlg</Form>
 			</DCCReference>
-			<DCCReference Include="FmProgramUpdatesDlg.pas">
-				<Form>ProgramUpdatesDlg</Form>
-			</DCCReference>
 			<DCCReference Include="FmSelectionSearchDlg.pas">
 				<Form>SelectionSearchDlg</Form>
 			</DCCReference>

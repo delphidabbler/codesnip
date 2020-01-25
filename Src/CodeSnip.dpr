@@ -93,7 +93,6 @@ uses
   FmPreferencesDlg in 'FmPreferencesDlg.pas' {PreferencesDlg},
   FmPreviewDlg in 'FmPreviewDlg.pas' {PreviewDlg},
   FmPrintDlg in 'FmPrintDlg.pas' {PrintDlg},
-  FmProgramUpdatesDlg in 'FmProgramUpdatesDlg.pas' {ProgramUpdatesDlg},
   FmSelectionSearchDlg in 'FmSelectionSearchDlg.pas' {SelectionSearchDlg},
   FmSnippetsEditorDlg in 'FmSnippetsEditorDlg.pas' {SnippetsEditorDlg},
   FmSnippetsEditorDlg.FrActiveTextEditor in 'FmSnippetsEditorDlg.FrActiveTextEditor.pas' {SnippetsActiveTextEdFrame: TFrame},
