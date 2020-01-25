@@ -14,6 +14,7 @@
 
 unit FmUserBugReportDlg;
 
+// TODO -cUI: Modify instructions to refer to GitHub and fact you need GitHub account to report bugs
 
 interface
 

@@ -15,7 +15,7 @@
 unit FmBugReportBaseDlg;
 
 
-// TODO: Need to revise bug report dialogue once we have bug reporter on GitHub
+// TODO -cUI: Rename Bug Tracker as Issue Tracker. Maybe mention GitHub
 
 interface
 
