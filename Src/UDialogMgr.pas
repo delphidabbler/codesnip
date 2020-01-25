@@ -130,9 +130,6 @@ type
     ///  </returns>
     function ExecPrintDlg: Boolean;
 
-    ///  <summary>Displays the Donate dialogue box.</summary>
-    procedure ShowDonateDlg;  // TODO -cwebsvc: remove this
-
     ///  <summary>Displays the Test Unit dialogue box.</summary>
     ///  <param name="Snippet">ISnippet [in] Snippet for which test unit is to
     ///  be generated.</param>
@@ -149,12 +146,6 @@ type
     function ShowDependenciesDlg(Snippet: ISnippet; const HelpKeyword: string):
       ISearch;
 
-    ///  <summary>Displays the Proxy Server configuration dialogue box.
-    ///  </summary>
-    ///  <returns>Boolean. True if user OKd dialogue or False if user cancelled.
-    ///  </returns>
-    function ExecProxyServerDlg: Boolean; // TODO -cwebsvc: remove this
-
     ///  <summary>Displays the Test Compile dialogue box.</summary>
     ///  <param name="CompileMgr">TCompileMgr [in] Object used to manage test
     ///  compilation and to retain results.</param>
@@ -162,9 +153,6 @@ type
     ///  </param>
     procedure ShowTestCompileDlg(const CompileMgr: TCompileMgr;
       Snippet: ISnippet);
-
-    ///  <summary>Displays the Check For Program Updates dialogue box.</summary>
-    procedure ShowProgramUpdatesDlg;    // TODO -cwebsvc: remove this
 
     ///  <summary>Displays the SWAG Import Wizard dialogue box.</summary>
     procedure ShowSWAGImportDlg;
@@ -263,11 +251,6 @@ begin
   Result := TPrintDlg.Execute(Owner);
 end;
 
-function TDialogMgr.ExecProxyServerDlg: Boolean;
-begin
-  Result := TProxyServerDlg.Execute(Owner);
-end;
-
 function TDialogMgr.ExecSelectionSearchDlg(SelectedSnippets: ISnippetIDList;
   out ASearch: ISearch): Boolean;
 begin
@@ -292,19 +275,9 @@ begin
   );
 end;
 
-procedure TDialogMgr.ShowDonateDlg;
-begin
-  TDonateDlg.Execute(Owner);
-end;
-
 procedure TDialogMgr.ShowFavouritesDlg(ANotifier: INotifier);
 begin
   TFavouritesDlg.Display(Owner, ANotifier);
-end;
-
-procedure TDialogMgr.ShowProgramUpdatesDlg;
-begin
-  TProgramUpdatesDlg.Execute(Owner);
 end;
 
 procedure TDialogMgr.ShowSWAGImportDlg;
