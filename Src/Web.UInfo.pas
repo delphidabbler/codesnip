@@ -68,6 +68,8 @@ type
   TWebInfo = class(TNoConstructObject)
   strict private
     const
+      ///  <summary>URL of CodeSnip's project page on GitHub.</summary>
+      GitHubSiteURL = 'https://github.com/delphidabbler/codesnip';
       ///  <summary>Name of server that hosts tested and released web services
       ///  that are used by CodeSnip.</summary>
       ///  <remarks>There is also a test server that can be used by CodeSnip
@@ -96,7 +98,7 @@ type
       ///  <summary>URL of home page on DelphiDabbler website.</summary>
       DelphiDabblerHomeURL = 'https://github.com/delphidabbler/codesnip'; // TODO -cwebsvc: remove this
       ///  <summary>URL of home page of the CodeSnip project.</summary>
-      ProgramHomeURL = 'https://github.com/delphidabbler/codesnip';
+      ProgramHomeURL = GitHubSiteURL;
       /// <summary>URL of the CodeSnip blog</summary>
       ProgramBlogURL = 'http://codesnip-app.blogspot.com/';
       ///  <summary>URL of the online Code Snippets database.</summary>
@@ -108,7 +110,7 @@ type
       ///  <summary>URL used to view and report CodeSnip bugs.</summary>
       ///  <remarks>This URL will redirect to the actual bug tracker which may
       ///  be on an external site such as SourceForge or GitHub.</remarks>
-      BugTrackerURL = WebsiteURL + '/url/codesnip-bugs';  // TODO -cwebsvc -cQuery: replace with URL of bug tracker on GitHub if this goes live ??
+      BugTrackerURL = GitHubSiteURL + '/issues';
       ///  <summary>URL of CodeSnip's FAQ web page.</summary>
       ///  <remarks>This URL will redirect to the FAQ location which may be on
       ///  an external site such as GitHub or SourceForge.</remarks>
