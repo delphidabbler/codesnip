@@ -36,9 +36,6 @@ type
   INotifier = interface(IInterface)
     ['{13962DE4-784A-4B70-9D3F-FD434FAE4F4F}']
 
-    ///  <summary>Requests a database update.</summary>
-    procedure UpdateDbase;  // TODO -cwebsvc: remove this
-
     ///  <summary>Displays a snippet.</summary>
     ///  <param name="SnippetID">TSnippetID [in] ID of required snippet.
     ///  </param>
@@ -122,10 +119,6 @@ type
   ///  interface.</remarks>
   ISetActions = interface(IInterface)
     ['{A4B7AFE2-EE6C-4D39-BEA6-B52CC8AAC1DE}']
-
-    ///  <summary>Sets action used to request a database update.</summary>
-    ///  <param name="Action">TBasicAction [in] Required action.</param>
-    procedure SetUpdateDbaseAction(const Action: TBasicAction); // TODO -cwebsvc: remove this
 
     ///  <summary>Sets action used to display a snippet.</summary>
     ///  <param name="Action">TBasicAction [in] Required action.</param>

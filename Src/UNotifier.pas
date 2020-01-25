@@ -42,8 +42,6 @@ type
   TNotifier = class(TInterfacedObject, INotifier, ISetActions)
   strict private
     var
-      ///  <summary>Action that triggers a database update.</summary>
-      fUpdateDbaseAction: TBasicAction; // TODO -cwebsvc: remove this
       ///  <summary>Action that causes a named snippet to be displayed.
       ///  </summary>
       fDisplaySnippetAction: TBasicAction;
@@ -89,10 +87,6 @@ type
       ///  Starred property.</summary>
       fChangeSnippetStarAction: TBasicAction;
   public
-
-    ///  <summary>Requests a database update.</summary>
-    ///  <remarks>Methods of INotifier.</remarks>
-    procedure UpdateDbase;  // TODO -cwebsvc: remove this
 
     ///  <summary>Displays a snippet.</summary>
     ///  <param name="SnippetID">TSnippetID [in] ID of required snippet.
@@ -185,11 +179,6 @@ type
     ///  <remarks>Method of INotifier.</remarks>
     procedure ChangeSnippetStar(const SnippetID: TSnippetID;
       const State: Boolean);
-
-    ///  <summary>Sets action used to request a database update.</summary>
-    ///  <param name="Action">TBasicAction [in] Required action.</param>
-    ///  <remarks>Methods of ISetActions.</remarks>
-    procedure SetUpdateDbaseAction(const Action: TBasicAction); // TODO -cwebsvc: remove this
 
     ///  <summary>Sets action used to display a snippet.</summary>
     ///  <param name="Action">TBasicAction [in] Required action.</param>
@@ -521,12 +510,6 @@ begin
   fShowViewItemAction := Action;
 end;
 
-procedure TNotifier.SetUpdateDbaseAction(
-  const Action: TBasicAction);
-begin
-  fUpdateDbaseAction := Action;
-end;
-
 procedure TNotifier.ShowAboutBox;
 begin
   if Assigned(fAboutBoxAction) then
@@ -556,12 +539,6 @@ begin
     (fShowViewItemAction as TViewItemAction).NewTab := NewTab;
     fShowViewItemAction.Execute;
   end;
-end;
-
-procedure TNotifier.UpdateDbase;
-begin
-  if Assigned(fUpdateDbaseAction) then
-    fUpdateDbaseAction.Execute;
 end;
 
 end.
