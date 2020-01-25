@@ -66,7 +66,6 @@ uses
   FmBugReportBaseDlg in 'FmBugReportBaseDlg.pas' {BugReportBaseDlg},
   FmCodeExportDlg in 'FmCodeExportDlg.pas' {CodeExportDlg},
   FmCodeImportDlg in 'FmCodeImportDlg.pas' {CodeImportDlg},
-  FmCodeSubmitDlg in 'FmCodeSubmitDlg.pas' {CodeSubmitDlg},
   FmCompErrorDlg in 'FmCompErrorDlg.pas' {CompErrorDlg},
   FmCompilersDlg in 'FmCompilersDlg.pas' {CompilersDlg},
   FmCompilersDlg.FrBase in 'FmCompilersDlg.FrBase.pas' {CompilersDlgBaseFrame: TFrame},
