@@ -87,7 +87,7 @@ type
     ///  page.</summary>
     ///  <param name="ClsName">string [in] Class name of the frame that
     ///  implements the required preferences page.</param>
-    procedure ShowPrefsPage(const ClsName: string);
+    procedure ShowPrefsPage(const ClsName: string); // TODO -cwebsvc: remove this
 
     ///  <summary>Displays the given tag.</summary>
     ///  <param name="Tag">TTag [in] Tag to be displayed.</param>
