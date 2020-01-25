@@ -157,9 +157,6 @@
 			<DCCReference Include="FmMain.pas">
 				<Form>MainForm</Form>
 			</DCCReference>
-			<DCCReference Include="FmNewsDlg.pas">
-				<Form>NewsDlg</Form>
-			</DCCReference>
 			<DCCReference Include="FmPreferencesDlg.pas">
 				<Form>PreferencesDlg</Form>
 			</DCCReference>
@@ -275,10 +272,6 @@
 			</DCCReference>
 			<DCCReference Include="FrPrefsBase.pas">
 				<Form>PrefsBaseFrame</Form>
-				<DesignClass>TFrame</DesignClass>
-			</DCCReference>
-			<DCCReference Include="FrRSSNews.pas">
-				<Form>RSSNewsFrame</Form>
 				<DesignClass>TFrame</DesignClass>
 			</DCCReference>
 			<DCCReference Include="FrRTFPreview.pas">
@@ -436,8 +429,6 @@
 			<DCCReference Include="UQuery.pas"/>
 			<DCCReference Include="UREMLDataIO.pas"/>
 			<DCCReference Include="UResourceUtils.pas"/>
-			<DCCReference Include="URFC2822Date.pas"/>
-			<DCCReference Include="URSS20.pas"/>
 			<DCCReference Include="URTFBuilder.pas"/>
 			<DCCReference Include="URTFSnippetDoc.pas"/>
 			<DCCReference Include="URTFStyles.pas"/>
@@ -512,7 +503,6 @@
 			<DCCReference Include="Web.UHTTPEx.pas"/>
 			<DCCReference Include="Web.UInfo.pas"/>
 			<DCCReference Include="Web.USWAGRESTMgr.pas"/>
-			<DCCReference Include="Web.UXMLRequestor.pas"/>
 			<DCCReference Include="Main\AutoGen\IntfExternalObj.pas"/>
 			<DCCReference Include="Main\Imports\GIFImage.pas"/>
 			<DCCReference Include="Main\Imports\LVEx.pas"/>
