@@ -15,6 +15,7 @@
 
 unit Web.USWAGRESTMgr;
 
+// TODO -cwebsvc: Rework this unit as a SWAG XML parser that gets XML from file - will need renaming
 
 interface
 
