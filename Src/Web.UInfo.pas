@@ -100,19 +100,19 @@ type
       /// <summary>URL of the CodeSnip blog</summary>
       ProgramBlogURL = 'http://codesnip-app.blogspot.com/';
       ///  <summary>URL of the online Code Snippets database.</summary>
-      DatabaseURL = WebsiteURL + '/url/csdb';                      // TODO -cwebsvc: remove this
+      DatabaseURL = WebsiteURL + '/url/csdb';  // TODO -cwebsvc -cQuery: replace with URL of DDab CS DB on GitHub ??
       ///  <summary>URL used to make donations towards the CodeSnip project.
       ///  </summary>
       ///  <remarks>This URL redirects to the correct page on PayPal.</remarks>
-      DonateURL = WebsiteURL + '/url/donate-cs';                  // TODO -cwebsvc: remove this
+      DonateURL = WebsiteURL + '/url/donate-cs'; // TODO -cwebsvc: remove this
       ///  <summary>URL used to view and report CodeSnip bugs.</summary>
       ///  <remarks>This URL will redirect to the actual bug tracker which may
       ///  be on an external site such as SourceForge or GitHub.</remarks>
-      BugTrackerURL = WebsiteURL + '/url/codesnip-bugs';         // TODO -cwebsvc: remove this
+      BugTrackerURL = WebsiteURL + '/url/codesnip-bugs';  // TODO -cwebsvc -cQuery: replace with URL of bug tracker on GitHub if this goes live ??
       ///  <summary>URL of CodeSnip's FAQ web page.</summary>
       ///  <remarks>This URL will redirect to the FAQ location which may be on
       ///  an external site such as GitHub or SourceForge.</remarks>
-      FAQsURL = WebsiteURL + '/url/codesnip-faq';                // TODO -cwebsvc: remove this
+      FAQsURL = WebsiteURL + '/url/codesnip-faq'; // TODO -cwebsvc -cQuery: replace with URL of FAQs if they moved to GitHub
   public
     ///  <summary>Builds the URL of the CodeSnip news feed.</summary>
     ///  <param name="Age"><c>Word</c> [in] Maximum age, in days, of news items

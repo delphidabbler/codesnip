@@ -12,7 +12,7 @@
  * reports if a new version of CodeSnip is available.
 }
 
-// TODO -remove -websvc: Remove this unit
+// TODO -cwebsvc: Remove this unit
 
 unit FmProgramUpdatesDlg;
 

@@ -11,6 +11,7 @@
  * Implements a record that encapsulates information a program user.
 }
 
+// TODO -Query: check if this unit is still required
 
 unit UUserDetails;
 

@@ -1,0 +1,11 @@
+{TODO -cSettings : Update Settings / Preferences code to remove settings that are no longer required}
+{TODO -cQuery : Remove Notifications Queue and display thread??}
+{TODO -cQuery : Remove Easter Egg?}
+{TODO -cUI : Check links in about box and fix as required}
+{TODO -cQuery : Add a menu option with a web link to GitHub account for online DDab CS database when made public ??}
+{TODO -cQuery : Reinstate FAQ help menu option if FAQ ported to GitHub}
+{TODO -cUI :  Remove Donate section from Welcome Page}
+{TODO -cUI :  Remove Update Checks section from Welcome Page}
+{TODO -cQuery : Remove diffs settings - not sure what it's for!}
+{TODO -cPrefs : Remove Updates tab from Preferences dialog}
+{TODO -cPrefs : Remove News tab from Preferences dialog}
