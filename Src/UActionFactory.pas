@@ -82,14 +82,6 @@ type
         @param OnExecHandler [in] Handler for action's OnExecute event.
         @return Reference to newly created action.
       }
-    class function CreateShowPrefsPageAction(const AOwner: TComponent;
-      const OnExecHandler: TNotifyEvent = nil): TBasicAction;
-      {Creates a Show Preferences Page action and sets OnExecute handler id
-      provided.
-        @param AOwner [in] Owner of action.
-        @param OnExecHandler [in] Handler for action's OnExecute event.
-        @return Reference to newly created action.
-      }
     class function CreateDisplayTagAction(const AOwner: TComponent;
       const OnExecHandler: TNotifyEvent = nil): TBasicAction;
       {Creates a Display Tag action and sets OnExecute handler if provided.
@@ -138,7 +130,6 @@ uses
   UDetailTabAction,
   UEditSnippetAction,
   ULinkAction,
-  UShowPrefsPageAction,
   USnippetAction,
   UViewItemAction;
 
@@ -235,18 +226,6 @@ class function TActionFactory.CreateRemoveTagAction(const AOwner: TComponent;
   }
 begin
   Result := CreateAction(TRemoveTagAction, AOwner, OnExecHandler);
-end;
-
-class function TActionFactory.CreateShowPrefsPageAction(
-  const AOwner: TComponent; const OnExecHandler: TNotifyEvent): TBasicAction;
-  {Creates a Show Preferences Page action and sets OnExecute handler id
-  provided.
-    @param AOwner [in] Owner of action.
-    @param OnExecHandler [in] Handler for action's OnExecute event.
-    @return Reference to newly created action.
-  }
-begin
-  Result := CreateAction(TShowPrefsPageAction, AOwner, OnExecHandler);
 end;
 
 class function TActionFactory.CreateSnippetAction(const AOwner: TComponent;
