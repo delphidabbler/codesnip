@@ -94,7 +94,7 @@ type
   public
     const
       ///  <summary>URL of home page on DelphiDabbler website.</summary>
-      DelphiDabblerHomeURL = 'https://github.com/delphidabbler/codesnip';
+      DelphiDabblerHomeURL = 'https://github.com/delphidabbler/codesnip'; // TODO -cwebsvc: remove this
       ///  <summary>URL of home page of the CodeSnip project.</summary>
       ProgramHomeURL = 'https://github.com/delphidabbler/codesnip';
       /// <summary>URL of the CodeSnip blog</summary>
