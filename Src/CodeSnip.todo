@@ -1,3 +1,22 @@
+{TODO -cDatabase :
+Determine whether an Origin field can be used to specify source of each snippet.
+May be replace LinkInfo property?
+Update database.html as necessary}
+{TODO -cDatabase : Re-assess need for LinkInfo field. Remove if not required.
+Update database.html as necessary.
+}
+{TODO -odatabase.html -cDocs :
+Check if there are any restrictions on characters used in the Tags property of a snippet data file
+Update database.html with finding}
+{TODO -odatabase.html -cDocs :
+Check if RequireModules property of snippet files must be valid Pascal indentifiers.
+Update database.html with finding}
+{TODO -odatabase.html -cDocs :
+Check version of REML used in Description and Notes properties in snippets data files
+Add findings to database.htm}
+{TODO -odatabase.html -cDocs :
+In database snippets files check if all properties except ID can have default value per docs.
+Add note of defaults to database.html}
 {TODO -cSettings : Update Settings / Preferences code to remove settings that are no longer required}
 {TODO -cQuery : Remove Notifications Queue and display thread??}
 {TODO -cQuery : Remove Easter Egg?}
