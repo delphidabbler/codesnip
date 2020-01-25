@@ -17,7 +17,6 @@
 unit UCodeShareMgr;
 
 
-// TODO -cwebsvc: Check if Submit or Export code methods are required: can no longer submit to online DB
 
 interface
 
@@ -46,11 +45,6 @@ type
           represent a snippet.
       }
   public
-    class procedure Submit(ViewItem: IView);
-      {Submits code for consideration to be included in main database.
-        @param ViewItem [in] View item that may contain a snippet. If so the
-          snippet is included in code for submission by default.
-      }
     class function CanShare: Boolean;
       {Checks if there are any snippets that can be shared (i.e. exported or
       submitted).
@@ -74,7 +68,10 @@ uses
   // Delphi
   SysUtils,
   // Project
-  DB.UMain, FmCodeExportDlg, FmCodeImportDlg, FmCodeSubmitDlg, UCodeImportMgr;
+  DB.UMain,
+  FmCodeExportDlg,
+  FmCodeImportDlg,
+  UCodeImportMgr;
 
 
 { TCodeShareMgr }
@@ -125,15 +122,6 @@ begin
   finally
     ImportMgr.Free;
   end;
-end;
-
-class procedure TCodeShareMgr.Submit(ViewItem: IView);
-  {Submits code for consideration to be included in main database.
-    @param ViewItem [in] View item that may contain a snippet. If so the snippet
-      is included in code for submission by default.
-  }
-begin
-  TCodeSubmitDlg.Execute(nil, GetSnippetFromView(ViewItem));
 end;
 
 end.

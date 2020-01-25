@@ -687,15 +687,13 @@ inherited MainForm: TMainForm
       Hint = 
         'Submit|Submit one or more snippets for possible inclusion in the' +
         ' main database'
-      OnExecute = actSubmitExecute
-      OnUpdate = ActSubmitOrExportUpdate
     end
     object actExportCode: TAction
       Category = 'Snippets'
       Caption = 'Export Snippets...'
       Hint = 'Export snippets|Export one or more snippets to a file'
       OnExecute = actExportCodeExecute
-      OnUpdate = ActSubmitOrExportUpdate
+      OnUpdate = actExportCodeUpdate
     end
     object actImportCode: TAction
       Category = 'Snippets'
@@ -1072,12 +1070,6 @@ inherited MainForm: TMainForm
         Action = actSWAGImport
       end
       object miSpacer14: TMenuItem
-        Caption = '-'
-      end
-      object miSubmit: TMenuItem
-        Action = actSubmit
-      end
-      object miSpacer19: TMenuItem
         Caption = '-'
       end
       object miToggleFavourite: TMenuItem

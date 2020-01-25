@@ -187,9 +187,7 @@ type
     miSpacer15: TMenuItem;
     miSpacer16: TMenuItem;
     miSpacer17: TMenuItem;
-    miSpacer19: TMenuItem;
     miSpacer20: TMenuItem;
-    miSubmit: TMenuItem;
     miSWAGImport: TMenuItem;
     miTestCompile: TMenuItem;
     miTools: TMenuItem;
@@ -302,6 +300,9 @@ type
     ///  <summary>Displays a dialogue box that can be used to export one or more
     ///  snippets.</summary>
     procedure actExportCodeExecute(Sender: TObject);
+    ///  <summary>Determines whether ExportCode action should be enabled.
+    ///  </summary>
+    procedure actExportCodeUpdate(Sender: TObject);
     ///  <summary>Opens currently selected snippet in Snippets Editor for
     ///  editing.</summary>
     procedure actEditSnippetExecute(Sender: TObject);
@@ -415,12 +416,6 @@ type
     ///  <summary>Displays the Select Snippets dialogue box where the snippets
     ///  to be displayed can be chosen.</summary>
     procedure actSelectSnippetsExecute(Sender: TObject);
-    ///  <summary>Displays the Code Submission Wizard that enables snippets to
-    ///  be submitted for inclusion in the main database.</summary>
-    procedure actSubmitExecute(Sender: TObject);
-    ///  <summary>Determines whether the Submit or ExportCode actions can be
-    ///  enabled.</summary>
-    procedure ActSubmitOrExportUpdate(Sender: TObject);
     ///  <summary>Displays the SWAG import dialogue box that enables the user to
     ///  import snippets from the SWAG database into the snippets database.
     ///  </summary>
@@ -759,6 +754,11 @@ begin
   TCodeShareMgr.ExportCode(fMainDisplayMgr.CurrentView);
 end;
 
+procedure TMainForm.actExportCodeUpdate(Sender: TObject);
+begin
+  (Sender as TAction).Enabled := TCodeShareMgr.CanShare;
+end;
+
 procedure TMainForm.actFavouritesExecute(Sender: TObject);
 begin
   fDialogMgr.ShowFavouritesDlg(fNotifier);
@@ -1067,16 +1067,6 @@ begin
   );
   if UpdateUI then
     fMainDisplayMgr.CompleteRefresh;
-end;
-
-procedure TMainForm.actSubmitExecute(Sender: TObject);
-begin
-  TCodeShareMgr.Submit(fMainDisplayMgr.CurrentView);
-end;
-
-procedure TMainForm.ActSubmitOrExportUpdate(Sender: TObject);
-begin
-  (Sender as TAction).Enabled := TCodeShareMgr.CanShare;
 end;
 
 procedure TMainForm.actSWAGImportExecute(Sender: TObject);
