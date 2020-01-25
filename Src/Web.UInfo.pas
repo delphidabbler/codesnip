@@ -78,12 +78,6 @@ type
       ProductionServerHost = 'delphidabbler.com';   // TODO -cwebsvc : remove this
       ///  <summary>URL of DelphiDabbler website.</summary>
       WebsiteURL = 'http://' + ProductionServerHost;  // TODO -cwebsvc : remove this
-      ///  <summary>Template for URL of Code Snippets news feed.</summary>
-      ///  <remarks>'%d' placeholder must be replaced by the required number of
-      ///  days into the past the news feed should cover. Passing <c>0</c> as
-      ///  the number of days results in all news items being returned.
-      ///  </remarks>
-      NewsFeedTplt = WebSiteURL + '/feeds/site-news-feed?id=codesnip&days=%d';  // TODO -cwebsvc: remove this
   strict private
     ///  <summary>Returns the name of the server that hosts web services that
     ///  are used by CodeSnip.</summary>
@@ -116,11 +110,6 @@ type
       ///  an external site such as GitHub or SourceForge.</remarks>
       FAQsURL = WebsiteURL + '/url/codesnip-faq'; // TODO -cwebsvc -cQuery: replace with URL of FAQs if they moved to GitHub
   public
-    ///  <summary>Builds the URL of the CodeSnip news feed.</summary>
-    ///  <param name="Age"><c>Word</c> [in] Maximum age, in days, of news items
-    ///  to be included in the feed.</param>
-    ///  <returns><c>string</c>. Required URL.</returns>
-    class function NewsFeedURL(const Age: Word): string;       // TODO -cwebsvc: remove this
     ///  <summary>Builds the URL of a web service.</summary>
     ///  <param name="URLTplt"><c>string</c>. [in] Template of URL of web
     ///  service script. Must contain a '%s' placeholder for host name.</param>
@@ -152,11 +141,6 @@ begin
     Result := TCommandLineOpts.TestServerHost
   else
     Result := ProductionServerHost;
-end;
-
-class function TWebInfo.NewsFeedURL(const Age: Word): string;
-begin
-  Result := Format(NewsFeedTplt, [Age]);
 end;
 
 class function TWebInfo.WebProxyInfo: TWebProxyInfo;
