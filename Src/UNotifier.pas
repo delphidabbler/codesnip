@@ -63,9 +63,6 @@ type
       fNewSnippetAction: TBasicAction;
       ///  <summary>Action that causes About box to be displayed.</summary>
       fAboutBoxAction: TBasicAction;
-      ///  <summary>Action that displays a specified page in the preferences
-      ///  dialogue box.</summary>
-      fShowPrefsPageAction: TBasicAction;
       ///  <summary>Action that causes a specified tag to be displayed.
       ///  </summary>
       fDisplayTagAction: TBasicAction;
@@ -124,13 +121,6 @@ type
     ///  <summary>Displays the program's About Box.</summary>
     ///  <remarks>Methods of INotifier.</remarks>
     procedure ShowAboutBox;
-
-    ///  <summary>Displays the Preferences dialogue box containing the specified
-    ///  page.</summary>
-    ///  <param name="ClsName">string [in] Class name of the frame that
-    ///  implements the required preferences page.</param>
-    ///  <remarks>Method of INotifier.</remarks>
-    procedure ShowPrefsPage(const ClsName: string);
 
     ///  <summary>Displays the given tag.</summary>
     ///  <param name="Tag">TTag [in] Tag to be displayed.</param>
@@ -211,12 +201,6 @@ type
     ///  <remarks>Methods of ISetActions.</remarks>
     procedure SetAboutBoxAction(const Action: TBasicAction);
 
-    ///  <summary>Sets action used to display a given page of the Preferences
-    ///  dialogue box.</summary>
-    ///  <param name="Action">TBasicAction [in] Required action.</param>
-    ///  <remarks>Method of ISetActions.</remarks>
-    procedure SetShowPrefsPageAction(const Action: TBasicAction);
-
     ///  <summary>Sets action used to display a tag.</summary>
     ///  <param name="Action">TBasicAction [in] Required action.</param>
     ///  <remarks>Method of ISetActions.</remarks>
@@ -256,7 +240,6 @@ uses
   UContainers,
   UDetailTabAction,
   UEditSnippetAction,
-  UShowPrefsPageAction,
   USnippetAction,
   UViewItemAction;
 
@@ -435,13 +418,6 @@ begin
   fRemoveTagAction := Action;
 end;
 
-procedure TNotifier.SetShowPrefsPageAction(const Action: TBasicAction);
-begin
-  Assert(Action is TShowPrefsPageAction, ClassName
-    + '.SetShowPreferencesAction: Action is not TShowPrefsPageAction');
-  fShowPrefsPageAction := Action;
-end;
-
 procedure TNotifier.SetShowViewItemAction(const Action: TBasicAction);
 begin
   fShowViewItemAction := Action;
@@ -451,15 +427,6 @@ procedure TNotifier.ShowAboutBox;
 begin
   if Assigned(fAboutBoxAction) then
     fAboutBoxAction.Execute;
-end;
-
-procedure TNotifier.ShowPrefsPage(const ClsName: string);
-begin
-  if Assigned(fShowPrefsPageAction) then
-  begin
-    (fShowPrefsPageAction as TShowPrefsPageAction).FrameClassName := ClsName;
-    fShowPrefsPageAction.Execute;
-  end;
 end;
 
 procedure TNotifier.ShowViewItem(ViewItem: IView; const NewTab: Boolean);
