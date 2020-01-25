@@ -27,27 +27,12 @@ Res\Scripts\3rdParty\jquery.cycle.lite.js
 # compiler error log
 Res\HTML\dlg-comperror-tplt.html
 
-# donate dialogue
-Res\HTML\dlg-donate.html
-
-# email privacy information for display in frames
-Res\HTML\frm-emailprivacy.html
-
 # active text preview dialogueue
 Res\HTML\dlg-activetext-preview-tplt.html
-
-# news dialogue
-Res\HTML\dlg-rssnews.html
 
 # SWAG import dialogue
 Res\HTML\dlg-swag-import-intro.html
 Res\HTML\dlg-swag-import-outro-tplt.html
-
-# code submission wizard
-Res\HTML\dlg-codesubmit-intro.html
-Res\HTML\dlg-codesubmit-license.html
-Res\HTML\dlg-codesubmit-submit.html
-Res\HTML\dlg-codesubmit-finished.html
 
 # Detail pane pages, scripts and CSS
 # ==================================
