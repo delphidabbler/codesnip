@@ -63,9 +63,6 @@ type
       ///  <summary>Action that causes the Snippets Editor to be opened ready to
       ///  create a new snippet.</summary>
       fNewSnippetAction: TBasicAction;
-      ///  <summary>Action that causes news items from CodeSnip news feed to be
-      ///  displayed.</summary>
-      fNewsAction: TBasicAction;  // TODO -cwebsvc: remove this
       ///  <summary>Action that causes a check for program updates to be
       ///  performed.</summary>
       fCheckForUpdatesAction: TBasicAction; // TODO -cwebsvc: remove this
@@ -132,10 +129,6 @@ type
     ///  <summary>Opens Snippets Editor ready to create a new snippet.</summary>
     ///  <remarks>Methods of INotifier.</remarks>
     procedure NewSnippet;
-
-    ///  <summary>Displays news items from the CodeSnip news feed.</summary>
-    ///  <remarks>Methods of INotifier.</remarks>
-    procedure ShowNews; // TODO -cwebsvc: remove this
 
     ///  <summary>Checks for program updates.</summary>
     ///  <remarks>Methods of INotifier.</remarks>
@@ -230,12 +223,6 @@ type
     ///  <param name="Action">TBasicAction [in] Required action.</param>
     ///  <remarks>Methods of ISetActions.</remarks>
     procedure SetNewSnippetAction(const Action: TBasicAction);
-
-    ///  <summary>Sets action used to display news items from the CodeSnip news
-    ///  feed.</summary>
-    ///  <param name="Action">TBasicAction [in] Required action.</param>
-    ///  <remarks>Methods of ISetActions.</remarks>
-    procedure SetNewsAction(const Action: TBasicAction);  // TODO -cwebsvc: remove this
 
     ///  <summary>Sets action used to check for program updates.</summary>
     ///  <param name="Action">TBasicAction [in] Required action.</param>
@@ -475,11 +462,6 @@ begin
   fEditSnippetAction := Action;
 end;
 
-procedure TNotifier.SetNewsAction(const Action: TBasicAction);
-begin
-  fNewsAction := Action;
-end;
-
 procedure TNotifier.SetNewSnippetAction(const Action: TBasicAction);
 begin
   fNewSnippetAction := Action;
@@ -514,12 +496,6 @@ procedure TNotifier.ShowAboutBox;
 begin
   if Assigned(fAboutBoxAction) then
     fAboutBoxAction.Execute;
-end;
-
-procedure TNotifier.ShowNews;
-begin
-  if Assigned(fNewsAction) then
-    fNewsAction.Execute;
 end;
 
 procedure TNotifier.ShowPrefsPage(const ClsName: string);
