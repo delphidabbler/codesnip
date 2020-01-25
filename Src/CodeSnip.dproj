@@ -166,9 +166,6 @@
 			<DCCReference Include="FmProgramUpdatesDlg.pas">
 				<Form>ProgramUpdatesDlg</Form>
 			</DCCReference>
-			<DCCReference Include="FmProxyServerDlg.pas">
-				<Form>ProxyServerDlg</Form>
-			</DCCReference>
 			<DCCReference Include="FmSelectionSearchDlg.pas">
 				<Form>SelectionSearchDlg</Form>
 			</DCCReference>
