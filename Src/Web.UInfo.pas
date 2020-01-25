@@ -89,18 +89,12 @@ type
     class function Host: string;                         // TODO -cwebsvc: remove this
   public
     const
-      ///  <summary>URL of home page on DelphiDabbler website.</summary>
-      DelphiDabblerHomeURL = 'https://github.com/delphidabbler/codesnip'; // TODO -cwebsvc: remove this
       ///  <summary>URL of home page of the CodeSnip project.</summary>
       ProgramHomeURL = GitHubSiteURL;
       /// <summary>URL of the CodeSnip blog</summary>
       ProgramBlogURL = 'http://codesnip-app.blogspot.com/';
       ///  <summary>URL of the online Code Snippets database.</summary>
       DatabaseURL = WebsiteURL + '/url/csdb';  // TODO -cwebsvc -cQuery: replace with URL of DDab CS DB on GitHub ??
-      ///  <summary>URL used to make donations towards the CodeSnip project.
-      ///  </summary>
-      ///  <remarks>This URL redirects to the correct page on PayPal.</remarks>
-      DonateURL = WebsiteURL + '/url/donate-cs'; // TODO -cwebsvc: remove this
       ///  <summary>URL used to view and report CodeSnip bugs.</summary>
       ///  <remarks>This URL will redirect to the actual bug tracker which may
       ///  be on an external site such as SourceForge or GitHub.</remarks>
