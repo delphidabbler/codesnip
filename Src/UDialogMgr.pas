@@ -155,9 +155,6 @@ type
     ///  </returns>
     function ExecProxyServerDlg: Boolean; // TODO -cwebsvc: remove this
 
-    ///  <summary>Displays the News dialogue box.</summary>
-    procedure ShowNewsDlg;  // TODO -cwebsvc: remove this
-
     ///  <summary>Displays the Test Compile dialogue box.</summary>
     ///  <param name="CompileMgr">TCompileMgr [in] Object used to manage test
     ///  compilation and to retain results.</param>
@@ -203,7 +200,6 @@ uses
   FmFindCompilerDlg,
   FmFindTextDlg,
   FmFindXRefsDlg,
-  FmNewsDlg,
   FmPreferencesDlg,
   FmPrintDlg,
   FmProgramUpdatesDlg,
@@ -304,11 +300,6 @@ end;
 procedure TDialogMgr.ShowFavouritesDlg(ANotifier: INotifier);
 begin
   TFavouritesDlg.Display(Owner, ANotifier);
-end;
-
-procedure TDialogMgr.ShowNewsDlg;
-begin
-  TNewsDlg.Execute(Owner);
 end;
 
 procedure TDialogMgr.ShowProgramUpdatesDlg;
