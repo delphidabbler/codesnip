@@ -68,9 +68,6 @@ type
     ///  <summary>Opens Snippets Editor ready to create a new snippet.</summary>
     procedure NewSnippet;
 
-    ///  <summary>Checks for program updates.</summary>
-    procedure CheckForUpdates;  // TODO -cwebsvc: remove this
-
     ///  <summary>Displays the program's About Box.</summary>
     procedure ShowAboutBox;
 
@@ -150,10 +147,6 @@ type
     ///  snippet.</summary>
     ///  <param name="Action">TBasicAction [in] Required action.</param>
     procedure SetNewSnippetAction(const Action: TBasicAction);
-
-    ///  <summary>Sets action used to check for program updates.</summary>
-    ///  <param name="Action">TBasicAction [in] Required action.</param>
-    procedure SetCheckForUpdatesAction(const Action: TBasicAction);   // TODO -cwebsvc: remove this
 
     ///  <summary>Sets action used to display the program's About Box.</summary>
     ///  <param name="Action">TBasicAction [in] Required action.</param>

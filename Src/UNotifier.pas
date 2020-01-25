@@ -61,9 +61,6 @@ type
       ///  <summary>Action that causes the Snippets Editor to be opened ready to
       ///  create a new snippet.</summary>
       fNewSnippetAction: TBasicAction;
-      ///  <summary>Action that causes a check for program updates to be
-      ///  performed.</summary>
-      fCheckForUpdatesAction: TBasicAction; // TODO -cwebsvc: remove this
       ///  <summary>Action that causes About box to be displayed.</summary>
       fAboutBoxAction: TBasicAction;
       ///  <summary>Action that displays a specified page in the preferences
@@ -123,10 +120,6 @@ type
     ///  <summary>Opens Snippets Editor ready to create a new snippet.</summary>
     ///  <remarks>Methods of INotifier.</remarks>
     procedure NewSnippet;
-
-    ///  <summary>Checks for program updates.</summary>
-    ///  <remarks>Methods of INotifier.</remarks>
-    procedure CheckForUpdates;  // TODO -cwebsvc: remove this
 
     ///  <summary>Displays the program's About Box.</summary>
     ///  <remarks>Methods of INotifier.</remarks>
@@ -212,11 +205,6 @@ type
     ///  <param name="Action">TBasicAction [in] Required action.</param>
     ///  <remarks>Methods of ISetActions.</remarks>
     procedure SetNewSnippetAction(const Action: TBasicAction);
-
-    ///  <summary>Sets action used to check for program updates.</summary>
-    ///  <param name="Action">TBasicAction [in] Required action.</param>
-    ///  <remarks>Methods of ISetActions.</remarks>
-    procedure SetCheckForUpdatesAction(const Action: TBasicAction); // TODO -cwebsvc: remove this
 
     ///  <summary>Sets action used to display the program's About Box.</summary>
     ///  <param name="Action">TBasicAction [in] Required action.</param>
@@ -304,12 +292,6 @@ begin
   end;
 end;
 
-procedure TNotifier.CheckForUpdates;
-begin
-  if Assigned(fCheckForUpdatesAction) then
-    fCheckForUpdatesAction.Execute;
-end;
-
 procedure TNotifier.ConfigCompilers;
 begin
   if Assigned(fConfigCompilersAction) then
@@ -383,11 +365,6 @@ begin
   Assert(Action is TChangeSnippetStarAction, ClassName +
     '.SetChangeSnippetStarAction: Action is not TChangeSnippetStarAction');
   fChangeSnippetStarAction := Action;
-end;
-
-procedure TNotifier.SetCheckForUpdatesAction(const Action: TBasicAction);
-begin
-  fCheckForUpdatesAction := Action;
 end;
 
 procedure TNotifier.SetConfigCompilersAction(const Action: TBasicAction);
