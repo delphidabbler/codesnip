@@ -190,3 +190,8 @@ acronym {
   font-style: italic;
   font-weight: bold;
 }
+
+.todo {
+  color: red;
+  font-weight: bold;
+}
