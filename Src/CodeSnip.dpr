@@ -77,7 +77,6 @@ uses
   FmCompilersDlg.UBannerMgr in 'FmCompilersDlg.UBannerMgr.pas',
   FmCompilersDlg.UCompilerListMgr in 'FmCompilersDlg.UCompilerListMgr.pas',
   FmDependenciesDlg in 'FmDependenciesDlg.pas' {DependenciesDlg},
-  FmDonateDlg in 'FmDonateDlg.pas' {DonateDlg},
   FmDuplicateSnippetDlg in 'FmDuplicateSnippetDlg.pas' {DuplicateSnippetDlg},
   FmEasterEgg in 'FmEasterEgg.pas' {EasterEggForm},
   FmFavouritesDlg in 'FmFavouritesDlg.pas' {FavouritesDlg},
