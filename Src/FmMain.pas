@@ -106,7 +106,6 @@ type
     actSWAGImport: TAction;
     actTestBug: TAction;
     actTestCompile: TAction;
-    actUpdateDbase: TAction;
     actViewGroupAlphabetically: TAction;
     actViewGroupByTags: TAction;
     actViewCompErrs: TAction;
@@ -187,11 +186,9 @@ type
     miSpacer15: TMenuItem;
     miSpacer16: TMenuItem;
     miSpacer17: TMenuItem;
-    miSpacer20: TMenuItem;
     miSWAGImport: TMenuItem;
     miTestCompile: TMenuItem;
     miTools: TMenuItem;
-    miUpdateDbase: TMenuItem;
     miView: TMenuItem;
     miViewGroupByTags: TMenuItem;
     miViewCompErrs: TMenuItem;
@@ -229,7 +226,6 @@ type
     tbSpacer7: TToolButton;
     tbSpacer8: TToolButton;
     tbTestCompile: TToolButton;
-    tbUpdateDbase: TToolButton;
     actConfigDiffProg: TAction;
     miConfigDiffProg: TMenuItem;
     actViewGroupByLanguage: TAction;
@@ -1403,7 +1399,6 @@ begin
     fNotifier := TNotifier.Create;
     with fNotifier as ISetActions do
     begin
-      SetUpdateDbaseAction(actUpdateDbase);
       SetDisplaySnippetAction(TActionFactory.CreateSnippetAction(Self));
       SetConfigCompilersAction(actCompilers);
       SetShowViewItemAction(

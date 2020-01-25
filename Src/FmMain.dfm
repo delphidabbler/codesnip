@@ -166,13 +166,8 @@ inherited MainForm: TMainForm
       ImageIndex = 12
       Style = tbsSeparator
     end
-    object tbUpdateDbase: TToolButton
-      Left = 423
-      Top = 0
-      Action = actUpdateDbase
-    end
     object tbSpacer4: TToolButton
-      Left = 446
+      Left = 423
       Top = 0
       Width = 8
       Caption = 'tbSpacer4'
@@ -180,7 +175,7 @@ inherited MainForm: TMainForm
       Style = tbsSeparator
     end
     object tbHelpContents: TToolButton
-      Left = 454
+      Left = 431
       Top = 0
       Action = actHelpContents
     end
@@ -673,14 +668,6 @@ inherited MainForm: TMainForm
       OnExecute = actSaveDatabaseExecute
       OnUpdate = actSaveDatabaseUpdate
     end
-    object actUpdateDbase: TAction
-      Category = 'Database'
-      Caption = 'Update From Web...'
-      Hint = 'Update Database from Web|Update the database from the internet'
-      ImageIndex = 7
-      Visible = False
-      OnExecute = actUpdateDbaseExecute
-    end
     object actSubmit: TAction
       Category = 'Snippets'
       Caption = 'Submit Snippets...'
@@ -1094,12 +1081,6 @@ inherited MainForm: TMainForm
         Action = actRestoreDatabase
       end
       object miSpacer13: TMenuItem
-        Caption = '-'
-      end
-      object miUpdateDbase: TMenuItem
-        Action = actUpdateDbase
-      end
-      object miSpacer20: TMenuItem
         Caption = '-'
       end
       object miMoveDatabase: TMenuItem
