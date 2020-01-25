@@ -870,6 +870,15 @@ inherited MainForm: TMainForm
         'browser'
       ImageIndex = 6
     end
+    object actReportIssue: TAction
+      Category = 'Tools'
+      Caption = 'Report Bug / Request Feature...'
+      Hint = 
+        'Report a bug or request a feature|Report a bug or request a feat' +
+        'ure using the issue tracker on GitHub'
+      ImageIndex = 17
+      OnExecute = actReportIssueExecute
+    end
   end
   object mnuMain: TMainMenu
     Images = ilMain
@@ -1110,6 +1119,12 @@ inherited MainForm: TMainForm
       end
       object miConfigDiffProg: TMenuItem
         Action = actConfigDiffProg
+      end
+      object miSpacer7: TMenuItem
+        Caption = '-'
+      end
+      object miReportIssue: TMenuItem
+        Action = actReportIssue
       end
     end
     object miHelp: TMenuItem

@@ -235,6 +235,9 @@ type
     tbFindTags: TToolButton;
     miBlog: TMenuItem;
     actBlog: TBrowseURL;
+    actReportIssue: TAction;
+    miSpacer7: TMenuItem;
+    miReportIssue: TMenuItem;
     ///  <summary>Displays About Box.</summary>
     procedure actAboutExecute(Sender: TObject);
     ///  <summary>Adds current snippet to favourites.</summary>
@@ -478,6 +481,7 @@ type
     ///  position is permitted and blocks the move if not.</summary>
     procedure splitVertCanResize(Sender: TObject; var NewSize: Integer;
       var Accept: Boolean);
+    procedure actReportIssueExecute(Sender: TObject);
   strict private
     var
       ///  <summary>Object that notifies user-initiated events by triggering
@@ -978,6 +982,11 @@ begin
   TDBModificationMgr.RemoveTagFromSnippet(
     (Sender as TRemoveTagAction).SnippetID, (Sender as TRemoveTagAction).Tag
   );
+end;
+
+procedure TMainForm.actReportIssueExecute(Sender: TObject);
+begin
+  fDialogMgr.ShowBugReportDlg
 end;
 
 procedure TMainForm.actRestoreDatabaseExecute(Sender: TObject);
