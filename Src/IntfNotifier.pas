@@ -37,7 +37,7 @@ type
     ['{13962DE4-784A-4B70-9D3F-FD434FAE4F4F}']
 
     ///  <summary>Requests a database update.</summary>
-    procedure UpdateDbase;
+    procedure UpdateDbase;  // TODO -cwebsvc: remove this
 
     ///  <summary>Displays a snippet.</summary>
     ///  <param name="SnippetID">TSnippetID [in] ID of required snippet.
@@ -69,16 +69,16 @@ type
     procedure EditSnippet(const SnippetID: TSnippetID);
 
     ///  <summary>Displays Donate dialogue box.</summary>
-    procedure Donate;
+    procedure Donate; // TODO -cwebsvc: remove this
 
     ///  <summary>Opens Snippets Editor ready to create a new snippet.</summary>
     procedure NewSnippet;
 
     ///  <summary>Displays news items from the CodeSnip news feed.</summary>
-    procedure ShowNews;
+    procedure ShowNews; // TODO -cwebsvc: remove this
 
     ///  <summary>Checks for program updates.</summary>
-    procedure CheckForUpdates;
+    procedure CheckForUpdates;  // TODO -cwebsvc: remove this
 
     ///  <summary>Displays the program's About Box.</summary>
     procedure ShowAboutBox;
@@ -125,7 +125,7 @@ type
 
     ///  <summary>Sets action used to request a database update.</summary>
     ///  <param name="Action">TBasicAction [in] Required action.</param>
-    procedure SetUpdateDbaseAction(const Action: TBasicAction);
+    procedure SetUpdateDbaseAction(const Action: TBasicAction); // TODO -cwebsvc: remove this
 
     ///  <summary>Sets action used to display a snippet.</summary>
     ///  <param name="Action">TBasicAction [in] Required action.</param>

@@ -43,7 +43,7 @@ type
   strict private
     var
       ///  <summary>Action that triggers a database update.</summary>
-      fUpdateDbaseAction: TBasicAction;
+      fUpdateDbaseAction: TBasicAction; // TODO -cwebsvc: remove this
       ///  <summary>Action that causes a named snippet to be displayed.
       ///  </summary>
       fDisplaySnippetAction: TBasicAction;
@@ -61,16 +61,16 @@ type
       ///  <summary>Action that causes a snippet to be edited.</summary>
       fEditSnippetAction: TBasicAction;
       ///  <summary>Action that displays donate dialogue box.</summary>
-      fDonateAction: TBasicAction;
+      fDonateAction: TBasicAction; // TODO -cwebsvc: remove this
       ///  <summary>Action that causes the Snippets Editor to be opened ready to
       ///  create a new snippet.</summary>
       fNewSnippetAction: TBasicAction;
       ///  <summary>Action that causes news items from CodeSnip news feed to be
       ///  displayed.</summary>
-      fNewsAction: TBasicAction;
+      fNewsAction: TBasicAction;  // TODO -cwebsvc: remove this
       ///  <summary>Action that causes a check for program updates to be
       ///  performed.</summary>
-      fCheckForUpdatesAction: TBasicAction;
+      fCheckForUpdatesAction: TBasicAction; // TODO -cwebsvc: remove this
       ///  <summary>Action that causes About box to be displayed.</summary>
       fAboutBoxAction: TBasicAction;
       ///  <summary>Action that displays a specified page in the preferences
@@ -92,7 +92,7 @@ type
 
     ///  <summary>Requests a database update.</summary>
     ///  <remarks>Methods of INotifier.</remarks>
-    procedure UpdateDbase;
+    procedure UpdateDbase;  // TODO -cwebsvc: remove this
 
     ///  <summary>Displays a snippet.</summary>
     ///  <param name="SnippetID">TSnippetID [in] ID of required snippet.
@@ -133,7 +133,7 @@ type
 
     ///  <summary>Displays Donate dialogue box.</summary>
     ///  <remarks>Methods of INotifier.</remarks>
-    procedure Donate;
+    procedure Donate; // TODO -cwebsvc: remove this
 
     ///  <summary>Opens Snippets Editor ready to create a new snippet.</summary>
     ///  <remarks>Methods of INotifier.</remarks>
@@ -141,11 +141,11 @@ type
 
     ///  <summary>Displays news items from the CodeSnip news feed.</summary>
     ///  <remarks>Methods of INotifier.</remarks>
-    procedure ShowNews;
+    procedure ShowNews; // TODO -cwebsvc: remove this
 
     ///  <summary>Checks for program updates.</summary>
     ///  <remarks>Methods of INotifier.</remarks>
-    procedure CheckForUpdates;
+    procedure CheckForUpdates;  // TODO -cwebsvc: remove this
 
     ///  <summary>Displays the program's About Box.</summary>
     ///  <remarks>Methods of INotifier.</remarks>
@@ -189,7 +189,7 @@ type
     ///  <summary>Sets action used to request a database update.</summary>
     ///  <param name="Action">TBasicAction [in] Required action.</param>
     ///  <remarks>Methods of ISetActions.</remarks>
-    procedure SetUpdateDbaseAction(const Action: TBasicAction);
+    procedure SetUpdateDbaseAction(const Action: TBasicAction); // TODO -cwebsvc: remove this
 
     ///  <summary>Sets action used to display a snippet.</summary>
     ///  <param name="Action">TBasicAction [in] Required action.</param>
@@ -234,7 +234,7 @@ type
     ///  <summary>Sets action used to display Donate dialogue box.</summary>
     ///  <param name="Action">TBasicAction [in] Required action.</param>
     ///  <remarks>Methods of ISetActions.</remarks>
-    procedure SetDonateAction(const Action: TBasicAction);
+    procedure SetDonateAction(const Action: TBasicAction);  // TODO -cwebsvc: remove this
 
     ///  <summary>Sets action used to open snippets editor to create a new
     ///  snippet.</summary>
@@ -246,12 +246,12 @@ type
     ///  feed.</summary>
     ///  <param name="Action">TBasicAction [in] Required action.</param>
     ///  <remarks>Methods of ISetActions.</remarks>
-    procedure SetNewsAction(const Action: TBasicAction);
+    procedure SetNewsAction(const Action: TBasicAction);  // TODO -cwebsvc: remove this
 
     ///  <summary>Sets action used to check for program updates.</summary>
     ///  <param name="Action">TBasicAction [in] Required action.</param>
     ///  <remarks>Methods of ISetActions.</remarks>
-    procedure SetCheckForUpdatesAction(const Action: TBasicAction);
+    procedure SetCheckForUpdatesAction(const Action: TBasicAction); // TODO -cwebsvc: remove this
 
     ///  <summary>Sets action used to display the program's About Box.</summary>
     ///  <param name="Action">TBasicAction [in] Required action.</param>

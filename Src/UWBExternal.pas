@@ -58,7 +58,7 @@ type
 
     ///  <summary>Updates database from internet.</summary>
     ///  <remarks>Method of IWBExternal13.</remarks>
-    procedure UpdateDbase; safecall;
+    procedure UpdateDbase; safecall;  // TODO -cwebsvc -cjs: remove this from IDL when removed from HTML & JS
 
     ///  <summary>Displays the given snippet.</summary>
     ///  <param name="SnippetID">WideString [in] ID of snippet to be displayed.
@@ -75,7 +75,7 @@ type
 
     ///  <summary>Displays the Donate dialogue box.</summary>
     ///  <remarks>Method of IWBExternal13.</remarks>
-    procedure Donate; safecall;
+    procedure Donate; safecall; // TODO -cwebsvc -cjs: remove this from IDL when removed from HTML & JS
 
     ///  <summary>Opens Snippet Editor ready to create a new snippet.</summary>
     ///  <remarks>Method of IWBExternal13.</remarks>
@@ -83,11 +83,11 @@ type
 
     ///  <summary>Shows latest news items from CodeSnip news feed.</summary>
     ///  <remarks>Method of IWBExternal13.</remarks>
-    procedure ShowNews; safecall;
+    procedure ShowNews; safecall; // TODO -cwebsvc -cjs: remove this from IDL when removed from HTML & JS
 
     ///  <summary>Checks for program updates.</summary>
     ///  <remarks>Method of IWBExternal13.</remarks>
-    procedure CheckForUpdates; safecall;
+    procedure CheckForUpdates; safecall;  // TODO -cwebsvc -cjs: remove this from IDL when removed from HTML & JS
 
     ///  <summary>Displays the program's About Box.</summary>
     ///  <remarks>Method of IWBExternal13.</remarks>
