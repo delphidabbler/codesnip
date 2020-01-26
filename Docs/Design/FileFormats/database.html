@@ -299,20 +299,11 @@
 
 <p>
   Following the fixed fields comes a list of property data. Properties can
-  appear in any order and, with the exception of the ID property, may be omitted
-  if they have their default value.
-</p>
-<p class="todo pullout">TODO: Check if it is true that <em>all</em> properties
-  other than ID have default values. Doesn't seem to make sense for some props
-  like Title and SourceCode.
+  appear in any order. Some properties must be written &ndash; they are noted below. Others are optional and won't be written if they have their default values. Default values are noted for optionally written properties.
 </p>
 
 <p>
   The property data is organised as follows, one record for each property:
-</p>
-
-<p class='todo pullout'>
-  TODO: Specify default values used below.
 </p>
 
 <dl>
@@ -335,21 +326,21 @@
       </dt>
       <dd>
         A <kbd>SizedString</kbd> value that is a text representation of the
-        snippet's ID.
+        snippet's ID. <em>Required. Must be non-empty</em>
       </dd>
       <dt>
         Title property
       </dt>
       <dd>
         A <kbd>SizedString</kbd> value containing the snippet's title in plain
-        text.
+        text. <em>Required. Must be non-empty</em>
       </dd>
       <dt>
         Description property
       </dt>
       <dd>
         A <kbd>SizedLongString</kbd> value containing the snippet's description
-        in REML mark-up.
+        in REML mark-up. <em>Default: no description.</em>
         <div class='todo pullout'>TODO: Specific version of REML used. REML 3??</div>
       </dd>
       <dt>
@@ -357,33 +348,33 @@
       </dt>
       <dd>
         A <kbd>SizedLongString</kbd> value containing the snippet's source code
-        in plain text.
+        in plain text. <em>Required: Must be non-empty.</em>
       </dd>
       <dt>
         LanguageID property
       </dt>
       <dd>
         A <kbd>SizedString</kbd> value that is a text representation of the
-        snippet's language ID.
+        snippet's language ID. <em>Default: Default language ID.</em>
       </dd>
       <dt>
         Modified property
       </dt>
       <dd>
-        A <kbd>Date</kbd> value that is the date the snippet was last modified.
+        A <kbd>Date</kbd> value that is the date the snippet was last modified. <em>Default: Null date.</em>
       </dd>
       <dt>
         Created property
       </dt>
       <dd>
-        A <kbd>Date</kbd> value that is the date the snippet was created.
+        A <kbd>Date</kbd> value that is the date the snippet was created. <em>Default: Null date.</em>
       </dd>
       <dt>
         RequiredModules property
       </dt>
       <dd>
         A <kbd>StringList</kbd> value containing a list of any required module
-        names, each of which is in plain text.
+        names, each of which is in plain text. <em>Default: no required modules.</em>
         <div class='todo pullout'>TODO: Check if this should specify a valid Pascal identifier rather than <em>plain text</em> as stated.</div>
       </dd>
       <dt>
@@ -391,20 +382,20 @@
       </dt>
       <dd>
         A <kbd>StringList</kbd> value containing a list of string
-        representations of the IDs of any required snippets.
+        representations of the IDs of any required snippets. <em>Default: No required snippets.</em>
       </dd>
       <dt>
         XRefs property
       </dt>
       <dd>
         A <kbd>StringList</kbd> value containing a list of string
-        representations of the IDs of any cross referenced snippets.
+        representations of the IDs of any cross referenced snippets. <em>Default: No cross referenced snippets.</em>
       </dd>
       <dt>
         Notes property
       </dt>
       <dd>
-        A <kbd>SizedLongString</kbd> value containing the notes in REML mark-up.
+        A <kbd>SizedLongString</kbd> value containing the notes in REML mark-up. <em>Default: No notes.</em>
         <div class='todo pullout'>TODO: Specific version of REML used. REML 3??</div>
       </dd>
       <dt>
@@ -412,7 +403,7 @@
       </dt>
       <dd>
         A <kbd>Byte</kbd> value containing a code that specifies the snippet's
-        kind.
+        kind. <em>Default: freeform.</em>
       </dd>
       <dt>
         CompileResults property
@@ -431,13 +422,16 @@
             which the snippet fails to compile.
           </li>
         </ol>
+        <div>
+          <em>Default: both compile lists empty.</em>
+        </div>
       </dd>
       <dt>
         Tags property
       </dt>
       <dd>
         A <kbd>StringList</kbd> value containing a list of names of the
-        snippet's tags, each in plain text.
+        snippet's tags, each in plain text. <em>Default: no tags.</em>
         <div class='todo pullout'>TODO: Check if there are any restrictions on the format of tag.</div>
       </dd>
       <dt>
@@ -462,26 +456,29 @@
             updated from the linked synch space.
           </li>
         </ol>
+        <div>
+          This property is never written when origin source is <em>local</em>. <em>Default: local.</em>
+        </div>
       </dd>
       <dt>
         TestInfo property
       </dt>
       <dd>
         A <kbd>Byte</kbd> value containing a code that specifies the snippet's
-        testing level.
+        testing level. <em>Default: not tested.</em>
       </dd>
       <dt>
         Starred property
       </dt>
       <dd>
         A <kbd>Byte</kbd> representation of a Boolean value that determines if
-        the snippet is starred.
+        the snippet is starred. <em>Default: un-starred.</em>
       </dd>
       <dt class='todo pullout'>
-        TODO: Consider adding an <em>Origin property</em> to denote where snippet was obtained from. Replacement for the <em>LinkInfo</em> property?
+        TODO: Consider adding an <em>Origin property</em> to denote where snippet was obtained from. Replacement for the <em>LinkInfo</em> property? <em>Default: local.</em>
       </dt>
       <dt class='todo pullout'>
-        TODO: Consider adding a <em>License property</em> to state any license that applies to the snippet. <em>Consider a default license, and consider how to license any SWAG imports.
+        TODO: Consider adding a <em>License property</em> to state any license that applies to the snippet. <em>Consider a default license, and consider how to license any SWAG imports. <em>Default: no license.</em>
       </dt>
     </dl>
   </dd>
