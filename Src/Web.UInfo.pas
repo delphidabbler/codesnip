@@ -8,8 +8,7 @@
  * $Rev$
  * $Date$
  *
- * Provides records and static that provide information about URLs, web services
- * and proxy servers.
+ * Provides information about web locations used by CodeSnip.
 }
 
 
@@ -20,8 +19,8 @@ interface
 
 
 type
-  ///  <summary>Static class that provides information about URLs and any proxy
-  ///  server used by CodeSnip.</summary>
+  ///  <summary>Advanced record that provides information web locations used by
+  ///  CodeSnip.</summary>
   TWebInfo = record
   strict private
     const
