@@ -469,7 +469,8 @@ var
   end;
 
 begin
-  // TODO -cUI: remove unused placeholder resolutions  inherited;
+  inherited;
+  // TODO -cUI: remove unused placeholder resolutions
   Tplt.ResolvePlaceholderHTML(
     'externalScript', TJavaScript.LoadScript('external.js', etWindows1252)
   );
