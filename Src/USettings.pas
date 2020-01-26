@@ -236,7 +236,7 @@ uses
   // Delphi
   Classes, IniFiles, IOUtils,
   // Project
-  UAppInfo, UEncryptor, UExceptions, UHexUtils, UIOUtils, UStrUtils;
+  UAppInfo, UExceptions, UHexUtils, UIOUtils, UStrUtils;
 
 
 var
