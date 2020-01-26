@@ -64,6 +64,7 @@ procedure TTagSet.Assign(Other: ITagSet);
 var
   Tag: TTag;
 begin
+  Assert(Assigned(Other), ClassName + '.Assign: Other must not be nil');
   Clear;
   for Tag in Other do
     Add(Tag);
@@ -104,6 +105,7 @@ end;
 
 constructor TTagSet.Create(Tags: ITagSet);
 begin
+  Assert(Assigned(Tags), ClassName + '.Create: Tags must not be nil');
   Create;
   Assign(Tags);
 end;
@@ -118,6 +120,7 @@ procedure TTagSet.Exclude(Tags: ITagSet);
 var
   Tag: TTag;
 begin
+  Assert(Assigned(Tags), ClassName + '.Exclude: Tags must not be nil');
   for Tag in Tags do
     fTags.Remove(Tag);
 end;
@@ -147,6 +150,7 @@ procedure TTagSet.Include(Tags: ITagSet);
 var
   Tag: TTag;
 begin
+  Assert(Assigned(Tags), ClassName + '.Include: Tags must not be nil');
   for Tag in Tags do
     fTags.Add(Tag); // set implementation ignores duplicates
 end;
