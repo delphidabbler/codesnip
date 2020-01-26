@@ -326,7 +326,7 @@
       </dt>
       <dd>
         A <kbd>SizedString</kbd> value that is a text representation of the
-        snippet's ID. <em>Required. Must be non-empty</em>
+        snippet's ID. Must be non-empty and a valid ID string. <em>Required.</em>
       </dd>
       <dt>
         Title property
@@ -340,8 +340,7 @@
       </dt>
       <dd>
         A <kbd>SizedLongString</kbd> value containing the snippet's description
-        in REML mark-up. <em>Default: no description.</em>
-        <div class='todo pullout'>TODO: Specific version of REML used. REML 3??</div>
+        in REML mark-up. REML v4 is supported. <em>Default: no description.</em>
       </dd>
       <dt>
         SourceCode property
@@ -382,21 +381,20 @@
       </dt>
       <dd>
         A <kbd>StringList</kbd> value containing a list of string
-        representations of the IDs of any required snippets. <em>Default: No required snippets.</em>
+        representations of the IDs of any required snippets. Any ID strings must be valid snippet IDs. <em>Default: No required snippets.</em>
       </dd>
       <dt>
         XRefs property
       </dt>
       <dd>
         A <kbd>StringList</kbd> value containing a list of string
-        representations of the IDs of any cross referenced snippets. <em>Default: No cross referenced snippets.</em>
+        representations of the IDs of any cross referenced snippets. Any ID strings must be valid snippet IDs. <em>Default: No cross referenced snippets.</em>
       </dd>
       <dt>
         Notes property
       </dt>
       <dd>
-        A <kbd>SizedLongString</kbd> value containing the notes in REML mark-up. <em>Default: No notes.</em>
-        <div class='todo pullout'>TODO: Specific version of REML used. REML 3??</div>
+        A <kbd>SizedLongString</kbd> value containing the notes in REML mark-up. REML v4 is supported.  <em>Default: No notes.</em>
       </dd>
       <dt>
         Kind property
@@ -430,9 +428,7 @@
         Tags property
       </dt>
       <dd>
-        A <kbd>StringList</kbd> value containing a list of names of the
-        snippet's tags, each in plain text. <em>Default: no tags.</em>
-        <div class='todo pullout'>TODO: Check if there are any restrictions on the format of tag.</div>
+        A <kbd>StringList</kbd> value containing a list of names of the snippet's tags, each in plain text. Each tag name must be made up of valid tag characters. <em>Default: no tags.</em>
       </dd>
       <dt>
         LinkInfo property
