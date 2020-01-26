@@ -440,10 +440,6 @@ type
     ///  <remarks>The Tag property of the Action specifies the actual expand /
     ///  collapse operation.</remarks>
     procedure ActTreeStateChangeUpdate(Sender: TObject);
-    ///  <summary>Displays the Update From Web dialogue box that enables the
-    ///  latest version of the online database to be downloaded. If the database
-    ///  was changed it is reloaded.</summary>
-    procedure actUpdateDbaseExecute(Sender: TObject);
     ///  <summary>Displays a dialogue box giving details of any compiler errors
     ///  and warnings for the last compiled snippet.</summary>
     procedure actViewCompErrsExecute(Sender: TObject);
@@ -1130,27 +1126,6 @@ begin
   Action.Enabled := fMainDisplayMgr.CanUpdateOverviewTreeState(
     TTreeNodeAction(Action.Tag)
   )
-end;
-
-procedure TMainForm.actUpdateDbaseExecute(Sender: TObject);
-{ TODO -cCommented Out: Reinstate this action or similar to check for updates to
-                        linked spaces.
-                        NOTE: associated action has been made invisible. }
-//resourcestring
-//  sConfirmSave = 'The database has been changed. Do you wish to save it '
-//    + 'before updating the database?' + EOL2 + 'Clicking No will cause all '
-//    + 'recent changes to be lost.';
-begin
-//  if fDialogMgr.ExecDBUpdateDlg then
-//  begin
-//    // Database was updated: check if database needs saving
-//    if (Database as IDatabaseEdit).Updated
-//      and TMessageBox.Confirm(Self, sConfirmSave) then
-//      TUserDBMgr.Save(Self);
-//    // Reload the databases
-//    ReloadDatabase;
-//  end;
-  TMessageBox.Error(Self, 'actUpdateDbase temporarily disabled');
 end;
 
 procedure TMainForm.actViewCompErrsExecute(Sender: TObject);
