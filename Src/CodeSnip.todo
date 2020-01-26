@@ -20,6 +20,10 @@ Update database.html as necessary.
 {TODO -cQuery : Reinstate FAQ help menu option if FAQ ported to GitHub}
 
 
-{TODO -cQuery : Remove diffs settings - not sure what it's for!}
+{TODO -cFeature :Implement diff vewer:
++ Use selected snippet as first file to compare
++ Use a dialogue box to select second one
++ Write both snippets' source to temp folder
++ Compare files with diff viewer}
 {TODO -cPrefs : Remove Updates tab from Preferences dialog}
 {TODO -cPrefs : Remove News tab from Preferences dialog}
