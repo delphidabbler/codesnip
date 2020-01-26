@@ -1,3 +1,6 @@
+{TODO -odatabase.html -cQuery :
+Check if Indy code can be removed.
+Delete all Indy recognition if so.}
 {TODO -cQuery -odatabase.html :
 Consider adding License property to snippets.
 See database.html for full details}
