@@ -15,7 +15,9 @@
 
 unit Web.USWAGRESTMgr;
 
-// TODO -cwebsvc: Rework this unit as a SWAG XML parser that gets XML from file - will need renaming
+{ TODO -cSWAG: Rework this unit as a SWAG XML parser that gets XML from file
+                - will need renaming
+                - *** no longer works correctly *** }
 
 interface
 
@@ -25,7 +27,7 @@ uses
   XMLIntf,
   Generics.Collections,
   // Project
-  Web.UBaseWebService,
+//  Web.UBaseWebService,
   UXMLDocumentEx,
   UURIParams,
   SWAG.UCommon;
@@ -60,7 +62,7 @@ type
   ///  is documented ar http://swag.delphidabbler.com/docs/api/</para>
   ///  <para>Data is retrieved XML format.</para>
   ///  </remarks>
-  TSWAGRESTMgr = class sealed(TBaseWebService)
+  TSWAGRESTMgr = class sealed(TObject)
   strict private
     const
       ///  <summary>Web service's base URL template.</summary>
@@ -371,7 +373,7 @@ end;
 
 constructor TSWAGRESTMgr.Create;
 begin
-  inherited Create(TWebServiceInfo.Create(ScriptURLTplt, UserAgent));
+  inherited Create;// TODO -cSWAG: (TWebServiceInfo.Create(ScriptURLTplt, UserAgent));
 end;
 
 function TSWAGRESTMgr.CreateParams: TURIParams;
@@ -397,7 +399,8 @@ var
 begin
   Params := CreateParams;
   try
-    Response := GetText(ResourcePath, Params);
+    Response := ''; // TODO -cSWAG: GetText(ResourcePath, Params);
+    raise Exception.Create('TSWAGRESTMgr.GetCategories is disabled, awaiting reworking to access local data file');
     ParseCategoriesResponse(Response, CatList);
   finally
     Params.Free;
@@ -415,7 +418,8 @@ begin
   Params := CreateParams;
   try
     AddFieldsParam(Params, Fields);
-    Response := GetText(Format(ResourcePathTplt, [SnippetID]), Params);
+    Response := ''; // TODO -cSWAG: GetText(Format(ResourcePathTplt, [SnippetID]), Params);
+    raise Exception.Create('TSWAGRESTMgr.GetSnippet is disabled, awaiting reworking to access local data file');
     ParseSnippetResponse(Response, Snippet);
   finally
     Params.Free;
@@ -431,8 +435,9 @@ var
 begin
   Params := CreateParams;
   try
-    Response := GetText(Format(ResourcePathTplt, [URIEncode(CatID)]), Params);
-    Result := ParseSnippetCount(Response);
+    Response := ''; // TODO -cSWAG: GetText(Format(ResourcePathTplt, [URIEncode(CatID)]), Params);
+    Result := 0; // TODO -cSWAG: ParseSnippetCount(Response);
+    raise Exception.Create('TSWAGRESTMgr.GetSnippetCount is disabled, awaiting reworking to access local data file');
   finally
     Params.Free;
   end;
@@ -452,7 +457,8 @@ begin
     AddFieldsParam(Params, Fields);
     if not Limit.IsNull then
       AddLimitParam(Params, Limit);
-    Response := GetText(Format(ResourcePathTplt, [URIEncode(CatID)]), Params);
+    Response := ''; // TODO -cSWAG: GetText(Format(ResourcePathTplt, [URIEncode(CatID)]), Params);
+    raise Exception.Create('TSWAGRESTMgr.GetSnippets is disabled, awaiting reworking to access local data file');
     ParseSnippetsResponse(Response, SnippetList);
   finally
     Params.Free;

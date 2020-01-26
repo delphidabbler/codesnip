@@ -26,7 +26,7 @@ uses
   SWAG.UCommon,
   SWAG.USnippetCache,
   UExceptions,
-  Web.USWAGRESTMgr;
+  Web.USWAGRESTMgr; // TODO -cSWAG: Web.USWAGRESTMgr no longer work - exceptions created
 
 
 type
