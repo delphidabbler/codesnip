@@ -25,5 +25,5 @@ Update database.html as necessary.
 + Use a dialogue box to select second one
 + Write both snippets' source to temp folder
 + Compare files with diff viewer}
-{TODO -cPrefs : Remove Updates tab from Preferences dialog}
-{TODO -cPrefs : Remove News tab from Preferences dialog}
+
+
