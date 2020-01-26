@@ -14,6 +14,8 @@
 
 unit Web.UExceptions;
 
+// TODO -cremove: Removed this unit once dependencies in Web.USWAGRESTMgr and SWAG.UReader are removed
+
 
 interface
 
