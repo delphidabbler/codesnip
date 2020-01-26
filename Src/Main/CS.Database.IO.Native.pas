@@ -595,9 +595,9 @@ begin
       TEncoding.ASCII.GetBytes(Format('%.4d', [CurrentVersion]))
     );
     WriteString16Prop(Writer, spID, ASnippet.GetID.ToString, False);
-    WriteString16Prop(Writer, spTitle, ASnippet.GetTitle, True);
+    WriteString16Prop(Writer, spTitle, ASnippet.GetTitle, False);
     WriteMarkupProp(Writer, spDescription, ASnippet.GetDescription, True);
-    WriteString32Prop(Writer, spSourceCode, ASnippet.GetSourceCode, True);
+    WriteString32Prop(Writer, spSourceCode, ASnippet.GetSourceCode, False);
     WriteLanguageIDProp(Writer, spLanguageID, ASnippet.GetLanguageID, True);
     WriteDateProp(Writer, spModified, ASnippet.GetModified, True);
     WriteDateProp(Writer, spCreated, ASnippet.GetCreated, True);
