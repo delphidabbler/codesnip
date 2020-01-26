@@ -508,8 +508,6 @@ procedure TSWAGImportDlg.InitUpdatePage;
 var
   FullSnippets: Generics.Collections.TList<TSWAGSnippet>;
   Snippet: TSWAGSnippet;
-resourcestring
-  sWaitMsg = 'Downloading Snippets From SWAG...';
 begin
   Application.ProcessMessages;
   FullSnippets := Generics.Collections.TList<TSWAGSnippet>.Create;
