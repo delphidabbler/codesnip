@@ -217,12 +217,10 @@ begin
       raise ECodeSnip.CreateFmt(sNameExists, [ASnippet.ID.ToString]);
   if not fAllTags.ContainsSubSet(ASnippet.Tags) then
   begin
-    { TODO -cDatabase: Add TriggerNullDataEvent(evChangeBegin); }
+    { TODO -cQuery: Should we wrap call to add tags to snippet with change events
+                    e.g. evChangeStart, evTagAdded, evChangeEnd
+                    Investigations to date suggest UI is being updated OK without this }
     fAllTags.Include(ASnippet.Tags);
-    { TODO -cDatabase: Add change event for all tags added. Something like:
-       for Tag in ASnippet.Tags do
-        TriggerTagChangeEvent(evTagAdded, Tag);  }
-    { TODO -cDatabase: Add TriggerNullDataEvent(evChangeEnd); }
   end;
   TriggerNullDataEvent(evChangeBegin);
   try
