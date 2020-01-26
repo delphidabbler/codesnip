@@ -599,8 +599,8 @@ begin
     WriteMarkupProp(Writer, spDescription, ASnippet.GetDescription, True);
     WriteString32Prop(Writer, spSourceCode, ASnippet.GetSourceCode, False);
     WriteLanguageIDProp(Writer, spLanguageID, ASnippet.GetLanguageID, True);
-    WriteDateProp(Writer, spModified, ASnippet.GetModified, True);
-    WriteDateProp(Writer, spCreated, ASnippet.GetCreated, True);
+    WriteDateProp(Writer, spModified, ASnippet.GetModified, False);
+    WriteDateProp(Writer, spCreated, ASnippet.GetCreated, False);
     WriteStringsProp(
       Writer, spRequiredModules, ASnippet.GetRequiredModules, True
     );
