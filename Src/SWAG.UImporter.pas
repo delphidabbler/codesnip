@@ -197,7 +197,7 @@ end;
 
 procedure TSWAGImporter.ImportSnippet(const SWAGSnippet: TSWAGSnippet);
 begin
-  // TODO: implement a "bulk add snippet" option into TDatabase
+  // TODO -cDatabase: implement a "bulk add snippet" option into TDatabase
   Database.AddSnippet(BuildSnippetInfo(SWAGSnippet));
 end;
 
