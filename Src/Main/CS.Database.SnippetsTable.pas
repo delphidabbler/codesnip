@@ -61,7 +61,7 @@ type
 
 implementation
 
-{ TODO - cPerformance: If cost of cloning creating read-only snippets on each
+{ TODO -cPerformance: If cost of cloning creating read-only snippets on each
   lookup causes a performance bottleneck, considering caching read only
   snippets. If this is done make sure that snippets are removed from cache each
   time snippet with same ID is snippet table is modified. }

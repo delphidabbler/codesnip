@@ -292,7 +292,8 @@ begin
       SnippetInfo.Snippet.Notes := Notes;
     end;
 
-    { TODO: fix this code - as written, imported snippet will always have a
+    { TODO -cQuery: Is This TODO relevant now?
+            fix this code - as written, imported snippet will always have a
             unique id, so AddSnippet will always be called. Need to implement
             llinked spaces for this to work correctly. }
     if Database.SnippetExists(SnippetInfo.Snippet.ID) then

@@ -122,7 +122,7 @@ type
 
   EDBSnippet = class(EBug);
 
-  // TODO: Add new ToList<TSnippetID> method
+  // TODO -cQuery: Add new ToList<TSnippetID> method?
   ///  <summary>Implements a list of snippet identification records.</summary>
   TSnippetIDList = class(
     TInterfacedObject, ISnippetIDList, IAssignable, IClonable

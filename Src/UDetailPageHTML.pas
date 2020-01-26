@@ -469,7 +469,7 @@ var
   end;
 
 begin
-  inherited;
+  // TODO -cUI: remove unused placeholder resolutions  inherited;
   Tplt.ResolvePlaceholderHTML(
     'externalScript', TJavaScript.LoadScript('external.js', etWindows1252)
   );
@@ -509,11 +509,6 @@ begin
     'ProgramAutoCheckFrequency',
     UpdateFrequencyText(Preferences.AutoCheckProgramFrequency)
   );
-  // TODO: Restore line similar to following when synch spaces can auto-update
-//  Tplt.ResolvePlaceholderText(
-//    'DatabaseAutoCheckFrequency',
-//    UpdateFrequencyText(Preferences.AutoCheckDatabaseFrequency)
-//  );
 end;
 
 { TDBUpdatedPageHTML }

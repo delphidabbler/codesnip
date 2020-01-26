@@ -228,7 +228,7 @@ var
 begin
   RawSource := GenerateSource(fSaveDlg.CommentStyle, fSaveDlg.TruncateComments);
   HiliterCls := TDocumentHiliterHelper.GetHiliterClass(FileType);
-  { TODO: revise to allow brush to be specified based on source code language.
+  { TODO -cQuery: revise to allow brush to be specified based on source code language.
           This will probably need extra Language ID parameter to be added.
   }
   Brush := TSyntaxHiliterBrushes.CreateBrush(

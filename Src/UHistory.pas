@@ -159,7 +159,7 @@ var
 begin
   EventInfo := EvtInfo as IDatabaseChangeEventInfo;
   // Clear history if snippet changed or removed
-  // TODO: add support for changes to tags when such events are added
+  // TODO -cDatabase: add support for changes to tags when such events are added
   case EventInfo.Kind of
     evSnippetDeleted:
       Clear;

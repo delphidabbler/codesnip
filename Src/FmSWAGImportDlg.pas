@@ -12,7 +12,7 @@
  * snippets from the DelphiDabbler implementation of the SWAG Pascal archive.
 }
 
-// TODO -cwebsvc: change to import SWAG from local file - user must download and extract
+// TODO -cSWAG: change to import SWAG from local file - user must download and extract
 
 unit FmSWAGImportDlg;
 
@@ -400,7 +400,7 @@ begin
       // means indices of new items added are not sequential, and we must have
       // displayed title at same index in clbSelectSnippets as its snippet is in
       // fCurrentCatSnippets.
-      { TODO: When conversion to Delphi Collections complete, try to assign
+      { TODO -cRefactor: When conversion to Delphi Collections complete, try to assign
               Snippets to fCurrentCatSnippets in one operation. }
       for Snippet in Snippets do
         fCurrentCatSnippets.Add(Snippet);
@@ -489,7 +489,7 @@ begin
       // indices of new items added are not sequential, and we must have
       // displayed title at same index in lbCategories as its category is in
       // fSortedCategories.
-      { TODO: When conversion to Delphi Collections complete, try to assign
+      { TODO -cRefactor: When conversion to Delphi Collections complete, try to assign
               Cats to fSortedCategories in one operation. }
       for Cat in Cats do
         fSortedCategories.Add(Cat);
@@ -553,7 +553,7 @@ begin
     )
   );
 
-  // TODO: change to some structure that doesn't permit duplicates.
+  // TODO -cSWAG: change to some structure that doesn't permit duplicates.
   fSelectedSnippets := TSortedList<TSWAGSnippet>.Create(
     TRulesFactory<TSWAGSnippet>.Construct(
       function (const Left, Right: TSWAGSnippet): Integer
@@ -658,7 +658,7 @@ begin
       WaitWrapper(Self, CallProc, sWaitMsg);
     end
   );
-  // TODO: Display snippet as HTML, highlighted if necessary
+  // TODO -cLater: Display snippet as HTML, highlighted if necessary
   Content := Format(
     sContentTplt,
     [

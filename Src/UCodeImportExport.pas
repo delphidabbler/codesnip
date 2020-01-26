@@ -15,8 +15,8 @@
 
 unit UCodeImportExport;
 
-// TODO: change to support export to new db format
-// TODO: revisit some commenting re XML when support added for new db format
+// TODO -cExport: change to support export to new db format
+// TODO -cTidying: revisit some commenting re XML when support added for new db format
 
 interface
 

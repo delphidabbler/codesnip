@@ -112,7 +112,7 @@ type
       fCommandBars: TCommandBarMgr; // Configures popup menu and toolbar
       fPreviousGrouping: Integer;
       fGroupingCBMgr: TUnsortedCollectionCtrlKVMgr<Integer>;
-        // TODO: make grouping IDs into enum type instead of integer consts
+        // TODO -cRefactor: make grouping IDs into enum type instead of integer consts
   strict private
     procedure SelectNode(const Node: TTreeNode; const MakeVisible: Boolean);
       {Selects a specified node and optionally make it visible in the tree view.

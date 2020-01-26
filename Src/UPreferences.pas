@@ -148,7 +148,7 @@ type
     property SourceCodeBGColour: TColor
       read GetSourceCodeBGColour write SetSourceCodeBGColour;
 
-    { TODO: Merge all custom colours into one entry for colour dialogue box. }
+    { TODO -cSettings: Merge all custom colours into one entry for colour dialogue box. }
     ///  <summary>Gets custom colours available for use as background colour of
     ///  source code in main display as a string list.</summary>
     function GetSourceCodeBGCustomColours: IStringList;

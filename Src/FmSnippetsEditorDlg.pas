@@ -883,7 +883,7 @@ begin
   begin
     // We are adding a new snippet: clear all controls or set default values
     frmSourceEditor.Clear;
-    { TODO: Permit default language to be customisable by user: modify
+    { TODO -cSettings: Permit default language to be customisable by user: modify
             Preferences dialogue box and Preferences object ? }
     Language := TConfig.Instance.SourceCodeLanguages[
       TSourceCodeLanguageID.CreatePascal

@@ -11,7 +11,6 @@
  * Implements a static class that checks a snippet for validity.
 }
 
-// TODO: Validate module names - surley they must be valid (optionally dotted) Pascal identifiers.
 
 unit USnippetValidator;
 

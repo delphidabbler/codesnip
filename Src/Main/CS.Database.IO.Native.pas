@@ -719,7 +719,7 @@ begin
     try
       if Reader.Size < HeaderSize then
         Exit;
-      { TODO: Use extract method on code to use to read master file watermark
+      { TODO -cRefactor: Use extract method on code to use to read master file watermark
               and version shared with TMasterInfo.Parse (use public class method
               in TMasterInfo?}
       Watermark := TEncoding.UTF8.GetString(
@@ -834,7 +834,7 @@ begin
     case PropCode of
       spID:
         // skip over ID - we already have it
-        // TODO: Check ID in snippet file is same as that of given snippet
+        // TODO -cDBIO: Check ID in snippet file is same as that of given snippet
         Reader.ReadSizedString16;
       spTitle:
         ASnippet.SetTitle(Reader.ReadSizedString16);

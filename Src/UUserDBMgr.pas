@@ -16,7 +16,7 @@
 unit UUserDBMgr;
 
 
-{ TODO -cRenameUnit: Rename this unit to be based on main class name
+{ TODO -cRename: Rename this unit to be based on main class name
         (CS.Controllers.DBModificationMgr ?) }
 
 
@@ -70,13 +70,13 @@ type
     ///  <summary>Checks if the given view item specifies an editable snippet.
     ///  </summary>
     class function CanEdit(ViewItem: IView): Boolean;
-    { TODO: revise TRemoveTagAction to call the following method directly OR
+    { TODO -cRefactor: revise TRemoveTagAction to call the following method directly OR
             move the functionality into TRemoveTagAction itself. }
     ///  <summary>Removes given tag from tag list of snippet with given ID.
     ///  </summary>
     class procedure RemoveTagFromSnippet(const SnippetID: TSnippetID;
       const Tag: TTag);
-    { TODO: Move following method into action that calls the method ?? }
+    { TODO -cQuery: Move following method into action that calls the method ?? }
     ///  <summary>Updates Starred property associated with given snippet ID to
     ///  the given state.</summary>
     class procedure UpdateSnippetStarredState(const SnippetID: TSnippetID;

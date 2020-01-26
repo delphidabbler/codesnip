@@ -143,7 +143,7 @@ end;
 
 procedure TTagsEditorFrame.ArrangeControls;
 begin
-  // TODO: remove this method if remains empty
+  // TODO -cTidying: remove this method if remains empty
 end;
 
 procedure TTagsEditorFrame.Clear;

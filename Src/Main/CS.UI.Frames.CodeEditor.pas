@@ -181,10 +181,10 @@ begin
   fSynEditCmp.WantReturns := True;
   fSynEditCmp.WantTabs := True;
   fSynEditCmp.Gutter.LeftOffset := 0; // change this if use glyphs in gutter
-  fSynEditCmp.Gutter.ShowLineNumbers := True; // TODO: make option
+  fSynEditCmp.Gutter.ShowLineNumbers := True; // TODO -cSynEdit: make option?
   fSynEditCmp.WordWrap := False;
   fSynEditCmp.TabWidth := 2;
-  fSynEditCmp.ActiveLineColor := clNone; {default} // TODO: make option
+  fSynEditCmp.ActiveLineColor := clNone; {default} // TODO -cSynEdit: make option?
   fSynEditCmp.Options := [
     eoAutoIndent, eoDragDropEditing, eoEnhanceEndKey, eoGroupUndo,
     eoScrollPastEol, eoShowScrollHint, eoTabIndent, eoTabsToSpaces
@@ -192,7 +192,7 @@ begin
   // No highligher (default): setting .Highlighter = nil turns off highlighting
   fSynEditCmp.Highlighter := nil;
   // Turn off book mark keys & glyphs
-  { TODO: could make option, in which case need to restore default gutter's
+  { TODO -cSynEdit: could make option, in which case need to restore default gutter's
           right offset. If option included glyphs we'll need some nicer ones
           to give to BookMarkOptions.BookmarkImages }
   fSynEditCmp.BookMarkOptions.EnableKeys := False;

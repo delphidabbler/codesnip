@@ -426,7 +426,7 @@ var
 
 begin
   EventInfo := EvtInfo as IDatabaseChangeEventInfo;
-  // TODO: add support for changes to tags when such events are added
+  // TODO -cDatabase: add support for changes to tags when such events are added
   case EventInfo.Kind of
     evChangeBegin:
       PrepareForDBChange;

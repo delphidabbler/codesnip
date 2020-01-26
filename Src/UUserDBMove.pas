@@ -12,7 +12,7 @@
 }
 
 
-// TODO: Rename this unit to remove "user" from name (CS.Database.Relocate ?)
+// TODO -cRename: Rename this unit to remove "user" from name (CS.Database.Relocate ?)
 
 
 unit UUserDBMove;

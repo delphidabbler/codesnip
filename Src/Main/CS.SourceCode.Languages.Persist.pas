@@ -28,7 +28,7 @@ type
   TSourceCodeLanguagesIO = class(TNoConstructObject)
   strict private
     type
-      { TODO: There is a lot code here that is common with
+      { TODO -cRefactor: There is a lot code here that is common with
               TSyntaxHiliteThemesParser - pull out into base class, possibly in
               a CS.Config.SimpleLineBasedParser or similar unit. }
       TParser = class(TObject)

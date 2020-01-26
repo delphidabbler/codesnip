@@ -103,8 +103,6 @@ type
         @param OnExecHandler [in] Handler for action's OnExecute event.
         @return Reference to newly created action.
       }
-// TODO: remove OnExecHandler - never called by this action
-// TODO: check for other actions that don't call OnExecHandler and remove param
     class function CreateChangeSnippetStarAction(const AOwner: TComponent;
       const OnExecHandler: TNotifyEvent = nil): TBasicAction;
       {Creates a Change Snippet Star action and sets OnExecute handler if

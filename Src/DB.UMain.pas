@@ -43,7 +43,7 @@ type
     evSnippetDeleted,       // a snippet has been deleted
     evBeforeSnippetChange,  // a snippet is about to be changed
     evSnippetChanged        // a snippet's properties / references have changed
-    // TODO: add suitable event kinds for changes to tags as required
+    // TODO -cDatabase: add suitable event kinds for changes to tags as required
   );
 
   {
@@ -217,16 +217,16 @@ begin
       raise ECodeSnip.CreateFmt(sNameExists, [ASnippet.ID.ToString]);
   if not fAllTags.ContainsSubSet(ASnippet.Tags) then
   begin
-    { TODO: Add TriggerNullDataEvent(evChangeBegin); }
+    { TODO -cDatabase: Add TriggerNullDataEvent(evChangeBegin); }
     fAllTags.Include(ASnippet.Tags);
-    { TODO: Add change event for all tags added. Something like:
+    { TODO -cDatabase: Add change event for all tags added. Something like:
        for Tag in ASnippet.Tags do
         TriggerTagChangeEvent(evTagAdded, Tag);  }
-    { TODO: Add TriggerNullDataEvent(evChangeEnd); }
+    { TODO -cDatabase: Add TriggerNullDataEvent(evChangeEnd); }
   end;
   TriggerNullDataEvent(evChangeBegin);
   try
-    // TODO: Do we need to check snippet references and xrefs here?
+    // TODO -cQuery: Do we need to check snippet references and xrefs here?
     DBSnippet := TDBSnippet.CreateFrom(ASnippet);
     FlagUpdate; // sets fLastModifed
     DBSnippet.SetCreated(fLastModified);
@@ -256,7 +256,7 @@ begin
   try
     Dependents := Database.GetDependentsOf(ASnippetID);
     Referrers := Database.GetReferrersTo(ASnippetID);
-    // TODO: scan all snippets and remove references that match snippet ID
+    // TODO -cDatabase: scan all snippets and remove references that match snippet ID
     // Delete snippet for XRef or Depends list of referencing snippets
     for Referrer in Referrers do
       fSnippetsTable.Get(Referrer).GetXRefs.Remove(ASnippetID);
@@ -375,7 +375,7 @@ procedure TDatabase.Load;
 var
   Loader: IDatabaseLoader;
 begin
-  fSnippetsTable.Clear; // TODO: decide if loaders should clear this table
+  fSnippetsTable.Clear; // TODO -cDatabase: decide if loaders should clear this table
   Loader := TDatabaseIOFactory.CreateLoader;
   Loader.Load(fSnippetsTable, fAllTags, fLastModified);
   FixUpSnippetRefs;
@@ -507,21 +507,21 @@ procedure TDatabase.UpdateSnippet(ASnippet: IEditableSnippet);
 var
   DBSnippet: TDBSnippet;
 begin
-  // TODO: refactor out this common in common with AddSnippet
+  // TODO -cRefactor: refactor out this common code in common with AddSnippet
   if not fAllTags.ContainsSubSet(ASnippet.Tags) then
   begin
-    { TODO: Add TriggerNullDataEvent(evChangeBegin); }
+    { TODO -cDatabase: Add TriggerNullDataEvent(evChangeBegin); }
     fAllTags.Include(ASnippet.Tags);
-    { TODO: Add change event for all tags added. Something like:
+    { TODO -cDatabase: Add change event for all tags added. Something like:
        for Tag in ASnippet.Tags do
         TriggerTagChangeEvent(evTagAdded, Tag);  }
-    { TODO: Add TriggerNullDataEvent(evChangeEnd); }
+    { TODO -cDatabase: Add TriggerNullDataEvent(evChangeEnd); }
   end;
   TriggerNullDataEvent(evChangeBegin);
   TriggerSnippetChangeEvent(evBeforeSnippetChange, ASnippet.ID);
   DBSnippet := TDBSnippet.CreateFrom(ASnippet);
   try
-    // TODO: Do we need to check snippet references and xrefs here?
+    // TODO -cQuery: Do we need to check snippet references and xrefs here?
     FlagUpdate;
     DBSnippet.SetModified(fLastModified);
     fSnippetsTable.Update(DBSnippet);
