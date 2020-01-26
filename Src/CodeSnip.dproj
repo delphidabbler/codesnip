@@ -353,7 +353,6 @@
 			<DCCReference Include="UEditSnippetAction.pas"/>
 			<DCCReference Include="UEmailHelper.pas"/>
 			<DCCReference Include="UEncodings.pas"/>
-			<DCCReference Include="UEncryptor.pas"/>
 			<DCCReference Include="UExceptions.pas"/>
 			<DCCReference Include="UExeFileType.pas"/>
 			<DCCReference Include="UFileProtocol.pas"/>
@@ -483,7 +482,6 @@
 			<DCCReference Include="Main\AutoGen\IntfExternalObj.pas"/>
 			<DCCReference Include="Main\Imports\GIFImage.pas"/>
 			<DCCReference Include="Main\Imports\LVEx.pas"/>
-			<DCCReference Include="Main\Imports\UEncrypt.pas"/>
 			<DCCReference Include="Main\CS.Actions.ChangeSnippetStar.pas"/>
 			<DCCReference Include="Main\CS.Actions.DisplayLanguage.pas"/>
 			<DCCReference Include="Main\CS.Actions.DisplayTag.pas"/>
