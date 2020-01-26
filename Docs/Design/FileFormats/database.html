@@ -311,7 +311,7 @@
     <em>PropertyID</em> (<kbd>Byte</kbd>)
   </dt>
   <dd>
-    A unique code that identifies the property.
+    A unique code that identifies the property. Property IDs must be in the range <kbd>0x00..0xFE</kbd>. The special value <kbd>0xFF</kbd> is used to terminate the sequence of property records.
   </dd>
   <dt>
     <em>PropertyData</em> (type is property dependent)
