@@ -35,14 +35,15 @@ type
       /// <summary>URL of the CodeSnip blog</summary>
       ProgramBlogURL = 'http://codesnip-app.blogspot.com/';
 
-      ///  <summary>URL of the online Code Snippets database</summary>
-      // TODO -cWeb: Add DatabaseURL const with URL of online Code Snippets Database on GitHub when made public ??
-
       ///  <summary>URL used to view and report CodeSnip bugs</summary>
       BugTrackerURL = GitHubSiteURL + '/issues';
 
       ///  <summary>URL of CodeSnip's FAQ web page.</summary>
       // TODO -cWeb: Add FAQsURL const with URL of FAQs if they moved to GitHub
+
+      ///  <summary>URL of the online Code Snippets database</summary>
+      // TODO -cWeb: Add DatabaseURL const with URL of online Code Snippets Database on GitHub when made public ??
+
   end;
 
 
