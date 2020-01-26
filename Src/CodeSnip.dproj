@@ -486,11 +486,7 @@
 			<DCCReference Include="UXMLDocConsts.pas"/>
 			<DCCReference Include="UXMLDocHelper.pas"/>
 			<DCCReference Include="UXMLDocumentEx.pas"/>
-			<DCCReference Include="Web.UBaseWebService.pas"/>
-			<DCCReference Include="Web.UCharEncodings.pas"/>
-			<DCCReference Include="Web.UDownloadMonitor.pas"/>
 			<DCCReference Include="Web.UExceptions.pas"/>
-			<DCCReference Include="Web.UHTTPEx.pas"/>
 			<DCCReference Include="Web.UInfo.pas"/>
 			<DCCReference Include="Web.USWAGRESTMgr.pas"/>
 			<DCCReference Include="Main\AutoGen\IntfExternalObj.pas"/>
