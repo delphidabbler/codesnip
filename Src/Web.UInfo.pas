@@ -19,15 +19,10 @@ unit Web.UInfo;
 interface
 
 
-uses
-  // Project
-  UBaseObjects;
-
-
 type
   ///  <summary>Static class that provides information about URLs and any proxy
   ///  server used by CodeSnip.</summary>
-  TWebInfo = class(TNoConstructObject)
+  TWebInfo = record
   strict private
     const
       ///  <summary>URL of CodeSnip's project page on GitHub.</summary>
