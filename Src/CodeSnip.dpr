@@ -292,7 +292,6 @@ uses
   UToolButtonEx in 'UToolButtonEx.pas',
   UTVCheckBoxes in 'UTVCheckBoxes.pas',
   UUIWidgetImages in 'UUIWidgetImages.pas',
-  UUniqueID in 'UUniqueID.pas',
   UUnitsChkListMgr in 'UUnitsChkListMgr.pas',
   UURIEncode in 'UURIEncode.pas',
   UURIParams in 'UURIParams.pas',

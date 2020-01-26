@@ -191,8 +191,7 @@ uses
   UBox,
   UExceptions,
   UQuery,
-  UStrUtils,
-  UUniqueID;
+  UStrUtils;
 
 
 function Database: TDatabase;
