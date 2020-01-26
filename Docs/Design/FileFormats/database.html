@@ -333,7 +333,7 @@
       </dt>
       <dd>
         A <kbd>SizedString</kbd> value containing the snippet's title in plain
-        text. <em>Required. Must be non-empty</em>
+        text. Must be non-empty. <em>Required.</em>
       </dd>
       <dt>
         Description property
@@ -347,26 +347,26 @@
       </dt>
       <dd>
         A <kbd>SizedLongString</kbd> value containing the snippet's source code
-        in plain text. <em>Required: Must be non-empty.</em>
+        in plain text. Must be non-empty. <em>Required.</em>
       </dd>
       <dt>
         LanguageID property
       </dt>
       <dd>
         A <kbd>SizedString</kbd> value that is a text representation of the
-        snippet's language ID. <em>Default: Default language ID.</em>
+        snippet's language ID. <em>Default: default language ID.</em>
       </dd>
       <dt>
         Modified property
       </dt>
       <dd>
-        A <kbd>Date</kbd> value that is the date the snippet was last modified. <em>Default: Null date.</em>
+        A <kbd>Date</kbd> value that is the date the snippet was last modified. Must be valid UTC date-time string. <em>Required.</em>
       </dd>
       <dt>
         Created property
       </dt>
       <dd>
-        A <kbd>Date</kbd> value that is the date the snippet was created. <em>Default: Null date.</em>
+        A <kbd>Date</kbd> value that is the date the snippet was created. must be valid UTC date-time string. <em>Required.</em>
       </dd>
       <dt>
         RequiredModules property
@@ -374,27 +374,26 @@
       <dd>
         A <kbd>StringList</kbd> value containing a list of any required module
         names, each of which is in plain text. <em>Default: no required modules.</em>
-        <div class='todo pullout'>TODO: Check if this should specify a valid Pascal identifier rather than <em>plain text</em> as stated.</div>
       </dd>
       <dt>
         RequiredSnippets property
       </dt>
       <dd>
         A <kbd>StringList</kbd> value containing a list of string
-        representations of the IDs of any required snippets. Any ID strings must be valid snippet IDs. <em>Default: No required snippets.</em>
+        representations of the IDs of any required snippets. Any ID strings must be valid snippet IDs. <em>Default: no required snippets.</em>
       </dd>
       <dt>
         XRefs property
       </dt>
       <dd>
         A <kbd>StringList</kbd> value containing a list of string
-        representations of the IDs of any cross referenced snippets. Any ID strings must be valid snippet IDs. <em>Default: No cross referenced snippets.</em>
+        representations of the IDs of any cross referenced snippets. Any ID strings must be valid snippet IDs. <em>Default: no cross referenced snippets.</em>
       </dd>
       <dt>
         Notes property
       </dt>
       <dd>
-        A <kbd>SizedLongString</kbd> value containing the notes in REML mark-up. REML v4 is supported.  <em>Default: No notes.</em>
+        A <kbd>SizedLongString</kbd> value containing the notes in REML mark-up. REML v4 is supported.  <em>Default: no notes.</em>
       </dd>
       <dt>
         Kind property
@@ -421,7 +420,7 @@
           </li>
         </ol>
         <div>
-          <em>Default: both compile lists empty.</em>
+          <em>Default: no compile results.</em>
         </div>
       </dd>
       <dt>
