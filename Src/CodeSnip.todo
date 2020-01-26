@@ -1,3 +1,6 @@
+{TODO -odatabase.html :
+Consider adding License property to snippets.
+See database.html for full details}
 {TODO -cDatabase :
 Determine whether an Origin field can be used to specify source of each snippet.
 May be replace LinkInfo property?
