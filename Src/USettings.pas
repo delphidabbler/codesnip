@@ -122,19 +122,6 @@ type
     ///  regardless of locale.</remarks>
     procedure SetDateTime(const Name: string; const Value: TDateTime);
 
-    ///  <summary>Gets a named encrypted string value from settings and
-    ///  unencrypts it.</summary>
-    ///  <param name="Name">string [in] Name of value.</param>
-    ///  <returns>string. The unencrypted string.</returns>
-    function GetEncryptedString(const Name: string): string;
-
-    ///  <summary>Encrypts and records a named string value in settings.
-    ///  </summary>
-    ///  <param name="Name">string [in] Name of value.</param>
-    ///  <param name="Value">string [in] Value to be encrypted and recored.
-    ///  </param>
-    procedure SetEncryptedString(const Name, Value: string);
-
     ///  <summary>Gets a list of related string values from the section.
     ///  </summary>
     ///  <param name="CountName">string [in] Name of an integer value that
@@ -498,21 +485,6 @@ type
     ///  </remarks>
     procedure SetDateTime(const Name: string; const Value: TDateTime);
 
-    ///  <summary>Gets a named encrypted string value from settings and
-    ///  unencrypts it.</summary>
-    ///  <param name="Name">string [in] Name of value.</param>
-    ///  <returns>string. The unencrypted string.</returns>
-    ///  <remarks>Method of ISettingsSection.</remarks>
-    function GetEncryptedString(const Name: string): string;
-
-    ///  <summary>Encrypts and records a named string value in settings.
-    ///  </summary>
-    ///  <param name="Name">string [in] Name of value.</param>
-    ///  <param name="Value">string [in] Value to be encrypted and recored.
-    ///  </param>
-    ///  <remarks>Method of ISettingsSection.</remarks>
-    procedure SetEncryptedString(const Name, Value: string);
-
     ///  <summary>Gets a list of related string values from the section.
     ///  </summary>
     ///  <param name="CountName">string [in] Name of an integer value that
@@ -695,17 +667,6 @@ begin
   inherited;
 end;
 
-function TIniSettingsSection.GetEncryptedString(const Name: string): string;
-var
-  EncryptedBytes: TBytes; // encrypted value as array of bytes
-begin
-  // NOTE:
-  // See SetEncryptedString for details of how encrypted values are stored.
-  if not TryHexToBytes(GetItemValue(Name), EncryptedBytes) then
-    Exit('');
-  Result := TEncoding.UTF8.GetString(TEncryptor.Decrypt(EncryptedBytes));
-end;
-
 function TIniSettingsSection.GetBoolean(const Name: string;
   const Default: Boolean): Boolean;
 var
@@ -831,19 +792,6 @@ procedure TIniSettingsSection.SetDateTime(const Name: string;
   const Value: TDateTime);
 begin
   SetItemValue(Name, FormatDateTime('yyyy"-"mm"-"dd" "hh":"nn":"ss', Value));
-end;
-
-procedure TIniSettingsSection.SetEncryptedString(const Name, Value: string);
-begin
-  // NOTE:
-  // Encrypted values are stored as follows:
-  // 1: Unicode Value string is converted to an array of UTF-8 encoded bytes
-  // 2: The UTF-8 byte array is encrypted into another array of bytes
-  // 3: The encrypted byte array is converted to hexadecimal
-  // 4: The hexadecimal character string is stored in storage
-  SetItemValue(
-    Name, BytesToHex(TEncryptor.Encrypt(TEncoding.UTF8.GetBytes(Value)))
-  );
 end;
 
 procedure TIniSettingsSection.SetFloat(const Name: string; const Value: Double);
