@@ -253,10 +253,6 @@
 				<Form>MemoPreviewFrame</Form>
 				<DesignClass>TFrame</DesignClass>
 			</DCCReference>
-			<DCCReference Include="FrNewsPrefs.pas">
-				<Form>NewsPrefsFrame</Form>
-				<DesignClass>TFrame</DesignClass>
-			</DCCReference>
 			<DCCReference Include="FrOverview.pas">
 				<Form>OverviewFrame</Form>
 				<DesignClass>TFrame</DesignClass>
@@ -295,10 +291,6 @@
 			</DCCReference>
 			<DCCReference Include="FrTitled.pas">
 				<Form>TitledFrame</Form>
-				<DesignClass>TFrame</DesignClass>
-			</DCCReference>
-			<DCCReference Include="FrUpdatePrefs.pas">
-				<Form>UpdatePrefsFrame</Form>
 				<DesignClass>TFrame</DesignClass>
 			</DCCReference>
 			<DCCReference Include="IntfAligner.pas"/>
