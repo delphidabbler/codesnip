@@ -390,17 +390,14 @@
 
 <dl class="indent">
   <dt>
-    <strong>UserDataDir</strong> (String)
+    <strong>Path</strong> (String)
   </dt>
   <dd>
     <div class="half-spaced">
-      Specifies the directory that contains the user database. This value is
-      only  present if the user has moved the database from its default
-      location.
+      Specifies the directory that contains the database. This value is only present if the user has moved the database from its default location.
     </div>
     <div class="spaced">
-      <strong>Note:</strong> The value is ignored when CodeSnip is run in
-      portable mode.
+      <strong>Note:</strong> The value is ignored when CodeSnip is run in portable mode.
     </div>
   </dd>
 </dl>
@@ -422,7 +419,7 @@
     <strong>EditSnippetOnClose</strong> (Boolean)
   </dt>
   <dd>
-    Stores state of <em>Edit in Snippets Editor</em> check box.
+    Stores state of <em>Edit in Snippets Editor</em> check box. If this property is not present the value defaults to False.
   </dd>
 </dl>
 
@@ -647,6 +644,46 @@
 </dl>
 
 <h4>
+  [FindTags] section
+</h4>
+
+<p>
+  Provides information about the last tags search that was run.
+</p>
+
+<p>
+  Name / Values pairs:
+</p>
+
+<dl class="indent">
+  <dt>
+    <strong>TagCount</strong> (Integer)
+  </dt>
+  <dd>
+    Count of tags selected in last search.
+  </dd>
+  <dt>
+    <strong>Tag<em>XXX</em></strong> (String)
+  </dt>
+  <dd>
+    <div class="half-spaced">
+      One entry for each tag in search where <em>XXX</em> ranges from 0
+      to <strong>TagCount</strong> - 1.
+    </div>
+    <div class="half-spaced">
+      Each entry contains the name of a tag
+    </div>
+  </dd>
+  <dt>
+    <strong>Logic</strong> (Integer)
+  </dt>
+  <dd>
+    Code that describes search logic to use: 0 &rArr; &quot;and&quot;; 1 &rArr;
+    &quot;or&quot;.
+  </dd>
+</dl>
+
+<h4>
   [FindText] section
 </h4>
 
@@ -816,7 +853,7 @@
 
 <dl class="indent">
   <dt>
-    <strong>EmitWarnings</strong> (Boolean)
+    <strong>EmitWarnDirs</strong> (Boolean)
   </dt>
   <dd>
     Flag indicating whether directives are emitted to switch specified warnings
@@ -965,12 +1002,6 @@
   [Prefs:Hiliter] section
 </h4>
 
-<p class="pullout highlight">
-  <strong>NOTE:</strong> The [Prefs:Hiliter] section is likely to be redundant
-  in CodeSnip 5 where sytax highlighting styles are to be recorded in their own
-  file.
-</p>
-
 <p>
   Stores preferences that define the properties of one or more syntax
   highlighters. Also records information about the custom colours available when
@@ -982,123 +1013,26 @@
 </p>
 
 <dl class="indent">
-  <dt>
-    <strong>FontSize</strong> (Integer)
-  </dt>
+  <dl>
+    <strong>CurrentUITheme</strong> (String)
+  </dl>
   <dd>
-    Size of current highlighter font in points.
+    ID of syntax highlighter theme being used to highlight source code in the
+    user interface.
   </dd>
-  <dt>
-    <strong>FontName</strong> (String)
-  </dt>
+  <dl>
+    <strong>CurrentExportTheme</strong> (String)
+  </dl>
   <dd>
-    Name of current highlighter font.
+    ID of syntax highlighter theme being used to highlight source code that is
+    exported to HTML and RTF files or that is placed on the clipboard in RTF
+    format.
   </dd>
-  <dt>
-    <strong>Elem<em>XXX</em>.Color</strong> (Integer)
-  </dt>
+  <dl>
+    <strong>CurrentPrintTheme</strong> (String)
+  </dl>
   <dd>
-    <div class="half-spaced">
-      One entry for each of the 12 source code elements recognised by the
-      current syntax highlighter. <em>XXX</em> ranges from 0 to 11.
-    </div>
-    <div class="half-spaced">
-      Colour of source code element. Integer representation of a Delphi
-      <var>TColor</var> value. If the colour is not specified the value is the
-      integer representation of <var>clNone</var>.
-    </div>
-  </dd>
-  <dt>
-    <strong>Elem<em>XXX</em>.Style</strong> (Integer)
-  </dt>
-  <dd>
-    <div class="half-spaced">
-      One entry for each of the 12 source code elements recognised by the
-      current syntax highlighter. <em>XXX</em> ranges from 0 to 11.
-    </div>
-    <div class="half-spaced">
-      Bit-mask representing the font styles used for the source code element.
-    </div>
-  </dd>
-  <dt>
-    <strong>NamedHiliterCount</strong> (Integer)
-  </dt>
-  <dd>
-    Number of custom (or &quot;Named&quot;) syntax highlighters defined by user.
-  </dd>
-  <dt>
-    <strong>HilterName<em>XXX</em></strong> (String).
-  </dt>
-  <dd>
-    <div class="half-spaced">
-      One entry for each custom syntax highlighter, where <em>XXX</em> ranges
-      from 0 to <strong>NamedHiliterCount</strong> - 1.
-    </div>
-    <div class="half-spaced">
-      Each value is the name used to identify the syntax highlighter with the
-      same index. (See the various NamedHiliter<em>XXX</em> entries below.)
-    </div>
-  </dd>
-  <dt>
-    <strong>NamedHiliter<em>XXX</em>.FontSize</strong> (Integer)
-  </dt>
-  <dd>
-    <div class="half-spaced">
-      One entry for each custom syntax highlighter, where <em>XXX</em> ranges
-      from 0 to <strong>NamedHiliterCount</strong> - 1.
-    </div>
-    <div class="half-spaced">
-      Each value is the size of the corresponding syntax highlighter's font, in
-      points.
-    </div>
-  </dd>
-  <dt>
-    <strong>NamedHiliter<em>XXX</em>.FontName</strong>
-  </dt>
-  <dd>
-    <div class="half-spaced">
-      One entry for each custom syntax highlighter, where <em>XXX</em> ranges
-      from 0 to <strong>NamedHiliterCount</strong> - 1.
-    </div>
-    <div class="half-spaced">
-      Each value is the name of the corresponding syntax highlighter's font.
-    </div>
-  </dd>
-  <dt>
-    <strong>NamedHiliter<em>XXX</em>.Elem<em>YYY</em>.Color</strong> (Integer)
-  </dt>
-  <dd>
-    <div class="half-spaced">
-      There is an entry for each source code element of each custom syntax
-      highlighter. <em>XXX</em> represents the index of the corresponding syntax
-      highlighter and ranges from 0 to <strong>NamedHiliterCount</strong> - 1.
-      For each value of <em>XXX</em> there are 12
-      <strong>.Elem<em>YYY</em></strong>  values, with <em>YYY</em> ranging from
-      0 to 11.
-    </div>
-    <div class="half-spaced">
-      Each value specifies the colour of a source code element. The values are
-      integer representations of a Delphi <var>TColor</var> value. If the colour
-      is not specified the value is the integer representation of
-      <var>clNone</var>.
-    </div>
-  </dd>
-  <dt>
-    <strong>NamedHiliter<em>XXX</em>.Elem<em>YYY</em>.Style</strong> (Integer)
-  </dt>
-  <dd>
-    <div class="half-spaced">
-      There is an entry for each source code element of each custom syntax
-      highlighter. <em>XXX</em> represents the index of the corresponding syntax
-      highlighter and ranges from 0 to <strong>NamedHiliterCount</strong> - 1.
-      For each value of <em>XXX</em> there are 12
-      <strong>.Elem<em>YYY</em></strong>  values, with <em>YYY</em> ranging from
-      0 to 11.
-    </div>
-    <div class="half-spaced">
-      Each value contains a bit-mask representing the font style of a source
-      code element.
-    </div>
+    ID of syntax highlighter theme being used to highlight printed source code.
   </dd>
   <dt>
     <strong>CustomColourCount</strong> (Integer)
@@ -1121,50 +1055,6 @@
       from &quot;ColorA&quot; to &quot;ColorP&quot; and <em>ColourNum</em> is
       the hex representation of the colour.
     </div>
-  </dd>
-  <dl>
-    <strong>CurrentUITheme</strong> (String)
-  </dl>
-  <dd>
-    ID of syntax highlighter theme being used to highlight source code in the
-    user interface.
-  </dd>
-  <dl>
-    <strong>CurrentExportTheme</strong> (String)
-  </dl>
-  <dd>
-    ID of syntax highlighter theme being used to highlight source code that is
-    exported to HTML and RTF files or that is placed on the clipboard in RTF
-    format.
-  </dd>
-  <dl>
-    <strong>CurrentPrintTheme</strong> (String)
-  </dl>
-  <dd>
-    ID of syntax highlighter theme being used to highlight printed source code.
-  </dd>
-</dl>
-
-<h4>
-  [Prefs:News] section
-</h4>
-
-<p>
-  Stores preferences that determine how items from the CodeSnip news feed are
-  displayed.
-</p>
-
-<p>
-  Name / Value pairs:
-</p>
-
-<dl class="indent">
-  <dt>
-    <strong>MaxAge</strong> (Integer)
-  </dt>
-  <dd>
-    Maximum age of a news item that can appear in CodeSnip News dialogue box in
-    days. Default is 92 days.
   </dd>
 </dl>
 
@@ -1191,11 +1081,7 @@
       the snippet kind.
     </div>
     <div class="half-spaced">
-      Each entry's value describes the structure of the details pane page that
-      snippets of the kind given by the key name. The value is a comma separated
-      list of zero or more names, each of which denotes a page component.
-      Components are displayed in the order they are listed. Valid component
-      names are:
+      Each entry's value describes the structure of the details pane page used to display the specified snippet kind. The value is a comma separated list of zero or more names, each of which denotes a page component. Components are displayed in the order they are listed. Valid component names are:
     </div>
     <ul class="unspaced">
       <li>
@@ -1203,6 +1089,9 @@
       </li>
       <li>
         <em>SourceCode</em>
+      </li>
+      <li>
+        <em>Origin</em>
       </li>
       <li>
         <em>Kind</em>
@@ -1278,44 +1167,6 @@
 </dl>
 
 <h4>
-  [Prefs:Updating] section
-</h4>
-
-<p>
-  Stores preferences relating to updating CodeSnip and the local copy of the
-  online database.
-</p>
-
-<p>
-  Name / Value pairs:
-</p>
-
-<dl class="indent">
-  <dt>
-    <strong>AutoCheckProgramFrequency</strong> (Integer)
-  </dt>
-  <dd>
-    Specifies frequency, in days, with which CodeSnip automatically checks
-    online for program updates. A value of 0 indicates that CodeSnip will not
-    check for program updates automatically.
-  </dd>
-  <dt>
-    <strong>AutoCheckDatabaseFrequency</strong> (Integer)
-  </dt>
-  <dd>
-    <p class="pullout highlight">
-      <strong>NOTE:</strong> AutoCheckDatabaseFrequency is not currently used in
-      CodeSnip 5. However, it is possible that the setting may be re-instated.
-    </p>
-    <div>
-      Specifies frequency, in days, with which CodeSnip automatically checks
-      online for database updates. A value of 0 indicates that CodeSnip will not
-      check for database updates automatically.
-    </div>
-  </dd>
-</dl>
-
-<h4>
   [Printing] section
 </h4>
 
@@ -1379,92 +1230,6 @@
   </dt>
   <dd>
     Size of printed page's bottom margin in mm.
-  </dd>
-</dl>
-
-<h4>
-  [ProxyServer] section
-</h4>
-
-<p>
-  Stores information about any proxy internet server that is to be used.
-</p>
-
-<p>
-  Name / Value pairs:
-</p>
-
-<dl class="indent">
-  <dt>
-    <strong>UseProxy</strong> (Boolean)
-  </dt>
-  <dd>
-    Flag that indicates whether to use a proxy server or not. If false the
-    remaining name / value pairs in this section are ignored.
-  </dd>
-  <dt>
-    <strong>IPAddress</strong> (String)
-  </dt>
-  <dd>
-    IP address of proxy server in dotted quad format, e.g. 127.0.0.1.
-  </dd>
-  <dt>
-    <strong>Port</strong> (Integer)
-  </dt>
-  <dd>
-    Port on which to access proxy server.
-  </dd>
-  <dt>
-    <strong>UserName</strong> (String)
-  </dt>
-  <dd>
-    User name for proxy server access. Empty if server doesn't require a user
-    name.
-  </dd>
-  <dt>
-    <strong>Password</strong> (String)
-  </dt>
-  <dd>
-    Encrypted form of any password required to access proxy server. Empty if no
-    password is required. This value is a hex representation of the bytes of
-    the encrypted password.
-  </dd>
-</dl>
-
-<h4>
-  [UpdateChecks] section
-</h4>
-
-<p>
-  Records date of last (automatic) update checks for different items. These
-  values are used to determine when to perform the next check. (Checks are made
-  within a fixed interval of the preceding check).
-</p>
-
-<p>
-  Name / Value pairs:
-</p>
-
-<dl class="indent">
-  <dt>
-    <strong>LastProgramCheck</strong> (Date-Time)
-  </dt>
-  <dd>
-    Date (in GMT) that the program last checked to see if a new version of
-    CodeSnip is available.
-  </dd>
-  <dt>
-    <strong>LastDatabaseCheck</strong> (Date-Time)
-  </dt>
-  <dd>
-    <p class="pullout highlight">
-      <strong>NOTE:</strong> LastDatabaseCheck is not currently used in
-      CodeSnip 5. However, it is possible that the setting may be re-instated.
-    </p>
-    <div>
-      Date (in GMT) that the program last checked to see if the online version of
-      the Code Snippets Database had been updated.
-    </div>
   </dd>
 </dl>
 
@@ -1543,7 +1308,7 @@
       Width of window in pixels.
     </div>
     <div class="half-spaced">
-      Not used for fixed size windows.
+      <em>Not used for fixed size windows.</em>
     </div>
   </dd>
   <dt>
@@ -1554,7 +1319,7 @@
       Height of window in pixels.
     </div>
     <div class="half-spaced">
-      Not used for fixed size windows.
+      <em>Not used for fixed size windows.</em>
     </div>
   </dd>
   <dt>
@@ -1566,8 +1331,7 @@
       minimized; 2 &rArr; maximized.
     </div>
     <div class="half-spaced">
-      Not used for dialogue boxes and other windows that are always displayed in
-      the normal state.
+      <em>Not used for dialogue boxes and other windows that are always displayed in the normal state.</em>
     </div>
   </dd>
 </dl>
