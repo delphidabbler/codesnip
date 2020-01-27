@@ -1,3 +1,7 @@
+{TODO -cUI :
+Make syntax highlighter in main window take note of background
+colour of theme rather than use one on Display prefs page}
+{TODO -cSettings : Fix persistence of custom colours from dialog boxes - not being recorded in ini file.}
 {TODO -odatabase.html -cQuery :
 Check if Indy code can be removed.
 Delete all Indy recognition if so.}
