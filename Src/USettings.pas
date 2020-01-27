@@ -170,7 +170,6 @@ type
   ///  <para>-ssApplication - info about the application.</para>
   ///  <para>-ssPreferences - info about program preferences.</para>
   ///  <para>-ssUserInfo - info about user.</para>
-  ///  <para>-ssProxyServer - info about any proxy server.</para>
   ///  <para>-ssUnits - list of default units.</para>
   ///  <para>-ssDuplicateSnippet - persistent settings from Duplicate Snippets
   ///  dlg.</para>
@@ -178,7 +177,6 @@ type
   ///  <para>-ssWindowState - info about the size and state of various
   ///  windows.</para>
   ///  <para>-ssDatabase - database customisation info.</para>
-  ///  <para>-ssUpdateChecks - info about update checks.</para>
   ///  <para>-ssPrinting - printing preferences.</para>
   ///  <para>-ssExternalApps - information about external applicatios used by
   ///  CodeSnip.</para>
@@ -186,8 +184,8 @@ type
   ///  </summary>
   TSettingsSectionId = (
     ssFindText, ssFindCompiler, ssFindXRefs, ssCompilerInfo, ssApplication,
-    ssPreferences, ssUserInfo, ssProxyServer, ssUnits, ssDuplicateSnippet,
-    ssFavourites, ssWindowState, ssDatabase, ssUpdateChecks, ssPrinting,
+    ssPreferences, ssUserInfo, ssUnits, ssDuplicateSnippet,
+    ssFavourites, ssWindowState, ssDatabase, ssPrinting,
     ssExternalApps, ssFindTags
   );
 
@@ -533,13 +531,11 @@ const
     ssCommon,   // ssApplication
     ssUser,     // ssPreferences
     ssUser,     // ssUserInfo
-    ssUser,     // ssProxyServer
     ssUser,     // ssUnits
     ssUser,     // ssDuplicateSnippet
     ssUser,     // ssFavourites
     ssUser,     // ssWindowState
     ssUser,     // ssDatabase
-    ssUser,     // ssUpdateChecks
     ssUser,     // ssPrinting
     ssUser,     // ssExternalApps
     ssUser      // ssFindTags
@@ -619,13 +615,11 @@ const
     'Application',      // ssApplication
     'Prefs',            // ssPreferences
     'UserInfo',         // ssUserInfo
-    'ProxyServer',      // ssProxyServer
     'UnitList',         // ssUnits
     'DuplicateSnippet', // ssDuplicateSnippet
     'Favourites',       // ssFavourites
     'WindowState',      // ssWindowState
     'Database',         // ssDatabase
-    'UpdateChecks',     // ssUpdateChecks
     'Printing',         // ssPrinting
     'ExternalApps',     // ssExternalApps
     'FindTags'          // ssFindTags
