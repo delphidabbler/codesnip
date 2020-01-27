@@ -260,6 +260,9 @@ begin
 
   if fUserConfigFile.FileVer < 16 then
   begin
+    { TODO -cFirstRun: Map old display section names to new ones. For any new
+                       sections with no old counterpart add the section to the
+                       end. Make note that new sections have been added. }
     fUserConfigFile.DeleteRedundantDisplayOptions;
     fUserConfigFile.RenameCompilerIdentifiers;
     fUserConfigFile.RenamePrintingSectionAndValues;
