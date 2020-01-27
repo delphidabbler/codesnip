@@ -194,14 +194,6 @@ type
     property Warnings: IWarnings
       read GetWarnings write SetWarnings;
 
-    ///  <summary>Gets maximum age of items to be read from news feed.</summary>
-    function GetNewsAge: Integer;
-    ///  <summary>Sets maximum age of items to be read from news feed.</summary>
-    procedure SetNewsAge(const Age: Integer);
-    ///  <summary>Maximum age of items to be read from news feed.</summary>
-    property NewsAge: Integer
-      read GetNewsAge write SetNewsAge;
-
     ///  <summary>Gets information describing snippet detail page
     ///  customisations.</summary>
     function GetPageStructures: TSnippetPageStructures;
@@ -213,31 +205,6 @@ type
     property PageStructures: TSnippetPageStructures
       read GetPageStructures write SetPageStructures;
 
-    ///  <summary>Gets frequency, in days, that the program should automatically
-    ///  check for program updates.</summary>
-    function GetAutoCheckProgramFrequency: Word;
-    ///  <summary>Sets frequency, in days, that the program should automatically
-    ///  check for program updates.</summary>
-    procedure SetAutoCheckProgramFrequency(const Value: Word);
-    ///  <summary>Frequency, in days, that the program should automatically
-    ///  check for program updates.</summary>
-    ///  <remarks>A value of zero indicates that no update checking should
-    ///  take place.</remarks>
-    property AutoCheckProgramFrequency: Word
-      read GetAutoCheckProgramFrequency write SetAutoCheckProgramFrequency;
-
-    ///  <summary>Gets frequency, in days, that the program should automatically
-    ///  check for database updates.</summary>
-    function GetAutoCheckDatabaseFrequency: Word;
-    ///  <summary>Sets frequency, in days, that the program should automatically
-    ///  check for database updates.</summary>
-    procedure SetAutoCheckDatabaseFrequency(const Value: Word);
-    ///  <summary>Frequency, in days, that the program should automatically
-    ///  check for database updates.</summary>
-    ///  <remarks>A value of zero indicates that no update checking should
-    ///  take place.</remarks>
-    property AutoCheckDatabaseFrequency: Word
-      read GetAutoCheckDatabaseFrequency write SetAutoCheckDatabaseFrequency;
   end;
 
 
@@ -311,21 +278,9 @@ type
       ///  <summary>Reference to object containing information about warnings to
       ///  be enabled or disabled by code generator.</summary>
       fWarnings: IWarnings;
-      ///  <summary>Maximum age of items to be read from news feed.</summary>
-      fNewsAge: Integer;
       ///  <summary>Information describing snippet detail page customisations.
       ///  </summary>
       fPageStructures: TSnippetPageStructures;
-      ///  <summary>Frequency, in days, that the program should automatically
-      ///  check for program updates.</summary>
-      ///  <remarks>A value of zero indicates that no update checking should
-      ///  take place.</remarks>
-      fAutoCheckProgramFrequency: Word;
-      ///  <summary>Frequency, in days, that the program should automatically
-      ///  check for database updates.</summary>
-      ///  <remarks>A value of zero indicates that no update checking should
-      ///  take place.</remarks>
-      fAutoCheckDatabaseFrequency: Word;
   public
     ///  <summary>Constructs a new object instance.</summary>
     constructor Create;
@@ -458,14 +413,6 @@ type
     ///  <remarks>Method of IPreferences.</remarks>
     procedure SetWarnings(Warnings: IWarnings);
 
-    ///  <summary>Gets maximum age of items to be read from news feed.</summary>
-    ///  <remarks>Method of IPreferences.</remarks>
-    function GetNewsAge: Integer;
-
-    ///  <summary>Sets maximum age of items to be read from news feed.</summary>
-    ///  <remarks>Method of IPreferences.</remarks>
-    procedure SetNewsAge(const Age: Integer);
-
     ///  <summary>Gets information describing snippet detail page
     ///  customisations.</summary>
     ///  <remarks>Method of IPreferences.</remarks>
@@ -475,26 +422,6 @@ type
     ///  customisations.</summary>
     ///  <remarks>Method of IPreferences.</remarks>
     procedure SetPageStructures(PageStructures: TSnippetPageStructures);
-
-    ///  <summary>Gets frequency, in days, that the program should automatically
-    ///  check for program updates.</summary>
-    ///  <remarks>Method of IPreferences.</remarks>
-    function GetAutoCheckProgramFrequency: Word;
-
-    ///  <summary>Sets frequency, in days, that the program should automatically
-    ///  check for program updates.</summary>
-    ///  <remarks>Method of IPreferences.</remarks>
-    procedure SetAutoCheckProgramFrequency(const Value: Word);
-
-    ///  <summary>Gets frequency, in days, that the program should automatically
-    ///  check for database updates.</summary>
-    ///  <remarks>Method of IPreferences.</remarks>
-    function GetAutoCheckDatabaseFrequency: Word;
-
-    ///  <summary>Sets frequency, in days, that the program should automatically
-    ///  check for database updates.</summary>
-    ///  <remarks>Method of IPreferences.</remarks>
-    procedure SetAutoCheckDatabaseFrequency(const Value: Word);
 
     ///  <summary>Assigns the properties of the given object to this object.
     ///  </summary>
@@ -521,7 +448,6 @@ type
       cSourceCode = 'SourceCode';
       cHiliter = 'Hiliter';
       cCodeGenerator = 'CodeGen';
-      cNews = 'News';
       cDisplay = 'Display';
       cPageStructures = 'SnippetPageStructure';
       cUpdating = 'Updating';
@@ -583,10 +509,7 @@ begin
       SrcPref.CurrentHiliteThemeIds[HiliteThemeKind];
   Self.SetCustomHiliteColours(SrcPref.CustomHiliteColours);
   Self.SetWarnings(SrcPref.Warnings);
-  Self.SetNewsAge(SrcPref.NewsAge);
   Self.SetPageStructures(SrcPref.PageStructures);
-  Self.fAutoCheckProgramFrequency := SrcPref.AutoCheckProgramFrequency;
-  Self.fAutoCheckDatabaseFrequency := SrcPref.AutoCheckDatabaseFrequency;
 end;
 
 constructor TPreferences.Create;
@@ -602,16 +525,6 @@ destructor TPreferences.Destroy;
 begin
   fPageStructures.Free;
   inherited;
-end;
-
-function TPreferences.GetAutoCheckDatabaseFrequency: Word;
-begin
-  Result := fAutoCheckDatabaseFrequency;
-end;
-
-function TPreferences.GetAutoCheckProgramFrequency: Word;
-begin
-  Result := fAutoCheckProgramFrequency;
 end;
 
 function TPreferences.GetCurrentHiliteThemeId(Kind: TCurrentHiliteThemeKind):
@@ -630,11 +543,6 @@ end;
 function TPreferences.GetMeasurementUnits: TMeasurementUnits;
 begin
   Result := fMeasurementUnits;
-end;
-
-function TPreferences.GetNewsAge: Integer;
-begin
-  Result := fNewsAge;
 end;
 
 function TPreferences.GetOverviewStartState: TOverviewStartState;
@@ -692,16 +600,6 @@ begin
   Result := fWarnings;
 end;
 
-procedure TPreferences.SetAutoCheckDatabaseFrequency(const Value: Word);
-begin
-  fAutoCheckDatabaseFrequency := Value;
-end;
-
-procedure TPreferences.SetAutoCheckProgramFrequency(const Value: Word);
-begin
-  fAutoCheckProgramFrequency := Value;
-end;
-
 procedure TPreferences.SetCurrentHiliteThemeId(Kind: TCurrentHiliteThemeKind;
   const ThemeId: TSyntaxHiliteThemeID);
 begin
@@ -716,11 +614,6 @@ end;
 procedure TPreferences.SetMeasurementUnits(const Value: TMeasurementUnits);
 begin
   fMeasurementUnits := Value;
-end;
-
-procedure TPreferences.SetNewsAge(const Age: Integer);
-begin
-  fNewsAge := Age;
 end;
 
 procedure TPreferences.SetOverviewStartState(const Value: TOverviewStartState);
@@ -813,10 +706,7 @@ begin
       Self.fCurrentHiliteThemeIds[HiliteThemeKind];
   NewPref.CustomHiliteColours := Self.GetCustomHiliteColours;
   NewPref.Warnings := Self.GetWarnings;
-  NewPref.NewsAge := Self.fNewsAge;
   NewPref.PageStructures := Self.fPageStructures;
-  NewPref.AutoCheckProgramFrequency := Self.fAutoCheckProgramFrequency;
-  NewPref.AutoCheckDatabaseFrequency := Self.fAutoCheckDatabaseFrequency;
 end;
 
 constructor TPreferencesPersist.Create;
@@ -826,8 +716,6 @@ var
 const
   // Default margin size in millimeters
   cPrintPageMarginSizeMM = 25.0;
-  // Default maximum age of news items
-  cDefNewsAge = 92;
 begin
   inherited Create;
 
@@ -887,22 +775,10 @@ begin
   Storage := Settings.ReadSection(ssPreferences, cCodeGenerator);
   TWarningsPersist.Load(Storage, fWarnings);
 
-  // Read news section
-  Storage := Settings.ReadSection(ssPreferences, cNews);
-  fNewsAge := Storage.GetInteger('MaxAge', cDefNewsAge);
-
   // Read page structure section
   Storage := Settings.ReadSection(ssPreferences, cPageStructures);
   TSnippetPageStructuresPersist.Load(Storage, fPageStructures);
 
-  // Read updating section
-  Storage := Settings.ReadSection(ssPreferences, cUpdating);
-  fAutoCheckProgramFrequency := Storage.GetInteger(
-    'AutoCheckProgramFrequency', 7  // checks for updates every week
-  );
-  fAutoCheckDatabaseFrequency := Storage.GetInteger(
-    'AutoCheckDatabaseFrequency', 7 // checks for updates every week
-  );
 end;
 
 destructor TPreferencesPersist.Destroy;
@@ -957,20 +833,9 @@ begin
   Storage := Settings.EmptySection(ssPreferences, cCodeGenerator);
   TWarningsPersist.Save(Storage, fWarnings);
 
-  // Write news section
-  Storage := Settings.EmptySection(ssPreferences, cNews);
-  Storage.SetInteger('MaxAge', fNewsAge);
-  Storage.Save;
-
   // Write page structure section
   Storage := Settings.EmptySection(ssPreferences, cPageStructures);
   TSnippetPageStructuresPersist.Save(Storage, fPageStructures);
-
-  // Write updating section
-  Storage := Settings.EmptySection(ssPreferences, cUpdating);
-  Storage.SetInteger('AutoCheckProgramFrequency', fAutoCheckProgramFrequency);
-  Storage.SetInteger('AutoCheckDatabaseFrequency', fAutoCheckDatabaseFrequency);
-  Storage.Save;
 
   inherited;
 end;
