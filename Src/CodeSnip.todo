@@ -1,3 +1,5 @@
+{TODO -cBug : If a string beginning and ending with double quotes is written to a config file then those double quotes are stripped out when it is reloaded
+This happened when entering "%1" "%2" into parameter box of Configure Diff Viewer Program.}
 {TODO -cTags : Added Tags menu with  items and code to add / delete tags.}
 {TODO -cUI :
 Make syntax highlighter in main window take note of background
