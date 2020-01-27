@@ -1,3 +1,4 @@
+{TODO -cTags : Added Tags menu with  items and code to add / delete tags.}
 {TODO -cUI :
 Make syntax highlighter in main window take note of background
 colour of theme rather than use one on Display prefs page}
