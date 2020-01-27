@@ -149,6 +149,10 @@ del {
   color: gray;
 }
 
+.disabled {
+  color: gray;
+}
+
 a:link {
   color: #336;
   text-decoration: underline;
