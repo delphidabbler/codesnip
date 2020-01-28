@@ -341,7 +341,7 @@ resourcestring
   sHasDependents = 'Sorry, this snippet can''t be deleted. It is required by '
     + 'the following snippets:' + EOL + '    %s';
 begin
-  Assert(Supports(ViewItem, ISnippetView),
+  Assert(IsSnippet(ViewItem),
     ClassName + '.Delete: Current view is not a snippet');
   Snippet := Database.LookupSnippet((ViewItem as ISnippetView).SnippetID);
   // Check if snippet has dependents: don't allow deletion if so
