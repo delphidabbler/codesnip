@@ -135,7 +135,7 @@ var
 begin
   Storage := Settings.EmptySection(ssExternalApps);
   Storage.SetString('DiffViewerPath', fExePath);
-  Storage.SetString('DiffViewerParams', fParams);
+  Storage.SetString('DiffViewerParams', StrQuote(fParams));
   Storage.Save;
 end;
 
