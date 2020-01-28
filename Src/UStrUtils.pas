@@ -191,6 +191,11 @@ function StrStripWhiteSpace(const Str: UnicodeString): UnicodeString;
 ///  <summary>Checks if a stream contains white space.</summary>
 function StrContainsWhiteSpace(const Str: UnicodeString): Boolean;
 
+///  <summary>Encloses string Str in quotes specified by Quote.</summary>
+///  <remarks>Opening and closing quote are the same character.</remarks>
+function StrQuote(const Str: UnicodeString;
+  const Quote: Char = DOUBLEQUOTE): UnicodeString;
+
 ///  <summary>Encloses string Str in quotes specified by Quote iff Str contains
 ///  white space.</summary>
 ///  <remarks>Opening and closing quote are the same character.</remarks>
@@ -557,11 +562,17 @@ begin
   Result := StrUtils.PosEx(Needle, Haystack, Offset);
 end;
 
+function StrQuote(const Str: UnicodeString;
+  const Quote: Char = DOUBLEQUOTE): UnicodeString;
+begin
+  Result := Quote + Str + Quote;
+end;
+
 function StrQuoteSpaced(const Str: UnicodeString; const Quote: Char):
   UnicodeString;
 begin
   if StrContainsWhiteSpace(Str) then
-    Result := Quote + Str + Quote
+    Result := StrQuote(Str, Quote)
   else
     Result := Str;
 end;
