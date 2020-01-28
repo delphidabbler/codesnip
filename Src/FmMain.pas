@@ -702,8 +702,8 @@ end;
 
 procedure TMainForm.actDeleteSnippetExecute(Sender: TObject);
 begin
-  Assert(TDBModificationMgr.CanEdit(fMainDisplayMgr.CurrentView),
-    ClassName + '.actDeleteSnippetExecute: Can''t delete current view item');
+  Assert(TDBModificationMgr.IsSnippet(fMainDisplayMgr.CurrentView),
+    ClassName + '.actDeleteSnippetExecute: Current view item is not a snippet');
   TDBModificationMgr.DeleteSnippet(fMainDisplayMgr.CurrentView);
   // display update is handled by snippets change event handler
 end;
@@ -716,13 +716,13 @@ end;
 procedure TMainForm.actDuplicateSnippetUpdate(Sender: TObject);
 begin
   (Sender as TAction).Enabled :=
-    TDBModificationMgr.CanDuplicate(fMainDisplayMgr.CurrentView);
+    TDBModificationMgr.IsSnippet(fMainDisplayMgr.CurrentView);
 end;
 
 procedure TMainForm.ActEditDeleteSnippetUpdate(Sender: TObject);
 begin
   (Sender as TAction).Enabled :=
-    TDBModificationMgr.CanEdit(fMainDisplayMgr.CurrentView);
+    TDBModificationMgr.IsSnippet(fMainDisplayMgr.CurrentView);
 end;
 
 procedure TMainForm.ActEditSnippetByNameExecute(Sender: TObject);
@@ -732,8 +732,8 @@ end;
 
 procedure TMainForm.actEditSnippetExecute(Sender: TObject);
 begin
-  Assert(TDBModificationMgr.CanEdit(fMainDisplayMgr.CurrentView),
-    ClassName + '.actEditSnippetExecute: Can''t edit current view item');
+  Assert(TDBModificationMgr.IsSnippet(fMainDisplayMgr.CurrentView),
+    ClassName + '.actEditSnippetExecute: View item is not a snippet');
   fNotifier.EditSnippet(
     (fMainDisplayMgr.CurrentView as ISnippetView).SnippetID
   );
@@ -1099,7 +1099,7 @@ end;
 
 procedure TMainForm.actToggleFavouriteUpdate(Sender: TObject);
 begin
-  actToggleFavourite.Enabled := TDBModificationMgr.CanEdit(
+  actToggleFavourite.Enabled := TDBModificationMgr.IsSnippet(
     fMainDisplayMgr.CurrentView
   );
   if actToggleFavourite.Enabled then

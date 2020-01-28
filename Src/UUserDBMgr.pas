@@ -64,12 +64,9 @@ type
     ///  <summary>Deletes the snippet specified by the given view from the
     ///  database.</summary>
     class procedure DeleteSnippet(ViewItem: IView);
-    ///  <summary>Checks if given view item can be duplicated.</summary>
-    ///  <remarks>To be duplicated view must be a snippet.</summary>
-    class function CanDuplicate(ViewItem: IView): Boolean;
     ///  <summary>Checks if the given view item specifies an editable snippet.
     ///  </summary>
-    class function CanEdit(ViewItem: IView): Boolean;
+    class function IsSnippet(ViewItem: IView): Boolean;
     { TODO -cRefactor: revise TRemoveTagAction to call the following method directly OR
             move the functionality into TRemoveTagAction itself. }
     ///  <summary>Removes given tag from tag list of snippet with given ID.
@@ -266,18 +263,6 @@ begin
   end;
 end;
 
-class function TDBModificationMgr.CanDuplicate(ViewItem: IView): Boolean;
-begin
-  Assert(Assigned(ViewItem), ClassName + '.CanDuplicate: ViewItem is nil');
-  Result := Supports(ViewItem, ISnippetView);
-end;
-
-class function TDBModificationMgr.CanEdit(ViewItem: IView): Boolean;
-begin
-  Assert(Assigned(ViewItem), ClassName + '.CanEdit: ViewItem is nil');
-  Result := Supports(ViewItem, ISnippetView);
-end;
-
 class procedure TDBModificationMgr.CanOpenDialogClose(Sender: TObject;
   var CanClose: Boolean);
 var
@@ -388,7 +373,7 @@ end;
 
 class procedure TDBModificationMgr.DuplicateSnippet(ViewItem: IView);
 begin
-  Assert(CanDuplicate(ViewItem),
+  Assert(IsSnippet(ViewItem),
     ClassName + '.DuplicateSnippet: ViewItem can''t be duplicated');
   TDuplicateSnippetDlg.Execute(
     nil,
@@ -403,6 +388,12 @@ begin
   if not Database.TryLookupSnippet(SnippetID, Snippet) then
     raise EBug.Create(ClassName + '.EditSnippet: Snippet not in database');
   TSnippetsEditorDlg.EditSnippet(nil, Snippet);
+end;
+
+class function TDBModificationMgr.IsSnippet(ViewItem: IView): Boolean;
+begin
+  Assert(Assigned(ViewItem), ClassName + '.IsSnippet: ViewItem is nil');
+  Result := Supports(ViewItem, ISnippetView);
 end;
 
 class function TDBModificationMgr.IsSnippetStarred(
