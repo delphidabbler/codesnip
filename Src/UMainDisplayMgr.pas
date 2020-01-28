@@ -312,7 +312,7 @@ procedure TMainDisplayMgr.AddDBView(View: IView);
 begin
   Assert(fPendingChange, ClassName + '.AddView: no change pending');
   Assert(Supports(View, ISnippetView),
-    ClassName + '.AddView: View not a database item');
+    ClassName + '.AddView: View not a snippet item');
   RedisplayOverview;
   (fOverviewMgr as IOverviewDisplayMgr).SelectItem(View);
   if Preferences.ShowNewSnippetsInNewTabs then
