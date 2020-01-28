@@ -67,6 +67,8 @@ type
     ///  <summary>Checks if the given view item specifies an editable snippet.
     ///  </summary>
     class function IsSnippet(ViewItem: IView): Boolean;
+    ///  <summary>Checks if the given view item specifies a tag.</summary>
+    class function IsTag(ViewItem: IView): Boolean;
     { TODO -cRefactor: revise TRemoveTagAction to call the following method directly OR
             move the functionality into TRemoveTagAction itself. }
     ///  <summary>Removes given tag from tag list of snippet with given ID.
@@ -400,6 +402,12 @@ class function TDBModificationMgr.IsSnippetStarred(
   const SnippetID: TSnippetID): Boolean;
 begin
   Result := Database.LookupSnippet(SnippetID).Starred;
+end;
+
+class function TDBModificationMgr.IsTag(ViewItem: IView): Boolean;
+begin
+  Assert(Assigned(ViewItem), ClassName + '.IsTag: ViewItem is nil');
+  Result := Supports(ViewItem, ITagView);
 end;
 
 class procedure TDBModificationMgr.MoveDatabase;
