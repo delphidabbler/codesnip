@@ -236,7 +236,7 @@ class function TAppInfo.ProgramCaption: string;
 const
   { TODO -cPRERELEASE: Remove text in chevrons from ProgramCaption before
                        release }
-  CaptionBase = 'CodeSnip 5 <<<Pagoda - dev>>>';
+  CaptionBase = 'CodeSnip 5 <<<Pavilion - dev>>>';
 resourcestring
   sPortableMode = '(Portable mode)';
 begin
