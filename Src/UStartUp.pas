@@ -104,11 +104,13 @@ begin
   if TCommandLineOpts.IsPortable then
   begin
     // Ensure and use user data directory for portable mode
-    WorkingDir := TAppInfo.AppExeDir + '\UserData';
+    WorkingDir := TAppInfo.UserAppDir;
     // don't use TDirectory.CreateDirectory: don't want an exception here
     EnsureFolders(WorkingDir);
     if TDirectory.Exists(WorkingDir) then
       TDirectory.SetCurrentDirectory(WorkingDir);
+    // ensure database directory exists
+    EnsureFolders(TAppInfo.UserDataDir);
   end;
 end;
 
