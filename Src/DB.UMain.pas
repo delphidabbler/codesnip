@@ -152,6 +152,15 @@ type
     function SnippetExists(const ASnippetID: TSnippetID): Boolean;
     function SnippetCount: Integer;
     function IsEmpty: Boolean;
+    ///  <summary>Checks if a any snippet in the database satisfies a given
+    ///  condition.</summary>
+    ///  <param name="FilterFn">Closure that is passed each snippet. True must
+    ///  be returned if the snippet meets the condition.</param>
+    ///  <returns>True if a snippet meets the condition, False if not.</returns>
+    ///  <remarks>Ceases searching database when 1st snippet meets the
+    ///  condition. The whole database is searched if the condition is not met.
+    ///  </remarks>
+    function SnippetConditionExists(FilterFn: TDBFilterFn): Boolean;
     // Returns a list of IDs of all snippets that depend on the snippet with
     // the given ID.
     function GetDependentsOf(const ASnippetID: TSnippetID): ISnippetIDList;
@@ -428,6 +437,16 @@ begin
       Result := FilterFn(Snippet.CloneAsReadOnly);
     end
   );
+end;
+
+function TDatabase.SnippetConditionExists(FilterFn: TDBFilterFn): Boolean;
+var
+  Snippet: TDBSnippet;
+begin
+  for Snippet in fSnippetsTable do
+    if FilterFn(Snippet.CloneAsReadOnly) then
+      Exit(True);
+  Result := False;
 end;
 
 function TDatabase.SnippetCount: Integer;
