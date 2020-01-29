@@ -463,16 +463,6 @@ begin
     if not TDeleteUnusedTagsDlg.Execute(nil, UnusedTags) then
       Exit;
 
-    // TODO -cDebug: remove following dbg code
-    // --- DBG start
-    S := '';
-    for Tag in UnusedTags do
-    begin
-      S := S + Tag.ToString + #13#10;
-    end;
-    TMessageBox.Information(nil, S);
-    // --- DBG end
-
     Database.DeleteTags(UnusedTags);
   end
   else
