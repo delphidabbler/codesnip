@@ -424,6 +424,11 @@ var
     Result := (EventInfo.Info as TBox<TSnippetID>).Value;
   end;
 
+  function EvtInfoToTag: TTag;
+  begin
+    Result := (EventInfo.Info as TBox<TTag>).Value;
+  end;
+
 begin
   EventInfo := EvtInfo as IDatabaseChangeEventInfo;
   // TODO -cDatabase: add support for changes to tags when such events are added
@@ -431,9 +436,18 @@ begin
     evChangeBegin:
       PrepareForDBChange;
 
+    evChangeEnd:
+      (fOverviewMgr as IOverviewDisplayMgr).EndUpdate;
+
+
     evBeforeSnippetChange, evBeforeSnippetDelete:
       PrepareForDBViewChange(
         TViewFactory.CreateSnippetView(EvtInfoToSnippetID)
+      );
+
+    evBeforeTagDelete:
+      PrepareForDBViewChange(
+        TViewFactory.CreateTagView(EvtInfoToTag)
       );
 
     evSnippetChanged:
@@ -442,11 +456,12 @@ begin
         TViewFactory.CreateSnippetView(EvtInfoToSnippetID)
       );
 
-    evSnippetDeleted:
+    evSnippetDeleted, evTagDeleted:
       DeleteDBView(fChangingDetailPageIdx);
 
     evSnippetAdded:
       AddDBView(TViewFactory.CreateSnippetView(EvtInfoToSnippetID));
+
   end;
 end;
 
@@ -533,8 +548,10 @@ end;
 procedure TMainDisplayMgr.PrepareForDBChange;
 begin
   fPendingChange := True;
-  // simply save the state of the overview tree view ready for later restoration
+  // save the state of the overview tree view ready for later restoration
+  // and freeze updates until DB change complete
   (fOverviewMgr as IOverviewDisplayMgr).SaveTreeState;
+  (fOverviewMgr as IOverviewDisplayMgr).BeginUpdate;
 end;
 
 procedure TMainDisplayMgr.PrepareForDBReload;

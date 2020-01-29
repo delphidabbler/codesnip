@@ -42,8 +42,10 @@ type
     evBeforeSnippetDelete,  // a snippet is about to be deleted
     evSnippetDeleted,       // a snippet has been deleted
     evBeforeSnippetChange,  // a snippet is about to be changed
-    evSnippetChanged        // a snippet's properties / references have changed
+    evSnippetChanged,       // a snippet's properties / references have changed
     // TODO -cDatabase: add suitable event kinds for changes to tags as required
+    evBeforeTagDelete,
+    evTagDeleted
   );
 
   {
@@ -116,6 +118,8 @@ type
     procedure FixUpSnippetRefs;
     procedure TriggerSnippetChangeEvent(const Kind: TDatabaseChangeEventKind;
       const SnippetID: TSnippetID);
+    procedure TriggerTagChangeEvent(const Kind: TDatabaseChangeEventKind;
+      Tag: TTag);
     procedure TriggerNullDataEvent(const Kind: TDatabaseChangeEventKind);
     procedure TriggerChangeEvent(const Kind: TDatabaseChangeEventKind;
       const Info: TObject = nil);
@@ -172,6 +176,8 @@ type
     procedure AddSnippet(ASnippet: IEditableSnippet);
     procedure UpdateSnippet(ASnippet: IEditableSnippet);
     procedure DeleteSnippet(ASnippetID: TSnippetID);
+
+    procedure DeleteTags(Tags: ITagSet);
 
     procedure AddChangeEventHandler(const Handler: TNotifyEventInfo);
       {Adds a change event handler to list of listeners.
@@ -275,6 +281,35 @@ begin
   finally
     FlagUpdate;
     TriggerSnippetChangeEvent(evSnippetDeleted, ASnippetID);
+    TriggerNullDataEvent(evChangeEnd);
+  end;
+end;
+
+procedure TDatabase.DeleteTags(Tags: ITagSet);
+var
+  ValidTags: ITagSet;
+  Tag: TTag;
+begin
+  // Validate that each given tag is in database: remove any that are not
+  ValidTags := Tags.Filter(
+    function(const ATag: TTag): Boolean
+    begin
+      Result := fAllTags.Contains(ATag);
+    end
+  );
+  if ValidTags.IsEmpty then
+    Exit;
+
+  // We have valid tags: remove them
+  TriggerNullDataEvent(evChangeBegin);
+  try
+    for Tag in ValidTags do
+    begin
+      TriggerTagChangeEvent(evBeforeTagDelete, Tag);
+      fAllTags.Exclude(ValidTags);
+      TriggerTagChangeEvent(evTagDeleted, Tag);
+    end;
+  finally
     TriggerNullDataEvent(evChangeEnd);
   end;
 end;
@@ -479,6 +514,19 @@ var
   Obj: TBox<TSnippetID>;
 begin
   Obj := TBox<TSnippetID>.Create(SnippetID);
+  try
+    TriggerChangeEvent(Kind, Obj);
+  finally
+    Obj.Free;
+  end;
+end;
+
+procedure TDatabase.TriggerTagChangeEvent(const Kind: TDatabaseChangeEventKind;
+  Tag: TTag);
+var
+  Obj: TBox<TTag>;
+begin
+  Obj := TBox<TTag>.Create(Tag);
   try
     TriggerChangeEvent(Kind, Obj);
   finally

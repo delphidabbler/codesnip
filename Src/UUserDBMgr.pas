@@ -71,6 +71,8 @@ type
     class function IsTag(ViewItem: IView): Boolean;
     { TODO -cRefactor: revise TRemoveTagAction to call the following method directly OR
             move the functionality into TRemoveTagAction itself. }
+    ///  <summary>Removes all unused tags from database.</summary>
+    class procedure RemoveUnusedTags;
     ///  <summary>Removes given tag from tag list of snippet with given ID.
     ///  </summary>
     class procedure RemoveTagFromSnippet(const SnippetID: TSnippetID;
@@ -107,7 +109,9 @@ uses
   Dialogs,
   // Project
   CS.Database.Backup,
+  CS.Database.Tags,
   CS.Init.CommandLineOpts,
+  CS.UI.Dialogs.DeleteEmptyTags,
   DB.UMain,
   FmDuplicateSnippetDlg,
   FmSnippetsEditorDlg,
@@ -428,6 +432,52 @@ begin
   Tags.Remove(Tag);
   Snippet.Tags := Tags;
   Database.UpdateSnippet(Snippet);
+end;
+
+class procedure TDBModificationMgr.RemoveUnusedTags;
+var
+  AllTags: ITagSet;
+  Tag: TTag;
+  UnusedTags: ITagSet;
+  S: string;
+resourcestring
+  sNoUnusedTagsMsg = 'There are no unused tags';
+begin
+  AllTags := Database.GetAllTags;
+  UnusedTags := TTagSet.Create;
+  // Find all empty tags
+  for Tag in AllTags do
+  begin
+    if not Database.SnippetConditionExists(
+      function (Snippet: ISnippet): Boolean
+      begin
+        Result := Snippet.Tags.Contains(Tag);
+      end
+    ) then
+      UnusedTags.Add(Tag);
+  end;
+  if not UnusedTags.IsEmpty then
+  begin
+    // We have empty tags
+    // get user to confirm and have opportunity to keep some of the tags
+    if not TDeleteUnusedTagsDlg.Execute(nil, UnusedTags) then
+      Exit;
+
+    // TODO -cDebug: remove following dbg code
+    // --- DBG start
+    S := '';
+    for Tag in UnusedTags do
+    begin
+      S := S + Tag.ToString + #13#10;
+    end;
+    TMessageBox.Information(nil, S);
+    // --- DBG end
+
+    Database.DeleteTags(UnusedTags);
+  end
+  else
+    // No empty tags
+    TMessageBox.Information(nil, sNoUnusedTagsMsg);
 end;
 
 class function TDBModificationMgr.RestoreDatabase(
