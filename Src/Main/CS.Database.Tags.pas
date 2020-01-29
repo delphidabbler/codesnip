@@ -130,7 +130,7 @@ var
   Tag: TTag;
 begin
   Assert(Assigned(AFilterFn), ClassName + '.Filter: AFilterFn not assigned');
-  Result := Create;
+  Result := TTagSet.Create;
   for Tag in fTags do
     if AFilterFn(Tag) then
       Result.Add(Tag);
