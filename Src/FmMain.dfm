@@ -879,6 +879,12 @@ inherited MainForm: TMainForm
       ImageIndex = 17
       OnExecute = actReportIssueExecute
     end
+    object actDeleteUnusedTags: TAction
+      Category = 'Tags'
+      Caption = 'Delete Unused Tags...'
+      Hint = 'Delete unused tags|Delete all unused tags from the database'
+      OnExecute = actDeleteUnusedTagsExecute
+    end
   end
   object mnuMain: TMainMenu
     Images = ilMain
@@ -1073,6 +1079,12 @@ inherited MainForm: TMainForm
       end
       object miFavourites: TMenuItem
         Action = actFavourites
+      end
+    end
+    object miTags: TMenuItem
+      Caption = 'Tags'
+      object miDeleteUnusedTags: TMenuItem
+        Action = actDeleteUnusedTags
       end
     end
     object miDatabase: TMenuItem

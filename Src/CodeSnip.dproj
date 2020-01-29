@@ -553,6 +553,9 @@
 				<Form>HiliteThemesExampleFrame</Form>
 				<DesignClass>TFrame</DesignClass>
 			</DCCReference>
+			<DCCReference Include="Main\CS.UI.Dialogs.DeleteEmptyTags.pas">
+				<Form>DeleteUnusedTagsDlg</Form>
+			</DCCReference>
 			<None Include="CodeSnip.todo"/>
 			<BuildConfiguration Include="Base">
 				<Key>Base</Key>

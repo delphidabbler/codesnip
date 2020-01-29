@@ -238,6 +238,9 @@ type
     actReportIssue: TAction;
     miSpacer7: TMenuItem;
     miReportIssue: TMenuItem;
+    miTags: TMenuItem;
+    actDeleteUnusedTags: TAction;
+    miDeleteUnusedTags: TMenuItem;
     ///  <summary>Displays About Box.</summary>
     procedure actAboutExecute(Sender: TObject);
     ///  <summary>Adds current snippet to favourites.</summary>
@@ -478,6 +481,7 @@ type
     procedure splitVertCanResize(Sender: TObject; var NewSize: Integer;
       var Accept: Boolean);
     procedure actReportIssueExecute(Sender: TObject);
+    procedure actDeleteUnusedTagsExecute(Sender: TObject);
   strict private
     var
       ///  <summary>Object that notifies user-initiated events by triggering
@@ -706,6 +710,11 @@ begin
     ClassName + '.actDeleteSnippetExecute: Current view item is not a snippet');
   TDBModificationMgr.DeleteSnippet(fMainDisplayMgr.CurrentView);
   // display update is handled by snippets change event handler
+end;
+
+procedure TMainForm.actDeleteUnusedTagsExecute(Sender: TObject);
+begin
+  TDBModificationMgr.RemoveUnusedTags;
 end;
 
 procedure TMainForm.actDuplicateSnippetExecute(Sender: TObject);
