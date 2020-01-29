@@ -35,4 +35,5 @@ Update database.html as necessary.
 + Write both snippets' source to temp folder
 + Compare files with diff viewer}
 
+{TODO -cUI: Remove un-necessary separator in main form toolbar }
 
