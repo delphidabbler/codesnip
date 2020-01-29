@@ -224,6 +224,14 @@ type
     procedure RestoreTreeState;
       {Restores last saved treeview expansion state from memory.
       }
+    ///  <summary>Performs any actions required before overview is updated.
+    ///  </summary>
+    ///  <remarks>Method of IOverviewDisplayMgr.</remarks>
+    procedure BeginUpdate;
+    ///  <summary>Performs any actions required after overview has been updated.
+    ///  </summary>
+    ///  <remarks>Method of IOverviewDisplayMgr.</remarks>
+    procedure EndUpdate;
     { IPaneInfo }
     function IsInteractive: Boolean;
       {Checks if the pane is currently interactive with user.
@@ -258,6 +266,11 @@ uses
 {$R *.dfm}
 
 { TOverviewFrame }
+
+procedure TOverviewFrame.BeginUpdate;
+begin
+  tvSnippets.Items.BeginUpdate;
+end;
 
 function TOverviewFrame.CanUpdateTreeState(
   const State: TTreeNodeAction): Boolean;
@@ -382,6 +395,11 @@ begin
   Assert((GroupingIdx >= 0) and (GroupingIdx < fGroupingCBMgr.Count),
     ClassName + '.SaveTreeState: GroupingIdx out range');
   fTreeStates[GroupingIdx].SaveState;
+end;
+
+procedure TOverviewFrame.EndUpdate;
+begin
+  tvSnippets.Items.EndUpdate;
 end;
 
 function TOverviewFrame.FindItemNode(Item: IView): TViewItemTreeNode;

@@ -152,6 +152,12 @@ type
     ///  <summary>Restore expand / collapse state of treeview to last save
     ///  state.</summary>
     procedure RestoreTreeState;
+    ///  <summary>Performs any actions required before overview is updated.
+    ///  </summary>
+    procedure BeginUpdate;
+    ///  <summary>Performs any actions required after overview has been updated.
+    ///  </summary>
+    procedure EndUpdate;
   end;
 
 type
