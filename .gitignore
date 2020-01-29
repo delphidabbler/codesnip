@@ -1,4 +1,4 @@
-﻿# .gitignore file for CodeSnip project
+# .gitignore file for CodeSnip project
 
 # Delphi generated temporary files and directories
 *.local
@@ -16,3 +16,4 @@ Release
 Src/CodeSnip.cfg
 Src/Main/AutoGen/IntfExternalObj.pas
 Src/AutoGen/IntfExternalObj.pas
+Src/Portable/CodeSnipPortable.cfg
