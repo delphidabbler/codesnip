@@ -570,6 +570,7 @@ begin
     Exit;
   DeleteIniKey('Application', 'RegCode', CfgFileName);
   DeleteIniKey('Application', 'RegName', CfgFileName);
+  DeleteIniKey('Application', 'Key', CfgFileName);
 end;
 
 class function TCommonConfigFileUpdater.GetFileVersion: Integer;

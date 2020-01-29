@@ -31,10 +31,6 @@ type
   }
   TAppInfo = class(TNoConstructObject)
   strict private
-    class function GenerateKey: string;
-      {Generates unique program key for application in deterministic way.
-        @return Required key.
-      }
     ///  <summary>Returns the fully specified path to the given file in
     ///  CodeSnip's per-user data directory.</summary>
     class function UserFilePath(const FileName: string): string; inline;
@@ -111,11 +107,6 @@ type
       {Gets version number of program's executable file.
         @return Version number as dotted quad.
       }
-    class function ProgramKey: string;
-      {Gets program's unique identifying key. This key should be different on
-      each installation. If key does not exist it is created.
-        @return 32 digit key.
-      }
   end;
 
 
@@ -131,7 +122,6 @@ uses
   CS.Init.CommandLineOpts,
   USettings,
   UStrUtils,
-  USystemID,
   USystemInfo,
   UVersionInfo,
   Web.UInfo;
@@ -204,20 +194,6 @@ begin
   Result := UserFilePath('Favourites');
 end;
 
-class function TAppInfo.GenerateKey: string;
-  {Generates unique program key for application in deterministic way.
-    @return Required key.
-  }
-begin
-  Result := StrToUpper(
-    TPJMD5.Calculate(
-      USystemID.SystemIDStr, TEncoding.ASCII
-    )
-  );
-  if TCommandLineOpts.IsPortable then
-    Result := 'P:' + StrSliceRight(Result, Length(Result) - 2);
-end;
-
 class function TAppInfo.HelpFileName: string;
   {Returns fully specified name of CodeSnip's help file.
     @return Name of help file.
@@ -253,26 +229,6 @@ class function TAppInfo.ProgramFileVersion: string;
   }
 begin
   Result := TVersionInfo.FileVersionNumberStr;
-end;
-
-class function TAppInfo.ProgramKey: string;
-  {Gets program's unique identifying key. This key should be different on each
-  installation. If key does not exist it is created.
-    @return 32 digit key.
-  }
-var
-  Section: ISettingsSection;  // persistent storage where key is recorded
-begin
-  // Try to get key from storage
-  Section := Settings.ReadSection(ssApplication);
-  Result := Section.GetString('Key');
-  if Result = '' then
-  begin
-    // Key not present: create and store it
-    Result := GenerateKey;
-    Section.SetString('Key', Result);
-    Section.Save;
-  end;
 end;
 
 class function TAppInfo.ProgramReleaseInfo: string;
