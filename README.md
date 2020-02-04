@@ -11,11 +11,11 @@ A code bank designed with Pascal in mind.
 
 ## Overview
 
-> **CodeSnip Is No Longer Being Supported**.
+> **CodeSnip 4 Is No Longer Being Supported**.
 
-> Bugs can no longer be reported and requests for new features are no longer being accepted.
+> Bugs can no longer be reported and requests for new features in CodeSnip 4 are no longer being accepted.
 
-> It is hoped to produce one final version that removes the program's dependency on the delphidabbler.com webserver that is due to close 15th June 2020, but no guarantees.
+> It is hoped to produce one final version that removes the program's dependency on the delphidabbler.com webserver that is due to close 15th June 2020, but no guarantees. Work started late Jan 2020.
 
 CodeSnip is an open source code bank for storing and viewing your code snippets. While it can manage snippets in any source language, it is focussed mainly on Pascal and Delphi code for which additional features are available.
 
@@ -29,7 +29,7 @@ CodeSnip requires Windows 2000 or later and Internet Explorer 6 or later, althou
 
 <sup>†</sup> DelphiDabbler.com is due to close down on 15 June 2020. After this time these links will no longer work.
 
-<sup>‡</sup> It is hoped to move the Code Snippets Database to GitHub before DelphiDabbler.com closes down.
+<sup>‡</sup> The Code Snippets Database has been imported to GitHub: it's a work in progress. [See the repo](https://github.com/delphidabbler/code-snippets).
 
 ## Installation
 
