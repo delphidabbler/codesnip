@@ -64,8 +64,6 @@ begin
   UserData := Settings.ReadSection(ssUserInfo);
   Name := StrTrim(UserData.GetString('Name'));
   if Name = '' then
-    Name := StrTrim(TAppInfo.RegisteredUser);
-  if Name = '' then
     Name := StrTrim(TComputerInfo.UserName);
   Email := StrTrim(UserData.GetString('Email'));
   Result := TUserDetails.Create(Name, Email);

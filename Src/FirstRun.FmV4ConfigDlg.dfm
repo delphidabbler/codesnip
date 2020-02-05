@@ -15,6 +15,10 @@ inherited V4ConfigDlg: TV4ConfigDlg
       object tsIntro: TTabSheet
         Caption = 'tsIntro'
         TabVisible = False
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object lblIntro1: TLabel
           Left = 0
           Top = 3
@@ -70,6 +74,10 @@ inherited V4ConfigDlg: TV4ConfigDlg
         Caption = 'tsConfigFile'
         ImageIndex = 1
         TabVisible = False
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object lblCopyConfig: TLabel
           Left = 0
           Top = 3
@@ -97,6 +105,10 @@ inherited V4ConfigDlg: TV4ConfigDlg
         Caption = 'tsUserDB'
         ImageIndex = 2
         TabVisible = False
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object lblUserDB1: TLabel
           Left = 0
           Top = 3
@@ -136,6 +148,10 @@ inherited V4ConfigDlg: TV4ConfigDlg
         Caption = 'tsSummary'
         ImageIndex = 3
         TabVisible = False
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object lblSummaryPrefix: TLabel
           Left = 0
           Top = 3
@@ -170,6 +186,10 @@ inherited V4ConfigDlg: TV4ConfigDlg
         Caption = 'tsFinish'
         ImageIndex = 4
         TabVisible = False
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object lblFinish1: TLabel
           Left = 0
           Top = 3

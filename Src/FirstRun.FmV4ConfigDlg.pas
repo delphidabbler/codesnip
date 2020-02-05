@@ -341,7 +341,6 @@ end;
 
 procedure TV4ConfigDlg.ListChanges;
 resourcestring
-  sRegistration = 'Program registration information has been lost.';
   sHiliter = 'Syntax highlighter customisations have been lost.';
   sProxyPwd = 'Your proxy server password needs to be re-entered.';
   sSourceFormat = 'Source code formatting preferences may have been lost.';
@@ -353,8 +352,6 @@ begin
     // there are changes to config file: show in bullet list
     lblFinish2.Visible := True;
     Changes := TIStringList.Create;
-    if frcRegistration in fCfgChanges then
-      Changes.Add(sRegistration);
     if frcHiliter in fCfgChanges then
       Changes.Add(sHiliter);
     if frcProxyPwd in fCfgChanges then

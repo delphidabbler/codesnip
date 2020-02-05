@@ -29,7 +29,6 @@ type
   ///  <summary>Enumeration of changes that can be made to brought forward
   ///  config files that result in data loss.</summary>
   TFirstRunCfgChanges = (
-    frcRegistration,    // local registration record lost
     frcHiliter,         // syntax highlighter customisation lost
     frcProxyPwd,        // internet proxy password lost
     frcSourceFormat     // source code output formatting lost
@@ -219,7 +218,6 @@ begin
     begin
       fUserConfigFile.UpdateFromOriginal;
       Include(Changes, frcHiliter);
-      Include(Changes, frcRegistration);
       Include(Changes, frcSourceFormat);
     end;
     piV1_9, piV2:

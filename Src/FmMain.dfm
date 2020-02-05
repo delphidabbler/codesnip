@@ -536,13 +536,6 @@ inherited MainForm: TMainForm
       ImageIndex = 16
       OnExecute = actPreferencesExecute
     end
-    object actRegister: TAction
-      Category = 'Tools'
-      Caption = '&Register CodeSnip...'
-      Hint = 'Register CodeSnip|Register CodeSnip online'
-      OnExecute = actRegisterExecute
-      OnUpdate = actRegisterUpdate
-    end
     object actLicense: TAction
       Category = 'Help'
       Caption = 'License'
@@ -1203,13 +1196,6 @@ inherited MainForm: TMainForm
       end
       object miReportBug: TMenuItem
         Action = actBugReport
-      end
-      object miSpacer9: TMenuItem
-        Caption = '-'
-      end
-      object miRegister: TMenuItem
-        Action = actRegister
-        Default = True
       end
     end
     object miHelp: TMenuItem

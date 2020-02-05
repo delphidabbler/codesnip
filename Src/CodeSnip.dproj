@@ -219,9 +219,6 @@
 			<DCCReference Include="FmProxyServerDlg.pas">
 				<Form>ProxyServerDlg</Form>
 			</DCCReference>
-			<DCCReference Include="FmRegistrationDlg.pas">
-				<Form>RegistrationDlg</Form>
-			</DCCReference>
 			<DCCReference Include="FmRenameCategoryDlg.pas">
 				<Form>RenameCategoryDlg</Form>
 			</DCCReference>
@@ -620,7 +617,6 @@
 			<DCCReference Include="Web.UHTTPEx.pas"/>
 			<DCCReference Include="Web.UInfo.pas"/>
 			<DCCReference Include="Web.UProgramUpdateMgr.pas"/>
-			<DCCReference Include="Web.URegistrar.pas"/>
 			<DCCReference Include="Web.UStdWebService.pas"/>
 			<DCCReference Include="Web.USWAGRESTMgr.pas"/>
 			<DCCReference Include="Web.UXMLRequestor.pas"/>

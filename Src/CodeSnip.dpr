@@ -129,7 +129,6 @@ uses
   FmPrintDlg in 'FmPrintDlg.pas' {PrintDlg},
   FmProgramUpdatesDlg in 'FmProgramUpdatesDlg.pas' {ProgramUpdatesDlg},
   FmProxyServerDlg in 'FmProxyServerDlg.pas' {ProxyServerDlg},
-  FmRegistrationDlg in 'FmRegistrationDlg.pas' {RegistrationDlg},
   FmRenameCategoryDlg in 'FmRenameCategoryDlg.pas' {RenameCategoryDlg},
   FmSelectionSearchDlg in 'FmSelectionSearchDlg.pas' {SelectionSearchDlg},
   FmSnippetsEditorDlg in 'FmSnippetsEditorDlg.pas' {SnippetsEditorDlg},
@@ -405,7 +404,6 @@ uses
   Web.UHTTPEx in 'Web.UHTTPEx.pas',
   Web.UInfo in 'Web.UInfo.pas',
   Web.UProgramUpdateMgr in 'Web.UProgramUpdateMgr.pas',
-  Web.URegistrar in 'Web.URegistrar.pas',
   Web.UStdWebService in 'Web.UStdWebService.pas',
   Web.USWAGRESTMgr in 'Web.USWAGRESTMgr.pas',
   Web.UXMLRequestor in 'Web.UXMLRequestor.pas';
