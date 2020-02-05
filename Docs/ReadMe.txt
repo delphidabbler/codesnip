@@ -367,7 +367,7 @@ Bugs
 Please do report any bugs you find.
 
 Bugs are recorded in tracker software. View the reported and fixed bugs via
-http://delphidabbler.com/url/codesnip-bugs (this redirects to the tracker page).
+https://github.com/delphidabbler/codesnip/issues
 
 You can also access the bug tracker from CodeSnip by using the "Tools | Report
 Bug Online" menu option then following the link that appears in the resulting
@@ -377,7 +377,7 @@ If you wish to report a bug, please check the current reports on the bug
 tracker. If your bug hasn't already been reported or fixed please add a report
 using the "Add new" link on Tracker.
 
-Please note that versions 1 and 2 of CodeSnip are no longer supported, so don't
+Please note that versions 1 to 3 of CodeSnip are no longer supported, so don't
 report bugs for those versions. You should update the program first and only
 report the bug if it is still present.
 
