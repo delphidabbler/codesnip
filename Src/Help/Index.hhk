@@ -332,10 +332,6 @@
     <param name="Local" value="HTML\quickstart.htm">
     </OBJECT>
   <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="registration wizard">
-    <param name="Local" value="HTML\dlg_register.htm">
-    </OBJECT>
-  <LI> <OBJECT type="text/sitemap">
     <param name="Name" value="rename category dialogue">
     <param name="Local" value="HTML\dlg_renamecategory.htm">
     </OBJECT>
