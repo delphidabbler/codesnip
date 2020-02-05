@@ -260,6 +260,9 @@ begin
   if fUserConfigFile.FileVer < 15 then
     fUserConfigFile.UpdateFindXRefs;
 
+  if fCommonConfigFile.FileVer < 7 then
+    fCommonConfigFile.DeleteRegistrationInfo;
+
   fUserConfigFile.Stamp;
   // NOTE: strictly speaking we only need to stamp common config file in
   // portable version. Installer does this in normal version. However, it does
