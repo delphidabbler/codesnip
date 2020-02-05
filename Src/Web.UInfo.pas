@@ -93,6 +93,8 @@ type
     class function Host: string;
   public
     const
+      ///  <summary>URL of CodeSnip's GitHub page.</summary>
+      GitHubURL = 'https://github.com/delphidabbler/codesnip';
       ///  <summary>URL of home page on DelphiDabbler website.</summary>
       DelphiDabblerHomeURL = WebsiteURL + '/';
       ///  <summary>URL of home page of the CodeSnip project.</summary>
@@ -103,14 +105,14 @@ type
       ///  </summary>
       ///  <remarks>This URL redirects to the correct page on PayPal.</remarks>
       DonateURL = WebsiteURL + '/url/donate-cs';
-      ///  <summary>URL used to view and report CodeSnip bugs.</summary>
-      ///  <remarks>This URL will redirect to the actual bug tracker which may
-      ///  be on an external site such as SourceForge or GitHub.</remarks>
-      BugTrackerURL = WebsiteURL + '/url/codesnip-bugs';
+      ///  <summary>URL used to view and report CodeSnip bugs on GitHub.
+      ///  </summary>
+      BugTrackerURL = GitHubURL + '/issues';
       ///  <summary>URL of CodeSnip's FAQ web page.</summary>
       ///  <remarks>This URL will redirect to the FAQ location which may be on
       ///  an external site such as GitHub or SourceForge.</remarks>
       FAQsURL = WebsiteURL + '/url/codesnip-faq';
+
   public
     ///  <summary>Returns the name of the server that hosts web services used by
     ///  CodeSnip when under testing. This server receives updated web services
