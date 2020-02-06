@@ -270,9 +270,9 @@ Check For Program Updates" menu option. Once again you will be directed to a web
 page from where the updated program can be downloaded.
 
 Neither of the above methods will detect beta and preview releases of the
-program. To find out about those you should subscribe to the CodeSnip news feed
-(see below). Alternatively you can view the latest news from the feed from the
-"Help | CodeSnip News" menu option.
+program. To find out about those you should check the CodeSnip Blog at
+http://codesnip-app.blogspot.com/ or check the available releases on the 
+CodeSnip GitHub.
 
 NOTE: You may need to configure your firewall to permit CodeSnip to access the
 internet otherwise the automatic updating may not work.
@@ -317,17 +317,6 @@ Known Installation and Upgrading Issues
   command line options you have specified on the "Switches" (aka "Command Line")
   tab of the Configure Compilers dialogue box for Delphi XE2 or later will be
   removed and equivalent entries will have been made on the "Namespaces" tab.
-
-
-RSS News Feed
-================================================================================
-
-You can get notified of all updates to the CodeSnip program and to the database
-by subscribing to the Code Snippets RSS Feed at
-http://delphidabbler.com/feeds/site-news-feed?id=codesnip.
-
-The latest news from this feed can also be displayed from the program's "Help |
-CodeSnip News" menu option.
 
 
 License & Disclaimer

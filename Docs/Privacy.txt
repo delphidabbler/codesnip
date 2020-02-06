@@ -67,17 +67,15 @@ CodeSnip Online Activity
 CodeSnip may go online for several reasons. They are:
 
    1. Updating the database.
-   3. Submitting code for inclusion in the main database.
-   4. Displaying the latest news in the "CodeSnip News" dialogue box.
-   5. Checking for program updates.
-   6. Importing snippets from the SWAG database.
-   7. Accessing various websites via hyperlinks and menu options.
-   8. Accessing the internet using a proxy server.
+   2. Submitting code for inclusion in the main database.
+   3. Checking for program updates.
+   4. Importing snippets from the SWAG database.
+   5. Accessing various websites via hyperlinks and menu options.
+   6. Accessing the internet using a proxy server.
 
-The first six actions are performed directly by CodeSnip, which communicates
-with web services located on delphidabbler.com using HTTP on port 80. The
-seventh action simply displays web pages in a browser. The eighth passes user
-information to the proxy server.
+Some are performed directly by CodeSnip, which communicates with web services 
+located on delphidabbler.com using HTTP on port 80. Others simply display web pages in a browser. The last reason passes user information to the proxy server
+if configured to do so,
 
 Personal data will neither be published on the DelphiDabbler website nor
 knowingly passed to third parties. Furthermore your data will only be used by
@@ -145,16 +143,6 @@ The snippets may be edited and published on the Code Snippets online database
 and distributed to CodeSnip users. Your name may be used to credit the snippets.
 Your email address will not be published and is used only to contact you with
 any queries about the submitted code or its licensing.
-
-
-Displaying the latest news
---------------------------------------------------------------------------------
-
-This action is performed by selecting the "Help | CodeSnip News" menu option or
-by clicking the "Latest News" button in the "Update from Web" dialogue box.
-
-CodeSnip simply requests an XML document containing an RSS 2.0 news feed from
-the DelphiDabbler website. No personal information is included in the request.
 
 
 Checking for program updates
