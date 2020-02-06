@@ -109,10 +109,9 @@ type
       ///  </summary>
       BugTrackerURL = GitHubURL + '/issues';
       ///  <summary>URL of CodeSnip's FAQ web page.</summary>
-      ///  <remarks>This URL will redirect to the FAQ location which may be on
-      ///  an external site such as GitHub or SourceForge.</remarks>
-      FAQsURL = WebsiteURL + '/url/codesnip-faq';
-
+      ///  <remarks>This is the CodeSnip FAQ project on GitHub.</remarks>
+      FAQsURL = 'https://github.com/delphidabbler/codesnip-faq/'
+        + 'blob/master/README.md';
   public
     ///  <summary>Returns the name of the server that hosts web services used by
     ///  CodeSnip when under testing. This server receives updated web services
