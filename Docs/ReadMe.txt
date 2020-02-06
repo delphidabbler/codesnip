@@ -253,29 +253,14 @@ copy must be registered separately.
 Updating the Program
 ================================================================================
 
-CodeSnip automatically checks online for available program updates. If it finds
-that an update is available it displays a notification window at the bottom
-right of the main window. That window has a button you can click that opens your
-default browser at a web page that downloads the new version of the program.
+Updates are published on:
 
-Once the updated version is downloaded you must close CodeSnip install the
-program in the usual way.
++ GitHub: https://github.com/delphidabbler/codesnip/releases
 
-You can change the frequency with which CodeSnip checks for updates, or turn off
-the feature, from the "Updates" tab of the "Preferences" dialogue box. You can
-display this dialogue box from the "Tools | Preferences" menu option.
++ SourceForge: https://sourceforge.net/projects/codesnip/files/
 
-You can also check for program updates manually at any time from the "Tools |
-Check For Program Updates" menu option. Once again you will be directed to a web
-page from where the updated program can be downloaded.
-
-Neither of the above methods will detect beta and preview releases of the
-program. To find out about those you should check the CodeSnip Blog at
-http://codesnip-app.blogspot.com/ or check the available releases on the 
-CodeSnip GitHub.
-
-NOTE: You may need to configure your firewall to permit CodeSnip to access the
-internet otherwise the automatic updating may not work.
+News of new updates is published on the CodeSnip Blog:
+http://codesnip-app.blogspot.com/.
 
 
 Known Installation and Upgrading Issues

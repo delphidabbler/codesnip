@@ -111,9 +111,6 @@
         Submitting code for inclusion in the main database.
       </li>
       <li>
-        Checking for program updates.
-      </li>
-      <li>
         Importing snippets from the SWAG database.
       </li>
       <li>
@@ -124,10 +121,10 @@
       </li>
     </ol>
     <p>
-      The first six actions are performed directly by <em>CodeSnip</em>,
+      The first three actions are performed directly by <em>CodeSnip</em>,
       which communicates with web services located on delphidabbler.com
-      using HTTP on port 80. The seventh action simply displays web pages in a
-      browser. The eighth passes user information to the proxy server.
+      using HTTP on port 80. The fourth action simply displays web pages in a
+      browser. The fifth passes user information to the proxy server.
     </p>
     <p>
       Personal data will neither be published on the DelphiDabbler website nor
@@ -238,58 +235,6 @@
       to credit the snippets. Your email address will not be published and is
       used only to contact you with any queries about the submitted code or its
       licensing.
-    </p>
-    <h3>
-      Checking for program updates
-    </h3>
-    <p>
-      This action can be started manually by clicking the &quot;Tools | Check
-      For Program Updates&quot; menu option. The resulting dialogue box connects
-      to the DelphiDabbler program update web service.
-    </p>
-    <p>
-      <em>CodeSnip</em> may also check for updates automatically, behind the
-      scenes. The same DelphiDabbler program update web is used in this case.
-      The process usually happens just after the program has started. You can
-      disable this automatic checking by using the &quot;Updates&quot; tab of
-      the &quot;Preferences&quot; dialogue box which is displayed via the
-      &quot;Tools | Preferences&quot; menu option.
-    </p>
-    <p>
-      Whichever way the the web service is used the same information is sent,
-      which is:
-    </p>
-    <ul>
-      <li>
-        An API key used permit access to the web service.
-      </li>
-      <li>
-        The program's version information.
-      </li>
-      <li>
-        The unique 32 digit program key (see Common.config above for details).
-      </li>
-      <li>
-        A description of the operating system and version of Internet Explorer
-        being used.
-      </li>
-      <li>
-        An indication of whether the service is being called automatically or
-        manually.
-      </li>
-    </ul>
-    <p>
-      This information is recorded in a log file on the DelphiDabbler web
-      server. The log file is used to gather information about the operating
-      systems and program versions currently in use and to monitor any web
-      service errors.
-    </p>
-    <p>
-      Regardless of the method used to contact the web service, if an update is
-      available you are given the option to download it. To do this CodeSnip
-      uses your default web browser to download a zip file containing the update
-      from the SourceForge website. SourceForge may set cookies on your computer
-      that are outside <em>CodeSnip</em>'s control.
     </p>
     <h3>
       Importing snippets from the SWAG database

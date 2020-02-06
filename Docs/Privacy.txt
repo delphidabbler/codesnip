@@ -68,12 +68,11 @@ CodeSnip may go online for several reasons. They are:
 
    1. Updating the database.
    2. Submitting code for inclusion in the main database.
-   3. Checking for program updates.
-   4. Importing snippets from the SWAG database.
-   5. Accessing various websites via hyperlinks and menu options.
-   6. Accessing the internet using a proxy server.
+   3. Importing snippets from the SWAG database.
+   4. Accessing various websites via hyperlinks and menu options.
+   5. Accessing the internet using a proxy server.
 
-Some are performed directly by CodeSnip, which communicates with web services 
+Some are performed directly by CodeSnip, which communicates with web services
 located on delphidabbler.com using HTTP on port 80. Others simply display web pages in a browser. The last reason passes user information to the proxy server
 if configured to do so,
 
@@ -143,41 +142,6 @@ The snippets may be edited and published on the Code Snippets online database
 and distributed to CodeSnip users. Your name may be used to credit the snippets.
 Your email address will not be published and is used only to contact you with
 any queries about the submitted code or its licensing.
-
-
-Checking for program updates
---------------------------------------------------------------------------------
-
-This action can be started manually by clicking the "Tools | Check For Program
-Updates" menu option. The resulting dialogue box connects to the DelphiDabbler
-program update web service.
-
-CodeSnip may also check for updates automatically, behind the scenes. The same
-DelphiDabbler program update web is used in this case. The process usually
-happens just after the program has started. You can disable this automatic
-checking by using the "Updates" tab of the "Preferences" dialogue box which is
-displayed via the "Tools | Preferences" menu option.
-
-Whichever way the the web service is used the same information is sent, which
-is:
-
-    * An API key used permit access to the web service.
-    * The program's version information.
-    * The unique 32 digit program key (see Common.config above for details).
-    * A description of the operating system and version of Internet Explorer
-      being used.
-    * An indication of whether the service is being called automatically or
-      manually.
-
-This information is recorded in a log file on the DelphiDabbler web server. The
-log file is used to gather information about the operating systems and program
-versions currently in use and to monitor any web service errors.
-
-Regardless of the method used to contact the web service, if an update is
-available you are given the option to download it. To do this CodeSnip uses your
-default web browser to download a zip file containing the update from the
-SourceForge website. SourceForge may set cookies on your computer that are
-outside CodeSnip's control.
 
 
 Importing snippets from the SWAG database
