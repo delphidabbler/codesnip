@@ -228,7 +228,7 @@ Each user can configure compilers differently.
 Delphi XE2 to XE8 and Delphi 10.1 Berlin may need to be configured to search for
 required units in the correct namespaces. This is explained in the Add/Edit
 Snippet Dialogue Box help topic and in the FAQ at
-http://delphidabbler.com/url/codesnip-and-xe2.
+https://github.com/delphidabbler/codesnip-faq/blob/master/UsingCodeSnip.md#faq-1
 
 
 Registration
@@ -340,7 +340,7 @@ Source Code
 
 CodeSnip's source code is freely available. For details of how to obtain the
 source see the FAQ at
-http://wiki.delphidabbler.com/index.php/FAQs/CodeSnipAppSource#FAQ1
+https://github.com/delphidabbler/codesnip-faq/blob/master/SourceCode.md#faq-1
 
 The standard and portable editions of CodeSnip share the same source code.
 
@@ -399,7 +399,7 @@ FAQs
 ================================================================================
 
 There are Frequently Asked Questions pages for CodeSnip on the web, at
-http://delphidabbler.com/url/codesnip-faq.
+https://github.com/delphidabbler/codesnip-faq/blob/master/README.md
 
 
 Contribute to the Database
