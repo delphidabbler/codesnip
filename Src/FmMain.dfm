@@ -924,6 +924,7 @@ inherited MainForm: TMainForm
       Hint = 
         'Display CodeSnip news blog|Display the CodeSnip News Blog in the' +
         ' default web browser'
+      ImageIndex = 36
     end
   end
   object mnuMain: TMainMenu
