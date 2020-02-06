@@ -284,14 +284,6 @@
     <param name="Local" value="HTML\navigation.htm">
     </OBJECT>
   <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="news dialogue">
-    <param name="Local" value="HTML\dlg_news.htm">
-    </OBJECT>
-  <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="news preferences">
-    <param name="Local" value="HTML\dlg_prefs_news.htm">
-    </OBJECT>
-  <LI> <OBJECT type="text/sitemap">
     <param name="Name" value="open backup dialogue">
     <param name="Local" value="HTML\dlg_restore.htm">
     </OBJECT>
