@@ -492,14 +492,6 @@ inherited MainForm: TMainForm
       OnExecute = ActOverviewTabExecute
       OnUpdate = ActOverviewTabUpdate
     end
-    object actWebSite: TBrowseURL
-      Category = 'Help'
-      Caption = 'DelphiDabbler Website'
-      Hint = 
-        'Visit DelphiDabbler website|Display the DelphiDabbler website in' +
-        ' the default web browser'
-      ImageIndex = 6
-    end
     object actHelpQuickStart: TAction
       Category = 'Help'
       Caption = 'QuickStart Guide'
@@ -1217,14 +1209,11 @@ inherited MainForm: TMainForm
       object miSpacer3: TMenuItem
         Caption = '-'
       end
-      object miFAQs: TMenuItem
-        Action = actFAQs
-      end
       object miHomePage: TMenuItem
         Action = actHomePage
       end
-      object miWebSite: TMenuItem
-        Action = actWebSite
+      object miFAQs: TMenuItem
+        Action = actFAQs
       end
       object miSpacer5: TMenuItem
         Caption = '-'

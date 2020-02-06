@@ -100,7 +100,6 @@ type
     actViewDependencies: TAction;
     actViewSnippetKinds: TAction;
     actViewTestUnit: TAction;
-    actWebSite: TBrowseURL;
     actWelcome: TAction;
     alMain: TActionList;
     appEvents: TApplicationEvents;
@@ -200,7 +199,6 @@ type
     miViewSnippetKinds: TMenuItem;
     miViewTestUnit: TMenuItem;
     miViewAlphabetical: TMenuItem;
-    miWebSite: TMenuItem;
     miWelcome: TMenuItem;
     mnuMain: TMainMenu;
     pnlBody: TPanel;
@@ -1376,7 +1374,6 @@ begin
     // Initialise actions
     // Browse actions have to have URLs set dynamically
     actHomePage.URL := TWebInfo.ProgramHomeURL;
-    actWebSite.URL := TWebInfo.DelphiDabblerHomeURL;
     actFAQs.URL := TWebInfo.FAQsURL;
     actBlog.URL := TWebInfo.BlogURL;
     // Tree control actions need shortcuts adding dynamically, and state stored
