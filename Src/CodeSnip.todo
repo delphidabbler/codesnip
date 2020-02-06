@@ -1,3 +1,7 @@
+{TODO -cWeb : Review all docs & help file to remove / replace all references to delphidabbler.com}
+{TODO -cWeb :
+Review help file and remove/replace all references to the DelphiDabbler
+mapped URLs of form delphidabbler.com/url/xxxx}
 {TODO -cFirstRun : Update config file versions: common to 7 and user to 16}
 {TODO -cPreRelease : Add correct CodeSnip version to Docs\Design\FileFormat\Config.html (currently flagged as 4.###)}
 {TODO -cPreRelease : Remove -[**dev**] from product and file versions in .vi files before bumping release number}
