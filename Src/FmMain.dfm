@@ -537,7 +537,7 @@ inherited MainForm: TMainForm
     end
     object actGitHubHome: TBrowseURL
       Category = 'Help'
-      Caption = 'CodeSnip Project On GitHub'
+      Caption = 'CodeSnip On GitHub'
       Hint = 
         'Codesnip GitHub project|Display CodeSnip'#39's GitHub web page in th' +
         'e default web browser'
@@ -912,11 +912,11 @@ inherited MainForm: TMainForm
     end
     object actBlog: TBrowseURL
       Category = 'Help'
-      Caption = 'CodeSnip News && Blog...'
+      Caption = 'CodeSnip News Blog'
       Hint = 
         'Display CodeSnip news blog|Display the CodeSnip News Blog in the' +
         ' default web browser'
-      ImageIndex = 36
+      ImageIndex = 6
     end
   end
   object mnuMain: TMainMenu
@@ -1212,14 +1212,14 @@ inherited MainForm: TMainForm
       object miHomePage: TMenuItem
         Action = actGitHubHome
       end
+      object miBlog: TMenuItem
+        Action = actBlog
+      end
       object miFAQs: TMenuItem
         Action = actFAQs
       end
       object miSpacer5: TMenuItem
         Caption = '-'
-      end
-      object miBlog: TMenuItem
-        Action = actBlog
       end
       object miDonate: TMenuItem
         Action = actDonate
