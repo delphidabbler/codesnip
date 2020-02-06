@@ -104,7 +104,9 @@ type
       ///  <summary>URL used to make donations towards the CodeSnip project.
       ///  </summary>
       ///  <remarks>This URL redirects to the correct page on PayPal.</remarks>
-      DonateURL = WebsiteURL + '/url/donate-cs';
+      DonateURL = 'https://www.paypal.com/donate/?'
+        + 'token=LYnh7_DXV-YqTmX3Bilr9rCPN89oANmBTZmRCdNHu_qFSk2jo_'
+        + 'WzTYTXCE165U9hXEmwq0&country.x=GB&locale.x=GB';
       ///  <summary>URL used to view and report CodeSnip bugs on GitHub.
       ///  </summary>
       BugTrackerURL = GitHubURL + '/issues';
