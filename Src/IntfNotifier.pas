@@ -83,6 +83,7 @@ type
     ///  <summary>Displays news items from the CodeSnip news feed.</summary>
     procedure ShowNews;
 
+    // TODO -cNotifier: remove this method and remove from external object
     ///  <summary>Checks for program updates.</summary>
     procedure CheckForUpdates;
 
