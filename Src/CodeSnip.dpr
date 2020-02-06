@@ -126,7 +126,6 @@ uses
   FmPreferencesDlg in 'FmPreferencesDlg.pas' {PreferencesDlg},
   FmPreviewDlg in 'FmPreviewDlg.pas' {PreviewDlg},
   FmPrintDlg in 'FmPrintDlg.pas' {PrintDlg},
-  FmProgramUpdatesDlg in 'FmProgramUpdatesDlg.pas' {ProgramUpdatesDlg},
   FmProxyServerDlg in 'FmProxyServerDlg.pas' {ProxyServerDlg},
   FmRenameCategoryDlg in 'FmRenameCategoryDlg.pas' {RenameCategoryDlg},
   FmSelectionSearchDlg in 'FmSelectionSearchDlg.pas' {SelectionSearchDlg},
@@ -307,7 +306,6 @@ uses
   UPrintEngine in 'UPrintEngine.pas',
   UPrintInfo in 'UPrintInfo.pas',
   UPrintMgr in 'UPrintMgr.pas',
-  UProgramUpdateChecker in 'UProgramUpdateChecker.pas',
   UProtocols in 'UProtocols.pas',
   UQuery in 'UQuery.pas',
   UREMLDataIO in 'UREMLDataIO.pas',
@@ -398,7 +396,6 @@ uses
   Web.UExceptions in 'Web.UExceptions.pas',
   Web.UHTTPEx in 'Web.UHTTPEx.pas',
   Web.UInfo in 'Web.UInfo.pas',
-  Web.UProgramUpdateMgr in 'Web.UProgramUpdateMgr.pas',
   Web.UStdWebService in 'Web.UStdWebService.pas',
   Web.USWAGRESTMgr in 'Web.USWAGRESTMgr.pas';
 

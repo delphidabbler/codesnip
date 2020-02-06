@@ -79,7 +79,6 @@ type
     actPreviousTab: TAction;
     actPrint: TAction;
     actPrivacy: TAction;
-    actProgramUpdates: TAction;
     actProxyServer: TAction;
     actRenameCategory: TAction;
     actRestoreDatabase: TAction;
@@ -112,7 +111,6 @@ type
     miAddSnippet: TMenuItem;
     miBackupDatabase: TMenuItem;
     miCategories: TMenuItem;
-    miCheckUpdates: TMenuItem;
     miCloseAllDetailsTabs: TMenuItem;
     miCloseDetailsTab: TMenuItem;
     miCollapseNode: TMenuItem;
@@ -174,7 +172,6 @@ type
     miSpacer4: TMenuItem;
     miSpacer5: TMenuItem;
     miSpacer6: TMenuItem;
-    miSpacer7: TMenuItem;
     miSpacer8: TMenuItem;
     miSpacer10: TMenuItem;
     miSpacer11: TMenuItem;
@@ -380,9 +377,6 @@ type
     procedure actPrintUpdate(Sender: TObject);
     ///  <summary>Displays the Privacy Statement help topic.</summary>
     procedure actPrivacyExecute(Sender: TObject);
-    ///  <summary>Displays the Check For Program Updates dialogue box that
-    ///  displays the availability of any program updates.</summary>
-    procedure actProgramUpdatesExecute(Sender: TObject);
     ///  <summary>Displays the Proxy Server Configuration dialogue box that can
     ///  be used to specify a proxy server to use for internet access.</summary>
     procedure actProxyServerExecute(Sender: TObject);
@@ -979,11 +973,6 @@ begin
   DisplayHelp('PrivacyStatement');
 end;
 
-procedure TMainForm.actProgramUpdatesExecute(Sender: TObject);
-begin
-  fDialogMgr.ShowProgramUpdatesDlg;
-end;
-
 procedure TMainForm.actProxyServerExecute(Sender: TObject);
 begin
   fDialogMgr.ExecProxyServerDlg;
@@ -1421,7 +1410,7 @@ begin
       SetDonateAction(actDonate);
       SetNewSnippetAction(actAddSnippet);
       SetNewsAction(actBlog);
-      SetCheckForUpdatesAction(actProgramUpdates);
+      // SetCheckForUpdatesAction(actProgramUpdates);
       SetAboutBoxAction(actAbout);
       SetShowPrefsPageAction(
         TActionFactory.CreateShowPrefsPageAction(Self, ActShowPrefsPageExecute)

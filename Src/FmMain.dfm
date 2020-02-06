@@ -853,14 +853,6 @@ inherited MainForm: TMainForm
       OnExecute = actLoadSelectionExecute
       OnUpdate = ActNonEmptyDBUpdate
     end
-    object actProgramUpdates: TAction
-      Category = 'Tools'
-      Caption = 'Check For Program Updates...'
-      Hint = 
-        'Check for program updates|Check online for newer versions of Cod' +
-        'eSnip'
-      OnExecute = actProgramUpdatesExecute
-    end
     object actCloseUnselectedDetailsTabs: TAction
       Category = 'View'
       Caption = 'Close All Other Tabs'
@@ -1177,12 +1169,6 @@ inherited MainForm: TMainForm
         Action = actProxyServer
       end
       object miSpacer18: TMenuItem
-        Caption = '-'
-      end
-      object miCheckUpdates: TMenuItem
-        Action = actProgramUpdates
-      end
-      object miSpacer7: TMenuItem
         Caption = '-'
       end
       object miReportBug: TMenuItem

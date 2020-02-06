@@ -71,53 +71,6 @@ type
   end;
 
 type
-  ///  <summary>Thread that checks online to find if a new version of CodeSnip
-  ///  is available.</summary>
-  ///  <remarks>
-  ///  <para>No check is made if the user has switched the automatic program
-  ///  update checking facility off in preferences or if a check has been made
-  ///  within the time period specified by the user.
-  ///  </para>
-  ///  <para>The thread fails silently as if no update is available if any
-  ///  errors occur when accessing the internet or web service.</para>
-  ///  <para>If an update is found a notification containing the details is
-  ///  placed in the notification queue to await display.</para>
-  ///  </remarks>
-  TProgramUpdateCheckerThread = class sealed(TUpdateCheckerThread)
-  strict private
-    var
-      ///  <summary>Action that causes a web page to be displayed from where
-      ///  a program update can be downloaded.</summary>
-      ///  <remarks>This action is executed when the user clicks the 'task
-      ///  button' in any program update notification window.</remarks>
-      fDownloadAction: TBrowseURL;
-  strict protected
-    ///  <summary>Returns the frequency of update checks, in days.</summary>
-    ///  <remarks>A return value of zero indicates that no checks should be
-    ///  made.</remarks>
-    function UpdateFrequency: Word; override;
-    ///  <summary>Returns the name of the value in the 'UpdateChecks' settings
-    ///  section that stores the date the last update check was made.</summary>
-    function LastUpdateSettingsName: string; override;
-    ///  <summary>Checks to see if a program update is available and, if so,
-    ///  creates a notification record with details of how to obtain the update.
-    ///  </summary>
-    ///  <param name="N">TNotificationData [out] The required notification
-    ///  record if an update is available. Undefined otherwise.</param>
-    ///  <returns>Boolean. True if an update is available or False if not.
-    ///  </returns>
-    function DoCheck(out N: TNotificationData): Boolean; override;
-  public
-    ///  <summary>Creates the and initialises the thread instance.</summary>
-    ///  <param name="StartDelay">Cardinal [in] Number of milliseconds to delay
-    ///  the start of the thread's execution. Passing 0 indicates no delay.
-    ///  Non-zero delays are rounded up to the nearest 1/5th second.</param>
-    constructor Create(StartDelay: Cardinal = 0);
-    ///  <summary>Destroys thread object instance.</summary>
-    destructor Destroy; override;
-  end;
-
-type
   ///  <summary>Thread that checks online to find if a new version of the online
   ///  code snippets database is available.</summary>
   ///  <remarks>
@@ -181,7 +134,7 @@ uses
   // Delphi
   SysUtils, Classes, DateUtils,
   // Project
-  FmDBUpdateDlg, UAppInfo, UPreferences, UProgramUpdateChecker, USettings,
+  FmDBUpdateDlg, UAppInfo, UPreferences, USettings,
   UDBUpdateMgr, UUtils;
 
 
@@ -222,64 +175,6 @@ begin
   Storage := Settings.ReadSection(ssUpdateChecks);
   Storage.SetDateTime(LastUpdateSettingsName, NowGMT);
   Storage.Save;
-end;
-
-{ TProgramUpdateCheckerThread }
-
-constructor TProgramUpdateCheckerThread.Create(StartDelay: Cardinal);
-begin
-  inherited Create(StartDelay);
-  fDownloadAction := TBrowseURL.Create(nil);
-end;
-
-destructor TProgramUpdateCheckerThread.Destroy;
-begin
-  fDownloadAction.Free;
-  inherited;
-end;
-
-function TProgramUpdateCheckerThread.DoCheck(out N: TNotificationData): Boolean;
-resourcestring
-  sTitle = 'Program Update Available';
-  sContent = 'CodeSnip version %s is available for download.';
-  sDownloadPrompt = 'Download Now';
-const
-  HelpKeyword = 'ProgramUpdateNotification';
-var
-  UpdateChecker: TProgramUpdateChecker;
-  Content: TArray<string>;
-  TaskCallback: TProc;
-begin
-  UpdateChecker := TProgramUpdateChecker.Create('Auto');
-  try
-    if not UpdateChecker.Execute then
-      Exit(False);
-    fDownloadAction.URL := UpdateChecker.DownloadURL;
-    Content := TArray<string>.Create(
-      Format(sContent, [string(UpdateChecker.LatestVersion)])
-    );
-    TaskCallback :=
-      procedure
-      begin
-        fDownloadAction.Execute;
-      end;
-    N := TNotificationData.Create(
-      sTitle, Content, HelpKeyword, TaskCallback, sDownloadPrompt
-    );
-    Result := True;
-  finally
-    UpdateChecker.Free;
-  end;
-end;
-
-function TProgramUpdateCheckerThread.LastUpdateSettingsName: string;
-begin
-  Result := 'LastProgramCheck';
-end;
-
-function TProgramUpdateCheckerThread.UpdateFrequency: Word;
-begin
-  Result := Preferences.AutoCheckProgramFrequency;
 end;
 
 { TDatabaseUpdateCheckerThread }
@@ -335,7 +230,7 @@ begin
   inherited Create;
   fThreads := TThreadGroup.Create;
   fThreads.Add([
-    TProgramUpdateCheckerThread.Create(10000),  // begins work after 10s delay
+//    TProgramUpdateCheckerThread.Create(10000),  // begins work after 10s delay
     TDatabaseUpdateCheckerThread.Create(20000)  // begins work after 20s delay
   ]);
   fThreads.SetPriorities(tpLowest);

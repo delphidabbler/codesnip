@@ -210,9 +210,6 @@
 			<DCCReference Include="FmPrintDlg.pas">
 				<Form>PrintDlg</Form>
 			</DCCReference>
-			<DCCReference Include="FmProgramUpdatesDlg.pas">
-				<Form>ProgramUpdatesDlg</Form>
-			</DCCReference>
 			<DCCReference Include="FmProxyServerDlg.pas">
 				<Form>ProxyServerDlg</Form>
 			</DCCReference>
@@ -512,7 +509,6 @@
 			<DCCReference Include="UPrintEngine.pas"/>
 			<DCCReference Include="UPrintInfo.pas"/>
 			<DCCReference Include="UPrintMgr.pas"/>
-			<DCCReference Include="UProgramUpdateChecker.pas"/>
 			<DCCReference Include="UProtocols.pas"/>
 			<DCCReference Include="UQuery.pas"/>
 			<DCCReference Include="UREMLDataIO.pas"/>
@@ -603,7 +599,6 @@
 			<DCCReference Include="Web.UExceptions.pas"/>
 			<DCCReference Include="Web.UHTTPEx.pas"/>
 			<DCCReference Include="Web.UInfo.pas"/>
-			<DCCReference Include="Web.UProgramUpdateMgr.pas"/>
 			<DCCReference Include="Web.UStdWebService.pas"/>
 			<DCCReference Include="Web.USWAGRESTMgr.pas"/>
 			<None Include="CodeSnip.todo"/>
