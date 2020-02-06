@@ -12,6 +12,8 @@
  * the user to set their application and database update preferences.
 }
 
+{ TODO -cWeb: Remove this frame and all associated prefs once database update
+  code revised not to use web service. }
 
 unit FrUpdatePrefs;
 
