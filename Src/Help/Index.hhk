@@ -124,10 +124,6 @@
     <param name="Local" value="HTML\task_copysnippet.htm">
     </OBJECT>
   <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="customise codesnip">
-    <param name="Local" value="HTML\task_customise.htm">
-    </OBJECT>
-  <LI> <OBJECT type="text/sitemap">
     <param name="Name" value="delete category dialogue">
     <param name="Local" value="HTML\dlg_deletecategory.htm">
     </OBJECT>
