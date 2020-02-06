@@ -75,7 +75,6 @@ type
     actMoveUserDatabase: TAction;
     actNextTab: TAction;
     actNewDetailsTab: TAction;
-    actNews: TAction;
     actPreferences: TAction;
     actPreviousTab: TAction;
     actPrint: TAction;
@@ -154,7 +153,6 @@ type
     miLoadSelection: TMenuItem;
     miMoveUserDatabase: TMenuItem;
     miNewDetailsTab: TMenuItem;
-    miNews: TMenuItem;
     miPreferences: TMenuItem;
     miPrint: TMenuItem;
     miPrivacy: TMenuItem;
@@ -235,6 +233,8 @@ type
     tbSpacer8: TToolButton;
     tbTestCompile: TToolButton;
     tbUpdateDbase: TToolButton;
+    actBlog: TBrowseURL;
+    miBlog: TMenuItem;
     ///  <summary>Displays About Box.</summary>
     procedure actAboutExecute(Sender: TObject);
     ///  <summary>Gets a new category from user and adds to database.</summary>
@@ -355,9 +355,6 @@ type
     procedure actMoveUserDatabaseExecute(Sender: TObject);
     ///  <summary>Creates a new empty tab in details pane.</summary>
     procedure actNewDetailsTabExecute(Sender: TObject);
-    ///  <summary>Displays a dialogue box containing latest news from CodeSnip's
-    ///  RSS feed.</summary>
-    procedure actNewsExecute(Sender: TObject);
     ///  <summary>Displays next tab in either overview or details pane depending
     ///  which pane is active.</summary>
     procedure actNextTabExecute(Sender: TObject);
@@ -923,11 +920,6 @@ begin
   fMainDisplayMgr.CreateNewDetailsTab;
 end;
 
-procedure TMainForm.actNewsExecute(Sender: TObject);
-begin
-  fDialogMgr.ShowNewsDlg;
-end;
-
 procedure TMainForm.actNextTabExecute(Sender: TObject);
 begin
   fMainDisplayMgr.SelectNextActiveTab;
@@ -1386,6 +1378,7 @@ begin
     actHomePage.URL := TWebInfo.ProgramHomeURL;
     actWebSite.URL := TWebInfo.DelphiDabblerHomeURL;
     actFAQs.URL := TWebInfo.FAQsURL;
+    actBlog.URL := TWebInfo.BlogURL;
     // Tree control actions need shortcuts adding dynamically, and state stored
     // in Tag property
     actExpandNode.ShortCut := ShortCut(VK_ADD, [ssCtrl]);
@@ -1430,7 +1423,7 @@ begin
       );
       SetDonateAction(actDonate);
       SetNewSnippetAction(actAddSnippet);
-      SetNewsAction(actNews);
+      SetNewsAction(actBlog);
       SetCheckForUpdatesAction(actProgramUpdates);
       SetAboutBoxAction(actAbout);
       SetShowPrefsPageAction(

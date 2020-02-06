@@ -37,7 +37,6 @@ type
     lblError: TLabel;
     edProgress: TMemo;
     lblHeadline: TLabel;
-    btnNews: TButton;
     ///  <summary>Handles click on cancel button and cancels the update.
     ///  </summary>
     procedure btnCancelClick(Sender: TObject);
@@ -52,9 +51,6 @@ type
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     ///  <summary>Tidies up on form destruction.</summary>
     procedure FormDestroy(Sender: TObject);
-    ///  <summary>Handles click on News button by displaying News dialogue box.
-    ///  </summary>
-    procedure btnNewsClick(Sender: TObject);
   strict private
     type
       ///  <summary>Enumeration that specifies display style of 'headline' text
@@ -162,7 +158,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  FmNewsDlg, UAppInfo, UColours, UConsts, UCtrlArranger, UStrUtils, UUtils;
+  UAppInfo, UColours, UConsts, UCtrlArranger, UStrUtils, UUtils;
 
 
 {$R *.dfm}
@@ -201,9 +197,6 @@ begin
   // Arrange additonal cancel button
   btnCancel.Left := btnClose.Left + btnClose.Width - btnCancel.Width;
   btnCancel.Top := btnClose.Top;
-  // Arrange "latest news" button
-  btnNews.Left := 8;
-  btnNews.Top := btnClose.Top;
   // Align error label
   lblError.Left := (pnlBody.Width - lblError.Width) div 2;
 end;
@@ -272,11 +265,6 @@ begin
     btnCancel.Visible := False;
     btnClose.Visible := True;
   end;
-end;
-
-procedure TDBUpdateDlg.btnNewsClick(Sender: TObject);
-begin
-  TNewsDlg.Execute(Self);
 end;
 
 procedure TDBUpdateDlg.DownloadProgressHandler(Sender: TObject;

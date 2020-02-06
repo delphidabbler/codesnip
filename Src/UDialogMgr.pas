@@ -137,9 +137,6 @@ type
     ///  </returns>
     function ExecProxyServerDlg: Boolean;
 
-    ///  <summary>Displays the News dialogue box.</summary>
-    procedure ShowNewsDlg;
-
     ///  <summary>Displays the Test Compile dialogue box.</summary>
     ///  <param name="CompileMgr">TCompileMgr [in] Object used to manage test
     ///  compilation and to retain results.</param>
@@ -164,7 +161,7 @@ uses
   Forms,
   // Project
   FmAboutDlg, FmDBUpdateDlg, FmDependenciesDlg, FmDonateDlg, FmFindCompilerDlg,
-  FmFindTextDlg, FmFindXRefsDlg, FmNewsDlg, FmPreferencesDlg, FmPrintDlg,
+  FmFindTextDlg, FmFindXRefsDlg, FmPreferencesDlg, FmPrintDlg,
   FmProgramUpdatesDlg, FmProxyServerDlg,
   FmSelectionSearchDlg, FmSWAGImportDlg, FmTestCompileDlg, FmUserBugReportDlg,
   UTestUnitDlgMgr;
@@ -243,11 +240,6 @@ end;
 procedure TDialogMgr.ShowDonateDlg;
 begin
   TDonateDlg.Execute(Owner);
-end;
-
-procedure TDialogMgr.ShowNewsDlg;
-begin
-  TNewsDlg.Execute(Owner);
 end;
 
 procedure TDialogMgr.ShowProgramUpdatesDlg;

@@ -123,7 +123,6 @@ uses
   FmHelpAware in 'FmHelpAware.pas' {HelpAwareForm},
   FmMain in 'FmMain.pas' {MainForm},
   FmNewHiliterNameDlg in 'FmNewHiliterNameDlg.pas' {NewHiliterNameDlg},
-  FmNewsDlg in 'FmNewsDlg.pas' {NewsDlg},
   FmPreferencesDlg in 'FmPreferencesDlg.pas' {PreferencesDlg},
   FmPreviewDlg in 'FmPreviewDlg.pas' {PreviewDlg},
   FmPrintDlg in 'FmPrintDlg.pas' {PrintDlg},
@@ -158,11 +157,9 @@ uses
   FrHTMLPreview in 'FrHTMLPreview.pas' {HTMLPreviewFrame: TFrame},
   FrHTMLTpltDlg in 'FrHTMLTpltDlg.pas' {HTMLTpltDlgFrame: TFrame},
   FrMemoPreview in 'FrMemoPreview.pas' {MemoPreviewFrame: TFrame},
-  FrNewsPrefs in 'FrNewsPrefs.pas' {NewsPrefsFrame: TFrame},
   FrOverview in 'FrOverview.pas' {OverviewFrame: TFrame},
   FrPrefsBase in 'FrPrefsBase.pas' {PrefsBaseFrame: TFrame},
   FrPrintingPrefs in 'FrPrintingPrefs.pas' {PrintingPrefsFrame: TFrame},
-  FrRSSNews in 'FrRSSNews.pas' {RSSNewsFrame: TFrame},
   FrRTFPreview in 'FrRTFPreview.pas' {RTFPreviewFrame: TFrame},
   FrRTFShowCase in 'FrRTFShowCase.pas' {RTFShowCaseFrame: TFrame},
   FrCheckedTV in 'FrCheckedTV.pas' {CheckedTVFrame: TFrame},
@@ -316,8 +313,6 @@ uses
   UREMLDataIO in 'UREMLDataIO.pas',
   UReservedCategories in 'UReservedCategories.pas',
   UResourceUtils in 'UResourceUtils.pas',
-  URFC2822Date in 'URFC2822Date.pas',
-  URSS20 in 'URSS20.pas',
   URTFBuilder in 'URTFBuilder.pas',
   URTFCategoryDoc in 'URTFCategoryDoc.pas',
   URTFSnippetDoc in 'URTFSnippetDoc.pas',
@@ -405,8 +400,7 @@ uses
   Web.UInfo in 'Web.UInfo.pas',
   Web.UProgramUpdateMgr in 'Web.UProgramUpdateMgr.pas',
   Web.UStdWebService in 'Web.UStdWebService.pas',
-  Web.USWAGRESTMgr in 'Web.USWAGRESTMgr.pas',
-  Web.UXMLRequestor in 'Web.UXMLRequestor.pas';
+  Web.USWAGRESTMgr in 'Web.USWAGRESTMgr.pas';
 
 // Include resources
 {$Resource ExternalObj.tlb}       // Type library file

@@ -803,15 +803,6 @@ inherited MainForm: TMainForm
       OnExecute = actDeleteCategoryExecute
       OnUpdate = actDeleteCategoryUpdate
     end
-    object actNews: TAction
-      Category = 'Help'
-      Caption = 'CodeSnip News...'
-      Hint = 
-        'CodeSnip news|Display news about CodeSnip and the online databas' +
-        'e'
-      ImageIndex = 36
-      OnExecute = actNewsExecute
-    end
     object actNewDetailsTab: TAction
       Category = 'View'
       Caption = 'New Tab'
@@ -926,6 +917,13 @@ inherited MainForm: TMainForm
         'Import snippets from SWAG|Import one or more snippets into the u' +
         'ser database from the online SWAG database'
       OnExecute = actSWAGImportExecute
+    end
+    object actBlog: TBrowseURL
+      Category = 'Help'
+      Caption = 'CodeSnip News && Blog...'
+      Hint = 
+        'Display CodeSnip news blog|Display the CodeSnip News Blog in the' +
+        ' default web browser'
     end
   end
   object mnuMain: TMainMenu
@@ -1230,8 +1228,8 @@ inherited MainForm: TMainForm
       object miSpacer5: TMenuItem
         Caption = '-'
       end
-      object miNews: TMenuItem
-        Action = actNews
+      object miBlog: TMenuItem
+        Action = actBlog
       end
       object miDonate: TMenuItem
         Action = actDonate

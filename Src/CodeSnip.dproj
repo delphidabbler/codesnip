@@ -201,9 +201,6 @@
 			<DCCReference Include="FmNewHiliterNameDlg.pas">
 				<Form>NewHiliterNameDlg</Form>
 			</DCCReference>
-			<DCCReference Include="FmNewsDlg.pas">
-				<Form>NewsDlg</Form>
-			</DCCReference>
 			<DCCReference Include="FmPreferencesDlg.pas">
 				<Form>PreferencesDlg</Form>
 			</DCCReference>
@@ -323,10 +320,6 @@
 				<Form>MemoPreviewFrame</Form>
 				<DesignClass>TFrame</DesignClass>
 			</DCCReference>
-			<DCCReference Include="FrNewsPrefs.pas">
-				<Form>NewsPrefsFrame</Form>
-				<DesignClass>TFrame</DesignClass>
-			</DCCReference>
 			<DCCReference Include="FrOverview.pas">
 				<Form>OverviewFrame</Form>
 				<DesignClass>TFrame</DesignClass>
@@ -337,10 +330,6 @@
 			</DCCReference>
 			<DCCReference Include="FrPrintingPrefs.pas">
 				<Form>PrintingPrefsFrame</Form>
-				<DesignClass>TFrame</DesignClass>
-			</DCCReference>
-			<DCCReference Include="FrRSSNews.pas">
-				<Form>RSSNewsFrame</Form>
 				<DesignClass>TFrame</DesignClass>
 			</DCCReference>
 			<DCCReference Include="FrRTFPreview.pas">
@@ -529,8 +518,6 @@
 			<DCCReference Include="UREMLDataIO.pas"/>
 			<DCCReference Include="UReservedCategories.pas"/>
 			<DCCReference Include="UResourceUtils.pas"/>
-			<DCCReference Include="URFC2822Date.pas"/>
-			<DCCReference Include="URSS20.pas"/>
 			<DCCReference Include="URTFBuilder.pas"/>
 			<DCCReference Include="URTFCategoryDoc.pas"/>
 			<DCCReference Include="URTFSnippetDoc.pas"/>
@@ -619,7 +606,6 @@
 			<DCCReference Include="Web.UProgramUpdateMgr.pas"/>
 			<DCCReference Include="Web.UStdWebService.pas"/>
 			<DCCReference Include="Web.USWAGRESTMgr.pas"/>
-			<DCCReference Include="Web.UXMLRequestor.pas"/>
 			<None Include="CodeSnip.todo"/>
 			<BuildConfiguration Include="Base">
 				<Key>Base</Key>

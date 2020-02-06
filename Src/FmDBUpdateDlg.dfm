@@ -6,7 +6,7 @@ inherited DBUpdateDlg: TDBUpdateDlg
   ClientHeight = 344
   OnCloseQuery = FormCloseQuery
   ExplicitWidth = 474
-  ExplicitHeight = 372
+  ExplicitHeight = 373
   PixelsPerInch = 96
   TextHeight = 13
   inherited pnlBody: TPanel
@@ -75,10 +75,7 @@ inherited DBUpdateDlg: TDBUpdateDlg
     end
   end
   inherited btnHelp: TButton
-    TabOrder = 4
-  end
-  inherited btnClose: TButton
-    TabOrder = 2
+    TabOrder = 3
   end
   object btnCancel: TButton
     Left = 120
@@ -87,16 +84,7 @@ inherited DBUpdateDlg: TDBUpdateDlg
     Height = 25
     Cancel = True
     Caption = 'Cancel Update'
-    TabOrder = 3
+    TabOrder = 2
     OnClick = btnCancelClick
-  end
-  object btnNews: TButton
-    Left = 8
-    Top = 304
-    Width = 91
-    Height = 25
-    Caption = 'Latest &News...'
-    TabOrder = 1
-    OnClick = btnNewsClick
   end
 end
