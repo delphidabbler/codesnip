@@ -68,7 +68,7 @@ type
     actHelpCompChecks: TAction;
     actHelpContents: TAction;
     actHelpQuickStart: TAction;
-    actHomePage: TBrowseURL;
+    actGitHubHome: TBrowseURL;
     actImportCode: TAction;
     actLicense: TAction;
     actLoadSelection: TAction;
@@ -1373,7 +1373,7 @@ begin
 
     // Initialise actions
     // Browse actions have to have URLs set dynamically
-    actHomePage.URL := TWebInfo.ProgramHomeURL;
+    actGitHubHome.URL := TWebInfo.GitHubURL;
     actFAQs.URL := TWebInfo.FAQsURL;
     actBlog.URL := TWebInfo.BlogURL;
     // Tree control actions need shortcuts adding dynamically, and state stored

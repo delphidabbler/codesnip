@@ -535,12 +535,12 @@ inherited MainForm: TMainForm
       ImageIndex = 35
       OnExecute = actLicenseExecute
     end
-    object actHomePage: TBrowseURL
+    object actGitHubHome: TBrowseURL
       Category = 'Help'
-      Caption = 'CodeSnip Home Page'
+      Caption = 'CodeSnip Project On GitHub'
       Hint = 
-        'Codesnip home page|Display CodeSnip'#39's web page in the default we' +
-        'b browser'
+        'Codesnip GitHub project|Display CodeSnip'#39's GitHub web page in th' +
+        'e default web browser'
       ImageIndex = 6
     end
     object actFindXRefs: TAction
@@ -1210,7 +1210,7 @@ inherited MainForm: TMainForm
         Caption = '-'
       end
       object miHomePage: TMenuItem
-        Action = actHomePage
+        Action = actGitHubHome
       end
       object miFAQs: TMenuItem
         Action = actFAQs
