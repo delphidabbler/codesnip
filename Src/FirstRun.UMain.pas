@@ -260,6 +260,10 @@ begin
   if fUserConfigFile.FileVer < 15 then
     fUserConfigFile.UpdateFindXRefs;
 
+
+  if fUserConfigFile.FileVer < 16 then
+    fUserConfigFile.DeleteNewsPrefs;
+
   if fCommonConfigFile.FileVer < 7 then
     fCommonConfigFile.DeleteRegistrationInfo;
 

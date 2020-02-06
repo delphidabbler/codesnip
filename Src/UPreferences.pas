@@ -240,14 +240,6 @@ type
     property Warnings: IWarnings
       read GetWarnings write SetWarnings;
 
-    ///  <summary>Gets maximum age of items to be read from news feed.</summary>
-    function GetNewsAge: Integer;
-    ///  <summary>Sets maximum age of items to be read from news feed.</summary>
-    procedure SetNewsAge(const Age: Integer);
-    ///  <summary>Maximum age of items to be read from news feed.</summary>
-    property NewsAge: Integer
-      read GetNewsAge write SetNewsAge;
-
     ///  <summary>Gets information describing snippet detail page
     ///  customisations.</summary>
     function GetPageStructures: TSnippetPageStructures;
@@ -370,8 +362,6 @@ type
       ///  <summary>Reference to object containing information about warnings to
       ///  be enabled or disabled by code generator.</summary>
       fWarnings: IWarnings;
-      ///  <summary>Maximum age of items to be read from news feed.</summary>
-      fNewsAge: Integer;
       ///  <summary>Information describing snippet detail page customisations.
       ///  </summary>
       fPageStructures: TSnippetPageStructures;
@@ -577,14 +567,6 @@ type
     ///  <remarks>Method of IPreferences.</remarks>
     procedure SetWarnings(Warnings: IWarnings);
 
-    ///  <summary>Gets maximum age of items to be read from news feed.</summary>
-    ///  <remarks>Method of IPreferences.</remarks>
-    function GetNewsAge: Integer;
-
-    ///  <summary>Sets maximum age of items to be read from news feed.</summary>
-    ///  <remarks>Method of IPreferences.</remarks>
-    procedure SetNewsAge(const Age: Integer);
-
     ///  <summary>Gets information describing snippet detail page
     ///  customisations.</summary>
     ///  <remarks>Method of IPreferences.</remarks>
@@ -641,7 +623,6 @@ type
       cPrinting = 'Printing';
       cHiliter = 'Hiliter';
       cCodeGenerator = 'CodeGen';
-      cNews = 'News';
       cDisplay = 'Display';
       cPageStructures = 'SnippetPageStructure';
       cUpdating = 'Updating';
@@ -706,7 +687,6 @@ begin
   Self.SetNamedHiliteAttrs(SrcPref.NamedHiliteAttrs);
   Self.SetCustomHiliteColours(SrcPref.CustomHiliteColours);
   Self.SetWarnings(SrcPref.Warnings);
-  Self.SetNewsAge(SrcPref.NewsAge);
   Self.SetPageStructures(SrcPref.PageStructures);
   Self.fAutoCheckProgramFrequency := SrcPref.AutoCheckProgramFrequency;
   Self.fAutoCheckDatabaseFrequency := SrcPref.AutoCheckDatabaseFrequency;
@@ -770,11 +750,6 @@ end;
 function TPreferences.GetNamedHiliteAttrs: INamedHiliteAttrs;
 begin
   Result := fNamedHiliteAttrs;
-end;
-
-function TPreferences.GetNewsAge: Integer;
-begin
-  Result := fNewsAge;
 end;
 
 function TPreferences.GetOverviewStartState: TOverviewStartState;
@@ -884,11 +859,6 @@ begin
   (fNamedHiliteAttrs as IAssignable).Assign(NamedHiliteAttrs);
 end;
 
-procedure TPreferences.SetNewsAge(const Age: Integer);
-begin
-  fNewsAge := Age;
-end;
-
 procedure TPreferences.SetOverviewStartState(const Value: TOverviewStartState);
 begin
   fOverviewStartState := Value;
@@ -985,7 +955,6 @@ begin
   NewPref.NamedHiliteAttrs := Self.GetNamedHiliteAttrs;
   NewPref.CustomHiliteColours := Self.GetCustomHiliteColours;
   NewPref.Warnings := Self.GetWarnings;
-  NewPref.NewsAge := Self.fNewsAge;
   NewPref.PageStructures := Self.fPageStructures;
   NewPref.AutoCheckProgramFrequency := Self.fAutoCheckProgramFrequency;
   NewPref.AutoCheckDatabaseFrequency := Self.fAutoCheckDatabaseFrequency;
@@ -997,8 +966,6 @@ var
 const
   // Default margin size in millimeters
   cPrintPageMarginSizeMM = 25.0;
-  // Default maximum age of news items
-  cDefNewsAge = 92;
 begin
   inherited Create;
 
@@ -1074,10 +1041,6 @@ begin
   // Read code generator section
   Storage := Settings.ReadSection(ssPreferences, cCodeGenerator);
   TWarningsPersist.Load(Storage, fWarnings);
-
-  // Read news section
-  Storage := Settings.ReadSection(ssPreferences, cNews);
-  fNewsAge := Storage.GetInteger('MaxAge', cDefNewsAge);
 
   // Read page structure section
   Storage := Settings.ReadSection(ssPreferences, cPageStructures);
@@ -1159,11 +1122,6 @@ begin
   // Write code generation section
   Storage := Settings.EmptySection(ssPreferences, cCodeGenerator);
   TWarningsPersist.Save(Storage, fWarnings);
-
-  // Write news section
-  Storage := Settings.EmptySection(ssPreferences, cNews);
-  Storage.SetInteger('MaxAge', fNewsAge);
-  Storage.Save;
 
   // Write page structure section
   Storage := Settings.EmptySection(ssPreferences, cPageStructures);

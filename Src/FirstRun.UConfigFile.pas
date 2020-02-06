@@ -98,7 +98,9 @@ type
     ///  <summary>Deletes unused key that determines detail pane index.
     ///  </summary>
     procedure DeleteDetailsPaneIndex;
-    {}{$ENDIF}
+    {$ENDIF}
+    ///  <summary>Deletes unused Prefs:News section.</summary>
+    procedure DeleteNewsPrefs;
     ///  <summary>Effectively renames MainWindow section used prior to version
     ///  11 as WindowState:MainForm.</summary>
     procedure RenameMainWindowSection;
@@ -287,6 +289,13 @@ begin
   DeleteIniSection('Prefs:Hiliter', CfgFileName);
 end;
 {$ENDIF}
+
+procedure TUserConfigFileUpdater.DeleteNewsPrefs;
+begin
+  if not TFile.Exists(CfgFileName, False) then
+    CreateNewFile;
+  DeleteIniSection('Prefs:News', CfgFileName);
+end;
 
 {$IFNDEF PORTABLE}
 procedure TUserConfigFileUpdater.DeleteProxyPassword;
