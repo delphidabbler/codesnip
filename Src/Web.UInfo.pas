@@ -89,8 +89,6 @@ type
     const
       ///  <summary>URL of CodeSnip's GitHub page.</summary>
       GitHubURL = 'https://github.com/delphidabbler/codesnip';
-      ///  <summary>URL of home page of the CodeSnip project.</summary>
-      ProgramHomeURL = WebsiteURL + '/url/codesnip-home';
       ///  <summary>URL of the online Code Snippets database.</summary>
       DatabaseURL = WebsiteURL + '/url/csdb';
       ///  <summary>URL used to make donations towards the CodeSnip project.
