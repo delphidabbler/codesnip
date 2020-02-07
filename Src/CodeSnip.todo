@@ -1,3 +1,6 @@
+{TODO -cSharing :
+Decide if to continue to support user info in export files
+- update Docs\Design\FileFormats\config.html accordingly}
 {TODO -cWeb : Review all docs & help file to remove / replace all references to delphidabbler.com}
 {TODO -cWeb :
 Review help file and remove/replace all references to the DelphiDabbler
