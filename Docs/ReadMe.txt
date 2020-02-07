@@ -387,16 +387,6 @@ There are Frequently Asked Questions pages for CodeSnip on the web, at
 https://github.com/delphidabbler/codesnip-faq/blob/master/README.md
 
 
-Contribute to the Database
-================================================================================
-
-Please do contribute Pascal snippets to the on-line Code Snippets database.
-
-You can submit routines from your user-defined snippets database using the
-"Snippets | Submit Routines" menu option. Otherwise please send your code via
-the DelphiDabbler contact page at http://delphidabbler.com/contact.
-
-
 Thanks
 ================================================================================
 

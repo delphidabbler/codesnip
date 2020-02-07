@@ -37,9 +37,7 @@ preferences. The only personal information is as follows:
 
     * Any user name or email address you provided if you ever entered the
       information in a dialogue box. This is used simply to automatically enter
-      the data in dialogue boxes where needed, to save you re-typing it. See
-      below for details of activities that require either or both a name or
-      email address to be submitted.
+      the data in dialogue boxes where needed, to save you re-typing it.
 
     * Your user name and password if you configured CodeSnip to access the
       internet using a proxy server. The information is used only to access the
@@ -67,10 +65,9 @@ CodeSnip Online Activity
 CodeSnip may go online for several reasons. They are:
 
    1. Updating the database.
-   2. Submitting code for inclusion in the main database.
-   3. Importing snippets from the SWAG database.
-   4. Accessing various websites via hyperlinks and menu options.
-   5. Accessing the internet using a proxy server.
+   2. Importing snippets from the SWAG database.
+   3. Accessing various websites via hyperlinks and menu options.
+   4. Accessing the internet using a proxy server.
 
 Some are performed directly by CodeSnip, which communicates with web services
 located on delphidabbler.com using HTTP on port 80. Others simply display web pages in a browser. The last reason passes user information to the proxy server
@@ -120,28 +117,6 @@ This information is recorded in two places:
 
 None of these records store any information that can be tracked back to an
 individual.
-
-
-Submitting code to the main database
---------------------------------------------------------------------------------
-
-This activity is started from the "Snippets | Submit Snippets" menu option and
-data is collected using the resulting wizard. Clicking the "Submit" button in
-the wizard sends the following information to the DelphiDabbler code submission
-web service:
-
-    * The CodeSnip program version number.
-    * Your name, email address any comments entered in the wizard.
-    * All the snippets you chose to send.
-
-You can preview the data to be sent (in XML format) from the wizard. The XML
-will be stored in a file on the DelphiDabbler server until processed. The data
-is also emailed to the database maintainer (currently the author of CodeSnip).
-
-The snippets may be edited and published on the Code Snippets online database
-and distributed to CodeSnip users. Your name may be used to credit the snippets.
-Your email address will not be published and is used only to contact you with
-any queries about the submitted code or its licensing.
 
 
 Importing snippets from the SWAG database

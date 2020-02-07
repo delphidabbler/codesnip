@@ -59,7 +59,6 @@ HTML\dlg_saveselection.htm
 HTML\dlg_savesnippet.htm
 HTML\dlg_selectcompiler.htm
 HTML\dlg_selectroutines.htm
-HTML\dlg_submit.htm
 HTML\dlg_testcompile.htm
 HTML\dlg_trappedbugreport.htm
 HTML\dlg_update.htm
@@ -102,7 +101,6 @@ HTML\task_generateunit.htm
 HTML\task_printroutine.htm
 HTML\task_savesnippet.htm
 HTML\task_search.htm
-HTML\task_submit.htm
 HTML\task_testcompile.htm
 HTML\task_update.htm
 HTML\welcome.htm
@@ -115,4 +113,3 @@ HTML\notifiy_database_update.htm
 HTML\dlg_dependencies_edit.htm
 HTML\about_swag.htm
 HTML\dlg_swagimport.htm
-HTML\submission-rights.htm

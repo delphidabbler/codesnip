@@ -58,10 +58,6 @@
     <param name="Local" value="HTML\dlg_prefs_codegen.htm">
     </OBJECT>
   <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="code submission dialogue">
-    <param name="Local" value="HTML\dlg_submit.htm">
-    </OBJECT>
-  <LI> <OBJECT type="text/sitemap">
     <param name="Name" value="common tasks">
     <param name="Local" value="HTML\tasks.htm">
     </OBJECT>
@@ -101,10 +97,6 @@
     <LI> <OBJECT type="text/sitemap">
       <param name="Name" value="update the database">
       <param name="Local" value="HTML\task_update.htm">
-      </OBJECT>
-    <LI> <OBJECT type="text/sitemap">
-      <param name="Name" value="submit code to the database">
-      <param name="Local" value="HTML\task_submit.htm">
       </OBJECT>
     <LI> <OBJECT type="text/sitemap">
       <param name="Name" value="export and import snippets">
@@ -358,10 +350,6 @@
   <LI> <OBJECT type="text/sitemap">
     <param name="Name" value="snippets menu">
     <param name="Local" value="HTML\menu_snippets.htm">
-    </OBJECT>
-  <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="submit code to the database">
-    <param name="Local" value="HTML\task_submit.htm">
     </OBJECT>
   <LI> <OBJECT type="text/sitemap">
     <param name="Name" value="SWAG database">
