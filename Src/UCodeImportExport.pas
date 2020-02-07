@@ -110,6 +110,7 @@ type
   ECodeImporter = class(ECodeSnipXML);
 
 type
+  // TODO -cRefactor: Decide if we still need to export user info
   ///  <summary>Exports code snippets and user info to XML.</summary>
   TCodeExporter = class(TNoPublicConstructObject)
   strict private
