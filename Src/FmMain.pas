@@ -88,7 +88,6 @@ type
     actSaveUnit: TAction;
     actSelectAll: TAction;
     actSelectSnippets: TAction;
-    actSubmit: TAction;
     actSWAGImport: TAction;
     actTestBug: TAction;
     actTestCompile: TAction;
@@ -182,9 +181,7 @@ type
     miSpacer16: TMenuItem;
     miSpacer17: TMenuItem;
     miSpacer18: TMenuItem;
-    miSpacer19: TMenuItem;
     miSpacer20: TMenuItem;
-    miSubmit: TMenuItem;
     miSWAGImport: TMenuItem;
     miTestCompile: TMenuItem;
     miTools: TMenuItem;
@@ -419,9 +416,6 @@ type
     ///  <summary>Displays the Select Snippets dialogue box where the snippets
     ///  to be displayed can be chosen.</summary>
     procedure actSelectSnippetsExecute(Sender: TObject);
-    ///  <summary>Displays the Code Submission Wizard that enables user defined
-    ///  snippets to be submitted for inclusion in the main database.</summary>
-    procedure actSubmitExecute(Sender: TObject);
     ///  <summary>Determines whether the Submit or ExportCode actions can be
     ///  enabled.</summary>
     procedure ActSubmitOrExportUpdate(Sender: TObject);
@@ -1068,13 +1062,9 @@ begin
     fMainDisplayMgr.CompleteRefresh;
 end;
 
-procedure TMainForm.actSubmitExecute(Sender: TObject);
-begin
-  TCodeShareMgr.Submit(fMainDisplayMgr.CurrentView);
-end;
-
 procedure TMainForm.ActSubmitOrExportUpdate(Sender: TObject);
 begin
+  // TODO -cRefactor: rename method - no longer shared
   (Sender as TAction).Enabled := TCodeShareMgr.CanShare;
 end;
 
