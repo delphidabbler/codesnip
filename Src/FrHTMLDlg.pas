@@ -106,6 +106,12 @@ begin
       AddProperty(TCSS.MarginProp(cssBottom, 0));
       AddProperty(TCSS.PaddingProp(0));
     end;
+    with CSSBuilder.AddSelector('ul') do
+    begin
+      AddProperty(TCSS.MarginProp(cssTop, 6));
+      AddProperty(TCSS.MarginProp(cssBottom, 0));
+      AddProperty(TCSS.PaddingProp(0));
+    end;
     // Sets table font info
     with CSSBuilder.AddSelector('table') do
       AddProperty(TCSS.FontProps(fOwner.Font));
