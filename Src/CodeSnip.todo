@@ -1,3 +1,4 @@
+{TODO -cUI : Rationalise use of TFontHelper.SetDefaultFont(s) and .SetDefaultBaseFont(s) methods.}
 {TODO -cSharing :
 Decide if to continue to support user info in export files
 - update Docs\Design\FileFormats\config.html accordingly}
