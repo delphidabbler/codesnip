@@ -436,6 +436,7 @@
 			<DCCReference Include="UDetailPageLoader.pas"/>
 			<DCCReference Include="UDetailTabAction.pas"/>
 			<DCCReference Include="UDialogMgr.pas"/>
+			<DCCReference Include="UDirectoryCopier.pas"/>
 			<DCCReference Include="UDispatchList.pas"/>
 			<DCCReference Include="UDlgHelper.pas"/>
 			<DCCReference Include="UDOSDateTime.pas"/>

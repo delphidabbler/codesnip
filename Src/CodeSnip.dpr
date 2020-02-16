@@ -235,6 +235,7 @@ uses
   UDetailPageLoader in 'UDetailPageLoader.pas',
   UDetailTabAction in 'UDetailTabAction.pas',
   UDialogMgr in 'UDialogMgr.pas',
+  UDirectoryCopier in 'UDirectoryCopier.pas',
   UDispatchList in 'UDispatchList.pas',
   UDlgHelper in 'UDlgHelper.pas',
   UDOSDateTime in 'UDOSDateTime.pas',
