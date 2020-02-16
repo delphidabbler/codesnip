@@ -89,6 +89,10 @@ type
     const
       ///  <summary>URL of CodeSnip's GitHub page.</summary>
       GitHubURL = 'https://github.com/delphidabbler/codesnip';
+      ///  <summary>URL of the GitHub page where DelphiDabbler Code Snippets
+      ///  database releases are hosted.</summary>
+      CSDBReleaseURL = 'https://github.com/'
+        + 'delphidabbler/code-snippets/releases';
       ///  <summary>URL of the online Code Snippets database.</summary>
       DatabaseURL = WebsiteURL + '/url/csdb';
       ///  <summary>URL used to make donations towards the CodeSnip project.
