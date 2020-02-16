@@ -241,8 +241,8 @@
 			<DCCReference Include="FmUserDataPathDlg.pas">
 				<Form>UserDataPathDlg</Form>
 			</DCCReference>
-			<DCCReference Include="FmUserDataPathDlg.FrProgress.pas">
-				<Form>UserDataPathDlgProgressFrame</Form>
+			<DCCReference Include="FrProgress.pas">
+				<Form>ProgressFrame</Form>
 				<DesignClass>TFrame</DesignClass>
 			</DCCReference>
 			<DCCReference Include="FmUserHiliterMgrDlg.pas">

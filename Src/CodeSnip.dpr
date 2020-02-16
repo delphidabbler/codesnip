@@ -136,7 +136,7 @@ uses
   FmTrappedBugReportDlg in 'FmTrappedBugReportDlg.pas' {TrappedBugReportDlg},
   FmUserBugReportDlg in 'FmUserBugReportDlg.pas' {UserBugReportDlg},
   FmUserDataPathDlg in 'FmUserDataPathDlg.pas' {UserDataPathDlg},
-  FmUserDataPathDlg.FrProgress in 'FmUserDataPathDlg.FrProgress.pas' {UserDataPathDlgProgressFrame: TFrame},
+  FrProgress in 'FrProgress.pas' {ProgressFrame: TFrame},
   FmUserHiliterMgrDlg in 'FmUserHiliterMgrDlg.pas' {UserHiliterMgrDlg},
   FmWaitDlg in 'FmWaitDlg.pas' {WaitDlg},
   FmWizardDlg in 'FmWizardDlg.pas' {WizardDlg},

@@ -23,7 +23,7 @@ uses
   // Delphi
   SysUtils, Forms, Classes, ActnList, StdCtrls, Controls, ExtCtrls,
   // Project
-  FmGenericViewDlg, FmUserDataPathDlg.FrProgress, UBaseObjects, 
+  FmGenericViewDlg, FrProgress, UBaseObjects,
   UControlStateMgr, UUserDBMove;
 
 type

@@ -1,4 +1,4 @@
-object UserDataPathDlgProgressFrame: TUserDataPathDlgProgressFrame
+object ProgressFrame: TProgressFrame
   Left = 0
   Top = 0
   Width = 320
@@ -14,10 +14,6 @@ object UserDataPathDlgProgressFrame: TUserDataPathDlgProgressFrame
     BevelKind = bkFlat
     BevelOuter = bvNone
     TabOrder = 0
-    ExplicitLeft = 16
-    ExplicitTop = 16
-    ExplicitWidth = 288
-    ExplicitHeight = 73
     object lblDescription: TLabel
       Left = 8
       Top = 8
