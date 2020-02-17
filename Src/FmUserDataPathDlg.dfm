@@ -170,7 +170,7 @@ inherited UserDataPathDlg: TUserDataPathDlg
         TabOrder = 0
       end
     end
-    inline frmProgress: TUserDataPathDlgProgressFrame
+    inline frmProgress: TProgressFrame
       Left = 57
       Top = 0
       Width = 320

@@ -49,7 +49,7 @@ type
     lblPath: TLabel;
     lblWarning: TLabel;
     edPath: TEdit;
-    frmProgress: TUserDataPathDlgProgressFrame;
+    frmProgress: TProgressFrame;
     ///  <summary>Dispays Browse For Folder dialogue box and copies any chosen
     ///  folder to the edPath edit control.</summary>
     procedure actBrowseExecute(Sender: TObject);
