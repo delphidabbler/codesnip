@@ -165,6 +165,14 @@ function IsEqualBytes(const BA1, BA2: TBytes; const Count: Cardinal):
 ///  <remarks>If both arrays are empty they are considered equal.</remarks>
 function IsEqualBytes(const BA1, BA2: TBytes): Boolean; overload;
 
+///  <summary>Attempts to convert a string to a Word value.</summary>
+///  <param name="S">string [in] String to convert.</param>
+///  <param name="W">Word [out] Converted value.</param>
+///  <returns>Boolean. True if conversion succeeded, False otherwise.</returns>
+///  <remarks>String must represent a non-negative integer that is representable
+///  as a Word.</remarks>
+function TryStrToWord(const S: string; out W: Word): Boolean;
+
 
 implementation
 
@@ -431,6 +439,18 @@ begin
     if BA1[I] <> BA2[I] then
       Exit(False);
   Result := True;
+end;
+
+function TryStrToWord(const S: string; out W: Word): Boolean;
+var
+  I: Integer;
+begin
+  Result := TryStrToInt(S, I);
+  if not Result then
+    Exit;
+  if (I < 0) or (I > High(Word)) then
+    Exit(False);
+  W := Word(I);
 end;
 
 end.
