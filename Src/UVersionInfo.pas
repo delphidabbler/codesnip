@@ -33,6 +33,7 @@ type
     Record representing the four fields of a version number.
   }
   TVersionNumber = record
+  public
     V1: Word;   // Major version number
     V2: Word;   // Minor version number
     V3: Word;   // Revision version number
@@ -41,6 +42,16 @@ type
       {Creates a nul version number with all fields set to zero.
         @return Required nul record.
       }
+    ///  <summary>Attempts to convert a string to a version number.</summary>
+    ///  <param name="S">string [in] String to convert.</param>
+    ///  <param name="V">Word [out] Converted version number.</param>
+    ///  <returns>Boolean. True if conversion succeeded, False otherwise.
+    ///  </returns>
+    ///  <remarks>String must represent a dotted quad of non-negative integers,
+    ///  separated by dots, where each integer must be representable as a Word.
+    ///  </remarks>
+    class function TryStrToVersionNumber(const S: string;
+      out V: TVersionNumber): Boolean; static;
     class operator LessThanOrEqual(Ver1, Ver2: TVersionNumber): Boolean;
       {Operator overload that compares two version numbers to check if first is
       less than or equal to the second.
@@ -150,7 +161,8 @@ uses
   // Delphi
   SysUtils,
   // Project
-  UIStringList;
+  UIStringList,
+  UUtils;
 
 
 { TVersionInfo }
@@ -290,16 +302,11 @@ class operator TVersionNumber.Implicit(Str: string): TVersionNumber;
     @return Converted version number.
     @except EConvertError. raised if string in wrong format.
   }
-var
-  Parts: IStringList; // contains parts of version number
+resourcestring
+  sError = '"%s" is not a valid version number';
 begin
-  Parts := TIStringList.Create(Str, '.', False, True);
-  while Parts.Count < 4 do
-    Parts.Add('0');
-  Result.V1 := StrToInt(Parts[0]);
-  Result.V2 := StrToInt(Parts[1]);
-  Result.V3 := StrToInt(Parts[2]);
-  Result.V4 := StrToInt(Parts[3]);
+  if not TryStrToVersionNumber(Str, Result) then
+    raise EConvertError.CreateFmt(sError, [Str]);
 end;
 
 class operator TVersionNumber.Implicit(Ver: TPJVersionNumber): TVersionNumber;
@@ -357,6 +364,25 @@ begin
   Result.V2 := 0;
   Result.V3 := 0;
   Result.V4 := 0;
+end;
+
+class function TVersionNumber.TryStrToVersionNumber(const S: string;
+  out V: TVersionNumber): Boolean;
+var
+  Parts: IStringList; // contains parts of version number
+begin
+  Parts := TIStringList.Create(S, '.', False, True);
+  while Parts.Count < 4 do
+    Parts.Add('0');
+  if not TryStrToWord(Parts[0], V.V1) then
+    Exit(False);
+  if not TryStrToWord(Parts[1], V.V2) then
+    Exit(False);
+  if not TryStrToWord(Parts[2], V.V3) then
+    Exit(False);
+  if not TryStrToWord(Parts[3], V.V4) then
+    Exit(False);
+  Result := True;
 end;
 
 end.
