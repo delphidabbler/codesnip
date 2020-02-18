@@ -251,6 +251,14 @@ function StrIf(const Condition: Boolean; const TrueStr, FalseStr: string):
 ///  in Escapes.</summary>
 function StrBackslashEscape(const S, Escapable, Escapes: string): string;
 
+///  <summary>Sets a given string list to have the same elements as a given
+///  string array.</summary>
+///  <remarks>
+///  <para>Any existing contents of the string list are lost.</para>
+///  <para>The string list must not be nil.</para>
+///  </remarks>
+procedure StrArrayToStrList(const SA: array of string; const SL: TStrings);
+
 
 implementation
 
@@ -842,6 +850,16 @@ begin
       PRes^ := Ch;
     Inc(PRes);
   end;
+end;
+
+procedure StrArrayToStrList(const SA: array of string; const SL: TStrings);
+var
+  S: string;
+begin
+  Assert(Assigned(SL), 'StrArrayToStrList: SL is nil');
+  SL.Clear;
+  for S in SA do
+    SL.Add(S);
 end;
 
 end.
