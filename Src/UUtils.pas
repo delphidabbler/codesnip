@@ -144,6 +144,27 @@ function URIBaseName(const URI: string): string;
 ///  <returns>Boolean. True if conversion succeeds, False if not.</returns>
 function TryStrToCardinal(const S: string; out Value: Cardinal): Boolean;
 
+///  <summary>Test a given number of bytes from the start of two byte arrays for
+///  equality.</summary>
+///  <param name="BA1">TBytes [in] First byte array to be compared.</param>
+///  <param name="BA2">TBytes [in] Second byte array to be compared.</param>
+///  <param name="Count">Cardinal [in] Number of bytes to be compared. Must be
+///  greater than zero.</param>
+///  <returns>True if the required number of bytes in the arrays are equal and
+///  both arrays have at least Count bytes. Otherwise False is returned.
+///  </returns>
+///  <remarks>If either BA1 or BA1 have less than Count bytes then False is
+///  returned, regardless of whether the arrays are equal.</remarks>
+function IsEqualBytes(const BA1, BA2: TBytes; const Count: Cardinal):
+  Boolean; overload;
+
+///  <summary>Checks if two byte arrays are equal.</summary>
+///  <param name="BA1">TBytes [in] First byte array to be compared.</param>
+///  <param name="BA2">TBytes [in] Second byte array to be compared.</param>
+///  <returns>True if the two arrays are equal, False if not.</returns>
+///  <remarks>If both arrays are empty they are considered equal.</remarks>
+function IsEqualBytes(const BA1, BA2: TBytes): Boolean; overload;
+
 
 implementation
 
@@ -384,6 +405,32 @@ begin
     and (Int64Rec(Value64).Hi = 0);
   if Result then
     Value := Int64Rec(Value64).Lo;
+end;
+
+function IsEqualBytes(const BA1, BA2: TBytes; const Count: Cardinal):
+  Boolean;
+var
+  I: Integer;
+begin
+  Assert(Count > 0, 'IsEqualBytes: Count must be greater than zero');
+  if (Length(BA1) < Int64(Count)) or (Length(BA2) < Int64(Count)) then
+    Exit(False);
+  for I := 0 to Pred(Count) do
+    if BA1[I] <> BA2[I] then
+      Exit(False);
+  Result := True;
+end;
+
+function IsEqualBytes(const BA1, BA2: TBytes): Boolean;
+var
+  I: Integer;
+begin
+  if Length(BA1) <> Length(BA2) then
+    Exit(False);
+  for I := 0 to Pred(Length(BA1)) do
+    if BA1[I] <> BA2[I] then
+      Exit(False);
+  Result := True;
 end;
 
 end.
