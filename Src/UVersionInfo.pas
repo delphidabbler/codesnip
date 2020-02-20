@@ -38,6 +38,9 @@ type
     V2: Word;   // Minor version number
     V3: Word;   // Revision version number
     V4: Word;   // Build number
+    ///  <summary>Checks if this version number is Null.</summary>
+    ///  <returns>Boolean. True if null, False otherwise.</returns>
+    function IsNull: Boolean;
     class function Nul: TVersionNumber; static;
       {Creates a nul version number with all fields set to zero.
         @return Required nul record.
@@ -307,6 +310,11 @@ resourcestring
 begin
   if not TryStrToVersionNumber(Str, Result) then
     raise EConvertError.CreateFmt(sError, [Str]);
+end;
+
+function TVersionNumber.IsNull: Boolean;
+begin
+  Result := Self = TVersionNumber.Nul;
 end;
 
 class operator TVersionNumber.Implicit(Ver: TPJVersionNumber): TVersionNumber;
