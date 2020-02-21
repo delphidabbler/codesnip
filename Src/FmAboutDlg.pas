@@ -391,7 +391,6 @@ begin
   inherited;
   // Create meta data object for main database
   fMetaData := TMainDBMetaDataFactory.MainDBMetaDataInstance;
-  fMetaData.Refresh;
 end;
 
 procedure TAboutDlg.InitHTMLFrames;
