@@ -139,11 +139,8 @@ type
     ///  <param name="DlgTitle">string [in] Title of dialogue box.</param>
     procedure ViewConfigFile(const FileName, DlgTitle: string);
   strict protected
-    ///  <summary>Initialises form by creating owned object(s).</summary>
-    ///  <remarks>Called from ancestor class.</remarks>
-    procedure InitForm; override;
-    ///  <summary>Configures form by creating custom controls and initialising
-    ///  HTML frames.</summary>
+    ///  <summary>Configures form by creating owned object and custom controls
+    ///  and initialising HTML frames.</summary>
     ///  <remarks>Called from ancestor class.</remarks>
     procedure ConfigForm; override;
     ///  <summary>Arranges controls on form.</summary>
@@ -285,6 +282,8 @@ resourcestring
   sUserDBPathGpCaption = 'User Database Directory';
 begin
   inherited;
+  // Create meta data object for main database
+  fMetaData := TMainDBMetaDataFactory.MainDBMetaDataInstance;
   // Creates required custom controls
   fInstallPathGp := CreatePathInfoBox(
     sInstallPathGpCaption, TAppInfo.AppExeDir, 0
@@ -384,13 +383,6 @@ begin
     else
       EventInfo.Args.srcElement.style.cursor := 'auto';
   end;
-end;
-
-procedure TAboutDlg.InitForm;
-begin
-  inherited;
-  // Create meta data object for main database
-  fMetaData := TMainDBMetaDataFactory.MainDBMetaDataInstance;
 end;
 
 procedure TAboutDlg.InitHTMLFrames;
