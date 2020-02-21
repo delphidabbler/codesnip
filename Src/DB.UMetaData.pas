@@ -190,11 +190,6 @@ type
   ///  <summary>Factory that creates instances of objects that provide
   ///  information about the main database and database updates.</summary>
   TMainDBMetaDataFactory = record
-  strict private
-    class var
-      ///  <summary>Stores reference to a singleton instance of class that
-      ///  provides information about the main database.</summary>
-      fMainDBSingleton: IDBMetaData;
   public
     ///  <summary>Returns instance of class that provides meta data for the
     ///  main database.</summary>
@@ -537,9 +532,7 @@ type
 class function TMainDBMetaDataFactory.MainDBMetaDataInstance:
   IDBMetaData;
 begin
-  if not Assigned(fMainDBSingleton) then
-    fMainDBSingleton := TMainDBMetaData.Create;
-  Result := fMainDBSingleton;
+  Result := TMainDBMetaData.Create;
 end;
 
 class function TMainDBMetaDataFactory.UpdateMetaDataInstance(
