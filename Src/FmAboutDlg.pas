@@ -139,16 +139,19 @@ type
     ///  <param name="DlgTitle">string [in] Title of dialogue box.</param>
     procedure ViewConfigFile(const FileName, DlgTitle: string);
   strict protected
+    ///  <summary>Initialises form by creating owned object(s).</summary>
+    ///  <remarks>Called from ancestor class.</remarks>
+    procedure InitForm; override;
     ///  <summary>Configures form by creating custom controls and initialising
     ///  HTML frames.</summary>
     ///  <remarks>Called from ancestor class.</remarks>
     procedure ConfigForm; override;
-    ///  <summary>Initialises HTML frames to use required HTML templates and
-    ///  resolves all template placeholders.</summary>
-    procedure InitHTMLFrames;
     ///  <summary>Arranges controls on form.</summary>
     ///  <remarks>Called from ancestor class.</remarks>
     procedure ArrangeForm; override;
+    ///  <summary>Initialises HTML frames to use required HTML templates and
+    ///  resolves all template placeholders.</summary>
+    procedure InitHTMLFrames;
     ///  <summary>Updates CSS used for HTML displayed in title frame.</summary>
     ///  <param name="Sender">TObject [in] Not used.</param>
     ///  <param name="CSSBuilder">TCSSBuilder [in] Object used to update CSS.
@@ -294,8 +297,6 @@ begin
   );
   btnViewAppConfig.TabOrder := fUserDBPathGp.TabOrder + 1;
   btnViewUserConfig.TabOrder := btnViewAppConfig.TabOrder + 1;
-  // Create meta data object
-  fMetaData := TMainDBMetaDataFactory.MainDBMetaDataInstance;
   // Load content into HTML frames
   InitHTMLFrames;
 end;
@@ -383,6 +384,14 @@ begin
     else
       EventInfo.Args.srcElement.style.cursor := 'auto';
   end;
+end;
+
+procedure TAboutDlg.InitForm;
+begin
+  inherited;
+  // Create meta data object for main database
+  fMetaData := TMainDBMetaDataFactory.MainDBMetaDataInstance;
+  fMetaData.Refresh;
 end;
 
 procedure TAboutDlg.InitHTMLFrames;
