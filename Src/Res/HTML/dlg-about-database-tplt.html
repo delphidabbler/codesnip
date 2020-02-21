@@ -50,42 +50,62 @@
         class="external-link"
         href="http://delphidabbler.com/url/csdb"
         title="View the online database"
-      >Code Snippets Database</a> is an online resource containing numerous
-      fragments of useful Object Pascal code.
+      >Code Snippets Database</a> is an online resource containing numerous fragments of useful Object Pascal code.
     </p>
 
-    <p>
-      The source code in the database is copyright &copy; <%Year%> by the
-      database contributors (see below). It is made available under the terms of
-      the <a
-        class="external-link"
-        href="http://opensource.org/licenses/MIT"
-      >MIT License</a>. The code is
-      used entirely at your own risk.
-    </p>
+    <div style="<%DBAvailable%>">
 
-    <p>
-      <strong>Credits</strong>
-    </p>
+      <div style="<%MetaDataAvailable%>">
 
-    <p>
-      The following people have contributed code to the database, or have helped
-      to test it:
-    </p>
+        <p style="<%LicenseInfoAvailable%>">
+          The source code in the database is copyright &copy; <%CopyrightYear%> by <%CopyrightHolders%>. It is made available under the terms of the <%DBLicense%>.
+        </p>
 
-    <div class="scrollbox">
-      <div class="contrib-head">
-        Contributors
+        <p style="<%LicenseInfoNotAvailable%>">
+          No copyright or licensing information is available.
+        </p>
+
+        <p>
+          The code is used entirely at your own risk.
+        </p>
+
+        <p>
+          <strong>Credits</strong>
+        </p>
+
+        <p>
+          The following people have contributed code to the database, or have helped to test it:
+        </p>
+
+        <div class="scrollbox">
+          <div class="contrib-head">
+            Contributors
+          </div>
+          <div class="people-list">
+            <%ContribList%>
+          </div>
+          <div class="tester-head">
+            Testers
+          </div>
+          <div class="people-list">
+            <%TesterList%>
+          </div>
+        </div>
+
       </div>
-      <div class="people-list">
-        <%ContribList%>
-      </div>
-      <div class="tester-head">
-        Testers
-      </div>
-      <div class="people-list">
-        <%TesterList%>
-      </div>
+
+      <p style="<%MetaDataNotAvailable%>">
+        <strong>Credits, License and Copyright information are not available.</strong> The main database may be corrupt. Please use the <em>Database | Get DelphiDabbler Snippets Database</em> menu option to display the <em>Get DelphiDabbler Snippets Database</em> dialogue box and follow the instructions there to get the latest version of the database.
+      </p>
+
+    </div>
+
+    <div style="<%DBNotAvailable%>">
+
+      <p>
+        <strong>The database is not loaded.</strong> You can get it by following the instructions in the <em>Get DelphiDabbler Snippets Database</em> dialogue box that is displayed from the <em>Database | Get DelphiDabbler Snippets Database</em> menu option.
+      </p>
+
     </div>
 
   </body>

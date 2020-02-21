@@ -19,11 +19,23 @@ interface
 
 
 uses
-  // Delphi
-  Forms, ComCtrls, StdCtrls, Controls, ExtCtrls, Classes, Messages,
+  // VCL
+  Forms,
+  ComCtrls,
+  StdCtrls,
+  Controls,
+  ExtCtrls,
+  Classes,
+  Messages,
   // Project
-  Browser.UHTMLEvents, FmGenericViewDlg, FrBrowserBase, FrHTMLDlg,
-  FrHTMLTpltDlg, UContributors, UCSSBuilder;
+  Browser.UHTMLEvents,
+  DB.UMetaData,
+  FmGenericViewDlg,
+  FrBrowserBase,
+  FrHTMLDlg,
+  FrHTMLTpltDlg,
+  UCSSBuilder,
+  UIStringList;
 
 
 type
@@ -104,6 +116,7 @@ type
     fMainDBPathGp: TPathInfoBox;  // control that displays main database folder
     fUserDBPathGp: TPathInfoBox;  // control that displays user database folder
     fInstallPathGp: TPathInfoBox; // control that displays program install path
+    fMetaData: IDBMetaData;       // stores main database meta data
     procedure HTMLEventHandler(Sender: TObject;
       const EventInfo: THTMLEventInfo);
       {Handles title frame's OnHTMLEvent event. Checks for easter-egg related
@@ -111,11 +124,10 @@ type
         @param Sender [in] Not used.
         @param EventInfo [in] Object providing information about the event.
       }
-    function ContribListHTML(const ContribClass: TContributorsClass): string;
+    function ContribListHTML(ContribList: IStringList): string;
       {Builds HTML used to display list of contributors or creates an error
       message if contributor list is not available.
-        @param ContribClass [in] Type of contributor class to use. This
-          determines names that are displayed.
+        @param ContribList [in] list of contributors.
         @return Required HTML.
       }
     procedure ViewConfigFile(const FileName, DlgTitle: string);
@@ -160,32 +172,31 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Graphics, Math, Windows, ShellAPI, IOUtils,
+  SysUtils,
+  Graphics,
+  Math,
+  Windows,
+  ShellAPI,
+  IOUtils,
   // Project
-  FmEasterEgg, FmPreviewDlg, UAppInfo, UColours, UConsts,
-  UCSSUtils, UCtrlArranger, UEncodings, UFontHelper, UGraphicUtils, UHTMLUtils,
-  UHTMLTemplate, UIOUtils, UMessageBox, UResourceUtils, UThemesEx;
-
-
-{
-  NOTE:
-
-  The about box uses three HTML templates. These are stored in RT_HTML resources
-  as:
-    + "dlg-about-head-tplt.html"
-    + "dlg-about-program-tplt.html"
-    + "dlg-about-database-tplt.html".
-
-  The following placeholders are used in one or more of the templates. The
-  placeholders are replaced by their values within this unit:
-
-  <%Release%>         program release number
-  <%ResURL%>          url of programs HTML resources
-  <%ContribList%>     list of program contributors
-  <%TesterList%>      list of program testers
-  <%Year%>            current year
-}
-
+  DB.UMain,
+  FmEasterEgg,
+  FmPreviewDlg,
+  UAppInfo,
+  UColours,
+  UConsts,
+  UCSSUtils,
+  UCtrlArranger,
+  UEncodings,
+  UFontHelper,
+  UGraphicUtils,
+  UHTMLUtils,
+  UHTMLTemplate,
+  UIOUtils,
+  UMessageBox,
+  UResourceUtils,
+  UStrUtils,
+  UThemesEx;
 
 {$R *.dfm}
 
@@ -290,47 +301,41 @@ begin
   );
   btnViewAppConfig.TabOrder := fUserDBPathGp.TabOrder + 1;
   btnViewUserConfig.TabOrder := btnViewAppConfig.TabOrder + 1;
+  // Create meta data object
+  fMetaData := TMainDBMetaDataFactory.MainDBMetaDataInstance;
   // Load content into HTML frames
   InitHTMLFrames;
 end;
 
-function TAboutDlg.ContribListHTML(const ContribClass: TContributorsClass):
+function TAboutDlg.ContribListHTML(ContribList: IStringList):
   string;
-  {Builds HTML used to display list of contributors or creates an error
-  message if contributor list is not available.
-    @param ContribClass [in] Type of contributor class to use. This determines
-      names that are displayed.
+  {Builds HTML used to display list of contributors or creates an error message
+  if contributor list is not available.
+    @param ContribList [in] list of contributors.
     @return Required HTML.
   }
 resourcestring
   // Error string used when contributor file not available
-  sNoContributors       = 'List not available, please update database.';
+  sNoContributors = 'No contributors list available. Database may be corrupt';
 var
-  Contributors: TContributors;  // contributors to database
   Contributor: string;          // name of a contributor
   DivAttrs: IHTMLAttributes;    // attributes of div tag
 begin
   Result := '';
-  // Get list of contributors
-  Contributors := ContribClass.Create;
-  try
-    if not Contributors.IsError then
-    begin
-      for Contributor in Contributors do
-        Result := Result
-          + THTML.CompoundTag('div', THTML.Entities(Contributor))
-          + EOL;
-    end
-    else
-    begin
-      // List couldn't be found: display warning message
-      DivAttrs := THTMLAttributes.Create('class', 'warning');
-      Result := THTML.CompoundTag(
-        'div', DivAttrs, THTML.Entities(sNoContributors)
-      );
-    end;
-  finally
-    FreeAndNil(Contributors);
+  if ContribList.Count > 0 then
+  begin
+    for Contributor in ContribList do
+      Result := Result
+        + THTML.CompoundTag('div', THTML.Entities(Contributor))
+        + EOL;
+  end
+  else
+  begin
+    // List couldn't be found: display warning message
+    DivAttrs := THTMLAttributes.Create('class', 'warning');
+    Result := THTML.CompoundTag(
+      'div', DivAttrs, THTML.Entities(sNoContributors)
+    );
   end;
 end;
 
@@ -433,7 +438,8 @@ procedure TAboutDlg.InitHTMLFrames;
     }
   begin
     pcDetail.ActivePage := tsProgram;   // display page to let browser load OK
-    // TODO -cRefactor: Change this frmProgram so it's no longer a HTML template
+    { TODO -cRefactor: Change this frmProgram so it's no longer a HTML template
+            unless we need to add a gravatar link from Web.UInfo unit. }
     frmProgram.Initialise(
       'dlg-about-program-tplt.html',
       procedure(Tplt: THTMLTemplate)
@@ -447,19 +453,79 @@ procedure TAboutDlg.InitHTMLFrames;
     {Initialises and loads HTML into database frame.
     }
   begin
-    pcDetail.ActivePage := tsDatabase;  // display page to let browser load OK
+    // Ensure browser loads page so we can process it
+    pcDetail.ActivePage := tsDatabase;
+
     frmDatabase.Initialise(
       'dlg-about-database-tplt.html',
       procedure(Tplt: THTMLTemplate)
+      var
+        IsDBAvalable: Boolean;
+        IsMetaDataAvailable: Boolean;
+        IsLicenseInfomAvailable: Boolean;
       begin
+        // Resolve conditionally displayed block placeholders
+        IsDBAvalable := Database.Snippets.Count(False) > 0;
+        IsMetaDataAvailable := fMetaData.IsSupportedVersion
+          and not fMetaData.IsCorrupt;
+        IsLicenseInfomAvailable := IsMetaDataAvailable
+          and (fMetaData.GetLicenseInfo.Name <> '')
+          and (fMetaData.GetCopyrightInfo.Date <> '')
+          and (fMetaData.GetCopyrightInfo.Holder <> '');
         Tplt.ResolvePlaceholderHTML(
-          'ContribList', ContribListHTML(TCodeContributors)
+          'DBAvailable',
+          TCSS.BlockDisplayProp(IsDBAvalable)
         );
         Tplt.ResolvePlaceholderHTML(
-          'TesterList', ContribListHTML(TTesters)
+          'DBNotAvailable',
+          TCSS.BlockDisplayProp(not IsDBAvalable)
+        );
+        Tplt.ResolvePlaceholderHTML(
+          'MetaDataAvailable',
+          TCSS.BlockDisplayProp(IsMetaDataAvailable)
+        );
+        Tplt.ResolvePlaceholderHTML(
+          'MetaDataNotAvailable',
+          TCSS.BlockDisplayProp(not IsMetaDataAvailable)
+        );
+        Tplt.ResolvePlaceholderHTML(
+          'LicenseInfoAvailable',
+          TCSS.BlockDisplayProp(IsLicenseInfomAvailable)
+        );
+        Tplt.ResolvePlaceholderHTML(
+          'LicenseInfoNotAvailable',
+          TCSS.BlockDisplayProp(not IsLicenseInfomAvailable)
+        );
+
+        // Rsolve content placeholders
+        Tplt.ResolvePlaceholderText(
+          'CopyrightYear',
+          fMetaData.GetCopyrightInfo.Date
         );
         Tplt.ResolvePlaceholderText(
-          'Year', FormatDateTime('YYYY', Now)
+          'CopyrightHolders',
+          fMetaData.GetCopyrightInfo.Holder
+        );
+        Tplt.ResolvePlaceholderHTML(
+          'DBLicense',
+          StrIf(
+            fMetaData.GetLicenseInfo.URL <> '',
+            THTML.CompoundTag(
+              'a',
+              THTMLAttributes.Create([
+                THTMLAttribute.Create('href', fMetaData.GetLicenseInfo.URL),
+                THTMLAttribute.Create('class', 'external-link')
+              ]),
+              THTML.Entities(fMetaData.GetLicenseInfo.Name)
+            ),
+            THTML.Entities(fMetaData.GetLicenseInfo.Name)
+          )
+        );
+        Tplt.ResolvePlaceholderHTML(
+          'ContribList', ContribListHTML(fMetaData.GetContributors)
+        );
+        Tplt.ResolvePlaceholderHTML(
+          'TesterList', ContribListHTML(fMetaData.GetTesters)
         );
       end
     );
