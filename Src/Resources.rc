@@ -84,3 +84,9 @@ LANGUAGE LANG_NEUTRAL , SUBLANG_NEUTRAL
 */
 1 24 "Res/Misc/CodeSnip.manifest"
 
+
+/*
+  Text of Code Snippets Database v1 license.
+  File is UTF-8 with NO BOM.
+*/
+CSDBLICENSE RCDATA "Res/Misc/CSDB-v1-License.txt"

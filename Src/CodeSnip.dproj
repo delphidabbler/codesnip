@@ -71,6 +71,7 @@
 			<DCCReference Include="DB.UCategory.pas"/>
 			<DCCReference Include="DB.UDatabaseIO.pas"/>
 			<DCCReference Include="DB.UMain.pas"/>
+			<DCCReference Include="DB.UMetaData.pas"/>
 			<DCCReference Include="DB.USnippet.pas"/>
 			<DCCReference Include="DB.USnippetKind.pas"/>
 			<DCCReference Include="DBIO.UFileIOIntf.pas"/>
