@@ -40,56 +40,48 @@ uses
 
 type
 
-  {
-  TPathInfoBox:
-    Component that displays a path in a group box with an associated button that
-    displays the path in Windows Explorer.
-  }
+  ///  <summary>Custom component that displays a path in a group box with an
+  ///  associated button to display the path in Windows Explorer.</summary>
   TPathInfoBox = class(TCustomGroupBox)
   strict private
-    fPathLbl: TLabel;   // Label that displays path
-    fViewBtn: TButton;  // Button that displays path in explorer
+    var
+      ///  <summary>Label that displays path.</summary>
+      fPathLbl: TLabel;
+      ///  <summary>Button that displays path in explorer.</summary>
+      fViewBtn: TButton;
+    ///  <summary>Read accessor for Path property. Gets and returns value from
+    ///  path label.</summary>
     function GetPath: string;
-      {Read accessor for Path property. Gets value from label.
-        @return Property value.
-      }
+    ///  <summary>Write accessor for Path property. Stores given value in path
+    ///  label and updates state of button.</summary>
     procedure SetPath(const Value: string);
-      {Write accessor for Path property. Stores value in label and updates state
-      of button.
-        @param Value [in] New property value.
-      }
+    ///  <summary>Button click event handler. Displays folder stored in Path
+    ///  property in Windows Explorer.</summary>
     procedure BtnClick(Sender: TObject);
-      {Button click event handler. Displays folder stored in Path property in
-      Windows Explorer.
-        @param Sender [in] Not used.
-      }
+    ///  <summary>Handles font changes by resizing control to allow for new font
+    ///  size.</summary>
+    ///  <param name="Msg">TMessage [in/out] Not used.</param>
     procedure FontChange(var Msg: TMessage); message CM_FONTCHANGED;
-      {Handles font changes by resizing control to allow for new font size.
-        @param Msg [in/out] Not used.
-      }
+    ///  <summary>Resizes and re-arranges control and its sub-components.
+    ///  </summary>
     procedure ReArrange;
-      {Resizes and re-arranges control and its sub-components.
-      }
   strict protected
+    ///  <summary>Handles control resizing. Re-arranges control's
+    ///  sub-components.</summary>
     procedure Resize; override;
-      {Handles control resizing. Re-arranges control's sub-components.
-      }
   public
+    ///  <summary>Component constructor. Creates sub-components and arranges
+    ///  them.</summary>
     constructor Create(AOwner: TComponent); override;
-      {Component constructor. Creates sub-components and arranges them.
-        @param AOwner [in] Owning component.
-      }
+    ///  <summary>Path displayed in group box and displayed by view button.
+    ///  </summary>
     property Path: string read GetPath write SetPath;
-      {Path displayed in group box and displayed by view button}
   end;
 
-  {
-  TAboutDlg:
-    Implements an about dialog box that uses web browser controls to display
-    information about the program and the database. HTML templates containing
-    the dialog box content are loaded from resources. Also provides access to
-    the program's easter egg.
-  }
+  ///  <summary>Implements program&#39; about dialogue box.</summary>
+  ///  <remarks>Displays information about the program, the main database and
+  ///  the program's user and application folders and config files. Also
+  ///  provides access to the program's easter egg.</remarks>
   TAboutDlg = class(TGenericViewDlg)
     bvlSeparator: TBevel;
     frmDatabase: THTMLTpltDlgFrame;
@@ -110,60 +102,71 @@ type
     ///  a tab is clicked.</remarks>
     procedure pcDetailMouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
+    ///  <summary>Handles button click event to display application config file.
+    ///  </summary>
     procedure btnViewAppConfigClick(Sender: TObject);
+    ///  <summary>Handles button click event to display per-user config file.
+    ///  </summary>
     procedure btnViewUserConfigClick(Sender: TObject);
   strict private
-    fMainDBPathGp: TPathInfoBox;  // control that displays main database folder
-    fUserDBPathGp: TPathInfoBox;  // control that displays user database folder
-    fInstallPathGp: TPathInfoBox; // control that displays program install path
-    fMetaData: IDBMetaData;       // stores main database meta data
+    var
+      ///  <summary>Control that displays main database folder.</summary>
+      fMainDBPathGp: TPathInfoBox;
+      ///  <summary>Control that displays user database folder.</summary>
+      fUserDBPathGp: TPathInfoBox;
+      ///  <summary>Control that displays program install path.</summary>
+      fInstallPathGp: TPathInfoBox;
+      ///  <summary>Provides access to main database meta data.</summary>
+      fMetaData: IDBMetaData;
+    ///  <summary>Handles title frame's OnHTMLEvent event. Checks for mouse
+    ///  events relating to display of the easter egg and acts accordingly.
+    ///  </summary>
+    ///  <param name="Sender">TObject [in] Not used.</param>
+    ///  <param name="EventInfo">THTMLEventInfo [in] Object providing
+    ///  information about the event.</param>
     procedure HTMLEventHandler(Sender: TObject;
       const EventInfo: THTMLEventInfo);
-      {Handles title frame's OnHTMLEvent event. Checks for easter-egg related
-      mouse events on icon image and acts accordingly.
-        @param Sender [in] Not used.
-        @param EventInfo [in] Object providing information about the event.
-      }
+    ///  <summary>Builds HTML used to display list of contributors or an error
+    ///  message if the list is empty.</summary>
+    ///  <param name="ContribList">IStringList [in] List of contributors to
+    ///  display.</param>
+    ///  <returns>string. Required HTML.</returns>
     function ContribListHTML(ContribList: IStringList): string;
-      {Builds HTML used to display list of contributors or creates an error
-      message if contributor list is not available.
-        @param ContribList [in] list of contributors.
-        @return Required HTML.
-      }
+    ///  <summary>Displays content of a config file in a dialogue box or an
+    ///  error message if the file does not exist.</summary>
+    ///  <param name="FileName">string [in] Name of config file to display.
+    ///  </param>
+    ///  <param name="DlgTitle">string [in] Title of dialogue box.</param>
     procedure ViewConfigFile(const FileName, DlgTitle: string);
-      {Displays content of a config file in a preview dialogue box. If file
-      does not exist an error message is displayed.
-        @param FileName [in] Name of config file.
-        @param DlgTitle [in] Title of preview dialogue box.
-      }
   strict protected
+    ///  <summary>Configures form by creating custom controls and initialising
+    ///  HTML frames.</summary>
+    ///  <remarks>Called from ancestor class.</remarks>
     procedure ConfigForm; override;
-      {Configures form by creating custom controls and initialising HTML frames.
-      Called from ancestor class.
-      }
+    ///  <summary>Initialises HTML frames to use required HTML templates and
+    ///  resolves all template placeholders.</summary>
     procedure InitHTMLFrames;
-      {Initialises HTML frames to use required template document with
-      placeholders replaced by required values.
-      }
+    ///  <summary>Arranges controls on form.</summary>
+    ///  <remarks>Called from ancestor class.</remarks>
     procedure ArrangeForm; override;
-      {Arranges controls on form.
-      }
+    ///  <summary>Updates CSS used for HTML displayed in title frame.</summary>
+    ///  <param name="Sender">TObject [in] Not used.</param>
+    ///  <param name="CSSBuilder">TCSSBuilder [in] Object used to update CSS.
+    ///  </param>
     procedure UpdateTitleCSS(Sender: TObject; const CSSBuilder: TCSSBuilder);
-      {Updates CSS used for HTML displayed in title frame.
-        @param Sender [in] Not used.
-        @param CSSBuilder [in] Object used to update CSS.
-      }
+    ///  <summary>Updates CSS used for HTML displayed in detail frames.
+    ///  </summary>
+    ///  <param name="Sender">TObject [in] Not used.</param>
+    ///  <param name="CSSBuilder">TCSSBuilder [in] Object used to update CSS.
+    ///  </param>
+    ///  <remarks>Details frames form the body of the About Box on the Program
+    ///  and Database tabs.</remarks>
     procedure UpdateDetailCSS(Sender: TObject; const CSSBuilder: TCSSBuilder);
-      {Updates CSS used for HTML displayed in detail (i.e. program and database)
-      frames.
-        @param Sender [in] Not used.
-        @param CSSBuilder [in] Object used to update CSS.
-      }
   public
+    ///  <summary>Displays dialog box.</summary>
+    ///  <param name="AOwner">TComponent [in] Component that owns this dialogus
+    ///   box.</param>
     class procedure Execute(AOwner: TComponent);
-      {Displays dialog box.
-        @param AOwner [in] Component that owns this dialog box.
-      }
   end;
 
 
@@ -200,11 +203,10 @@ uses
 
 {$R *.dfm}
 
+///  <summary>Displays Windows Explorer showing a specific folder.</summary>
+///  <param name="Folder">string [in] Folder to explore.</param>
+///  <returns>Boolean. True if explorer displayed, False if not.</returns>
 function ExploreFolder(const Folder: string): Boolean;
-  {Displays Windows Explorer showing a specified folder.
-    @param Folder [in] Folder to explore.
-    @return True if explorer displayed, False if not.
-  }
 begin
   if TDirectory.Exists(Folder) then
     Result := ShellExecute(
@@ -217,8 +219,6 @@ end;
 { TAboutDlg }
 
 procedure TAboutDlg.ArrangeForm;
-  {Arranges controls on form.
-  }
 var
   PathTabHeight: Integer;
 begin
@@ -261,18 +261,11 @@ begin
 end;
 
 procedure TAboutDlg.ConfigForm;
-  {Configures form by creating custom controls and initialising HTML frames.
-  Called from ancestor class.
-  }
 
+  //  Creates and initialises a custom path information control with given
+  //  caption, path and tab order.</summary>
   function CreatePathInfoBox(const Caption, Path: string;
     const TabOrder: Integer): TPathInfoBox;
-    {Creates and initialises a custom path information control.
-      @param Caption [in] Group box caption.
-      @param Path [in] Path to be displayed.
-      @param TabOrder [in] Tab order of info box.
-      @return New control.
-    }
   begin
     Result := TPathInfoBox.CreateParented(tsPaths.Handle);
     Result.Parent := tsPaths;
@@ -309,11 +302,6 @@ end;
 
 function TAboutDlg.ContribListHTML(ContribList: IStringList):
   string;
-  {Builds HTML used to display list of contributors or creates an error message
-  if contributor list is not available.
-    @param ContribList [in] list of contributors.
-    @return Required HTML.
-  }
 resourcestring
   // Error string used when contributor file not available
   sNoContributors = 'No contributors list available. Database may be corrupt';
@@ -340,9 +328,6 @@ begin
 end;
 
 class procedure TAboutDlg.Execute(AOwner: TComponent);
-  {Displays dialog box.
-    @param AOwner [in] Component that owns this dialog box.
-  }
 begin
   with Create(AOwner) do
     try
@@ -353,9 +338,6 @@ begin
 end;
 
 procedure TAboutDlg.FormCreate(Sender: TObject);
-  {Form initialisation event handler. Sets handler that updates frame's CSS.
-    @param Sender [in] Not used.
-  }
 begin
   inherited;
   frmTitle.OnBuildCSS := UpdateTitleCSS;
@@ -364,9 +346,6 @@ begin
 end;
 
 procedure TAboutDlg.FormDestroy(Sender: TObject);
-  {Form destruction event handler. Frees non-owned controls.
-    @param Sender [in] Not used.
-  }
 begin
   inherited;
   fInstallPathGp.Free;
@@ -376,11 +355,6 @@ end;
 
 procedure TAboutDlg.HTMLEventHandler(Sender: TObject;
   const EventInfo: THTMLEventInfo);
-  {Handles title frame's OnHTMLEvent event. Checks for easter-egg related mouse
-  events on icon image and acts accordingly.
-    @param Sender [in] Not used.
-    @param EventInfo [in] Object providing information about the event.
-  }
 const
   cIconImgId = 'icon';  // id of icon image
 begin
@@ -412,14 +386,9 @@ begin
 end;
 
 procedure TAboutDlg.InitHTMLFrames;
-  {Initialises HTML frames to use required template document with placeholders
-  replaced by required values.
-  }
 
-  // ---------------------------------------------------------------------------
+  // Initialises and loads HTML into title frame.
   procedure InitTitleFrame;
-    {Initialises and loads HTML into title frame.
-    }
   begin
     frmTitle.Initialise(
       'dlg-about-head-tplt.html',
@@ -433,9 +402,8 @@ procedure TAboutDlg.InitHTMLFrames;
     frmTitle.OnHTMLEvent := HTMLEventHandler;
   end;
 
+  // Initialises and loads HTML into program frame.
   procedure InitProgramFrame;
-    {Initialises and loads HTML into program frame.
-    }
   begin
     pcDetail.ActivePage := tsProgram;   // display page to let browser load OK
     { TODO -cRefactor: Change this frmProgram so it's no longer a HTML template
@@ -449,9 +417,8 @@ procedure TAboutDlg.InitHTMLFrames;
     );
   end;
 
+  // Initialises and loads HTML into database frame.
   procedure InitDatabaseFrame;
-    {Initialises and loads HTML into database frame.
-    }
   begin
     // Ensure browser loads page so we can process it
     pcDetail.ActivePage := tsDatabase;
@@ -547,11 +514,6 @@ end;
 
 procedure TAboutDlg.UpdateDetailCSS(Sender: TObject;
   const CSSBuilder: TCSSBuilder);
-  {Updates CSS used for HTML displayed in detail (i.e. program and database)
-  frames.
-    @param Sender [in] Not used.
-    @param CSSBuilder [in] Object used to update CSS.
-  }
 var
   ContentFont: TFont; // font used for content
 begin
@@ -583,10 +545,6 @@ end;
 
 procedure TAboutDlg.UpdateTitleCSS(Sender: TObject;
   const CSSBuilder: TCSSBuilder);
-  {Updates CSS used for HTML displayed in title frame.
-    @param Sender [in] Not used.
-    @param CSSBuilder [in] Object used to update CSS.
-  }
 begin
   // Set body colour, and put border round it
   with CSSBuilder.Selectors['body'] do
@@ -617,19 +575,12 @@ end;
 { TPathInfoBox }
 
 procedure TPathInfoBox.BtnClick(Sender: TObject);
-  {Button click event handler. Displays folder stored in Path property in
-  Windows Explorer.
-    @param Sender [in] Not used.
-  }
 begin
   if Assigned(fPathLbl) and (fPathLbl.Caption <> '') then
     ExploreFolder(fPathLbl.Caption);
 end;
 
 constructor TPathInfoBox.Create(AOwner: TComponent);
-  {Component constructor. Creates sub-components and arranges them.
-    @param AOwner [in] Owning component.
-  }
 resourcestring
   // Hint attached to view button
   sViewBtnHint = 'Explore...|Display the path in Windows Explorer';
@@ -663,25 +614,17 @@ begin
 end;
 
 procedure TPathInfoBox.FontChange(var Msg: TMessage);
-  {Handles font changes by resizing control to allow for new font size.
-    @param Msg [in/out] Not used.
-  }
 begin
   inherited;
   ReArrange;
 end;
 
 function TPathInfoBox.GetPath: string;
-  {Read accessor for Path property. Gets value from label.
-    @return Property value.
-  }
 begin
   Result := fPathLbl.Caption;
 end;
 
 procedure TPathInfoBox.ReArrange;
-  {Resizes and re-arranges control and its sub-components.
-  }
 begin
   TCtrlArranger.SetLabelHeight(fPathLbl);
   Height := Max(fPathLbl.Height, fViewBtn.Height) + 24;
@@ -695,18 +638,12 @@ begin
 end;
 
 procedure TPathInfoBox.Resize;
-  {Handles control resizing. Re-arranges control's sub-components.
-  }
 begin
   inherited;
   ReArrange;
 end;
 
 procedure TPathInfoBox.SetPath(const Value: string);
-  {Write accessor for Path property. Stores value in label and updates state
-  of button.
-    @param Value [in] New property value.
-  }
 resourcestring
   // hints used when path doesn't exist
   sShortPathDoesNotExist = 'Path does not exist';
