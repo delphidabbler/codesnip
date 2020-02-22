@@ -36,16 +36,6 @@ type
   TDBUpdateMgr = class(TObject)
   public
     type
-      // TODO -cDBUpdate: Remove this type once dummy placeholder method removed
-      ///  <summary>
-      ///  <para>Enumeration of possible result when querying if a database
-      ///  updated is available.</para>
-      ///  <para>- upUpToDate - local database is up to date.</para>
-      ///  <para>- uqUpdateAvailable - a database update is available.</para>
-      ///  <para>- uqError - an error occurred during the request.</para>
-      ///  </summary>
-      TUpdateQueryResult = (uqUpToDate, uqUpdateAvailable, uqError);
-    type
       ///  <summary>Type of event triggered to report progress when updating
       ///  local database files.</summary>
       ///  <param name="Sender">TObject [in] Object that triggered event.
@@ -92,15 +82,6 @@ type
     ///  unexpected error is raised.</exception>
     procedure Execute;
 
-    ///  <summary>Queries whether updates to the local database are available.
-    ///  </summary>
-    ///  <returns>TDBUpdateMgr.TUpdateQueryResult value of uqUpToDate is always
-    ///  returned.</returns>
-    ///  <remarks>This method is currently a stub left in place because it is
-    ///  called by the redundant update checker thread that is slated for
-    ///  removal.</remarks>
-    function CheckForUpdates: TUpdateQueryResult;
-
     ///  <summary>Validates package of update files in given directory.
     ///  </summary>
     ///  <exception>EDBUpdateValidationError raised if any validation test
@@ -129,13 +110,6 @@ uses
 
 
 { TDBUpdateMgr }
-
-function TDBUpdateMgr.CheckForUpdates: TUpdateQueryResult;
-begin
-  // TODO -cDBUpdate: Remove this temporary fix once update checker thread removed
-  // TODO -cDBUpdate: Remove this method once above TODO is completed
-  Result := uqUpToDate;
-end;
 
 constructor TDBUpdateMgr.Create(const LocalDir, UpdateDir: string);
 begin
