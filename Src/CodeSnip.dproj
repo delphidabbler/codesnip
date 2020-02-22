@@ -384,12 +384,6 @@
 			<DCCReference Include="IntfFrameMgrs.pas"/>
 			<DCCReference Include="IntfNotifier.pas"/>
 			<DCCReference Include="IntfPreview.pas"/>
-			<DCCReference Include="Notifications.UDisplayMgr.pas"/>
-			<DCCReference Include="Notifications.UData.pas"/>
-			<DCCReference Include="Notifications.UDisplayThread.pas"/>
-			<DCCReference Include="Notifications.UQueue.pas"/>
-			<DCCReference Include="Notifications.URecorderThread.pas"/>
-			<DCCReference Include="Notifications.UWindow.pas"/>
 			<DCCReference Include="SWAG.UCommon.pas"/>
 			<DCCReference Include="SWAG.UImporter.pas"/>
 			<DCCReference Include="SWAG.UReader.pas"/>
@@ -559,14 +553,12 @@
 			<DCCReference Include="UTestUnitDlgMgr.pas"/>
 			<DCCReference Include="UTextSnippetDoc.pas"/>
 			<DCCReference Include="UThemesEx.pas"/>
-			<DCCReference Include="UThreadGroup.pas"/>
 			<DCCReference Include="UToolButtonEx.pas"/>
 			<DCCReference Include="UTVCheckBoxes.pas"/>
 			<DCCReference Include="UUIWidgetImages.pas"/>
 			<DCCReference Include="UUniqueID.pas"/>
 			<DCCReference Include="UUnitAnalyser.pas"/>
 			<DCCReference Include="UUnitsChkListMgr.pas"/>
-			<DCCReference Include="UUpdateCheckers.pas"/>
 			<DCCReference Include="UURIEncode.pas"/>
 			<DCCReference Include="UURIParams.pas"/>
 			<DCCReference Include="UUrlMonEx.pas"/>
