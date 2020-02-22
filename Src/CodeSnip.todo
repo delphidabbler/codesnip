@@ -1,3 +1,6 @@
+{TODO -cHelp :
+Add a Backup Database task help topis that describes how to backup and restore databases.
+Then add help link to Res/HTML/dlg-dbupdate-intro-tplt.html}
 {TODO -cUI : Rationalise use of TFontHelper.SetDefaultFont(s) and .SetDefaultBaseFont(s) methods.}
 {TODO -cSharing :
 Decide if to continue to support user info in export files
