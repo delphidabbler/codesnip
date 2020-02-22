@@ -165,3 +165,8 @@ acronym {
   font-style: italic;
   font-weight: bold;
 }
+
+.del {
+  text-decoration: line-through;
+  color: gray;
+}
