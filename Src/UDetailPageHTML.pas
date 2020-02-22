@@ -415,26 +415,6 @@ var
   Compilers: ICompilers;
   Compiler: ICompiler;
   CompilerList: TStringBuilder;
-
-  ///  <summary>Returns the text of a statement that describes how often am
-  ///  automatic update checked is performed.</summary>
-  ///  <param name="Frequency">Word [in] Days between checks or zero to
-  ///  indicated that no checks are made.</param>
-  ///  <returns>string. Required text.</returns>
-  function UpdateFrequencyText(const Frequency: Word): string;
-  resourcestring
-    sNeverChecked = 'never checked';
-    sCheckedEveryNDays = 'checked every %d days';
-    sCheckedEveryDay = 'checked every day';
-  begin
-    if Frequency = 0 then
-      Result := sNeverChecked
-    else if Frequency = 1 then
-      Result := sCheckedEveryDay
-    else
-      Result := Format(sCheckedEveryNDays, [Frequency]);
-  end;
-
 begin
   inherited;
   Tplt.ResolvePlaceholderHTML(
