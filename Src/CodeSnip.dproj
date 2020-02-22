@@ -591,12 +591,10 @@
 			<DCCReference Include="UXMLDocumentEx.pas"/>
 			<DCCReference Include="Web.UBaseWebService.pas"/>
 			<DCCReference Include="Web.UCharEncodings.pas"/>
-			<DCCReference Include="Web.UDBDownloadMgr.pas"/>
 			<DCCReference Include="Web.UDownloadMonitor.pas"/>
 			<DCCReference Include="Web.UExceptions.pas"/>
 			<DCCReference Include="Web.UHTTPEx.pas"/>
 			<DCCReference Include="Web.UInfo.pas"/>
-			<DCCReference Include="Web.UStdWebService.pas"/>
 			<DCCReference Include="Web.USWAGRESTMgr.pas"/>
 			<None Include="CodeSnip.todo"/>
 			<BuildConfiguration Include="Base">

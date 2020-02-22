@@ -390,12 +390,10 @@ uses
   UXMLDocumentEx in 'UXMLDocumentEx.pas',
   Web.UBaseWebService in 'Web.UBaseWebService.pas',
   Web.UCharEncodings in 'Web.UCharEncodings.pas',
-  Web.UDBDownloadMgr in 'Web.UDBDownloadMgr.pas',
   Web.UDownloadMonitor in 'Web.UDownloadMonitor.pas',
   Web.UExceptions in 'Web.UExceptions.pas',
   Web.UHTTPEx in 'Web.UHTTPEx.pas',
   Web.UInfo in 'Web.UInfo.pas',
-  Web.UStdWebService in 'Web.UStdWebService.pas',
   Web.USWAGRESTMgr in 'Web.USWAGRESTMgr.pas';
 
 // Include resources
