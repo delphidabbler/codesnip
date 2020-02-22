@@ -173,6 +173,9 @@ type
   TSettingsStorageId = (ssUser, ssCommon);
 
 type
+
+  { TODO -cSettings: Investigate why ssApplication section no longer used.
+                     Update below and in docs once found out. }
   ///  <summary>
   ///  <para>Enumeration of recognised sections within persistent storage.
   ///  </para>
@@ -196,7 +199,7 @@ type
   TSettingsSectionId = (
     ssFindText, ssFindCompiler, ssFindXRefs, ssCompilerInfo, ssApplication,
     ssPreferences, ssUserInfo, ssProxyServer, ssUnits, ssDuplicateSnippet,
-    ssFavourites, ssWindowState, ssDatabase, ssUpdateChecks
+    ssFavourites, ssWindowState, ssDatabase
   );
 
 type
@@ -561,8 +564,7 @@ const
     ssUser,     // ssDuplicateSnippet
     ssUser,     // ssFavourites
     ssUser,     // ssWindowState
-    ssUser,     // ssDatabase
-    ssUser      // ssUpdateChecks
+    ssUser      // ssDatabase
   );
 begin
   Result := cSectionStorageMap[Section];
@@ -644,8 +646,7 @@ const
     'DuplicateSnippet', // ssDuplicateSnippet
     'Favourites',       // ssFavourites
     'WindowState',      // ssWindowState
-    'Database',         // ssDatabase
-    'UpdateChecks'      // ssUpdateChecks
+    'Database'          // ssDatabase
   );
 begin
   Result := cSectionNames[Id];
