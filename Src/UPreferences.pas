@@ -251,31 +251,6 @@ type
     property PageStructures: TSnippetPageStructures
       read GetPageStructures write SetPageStructures;
 
-    ///  <summary>Gets frequency, in days, that the program should automatically
-    ///  check for program updates.</summary>
-    function GetAutoCheckProgramFrequency: Word;
-    ///  <summary>Sets frequency, in days, that the program should automatically
-    ///  check for program updates.</summary>
-    procedure SetAutoCheckProgramFrequency(const Value: Word);
-    ///  <summary>Frequency, in days, that the program should automatically
-    ///  check for program updates.</summary>
-    ///  <remarks>A value of zero indicates that no update checking should
-    ///  take place.</remarks>
-    property AutoCheckProgramFrequency: Word
-      read GetAutoCheckProgramFrequency write SetAutoCheckProgramFrequency;
-
-    ///  <summary>Gets frequency, in days, that the program should automatically
-    ///  check for database updates.</summary>
-    function GetAutoCheckDatabaseFrequency: Word;
-    ///  <summary>Sets frequency, in days, that the program should automatically
-    ///  check for database updates.</summary>
-    procedure SetAutoCheckDatabaseFrequency(const Value: Word);
-    ///  <summary>Frequency, in days, that the program should automatically
-    ///  check for database updates.</summary>
-    ///  <remarks>A value of zero indicates that no update checking should
-    ///  take place.</remarks>
-    property AutoCheckDatabaseFrequency: Word
-      read GetAutoCheckDatabaseFrequency write SetAutoCheckDatabaseFrequency;
   end;
 
 
@@ -365,16 +340,6 @@ type
       ///  <summary>Information describing snippet detail page customisations.
       ///  </summary>
       fPageStructures: TSnippetPageStructures;
-      ///  <summary>Frequency, in days, that the program should automatically
-      ///  check for program updates.</summary>
-      ///  <remarks>A value of zero indicates that no update checking should
-      ///  take place.</remarks>
-      fAutoCheckProgramFrequency: Word;
-      ///  <summary>Frequency, in days, that the program should automatically
-      ///  check for database updates.</summary>
-      ///  <remarks>A value of zero indicates that no update checking should
-      ///  take place.</remarks>
-      fAutoCheckDatabaseFrequency: Word;
   public
     ///  <summary>Constructs a new object instance.</summary>
     constructor Create;
@@ -577,26 +542,6 @@ type
     ///  <remarks>Method of IPreferences.</remarks>
     procedure SetPageStructures(PageStructures: TSnippetPageStructures);
 
-    ///  <summary>Gets frequency, in days, that the program should automatically
-    ///  check for program updates.</summary>
-    ///  <remarks>Method of IPreferences.</remarks>
-    function GetAutoCheckProgramFrequency: Word;
-
-    ///  <summary>Sets frequency, in days, that the program should automatically
-    ///  check for program updates.</summary>
-    ///  <remarks>Method of IPreferences.</remarks>
-    procedure SetAutoCheckProgramFrequency(const Value: Word);
-
-    ///  <summary>Gets frequency, in days, that the program should automatically
-    ///  check for database updates.</summary>
-    ///  <remarks>Method of IPreferences.</remarks>
-    function GetAutoCheckDatabaseFrequency: Word;
-
-    ///  <summary>Sets frequency, in days, that the program should automatically
-    ///  check for database updates.</summary>
-    ///  <remarks>Method of IPreferences.</remarks>
-    procedure SetAutoCheckDatabaseFrequency(const Value: Word);
-
     ///  <summary>Assigns the properties of the given object to this object.
     ///  </summary>
     ///  <exceptions>Raises EBug if Src does not support IPreferences.
@@ -625,7 +570,6 @@ type
       cCodeGenerator = 'CodeGen';
       cDisplay = 'Display';
       cPageStructures = 'SnippetPageStructure';
-      cUpdating = 'Updating';
     class var
       ///  <summary>Stores reference to singleton instance of this class.
       ///  </summary>
@@ -688,8 +632,6 @@ begin
   Self.SetCustomHiliteColours(SrcPref.CustomHiliteColours);
   Self.SetWarnings(SrcPref.Warnings);
   Self.SetPageStructures(SrcPref.PageStructures);
-  Self.fAutoCheckProgramFrequency := SrcPref.AutoCheckProgramFrequency;
-  Self.fAutoCheckDatabaseFrequency := SrcPref.AutoCheckDatabaseFrequency;
 end;
 
 constructor TPreferences.Create;
@@ -709,16 +651,6 @@ destructor TPreferences.Destroy;
 begin
   fPageStructures.Free;
   inherited;
-end;
-
-function TPreferences.GetAutoCheckDatabaseFrequency: Word;
-begin
-  Result := fAutoCheckDatabaseFrequency;
-end;
-
-function TPreferences.GetAutoCheckProgramFrequency: Word;
-begin
-  Result := fAutoCheckProgramFrequency;
 end;
 
 function TPreferences.GetCustomHiliteColours: IStringList;
@@ -815,16 +747,6 @@ end;
 function TPreferences.GetWarnings: IWarnings;
 begin
   Result := fWarnings;
-end;
-
-procedure TPreferences.SetAutoCheckDatabaseFrequency(const Value: Word);
-begin
-  fAutoCheckDatabaseFrequency := Value;
-end;
-
-procedure TPreferences.SetAutoCheckProgramFrequency(const Value: Word);
-begin
-  fAutoCheckProgramFrequency := Value;
 end;
 
 procedure TPreferences.SetCustomHiliteColours(const Colours: IStringList);
@@ -956,8 +878,6 @@ begin
   NewPref.CustomHiliteColours := Self.GetCustomHiliteColours;
   NewPref.Warnings := Self.GetWarnings;
   NewPref.PageStructures := Self.fPageStructures;
-  NewPref.AutoCheckProgramFrequency := Self.fAutoCheckProgramFrequency;
-  NewPref.AutoCheckDatabaseFrequency := Self.fAutoCheckDatabaseFrequency;
 end;
 
 constructor TPreferencesPersist.Create;
@@ -1046,14 +966,6 @@ begin
   Storage := Settings.ReadSection(ssPreferences, cPageStructures);
   TSnippetPageStructuresPersist.Load(Storage, fPageStructures);
 
-  // Read updating section
-  Storage := Settings.ReadSection(ssPreferences, cUpdating);
-  fAutoCheckProgramFrequency := Storage.GetInteger(
-    'AutoCheckProgramFrequency', 7  // checks for updates every week
-  );
-  fAutoCheckDatabaseFrequency := Storage.GetInteger(
-    'AutoCheckDatabaseFrequency', 7 // checks for updates every week
-  );
 end;
 
 destructor TPreferencesPersist.Destroy;
@@ -1126,12 +1038,6 @@ begin
   // Write page structure section
   Storage := Settings.EmptySection(ssPreferences, cPageStructures);
   TSnippetPageStructuresPersist.Save(Storage, fPageStructures);
-
-  // Write updating section
-  Storage := Settings.EmptySection(ssPreferences, cUpdating);
-  Storage.SetInteger('AutoCheckProgramFrequency', fAutoCheckProgramFrequency);
-  Storage.SetInteger('AutoCheckDatabaseFrequency', fAutoCheckDatabaseFrequency);
-  Storage.Save;
 
   inherited;
 end;
