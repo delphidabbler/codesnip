@@ -367,10 +367,6 @@
 				<Form>TitledFrame</Form>
 				<DesignClass>TFrame</DesignClass>
 			</DCCReference>
-			<DCCReference Include="FrUpdatePrefs.pas">
-				<Form>UpdatePrefsFrame</Form>
-				<DesignClass>TFrame</DesignClass>
-			</DCCReference>
 			<DCCReference Include="Hiliter.UAttrs.pas"/>
 			<DCCReference Include="Hiliter.UCSS.pas"/>
 			<DCCReference Include="Hiliter.UFileHiliter.pas"/>

@@ -169,7 +169,6 @@ uses
   FrSourcePrefs in 'FrSourcePrefs.pas' {SourcePrefsFrame: TFrame},
   FrTextPreview in 'FrTextPreview.pas' {TextPreviewFrame: TFrame},
   FrTitled in 'FrTitled.pas' {TitledFrame: TFrame},
-  FrUpdatePrefs in 'FrUpdatePrefs.pas' {UpdatePrefsFrame: TFrame},
   Hiliter.UAttrs in 'Hiliter.UAttrs.pas',
   Hiliter.UCSS in 'Hiliter.UCSS.pas',
   Hiliter.UFileHiliter in 'Hiliter.UFileHiliter.pas',
