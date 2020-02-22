@@ -484,14 +484,6 @@ begin
   finally
     CompilerList.Free;
   end;
-  Tplt.ResolvePlaceholderText(
-    'ProgramAutoCheckFrequency',
-    UpdateFrequencyText(Preferences.AutoCheckProgramFrequency)
-  );
-  Tplt.ResolvePlaceholderText(
-    'DatabaseAutoCheckFrequency',
-    UpdateFrequencyText(Preferences.AutoCheckDatabaseFrequency)
-  );
 end;
 
 { TDBUpdatedPageHTML }
