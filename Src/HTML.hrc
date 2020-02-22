@@ -50,6 +50,12 @@ Res\HTML\dlg-codesubmit-license.html
 Res\HTML\dlg-codesubmit-submit.html
 Res\HTML\dlg-codesubmit-finished.html
 
+# get delphidabbler snippets database wizard
+Res\HTML\dlg-dbupdate-intro-tplt.html
+Res\HTML\dlg-dbupdate-load.html
+Res\HTML\dlg-dbupdate-finish.html
+
+
 # Detail pane pages, scripts and CSS
 # ==================================
 
@@ -140,4 +146,3 @@ Res\Img\Egg\blue-paper.png
 
 # donate dialogue - £ sign image
 Res\Img\pound-sign.png
-

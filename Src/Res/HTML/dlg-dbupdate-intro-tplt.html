@@ -1,0 +1,67 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<!--
+ * This Source Code Form is subject to the terms of the Mozilla Public License,
+ * v. 2.0. If a copy of the MPL was not distributed with this file, You can
+ * obtain one at http://mozilla.org/MPL/2.0/
+ *
+ * Copyright (C) 2020, Peter Johnson (www.delphidabbler.com).
+ *
+ * Information displayed on the Intro page of the main Database Installation
+ * Wizard.
+-->
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+  <head>
+    <title>dlg-dbupdate-intro-tplt.html</title>
+  </head>
+
+  <body>
+
+    <p class="framed">
+      <span class="warning">Important Note:</span> you are <strong>strongly advised</strong> to back up your user database before going ahead with this installation. To do this cancel this dialogue box then use the <em>Database | Backup User Database</em> menu option to create a backup, then come back here. <!-- TODO: add a backup help topic <a
+        class="help-link"
+        href="help:xxxxx"
+      >View backup help</a>. -->
+    </p>
+
+    <p>
+      Before you can install a new version of the DelphiDabbler Code Snippets Database you need to download it from GitHub.
+    </p>
+
+    <p>
+      First go to <a
+        class="external-link"
+        href="<%CSDBReleaseURL%>"
+      ><%CSDBReleaseURL%></a> and find the latest release of the database built for <em>CodeSnip</em> v4.16 and later. Look for a zip file whose name has the form <code>csdb416-v2.x.x.zip</code> where <code>2.x.x</code> is the database version number.
+    </p>
+
+    <p>
+      Download the file and unzip it into a folder on your computer. Make a note of the folder's location - it will be needed in the next step.
+    </p>
+
+    <p>
+      <strong>Note:</strong> Your chosen download folder:
+    </p>
+
+    <ul>
+      <li>
+         <strong>must</strong> be empty before downloading the database.
+      </li>
+      <li>
+        <strong>must not</strong> be a sub-directory of <em>CodeSnip</em>'s application or user data directories.
+      </li>
+    </ul>
+
+    <p>
+      Once the file has been downloaded and unzipped, click the <em>Next</em> button.
+    </p>
+
+  </body>
+
+</html>
