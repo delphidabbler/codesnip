@@ -26,7 +26,7 @@ uses
   // Project
   Favourites.UManager, FmHelpAware, FrDetail, FrOverview, FrTitled,
   IntfNotifier, UCompileMgr, UDialogMgr, UHistory, UMainDisplayMgr, USearch,
-  UStatusBarMgr, UUpdateCheckers, UWindowSettings;
+  UStatusBarMgr, UWindowSettings;
 
 
 type
@@ -505,9 +505,6 @@ type
       fCompileMgr: TMainCompileMgr;
       ///  <summary>Object that manages favourites.</summary>
       fFavouritesMgr: TFavouritesManager;
-      ///  <summary>Object that checks for program and database updates in a
-      ///  background thread.</summary>
-      fUpdateChecker: TUpdateCheckerMgr;
 
     ///  <summary>Displays view item given by TViewItemAction instance
     ///  referenced by Sender and adds to history list.</summary>
@@ -575,7 +572,7 @@ uses
   Windows, Graphics,
   // Project
   DB.UCategory, DB.UMain, DB.USnippet, FmSplash, FmTrappedBugReportDlg,
-  FmWaitDlg, IntfFrameMgrs, Notifications.UDisplayMgr, UActionFactory, UAppInfo,
+  FmWaitDlg, IntfFrameMgrs, UActionFactory, UAppInfo,
   UClassHelpers, UCodeShareMgr, UCommandBars, UConsts, UCopyInfoMgr,
   UCopySourceMgr, UDatabaseLoader, UDatabaseLoaderUI, UDetailTabAction,
   UEditSnippetAction, UExceptions, UHelpMgr, UHistoryMenus, UKeysHelper,
@@ -1282,13 +1279,6 @@ end;
 procedure TMainForm.FormDestroy(Sender: TObject);
 begin
   inherited;
-  // Stop update checking threads
-  fUpdateChecker.StopThreads;
-  fUpdateChecker.Free;
-
-  // Stop notification display sub-system
-  TNotificationDisplayMgr.Stop;
-
   // Save any changes to user database
   with Database as IDatabaseEdit do
   begin
@@ -1528,13 +1518,6 @@ begin
     // *** Must be done AFTER database has loaded ***
     fFavouritesMgr := TFavouritesManager.Create(fNotifier);
 
-    // Start notification display sub-system
-    TNotificationDisplayMgr.Start(Self);
-
-    // Start update checking manager
-    // *** Should be done after notification window listener starts
-    fUpdateChecker := TUpdateCheckerMgr.Create;
-    fUpdateChecker.StartThreads;
   finally
     // Ready to start using app: request splash form closes and enable form
     SplashForm.RequestClose;
