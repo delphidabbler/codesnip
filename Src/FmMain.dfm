@@ -661,11 +661,10 @@ inherited MainForm: TMainForm
     end
     object actUpdateDbase: TAction
       Category = 'Database'
-      Caption = 'Update From Web...'
+      Caption = 'Install or Update DelphiDabbler Snippets Database...'
       Hint = 
-        'Update database from web|Update the main snippet database from t' +
-        'he internet'
-      ImageIndex = 7
+        'Install or update DelphiDabbler Code Snippets database|Install o' +
+        'r update the main DelphiDabbler Code Snippets database'
       OnExecute = actUpdateDbaseExecute
     end
     object actExportCode: TAction
