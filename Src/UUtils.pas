@@ -337,7 +337,7 @@ begin
     raise EConvertError.CreateFmt(sBadDate, [SQLDateTime]);
 end;
 
-function TryParseSQLDateTime(const SQLDateStr: string; out Value: TDateTime):
+function TryParseSQLDateTime(const SQLDateTime: string; out Value: TDateTime):
   Boolean;
 var
   Year, Month, Day, Hour, Min, Sec: Word;
@@ -436,16 +436,6 @@ begin
     and (Int64Rec(Value64).Hi = 0);
   if Result then
     Value := Int64Rec(Value64).Lo;
-end;
-
-function TryStrToWord(const S: string; out Value: Word): Boolean;
-var
-  ValueInt: Integer;
-begin
-  Result := TryStrToInt(S, ValueInt)
-    and (LongRec(ValueInt).Hi = 0);
-  if Result then
-    Value := LongRec(ValueInt).Lo;
 end;
 
 function IsEqualBytes(const BA1, BA2: TBytes; const Count: Cardinal):
