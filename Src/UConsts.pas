@@ -30,6 +30,7 @@ const
   VTAB        = #11;    // vertical tab character
   FF          = #12;    // form feed character
   CR          = #13;    // carriage return character
+  SUB         = #26;    // ASCII SUB character
   ESC         = #27;    // escape character
   SINGLEQUOTE = '''';   // single quote character
   DOUBLEQUOTE = '"';    // double quote character
@@ -37,6 +38,7 @@ const
   CRLF  = CR + LF;      // carriage return followed by line feed
   EOL   = CRLF;         // end of line character sequence for Windows systems
   EOL2  = EOL + EOL;    // 2 end of line sequences
+  EOF   = SUB;          // end of file character
 
   RT_HTML = MakeIntResource(23);    // HTML resource identifier
 
