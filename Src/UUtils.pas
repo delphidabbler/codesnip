@@ -89,11 +89,21 @@ function NowGMT: TDateTime;
 
 ///  <summary>Converts a date-time value in SQL format into a TDateTime.
 ///  </summary>
-///  <param name="SQLDate">string [in] SQL format date-time value to be
+///  <param name="SQLDateTime">string [in] SQL format date-time value to be
 ///  converted.</param>
 ///  <returns>TDateTime. Converted value.</returns>
 ///  <remarks>SQLDate must be in YYYY-MM-DD hh:mm:ss format.</remarks>
-function ParseSQLDateTime(const SQLDate: string): TDateTime;
+function ParseSQLDateTime(const SQLDateTime: string): TDateTime;
+
+///  <summary>Attempts to convert a date-time value in SQL format into a
+///  TDateTime value.</summary>
+///  <param name="SQLDateTime">string [in] SQL format date-time value to be
+///  converted.</param>
+///  <param name="Value">TDateTime [out] Set to converted date-time value if
+///  conversion succeeded or undefined if coversion failed.</param>
+///  <returns>Boolean. True if conversion succeeded, False otherwise.</returns>
+function TryParseSQLDateTime(const SQLDateTime: string; out Value: TDateTime):
+  Boolean;
 
 ///  <summary>Get a desired interface pointer to an object instance.</summary>
 ///  <param name="Instance">IInterface [in] Instance for which an interface is
@@ -165,10 +175,11 @@ function IsEqualBytes(const BA1, BA2: TBytes; const Count: Cardinal):
 ///  <remarks>If both arrays are empty they are considered equal.</remarks>
 function IsEqualBytes(const BA1, BA2: TBytes): Boolean; overload;
 
-///  <summary>Attempts to convert a string to a Word value.</summary>
-///  <param name="S">string [in] String to convert.</param>
-///  <param name="W">Word [out] Converted value.</param>
-///  <returns>Boolean. True if conversion succeeded, False otherwise.</returns>
+///  <summary>Attempts to convert string S into a Word value.</summary>
+///  <param name="S">string [in] String to be converted.</param>
+///  <param name="W">Cardinal [out] Value of converted string. Undefined if
+///  conversion fails.</param>
+///  <returns>Boolean. True if conversion succeeds, False if not.</returns>
 ///  <remarks>String must represent a non-negative integer that is representable
 ///  as a Word.</remarks>
 function TryStrToWord(const S: string; out W: Word): Boolean;
@@ -179,7 +190,7 @@ implementation
 
 uses
   // Delphi
-  Windows, ShlObj, ActiveX, Messages, Character, Math,
+  Windows, ShlObj, ActiveX, Messages, Character, Math, DateUtils,
   // Project
   UConsts, UStrUtils;
 
@@ -318,20 +329,32 @@ begin
   Result := FormatDateTime(cRFC1123Pattern, NowGMT);
 end;
 
-function ParseSQLDateTime(const SQLDate: string): TDateTime;
+function ParseSQLDateTime(const SQLDateTime: string): TDateTime;
+resourcestring
+  sBadDate = '"%s" is not a valid SQL DateTime';
 begin
-  Result := SysUtils.EncodeDate(
-    SysUtils.StrToInt(Copy(SQLDate, 1, 4)),
-    SysUtils.StrToInt(Copy(SQLDate, 6, 2)),
-    SysUtils.StrToInt(Copy(SQLDate, 9, 2))
-  )
-  +
-  SysUtils.EncodeTime(
-    SysUtils.StrToInt(Copy(SQLDate, 12, 2)),
-    SysUtils.StrToInt(Copy(SQLDate, 15, 2)),
-    SysUtils.StrToInt(Copy(SQLDate, 18, 2)),
-    0
-  );
+  if not TryParseSQLDateTime(SQLDateTime, Result) then
+    raise EConvertError.CreateFmt(sBadDate, [SQLDateTime]);
+end;
+
+function TryParseSQLDateTime(const SQLDateStr: string; out Value: TDateTime):
+  Boolean;
+var
+  Year, Month, Day, Hour, Min, Sec: Word;
+begin
+  if not TryStrToWord(Copy(SQLDateTime, 1, 4), Year) then
+    Exit(False);
+  if not TryStrToWord(Copy(SQLDateTime, 6, 2), Month) then
+    Exit(False);
+  if not TryStrToWord(Copy(SQLDateTime, 9, 2), Day) then
+    Exit(False);
+  if not TryStrToWord(Copy(SQLDateTime, 12, 2), Hour) then
+    Exit(False);
+  if not TryStrToWord(Copy(SQLDateTime, 15, 2), Min) then
+    Exit(False);
+  if not TryStrToWord(Copy(SQLDateTime, 18, 2), Sec) then
+    Exit(False);
+  Result := TryEncodeDateTime(Year, Month, Day, Hour, Min, Sec, 0, Value);
 end;
 
 procedure GetIntf(const Instance: IInterface; const IID: TGUID; out Intf);
@@ -413,6 +436,16 @@ begin
     and (Int64Rec(Value64).Hi = 0);
   if Result then
     Value := Int64Rec(Value64).Lo;
+end;
+
+function TryStrToWord(const S: string; out Value: Word): Boolean;
+var
+  ValueInt: Integer;
+begin
+  Result := TryStrToInt(S, ValueInt)
+    and (LongRec(ValueInt).Hi = 0);
+  if Result then
+    Value := LongRec(ValueInt).Lo;
 end;
 
 function IsEqualBytes(const BA1, BA2: TBytes; const Count: Cardinal):
