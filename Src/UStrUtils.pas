@@ -266,6 +266,12 @@ function StrBackslashEscape(const S, Escapable, Escapes: string): string;
 ///  </remarks>
 procedure StrArrayToStrList(const SA: array of string; const SL: TStrings);
 
+///  <summary>Checks if the given string is the empty string. If the optional
+///  IgnoreWhiteSpace parameter is True then the string is trimmed of leading
+///  and trailing white space before checking</summary>
+function StrIsEmpty(const S: string; const IgnoreWhiteSpace: Boolean = False):
+  Boolean;
+
 
 implementation
 
@@ -890,6 +896,15 @@ begin
   SL.Clear;
   for S in SA do
     SL.Add(S);
+end;
+
+function StrIsEmpty(const S: string; const IgnoreWhiteSpace: Boolean = False):
+  Boolean;
+begin
+  if IgnoreWhiteSpace then
+    Result := StrTrim(S) = ''
+  else
+    Result := S = '';
 end;
 
 end.
