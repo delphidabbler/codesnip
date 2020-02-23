@@ -201,7 +201,14 @@ function StrQuoteSpaced(const Str: UnicodeString;
 ///  with each list element being separated by Delim. Empty string list elements
 ///  are included in the output string only if AllowEmpty is True.</summary>
 function StrJoin(const SL: TStrings; const Delim: UnicodeString;
-  const AllowEmpty: Boolean = True): UnicodeString;
+  const AllowEmpty: Boolean = True): UnicodeString; overload;
+
+///  <summary>Joins all strings from an array of string together into a single
+///  string with each array element being separated by Delim. Empty string list
+///  elements are included in the output string only if AllowEmpty is True.
+///  </summary>
+function StrJoin(const Strs: array of string; const Delim: UnicodeString;
+  const AllowEmpty: Boolean = True): UnicodeString; overload;
 
 ///  <summary>Splits string Str at delimiter Delim and records the components in
 ///  List. If TrimStrs is True spaces are trimmed from each component. If
@@ -500,6 +507,29 @@ begin
       end
       else
         Result := Result + Delim + SL[Idx];
+    end;
+  end;
+end;
+
+function StrJoin(const Strs: array of string; const Delim: UnicodeString;
+  const AllowEmpty: Boolean = True): UnicodeString; overload;
+var
+  S: string;          // each string in array
+  FirstItem: Boolean; // flag true until first item has been added to result
+begin
+  Result := '';
+  FirstItem := True;
+  for S in Strs do
+  begin
+    if (S <> '') or AllowEmpty then
+    begin
+      if FirstItem then
+      begin
+        Result := S;
+        FirstItem := False;
+      end
+      else
+        Result := Result + Delim + S;
     end;
   end;
 end;
