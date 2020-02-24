@@ -214,8 +214,7 @@ uses
   XMLIntf,
   // Project
   UComparers,
-  UConsts,
-  Web.UExceptions;
+  UConsts;
 
 
 { TSWAGReader }
