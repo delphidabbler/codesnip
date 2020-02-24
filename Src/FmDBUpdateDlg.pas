@@ -217,7 +217,7 @@ begin
   frmIntro.Top := 0;
   frmIntro.Left := 0;
 
-  // tsFile
+  // tsFolder
   TCtrlArranger.AlignVCentres(
     TCtrlArranger.BottomOf(lblFolder, 6), [edPath, btnBrowse]
   );
