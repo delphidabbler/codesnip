@@ -584,7 +584,6 @@
 			<DCCReference Include="Web.UExceptions.pas"/>
 			<DCCReference Include="Web.UHTTPEx.pas"/>
 			<DCCReference Include="Web.UInfo.pas"/>
-			<DCCReference Include="Web.USWAGRESTMgr.pas"/>
 			<None Include="CodeSnip.todo"/>
 			<BuildConfiguration Include="Base">
 				<Key>Base</Key>

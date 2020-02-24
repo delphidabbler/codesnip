@@ -385,8 +385,7 @@ uses
   Web.UDownloadMonitor in 'Web.UDownloadMonitor.pas',
   Web.UExceptions in 'Web.UExceptions.pas',
   Web.UHTTPEx in 'Web.UHTTPEx.pas',
-  Web.UInfo in 'Web.UInfo.pas',
-  Web.USWAGRESTMgr in 'Web.USWAGRESTMgr.pas';
+  Web.UInfo in 'Web.UInfo.pas';
 
 // Include resources
 {$Resource ExternalObj.tlb}       // Type library file
