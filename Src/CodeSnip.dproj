@@ -384,6 +384,7 @@
 			<DCCReference Include="SWAG.UImporter.pas"/>
 			<DCCReference Include="SWAG.UReader.pas"/>
 			<DCCReference Include="SWAG.USnippetCache.pas"/>
+			<DCCReference Include="SWAG.UXMLProcessor.pas"/>
 			<DCCReference Include="UActionFactory.pas"/>
 			<DCCReference Include="UAnchors.pas"/>
 			<DCCReference Include="UAppInfo.pas"/>

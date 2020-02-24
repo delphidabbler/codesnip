@@ -4,7 +4,7 @@ inherited SWAGImportDlg: TSWAGImportDlg
   ClientHeight = 505
   ClientWidth = 687
   ExplicitWidth = 693
-  ExplicitHeight = 533
+  ExplicitHeight = 534
   PixelsPerInch = 96
   TextHeight = 13
   inherited pnlBody: TPanel
@@ -25,6 +25,10 @@ inherited SWAGImportDlg: TSWAGImportDlg
       object tsIntro: TTabSheet
         Caption = 'tsIntro'
         TabVisible = False
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         inline frmIntro: TFixedHTMLDlgFrame
           Left = 0
           Top = 0
@@ -55,10 +59,61 @@ inherited SWAGImportDlg: TSWAGImportDlg
           end
         end
       end
+      object tsFolder: TTabSheet
+        Caption = 'tsFolder'
+        ImageIndex = 4
+        TabVisible = False
+        ExplicitLeft = 0
+        ExplicitTop = 27
+        ExplicitWidth = 0
+        ExplicitHeight = 425
+        object lblFolder: TLabel
+          Left = 0
+          Top = 8
+          Width = 393
+          Height = 13
+          Caption = 
+            'Enter the SWAG database download &folder: (click the button to b' +
+            'rowse for folder)'
+          FocusControl = edPath
+        end
+        object lblFolderPageInfo: TLabel
+          Left = 0
+          Top = 72
+          Width = 270
+          Height = 13
+          Caption = 'Click the Next button to choose which snippets to import'
+        end
+        object edPath: TEdit
+          Left = 0
+          Top = 28
+          Width = 484
+          Height = 21
+          TabOrder = 0
+        end
+        object btnBrowse: TButton
+          Left = 490
+          Top = 28
+          Width = 27
+          Height = 21
+          Action = actBrowse
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'Tahoma'
+          Font.Style = [fsBold]
+          ParentFont = False
+          TabOrder = 1
+        end
+      end
       object tsCategories: TTabSheet
         Caption = 'tsCategories'
         ImageIndex = 1
         TabVisible = False
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object lblCategories: TLabel
           Left = 0
           Top = 45
@@ -131,6 +186,10 @@ inherited SWAGImportDlg: TSWAGImportDlg
         Caption = 'tsUpdate'
         ImageIndex = 2
         TabVisible = False
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object lblUpdateDesc: TLabel
           Left = 0
           Top = 3
@@ -173,6 +232,10 @@ inherited SWAGImportDlg: TSWAGImportDlg
         Caption = 'tsFinish'
         ImageIndex = 3
         TabVisible = False
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         inline frmOutro: THTMLTpltDlgFrame
           Left = 0
           Top = 0
@@ -217,6 +280,10 @@ inherited SWAGImportDlg: TSWAGImportDlg
       Caption = '&Preview Selected Snippet...'
       OnExecute = actDisplaySnippetExecute
       OnUpdate = actDisplaySnippetUpdate
+    end
+    object actBrowse: TAction
+      Caption = '...'
+      OnExecute = actBrowseExecute
     end
   end
 end
