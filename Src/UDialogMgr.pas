@@ -90,11 +90,6 @@ type
     function ExecPreferencesDlg(const PageClassName: string;
       out UpdateUI: Boolean): Boolean; overload;
 
-    ///  <summary>Displays Registration dialogue box.</summary>
-    ///  <returns>Boolean. True if user OKd dialogue or False if user cancelled.
-    ///  </returns>
-    function ExecRegistrationDlg: Boolean;
-
     ///  <summary>Displays Select Snippets dialogue box.</summary>
     ///  <param name="SelectedSnippets">TSnippetList [in] List of pre-selected
     ///  snippets.</param>
@@ -142,9 +137,6 @@ type
     ///  </returns>
     function ExecProxyServerDlg: Boolean;
 
-    ///  <summary>Displays the News dialogue box.</summary>
-    procedure ShowNewsDlg;
-
     ///  <summary>Displays the Test Compile dialogue box.</summary>
     ///  <param name="CompileMgr">TCompileMgr [in] Object used to manage test
     ///  compilation and to retain results.</param>
@@ -152,9 +144,6 @@ type
     ///  </param>
     procedure ShowTestCompileDlg(const CompileMgr: TCompileMgr;
       const Snippet: TSnippet);
-
-    ///  <summary>Displays the Check For Program Updates dialogue box.</summary>
-    procedure ShowProgramUpdatesDlg;
 
     ///  <summary>Displays the SWAG Import Wizard dialogue box.</summary>
     procedure ShowSWAGImportDlg;
@@ -169,8 +158,8 @@ uses
   Forms,
   // Project
   FmAboutDlg, FmDBUpdateDlg, FmDependenciesDlg, FmDonateDlg, FmFindCompilerDlg,
-  FmFindTextDlg, FmFindXRefsDlg, FmNewsDlg, FmPreferencesDlg, FmPrintDlg,
-  FmProgramUpdatesDlg, FmProxyServerDlg, FmRegistrationDlg,
+  FmFindTextDlg, FmFindXRefsDlg, FmPreferencesDlg, FmPrintDlg,
+  FmProxyServerDlg,
   FmSelectionSearchDlg, FmSWAGImportDlg, FmTestCompileDlg, FmUserBugReportDlg,
   UTestUnitDlgMgr;
 
@@ -221,11 +210,6 @@ begin
   Result := TProxyServerDlg.Execute(Owner);
 end;
 
-function TDialogMgr.ExecRegistrationDlg: Boolean;
-begin
-  Result := TRegistrationDlg.Execute(Owner);
-end;
-
 function TDialogMgr.ExecSelectionSearchDlg(
   const SelectedSnippets: TSnippetList; out ASearch: ISearch): Boolean;
 begin
@@ -253,16 +237,6 @@ end;
 procedure TDialogMgr.ShowDonateDlg;
 begin
   TDonateDlg.Execute(Owner);
-end;
-
-procedure TDialogMgr.ShowNewsDlg;
-begin
-  TNewsDlg.Execute(Owner);
-end;
-
-procedure TDialogMgr.ShowProgramUpdatesDlg;
-begin
-  TProgramUpdatesDlg.Execute(Owner);
 end;
 
 procedure TDialogMgr.ShowSWAGImportDlg;

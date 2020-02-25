@@ -33,8 +33,6 @@ type
   ///  </remarks>
   TFileIO = record
   strict private
-    class function CheckBOM(const Bytes: TBytes; const Encoding: TEncoding):
-      Boolean; static;
     ///  <summary>
     ///  Appends whole contents of a byte array to a stream.
     ///  </summary>
@@ -45,6 +43,38 @@ type
     ///  </summary>
     class function StreamToBytes(const Stream: TStream): TBytes; static;
   public
+    ///  <summary>Checks if given byte array begins with the BOM of the given
+    ///  encoding.</summary>
+    ///  <remarks>
+    ///  <para>If the given encoding does not have a BOM then False is
+    ///  returned.</para>
+    ///  <para>If the byte array has fewer bytes than the required BOM then
+    ///  False is returned.</para>
+    ///  </remarks>
+    class function CheckBOM(const Bytes: TBytes; const Encoding: TEncoding):
+      Boolean; overload; static;
+    ///  <summary>Checks if given stream begins with the BOM of the given
+    ///  encoding.</summary>
+    ///  <remarks>
+    ///  <para>Stream must support changing the current position otherwise an
+    ///  exception will be raised.</para>
+    ///  <para>If the given encoding does not have a BOM then False is
+    ///  returned.</para>
+    ///  <para>If the stream has fewer bytes than the required BOM then False
+    ///  is returned.</para>
+    ///  </remarks>
+    class function CheckBOM(const Stream: TStream; const Encoding: TEncoding):
+      Boolean; overload; static;
+    ///  <summary>Checks if given file begins with the BOM of the given
+    ///  encoding.</summary>
+    ///  <remarks>
+    ///  <para>If the given encoding does not have a BOM then False is
+    ///  returned.</para>
+    ///  <para>If the file has fewer bytes than the required BOM then False
+    ///  is returned.</para>
+    ///  </remarks>
+    class function CheckBOM(const FileName: TFileName;
+      const Encoding: TEncoding): Boolean; overload; static;
     ///  <summary>
     ///  Writes all the bytes from a byte array to a file.
     ///  </summary>
@@ -138,6 +168,11 @@ type
 implementation
 
 
+uses
+  // Project
+  UUtils;
+
+
 resourcestring
   // Error messages
   sBadBOM = 'Preamble of file %s does not match expected encoding';
@@ -156,17 +191,46 @@ class function TFileIO.CheckBOM(const Bytes: TBytes; const Encoding: TEncoding):
   Boolean;
 var
   Preamble: TBytes;
-  I: Integer;
 begin
+  Assert(Assigned(Encoding), 'TFileIO.CheckBOM: Encoding is nil');
   Preamble := Encoding.GetPreamble;
   if Length(Preamble) = 0 then
     Exit(False);
-  if Length(Bytes) < Length(Preamble) then
+  Result := IsEqualBytes(Bytes, Preamble, Length(Preamble));
+end;
+
+class function TFileIO.CheckBOM(const Stream: TStream;
+  const Encoding: TEncoding): Boolean;
+var
+  Bytes: TBytes;
+  Preamble: TBytes;
+  OldPos: Int64;
+begin
+  Assert(Assigned(Stream), 'TFileIO.CheckBOM: Stream is nil');
+  Assert(Assigned(Encoding), 'TFileIO.CheckBOM: Encoding is nil');
+  Preamble := Encoding.GetPreamble;
+  if Stream.Size < Length(Preamble) then
     Exit(False);
-  for I := 0 to Pred(Length(Preamble)) do
-    if Bytes[I] <> Preamble[I] then
-      Exit(False);
-  Result := True;
+  OldPos := Stream.Position;
+  SetLength(Bytes, Length(Preamble));
+  Stream.Position := 0;
+  Stream.ReadBuffer(Pointer(Bytes)^, Length(Preamble));
+  Stream.Position := OldPos;
+  Result := IsEqualBytes(Bytes, Preamble);
+end;
+
+class function TFileIO.CheckBOM(const FileName: TFileName;
+  const Encoding: TEncoding): Boolean;
+var
+  Stream: TStream;
+begin
+  Assert(Assigned(Encoding), 'TFileIO.CheckBOM: Encoding is nil');
+  Stream := TFileStream.Create(FileName, fmOpenRead or fmShareDenyNone);
+  try
+    Result := CheckBOM(Stream, Encoding);
+  finally
+    Stream.Free;
+  end;
 end;
 
 class procedure TFileIO.CopyFile(const SrcFileName, DestFileName: string);

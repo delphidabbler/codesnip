@@ -24,10 +24,6 @@ DELPHIROOT = $(DELPHIXE)
 !error DELPHIROOT or DELPHIXE environment variable required.
 !endif
 
-!ifndef INDY10
-!error INDY10 environment variable required.
-!endif
-
 # Define macros for required tools
 
 TLIBIMP = "$(DELPHIROOT)\Bin\TLibImp.exe"
@@ -127,7 +123,7 @@ CodeSnip.exe:
 !ifdef PORTABLE
   @if exist $(EXE)\$(@F) copy $(EXE)\$(@F) $(EXE)\$(@F).bak
 !endif
-  @$(DCC32) $(@B).dpr -B -U"$(INDY10)" $(DELPHIDEFINES)
+  @$(DCC32) $(@B).dpr -B  $(DELPHIDEFINES)
 !ifdef PORTABLE
   @copy $(EXE)\$(@F) $(EXE)\$(@B)-p.exe /Y
   @del $(EXE)\$(@F)

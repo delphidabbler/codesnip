@@ -4,7 +4,7 @@ inherited SWAGImportDlg: TSWAGImportDlg
   ClientHeight = 505
   ClientWidth = 687
   ExplicitWidth = 693
-  ExplicitHeight = 533
+  ExplicitHeight = 534
   PixelsPerInch = 96
   TextHeight = 13
   inherited pnlBody: TPanel
@@ -25,34 +25,73 @@ inherited SWAGImportDlg: TSWAGImportDlg
       object tsIntro: TTabSheet
         Caption = 'tsIntro'
         TabVisible = False
-        inline frmIntro: TFixedHTMLDlgFrame
+        inline frmIntro: THTMLTpltDlgFrame
           Left = 0
           Top = 0
           Width = 663
-          Height = 446
+          Height = 236
           Align = alTop
           TabOrder = 0
           TabStop = True
-          ExplicitWidth = 663
-          ExplicitHeight = 446
+          ExplicitLeft = 8
+          ExplicitTop = 8
           inherited pnlBrowser: TPanel
             Width = 663
-            Height = 446
-            ExplicitWidth = 663
-            ExplicitHeight = 446
             inherited wbBrowser: TWebBrowser
               Width = 663
-              Height = 446
-              ExplicitWidth = 663
-              ExplicitHeight = 446
+              ExplicitWidth = 320
+              ExplicitHeight = 240
               ControlData = {
-                4C00000086440000182E00000000000000000000000000000000000000000000
+                4C00000086440000641800000000000000000000000000000000000000000000
                 000000004C000000000000000000000001000000E0D057007335CF11AE690800
                 2B2E126208000000000000004C0000000114020000000000C000000000000046
                 8000000000000000000000000000000000000000000000000000000000000000
                 00000000000000000100000000000000000000000000000000000000}
             end
           end
+        end
+      end
+      object tsFolder: TTabSheet
+        Caption = 'tsFolder'
+        ImageIndex = 4
+        TabVisible = False
+        object lblFolder: TLabel
+          Left = 0
+          Top = 8
+          Width = 393
+          Height = 13
+          Caption = 
+            'Enter the SWAG database download &folder: (click the button to b' +
+            'rowse for folder)'
+          FocusControl = edPath
+        end
+        object lblFolderPageInfo: TLabel
+          Left = 0
+          Top = 72
+          Width = 270
+          Height = 13
+          Caption = 'Click the Next button to choose which snippets to import'
+        end
+        object edPath: TEdit
+          Left = 0
+          Top = 28
+          Width = 484
+          Height = 21
+          TabOrder = 0
+        end
+        object btnBrowse: TButton
+          Left = 490
+          Top = 28
+          Width = 27
+          Height = 21
+          Action = actBrowse
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'Tahoma'
+          Font.Style = [fsBold]
+          ParentFont = False
+          TabOrder = 1
         end
       end
       object tsCategories: TTabSheet
@@ -179,6 +218,8 @@ inherited SWAGImportDlg: TSWAGImportDlg
           Width = 663
           Height = 446
           Align = alTop
+          DoubleBuffered = False
+          ParentDoubleBuffered = False
           TabOrder = 0
           TabStop = True
           ExplicitWidth = 663
@@ -217,6 +258,10 @@ inherited SWAGImportDlg: TSWAGImportDlg
       Caption = '&Preview Selected Snippet...'
       OnExecute = actDisplaySnippetExecute
       OnUpdate = actDisplaySnippetUpdate
+    end
+    object actBrowse: TAction
+      Caption = '...'
+      OnExecute = actBrowseExecute
     end
   end
 end

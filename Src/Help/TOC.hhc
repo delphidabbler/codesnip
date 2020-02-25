@@ -140,10 +140,6 @@
       <param name="Local" value="HTML\task_customise.htm">
       </OBJECT>
     <LI> <OBJECT type="text/sitemap">
-      <param name="Name" value="Submit Code to the Database">
-      <param name="Local" value="HTML\task_submit.htm">
-      </OBJECT>
-    <LI> <OBJECT type="text/sitemap">
       <param name="Name" value="Export and Import Snippets">
       <param name="Local" value="HTML\task_export.htm">
       </OBJECT>

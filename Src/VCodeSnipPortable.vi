@@ -27,14 +27,14 @@ Character Set=1252
 Comments=Released under the terms of the Mozilla Public License v2.0 (http://www.mozilla.org/MPL/2.0/)
 Company Name=DelphiDabbler
 File Description=CodeSnip Database Viewer (Portable Edition)
-File Version=<#F1>.<#F2>.<#F3> build <#F4>
+File Version=<#F1>.<#F2>.<#F3> build <#F4>-[**dev**]
 Internal Name=<SHORTFNAME>
 Legal Copyright=Copyright © P.D.Johnson, 2005-<YEAR>.
 Legal Trademark=
 Original File Name=CodeSnip-p.exe
 Private Build=
 Product Name=DelphiDabbler CodeSnip
-Product Version=Release <#P1>.<#P2>.<#P3>
+Product Version=Release <#P1>.<#P2>.<#P3>-[**dev**]
 Special Build=Portable
 
 [Configuration Details]

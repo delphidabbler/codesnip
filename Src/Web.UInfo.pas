@@ -76,12 +76,6 @@ type
       ProductionServerHost = 'delphidabbler.com';
       ///  <summary>URL of DelphiDabbler website.</summary>
       WebsiteURL = 'http://' + ProductionServerHost;
-      ///  <summary>Template for URL of Code Snippets news feed.</summary>
-      ///  <remarks>'%d' placeholder must be replaced by the required number of
-      ///  days into the past the news feed should cover. Passing <c>0</c> as
-      ///  the number of days results in all news items being returned.
-      ///  </remarks>
-      NewsFeedTplt = WebSiteURL + '/feeds/site-news-feed?id=codesnip&days=%d';
   strict private
     ///  <summary>Returns the name of the server that hosts web services that
     ///  are used by CodeSnip.</summary>
@@ -93,24 +87,32 @@ type
     class function Host: string;
   public
     const
-      ///  <summary>URL of home page on DelphiDabbler website.</summary>
-      DelphiDabblerHomeURL = WebsiteURL + '/';
-      ///  <summary>URL of home page of the CodeSnip project.</summary>
-      ProgramHomeURL = WebsiteURL + '/url/codesnip-home';
+      ///  <summary>URL of CodeSnip's GitHub page.</summary>
+      GitHubURL = 'https://github.com/delphidabbler/codesnip';
+      ///  <summary>URL of the GitHub page where DelphiDabbler Code Snippets
+      ///  database releases are hosted.</summary>
+      CSDBReleaseURL = 'https://github.com/'
+        + 'delphidabbler/code-snippets/releases';
+      ///  <summary>URL of the GitHub page where SWAG database releases are
+      ///  hosted.</summary>
+      SWAGReleaseURL = 'https://github.com/delphidabbler/swag/releases';
       ///  <summary>URL of the online Code Snippets database.</summary>
       DatabaseURL = WebsiteURL + '/url/csdb';
       ///  <summary>URL used to make donations towards the CodeSnip project.
       ///  </summary>
       ///  <remarks>This URL redirects to the correct page on PayPal.</remarks>
-      DonateURL = WebsiteURL + '/url/donate-cs';
-      ///  <summary>URL used to view and report CodeSnip bugs.</summary>
-      ///  <remarks>This URL will redirect to the actual bug tracker which may
-      ///  be on an external site such as SourceForge or GitHub.</remarks>
-      BugTrackerURL = WebsiteURL + '/url/codesnip-bugs';
+      DonateURL = 'https://www.paypal.com/donate/?'
+        + 'token=LYnh7_DXV-YqTmX3Bilr9rCPN89oANmBTZmRCdNHu_qFSk2jo_'
+        + 'WzTYTXCE165U9hXEmwq0&country.x=GB&locale.x=GB';
+      ///  <summary>URL used to view and report CodeSnip bugs on GitHub.
+      ///  </summary>
+      BugTrackerURL = GitHubURL + '/issues';
       ///  <summary>URL of CodeSnip's FAQ web page.</summary>
-      ///  <remarks>This URL will redirect to the FAQ location which may be on
-      ///  an external site such as GitHub or SourceForge.</remarks>
-      FAQsURL = WebsiteURL + '/url/codesnip-faq';
+      ///  <remarks>This is the CodeSnip FAQ project on GitHub.</remarks>
+      FAQsURL = 'https://github.com/delphidabbler/codesnip-faq/'
+        + 'blob/master/README.md';
+      /// <summary>URL of the the CodeSnip blog.</summary>
+      BlogURL = 'http://codesnip-app.blogspot.com/';
   public
     ///  <summary>Returns the name of the server that hosts web services used by
     ///  CodeSnip when under testing. This server receives updated web services
@@ -130,11 +132,6 @@ type
     ///  <para>The server must be using the <c>http://</c> protocol.</para>
     ///  </remarks>
     class function TestServerHost: string;
-    ///  <summary>Builds the URL of the CodeSnip news feed.</summary>
-    ///  <param name="Age"><c>Word</c> [in] Maximum age, in days, of news items
-    ///  to be included in the feed.</param>
-    ///  <returns><c>string</c>. Required URL.</returns>
-    class function NewsFeedURL(const Age: Word): string;
     ///  <summary>Builds the URL of a web service.</summary>
     ///  <param name="URLTplt"><c>string</c>. [in] Template of URL of web
     ///  service script. Must contain a '%s' placeholder for host name.</param>
@@ -175,11 +172,6 @@ begin
     Result := TestServerHost
   else
     Result := ProductionServerHost;
-end;
-
-class function TWebInfo.NewsFeedURL(const Age: Word): string;
-begin
-  Result := Format(NewsFeedTplt, [Age]);
 end;
 
 class function TWebInfo.TestServerHost: string;

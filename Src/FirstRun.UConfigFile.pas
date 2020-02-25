@@ -77,7 +77,7 @@ type
   strict private
     const
       ///  <summary>Current user config file version.</summary>
-      FileVersion = 15;
+      FileVersion = 16;
   strict protected
     ///  <summary>Returns current user config file version.</summary>
     class function GetFileVersion: Integer; override;
@@ -98,7 +98,9 @@ type
     ///  <summary>Deletes unused key that determines detail pane index.
     ///  </summary>
     procedure DeleteDetailsPaneIndex;
-    {}{$ENDIF}
+    {$ENDIF}
+    ///  <summary>Deletes unused Prefs:News section.</summary>
+    procedure DeleteNewsPrefs;
     ///  <summary>Effectively renames MainWindow section used prior to version
     ///  11 as WindowState:MainForm.</summary>
     procedure RenameMainWindowSection;
@@ -126,7 +128,7 @@ type
   strict private
     const
       ///  <summary>Current common config file version.</summary>
-      FileVersion = 6;
+      FileVersion = 7;
   strict protected
     ///  <summary>Returns current common config file version.</summary>
     class function GetFileVersion: Integer; override;
@@ -137,6 +139,9 @@ type
     ///  a different section to common config file, hence need for overridden
     ///  methods.</remarks>
     procedure Stamp; override;
+    ///  <summary>Deletes program registration information from application
+    ///  section.</summary>
+    procedure DeleteRegistrationInfo;
   end;
 
 
@@ -284,6 +289,13 @@ begin
   DeleteIniSection('Prefs:Hiliter', CfgFileName);
 end;
 {$ENDIF}
+
+procedure TUserConfigFileUpdater.DeleteNewsPrefs;
+begin
+  if not TFile.Exists(CfgFileName, False) then
+    CreateNewFile;
+  DeleteIniSection('Prefs:News', CfgFileName);
+end;
 
 {$IFNDEF PORTABLE}
 procedure TUserConfigFileUpdater.DeleteProxyPassword;
@@ -487,6 +499,14 @@ begin
 end;
 
 { TCommonConfigFileUpdater }
+
+procedure TCommonConfigFileUpdater.DeleteRegistrationInfo;
+begin
+  if not TFile.Exists(CfgFileName, False) then
+    CreateNewFile;
+  DeleteIniKey('Application', 'RegCode', CfgFileName);
+  DeleteIniKey('Application', 'RegName', CfgFileName);
+end;
 
 class function TCommonConfigFileUpdater.GetFileVersion: Integer;
 begin

@@ -13,6 +13,14 @@
 }
 
 
+{TODO -cSWAG: Add facility to elect to use swag categories }
+{TODO -cSWAG: Consider removing callbacks }
+{TODO -cSWAG: Consider using cutdown version on progress form for init swag and
+              loading multiple snippets.
+              Perhaps use a base class frame - TBusyBaseFrame that gets
+              subclassed by TBusyFrame. Can also rewrite TProgressFrame as a
+              subclass of TBusyBaseFrame.}
+
 unit FmSWAGImportDlg;
 
 interface
@@ -36,6 +44,7 @@ uses
   FrHTMLTpltDlg,
   UBaseObjects,
   UContainers,
+  UCSSBuilder,
   SWAG.UCommon,
   SWAG.UImporter,
   SWAG.UReader, ActnList;
@@ -49,7 +58,6 @@ type
     tsIntro: TTabSheet;
     tsCategories: TTabSheet;
     lblCategories: TLabel;
-    frmIntro: TFixedHTMLDlgFrame;
     lbCategories: TListBox;
     lblCategoriesDesc: TLabel;
     lblSelectSnippets: TLabel;
@@ -64,6 +72,13 @@ type
     actDisplayCategory: TAction;
     actDisplaySnippet: TAction;
     btnDisplaySnippet: TButton;
+    tsFolder: TTabSheet;
+    lblFolder: TLabel;
+    edPath: TEdit;
+    lblFolderPageInfo: TLabel;
+    btnBrowse: TButton;
+    actBrowse: TAction;
+    frmIntro: THTMLTpltDlgFrame;
     ///  <summary>Handles clicks on the check boxes next to snippets in the
     ///  snippet selection list box by selecting and deselecting snippets for
     ///  inclusion in the import.</summary>
@@ -85,21 +100,33 @@ type
     ///  list box when the user presses enter.</summary>
     procedure lbCategoriesKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
-    procedure actDisplayCategoryUpdate(Sender: TObject);
+    ///  <summary>Executes action to display a Browse for Folders dialogue box
+    ///  and store the chosen folder in an edit box.</summary>
+    procedure actBrowseExecute(Sender: TObject);
+    ///  <summary>Executes action to display the snippets in the selected
+    ///  category.</summary>
     procedure actDisplayCategoryExecute(Sender: TObject);
+    ///  <summary>Updates enabled state of display category action.</summary>
+    procedure actDisplayCategoryUpdate(Sender: TObject);
+    ///  <summary>Executes action to preview the selected snippet.</summary>
     procedure actDisplaySnippetExecute(Sender: TObject);
+    ///  <summary>Updates enabled state of display snippet category.</summary>
     procedure actDisplaySnippetUpdate(Sender: TObject);
   strict private
     const
       ///  <summary>Index of introductory page in wizard.</summary>
       cIntroPage = 0;
+      ///  <summary>Index of SWAG database folder selection page in wizard.
+      ///  </summary>
+      cChooseFolderPage = 1;
       ///  <summary>Index of snippet selection page in wizard.</summary>
-      cSelectionPage = 1;
+      cSelectionPage = 2;
       ///  <summary>Index of import page in wizard.</summary>
-      cUpdatePage = 2;
+      cUpdatePage = 3;
       ///  <summary>Index of finish page in wizard.</summary>
-      cFinishPage = 3;
+      cFinishPage = 4;
     var
+      fPrevSWAGDir: string;
       ///  <summary>Object that provides cached access to the SWAG database.
       ///  </summary>
       fSWAGReader: TSWAGReader;
@@ -118,33 +145,48 @@ type
       ///  <summary>ID of currently selected category.</summary>
       ///  <remarks>Set to empty string if no category is selected.</remarks>
       fCurrentCatID: string;
+    ///  <summary>Retrieves import directory name from edit control where it is
+    ///  entered.</summary>
+    function GetDirNameFromEditCtrl: string;
     ///  <summary>Validates entries on the wizard page identified by the given
     ///  page index.</summary>
     procedure ValidatePage(const PageIdx: Integer);
+    ///  <summary>Handles HTML template frame's OnBuildCSS event. Adds
+    ///  additional CSS required by HTML in this form.</summary>
+    ///  <param name="Sender">TObject [in] Reference to object triggering event.
+    ///  </param>
+    ///  <param name="CSSBuilder">TCSSBuilder [in] Object used to construct the
+    ///  CSS.</param>
+    procedure BuildCSS(Sender: TObject; const CSSBuilder: TCSSBuilder);
     ///  <summary>Displays snippets selected for import in list view on Update
     ///  page.</summary>
     procedure PopulateImportsLV;
+    ///  <summary>Initialises SWAG database XML file for reading before
+    ///  Selection page.</summary>
+    ///  <remarks>May display a wait dialogue box while initialising the
+    ///  database.</remarks>
+    procedure BeforeSelectionPage;
     ///  <summary>Initialises Selection page by populating its list of SWAG
     ///  categories, if necessary.</summary>
-    ///  <remarks>May display a wait dialogue box if the categories have to be
-    ///  downloaded from the SWAG database.</remarks>
+    ///  <remarks>May display a wait dialogue box while loading the categories.
+    ///  </remarks>
     procedure InitSelectionPage;
     ///  <summary>Initialises Update page by retrieving all the selected
     ///  snippets, preparing them for import and displaying them in the page's
     ///  list view.</summary>
-    ///  <remarks>May display a wait dialogue box if any of the snippets to be
-    ///  imported have to be downloaded from the SWAG database.</remarks>
+    ///  <remarks>May display a wait dialogue box while loading the snippets.
+    ///  </remarks>
     procedure InitUpdatePage;
-    ///  <summary>Gets the snippets contained is any selected category and
+    ///  <summary>Gets the snippets contained in any selected category and
     ///  displays them in the snippet selection list box on the Selection page.
     ///  </summary>
-    ///  <remarks>May display a wait dialogue box if the snippets have to be
-    ///  downloaded from the SWAG database.</remarks>
+    ///  <remarks>May display a wait dialogue box while the snippets are being
+    ///  retrieved.</remarks>
     procedure DisplaySnippetsForCategory;
     ///  <summary>Creates and displays a preview of the currently selected
     ///  snippet in the Selection page's snippet selection list box.</summary>
-    ///  <remarks>May display a wait dialogue box if the selected snippet has to
-    ///  be downloaded from the SWAG database.</remarks>
+    ///  <remarks>May display a wait dialogue box while the selected snippet is
+    ///  retrieved.</remarks>
     procedure PreviewSelectedSnippet;
     ///  <summary>Gets the complete information for each snippet selected for
     ///  import and stores in the given list.</summary>
@@ -207,22 +249,46 @@ uses
   // Delphi
   Generics.Defaults,
   Windows,
+  IOUtils,
   // Project
   FmPreviewDlg,
   FmWaitDlg,
+  UBrowseForFolderDlg,
+  UColours,
   UConsts,
+  UCSSUtils,
   UCtrlArranger,
   UEncodings,
   UExceptions,
   UHTMLTemplate,
   UMessageBox,
   UStrUtils,
-  UWaitForThreadUI;
+  UWaitForThreadUI,
+  Web.UInfo;
 
 {$R *.dfm}
 
 
 { TSWAGImportDlg }
+
+procedure TSWAGImportDlg.actBrowseExecute(Sender: TObject);
+var
+  Dlg: TBrowseForFolderDlg; // browse for folder standard dialogue box
+resourcestring
+  sDlgTitle = 'Choose SWAG database download directory';
+  sDlgHeading = 'Choose an empty directory or create a new one';
+begin
+  Dlg := TBrowseForFolderDlg.Create(nil);
+  try
+    Dlg.Title := sDlgTitle;
+    Dlg.Headline := sDlgHeading;
+    Dlg.MakeFolderBtnVisible := True;
+    if Dlg.Execute then
+      edPath.Text := Dlg.FolderName;
+  finally
+    Dlg.Free;
+  end;
+end;
 
 procedure TSWAGImportDlg.actDisplayCategoryExecute(Sender: TObject);
 begin
@@ -251,6 +317,13 @@ begin
 
   // tsIntro
   frmIntro.Height := frmIntro.DocHeight;
+
+  // tsFolder
+  TCtrlArranger.AlignVCentres(
+    TCtrlArranger.BottomOf(lblFolder, 6), [edPath, btnBrowse]
+  );
+  TCtrlArranger.MoveToRightOf(edPath, btnBrowse, 8);
+  lblFolderPageInfo.Top := TCtrlArranger.BottomOf([edPath, btnBrowse], 12);
 
   // tsCategories
   lblCategoriesDesc.Width := tsCategories.ClientWidth;
@@ -285,8 +358,11 @@ begin
 
   // set required height
   pnlBody.ClientHeight := TCtrlArranger.MaxContainerHeight(
-    [tsIntro, tsCategories, tsUpdate, tsFinish]
+    [tsIntro, tsFolder, tsCategories, tsUpdate, tsFinish]
   ) + pnlBody.ClientHeight - tsFinish.Height;
+  pnlBody.ClientWidth := TCtrlArranger.MaxContainerWidth(
+    [tsIntro, tsFolder, tsCategories, tsUpdate, tsFinish]
+  ) + pnlBody.ClientWidth - tsIntro.Width;
 
   // re-size controls to fit height
   lvImports.Height := tsUpdate.ClientHeight - lvImports.Top;
@@ -294,11 +370,62 @@ begin
   inherited;
 end;
 
+procedure TSWAGImportDlg.BeforeSelectionPage;
+resourcestring
+  sDefaultWaitMsg = 'Accessing database...';
+  sWaitMsg = 'Initialising SWAG database...';
+var
+  WaitProc: TProc;
+begin
+  if StrSameText(fPrevSWAGDir, GetDirNameFromEditCtrl) then
+    Exit;
+
+  lbCategories.Clear;
+  clbSelectSnippets.Clear;
+
+  WaitProc := procedure
+  begin
+    Application.ProcessMessages;
+    fPrevSWAGDir := GetDirNameFromEditCtrl;
+    FreeAndNil(fSWAGReader);
+    fSWAGReader := TSWAGReader.Create(
+      GetDirNameFromEditCtrl,
+      procedure (CallProc: TProc)
+      begin
+        WaitWrapper(Self, CallProc, sDefaultWaitMsg);
+      end
+    );
+  end;
+
+  TWaitForThreadUI.Run( // this blocks until thread completes
+    WaitProc,
+    False,
+    TWaitDlg.CreateAutoFree(Self, sWaitMsg),
+    0,
+    500
+  );
+end;
+
 procedure TSWAGImportDlg.BeginPage(const PageIdx: Integer);
 begin
   case PageIdx of
     cSelectionPage: InitSelectionPage;
     cUpdatePage: InitUpdatePage;
+  end;
+end;
+
+procedure TSWAGImportDlg.BuildCSS(Sender: TObject;
+  const CSSBuilder: TCSSBuilder);
+begin
+  inherited;
+  // Set body text spacing
+  with CSSBuilder.Selectors['body'] do
+    AddProperty(TCSS.LineHeightProp(120));
+  // Create .framed border style
+  with CSSBuilder.AddSelector('.framed') do
+  begin
+    AddProperty(TCSS.BorderProp(cssAll, 1, cbsSolid, clBorder));
+    AddProperty(TCSS.PaddingProp(4));
   end;
 end;
 
@@ -339,6 +466,7 @@ procedure TSWAGImportDlg.ConfigForm;
 begin
   inherited;
   pcWizard.ActivePage := tsFinish;
+  frmOutro.OnBuildCSS := BuildCSS;
   frmOutro.Initialise(
     'dlg-swag-import-outro-tplt.html',
     procedure (Tplt: THTMLTemplate)
@@ -350,7 +478,17 @@ begin
     end
   );
   pcWizard.ActivePage := tsIntro;
-  frmIntro.Initialise('dlg-swag-import-intro.html');
+  frmIntro.OnBuildCSS := BuildCSS;
+  frmIntro.Initialise(
+    'dlg-swag-import-intro-tplt.html',
+    procedure (Tplt: THTMLTemplate)
+    begin
+      Tplt.ResolvePlaceholderText(
+        'SWAGReleaseURL',
+        TWebInfo.SWAGReleaseURL
+      );
+    end
+  );
 end;
 
 destructor TSWAGImportDlg.Destroy;
@@ -423,12 +561,17 @@ begin
     end;
 end;
 
+function TSWAGImportDlg.GetDirNameFromEditCtrl: string;
+begin
+  Result := StrTrim(edPath.Text);
+end;
+
 procedure TSWAGImportDlg.GetImportSnippets(const SnipList: TList<TSWAGSnippet>);
 var
   SnipIDs: TList<Cardinal>;
   PartialSnippet: TSWAGSnippet;
 resourcestring
-  sWaitMsg = 'Downloading Snippets From SWAG...';
+  sWaitMsg = 'Retrieving snippets...';
 begin
   SnipIDs := TList<Cardinal>.Create;
   try
@@ -437,6 +580,10 @@ begin
     fSWAGReader.GetCompleteSnippets(
       SnipIDs,
       SnipList,
+      procedure
+      begin
+        Application.ProcessMessages;
+      end,
       procedure (CallProc: TProc)
       begin
         WaitWrapper(Self, CallProc, sWaitMsg);
@@ -450,12 +597,14 @@ end;
 function TSWAGImportDlg.HeadingText(const PageIdx: Integer): string;
 resourcestring
   sIntroPageHeading = 'Import snippets from SWAG';
+  sFolderPage = 'Select SWAG database download folder';
   sSelectionPageHeading = 'Select required snippets';
   sUpdatePage = 'Ready to import';
   sFinishPage = 'Import complete';
 begin
   case PageIdx of
     cIntroPage:     Result := sIntroPageHeading;
+    cChooseFolderPage:    Result := sFolderPage;
     cSelectionPage: Result := sSelectionPageHeading;
     cUpdatePage:    Result := sUpdatePage;
     cFinishPage:    Result := sFinishPage;
@@ -463,14 +612,28 @@ begin
 end;
 
 procedure TSWAGImportDlg.InitSelectionPage;
+//resourcestring
+//  sDefaultWaitMsg = 'Accessing SWAG database...';
 var
   Cats: TList<TSWAGCategory>;
   Idx: Integer;
 begin
   Application.ProcessMessages;
-  if lbCategories.Count > 0 then
+
+  if (lbCategories.Count > 0) then
     Exit;
 
+//  fPrevSWAGDir := GetDirNameFromEditCtrl;
+//
+//  FreeAndNil(fSWAGReader);
+//  fSWAGReader := TSWAGReader.Create(
+//    GetDirNameFromEditCtrl,
+//    procedure (CallProc: TProc)
+//    begin
+//      WaitWrapper(Self, CallProc, sDefaultWaitMsg);
+//    end
+//  );
+//
   Cats := TList<TSWAGCategory>.Create;
   try
     fSWAGReader.GetCategories(Cats);
@@ -497,7 +660,7 @@ var
   FullSnippets: TList<TSWAGSnippet>;
   Snippet: TSWAGSnippet;
 resourcestring
-  sWaitMsg = 'Downloading Snippets From SWAG...';
+  sWaitMsg = 'Retrieving snippets...';
 begin
   Application.ProcessMessages;
   FullSnippets := TList<TSWAGSnippet>.Create;
@@ -549,12 +712,6 @@ begin
 
   fImporter := TSWAGImporter.Create;
 
-  fSWAGReader := TSWAGReader.Create(
-    procedure (CallProc: TProc)
-    begin
-      WaitWrapper(Self, CallProc, sDefaultWaitMsg);
-    end
-  );
 end;
 
 procedure TSWAGImportDlg.lbCategoriesDblClick(Sender: TObject);
@@ -576,6 +733,7 @@ begin
   try
     ValidatePage(PageIdx);
     case PageIdx of
+      cChooseFolderPage: BeforeSelectionPage;
       cUpdatePage: UpdateDatabase;
     end;
     CanMove := True;
@@ -615,7 +773,7 @@ var
   SelIdx: Integer;
   Content: string;
 resourcestring
-  sWaitMsg = 'Downloading Snippet From SWAG...';
+  sWaitMsg = 'Retrieving snippet...';
   sContentTplt = 'ID: %0:d' + EOL +
     'Category: "%1:s"' + EOL +
     'File Name: "%2:s"' + EOL +
@@ -698,15 +856,33 @@ begin
 end;
 
 procedure TSWAGImportDlg.ValidatePage(const PageIdx: Integer);
-resourcestring
-  sEmptySelection = 'You must select one or more snippets to import.';
+
+  procedure ValidateChooseFolderPage;
+  resourcestring
+    sNoFolder = 'Please enter the directory where you downloaded the SWAG '
+      + 'database.';
+    sBadFolder = 'Directory "%s" does not exist. Please specify a valid one.';
+  begin
+    if GetDirNameFromEditCtrl = '' then
+      raise EDataEntry.Create(sNoFolder);
+    if not TDirectory.Exists(GetDirNameFromEditCtrl, False) then
+      raise EDataEntry.CreateFmt(sBadFolder, [GetDirNameFromEditCtrl]);
+  end;
+
+  procedure ValidateSelectionPage;
+  resourcestring
+    sEmptySelection = 'You must select one or more snippets to import.';
+  begin
+    if fSelectedSnippets.Count = 0 then
+      raise EDataEntry.Create(sEmptySelection);
+  end;
+
 begin
   case PageIdx of
+    cChooseFolderPage:
+      ValidateChooseFolderPage;
     cSelectionPage:
-    begin
-      if fSelectedSnippets.Count = 0 then
-        raise EDataEntry.Create(sEmptySelection);
-    end;
+      ValidateSelectionPage;
   end;
 end;
 

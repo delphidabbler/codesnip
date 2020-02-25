@@ -228,7 +228,7 @@ Each user can configure compilers differently.
 Delphi XE2 to XE8 and Delphi 10.1 Berlin may need to be configured to search for
 required units in the correct namespaces. This is explained in the Add/Edit
 Snippet Dialogue Box help topic and in the FAQ at
-http://delphidabbler.com/url/codesnip-and-xe2.
+https://github.com/delphidabbler/codesnip-faq/blob/master/UsingCodeSnip.md#faq-1
 
 
 Registration
@@ -253,29 +253,14 @@ copy must be registered separately.
 Updating the Program
 ================================================================================
 
-CodeSnip automatically checks online for available program updates. If it finds
-that an update is available it displays a notification window at the bottom
-right of the main window. That window has a button you can click that opens your
-default browser at a web page that downloads the new version of the program.
+Updates are published on:
 
-Once the updated version is downloaded you must close CodeSnip install the
-program in the usual way.
++ GitHub: https://github.com/delphidabbler/codesnip/releases
 
-You can change the frequency with which CodeSnip checks for updates, or turn off
-the feature, from the "Updates" tab of the "Preferences" dialogue box. You can
-display this dialogue box from the "Tools | Preferences" menu option.
++ SourceForge: https://sourceforge.net/projects/codesnip/files/
 
-You can also check for program updates manually at any time from the "Tools |
-Check For Program Updates" menu option. Once again you will be directed to a web
-page from where the updated program can be downloaded.
-
-Neither of the above methods will detect beta and preview releases of the
-program. To find out about those you should subscribe to the CodeSnip news feed
-(see below). Alternatively you can view the latest news from the feed from the
-"Help | CodeSnip News" menu option.
-
-NOTE: You may need to configure your firewall to permit CodeSnip to access the
-internet otherwise the automatic updating may not work.
+News of new updates is published on the CodeSnip Blog:
+http://codesnip-app.blogspot.com/.
 
 
 Known Installation and Upgrading Issues
@@ -319,17 +304,6 @@ Known Installation and Upgrading Issues
   removed and equivalent entries will have been made on the "Namespaces" tab.
 
 
-RSS News Feed
-================================================================================
-
-You can get notified of all updates to the CodeSnip program and to the database
-by subscribing to the Code Snippets RSS Feed at
-http://delphidabbler.com/feeds/site-news-feed?id=codesnip.
-
-The latest news from this feed can also be displayed from the program's "Help |
-CodeSnip News" menu option.
-
-
 License & Disclaimer
 ================================================================================
 
@@ -351,7 +325,7 @@ Source Code
 
 CodeSnip's source code is freely available. For details of how to obtain the
 source see the FAQ at
-http://wiki.delphidabbler.com/index.php/FAQs/CodeSnipAppSource#FAQ1
+https://github.com/delphidabbler/codesnip-faq/blob/master/SourceCode.md#faq-1
 
 The standard and portable editions of CodeSnip share the same source code.
 
@@ -367,7 +341,7 @@ Bugs
 Please do report any bugs you find.
 
 Bugs are recorded in tracker software. View the reported and fixed bugs via
-http://delphidabbler.com/url/codesnip-bugs (this redirects to the tracker page).
+https://github.com/delphidabbler/codesnip/issues
 
 You can also access the bug tracker from CodeSnip by using the "Tools | Report
 Bug Online" menu option then following the link that appears in the resulting
@@ -377,7 +351,7 @@ If you wish to report a bug, please check the current reports on the bug
 tracker. If your bug hasn't already been reported or fixed please add a report
 using the "Add new" link on Tracker.
 
-Please note that versions 1 and 2 of CodeSnip are no longer supported, so don't
+Please note that versions 1 to 3 of CodeSnip are no longer supported, so don't
 report bugs for those versions. You should update the program first and only
 report the bug if it is still present.
 
@@ -410,17 +384,7 @@ FAQs
 ================================================================================
 
 There are Frequently Asked Questions pages for CodeSnip on the web, at
-http://delphidabbler.com/url/codesnip-faq.
-
-
-Contribute to the Database
-================================================================================
-
-Please do contribute Pascal snippets to the on-line Code Snippets database.
-
-You can submit routines from your user-defined snippets database using the
-"Snippets | Submit Routines" menu option. Otherwise please send your code via
-the DelphiDabbler contact page at http://delphidabbler.com/contact.
+https://github.com/delphidabbler/codesnip-faq/blob/master/README.md
 
 
 Thanks

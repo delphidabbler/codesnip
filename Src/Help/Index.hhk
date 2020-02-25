@@ -42,10 +42,6 @@
     <param name="Local" value="HTML\menu_categories.htm">
     </OBJECT>
   <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="check for program updates dialogue">
-    <param name="Local" value="HTML\dlg_programupdates.htm">
-    </OBJECT>
-  <LI> <OBJECT type="text/sitemap">
     <param name="Name" value="compile menu">
     <param name="Local" value="HTML\menu_compile.htm">
     </OBJECT>
@@ -60,10 +56,6 @@
   <LI> <OBJECT type="text/sitemap">
     <param name="Name" value="code generation preferences">
     <param name="Local" value="HTML\dlg_prefs_codegen.htm">
-    </OBJECT>
-  <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="code submission dialogue">
-    <param name="Local" value="HTML\dlg_submit.htm">
     </OBJECT>
   <LI> <OBJECT type="text/sitemap">
     <param name="Name" value="common tasks">
@@ -107,10 +99,6 @@
       <param name="Local" value="HTML\task_update.htm">
       </OBJECT>
     <LI> <OBJECT type="text/sitemap">
-      <param name="Name" value="submit code to the database">
-      <param name="Local" value="HTML\task_submit.htm">
-      </OBJECT>
-    <LI> <OBJECT type="text/sitemap">
       <param name="Name" value="export and import snippets">
       <param name="Local" value="HTML\task_export.htm">
       </OBJECT>
@@ -122,10 +110,6 @@
   <LI> <OBJECT type="text/sitemap">
     <param name="Name" value="copy code snippets">
     <param name="Local" value="HTML\task_copysnippet.htm">
-    </OBJECT>
-  <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="customise codesnip">
-    <param name="Local" value="HTML\task_customise.htm">
     </OBJECT>
   <LI> <OBJECT type="text/sitemap">
     <param name="Name" value="delete category dialogue">
@@ -284,14 +268,6 @@
     <param name="Local" value="HTML\navigation.htm">
     </OBJECT>
   <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="news dialogue">
-    <param name="Local" value="HTML\dlg_news.htm">
-    </OBJECT>
-  <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="news preferences">
-    <param name="Local" value="HTML\dlg_prefs_news.htm">
-    </OBJECT>
-  <LI> <OBJECT type="text/sitemap">
     <param name="Name" value="open backup dialogue">
     <param name="Local" value="HTML\dlg_restore.htm">
     </OBJECT>
@@ -330,10 +306,6 @@
   <LI> <OBJECT type="text/sitemap">
     <param name="Name" value="quickstart guide">
     <param name="Local" value="HTML\quickstart.htm">
-    </OBJECT>
-  <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="registration wizard">
-    <param name="Local" value="HTML\dlg_register.htm">
     </OBJECT>
   <LI> <OBJECT type="text/sitemap">
     <param name="Name" value="rename category dialogue">
@@ -378,10 +350,6 @@
   <LI> <OBJECT type="text/sitemap">
     <param name="Name" value="snippets menu">
     <param name="Local" value="HTML\menu_snippets.htm">
-    </OBJECT>
-  <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="submit code to the database">
-    <param name="Local" value="HTML\task_submit.htm">
     </OBJECT>
   <LI> <OBJECT type="text/sitemap">
     <param name="Name" value="SWAG database">

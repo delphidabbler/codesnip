@@ -19,8 +19,8 @@ interface
 
 
 uses
-  // Delphi
-  Classes;
+  // Project
+  UDirectoryCopier;
 
 
 type
@@ -43,42 +43,29 @@ type
       fOnCopyFile: TProgress;
       ///  <summary>Reference to event handler for OnDeleteFile event.</summary>
       fOnDeleteFile: TProgress;
-      ///  <summary>List of files in the database.</summary>
-      fDBFiles: TStrings;
       ///  <summary>Directory of existing user database.</summary>
       fSourceDir: string;
       ///  <summary>Required new database directory.</summary>
       fDestDir: string;
-    ///  <summary>Triggers OnCopyFile event, with a percentage completeness
-    ///  based on the given number of files copied.</summary>
-    procedure NotifyCopyFile(FileCount: Cardinal);
-    ///  <summary>Triggers OnDeleteFile event, with a percentage completeness
-    ///  based on the given number of files deleted.</summary>
-    procedure NotifyDeleteFile(FileCount: Cardinal);
+      ///  <summary>Instance of class used to perform directory move.</summary>
+      fDirCopier: TDirectoryCopier;
     ///  <summary>Validates source and destination directories.</summary>
     ///  <exceptions>Raises EInOutError exception if either directory is not
     ///  valid.</exceptions>
     procedure ValidateDirectories;
-    ///  <summary>Calculates a returns percentage progress of towards a goal.
-    ///  </summary>
-    ///  <param name="Count">Cardinal [in] Number of transactions completed
-    ///  towards goal.</param>
-    ///  <param name="Goal">Cardinal [in] Number of transactions required to
-    ///  reach goal.</param>
-    function GetProgress(Count, Goal: Cardinal): Byte;
-    ///  <summary>Performs database move operation and records new location.
-    ///  </summary>
-    procedure DoMove;
-    ///  <summary>Copies database file with given index in file list from old to
-    ///  new database directories.</summary>
-    ///  <remarks>Triggers OnCopyFile event when the file has been copied.
-    ///  </remarks>
-    procedure CopyFile(const FileIdx: Cardinal);
-    ///  <summary>Deletes database file with given index in file list from old
-    ///  database directory.</summary>
-    ///  <remarks>Triggers OnDeleteFile event when the file has been deleted.
-    ///  </remarks>
-    procedure DeleteFile(const FileIdx: Cardinal);
+    ///  <summary>Handles TDirectoryCopier.OnAfterCopyDir event to update user
+    ///  database location.</summary>
+    ///  <remarks>Database location is updated once the database has been copied
+    ///  but before old database directory is deleted.</remarks>
+    procedure SetNewDBDirectory(Sender: TObject);
+    ///  <summary>Handles TDirectoryCopier.OnCopyFileProgress event and passes
+    ///  the given progress percentage on to this class&#39; similar OnCopyFile
+    ///  event.</summary>
+    procedure ReportCopyProgress(Sender: TObject; const Percent: Single);
+    ///  <summary>Handles TDirectoryCopier.OnDeleteFileProgress event and passes
+    ///  the given progress percentage on to this class&#39; similar
+    ///  OnDeleteFile event.</summary>
+    procedure ReportDeleteProgress(Sender: TObject; const Percent: Single);
   public
     ///  <summary>Constructs and initialises new object instance.</summary>
     constructor Create;
@@ -105,69 +92,26 @@ implementation
 
 uses
   // Delphi
-  SysUtils, IOUtils, Math, Windows {for inlining},
+  SysUtils, IOUtils,
   // Project
-  UAppInfo, UDOSDateTime, UIOUtils, UStrUtils, UUtils;
+  UAppInfo, UStrUtils;
 
 
 { TUserDBMove }
 
-procedure TUserDBMove.CopyFile(const FileIdx: Cardinal);
-var
-  SrcFile, DestFile: string;
-  FileDate: IDOSDateTime;
-begin
-  SrcFile := fSourceDir + PathDelim + fDBFiles[FileIdx];
-  DestFile := fDestDir + PathDelim + fDBFiles[FileIdx];
-  FileDate := TDOSDateTimeFactory.CreateFromFile(SrcFile);
-  TFileIO.CopyFile(SrcFile, DestFile);
-  FileDate.ApplyToFile(DestFile);
-  NotifyCopyFile(FileIdx);
-end;
-
 constructor TUserDBMove.Create;
 begin
   inherited Create;
-  fDBFiles := TStringList.Create;
-end;
-
-procedure TUserDBMove.DeleteFile(const FileIdx: Cardinal);
-begin
-  SysUtils.DeleteFile(fSourceDir + PathDelim + fDBFiles[FileIdx]);
-  NotifyDeleteFile(FileIdx);
+  fDirCopier := TDirectoryCopier.Create;
+  fDirCopier.OnAfterCopyDir := SetNewDBDirectory;
+  fDirCopier.OnCopyFileProgress := ReportCopyProgress;
+  fDirCopier.OnDeleteFileProgress := ReportDeleteProgress;
 end;
 
 destructor TUserDBMove.Destroy;
 begin
-  fDBFiles.Free;
+  fDirCopier.Free;
   inherited;
-end;
-
-procedure TUserDBMove.DoMove;
-var
-  FileIdx: Cardinal;
-begin
-  fDBFiles.Clear;
-  ListFiles(fSourceDir, '*.*', fDBFiles, False, True);
-  // copy files
-  NotifyCopyFile(0);
-  EnsureFolders(fDestDir);
-  for FileIdx := 0 to Pred(fDBFiles.Count) do
-    CopyFile(FileIdx);
-  // record new location BEFORE deleting old directory
-  TAppInfo.ChangeUserDataDir(fDestDir);
-  // delete files
-  NotifyDeleteFile(0);
-  for FileIdx := 0 to Pred(fDBFiles.Count) do
-    DeleteFile(FileIdx);
-  SysUtils.RemoveDir(fSourceDir);
-end;
-
-function TUserDBMove.GetProgress(Count, Goal: Cardinal): Byte;
-begin
-  Assert(Goal > 0, ClassName + '.GetProgress: Goal is zero');
-  Count := Min(Goal, Count);
-  Result := Round(100 * Count / Goal);
 end;
 
 procedure TUserDBMove.MoveTo(const ADirectory: string);
@@ -175,19 +119,27 @@ begin
   fSourceDir := ExcludeTrailingPathDelimiter(TAppInfo.UserDataDir);
   fDestDir := ExcludeTrailingPathDelimiter(ADirectory);
   ValidateDirectories;
-  DoMove;
+  fDirCopier.Move(fSourceDir, fDestDir);
 end;
 
-procedure TUserDBMove.NotifyCopyFile(FileCount: Cardinal);
+procedure TUserDBMove.ReportCopyProgress(Sender: TObject;
+  const Percent: Single);
 begin
   if Assigned(fOnCopyFile) then
-    fOnCopyFile(Self, GetProgress(FileCount, fDBFiles.Count));
+    fOnCopyFile(Self, Round(Percent));
 end;
 
-procedure TUserDBMove.NotifyDeleteFile(FileCount: Cardinal);
+procedure TUserDBMove.ReportDeleteProgress(Sender: TObject;
+  const Percent: Single);
 begin
   if Assigned(fOnDeleteFile) then
-    fOnDeleteFile(Self, GetProgress(FileCount, fDBFiles.Count));
+    fOnDeleteFile(Self, Round(Percent));
+end;
+
+procedure TUserDBMove.SetNewDBDirectory(Sender: TObject);
+begin
+  // record new location BEFORE deleting old directory
+  TAppInfo.ChangeUserDataDir(fDestDir);
 end;
 
 procedure TUserDBMove.ValidateDirectories;

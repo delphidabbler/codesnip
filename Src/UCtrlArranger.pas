@@ -167,6 +167,14 @@ type
     ///  example a page control where the containers are the pages.</remarks>
     class function MaxContainerHeight(const Containers: array of TWinControl):
       Integer;
+
+    ///  <summary>Returns maximum width of controls parented by given set of
+    ///  parent controls.</summary>
+    ///  <remarks>Designed for use in determining the width of a control that
+    ///  has to accomodate all the controls from any of the containers, for
+    ///  example a page control where the containers are the pages.</remarks>
+    class function MaxContainerWidth(const Containers: array of TWinControl):
+      Integer;
   end;
 
 
@@ -309,6 +317,16 @@ begin
   Result := 0;
   for Container in Containers do
     Result := Max(Result, TotalControlHeight(Container));
+end;
+
+class function TCtrlArranger.MaxContainerWidth(
+  const Containers: array of TWinControl): Integer;
+var
+  Container: TWinControl;   // each container in Containers
+begin
+  Result := 0;
+  for Container in Containers do
+    Result := Max(Result, TotalControlWidth(Container));
 end;
 
 class procedure TCtrlArranger.MoveBelow(const RefCtrl, Ctrl: TControl;

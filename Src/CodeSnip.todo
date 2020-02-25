@@ -1,0 +1,18 @@
+{TODO -cDocs : Update License.html to replace references to SVN with Git}
+{TODO -cDocs : Update Build.html to replace references to SVN with Git}
+{TODO -cFirstRun : Delete UpdateChecks section from Config file on first run}
+{TODO -cFirstRun : Delete Prefs:Updating section from Config file on first run}
+{TODO -cHelp :
+Add a Backup Database task help topis that describes how to backup and restore databases.
+Then add help link to Res/HTML/dlg-dbupdate-intro-tplt.html}
+{TODO -cUI : Rationalise use of TFontHelper.SetDefaultFont(s) and .SetDefaultBaseFont(s) methods.}
+{TODO -cSharing :
+Decide if to continue to support user info in export files
+- update Docs\Design\FileFormats\config.html accordingly}
+{TODO -cWeb : Review all docs & help file to remove / replace all references to delphidabbler.com}
+{TODO -cWeb :
+Review help file and remove/replace all references to the DelphiDabbler
+mapped URLs of form delphidabbler.com/url/xxxx}
+{TODO -cFirstRun : Update config file versions: common to 7 and user to 16}
+{TODO -cPreRelease : Add correct CodeSnip version to Docs\Design\FileFormat\Config.html (currently flagged as 4.###)}
+{TODO -cPreRelease : Remove -[**dev**] from product and file versions in .vi files before bumping release number}

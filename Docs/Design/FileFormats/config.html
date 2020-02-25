@@ -122,9 +122,8 @@
 </p>
 
 <p>
-  There have been several versions of this file. The current one is version 6.
-  The change to version 6 came with CodeSnip v4 and the change to Unicode
-  encoding.
+  There have been several versions of this file. The current one is version 7.
+  The change to version 7 came with CodeSnip v4.### and the removal of DelphiDabbler web service support.
 </p>
 
 <p>
@@ -149,20 +148,6 @@
   </dt>
   <dd>
     Unique application ID. String of 32 hex digits.
-  </dd>
-  <dt>
-    <strong>RegCode</strong> (String)
-  </dt>
-  <dd>
-    Registration code. String of 32 hex digits. May be empty string or missing
-    if application not registered.
-  </dd>
-  <dt>
-    <strong>RegName</strong> (String)
-  </dt>
-  <dd>
-    Name of person who registered program. May be empty string or missing if
-    application not registered.
   </dd>
   <dt>
     <strong>Version</strong> (String)
@@ -214,8 +199,8 @@
 </p>
 
 <p>
-  There have been several versions of this file. The current one is version 15.
- </p>
+  There have been several versions of this file. The current one is version 16. The change to version 16 came with CodeSnip v4.### and the removal of DelphiDabbler web service support.
+</p>
 
 <p>
   The file is in INI file format. It has the following sections.
@@ -1159,29 +1144,6 @@
 </dl>
 
 <h4>
-  [Prefs:News] section
-</h4>
-
-<p>
-  Stores preferences that determine how items from the CodeSnip news feed are
-  displayed.
-</p>
-
-<p>
-  Name / Value pairs:
-</p>
-
-<dl class="indent">
-  <dt>
-    <strong>MaxAge</strong> (Integer)
-  </dt>
-  <dd>
-    Maximum age of a news item that can appear in CodeSnip News dialogue box in
-    days. Default is 92 days.
-  </dd>
-</dl>
-
-<h4>
   [Prefs:Printing] section
 </h4>
 
@@ -1339,6 +1301,8 @@
   </dd>
 </dl>
 
+<div class="del">
+
 <h4>
   [Prefs:Updating] section
 </h4>
@@ -1370,6 +1334,8 @@
     check for database updates automatically.
   </dd>
 </dl>
+
+</div>
 
 <h4>
   [ProxyServer] section
@@ -1420,6 +1386,7 @@
   </dd>
 </dl>
 
+<div class="del">
 <h4>
   [UpdateChecks] section
 </h4>
@@ -1450,6 +1417,7 @@
     the Code Snippets Database had been updated.
   </dd>
 </dl>
+</div>
 
 <h4>
   [UserInfo] section

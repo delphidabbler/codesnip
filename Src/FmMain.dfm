@@ -492,14 +492,6 @@ inherited MainForm: TMainForm
       OnExecute = ActOverviewTabExecute
       OnUpdate = ActOverviewTabUpdate
     end
-    object actWebSite: TBrowseURL
-      Category = 'Help'
-      Caption = 'DelphiDabbler Website'
-      Hint = 
-        'Visit DelphiDabbler website|Display the DelphiDabbler website in' +
-        ' the default web browser'
-      ImageIndex = 6
-    end
     object actHelpQuickStart: TAction
       Category = 'Help'
       Caption = 'QuickStart Guide'
@@ -536,13 +528,6 @@ inherited MainForm: TMainForm
       ImageIndex = 16
       OnExecute = actPreferencesExecute
     end
-    object actRegister: TAction
-      Category = 'Tools'
-      Caption = '&Register CodeSnip...'
-      Hint = 'Register CodeSnip|Register CodeSnip online'
-      OnExecute = actRegisterExecute
-      OnUpdate = actRegisterUpdate
-    end
     object actLicense: TAction
       Category = 'Help'
       Caption = 'License'
@@ -550,12 +535,12 @@ inherited MainForm: TMainForm
       ImageIndex = 35
       OnExecute = actLicenseExecute
     end
-    object actHomePage: TBrowseURL
+    object actGitHubHome: TBrowseURL
       Category = 'Help'
-      Caption = 'CodeSnip Home Page'
+      Caption = 'CodeSnip On GitHub'
       Hint = 
-        'Codesnip home page|Display CodeSnip'#39's web page in the default we' +
-        'b browser'
+        'Codesnip GitHub project|Display CodeSnip'#39's GitHub web page in th' +
+        'e default web browser'
       ImageIndex = 6
     end
     object actFindXRefs: TAction
@@ -676,21 +661,11 @@ inherited MainForm: TMainForm
     end
     object actUpdateDbase: TAction
       Category = 'Database'
-      Caption = 'Update From Web...'
+      Caption = 'Install or Update DelphiDabbler Snippets Database...'
       Hint = 
-        'Update database from web|Update the main snippet database from t' +
-        'he internet'
-      ImageIndex = 7
+        'Install or update DelphiDabbler Code Snippets database|Install o' +
+        'r update the main DelphiDabbler Code Snippets database'
       OnExecute = actUpdateDbaseExecute
-    end
-    object actSubmit: TAction
-      Category = 'Snippets'
-      Caption = 'Submit Snippets...'
-      Hint = 
-        'Submit|Submit one or more snippets for possible inclusion in the' +
-        ' main database'
-      OnExecute = actSubmitExecute
-      OnUpdate = ActSubmitOrExportUpdate
     end
     object actExportCode: TAction
       Category = 'Snippets'
@@ -810,15 +785,6 @@ inherited MainForm: TMainForm
       OnExecute = actDeleteCategoryExecute
       OnUpdate = actDeleteCategoryUpdate
     end
-    object actNews: TAction
-      Category = 'Help'
-      Caption = 'CodeSnip News...'
-      Hint = 
-        'CodeSnip news|Display news about CodeSnip and the online databas' +
-        'e'
-      ImageIndex = 36
-      OnExecute = actNewsExecute
-    end
     object actNewDetailsTab: TAction
       Category = 'View'
       Caption = 'New Tab'
@@ -877,14 +843,6 @@ inherited MainForm: TMainForm
       OnExecute = actLoadSelectionExecute
       OnUpdate = ActNonEmptyDBUpdate
     end
-    object actProgramUpdates: TAction
-      Category = 'Tools'
-      Caption = 'Check For Program Updates...'
-      Hint = 
-        'Check for program updates|Check online for newer versions of Cod' +
-        'eSnip'
-      OnExecute = actProgramUpdatesExecute
-    end
     object actCloseUnselectedDetailsTabs: TAction
       Category = 'View'
       Caption = 'Close All Other Tabs'
@@ -933,6 +891,14 @@ inherited MainForm: TMainForm
         'Import snippets from SWAG|Import one or more snippets into the u' +
         'ser database from the online SWAG database'
       OnExecute = actSWAGImportExecute
+    end
+    object actBlog: TBrowseURL
+      Category = 'Help'
+      Caption = 'CodeSnip News Blog'
+      Hint = 
+        'Display CodeSnip news blog|Display the CodeSnip News Blog in the' +
+        ' default web browser'
+      ImageIndex = 6
     end
   end
   object mnuMain: TMainMenu
@@ -1116,12 +1082,6 @@ inherited MainForm: TMainForm
       object miSpacer14: TMenuItem
         Caption = '-'
       end
-      object miSubmit: TMenuItem
-        Action = actSubmit
-      end
-      object miSpacer19: TMenuItem
-        Caption = '-'
-      end
       object miAddFavourite: TMenuItem
         Action = actAddFavourite
       end
@@ -1195,21 +1155,8 @@ inherited MainForm: TMainForm
       object miSpacer18: TMenuItem
         Caption = '-'
       end
-      object miCheckUpdates: TMenuItem
-        Action = actProgramUpdates
-      end
-      object miSpacer7: TMenuItem
-        Caption = '-'
-      end
       object miReportBug: TMenuItem
         Action = actBugReport
-      end
-      object miSpacer9: TMenuItem
-        Caption = '-'
-      end
-      object miRegister: TMenuItem
-        Action = actRegister
-        Default = True
       end
     end
     object miHelp: TMenuItem
@@ -1232,20 +1179,17 @@ inherited MainForm: TMainForm
       object miSpacer3: TMenuItem
         Caption = '-'
       end
+      object miHomePage: TMenuItem
+        Action = actGitHubHome
+      end
+      object miBlog: TMenuItem
+        Action = actBlog
+      end
       object miFAQs: TMenuItem
         Action = actFAQs
       end
-      object miHomePage: TMenuItem
-        Action = actHomePage
-      end
-      object miWebSite: TMenuItem
-        Action = actWebSite
-      end
       object miSpacer5: TMenuItem
         Caption = '-'
-      end
-      object miNews: TMenuItem
-        Action = actNews
       end
       object miDonate: TMenuItem
         Action = actDonate

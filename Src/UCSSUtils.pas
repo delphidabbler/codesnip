@@ -417,6 +417,14 @@ type
     ///  <returns>string. Required CSS property.</returns>
     class function OverflowProp(const Value: TCSSOverflowValue;
       const Direction: TCSSOverflowDirection = codBoth): string; static;
+
+    ///  <summary>Creates a CSS "line-height" property.</summary>
+    ///  <param name="Percentage">UInt16 [in] Line height as a percentage of
+    ///  font size.</param>
+    ///  <returns>string. Required CSS property.</returns>
+    ///  <remarks>Only the percentage version of line height is supported.
+    ///  </remarks>
+    class function LineHeightProp(const Percentage: UInt16): string; static;
   end;
 
 
@@ -613,6 +621,11 @@ const
   );
 begin
   Result := Units[LU];
+end;
+
+class function TCSS.LineHeightProp(const Percentage: UInt16): string;
+begin
+  Result := 'line-height: ' + IntToStr(Percentage) + '%';
 end;
 
 class function TCSS.MarginProp(const Margin: array of Integer): string;

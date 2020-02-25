@@ -35,10 +35,6 @@ type
       {Generates unique program key for application in deterministic way.
         @return Required key.
       }
-    class function RegistrationCode: string;
-      {Reads program's registration code from persistent storage.
-        @return Registration code or '' if not registered.
-      }
   public
     const CompanyName = 'DelphiDabbler';
       {Name of "company" that owns this program}
@@ -120,20 +116,6 @@ type
       {Gets program's unique identifying key. This key should be different on
       each installation. If key does not exist it is created.
         @return 32 digit key.
-      }
-    class procedure RegisterProgram(const Code, Name: string);
-      {Registers program by storing registration code and user name in
-      persistent storage.
-        @param Code [in] Registration code.
-        @param Name [in] Registered user name.
-      }
-    class function IsRegistered: Boolean;
-      {Checks if program is registered.
-        @return True if program registered.
-      }
-    class function RegisteredUser: string;
-      {Reads name of registered user from persistent storage.
-        @return User name or '' if not registered.
       }
   end;
 
@@ -253,14 +235,6 @@ begin
   Result := AppExeDir + '\CodeSnip.chm';
 end;
 
-class function TAppInfo.IsRegistered: Boolean;
-  {Checks if program is registered.
-    @return True if program registered.
-  }
-begin
-  Result := RegistrationCode <> '';
-end;
-
 class function TAppInfo.ProgramFileVersion: string;
   {Gets version number of program's executable file.
     @return Version number as dotted quad.
@@ -306,43 +280,6 @@ class function TAppInfo.ProgramReleaseVersion: string;
   }
 begin
   Result := TVersionInfo.ProductVersionNumberStr;
-end;
-
-class function TAppInfo.RegisteredUser: string;
-  {Reads name of registered user from persistent storage.
-    @return User name or '' if not registered.
-  }
-var
-  Section: ISettingsSection;  // persistent storage where name is recorded
-begin
-  Section := Settings.ReadSection(ssApplication);
-  Result := Section.GetString('RegName');
-end;
-
-class procedure TAppInfo.RegisterProgram(const Code, Name: string);
-  {Registers program by storing registration code and user name in persistent
-  storage.
-    @param Code [in] Registration code.
-    @param Name [in] Registered user name.
-  }
-var
-  Section: ISettingsSection;  // persistent storage where code is to be recorded
-begin
-  Section := Settings.ReadSection(ssApplication);
-  Section.SetString('RegCode', Code);
-  Section.SetString('RegName', Name);
-  Section.Save;
-end;
-
-class function TAppInfo.RegistrationCode: string;
-  {Reads program's registration code from persistent storage.
-    @return Registration code or '' if not registered.
-  }
-var
-  Section: ISettingsSection;  // persistent storage where code is recorded
-begin
-  Section := Settings.ReadSection(ssApplication);
-  Result := Section.GetString('RegCode');
 end;
 
 class function TAppInfo.UserAppDir: string;

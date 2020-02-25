@@ -1,7 +1,7 @@
 inherited UserDataPathDlg: TUserDataPathDlg
   Caption = 'Move User Database'
   ExplicitWidth = 474
-  ExplicitHeight = 374
+  ExplicitHeight = 375
   PixelsPerInch = 96
   TextHeight = 13
   inherited pnlBody: TPanel
@@ -170,14 +170,19 @@ inherited UserDataPathDlg: TUserDataPathDlg
         TabOrder = 0
       end
     end
-    inline frmProgress: TUserDataPathDlgProgressFrame
+    inline frmProgress: TProgressFrame
       Left = 57
       Top = 0
       Width = 320
       Height = 82
+      ParentBackground = False
       TabOrder = 2
       Visible = False
       ExplicitLeft = 57
+      ExplicitHeight = 82
+      inherited pnlBody: TPanel
+        Height = 82
+      end
     end
   end
   object alDlg: TActionList

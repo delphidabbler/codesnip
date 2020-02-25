@@ -26,7 +26,7 @@ uses
   // Project
   Favourites.UManager, FmHelpAware, FrDetail, FrOverview, FrTitled,
   IntfNotifier, UCompileMgr, UDialogMgr, UHistory, UMainDisplayMgr, USearch,
-  UStatusBarMgr, UUpdateCheckers, UWindowSettings;
+  UStatusBarMgr, UWindowSettings;
 
 
 type
@@ -68,21 +68,18 @@ type
     actHelpCompChecks: TAction;
     actHelpContents: TAction;
     actHelpQuickStart: TAction;
-    actHomePage: TBrowseURL;
+    actGitHubHome: TBrowseURL;
     actImportCode: TAction;
     actLicense: TAction;
     actLoadSelection: TAction;
     actMoveUserDatabase: TAction;
     actNextTab: TAction;
     actNewDetailsTab: TAction;
-    actNews: TAction;
     actPreferences: TAction;
     actPreviousTab: TAction;
     actPrint: TAction;
     actPrivacy: TAction;
-    actProgramUpdates: TAction;
     actProxyServer: TAction;
-    actRegister: TAction;
     actRenameCategory: TAction;
     actRestoreDatabase: TAction;
     actSaveDatabase: TAction;
@@ -91,7 +88,6 @@ type
     actSaveUnit: TAction;
     actSelectAll: TAction;
     actSelectSnippets: TAction;
-    actSubmit: TAction;
     actSWAGImport: TAction;
     actTestBug: TAction;
     actTestCompile: TAction;
@@ -102,7 +98,6 @@ type
     actViewDependencies: TAction;
     actViewSnippetKinds: TAction;
     actViewTestUnit: TAction;
-    actWebSite: TBrowseURL;
     actWelcome: TAction;
     alMain: TActionList;
     appEvents: TApplicationEvents;
@@ -115,7 +110,6 @@ type
     miAddSnippet: TMenuItem;
     miBackupDatabase: TMenuItem;
     miCategories: TMenuItem;
-    miCheckUpdates: TMenuItem;
     miCloseAllDetailsTabs: TMenuItem;
     miCloseDetailsTab: TMenuItem;
     miCollapseNode: TMenuItem;
@@ -155,12 +149,10 @@ type
     miLoadSelection: TMenuItem;
     miMoveUserDatabase: TMenuItem;
     miNewDetailsTab: TMenuItem;
-    miNews: TMenuItem;
     miPreferences: TMenuItem;
     miPrint: TMenuItem;
     miPrivacy: TMenuItem;
     miProxyServer: TMenuItem;
-    miRegister: TMenuItem;
     miRenameCategory: TMenuItem;
     miReportBug: TMenuItem;
     miRestoreDatabase: TMenuItem;
@@ -179,9 +171,7 @@ type
     miSpacer4: TMenuItem;
     miSpacer5: TMenuItem;
     miSpacer6: TMenuItem;
-    miSpacer7: TMenuItem;
     miSpacer8: TMenuItem;
-    miSpacer9: TMenuItem;
     miSpacer10: TMenuItem;
     miSpacer11: TMenuItem;
     miSpacer12: TMenuItem;
@@ -191,9 +181,7 @@ type
     miSpacer16: TMenuItem;
     miSpacer17: TMenuItem;
     miSpacer18: TMenuItem;
-    miSpacer19: TMenuItem;
     miSpacer20: TMenuItem;
-    miSubmit: TMenuItem;
     miSWAGImport: TMenuItem;
     miTestCompile: TMenuItem;
     miTools: TMenuItem;
@@ -205,7 +193,6 @@ type
     miViewSnippetKinds: TMenuItem;
     miViewTestUnit: TMenuItem;
     miViewAlphabetical: TMenuItem;
-    miWebSite: TMenuItem;
     miWelcome: TMenuItem;
     mnuMain: TMainMenu;
     pnlBody: TPanel;
@@ -238,6 +225,8 @@ type
     tbSpacer8: TToolButton;
     tbTestCompile: TToolButton;
     tbUpdateDbase: TToolButton;
+    actBlog: TBrowseURL;
+    miBlog: TMenuItem;
     ///  <summary>Displays About Box.</summary>
     procedure actAboutExecute(Sender: TObject);
     ///  <summary>Gets a new category from user and adds to database.</summary>
@@ -358,9 +347,6 @@ type
     procedure actMoveUserDatabaseExecute(Sender: TObject);
     ///  <summary>Creates a new empty tab in details pane.</summary>
     procedure actNewDetailsTabExecute(Sender: TObject);
-    ///  <summary>Displays a dialogue box containing latest news from CodeSnip's
-    ///  RSS feed.</summary>
-    procedure actNewsExecute(Sender: TObject);
     ///  <summary>Displays next tab in either overview or details pane depending
     ///  which pane is active.</summary>
     procedure actNextTabExecute(Sender: TObject);
@@ -388,19 +374,9 @@ type
     procedure actPrintUpdate(Sender: TObject);
     ///  <summary>Displays the Privacy Statement help topic.</summary>
     procedure actPrivacyExecute(Sender: TObject);
-    ///  <summary>Displays the Check For Program Updates dialogue box that
-    ///  displays the availability of any program updates.</summary>
-    procedure actProgramUpdatesExecute(Sender: TObject);
     ///  <summary>Displays the Proxy Server Configuration dialogue box that can
     ///  be used to specify a proxy server to use for internet access.</summary>
     procedure actProxyServerExecute(Sender: TObject);
-    ///  <summary>Displays the Registration Wizard that can be used to register
-    ///  CodeSnip.</summary>
-    procedure actRegisterExecute(Sender: TObject);
-    ///  <summary>Determines whether the Register action is visible.</summary>
-    ///  <remarks>The action is visible iff the program is not already
-    ///  registered.</remarks>
-    procedure actRegisterUpdate(Sender: TObject);
     ///  <summary>Displays a dialogue box that can be used to rename a user
     ///  defined category.</summary>
     procedure actRenameCategoryExecute(Sender: TObject);
@@ -440,9 +416,6 @@ type
     ///  <summary>Displays the Select Snippets dialogue box where the snippets
     ///  to be displayed can be chosen.</summary>
     procedure actSelectSnippetsExecute(Sender: TObject);
-    ///  <summary>Displays the Code Submission Wizard that enables user defined
-    ///  snippets to be submitted for inclusion in the main database.</summary>
-    procedure actSubmitExecute(Sender: TObject);
     ///  <summary>Determines whether the Submit or ExportCode actions can be
     ///  enabled.</summary>
     procedure ActSubmitOrExportUpdate(Sender: TObject);
@@ -514,8 +487,6 @@ type
       var Accept: Boolean);
   strict private
     var
-      ///  <summary>Flag denoting if application is registered.</summary>
-      fIsAppRegistered: Boolean;
       ///  <summary>Object that notifies user-initiated events by triggering
       ///  actions.</summary>
       fNotifier: INotifier;
@@ -534,9 +505,6 @@ type
       fCompileMgr: TMainCompileMgr;
       ///  <summary>Object that manages favourites.</summary>
       fFavouritesMgr: TFavouritesManager;
-      ///  <summary>Object that checks for program and database updates in a
-      ///  background thread.</summary>
-      fUpdateChecker: TUpdateCheckerMgr;
 
     ///  <summary>Displays view item given by TViewItemAction instance
     ///  referenced by Sender and adds to history list.</summary>
@@ -604,7 +572,7 @@ uses
   Windows, Graphics,
   // Project
   DB.UCategory, DB.UMain, DB.USnippet, FmSplash, FmTrappedBugReportDlg,
-  FmWaitDlg, IntfFrameMgrs, Notifications.UDisplayMgr, UActionFactory, UAppInfo,
+  FmWaitDlg, IntfFrameMgrs, UActionFactory, UAppInfo,
   UClassHelpers, UCodeShareMgr, UCommandBars, UConsts, UCopyInfoMgr,
   UCopySourceMgr, UDatabaseLoader, UDatabaseLoaderUI, UDetailTabAction,
   UEditSnippetAction, UExceptions, UHelpMgr, UHistoryMenus, UKeysHelper,
@@ -621,8 +589,6 @@ uses
 procedure TMainForm.actAboutExecute(Sender: TObject);
 begin
   fDialogMgr.ShowAboutDlg;
-  if not fIsAppRegistered then
-    fIsAppRegistered := TAppInfo.IsRegistered;
 end;
 
 procedure TMainForm.actAddCategoryExecute(Sender: TObject);
@@ -937,11 +903,6 @@ begin
   fMainDisplayMgr.CreateNewDetailsTab;
 end;
 
-procedure TMainForm.actNewsExecute(Sender: TObject);
-begin
-  fDialogMgr.ShowNewsDlg;
-end;
-
 procedure TMainForm.actNextTabExecute(Sender: TObject);
 begin
   fMainDisplayMgr.SelectNextActiveTab;
@@ -1003,29 +964,9 @@ begin
   DisplayHelp('PrivacyStatement');
 end;
 
-procedure TMainForm.actProgramUpdatesExecute(Sender: TObject);
-begin
-  fDialogMgr.ShowProgramUpdatesDlg;
-end;
-
 procedure TMainForm.actProxyServerExecute(Sender: TObject);
 begin
   fDialogMgr.ExecProxyServerDlg;
-end;
-
-procedure TMainForm.actRegisterExecute(Sender: TObject);
-begin
-  if fDialogMgr.ExecRegistrationDlg then
-    fIsAppRegistered := True;
-end;
-
-procedure TMainForm.actRegisterUpdate(Sender: TObject);
-begin
-  with Sender as TAction do
-  begin
-    Visible := not fIsAppRegistered;
-    Enabled := True;
-  end;
 end;
 
 procedure TMainForm.actRenameCategoryExecute(Sender: TObject);
@@ -1118,13 +1059,9 @@ begin
     fMainDisplayMgr.CompleteRefresh;
 end;
 
-procedure TMainForm.actSubmitExecute(Sender: TObject);
-begin
-  TCodeShareMgr.Submit(fMainDisplayMgr.CurrentView);
-end;
-
 procedure TMainForm.ActSubmitOrExportUpdate(Sender: TObject);
 begin
+  // TODO -cRefactor: rename method - no longer shared
   (Sender as TAction).Enabled := TCodeShareMgr.CanShare;
 end;
 
@@ -1342,13 +1279,6 @@ end;
 procedure TMainForm.FormDestroy(Sender: TObject);
 begin
   inherited;
-  // Stop update checking threads
-  fUpdateChecker.StopThreads;
-  fUpdateChecker.Free;
-
-  // Stop notification display sub-system
-  TNotificationDisplayMgr.Stop;
-
   // Save any changes to user database
   with Database as IDatabaseEdit do
   begin
@@ -1412,9 +1342,9 @@ begin
 
     // Initialise actions
     // Browse actions have to have URLs set dynamically
-    actHomePage.URL := TWebInfo.ProgramHomeURL;
-    actWebSite.URL := TWebInfo.DelphiDabblerHomeURL;
+    actGitHubHome.URL := TWebInfo.GitHubURL;
     actFAQs.URL := TWebInfo.FAQsURL;
+    actBlog.URL := TWebInfo.BlogURL;
     // Tree control actions need shortcuts adding dynamically, and state stored
     // in Tag property
     actExpandNode.ShortCut := ShortCut(VK_ADD, [ssCtrl]);
@@ -1459,8 +1389,8 @@ begin
       );
       SetDonateAction(actDonate);
       SetNewSnippetAction(actAddSnippet);
-      SetNewsAction(actNews);
-      SetCheckForUpdatesAction(actProgramUpdates);
+      SetNewsAction(actBlog);
+      // SetCheckForUpdatesAction(actProgramUpdates);
       SetAboutBoxAction(actAbout);
       SetShowPrefsPageAction(
         TActionFactory.CreateShowPrefsPageAction(Self, ActShowPrefsPageExecute)
@@ -1567,8 +1497,6 @@ begin
     // Create object to handle compilation and assoicated UI and dialogues
     fCompileMgr := TMainCompileMgr.Create(Self);  // auto-freed
 
-    // Record if app is registered
-    fIsAppRegistered := TAppInfo.IsRegistered;
 
     // Set event handler for snippets database
     Database.AddChangeEventHandler(DBChangeHandler);
@@ -1590,13 +1518,6 @@ begin
     // *** Must be done AFTER database has loaded ***
     fFavouritesMgr := TFavouritesManager.Create(fNotifier);
 
-    // Start notification display sub-system
-    TNotificationDisplayMgr.Start(Self);
-
-    // Start update checking manager
-    // *** Should be done after notification window listener starts
-    fUpdateChecker := TUpdateCheckerMgr.Create;
-    fUpdateChecker.StartThreads;
   finally
     // Ready to start using app: request splash form closes and enable form
     SplashForm.RequestClose;
