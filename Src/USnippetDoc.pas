@@ -155,6 +155,7 @@ resourcestring
   sDependListTitle = 'Required snippets:';
   sXRefListTitle = 'See also:';
   sCompilers = 'Supported compilers:';
+  // TODO -cWeb: Change following to get license info from DB meta data
   sMainDatabaseInfo = 'A snippet from the DelphiDabbler CodeSnip Database '
    + '(%s), licensed under the MIT License '
    + '(http://opensource.org/licenses/MIT).';
