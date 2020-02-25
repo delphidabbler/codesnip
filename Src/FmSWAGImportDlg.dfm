@@ -25,32 +25,24 @@ inherited SWAGImportDlg: TSWAGImportDlg
       object tsIntro: TTabSheet
         Caption = 'tsIntro'
         TabVisible = False
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
-        inline frmIntro: TFixedHTMLDlgFrame
+        inline frmIntro: THTMLTpltDlgFrame
           Left = 0
           Top = 0
           Width = 663
-          Height = 446
+          Height = 236
           Align = alTop
           TabOrder = 0
           TabStop = True
-          ExplicitWidth = 663
-          ExplicitHeight = 446
+          ExplicitLeft = 8
+          ExplicitTop = 8
           inherited pnlBrowser: TPanel
             Width = 663
-            Height = 446
-            ExplicitWidth = 663
-            ExplicitHeight = 446
             inherited wbBrowser: TWebBrowser
               Width = 663
-              Height = 446
-              ExplicitWidth = 663
-              ExplicitHeight = 446
+              ExplicitWidth = 320
+              ExplicitHeight = 240
               ControlData = {
-                4C00000086440000182E00000000000000000000000000000000000000000000
+                4C00000086440000641800000000000000000000000000000000000000000000
                 000000004C000000000000000000000001000000E0D057007335CF11AE690800
                 2B2E126208000000000000004C0000000114020000000000C000000000000046
                 8000000000000000000000000000000000000000000000000000000000000000
@@ -63,10 +55,6 @@ inherited SWAGImportDlg: TSWAGImportDlg
         Caption = 'tsFolder'
         ImageIndex = 4
         TabVisible = False
-        ExplicitLeft = 0
-        ExplicitTop = 27
-        ExplicitWidth = 0
-        ExplicitHeight = 425
         object lblFolder: TLabel
           Left = 0
           Top = 8
@@ -110,10 +98,6 @@ inherited SWAGImportDlg: TSWAGImportDlg
         Caption = 'tsCategories'
         ImageIndex = 1
         TabVisible = False
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         object lblCategories: TLabel
           Left = 0
           Top = 45
@@ -186,10 +170,6 @@ inherited SWAGImportDlg: TSWAGImportDlg
         Caption = 'tsUpdate'
         ImageIndex = 2
         TabVisible = False
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         object lblUpdateDesc: TLabel
           Left = 0
           Top = 3
@@ -232,16 +212,14 @@ inherited SWAGImportDlg: TSWAGImportDlg
         Caption = 'tsFinish'
         ImageIndex = 3
         TabVisible = False
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         inline frmOutro: THTMLTpltDlgFrame
           Left = 0
           Top = 0
           Width = 663
           Height = 446
           Align = alTop
+          DoubleBuffered = False
+          ParentDoubleBuffered = False
           TabOrder = 0
           TabStop = True
           ExplicitWidth = 663

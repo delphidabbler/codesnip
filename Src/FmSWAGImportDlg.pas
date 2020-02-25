@@ -44,6 +44,7 @@ uses
   FrHTMLTpltDlg,
   UBaseObjects,
   UContainers,
+  UCSSBuilder,
   SWAG.UCommon,
   SWAG.UImporter,
   SWAG.UReader, ActnList;
@@ -57,7 +58,6 @@ type
     tsIntro: TTabSheet;
     tsCategories: TTabSheet;
     lblCategories: TLabel;
-    frmIntro: TFixedHTMLDlgFrame;
     lbCategories: TListBox;
     lblCategoriesDesc: TLabel;
     lblSelectSnippets: TLabel;
@@ -78,6 +78,7 @@ type
     lblFolderPageInfo: TLabel;
     btnBrowse: TButton;
     actBrowse: TAction;
+    frmIntro: THTMLTpltDlgFrame;
     ///  <summary>Handles clicks on the check boxes next to snippets in the
     ///  snippet selection list box by selecting and deselecting snippets for
     ///  inclusion in the import.</summary>
@@ -150,6 +151,13 @@ type
     ///  <summary>Validates entries on the wizard page identified by the given
     ///  page index.</summary>
     procedure ValidatePage(const PageIdx: Integer);
+    ///  <summary>Handles HTML template frame's OnBuildCSS event. Adds
+    ///  additional CSS required by HTML in this form.</summary>
+    ///  <param name="Sender">TObject [in] Reference to object triggering event.
+    ///  </param>
+    ///  <param name="CSSBuilder">TCSSBuilder [in] Object used to construct the
+    ///  CSS.</param>
+    procedure BuildCSS(Sender: TObject; const CSSBuilder: TCSSBuilder);
     ///  <summary>Displays snippets selected for import in list view on Update
     ///  page.</summary>
     procedure PopulateImportsLV;
@@ -246,14 +254,17 @@ uses
   FmPreviewDlg,
   FmWaitDlg,
   UBrowseForFolderDlg,
+  UColours,
   UConsts,
+  UCSSUtils,
   UCtrlArranger,
   UEncodings,
   UExceptions,
   UHTMLTemplate,
   UMessageBox,
   UStrUtils,
-  UWaitForThreadUI;
+  UWaitForThreadUI,
+  Web.UInfo;
 
 {$R *.dfm}
 
@@ -403,6 +414,21 @@ begin
   end;
 end;
 
+procedure TSWAGImportDlg.BuildCSS(Sender: TObject;
+  const CSSBuilder: TCSSBuilder);
+begin
+  inherited;
+  // Set body text spacing
+  with CSSBuilder.Selectors['body'] do
+    AddProperty(TCSS.LineHeightProp(120));
+  // Create .framed border style
+  with CSSBuilder.AddSelector('.framed') do
+  begin
+    AddProperty(TCSS.BorderProp(cssAll, 1, cbsSolid, clBorder));
+    AddProperty(TCSS.PaddingProp(4));
+  end;
+end;
+
 procedure TSWAGImportDlg.clbSelectSnippetsClickCheck(Sender: TObject);
 var
   SelIdx: Integer;
@@ -440,6 +466,7 @@ procedure TSWAGImportDlg.ConfigForm;
 begin
   inherited;
   pcWizard.ActivePage := tsFinish;
+  frmOutro.OnBuildCSS := BuildCSS;
   frmOutro.Initialise(
     'dlg-swag-import-outro-tplt.html',
     procedure (Tplt: THTMLTemplate)
@@ -451,7 +478,17 @@ begin
     end
   );
   pcWizard.ActivePage := tsIntro;
-  frmIntro.Initialise('dlg-swag-import-intro.html');
+  frmIntro.OnBuildCSS := BuildCSS;
+  frmIntro.Initialise(
+    'dlg-swag-import-intro-tplt.html',
+    procedure (Tplt: THTMLTemplate)
+    begin
+      Tplt.ResolvePlaceholderText(
+        'SWAGReleaseURL',
+        TWebInfo.SWAGReleaseURL
+      );
+    end
+  );
 end;
 
 destructor TSWAGImportDlg.Destroy;
