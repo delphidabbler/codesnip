@@ -98,6 +98,7 @@ uses
   // Project
   UAppInfo, UUtils, Web.UInfo;
 
+// TODO -cDatabase: get license info from database rather than use literal text.
 
 resourcestring
   // Dialog box title
@@ -112,9 +113,8 @@ resourcestring
   // Error message
   sErrorMsg = 'Filename is not valid for a Pascal unit';
   // Unit header comments
-  sLicense = 'This unit is copyright © %0:s by the Code Snippets Database '
-    + 'Contributors (http://snippets.delphidabbler.com/contributors) and '
-    + 'is licensed under the MIT license '
+  sLicense = 'This unit is copyright © %0:s by the Peter Johnson and Code '
+    + 'Snippets Database contributors and is licensed under the MIT license '
     + '(http://opensource.org/licenses/MIT).';
   sMainDescription = 'The unit was generated automatically and incorporates a '
     + 'selection of source code taken from the Code Snippets Database at %0:s.';
