@@ -374,10 +374,8 @@ Feedback
 ================================================================================
 
 If you want to suggest new features please use the feature request tracker
-accessed from  http://delphidabbler.com/url/codesnip-featurereq.
-
-Any other comments can be sent using the contact page at
-http://delphidabbler.com/contact.
+accessed from https://github.com/delphidabbler/codesnip/issues (GitHub account
+required).
 
 
 FAQs
