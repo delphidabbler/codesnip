@@ -3,10 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2012, Peter Johnson (www.delphidabbler.com).
- *
- * $Rev$
- * $Date$
+ * Copyright (C) 2005-2020, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Set of classes that can register and provide instances of appropriate
  * protocol handler classes according to a URL's protocol. Also provides base

@@ -3,10 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2010-2012, Peter Johnson (www.delphidabbler.com).
- *
- * $Rev$
- * $Date$
+ * Copyright (C) 2010-2020, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Provides a base class for singleton objects along with a manager object that
  * records instances of each type of singleton.

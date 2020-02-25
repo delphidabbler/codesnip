@@ -3,10 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2012, Peter Johnson (www.delphidabbler.com).
- *
- * $Rev$
- * $Date$
+ * Copyright (C) 2005-2020, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements a frame containing a web browser control that displays HTML
  * content generated from a template that takes on the appearance of a dialogue
