@@ -376,7 +376,6 @@ uses
   UXMLDocConsts in 'UXMLDocConsts.pas',
   UXMLDocHelper in 'UXMLDocHelper.pas',
   UXMLDocumentEx in 'UXMLDocumentEx.pas',
-  Web.UCharEncodings in 'Web.UCharEncodings.pas',
   Web.UInfo in 'Web.UInfo.pas';
 
 // Include resources
