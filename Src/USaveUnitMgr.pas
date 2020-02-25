@@ -96,7 +96,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  UAppInfo, UUtils, Web.UInfo;
+  UAppInfo, UUrl, UUtils;
 
 // TODO -cDatabase: get license info from database rather than use literal text.
 
@@ -150,7 +150,7 @@ begin
     // Result used for units that contain at snippet(s) from main database
     Result.Add(Format(sLicense, [FormatDateTime('YYYY', Now)]));
     Result.Add('');
-    Result.Add(Format(sMainDescription, [TWebInfo.DatabaseURL]));
+    Result.Add(Format(sMainDescription, [TURL.DatabaseURL]));
     Result.Add('');
     Result.Add(Format(sGenerated, [RFC1123DateStamp]));
     Result.Add(
@@ -160,7 +160,7 @@ begin
     );
     Result.Add('');
     Result.Add(
-      Format(sAdvert, [TAppInfo.ProgramName, TWebInfo.GitHubURL])
+      Format(sAdvert, [TAppInfo.ProgramName, TURL.GitHubURL])
     );
   end
   else

@@ -574,8 +574,8 @@ uses
   UCopySourceMgr, UDatabaseLoader, UDatabaseLoaderUI, UDetailTabAction,
   UEditSnippetAction, UExceptions, UHelpMgr, UHistoryMenus, UKeysHelper,
   UMessageBox, UNotifier, UNulDropTarget, UPrintMgr, UQuery, USaveSnippetMgr,
-  USaveUnitMgr, USelectionIOMgr, UShowPrefsPageAction, UUserDBMgr, UView,
-  UViewItemAction, UWBExternal, Web.UInfo;
+  USaveUnitMgr, USelectionIOMgr, UShowPrefsPageAction, UUrl, UUserDBMgr, UView,
+  UViewItemAction, UWBExternal;
 
 
 {$R *.dfm}
@@ -1337,9 +1337,9 @@ begin
 
     // Initialise actions
     // Browse actions have to have URLs set dynamically
-    actGitHubHome.URL := TWebInfo.GitHubURL;
-    actFAQs.URL := TWebInfo.FAQsURL;
-    actBlog.URL := TWebInfo.BlogURL;
+    actGitHubHome.URL := TURL.GitHubURL;
+    actFAQs.URL := TURL.FAQsURL;
+    actBlog.URL := TURL.BlogURL;
     // Tree control actions need shortcuts adding dynamically, and state stored
     // in Tag property
     actExpandNode.ShortCut := ShortCut(VK_ADD, [ssCtrl]);

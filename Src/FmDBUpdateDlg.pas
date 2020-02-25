@@ -173,7 +173,7 @@ uses
   UMessageBox,
   UStructs,
   UStrUtils,
-  Web.UInfo;
+  UUrl;
 
 {$R *.dfm}
 
@@ -272,7 +272,7 @@ begin
     begin
       Tplt.ResolvePlaceholderText(
         'CSDBReleaseURL',
-        TWebInfo.CSDBReleaseURL
+        TURL.CSDBReleaseURL
       );
     end
   );

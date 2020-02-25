@@ -356,6 +356,7 @@ uses
   UUnitAnalyser in 'UUnitAnalyser.pas',
   UUnitsChkListMgr in 'UUnitsChkListMgr.pas',
   UURIEncode in 'UURIEncode.pas',
+  UUrl in 'UUrl.pas',
   UUrlMonEx in 'UUrlMonEx.pas',
   UUserDBBackup in 'UUserDBBackup.pas',
   UUserDBMgr in 'UUserDBMgr.pas',
@@ -375,8 +376,7 @@ uses
   UWindowSettings in 'UWindowSettings.pas',
   UXMLDocConsts in 'UXMLDocConsts.pas',
   UXMLDocHelper in 'UXMLDocHelper.pas',
-  UXMLDocumentEx in 'UXMLDocumentEx.pas',
-  Web.UInfo in 'Web.UInfo.pas';
+  UXMLDocumentEx in 'UXMLDocumentEx.pas';
 
 // Include resources
 {$Resource ExternalObj.tlb}       // Type library file

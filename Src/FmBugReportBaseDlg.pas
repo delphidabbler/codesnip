@@ -55,7 +55,7 @@ uses
   // Delphi
   ExtActns,
   // Project
-  UColours, UCtrlArranger, UFontHelper, Web.UInfo;
+  UColours, UCtrlArranger, UFontHelper, UUrl;
 
 
 {$R *.dfm}
@@ -100,7 +100,7 @@ begin
   // must be able to override this method.
   with TBrowseURL.Create(nil) do
     try
-      URL := TWebInfo.BugTrackerURL;
+      URL := TURL.BugTrackerURL;
       Execute;
     finally
       Free;

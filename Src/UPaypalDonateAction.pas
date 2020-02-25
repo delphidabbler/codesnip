@@ -44,7 +44,7 @@ uses
   // Delphi
   SysUtils, ExtActns,
   // Project
-  Web.UInfo;
+  UUrl;
 
 
 { TPaypalDonateAction }
@@ -61,7 +61,7 @@ begin
   // use a TBrowseAction to access URL
   BrowseAction := TBrowseURL.Create(nil);
   try
-    BrowseAction.URL := TWebInfo.DonateURL;
+    BrowseAction.URL := TURL.DonateURL;
     BrowseAction.Execute;
   finally
     FreeAndNil(BrowseAction);

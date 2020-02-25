@@ -10,21 +10,16 @@
 }
 
 
-unit Web.UInfo;
+unit UUrl;
 
 
 interface
 
 
-uses
-  // Project
-  UBaseObjects;
-
-
 type
-  ///  <summary>Static class that provides information about URLs and any proxy
-  ///  server used by CodeSnip.</summary>
-  TWebInfo = class(TNoConstructObject)
+  ///  <summary>Advanced record that provides various URLs used by the program.
+  ///  </summary>
+  TURL = record
   strict private
     const
       ///  <summary>Name of server that hosts tested and released web services

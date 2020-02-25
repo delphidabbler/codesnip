@@ -260,8 +260,8 @@ uses
   UHTMLTemplate,
   UMessageBox,
   UStrUtils,
-  UWaitForThreadUI,
-  Web.UInfo;
+  UUrl,
+  UWaitForThreadUI;
 
 {$R *.dfm}
 
@@ -482,7 +482,7 @@ begin
     begin
       Tplt.ResolvePlaceholderText(
         'SWAGReleaseURL',
-        TWebInfo.SWAGReleaseURL
+        TURL.SWAGReleaseURL
       );
     end
   );

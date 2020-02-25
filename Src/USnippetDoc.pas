@@ -111,7 +111,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  Compilers.UCompilers, DB.UMain, DB.USnippetKind, UStrUtils, Web.UInfo;
+  Compilers.UCompilers, DB.UMain, DB.USnippetKind, UStrUtils, UUrl;
 
 
 { TSnippetDoc }
@@ -180,7 +180,7 @@ begin
     RenderExtra(Snippet.Extra);
   if not Snippet.UserDefined then
     // database info written only if snippet is from main database
-    RenderDBInfo(Format(sMainDatabaseInfo, [TWebInfo.DatabaseURL]));
+    RenderDBInfo(Format(sMainDatabaseInfo, [TURL.DatabaseURL]));
   Result := FinaliseDoc;
 end;
 
