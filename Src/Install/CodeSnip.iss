@@ -17,7 +17,7 @@
   /* assumes S begins with "Release " followed by version as x.x.x */ \
   Local[0] = Copy(S, Len("Release ") + 1, 99), \
   Local[0]
-  
+
 #define AppPublisher "DelphiDabbler"
 #define AppName "CodeSnip"
 #define ExeFile AppName + ".exe"
@@ -34,10 +34,10 @@
 #define ExeProg SrcExePath + ExeFile
 #define AppVersion DeleteToVerStart(GetFileProductVersion(ExeProg))
 #define Copyright GetStringFileInfo(ExeProg, LEGAL_COPYRIGHT)
-#define Company "DelphiDabbler.com"
-#define WebAddress "www.delphidabbler.com"
-#define WebURL "http://" + WebAddress + "/"
-#define AppURL WebURL + "software/codesnip"
+#define Company "DelphiDabbler"
+#define WebAddress "github.com/delphidabbler"
+#define WebURL "https://" + WebAddress + "/"
+#define AppURL WebURL + "/codesnip"
 #define InstUninstDir "Uninst"
 
 ; Creates name of setup file from app name, version and any special build string
