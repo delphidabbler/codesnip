@@ -251,9 +251,6 @@ procedure TDBUpdateDlg.BuildCSS(Sender: TObject;
     const CSSBuilder: TCSSBuilder);
 begin
   inherited;
-  // Set body style to use window colour and frame's font with no margin
-  with CSSBuilder.Selectors['a'] do
-    AddProperty(TCSS.ColorProp(clExternalLink));
   // Create .framed border style
   with CSSBuilder.AddSelector('.framed') do
   begin
