@@ -1,3 +1,5 @@
+{TODO -cDocs : Remove remaining $Rev$ and $Date$ SVN placeholders}
+{TODO -cRefactor : Remove dlg-codesubmit-intro.html and dlg-codesubmit-finished.html from resources}
 {TODO -cDocs : Update License.html to replace references to SVN with Git}
 {TODO -cDocs : Update Build.html to replace references to SVN with Git}
 {TODO -cFirstRun : Delete UpdateChecks section from Config file on first run}
