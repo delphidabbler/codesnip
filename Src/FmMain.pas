@@ -1329,8 +1329,6 @@ begin
     // Set window caption
     Application.Title := TAppInfo.ProgramCaption;
     Caption := TAppInfo.ProgramCaption;
-    if TWebInfo.UsingTestServer then
-      Caption := Caption + ' [' + TWebInfo.TestServerHost + ']';
 
     // Restore window settings
     fWindowSettings := TMainWindowSettings.CreateStandAlone(Self); // auto-freed
