@@ -93,6 +93,9 @@ type
       ///  database releases are hosted.</summary>
       CSDBReleaseURL = 'https://github.com/'
         + 'delphidabbler/code-snippets/releases';
+      ///  <summary>URL of the GitHub page where SWAG database releases are
+      ///  hosted.</summary>
+      SWAGReleaseURL = 'https://github.com/delphidabbler/swag/releases';
       ///  <summary>URL of the online Code Snippets database.</summary>
       DatabaseURL = WebsiteURL + '/url/csdb';
       ///  <summary>URL used to make donations towards the CodeSnip project.
