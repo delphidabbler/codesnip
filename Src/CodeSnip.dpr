@@ -359,7 +359,6 @@ uses
   UUnitAnalyser in 'UUnitAnalyser.pas',
   UUnitsChkListMgr in 'UUnitsChkListMgr.pas',
   UURIEncode in 'UURIEncode.pas',
-  UURIParams in 'UURIParams.pas',
   UUrlMonEx in 'UUrlMonEx.pas',
   UUserDBBackup in 'UUserDBBackup.pas',
   UUserDBMgr in 'UUserDBMgr.pas',
@@ -380,11 +379,7 @@ uses
   UXMLDocConsts in 'UXMLDocConsts.pas',
   UXMLDocHelper in 'UXMLDocHelper.pas',
   UXMLDocumentEx in 'UXMLDocumentEx.pas',
-  Web.UBaseWebService in 'Web.UBaseWebService.pas',
   Web.UCharEncodings in 'Web.UCharEncodings.pas',
-  Web.UDownloadMonitor in 'Web.UDownloadMonitor.pas',
-  Web.UExceptions in 'Web.UExceptions.pas',
-  Web.UHTTPEx in 'Web.UHTTPEx.pas',
   Web.UInfo in 'Web.UInfo.pas';
 
 // Include resources
