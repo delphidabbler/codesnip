@@ -113,6 +113,7 @@ resourcestring
   // Error message
   sErrorMsg = 'Filename is not valid for a Pascal unit';
   // Unit header comments
+  // TODO -cWeb: Change following to get license from database meta data
   sLicense = 'This unit is copyright © %0:s by the Peter Johnson and Code '
     + 'Snippets Database contributors and is licensed under the MIT license '
     + '(http://opensource.org/licenses/MIT).';
