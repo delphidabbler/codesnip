@@ -9,6 +9,7 @@
  * CodeSnip format and adds them to the database.
 }
 
+// TODO -cDatabase: check BSD3URI const has valid license info
 
 unit SWAG.UImporter;
 
@@ -166,7 +167,7 @@ resourcestring
   sLicensePostfix = '.';
 const
   // URLs of web pages referenced from links in boilerplate
-  SWAGDBURI = 'http://swag.delphidabbler.com/';
+  SWAGDBURI = 'https://github.com/delphidabbler/swag';
   BSD3URI = 'http://opensource.org/licenses/BSD-3-Clause';
 var
   // Active text attributes for links included in boilerplate
