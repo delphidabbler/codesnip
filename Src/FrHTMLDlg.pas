@@ -85,6 +85,7 @@ begin
       AddProperty(TCSS.BackgroundColorProp(fOwner.Color));
       AddProperty(TCSS.FontProps(fOwner.Font));
       AddProperty(TCSS.MarginProp(0));
+      AddProperty(TCSS.LineHeightProp(120));
     end;
     // Sets heading margins, padding and font size
     with CSSBuilder.AddSelector('h1') do
