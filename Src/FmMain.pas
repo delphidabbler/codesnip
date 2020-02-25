@@ -1337,9 +1337,9 @@ begin
 
     // Initialise actions
     // Browse actions have to have URLs set dynamically
-    actGitHubHome.URL := TURL.GitHubURL;
-    actFAQs.URL := TURL.FAQsURL;
-    actBlog.URL := TURL.BlogURL;
+    actGitHubHome.URL := TURL.CodeSnip;
+    actFAQs.URL := TURL.CodeSnipFAQReadMe;
+    actBlog.URL := TURL.CodeSnipBlog;
     // Tree control actions need shortcuts adding dynamically, and state stored
     // in Tag property
     actExpandNode.ShortCut := ShortCut(VK_ADD, [ssCtrl]);

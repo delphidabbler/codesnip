@@ -61,7 +61,7 @@ begin
   // use a TBrowseAction to access URL
   BrowseAction := TBrowseURL.Create(nil);
   try
-    BrowseAction.URL := TURL.DonateURL;
+    BrowseAction.URL := TURL.PaypalDonate;
     BrowseAction.Execute;
   finally
     FreeAndNil(BrowseAction);

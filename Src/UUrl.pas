@@ -22,42 +22,46 @@ type
   TURL = record
   strict private
     const
-      ///  <summary>Name of server that hosts tested and released web services
-      ///  that are used by CodeSnip.</summary>
-      ///  <remarks>There is also a test server that can be used by CodeSnip
-      ///  where new and updated web services are tested - see
-      ///  <c>TestServerHost</c> below.</remarks>
-      ProductionServerHost = 'delphidabbler.com';
-      ///  <summary>URL of DelphiDabbler website.</summary>
-      WebsiteURL = 'http://' + ProductionServerHost;
+      ///  <summary>URL of DelphiDabbler's account on GitHub repository.
+      ///  </summary>
+      DDabGitHub = 'https://github.com/delphidabbler';
+      ///  <summary>URL of the Code Snippet database's GitHub repository.
+      ///  </summary>
+      CodeSnippetsDB = DDabGitHub + '/code-snippets';
+      ///  <summary>URL of the SWAG database's GitHub repository.</summary>
+      SWAG = DDabGitHub + '/swag';
+      ///  <summary>URL of the CodeSnip FAQ's GitHub repository.</summary>
+      CodeSnipFAQ = DDabGitHub + '/codesnip-faq';
   public
     const
-      ///  <summary>URL of CodeSnip's GitHub page.</summary>
-      GitHubURL = 'https://github.com/delphidabbler/codesnip';
-      ///  <summary>URL of the GitHub page where DelphiDabbler Code Snippets
-      ///  database releases are hosted.</summary>
-      CSDBReleaseURL = 'https://github.com/'
-        + 'delphidabbler/code-snippets/releases';
-      ///  <summary>URL of the GitHub page where SWAG database releases are
-      ///  hosted.</summary>
-      SWAGReleaseURL = 'https://github.com/delphidabbler/swag/releases';
-      ///  <summary>URL of the online Code Snippets database.</summary>
-      DatabaseURL = WebsiteURL + '/url/csdb';
-      ///  <summary>URL used to make donations towards the CodeSnip project.
-      ///  </summary>
-      ///  <remarks>This URL redirects to the correct page on PayPal.</remarks>
-      DonateURL = 'https://www.paypal.com/donate/?'
-        + 'token=LYnh7_DXV-YqTmX3Bilr9rCPN89oANmBTZmRCdNHu_qFSk2jo_'
-        + 'WzTYTXCE165U9hXEmwq0&country.x=GB&locale.x=GB';
+      ///  <summary>URL of CodeSnip's GitHub repository.</summary>
+      CodeSnip = DDabGitHub + '/codesnip';
+
       ///  <summary>URL used to view and report CodeSnip bugs on GitHub.
       ///  </summary>
-      BugTrackerURL = GitHubURL + '/issues';
+      CodeSnipBugTracker = CodeSnip + '/issues';
+
       ///  <summary>URL of CodeSnip's FAQ web page.</summary>
       ///  <remarks>This is the CodeSnip FAQ project on GitHub.</remarks>
-      FAQsURL = 'https://github.com/delphidabbler/codesnip-faq/'
-        + 'blob/master/README.md';
+      CodeSnipFAQReadMe = CodeSnipFAQ + '/blob/master/README.md';
+
+      ///  <summary>URL of the GitHub page where DelphiDabbler Code Snippets
+      ///  database releases are hosted.</summary>
+      CodeSnippetsDBReleases = CodeSnippetsDB + '/releases';
+
+      ///  <summary>URL of the GitHub page where SWAG database releases are
+      ///  hosted.</summary>
+      SWAGReleases = SWAG + '/releases';
+
+      ///  <summary>URL used to make donations towards the CodeSnip project.
+      ///  </summary>
+      PaypalDonate = 'https://www.paypal.com/donate/?'
+        + 'token=LYnh7_DXV-YqTmX3Bilr9rCPN89oANmBTZmRCdNHu_qFSk2jo_'
+        + 'WzTYTXCE165U9hXEmwq0&country.x=GB&locale.x=GB';
+
       /// <summary>URL of the the CodeSnip blog.</summary>
-      BlogURL = 'http://codesnip-app.blogspot.com/';
+      CodeSnipBlog = 'http://codesnip-app.blogspot.com/';
+
   end;
 
 

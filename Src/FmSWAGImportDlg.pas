@@ -482,7 +482,7 @@ begin
     begin
       Tplt.ResolvePlaceholderText(
         'SWAGReleaseURL',
-        TURL.SWAGReleaseURL
+        TURL.SWAGReleases
       );
     end
   );

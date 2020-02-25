@@ -272,7 +272,7 @@ begin
     begin
       Tplt.ResolvePlaceholderText(
         'CSDBReleaseURL',
-        TURL.CSDBReleaseURL
+        TURL.CodeSnippetsDBReleases
       );
     end
   );

@@ -100,7 +100,7 @@ begin
   // must be able to override this method.
   with TBrowseURL.Create(nil) do
     try
-      URL := TURL.BugTrackerURL;
+      URL := TURL.CodeSnipBugTracker;
       Execute;
     finally
       Free;
