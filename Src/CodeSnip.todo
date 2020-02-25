@@ -1,3 +1,5 @@
+{TODO -cDocs : Update License.html to replace references to SVN with Git}
+{TODO -cDocs : Update Build.html to replace references to SVN with Git}
 {TODO -cFirstRun : Delete UpdateChecks section from Config file on first run}
 {TODO -cFirstRun : Delete Prefs:Updating section from Config file on first run}
 {TODO -cHelp :
