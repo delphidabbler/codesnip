@@ -1,3 +1,4 @@
+{TODO -cWeb : Remove donate box & related notes - problem doing direct link to paypalwith giving away email address}
 {TODO -cDocs : Remove remaining $Rev$ and $Date$ SVN placeholders}
 {TODO -cRefactor : Remove dlg-codesubmit-intro.html and dlg-codesubmit-finished.html from resources}
 {TODO -cDocs : Update License.html to replace references to SVN with Git}
