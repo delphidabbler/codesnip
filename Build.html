@@ -95,62 +95,12 @@
 
 <p>
   Several DelphiDabbler and other 3rd party libraries and components are
-  required to compile <em>CodeSnip</em>, most of which are included in the code
-  repository in the <code>Src/3rdParty</code> directory. Code not included in
-  the repository is noted below.
-</p>
-
-<h3>
-  Indy libraries v10
-</h3>
-
-<p>
-  The Indy 10 Internet components ship with Delphi XE.
-  If you prefer to work with the latest release you can download it from <a
-    href="http://www.indyproject.org/"
-  >http://www.indyproject.org/</a>. If you download a copy of Indy 10 you
-  should compile the source code separately with the same version of Delphi
-  that is being used to compile <em>CodeSnip</em>.
+  required to compile <em>CodeSnip</em>. They are included in the code
+  repository in the <code>Src/3rdParty</code> directory.
 </p>
 
 <p>
-  Regardless of whether you are using the version of Indy 10 supplied with
-  Delphi or if you have downloaded and compiled your own version, you must set
-  the <code>INDY10</code> environment variable to the directory where you
-  placed the compiled code.
-</p>
-
-<h4 id="indychanges">
-  Changes between different Indy 10 releases
-</h4>
-
-<p>
-  Changes were made to the parameter lists of the <var>TWorkBeginEvent</var>
-  and <var>TWorkEvent</var> events between early and later releases of Indy
-  10. Specifically, earlier versions use type <var>Integer</var> for the
-  <var>AWorkCount</var> parameter of <var>TWorkEvent</var> and the
-  <var>AWorkCountMax</var> parameter of <var>TWorkBeginEvent</var>, while
-  later versions use <var>Int64</var>.
-<p>
-
-<p>
-  <em>CodeSnip</em>'s source code uses conditional compilation to provide the
-  correct event handler signatures &ndash; and it makes an intelligent guess
-  at which signature to use depending on the version number provided by the
-  Indy library code. Should the program fail to compile with an error in the
-  <var>Web.UDownloadMonitor</var> unit, you should check the event signatures in
-  your Indy <var>IdComponent</var> unit and then define the
-  <code>INDY_WORKEVENT_INT64</code> environment variable if <var>Int64</var>
-  parameters are required or <code>INDY_WORKEVENT_INT32</code> if
-  <var>Integer</var> parameters are used.
-</p>
-
-<h3>
-  Delphi RTL &amp; VCL
-</h3>
-
-<p>
-  Goes without saying really, but you need the RTL and VCL that ships with
+  Goes without saying really, but you will also need the RTL and VCL that ships with
   Delphi.
 </p>
 
@@ -229,23 +179,6 @@
     directory. When <code>DELPHIXE</code> is defined
     <code>DELPHIROOT</code> will be set to the value of
     <code>DELPHIXE</code>.
-  </dd>
-  <dt class="spaced">
-    <code>INDY10</code> - required
-  </dt>
-  <dd>
-    Must be set to the directory where the Indy 10 components are installed.
-    The code must have been built with the same version of Delphi used to
-    compile <em>CodeSnip</em>.
-  </dd>
-  <dt class="spaced">
-    <code>INDY_WORKEVENT_INT64</code> <strong>or</strong>
-    <code>INDY_WORKEVENT_INT32</code> - optional
-  </dt>
-  <dd>
-    <a href="#indychanges">See above</a> for details. If used, only one of
-    the environment variables may be defined. Defining both causes
-    compilation to fail.
   </dd>
 </dl>
 
@@ -391,9 +324,6 @@
   <li>
     <code>DELPHIROOT</code> <strong>or</strong> <code>DELPHIXE</code>
   </li>
-  <li>
-    <code>INDY10</code>
-  </li>
 </ul>
 
 <h4>
@@ -439,17 +369,6 @@
     <code>ZIPROOT</code>
   </li>
 </ul>
-
-<h4>
-  Step 4
-</h4>
-
-<p>
-  Set <code>INDY_WORKEVENT_INT64</code> or <code>INDY_WORKEVENT_INT32</code>
-  if necessary (explained <a
-    href="#indychanges"
-  >above</a>).
-</p>
 
 <h3>
   Get the Source Code
