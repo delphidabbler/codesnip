@@ -488,7 +488,6 @@
 			<DCCReference Include="UOverviewTreeState.pas"/>
 			<DCCReference Include="UPageSetupDialogEx.pas"/>
 			<DCCReference Include="UPageSetupDlgMgr.pas"/>
-			<DCCReference Include="UPaypalDonateAction.pas"/>
 			<DCCReference Include="UPipe.pas"/>
 			<DCCReference Include="UPreferences.pas"/>
 			<DCCReference Include="UPrintDocuments.pas"/>
