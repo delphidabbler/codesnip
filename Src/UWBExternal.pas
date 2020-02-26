@@ -34,7 +34,7 @@ type
   ///  <para>The methods a declared in the type library that is defined in
   ///  External.idl.</para>
   ///  </remarks>
-  TWBExternal = class(TAutoIntfObject, IWBExternal12, ISetNotifier)
+  TWBExternal = class(TAutoIntfObject, IWBExternal13, ISetNotifier)
   strict private
     var
       ///  <summary>Object used to call application code in response to
@@ -77,43 +77,39 @@ type
     ///  </param>
     ///  <remarks>
     ///  <para>The named snippet must be user defined.</para>
-    ///  <para>Method of IWBExternal12.</para>
+    ///  <para>Method of IWBExternal13.</para>
     ///  </remarks>
     procedure EditSnippet(const SnippetName: WideString); safecall;
-
-    ///  <summary>Displays the Donate dialogue box.</summary>
-    ///  <remarks>Method of IWBExternal12.</remarks>
-    procedure Donate; safecall;
 
     ///  <summary>Displays a named category.</summary>
     ///  <param name="CatID">WideString [in] ID of category to be displayed.
     ///  </param>
     ///  <param name="NewTab">WordBool [in] Whether to display category in a new
     ///  tab.</param>
-    ///  <remarks>Method of IWBExternal12.</remarks>
+    ///  <remarks>Method of IWBExternal13.</remarks>
     procedure DisplayCategory(const CatID: WideString; NewTab: WordBool);
       safecall;
 
     ///  <summary>Opens Snippet Editor ready to create a new snippet.</summary>
-    ///  <remarks>Method of IWBExternal12.</remarks>
+    ///  <remarks>Method of IWBExternal13.</remarks>
     procedure NewSnippet; safecall;
 
     ///  <summary>Shows latest news items from CodeSnip news feed.</summary>
-    ///  <remarks>Method of IWBExternal12.</remarks>
+    ///  <remarks>Method of IWBExternal13.</remarks>
     procedure ShowNews; safecall;
 
     ///  <summary>Checks for program updates.</summary>
-    ///  <remarks>Method of IWBExternal12.</remarks>
+    ///  <remarks>Method of IWBExternal13.</remarks>
     procedure CheckForUpdates; safecall;
 
     ///  <summary>Displays the program's About Box.</summary>
-    ///  <remarks>Method of IWBExternal12.</remarks>
+    ///  <remarks>Method of IWBExternal13.</remarks>
     procedure ShowAboutBox; safecall;
 
     ///  <summary>Displays specified page of the Preferences dialogue.</summary>
     ///  <param name="ClsName">WideString [in] Class name of the frame that
     ///  implements the required preferences page.</param>
-    ///  <remarks>Method of IWBExternal12.</remarks>
+    ///  <remarks>Method of IWBExternal13.</remarks>
     procedure ShowPrefsPage(const ClsName: WideString); safecall;
 
     ///  <summary>Records the notifier object that is used to call application
@@ -166,7 +162,7 @@ begin
   ExeName := TAppInfo.AppExeFilePath;
   OleCheck(LoadTypeLib(PWideChar(ExeName), TypeLib));
   // Create the object using type library
-  inherited Create(TypeLib, IWBExternal12);
+  inherited Create(TypeLib, IWBExternal13);
 end;
 
 procedure TWBExternal.DisplayCategory(const CatID: WideString;
@@ -186,16 +182,6 @@ begin
   try
     if Assigned(fNotifier) then
       fNotifier.DisplaySnippet(SnippetName, UserDefined, NewTab);
-  except
-    HandleException;
-  end;
-end;
-
-procedure TWBExternal.Donate;
-begin
-  try
-    if Assigned(fNotifier) then
-      fNotifier.Donate;
   except
     HandleException;
   end;
