@@ -356,20 +356,6 @@ report bugs for those versions. You should update the program first and only
 report the bug if it is still present.
 
 
-Make a Donation
-================================================================================
-
-CodeSnip is free to use and there is no requirement to pay anything for it. You
-get a fully working version of the program whether you make a donation or not.
-
-Having said that, it takes time and money to maintain CodeSnip and the online
-database. So if you wish to make a contribution it will be most welcome.
-
-Payment in pounds sterling can be made via this address -
-http://delphidabbler.com/url/donate-cs - which redirects to a secure PayPal
-page.
-
-
 Feedback
 ================================================================================
 
