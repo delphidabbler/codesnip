@@ -33,15 +33,10 @@ folder for the standard edition or in the AppData sub folder of the install
 directory for the portable edition.
 
 The file stores several user-specific application data settings such as your
-preferences. The only personal information is as follows:
-
-    * Any user name or email address you provided if you ever entered the
-      information in a dialogue box. This is used simply to automatically enter
-      the data in dialogue boxes where needed, to save you re-typing it.
-
-    * Your user name and password if you configured CodeSnip to access the
-      internet using a proxy server. The information is used only to access the
-      proxy. Passwords are encrypted.
+preferences. The only personal information is any user name or email address you
+provided if you ever entered such information in a dialogue box. This is used
+only to automatically enter the data in dialogue boxes where needed, to save you
+re-typing it.
 
 
 Spyware
