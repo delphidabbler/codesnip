@@ -109,6 +109,7 @@ type
       {Gets version number of program's executable file.
         @return Version number as dotted quad.
       }
+    // TODO -cTidy: Remove following unused method and may settings ssApplication section
     class function ProgramKey: string;
       {Gets program's unique identifying key. This key should be different on
       each installation. If key does not exist it is created.
