@@ -181,7 +181,7 @@ begin
     RenderExtra(Snippet.Extra);
   if not Snippet.UserDefined then
     // database info written only if snippet is from main database
-    RenderDBInfo(Format(sMainDatabaseInfo, [TURL.CodeSnip]));
+    RenderDBInfo(Format(sMainDatabaseInfo, [TURL.CodeSnipRepo]));
   Result := FinaliseDoc;
 end;
 

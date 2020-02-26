@@ -27,31 +27,31 @@ type
       DDabGitHub = 'https://github.com/delphidabbler';
       ///  <summary>URL of the Code Snippet database's GitHub repository.
       ///  </summary>
-      CodeSnippetsDB = DDabGitHub + '/code-snippets';
+      CodeSnippetsDBRepo = DDabGitHub + '/code-snippets';
       ///  <summary>URL of the SWAG database's GitHub repository.</summary>
-      SWAG = DDabGitHub + '/swag';
+      SWAGRepo = DDabGitHub + '/swag';
       ///  <summary>URL of the CodeSnip FAQ's GitHub repository.</summary>
-      CodeSnipFAQ = DDabGitHub + '/codesnip-faq';
+      CodeSnipFAQRepo = DDabGitHub + '/codesnip-faq';
   public
     const
       ///  <summary>URL of CodeSnip's GitHub repository.</summary>
-      CodeSnip = DDabGitHub + '/codesnip';
+      CodeSnipRepo = DDabGitHub + '/codesnip';
 
       ///  <summary>URL used to view and report CodeSnip bugs on GitHub.
       ///  </summary>
-      CodeSnipBugTracker = CodeSnip + '/issues';
+      CodeSnipBugTracker = CodeSnipRepo + '/issues';
 
       ///  <summary>URL of CodeSnip's FAQ web page.</summary>
       ///  <remarks>This is the CodeSnip FAQ project on GitHub.</remarks>
-      CodeSnipFAQReadMe = CodeSnipFAQ + '/blob/master/README.md';
+      CodeSnipFAQReadMe = CodeSnipFAQRepo + '/blob/master/README.md';
 
       ///  <summary>URL of the GitHub page where DelphiDabbler Code Snippets
       ///  database releases are hosted.</summary>
-      CodeSnippetsDBReleases = CodeSnippetsDB + '/releases';
+      CodeSnippetsDBReleases = CodeSnippetsDBRepo + '/releases';
 
       ///  <summary>URL of the GitHub page where SWAG database releases are
       ///  hosted.</summary>
-      SWAGReleases = SWAG + '/releases';
+      SWAGReleases = SWAGRepo + '/releases';
 
       ///  <summary>URL used to make donations towards the CodeSnip project.
       ///  </summary>
