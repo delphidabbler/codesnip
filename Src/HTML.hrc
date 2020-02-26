@@ -25,9 +25,6 @@ Res\Scripts\3rdParty\jquery.cycle.lite.js
 # compiler error log
 Res\HTML\dlg-comperror-tplt.html
 
-# donate dialogue
-Res\HTML\dlg-donate.html
-
 # active text preview dialogueue
 Res\HTML\dlg-activetext-preview-tplt.html
 
@@ -131,6 +128,3 @@ Res\Img\Egg\play-btn.png
 Res\Img\Egg\play-btn-hover.png
 Res\Img\Egg\doggy-pics.png
 Res\Img\Egg\blue-paper.png
-
-# donate dialogue - £ sign image
-Res\Img\pound-sign.png
