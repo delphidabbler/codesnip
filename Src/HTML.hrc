@@ -28,9 +28,6 @@ Res\HTML\dlg-comperror-tplt.html
 # donate dialogue
 Res\HTML\dlg-donate.html
 
-# email privacy information for display in frames
-Res\HTML\frm-emailprivacy.html
-
 # active text preview dialogueue
 Res\HTML\dlg-activetext-preview-tplt.html
 
