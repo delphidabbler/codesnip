@@ -125,12 +125,6 @@ type
     function ShowDependenciesDlg(const Snippet: TSnippet;
       const HelpKeyword: string): ISearch;
 
-    ///  <summary>Displays the Proxy Server configuration dialogue box.
-    ///  </summary>
-    ///  <returns>Boolean. True if user OKd dialogue or False if user cancelled.
-    ///  </returns>
-    function ExecProxyServerDlg: Boolean;
-
     ///  <summary>Displays the Test Compile dialogue box.</summary>
     ///  <param name="CompileMgr">TCompileMgr [in] Object used to manage test
     ///  compilation and to retain results.</param>
@@ -153,7 +147,6 @@ uses
   // Project
   FmAboutDlg, FmDBUpdateDlg, FmDependenciesDlg, FmFindCompilerDlg,
   FmFindTextDlg, FmFindXRefsDlg, FmPreferencesDlg, FmPrintDlg,
-  FmProxyServerDlg,
   FmSelectionSearchDlg, FmSWAGImportDlg, FmTestCompileDlg, FmUserBugReportDlg,
   UTestUnitDlgMgr;
 
@@ -197,11 +190,6 @@ end;
 function TDialogMgr.ExecPrintDlg: Boolean;
 begin
   Result := TPrintDlg.Execute(Owner);
-end;
-
-function TDialogMgr.ExecProxyServerDlg: Boolean;
-begin
-  Result := TProxyServerDlg.Execute(Owner);
 end;
 
 function TDialogMgr.ExecSelectionSearchDlg(

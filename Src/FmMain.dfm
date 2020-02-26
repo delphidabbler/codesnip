@@ -745,14 +745,6 @@ inherited MainForm: TMainForm
       OnExecute = actCopySourceExecute
       OnUpdate = actCopySourceUpdate
     end
-    object actProxyServer: TAction
-      Category = 'Tools'
-      Caption = 'Proxy Server...'
-      Hint = 
-        'Configure proxy server|Configure any proxy server to be used by ' +
-        'CodeSnip when accessing web services'
-      OnExecute = actProxyServerExecute
-    end
     object actAddCategory: TAction
       Category = 'Categories'
       Caption = 'New Category...'
@@ -1141,9 +1133,6 @@ inherited MainForm: TMainForm
       end
       object miCompilers: TMenuItem
         Action = actCompilers
-      end
-      object miProxyServer: TMenuItem
-        Action = actProxyServer
       end
       object miSpacer18: TMenuItem
         Caption = '-'
