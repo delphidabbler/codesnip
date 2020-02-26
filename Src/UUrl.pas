@@ -5,8 +5,7 @@
  *
  * Copyright (C) 2009-2020, Peter Johnson (gravatar.com/delphidabbler).
  *
- * Provides records and static that provide information about URLs, web services
- * and proxy servers.
+ * Provides details of various URLs used by CodeSnip.
 }
 
 
