@@ -105,7 +105,6 @@ uses
   FmDBUpdateDlg in 'FmDBUpdateDlg.pas' {DBUpdateDlg},
   FmDeleteCategoryDlg in 'FmDeleteCategoryDlg.pas' {DeleteCategoryDlg},
   FmDependenciesDlg in 'FmDependenciesDlg.pas' {DependenciesDlg},
-  FmDonateDlg in 'FmDonateDlg.pas' {DonateDlg},
   FmDuplicateSnippetDlg in 'FmDuplicateSnippetDlg.pas' {DuplicateSnippetDlg},
   FmEasterEgg in 'FmEasterEgg.pas' {EasterEggForm},
   FmFavouritesDlg in 'FmFavouritesDlg.pas' {FavouritesDlg},

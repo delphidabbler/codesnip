@@ -154,9 +154,6 @@
 			<DCCReference Include="FmDependenciesDlg.pas">
 				<Form>DependenciesDlg</Form>
 			</DCCReference>
-			<DCCReference Include="FmDonateDlg.pas">
-				<Form>DonateDlg</Form>
-			</DCCReference>
 			<DCCReference Include="FmDuplicateSnippetDlg.pas">
 				<Form>DuplicateSnippetDlg</Form>
 			</DCCReference>
