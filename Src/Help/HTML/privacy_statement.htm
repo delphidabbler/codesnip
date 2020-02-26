@@ -4,10 +4,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2014, Peter Johnson (www.delphidabbler.com).
- *
- * $Rev$
- * $Date$
+ * Copyright (C) 2005-2020, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Help topic containing program's privacy statement.
 -->
@@ -83,11 +80,11 @@
       deliberately or knowingly included with <em>CodeSnip</em> or its
       installer. If the program is found to contain spyware it will have been
       added by third parties without permission. Please inform the author of any
-      such occurrence or any suspicious behaviour via <a
-        href="http://delphidabbler.com/contact"
+      such occurrence or any suspicious behaviour by creating an issue on <a
+        href="https://github.com/delphidabbler/codesnip"
         class="weblink"
         target="_blank"
-      >http://delphidabbler.com/contact</a>.
+      >the CodeSnip GitHub repository</a> (GitHub account required).
     </p>
     <p>
       <em>CodeSnip</em> never tries to &quot;phone home&quot; of its own
@@ -99,143 +96,11 @@
       CodeSnip Online Activity
     </h2>
     <p>
-      <em>CodeSnip</em> may go online for several reasons. They are:
-    </p>
-    <ol class="unspaced">
-      <li>
-        Updating the database.
-      </li>
-      <li>
-        Importing snippets from the SWAG database.
-      </li>
-      <li>
-        Accessing various websites via hyperlinks and menu options.
-      </li>
-      <li>
-        Accessing the internet using a proxy server.
-      </li>
-    </ol>
-    <p>
-      The first two actions are performed directly by <em>CodeSnip</em>,
-      which communicates with web services located on delphidabbler.com
-      using HTTP on port 80. The third action simply displays web pages in a
-      browser. The fourth passes user information to the proxy server.
-    </p>
-    <p>
-      Personal data will neither be published on the DelphiDabbler website nor
-      knowingly passed to third parties. Furthermore your data will only be
-      used by the author for the purposes described below.
-    </p>
-    <h3>
-      Updating the Database
-    </h3>
-    <p>
-      This activity is started by displaying the &quot;Update From Web&quot;
-      dialogue box and clicking its &quot;Update from Web&quot; button.
-    </p>
-    <p>
-      <em>CodeSnip</em> may also check automatically, behind the scenes, to see
-      if database updates are available. This usually happens just after the
-      program has started. You can disable this automatic checking by using the
-      &quot;Updates&quot; tab of the &quot;Preferences&quot; dialogue box which
-      is displayed via the &quot;Tools | Preferences&quot; menu option.
-    </p>
-    <p>
-      When <em>CodeSnip</em> contacts the update web service it sends the
-      following information:
-    </p>
-    <ul class="unspaced">
-      <li>
-        The unique 32 digit program key (see Common.config above for details).
-      </li>
-      <li>
-        Program version number.
-      </li>
-      <li>
-        Operating system description.
-      </li>
-      <li>
-        Internet Explorer version.
-      </li>
-    </ul>
-    <p>
-      This information is recorded in two places:
-    </p>
-    <ol>
-      <li>
-        Each transaction is recorded in a log file on the web server. This log
-        is used for tracking any database errors.
-      </li>
-      <li>
-        <div>
-          A database of the program keys is updated with the following data:
-        </div>
-        <ul class="unspaced">
-          <li>
-            the number of times that program has updated the database;
-          </li>
-          <li>
-            the first and latest version of CodeSnip having that program key;
-          </li>
-          <li>
-            the date of the first and latest updates;
-          </li>
-          <li>
-            the current operating system being used;
-          </li>
-          <li>
-            the current Internet Explorer version being used.
-          </li>
-        </ul>
-        <div>
-          This database is used to provide usage information and to track the
-          operating systems and browser control versions currently in use. This
-          information informs development of CodeSnip.
-        </div>
-      </li>
-    </ol>
-    <p>
-      None of these records store any information that can be tracked back to an
-      individual.
-    </p>
-    <h3>
-      Importing snippets from the SWAG database
-    </h3>
-    <p>
-      Snippets are imported from the SWAG database (<a
-        href="http://swag.delphidabbler.com/"
-        class="weblink"
-        target="_blank"
-      >http://swag.delphidabbler.com</a>) using the <em>SWAG Import Wizard</em>
-      that is accessed from the <em>Snippets | Import Snippets From SWAG</em>
-      menu item.
-    </p>
-    <p>
-      The wizard gets the required snippets from the REST API at
-      swag.delphidabbler.com. This API is documented at <a
-        href="http://swag.delphidabbler.com/docs/api/"
-        class="weblink"
-        target="_blank"
-      >http://swag.delphidabbler.com/docs/api/</a>. No personal data is sent.
-    </p>
-    <h3>
-      Accessing Websites via Links and Menu Options
-    </h3>
-    <p>
-      CodeSnip's <em>Help</em> menu contains several items that cause various
-      web pages from DelphiDabbler.com to be displayed in your default web
-      browser.
-    </p>
-    <p>
-      In addition, various links in the program's main display, some dialogue
-      boxes and the help file access remote websites which are displayed in your
-      default browser. You should refer to the relevant website's privacy
-      policies to learn how they use any data you supply when visiting their
-      pages.
-    </p>
-    <p>
-      DelphiDabbler has no control over the content of linked third party
-      websites and you follow such links at your own risk.
+      CodeSnip's <em>Help</em> menu and several other parts of the user
+      interface contain menu items and links that cause various third party web
+      pages to be displayed in your default web browser. The author takes no
+      responsibility for any data collected by your web browser or the
+      individual web sites.
     </p>
     <h3>
       Accessing the internet using a proxy server

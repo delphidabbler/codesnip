@@ -3,10 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2008-2014, Peter Johnson (www.delphidabbler.com).
- *
- * $Rev$
- * $Date$
+ * Copyright (C) 2008-2020, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements an abstract base class that renders a text document that describes
  * a snippet. Should be overridden by classes that generate actual documents in
@@ -114,7 +111,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  Compilers.UCompilers, DB.UMain, DB.USnippetKind, UStrUtils, Web.UInfo;
+  Compilers.UCompilers, DB.UMain, DB.USnippetKind, UStrUtils, UUrl;
 
 
 { TSnippetDoc }
@@ -158,6 +155,7 @@ resourcestring
   sDependListTitle = 'Required snippets:';
   sXRefListTitle = 'See also:';
   sCompilers = 'Supported compilers:';
+  // TODO -cWeb: Change following to get license info from DB meta data
   sMainDatabaseInfo = 'A snippet from the DelphiDabbler CodeSnip Database '
    + '(%s), licensed under the MIT License '
    + '(http://opensource.org/licenses/MIT).';
@@ -183,7 +181,7 @@ begin
     RenderExtra(Snippet.Extra);
   if not Snippet.UserDefined then
     // database info written only if snippet is from main database
-    RenderDBInfo(Format(sMainDatabaseInfo, [TWebInfo.DatabaseURL]));
+    RenderDBInfo(Format(sMainDatabaseInfo, [TURL.CodeSnipRepo]));
   Result := FinaliseDoc;
 end;
 

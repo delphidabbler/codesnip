@@ -3,10 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2009-2012, Peter Johnson (www.delphidabbler.com).
- *
- * $Rev$
- * $Date$
+ * Copyright (C) 2009-2020, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Provides an abstract base class for frames that enable categorised snippets
  * to be selected by means of a tree view displaying check boxes.

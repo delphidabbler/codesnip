@@ -50,8 +50,9 @@ Spyware
 No spyware or other software that threatens your privacy has been deliberately
 or knowingly included with CodeSnip or its installer. If the program is found to
 contain spyware it will have been added by third parties without permission.
-Please inform the author of any such occurrence or any suspicious behaviour via
-http://delphidabbler.com/contact.
+Please inform the author of any such occurrence or any suspicious behaviour  by
+creating an issue on the CodeSnip GitHub repository at
+https://github.com/delphidabbler/codesnip.
 
 CodeSnip never tries to "phone home" of its own accord. It only goes online in
 response to user requests. Should you notice any unauthorised activity please
@@ -62,88 +63,10 @@ hacked by some third party.
 CodeSnip Online Activity
 ================================================================================
 
-CodeSnip may go online for several reasons. They are:
-
-   1. Updating the database.
-   2. Importing snippets from the SWAG database.
-   3. Accessing various websites via hyperlinks and menu options.
-   4. Accessing the internet using a proxy server.
-
-Some are performed directly by CodeSnip, which communicates with web services
-located on delphidabbler.com using HTTP on port 80. Others simply display web pages in a browser. The last reason passes user information to the proxy server
-if configured to do so,
-
-Personal data will neither be published on the DelphiDabbler website nor
-knowingly passed to third parties. Furthermore your data will only be used by
-the author for the purposes described below.
-
-
-Updating the Database
---------------------------------------------------------------------------------
-
-This activity is started by displaying the "Update From Web" dialogue box and
-clicking its "Update from Web" button.
-
-CodeSnip may also check automatically, behind the scenes, to see if database
-updates are available. This usually happens just after the program has started.
-You can disable this automatic checking by using the "Updates" tab of the
-"Preferences" dialogue box which is displayed via the "Tools | Preferences" menu
-option.
-
-When CodeSnip contacts the update web service it sends the following
-information:
-
-    * The unique 32 digit program key (see Common.config above for details).
-    * Program version number.
-    * Operating system description.
-    * Internet Explorer version.
-
-This information is recorded in two places:
-
-   1. Each transaction is recorded in a log file on the web server. This log
-      is used for tracking any database errors.
-
-   2. A database of the program keys is updated with the following data:
-
-        * the number of times that program has updated the database;
-        * the first and latest version of CodeSnip having that program key;
-        * the date of the first and latest updates;
-        * the current operating system being used;
-        * the current Internet Explorer version being used.
-
-      This database is used to provide usage information and to track the
-      operating systems and browser control versions currently in use. This
-      information informs development of CodeSnip.
-
-None of these records store any information that can be tracked back to an
-individual.
-
-
-Importing snippets from the SWAG database
------------------------------------------
-
-Snippets are imported from the SWAG database (http://swag.delphidabbler.com)
-using the SWAG Import Wizard that is accessed from the "Snippets | Import
-Snippets From SWAG" menu item.
-
-The wizard gets the required snippets from the REST API at
-swag.delphidabbler.com. This API is documented at
-http://swag.delphidabbler.com/docs/api/. No personal data is sent.
-
-
-Accessing Websites via Links and Menu Options
---------------------------------------------------------------------------------
-
-CodeSnip's "Help" menu contains several items that cause various web pages from
-DelphiDabbler.com to be displayed in your default web browser.
-
-In addition, various links in the program's main display, some dialogue boxes
-and the help file access remote websites which are displayed in your default
-browser. You should refer to the relevant website's privacy policies to learn
-how they use any data you supply when visiting their pages.
-
-DelphiDabbler has no control over the content of linked third party websites and
-you follow such links at your own risk.
+CodeSnip's Help menu and several other parts of the user interface contain menu
+items and links that cause various third party web pages to be displayed in your
+default web browser. The author takes no responsibility for any data collected by
+your web browser or the individual web sites.
 
 
 Accessing the internet using a proxy server

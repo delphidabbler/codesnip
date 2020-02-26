@@ -3,10 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2016, Peter Johnson (www.delphidabbler.com).
- *
- * $Rev$
- * $Date$
+ * Copyright (C) 2005-2020, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Application's main form. Handles the program's main window display and user
  * interaction.
@@ -577,8 +574,8 @@ uses
   UCopySourceMgr, UDatabaseLoader, UDatabaseLoaderUI, UDetailTabAction,
   UEditSnippetAction, UExceptions, UHelpMgr, UHistoryMenus, UKeysHelper,
   UMessageBox, UNotifier, UNulDropTarget, UPrintMgr, UQuery, USaveSnippetMgr,
-  USaveUnitMgr, USelectionIOMgr, UShowPrefsPageAction, UUserDBMgr, UView,
-  UViewItemAction, UWBExternal, Web.UInfo;
+  USaveUnitMgr, USelectionIOMgr, UShowPrefsPageAction, UUrl, UUserDBMgr, UView,
+  UViewItemAction, UWBExternal;
 
 
 {$R *.dfm}
@@ -1332,8 +1329,6 @@ begin
     // Set window caption
     Application.Title := TAppInfo.ProgramCaption;
     Caption := TAppInfo.ProgramCaption;
-    if TWebInfo.UsingTestServer then
-      Caption := Caption + ' [' + TWebInfo.TestServerHost + ']';
 
     // Restore window settings
     fWindowSettings := TMainWindowSettings.CreateStandAlone(Self); // auto-freed
@@ -1342,9 +1337,9 @@ begin
 
     // Initialise actions
     // Browse actions have to have URLs set dynamically
-    actGitHubHome.URL := TWebInfo.GitHubURL;
-    actFAQs.URL := TWebInfo.FAQsURL;
-    actBlog.URL := TWebInfo.BlogURL;
+    actGitHubHome.URL := TURL.CodeSnipRepo;
+    actFAQs.URL := TURL.CodeSnipFAQReadMe;
+    actBlog.URL := TURL.CodeSnipBlog;
     // Tree control actions need shortcuts adding dynamically, and state stored
     // in Tag property
     actExpandNode.ShortCut := ShortCut(VK_ADD, [ssCtrl]);

@@ -557,6 +557,7 @@
 			<DCCReference Include="UUnitAnalyser.pas"/>
 			<DCCReference Include="UUnitsChkListMgr.pas"/>
 			<DCCReference Include="UURIEncode.pas"/>
+			<DCCReference Include="UUrl.pas"/>
 			<DCCReference Include="UUrlMonEx.pas"/>
 			<DCCReference Include="UUserDBBackup.pas"/>
 			<DCCReference Include="UUserDBMgr.pas"/>
@@ -577,8 +578,6 @@
 			<DCCReference Include="UXMLDocConsts.pas"/>
 			<DCCReference Include="UXMLDocHelper.pas"/>
 			<DCCReference Include="UXMLDocumentEx.pas"/>
-			<DCCReference Include="Web.UCharEncodings.pas"/>
-			<DCCReference Include="Web.UInfo.pas"/>
 			<None Include="CodeSnip.todo"/>
 			<BuildConfiguration Include="Base">
 				<Key>Base</Key>

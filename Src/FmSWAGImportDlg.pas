@@ -3,10 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2013, Peter Johnson (www.delphidabbler.com).
- *
- * $Rev$
- * $Date$
+ * Copyright (C) 2013-2020, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements a wizard dialogue box that lets the user select and import
  * snippets from the DelphiDabbler implementation of the SWAG Pascal archive.
@@ -263,8 +260,8 @@ uses
   UHTMLTemplate,
   UMessageBox,
   UStrUtils,
-  UWaitForThreadUI,
-  Web.UInfo;
+  UUrl,
+  UWaitForThreadUI;
 
 {$R *.dfm}
 
@@ -485,7 +482,7 @@ begin
     begin
       Tplt.ResolvePlaceholderText(
         'SWAGReleaseURL',
-        TWebInfo.SWAGReleaseURL
+        TURL.SWAGReleases
       );
     end
   );

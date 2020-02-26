@@ -3,10 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2009-2012, Peter Johnson (www.delphidabbler.com).
- *
- * $Rev$
- * $Date$
+ * Copyright (C) 2009-2020, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Custom action used to display the DelphiDabbler Paypal donation page in
  * default web browser.
@@ -47,7 +44,7 @@ uses
   // Delphi
   SysUtils, ExtActns,
   // Project
-  Web.UInfo;
+  UUrl;
 
 
 { TPaypalDonateAction }
@@ -64,7 +61,7 @@ begin
   // use a TBrowseAction to access URL
   BrowseAction := TBrowseURL.Create(nil);
   try
-    BrowseAction.URL := TWebInfo.DonateURL;
+    BrowseAction.URL := TURL.PaypalDonate;
     BrowseAction.Execute;
   finally
     FreeAndNil(BrowseAction);

@@ -3,10 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2006-2014, Peter Johnson (www.delphidabbler.com).
- *
- * $Rev$
- * $Date$
+ * Copyright (C) 2006-2020, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Defines a class that manages generation, previewing and saving of a pascal
  * unit.
@@ -99,8 +96,9 @@ uses
   // Delphi
   SysUtils,
   // Project
-  UAppInfo, UUtils, Web.UInfo;
+  UAppInfo, UUrl, UUtils;
 
+// TODO -cDatabase: get license info from database rather than use literal text.
 
 resourcestring
   // Dialog box title
@@ -115,9 +113,9 @@ resourcestring
   // Error message
   sErrorMsg = 'Filename is not valid for a Pascal unit';
   // Unit header comments
-  sLicense = 'This unit is copyright © %0:s by the Code Snippets Database '
-    + 'Contributors (http://snippets.delphidabbler.com/contributors) and '
-    + 'is licensed under the MIT license '
+  // TODO -cWeb: Change following to get license from database meta data
+  sLicense = 'This unit is copyright © %0:s by the Peter Johnson and Code '
+    + 'Snippets Database contributors and is licensed under the MIT license '
     + '(http://opensource.org/licenses/MIT).';
   sMainDescription = 'The unit was generated automatically and incorporates a '
     + 'selection of source code taken from the Code Snippets Database at %0:s.';
@@ -153,7 +151,7 @@ begin
     // Result used for units that contain at snippet(s) from main database
     Result.Add(Format(sLicense, [FormatDateTime('YYYY', Now)]));
     Result.Add('');
-    Result.Add(Format(sMainDescription, [TWebInfo.DatabaseURL]));
+    Result.Add(Format(sMainDescription, [TURL.CodeSnipRepo]));
     Result.Add('');
     Result.Add(Format(sGenerated, [RFC1123DateStamp]));
     Result.Add(
@@ -163,7 +161,7 @@ begin
     );
     Result.Add('');
     Result.Add(
-      Format(sAdvert, [TAppInfo.ProgramName, TWebInfo.GitHubURL])
+      Format(sAdvert, [TAppInfo.ProgramName, TURL.CodeSnipRepo])
     );
   end
   else

@@ -3,15 +3,13 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2013, Peter Johnson (www.delphidabbler.com).
- *
- * $Rev$
- * $Date$
+ * Copyright (C) 2013-2020, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements a class that converts snippets from the SWAG database into
  * CodeSnip format and adds them to the database.
 }
 
+// TODO -cDatabase: check BSD3URI const has valid license info
 
 unit SWAG.UImporter;
 
@@ -169,7 +167,7 @@ resourcestring
   sLicensePostfix = '.';
 const
   // URLs of web pages referenced from links in boilerplate
-  SWAGDBURI = 'http://swag.delphidabbler.com/';
+  SWAGDBURI = 'https://github.com/delphidabbler/swag';
   BSD3URI = 'http://opensource.org/licenses/BSD-3-Clause';
 var
   // Active text attributes for links included in boilerplate

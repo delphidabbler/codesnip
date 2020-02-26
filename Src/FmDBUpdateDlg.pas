@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2020, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2005-2020, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements a wizard dialogue box that handles the updating of the main
  * DelphiDabbler Code Snippets database.
@@ -173,7 +173,7 @@ uses
   UMessageBox,
   UStructs,
   UStrUtils,
-  Web.UInfo;
+  UUrl;
 
 {$R *.dfm}
 
@@ -272,7 +272,7 @@ begin
     begin
       Tplt.ResolvePlaceholderText(
         'CSDBReleaseURL',
-        TWebInfo.CSDBReleaseURL
+        TURL.CodeSnippetsDBReleases
       );
     end
   );

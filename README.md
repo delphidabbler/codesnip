@@ -19,17 +19,11 @@ A code bank designed with Pascal in mind.
 
 CodeSnip is an open source code bank for storing and viewing your code snippets. While it can manage snippets in any source language, it is focussed mainly on Pascal and Delphi code for which additional features are available.
 
-CodeSnip also provides offline access to the DelphiDabbler [Code Snippets Database](http://snippets.delphidabbler.com/) -- *deprecated*<sup> † ‡</sup>.
+CodeSnip also provides offline access to the DelphiDabbler [Code Snippets Database](https://github.com/delphidabbler/code-snippets).
 
 The program is available in both standard and portable editions.
 
-For more information see [http://codesnip.delphidabbler.com/features](http://codesnip.delphidabbler.com/features) -- *deprecated*<sup> †</sup>.
-
 CodeSnip requires Windows 2000 or later and Internet Explorer 6 or later, although XP and IE 8 and later are preferred.
-
-<sup>†</sup> DelphiDabbler.com is due to close down on 15 June 2020. After this time these links will no longer work.
-
-<sup>‡</sup> The Code Snippets Database has been imported to GitHub: it's a work in progress. [See the repo](https://github.com/delphidabbler/code-snippets).
 
 ## Installation
 
@@ -41,9 +35,7 @@ The following support is available for CodeSnip:
 
 * A comprehensive help file.
 * A [read-me file](https://raw.githubusercontent.com/delphidabbler/codesnip/master/Docs/ReadMe.txt)<sup> *</sup> that discusses installation, configuration, updating and known issues.
-* A dedicated set of [web pages](http://codesnip.delphidabbler.com/) -- *deprecated*<sup> †</sup>.
 * An [FAQ](https://github.com/delphidabbler/codesnip-faq/blob/master/UsingCodeSnip.md)
-* An [RSS news feed](http://delphidabbler.com/feeds/site-news-feed?id=codesnip) -- *deprecated*<sup> †</sup>. This can also be accessed via the program.
 * A [Blog](http://codesnip-app.blogspot.co.uk/).
 * A [privacy statement](https://raw.githubusercontent.com/delphidabbler/codesnip/master/Docs/Privacy.txt)<sup>*</sup> that provides information about any personal information stored by the program and what info is transmitted over the net.
 
@@ -51,7 +43,6 @@ There's also plenty of info available on how to compile CodeSnip from source - s
 
 <sup>*</sup> These links take you to the most recent version of the documents -- they can change from release to release.
 
-<sup>†</sup> These features are **deprecated** -- they are dependent on the delphidabbler.com web server which is due to close down on 15th June 2020.
 
 ## Source Code
 
@@ -71,7 +62,7 @@ Contributions are no longer accepted for this repo. If you wish to take over dev
 
 `master` and each branch will have a file in the root directory named `Build.html` that gives detailed information about how to compile CodeSnip.
 
-There is also an [FAQ](http://wiki.delphidabbler.com/index.php/FAQs/CodeSnipAppSource) -- *deprecated* (see [Support](#support) above).
+There is also an [FAQ](https://github.com/delphidabbler/codesnip-faq) -- (see [Support](#support) above).
 
 ## Change Log
 
@@ -83,7 +74,7 @@ The program's EULA which gives full details of the license applying to the lates
 
 Most of the original code is made available under the [Mozilla Public License v2](https://www.mozilla.org/MPL/2.0/).
 
-The [CodeSnip Compiling & Source Code FAQ](http://wiki.delphidabbler.com/index.php/FAQs/CodeSnipAppSource) may be useful if you have any queries about re-using CodeSnip source in other projects.
+The [CodeSnip Compiling & Source Code FAQ](https://github.com/delphidabbler/codesnip-faq/blob/master/SourceCode.md) may be useful if you have any queries about re-using CodeSnip source in other projects.
 
 ## CodeSnip 5 Development
 
@@ -94,7 +85,4 @@ Unfortunately `pagoda` has also been abandoned now. The branch has been left in 
 The idea behind v5 was to:
 
 1. Generalise CodeSnip to be a code bank for several different languages instead of just Pascal, while still providing some additional support for test-compiling Pascal code.
-2. Increase the focus on the user's own code while downplaying the importance of code downloaded from the DelphiDabbler [Code Snippets database](http://snippets.delphidabbler.com/), like [SWAG](http://swag.delphidabbler.com/) is at present.<sup> †</sup>
-3. Remove the program's dependency on web services provided by [DelphiDabbler.com](http://delphidabbler.com) given the current uncertainty over that websites future.
-
-<sup>†</sup> It is hoped to move the Code Snippets database to GitHub before DelphiDabbler closes down on 15 June 2020.
+2. Increase the focus on the user's own code while downplaying the importance of code downloaded from the DelphiDabbler [Code Snippets database](https://github.com/delphidabbler/code-snippets), like [SWAG](https://github.com/delphidabbler/swag) is at present.
