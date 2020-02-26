@@ -273,13 +273,6 @@ Known Installation and Upgrading Issues
   the Preferences dialogue box displayed from the "Tools | Preferences" menu
   option.
 
-+ If you are updating from v3.6.0 or earlier and have set up a password
-  protected proxy server for internet access your password will have been lost.
-  This is because the format for storing passwords changed at v3.6.1.
-
-  To re-enter your proxy password use the Proxy Server Configuration dialogue
-  box displayed from the "Tools | Proxy Server" menu option.
-
 + Your source code formatting preferences will have been lost if you are
   updating from v1.7.4 or earlier.
 
