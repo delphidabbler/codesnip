@@ -41,12 +41,6 @@ Res\HTML\dlg-rssnews.html
 Res\HTML\dlg-swag-import-intro-tplt.html
 Res\HTML\dlg-swag-import-outro-tplt.html
 
-# code submission wizard
-Res\HTML\dlg-codesubmit-intro.html
-Res\HTML\dlg-codesubmit-license.html
-Res\HTML\dlg-codesubmit-submit.html
-Res\HTML\dlg-codesubmit-finished.html
-
 # get delphidabbler snippets database wizard
 Res\HTML\dlg-dbupdate-intro-tplt.html
 Res\HTML\dlg-dbupdate-load.html
