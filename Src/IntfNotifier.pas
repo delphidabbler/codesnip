@@ -71,9 +71,6 @@ type
     ///  <remarks>Snippet must be user defined.</remarks>
     procedure EditSnippet(const SnippetName: WideString);
 
-    ///  <summary>Displays Donate dialogue box.</summary>
-    procedure Donate;
-
     ///  <summary>Opens Snippets Editor ready to create a new snippet.</summary>
     procedure NewSnippet;
 
@@ -137,10 +134,6 @@ type
     ///  </summary>
     ///  <param name="Action">TBasicAction [in] Required action.</param>
     procedure SetEditSnippetAction(const Action: TBasicAction);
-
-    ///  <summary>Sets action used to display Donate dialogue box.</summary>
-    ///  <param name="Action">TBasicAction [in] Required action.</param>
-    procedure SetDonateAction(const Action: TBasicAction);
 
     ///  <summary>Sets action used to display a category.</summary>
     ///  <param name="Action">TBasicAction [in] Required action.</param>
