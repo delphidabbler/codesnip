@@ -183,7 +183,6 @@ type
   ///  <para>-ssApplication - info about the application</para>
   ///  <para>-ssPreferences - info about program preferences</para>
   ///  <para>-ssUserInfo - info about user</para>
-  ///  <para>-ssProxyServer - info about any proxy server</para>
   ///  <para>-ssUnits - list of default units</para>
   ///  <para>-ssDuplicateSnippet - persistent settings from Duplicate Snippets
   ///  dlg</para>
@@ -195,7 +194,7 @@ type
   ///  </summary>
   TSettingsSectionId = (
     ssFindText, ssFindCompiler, ssFindXRefs, ssCompilerInfo, ssApplication,
-    ssPreferences, ssUserInfo, ssProxyServer, ssUnits, ssDuplicateSnippet,
+    ssPreferences, ssUserInfo, ssUnits, ssDuplicateSnippet,
     ssFavourites, ssWindowState, ssDatabase
   );
 
@@ -556,7 +555,6 @@ const
     ssCommon,   // ssApplication
     ssUser,     // ssPreferences
     ssUser,     // ssUserInfo
-    ssUser,     // ssProxyServer
     ssUser,     // ssUnits
     ssUser,     // ssDuplicateSnippet
     ssUser,     // ssFavourites
@@ -638,7 +636,6 @@ const
     'Application',      // ssApplication
     'Prefs',            // ssPreferences
     'UserInfo',         // ssUserInfo
-    'ProxyServer',      // ssProxyServer
     'UnitList',         // ssUnits
     'DuplicateSnippet', // ssDuplicateSnippet
     'Favourites',       // ssFavourites

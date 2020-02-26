@@ -18,12 +18,34 @@ interface
 
 uses
   // Delphi
-  SysUtils, Menus, ExtActns, StdActns, Classes, ActnList, ImgList, Controls,
-  Forms, ExtCtrls, ComCtrls, ToolWin, Messages, AppEvnts,
+  SysUtils,
+  Menus,
+  ExtActns,
+  StdActns,
+  Classes,
+  ActnList,
+  ImgList,
+  Controls,
+  Forms,
+  ExtCtrls,
+  ComCtrls,
+  ToolWin,
+  Messages,
+  AppEvnts,
   // Project
-  Favourites.UManager, FmHelpAware, FrDetail, FrOverview, FrTitled,
-  IntfNotifier, UCompileMgr, UDialogMgr, UHistory, UMainDisplayMgr, USearch,
-  UStatusBarMgr, UWindowSettings;
+  Favourites.UManager,
+  FmHelpAware,
+  FrDetail,
+  FrOverview,
+  FrTitled,
+  IntfNotifier,
+  UCompileMgr,
+  UDialogMgr,
+  UHistory,
+  UMainDisplayMgr,
+  USearch,
+  UStatusBarMgr,
+  UWindowSettings;
 
 
 type
@@ -75,7 +97,6 @@ type
     actPreviousTab: TAction;
     actPrint: TAction;
     actPrivacy: TAction;
-    actProxyServer: TAction;
     actRenameCategory: TAction;
     actRestoreDatabase: TAction;
     actSaveDatabase: TAction;
@@ -147,7 +168,6 @@ type
     miPreferences: TMenuItem;
     miPrint: TMenuItem;
     miPrivacy: TMenuItem;
-    miProxyServer: TMenuItem;
     miRenameCategory: TMenuItem;
     miReportBug: TMenuItem;
     miRestoreDatabase: TMenuItem;
@@ -367,9 +387,6 @@ type
     procedure actPrintUpdate(Sender: TObject);
     ///  <summary>Displays the Privacy Statement help topic.</summary>
     procedure actPrivacyExecute(Sender: TObject);
-    ///  <summary>Displays the Proxy Server Configuration dialogue box that can
-    ///  be used to specify a proxy server to use for internet access.</summary>
-    procedure actProxyServerExecute(Sender: TObject);
     ///  <summary>Displays a dialogue box that can be used to rename a user
     ///  defined category.</summary>
     procedure actRenameCategoryExecute(Sender: TObject);
@@ -950,11 +967,6 @@ end;
 procedure TMainForm.actPrivacyExecute(Sender: TObject);
 begin
   DisplayHelp('PrivacyStatement');
-end;
-
-procedure TMainForm.actProxyServerExecute(Sender: TObject);
-begin
-  fDialogMgr.ExecProxyServerDlg;
 end;
 
 procedure TMainForm.actRenameCategoryExecute(Sender: TObject);
