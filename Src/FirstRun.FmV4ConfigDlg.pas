@@ -339,7 +339,6 @@ end;
 procedure TV4ConfigDlg.ListChanges;
 resourcestring
   sHiliter = 'Syntax highlighter customisations have been lost.';
-  sProxyPwd = 'Your proxy server password needs to be re-entered.';
   sSourceFormat = 'Source code formatting preferences may have been lost.';
 var
   Changes: IStringList;
@@ -351,8 +350,6 @@ begin
     Changes := TIStringList.Create;
     if frcHiliter in fCfgChanges then
       Changes.Add(sHiliter);
-    if frcProxyPwd in fCfgChanges then
-      Changes.Add(sProxyPwd);
     if frcSourceFormat in fCfgChanges then
       Changes.Add(sSourceFormat);
     CreateBulletPage(

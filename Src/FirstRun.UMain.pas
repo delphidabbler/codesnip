@@ -27,7 +27,6 @@ type
   ///  config files that result in data loss.</summary>
   TFirstRunCfgChanges = (
     frcHiliter,         // syntax highlighter customisation lost
-    frcProxyPwd,        // internet proxy password lost
     frcSourceFormat     // source code output formatting lost
   );
 
@@ -56,11 +55,6 @@ type
       ///  <summary>Object used to copy forward older versions of user database.
       ///  </summary>
       fDatabase: TUserDatabaseUpdater;
-    {$IFNDEF PORTABLE}
-    ///  <summary>Checks if config file uses earlier format for storing proxy
-    ///  server passwords.</summary>
-    function HasOldStyleProxyPwd: Boolean;
-    {}{$ENDIF}
   public
     ///  <summary>Constructs object and owned object.</summary>
     constructor Create;
@@ -183,13 +177,6 @@ begin
   inherited;
 end;
 
-{$IFNDEF PORTABLE}
-function TFirstRun.HasOldStyleProxyPwd: Boolean;
-begin
-  Result := (fUserConfigFile.FileVer <= 6) and fUserConfigFile.HasProxyPassword;
-end;
-{$ENDIF}
-
 function TFirstRun.HaveOldUserCfgFile: Boolean;
 begin
   Result := TFile.Exists(fInstallInfo.PreviousUserConfigFileName, False);
@@ -222,14 +209,7 @@ begin
       fUserConfigFile.DeleteHighligherPrefs;
       Include(Changes, frcHiliter);
     end;
-    piV3:
-    begin
-      if HasOldStyleProxyPwd then
-      begin
-        fUserConfigFile.DeleteProxyPassword;
-        Include(Changes, frcProxyPwd);
-      end;
-    end;
+    piV3: ; // do nothing
   end;
   {$ENDIF}
 
@@ -259,7 +239,10 @@ begin
 
 
   if fUserConfigFile.FileVer < 16 then
+  begin
     fUserConfigFile.DeleteNewsPrefs;
+    fUserConfigFile.DeleteProxyServerSection;
+  end;
 
   if fCommonConfigFile.FileVer < 7 then
     fCommonConfigFile.DeleteRegistrationInfo;

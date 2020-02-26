@@ -85,10 +85,6 @@ type
     procedure UpdateFromOriginal;
     ///  <summary>Deletes any highlighter preferences.</summary>
     procedure DeleteHighligherPrefs;
-    ///  <summary>Checks a proxy password is present in file.</summary>
-    function HasProxyPassword: Boolean;
-    ///  <summary>Deletes proxy password entry.</summary>
-    procedure DeleteProxyPassword;
     ///  <summary>Updates Prefs:CodeGen section from format prior to version 9
     ///  to version 9 and later format.</summary>
     procedure UpdateCodeGenEntries;
@@ -96,6 +92,8 @@ type
     ///  </summary>
     procedure DeleteDetailsPaneIndex;
     {$ENDIF}
+    ///  <summary>Deletes proxy server section.</summary>
+    procedure DeleteProxyServerSection;
     ///  <summary>Deletes unused Prefs:News section.</summary>
     procedure DeleteNewsPrefs;
     ///  <summary>Effectively renames MainWindow section used prior to version
@@ -294,26 +292,17 @@ begin
   DeleteIniSection('Prefs:News', CfgFileName);
 end;
 
-{$IFNDEF PORTABLE}
-procedure TUserConfigFileUpdater.DeleteProxyPassword;
+procedure TUserConfigFileUpdater.DeleteProxyServerSection;
 begin
   if not TFile.Exists(CfgFileName, False) then
     CreateNewFile;
-  SetIniString('ProxyServer', 'Password', '', CfgFileName);
+  DeleteIniSection('ProxyServer', CfgFileName);
 end;
-{$ENDIF}
 
 class function TUserConfigFileUpdater.GetFileVersion: Integer;
 begin
   Result := FileVersion;
 end;
-
-{$IFNDEF PORTABLE}
-function TUserConfigFileUpdater.HasProxyPassword: Boolean;
-begin
-  Result := GetIniString('ProxyServer', 'Password', '', CfgFileName) <> '';
-end;
-{$ENDIF}
 
 procedure TUserConfigFileUpdater.RenameMainWindowSection;
 begin
