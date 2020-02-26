@@ -66,15 +66,6 @@ function editSnippet(snippet) {
 }
 
 /*
- * Calls external object to get host application to display Donate dialog box.
- *  @return False.
- */
-function donate() {
-  external.Donate();
-  return false;
-}
-
-/*
  * Calls external object to get host application to start Snippets Editor ready
  * for a new snippet to be entered.
  *  @return False.
@@ -86,7 +77,7 @@ function newSnippet() {
 
 /*
  * Calls external object to get host application to display the CodeSnip news
- * feed.
+ * blog.
  *  @return False.
  */
 function showNews() {

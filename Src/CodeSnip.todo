@@ -1,5 +1,5 @@
 {TODO -cUI : Remove unused tool bar button in main window}
-{TODO -cWeb : Remove donate box & related notes - problem doing direct link to paypalwith giving away email address}
+
 {TODO -cDocs : Remove remaining $Rev$ and $Date$ SVN placeholders}
 
 {TODO -cDocs : Update License.html to replace references to SVN with Git}

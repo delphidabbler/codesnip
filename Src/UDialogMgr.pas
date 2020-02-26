@@ -109,9 +109,6 @@ type
     ///  </returns>
     function ExecPrintDlg: Boolean;
 
-    ///  <summary>Displays the Donate dialogue box.</summary>
-    procedure ShowDonateDlg;
-
     ///  <summary>Displays the Test Unit dialogue box.</summary>
     ///  <param name="Snippet">TSnippet [in] Snippet for which test unit is to
     ///  be generated.</param>
@@ -154,7 +151,7 @@ uses
   // Delphi
   Forms,
   // Project
-  FmAboutDlg, FmDBUpdateDlg, FmDependenciesDlg, FmDonateDlg, FmFindCompilerDlg,
+  FmAboutDlg, FmDBUpdateDlg, FmDependenciesDlg, FmFindCompilerDlg,
   FmFindTextDlg, FmFindXRefsDlg, FmPreferencesDlg, FmPrintDlg,
   FmProxyServerDlg,
   FmSelectionSearchDlg, FmSWAGImportDlg, FmTestCompileDlg, FmUserBugReportDlg,
@@ -229,11 +226,6 @@ begin
   Result := TDependenciesDlg.Execute(
     Owner, Snippet, [tiDependsUpon, tiRequiredBy], True, HelpKeyword
   );
-end;
-
-procedure TDialogMgr.ShowDonateDlg;
-begin
-  TDonateDlg.Execute(Owner);
 end;
 
 procedure TDialogMgr.ShowSWAGImportDlg;

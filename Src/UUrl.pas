@@ -53,12 +53,6 @@ type
       ///  hosted.</summary>
       SWAGReleases = SWAGRepo + '/releases';
 
-      ///  <summary>URL used to make donations towards the CodeSnip project.
-      ///  </summary>
-      PaypalDonate = 'https://www.paypal.com/donate/?'
-        + 'token=LYnh7_DXV-YqTmX3Bilr9rCPN89oANmBTZmRCdNHu_qFSk2jo_'
-        + 'WzTYTXCE165U9hXEmwq0&country.x=GB&locale.x=GB';
-
       /// <summary>URL of the the CodeSnip blog.</summary>
       CodeSnipBlog = 'http://codesnip-app.blogspot.com/';
 

@@ -54,8 +54,6 @@ type
       ///  <summary>Action that causes a user defined snippet to be
       ///  edited.</summary>
       fEditSnippetAction: TBasicAction;
-      ///  <summary>Action that displays donate dialogue box.</summary>
-      fDonateAction: TBasicAction;
       ///  <summary>Action that causes a category to be displayed.</summary>
       fDisplayCategoryAction: TBasicAction;
       ///  <summary>Action that causes the Snippets Editor to be opened ready to
@@ -129,10 +127,6 @@ type
     ///  </remarks>
     procedure EditSnippet(const SnippetName: WideString);
 
-    ///  <summary>Displays Donate dialogue box.</summary>
-    ///  <remarks>Methods of INotifier.</remarks>
-    procedure Donate;
-
     ///  <summary>Opens Snippets Editor ready to create a new snippet.</summary>
     ///  <remarks>Methods of INotifier.</remarks>
     procedure NewSnippet;
@@ -200,11 +194,6 @@ type
     ///  <param name="Action">TBasicAction [in] Required action.</param>
     ///  <remarks>Methods of ISetActions.</remarks>
     procedure SetEditSnippetAction(const Action: TBasicAction);
-
-    ///  <summary>Sets action used to display Donate dialogue box.</summary>
-    ///  <param name="Action">TBasicAction [in] Required action.</param>
-    ///  <remarks>Methods of ISetActions.</remarks>
-    procedure SetDonateAction(const Action: TBasicAction);
 
     ///  <summary>Sets action used to display a category.</summary>
     ///  <param name="Action">TBasicAction [in] Required action.</param>
@@ -305,12 +294,6 @@ begin
   end;
 end;
 
-procedure TNotifier.Donate;
-begin
-  if Assigned(fDonateAction) then
-    fDonateAction.Execute;
-end;
-
 procedure TNotifier.EditSnippet(const SnippetName: WideString);
 begin
   if Assigned(fEditSnippetAction) then
@@ -367,11 +350,6 @@ begin
     ClassName + '.SetDisplaySnippetAction: Action must support ISetNotifier');
   fDisplaySnippetAction := Action;
   (fDisplaySnippetAction as ISetNotifier).SetNotifier(Self);
-end;
-
-procedure TNotifier.SetDonateAction(const Action: TBasicAction);
-begin
-  fDonateAction := Action;
 end;
 
 procedure TNotifier.SetEditSnippetAction(const Action: TBasicAction);

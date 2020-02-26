@@ -12,7 +12,7 @@
 
 [
   uuid(DA95AEFB-3FB5-4A9E-9F9D-A53DD05CA7D4),
-  version(12.0),
+  version(13.0),
   helpstring("CodeSnip DOM External Object Extender Type Library"),
   custom(DE77BA64-517C-11D1-A2DA-0000F8773CE9, 117441012),
   custom(DE77BA63-517C-11D1-A2DA-0000F8773CE9, 1219706147)
@@ -24,19 +24,19 @@ library ExternalObj
   importlib("stdole2.tlb");
 
   /*
-   * V12 interface of extension to browser DOM's "external" object.
+   * V13 interface of extension to browser DOM's "external" object.
    */
-  interface IWBExternal12;
+  interface IWBExternal13;
 
 
   [
     uuid(BA971829-ED4D-4092-BCAE-4B5DB1A2D74A),
-    version(12.0),
+    version(13.0),
     helpstring("DOM external object extender"),
     dual,
     oleautomation
   ]
-  interface IWBExternal12: IDispatch
+  interface IWBExternal13: IDispatch
   {
     /*
      * Update database from internet.
@@ -65,12 +65,6 @@ library ExternalObj
      */
     [id(0x0000006C)]
     HRESULT _stdcall EditSnippet([in] BSTR SnippetName);
-
-    /*
-     * Displays Donate dialog box.
-     */
-    [id(0x0000006D)]
-    HRESULT _stdcall Donate(void);
 
     /*
      * Display identified category.
