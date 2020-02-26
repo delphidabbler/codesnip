@@ -205,9 +205,6 @@
 			<DCCReference Include="FmPrintDlg.pas">
 				<Form>PrintDlg</Form>
 			</DCCReference>
-			<DCCReference Include="FmProxyServerDlg.pas">
-				<Form>ProxyServerDlg</Form>
-			</DCCReference>
 			<DCCReference Include="FmRenameCategoryDlg.pas">
 				<Form>RenameCategoryDlg</Form>
 			</DCCReference>
