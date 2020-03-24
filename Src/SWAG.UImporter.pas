@@ -9,7 +9,6 @@
  * CodeSnip format and adds them to the database.
 }
 
-// TODO -cDatabase: check BSD3URI const has valid license info
 
 unit SWAG.UImporter;
 
@@ -161,26 +160,19 @@ resourcestring
   sStatementPrefix = 'This snippet was imported from the ';
   sStatementLinkText = 'SWAG Pascal Archive';
   sStatementPostfix = '. ';
-  sLicensePrefix = 'Unless stated otherwise this snippet is licensed under '
-    + 'the ';
-  sLicenseLinkText = 'BSD 3-Clause License';
-  sLicensePostfix = '.';
-const
-  // URLs of web pages referenced from links in boilerplate
+  sLicense = 'The code snippets in the archive pages are generally freeware or '
+    + 'public domain as defined by any accompanying comments and copyright '
+    + 'statements. Contact the author if in doubt.';
+  // URL of web page referenced from links in boilerplate
   SWAGDBURI = 'https://github.com/delphidabbler/swag';
-  BSD3URI = 'http://opensource.org/licenses/BSD-3-Clause';
 var
-  // Active text attributes for links included in boilerplate
+  // Active text attributes for link included in boilerplate
   SWAGDBURIAttr: IActiveTextAttrs;
-  BSD3URIAttr: IActiveTextAttrs;
 begin
   if not Assigned(fExtraBoilerplate) then
   begin
     SWAGDBURIAttr := TActiveTextFactory.CreateAttrs(
       TActiveTextAttr.Create('href', SWAGDBURI)
-    );
-    BSD3URIAttr := TActiveTextFactory.CreateAttrs(
-      TActiveTextAttr.Create('href', BSD3URI)
     );
     fExtraBoilerplate := TActiveTextFactory.CreateActiveText;
     fExtraBoilerplate.AddElem(
@@ -202,19 +194,7 @@ begin
       TActiveTextFactory.CreateTextElem(sStatementPostfix)
     );
     fExtraBoilerplate.AddElem(
-      TActiveTextFactory.CreateTextElem(sLicensePrefix)
-    );
-    fExtraBoilerplate.AddElem(
-      TActiveTextFactory.CreateActionElem(ekLink, BSD3URIAttr, fsOpen)
-    );
-    fExtraBoilerplate.AddElem(
-      TActiveTextFactory.CreateTextElem(sLicenseLinkText)
-    );
-    fExtraBoilerplate.AddElem(
-      TActiveTextFactory.CreateActionElem(ekLink, BSD3URIAttr, fsClose)
-    );
-    fExtraBoilerplate.AddElem(
-      TActiveTextFactory.CreateTextElem(sLicensePostfix)
+      TActiveTextFactory.CreateTextElem(sLicense)
     );
     fExtraBoilerplate.AddElem(
       TActiveTextFactory.CreateActionElem(ekPara, fsClose)
