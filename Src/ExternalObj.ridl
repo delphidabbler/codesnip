@@ -87,12 +87,6 @@ library ExternalObj
     [id(0x00000071)]
 
     /*
-     * Check for program updates.
-     */
-    HRESULT _stdcall CheckForUpdates(void);
-    [id(0x00000072)]
-
-    /*
      * Display the program's About box.
      */
     HRESULT _stdcall ShowAboutBox(void);
