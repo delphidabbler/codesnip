@@ -86,15 +86,6 @@ function showNews() {
 }
 
 /*
- * Calls external object to get host application to check for program updates.
- *  @return False.
- */
-function checkForUpdates() {
-  external.CheckForUpdates();
-  return false;
-}
-
-/*
  * Calls external object to get host application to display About box.
  *  @return False,
  */
