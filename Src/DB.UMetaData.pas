@@ -125,6 +125,11 @@ type
     property URL: string read fURL;
     ///  <summary>Full text of license.</summary>
     property Text: string read fText;
+    ///  <summary>Returns a string containing license name followed by any URL
+    ///  in parentheses.</summary>
+    ///  <remarks>If no URL is available then only the license name is returned.
+    ///  </remarks>
+    function NameWithURL: string;
   end;
 
   ///  <summary>Record providing informaton about the main database copyright.
@@ -936,6 +941,13 @@ begin
   fSPDX := ASPDX;
   fURL := AURL;
   fText := AText;
+end;
+
+function TDBLicenseInfo.NameWithURL: string;
+begin
+  Result := fName;
+  if fURL <> '' then
+    Result := Result + ' (' + fURL + ')';
 end;
 
 { TDBCopyrightInfo }
