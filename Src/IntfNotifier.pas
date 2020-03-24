@@ -77,10 +77,6 @@ type
     ///  <summary>Displays news items from the CodeSnip news feed.</summary>
     procedure ShowNews;
 
-    // TODO -cNotifier: remove this method and remove from external object
-    ///  <summary>Checks for program updates.</summary>
-    procedure CheckForUpdates;
-
     ///  <summary>Displays the program's About Box.</summary>
     procedure ShowAboutBox;
 
@@ -148,10 +144,6 @@ type
     ///  feed.</summary>
     ///  <param name="Action">TBasicAction [in] Required action.</param>
     procedure SetNewsAction(const Action: TBasicAction);
-
-    ///  <summary>Sets action used to check for program updates.</summary>
-    ///  <param name="Action">TBasicAction [in] Required action.</param>
-    procedure SetCheckForUpdatesAction(const Action: TBasicAction);
 
     ///  <summary>Sets action used to display the program's About Box.</summary>
     ///  <param name="Action">TBasicAction [in] Required action.</param>

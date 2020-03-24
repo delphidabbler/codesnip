@@ -62,9 +62,6 @@ type
       ///  <summary>Action that causes news items from CodeSnip news feed to be
       ///  displayed.</summary>
       fNewsAction: TBasicAction;
-      ///  <summary>Action that causes a check for program updates to be
-      ///  performed.</summary>
-      fCheckForUpdatesAction: TBasicAction;
       ///  <summary>Action that causes About box to be displayed.</summary>
       fAboutBoxAction: TBasicAction;
       ///  <summary>Action that displays a specified page in the preferences
@@ -134,10 +131,6 @@ type
     ///  <summary>Displays news items from the CodeSnip news feed.</summary>
     ///  <remarks>Methods of INotifier.</remarks>
     procedure ShowNews;
-
-    ///  <summary>Checks for program updates.</summary>
-    ///  <remarks>Methods of INotifier.</remarks>
-    procedure CheckForUpdates;
 
     ///  <summary>Displays the program's About Box.</summary>
     ///  <remarks>Methods of INotifier.</remarks>
@@ -212,11 +205,6 @@ type
     ///  <remarks>Methods of ISetActions.</remarks>
     procedure SetNewsAction(const Action: TBasicAction);
 
-    ///  <summary>Sets action used to check for program updates.</summary>
-    ///  <param name="Action">TBasicAction [in] Required action.</param>
-    ///  <remarks>Methods of ISetActions.</remarks>
-    procedure SetCheckForUpdatesAction(const Action: TBasicAction);
-
     ///  <summary>Sets action used to display the program's About Box.</summary>
     ///  <param name="Action">TBasicAction [in] Required action.</param>
     ///  <remarks>Methods of ISetActions.</remarks>
@@ -258,12 +246,6 @@ begin
     ClassName + '.ChangeOverviewStyle: Pane out of range');
   if Assigned(fOverviewStyleChangeActions[Style]) then
     fOverviewStyleChangeActions[Style].Execute;
-end;
-
-procedure TNotifier.CheckForUpdates;
-begin
-  if Assigned(fCheckForUpdatesAction) then
-    fCheckForUpdatesAction.Execute;
 end;
 
 procedure TNotifier.ConfigCompilers;
@@ -312,11 +294,6 @@ end;
 procedure TNotifier.SetAboutBoxAction(const Action: TBasicAction);
 begin
   fAboutBoxAction := Action;
-end;
-
-procedure TNotifier.SetCheckForUpdatesAction(const Action: TBasicAction);
-begin
-  fCheckForUpdatesAction := Action;
 end;
 
 procedure TNotifier.SetConfigCompilersAction(const Action: TBasicAction);
