@@ -1,7 +1,7 @@
 {TODO -cTidy : Check if encryption lib and project units still required}
 {TODO -cUI : Remove unused tool bar button in main window}
 
-{TODO -cDocs : Remove remaining $Rev$ and $Date$ SVN placeholders}
+
 
 {TODO -cDocs : Update License.html to replace references to SVN with Git}
 {TODO -cDocs : Update Build.html to replace references to SVN with Git}
