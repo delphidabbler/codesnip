@@ -86,31 +86,10 @@ function showNews() {
 }
 
 /*
- * Calls external object to get host application to check for program updates.
- *  @return False.
- */
-function checkForUpdates() {
-  external.CheckForUpdates();
-  return false;
-}
-
-/*
  * Calls external object to get host application to display About box.
  *  @return False,
  */
 function showAboutBox() {
   external.ShowAboutBox();
-  return false;
-}
-
-/*
- * Calls external object to display the tab with the given frame class in the
- * Preferences dialogue box.
- *  @param string tabCls [in] Name of class of frame hosting required
- *    preferences page.
- *  @return False.
- */
-function showPrefsPage(tabCls) {
-  external.ShowPrefsPage(tabCls);
   return false;
 }

@@ -313,7 +313,6 @@ uses
   USelectionIOMgr in 'USelectionIOMgr.pas',
   USettings in 'USettings.pas',
   UShowCaseCtrl in 'UShowCaseCtrl.pas',
-  UShowPrefsPageAction in 'UShowPrefsPageAction.pas',
   USimpleDispatch in 'USimpleDispatch.pas',
   USingleton in 'USingleton.pas',
   USnipKindListAdapter in 'USnipKindListAdapter.pas',

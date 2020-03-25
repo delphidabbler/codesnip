@@ -77,18 +77,9 @@ type
     ///  <summary>Displays news items from the CodeSnip news feed.</summary>
     procedure ShowNews;
 
-    // TODO -cNotifier: remove this method and remove from external object
-    ///  <summary>Checks for program updates.</summary>
-    procedure CheckForUpdates;
-
     ///  <summary>Displays the program's About Box.</summary>
     procedure ShowAboutBox;
 
-    ///  <summary>Displays the Preferences dialogue box containing the specified
-    ///  page.</summary>
-    ///  <param name="ClsName">string [in] Class name of the frame that
-    ///  implements the required preferences page.</param>
-    procedure ShowPrefsPage(const ClsName: string);
   end;
 
 type
@@ -149,18 +140,10 @@ type
     ///  <param name="Action">TBasicAction [in] Required action.</param>
     procedure SetNewsAction(const Action: TBasicAction);
 
-    ///  <summary>Sets action used to check for program updates.</summary>
-    ///  <param name="Action">TBasicAction [in] Required action.</param>
-    procedure SetCheckForUpdatesAction(const Action: TBasicAction);
-
     ///  <summary>Sets action used to display the program's About Box.</summary>
     ///  <param name="Action">TBasicAction [in] Required action.</param>
     procedure SetAboutBoxAction(const Action: TBasicAction);
 
-    ///  <summary>Sets action used to display a given page of the Preferences
-    ///  dialogue box.</summary>
-    ///  <param name="Action">TBasicAction [in] Required action.</param>
-    procedure SetShowPrefsPageAction(const Action: TBasicAction);
   end;
 
 type

@@ -529,10 +529,6 @@ type
     ///  <summary>Selects a tab in the details pane where the tab is provided by
     ///  the TDetailTabAction instance referenced by Sender.</summary>
     procedure ActSelectDetailTabExecute(Sender: TObject);
-    ///  <summary>Displays Preferences dialogue box containing the single page
-    ///  specified by the TShowPrefsPageAction instance referenced by Sender.
-    ///  </summary>
-    procedure ActShowPrefsPageExecute(Sender: TObject);
     ///  <summary>Handles events that inform of changes to the database. The
     ///  EvtInfo object provides information about the change.</summary>
     procedure DBChangeHandler(Sender: TObject; const EvtInfo: IInterface);
@@ -587,8 +583,8 @@ uses
   UCopySourceMgr, UDatabaseLoader, UDatabaseLoaderUI, UDetailTabAction,
   UEditSnippetAction, UExceptions, UHelpMgr, UHistoryMenus, UKeysHelper,
   UMessageBox, UNotifier, UNulDropTarget, UPrintMgr, UQuery, USaveSnippetMgr,
-  USaveUnitMgr, USelectionIOMgr, UShowPrefsPageAction, UUrl, UUserDBMgr, UView,
-  UViewItemAction, UWBExternal;
+  USaveUnitMgr, USelectionIOMgr, UUrl, UUserDBMgr, UView, UViewItemAction,
+  UWBExternal;
 
 
 {$R *.dfm}
@@ -1048,17 +1044,6 @@ begin
     DoSearchFilter(Search);
 end;
 
-procedure TMainForm.ActShowPrefsPageExecute(Sender: TObject);
-var
-  UpdateUI: Boolean;  // flag true if preference changes affect main window UI
-begin
-  fDialogMgr.ExecPreferencesDlg(
-    (Sender as TShowPrefsPageAction).FrameClassName, UpdateUI
-  );
-  if UpdateUI then
-    fMainDisplayMgr.CompleteRefresh;
-end;
-
 procedure TMainForm.ActSubmitOrExportUpdate(Sender: TObject);
 begin
   // TODO -cRefactor: rename method - no longer shared
@@ -1387,11 +1372,7 @@ begin
       );
       SetNewSnippetAction(actAddSnippet);
       SetNewsAction(actBlog);
-      // SetCheckForUpdatesAction(actProgramUpdates);
       SetAboutBoxAction(actAbout);
-      SetShowPrefsPageAction(
-        TActionFactory.CreateShowPrefsPageAction(Self, ActShowPrefsPageExecute)
-      );
     end;
 
     // Customise web browser controls in Details pane
