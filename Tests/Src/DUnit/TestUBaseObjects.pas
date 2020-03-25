@@ -1,9 +1,5 @@
 {
   Delphi DUnit Test Case for the UBaseObjects Unit
-  ------------------------------------------------
-
-  $Rev$
-  $Date$
 }
 
 unit TestUBaseObjects;

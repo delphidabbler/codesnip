@@ -12148,8 +12148,3 @@ Version Information Editor 2.11.2
 Inno Setup Compiler v5.2.3 with ISPP preprocessor.
 Microsoft MIDL compiler v7.0
 Borland TLIBIMP v10.0
-
---------------------------------------------------------------------------------
-$Rev$
-$Date$
---------------------------------------------------------------------------------
