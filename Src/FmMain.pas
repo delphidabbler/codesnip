@@ -1372,7 +1372,6 @@ begin
       );
       SetNewSnippetAction(actAddSnippet);
       SetNewsAction(actBlog);
-      // SetCheckForUpdatesAction(actProgramUpdates);
       SetAboutBoxAction(actAbout);
     end;
 
