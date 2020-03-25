@@ -72,25 +72,25 @@ library ExternalObj
      */
     [id(0x0000006E)]
     HRESULT _stdcall DisplayCategory([in] BSTR CatID, [in] VARIANT_BOOL NewTab);
-    [id(0x0000006F)]
 
     /*
      * Open Snippets Editor ready to create a new snippet.
      */
+    [id(0x0000006F)]
     HRESULT _stdcall NewSnippet(void);
-    [id(0x00000070)]
 
     /*
      * Show news items from CodeSnip news feed.
      */
+    [id(0x00000070)]
     HRESULT _stdcall ShowNews(void);
-    [id(0x00000071)]
 
     /*
      * Display the program's About box.
      */
+    [id(0x00000071)]
     HRESULT _stdcall ShowAboutBox(void);
-    
+
   };
 
 };
