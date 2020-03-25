@@ -93,15 +93,3 @@ function showAboutBox() {
   external.ShowAboutBox();
   return false;
 }
-
-/*
- * Calls external object to display the tab with the given frame class in the
- * Preferences dialogue box.
- *  @param string tabCls [in] Name of class of frame hosting required
- *    preferences page.
- *  @return False.
- */
-function showPrefsPage(tabCls) {
-  external.ShowPrefsPage(tabCls);
-  return false;
-}
