@@ -1,10 +1,6 @@
 {TODO -cTidy : Check if encryption lib and project units still required}
 {TODO -cUI : Remove unused tool bar button in main window}
-
-
-
 {TODO -cDocs : Update License.html to replace references to SVN with Git}
-{TODO -cDocs : Update Build.html to replace references to SVN with Git}
 {TODO -cFirstRun : Delete UpdateChecks section from Config file on first run}
 {TODO -cFirstRun : Delete Prefs:Updating section from Config file on first run}
 {TODO -cHelp :
