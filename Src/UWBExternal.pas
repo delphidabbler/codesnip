@@ -102,12 +102,6 @@ type
     ///  <remarks>Method of IWBExternal14.</remarks>
     procedure ShowAboutBox; safecall;
 
-    ///  <summary>Displays specified page of the Preferences dialogue.</summary>
-    ///  <param name="ClsName">WideString [in] Class name of the frame that
-    ///  implements the required preferences page.</param>
-    ///  <remarks>Method of IWBExternal14.</remarks>
-    procedure ShowPrefsPage(const ClsName: WideString); safecall;
-
     ///  <summary>Records the notifier object that is used to call application
     ///  code in response to JavaScript calls running in browser documents.
     ///  </summary>
@@ -218,16 +212,6 @@ begin
   try
     if Assigned(fNotifier) then
       fNotifier.ShowNews;
-  except
-    HandleException;
-  end;
-end;
-
-procedure TWBExternal.ShowPrefsPage(const ClsName: WideString); safecall;
-begin
-  try
-    if Assigned(fNotifier) then
-      fNotifier.ShowPrefsPage(ClsName);
   except
     HandleException;
   end;

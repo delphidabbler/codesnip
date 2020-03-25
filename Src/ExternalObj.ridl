@@ -90,14 +90,7 @@ library ExternalObj
      * Display the program's About box.
      */
     HRESULT _stdcall ShowAboutBox(void);
-    [id(0x00000073)]
-
-    /*
-     * Displays a tab in the Preferences dialogue box.
-     *    @param TagCls [in] Class name of frame hosting required dialogue box
-     *      page.
-     */
-    HRESULT _stdcall ShowPrefsPage([in] BSTR ClsName);
+    
   };
 
 };
