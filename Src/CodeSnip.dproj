@@ -510,7 +510,6 @@
 			<DCCReference Include="USelectionIOMgr.pas"/>
 			<DCCReference Include="USettings.pas"/>
 			<DCCReference Include="UShowCaseCtrl.pas"/>
-			<DCCReference Include="UShowPrefsPageAction.pas"/>
 			<DCCReference Include="USimpleDispatch.pas"/>
 			<DCCReference Include="USingleton.pas"/>
 			<DCCReference Include="USnipKindListAdapter.pas"/>
