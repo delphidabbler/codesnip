@@ -42,10 +42,17 @@
       padding: 0;
       margin: 0.5em 0;
     }
-    .box, .cmd {
+    .note, .cmd {
       padding: 0.25em;
-      background-color: #eef;
       border: 1px solid silver;
+    }
+    .cmd {
+      background-color: #eef;
+      font-style: none;
+    }
+    .note {
+      background-color: #ffffcc;
+      font-style: italic;
     }
     .cmd {
       margin-left: 2em;
@@ -70,20 +77,14 @@
 
 <p>
   <em>CodeSnip</em> is written in Object Pascal and is targeted at Delphi
-  XE. Compilation with earlier compilers is not guaranteed. The code will
-  require some changes to compile on Delphi XE2 or later.
+  XE. Compilation with other compilers is not guaranteed.
 </p>
 
 <p>
   The are currently two editions of <em>CodeSnip</em>: the standard edition and
-  the portable edition. They both share the same code base and the different
+  the portable edition. They both share the same code base: the different
   editions are created using conditional compilation. These instructions show
   how to build either edition.
-</p>
-
-<p>
-  The Delphi XE IDE can be used to modify the source and to perform test builds.
-  Final builds should be created using the provided makefile.
 </p>
 
 <h2>
@@ -92,12 +93,12 @@
 
 <p>
   Several DelphiDabbler and other 3rd party libraries and components are
-  required to compile <em>CodeSnip</em>. They are included in the code
+  required to compile <em>CodeSnip</em>. They are all included in the code
   repository in the <code>Src/3rdParty</code> directory.
 </p>
 
 <p>
-  Goes without saying really, but you will also need the RTL and VCL that ships with
+  It goes without saying that you will also need the RTL and VCL that ships with
   Delphi.
 </p>
 
@@ -114,17 +115,16 @@
 </h3>
 
 <p>
-  A copy of the Delphi XE command line compiler is required to build the
-  object Pascal code from the provided makefile.
+  All the following tools that ship with Delphi XE are required:
 </p>
 
-<p>
-  You can use the Delphi IDE to edit the code and test compile it, but final
-  builds should be created using the makefile, which requires the following
-  tools that are supplied with Delphi:
-</p>
-
-<dl>
+<dl class="indent">
+  <dt class="spaced">
+    <code>MAKE</code>
+  </dt>
+  <dd>
+    The make tool &ndash; do not use the Microsoft make tool.
+  </dd>
   <dt class="spaced">
     <code>DCC32</code>
   </dt>
@@ -158,7 +158,7 @@
   The following environment variables are associated with these tools:
 </p>
 
-<dl>
+<dl class="indent">
   <dt class="spaced">
     <code>DELPHIROOT</code> - required unless <code>DELPHIXE</code> is set.
   </dt>
@@ -178,15 +178,6 @@
     <code>DELPHIXE</code>.
   </dd>
 </dl>
-
-<h3>
-  MAKE
-</h3>
-
-<p>
-  This is the make tool that ships with Delphi. You can use any version that
-  works.
-</p>
 
 <h3>
   DelphiDabbler Version Information Editor (VIEd)
@@ -212,8 +203,8 @@
 </h3>
 
 <p>
-  HTMLRes is used to compile <code>HTML.hrc</code> which stores various
-  HTML, JavaScript, CSS and images into HTML resources. Version 1.1 or later
+  HTMLRes is used to compile <code>HTML.hrc</code> which adds various
+  HTML, JavaScript, CSS and images to HTML resources. Version 1.1 or later
   is required.
   The HTML Resource Compiler can be obtained from
   <a
@@ -231,9 +222,8 @@
 </h3>
 
 <p>
-  The Unicode version on the Inno setup command line compiler is needed to
-  create <em>CodeSnip</em>'s install program. v5.5.2 (u) or later is required.
-  Earlier (Unicode) versions may work, but this is not guaranteed.
+  The Unicode version of the Inno setup command line compiler is needed to
+  create <em>CodeSnip</em>'s install program. v5.5.2(u) or later is required.
 </p>
 
 <p>
@@ -290,9 +280,13 @@
 </p>
 
 <p>
-  <strong>Note:</strong> You do not need Zip if you do not intend to create
-  release files.
+  You do not need Zip if you do not intend to create release files.
 </p>
+
+<p class="note">
+  <strong>Note:</strong> You can use the Delphi IDE to edit the code and test compile it. However you will need to build the code from the makefile first to ensure all the required resource files and auto-generated files are present. If you change any resource files or type libraries you also need to re-run the makefile. Final builds should always be created using the makefile.
+</p>
+
 
 <h2>
   Preparation
@@ -335,7 +329,7 @@
 <pre class="cmd"><span class="prompt">&gt;</span> set PATH=%DELPHIROOT%\Bin;%PATH%</pre>
 
 <p>
-  You do not have to do this but it means you can run the preferred version of
+  You do not have to do this but it means you can run
   <code>Make</code> from the command line without having to specify its path
   every time.
 </p>
@@ -372,71 +366,38 @@
 </h3>
 
 <p>
-  If you don't already have it, download or checkout the <em>CodeSnip</em>
-  source code. There are several options:
+  The source code is maintained in the <code><a href="https://github.com/delphidabbler/codesnip">delphidabbler/codesnip</a></code> Git respository on GitHub.
+</p>
+
+<p>
+  If you are intending to contribute code to the project you need to:
 </p>
 
 <ol class="spaced">
   <li>
-    <div>
-      If you are a Subversion user you can:
-    </div>
-    <ul class="spaced">
-      <li>
-        <div>
-          Check out the source using the following command:
-        </div>
-        <pre class="cmd"><span class="prompt">&gt;</span> svn checkout https://svn.code.sf.net/p/codesnip/code/trunk PATH</pre>
-        <div>
-          or
-        </div>
-        <pre class="cmd"><span class="prompt">&gt;</span> svn checkout svn://svn.code.sf.net/p/codesnip/code/trunk PATH</pre>
-        <div>
-          Where <code>PATH</code> is the directory where you want to place the
-          working copy. You will not be able to commit changes unless you join
-          the project, when a different check out URL is used.
-        </div>
-      </li>
-      <li>
-        <div>
-          Export the code using this command:
-        </div>
-        <pre class="cmd"><span class="prompt">&gt;</span> svn export https://svn.code.sf.net/p/codesnip/code/trunk PATH</pre>
-        <div>
-          or
-        </div>
-        <pre class="cmd"><span class="prompt">&gt;</span> svn export svn://svn.code.sf.net/p/codesnip/code/trunk PATH</pre>
-        <div>
-          where <code>PATH</code> is the directory where you wish to store the
-          code.
-        </div>
-      </li>
-    </ul>
-    <div class="spaced">
-      These commands get code from the repository trunk. To get the code of a
-      stable release replace <code>trunk</code> with <code>tags/XXXX</code>
-      where <code>XXX</code> specifies the version.
-    </div>
+    Fork the project on GitHub.
   </li>
   <li>
-    Download source files for the current many older releases from the <a
-      href="https://sourceforge.net/projects/codesnip/files/"
-    >CodeSnip SourceForge Files Page</a>.
+    Create a new branch off the <code>development</code> branch.
   </li>
   <li>
-    Grab the source code of the latest release from the release page of the <a
-      href="https://github.com/delphidabbler/codesnip/releases"
-    >delphidabbler/codesnip</a> repository on GitHub.
+    Make your changes on the branch you created.
+  </li>
+  <li>
+    Once finished raise a pull request for your code on the <code>delphidabbler/codesnip</code> repo.
   </li>
 </ol>
+
+<p>
+  If you only intend to use the code for your own purposes you can still fork the repository as above. Alternatively you can download the source code from the project's <a href="https://github.com/delphidabbler/codesnip/releases">Releases</a> section on GitHub &ndash; just choose the version you want.
+</p>
 
 <h3>
   Configure the Source Tree
 </h3>
 
 <p>
-  After checking out or downloading and extracting the source code you should
-  have the following directory structure:
+  After forking the repository or downloading and extracting the source code you should have the following directory structure:
 </p>
 
 <pre>./
@@ -493,23 +454,21 @@
 <p>
   If, by chance you also have <code>Bin</code>, <code>Exe</code> and / or
   <code>Release</code> directories don't worry - all will become clear.
-  Subversion users may also see the usual <code>.svn</code> hidden
-  directories. If you have done some editing in the Delphi IDE you may also see
+  Git users may also see the usual <code>.git</code> hidden
+  directory. If you have done some editing in the Delphi IDE you may also see
   occasional hidden <code>__history</code> folders.
 </p>
 
 <p>
   Before you can get hacking, you need to prepare the code tree. Open a command
-  console and navigate into the <code>Src</code> sub-folder. Run any script you
-  have created to set environment variables then do:
+  console then run any script you may have created to set the required environment variables. Now navigate into the <code>Src</code> sub-folder and do:
 </p>
 
 <pre class="cmd"><span class="prompt">&gt;</span> Make config</pre>
 
 <p>
   You may need to replace <code>Make</code> with the full path to
-  <code>Make</code> if it isn't on the path, or if the <code>Make</code> that
-  runs isn't the CodeGear / Embarcadero version. If this is the case try:
+  <code>Make</code> if it isn't on the path. If this is the case try:
 </p>
 
 <pre class="cmd"><span class="prompt">&gt;</span> %DELPHIROOT%\Bin\Make config</pre>
@@ -525,7 +484,7 @@
 </p>
 
 <p>
-  Once <code>Make config</code> has completed your folder structure should
+  Once <code>Make config</code> has run your folder structure should
   have acquired the following new folders, if they weren't present already:
 </p>
 
@@ -545,7 +504,7 @@
   If the <code>Bin</code> folder already existed, it will have been emptied.
   In addition, <code>Make</code> will have created a <code>.cfg</code> file from
   template in the <code>Src</code> folder. This <code>.cfg</code> file is needed
-  for DCC32 to run correctly. The file will be ignored by Subversion.
+  for DCC32 to run correctly. The file will be ignored by Git.
 </p>
 
 <h4>
@@ -599,7 +558,7 @@
   You have several options:
 </p>
 
-<ul>
+<ul class="spaced">
   <li>
     Build the <em>CodeSnip</em> Executable
   </li>
@@ -625,10 +584,10 @@
   <code>Make config</code> has been run.
 </p>
 
-<p class="box">
-  <em><strong>Note:</strong> This information applies only to building
-  </em>CodeSnip<em> itself, not to building and using the code in the
-  <code>Test</code> directory.</em>
+<p class="note">
+  <strong>Note:</strong> This information applies only to building
+  <em>CodeSnip</em> itself, not to building and using the code in the
+  <code>Test</code> directory.
 </p>
 
 <h3>
@@ -730,7 +689,7 @@
 </h3>
 
 <p>
-  Make can create zip files containing the files that are included in a release.
+  Make can create zip files containing all the files that are included in a release.
 </p>
 
 <h4>
@@ -740,7 +699,7 @@
 <p>
   The release file for the standard edition of <em>CodeSnip</em> includes the
   setup file along with  <code>ReadMe.txt</code> from the <code>Docs</code>
-  directory. Both must be present.
+  directory. Both files must exist.
 </p>
 
 <p>
@@ -783,7 +742,7 @@
 
 <pre class="cmd"><span class="prompt">&gt;</span> Make -DPORTABLE -DRELEASEFILENAME=MyPortableRelease.zip release</pre>
 
-<p>
+<p class="note">
   <strong>Warning:</strong> If you are building both the standard and portable
   releases with custom file names, make sure you supply a different value of
   the <code>RELEASEFILENAME</code> macro for each release, otherwise the last
@@ -832,9 +791,9 @@
 
 <pre class="cmd"><span class="prompt">&gt;</span> Make clean</pre>
 
-<p>
+<p class="note">
   <strong>Warning:</strong> This command removes the <code>__history</code>
-  folders that Delphi uses to maintain earlier versions of files.
+  folders that Delphi uses to roll back to earlier versions of files.
 </p>
 
 <h2>
