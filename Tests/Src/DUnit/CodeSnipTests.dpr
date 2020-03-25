@@ -34,11 +34,6 @@
  *   DCC32 -B -R<path-to-dunit-binaries> CodeSnipTests
  *
  * Note that once again the path to the DUnit binaries is required.
- *
- * -----------------------------------------------------------------------------
- * $Rev$
- * $Date$
- * -----------------------------------------------------------------------------
 }
 
 

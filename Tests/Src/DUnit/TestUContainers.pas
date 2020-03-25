@@ -1,9 +1,5 @@
 {
   Delphi DUnit Test Case for the UContainers Unit
-  -----------------------------------------------
-
-  $Rev$
-  $Date$
 }
 
 

@@ -1,9 +1,5 @@
 {
   Delphi DUnit Test Case for the UStrUtils Unit
-  ---------------------------------------------
-
-  $Rev$
-  $Date$
 }
 
 unit TestUStrUtils;

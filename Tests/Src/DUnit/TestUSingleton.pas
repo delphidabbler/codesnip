@@ -1,11 +1,7 @@
 {
   Delphi DUnit Test Case for the USingleton Unit
-  ----------------------------------------------
 
   To use all the tests in this unit you will need to define the TESTING symbol.
-
-  $Rev$
-  $Date$
 }
 
 unit TestUSingleton;
