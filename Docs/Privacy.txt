@@ -45,9 +45,9 @@ Spyware
 No spyware or other software that threatens your privacy has been deliberately
 or knowingly included with CodeSnip or its installer. If the program is found to
 contain spyware it will have been added by third parties without permission.
-Please inform the author of any such occurrence or any suspicious behaviour  by
+Please inform the author of any such occurrence or any suspicious behaviour by
 creating an issue on the CodeSnip GitHub repository at
-https://github.com/delphidabbler/codesnip.
+https://github.com/delphidabbler/codesnip/issues (GitHub account required).
 
 CodeSnip never tries to "phone home" of its own accord. It only goes online in
 response to user requests. Should you notice any unauthorised activity please
@@ -60,8 +60,8 @@ CodeSnip Online Activity
 
 CodeSnip's Help menu and several other parts of the user interface contain menu
 items and links that cause various third party web pages to be displayed in your
-default web browser. The author takes no responsibility for any data collected by
-your web browser or the individual web sites.
+default web browser. The author takes no responsibility for any data collected
+by your web browser or the individual web sites.
 
 
 ================================================================================
