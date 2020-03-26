@@ -77,14 +77,14 @@
   </dt>
   <dd>
     Similar to version 1 except that the 32Kb size limit was lifted (now 2Gb).
-    Also only for backing up the user database.
+    Used only for backing up the user database.
   </dd>
   <dt>
     Version 3
   </dt>
   <dd>
-    Similar to Versions 1 and 2. Nowused for backing up both the user database
-    and the main database. An file ID field was added to allows which database
+    Similar to Versions 1 and 2. Now used for backing up both the user database
+    and the main database. A file ID field was added to specify which database
     was backed up. The file ID generalises to any file.
   </dd>
   <dt>
@@ -132,7 +132,7 @@
   <dd>
     This file format uses pure binary raw data. The watermark part of the file
     header is written in ASCII. File names are stored as UTF-8. All other
-    information, including file contents is stored as raw binary.
+    information is stored as raw binary.
   </dd>
 </dl>
 
@@ -285,7 +285,6 @@
         <code>'DBAC'</code> for user database backup.
       </li>
     </ul>
-    Other IDs could be used for other backup types.
   </dd>
   <dt>
     <code>FileCount</code>
@@ -371,7 +370,6 @@
         <code>'DBAC'</code> for user database backup.
       </li>
     </ul>
-    Other IDs could be used for other backup types.
   </dd>
   <dt>
     <code>FileCount</code>
@@ -420,13 +418,13 @@
 
 <p>
   Code that writes backup files should only ever write the latest available file
-  format at the time the code was written. It should never attempt to write
+  format at the time the code was written. It musr never attempt to write
   earlier versions.
 </p>
 
 <p>
-  Code that restores backup files be able to interpret all earlier formats in
-  addition to the current one because the program may to restore data from an
+  Code that restores backup files must be able to interpret all earlier formats in
+  addition to the current one, because the program may need to restore data from an
   old backup file. If the code detects a later version than it was designed for
   it should display an error message and terminate.
 </p>
@@ -437,9 +435,9 @@
 
 <p>
   Some earlier versions of the backup restoration code have faults in that they
-  will attempt to read later backup file versions than thosethey were designed
-  for. By good fortune factors in the design of later file formats mean that the
-  reading code always abandons the reading, albeit with no error message. These
+  will attempt to read later backup file versions than those they were designed
+  for. By good fortune, factors in the design of later file formats mean that the
+  reading code always abandons reading later, albeit with no error message. These
   problems are:
 </p>
 
@@ -455,11 +453,10 @@
     </div>
     <div class="half-spaced">
       The reading code expects backup files to begin with a file count as a text
-      hex representation of a SmallInt. In file version 2 and later the first
+      representation of a SmallInt in hex. In file version 2 and later the first
       four ANSI chars of the file are <code>'FFFF'</code>, which decodes as
       <code>-1</code>. The reader interprets this value as meaning there are no
-      files in the backup and does nothing, leaving the existing database
-      intact.
+      files in the backup and does nothing.
     </div>
   </dd>
   <dt>
@@ -473,7 +470,7 @@
       In v3 files the file ID is recorded in the same location and same format
       as the v2 file format expects to find the file count. Luckily the only two
       values in use as File IDs are <code>'CBAC'</code> and <code>'DBAC'</code>,
-      both of which decode as negative integers. The reader software interprets
+      both of which decode as negative integers expressed in hex. The reader software interprets
       this as meaning there are no files in the backup.
     </div>
     <div class="helf-speed">
@@ -495,11 +492,11 @@
       work with file format v3 will also try to read later file versions. It
       looks for its file count in a hex encoded SmallInt value at position 12 in
       the backup file. File format v4 was designed to have a padding value of
-      <code>'0000'</code> in this location. Agains this fools the reader software
+      <code>'0000'</code> in this location. This fools the v3 reader software
       into thinking there are no files in the backup.
     </div>
     <div class="half-spaced">
-      From CodeSnip v3.8.6 the file reader works correctly.
+      From CodeSnip v3.8.6 the file reader works correctly and exits with an error when an unsupported backup file version is encountered.
     </div>
   </dd>
 </dl>
@@ -533,7 +530,7 @@
     File format version 1
   </dt>
   <dd>
-    Watermark: <code>''</code>
+    Watermark: <code>''</code> (empty)
   </dd>
   <dt>
     File format version 2
@@ -558,8 +555,8 @@
 <p>
   It can be seen that the version number at byte offset 4 is not necessary for
   identification if the watermark is made longer. However, it should always be
-  used because earlier versions of the file readers use it to determine which
-  format is to be read.
+  used because earlier versions of the file readers may use it to determine which
+  format version is to be read.
 </p>
 
 </body>
