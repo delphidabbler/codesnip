@@ -1,0 +1,389 @@
+<!DOCTYPE HTML>
+
+<!--
+ * This file copyright (C) 2020, Peter Johnson (gravatar.com/delphidabbler) and
+ * is licensed under the MIT License: https://opensource.org/licenses/MIT
+ *
+ * DelphiDabbler Code Snippets Database Documentation: REML markup language
+ * documentation.
+-->
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8" />
+<meta http-equiv=X-UA-Compatible content="IE=edge">
+<meta name=viewport content="width=device-width,initial-scale=1">
+<!--[if lt IE 9]>
+<script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+<![endif]-->
+<meta name="author" content="Peter Johnson - https://en.gravatar.com/delphidabbler">
+<meta name="description" content="DelphiDabbler Code Snippets collection documentation - REML markup language">
+<style>
+body {
+  font-family: "Segoe UI", Tahoma, Geneva, Helvetica, Arial, sans-serif;
+  font-size: 13pt;
+  font-weight: normal;
+  margin: 1em 3em;
+  padding: 0;
+  line-height: 150%;
+  background-color: white;
+  color: #444444;
+}
+header {
+  padding: 0;
+  background-color: #f5f5f5;
+  border-radius: 16px;
+  border: 1px silver solid;
+  display: block;
+}
+#title {
+  font-size: 200%;
+  font-weight: bold;
+  text-align: center;
+  margin: 0.5em;
+}
+
+header nav {
+  display: block;
+  margin: 1em;
+  font-weight: normal;
+  font-size: 90%;
+}
+header nav ul {
+  list-style: none;
+  margin: 0;
+  text-align: center;
+}
+header nav li {
+  display: inline;
+}
+header nav a {
+  text-decoration: none;
+  white-space: nowrap;
+  padding: 0.5em;
+}
+header nav a:hover {
+  background-color: #eeeeee;
+}
+h1 {
+  font-weight: bold;
+  font-size: 200%;
+  padding: 0 0 0.5em 0;
+  margin: 1em 0;
+  border-bottom: 1px silver solid;
+}
+h2 {
+  font-weight: bold;
+  font-size: 175%;
+  padding: 0;
+  margin: 0.75em 0;
+}
+aside {
+  display: block;
+  xfont-size: 100%;
+  font-style: italic;
+  padding: 0.25em 0.5em;
+  margin: 0.75em 2em;
+  border-left: 2px solid silver;
+  border-right: 1px solid silver;
+  border-top: 1px solid silver;
+  border-bottom: 2px solid silver;
+  border-radius: 6px;
+  background-color: #f5f5f5;
+}
+aside code.value {
+  background-color: #ddd;
+}
+p {
+  font-size: 100%;
+  padding: 0;
+  margin: 0.75em 0;
+}
+pre, code {
+  font-family: "Lucida Console", "Courier New", Courier, monospace;
+  font-size: 90%;
+}
+pre.sample {
+  margin: 0.75em 2em;
+  background-color: #f5f5f5;
+  padding: 0.5em;
+}
+code.key, code.value {
+  background-color: #f5f5f5;
+  padding: 1px 4px;
+}
+code.key {
+  font-weight: bold;
+  font-style: none;
+}
+code.value {
+  font-style: normal;
+}
+ul {
+  font-size: 100%;
+  padding: 0;
+  margin: 0.75em 0 0.75em 2em;
+}
+ul ul {
+  margin: 0.25em 0 0.25em 2em;
+}
+li {
+  padding: 0;
+  margin: 0.75em 0;
+}
+li li, li div {
+  margin: 0.25em 0;
+}
+ul.half-spaced li {
+    margin: 0.4em 0;
+}
+ul.unspaced li {
+  margin: 0;
+}
+.very-strong {
+   xtext-transform: uppercase;
+   font-variant: small-caps;
+   font-weight: bold;
+}
+dt {
+  margin: 0;
+  padding: 0;
+  font-weight: inherited;
+}
+dd {
+  margin: 0 0 0 2em;
+  padding: 0;
+  font-weight: normal;
+}
+a {
+  color: rgb(46, 46, 192);
+}
+section {
+  display: block;
+  margin: 2em 0 2em 0;
+  padding: 1em;
+  background-color: transparent;
+  border-radius: 16px;
+  border: 1px silver solid;
+}
+section h1 {
+  margin-top: 0;
+  margin-bottom: 0.5em;
+}
+</style>
+
+<title>
+  REML Documentation
+</title>
+
+</head>
+
+<body>
+
+<header>
+
+  <div id="title">
+    <p>
+      REML Markup Language
+    </p>
+  </div>
+
+  <nav id="contents">
+    <ul>
+      <li>
+        <a href="#intro">Introduction</a>
+      </li>
+      <li>
+        <a href="#tags">Tags</a>
+      </li>
+      <li>
+        <a href="#entities">Character Entities</a>
+      </li>
+    </ul>
+  </nav>
+
+</header>
+
+<section id="intro">
+
+  <h1>
+    Introduction
+  </h1>
+
+  <p>
+    REML is a little markup language that can be used to style text. It is used in Code Snippets collection meta data for certain properties of a snippet.
+  </p>
+  <p>
+    The REML language is a SGML language similar to a greatly simplified XHTML. The are a small number of tags and character entities that can be used.
+  </p>
+  <aside>
+    <strong>Note:</strong> The language described here is REML v4. Earlier versions are obsolete.
+  </aside>
+
+</section>
+
+<section id="tags">
+
+  <h1>
+    Tags
+  </h1>
+
+  <p>
+    There are two types of tags: block level and in-line.
+  </p>
+
+  <p>
+    If an unrecognised tag is encountered an REML code the interpreter <em>should</em> report an error. However, providing start and end tags are matched, the interpreter <em>may</em> choose to simply ignore the tags.
+  </p>
+
+  <h2>
+    Block Level Tags
+  </h2>
+
+  <p>
+    Block level tags separate the enclosed text into paragraphs of some description. The supported tags are:
+  </p>
+  <ul class="half-spaced">
+    <li>
+      <code class="value">&lt;p&gt;...&lt;/p&gt;</code> &ndash; Renders the enclosed markup as a simple paragraph.
+    </li>
+    <li>
+      <code class="value">&lt;heading&gt;...&lt;/heading&gt;</code> &ndash; Renders the enclosed markup as a heading.
+    </li>
+  </ul>
+  <p>
+    The following rules apply to the use of block level tags:
+  </p>
+  <ul class="unspaced">
+    <li>
+      The tags <span class="very-strong">must not</span> be nested.
+    </li>
+    <li>
+      The tags <span class="very-strong">must</span> be matched, e.g. <code class="value">&lt;p&gt;</code> must have a matching <code class="value">&lt;/p&gt;</code>.
+    </li>
+    <li>
+      All text <em>should</em> be embedded within block level tags, e.g. <code class="value">&lt;heading&gt;heading&lt;/heading&gt;&lt;p&gt;text&lt;/p&gt;</code> or simply <code class="value">&lt;p&gt;text&lt;/p&gt;</code>.
+    </li>
+    <li>
+      White space between blocks <span class="very-strong">must</span> be ignored.
+    </li>
+  </ul>
+  <p>
+    Here is a valid example:
+  </p>
+  <pre class="sample">&lt;p&gt;Hello World&lt;/p&gt;
+&lt;heading&gt;Hello&lt;/heading&gt;
+&lt;p&gt;Hello World&lt;/p&gt;</pre>
+  <p>
+    Strictly speaking, the following example is invalid code &ndash; all occurrences of <code class="value">wrong</code> are in error because they are not contained within block tags.
+  </p>
+  <pre class="sample">wrong &lt;heading&gt;blah&lt;/heading&gt; wrong &lt;p&gt;blah&lt;/p&gt; wrong</pre>
+  <p>
+    However interpreting code <em>may</em> interpret this permissively. If this is done the text outside blocks <span class="very-strong">must</span> be interpreted as if it was enclosed in <code class="value">&lt;p&gt;</code> and <code class="value">&lt;/p&gt;</code> tags. Therefore the above code would be interpreted as:
+  </p>
+  <pre class="sample">&lt;p&gt;wrong &lt;/p&gt;&lt;heading&gt;blah&lt;/heading&gt;&lt;p&gt;wrong &lt;/p&gt;&lt;p&gt;blah&lt;/p&gt;&lt;p&gt;wrong&lt;/p&gt;</pre>
+  <aside>
+    <strong>Note:</strong> Code Snippets Database collections <em>may</em> contain such non-conforming REML. Therefore interpreters of REML that need to accept such collections <span class="very-strong">must</span> be able to handle text without enclosing block tags.
+  </aside>
+
+  <h2>
+    Inline Tags
+  </h2>
+
+  <p>
+    In-line tags format the text enclosed between the start and end tags.
+  </p>
+  <p>
+    Here are the available in-line tags:
+  </p>
+  <ul class="half-spaced">
+    <li>
+      <code class="value">&lt;strong&gt;...&lt;/strong&gt;</code> &ndash; Renders the enclosed markup with strong emphasis.
+    </li>
+    <li>
+      <code class="value">&lt;em&gt;...&lt;/em&gt;</code> &ndash; Emphasises the enclosed markup.
+    </li>
+    <li>
+      <code class="value">&lt;var&gt;...&lt;/var&gt;</code> &ndash; Used to indicate the enclosed markup is a variable.
+    </li>
+    <li>
+      <code class="value">&lt;warning&gt;...&lt;/warning&gt;</code> &ndash; Used for warning text.
+    </li>
+    <li>
+      <code class="value">&lt;mono&gt;...&lt;/mono&gt;</code> &ndash; Renders markup in a mono-spaced font.
+    </li>
+    <li>
+      <code class="value">&lt;a href="url"&gt;...&lt;/a&gt;</code> &ndash; Creates a hyper-link. The <code class="value">href</code> attribute <span class="very-strong">must</span> specify the required URL, which <span class="very-strong">must</span> use one of the <code class="value">http</code>, <code class="value">https</code> or <code class="value">file</code> protocols; others are not permitted. If you use the <code class="value">file</code> protocol it <span class="very-strong">must</span> reference a valid local or network file.
+    </li>
+  </ul>
+  <p>
+    The following rules apply to the use of in-line tags:
+  </p>
+  <ul class="unspaced">
+    <li>
+      In-line tags <span class="very-strong">must</span> be embedded inside a block level tag. E.g. <code class="value">&lt;p&gt;one&lt;strong&gt;two&lt;/strong&gt;three&lt;/p&gt;</code>.
+    </li>
+    <li>
+      Tags <span class="very-strong">must</span> match. E.g. <code class="value">&lt;em&gt;</code> must be matched with <code class="value">&lt;/em&gt;</code>.
+    </li>
+    <li>
+      Tags may be nested, providing the tags match. E.g. <code class="value">&lt;em&gt;blah &lt;var&gt;blah&lt;/var&gt;&lt;/em&gt;</code> is valid but <code class="value">&lt;em&gt;blah &lt;var&gt;blah&lt;/em&gt;&lt;/var&gt;</code> is not.
+    </li>
+  </ul>
+  <p>
+    Examples:
+  </p>
+  <pre class="sample">&lt;p&gt;Make stuff &lt;strong&gt;stand out&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Emphasised &lt;warning&gt;warning!&lt;/warning&gt;&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;Refer to a function &lt;var&gt;parameter&lt;/var&gt;.&lt;/p&gt;
+&lt;p&gt;Use the: &lt;mono&gt;Windows&lt;/mono&gt; unit.&lt;/p&gt;
+&lt;p&gt;See this &lt;a href="http://example.com"&gt;example&lt;/a&gt;.&lt;/p&gt;</pre>
+
+</section>
+
+<section id="entities">
+
+  <h1>
+    Character Entities
+  </h1>
+
+  <p>
+    A few symbolic character entities are supported in REML. Here is the complete list:
+  </p>
+  <ul class="half-spaced">
+    <li>
+      <code class="value">&amp;lt;</code> for <code class="value">&lt;</code>
+    </li>
+    <li>
+      <code class="value">&amp;gt;</code> for <code class="value">&gt;</code>
+    </li>
+    <li>
+      <code class="value">&amp;quot;</code> for <code class="value">&quot;</code>
+    </li>
+    <li>
+      <code class="value">&amp;amp;</code> for <code class="value">&amp;</code>
+    </li>
+    <li>
+      <code class="value">&amp;copy;</code> for <code class="value">&copy;</code>
+    </li>
+  </ul>
+
+  <aside>
+    <strong>Note:</strong> the '&lt;' and '&amp;' characters are special within the markup and cannot be used literally, even when you are just entering plain text. You <span class="very-strong">must</span> use the <code class="value">&amp;lt;</code> character entity in place of <code class="value">&lt;</code> and <code class="value">&amp;amp;</code> instead of <code class="value">&amp;</code>. For example to write <code class="value">x&lt;y</code> in REML use <code class="value">x&amp;lt;y</code> and to write <code class="value">you &amp; me</code> use <code class="value">you &amp;amp; me</code>.
+  </aside>
+
+  <p>
+    To express other special symbols for which there is no symbolic character entity, numeric character entities can be used. For example to display the '¶' character (Unicode <em>pilcrow sign</em>) use <code class="value">&amp;#182;</code>.
+  </p>
+
+  <aside>
+    <strong>Note:</strong> Numeric entities should be used with caution because the characters they represent may vary across different text encodings, whereas symbolic entities are safe across encodings.
+  </aside>
+
+</section>
+
+</body>
+
+</html>
