@@ -114,6 +114,17 @@ code {
   font-family: "Courier New", Courier, monospace;
 }
 
+code.key {
+  font-weight: bold;
+  font-style: none;
+}
+
+code.value {
+  padding: 1px 2px;
+  background-color: #f5f5f5;
+  font-style: normal;
+}
+
 del {
   text-decoration: line-through;
   color: gray;
@@ -166,4 +177,9 @@ acronym {
 .del {
   text-decoration: line-through;
   color: gray;
+}
+
+.very-strong{
+   font-variant: small-caps;
+   font-weight: bold;
 }
