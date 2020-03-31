@@ -98,6 +98,8 @@ type
     procedure DeleteNewsPrefs;
     ///  <summary>Deletes unused Prefs:Updating section.</summary>
     procedure DeleteUpdatingPrefs;
+    ///  <summary>Deletes unused UpdateChecks section.</summary>
+    procedure DeleteUpdateChecks;
     ///  <summary>Effectively renames MainWindow section used prior to version
     ///  11 as WindowState:MainForm.</summary>
     procedure RenameMainWindowSection;
