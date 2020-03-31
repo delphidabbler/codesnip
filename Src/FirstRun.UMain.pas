@@ -220,13 +220,11 @@ begin
     // we rely on this for portable version.
     fUserConfigFile.CreateDefaultCodeGenEntries;
 
-  {$IFNDEF PORTABLE}
   if fUserConfigFile.FileVer < 9 then
   begin
     fUserConfigFile.DeleteDetailsPaneIndex;
     fUserConfigFile.UpdateCodeGenEntries;
   end;
-  {$ENDIF}
 
   if fUserConfigFile.FileVer < 11 then
     fUserConfigFile.RenameMainWindowSection;

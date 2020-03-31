@@ -87,15 +87,13 @@ type
     ///  <summary>Deletes any highlighter preferences.</summary>
     ///  <remarks>Standard edition only.</remarks>
     procedure DeleteHighligherPrefs;
+    {$ENDIF}
     ///  <summary>Updates Prefs:CodeGen section from format prior to version 9
     ///  to version 9 and later format.</summary>
-    ///  <remarks>Standard edition only.</remarks>
     procedure UpdateCodeGenEntries;
     ///  <summary>Deletes unused key that determines detail pane index.
     ///  </summary>
-    ///  <remarks>Standard edition only.</remarks>
     procedure DeleteDetailsPaneIndex;
-    {$ENDIF}
     ///  <summary>Deletes proxy server section.</summary>
     procedure DeleteProxyServerSection;
     ///  <summary>Deletes unused Prefs:News section.</summary>
@@ -288,14 +286,12 @@ begin
   SetIniString('Prefs:CodeGen', 'Warning7.MinCompiler', '20.00', CfgFileName);
 end;
 
-{$IFNDEF PORTABLE}
 procedure TUserConfigFileUpdater.DeleteDetailsPaneIndex;
 begin
   if not TFile.Exists(CfgFileName, False) then
     CreateNewFile;
   DeleteIniKey('MainWindow', 'DetailTab', CfgFileName);
 end;
-{$ENDIF}
 
 {$IFNDEF PORTABLE}
 procedure TUserConfigFileUpdater.DeleteHighligherPrefs;
@@ -398,7 +394,6 @@ begin
   );
 end;
 
-{$IFNDEF PORTABLE}
 procedure TUserConfigFileUpdater.UpdateCodeGenEntries;
 begin
   // Key that determines if warnings are emitted changes from SwitchOffWarnings
@@ -418,7 +413,6 @@ begin
   else
     SetIniInt('Prefs:CodeGen', 'EmitWarnDirs', 0, CfgFileName);
 end;
-{$ENDIF}
 
 procedure TUserConfigFileUpdater.UpdateFindXRefs;
 begin
