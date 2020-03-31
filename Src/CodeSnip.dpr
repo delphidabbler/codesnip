@@ -355,7 +355,6 @@ uses
   UUserDBMgr in 'UUserDBMgr.pas',
   UUserDBMove in 'UUserDBMove.pas',
   UUserDetails in 'UUserDetails.pas',
-  UUserDetailsPersist in 'UUserDetailsPersist.pas',
   UUtils in 'UUtils.pas',
   UVersionInfo in 'UVersionInfo.pas',
   UView in 'UView.pas',

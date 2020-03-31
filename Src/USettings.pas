@@ -157,7 +157,6 @@ type
   ///  <para>-ssFindXRefs - info about last XRef search</para>
   ///  <para>-ssCompilerInfo - info about each supported compiler</para>
   ///  <para>-ssPreferences - info about program preferences</para>
-  ///  <para>-ssUserInfo - info about user</para>
   ///  <para>-ssUnits - list of default units</para>
   ///  <para>-ssDuplicateSnippet - persistent settings from Duplicate Snippets
   ///  dlg</para>
@@ -169,7 +168,7 @@ type
   ///  </summary>
   TSettingsSectionId = (
     ssFindText, ssFindCompiler, ssFindXRefs, ssCompilerInfo,
-    ssPreferences, ssUserInfo, ssUnits, ssDuplicateSnippet,
+    ssPreferences, ssUnits, ssDuplicateSnippet,
     ssFavourites, ssWindowState, ssDatabase
   );
 
@@ -537,7 +536,6 @@ const
     'FindXRefs',        // ssFindXRefs
     'Cmp',              // ssCompilerInfo
     'Prefs',            // ssPreferences
-    'UserInfo',         // ssUserInfo
     'UnitList',         // ssUnits
     'DuplicateSnippet', // ssDuplicateSnippet
     'Favourites',       // ssFavourites
