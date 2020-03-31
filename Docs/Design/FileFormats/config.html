@@ -315,7 +315,7 @@
   </dt>
   <dd>
     <div class="half-spaced">
-      Once entry for each search directory configured for the compiler where <code class="key"<em>XXX</code> ranges from <code class="value">0</code> to <code class="key">SearchDirCount</code> - <code class="value">1</code>.
+      One entry for each search directory configured for the compiler where <code class="key"<em>XXX</code> ranges from <code class="value">0</code> to <code class="key">SearchDirCount</code> - <code class="value">1</code>.
     </div>
     <div class="half-spaced">
       Each entry contains a fully specified directory path.
@@ -1229,6 +1229,84 @@
   </dd>
 </dl>
 </div>
+
+<h4>
+  [UnitList] section
+</h4>
+
+<p>
+  Records the names of the units that appear in the <em>Units</em> check box list on the <em>References</em> tab of the <em>Edit Snippet</em> dialoogue box.
+</p>
+
+<p>
+  Name / Value pairs:
+</p>
+
+<dl class="indent">
+  <dt>
+    <code class="key">Count</code> (Integer)
+  </dt>
+  <dd>
+    The number of units in the list.
+  </dd>
+  <dt>
+    <code class="key">Unit<em>XXX</em></code> (String)
+  </dt>
+  <dd>
+    One entry for each unit, where <code class="key">XXX</code> range from <code class="value">0</code> to <code class="key">Count</code> - <code class="value">1</code>.
+  </dd>
+</dl>
+
+<p>
+  Note that some &quot;reserved&quot; unit names that always appear in the list box are not recorded in settings. They are:
+</p>
+
+<ul class="unspaced">
+  <li>
+    <var>SysUtils</var>
+  </li>
+  <li>
+    <var>Classes</var>
+  </li>
+  <li>
+    <var>Windows</var>
+  </li>
+  <li>
+    <var>Graphics</var>
+  </li>
+</ul>
+
+<p>
+  If this section is missing or has no units listed then CodeSnip defaults to using the following units in addition to the &quot;reserved&quot; units:
+</p>
+
+<ul class="unspaced">
+  <li>
+    <var>Controls</var>
+  </li>
+  <li>
+    <var>Messages</var>
+  </li>
+  <li>
+    <var>Types</var>
+  </li>
+  <li>
+    <var>ShlObj</var>
+  </li>
+  <li>
+    <var>ShellAPI</var>
+  </li>
+  <li>
+    <var>ActiveX</var>
+  </li>
+  <li>
+    <var>Math</var>
+  </li>
+</ul>
+
+<p>
+  These default unit names will be included in this section the first time it is written.
+</p>
 
 <div class="del">
 <h4>
