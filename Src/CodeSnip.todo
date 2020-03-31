@@ -1,4 +1,3 @@
-{TODO -cTidy : Check if encryption lib and project units still required}
 {TODO -cUI : Remove unused tool bar button in main window}
 {TODO -cFirstRun : Delete UpdateChecks section from Config file on first run}
 {TODO -cFirstRun : Delete Prefs:Updating section from Config file on first run}
