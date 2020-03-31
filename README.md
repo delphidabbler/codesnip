@@ -11,15 +11,9 @@ A code bank designed with Pascal in mind.
 
 ## Overview
 
-> **CodeSnip 4 Is No Longer Being Supported**.
-
-> Bugs can no longer be reported and requests for new features in CodeSnip 4 are no longer being accepted.
-
-> It is hoped to produce one final version that removes the program's dependency on the delphidabbler.com webserver that is due to close 15th June 2020, but no guarantees. Work started late Jan 2020.
-
 CodeSnip is an open source code bank for storing and viewing your code snippets. While it can manage snippets in any source language, it is focussed mainly on Pascal and Delphi code for which additional features are available.
 
-CodeSnip also provides offline access to the DelphiDabbler [Code Snippets Database](https://github.com/delphidabbler/code-snippets).
+CodeSnip can import code from the DelphiDabbler [Code Snippets Database](https://github.com/delphidabbler/code-snippets).
 
 The program is available in both standard and portable editions.
 
@@ -46,7 +40,7 @@ There's also plenty of info available on how to compile CodeSnip from source - s
 
 ## Source Code
 
-Up to and including release 4.13.1 the project's source code was maintained in a Subversion repository on [SourceForge](https://sourceforge.net/p/codesnip/code/). The Subversion repo was converted to Git on 21 5 October 2015 and imported to GitHub. All releases from v3.0.0 are marked by tags in the form `version-x.x.x` where `x.x.x` is the version number.
+Up to and including release 4.13.1 the project's source code was maintained in a Subversion repository on [SourceForge](https://sourceforge.net/p/codesnip/code/). The Subversion repo was converted to Git in October 2015 and imported to GitHub. All releases from v3.0.0 are marked by tags in the form `version-x.x.x` where `x.x.x` is the version number.
 
 > Note that any branches that were created and deleted in the Subversion repo are missing from the Git history. So, for full details of the the project's history from v3.0.0 to v4.13.1 please refer to the old Subversion repo on SourceForge.
 
@@ -56,7 +50,7 @@ Up to and including release 4.13.1, `master` is simply a copy of the old Subvers
 
 ### Contributions
 
-Contributions are no longer accepted for this repo. If you wish to take over development, please fork the repo and take it where you wish.
+To contribute to the project please fork the repository on GitHub. Create a feature branch off the development branch. Make your changes to that branch then submit a pull request on GitHub.
 
 ### Compiling
 
@@ -66,23 +60,18 @@ There is also an [FAQ](https://github.com/delphidabbler/codesnip-faq) -- (see [S
 
 ## Change Log
 
-The program's current change log can be found in the file `Docs/ChangeLogs/ChangeLog-v4.txt` on the `master` branch.
+The program's current change log can be found in the file `Docs/ChangeLogs/ChangeLog-v4.txt` on the `master` branch. Change logs for other major releases are in the same directory.
 
 ## License
 
-The program's EULA which gives full details of the license applying to the latest release can be found in the file `Docs\License.html` in the `master` branch. The license has changed between releases, so if you need to see an older one, select the appropriate `version-x.x.x` tag and read the older version of the file.
+The program's EULA, which gives full details of the license applying to the latest release, can be found in the file `Docs\License.html` in the `master` branch. The license has changed between releases, so if you need to see an older one, select the appropriate `version-x.x.x` tag and read the older version of the file.
 
 Most of the original code is made available under the [Mozilla Public License v2](https://www.mozilla.org/MPL/2.0/).
 
 The [CodeSnip Compiling & Source Code FAQ](https://github.com/delphidabbler/codesnip-faq/blob/master/SourceCode.md) may be useful if you have any queries about re-using CodeSnip source in other projects.
 
-## CodeSnip 5 Development
+## Bug Reports and Features
 
-Following a false start back in 2013/4 in the `parsnip` branch, development of CodeSnip 5 restarted in the `pagoda` branch, which picked up where `parsnip` left off. (Don't ask where those names came from!)
+You can report bugs or request new features using the [Issues section](https://github.com/delphidabbler/codesnip/issues) of the CodeSnip GitHub project. You will need a GitHub account to do this.
 
-Unfortunately `pagoda` has also been abandoned now. The branch has been left in place in case anyone else wants to continue development.
-
-The idea behind v5 was to:
-
-1. Generalise CodeSnip to be a code bank for several different languages instead of just Pascal, while still providing some additional support for test-compiling Pascal code.
-2. Increase the focus on the user's own code while downplaying the importance of code downloaded from the DelphiDabbler [Code Snippets database](https://github.com/delphidabbler/code-snippets), like [SWAG](https://github.com/delphidabbler/swag) is at present.
+Please do not report bugs unless you have checked whether the bug exists in the latest version of the program.

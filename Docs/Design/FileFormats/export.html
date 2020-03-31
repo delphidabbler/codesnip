@@ -60,9 +60,11 @@
 </h2>
 
 <p>
-  XML export files use UTF-8 encoding without a byte order mark. (In earlier
-  versions XML generated for submission to the online database is also encoded 
-  in UTF-8. Code submission is no longer supported.)
+  XML export files use UTF-8 encoding without a byte order mark.
+</p>
+
+<p class="pullout">
+  In earlier versions of CodeSnip, XML files generated for submission to the online database were also encoded in UTF-8. Support for code submission was removed from CodeSnip v4.16.0.
 </p>
 
 <p>
@@ -76,8 +78,8 @@
 </h2>
 
 <p>
-  There have been six different versions of the XML file format &ndash; v1 to
-  v6. Tags from all six versions are explained below with notes describing
+  There have been seven different versions of the XML export file format &ndash; v1 to
+  v7. Tags used by all versions are explained below, with notes describing
   which versions a tag applies to. Where there is no note the tag is valid in
   all versions.
 </p>
@@ -138,7 +140,7 @@
       </dt>
       <dd>
         Identifies version of file. Determines which tags are valid and
-        establishes rules concerning content. Valid versions are 1..6.
+        establishes rules concerning content. Valid versions are 1..7.
       </dd>
     </dl>
   </dd>
@@ -155,30 +157,56 @@
     <strong>codesnip-export/user-info</strong>
   </dt>
   <dd>
-    Contains information about user who created the file (omitted for normal
-    exports &ndash; (In earlier versions this was included with submissions to 
-    the online database. Submission to the database is no longer supported.)
+    <ul class="squashed">
+      <li>
+        <span class="highlight">versions 1..6:</span> Contains information about user who created the file &nbsp; used for submissions to the online database, omitted for other exports.
+      </li>
+      <li>
+        <span class="highlight">version 7:</span> Not supported. Ignored if present.
+      </li>
+    </ul>
   </dd>
 
   <dt>
     <strong>codesnip-export/user-info/name</strong>
   </dt>
   <dd>
-    User's name or nickname.
+    <ul class="squashed">
+      <li>
+        <span class="highlight">versions 1..6:</span> User's name or nickname.
+      </li>
+      <li>
+        <span class="highlight">version 7:</span> Not supported. Ignored if present.
+      </li>
+    </ul>
   </dd>
 
   <dt>
     <strong>codesnip-export/user-info/email</strong>
   </dt>
   <dd>
-    User's email address.
+    <ul class="squashed">
+      <li>
+        <span class="highlight">versions 1..6:</span> User's email address.
+      </li>
+      <li>
+        <span class="highlight">version 7:</span> Not supported. Ignored if present.
+      </li>
+    </ul>
   </dd>
 
   <dt>
     <strong>codesnip-export/user-info/comments</strong>
   </dt>
   <dd>
-    Any comments provided by user.
+    <ul class="squashed">
+      <li>
+        <span class="highlight">versions 1..6:</span> Any comments provided by user.
+      </li>
+      <li>
+        <span class="highlight">version 7:</span> Not supported. Ignored if present.
+      </li>
+    </ul>
   </dd>
 
   <dt>
@@ -232,8 +260,8 @@
         of plain text.
       </li>
       <li>
-        <span class="highlight">version 6:</span> Content is formatted text
-        encoded in REML markup. REML v3 is supported.
+        <span class="highlight">version 6 and later:</span> Content is formatted text
+        encoded in REML markup. REML v4 is supported.
       </li>
     </ul>
   </dd>
@@ -255,7 +283,7 @@
       </li>
       <li>
         <div>
-          <span class="highlight">version 6:</span>
+          <span class="highlight">version 6 and later:</span>
         </div>
         <div class="indent">
           <div>
@@ -288,7 +316,7 @@
         <span class="highlight">versions 1..5:</span> Not supported.
       </li>
       <li>
-        <span class="highlight">version 6:</span> Display name of snippet. Can
+        <span class="highlight">version 6 and later:</span> Display name of snippet. Can
         contain any characters and need not be unique. Present only if snippet
         has a display name that is different to the value of the <em>name</em>
         attribute of the <em>codesnip-data/routines/routine</em> tag.
@@ -375,6 +403,10 @@
             <li>
               <span class="highlight">versions 4 and 5:</span> indicates REML
               v3.
+            </li>
+            <li>
+              <span class="highlight">versions 6 and later:</span> indicates REML
+              v4.
             </li>
           </ul>
         </li>
@@ -719,6 +751,9 @@
       Previously the description was plain text.
     </div>
     <div class="half-spaced">
+      The supported version of REML was updated to v4.
+    </div>
+    <div class="half-spaced">
       The following tags were introduced:
     </div>
     <ul class="squashed">
@@ -729,6 +764,12 @@
         <em>codesnip-export/routines/routine/highlight-source</em>
       </li>
     </ul>
+  </dd>
+  <dt>
+    Version 7
+  </dt>
+  <dd>
+    The <em>codesnip-export/user-info</em> tag and sub-tags were no longer supported.
   </dd>
 </dl>
 
@@ -755,7 +796,8 @@
 <p>
   Readers of v1 to v5 files must:
 </p>
-<ol>
+
+<ul>
   <li>
     Convert the plain text snippet description read from
     <em>codesnip-data/routines/routine/description</em> into the formatted text
@@ -766,6 +808,10 @@
     tag with value &quot;1&quot; had been specified.
   </li>
 </ul>
+
+<p>
+  Readers of v1 to v6 files must ignore the <em>codesnip-export/user-info</em> tag and sub-tags, where present.
+</p>
 
 </body>
 
