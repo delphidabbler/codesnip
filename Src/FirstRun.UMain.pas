@@ -244,13 +244,13 @@ begin
     fUserConfigFile.DeleteProxyServerSection;
   end;
 
+  {$IFNDEF PORTABLE}
   if fCommonConfigFile.FileVer < 7 then
   begin
-    {$IFNDEF PORTABLE}
     fCommonConfigFile.DeleteRegistrationInfo;
     fCommonConfigFile.DeleteProgramKey;
-    {$ENDIF}
   end;
+  {$ENDIF}
 
   fUserConfigFile.Stamp;
 
