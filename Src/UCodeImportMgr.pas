@@ -214,7 +214,7 @@ begin
   fImportInfoList.Clear;
   try
     Data := TFileIO.ReadAllBytes(FileName);
-    TCodeImporter.ImportData(fUserInfo, fSnippetInfoList, Data);
+    TCodeImporter.ImportData(fSnippetInfoList, Data);
   except
     on E: EStreamError do
       raise ECodeImportMgr.Create(E);

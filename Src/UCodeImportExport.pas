@@ -68,8 +68,6 @@ type
   strict private
     ///  <summary>Version of file being imported.</summary>
     fVersion: Integer;
-    ///  <summary>Information about user who created export.</summary>
-    fUserInfo: TUserInfo;
     ///  <summary>List of snippets read from XML.</summary>
     fSnippetInfo: TSnippetInfoList;
     ///  <summary>Extended XML document object.</summary>
@@ -91,14 +89,12 @@ type
   public
     ///  <summary>Destroys object.</summary>
     destructor Destroy; override;
-    ///  <summary>Imports snippets and optional user data from XML.</summary>
-    ///  <param name="UserInfo">TUserInfo [out] Receives user information. Set
-    ///  to null if no user information was available.</param>
+    ///  <summary>Imports snippets from XML.</summary>
     ///  <param name="SnippetInfo">TSnippetInfoList [out] Receives information
     ///  about each imported snippet.</param>
     ///  <param name="Data">TBytes [in] Byte array containing XML data.</param>
-    class procedure ImportData(out UserInfo: TUserInfo;
-      out SnippetInfo: TSnippetInfoList; const Data: TBytes);
+    class procedure ImportData(out SnippetInfo: TSnippetInfoList;
+      const Data: TBytes);
   end;
 
 type
@@ -469,7 +465,6 @@ resourcestring
   // Error message
   sParseError = 'Import file has an invalid format';
 var
-  UserNode: IXMLNode;               // node containing any user info
   SnippetNodes: IXMLSimpleNodeList; // list of snippet nodes
   SnippetNode: IXMLNode;            // each snippet node in list
   Idx: Integer;                     // loops thru snippet node list
@@ -481,21 +476,6 @@ begin
 
     // Validate loaded document and get version number
     fVersion := ValidateDoc;
-
-    // Get user info
-    UserNode :=  fXMLDoc.FindNode(cExportRootNode + '\' + cUserInfoNode);
-    if Assigned(UserNode) then
-    begin
-      fUserInfo.Details.Name := TXMLDocHelper.GetSubTagText(
-        fXMLDoc, UserNode, cUserNameNode
-      );
-      fUserInfo.Details.Email := TXMLDocHelper.GetSubTagText(
-        fXMLDoc, UserNode, cUserEmailNode
-      );
-      fUserInfo.Comments := TXMLDocHelper.GetSubTagText(
-        fXMLDoc, UserNode, cUserCommentsNode
-      );
-    end;
 
     // Read in all snippets
     SnippetNodes := GetAllSnippetNodes;
@@ -574,15 +554,14 @@ begin
   Result := fXMLDoc.FindChildNodes(SnippetsNode, cSnippetNode);
 end;
 
-class procedure TCodeImporter.ImportData(out UserInfo: TUserInfo;
-  out SnippetInfo: TSnippetInfoList; const Data: TBytes);
+class procedure TCodeImporter.ImportData(out SnippetInfo: TSnippetInfoList;
+  const Data: TBytes);
 var
   Idx: Integer; // loops through all imported snippets
 begin
   with InternalCreate do
     try
       Execute(Data);
-      UserInfo.Assign(fUserInfo);
       SetLength(SnippetInfo, Length(fSnippetInfo));
       for Idx := Low(fSnippetInfo) to High(fSnippetInfo) do
         SnippetInfo[Idx].Assign(fSnippetInfo[Idx]);
@@ -599,7 +578,6 @@ begin
   fXMLDoc := TXMLDocHelper.CreateXMLDoc;
   // Initialise fields that receive imported data
   SetLength(fSnippetInfo, 0);
-  fUserInfo.Init;
 end;
 
 function TCodeImporter.ValidateDoc: Integer;
