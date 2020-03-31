@@ -220,13 +220,11 @@ begin
     // we rely on this for portable version.
     fUserConfigFile.CreateDefaultCodeGenEntries;
 
-  {$IFNDEF PORTABLE}
   if fUserConfigFile.FileVer < 9 then
   begin
     fUserConfigFile.DeleteDetailsPaneIndex;
     fUserConfigFile.UpdateCodeGenEntries;
   end;
-  {$ENDIF}
 
   if fUserConfigFile.FileVer < 11 then
     fUserConfigFile.RenameMainWindowSection;
@@ -242,16 +240,30 @@ begin
   begin
     fUserConfigFile.DeleteNewsPrefs;
     fUserConfigFile.DeleteProxyServerSection;
+    fUserConfigFile.DeleteUpdatingPrefs;
+    fUserConfigFile.DeleteUpdateChecks;
   end;
 
+  {$IFNDEF PORTABLE}
+  // No need to delete sections of common config file on portable edition
+  // because the entire file is deleted below!
   if fCommonConfigFile.FileVer < 7 then
+  begin
     fCommonConfigFile.DeleteRegistrationInfo;
+    fCommonConfigFile.DeleteProgramKey;
+  end;
+  {$ENDIF}
 
   fUserConfigFile.Stamp;
+
+  {$IFNDEF PORTABLE}
   // NOTE: strictly speaking we only need to stamp common config file in
   // portable version. Installer does this in normal version. However, it does
   // no harm to stamp this file twice - belt and braces!
   fCommonConfigFile.Stamp;
+  {$ELSE}
+  fCommonConfigFile.DeleteCfgFile;
+  {$ENDIF}
 end;
 
 { TFirstRunMgr }

@@ -44,7 +44,6 @@
 			<DCCReference Include="3rdParty\PJSysInfo.pas"/>
 			<DCCReference Include="3rdParty\PJVersionInfo.pas"/>
 			<DCCReference Include="3rdParty\PJWdwState.pas"/>
-			<DCCReference Include="3rdParty\UEncrypt.pas"/>
 			<DCCReference Include="AutoGen\IntfExternalObj.pas"/>
 			<DCCReference Include="ActiveText.UHTMLRenderer.pas"/>
 			<DCCReference Include="ActiveText.UMain.pas"/>
@@ -429,7 +428,6 @@
 			<DCCReference Include="UEditSnippetAction.pas"/>
 			<DCCReference Include="UEmailHelper.pas"/>
 			<DCCReference Include="UEncodings.pas"/>
-			<DCCReference Include="UEncryptor.pas"/>
 			<DCCReference Include="UExceptions.pas"/>
 			<DCCReference Include="UExeFileType.pas"/>
 			<DCCReference Include="UFileProtocol.pas"/>
@@ -533,7 +531,6 @@
 			<DCCReference Include="UStringReader.pas"/>
 			<DCCReference Include="UStructs.pas"/>
 			<DCCReference Include="UStrUtils.pas"/>
-			<DCCReference Include="USystemID.pas"/>
 			<DCCReference Include="USystemInfo.pas"/>
 			<DCCReference Include="UTaggedTextLexer.pas"/>
 			<DCCReference Include="UTestCompile.pas"/>
@@ -555,7 +552,6 @@
 			<DCCReference Include="UUserDBMgr.pas"/>
 			<DCCReference Include="UUserDBMove.pas"/>
 			<DCCReference Include="UUserDetails.pas"/>
-			<DCCReference Include="UUserDetailsPersist.pas"/>
 			<DCCReference Include="UUtils.pas"/>
 			<DCCReference Include="UVersionInfo.pas"/>
 			<DCCReference Include="UView.pas"/>

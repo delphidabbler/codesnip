@@ -60,7 +60,7 @@ type
     ///  <summary>Checks if program version in config file is same as current
     ///  program version.</summary>
     function IsCurrentProgramVer: Boolean; overload;
-    ///  <summary>Stamps config file with current and file version.</summary>
+    ///  <summary>Stamps config file with current file version.</summary>
     procedure Stamp; virtual;
   end;
 
@@ -82,20 +82,26 @@ type
     {$IFNDEF PORTABLE}
     ///  <summary>Updates config file currently in original (pre v1.9) format to
     ///  current format.</summary>
+    ///  <remarks>Standard edition only.</remarks>
     procedure UpdateFromOriginal;
     ///  <summary>Deletes any highlighter preferences.</summary>
+    ///  <remarks>Standard edition only.</remarks>
     procedure DeleteHighligherPrefs;
+    {$ENDIF}
     ///  <summary>Updates Prefs:CodeGen section from format prior to version 9
     ///  to version 9 and later format.</summary>
     procedure UpdateCodeGenEntries;
     ///  <summary>Deletes unused key that determines detail pane index.
     ///  </summary>
     procedure DeleteDetailsPaneIndex;
-    {$ENDIF}
     ///  <summary>Deletes proxy server section.</summary>
     procedure DeleteProxyServerSection;
     ///  <summary>Deletes unused Prefs:News section.</summary>
     procedure DeleteNewsPrefs;
+    ///  <summary>Deletes unused Prefs:Updating section.</summary>
+    procedure DeleteUpdatingPrefs;
+    ///  <summary>Deletes unused UpdateChecks section.</summary>
+    procedure DeleteUpdateChecks;
     ///  <summary>Effectively renames MainWindow section used prior to version
     ///  11 as WindowState:MainForm.</summary>
     procedure RenameMainWindowSection;
@@ -130,13 +136,26 @@ type
   public
     ///  <summary>Stamps config file with current program and file versions.
     ///  </summary>
-    ///  <remarks>Note that the user config file has program version written to
+    ///  <remarks>
+    ///  <para>Note that the user config file has program version written to
     ///  a different section to common config file, hence need for overridden
-    ///  methods.</remarks>
+    ///  methods.</para>
+    ///  <para>Does nothing in portable edition.</para>
+    ///  </remarks>
     procedure Stamp; override;
+   {$IFNDEF PORTABLE}
     ///  <summary>Deletes program registration information from application
     ///  section.</summary>
+    ///  <remarks>Standard edition only.</remarks>
     procedure DeleteRegistrationInfo;
+    ///  <summary>Deletes program key from application section.</summary>
+    ///  <remarks>Standard edition only.</remarks>
+    procedure DeleteProgramKey;
+    {$ELSE}
+    ///  <summary>Deletes and common config file</summary>
+    ///  <remarks>Portable edition only.</remarks>
+    procedure DeleteCfgFile;
+    {$ENDIF}
   end;
 
 
@@ -267,14 +286,12 @@ begin
   SetIniString('Prefs:CodeGen', 'Warning7.MinCompiler', '20.00', CfgFileName);
 end;
 
-{$IFNDEF PORTABLE}
 procedure TUserConfigFileUpdater.DeleteDetailsPaneIndex;
 begin
   if not TFile.Exists(CfgFileName, False) then
     CreateNewFile;
   DeleteIniKey('MainWindow', 'DetailTab', CfgFileName);
 end;
-{$ENDIF}
 
 {$IFNDEF PORTABLE}
 procedure TUserConfigFileUpdater.DeleteHighligherPrefs;
@@ -297,6 +314,20 @@ begin
   if not TFile.Exists(CfgFileName, False) then
     CreateNewFile;
   DeleteIniSection('ProxyServer', CfgFileName);
+end;
+
+procedure TUserConfigFileUpdater.DeleteUpdateChecks;
+begin
+  if not TFile.Exists(CfgFileName, False) then
+    CreateNewFile;
+  DeleteIniSection('UpdateChecks', CfgFileName);
+end;
+
+procedure TUserConfigFileUpdater.DeleteUpdatingPrefs;
+begin
+  if not TFile.Exists(CfgFileName, False) then
+    CreateNewFile;
+  DeleteIniSection('Prefs:Updating', CfgFileName);
 end;
 
 class function TUserConfigFileUpdater.GetFileVersion: Integer;
@@ -363,7 +394,6 @@ begin
   );
 end;
 
-{$IFNDEF PORTABLE}
 procedure TUserConfigFileUpdater.UpdateCodeGenEntries;
 begin
   // Key that determines if warnings are emitted changes from SwitchOffWarnings
@@ -383,7 +413,6 @@ begin
   else
     SetIniInt('Prefs:CodeGen', 'EmitWarnDirs', 0, CfgFileName);
 end;
-{$ENDIF}
 
 procedure TUserConfigFileUpdater.UpdateFindXRefs;
 begin
@@ -486,6 +515,24 @@ end;
 
 { TCommonConfigFileUpdater }
 
+{$IFDEF PORTABLE}
+procedure TCommonConfigFileUpdater.DeleteCfgFile;
+begin
+  if TFile.Exists(CfgFileName, False) then
+    TFile.Delete(CfgFileName);
+end;
+{$ENDIF}
+
+{$IFNDEF PORTABLE}
+procedure TCommonConfigFileUpdater.DeleteProgramKey;
+begin
+  if not TFile.Exists(CfgFileName, False) then
+    CreateNewFile;
+  DeleteIniKey('Application', 'Key', CfgFileName);
+end;
+{$ENDIF}
+
+{$IFNDEF PORTABLE}
 procedure TCommonConfigFileUpdater.DeleteRegistrationInfo;
 begin
   if not TFile.Exists(CfgFileName, False) then
@@ -493,6 +540,7 @@ begin
   DeleteIniKey('Application', 'RegCode', CfgFileName);
   DeleteIniKey('Application', 'RegName', CfgFileName);
 end;
+{$ENDIF}
 
 class function TCommonConfigFileUpdater.GetFileVersion: Integer;
 begin
@@ -501,10 +549,12 @@ end;
 
 procedure TCommonConfigFileUpdater.Stamp;
 begin
+  {$IFNDEF PORTABLE}
   inherited;
   SetIniString(
     'Application', 'Version', TAppInfo.ProgramReleaseVersion, CfgFileName
   );
+  {$ENDIF}
 end;
 
 end.

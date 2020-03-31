@@ -27,11 +27,6 @@ type
     Static class that provides information about the application.
   }
   TAppInfo = class(TNoConstructObject)
-  strict private
-    class function GenerateKey: string;
-      {Generates unique program key for application in deterministic way.
-        @return Required key.
-      }
   public
     const CompanyName = 'DelphiDabbler';
       {Name of "company" that owns this program}
@@ -75,7 +70,10 @@ type
         @return Full path to required directory.
       }
     class procedure ChangeUserDataDir(const NewDir: string);
-      {Changes directory where CodeSnip stores the user's "database" files.
+      {Changes directory where CodeSnip stores the user's "database" files and
+      records it in the user config file.
+      Does nothing on portable edition since it does not permit the user
+      database to be moved.
         @param NewDir [in] New directory.
       }
     class function AppExeFilePath: string;
@@ -109,12 +107,6 @@ type
       {Gets version number of program's executable file.
         @return Version number as dotted quad.
       }
-    // TODO -cTidy: Remove following unused method and may settings ssApplication section
-    class function ProgramKey: string;
-      {Gets program's unique identifying key. This key should be different on
-      each installation. If key does not exist it is created.
-        @return 32 digit key.
-      }
   end;
 
 
@@ -124,10 +116,11 @@ implementation
 uses
   // Delphi
   SysUtils,
-  // DelphiDabbler library
-  PJMD5,
   // Project
-  USettings, UStrUtils, USystemID, USystemInfo, UVersionInfo;
+  USettings,
+  UStrUtils,
+  USystemInfo,
+  UVersionInfo;
 
 
 { TAppInfo }
@@ -166,7 +159,10 @@ begin
 end;
 
 class procedure TAppInfo.ChangeUserDataDir(const NewDir: string);
-  {Changes directory where CodeSnip stores the user's "database" files.
+  {Changes directory where CodeSnip stores the user's "database" files and
+  records it in the user config file.
+  Does nothing on portable edition since it does not permit the user database
+  to be moved.
     @param NewDir [in] New directory.
   }
 {$IFNDEF PORTABLE}
@@ -210,21 +206,6 @@ begin
   {$ENDIF}
 end;
 
-class function TAppInfo.GenerateKey: string;
-  {Generates unique program key for application in deterministic way.
-    @return Required key.
-  }
-begin
-  Result := StrToUpper(
-    TPJMD5.Calculate(
-      USystemID.SystemIDStr, TEncoding.ASCII
-    )
-  );
-  {$IFDEF PORTABLE}
-  Result := 'P:' + StrSliceRight(Result, Length(Result) - 2);
-  {$ENDIF}
-end;
-
 class function TAppInfo.HelpFileName: string;
   {Returns fully specified name of CodeSnip's help file.
     @return Name of help file.
@@ -239,26 +220,6 @@ class function TAppInfo.ProgramFileVersion: string;
   }
 begin
   Result := TVersionInfo.FileVersionNumberStr;
-end;
-
-class function TAppInfo.ProgramKey: string;
-  {Gets program's unique identifying key. This key should be different on each
-  installation. If key does not exist it is created.
-    @return 32 digit key.
-  }
-var
-  Section: ISettingsSection;  // persistent storage where key is recorded
-begin
-  // Try to get key from storage
-  Section := Settings.ReadSection(ssApplication);
-  Result := Section.GetString('Key');
-  if Result = '' then
-  begin
-    // Key not present: create and store it
-    Result := GenerateKey;
-    Section.SetString('Key', Result);
-    Section.Save;
-  end;
 end;
 
 class function TAppInfo.ProgramReleaseInfo: string;
