@@ -60,7 +60,7 @@ type
     ///  <summary>Checks if program version in config file is same as current
     ///  program version.</summary>
     function IsCurrentProgramVer: Boolean; overload;
-    ///  <summary>Stamps config file with current and file version.</summary>
+    ///  <summary>Stamps config file with current file version.</summary>
     procedure Stamp; virtual;
   end;
 
@@ -82,14 +82,18 @@ type
     {$IFNDEF PORTABLE}
     ///  <summary>Updates config file currently in original (pre v1.9) format to
     ///  current format.</summary>
+    ///  <remarks>Standard edition only.</remarks>
     procedure UpdateFromOriginal;
     ///  <summary>Deletes any highlighter preferences.</summary>
+    ///  <remarks>Standard edition only.</remarks>
     procedure DeleteHighligherPrefs;
     ///  <summary>Updates Prefs:CodeGen section from format prior to version 9
     ///  to version 9 and later format.</summary>
+    ///  <remarks>Standard edition only.</remarks>
     procedure UpdateCodeGenEntries;
     ///  <summary>Deletes unused key that determines detail pane index.
     ///  </summary>
+    ///  <remarks>Standard edition only.</remarks>
     procedure DeleteDetailsPaneIndex;
     {$ENDIF}
     ///  <summary>Deletes proxy server section.</summary>
@@ -151,7 +155,7 @@ type
     procedure DeleteProgramKey;
     {$ELSE}
     ///  <summary>Deletes and common config file</summary>
-    ///  <remarks>Portable edition only</remarks>
+    ///  <remarks>Portable edition only.</remarks>
     procedure DeleteCfgFile;
     {$ENDIF}
   end;

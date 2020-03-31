@@ -247,6 +247,8 @@ begin
   end;
 
   {$IFNDEF PORTABLE}
+  // No need to delete sections of common config file on portable edition
+  // because the entire file is deleted below!
   if fCommonConfigFile.FileVer < 7 then
   begin
     fCommonConfigFile.DeleteRegistrationInfo;
