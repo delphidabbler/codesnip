@@ -70,7 +70,10 @@ type
         @return Full path to required directory.
       }
     class procedure ChangeUserDataDir(const NewDir: string);
-      {Changes directory where CodeSnip stores the user's "database" files.
+      {Changes directory where CodeSnip stores the user's "database" files and
+      records it in the user config file.
+      Does nothing on portable edition since it does not permit the user
+      database to be moved.
         @param NewDir [in] New directory.
       }
     class function AppExeFilePath: string;
@@ -156,7 +159,10 @@ begin
 end;
 
 class procedure TAppInfo.ChangeUserDataDir(const NewDir: string);
-  {Changes directory where CodeSnip stores the user's "database" files.
+  {Changes directory where CodeSnip stores the user's "database" files and
+  records it in the user config file.
+  Does nothing on portable edition since it does not permit the user database
+  to be moved.
     @param NewDir [in] New directory.
   }
 {$IFNDEF PORTABLE}
