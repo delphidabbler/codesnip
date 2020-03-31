@@ -1,6 +1,6 @@
 {TODO -cUI : Remove unused tool bar button in main window}
-{TODO -cFirstRun : Delete UpdateChecks section from Config file on first run}
-{TODO -cFirstRun : Delete Prefs:Updating section from Config file on first run}
+
+
 {TODO -cHelp :
 Add a Backup Database task help topics that describes how to backup and restore databases.
 Then add help link to Res/HTML/dlg-dbupdate-intro-tplt.html}
