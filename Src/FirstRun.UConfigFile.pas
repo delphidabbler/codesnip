@@ -96,6 +96,8 @@ type
     procedure DeleteProxyServerSection;
     ///  <summary>Deletes unused Prefs:News section.</summary>
     procedure DeleteNewsPrefs;
+    ///  <summary>Deletes unused Prefs:Updating section.</summary>
+    procedure DeleteUpdatingPrefs;
     ///  <summary>Effectively renames MainWindow section used prior to version
     ///  11 as WindowState:MainForm.</summary>
     procedure RenameMainWindowSection;
@@ -310,6 +312,13 @@ begin
   if not TFile.Exists(CfgFileName, False) then
     CreateNewFile;
   DeleteIniSection('ProxyServer', CfgFileName);
+end;
+
+procedure TUserConfigFileUpdater.DeleteUpdatingPrefs;
+begin
+  if not TFile.Exists(CfgFileName, False) then
+    CreateNewFile;
+  DeleteIniSection('Prefs:Updating', CfgFileName);
 end;
 
 class function TUserConfigFileUpdater.GetFileVersion: Integer;
