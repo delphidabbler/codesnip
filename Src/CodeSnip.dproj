@@ -533,7 +533,6 @@
 			<DCCReference Include="UStringReader.pas"/>
 			<DCCReference Include="UStructs.pas"/>
 			<DCCReference Include="UStrUtils.pas"/>
-			<DCCReference Include="USystemID.pas"/>
 			<DCCReference Include="USystemInfo.pas"/>
 			<DCCReference Include="UTaggedTextLexer.pas"/>
 			<DCCReference Include="UTestCompile.pas"/>
