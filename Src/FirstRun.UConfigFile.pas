@@ -137,6 +137,8 @@ type
     ///  <summary>Deletes program registration information from application
     ///  section.</summary>
     procedure DeleteRegistrationInfo;
+    ///  <summary>Deletes program key from application section.</summary>
+    procedure DeleteProgramKey;
   end;
 
 
@@ -485,6 +487,13 @@ begin
 end;
 
 { TCommonConfigFileUpdater }
+
+procedure TCommonConfigFileUpdater.DeleteProgramKey;
+begin
+  if not TFile.Exists(CfgFileName, False) then
+    CreateNewFile;
+  DeleteIniKey('Application', 'Key', CfgFileName);
+end;
 
 procedure TCommonConfigFileUpdater.DeleteRegistrationInfo;
 begin

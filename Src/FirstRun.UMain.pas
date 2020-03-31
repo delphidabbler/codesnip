@@ -245,7 +245,10 @@ begin
   end;
 
   if fCommonConfigFile.FileVer < 7 then
+  begin
     fCommonConfigFile.DeleteRegistrationInfo;
+    fCommonConfigFile.DeleteProgramKey;
+  end;
 
   fUserConfigFile.Stamp;
   // NOTE: strictly speaking we only need to stamp common config file in
