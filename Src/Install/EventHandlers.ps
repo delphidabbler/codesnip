@@ -194,21 +194,22 @@ begin
         {Do nothing: per user config files only};
       piV1_9:
       begin
+        CopyCommonConfigFile(piV1_9);
         if gDatabaseCopyingRequested then
           CopyMainDatabase(piV1_9);
       end;
       piV2V3:
       begin
+        CopyCommonConfigFile(piV2V3);
         if gDatabaseCopyingRequested then
           CopyMainDatabase(piV2V3);
       end;
     end;
   end;
 
-  // Delete any prexisting common config file: no longer used as of CodeSnip
-  // v4.16.0
-  if FileExists(gCurrentCommonConfigFile) then
-    DeleteFile(gCurrentCommonConfigFile);
+  // Ensure common config has correct config file and program version
+  // information. This creates the config file if it doesn't exist
+  StampCommonConfigFile;
 
   // Display message if no database is installed
   if not MainDatabaseExists then
