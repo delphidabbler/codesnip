@@ -316,6 +316,13 @@ begin
   DeleteIniSection('ProxyServer', CfgFileName);
 end;
 
+procedure TUserConfigFileUpdater.DeleteUpdateChecks;
+begin
+  if not TFile.Exists(CfgFileName, False) then
+    CreateNewFile;
+  DeleteIniSection('UpdateChecks', CfgFileName);
+end;
+
 procedure TUserConfigFileUpdater.DeleteUpdatingPrefs;
 begin
   if not TFile.Exists(CfgFileName, False) then
