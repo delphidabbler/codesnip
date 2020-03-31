@@ -44,7 +44,6 @@
 			<DCCReference Include="3rdParty\PJSysInfo.pas"/>
 			<DCCReference Include="3rdParty\PJVersionInfo.pas"/>
 			<DCCReference Include="3rdParty\PJWdwState.pas"/>
-			<DCCReference Include="3rdParty\UEncrypt.pas"/>
 			<DCCReference Include="AutoGen\IntfExternalObj.pas"/>
 			<DCCReference Include="ActiveText.UHTMLRenderer.pas"/>
 			<DCCReference Include="ActiveText.UMain.pas"/>
@@ -429,7 +428,6 @@
 			<DCCReference Include="UEditSnippetAction.pas"/>
 			<DCCReference Include="UEmailHelper.pas"/>
 			<DCCReference Include="UEncodings.pas"/>
-			<DCCReference Include="UEncryptor.pas"/>
 			<DCCReference Include="UExceptions.pas"/>
 			<DCCReference Include="UExeFileType.pas"/>
 			<DCCReference Include="UFileProtocol.pas"/>
