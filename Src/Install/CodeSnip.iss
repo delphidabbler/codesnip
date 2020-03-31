@@ -114,6 +114,8 @@ Type: filesandordirs; Name: "{commonappdata}\{#AppPublisher}\{#ProgDataSubDir}"
 // DataLocations.ps must be declared first
 #include "DataLocations.ps"
 #include "VersionInfo.ps" 
+#include "Unicode.ps"
+#include "UpdateIni.ps"
 #include "UpdateDBase.ps"
 #include "EventHandlers.ps"
 

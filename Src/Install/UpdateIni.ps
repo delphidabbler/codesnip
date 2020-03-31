@@ -1,0 +1,100 @@
+{
+ * This Source Code Form is subject to the terms of the Mozilla Public License,
+ * v. 2.0. If a copy of the MPL was not distributed with this file, You can
+ * obtain one at http://mozilla.org/MPL/2.0/
+ *
+ * Copyright (C) 2007-2020, Peter Johnson (gravatar.com/delphidabbler).
+ *
+ * Pascal script for use in [Code] Section of CodeSnip's Install.iss.
+ *
+ * Creates application-wide config files in correct data folder. Brings forward
+ * information from versions including and after v1.9.
+ *
+ * Config files of version 1.8.11 and earlier are ignored. This means
+ * application will get a new key and registration info may be lost.
+}
+
+
+// Reads an ANSI config file, converts content to Unicode and writes that to a
+// UTF-16LE encoded Unicode config file with BOM. Does nothing if old and new
+// file names are the same.
+// *** Requires Unicode Inno Setup. ***
+procedure CopyAnsiToUnicodeConfigFile(OldFileName, NewFileName: string);
+var
+  Lines: TArrayOfString;  // lines of text read from ANSI .ini file
+begin
+  if CompareText(OldFileName, NewFileName) = 0 then
+    Exit;
+  // reads an ANSI file using system default encoding and converts contents to
+  // Unicode array where each element is one line of text file
+  LoadStringsFromFile(OldFileName, Lines);
+  // writes Unicode string array to file using UTF-16LE encoding
+  ForceDirectories(ExtractFileDir(NewFileName));
+  WriteStringsToUnicodeFile(NewFileName, Lines);
+end;
+
+// Makes a copy of a Unicode config file with a different name. Does nothing if
+// old and new file names are the same.
+procedure CopyUnicodeConfigFiles(OldFileName, NewFileName: string);
+begin
+  if CompareText(OldFileName, NewFileName) = 0 then
+    Exit;
+  ForceDirectories(ExtractFileDir(NewFileName));
+  FileCopy(OldFileName, NewFileName, False);
+end;
+
+// Checks if a config file is ANSI. If False is returned the file is assumed to
+// be Unicode.
+function IsAnsiConfigFile(InstallID: Integer): Boolean;
+begin
+  Result := InstallID <= piV2V3;
+end;
+
+// Creates a new empty UTF-16LE encoded config file. Used to ensure the config
+// file writing routines write in Unicode. This works because built in Inno
+// Setup ini functions call Windows API WritePrivateProfileString which only
+// writes Unicode if the file it is writing to is detected as Unicode. If not it
+// writes ANSI text.
+procedure CreateUnicodeConfigFile(FileName: string);
+var
+  NulLines: TArrayOfString;   // dummy empty string array
+begin
+  ForceDirectories(ExtractFileDir(FileName));
+  SetLength(NulLines, 0);
+  WriteStringsToUnicodeFile(FileName, NulLines);
+end;
+
+// Copies common config file of a previous installation to new installation,
+// updating to Unicode format if necessary.
+procedure CopyCommonConfigFile(InstallID: Integer);
+var
+  OldCommonConfigFile: string;
+begin
+  OldCommonConfigFile := gCommonConfigFiles[InstallID];
+  if OldCommonConfigFile <> '' then
+  begin
+    if IsAnsiConfigFile(InstallID) then
+      CopyAnsiToUnicodeConfigFile(OldCommonConfigFile, gCurrentCommonConfigFile)
+    else
+      CopyUnicodeConfigFiles(OldCommonConfigFile, gCurrentCommonConfigFile);
+  end;
+end;
+
+// Updates common config file with correct version information. This records
+// both config file version and version number of program being installed. If
+// no config file exists, it is created.
+procedure StampCommonConfigFile;
+begin
+  // Set ini file version
+  if not FileExists(gCurrentCommonConfigFile) then
+    CreateUnicodeConfigFile(gCurrentCommonConfigFile);
+  SetIniInt('IniFile', 'Version', 6, gCurrentCommonConfigFile);
+  // Record application version in common ini file
+  SetIniString(
+    'Application',
+    'Version',
+    ExpandConstant('{#AppVersion}'),
+    gCurrentCommonConfigFile
+  );
+end;
+
