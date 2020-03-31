@@ -130,15 +130,26 @@ type
   public
     ///  <summary>Stamps config file with current program and file versions.
     ///  </summary>
-    ///  <remarks>Note that the user config file has program version written to
+    ///  <remarks>
+    ///  <para>Note that the user config file has program version written to
     ///  a different section to common config file, hence need for overridden
-    ///  methods.</remarks>
+    ///  methods.</para>
+    ///  <para>Does nothing in portable edition.</para>
+    ///  </remarks>
     procedure Stamp; override;
+   {$IFNDEF PORTABLE}
     ///  <summary>Deletes program registration information from application
     ///  section.</summary>
+    ///  <remarks>Standard edition only.</remarks>
     procedure DeleteRegistrationInfo;
     ///  <summary>Deletes program key from application section.</summary>
+    ///  <remarks>Standard edition only.</remarks>
     procedure DeleteProgramKey;
+    {$ELSE}
+    ///  <summary>Deletes and common config file</summary>
+    ///  <remarks>Portable edition only</remarks>
+    procedure DeleteCfgFile;
+    {$ENDIF}
   end;
 
 
@@ -488,13 +499,24 @@ end;
 
 { TCommonConfigFileUpdater }
 
+{$IFDEF PORTABLE}
+procedure TCommonConfigFileUpdater.DeleteCfgFile;
+begin
+  if TFile.Exists(CfgFileName, False) then
+    TFile.Delete(CfgFileName);
+end;
+{$ENDIF}
+
+{$IFNDEF PORTABLE}
 procedure TCommonConfigFileUpdater.DeleteProgramKey;
 begin
   if not TFile.Exists(CfgFileName, False) then
     CreateNewFile;
   DeleteIniKey('Application', 'Key', CfgFileName);
 end;
+{$ENDIF}
 
+{$IFNDEF PORTABLE}
 procedure TCommonConfigFileUpdater.DeleteRegistrationInfo;
 begin
   if not TFile.Exists(CfgFileName, False) then
@@ -502,6 +524,7 @@ begin
   DeleteIniKey('Application', 'RegCode', CfgFileName);
   DeleteIniKey('Application', 'RegName', CfgFileName);
 end;
+{$ENDIF}
 
 class function TCommonConfigFileUpdater.GetFileVersion: Integer;
 begin
@@ -510,10 +533,12 @@ end;
 
 procedure TCommonConfigFileUpdater.Stamp;
 begin
+  {$IFNDEF PORTABLE}
   inherited;
   SetIniString(
     'Application', 'Version', TAppInfo.ProgramReleaseVersion, CfgFileName
   );
+  {$ENDIF}
 end;
 
 end.

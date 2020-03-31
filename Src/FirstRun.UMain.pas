@@ -246,15 +246,22 @@ begin
 
   if fCommonConfigFile.FileVer < 7 then
   begin
+    {$IFNDEF PORTABLE}
     fCommonConfigFile.DeleteRegistrationInfo;
     fCommonConfigFile.DeleteProgramKey;
+    {$ENDIF}
   end;
 
   fUserConfigFile.Stamp;
+
+  {$IFNDEF PORTABLE}
   // NOTE: strictly speaking we only need to stamp common config file in
   // portable version. Installer does this in normal version. However, it does
   // no harm to stamp this file twice - belt and braces!
   fCommonConfigFile.Stamp;
+  {$ELSE}
+  fCommonConfigFile.DeleteCfgFile;
+  {$ENDIF}
 end;
 
 { TFirstRunMgr }
