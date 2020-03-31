@@ -108,8 +108,6 @@ type
   TCodeExporter = class(TNoPublicConstructObject)
   strict private
     var
-      ///  <summary>User information to be written to XML.</summary>
-      fUserInfo: TUserInfo;
       ///  <summary>List of snippets to be exported.</summary>
       fSnippets: TSnippetList;
       ///  <summary>Extended XML document object.</summary>
@@ -135,11 +133,6 @@ type
     ///  <param name="ParentNode">IXMLNode [in] Node under which this node is to
     ///  be created.</param>
     procedure WriteProgInfo(const ParentNode: IXMLNode);
-    ///  <summary>Writes a node and sub-nodes containing any information about
-    ///  user who created export file.</summary>
-    ///  <param name="ParentNode">IXMLNode [in] Node under which user info node
-    ///  is to be written.</param>
-    procedure WriteUserInfo(const ParentNode: IXMLNode);
     ///  <summary>Writes nodes containing details of all exported snippets.
     ///  </summary>
     ///  <param name="ParentNode">IXMLNode [in] Node under which snippets are to
@@ -159,23 +152,17 @@ type
     function Execute: TEncodedData;
     ///  <summary>Constructs and initialises object ready to perform export.
     ///  </summary>
-    ///  <param name="UserInfo">TUserInfo [in] User information to be exported.
-    ///  Ignored if null.</param>
     ///  <param name="SnipList">TSnippetList [in] List of snippets to be
     ///  exported.</param>
-    constructor InternalCreate(const UserInfo: TUserInfo;
-      const SnipList: TSnippetList);
+    constructor InternalCreate(const SnipList: TSnippetList);
   public
     ///  <summary>Destroys object.</summary>
     destructor Destroy; override;
-    ///  <summary>Exports user information and snippets as XML.</summary>
-    ///  <param name="UserInfo">TUserInfo [in] User information to be exported.
-    ///  Ignored if null.</param>
+    ///  <summary>Exports snippets as XML.</summary>
     ///  <param name="SnipList">TSnippetList [in] List of snippets to be
     ///  exported.</param>
     ///  <returns>TEncodedData. Encoded data containing exported XML.</returns>
-    class function ExportSnippets(const UserInfo: TUserInfo;
-      const SnipList: TSnippetList): TEncodedData;
+    class function ExportSnippets(const SnipList: TSnippetList): TEncodedData;
   end;
 
 type
@@ -265,8 +252,6 @@ begin
 
     // Write document content
     WriteProgInfo(RootNode);
-    if not fUserInfo.IsNul then
-      WriteUserInfo(RootNode);
     WriteSnippets(RootNode);
 
     // Save XML as UTF-8 with no BOM
@@ -277,10 +262,10 @@ begin
   end;
 end;
 
-class function TCodeExporter.ExportSnippets(const UserInfo: TUserInfo;
-  const SnipList: TSnippetList): TEncodedData;
+class function TCodeExporter.ExportSnippets(const SnipList: TSnippetList):
+  TEncodedData;
 begin
-  with InternalCreate(UserInfo, SnipList) do
+  with InternalCreate(SnipList) do
     try
       Result := Execute;
     finally
@@ -295,12 +280,10 @@ begin
   raise EObj;
 end;
 
-constructor TCodeExporter.InternalCreate(const UserInfo: TUserInfo;
-  const SnipList: TSnippetList);
+constructor TCodeExporter.InternalCreate(const SnipList: TSnippetList);
 begin
   inherited InternalCreate;
   fSnippets := SnipList;
-  fUserInfo := UserInfo;
 end;
 
 function TCodeExporter.SnippetNames(
@@ -388,18 +371,6 @@ begin
   // Add child node for each exported snippet
   for Snippet in fSnippets do
     WriteSnippet(Node, Snippet);
-end;
-
-procedure TCodeExporter.WriteUserInfo(const ParentNode: IXMLNode);
-var
-  UserInfoNode: IXMLNode; // new user info parent node
-begin
-  // Add user info node
-  UserInfoNode := fXMLDoc.CreateElement(ParentNode, cUserInfoNode);
-  // Add separate child node for each piece of user info
-  fXMLDoc.CreateElement(UserInfoNode, cUserNameNode, fUserInfo.Details.Name);
-  fXMLDoc.CreateElement(UserInfoNode, cUserEmailNode, fUserInfo.Details.Email);
-  fXMLDoc.CreateElement(UserInfoNode, cUserCommentsNode, fUserInfo.Comments);
 end;
 
 { TCodeImporter }
