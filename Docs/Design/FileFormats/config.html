@@ -84,7 +84,7 @@
 </p>
 
 <p>
-  On earlier versions of CodeSnip the config files were ANSI text files using the system's default encoding. The installer takes care of converting the older ANSI files to Unicode.
+  On earlier versions of CodeSnip the config files were ANSI text files using the system's default encoding. CodeSnip v4 and the standard edition's installer convert the older ANSI files to Unicode.
 </p>
 
 <h2>
@@ -95,8 +95,12 @@
   Common Config File
 </h3>
 
+<p class="pullout">
+  <strong>Note:</strong> From CodeSnip v4.16 this file is used only by the installer of the standard edition. The portable edition does not use the file and does not create it.
+</p>
+
 <p>
-  This file stores information about CodeSnip that is common to all users. The file is named <code>Common.config</code>. The standard version of CodeSnip stores this file in the <code>%ProgramData%\DelphiDabbler\CodeSnip.4</code> directory, while the portable version stores it in the <code>AppDir</code> sub-directory of the folder where CodeSnip is installed.
+  The file stores information about the current version of the program. It is named <code>Common.config</code>. The file is stored in the standard edition's <code>%ProgramData%\DelphiDabbler\CodeSnip.4</code> directory.
 </p>
 
 <p>
@@ -120,12 +124,6 @@
 </p>
 
 <dl class="indent">
-  <dt class="del">
-    <code class="key">Key</code> (String)
-  </dt>
-  <dd class="del">
-    Unique application ID. String of 32 hex digits.
-  </dd>
   <dt>
     <code class="key">Version</code> (String)
   </dt>
