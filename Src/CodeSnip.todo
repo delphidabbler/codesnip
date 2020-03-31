@@ -6,5 +6,5 @@
 Add a Backup Database task help topics that describes how to backup and restore databases.
 Then add help link to Res/HTML/dlg-dbupdate-intro-tplt.html}
 {TODO -cUI : Rationalise use of TFontHelper.SetDefaultFont(s) and .SetDefaultBaseFont(s) methods.}
-{TODO -cFirstRun : Update config file versions: common to 7 and user to 16}
+
 {TODO -cPreRelease : Remove -[**dev**] from product and file versions in .vi files before bumping release number}
