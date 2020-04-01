@@ -10,14 +10,6 @@
 }
 
 
-{TODO -cSWAG: Add facility to elect to use swag categories }
-{TODO -cSWAG: Consider removing callbacks }
-{TODO -cSWAG: Consider using cutdown version on progress form for init swag and
-              loading multiple snippets.
-              Perhaps use a base class frame - TBusyBaseFrame that gets
-              subclassed by TBusyFrame. Can also rewrite TProgressFrame as a
-              subclass of TBusyBaseFrame.}
-
 unit FmSWAGImportDlg;
 
 interface
