@@ -551,7 +551,6 @@
 			<DCCReference Include="UUserDBBackup.pas"/>
 			<DCCReference Include="UUserDBMgr.pas"/>
 			<DCCReference Include="UUserDBMove.pas"/>
-			<DCCReference Include="UUserDetails.pas"/>
 			<DCCReference Include="UUtils.pas"/>
 			<DCCReference Include="UVersionInfo.pas"/>
 			<DCCReference Include="UView.pas"/>
