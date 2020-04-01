@@ -17,9 +17,17 @@ interface
 
 uses
   // Delphi
-  Classes, ActnList, Controls, ComCtrls, StdCtrls, ExtCtrls, Forms,
+  Classes,
+  ActnList,
+  Controls,
+  ComCtrls,
+  StdCtrls,
+  ExtCtrls,
+  Forms,
   // Project
-  FmWizardDlg, UBaseObjects, UCodeImportMgr;
+  FmWizardDlg,
+  UBaseObjects,
+  UCodeImportMgr;
 
 type
   ///  <summary>
@@ -30,21 +38,14 @@ type
   TCodeImportDlg = class(TWizardDlg, INoPublicConstruct)
     tsInfo: TTabSheet;
     tsFile: TTabSheet;
-    tsUserInfo: TTabSheet;
     tsUpdate: TTabSheet;
     lblIntro: TLabel;
     lblFile: TLabel;
     edFile: TEdit;
     btnBrowse: TButton;
     tsFinish: TTabSheet;
-    lblName: TLabel;
-    lblEmail: TLabel;
-    lblComments: TLabel;
-    edComments: TMemo;
     lvImports: TListView;
     lblImportList: TLabel;
-    edName: TEdit;
-    edEmail: TEdit;
     lblLoadFile: TLabel;
     btnRename: TButton;
     edRename: TEdit;
@@ -71,13 +72,12 @@ type
   strict private
     const
       // Indices of wizard pages
-      cIntroPage = 0;
-      cFilePage = 1;
-      cUserInfoPage = 2;  // displayed only there is user info
-      cUpdatePage = 3;
-      cFinishPage = 4;
+      cIntroPage    = 0;
+      cFilePage     = 1;
+      cUpdatePage   = 2;
+      cFinishPage   = 3;
       // Index of subitems in list view
-      cLVActionIdx = 1;
+      cLVActionIdx  = 1;
       cLVImportName = 0;
     var
       ///  <summary>Reference to import manager object used to perform import
@@ -100,8 +100,6 @@ type
     ///  error message if not.</summary>
     class procedure CanOpenDialogClose(Sender: TObject;
       var CanClose: Boolean);
-    ///  <summary>Populates controls on user information page.</summary>
-    procedure InitUserInfo;
     ///  <summary>Displays current details of all snippets in import file in
     ///  list view on update page.</summary>
     procedure InitImportInfo;
@@ -153,14 +151,6 @@ type
     ///  <remarks>Overridden method called from ancestor class.</remarks>
     procedure MoveForward(const PageIdx: Integer; var CanMove: Boolean);
       override;
-    ///  <summary>Determines index of page following page indexed by PageIdx.
-    ///  Skips user info page if there is no user info.</summary>
-    ///  <remarks>Overridden method called from ancestor class.</remarks>
-    function NextPage(const PageIdx: Integer): Integer; override;
-    ///  <summary>Determines index of page preceding page indexed by PageIdx.
-    ///  Skips user info page if there is no user info.</summary>
-    ///  <remarks>Overridden method called from ancestor class.</remarks>
-    function PrevPage(const PageIdx: Integer): Integer; override;
   public
     ///  <summary>Displays wizard, passing a reference to import manager object
     ///  to be used for import operations. Returns True if wizard finishes or
@@ -175,10 +165,16 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Dialogs,
+  SysUtils,
+  Dialogs,
   // Project
-  UCtrlArranger, UExceptions, UMessageBox, UOpenDialogEx, UOpenDialogHelper,
-  USnippetValidator, UStrUtils;
+  UCtrlArranger,
+  UExceptions,
+  UMessageBox,
+  UOpenDialogEx,
+  UOpenDialogHelper,
+  USnippetValidator,
+  UStrUtils;
 
 {$R *.dfm}
 
@@ -232,21 +228,18 @@ end;
 procedure TCodeImportDlg.ArrangeForm;
 begin
   TCtrlArranger.SetLabelHeights(Self);
+
   // Arrange controls on tab sheets
+
   // tsInfo
-  { nothing to do }
+  // nothing to do
+
   // tsFile
   TCtrlArranger.AlignVCentres(
     TCtrlArranger.BottomOf(lblFile, 6), [edFile, btnBrowse]
   );
   lblLoadFile.Top := TCtrlArranger.BottomOf([edFile, btnBrowse], 12);
-  // tsUserInfo
-  TCtrlArranger.AlignVCentres(8, [lblName, edName]);
-  TCtrlArranger.AlignVCentres(
-    TCtrlArranger.BottomOf([lblName, edName], 8), [lblEmail, edEmail]
-  );
-  lblComments.Top := TCtrlArranger.BottomOf([lblEmail, edEmail], 8);
-  edComments.Top := lblComments.Top;
+
   // tsUpdate
   lblImportList.Top := TCtrlArranger.BottomOf(lblModifyInstructions, 8);
   lvImports.Top := TCtrlArranger.BottomOf(lblImportList, 6);
@@ -254,12 +247,13 @@ begin
   TCtrlArranger.AlignVCentres(
     TCtrlArranger.BottomOf(lblSelectedSnippet, 6), [edRename, btnRename]
   );
+
   // tsFinish
   sbFinish.Top := TCtrlArranger.BottomOf(lblFinish, 6);
 
   // Size body
   pnlBody.ClientHeight := TCtrlArranger.MaxContainerHeight(
-    [tsInfo, tsFile, tsUserInfo, tsUpdate, tsFinish]
+    [tsInfo, tsFile, tsUpdate, tsFinish]
   ) + pnlBody.ClientHeight - tsInfo.Height;
 
   // Arrange inherited controls and size the form
@@ -269,7 +263,6 @@ end;
 procedure TCodeImportDlg.BeginPage(const PageIdx: Integer);
 begin
   case PageIdx of
-    cUserInfoPage: InitUserInfo;
     cUpdatePage: InitImportInfo;
     cFinishPage: PresentResults;
   end;
@@ -329,14 +322,12 @@ resourcestring
   // Page headings
   sIntroPageheading = 'Import snippets from a file';
   sFilePage = 'Choose import file';
-  sUserInfoPage = 'User information';
   sUpdatePage = 'Edit import and update database';
   sFinishPage = 'Import complete';
 begin
   case PageIdx of
     cIntroPage:     Result := sIntroPageheading;
     cFilePage:      Result := sFilePage;
-    cUserInfoPage:  Result := sUserInfoPage;
     cUpdatePage:    Result := sUpdatePage;
     cFinishPage:    Result := sFinishPage;
   end;
@@ -375,13 +366,6 @@ begin
   finally
     lvImports.Items.EndUpdate;
   end;
-end;
-
-procedure TCodeImportDlg.InitUserInfo;
-begin
-  edName.Text := fImportMgr.UserInfo.Details.Name;
-  edEmail.Text := fImportMgr.UserInfo.Details.Email;
-  edComments.Text := fImportMgr.UserInfo.Comments;
 end;
 
 constructor TCodeImportDlg.InternalCreate(AOwner: TComponent;
@@ -427,16 +411,6 @@ begin
   end;
 end;
 
-function TCodeImportDlg.NextPage(const PageIdx: Integer): Integer;
-begin
-  case PageIdx of
-    cFilePage:
-      if fImportMgr.UserInfo.IsNul then
-        Exit(cUpdatePage);
-  end;
-  Result := inherited NextPage(PageIdx);
-end;
-
 procedure TCodeImportDlg.PresentResults;
 
   // ---------------------------------------------------------------------------
@@ -466,16 +440,6 @@ begin
       Continue;
     AddLabel(LblTop, DataItem.ImportAsName);
   end;
-end;
-
-function TCodeImportDlg.PrevPage(const PageIdx: Integer): Integer;
-begin
-  case PageIdx of
-    cUpdatePage:
-      if fImportMgr.UserInfo.IsNul then
-        Exit(cFilePage);
-  end;
-  Result := inherited PrevPage(PageIdx);
 end;
 
 procedure TCodeImportDlg.ReadImportFile;

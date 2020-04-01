@@ -5,8 +5,8 @@
  *
  * Copyright (C) 2008-2020, Peter Johnson (gravatar.com/delphidabbler).
  *
- * Implements classes that can import and export user defined snippets and user
- * information from and to XML.
+ * Implements classes that can import and export user defined snippets from and
+ * to XML.
 }
 
 
@@ -18,10 +18,16 @@ interface
 
 uses
   // Delphi
-  SysUtils, Classes, XMLIntf,
+  SysUtils,
+  Classes,
+  XMLIntf,
   // Project
-  DB.USnippet, UBaseObjects, UEncodings,  UExceptions, UIStringList,
-  UUserDetails, UXMLDocHelper, UXMLDocumentEx;
+  DB.USnippet,
+  UBaseObjects,
+  UEncodings,
+  UIStringList,
+  UXMLDocHelper,
+  UXMLDocumentEx;
 
 
 type
@@ -43,33 +49,11 @@ type
   TSnippetInfoList = array of TSnippetInfo;
 
 type
-  ///  <summary>Encapsulates user info from export files.</summary>
-  TUserInfo = record
-    ///  <summary>User's personal details.</summary>
-    Details: TUserDetails;
-    ///  <summary>User's comments.</summary>
-    Comments: string;
-    ///  <summary>Initialises record to given values.</summary>
-    constructor Create(const UserDetails: TUserDetails;
-      const UserComments: string);
-    ///  <summary>Returns a new record with null field values.</summary>
-    class function CreateNul: TUserInfo; static;
-    ///  <summary>Copies given TUserInfo record to this one.</summary>
-    procedure Assign(const Src: TUserInfo);
-    ///  <summary>Initialises record to null value.</summary>
-    procedure Init;
-    ///  <summary>Checks if record is null, i.e. empty.</summary>
-    function IsNul: Boolean;
-  end;
-
-type
-  ///  <summary>Imports code snippets and user info from XML.</summary>
+  ///  <summary>Imports code snippets from XML.</summary>
   TCodeImporter = class(TNoPublicConstructObject)
   strict private
     ///  <summary>Version of file being imported.</summary>
     fVersion: Integer;
-    ///  <summary>Information about user who created export.</summary>
-    fUserInfo: TUserInfo;
     ///  <summary>List of snippets read from XML.</summary>
     fSnippetInfo: TSnippetInfoList;
     ///  <summary>Extended XML document object.</summary>
@@ -91,14 +75,12 @@ type
   public
     ///  <summary>Destroys object.</summary>
     destructor Destroy; override;
-    ///  <summary>Imports snippets and optional user data from XML.</summary>
-    ///  <param name="UserInfo">TUserInfo [out] Receives user information. Set
-    ///  to null if no user information was available.</param>
+    ///  <summary>Imports snippets from XML.</summary>
     ///  <param name="SnippetInfo">TSnippetInfoList [out] Receives information
     ///  about each imported snippet.</param>
     ///  <param name="Data">TBytes [in] Byte array containing XML data.</param>
-    class procedure ImportData(out UserInfo: TUserInfo;
-      out SnippetInfo: TSnippetInfoList; const Data: TBytes);
+    class procedure ImportData(out SnippetInfo: TSnippetInfoList;
+      const Data: TBytes);
   end;
 
 type
@@ -107,13 +89,10 @@ type
   ECodeImporter = class(ECodeSnipXML);
 
 type
-  // TODO -cRefactor: Decide if we still need to export user info
-  ///  <summary>Exports code snippets and user info to XML.</summary>
+  ///  <summary>Exports code snippets to XML.</summary>
   TCodeExporter = class(TNoPublicConstructObject)
   strict private
     var
-      ///  <summary>User information to be written to XML.</summary>
-      fUserInfo: TUserInfo;
       ///  <summary>List of snippets to be exported.</summary>
       fSnippets: TSnippetList;
       ///  <summary>Extended XML document object.</summary>
@@ -139,11 +118,6 @@ type
     ///  <param name="ParentNode">IXMLNode [in] Node under which this node is to
     ///  be created.</param>
     procedure WriteProgInfo(const ParentNode: IXMLNode);
-    ///  <summary>Writes a node and sub-nodes containing any information about
-    ///  user who created export file.</summary>
-    ///  <param name="ParentNode">IXMLNode [in] Node under which user info node
-    ///  is to be written.</param>
-    procedure WriteUserInfo(const ParentNode: IXMLNode);
     ///  <summary>Writes nodes containing details of all exported snippets.
     ///  </summary>
     ///  <param name="ParentNode">IXMLNode [in] Node under which snippets are to
@@ -163,23 +137,17 @@ type
     function Execute: TEncodedData;
     ///  <summary>Constructs and initialises object ready to perform export.
     ///  </summary>
-    ///  <param name="UserInfo">TUserInfo [in] User information to be exported.
-    ///  Ignored if null.</param>
     ///  <param name="SnipList">TSnippetList [in] List of snippets to be
     ///  exported.</param>
-    constructor InternalCreate(const UserInfo: TUserInfo;
-      const SnipList: TSnippetList);
+    constructor InternalCreate(const SnipList: TSnippetList);
   public
     ///  <summary>Destroys object.</summary>
     destructor Destroy; override;
-    ///  <summary>Exports user information and snippets as XML.</summary>
-    ///  <param name="UserInfo">TUserInfo [in] User information to be exported.
-    ///  Ignored if null.</param>
+    ///  <summary>Exports snippets as XML.</summary>
     ///  <param name="SnipList">TSnippetList [in] List of snippets to be
     ///  exported.</param>
     ///  <returns>TEncodedData. Encoded data containing exported XML.</returns>
-    class function ExportSnippets(const UserInfo: TUserInfo;
-      const SnipList: TSnippetList): TEncodedData;
+    class function ExportSnippets(const SnipList: TSnippetList): TEncodedData;
   end;
 
 type
@@ -193,10 +161,17 @@ implementation
 
 uses
   // Delphi
-  ActiveX, XMLDom,
+  ActiveX,
+  XMLDom,
   // Project
-  ActiveText.UMain, DB.UMain, DB.USnippetKind, UAppInfo, UREMLDataIO,
-  UReservedCategories, USnippetExtraHelper, USnippetIDs, UStructs,
+  ActiveText.UMain,
+  DB.UMain,
+  DB.USnippetKind,
+  UAppInfo,
+  UReservedCategories,
+  USnippetExtraHelper,
+  USnippetIDs,
+  UStructs,
   UXMLDocConsts;
 
 
@@ -207,38 +182,6 @@ const
   // file version numbers
   cEarliestVersion  = 1;  // earliest file version supported by importer
   cLatestVersion    = 6;  // current file version written by exporter
-
-
-{ TUserInfo }
-
-procedure TUserInfo.Assign(const Src: TUserInfo);
-begin
-  Details.Assign(Src.Details);
-  Comments := Src.Comments;
-end;
-
-constructor TUserInfo.Create(const UserDetails: TUserDetails;
-  const UserComments: string);
-begin
-  Details := UserDetails;
-  Comments := UserComments;
-end;
-
-class function TUserInfo.CreateNul: TUserInfo;
-begin
-  Result.Init;
-end;
-
-procedure TUserInfo.Init;
-begin
-  Details.Init;
-  Comments := '';
-end;
-
-function TUserInfo.IsNul: Boolean;
-begin
-  Result := Details.IsNul and (Comments = '');
-end;
 
 { TCodeExporter }
 
@@ -269,8 +212,6 @@ begin
 
     // Write document content
     WriteProgInfo(RootNode);
-    if not fUserInfo.IsNul then
-      WriteUserInfo(RootNode);
     WriteSnippets(RootNode);
 
     // Save XML as UTF-8 with no BOM
@@ -281,10 +222,10 @@ begin
   end;
 end;
 
-class function TCodeExporter.ExportSnippets(const UserInfo: TUserInfo;
-  const SnipList: TSnippetList): TEncodedData;
+class function TCodeExporter.ExportSnippets(const SnipList: TSnippetList):
+  TEncodedData;
 begin
-  with InternalCreate(UserInfo, SnipList) do
+  with InternalCreate(SnipList) do
     try
       Result := Execute;
     finally
@@ -299,12 +240,10 @@ begin
   raise EObj;
 end;
 
-constructor TCodeExporter.InternalCreate(const UserInfo: TUserInfo;
-  const SnipList: TSnippetList);
+constructor TCodeExporter.InternalCreate(const SnipList: TSnippetList);
 begin
   inherited InternalCreate;
   fSnippets := SnipList;
-  fUserInfo := UserInfo;
 end;
 
 function TCodeExporter.SnippetNames(
@@ -394,18 +333,6 @@ begin
     WriteSnippet(Node, Snippet);
 end;
 
-procedure TCodeExporter.WriteUserInfo(const ParentNode: IXMLNode);
-var
-  UserInfoNode: IXMLNode; // new user info parent node
-begin
-  // Add user info node
-  UserInfoNode := fXMLDoc.CreateElement(ParentNode, cUserInfoNode);
-  // Add separate child node for each piece of user info
-  fXMLDoc.CreateElement(UserInfoNode, cUserNameNode, fUserInfo.Details.Name);
-  fXMLDoc.CreateElement(UserInfoNode, cUserEmailNode, fUserInfo.Details.Email);
-  fXMLDoc.CreateElement(UserInfoNode, cUserCommentsNode, fUserInfo.Comments);
-end;
-
 { TCodeImporter }
 
 destructor TCodeImporter.Destroy;
@@ -469,7 +396,6 @@ resourcestring
   // Error message
   sParseError = 'Import file has an invalid format';
 var
-  UserNode: IXMLNode;               // node containing any user info
   SnippetNodes: IXMLSimpleNodeList; // list of snippet nodes
   SnippetNode: IXMLNode;            // each snippet node in list
   Idx: Integer;                     // loops thru snippet node list
@@ -481,21 +407,6 @@ begin
 
     // Validate loaded document and get version number
     fVersion := ValidateDoc;
-
-    // Get user info
-    UserNode :=  fXMLDoc.FindNode(cExportRootNode + '\' + cUserInfoNode);
-    if Assigned(UserNode) then
-    begin
-      fUserInfo.Details.Name := TXMLDocHelper.GetSubTagText(
-        fXMLDoc, UserNode, cUserNameNode
-      );
-      fUserInfo.Details.Email := TXMLDocHelper.GetSubTagText(
-        fXMLDoc, UserNode, cUserEmailNode
-      );
-      fUserInfo.Comments := TXMLDocHelper.GetSubTagText(
-        fXMLDoc, UserNode, cUserCommentsNode
-      );
-    end;
 
     // Read in all snippets
     SnippetNodes := GetAllSnippetNodes;
@@ -574,15 +485,14 @@ begin
   Result := fXMLDoc.FindChildNodes(SnippetsNode, cSnippetNode);
 end;
 
-class procedure TCodeImporter.ImportData(out UserInfo: TUserInfo;
-  out SnippetInfo: TSnippetInfoList; const Data: TBytes);
+class procedure TCodeImporter.ImportData(out SnippetInfo: TSnippetInfoList;
+  const Data: TBytes);
 var
   Idx: Integer; // loops through all imported snippets
 begin
   with InternalCreate do
     try
       Execute(Data);
-      UserInfo.Assign(fUserInfo);
       SetLength(SnippetInfo, Length(fSnippetInfo));
       for Idx := Low(fSnippetInfo) to High(fSnippetInfo) do
         SnippetInfo[Idx].Assign(fSnippetInfo[Idx]);
@@ -599,7 +509,6 @@ begin
   fXMLDoc := TXMLDocHelper.CreateXMLDoc;
   // Initialise fields that receive imported data
   SetLength(fSnippetInfo, 0);
-  fUserInfo.Init;
 end;
 
 function TCodeImporter.ValidateDoc: Integer;

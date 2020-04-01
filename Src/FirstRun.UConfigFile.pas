@@ -102,6 +102,8 @@ type
     procedure DeleteUpdatingPrefs;
     ///  <summary>Deletes unused UpdateChecks section.</summary>
     procedure DeleteUpdateChecks;
+    ///  <summary>Deletes unused UserInfo section.</summary>
+    procedure DeleteUserInfo;
     ///  <summary>Effectively renames MainWindow section used prior to version
     ///  11 as WindowState:MainForm.</summary>
     procedure RenameMainWindowSection;
@@ -328,6 +330,13 @@ begin
   if not TFile.Exists(CfgFileName, False) then
     CreateNewFile;
   DeleteIniSection('Prefs:Updating', CfgFileName);
+end;
+
+procedure TUserConfigFileUpdater.DeleteUserInfo;
+begin
+  if not TFile.Exists(CfgFileName, False) then
+    CreateNewFile;
+  DeleteIniSection('UserInfo', CfgFileName);
 end;
 
 class function TUserConfigFileUpdater.GetFileVersion: Integer;

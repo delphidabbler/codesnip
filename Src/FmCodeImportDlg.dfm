@@ -1,7 +1,7 @@
 inherited CodeImportDlg: TCodeImportDlg
   Caption = 'Import Wizard'
   ExplicitWidth = 565
-  ExplicitHeight = 433
+  ExplicitHeight = 436
   PixelsPerInch = 96
   TextHeight = 13
   inherited pnlBody: TPanel
@@ -9,11 +9,15 @@ inherited CodeImportDlg: TCodeImportDlg
     ExplicitHeight = 321
     inherited pcWizard: TPageControl
       Height = 288
-      ActivePage = tsUpdate
+      ActivePage = tsFile
       ExplicitHeight = 288
       object tsInfo: TTabSheet
         Caption = 'tsInfo'
         TabVisible = False
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object lblIntro: TLabel
           Left = 0
           Top = 8
@@ -33,7 +37,7 @@ inherited CodeImportDlg: TCodeImportDlg
         object lblFile: TLabel
           Left = 0
           Top = 8
-          Width = 220
+          Width = 230
           Height = 13
           Caption = 'Open import &file: (click button to browse for file)'
           FocusControl = edFile
@@ -41,7 +45,7 @@ inherited CodeImportDlg: TCodeImportDlg
         object lblLoadFile: TLabel
           Left = 0
           Top = 72
-          Width = 172
+          Width = 179
           Height = 13
           Caption = 'Click the Next button to read the file.'
         end
@@ -67,60 +71,6 @@ inherited CodeImportDlg: TCodeImportDlg
           TabOrder = 1
         end
       end
-      object tsUserInfo: TTabSheet
-        Caption = 'tsUserInfo'
-        ImageIndex = 2
-        TabVisible = False
-        object lblName: TLabel
-          Left = 0
-          Top = 8
-          Width = 31
-          Height = 13
-          Caption = 'Name:'
-        end
-        object lblEmail: TLabel
-          Left = 0
-          Top = 45
-          Width = 28
-          Height = 13
-          Caption = 'Email:'
-        end
-        object lblComments: TLabel
-          Left = 0
-          Top = 85
-          Width = 52
-          Height = 13
-          Caption = 'Comments:'
-        end
-        object edComments: TMemo
-          Left = 72
-          Top = 82
-          Width = 297
-          Height = 154
-          ParentColor = True
-          ReadOnly = True
-          ScrollBars = ssVertical
-          TabOrder = 2
-        end
-        object edName: TEdit
-          Left = 72
-          Top = 3
-          Width = 297
-          Height = 21
-          ParentColor = True
-          ReadOnly = True
-          TabOrder = 0
-        end
-        object edEmail: TEdit
-          Left = 72
-          Top = 42
-          Width = 297
-          Height = 21
-          ParentColor = True
-          ReadOnly = True
-          TabOrder = 1
-        end
-      end
       object tsUpdate: TTabSheet
         Caption = 'tsUpdate'
         ImageIndex = 3
@@ -128,7 +78,7 @@ inherited CodeImportDlg: TCodeImportDlg
         object lblImportList: TLabel
           Left = 0
           Top = 53
-          Width = 86
+          Width = 91
           Height = 13
           Caption = 'Imported &snippets:'
           FocusControl = lvImports
@@ -136,7 +86,7 @@ inherited CodeImportDlg: TCodeImportDlg
         object lblSelectedSnippet: TLabel
           Left = 0
           Top = 217
-          Width = 82
+          Width = 83
           Height = 13
           Caption = 'S&elected snippet:'
           FocusControl = edRename
@@ -203,6 +153,10 @@ inherited CodeImportDlg: TCodeImportDlg
         Caption = 'tsFinish'
         ImageIndex = 5
         TabVisible = False
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object lblFinish: TLabel
           Left = 0
           Top = 8
