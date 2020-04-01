@@ -9,8 +9,6 @@
  * documents.
 }
 
-{ TODO -cRefactor: Separate out generic helper code from snippets XML file
-                   specific code. Put generic code in super-class? }
 
 unit UXMLDocHelper;
 

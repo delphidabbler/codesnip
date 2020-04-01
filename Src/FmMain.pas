@@ -1046,7 +1046,6 @@ end;
 
 procedure TMainForm.ActSubmitOrExportUpdate(Sender: TObject);
 begin
-  // TODO -cRefactor: rename method - no longer shared
   (Sender as TAction).Enabled := TCodeShareMgr.CanShare;
 end;
 
