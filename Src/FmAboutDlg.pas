@@ -403,8 +403,6 @@ procedure TAboutDlg.InitHTMLFrames;
   procedure InitProgramFrame;
   begin
     pcDetail.ActivePage := tsProgram;   // display page to let browser load OK
-    { TODO -cRefactor: Change this frmProgram so it's no longer a HTML template
-            unless we need to add a gravatar link from Web.UInfo unit. }
     frmProgram.Initialise(
       'dlg-about-program-tplt.html',
       procedure(Tplt: THTMLTemplate)
