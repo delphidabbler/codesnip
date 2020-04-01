@@ -5,8 +5,8 @@
  *
  * Copyright (C) 2008-2020, Peter Johnson (gravatar.com/delphidabbler).
  *
- * Implements classes that can import and export user defined snippets and user
- * information from and to XML.
+ * Implements classes that can import and export user defined snippets from and
+ * to XML.
 }
 
 
@@ -18,10 +18,16 @@ interface
 
 uses
   // Delphi
-  SysUtils, Classes, XMLIntf,
+  SysUtils,
+  Classes,
+  XMLIntf,
   // Project
-  DB.USnippet, UBaseObjects, UEncodings,  UExceptions, UIStringList,
-  UUserDetails, UXMLDocHelper, UXMLDocumentEx;
+  DB.USnippet,
+  UBaseObjects,
+  UEncodings,
+  UIStringList,
+  UXMLDocHelper,
+  UXMLDocumentEx;
 
 
 type
@@ -43,27 +49,7 @@ type
   TSnippetInfoList = array of TSnippetInfo;
 
 type
-  ///  <summary>Encapsulates user info from export files.</summary>
-  TUserInfo = record
-    ///  <summary>User's personal details.</summary>
-    Details: TUserDetails;
-    ///  <summary>User's comments.</summary>
-    Comments: string;
-    ///  <summary>Initialises record to given values.</summary>
-    constructor Create(const UserDetails: TUserDetails;
-      const UserComments: string);
-    ///  <summary>Returns a new record with null field values.</summary>
-    class function CreateNul: TUserInfo; static;
-    ///  <summary>Copies given TUserInfo record to this one.</summary>
-    procedure Assign(const Src: TUserInfo);
-    ///  <summary>Initialises record to null value.</summary>
-    procedure Init;
-    ///  <summary>Checks if record is null, i.e. empty.</summary>
-    function IsNul: Boolean;
-  end;
-
-type
-  ///  <summary>Imports code snippets and user info from XML.</summary>
+  ///  <summary>Imports code snippets from XML.</summary>
   TCodeImporter = class(TNoPublicConstructObject)
   strict private
     ///  <summary>Version of file being imported.</summary>
@@ -103,8 +89,7 @@ type
   ECodeImporter = class(ECodeSnipXML);
 
 type
-  // TODO -cRefactor: Decide if we still need to export user info
-  ///  <summary>Exports code snippets and user info to XML.</summary>
+  ///  <summary>Exports code snippets to XML.</summary>
   TCodeExporter = class(TNoPublicConstructObject)
   strict private
     var
@@ -176,10 +161,17 @@ implementation
 
 uses
   // Delphi
-  ActiveX, XMLDom,
+  ActiveX,
+  XMLDom,
   // Project
-  ActiveText.UMain, DB.UMain, DB.USnippetKind, UAppInfo, UREMLDataIO,
-  UReservedCategories, USnippetExtraHelper, USnippetIDs, UStructs,
+  ActiveText.UMain,
+  DB.UMain,
+  DB.USnippetKind,
+  UAppInfo,
+  UReservedCategories,
+  USnippetExtraHelper,
+  USnippetIDs,
+  UStructs,
   UXMLDocConsts;
 
 
@@ -190,38 +182,6 @@ const
   // file version numbers
   cEarliestVersion  = 1;  // earliest file version supported by importer
   cLatestVersion    = 6;  // current file version written by exporter
-
-
-{ TUserInfo }
-
-procedure TUserInfo.Assign(const Src: TUserInfo);
-begin
-  Details.Assign(Src.Details);
-  Comments := Src.Comments;
-end;
-
-constructor TUserInfo.Create(const UserDetails: TUserDetails;
-  const UserComments: string);
-begin
-  Details := UserDetails;
-  Comments := UserComments;
-end;
-
-class function TUserInfo.CreateNul: TUserInfo;
-begin
-  Result.Init;
-end;
-
-procedure TUserInfo.Init;
-begin
-  Details.Init;
-  Comments := '';
-end;
-
-function TUserInfo.IsNul: Boolean;
-begin
-  Result := Details.IsNul and (Comments = '');
-end;
 
 { TCodeExporter }
 
