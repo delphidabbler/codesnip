@@ -38,10 +38,6 @@ const
   // export XML only
   cExportRootNode             = 'codesnip-export';
   cProgVersionNode            = 'prog-version';
-  cUserInfoNode               = 'user-info';
-  cUserNameNode               = 'name';
-  cUserEmailNode              = 'email';
-  cUserCommentsNode           = 'comments';
   cSourceCodeTextNode         = 'source-code-text';
   // common to user-database and export XML
   cRootVersionAttr            = 'version';

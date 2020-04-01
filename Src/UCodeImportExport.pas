@@ -181,7 +181,7 @@ const
   cWatermark        = 'B46969D4-D367-4F5F-833E-F165FBA78631';
   // file version numbers
   cEarliestVersion  = 1;  // earliest file version supported by importer
-  cLatestVersion    = 6;  // current file version written by exporter
+  cLatestVersion    = 7;  // current file version written by exporter
 
 { TCodeExporter }
 
