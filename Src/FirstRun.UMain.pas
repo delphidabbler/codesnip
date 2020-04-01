@@ -242,6 +242,7 @@ begin
     fUserConfigFile.DeleteProxyServerSection;
     fUserConfigFile.DeleteUpdatingPrefs;
     fUserConfigFile.DeleteUpdateChecks;
+    fUserConfigFile.DeleteUserInfo;
   end;
 
   {$IFNDEF PORTABLE}
