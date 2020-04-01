@@ -16,13 +16,10 @@ portable edition.
 Common.config
 --------------------------------------------------------------------------------
 
-Common.config is located in the %ProgramData%\DelphiDabbler\CodeSnip.4 folder
-for the standard edition or in the AppData sub folder of the install directory
-for the portable edition.
+Common.config is located in the in the %ProgramData%\DelphiDabbler\CodeSnip.4
+folder for the standard edition. It is not used by the portable edition.
 
-The data that is stored in Common.config includes a unique 32 digit hexadecimal
-key based on attributes of your computer. The data that is used to create the
-hexadecimal key cannot be recovered from the key.
+Only version information is stored in <code>Common.config</code>.
 
 
 User.config
@@ -33,10 +30,7 @@ folder for the standard edition or in the AppData sub folder of the install
 directory for the portable edition.
 
 The file stores several user-specific application data settings such as your
-preferences. The only personal information is any user name or email address you
-provided if you ever entered such information in a dialogue box. This is used
-only to automatically enter the data in dialogue boxes where needed, to save you
-re-typing it.
+preferences. None of this information is personally identifiable.
 
 
 Spyware
