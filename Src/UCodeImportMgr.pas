@@ -94,8 +94,6 @@ type
       fSnippetInfoList: TSnippetInfoList;
       ///  <summary>Value of ImportInfo property.</summary>
       fImportInfoList: TImportInfoList;
-      ///  <summary>Value of UserInfo property.</summary>
-      fUserInfo: TUserInfo;
     ///  <summary>Initialises import information list with details of snippets
     ///  read from import file.</summary>
     procedure InitImportInfoList;
@@ -132,9 +130,6 @@ type
     ///  <remarks>Any existing snippets with same name as imported snippets are
     ///  overwritten.</remarks>
     procedure UpdateDatabase;
-    ///  <summary>Information about user who created the import file.</summary>
-    ///  <remarks>May be null if no user info included in import file.</remarks>
-    property UserInfo: TUserInfo read fUserInfo;
     ///  <summary>List of information describing if and how to import snippets
     ///  in import file. Permits customisation of import.</summary>
     property ImportInfo: TImportInfoList read fImportInfoList;
@@ -210,7 +205,6 @@ procedure TCodeImportMgr.Import(const FileName: string);
 var
   Data: TBytes; // content of import file as bytes
 begin
-  fUserInfo := TUserInfo.CreateNul;
   fImportInfoList.Clear;
   try
     Data := TFileIO.ReadAllBytes(FileName);
