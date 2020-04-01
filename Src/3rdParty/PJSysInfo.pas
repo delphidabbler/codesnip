@@ -3,10 +3,10 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2001-2016, Peter Johnson (@delphidabbler).
+ * Copyright (C) 2001-2020, Peter Johnson (@delphidabbler).
  *
- * $Rev: 2015 $
- * $Date: 2016-09-12 00:47:45 +0100 (Mon, 12 Sep 2016) $
+ * $Rev: 2023 $
+ * $Date: 2020-03-17 05:00:45 +0000 (Tue, 17 Mar 2020) $
  *
  * This unit contains various static classes, constants, type definitions and
  * global variables for use in providing information about the host computer and
@@ -37,8 +37,8 @@
  *     code used in v3.0 and later)
  *
  *   - Rich Habedank (bug fix in r228 and testing of bug fixes reported as
- *     issues #31 (https://code.google.com/p/ddab-lib/issues/detail?id=31) and
- *     #33 (https://code.google.com/p/ddab-lib/issues/detail?id=33)
+ *     issues #31 (https://sourceforge.net/p/ddablib/tickets/31/) and #33
+ *     (https://sourceforge.net/p/ddablib/tickets/33/)
  *
  * The project also draws on the work of:
  *
@@ -443,9 +443,10 @@ type
     osWin8Point1,           // Windows 8.1
     osWinSvr2012R2,         // Windows Server 2012 R2
     osWin10,                // Windows 10
-    osWin10Svr              // Windows 2016 Server
+    osWin10Svr,             // Windows 2016 Server
+    osWinSvr2019            // Windows 2019 Server
   );
-
+  
 type
   ///  <summary>Enumeration identifying processor architecture.</summary>
   TPJProcessorArchitecture = (
@@ -791,6 +792,15 @@ type
     ///  processor.</remarks>
     class function ProcessorName: string;
 
+    ///  <summary>Returns the speed of the computer's processor in MHz.
+    ///  </summary>
+    ///  <remarks>
+    ///  <para>On multi-processor systems this is the speed of the 1st
+    ///  processor.</para>
+    ///  <para>0 is returned if the information is not a available.</para>
+    ///  </remarks>
+    class function ProcessorSpeedMHz: Cardinal;
+
     ///  <summary>Checks if the host computer has a 64 bit processor.</summary>
     class function Is64Bit: Boolean;
 
@@ -967,6 +977,7 @@ resourcestring
   sUnknownPlatform = 'Unrecognised operating system platform';
   sUnknownProduct = 'Unrecognised operating system product';
   sBadRegType =  'Unsupported registry type';
+  sBadRegIntType = 'Integer value expected in registry';
   sBadProcHandle = 'Bad process handle';
 
 
@@ -1170,6 +1181,65 @@ const
     'Software\Microsoft\Windows\CurrentVersion',
     'Software\Microsoft\Windows NT\CurrentVersion'
   );
+
+const
+  // Known windows build numbers.
+  // Sources:
+  //   https://en.wikipedia.org/wiki/Windows_NT
+  //   https://en.wikipedia.org/wiki/Windows_10_version_history
+  //   https://en.wikipedia.org/wiki/Windows_Server_2019
+  //   https://en.wikipedia.org/wiki/Windows_Server_2016
+  //   https://en.wikipedia.org/wiki/Windows_Server_2016
+  //   https://tinyurl.com/y8tfadm2
+
+  // for Vista and Win 7 we have to add service pack number to these values to
+  // get actual build number
+
+  WinVistaBaseBuild = 6000;
+  Win7BaseBuild = 7600;
+
+  // for Win 8 onwards we just use the build numbers as is
+
+  Win8Build = 9200;             // Build number used for all Win 8/Svr 2012
+  Win8Point1Build = 9600;       // Build number used for all Win 8.1/Svr 2012 R2
+
+  Win10TH1Build = 10240;        // Windows 10 TH1 - version 1507 (1st release)
+  Win10TH2Build = 10586;        // Windows 10 TH2 - version 1511
+  Win10RS1Build = 14393;        // Windows 10 RS1 - version 1607
+  Win10RS2Build = 15063;        // Windows 10 RS2 - version 1703
+  Win10RS3Build = 16299;        // Windows 10 RS3 - version 1709
+  Win10RS4Build = 17134;        // Windows 10 RS4 - version 1803
+  Win10RS5Build = 17763;        // Windows 10 RS5 - version 1809
+  Win1019H1Build = 18362;       // Windows 10 19H1 - version 1903
+  Win1019H2Build = 18363;       // Windows 10 19H2 - version 1909
+  Win1020H1Build = 19041;       // Windows 10 20H2 - version 2004
+
+  Win2016TP1Build = 9841;       // Win 2016 Server Technical Preview 1
+  Win2016TP2Build = 10074;      // Win 2016 Server Technical Preview 2
+  Win2016TP3Build = 10514;      // Win 2016 Server Technical Preview 3
+  Win2016TP4Build = 10586;      // Win 2016 Server Technical Preview 4
+  Win2016TP5Build = 14300;      // Win 2016 Server Technical Preview 5
+  Win2016RTMBuild = 14393;      // Win 2016 Server Release To Manufacturing
+  Win2016v1709Build = 16299;    // Win Server 2016 version 1709
+  Win2016v1803Build = 17134;    // Win Server 2016 version 1803
+
+  Win2019IP180320Build = 17623; // Win Server 2019 Insider Preview Build 17623
+  Win2019IP180324Build = 17627; // Win Server 2019 Insider Preview Build 17627
+  Win2019IP180515Build = 17666; // Win Server 2019 Insider Preview Build 17666
+  Win2019IP180619Build = 17692; // Win Server 2019 Insider Preview Build 17692
+  Win2019IP180710Build = 17709; // Win Server 2019 Insider Preview Build 17709
+  Win2019IP180716Build = 17713; // Win Server 2019 Insider Preview Build 17713
+  Win2019IP180731Build = 17723; // Win Server 2019 Insider Preview Build 17723
+  Win2019IP180814Build = 17733; // Win Server 2019 Insider Preview Build 17733
+  Win2019IP180821Build = 17738; // Win Server 2019 Insider Preview Build 17738
+  Win2019IP180828Build = 17744; // Win Server 2019 Insider Preview Build 17744
+  Win2019v1809Build = 17763;    // Win Server 2019 version 1809
+  Win2019v1903Build = 18362;    // Win Server 2019 version 1903
+  Win2019v1909Build = 18363;    // Win Server 2019 version 1909
+
+  // Last build number of Windows 2016 Server - after this build number are
+  // Windows 2019 Server
+  Win2016LastBuild = Win2016v1803Build;
 
 type
   // Function type of the GetNativeSystemInfo and GetSystemInfo functions
@@ -1379,8 +1449,8 @@ end;
 
 // Checks if host OS is Windows 2000 or earlier, including any Win9x OS.
 // This is a helper function for RegCreate and RegOpenKeyReadOnly and avoids
-// avoids using TPJOSInfo to ensure that an infinite loop is not set up with
-// TPJOSInfo calling back into RegCreate.
+// using TPJOSInfo to ensure that an infinite loop is not set up with TPJOSInfo
+// calling back into RegCreate.
 function IsWin2000OrEarlier: Boolean;
 begin
   // NOTE: all Win9x OSs have InternalMajorVersion < 5, so we don't need to
@@ -1395,7 +1465,8 @@ end;
 function RegCreate: TRegistry;
 begin
   {$IFDEF REGACCESSFLAGS}
-  //! Fix for issue #14 (http://bit.n/eWkw9X) suggested by Steffen Schaff.
+  //! Fix for issue #14 (https://sourceforge.net/p/ddablib/tickets/14/)
+  //! suggested by Steffen Schaff.
   //! Later modified to allow for fact that Windows 2000 fails if
   //! KEY_WOW64_64KEY is used.
   if IsWin2000OrEarlier then
@@ -1464,6 +1535,32 @@ begin
   end;
 end;
 
+function GetRegistryInt(const RootKey: HKEY; const SubKey, Name: string):
+  Integer;
+var
+  Reg: TRegistry;          // registry access object
+  ValueInfo: TRegDataInfo; // info about registry value
+begin
+  Result := 0;
+  // Open registry at required root key
+  Reg := RegCreate;
+  try
+    Reg.RootKey := RootKey;
+    if RegOpenKeyReadOnly(Reg, SubKey) and Reg.ValueExists(Name) then
+    begin
+      // Check if registry value is integer
+      Reg.GetDataInfo(Name, ValueInfo);
+      if ValueInfo.RegData <> rdInteger then
+        raise EPJSysInfo.Create(sBadRegIntType);
+      Result := Reg.ReadInteger(Name);
+    end;
+  finally
+    // Close registry
+    Reg.CloseKey;
+    Reg.Free;
+  end;
+end;
+
 // Gets string info for given value from Windows current version key in
 // registry.
 function GetCurrentVersionRegStr(ValName: string): string;
@@ -1489,24 +1586,14 @@ var
   GetVersionEx: TGetVersionEx;      // pointer to GetVersionEx API function
   GetProductInfo: TGetProductInfo;  // pointer to GetProductInfo API function
   SI: TSystemInfo;                  // structure from GetSystemInfo API call
-const
-  // Known windows build numbers.
-  // Source: https://en.wikipedia.org/wiki/Windows_NT
-  // for Vista and Win 7 we have to add service pack number to these values to
-  // get actual build number
-  WinVistaBaseBuild = 6000;
-  Win7BaseBuild = 7600;
-  // for Win 8 onwards we just use the build numbers as is
-  Win8Build = 9200;         // Only build number used for Win 8 / Svr 2012
-  Win8Point1Build = 9600;   // Only build number used for Win 8.1 / Svr 2012 R2
-  Win10TH1Build = 10240;    // Initial Windows 10 release (not Server 2016)
-  Win10TH2Build = 10586;    // Windows 10 TH2 (shared with Win 2016 TP4 - below)
-  Win10RS1Build = 14393;    // Windows 10 RS1
-  Win2016TP1Build = 9841;   // Windows 2016 Server Technical Preview 1
-  Win2016TP2Build = 10074;  // Windows 2016 Server Technical Preview 2
-  Win2016TP3Build = 10514;  // Windows 2016 Server Technical Preview 3
-  Win2016TP4Build = 10586;  // Windows 2016 Server Technical Preview 4
-  Win2016TP5Build = 14300;  // Windows 2016 Server Technical Preview 5
+
+  // Return name of Windows Server 2019 insider preview release for given build
+  // number. Build must be a valid insider preview release number
+  function Win2019IPExtra(const Build: Integer): string;
+  begin
+    Result := Format('Insider Preview Build %d', [Build]);
+  end;
+
 begin
   // Load version query functions used externally to this routine
   VerSetConditionMask := LoadKernelFunc('VerSetConditionMask');
@@ -1515,6 +1602,7 @@ begin
   {$ELSE}
   VerifyVersionInfo := LoadKernelFunc('VerifyVersionInfoA');
   {$ENDIF}
+
   if not UseGetVersionAPI then
   begin
     // Not using GetVersion and GetVersionEx functions to get version info
@@ -1526,9 +1614,9 @@ begin
     Win32ServicePackMinor := 0;
     // we don't use suite mask any more!
     Win32SuiteMask := 0;
-    // platform for all OSs tested for this way are NT: the NewGetVersion calls
-    // below indirectly call VerifyVersionInfo API, which is only defined for
-    // Windows 2000 and later.
+    // platform for all OSs tested for this way is always NT: the NewGetVersion
+    // calls below indirectly call VerifyVersionInfo API, which is only defined
+    // for Windows 2000 and later.
     InternalPlatform := VER_PLATFORM_WIN32_NT;
     Win32HaveExInfo := True;
     NewGetVersion(
@@ -1545,7 +1633,7 @@ begin
     else
       Win32ProductType := 0;
     // NOTE: It's going to be very slow to test for all possible build numbers,
-    // so I've just narrowed the search down using the information at
+    // so I've narrowed the search down using the information at
     // http://en.wikipedia.org/wiki/Windows_NT
     case InternalMajorVersion of
       6:
@@ -1591,29 +1679,63 @@ begin
           if (Win32ProductType <> VER_NT_DOMAIN_CONTROLLER)
             and (Win32ProductType <> VER_NT_SERVER) then
           begin
-            // Windows 10 TH1 branch release
             if IsBuildNumber(Win10TH1Build) then
-              InternalBuildNumber := Win10TH1Build
-            // Windows 10 TH2 branch release
+            begin
+              InternalBuildNumber := Win10TH1Build;
+              InternalExtraUpdateInfo := 'Version 1507';  // 1st Win 10 version
+            end
             else if IsBuildNumber(Win10TH2Build) then
             begin
               InternalBuildNumber := Win10TH2Build;
-              InternalExtraUpdateInfo := 'Version 1511';
+              InternalExtraUpdateInfo := 'Version 1511: November Update';
             end
             else if IsBuildNumber(Win10RS1Build) then
             begin
               InternalBuildNumber := Win10RS1Build;
-              InternalExtraUpdateInfo := 'Version 1607';
-            end;
+              InternalExtraUpdateInfo := 'Version 1607: Anniversary Update';
+            end
+            else if IsBuildNumber(Win10RS2Build) then
+            begin
+              InternalBuildNumber := Win10RS2Build;
+              InternalExtraUpdateInfo := 'Version 1703: Creators Update';
+            end
+            else if IsBuildNumber(Win10RS3Build) then
+            begin
+              InternalBuildNumber := Win10RS3Build;
+              InternalExtraUpdateInfo := 'Version 1709: Fall Creators Update';
+            end
+            else if IsBuildNumber(Win10RS4Build) then
+            begin
+              InternalBuildNumber := Win10RS4Build;
+              InternalExtraUpdateInfo := 'Version 1803: April 2018 Update';
+            end
+            else if IsBuildNumber(Win10RS5Build) then
+            begin
+              InternalBuildNumber := Win10RS5Build;
+              InternalExtraUpdateInfo := 'Version 1809: October 2018 Update';
+            end
+            else if IsBuildNumber(Win1019H1Build) then
+            begin
+              InternalBuildNumber := Win1019H1Build;
+              InternalExtraUpdateInfo := 'Version 1903: May 2019 Update';
+            end
+            else if IsBuildNumber(Win1019H2Build) then
+            begin
+              InternalBuildNumber := Win1019H2Build;
+              InternalExtraUpdateInfo := 'Version 1909: Novermber 2019 Update';
+            end
+            else if IsBuildNumber(Win1020H1Build) then
+            begin
+              InternalBuildNumber := Win1020H1Build;
+              // TODO: Add marketing name below once known
+              InternalExtraUpdateInfo := 'Version 2004';
+            end
           end
           else
           begin
-            { TODO: Revisit when Windows 2016 Server is released to add its
-                    build number }
-            // Check for Technical previews. We don't check for TP1 here because
-            // that reported version 6.4, not version 10!
-            // Source of these build numbers:
-            // https://en.wikipedia.org/wiki/Windows_Server_2016#Version_history
+            // Check for Win Server 2016 echnical previews.
+            // We don't check for TP1 // here because that reported version 6.4,
+            // not version 10!
             if IsBuildNumber(Win2016TP2Build) then
             begin
               InternalBuildNumber := Win2016TP2Build;
@@ -1634,14 +1756,99 @@ begin
               InternalBuildNumber := Win2016TP5Build;
               InternalExtraUpdateInfo := 'Technical Preview 5';
             end
+            else if IsBuildNumber(Win2016RTMBuild) then
+            begin
+              InternalBuildNumber := Win2016RTMBuild;
+              InternalExtraUpdateInfo := 'Version 1607';
+            end
+            else if IsBuildNumber(Win2016v1709Build) then
+            begin
+              InternalBuildNumber := Win2016v1709Build;
+              InternalExtraUpdateInfo := 'Version 1709';
+            end
+            else if IsBuildNumber(Win2016v1803Build) then
+            begin
+              InternalBuildNumber := Win2016v1803Build;
+              InternalExtraUpdateInfo := 'Version 1803';
+            end
+            else if IsBuildNumber(Win2019IP180320Build) then
+            begin
+              InternalBuildNumber := Win2019IP180320Build;
+              InternalExtraUpdateInfo := Win2019IPExtra(Win2019IP180320Build);
+            end
+            else if IsBuildNumber(Win2019IP180324Build) then
+            begin
+              InternalBuildNumber := Win2019IP180324Build;
+              InternalExtraUpdateInfo := Win2019IPExtra(Win2019IP180324Build);
+            end
+            else if IsBuildNumber(Win2019IP180515Build) then
+            begin
+              InternalBuildNumber := Win2019IP180515Build;
+              InternalExtraUpdateInfo := Win2019IPExtra(Win2019IP180515Build);
+            end
+            else if IsBuildNumber(Win2019IP180619Build) then
+            begin
+              InternalBuildNumber := Win2019IP180619Build;
+              InternalExtraUpdateInfo := Win2019IPExtra(Win2019IP180619Build);
+            end
+            else if IsBuildNumber(Win2019IP180710Build) then
+            begin
+              InternalBuildNumber := Win2019IP180710Build;
+              InternalExtraUpdateInfo := Win2019IPExtra(Win2019IP180710Build);
+            end
+            else if IsBuildNumber(Win2019IP180716Build) then
+            begin
+              InternalBuildNumber := Win2019IP180716Build;
+              InternalExtraUpdateInfo := Win2019IPExtra(Win2019IP180716Build);
+            end
+            else if IsBuildNumber(Win2019IP180716Build) then
+            begin
+              InternalBuildNumber := Win2019IP180716Build;
+              InternalExtraUpdateInfo := Win2019IPExtra(Win2019IP180716Build);
+            end
+            else if IsBuildNumber(Win2019IP180731Build) then
+            begin
+              InternalBuildNumber := Win2019IP180731Build;
+              InternalExtraUpdateInfo := Win2019IPExtra(Win2019IP180731Build);
+            end
+            else if IsBuildNumber(Win2019IP180814Build) then
+            begin
+              InternalBuildNumber := Win2019IP180814Build;
+              InternalExtraUpdateInfo := Win2019IPExtra(Win2019IP180814Build);
+            end
+            else if IsBuildNumber(Win2019IP180821Build) then
+            begin
+              InternalBuildNumber := Win2019IP180821Build;
+              InternalExtraUpdateInfo := Win2019IPExtra(Win2019IP180821Build);
+            end
+            else if IsBuildNumber(Win2019IP180828Build) then
+            begin
+              InternalBuildNumber := Win2019IP180828Build;
+              InternalExtraUpdateInfo := Win2019IPExtra(Win2019IP180828Build);
+            end
+            else if IsBuildNumber(Win2019v1809Build) then
+            begin
+              InternalBuildNumber := Win2019v1809Build;
+              InternalExtraUpdateInfo := 'Version 1809';
+            end
+            else if IsBuildNumber(Win2019v1903Build) then
+            begin
+              InternalBuildNumber := Win2019v1903Build;
+              InternalExtraUpdateInfo := 'Version 1903';
+            end
+            else if IsBuildNumber(Win2019v1909Build) then
+            begin
+              InternalBuildNumber := Win2019v1909Build;
+              InternalExtraUpdateInfo := 'Version 1909';
+            end
           end;
         end;
       end;
     end;
 
     // ** If InternalBuildNumber is 0 when we get here then we failed to get it
-    //    We no longer look in registry as of SVN commit r2001, because this is
-    //    can get spoofed. E.g. when running on Windows 10 TH2 registry call is
+    //    We no longer look in registry as of SVN commit r2001, because this can
+    //    get spoofed. E.g. when running on Windows 10 TH2 registry call is
     //    returning build number of 7600 even though regedit reveals it to be
     //    10586 !
     //    So we must now consider a build number of 0 as indicating an unknown
@@ -1776,7 +1983,7 @@ begin
     osWin7, osWinSvr2008R2,
     osWin8, osWinSvr2012,
     osWin8Point1, osWinSvr2012R2,
-    osWin10, osWin10Svr:
+    osWin10, osWin10Svr, osWinSvr2019:
     begin
       // For v6.0 and later we ignore the suite mask and use the new
       // PRODUCT_ flags from the GetProductInfo() function to determine the
@@ -2315,7 +2522,10 @@ begin
               if not IsServer then
                 Result := osWin10
               else
-                Result := osWin10Svr;
+                if InternalBuildNumber <= Win2016LastBuild then
+                  Result := osWin10Svr
+                else
+                  Result := osWinSvr2019;
           end;
         end;
         else
@@ -2361,6 +2571,7 @@ begin
     osWinSvr2012R2: Result := 'Windows Server 2012 R2';
     osWin10: Result := 'Windows 10';
     osWin10Svr: Result := 'Windows Server 2016';
+    osWinSvr2019: Result := 'Windows Server 2019';
     else
       raise EPJSysInfo.Create(sUnknownProduct);
   end;
@@ -2680,6 +2891,17 @@ begin
     HKEY_LOCAL_MACHINE,
     'HARDWARE\DESCRIPTION\System\CentralProcessor\0\',
     'ProcessorNameString'
+  );
+end;
+
+class function TPJComputerInfo.ProcessorSpeedMHz: Cardinal;
+begin
+  Result := Cardinal(
+    GetRegistryInt(
+      HKEY_LOCAL_MACHINE,
+      'HARDWARE\DESCRIPTION\System\CentralProcessor\0\',
+      '~MHz'
+    )
   );
 end;
 

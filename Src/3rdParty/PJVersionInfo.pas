@@ -3,10 +3,10 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 1998-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 1998-2014, Peter Johnson (www.delphidabbler.com).
  *
- * $Rev$
- * $Date$
+ * $Rev: 1515 $
+ * $Date: 2014-01-11 02:36:28 +0000 (Sat, 11 Jan 2014) $
  *
  * Version Information Component. The component reads version information from
  * executable files.
@@ -35,14 +35,17 @@ unit PJVersionInfo;
 {$ENDIF}
 // Switch off unsafe code warnings if switch supported
 {$IFDEF CONDITIONALEXPRESSIONS}
-  {$IF CompilerVersion >= 15.0}   // >= Delphi 7
-    {$WARN UNSAFE_CODE OFF}
+  {$IF CompilerVersion >= 24.0} // Delphi XE3 and later
+    {$LEGACYIFEND ON}  // NOTE: this must come before all $IFEND directives
   {$IFEND}
-  {$IF CompilerVersion >= 18.0}   // >= Delphi 2006
+  {$IF CompilerVersion >= 23.0} // Delphi XE2 and later
+    {$DEFINE Supports_RTLNameSpaces}
+  {$IFEND}
+  {$IF CompilerVersion >= 18.0} // Delphi 2006 and later
     {$DEFINE Supports_AdvancedRecords}
   {$IFEND}
-  {$IF CompilerVersion >= 23.0} // Delphi XE2
-    {$DEFINE Supports_RTLNameSpaces}
+  {$IF CompilerVersion >= 15.0} // Delphi 7 and later
+    {$WARN UNSAFE_CODE OFF}
   {$IFEND}
 {$ENDIF}
 

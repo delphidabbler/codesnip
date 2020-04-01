@@ -3,10 +3,10 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2010-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2010-2014, Peter Johnson (www.delphidabbler.com).
  *
- * $Rev$
- * $Date$
+ * $Rev: 1515 $
+ * $Date: 2014-01-11 02:36:28 +0000 (Sat, 11 Jan 2014) $
  *
  * This unit is a Delphi Pascal implementation of the MD5 Message-Digest
  * algorithm. See RFC1321 (http://www.faqs.org/rfcs/rfc1321.html).
@@ -31,11 +31,14 @@ unit PJMD5;
 {$UNDEF CANCOMPILE}
 {$UNDEF RTLNAMESPACES}
 {$IFDEF CONDITIONALEXPRESSIONS}
-  {$IF CompilerVersion >= 20.0}   // Delphi 2009
-    {$DEFINE CANCOMPILE}
+  {$IF CompilerVersion >= 24.0} // Delphi XE3 and later
+    {$LEGACYIFEND ON}  // NOTE: this must come before all $IFEND directives
   {$IFEND}
-  {$IF CompilerVersion >= 23.0}   // Delphi XE2
+  {$IF CompilerVersion >= 23.0} // Delphi XE2 and later
     {$DEFINE RTLNAMESPACES}
+  {$IFEND}
+  {$IF CompilerVersion >= 20.0} // Delphi 2009 and later
+    {$DEFINE CANCOMPILE}
   {$IFEND}
 {$ENDIF}
 {$IFNDEF CANCOMPILE}
