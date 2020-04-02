@@ -6,7 +6,6 @@
 ;
 ; CodeSnip help project file.
 
-
 [OPTIONS]
 Compatibility=1.1
 Compiled file=..\..\Exe\CodeSnip.chm
@@ -17,9 +16,9 @@ Index file=Index.hhk
 Language=0x809 English (United Kingdom)
 Title=CodeSnip Help
 
-
 [FILES]
 HTML\about_compiler_checks.htm
+HTML\about_swag.htm
 HTML\detail_pane.htm
 HTML\dlg_about.htm
 HTML\dlg_addcategory.htm
@@ -27,18 +26,22 @@ HTML\dlg_backup.htm
 HTML\dlg_configcompilers.htm
 HTML\dlg_deletecategory.htm
 HTML\dlg_dependencies.htm
+HTML\dlg_dependencies_edit.htm
 HTML\dlg_duplicatesnippet.htm
 HTML\dlg_editsnippet.htm
 HTML\dlg_elementcolour.htm
 HTML\dlg_export.htm
 HTML\dlg_exportfile.htm
+HTML\dlg_favourites.htm
 HTML\dlg_findcompiler.htm
 HTML\dlg_findtext.htm
 HTML\dlg_findxrefs.htm
 HTML\dlg_firstrun.htm
+HTML\dlg_hilitemgr.htm
 HTML\dlg_import.htm
 HTML\dlg_importfile.htm
 HTML\dlg_loadselection.htm
+HTML\dlg_moveuserdb.htm
 HTML\dlg_pagesetup.htm
 HTML\dlg_preferences.htm
 HTML\dlg_prefs_codegen.htm
@@ -48,13 +51,16 @@ HTML\dlg_prefs_hiliter.htm
 HTML\dlg_prefs_printing.htm
 HTML\dlg_prefs_snippetlayout.htm
 HTML\dlg_prefs_sourcecode.htm
+HTML\dlg_prefs_updates.htm
 HTML\dlg_print.htm
 HTML\dlg_renamecategory.htm
 HTML\dlg_restore.htm
+HTML\dlg_savehiliter.htm
 HTML\dlg_saveselection.htm
 HTML\dlg_savesnippet.htm
 HTML\dlg_selectcompiler.htm
 HTML\dlg_selectroutines.htm
+HTML\dlg_swagimport.htm
 HTML\dlg_testcompile.htm
 HTML\dlg_trappedbugreport.htm
 HTML\dlg_update.htm
@@ -77,6 +83,7 @@ HTML\menu_tools.htm
 HTML\menu_view.htm
 HTML\navigation.htm
 HTML\new.htm
+HTML\notifiy_database_update.htm
 HTML\overview_pane.htm
 HTML\privacy_statement.htm
 HTML\quickstart.htm
@@ -88,7 +95,6 @@ HTML\snippet_kinds.htm
 HTML\snippet_routine.htm
 HTML\snippet_type.htm
 HTML\snippet_unit.htm
-HTML\tasks.htm
 HTML\task_addsnippets.htm
 HTML\task_copysnippet.htm
 HTML\task_customise.htm
@@ -99,13 +105,5 @@ HTML\task_savesnippet.htm
 HTML\task_search.htm
 HTML\task_testcompile.htm
 HTML\task_update.htm
+HTML\tasks.htm
 HTML\welcome.htm
-HTML\dlg_favourites.htm
-HTML\dlg_moveuserdb.htm
-HTML\dlg_savehiliter.htm
-HTML\dlg_hilitemgr.htm
-HTML\dlg_prefs_updates.htm
-HTML\notifiy_database_update.htm
-HTML\dlg_dependencies_edit.htm
-HTML\about_swag.htm
-HTML\dlg_swagimport.htm
