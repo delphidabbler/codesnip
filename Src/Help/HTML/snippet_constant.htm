@@ -32,9 +32,9 @@
     </p>
     <p>
       Each constant snippet begins with the <strong>const</strong> keyword as
-      the first non-space text in the source code. Comments may not preceed it.
-      The <strong>const</strong> keyword is followed by at least one space or
-      newline and then one or more constant definitions.
+      the first non-space text in the source code. Comments may not precede it.
+      The <strong>const</strong> keyword is followed by at least one space or a
+      new line and then one or more constant definitions.
     </p>
     <p>
       Here's an example of a valid constant snippet:
@@ -44,11 +44,11 @@
   cRangeMin = 1;
   cIntArray: array[cRangeMin..cRangeMax] of Integer = (42, 56, 99);</pre>
     <p>
-      Constant snippets may refer to other
-      <a href="snippet_type.htm">simple type</a> definitions,
-      <a href="snippet_class.htm">class &amp; advanced record</a> definitions
-      or constants, providing they are defined in Delphi units or elsewhere in
-      the database. The snippet's units and dependencies references should
+      Constant snippets may refer to other constant definitions,
+      <a href="snippet_type.htm">simple type</a> definitions or
+      <a href="snippet_class.htm">class &amp; advanced record</a> definitions,
+      providing they are defined in Delphi units or elsewhere in the database.
+      The snippet's <em>units</em> and <em>dependencies</em> references should
       indicate where to find the other types and constants. Constants may not
       reference <a href="snippet_routine.htm">routine</a>,
       <a href="snippet_unit.htm">unit</a> or

@@ -29,7 +29,7 @@
     <p>
       A simple type definition snippet, unsurprisingly, defines one or more
       Pascal types. Only simple types are supported. Classes, objects and
-      records that contain methods are not: use
+      records that contain methods are not supported: use
       <a href="snippet_class.htm">class &amp; advanced record</a> snippet kinds
       for those. If you're not sure, the only types supported are those that can
       be completely defined in the interface section of a unit.
@@ -38,7 +38,7 @@
       Each type definition snippet must begin with the <strong>type</strong>
       keyword as the first non-space text in the source code. Comments may not
       preceed it. The <strong>type</strong> keyword is followed by at least one
-      space or newline and then one or more type definitions.
+      space or a new line and then one or more type definitions.
     </p>
     <p>
       Here's an example of a valid type definition:
@@ -51,8 +51,9 @@
       <a href="snippet_class.htm">class &amp; advanced record</a> type
       definitions or <a href="snippet_constant.htm">constants</a>, providing
       they are defined in Delphi units or elsewhere in the database. The
-      snippet's units and dependencies references should indicate where to find
-      the other types and constants. Type definitions must not reference
+      snippet's <em>units</em> and <em>dependencies</em> references should
+      indicate where to find the other types and constants. Type definitions
+      must not reference
       <a href="snippet_routine.htm">routine</a>,
       <a href="snippet_unit.htm">unit</a> or
       <a href="snippet_freeform.htm">freeform</a> snippets.
