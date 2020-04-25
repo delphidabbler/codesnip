@@ -377,10 +377,6 @@
     <param name="Local" value="HTML\dlg_update.htm">
     </OBJECT>
   <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="updates preferences">
-    <param name="Local" value="HTML\dlg_prefs_updates.htm">
-    </OBJECT>
-  <LI> <OBJECT type="text/sitemap">
     <param name="Name" value="user defined highlighters dialogue">
     <param name="Local" value="HTML\dlg_hilitemgr.htm">
     </OBJECT>
