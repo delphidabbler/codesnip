@@ -145,6 +145,11 @@ table.menu td.desc {
   background-color: white;
 }
 
+pre.reml,
+code.reml {
+  color: purple;
+}
+
 .indent {
   margin-left: 2em;
 }
