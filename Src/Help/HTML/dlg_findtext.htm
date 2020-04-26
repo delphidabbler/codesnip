@@ -41,17 +41,18 @@
     </p>
     <p>
       Enter the text you want to search for in the <em>Text to find</em> combo
-      box.
+      box. Recent search text can be accessed from the drop down list.
     </p>
     <p>
       When more than one search word is entered you have a choice of whether to
       search for snippets containing all the words, or any of them. You specify
       which of these options you want by choosing the relevant radio button in
       the <em>Search logic</em> group box. For example, choosing the <em>Find
-      all words</em> option and searching for &quot;Foo Bar&quot; would match
-      the text &quot;Foo and Bar&quot; but would not match &quot;Foo&quot; or
-      &quot;Bar&quot;. Choosing <em>Find and word</em> instead and again
-      searching for &quot;Foo Bar&quot; would match all the previous examples.
+      all words</em> option and searching for &quot;<code>Foo Bar</code>&quot;
+      would match the text &quot;Foo and Bar&quot; but would not match
+      &quot;Foo&quot; or &quot;Bar&quot;. Choosing <em>Find any word</em>
+      instead and again searching for &quot;<code>Foo Bar</code>&quot; would
+      match all the previous examples.
     </p>
     <p>
       There are two more options for further refining the search:
@@ -59,18 +60,20 @@
     <ol>
       <li>
         Use the <em>Whole words only</em> check box to ensure that the search
-        only looks up words that exactly match those specified. If the check box
+        only matches words that exactly match those specified. If the check box
         is cleared then words containing the specified text will also be found.
-        For example when the check box is ticked search for &quot;Foo&quot; will
-        not match &quot;FooBar&quot;, but when the check box is cleared, the two
-        words will match.
+        For example when the check box is ticked a search for
+        &quot;<code>Foo</code>&quot; will match &quot;Foo&quot; in
+        &quot;Foo Bar&quot; but will not match &quot;FooBar&quot;. When the
+        check box is cleared, &quot;<code>Foo</code>&quot; will match both
+        examples.
       </li>
       <li>
         Make the search case sensitive by checking the <em>Case sensitive</em>
-        check box. In this case searching for &quot;Foo&quot; would only match
-        the exact text and would not match &quot;foo&quot or &quot;FOO&quot;.
-        If the check box is cleared then case is ignored. Now searching for
-        &quot;Foo;&quot; will match both &quot;foo&quot and &quot;FOO&quot;.
+        check box. In this case searching for &quot;<code>Foo</code>&quot; will
+        match &quot;Foo&quot; but not &quot;foo&quot; or &quot;FOO&quot;. If the
+        check box is cleared then case is ignored and searching for
+        &quot;<code>Foo</code>&quot; again will match all three examples.
       </li>
     </ol>
     <p>
@@ -88,10 +91,9 @@
       remains unchanged.
     </p>
     <p>
-      The <em>Search scope</em> group box is disabled if there was no existing
-      search when this dialogue box was opened, and the search operates on the
-      entire database.
+      The <em>Search scope</em> group box is disabled if there was no previous
+      search active when this dialogue box was opened. The search will operate
+      on the entire database.
     </p>
   </body>
 </html>
-

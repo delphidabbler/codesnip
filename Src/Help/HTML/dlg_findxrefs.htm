@@ -28,45 +28,86 @@
     </h1>
     <p>
       Use this dialogue box to find snippets that are referenced by the
-      currently selected snippet and / or those snippets reference that snippet.
-      The dialogue is displayed from the <em>Search | Find Cross Refs</em> menu
-      option.
+      currently selected snippet and / or those snippets that reference the
+      snippet. The dialogue is displayed from the <em>Search | Find Cross
+      Refs</em> menu option.
     </p>
     <p>
-      The search can be customised by checking or clearing the following check
+      The dialogue enables two kinds of cross-references to be found:
+    </p>
+    <ol>
+      <li>
+        Snippet dependencies, which are snippets that the selected snippet
+        depends upon in order to compile. Alternatively the search can find
+        snippets that depend on the selected one.
+      </li>
+      <li>
+        &quot;See also&quot; references, which are snippets that are related to
+        the selected snippet conceptually. Such snippets are not necessarily
+        needed to compile the selected snippet. Alternatively the search can
+        find snippets that refer to the selected one as a &quot;see also&quot;
+        snippet.
+      </li>
+    </ol>
+    <p>
+      The search is customised by checking or clearing the following check
       boxes:
     </p>
     <ul>
       <li>
-        <em>Search for required snippets</em>. Selecting this option causes
-        all snippets that are needed to compile the selected snippet to be
-        included in the search result. If the related <em>Search
-        recursively</em> box is checked the search continues through the found
-        snippets.
+        <p>
+          <em>Search for required snippets</em>
+        </p>
+        <p>
+          Selecting this option includes all snippets that the selected snippet
+          depends upon in the search result.
+        </p>
+        <p>
+          If the related <em>Search recursively</em> box is checked the search
+          is applied recursively to all the found snippets.
+        </p>
       </li>
       <li>
-        <em>Search for snippets that depend on this one</em>. Choose this option
-        to include in the search results all snippets that depend upon (i.e.
-        require) this one.
+        <p>
+          <em>Search for snippets that depend on this one</em>
+        </p>
+        <p>
+          Choose this option to include in the search results all snippets that
+          depend upon this one.
+        </p>
       </li>
       <li>
-        <em>Search for &quot;see also&quot; cross references</em>. This option
-        includes snippets referenced as &quot;see also&quot; to be included in
-        the search result. These snippets are not necessarily needed to compile
-        the selected snippet, but are related to it conceptually. Again,
-        checking the related <em>Search recursively</em> check box causes the
-        search to recurse through the found &quot;see also&quot; cross
-        references.
+        <p>
+          <em>Search for &quot;see also&quot; cross references</em>
+        </p>
+        <p>
+          This option includes all snippets referenced as &quot;see also&quot;
+          in the search result.
+        </p>
+        <p>
+          Checking the related <em>Search recursively</em> check box causes the
+          search to recurse through all the found snippets' &quot;see also&quot;
+          cross references.
+        </p>
       </li>
       <li>
-        <em>Search for snippets that cross-reference this one</em>. Choose this
-        option to include in the search results all snippets that
-        cross-reference this one.
+        <p>
+          <em>Search for snippets that cross-reference this one</em>
+        </p>
+        <p>
+          Choose this option to include all snippets that cross-reference this
+          one in the search results.
+        </p>
       </li>
       <li>
-        <em>Include &quot;xxxx&quot; in search</em> (where xxxx is the name of
-        the selected snippet). Checking this box simply includes the selected
-        snippet in the search results.
+        <p>
+          <em>Include &quot;xxxx&quot; in search</em> (where xxxx is the name of
+          the selected snippet).
+        </p>
+        <p>
+          Checking this box simply includes the selected snippet in the search
+          results.
+        </p>
       </li>
     </ul>
     <p>
@@ -74,10 +115,10 @@
       or <em>Search for &quot;see also&quot; cross references</em> options.
     </p>
     <p>
-      <strong>NOTE:</strong> Any cross references selected using this dialogue
-      box will replace any search results that were previously displayed. A
+      <strong>Note:</strong> Snippets selected by the use of this dialogue box
+      will replace any search results that were previously displayed. A
       message to this effect will be displayed in the dialogue box if it is
-      displayed when search results are being displayed.
+      opened while a previous search is active.
     </p>
   </body>
 </html>
