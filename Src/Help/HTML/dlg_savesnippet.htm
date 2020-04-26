@@ -65,21 +65,23 @@
     </p>
     <ul>
       <li>
-        A Pascal include file (.inc) - The code is written to a file with
-        extension *.inc that can be included in any Pascal source file.
+        A Pascal include file (.inc) &ndash; The code is written to a file with
+        extension .inc that can be included in any Pascal source file. The file
+        should be valid for inclusion in a Pascal unit using the
+        <code>$INCLUDE</code> (or <code>$I</code>) directive.
       </li>
       <li>
-        A plain text file (.txt) - This is the same as the Pascal include file
-        except that the extension is .txt rather than .inc.
+        A plain text file (.txt) &ndash; This is the same as the Pascal include
+        file except that the extension is .txt rather than .inc.
       </li>
       <li>
-        An HTML file (.html) - This option writes the source code out as a
-        valid XHTML document that uses CSS to format the code. The document can
-        be syntax highlighted if the <em>Use syntax highlighting</em>
-        check box is checked.
+        An HTML file (.html) &ndash; This option writes the source code out as a
+        valid XHTML document that uses embedded CSS to format the code. The
+        source code will be syntax highlighted if the <em>Use syntax
+        highlighting</em> check box is checked.
       </li>
       <li>
-        A rich text file (.rtf) - The source code is written out as an RTF
+        A rich text file (.rtf) &ndash; The source code is written out as an RTF
         document. Again syntax highlighting can be used if the <em>Use syntax
         highlighting</em> check box is checked.
       </li>
@@ -87,12 +89,39 @@
     <p>
       Snippet descriptions can be written as a Pascal comment to the output
       file. Use the <em>Comment style</em> drop down list to specify the style
-      of commenting to be used. Comments can be inhibited using by selecting the
-      <em>No comments</em> option from the list. If the <em>Truncate comments to
-      1st paragraph</em> check box is ticked then only the first paragraph of
-      the snippet's description is used. Clearing this check box means that all
-      of the description is used.
+      of commenting to be used. Such comments can be inhibited by selecting the
+      <em>No descriptive comments</em> option from the list. If the <em>Truncate
+      comments to 1st paragraph</em> check box is ticked then only the first
+      paragraph of the snippet's description is used. Clearing this check box
+      means that the full text of the description is used.
     </p>
+    <p>
+      The output file encoding can be be specified in the <em>File Encoding</em>
+      drop down list. Options vary depending on the file type. Some file types
+      support only a single encoding. The encodings are:
+    </p>
+    <ul>
+      <li>
+        <em>ANSI (Default)</em> &ndash; the system default ANSI encoding.
+        Available for both plain text and Pascal include files and as the only
+        option for rich text files.
+      </li>
+      <li>
+        <em>UTF-8</em> &ndash; UTF-8 encoding, with BOM<sup>&dagger;</sup>.
+        Available for both plain text and Pascal include files and as the only
+        option for XHTML files. If used for Pascal include files be warned that
+        the files will only compile with compilers that support Unicode source
+        files.
+      </li>
+      <li>
+        <em>Unicode (Little Endian)</em> &ndash; UTF-16 LE encoding, with
+        BOM<sup>&dagger;</sup>. Available for plain text files only.
+      </li>
+      <li>
+        <em>Unicode (Big Endian)</em> &ndash; UTF-16 BE encoding, with
+        BOM<sup>&dagger;</sup>. Available for plain text files only.
+      </li>
+    </ul>
     <p>
       The output can be previewed by clicking the <em>Preview</em> button. This
       displays the source code in a dialogue box, formatted according to your
@@ -102,6 +131,13 @@
     <p>
       Use the <em>Save</em> button to write the file to disk or press
       <em>Cancel</em> to abort.
+    </p>
+    <h3>
+      Footnote
+    </h3>
+    <p>
+      &dagger; BOM = Byte Order Mark or Preamble: a sequence of bytes at the
+      start of a text file that identifies its encoding.
     </p>
   </body>
 </html>
