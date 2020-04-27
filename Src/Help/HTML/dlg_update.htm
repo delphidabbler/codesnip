@@ -11,7 +11,7 @@
 <html>
   <head>
     <title>
-      Update From Web Dialogue Box
+      Install or Update DelphiDabbler Snippets Database Wizard
     </title>
     <meta http-equiv="Content-Type" content="text-html; charset=Windows-1252">
     <link rel="stylesheet" href="../css/codesnip.css" type="text/css">
@@ -24,57 +24,96 @@
       <param name="ALink Name" value="DBUpdateDlg">
     </object>
     <h1>
-      <a name="dlg_update"></a>Update From Web Dialogue Box
+      <a name="dlg_update"></a>Install or Update DelphiDabbler Snippets Database
+      Wizard
     </h1>
     <p>
-      This dialogue box is used to update the <em>CodeSnip</em> database from
-      the internet. It is displayed using the <em>Database | Update From
-      Web</em> menu option.
+      This wizard dialogue box is used to install or update <em>CodeSnip</em>'s
+      main snippets database. It is displayed using the <em>Database | Install
+      or Update DelphiDabbler Snippets Database</em> menu option.
     </p>
     <p>
-      The <em>Update from Web</em> button should be clicked to initiate the
-      update. <strong>Note:</strong> you must ensure you are connected to the
-      internet before clicking this button otherwise a &quot;Connection
-      Error&quot; message will be displayed.
+      The wizard navigates you through the installation process, with each page
+      appearing in a fixed sequence.
     </p>
     <p>
-      Once the <em>Update from Web</em> button has been clicked it will be
-      replaced by a progress report pane. The update will then begin.
-    </p>
-    <p>
-      <em>CodeSnip</em> first logs on to the web server and then determines if
-      your copy of the database is out of date. If so the latest version is
-      downloaded. A progress bar is displayed while the database is being
-      downloaded. A confirmatory message is displayed once the process is
-      complete.
-    </p>
-    <p>
-      <strong>Note:</strong> The database will be updated for all users, since
-      each user accesses the same copy of the database.
+      <strong class="warning">Warning:</strong> if you are using the standard
+      version of <em>CodeSnip</em> updating this database will affect all users
+      of this computer because each user shares the same copy of the database.
     </p>
     <h2>
-      Cancelling the update
+      Page 1: <em>Download the database</em>
     </h2>
     <p>
-      The <em>Close</em> button is replaced by a larger <em>Cancel Update</em>
-      button while the update is in progress. This button can be clicked at any
-      time to cancel the update. <em>CodeSnip</em> will restore the previous
-      database. <strong>Note:</strong> database downloads can't be
-      interupted.
+      Before the database can be installed it must first be downloaded from the
+      internet and stored in a folder on your local computer. This page explains
+      how.
+    </p>
+    <p>
+      Follow the instructions on how to download and unpack the database into a
+      folder then come back to the wizard and press the <em>Next</em> button to
+      go to the next page.
     </p>
     <h2>
-      Update errors
+      Page 2: <em>Select database download folder</em>
     </h2>
     <p>
-      If <em>CodeSnip</em> detects an error while updating it aborts the
-      update, restores the old database and displays a brief error message at
-      the top of the the dialogue box. More details of the error are displayed
-      in the progress report pane.
+      On this page you need to provide the full path to the folder where you
+      downloaded the DelphiDabbler Code Snippets Database. Enter the path in the
+      edit box. You can click the ellipsis button to the right of the edit box
+      to display a standard browse for folder dialogue box and choose the folder
+      from there. The chosen folder will be entered into the edit box for you.
     </p>
     <p>
-      If you see a &quot;Connection Error&quot; check your internet connection
-      and try again. If you receive web server or time out errors this may be
-      due to the server being down or busy so it is worth trying later.
+      Once you have entered the path click <em>Next</em>. The data in the folder
+      will then be checked and, if valid, the next page of the wizard will be
+      displayed. If the data is invalid an error message will be displayed and
+      the page will not change.
+    </p>
+    <h2>
+      Page 3: <em>Install the database</em>
+    </h2>
+    <p>
+      You are now ready to install the latest version of the database.
+    </p>
+    <p>
+      Simply click the <em>Load</em> button when you are ready to proceed.
+      <strong>Note:</strong> this is the last chance to change your mind &ndash;
+      you can't go back once the <em>Load</em> button has been pressed.
+    </p>
+    <p>
+      On pressing <em>Load</em> a progress bar will be displayed while the
+      database is installed.
+    </p>
+    <p>
+      Once the installation is complete the final page of the wizard will be
+      displayed.
+    </p>
+    <h2>
+      Page 4: <em>Database installed</em>
+    </h2>
+    <p>
+      This page confirms that the installation is complete.
+    </p>
+    <p>
+      If you were updating an older version of the database it will have been
+      overwritten.
+    </p>
+    <p>
+      Click the <em>Finish</em> button to close the wizard.
+    </p>
+    <h2>
+      Finishing up
+    </h2>
+    <p>
+      Once the wizard has closed <em>CodeSnip</em> will close all open tabs and
+      then reload the database with the changes made by the wizard. If you have
+      unsaved changes in your user database <em>CodeSnip</em> will offer to save
+      them before reloading the database.
+    </p>
+    <p>
+      Once the database has been reloaded a single tab will be opened that
+      confirms the database was updated.
     </p>
   </body>
 </html>
