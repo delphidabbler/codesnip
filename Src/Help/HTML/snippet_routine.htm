@@ -28,37 +28,38 @@
     </h1>
     <p>
       A routine snippet, defines exactly one Pascal procedure or function.
-      Methods are not permitted.
+      Methods are not permitted (see the <a href="snippet_class.htm">class &amp
+      advanced record</a> kind for how to deal with methods).
     </p>
     <p>
       Each routine snippet begins with either the <strong>function</strong> or
       <strong>procedure</strong> keyword followed by a valid Pascal routine
-      prototype (see below). No source code or comments may not preceed the
+      prototype (see below). No source code or comments may precede the
       <strong>function</strong> or <strong>procedure</strong> keywords. The
-      following directives may be included in the prototype.
+      following directives may be included in the prototype:
     </p>
     <ul class="unspaced">
       <li>
-        register
+        <strong>register</strong>
       </li>
       <li>
-        pascal
+        <strong>pascal</strong>
       </li>
       <li>
-        cdecl
+        <strong>cdecl</strong>
       </li>
       <li>
-        stdcall
+        <strong>stdcall</strong>
       </li>
       <li>
-        safecall
+        <strong>safecall</strong>
       </li>
       <li>
-        overload
+        <strong>overload</strong>
       </li>
     </ul>
     <p>
-      After the routine prototype there must be at least one space or newline
+      After the routine prototype there must be at least one space or a new line
       before the routine's implementation. Private functions, procedures, type
       definitions, variables and constants are permitted.
     </p>
@@ -80,10 +81,10 @@ end;</pre>
       <a href="snippet_type.htm">simple type</a> definitions,
       <a href="snippet_class.htm">class &amp; advanced record</a> definitions or
       <a href="snippet_constant.htm">constants</a>, providing they are defined
-      in Delphi units or elsewhere in the database. The snippet's units and
-      dependency references should indicate where to find referenced types,
-      constants and routines. Routine snippets may not reference
-      <a href="snippet_freeform.htm">freeform</a> or
+      in Delphi units or elsewhere in the database. The snippet's <em>units</em>
+      and <em>dependency</em> references should indicate where to find
+      referenced types, constants and routines. Routine snippets may not
+      reference <a href="snippet_freeform.htm">freeform</a> or
       <a href="snippet_unit.htm">unit</a> snippets.
     </p>
     <p>
@@ -97,9 +98,15 @@ end;</pre>
     <p>
       You may use overloaded routines by creating a separate routine snippet for
       each overloaded version of the routine. The <strong>overload</strong>
-      directive must be used. While the name of the routines used in the source
-      code must be the same for each overloaded routine, each snippet must be
-      given a unique name for use by the database.
+      directive must be used for each snippet.
+    </p>
+    <p>
+      While the name of the routines in source code must obviously be the same,
+      each snippet must be given a unique name for use by the database. For
+      example if there are two overloaded routines named <code>MyFunc</code> you
+      could use <em>MyFunc_A</em> and <em>MyFunc_B</em> as the snippet's name in
+      the database. The main DelphiDabbler Snippets Database has plenty of
+      examples.
     </p>
   </body>
 </html>

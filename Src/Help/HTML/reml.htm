@@ -25,10 +25,6 @@
       dl dd {
         margin-left: 24px;
       }
-      .code {
-        font-family: "Courier New";
-        color: purple;
-      }
       .hilite {
         background-color: #ff9;
       }
@@ -62,19 +58,19 @@
       Block level tags
     </h3>
     <dl>
-      <dt class="code">&lt;p&gt;...&lt/p&gt;</dt>
+      <dt><code class="reml">&lt;p&gt;...&lt/p&gt;</code></dt>
       <dd>
         Renders the enclosed markup as a simple paragraph.
       </dd>
-      <dt class="code">&lt;heading&gt;...&lt;/heading&gt;</dt>
+      <dt><code class="reml">&lt;heading&gt;...&lt;/heading&gt;</code></dt>
       <dd>
         Renders the enclosed markup as a heading.
       </dd>
     </dl>
     <p>
       The following rules apply to the use of
-      <span class="code">&lt;p&gt;</span> and
-      <span class="code">&lt;heading&gt;</span>
+      <code class="reml">&lt;p&gt;</code> and
+      <code class="reml">&lt;heading&gt;</code>
     </p>
     <ol>
       <li>
@@ -82,8 +78,8 @@
       </li>
       <li>
         The tags must be matched, e.g.
-        <span class="code">&lt;p&gt;</span> must have a matching
-        <span class="code">&lt;/p&gt;</span>.
+        <code class="reml">&lt;p&gt;</code> must have a matching
+        <code class="reml">&lt;/p&gt;</code>.
       </li>
       <li>
         All text should be embedded within block level tags, e.g. <span
@@ -99,11 +95,11 @@
     </p>
     <ol>
       <li class="extra-spacing">
-        <span class="code">&lt;p&gt;Hello World&lt;/p&gt;</span>
+        <code class="reml">&lt;p&gt;Hello World&lt;/p&gt;</code>
       </li>
       <li>
-        <span class="code">&lt;heading&gt;Hello&lt;/heading&gt;<br>
-        &lt;p&gt;Hello World&lt;/p&gt;</span>
+        <code class="reml">&lt;heading&gt;Hello&lt;/heading&gt;<br>
+        &lt;p&gt;Hello World&lt;/p&gt;</code>
       </li>
     </ol>
     <p>
@@ -111,27 +107,19 @@
       highlighted sections are in error, because they are not contained within
       block tags.
     </p>
-    <p class="indent code">
-      <span class="hilite">blah</span>
-      &lt;heading&gt;blah&lt;/heading&gt;
-      <span class="hilite">blah</span>
-      &lt;p&gt;blah&lt;/p&gt;
-      <span class="hilite">blah</span>
-    </p>
+    <pre class="reml indent"><span class="hilite">blah</span>&lt;heading&gt;blah&lt;/heading&gt;<span class="hilite">blah</span>&lt;p&gt;blah&lt;/p&gt;<span class="hilite">blah</span></pre>
     <p>
       However, <em>CodeSnip</em> is quite permissive and, in many cases,
       automatically adds
-      <span class="code">&lt;p&gt;</span>...<span class="code">&lt;/p&gt;</span>
+      <code class="reml">&lt;p&gt;</code>...<code class="reml">&lt;/p&gt;</code>
       tags for text that is not enclosed in block level tags. The above code is
       interpreted as:
     </p>
-    <p class="indent code">
-      &lt;p&gt;<span class="hilite">blah</span> &lt;/p&gt;<br>
-      &lt;heading&gt;blah&lt;/heading&gt;<br>
-      &lt;p&gt;<span class="hilite">blah</span> &lt;/p&gt;<br>
-      &lt;p&gt;blah&lt;/p&gt;<br>
-      &lt;p&gt;<span class="hilite">blah</span>&lt;/p&gt;
-    </p>
+    <pre class="reml indent">&lt;p&gt;<span class="hilite">blah</span> &lt;/p&gt;
+&lt;heading&gt;blah&lt;/heading&gt;
+&lt;p&gt;<span class="hilite">blah</span> &lt;/p&gt;
+&lt;p&gt;blah&lt;/p&gt;
+&lt;p&gt;<span class="hilite">blah</span>&lt;/p&gt;</pre>
     <h3>
       Inline tags
     </h3>
@@ -139,40 +127,40 @@
       Here are the available inline tags:
     </p>
     <dl>
-      <dt class="code">&lt;strong&gt;...&lt/strong&gt;</dt>
+      <dt><code class="reml">&lt;strong&gt;...&lt/strong&gt;</code></dt>
       <dd>
         Renders the enclosed markup with strong emphasis.<br>
-        <em>Example:</em> <span class="code">&lt;p&gt;Make stuff
-        &lt;strong&gt;stand out&lt;/strong&gt;.&lt;/p&gt;</span>
+        <em>Example:</em> <code class="reml">&lt;p&gt;Make stuff
+        &lt;strong&gt;stand out&lt;/strong&gt;.&lt;/p&gt;</code>
       </dd>
-      <dt class="code">&lt;em&gt;...&lt;/em&gt;</dt>
+      <dt><code class="reml">&lt;em&gt;...&lt;/em&gt;</code></dt>
       <dd>
         Emphasises the enclosed markup.<br>
-        <em>Example:</em> <span class="code">&lt;p&gt;Draw
-        &lt;em&gt;attention&lt;/em&gt; to something.&lt;/p&gt;</span>
+        <em>Example:</em> <code class="reml">&lt;p&gt;Draw
+        &lt;em&gt;attention&lt;/em&gt; to something.&lt;/p&gt;</code>
       </dd>
-      <dt class="code">&lt;var&gt;...&lt;/var&gt;</dt>
+      <dt><code class="reml">&lt;var&gt;...&lt;/var&gt;</code></dt>
       <dd>
         Used to indicate the enclosed markup is a variable.<br>
-        <em>Example:</em> <span class="code">&lt;p&gt;Refer to a function
-        &lt;var&gt;parameter&lt;/var&gt;.&lt;/p&gt;</span>
+        <em>Example:</em> <code class="reml">&lt;p&gt;Refer to a function
+        &lt;var&gt;parameter&lt;/var&gt;.&lt;/p&gt;</code>
       </dd>
-      <dt class="code">&lt;warning&gt;...&lt;/warning&gt;</dt>
+      <dt><code class="reml">&lt;warning&gt;...&lt;/warning&gt;</code></dt>
       <dd>
         Used for warning text.<br>
         <em>Example:</em>
-        <span class="code">&lt;p&gt;&lt;warning&gt;Warning:&lt;/warning&gt;
-        Don't do it!&lt;/p&gt;</span>
+        <code class="reml">&lt;p&gt;&lt;warning&gt;Warning:&lt;/warning&gt;
+        Don't do it!&lt;/p&gt;</code>
       </dd>
-      <dt class="code">&lt;mono&gt;...&lt;/mono&gt;</dt>
+      <dt><code class="reml">&lt;mono&gt;...&lt;/mono&gt;</code></dt>
       <dd>
         Renders markup in a mono-spaced font.<br>
-        <em>Example:</em> <span class="code">&lt;p&gt;Use the:
-        &lt;mono&gt;Windows&lt;/mono&gt; unit.&lt;/p&gt;</span>
+        <em>Example:</em> <code class="reml">&lt;p&gt;Use the:
+        &lt;mono&gt;Windows&lt;/mono&gt; unit.&lt;/p&gt;</code>
       </dd>
-      <dt class="code">&lt;a href=&quot;url&quot;&gt;...&lt;/a&gt;</dt>
+      <dt><code class="reml">&lt;a href=&quot;url&quot;&gt;...&lt;/a&gt;</code></dt>
       <dd>
-        Creates a hyperlink. The <span class="code">href</span> attribute must
+        Creates a hyperlink. The <code class="reml">href</code> attribute must
         specify the required URL, which must use one of the <em>http:</em>,
         <em>https:</em> or <em>file:</em> protocols; others are not permitted.
         If you use the <em>file:</em> protocol it must reference a valid local
@@ -180,9 +168,9 @@
         containing a hyperlink that uses the <em>file:</em> protocol it will
         only work on the recipient's system if the specified file exists in the
         same location.<br>
-        <em>Example:</em> <span class="code">&lt;p&gt;&lt;a
+        <em>Example:</em> <code class="reml">&lt;p&gt;&lt;a
         href=&quot;http://example.com&quot;&gt;Visit
-        example.com&lt;/a&gt;&lt/p&gt;.</span>.
+        example.com&lt;/a&gt;&lt/p&gt;.</code>.
       </dd>
     </dl>
     <h3 id="entities">
@@ -191,9 +179,9 @@
     <p>
       The &quot;&lt;&quot; and &quot;&amp;&quot; characters are special within
       the markup and must not be used directly, even when you are just entering
-      plain text. You must use the <span class="code">&amp;lt;</span> character
+      plain text. You must use the <code class="reml">&amp;lt;</code> character
       entity in place of &quot;&lt;&quot; and
-      <span class="code">&amp;amp;</span> instead of &quot;&amp;&quot;.
+      <code class="reml">&amp;amp;</code> instead of &quot;&amp;&quot;.
     </p>
     <p>
       A few other character entities are supported for convenience. Here is the
@@ -201,32 +189,33 @@
     </p>
     <ul class="unspaced">
       <li>
-        <code>&amp;lt;</code> for <code>&lt;</code>
+        <code class="reml">&amp;lt;</code> for <code class="reml">&lt;</code>
       </li>
       <li>
-        <code>&amp;gt;</code> for <code>&gt;</code>
+        <code class="reml">&amp;gt;</code> for <code class="reml">&gt;</code>
       </li>
       <li>
-        <code>&amp;quot;</code> for <code>&quot;</code>
+        <code class="reml">&amp;quot;</code> for
+        <code class="reml">&quot;</code>
       </li>
       <li>
-        <code>&amp;amp;</code> for <code>&amp;</code>
+        <code class="reml">&amp;amp;</code> for <code class="reml">&amp;</code>
       </li>
       <li>
-        <code>&amp;copy;</code> for <code>&copy;</code>
+        <code class="reml">&amp;copy;</code> for
+        <code class="reml">&copy;</code>
       </li>
     </ul>
     <p>
-      By way of an example, if you want to display
-      <span class="code">x &lt; y</span>, use:
+      By way of an example, if you want to display <code>x &lt; y</code>, use:
     </p>
     <p class="indent">
-      <code>x &amp;lt; y</code>
+      <code class="reml">x &amp;lt; y</code>
     </p>
     <p>
       No other symbolic character entities are supported.
       However, numeric character entities can be used to insert other characters
-      by specifying its code. For example <span class="code">&amp;#64;</span> is
+      by specifying its code. For example <code class="reml">&amp;#64;</code> is
       equivalent to &quot;&#64;&quot;.
     </p>
     <p>

@@ -64,6 +64,10 @@
       <param name="Local" value="HTML\task_addsnippets.htm">
       </OBJECT>
     <LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="backup and restore the user database">
+      <param name="Local" value="HTML\task_backup.htm">
+      </OBJECT>
+    <LI> <OBJECT type="text/sitemap">
       <param name="Name" value="copy code snippets">
       <param name="Local" value="HTML\task_copysnippet.htm">
       </OBJECT>
@@ -375,10 +379,6 @@
   <LI> <OBJECT type="text/sitemap">
     <param name="Name" value="update from web dialogue">
     <param name="Local" value="HTML\dlg_update.htm">
-    </OBJECT>
-  <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="updates preferences">
-    <param name="Local" value="HTML\dlg_prefs_updates.htm">
     </OBJECT>
   <LI> <OBJECT type="text/sitemap">
     <param name="Name" value="user defined highlighters dialogue">

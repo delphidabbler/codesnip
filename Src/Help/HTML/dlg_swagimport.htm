@@ -27,78 +27,109 @@
       SWAG Import Wizard
     </h1>
     <p>
-      This wizard is used to enable you import snippets from the
+      This wizard is used to enable you to import snippets from the
       <a href="about_swag.htm">SWAG Database</a> into your code snippets
       database. The wizard is accessed from the <em>Snippets | Import
       Snippets From SWAG</em> menu option.
     </p>
     <h2>
-      First page
+      Page 1: <em>Import snippets from SWAG</em>
     </h2>
     <p>
-      This page simply gives an overview of how to use the wizard. Click the
-      <em>Next</em> button to display the <em>Select required snippets</em>
-      page.
+      This page gives an overview of how to use the wizard.
+    </p>
+    <p>
+      The wizard requires that you have a suitable copy of SWAG stored on your
+      computer. If you haven't yet got it then you need to download it before
+      continuing. The instructions shown in the box on this page of the wizard
+      explain how to do this.
+    </p>
+    <p>
+      When you are ready, click the <em>Next</em> button.
     </p>
     <h2>
-      &quot;Select required snippets&quot; page
+      Page 2: <em>Select SWAG database download folder</em>
     </h2>
     <p>
-      When this page is first displayed it downloads information about the
-      available categories from the SWAG database. A list of categories is then
-      displayed in the left hand, <em>SWAG categories</em>, list box.
+      On this page you need to provide the full path to the folder where you
+      downloaded the SWAG database. Enter the path in the edit box. You can
+      click the ellipsis button to the right of the edit box to display a
+      standard browse for folder dialogue box and choose the folder from there.
+      The chosen folder will be entered into the edit box for you.
+    </p>
+    <p>
+      Once you have entered the path click <em>Next</em>. The data in the folder
+      will then be read and, if valid, the next page of the wizard will be
+      displayed. A progress bar may be displayed if the process of reading the
+      data takes some time. If the data is invalid an error message will be
+      displayed and the page will not change.
+    </p>
+    <h2>
+      Page 3: <em>Select required snippets</em>
+    </h2>
+    <p>
+      When this page is first displayed it displays all the categories of
+      snippets available in the SWAG database in the <em>SWAG categories</em>
+      list box.
     </p>
     <p>
       Choose a category in the list and click the <em>Show Snippets In
       Category</em> button to display a list of its snippets in the right
-      hand list box. The first time you choose a category the wizard will
-      download the snippet list from the SWAG database. Note that
-      double-clicking a category has the same effect as clicking the <em>Show
-      Snippets In Category</em> button.
+      hand list box. Alternatively just double-click the category name. The
+      first time you choose a category the wizard will read the list of snippets
+      from the database and a progress bar may be displayed while this is done.
     </p>
     <p>
       Select any snippets you want to import by ticking the check box next to
       the snippet's name. If you want to preview the snippet before deciding
-      whether to import it highlight the snippet and click the <em>Preview
-      Selected Snippet</em> button. The snippet will then be downloaded (if
-      necessary) and displayed in a dialogue box. Note that double-clicking a
-      snippet has the same effect as clicking the <em>Preview Selected
-      Snippet</em> button.
+      whether to import it, highlight the snippet and click the <em>Preview
+      Selected Snippet</em> button. Alternatively just double click the snippet
+      name. The snippet will then be read from the database (if necessary) and
+      displayed in a dialogue box.
     </p>
     <p>
       Repeat this process for further categories if you wish. When you are
       ready to import your chosen snippets click the <em>Next</em> button to
-      display the <em>Ready to import</em> page.
+      display the next page. Note that you must select at least one snippet in
+      order to move on.
+    </p>
+    <p>
+      <strong class="warning">Warning:</strong> Do not select too many snippets
+      to be imported at one time because the import process is not very
+      efficient and can take a long time.
     </p>
     <h2>
-      &quot;Ready to import&quot; page
+      Page 4: <em>Ready to import</em>
     </h2>
     <p>
       This page lists all the snippets you have selected for import along with
       the unique ID (i.e. snippet name) that will be assigned to it after
-      import. Note that snippets may be downloaded from the SWAG database when
-      the page is displayed.
+      import. Note that some snippets may need to be retrieved from the SWAG
+      database when the page is displayed and a progress bar may be displayed
+      while this happens.
     </p>
     <p>
       You should review your selection. If you want to make any changes use the
-      <em>Back</em> button to go back <em>Select required snippets</em> page.
+      <em>Back</em> button to go back to the previous page and de-select any
+      unwanted snippets or select any snippets you may have missed.
     </p>
     <p>
-      When you are ready to import click the <em>Import</em> button. Once
-      <em>Import</em> has been clicked the wizard will perform the import. A
-      dialogue box will be displayed while the import proceeds. When the import
-      has finished the <em>Import complete</em> page.
+      When you are ready to proceed, click the <em>Import</em> button. Once
+      <em>Import</em> has been clicked the wizard will perform the import
+      &ndash; there is no going back. A dialogue box will be displayed while the
+      import proceeds. When the import has finished the final page of the wizard
+      will be displayed.
     </p>
     <h2>
-      Import complete
+      Page 5: <em>Import complete</em>
     </h2>
     <p>
       This page simply confirms the import has completed. You should note that
-      the snippets will have been imported into a special category named
-      &quot;SWAG Imports&quot; by default.
+      all the snippets will have been imported into the same special category,
+      the name of which will be displayed.
     </p>
     <p>
-      Click the <em>Finish</em> to close the wizard.
+      Click the <em>Finish</em> button to close the wizard.
     </p>
     <p>
       The imported snippets are fully editable like any other user defined
@@ -106,9 +137,9 @@
     </p>
     <p>
       <strong>Note:</strong> <em>CodeSnip</em> does not track snippets imported
-      from SWAG, so if you import same snippet more than once it will be
+      from SWAG, so if you import the same snippet more than once it will be
       duplicated in your local database &ndash; it will not overwrite the
-      original.
+      original. You will not be warned about such duplications.
     </p>
   </body>
 </html>

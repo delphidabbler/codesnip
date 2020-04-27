@@ -140,6 +140,10 @@
       <param name="Name" value="Export and Import Snippets">
       <param name="Local" value="HTML\task_export.htm">
       </OBJECT>
+    <LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="Backup and Restore the User Database">
+      <param name="Local" value="HTML\task_backup.htm">
+      </OBJECT>
   </UL>
   <LI> <OBJECT type="text/sitemap">
     <param name="Name" value="About the Kinds of Snippets">

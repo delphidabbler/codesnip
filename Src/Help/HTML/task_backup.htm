@@ -1,0 +1,84 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<!--
+ * This Source Code Form is subject to the terms of the Mozilla Public License,
+ * v. 2.0. If a copy of the MPL was not distributed with this file, You can
+ * obtain one at http://mozilla.org/MPL/2.0/
+ *
+ * Copyright (C) 2020, Peter Johnson (gravatar.com/delphidabbler).
+ *
+ * Help topic describing how to backup and restore the user database
+-->
+<html>
+  <head>
+    <meta
+     http-equiv="Content-Type"
+     content="text-html; charset=Windows-1252">
+    <title>
+      Backup and Restore User Database
+    </title>
+    <link
+     rel="stylesheet"
+     href="../css/codesnip.css"
+     type="text/css">
+  </head>
+  <body>
+    <object
+     type="application/x-oleobject"
+     classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+      <param
+       name="ALink Name"
+       value="TaskBackupRestore">
+    </object>
+    <h1>
+      Backup and Restore the User Database
+    </h1>
+    <p>
+      To protect against unexpected errors like hard disk failure it is wise to
+      periodically backup your user database. <em>CodeSnip</em> has a tool to
+      help with this: it can write your complete user database to a single file
+      that you can archive safely. <em>CodeSnip</em> can recreate the user
+      database from such backup files if necessary.
+    </p>
+    <p class="bordered">
+      Note that backups <strong>do not</strong> include the main DelphiDabbler
+      Snippets Database. This is because you can just download a fresh copy of
+      it from the internet if you need to replace it. Use the <em>Database |
+      Install or Update DelphiDabbler Snippets Database</em> menu option to do
+      that.
+    </p>
+    <h2>
+      How to create a backup
+    </h2>
+    <p>
+      To perform the backup just select the <em>Database | Backup User
+      Database</em> menu option. This displays a
+      <a href="dlg_backup.htm">file dialogue box</a> where you specify a file to
+      use for the backup. It is up to you how to name the file. Including the
+      date of the backup may be a good idea.
+    </p>
+    <p>
+      You can save the file to a USB drive or portable hard drive or put it
+      something like a Dropbox or Google Drive folder.
+    </p>
+    <h2>
+      How to restore a backup
+    </h2>
+    <p>
+      Should the worst happen and you loose your user defined database you can
+      recreate it from your latest backup.
+    </p>
+    <p>
+      To do this use the <em>Database | Restore Backup</em> menu option. This
+      displays a <a href="dlg_restore.htm">file dialogue box</a> where you can
+      navigate to your chosen backup file. Select the file and click <em>OK</em>
+      to restore the backup.
+    </p>
+    <p>
+      If the backup file is valid it will replace any existing user database and
+      then the whole database will be reloaded. All existing tabs in the user
+      interface will be closed. When the database has finished reloading a
+      new tab will open with a message informing that the database has been
+      updated.
+    </p>
+  </body>
+</html>

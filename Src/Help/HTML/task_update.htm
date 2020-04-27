@@ -12,52 +12,85 @@
   <head>
     <meta http-equiv="Content-Type" content="text-html; charset=Windows-1252">
     <title>
-      Update Database
+      Install or Update the DelphiDabbler Code Snippets Database
     </title>
     <link rel="stylesheet" href="../css/codesnip.css" type="text/css">
   </head>
   <body>
     <h1>
-      Update Database
+      Install or Update the DelphiDabbler Code Snippets Database
     </h1>
     <p>
-      Updates to the code snippets database are made available from time to time
-      on the web. You can download the latest version of the database easily by
-      connecting to the internet then clicking the <img
-        src="../Images/Download.png"
-        class="glyph"
-        alt="Update Database button"
-      > <em>Update Database from Web</em> toolbar button or by choosing the
-      <em>Database | Update From Web</em> menu option.
+      You can install the DelphiDabbler Code Snippets Database into
+      <em>CodeSnip</em> as follows.
     </p>
+    <ol>
+      <li>
+        Download the latest release of the database from the
+        <code>delphidabbler/code-snippets</code> project on GitHub. You can find
+        the latest release at
+        <a
+          href="https://github.com/delphidabbler/code-snippets/releases"
+          class="weblink"
+        >https://github.com/delphidabbler/code-snippets/releases</a>.
+      </li>
+      <li>
+        Unpack the downloaded zip file into a <strong>new or empty</strong>
+        folder on your computer. The folder <strong>must not</strong> be a sub
+        folder of <em>CodeSnip</em>'s application or user database directories.
+      </li>
+      <li>
+        Display the <a
+         href="dlg_update.htm"
+        >Install or Update DelphiDabbler Snippets Database</a> wizard from the
+        <em>Database | Install or Update DelphiDabbler Snippets
+        Database</em> menu option.
+      </li>
+      <li>
+        Skip the first page of the wizard by clicking <em>Next</em>.
+      </li>
+      <li>
+        On the <em>Select database download folder</em> page of the wizard enter
+        the full path of the folder where you unpacked the downloaded zip file.
+        Click <em>Next</em>.
+      </li>
+      <li>
+        The <em>Install the database</em> page will now be displayed. Click
+        <em>Load</em> to load the database.
+      </li>
+      <li>
+        Once the database has been copied the <em>Database installed</em> page
+        will be displayed and you can close the wizard using the <em>Finish</em>
+        button.
+      </li>
+      <li>
+        The database is now installed. You can now delete both the downloaded
+        zip file and the folder where you unpacked it.
+      </li>
+    </ol>
     <p>
-      The <a
-        href="dlg_update.htm"
-      >Update From Web</a> dialogue box will be displayed. Make sure you are
-      connected to the internet then click the <em>Update from Web</em> button
-      to begin the update.
+      You can periodically check the <code>delphidabbler/code-snippets</code>
+      GitHub account to see if any new releases have been made. To update to the
+      latest release simply repeat the process above.
     </p>
+    <h2>
+      Notes
+    </h2>
     <p>
-      By default <em>CodeSnip</em> checks periodically to find if any database
-      updates are available. It displays a pop-up notification in the main
-      window if an update is available. The notification includes a button that
-      displays the <a
-        href="dlg_update.htm"
-      >Update From Web</a> dialogue box mentioned above. You can switch this
-      feature off, or change the frequency with which checks are made, by using
-      the <a
-        href="dlg_prefs_updates.htm"
-      >Updates</a> tab of the <a
-        href="dlg_preferences.htm"
-      >Preferences</a> dialogue box.
-    </p>
-    <p>
-      Database updates apply to all users. This is because only one copy of the
-      database exists on the computer.
+      A single copy of DelphiDabbler Code Snippets Database is shared by all
+      users of the same computer.
     </p>
     <p>
       Updating the database has no effect on any user-defined snippets that have
       been created &ndash; they are not overwritten by the update process.
+      However, it does no harm to take a backup of your snippets before
+      performing the update! Use the <em>Database | Backup User Database</em>
+      menu option to do this.
+    </p>
+    <p>
+      You cannot edit snippets from the Code Snippets Database. You can identify
+      them easily because, by default, the snippet name is displayed in a
+      different colour to user-defined snippets.
     </p>
   </body>
 </html>
