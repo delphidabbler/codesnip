@@ -510,7 +510,9 @@ begin
     Exit;
   fCurrentCatID := fSortedCategories[CatIdx].ID;
   lblSelectSnippets.Caption := Format(
-    sSnippetListCaption, [fSortedCategories[CatIdx].Title]
+    sSnippetListCaption,
+    // double up ampersands to avoid being treated as accelerator characters
+    [StrReplace(fSortedCategories[CatIdx].Title, '&', '&&')]
   );
   Snippets := TList<TSWAGSnippet>.Create;
   try
