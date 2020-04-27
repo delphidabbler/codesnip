@@ -166,21 +166,8 @@ inherited MainForm: TMainForm
       ImageIndex = 12
       Style = tbsSeparator
     end
-    object tbUpdateDbase: TToolButton
-      Left = 423
-      Top = 0
-      Action = actUpdateDbase
-    end
-    object tbSpacer4: TToolButton
-      Left = 446
-      Top = 0
-      Width = 8
-      Caption = 'tbSpacer4'
-      ImageIndex = 12
-      Style = tbsSeparator
-    end
     object tbHelpContents: TToolButton
-      Left = 454
+      Left = 423
       Top = 0
       Action = actHelpContents
     end
