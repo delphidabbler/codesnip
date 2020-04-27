@@ -64,6 +64,10 @@
       <param name="Local" value="HTML\task_addsnippets.htm">
       </OBJECT>
     <LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="backup and restore the user database">
+      <param name="Local" value="HTML\task_backup.htm">
+      </OBJECT>
+    <LI> <OBJECT type="text/sitemap">
       <param name="Name" value="copy code snippets">
       <param name="Local" value="HTML\task_copysnippet.htm">
       </OBJECT>
