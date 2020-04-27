@@ -786,7 +786,7 @@ inherited MainForm: TMainForm
     end
     object actDuplicateSnippet: TAction
       Category = 'Snippets'
-      Caption = 'Duplicate Snippet'
+      Caption = 'Duplicate Snippet...'
       Hint = 
         'Duplicate snippet|Duplicate the selected snippet and add it to t' +
         'he user-defined database'
