@@ -16,7 +16,7 @@ inherited DBUpdateDlg: TDBUpdateDlg
     end
     inherited pcWizard: TPageControl
       Width = 409
-      ActivePage = tsFinish
+      ActivePage = tsFolder
       ExplicitWidth = 409
       object tsIntro: TTabSheet
         Caption = 'tsIntro'
@@ -63,9 +63,9 @@ inherited DBUpdateDlg: TDBUpdateDlg
         object lblFolderPageInfo: TLabel
           Left = 0
           Top = 72
-          Width = 246
+          Width = 220
           Height = 13
-          Caption = 'Click the Next button to update the local database.'
+          Caption = 'Click the Next button when ready to proceed.'
         end
         object edPath: TEdit
           Left = 0
