@@ -64,19 +64,12 @@
 
       <div id="main-db" class="box">
         <div class="caption">
-          Code Snippets database
+          DelphiDabbler Code Snippets database
         </div>
         <div style="<%HaveMainDB%>">
           <div class="content">
-            There are <em><%MainDBCount%></em> snippets in the Code Snippets
-            database.
-          </div>
-          <div class="content">
-            <a
-              href="#"
-              class="command-link"
-              onclick="updateDbase();return false;"
-            >Check for updates</a>
+            There are <em><%MainDBCount%></em> snippets in the DelphiDabbler 
+            Code Snippets database.
           </div>
         </div>
         <div style="<%NoMainDB%>">
@@ -86,13 +79,17 @@
               class="external-link"
             >DelphiDabbler Code Snippets Database</a> has not been
             installed.</em>
+            <a
+              href="help:TaskUpdateCSDB"
+              class="help-link"
+            >Learn more</a>
           </div>
           <div class="content">
             <a
               href="#"
               class="command-link"
               onclick="updateDbase();return false;"
-            >Download it now</a>
+            >Install it now</a>
           </div>
         </div>
 
@@ -204,5 +201,5 @@
     </div>
 
   </body>
-  
+
 </html>
