@@ -391,10 +391,10 @@ type
   end;
 
   ///  <summary>Class that is present to represent unknown database meta file
-  ///  formats.</summary>
+  ///  formats. Also used when database is not present.</summary>
   ///  <remarks>Accesses no files and returns null results for all methods
   ///  except IsVersionSupported.</remarks>
-  TUnknownMetaFiles = class sealed(TDBMetaFiles)
+  TUnknownOrMissingMetaFiles = class sealed(TDBMetaFiles)
   public
     ///  <summary>Returns the empty string.</summary>
     ///  <remarks>The file format is unknown, so the version file cannot be read
@@ -852,37 +852,37 @@ begin
   Result := StrTrim(ReadFileText(cVersionFile));
 end;
 
-{ TUnknownMetaFiles }
+{ TUnknownOrMissingMetaFiles }
 
-function TUnknownMetaFiles.AreAllFilesPresent: Boolean;
+function TUnknownOrMissingMetaFiles.AreAllFilesPresent: Boolean;
 resourcestring
   sNotSupportedError = 'Calling %s.AreAllFilesPresent is not supported for an '
-    + 'unrecognised database format';
+    + 'unrecognised database format or missing database';
 begin
   raise ENotSupportedException.CreateFmt(sNotSupportedError, [ClassName]);
 end;
 
-function TUnknownMetaFiles.Contributors: TStringDynArray;
+function TUnknownOrMissingMetaFiles.Contributors: TStringDynArray;
 begin
   SetLength(Result, 0);
 end;
 
-function TUnknownMetaFiles.LicenseInfo: TStringDynArray;
+function TUnknownOrMissingMetaFiles.LicenseInfo: TStringDynArray;
 begin
   SetLength(Result, 0);
 end;
 
-function TUnknownMetaFiles.LicenseText: string;
+function TUnknownOrMissingMetaFiles.LicenseText: string;
 begin
   Result := '';
 end;
 
-function TUnknownMetaFiles.Testers: TStringDynArray;
+function TUnknownOrMissingMetaFiles.Testers: TStringDynArray;
 begin
   SetLength(Result, 0);
 end;
 
-function TUnknownMetaFiles.Version: string;
+function TUnknownOrMissingMetaFiles.Version: string;
 begin
   Result := '';
 end;
@@ -891,8 +891,6 @@ end;
 
 class function TDBMetaFilesFactory.GetInstance(const DBDir: string):
   TDBMetaFiles;
-resourcestring
-  sBadDirError = 'Database directory "%s" does not exist';
 var
   VersionFile: string;
   VersionStr: string;
@@ -900,7 +898,8 @@ var
   DBPath: string;
 begin
   if not TDirectory.Exists(ExcludeTrailingPathDelimiter(DBDir)) then
-    raise EDBMetaData.CreateFmt(sBadDirError, [DBDir]);
+    // Database is not installed
+    Exit(TUnknownOrMissingMetaFiles.Create(DBDir));
 
   DBPath := IncludeTrailingPathDelimiter(DBDir);
 
@@ -917,7 +916,7 @@ begin
   begin
     VersionStr := TFileIO.ReadAllText(VersionFile, TEncoding.UTF8, True);
     if not TVersionNumber.TryStrToVersionNumber(VersionStr, Version) then
-      Result := TUnknownMetaFiles.Create(DBDir)
+      Result := TUnknownOrMissingMetaFiles.Create(DBDir)
     else if Version.V1 = 2 then
       Result := TV2DBMetaFiles.Create(DBDir)
     else
@@ -929,7 +928,7 @@ begin
       and TFile.Exists(DBPath + TDBMetaFileNames.TestersV1, False) then
       Result := TV1DBMetaFiles.Create(DBDir)
     else
-      Result := TUnknownMetaFiles.Create(DBDir);
+      Result := TUnknownOrMissingMetaFiles.Create(DBDir);
   end;
 end;
 
