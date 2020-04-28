@@ -19,7 +19,7 @@ inherited SWAGImportDlg: TSWAGImportDlg
     inherited pcWizard: TPageControl
       Width = 671
       Height = 456
-      ActivePage = tsIntro
+      ActivePage = tsUpdate
       ExplicitWidth = 671
       ExplicitHeight = 456
       object tsIntro: TTabSheet
@@ -33,10 +33,10 @@ inherited SWAGImportDlg: TSWAGImportDlg
           Align = alTop
           TabOrder = 0
           TabStop = True
-          ExplicitLeft = 8
-          ExplicitTop = 8
+          ExplicitWidth = 663
           inherited pnlBrowser: TPanel
             Width = 663
+            ExplicitWidth = 663
             inherited wbBrowser: TWebBrowser
               Width = 663
               ExplicitWidth = 320
@@ -178,10 +178,10 @@ inherited SWAGImportDlg: TSWAGImportDlg
           AutoSize = False
           Caption = 
             'You have chosen to import the following SWAG snippets. They will' +
-            ' be imported with the given Display Names and Unique IDs. You ca' +
-            'n change these if you wish using the Snippets Editor. To make ch' +
-            'anges go back to the previous page. When you are ready to import' +
-            ' the snippets click "Import". This step can'#39't be undone.'
+            ' be imported with the given Display Names and Snippet IDs. You c' +
+            'an change these if you wish using the Snippets Editor. To make c' +
+            'hanges go back to the previous page. When you are ready to impor' +
+            't the snippets click "Import". This step can'#39't be undone.'
           WordWrap = True
         end
         object lvImports: TListView

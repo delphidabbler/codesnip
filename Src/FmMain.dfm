@@ -166,21 +166,8 @@ inherited MainForm: TMainForm
       ImageIndex = 12
       Style = tbsSeparator
     end
-    object tbUpdateDbase: TToolButton
-      Left = 423
-      Top = 0
-      Action = actUpdateDbase
-    end
-    object tbSpacer4: TToolButton
-      Left = 446
-      Top = 0
-      Width = 8
-      Caption = 'tbSpacer4'
-      ImageIndex = 12
-      Style = tbsSeparator
-    end
     object tbHelpContents: TToolButton
-      Left = 454
+      Left = 423
       Top = 0
       Action = actHelpContents
     end
@@ -323,7 +310,7 @@ inherited MainForm: TMainForm
       Caption = 'Save Annotated Source...'
       Hint = 
         'Save annotated source code|Save the annotated source code of the' +
-        ' selected snippet or category to a file'
+        ' selected routine or category to a file'
       ImageIndex = 18
       ShortCut = 24654
       OnExecute = actSaveSnippetExecute
@@ -354,8 +341,8 @@ inherited MainForm: TMainForm
       Category = 'File'
       Caption = 'Save Unit...'
       Hint = 
-        'Save unit|Generate and save a Pascal unit containing the snippet' +
-        's in the current selection'
+        'Save unit|Generate and save a Pascal unit containing valid snipp' +
+        'ets in the current selection'
       ImageIndex = 14
       ShortCut = 16469
       OnExecute = actSaveUnitExecute
@@ -450,7 +437,7 @@ inherited MainForm: TMainForm
       Caption = 'Copy Annotated Source'
       Hint = 
         'Copy annotated source code|Copy the annotated source code of the' +
-        ' selected snippet or category to the clipboard'
+        ' selected routine or category to the clipboard'
       ShortCut = 16462
       OnExecute = actCopySnippetExecute
       OnUpdate = actCopySnippetUpdate
@@ -495,7 +482,7 @@ inherited MainForm: TMainForm
     object actHelpQuickStart: TAction
       Category = 'Help'
       Caption = 'QuickStart Guide'
-      Hint = 'QuickStart guide|Display the QuickStart help page'
+      Hint = 'QuickStart guide|Display the QuickStart help topic'
       OnExecute = actHelpQuickStartExecute
     end
     object actCompilers: TAction
@@ -531,7 +518,7 @@ inherited MainForm: TMainForm
     object actLicense: TAction
       Category = 'Help'
       Caption = 'License'
-      Hint = 'View license|View the end user license agreement'
+      Hint = 'View license|View a summary of the end user license agreement'
       ImageIndex = 35
       OnExecute = actLicenseExecute
     end
@@ -695,7 +682,7 @@ inherited MainForm: TMainForm
       Caption = 'Dependencies...'
       Hint = 
         'View dependencies|Display the names of snippets that depend on, ' +
-        'or are required, by the selected snippet'
+        'or are required by, the selected snippet'
       ImageIndex = 31
       ShortCut = 16452
       OnExecute = actViewDependenciesExecute
@@ -794,12 +781,12 @@ inherited MainForm: TMainForm
       Caption = 'FAQs'
       Hint = 
         'FAQs|Display CodeSnip'#39's online Frequently Asked Questions in the' +
-        ' default browser'
+        ' default web browser'
       ImageIndex = 6
     end
     object actDuplicateSnippet: TAction
       Category = 'Snippets'
-      Caption = 'Duplicate Snippet'
+      Caption = 'Duplicate Snippet...'
       Hint = 
         'Duplicate snippet|Duplicate the selected snippet and add it to t' +
         'he user-defined database'
@@ -812,8 +799,8 @@ inherited MainForm: TMainForm
       Category = 'File'
       Caption = 'Save Selection...'
       Hint = 
-        'Save current selection|Save information about the current snippe' +
-        't selection to a file'
+        'Save current selection|Save information about the currently sele' +
+        'cted snippets to a file'
       ShortCut = 41043
       OnExecute = actSaveSelectionExecute
       OnUpdate = actSaveSelectionUpdate
@@ -833,7 +820,7 @@ inherited MainForm: TMainForm
       Caption = 'Close All Other Tabs'
       Hint = 
         'Close all other tabs|Close all tabs in the Details pane except f' +
-        'or the current tab'
+        'or the current one'
       ShortCut = 24691
       OnExecute = actCloseUnselectedDetailsTabsExecute
       OnUpdate = actCloseDetailsTabsUpdate
@@ -874,7 +861,7 @@ inherited MainForm: TMainForm
       Caption = 'Import Snippets From SWAG...'
       Hint = 
         'Import snippets from SWAG|Import one or more snippets into the u' +
-        'ser database from the online SWAG database'
+        'ser database from the SWAG database'
       OnExecute = actSWAGImportExecute
     end
     object actBlog: TBrowseURL

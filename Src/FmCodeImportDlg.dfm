@@ -9,15 +9,11 @@ inherited CodeImportDlg: TCodeImportDlg
     ExplicitHeight = 321
     inherited pcWizard: TPageControl
       Height = 288
-      ActivePage = tsFile
+      ActivePage = tsInfo
       ExplicitHeight = 288
       object tsInfo: TTabSheet
         Caption = 'tsInfo'
         TabVisible = False
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         object lblIntro: TLabel
           Left = 0
           Top = 8
@@ -98,9 +94,9 @@ inherited CodeImportDlg: TCodeImportDlg
           Height = 40
           AutoSize = False
           Caption = 
-            'The imported functions are listed below. Select, deselect and re' +
-            'name as required then click the "Update" button to update the da' +
-            'tabase. Use "Cancel" to abandon the import.'
+            'The functions to be imported are listed below. Select, deselect ' +
+            'and rename as required then click the "Update" button to update ' +
+            'the database. Use "Cancel" to abandon the import.'
           WordWrap = True
         end
         object lvImports: TListView
@@ -153,10 +149,6 @@ inherited CodeImportDlg: TCodeImportDlg
         Caption = 'tsFinish'
         ImageIndex = 5
         TabVisible = False
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         object lblFinish: TLabel
           Left = 0
           Top = 8

@@ -3,6 +3,8 @@ inherited DBUpdateDlg: TDBUpdateDlg
   Top = 0
   Caption = 'Install or Update DelphiDabbler Snippets Database'
   Position = poDesigned
+  ExplicitWidth = 565
+  ExplicitHeight = 436
   PixelsPerInch = 96
   TextHeight = 13
   inherited pnlBody: TPanel
@@ -14,15 +16,11 @@ inherited DBUpdateDlg: TDBUpdateDlg
     end
     inherited pcWizard: TPageControl
       Width = 409
-      ActivePage = tsFinish
+      ActivePage = tsFolder
       ExplicitWidth = 409
       object tsIntro: TTabSheet
         Caption = 'tsIntro'
         TabVisible = False
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         inline frmIntro: THTMLTpltDlgFrame
           Left = 0
           Top = 0
@@ -52,10 +50,6 @@ inherited DBUpdateDlg: TDBUpdateDlg
         Caption = 'tsFolder'
         ImageIndex = 1
         TabVisible = False
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         object lblFolder: TLabel
           Left = 0
           Top = 8
@@ -69,9 +63,9 @@ inherited DBUpdateDlg: TDBUpdateDlg
         object lblFolderPageInfo: TLabel
           Left = 0
           Top = 72
-          Width = 246
+          Width = 220
           Height = 13
-          Caption = 'Click the Next button to update the local database.'
+          Caption = 'Click the Next button when ready to proceed.'
         end
         object edPath: TEdit
           Left = 0
@@ -99,10 +93,6 @@ inherited DBUpdateDlg: TDBUpdateDlg
         Caption = 'tsLoad'
         ImageIndex = 2
         TabVisible = False
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         inline frmLoad: TFixedHTMLDlgFrame
           Left = 0
           Top = 0
@@ -126,10 +116,6 @@ inherited DBUpdateDlg: TDBUpdateDlg
         Caption = 'tsFinish'
         ImageIndex = 3
         TabVisible = False
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         inline frmFinish: TFixedHTMLDlgFrame
           Left = 0
           Top = 0
@@ -165,9 +151,6 @@ inherited DBUpdateDlg: TDBUpdateDlg
         ExplicitHeight = 82
       end
     end
-  end
-  inherited btnHelp: TButton
-    Visible = False
   end
   object alMain: TActionList
     Left = 448

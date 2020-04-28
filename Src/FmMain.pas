@@ -233,13 +233,11 @@ type
     tbSelectSnippets: TToolButton;
     tbSpacer1: TToolButton;
     tbSpacer3: TToolButton;
-    tbSpacer4: TToolButton;
     tbSpacer5: TToolButton;
     tbSpacer6: TToolButton;
     tbSpacer7: TToolButton;
     tbSpacer8: TToolButton;
     tbTestCompile: TToolButton;
-    tbUpdateDbase: TToolButton;
     actBlog: TBrowseURL;
     miBlog: TMenuItem;
     ///  <summary>Displays About Box.</summary>
