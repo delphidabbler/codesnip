@@ -613,12 +613,6 @@ inherited MainForm: TMainForm
       OnExecute = actPrintExecute
       OnUpdate = actPrintUpdate
     end
-    object actPrivacy: TAction
-      Category = 'Help'
-      Caption = 'Privacy Statement'
-      Hint = 'View privacy statement|View the program'#39's privacy statement'
-      OnExecute = actPrivacyExecute
-    end
     object actBackupDatabase: TAction
       Category = 'Database'
       Caption = 'Backup User Database...'
@@ -1138,9 +1132,6 @@ inherited MainForm: TMainForm
       end
       object miHelpCompChecks: TMenuItem
         Action = actHelpCompChecks
-      end
-      object miPrivacy: TMenuItem
-        Action = actPrivacy
       end
       object miLicense: TMenuItem
         Action = actLicense
