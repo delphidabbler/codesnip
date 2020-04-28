@@ -184,7 +184,6 @@ release:
   @$(ZIP) -j -9 $(OUTFILE) Exe\CodeSnip-p.exe
   @$(ZIP) -j -9 $(OUTFILE) Exe\CodeSnip.chm
   @$(ZIP) -j -9 $(OUTFILE) Docs\ReadMe.txt
-  @$(ZIP) -j -9 $(OUTFILE) Docs\Privacy.txt
   @$(ZIP) -j -9 $(OUTFILE) Docs\License.html
 !endif
   @cd Src

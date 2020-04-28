@@ -180,10 +180,6 @@
     <param name="Local" value="HTML\license.htm">
     </OBJECT>
   <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="Privacy Statement">
-    <param name="Local" value="HTML\privacy_statement.htm">
-    </OBJECT>
-  <LI> <OBJECT type="text/sitemap">
     <param name="Name" value="FAQs">
     <param name="Local" value="HTML\faqs.htm">
     </OBJECT>

@@ -96,7 +96,6 @@ type
     actPreferences: TAction;
     actPreviousTab: TAction;
     actPrint: TAction;
-    actPrivacy: TAction;
     actRenameCategory: TAction;
     actRestoreDatabase: TAction;
     actSaveDatabase: TAction;
@@ -167,7 +166,6 @@ type
     miNewDetailsTab: TMenuItem;
     miPreferences: TMenuItem;
     miPrint: TMenuItem;
-    miPrivacy: TMenuItem;
     miRenameCategory: TMenuItem;
     miReportBug: TMenuItem;
     miRestoreDatabase: TMenuItem;
@@ -383,8 +381,6 @@ type
     procedure actPrintExecute(Sender: TObject);
     ///  <summary>Determines whether the Print action can be enabled.</summary>
     procedure actPrintUpdate(Sender: TObject);
-    ///  <summary>Displays the Privacy Statement help topic.</summary>
-    procedure actPrivacyExecute(Sender: TObject);
     ///  <summary>Displays a dialogue box that can be used to rename a user
     ///  defined category.</summary>
     procedure actRenameCategoryExecute(Sender: TObject);
@@ -956,11 +952,6 @@ procedure TMainForm.actPrintUpdate(Sender: TObject);
 begin
   (Sender as TAction).Enabled :=
     TPrintMgr.CanPrint(fMainDisplayMgr.CurrentView);
-end;
-
-procedure TMainForm.actPrivacyExecute(Sender: TObject);
-begin
-  DisplayHelp('PrivacyStatement');
 end;
 
 procedure TMainForm.actRenameCategoryExecute(Sender: TObject);

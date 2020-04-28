@@ -25,7 +25,6 @@
 #define ReadMeFile "ReadMe.txt"
 #define LicenseFile "License.rtf"
 #define LicenseTextFile "License.html"
-#define PrivacyFile "Privacy.txt"
 #define OutDir SourcePath + "..\..\Exe"
 #define SrcDocsPath SourcePath + "..\..\Docs\"
 #define SrcAssetsPath SourcePath + '\Assets\"
@@ -91,7 +90,6 @@ Source: {#SrcExePath}{#ExeFile}; DestDir: {app}
 Source: {#SrcExePath}{#HelpFile}; DestDir: {app}; Flags: ignoreversion
 Source: {#SrcDocsPath}{#LicenseTextFile}; DestDir: {app}; Flags: ignoreversion
 Source: {#SrcDocsPath}{#ReadMeFile}; DestDir: {app}; Flags: ignoreversion
-Source: {#SrcDocsPath}{#PrivacyFile}; DestDir: {app}; Flags: ignoreversion
 Source: {#SrcAssetsPath}UpdatingPreview.rtf; Flags: dontcopy
 Source: {#SrcAssetsPath}AutoUpdateChecks.rtf; Flags: dontcopy
 

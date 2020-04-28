@@ -31,7 +31,6 @@ The following support is available for CodeSnip:
 * A [read-me file](https://raw.githubusercontent.com/delphidabbler/codesnip/master/Docs/ReadMe.txt)<sup> *</sup> that discusses installation, configuration, updating and known issues.
 * An [FAQ](https://github.com/delphidabbler/codesnip-faq/blob/master/UsingCodeSnip.md)
 * A [Blog](http://codesnip-app.blogspot.co.uk/).
-* A [privacy statement](https://raw.githubusercontent.com/delphidabbler/codesnip/master/Docs/Privacy.txt)<sup>*</sup> that provides information about any personal information stored by the program and what info is transmitted over the net.
 
 There's also plenty of info available on how to compile CodeSnip from source - see below.
 
