@@ -343,6 +343,20 @@ There are Frequently Asked Questions pages for CodeSnip on the web, at
 https://github.com/delphidabbler/codesnip-faq/blob/master/README.md
 
 
+Privacy
+================================================================================
+
+As of v4.16.0 CodeSnip no longer stores or transmits any personally identifiable
+data.
+
+Because of this change the privacy statement that used to be provided with the
+program has been removed.
+
+Do note though that CodeSnip can display web pages via your default web
+browser, but only in response to user input. No guarantee is made about any
+personal data collected by such web pages.
+
+
 Thanks
 ================================================================================
 
