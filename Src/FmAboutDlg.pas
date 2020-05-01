@@ -196,7 +196,8 @@ uses
   UMessageBox,
   UResourceUtils,
   UStrUtils,
-  UThemesEx;
+  UThemesEx,
+  UVersionInfo;
 
 {$R *.dfm}
 
@@ -425,6 +426,18 @@ procedure TAboutDlg.InitHTMLFrames;
         IsDBAvalable: Boolean;
         IsMetaDataAvailable: Boolean;
         IsLicenseInfoAvailable: Boolean;
+
+        function DBVersion: string;
+        var
+          Ver: TVersionNumber;
+        begin
+          Ver := fMetaData.GetVersion;
+          if Ver.V1 = 1 then
+            Result := '1'
+          else
+            Result := Ver;
+        end;
+
       begin
         // Resolve conditionally displayed block placeholders
         IsDBAvalable := Database.Snippets.Count(False) > 0;
@@ -448,6 +461,10 @@ procedure TAboutDlg.InitHTMLFrames;
         );
         Tplt.ResolvePlaceholderHTML(
           'LicenseInfoAvailable', TCSS.BlockDisplayProp(IsLicenseInfoAvailable)
+        );
+        Tplt.ResolvePlaceholderHTML(
+          'LicenseInfoAvailableInline',
+          TCSS.InlineDisplayProp(IsLicenseInfoAvailable)
         );
         Tplt.ResolvePlaceholderHTML(
           'LicenseInfoNotAvailable',
@@ -482,7 +499,7 @@ procedure TAboutDlg.InitHTMLFrames;
         Tplt.ResolvePlaceholderHTML(
           'TesterList', ContribListHTML(fMetaData.GetTesters)
         );
-        Tplt.ResolvePlaceholderText('Version', fMetaData.GetVersion);
+        Tplt.ResolvePlaceholderText('Version', DBVersion);
       end
     );
   end;
