@@ -403,6 +403,13 @@ type
     ///  <returns>string. Required CSS property.</returns>
     class function BlockDisplayProp(const Show: Boolean): string; static;
 
+    ///  <summary>Creates a CSS "display" property that causes its element to be
+    ///  either hidden or displayed as "inline".</summary>
+    ///  <param name="Show">Boolean [in] Flag indicating if block is to be
+    ///  displayed (True) or hidden (False).</param>
+    ///  <returns>string. Required CSS property.</returns>
+    class function InlineDisplayProp(const Show: Boolean): string; static;
+
     ///  <summary>Creates a CSS "overflow", "overflow-x" or overflow-y"
     ///  property.</summary>
     ///  <param name="Value">TCSSOverflowValue [in] Required overflow handling.
@@ -584,6 +591,14 @@ end;
 class function TCSS.HideBorderProp(const Side: TCSSSide): string;
 begin
   Result := BorderProp(Side, 0, cbsNone, clNone);
+end;
+
+class function TCSS.InlineDisplayProp(const Show: Boolean): string;
+const
+  // Map of flag onto required display style
+  BlockDisplayStyles: array[Boolean] of TCSSDisplayStyle = (cdsNone, cdsInline);
+begin
+  Result := DisplayProp(BlockDisplayStyles[Show]);
 end;
 
 class function TCSS.LengthList(const List: array of Integer;
