@@ -19,8 +19,8 @@
 + Changes to About Box's "Paths" tab:
   - Added new buttons to display the contents of the system and per-user config files.
   - Renamed tab as "Paths & Files".
-+ Implemented feature request #83 (https://sourceforge.net/p/codesnip/feature-requests/83/) to enable the name and port of any web service test server to be passed on command line by using the new "--test-server" command line option. This replaces hard-wired test server name & port that was activated using the now removed "-localhost" command line switch.
-+ Fixed bug #96: "Some open / save dialogues too small" (https://sourceforge.net/p/codesnip/bugs/96/). The height of customised dialogue boxes was increased.
++ Implemented feature request #83 ~~(https://sourceforge.net/p/codesnip/feature-requests/83/)~~ to enable the name and port of any web service test server to be passed on command line by using the new "--test-server" command line option. This replaces hard-wired test server name & port that was activated using the now removed "-localhost" command line switch.
++ Fixed bug #96: "Some open / save dialogues too small" ~~(https://sourceforge.net/p/codesnip/bugs/96/)~~. The height of customised dialogue boxes was increased.
 + Updated operating system detection code to detect Windows 10 TH2.
 + New photo of Sophie the dog added to the Easter egg slide show!
 + Updated help file re About Box changes.
@@ -94,7 +94,7 @@
 
 ## Release v4.8.7 of 06 March 2014
 
-+ Fixed automatic update checker so that it correctly records last update date. This fixes bug #93 (http://bit.ly/NmSQUt).
++ Fixed automatic update checker so that it correctly records last update date. This fixes bug #93 ~~(http://bit.ly/NmSQUt)~~.
 + Updated to use v2 of the DelphiDabbler CodeSnip update web service when checking for availability of program updates.
 + Minor corrections to help file.
 
@@ -107,7 +107,7 @@
 
 ## Release v4.8.5 of 13 January 2014
 
-+ Fixed bug #91 "Generated units won't compile on Delphi XE5" (http://bit.ly/1eBjym2). Compiler directives that are used to change compiler warnings now includes a conditionally compiled $LEGACYIFEND ON directive.
++ Fixed bug #91 "Generated units won't compile on Delphi XE5" ~~(http://bit.ly/1eBjym2)~~. Compiler directives that are used to change compiler warnings now includes a conditionally compiled $LEGACYIFEND ON directive.
 + Fixed potential bug when checking for the existence of files. It had been possible that a "sym-link" to a file could give misleading results.
 + Updated program copyright date in license file, about box, help file and installer.
 
@@ -115,7 +115,7 @@
 ## Release v4.8.4 of 28 November 2013
 
 + Improved user interface of SWAG Import Wizard.
-+ Renamed "Save Snippet" and "Copy Snippet" menu options to "Save Annotated Source" and "Copy Annotated Source". This fixes bug #90: " Wrong caption on menu option for copying category to clipboard" (http://bit.ly/ImA398).
++ Renamed "Save Snippet" and "Copy Snippet" menu options to "Save Annotated Source" and "Copy Annotated Source". This fixes bug #90: " Wrong caption on menu option for copying category to clipboard" ~~(http://bit.ly/ImA398)~~.
 + Revised and corrected numerous main menu and pop-up menu hints.
 + Updated help file re changes to menu options and SWAG Import Wizards.
 
@@ -135,7 +135,7 @@
 
 ## Release v4.8.1 of 18 September 2013
 
-+ Removed "File | Page Setup" menu option because some settings made there were being ignored when a file was printed. This is a fix for bug #89 "Setup selections not being remembered" (http://bit.ly/1a3V94x).
++ Removed "File | Page Setup" menu option because some settings made there were being ignored when a file was printed. This is a fix for bug #89 "Setup selections not being remembered" ~~(http://bit.ly/1a3V94x)~~.
 + Updated help file re changes.
 
 
@@ -149,25 +149,25 @@
 
 ## Release v4.7.2 of 27 August 2013
 
-+ Fixed bug #88 "SWAG Import Wizard display bug" (http://bit.ly/15ryOxz) where duplicate snippets could be displayed on the "Ready to import" page in certain circumstances.
++ Fixed bug #88 "SWAG Import Wizard display bug" ~~(http://bit.ly/15ryOxz)~~ where duplicate snippets could be displayed on the "Ready to import" page in certain circumstances.
 
 
 ## Release v4.7.1 of 18 August 2013
 
 + Fixed bug where right clicking a tab in the detail pane sometimes caused the contents of the pane to be temporarily blanked out while the context menu was displayed.
-  - This fix also, as a side effect, fixed bug #87 "Tab headings and contents don't match after a tab is closed." (http://bit.ly/15TD197).
+  - This fix also, as a side effect, fixed bug #87 "Tab headings and contents don't match after a tab is closed." ~~(http://bit.ly/15TD197)~~.
 
 
 ## Release v4.7.0 of 31 July 2013
 
-+ Implemented feature request #71 "Support importing of one or more snippets from the SWAG database" (http://bit.ly/18AFlGu):
++ Implemented feature request #71 "Support importing of one or more snippets from the SWAG database" ~~(http://bit.ly/18AFlGu)~~:
   - Uses DelphiDabbler SWAG web service to get SWAG data.
   - New wizard to permit user to select required SWAG snippets. This is accessible from the new "Snippets | Import Snippets From SWAG" menu option.
   - Snippets are imported into a new "SWAG Imports" category.
-+ Implemented feature request #80 "Enable detail pane tabs to be re-ordered" (http://bit.ly/13cbjTZ).
-+ In detail pane source code and compiler table now display horizontal scroll bars if they do not fit within the width of the pane. This implements feature requests #60 (http://bit.ly/17iCzT4) and #61 (http://bit.ly/1coDJ5f).
++ Implemented feature request #80 "Enable detail pane tabs to be re-ordered" ~~(http://bit.ly/13cbjTZ)~~.
++ In detail pane source code and compiler table now display horizontal scroll bars if they do not fit within the width of the pane. This implements feature requests #60 ~~(http://bit.ly/17iCzT4)~~ and #61 ~~(http://bit.ly/1coDJ5f)~~.
 + Minor changes to dialogue box that appears during long operations.
-+ Fixed bug #86 "Snippets are sorted by snippet name in snippet table listings in detail pane" (http://bit.ly/17iD27H).
++ Fixed bug #86 "Snippets are sorted by snippet name in snippet table listings in detail pane" ~~(http://bit.ly/17iD27H)~~.
 + Fixed a few code errors that could have surfaced as bugs.
 + Modified how HTML based detail pane display is generated and displayed.
 + Some refactoring.
@@ -179,32 +179,32 @@
 ## Release v4.6.4 of 24 July 2013
 
 + Fix for IE 9 related browser control script bugs introduced in v4.6.3 when IE 10 bugs were fixed:
-  - Bug #84 "Script errors on startup" (http://bit.ly/13bfaAL).
-  - Bug #85 "Check For Updates link " (http://bit.ly/1656pgE).
+  - Bug #84 "Script errors on startup" ~~(http://bit.ly/13bfaAL)~~.
+  - Bug #85 "Check For Updates link " ~~(http://bit.ly/1656pgE)~~.
 
 
 ## Release v4.6.3 of 14 July 2013
 
-+ Further fix for IE 10 related bug #75 "Floating point error in 4.4.1" (http://bit.ly/12zAWSp). Re-implemented method used to display content in main window's detail pane using the IE web browser control.
++ Further fix for IE 10 related bug #75 "Floating point error in 4.4.1" ~~(http://bit.ly/12zAWSp)~~. Re-implemented method used to display content in main window's detail pane using the IE web browser control.
 
 
 ## Release v4.6.2 of 09 July 2013
 
-+ Tentative fix for bug #83 "Error when the main form is shown" (http://bit.ly/12eUV5Y) that has been reported on Windows 8. The fix is tentative because the bug hasn't been reproduced.
++ Tentative fix for bug #83 "Error when the main form is shown" ~~(http://bit.ly/12eUV5Y)~~ that has been reported on Windows 8. The fix is tentative because the bug hasn't been reproduced.
 
 
 ## Release v4.6.1 of 01 July 2013
 
-+ Provided fix for reported bug #75 "Floating point error in 4.4.1" (http://bit.ly/12zAWSp) that apparently affects Windows 8, probably with IE 10 installed.
++ Provided fix for reported bug #75 "Floating point error in 4.4.1" ~~(http://bit.ly/12zAWSp)~~ that apparently affects Windows 8, probably with IE 10 installed.
 + Fixed unreported bug where IE 10 browser was being reported as IE 9.
 + Fixed potential bug in code that processes class / advanced record snippet types ready for test compilation and inclusion in generated units.
 
 
 ## Release v4.6.0 of 02 June 2013
 
-+ Added new options to "Find Cross References" dialogue box to allow snippets that either cross reference or depend upon the selected snippet to be included in the search. This implements feature request #30 (http://bit.ly/13cYImA).
-+ Added a new "Select and Close" button to the Dependencies dialogue box that causes the snippets displayed on the current tab to be selected in the main display. This implements feature request #77 (http://bit.ly/15s8fH2).
-+ The background colour of source code displayed in the main display can now be customised via a new option on the Display tab of the Preferences dialogue box. This implements feature request #36 (http://bit.ly/17fxMGW).
++ Added new options to "Find Cross References" dialogue box to allow snippets that either cross reference or depend upon the selected snippet to be included in the search. This implements feature request #30 ~~(http://bit.ly/13cYImA)~~.
++ Added a new "Select and Close" button to the Dependencies dialogue box that causes the snippets displayed on the current tab to be selected in the main display. This implements feature request #77 ~~(http://bit.ly/15s8fH2)~~.
++ The background colour of source code displayed in the main display can now be customised via a new option on the Display tab of the Preferences dialogue box. This implements feature request #36 ~~(http://bit.ly/17fxMGW)~~.
 + CodeSnip now compiled with Delphi XE.
 + Per-user configuration file format changed to v15 which is not entirely compatible with previous versions of CodeSnip.
 + Updated help file re changes.
@@ -213,12 +213,12 @@
 ## Release v4.5.1 of 15 May 2013
 
 + Added progress bars or marquees to several database operations that can take a long time on slower storage devices, i.e.:
-  - When local files are being updated after downloading an updated database in the Update From Web dialogue box. This fixes bug #79 (https://sourceforge.net/p/codesnip/bugs/79/)
+  - When local files are being updated after downloading an updated database in the Update From Web dialogue box. This fixes bug #79 ~~(https://sourceforge.net/p/codesnip/bugs/79/)~~:
   - When the local database is being saved.
   - When the local database is being backed up or restored.
   - When the local database is being moved to a new location.
-+ The user database can now be relocated to a network drive. This fixes issue #81 "Move database to a network drive" (https://sourceforge.net/p/codesnip/bugs/81/).
-+ Fixed issue #80 "HTML output bug" (https://sourceforge.net/p/codesnip/bugs/80/).
++ The user database can now be relocated to a network drive. This fixes issue #81 "Move database to a network drive" ~~(https://sourceforge.net/p/codesnip/bugs/81/)~~.
++ Fixed issue #80 "HTML output bug" ~~(https://sourceforge.net/p/codesnip/bugs/80/)~~.
 + Fixed minor alignment bug that occurred when displaying a wait dialogue box over the main window.
 + Some refactoring.
 + Updated help file re changes.
@@ -226,7 +226,7 @@
 
 ## Release v4.5.0 of 02 May 2013
 
-+ Added support for Delphi XE4 compiler. Implements feature request #78 (http://bit.ly/10uGhoD).
++ Added support for Delphi XE4 compiler. Implements feature request #78 ~~(http://bit.ly/10uGhoD)~~.
 + Updated documentation re changes.
 + Updated help file re changes.
 
@@ -234,19 +234,19 @@
 ## Release v4.4.2 of 26 April 2013
 
 + Fixed bugs:
-  - #76 (http://bit.ly/12Loz5o) - An advanced record snippet with a method name that clashes with a directive is not test compiling correctly.
-  - #77 (http://bit.ly/11I9wXI) - Syntax highlighter highlights "contains", "requires" and "package" directives when used in method names.
-  - #78 (http://bit.ly/ZQl3T4) - CodeSnip doesn't restore window in correct position when task bar on left or top of screen.
+  - #76 ~~(http://bit.ly/12Loz5o)~~ - An advanced record snippet with a method name that clashes with a directive is not test compiling correctly.
+  - #77 ~~(http://bit.ly/11I9wXI)~~ - Syntax highlighter highlights "contains", "requires" and "package" directives when used in method names.
+  - #78 ~~(http://bit.ly/ZQl3T4)~~ - CodeSnip doesn't restore window in correct position when task bar on left or top of screen.
 
 
 ## Release v4.4.1 of 09 April 2013
 
-+ Fixed bug #73 "Attempting to check for program updates returns a 404 'Not found' error" (http://bit.ly/Yf3UGy) - this error happened only when using remote server, not localhost test server.
++ Fixed bug #73 "Attempting to check for program updates returns a 404 'Not found' error" ~~(http://bit.ly/Yf3UGy)~~ - this error happened only when using remote server, not localhost test server.
 
 
 ## Release v4.4.0 of 08 April 2013
 
-+ Implemented feature request #75 "Check for updates on start-up" (http://bit.ly/ZJ8OGH):
++ Implemented feature request #75 "Check for updates on start-up" ~~(http://bit.ly/ZJ8OGH)~~:
   - CodeSnip checks for both program and Code Snippets Database updates in low priority background threads that run when the program is first started.
   - Update checking takes place at intervals between once per day and once per month.
   - A new "Updates" tab was added to the "Preferences" dialogue box where update frequencies can be chosen, or the auto-update feature switched off. Program and database update checking can be configured individually.
@@ -267,9 +267,9 @@
 
 ## Release v4.3.0 of 27 February 2013
 
-+ Implemented feature request #40 "Add 'Namespaces' tab to Configure Compilers dialogue box" (http://bit.ly/12XsX32). The new tab appears only for Delphi XE2 and later and obviates the need to manually create -NS commands for passing to the compilers. Suitable default namespaces are provided if none have been configured.
-+ Implemented feature request #70 "Let user specify location of user database" (http://bit.ly/13aNCQZ). This feature is accessed from the new "Move Use Database" option on the Database menu. NOTE: The feature is not available in the portable edition which is designed to keep the user database together with the program.
-+ Implemented feature request #69 "Enable custom syntax highlighter styles to be saved" (http://bit.ly/XQHkOI). The Syntax Highlighter tab of the Preferences dialogue box has been modified to enable custom syntax highlighter attributes to be saved under a given name and existing named styles to be used or deleted.
++ Implemented feature request #40 "Add 'Namespaces' tab to Configure Compilers dialogue box" ~~(http://bit.ly/12XsX32)~~. The new tab appears only for Delphi XE2 and later and obviates the need to manually create -NS commands for passing to the compilers. Suitable default namespaces are provided if none have been configured.
++ Implemented feature request #70 "Let user specify location of user database" ~~(http://bit.ly/13aNCQZ)~~. This feature is accessed from the new "Move Use Database" option on the Database menu. NOTE: The feature is not available in the portable edition which is designed to keep the user database together with the program.
++ Implemented feature request #69 "Enable custom syntax highlighter styles to be saved" ~~(http://bit.ly/XQHkOI)~~. The Syntax Highlighter tab of the Preferences dialogue box has been modified to enable custom syntax highlighter attributes to be saved under a given name and existing named styles to be used or deleted.
 + Changed name of "Delphi 2006" predefined syntax highlighter to "RAD Studio". This remains the default highlighter.
 + A little refactoring.
 + Enlarged Configure Compilers dialogue box.
@@ -283,18 +283,18 @@
 
 ## Release v4.2.1 of 14 February 2013
 
-+ Bug fix: changed Favourites dialogue to display snippet display names instead of unique names. Fixes bug #72 (http://bit.ly/Vj6ZCM).
++ Bug fix: changed Favourites dialogue to display snippet display names instead of unique names. Fixes bug #72 ~~(http://bit.ly/Vj6ZCM)~~.
 + Updated program copyright date in About box.
 
 
 ## Release v4.2.0 of 07 February 2013
 
-+ Added support for "favourite" snippets. Implements feature request #37 (http://bit.ly/12unShW):
++ Added support for "favourite" snippets. Implements feature request #37 ~~(http://bit.ly/12unShW)~~:
   - Any displayed snippet can be flagged as a favourite via a menu option or toolbar button.
   - A new non-modal dialogue box can now be displayed alongside the CodeSnip window for easy selection and management of favourite snippets.
 + Changes to Duplicate Snippets dialogue box:
-  - Display name of duplicate snippet can be edited. Implements feature request #64 (http://bit.ly/14TdUGF).
-  - Snippets Editor can be opened immediately the Duplicate Snippet dialogue box closes to edit the duplicated snippet. Implements feature request #65 (http://bit.ly/UBlt2Y).
+  - Display name of duplicate snippet can be edited. Implements feature request #64 ~~(http://bit.ly/14TdUGF)~~.
+  - Snippets Editor can be opened immediately the Duplicate Snippet dialogue box closes to edit the duplicated snippet. Implements feature request #65 ~~(http://bit.ly/UBlt2Y)~~.
 + Status bar changed: first panel now displays no category information, but displays both total number of snippets and number of snippets in each database.
 + Fixed unreported bug in save dialogue boxes where overwrite permission requests could be displayed erroneously.
 + Program closes gracefully if run on unsupported versions.
@@ -308,9 +308,9 @@
 ## Release v4.1.1 of 30 January 2013
 
 + Fixed bugs:
-  - #68 (http://bit.ly/WxG6LC): Comments missing in unit / code generation for some types.
-  - #70 (http://bit.ly/WAYEHN): Changing syntax highlighter font has no effect in main display.
-  - #71 (http://bit.ly/14v9i9v): Option to select monochrome printing not working properly.
+  - #68 ~~(http://bit.ly/WxG6LC)~~: Comments missing in unit / code generation for some types.
+  - #70 ~~(http://bit.ly/WAYEHN)~~: Changing syntax highlighter font has no effect in main display.
+  - #71 ~~(http://bit.ly/14v9i9v)~~: Option to select monochrome printing not working properly.
   - Unreported: Changing syntax highlighter font has no effect when printing or when copying text to clipboard as RTF (related to bug #70).
 + Updated help file re syntax highlighter changes.
 
@@ -326,12 +326,12 @@
   - Different version information and program identifier.
   - There is no set up program.
 + Changes to snippets editor:
-  - Added context menus to cross-references and dependencies check box lists. Both have menu item to clear list. Dependencies list has item to view dependencies. Implements feature request #3560960 (http://bit.ly/U83Swh).
+  - Added context menus to cross-references and dependencies check box lists. Both have menu item to clear list. Dependencies list has item to view dependencies. Implements feature request #3560960 ~~(http://bit.ly/U83Swh)~~.
   - Deleted "View Dependencies" button now that its functionality is now on context menu.
   - Enlarged various controls on all except "Code" tab.
-  - Units listed on "References" tab is now persistent. Units can be removed, defaults restored and selection cleared via a new context menu. Implements feature request #3560962 (http://bit.ly/UM0c0B).
-+ New source code formatting option added to only use first paragraph of a snippet description as snippet comment in generated code. This is configured via "Code Formatting" tab of "Preferences" dialogue box and / or from relevant "Save" dialogue boxes. Implements feature request #3560647 (http://bit.ly/UQrDax).
-+ Changed mini-toolbar in overview pane to expand / collapse all overview tree view instead of just selected node. Implements feature request #3560646 (http://bit.ly/UOUQTr).
+  - Units listed on "References" tab is now persistent. Units can be removed, defaults restored and selection cleared via a new context menu. Implements feature request #3560962 ~~(http://bit.ly/UM0c0B)~~.
++ New source code formatting option added to only use first paragraph of a snippet description as snippet comment in generated code. This is configured via "Code Formatting" tab of "Preferences" dialogue box and / or from relevant "Save" dialogue boxes. Implements feature request #3560647 ~~(http://bit.ly/UQrDax)~~.
++ Changed mini-toolbar in overview pane to expand / collapse all overview tree view instead of just selected node. Implements feature request #3560646 ~~(http://bit.ly/UOUQTr)~~.
 + Reimplemented database search engine.
 + Some external links modified that will seamlessly accommodate future changes in destination URLs.
 + Changed some glyphs used in menus.
@@ -358,7 +358,7 @@
 
 _Internal CodeSnip version 4.0.1.213_
 
-+ Modified version of Release v4.0.1 that can run from a writeable removable medium without writing files or registry on host computer. This implements feature request #3577431 (http://bit.ly/UxvUj0).
++ Modified version of Release v4.0.1 that can run from a writeable removable medium without writing files or registry on host computer. This implements feature request #3577431 ~~(http://bit.ly/UxvUj0)~~.
 + Changes that apply only to portable version:
   - Changed executable file name to CodeSnip-p.exe.
   - Program caption changed to identify as portable version.
@@ -375,9 +375,9 @@ _Internal CodeSnip version 4.0.1.213_
 
 _Internal CodeSnip version 4.0.1.212_
 
-+ Fixed bug #3578652 (http://bit.ly/RXIwBC): "Pre-processor directive errors in main db ini files" by removing support for problematic directives.
-+ Rolling mouse over links in detail pane no longer displays a hint in the status bar. This change fixes bug #3577407 (http://bit.ly/VeSVGg): Clicking detail pane snippet link leaves hint in status bar.
-+ Windows no longer scale automatically when screen DPI differs from that on design system. This fixes bugs #3591818 (http://bit.ly/TvNaUL) "Strange window behaviour in Windows 7" and bug #3591820 (http://bit.ly/SEH6dO) "Incorrect font size used for some bold text".
++ Fixed bug #3578652 ~~(http://bit.ly/RXIwBC)~~: "Pre-processor directive errors in main db ini files" by removing support for problematic directives.
++ Rolling mouse over links in detail pane no longer displays a hint in the status bar. This change fixes bug #3577407 ~~(http://bit.ly/VeSVGg)~~: Clicking detail pane snippet link leaves hint in status bar.
++ Windows no longer scale automatically when screen DPI differs from that on design system. This fixes bugs #3591818 ~~(http://bit.ly/TvNaUL)~~ "Strange window behaviour in Windows 7" and bug #3591820 ~~(http://bit.ly/SEH6dO)~~ "Incorrect font size used for some bold text".
 + Update operating system detection code to detect W0ndows 8 & 2012 server.
 + Some refactoring and some redundant code removed.
 + Updated documentation.
@@ -393,12 +393,12 @@ See also changes from alpha, beta and release candidates below for details of ch
 + New glyphs that describes level of testing applied to snippets from online Code Snippets Database now appear in top right of detail pane.
 + Changed main window caption and task bar entry to include version number "4" after program name.
 + Fixed bugs:
-  - #3572382 (http://bit.ly/OnEtNY): Automatic conversion of blank lines to paragraphs in REML mark-up editor gets confused if block level tags are already present.
+  - #3572382 ~~(http://bit.ly/OnEtNY)~~: Automatic conversion of blank lines to paragraphs in REML mark-up editor gets confused if block level tags are already present.
   - Unreported: Controls in News dialogue box do not use correct font.
 + A little refactoring.
 + Updated help file:
   - Modified re recent changes
-  - Added new "What's new" topic giving details of changes in v4. Implements feature request #3567490 (http://bit.ly/RgQx0W).
+  - Added new "What's new" topic giving details of changes in v4. Implements feature request #3567490 ~~(http://bit.ly/RgQx0W)~~.
   - Renamed "Welcome" page as "Overview".
 + Updated documentation, including read-me file.
 
@@ -407,14 +407,14 @@ See also changes from alpha, beta and release candidates below for details of ch
 
 _Internal CodeSnip version 3.999.3_
 
-+ Fixed serious bug #3568628 (http://bit.ly/V5NX0H): "CodeSnip faulting at startup after fresh install with no previous v3 installation".
++ Fixed serious bug #3568628 ~~(http://bit.ly/V5NX0H)~~: "CodeSnip faulting at startup after fresh install with no previous v3 installation".
 
 
 ## Release v4.0 RC 2 of 17 September 2012
 
 _Internal CodeSnip version 3.999.2_
 
-+ Fixed serious bug #3568515 (http://bit.ly/Oy2Q7g): Duplicating a snippet with a display name causes crash.
++ Fixed serious bug #3568515 ~~(http://bit.ly/Oy2Q7g)~~: Duplicating a snippet with a display name causes crash.
 + Minor update to licensing information and about box credits.
 
 
@@ -429,8 +429,8 @@ _Internal CodeSnip version 3.999.1_
   - No clicking noise is now issued by UI in response to user interaction with Details pane.
   - Links to external commands and to other snippets re-styled.
   - Revised and updated program's main icon.
-+ Fixed bug #3566426 (http://bit.ly/OmbwTB): About Box Paths Page displays wrongly when themes not available.
-+ Added support for Delphi XE3 compiler. Implements feature request #3566346 (http://bit.ly/SIVpS2).
++ Fixed bug #3566426 ~~(http://bit.ly/OmbwTB)~~: About Box Paths Page displays wrongly when themes not available.
++ Added support for Delphi XE3 compiler. Implements feature request #3566346 ~~(http://bit.ly/SIVpS2)~~.
 + Completely new Easter Egg.
 + Refactoring and internal code changes, including a revision of the "external" object that communicates with JavaScript in browser controls.
 + Changed License:
@@ -448,22 +448,22 @@ _Internal CodeSnip version 3.999.1_
 _Internal CodeSnip version 3.99.2_
 
 + Bug fixes:
-  - #3556620 (http://bit.ly/Mq1Khh): Serious flaw in generating units containing class types when the classes contain method types other than procedure or function.
-  - #3556713 (http://bit.ly/RIzfvQ): Context menus are not displayed when pressing Alt+F10.
-  - #3556715 (http://bit.ly/O3QN0u): Deleting a category then returning to it via the history list causes a GPF.
-  - #3556718 (http://bit.ly/RVanCE): Inconsistent context menus for edit controls in Snippets Editor.
-  - #3557107 (http://bit.ly/PfiYxm): New snippets and categories are not added to the history list.
-  - #3558649 (http://bit.ly/PAXLQv): Closing the Preferences dialogue always refreshes the main display even if the dialogue box was cancelled or if nothing was changed.
-  - #3559156 (http://bit.ly/TKXYQ7): "Previews" giving examples of the effect of changes made in the Preferences dialogue box sometimes disappear when the tab key is pressed.
-  - #3559239 (http://bit.ly/Pm1HU4): Snippet names and display names are used inconsistently in the UI.
-  - #3559257 (http://bit.ly/Qc8Fqu): Compile Results displayed from the main menu can get out of sync with the actual compile results of snippets that have been edited since they were last compiled.
-  - #3559265 (http://bit.ly/NvV9iH): Viewing dependencies for an unnamed snippet or a snippet not in the database causes a GPF.
-  - #3559266 (http://bit.ly/S69wO2): When include files are generated for a snippet that depends on a class type, the required class is not listed in the file's header comments.
-  - #3560317 (http://bit.ly/PUcEgV): The caption of the Active Text preview dialogue box refers to "Extra" text when it is used to preview a snippet's description.
-  - #3560521 (http://bit.ly/RG7Jlw): The state of the Overview tree often doesn't restore correctly after a database update.
-  - #3560958 (http://bit.ly/TX7M9V): Snippets are not sorted correctly (i.e. on display name) in the Overview pane.
-  - #3561014 (http://bit.ly/PEFgXY): The current view in the Display pane is not cleared, even though all tabs are closed, when the database is re-loading.
-  - #3561047 (http://bit.ly/Pf5L5v): The Category view in the Overview pane sometimes appears fully expanded when it is expected to be fully collapsed.
+  - #3556620 ~~(http://bit.ly/Mq1Khh)~~: Serious flaw in generating units containing class types when the classes contain method types other than procedure or function.
+  - #3556713 ~~(http://bit.ly/RIzfvQ)~~: Context menus are not displayed when pressing Alt+F10.
+  - #3556715 ~~(http://bit.ly/O3QN0u)~~: Deleting a category then returning to it via the history list causes a GPF.
+  - #3556718 ~~(http://bit.ly/RVanCE)~~: Inconsistent context menus for edit controls in Snippets Editor.
+  - #3557107 ~~(http://bit.ly/PfiYxm)~~: New snippets and categories are not added to the history list.
+  - #3558649 ~~(http://bit.ly/PAXLQv)~~: Closing the Preferences dialogue always refreshes the main display even if the dialogue box was cancelled or if nothing was changed.
+  - #3559156 ~~(http://bit.ly/TKXYQ7)~~: "Previews" giving examples of the effect of changes made in the Preferences dialogue box sometimes disappear when the tab key is pressed.
+  - #3559239 ~~(http://bit.ly/Pm1HU4)~~: Snippet names and display names are used inconsistently in the UI.
+  - #3559257 ~~(http://bit.ly/Qc8Fqu)~~: Compile Results displayed from the main menu can get out of sync with the actual compile results of snippets that have been edited since they were last compiled.
+  - #3559265 ~~(http://bit.ly/NvV9iH)~~: Viewing dependencies for an unnamed snippet or a snippet not in the database causes a GPF.
+  - #3559266 ~~(http://bit.ly/S69wO2)~~: When include files are generated for a snippet that depends on a class type, the required class is not listed in the file's header comments.
+  - #3560317 ~~(http://bit.ly/PUcEgV)~~: The caption of the Active Text preview dialogue box refers to "Extra" text when it is used to preview a snippet's description.
+  - #3560521 ~~(http://bit.ly/RG7Jlw)~~: The state of the Overview tree often doesn't restore correctly after a database update.
+  - #3560958 ~~(http://bit.ly/TX7M9V)~~: Snippets are not sorted correctly (i.e. on display name) in the Overview pane.
+  - #3561014 ~~(http://bit.ly/PEFgXY)~~: The current view in the Display pane is not cleared, even though all tabs are closed, when the database is re-loading.
+  - #3561047 ~~(http://bit.ly/Pf5L5v)~~: The Category view in the Overview pane sometimes appears fully expanded when it is expected to be fully collapsed.
   - Untracked: Removed "(v4 preview)" text that had been left in main window title bar.
   - Untracked: Minor accelerator key related problems in the Preferences dialogue box.
 + Main UI changes:
@@ -471,18 +471,18 @@ _Internal CodeSnip version 3.99.2_
   - Right-clicking a tab in the Overview or Detail pane now selects the tab.
   - Middle-clicking an item in the Overview pane now selects it. Previously middle clicks were ignored.
   - Many more parts of the main display and dialogue boxes now display display names for snippets rather than unique names.
-  - Ctrl clicking snippet and category links in the Detail pane and History UI controls now opens the chosen item in a new tab. Implements feature requests #3559377 (http://bit.ly/OqnAjd) and #3559378 (http://bit.ly/NPtEkX).
-  - Different link styles are now used for the different types of link in the Detail pane. Implements feature request #3559464 (http://bit.ly/Pwsqg6).
+  - Ctrl clicking snippet and category links in the Detail pane and History UI controls now opens the chosen item in a new tab. Implements feature requests #3559377 ~~(http://bit.ly/OqnAjd)~~ and #3559378 ~~(http://bit.ly/NPtEkX)~~.
+  - Different link styles are now used for the different types of link in the Detail pane. Implements feature request #3559464 ~~(http://bit.ly/Pwsqg6)~~.
   - Pressing Ctrl+Return on an active snippet or category link in the Details pane now opens the item in a new tab instead of the current tab. Pressing Return now opens the item in the current tab.
-  - The Detail pane's context menu now displays more options when text selections and links are right clicked. Implements feature request #3559375 (http://bit.ly/NzaY8a) with some minor differences.
-  - New button added to the Display tab of the Preferences dialogue box that resets default snippet heading colours. Implements feature request #3559140 (http://bit.ly/QKQo43).
+  - The Detail pane's context menu now displays more options when text selections and links are right clicked. Implements feature request #3559375 ~~(http://bit.ly/NzaY8a)~~ with some minor differences.
+  - New button added to the Display tab of the Preferences dialogue box that resets default snippet heading colours. Implements feature request #3559140 ~~(http://bit.ly/QKQo43)~~.
   - The "Types" unit is now displayed by default in the Snippets Editor Reference Tab's predefined units list.
 + When a category is printed, any URLs in snippet descriptions are output and styled.
 + Names of units referenced by snippets may now contain dots.
 + Some refactoring and internal code changes, including a major reworking of the "first run" program configuration and a revision to the "external" object that communicates with JavaScript in browser controls.
 + Help file updated:
   - Re UI changes.
-  - With a description of the need to configure namespaces for Delphi XE2 for each unit referenced by the code it is test compiling - addresses bug #3536531 (http://bit.ly/Q2bcmY).
+  - With a description of the need to configure namespaces for Delphi XE2 for each unit referenced by the code it is test compiling - addresses bug #3536531 ~~(http://bit.ly/Q2bcmY)~~.
 + Updated documentation.
 
 
@@ -491,12 +491,12 @@ _Internal CodeSnip version 3.99.2_
 _Internal CodeSnip version 3.99.1_
 
 + New features:
-  - Structure of snippet pages in details pane is now customisable: various page elements can be omitted and order of elements can be specified. Each snippet type has its own page customisation. Implements feature request #3519456 (http://bit.ly/NhT8Kr).
-  - Snippets can now have a "display name" that can contain any characters and does not need to be unique. When provided the display name is displayed in preference to the normal name. Implements feature request #3519460 (http://bit.ly/NN6kRP).
-  - Snippet descriptions can now be formatted and contain multiple paragraphs. This implements feature requests #3411890 (http://bit.ly/OS8a5a) and #3520405 (http://bit.ly/OS8yRe).
-  - Snippets can now be configured so that their source code is not syntax highlighted. This change allows snippets in other languages not to be highlighted as if they are Pascal. Implements feature request #3519935 (http://bit.ly/LrNiAg)
-  - Colour of headings for snippets and categories from main and user databases are now user configurable. This implements feature request #3519463 (http://bit.ly/Nz9JH2).
-  - User can now limit the number of compilers that appear in the compiler results table in the display pane. This is done via the Configure Compilers dialogue box. Implements feature request #3519459 (http://bit.ly/Q5O51z).
+  - Structure of snippet pages in details pane is now customisable: various page elements can be omitted and order of elements can be specified. Each snippet type has its own page customisation. Implements feature request #3519456 ~~(http://bit.ly/NhT8Kr)~~.
+  - Snippets can now have a "display name" that can contain any characters and does not need to be unique. When provided the display name is displayed in preference to the normal name. Implements feature request #3519460 ~~(http://bit.ly/NN6kRP)~~.
+  - Snippet descriptions can now be formatted and contain multiple paragraphs. This implements feature requests #3411890 ~~(http://bit.ly/OS8a5a)~~ and #3520405 ~~(http://bit.ly/OS8yRe)~~.
+  - Snippets can now be configured so that their source code is not syntax highlighted. This change allows snippets in other languages not to be highlighted as if they are Pascal. Implements feature request #3519935 ~~(http://bit.ly/LrNiAg)~~.
+  - Colour of headings for snippets and categories from main and user databases are now user configurable. This implements feature request #3519463 ~~(http://bit.ly/Nz9JH2)~~.
+  - User can now limit the number of compilers that appear in the compiler results table in the display pane. This is done via the Configure Compilers dialogue box. Implements feature request #3519459 ~~(http://bit.ly/Q5O51z)~~.
   - New option on Tools menu that checks availability of new versions of CodeSnip.
 + User interface changes:
   - "Test Compile" link removed from snippet display in details pane.
@@ -520,7 +520,7 @@ _Internal CodeSnip version 3.99.1_
   - Changed handling of multiple spaces in REML code to be the same as in HTML.
   - Formatting of REML code improved when re-displayed.
 + Bug fixes:
-  - Bug #3536331 fixed (http://bit.ly/KQTYc3): words at the end of some paragraphs in a snippet's extra information were not being found in "whole word only" searches.
+  - Bug #3536331 fixed ~~(http://bit.ly/KQTYc3)~~: words at the end of some paragraphs in a snippet's extra information were not being found in "whole word only" searches.
   - Fixed unreported file parsing bug that occurred when loading a saved snippet selection from disk.
 + Changed Delphi compiler detection so that compilers can be detected by examining current user registry key in addition to local machine registry key. This enables Delphis that were installed for a given user only to be detected.
 + Improved error handling when reading and writing snippet selection files.
@@ -564,8 +564,8 @@ _Internal CodeSnip version 3.98.3_
   - Program tab of About box updated with credits for new third party code.
 + Bug fixes:
   - Error in logic of code that generates program ID was fixed.
-  - Bug #2868708 fixed (http://bit.ly/KeyAvS): edited snippets are no longer lost from manual snippet selections unless snippet names are changed.
-  - Bug #3534138 fixed (http://bit.ly/Mg9gJG): details pane display is now cleared when last tab is closed: previously content of last closed tab remained on screen.
+  - Bug #2868708 fixed ~~(http://bit.ly/KeyAvS)~~: edited snippets are no longer lost from manual snippet selections unless snippet names are changed.
+  - Bug #3534138 fixed ~~(http://bit.ly/Mg9gJG)~~: details pane display is now cleared when last tab is closed: previously content of last closed tab remained on screen.
 + Info about user's OS and IE version is now sent to web server during online database updates.
 + Some refactoring.
 + Help file updated in line with changes and new features. Some US English spellings changed to UK English for consistency.
@@ -592,7 +592,7 @@ _Internal CodeSnip version 3.98.2_
 + Bug fixes:
   - Fixed potential source of a bug in code that edits user-defined categories.
   - Fixed unreported minor bug in dialogue boxes that display tabbed page controls: clicking a tab did not always give it the keyboard focus.
-  - Fixed bug #3519784 (http://bit.ly/IsCsun) where multi-line "type" or "constant" snippets that start on the same line as the type or const keyword were corrupted when included in units using the "comments after snippet header" comment style.
+  - Fixed bug #3519784 ~~(http://bit.ly/IsCsun)~~ where multi-line "type" or "constant" snippets that start on the same line as the type or const keyword were corrupted when included in units using the "comments after snippet header" comment style.
 + Characters used to introduced switches on the command line were changed: '/' replaces '\'. '-' is still permitted.
 + User and main database formats modified. User databases saved with this version may not be readable with release 4.0 alpha 1.
 + Some refactoring.
@@ -672,7 +672,7 @@ _Internal CodeSnip version 3.98.1_
 
 ## Release v3.13.1 of 18 September 2013
 
-+ Removed File | Page Setup menu option because some settings made there were being ignored when a file was printed. This is a fix for bug #89 "Setup selections not being remembered" (http://bit.ly/1a3V94x).
++ Removed File | Page Setup menu option because some settings made there were being ignored when a file was printed. This is a fix for bug #89 "Setup selections not being remembered" ~~(http://bit.ly/1a3V94x)~~.
 + Updated help file re changes.
 
 
@@ -685,34 +685,34 @@ _Internal CodeSnip version 3.98.1_
 
 ## Release v3.12.1 of 01 July 2013
 
-+ Fixed bug #82 "Fatal divide by zero exception on start-up" (http://bit.ly/15aIJqQ) that affected all v3.x versions when the IE 10 browser was installed.
++ Fixed bug #82 "Fatal divide by zero exception on start-up" ~~(http://bit.ly/15aIJqQ)~~ that affected all v3.x versions when the IE 10 browser was installed.
 + Fixed unreported bug where IE 10 browser was being reported as IE 9.
 + Updated all third party DelphiDabbler code to latest available versions.
 + Updated documentation re changes.
 
 ## Release v3.12.0 of 02 May 2013
 
-+ Added support for Delphi XE4 compiler. Implements feature request #78 (http://bit.ly/10uGhoD).
-+ Fixed bug #78 (http://bit.ly/ZQl3T4) - CodeSnip doesn't restore window in correct position when task bar on left or top of screen.
++ Added support for Delphi XE4 compiler. Implements feature request #78 ~~(http://bit.ly/10uGhoD)~~.
++ Fixed bug #78 ~~(http://bit.ly/ZQl3T4)~~ - CodeSnip doesn't restore window in correct position when task bar on left or top of screen.
 + Updated documentation re changes.
 + Updated help file re changes.
 
 
 ## Release v3.11.1 of 08 December 2012
 
-+ Fixed bug #3578654 (http://bit.ly/T7fTxu): "Pre-processor directive errors in main db ini files" by removing support for problematic directives.
-+ Hints are no longer displayed in status bar when user rolls mouse over a link in the display pane. This fixes bug #3577408 (http://bit.ly/WEzZGg): "Clicking detail pane snippet link leaves hint in status bar".
-+ Windows no longer scale automatically when screen DPI differs from that on design system. This fixes bugs #3591818 (http://bit.ly/TvNaUL) "Strange window behaviour in Windows 7" and bug #3591820 (http://bit.ly/SEH6dO) "Incorrect font size used for some bold text".
++ Fixed bug #3578654 ~~(http://bit.ly/T7fTxu)~~: "Pre-processor directive errors in main db ini files" by removing support for problematic directives.
++ Hints are no longer displayed in status bar when user rolls mouse over a link in the display pane. This fixes bug #3577408 ~~(http://bit.ly/WEzZGg)~~: "Clicking detail pane snippet link leaves hint in status bar".
++ Windows no longer scale automatically when screen DPI differs from that on design system. This fixes bugs #3591818 ~~(http://bit.ly/TvNaUL)~~ "Strange window behaviour in Windows 7" and bug #3591820 ~~(http://bit.ly/SEH6dO)~~ "Incorrect font size used for some bold text".
 + Updated operating system detection code to detect W0ndows 8 & 2012 server.
 + Updated documentation
 
 
 ## Release v3.11.0 of 17 September 2012
 
-+ Added support for Delphi XE3 compiler. Implements feature request #3566345 (http://bit.ly/OvbBPp).
++ Added support for Delphi XE3 compiler. Implements feature request #3566345 ~~(http://bit.ly/OvbBPp)~~.
 + Bug fixes:
-  - #3561713 (http://bit.ly/QEYRFx): The Category view in the Overview pane sometimes appears fully expanded when it is expected to be fully collapsed.
-  - #3566430 (http://bit.ly/U1KnGZ): About Box Paths Page displays wrongly when themes not available.
+  - #3561713 ~~(http://bit.ly/QEYRFx)~~: The Category view in the Overview pane sometimes appears fully expanded when it is expected to be fully collapsed.
+  - #3566430 ~~(http://bit.ly/U1KnGZ)~~: About Box Paths Page displays wrongly when themes not available.
 + Updated documentation re changes.
 + Updated help file re changes.
 
@@ -720,18 +720,18 @@ _Internal CodeSnip version 3.98.1_
 ## Release v3.10.5 of 21 August 2012
 
 + Fixed bugs:
-  - #3559257 (http://bit.ly/Qc8Fqu): Compile Results accessed from menu can get out of sync.
-  - #3559156 (http://bit.ly/TKXYQ7): "Previews" disappearing in Preferences dialogue box
+  - #3559257 ~~(http://bit.ly/Qc8Fqu)~~: Compile Results accessed from menu can get out of sync.
+  - #3559156 ~~(http://bit.ly/TKXYQ7)~~: "Previews" disappearing in Preferences dialogue box
 
 
 ## Release v3.10.4 of 16 August 2012
 
-+ Added support for displaying pop-up menus over appropriate control when Alt+F10 is pressed. Fixes bug #3556713 (http://bit.ly/RIzfvQ).
++ Added support for displaying pop-up menus over appropriate control when Alt+F10 is pressed. Fixes bug #3556713 ~~(http://bit.ly/RIzfvQ)~~.
 + Changes to snippets editor:
-  - Added missing edit context menu to "add unit" edit control on References tab. Fixes bug #3556718 (http://bit.ly/RVanCE) as it relates to v3.
+  - Added missing edit context menu to "add unit" edit control on References tab. Fixes bug #3556718 ~~(http://bit.ly/RVanCE~~) as it relates to v3.
   - Predefined list of units in Units list on References tab now includes the "Types" unit.
   - Referenced unit names may now contain dots.
-  - Snippets Editor help topic now explains need to configure Delphi XE2 compiler to search namespaces containing referenced units. This provides a solution to bug #3536531 (http://bit.ly/Q2bcmY).
+  - Snippets Editor help topic now explains need to configure Delphi XE2 compiler to search namespaces containing referenced units. This provides a solution to bug #3536531 ~~(http://bit.ly/Q2bcmY)~~.
 
 
 ## Release v3.10.3 of 25 July 2012
@@ -742,14 +742,14 @@ _Internal CodeSnip version 3.98.1_
 
 ## Release v3.10.2 of 19 June 2012
 
-+ Fixed bug #3536331 (http://bit.ly/KQVATf) where some distinct words in a snippet's Extra text where not being found in text searches.
++ Fixed bug #3536331 ~~(http://bit.ly/KQVATf)~~ where some distinct words in a snippet's Extra text where not being found in text searches.
 + Info about user's OS and IE version is now sent to web server during online database updates.
 + Updated privacy statement re changes in information sent by update web service.
 
 
 ## Release v3.10.1 of 20 April 2012
 
-+ Fixed bug #3519784 (http://bit.ly/IsCsun) where multi-line type or constant snippets that start on same line as type or const keyword were corrupted when included in units using the "comments after snippet header" comment style.
++ Fixed bug #3519784 ~~(http://bit.ly/IsCsun)~~ where multi-line type or constant snippets that start on same line as type or const keyword were corrupted when included in units using the "comments after snippet header" comment style.
 + Also fixed potential source of a bug in code that edits user-defined categories.
 
 
@@ -775,14 +775,14 @@ _Internal CodeSnip version 3.98.1_
 
 ## Release v3.9.2 of 28 October 2011
 
-+ Fixed bug #3427741 (http://bit.ly/vq2fAz) where details pane tabs didn't change in response to key presses.
-+ Fixed bug #3427866 (http://bit.ly/w31z8L) where selection in overview was not always same as item displayed in details pane.
-+ Fixed bug #3427889 (http://bit.ly/tijnmF) where there was the possibility of a GPF in overview pane.
++ Fixed bug #3427741 ~~(http://bit.ly/vq2fAz)~~ where details pane tabs didn't change in response to key presses.
++ Fixed bug #3427866 ~~(http://bit.ly/w31z8L)~~ where selection in overview was not always same as item displayed in details pane.
++ Fixed bug #3427889 ~~(http://bit.ly/tijnmF)~~ where there was the possibility of a GPF in overview pane.
 
 
 ## Release v3.9.1 of 18 September 2011
 
-+ Fixed bug #3369422 (http://bit.ly/omSp6F) in Pascal highlighter that was causing an assertion failure when parsing malformed Pascal general format floating point numbers.
++ Fixed bug #3369422 ~~(http://bit.ly/omSp6F)~~ in Pascal highlighter that was causing an assertion failure when parsing malformed Pascal general format floating point numbers.
 
 
 ## Release v3.9.0 of 07 September 2011
@@ -797,7 +797,7 @@ _Internal CodeSnip version 3.98.1_
 
 ## Release v3.8.11 of 02 July 2011
 
-+ Fixed display problem in about box and compiler error dialogue boxes on systems using Internet Explorer v9 web browser control. This fixes issue #3349186 (http://bit.ly/lF6bTO).
++ Fixed display problem in about box and compiler error dialogue boxes on systems using Internet Explorer v9 web browser control. This fixes issue #3349186 ~~(http://bit.ly/lF6bTO)~~.
 + Updated read-me file re support for IE9 browser control.
 
 
@@ -810,9 +810,9 @@ _Internal CodeSnip version 3.98.1_
 
 ## Release v3.8.9 of 10 May 2011
 
-+ Fixed bug #3299870 (http://bit.ly/iX8Its) that was allowing imported snippets with duplicate names to be renamed with invalid names.
++ Fixed bug #3299870 ~~(http://bit.ly/iX8Its)~~ that was allowing imported snippets with duplicate names to be renamed with invalid names.
 + Improved UI used to edit imported snippet names.
-+ Any "warning" compile results in main database are now treated and displayed as "success" results per feature request #3290359 (http://bit.ly/mshbRa).
++ Any "warning" compile results in main database are now treated and displayed as "success" results per feature request #3290359 ~~(http://bit.ly/mshbRa)~~.
 + Fixed unreported potential bug in code that sets window class names.
 + Updated documentation.
 
@@ -843,14 +843,14 @@ _Internal CodeSnip version 3.98.1_
 
 ## Release v3.8.5 of 28 November 2010
 
-+ Fixed bug where user was able to create snippets with valid names that would crash the alphabetic overview. Snippet names are now limited to letters from English alphabet and the underscore. Fixes bug #3120958 (http://bit.ly/fDAswL).
-+ Fixed bug where snippets that have names beginning with a lower case letter were being omitted from from the associated list of snippets shown in the detail pane. Fixes bug #3120962 (http://bit.ly/eGhQvc).
++ Fixed bug where user was able to create snippets with valid names that would crash the alphabetic overview. Snippet names are now limited to letters from English alphabet and the underscore. Fixes bug #3120958 ~~(http://bit.ly/fDAswL)~~.
++ Fixed bug where snippets that have names beginning with a lower case letter were being omitted from from the associated list of snippets shown in the detail pane. Fixes bug #3120962 ~~(http://bit.ly/eGhQvc)~~.
 + Updated Snippets Editor topic in help file.
 
 
 ## Release v3.8.4 of 26 November 2010
 
-+ User can now opt to terminate the application when an unexpected exception is trapped. This implements feature request #3074914 (http://bit.ly/hUyEAw).
++ User can now opt to terminate the application when an unexpected exception is trapped. This implements feature request #3074914 ~~(http://bit.ly/hUyEAw)~~.
 + Wording of bug report dialogue boxes changed.
 + Snippets selection dialogue box now displays wait cursor while waiting for it to be displayed.
 + Some corrections and clarifications made to comments that appear in generated "include" files.
@@ -862,7 +862,7 @@ _Internal CodeSnip version 3.98.1_
 
 ## Release v3.8.3 of 24 November 2010
 
-+ Added button to "Compile" tab of Snippets Editor to display unit used to test compile snippets. This implements feature request #3108008 (http://bit.ly/elBZnn).
++ Added button to "Compile" tab of Snippets Editor to display unit used to test compile snippets. This implements feature request #3108008 ~~(http://bit.ly/elBZnn)~~.
 + Fixed unreported bugs in handling of exceptions raised in threads.
 + Simplified method used to load database on start up. No longer uses a separate thread.
 + Overhauled and simplified code used to display "wait" dialogues during test compilations and database reloading.
@@ -875,13 +875,13 @@ _Internal CodeSnip version 3.98.1_
 
 ## Release v3.8.2 of 16 November 2010
 
-+ The position of the caret in the Snippets Editor's Extra Information control is now displayed. Implements feature request #3105288 (http://bit.ly/bRV86Z).
++ The position of the caret in the Snippets Editor's Extra Information control is now displayed. Implements feature request #3105288 ~~(http://bit.ly/bRV86Z)~~.
 + Code that displays caret positions was refactored and improved.
-+ Display of errors in the Snippets Editor's text edit controls has been improved in most cases either by positioning the caret near the error or selecting the erroneous text. This implements feature request #3107042 (http://bit.ly/cKx5YQ).
++ Display of errors in the Snippets Editor's text edit controls has been improved in most cases either by positioning the caret near the error or selecting the erroneous text. This implements feature request #3107042 ~~(http://bit.ly/cKx5YQ)~~.
 + Made significant changes to code that parses REML mark-up:
   - Rationalised error reporting and added support for reporting the position of errors.
   - Fixed unreported bug that produced wrong error message when empty tags are encountered.
-  - Fixed bug #3107982 (http://bit.ly/cp9Cff) that failed to report some unclosed tags as errors.
+  - Fixed bug #3107982 ~~(http://bit.ly/cp9Cff)~~ that failed to report some unclosed tags as errors.
   - Refactored and reorganised much of the code.
 + All encoding and decoding of URIs is now RFC 3986 compliant.
 + Refactored character detection and string encoding support code.
@@ -891,7 +891,7 @@ _Internal CodeSnip version 3.98.1_
 
 ## Release v3.8.1 of 08 November 2010
 
-+ Fixed bug #3015589 (http://bit.ly/cdPedH) where some user syntax highlighter settings were being ignored in main display.
++ Fixed bug #3015589 ~~(http://bit.ly/cdPedH)~~ where some user syntax highlighter settings were being ignored in main display.
 + Changed Test Unit view dialogue box to use user syntax highlighter settings.
 + Revised credits in About Box program tab.
 + Updated third party units: PJMD5 to v0.3, PJSysInfo to v3.3, PJVersionInfo to v3.3.
@@ -958,7 +958,7 @@ _Internal CodeSnip version 3.98.1_
 
 ## Release v3.6.0 of 26 May 2010
 
-+ Added support for emitting compiler directives to switch off specified warnings. This implement feature request #2994485 (see http://bit.ly/cxDJG4).
++ Added support for emitting compiler directives to switch off specified warnings. This implement feature request #2994485 ~~(see http://bit.ly/cxDJG4)~~.
 + Preferences dialogue box updated:
   - New "Code Generation" tab used to configure which if any warnings are to be inhibited.
   - Renamed "Source Code" tab to "Code Formatting".
@@ -977,18 +977,18 @@ _Internal CodeSnip version 3.98.1_
 
 ## Release v3.5.5 of 24 March 2010
 
-+ Fixes download stream read bug #2976048 (see http://bit.ly/ds6mBr).
++ Fixes download stream read bug #2976048 ~~(see http://bit.ly/ds6mBr)~~.
 
 
 ## Release v3.5.4 of 18 March 2010
 
-+ Temporary fix for download error checking bug #2970055 (see http://bit.ly/cvf9Mm).
-+ Fixed https protocol bug #2970896 (see http://bit.ly/bCIx38).
++ Temporary fix for download error checking bug #2970055 ~~(see http://bit.ly/cvf9Mm)~~.
++ Fixed https protocol bug #2970896 ~~(see http://bit.ly/bCIx38)~~.
 
 
 ## Release v3.5.3 of 08 March 2010
 
-+ Fixed database download error checking bug #2964767 (see http://bit.ly/90vFfp).
++ Fixed database download error checking bug #2964767 ~~(see http://bit.ly/90vFfp)~~.
 + Updated PayPal donations narrative on welcome page.
 
 
@@ -998,7 +998,7 @@ _Internal CodeSnip version 3.98.1_
   - Use web service's revised download file format
   - Validate download data before updating local database.
   - Provide better download error messages.
-+ Fixed bug #2947794 in view link dialogue box (see http://bit.ly/beiZZ8).
++ Fixed bug #2947794 in view link dialogue box ~~(see http://bit.ly/beiZZ8)~~.
 + Refactored some exception handling code.
 
 
@@ -1039,7 +1039,7 @@ _Internal CodeSnip version 3.98.1_
 
 ## Release v3.4.6 of 18 November 2009
 
-+ Changed code that takes a security backup of main database during updates to store backup in a single file rather as separate files in a temporary folder. This should fix bug #2898687 (see http://bit.ly/bKg6oH).
++ Changed code that takes a security backup of main database during updates to store backup in a single file rather as separate files in a temporary folder. This should fix bug #2898687 ~~(see http://bit.ly/bKg6oH)~~.
 + Slightly modified user database backup file format to match that now used for main database backup.
 + Fixed potential bugs:
   - Code that performs busy waits could have caused program to freeze.
@@ -1049,9 +1049,9 @@ _Internal CodeSnip version 3.98.1_
 
 ## Release v3.4.5 of 09 November 2009
 
-+ Home, Ctrl+Home, End and Ctrl+End keys now work in overview pane and go to first and last item in tree view respectively per feature request #2888880 - see http://bit.ly/bgJCVU).
++ Home, Ctrl+Home, End and Ctrl+End keys now work in overview pane and go to first and last item in tree view respectively per feature request #2888880 ~~(see http://bit.ly/bgJCVU)~~.
 + State of tree view in overview pane is now maintained after editing the user database: the tree is no longer always fully expanded after each edit.
-+ Removed "Properties" button from print dialogue box along with associated dialogue boxes. This option has always been buggy. This "fixes" bug #2868706 (see http://bit.ly/9LArqI).
++ Removed "Properties" button from print dialogue box along with associated dialogue boxes. This option has always been buggy. This "fixes" bug #2868706 ~~(see http://bit.ly/9LArqI)~~.
 + Fixed unreported makefile bug.
 
 
@@ -1059,7 +1059,7 @@ _Internal CodeSnip version 3.98.1_
 
 + Changed bug reporting mechanism. Bugs are now reported via the on-line bug tracker. Bug report dialogues changed accordingly. Access to the old bug report web service was removed.
 + Added two new default syntax highlighter styles: "Visual Studio" and "No Highlighter". The latter switches off syntax highlighting.
-+ Fixed bug no. 2882331 (see http://bit.ly/beArcC). This was a bug in the syntax highlighter that occurred when an unexpected character was encountered.
++ Fixed bug no. 2882331 ~~(see http://bit.ly/beArcC)~~. This was a bug in the syntax highlighter that occurred when an unexpected character was encountered.
 + Updated help file re changes.
 + Some minor source code corrections.
 
@@ -1076,7 +1076,7 @@ _Internal CodeSnip version 3.98.1_
 
 ## Release v3.4.2 of 10 October 2009
 
-+ Fixed bugs #2868706 (see http://bit.ly/9LArqI) and #2875857 (see http://bit.ly/bN4xqE)
++ Fixed bugs #2868706 ~~(see http://bit.ly/9LArqI)~~ and #2875857 ~~(see http://bit.ly/bN4xqE)~~
 + Updated GIF image handling code.
 
 
