@@ -1,6 +1,17 @@
 # Changelog
 
 
+This is the change log for _DelphiDabbler CodeSnip_.
+
+All notable changes to this project are documented in this file.
+
+This change log begins with the first ever pre-release version of _CodeSnip_. Releases are sequential in reverse version number order.
+
+> Note that _CodeSnip_ v4 was developed in parallel with v3 for a while. As a consequence some later v3 releases have later release dates than early v4 releases.
+
+From v4.1.0 the version numbering has attempted to adhere to the principles of [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+
 ## Release v4.15.1 of 22 September 2016
 
 + Updated OS detection code to detect Windows 10 Version 1607 (Anniversary update) and all technical previews of Windows 2016 Server to date.
