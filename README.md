@@ -59,7 +59,9 @@ There is also an [FAQ](https://github.com/delphidabbler/codesnip-faq) -- (see [S
 
 ## Change Log
 
-The program's current change log can be found in the file `Docs/ChangeLogs/ChangeLog-v4.txt` on the `master` branch. Change logs for other major releases are in the same directory.
+The program's current change log can be found in the file `CHANGELOG.md` in the root of the `master` branch.
+
+> Note that CodeSnip v4.15.1 and earlier did not have `CHANGELOG.md`. Instead, some versions maintained a separate change log for each major version in the `Docs/ChangeLogs` directory.
 
 ## License
 
