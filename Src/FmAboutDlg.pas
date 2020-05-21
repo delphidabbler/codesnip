@@ -196,7 +196,8 @@ uses
   UMessageBox,
   UResourceUtils,
   UStrUtils,
-  UThemesEx;
+  UThemesEx,
+  UVersionInfo;
 
 {$R *.dfm}
 
@@ -424,49 +425,58 @@ procedure TAboutDlg.InitHTMLFrames;
       var
         IsDBAvalable: Boolean;
         IsMetaDataAvailable: Boolean;
-        IsLicenseInfomAvailable: Boolean;
+        IsLicenseInfoAvailable: Boolean;
+
+        function DBVersion: string;
+        var
+          Ver: TVersionNumber;
+        begin
+          Ver := fMetaData.GetVersion;
+          if Ver.V1 = 1 then
+            Result := '1'
+          else
+            Result := Ver;
+        end;
+
       begin
         // Resolve conditionally displayed block placeholders
         IsDBAvalable := Database.Snippets.Count(False) > 0;
         IsMetaDataAvailable := fMetaData.IsSupportedVersion
           and not fMetaData.IsCorrupt;
-        IsLicenseInfomAvailable := IsMetaDataAvailable
+        IsLicenseInfoAvailable := IsMetaDataAvailable
           and (fMetaData.GetLicenseInfo.Name <> '')
           and (fMetaData.GetCopyrightInfo.Date <> '')
           and (fMetaData.GetCopyrightInfo.Holder <> '');
         Tplt.ResolvePlaceholderHTML(
-          'DBAvailable',
-          TCSS.BlockDisplayProp(IsDBAvalable)
+          'DBAvailable', TCSS.BlockDisplayProp(IsDBAvalable)
         );
         Tplt.ResolvePlaceholderHTML(
-          'DBNotAvailable',
-          TCSS.BlockDisplayProp(not IsDBAvalable)
+          'DBNotAvailable', TCSS.BlockDisplayProp(not IsDBAvalable)
         );
         Tplt.ResolvePlaceholderHTML(
-          'MetaDataAvailable',
-          TCSS.BlockDisplayProp(IsMetaDataAvailable)
+          'MetaDataAvailable', TCSS.BlockDisplayProp(IsMetaDataAvailable)
         );
         Tplt.ResolvePlaceholderHTML(
-          'MetaDataNotAvailable',
-          TCSS.BlockDisplayProp(not IsMetaDataAvailable)
+          'MetaDataNotAvailable', TCSS.BlockDisplayProp(not IsMetaDataAvailable)
         );
         Tplt.ResolvePlaceholderHTML(
-          'LicenseInfoAvailable',
-          TCSS.BlockDisplayProp(IsLicenseInfomAvailable)
+          'LicenseInfoAvailable', TCSS.BlockDisplayProp(IsLicenseInfoAvailable)
+        );
+        Tplt.ResolvePlaceholderHTML(
+          'LicenseInfoAvailableInline',
+          TCSS.InlineDisplayProp(IsLicenseInfoAvailable)
         );
         Tplt.ResolvePlaceholderHTML(
           'LicenseInfoNotAvailable',
-          TCSS.BlockDisplayProp(not IsLicenseInfomAvailable)
+          TCSS.BlockDisplayProp(not IsLicenseInfoAvailable)
         );
 
-        // Rsolve content placeholders
+        // Resolve content placeholders
         Tplt.ResolvePlaceholderText(
-          'CopyrightYear',
-          fMetaData.GetCopyrightInfo.Date
+          'CopyrightYear', fMetaData.GetCopyrightInfo.Date
         );
         Tplt.ResolvePlaceholderText(
-          'CopyrightHolders',
-          fMetaData.GetCopyrightInfo.Holder
+          'CopyrightHolders', fMetaData.GetCopyrightInfo.Holder
         );
         Tplt.ResolvePlaceholderHTML(
           'DBLicense',
@@ -489,6 +499,7 @@ procedure TAboutDlg.InitHTMLFrames;
         Tplt.ResolvePlaceholderHTML(
           'TesterList', ContribListHTML(fMetaData.GetTesters)
         );
+        Tplt.ResolvePlaceholderText('Version', DBVersion);
       end
     );
   end;

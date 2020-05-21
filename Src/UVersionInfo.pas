@@ -30,6 +30,9 @@ type
     Record representing the four fields of a version number.
   }
   TVersionNumber = record
+  strict private
+    ///  <summary>Converts version number to a string.</summary>
+    function ToString: string;
   public
     V1: Word;   // Major version number
     V2: Word;   // Minor version number
@@ -106,6 +109,12 @@ type
         @param Str [in] String to be converted. Must be in dotted quad format.
         @return Converted version number.
         @except EConvertError. raised if string in wrong format.
+      }
+    class operator Implicit(Ver: TVersionNumber): string;
+      {Operator overload that performs implicit conversion of a version number
+      to a string in dotted quad format.
+        @param Ver [in] Version number to be converted.
+        @return Dotted quad string.
       }
     class operator Explicit(Ver: TVersionNumber): TPJVersionNumber;
       {Operator overload that performs an explicit conversion of a
@@ -269,7 +278,7 @@ class operator TVersionNumber.Explicit(Ver: TVersionNumber): string;
     @return Dotted quad string.
   }
 begin
-  Result := Format('%d.%d.%d.%d', [Ver.V1, Ver.V2, Ver.V3, Ver.V4]);
+  Result := Ver.ToString;
 end;
 
 class operator TVersionNumber.GreaterThan(Ver1, Ver2: TVersionNumber): Boolean;
@@ -327,6 +336,16 @@ begin
   Result.V4 := Ver.V4;
 end;
 
+class operator TVersionNumber.Implicit(Ver: TVersionNumber): string;
+  {Operator overload that performs implicit conversion of a version number to a
+  string in dotted quad format.
+    @param Ver [in] Version number to be converted.
+    @return Dotted quad string.
+  }
+begin
+  Result := Ver.ToString;
+end;
+
 class operator TVersionNumber.LessThan(Ver1, Ver2: TVersionNumber): Boolean;
   {Operator overload that compares two version numbers to check if first is
   less than second.
@@ -369,6 +388,11 @@ begin
   Result.V2 := 0;
   Result.V3 := 0;
   Result.V4 := 0;
+end;
+
+function TVersionNumber.ToString: string;
+begin
+  Result := Format('%d.%d.%d.%d', [V1, V2, V3, V4]);
 end;
 
 class function TVersionNumber.TryStrToVersionNumber(const S: string;

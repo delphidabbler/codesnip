@@ -132,6 +132,10 @@ code snippets.
 No files are written outside the folder where you copied the files and the
 registry is not modified.
 
+** WARNING: When updating an existing portable installation with a new version
+of CodeSnip it is important that you do not change or delete the AppData and
+UserData folders. If you do this you risk loosing your settings and/or database.
+
 
 Uninstallation
 ================================================================================
