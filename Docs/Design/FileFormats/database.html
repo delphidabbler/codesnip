@@ -80,7 +80,7 @@
 
 <p>
   These files are stored in binary format. Text included in within the binary
-  data is stored in UTF-8 format.
+  data is stored in UTF&#8209;8 format.
 </p>
 
 <h2>
@@ -121,14 +121,14 @@
     <kbd>SizedString</kbd>
   </dt>
   <dd>
-    This is a variable length UTF-8 string that is preceded by its length as a
+    This is a variable length UTF&#8209;8 string that is preceded by its length as a
     <kbd>Word</kbd>.
   </dd>
   <dt>
     <kbd>SizedLongString</kbd>
   </dt>
   <dd>
-    This is a variable length UTF-8 string that is preceded by its length as a
+    This is a variable length UTF&#8209;8 string that is preceded by its length as a
     <kbd>LongWord</kbd>.
   </dd>
   <dt>
@@ -143,7 +143,7 @@
     <kbd>FixedString[<em>X</em>]</kbd>
   </dt>
   <dd>
-    This is a chunk of UTF-8 text whose length is specified by
+    This is a chunk of UTF&#8209;8 text whose length is specified by
     <kbd><em>X</em></kbd>.
   </dd>
   <dt>
@@ -159,10 +159,10 @@
   <dd>
     This is a UTC date in <a
       href="http://www.cl.cam.ac.uk/~mgk25/iso-time.html"
-    >ISO-8601 format</a> written as a <kbd>SizedString</kbd> value. The string
+    >ISO&#8209;8601 format</a> written as a <kbd>SizedString</kbd> value. The string
     will always have the format
-    <kbd>YYYY-MM-DD&quot;T&quot;HH:MM:SS.XXX&quot;Z&quot;</kbd> or
-    <kbd>YYYY-MM-DD&quot;T&quot;HH:MM:SS,XXX&quot;Z&quot;</kbd>.
+    <kbd>YYYY&#8209;MM&#8209;DD&quot;T&quot;HH:MM:SS.XXX&quot;Z&quot;</kbd> or
+    <kbd>YYYY&#8209;MM&#8209;DD&quot;T&quot;HH:MM:SS,XXX&quot;Z&quot;</kbd>.
   </dd>
 </dl>
 
@@ -185,8 +185,7 @@
   </dt>
   <dd>
     Identifies the file as a master database file. The field always has the
-    value &quot;<kbd>CSDB-MASTER-0562C0E6F20B4C2F945D1FDEC6393C4C</kbd>&quot;
-    (without the quotes).
+    value <kbd class="value">CSDB&#8209;MASTER&#8209;0562C0E6F20B4C2F945D1FDEC6393C4C</kbd>.
   </dd>
   <dt>
     <em>FileVersion</em> (<kbd>FixedString[4]</kbd>)
@@ -194,7 +193,7 @@
   <dd>
     The version of the database as a four character string of digits. At present
     only version 7 is supported and the field always has the value
-    &quot;<kbd>0007</kbd>&quot; (without the quotes).
+    <kbd class="value">0007</kbd>.
   </dd>
   <dt>
     <em>LastModificationDate</em> (<kbd>Date</kbd>)
@@ -244,7 +243,7 @@
         <em>Reserved</em> (<kbd>LongWord</kbd>)
       </dt>
       <dd>
-        A 32 bit field reserved for future use. Must be zero.
+        A 32 bit field reserved for future use. Must be <kbd  class="value">0</kbd>.
       </dd>
     </dl>
   </dd>
@@ -280,8 +279,7 @@
   </dt>
   <dd>
     Identifies the file as a snippet file. The field always has the value
-    &quot;<kbd>CSDB-SNIPPET-0562C0E6F20B4C2F945D1FDEC6393C4C</kbd>&quot;
-    (without the quotes).
+    <kbd class="value">CSDB&#8209;SNIPPET&#8209;0562C0E6F20B4C2F945D1FDEC6393C4C</kbd>.
   </dd>
   <dt>
     <em>FileVersion</em> (<kbd>FixedString[4]</kbd>)
@@ -289,7 +287,7 @@
   <dd>
     The version of the database as a four character string of digits. At
     present only version 7 is supported and the field always has the value
-    &quot;<kbd>0007</kbd>&quot; (without the quotes).
+    <kbd class="value">0007</kbd>.
   </dd>
 </dl>
 
@@ -311,7 +309,7 @@
     <em>PropertyID</em> (<kbd>Byte</kbd>)
   </dt>
   <dd>
-    A unique code that identifies the property. Property IDs must be in the range <kbd>0x00..0xFE</kbd>. The special value <kbd>0xFF</kbd> is used to terminate the sequence of property records.
+    A unique code that identifies the property. Property IDs must be in the range <kbd class="value">0x00</kbd>..<kbd class="value">0xFE</kbd>. The special value <kbd class="value">0xFF</kbd> is used to terminate the sequence of property records.
   </dd>
   <dt>
     <em>PropertyData</em> (type is property dependent)
@@ -452,7 +450,7 @@
           </li>
         </ol>
         <div>
-          This property is never written when origin source is <em>local</em>. <em>Default: local.</em>
+          This property is never written when origin source is <kbd class="value">local</kbd>. <em>Default: <kbd class="value">local</kbd>.</em>
         </div>
       </dd>
       <dt>
@@ -467,7 +465,7 @@
       </dt>
       <dd>
         A <kbd>Byte</kbd> representation of a Boolean value that determines if
-        the snippet is starred. <em>Default: un-starred.</em>
+        the snippet is starred. <em>Default: <kbd class="value">0</kbd> (i.e. <kbd class="value">False</kbd>).</em>
       </dd>
       <dt class='todo pullout'>
         TODO: Consider adding an <em>Origin property</em> to denote where snippet was obtained from. Replacement for the <em>LinkInfo</em> property? <em>Default: local.</em>
