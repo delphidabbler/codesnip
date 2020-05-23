@@ -143,6 +143,11 @@ ol.unspaced li {
 code, kbd {
   font-family: Consolas, "Courier New", Courier, monospace;
 }
+kbd.value {
+  background-color: #eef;
+  padding-left: 2pt;
+  padding-right: 2pt;
+}
 
 del {
   text-decoration: line-through;
