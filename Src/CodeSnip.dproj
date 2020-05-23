@@ -556,6 +556,7 @@
 			<DCCReference Include="Main\CS.UI.Dialogs.DeleteEmptyTags.pas">
 				<Form>DeleteUnusedTagsDlg</Form>
 			</DCCReference>
+			<DCCReference Include="Main\CS.Database.IO.Packages.pas"/>
 			<None Include="CodeSnip.todo"/>
 			<BuildConfiguration Include="Base">
 				<Key>Base</Key>

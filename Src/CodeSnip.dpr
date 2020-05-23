@@ -371,7 +371,8 @@ uses
   CS.Utils.COM in 'Main\CS.Utils.COM.pas',
   CS.UI.Dialogs.TagsSearch in 'Main\CS.UI.Dialogs.TagsSearch.pas' {TagsSearchDlg},
   CS.UI.Dialogs.HiliteThemesEditor.ExampleFrame in 'Main\CS.UI.Dialogs.HiliteThemesEditor.ExampleFrame.pas' {HiliteThemesExampleFrame: TFrame},
-  CS.UI.Dialogs.DeleteEmptyTags in 'Main\CS.UI.Dialogs.DeleteEmptyTags.pas' {DeleteUnusedTagsDlg};
+  CS.UI.Dialogs.DeleteEmptyTags in 'Main\CS.UI.Dialogs.DeleteEmptyTags.pas' {DeleteUnusedTagsDlg},
+  CS.Database.IO.Packages in 'Main\CS.Database.IO.Packages.pas';
 
 // Include resources
 {$Resource ExternalObj.tlb}       // Type library file
