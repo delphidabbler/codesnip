@@ -767,7 +767,7 @@ var
 resourcestring
   sWaitMsg = 'Retrieving packet...';
   sContentTplt = 'ID: %0:d' + EOL +
-    'Category: "%1:s"' + EOL +
+    'Category ID: %1:d' + EOL +
     'File Name: "%2:s"' + EOL +
     'Title: "%3:s"' + EOL +
     'Author: "%4:s"' + EOL2 +

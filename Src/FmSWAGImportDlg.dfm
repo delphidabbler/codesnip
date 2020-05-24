@@ -19,7 +19,7 @@ inherited SWAGImportDlg: TSWAGImportDlg
     inherited pcWizard: TPageControl
       Width = 671
       Height = 456
-      ActivePage = tsCategories
+      ActivePage = tsUpdate
       ExplicitWidth = 671
       ExplicitHeight = 456
       object tsIntro: TTabSheet
@@ -178,10 +178,6 @@ inherited SWAGImportDlg: TSWAGImportDlg
         Caption = 'tsUpdate'
         ImageIndex = 2
         TabVisible = False
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         object lblUpdateDesc: TLabel
           Left = 0
           Top = 3
@@ -204,11 +200,11 @@ inherited SWAGImportDlg: TSWAGImportDlg
           Height = 317
           Columns = <
             item
-              Caption = 'Snippet Title (Display Name)'
+              Caption = 'Packet Title '#8594' Snippet Display Name'
               Width = 400
             end
             item
-              Caption = 'Snippet ID (Name)'
+              Caption = 'Snippet Name from SWAG ID'
               Width = 200
             end>
           ColumnClick = False
