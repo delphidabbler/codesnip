@@ -18,6 +18,7 @@ interface
 uses
   // Delphi
   SysUtils,
+  Generics.Defaults,
   Generics.Collections,
   // Project
   SWAG.UCommon,
@@ -58,7 +59,7 @@ type
       ///  <para>Only partial information that summarises each packet is
       ///  stored.</para>
       ///  </remarks>
-      fPacketsByCategory: TDictionary<string,TList<TSWAGPacket>>;
+      fPacketsByCategory: TDictionary<Cardinal,TList<TSWAGPacket>>;
       ///  <summary>Object used to interogate SWAG XML file.</summary>
       fXMLProcessor: TSWAGXMLProcessor;
       ///  <summary>Default wrapper for calls to the local SWAG database.
@@ -85,7 +86,7 @@ type
     procedure FetchCategories(CallWrapper: TSWAGCallbackWrapper);
     ///  <summary>Fetches summaries of all the packets contained in a given
     ///  SWAG category from the SWAG database.</summary>
-    ///  <param name="CatID">string [in] ID of category for which packet
+    ///  <param name="CatID">Cardinal [in] ID of category for which packet
     ///  summaries are required.</param>
     ///  <param name="CallWrapper">TSWAGCallbackWrapper [in] Callback that is
     ///  called and passed a closure which can retrive the required category
@@ -93,7 +94,7 @@ type
     ///  to the constructor is used.</param>
     ///  <remarks>The fetched packet summaries are cached in
     ///  fPacketsByCategory.</remarks>
-    procedure FetchPartialPackets(const CatID: string;
+    procedure FetchPartialPackets(const CatID: Cardinal;
       CallWrapper: TSWAGCallbackWrapper);
     ///  <summary>Fetches full details a packet from the SWAG database.
     ///  </summary>
@@ -147,7 +148,7 @@ type
       CallWrapper: TSWAGCallbackWrapper = nil);
     ///  <summary>Gets summaries of all the packets contained in a given SWAG
     ///  category.</summary>
-    ///  <param name="CatID">string [in] ID of the required category.</param>
+    ///  <param name="CatID">Cardinal [in] ID of the required category.</param>
     ///  <param name="Packets">TList&lt;TSWAGPacket&gt; [in] Receives the
     ///  required list of packet summaries.</param>
     ///  <param name="CallWrapper">TSWAGCallbackWrapper [in] Callback that is
@@ -158,7 +159,7 @@ type
     ///  CallWrapper is called to retrieve the required packets. On subsequent
     ///  calls for that category the packets summaries are read from a cache
     ///  and CallWrapper is not called.</remarks>
-    procedure GetPartialPackets(const CatID: string;
+    procedure GetPartialPackets(const CatID: Cardinal;
       const Packets: TList<TSWAGPacket>;
       CallWrapper: TSWAGCallbackWrapper = nil);
     ///  <summary>Gets full details a packet from the SWAG database.</summary>
@@ -222,9 +223,18 @@ begin
   inherited Create;
   fDefaultCallWrapper := DefaultSWAGCallbackWrapper;
   fCategories := TList<TSWAGCategory>.Create;
-  fPacketsByCategory := TObjectDictionary<string,TList<TSWAGPacket>>.Create(
+  fPacketsByCategory := TObjectDictionary<Cardinal,TList<TSWAGPacket>>.Create(
     [doOwnsValues],
-    TStringEqualityComparer.Create
+    TDelegatedEqualityComparer<Cardinal>.Create(
+      function (const Left, Right: Cardinal): Boolean
+      begin
+        Result := Left = Right;
+      end,
+      function (const Value: Cardinal): Integer
+      begin
+        Result := Integer(Value);
+      end
+    )
   );
   fPacketCache := TSWAGPacketCache.Create(MaxPacketCacheSize);
   fXMLProcessor := TSWAGXMLProcessor.Create;
@@ -301,7 +311,7 @@ begin
   );
 end;
 
-procedure TSWAGReader.FetchPartialPackets(const CatID: string;
+procedure TSWAGReader.FetchPartialPackets(const CatID: Cardinal;
   CallWrapper: TSWAGCallbackWrapper);
 begin
   if not Assigned(CallWrapper) then
@@ -382,7 +392,7 @@ begin
   end;
 end;
 
-procedure TSWAGReader.GetPartialPackets(const CatID: string;
+procedure TSWAGReader.GetPartialPackets(const CatID: Cardinal;
   const Packets: TList<TSWAGPacket>; CallWrapper: TSWAGCallbackWrapper);
 begin
   if not fPacketsByCategory.ContainsKey(CatID) then

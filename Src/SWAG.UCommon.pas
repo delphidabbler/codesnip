@@ -18,8 +18,8 @@ interface
 type
   ///  <summary>Record that encapsulates the data of a SWAG category.</summary>
   TSWAGCategory = record
-    ///  <summary>String that uniquely identifies a SWAG category.</summary>
-    ID: string;
+    ///  <summary>Number that uniquely identifies a SWAG category.</summary>
+    ID: Cardinal;
     ///  <summary>SWAG category title.</summary>
     Title: string;
   end;
@@ -31,7 +31,7 @@ type
     ///  <summary>Number that uniquely identifies a SWAG packet.</summary>
     ID: Cardinal;
     ///  <summary>ID of SWAG category that packet belongs to.</summary>
-    Category: string;
+    Category: Cardinal;
     ///  <summary>File name of packet in original SWAG archive.</summary>
     FileName: string;
     ///  <summary>Date and time packet was added to or updated in the SWAG

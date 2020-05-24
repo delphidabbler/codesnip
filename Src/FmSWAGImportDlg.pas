@@ -133,8 +133,8 @@ type
       ///  user database.</summary>
       fImporter: TSWAGImporter;
       ///  <summary>ID of currently selected category.</summary>
-      ///  <remarks>Set to empty string if no category is selected.</remarks>
-      fCurrentCatID: string;
+      ///  <remarks>Set to zero if no category is selected.</remarks>
+      fCurrentCatID: Cardinal;
     ///  <summary>Retrieves import directory name from edit control where it is
     ///  entered.</summary>
     function GetDirNameFromEditCtrl: string;
@@ -503,7 +503,7 @@ begin
   CatIdx := lbCategories.ItemIndex;
   if CatIdx = -1 then
   begin
-    fCurrentCatID := '';
+    fCurrentCatID := 0;
     Exit;
   end;
   if fCurrentCatID = fSortedCategories[CatIdx].ID then

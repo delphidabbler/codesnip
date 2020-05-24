@@ -18,6 +18,7 @@ interface
 
 uses
   // VCL
+  XMLIntf,
   Generics.Collections,
   // Project
   SWAG.UCommon,
@@ -47,8 +48,8 @@ type
       cCategoryNode           = 'category';
       cCategoryIDAttr         = 'id';
       cCategoryTitleNode      = 'title';
-      cPacketsNode            = 'snippets';
-      cPacketNode             = 'snippet';
+      cPacketsNode            = 'packets';
+      cPacketNode             = 'packet';
       cPacketIDAttr           = 'id';
       cPacketCatIdNode        = 'category-id';
       cPacketFileNameNode     = 'file-name';
@@ -91,6 +92,18 @@ type
     ///  <exception>ESWAGXMLProcessor raised if packet source code can&#39;t be
     ///  loaded.</exception>
     procedure GetPacketSourceCode(var Packet: TSWAGPacket);
+    ///  <summary>Read and validate a positive integer value from a node
+    ///  attribute</summary>
+    ///  <param name="Node">IXMLNode [in] Node whose attribute is to be read.
+    ///  </param>
+    ///  <param name="Attr">string [in] Name of attribute.</param>
+    ///  <param name="ErrMsg">string [in] Exception error messsage to be used on
+    ///  error.</param>
+    ///  <returns>Required postive integer value.</returns>
+    ///  <exception>ESWAGXMLProcessor raised if attribute value is missing or
+    ///  is not a positive integer.</exception>
+    function GetPositiveIntAttribute(Node: IXMLNode; const Attr: string;
+      const ErrMsg: string): Cardinal;
   public
     ///  <summary>Constructor that sets up object ready to to process XML.
     ///  </summary>
@@ -110,13 +123,13 @@ type
     procedure GetCategories(CatList: TList<TSWAGCategory>);
     ///  <summary>Gets partial information about all packets belonging to a
     ///  category from the SWAG XML file.</summary>
-    ///  <param name="CatID">string [in] ID of category for which packets are
+    ///  <param name="CatID">Cardinal [in] ID of category for which packets are
     ///  required.</param>
     ///  <param name="PacketList">TList&lt;TSWAGPacket&gt; [in] Receives list
     ///  of packets read.</param>
     ///  <exception>ESWAGXMLProcessor raised if partial packets can't be read
     ///  or are invalid.</exception>
-    procedure GetPartialPackets(const CatID: string;
+    procedure GetPartialPackets(const CatID: Cardinal;
       PacketList: TList<TSWAGPacket>);
     ///  <summary>Gets a single packet from the SWAG XML file.</summary>
     ///  <param name="PacketID">Cardinal [in] Unique ID of the required packet.
@@ -142,7 +155,6 @@ uses
   Classes,
   IOUtils,
   ActiveX,
-  XMLIntf,
   Math,
   DateUtils,
   // Project
@@ -179,6 +191,7 @@ resourcestring
   sMissingNode = 'Invalid SWAG XML file: no categories information found';
   sMissingID = 'Invalid SWAG XML file: missing category ID';
   sMissingTitle = 'Invalid SWAG XML file: missing title for category "%s"';
+  sBadSourceID = 'Invalid SWAG XML file: invalid or missing category ID';
 begin
   CategoriesNode := fXMLDoc.FindNode(
     NodePath([cSWAGRootNode, cCategoriesNode])
@@ -188,9 +201,9 @@ begin
   CategoryNodes := fXMLDoc.FindChildNodes(CategoriesNode, cCategoryNode);
   for CategoryNode in CategoryNodes do
   begin
-    Category.ID := CategoryNode.Attributes[cCategoryIDAttr];
-    if StrIsEmpty(Category.ID, True) then
-      raise ESWAGXMLProcessor.Create(sMissingID);
+    Category.ID := GetPositiveIntAttribute(
+      CategoryNode, cCategoryIDAttr, sBadSourceID
+    );
     Category.Title := TXMLDocHelper.GetSubTagText(
       fXMLDoc, CategoryNode, cCategoryTitleNode
     );
@@ -205,9 +218,12 @@ var
   AllPacketsNode: IXMLNode;
   PacketNode: IXMLNode;
   DateStr: string;
+  PacketCatID: Cardinal;
 resourcestring
   sPacketsNodeMissing = 'Invalid SWAG XML file: no packet information found';
   sPacketNotFound = 'Invalid SWAG XML file: packet with ID %d not found';
+  sBadPacketCategory = 'Invalid SWAG XML file: packet has invalid or missing '
+    + 'category ID';
 begin
   // Find required Packet node
   AllPacketsNode := fXMLDoc.FindNode(NodePath([cSWAGRootNode, cPacketsNode]));
@@ -220,9 +236,12 @@ begin
     raise ESWAGXMLProcessor.CreateFmt(sPacketNotFound, [PacketID]);
   // Get Packet info from Packet node
   Result.ID := PacketID;
-  Result.Category := TXMLDocHelper.GetSubTagText(
-    fXMLDoc, PacketNode, cPacketCatIdNode
-  );
+  if not TryStrToCardinal(
+    TXMLDocHelper.GetSubTagText(fXMLDoc, PacketNode, cPacketCatIdNode),
+    PacketCatID
+  ) then
+    raise ESWAGXMLProcessor.Create(sBadPacketCategory);
+  Result.Category := PacketCatID;
   Result.FileName := TXMLDocHelper.GetSubTagText(
     fXMLDoc, PacketNode, cPacketFileNameNode
   );
@@ -255,12 +274,10 @@ resourcestring
 begin
   Assert(Packet.ID > 0, ClassName + '.GetPacketSourceCode: '
     + 'Packet.ID not set');
-  Assert(not StrIsEmpty(Packet.Category),
-    ClassName + '.GetPacketSourceCode: Packet.Category not set');
   Assert(not StrIsEmpty(Packet.FileName),
     ClassName + '.GetPacketSourceCode: Packet.FileName not set');
   FilePath := StrJoin(
-    [fSWAGRootDir, Packet.Category, Packet.FileName], PathDelim
+    [fSWAGRootDir, Packet.FileName], PathDelim
   );
   if not TFile.Exists(FilePath, False) then
     raise ESWAGXMLProcessor.CreateFmt(sSourceCodeNotFound, [Packet.ID]);
@@ -271,17 +288,17 @@ begin
   Packet.SourceCode := Code;
 end;
 
-procedure TSWAGXMLProcessor.GetPartialPackets(const CatID: string;
+procedure TSWAGXMLProcessor.GetPartialPackets(const CatID: Cardinal;
   PacketList: TList<TSWAGPacket>);
 var
   AllPacketsNode: IXMLNode;
   PacketNodes: IXMLSimpleNodeList;
   PacketNode: IXMLNode;
   Packet: TSWAGPacket;
-  PacketID: Integer;
+  CatIDFromNode: Cardinal;
 resourcestring
   sPacketsNodeMissing = 'Invalid SWAG XML file: no packet information found';
-  sBadSourceID = 'Invalid SWAG XML file: invalid packet ID encountered';
+  sBadSourceID = 'Invalid SWAG XML file: missing or invalid packet ID';
 begin
   AllPacketsNode := fXMLDoc.FindNode(NodePath([cSWAGRootNode, cPacketsNode]));
   if not Assigned(AllPacketsNode) then
@@ -291,14 +308,14 @@ begin
     Exit;
   for PacketNode in PacketNodes do
   begin
-    if StrSameText(
+    if TryStrToCardinal(
       TXMLDocHelper.GetSubTagText(fXMLDoc, PacketNode, cPacketCatIdNode),
-      CatID
-    ) then
+      CatIDFromNode
+    ) and (CatIDFromNode > 0) and (CatIDFromNode = CatID) then
     begin
-      if not TryStrToInt(PacketNode.Attributes[cPacketIDAttr], PacketID) then
-        raise ESWAGXMLProcessor.Create(sBadSourceID);
-      Packet.ID := PacketID;
+      Packet.ID := GetPositiveIntAttribute(
+        PacketNode, cPacketIDAttr, sBadSourceID
+      );
       Packet.Title := TXMLDocHelper.GetSubTagText(
         fXMLDoc, PacketNode, cPacketTitleNode
       );
@@ -306,6 +323,13 @@ begin
       PacketList.Add(Packet);
     end;
   end;
+end;
+
+function TSWAGXMLProcessor.GetPositiveIntAttribute(Node: IXMLNode; const Attr,
+  ErrMsg: string): Cardinal;
+begin
+  if not TryStrToCardinal(Node.Attributes[Attr], Result) or (Result = 0) then
+    raise ESWAGXMLProcessor.Create(ErrMsg);
 end;
 
 procedure TSWAGXMLProcessor.Initialise(const SWAGDirName: string);
@@ -352,14 +376,14 @@ end;
 
 procedure TSWAGXMLProcessor.ValidatePacket(const Packet: TSWAGPacket);
 resourcestring
-  sBadCatID = 'Invalid SWAG XML file: packet %d has no category';
+  sBadCatID = 'Invalid SWAG XML file: packet %d has invalid category';
   sBadFileName = 'Invalid SWAG XML file: packet %d has no file name';
   sBadDateStamp = 'Invalid SWAG XML file: packet %d has no date stamp';
   sBadAuthor = 'Invalid SWAG XML file: packet %d has no author';
   sBadSourceCode = 'Invalid SWAG XML file: packet %d has no source code';
 begin
   ValidatePartialPacket(Packet);
-  if StrIsEmpty(Packet.Category, True) then
+  if Packet.Category = 0 then
     raise ESWAGXMLProcessor.CreateFmt(sBadCatID, [Packet.ID]);
   if StrIsEmpty(Packet.FileName, True) then
     raise ESWAGXMLProcessor.CreateFmt(sBadFileName, [Packet.ID]);
