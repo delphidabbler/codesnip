@@ -6,7 +6,7 @@
  * Copyright (C) 2020, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements a class that interfaces with a local copy of the DelphiDabbler
- * version of the SWAG databases to get snippet and category information.
+ * version of the SWAG databases to get packet and category information.
 }
 
 
@@ -28,7 +28,7 @@ uses
 type
 
   ///  <summary>Class that interfaces with a local copy of the DelphiDabbler
-  ///  version of the SWAG databases to get snippet and category information.
+  ///  version of the SWAG databases to get packet and category information.
   ///  </summary>
   ///  <remarks>The database meta data is stored in an XML file and source code
   ///  is stored in text files.</remarks>
@@ -47,15 +47,15 @@ type
       cCategoryNode           = 'category';
       cCategoryIDAttr         = 'id';
       cCategoryTitleNode      = 'title';
-      cSnippetsNode           = 'snippets';
-      cSnippetNode            = 'snippet';
-      cSnippetIDAttr          = 'id';
-      cSnippetCatIdNode       = 'category-id';
-      cSnippetFileNameNode    = 'file-name';
-      cSnippetDateNode        = 'date';
-      cSnippetAuthorNode      = 'author';
-      cSnippetIsDocumentNode  = 'is-document';
-      cSnippetTitleNode       = 'title';
+      cPacketsNode            = 'snippets';
+      cPacketNode             = 'snippet';
+      cPacketIDAttr           = 'id';
+      cPacketCatIdNode        = 'category-id';
+      cPacketFileNameNode     = 'file-name';
+      cPacketDateNode         = 'date';
+      cPacketAuthorNode       = 'author';
+      cPacketIsDocumentNode   = 'is-document';
+      cPacketTitleNode        = 'title';
     var
       ///  <summary>Object used to access and search SWAG XML meta data file.
       ///  </summary>
@@ -70,27 +70,27 @@ type
     ///  <exception>ESWAGXMLProcessor raised if document fails validation.
     ///  </exception>
     procedure ValidateXMLDoc;
-    ///  <summary>Validates fields of given snippet record as read from XML and
+    ///  <summary>Validates fields of given packet record as read from XML and
     ///  source code files.</summary>
-    ///  <param name="Snippet">TSWAGSnippet [in] Snippet record to be validated.
+    ///  <param name="Packet">TSWAGPacket [in] Packet record to be validated.
     ///  </param>
-    ///  <exception>ESWAGXMLProcessor raised if snippet fails validation.
+    ///  <exception>ESWAGXMLProcessor raised if packet fails validation.
     ///  </exception>
-    procedure ValidateSnippet(const Snippet: TSWAGSnippet);
-    ///  <summary>Validates fields of given partial snippet record as read from
+    procedure ValidatePacket(const Packet: TSWAGPacket);
+    ///  <summary>Validates fields of given partial packet record as read from
     ///  XML.</summary>
-    ///  <param name="Snippet">TSWAGSnippet [in] Snippet record to be validated.
+    ///  <param name="Packet">TSWAGPacket [in] Packet record to be validated.
     ///  </param>
-    ///  <exception>ESWAGXMLProcessor raised if snippet fails validation.
+    ///  <exception>ESWAGXMLProcessor raised if packet fails validation.
     ///  </exception>
-    procedure ValidatePartialSnippet(const Snippet: TSWAGSnippet);
-    ///  <summary>Gets source code for a snippet from file and stores it in the
-    ///  snippet record.</summary>
-    ///  <param name="Snippet">TSWAGSnippet [in/out] Snippet for which source
-    ///  code is required. Snippet is updated with required source code.</param>
-    ///  <exception>ESWAGXMLProcessor raised if snippet source code can&#39;t be
+    procedure ValidatePartialPacket(const Packet: TSWAGPacket);
+    ///  <summary>Gets source code for a packet from file and stores it in the
+    ///  packet record.</summary>
+    ///  <param name="Packet">TSWAGPacket [in/out] Packet for which source
+    ///  code is required. Packet is updated with required source code.</param>
+    ///  <exception>ESWAGXMLProcessor raised if packet source code can&#39;t be
     ///  loaded.</exception>
-    procedure GetSnippetSourceCode(var Snippet: TSWAGSnippet);
+    procedure GetPacketSourceCode(var Packet: TSWAGPacket);
   public
     ///  <summary>Constructor that sets up object ready to to process XML.
     ///  </summary>
@@ -108,23 +108,23 @@ type
     ///  <exception>ESWAGXMLProcessor raised if categories can't be read or are
     ///  invalid.</exception>
     procedure GetCategories(CatList: TList<TSWAGCategory>);
-    ///  <summary>Gets partial information about all snippets belonging to a
+    ///  <summary>Gets partial information about all packets belonging to a
     ///  category from the SWAG XML file.</summary>
-    ///  <param name="CatID">string [in] ID of category for which snippets are
+    ///  <param name="CatID">string [in] ID of category for which packets are
     ///  required.</param>
-    ///  <param name="SnippetList">TList&lt;TSWAGSnippet&gt; [in] Receives list
-    ///  of snippets read.</param>
-    ///  <exception>ESWAGXMLProcessor raised if partial snippets can't be read
+    ///  <param name="PacketList">TList&lt;TSWAGPacket&gt; [in] Receives list
+    ///  of packets read.</param>
+    ///  <exception>ESWAGXMLProcessor raised if partial packets can't be read
     ///  or are invalid.</exception>
-    procedure GetPartialSnippets(const CatID: string;
-      SnippetList: TList<TSWAGSnippet>);
-    ///  <summary>Gets a single snippet from the SWAG XML file.</summary>
-    ///  <param name="SnippetID">Cardinal [in] Unique ID of the required
-    ///  snippet.</param>
-    ///  <returns>TSWAGSnippet. Details of the required snippet.</returns>
-    ///  <exception>ESWAGXMLProcessor raised if snippet can't be read or is
+    procedure GetPartialPackets(const CatID: string;
+      PacketList: TList<TSWAGPacket>);
+    ///  <summary>Gets a single packet from the SWAG XML file.</summary>
+    ///  <param name="PacketID">Cardinal [in] Unique ID of the required packet.
+    ///  </param>
+    ///  <returns>TSWAGPacket. Details of the required packet.</returns>
+    ///  <exception>ESWAGXMLProcessor raised if packet can't be read or is
     ///  invalid.</exception>
-    function GetSnippet(const SnippetID: Cardinal): TSWAGSnippet;
+    function GetPacket(const PacketID: Cardinal): TSWAGPacket;
 
   end;
 
@@ -200,112 +200,112 @@ begin
   end;
 end;
 
-procedure TSWAGXMLProcessor.GetPartialSnippets(const CatID: string;
-  SnippetList: TList<TSWAGSnippet>);
+function TSWAGXMLProcessor.GetPacket(const PacketID: Cardinal): TSWAGPacket;
 var
-  AllSnippetsNode: IXMLNode;
-  SnippetNodes: IXMLSimpleNodeList;
-  SnippetNode: IXMLNode;
-  Snippet: TSWAGSnippet;
-  SnippetID: Integer;
-resourcestring
-  sSnippetsNodeMissing = 'Invalid SWAG XML file: no snippet information found';
-  sBadSourceID = 'Invalid SWAG XML file: invalid snippet ID encountered';
-begin
-  AllSnippetsNode := fXMLDoc.FindNode(NodePath([cSWAGRootNode, cSnippetsNode]));
-  if not Assigned(AllSnippetsNode) then
-    raise ESWAGXMLProcessor.Create(sSnippetsNodeMissing);
-  SnippetNodes := fXMLDoc.FindChildNodes(AllSnippetsNode, cSnippetNode);
-  if not Assigned(SnippetNodes) then
-    Exit;
-  for SnippetNode in SnippetNodes do
-  begin
-    if StrSameText(
-      TXMLDocHelper.GetSubTagText(fXMLDoc, SnippetNode, cSnippetCatIdNode),
-      CatID
-    ) then
-    begin
-      if not TryStrToInt(SnippetNode.Attributes[cSnippetIDAttr], SnippetID) then
-        raise ESWAGXMLProcessor.Create(sBadSourceID);
-      Snippet.ID := SnippetID;
-      Snippet.Title := TXMLDocHelper.GetSubTagText(
-        fXMLDoc, SnippetNode, cSnippetTitleNode
-      );
-      ValidatePartialSnippet(Snippet);
-      SnippetList.Add(Snippet);
-    end;
-  end;
-end;
-
-function TSWAGXMLProcessor.GetSnippet(const SnippetID: Cardinal): TSWAGSnippet;
-var
-  AllSnippetsNode: IXMLNode;
-  SnippetNode: IXMLNode;
+  AllPacketsNode: IXMLNode;
+  PacketNode: IXMLNode;
   DateStr: string;
 resourcestring
-  sSnippetsNodeMissing = 'Invalid SWAG XML file: no snippet information found';
-  sSnippetNotFound = 'Invalid SWAG XML file: snippet with ID %d not found';
+  sPacketsNodeMissing = 'Invalid SWAG XML file: no packet information found';
+  sPacketNotFound = 'Invalid SWAG XML file: packet with ID %d not found';
 begin
-  // Find required snippet node
-  AllSnippetsNode := fXMLDoc.FindNode(NodePath([cSWAGRootNode, cSnippetsNode]));
-  if not Assigned(AllSnippetsNode) then
-    raise ESWAGXMLProcessor.Create(sSnippetsNodeMissing);
-  SnippetNode := fXMLDoc.FindFirstChildNode(
-    AllSnippetsNode, cSnippetNode, cSnippetIDAttr, SnippetID
+  // Find required Packet node
+  AllPacketsNode := fXMLDoc.FindNode(NodePath([cSWAGRootNode, cPacketsNode]));
+  if not Assigned(AllPacketsNode) then
+    raise ESWAGXMLProcessor.Create(sPacketsNodeMissing);
+  PacketNode := fXMLDoc.FindFirstChildNode(
+    AllPacketsNode, cPacketNode, cPacketIDAttr, PacketID
   );
-  if not Assigned(SnippetNode) then
-    raise ESWAGXMLProcessor.CreateFmt(sSnippetNotFound, [SnippetID]);
-  // Get snippet info from snippet node
-  Result.ID := SnippetID;
+  if not Assigned(PacketNode) then
+    raise ESWAGXMLProcessor.CreateFmt(sPacketNotFound, [PacketID]);
+  // Get Packet info from Packet node
+  Result.ID := PacketID;
   Result.Category := TXMLDocHelper.GetSubTagText(
-    fXMLDoc, SnippetNode, cSnippetCatIdNode
+    fXMLDoc, PacketNode, cPacketCatIdNode
   );
   Result.FileName := TXMLDocHelper.GetSubTagText(
-    fXMLDoc, SnippetNode, cSnippetFileNameNode
+    fXMLDoc, PacketNode, cPacketFileNameNode
   );
   DateStr := TXMLDocHelper.GetSubTagText(
-    fXMLDoc, SnippetNode, cSnippetDateNode
+    fXMLDoc, PacketNode, cPacketDateNode
   );
   if not TryParseSQLDateTime(DateStr, Result.DateStamp) then
     Result.DateStamp := 0.0;
   Result.Title := TXMLDocHelper.GetSubTagText(
-    fXMLDoc, SnippetNode, cSnippetTitleNode
+    fXMLDoc, PacketNode, cPacketTitleNode
   );
   Result.Author := TXMLDocHelper.GetSubTagText(
-    fXMLDoc, SnippetNode, cSnippetAuthorNode
+    fXMLDoc, PacketNode, cPacketAuthorNode
   );
   Result.IsDocument := StrSameText(
-    TXMLDocHelper.GetSubTagText(fXMLDoc, SnippetNode, cSnippetIsDocumentNode),
+    TXMLDocHelper.GetSubTagText(fXMLDoc, PacketNode, cPacketIsDocumentNode),
     '1'
   );
-  GetSnippetSourceCode(Result);
-  ValidateSnippet(Result);
+  GetPacketSourceCode(Result);
+  ValidatePacket(Result);
 end;
 
-procedure TSWAGXMLProcessor.GetSnippetSourceCode(var Snippet: TSWAGSnippet);
+procedure TSWAGXMLProcessor.GetPacketSourceCode(var Packet: TSWAGPacket);
 var
   FilePath: string;
   Code: string;
 resourcestring
   sSourceCodeNotFound = 'Invalid SWAG database: '
-    + 'source code file for snippet %d not found';
+    + 'source code file for packet %d not found';
 begin
-  Assert(Snippet.ID > 0, ClassName + '.GetSnippetSourceCode: '
-    + 'Snippet.ID not set');
-  Assert(not StrIsEmpty(Snippet.Category),
-    ClassName + '.GetSnippetSourceCode: Snippet.Category not set');
-  Assert(not StrIsEmpty(Snippet.FileName),
-    ClassName + '.GetSnippetSourceCode: Snippet.FileName not set');
+  Assert(Packet.ID > 0, ClassName + '.GetPacketSourceCode: '
+    + 'Packet.ID not set');
+  Assert(not StrIsEmpty(Packet.Category),
+    ClassName + '.GetPacketSourceCode: Packet.Category not set');
+  Assert(not StrIsEmpty(Packet.FileName),
+    ClassName + '.GetPacketSourceCode: Packet.FileName not set');
   FilePath := StrJoin(
-    [fSWAGRootDir, Snippet.Category, Snippet.FileName], PathDelim
+    [fSWAGRootDir, Packet.Category, Packet.FileName], PathDelim
   );
   if not TFile.Exists(FilePath, False) then
-    raise ESWAGXMLProcessor.CreateFmt(sSourceCodeNotFound, [Snippet.ID]);
+    raise ESWAGXMLProcessor.CreateFmt(sSourceCodeNotFound, [Packet.ID]);
   Code := TFileIO.ReadAllText(FilePath, TEncoding.Default);
   // Some if not all the source code files end in the EOF (SUB) character
   if (Length(Code) > 0) and (Code[Length(Code)] = EOF) then
     Code := StrSliceLeft(Code, Length(Code) - 1);
-  Snippet.SourceCode := Code;
+  Packet.SourceCode := Code;
+end;
+
+procedure TSWAGXMLProcessor.GetPartialPackets(const CatID: string;
+  PacketList: TList<TSWAGPacket>);
+var
+  AllPacketsNode: IXMLNode;
+  PacketNodes: IXMLSimpleNodeList;
+  PacketNode: IXMLNode;
+  Packet: TSWAGPacket;
+  PacketID: Integer;
+resourcestring
+  sPacketsNodeMissing = 'Invalid SWAG XML file: no packet information found';
+  sBadSourceID = 'Invalid SWAG XML file: invalid packet ID encountered';
+begin
+  AllPacketsNode := fXMLDoc.FindNode(NodePath([cSWAGRootNode, cPacketsNode]));
+  if not Assigned(AllPacketsNode) then
+    raise ESWAGXMLProcessor.Create(sPacketsNodeMissing);
+  PacketNodes := fXMLDoc.FindChildNodes(AllPacketsNode, cPacketNode);
+  if not Assigned(PacketNodes) then
+    Exit;
+  for PacketNode in PacketNodes do
+  begin
+    if StrSameText(
+      TXMLDocHelper.GetSubTagText(fXMLDoc, PacketNode, cPacketCatIdNode),
+      CatID
+    ) then
+    begin
+      if not TryStrToInt(PacketNode.Attributes[cPacketIDAttr], PacketID) then
+        raise ESWAGXMLProcessor.Create(sBadSourceID);
+      Packet.ID := PacketID;
+      Packet.Title := TXMLDocHelper.GetSubTagText(
+        fXMLDoc, PacketNode, cPacketTitleNode
+      );
+      ValidatePartialPacket(Packet);
+      PacketList.Add(Packet);
+    end;
+  end;
 end;
 
 procedure TSWAGXMLProcessor.Initialise(const SWAGDirName: string);
@@ -350,36 +350,36 @@ begin
   Result := StrJoin(Tags, '\', False);
 end;
 
-procedure TSWAGXMLProcessor.ValidatePartialSnippet(const Snippet: TSWAGSnippet);
+procedure TSWAGXMLProcessor.ValidatePacket(const Packet: TSWAGPacket);
 resourcestring
-  sBadID = 'Invalid SWAG XML file: snippet ID not set';
-  sBadTitle = 'Invalid SWAG XML file: snippet %d has no title';
+  sBadCatID = 'Invalid SWAG XML file: packet %d has no category';
+  sBadFileName = 'Invalid SWAG XML file: packet %d has no file name';
+  sBadDateStamp = 'Invalid SWAG XML file: packet %d has no date stamp';
+  sBadAuthor = 'Invalid SWAG XML file: packet %d has no author';
+  sBadSourceCode = 'Invalid SWAG XML file: packet %d has no source code';
 begin
-  if Snippet.ID < 1 then
-    raise ESWAGXMLProcessor.Create(sBadID);
-  if StrIsEmpty(Snippet.Title, True) then
-    raise ESWAGXMLProcessor.CreateFmt(sBadTitle, [Snippet.ID]);
+  ValidatePartialPacket(Packet);
+  if StrIsEmpty(Packet.Category, True) then
+    raise ESWAGXMLProcessor.CreateFmt(sBadCatID, [Packet.ID]);
+  if StrIsEmpty(Packet.FileName, True) then
+    raise ESWAGXMLProcessor.CreateFmt(sBadFileName, [Packet.ID]);
+  if DateUtils.SameDateTime(Packet.DateStamp, 0.0) then
+    raise ESWAGXMLProcessor.CreateFmt(sBadDateStamp, [Packet.ID]);
+  if StrIsEmpty(Packet.Author, True) then
+    raise ESWAGXMLProcessor.CreateFmt(sBadAuthor, [Packet.ID]);
+  if StrIsEmpty(Packet.SourceCode, True) then
+    raise ESWAGXMLProcessor.CreateFmt(sBadSourceCode, [Packet.ID]);
 end;
 
-procedure TSWAGXMLProcessor.ValidateSnippet(const Snippet: TSWAGSnippet);
+procedure TSWAGXMLProcessor.ValidatePartialPacket(const Packet: TSWAGPacket);
 resourcestring
-  sBadCatID = 'Invalid SWAG XML file: snippet %d has no category';
-  sBadFileName = 'Invalid SWAG XML file: snippet %d has no file name';
-  sBadDateStamp = 'Invalid SWAG XML file: snippet %d has no date stamp';
-  sBadAuthor = 'Invalid SWAG XML file: snippet %d has no author';
-  sBadSourceCode = 'Invalid SWAG XML file: snippet %d has no source code';
+  sBadID = 'Invalid SWAG XML file: packet ID not set';
+  sBadTitle = 'Invalid SWAG XML file: packet %d has no title';
 begin
-  ValidatePartialSnippet(Snippet);
-  if StrIsEmpty(Snippet.Category, True) then
-    raise ESWAGXMLProcessor.CreateFmt(sBadCatID, [Snippet.ID]);
-  if StrIsEmpty(Snippet.FileName, True) then
-    raise ESWAGXMLProcessor.CreateFmt(sBadFileName, [Snippet.ID]);
-  if DateUtils.SameDateTime(Snippet.DateStamp, 0.0) then
-    raise ESWAGXMLProcessor.CreateFmt(sBadDateStamp, [Snippet.ID]);
-  if StrIsEmpty(Snippet.Author, True) then
-    raise ESWAGXMLProcessor.CreateFmt(sBadAuthor, [Snippet.ID]);
-  if StrIsEmpty(Snippet.SourceCode, True) then
-    raise ESWAGXMLProcessor.CreateFmt(sBadSourceCode, [Snippet.ID]);
+  if Packet.ID < 1 then
+    raise ESWAGXMLProcessor.Create(sBadID);
+  if StrIsEmpty(Packet.Title, True) then
+    raise ESWAGXMLProcessor.CreateFmt(sBadTitle, [Packet.ID]);
 end;
 
 procedure TSWAGXMLProcessor.ValidateXMLDoc;
@@ -419,10 +419,10 @@ begin
 
   // Check for compulsory <sources> node
   SourcesNode := fXMLDoc.FindNode(
-    NodePath([cSWAGRootNode, cSnippetsNode])
+    NodePath([cSWAGRootNode, cPacketsNode])
   );
   if not Assigned(SourcesNode) then
-    raise ESWAGXMLProcessor.CreateFmt(sMissingNode, [cSnippetsNode]);
+    raise ESWAGXMLProcessor.CreateFmt(sMissingNode, [cPacketsNode]);
 end;
 
 end.

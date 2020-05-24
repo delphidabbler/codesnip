@@ -19,12 +19,16 @@ inherited SWAGImportDlg: TSWAGImportDlg
     inherited pcWizard: TPageControl
       Width = 671
       Height = 456
-      ActivePage = tsUpdate
+      ActivePage = tsCategories
       ExplicitWidth = 671
       ExplicitHeight = 456
       object tsIntro: TTabSheet
         Caption = 'tsIntro'
         TabVisible = False
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         inline frmIntro: THTMLTpltDlgFrame
           Left = 0
           Top = 0
@@ -55,6 +59,10 @@ inherited SWAGImportDlg: TSWAGImportDlg
         Caption = 'tsFolder'
         ImageIndex = 4
         TabVisible = False
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object lblFolder: TLabel
           Left = 0
           Top = 8
@@ -68,9 +76,9 @@ inherited SWAGImportDlg: TSWAGImportDlg
         object lblFolderPageInfo: TLabel
           Left = 0
           Top = 72
-          Width = 270
+          Width = 267
           Height = 13
-          Caption = 'Click the Next button to choose which snippets to import'
+          Caption = 'Click the Next button to choose which packets to import'
         end
         object edPath: TEdit
           Left = 0
@@ -113,20 +121,20 @@ inherited SWAGImportDlg: TSWAGImportDlg
           Height = 36
           AutoSize = False
           Caption = 
-            'Select a category from the list on the left and click "Show Snip' +
-            'pets In Category" (or double click the category) to display a li' +
-            'st of its snippets in the right hand list. Tick the snippets you' +
-            ' want to import. Repeat with as many categories as you wish. Whe' +
-            'n you are ready to import click "Next".'
+            'Select a category from the list on the left and click "Show Pack' +
+            'ets In Category" (or double click the category) to display a lis' +
+            't of its packets in the right hand list. Tick the packet(s) you ' +
+            'want to import. Repeat with as many categories as you wish. When' +
+            ' you are ready to import click "Next".'
           WordWrap = True
         end
-        object lblSelectSnippets: TLabel
+        object lblSelectPackets: TLabel
           Left = 256
           Top = 45
-          Width = 119
+          Width = 116
           Height = 13
-          Caption = '&Select required snippets:'
-          FocusControl = clbSelectSnippets
+          Caption = '&Select required packets:'
+          FocusControl = clbSelectPackets
         end
         object lbCategories: TListBox
           Left = 0
@@ -138,16 +146,16 @@ inherited SWAGImportDlg: TSWAGImportDlg
           OnDblClick = lbCategoriesDblClick
           OnKeyDown = lbCategoriesKeyDown
         end
-        object clbSelectSnippets: TCheckListBox
+        object clbSelectPackets: TCheckListBox
           Left = 256
           Top = 64
           Width = 404
           Height = 321
-          OnClickCheck = clbSelectSnippetsClickCheck
+          OnClickCheck = clbSelectPacketsClickCheck
           ItemHeight = 13
           TabOrder = 2
-          OnDblClick = clbSelectSnippetsDblClick
-          OnKeyDown = clbSelectSnippetsKeyDown
+          OnDblClick = clbSelectPacketsDblClick
+          OnKeyDown = clbSelectPacketsKeyDown
         end
         object btnDisplayCategory: TButton
           Left = 30
@@ -157,12 +165,12 @@ inherited SWAGImportDlg: TSWAGImportDlg
           Action = actDisplayCategory
           TabOrder = 1
         end
-        object btnDisplaySnippet: TButton
+        object btnDisplayPacket: TButton
           Left = 280
           Top = 391
           Width = 185
           Height = 25
-          Action = actDisplaySnippet
+          Action = actDisplayPacket
           TabOrder = 3
         end
       end
@@ -170,6 +178,10 @@ inherited SWAGImportDlg: TSWAGImportDlg
         Caption = 'tsUpdate'
         ImageIndex = 2
         TabVisible = False
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object lblUpdateDesc: TLabel
           Left = 0
           Top = 3
@@ -177,11 +189,12 @@ inherited SWAGImportDlg: TSWAGImportDlg
           Height = 36
           AutoSize = False
           Caption = 
-            'You have chosen to import the following SWAG snippets. They will' +
-            ' be imported with the given Display Names and Snippet IDs. You c' +
-            'an change these if you wish using the Snippets Editor. To make c' +
-            'hanges go back to the previous page. When you are ready to impor' +
-            't the snippets click "Import". This step can'#39't be undone.'
+            'You have chosen to import the following SWAG packets as CodeSnip' +
+            ' snippets. They will be imported with the given Display Names an' +
+            'd Packet IDs. You can change these if you wish using the Snippet' +
+            's Editor. To make changes go back to the previous page. When you' +
+            ' are ready to import the packets click "Import". This step can'#39't' +
+            ' be undone.'
           WordWrap = True
         end
         object lvImports: TListView
@@ -212,6 +225,10 @@ inherited SWAGImportDlg: TSWAGImportDlg
         Caption = 'tsFinish'
         ImageIndex = 3
         TabVisible = False
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         inline frmOutro: THTMLTpltDlgFrame
           Left = 0
           Top = 0
@@ -250,14 +267,14 @@ inherited SWAGImportDlg: TSWAGImportDlg
     Left = 336
     Top = 256
     object actDisplayCategory: TAction
-      Caption = 'S&how Snippets In Category'
+      Caption = 'S&how Packets In Category'
       OnExecute = actDisplayCategoryExecute
       OnUpdate = actDisplayCategoryUpdate
     end
-    object actDisplaySnippet: TAction
-      Caption = '&Preview Selected Snippet...'
-      OnExecute = actDisplaySnippetExecute
-      OnUpdate = actDisplaySnippetUpdate
+    object actDisplayPacket: TAction
+      Caption = '&Preview Selected Packet...'
+      OnExecute = actDisplayPacketExecute
+      OnUpdate = actDisplayPacketUpdate
     end
     object actBrowse: TAction
       Caption = '...'

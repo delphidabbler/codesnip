@@ -6,7 +6,8 @@
  * Copyright (C) 2013-2020, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements a wizard dialogue box that lets the user select and import
- * snippets from the DelphiDabbler implementation of the SWAG Pascal archive.
+ * packets from the DelphiDabbler implementation of the SWAG Pascal archive as
+ * new user-defined CodeSnip snippets.
 }
 
 
@@ -41,16 +42,16 @@ uses
 
 type
   ///  <summary>Class that implements a wizard dialogue box that lets the user
-  ///  select and import snippets from the DelphiDabbler implementation of the
-  ///  SWAG Pascal archive.</summary>
+  ///  select and import packets from the DelphiDabbler implementation of the
+  ///  SWAG Pascal archive as new user-defined CodeSnip snippets.</summary>
   TSWAGImportDlg = class(TWizardDlg, INoPublicConstruct)
     tsIntro: TTabSheet;
     tsCategories: TTabSheet;
     lblCategories: TLabel;
     lbCategories: TListBox;
     lblCategoriesDesc: TLabel;
-    lblSelectSnippets: TLabel;
-    clbSelectSnippets: TCheckListBox;
+    lblSelectPackets: TLabel;
+    clbSelectPackets: TCheckListBox;
     tsUpdate: TTabSheet;
     lvImports: TListView;
     lblUpdateDesc: TLabel;
@@ -59,8 +60,8 @@ type
     btnDisplayCategory: TButton;
     alWizard: TActionList;
     actDisplayCategory: TAction;
-    actDisplaySnippet: TAction;
-    btnDisplaySnippet: TButton;
+    actDisplayPacket: TAction;
+    btnDisplayPacket: TButton;
     tsFolder: TTabSheet;
     lblFolder: TLabel;
     edPath: TEdit;
@@ -68,39 +69,39 @@ type
     btnBrowse: TButton;
     actBrowse: TAction;
     frmIntro: THTMLTpltDlgFrame;
-    ///  <summary>Handles clicks on the check boxes next to snippets in the
-    ///  snippet selection list box by selecting and deselecting snippets for
+    ///  <summary>Handles clicks on the check boxes next to packets in the
+    ///  packet selection list box by selecting and deselecting packets for
     ///  inclusion in the import.</summary>
-    procedure clbSelectSnippetsClickCheck(Sender: TObject);
-    ///  <summary>Handles double clicks on snippets in the snippet selection
-    ///  list box by causing the selected snippet to be previewed.</summary>
-    procedure clbSelectSnippetsDblClick(Sender: TObject);
-    ///  <summary>Handles key down events on the snippet selection list box by
-    ///  causing the selected snippet to be previewed when the user presses
+    procedure clbSelectPacketsClickCheck(Sender: TObject);
+    ///  <summary>Handles double clicks on packets in the packet selection
+    ///  list box by causing the selected packet to be previewed.</summary>
+    procedure clbSelectPacketsDblClick(Sender: TObject);
+    ///  <summary>Handles key down events on the packet selection list box by
+    ///  causing the selected packet to be previewed when the user presses
     ///  Enter.</summary>
-    procedure clbSelectSnippetsKeyDown(Sender: TObject; var Key: Word;
+    procedure clbSelectPacketsKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
     ///  <summary>Handles double clicks on categories in the SWAG categories
-    ///  list box by displaying the category's snippets in the snippet selection
+    ///  list box by displaying the category's packets in the packet selection
     ///  list box.</summary>
     procedure lbCategoriesDblClick(Sender: TObject);
     ///  <summary>Handles key down events on categories in the SWAG categories
-    ///  list box by displaying the category's snippets in the snippet selection
+    ///  list box by displaying the category's packets in the packet selection
     ///  list box when the user presses enter.</summary>
     procedure lbCategoriesKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
     ///  <summary>Executes action to display a Browse for Folders dialogue box
     ///  and store the chosen folder in an edit box.</summary>
     procedure actBrowseExecute(Sender: TObject);
-    ///  <summary>Executes action to display the snippets in the selected
+    ///  <summary>Executes action to display the packets in the selected
     ///  category.</summary>
     procedure actDisplayCategoryExecute(Sender: TObject);
     ///  <summary>Updates enabled state of display category action.</summary>
     procedure actDisplayCategoryUpdate(Sender: TObject);
-    ///  <summary>Executes action to preview the selected snippet.</summary>
-    procedure actDisplaySnippetExecute(Sender: TObject);
-    ///  <summary>Updates enabled state of display snippet category.</summary>
-    procedure actDisplaySnippetUpdate(Sender: TObject);
+    ///  <summary>Executes action to preview the selected packet.</summary>
+    procedure actDisplayPacketExecute(Sender: TObject);
+    ///  <summary>Updates enabled state of display packet category.</summary>
+    procedure actDisplayPacketUpdate(Sender: TObject);
   strict private
     const
       ///  <summary>Index of introductory page in wizard.</summary>
@@ -108,7 +109,7 @@ type
       ///  <summary>Index of SWAG database folder selection page in wizard.
       ///  </summary>
       cChooseFolderPage = 1;
-      ///  <summary>Index of snippet selection page in wizard.</summary>
+      ///  <summary>Index of packet selection page in wizard.</summary>
       cSelectionPage = 2;
       ///  <summary>Index of import page in wizard.</summary>
       cUpdatePage = 3;
@@ -122,13 +123,13 @@ type
       ///  <summary>List of all categories in SWAG database, sorted by title.
       ///  </summary>
       fSortedCategories: TSortedList<TSWAGCategory>;
-      ///  <summary>List of snippets in the current category, sorted by title.
+      ///  <summary>List of packets in the current category, sorted by title.
       ///  </summary>
-      fCurrentCatSnippets: TSortedList<TSWAGSnippet>;
-      ///  <summary>List of snippets selected for import, sorted by ID.
+      fCurrentCatPackets: TSortedList<TSWAGPacket>;
+      ///  <summary>List of packets selected for import, sorted by ID.
       ///  </summary>
-      fSelectedSnippets: TSortedList<TSWAGSnippet>;
-      ///  <summary>Object that imports selected SWAG snippets into CodeSnip's
+      fSelectedPackets: TSortedList<TSWAGPacket>;
+      ///  <summary>Object that imports selected SWAG packets into CodeSnip's
       ///  user database.</summary>
       fImporter: TSWAGImporter;
       ///  <summary>ID of currently selected category.</summary>
@@ -147,7 +148,7 @@ type
     ///  <param name="CSSBuilder">TCSSBuilder [in] Object used to construct the
     ///  CSS.</param>
     procedure BuildCSS(Sender: TObject; const CSSBuilder: TCSSBuilder);
-    ///  <summary>Displays snippets selected for import in list view on Update
+    ///  <summary>Displays packets selected for import in list view on Update
     ///  page.</summary>
     procedure PopulateImportsLV;
     ///  <summary>Initialises SWAG database XML file for reading before
@@ -161,27 +162,27 @@ type
     ///  </remarks>
     procedure InitSelectionPage;
     ///  <summary>Initialises Update page by retrieving all the selected
-    ///  snippets, preparing them for import and displaying them in the page's
+    ///  packets, preparing them for import and displaying them in the page's
     ///  list view.</summary>
-    ///  <remarks>May display a wait dialogue box while loading the snippets.
+    ///  <remarks>May display a wait dialogue box while loading the packets.
     ///  </remarks>
     procedure InitUpdatePage;
-    ///  <summary>Gets the snippets contained in any selected category and
-    ///  displays them in the snippet selection list box on the Selection page.
+    ///  <summary>Gets the packets contained in any selected category and
+    ///  displays them in the packet selection list box on the Selection page.
     ///  </summary>
-    ///  <remarks>May display a wait dialogue box while the snippets are being
+    ///  <remarks>May display a wait dialogue box while the packets are being
     ///  retrieved.</remarks>
-    procedure DisplaySnippetsForCategory;
+    procedure DisplayPacketsForCategory;
     ///  <summary>Creates and displays a preview of the currently selected
-    ///  snippet in the Selection page's snippet selection list box.</summary>
-    ///  <remarks>May display a wait dialogue box while the selected snippet is
+    ///  packet in the Selection page's packet selection list box.</summary>
+    ///  <remarks>May display a wait dialogue box while the selected packet is
     ///  retrieved.</remarks>
-    procedure PreviewSelectedSnippet;
-    ///  <summary>Gets the complete information for each snippet selected for
+    procedure PreviewSelectedPacket;
+    ///  <summary>Gets the complete information for each packet selected for
     ///  import and stores in the given list.</summary>
-    procedure GetImportSnippets(const SnipList: TList<TSWAGSnippet>);
-    ///  <summary>Performs the import of the selected snippets into CodeSnip's
-    ///  user database.</summary>
+    procedure GetImportPackets(const PacketList: TList<TSWAGPacket>);
+    ///  <summary>Performs the import of the selected packets as into CodeSnip's
+    ///  user database as new user-defined snippets.</summary>
     ///  <remarks>Displays a wait dialogue box while the import is proceeding.
     ///  </remarks>
     procedure UpdateDatabase;
@@ -281,7 +282,7 @@ end;
 
 procedure TSWAGImportDlg.actDisplayCategoryExecute(Sender: TObject);
 begin
-  DisplaySnippetsForCategory;
+  DisplayPacketsForCategory;
 end;
 
 procedure TSWAGImportDlg.actDisplayCategoryUpdate(Sender: TObject);
@@ -289,14 +290,14 @@ begin
   actDisplayCategory.Enabled := lbCategories.ItemIndex >= 0;
 end;
 
-procedure TSWAGImportDlg.actDisplaySnippetExecute(Sender: TObject);
+procedure TSWAGImportDlg.actDisplayPacketExecute(Sender: TObject);
 begin
-  PreviewSelectedSnippet;
+  PreviewSelectedPacket;
 end;
 
-procedure TSWAGImportDlg.actDisplaySnippetUpdate(Sender: TObject);
+procedure TSWAGImportDlg.actDisplayPacketUpdate(Sender: TObject);
 begin
-  actDisplaySnippet.Enabled := clbSelectSnippets.ItemIndex >= 0;
+  actDisplayPacket.Enabled := clbSelectPackets.ItemIndex >= 0;
 end;
 
 procedure TSWAGImportDlg.ArrangeForm;
@@ -321,19 +322,19 @@ begin
     [lblCategoriesDesc, lblCategories, lbCategories], 0
   );
   TCtrlArranger.AlignTops(
-    [lblCategories, lblSelectSnippets],
+    [lblCategories, lblSelectPackets],
     TCtrlArranger.BottomOf(lblCategoriesDesc, 12)
   );
   TCtrlArranger.AlignTops(
-    [lbCategories, clbSelectSnippets],
-    TCtrlArranger.BottomOf([lblCategories, lblSelectSnippets], 6)
+    [lbCategories, clbSelectPackets],
+    TCtrlArranger.BottomOf([lblCategories, lblSelectPackets], 6)
   );
   TCtrlArranger.AlignTops(
-    [btnDisplayCategory, btnDisplaySnippet],
-    TCtrlArranger.BottomOf([lbCategories, clbSelectSnippets], 8)
+    [btnDisplayCategory, btnDisplayPacket],
+    TCtrlArranger.BottomOf([lbCategories, clbSelectPackets], 8)
   );
   TCtrlArranger.AlignHCentresTo([lbCategories], [btnDisplayCategory]);
-  TCtrlArranger.AlignHCentresTo([clbSelectSnippets], [btnDisplaySnippet]);
+  TCtrlArranger.AlignHCentresTo([clbSelectPackets], [btnDisplayPacket]);
 
   // tsUpdate
   lblUpdateDesc.Width := tsUpdate.ClientWidth;
@@ -370,7 +371,7 @@ begin
     Exit;
 
   lbCategories.Clear;
-  clbSelectSnippets.Clear;
+  clbSelectPackets.Clear;
 
   WaitProc := procedure
   begin
@@ -418,37 +419,37 @@ begin
   end;
 end;
 
-procedure TSWAGImportDlg.clbSelectSnippetsClickCheck(Sender: TObject);
+procedure TSWAGImportDlg.clbSelectPacketsClickCheck(Sender: TObject);
 var
   SelIdx: Integer;
   DelIdx: Integer;
 begin
-  SelIdx := clbSelectSnippets.ItemIndex;
+  SelIdx := clbSelectPackets.ItemIndex;
   if SelIdx = -1 then
     Exit;
-  if clbSelectSnippets.Checked[SelIdx] then
+  if clbSelectPackets.Checked[SelIdx] then
   begin
-    if not fSelectedSnippets.Contains(fCurrentCatSnippets[SelIdx]) then
-      fSelectedSnippets.Add(fCurrentCatSnippets[SelIdx]);
+    if not fSelectedPackets.Contains(fCurrentCatPackets[SelIdx]) then
+      fSelectedPackets.Add(fCurrentCatPackets[SelIdx]);
   end
   else
   begin
-    DelIdx := fSelectedSnippets.IndexOf(fCurrentCatSnippets[SelIdx]);
+    DelIdx := fSelectedPackets.IndexOf(fCurrentCatPackets[SelIdx]);
     if DelIdx >= 0 then
-      fSelectedSnippets.Delete(DelIdx);
+      fSelectedPackets.Delete(DelIdx);
   end;
 end;
 
-procedure TSWAGImportDlg.clbSelectSnippetsDblClick(Sender: TObject);
+procedure TSWAGImportDlg.clbSelectPacketsDblClick(Sender: TObject);
 begin
-  PreviewSelectedSnippet;
+  PreviewSelectedPacket;
 end;
 
-procedure TSWAGImportDlg.clbSelectSnippetsKeyDown(Sender: TObject;
+procedure TSWAGImportDlg.clbSelectPacketsKeyDown(Sender: TObject;
   var Key: Word; Shift: TShiftState);
 begin
   if Key = VK_RETURN then
-    PreviewSelectedSnippet;
+    PreviewSelectedPacket;
 end;
 
 procedure TSWAGImportDlg.ConfigForm;
@@ -484,20 +485,20 @@ destructor TSWAGImportDlg.Destroy;
 begin
   fSWAGReader.Free;
   fImporter.Free;
-  fSelectedSnippets.Free;
-  fCurrentCatSnippets.Free;
+  fSelectedPackets.Free;
+  fCurrentCatPackets.Free;
   fSortedCategories.Free;
   inherited;
 end;
 
-procedure TSWAGImportDlg.DisplaySnippetsForCategory;
+procedure TSWAGImportDlg.DisplayPacketsForCategory;
 resourcestring
-  sSnippetListCaption = '&Select snippets from "%s"';
+  sPacketListCaption = '&Select packets from "%s"';
 var
   CatIdx: Integer;
   Idx: Integer;
   N: Integer;
-  Snippets: TList<TSWAGSnippet>;
+  Packets: TList<TSWAGPacket>;
 begin
   CatIdx := lbCategories.ItemIndex;
   if CatIdx = -1 then
@@ -509,36 +510,36 @@ begin
     // nothing to do if current category selected again
     Exit;
   fCurrentCatID := fSortedCategories[CatIdx].ID;
-  lblSelectSnippets.Caption := Format(
-    sSnippetListCaption,
+  lblSelectPackets.Caption := Format(
+    sPacketListCaption,
     // double up ampersands to avoid being treated as accelerator characters
     [StrReplace(fSortedCategories[CatIdx].Title, '&', '&&')]
   );
-  Snippets := TList<TSWAGSnippet>.Create;
+  Packets := TList<TSWAGPacket>.Create;
   try
-    fSWAGReader.GetPartialSnippets(fCurrentCatID, Snippets);
-    clbSelectSnippets.Items.BeginUpdate;
+    fSWAGReader.GetPartialPackets(fCurrentCatID, Packets);
+    clbSelectPackets.Items.BeginUpdate;
     try
-      fCurrentCatSnippets.Clear;
-      clbSelectSnippets.Clear;
-      // We set fCurrentCatSnippets first because it is a sorted list which
+      fCurrentCatPackets.Clear;
+      clbSelectPackets.Clear;
+      // We set fCurrentCatPackets first because it is a sorted list which
       // means indices of new items added are not sequential, and we must have
-      // displayed title at same index in clbSelectSnippets as its snippet is in
-      // fCurrentCatSnippets.
-      fCurrentCatSnippets.AddRange(Snippets);
-      for Idx := 0 to Pred(fCurrentCatSnippets.Count) do
+      // displayed title at same index in clbSelectPackets as its packet is in
+      // fCurrentCatPackets.
+      fCurrentCatPackets.AddRange(Packets);
+      for Idx := 0 to Pred(fCurrentCatPackets.Count) do
       begin
-        N := clbSelectSnippets.Items.Add(fCurrentCatSnippets[Idx].Title);
+        N := clbSelectPackets.Items.Add(fCurrentCatPackets[Idx].Title);
         Assert(Idx = N, 'Idx <> N');
-        clbSelectSnippets.Checked[Idx] := fSelectedSnippets.Contains(
-          fCurrentCatSnippets[Idx]
+        clbSelectPackets.Checked[Idx] := fSelectedPackets.Contains(
+          fCurrentCatPackets[Idx]
         );
       end;
     finally
-      clbSelectSnippets.Items.EndUpdate;
+      clbSelectPackets.Items.EndUpdate;
     end;
   finally
-    Snippets.Free;
+    Packets.Free;
   end;
 end;
 
@@ -557,20 +558,20 @@ begin
   Result := StrTrim(edPath.Text);
 end;
 
-procedure TSWAGImportDlg.GetImportSnippets(const SnipList: TList<TSWAGSnippet>);
+procedure TSWAGImportDlg.GetImportPackets(const PacketList: TList<TSWAGPacket>);
 var
-  SnipIDs: TList<Cardinal>;
-  PartialSnippet: TSWAGSnippet;
+  PacketIDs: TList<Cardinal>;
+  PartialPacket: TSWAGPacket;
 resourcestring
-  sWaitMsg = 'Retrieving snippets...';
+  sWaitMsg = 'Retrieving packets...';
 begin
-  SnipIDs := TList<Cardinal>.Create;
+  PacketIDs := TList<Cardinal>.Create;
   try
-    for PartialSnippet in fSelectedSnippets do
-      SnipIDs.Add(PartialSnippet.ID);
-    fSWAGReader.GetCompleteSnippets(
-      SnipIDs,
-      SnipList,
+    for PartialPacket in fSelectedPackets do
+      PacketIDs.Add(PartialPacket.ID);
+    fSWAGReader.GetCompletePackets(
+      PacketIDs,
+      PacketList,
       procedure
       begin
         Application.ProcessMessages;
@@ -581,15 +582,15 @@ begin
       end
     );
   finally
-    SnipIDs.Free;
+    PacketIDs.Free;
   end;
 end;
 
 function TSWAGImportDlg.HeadingText(const PageIdx: Integer): string;
 resourcestring
-  sIntroPageHeading = 'Import snippets from SWAG';
+  sIntroPageHeading = 'Import packets from SWAG as new snippets';
   sFolderPage = 'Select SWAG database download folder';
-  sSelectionPageHeading = 'Select required snippets';
+  sSelectionPageHeading = 'Select required packets';
   sUpdatePage = 'Ready to import';
   sFinishPage = 'Import complete';
 begin
@@ -648,20 +649,20 @@ end;
 
 procedure TSWAGImportDlg.InitUpdatePage;
 var
-  FullSnippets: TList<TSWAGSnippet>;
-  Snippet: TSWAGSnippet;
+  FullPackets: TList<TSWAGPacket>;
+  Packet: TSWAGPacket;
 resourcestring
-  sWaitMsg = 'Retrieving snippets...';
+  sWaitMsg = 'Retrieving packets...';
 begin
   Application.ProcessMessages;
-  FullSnippets := TList<TSWAGSnippet>.Create;
+  FullPackets := TList<TSWAGPacket>.Create;
   try
-    GetImportSnippets(FullSnippets);
+    GetImportPackets(FullPackets);
     fImporter.Reset;
-    for Snippet in FullSnippets do
-      fImporter.IncludeSnippet(Snippet);
+    for Packet in FullPackets do
+      fImporter.IncludePacket(Packet);
   finally
-    FullSnippets.Free;
+    FullPackets.Free;
   end;
   PopulateImportsLV;
 end;
@@ -681,25 +682,25 @@ begin
   );
   fSortedCategories.PermitDuplicates := True;
 
-  fCurrentCatSnippets := TSortedList<TSWAGSnippet>.Create(
-    TDelegatedComparer<TSWAGSnippet>.Create(
-      function (const Left, Right: TSWAGSnippet): Integer
+  fCurrentCatPackets := TSortedList<TSWAGPacket>.Create(
+    TDelegatedComparer<TSWAGPacket>.Create(
+      function (const Left, Right: TSWAGPacket): Integer
       begin
         Result := StrCompareStr(Left.Title, Right.Title);
       end
     )
   );
-  fCurrentCatSnippets.PermitDuplicates := True;
+  fCurrentCatPackets.PermitDuplicates := True;
 
-  fSelectedSnippets := TSortedList<TSWAGSnippet>.Create(
-    TDelegatedComparer<TSWAGSnippet>.Create(
-      function (const Left, Right: TSWAGSnippet): Integer
+  fSelectedPackets := TSortedList<TSWAGPacket>.Create(
+    TDelegatedComparer<TSWAGPacket>.Create(
+      function (const Left, Right: TSWAGPacket): Integer
       begin
         Result := Left.ID - Right.ID;
       end
     )
   );
-  fSelectedSnippets.PermitDuplicates := False;
+  fSelectedPackets.PermitDuplicates := False;
 
   fImporter := TSWAGImporter.Create;
 
@@ -707,14 +708,14 @@ end;
 
 procedure TSWAGImportDlg.lbCategoriesDblClick(Sender: TObject);
 begin
-  DisplaySnippetsForCategory;
+  DisplayPacketsForCategory;
 end;
 
 procedure TSWAGImportDlg.lbCategoriesKeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 begin
   if Key = VK_RETURN then
-    DisplaySnippetsForCategory;
+    DisplayPacketsForCategory;
 end;
 
 procedure TSWAGImportDlg.MoveForward(const PageIdx: Integer;
@@ -740,31 +741,31 @@ end;
 
 procedure TSWAGImportDlg.PopulateImportsLV;
 var
-  Snippet: TSWAGSnippet;
+  Packet: TSWAGPacket;
   LI: TListItem;
 begin
   lvImports.Items.BeginUpdate;
   try
     lvImports.Clear;
-    for Snippet in fSelectedSnippets do
+    for Packet in fSelectedPackets do
     begin
       LI := lvImports.Items.Add;
-      LI.Caption := Snippet.Title;
-      LI.SubItems.Add(TSWAGImporter.MakeValidSnippetName(Snippet.ID));
+      LI.Caption := Packet.Title;
+      LI.SubItems.Add(TSWAGImporter.MakeValidSnippetName(Packet.ID));
     end;
   finally
     lvImports.Items.EndUpdate;
   end;
 end;
 
-procedure TSWAGImportDlg.PreviewSelectedSnippet;
+procedure TSWAGImportDlg.PreviewSelectedPacket;
 var
-  PartialSnippet: TSWAGSnippet;
-  FullSnippet: TSWAGSnippet;
+  PartialPacket: TSWAGPacket;
+  FullPacket: TSWAGPacket;
   SelIdx: Integer;
   Content: string;
 resourcestring
-  sWaitMsg = 'Retrieving snippet...';
+  sWaitMsg = 'Retrieving packet...';
   sContentTplt = 'ID: %0:d' + EOL +
     'Category: "%1:s"' + EOL +
     'File Name: "%2:s"' + EOL +
@@ -772,12 +773,12 @@ resourcestring
     'Author: "%4:s"' + EOL2 +
     'Source Code:' + EOL + '%5:s' + EOL + '%6:s';
 begin
-  SelIdx := clbSelectSnippets.ItemIndex;
+  SelIdx := clbSelectPackets.ItemIndex;
   if SelIdx = -1 then
     Exit;
-  PartialSnippet := fCurrentCatSnippets[SelIdx];
-  FullSnippet := fSWAGReader.GetCompleteSnippet(
-    PartialSnippet.ID,
+  PartialPacket := fCurrentCatPackets[SelIdx];
+  FullPacket := fSWAGReader.GetCompletePacket(
+    PartialPacket.ID,
     procedure (CallProc: TProc)
     begin
       WaitWrapper(Self, CallProc, sWaitMsg);
@@ -786,13 +787,13 @@ begin
   Content := Format(
     sContentTplt,
     [
-      FullSnippet.ID,
-      FullSnippet.Category,
-      FullSnippet.FileName,
-      FullSnippet.Title,
-      FullSnippet.Author,
+      FullPacket.ID,
+      FullPacket.Category,
+      FullPacket.FileName,
+      FullPacket.Title,
+      FullPacket.Author,
       StringOfChar('-', 80),
-      StrWindowsLineBreaks(FullSnippet.SourceCode)
+      StrWindowsLineBreaks(FullPacket.SourceCode)
     ]
   );
   TPreviewDlg.Execute(
@@ -825,6 +826,8 @@ procedure TSWAGImportDlg.UpdateDatabase;
     Application.ProcessMessages;
   end;
 
+resourcestring
+  sWaitMsg = 'Importing packets into database as new snippets...';
 begin
   SetBtnVisibility(False);
   try
@@ -833,13 +836,13 @@ begin
       procedure
       begin
         fImporter.Import(
-          procedure (const Snippet: TSWAGSnippet)
+          procedure (const Packet: TSWAGPacket)
           begin
             Application.ProcessMessages;
           end
         );
       end,
-      'Importing Snippets Into Database...'
+      sWaitMsg
     );
   finally
     SetBtnVisibility(True);
@@ -862,9 +865,9 @@ procedure TSWAGImportDlg.ValidatePage(const PageIdx: Integer);
 
   procedure ValidateSelectionPage;
   resourcestring
-    sEmptySelection = 'You must select one or more snippets to import.';
+    sEmptySelection = 'You must select one or more packets to import.';
   begin
-    if fSelectedSnippets.Count = 0 then
+    if fSelectedPackets.Count = 0 then
       raise EDataEntry.Create(sEmptySelection);
   end;
 
