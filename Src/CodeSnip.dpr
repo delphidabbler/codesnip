@@ -179,7 +179,7 @@ uses
   SWAG.UCommon in 'SWAG.UCommon.pas',
   SWAG.UImporter in 'SWAG.UImporter.pas',
   SWAG.UReader in 'SWAG.UReader.pas',
-  SWAG.USnippetCache in 'SWAG.USnippetCache.pas',
+  SWAG.UPacketCache in 'SWAG.UPacketCache.pas',
   SWAG.UXMLProcessor in 'SWAG.UXMLProcessor.pas',
   UActionFactory in 'UActionFactory.pas',
   UAnchors in 'UAnchors.pas',

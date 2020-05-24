@@ -21,7 +21,7 @@ uses
   Generics.Collections,
   // Project
   SWAG.UCommon,
-  SWAG.USnippetCache,
+  SWAG.UPacketCache,
   SWAG.UXMLProcessor,
   UExceptions;
 
