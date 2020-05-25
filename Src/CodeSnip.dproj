@@ -377,6 +377,7 @@
 			<DCCReference Include="SWAG.UImporter.pas"/>
 			<DCCReference Include="SWAG.UReader.pas"/>
 			<DCCReference Include="SWAG.UPacketCache.pas"/>
+			<DCCReference Include="SWAG.UVersion.pas"/>
 			<DCCReference Include="SWAG.UXMLProcessor.pas"/>
 			<DCCReference Include="UActionFactory.pas"/>
 			<DCCReference Include="UAnchors.pas"/>
@@ -565,6 +566,7 @@
 			<DCCReference Include="UXMLDocConsts.pas"/>
 			<DCCReference Include="UXMLDocHelper.pas"/>
 			<DCCReference Include="UXMLDocumentEx.pas"/>
+			<DCCReference Include="SWAG.UVersion.pas"/>
 			<None Include="CodeSnip.todo"/>
 			<BuildConfiguration Include="Base">
 				<Key>Base</Key>

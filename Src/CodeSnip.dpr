@@ -180,6 +180,7 @@ uses
   SWAG.UImporter in 'SWAG.UImporter.pas',
   SWAG.UReader in 'SWAG.UReader.pas',
   SWAG.UPacketCache in 'SWAG.UPacketCache.pas',
+  SWAG.UVersion in 'SWAG.UVersion.pas',
   SWAG.UXMLProcessor in 'SWAG.UXMLProcessor.pas',
   UActionFactory in 'UActionFactory.pas',
   UAnchors in 'UAnchors.pas',
