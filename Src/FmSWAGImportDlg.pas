@@ -65,11 +65,12 @@ type
     tsFolder: TTabSheet;
     lblFolder: TLabel;
     edPath: TEdit;
-    lblFolderPageInfo: TLabel;
+    lblFolderPageInfo2: TLabel;
     btnBrowse: TButton;
     actBrowse: TAction;
     frmIntro: THTMLTpltDlgFrame;
     lblVersionNumber: TLabel;
+    lblFolderPageInfo1: TLabel;
     ///  <summary>Handles clicks on the check boxes next to packets in the
     ///  packet selection list box by selecting and deselecting packets for
     ///  inclusion in the import.</summary>
@@ -315,8 +316,12 @@ begin
   TCtrlArranger.AlignVCentres(
     TCtrlArranger.BottomOf(lblFolder, 6), [edPath, btnBrowse]
   );
+  TCtrlArranger.AlignLefts(
+    [lblFolder, edPath, lblFolderPageInfo1, lblFolderPageInfo2], 0
+  );
   TCtrlArranger.MoveToRightOf(edPath, btnBrowse, 8);
-  lblFolderPageInfo.Top := TCtrlArranger.BottomOf([edPath, btnBrowse], 12);
+  lblFolderPageInfo1.Top := TCtrlArranger.BottomOf([edPath, btnBrowse], 12);
+  lblFolderPageInfo2.Top := TCtrlArranger.BottomOf(lblFolderPageInfo1, 8);
 
   // tsCategories
   lblCategoriesDesc.Width := tsCategories.ClientWidth;
@@ -423,7 +428,8 @@ begin
   with CSSBuilder.AddSelector('.framed') do
   begin
     AddProperty(TCSS.BorderProp(cssAll, 1, cbsSolid, clBorder));
-    AddProperty(TCSS.PaddingProp(4));
+    AddProperty(TCSS.PaddingProp(0, 4, 4, 4));
+    AddProperty(TCSS.MarginProp(cssTop, 4));
   end;
 end;
 
@@ -461,6 +467,8 @@ begin
 end;
 
 procedure TSWAGImportDlg.ConfigForm;
+resourcestring
+  sVersions = 'v%0:s to v%1:s';
 begin
   inherited;
   pcWizard.ActivePage := tsFinish;
@@ -484,6 +492,16 @@ begin
       Tplt.ResolvePlaceholderText(
         'SWAGReleaseURL',
         TURL.SWAGReleases
+      );
+      Tplt.ResolvePlaceholderText(
+        'SupportedSWAGVersions',
+        Format(
+          sVersions,
+          [
+            string(TSWAGVersion.LowestSupportedVersion),
+            string(TSWAGVersion.LowestUnSupportedVersion)
+          ]
+        )
       );
     end
   );
@@ -615,7 +633,6 @@ procedure TSWAGImportDlg.InitSelectionPage;
 var
   Cats: TList<TSWAGCategory>;
   Idx: Integer;
-  VerNumStr: string;
 resourcestring
   sLblVersionNumberCaption = 'SWAG version %s';
 begin

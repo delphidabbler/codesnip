@@ -19,16 +19,12 @@ inherited SWAGImportDlg: TSWAGImportDlg
     inherited pcWizard: TPageControl
       Width = 671
       Height = 456
-      ActivePage = tsCategories
+      ActivePage = tsFinish
       ExplicitWidth = 671
       ExplicitHeight = 456
       object tsIntro: TTabSheet
         Caption = 'tsIntro'
         TabVisible = False
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         inline frmIntro: THTMLTpltDlgFrame
           Left = 0
           Top = 0
@@ -59,37 +55,41 @@ inherited SWAGImportDlg: TSWAGImportDlg
         Caption = 'tsFolder'
         ImageIndex = 4
         TabVisible = False
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         object lblFolder: TLabel
           Left = 0
           Top = 8
-          Width = 393
+          Width = 383
           Height = 13
           Caption = 
-            'Enter the SWAG database download &folder: (click the button to b' +
-            'rowse for folder)'
+            'Enter the SWAG database download &folder - you need the '#39'swag'#39' s' +
+            'ub-directory:'
           FocusControl = edPath
         end
-        object lblFolderPageInfo: TLabel
+        object lblFolderPageInfo2: TLabel
           Left = 0
           Top = 72
           Width = 267
           Height = 13
           Caption = 'Click the Next button to choose which packets to import'
         end
-        object edPath: TEdit
+        object lblFolderPageInfo1: TLabel
           Left = 0
-          Top = 28
+          Top = 26
+          Width = 208
+          Height = 13
+          Caption = 'Click the ... button to browse for the folder'
+          FocusControl = edPath
+        end
+        object edPath: TEdit
+          Left = 3
+          Top = 45
           Width = 484
           Height = 21
           TabOrder = 0
         end
         object btnBrowse: TButton
-          Left = 490
-          Top = 28
+          Left = 493
+          Top = 45
           Width = 27
           Height = 21
           Action = actBrowse
@@ -184,10 +184,6 @@ inherited SWAGImportDlg: TSWAGImportDlg
         Caption = 'tsUpdate'
         ImageIndex = 2
         TabVisible = False
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         object lblUpdateDesc: TLabel
           Left = 0
           Top = 3
@@ -231,10 +227,6 @@ inherited SWAGImportDlg: TSWAGImportDlg
         Caption = 'tsFinish'
         ImageIndex = 3
         TabVisible = False
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         inline frmOutro: THTMLTpltDlgFrame
           Left = 0
           Top = 0
