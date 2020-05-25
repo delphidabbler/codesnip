@@ -69,6 +69,7 @@ type
     btnBrowse: TButton;
     actBrowse: TAction;
     frmIntro: THTMLTpltDlgFrame;
+    lblVersionNumber: TLabel;
     ///  <summary>Handles clicks on the check boxes next to packets in the
     ///  packet selection list box by selecting and deselecting packets for
     ///  inclusion in the import.</summary>
@@ -243,6 +244,7 @@ uses
   // Project
   FmPreviewDlg,
   FmWaitDlg,
+  SWAG.UVersion,
   UBrowseForFolderDlg,
   UColours,
   UConsts,
@@ -254,6 +256,7 @@ uses
   UMessageBox,
   UStrUtils,
   UUrl,
+  UVersionInfo,
   UWaitForThreadUI;
 
 {$R *.dfm}
@@ -319,7 +322,7 @@ begin
   lblCategoriesDesc.Width := tsCategories.ClientWidth;
   lblCategoriesDesc.Top := 3;
   TCtrlArranger.AlignLefts(
-    [lblCategoriesDesc, lblCategories, lbCategories], 0
+    [lblCategoriesDesc, lblCategories, lbCategories, lblVersionNumber], 0
   );
   TCtrlArranger.AlignTops(
     [lblCategories, lblSelectPackets],
@@ -332,6 +335,11 @@ begin
   TCtrlArranger.AlignTops(
     [btnDisplayCategory, btnDisplayPacket],
     TCtrlArranger.BottomOf([lbCategories, clbSelectPackets], 8)
+  );
+  TCtrlArranger.MoveBelow(
+    [btnDisplayCategory, btnDisplayPacket],
+    lblVersionNumber,
+    8
   );
   TCtrlArranger.AlignHCentresTo([lbCategories], [btnDisplayCategory]);
   TCtrlArranger.AlignHCentresTo([clbSelectPackets], [btnDisplayPacket]);
@@ -604,28 +612,23 @@ begin
 end;
 
 procedure TSWAGImportDlg.InitSelectionPage;
-//resourcestring
-//  sDefaultWaitMsg = 'Accessing SWAG database...';
 var
   Cats: TList<TSWAGCategory>;
   Idx: Integer;
+  VerNumStr: string;
+resourcestring
+  sLblVersionNumberCaption = 'SWAG version %s';
 begin
+  lblVersionNumber.Caption := Format(
+    sLblVersionNumberCaption,
+    [string(TSWAGVersion.GetVersion(GetDirNameFromEditCtrl))]
+  );
+
   Application.ProcessMessages;
 
   if (lbCategories.Count > 0) then
     Exit;
 
-//  fPrevSWAGDir := GetDirNameFromEditCtrl;
-//
-//  FreeAndNil(fSWAGReader);
-//  fSWAGReader := TSWAGReader.Create(
-//    GetDirNameFromEditCtrl,
-//    procedure (CallProc: TProc)
-//    begin
-//      WaitWrapper(Self, CallProc, sDefaultWaitMsg);
-//    end
-//  );
-//
   Cats := TList<TSWAGCategory>.Create;
   try
     fSWAGReader.GetCategories(Cats);
@@ -856,11 +859,23 @@ procedure TSWAGImportDlg.ValidatePage(const PageIdx: Integer);
     sNoFolder = 'Please enter the directory where you downloaded the SWAG '
       + 'database.';
     sBadFolder = 'Directory "%s" does not exist. Please specify a valid one.';
+    sBadVersion = '%s.' + EOL2
+      + 'Please specify a directory containing a supported version.';
+    sCorrupt = 'Not a valid SWAG database (%s). ' + EOL2
+      + 'Please specify a different directory.';
   begin
     if GetDirNameFromEditCtrl = '' then
-      raise EDataEntry.Create(sNoFolder);
+      raise EDataEntry.Create(sNoFolder, edPath);
     if not TDirectory.Exists(GetDirNameFromEditCtrl, False) then
-      raise EDataEntry.CreateFmt(sBadFolder, [GetDirNameFromEditCtrl]);
+      raise EDataEntry.CreateFmt(sBadFolder, [GetDirNameFromEditCtrl], edPath);
+    try
+      TSWAGVersion.ValidateVersionFile(GetDirNameFromEditCtrl);
+    except
+      on E: ECorruptSWAGVersion do
+        raise EDataEntry.CreateFmt(sCorrupt, [E.Message], edPath);
+      on E: EUnsupportedSWAGVersion do
+        raise EDataEntry.CreateFmt(sBadVersion, [E.Message], edPath);
+    end;
   end;
 
   procedure ValidateSelectionPage;

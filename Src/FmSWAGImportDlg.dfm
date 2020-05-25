@@ -19,7 +19,7 @@ inherited SWAGImportDlg: TSWAGImportDlg
     inherited pcWizard: TPageControl
       Width = 671
       Height = 456
-      ActivePage = tsUpdate
+      ActivePage = tsCategories
       ExplicitWidth = 671
       ExplicitHeight = 456
       object tsIntro: TTabSheet
@@ -136,6 +136,12 @@ inherited SWAGImportDlg: TSWAGImportDlg
           Caption = '&Select required packets:'
           FocusControl = clbSelectPackets
         end
+        object lblVersionNumber: TLabel
+          Left = 2
+          Top = 427
+          Width = 3
+          Height = 13
+        end
         object lbCategories: TListBox
           Left = 0
           Top = 64
@@ -147,7 +153,7 @@ inherited SWAGImportDlg: TSWAGImportDlg
           OnKeyDown = lbCategoriesKeyDown
         end
         object clbSelectPackets: TCheckListBox
-          Left = 256
+          Left = 240
           Top = 64
           Width = 404
           Height = 321
@@ -178,6 +184,10 @@ inherited SWAGImportDlg: TSWAGImportDlg
         Caption = 'tsUpdate'
         ImageIndex = 2
         TabVisible = False
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object lblUpdateDesc: TLabel
           Left = 0
           Top = 3
