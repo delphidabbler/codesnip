@@ -31,10 +31,6 @@ type
   TSWAGVersion = class(TNoPublicConstructObject)
   strict private
     const
-      ///  <summary>First supported SWAG version.</summary>
-      LowestSupportedVersion: TVersionNumber = (V1: 1; V2: 0; V3: 0; V4: 0);
-      ///  <summary>Lowest SWAG version that is NOT supported.</summary>
-      LowestUnSupportedVersion: TVersionNumber = (V1: 1; V2: 1; V3: 0; V4: 0);
       ///  <summary>SWAG version file name, without path.</summary>
       SWAGVersionFileName = 'VERSION';
     var
@@ -59,6 +55,11 @@ type
     ///  should be located.</param>
     constructor InternalCreate(const SWAGDir: TFileName);
   public
+    const
+      ///  <summary>First supported SWAG version.</summary>
+      LowestSupportedVersion: TVersionNumber = (V1: 1; V2: 0; V3: 0; V4: 0);
+      ///  <summary>Lowest SWAG version that is NOT supported.</summary>
+      LowestUnSupportedVersion: TVersionNumber = (V1: 1; V2: 1; V3: 0; V4: 0);
     ///  <summary>Validates the version file. Returns normally if there are no
     ///  errors or raises an exception if an error is found.</summary>
     ///  <param name="SWAGDir">TFileName [in] Directory where version file
