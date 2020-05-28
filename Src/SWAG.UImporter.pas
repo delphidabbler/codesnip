@@ -158,47 +158,75 @@ begin
 end;
 
 function TSWAGImporter.ExtraBoilerplate: IActiveText;
+
+  procedure AddText(const Text: string);
+  begin
+    fExtraBoilerplate.AddElem(
+      TActiveTextFactory.CreateTextElem(Text)
+    );
+  end;
+
+  procedure AddLink(const Text, URI: string);
+  var
+    HRefAttr: IActiveTextAttrs;
+  begin
+    HRefAttr := TActiveTextFactory.CreateAttrs(
+      TActiveTextAttr.Create('href', URI)
+    );
+    fExtraBoilerplate.AddElem(
+      TActiveTextFactory.CreateActionElem(ekLink, HRefAttr, fsOpen)
+    );
+    AddText(Text);
+    fExtraBoilerplate.AddElem(
+      TActiveTextFactory.CreateActionElem(ekLink, HRefAttr, fsClose)
+    );
+  end;
+
 resourcestring
   sStatementPrefix = 'This snippet was imported from a packet in the ';
-  sStatementLinkText = 'SWAG Pascal Archive';
+  sStatementLinkText = 'SWAG Pascal Code Collection';
   sStatementPostfix = '. ';
-  sLicense = 'The code packets in the archive pages are generally freeware or '
-    + 'public domain as defined by any accompanying comments and copyright '
-    + 'statements. Contact the author if in doubt.';
-  // TODO: Check license wording against SWAG docs
-  // URL of web page referenced from links in boilerplate
-  SWAGDBURI = 'https://github.com/delphidabbler/swag';
-var
-  // Active text attributes for link included in boilerplate
-  SWAGDBURIAttr: IActiveTextAttrs;
+  sLicense1 = 'Unless the snippet states otherwise it is deemed to be licensed '
+    + 'under either the ';
+  sLGPLLinkText = 'GNU Lesser General Public License v2.1';
+  sLicense2 = ' (source code) or the ';
+  sFDLLinkText = 'GNU Free Documentation License v1.2';
+  sLicense3 = ' (other documents), as appropriate. For further information '
+    + 'please see the ';
+  sSWAGLicenseLinkText = 'SWAG License document';
+  sLicense4 = '.';
+const
+  // URLs of web pages referenced from links in boilerplate
+  SWAGProjectURL = 'https://github.com/delphidabbler/swag';
+  SWAGLicenseURL = SWAGProjectURL + '/blob/master/LICENSE.md';
+  LGPLLicenseURL = 'https://www.gnu.org/licenses/old-licenses/lgpl-2.1.html';
+  FDPLicenseURL = 'https://www.gnu.org/licenses/old-licenses/fdl-1.2.html';
+
 begin
   if not Assigned(fExtraBoilerplate) then
   begin
-    SWAGDBURIAttr := TActiveTextFactory.CreateAttrs(
-      TActiveTextAttr.Create('href', SWAGDBURI)
-    );
     fExtraBoilerplate := TActiveTextFactory.CreateActiveText;
+    // Intro para
     fExtraBoilerplate.AddElem(
       TActiveTextFactory.CreateActionElem(ekPara, fsOpen)
     );
+    AddText(sStatementPrefix);
+    AddLink(sStatementLinkText, SWAGProjectURL);
+    AddText(sStatementPostfix);
     fExtraBoilerplate.AddElem(
-      TActiveTextFactory.CreateTextElem(sStatementPrefix)
+      TActiveTextFactory.CreateActionElem(ekPara, fsClose)
     );
+    // License para
     fExtraBoilerplate.AddElem(
-      TActiveTextFactory.CreateActionElem(ekLink, SWAGDBURIAttr, fsOpen)
+      TActiveTextFactory.CreateActionElem(ekPara, fsOpen)
     );
-    fExtraBoilerplate.AddElem(
-      TActiveTextFactory.CreateTextElem(sStatementLinkText)
-    );
-    fExtraBoilerplate.AddElem(
-      TActiveTextFactory.CreateActionElem(ekLink, SWAGDBURIAttr, fsClose)
-    );
-    fExtraBoilerplate.AddElem(
-      TActiveTextFactory.CreateTextElem(sStatementPostfix)
-    );
-    fExtraBoilerplate.AddElem(
-      TActiveTextFactory.CreateTextElem(sLicense)
-    );
+    AddText(sLicense1);
+    AddLink(sLGPLLinkText, LGPLLicenseURL);
+    AddText(sLicense2);
+    AddLink(sFDLLinkText, FDPLicenseURL);
+    AddText(sLicense3);
+    AddLink(sSWAGLicenseLinkText, SWAGLicenseURL);
+    AddText(sLicense4);
     fExtraBoilerplate.AddElem(
       TActiveTextFactory.CreateActionElem(ekPara, fsClose)
     );
