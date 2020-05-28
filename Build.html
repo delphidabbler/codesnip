@@ -229,7 +229,7 @@
 
 <p class="note">
 	<strong>Warning:</strong> Do not use Inno Setup v6. This will fail to compile
-	the setup script. Inno Setup 6 does not support Windows 2000 or XE, while 
+	the setup script. Inno Setup 6 does not support Windows 2000 or XE, while
 	<em>CodeSnip</em> still does.
 </p>
 
@@ -288,10 +288,6 @@
 
 <p>
   You do not need Zip if you do not intend to create release files.
-</p>
-
-<p class="note">
-  <strong>Note:</strong> You can use the Delphi IDE to edit the code and test compile it. However you will need to build the code from the makefile first to ensure all the required resource files and auto-generated files are present. If you change any resource files or type libraries you also need to re-run the makefile. Final builds should always be created using the makefile.
 </p>
 
 
@@ -543,6 +539,12 @@
   Options</em>. The standard name for the portable exe file is
   <code>CodeSnip-p.exe</code>, but the IDE will generate
   <code>CodeSnip.exe</code>. You can rename the file manually.
+</p>
+
+<p>
+	After you have gone through these steps you can edit Pascal code and test
+	compile from the Delphi IDE. However if you change any files compiled into resources, or the type library, or run a clean up, then you must repeat the
+	above steps and do a complete build from the IDE.
 </p>
 
 <p>
