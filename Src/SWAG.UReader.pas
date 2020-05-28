@@ -18,10 +18,11 @@ interface
 uses
   // Delphi
   SysUtils,
+  Generics.Defaults,
   Generics.Collections,
   // Project
   SWAG.UCommon,
-  SWAG.USnippetCache,
+  SWAG.UPacketCache,
   SWAG.UXMLProcessor,
   UExceptions;
 
@@ -44,21 +45,21 @@ type
       TSWAGCallbackWrapper = reference to procedure (CallProc: TProc);
   strict private
     const
-      ///  <summary>Maximum size of cache of complete snippets read from the
+      ///  <summary>Maximum size of cache of complete packets read from the
       ///  SWAG database.</summary>
-      MaxSnippetCacheSize = 50;
+      MaxPacketCacheSize = 50;
     var
       ///  <summary>List of all categories in the SWAG database.</summary>
       fCategories: TList<TSWAGCategory>;
-      ///  <summary>Map of category IDs onto the snippets that belong to the
+      ///  <summary>Map of category IDs onto the packets that belong to the
       ///  category.</summary>
       ///  <remarks>
-      ///  <para>This object is used to cache the snippets for each category, to
+      ///  <para>This object is used to cache the packets for each category, to
       ///  avoid having to read from the database more than once.</para>
-      ///  <para>Only partial information that summarises each snippet is
+      ///  <para>Only partial information that summarises each packet is
       ///  stored.</para>
       ///  </remarks>
-      fSnippetsByCategory: TDictionary<string,TList<TSWAGSnippet>>;
+      fPacketsByCategory: TDictionary<Cardinal,TList<TSWAGPacket>>;
       ///  <summary>Object used to interogate SWAG XML file.</summary>
       fXMLProcessor: TSWAGXMLProcessor;
       ///  <summary>Default wrapper for calls to the local SWAG database.
@@ -67,9 +68,9 @@ type
       ///  unless a different wrapper is specified by the caller in certain
       ///  method calls.</remarks>
       fDefaultCallWrapper: TSWAGCallbackWrapper;
-      ///  <summary>Cache of complete snippets read from the SWAG database.
+      ///  <summary>Cache of complete packets read from the SWAG database.
       ///  </summary>
-      fSnippetCache: TSWAGSnippetCache;
+      fPacketCache: TSWAGPacketCache;
     ///  <summary>Handles the given exception by converting expected exceptions
     ///  into ESWAGReader exceptions.</summary>
     ///  <exception>Always raises an exception. ESWAGReader is raised if E is
@@ -83,42 +84,42 @@ type
     ///  to the constructor is used.</param>
     ///  <remarks>The fetched categories are cached in fCategories.</remarks>
     procedure FetchCategories(CallWrapper: TSWAGCallbackWrapper);
-    ///  <summary>Fetches summaries of all the snippets contained in a given
+    ///  <summary>Fetches summaries of all the packets contained in a given
     ///  SWAG category from the SWAG database.</summary>
-    ///  <param name="CatID">string [in] ID of category for which snippet
+    ///  <param name="CatID">Cardinal [in] ID of category for which packet
     ///  summaries are required.</param>
     ///  <param name="CallWrapper">TSWAGCallbackWrapper [in] Callback that is
     ///  called and passed a closure which can retrive the required category
     ///  information from the database. If nil then the default callback passed
     ///  to the constructor is used.</param>
-    ///  <remarks>The fetched snippet summaries are cached in
-    ///  fSnippetsByCategory.</remarks>
-    procedure FetchPartialSnippets(const CatID: string;
+    ///  <remarks>The fetched packet summaries are cached in
+    ///  fPacketsByCategory.</remarks>
+    procedure FetchPartialPackets(const CatID: Cardinal;
       CallWrapper: TSWAGCallbackWrapper);
-    ///  <summary>Fetches full details a snippet from the SWAG database.
+    ///  <summary>Fetches full details a packet from the SWAG database.
     ///  </summary>
-    ///  <param name="SnippetID">Cardinal [in] ID of required snippet.</param>
+    ///  <param name="PacketID">Cardinal [in] ID of required packet.</param>
     ///  <param name="CallWrapper">TSWAGCallbackWrapper [in] Callback that is
-    ///  called and passed a closure which can retrive the required snippet
+    ///  called and passed a closure which can retrive the required packet
     ///  from the database. If nil then the default callback passed to the
     ///  constructor is used.</param>
-    ///  <returns>TSWAGSnippet. The retrieved snippet.</returns>
-    function FetchCompleteSnippet(const SnippetID: Cardinal;
-      CallWrapper: TSWAGCallbackWrapper): TSWAGSnippet;
-    ///  <summary>Fetches multiple complete snippets from the SWAG database.
+    ///  <returns>TSWAGPacket. The retrieved packet.</returns>
+    function FetchCompletePacket(const PacketID: Cardinal;
+      CallWrapper: TSWAGCallbackWrapper): TSWAGPacket;
+    ///  <summary>Fetches multiple complete packets from the SWAG database.
     ///  </summary>
-    ///  <param name="SnipIDs">TList&lt;Cardinal&gt; [in] List of IDs of the
-    ///  required snippets.</param>
-    ///  <param name="Snippets">TList&lt;TSWAGSnippet&gt; [in] Receives the list
-    ///  of retrieved snippets.</param>
+    ///  <param name="PacketIDs">TList&lt;Cardinal&gt; [in] List of IDs of the
+    ///  required packets.</param>
+    ///  <param name="Packets">TList&lt;TSWAGPacket&gt; [in] Receives the list
+    ///  of retrieved packets.</param>
     ///  <param name="CallWrapper">TSWAGCallbackWrapper [in] Callback that is
-    ///  called and passed a closure which can retrive the required snippets
+    ///  called and passed a closure which can retrive the required packets
     ///  from the database. If nil then the default callback passed to the
     ///  constructor is used.</param>
     ///  <param name="BreatherProc">TProc [in] Callback procedure called between
-    ///  reading each snippet.</param>
-    procedure FetchCompleteSnippets(const SnipIDs: TList<Cardinal>;
-      Snippets: TList<TSWAGSnippet>; BreatherProc: TProc;
+    ///  reading each packet.</param>
+    procedure FetchCompletePackets(const PacketIDs: TList<Cardinal>;
+      Packets: TList<TSWAGPacket>; BreatherProc: TProc;
       CallWrapper: TSWAGCallbackWrapper);
   public
     ///  <summary>Creates a new object instance.</summary>
@@ -145,54 +146,54 @@ type
     ///  </remarks>
     procedure GetCategories(const Cats: TList<TSWAGCategory>;
       CallWrapper: TSWAGCallbackWrapper = nil);
-    ///  <summary>Gets summaries of all the snippets contained in a given SWAG
+    ///  <summary>Gets summaries of all the packets contained in a given SWAG
     ///  category.</summary>
-    ///  <param name="CatID">string [in] ID of the required category.</param>
-    ///  <param name="Snippets">TList&lt;TSWAGSnippet&gt; [in] Receives the
-    ///  required list of snippet summaries.</param>
+    ///  <param name="CatID">Cardinal [in] ID of the required category.</param>
+    ///  <param name="Packets">TList&lt;TSWAGPacket&gt; [in] Receives the
+    ///  required list of packet summaries.</param>
     ///  <param name="CallWrapper">TSWAGCallbackWrapper [in] Callback that is
-    ///  called and passed a closure which can retrive the required snippet
+    ///  called and passed a closure which can retrive the required packet
     ///  summaries from the database. If nil then the default callback passed to
     ///  the constructor is used.</param>
     ///  <remarks>The first time this method is called for any category
-    ///  CallWrapper is called to retrieve the required snippets. On subsequent
-    ///  calls for that category the snippets summaries are read from a cache
+    ///  CallWrapper is called to retrieve the required packets. On subsequent
+    ///  calls for that category the packets summaries are read from a cache
     ///  and CallWrapper is not called.</remarks>
-    procedure GetPartialSnippets(const CatID: string;
-      const Snippets: TList<TSWAGSnippet>;
+    procedure GetPartialPackets(const CatID: Cardinal;
+      const Packets: TList<TSWAGPacket>;
       CallWrapper: TSWAGCallbackWrapper = nil);
-    ///  <summary>Gets full details a snippet from the SWAG database.</summary>
-    ///  <param name="ID">Cardinal [in] Unique ID of the required snippet.
+    ///  <summary>Gets full details a packet from the SWAG database.</summary>
+    ///  <param name="ID">Cardinal [in] Unique ID of the required packet.
     ///  </param>
     ///  <param name="CallWrapper">TSWAGCallbackWrapper [in] Callback that is
-    ///  called and passed a closure which can retrive the required snippet
+    ///  called and passed a closure which can retrive the required packet
     ///  from the database. If nil then the default callback passed to the
     ///  constructor is used.</param>
-    ///  <returns>TSWAGSnippet. The required snippet.</returns>
-    ///  <remarks>The first time this method is called for any snippet
-    ///  CallWrapper is called to retrieve the snippet. On subsequent calls for
-    ///  calls for that snippet the snippet is read from a cache and CallWrapper
-    ///  is not called.</remarks>
-    function GetCompleteSnippet(const ID: Cardinal;
-      CallWrapper: TSWAGCallbackWrapper = nil): TSWAGSnippet;
-    ///  <summary>Gets full details of multiple snippets from the SWAG database.
+    ///  <returns>TSWAGPacket. The required packet.</returns>
+    ///  <remarks>The first time this method is called for any packet
+    ///  CallWrapper is called to retrieve the packet. On subsequent calls for
+    ///  that packet the packet is read from a cache and CallWrapper is not
+    ///  called.</remarks>
+    function GetCompletePacket(const ID: Cardinal;
+      CallWrapper: TSWAGCallbackWrapper = nil): TSWAGPacket;
+    ///  <summary>Gets full details of multiple packets from the SWAG database.
     ///  </summary>
-    ///  <param name="SnipIDs">TList&lt;Cardinal&gt; [in] List of IDs of the
-    ///  required snippets.</param>
-    ///  <param name="Snippets">TList&lt;TSWAGSnippet&gt; [in] Receives the
-    ///  required list of snippets.</param>
+    ///  <param name="PacketIDs">TList&lt;Cardinal&gt; [in] List of IDs of the
+    ///  required packets.</param>
+    ///  <param name="Packets">TList&lt;TSWAGPacket&gt; [in] Receives the
+    ///  required list of packets.</param>
     ///  <param name="CallWrapper">TSWAGCallbackWrapper [in] Callback that is
-    ///  called and passed a closure which can retrive the required snippets
+    ///  called and passed a closure which can retrive the required packets
     ///  from the database. If nil then the default callback passed to the
     ///  constructor is used.</param>
     ///  <param name="BreatherProc">TProc [in] Callback procedure called between
-    ///  reading each snippet.</param>
+    ///  reading each packet.</param>
     ///  <remarks>The first time this method is called for any category
-    ///  CallWrapper is called to retrieve the required snippets. On subsequent
-    ///  calls for that category the snippets are read from a cache and
+    ///  CallWrapper is called to retrieve the required packets. On subsequent
+    ///  calls for that category the packets are read from a cache and
     ///  CallWrapper is not called.</remarks>
-    procedure GetCompleteSnippets(SnipIDs: TList<Cardinal>;
-      Snippets: TList<TSWAGSnippet>; BreatherProc: TProc = nil;
+    procedure GetCompletePackets(PacketIDs: TList<Cardinal>;
+      Packets: TList<TSWAGPacket>; BreatherProc: TProc = nil;
       CallWrapper: TSWAGCallbackWrapper = nil);
   end;
 
@@ -222,11 +223,20 @@ begin
   inherited Create;
   fDefaultCallWrapper := DefaultSWAGCallbackWrapper;
   fCategories := TList<TSWAGCategory>.Create;
-  fSnippetsByCategory := TObjectDictionary<string,TList<TSWAGSnippet>>.Create(
+  fPacketsByCategory := TObjectDictionary<Cardinal,TList<TSWAGPacket>>.Create(
     [doOwnsValues],
-    TStringEqualityComparer.Create
+    TDelegatedEqualityComparer<Cardinal>.Create(
+      function (const Left, Right: Cardinal): Boolean
+      begin
+        Result := Left = Right;
+      end,
+      function (const Value: Cardinal): Integer
+      begin
+        Result := Integer(Value);
+      end
+    )
   );
-  fSnippetCache := TSWAGSnippetCache.Create(MaxSnippetCacheSize);
+  fPacketCache := TSWAGPacketCache.Create(MaxPacketCacheSize);
   fXMLProcessor := TSWAGXMLProcessor.Create;
   fXMLProcessor.Initialise(SWAGDBDir);
 end;
@@ -234,8 +244,8 @@ end;
 destructor TSWAGReader.Destroy;
 begin
   fXMLProcessor.Free;
-  fSnippetCache.Free;
-  fSnippetsByCategory.Free;
+  fPacketCache.Free;
+  fPacketsByCategory.Free;
   fCategories.Free;
   inherited;
 end;
@@ -261,24 +271,24 @@ begin
   );
 end;
 
-function TSWAGReader.FetchCompleteSnippet(const SnippetID: Cardinal;
-  CallWrapper: TSWAGCallbackWrapper): TSWAGSnippet;
+function TSWAGReader.FetchCompletePacket(const PacketID: Cardinal;
+  CallWrapper: TSWAGCallbackWrapper): TSWAGPacket;
 var
-  Snippet: TSWAGSnippet;
+  Packet: TSWAGPacket;
 begin
   if not Assigned(CallWrapper) then
     CallWrapper := fDefaultCallWrapper;
   CallWrapper(
     procedure
     begin
-      Snippet := fXMLProcessor.GetSnippet(SnippetID);
+      Packet := fXMLProcessor.GetPacket(PacketID);
     end
   );
-  Result := Snippet;
+  Result := Packet;
 end;
 
-procedure TSWAGReader.FetchCompleteSnippets(const SnipIDs: TList<Cardinal>;
-  Snippets: TList<TSWAGSnippet>;
+procedure TSWAGReader.FetchCompletePackets(const PacketIDs: TList<Cardinal>;
+  Packets: TList<TSWAGPacket>;
   BreatherProc: TProc;
   CallWrapper: TSWAGCallbackWrapper);
 begin
@@ -287,21 +297,21 @@ begin
   CallWrapper(
     procedure
     var
-      SnipID: Cardinal;
-      Snippet: TSWAGSnippet;
+      PacketID: Cardinal;
+      Packet: TSWAGPacket;
     begin
       BreatherProc;
-      for SnipID in SnipIDs do
+      for PacketID in PacketIDs do
       begin
-        Snippet := fXMLProcessor.GetSnippet(SnipID);
-        Snippets.Add(Snippet);
+        Packet := fXMLProcessor.GetPacket(PacketID);
+        Packets.Add(Packet);
         BreatherProc;
       end;
     end
   );
 end;
 
-procedure TSWAGReader.FetchPartialSnippets(const CatID: string;
+procedure TSWAGReader.FetchPartialPackets(const CatID: Cardinal;
   CallWrapper: TSWAGCallbackWrapper);
 begin
   if not Assigned(CallWrapper) then
@@ -309,11 +319,11 @@ begin
   CallWrapper(
     procedure
     var
-      SnipList: TList<TSWAGSnippet>;
+      PacketList: TList<TSWAGPacket>;
     begin
-      SnipList := TList<TSWAGSnippet>.Create;
-      fXMLProcessor.GetPartialSnippets(CatID, SnipList);
-      fSnippetsByCategory.Add(CatID, SnipList);
+      PacketList := TList<TSWAGPacket>.Create;
+      fXMLProcessor.GetPartialPackets(CatID, PacketList);
+      fPacketsByCategory.Add(CatID, PacketList);
     end
   );
 end;
@@ -331,63 +341,63 @@ begin
   Cats.AddRange(fCategories);
 end;
 
-function TSWAGReader.GetCompleteSnippet(const ID: Cardinal;
-  CallWrapper: TSWAGCallbackWrapper): TSWAGSnippet;
+function TSWAGReader.GetCompletePacket(const ID: Cardinal;
+  CallWrapper: TSWAGCallbackWrapper): TSWAGPacket;
 begin
-  if not fSnippetCache.Retrieve(ID, Result) then
+  if not fPacketCache.Retrieve(ID, Result) then
   begin
-    Result := FetchCompleteSnippet(ID, CallWrapper);
-    fSnippetCache.Add(Result);
+    Result := FetchCompletePacket(ID, CallWrapper);
+    fPacketCache.Add(Result);
   end;
 end;
 
-procedure TSWAGReader.GetCompleteSnippets(SnipIDs: TList<Cardinal>;
-  Snippets: TList<TSWAGSnippet>; BreatherProc: TProc;
+procedure TSWAGReader.GetCompletePackets(PacketIDs: TList<Cardinal>;
+  Packets: TList<TSWAGPacket>; BreatherProc: TProc;
   CallWrapper: TSWAGCallbackWrapper);
 var
-  RemoteSnippetIDs: TList<Cardinal>;
-  FetchedSnippets: TList<TSWAGSnippet>;
-  Snippet: TSWAGSnippet;
-  SnipID: Cardinal;
+  RemotePacketIDs: TList<Cardinal>;
+  FetchedPackets: TList<TSWAGPacket>;
+  Packet: TSWAGPacket;
+  PacketID: Cardinal;
 begin
-  RemoteSnippetIDs := TList<Cardinal>.Create;
+  RemotePacketIDs := TList<Cardinal>.Create;
   try
-    for SnipID in SnipIDs do
+    for PacketID in PacketIDs do
     begin
-      if fSnippetCache.Retrieve(SnipID, Snippet) then
-        Snippets.Add(Snippet)
+      if fPacketCache.Retrieve(PacketID, Packet) then
+        Packets.Add(Packet)
       else
-        RemoteSnippetIDs.Add(SnipID);
+        RemotePacketIDs.Add(PacketID);
     end;
-    if RemoteSnippetIDs.Count > 0 then
+    if RemotePacketIDs.Count > 0 then
     begin
-      FetchedSnippets := TList<TSWAGSnippet>.Create;
+      FetchedPackets := TList<TSWAGPacket>.Create;
       try
         if not Assigned(BreatherProc) then
           BreatherProc := procedure begin end;
-        FetchCompleteSnippets(
-          RemoteSnippetIDs, FetchedSnippets, BreatherProc, CallWrapper
+        FetchCompletePackets(
+          RemotePacketIDs, FetchedPackets, BreatherProc, CallWrapper
         );
-        for Snippet in FetchedSnippets do
+        for Packet in FetchedPackets do
         begin
-          fSnippetCache.Add(Snippet);
-          Snippets.Add(Snippet);
+          fPacketCache.Add(Packet);
+          Packets.Add(Packet);
         end;
       finally
-        FetchedSnippets.Free;
+        FetchedPackets.Free;
       end;
     end;
   finally
-    RemoteSnippetIDs.Free;
+    RemotePacketIDs.Free;
   end;
 end;
 
-procedure TSWAGReader.GetPartialSnippets(const CatID: string;
-  const Snippets: TList<TSWAGSnippet>; CallWrapper: TSWAGCallbackWrapper);
+procedure TSWAGReader.GetPartialPackets(const CatID: Cardinal;
+  const Packets: TList<TSWAGPacket>; CallWrapper: TSWAGCallbackWrapper);
 begin
-  if not fSnippetsByCategory.ContainsKey(CatID) then
-    FetchPartialSnippets(CatID, CallWrapper);
-  Snippets.AddRange(fSnippetsByCategory[CatID]);
+  if not fPacketsByCategory.ContainsKey(CatID) then
+    FetchPartialPackets(CatID, CallWrapper);
+  Packets.AddRange(fPacketsByCategory[CatID]);
 end;
 
 procedure TSWAGReader.HandleException(E: Exception);

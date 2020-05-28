@@ -27,13 +27,18 @@
       SWAG Import Wizard
     </h1>
     <p>
-      This wizard is used to enable you to import snippets from the
+      This wizard is used to enable you to import <em>packets</em> from the
       <a href="about_swag.htm">SWAG Database</a> into your code snippets
-      database. The wizard is accessed from the <em>Snippets | Import
+      database. (A SWAG <em>packet</em> is roughly the equivalent of a
+			<em>CodeSnip</em> snippet: packets are converted into snippets before
+			being imported.)
+		</p>
+	  <p>
+			The wizard is accessed from the <em>Snippets | Import
       Snippets From SWAG</em> menu option.
     </p>
     <h2>
-      Page 1: <em>Import snippets from SWAG</em>
+      Page 1: <em>Import packets from SWAG as new snippets</em>
     </h2>
     <p>
       This page gives an overview of how to use the wizard.
@@ -51,11 +56,15 @@
       Page 2: <em>Select SWAG database download folder</em>
     </h2>
     <p>
-      On this page you need to provide the full path to the folder where you
-      downloaded the SWAG database. Enter the path in the edit box. You can
-      click the ellipsis button to the right of the edit box to display a
-      standard browse for folder dialogue box and choose the folder from there.
-      The chosen folder will be entered into the edit box for you.
+      On this page you need to provide the full path to the SWAG database on
+			your system. By default the required folder is the <code>swag</code>
+			sub-directory of the folder where you extracted the SWAG zip file.
+		</p>
+		<p>
+			Enter the path in the edit box. You can click the ellipsis button to the
+			right of the edit box to display a standard browse for folder dialogue box
+			and choose the folder from there. The chosen folder will be entered into
+			the edit box for you.
     </p>
     <p>
       Once you have entered the path click <em>Next</em>. The data in the folder
@@ -65,36 +74,36 @@
       displayed and the page will not change.
     </p>
     <h2>
-      Page 3: <em>Select required snippets</em>
+      Page 3: <em>Select required packets</em>
     </h2>
     <p>
       When this page is first displayed it displays all the categories of
-      snippets available in the SWAG database in the <em>SWAG categories</em>
+      packets available in the SWAG database in the <em>SWAG categories</em>
       list box.
     </p>
     <p>
-      Choose a category in the list and click the <em>Show Snippets In
-      Category</em> button to display a list of its snippets in the right
+      Choose a category in the list and click the <em>Show Packets In
+      Category</em> button to display a list of its packets in the right
       hand list box. Alternatively just double-click the category name. The
-      first time you choose a category the wizard will read the list of snippets
+      first time you choose a category the wizard will read the list of packets
       from the database and a progress bar may be displayed while this is done.
     </p>
     <p>
-      Select any snippets you want to import by ticking the check box next to
-      the snippet's name. If you want to preview the snippet before deciding
-      whether to import it, highlight the snippet and click the <em>Preview
-      Selected Snippet</em> button. Alternatively just double click the snippet
-      name. The snippet will then be read from the database (if necessary) and
-      displayed in a dialogue box.
+      Select any packets you want to import by ticking the check box next to
+      the packet's name. If you want to preview the packet before deciding
+      whether to import it, highlight it and click the <em>Preview Selected
+			Packet</em> button. Alternatively just double click the packet name. The
+			packet will then be read from the database (if necessary) and displayed
+			in a dialogue box.
     </p>
     <p>
       Repeat this process for further categories if you wish. When you are
-      ready to import your chosen snippets click the <em>Next</em> button to
-      display the next page. Note that you must select at least one snippet in
+      ready to import your chosen packets click the <em>Next</em> button to
+      display the next page. Note that you must select at least one packet in
       order to move on.
     </p>
     <p>
-      <strong class="warning">Warning:</strong> Do not select too many snippets
+      <strong class="warning">Warning:</strong> Do not select too many packets
       to be imported at one time because the import process is not very
       efficient and can take a long time.
     </p>
@@ -102,16 +111,16 @@
       Page 4: <em>Ready to import</em>
     </h2>
     <p>
-      This page lists all the snippets you have selected for import along with
-      the unique ID (i.e. snippet name) that will be assigned to it after
-      import. Note that some snippets may need to be retrieved from the SWAG
-      database when the page is displayed and a progress bar may be displayed
-      while this happens.
+      This page lists all the packets you have selected for import along with
+      the unique ID (i.e. snippet name) that will be assigned to the
+			<em>CodeSnip</em> snippet after import. Note that some packets may need to
+			be retrieved from the SWAG database when the page is displayed and a
+			progress bar may be displayed while this happens.
     </p>
     <p>
       You should review your selection. If you want to make any changes use the
       <em>Back</em> button to go back to the previous page and de-select any
-      unwanted snippets or select any snippets you may have missed.
+      unwanted packets or select any you may have missed.
     </p>
     <p>
       When you are ready to proceed, click the <em>Import</em> button. Once
@@ -124,9 +133,9 @@
       Page 5: <em>Import complete</em>
     </h2>
     <p>
-      This page simply confirms the import has completed. You should note that
-      all the snippets will have been imported into the same special category,
-      the name of which will be displayed.
+      This page simply confirms the import has completed. All the selected
+			packets will have been converted to snippets and imported into the same
+			special category, the name of which will be displayed.
     </p>
     <p>
       Click the <em>Finish</em> button to close the wizard.
@@ -136,10 +145,11 @@
       snippet.
     </p>
     <p>
-      <strong>Note:</strong> <em>CodeSnip</em> does not track snippets imported
-      from SWAG, so if you import the same snippet more than once it will be
-      duplicated in your local database &ndash; it will not overwrite the
-      original. You will not be warned about such duplications.
+      <strong class="warning">Warning:</strong> <em>CodeSnip</em> does not track
+			packets imported from SWAG, so if you import the same packet more than
+			once a duplicate snippet will be created for it in your local database
+			&ndash; the original will not be overwritten. You will not be warned about
+			such duplications.
     </p>
   </body>
 </html>
