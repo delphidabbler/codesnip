@@ -144,7 +144,8 @@ Uninstalling the Standard Edition
 ---------------------------------
 
 CodeSnip can be uninstalled via "Apps and Features" (a.k.a. "Programs and
-Features", a.k.a. "Add / Remove Programs") from the Windows Control Panel or by choosing "Uninstall DelphiDabbler CodeSnip" from the program's start menu group.
+Features", a.k.a. "Add / Remove Programs") from the Windows Control Panel or by
+choosing "Uninstall DelphiDabbler CodeSnip" from the program's start menu group.
 
 Administrator privileges will be required to uninstall CodeSnip. Windows Vista
 to Windows 10 with UAC prompts enabled will prompt for an admin password if
