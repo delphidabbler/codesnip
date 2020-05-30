@@ -7,7 +7,8 @@ A code bank designed with Pascal in mind.
 * [Support](#support)
 * [Source Code](#source-code)
 * [Change Log](#change-log)
-* [CodeSnip 5 Development](#codesnip-5-development) -- **frozen**
+* [License](#license)
+* [Bug Reports and Features](#bug-reports-and-features)
 
 ## Overview
 
@@ -21,41 +22,53 @@ CodeSnip requires Windows 2000 or later and Internet Explorer 6 or later, althou
 
 ## Installation
 
-CodeSnip is installed and removed using a standard Windows installer. Administrator privileges are required for installation.
+The standard edition of CodeSnip is installed and removed using a standard Windows installer. Administrator privileges are required for installation.
+
+The portable edition has no installer. Simply follow the instructions in the [read me file](https://github.com/delphidabbler/codesnip/blob/master/Docs/ReadMe.txt) that is included in the download zip file.
 
 ## Support
 
-The following support is available for CodeSnip:
+The following support is available CodeSnip users:
 
 * A comprehensive help file.
 * A [read-me file](https://raw.githubusercontent.com/delphidabbler/codesnip/master/Docs/ReadMe.txt)<sup> *</sup> that discusses installation, configuration, updating and known issues.
-* An [FAQ](https://github.com/delphidabbler/codesnip-faq/blob/master/UsingCodeSnip.md)
+* A [Using CodeSnip FAQ](https://github.com/delphidabbler/codesnip-faq/blob/master/UsingCodeSnip.md).
 * A [Blog](http://codesnip-app.blogspot.co.uk/).
 
 There's also plenty of info available on how to compile CodeSnip from source - see below.
 
 <sup>*</sup> These links take you to the most recent version of the documents -- they can change from release to release.
 
-
 ## Source Code
 
-Up to and including release 4.13.1 the project's source code was maintained in a Subversion repository on [SourceForge](https://sourceforge.net/p/codesnip/code/). The Subversion repo was converted to Git in October 2015 and imported to GitHub. All releases from v3.0.0 are marked by tags in the form `version-x.x.x` where `x.x.x` is the version number.
+CodeSnip's source code is maintained in the [`delphidabbler/codesnip`](https://github.com/delphidabbler/codesnip) Git repository on GitHub†.
 
-> Note that any branches that were created and deleted in the Subversion repo are missing from the Git history. So, for full details of the the project's history from v3.0.0 to v4.13.1 please refer to the old Subversion repo on SourceForge.
+[Git Flow](http://nvie.com/posts/a-successful-git-branching-model/) methodology has been adopted, with the exception of some branches that have been used in abortive attempts to start work on CodeSnip 5.
 
-Following tag `version-4.13.1` the [Git Flow](http://nvie.com/posts/a-successful-git-branching-model/) methodology was adopted. The exception is the `pagoda` branch that sits outside Git Flow. This branch was originally planned to be the CodeSnip v5 development branch (see [below](#codesnip-5-development) for details).
+The following branches existed at the time when CodeSnip v4.16.0 was released:
 
-Up to and including release 4.13.1, `master` is simply a copy of the old Subversion `trunk` and, as such, contains various development commits along with numerous commits related to management of Subversion. After release 4.13.1, and the addition of this read-me file, `master` contains only commits relating to an actual release.
+* `master`: Always reflects the state of the source code as of the latest release.‡
+* `develop`: Main development branch. The head of this branch contains the latest development code.
+* `pagoda`: An abortive attempt at developing CodeSnip 5. Work on this branch has halted. It does not follow GitFlow methodology. ***Do not use this branch: it may be pruned.***
+* `pavilion`: Another attempt at working on CodeSnip 5. It branched off `pagoda` and it's future is uncertain. Again it does not follow GitFlow methodology.
+
+New features and most bug fixes are worked on in `feature/xxxx` branches locally. They are merged into `develop` as they are completed and the branches are deleted.
+
+**Note** that the default branch on GitHub is `develop` rather than `master`. This is because that's where all the work takes place. If you want to see the state of play at the last release make sure to switch to `master`.
+
+> † Up to and including v4.13.1 the source code was kept in a Subversion repository on SourceForge. It was converted to Git in October 2015 and imported into GitHub. All releases from v3.0.0 are marked by tags in the form `version-x.x.x` where `x.x.x` is the version number. None of the Subversion branches made it through the conversion to Git, so to see a full history look at the old [SourceForge repository](https://sourceforge.net/p/codesnip/code/).
+
+> ‡ All the converted Subversion code was committed to `master`, making it a copy of the old Subversion `trunk`. As such `master` contains various development commits along with numerous commits related to management of Subversion. After release 4.13.1, and the the first commit of this read-me file, `master` contains only commits relating to actual releases.
 
 ### Contributions
 
-To contribute to the project please fork the repository on GitHub. Create a feature branch off the development branch. Make your changes to that branch then submit a pull request on GitHub.
+To contribute to the project please fork the repository on GitHub. Create a feature branch off the `develop` branch. Make your changes to the feature branch then submit a pull request via GitHub.
 
 ### Compiling
 
-`master` and each branch will have a file in the root directory named `Build.html` that gives detailed information about how to compile CodeSnip.
+`master` has a file in the root directory named [`Build.html`](https://htmlpreview.github.io/?https://github.com/delphidabbler/codesnip/blob/master/Build.html) that gives detailed information about how to compile the current release of CodeSnip.
 
-There is also an [FAQ](https://github.com/delphidabbler/codesnip-faq) -- (see [Support](#support) above).
+There is also a [Compiling & Source Code FAQ](https://github.com/delphidabbler/codesnip-faq/blob/master/SourceCode.md).
 
 ## Change Log
 
@@ -65,7 +78,7 @@ The program's current change log can be found in the file `CHANGELOG.md` in the 
 
 ## License
 
-The program's EULA, which gives full details of the license applying to the latest release, can be found in the file `Docs\License.html` in the `master` branch. The license has changed between releases, so if you need to see an older one, select the appropriate `version-x.x.x` tag and read the older version of the file.
+The program's EULA, which gives full details of the license applying to the latest release, can be found in the file [`Docs\License.html`](https://htmlpreview.github.io/?https://github.com/delphidabbler/codesnip/blob/master/Docs/License.html) in the `master` branch. The license has changed between releases, so if you need to see an older one, select the appropriate `version-x.x.x` tag and read the older version of the file.
 
 Most of the original code is made available under the [Mozilla Public License v2](https://www.mozilla.org/MPL/2.0/).
 

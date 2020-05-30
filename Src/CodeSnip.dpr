@@ -78,6 +78,8 @@ uses
   Favourites.UFavourites in 'Favourites.UFavourites.pas',
   Favourites.UPersist in 'Favourites.UPersist.pas',
   FirstRun.FmV4ConfigDlg in 'FirstRun.FmV4ConfigDlg.pas' {V4ConfigDlg},
+  FirstRun.FmWhatsNew in 'FirstRun.FmWhatsNew.pas' {WhatsNewDlg},
+  FirstRun.FmWhatsNew.FrHTML in 'FirstRun.FmWhatsNew.FrHTML.pas' {WhatsNewHTMLFrame: TFrame},
   FirstRun.UConfigFile in 'FirstRun.UConfigFile.pas',
   FirstRun.UDatabase in 'FirstRun.UDatabase.pas',
   FirstRun.UIniFile in 'FirstRun.UIniFile.pas',

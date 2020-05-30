@@ -19,7 +19,7 @@ interface
 
 uses
   // Project
-  FirstRun.UConfigFile, FirstRun.UDatabase, FirstRun.UInstallInfo;
+  FirstRun.UConfigFile, FirstRun.UDatabase, FirstRun.UInstallInfo, UVersionInfo;
 
 
 type
@@ -79,8 +79,17 @@ type
     ///  <summary>Creates a new, empty, Unicode encoded per-user config file for
     ///  current installation.</summary>
     procedure CreateEmptyUserCfgFile;
-    ///  <summary>
+    ///  <summary>Checks if the program has been updated since the last run.
+    ///  </summary>
+    ///  <remarks>Compares the version number stored in the brought forward
+    ///  config file against the current program version number from resources.
+    ///  </remarks>
     function IsProgramUpdated: Boolean;
+    ///  <summary>Checks if the previous program's version number, as specified
+    ///  in the user config file, is contained in the range Lo..Hi with range
+    ///  endpoints determined by IntervalEndPoints.</summary>
+    function IsPreviousProgramVerInRange(const Lo, Hi: TVersionNumber;
+      const IntervalEndPoints: TVersionNumber.TIntervalEndPoints): Boolean;
   end;
 
 type
@@ -108,7 +117,8 @@ type
     class function IsProgramUpdated: Boolean;
   public
     ///  <summary>Runs start-up checks to detect if program has been run before
-    ///  and performs any required user config and user database updates.
+    ///  and performs any required user config and user database updates. In
+    ///  some circumstances a "what's new" dialogue box may be displayed.
     ///  </summary>
     class procedure Execute;
   end;
@@ -119,9 +129,10 @@ implementation
 
 uses
   // Delphi
-  SysUtils, IOUtils, Forms
-  {$IFNDEF PORTABLE}
+  SysUtils, IOUtils, Forms,
   // Project
+  FirstRun.FmWhatsNew
+  {$IFNDEF PORTABLE}
   ,
   FirstRun.FmV4ConfigDlg;
   {$ELSE}
@@ -185,6 +196,15 @@ end;
 function TFirstRun.HaveOldUserDB: Boolean;
 begin
   Result := TFile.Exists(fInstallInfo.PreviousUserDatabaseFileName, False);
+end;
+
+function TFirstRun.IsPreviousProgramVerInRange(const Lo, Hi: TVersionNumber;
+  const IntervalEndPoints: TVersionNumber.TIntervalEndPoints): Boolean;
+var
+  PrevProgVer: TVersionNumber;
+begin
+  PrevProgVer := fUserConfigFile.PreviousProgramVer;
+  Result := PrevProgVer.IsInRange(Lo, Hi, IntervalEndPoints);
 end;
 
 function TFirstRun.IsProgramUpdated: Boolean;
@@ -270,6 +290,12 @@ end;
 { TFirstRunMgr }
 
 class procedure TFirstRunMgr.Execute;
+const
+  // Version numbers specifying a range in which previous program version must
+  // lie in order to display "What's New" dialogue box.
+  // Range is [NeedWhatsNewLoVerIncl, NeedWhatsNewHiVerExcl)
+  NeedWhatsNewLoVerIncl: TVersionNumber = (V1: 4; V2: 0; V3: 0; V4: 0);
+  NeedWhatsNewHiVerExcl: TVersionNumber = (V1: 4; V2: 16; V3: 0; V4: 0);
 var
   FR: TFirstRun;
   Changes: TFirstRunCfgChangeSet;
@@ -295,7 +321,15 @@ begin
   begin
     FR := TFirstRun.Create;
     try
-      FR.UpdateUserCfgFile(Changes);
+      // We display "What's New" dialogue box if previous program version number
+      // is in the given range
+      if FR.IsPreviousProgramVerInRange(
+        NeedWhatsNewLoVerIncl,
+        NeedWhatsNewHiVerExcl,
+        TVersionNumber.TIntervalEndPoints.iepHalfOpenHi
+      ) then
+        TWhatsNewDlg.Execute(Application);
+      FR.UpdateUserCfgFile(Changes);  // we ignore Changes [out] param value
     finally
       FR.Free;
     end;
