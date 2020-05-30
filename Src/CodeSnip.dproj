@@ -83,6 +83,13 @@
 			<DCCReference Include="FirstRun.FmV4ConfigDlg.pas">
 				<Form>V4ConfigDlg</Form>
 			</DCCReference>
+			<DCCReference Include="FirstRun.FmWhatsNew.pas">
+				<Form>WhatsNewDlg</Form>
+			</DCCReference>
+			<DCCReference Include="FirstRun.FmWhatsNew.FrHTML.pas">
+				<Form>WhatsNewHTMLFrame</Form>
+				<DesignClass>TFrame</DesignClass>
+			</DCCReference>
 			<DCCReference Include="FirstRun.UConfigFile.pas"/>
 			<DCCReference Include="FirstRun.UDatabase.pas"/>
 			<DCCReference Include="FirstRun.UIniFile.pas"/>
@@ -566,7 +573,6 @@
 			<DCCReference Include="UXMLDocConsts.pas"/>
 			<DCCReference Include="UXMLDocHelper.pas"/>
 			<DCCReference Include="UXMLDocumentEx.pas"/>
-			<DCCReference Include="SWAG.UVersion.pas"/>
 			<None Include="CodeSnip.todo"/>
 			<BuildConfiguration Include="Base">
 				<Key>Base</Key>

@@ -25,7 +25,7 @@ Res\Scripts\3rdParty\jquery.cycle.lite.js
 # compiler error log
 Res\HTML\dlg-comperror-tplt.html
 
-# active text preview dialogueue
+# active text preview dialogue
 Res\HTML\dlg-activetext-preview-tplt.html
 
 # news dialogue
@@ -39,6 +39,11 @@ Res\HTML\dlg-swag-import-outro-tplt.html
 Res\HTML\dlg-dbupdate-intro-tplt.html
 Res\HTML\dlg-dbupdate-load.html
 Res\HTML\dlg-dbupdate-finish.html
+
+# what's new dialogue
+# -------------------
+Res\HTML\dlg-whatsnew.html
+
 
 
 # Detail pane pages, scripts and CSS
