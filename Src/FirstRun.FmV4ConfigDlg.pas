@@ -114,6 +114,12 @@ type
         procedure AlignForm(const AForm: TCustomForm);
       end;
   strict protected
+    ///  <summary>Modifies window creation parameters to ensure the dialgue box
+    ///  displays a button in the task bar.</summary>
+    ///  <remarks>This is necessary because the dialogue box is displayed before
+    ///  CodeSnip's main window is shown, so there is no suitable button
+    ///  displayed yet.</remarks>
+    procedure CreateParams(var Params: TCreateParams); override;
     ///  <summary>Returns instance of form aligner object.</summary>
     function GetAligner: IFormAligner; override;
     ///  <summary>Arranges controls within each tab sheet.</summary>
@@ -159,6 +165,8 @@ implementation
 
 
 uses
+  // VCL
+  Windows,
   // Project
   UConsts, UCtrlArranger, UMessageBox, UStructs;
 
@@ -266,6 +274,12 @@ begin
     Lbl.Left := 0;
     NextTop := TCtrlArranger.BottomOf(Lbl, Spacing);
   end;
+end;
+
+procedure TV4ConfigDlg.CreateParams(var Params: TCreateParams);
+begin
+  inherited;
+  Params.ExStyle := Params.ExStyle OR WS_EX_APPWINDOW;
 end;
 
 function TV4ConfigDlg.DatabaseAvailable: Boolean;
