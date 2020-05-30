@@ -34,6 +34,17 @@ type
     ///  <summary>Converts version number to a string.</summary>
     function ToString: string;
   public
+    type
+      ///  <summary>Enumeration that specifies whether intervals used in range
+      ///  checks are open, closed or half-open.</summary>
+      ///  <remarks>
+      ///  <para><c>iepOpen</c> - open interval (x,y)</para>
+      ///  <para><c>iepHalfOpenLo</c> - half open interval (x,y]</para>
+      ///  <para><c>iepHalfOpenHi</c> - half open interval [x,y)</para>
+      ///  <para><c>iepClosed</c> - closed interval [x,y]</para>
+      ///  </remarks>
+      TIntervalEndPoints = (iepOpen, iepHalfOpenLo, iepHalfOpenHi, iepClosed);
+  public
     V1: Word;   // Major version number
     V2: Word;   // Minor version number
     V3: Word;   // Revision version number
@@ -45,6 +56,13 @@ type
       {Creates a nul version number with all fields set to zero.
         @return Required nul record.
       }
+    ///  <summary>Checks if the current version number is contained in the range
+    ///  Lo..Hi with range endpoints determined by EndPoints.</summary>
+    ///  <remarks>Note that when Lo=Hi the intervals (Lo,Hi), (Lo,Hi] and
+    ///  [Lo,Hi) represent the empty set, while [Lo,Hi] = {Lo}. When Lo &gt; Hi
+    ///  all interval types represent the empty set.</remarks>
+    function IsInRange(const Lo, Hi: TVersionNumber;
+      const EndPoints: TIntervalEndPoints): Boolean;
     ///  <summary>Attempts to convert a string to a version number.</summary>
     ///  <param name="S">string [in] String to convert.</param>
     ///  <param name="V">Word [out] Converted version number.</param>
@@ -170,6 +188,7 @@ uses
   // Delphi
   SysUtils,
   // Project
+  UExceptions,
   UIStringList,
   UUtils;
 
@@ -316,6 +335,19 @@ resourcestring
 begin
   if not TryStrToVersionNumber(Str, Result) then
     raise EConvertError.CreateFmt(sError, [Str]);
+end;
+
+function TVersionNumber.IsInRange(const Lo, Hi: TVersionNumber;
+  const EndPoints: TIntervalEndPoints): Boolean;
+begin
+  case EndPoints of
+    iepOpen: Result := (Lo < Self) and (Self < Hi);
+    iepHalfOpenLo: Result := (Lo < Self) and (Self <= Hi);
+    iepHalfOpenHi: Result := (Lo <= Self) and (Self < Hi);
+    iepClosed: Result := (Lo <= Self) and (Self <= Hi);
+    else
+      raise EBug.Create('TVersionNumber.IsInRange: invalid Kind parameter');
+  end;
 end;
 
 function TVersionNumber.IsNull: Boolean;

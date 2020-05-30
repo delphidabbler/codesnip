@@ -16,6 +16,11 @@ unit FirstRun.UConfigFile;
 interface
 
 
+uses
+  // Project
+  UVersionInfo;
+
+
 type
   ///  <summary>Class that manages the updating of older config files to the
   ///  current format. Missing files will also be created.</summary>
@@ -60,6 +65,9 @@ type
     ///  <summary>Checks if program version in config file is same as current
     ///  program version.</summary>
     function IsCurrentProgramVer: Boolean; overload;
+    class function PreviousProgramVer(const CfgFileName: string):
+      TVersionNumber; overload;
+    function PreviousProgramVer: TVersionNumber; overload;
     ///  <summary>Stamps config file with current file version.</summary>
     procedure Stamp; virtual;
   end;
@@ -234,8 +242,23 @@ class function TConfigFileUpdater.IsCurrentProgramVer(
 var
   CfgProgVer: string;  // program version from config file
 begin
-  CfgProgVer := GetIniString('IniFile', 'ProgramVersion', '', CfgFileName);
+  CfgProgVer := PreviousProgramVer(CfgFileName);
   Result := CfgProgVer = TAppInfo.ProgramReleaseVersion;
+end;
+
+function TConfigFileUpdater.PreviousProgramVer: TVersionNumber;
+begin
+  Result := PreviousProgramVer(fCfgFileName);
+end;
+
+class function TConfigFileUpdater.PreviousProgramVer(
+  const CfgFileName: string): TVersionNumber;
+begin
+  if not TVersionNumber.TryStrToVersionNumber(
+    GetIniString('IniFile', 'ProgramVersion', '', CfgFileName),
+    Result
+  ) then
+    Exit(TVersionNumber.Nul);
 end;
 
 procedure TConfigFileUpdater.Stamp;
