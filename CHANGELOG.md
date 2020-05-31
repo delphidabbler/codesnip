@@ -389,7 +389,7 @@ _Internal CodeSnip version 4.0.1.212_
 + Fixed bug #3578652 ~~(http://bit.ly/RXIwBC)~~: "Pre-processor directive errors in main db ini files" by removing support for problematic directives.
 + Rolling mouse over links in detail pane no longer displays a hint in the status bar. This change fixes bug #3577407 ~~(http://bit.ly/VeSVGg)~~: Clicking detail pane snippet link leaves hint in status bar.
 + Windows no longer scale automatically when screen DPI differs from that on design system. This fixes bugs #3591818 ~~(http://bit.ly/TvNaUL)~~ "Strange window behaviour in Windows 7" and bug #3591820 ~~(http://bit.ly/SEH6dO)~~ "Incorrect font size used for some bold text".
-+ Update operating system detection code to detect W0ndows 8 & 2012 server.
++ Update operating system detection code to detect Windows 8 & 2012 server.
 + Some refactoring and some redundant code removed.
 + Updated documentation.
 + Updated help topic that describes main display.
@@ -526,7 +526,7 @@ _Internal CodeSnip version 3.99.1_
   - Added controls to "Display" tab to set main and user database heading colours.
   - Changes that affect appearance of content of details pane are now reflected in the display as soon as the Preferences dialogue box closes, rather than on program restart.
 + Changes to REML mark-up handling:
-  - Any REML text not embedded in block level tags is now automatically wrapped in <p> tags.
+  - Any REML text not embedded in block level tags is now automatically wrapped in `<p>`...`</p>` tags.
   - Nested REML block level tags are no longer allowed.
   - Changed handling of multiple spaces in REML code to be the same as in HTML.
   - Formatting of REML code improved when re-displayed.
@@ -635,7 +635,7 @@ _Internal CodeSnip version 3.98.1_
 + Improved Delphi code syntax highlighter:
   - Recognises Delphi 2010 keywords
   - Correctly handles context sensitive directives within "property", "exports" and "external" statements.
-  - Recognises '&' prefix that causes keywords to be treated as identifiers.
+  - Recognises `&` prefix that causes keywords to be treated as identifiers.
 + Compiler search paths can now be specified for included units permitting non-VCL units to be used by snippets.
 + Database:
   - Non-empty categories can no longer be deleted.
@@ -714,7 +714,7 @@ _Internal CodeSnip version 3.98.1_
 + Fixed bug #3578654 ~~(http://bit.ly/T7fTxu)~~: "Pre-processor directive errors in main db ini files" by removing support for problematic directives.
 + Hints are no longer displayed in status bar when user rolls mouse over a link in the display pane. This fixes bug #3577408 ~~(http://bit.ly/WEzZGg)~~: "Clicking detail pane snippet link leaves hint in status bar".
 + Windows no longer scale automatically when screen DPI differs from that on design system. This fixes bugs #3591818 ~~(http://bit.ly/TvNaUL)~~ "Strange window behaviour in Windows 7" and bug #3591820 ~~(http://bit.ly/SEH6dO)~~ "Incorrect font size used for some bold text".
-+ Updated operating system detection code to detect W0ndows 8 & 2012 server.
++ Updated operating system detection code to detect Windows 8 & 2012 server.
 + Updated documentation
 
 
