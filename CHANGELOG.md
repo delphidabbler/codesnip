@@ -31,6 +31,7 @@ This is a significant update. It's purpose is to remove CodeSnip's dependencies 
   - Removed the option to submit snippets for addition to the DelphiDabbler Code Snippets database.
   - Removed support for a proxy web server - now unnecessary.
   - Removed support for the `--test-server` command line option that enabled use of a different server to test web services.
+  - Updated install program so it no longer displays a page stating that CodeSnip will go automatically go on-line to check for updates.
 + Removed references and links to delphidabbler.com from the program, the installer, the help file and documentation. Some references were deleted while others were replaced with alternatives, including:
 	- Changed the URL of the FAQs to refer to the `codesnip-faq` GitHub project.
 	- References to swag.delphidabbler.com were replaced with references to the `delphidabbler/swag` project on GitHub.
