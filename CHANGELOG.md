@@ -12,6 +12,72 @@ This change log begins with the first ever pre-release version of _CodeSnip_. Re
 From v4.1.0 the version numbering has attempted to adhere to the principles of [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## Release v4.16.0 of 31 May 2020
+
+This is a significant update. It's purpose is to remove CodeSnip's dependencies on the delphidabbler.com website and associated web services. This was done because of the expected June 2020 closure or reduced functionality of delphidabbler.com. Some affected features were removed and others replaced with alternatives.
+
++ Removed all dependencies on web services. The following changes were made as a consequence of this:
+  - Replaced the option to update the main DelphiDabbler Code Snippets database from the web with an option to update it from locally stored data:
+    - Replaced the _Update from Web_ dialogue box with a new wizard. Menu options on the _Snippets_ menu were renamed accordingly and the old tool bar button was removed.
+    - Changed the database update code to use data that has been manually downloaded from the `delphidabbler/code-snippets` GitHub project.
+    - Modified the database reading code to accept both the new Code Snippets database v2 format _and_ the legacy v1 format.
+  + Replaced the option to import SWAG snippets from an on-line REST service with an option to import snippets from locally stored data.
+    - Revised the SWAG import wizard re the changes to the import method.
+    - Modified the SWAG import code to use data that has been manually downloaded from the `delphidabbler/swag` GitHub project.
+  - The option to register the program was removed. No registration key is now generated or stored.
+  - Replaced the option to read and display the CodeSnip RSS news feed with one to display the CodeSnip Blog.
+  - Removed the menu option used to check for program updates.
+  - Removed the background task that automatically checked for program and database updates.
+  - Removed the option to submit snippets for addition to the DelphiDabbler Code Snippets database.
+  - Removed support for a proxy web server - now unnecessary.
+  - Removed support for the `--test-server` command line option that enabled use of a different server to test web services.
++ Removed references and links to delphidabbler.com from the program, the installer, the help file and documentation. Some references were deleted while others were replaced with alternatives, including:
+	- Changed the URL of the FAQs to refer to the `codesnip-faq` GitHub project.
+	- References to swag.delphidabbler.com were replaced with references to the `delphidabbler/swag` project on GitHub.
+	- URLs that were redirected via a service on delphidabbler.com were replaced by hard coded URLs.
++ The export file format was changed to exclude personal user information. The original format can still be read but any user information is ignored and discarded.
++ Config file processing changes:
+  - Removed support for reading or writing data relating to removed features.
+  - When CodeSnip is first run after updating from an earlier version, any pre-existing config files are purged of any information that is no longer relevant.
+  - The common config file is no longer used by the portable edition. Any pre-existing file is deleted the first time the portable edition is run.
+	- The common and per-user config file versions were bumped to 7 and 16 respectively.
++ Welcome page changes:
+  - Removed the _Update Checks_ and _Donate_ sections and related links.
+  - Removed links used to check for program and database updates.
+  - Replaced the link used to display the news feed with one that displays the CodeSnip blog.
++ Added a "What's New" type of dialogue box that can be selectively displayed when a new version of CodeSnip is run for the first time. v4.16.0 _always_ displays the dialogue box when first run.
++ The operating system detection code was updated to correctly detect all Windows and Windows Server releases as of March 2020.
++ Revised the _About_ dialogue box:
+	- To display version and licensing information extracted from Code Snippets Database v2 meta data.
+	- To remove credits for 3rd party code that is no longer used.
++ The bug tracker dialogue boxes were updated re the change of issue tracker from SourceForge to GitHub.
++ Removed redundant pages and controls from the _Preferences_ dialogue box.
++ Removed the _Donate_ dialogue box and associated menu options.
++ Revised and re-ordered some menu options.
++ The program no longer generates and saves an application identifier key.
++ Bugs fixed:
+    - Corrected license information stored in the _Extra_ information section of imported SWAG packages.
+    - Fixed a text formatting error in the SWAG import wizard ([issue #4](https://github.com/delphidabbler/codesnip/issues/4)).
+    - Fixed broken help topic links in some dialogue boxes ([issue #3](https://github.com/delphidabbler/codesnip/issues/3))
+	  - Fixed a bug in the portable edition's startup processing of its config file.
+    - Fixed the dialogue box displayed when updating from CodeSnip v3 or earlier to display an icon in the Windows task bar.
+    -  Corrected the license details included in comments of generated source code that includes snippets from the main database.
+    - Corrected typos and errors in the UI.
++ Some source code refactoring and clarifications.
++ Removed redundant library code:
+  - Encryption library.
+  - Indy Internet components.
++ Help file overhauled: new topics added, redundant topics removed and many errors corrected. Some restyling.
++ Updated documentation, including:
+  - Major changes to `./README.md` and `./Docs/ReadMe.txt`.
+	- Merged all the major version specific changelogs into a single `./CHANGELOG.md` file and deleted the old files.
+	- File format documentation was overhauled re changes introduced in this release.
+	- Edited `./Docs/License.html` to remove license information and acknowledgements for 3rd party code that is no longer used.
+	- Fixed errors in `./Build.html` concerning the source code repository and made some other minor changes.
+	- Removed the privacy statement document, `./Docs/Privacy.txt` since CodeSnip no longer stores or transmits any personal information. (Also removed privacy help topic and menu item.)
+	- Removed `./Docs/Design/WebServices.txt` file that described the web services used by CodeSnip.
+
+
 ## Release v4.15.1 of 22 September 2016
 
 + Updated OS detection code to detect Windows 10 Version 1607 (Anniversary update) and all technical previews of Windows 2016 Server to date.
