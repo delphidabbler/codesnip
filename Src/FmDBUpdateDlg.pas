@@ -12,9 +12,9 @@
 
 unit FmDBUpdateDlg;
 
-// TODO -cHelp: Make help button visible once help topic is created.
 
 interface
+
 
 uses
   // Project
@@ -41,6 +41,8 @@ uses
   UDBUpdateMgr;
 
 type
+  ///  <summary>Wizard dialogue box that handles the updating of the main
+  ///  DelphiDabbler Code Snippets database from disk.</summary>
   TDBUpdateDlg = class(TWizardDlg, INoPublicConstruct)
     tsIntro: TTabSheet;
     tsFolder: TTabSheet;

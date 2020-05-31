@@ -5,11 +5,78 @@ This is the change log for _DelphiDabbler CodeSnip_.
 
 All notable changes to this project are documented in this file.
 
-This change log begins with the first ever pre-release version of _CodeSnip_. Releases are sequential in reverse version number order.
+This change log begins with the first ever pre-release version of _CodeSnip_. Releases are listed in reverse version number order.
 
-> Note that _CodeSnip_ v4 was developed in parallel with v3 for a while. As a consequence some later v3 releases have later release dates than early v4 releases.
+> Note that _CodeSnip_ v4 was developed in parallel with v3 for a while. As a consequence some v3 releases have later release dates than early v4 releases.
 
 From v4.1.0 the version numbering has attempted to adhere to the principles of [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+
+## Release v4.16.0 of 31 May 2020
+
+This is a significant update. It's purpose is to remove CodeSnip's dependencies on the delphidabbler.com website and associated web services. This was done because of the expected June 2020 closure or reduced functionality of delphidabbler.com. Some affected features were removed and others replaced with alternatives.
+
++ Removed all dependencies on web services. The following changes were made as a consequence of this:
+  - Replaced the option to update the main DelphiDabbler Code Snippets database from the web with an option to update it from locally stored data:
+    - Replaced the _Update from Web_ dialogue box with a new wizard. Menu options on the _Snippets_ menu were renamed accordingly and the old tool bar button was removed.
+    - Changed the database update code to use data that has been manually downloaded from the `delphidabbler/code-snippets` GitHub project.
+    - Modified the database reading code to accept both the new Code Snippets database v2 format _and_ the legacy v1 format.
+  + Replaced the option to import SWAG snippets from an on-line REST service with an option to import snippets from locally stored data.
+    - Revised the SWAG import wizard re the changes to the import method.
+    - Modified the SWAG import code to use data that has been manually downloaded from the `delphidabbler/swag` GitHub project.
+  - The option to register the program was removed. No registration key is now generated or stored.
+  - Replaced the option to read and display the CodeSnip RSS news feed with one to display the CodeSnip Blog.
+  - Removed the menu option used to check for program updates.
+  - Removed the background task that automatically checked for program and database updates.
+  - Removed the option to submit snippets for addition to the DelphiDabbler Code Snippets database.
+  - Removed support for a proxy web server - now unnecessary.
+  - Removed support for the `--test-server` command line option that enabled use of a different server to test web services.
+  - Updated install program so it no longer displays a page stating that CodeSnip will go automatically go on-line to check for updates.
++ Removed references and links to delphidabbler.com from the program, the installer, the help file and documentation. Some references were deleted while others were replaced with alternatives, including:
+	- Changed the URL of the FAQs to refer to the `codesnip-faq` GitHub project.
+	- References to swag.delphidabbler.com were replaced with references to the `delphidabbler/swag` project on GitHub.
+	- URLs that were redirected via a service on delphidabbler.com were replaced by hard coded URLs.
++ The export file format was changed to exclude personal user information. The original format can still be read but any user information is ignored and discarded.
++ Config file processing changes:
+  - Removed support for reading or writing data relating to removed features.
+  - When CodeSnip is first run after updating from an earlier version, any pre-existing config files are purged of any information that is no longer relevant.
+  - The common config file is no longer used by the portable edition. Any pre-existing file is deleted the first time the portable edition is run.
+	- The common and per-user config file versions were bumped to 7 and 16 respectively.
++ Welcome page changes:
+  - Removed the _Update Checks_ and _Donate_ sections and related links.
+  - Removed links used to check for program and database updates.
+  - Replaced the link used to display the news feed with one that displays the CodeSnip blog.
++ Added a "What's New" type of dialogue box that can be selectively displayed when a new version of CodeSnip is run for the first time. v4.16.0 _always_ displays the dialogue box when first run.
++ The operating system detection code was updated to correctly detect all Windows and Windows Server releases as of March 2020.
++ Revised the _About_ dialogue box:
+	- To display version and licensing information extracted from Code Snippets Database v2 meta data.
+	- To remove credits for 3rd party code that is no longer used.
++ The bug tracker dialogue boxes were updated re the change of issue tracker from SourceForge to GitHub.
++ Removed redundant pages and controls from the _Preferences_ dialogue box.
++ Removed the _Donate_ dialogue box and associated menu options.
++ Revised and re-ordered some menu options.
++ The program no longer generates and saves an application identifier key.
++ Bugs fixed:
+    - Corrected license information stored in the _Extra_ information section of imported SWAG packages.
+    - Fixed a text formatting error in the SWAG import wizard ([issue #4](https://github.com/delphidabbler/codesnip/issues/4)).
+    - Fixed broken help topic links in some dialogue boxes ([issue #3](https://github.com/delphidabbler/codesnip/issues/3))
+	  - Fixed a bug in the portable edition's startup processing of its config file.
+    - Fixed the dialogue box displayed when updating from CodeSnip v3 or earlier to display an icon in the Windows task bar.
+    -  Corrected the license details included in comments of generated source code that includes snippets from the main database.
+    - Corrected typos and errors in the UI.
++ Some source code refactoring and clarifications.
++ Removed redundant library code:
+  - Encryption library.
+  - Indy Internet components.
++ Help file overhauled: new topics added, redundant topics removed and many errors corrected. Some restyling.
++ Updated documentation, including:
+  - Major changes to `./README.md` and `./Docs/ReadMe.txt`.
+	- Merged all the major version specific changelogs into a single `./CHANGELOG.md` file and deleted the old files.
+	- File format documentation was overhauled re changes introduced in this release.
+	- Edited `./Docs/License.html` to remove license information and acknowledgements for 3rd party code that is no longer used.
+	- Fixed errors in `./Build.html` concerning the source code repository and made some other minor changes.
+	- Removed the privacy statement document, `./Docs/Privacy.txt` since CodeSnip no longer stores or transmits any personal information. (Also removed privacy help topic and menu item.)
+	- Removed `./Docs/Design/WebServices.txt` file that described the web services used by CodeSnip.
 
 
 ## Release v4.15.1 of 22 September 2016
@@ -389,7 +456,7 @@ _Internal CodeSnip version 4.0.1.212_
 + Fixed bug #3578652 ~~(http://bit.ly/RXIwBC)~~: "Pre-processor directive errors in main db ini files" by removing support for problematic directives.
 + Rolling mouse over links in detail pane no longer displays a hint in the status bar. This change fixes bug #3577407 ~~(http://bit.ly/VeSVGg)~~: Clicking detail pane snippet link leaves hint in status bar.
 + Windows no longer scale automatically when screen DPI differs from that on design system. This fixes bugs #3591818 ~~(http://bit.ly/TvNaUL)~~ "Strange window behaviour in Windows 7" and bug #3591820 ~~(http://bit.ly/SEH6dO)~~ "Incorrect font size used for some bold text".
-+ Update operating system detection code to detect W0ndows 8 & 2012 server.
++ Update operating system detection code to detect Windows 8 & 2012 server.
 + Some refactoring and some redundant code removed.
 + Updated documentation.
 + Updated help topic that describes main display.
@@ -526,7 +593,7 @@ _Internal CodeSnip version 3.99.1_
   - Added controls to "Display" tab to set main and user database heading colours.
   - Changes that affect appearance of content of details pane are now reflected in the display as soon as the Preferences dialogue box closes, rather than on program restart.
 + Changes to REML mark-up handling:
-  - Any REML text not embedded in block level tags is now automatically wrapped in <p> tags.
+  - Any REML text not embedded in block level tags is now automatically wrapped in `<p>`...`</p>` tags.
   - Nested REML block level tags are no longer allowed.
   - Changed handling of multiple spaces in REML code to be the same as in HTML.
   - Formatting of REML code improved when re-displayed.
@@ -635,7 +702,7 @@ _Internal CodeSnip version 3.98.1_
 + Improved Delphi code syntax highlighter:
   - Recognises Delphi 2010 keywords
   - Correctly handles context sensitive directives within "property", "exports" and "external" statements.
-  - Recognises '&' prefix that causes keywords to be treated as identifiers.
+  - Recognises `&` prefix that causes keywords to be treated as identifiers.
 + Compiler search paths can now be specified for included units permitting non-VCL units to be used by snippets.
 + Database:
   - Non-empty categories can no longer be deleted.
@@ -714,7 +781,7 @@ _Internal CodeSnip version 3.98.1_
 + Fixed bug #3578654 ~~(http://bit.ly/T7fTxu)~~: "Pre-processor directive errors in main db ini files" by removing support for problematic directives.
 + Hints are no longer displayed in status bar when user rolls mouse over a link in the display pane. This fixes bug #3577408 ~~(http://bit.ly/WEzZGg)~~: "Clicking detail pane snippet link leaves hint in status bar".
 + Windows no longer scale automatically when screen DPI differs from that on design system. This fixes bugs #3591818 ~~(http://bit.ly/TvNaUL)~~ "Strange window behaviour in Windows 7" and bug #3591820 ~~(http://bit.ly/SEH6dO)~~ "Incorrect font size used for some bold text".
-+ Updated operating system detection code to detect W0ndows 8 & 2012 server.
++ Updated operating system detection code to detect Windows 8 & 2012 server.
 + Updated documentation
 
 
