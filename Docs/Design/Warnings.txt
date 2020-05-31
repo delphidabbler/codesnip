@@ -5,8 +5,3 @@ XE warning options as follows:
 "Platform Symbol" is switched OFF.
 "Widening given AnsiChar constant to WideChar lost information" is switched ON.
 "Widening given AnsiString constant lost information" is switched ON.
-
---------------------------------------------------------------------------------
-$Rev$
-$Date$
---------------------------------------------------------------------------------

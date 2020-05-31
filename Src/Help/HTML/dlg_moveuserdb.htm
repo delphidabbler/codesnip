@@ -4,10 +4,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2013, Peter Johnson (www.delphidabbler.com).
- *
- * $Rev$
- * $Date$
+ * Copyright (C) 2013-2020, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Help topic for Move User Database dialogue box.
 -->
@@ -36,19 +33,19 @@
       Move User Database Dialogue Box
     </h1>
     <p class="bordered">
-      <strong>Note:</strong> This dialogue box is not available in the portable
-      edition of <em>CodeSnip</em>.
+      <strong class="warning">Note:</strong> This dialogue box is not available
+      in the portable edition of <em>CodeSnip</em>.
     </p>
     <p>
       The purpose of this dialogue box is to enable the user to move the user
       defined snippets database from its default location to a new directory.
       You may wish to do this to enable the database to be easily backed up.
       For example you could move the database to a sub-directory of a
-      <em>Dropbox</em> or <em>GoogleDrive</em> directory.
+      <em>Dropbox</em> or <em>Google Drive</em> directory.
     </p>
     <p>
-      You have the option to restore a previously moved database to its default
-      location. Both options are described below.
+      You also have the option to restore a previously moved database to its
+      default location. Both options are described below.
     </p>
     <p class="bordered">
       <strong>Important:</strong> You a strongly advised to make a backup of the
@@ -57,7 +54,7 @@
       Database</em> menu option to do this.
     </p>
     <h2>
-      Move the database to a new directory
+      <em>Move database to new directory</em> group box
     </h2>
     <p>
       To move the database enter the <strong>full path</strong> of the new
@@ -70,10 +67,10 @@
     </p>
     <ul>
       <li>
-        the directory must be empty;
+        it must be empty;
       </li>
       <li>
-        it must not be a sub-directory of the current database location;
+        it must not be a sub-directory of the current database location.
       </li>
     </ul>
     <p>
@@ -85,22 +82,22 @@
     </p>
     <p>
       The new location of the database will be recorded in the per user config
-      file and it is important that this file is not modified or deleted
+      file. It is important that this config file is not modified or deleted
       otherwise the database will not be found.
     </p>
     <h2>
-      Restore database to default directory
+      <em>Restore database to default directory</em> group box
     </h2>
     <p>
       The database can be moved back to its default directory simply by clicking
-      the <em>Restore Default Path</em> button. If the default directory is not
-      empty this action will fail and an error message will be displayed. As
-      above, a progress bar gives an indication of how long the process may
+      the large <em>Restore Default Path</em> button. If the default directory
+      is not empty this action will fail and an error message will be displayed.
+      As above, a progress bar gives an indication of how long the process may
       take.
     </p>
     <p>
-      The <em>Restore Default Path</em> button will be disabled if database is
-      already in its default location.
+      The <em>Restore Default Path</em> button will be disabled if the database
+      is already in its default location.
     </p>
   </body>
 </html>

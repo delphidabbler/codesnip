@@ -2,10 +2,7 @@
 # v. 2.0. If a copy of the MPL was not distributed with this file, You can
 # obtain one at http://mozilla.org/MPL/2.0/
 #
-# Copyright (C) 2005-2016, Peter Johnson (www.delphidabbler.com).
-#
-# $Rev$
-# $Date$
+# Copyright (C) 2005-2020, Peter Johnson (gravatar.com/delphidabbler).
 #
 # Manifest file used to generate HTML.res resource file.
 
@@ -28,27 +25,26 @@ Res\Scripts\3rdParty\jquery.cycle.lite.js
 # compiler error log
 Res\HTML\dlg-comperror-tplt.html
 
-# donate dialogue
-Res\HTML\dlg-donate.html
-
-# email privacy information for display in frames
-Res\HTML\frm-emailprivacy.html
-
-# active text preview dialogueue
+# active text preview dialogue
 Res\HTML\dlg-activetext-preview-tplt.html
 
 # news dialogue
 Res\HTML\dlg-rssnews.html
 
 # SWAG import dialogue
-Res\HTML\dlg-swag-import-intro.html
+Res\HTML\dlg-swag-import-intro-tplt.html
 Res\HTML\dlg-swag-import-outro-tplt.html
 
-# code submission wizard
-Res\HTML\dlg-codesubmit-intro.html
-Res\HTML\dlg-codesubmit-license.html
-Res\HTML\dlg-codesubmit-submit.html
-Res\HTML\dlg-codesubmit-finished.html
+# get delphidabbler snippets database wizard
+Res\HTML\dlg-dbupdate-intro-tplt.html
+Res\HTML\dlg-dbupdate-load.html
+Res\HTML\dlg-dbupdate-finish.html
+
+# what's new dialogue
+# -------------------
+Res\HTML\dlg-whatsnew.html
+
+
 
 # Detail pane pages, scripts and CSS
 # ==================================
@@ -137,7 +133,3 @@ Res\Img\Egg\play-btn.png
 Res\Img\Egg\play-btn-hover.png
 Res\Img\Egg\doggy-pics.png
 Res\Img\Egg\blue-paper.png
-
-# donate dialogue - £ sign image
-Res\Img\pound-sign.png
-

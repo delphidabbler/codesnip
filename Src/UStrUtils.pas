@@ -3,10 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2011-2013, Peter Johnson (www.delphidabbler.com).
- *
- * $Rev$
- * $Date$
+ * Copyright (C) 2011-2020, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Unicode string utility routines.
  *
@@ -201,7 +198,14 @@ function StrQuoteSpaced(const Str: UnicodeString;
 ///  with each list element being separated by Delim. Empty string list elements
 ///  are included in the output string only if AllowEmpty is True.</summary>
 function StrJoin(const SL: TStrings; const Delim: UnicodeString;
-  const AllowEmpty: Boolean = True): UnicodeString;
+  const AllowEmpty: Boolean = True): UnicodeString; overload;
+
+///  <summary>Joins all strings from an array of string together into a single
+///  string with each array element being separated by Delim. Empty string list
+///  elements are included in the output string only if AllowEmpty is True.
+///  </summary>
+function StrJoin(const Strs: array of string; const Delim: UnicodeString;
+  const AllowEmpty: Boolean = True): UnicodeString; overload;
 
 ///  <summary>Splits string Str at delimiter Delim and records the components in
 ///  List. If TrimStrs is True spaces are trimmed from each component. If
@@ -250,6 +254,20 @@ function StrIf(const Condition: Boolean; const TrueStr, FalseStr: string):
 ///  Escapable with the backslash character followed by the matching character
 ///  in Escapes.</summary>
 function StrBackslashEscape(const S, Escapable, Escapes: string): string;
+
+///  <summary>Sets a given string list to have the same elements as a given
+///  string array.</summary>
+///  <remarks>
+///  <para>Any existing contents of the string list are lost.</para>
+///  <para>The string list must not be nil.</para>
+///  </remarks>
+procedure StrArrayToStrList(const SA: array of string; const SL: TStrings);
+
+///  <summary>Checks if the given string is the empty string. If the optional
+///  IgnoreWhiteSpace parameter is True then the string is trimmed of leading
+///  and trailing white space before checking</summary>
+function StrIsEmpty(const S: string; const IgnoreWhiteSpace: Boolean = False):
+  Boolean;
 
 
 implementation
@@ -492,6 +510,29 @@ begin
       end
       else
         Result := Result + Delim + SL[Idx];
+    end;
+  end;
+end;
+
+function StrJoin(const Strs: array of string; const Delim: UnicodeString;
+  const AllowEmpty: Boolean = True): UnicodeString; overload;
+var
+  S: string;          // each string in array
+  FirstItem: Boolean; // flag true until first item has been added to result
+begin
+  Result := '';
+  FirstItem := True;
+  for S in Strs do
+  begin
+    if (S <> '') or AllowEmpty then
+    begin
+      if FirstItem then
+      begin
+        Result := S;
+        FirstItem := False;
+      end
+      else
+        Result := Result + Delim + S;
     end;
   end;
 end;
@@ -842,6 +883,25 @@ begin
       PRes^ := Ch;
     Inc(PRes);
   end;
+end;
+
+procedure StrArrayToStrList(const SA: array of string; const SL: TStrings);
+var
+  S: string;
+begin
+  Assert(Assigned(SL), 'StrArrayToStrList: SL is nil');
+  SL.Clear;
+  for S in SA do
+    SL.Add(S);
+end;
+
+function StrIsEmpty(const S: string; const IgnoreWhiteSpace: Boolean = False):
+  Boolean;
+begin
+  if IgnoreWhiteSpace then
+    Result := StrTrim(S) = ''
+  else
+    Result := S = '';
 end;
 
 end.

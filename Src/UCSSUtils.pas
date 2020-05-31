@@ -3,10 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2006-2013, Peter Johnson (www.delphidabbler.com).
- *
- * $Rev$
- * $Date$
+ * Copyright (C) 2006-2020, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Static method record that assists in generating CSS properties.
 }
@@ -406,6 +403,13 @@ type
     ///  <returns>string. Required CSS property.</returns>
     class function BlockDisplayProp(const Show: Boolean): string; static;
 
+    ///  <summary>Creates a CSS "display" property that causes its element to be
+    ///  either hidden or displayed as "inline".</summary>
+    ///  <param name="Show">Boolean [in] Flag indicating if block is to be
+    ///  displayed (True) or hidden (False).</param>
+    ///  <returns>string. Required CSS property.</returns>
+    class function InlineDisplayProp(const Show: Boolean): string; static;
+
     ///  <summary>Creates a CSS "overflow", "overflow-x" or overflow-y"
     ///  property.</summary>
     ///  <param name="Value">TCSSOverflowValue [in] Required overflow handling.
@@ -417,6 +421,14 @@ type
     ///  <returns>string. Required CSS property.</returns>
     class function OverflowProp(const Value: TCSSOverflowValue;
       const Direction: TCSSOverflowDirection = codBoth): string; static;
+
+    ///  <summary>Creates a CSS "line-height" property.</summary>
+    ///  <param name="Percentage">UInt16 [in] Line height as a percentage of
+    ///  font size.</param>
+    ///  <returns>string. Required CSS property.</returns>
+    ///  <remarks>Only the percentage version of line height is supported.
+    ///  </remarks>
+    class function LineHeightProp(const Percentage: UInt16): string; static;
   end;
 
 
@@ -581,6 +593,14 @@ begin
   Result := BorderProp(Side, 0, cbsNone, clNone);
 end;
 
+class function TCSS.InlineDisplayProp(const Show: Boolean): string;
+const
+  // Map of flag onto required display style
+  BlockDisplayStyles: array[Boolean] of TCSSDisplayStyle = (cdsNone, cdsInline);
+begin
+  Result := DisplayProp(BlockDisplayStyles[Show]);
+end;
+
 class function TCSS.LengthList(const List: array of Integer;
   const LU: TCSSLengthUnit): string;
 var
@@ -613,6 +633,11 @@ const
   );
 begin
   Result := Units[LU];
+end;
+
+class function TCSS.LineHeightProp(const Percentage: UInt16): string;
+begin
+  Result := 'line-height: ' + IntToStr(Percentage) + '%';
 end;
 
 class function TCSS.MarginProp(const Margin: array of Integer): string;

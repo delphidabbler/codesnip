@@ -3,10 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2006-2016, Peter Johnson (www.delphidabbler.com).
- *
- * $Rev$
- * $Date$
+ * Copyright (C) 2006-2020, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements class that can store application settings in application wide and
  * per user persistent storage.
@@ -122,19 +119,6 @@ type
     ///  regardless of locale.</remarks>
     procedure SetDateTime(const Name: string; const Value: TDateTime);
 
-    ///  <summary>Gets a named encrypted string value from settings and
-    ///  unencrypts it.</summary>
-    ///  <param name="Name">string [in] Name of value.</param>
-    ///  <returns>string. The unencrypted string.</returns>
-    function GetEncryptedString(const Name: string): string;
-
-    ///  <summary>Encrypts and records a named string value in settings.
-    ///  </summary>
-    ///  <param name="Name">string [in] Name of value.</param>
-    ///  <param name="Value">string [in] Value to be encrypted and recored.
-    ///  </param>
-    procedure SetEncryptedString(const Name, Value: string);
-
     ///  <summary>Gets a list of related string values from the section.
     ///  </summary>
     ///  <param name="CountName">string [in] Name of an integer value that
@@ -164,15 +148,7 @@ type
   end;
 
 type
-  ///  <summary>
-  ///  <para>Enumeration of the different storage locations that can store
-  ///  settings.</para>
-  ///  <para>- ssUser - Storage for per-user settings.</para>
-  ///  <para>- ssCommon - Storage for common (application-wde) settings.</para>
-  ///  </summary>
-  TSettingsStorageId = (ssUser, ssCommon);
 
-type
   ///  <summary>
   ///  <para>Enumeration of recognised sections within persistent storage.
   ///  </para>
@@ -180,10 +156,7 @@ type
   ///  <para>-ssFindCompiler - info about last compiler search</para>
   ///  <para>-ssFindXRefs - info about last XRef search</para>
   ///  <para>-ssCompilerInfo - info about each supported compiler</para>
-  ///  <para>-ssApplication - info about the application</para>
   ///  <para>-ssPreferences - info about program preferences</para>
-  ///  <para>-ssUserInfo - info about user</para>
-  ///  <para>-ssProxyServer - info about any proxy server</para>
   ///  <para>-ssUnits - list of default units</para>
   ///  <para>-ssDuplicateSnippet - persistent settings from Duplicate Snippets
   ///  dlg</para>
@@ -194,9 +167,9 @@ type
   ///  <para>-ssUpdateChecks - info about update checks</para>
   ///  </summary>
   TSettingsSectionId = (
-    ssFindText, ssFindCompiler, ssFindXRefs, ssCompilerInfo, ssApplication,
-    ssPreferences, ssUserInfo, ssProxyServer, ssUnits, ssDuplicateSnippet,
-    ssFavourites, ssWindowState, ssDatabase, ssUpdateChecks
+    ssFindText, ssFindCompiler, ssFindXRefs, ssCompilerInfo,
+    ssPreferences, ssUnits, ssDuplicateSnippet,
+    ssFavourites, ssWindowState, ssDatabase
   );
 
 type
@@ -242,42 +215,31 @@ implementation
 
 uses
   // Delphi
-  Classes, IniFiles, IOUtils,
+  Classes,
+  IniFiles,
+  IOUtils,
   // Project
-  UAppInfo, UEncryptor, UExceptions, UHexUtils, UIOUtils, UStrUtils;
+  UAppInfo,
+  UHexUtils,
+  UIOUtils,
+  UStrUtils;
 
 
 var
   // Private global variable: stores reference to settings singleton object
   pvtSettings: ISettings = nil;
 
-
 type
-  ///  <summary>Base class for all settings classes, regardless of storage
-  ///  medium used.</summary>
-  TSettingsBase = class(TInterfacedObject)
-  strict protected
-    ///  <summary>Determines and returns identifier of the storage entity on
-    ///  which a section is stored.</summary>
-    ///  <param name="Section">TSettingsSectionId [in] Id of section.</param>
-    ///  <returns>Id of required storage.</returns>
-    function SectionStorage(const Section: TSettingsSectionId):
-      TSettingsStorageId;
-  end;
-
-type
-  ///  <summary>Base class for all settings classes that use ini files for
-  ///  persisent storage.</summary>
+  ///  <summary>Base class for all settings classes that use setting ini file
+  /// for persisent storage.</summary>
   ///  <remarks>Implements core ini file functionality.</remarks>
-  TIniSettingsBase = class(TSettingsBase)
+  TIniSettingsBase = class(TInterfacedObject)
   strict protected
-    ///  <summary>Maps the given storage id to the storage file name.</summary>
-    function StorageName(const Storage: TSettingsStorageId): string;
-    ///  <summary>Creates and returns a TIniFile instance onto the ini file
-    ///  for the given storage id.</summary>
+    ///  <summary>Creates and returns a TIniFile instance onto the settings ini
+    ///  file.</summary>
     ///  <remarks>The caller is responsible for freeing the returned instance.
     ///  </remarks>
-    function CreateIniFile(const Storage: TSettingsStorageId): TIniFile;
+    function CreateIniFile: TIniFile;
   public
     ///  <summary>Constructs new object instance.</summary>
     constructor Create;
@@ -349,8 +311,6 @@ type
     var
       ///  <summary>Name of section.</summary>
       fSectionName: string;
-      ///  <summary>Id of storage to be used.</summary>
-      fStorage: TSettingsStorageId;
       ///  <summary>Stores section's data as name=value pairs.</summary>
       fValues: TStringList;
 
@@ -375,10 +335,7 @@ type
     ///  <summary>Construct a new object instance that encapsulates an empty
     ///  section.</summary>
     ///  <param name="Section">string [in] Name of section in ini file.</param>
-    ///  <param name="Storage">TSettingsStorageId [in] Identifies the storage
-    ///  (i.e. ini file) to be used.</param>
-    constructor Create(const Section: string;
-      const Storage: TSettingsStorageId);
+    constructor Create(const Section: string);
 
     ///  <summary>Destroys object instance.</summary>
     destructor Destroy; override;
@@ -493,21 +450,6 @@ type
     ///  </remarks>
     procedure SetDateTime(const Name: string; const Value: TDateTime);
 
-    ///  <summary>Gets a named encrypted string value from settings and
-    ///  unencrypts it.</summary>
-    ///  <param name="Name">string [in] Name of value.</param>
-    ///  <returns>string. The unencrypted string.</returns>
-    ///  <remarks>Method of ISettingsSection.</remarks>
-    function GetEncryptedString(const Name: string): string;
-
-    ///  <summary>Encrypts and records a named string value in settings.
-    ///  </summary>
-    ///  <param name="Name">string [in] Name of value.</param>
-    ///  <param name="Value">string [in] Value to be encrypted and recored.
-    ///  </param>
-    ///  <remarks>Method of ISettingsSection.</remarks>
-    procedure SetEncryptedString(const Name, Value: string);
-
     ///  <summary>Gets a list of related string values from the section.
     ///  </summary>
     ///  <param name="CountName">string [in] Name of an integer value that
@@ -542,32 +484,6 @@ begin
   Result := pvtSettings;
 end;
 
-{ TSettingsBase }
-
-function TSettingsBase.SectionStorage(
-  const Section: TSettingsSectionId): TSettingsStorageId;
-const
-  // Map of known sections onto storage that contains them
-  cSectionStorageMap: array[TSettingsSectionId] of TSettingsStorageId = (
-    ssUser,     // ssFindText
-    ssUser,     // ssFindCompiler
-    ssUser,     // ssFindXRefs
-    ssUser,     // ssCompilerInfo
-    ssCommon,   // ssApplication
-    ssUser,     // ssPreferences
-    ssUser,     // ssUserInfo
-    ssUser,     // ssProxyServer
-    ssUser,     // ssUnits
-    ssUser,     // ssDuplicateSnippet
-    ssUser,     // ssFavourites
-    ssUser,     // ssWindowState
-    ssUser,     // ssDatabase
-    ssUser      // ssUpdateChecks
-  );
-begin
-  Result := cSectionStorageMap[Section];
-end;
-
 { TIniSettingsBase }
 
 constructor TIniSettingsBase.Create;
@@ -578,29 +494,15 @@ begin
   TDirectory.CreateDirectory(TAppInfo.CommonAppDir);
 end;
 
-function TIniSettingsBase.CreateIniFile(
-  const Storage: TSettingsStorageId): TIniFile;
+function TIniSettingsBase.CreateIniFile: TIniFile;
 var
   FileName: string; // name if ini file
 begin
-  FileName := StorageName(Storage);
+  FileName := TAppInfo.UserConfigFileName;
   if not TFile.Exists(FileName, False) then
     // create empty Unicode text file with BOM to force Win API to write Unicode
     TFileIO.WriteAllText(FileName, '', TEncoding.Unicode, True);
   Result := TIniFile.Create(FileName);
-end;
-
-function TIniSettingsBase.StorageName(
-  const Storage: TSettingsStorageId): string;
-begin
-  case Storage of
-    ssUser:
-      Result := TAppInfo.UserConfigFileName;
-    ssCommon:
-      Result := TAppInfo.AppConfigFileName;
-    else
-      raise EBug.Create(ClassName + '.StorageName: unknown storage type');
-  end;
 end;
 
 { TIniSettings }
@@ -608,10 +510,7 @@ end;
 function TIniSettings.CreateSection(const SectionID: TSettingsSectionId;
   const SubSection: string): ISettingsSection;
 begin
-  Result := TIniSettingsSection.Create(
-    SectionName(SectionID, SubSection),
-    SectionStorage(SectionID)
-  );
+  Result := TIniSettingsSection.Create(SectionName(SectionID, SubSection));
 end;
 
 function TIniSettings.EmptySection(const Section: TSettingsSectionId;
@@ -636,16 +535,12 @@ const
     'FindCompiler',     // ssFindCompiler
     'FindXRefs',        // ssFindXRefs
     'Cmp',              // ssCompilerInfo
-    'Application',      // ssApplication
     'Prefs',            // ssPreferences
-    'UserInfo',         // ssUserInfo
-    'ProxyServer',      // ssProxyServer
     'UnitList',         // ssUnits
     'DuplicateSnippet', // ssDuplicateSnippet
     'Favourites',       // ssFavourites
     'WindowState',      // ssWindowState
-    'Database',         // ssDatabase
-    'UpdateChecks'      // ssUpdateChecks
+    'Database'          // ssDatabase
   );
 begin
   Result := cSectionNames[Id];
@@ -660,13 +555,11 @@ begin
   fValues.Clear;
 end;
 
-constructor TIniSettingsSection.Create(const Section: string;
-  const Storage: TSettingsStorageId);
+constructor TIniSettingsSection.Create(const Section: string);
 begin
   inherited Create;
   fValues := TStringList.Create;
   fSectionName := Section;
-  fStorage := Storage;
 end;
 
 procedure TIniSettingsSection.DeleteItem(const Name: string);
@@ -682,17 +575,6 @@ destructor TIniSettingsSection.Destroy;
 begin
   FreeAndNil(fValues);
   inherited;
-end;
-
-function TIniSettingsSection.GetEncryptedString(const Name: string): string;
-var
-  EncryptedBytes: TBytes; // encrypted value as array of bytes
-begin
-  // NOTE:
-  // See SetEncryptedString for details of how encrypted values are stored.
-  if not TryHexToBytes(GetItemValue(Name), EncryptedBytes) then
-    Exit('');
-  Result := TEncoding.UTF8.GetString(TEncryptor.Decrypt(EncryptedBytes));
 end;
 
 function TIniSettingsSection.GetBoolean(const Name: string;
@@ -764,7 +646,7 @@ end;
 procedure TIniSettingsSection.Load;
 begin
   // Read all values from section in app's ini file to data item storage
-  with CreateIniFile(fStorage) do
+  with CreateIniFile do
     try
       ReadSectionValues(fSectionName, fValues);
     finally
@@ -793,7 +675,7 @@ var
   Idx: Integer; // loops thru all data items in section
 begin
   // Open application's ini file
-  with CreateIniFile(fStorage) do
+  with CreateIniFile do
     try
       // Delete any existing section with same name
       EraseSection(fSectionName);
@@ -820,19 +702,6 @@ procedure TIniSettingsSection.SetDateTime(const Name: string;
   const Value: TDateTime);
 begin
   SetItemValue(Name, FormatDateTime('yyyy"-"mm"-"dd" "hh":"nn":"ss', Value));
-end;
-
-procedure TIniSettingsSection.SetEncryptedString(const Name, Value: string);
-begin
-  // NOTE:
-  // Encrypted values are stored as follows:
-  // 1: Unicode Value string is converted to an array of UTF-8 encoded bytes
-  // 2: The UTF-8 byte array is encrypted into another array of bytes
-  // 3: The encrypted byte array is converted to hexadecimal
-  // 4: The hexadecimal character string is stored in storage
-  SetItemValue(
-    Name, BytesToHex(TEncryptor.Encrypt(TEncoding.UTF8.GetBytes(Value)))
-  );
 end;
 
 procedure TIniSettingsSection.SetFloat(const Name: string; const Value: Double);

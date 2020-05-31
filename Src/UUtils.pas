@@ -3,10 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
- *
- * $Rev$
- * $Date$
+ * Copyright (C) 2005-2020, Peter Johnson (gravatar.com/delphidabbler).
  *
  * General utility routines.
 }
@@ -89,11 +86,21 @@ function NowGMT: TDateTime;
 
 ///  <summary>Converts a date-time value in SQL format into a TDateTime.
 ///  </summary>
-///  <param name="SQLDate">string [in] SQL format date-time value to be
+///  <param name="SQLDateTime">string [in] SQL format date-time value to be
 ///  converted.</param>
 ///  <returns>TDateTime. Converted value.</returns>
 ///  <remarks>SQLDate must be in YYYY-MM-DD hh:mm:ss format.</remarks>
-function ParseSQLDateTime(const SQLDate: string): TDateTime;
+function ParseSQLDateTime(const SQLDateTime: string): TDateTime;
+
+///  <summary>Attempts to convert a date-time value in SQL format into a
+///  TDateTime value.</summary>
+///  <param name="SQLDateTime">string [in] SQL format date-time value to be
+///  converted.</param>
+///  <param name="Value">TDateTime [out] Set to converted date-time value if
+///  conversion succeeded or undefined if coversion failed.</param>
+///  <returns>Boolean. True if conversion succeeded, False otherwise.</returns>
+function TryParseSQLDateTime(const SQLDateTime: string; out Value: TDateTime):
+  Boolean;
 
 ///  <summary>Get a desired interface pointer to an object instance.</summary>
 ///  <param name="Instance">IInterface [in] Instance for which an interface is
@@ -144,13 +151,43 @@ function URIBaseName(const URI: string): string;
 ///  <returns>Boolean. True if conversion succeeds, False if not.</returns>
 function TryStrToCardinal(const S: string; out Value: Cardinal): Boolean;
 
+///  <summary>Test a given number of bytes from the start of two byte arrays for
+///  equality.</summary>
+///  <param name="BA1">TBytes [in] First byte array to be compared.</param>
+///  <param name="BA2">TBytes [in] Second byte array to be compared.</param>
+///  <param name="Count">Cardinal [in] Number of bytes to be compared. Must be
+///  greater than zero.</param>
+///  <returns>True if the required number of bytes in the arrays are equal and
+///  both arrays have at least Count bytes. Otherwise False is returned.
+///  </returns>
+///  <remarks>If either BA1 or BA1 have less than Count bytes then False is
+///  returned, regardless of whether the arrays are equal.</remarks>
+function IsEqualBytes(const BA1, BA2: TBytes; const Count: Cardinal):
+  Boolean; overload;
+
+///  <summary>Checks if two byte arrays are equal.</summary>
+///  <param name="BA1">TBytes [in] First byte array to be compared.</param>
+///  <param name="BA2">TBytes [in] Second byte array to be compared.</param>
+///  <returns>True if the two arrays are equal, False if not.</returns>
+///  <remarks>If both arrays are empty they are considered equal.</remarks>
+function IsEqualBytes(const BA1, BA2: TBytes): Boolean; overload;
+
+///  <summary>Attempts to convert string S into a Word value.</summary>
+///  <param name="S">string [in] String to be converted.</param>
+///  <param name="W">Cardinal [out] Value of converted string. Undefined if
+///  conversion fails.</param>
+///  <returns>Boolean. True if conversion succeeds, False if not.</returns>
+///  <remarks>String must represent a non-negative integer that is representable
+///  as a Word.</remarks>
+function TryStrToWord(const S: string; out W: Word): Boolean;
+
 
 implementation
 
 
 uses
   // Delphi
-  Windows, ShlObj, ActiveX, Messages, Character, Math,
+  Windows, ShlObj, ActiveX, Messages, Character, Math, DateUtils,
   // Project
   UConsts, UStrUtils;
 
@@ -289,20 +326,32 @@ begin
   Result := FormatDateTime(cRFC1123Pattern, NowGMT);
 end;
 
-function ParseSQLDateTime(const SQLDate: string): TDateTime;
+function ParseSQLDateTime(const SQLDateTime: string): TDateTime;
+resourcestring
+  sBadDate = '"%s" is not a valid SQL DateTime';
 begin
-  Result := SysUtils.EncodeDate(
-    SysUtils.StrToInt(Copy(SQLDate, 1, 4)),
-    SysUtils.StrToInt(Copy(SQLDate, 6, 2)),
-    SysUtils.StrToInt(Copy(SQLDate, 9, 2))
-  )
-  +
-  SysUtils.EncodeTime(
-    SysUtils.StrToInt(Copy(SQLDate, 12, 2)),
-    SysUtils.StrToInt(Copy(SQLDate, 15, 2)),
-    SysUtils.StrToInt(Copy(SQLDate, 18, 2)),
-    0
-  );
+  if not TryParseSQLDateTime(SQLDateTime, Result) then
+    raise EConvertError.CreateFmt(sBadDate, [SQLDateTime]);
+end;
+
+function TryParseSQLDateTime(const SQLDateTime: string; out Value: TDateTime):
+  Boolean;
+var
+  Year, Month, Day, Hour, Min, Sec: Word;
+begin
+  if not TryStrToWord(Copy(SQLDateTime, 1, 4), Year) then
+    Exit(False);
+  if not TryStrToWord(Copy(SQLDateTime, 6, 2), Month) then
+    Exit(False);
+  if not TryStrToWord(Copy(SQLDateTime, 9, 2), Day) then
+    Exit(False);
+  if not TryStrToWord(Copy(SQLDateTime, 12, 2), Hour) then
+    Exit(False);
+  if not TryStrToWord(Copy(SQLDateTime, 15, 2), Min) then
+    Exit(False);
+  if not TryStrToWord(Copy(SQLDateTime, 18, 2), Sec) then
+    Exit(False);
+  Result := TryEncodeDateTime(Year, Month, Day, Hour, Min, Sec, 0, Value);
 end;
 
 procedure GetIntf(const Instance: IInterface; const IID: TGUID; out Intf);
@@ -384,6 +433,44 @@ begin
     and (Int64Rec(Value64).Hi = 0);
   if Result then
     Value := Int64Rec(Value64).Lo;
+end;
+
+function IsEqualBytes(const BA1, BA2: TBytes; const Count: Cardinal):
+  Boolean;
+var
+  I: Integer;
+begin
+  Assert(Count > 0, 'IsEqualBytes: Count must be greater than zero');
+  if (Length(BA1) < Int64(Count)) or (Length(BA2) < Int64(Count)) then
+    Exit(False);
+  for I := 0 to Pred(Count) do
+    if BA1[I] <> BA2[I] then
+      Exit(False);
+  Result := True;
+end;
+
+function IsEqualBytes(const BA1, BA2: TBytes): Boolean;
+var
+  I: Integer;
+begin
+  if Length(BA1) <> Length(BA2) then
+    Exit(False);
+  for I := 0 to Pred(Length(BA1)) do
+    if BA1[I] <> BA2[I] then
+      Exit(False);
+  Result := True;
+end;
+
+function TryStrToWord(const S: string; out W: Word): Boolean;
+var
+  I: Integer;
+begin
+  Result := TryStrToInt(S, I);
+  if not Result then
+    Exit;
+  if (I < 0) or (I > High(Word)) then
+    Exit(False);
+  W := Word(I);
 end;
 
 end.

@@ -5,10 +5,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2012-2016, Peter Johnson (www.delphidabbler.com).
- *
- * $Rev$
- * $Date$
+ * Copyright (C) 2012-2020, Peter Johnson (gravatar.com/delphidabbler).
  *
  * CodeSnip File Format Documentation: User Database
 -->
@@ -61,9 +58,7 @@
 </p>
 
 <p>
-  The source code for each snippet is stored in separate sequentially numbered
-  .dat data files &ndash; one per snippet. Each source code file is referenced
-  by the XML file.
+  The source code for each snippet is stored in separate, sequentially numbered, <code>.dat</code> data files &ndash; one per snippet. Each source code file is referenced by the XML file.
 </p>
 
 <p>
@@ -89,7 +84,7 @@
 </p>
 
 <p>
-  CodeSnip v4 must be able to work with all these encoding because it may
+  CodeSnip v4 must be able to work with all these encodings because it may
   inherit a copy of a user database in an earlier format.
 </p>
 
@@ -286,7 +281,7 @@
       </li>
       <li>
         <span class="highlight">version 6:</span> Content is formatted text
-        encoded in REML markup. REML v3 is supported.
+        encoded in REML markup. REML v4 is supported.
       </li>
     </ul>
   </dd>
@@ -426,7 +421,10 @@
               <span class="highlight">version 3:</span> indicates REML v2
             </li>
             <li>
-              <span class="highlight">versions 4..6:</span> indicates REML v3.
+              <span class="highlight">versions 4..5:</span> indicates REML v3.
+            </li>
+            <li>
+              <span class="highlight">version 6:</span> indicates REML v4.
             </li>
           </ul>
         </li>
@@ -676,8 +674,8 @@
 
 <p>
   Source code is stored separately from the main XML file. The source code of
-  each snippet has its file. Files are numbered sequentially and have a .dat
-  extension, for example <code>6.dat</code>.
+  each snippet has its own file. Files are numbered sequentially and have a
+  <code>.dat</code> extension, for example <code>6.dat</code>.
 </p>
 
 <p>
@@ -792,7 +790,10 @@
       Previously the description was plain text.
     </div>
     <div class="half-spaced">
-      The following tag was introduced:
+      The supported version of REML was updated to v4.
+    </div>
+    <div class="half-spaced">
+      The following tags were introduced:
     </div>
     <ul class="squashed">
       <li>
@@ -813,7 +814,7 @@
   Readers of version 1 files must convert the contents of the
   <em>codesnip-data/routines/routine/comments</em>,
   <em>codesnip-data/routines/routine/credits</em> and
-  <em>codesnip-data/routines/routine/credits-url</em> tags into formatted text
+  <em>codesnip-data/routines/routine/credits-url</em> tags into valid REML code
   that simulates the parsed content of the
   <em>codesnip-data/routines/routine/extra</em> tag.
 </p>
@@ -831,7 +832,7 @@
 <ol>
   <li>
     Convert the plain text snippet description read from
-    <em>codesnip-data/routines/routine/description</em> into the formatted text
+    <em>codesnip-data/routines/routine/description</em> into the REML
     equivalent of a single paragraph containing the description.
   </li>
   <li>

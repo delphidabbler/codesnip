@@ -3,10 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2008-2013, Peter Johnson (www.delphidabbler.com).
- *
- * $Rev$
- * $Date$
+ * Copyright (C) 2008-2020, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements classes that handle application start up, determine if it the
  * first run of the current version and perform necessary updates to per-user
@@ -22,16 +19,14 @@ interface
 
 uses
   // Project
-  FirstRun.UConfigFile, FirstRun.UDatabase, FirstRun.UInstallInfo;
+  FirstRun.UConfigFile, FirstRun.UDatabase, FirstRun.UInstallInfo, UVersionInfo;
 
 
 type
   ///  <summary>Enumeration of changes that can be made to brought forward
   ///  config files that result in data loss.</summary>
   TFirstRunCfgChanges = (
-    frcRegistration,    // local registration record lost
     frcHiliter,         // syntax highlighter customisation lost
-    frcProxyPwd,        // internet proxy password lost
     frcSourceFormat     // source code output formatting lost
   );
 
@@ -60,11 +55,6 @@ type
       ///  <summary>Object used to copy forward older versions of user database.
       ///  </summary>
       fDatabase: TUserDatabaseUpdater;
-    {$IFNDEF PORTABLE}
-    ///  <summary>Checks if config file uses earlier format for storing proxy
-    ///  server passwords.</summary>
-    function HasOldStyleProxyPwd: Boolean;
-    {}{$ENDIF}
   public
     ///  <summary>Constructs object and owned object.</summary>
     constructor Create;
@@ -89,8 +79,17 @@ type
     ///  <summary>Creates a new, empty, Unicode encoded per-user config file for
     ///  current installation.</summary>
     procedure CreateEmptyUserCfgFile;
-    ///  <summary>
+    ///  <summary>Checks if the program has been updated since the last run.
+    ///  </summary>
+    ///  <remarks>Compares the version number stored in the brought forward
+    ///  config file against the current program version number from resources.
+    ///  </remarks>
     function IsProgramUpdated: Boolean;
+    ///  <summary>Checks if the previous program's version number, as specified
+    ///  in the user config file, is contained in the range Lo..Hi with range
+    ///  endpoints determined by IntervalEndPoints.</summary>
+    function IsPreviousProgramVerInRange(const Lo, Hi: TVersionNumber;
+      const IntervalEndPoints: TVersionNumber.TIntervalEndPoints): Boolean;
   end;
 
 type
@@ -118,7 +117,8 @@ type
     class function IsProgramUpdated: Boolean;
   public
     ///  <summary>Runs start-up checks to detect if program has been run before
-    ///  and performs any required user config and user database updates.
+    ///  and performs any required user config and user database updates. In
+    ///  some circumstances a "what's new" dialogue box may be displayed.
     ///  </summary>
     class procedure Execute;
   end;
@@ -129,9 +129,10 @@ implementation
 
 uses
   // Delphi
-  SysUtils, IOUtils, Forms
-  {$IFNDEF PORTABLE}
+  SysUtils, IOUtils, Forms,
   // Project
+  FirstRun.FmWhatsNew
+  {$IFNDEF PORTABLE}
   ,
   FirstRun.FmV4ConfigDlg;
   {$ELSE}
@@ -187,13 +188,6 @@ begin
   inherited;
 end;
 
-{$IFNDEF PORTABLE}
-function TFirstRun.HasOldStyleProxyPwd: Boolean;
-begin
-  Result := (fUserConfigFile.FileVer <= 6) and fUserConfigFile.HasProxyPassword;
-end;
-{$ENDIF}
-
 function TFirstRun.HaveOldUserCfgFile: Boolean;
 begin
   Result := TFile.Exists(fInstallInfo.PreviousUserConfigFileName, False);
@@ -202,6 +196,15 @@ end;
 function TFirstRun.HaveOldUserDB: Boolean;
 begin
   Result := TFile.Exists(fInstallInfo.PreviousUserDatabaseFileName, False);
+end;
+
+function TFirstRun.IsPreviousProgramVerInRange(const Lo, Hi: TVersionNumber;
+  const IntervalEndPoints: TVersionNumber.TIntervalEndPoints): Boolean;
+var
+  PrevProgVer: TVersionNumber;
+begin
+  PrevProgVer := fUserConfigFile.PreviousProgramVer;
+  Result := PrevProgVer.IsInRange(Lo, Hi, IntervalEndPoints);
 end;
 
 function TFirstRun.IsProgramUpdated: Boolean;
@@ -219,7 +222,6 @@ begin
     begin
       fUserConfigFile.UpdateFromOriginal;
       Include(Changes, frcHiliter);
-      Include(Changes, frcRegistration);
       Include(Changes, frcSourceFormat);
     end;
     piV1_9, piV2:
@@ -227,14 +229,7 @@ begin
       fUserConfigFile.DeleteHighligherPrefs;
       Include(Changes, frcHiliter);
     end;
-    piV3:
-    begin
-      if HasOldStyleProxyPwd then
-      begin
-        fUserConfigFile.DeleteProxyPassword;
-        Include(Changes, frcProxyPwd);
-      end;
-    end;
+    piV3: ; // do nothing
   end;
   {$ENDIF}
 
@@ -245,13 +240,11 @@ begin
     // we rely on this for portable version.
     fUserConfigFile.CreateDefaultCodeGenEntries;
 
-  {$IFNDEF PORTABLE}
   if fUserConfigFile.FileVer < 9 then
   begin
     fUserConfigFile.DeleteDetailsPaneIndex;
     fUserConfigFile.UpdateCodeGenEntries;
   end;
-  {$ENDIF}
 
   if fUserConfigFile.FileVer < 11 then
     fUserConfigFile.RenameMainWindowSection;
@@ -262,16 +255,47 @@ begin
   if fUserConfigFile.FileVer < 15 then
     fUserConfigFile.UpdateFindXRefs;
 
+
+  if fUserConfigFile.FileVer < 16 then
+  begin
+    fUserConfigFile.DeleteNewsPrefs;
+    fUserConfigFile.DeleteProxyServerSection;
+    fUserConfigFile.DeleteUpdatingPrefs;
+    fUserConfigFile.DeleteUpdateChecks;
+    fUserConfigFile.DeleteUserInfo;
+  end;
+
+  {$IFNDEF PORTABLE}
+  // No need to delete sections of common config file on portable edition
+  // because the entire file is deleted below!
+  if fCommonConfigFile.FileVer < 7 then
+  begin
+    fCommonConfigFile.DeleteRegistrationInfo;
+    fCommonConfigFile.DeleteProgramKey;
+  end;
+  {$ENDIF}
+
   fUserConfigFile.Stamp;
+
+  {$IFNDEF PORTABLE}
   // NOTE: strictly speaking we only need to stamp common config file in
   // portable version. Installer does this in normal version. However, it does
   // no harm to stamp this file twice - belt and braces!
   fCommonConfigFile.Stamp;
+  {$ELSE}
+  fCommonConfigFile.DeleteCfgFile;
+  {$ENDIF}
 end;
 
 { TFirstRunMgr }
 
 class procedure TFirstRunMgr.Execute;
+const
+  // Version numbers specifying a range in which previous program version must
+  // lie in order to display "What's New" dialogue box.
+  // Range is [NeedWhatsNewLoVerIncl, NeedWhatsNewHiVerExcl)
+  NeedWhatsNewLoVerIncl: TVersionNumber = (V1: 4; V2: 0; V3: 0; V4: 0);
+  NeedWhatsNewHiVerExcl: TVersionNumber = (V1: 4; V2: 16; V3: 0; V4: 0);
 var
   FR: TFirstRun;
   Changes: TFirstRunCfgChangeSet;
@@ -297,7 +321,15 @@ begin
   begin
     FR := TFirstRun.Create;
     try
-      FR.UpdateUserCfgFile(Changes);
+      // We display "What's New" dialogue box if previous program version number
+      // is in the given range
+      if FR.IsPreviousProgramVerInRange(
+        NeedWhatsNewLoVerIncl,
+        NeedWhatsNewHiVerExcl,
+        TVersionNumber.TIntervalEndPoints.iepHalfOpenHi
+      ) then
+        TWhatsNewDlg.Execute(Application);
+      FR.UpdateUserCfgFile(Changes);  // we ignore Changes [out] param value
     finally
       FR.Free;
     end;

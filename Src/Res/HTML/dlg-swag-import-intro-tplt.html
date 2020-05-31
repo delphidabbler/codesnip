@@ -1,0 +1,70 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<!--
+ * This Source Code Form is subject to the terms of the Mozilla Public License,
+ * v. 2.0. If a copy of the MPL was not distributed with this file, You can
+ * obtain one at http://mozilla.org/MPL/2.0/
+ *
+ * Copyright (C) 2013-2020, Peter Johnson (gravatar.com/delphidabbler).
+ *
+ * Introductory information displayed on the first page of the SWAG Import
+ * Wizard.
+-->
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+  <head>
+    <title>dlg-swag-import-intro.html</title>
+  </head>
+
+  <body>
+
+    <p>
+      This wizard enables you to import &quot;packets&quot; (SWAG's equivalent of CodeSnip's snippets) from the <a
+        class="help-link"
+        href="help:AboutSWAG"
+      >SWAG database</a> into your local user database.
+    </p>
+
+    <div class="framed">
+      <p>
+				You must have a copy of a specially prepared version of SWAG on your local system before continuing. If you haven't already got it then you need to download it from the <em>delphidabbler/swag</em> repository on GitHub.
+			</p>
+			<p>
+				Go to <a class="external-link" href="<%SWAGReleaseURL%>" ><%SWAGReleaseURL%></a> and find the latest supported release&dagger;. The file name will be in the form <code>dd-swag-vX.Y.Z</code> where <code>X.Y.Z</code> is the version number. Download the file and unzip it into a folder on your computer. Make a note of the folder's location - it will be needed in the next step.
+			</p>
+			<p class="indent">
+				&dagger; Currently CodeSnip supports SWAG versions <%SupportedSWAGVersions%>.
+			</p>
+		</div>
+
+		<p>
+			<strong class="warning">Warning:</strong> Although importing snippets should be safe, you may wish to take a backup of your user database before going any further. You can do this from the <em>Database | Backup User Database</em> menu option.
+		</p>
+
+    <p>
+      On the next page of the wizard you will be asked for the location of the folder containing the SWAG database. <strong>Note</strong> that you will need to specify the <strong><code>swag</code></strong> sub-directory of the download. <em>CodeSnip</em> will then open the database and display all SWAG's categories on the following page. From there you can browse and display the packets in each category before selecting those you want to import. You get a chance to review these before importing.
+    </p>
+
+    <p>
+      All packets are imported as <a
+        class="help-link"
+        href="help:SnippetFreeform"
+      >freeform</a> snippets.
+    </p>
+
+    <p>
+			<em>CodeSnip</em> does not keep a track of packets imported from SWAG &ndash; it treats them just like any other user defined snippet. This means it is possible to import the same packet more than once. It's up to you to keep track of this.
+    </p>
+
+    <p>
+      <strong>Note:</strong> It can take quite some time to import packets from SWAG. You are advised not to import more than about 20 packets in one go. If you want to import a lot of packets you should run this wizard more than once.
+    </p>
+
+  </body>
+
+</html>

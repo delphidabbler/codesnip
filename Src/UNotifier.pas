@@ -3,10 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
- *
- * $Rev$
- * $Date$
+ * Copyright (C) 2005-2020, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Object that notifies the main application of certain user-initiated events.
 }
@@ -57,8 +54,6 @@ type
       ///  <summary>Action that causes a user defined snippet to be
       ///  edited.</summary>
       fEditSnippetAction: TBasicAction;
-      ///  <summary>Action that displays donate dialogue box.</summary>
-      fDonateAction: TBasicAction;
       ///  <summary>Action that causes a category to be displayed.</summary>
       fDisplayCategoryAction: TBasicAction;
       ///  <summary>Action that causes the Snippets Editor to be opened ready to
@@ -67,14 +62,8 @@ type
       ///  <summary>Action that causes news items from CodeSnip news feed to be
       ///  displayed.</summary>
       fNewsAction: TBasicAction;
-      ///  <summary>Action that causes a check for program updates to be
-      ///  performed.</summary>
-      fCheckForUpdatesAction: TBasicAction;
       ///  <summary>Action that causes About box to be displayed.</summary>
       fAboutBoxAction: TBasicAction;
-      ///  <summary>Action that displays a specified page in the preferences
-      ///  dialogue box.</summary>
-      fShowPrefsPageAction: TBasicAction;
 
   public
 
@@ -132,10 +121,6 @@ type
     ///  </remarks>
     procedure EditSnippet(const SnippetName: WideString);
 
-    ///  <summary>Displays Donate dialogue box.</summary>
-    ///  <remarks>Methods of INotifier.</remarks>
-    procedure Donate;
-
     ///  <summary>Opens Snippets Editor ready to create a new snippet.</summary>
     ///  <remarks>Methods of INotifier.</remarks>
     procedure NewSnippet;
@@ -144,20 +129,9 @@ type
     ///  <remarks>Methods of INotifier.</remarks>
     procedure ShowNews;
 
-    ///  <summary>Checks for program updates.</summary>
-    ///  <remarks>Methods of INotifier.</remarks>
-    procedure CheckForUpdates;
-
     ///  <summary>Displays the program's About Box.</summary>
     ///  <remarks>Methods of INotifier.</remarks>
     procedure ShowAboutBox;
-
-    ///  <summary>Displays the Preferences dialogue box containing the specified
-    ///  page.</summary>
-    ///  <param name="ClsName">string [in] Class name of the frame that
-    ///  implements the required preferences page.</param>
-    ///  <remarks>Method of INotifier.</remarks>
-    procedure ShowPrefsPage(const ClsName: string);
 
     ///  <summary>Sets action used to request a database update.</summary>
     ///  <param name="Action">TBasicAction [in] Required action.</param>
@@ -204,11 +178,6 @@ type
     ///  <remarks>Methods of ISetActions.</remarks>
     procedure SetEditSnippetAction(const Action: TBasicAction);
 
-    ///  <summary>Sets action used to display Donate dialogue box.</summary>
-    ///  <param name="Action">TBasicAction [in] Required action.</param>
-    ///  <remarks>Methods of ISetActions.</remarks>
-    procedure SetDonateAction(const Action: TBasicAction);
-
     ///  <summary>Sets action used to display a category.</summary>
     ///  <param name="Action">TBasicAction [in] Required action.</param>
     ///  <remarks>Methods of ISetActions.</remarks>
@@ -226,21 +195,11 @@ type
     ///  <remarks>Methods of ISetActions.</remarks>
     procedure SetNewsAction(const Action: TBasicAction);
 
-    ///  <summary>Sets action used to check for program updates.</summary>
-    ///  <param name="Action">TBasicAction [in] Required action.</param>
-    ///  <remarks>Methods of ISetActions.</remarks>
-    procedure SetCheckForUpdatesAction(const Action: TBasicAction);
-
     ///  <summary>Sets action used to display the program's About Box.</summary>
     ///  <param name="Action">TBasicAction [in] Required action.</param>
     ///  <remarks>Methods of ISetActions.</remarks>
     procedure SetAboutBoxAction(const Action: TBasicAction);
 
-    ///  <summary>Sets action used to display a given page of the Preferences
-    ///  dialogue box.</summary>
-    ///  <param name="Action">TBasicAction [in] Required action.</param>
-    ///  <remarks>Method of ISetActions.</remarks>
-    procedure SetShowPrefsPageAction(const Action: TBasicAction);
   end;
 
 
@@ -251,8 +210,12 @@ uses
   // Delphi
   SysUtils, StdActns,
   // Project
-  Compilers.UGlobals, UCategoryAction, UDetailTabAction, UEditSnippetAction,
-  UShowPrefsPageAction, USnippetAction, UViewItemAction;
+  Compilers.UGlobals,
+  UCategoryAction,
+  UDetailTabAction,
+  UEditSnippetAction,
+  USnippetAction,
+  UViewItemAction;
 
 
 { TNotifier }
@@ -272,12 +235,6 @@ begin
     ClassName + '.ChangeOverviewStyle: Pane out of range');
   if Assigned(fOverviewStyleChangeActions[Style]) then
     fOverviewStyleChangeActions[Style].Execute;
-end;
-
-procedure TNotifier.CheckForUpdates;
-begin
-  if Assigned(fCheckForUpdatesAction) then
-    fCheckForUpdatesAction.Execute;
 end;
 
 procedure TNotifier.ConfigCompilers;
@@ -308,12 +265,6 @@ begin
   end;
 end;
 
-procedure TNotifier.Donate;
-begin
-  if Assigned(fDonateAction) then
-    fDonateAction.Execute;
-end;
-
 procedure TNotifier.EditSnippet(const SnippetName: WideString);
 begin
   if Assigned(fEditSnippetAction) then
@@ -332,11 +283,6 @@ end;
 procedure TNotifier.SetAboutBoxAction(const Action: TBasicAction);
 begin
   fAboutBoxAction := Action;
-end;
-
-procedure TNotifier.SetCheckForUpdatesAction(const Action: TBasicAction);
-begin
-  fCheckForUpdatesAction := Action;
 end;
 
 procedure TNotifier.SetConfigCompilersAction(const Action: TBasicAction);
@@ -372,11 +318,6 @@ begin
   (fDisplaySnippetAction as ISetNotifier).SetNotifier(Self);
 end;
 
-procedure TNotifier.SetDonateAction(const Action: TBasicAction);
-begin
-  fDonateAction := Action;
-end;
-
 procedure TNotifier.SetEditSnippetAction(const Action: TBasicAction);
 begin
   Assert(Action is TEditSnippetAction,
@@ -404,13 +345,6 @@ begin
     fOverviewStyleChangeActions[Idx] := Actions[Idx];
 end;
 
-procedure TNotifier.SetShowPrefsPageAction(const Action: TBasicAction);
-begin
-  Assert(Action is TShowPrefsPageAction, ClassName
-    + '.SetShowPreferencesAction: Action is not TShowPrefsPageAction');
-  fShowPrefsPageAction := Action;
-end;
-
 procedure TNotifier.SetShowViewItemAction(const Action: TBasicAction);
 begin
   fShowViewItemAction := Action;
@@ -432,15 +366,6 @@ procedure TNotifier.ShowNews;
 begin
   if Assigned(fNewsAction) then
     fNewsAction.Execute;
-end;
-
-procedure TNotifier.ShowPrefsPage(const ClsName: string);
-begin
-  if Assigned(fShowPrefsPageAction) then
-  begin
-    (fShowPrefsPageAction as TShowPrefsPageAction).FrameClassName := ClsName;
-    fShowPrefsPageAction.Execute;
-  end;
 end;
 
 procedure TNotifier.ShowViewItem(ViewItem: IView; const NewTab: Boolean);

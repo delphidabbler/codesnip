@@ -3,10 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2007-2016, Peter Johnson (www.delphidabbler.com).
- *
- * $Rev$
- * $Date$
+ * Copyright (C) 2007-2020, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements class that manages the updating of older config files to the
  * current format.
@@ -17,6 +14,11 @@ unit FirstRun.UConfigFile;
 
 
 interface
+
+
+uses
+  // Project
+  UVersionInfo;
 
 
 type
@@ -63,7 +65,10 @@ type
     ///  <summary>Checks if program version in config file is same as current
     ///  program version.</summary>
     function IsCurrentProgramVer: Boolean; overload;
-    ///  <summary>Stamps config file with current and file version.</summary>
+    class function PreviousProgramVer(const CfgFileName: string):
+      TVersionNumber; overload;
+    function PreviousProgramVer: TVersionNumber; overload;
+    ///  <summary>Stamps config file with current file version.</summary>
     procedure Stamp; virtual;
   end;
 
@@ -77,7 +82,7 @@ type
   strict private
     const
       ///  <summary>Current user config file version.</summary>
-      FileVersion = 15;
+      FileVersion = 16;
   strict protected
     ///  <summary>Returns current user config file version.</summary>
     class function GetFileVersion: Integer; override;
@@ -85,20 +90,28 @@ type
     {$IFNDEF PORTABLE}
     ///  <summary>Updates config file currently in original (pre v1.9) format to
     ///  current format.</summary>
+    ///  <remarks>Standard edition only.</remarks>
     procedure UpdateFromOriginal;
     ///  <summary>Deletes any highlighter preferences.</summary>
+    ///  <remarks>Standard edition only.</remarks>
     procedure DeleteHighligherPrefs;
-    ///  <summary>Checks a proxy password is present in file.</summary>
-    function HasProxyPassword: Boolean;
-    ///  <summary>Deletes proxy password entry.</summary>
-    procedure DeleteProxyPassword;
+    {$ENDIF}
     ///  <summary>Updates Prefs:CodeGen section from format prior to version 9
     ///  to version 9 and later format.</summary>
     procedure UpdateCodeGenEntries;
     ///  <summary>Deletes unused key that determines detail pane index.
     ///  </summary>
     procedure DeleteDetailsPaneIndex;
-    {}{$ENDIF}
+    ///  <summary>Deletes proxy server section.</summary>
+    procedure DeleteProxyServerSection;
+    ///  <summary>Deletes unused Prefs:News section.</summary>
+    procedure DeleteNewsPrefs;
+    ///  <summary>Deletes unused Prefs:Updating section.</summary>
+    procedure DeleteUpdatingPrefs;
+    ///  <summary>Deletes unused UpdateChecks section.</summary>
+    procedure DeleteUpdateChecks;
+    ///  <summary>Deletes unused UserInfo section.</summary>
+    procedure DeleteUserInfo;
     ///  <summary>Effectively renames MainWindow section used prior to version
     ///  11 as WindowState:MainForm.</summary>
     procedure RenameMainWindowSection;
@@ -126,17 +139,33 @@ type
   strict private
     const
       ///  <summary>Current common config file version.</summary>
-      FileVersion = 6;
+      FileVersion = 7;
   strict protected
     ///  <summary>Returns current common config file version.</summary>
     class function GetFileVersion: Integer; override;
   public
     ///  <summary>Stamps config file with current program and file versions.
     ///  </summary>
-    ///  <remarks>Note that the user config file has program version written to
+    ///  <remarks>
+    ///  <para>Note that the user config file has program version written to
     ///  a different section to common config file, hence need for overridden
-    ///  methods.</remarks>
+    ///  methods.</para>
+    ///  <para>Does nothing in portable edition.</para>
+    ///  </remarks>
     procedure Stamp; override;
+   {$IFNDEF PORTABLE}
+    ///  <summary>Deletes program registration information from application
+    ///  section.</summary>
+    ///  <remarks>Standard edition only.</remarks>
+    procedure DeleteRegistrationInfo;
+    ///  <summary>Deletes program key from application section.</summary>
+    ///  <remarks>Standard edition only.</remarks>
+    procedure DeleteProgramKey;
+    {$ELSE}
+    ///  <summary>Deletes and common config file</summary>
+    ///  <remarks>Portable edition only.</remarks>
+    procedure DeleteCfgFile;
+    {$ENDIF}
   end;
 
 
@@ -213,8 +242,23 @@ class function TConfigFileUpdater.IsCurrentProgramVer(
 var
   CfgProgVer: string;  // program version from config file
 begin
-  CfgProgVer := GetIniString('IniFile', 'ProgramVersion', '', CfgFileName);
+  CfgProgVer := PreviousProgramVer(CfgFileName);
   Result := CfgProgVer = TAppInfo.ProgramReleaseVersion;
+end;
+
+function TConfigFileUpdater.PreviousProgramVer: TVersionNumber;
+begin
+  Result := PreviousProgramVer(fCfgFileName);
+end;
+
+class function TConfigFileUpdater.PreviousProgramVer(
+  const CfgFileName: string): TVersionNumber;
+begin
+  if not TVersionNumber.TryStrToVersionNumber(
+    GetIniString('IniFile', 'ProgramVersion', '', CfgFileName),
+    Result
+  ) then
+    Exit(TVersionNumber.Nul);
 end;
 
 procedure TConfigFileUpdater.Stamp;
@@ -267,14 +311,12 @@ begin
   SetIniString('Prefs:CodeGen', 'Warning7.MinCompiler', '20.00', CfgFileName);
 end;
 
-{$IFNDEF PORTABLE}
 procedure TUserConfigFileUpdater.DeleteDetailsPaneIndex;
 begin
   if not TFile.Exists(CfgFileName, False) then
     CreateNewFile;
   DeleteIniKey('MainWindow', 'DetailTab', CfgFileName);
 end;
-{$ENDIF}
 
 {$IFNDEF PORTABLE}
 procedure TUserConfigFileUpdater.DeleteHighligherPrefs;
@@ -285,26 +327,45 @@ begin
 end;
 {$ENDIF}
 
-{$IFNDEF PORTABLE}
-procedure TUserConfigFileUpdater.DeleteProxyPassword;
+procedure TUserConfigFileUpdater.DeleteNewsPrefs;
 begin
   if not TFile.Exists(CfgFileName, False) then
     CreateNewFile;
-  SetIniString('ProxyServer', 'Password', '', CfgFileName);
+  DeleteIniSection('Prefs:News', CfgFileName);
 end;
-{$ENDIF}
+
+procedure TUserConfigFileUpdater.DeleteProxyServerSection;
+begin
+  if not TFile.Exists(CfgFileName, False) then
+    CreateNewFile;
+  DeleteIniSection('ProxyServer', CfgFileName);
+end;
+
+procedure TUserConfigFileUpdater.DeleteUpdateChecks;
+begin
+  if not TFile.Exists(CfgFileName, False) then
+    CreateNewFile;
+  DeleteIniSection('UpdateChecks', CfgFileName);
+end;
+
+procedure TUserConfigFileUpdater.DeleteUpdatingPrefs;
+begin
+  if not TFile.Exists(CfgFileName, False) then
+    CreateNewFile;
+  DeleteIniSection('Prefs:Updating', CfgFileName);
+end;
+
+procedure TUserConfigFileUpdater.DeleteUserInfo;
+begin
+  if not TFile.Exists(CfgFileName, False) then
+    CreateNewFile;
+  DeleteIniSection('UserInfo', CfgFileName);
+end;
 
 class function TUserConfigFileUpdater.GetFileVersion: Integer;
 begin
   Result := FileVersion;
 end;
-
-{$IFNDEF PORTABLE}
-function TUserConfigFileUpdater.HasProxyPassword: Boolean;
-begin
-  Result := GetIniString('ProxyServer', 'Password', '', CfgFileName) <> '';
-end;
-{$ENDIF}
 
 procedure TUserConfigFileUpdater.RenameMainWindowSection;
 begin
@@ -365,7 +426,6 @@ begin
   );
 end;
 
-{$IFNDEF PORTABLE}
 procedure TUserConfigFileUpdater.UpdateCodeGenEntries;
 begin
   // Key that determines if warnings are emitted changes from SwitchOffWarnings
@@ -385,7 +445,6 @@ begin
   else
     SetIniInt('Prefs:CodeGen', 'EmitWarnDirs', 0, CfgFileName);
 end;
-{$ENDIF}
 
 procedure TUserConfigFileUpdater.UpdateFindXRefs;
 begin
@@ -488,6 +547,33 @@ end;
 
 { TCommonConfigFileUpdater }
 
+{$IFDEF PORTABLE}
+procedure TCommonConfigFileUpdater.DeleteCfgFile;
+begin
+  if TFile.Exists(CfgFileName, False) then
+    TFile.Delete(CfgFileName);
+end;
+{$ENDIF}
+
+{$IFNDEF PORTABLE}
+procedure TCommonConfigFileUpdater.DeleteProgramKey;
+begin
+  if not TFile.Exists(CfgFileName, False) then
+    CreateNewFile;
+  DeleteIniKey('Application', 'Key', CfgFileName);
+end;
+{$ENDIF}
+
+{$IFNDEF PORTABLE}
+procedure TCommonConfigFileUpdater.DeleteRegistrationInfo;
+begin
+  if not TFile.Exists(CfgFileName, False) then
+    CreateNewFile;
+  DeleteIniKey('Application', 'RegCode', CfgFileName);
+  DeleteIniKey('Application', 'RegName', CfgFileName);
+end;
+{$ENDIF}
+
 class function TCommonConfigFileUpdater.GetFileVersion: Integer;
 begin
   Result := FileVersion;
@@ -495,10 +581,12 @@ end;
 
 procedure TCommonConfigFileUpdater.Stamp;
 begin
+  {$IFNDEF PORTABLE}
   inherited;
   SetIniString(
     'Application', 'Version', TAppInfo.ProgramReleaseVersion, CfgFileName
   );
+  {$ENDIF}
 end;
 
 end.

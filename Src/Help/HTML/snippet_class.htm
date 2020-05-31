@@ -4,10 +4,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2012, Peter Johnson (www.delphidabbler.com).
- *
- * $Rev$
- * $Date$
+ * Copyright (C) 2012-2020, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Help topic describing class and advanced record snippet kind.
 -->
@@ -30,8 +27,8 @@
       <a name="snippet_class"></a>Class &amp; Advanced Record Snippets
     </h1>
     <p>
-      A class (or advanced record) snippet, defines a <em>single</em> Pascal
-      class or advanced record (i.e. record with methods).
+      A snippet of the class &amp; advanced record kind defines one or more
+      Pascal classes or advanced records (i.e. records with methods).
     </p>
     <p>
       The source code must conform to the following rules:
@@ -39,13 +36,14 @@
     <ul class="spaced">
       <li>
         Each snippet must begin with the <strong>type</strong> keyword as the
-        first non-white-space text in the source code. Comments should not
-        preceed it. Ideally the <strong>type</strong> keyword should be on a
-        line on its own.
+        first non-white-space text in the source code. Comments must not
+        precede it. The <strong>type</strong> keyword must be followed by at
+        least one space or a new line.
       </li>
       <li>
-        Next follow all the class declarations. Addition <strong>type</strong>
-        keywords may be used.
+        Next follows the class or advance record declaration(s). Additional
+        <strong>type</strong> keywords may be used between types, but are not
+        required.
       </li>
       <li>
         Method implementations follow once <em>all</em> the class / record types
@@ -53,17 +51,16 @@
         classes and record types.
       </li>
       <li>
-        The <strong>implementation</strong> keyword must not be used to separate
-        the declaration and the implementation: <em>CodeSnip</em> works out
-        where the implementation starts.
+        Unlike in a Pascal unit, the <strong>implementation</strong> keyword
+        <strong>must not</strong> be used to separate the declaration and the implementation: <em>CodeSnip</em> works out where the implementation
+        starts.
       </li>
     </ul>
     <p>
       <strong class="warning">Warning:</strong> It is an error to use this
-      snippet kind for records or classes that have no methods &ndash; use <a
+      snippet kind for records or classes that have no method implementations (for example pure abstract classes) &ndash; use a <a
         href="snippet_type.htm"
-      >simple type definition</a> instead. It is also an error to define more
-      than one class per snippet.
+      >simple type definition</a> snippet instead.
     </p>
     <p>
       Here are examples valid class and advanced record snippets:
@@ -101,25 +98,34 @@ type
     constructor Create(AX, AY: Integer);
   end;
 
+type // optional type keyword
+  TRectEx = record
+    Top, Left, Width, Height: Integer;
+    constructor Create(ATop, ALeft, AWidth, AHeight: Integer);
+  end;
+
 constructor TPointEx.Create(AX, AY: Integer);
 begin
   X := AX;
   Y := AY;
+end;
+
+constructor TRectEx.Create(ATop, ALeft, AWidth, AHeight: Integer);
+begin
+  Top := ATop;
+  Left := ALeft;
+  Width := AWidth;
+  Height := AHeight;
 end;</pre>
     <p>
-      Class and Advanced Record snippets may refer to other classes or advanced
-      records, <a href="snippet_routine.htm">routines</a>,
-      <a href="snippet_type.htm">simple type definitions</a> or
+      Class &amp; Advanced Record snippets may refer to other class &amp
+      advanced record snippets, <a href="snippet_routine.htm">routines</a>,
+      <a href="snippet_type.htm">simple type definitions</a> and
       <a href="snippet_constant.htm">constants</a>, providing they are defined
-      in Delphi units or elsewhere in the database. The snippet's units and
-      dependency references should indicate where to find referenced types,
-      constants and routines. <a href="snippet_freeform.htm">Freeform</a>
+      in Delphi units or elsewhere in the database. The snippet's <em>units</em>
+      and <em>dependency</em> references should indicate where to find the
+      referenced snippets. <a href="snippet_freeform.htm">Freeform</a>
       and <a href="snippet_unit.htm">unit</a> snippets may not be referenced.
-    </p>
-    <p>
-      It is important that <em>CodeSnip</em> can understand the code because it
-      must be able to separate the declaration and implementation parts when
-      generating a unit containing the snippet.
     </p>
   </body>
 </html>

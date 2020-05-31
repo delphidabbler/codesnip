@@ -4,10 +4,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2012, Peter Johnson (www.delphidabbler.com).
- *
- * $Rev$
- * $Date$
+ * Copyright (C) 2012-2020, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Help topic for First Run wizard dialogue box.
 -->
@@ -24,7 +21,7 @@
       type="application/x-oleobject"
       classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e"
     >
-      <param name="ALink Name" value="FirstRunDlg">
+      <param name="ALink Name" value="V4ConfigDlg">
     </object>
     <h1>
       <a name="dlg_firstrun"></a>
@@ -36,12 +33,13 @@
     </p>
     <p>
       Its purpose is to enable you to preserve preferences from the earlier
-      version of <em>CodeSnip</em> and to import any user snippets database you
-      may have created.
+      version of <em>CodeSnip</em> and to import any user defined snippets
+      database you may have created.
     </p>
     <p>
-      Notes: If you run <em>CodeSnip 4</em> as a different user you may see this
-      dialogue box again since it performs configuration on a per-user basis.
+      <strong>Note:</strong> If you run <em>CodeSnip 4</em> as a different user
+      you may see this dialogue box again since it performs configuration on a
+      per-user basis.
     </p>
     <p>
       The dialogue box takes the form of a multi-page wizard. You can't cancel
@@ -94,19 +92,6 @@
       </li>
       <li>
         <div>
-          If you are updating from v3.6.0 or earlier and have set up a password
-          protected proxy server for internet access you will need to re-enter
-          the password since it will have been lost. This is because format for
-          storing passwords changed at v3.6.1.
-        </div>
-        <div>
-          To re-enter your proxy password use the <a
-            href="dlg_proxyserver.htm"
-          >Proxy Server Configuration</a> dialogue box.
-        </div>
-      </li>
-      <li>
-        <div>
           Your source code formatting preferences will have been lost if you
           are updating from v1.7.4 or earlier.
         </div>
@@ -118,23 +103,9 @@
           >Preferences</a> dialogue box.
         </div>
       </li>
-      <li>
-        <div>
-          If you are updating from v1.8.11 or earlier and have registered
-          <em>CodeSnip</em> you registration information will have been lost.
-        </div>
-        <div>
-          You can check this by displaying the <a
-            href="dlg_about.htm"
-          >About</a> dialogue box and checking the <em>About The Program</em>
-          tab. If it displays a <em>Register CodeSnip</em> button the program
-          is not registered. You can (re)register if you wish by clicking the
-          button.
-        </div>
-      </li>
     </ul>
     <p>
-      Once you have decided whether to preserve preferences or not, click the
+      Once you have decided whether to preserve preferences, click the
       <em>Next</em> button. This will take you to the <em>Snippets database</em>
       page or the <em>Summary</em> page, depending on whether a user defined
       snippets database has been found.
@@ -149,18 +120,19 @@
       you prefer to abandon the database, clear the check box.
     </p>
     <p>
-      If you do create a copy of the database any changes you make to it will
-      not be reflected in the earlier copy, or vice versa. This is because a
-      snippets database updated by <em>CodeSnip 4</em> ceases to be readable by
-      earlier versions.
+      If you do create a copy of the database any changes you make to it in
+      <em>CodeSnip 4</em> will not be reflected in the earlier copy, and vice
+      versa. This is because a snippets database updated by <em>CodeSnip 4</em>
+      ceases to be readable by earlier versions.
     </p>
     <p>
       <strong>Note:</strong> If you don't install the old database you can still
-      export snippets from it later that can be imported into <em>CodeSnip
-      4</em> at a later date, provided you don't uninstall the older version of
-      <em>CodeSnip</em>. See <a
+      export snippets from it later, using the old version of <em>CodeSnip</em>
+      and then import them with <em>CodeSnip 4</em>. If you think you may need
+      to do this do not uninstall the older version of <em>CodeSnip</em>. See <a
         href="task_export.htm"
-      >Exporting and Importing Snippets</a> for further information.
+      >Exporting and Importing Snippets</a> for further information about
+      importing and exporting.
     </p>
     <h2>
       &quot;Summary&quot; page
@@ -184,14 +156,14 @@
       This page is displayed after the configuration is complete.
     </p>
     <p>
-      If you preversed your preference and any loss of information has been
-      detected, or is possible, the information is listed here. See the
+      If you preserved your preferences and any loss of information has been
+      detected, or is possible, that information is listed here. See the
       &quot;Preferences&quot; page section above for details. Otherwise the
       page simply reports that the process is complete.
     </p>
     <p>
       Click <em>Finish</em> to close the wizard. <em>CodeSnip 4</em> will now
-      load.
+      load normally.
     </p>
   </body>
 </html>

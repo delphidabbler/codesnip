@@ -1,5 +1,6 @@
 inherited UserBugReportDlg: TUserBugReportDlg
   Caption = 'Report Bug Online'
+  ExplicitHeight = 375
   PixelsPerInch = 96
   TextHeight = 13
   inherited pnlBody: TPanel
@@ -22,8 +23,9 @@ inherited UserBugReportDlg: TUserBugReportDlg
       AutoSize = False
       Caption = 
         'Please use the link below to display CodeSnip'#39's online bug track' +
-        'er then review the existing bug reports to see if anything simil' +
-        'ar has been reported already, or maybe even fixed.'
+        'er on GitHub (GitHub account required). Please review the existi' +
+        'ng bug reports to see if anything similar has been reported alre' +
+        'ady, or maybe even fixed.'
       WordWrap = True
     end
     object lblInstruct3: TLabel

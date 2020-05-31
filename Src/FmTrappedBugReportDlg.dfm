@@ -1,6 +1,6 @@
 inherited TrappedBugReportDlg: TTrappedBugReportDlg
   Caption = 'Unexpected Error'
-  ExplicitHeight = 356
+  ExplicitHeight = 375
   PixelsPerInch = 96
   TextHeight = 13
   inherited pnlBody: TPanel
@@ -46,7 +46,8 @@ inherited TrappedBugReportDlg: TTrappedBugReportDlg
       AutoSize = False
       Caption = 
         'It will be helpful if you can take the time to report this bug u' +
-        'sing the online CodeSnip bug tracker.'
+        'sing the online CodeSnip bug tracker on GitHub (GitHub account r' +
+        'equired).'
       WordWrap = True
     end
     object lblInstruct2: TLabel [4]
@@ -69,9 +70,11 @@ inherited TrappedBugReportDlg: TTrappedBugReportDlg
       Height = 38
       AutoSize = False
       Caption = 
-        'CodeSnip has gathered some information about the bug that will b' +
-        'e placed on the clipboard. When you are reporting the bug please' +
-        ' paste the information after your description of the problem.'
+        'CodeSnip has gathered some data about the bug that will be place' +
+        'd on the clipboard. When you are reporting the bug please paste ' +
+        'the information after your description of the problem. Please do' +
+        ' write a description of what you were doing. The data on the cli' +
+        'pboard is not sufficient on its own.'
       WordWrap = True
     end
     inherited lblBugTrackerKey: TLabel

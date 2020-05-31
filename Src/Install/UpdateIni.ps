@@ -3,10 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2007-2012, Peter Johnson (www.delphidabbler.com).
- *
- * $Rev$
- * $Date$
+ * Copyright (C) 2007-2020, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Pascal script for use in [Code] Section of CodeSnip's Install.iss.
  *
@@ -91,7 +88,7 @@ begin
   // Set ini file version
   if not FileExists(gCurrentCommonConfigFile) then
     CreateUnicodeConfigFile(gCurrentCommonConfigFile);
-  SetIniInt('IniFile', 'Version', 6, gCurrentCommonConfigFile);
+  SetIniInt('IniFile', 'Version', 7, gCurrentCommonConfigFile);
   // Record application version in common ini file
   SetIniString(
     'Application',

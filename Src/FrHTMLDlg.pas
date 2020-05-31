@@ -3,10 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
- *
- * $Rev$
- * $Date$
+ * Copyright (C) 2005-2020, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements a frame containing a web browser control that displays HTML
  * content that takes on the appearance of a dialogue box.
@@ -101,6 +98,12 @@ begin
     end;
     // Sets paragraph margins and padding
     with CSSBuilder.AddSelector('p') do
+    begin
+      AddProperty(TCSS.MarginProp(cssTop, 6));
+      AddProperty(TCSS.MarginProp(cssBottom, 0));
+      AddProperty(TCSS.PaddingProp(0));
+    end;
+    with CSSBuilder.AddSelector('ul') do
     begin
       AddProperty(TCSS.MarginProp(cssTop, 6));
       AddProperty(TCSS.MarginProp(cssBottom, 0));

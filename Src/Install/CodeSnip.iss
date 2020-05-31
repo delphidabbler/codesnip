@@ -2,10 +2,7 @@
 ; v. 2.0. If a copy of the MPL was not distributed with this file, You can
 ; obtain one at http://mozilla.org/MPL/2.0/
 ;
-; Copyright (C) 2006-2013, Peter Johnson (www.delphidabbler.com).
-;
-; $Rev$
-; $Date$
+; Copyright (C) 2006-2020, Peter Johnson (gravatar.com/delphidabbler).
 ;
 ; Install file generation script for use with Inno Setup.
 
@@ -20,7 +17,7 @@
   /* assumes S begins with "Release " followed by version as x.x.x */ \
   Local[0] = Copy(S, Len("Release ") + 1, 99), \
   Local[0]
-  
+
 #define AppPublisher "DelphiDabbler"
 #define AppName "CodeSnip"
 #define ExeFile AppName + ".exe"
@@ -28,7 +25,6 @@
 #define ReadMeFile "ReadMe.txt"
 #define LicenseFile "License.rtf"
 #define LicenseTextFile "License.html"
-#define PrivacyFile "Privacy.txt"
 #define OutDir SourcePath + "..\..\Exe"
 #define SrcDocsPath SourcePath + "..\..\Docs\"
 #define SrcAssetsPath SourcePath + '\Assets\"
@@ -37,10 +33,10 @@
 #define ExeProg SrcExePath + ExeFile
 #define AppVersion DeleteToVerStart(GetFileProductVersion(ExeProg))
 #define Copyright GetStringFileInfo(ExeProg, LEGAL_COPYRIGHT)
-#define Company "DelphiDabbler.com"
-#define WebAddress "www.delphidabbler.com"
-#define WebURL "http://" + WebAddress + "/"
-#define AppURL WebURL + "software/codesnip"
+#define Company "DelphiDabbler"
+#define WebAddress "github.com/delphidabbler"
+#define WebURL "https://" + WebAddress + "/"
+#define AppURL WebURL + "/codesnip"
 #define InstUninstDir "Uninst"
 
 ; Creates name of setup file from app name, version and any special build string
@@ -94,9 +90,7 @@ Source: {#SrcExePath}{#ExeFile}; DestDir: {app}
 Source: {#SrcExePath}{#HelpFile}; DestDir: {app}; Flags: ignoreversion
 Source: {#SrcDocsPath}{#LicenseTextFile}; DestDir: {app}; Flags: ignoreversion
 Source: {#SrcDocsPath}{#ReadMeFile}; DestDir: {app}; Flags: ignoreversion
-Source: {#SrcDocsPath}{#PrivacyFile}; DestDir: {app}; Flags: ignoreversion
 Source: {#SrcAssetsPath}UpdatingPreview.rtf; Flags: dontcopy
-Source: {#SrcAssetsPath}AutoUpdateChecks.rtf; Flags: dontcopy
 
 [Icons]
 Name: {group}\{#AppPublisher} {#AppName}; Filename: {app}\{#ExeFile}

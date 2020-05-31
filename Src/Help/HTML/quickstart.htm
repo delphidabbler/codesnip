@@ -4,10 +4,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2016, Peter Johnson (www.delphidabbler.com).
- *
- * $Rev$
- * $Date$
+ * Copyright (C) 2005-2020, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Quick start help topic.
 -->
@@ -34,21 +31,13 @@
       This is a guide to getting up and running quickly with <em>CodeSnip</em>.
     </p>
     <h2>
-      Download the database
+      Install the DelphiDabbler Snippets database
     </h2>
     <p>
-      If you have not already done so, you need to get an up to date copy of
-      the <em>CodeSnip</em> database. You will know if this is the case because
-      the program will display a message to that effect when it first starts.
-      Use the <a
-       href="dlg_update.htm">Update From Web</a> dialogue box, reached from the
-      <em>Database | Update From Web</em> menu option.
-    </p>
-    <p>
-      If you need <em>CodeSnip</em> to access the internet via a Proxy Server
-      you should use the <em>Tools | Proxy Server</em> menu option and enter
-      information and the proxy in the resulting <a
-       href="dlg_proxyserver.htm">Proxy Server Configuration</a> dialogue box.
+      If you have not already done so, you can
+      <a href="task_update.htm">install</a> the main <em>DelphiDabbler Code
+      Snippets</em> database. You may be prompted to download the database the
+      first time you run the program.
     </p>
     <h2>
       Customise the Database
@@ -56,13 +45,11 @@
     <p>
       You can add your own snippets to the database. These snippets are held
       separately to the main database and are not affected by database updates.
-      If you wish you can submit user defined code to be considered for
-      inclusion in the main database.
     </p>
     <p>
       Add, edit and delete snippets using the appropriate menu items on the
-      <em>Database</em> menu. You can also save, backup and restore the user
-      database from this menu.
+      <a href="menu_database.htm">Database</a> menu. You can also save, backup
+      and restore the user database from this menu.
     </p>
     <p>
       Snippets can be categorised using any of the available categories or you
@@ -76,12 +63,14 @@
       <a href="overview_pane.htm">Overview Pane</a>, grouped in different ways
       depending on which tab is selected. Select the name of a snippet in the
       Overview Pane to display its source code, description and other
-      information in the Detail Pane. Any snippets required to compile
-      the displayed snippet are listed in the &quot;Required snippets&quot;
-      section. Clicking a snippet's name displays its details. Similar
-      snippets are accessible in the &quot;See also&quot; section. The
-      compilers the snippet is known to compile with are indicated at the bottom
-      of the display.
+      information in the Detail Pane.
+    </p>
+    <p>
+      For Pascal snippets any snippets required to compile the displayed snippet
+      are listed in the &quot;Required snippets&quot; section. Clicking a
+      snippet's name displays its details. Similar snippets are accessible in
+      the &quot;See also&quot; section. The compilers the snippet is known to
+      compile with are indicated at the bottom of the display.
     </p>
     <p>
       Clicking a section heading in the <a href="overview_pane.htm">Overview
@@ -100,7 +89,7 @@
       Searching the database
     </h2>
     <p>
-      You can search the database for specific words, for snippets that
+      You can search the database for specific words, for Pascal snippets that
       compile (or don't compile) under certain compilers or for
       cross-referenced snippets. Use the <a href="dlg_findtext.htm">Find
       Text</a>, <a href="dlg_findcompiler.htm">Find Compiler(s)</a> or
@@ -137,8 +126,8 @@
       accessed from the <em>Snippets | Show Favourites</em> menu option or by
       pressing <span class="smallcaps">F4</span>. Display the snippet you want
       by double clicking it. The snippet will then be displayed in the main
-      window's <a href="detail_pane.htm">detail pane</a> as normal. You can also
-      use the dialogue box to remove any unwanted favourites.
+      window's <a href="detail_pane.htm">detail pane</a> in a new tab. You can
+      also use the dialogue box to remove any unwanted favourites.
     </p>
     <p>
       The <a href="dlg_favourites.htm">Favourites</a> dialogue box is non-modal
@@ -151,8 +140,8 @@
       Test Compiling Snippets
     </h2>
     <p>
-      When any snippet is selected you can test it with any supported compilers
-      currently installed on your computer, provided it is not a
+      When any Pascal snippet is selected you can test it with any supported
+      compilers currently installed on your computer, provided it is not a
       <a href="snippet_freeform.htm">freeform</a> snippet. To do this you must
       first have configured <em>CodeSnip</em> to work with your compilers by
       providing the required information in the
@@ -160,11 +149,11 @@
     </p>
     <p>
       To perform a test compilation select the required snippet in the Overview
-      pane and choose <em>Compile | Test Compile Snippet</em> menu option. The
-      program will then compile the snippet and display the result in the
-      <a href="dlg_testcompile.htm">Test Compile Results</a> dialogue box. Full
-      details of any compiler errors or warnings can be displayed from this
-      dialogue box.
+      pane and choose <em>Compile | Test Compile Snippet</em> menu option or
+      press <span class="smallcaps">F9</span>. The program will then compile the
+      snippet and display the result in the <a href="dlg_testcompile.htm">Test
+      Compile Results</a> dialogue box. Full details of any compiler errors or
+      warnings can be displayed from this dialogue box.
     </p>
     <h2>
       Exporting Snippets
@@ -174,24 +163,36 @@
     </p>
     <ul>
       <li>
-        Any selected routine can be exported to a file using the
+        Any selected <a href="snippet_routine.htm">routine</a> or routines in
+        a selected category can be exported to a file using the
         <a href="dlg_savesnippet.htm">Save Annotated Source</a> dialogue box
         accessed from the <em>File | Save Annotated Source</em> menu option.
       </li>
       <li>
         Plain text and syntax highlighted rich text copies of selected snippets
         can be copied to the clipboard via the <em>Edit | Copy Annotated
-        Source</em> or <em>Edit | Copy Source Code</em> menu options.
+        Source</em> (<a href="snippet_routine.htm">routines</a> only) or
+        <em>Edit | Copy Source Code</em> menu options.
       </li>
       <li>
-        Complete Pascal units can be generated and written to file. The unit
-        will contain all the currently selected snippets (i.e. those displayed
-        in the <a href="overview_pane.htm">Overview Pane</a>). You can
-        explicitly specify the selected snippets by using the
-        <a href="dlg_selectroutines.htm">Select Snippets</a> dialogue box
-        available via <em>Search | Select Snippets</em>. The unit is configured
-        and saved from the <a href="dlg_saveunit.htm">Save Unit</a> dialogue
-        box, displayed from the <em>File | Save Unit</em> menu option.
+        <p>
+          Complete Pascal units can be generated and written to file. The unit
+          will contain all the currently selected snippets (i.e. those displayed
+          in the <a href="overview_pane.htm">Overview Pane</a>). You can
+          explicitly specify the selected snippets by using the
+          <a href="dlg_selectroutines.htm">Select Snippets</a> dialogue box
+          available via the <em>Search | Select Snippets</em> menu option.
+        </p>
+        <p>
+          The unit is configured and saved from the
+          <a href="dlg_saveunit.htm">Save Unit</a> dialogue box, displayed from
+          the <em>File | Save Unit</em> menu option.
+        </p>
+        <p>
+          Note that <a href="snippet_unit.htm">unit</a> and
+          <a href="snippet_freeform.htm">freeform</a> snippets cannot be
+          included in a generated unit.
+        </p>
       </li>
       <li>
         User-defined snippets can be exported to a file that can be imported by

@@ -3,10 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
- *
- * $Rev$
- * $Date$
+ * Copyright (C) 2005-2020, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Cascading style sheet used by HTML displayed in detail panes.
  */
@@ -108,14 +105,6 @@ pre {
 
 #compilers .caption {
   background-color: #FCD9F3;
-}
-
-#auto-updates .caption {
-  background-color: #FFDFAF;
-}
-
-#donate .caption {
-  background-color: #FFF1A4;
 }
 
 #help .caption {

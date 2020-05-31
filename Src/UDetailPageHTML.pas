@@ -3,10 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
- *
- * $Rev$
- * $Date$
+ * Copyright (C) 2005-2020, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Heirachy of classes that render views as HTML. The HTML is used to display
  * the view item in a tab in the detail pane. A factory is provided that can
@@ -415,26 +412,6 @@ var
   Compilers: ICompilers;
   Compiler: ICompiler;
   CompilerList: TStringBuilder;
-
-  ///  <summary>Returns the text of a statement that describes how often am
-  ///  automatic update checked is performed.</summary>
-  ///  <param name="Frequency">Word [in] Days between checks or zero to
-  ///  indicated that no checks are made.</param>
-  ///  <returns>string. Required text.</returns>
-  function UpdateFrequencyText(const Frequency: Word): string;
-  resourcestring
-    sNeverChecked = 'never checked';
-    sCheckedEveryNDays = 'checked every %d days';
-    sCheckedEveryDay = 'checked every day';
-  begin
-    if Frequency = 0 then
-      Result := sNeverChecked
-    else if Frequency = 1 then
-      Result := sCheckedEveryDay
-    else
-      Result := Format(sCheckedEveryNDays, [Frequency]);
-  end;
-
 begin
   inherited;
   Tplt.ResolvePlaceholderHTML(
@@ -484,14 +461,6 @@ begin
   finally
     CompilerList.Free;
   end;
-  Tplt.ResolvePlaceholderText(
-    'ProgramAutoCheckFrequency',
-    UpdateFrequencyText(Preferences.AutoCheckProgramFrequency)
-  );
-  Tplt.ResolvePlaceholderText(
-    'DatabaseAutoCheckFrequency',
-    UpdateFrequencyText(Preferences.AutoCheckDatabaseFrequency)
-  );
 end;
 
 { TDBUpdatedPageHTML }

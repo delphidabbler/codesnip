@@ -3,10 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2008-2012, Peter Johnson (www.delphidabbler.com).
- *
- * $Rev$
- * $Date$
+ * Copyright (C) 2008-2020, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements a static class that manages sharing of user defined snippets.
  * Provides support for exporting snippets, importing snippets and submitting
@@ -42,11 +39,6 @@ type
           represent a snippet or if snippet is not user defined.
       }
   public
-    class procedure Submit(ViewItem: IView);
-      {Submits code for consideration to be included in main database.
-        @param ViewItem [in] View item that may contain a user defined snippet.
-          If so the snippet is included in code for submission by default.
-      }
     class function CanShare: Boolean;
       {Checks if there are any user defined snippets that can be shared (i.e.
       exported or submitted.
@@ -70,7 +62,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  DB.UMain, FmCodeExportDlg, FmCodeImportDlg, FmCodeSubmitDlg, UCodeImportMgr;
+  DB.UMain, FmCodeExportDlg, FmCodeImportDlg, UCodeImportMgr;
 
 
 { TCodeShareMgr }
@@ -122,15 +114,6 @@ begin
   finally
     ImportMgr.Free;
   end;
-end;
-
-class procedure TCodeShareMgr.Submit(ViewItem: IView);
-  {Submits code for consideration to be included in main database.
-    @param ViewItem [in] View item that may contain a user defined snippet. If
-      so the snippet is included in code for submission by default.
-  }
-begin
-  TCodeSubmitDlg.Execute(nil, GetSnippetFromView(ViewItem));
 end;
 
 end.

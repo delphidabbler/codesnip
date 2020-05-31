@@ -3,10 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2006-2015, Peter Johnson (www.delphidabbler.com).
- *
- * $Rev$
- * $Date$
+ * Copyright (C) 2006-2020, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Source for type library that defines the interface to extensions to the
  * browser control DOM's "external object".
@@ -15,7 +12,7 @@
 
 [
   uuid(DA95AEFB-3FB5-4A9E-9F9D-A53DD05CA7D4),
-  version(12.0),
+  version(14.0),
   helpstring("CodeSnip DOM External Object Extender Type Library"),
   custom(DE77BA64-517C-11D1-A2DA-0000F8773CE9, 117441012),
   custom(DE77BA63-517C-11D1-A2DA-0000F8773CE9, 1219706147)
@@ -27,19 +24,19 @@ library ExternalObj
   importlib("stdole2.tlb");
 
   /*
-   * V12 interface of extension to browser DOM's "external" object.
+   * V14 interface of extension to browser DOM's "external" object.
    */
-  interface IWBExternal12;
+  interface IWBExternal14;
 
 
   [
     uuid(BA971829-ED4D-4092-BCAE-4B5DB1A2D74A),
-    version(12.0),
+    version(14.0),
     helpstring("DOM external object extender"),
     dual,
     oleautomation
   ]
-  interface IWBExternal12: IDispatch
+  interface IWBExternal14: IDispatch
   {
     /*
      * Update database from internet.
@@ -70,49 +67,30 @@ library ExternalObj
     HRESULT _stdcall EditSnippet([in] BSTR SnippetName);
 
     /*
-     * Displays Donate dialog box.
-     */
-    [id(0x0000006D)]
-    HRESULT _stdcall Donate(void);
-
-    /*
      * Display identified category.
      *    @param CatID [in] ID of category to display.
      */
     [id(0x0000006E)]
     HRESULT _stdcall DisplayCategory([in] BSTR CatID, [in] VARIANT_BOOL NewTab);
-    [id(0x0000006F)]
 
     /*
      * Open Snippets Editor ready to create a new snippet.
      */
+    [id(0x0000006F)]
     HRESULT _stdcall NewSnippet(void);
-    [id(0x00000070)]
 
     /*
      * Show news items from CodeSnip news feed.
      */
+    [id(0x00000070)]
     HRESULT _stdcall ShowNews(void);
-    [id(0x00000071)]
-
-    /*
-     * Check for program updates.
-     */
-    HRESULT _stdcall CheckForUpdates(void);
-    [id(0x00000072)]
 
     /*
      * Display the program's About box.
      */
+    [id(0x00000071)]
     HRESULT _stdcall ShowAboutBox(void);
-    [id(0x00000073)]
 
-    /*
-     * Displays a tab in the Preferences dialogue box.
-     *    @param TagCls [in] Class name of frame hosting required dialogue box
-     *      page.
-     */
-    HRESULT _stdcall ShowPrefsPage([in] BSTR ClsName);
   };
 
 };

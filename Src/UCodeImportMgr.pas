@@ -3,10 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2008-2012, Peter Johnson (www.delphidabbler.com).
- *
- * $Rev$
- * $Date$
+ * Copyright (C) 2008-2020, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements a static class that handles import of a codesnip export file into
  * the user-defined database.
@@ -97,8 +94,6 @@ type
       fSnippetInfoList: TSnippetInfoList;
       ///  <summary>Value of ImportInfo property.</summary>
       fImportInfoList: TImportInfoList;
-      ///  <summary>Value of UserInfo property.</summary>
-      fUserInfo: TUserInfo;
     ///  <summary>Initialises import information list with details of snippets
     ///  read from import file.</summary>
     procedure InitImportInfoList;
@@ -135,9 +130,6 @@ type
     ///  <remarks>Any existing snippets with same name as imported snippets are
     ///  overwritten.</remarks>
     procedure UpdateDatabase;
-    ///  <summary>Information about user who created the import file.</summary>
-    ///  <remarks>May be null if no user info included in import file.</remarks>
-    property UserInfo: TUserInfo read fUserInfo;
     ///  <summary>List of information describing if and how to import snippets
     ///  in import file. Permits customisation of import.</summary>
     property ImportInfo: TImportInfoList read fImportInfoList;
@@ -213,11 +205,10 @@ procedure TCodeImportMgr.Import(const FileName: string);
 var
   Data: TBytes; // content of import file as bytes
 begin
-  fUserInfo := TUserInfo.CreateNul;
   fImportInfoList.Clear;
   try
     Data := TFileIO.ReadAllBytes(FileName);
-    TCodeImporter.ImportData(fUserInfo, fSnippetInfoList, Data);
+    TCodeImporter.ImportData(fSnippetInfoList, Data);
   except
     on E: EStreamError do
       raise ECodeImportMgr.Create(E);
@@ -244,7 +235,6 @@ end;
 
 procedure TCodeImportMgr.UpdateDatabase;
 
-  // ---------------------------------------------------------------------------
   // Adjusts a snippet's dependency list so that main database is searched for a
   // required snippet if it is not in the user database.
   procedure AdjustDependsList(const Depends: ISnippetIDList);
@@ -263,23 +253,6 @@ procedure TCodeImportMgr.UpdateDatabase;
       Depends[Idx] := SnippetID;
     end;
   end;
-
-  ///  Builds an active text representation of the contributing user's details.
-  function UserDetailsActiveText: IActiveText;
-  resourcestring
-    // user information prefix text
-    sContributorPrefix = 'Contributed by:';
-  begin
-    Result := TActiveTextFactory.CreateActiveText;
-    Result.AddElem(TActiveTextFactory.CreateActionElem(ekPara, fsOpen));
-    Result.AddElem(
-      TActiveTextFactory.CreateTextElem(
-        sContributorPrefix + ' ' + UserInfo.Details.ToString
-      )
-    );
-    Result.AddElem(TActiveTextFactory.CreateActionElem(ekPara, fsClose));
-  end;
-  // ---------------------------------------------------------------------------
 
 var
   Editor: IDatabaseEdit;      // object used to update user database
@@ -300,9 +273,6 @@ begin
       Continue;
 
     AdjustDependsList(SnippetInfo.Data.Refs.Depends);
-
-    if UserInfo.Details.ToString <> '' then
-      SnippetInfo.Data.Props.Extra.Append(UserDetailsActiveText);
 
     Snippet := Database.Snippets.Find(ImportInfo.ImportAsName, True);
     if Assigned(Snippet) then

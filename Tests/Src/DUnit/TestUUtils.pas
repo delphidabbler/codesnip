@@ -1,9 +1,5 @@
 {                    \
   Delphi DUnit Test Case for the UUtils Unit
-  ------------------------------------------
-
-  $Rev$
-  $Date$
 }
 
 unit TestUUtils;
@@ -147,13 +143,13 @@ begin
   CheckEquals('', URIBaseName('foo/'), 'Test 3');
   CheckEquals('bar', URIBaseName('foo/bar'), 'Test 4');
   CheckEquals(
-    'swag.php',
-    URIBaseName('http://www.delphidabbler.com/swag.php'),
+    'foo.php',
+    URIBaseName('http://example.com/foo.php'),
     'Test 5'
   );
   CheckEquals(
     'bar',
-    URIBaseName('http://www.delphidabbler.com/foo/bar'),
+    URIBaseName('http://example.com/foo/bar'),
     'Test 6'
   );
 end;

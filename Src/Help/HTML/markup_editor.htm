@@ -4,10 +4,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2012, Peter Johnson (www.delphidabbler.com).
- *
- * $Rev$
- * $Date$
+ * Copyright (C) 2912-2020, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Help topic describing the use of the Markup Editor.
 -->
@@ -54,14 +51,14 @@
       edit control to be interpreted as plain text.
     </p>
     <p>
-      All characters you enter are treated literally. You cannot style the text.
-      Any URLs you enter are treated as plain text and are not interpreted as
-      hyplerlinks.
+      All characters you enter are treated literally. You cannot format the
+      text, other than to separate it into paragraphs. Any URLs you enter are
+      treated as plain text and are not interpreted as hyperlinks.
     </p>
     <p>
-      You can enter multiple paragraphs of text by separating each paragraph
-      with a blank line. Any text on consequtive lines is otherwise treated as
-      a single line. For example:
+      You enter multiple paragraphs of text by separating each paragraph with a
+      blank line. Any text on consecutive lines is treated as a single line. For
+      example:
     </p>
     <p class="indent bordered">
       Lorem ipsum dolor sit amet<br>
@@ -97,11 +94,11 @@
       Markup
     </h2>
     <p>
-      Choosing the <em>Markup</em> tab causes the entered text to be treated as
-      markup language, which is a very simple, HTML-like, language that allows
-      for a limited amount of text formatting and for the inclusion of
-      hyperlinks. For full details see the <a href="reml.htm">REML</a> help
-      topic.
+      Choosing the <em>Markup</em> tab causes the entered text to be interpreted
+      as <em>CodeSnip</em>'s own markup language, which is a very simple,
+      HTML-like, language that allows for a limited amount of text formatting
+      and for the inclusion of hyperlinks. For full details see the
+      <a href="reml.htm">REML</a> help topic.
     </p>
     <p>
       A fixed width font is used to indicate you are editing
@@ -121,44 +118,44 @@
     </p>
     <ul>
       <li>
-        <div>
+        <p>
           <em>Convert To Plain Text</em>
-        </div>
-        <div>
+        </p>
+        <p>
           This option is only available when the editor is in <em>Markup</em>
           mode. It replaces the <a href="reml.htm">REML</a> markup in the edit
           control with the plain text equivalent.
-        </div>
-        <div>
+        </p>
+        <p>
           All in-line styling and hyperlinks are lost. Paragraphs and headings
           are converted to plain text paragraphs, separated by blank lines.
-        </div>
-        <div>
+        </p>
+        <p>
           The editor is switched into <em>Plain Text</em> mode.
-        </div>
-        <div>
+        </p>
+        <p>
           If there is an error in the markup an error message will be displayed,
           no conversion will take place and the mode will not be changed.
-        </div>
+        </p>
       </li>
       <li>
-        <div>
+        <p>
           <em>Convert To Markup</em>
-        </div>
-        <div>
+        </p>
+        <p>
           This option is only available when the editor is in <em>Plain
           Text</em> mode. It replaces the text entered in the edit control with
           the equivalent <a href="reml.htm">REML</a> code.
-        </div>
-        <div>
+        </p>
+        <p>
           Illegal <a href="reml.htm">REML</a> characters are converted to
           character attributes. Paragraphs (i.e. blocks of text separated by
           blanks lines) are converted to <a href="reml.htm">REML</a> paragraphs
-          using the &lt;p&gt; tag.
-        </div>
-        <div>
+          using the <code class="reml">&lt;p&gt;</code> tag.
+        </p>
+        <p>
           The editor is switched into <em>Markup</em> mode.
-        </div>
+        </p>
       </li>
     </ul>
   </body>

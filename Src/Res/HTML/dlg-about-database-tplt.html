@@ -9,10 +9,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2007-2014, Peter Johnson (www.delphidabbler.com).
- *
- * $Rev$
- * $Date$
+ * Copyright (C) 2007-2020, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Template for content displayed in database tab of about dialogue box.
 -->
@@ -48,44 +45,67 @@
       The DelphiDabbler
       <a
         class="external-link"
-        href="http://delphidabbler.com/url/csdb"
-        title="View the online database"
-      >Code Snippets Database</a> is an online resource containing numerous
-      fragments of useful Object Pascal code.
+        href="https://github.com/delphidabbler/code-snippets"
+      >Code Snippets Database</a> is a resource containing numerous fragments of useful Object Pascal code.<span style="<%LicenseInfoAvailableInline%>"> You are using version <%Version%>.</span>
     </p>
 
-    <p>
-      The source code in the database is copyright &copy; <%Year%> by the
-      database contributors (see below). It is made available under the terms of
-      the <a
-        class="external-link"
-        href="http://opensource.org/licenses/MIT"
-      >MIT License</a>. The code is
-      used entirely at your own risk.
-    </p>
+    <div style="<%DBAvailable%>">
 
-    <p>
-      <strong>Credits</strong>
-    </p>
+      <div style="<%MetaDataAvailable%>">
 
-    <p>
-      The following people have contributed code to the database, or have helped
-      to test it:
-    </p>
+        <p style="<%LicenseInfoAvailable%>">
+          The source code in the database is copyright &copy; <%CopyrightYear%> by <%CopyrightHolders%>. It is made available under the terms of the <%DBLicense%>.
+        </p>
 
-    <div class="scrollbox">
-      <div class="contrib-head">
-        Contributors
+        <p style="<%LicenseInfoNotAvailable%>">
+          No copyright or licensing information is available.
+        </p>
+
+        <p>
+          The code is used entirely at your own risk.
+        </p>
+
+        <p>
+          <strong>Credits</strong>
+        </p>
+
+        <p>
+          The following people have contributed code to the database, or have helped to test it:
+        </p>
+
+        <div class="scrollbox">
+          <div class="contrib-head">
+            Contributors
+          </div>
+          <div class="people-list">
+            <%ContribList%>
+          </div>
+          <div class="tester-head">
+            Testers
+          </div>
+          <div class="people-list">
+            <%TesterList%>
+          </div>
+        </div>
+
       </div>
-      <div class="people-list">
-        <%ContribList%>
-      </div>
-      <div class="tester-head">
-        Testers
-      </div>
-      <div class="people-list">
-        <%TesterList%>
-      </div>
+
+      <p style="<%MetaDataNotAvailable%>">
+        <strong>Credits, License and Copyright information are not available.</strong> The main database may be corrupt. Please use the <em>Database | Install or Update DelphiDabbler Snippets Database</em> menu option to display the <em>Install or Update DelphiDabbler Snippets Database</em> dialogue box and follow the instructions there to get the latest version of the database.
+      </p>
+
+    </div>
+
+    <div style="<%DBNotAvailable%>">
+
+      <p>
+        <strong>The database is not installed.</strong>
+      </p>
+
+      <p>
+        You can install it from the <em>Database | Install or Update DelphiDabbler Snippets Database</em> menu option. <a class="help-link" href="help:TaskUpdateCSDB">Learn more</a>.
+      </p>
+
     </div>
 
   </body>

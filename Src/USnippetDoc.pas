@@ -3,10 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2008-2014, Peter Johnson (www.delphidabbler.com).
- *
- * $Rev$
- * $Date$
+ * Copyright (C) 2008-2020, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements an abstract base class that renders a text document that describes
  * a snippet. Should be overridden by classes that generate actual documents in
@@ -55,10 +52,9 @@ type
     ///  <summary>Creates and returns an array of compiler compatibility
     ///  information for given snippet.</summary>
     function CompilerInfo(const Snippet: TSnippet): TCompileDocInfoArray;
-      {Gets compiler compatibility information for a snippet.
-        @param Snippet [in] Snippet for which compiler information is required.
-        @return Array of compiler compatibility information.
-      }
+    ///  <summary>Generates and returns a string containing information about
+    ///  the main database.</summary>
+    function MainDBInfo: string;
   strict protected
     ///  <summary>Initialise document.</summary>
     ///  <remarks>Does nothing. Descendant classes should perform any required
@@ -114,7 +110,12 @@ uses
   // Delphi
   SysUtils,
   // Project
-  Compilers.UCompilers, DB.UMain, DB.USnippetKind, UStrUtils, Web.UInfo;
+  Compilers.UCompilers,
+  DB.UMain,
+  DB.UMetaData,
+  DB.USnippetKind,
+  UStrUtils,
+  UUrl;
 
 
 { TSnippetDoc }
@@ -158,9 +159,6 @@ resourcestring
   sDependListTitle = 'Required snippets:';
   sXRefListTitle = 'See also:';
   sCompilers = 'Supported compilers:';
-  sMainDatabaseInfo = 'A snippet from the DelphiDabbler CodeSnip Database '
-   + '(%s), licensed under the MIT License '
-   + '(http://opensource.org/licenses/MIT).';
 begin
   Assert(Assigned(Snippet), ClassName + '.Create: Snippet is nil');
   // generate document
@@ -183,13 +181,30 @@ begin
     RenderExtra(Snippet.Extra);
   if not Snippet.UserDefined then
     // database info written only if snippet is from main database
-    RenderDBInfo(Format(sMainDatabaseInfo, [TWebInfo.DatabaseURL]));
+    RenderDBInfo(MainDBInfo);
   Result := FinaliseDoc;
 end;
 
 procedure TSnippetDoc.InitialiseDoc;
 begin
   // Do nothing
+end;
+
+function TSnippetDoc.MainDBInfo: string;
+resourcestring
+  sMainDBInfo = 'A snippet from the DelphiDabbler Code Snippets Database '
+   + '(%0:s), licensed under the %1:s.';
+var
+  DBMetaData: IDBMetaData;
+begin
+  DBMetaData := TMainDBMetaDataFactory.MainDBMetaDataInstance;
+  Result := Format(
+    sMainDBInfo,
+    [
+      TURL.CodeSnipRepo,
+      DBMetaData.GetLicenseInfo.NameWithURL
+    ]
+  );
 end;
 
 function TSnippetDoc.SnippetsToStrings(const SnippetList: TSnippetList):

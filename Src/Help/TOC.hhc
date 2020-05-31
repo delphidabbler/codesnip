@@ -4,10 +4,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
- *
- * $Rev$
- * $Date$
+ * Copyright (C) 2005-2020, Peter Johnson (gravatar.com/delphidabbler).
  *
  * CodeSnip help table of contents file.
 -->
@@ -140,12 +137,12 @@
       <param name="Local" value="HTML\task_customise.htm">
       </OBJECT>
     <LI> <OBJECT type="text/sitemap">
-      <param name="Name" value="Submit Code to the Database">
-      <param name="Local" value="HTML\task_submit.htm">
-      </OBJECT>
-    <LI> <OBJECT type="text/sitemap">
       <param name="Name" value="Export and Import Snippets">
       <param name="Local" value="HTML\task_export.htm">
+      </OBJECT>
+    <LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="Backup and Restore the User Database">
+      <param name="Local" value="HTML\task_backup.htm">
       </OBJECT>
   </UL>
   <LI> <OBJECT type="text/sitemap">
@@ -181,10 +178,6 @@
   <LI> <OBJECT type="text/sitemap">
     <param name="Name" value="License">
     <param name="Local" value="HTML\license.htm">
-    </OBJECT>
-  <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="Privacy Statement">
-    <param name="Local" value="HTML\privacy_statement.htm">
     </OBJECT>
   <LI> <OBJECT type="text/sitemap">
     <param name="Name" value="FAQs">

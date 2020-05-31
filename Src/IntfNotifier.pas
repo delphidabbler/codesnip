@@ -3,10 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
- *
- * $Rev$
- * $Date$
+ * Copyright (C) 2005-2020, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Defines interfaces to set up and use the notifier object that triggers
  * actions in response to user initiated events in the GUI.
@@ -74,26 +71,15 @@ type
     ///  <remarks>Snippet must be user defined.</remarks>
     procedure EditSnippet(const SnippetName: WideString);
 
-    ///  <summary>Displays Donate dialogue box.</summary>
-    procedure Donate;
-
     ///  <summary>Opens Snippets Editor ready to create a new snippet.</summary>
     procedure NewSnippet;
 
     ///  <summary>Displays news items from the CodeSnip news feed.</summary>
     procedure ShowNews;
 
-    ///  <summary>Checks for program updates.</summary>
-    procedure CheckForUpdates;
-
     ///  <summary>Displays the program's About Box.</summary>
     procedure ShowAboutBox;
 
-    ///  <summary>Displays the Preferences dialogue box containing the specified
-    ///  page.</summary>
-    ///  <param name="ClsName">string [in] Class name of the frame that
-    ///  implements the required preferences page.</param>
-    procedure ShowPrefsPage(const ClsName: string);
   end;
 
 type
@@ -140,10 +126,6 @@ type
     ///  <param name="Action">TBasicAction [in] Required action.</param>
     procedure SetEditSnippetAction(const Action: TBasicAction);
 
-    ///  <summary>Sets action used to display Donate dialogue box.</summary>
-    ///  <param name="Action">TBasicAction [in] Required action.</param>
-    procedure SetDonateAction(const Action: TBasicAction);
-
     ///  <summary>Sets action used to display a category.</summary>
     ///  <param name="Action">TBasicAction [in] Required action.</param>
     procedure SetDisplayCategoryAction(const Action: TBasicAction);
@@ -158,18 +140,10 @@ type
     ///  <param name="Action">TBasicAction [in] Required action.</param>
     procedure SetNewsAction(const Action: TBasicAction);
 
-    ///  <summary>Sets action used to check for program updates.</summary>
-    ///  <param name="Action">TBasicAction [in] Required action.</param>
-    procedure SetCheckForUpdatesAction(const Action: TBasicAction);
-
     ///  <summary>Sets action used to display the program's About Box.</summary>
     ///  <param name="Action">TBasicAction [in] Required action.</param>
     procedure SetAboutBoxAction(const Action: TBasicAction);
 
-    ///  <summary>Sets action used to display a given page of the Preferences
-    ///  dialogue box.</summary>
-    ///  <param name="Action">TBasicAction [in] Required action.</param>
-    procedure SetShowPrefsPageAction(const Action: TBasicAction);
   end;
 
 type

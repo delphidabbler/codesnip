@@ -4,10 +4,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2008-2012, Peter Johnson (www.delphidabbler.com).
- *
- * $Rev$
- * $Date$
+ * Copyright (C) 2008-2020, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Help topic for Open Backup dialogue box.
 -->
@@ -33,17 +30,21 @@
        value="RestoreBackupDlg">
     </object>
     <h1>
-      Open Backup Dialogue Box
+      Open Backup File Dialogue Box
     </h1>
     <p>
       This Windows standard dialogue box is displayed when the <em>Database |
       Restore User Database</em> menu option is selected. Use the dialogue to
-      specify the name and location of the previously created backup file that
-      contains the database to be restored.
+      specify the name and location of the backup file that contains the
+      database to be restored.
     </p>
     <p>
-      Click <em>OK</em> restore the database. The existing user database will be
-      overwritten.
+      An error message will be displayed if the selected file is not a valid
+      backup file.
+    </p>
+    <p>
+      Click <em>OK</em> to restore the backup. The existing user database will
+      be overwritten.
     </p>
   </body>
 </html>

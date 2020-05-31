@@ -3,10 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2009-2012, Peter Johnson (www.delphidabbler.com).
- *
- * $Rev$
- * $Date$
+ * Copyright (C) 2009-2020, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Provides support for certain character encodings used by the program.
 }
@@ -62,19 +59,19 @@ type
     ///  <summary>
     ///  Constructs encoded data from array of bytes and specified encoding
     ///  type.
+    ///  </summary>
     ///  <param name="AData">TBytes [in] Source of data.</param>
     ///  <param name="AEncodingType">TEncodingType [in] Type of encoding that
     ///  was used to create byte array.</param>
-    ///  </summary>
     constructor Create(const AData: TBytes; const AEncodingType: TEncodingType);
       overload;
     ///  <summary>
     ///  Constructs encoded data from a Unicode string and specified encoding
     ///  type.
+    ///  </summary>
     ///  <param name="AStr">string [in] Source of data.</param>
     ///  <param name="AEncodingType">TEncodingType [in] Type of encoding to be
     ///  used to encode string.</param>
-    ///  </summary>
     constructor Create(const AStr: string; const AEncodingType: TEncodingType);
       overload;
     ///  <summary>

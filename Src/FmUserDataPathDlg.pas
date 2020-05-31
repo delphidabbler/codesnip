@@ -3,10 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2013, Peter Johnson (www.delphidabbler.com).
- *
- * $Rev$
- * $Date$
+ * Copyright (C) 2013-2020, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements a dialogue box that can be used to move the user database to a
  * different directory.
@@ -23,7 +20,7 @@ uses
   // Delphi
   SysUtils, Forms, Classes, ActnList, StdCtrls, Controls, ExtCtrls,
   // Project
-  FmGenericViewDlg, FmUserDataPathDlg.FrProgress, UBaseObjects, 
+  FmGenericViewDlg, FrProgress, UBaseObjects,
   UControlStateMgr, UUserDBMove;
 
 type
@@ -49,7 +46,7 @@ type
     lblPath: TLabel;
     lblWarning: TLabel;
     edPath: TEdit;
-    frmProgress: TUserDataPathDlgProgressFrame;
+    frmProgress: TProgressFrame;
     ///  <summary>Dispays Browse For Folder dialogue box and copies any chosen
     ///  folder to the edPath edit control.</summary>
     procedure actBrowseExecute(Sender: TObject);

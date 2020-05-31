@@ -3,10 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2012-2013, Peter Johnson (www.delphidabbler.com).
- *
- * $Rev$
- * $Date$
+ * Copyright (C) 2012-2020, Peter Johnson (gravatar.com/delphidabbler).
  *
  * A frame that provides an editor for entering and ammending active text,
  * either as plain text or in markup.

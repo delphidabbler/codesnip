@@ -3,10 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2012-2013, Peter Johnson (www.delphidabbler.com).
- *
- * $Rev$
- * $Date$
+ * Copyright (C) 2012-2020, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements a wizard dialogue box that may be displayed on the first run of
  * CodeSnip v4 to get user to decide whether what data to bring forward from
@@ -117,6 +114,12 @@ type
         procedure AlignForm(const AForm: TCustomForm);
       end;
   strict protected
+    ///  <summary>Modifies window creation parameters to ensure the dialgue box
+    ///  displays a button in the task bar.</summary>
+    ///  <remarks>This is necessary because the dialogue box is displayed before
+    ///  CodeSnip's main window is shown, so there is no suitable button
+    ///  displayed yet.</remarks>
+    procedure CreateParams(var Params: TCreateParams); override;
     ///  <summary>Returns instance of form aligner object.</summary>
     function GetAligner: IFormAligner; override;
     ///  <summary>Arranges controls within each tab sheet.</summary>
@@ -162,6 +165,8 @@ implementation
 
 
 uses
+  // VCL
+  Windows,
   // Project
   UConsts, UCtrlArranger, UMessageBox, UStructs;
 
@@ -271,6 +276,12 @@ begin
   end;
 end;
 
+procedure TV4ConfigDlg.CreateParams(var Params: TCreateParams);
+begin
+  inherited;
+  Params.ExStyle := Params.ExStyle OR WS_EX_APPWINDOW;
+end;
+
 function TV4ConfigDlg.DatabaseAvailable: Boolean;
 begin
   Result := fFirstRun.HaveOldUserDB;
@@ -341,9 +352,7 @@ end;
 
 procedure TV4ConfigDlg.ListChanges;
 resourcestring
-  sRegistration = 'Program registration information has been lost.';
   sHiliter = 'Syntax highlighter customisations have been lost.';
-  sProxyPwd = 'Your proxy server password needs to be re-entered.';
   sSourceFormat = 'Source code formatting preferences may have been lost.';
 var
   Changes: IStringList;
@@ -353,12 +362,8 @@ begin
     // there are changes to config file: show in bullet list
     lblFinish2.Visible := True;
     Changes := TIStringList.Create;
-    if frcRegistration in fCfgChanges then
-      Changes.Add(sRegistration);
     if frcHiliter in fCfgChanges then
       Changes.Add(sHiliter);
-    if frcProxyPwd in fCfgChanges then
-      Changes.Add(sProxyPwd);
     if frcSourceFormat in fCfgChanges then
       Changes.Add(sSourceFormat);
     CreateBulletPage(

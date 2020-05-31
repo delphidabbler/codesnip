@@ -4,10 +4,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2008-2013, Peter Johnson (www.delphidabbler.com).
- *
- * $Rev$
- * $Date$
+ * Copyright (C) 2008-2020, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Help topic for Snippets Editor.
 -->
@@ -33,7 +30,7 @@
     <p>
       This dialogue box is displayed when either the <em>Snippets | New
       Snippet</em> or <em>Snippets | Edit Snippet</em> menu options are
-      selected. It is used to enter details of a new user defined code snippet
+      selected. It is used to enter details of a new user-defined code snippet
       or to edit the details of an existing user-defined snippet.
     </p>
     <p>
@@ -45,10 +42,10 @@
       Editing the snippet
     </h2>
     <p>
-      The dialogue has multiple tabs. All but the <em>Code</em> tab are optional
-      &ndash; others can be used to provide additional information about the
-      snippet. However, if you plan to test compile the snippet you must ensure
-      that the snippet's dependencies and units are properly set up on the
+      The dialogue has multiple tabs. All but the <em>Code</em> tab are
+      optional: they are used to enter additional information that can be useful
+      but is not required. However, if you plan to test compile a Pascal snippet
+      you must ensure that the snippet's dependencies are properly set up on the
       <em>References</em> tab.
     </p>
     <h3>
@@ -56,116 +53,116 @@
     </h3>
     <p>
       This tab gathers all the information needed to define a snippet. All the
-      fields are required. They are:
+      fields except <em>Display Name</em> are required. They are:
     </p>
     <ul>
       <li>
-        <div>
+        <p>
           <em>Name</em>
-        </div>
-        <div>
+        </p>
+        <p>
           Enter a name for the snippet in the edit box. The name must be a valid
           Unicode Pascal identifier. It must also be unique within the user
-          database, it may duplicate names in the main database.
-        </div>
-        <div>
+          database, although it may duplicate names in the main database.
+        </p>
+        <p>
           It is customary to name functions or procedures using the routine's
           name. Overloaded routines are often named by suffixing the routine
           name with '_A', '_B', '_C' and so on.
-        </div>
+        </p>
       </li>
       <li>
-        <div>
+        <p>
           <em>Display Name</em>
-        </div>
-        <div>
+        </p>
+        <p>
           Enter a display name for the snippet. When present this name will be
-          displayed in the main display instead of the snippet's name entered
-          above. This name may contain any characters and does not have to be
+          displayed in the main display instead of the name entered above. The
+          display name may contain any Unicode character and does not need to be
           unique.
-        </div>
-        <div>
+        </p>
+        <p>
           This is an optional entry. If it is not supplied the value of the
           <em>Name</em> control is used as the display name.
-        </div>
-        <div>
-          The display name is useful where the entry in <em>Name</em> field does
-          not display well. For example overloaded snippets named
+        </p>
+        <p>
+          The display name is useful where the entry in the <em>Name</em> field
+          does not display well. For example overloaded snippets named
           &quot;Foo&quot; may have names &quot;Foo_A&quot;, &quot;Foo_B&quot;,
           &quot;Foo_C&quot; etc., which are not too friendly. To improve this
           you could use display names like &quot;Foo (Integer overload)&quot;,
           &quot;Foo (string overload)&quot;, &quot;Foo (Integer,string
           overload)&quot; etc.
-        </div>
+        </p>
       </li>
       <li>
-        <div>
+        <p>
           <em>Description</em>
-        </div>
-        <div>
+        </p>
+        <p>
           Enter a description of the code snippet in the
-          <a href="markup_editor.htm">markup editor</a>. You can use more than
-          one paragraph of text. You have the choice of styling the text and
-          using hyperlinks.
-        </div>
-        <div>
+          <a href="markup_editor.htm">markup editor</a>. More than one paragraph
+          of text can be used. You can enter either plain text or text formatted
+          using <em>CodeSnip</em>'s <a href="reml.htm">REML</a> markup language.
+        </p>
+        <p>
           The description field should not contain &quot;}&quot; characters
-          since the field's text is used in comments in exported Pascal code and
-          the &quot;}&quot; character will terminate the comment early.
-        </div>
-        <div>
+          since the field's text may be enclosed in comments in exported Pascal
+          code and the &quot;}&quot; character will terminate the comment early.
+        </p>
+        <p>
           The description can be previewed using the <em>Preview</em> button.
           Clicking this button also validates markup if you have used it.
-        </div>
+        </p>
       </li>
       <li>
-        <div>
+        <p>
           <em>Kind</em>
-        </div>
-        <div>
+        </p>
+        <p>
           Select the <a href="snippet_kinds.htm">kind of snippet</a> from the
           drop down list.
-        </div>
+        </p>
       </li>
       <li>
-        <div>
+        <p>
           <em>Category</em>
-        </div>
-        <div>
+        </p>
+        <p>
           Select the category to which the snippet belongs from the drop down
           list.
-        </div>
+        </p>
       </li>
       <li>
-        <div>
+        <p>
           <em>Source code</em>
-        </div>
-        <div>
+        </p>
+        <p>
           Enter the snippet's source code in this text box. The format of the
           source code is important unless you are using the freeform snippet
           kind. <a
             href="snippet_kinds.htm"
           >Learn more</a>.
-        </div>
+        </p>
       </li>
       <li>
-        <div>
+        <p>
           <em>Syntax highlight this snippet as Pascal code</em>
-        </div>
-        <div>
+        </p>
+        <p>
           Tick this box if your snippet is written in Pascal and you would like
           the source to be syntax highlighted. Otherwise clear the box. Note
           that the built in highlighter only understands Pascal code and will
           not render code in other languages correctly.
-        </div>
-        <div>
+        </p>
+        <p>
           If you prefer to turn off syntax highlighting completely go to the <a
             href="dlg_prefs_hiliter.htm"
           >Syntax Highlighter</a> tab of the <a
             href="dlg_preferences.htm"
           >Preferences</a> dialogue box, click the <em>Use Predefined
           Styles</em> button and select the <em>No Highliter</em> option.
-        </div>
+        </p>
     </ul>
     <h3>
       References Tab
@@ -174,132 +171,124 @@
       Use this tab to specify the snippets and units that are associated with
       the snippet being edited. If it is intended to test compile the snippet
       then the <em>Dependencies</em> and <em>Units</em> list boxes must be
-      completed if the snippet depends on a Delphi unit or if it uses another
-      snippet from the database.
+      completed correctly whenever the snippet depends on a Delphi unit or if it
+      relies upon another snippet from the database.
     </p>
     <p>
       The available controls are:
     </p>
     <ul>
       <li>
-        <div>
+        <p>
           <em>Cross-references</em> list box
-        </div>
-        <div>
+        </p>
+        <p>
           Use this list box to specify any other snippets to be cross-referenced
-          from this snippet. Check the boxes next to desired snippets. Cross
+          from this snippet. Check the boxes next to the desired snippets. Cross
           references are for information only. All snippets are listed, except
           for the one being edited.
-        </div>
-        <div>
+        </p>
+        <p>
           To deselect all cross-references right click the list box and select
           the <em>Deselect All Cross-References</em> option from the context
           menu.
-        </div>
-        <div>
-          User defined snippets are displayed in blue.
-        </div>
+        </p>
       </li>
       <li>
-        <div>
+        <p>
           <em>Dependencies</em> list box
-        </div>
-        <div>
+        </p>
+        <p>
           Specify any other snippets that this snippet depends upon by checking
           the boxes next to the desired snippets in this list box. If this
           snippet is to be test compiled then any other snippets it requires
           must be specified here or the test compile will fail. The exception is
           that <a href="snippet_unit.htm">unit snippets</a> never have any
           dependencies.
-        </div>
-        <div>
+        </p>
+        <p>
           To deselect all dependencies right click the list box and select the
           <em>Deselect All Dependencies</em> option from the context menu.
-        </div>
-        <div>
-          You can use the context menu to to see all dependencies for the
-          snippet being edited. This displayed the
+        </p>
+        <p>
+          You can use the context menu to see all dependencies for the
+          snippet being edited. This information is displayed in the
           <a href="dlg_dependencies_edit.htm">Dependencies dialogue box</a>.
           All entries checked in the <em>Dependencies</em> list box are
           included, along with all their own dependencies, and so on. You must
           not create a circular dependency; the <em>Dependencies</em> dialogue
           box will help you detect them.
-        </div>
-        <div>
-          The available entries in this list box will vary according to the
-          <a href="snippet_kinds.htm">snippet kind</a> and the kind of snippets
-          it can depend on. For example, <a href="snippet_constant.htm">constant
-          snippets</a> can't depend on <a href="snippet_routine.htm">routine</a>
-          snippets and <a href="snippet_unit.htm">unit snippets</a> can't depend
-          on anything, so the list is empty.
-          <a href="snippet_freeform.htm">Freeform</a> snippets are never
-          included.
-        </div>
-        <div>
-          User defined snippets are displayed in blue.
-        </div>
+        </p>
+        <p>
+          The available snippets in this list box will vary according to the
+          <a href="snippet_kinds.htm">snippet kind</a>. For example,
+          <a href="snippet_constant.htm">constant snippets</a> can't depend on
+          <a href="snippet_routine.htm">routine</a> snippets and <a href="snippet_unit.htm">unit snippets</a> can't depend on anything, so the
+          list will be empty. <a href="snippet_freeform.htm">Freeform</a>
+          snippets are never included in the list.
+        </p>
       </li>
       <li>
-        <div>
+        <p>
           <em>Units</em> list box
-        </div>
-        <div>
-          Select any units that this snippet requires in order to compile using
-          this list box. Required units must be specified if test compilation is
-          to be attempted. A selection of common units is provided, along with
-          any units already associated with the snippet.
-        </div>
-        <div>
-          If the unit you need is not in the list box simply enter its name in
+        </p>
+        <p>
+          Use this list box to select any units that this snippet requires in
+          order to compile. Required units must be specified if test compilation
+          is to be attempted. A selection of common units is provided, along
+          with any units already associated with the snippet.
+        </p>
+        <p>
+          If the unit you need is not in the list box, simply enter its name in
           the edit box next to the <em>Add Unit</em> button and click the
           button.
-        </div>
-        <div>
+        </p>
+        <p>
           Each unit you use is remembered and will appear in the list box in
           future. If the list box is getting too full you can remove most units
           by right clicking them and selecting <em>Delete Selected Unit</em>
           from the context menu. Note that the <code>SysUtils</code>,
           <code>Classes</code>, <code>Windows</code> and <code>Graphics</code>
           units cannot be deleted.
-        </div>
-        <div>
+        </p>
+        <p>
           The list box's context menu also gives options to restore the unit
           list to it's &quot;factory&quot; default and to deselect all the units
           in the list.
-        </div>
-        <div>
+        </p>
+        <p>
           Units are &quot;used&quot; in the order they appear in the list. If
-          this order causes namespace clashes you should prefix ambiguous
+          this ordering causes namespace clashes you should prefix ambiguous
           identifiers in the source code with the unit name, e.g.
           <code>Graphics.TBitmap</code>.
-        </div>
-		<div>
-		  If you intend to test compile your snippet with Delphi XE2 or later
-		  you will need to make sure the appropriate compiler is configured to
-		  search the namespaces containing the units you list here. Do this in
-		  the <a href="dlg_configcompilers.htm">Configure Compilers</a> dialogue
-		  box. Use the <em>Namespaces</em> tab to enter the required namespaces.
-		  Click the <em>Defaults</em> button to use a set of namespaces that
-		  works with many of the commonly used units. You can see a list of
-		  namespaces with the units they contain in the <a
-			href="http://docwiki.embarcadero.com/RADStudio/en/Unit_Scope_Names"
-			class="weblink"
-			target="_blank"
-		  >Unit Scope Names</a> topic of the Embarcadero RADStudio
-		  documentation.
-		</div>
-		<div>
-		  If any unit is not part of the Delphi RTL or VCL you will need to let
-		  the compiler know where to find the unit. Use the <em>Search
-		  Paths</em> tab of the <a href="dlg_configcompilers.htm">Configure
-		  Compilers</a> dialogue box to specify the required path. You need to
-		  do this for each compiler separately.
-		</div>
-		<div>
-		  <strong>Notes:</strong> <a href="snippet_unit.htm">Unit snippets</a>
+        </p>
+        <p>
+          If you intend to test compile your snippet with Delphi XE2 or later
+          you will need to make sure the appropriate compiler is configured to
+          search the namespaces containing the units you list here. Do this
+          using the <em>Namespaces</em> tab of the
+          <a href="dlg_configcompilers.htm">Configure Compilers</a> dialogue
+          box. You need to do this for each compiler separately. You can
+          find a list of namespaces and the units they contain in the
+          <a
+            href="http://docwiki.embarcadero.com/RADStudio/en/Unit_Scope_Names"
+            class="weblink"
+            target="_blank"
+          >Unit Scope Names</a> topic of the Embarcadero RADStudio
+          documentation.
+        </p>
+        <p>
+          If any unit is not part of the Delphi RTL or VCL you will need to let
+          the compiler know where to find the unit. Use the <em>Search
+          Paths</em> tab of the <a href="dlg_configcompilers.htm">Configure
+          Compilers</a> dialogue box to specify the required path. You need to
+          do this for each compiler separately.
+        </p>
+        <p>
+          <strong>Notes:</strong> <a href="snippet_unit.htm">Unit snippets</a>
           must declare their used units in the unit source code, so this list
           box is disabled when the snippet kind is <em>unit</em>.
-        </div>
+        </p>
       </li>
     </ul>
     <h3>
@@ -313,7 +302,7 @@
     <p>
       Enter the required information in the <em>Extra information</em>
       <a href="markup_editor.htm">markup editor</a>. You can enter either plain
-      text of formatted text and hyperlinks using the custom
+      text or text formatted using <em>CodeSnip</em>'s
       <a href="reml.htm">REML</a> markup language.
     </p>
     <p>
@@ -324,19 +313,23 @@
       Compile Results Tab
     </h3>
     <p>
-      Use this tab to specify any known compiler results for the snippet. You
-      can specify the required compiler in several ways:
+      Use this tab to specify any known compilation results for the snippet. You
+      can specify such results in several ways:
     </p>
     <ul>
       <li>
-        Manually, one compiler at a time using the <em>Set a compile
-        results</em> list box. Click the drop down button next to the required
-        compiler then choose the required compile result from the drop down
-        menu, i.e. one of <em>Success</em>, <em>Warning</em>, <em>Error</em> and
-        <em>Unknown</em>. To use the keyboard to modify compile results proceed
-        as follows:
+        <p>
+          Manually, one compiler at a time using the <em>Set compile
+          results</em> list box. Click the drop down button next to the required
+          compiler then choose a compilation result from the drop down
+          menu, i.e. one of <em>Success</em>, <em>Warning</em>, <em>Error</em>
+          and <em>Unknown</em>.
+        </p>
+        <p>
+          To use the keyboard to modify compile results proceed as follows:
+        </p>
         <ol>
-		  <li>
+          <li>
             Move the keyboard focus to the list box using the
             <span class="smallcaps">Tab</span> key.
           </li>
@@ -368,22 +361,22 @@
         result &quot;query&quot; (grey LED).
       </li>
       <li>
-        <div>
+        <p>
           Use the <em>Test Compile</em> button to compile the snippet and set
-          the compile results accordingly. This button is disabled if no
+          the compile results automatically. This button is disabled if no
           compilers are configured or if the snippet is
           <a href="snippet_freeform.htm">freeform</a>.
-        </div>
-        <div>
+        </p>
+        <p>
           If one or more compilers report warnings or errors, a link appears
           below the <em>Test Compile</em> button that can be clicked to display
           details of the warnings or errors.
-        </div>
-        <div>
+        </p>
+        <p>
           You can display the unit used to perform the test compilation by
           clicking the <em>View Test Unit</em> button. This can be useful when
           tracking down errors.
-        </div>
+        </p>
       </li>
     </ul>
     <h2>

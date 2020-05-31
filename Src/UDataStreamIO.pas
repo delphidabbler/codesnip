@@ -3,10 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2006-2012, Peter Johnson (www.delphidabbler.com).
- *
- * $Rev$
- * $Date$
+ * Copyright (C) 2006-2020, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Stream wrappers read / write data from / to a formatted data stream. Classes
  * are provided to read from text or binary streams that conform to the data

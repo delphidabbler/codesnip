@@ -3,10 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2016, Peter Johnson (www.delphidabbler.com).
- *
- * $Rev$
- * $Date$
+ * Copyright (C) 2005-2020, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Class that provides information about the application.
 }
@@ -30,15 +27,6 @@ type
     Static class that provides information about the application.
   }
   TAppInfo = class(TNoConstructObject)
-  strict private
-    class function GenerateKey: string;
-      {Generates unique program key for application in deterministic way.
-        @return Required key.
-      }
-    class function RegistrationCode: string;
-      {Reads program's registration code from persistent storage.
-        @return Registration code or '' if not registered.
-      }
   public
     const CompanyName = 'DelphiDabbler';
       {Name of "company" that owns this program}
@@ -82,7 +70,10 @@ type
         @return Full path to required directory.
       }
     class procedure ChangeUserDataDir(const NewDir: string);
-      {Changes directory where CodeSnip stores the user's "database" files.
+      {Changes directory where CodeSnip stores the user's "database" files and
+      records it in the user config file.
+      Does nothing on portable edition since it does not permit the user
+      database to be moved.
         @param NewDir [in] New directory.
       }
     class function AppExeFilePath: string;
@@ -116,25 +107,6 @@ type
       {Gets version number of program's executable file.
         @return Version number as dotted quad.
       }
-    class function ProgramKey: string;
-      {Gets program's unique identifying key. This key should be different on
-      each installation. If key does not exist it is created.
-        @return 32 digit key.
-      }
-    class procedure RegisterProgram(const Code, Name: string);
-      {Registers program by storing registration code and user name in
-      persistent storage.
-        @param Code [in] Registration code.
-        @param Name [in] Registered user name.
-      }
-    class function IsRegistered: Boolean;
-      {Checks if program is registered.
-        @return True if program registered.
-      }
-    class function RegisteredUser: string;
-      {Reads name of registered user from persistent storage.
-        @return User name or '' if not registered.
-      }
   end;
 
 
@@ -144,10 +116,11 @@ implementation
 uses
   // Delphi
   SysUtils,
-  // DelphiDabbler library
-  PJMD5,
   // Project
-  USettings, UStrUtils, USystemID, USystemInfo, UVersionInfo;
+  USettings,
+  UStrUtils,
+  USystemInfo,
+  UVersionInfo;
 
 
 { TAppInfo }
@@ -186,7 +159,10 @@ begin
 end;
 
 class procedure TAppInfo.ChangeUserDataDir(const NewDir: string);
-  {Changes directory where CodeSnip stores the user's "database" files.
+  {Changes directory where CodeSnip stores the user's "database" files and
+  records it in the user config file.
+  Does nothing on portable edition since it does not permit the user database
+  to be moved.
     @param NewDir [in] New directory.
   }
 {$IFNDEF PORTABLE}
@@ -230,21 +206,6 @@ begin
   {$ENDIF}
 end;
 
-class function TAppInfo.GenerateKey: string;
-  {Generates unique program key for application in deterministic way.
-    @return Required key.
-  }
-begin
-  Result := StrToUpper(
-    TPJMD5.Calculate(
-      USystemID.SystemIDStr, TEncoding.ASCII
-    )
-  );
-  {$IFDEF PORTABLE}
-  Result := 'P:' + StrSliceRight(Result, Length(Result) - 2);
-  {$ENDIF}
-end;
-
 class function TAppInfo.HelpFileName: string;
   {Returns fully specified name of CodeSnip's help file.
     @return Name of help file.
@@ -253,40 +214,12 @@ begin
   Result := AppExeDir + '\CodeSnip.chm';
 end;
 
-class function TAppInfo.IsRegistered: Boolean;
-  {Checks if program is registered.
-    @return True if program registered.
-  }
-begin
-  Result := RegistrationCode <> '';
-end;
-
 class function TAppInfo.ProgramFileVersion: string;
   {Gets version number of program's executable file.
     @return Version number as dotted quad.
   }
 begin
   Result := TVersionInfo.FileVersionNumberStr;
-end;
-
-class function TAppInfo.ProgramKey: string;
-  {Gets program's unique identifying key. This key should be different on each
-  installation. If key does not exist it is created.
-    @return 32 digit key.
-  }
-var
-  Section: ISettingsSection;  // persistent storage where key is recorded
-begin
-  // Try to get key from storage
-  Section := Settings.ReadSection(ssApplication);
-  Result := Section.GetString('Key');
-  if Result = '' then
-  begin
-    // Key not present: create and store it
-    Result := GenerateKey;
-    Section.SetString('Key', Result);
-    Section.Save;
-  end;
 end;
 
 class function TAppInfo.ProgramReleaseInfo: string;
@@ -306,43 +239,6 @@ class function TAppInfo.ProgramReleaseVersion: string;
   }
 begin
   Result := TVersionInfo.ProductVersionNumberStr;
-end;
-
-class function TAppInfo.RegisteredUser: string;
-  {Reads name of registered user from persistent storage.
-    @return User name or '' if not registered.
-  }
-var
-  Section: ISettingsSection;  // persistent storage where name is recorded
-begin
-  Section := Settings.ReadSection(ssApplication);
-  Result := Section.GetString('RegName');
-end;
-
-class procedure TAppInfo.RegisterProgram(const Code, Name: string);
-  {Registers program by storing registration code and user name in persistent
-  storage.
-    @param Code [in] Registration code.
-    @param Name [in] Registered user name.
-  }
-var
-  Section: ISettingsSection;  // persistent storage where code is to be recorded
-begin
-  Section := Settings.ReadSection(ssApplication);
-  Section.SetString('RegCode', Code);
-  Section.SetString('RegName', Name);
-  Section.Save;
-end;
-
-class function TAppInfo.RegistrationCode: string;
-  {Reads program's registration code from persistent storage.
-    @return Registration code or '' if not registered.
-  }
-var
-  Section: ISettingsSection;  // persistent storage where code is recorded
-begin
-  Section := Settings.ReadSection(ssApplication);
-  Result := Section.GetString('RegCode');
 end;
 
 class function TAppInfo.UserAppDir: string;

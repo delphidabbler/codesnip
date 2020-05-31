@@ -3,10 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2007-2013, Peter Johnson (www.delphidabbler.com).
- *
- * $Rev$
- * $Date$
+ * Copyright (C) 2007-2020, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements class that manages the display of dialog boxes.
 }
@@ -90,11 +87,6 @@ type
     function ExecPreferencesDlg(const PageClassName: string;
       out UpdateUI: Boolean): Boolean; overload;
 
-    ///  <summary>Displays Registration dialogue box.</summary>
-    ///  <returns>Boolean. True if user OKd dialogue or False if user cancelled.
-    ///  </returns>
-    function ExecRegistrationDlg: Boolean;
-
     ///  <summary>Displays Select Snippets dialogue box.</summary>
     ///  <param name="SelectedSnippets">TSnippetList [in] List of pre-selected
     ///  snippets.</param>
@@ -117,9 +109,6 @@ type
     ///  </returns>
     function ExecPrintDlg: Boolean;
 
-    ///  <summary>Displays the Donate dialogue box.</summary>
-    procedure ShowDonateDlg;
-
     ///  <summary>Displays the Test Unit dialogue box.</summary>
     ///  <param name="Snippet">TSnippet [in] Snippet for which test unit is to
     ///  be generated.</param>
@@ -136,15 +125,6 @@ type
     function ShowDependenciesDlg(const Snippet: TSnippet;
       const HelpKeyword: string): ISearch;
 
-    ///  <summary>Displays the Proxy Server configuration dialogue box.
-    ///  </summary>
-    ///  <returns>Boolean. True if user OKd dialogue or False if user cancelled.
-    ///  </returns>
-    function ExecProxyServerDlg: Boolean;
-
-    ///  <summary>Displays the News dialogue box.</summary>
-    procedure ShowNewsDlg;
-
     ///  <summary>Displays the Test Compile dialogue box.</summary>
     ///  <param name="CompileMgr">TCompileMgr [in] Object used to manage test
     ///  compilation and to retain results.</param>
@@ -152,9 +132,6 @@ type
     ///  </param>
     procedure ShowTestCompileDlg(const CompileMgr: TCompileMgr;
       const Snippet: TSnippet);
-
-    ///  <summary>Displays the Check For Program Updates dialogue box.</summary>
-    procedure ShowProgramUpdatesDlg;
 
     ///  <summary>Displays the SWAG Import Wizard dialogue box.</summary>
     procedure ShowSWAGImportDlg;
@@ -168,9 +145,8 @@ uses
   // Delphi
   Forms,
   // Project
-  FmAboutDlg, FmDBUpdateDlg, FmDependenciesDlg, FmDonateDlg, FmFindCompilerDlg,
-  FmFindTextDlg, FmFindXRefsDlg, FmNewsDlg, FmPreferencesDlg, FmPrintDlg,
-  FmProgramUpdatesDlg, FmProxyServerDlg, FmRegistrationDlg,
+  FmAboutDlg, FmDBUpdateDlg, FmDependenciesDlg, FmFindCompilerDlg,
+  FmFindTextDlg, FmFindXRefsDlg, FmPreferencesDlg, FmPrintDlg,
   FmSelectionSearchDlg, FmSWAGImportDlg, FmTestCompileDlg, FmUserBugReportDlg,
   UTestUnitDlgMgr;
 
@@ -216,16 +192,6 @@ begin
   Result := TPrintDlg.Execute(Owner);
 end;
 
-function TDialogMgr.ExecProxyServerDlg: Boolean;
-begin
-  Result := TProxyServerDlg.Execute(Owner);
-end;
-
-function TDialogMgr.ExecRegistrationDlg: Boolean;
-begin
-  Result := TRegistrationDlg.Execute(Owner);
-end;
-
 function TDialogMgr.ExecSelectionSearchDlg(
   const SelectedSnippets: TSnippetList; out ASearch: ISearch): Boolean;
 begin
@@ -248,21 +214,6 @@ begin
   Result := TDependenciesDlg.Execute(
     Owner, Snippet, [tiDependsUpon, tiRequiredBy], True, HelpKeyword
   );
-end;
-
-procedure TDialogMgr.ShowDonateDlg;
-begin
-  TDonateDlg.Execute(Owner);
-end;
-
-procedure TDialogMgr.ShowNewsDlg;
-begin
-  TNewsDlg.Execute(Owner);
-end;
-
-procedure TDialogMgr.ShowProgramUpdatesDlg;
-begin
-  TProgramUpdatesDlg.Execute(Owner);
 end;
 
 procedure TDialogMgr.ShowSWAGImportDlg;

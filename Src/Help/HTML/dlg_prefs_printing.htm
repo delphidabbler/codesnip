@@ -4,10 +4,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2007-2012, Peter Johnson (www.delphidabbler.com).
- *
- * $Rev$
- * $Date$
+ * Copyright (C) 2007-2020, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Help topic for Printing tab of Preferences dialogue box.
 -->
@@ -39,7 +36,7 @@
       tab from the <a href="dlg_print.htm">Print</a> dialogue box.
     </p>
     <p>
-      <strong>Note:</strong> Options set in this tab usually take effect the
+      <strong class="warning">Warning:</strong> Options set in this tab usually take effect the
       next time the application is started. The exception is when the tab is
       displayed from the <em>Print</em> dialogue box, when you can choose to
       apply the new options straight away.
@@ -50,7 +47,7 @@
     <p>
       There are two options that change the way printed documents are formatted:
     </p>
-    <ul class="unspaced">
+    <ul class="spaced">
       <li>
         The <em>Syntax highlight source code</em> check box specifies whether
         source code included in the output is syntax highlighted by default.
@@ -65,6 +62,12 @@
       A preview of the effect of the options is displayed to the right of the
       check boxes.
     </p>
+    <p>
+      When syntax highlighting is enabled the style used is as specified in the
+      <a href="dlg_prefs_hiliter.htm">Syntax Highlighter</a> tab. When black and
+      white printing is specified the highlighter's font styles are used but
+      colours are ignored.
+    </p>
     <h2>
       Page Margins
     </h2>
@@ -75,7 +78,7 @@
     <p>
       Margins are displayed and entered either in inches or millimeters. The
       units being used are displayed in the group box caption.
-      <strong>Note:</strong> measurement units can be specified on the
+      <strong>Note:</strong> measurement units can be changed on the
       <a href="dlg_prefs_general.htm">Misc.</a> tab, if it is visible.
     </p>
   </body>

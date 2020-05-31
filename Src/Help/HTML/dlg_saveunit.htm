@@ -4,10 +4,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2006-2012, Peter Johnson (www.delphidabbler.com).
- *
- * $Rev$
- * $Date$
+ * Copyright (C) 2006-2020, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Help topic for Save Unit dialogue box.
 -->
@@ -32,7 +29,7 @@
     <p>
       This dialogue box is displayed when the <em>File | Save Unit</em> menu
       option is clicked. It is used to specify the file name, file type and
-      formatting information for the source code unit that is to be saved.
+      formatting information for the unit that is to be saved.
     </p>
     <p>
       All currently selected snippets, with the exception of any
@@ -46,7 +43,7 @@
     </p>
     <p>
       You specify the name and folder for the file where the unit will be saved
-      in in the usual way. Note that the chosen file name, minus its extension
+      in in the usual way. <strong class="warning">Warning:</strong> the chosen file name, minus its extension
       must be a valid Pascal unit name.
     </p>
     <p>
@@ -55,21 +52,21 @@
     </p>
     <ul>
       <li>
-        A Pascal unit file (.pas) - The code is written to a file with
+        A Pascal unit file (.pas) &ndash; The code is written to a file with
         extension .pas. The unit is given a name based on the file name.
       </li>
       <li>
-        A plain text file (.txt) - This is the same as the Pascal unit file
-        except that the extension is .txt rather than .pas.
+        A plain text file (.txt) &ndash; This is the same as the Pascal unit
+        file except that the extension is .txt rather than .pas.
       </li>
       <li>
-        An HTML file (.html) - This option writes the source code out as a
-        valid XHTML document that uses CSS to format the code. The document can
-        contain syntax highlighting if the <em>Use syntax highlighting</em>
-        check box is checked.
+        An HTML file (.html) &ndash; This option writes the source code out as a
+        valid XHTML document that uses embedded CSS to format the code. The
+        source code will be syntax highlighted if the <em>Use syntax
+        highlighting</em> check box is checked.
       </li>
       <li>
-        A rich text file (.rtf) - The source code is written out as an RTF
+        A rich text file (.rtf) &ndash; The source code is written out as an RTF
         document. Again syntax highlighting can be used if the <em>Use syntax
         highlighting</em> check box is checked.
       </li>
@@ -77,12 +74,39 @@
     <p>
       Each snippet's description can be written as a Pascal comment to the
       output file. Use the <em>Comment style</em> drop down list to specify the
-      style of commenting to be used. Comments can be inhibited using by
-      selecting the <em>No comments</em> option from the list. If the
-      <em>Truncate comments to 1st paragraph</em> check box is ticked then only
-      the first paragraph of the snippet's description is used. Clearing this
-      check box means that all of the description is used.
+      style of commenting to be used. Such comments can be inhibited by
+      selecting the <em>No descriptive comments</em> option from the list. If
+      the <em>Truncate comments to 1st paragraph</em> check box is ticked then
+      only the first paragraph of each snippet's description is used. Clearing
+      this check box means that the full text of snippet descriptions are used.
     </p>
+    <p>
+      The output file encoding can be be specified in the <em>File Encoding</em>
+      drop down list. Options vary depending on the file type. Some file types
+      support only a single encoding. The encodings are:
+    </p>
+    <ul>
+      <li>
+        <em>ANSI (Default)</em> &ndash; the system default ANSI encoding.
+        Available for both plain text and Pascal unit files and as the only
+        option for rich text files.
+      </li>
+      <li>
+        <em>UTF-8</em> &ndash; UTF-8 encoding, with BOM<sup>&dagger;</sup>.
+        Available for both plain text and Pascal unit files and as the only
+        option for XHTML files. If used for Pascal units be warned that the
+        unit will only compile with compilers that support Unicode source
+        files.
+      </li>
+      <li>
+        <em>Unicode (Little Endian)</em> &ndash; UTF-16 LE encoding, with
+        BOM<sup>&dagger;</sup>. Available for plain text files only.
+      </li>
+      <li>
+        <em>Unicode (Big Endian)</em> &ndash; UTF-16 BE encoding, with
+        BOM<sup>&dagger;</sup>. Available for plain text files only.
+      </li>
+    </ul>
     <p>
       The output can be previewed by clicking the <em>Preview</em> button. This
       displays the source code in a dialogue box, formatted according to your
@@ -90,8 +114,15 @@
       clipboard if required.
     </p>
     <p>
-      Use the <em>Save</em> button to write the source code to disk or <em>
-      Cancel</em> to abort.
+      Use the <em>Save</em> button to write the unit to disk or <em>Cancel</em>
+      to abort.
+    </p>
+    <h3>
+      Footnote
+    </h3>
+    <p>
+      &dagger; BOM = Byte Order Mark or Preamble: a sequence of bytes at the
+      start of a text file that identifies its encoding.
     </p>
   </body>
 </html>

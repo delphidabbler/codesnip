@@ -2,10 +2,7 @@
 # v. 2.0. If a copy of the MPL was not distributed with this file, You can
 # obtain one at http://mozilla.org/MPL/2.0/
 #
-# Copyright (C) 2009-2015, Peter Johnson (www.delphidabbler.com).
-#
-# $Rev$
-# $Date$
+# Copyright (C) 2009-2020, Peter Johnson (gravatar.com/delphidabbler).
 #
 # Makefile for the CodeSnip project.
 
@@ -22,10 +19,6 @@ DELPHIROOT = $(DELPHIXE)
 !endif
 !ifndef DELPHIROOT
 !error DELPHIROOT or DELPHIXE environment variable required.
-!endif
-
-!ifndef INDY10
-!error INDY10 environment variable required.
 !endif
 
 # Define macros for required tools
@@ -127,7 +120,7 @@ CodeSnip.exe:
 !ifdef PORTABLE
   @if exist $(EXE)\$(@F) copy $(EXE)\$(@F) $(EXE)\$(@F).bak
 !endif
-  @$(DCC32) $(@B).dpr -B -U"$(INDY10)" $(DELPHIDEFINES)
+  @$(DCC32) $(@B).dpr -B  $(DELPHIDEFINES)
 !ifdef PORTABLE
   @copy $(EXE)\$(@F) $(EXE)\$(@B)-p.exe /Y
   @del $(EXE)\$(@F)
@@ -191,7 +184,6 @@ release:
   @$(ZIP) -j -9 $(OUTFILE) Exe\CodeSnip-p.exe
   @$(ZIP) -j -9 $(OUTFILE) Exe\CodeSnip.chm
   @$(ZIP) -j -9 $(OUTFILE) Docs\ReadMe.txt
-  @$(ZIP) -j -9 $(OUTFILE) Docs\Privacy.txt
   @$(ZIP) -j -9 $(OUTFILE) Docs\License.html
 !endif
   @cd Src

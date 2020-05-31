@@ -162,19 +162,4 @@ inherited AboutDlg: TAboutDlg
       end
     end
   end
-  inherited btnHelp: TButton
-    TabOrder = 3
-  end
-  inherited btnClose: TButton
-    TabOrder = 2
-  end
-  object btnRegister: TButton
-    Left = 8
-    Top = 304
-    Width = 113
-    Height = 25
-    Caption = '&Register CodeSnip...'
-    TabOrder = 1
-    OnClick = btnRegisterClick
-  end
 end

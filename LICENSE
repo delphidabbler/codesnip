@@ -14,7 +14,7 @@ There are two ways that license information can be found:
    do not have human-readable content.
 
 If any information is missing or incorrect please inform the author by filling
-in a bug report at http://delphidabbler.com/url/codesnip-bugs
+in a bug report at https://github.com/delphidabbler/codesnip/issues
 
 If you are planning on re-using any of the CodeSnip source, detailed licensing
 information will be found in Docs/License.html.

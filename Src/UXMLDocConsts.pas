@@ -3,10 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2008-2016, Peter Johnson (www.delphidabbler.com).
- *
- * $Rev$
- * $Date$
+ * Copyright (C) 2008-2020, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Constants defined node names and attributes used in the various XML documents
  * used by CodeSnip.
@@ -41,10 +38,6 @@ const
   // export XML only
   cExportRootNode             = 'codesnip-export';
   cProgVersionNode            = 'prog-version';
-  cUserInfoNode               = 'user-info';
-  cUserNameNode               = 'name';
-  cUserEmailNode              = 'email';
-  cUserCommentsNode           = 'comments';
   cSourceCodeTextNode         = 'source-code-text';
   // common to user-database and export XML
   cRootVersionAttr            = 'version';

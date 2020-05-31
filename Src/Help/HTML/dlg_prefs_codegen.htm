@@ -4,10 +4,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2010-2012, Peter Johnson (www.delphidabbler.com).
- *
- * $Rev$
- * $Date$
+ * Copyright (C) 2010-2020, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Help topic for Code Generation tab of Preferences dialogue box.
 -->
@@ -31,8 +28,9 @@
     </h1>
     <p>
       This tab of the <a href="dlg_preferences.htm">Preferences</a> dialogue box
-      is used to customise the source code emitted by the code generator for
-      test compilations and generated units.
+      is used to customise the source code emitted by the code generator when
+      creating test compilations and when outputting units.
+    </p>
     <p>
       The tab is accessed by selecting the <em>Tools | Preferences</em> menu
       item then clicking the <em>Code Generation</em> tab.
@@ -41,9 +39,10 @@
       Formatting</a> tab for that.
     </p>
     <p>
-      The Code Generator can be configured to generate $WARN compiler directives
-      to switch specified warning messages on or off. These directives are
-      supported by Delphi 6 and later.
+      The Code Generator can be configured to generate <code>$WARN</code>
+      compiler directives to switch specified warning messages on or off. These
+      directives are supported by Delphi 6 and later. Free Pascal is not
+      supported.
     </p>
     <p>
       To enable this facility you must check the <em>Emit $WARN directives</em>
@@ -53,14 +52,12 @@
       The warnings for which compiler directives are to be generated are those
       listed in the list view control situated below the check box. Warnings
       are identified by the text in the <em>Symbol</em> column. These symbols
-      must be valid parameters for Delphi's $WARN directive. Since new symbols
-      have been introduced in different versions of Delphi, the minimum version
-      of the compiler that supports the warning must also be specified. This is
-      shown in the <em>Min. Compiler</em> column of the list view. The version
-      number is that specified by the Delphi's <a
-        href="http://wiki.delphidabbler.com/index.php/Notes/VersionNumbers"
-        class="weblink"
-      ><var>CompilerVersion</var> constant.</a>. Finally, whether a warning is
+      must be valid parameters for Delphi's <code>$WARN</code> directive. Since
+      new symbols have been introduced in different versions of Delphi, the
+      minimum version of the compiler that supports the warning must also be
+      specified. This is shown in the <em>Min. Compiler</em> column of the list
+      view. The version number is that specified by Delphi's
+      <var>CompilerVersion</var> constant. Finally, whether a warning is
       switched on or off is shown in the <em>State</em> column.
     </p>
     <p>
@@ -78,12 +75,12 @@
         <strong>Add a symbol</strong><br>
         Enter the symbol name in the <em>Symbol</em> edit control, specify the
         earliest compiler version that supports it in the <em>Min. Compiler</em>
-        edit control and specify whether the $WARN directive will switch the
-        warning on or off by selecting the appropriate <em>Warning State</em>
-        radio button. Click the <em>Add</em> button to add the symbol to the
-        list. If the <em>Add</em> button remains disabled check that the
+        edit control and specify whether the <code>$WARN</code> directive will
+        switch the warning on or off by selecting the appropriate <em>Warning
+        State</em> radio button. Click the <em>Add</em> button to add the symbol
+        to the list. If the <em>Add</em> button remains disabled check that the
         compiler version is valid and that the symbol name does not already
-        exist.
+        exist in the list view.
       </li>
       <li>
         <strong>Delete a symbol</strong><br>
@@ -96,9 +93,9 @@
         copied into the <em>Symbol</em> and <em>Min. Compiler</em> edit
         controls and the appropriate <em>Warning State</em> radio button will be
         selected. Change the details as required then click the <em>Update</em>
-        button to modify the symbol. The changes will be reflected in the list
-        view. If the entered information is not valid then the <em>Update</em>
-        button will be disabled.
+        button. The changes will be reflected in the list view. If the entered
+        information is not valid then the <em>Update</em> button will be
+        disabled.
       </li>
     </ul>
     <p>
@@ -114,8 +111,8 @@
       source code that will be emitted by the code generator.
     </p>
     <p>
-      The <em>Restore Defaults</em> button discards the current list of $WARN
-      directives and replaces it with a default set.
+      The <em>Restore Defaults</em> button discards the current list of
+      <code>$WARN</code> directives and replaces it with a default set.
     </p>
   </body>
 </html>
