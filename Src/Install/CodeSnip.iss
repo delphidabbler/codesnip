@@ -91,7 +91,6 @@ Source: {#SrcExePath}{#HelpFile}; DestDir: {app}; Flags: ignoreversion
 Source: {#SrcDocsPath}{#LicenseTextFile}; DestDir: {app}; Flags: ignoreversion
 Source: {#SrcDocsPath}{#ReadMeFile}; DestDir: {app}; Flags: ignoreversion
 Source: {#SrcAssetsPath}UpdatingPreview.rtf; Flags: dontcopy
-Source: {#SrcAssetsPath}AutoUpdateChecks.rtf; Flags: dontcopy
 
 [Icons]
 Name: {group}\{#AppPublisher} {#AppName}; Filename: {app}\{#ExeFile}

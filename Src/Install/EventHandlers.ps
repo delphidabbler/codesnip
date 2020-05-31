@@ -22,10 +22,6 @@ var
   // a v4 preview release.
   gUpdateFromPreviewPage: TOutputMsgMemoWizardPage;
 
-  // Reference to custom memo page that displays information about automatic
-  // update checking.
-  gAutoUpdateCheckPage: TOutputMsgMemoWizardPage;
-
   // Flag true if user wants to bring forward a copy of the main database
   gDatabaseCopyingRequested: Boolean;
 
@@ -79,18 +75,6 @@ begin
   if LoadStringFromFile(RTFFile, RTF) then
     gUpdateFromPreviewPage.RichEditViewer.RTFText := RTF;
 
-  // page that displays information about automatic updatw checking
-  gAutoUpdateCheckPage := CreateOutputMsgMemoPage(
-    wpLicense,
-    'Information',
-    'CodeSnip''s new Automatic Update Checking feature.',
-    '',
-    ''
-  );
-  ExtractTemporaryFile('AutoUpdateChecks.rtf');
-  RTFFile := ExpandConstant('{tmp}\AutoUpdateChecks.rtf');
-  if LoadStringFromFile(RTFFile, RTF) then
-    gAutoUpdateCheckPage.RichEditViewer.RTFText := RTF;
 end;
 
 // Called to determine whether page specified by PageID should be displayed.
@@ -114,16 +98,6 @@ begin
       'Application', 'Version', '', gCurrentCommonConfigFile
     );
     if Pos('alpha', ProgVer) = 0 then
-      Result := True;
-  end
-  else if PageId = gAutoUpdateCheckPage.ID then
-  begin
-    ProgVer := GetIniString(
-      'Application', 'Version', '', gCurrentCommonConfigFile
-    );
-    if CompareVerNums(
-      StrToVersionInfo(ProgVer), CreateVersionNumber(4, 4, 0, 0)
-    ) >= 0 then
       Result := True;
   end;
 end;
