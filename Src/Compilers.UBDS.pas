@@ -144,6 +144,12 @@ begin
       Result := 'D10S';
     ciD101B:
       Result := 'D101B';
+    ciD102T:
+      Result := 'D102T';
+    ciD103R:
+      Result := 'D103R';
+    ciD104S:
+      Result := 'D104S';
     else
       raise EBug.Create(ClassName + '.GetIDString: Invalid ID');
   end;
@@ -162,6 +168,9 @@ resourcestring
   sDelphiXE8 = 'Delphi XE8';            // name of Delphi XE8 compiler
   sDelphi10S = 'Delphi 10 Seattle';     // name of Delphi 10 compiler
   sDelphi101B = 'Delphi 10.1 Berlin';   // name of Delphi 10.1 compiler
+  sDelphi102T = 'Delphi 10.2 Tokyo';    // name of Delphi 10.2 compiler
+  sDelphi103R = 'Delphi 10.3 Rio';      // name of Delphi 10.3 compiler
+  sDelphi104S = 'Delphi 10.4 Sydney';   // name of Delphi 10.4 compiler
 begin
   case GetID of
     ciDXE:
@@ -184,6 +193,12 @@ begin
       Result := sDelphi10S;
     ciD101B:
       Result := sDelphi101B;
+    ciD102T:
+      Result := sDelphi102T;
+    ciD103R:
+      Result := sDelphi103R;
+    ciD104S:
+      Result := sDelphi104S;
     else
       Result := Format(sCompilerName, [ProductVersion]);
   end;
@@ -214,6 +229,9 @@ begin
     ciDXE8    : Result := '\Software\Embarcadero\BDS\16.0';
     ciD10S    : Result := '\Software\Embarcadero\BDS\17.0';
     ciD101B   : Result := '\Software\Embarcadero\BDS\18.0';
+    ciD102T   : Result := '\Software\Embarcadero\BDS\19.0';
+    ciD103R   : Result := '\Software\Embarcadero\BDS\20.0';
+    ciD104S   : Result := '\Software\Embarcadero\BDS\21.0';
     else raise EBug.Create(ClassName + '.InstallationRegKey: Invalid ID');
   end;
 end;

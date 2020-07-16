@@ -679,6 +679,9 @@ begin
   AddMenuItem('Delphi XE8', 29.0);
   AddMenuItem('Delphi 10 Seattle', 30.0);
   AddMenuItem('Delphi 10.1 Berlin', 31.0);
+  AddMenuItem('Delphi 10.2 Tokyo', 32.0);
+  AddMenuItem('Delphi 10.3 Rio', 33.0);
+  AddMenuItem('Delphi 10.4 Sydney', 34.0);
 end;
 
 procedure TCodeGenPrefsFrame.PreDefCompilerMenuClick(Sender: TObject);
