@@ -40,6 +40,9 @@ type
     ciDXE8,                             // Delphi XE8
     ciD10S,                             // Delphi 10 Seattle
     ciD101B,                            // Delphi 10.1 Berlin
+    ciD102T,                            // Delphi 10.2 Tokyo
+    ciD103R,                            // Delphi 10.3 Rio
+    ciD104S,                            // Delphi 10.4 Sydney
     ciFPC                               // Free Pascal
   );
 
@@ -52,7 +55,8 @@ const
   ///  compilers.</summary>
   cBDSCompilers = [
     ciD2005w32, ciD2006w32, ciD2007, ciD2009w32, ciD2010, ciDXE, ciDXE2,
-    ciDXE3, ciDXE4, ciDXE5, ciDXE6, ciDXE7, ciDXE8, ciD10S, ciD101B
+    ciDXE3, ciDXE4, ciDXE5, ciDXE6, ciDXE7, ciDXE8, ciD10S, ciD101B, ciD102T,
+    ciD103R, ciD104S
   ];
 
 const
