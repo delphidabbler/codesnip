@@ -43,7 +43,8 @@
     <p>
       <em>REML</em> is <em>CodeSnip</em>'s own little markup language that can
       be used to style the text of a snippet's description and / or extra
-      information.
+      information. The latest version is v5, which is backwards compatible with
+	  all other versions.
     </p>
     <h2>
       Language Details
@@ -66,43 +67,80 @@
       <dd>
         Renders the enclosed markup as a heading.
       </dd>
+      <dt><code class="reml">&lt;ol&gt;...&lt;/ol&gt;</code></dt>
+      <dd>
+        Renders the enclosed HTML as an ordered list. Must contain
+        <code class="value">&lt;li&gt;...&lt;/li&gt</code> blocks and nothing
+        else.
+      </dd>
+      <dt><code class="reml">&lt;ul&gt;...&lt;/ul&gt;</code></dt>
+      <dd>
+        Renders the enclosed HTML as an unordered list. Must contain
+        <code class="value">&lt;li&gt;...&lt;/li&gt</code> blocks and nothing
+        else.
+      </dd>
+      <dt><code class="reml">&lt;l1&gt;...&lt;/li&gt;</code></dt>
+      <dd>
+        Renders the enclosed HTML as a list item. May only be used within
+        <code class="value">&lt;ol&gt;...&lt;/ol&gt;</code> and
+        <code class="value">&lt;ul&gt;...&lt;/ul&gt;</code> blocks.
+      </dd>
     </dl>
     <p>
-      The following rules apply to the use of
-      <code class="reml">&lt;p&gt;</code> and
-      <code class="reml">&lt;heading&gt;</code>
+      The following rules apply to the use of block level tags:
     </p>
     <ol>
       <li>
-        The tags must not be nested.
+        Must be matched, e.g.
+        <code class="value">&lt;p&gt;</code> must have a matching
+        <code class="value">&lt;/p&gt;</code>.
       </li>
       <li>
-        The tags must be matched, e.g.
-        <code class="reml">&lt;p&gt;</code> must have a matching
-        <code class="reml">&lt;/p&gt;</code>.
+        <code class="value">&lt;p&gt;...&lt;/p&gt;</code> and
+        <code class="value">&lt;heading&gt;...&lt;/heading&gt;</code> blocks
+        must not contain other block level tags.
       </li>
       <li>
-        All text should be embedded within block level tags, e.g. <span
-          class="code"
-        >&lt;heading&gt;heading&lt;/heading&gt; &lt;p&gt;text&lt;/p&gt;</span>
-        or simply <span
-          class="code"
-        >&lt;p&gt;text&lt;/p&gt;</span>.
+        <code class="value">&lt;ol&gt;...&lt;/ol&gt;</code> and
+        <code class="value">&lt;ul&gt;...&lt;/ul&gt;</code> blocks must only
+        contain one or more
+        <code class="value">&lt;li&gt;...&lt;/li&gt;</code> blocks.
+      </li>
+      <li>
+        <code class="value">&lt;li&gt;...&lt;/li&gt;</code> blocks must not
+        contain
+        <code class="value">&lt;p&gt;...&lt;/p&gt;</code>,
+        <code class="value">&lt;heading&gt;...&lt;/heading&gt;</code> or other
+        <code class="value">&lt;li&gt;...&lt;/li&gt;</code> blocks directly,
+        but may contain
+        <code class="value">&lt;ol&gt;...&lt;/ol&gt;</code> and
+        <code class="value">&lt;ul&gt;...&lt;/ul&gt;</code> blocks.
+      </li>
+      <li>
+        All text should be embedded within
+        <code class="value">&lt;p&gt;...&lt;/p&gt;</code>,
+        <code class="value">&lt;heading&gt;...&lt;/heading&gt;</code> or
+        <code class="value">&lt;li&gt;...&lt;/li&gt;</code> block level tags,
+        e.g. <code class="value"
+        >&lt;heading&gt;heading&lt;/heading&gt;&lt;p&gt;text&lt;/p&gt;</code>
+        or simply <code class="value">&lt;p&gt;text&lt;/p&gt;</code>.
+      </li>
+      <li>
+        White space between blocks must be ignored.
       </li>
     </ol>
     <p>
-      Here are some valid examples:
+      Here is a valid example:
     </p>
-    <ol>
-      <li class="extra-spacing">
-        <code class="reml">&lt;p&gt;Hello World&lt;/p&gt;</code>
-      </li>
-      <li>
-        <code class="reml">&lt;heading&gt;Hello&lt;/heading&gt;<br>
-        &lt;p&gt;Hello World&lt;/p&gt;</code>
-      </li>
-    </ol>
-    <p>
+    <pre class="sample">&lt;p&gt;Hello World&lt;/p&gt;
+&lt;heading&gt;Hello&lt;/heading&gt;
+&lt;p&gt;Hello World&lt;/p&gt;
+&lt;ol&gt;
+  &lt;li&gt;one&lt;/li&gt;
+  &lt;li&gt;two&lt;/li&gt;
+  &lt;li&gt;three&lt;/li&gt;
+&lt;/ol&gt;</pre>
+          <p>
       Srictly speaking, the following example is invalid code &ndash; the
       highlighted sections are in error, because they are not contained within
       block tags.
@@ -187,30 +225,141 @@
       A few other character entities are supported for convenience. Here is the
       complete list:
     </p>
-    <ul class="unspaced">
-      <li>
-        <code class="reml">&amp;lt;</code> for <code class="reml">&lt;</code>
-      </li>
-      <li>
-        <code class="reml">&amp;gt;</code> for <code class="reml">&gt;</code>
-      </li>
-      <li>
-        <code class="reml">&amp;quot;</code> for
-        <code class="reml">&quot;</code>
-      </li>
-      <li>
-        <code class="reml">&amp;amp;</code> for <code class="reml">&amp;</code>
-      </li>
-      <li>
-        <code class="reml">&amp;copy;</code> for
-        <code class="reml">&copy;</code>
-      </li>
-    </ul>
+    <table class="bordered" cellspacing="1" cellpadding="0">
+      <thead>
+        <tr>
+          <th>Character Entity</th>
+          <th>Actual Character</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>&amp;amp;</code></td>
+          <td class="centre">&amp;</td>
+        </tr>
+        <tr>
+          <td><code>&amp;quot;</code></td>
+          <td class="centre">&quot;</td>
+        </tr>
+        <tr>
+          <td><code>&amp;gt;</code></td>
+          <td class="centre">&gt;</td>
+        </tr>
+        <tr>
+          <td><code>&amp;lt;</code></td>
+          <td class="centre">&lt;</td>
+        </tr>
+        <tr>
+          <td><code>&amp;copy;</code></td>
+          <td class="centre">&copy;</td>
+        </tr>
+        <tr>
+          <td><code>&amp;times;</code></td>
+          <td class="centre">&times;</td>
+        </tr>
+        <tr>
+          <td><code>&amp;divide;</code> or <code>&amp;div;</code></td>
+          <td class="centre">&divide;</td>
+        </tr>
+        <tr>
+          <td><code>&amp;plusmn;</code></td>
+          <td class="centre">&plusmn;</td>
+        </tr>
+        <tr>
+          <td><code>&amp;ne;</code> or <code>&amp;neq;</code></td>
+          <td class="centre">&ne;</td>
+        </tr>
+        <tr>
+          <td><code>&amp;sum;</code></td>
+          <td class="centre">&sum;</td>
+        </tr>
+        <tr>
+          <td><code>&amp;infin;</code></td>
+          <td class="centre">&infin;</td>
+        </tr>
+        <tr>
+          <td><code>&amp;pound;</code></td>
+          <td class="centre">&pound;</td>
+        </tr>
+        <tr>
+          <td><code>&amp;curren;</code></td>
+          <td class="centre">&curren;</td>
+        </tr>
+        <tr>
+          <td><code>&amp;yen;</code></td>
+          <td class="centre">&yen;</td>
+        </tr>
+        <tr>
+          <td><code>&amp;euro;</code></td>
+          <td class="centre">&euro;</td>
+        </tr>
+        <tr>
+          <td><code>&amp;cent;</code></td>
+          <td class="centre">&cent;</td>
+        </tr>
+        <tr>
+          <td><code>&amp;dagger;</code></td>
+          <td class="centre">&dagger;</td>
+        </tr>
+        <tr>
+          <td><code>&amp;ddagger;</code> or <code>&amp;Dagger;</code></td>
+          <td class="centre">&ddagger;</td>
+        </tr>
+        <tr>
+          <td><code>&amp;hellip;</code></td>
+          <td class="centre">&hellip;</td>
+        </tr>
+        <tr>
+          <td><code>&amp;para;</code></td>
+          <td class="centre">&para;</td>
+        </tr>
+        <tr>
+          <td><code>&amp;sect;</code></td>
+          <td class="centre">&sect;</td>
+        </tr>
+        <tr>
+          <td><code>&amp;reg;</code></td>
+          <td class="centre">&reg;</td>
+        </tr>
+        <tr>
+          <td><code>&amp;frac14;</code></td>
+          <td class="centre">&frac14;</td>
+        </tr>
+        <tr>
+          <td><code>&amp;frac12;</code> or <code>&amp;half;</code></td>
+          <td class="centre">&frac12;</td>
+        </tr>
+        <tr>
+          <td><code>&amp;frac34;</code></td>
+          <td class="centre">&frac34;</td>
+        </tr>
+        <tr>
+          <td><code>&amp;micro;</code></td>
+          <td class="centre">&micro;</td>
+        </tr>
+        <tr>
+          <td><code>&amp;deg;</code></td>
+          <td class="centre">&deg;</td>
+        </tr>
+        <tr>
+          <td><code>&amp;laquo;</code></td>
+          <td class="centre">&laquo;</td>
+        </tr>
+        <tr>
+          <td><code>&amp;raquo;</code></td>
+          <td class="centre">&raquo;</td>
+        </tr>
+        <tr>
+          <td><code>&amp;iquest;</code></td>
+          <td class="centre">&iquest;</td>
+        </tr>
+      </tbody>
+    </table>
     <p>
-      By way of an example, if you want to display <code>x &lt; y</code>, use:
+      By way of an example, if you want to display <code>x &ne; y</code>, use:
     </p>
     <p class="indent">
-      <code class="reml">x &amp;lt; y</code>
+      <code class="reml">x &amp;ne; y</code>
     </p>
     <p>
       No other symbolic character entities are supported.
@@ -226,4 +375,3 @@
     </p>
   </body>
 </html>
-
