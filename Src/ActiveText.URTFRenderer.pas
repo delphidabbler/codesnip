@@ -196,7 +196,7 @@ begin
       RenderTextElem(TextElem, RTFBuilder)
     else if Supports(Elem, IActiveTextActionElem, ActionElem) then
     begin
-      if ActionElem.DisplayStyle = dsBlock then
+      if TActiveTextElemCaps.DisplayStyleOf(ActionElem.Kind) = dsBlock then
         RenderBlockActionElem(ActionElem, RTFBuilder)
       else
         RenderInlineActionElem(ActionElem, RTFBuilder);

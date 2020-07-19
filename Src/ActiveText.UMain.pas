@@ -120,14 +120,17 @@ type
 type
   ///  <summary>Supported types of active text action elements.</summary>
   TActiveTextActionElemKind = (
-    ekLink,         // link element: has a URL (inline)
-    ekStrong,       // text formatted as strong (inline)
-    ekEm,           // text formatted as emphasised (inline)
-    ekVar,          // text formatted as variable (inline)
-    ekPara,         // delimits a paragraph (block level)
-    ekWarning,      // text formatted as a warning (inline)
-    ekHeading,      // delimits a heading (block level)
-    ekMono          // text formatted as mono spaced (inline)
+    ekLink,           // link element: has a URL (inline)
+    ekStrong,         // text formatted as strong (inline)
+    ekEm,             // text formatted as emphasised (inline)
+    ekVar,            // text formatted as variable (inline)
+    ekPara,           // delimits a paragraph (block level)
+    ekWarning,        // text formatted as a warning (inline)
+    ekHeading,        // delimits a heading (block level)
+    ekMono,           // text formatted as mono spaced (inline)
+    ekUnorderedList,  // container for unordered lists (block level)
+    ekOrderedList,    // container for ordered list (block level)
+    ekListItem        // list item (block level)
   );
 
 type
@@ -157,12 +160,6 @@ type
     function GetAttrs: IActiveTextAttrs;
     ///  <summary>Object describing element's attributes.</summary>
     property Attrs: IActiveTextAttrs read GetAttrs;
-    ///  <summary>Returns value that indicates whether element is an inline or
-    ///  block element.</summary>
-    function GetDisplayStyle: TActiveTextDisplayStyle;
-    ///  <summary>Indicates whether element displays inline or as a block.
-    ///  </summary>
-    property DisplayStyle: TActiveTextDisplayStyle read GetDisplayStyle;
   end;
 
 type
@@ -273,6 +270,162 @@ type
       IActiveTextAttrs; overload;
   end;
 
+type
+  ///  <summary>Provides information about the capabilities of each supported
+  ///  active text element.</summary>
+  TActiveTextElemCaps = record
+  strict private
+    type
+      ///  <summary>Fields used to define an active text element's capabilities.
+      ///  </summary>
+      TCaps = record
+      public
+        var
+          ///  <summary>Determines how element is to be displayed.</summary>
+          DisplayStyle: TActiveTextDisplayStyle;
+          ///  <summary>Set of elements that may not occur inside the element.
+          ///  </summary>
+          Exclusions: TActiveTextActionElemKinds;
+          ///  <summary>Set of elements that are permitted as parents of the
+          ///  element.</summary>
+          ///  <remarks>An empty set is taken to mean any element is permitted.
+          ///  </remarks>
+          RequiredParents: TActiveTextActionElemKinds;
+          ///  <summary>Specifies whether plain text can be contained within the
+          ///  element.</summary>
+          PermitsText: Boolean;
+      end;
+    const
+      ///  <summary>Set of block level elements.</summary>
+      BlockElems = [
+        ekPara, ekHeading, ekUnorderedList, ekOrderedList, ekListItem
+      ];
+      ///  <summary>Set of inline elements.</summary>
+      InlineElems = [
+        ekLink, ekStrong, ekEm, ekVar, ekWarning, ekMono
+      ];
+      ///  <summary>Set of all elements.</summary>
+      AllElems = BlockElems + InlineElems;
+      ///  <summary>Map of all elements to their capabilities.</summary>
+      Map: array[TActiveTextActionElemKind] of TCaps =
+        (
+          (
+            // ekLink
+            //   may contain any inline elements but no block elements
+            DisplayStyle: dsInline;
+            Exclusions: BlockElems;
+            RequiredParents: [];
+            PermitsText: True;
+          ),
+          (
+            // ekStrong
+            //   may contain any inline elements but no block elements
+            DisplayStyle: dsInline;
+            Exclusions: BlockElems;
+            RequiredParents: [];
+            PermitsText: True;
+          ),
+          (
+            // ekEm
+            //   may contain any inline elements but no block elements
+            DisplayStyle: dsInline;
+            Exclusions: BlockElems;
+            RequiredParents: [];
+            PermitsText: True;
+          ),
+          (
+            // ekVar
+            //   may contain any inline elements but no block elements
+            DisplayStyle: dsInline;
+            Exclusions: BlockElems;
+            RequiredParents: [];
+            PermitsText: True;
+          ),
+          (
+            // ekPara
+            //   may contain any inline elements but no block elements
+            DisplayStyle: dsBlock;
+            Exclusions: BlockElems;
+            RequiredParents: [];
+            PermitsText: True;
+          ),
+          (
+            // ekWarning
+            //   may contain any inline elements but no block elements
+            DisplayStyle: dsInline;
+            Exclusions: BlockElems;
+            RequiredParents: [];
+            PermitsText: True;
+          ),
+          (
+            // ekHeading
+            //   may contain any inline elements but no block elements
+            DisplayStyle: dsBlock;
+            Exclusions: BlockElems;
+            RequiredParents: [];
+            PermitsText: True;
+          ),
+          (
+            // ekMono
+            //   may contain any inline elements but no block elements
+            DisplayStyle: dsInline;
+            Exclusions: BlockElems;
+            RequiredParents: [];
+            PermitsText: True;
+          ),
+          (
+            // ekUnorderedList
+            //   may contain only list item elements
+            DisplayStyle: dsBlock;
+            Exclusions: AllElems - [ekListItem];
+            RequiredParents: [];
+            PermitsText: False
+          ),
+          (
+            // ekOrderedList
+            //   may contain only list item elements
+            DisplayStyle: dsBlock;
+            Exclusions: AllElems - [ekListItem];
+            RequiredParents: [];
+            PermitsText: False;
+          ),
+          (
+            // ekListItem
+            //   may contain any inline or block elements except another list
+            //   item
+            DisplayStyle: dsBlock;
+            Exclusions: [ekListItem];
+            RequiredParents: [ekOrderedList, ekUnorderedList];
+            PermitsText: True;
+          )
+        );
+  public
+    ///  <summary>Returns the display type of the given element.</summary>
+    class function DisplayStyleOf(const Elem: TActiveTextActionElemKind):
+      TActiveTextDisplayStyle; static;
+    ///  <summary>Checks whether the given element can contain text.</summary>
+    class function CanContainText(const Elem: TActiveTextActionElemKind):
+      Boolean; static;
+    ///  <summary>Checks whether the given Parent element can contain the given
+    ///  Child element.</summary>
+    class function CanContainElem(
+      const Parent, Child: TActiveTextActionElemKind): Boolean; static;
+    ///  <summary>Checks whether the given Parent element is required as a
+    ///  parent of the given Child element.</summary>
+    class function IsRequiredParent(
+      const Parent, Child: TActiveTextActionElemKind): Boolean; static;
+    ///  <summary>Checks whether the given element is permitted in the root of
+    ///  an active text document, i.e. outside any other block level element.
+    ///  </summary>
+    class function IsElemPermittedInRoot(const Elem: TActiveTextActionElemKind):
+      Boolean; static;
+    ///  <summary>Checks whether the given child element is excluded from being
+    ///  a child of the given parent element.</summary>
+    class function IsExcludedElem(
+      const Parent, Child: TActiveTextActionElemKind): Boolean; static;
+
+  end;
+
 
 implementation
 
@@ -354,7 +507,7 @@ type
     fText: string;
   public
     ///  <summary>Object constructor. Records given element text and sets
-    ///  required kind for a text element.</summary>
+    ///  required Elem for a text element.</summary>
     constructor Create(const Text: string);
     ///  <summary>Assigns properties of another object to this object.</summary>
     ///  <param name="Src">IInterface [in] Object whose properties are to be
@@ -375,7 +528,7 @@ type
     IActiveTextElem, IActiveTextActionElem, IAssignable, IClonable
   )
   strict private
-    ///  <summary>Kind of element encapsulated by this object.</summary>
+    ///  <summary>Elem of element encapsulated by this object.</summary>
     fKind: TActiveTextActionElemKind;
     ///  <summary>State of element: opening or closing.</summary>
     fState: TActiveTextElemState;
@@ -383,7 +536,7 @@ type
     fAttrs: IActiveTextAttrs;
   public
     ///  <summary>Object constructor. Creates an action element.</summary>
-    ///  <param name="AKind">TActiveTextElemKind [in] Required kind of element.
+    ///  <param name="AKind">TActiveTextElemKind [in] Required Elem of element.
     ///  </param>
     ///  <param name="AAttrs">IActiveTextAttrs [in] Element's attributes.
     ///  </param>
@@ -402,7 +555,7 @@ type
     ///  <summary>Returns a cloned instance of this object.</summary>
     ///  <remarks>Method of IClonable.</remarks>
     function Clone: IInterface;
-    ///  <summary>Returns kind of action represented by this element.</summary>
+    ///  <summary>Returns Elem of action represented by this element.</summary>
     ///  <remarks>Method of IActiveTextActionElem.</remarks>
     function GetKind: TActiveTextActionElemKind;
     ///  <summary>Returns state of element.</summary>
@@ -411,10 +564,6 @@ type
     ///  <summary>Returns object describing element's attributes.</summary>
     ///  <remarks>Method of IActiveTextActionElem.</remarks>
     function GetAttrs: IActiveTextAttrs;
-    ///  <summary>Returns value that indicates whether element is an inline or
-    ///  block element.</summary>
-    ///  <remarks>Method of IActiveTextActionElem.</remarks>
-    function GetDisplayStyle: TActiveTextDisplayStyle;
   end;
 
 type
@@ -618,7 +767,7 @@ begin
       if Supports(Elem, IActiveTextTextElem, TextElem) then
         SB.Append(TextElem.Text);
       if Supports(Elem, IActiveTextActionElem, ActionElem)
-        and (ActionElem.DisplayStyle = dsBlock)
+        and (TActiveTextElemCaps.DisplayStyleOf(ActionElem.Kind) = dsBlock)
         and (ActionElem.State = fsClose) then
         // new line at end of block to separate text at end of closing block
         // from text at start of following block
@@ -689,14 +838,6 @@ begin
   Result := fAttrs;
 end;
 
-function TActiveTextActionElem.GetDisplayStyle: TActiveTextDisplayStyle;
-begin
-  if GetKind in [ekPara, ekHeading] then
-    Result := dsBlock
-  else
-    Result := dsInline;
-end;
-
 function TActiveTextActionElem.GetKind: TActiveTextActionElemKind;
 begin
   Result := fKind;
@@ -754,6 +895,46 @@ end;
 function TActiveTextAttrs.GetEnumerator: TEnumerator<TPair<string, string>>;
 begin
   Result := fMap.GetEnumerator;
+end;
+
+{ TActiveTextElemCapsMap }
+
+class function TActiveTextElemCaps.CanContainElem(const Parent,
+  Child: TActiveTextActionElemKind): Boolean;
+begin
+  Result := not (Child in Map[Parent].Exclusions);
+end;
+
+class function TActiveTextElemCaps.CanContainText(
+  const Elem: TActiveTextActionElemKind): Boolean;
+begin
+  Result := Map[Elem].PermitsText;
+end;
+
+class function TActiveTextElemCaps.DisplayStyleOf(
+  const Elem: TActiveTextActionElemKind): TActiveTextDisplayStyle;
+begin
+  Result := Map[Elem].DisplayStyle;
+end;
+
+class function TActiveTextElemCaps.IsElemPermittedInRoot(
+  const Elem: TActiveTextActionElemKind): Boolean;
+begin
+  Result := Map[Elem].RequiredParents = [];
+end;
+
+class function TActiveTextElemCaps.IsExcludedElem(const Parent,
+  Child: TActiveTextActionElemKind): Boolean;
+begin
+  Result := Child in Map[Parent].Exclusions;
+end;
+
+class function TActiveTextElemCaps.IsRequiredParent(
+  const Parent, Child: TActiveTextActionElemKind): Boolean;
+begin
+  if Map[Child].RequiredParents = [] then
+    Exit(True);
+  Result := Parent in Map[Child].RequiredParents;
 end;
 
 end.
