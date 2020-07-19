@@ -383,13 +383,14 @@ type
     fAttrs: IActiveTextAttrs;
   public
     ///  <summary>Object constructor. Creates an action element.</summary>
-    ///  <param name="Kind">TActiveTextElemKind [in] Required kind of element.
+    ///  <param name="AKind">TActiveTextElemKind [in] Required kind of element.
     ///  </param>
-    ///  <param name="Attrs">IActiveTextAttrs [in] Element's attributes.</param>
-    ///  <param name="State">TActiveTextElemState [in] State of element: opening
-    ///  or closing.</param>
-    constructor Create(const Kind: TActiveTextActionElemKind;
-      Attrs: IActiveTextAttrs; const State: TActiveTextElemState);
+    ///  <param name="AAttrs">IActiveTextAttrs [in] Element's attributes.
+    ///  </param>
+    ///  <param name="AState">TActiveTextElemState [in] State of element:
+    ///  opening or closing.</param>
+    constructor Create(const AKind: TActiveTextActionElemKind;
+      AAttrs: IActiveTextAttrs; const AState: TActiveTextElemState);
     ///  <summary>Assigns properties of another object to this object.</summary>
     ///  <param name="Src">IInterface [in] Object whose properties are to be
     ///  assigned. Src must support IActiveTextActionElem.</param>
@@ -674,13 +675,13 @@ begin
   Result := TActiveTextActionElem.Create(GetKind, Attrs, GetState);
 end;
 
-constructor TActiveTextActionElem.Create(const Kind: TActiveTextActionElemKind;
-  Attrs: IActiveTextAttrs; const State: TActiveTextElemState);
+constructor TActiveTextActionElem.Create(const AKind: TActiveTextActionElemKind;
+  AAttrs: IActiveTextAttrs; const AState: TActiveTextElemState);
 begin
   inherited Create;
-  fAttrs := Attrs;
-  fState := State;
-  fKind := Kind;
+  fAttrs := AAttrs;
+  fState := AState;
+  fKind := AKind;
 end;
 
 function TActiveTextActionElem.GetAttrs: IActiveTextAttrs;
