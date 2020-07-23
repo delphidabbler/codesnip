@@ -812,7 +812,7 @@ begin
       FullPacket.FileName,
       FullPacket.Title,
       FullPacket.Author,
-      StringOfChar('-', 80),
+      StrOfChar('-', 80),
       StrWindowsLineBreaks(FullPacket.SourceCode)
     ]
   );
