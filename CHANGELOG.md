@@ -12,6 +12,13 @@ This change log begins with the first ever pre-release version of _CodeSnip_. Re
 From v4.1.0 the version numbering has attempted to adhere to the principles of [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## Release v4.17.0 of 31 July 2020
+
++ Added support for test compilation with, and detection of, Delphi 10.2 Tokyo, Delphi 10.3 Rio and Delphi 10.4 Sydney compilers.
++ Updated documentation re changes.
++ Updated help file re changes.
+
+
 ## Release v4.16.0 of 31 May 2020
 
 This is a significant update. It's purpose is to remove CodeSnip's dependencies on the delphidabbler.com website and associated web services. This was done because of the expected June 2020 closure or reduced functionality of delphidabbler.com. Some affected features were removed and others replaced with alternatives.
