@@ -28,9 +28,6 @@ Res\HTML\dlg-comperror-tplt.html
 # active text preview dialogue
 Res\HTML\dlg-activetext-preview-tplt.html
 
-# news dialogue
-Res\HTML\dlg-rssnews.html
-
 # SWAG import dialogue
 Res\HTML\dlg-swag-import-intro-tplt.html
 Res\HTML\dlg-swag-import-outro-tplt.html

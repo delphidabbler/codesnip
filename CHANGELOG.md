@@ -12,6 +12,14 @@ This change log begins with the first ever pre-release version of _CodeSnip_. Re
 From v4.1.0 the version numbering has attempted to adhere to the principles of [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## Release v4.17.1 of 31 July 2020
+
+Hotfix release.
+
+* Corrected "What's New" dialogue box content that is displayed _only_ when updating from v4.15.1 and earlier. The correction is to ensure the text makes sense when release 4.16.0 has been skipped. This change should have been made in v4.17.0.
+* Removed a redundant resource.
+
+
 ## Release v4.17.0 of 31 July 2020
 
 + Added support for test compilation with, and detection of, Delphi 10.2 Tokyo, Delphi 10.3 Rio and Delphi 10.4 Sydney compilers.
