@@ -12,6 +12,13 @@ This change log begins with the first ever pre-release version of _CodeSnip_. Re
 From v4.1.0 the version numbering has attempted to adhere to the principles of [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## Release v4.17.2 of 12 September 2020
+
+Hotfix release.
+
+* Updated version of jQuery used by program easter egg from v1.8.0 to v1.12.4 to fix a known vulnerability in v1.8.0. Also updated jQuery Cycle Lite that depends on jQuery from v1.6 to 1.7.
+
+
 ## Release v4.17.1 of 31 July 2020
 
 Hotfix release.

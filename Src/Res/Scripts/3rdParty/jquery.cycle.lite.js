@@ -2,7 +2,7 @@
  * jQuery Cycle Lite Plugin
  * http://malsup.com/jquery/cycle/lite/
  * Copyright (c) 2008-2012 M. Alsup
- * Version: 1.6 (02-MAY-2012)
+ * Version: 1.7 (20-FEB-2013)
  * Dual licensed under the MIT and GPL licenses:
  * http://www.opensource.org/licenses/mit-license.php
  * http://www.gnu.org/licenses/gpl.html
@@ -11,17 +11,19 @@
 ;(function($) {
 "use strict";
 
-var ver = 'Lite-1.6';
+var ver = 'Lite-1.7';
+var msie = /MSIE/.test(navigator.userAgent);
 
 $.fn.cycle = function(options) {
     return this.each(function() {
         options = options || {};
-
-        if (this.cycleTimeout) clearTimeout(this.cycleTimeout);
+        
+        if (this.cycleTimeout) 
+            clearTimeout(this.cycleTimeout);
 
         this.cycleTimeout = 0;
         this.cyclePause = 0;
-
+        
         var $cont = $(this);
         var $slides = options.slideExpr ? $(options.slideExpr, this) : $cont.children();
         var els = $slides.get();
@@ -36,43 +38,44 @@ $.fn.cycle = function(options) {
         var meta = $.isFunction($cont.data) ? $cont.data(opts.metaAttr) : null;
         if (meta)
             opts = $.extend(opts, meta);
-
+            
         opts.before = opts.before ? [opts.before] : [];
         opts.after = opts.after ? [opts.after] : [];
         opts.after.unshift(function(){ opts.busy=0; });
-
+            
         // allow shorthand overrides of width, height and timeout
         var cls = this.className;
         opts.width = parseInt((cls.match(/w:(\d+)/)||[])[1], 10) || opts.width;
         opts.height = parseInt((cls.match(/h:(\d+)/)||[])[1], 10) || opts.height;
         opts.timeout = parseInt((cls.match(/t:(\d+)/)||[])[1], 10) || opts.timeout;
 
-        if ($cont.css('position') == 'static')
+        if ($cont.css('position') == 'static') 
             $cont.css('position', 'relative');
-        if (opts.width)
+        if (opts.width) 
             $cont.width(opts.width);
-        if (opts.height && opts.height != 'auto')
+        if (opts.height && opts.height != 'auto') 
             $cont.height(opts.height);
 
         var first = 0;
         $slides.css({position: 'absolute', top:0}).each(function(i) {
             $(this).css('z-index', els.length-i);
         });
-
+        
         $(els[first]).css('opacity',1).show(); // opacity bit needed to handle reinit case
-        if ($.browser.msie) els[first].style.removeAttribute('filter');
+        if (msie) 
+            els[first].style.removeAttribute('filter');
 
-        if (opts.fit && opts.width)
+        if (opts.fit && opts.width) 
             $slides.width(opts.width);
-        if (opts.fit && opts.height && opts.height != 'auto')
+        if (opts.fit && opts.height && opts.height != 'auto') 
             $slides.height(opts.height);
-        if (opts.pause)
+        if (opts.pause) 
             $cont.hover(function(){this.cyclePause=1;}, function(){this.cyclePause=0;});
 
         var txFn = $.fn.cycle.transitions[opts.fx];
         if (txFn)
             txFn($cont, $slides, opts);
-
+        
         $slides.each(function() {
             var $el = $(this);
             this.cycleH = (opts.fit && opts.height) ? opts.height : $el.height();
@@ -104,7 +107,7 @@ $.fn.cycle = function(options) {
             opts.before[0].apply(e0, [e0, e0, opts, true]);
         if (opts.after.length > 1)
             opts.after[1].apply(e0, [e0, e0, opts, true]);
-
+        
         if (opts.click && !opts.next)
             opts.next = opts.click;
         if (opts.next)
@@ -120,17 +123,17 @@ $.fn.cycle = function(options) {
 };
 
 function go(els, opts, manual, fwd) {
-    if (opts.busy)
+    if (opts.busy) 
         return;
     var p = els[0].parentNode, curr = els[opts.currSlide], next = els[opts.nextSlide];
-    if (p.cycleTimeout === 0 && !manual)
+    if (p.cycleTimeout === 0 && !manual) 
         return;
 
     if (manual || !p.cyclePause) {
         if (opts.before.length)
             $.each(opts.before, function(i,o) { o.apply(next, [curr, next, opts, fwd]); });
         var after = function() {
-            if ($.browser.msie)
+            if (msie)
                 this.style.removeAttribute('filter');
             $.each(opts.after, function(i,o) { o.apply(next, [curr, next, opts, fwd]); });
             queueNext(opts);

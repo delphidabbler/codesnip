@@ -19,7 +19,7 @@ Res\HTML\dlg-about-database-tplt.html
 Res\HTML\dlg-easter-egg.html
 Res\CSS\easteregg.css
 Res\Scripts\easteregg.js
-Res\Scripts\3rdParty\jquery-1.8.0.min.js
+Res\Scripts\3rdParty\jquery-1.12.4.min.js
 Res\Scripts\3rdParty\jquery.cycle.lite.js
 
 # compiler error log
