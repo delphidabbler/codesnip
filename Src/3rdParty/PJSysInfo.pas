@@ -5,8 +5,8 @@
  *
  * Copyright (C) 2001-2020, Peter Johnson (@delphidabbler).
  *
- * $Rev: 2023 $
- * $Date: 2020-03-17 05:00:45 +0000 (Tue, 17 Mar 2020) $
+ * $Rev: 2029 $
+ * $Date: 2020-10-31 15:24:58 +0000 (Sat, 31 Oct 2020) $
  *
  * This unit contains various static classes, constants, type definitions and
  * global variables for use in providing information about the host computer and
@@ -446,7 +446,7 @@ type
     osWin10Svr,             // Windows 2016 Server
     osWinSvr2019            // Windows 2019 Server
   );
-  
+
 type
   ///  <summary>Enumeration identifying processor architecture.</summary>
   TPJProcessorArchitecture = (
@@ -1212,7 +1212,8 @@ const
   Win10RS5Build = 17763;        // Windows 10 RS5 - version 1809
   Win1019H1Build = 18362;       // Windows 10 19H1 - version 1903
   Win1019H2Build = 18363;       // Windows 10 19H2 - version 1909
-  Win1020H1Build = 19041;       // Windows 10 20H2 - version 2004
+  Win1020H1Build = 19041;       // Windows 10 20H1 - version 2004
+  Win1020H2Build = 19042;       // Windows 10 20H2 - version 20H2
 
   Win2016TP1Build = 9841;       // Win 2016 Server Technical Preview 1
   Win2016TP2Build = 10074;      // Win 2016 Server Technical Preview 2
@@ -1722,13 +1723,19 @@ begin
             else if IsBuildNumber(Win1019H2Build) then
             begin
               InternalBuildNumber := Win1019H2Build;
-              InternalExtraUpdateInfo := 'Version 1909: Novermber 2019 Update';
+              InternalExtraUpdateInfo := 'Version 1909: November 2019 Update';
             end
             else if IsBuildNumber(Win1020H1Build) then
             begin
               InternalBuildNumber := Win1020H1Build;
-              // TODO: Add marketing name below once known
-              InternalExtraUpdateInfo := 'Version 2004';
+              InternalExtraUpdateInfo := 'Version 2004: May 2020 Update';
+            end
+            else if IsBuildNumber(Win1020H2Build) then
+            begin
+              InternalBuildNumber := Win1020H2Build;
+              // Note: Microsoft announced the official version name is '20H2',
+              //       not '2010' which some had expected it to be
+              InternalExtraUpdateInfo := 'Version 20H2: October 2020 Update';
             end
           end
           else
