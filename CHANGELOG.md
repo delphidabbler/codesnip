@@ -16,6 +16,7 @@ From v4.1.0 the version numbering has attempted to adhere to the principles of [
 
 * Added support for test compilation with, and detection of, Delphi 11 Alexandria.
 * Updated various dialogue boxes to widen lists of compilers to accommodate length of new compiler name.
+* Operating system detection code was updated to correctly detect Windows 10 version 20H2.
 * Updated documentation re changes.
 * Updated help file re changes.
 * Minor documentation corrections.
