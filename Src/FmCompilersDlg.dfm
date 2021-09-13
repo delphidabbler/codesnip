@@ -1,16 +1,16 @@
 inherited CompilersDlg: TCompilersDlg
   Caption = 'Configure Compilers'
   ClientHeight = 381
-  ClientWidth = 524
-  ExplicitWidth = 530
+  ClientWidth = 547
+  ExplicitWidth = 553
   ExplicitHeight = 410
   PixelsPerInch = 96
   TextHeight = 13
   inherited pnlBody: TPanel
-    Width = 505
-    ExplicitWidth = 505
+    Width = 531
+    ExplicitWidth = 531
     object pbBanner: TPaintBox
-      Left = 135
+      Left = 161
       Top = 0
       Width = 370
       Height = 23
@@ -26,7 +26,7 @@ inherited CompilersDlg: TCompilersDlg
     object lbCompilers: TListBox
       Left = 0
       Top = 0
-      Width = 129
+      Width = 155
       Height = 292
       Style = lbOwnerDrawFixed
       Ctl3D = True
@@ -36,7 +36,7 @@ inherited CompilersDlg: TCompilersDlg
       TabOrder = 0
     end
     object pcCompiler: TPageControl
-      Left = 135
+      Left = 161
       Top = 29
       Width = 370
       Height = 263
@@ -52,6 +52,8 @@ inherited CompilersDlg: TCompilersDlg
           Height = 235
           Align = alClient
           TabOrder = 0
+          ExplicitLeft = -4
+          ExplicitTop = 2
         end
       end
       object tsSwitches: TTabSheet
@@ -123,10 +125,6 @@ inherited CompilersDlg: TCompilersDlg
       object tsLog: TTabSheet
         Caption = 'Output Log'
         ImageIndex = 1
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         inline frmLog: TCompilersDlgLogFrame
           Left = 0
           Top = 0

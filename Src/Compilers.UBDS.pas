@@ -150,6 +150,8 @@ begin
       Result := 'D103R';
     ciD104S:
       Result := 'D104S';
+    ciD11A:
+      Result := 'D11A';
     else
       raise EBug.Create(ClassName + '.GetIDString: Invalid ID');
   end;
@@ -157,20 +159,23 @@ end;
 
 function TBDSCompiler.GetName: string;
 resourcestring
-  sCompilerName = 'Delphi %d';          // template for name of compiler
-  sDelphiXE = 'Delphi XE';              // name of Delphi XE compiler
-  sDelphiXE2 = 'Delphi XE2';            // name of Delphi XE2 compiler
-  sDelphiXE3 = 'Delphi XE3';            // name of Delphi XE3 compiler
-  sDelphiXE4 = 'Delphi XE4';            // name of Delphi XE4 compiler
-  sDelphiXE5 = 'Delphi XE5';            // name of Delphi XE5 compiler
-  sDelphiXE6 = 'Delphi XE6';            // name of Delphi XE6 compiler
-  sDelphiXE7 = 'Delphi XE7';            // name of Delphi XE7 compiler
-  sDelphiXE8 = 'Delphi XE8';            // name of Delphi XE8 compiler
-  sDelphi10S = 'Delphi 10 Seattle';     // name of Delphi 10 compiler
-  sDelphi101B = 'Delphi 10.1 Berlin';   // name of Delphi 10.1 compiler
-  sDelphi102T = 'Delphi 10.2 Tokyo';    // name of Delphi 10.2 compiler
-  sDelphi103R = 'Delphi 10.3 Rio';      // name of Delphi 10.3 compiler
-  sDelphi104S = 'Delphi 10.4 Sydney';   // name of Delphi 10.4 compiler
+  // template for name of compiler with simple integer version number
+  sCompilerName = 'Delphi %d';
+  // names of compilers not suitable for use with template
+  sDelphiXE = 'Delphi XE';
+  sDelphiXE2 = 'Delphi XE2';
+  sDelphiXE3 = 'Delphi XE3';
+  sDelphiXE4 = 'Delphi XE4';
+  sDelphiXE5 = 'Delphi XE5';
+  sDelphiXE6 = 'Delphi XE6';
+  sDelphiXE7 = 'Delphi XE7';
+  sDelphiXE8 = 'Delphi XE8';
+  sDelphi10S = 'Delphi 10 Seattle';
+  sDelphi101B = 'Delphi 10.1 Berlin';
+  sDelphi102T = 'Delphi 10.2 Tokyo';
+  sDelphi103R = 'Delphi 10.3 Rio';
+  sDelphi104S = 'Delphi 10.4 Sydney';
+  sDelphi11A =  'Delphi 11 Alexandria';
 begin
   case GetID of
     ciDXE:
@@ -199,6 +204,8 @@ begin
       Result := sDelphi103R;
     ciD104S:
       Result := sDelphi104S;
+    ciD11A:
+      Result := sDelphi11A;
     else
       Result := Format(sCompilerName, [ProductVersion]);
   end;
@@ -232,6 +239,7 @@ begin
     ciD102T   : Result := '\Software\Embarcadero\BDS\19.0';
     ciD103R   : Result := '\Software\Embarcadero\BDS\20.0';
     ciD104S   : Result := '\Software\Embarcadero\BDS\21.0';
+    ciD11A    : Result := '\Software\Embarcadero\BDS\22.0';
     else raise EBug.Create(ClassName + '.InstallationRegKey: Invalid ID');
   end;
 end;
