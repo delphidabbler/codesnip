@@ -12,6 +12,16 @@ This change log begins with the first ever pre-release version of _CodeSnip_. Re
 From v4.1.0 the version numbering has attempted to adhere to the principles of [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## Release v4.18.0 of 13 September 2021
+
+* Added support for test compilation with, and detection of, Delphi 11 Alexandria.
+* Updated various dialogue boxes to widen lists of compilers to accommodate length of new compiler name.
+* Operating system detection code was updated to correctly detect Windows 10 version 20H2.
+* Updated documentation re changes.
+* Updated help file re changes.
+* Minor documentation corrections.
+
+
 ## Release v4.17.2 of 12 September 2020
 
 Hotfix release.

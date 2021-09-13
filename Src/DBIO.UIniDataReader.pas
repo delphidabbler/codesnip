@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2020, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2005-2021, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements code that reads the main CodeSnip database from .ini and .dat
  * files.
@@ -235,7 +235,8 @@ const
     'Delphi2005Win32', 'Delphi2006Win32', 'Delphi2007', 'Delphi2009Win32',
     'Delphi2010', 'DelphiXE', 'DelphiXE2', 'DelphiXE3', 'DelphiXE4',
     'DelphiXE5', 'DelphiXE6', 'DelphiXE7', 'DelphiXE8', 'Delphi10S',
-    'Delphi101B', 'Delphi102T', 'Delphi103R', 'Delphi104S', 'FPC'
+    'Delphi101B', 'Delphi102T', 'Delphi103R', 'Delphi104S', 'Delphi11A',
+    'FPC'
   );
 
 { TIniDataReader }

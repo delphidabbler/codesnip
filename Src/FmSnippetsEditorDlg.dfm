@@ -6,7 +6,7 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
   ClientWidth = 738
   Position = poDesigned
   ExplicitWidth = 744
-  ExplicitHeight = 606
+  ExplicitHeight = 607
   PixelsPerInch = 96
   TextHeight = 13
   inherited pnlBody: TPanel
@@ -19,7 +19,7 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
       Top = 0
       Width = 662
       Height = 504
-      ActivePage = tsReferences
+      ActivePage = tsCompileResults
       Align = alClient
       TabOrder = 0
       OnChange = pcMainChange
@@ -193,10 +193,6 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
       object tsReferences: TTabSheet
         Caption = 'References'
         ImageIndex = 1
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         object lblXRefs: TLabel
           Left = 3
           Top = 3
@@ -326,10 +322,6 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
       object tsCompileResults: TTabSheet
         Caption = 'Compile Results'
         ImageIndex = 3
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         object lblCompilers: TLabel
           Left = 3
           Top = 3
@@ -347,8 +339,8 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
         end
         object lblCompResDesc: TLabel
           Left = 3
-          Top = 405
-          Width = 166
+          Top = 401
+          Width = 186
           Height = 60
           AutoSize = False
           Caption = 
@@ -359,7 +351,7 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
         object lbCompilers: TListBox
           Left = 3
           Top = 22
-          Width = 166
+          Width = 186
           Height = 373
           Style = lbOwnerDrawFixed
           ItemHeight = 28
