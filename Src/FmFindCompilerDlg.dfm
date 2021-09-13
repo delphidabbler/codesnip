@@ -29,8 +29,8 @@ inherited FindCompilerDlg: TFindCompilerDlg
     end
     object lbCompilerVers: TCheckListBox
       Left = 0
-      Top = 16
-      Width = 136
+      Top = 19
+      Width = 154
       Height = 186
       OnClickCheck = lbCompilerVersClickCheck
       IntegralHeight = True
