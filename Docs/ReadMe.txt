@@ -218,9 +218,9 @@ dialogue" in the help file index).
 
 Each user can configure compilers differently.
 
-Delphi XE2 to XE8 and Delphi 10.4 Sydney may need to be configured to search for
-required units in the correct namespaces. This is explained in the Add/Edit
-Snippet Dialogue Box help topic and in the FAQ at
+Delphi XE2 and later may need to be configured to search for required units in
+the correct namespaces. This is explained in the Add/Edit Snippet Dialogue Box
+help topic and in the FAQ at
 https://github.com/delphidabbler/codesnip-faq/blob/master/UsingCodeSnip.md#faq-1
 
 Any type of snippet other than "freeform" can be test compiled.
