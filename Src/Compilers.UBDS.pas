@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2006-2020, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2006-2021, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Class that controls and provides information about Borland CodeGear and
  * Embarcadero "BDS" Win32 compilers.
