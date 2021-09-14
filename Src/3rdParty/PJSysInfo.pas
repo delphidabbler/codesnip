@@ -5,8 +5,8 @@
  *
  * Copyright (C) 2001-2020, Peter Johnson (@delphidabbler).
  *
- * $Rev: 2066 $
- * $Date: 2021-09-12 20:29:38 +0100 (Sun, 12 Sep 2021) $
+ * $Rev: 2069 $
+ * $Date: 2021-09-14 16:00:48 +0100 (Tue, 14 Sep 2021) $
  *
  * This unit contains various static classes, constants, type definitions and
  * global variables for use in providing information about the host computer and
@@ -1228,20 +1228,20 @@ const
           - Add more Win11 versions as discovered. }
   // NOTE: Preview and beta versions of Windows 11 report version 10.0
   Win11DevBuild = 21996;          // Windows 11 version Dev
-                                  //   – 10.0.21996.1 (Insider version)
+                                  //   - 10.0.21996.1 (Insider version)
   Win11v21H2Build = 22000;        // Version depends on revision # [Rev#]:
                                   //   Revision # 51..168:
                                   //     Windows 11 version 21H2
-                                  //       – 10.0.22000.[Rev#] (Insider version)
+                                  //       - 10.0.22000.[Rev#] (Insider version)
                                   //   Revision # 184
                                   //     Windows 11 version 21H2
-                                  //       – 10.0.22000.184 (Beta Version)
+                                  //       - 10.0.22000.184 (Beta Version)
                                   //   Revision # >=185
                                   //     Windows 11 (unknown version)
   Win11c21H2PreRel1Build = 22449; // Windows 11 version 21H2
-                                  //   – 10.0.22449.000 (RSPRERELEASE)
+                                  //   - 10.0.22449.000 (RSPRERELEASE)
   Win11c21H2PreRel2Build = 22454; // Windows 11 version 21H2
-                                  //   – 10.0.22454.1000 (RSPRERELEASE)
+                                  //   - 10.0.22454.1000 (RSPRERELEASE)
 
   Win11FirstBuild = Win11DevBuild;  // First build number of Windows 11
 
