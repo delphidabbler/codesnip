@@ -5,8 +5,8 @@
  *
  * Copyright (C) 2001-2020, Peter Johnson (@delphidabbler).
  *
- * $Rev: 2029 $
- * $Date: 2020-10-31 15:24:58 +0000 (Sat, 31 Oct 2020) $
+ * $Rev: 2069 $
+ * $Date: 2021-09-14 16:00:48 +0100 (Tue, 14 Sep 2021) $
  *
  * This unit contains various static classes, constants, type definitions and
  * global variables for use in providing information about the host computer and
@@ -29,34 +29,7 @@
  *
  * ACKNOWLEDGEMENTS
  *
- * Thanks to the following who have contributed to this project:
- *
- *   - Guillermo Fazzolari (bug fix in v2.0.1)
- *
- *   - Laurent Pierre (Many PRODUCT_* constants and suggested GetProductInfo API
- *     code used in v3.0 and later)
- *
- *   - Rich Habedank (bug fix in r228 and testing of bug fixes reported as
- *     issues #31 (https://sourceforge.net/p/ddablib/tickets/31/) and #33
- *     (https://sourceforge.net/p/ddablib/tickets/33/)
- *
- * The project also draws on the work of:
- *
- *   - Achim Kalwa <delphi@achim-kalwa.de> who translated the versionhelpers.h
- *     header into Pascal. Some of the IsReallyWindowsXXXXOrGreater methods of
- *     TPJOSInfo and the TestWindowsVersion routine are based closely on his
- *     work.
- *
- *   - Brendan grant for his ideas presented in the Code Project article at
- *     http://bit.ly/1mDKTu3
- *
- *   - Kendall Sullivan for the code on which TPJComputerInfo.IsAdmin is based.
- *     See http://edn.embarcadero.com/article/26752.
- *
- *   - norgepaul for the code on which TPJComputerInfo.IsUACActive is based. See
- *     his answer on Stack Overflow at http://tinyurl.com/avlztmg.
- *
- * ***** END LICENSE BLOCK *****
+ * See Docs/Acknowledgements.md
 }
 
 
@@ -444,7 +417,9 @@ type
     osWinSvr2012R2,         // Windows Server 2012 R2
     osWin10,                // Windows 10
     osWin10Svr,             // Windows 2016 Server
-    osWinSvr2019            // Windows 2019 Server
+    osWinSvr2019,           // Windows 2019 Server
+    osWin11,                // Windows 11
+    osWinSvr2022            // Windows 2022 Server
   );
 
 type
@@ -522,14 +497,17 @@ type
 
     ///  <summary>Checks if the OS is on the Windows 9x platform.</summary>
     class function IsWin9x: Boolean;
+      {$IFDEF INLINEMETHODS}inline;{$ENDIF}
 
     ///  <summary>Checks if the OS is on the Windows NT platform.</summary>
     class function IsWinNT: Boolean;
+      {$IFDEF INLINEMETHODS}inline;{$ENDIF}
 
     ///  <summary>Checks if the program is hosted on Win32s.</summary>
     ///  <remarks>This is unlikely to ever return True since Delphi does not run
     ///  on Win32s.</remarks>
     class function IsWin32s: Boolean;
+      {$IFDEF INLINEMETHODS}inline;{$ENDIF}
 
     ///  <summary>Checks if a 32 bit program is running under WOW64 on a 64 bit
     ///  operating system.</summary>
@@ -594,11 +572,13 @@ type
     ///  <remarks>0 is returned in no service pack is installed, if the host OS
     ///  is not on the NT platform.</remarks>
     class function ServicePackMajor: Integer;
+      {$IFDEF INLINEMETHODS}inline;{$ENDIF}
 
     ///  <summary>Returns the minor version number of any NT platform service
     ///  pack.</summary>
-    ///  <remarks>Invalid is ServicePackMinor returns 0.</remarks>
+    ///  <remarks>Invalid if ServicePackMajor returns 0.</remarks>
     class function ServicePackMinor: Integer;
+      {$IFDEF INLINEMETHODS}inline;{$ENDIF}
 
     ///  <summary>Returns the product edition for an NT platform OS.</summary>
     ///  <remarks>The empty string is returned if the OS is not on the NT
@@ -755,6 +735,15 @@ type
     ///  <para>WARNING: For Windows 10 this method is likely to succeed only if
     ///  the application is correctly manifested.</para>
     class function IsWindowsServer: Boolean;
+
+    ///  <summary>Returns any revision number for the OS.</summary>
+    ///  <remarks>
+    ///  <para>If the OS does not provide any revision information then zero is
+    ///  returned.</para>
+    ///  <para>This value is read fromt he registry therefore it is possible
+    ///  that this value could be spoofed.</para>
+    ///  </remarks>
+    class function RevisionNumber: Integer;
   end;
 
 type
@@ -803,6 +792,7 @@ type
 
     ///  <summary>Checks if the host computer has a 64 bit processor.</summary>
     class function Is64Bit: Boolean;
+      {$IFDEF INLINEMETHODS}inline;{$ENDIF}
 
     ///  <summary>Checks if a network is present on host computer.</summary>
     class function IsNetworkPresent: Boolean;
@@ -935,6 +925,8 @@ var
   // Description of any OS service pack.
   Win32CSDVersionEx: string = '';
 
+  // OS Revision number. Zero if revision number not available.
+  Win32RevisionNumber: Integer = 0;
   // Flag that indicates if extended version information is available.
   Win32HaveExInfo: Boolean = False;
   // Major version number of the latest Service Pack installed on the system. If
@@ -1183,26 +1175,37 @@ const
   );
 
 const
-  // Known windows build numbers.
-  // Sources:
-  //   https://en.wikipedia.org/wiki/Windows_NT
-  //   https://en.wikipedia.org/wiki/Windows_10_version_history
-  //   https://en.wikipedia.org/wiki/Windows_Server_2019
-  //   https://en.wikipedia.org/wiki/Windows_Server_2016
-  //   https://en.wikipedia.org/wiki/Windows_Server_2016
-  //   https://tinyurl.com/y8tfadm2
+  {
+    Known windows build numbers.
+    Sources:
+      https://en.wikipedia.org/wiki/List_of_Microsoft_Windows_versions
+      https://en.wikipedia.org/wiki/Windows_NT
+      https://en.wikipedia.org/wiki/Windows_10_version_history
+      https://en.wikipedia.org/wiki/Windows_11_version_history
+      https://en.wikipedia.org/wiki/Windows_Server
+      https://en.wikipedia.org/wiki/Windows_Server_2019
+      https://en.wikipedia.org/wiki/Windows_Server_2016
+      https://tinyurl.com/y8tfadm2
+      https://tinyurl.com/usupsz4a
+      https://docs.microsoft.com/en-us/lifecycle/products/windows-server-2022
 
-  // for Vista and Win 7 we have to add service pack number to these values to
-  // get actual build number
+    Note:
+      For Vista and Win 7 we have to add service pack number to these values to
+      get actual build number. For Win 8 onwards we just use the build numbers
+      as is.
+  }
 
+  // Windows Vista -------------------------------------------------------------
   WinVistaBaseBuild = 6000;
+
+  // Windows 7 -----------------------------------------------------------------
   Win7BaseBuild = 7600;
 
-  // for Win 8 onwards we just use the build numbers as is
-
+  // Windows 8 -----------------------------------------------------------------
   Win8Build = 9200;             // Build number used for all Win 8/Svr 2012
   Win8Point1Build = 9600;       // Build number used for all Win 8.1/Svr 2012 R2
 
+  // Windows 10 ----------------------------------------------------------------
   Win10TH1Build = 10240;        // Windows 10 TH1 - version 1507 (1st release)
   Win10TH2Build = 10586;        // Windows 10 TH2 - version 1511
   Win10RS1Build = 14393;        // Windows 10 RS1 - version 1607
@@ -1214,7 +1217,35 @@ const
   Win1019H2Build = 18363;       // Windows 10 19H2 - version 1909
   Win1020H1Build = 19041;       // Windows 10 20H1 - version 2004
   Win1020H2Build = 19042;       // Windows 10 20H2 - version 20H2
+  Win1021H1Build = 19043;       // Windows 10 21H1 - version 21H1
+  { TODO: 2021-09-11
+          - Win 21H2 due late 2021
+          - Update following var name once Win21H2 released}
+  _Win1021H2Build = 19044;      // Windows 10 21H2 - version 21H2
 
+  // Windows 11 ----------------------------------------------------------------
+  { TODO: 2021-09-11
+          - Add more Win11 versions as discovered. }
+  // NOTE: Preview and beta versions of Windows 11 report version 10.0
+  Win11DevBuild = 21996;          // Windows 11 version Dev
+                                  //   - 10.0.21996.1 (Insider version)
+  Win11v21H2Build = 22000;        // Version depends on revision # [Rev#]:
+                                  //   Revision # 51..168:
+                                  //     Windows 11 version 21H2
+                                  //       - 10.0.22000.[Rev#] (Insider version)
+                                  //   Revision # 184
+                                  //     Windows 11 version 21H2
+                                  //       - 10.0.22000.184 (Beta Version)
+                                  //   Revision # >=185
+                                  //     Windows 11 (unknown version)
+  Win11c21H2PreRel1Build = 22449; // Windows 11 version 21H2
+                                  //   - 10.0.22449.000 (RSPRERELEASE)
+  Win11c21H2PreRel2Build = 22454; // Windows 11 version 21H2
+                                  //   - 10.0.22454.1000 (RSPRERELEASE)
+
+  Win11FirstBuild = Win11DevBuild;  // First build number of Windows 11
+
+  // Windows 2016 Server -------------------------------------------------------
   Win2016TP1Build = 9841;       // Win 2016 Server Technical Preview 1
   Win2016TP2Build = 10074;      // Win 2016 Server Technical Preview 2
   Win2016TP3Build = 10514;      // Win 2016 Server Technical Preview 3
@@ -1223,7 +1254,10 @@ const
   Win2016RTMBuild = 14393;      // Win 2016 Server Release To Manufacturing
   Win2016v1709Build = 16299;    // Win Server 2016 version 1709
   Win2016v1803Build = 17134;    // Win Server 2016 version 1803
+  Win2016LastBuild = Win2016v1803Build; // Last build number of Win 2016 Server
+                                        // After this it's Win 2019 Server
 
+  // Windows 2019 Server -------------------------------------------------------
   Win2019IP180320Build = 17623; // Win Server 2019 Insider Preview Build 17623
   Win2019IP180324Build = 17627; // Win Server 2019 Insider Preview Build 17627
   Win2019IP180515Build = 17666; // Win Server 2019 Insider Preview Build 17666
@@ -1237,10 +1271,13 @@ const
   Win2019v1809Build = 17763;    // Win Server 2019 version 1809
   Win2019v1903Build = 18362;    // Win Server 2019 version 1903
   Win2019v1909Build = 18363;    // Win Server 2019 version 1909
+  Win2019v2004Build = 19041;    // Win Server 2019 version 2004
+  Win2019v20H2Build = 19042;    // Win Server 2019 version 20H2
+  Win2019LastBuild = Win2019v20H2Build; // Last build number of Win 2019 Server
+                                        // After this it's Win 2022 Server
 
-  // Last build number of Windows 2016 Server - after this build number are
-  // Windows 2019 Server
-  Win2016LastBuild = Win2016v1803Build;
+  // Windows 2022 Server -------------------------------------------------------
+  Win2022v21H2Build = 20348;    // Win Server 2022 version 21H2
 
 type
   // Function type of the GetNativeSystemInfo and GetSystemInfo functions
@@ -1277,6 +1314,7 @@ var
   InternalMinorVersion: LongWord = 0;
   InternalBuildNumber: Integer = 0;
   InternalCSDVersion: string = '';
+  InternalRevisionNumber: Integer = 0;
   // Internal variable recording processor architecture information
   InternalProcessorArchitecture: Word = 0;
   // Internal variable recording additional update information.
@@ -1595,6 +1633,14 @@ var
     Result := Format('Insider Preview Build %d', [Build]);
   end;
 
+  // Get OS's revision number from registry.
+  function GetOSRevisionNumber(const IsNT: Boolean): Integer;
+  begin
+    Result := GetRegistryInt(
+      HKEY_LOCAL_MACHINE, CurrentVersionRegKeys[IsNT], 'UBR'
+    );
+  end;
+
 begin
   // Load version query functions used externally to this routine
   VerSetConditionMask := LoadKernelFunc('VerSetConditionMask');
@@ -1619,6 +1665,7 @@ begin
     // calls below indirectly call VerifyVersionInfo API, which is only defined
     // for Windows 2000 and later.
     InternalPlatform := VER_PLATFORM_WIN32_NT;
+    InternalRevisionNumber := GetOSRevisionNumber(True);
     Win32HaveExInfo := True;
     NewGetVersion(
       InternalMajorVersion, InternalMinorVersion,
@@ -1737,6 +1784,82 @@ begin
               //       not '2010' which some had expected it to be
               InternalExtraUpdateInfo := 'Version 20H2: October 2020 Update';
             end
+            else if IsBuildNumber(Win1021H1Build) then
+            begin
+              InternalBuildNumber := Win1021H1Build;
+              InternalExtraUpdateInfo := 'Version 21H1';
+            end
+            else if IsBuildNumber(_Win1021H2Build) then
+            begin
+              { TODO: Added 2021/09/11
+                      - Release expected late 2021
+                      - Fix build number if necessary
+                      - Remove underscore prefix from const name
+                      - Fix value of InternalExtraUpdateInfo as required }
+              InternalBuildNumber := _Win1021H2Build;
+              InternalExtraUpdateInfo := 'Version 21H2';
+            end
+            // As of 2021-09-11, Win 11 pre-releases are reporting v10.0
+            // Details taken from: https://tinyurl.com/usupsz4a
+            // Correct according to above web oage as of 2021-09-11
+            { TODO: Added 2021-09-11
+                    - Revisit URL to check for change following official release
+                      of Windows 11
+                    - Add any further pre-release versions
+                    - Check if final release has major version 11
+            }
+            else if IsBuildNumber(Win11DevBuild) then
+            begin
+              InternalBuildNumber := Win11DevBuild;
+              InternalExtraUpdateInfo := Format(
+                'Dev [Insider v10.0.%d.%d]',
+                [InternalBuildNumber, InternalRevisionNumber]
+              )
+            end
+            else if IsBuildNumber(Win11v21H2Build) then
+            begin
+              // There are several Win 11 releases with this build number
+              // Which release we're talking about depends on the revision
+              // number.
+              InternalBuildNumber := Win11v21H2Build;
+              if InternalRevisionNumber in [51, 65, 71, 100, 120, 132, 168] then
+              begin
+                InternalExtraUpdateInfo := Format(
+                  'Version 21H2 [Insider v10.0.%d.%d]',
+                  [InternalBuildNumber, InternalRevisionNumber]
+                );
+              end
+              else if InternalRevisionNumber = 184 then
+              begin
+                InternalExtraUpdateInfo := Format(
+                  'Version 21H2 [Beta v10.0.%d.%d]',
+                  [InternalBuildNumber, InternalRevisionNumber]
+                );
+              end
+              else
+              begin
+                InternalExtraUpdateInfo := Format(
+                  'Unknown release v10.0.%d.%d',
+                  [InternalBuildNumber, InternalRevisionNumber]
+                );
+              end;
+            end
+            else if IsBuildNumber(Win11c21H2PreRel1Build) then
+            begin
+              InternalBuildNumber := Win11c21H2PreRel1Build;
+              InternalExtraUpdateInfo := Format(
+                'Version 21H2 [RSPRERELEASE v10.0.%d.%d]',
+                [InternalBuildNumber, InternalRevisionNumber]
+              );
+            end
+            else if IsBuildNumber(Win11c21H2PreRel2Build) then
+            begin
+              InternalBuildNumber := Win11c21H2PreRel2Build;
+              InternalExtraUpdateInfo := Format(
+                'Version 21H2 [RSPRERELEASE v10.0.%d.%d]',
+                [InternalBuildNumber, InternalRevisionNumber]
+              );
+            end;
           end
           else
           begin
@@ -1848,6 +1971,21 @@ begin
               InternalBuildNumber := Win2019v1909Build;
               InternalExtraUpdateInfo := 'Version 1909';
             end
+            else if IsBuildNumber(Win2019v2004Build) then
+            begin
+              InternalBuildNumber := Win2019v2004Build;
+              InternalExtraUpdateInfo := 'Version 2004';
+            end
+            else if IsBuildNumber(Win2019v20H2Build) then
+            begin
+              InternalBuildNumber := Win2019v20H2Build;
+              InternalExtraUpdateInfo := 'Version 20H2';
+            end
+            else if IsBuildNumber(Win2022v21H2Build) then
+            begin
+              InternalBuildNumber := Win2022v21H2Build;
+              InternalExtraUpdateInfo := 'Version 21H2';
+            end;
           end;
         end;
       end;
@@ -1875,6 +2013,9 @@ begin
     InternalMinorVersion := Win32MinorVersion;
     InternalBuildNumber := Win32BuildNumber;
     InternalCSDVersion := Win32CSDVersion;
+    InternalRevisionNumber := GetOSRevisionNumber(
+      InternalPlatform = VER_PLATFORM_WIN32_NT
+    );
     // Try to get extended information
     {$IFDEF UNICODE}
     GetVersionEx := LoadKernelFunc('GetVersionExW');
@@ -1923,6 +2064,8 @@ begin
   GetSystemInfoFn(SI);
   // Get processor architecture
   InternalProcessorArchitecture := SI.wProcessorArchitecture;
+  // Store revision number
+  Win32RevisionNumber := InternalRevisionNumber;
 end;
 
 { TPJOSInfo }
@@ -1944,11 +2087,15 @@ end;
 
 class function TPJOSInfo.Description: string;
 
-  // Adds a non-empty string to end of result, preceded by space.
-  procedure AppendToResult(const Str: string);
+  // Adds a non-empty string to end of result, optionally preceded by space.
+  procedure AppendToResult(const Str: string; const WantSpace: Boolean = True);
   begin
     if Str <> '' then
-      Result := Result + ' ' + Str;
+    begin
+      if WantSpace then
+        Result := Result + ' ';
+      Result := Result + Str;
+    end;
   end;
 
 begin
@@ -1964,15 +2111,22 @@ begin
         // For NT3/4 append version number after product
         AppendToResult(Format('%d.%d', [MajorVersion, MinorVersion]));
         AppendToResult(Edition);
-        AppendToResult(ServicePackEx);  // does nothing if no service pack etc
+        AppendToResult(ServicePackEx);  // does nothing if no service pack
         AppendToResult(Format('(Build %d)', [BuildNumber]));
       end
       else
       begin
         // Windows 2000 and later: don't include version number
         AppendToResult(Edition);
-        AppendToResult(ServicePackEx);  // does nothing if no service pack
-        AppendToResult(Format('(Build %d)', [BuildNumber]));
+        if (ServicePackEx <> '') then
+          AppendToResult(', ' + ServicePackEx, False);
+        if InternalRevisionNumber > 0 then
+          AppendToResult(
+            Format(', Build %d.%d', [BuildNumber, InternalRevisionNumber]),
+            False
+          )
+        else
+          AppendToResult(Format(', Build %d', [BuildNumber]), False);
       end;
     end;
     ospWin9x:
@@ -1990,7 +2144,7 @@ begin
     osWin7, osWinSvr2008R2,
     osWin8, osWinSvr2012,
     osWin8Point1, osWinSvr2012R2,
-    osWin10, osWin10Svr, osWinSvr2019:
+    osWin10, osWin11, osWin10Svr, osWinSvr2019, osWinSvr2022:
     begin
       // For v6.0 and later we ignore the suite mask and use the new
       // PRODUCT_ flags from the GetProductInfo() function to determine the
@@ -2262,8 +2416,8 @@ end;
 class function TPJOSInfo.IsReallyWindowsVersionOrGreater(MajorVersion,
   MinorVersion, ServicePackMajor: Word): Boolean;
 begin
-  Assert(MajorVersion >= HiByte(_WIN32_WINNT_WIN2K));
-  if Assigned(VerSetConditionMask) and Assigned(VerifyVersionInfo) then
+  if (MajorVersion >= HiByte(_WIN32_WINNT_WIN2K))
+    and Assigned(VerSetConditionMask) and Assigned(VerifyVersionInfo) then
     Result := TestWindowsVersion(
       MajorVersion, MinorVersion, ServicePackMajor, 0, VER_GREATER_EQUAL
     )
@@ -2527,12 +2681,23 @@ begin
           case InternalMinorVersion of
             0:
               if not IsServer then
-                Result := osWin10
+              begin
+                if InternalBuildNumber < Win11FirstBuild then
+                  Result := osWin10
+                else
+                  // As of 2021-09-11 Win 11 is reporting version 10.0
+                  Result := osWin11;
+              end
               else
+              begin
                 if InternalBuildNumber <= Win2016LastBuild then
                   Result := osWin10Svr
+                else if InternalBuildNumber <= Win2019LastBuild then
+                  Result := osWinSvr2019
                 else
-                  Result := osWinSvr2019;
+                  //
+                  Result := osWinSvr2022;
+              end;
           end;
         end;
         else
@@ -2556,7 +2721,7 @@ end;
 class function TPJOSInfo.ProductName: string;
 begin
   case Product of
-    osUnknownWinNT, osUnknownWin9x, osUnknownWin32s: Result := '';
+    osUnknown, osUnknownWinNT, osUnknownWin9x, osUnknownWin32s: Result := '';
     osWinNT: Result := 'Windows NT';
     osWin2K: Result := 'Windows 2000';
     osWinXP: Result := 'Windows XP';
@@ -2579,6 +2744,8 @@ begin
     osWin10: Result := 'Windows 10';
     osWin10Svr: Result := 'Windows Server 2016';
     osWinSvr2019: Result := 'Windows Server 2019';
+    osWin11: Result := 'Windows 11';
+    osWinSvr2022: Result := 'Windows Server 2022';
     else
       raise EPJSysInfo.Create(sUnknownProduct);
   end;
@@ -2605,6 +2772,11 @@ begin
   Result := GetRegistryString(
     HKEY_LOCAL_MACHINE, CurrentVersionRegKeys[IsWinNT], 'RegisteredOwner'
   );
+end;
+
+class function TPJOSInfo.RevisionNumber: Integer;
+begin
+  Result := InternalRevisionNumber;
 end;
 
 class function TPJOSInfo.ServicePack: string;
