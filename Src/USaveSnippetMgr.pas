@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2020, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2005-2021, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Defines a class that manages generation, previewing and saving of a code
  * snippet.
@@ -92,7 +92,8 @@ uses
 
 resourcestring
   // Dialog box title
-  sSaveDlgTitle = 'Save %0:s Snippet';
+  sSaveSnippetDlgTitle = 'Save %0:s Snippet';
+  sSaveCategoryDlgTitle = 'Save %0:s Category';
   // Output document title for snippets and categories
   sDocTitle = '"%0:s" %1:s';
   sCategory = 'category';
@@ -145,7 +146,12 @@ end;
 
 function TSaveSnippetMgr.GetDlgTitle: string;
 begin
-  Result := Format(sSaveDlgTitle, [fView.Description]);
+  if Supports(fView, ICategoryView) then
+    Result := Format(sSaveCategoryDlgTitle, [fView.Description])
+  else if Supports(fView, ISnippetView) then
+    Result := Format(sSaveSnippetDlgTitle, [fView.Description])
+  else
+    Result := '';
 end;
 
 function TSaveSnippetMgr.GetDocTitle: string;
