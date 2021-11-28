@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2012-2020, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2012-2021, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Provides various class helpers for VCL classes.
 }
@@ -11,13 +11,15 @@
 
 unit UClassHelpers;
 
+{ TODO: Separate different helpers into their own units, within a ClassHelpers
+        scope. E.g. ClassHelpers.Controls, ClassHelper.Graphics }
 
 interface
 
 
 uses
   // Delphi
-  Controls, Menus, ImgList, Graphics, ActnList;
+  Controls, Menus, ImgList, Graphics, ActnList, GIFImg;
 
 
 type
@@ -68,6 +70,21 @@ type
     ///  <summary>Updates all actions in the action list by calling their Update
     ///  methods.</summary>
     procedure Update;
+  end;
+
+type
+  ///  <summary>Class helper that adds a method to TGIFImage that adds a similar
+  ///  method to one present in 3rd party TGIFImage to load an image from
+  ///   resources.</summary>
+  TGIFImageHelper = class helper for TGIFImage
+  public
+    ///  <summary>Load a GIF image from given resource.</summary>
+    ///  <param name="Module">HINSTANCE [in] Module containing resource.</param>
+    ///  <param name="ResName">string [in] Name of resource to be loaded.
+    ///  </param>
+    ///  <param name="ResType">PChar [in] Type of resource to be loaded.</param>
+    procedure LoadFromResource(const Module: HMODULE; const ResName: string;
+      const ResType: PChar);
   end;
 
 
@@ -172,6 +189,21 @@ var
 begin
   for Action in Self do
     Action.Update;
+end;
+
+{ TGIFImageHelper }
+
+procedure TGIFImageHelper.LoadFromResource(const Module: HMODULE;
+  const ResName: string; const ResType: PChar);
+var
+  Stm: TResourceStream;
+begin
+  Stm := TResourceStream.Create(Module, ResName, ResType);
+  try
+    LoadFromStream(Stm);
+  finally
+    Stm.Free;
+  end;
 end;
 
 end.
