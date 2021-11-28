@@ -7,9 +7,6 @@
  *
  * Image list descendant that enables representations of GIF images loaded from
  * HTML resource to be added. Resource names are mapped to image indices.
- *
- * Requires TGIFImage from GIFImage.pas by Anders Melander updated by Finn
- * Tolderlund.
 }
 
 
