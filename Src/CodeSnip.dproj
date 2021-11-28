@@ -36,7 +36,6 @@
 			<DelphiCompile Include="CodeSnip.dpr">
 				<MainSource>MainSource</MainSource>
 			</DelphiCompile>
-			<DCCReference Include="3rdParty\GIFImage.pas"/>
 			<DCCReference Include="3rdParty\LVEx.pas"/>
 			<DCCReference Include="3rdParty\PJMD5.pas"/>
 			<DCCReference Include="3rdParty\PJShellFolders.pas"/>

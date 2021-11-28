@@ -33,7 +33,6 @@ program CodeSnip;
 uses
   Forms,
   Windows,
-  GIFImage in '3rdParty\GIFImage.pas',
   LVEx in '3rdParty\LVEx.pas',
   PJMD5 in '3rdParty\PJMD5.pas',
   PJShellFolders in '3rdParty\PJShellFolders.pas',
