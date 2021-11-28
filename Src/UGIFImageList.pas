@@ -72,8 +72,8 @@ implementation
 
 
 uses
-  // 3rd party
-  GIFImage,
+  // Delphi
+  GIFImg, UClassHelpers,
   // Project
   UComparers;
 
