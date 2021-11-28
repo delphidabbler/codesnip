@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2007-2020, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2007-2021, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements the program's splash screen.
 }
@@ -66,11 +66,9 @@ implementation
 
 uses
   // Delphi
-  Windows, Graphics,
-  // 3rd party
-  GIFImage,
+  Windows, Graphics, GIFImg,
   // Project
-  UAppInfo, UColours, UStructs, UWindowSettings;
+  UAppInfo, UClassHelpers, UColours, UStructs, UWindowSettings;
 
 
 {$R *.dfm}
@@ -149,7 +147,7 @@ begin
   // Load and display splash screen image
   GIF := TGIFImage.Create;
   try
-    GIF.LoadFromResourceName(HInstance, 'SPLASHIMAGE');
+    GIF.LoadFromResource(HInstance, 'SPLASHIMAGE', RT_RCDATA);
     Canvas.Draw(0, 0, GIF);
   finally
     GIF.Free;

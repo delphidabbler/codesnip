@@ -3,13 +3,10 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2008-2020, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2008-2021, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Image list descendant that enables representations of GIF images loaded from
  * HTML resource to be added. Resource names are mapped to image indices.
- *
- * Requires TGIFImage from GIFImage.pas by Anders Melander updated by Finn
- * Tolderlund.
 }
 
 
@@ -72,8 +69,8 @@ implementation
 
 
 uses
-  // 3rd party
-  GIFImage,
+  // Delphi
+  GIFImg, UClassHelpers,
   // Project
   UComparers;
 
@@ -127,21 +124,17 @@ function TGIFImageList.CreateBMPFromGIFRes(const GIFResName: string): TBitmap;
     @return Bitmap representation of GIF.
   }
 var
-  GIFStm: TStream;    // stream used to access GIF in resources
   GIF: TGIFImage;     // GIF image object
 begin
-  GIFStm := nil;
   GIF := TGIFImage.Create;
   try
     // Open stream onto GIF in HTML resources and load into GIF image object
-    GIFStm := TResourceStream.Create(HInstance, GIFResName, RT_HTML);
-    GIF.LoadFromStream(GIFStm);
+    GIF.LoadFromResource(HInstance, GIFResName, RT_HTML);
     // Make bitmap copy of GIF
     Result := TBitmap.Create;
     Result.Assign(GIF);
     Result.TransparentColor := Result.Canvas.Pixels[0, 0];
   finally
-    GIFStm.Free;
     GIF.Free;
   end;
 end;
