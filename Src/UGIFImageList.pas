@@ -127,21 +127,17 @@ function TGIFImageList.CreateBMPFromGIFRes(const GIFResName: string): TBitmap;
     @return Bitmap representation of GIF.
   }
 var
-  GIFStm: TStream;    // stream used to access GIF in resources
   GIF: TGIFImage;     // GIF image object
 begin
-  GIFStm := nil;
   GIF := TGIFImage.Create;
   try
     // Open stream onto GIF in HTML resources and load into GIF image object
-    GIFStm := TResourceStream.Create(HInstance, GIFResName, RT_HTML);
-    GIF.LoadFromStream(GIFStm);
+    GIF.LoadFromResource(HInstance, GIFResName, RT_HTML);
     // Make bitmap copy of GIF
     Result := TBitmap.Create;
     Result.Assign(GIF);
     Result.TransparentColor := Result.Canvas.Pixels[0, 0];
   finally
-    GIFStm.Free;
     GIF.Free;
   end;
 end;
