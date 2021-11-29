@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2020, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2005-2021, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Helper interfaces and classes used to generate HTML.
 }
@@ -227,18 +227,12 @@ begin
     for Ch in Text do
     begin
       case Ch of
-        '<':
-          SB.Append('&lt;');
-        '>':
-          SB.Append('&gt;');
-        '&':
-          SB.Append('&amp;');
-        DOUBLEQUOTE:
-          SB.Append('&quot;');
-        #0..#9, #11, #12, #14..#31:
-          SB.Append('&#' + IntToStr(Ord(Ch)) + ';')
-        else
-          SB.Append(Ch);
+        LT:           SB.Append('&lt;');
+        GT:           SB.Append('&gt;');
+        SINGLEQUOTE:  SB.Append('&apos;');
+        DOUBLEQUOTE:  SB.Append('&quot;');
+        AMPERSAND:    SB.Append('&amp;');
+        else          SB.Append(Ch);
       end;
     end;
     Result := SB.ToString;

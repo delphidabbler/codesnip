@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2009-2020, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2009-2021, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Defines various character, string and resource id constants.
 }
@@ -29,8 +29,12 @@ const
   CR          = #13;    // carriage return character
   SUB         = #26;    // ASCII SUB character
   ESC         = #27;    // escape character
+
   SINGLEQUOTE = '''';   // single quote character
   DOUBLEQUOTE = '"';    // double quote character
+  AMPERSAND   = '&';    // ampersand character
+  GT          = '>';    // greater-than / closing angle bracket character
+  LT          = '<';    // less-than / opening angle bracket character
 
   CRLF  = CR + LF;      // carriage return followed by line feed
   EOL   = CRLF;         // end of line character sequence for Windows systems
