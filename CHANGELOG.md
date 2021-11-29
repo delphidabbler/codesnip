@@ -12,6 +12,17 @@ This change log begins with the first ever pre-release version of _CodeSnip_. Re
 From v4.1.0 the version numbering has attempted to adhere to the principles of [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## Release v4.18.1 of 29 November 2021
+
+* Improved handling of control and whitespace characters in generated HTML: revised which characters were converted to HTML character attributes / entities.
+* Fixed error in title of _Save Annotated Source_ dialogue box.
+* Replaced use 3rd party `GIFImage` unit with similar `GIFImg` unit from Delphi XE VCL.
+* Corrected help topic for _Dependencies_ dialogue box to describe _Save & Close_ button.
+* Operating system detection code was updated to correctly detect Windows 11 and Windows 10 version 21H2.
+* Some refactoring.
+* Updated license document (`License.html`) following removal of dependency on GIFImage unit.
+
+
 ## Release v4.18.0 of 13 September 2021
 
 * Added support for test compilation with, and detection of, Delphi 11 Alexandria.
