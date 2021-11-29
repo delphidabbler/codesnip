@@ -29,8 +29,12 @@ const
   CR          = #13;    // carriage return character
   SUB         = #26;    // ASCII SUB character
   ESC         = #27;    // escape character
+
   SINGLEQUOTE = '''';   // single quote character
   DOUBLEQUOTE = '"';    // double quote character
+  AMPERSAND   = '&';    // ampersand character
+  GT          = '>';    // greater-than / closing angle bracket character
+  LT          = '<';    // less-than / opening angle bracket character
 
   CRLF  = CR + LF;      // carriage return followed by line feed
   EOL   = CRLF;         // end of line character sequence for Windows systems
