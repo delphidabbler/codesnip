@@ -227,18 +227,12 @@ begin
     for Ch in Text do
     begin
       case Ch of
-        '<':
-          SB.Append('&lt;');
-        '>':
-          SB.Append('&gt;');
-        '&':
-          SB.Append('&amp;');
-        DOUBLEQUOTE:
-          SB.Append('&quot;');
-        #0..#9, #11, #12, #14..#31:
-          SB.Append('&#' + IntToStr(Ord(Ch)) + ';')
-        else
-          SB.Append(Ch);
+        LT:           SB.Append('&lt;');
+        GT:           SB.Append('&gt;');
+        SINGLEQUOTE:  SB.Append('&apos;');
+        DOUBLEQUOTE:  SB.Append('&quot;');
+        AMPERSAND:    SB.Append('&amp;');
+        else          SB.Append(Ch);
       end;
     end;
     Result := SB.ToString;
