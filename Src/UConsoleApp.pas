@@ -368,8 +368,8 @@ begin
   // parameter.
   // See https://msdn.microsoft.com/en-us/library/ms682425.aspx for an
   // explanation of the problem: look under the lpCommandLine parameter section.
-  // Remy Lebeau suggested the workaround used below in his post to
-  // https://forums.codegear.com/thread.jspa?threadID=12826
+  // Remy Lebeau suggested the workaround used below in a post on the old
+  // CodeGear forums.
   SafeCmdLine := CmdLine;
   UniqueString(SafeCmdLine);
   // Set up creation flags: special flag used to determine type of environment

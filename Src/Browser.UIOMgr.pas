@@ -187,7 +187,6 @@ procedure TWBIOMgr.DocCompleteHandler(Sender: TObject; const pDisp: IDispatch;
 begin
   // Top level document has finished loading iff pDisp contains reference to
   // browser control's default interface.
-  // See http://support.microsoft.com/kb/180366
   if pDisp = (fWB.DefaultInterface as IDispatch) then
     fDocLoaded := True;
 end;

@@ -8,7 +8,7 @@
  * Provides a base class for singleton objects along with a manager object that
  * records instances of each type of singleton.
  *
- * Based on by code by Yoav Abrahami see <URL:http://bit.ly/cAH0HO>, updated to
+ * Based on by code by Yoav Abrahami on the former Delphi3000.com, updated to
  * take advantage of modern Delphi features: generics, class vars, class
  * constructor and destructor etc. Further updated to use class types instead of
  * class names as dictionary keys following suggestions made in comments on my

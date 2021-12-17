@@ -66,8 +66,7 @@ type
     ///  <returns>string. Required JavaScript code.</returns>
     ///  <remarks>We sometimes need to load scripts into strings and then embed
     ///  in HTML document since linking to external resource script doesn't seem
-    ///  to work in IE 9 (see bug report
-    ///  https://sourceforge.net/p/codesnip/bugs/84/).</remarks>
+    ///  to work in IE 9.</remarks>
     class function LoadScript(const ScriptName: string;
       const EncType: TEncodingType): string; static;
   end;

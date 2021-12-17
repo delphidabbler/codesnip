@@ -36,8 +36,7 @@
         }
     }
 
-    // Modification of function by Dustin Diaz:
-    //   http://www.dustindiaz.com/getelementsbyclass
+    // Modification of function by Dustin Diaz
     function getElementsByClass(searchClass,node,tag) {
         var classElements = [];
         if (node == null) {
