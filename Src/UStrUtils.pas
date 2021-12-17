@@ -1,7 +1,7 @@
 {
  * This Source Code Form is subject to the terms of the Mozilla Public License,
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * obtain one at https://mozilla.org/MPL/2.0/
  *
  * Copyright (C) 2011-2020, Peter Johnson (gravatar.com/delphidabbler).
  *
@@ -219,7 +219,7 @@ function StrExplode(Str: UnicodeString; const Delim: UnicodeString;
 ///  <summary>Splits string Str at the first occurence of Delim setting Left to
 ///  the string preceeding Delim and Right to the string following Delim.
 ///  Returns True if Delim was found in Str, False if not.</summary>
-///  <remarks>Either Left or Right will be empty if Delim is found at the start 
+///  <remarks>Either Left or Right will be empty if Delim is found at the start
 ///  or end of Str respectively.</remarks>
 function StrSplit(const Str: UnicodeString; const Delim: UnicodeString;
   out Left, Right: UnicodeString): Boolean;

@@ -1,7 +1,7 @@
 {
  * This Source Code Form is subject to the terms of the Mozilla Public License,
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * obtain one at https://mozilla.org/MPL/2.0/
  *
  * Copyright (C) 2008-2020, Peter Johnson (gravatar.com/delphidabbler).
  *
@@ -166,7 +166,7 @@ implementation
   <               &lt;
   "               &quot;
   &               &amp;
-  ©               &copy;
+  ï¿½               &copy;
 
   No other entities are supported. Any other character can be encoded using its
   unicode or ascii value. For example, the @ symbol (ascii 64) is encoded as
@@ -847,7 +847,7 @@ begin
   fEntityMap[1] := TREMLEntity.Create('quot', DOUBLEQUOTE);
   fEntityMap[2] := TREMLEntity.Create('gt',   '>');
   fEntityMap[3] := TREMLEntity.Create('lt',   '<');
-  fEntityMap[4] := TREMLEntity.Create('copy', '©');
+  fEntityMap[4] := TREMLEntity.Create('copy', 'ï¿½');
 end;
 
 class destructor TREMLEntities.Destroy;

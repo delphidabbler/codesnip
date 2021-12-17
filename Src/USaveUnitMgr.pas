@@ -1,7 +1,7 @@
 {
  * This Source Code Form is subject to the terms of the Mozilla Public License,
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * obtain one at https://mozilla.org/MPL/2.0/
  *
  * Copyright (C) 2006-2020, Peter Johnson (gravatar.com/delphidabbler).
  *
@@ -115,7 +115,7 @@ resourcestring
   // Error message
   sErrorMsg = 'Filename is not valid for a Pascal unit';
   // Unit header comments
-  sLicense = 'The unit is copyright © %0:s by %1:s and is licensed under '
+  sLicense = 'The unit is copyright ï¿½ %0:s by %1:s and is licensed under '
     + 'the %2:s.';
   sMainDescription = 'This unit was generated automatically. It incorporates a '
     + 'selection of source code taken from the Code Snippets Database at %0:s.';
