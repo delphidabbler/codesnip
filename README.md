@@ -1,21 +1,36 @@
 # CodeSnip Pagoda
 
-> **Branch abandoned?? - not quite - change of heart **
+> **Branch abandoned**
+> 
+> The `pagoda` branch, which had been moribund since July 2014, was officially abandoned in January 2020.
+> 
+> The branch will remain in the repository for the time being in case some of its code can be salvaged for use in a later version of CodeSnip.
+> 
+> Anyone is welcome to take over development of this branch. If you do, please fork the repository. But _do not_ submit any changes back here. On the other hand pull requests for the main CodeSnip v4 code base are welcome. **Warning: `pagoda` contains code that accesses web services that are no longer available.**
 
-Following a false start back in 2013/4 in the `parsnip` branch, development of CodeSnip 5 restarted in this `pagoda` branch, which picked up where `parsnip` left off. (Don't ask where those names came from!)
+## About `pagoda`
 
-While `pagoda` has also been abandoned now, a recent branch named `pavilion` has been started to explore whether this code is the quickest route to getting a new version of CodeSnip working that both removes dependency on the soon-to-close DelphiDabbler.com webserver *and* unifies the user and "main" databases.
-
-Only time will tell if this works out. I may bring it to completion if I can do it in a timely manner, but `pavilion` may also find itself abandoned if time runs out.
-
-The `pagoda` branch has been left in place in case anyone else wants to continue development along different lines. All my development effort will continue in `pavilion`.
+The `pagoda` branch is a continuation of the earlier `parsnip` branch. Together the branches represent a 1st, albeit abortive, attempt at developing CodeSnip v5 from the CodeSnip v4 code base.
 
 The original idea behind v5 was to:
 
 1. Generalise CodeSnip to be a code bank for several different languages instead of just Pascal, while still providing some additional support for test-compiling Pascal code.
-2. Increase the focus on the user's own code while downplaying the importance of code downloaded from the DelphiDabbler [Code Snippets database](http://snippets.delphidabbler.com/), like [SWAG](http://swag.delphidabbler.com/) is at present.<sup> †</sup>
-3. Remove the program's dependency on web services provided by [DelphiDabbler.com](http://delphidabbler.com) given the current uncertainty over that websites future.
+2. Increase the focus on the user's own code while downplaying the importance of code downloaded from the DelphiDabbler Code Snippets database,
 
-<sup>†</sup> It is hoped to move the Code Snippets database to GitHub before DelphiDabbler closes down on 15 June 2020.
+## History of the `pagoda` branch
 
-> If you decide to continue with this development please fork the repo. Do not submit changes back here - no pull requests will be accepted. However, it will be interesting to know what you plan. **Do not use any code that accesses the delphidabbler.com web services** - they **really** are going away on 15 June 2020 Thanks.
+The `pagoda` branch was branched from the earlier `parsnip` branch.
+
+`parsnip` was begun on 2013-08-18 by branching from the CodeSnip v4 code base in the old Subversion repository `trunk`, just after the release of CodeSnip 4.7.1.
+
+After hundreds of commits development of `parsnip` faltered, with the last significant work being committed on 2014-10-29. Subsequent commits were simply merges of updates from the CodeSnip 4 code tree, with the last being made on 2015-09-30, following the release of CodeSnip v4.13.1.
+
+`pagoda` was branched from `parsnip` on 2015-09-30, the day after `parsnip`'s last commit. This branch was begun in the Subversion repository, but there was only one commit before the whole of the CodeSnip code base was imported into Git and moved to GitHub on 2015-10-07. The `parsnip` branch had been removed by 2016-02-21.
+
+Work on `pagoda` began in February 2014 and continued through March 2014 when, apart from a few commits in July 2014, the branch was effectively abandoned.
+
+To all intents and purposes `pagoda` was just a continuation of `parsnip`. The reason for the name change is lost in the mists of time!
+
+## Life after `pagoda`?
+
+On 2020/01/24 a new branch, `pavilion`, was branched from `pagoda`. But that's another story. See the `pavilion` branch read-me for details.
