@@ -12,7 +12,7 @@
  * take advantage of modern Delphi features: generics, class vars, class
  * constructor and destructor etc. Further updated to use class types instead of
  * class names as dictionary keys following suggestions made in comments on my
- * blog post at <URL:http://bit.ly/d8n9Hq>.
+ * blog post at <URL:https://bit.ly/d8n9Hq>.
 }
 
 

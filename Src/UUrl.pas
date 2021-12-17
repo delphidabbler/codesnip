@@ -54,7 +54,7 @@ type
       SWAGReleases = SWAGRepo + '/releases';
 
       /// <summary>URL of the the CodeSnip blog.</summary>
-      CodeSnipBlog = 'http://codesnip-app.blogspot.com/';
+      CodeSnipBlog = 'https://codesnip-app.blogspot.com/';
 
   end;
 

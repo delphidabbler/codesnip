@@ -232,7 +232,7 @@ end;
   ordinal value of less than $80. So we needn't worry about detecting lead and
   continuation bytes.
 
-  For details of the UTF-8 encoding see http://en.wikipedia.org/wiki/UTF-8
+  For details of the UTF-8 encoding see https://en.wikipedia.org/wiki/UTF-8
 
   NOTE:
     URIEncode should be applied to the component parts of the URI before they

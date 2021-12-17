@@ -61,7 +61,7 @@
     }
 
     // Derived from Remy Sharp's code:
-    //   http://remysharp.com/2008/01/21/fixing-ie-overflow-problem/
+    //   https://remysharp.com/2008/01/21/fixing-ie-overflow-problem/
     function fixOverflow(elems) {
         var i;
         for (i = 0; i < elems.length; i += 1) {

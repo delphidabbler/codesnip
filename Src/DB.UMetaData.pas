@@ -762,7 +762,7 @@ begin
     'LicenseURL=https://opensource.org/licenses/MIT',
     'CopyrightDate=2005-2016',
     'CopyrightHolder=Peter Johnson & Contributors',
-    'CopyrightHolderURL=http://gravatar.com/delphidabbler'
+    'CopyrightHolderURL=https://gravatar.com/delphidabbler'
   );
 end;
 

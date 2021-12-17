@@ -313,7 +313,7 @@ var
   ST: TSystemTime;
 begin
   // This Windows API function gets system time in UTC/GMT
-  // see http://msdn.microsoft.com/en-us/library/ms724390
+  // see https://msdn.microsoft.com/en-us/library/ms724390
   GetSystemTime(ST);
   Result := SystemTimeToDateTime(ST);
 end;

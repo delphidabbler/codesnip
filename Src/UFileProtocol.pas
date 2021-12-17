@@ -42,7 +42,7 @@ uses
   IE also supports direct specification of the file name, without file://
   prefix. UNC file names are also supported, with or without the file:// prefix.
 
-  According to Microsoft, http://msdn.microsoft.com/en-us/library/aa767731.aspx,
+  According to Microsoft, https://msdn.microsoft.com/en-us/library/aa767731.aspx,
   valid file paths understood by TWebBrowser are:
 
   + file:///C|/Dirs/FileName.ext         (browses file name)

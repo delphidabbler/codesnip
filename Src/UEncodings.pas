@@ -379,7 +379,7 @@ uses
 ///  <remarks>
 ///  <para>Caller must ensure that the byte array has the correct format for
 ///  the requested code page.</para>
-///  <para>Based on Stack Overflow posting at http://bit.ly/bAvtGd.</para>
+///  <para>Based on Stack Overflow posting at https://bit.ly/bAvtGd.</para>
 ///  <para>Any terminating 0 byte included in Bytes is excluded from the
 ///  result because Delphi adds its own terminal #0 character to ANSI strings.
 ///  </para>

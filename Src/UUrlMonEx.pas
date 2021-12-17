@@ -23,7 +23,7 @@ uses
 
 const
   // Internet Explorer feature controls.
-  // For documentation see http://msdn.microsoft.com/en-us/library/ms537169
+  // For documentation see https://msdn.microsoft.com/en-us/library/ms537169
   FEATURE_OBJECT_CACHING                  = 0;
   FEATURE_ZONE_ELEVATION                  = 1;
   FEATURE_MIME_HANDLING                   = 2;
@@ -56,7 +56,7 @@ const
 
 const
   // Flags that specify where to set an Internet Explorer feature control
-  // For documentation see http://msdn.microsoft.com/en-us/library/ms537168
+  // For documentation see https://msdn.microsoft.com/en-us/library/ms537168
   SET_FEATURE_ON_THREAD                   = $00000001;
   SET_FEATURE_ON_PROCESS                  = $00000002;
   SET_FEATURE_IN_REGISTRY                 = $00000004;

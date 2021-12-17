@@ -122,7 +122,7 @@ const
   cXMLProcInstruction = '<?xml version="1.0"?>';
   // XML document type
   cDocType = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" '
-    + '"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">';
+    + '"https://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">';
   // Various tag names
   cHTMLTag = 'html';
   cHeadTag = 'head';
@@ -214,7 +214,7 @@ function THTMLBuilder.HTMLTag: string;
   function HTMLAttrs: IHTMLAttributes;
   begin
     Result := THTMLAttributes.Create(
-      [THTMLAttribute.Create('xmlns', 'http://www.w3.org/1999/xhtml'),
+      [THTMLAttribute.Create('xmlns', 'https://www.w3.org/1999/xhtml'),
       THTMLAttribute.Create('xml:lang', 'en'),
       THTMLAttribute.Create('lang', 'en')]
     );

@@ -96,7 +96,7 @@ type
     class function GetIEVersionStr: string;
     ///  <summary>Calculates major version number of Internet Explorer if it has
     ///  not already been calculated.</summary>
-    ///  <remarks>See http://support.microsoft.com/kb/969393/en-us.</remarks>
+    ///  <remarks>See https://support.microsoft.com/kb/969393/en-us.</remarks>
     class procedure InitMajorVersion;
   public
     const

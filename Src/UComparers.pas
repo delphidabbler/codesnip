@@ -71,7 +71,7 @@ uses
 
 
 ///  <summary>String has function.</summary>
-///  <remarks>Sourced from http://www.scalabium.com/faq/dct0136.htm.</summary>
+///  <remarks>Sourced from https://www.scalabium.com/faq/dct0136.htm.</summary>
 function ElfHash(const Value: string): Integer;
 var
   I: Integer; // loops thru string

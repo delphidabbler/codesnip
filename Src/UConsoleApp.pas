@@ -366,7 +366,7 @@ begin
   // Without the following code this problem would arise if this method was
   // called with a constant or string with -1 reference count as the CmdLine
   // parameter.
-  // See http://msdn.microsoft.com/en-us/library/ms682425.aspx for an
+  // See https://msdn.microsoft.com/en-us/library/ms682425.aspx for an
   // explanation of the problem: look under the lpCommandLine parameter section.
   // Remy Lebeau suggested the workaround used below in his post to
   // https://forums.codegear.com/thread.jspa?threadID=12826

@@ -175,7 +175,7 @@ implementation
   Example:
     <heading>Hello</heading>
     <p>&quot;<strong>Hello</strong>&quot; to
-    <a href="http://example.com">you</a></p>
+    <a href="https://example.com">you</a></p>
 
   This example specifes a heading "Hello" followed by a single paragraph. In the
   paragraph, "Hello" will be bold, "to" should be plain text and "you" should
