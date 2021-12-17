@@ -1,18 +1,18 @@
 {
  * This Source Code Form is subject to the terms of the Mozilla Public License,
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * obtain one at https://mozilla.org/MPL/2.0/
  *
  * Copyright (C) 2010-2020, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Provides a base class for singleton objects along with a manager object that
  * records instances of each type of singleton.
  *
- * Based on by code by Yoav Abrahami see <URL:http://bit.ly/cAH0HO>, updated to
+ * Based on by code by Yoav Abrahami on the former Delphi3000.com, updated to
  * take advantage of modern Delphi features: generics, class vars, class
  * constructor and destructor etc. Further updated to use class types instead of
  * class names as dictionary keys following suggestions made in comments on my
- * blog post at <URL:http://bit.ly/d8n9Hq>.
+ * blog post at <URL:https://bit.ly/d8n9Hq>.
 }
 
 

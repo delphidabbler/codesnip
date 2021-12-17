@@ -33,7 +33,7 @@ The following support is available CodeSnip users:
 * A comprehensive help file.
 * A [read-me file](https://raw.githubusercontent.com/delphidabbler/codesnip/master/Docs/ReadMe.txt)<sup> *</sup> that discusses installation, configuration, updating and known issues.
 * A [Using CodeSnip FAQ](https://github.com/delphidabbler/codesnip-faq/blob/master/UsingCodeSnip.md).
-* A [Blog](http://codesnip-app.blogspot.co.uk/).
+* A [Blog](https://codesnip-app.blogspot.co.uk/).
 
 There's also plenty of info available on how to compile CodeSnip from source - see below.
 
@@ -43,7 +43,7 @@ There's also plenty of info available on how to compile CodeSnip from source - s
 
 CodeSnip's source code is maintained in the [`delphidabbler/codesnip`](https://github.com/delphidabbler/codesnip) Git repository on GitHub†.
 
-[Git Flow](http://nvie.com/posts/a-successful-git-branching-model/) methodology has been adopted, with the exception of some branches that have been used in abortive attempts to start work on CodeSnip 5.
+[Git Flow](https://nvie.com/posts/a-successful-git-branching-model/) methodology has been adopted, with the exception of some branches that have been used in abortive attempts to start work on CodeSnip 5.
 
 The following branches existed at the time when CodeSnip v4.16.0 was released:
 

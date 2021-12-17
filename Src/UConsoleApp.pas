@@ -1,7 +1,7 @@
 {
  * This Source Code Form is subject to the terms of the Mozilla Public License,
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * obtain one at https://mozilla.org/MPL/2.0/
  *
  * Copyright (C) 2006-2020, Peter Johnson (gravatar.com/delphidabbler).
  *
@@ -366,10 +366,10 @@ begin
   // Without the following code this problem would arise if this method was
   // called with a constant or string with -1 reference count as the CmdLine
   // parameter.
-  // See http://msdn.microsoft.com/en-us/library/ms682425.aspx for an
+  // See https://msdn.microsoft.com/en-us/library/ms682425.aspx for an
   // explanation of the problem: look under the lpCommandLine parameter section.
-  // Remy Lebeau suggested the workaround used below in his post to
-  // https://forums.codegear.com/thread.jspa?threadID=12826
+  // Remy Lebeau suggested the workaround used below in a post on the old
+  // CodeGear forums.
   SafeCmdLine := CmdLine;
   UniqueString(SafeCmdLine);
   // Set up creation flags: special flag used to determine type of environment

@@ -1,7 +1,7 @@
 {
  * This Source Code Form is subject to the terms of the Mozilla Public License,
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * obtain one at https://mozilla.org/MPL/2.0/
  *
  * Copyright (C) 2006-2020, Peter Johnson (gravatar.com/delphidabbler).
  *
@@ -117,7 +117,7 @@ function MonoFontFamilyProc(PLF: PEnumLogFont; PNTM: PNewTextMetric;
   }
 begin
   // check for fixed pitch font and filter out all "vertical" fonts that start
-  // with "@" (see http://tinyurl.com/6ul6rfo for details of vertical fonts).
+  // with "@" (see https://tinyurl.com/6ul6rfo for details of vertical fonts).
   if ((PLF.elfLogFont.lfPitchAndFamily and $F) = FIXED_PITCH)
     and not StrStartsStr('@', PLF.elfLogFont.lfFaceName) then
     List.Add(PLF.elfLogFont.lfFaceName);
