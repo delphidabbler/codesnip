@@ -144,12 +144,12 @@ begin
   CheckEquals('bar', URIBaseName('foo/bar'), 'Test 4');
   CheckEquals(
     'foo.php',
-    URIBaseName('http://example.com/foo.php'),
+    URIBaseName('https://example.com/foo.php'),
     'Test 5'
   );
   CheckEquals(
     'bar',
-    URIBaseName('http://example.com/foo/bar'),
+    URIBaseName('https://example.com/foo/bar'),
     'Test 6'
   );
 end;

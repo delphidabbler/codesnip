@@ -1,6 +1,6 @@
 ; This Source Code Form is subject to the terms of the Mozilla Public License,
 ; v. 2.0. If a copy of the MPL was not distributed with this file, You can
-; obtain one at http://mozilla.org/MPL/2.0/
+; obtain one at https://mozilla.org/MPL/2.0/
 ;
 ; Copyright (C) 2008-2021, Peter Johnson (gravatar.com/delphidabbler).
 ;
@@ -21,12 +21,12 @@ Language=2057
 Character Set=1252
 
 [String File Info]
-Comments=Released under the terms of the Mozilla Public License v2.0 (http://www.mozilla.org/MPL/2.0/)
+Comments=Released under the terms of the Mozilla Public License v2.0 (https://www.mozilla.org/MPL/2.0/)
 Company Name=DelphiDabbler
 File Description=CodeSnip Database Viewer
 File Version=<#F1>.<#F2>.<#F3> build <#F4>
 Internal Name=<SHORTFNAME>
-Legal Copyright=Copyright © P.D.Johnson, 2005-<YEAR>.
+Legal Copyright=Copyright ï¿½ P.D.Johnson, 2005-<YEAR>.
 Legal Trademark=
 Original File Name=CodeSnip.exe
 Private Build=

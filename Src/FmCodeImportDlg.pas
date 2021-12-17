@@ -1,7 +1,7 @@
 {
  * This Source Code Form is subject to the terms of the Mozilla Public License,
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * obtain one at https://mozilla.org/MPL/2.0/
  *
  * Copyright (C) 2011-2020, Peter Johnson (gravatar.com/delphidabbler).
  *
@@ -424,7 +424,7 @@ procedure TCodeImportDlg.PresentResults;
     Lbl.Parent := sbFinish;
     Lbl.Left := 0;
     Lbl.Top := Top;
-    Lbl.Caption := '» ' + SnippetName;
+    Lbl.Caption := 'ï¿½ ' + SnippetName;
     Top := TCtrlArranger.BottomOf(Lbl, 2);
   end;
   // ---------------------------------------------------------------------------

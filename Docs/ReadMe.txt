@@ -236,7 +236,7 @@ Updates are published on:
 + SourceForge: https://sourceforge.net/projects/codesnip/files/
 
 News of new updates is published on the CodeSnip Blog:
-http://codesnip-app.blogspot.com/.
+https://codesnip-app.blogspot.com/.
 
 
 Known Installation and Upgrading Issues
@@ -303,7 +303,7 @@ https://github.com/delphidabbler/codesnip-faq/blob/master/SourceCode.md#faq-1
 The standard and portable editions of CodeSnip share the same source code.
 
 The original source code of v4 is released under the Mozilla Public license
-v2.0 (see http://www.mozilla.org/MPL/) and other open source licenses. See the
+v2.0 (see https://www.mozilla.org/MPL/) and other open source licenses. See the
 file "License.html" in the "Docs" directory of the repository for full licensing
 information.
 

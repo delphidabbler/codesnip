@@ -1,7 +1,7 @@
 {
  * This Source Code Form is subject to the terms of the Mozilla Public License,
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * obtain one at https://mozilla.org/MPL/2.0/
  *
  * Copyright (C) 2005-2020, Peter Johnson (gravatar.com/delphidabbler).
  *
@@ -187,7 +187,6 @@ procedure TWBIOMgr.DocCompleteHandler(Sender: TObject; const pDisp: IDispatch;
 begin
   // Top level document has finished loading iff pDisp contains reference to
   // browser control's default interface.
-  // See http://support.microsoft.com/kb/180366
   if pDisp = (fWB.DefaultInterface as IDispatch) then
     fDocLoaded := True;
 end;

@@ -1,7 +1,7 @@
 {
  * This Source Code Form is subject to the terms of the Mozilla Public License,
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * obtain one at https://mozilla.org/MPL/2.0/
  *
  * Copyright (C) 2006-2020, Peter Johnson (gravatar.com/delphidabbler).
  *
@@ -66,8 +66,7 @@ type
     ///  <returns>string. Required JavaScript code.</returns>
     ///  <remarks>We sometimes need to load scripts into strings and then embed
     ///  in HTML document since linking to external resource script doesn't seem
-    ///  to work in IE 9 (see bug report
-    ///  https://sourceforge.net/p/codesnip/bugs/84/).</remarks>
+    ///  to work in IE 9.</remarks>
     class function LoadScript(const ScriptName: string;
       const EncType: TEncodingType): string; static;
   end;
