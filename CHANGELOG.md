@@ -334,7 +334,7 @@ This is a significant update. It's purpose is to remove CodeSnip's dependencies 
 ## Release v4.5.1 of 15 May 2013
 
 + Added progress bars or marquees to several database operations that can take a long time on slower storage devices, i.e.:
-  - When local files are being updated after downloading an updated database in the Update From Web dialogue box. This fixes [SourceForge] bug #79 ~~(https://sourceforge.net/p/codesnip/bugs/79/)~~:
+  - When local files are being updated after downloading an updated database in the Update From Web dialogue box. This fixes [SourceForge] bug #79:
   - When the local database is being saved.
   - When the local database is being backed up or restored.
   - When the local database is being moved to a new location.
