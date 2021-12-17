@@ -1,4 +1,4 @@
-{
+﻿{
  * This Source Code Form is subject to the terms of the Mozilla Public License,
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
@@ -847,7 +847,7 @@ begin
   fEntityMap[1] := TREMLEntity.Create('quot', DOUBLEQUOTE);
   fEntityMap[2] := TREMLEntity.Create('gt',   '>');
   fEntityMap[3] := TREMLEntity.Create('lt',   '<');
-  fEntityMap[4] := TREMLEntity.Create('copy', '�');
+  fEntityMap[4] := TREMLEntity.Create('copy', '©');
 end;
 
 class destructor TREMLEntities.Destroy;
