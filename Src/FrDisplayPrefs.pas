@@ -63,7 +63,8 @@ type
       {Class constructor. Sets up frame and populates controls.
         @param AOwner [in] Component that owns frame.
       }
-    procedure Activate(const Prefs: IPreferences); override;
+    procedure Activate(const Prefs: IPreferences; const Flags: UInt64);
+      override;
       {Called when page activated. Updates controls.
         @param Prefs [in] Object that provides info used to update controls.
       }
@@ -106,7 +107,8 @@ uses
 
 { TDisplayPrefsFrame }
 
-procedure TDisplayPrefsFrame.Activate(const Prefs: IPreferences);
+procedure TDisplayPrefsFrame.Activate(const Prefs: IPreferences;
+  const Flags: UInt64);
   {Called when page activated. Updates controls.
     @param Prefs [in] Object that provides info used to update controls.
   }

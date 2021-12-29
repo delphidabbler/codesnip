@@ -74,7 +74,8 @@ type
     constructor Create(AOwner: TComponent); override;
       {Class constructor. Initialises controls.
       }
-    procedure Activate(const Prefs: IPreferences); override;
+    procedure Activate(const Prefs: IPreferences; const Flags: UInt64);
+      override;
       {Called when page activated. Updates controls.
         @param Prefs [in] Object that provides info used to update controls.
       }
@@ -165,7 +166,8 @@ type
 
 { TSourcePrefsFrame }
 
-procedure TSourcePrefsFrame.Activate(const Prefs: IPreferences);
+procedure TSourcePrefsFrame.Activate(const Prefs: IPreferences;
+  const Flags: UInt64);
   {Called when page activated. Updates controls.
     @param Prefs [in] Object that provides info used to update controls.
   }

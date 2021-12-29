@@ -50,6 +50,8 @@ type
       ///  <summary>Records if main UI needs to be updated to reflect changed
       ///  preferences.</summary>
       fUpdateUI: Boolean;
+      ///  <summary>Records flags to be passed to frames.</summary>
+      fFrameFlags: UInt64;
       ///  <summary>Records index of currently select tab/list item.</summary>
       fCurrentPageIdx: Integer;
     ///  <summary>Creates the required frames and displays each in a tab sheet
@@ -108,7 +110,8 @@ type
     ///  <returns>Boolean. True if user clicks OK to accept changes or False if
     ///  user cancels and no changes made.</returns>
     class function Execute(AOwner: TComponent;
-      const Pages: array of TPrefsFrameClass; out UpdateUI: Boolean): Boolean;
+      const Pages: array of TPrefsFrameClass; out UpdateUI: Boolean;
+      const Flags: UInt64 = 0): Boolean;
       overload;
     ///  <summary>Displays dialog with pages for each specified preferences
     ///  frame.</summary>
@@ -119,7 +122,8 @@ type
     ///  <returns>Boolean. True if user clicks OK to accept changes or False if
     ///  user cancels and no changes made.</returns>
     class function Execute(AOwner: TComponent;
-      const Pages: array of TPrefsFrameClass): Boolean; overload;
+      const Pages: array of TPrefsFrameClass; const Flags: UInt64 = 0):
+      Boolean; overload;
     ///  <summary>Displays preferences dialog with all registered preference
     ///  frames.</summary>
     ///  <param name="AOwner">TComponent [in] Component that owns dialog.
@@ -128,8 +132,8 @@ type
     ///  be updated as a result of preference changes.</param>
     ///  <returns>Boolean. True if user clicks OK to accept changes or False if
     ///  user cancels and no changes made.</returns>
-    class function Execute(AOwner: TComponent; out UpdateUI: Boolean): Boolean;
-      overload;
+    class function Execute(AOwner: TComponent; out UpdateUI: Boolean;
+      const Flags: UInt64 = 0): Boolean; overload;
     ///  <summary>Displays dialogue with showing a single frame, specified by
     ///  its class name.</summary>
     ///  <param name="AOwner">TComponent [in] Component that owns dialog.
@@ -141,7 +145,7 @@ type
     ///  <returns>Boolean. True if user clicks OK to accept changes or False if
     ///  user cancels and no changes made.</returns>
     class function Execute(AOwner: TComponent; const PageClsName: string;
-      out UpdateUI: Boolean): Boolean; overload;
+      out UpdateUI: Boolean; const Flags: UInt64 = 0): Boolean; overload;
     ///  <summary>Registers given preferences frame class for inclusion in the
     ///  preferences dialog box.</summary>
     ///  <remarks>Registered frames are created when the dialog box is displayed
@@ -258,10 +262,12 @@ begin
 end;
 
 class function TPreferencesDlg.Execute(AOwner: TComponent;
-  const Pages: array of TPrefsFrameClass; out UpdateUI: Boolean): Boolean;
+  const Pages: array of TPrefsFrameClass; out UpdateUI: Boolean;
+  const Flags: UInt64): Boolean;
 begin
   with InternalCreate(AOwner) do
     try
+      fFrameFlags := Flags;
       CreatePages(Pages);
       Result := ShowModal = mrOK;
       if Result then
@@ -274,21 +280,22 @@ begin
 end;
 
 class function TPreferencesDlg.Execute(AOwner: TComponent;
-  out UpdateUI: Boolean): Boolean;
+  out UpdateUI: Boolean; const Flags: UInt64): Boolean;
 begin
-  Result := Execute(AOwner, fPages.ToArray, UpdateUI);
+  Result := Execute(AOwner, fPages.ToArray, UpdateUI, Flags);
 end;
 
 class function TPreferencesDlg.Execute(AOwner: TComponent;
-  const Pages: array of TPrefsFrameClass): Boolean;
+  const Pages: array of TPrefsFrameClass; const Flags: UInt64): Boolean;
 var
   Dummy: Boolean; // unused UpdateUI parameters
 begin
-  Result := Execute(AOwner, Pages, Dummy);
+  Result := Execute(AOwner, Pages, Dummy, Flags);
 end;
 
 class function TPreferencesDlg.Execute(AOwner: TComponent;
-  const PageClsName: string; out UpdateUI: Boolean): Boolean;
+  const PageClsName: string; out UpdateUI: Boolean; const Flags: UInt64):
+  Boolean;
 var
   FrameClass: TPrefsFrameClass;
 begin
@@ -335,7 +342,7 @@ begin
   fLocalPrefs := (Preferences as IClonable).Clone as IPreferences;
   // Display and initialise required pages
   for TabIdx := 0 to Pred(pcMain.PageCount) do
-    MapTabSheetToPage(TabIdx).LoadPrefs(fLocalPrefs);
+    MapTabSheetToPage(TabIdx).LoadPrefs(fLocalPrefs, fFrameFlags);
   // Select last use tab sheet (or 1st if last not known)
   fCurrentPageIdx := GetLastTabIdx;
   if fCurrentPageIdx < 0 then
@@ -413,7 +420,7 @@ begin
   Assert(Assigned(TS), ClassName + '.SelectTab: TS is nil');
   GetSelectedPage.Deactivate(fLocalPrefs);
   pcMain.ActivePage := TS;
-  GetSelectedPage.Activate(fLocalPrefs);
+  GetSelectedPage.Activate(fLocalPrefs, fFrameFlags);
   fCurrentPageIdx := pcMain.ActivePageIndex;
 end;
 
