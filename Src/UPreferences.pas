@@ -37,6 +37,23 @@ type
   IPreferences = interface(IInterface)
     ['{381B9A92-B528-47E1-AC04-90E1FFFDADA7}']
 
+    ///  <summary>Gets last tab displayed by Preferences dialogue box when it
+    ///  was last closed, or empty string if the tab is not known.
+    ///  </summary>
+    ///  <remarks>This is meta data about the dialogue box itself, not about
+    ///  user preferences.</remarks>
+    function GetLastTab: string;
+    ///  <summary>Sets last tab displayed by Preferences dialogue box when it
+    ///  was last closed.</summary>
+    ///  <remarks>This is meta data about the dialogue box itself, not about
+    ///  user preferences.</remarks>
+    procedure SetLastTab(const Value: string);
+    ///  <summary>Last tab displayed by Preferences dialogue box when it was
+    ///  last closed, or empty string if the tab is not known.</summary>
+    ///  <remarks>This is meta data about the dialogue box itself, not about
+    ///  user preferences.</remarks>
+    property LastTab: string read GetLastTab write SetLastTab;
+
     ///  <summary>Gets style of commenting used to describe snippets in
     ///  generated code.</summary>
     function GetSourceCommentStyle: TCommentStyle;
@@ -283,6 +300,7 @@ type
   )
   strict protected
     var
+      fLastTab: string;
       ///  <summary>Default file extension / type used when writing code
       ///  snippets  file.</summary>
       fSourceDefaultFileType: TSourceFileType;
@@ -343,6 +361,24 @@ type
 
     ///  <summary>Destroys object instance.</summary>
     destructor Destroy; override;
+
+    ///  <summary>Gets last tab displayed by Preferences dialogue box when it
+    ///  was last closed, or empty string if the tab is not known.
+    ///  </summary>
+    ///  <remarks>
+    ///  <para>This is meta data about the dialogue box itself, not about
+    ///  user preferences.</para>
+    ///  <para>Method of IPreferences.</para>
+    ///  </remarks>
+    function GetLastTab: string;
+    ///  <summary>Sets last tab displayed by Preferences dialogue box when it
+    ///  was last closed.</summary>
+    ///  <remarks>
+    ///  <para>This is meta data about the dialogue box itself, not about user
+    ///  preferences.</para>
+    ///  <para>Method of IPreferences.</para>
+    ///  </remarks>
+    procedure SetLastTab(const Value: string);
 
     ///  <summary>Gets style of commenting used to describe snippets in
     ///  generated code.</summary>
@@ -608,6 +644,7 @@ begin
   if not Supports(Src, IPreferences, SrcPref) then
     raise EBug.Create(ClassName + '.Assign: Src is wrong type');
   // Copy the data
+  Self.fLastTab := SrcPref.LastTab;
   Self.fSourceDefaultFileType := SrcPref.SourceDefaultFileType;
   Self.fSourceCommentStyle := SrcPref.SourceCommentStyle;
   Self.fTruncateSourceComments := SrcPref.TruncateSourceComments;
@@ -669,6 +706,11 @@ end;
 function TPreferences.GetHiliteAttrs: IHiliteAttrs;
 begin
   Result := fHiliteAttrs;
+end;
+
+function TPreferences.GetLastTab: string;
+begin
+  Result := fLastTab;
 end;
 
 function TPreferences.GetMeasurementUnits: TMeasurementUnits;
@@ -768,6 +810,11 @@ begin
   (fHiliteAttrs as IAssignable).Assign(Attrs);
 end;
 
+procedure TPreferences.SetLastTab(const Value: string);
+begin
+  fLastTab := Value;
+end;
+
 procedure TPreferences.SetMeasurementUnits(const Value: TMeasurementUnits);
 begin
   fMeasurementUnits := Value;
@@ -854,6 +901,7 @@ begin
   Result := TPreferences.Create;
   // Copy properties to it
   NewPref := Result as IPreferences;
+  NewPref.LastTab := Self.fLastTab;
   NewPref.SourceDefaultFileType := Self.fSourceDefaultFileType;
   NewPref.SourceCommentStyle := Self.fSourceCommentStyle;
   NewPref.TruncateSourceComments := Self.fTruncateSourceComments;
@@ -885,6 +933,10 @@ const
   cPrintPageMarginSizeMM = 25.0;
 begin
   inherited Create;
+
+  // Read meta data section (no sub-section name)
+  Storage := Settings.ReadSection(ssPreferences);
+  fLastTab := Storage.GetString('LastTab');
 
   // Read general section
   Storage := Settings.ReadSection(ssPreferences, cGeneral);
@@ -969,6 +1021,11 @@ destructor TPreferencesPersist.Destroy;
 var
   Storage: ISettingsSection;  // object used to access persistent storage
 begin
+  // Wreite meta section (no sub-section name)
+  Storage := Settings.EmptySection(ssPreferences);
+  Storage.SetString('LastTab', fLastTab);
+  Storage.Save;
+
   // Write general section
   Storage := Settings.EmptySection(ssPreferences, cGeneral);
   Storage.SetInteger('Units', Ord(fMeasurementUnits));

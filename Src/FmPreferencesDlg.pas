@@ -39,6 +39,7 @@ type
     ///  <summary>Handles event triggered when list box is clicked or changed
     ///  via keyboard.</summary>
     procedure lbPagesClick(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
   strict private
     class var
       ///  <summary>List of registered page frames</summary>
@@ -76,6 +77,9 @@ type
     ///  <remarks>Stores state of tab being closed and restores state of tab
     ///  being opened.</remarks>
     procedure SelectTab(TS: TTabSheet);
+    ///  <summary>Returns index of tab selected when dialogue box was last
+    ///  closed or -1 if no tab recorded or tab doesn't exist.</summary>
+    function GetLastTabIdx: Integer;
   strict protected
     ///  <summary>Gets the help A-link keyword to be used when help button
     ///  clicked.</summary>
@@ -170,7 +174,8 @@ implementation
 
 uses
   // Project
-  IntfCommon;
+  IntfCommon,
+  UStrUtils;
 
 
 {$R *.dfm}
@@ -292,6 +297,28 @@ begin
   Result := Execute(AOwner, [FrameClass], UpdateUI);
 end;
 
+procedure TPreferencesDlg.FormDestroy(Sender: TObject);
+begin
+  // Save current tab
+  if Assigned(pcMain.ActivePage) then
+    Preferences.LastTab := MapTabSheetToPage(pcMain.ActivePage).DisplayName;
+  inherited;
+end;
+
+function TPreferencesDlg.GetLastTabIdx: Integer;
+var
+  TabName: string;
+  ListIdx: Integer;
+begin
+  TabName := Preferences.LastTab;
+  if TabName = '' then
+    Exit(-1);
+  for ListIdx := 0 to Pred(lbPages.Count) do
+    if StrSameText(TabName, lbPages.Items[ListIdx]) then
+      Exit(ListIdx);
+  Result := -1;
+end;
+
 function TPreferencesDlg.GetSelectedPage: TPrefsBaseFrame;
 begin
   Result := MapTabSheetToPage(pcMain.ActivePage);
@@ -299,7 +326,7 @@ end;
 
 procedure TPreferencesDlg.InitForm;
 var
-  TabIdx: Integer;  // loops thru tabs in page control
+  TabIdx: Integer;      // loops thru tabs in page control
 begin
   inherited;
   // Take local copy of global preferences. This local copy will be updated as
@@ -309,8 +336,10 @@ begin
   // Display and initialise required pages
   for TabIdx := 0 to Pred(pcMain.PageCount) do
     MapTabSheetToPage(TabIdx).LoadPrefs(fLocalPrefs);
-  // Select first TabSheet
-  fCurrentPageIdx := 0;
+  // Select last use tab sheet (or 1st if last not known)
+  fCurrentPageIdx := GetLastTabIdx;
+  if fCurrentPageIdx < 0 then
+    fCurrentPageIdx := 0;
   pcMain.ActivePageIndex := fCurrentPageIdx;
   lbPages.ItemIndex := fCurrentPageIdx;
 end;
