@@ -3,27 +3,37 @@ inherited PreferencesDlg: TPreferencesDlg
   Top = 138
   Caption = 'Preferences'
   ClientHeight = 421
-  ClientWidth = 462
-  ExplicitWidth = 468
-  ExplicitHeight = 447
+  ClientWidth = 722
+  ExplicitWidth = 728
+  ExplicitHeight = 450
   PixelsPerInch = 96
   TextHeight = 13
   inherited pnlBody: TPanel
-    Width = 446
-    Height = 377
-    ExplicitWidth = 446
-    ExplicitHeight = 377
+    Width = 609
+    Height = 329
+    ExplicitWidth = 609
+    ExplicitHeight = 329
     object pcMain: TPageControl
-      Left = 0
+      Left = 163
       Top = 0
       Width = 446
-      Height = 377
-      Align = alClient
+      Height = 329
+      Align = alRight
       MultiLine = True
+      TabOrder = 1
+      ExplicitLeft = 159
+      ExplicitHeight = 377
+    end
+    object lbPages: TListBox
+      Left = 0
+      Top = 0
+      Width = 153
+      Height = 329
+      Align = alLeft
+      ItemHeight = 13
       TabOrder = 0
-      OnChange = pcMainChange
-      OnChanging = pcMainChanging
-      OnMouseDown = pcMainMouseDown
+      OnClick = lbPagesClick
+      ExplicitHeight = 377
     end
   end
   inherited btnOK: TButton

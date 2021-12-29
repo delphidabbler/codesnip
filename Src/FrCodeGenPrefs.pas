@@ -176,7 +176,8 @@ type
     ///  <summary>Records details of warnings from given preferences object and
     ///  updates controls accordingly.</summary>
     ///  <remarks>Called when page is activated.</remarks>
-    procedure Activate(const Prefs: IPreferences); override;
+    procedure Activate(const Prefs: IPreferences; const Flags: UInt64);
+      override;
     ///  <summary>Updates given preferences object with details of warnings as
     ///  modified by user.</summary>
     ///  <remarks>Called when page is deactivated.</remarks>
@@ -322,7 +323,8 @@ begin
   actDelete.Enabled := Assigned(fLVWarnings.Selected);
 end;
 
-procedure TCodeGenPrefsFrame.Activate(const Prefs: IPreferences);
+procedure TCodeGenPrefsFrame.Activate(const Prefs: IPreferences;
+  const Flags: UInt64);
 begin
   (fWarnings as IAssignable).Assign(Prefs.Warnings);
   chkWARNEnabled.Checked := fWarnings.Enabled;

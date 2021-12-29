@@ -64,7 +64,8 @@ type
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
-    procedure Activate(const Prefs: IPreferences); override;
+    procedure Activate(const Prefs: IPreferences; const Flags: UInt64);
+      override;
     procedure Deactivate(const Prefs: IPreferences); override;
     ///  <summary>Checks if preference changes require that main window UI is
     ///  updated.</summary>
@@ -146,7 +147,8 @@ begin
     and (lbAvailableFragments.ItemIndex >= 0);
 end;
 
-procedure TSnippetLayoutPrefsFrame.Activate(const Prefs: IPreferences);
+procedure TSnippetLayoutPrefsFrame.Activate(const Prefs: IPreferences;
+  const Flags: UInt64);
 begin
   fPageStructs.Assign(Prefs.PageStructures);
   UpdateFragmentInfo;

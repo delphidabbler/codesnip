@@ -143,7 +143,8 @@ type
     ///  <summary>Updates controls from given preferences object.</summary>
     ///  <remarks>Called when the dialogue page containing the frame is
     ///  activated.</remarks>
-    procedure Activate(const Prefs: IPreferences); override;
+    procedure Activate(const Prefs: IPreferences; const Flags: UInt64);
+      override;
     ///  <summary>Updates given preferences object with data entered in controls.
     ///  </summary>
     ///  <remarks>Called when the dialogue page containing the frame is
@@ -254,7 +255,8 @@ const
 
 { THiliterPrefsFrame }
 
-procedure THiliterPrefsFrame.Activate(const Prefs: IPreferences);
+procedure THiliterPrefsFrame.Activate(const Prefs: IPreferences;
+  const Flags: UInt64);
 begin
   (fAttrs as IAssignable).Assign(Prefs.HiliteAttrs);
   (fNamedAttrs as IAssignable).Assign(Prefs.NamedHiliteAttrs);

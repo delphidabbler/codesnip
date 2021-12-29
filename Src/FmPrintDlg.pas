@@ -130,7 +130,11 @@ resourcestring
   sMessage = 'Your preferences will take effect the next time you start the '
     + 'application';
 begin
-  if TPreferencesDlg.Execute(Self, [TPrintingPrefsFrame]) then
+  if TPreferencesDlg.Execute(
+    Self,
+    [TPrintingPrefsFrame],
+    TPrintingPrefsFrame.MakeFrameFlag(TPrintingPrefsFrame.HideRestartMessage)
+  ) then
   begin
     if TMessageBox.Confirm(Self, sQuery) then
     begin
