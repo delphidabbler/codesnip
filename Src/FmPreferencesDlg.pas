@@ -32,26 +32,13 @@ type
   ///  </remarks>
   TPreferencesDlg = class(TGenericOKDlg, INoPublicConstruct)
     pcMain: TPageControl;
+    lbPages: TListBox;
     ///  <summary>OK button click event handler. Writes preference data to
     ///  persistent storage.</summary>
     procedure btnOKClick(Sender: TObject);
-    ///  <param>Called when current tab sheet has changed. Gets newly selected
-    ///  page to re-initialise its controls from local preferences.</param>
-    ///  <remarks>This enables any pages that depend on preferences that may
-    ///  have been changed in other pages to update appropriately.</remarks>
-    procedure pcMainChange(Sender: TObject);
-    ///  <summary>Called just before active tab sheet is changed. Causes page
-    ///  about to be deselected to update local preferences with any changes.
-    ///  </summary>
-    ///  <remarks>We do this in case another page needs to update due to changes
-    ///  made on current page.</remarks>
-    procedure pcMainChanging(Sender: TObject; var AllowChange: Boolean);
-    ///  <summary>Handles event triggered when user clicks on one of page
-    ///  control tabs. Ensures page control has focus.</summary>
-    ///  <remarks>Without this fix, page control does not always get focus when
-    ///  a tab is clicked.</remarks>
-    procedure pcMainMouseDown(Sender: TObject; Button: TMouseButton;
-      Shift: TShiftState; X, Y: Integer);
+    ///  <summary>Handles event triggered when list box is clicked or changed
+    ///  via keyboard.</summary>
+    procedure lbPagesClick(Sender: TObject);
   strict private
     class var
       ///  <summary>List of registered page frames</summary>
@@ -62,6 +49,8 @@ type
       ///  <summary>Records if main UI needs to be updated to reflect changed
       ///  preferences.</summary>
       fUpdateUI: Boolean;
+      ///  <summary>Records index of currently select tab/list item.</summary>
+      fCurrentPageIdx: Integer;
     ///  <summary>Creates the required frames and displays each in a tab sheet
     ///  within the page control.</summary>
     ///  <param name="FrameClasses">array of TPrefsFrameClass [in] Class
@@ -83,6 +72,10 @@ type
     ///  <summary>Gets reference to preferences frame on currently selected tab.
     ///  </summary>
     function GetSelectedPage: TPrefsBaseFrame;
+    ///  <summary>Selects given tab.</summary>
+    ///  <remarks>Stores state of tab being closed and restores state of tab
+    ///  being opened.</remarks>
+    procedure SelectTab(TS: TTabSheet);
   strict protected
     ///  <summary>Gets the help A-link keyword to be used when help button
     ///  clicked.</summary>
@@ -241,6 +234,10 @@ begin
     Frame.Top := 4;
     // set tab sheet caption to frame's display name
     TS.Caption := Frame.DisplayName;
+    TS.TabVisible := False;
+
+    // Create list box item for page
+    lbPages.Items.AddObject(Frame.DisplayName, TS);
   end;
 end;
 
@@ -313,7 +310,18 @@ begin
   for TabIdx := 0 to Pred(pcMain.PageCount) do
     MapTabSheetToPage(TabIdx).LoadPrefs(fLocalPrefs);
   // Select first TabSheet
-  pcMain.ActivePageIndex := 0;
+  fCurrentPageIdx := 0;
+  pcMain.ActivePageIndex := fCurrentPageIdx;
+  lbPages.ItemIndex := fCurrentPageIdx;
+end;
+
+procedure TPreferencesDlg.lbPagesClick(Sender: TObject);
+begin
+  if lbPages.ItemIndex < 0 then
+    Exit;
+  if lbPages.ItemIndex = fCurrentPageIdx then
+    Exit;
+  SelectTab(lbPages.Items.Objects[lbPages.ItemIndex] as TTabSheet)
 end;
 
 class function TPreferencesDlg.MapClassNameToPageClass(const ClsName: string):
@@ -351,24 +359,6 @@ begin
   Assert(Assigned(Result), ClassName + '.MapTabSheetToPage: Frame not found');
 end;
 
-procedure TPreferencesDlg.pcMainChange(Sender: TObject);
-begin
-  GetSelectedPage.Activate(fLocalPrefs);
-end;
-
-procedure TPreferencesDlg.pcMainChanging(Sender: TObject;
-  var AllowChange: Boolean);
-begin
-  GetSelectedPage.Deactivate(fLocalPrefs);
-end;
-
-procedure TPreferencesDlg.pcMainMouseDown(Sender: TObject; Button: TMouseButton;
-  Shift: TShiftState; X, Y: Integer);
-begin
-  if htOnItem in pcMain.GetHitTestInfoAt(X, Y) then
-    pcMain.SetFocus;
-end;
-
 class procedure TPreferencesDlg.RegisterPage(const FrameCls: TPrefsFrameClass);
 var
   PageIdx: Integer; // loops through all registered frames
@@ -387,6 +377,15 @@ begin
   end;
   // Record the frame's class reference
   fPages.Insert(InsIdx, FrameCls);
+end;
+
+procedure TPreferencesDlg.SelectTab(TS: TTabSheet);
+begin
+  Assert(Assigned(TS), ClassName + '.SelectTab: TS is nil');
+  GetSelectedPage.Deactivate(fLocalPrefs);
+  pcMain.ActivePage := TS;
+  GetSelectedPage.Activate(fLocalPrefs);
+  fCurrentPageIdx := pcMain.ActivePageIndex;
 end;
 
 end.
