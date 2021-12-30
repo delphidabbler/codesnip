@@ -175,6 +175,14 @@ type
     property DBHeadingCustomColours[UserDefined: Boolean]: IStringList
       read GetDBHeadingCustomColours write SetDBHeadingCustomColours;
 
+    ///  <summary>Gets size of font used in overview pane tree view.</summary>
+    function GetOverviewFontSize: Integer;
+    ///  <summary>Sets size of font used in overview pane tree view.</summary>
+    procedure SetOverviewFontSize(const Value: Integer);
+    ///  <summary>Size of font used in overview pane tree view.</summary>
+    property OverviewFontSize: Integer
+      read GetOverviewFontSize write SetOverviewFontSize;
+
     ///  <summary>Gets colour used for background of source code in main
     ///  display.</summary>
     function GetSourceCodeBGColour: TColor;
@@ -331,6 +339,9 @@ type
       ///  either online database (UserDefined = False) or user database
       ///  (UserDefined = True).</summary>
       fDBHeadingCustomColours: array[Boolean] of IStringList;
+      ///  <summary>Records size of font used in overview pane tree view.
+      ///  </summary>
+      fOverviewFontSize: Integer;
       ///  <summary>Records colour used for background of source code in main
       ///  display.</summary>
       fSourceCodeBGColour: TColor;
@@ -490,6 +501,14 @@ type
     ///  <remarks>Method of IPreferences.</remarks>
     procedure SetDBHeadingCustomColours(UserDefined: Boolean;
       Value: IStringList);
+
+    ///  <summary>Gets size of font used in overview pane tree view.</summary>
+    ///  <remarks>Method of IPreferences.</remarks>
+    function GetOverviewFontSize: Integer;
+
+    ///  <summary>Sets size of font used in overview pane tree view.</summary>
+    ///  <remarks>Method of IPreferences.</remarks>
+    procedure SetOverviewFontSize(const Value: Integer);
 
     ///  <summary>Gets colour used for background of source code in main
     ///  display.</summary>
@@ -657,6 +676,7 @@ begin
   Self.fDBHeadingCustomColours[False] := SrcPref.DBHeadingCustomColours[False];
   Self.fDBHeadingColours[True] := SrcPref.DBHeadingColours[True];
   Self.fDBHeadingCustomColours[True] := SrcPref.DBHeadingCustomColours[True];
+  Self.fOverviewFontSize := SrcPref.OverviewFontSize;
   Self.fSourceCodeBGColour := SrcPref.SourceCodeBGColour;
   Self.fSourceCodeBGCustomColours := SrcPref.SourceCodeBGCustomColours;
   Self.fPrinterOptions := SrcPref.PrinterOptions;
@@ -721,6 +741,11 @@ end;
 function TPreferences.GetNamedHiliteAttrs: INamedHiliteAttrs;
 begin
   Result := fNamedHiliteAttrs;
+end;
+
+function TPreferences.GetOverviewFontSize: Integer;
+begin
+  Result := fOverviewFontSize
 end;
 
 function TPreferences.GetOverviewStartState: TOverviewStartState;
@@ -825,6 +850,11 @@ begin
   (fNamedHiliteAttrs as IAssignable).Assign(NamedHiliteAttrs);
 end;
 
+procedure TPreferences.SetOverviewFontSize(const Value: Integer);
+begin
+  fOverviewFontSize := Value;
+end;
+
 procedure TPreferences.SetOverviewStartState(const Value: TOverviewStartState);
 begin
   fOverviewStartState := Value;
@@ -914,6 +944,7 @@ begin
   NewPref.DBHeadingCustomColours[False] := Self.fDBHeadingCustomColours[False];
   NewPref.DBHeadingColours[True] := Self.fDBHeadingColours[True];
   NewPref.DBHeadingCustomColours[True] := Self.fDBHeadingCustomColours[True];
+  NewPref.OverviewFontSize := Self.fOverviewFontSize;
   NewPref.SourceCodeBGColour := Self.fSourceCodeBGColour;
   NewPref.SourceCodeBGCustomColours := Self.fSourceCodeBGCustomColours;
   NewPref.PrinterOptions := Self.fPrinterOptions;
@@ -968,6 +999,7 @@ begin
   fDBHeadingCustomColours[True] := Storage.GetStrings(
     'UserDBHeadingCustomColourCount', 'UserDBHeadingCustomColour%d'
   );
+  fOverviewFontSize := Storage.GetInteger('OverviewFontSize', 9);
   fSourceCodeBGCustomColours := Storage.GetStrings(
     'SourceCodeBGCustomColourCount', 'SourceCodeBGCustomColour%d'
   );
@@ -1038,6 +1070,7 @@ begin
   Storage.SetBoolean('ShowNewSnippetsInNewTabs', fShowNewSnippetsInNewTabs);
   Storage.SetInteger('MainDBHeadingColour', fDBHeadingColours[False]);
   Storage.SetInteger('UserDBHeadingColour', fDBHeadingColours[True]);
+  Storage.SetInteger('OverviewFontSize', fOverviewFontSize);
   Storage.SetInteger('SourceCodeBGColour', fSourceCodeBGColour);
   Storage.SetStrings(
     'MainDBHeadingCustomColourCount',

@@ -41,6 +41,8 @@ type
   strict protected
     class function IsFlagSupported(const Flag: UInt64): Boolean; inline;
     class function ExtractFrameFlag(const Flag: UInt64): UInt32; inline;
+    ///  <summary>Returns reference to form that hosts the frame.</summary>
+    function ParentForm: TForm;
   public
     procedure SavePrefs(const Prefs: IPreferences); virtual;
       {Saves information user entered in frame. By default the method simply
@@ -90,7 +92,8 @@ implementation
 
 uses
   // Delphi
-  SysUtils;
+  SysUtils,
+  Controls;
 
 
 {$R *.dfm}
@@ -125,6 +128,20 @@ begin
   // index number and $FFFFFFFF is the 32 bit flag or bitmask of flags
   Int64Rec(Result).Hi := UInt32(Index);
   Int64Rec(Result).Lo := Flag;
+end;
+
+function TPrefsBaseFrame.ParentForm: TForm;
+var
+  ParentCtrl: TWinControl;  // reference to parent controls
+begin
+  // Loop through parent controls until form found or top level parent reached
+  ParentCtrl := Self.Parent;
+  while Assigned(ParentCtrl) and not (ParentCtrl is TForm) do
+    ParentCtrl := ParentCtrl.Parent;
+  if ParentCtrl is TForm then
+    Result := ParentCtrl as TForm
+  else
+    Result := nil;
 end;
 
 procedure TPrefsBaseFrame.SavePrefs(const Prefs: IPreferences);

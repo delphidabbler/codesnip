@@ -131,8 +131,6 @@ type
     ///  highlighter element.</summary>
     ///  <remarks>This RTF is used to display elememt in preview pane.</remarks>
     function GenerateRTF: TRTF;
-    ///  <summary>Returns reference to form that hosts the frame.</summary>
-    function ParentForm: TForm;
   public
     ///  <summary>Constructs frame instance and initialises controls.</summary>
     ///  <param name="AOwner">TComponent [in] Component that owns the frame.
@@ -217,6 +215,8 @@ resourcestring
 
   // Error messages
   sErrBadFontSize       = 'Invalid font size';
+  sErrBadFontRange      = 'Font size out of range. '
+                          + 'Enter a value between %0:d and %1:d';
 
 const
   ///  <summary>Map of highlighter elements to descriptions.</summary>
@@ -344,10 +344,24 @@ begin
     Exit;
   if TryStrToInt(cbFontSize.Text, Size) then
   begin
-    // Combo has valid value entered: update
-    fAttrs.FontSize := Size;
-    UpdatePreview;
-    fChanged := True;
+    if TFontHelper.IsInCommonFontSizeRange(Size) then
+    begin
+      // Combo has valid value entered: update
+      fAttrs.FontSize := Size;
+      UpdatePreview;
+      fChanged := True;
+    end
+    else
+    begin
+      TMessageBox.Error(
+        ParentForm,
+        Format(
+          sErrBadFontRange,
+          [TFontHelper.CommonFontSizes.Min, TFontHelper.CommonFontSizes.Max]
+        )
+      );
+      cbFontSize.Text := IntToStr(fAttrs.FontSize);
+    end;
   end
   else
   begin
@@ -521,20 +535,6 @@ begin
     UpdateControls;
   end;
   UpdatePopupMenu;
-end;
-
-function THiliterPrefsFrame.ParentForm: TForm;
-var
-  ParentCtrl: TWinControl;  // reference to parent controls
-begin
-  // Loop through parent controls until form found or top level parent reached
-  ParentCtrl := Self.Parent;
-  while Assigned(ParentCtrl) and not (ParentCtrl is TForm) do
-    ParentCtrl := ParentCtrl.Parent;
-  if ParentCtrl is TForm then
-    Result := ParentCtrl as TForm
-  else
-    Result := nil;
 end;
 
 procedure THiliterPrefsFrame.PopulateElementsList;
