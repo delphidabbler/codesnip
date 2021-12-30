@@ -45,12 +45,13 @@ begin
   // page used to determine if main database is to be brought forward
   gConfigPage := CreateInputOptionPage(
     wpSelectProgramGroup,
-    'Code Snippets Online Database',
-    'Should Setup make a copy of your old installation''s online database?',
-    'Setup has detected that no copy of the Code Snippets online database is '
-      + 'available to this new installation. However a copy from an an older '
-      + 'version of CodeSnip has been detected and can be installed. Clear the '
-      + 'check box below if you prefer not to do this.'
+    'DelphiDabbler Code Snippets Database',
+    'Should Setup make a copy of your old installation''s copy of this '
+      + 'database?',
+    'Setup has detected that no copy of the DelphiDabbler Code Snippets '
+      + 'Database is available for this new installation. However a copy from '
+      + 'an older version of CodeSnip has been detected and can be installed. '
+      + 'Clear the check box below if you prefer not to do this.'
       + #13#10#13#10
       + 'NOTE: This does not copy any user defined database you may have. '
       + 'You will be given an opportunity to do that when you run your new '
@@ -142,9 +143,9 @@ begin
     Result := Result +  'Database preservation:';
     Result := Result + NewLine + Space;
     if gDatabaseCopyingRequested then
-      Result := Result + 'Copy existing Code Snippets database'
+      Result := Result + 'Copy existing DelphiDabbler Code Snippets Database'
     else
-      Result := Result + 'Don''t copy database'
+      Result := Result + 'Don''t copy DelphiDabbler Code Snippets Database'
         + NewLine + Space + Space
         + 'The database can still be downloaded when CodeSnip is run';
     Result := Result + NewLine + Space;
@@ -188,9 +189,10 @@ begin
   // Display message if no database is installed
   if not MainDatabaseExists then
     MsgBox(
-      'The is no copy of the online Code Snippets database installed.'#10#10
+      'The DelphiDabbler Code Snippets Database is not installed.'#10#10
         + 'You can download the database at any time using the program''s '
-        + '"Database | Update From Web" menu option.',
+        + '"Database | Install or Update DelphiDabbler Snippets Database" '
+        + 'menu option.',
       mbInformation,
       MB_OK
     );
