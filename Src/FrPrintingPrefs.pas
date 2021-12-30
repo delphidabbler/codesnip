@@ -5,8 +5,9 @@
  *
  * Copyright (C) 2007-2020, Peter Johnson (gravatar.com/delphidabbler).
  *
- * Implements a frame that allows user to set printing preferences. Designed for
- * use as one of the tabs in the Preferences dialogue box.
+ * Implements a frame that allows user to set printing preferences.
+ *
+ * Designed for use as one of the pages in the Preferences dialogue box.
 }
 
 

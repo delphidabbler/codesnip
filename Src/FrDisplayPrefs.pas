@@ -6,7 +6,8 @@
  * Copyright (C) 2012-2020, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements a frame that allows user to set application display preferences.
- * Designed for use as one of the tabs in the preferences dialog box.
+ 
+ * Designed for use as one of the pages in the preferences dialogue box.
 }
 
 

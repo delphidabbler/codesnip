@@ -7,7 +7,8 @@
  *
  * Implements a frame that allows user to set source code generation
  * preferences.
- * Designed for use as one of the tabs in the Preferences dialogue box.
+ *
+ * Designed for use as one of the pages in the Preferences dialogue box.
 }
 
 
