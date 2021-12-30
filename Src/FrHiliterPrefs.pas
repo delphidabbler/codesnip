@@ -131,8 +131,6 @@ type
     ///  highlighter element.</summary>
     ///  <remarks>This RTF is used to display elememt in preview pane.</remarks>
     function GenerateRTF: TRTF;
-    ///  <summary>Returns reference to form that hosts the frame.</summary>
-    function ParentForm: TForm;
   public
     ///  <summary>Constructs frame instance and initialises controls.</summary>
     ///  <param name="AOwner">TComponent [in] Component that owns the frame.
@@ -521,20 +519,6 @@ begin
     UpdateControls;
   end;
   UpdatePopupMenu;
-end;
-
-function THiliterPrefsFrame.ParentForm: TForm;
-var
-  ParentCtrl: TWinControl;  // reference to parent controls
-begin
-  // Loop through parent controls until form found or top level parent reached
-  ParentCtrl := Self.Parent;
-  while Assigned(ParentCtrl) and not (ParentCtrl is TForm) do
-    ParentCtrl := ParentCtrl.Parent;
-  if ParentCtrl is TForm then
-    Result := ParentCtrl as TForm
-  else
-    Result := nil;
 end;
 
 procedure THiliterPrefsFrame.PopulateElementsList;
