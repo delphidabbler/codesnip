@@ -19,7 +19,7 @@ uses
   // Delphi
   Classes, Graphics,
   // Project
-  UBaseObjects;
+  UBaseObjects, UStructs;
 
 
 type
@@ -45,6 +45,11 @@ type
         @param List [in] Receives list of font sizes. Cleared before sizes
           added.
       }
+    ///  <summary>Checks if given font size falls within range of common font
+    ///  sizes.</summary>
+    ///  <remarks>Common font size range is between smallest and largest font
+    ///  sizes returned by ListCommonFontSizes method.</remarks>
+    class function IsInCommonFontSizeRange(const FontSize: Integer): Boolean;
     class procedure SetDefaultFont(const Font: TFont);
       {Sets a font to be the default UI font for the underlying operating
       system.
@@ -92,6 +97,11 @@ type
 
       DefaultMonoFontName = 'Courier New';        // Default mono font name
       DefaultMonoFontSize = 8;                    // Default mono font size
+
+  public
+    const
+      // Range of common font sizes
+      CommonFontSizes: TRange = (Min: 7; Max: 32);
   end;
 
 
@@ -148,6 +158,12 @@ begin
   Result := Screen.Fonts.IndexOf(FontName) >= 0;
 end;
 
+class function TFontHelper.IsInCommonFontSizeRange(
+  const FontSize: Integer): Boolean;
+begin
+  Result := CommonFontSizes.Contains(FontSize);
+end;
+
 class procedure TFontHelper.ListCommonFontSizes(const List: TStrings);
   {Lists all commonly used font sizes.
     @param List [in] Receives list of font sizes. Cleared before sizes added.
@@ -157,7 +173,7 @@ var
 begin
   Assert(Assigned(List), ClassName + '.ListCommonFontSizes: List is nil');
   List.Clear;
-  for FontSize := 7 to 32 do
+  for FontSize := CommonFontSizes.Min to CommonFontSizes.Max do
     List.Add(IntToStr(FontSize));
 end;
 
