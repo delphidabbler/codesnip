@@ -91,6 +91,7 @@ begin
   Assert(Sender is TTreeView,
     ClassName + '.CustomDrawItem: Sender is not TTreeView');
   TV := Sender as TTreeView;
+  TV.Font.Size := Preferences.OverviewFontSize;
   if Assigned(Node) then
   begin
     // Set font and background colour according to selected / focusses state
