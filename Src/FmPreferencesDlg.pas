@@ -27,7 +27,7 @@ type
   ///  Dialog box that sets user preferences.
   ///  </summary>
   ///  <remarks>
-  ///  This dialog box displays tabs for preferences frames registered with the
+  ///  This dialog box displays pages for preferences frames registered with the
   ///  dialog box.
   ///  </remarks>
   TPreferencesDlg = class(TGenericOKDlg, INoPublicConstruct)
@@ -161,16 +161,17 @@ implementation
   Design notes
   ------------
 
-  This dialog box is a multi-page preferences dialog that provides access to
-  each page via a tab. The dialog box does not provide an implementation of each
-  page of the dialog. This representation must be provided by a frame descended
-  from TPrefsBaseFrame. Such frames must:
-    (a) register themselves with the dialog box by passing their class to the
+  This dialogue box is a multi-page preferences dialog that provides access to
+  each page via a list of page names. The dialogue box does not provide an
+  implementation of each page. This representation must be provided by a frame 
+  descended from TPrefsBaseFrame. Such frames must:
+    (a) register themselves with the dialogue box by passing their class to the
         TPreferencesDlg.RegisterPage class method.
     (b) implement all the abstract methods of TPrefsBaseFrame.
 
-  The dialog box will create registered frames when needed and host them within
-  a tab sheet in the main page control.
+  The dialogue box will create registered frames when needed and host them
+  within tab sheet in the main page control. It will also add the name of the
+  frame to a list control that is used to select the required "page".
 
   There is no need to modify this unit when a new frame is to be addded to it.
 }
@@ -188,7 +189,7 @@ uses
 
 procedure TPreferencesDlg.ArrangeForm;
 var
-  Idx: Integer;           // loops through all displayed tab sheets
+  Idx: Integer;           // loops through all displayed page
   Frame: TPrefsBaseFrame; // references each preference frame
   TabSheet: TTabSheet;    // references each tab sheet
 begin
@@ -306,7 +307,7 @@ end;
 
 procedure TPreferencesDlg.FormDestroy(Sender: TObject);
 begin
-  // Save current tab
+  // Save current page
   if Assigned(pcMain.ActivePage) then
     Preferences.LastTab := MapTabSheetToPage(pcMain.ActivePage).DisplayName;
   inherited;
@@ -343,7 +344,7 @@ begin
   // Display and initialise required pages
   for TabIdx := 0 to Pred(pcMain.PageCount) do
     MapTabSheetToPage(TabIdx).LoadPrefs(fLocalPrefs, fFrameFlags);
-  // Select last use tab sheet (or 1st if last not known)
+  // Select last used tab sheet (or 1st if last not known)
   fCurrentPageIdx := GetLastTabIdx;
   if fCurrentPageIdx < 0 then
     fCurrentPageIdx := 0;

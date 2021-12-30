@@ -7,7 +7,8 @@
  *
  * Implements a frame that allows user to customise appearance of different
  * kinds of snippets in main display.
- * Designed for use as one of the tabs in the preferences dialog box.
+ *
+ * Designed for use as one of the pages in the Preferences dialogue box.
 }
 
 
