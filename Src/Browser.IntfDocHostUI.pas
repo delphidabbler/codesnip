@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2020, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2005-2021, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Interfaces, records and constants used when hosting the IE WebBrowser Control
  * or automating IE to replace the menus, toolbars, and context menus. The

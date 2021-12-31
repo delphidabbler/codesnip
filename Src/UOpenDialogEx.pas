@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2008-2020, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2008-2021, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements an open dialog box subclass that aligns itself over its owner and
  * works correctly with the Vista task bar. Dialog also supports help keywords.

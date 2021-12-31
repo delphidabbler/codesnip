@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2009-2020, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2009-2021, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Provides objects that manage test compilation and assoicated UI, display of
  * compilation results via a callback and and compiler configuration.

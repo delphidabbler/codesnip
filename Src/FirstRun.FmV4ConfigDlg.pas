@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2012-2020, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2012-2021, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements a wizard dialogue box that may be displayed on the first run of
  * CodeSnip v4 to get user to decide whether what data to bring forward from

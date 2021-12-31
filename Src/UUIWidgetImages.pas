@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2010-2020, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2010-2021, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements an abstract base class that provides a framework for classes that
  * manage image lists containing images that are displayed in GUI widgets.

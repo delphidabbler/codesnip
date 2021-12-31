@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2009-2020, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2009-2021, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements an extension of TMemIniFile that loads the ini data from a set of
  * associated files and pre-processes the data.

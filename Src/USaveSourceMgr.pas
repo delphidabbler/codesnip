@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2006-2020, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2006-2021, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements abstract base class for classes that manage generation, previewing
  * and saving to disk of a source code files in various formats and encodings.

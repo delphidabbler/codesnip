@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2008-2020, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2008-2021, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements a main lexical analyser and subsdiary classes that can tokenise
  * code in a SGML like format. The lexer is customisable, the user providing the

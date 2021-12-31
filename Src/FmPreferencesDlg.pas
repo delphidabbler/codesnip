@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2006-2020, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2006-2021, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements a dialogue box that is used to set user preferences.
 }
@@ -163,7 +163,7 @@ implementation
 
   This dialogue box is a multi-page preferences dialog that provides access to
   each page via a list of page names. The dialogue box does not provide an
-  implementation of each page. This representation must be provided by a frame 
+  implementation of each page. This representation must be provided by a frame
   descended from TPrefsBaseFrame. Such frames must:
     (a) register themselves with the dialogue box by passing their class to the
         TPreferencesDlg.RegisterPage class method.

@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2009-2020, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2009-2021, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Defines a record that uniquely indentifies a snippet in the database, along
  * with an object that maintains a list of snippet ID records.

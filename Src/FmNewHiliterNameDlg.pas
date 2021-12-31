@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2013-2020, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2013-2021, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements a dialogue box that enables the user to enter a syntax highlighter
  * name.

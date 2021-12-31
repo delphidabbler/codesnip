@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2009-2020, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2009-2021, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Defines various classes used to configure one or more command bars owned by
  * a container. Command bars are UI elements used to issue commands, e.g. menus,

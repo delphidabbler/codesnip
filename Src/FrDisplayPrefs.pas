@@ -3,10 +3,10 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2012-2020, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2012-2021, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements a frame that allows user to set application display preferences.
- 
+
  * Designed for use as one of the pages in the preferences dialogue box.
 }
 
