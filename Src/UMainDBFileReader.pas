@@ -30,6 +30,10 @@ type
   ///  </remarks>
   TMainDBFileReader = class(TObject)
   strict private
+    const
+      ///  <summary>ANSI code page used for v4 and earlier database files.
+      ///  </summary>
+      LegacyCodePage = TEncodingHelper.Windows1252CodePage;
     var
       ///  <summary>Encoding to use when reading text files.</summary>
       fEncoding: TEncoding;
@@ -129,7 +133,7 @@ begin
   finally
     FS.Free;
   end;
-  Result := TEncoding.Default;
+  Result := TEncodingHelper.GetEncoding(LegacyCodePage);
 end;
 
 function TMainDBFileReader.ReadAllStrings(const FileName: string): IStringList;
