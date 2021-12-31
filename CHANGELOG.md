@@ -10,6 +10,27 @@ This change log begins with the first ever pre-release version of _CodeSnip_. Re
 
 From v4.1.0 the version numbering has attempted to adhere to the principles of [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## Release v4.19.0 of 31 December 2021
+
+* Improved user-friendliness of Preferences dialogue box:
+  * Removed multi-line tab sets and replacing navigation pane on left hand side of window.
+  * Hid warning on Printing preferences page that changes will not be made until after program is restarted, if and only if page is displayed from Print dialogue box.
+  * Last preferences page displayed is now remembered and restored the next time the dialogue box is displayed.
+* Added facility to customise size of font used in Overview pane's tree view. A new preference added to Display pane of Preferences dialogue box is used to set the font size.
+* Fixed obscure bug in code that reads legacy ANSI Code Snippets Database files that was potentially using the incorrect ANSI code page.
+* Updated help file re changes
+* Fixed errors in custom installer dialogue boxes.
+* Documentation corrected, expanded and updated.
+* Some tidying up:
+  * Fixed some broken web links in source code comments and elsewhere.
+  * Replaced `http` protocol in URLS with `https` wherever supported - mainly in source code comments & documentation.
+  * Removed some orphaned files long since removed from project.
+  * Added missing header comments to source file.
+  * Updated copyright dates in files modified during year to include 2021.
+  * Change log was overhauled to fix linting errors.
+* Bumped version of per-user config file to 17 following addition of new preferences.
+* Small amount of refactoring
+
 ## Release v4.18.1 of 29 November 2021
 
 * Improved handling of control and whitespace characters in generated HTML: revised which characters were converted to HTML character attributes / entities.
