@@ -20,7 +20,7 @@ From v4.1.0 the version numbering has attempted to adhere to the principles of [
 * Fixed obscure bug in code that reads legacy ANSI Code Snippets Database files that was potentially using the incorrect ANSI code page.
 * Updated help file re changes
 * Fixed errors in custom installer dialogue boxes.
-* Documentation corrected, expanded and updated.
+* Documentation corrected, expanded and updated, with some file format documentation having a major overhaul.
 * Some tidying up:
   * Fixed some broken web links in source code comments and elsewhere.
   * Replaced `http` protocol in URLS with `https` wherever supported - mainly in source code comments & documentation.
