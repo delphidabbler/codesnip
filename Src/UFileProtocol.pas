@@ -1,9 +1,9 @@
 {
  * This Source Code Form is subject to the terms of the Mozilla Public License,
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2009-2020, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2009-2021, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements a handler for the "file" URL protocol that displays a local file
  * in the associated program.
@@ -42,7 +42,7 @@ uses
   IE also supports direct specification of the file name, without file://
   prefix. UNC file names are also supported, with or without the file:// prefix.
 
-  According to Microsoft, http://msdn.microsoft.com/en-us/library/aa767731.aspx,
+  According to Microsoft, https://msdn.microsoft.com/en-us/library/aa767731.aspx,
   valid file paths understood by TWebBrowser are:
 
   + file:///C|/Dirs/FileName.ext         (browses file name)

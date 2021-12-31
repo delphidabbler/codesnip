@@ -1,9 +1,9 @@
 {
  * This Source Code Form is subject to the terms of the Mozilla Public License,
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2020, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2005-2021, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements class that can read files from main database using correct
  * encoding.
@@ -30,6 +30,10 @@ type
   ///  </remarks>
   TMainDBFileReader = class(TObject)
   strict private
+    const
+      ///  <summary>ANSI code page used for v4 and earlier database files.
+      ///  </summary>
+      LegacyCodePage = TEncodingHelper.Windows1252CodePage;
     var
       ///  <summary>Encoding to use when reading text files.</summary>
       fEncoding: TEncoding;
@@ -129,7 +133,7 @@ begin
   finally
     FS.Free;
   end;
-  Result := TEncoding.Default;
+  Result := TEncodingHelper.GetEncoding(LegacyCodePage);
 end;
 
 function TMainDBFileReader.ReadAllStrings(const FileName: string): IStringList;

@@ -1,9 +1,9 @@
 {
  * This Source Code Form is subject to the terms of the Mozilla Public License,
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2009-2020, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2009-2021, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Provides support for certain character encodings used by the program.
 }
@@ -379,7 +379,7 @@ uses
 ///  <remarks>
 ///  <para>Caller must ensure that the byte array has the correct format for
 ///  the requested code page.</para>
-///  <para>Based on Stack Overflow posting at http://bit.ly/bAvtGd.</para>
+///  <para>Based on Stack Overflow posting at https://bit.ly/bAvtGd.</para>
 ///  <para>Any terminating 0 byte included in Bytes is excluded from the
 ///  result because Delphi adds its own terminal #0 character to ANSI strings.
 ///  </para>

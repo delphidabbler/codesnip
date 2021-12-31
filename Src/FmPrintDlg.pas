@@ -1,9 +1,9 @@
 {
  * This Source Code Form is subject to the terms of the Mozilla Public License,
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2007-2020, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2007-2021, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements a print dialogue box.
 }
@@ -130,7 +130,11 @@ resourcestring
   sMessage = 'Your preferences will take effect the next time you start the '
     + 'application';
 begin
-  if TPreferencesDlg.Execute(Self, [TPrintingPrefsFrame]) then
+  if TPreferencesDlg.Execute(
+    Self,
+    [TPrintingPrefsFrame],
+    TPrintingPrefsFrame.MakeFrameFlag(TPrintingPrefsFrame.HideRestartMessage)
+  ) then
   begin
     if TMessageBox.Confirm(Self, sQuery) then
     begin

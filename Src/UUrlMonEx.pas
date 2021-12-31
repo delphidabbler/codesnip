@@ -1,9 +1,9 @@
 {
  * This Source Code Form is subject to the terms of the Mozilla Public License,
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2012-2020, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2012-2021, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Imports a function from UrlMon.dll that is only present on later versions of
  * Windows.
@@ -23,7 +23,7 @@ uses
 
 const
   // Internet Explorer feature controls.
-  // For documentation see http://msdn.microsoft.com/en-us/library/ms537169
+  // For documentation see https://msdn.microsoft.com/en-us/library/ms537169
   FEATURE_OBJECT_CACHING                  = 0;
   FEATURE_ZONE_ELEVATION                  = 1;
   FEATURE_MIME_HANDLING                   = 2;
@@ -56,7 +56,7 @@ const
 
 const
   // Flags that specify where to set an Internet Explorer feature control
-  // For documentation see http://msdn.microsoft.com/en-us/library/ms537168
+  // For documentation see https://msdn.microsoft.com/en-us/library/ms537168
   SET_FEATURE_ON_THREAD                   = $00000001;
   SET_FEATURE_ON_PROCESS                  = $00000002;
   SET_FEATURE_IN_REGISTRY                 = $00000004;

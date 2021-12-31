@@ -1,15 +1,15 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+  "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <!--
  * This Source Code Form is subject to the terms of the Mozilla Public License,
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * obtain one at https://mozilla.org/MPL/2.0/
  *
  * Copyright (C) 2012-2021, Peter Johnson (gravatar.com/delphidabbler).
  *
  * CodeSnip File Format Documentation: Export
 -->
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<html xmlns="https://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 
 <head>
 
@@ -41,6 +41,34 @@
   Export Files
 </h1>
 
+<section id="contents">
+
+<h2>
+  Contents
+</h2>
+
+<ul>
+  <li>
+    <a href="#intro">Introduction</a>
+  </li>
+  <li>
+    <a href="#encoding">Encoding</a>
+  </li>
+  <li>
+    <a href="#file-format">File Format</a>
+  </li>
+  <li>
+    <a href="#changelog">Change Log</a>
+  </li>
+  <li>
+    <a href="#file-readers">Notes For File Readers</a>
+  </li>
+</ul>
+
+</section>
+
+<section id="intro">
+
 <h2>
   Introduction
 </h2>
@@ -54,6 +82,10 @@
   There have been several different versions of the XML file format. Each of
   these is explained below.
 </p>
+
+</section>
+
+<section id="encoding">
 
 <h2>
   Encoding
@@ -72,6 +104,10 @@
   XML file's XML processing instruction. Earlier versions of the program omitted
   this attribute.
 </p>
+
+</section>
+
+<section id="file-format">
 
 <h2>
   File Format
@@ -308,7 +344,7 @@
   </dd>
 
   <dt>
-    <strong>codesnip-data/routines/routine/display-name</strong>
+    <strong>codesnip-export/routines/routine/display-name</strong>
   </dt>
   <dd>
     <ul class="squashed">
@@ -319,7 +355,7 @@
         <span class="highlight">version 6 and later:</span> Display name of snippet. Can
         contain any characters and need not be unique. Present only if snippet
         has a display name that is different to the value of the <em>name</em>
-        attribute of the <em>codesnip-data/routines/routine</em> tag.
+        attribute of the <em>codesnip-export/routines/routine</em> tag.
       </li>
     </ul>
   </dd>
@@ -395,18 +431,16 @@
           </div>
           <ul class="squashed">
             <li>
-              <span class="highlight">version 2:</span> indicates REML v1
+              <span class="highlight">version 2:</span> supports REML v1.
             </li>
             <li>
-              <span class="highlight">version 3:</span> indicates REML v2
+              <span class="highlight">version 3:</span> supports REML v2.
             </li>
             <li>
-              <span class="highlight">versions 4 and 5:</span> indicates REML
-              v3.
+              <span class="highlight">version 4:</span> supports REML v3.
             </li>
             <li>
-              <span class="highlight">versions 6 and later:</span> indicates REML
-              v4.
+              <span class="highlight">versions 5 &amp; 6:</span> supports REML v4.
             </li>
           </ul>
         </li>
@@ -486,85 +520,87 @@
         </div>
         <ul class="squashed">
           <li>
-            <em>d2</em> &ndash; Delphi 2 compiler
+            <em>d2</em> &ndash; Delphi 2 compiler <span class="highlight">(all versions)</span>
           </li>
           <li>
-            <em>d3</em> &ndash; Delphi 3 compiler
+            <em>d3</em> &ndash; Delphi 3 compiler <span class="highlight">(all versions)</span>
           </li>
           <li>
-            <em>d4</em> &ndash; Delphi 4 compiler
+            <em>d4</em> &ndash; Delphi 4 compiler <span class="highlight">(all versions)</span>
           </li>
           <li>
-            <em>d5</em> &ndash; Delphi 5 compiler
+            <em>d5</em> &ndash; Delphi 5 compiler <span class="highlight">(all versions)</span>
           </li>
           <li>
-            <em>d6</em> &ndash; Delphi 6 compiler
+            <em>d6</em> &ndash; Delphi 6 compiler <span class="highlight">(all versions)</span>
           </li>
           <li>
-            <em>d7</em> &ndash; Delphi 7 compiler
+            <em>d7</em> &ndash; Delphi 7 compiler <span class="highlight">(all versions)</span>
           </li>
           <li>
-            <em>d2005</em> &ndash; Delphi 2005 compiler
+            <em>d2005</em> &ndash; Delphi 2005 compiler <span class="highlight">(all versions)</span>
           </li>
           <li>
-            <em>d2006</em> &ndash; Delphi 2006 compiler
+            <em>d2006</em> &ndash; Delphi 2006 compiler <span class="highlight">(all versions)</span>
           </li>
           <li>
-            <em>d2007</em> &ndash; Delphi 2007 compiler
+            <em>d2007</em> &ndash; Delphi 2007 compiler <span class="highlight">(all versions)</span>
           </li>
           <li>
-            <em>d2009</em> &ndash; Delphi 2009 compiler
+            <em>d2009</em> &ndash; Delphi 2009 compiler <span class="highlight">(all versions)</span>
           </li>
           <li>
-            <em>d2010</em> &ndash; Delphi 2010 compiler
+            <em>d2010</em> &ndash; Delphi 2010 compiler <span class="highlight">(v4.1 &amp; later)</span>
           </li>
           <li>
-            <em>dXE</em> &ndash; Delphi XE compiler
+            <em>dXE</em> &ndash; Delphi XE compiler <span class="highlight">(v4.2 &amp; later)</span>
           </li>
           <li>
-            <em>dXE2</em> &ndash; Delphi XE2 compiler
+            <em>dXE2</em> &ndash; Delphi XE2 compiler <span class="highlight">(v4.3 &amp; later)</span>
           </li>
           <li>
-            <em>dXE3</em> &ndash; Delphi XE3 compiler
+            <em>dXE3</em> &ndash; Delphi XE3 compiler <span class="highlight">(v4.4..v4.5  and v6.1 &amp; later)</span>
           </li>
           <li>
-            <em>dDX4</em> &ndash; Delphi XE4 compiler. <strong>Note:</strong>
-            This value was named <em>dDX4</em> in error: it should have been
-            named <em>dXE4</em> but the erroneous value has been retained for
-            backwards compatibility reasons.
+            <em>dXE4</em> &ndash; Delphi XE4 compiler <span class="highlight">(v4.5 only)</span>
+            <br /><strong>Note:</strong> CodeSnip 3 used correct <em>dXE4</em> id, but CodeSnip 4 did not (see <em>dDX4</em> below).
           </li>
           <li>
-            <em>dXE5</em> &ndash; Delphi XE5 compiler
+            <em>dDX4</em> &ndash; Delphi XE4 compiler <span class="highlight">(v6.2 &amp; later)</span>
+            <br /><strong>Note:</strong> CodeSnip 4 <em>dDX4</em> in error instead of <em>dXE4</em> used by CodeSnip 3 (see above). The erroneous value was retained for backwards compatibility reasons.
           </li>
           <li>
-            <em>dXE6</em> &ndash; Delphi XE6 compiler
+            <em>dXE5</em> &ndash; Delphi XE5 compiler <span class="highlight">(v6.3 &amp; later)</span>
           </li>
           <li>
-            <em>dXE7</em> &ndash; Delphi XE7 compiler
+            <em>dXE6</em> &ndash; Delphi XE6 compiler <span class="highlight">(v6.4 &amp; later)</span>
           </li>
           <li>
-            <em>dXE8</em> &ndash; Delphi XE8 compiler
+            <em>dXE7</em> &ndash; Delphi XE7 compiler <span class="highlight">(v6.5 &amp; later)</span>
           </li>
           <li>
-            <em>d10s</em> &ndash; Delphi 10 Seattle compiler
+            <em>dXE8</em> &ndash; Delphi XE8 compiler <span class="highlight">(v6.6 &amp; later)</span>
           </li>
           <li>
-            <em>d101b</em> &ndash; Delphi 10.1 Berlin compiler
+            <em>d10s</em> &ndash; Delphi 10 Seattle compiler <span class="highlight">(v6.7 &amp; later)</span>
           </li>
           <li>
-            <em>d102t</em> &ndash; Delphi 10.2 Tokyo compiler
+            <em>d101b</em> &ndash; Delphi 10.1 Berlin compiler <span class="highlight">(v6.8 &amp; later)</span>
           </li>
           <li>
-            <em>d103r</em> &ndash; Delphi 10.3 Rio compiler
+            <em>d102t</em> &ndash; Delphi 10.2 Tokyo compiler <span class="highlight">(v7.1 &amp; later)</span>
           </li>
           <li>
-            <em>d104s</em> &ndash; Delphi 10.4 Sydney compiler
+            <em>d103r</em> &ndash; Delphi 10.3 Rio compiler <span class="highlight">(v7.1 &amp; later)</span>
           </li>
           <li>
-            <em>d11a</em> &ndash; Delphi 11 Alexandria compiler
+            <em>d104s</em> &ndash; Delphi 10.4 Sydney compiler <span class="highlight">(v7.1 &amp; later)</span>
           </li>
           <li>
-            <em>fpc</em> &ndash; Free Pascal compiler
+            <em>d11a</em> &ndash; Delphi 11 Alexandria compiler <span class="highlight">(v7.2 &amp; later)</span>
+          </li>
+          <li>
+            <em>fpc</em> &ndash; Free Pascal compiler <span class="highlight">(all versions)</span>
           </li>
         </ul>
       </dd>
@@ -662,28 +698,58 @@
   </dd>
 </dl>
 
+</section>
+
+<section id="changelog">
+
 <h2>
-  Differences Between File Versions
+  Change Log
 </h2>
 
 <p>
-  The differences between different export file versions is summarised below:
+  This section describes the changes between versions of the file format.
+</p>
+
+<p class="pullout">
+  There were small changes within versions, that probably should have been given minor version numbers - but weren't. Such minor numbers have been assigned retrospectively below, in order to better explain when in-version changes actually took place.
+</p>
+
+<p class="pullout">
+  File formats v4 and v5/v6 actually overlapped in the dates they were in use. This is because v4 was used by CodeSnip v3 and v5/v6 were used by CodeSnip 4. Those two versions of CodeSnip were maintained in parallel for a while.
 </p>
 
 <dl>
   <dt>
-    Version 1
+    <strong>Version 1 - 15 December 2008</strong>
   </dt>
   <dd>
-    First version of database.
+    <p>
+      Introduced in CodeSnip v2.2
+    </p>
+    <p>
+      First version of export file format.
+    </p>
+    <p>
+      Supported Delphi compilers from Delphi 2 to Delphi 2009 plus Free Pascal.
+    </p>
+    <p>
+      REML not supported.
+    </p>
+    <p>
+      The XML file was in UTF-8 format with no BOM and no XML encoding attribute.
+    </p>
   </dd>
+
   <dt>
-    Version 2
+    <strong>Version 2 - 31 December 2008</strong>
   </dt>
   <dd>
-    <div class="half-spaced">
-      The following tags are no longer supported:
-    </div>
+    <p>
+      Introduced with CodeSnip v2.2.5.
+    </p>
+    <p>
+      Removed following tags:
+    </p>
     <ul class="squashed">
       <li>
         <em>codesnip-export/routines/routine/comments</em>
@@ -695,113 +761,241 @@
         <em>codesnip-export/routines/routine/credits-url</em>
       </li>
     </ul>
-    <div class="half-spaced">
-      The following tag was introduced:
-    </div>
+    <p>
+      Added following tag:
+    </p>
     <ul class="squashed">
       <li>
-        <em>codesnip-export/routines/routine/extra</em> (uses REML v1 markup).
+        <em>codesnip-export/routines/routine/extra</em>
       </li>
     </ul>
+    <p>
+      The version of REML supported by the
+      <em>codesnip-export/routines/routine/extra</em> tag was v1.
+    </p>
   </dd>
+
   <dt>
-    Version 3
+    <strong>Version 3 - 29 June 2009</strong>
   </dt>
   <dd>
-    <div class="half-spaced">
-      The following tag is no longer supported:
-    </div>
+    <p>
+      Introduced with CodeSnip v3.0.
+    </p>
+    <p>
+      Introduced with CodeSnip v3.0.
+    </p>
     <ul class="squashed">
       <li>
         <em>codesnip-export/routines/routine/standard-format</em>
       </li>
     </ul>
-    <div class="half-spaced">
+    <p>
       The following tag was introduced:
-    </div>
+    </p>
     <ul class="squashed">
       <li>
         <em>codesnip-export/routines/routine/kind</em>
       </li>
     </ul>
-    <div class="half-spaced">
+    <p>
       The version of REML supported by the
       <em>codesnip-export/routines/routine/extra</em> tag was updated to v2.
-    </div>
+    </p>
   </dd>
+
   <dt>
-    Version 4
+    <strong>Version 4 - 06 July 2009</strong>
   </dt>
   <dd>
-    The version of REML supported by the
-    <em>codesnip-export/routines/routine/extra</em> tag was updated to v3.
+    <p>
+      Introduced with CodeSnip v3.0.1.
+    </p>
+    <p>
+      The version of REML supported by the
+      <em>codesnip-export/routines/routine/extra</em> tag was updated to v3.
+    </p>
+    <dl>
+      <dt>
+        <em>Version 4.1 - 24 September 2009</em>
+      </dt>
+      <dd>
+        Updated with CodeSnip v3.4 to add support for Delphi 2010.
+      </dd>
+      <dt>
+        <em>Version 4.2 - 23 October 2010</em>
+      </dt>
+      <dd>
+        Updated with CodeSnip v3.8.0 to add support for Delphi XE.
+      </dd>
+      <dt>
+        <em>Version 4.3 - 07 September 2011</em>
+      </dt>
+      <dd>
+        Updated with CodeSnip v3.9.0 to add support for Delphi XE2.
+      </dd>
+      <dt>
+        <em>Version 4.4 - 17 September 2012</em>
+      </dt>
+      <dd>
+        Updated with CodeSnip v3.11.0 to add support for Delphi XE3.
+      </dd>
+      <dt>
+        <em>Version 4.5 - 02 May 2013</em>
+      </dt>
+      <dd>
+        Updated with CodeSnip v3.12.0 to add support for Delphi XE4.
+      </dd>
+    </dl>
   </dd>
+
   <dt>
-    Version 5
+    <strong>Version 5 - 31 December 2011</strong>
   </dt>
   <dd>
-    <div class="half-spaced">
+    <p>
+      Introduced with CodeSnip v4.0 alpha 1.
+    </p>
+    <p>
       The XML file's encoding was explicitly set to &quot;UTF-8&quot; by setting
       the encoding attribute of the XML processing instruction to this value.
-    </div>
-    <div class="half-spaced">
+    </p>
+    <p>
       Snippet names, wherever they occur in the XML file, can now begin with
       any character that is a valid first character of a Unicode Pascal
       identifier. Previously the first character of the attribute had to be one
       of 'A'..'Z', 'a'..'z' or '_'.
-    </div>
-    <div class="half-spaced">
+    </p>
+    <p>
       New &quot;class&quot and &quot;unit&quot; snippet kinds supported.
-    </div>
+    </p>
+    <p>
+      The version of REML supported by the
+      <em>codesnip-export/routines/routine/extra</em> tag was updated to v4.
+    </p>
   </dd>
+
   <dt>
-    Version 6
+    <strong>Version 6 - 11 August 2012</strong>
   </dt>
   <dd>
-    <div class="half-spaced">
-      A snippet's description is now stored as formatted text using REML markup.
-      Previously the description was plain text.
-    </div>
-    <div class="half-spaced">
-      The supported version of REML was updated to v4.
-    </div>
-    <div class="half-spaced">
+    <p>
+      Introduced with CodeSnip v4.0 beta 1.
+    </p>
+    <p>
+      A snippet's description is now stored as formatted text using REML v4 markup. Previously the description was plain text.
+    </p>
+    <p>
       The following tags were introduced:
-    </div>
+    </p>
     <ul class="squashed">
       <li>
-        <em>codesnip-data/routines/routine/display-name</em>
+        <em>codesnip-export/routines/routine/display-name</em>
       </li>
       <li>
         <em>codesnip-export/routines/routine/highlight-source</em>
       </li>
     </ul>
+    <dl>
+      <dt>
+        <em>Version 6.1 - 14 September 2012</em>
+      </dt>
+      <dd>
+        Updated with CodeSnip v4.0 RC 1 to add support for Delphi XE3.
+      </dd>
+      <dt>
+        <em>Version 6.2 - 02 May 2013</em>
+      </dt>
+      <dd>
+        Updated with CodeSnip v4.5.0 to add support for Delphi XE4.
+      </dd>
+      <dt>
+        <em>Version 6.3 - 12 September 2013</em>
+      </dt>
+      <dd>
+        Updated with CodeSnip v4.8.0 to add support for Delphi XE5.
+      </dd>
+      <dt>
+        <em>Version 6.4 - 30 April 2014</em>
+      </dt>
+      <dd>
+        Updated with CodeSnip v4.9.0 to add support for Delphi XE6.
+      </dd>
+      <dt>
+        <em>Version 6.5 - 12 September 2014</em>
+      </dt>
+      <dd>
+        Updated with CodeSnip v4.10.0 to add support for Delphi XE7.
+      </dd>
+      <dt>
+        <em>Version 6.6 - 06 May 2015</em>
+      </dt>
+      <dd>
+        Updated with CodeSnip v4.12.0 to add support for Delphi XE8.
+      </dd>
+      <dt>
+        <em>Version 6.7 - 05 September 2015</em>
+      </dt>
+      <dd>
+        Updated with CodeSnip v4.13.0 to add support for Delphi 10 Seattle.
+      </dd>
+      <dt>
+        <em>Version 6.8 - 13 July 2016</em>
+      </dt>
+      <dd>
+        Updated with CodeSnip v4.15.0 to add support for Delphi 10.1 Berlin.
+      </dd>
+    </dl>
   </dd>
+
   <dt>
-    Version 7
+    <strong>Version 7 - 31 May 2020</strong>
   </dt>
   <dd>
-    The <em>codesnip-export/user-info</em> tag and sub-tags were no longer supported.
+    <p>
+      Introduced with CodeSnip v4.16.0.
+    </p>
+    <p>
+      The <em>codesnip-export/user-info</em> tag and sub-tags were no longer supported.
+    </p>
+    <dl>
+      <dt>
+        <em>Version 7.1 - 31 July 2020</em>
+      </dt>
+      <dd>
+        Updated with CodeSnip v4.17.0 to add support for Delphi 10.2 Tokyo, Delphi 10.3 Rio and Delphi 10.4 Sydney.
+      </dd>
+      <dt>
+        <em>Version 7.2 - 13 September 2021</em>
+      </dt>
+      <dd>
+        Updated with CodeSnip v4.18.0 to add support for Delphi 11 Alexandria.
+      </dd>
+    </dl>
   </dd>
 </dl>
 
-<h3>
-  Notes For File Readers Used For Importing
-</h3>
+</section>
+
+<section id="file-readers">
+
+<h2>
+  Notes For File Readers
+</h2>
 
 <p>
   Readers of v1 files must convert the contents of the
-  <em>codesnip-data/routines/routine/comments</em>,
-  <em>codesnip-data/routines/routine/credits</em> and
-  <em>codesnip-data/routines/routine/credits-url</em> tags into formatted text
+  <em>codesnip-export/routines/routine/comments</em>,
+  <em>codesnip-export/routines/routine/credits</em> and
+  <em>codesnip-export/routines/routine/credits-url</em> tags into formatted text
   that simulates the parsed content of a
-  <em>codesnip-data/routines/routine/extra</em> tag.
+  <em>codesnip-export/routines/routine/extra</em> tag.
 </p>
 
 <p>
   Readers of v1 and v2 files should map a
-  <em>codesnip-data/routines/routine/standard-format</em> value of &quot;0&quot;
-  to a <em>codesnip-data/routines/routine/kind</em> value of
+  <em>codesnip-export/routines/routine/standard-format</em> value of &quot;0&quot;
+  to a <em>codesnip-export/routines/routine/kind</em> value of
   &quot;freeform&quot; and a value of &quot;1&quot; to &quot;routine&quot;.
 </p>
 
@@ -812,7 +1006,7 @@
 <ul>
   <li>
     Convert the plain text snippet description read from
-    <em>codesnip-data/routines/routine/description</em> into the formatted text
+    <em>codesnip-export/routines/routine/description</em> into the formatted text
     equivalent of a single paragraph containing the description.
   </li>
   <li>
@@ -824,6 +1018,8 @@
 <p>
   Readers of v1 to v6 files must ignore the <em>codesnip-export/user-info</em> tag and sub-tags, where present.
 </p>
+
+</section>
 
 </body>
 

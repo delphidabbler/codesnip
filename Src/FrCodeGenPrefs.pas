@@ -1,13 +1,14 @@
 {
  * This Source Code Form is subject to the terms of the Mozilla Public License,
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * obtain one at https://mozilla.org/MPL/2.0/
  *
  * Copyright (C) 2010-2021, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements a frame that allows user to set source code generation
  * preferences.
- * Designed for use as one of the tabs in the Preferences dialogue box.
+ *
+ * Designed for use as one of the pages in the Preferences dialogue box.
 }
 
 
@@ -176,7 +177,8 @@ type
     ///  <summary>Records details of warnings from given preferences object and
     ///  updates controls accordingly.</summary>
     ///  <remarks>Called when page is activated.</remarks>
-    procedure Activate(const Prefs: IPreferences); override;
+    procedure Activate(const Prefs: IPreferences; const Flags: UInt64);
+      override;
     ///  <summary>Updates given preferences object with details of warnings as
     ///  modified by user.</summary>
     ///  <remarks>Called when page is deactivated.</remarks>
@@ -322,7 +324,8 @@ begin
   actDelete.Enabled := Assigned(fLVWarnings.Selected);
 end;
 
-procedure TCodeGenPrefsFrame.Activate(const Prefs: IPreferences);
+procedure TCodeGenPrefsFrame.Activate(const Prefs: IPreferences;
+  const Flags: UInt64);
 begin
   (fWarnings as IAssignable).Assign(Prefs.Warnings);
   chkWARNEnabled.Checked := fWarnings.Enabled;

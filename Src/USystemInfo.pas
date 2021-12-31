@@ -1,9 +1,9 @@
 {
  * This Source Code Form is subject to the terms of the Mozilla Public License,
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2006-2020, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2006-2021, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Static classes that provide information about the host system.
  *
@@ -96,7 +96,7 @@ type
     class function GetIEVersionStr: string;
     ///  <summary>Calculates major version number of Internet Explorer if it has
     ///  not already been calculated.</summary>
-    ///  <remarks>See http://support.microsoft.com/kb/969393/en-us.</remarks>
+    ///  <remarks>See https://support.microsoft.com/kb/969393/en-us.</remarks>
     class procedure InitMajorVersion;
   public
     const

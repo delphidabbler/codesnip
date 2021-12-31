@@ -32,6 +32,14 @@ inherited DisplayPrefsFrame: TDisplayPrefsFrame
     Height = 13
     Caption = 'Background colour for &source code:'
   end
+  object lblOverviewFontSize: TLabel
+    Left = 16
+    Top = 200
+    Width = 145
+    Height = 13
+    Caption = 'Overview tree view &font size: '
+    FocusControl = cbOverviewFontSize
+  end
   object cbOverviewTree: TComboBox
     Left = 192
     Top = 2
@@ -65,5 +73,13 @@ inherited DisplayPrefsFrame: TDisplayPrefsFrame
     Caption = 'Use Default &Colours'
     TabOrder = 3
     OnClick = btnDefColoursClick
+  end
+  object cbOverviewFontSize: TComboBox
+    Left = 192
+    Top = 197
+    Width = 57
+    Height = 21
+    TabOrder = 4
+    OnChange = cbOverviewFontSizeChange
   end
 end

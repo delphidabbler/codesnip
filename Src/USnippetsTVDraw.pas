@@ -1,9 +1,9 @@
 {
  * This Source Code Form is subject to the terms of the Mozilla Public License,
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2009-2020, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2009-2021, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Provides an abstract base class that can render tree nodes representing
  * snippets in a tree view.
@@ -91,6 +91,7 @@ begin
   Assert(Sender is TTreeView,
     ClassName + '.CustomDrawItem: Sender is not TTreeView');
   TV := Sender as TTreeView;
+  TV.Font.Size := Preferences.OverviewFontSize;
   if Assigned(Node) then
   begin
     // Set font and background colour according to selected / focusses state

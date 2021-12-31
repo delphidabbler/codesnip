@@ -1,9 +1,9 @@
 {
  * This Source Code Form is subject to the terms of the Mozilla Public License,
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2007-2020, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2007-2021, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements a class used to create content of an XHTML strict document.
 }
@@ -122,7 +122,7 @@ const
   cXMLProcInstruction = '<?xml version="1.0"?>';
   // XML document type
   cDocType = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" '
-    + '"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">';
+    + '"https://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">';
   // Various tag names
   cHTMLTag = 'html';
   cHeadTag = 'head';
@@ -214,7 +214,7 @@ function THTMLBuilder.HTMLTag: string;
   function HTMLAttrs: IHTMLAttributes;
   begin
     Result := THTMLAttributes.Create(
-      [THTMLAttribute.Create('xmlns', 'http://www.w3.org/1999/xhtml'),
+      [THTMLAttribute.Create('xmlns', 'https://www.w3.org/1999/xhtml'),
       THTMLAttribute.Create('xml:lang', 'en'),
       THTMLAttribute.Create('lang', 'en')]
     );

@@ -1,12 +1,13 @@
 {
  * This Source Code Form is subject to the terms of the Mozilla Public License,
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2007-2020, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2007-2021, Peter Johnson (gravatar.com/delphidabbler).
  *
- * Implements a frame that allows user to set printing preferences. Designed for
- * use as one of the tabs in the Preferences dialogue box.
+ * Implements a frame that allows user to set printing preferences.
+ *
+ * Designed for use as one of the pages in the Preferences dialogue box.
 }
 
 
@@ -44,7 +45,7 @@ type
     edLeft: TEdit;
     edRight: TEdit;
     edTop: TEdit;
-    stInfo: TStaticText;
+    lblInfo: TLabel;
     procedure CheckboxClick(Sender: TObject);
     procedure NumEditKeyPress(Sender: TObject; var Key: Char);
   strict private
@@ -57,10 +58,14 @@ type
       controls.
       }
   public
+    const
+      HideRestartMessage = 1;
+  public
     constructor Create(AOwner: TComponent); override;
       {Class constructor. Sets up frame object.
       }
-    procedure Activate(const Prefs: IPreferences); override;
+    procedure Activate(const Prefs: IPreferences; const Flags: UInt64);
+      override;
       {Called when page activated. Updates controls.
         @param Prefs [in] Object that provides info used to update controls.
       }
@@ -96,9 +101,9 @@ uses
   // Delphi
   SysUtils, Windows, Graphics, Math, ComCtrls,
   // Project
-  FmPreferencesDlg, Hiliter.UAttrs, Hiliter.UHiliters, IntfCommon, UConsts,
-  UEncodings, UKeysHelper, UPrintInfo, URTFBuilder, URTFStyles, URTFUtils,
-  UStrUtils, UUtils;
+  FmPreferencesDlg, Hiliter.UAttrs, Hiliter.UHiliters, IntfCommon, UColours,
+  UConsts, UEncodings, UFontHelper, UKeysHelper, UPrintInfo, URTFBuilder,
+  URTFStyles, URTFUtils, UStrUtils, UUtils;
 
 
 {$R *.dfm}
@@ -141,7 +146,8 @@ type
 
 { TPrintingPrefsFrame }
 
-procedure TPrintingPrefsFrame.Activate(const Prefs: IPreferences);
+procedure TPrintingPrefsFrame.Activate(const Prefs: IPreferences;
+  const Flags: UInt64);
   {Called when page activated. Updates controls.
     @param Prefs [in] Object that provides info used to update controls.
   }
@@ -193,13 +199,25 @@ begin
   // Record current user highlighting choices and display initial preview
   (fHiliteAttrs as IAssignable).Assign(Prefs.HiliteAttrs);
   DisplayPreview;
+
+  // Show or hide info label depending on custom flag
+  if IsFlagSupported(Flags) then
+    lblInfo.Visible := not (
+      ExtractFrameFlag(Flags) and HideRestartMessage = HideRestartMessage
+    )
+  else
+    lblInfo.Visible := True;
 end;
 
 procedure TPrintingPrefsFrame.ArrangeControls;
   {Arranges controls on frame. Called after frame has been sized.
   }
 begin
-  // Do nothing: all controls arrange themselves using Anchors property
+  // No alignment needed:
+  //   all controls use Anchors property to arrange themselves
+  // Set warning font for info label
+  TFontHelper.SetDefaultFont(lblInfo.Font);
+  lblInfo.Font.Color := clWarningText;
 end;
 
 procedure TPrintingPrefsFrame.CheckboxClick(Sender: TObject);

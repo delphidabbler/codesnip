@@ -1,8 +1,8 @@
 ; This Source Code Form is subject to the terms of the Mozilla Public License,
 ; v. 2.0. If a copy of the MPL was not distributed with this file, You can
-; obtain one at http://mozilla.org/MPL/2.0/
+; obtain one at https://mozilla.org/MPL/2.0/
 ;
-; Copyright (C) 2006-2020, Peter Johnson (gravatar.com/delphidabbler).
+; Copyright (C) 2006-2021, Peter Johnson (gravatar.com/delphidabbler).
 ;
 ; Install file generation script for use with Inno Setup.
 
@@ -110,7 +110,7 @@ Type: filesandordirs; Name: "{commonappdata}\{#AppPublisher}\{#ProgDataSubDir}"
 [Code]
 // DataLocations.ps must be declared first
 #include "DataLocations.ps"
-#include "VersionInfo.ps" 
+#include "VersionInfo.ps"
 #include "Unicode.ps"
 #include "UpdateIni.ps"
 #include "UpdateDBase.ps"

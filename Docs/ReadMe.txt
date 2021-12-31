@@ -236,7 +236,7 @@ Updates are published on:
 + SourceForge: https://sourceforge.net/projects/codesnip/files/
 
 News of new updates is published on the CodeSnip Blog:
-http://codesnip-app.blogspot.com/.
+https://codesnip-app.blogspot.com/.
 
 
 Known Installation and Upgrading Issues
@@ -245,14 +245,14 @@ Known Installation and Upgrading Issues
 + Any syntax highlighter customisation you have made will be lost if you are
   updating from any v2 or earlier.
 
-  You will need to redo any customisation using the "Syntax Highlighter" tab of
+  You will need to redo any customisation using the "Syntax Highlighter" page of
   the Preferences dialogue box displayed from the "Tools | Preferences" menu
   option.
 
 + Your source code formatting preferences will have been lost if you are
   updating from v1.7.4 or earlier.
 
-  You will need to reconfigure them using the "Code Formatting" tab of the
+  You will need to reconfigure them using the "Code Formatting" page of the
   Preferences dialogue box displayed from the "Tools | Preferences" menu option.
 
 + If you have updated to CodeSnip v4.2.0 or later from any earlier v4 release,
@@ -303,7 +303,7 @@ https://github.com/delphidabbler/codesnip-faq/blob/master/SourceCode.md#faq-1
 The standard and portable editions of CodeSnip share the same source code.
 
 The original source code of v4 is released under the Mozilla Public license
-v2.0 (see http://www.mozilla.org/MPL/) and other open source licenses. See the
+v2.0 (see https://www.mozilla.org/MPL/) and other open source licenses. See the
 file "License.html" in the "Docs" directory of the repository for full licensing
 information.
 

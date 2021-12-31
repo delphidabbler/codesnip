@@ -6,6 +6,17 @@ inherited PrintingPrefsFrame: TPrintingPrefsFrame
   DesignSize = (
     396
     311)
+  object lblInfo: TLabel
+    Left = 0
+    Top = 264
+    Width = 329
+    Height = 13
+    Alignment = taCenter
+    Anchors = [akLeft, akTop, akRight]
+    Caption = 
+      'Your changes will take effect the next time you start the applic' +
+      'ation.'
+  end
   object gpOutputOptions: TGroupBox
     Left = 0
     Top = 2
@@ -125,18 +136,5 @@ inherited PrintingPrefsFrame: TPrintingPrefsFrame
       TabOrder = 3
       OnKeyPress = NumEditKeyPress
     end
-  end
-  object stInfo: TStaticText
-    Left = 0
-    Top = 256
-    Width = 393
-    Height = 25
-    Alignment = taCenter
-    Anchors = [akLeft, akTop, akRight]
-    AutoSize = False
-    Caption = 
-      'Your changes will take effect the next time you start the applic' +
-      'ation.'
-    TabOrder = 2
   end
 end

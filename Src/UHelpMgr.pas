@@ -1,9 +1,9 @@
 {
  * This Source Code Form is subject to the terms of the Mozilla Public License,
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2020, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2005-2021, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Provides an interface that the program uses to access help. Also exposes a
  * routine that enables an object that implements the interface to be registered

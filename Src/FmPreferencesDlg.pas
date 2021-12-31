@@ -1,9 +1,9 @@
 {
  * This Source Code Form is subject to the terms of the Mozilla Public License,
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2006-2020, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2006-2021, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements a dialogue box that is used to set user preferences.
 }
@@ -27,31 +27,19 @@ type
   ///  Dialog box that sets user preferences.
   ///  </summary>
   ///  <remarks>
-  ///  This dialog box displays tabs for preferences frames registered with the
+  ///  This dialog box displays pages for preferences frames registered with the
   ///  dialog box.
   ///  </remarks>
   TPreferencesDlg = class(TGenericOKDlg, INoPublicConstruct)
     pcMain: TPageControl;
+    lbPages: TListBox;
     ///  <summary>OK button click event handler. Writes preference data to
     ///  persistent storage.</summary>
     procedure btnOKClick(Sender: TObject);
-    ///  <param>Called when current tab sheet has changed. Gets newly selected
-    ///  page to re-initialise its controls from local preferences.</param>
-    ///  <remarks>This enables any pages that depend on preferences that may
-    ///  have been changed in other pages to update appropriately.</remarks>
-    procedure pcMainChange(Sender: TObject);
-    ///  <summary>Called just before active tab sheet is changed. Causes page
-    ///  about to be deselected to update local preferences with any changes.
-    ///  </summary>
-    ///  <remarks>We do this in case another page needs to update due to changes
-    ///  made on current page.</remarks>
-    procedure pcMainChanging(Sender: TObject; var AllowChange: Boolean);
-    ///  <summary>Handles event triggered when user clicks on one of page
-    ///  control tabs. Ensures page control has focus.</summary>
-    ///  <remarks>Without this fix, page control does not always get focus when
-    ///  a tab is clicked.</remarks>
-    procedure pcMainMouseDown(Sender: TObject; Button: TMouseButton;
-      Shift: TShiftState; X, Y: Integer);
+    ///  <summary>Handles event triggered when list box is clicked or changed
+    ///  via keyboard.</summary>
+    procedure lbPagesClick(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
   strict private
     class var
       ///  <summary>List of registered page frames</summary>
@@ -62,6 +50,10 @@ type
       ///  <summary>Records if main UI needs to be updated to reflect changed
       ///  preferences.</summary>
       fUpdateUI: Boolean;
+      ///  <summary>Records flags to be passed to frames.</summary>
+      fFrameFlags: UInt64;
+      ///  <summary>Records index of currently select tab/list item.</summary>
+      fCurrentPageIdx: Integer;
     ///  <summary>Creates the required frames and displays each in a tab sheet
     ///  within the page control.</summary>
     ///  <param name="FrameClasses">array of TPrefsFrameClass [in] Class
@@ -83,6 +75,13 @@ type
     ///  <summary>Gets reference to preferences frame on currently selected tab.
     ///  </summary>
     function GetSelectedPage: TPrefsBaseFrame;
+    ///  <summary>Selects given tab.</summary>
+    ///  <remarks>Stores state of tab being closed and restores state of tab
+    ///  being opened.</remarks>
+    procedure SelectTab(TS: TTabSheet);
+    ///  <summary>Returns index of tab selected when dialogue box was last
+    ///  closed or -1 if no tab recorded or tab doesn't exist.</summary>
+    function GetLastTabIdx: Integer;
   strict protected
     ///  <summary>Gets the help A-link keyword to be used when help button
     ///  clicked.</summary>
@@ -111,7 +110,8 @@ type
     ///  <returns>Boolean. True if user clicks OK to accept changes or False if
     ///  user cancels and no changes made.</returns>
     class function Execute(AOwner: TComponent;
-      const Pages: array of TPrefsFrameClass; out UpdateUI: Boolean): Boolean;
+      const Pages: array of TPrefsFrameClass; out UpdateUI: Boolean;
+      const Flags: UInt64 = 0): Boolean;
       overload;
     ///  <summary>Displays dialog with pages for each specified preferences
     ///  frame.</summary>
@@ -122,7 +122,8 @@ type
     ///  <returns>Boolean. True if user clicks OK to accept changes or False if
     ///  user cancels and no changes made.</returns>
     class function Execute(AOwner: TComponent;
-      const Pages: array of TPrefsFrameClass): Boolean; overload;
+      const Pages: array of TPrefsFrameClass; const Flags: UInt64 = 0):
+      Boolean; overload;
     ///  <summary>Displays preferences dialog with all registered preference
     ///  frames.</summary>
     ///  <param name="AOwner">TComponent [in] Component that owns dialog.
@@ -131,8 +132,8 @@ type
     ///  be updated as a result of preference changes.</param>
     ///  <returns>Boolean. True if user clicks OK to accept changes or False if
     ///  user cancels and no changes made.</returns>
-    class function Execute(AOwner: TComponent; out UpdateUI: Boolean): Boolean;
-      overload;
+    class function Execute(AOwner: TComponent; out UpdateUI: Boolean;
+      const Flags: UInt64 = 0): Boolean; overload;
     ///  <summary>Displays dialogue with showing a single frame, specified by
     ///  its class name.</summary>
     ///  <param name="AOwner">TComponent [in] Component that owns dialog.
@@ -144,7 +145,7 @@ type
     ///  <returns>Boolean. True if user clicks OK to accept changes or False if
     ///  user cancels and no changes made.</returns>
     class function Execute(AOwner: TComponent; const PageClsName: string;
-      out UpdateUI: Boolean): Boolean; overload;
+      out UpdateUI: Boolean; const Flags: UInt64 = 0): Boolean; overload;
     ///  <summary>Registers given preferences frame class for inclusion in the
     ///  preferences dialog box.</summary>
     ///  <remarks>Registered frames are created when the dialog box is displayed
@@ -160,16 +161,17 @@ implementation
   Design notes
   ------------
 
-  This dialog box is a multi-page preferences dialog that provides access to
-  each page via a tab. The dialog box does not provide an implementation of each
-  page of the dialog. This representation must be provided by a frame descended
-  from TPrefsBaseFrame. Such frames must:
-    (a) register themselves with the dialog box by passing their class to the
+  This dialogue box is a multi-page preferences dialog that provides access to
+  each page via a list of page names. The dialogue box does not provide an
+  implementation of each page. This representation must be provided by a frame
+  descended from TPrefsBaseFrame. Such frames must:
+    (a) register themselves with the dialogue box by passing their class to the
         TPreferencesDlg.RegisterPage class method.
     (b) implement all the abstract methods of TPrefsBaseFrame.
 
-  The dialog box will create registered frames when needed and host them within
-  a tab sheet in the main page control.
+  The dialogue box will create registered frames when needed and host them
+  within tab sheet in the main page control. It will also add the name of the
+  frame to a list control that is used to select the required "page".
 
   There is no need to modify this unit when a new frame is to be addded to it.
 }
@@ -177,7 +179,8 @@ implementation
 
 uses
   // Project
-  IntfCommon;
+  IntfCommon,
+  UStrUtils;
 
 
 {$R *.dfm}
@@ -186,7 +189,7 @@ uses
 
 procedure TPreferencesDlg.ArrangeForm;
 var
-  Idx: Integer;           // loops through all displayed tab sheets
+  Idx: Integer;           // loops through all displayed page
   Frame: TPrefsBaseFrame; // references each preference frame
   TabSheet: TTabSheet;    // references each tab sheet
 begin
@@ -241,6 +244,10 @@ begin
     Frame.Top := 4;
     // set tab sheet caption to frame's display name
     TS.Caption := Frame.DisplayName;
+    TS.TabVisible := False;
+
+    // Create list box item for page
+    lbPages.Items.AddObject(Frame.DisplayName, TS);
   end;
 end;
 
@@ -256,10 +263,12 @@ begin
 end;
 
 class function TPreferencesDlg.Execute(AOwner: TComponent;
-  const Pages: array of TPrefsFrameClass; out UpdateUI: Boolean): Boolean;
+  const Pages: array of TPrefsFrameClass; out UpdateUI: Boolean;
+  const Flags: UInt64): Boolean;
 begin
   with InternalCreate(AOwner) do
     try
+      fFrameFlags := Flags;
       CreatePages(Pages);
       Result := ShowModal = mrOK;
       if Result then
@@ -272,27 +281,50 @@ begin
 end;
 
 class function TPreferencesDlg.Execute(AOwner: TComponent;
-  out UpdateUI: Boolean): Boolean;
+  out UpdateUI: Boolean; const Flags: UInt64): Boolean;
 begin
-  Result := Execute(AOwner, fPages.ToArray, UpdateUI);
+  Result := Execute(AOwner, fPages.ToArray, UpdateUI, Flags);
 end;
 
 class function TPreferencesDlg.Execute(AOwner: TComponent;
-  const Pages: array of TPrefsFrameClass): Boolean;
+  const Pages: array of TPrefsFrameClass; const Flags: UInt64): Boolean;
 var
   Dummy: Boolean; // unused UpdateUI parameters
 begin
-  Result := Execute(AOwner, Pages, Dummy);
+  Result := Execute(AOwner, Pages, Dummy, Flags);
 end;
 
 class function TPreferencesDlg.Execute(AOwner: TComponent;
-  const PageClsName: string; out UpdateUI: Boolean): Boolean;
+  const PageClsName: string; out UpdateUI: Boolean; const Flags: UInt64):
+  Boolean;
 var
   FrameClass: TPrefsFrameClass;
 begin
   FrameClass := MapClassNameToPageClass(PageClsName);
   Assert(Assigned(FrameClass), ClassName + '.Execute: PageClsName not valid');
   Result := Execute(AOwner, [FrameClass], UpdateUI);
+end;
+
+procedure TPreferencesDlg.FormDestroy(Sender: TObject);
+begin
+  // Save current page
+  if Assigned(pcMain.ActivePage) then
+    Preferences.LastTab := MapTabSheetToPage(pcMain.ActivePage).DisplayName;
+  inherited;
+end;
+
+function TPreferencesDlg.GetLastTabIdx: Integer;
+var
+  TabName: string;
+  ListIdx: Integer;
+begin
+  TabName := Preferences.LastTab;
+  if TabName = '' then
+    Exit(-1);
+  for ListIdx := 0 to Pred(lbPages.Count) do
+    if StrSameText(TabName, lbPages.Items[ListIdx]) then
+      Exit(ListIdx);
+  Result := -1;
 end;
 
 function TPreferencesDlg.GetSelectedPage: TPrefsBaseFrame;
@@ -302,7 +334,7 @@ end;
 
 procedure TPreferencesDlg.InitForm;
 var
-  TabIdx: Integer;  // loops thru tabs in page control
+  TabIdx: Integer;      // loops thru tabs in page control
 begin
   inherited;
   // Take local copy of global preferences. This local copy will be updated as
@@ -311,9 +343,22 @@ begin
   fLocalPrefs := (Preferences as IClonable).Clone as IPreferences;
   // Display and initialise required pages
   for TabIdx := 0 to Pred(pcMain.PageCount) do
-    MapTabSheetToPage(TabIdx).LoadPrefs(fLocalPrefs);
-  // Select first TabSheet
-  pcMain.ActivePageIndex := 0;
+    MapTabSheetToPage(TabIdx).LoadPrefs(fLocalPrefs, fFrameFlags);
+  // Select last used tab sheet (or 1st if last not known)
+  fCurrentPageIdx := GetLastTabIdx;
+  if fCurrentPageIdx < 0 then
+    fCurrentPageIdx := 0;
+  pcMain.ActivePageIndex := fCurrentPageIdx;
+  lbPages.ItemIndex := fCurrentPageIdx;
+end;
+
+procedure TPreferencesDlg.lbPagesClick(Sender: TObject);
+begin
+  if lbPages.ItemIndex < 0 then
+    Exit;
+  if lbPages.ItemIndex = fCurrentPageIdx then
+    Exit;
+  SelectTab(lbPages.Items.Objects[lbPages.ItemIndex] as TTabSheet)
 end;
 
 class function TPreferencesDlg.MapClassNameToPageClass(const ClsName: string):
@@ -351,24 +396,6 @@ begin
   Assert(Assigned(Result), ClassName + '.MapTabSheetToPage: Frame not found');
 end;
 
-procedure TPreferencesDlg.pcMainChange(Sender: TObject);
-begin
-  GetSelectedPage.Activate(fLocalPrefs);
-end;
-
-procedure TPreferencesDlg.pcMainChanging(Sender: TObject;
-  var AllowChange: Boolean);
-begin
-  GetSelectedPage.Deactivate(fLocalPrefs);
-end;
-
-procedure TPreferencesDlg.pcMainMouseDown(Sender: TObject; Button: TMouseButton;
-  Shift: TShiftState; X, Y: Integer);
-begin
-  if htOnItem in pcMain.GetHitTestInfoAt(X, Y) then
-    pcMain.SetFocus;
-end;
-
 class procedure TPreferencesDlg.RegisterPage(const FrameCls: TPrefsFrameClass);
 var
   PageIdx: Integer; // loops through all registered frames
@@ -387,6 +414,15 @@ begin
   end;
   // Record the frame's class reference
   fPages.Insert(InsIdx, FrameCls);
+end;
+
+procedure TPreferencesDlg.SelectTab(TS: TTabSheet);
+begin
+  Assert(Assigned(TS), ClassName + '.SelectTab: TS is nil');
+  GetSelectedPage.Deactivate(fLocalPrefs);
+  pcMain.ActivePage := TS;
+  GetSelectedPage.Activate(fLocalPrefs, fFrameFlags);
+  fCurrentPageIdx := pcMain.ActivePageIndex;
 end;
 
 end.
