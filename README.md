@@ -37,13 +37,13 @@ The following support is available CodeSnip users:
 
 There's also plenty of info available on how to compile CodeSnip from source - see below.
 
-<sup>*</sup> These links take you to the most recent version of the documents -- they can change from release to release.
+<sup>*</sup> This link takes you to the most recent version of the read-me file -- it can change from release to release.
 
 ## Source Code
 
 CodeSnip's source code is maintained in the [`delphidabbler/codesnip`](https://github.com/delphidabbler/codesnip) Git repository on GitHub†.
 
-[Git Flow](https://nvie.com/posts/a-successful-git-branching-model/) methodology has been adopted, with the exception of some branches that have been used in abortive attempts to start work on CodeSnip 5.
+[Git Flow](https://nvie.com/posts/a-successful-git-branching-model/) methodology has been adopted, with the exception of some branches that have been used in various attempts to start work on CodeSnip 5.
 
 The following branches existed at the time when CodeSnip v4.16.0 was released:
 
@@ -52,9 +52,9 @@ The following branches existed at the time when CodeSnip v4.16.0 was released:
 * `pagoda`: An abortive attempt at developing CodeSnip 5. Work on this branch has halted. It does not follow GitFlow methodology. ***Do not use this branch: it may be pruned.***
 * `pavilion`: Another attempt at working on CodeSnip 5. It branched off `pagoda` and it's future is uncertain. Again it does not follow GitFlow methodology.
 
-New features and most bug fixes are worked on in `feature/xxxx` branches locally. They are merged into `develop` as they are completed and the branches are deleted.
+New features and most bug fixes are worked on in `feature/xxxx` branches that are branched off `develop` locally. They are merged into `develop` as they are completed and the branches are deleted.
 
-**Note** that the default branch on GitHub is `develop` rather than `master`. This is because that's where all the work takes place. If you want to see the state of play at the last release make sure to switch to `master`.
+Note that the default branch on GitHub is `master`, which contains the state of the project as of the latest release. If you want to see the current state of play with new developments switch to `develop`.
 
 > † Up to and including v4.13.1 the source code was kept in a Subversion repository on SourceForge. It was converted to Git in October 2015 and imported into GitHub. All releases from v3.0.0 are marked by tags in the form `version-x.x.x` where `x.x.x` is the version number. None of the Subversion branches made it through the conversion to Git, so to see a full history look at the old [SourceForge repository](https://sourceforge.net/p/codesnip/code/).
 
