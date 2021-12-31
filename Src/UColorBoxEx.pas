@@ -1,9 +1,9 @@
 {
  * This Source Code Form is subject to the terms of the Mozilla Public License,
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2008-2020, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2008-2021, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements a subclass of TColorBox that enables an alternative colour dialog
  * box to be displayed when "Custom Colour" is chosen from the combo box's drop

@@ -1,12 +1,13 @@
 {
  * This Source Code Form is subject to the terms of the Mozilla Public License,
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2006-2020, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2006-2021, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements a frame that allows user to set source code preferences.
- * Designed for use as one of the tabs in the Preferences dialogue box.
+ *
+ * Designed for use as one of the pages in the Preferences dialogue box.
 }
 
 
@@ -74,7 +75,8 @@ type
     constructor Create(AOwner: TComponent); override;
       {Class constructor. Initialises controls.
       }
-    procedure Activate(const Prefs: IPreferences); override;
+    procedure Activate(const Prefs: IPreferences; const Flags: UInt64);
+      override;
       {Called when page activated. Updates controls.
         @param Prefs [in] Object that provides info used to update controls.
       }
@@ -165,7 +167,8 @@ type
 
 { TSourcePrefsFrame }
 
-procedure TSourcePrefsFrame.Activate(const Prefs: IPreferences);
+procedure TSourcePrefsFrame.Activate(const Prefs: IPreferences;
+  const Flags: UInt64);
   {Called when page activated. Updates controls.
     @param Prefs [in] Object that provides info used to update controls.
   }

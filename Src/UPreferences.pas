@@ -1,9 +1,9 @@
 {
  * This Source Code Form is subject to the terms of the Mozilla Public License,
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2006-2020, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2006-2021, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements a singletion object that exposes and persists user preferences.
 }
@@ -36,6 +36,23 @@ type
   ///  </summary>
   IPreferences = interface(IInterface)
     ['{381B9A92-B528-47E1-AC04-90E1FFFDADA7}']
+
+    ///  <summary>Gets last tab displayed by Preferences dialogue box when it
+    ///  was last closed, or empty string if the tab is not known.
+    ///  </summary>
+    ///  <remarks>This is meta data about the dialogue box itself, not about
+    ///  user preferences.</remarks>
+    function GetLastTab: string;
+    ///  <summary>Sets last tab displayed by Preferences dialogue box when it
+    ///  was last closed.</summary>
+    ///  <remarks>This is meta data about the dialogue box itself, not about
+    ///  user preferences.</remarks>
+    procedure SetLastTab(const Value: string);
+    ///  <summary>Last tab displayed by Preferences dialogue box when it was
+    ///  last closed, or empty string if the tab is not known.</summary>
+    ///  <remarks>This is meta data about the dialogue box itself, not about
+    ///  user preferences.</remarks>
+    property LastTab: string read GetLastTab write SetLastTab;
 
     ///  <summary>Gets style of commenting used to describe snippets in
     ///  generated code.</summary>
@@ -157,6 +174,14 @@ type
     ///  (UserDefined = True).</summary>
     property DBHeadingCustomColours[UserDefined: Boolean]: IStringList
       read GetDBHeadingCustomColours write SetDBHeadingCustomColours;
+
+    ///  <summary>Gets size of font used in overview pane tree view.</summary>
+    function GetOverviewFontSize: Integer;
+    ///  <summary>Sets size of font used in overview pane tree view.</summary>
+    procedure SetOverviewFontSize(const Value: Integer);
+    ///  <summary>Size of font used in overview pane tree view.</summary>
+    property OverviewFontSize: Integer
+      read GetOverviewFontSize write SetOverviewFontSize;
 
     ///  <summary>Gets colour used for background of source code in main
     ///  display.</summary>
@@ -283,6 +308,7 @@ type
   )
   strict protected
     var
+      fLastTab: string;
       ///  <summary>Default file extension / type used when writing code
       ///  snippets  file.</summary>
       fSourceDefaultFileType: TSourceFileType;
@@ -313,6 +339,9 @@ type
       ///  either online database (UserDefined = False) or user database
       ///  (UserDefined = True).</summary>
       fDBHeadingCustomColours: array[Boolean] of IStringList;
+      ///  <summary>Records size of font used in overview pane tree view.
+      ///  </summary>
+      fOverviewFontSize: Integer;
       ///  <summary>Records colour used for background of source code in main
       ///  display.</summary>
       fSourceCodeBGColour: TColor;
@@ -343,6 +372,24 @@ type
 
     ///  <summary>Destroys object instance.</summary>
     destructor Destroy; override;
+
+    ///  <summary>Gets last tab displayed by Preferences dialogue box when it
+    ///  was last closed, or empty string if the tab is not known.
+    ///  </summary>
+    ///  <remarks>
+    ///  <para>This is meta data about the dialogue box itself, not about
+    ///  user preferences.</para>
+    ///  <para>Method of IPreferences.</para>
+    ///  </remarks>
+    function GetLastTab: string;
+    ///  <summary>Sets last tab displayed by Preferences dialogue box when it
+    ///  was last closed.</summary>
+    ///  <remarks>
+    ///  <para>This is meta data about the dialogue box itself, not about user
+    ///  preferences.</para>
+    ///  <para>Method of IPreferences.</para>
+    ///  </remarks>
+    procedure SetLastTab(const Value: string);
 
     ///  <summary>Gets style of commenting used to describe snippets in
     ///  generated code.</summary>
@@ -454,6 +501,14 @@ type
     ///  <remarks>Method of IPreferences.</remarks>
     procedure SetDBHeadingCustomColours(UserDefined: Boolean;
       Value: IStringList);
+
+    ///  <summary>Gets size of font used in overview pane tree view.</summary>
+    ///  <remarks>Method of IPreferences.</remarks>
+    function GetOverviewFontSize: Integer;
+
+    ///  <summary>Sets size of font used in overview pane tree view.</summary>
+    ///  <remarks>Method of IPreferences.</remarks>
+    procedure SetOverviewFontSize(const Value: Integer);
 
     ///  <summary>Gets colour used for background of source code in main
     ///  display.</summary>
@@ -608,6 +663,7 @@ begin
   if not Supports(Src, IPreferences, SrcPref) then
     raise EBug.Create(ClassName + '.Assign: Src is wrong type');
   // Copy the data
+  Self.fLastTab := SrcPref.LastTab;
   Self.fSourceDefaultFileType := SrcPref.SourceDefaultFileType;
   Self.fSourceCommentStyle := SrcPref.SourceCommentStyle;
   Self.fTruncateSourceComments := SrcPref.TruncateSourceComments;
@@ -620,6 +676,7 @@ begin
   Self.fDBHeadingCustomColours[False] := SrcPref.DBHeadingCustomColours[False];
   Self.fDBHeadingColours[True] := SrcPref.DBHeadingColours[True];
   Self.fDBHeadingCustomColours[True] := SrcPref.DBHeadingCustomColours[True];
+  Self.fOverviewFontSize := SrcPref.OverviewFontSize;
   Self.fSourceCodeBGColour := SrcPref.SourceCodeBGColour;
   Self.fSourceCodeBGCustomColours := SrcPref.SourceCodeBGCustomColours;
   Self.fPrinterOptions := SrcPref.PrinterOptions;
@@ -671,6 +728,11 @@ begin
   Result := fHiliteAttrs;
 end;
 
+function TPreferences.GetLastTab: string;
+begin
+  Result := fLastTab;
+end;
+
 function TPreferences.GetMeasurementUnits: TMeasurementUnits;
 begin
   Result := fMeasurementUnits;
@@ -679,6 +741,11 @@ end;
 function TPreferences.GetNamedHiliteAttrs: INamedHiliteAttrs;
 begin
   Result := fNamedHiliteAttrs;
+end;
+
+function TPreferences.GetOverviewFontSize: Integer;
+begin
+  Result := fOverviewFontSize
 end;
 
 function TPreferences.GetOverviewStartState: TOverviewStartState;
@@ -768,6 +835,11 @@ begin
   (fHiliteAttrs as IAssignable).Assign(Attrs);
 end;
 
+procedure TPreferences.SetLastTab(const Value: string);
+begin
+  fLastTab := Value;
+end;
+
 procedure TPreferences.SetMeasurementUnits(const Value: TMeasurementUnits);
 begin
   fMeasurementUnits := Value;
@@ -776,6 +848,11 @@ end;
 procedure TPreferences.SetNamedHiliteAttrs(NamedHiliteAttrs: INamedHiliteAttrs);
 begin
   (fNamedHiliteAttrs as IAssignable).Assign(NamedHiliteAttrs);
+end;
+
+procedure TPreferences.SetOverviewFontSize(const Value: Integer);
+begin
+  fOverviewFontSize := Value;
 end;
 
 procedure TPreferences.SetOverviewStartState(const Value: TOverviewStartState);
@@ -854,6 +931,7 @@ begin
   Result := TPreferences.Create;
   // Copy properties to it
   NewPref := Result as IPreferences;
+  NewPref.LastTab := Self.fLastTab;
   NewPref.SourceDefaultFileType := Self.fSourceDefaultFileType;
   NewPref.SourceCommentStyle := Self.fSourceCommentStyle;
   NewPref.TruncateSourceComments := Self.fTruncateSourceComments;
@@ -866,6 +944,7 @@ begin
   NewPref.DBHeadingCustomColours[False] := Self.fDBHeadingCustomColours[False];
   NewPref.DBHeadingColours[True] := Self.fDBHeadingColours[True];
   NewPref.DBHeadingCustomColours[True] := Self.fDBHeadingCustomColours[True];
+  NewPref.OverviewFontSize := Self.fOverviewFontSize;
   NewPref.SourceCodeBGColour := Self.fSourceCodeBGColour;
   NewPref.SourceCodeBGCustomColours := Self.fSourceCodeBGCustomColours;
   NewPref.PrinterOptions := Self.fPrinterOptions;
@@ -885,6 +964,10 @@ const
   cPrintPageMarginSizeMM = 25.0;
 begin
   inherited Create;
+
+  // Read meta data section (no sub-section name)
+  Storage := Settings.ReadSection(ssPreferences);
+  fLastTab := Storage.GetString('LastTab');
 
   // Read general section
   Storage := Settings.ReadSection(ssPreferences, cGeneral);
@@ -916,6 +999,7 @@ begin
   fDBHeadingCustomColours[True] := Storage.GetStrings(
     'UserDBHeadingCustomColourCount', 'UserDBHeadingCustomColour%d'
   );
+  fOverviewFontSize := Storage.GetInteger('OverviewFontSize', 9);
   fSourceCodeBGCustomColours := Storage.GetStrings(
     'SourceCodeBGCustomColourCount', 'SourceCodeBGCustomColour%d'
   );
@@ -969,6 +1053,11 @@ destructor TPreferencesPersist.Destroy;
 var
   Storage: ISettingsSection;  // object used to access persistent storage
 begin
+  // Wreite meta section (no sub-section name)
+  Storage := Settings.EmptySection(ssPreferences);
+  Storage.SetString('LastTab', fLastTab);
+  Storage.Save;
+
   // Write general section
   Storage := Settings.EmptySection(ssPreferences, cGeneral);
   Storage.SetInteger('Units', Ord(fMeasurementUnits));
@@ -981,6 +1070,7 @@ begin
   Storage.SetBoolean('ShowNewSnippetsInNewTabs', fShowNewSnippetsInNewTabs);
   Storage.SetInteger('MainDBHeadingColour', fDBHeadingColours[False]);
   Storage.SetInteger('UserDBHeadingColour', fDBHeadingColours[True]);
+  Storage.SetInteger('OverviewFontSize', fOverviewFontSize);
   Storage.SetInteger('SourceCodeBGColour', fSourceCodeBGColour);
   Storage.SetStrings(
     'MainDBHeadingCustomColourCount',

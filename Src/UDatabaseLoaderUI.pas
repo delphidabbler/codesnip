@@ -1,9 +1,9 @@
 {
  * This Source Code Form is subject to the terms of the Mozilla Public License,
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2010-2020, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2010-2021, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Defines a static class that loads the database in a thread and displays a
  * wait dialog if the loading is taking more than a specified amount of time.

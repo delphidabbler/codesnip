@@ -1,9 +1,9 @@
 {
  * This Source Code Form is subject to the terms of the Mozilla Public License,
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2020, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2005-2021, Peter Johnson (gravatar.com/delphidabbler).
  *
  * General utility routines.
 }
@@ -313,7 +313,7 @@ var
   ST: TSystemTime;
 begin
   // This Windows API function gets system time in UTC/GMT
-  // see http://msdn.microsoft.com/en-us/library/ms724390
+  // see https://msdn.microsoft.com/en-us/library/ms724390
   GetSystemTime(ST);
   Result := SystemTimeToDateTime(ST);
 end;

@@ -1,13 +1,14 @@
 {
  * This Source Code Form is subject to the terms of the Mozilla Public License,
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2006-2020, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2006-2021, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements a frame that allows the user to set syntax highlighter
- * preferences. Designed for use as one of the tabs in the Preferences dialogue
- * box.
+ * preferences.
+ *
+ * Designed for use as one of the pages in the Preferences dialogue box.
 }
 
 
@@ -131,8 +132,6 @@ type
     ///  highlighter element.</summary>
     ///  <remarks>This RTF is used to display elememt in preview pane.</remarks>
     function GenerateRTF: TRTF;
-    ///  <summary>Returns reference to form that hosts the frame.</summary>
-    function ParentForm: TForm;
   public
     ///  <summary>Constructs frame instance and initialises controls.</summary>
     ///  <param name="AOwner">TComponent [in] Component that owns the frame.
@@ -143,7 +142,8 @@ type
     ///  <summary>Updates controls from given preferences object.</summary>
     ///  <remarks>Called when the dialogue page containing the frame is
     ///  activated.</remarks>
-    procedure Activate(const Prefs: IPreferences); override;
+    procedure Activate(const Prefs: IPreferences; const Flags: UInt64);
+      override;
     ///  <summary>Updates given preferences object with data entered in controls.
     ///  </summary>
     ///  <remarks>Called when the dialogue page containing the frame is
@@ -216,6 +216,8 @@ resourcestring
 
   // Error messages
   sErrBadFontSize       = 'Invalid font size';
+  sErrBadFontRange      = 'Font size out of range. '
+                          + 'Enter a value between %0:d and %1:d';
 
 const
   ///  <summary>Map of highlighter elements to descriptions.</summary>
@@ -254,7 +256,8 @@ const
 
 { THiliterPrefsFrame }
 
-procedure THiliterPrefsFrame.Activate(const Prefs: IPreferences);
+procedure THiliterPrefsFrame.Activate(const Prefs: IPreferences;
+  const Flags: UInt64);
 begin
   (fAttrs as IAssignable).Assign(Prefs.HiliteAttrs);
   (fNamedAttrs as IAssignable).Assign(Prefs.NamedHiliteAttrs);
@@ -342,10 +345,24 @@ begin
     Exit;
   if TryStrToInt(cbFontSize.Text, Size) then
   begin
-    // Combo has valid value entered: update
-    fAttrs.FontSize := Size;
-    UpdatePreview;
-    fChanged := True;
+    if TFontHelper.IsInCommonFontSizeRange(Size) then
+    begin
+      // Combo has valid value entered: update
+      fAttrs.FontSize := Size;
+      UpdatePreview;
+      fChanged := True;
+    end
+    else
+    begin
+      TMessageBox.Error(
+        ParentForm,
+        Format(
+          sErrBadFontRange,
+          [TFontHelper.CommonFontSizes.Min, TFontHelper.CommonFontSizes.Max]
+        )
+      );
+      cbFontSize.Text := IntToStr(fAttrs.FontSize);
+    end;
   end
   else
   begin
@@ -519,20 +536,6 @@ begin
     UpdateControls;
   end;
   UpdatePopupMenu;
-end;
-
-function THiliterPrefsFrame.ParentForm: TForm;
-var
-  ParentCtrl: TWinControl;  // reference to parent controls
-begin
-  // Loop through parent controls until form found or top level parent reached
-  ParentCtrl := Self.Parent;
-  while Assigned(ParentCtrl) and not (ParentCtrl is TForm) do
-    ParentCtrl := ParentCtrl.Parent;
-  if ParentCtrl is TForm then
-    Result := ParentCtrl as TForm
-  else
-    Result := nil;
 end;
 
 procedure THiliterPrefsFrame.PopulateElementsList;

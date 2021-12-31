@@ -1,9 +1,9 @@
 {
  * This Source Code Form is subject to the terms of the Mozilla Public License,
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2008-2020, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2008-2021, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements a colour dialog box subclass that aligns itself over its owner,
  * works correctly with the Vista task bar, provides a Title property and uses
@@ -48,7 +48,7 @@ type
           DialogFunc (in this case of type TChooseColour).
       }
     function MessageHook(var Msg: TMessage): Boolean; override;
-      {Intercepts messages sent to the dialog window before the dialog’s window
+      {Intercepts messages sent to the dialog window before the dialogï¿½s window
       procedure. This implementation changes default support for the help button
       to include the new HelpKeyword property and to use the program's own help
       manager.
@@ -172,7 +172,7 @@ begin
 end;
 
 function TColorDialogEx.MessageHook(var Msg: TMessage): Boolean;
-  {Intercepts messages sent to the dialog window before the dialog’s window
+  {Intercepts messages sent to the dialog window before the dialogï¿½s window
   procedure. This implementation changes default support for the help button
   to include the new HelpKeyword property and to use the program's own help
   manager.

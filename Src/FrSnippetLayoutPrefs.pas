@@ -1,13 +1,14 @@
 {
  * This Source Code Form is subject to the terms of the Mozilla Public License,
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2012-2020, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2012-2021, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements a frame that allows user to customise appearance of different
  * kinds of snippets in main display.
- * Designed for use as one of the tabs in the preferences dialog box.
+ *
+ * Designed for use as one of the pages in the Preferences dialogue box.
 }
 
 
@@ -64,7 +65,8 @@ type
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
-    procedure Activate(const Prefs: IPreferences); override;
+    procedure Activate(const Prefs: IPreferences; const Flags: UInt64);
+      override;
     procedure Deactivate(const Prefs: IPreferences); override;
     ///  <summary>Checks if preference changes require that main window UI is
     ///  updated.</summary>
@@ -146,7 +148,8 @@ begin
     and (lbAvailableFragments.ItemIndex >= 0);
 end;
 
-procedure TSnippetLayoutPrefsFrame.Activate(const Prefs: IPreferences);
+procedure TSnippetLayoutPrefsFrame.Activate(const Prefs: IPreferences;
+  const Flags: UInt64);
 begin
   fPageStructs.Assign(Prefs.PageStructures);
   UpdateFragmentInfo;

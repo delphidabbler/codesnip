@@ -1,9 +1,9 @@
 {
  * This Source Code Form is subject to the terms of the Mozilla Public License,
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2007-2020, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2007-2021, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Defines interface to an object that stores and manipulates a list of strings,
  * along with a class that implements the interface.

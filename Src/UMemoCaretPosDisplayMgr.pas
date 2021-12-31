@@ -1,9 +1,9 @@
 {
  * This Source Code Form is subject to the terms of the Mozilla Public License,
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2010-2020, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2010-2021, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Displays the caret position of one or more memo controls in associated label
  * controls. Labels are automatically updated whenever the caret position

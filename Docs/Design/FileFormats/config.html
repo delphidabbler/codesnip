@@ -1,15 +1,15 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+  "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <!--
  * This Source Code Form is subject to the terms of the Mozilla Public License,
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * obtain one at https://mozilla.org/MPL/2.0/
  *
  * Copyright (C) 2012-2021, Peter Johnson (gravatar.com/delphidabbler).
  *
  * CodeSnip File Format Documentation: Configuration Files
 -->
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<html xmlns="https://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 
 <head>
 
@@ -167,7 +167,7 @@
 </p>
 
 <p>
-  There have been several versions of this file. The current one is version 16. The change to version 16 came with CodeSnip v4.16.0 and the removal of DelphiDabbler web service support.
+  There have been several versions of this file. The current one is version 17. The change to version 17 came with CodeSnip v4.19.0 and the addition of the [Prefs] section.
 </p>
 
 <p>
@@ -733,6 +733,27 @@
 </dl>
 
 <h4>
+  [Prefs] section
+</h4>
+
+<p>
+  Stores information about the Preferences dialogue box itself, rather than actual preferences data. Actual preference data is stored in sections with names like [Prefs:XXX] where XXX is a preferences sub-section.
+</p>
+
+<p>
+  Name / Value pairs:
+</p>
+
+<dl class="indent">
+  <dt>
+    <code class="key">LastTab</code> (string)
+  </dt>
+  <dd>
+    Name of the tab that was open when the dialogue box was last closed. May be the empty string if the dialogue box has not yet been opened.
+  </dd>
+</dl>
+
+<h4>
   [Prefs:CodeGen] section
 </h4>
 
@@ -891,6 +912,12 @@
     <div class="half-spaced">
       The value is a definition of a custom colour in the format used by the <var>TColorDialog</var> dialogue box. This format is <code class="value">ColourID=ColourNum</code> where <em>ColourID</em> is a value from <code class="value">ColorA</code> to <code class="value">ColorP</code> and <em>ColourNum</em> is the hex representation of the colour.
     </div>
+  </dd>
+  <dt>
+    <code class="key">OverviewFontSize</code> (Integer)
+  </dt>
+  <dd>
+    Size of font to be used in overview pane tree view. If missing or empty the default value is <code class="value">9</code>.
   </dd>
 </dl>
 

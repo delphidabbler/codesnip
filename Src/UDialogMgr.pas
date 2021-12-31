@@ -1,9 +1,9 @@
 {
  * This Source Code Form is subject to the terms of the Mozilla Public License,
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2007-2020, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2007-2021, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements class that manages the display of dialog boxes.
 }
@@ -69,17 +69,17 @@ type
     function ExecFindXRefsDlg(const ASnippet: TSnippet;
       out ASearch: ISearch): Boolean;
 
-    ///  <summary>Displays Preferences dialogue box showing all tabs.</summary>
+    ///  <summary>Displays Preferences dialogue box showing all pages.</summary>
     ///  <param name="UpdateUI">Boolean [out] Flag that indicates if the UI
     ///  needs to be updated as a result of changes to preferences.</param>
     ///  <returns>Boolean. True if user OKd dialogue or False if user cancelled.
     ///  </returns>
     function ExecPreferencesDlg(out UpdateUI: Boolean): Boolean; overload;
 
-    ///  <summary>Displays Preference dialogue box showing a single tab.
+    ///  <summary>Displays Preference dialogue box showing a single page.
     ///  </summary>
     ///  <param name="PageClassName">string [in] Class name of frame that
-    ///  implements the content of the tab this is to be displayed.</param>
+    ///  implements the content of the page this is to be displayed.</param>
     ///  <param name="UpdateUI">Boolean [out] Flag that indicates if the UI
     ///  needs to be updated as a result of changes to preferences.</param>
     ///  <returns>Boolean. True if user OKd dialogue or False if user cancelled.
