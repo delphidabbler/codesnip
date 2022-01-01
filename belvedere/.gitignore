@@ -8,11 +8,10 @@
 *.dsk
 *.~*
 __history/
+__recovery/
 
 # Project specific directories & files
-Bin
-Exe
-Release
+_build
 Src/CodeSnip.cfg
 Src/AutoGen/IntfExternalObj.pas
 Src/Portable/CodeSnipPortable.cfg
