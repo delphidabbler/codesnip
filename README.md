@@ -41,6 +41,10 @@ Seems a bit ambitious? Well we'll see how it goes.
 
 Oh no, not getting into promising anything! It all depends on how much time and enthusiasm I have. This is my hobby after all.
 
+## Comments & Suggestions Welcome 
+
+I'm more than happy to receive suggestions, comments, ideas etc. and you are welcome to use the [CodeSnip 5 Belvedere](https://github.com/delphidabbler/codesnip/discussions/42) discussion thread to share your thoughts. Please use that thread in preference to the Issues page for anything to do with `belvedere`.
+
 ## Blog
 
 I'm planning to do an occasional blog post or two if and when I make progress. Those posts will appear on the existing [CodeSnip Blog](https://codesnip-app.blogspot.com/).
