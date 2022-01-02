@@ -2,7 +2,7 @@ program CodeSnip5;
 
 uses
   System.StartUpCopy,
-  FMX.Forms;
+  VCL.Forms;
 
 {$R *.res}
 
