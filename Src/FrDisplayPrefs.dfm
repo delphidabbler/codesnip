@@ -40,6 +40,14 @@ inherited DisplayPrefsFrame: TDisplayPrefsFrame
     Caption = 'Overview tree view &font size: '
     FocusControl = cbOverviewFontSize
   end
+  object lblDetailFontSize: TLabel
+    Left = 16
+    Top = 232
+    Width = 105
+    Height = 13
+    Caption = 'Detail pane font si&ze: '
+    FocusControl = cbDetailFontSize
+  end
   object cbOverviewTree: TComboBox
     Left = 192
     Top = 2
@@ -80,6 +88,14 @@ inherited DisplayPrefsFrame: TDisplayPrefsFrame
     Width = 57
     Height = 21
     TabOrder = 4
-    OnChange = cbOverviewFontSizeChange
+    OnChange = FontSizeChange
+  end
+  object cbDetailFontSize: TComboBox
+    Left = 192
+    Top = 229
+    Width = 57
+    Height = 21
+    TabOrder = 5
+    OnChange = FontSizeChange
   end
 end
