@@ -48,6 +48,19 @@ inherited DisplayPrefsFrame: TDisplayPrefsFrame
     Caption = 'Detail pane font si&ze: '
     FocusControl = cbDetailFontSize
   end
+  object lblHiliterInfo: TLabel
+    Left = 16
+    Top = 256
+    Width = 370
+    Height = 36
+    Caption = 
+      'To change the size of the source code font use the the Syntax Hi' +
+      'ghlighter options page.'
+    Color = clBtnFace
+    ParentColor = False
+    Transparent = True
+    WordWrap = True
+  end
   object cbOverviewTree: TComboBox
     Left = 192
     Top = 2

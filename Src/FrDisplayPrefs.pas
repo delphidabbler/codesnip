@@ -39,6 +39,7 @@ type
     cbOverviewFontSize: TComboBox;
     lblDetailFontSize: TLabel;
     cbDetailFontSize: TComboBox;
+    lblHiliterInfo: TLabel;
     procedure chkHideEmptySectionsClick(Sender: TObject);
     procedure btnDefColoursClick(Sender: TObject);
     procedure FontSizeChange(Sender: TObject);
@@ -152,7 +153,7 @@ begin
     [
       lblOverviewTree, chkHideEmptySections, chkSnippetsInNewTab,
       lblMainColour, lblUserColour, lblSourceBGColour, btnDefColours,
-      lblOverviewFontSize, lblDetailFontSize
+      lblOverviewFontSize, lblDetailFontSize, lblHiliterInfo
     ],
     0
   );
@@ -176,15 +177,15 @@ begin
     [lblMainColour, fMainColourBox]
   );
   TCtrlArranger.AlignVCentres(
-    TCtrlArranger.BottomOf([lblMainColour, fMainColourBox], 8),
+    TCtrlArranger.BottomOf([lblMainColour, fMainColourBox], 6),
     [lblUserColour, fUserColourBox]
   );
   TCtrlArranger.AlignVCentres(
-    TCtrlArranger.BottomOf([lblUserColour, fUserColourBox], 8),
+    TCtrlArranger.BottomOf([lblUserColour, fUserColourBox], 6),
     [lblSourceBGColour, fSourceBGColourBox]
   );
   TCtrlArranger.MoveBelow(
-    [lblSourceBGColour, fSourceBGColourBox], btnDefColours, 12
+    [lblSourceBGColour, fSourceBGColourBox], btnDefColours, 6
   );
   TCtrlArranger.AlignVCentres(
     TCtrlArranger.BottomOf(btnDefColours, 12),
@@ -194,6 +195,11 @@ begin
     TCtrlArranger.BottomOf(cbOverviewFontSize, 8),
     [lblDetailFontSize, cbDetailFontSize]
   );
+  TCtrlArranger.MoveBelow(
+    [lblDetailFontSize, cbDetailFontSize], lblHiliterInfo, 12
+  );
+  lblHiliterInfo.Width := Self.ClientWidth;
+  TCtrlArranger.SetLabelHeight(lblHiliterInfo);
   chkHideEmptySections.Width := Self.Width - 16;
   chkSnippetsInNewTab.Width := Self.Width - 16;
 end;
