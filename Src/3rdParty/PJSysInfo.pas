@@ -1,12 +1,12 @@
 {
  * This Source Code Form is subject to the terms of the Mozilla Public License,
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at https://mozilla.org/MPL/2.0/
+ * obtain one at http://mozilla.org/MPL/2.0/
  *
  * Copyright (C) 2001-2021, Peter Johnson (@delphidabbler).
  *
- * $Rev: 2079 $
- * $Date: 2021-11-27 14:29:47 +0000 (Sat, 27 Nov 2021) $
+ * $Rev: 2082 $
+ * $Date: 2022-01-01 10:12:03 +0000 (Sat, 01 Jan 2022) $
  *
  * This unit contains various static classes, constants, type definitions and
  * global variables for use in providing information about the host computer and
@@ -1247,6 +1247,18 @@ const
                                   //   - 10.0.22463.1000 (RSPRERELEASE)
   Win11v21H2PreRel5Build = 22468; // Windows 11 version 21H2
                                   //   - 10.0.22468.1000 (RSPRERELEASE)
+  Win11v21H2PreRel6Build = 22471; // Windows 11 version 21H2
+                                  //   - 10.0.22471.1000 (RSPRERELEASE)
+  Win11v21H2PreRel7Build = 22478; // Windows 11 version 21H2
+                                  //   - 10.0.22478.1000 (RSPRERELEASE)
+  Win11v21H2PreRel8Build = 22483; // Windows 11 version 21H2
+                                  //   - 10.0.22483.1000 (RSPRERELEASE)
+  Win11v21H2PreRel9Build = 22489; // Windows 11 version 21H2
+                                  //   - 10.0.22489.1000 (RSPRERELEASE)
+  Win11v21H2PreRel10Build = 22494;// Windows 11 version 21H2
+                                  //   - 10.0.22494.1000 (RSPRERELEASE)
+  Win11v21H2PreRel11Build = 22509;// Windows 11 version 21H2
+                                  //   - 10.0.22509.1000 (RSPRERELEASE)
 
   Win11FirstBuild = Win11DevBuild;  // First build number of Windows 11
 
@@ -1396,6 +1408,28 @@ begin
   POSVI := @OSVI;
   ConditionalMask := VerSetConditionMask(0, VER_BUILDNUMBER, VER_EQUAL);
   Result := VerifyVersionInfo(POSVI, VER_BUILDNUMBER, ConditionalMask);
+end;
+
+// Checks if any of the given build numbers match that of the current OS.
+// If current build number is in the list, FoundBN is set to the found build
+// number and True is returned. Otherwise False is returned and FoundBN is set
+// to zero.
+function FindBuildNumberFrom(const BNs: array of Integer; var FoundBN: Integer):
+  Boolean;
+var
+  I: Integer;
+begin
+  FoundBN := 0;
+  Result := False;
+  for I := Low(BNs) to High(BNs) do
+  begin
+    if IsBuildNumber(BNs[I]) then
+    begin
+      FoundBN := BNs[I];
+      Result := True;
+      Break;
+    end;
+  end;
 end;
 
 // Checks if the OS has the given product type.
@@ -1631,13 +1665,6 @@ var
   GetProductInfo: TGetProductInfo;  // pointer to GetProductInfo API function
   SI: TSystemInfo;                  // structure from GetSystemInfo API call
 
-  // Return name of Windows Server 2019 insider preview release for given build
-  // number. Build must be a valid insider preview release number
-  function Win2019IPExtra(const Build: Integer): string;
-  begin
-    Result := Format('Insider Preview Build %d', [Build]);
-  end;
-
   // Get OS's revision number from registry.
   function GetOSRevisionNumber(const IsNT: Boolean): Integer;
   begin
@@ -1824,8 +1851,8 @@ begin
               //     release of Win 11 -- well hidden eh?!
               InternalBuildNumber := Win11v21H2Build;
               case InternalBuildNumber of
-                194:
-                  // First public release of Windows 11
+                194..MaxInt:
+                  // Public releases of Windows 11 have build number >= 194
                   InternalExtraUpdateInfo := 'Version 21H2';
                 51, 65, 71, 100, 120, 132, 168:
                   InternalExtraUpdateInfo := Format(
@@ -1844,41 +1871,18 @@ begin
                   );
               end;
             end
-            else if IsBuildNumber(Win11v21H2PreRel1Build) then
+            else if FindBuildNumberFrom(
+              [
+                Win11v21H2PreRel1Build, Win11v21H2PreRel2Build,
+                Win11v21H2PreRel3Build, Win11v21H2PreRel4Build,
+                Win11v21H2PreRel5Build, Win11v21H2PreRel6Build,
+                Win11v21H2PreRel7Build, Win11v21H2PreRel8Build,
+                Win11v21H2PreRel9Build, Win11v21H2PreRel10Build,
+                Win11v21H2PreRel11Build
+              ],
+              InternalBuildNumber
+            ) then
             begin
-              InternalBuildNumber := Win11v21H2PreRel1Build;
-              InternalExtraUpdateInfo := Format(
-                'Version 21H2 [RSPRERELEASE v10.0.%d.%d]',
-                [InternalBuildNumber, InternalRevisionNumber]
-              );
-            end
-            else if IsBuildNumber(Win11v21H2PreRel2Build) then
-            begin
-              InternalBuildNumber := Win11v21H2PreRel2Build;
-              InternalExtraUpdateInfo := Format(
-                'Version 21H2 [RSPRERELEASE v10.0.%d.%d]',
-                [InternalBuildNumber, InternalRevisionNumber]
-              );
-            end
-            else if IsBuildNumber(Win11v21H2PreRel3Build) then
-            begin
-              InternalBuildNumber := Win11v21H2PreRel3Build;
-              InternalExtraUpdateInfo := Format(
-                'Version 21H2 [RSPRERELEASE v10.0.%d.%d]',
-                [InternalBuildNumber, InternalRevisionNumber]
-              );
-            end
-            else if IsBuildNumber(Win11v21H2PreRel4Build) then
-            begin
-              InternalBuildNumber := Win11v21H2PreRel4Build;
-              InternalExtraUpdateInfo := Format(
-                'Version 21H2 [RSPRERELEASE v10.0.%d.%d]',
-                [InternalBuildNumber, InternalRevisionNumber]
-              );
-            end
-            else if IsBuildNumber(Win11v21H2PreRel5Build) then
-            begin
-              InternalBuildNumber := Win11v21H2PreRel5Build;
               InternalExtraUpdateInfo := Format(
                 'Version 21H2 [RSPRERELEASE v10.0.%d.%d]',
                 [InternalBuildNumber, InternalRevisionNumber]
@@ -1925,60 +1929,20 @@ begin
               InternalBuildNumber := Win2016v1803Build;
               InternalExtraUpdateInfo := 'Version 1803';
             end
-            else if IsBuildNumber(Win2019IP180320Build) then
+            else if FindBuildNumberFrom(
+              [
+                Win2019IP180320Build, Win2019IP180324Build,
+                Win2019IP180515Build, Win2019IP180619Build,
+                Win2019IP180710Build, Win2019IP180716Build,
+                Win2019IP180731Build, Win2019IP180814Build,
+                Win2019IP180821Build, Win2019IP180828Build
+              ],
+              InternalBuildNumber
+            ) then
             begin
-              InternalBuildNumber := Win2019IP180320Build;
-              InternalExtraUpdateInfo := Win2019IPExtra(Win2019IP180320Build);
-            end
-            else if IsBuildNumber(Win2019IP180324Build) then
-            begin
-              InternalBuildNumber := Win2019IP180324Build;
-              InternalExtraUpdateInfo := Win2019IPExtra(Win2019IP180324Build);
-            end
-            else if IsBuildNumber(Win2019IP180515Build) then
-            begin
-              InternalBuildNumber := Win2019IP180515Build;
-              InternalExtraUpdateInfo := Win2019IPExtra(Win2019IP180515Build);
-            end
-            else if IsBuildNumber(Win2019IP180619Build) then
-            begin
-              InternalBuildNumber := Win2019IP180619Build;
-              InternalExtraUpdateInfo := Win2019IPExtra(Win2019IP180619Build);
-            end
-            else if IsBuildNumber(Win2019IP180710Build) then
-            begin
-              InternalBuildNumber := Win2019IP180710Build;
-              InternalExtraUpdateInfo := Win2019IPExtra(Win2019IP180710Build);
-            end
-            else if IsBuildNumber(Win2019IP180716Build) then
-            begin
-              InternalBuildNumber := Win2019IP180716Build;
-              InternalExtraUpdateInfo := Win2019IPExtra(Win2019IP180716Build);
-            end
-            else if IsBuildNumber(Win2019IP180716Build) then
-            begin
-              InternalBuildNumber := Win2019IP180716Build;
-              InternalExtraUpdateInfo := Win2019IPExtra(Win2019IP180716Build);
-            end
-            else if IsBuildNumber(Win2019IP180731Build) then
-            begin
-              InternalBuildNumber := Win2019IP180731Build;
-              InternalExtraUpdateInfo := Win2019IPExtra(Win2019IP180731Build);
-            end
-            else if IsBuildNumber(Win2019IP180814Build) then
-            begin
-              InternalBuildNumber := Win2019IP180814Build;
-              InternalExtraUpdateInfo := Win2019IPExtra(Win2019IP180814Build);
-            end
-            else if IsBuildNumber(Win2019IP180821Build) then
-            begin
-              InternalBuildNumber := Win2019IP180821Build;
-              InternalExtraUpdateInfo := Win2019IPExtra(Win2019IP180821Build);
-            end
-            else if IsBuildNumber(Win2019IP180828Build) then
-            begin
-              InternalBuildNumber := Win2019IP180828Build;
-              InternalExtraUpdateInfo := Win2019IPExtra(Win2019IP180828Build);
+              InternalExtraUpdateInfo := Format(
+                'Insider Preview Build %d', [InternalBuildNumber]
+              );
             end
             else if IsBuildNumber(Win2019v1809Build) then
             begin
