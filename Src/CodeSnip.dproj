@@ -572,6 +572,9 @@
 			<DCCReference Include="UXMLDocConsts.pas"/>
 			<DCCReference Include="UXMLDocHelper.pas"/>
 			<DCCReference Include="UXMLDocumentEx.pas"/>
+			<DCCReference Include="FmDeleteUserDBDlg.pas">
+				<Form>DeleteUserDBDlg</Form>
+			</DCCReference>
 			<None Include="CodeSnip.todo"/>
 			<BuildConfiguration Include="Base">
 				<Key>Base</Key>
