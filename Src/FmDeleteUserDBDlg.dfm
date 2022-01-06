@@ -1,5 +1,5 @@
 inherited DeleteUserDBDlg: TDeleteUserDBDlg
-  Caption = 'DeleteUserDBDlg'
+  Caption = 'Delete User Database'
   ExplicitWidth = 474
   ExplicitHeight = 375
   PixelsPerInch = 96
