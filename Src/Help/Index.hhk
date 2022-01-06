@@ -76,6 +76,10 @@
       <param name="Local" value="HTML\task_customise.htm">
       </OBJECT>
     <LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="delete the whole user database">
+      <param name="Local" value="HTML\task_deleteuserdb.htm">
+      </OBJECT>
+    <LI> <OBJECT type="text/sitemap">
       <param name="Name" value="duplicate snippet">
       <param name="Local" value="HTML\dlg_duplicatesnippet.htm">
       </OBJECT>
@@ -383,6 +387,9 @@
   <LI> <OBJECT type="text/sitemap">
     <param name="Name" value="view menu">
     <param name="Local" value="HTML\menu_view.htm">
+  <LI> <OBJECT type="text/sitemap">
+    <param name="Name" value="delete user database dialogue">
+    <param name="Local" value="HTML\dlg_deleteuserdb.htm">
     </OBJECT>
 </UL>
 </BODY></HTML>

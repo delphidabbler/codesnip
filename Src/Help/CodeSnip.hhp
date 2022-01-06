@@ -25,6 +25,7 @@ HTML\dlg_addcategory.htm
 HTML\dlg_backup.htm
 HTML\dlg_configcompilers.htm
 HTML\dlg_deletecategory.htm
+HTML\dlg_deleteuserdb.htm
 HTML\dlg_dependencies.htm
 HTML\dlg_dependencies_edit.htm
 HTML\dlg_duplicatesnippet.htm
@@ -96,6 +97,7 @@ HTML\task_addsnippets.htm
 HTML\task_backup.htm
 HTML\task_copysnippet.htm
 HTML\task_customise.htm
+HTML\task_deleteuserdb.htm
 HTML\task_export.htm
 HTML\task_generateunit.htm
 HTML\task_printroutine.htm
