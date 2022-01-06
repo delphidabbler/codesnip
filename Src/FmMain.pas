@@ -56,6 +56,7 @@ type
     actAddFavourite: TAction;
     actAddSnippet: TAction;
     actBackupDatabase: TAction;
+    actBlog: TBrowseURL;
     actBugReport: TAction;
     actCloseAllDetailsTabs: TAction;
     actCloseDetailsTab: TAction;
@@ -126,6 +127,7 @@ type
     miAddFavourite: TMenuItem;
     miAddSnippet: TMenuItem;
     miBackupDatabase: TMenuItem;
+    miBlog: TMenuItem;
     miCategories: TMenuItem;
     miCloseAllDetailsTabs: TMenuItem;
     miCloseDetailsTab: TMenuItem;
@@ -239,8 +241,6 @@ type
     tbSpacer7: TToolButton;
     tbSpacer8: TToolButton;
     tbTestCompile: TToolButton;
-    actBlog: TBrowseURL;
-    miBlog: TMenuItem;
     ///  <summary>Displays About Box.</summary>
     procedure actAboutExecute(Sender: TObject);
     ///  <summary>Gets a new category from user and adds to database.</summary>
