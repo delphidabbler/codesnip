@@ -619,6 +619,7 @@ inherited MainForm: TMainForm
       Hint = 'Backup user database|Backup the user-defined snippet database'
       ImageIndex = 33
       OnExecute = actBackupDatabaseExecute
+      OnUpdate = ActNonEmptyUserDBUpdate
     end
     object actRestoreDatabase: TAction
       Category = 'Database'
@@ -849,6 +850,7 @@ inherited MainForm: TMainForm
         'Move user database|Move the user-defined snippet database to a n' +
         'ew directory'
       OnExecute = actMoveUserDatabaseExecute
+      OnUpdate = ActNonEmptyUserDBUpdate
     end
     object actSWAGImport: TAction
       Category = 'Snippets'
@@ -873,6 +875,7 @@ inherited MainForm: TMainForm
         'Delete User Database|Deletes the user'#39's snippets database - USE ' +
         'WITH CAUTION'
       OnExecute = actDeleteUserDatabaseExecute
+      OnUpdate = ActNonEmptyUserDBUpdate
     end
   end
   object mnuMain: TMainMenu
