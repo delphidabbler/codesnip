@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2005-2022, Peter Johnson (gravatar.com/delphidabbler).
  *
  * CodeSnip application project file.
 }
@@ -369,7 +369,8 @@ uses
   UWindowSettings in 'UWindowSettings.pas',
   UXMLDocConsts in 'UXMLDocConsts.pas',
   UXMLDocHelper in 'UXMLDocHelper.pas',
-  UXMLDocumentEx in 'UXMLDocumentEx.pas';
+  UXMLDocumentEx in 'UXMLDocumentEx.pas',
+  FmDeleteUserDBDlg in 'FmDeleteUserDBDlg.pas' {DeleteUserDBDlg};
 
 // Include resources
 {$Resource ExternalObj.tlb}       // Type library file

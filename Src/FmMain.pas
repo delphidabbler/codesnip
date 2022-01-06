@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2005-2022, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Application's main form. Handles the program's main window display and user
  * interaction.
@@ -69,6 +69,7 @@ type
     actCopySource: TAction;
     actDeleteCategory: TAction;
     actDeleteSnippet: TAction;
+    actDeleteUserDatabase: TAction;
     actDuplicateSnippet: TAction;
     actEditSnippet: TAction;
     actExit: TFileExit;
@@ -138,6 +139,7 @@ type
     miDatabase: TMenuItem;
     miDeleteCategory: TMenuItem;
     miDeleteSnippet: TMenuItem;
+    miDeleteUserDatabase: TMenuItem;
     miDuplicateSnippet: TMenuItem;
     miEdit: TMenuItem;
     miEditSnippet: TMenuItem;
@@ -195,6 +197,7 @@ type
     miSpacer17: TMenuItem;
     miSpacer18: TMenuItem;
     miSpacer20: TMenuItem;
+    miSpacer21: TMenuItem;
     miSWAGImport: TMenuItem;
     miTestCompile: TMenuItem;
     miTools: TMenuItem;
@@ -294,6 +297,9 @@ type
     ///  <summary>Attempts to delete the current user defined snippet from the
     ///  database.</summary>
     procedure actDeleteSnippetExecute(Sender: TObject);
+    ///  <summary>Requests permission then attempts to delete the user defined
+    ///  snippets database.</summary>
+    procedure actDeleteUserDatabaseExecute(Sender: TObject);
     ///  <summary>Displays a dialogue box that can be used to duplicate the
     ///  selected snippet.</summary>
     procedure actDuplicateSnippetExecute(Sender: TObject);
@@ -711,6 +717,12 @@ begin
     ClassName + '.actDeleteSnippetExecute: Can''t delete current view item');
   TUserDBMgr.DeleteSnippet(fMainDisplayMgr.CurrentView);
   // display update is handled by snippets change event handler
+end;
+
+procedure TMainForm.actDeleteUserDatabaseExecute(Sender: TObject);
+begin
+  if TUserDBMgr.DeleteDatabase then
+    ReloadDatabase;
 end;
 
 procedure TMainForm.actDuplicateSnippetExecute(Sender: TObject);

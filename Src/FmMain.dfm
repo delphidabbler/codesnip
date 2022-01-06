@@ -8,8 +8,8 @@ inherited MainForm: TMainForm
   Constraints.MinWidth = 480
   Menu = mnuMain
   OnResize = FormResize
-  ExplicitWidth = 613
-  ExplicitHeight = 495
+  ExplicitWidth = 621
+  ExplicitHeight = 503
   PixelsPerInch = 96
   TextHeight = 13
   object sbStatusBar: TStatusBar
@@ -866,6 +866,14 @@ inherited MainForm: TMainForm
         ' default web browser'
       ImageIndex = 6
     end
+    object actDeleteUserDatabase: TAction
+      Category = 'Database'
+      Caption = 'Delete User Database...'
+      Hint = 
+        'Delete User Database|Deletes the user'#39's snippets database - USE ' +
+        'WITH CAUTION'
+      OnExecute = actDeleteUserDatabaseExecute
+    end
   end
   object mnuMain: TMainMenu
     Images = ilMain
@@ -1092,6 +1100,12 @@ inherited MainForm: TMainForm
       end
       object miMoveUserDatabase: TMenuItem
         Action = actMoveUserDatabase
+      end
+      object miSpacer21: TMenuItem
+        Caption = '-'
+      end
+      object miDeleteUserDatabase: TMenuItem
+        Action = actDeleteUserDatabase
       end
     end
     object miCompile: TMenuItem
