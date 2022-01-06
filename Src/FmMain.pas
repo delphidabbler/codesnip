@@ -495,6 +495,7 @@ type
     ///  position is permitted and blocks the move if not.</summary>
     procedure splitVertCanResize(Sender: TObject; var NewSize: Integer;
       var Accept: Boolean);
+    procedure ActNonEmptyUserDBUpdate(Sender: TObject);
   strict private
     var
       ///  <summary>Object that notifies user-initiated events by triggering
@@ -621,7 +622,10 @@ end;
 
 procedure TMainForm.actBackupDatabaseExecute(Sender: TObject);
 begin
+  if (Database as IDatabaseEdit).Updated then
+    TUserDBMgr.Save(Self);
   TUserDBMgr.BackupDatabase(Self);
+  fStatusBarMgr.Update;
 end;
 
 procedure TMainForm.actBugReportExecute(Sender: TObject);
@@ -721,8 +725,13 @@ end;
 
 procedure TMainForm.actDeleteUserDatabaseExecute(Sender: TObject);
 begin
+  if (Database as IDatabaseEdit).Updated then
+    TUserDBMgr.Save(Self);
   if TUserDBMgr.DeleteDatabase then
+  begin
     ReloadDatabase;
+    fStatusBarMgr.Update;
+  end;
 end;
 
 procedure TMainForm.actDuplicateSnippetExecute(Sender: TObject);
@@ -902,6 +911,8 @@ end;
 
 procedure TMainForm.actMoveUserDatabaseExecute(Sender: TObject);
 begin
+  if (Database as IDatabaseEdit).Updated then
+    TUserDBMgr.Save(Self);
   TUserDBMgr.MoveDatabase;
 end;
 
@@ -918,6 +929,11 @@ end;
 procedure TMainForm.ActNonEmptyDBUpdate(Sender: TObject);
 begin
   (Sender as TAction).Enabled := not Database.Snippets.IsEmpty;
+end;
+
+procedure TMainForm.ActNonEmptyUserDBUpdate(Sender: TObject);
+begin
+  (Sender as TAction).Enabled := not Database.Snippets.IsEmpty(True);
 end;
 
 procedure TMainForm.ActOverviewTabExecute(Sender: TObject);
@@ -979,7 +995,10 @@ end;
 procedure TMainForm.actRestoreDatabaseExecute(Sender: TObject);
 begin
   if TUserDBMgr.RestoreDatabase(Self) then
+  begin
     ReloadDatabase;
+    fStatusBarMgr.Update;
+  end;
 end;
 
 procedure TMainForm.actSaveDatabaseExecute(Sender: TObject);
