@@ -64,13 +64,14 @@ end;
 
 procedure TDeleteUserDBDlg.btnOKClick(Sender: TObject);
 resourcestring
-  sBadPassword = 'Invalid confirmation text entered: not deleting';
+  sBadPassword = 'Invalid confirmation text entered';
 begin
   inherited;
   fPermissionGranted := IsValidPassword;
   if not fPermissionGranted then
   begin
     TMessageBox.Error(Self, sBadPassword);
+    edConfirm.Text := '';
     ModalResult := mrNone;
   end;
 end;
