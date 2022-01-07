@@ -1,12 +1,12 @@
 program CodeSnip5;
 
 uses
-  System.StartUpCopy,
-  VCL.Forms;
+  Vcl.Forms;
 
 {$R *.res}
 
 begin
   Application.Initialize;
+  Application.MainFormOnTaskbar := True;
   Application.Run;
 end.
