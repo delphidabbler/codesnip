@@ -3,7 +3,8 @@ program CodeSnip5;
 uses
   Vcl.Forms,
   Vcl.Themes,
-  Vcl.Styles;
+  Vcl.Styles,
+  CS.UI.Forms.Root in 'CS.UI.Forms.Root.pas' {RootForm};
 
 {$R *.res}
 
