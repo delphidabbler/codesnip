@@ -142,6 +142,10 @@
             <Form>RootForm</Form>
             <FormType>dfm</FormType>
         </DCCReference>
+        <DCCReference Include="CS.UI.Forms.Main.pas">
+            <Form>MainForm</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
