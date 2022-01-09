@@ -152,6 +152,11 @@ type
     procedure Sort;
       {Sorts the string list alphabetically.
       }
+    ///  <summary>Return a copy of this string list</summary>
+    function Clone: IStringList;
+    ///  <summary>Replace this string list with a copy of string list <c>Src</c>
+    ///  </summary>
+    procedure Assign(Src: IStringList);
   end;
 
   {
@@ -160,7 +165,10 @@ type
     constructors.
   }
   TIStringList = class(TInterfacedObject,
-    IStringList, IAssignable, IClonable
+    IStringList,
+    { TODO -cRefactor: Remove IAssignable & IClonable interfaces & methods
+                        - replacements added to IStringList }
+    IAssignable, IClonable
   )
   strict private
     var
@@ -317,14 +325,20 @@ type
     procedure Sort;
       {Sorts the string list alphabetically.
       }
+    ///  <summary>Return a copy of this string list</summary>
+    function Clone: IStringList;
+    ///  <summary>Replace this string list with a copy of string list <c>Src</c>
+    ///  </summary>
+    procedure Assign(Src: IStringList); overload;
     { IAssignable methods }
-    procedure Assign(const Src: IInterface);
+    procedure Assign(const Src: IInterface); overload;
       {Sets list to a copy of another IStringList instance.
         @param Src [in] String list to be copied. Must support IStringList.
         @except EBug raised if Src does not support IStringList.
       }
     { IClonable methods }
-    function Clone: IInterface;
+    function IClonable.Clone = IClonableClone;
+    function IClonableClone: IInterface;
       {Creates a new instance of the object that is an extact copy of this
       instance.
         @return New object's IInterface interface.
@@ -365,11 +379,9 @@ procedure TIStringList.Add(const Strs: IStringList);
   {Adds all items from another IStringList instance to end of list.
     @param Strs [in] String list to be added.
   }
-var
-  Idx: Integer; // loops through strings in added list
 begin
-  for Idx := 0 to Pred(Strs.Count) do
-    Add(Strs[Idx]);
+  for var S in Strs do
+    Add(S);
 end;
 
 procedure TIStringList.Add(const Str: string; const Delim: string;
@@ -401,11 +413,9 @@ procedure TIStringList.Add(const Strs: array of string);
   {Adds all strings from an array to end of list.
     @param Strs [in] Dynamic array of strings to be added.
   }
-var
-  Idx: Integer; // loops thru elements of array
 begin
-  for Idx := Low(Strs) to High(Strs) do
-    Add(Strs[Idx]);
+  for var S in Strs do
+    Add(S);
 end;
 
 procedure TIStringList.Assign(const Src: IInterface);
@@ -420,6 +430,12 @@ begin
   Add(Src as IStringList);
 end;
 
+procedure TIStringList.Assign(Src: IStringList);
+begin
+  Clear;
+  Add(Src);
+end;
+
 procedure TIStringList.Clear;
   {Clears the list.
   }
@@ -427,7 +443,7 @@ begin
   fStrings.Clear;
 end;
 
-function TIStringList.Clone: IInterface;
+function TIStringList.Clone: IStringList;
   {Creates a new instance of the object that is an extact copy of this instance.
     @return New object's IInterface interface.
   }
@@ -591,6 +607,11 @@ begin
   Result := StrJoin(fStrings, Glue, AllowEmpty);
 end;
 
+function TIStringList.IClonableClone: IInterface;
+begin
+  Result := Clone;
+end;
+
 function TIStringList.IndexOf(const Str: string): Integer;
   {Gets index of a string in list.
     @param Str [in] String to be found.
@@ -654,12 +675,8 @@ function TIStringList.ToArray: TArray<string>;
   {Copies strings from string list into an array of strings.
     @return Array of strings.
   }
-var
-  Idx: Integer; // loops through all strings
 begin
-  SetLength(Result, Count);
-  for Idx := 0 to Pred(Count) do
-    Result[Idx] := GetItem(Idx);
+  Result := fStrings.ToStringArray;
 end;
 
 end.
