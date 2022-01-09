@@ -140,12 +140,18 @@
         </DelphiCompile>
         <DCCReference Include="CS.UI.Forms.Root.pas">
             <Form>RootForm</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="CS.UI.Forms.Main.pas">
             <Form>MainForm</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
+        <DCCReference Include="..\..\Src\UConsts.pas"/>
+        <DCCReference Include="..\..\Src\UStrUtils.pas"/>
+        <DCCReference Include="..\..\Src\IntfCommon.pas"/>
+        <DCCReference Include="..\..\Src\UBaseObjects.pas"/>
+        <DCCReference Include="..\..\Src\UStructs.pas"/>
+        <DCCReference Include="..\..\Src\UExceptions.pas"/>
+        <DCCReference Include="..\..\Src\UIStringList.pas"/>
+        <None Include="CodeSnip5.todo"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
@@ -178,15 +184,21 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="..\_build\Win64\Debug\CodeSnip5.exe" Configuration="Debug" Class="ProjectOutput">
-                    <Platform Name="Win64">
-                        <RemoteName>CodeSnip5.exe</RemoteName>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
                 <DeployFile LocalName="..\_build\Win64\Debug\CodeSnip5.rsm" Configuration="Debug" Class="DebugSymbols">
                     <Platform Name="Win64">
                         <RemoteName>CodeSnip5.rsm</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="CodeSnip5.todo" Configuration="Debug" Class="ProjectFile">
+                    <Platform Name="Win64">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="..\_build\Win64\Debug\CodeSnip5.exe" Configuration="Debug" Class="ProjectOutput">
+                    <Platform Name="Win64">
+                        <RemoteName>CodeSnip5.exe</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
@@ -1005,6 +1017,7 @@
                 <Platform value="Win32">True</Platform>
                 <Platform value="Win64">True</Platform>
             </Platforms>
+            <ModelSupport>False</ModelSupport>
         </BorlandProject>
         <ProjectFileVersion>12</ProjectFileVersion>
     </ProjectExtensions>
