@@ -28,6 +28,7 @@ type
     Encapsulates a rectangle. Assignment compatible with TRect. Has methods to
     manipulate and cast rectangle.
   }
+  // TODO -cRefactor: Replace TRextEx by TRect (Delphi 11 TRect has many simlar methods)
   TRectEx = packed record
     Left, Top,              // Coordinates of top left corner of rectangle
     Right, Bottom: Longint; // Coordinates of bottom right corner of rectangle
