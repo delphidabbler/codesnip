@@ -352,14 +352,14 @@ begin
   WantCapital := True;
   for Idx := 1 to Length(Str) do
   begin
-    if TCharacter.IsLetter(Result[Idx]) then
+    if Result[Idx].IsLetter then
     begin
       if WantCapital then
-        Result[Idx] := TCharacter.ToUpper(Result[Idx]);
+        Result[Idx] := Result[Idx].ToUpper;
       WantCapital := False;
     end
     else
-      WantCapital := TCharacter.IsWhiteSpace(Result[Idx]);
+      WantCapital := Result[Idx].IsWhiteSpace;
   end;
 end;
 
@@ -388,7 +388,7 @@ begin
   Idx := 1;
   while Idx <= Length(Str) do
   begin
-    if TCharacter.IsWhiteSpace(Str[Idx]) then
+    if Str[Idx].IsWhiteSpace then
     begin
       // Current char is white space: replace by space char and count it
       PRes^ := ' ';
@@ -396,7 +396,7 @@ begin
       Inc(ResCount);
       // Skip past any following white space
       Inc(Idx);
-      while TCharacter.IsWhiteSpace(Str[Idx]) do
+      while Str[Idx].IsWhiteSpace do
         Inc(Idx);
     end
     else
@@ -435,7 +435,7 @@ var
 begin
   Result := False;
   for Ch in Str do
-    if TCharacter.IsWhiteSpace(Ch) then
+    if Ch.IsWhiteSpace then
       Exit(True);
 end;
 
@@ -683,7 +683,7 @@ begin
   Idx := 1;
   while Idx <= Length(Str) do
   begin
-    if not TCharacter.IsWhiteSpace(Str[Idx]) then
+    if not Str[Idx].IsWhiteSpace then
     begin
       // Character is not white space: copy to result string
       PRes^ := Str[Idx];
@@ -709,7 +709,10 @@ end;
 
 function StrTrim(const Str: UnicodeString): UnicodeString;
 begin
-  Result := InternalTrim(Str, TCharacter.IsWhiteSpace);
+  Result := InternalTrim(
+    Str,
+    function (Ch: Char): Boolean begin Result := Ch.IsWhiteSpace; end
+  );
 end;
 
 function StrTrimChars(const Str: UnicodeString; const C: Char): UnicodeString;
@@ -722,7 +725,10 @@ end;
 
 function StrTrimLeft(const Str: UnicodeString): UnicodeString;
 begin
-  Result := InternalTrimLeft(Str, TCharacter.IsWhiteSpace);
+  Result := InternalTrimLeft(
+    Str,
+    function (Ch: Char): Boolean begin Result := Ch.IsWhiteSpace end
+  );
 end;
 
 function StrTrimLeftChars(const Str: UnicodeString; const C: Char):
@@ -736,7 +742,10 @@ end;
 
 function StrTrimRight(const Str: UnicodeString): UnicodeString;
 begin
-  Result := InternalTrimRight(Str, TCharacter.IsWhiteSpace);
+  Result := InternalTrimRight(
+    Str,
+    function (Ch: Char): Boolean begin Result := Ch.IsWhiteSpace end
+  );
 end;
 
 function StrTrimRightChars(const Str: UnicodeString; const C: Char):
