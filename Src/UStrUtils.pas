@@ -21,7 +21,7 @@ interface
 
 uses
   // Delphi
-  Classes,
+  System.Classes,
   // Project
   UConsts;
 
@@ -275,7 +275,9 @@ implementation
 
 uses
   // Delphi
-  SysUtils, StrUtils, Character;
+  System.SysUtils,
+  System.StrUtils,
+  System.Character;
 
 { Internal helper routines }
 
@@ -363,12 +365,12 @@ end;
 
 function StrCompareStr(const Left, Right: UnicodeString): Integer;
 begin
-  Result := SysUtils.AnsiCompareStr(Left, Right);
+  Result := System.SysUtils.AnsiCompareStr(Left, Right);
 end;
 
 function StrCompareText(const Left, Right: UnicodeString): Integer;
 begin
-  Result := SysUtils.AnsiCompareText(Left, Right);
+  Result := System.SysUtils.AnsiCompareText(Left, Right);
 end;
 
 function StrCompressWhiteSpace(const Str: UnicodeString): UnicodeString;
@@ -413,18 +415,18 @@ end;
 
 function StrContainsStr(const Needle, Haystack: UnicodeString): Boolean;
 begin
-  Result := StrUtils.AnsiContainsStr(Haystack, Needle);
+  Result := System.StrUtils.AnsiContainsStr(Haystack, Needle);
 end;
 
 function StrContainsText(const Needle, Haystack: UnicodeString): Boolean;
 begin
-  Result := StrUtils.AnsiContainsText(Haystack, Needle);
+  Result := System.StrUtils.AnsiContainsText(Haystack, Needle);
 end;
 
 function StrMatchText(const Str: string; const Values: array of string):
   Boolean;
 begin
-  Result := StrUtils.MatchText(Str, Values);
+  Result := System.StrUtils.MatchText(Str, Values);
 end;
 
 function StrContainsWhiteSpace(const Str: UnicodeString): Boolean;
@@ -488,7 +490,7 @@ end;
 function StrIsDelimiter(const Delims, Str: UnicodeString; const Idx: Integer):
   Boolean;
 begin
-  Result := SysUtils.IsDelimiter(Delims, Str, Idx);
+  Result := System.SysUtils.IsDelimiter(Delims, Str, Idx);
 end;
 
 function StrJoin(const SL: TStrings; const Delim: UnicodeString;
@@ -539,7 +541,7 @@ end;
 
 function StrLastDelimiterPos(const Delims, Str: UnicodeString): Integer;
 begin
-  Result := SysUtils.LastDelimiter(Delims, Str);
+  Result := System.SysUtils.LastDelimiter(Delims, Str);
 end;
 
 function StrLastPos(const Needle, Haystack: UnicodeString): Integer;
@@ -577,13 +579,13 @@ end;
 
 function StrPos(const Needle, Haystack: UnicodeString): Integer;
 begin
-  Result := SysUtils.AnsiPos(Needle, Haystack);
+  Result := System.SysUtils.AnsiPos(Needle, Haystack);
 end;
 
 function StrPos(const Needle, Haystack: UnicodeString; const Offset: Integer):
   Integer;
 begin
-  Result := StrUtils.PosEx(Needle, Haystack, Offset);
+  Result := System.StrUtils.PosEx(Needle, Haystack, Offset);
 end;
 
 function StrQuoteSpaced(const Str: UnicodeString; const Quote: Char):
@@ -598,35 +600,35 @@ end;
 function StrReplace(const Str, FindStr, ReplaceStr: UnicodeString):
   UnicodeString;
 begin
-  Result := StrUtils.AnsiReplaceStr(Str, FindStr, ReplaceStr);
+  Result := System.StrUtils.AnsiReplaceStr(Str, FindStr, ReplaceStr);
 end;
 
 function StrSameStr(const Left, Right: UnicodeString): Boolean;
 begin
-  Result := SysUtils.AnsiSameStr(Left, Right);
+  Result := System.SysUtils.AnsiSameStr(Left, Right);
 end;
 
 function StrSameText(const Left, Right: UnicodeString): Boolean;
 begin
-  Result := SysUtils.AnsiSameText(Left, Right);
+  Result := System.SysUtils.AnsiSameText(Left, Right);
 end;
 
 function StrSlice(const Str: UnicodeString; const StartIdx, Count: Integer):
   UnicodeString;
 begin
-  Result := StrUtils.AnsiMidStr(Str, StartIdx, Count);
+  Result := System.StrUtils.AnsiMidStr(Str, StartIdx, Count);
 end;
 
 function StrSliceLeft(const Str: UnicodeString; const Count: Integer):
   UnicodeString;
 begin
-  Result := StrUtils.AnsiLeftStr(Str, Count);
+  Result := System.StrUtils.AnsiLeftStr(Str, Count);
 end;
 
 function StrSliceRight(const Str: UnicodeString; const Count: Integer):
   UnicodeString;
 begin
-  Result := StrUtils.AnsiRightStr(Str, Count);
+  Result := System.StrUtils.AnsiRightStr(Str, Count);
 end;
 
 function StrSplit(const Str: UnicodeString; const Delim: UnicodeString;
@@ -656,14 +658,14 @@ function StrStartsStr(const SubStr, Str: UnicodeString): Boolean;
 begin
   if SubStr = '' then
     Exit(False);
-  Result := StrUtils.AnsiStartsStr(SubStr, Str);
+  Result := System.StrUtils.AnsiStartsStr(SubStr, Str);
 end;
 
 function StrStartsText(const SubStr, Str: UnicodeString): Boolean;
 begin
   if SubStr = '' then
     Exit(False);
-  Result := StrUtils.AnsiStartsText(SubStr, Str);
+  Result := System.StrUtils.AnsiStartsText(SubStr, Str);
 end;
 
 function StrStripWhiteSpace(const Str: UnicodeString): UnicodeString;
@@ -697,12 +699,12 @@ end;
 
 function StrToLower(const Str: UnicodeString): UnicodeString;
 begin
-  Result := SysUtils.AnsiLowerCase(Str);
+  Result := System.SysUtils.AnsiLowerCase(Str);
 end;
 
 function StrToUpper(const Str: UnicodeString): UnicodeString;
 begin
-  Result := SysUtils.AnsiUpperCase(Str);
+  Result := System.SysUtils.AnsiUpperCase(Str);
 end;
 
 function StrTrim(const Str: UnicodeString): UnicodeString;

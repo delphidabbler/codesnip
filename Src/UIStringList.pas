@@ -18,7 +18,7 @@ interface
 
 uses
   // Delphi
-  Classes,
+  System.Classes,
   // Project
   IntfCommon;
 
@@ -337,7 +337,7 @@ implementation
 
 uses
   // Delphi
-  SysUtils,
+  System.SysUtils,
   // Project
   UExceptions, UStrUtils;
 

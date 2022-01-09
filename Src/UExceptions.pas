@@ -33,7 +33,8 @@ interface
 
 uses
   // Delphi
-  SysUtils, Controls,
+  System.SysUtils,
+  Vcl.Controls,
   // Project
   UBaseObjects, UStructs;
 
@@ -193,7 +194,7 @@ implementation
 
 uses
   // Delphi
-  Classes;
+  System.Classes;
 
 
 { EAssignable }

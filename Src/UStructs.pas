@@ -18,7 +18,7 @@ interface
 
 uses
   // Delphi
-  Types;
+  System.Types;
 
 
 type
@@ -180,7 +180,7 @@ implementation
 
 uses
   // Delphi
-  Math;
+  System.Math;
 
 
 { TRectEx }
@@ -191,7 +191,7 @@ function TRectEx.ContainsPoint(const Pt: TPoint): Boolean;
     @return True if point is contained in the rectangle, False if not.
   }
 begin
-  Result := Types.PtInRect(Self, Pt);
+  Result := System.Types.PtInRect(Self, Pt);
 end;
 
 constructor TRectEx.Create(ALeft, ATop, ARight, ABottom: Integer);
@@ -319,7 +319,7 @@ function TRectEx.IsEmpty: Boolean;
     return True if empty, False if not.
   }
 begin
-  Result := Types.IsRectEmpty(Self);
+  Result := System.Types.IsRectEmpty(Self);
 end;
 
 procedure TRectEx.MakeEmpty;
@@ -403,7 +403,7 @@ function TRange.Contains(const Value: Integer): Boolean;
     @return True if Value is in range, False otherwise.
   }
 begin
-  Result := Math.InRange(Value, Min, Max);
+  Result := System.Math.InRange(Value, Min, Max);
 end;
 
 constructor TRange.Create(AMin, AMax: Integer);

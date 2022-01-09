@@ -17,7 +17,7 @@ interface
 
 uses
   // Delphi
-  Windows;
+  Winapi.Windows;
 
 
 const
