@@ -127,28 +127,8 @@ type
     directly from TObject rather than TInterfacedObject since most of the
     code of TInterfacedObject is redundant when reference counting not used.
   }
-  TNonRefCountedObject = class(TObject, IInterface)
-  public
-    { IInterface methods }
-    function QueryInterface(const IID: TGUID; out Obj): HResult; stdcall;
-      {Checks the specified interface is supported by this object. If so
-      reference to interface is passed out.
-        @param IID [in] Specifies interface being queried.
-        @param Obj [out] Reference to interface implementation or nil if not
-          supported.
-        @result S_OK if interface supported or E_NOINTERFACE if not supported.
-      }
-    function _AddRef: Integer; stdcall;
-      {Called by Delphi when interface is referenced. Reference count is not
-      updated.
-        @return -1.
-      }
-    function _Release: Integer; stdcall;
-      {Called by Delphi when interface reference goes out of scope. Reference
-      count is not updated and instance is never freed.
-        @return -1.
-      }
-  end;
+  // TODO -cRefactor: Replace TNonRefCountedObject with TNoRefCountObject
+  TNonRefCountedObject = class(TNoRefCountObject, IInterface);
 
   {
   TAggregatedOrLoneObject:
@@ -158,7 +138,7 @@ type
     object is passed to the constructor this object behaves as an aggregated
     object and defers to the container object for reference counting and
     interface queries. When nil is passed to the constructor or the
-    parameterless constructor is called the object bahaves as a stand alone
+    parameterless constructor is called the object behaves as a stand alone
     implementation and handles its own reference counting.
   }
   TAggregatedOrLoneObject = class(TInterfacedObject, IInterface)
@@ -296,42 +276,6 @@ constructor TNoPublicConstructIntfObject.InternalCreate;
   }
 begin
   inherited Create;
-end;
-
-{ TNonRefCountedObject }
-
-function TNonRefCountedObject.QueryInterface(const IID: TGUID;
-  out Obj): HResult;
-  {Checks the specified interface is supported by this object. If so reference
-  to interface is passed out.
-    @param IID [in] Specifies interface being queried.
-    @param Obj [out] Reference to interface implementation or nil if not
-      supported.
-    @result S_OK if interface supported or E_NOINTERFACE if not supported.
-  }
-begin
-  if GetInterface(IID, Obj) then
-    Result := S_OK
-  else
-    Result := E_NOINTERFACE;
-end;
-
-function TNonRefCountedObject._AddRef: Integer;
-  {Called by Delphi when interface is referenced. Reference count is not
-  updated.
-    @return -1.
-  }
-begin
-  Result := -1;
-end;
-
-function TNonRefCountedObject._Release: Integer;
-  {Called by Delphi when interface reference goes out of scope. Reference count
-  is not updated and instance is never freed.
-    @return -1.
-  }
-begin
-  Result := -1;
 end;
 
 { TAggregatedOrLoneObject }
