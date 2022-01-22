@@ -43,14 +43,15 @@ There's also plenty of info available on how to compile CodeSnip from source - s
 
 CodeSnip's source code is maintained in the [`delphidabbler/codesnip`](https://github.com/delphidabbler/codesnip) Git repository on GitHub†.
 
-[Git Flow](https://nvie.com/posts/a-successful-git-branching-model/) methodology has been adopted, with the exception of some branches that have been used in various attempts to start work on CodeSnip 5.
+The [Git Flow](https://nvie.com/posts/a-successful-git-branching-model/) methodology has been adopted, with the exception of some branches that have been used in various attempts to start work on CodeSnip 5.
 
-The following branches existed at the time when CodeSnip v4.16.0 was released:
+The following branches existed as of 2022/01/01:
 
 * `master`: Always reflects the state of the source code as of the latest release.‡
-* `develop`: Main development branch. The head of this branch contains the latest development code.
+* `develop`: Main development branch. The head of this branch contains the latest v4 development code.
+* `belvedere`: The latest attempt to develop CodeSnip 5. See the [Belvedere Readme file](https://github.com/delphidabbler/codesnip/blob/belvedere/README.md) for a full explanation.
 * `pagoda`: An abortive attempt at developing CodeSnip 5. Work on this branch has halted. It does not follow GitFlow methodology. ***Do not use this branch: it may be pruned.***
-* `pavilion`: Another attempt at working on CodeSnip 5. It branched off `pagoda` and it's future is uncertain. Again it does not follow GitFlow methodology.
+* `pavilion`: Another attempt at working on CodeSnip 5. It branched off `pagoda` and work on it has halted. Again it does not follow GitFlow methodology. ***Do not use this branch: it may be pruned.***
 
 New features and most bug fixes are worked on in `feature/xxxx` branches that are branched off `develop` locally. They are merged into `develop` as they are completed and the branches are deleted.
 
@@ -62,7 +63,17 @@ Note that the default branch on GitHub is `master`, which contains the state of 
 
 ### Contributions
 
-To contribute to the project please fork the repository on GitHub. Create a feature branch off the `develop` branch. Make your changes to the feature branch then submit a pull request via GitHub.
+#### CodeSnip 4
+
+To contribute to CodeSnip 4 development please fork the repository on GitHub. Create a feature branch off the `develop` branch. Make your changes to your feature branch then submit a pull request via GitHub.
+
+> **Do not create branches off `master`, always branch from `develop`.**
+
+#### CodeSnip 5 Belvedere
+
+Proceed as for CodeSnip 4 except create your feature branch off the `belvedere` branch instead of `develop`.
+
+> **Do not submit changes to the earlier `pagoda` or `pavilion` branches because they will not be accepted.**
 
 ### Compiling
 
