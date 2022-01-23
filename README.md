@@ -29,7 +29,7 @@ Initial thoughts are that CodeSnip 5 will:
 * Use a new JSON based config file format?
 * Drop support for older OSs - may be Win10/Win11 only?
 * Drop support for legacy CodeSnip file formats from before CodeSnip 4.
-* Bring together the standard and portable versions: no more separately compiler versions. CodeSnip will probably run as a standard Windows application if installed in `%ProgramFiles%` and act as a portable application is its installed anywhere else.
+* Bring together the standard and portable versions: no more separately compiler versions. CodeSnip will probably run as a standard Windows application if installed in `%ProgramFiles%` and act as a portable application if it's installed anywhere else.
 * Support different themes: e.g. light and dark.
 * Be more _testable_.
 
@@ -44,6 +44,20 @@ Oh no, not getting into promising anything! It all depends on how much time and 
 ## Comments & Suggestions Welcome
 
 I'm more than happy to receive suggestions, comments, ideas etc. and you are welcome to use the [CodeSnip 5 Belvedere](https://github.com/delphidabbler/codesnip/discussions/42) discussion thread to share your thoughts. Please use that thread in preference to the Issues page for anything to do with `belvedere`.
+
+## Contributing
+
+I'm not looking for any contributions to `belvedere` at the moment - it's too early in development to be cleat about what's needed.
+
+But as soon as I make enough progress I'll be more than happy to receive help.
+
+In the meantime any assistance maintaining CodeSnip 4 would be greatly appreciated. See `README.md` on the `develop` branch for details.
+
+## Compiling
+
+CodeSnip 5 Belvedere is being developed in Delphi 11 and is being compiled from the IDE.
+
+Binaries are being created in the `belvedere\_build` directory.
 
 ## Blog
 
