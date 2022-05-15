@@ -107,7 +107,7 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Graphics, Menus,
+  SysUtils, Graphics, Menus, Math,
   // Project
   ActiveText.UHTMLRenderer, Browser.UHighlighter, Hiliter.UAttrs, Hiliter.UCSS,
   Hiliter.UGlobals, UColours, UCSSUtils, UFontHelper, UPreferences, UQuery,
@@ -119,27 +119,53 @@ uses
 
 procedure TDetailViewFrame.BuildCSS(const CSSBuilder: TCSSBuilder);
 var
-  HiliteAttrs: IHiliteAttrs;  // syntax highlighter used to build CSS
-  CSSFont: TFont;             // font used to set CSS properties
+  HiliteAttrs: IHiliteAttrs;      // syntax highlighter used to build CSS
+  ContentFont: TFont;             // default content font sized per preferences
+  MonoFont: TFont;                // default mono font sized per preferences
+  CSSFont: TFont;                 // font used to set CSS properties
+  ContentFontScaleFactor: Single; // amount to increase font size by to get
+                                  // proportionally same increase as adding 1 to
+                                  // default content font size
+  MonoToContentFontRatio: Single; // ratio of size of mono font to content font
+  DefContentFontSize: Integer;    // default size of content font
+  DefMonoFontSize: Integer;       // default size of mono font
 begin
   // NOTE:
   // We only set CSS properties that may need to use system colours or fonts
   // that may be changed by user or changing program defaults. CSS that controls
   // layout remains in a CSS file embedded in resources.
   inherited;
+  ContentFont := nil;
+  MonoFont := nil;
   CSSFont := TFont.Create;
   try
+    MonoFont := TFont.Create;
+    ContentFont := TFont.Create;
+    TFontHelper.SetDefaultMonoFont(MonoFont);
+    TFontHelper.SetContentFont(ContentFont);
+    // Must do next two lines before changing content & mono font sizes
+    DefContentFontSize := ContentFont.Size;
+    DefMonoFontSize := MonoFont.Size;
+    ContentFontScaleFactor := 1.0 / DefContentFontSize;
+    MonoToContentFontRatio := DefMonoFontSize / DefContentFontSize;
+    ContentFont.Size := Preferences.DetailFontSize;
+    MonoFont.Size := Round(ContentFont.Size * MonoToContentFontRatio);
     // Set body style to use program's font and window colour
     with CSSBuilder.AddSelector('body') do
     begin
-      TFontHelper.SetContentFont(CSSFont);
+      CSSFont.Assign(ContentFont);
       AddProperty(TCSS.FontProps(CSSFont));
       AddProperty(TCSS.BackgroundColorProp(clWindow));
+    end;
+    with CSSBuilder.Selectors['code'] do
+    begin
+      CSSFont.Assign(MonoFont);
+      AddProperty(TCSS.FontProps(CSSFont));
     end;
     // Set table to use required font
     with CSSBuilder.AddSelector('table') do
     begin
-      TFontHelper.SetContentFont(CSSFont);
+      CSSFont.Assign(ContentFont);
       AddProperty(TCSS.FontProps(CSSFont));
       AddProperty(TCSS.BackgroundColorProp(clBorder));
     end;
@@ -149,8 +175,10 @@ begin
     // Sets H1 heading font size and border
     with CSSBuilder.AddSelector('h1') do
     begin
-      TFontHelper.SetContentFont(CSSFont);
-      CSSFont.Size := CSSFont.Size + 2;
+      CSSFont.Assign(ContentFont);
+      CSSFont.Size := CSSFont.Size + Max(
+        Round(2 * ContentFontScaleFactor * CSSFont.Size), 2
+      );
       CSSFont.Style := [fsBold];
       AddProperty(TCSS.FontProps(CSSFont));
       AddProperty(TCSS.BorderProp(cssBottom, 1, cbsSolid, clBorder));
@@ -158,22 +186,42 @@ begin
     // Sets H2 heading font size and border
     with CSSBuilder.AddSelector('h2') do
     begin
-      TFontHelper.SetContentFont(CSSFont);
+      CSSFont.Assign(ContentFont);
       CSSFont.Style := [fsBold];
       AddProperty(TCSS.FontProps(CSSFont));
     end;
     // Set H2 heading font for use in rendered active text
     with CSSBuilder.AddSelector('.active-text h2') do
     begin
-      TFontHelper.SetContentFont(CSSFont);
+      CSSFont.Assign(ContentFont);
       CSSFont.Style := [fsBold];
-      CSSFont.Size := CSSFont.Size + 1;
+      CSSFont.Size := CSSFont.Size + Max(
+        Round(ContentFontScaleFactor * CSSFont.Size), 1
+      );
+      AddProperty(TCSS.FontProps(CSSFont));
+    end;
+    // Set CODE tag within H2 heading for use in rendered active text
+    with CSSBuilder.AddSelector('.active-text h2 code') do
+    begin
+      CSSFont.Assign(MonoFont);
+      CSSFont.Style := [fsBold];
+      CSSFont.Size := CSSFont.Size + Max(
+        Round(ContentFontScaleFactor * CSSFont.Size), 1
+      );
       AddProperty(TCSS.FontProps(CSSFont));
     end;
     // Set H2 heading font for use in rendered active text in snippet list table
     with CSSBuilder.AddSelector('.snippet-list .active-text h2') do
     begin
-      TFontHelper.SetContentFont(CSSFont);
+      CSSFont.Assign(ContentFont);
+      CSSFont.Style := [fsBold];
+      AddProperty(TCSS.FontProps(CSSFont));
+    end;
+    // Set CODE within H2 heading font for use in rendered active text in
+    // snippet list table
+    with CSSBuilder.AddSelector('.snippet-list .active-text h2 code') do
+    begin
+      CSSFont.Assign(MonoFont);
       CSSFont.Style := [fsBold];
       AddProperty(TCSS.FontProps(CSSFont));
     end;
@@ -187,8 +235,8 @@ begin
     // Sets CSS for style of New Tab text
     with CSSBuilder.AddSelector('#newtab') do
     begin
-      TFontHelper.SetContentFont(CSSFont);
-      CSSFont.Size := 36;
+      CSSFont.Assign(ContentFont);
+      CSSFont.Size := 36 + Round(36 * ContentFontScaleFactor);
       CSSFont.Color := clNewTabText;
       AddProperty(TCSS.FontProps(CSSFont));
     end;
@@ -218,6 +266,8 @@ begin
       AddProperty(TCSS.FontWeightProp(cfwNormal));
     end;
   finally
+    ContentFont.Free;
+    MonoFont.Free;
     CSSFont.Free;
   end;
 end;

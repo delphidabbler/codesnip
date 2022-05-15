@@ -183,6 +183,14 @@ type
     property OverviewFontSize: Integer
       read GetOverviewFontSize write SetOverviewFontSize;
 
+    ///  <summary>Gets size of base font used in detail pane.</summary>
+    function GetDetailFontSize: Integer;
+    ///  <summary>Sets size of base font used in detail pane.</summary>
+    procedure SetDetailFontSize(const Value: Integer);
+    ///  <summary>Size of base font used in detail pane.</summary>
+    property DetailFontSize: Integer
+      read GetDetailFontSize write SetDetailFontSize;
+
     ///  <summary>Gets colour used for background of source code in main
     ///  display.</summary>
     function GetSourceCodeBGColour: TColor;
@@ -289,7 +297,7 @@ uses
   SysUtils,
   // Project
   Hiliter.UAttrs, Hiliter.UPersist, IntfCommon, UExceptions, UColours,
-  USettings;
+  UFontHelper, USettings;
 
 
 type
@@ -342,6 +350,8 @@ type
       ///  <summary>Records size of font used in overview pane tree view.
       ///  </summary>
       fOverviewFontSize: Integer;
+      ///  <summary>Records size of font used in details pane.</summary>
+      fDetailFontSize: Integer;
       ///  <summary>Records colour used for background of source code in main
       ///  display.</summary>
       fSourceCodeBGColour: TColor;
@@ -366,6 +376,11 @@ type
       ///  <summary>Information describing snippet detail page customisations.
       ///  </summary>
       fPageStructures: TSnippetPageStructures;
+    ///  <summary>Returns default font size for overview pane tree view.
+    ///  </summary>
+    function DefaultOverviewFontSize: Integer;
+    ///  <summary>Returns default font size for details pane.</summary>
+    function DefaultDetailFontSize: Integer;
   public
     ///  <summary>Constructs a new object instance.</summary>
     constructor Create;
@@ -509,6 +524,14 @@ type
     ///  <summary>Sets size of font used in overview pane tree view.</summary>
     ///  <remarks>Method of IPreferences.</remarks>
     procedure SetOverviewFontSize(const Value: Integer);
+
+    ///  <summary>Gets size of base font used in detail pane.</summary>
+    ///  <remarks>Method of IPreferences.</remarks>
+    function GetDetailFontSize: Integer;
+
+    ///  <summary>Sets size of base font used in detail pane.</summary>
+    ///  <remarks>Method of IPreferences.</remarks>
+    procedure SetDetailFontSize(const Value: Integer);
 
     ///  <summary>Gets colour used for background of source code in main
     ///  display.</summary>
@@ -677,6 +700,7 @@ begin
   Self.fDBHeadingColours[True] := SrcPref.DBHeadingColours[True];
   Self.fDBHeadingCustomColours[True] := SrcPref.DBHeadingCustomColours[True];
   Self.fOverviewFontSize := SrcPref.OverviewFontSize;
+  Self.fDetailFontSize := SrcPref.DetailFontSize;
   Self.fSourceCodeBGColour := SrcPref.SourceCodeBGColour;
   Self.fSourceCodeBGCustomColours := SrcPref.SourceCodeBGCustomColours;
   Self.fPrinterOptions := SrcPref.PrinterOptions;
@@ -701,6 +725,16 @@ begin
   TDefaultPageStructures.SetDefaults(fPageStructures);
 end;
 
+function TPreferences.DefaultDetailFontSize: Integer;
+begin
+  Result := TFontHelper.GetDefaultContentFontSize;
+end;
+
+function TPreferences.DefaultOverviewFontSize: Integer;
+begin
+  Result := TFontHelper.GetDefaultFontSize;
+end;
+
 destructor TPreferences.Destroy;
 begin
   fPageStructures.Free;
@@ -721,6 +755,11 @@ function TPreferences.GetDBHeadingCustomColours(
   UserDefined: Boolean): IStringList;
 begin
   Result := fDBHeadingCustomColours[UserDefined];
+end;
+
+function TPreferences.GetDetailFontSize: Integer;
+begin
+  Result := fDetailFontSize;
 end;
 
 function TPreferences.GetHiliteAttrs: IHiliteAttrs;
@@ -830,6 +869,14 @@ begin
   fDBHeadingCustomColours[UserDefined] := Value;
 end;
 
+procedure TPreferences.SetDetailFontSize(const Value: Integer);
+begin
+  if TFontHelper.IsInCommonFontSizeRange(Value) then
+    fDetailFontSize := Value
+  else
+    fDetailFontSize := DefaultDetailFontSize;
+end;
+
 procedure TPreferences.SetHiliteAttrs(const Attrs: IHiliteAttrs);
 begin
   (fHiliteAttrs as IAssignable).Assign(Attrs);
@@ -852,7 +899,10 @@ end;
 
 procedure TPreferences.SetOverviewFontSize(const Value: Integer);
 begin
-  fOverviewFontSize := Value;
+  if TFontHelper.IsInCommonFontSizeRange(Value) then
+    fOverviewFontSize := Value
+  else
+    fOverviewFontSize := DefaultOverviewFontSize;
 end;
 
 procedure TPreferences.SetOverviewStartState(const Value: TOverviewStartState);
@@ -945,6 +995,7 @@ begin
   NewPref.DBHeadingColours[True] := Self.fDBHeadingColours[True];
   NewPref.DBHeadingCustomColours[True] := Self.fDBHeadingCustomColours[True];
   NewPref.OverviewFontSize := Self.fOverviewFontSize;
+  NewPref.DetailFontSize := Self.fDetailFontSize;
   NewPref.SourceCodeBGColour := Self.fSourceCodeBGColour;
   NewPref.SourceCodeBGCustomColours := Self.fSourceCodeBGCustomColours;
   NewPref.PrinterOptions := Self.fPrinterOptions;
@@ -999,7 +1050,12 @@ begin
   fDBHeadingCustomColours[True] := Storage.GetStrings(
     'UserDBHeadingCustomColourCount', 'UserDBHeadingCustomColour%d'
   );
-  fOverviewFontSize := Storage.GetInteger('OverviewFontSize', 9);
+  fOverviewFontSize := Storage.GetInteger(
+    'OverviewFontSize', DefaultOverviewFontSize
+  );
+  fDetailFontSize := Storage.GetInteger(
+    'DetailFontSize', DefaultDetailFontSize
+  );
   fSourceCodeBGCustomColours := Storage.GetStrings(
     'SourceCodeBGCustomColourCount', 'SourceCodeBGCustomColour%d'
   );
@@ -1071,6 +1127,7 @@ begin
   Storage.SetInteger('MainDBHeadingColour', fDBHeadingColours[False]);
   Storage.SetInteger('UserDBHeadingColour', fDBHeadingColours[True]);
   Storage.SetInteger('OverviewFontSize', fOverviewFontSize);
+  Storage.SetInteger('DetailFontSize', fDetailFontSize);
   Storage.SetInteger('SourceCodeBGColour', fSourceCodeBGColour);
   Storage.SetStrings(
     'MainDBHeadingCustomColourCount',

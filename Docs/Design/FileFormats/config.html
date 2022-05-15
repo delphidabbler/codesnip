@@ -5,7 +5,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2012-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2012-2022, Peter Johnson (gravatar.com/delphidabbler).
  *
  * CodeSnip File Format Documentation: Configuration Files
 -->
@@ -167,7 +167,7 @@
 </p>
 
 <p>
-  There have been several versions of this file. The current one is version 17. The change to version 17 came with CodeSnip v4.19.0 and the addition of the [Prefs] section.
+  There have been several versions of this file. The current one is version 18. The change to version 18 came with CodeSnip v4.20.0 and the addition of the [Prefs] section.
 </p>
 
 <p>
@@ -917,7 +917,13 @@
     <code class="key">OverviewFontSize</code> (Integer)
   </dt>
   <dd>
-    Size of font to be used in overview pane tree view. If missing or empty the default value is <code class="value">9</code>.
+    Size of font to be used in overview pane tree view. If missing or empty the default value is the default font size of the operationg system.
+  </dd>
+  <dt>
+    <code class="key">DetailFontSize</code> (Integer)
+  </dt>
+  <dd>
+    Size of font to be used in detail pane for all text except for source code. If missing or empty the default value is the default content font size of the operating system.
   </dd>
 </dl>
 

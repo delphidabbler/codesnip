@@ -80,6 +80,8 @@ type
         @return Handle to cloned font. Caller is responsible for releasing the
           handle.
       }
+    class function GetDefaultFontSize: Integer;
+    class function GetDefaultContentFontSize: Integer;
   strict private
     const
       FallbackFontName = 'Arial';                 // Fallback font name
@@ -156,6 +158,32 @@ class function TFontHelper.FontExists(const FontName: string): Boolean;
   }
 begin
   Result := Screen.Fonts.IndexOf(FontName) >= 0;
+end;
+
+class function TFontHelper.GetDefaultContentFontSize: Integer;
+var
+  Font: TFont;
+begin
+  Font := TFont.Create;
+  try
+    SetContentFont(Font);
+    Result := Font.Size;
+  finally
+    Font.Free;
+  end;
+end;
+
+class function TFontHelper.GetDefaultFontSize: Integer;
+var
+  Font: TFont;
+begin
+  Font := TFont.Create;
+  try
+    SetDefaultFont(Font);
+    Result := Font.Size;
+  finally
+    Font.Free;
+  end;
 end;
 
 class function TFontHelper.IsInCommonFontSizeRange(
