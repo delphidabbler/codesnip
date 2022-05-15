@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2008-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2008-2022, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements a static class that manages user's interaction with user database.
 }
@@ -96,6 +96,8 @@ type
     ///  <summary>Moves the user database to a new location specified by the
     ///  user.</summary>
     class procedure MoveDatabase;
+    ///  <summary>Deletes the user database, with permission.</summary>
+    class function DeleteDatabase: Boolean;
   end;
 
 
@@ -104,7 +106,7 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Dialogs, Windows {for inlining},
+  SysUtils, Dialogs, Windows {for inlining}, IOUtils,
   // Project
   DB.UMain, DB.USnippet,
   FmAddCategoryDlg, FmDeleteCategoryDlg, FmDuplicateSnippetDlg,
@@ -112,7 +114,8 @@ uses
   {$IFNDEF PORTABLE}
   FmUserDataPathDlg,
   {$ENDIF}
-  FmWaitDlg,
+  FmDeleteUserDBDlg, FmWaitDlg,
+  UAppInfo,
   UConsts, UExceptions, UIStringList, UMessageBox, UOpenDialogEx,
   UOpenDialogHelper, UReservedCategories, USaveDialogEx, USnippetIDs,
   UUserDBBackup, UWaitForThreadUI;
@@ -375,6 +378,16 @@ begin
   finally
     CatList.Free;
   end;
+end;
+
+class function TUserDBMgr.DeleteDatabase: Boolean;
+begin
+  if not TDeleteUserDBDlg.Execute(nil) then
+    Exit(False);
+  if not TDirectory.Exists(TAppInfo.UserDataDir) then
+    Exit(False);
+  TDirectory.Delete(TAppInfo.UserDataDir, True);
+  Result := True;
 end;
 
 class procedure TUserDBMgr.DeleteSnippet(ViewItem: IView);

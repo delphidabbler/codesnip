@@ -43,14 +43,15 @@ There's also plenty of info available on how to compile CodeSnip from source - s
 
 CodeSnip's source code is maintained in the [`delphidabbler/codesnip`](https://github.com/delphidabbler/codesnip) Git repository on GitHub†.
 
-[Git Flow](https://nvie.com/posts/a-successful-git-branching-model/) methodology has been adopted, with the exception of some branches that have been used in various attempts to start work on CodeSnip 5.
+The [Git Flow](https://nvie.com/posts/a-successful-git-branching-model/) methodology has been adopted, with the exception of some branches that have been used in various attempts to start work on CodeSnip 5.
 
-The following branches existed at the time when CodeSnip v4.16.0 was released:
+The following branches existed as of 2022/01/01:
 
 * `master`: Always reflects the state of the source code as of the latest release.‡
-* `develop`: Main development branch. The head of this branch contains the latest development code.
+* `develop`: Main development branch. The head of this branch contains the latest v4 development code.
+* `belvedere`: The latest attempt to develop CodeSnip 5. See the [Belvedere Readme file](https://github.com/delphidabbler/codesnip/blob/belvedere/README.md) for a full explanation.
 * `pagoda`: An abortive attempt at developing CodeSnip 5. Work on this branch has halted. It does not follow GitFlow methodology. ***Do not use this branch: it may be pruned.***
-* `pavilion`: Another attempt at working on CodeSnip 5. It branched off `pagoda` and it's future is uncertain. Again it does not follow GitFlow methodology.
+* `pavilion`: Another attempt at working on CodeSnip 5. It branched off `pagoda` and work on it has halted. Again it does not follow GitFlow methodology. ***Do not use this branch: it may be pruned.***
 
 New features and most bug fixes are worked on in `feature/xxxx` branches that are branched off `develop` locally. They are merged into `develop` as they are completed and the branches are deleted.
 
@@ -62,13 +63,27 @@ Note that the default branch on GitHub is `master`, which contains the state of 
 
 ### Contributions
 
-To contribute to the project please fork the repository on GitHub. Create a feature branch off the `develop` branch. Make your changes to the feature branch then submit a pull request via GitHub.
+To contribute to CodeSnip 4 development please fork the repository on GitHub. Create a feature branch off the `develop` branch. Make your changes to your feature branch then submit a pull request via GitHub.
+
+> **Do not create branches off `master`, always branch from `develop`.**
+
+#### Licensing of contributions
+
+The license that applies to any existing file you edit will continue to apply to the edited file. Any existing license text or copyright statement **must not** be altered or removed.
+
+Any new file you contribute **must** either be licensed under the Mozilla Public License v2.0 (MPL2) or have a license compatible with the MPL2. If a license is not specified then the MPL2 will be applied to the file. You should insert a suitable copyright statement in the file.
+
+Any third party code used by your contributed code **must** also have a license compatible with the MPL2.
+
+> MPL2 boilerplate text, in several programming language's comment formats, can be found in the file `Docs/MPL-2.0-Boilerplate.txt`. You will need to change the name of the copyright holder.
 
 ### Compiling
 
-`master` has a file in the root directory named [`Build.html`](https://htmlpreview.github.io/?https://github.com/delphidabbler/codesnip/blob/master/Build.html) that gives detailed information about how to compile the current release of CodeSnip.
+`master` has a file in the root directory named [`Build.html`](https://htmlpreview.github.io/?https://github.com/delphidabbler/codesnip/blob/master/Build.html) that gives detailed information about how to compile the current release of CodeSnip 4.
 
 There is also a [Compiling & Source Code FAQ](https://github.com/delphidabbler/codesnip-faq/blob/master/SourceCode.md).
+
+CodeSnip 4 **must** be compiled with Delphi XE. See [Compiling & Source Code FAQ 11](https://github.com/delphidabbler/codesnip-faq/blob/master/SourceCode.md#faq-11) for the reason why.
 
 ## Change Log
 
