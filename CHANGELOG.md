@@ -10,6 +10,22 @@ This change log begins with the first ever pre-release version of _CodeSnip_. Re
 
 From v4.1.0 the version numbering has attempted to adhere to the principles of [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## Release v4.20.0 of 15 May 2022
+
+* Added an option to delete the user defined database.
+* Fixed bug that enabled the user to attempt to move, or back up, the user database when it doesn't exist. These options are now disabled when there is no user database.
+* Added facility to customise the size of font used in the details pane for all items except the source code font (which could already be modified separately). A new preference was added to the Display pane of the Preferences dialogue box to be used to set the font size.
+* Rearranged the controls on the Preferences dialogue box's Display pane.
+* Changed the default font used for the overview pane from a fixed value to the default size for the underlying operating system.
+* Changed the description of "Delphi 11 Alexandria" to "Delphi 11.x Alexandria" to reflect the fact the Delphi 11 updates have different minor version numbers, but can't be installed alongside each other.
+* Widened the compiler list box in the Configure Compilers dialogue box to accommodate the longer name used for Delphi 11.x compilers.
+* Refactored some font handling code.
+* Operating system detection code was updated to (a) fix some bugs and (b) detect some Dev channel builds of Windows 11.
+* Bumped the version of the per-user config file to 18 following the addition of a new preference.
+* Help file updated re the changes in this release.
+* Documentation updated to reflect changes in this release.
+* Updated `README.md` and `Build.html`
+
 ## Release v4.19.0 of 31 December 2021
 
 * Improved user-friendliness of Preferences dialogue box:
