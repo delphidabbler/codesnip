@@ -12,7 +12,8 @@ uses
   UBaseObjects in '..\..\Src\UBaseObjects.pas',
   UStructs in '..\..\Src\UStructs.pas',
   UExceptions in '..\..\Src\UExceptions.pas',
-  UIStringList in '..\..\Src\UIStringList.pas';
+  UIStringList in '..\..\Src\UIStringList.pas',
+  CS.Database.Types in 'CS.Database.Types.pas';
 
 {$R *.res}
 
