@@ -3,10 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2001-2021, Peter Johnson (@delphidabbler).
- *
- * $Rev: 2082 $
- * $Date: 2022-01-01 10:12:03 +0000 (Sat, 01 Jan 2022) $
+ * Copyright (C) 2001-2022, Peter Johnson (@delphidabbler).
  *
  * This unit contains various static classes, constants, type definitions and
  * global variables for use in providing information about the host computer and
@@ -419,7 +416,8 @@ type
     osWin10Svr,             // Windows 2016 Server
     osWinSvr2019,           // Windows 2019 Server
     osWin11,                // Windows 11
-    osWinSvr2022            // Windows 2022 Server
+    osWinSvr2022,           // Windows 2022 Server
+    osWinServer             // Windows Server (between Server 2019 & 2022)
   );
 
 type
@@ -1209,6 +1207,7 @@ const
   Win8Point1Build = 9600;       // Build number used for all Win 8.1/Svr 2012 R2
 
   // Windows 10 ----------------------------------------------------------------
+
   Win10TH1Build = 10240;        // Windows 10 TH1 - version 1507 (1st release)
   Win10TH2Build = 10586;        // Windows 10 TH2 - version 1511
   Win10RS1Build = 14393;        // Windows 10 RS1 - version 1607
@@ -1221,9 +1220,28 @@ const
   Win1020H1Build = 19041;       // Windows 10 20H1 - version 2004
   Win1020H2Build = 19042;       // Windows 10 20H2 - version 20H2
   Win1021H1Build = 19043;       // Windows 10 21H1 - version 21H1
+                                //   revisions 844..964 were beta
   Win1021H2Build = 19044;       // Windows 10 21H2 - version 21H2
+                                //   revisions 1147..1266 were previews
+
+  // Fast ring
+  Win10FastRing: array[0..21] of Integer = (
+    19536, 19541, 19546, 19551, 19555, 19559, 19564, 19569, 19577, 19582, 19587,
+    19592, 19603, 19608, 19613, 19619, 19624, 19628, 19631, 19635, 19640, 19645
+  );
+
+  // Dev channel
+  // Assuming all Dev channel releases had version string "Dev"
+  Win10DevChannel: array[0..44] of Integer = (
+    20150, 20152, 20161, 20170, 20175, 20180, 20185, 20190, 20197, 20201, 20206,
+    20211, 20215, 20221, 20226, 20231, 20236, 20241, 20246, 20251, 20257, 20262,
+    20270, 20277, 21277, 20279, 21286, 21292, 21296, 21301, 21313, 21318, 21322,
+    21327, 21332, 21337, 21343, 21354, 21359, 21364, 21370, 21376, 21382, 21387,
+    21390 // transitioned to Windows 11 after here
+  );
 
   // Windows 11 ----------------------------------------------------------------
+
   // NOTE: Preview and beta & release versions of Windows 11 report version 10.0
   Win11DevBuild = 21996;          // Windows 11 version Dev
                                   //   - 10.0.21996.1 (Insider version)
@@ -1237,28 +1255,28 @@ const
                                   //   Revision # 194
                                   //     Windows 11 version 21H2
                                   //       - ** 1st Public Release **
-  Win11v21H2PreRel1Build = 22449; // Windows 11 version 21H2
-                                  //   - 10.0.22449.000 (RSPRERELEASE)
-  Win11v21H2PreRel2Build = 22454; // Windows 11 version 21H2
-                                  //   - 10.0.22454.1000 (RSPRERELEASE)
-  Win11v21H2PreRel3Build = 22458; // Windows 11 version 21H2
-                                  //   - 10.0.22458.1000 (RSPRERELEASE)
-  Win11v21H2PreRel4Build = 22463; // Windows 11 version 21H2
-                                  //   - 10.0.22463.1000 (RSPRERELEASE)
-  Win11v21H2PreRel5Build = 22468; // Windows 11 version 21H2
-                                  //   - 10.0.22468.1000 (RSPRERELEASE)
-  Win11v21H2PreRel6Build = 22471; // Windows 11 version 21H2
-                                  //   - 10.0.22471.1000 (RSPRERELEASE)
-  Win11v21H2PreRel7Build = 22478; // Windows 11 version 21H2
-                                  //   - 10.0.22478.1000 (RSPRERELEASE)
-  Win11v21H2PreRel8Build = 22483; // Windows 11 version 21H2
-                                  //   - 10.0.22483.1000 (RSPRERELEASE)
-  Win11v21H2PreRel9Build = 22489; // Windows 11 version 21H2
-                                  //   - 10.0.22489.1000 (RSPRERELEASE)
-  Win11v21H2PreRel10Build = 22494;// Windows 11 version 21H2
-                                  //   - 10.0.22494.1000 (RSPRERELEASE)
-  Win11v21H2PreRel11Build = 22509;// Windows 11 version 21H2
-                                  //   - 10.0.22509.1000 (RSPRERELEASE)
+
+  // Dev channel release - different sources give different names.
+  // From what I can gather (and take this with a pinch of salt!):
+  // * Insider Dev channel releases from the RS_PRERELEASE branch weren't
+  //   matched to a Windows 11 release and had version string "Dev").
+  // * The NI_RELEASE channel was used from 2022/02/16 (build 2257).
+  // * From build 22567 the release string changed from "Dev" to "22H"
+
+  // Builds with version string "Dev"
+  Win11DevChannelDevBuilds: array[0..20] of Integer = (
+    22449, 22454, 22458, 22463, 22468,    // pre Win 11 release
+    22471, 22478, 22483, 22489, 22494, 22499, 22504, 22509, 22518, 22523, 22526,
+    22533, 22538, 22543, 22557, 22563
+  );
+  // Builds with version string "22H2" in Dev channel
+  Win11DevChannel22H2Builds: array[0..2] of Integer = (
+    22567, 22572, 22579
+  );
+  // Builds with version string "22H2" in Dev & Beta channels
+  Win11DevBetaChannels22H2Builds: array[0..3] of Integer = (
+    22581, 22593, 22598, 22610
+  );
 
   Win11FirstBuild = Win11DevBuild;  // First build number of Windows 11
 
@@ -1275,23 +1293,23 @@ const
                                         // After this it's Win 2019 Server
 
   // Windows 2019 Server -------------------------------------------------------
-  Win2019IP180320Build = 17623; // Win Server 2019 Insider Preview Build 17623
-  Win2019IP180324Build = 17627; // Win Server 2019 Insider Preview Build 17627
-  Win2019IP180515Build = 17666; // Win Server 2019 Insider Preview Build 17666
-  Win2019IP180619Build = 17692; // Win Server 2019 Insider Preview Build 17692
-  Win2019IP180710Build = 17709; // Win Server 2019 Insider Preview Build 17709
-  Win2019IP180716Build = 17713; // Win Server 2019 Insider Preview Build 17713
-  Win2019IP180731Build = 17723; // Win Server 2019 Insider Preview Build 17723
-  Win2019IP180814Build = 17733; // Win Server 2019 Insider Preview Build 17733
-  Win2019IP180821Build = 17738; // Win Server 2019 Insider Preview Build 17738
-  Win2019IP180828Build = 17744; // Win Server 2019 Insider Preview Build 17744
+  // Insider Preview builds
+  Win2019IPBuilds: array[0..9] of Integer = (
+    17623, 17627, 17666, 17692, 17709, 17713, 17723, 17733, 17738, 17744
+  );
+  // Release builds
   Win2019v1809Build = 17763;    // Win Server 2019 version 1809
   Win2019v1903Build = 18362;    // Win Server 2019 version 1903
   Win2019v1909Build = 18363;    // Win Server 2019 version 1909
-  Win2019v2004Build = 19041;    // Win Server 2019 version 2004
-  Win2019v20H2Build = 19042;    // Win Server 2019 version 20H2
-  Win2019LastBuild = Win2019v20H2Build; // Last build number of Win 2019 Server
-                                        // After this it's Win 2022 Server
+  Win2019LastBuild = Win2019v1909Build; // Last build number of Win 2019 Server
+                                        // After this it's Windows Server
+
+  // Windows Server ------------------------------------------------------------
+  WinServerv2004Build = 19041;    // Win Server version 2004
+  WinServerv20H2Build = 19042;    // Win Server version 20H2
+  WinServerLastBuild = WinServerv20H2Build; // Last build number of Windows
+                                            // Server. After this it's Window
+                                            // 2022 Sever
 
   // Windows 2022 Server -------------------------------------------------------
   Win2022v21H2Build = 20348;    // Win Server 2022 version 21H2
@@ -1509,6 +1527,14 @@ begin
     Result := Copy(Result, 1, Length(Result) - 1);
 end;
 {$ENDIF}
+
+// Checks if integer V is in the range of values defined by VLo and VHi,
+// inclusive.
+function IsInRange(const V, VLo, VHi: Integer): Boolean;
+begin
+  Assert(VLo <= VHi);
+  Result := (V >= VLo) and (V <= VHi);
+end;
 
 // Returns the value of the given environment variable.
 function GetEnvVar(const VarName: string): string;
@@ -1823,6 +1849,8 @@ begin
             begin
               InternalBuildNumber := Win1021H1Build;
               InternalExtraUpdateInfo := 'Version 21H1';
+              if IsInRange(InternalRevisionNumber, 844, 964) then
+                InternalExtraUpdateInfo := InternalExtraUpdateInfo + ' (beta)';
             end
             else if IsBuildNumber(Win1021H2Build) then
             begin
@@ -1830,8 +1858,29 @@ begin
               // yearly cycle
               InternalBuildNumber := Win1021H2Build;
               InternalExtraUpdateInfo := 'Version 21H2';
+              if IsInRange(InternalRevisionNumber, 1147, 1266) then
+                InternalExtraUpdateInfo := InternalExtraUpdateInfo
+                  + ' (preview)';
             end
-            // As of 2021-09-11, Win 11 pre-releases are reporting v10.0
+            else if FindBuildNumberFrom(
+              Win10DevChannel, InternalBuildNumber
+            ) then
+            begin
+              // Windows 10 Dev Channel releases
+              InternalExtraUpdateInfo := Format(
+                'Dev Channel v10.0.%d.%d (Dev)',
+                [InternalBuildNumber, InternalRevisionNumber]
+              );
+            end
+            else if FindBuildNumberFrom(Win10FastRing, InternalBuildNumber) then
+            begin
+              // Windows 10 Fast Ring releases
+              InternalExtraUpdateInfo := Format(
+                'Fast ring v10.0.%d.%d',
+                [InternalBuildNumber, InternalRevisionNumber]
+              );
+            end
+            // Win 11 releases are reporting v10.0
             // Details taken from: https://tinyurl.com/usupsz4a
             // Correct according to above web page as of 2021-09-11
             else if IsBuildNumber(Win11DevBuild) then
@@ -1872,19 +1921,32 @@ begin
               end;
             end
             else if FindBuildNumberFrom(
-              [
-                Win11v21H2PreRel1Build, Win11v21H2PreRel2Build,
-                Win11v21H2PreRel3Build, Win11v21H2PreRel4Build,
-                Win11v21H2PreRel5Build, Win11v21H2PreRel6Build,
-                Win11v21H2PreRel7Build, Win11v21H2PreRel8Build,
-                Win11v21H2PreRel9Build, Win11v21H2PreRel10Build,
-                Win11v21H2PreRel11Build
-              ],
-              InternalBuildNumber
+              Win11DevChannelDevBuilds, InternalBuildNumber
             ) then
             begin
+              // Win11 Dev Channel builds with version string "Dev"
               InternalExtraUpdateInfo := Format(
-                'Version 21H2 [RSPRERELEASE v10.0.%d.%d]',
+                'Dev Channel v10.0.%d.%d (Dev)',
+                [InternalBuildNumber, InternalRevisionNumber]
+              );
+            end
+            else if FindBuildNumberFrom(
+              Win11DevChannel22H2Builds, InternalBuildNumber
+            ) then
+            begin
+              // Win11 Dev channel builds with version string "22H2"
+              InternalExtraUpdateInfo := Format(
+                'Dev Channel v10.0.%d.%d (22H2)',
+                [InternalBuildNumber, InternalRevisionNumber]
+              );
+            end
+            else if FindBuildNumberFrom(
+              Win11DevBetaChannels22H2Builds, InternalBuildNumber
+            ) then
+            begin
+              // Win 11 Dev & Beta channel builds with verison string "22H2"
+              InternalExtraUpdateInfo := Format(
+                'Dev & Beta Channels v10.0.%d.%d (22H2)',
                 [InternalBuildNumber, InternalRevisionNumber]
               );
             end
@@ -1930,14 +1992,7 @@ begin
               InternalExtraUpdateInfo := 'Version 1803';
             end
             else if FindBuildNumberFrom(
-              [
-                Win2019IP180320Build, Win2019IP180324Build,
-                Win2019IP180515Build, Win2019IP180619Build,
-                Win2019IP180710Build, Win2019IP180716Build,
-                Win2019IP180731Build, Win2019IP180814Build,
-                Win2019IP180821Build, Win2019IP180828Build
-              ],
-              InternalBuildNumber
+              Win2019IPBuilds, InternalBuildNumber
             ) then
             begin
               InternalExtraUpdateInfo := Format(
@@ -1959,14 +2014,14 @@ begin
               InternalBuildNumber := Win2019v1909Build;
               InternalExtraUpdateInfo := 'Version 1909';
             end
-            else if IsBuildNumber(Win2019v2004Build) then
+            else if IsBuildNumber(WinServerv2004Build) then
             begin
-              InternalBuildNumber := Win2019v2004Build;
+              InternalBuildNumber := WinServerv2004Build;
               InternalExtraUpdateInfo := 'Version 2004';
             end
-            else if IsBuildNumber(Win2019v20H2Build) then
+            else if IsBuildNumber(WinServerv20H2Build) then
             begin
-              InternalBuildNumber := Win2019v20H2Build;
+              InternalBuildNumber := WinServerv20H2Build;
               InternalExtraUpdateInfo := 'Version 20H2';
             end
             else if IsBuildNumber(Win2022v21H2Build) then
@@ -2132,7 +2187,7 @@ begin
     osWin7, osWinSvr2008R2,
     osWin8, osWinSvr2012,
     osWin8Point1, osWinSvr2012R2,
-    osWin10, osWin11, osWin10Svr, osWinSvr2019, osWinSvr2022:
+    osWin10, osWin11, osWin10Svr, osWinSvr2019, osWinSvr2022, osWinServer:
     begin
       // For v6.0 and later we ignore the suite mask and use the new
       // PRODUCT_ flags from the GetProductInfo() function to determine the
@@ -2682,8 +2737,9 @@ begin
                   Result := osWin10Svr
                 else if InternalBuildNumber <= Win2019LastBuild then
                   Result := osWinSvr2019
+                else if InternalBuildNumber <= WinServerLastBuild then
+                  Result := osWinServer
                 else
-                  //
                   Result := osWinSvr2022;
               end;
           end;
@@ -2734,6 +2790,7 @@ begin
     osWinSvr2019: Result := 'Windows Server 2019';
     osWin11: Result := 'Windows 11';
     osWinSvr2022: Result := 'Windows Server 2022';
+    osWinServer: Result := 'Windows Server';
     else
       raise EPJSysInfo.Create(sUnknownProduct);
   end;
