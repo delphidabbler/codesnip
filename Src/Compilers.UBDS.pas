@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2006-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2006-2022, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Class that controls and provides information about Borland CodeGear and
  * Embarcadero "BDS" Win32 compilers.
@@ -175,7 +175,7 @@ resourcestring
   sDelphi102T = 'Delphi 10.2 Tokyo';
   sDelphi103R = 'Delphi 10.3 Rio';
   sDelphi104S = 'Delphi 10.4 Sydney';
-  sDelphi11A =  'Delphi 11 Alexandria';
+  sDelphi11A =  'Delphi 11.x Alexandria';
 begin
   case GetID of
     ciDXE:
