@@ -4,7 +4,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2005-2022, Peter Johnson (gravatar.com/delphidabbler).
  *
  * CodeSnip help table of contents file.
 -->
@@ -143,6 +143,10 @@
     <LI> <OBJECT type="text/sitemap">
       <param name="Name" value="Backup and Restore the User Database">
       <param name="Local" value="HTML\task_backup.htm">
+      </OBJECT>
+    <LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="Delete the whole User Database">
+      <param name="Local" value="HTML\task_deleteuserdb.htm">
       </OBJECT>
   </UL>
   <LI> <OBJECT type="text/sitemap">

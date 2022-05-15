@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2005-2022, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Declares various types that describe the compiler and compilation results and
  * defines interfaces to compiler objects.
@@ -43,7 +43,7 @@ type
     ciD102T,                            // Delphi 10.2 Tokyo
     ciD103R,                            // Delphi 10.3 Rio
     ciD104S,                            // Delphi 10.4 Sydney,
-    ciD11A,                             // Delphi 11 Alexandria
+    ciD11A,                             // Delphi 11.x Alexandria
     ciFPC                               // Free Pascal
   );
 

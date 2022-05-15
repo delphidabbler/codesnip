@@ -4,7 +4,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2005-2022, Peter Johnson (gravatar.com/delphidabbler).
  *
  * CodeSnip help index file.
 -->
@@ -74,6 +74,10 @@
     <LI> <OBJECT type="text/sitemap">
       <param name="Name" value="customise codesnip">
       <param name="Local" value="HTML\task_customise.htm">
+      </OBJECT>
+    <LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="delete the whole user database">
+      <param name="Local" value="HTML\task_deleteuserdb.htm">
       </OBJECT>
     <LI> <OBJECT type="text/sitemap">
       <param name="Name" value="duplicate snippet">
@@ -383,6 +387,9 @@
   <LI> <OBJECT type="text/sitemap">
     <param name="Name" value="view menu">
     <param name="Local" value="HTML\menu_view.htm">
+  <LI> <OBJECT type="text/sitemap">
+    <param name="Name" value="delete user database dialogue">
+    <param name="Local" value="HTML\dlg_deleteuserdb.htm">
     </OBJECT>
 </UL>
 </BODY></HTML>

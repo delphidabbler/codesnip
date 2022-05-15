@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2012-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2012-2022, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements a frame that allows user to set application display preferences.
 
@@ -37,14 +37,16 @@ type
     lblSourceBGColour: TLabel;
     lblOverviewFontSize: TLabel;
     cbOverviewFontSize: TComboBox;
+    lblDetailFontSize: TLabel;
+    cbDetailFontSize: TComboBox;
+    lblHiliterInfo: TLabel;
     procedure chkHideEmptySectionsClick(Sender: TObject);
     procedure btnDefColoursClick(Sender: TObject);
-    procedure cbOverviewFontSizeChange(Sender: TObject);
+    procedure FontSizeChange(Sender: TObject);
   strict private
     var
       ///  <summary>Flag indicating if changes affect UI.</summary>
       fUIChanged: Boolean;
-      fOverviewFontSize: Integer;
       fMainColourBox: TColorBoxEx;
       fMainColourDlg: TColorDialogEx;
       fUserColourBox: TColorBoxEx;
@@ -63,7 +65,7 @@ type
     function CreateCustomColourBox(const ColourDlg: TColorDialogEx):
       TColorBoxEx;
     procedure ColourBoxChangeHandler(Sender: TObject);
-    procedure PopulateFontSizeCombo;
+    procedure PopulateFontSizeCombos;
   public
     constructor Create(AOwner: TComponent); override;
       {Class constructor. Sets up frame and populates controls.
@@ -137,8 +139,10 @@ begin
   Prefs.DBHeadingCustomColours[False].CopyTo(fMainColourDlg.CustomColors, True);
   Prefs.DBHeadingCustomColours[True].CopyTo(fUserColourDlg.CustomColors, True);
   Prefs.SourceCodeBGCustomColours.CopyTo(fSourceBGColourDlg.CustomColors, True);
-  fOverviewFontSize := Prefs.OverviewFontSize;
-  cbOverviewFontSize.Text := IntToStr(fOverviewFontSize);
+  cbOverviewFontSize.Tag := Prefs.OverviewFontSize; // store font size in .Tag
+  cbOverviewFontSize.Text := IntToStr(Prefs.OverviewFontSize);
+  cbDetailFontSize.Tag := Prefs.DetailFontSize;     // store font size in .Tag
+  cbDetailFontSize.Text := IntToStr(Prefs.DetailFontSize);
 end;
 
 procedure TDisplayPrefsFrame.ArrangeControls;
@@ -149,14 +153,14 @@ begin
     [
       lblOverviewTree, chkHideEmptySections, chkSnippetsInNewTab,
       lblMainColour, lblUserColour, lblSourceBGColour, btnDefColours,
-      lblOverviewFontSize
+      lblOverviewFontSize, lblDetailFontSize, lblHiliterInfo
     ],
     0
   );
   TCtrlArranger.AlignLefts(
     [
       cbOverviewTree, fMainColourBox, fUserColourBox, fSourceBGColourBox,
-      cbOverviewFontSize
+      cbOverviewFontSize, cbDetailFontSize
     ],
     TCtrlArranger.RightOf(
       [lblOverviewTree, lblMainColour, lblUserColour, lblSourceBGColour],
@@ -165,28 +169,37 @@ begin
   );
   TCtrlArranger.AlignVCentres(3, [lblOverviewTree, cbOverviewTree]);
   TCtrlArranger.MoveBelow(
-    [lblOverviewTree, cbOverviewTree], chkSnippetsInNewTab, 24
+    [lblOverviewTree, cbOverviewTree], chkSnippetsInNewTab, 12
   );
   TCtrlArranger.MoveBelow(chkSnippetsInNewTab, chkHideEmptySections, 8);
   TCtrlArranger.AlignVCentres(
-    TCtrlArranger.BottomOf(chkHideEmptySections, 24),
+    TCtrlArranger.BottomOf(chkHideEmptySections, 12),
     [lblMainColour, fMainColourBox]
   );
   TCtrlArranger.AlignVCentres(
-    TCtrlArranger.BottomOf([lblMainColour, fMainColourBox], 8),
+    TCtrlArranger.BottomOf([lblMainColour, fMainColourBox], 6),
     [lblUserColour, fUserColourBox]
   );
   TCtrlArranger.AlignVCentres(
-    TCtrlArranger.BottomOf([lblUserColour, fUserColourBox], 8),
+    TCtrlArranger.BottomOf([lblUserColour, fUserColourBox], 6),
     [lblSourceBGColour, fSourceBGColourBox]
   );
   TCtrlArranger.MoveBelow(
-    [lblSourceBGColour, fSourceBGColourBox], btnDefColours, 12
+    [lblSourceBGColour, fSourceBGColourBox], btnDefColours, 6
   );
   TCtrlArranger.AlignVCentres(
     TCtrlArranger.BottomOf(btnDefColours, 12),
     [lblOverviewFontSize, cbOverviewFontSize]
   );
+  TCtrlArranger.AlignVCentres(
+    TCtrlArranger.BottomOf(cbOverviewFontSize, 8),
+    [lblDetailFontSize, cbDetailFontSize]
+  );
+  TCtrlArranger.MoveBelow(
+    [lblDetailFontSize, cbDetailFontSize], lblHiliterInfo, 12
+  );
+  lblHiliterInfo.Width := Self.ClientWidth;
+  TCtrlArranger.SetLabelHeight(lblHiliterInfo);
   chkHideEmptySections.Width := Self.Width - 16;
   chkSnippetsInNewTab.Width := Self.Width - 16;
 end;
@@ -199,43 +212,6 @@ begin
   fUserColourBox.Selected := clUserSnippet;
   fSourceBGColourBox.Selected := clSourceBg;
   fUIChanged := True;
-end;
-
-procedure TDisplayPrefsFrame.cbOverviewFontSizeChange(Sender: TObject);
-var
-  Size: Integer;  // font size entered by user
-begin
-  inherited;
-  // Do nothing if combo box text field cleared
-  if cbOverviewFontSize.Text = '' then
-    Exit;
-  if TryStrToInt(cbOverviewFontSize.Text, Size) then
-  begin
-    if TFontHelper.IsInCommonFontSizeRange(Size) then
-    begin
-      // Combo has valid value entered: update
-      fOverviewFontSize := Size;
-      fUIChanged := True;
-    end
-    else
-    begin
-      // Font size out of range
-      TMessageBox.Error(
-        ParentForm,
-        Format(
-          sErrBadOverviewFontRange,
-          [TFontHelper.CommonFontSizes.Min, TFontHelper.CommonFontSizes.Max]
-        )
-      );
-      cbOverviewFontSize.Text := IntToStr(fOverviewFontSize);
-    end;
-  end
-  else
-  begin
-    // Combo has invalid value: say so
-    TMessageBox.Error(ParentForm, sErrBadOverviewFontSize);
-    cbOverviewFontSize.Text := IntToStr(fOverviewFontSize);
-  end;
 end;
 
 procedure TDisplayPrefsFrame.chkHideEmptySectionsClick(Sender: TObject);
@@ -287,7 +263,7 @@ begin
   fSourceBGColourBox.TabOrder := 5;
   lblSourceBGColour.FocusControl := fSourceBGColourBox;
 
-  PopulateFontSizeCombo;
+  PopulateFontSizeCombos;
 end;
 
 function TDisplayPrefsFrame.CreateCustomColourBox(
@@ -330,7 +306,10 @@ begin
   Prefs.SourceCodeBGCustomColours.CopyFrom(
     fSourceBGColourDlg.CustomColors, True
   );
-  Prefs.OverviewFontSize := StrToIntDef(cbOverviewFontSize.Text, 8);
+  // Setting following properties to -1 causes preferences object to use their
+  // default font size
+  Prefs.OverviewFontSize := StrToIntDef(cbOverviewFontSize.Text, -1);
+  Prefs.DetailFontSize := StrToIntDef(cbDetailFontSize.Text, -1);
 end;
 
 function TDisplayPrefsFrame.DisplayName: string;
@@ -342,6 +321,47 @@ resourcestring
   sDisplayName = 'Display'; // display name
 begin
   Result := sDisplayName;
+end;
+
+procedure TDisplayPrefsFrame.FontSizeChange(Sender: TObject);
+var
+  Size: Integer;  // font size entered by user
+  CB: TComboBox;  // combo box that triggered event
+begin
+  inherited;
+  Assert(Sender is TComboBox,
+    ClassName + '.FontSizeChange: Sender not TComboBox');
+  CB := Sender as TComboBox;
+  // Do nothing if combo box text field cleared
+  if CB.Text = '' then
+    Exit;
+  if TryStrToInt(CB.Text, Size) then
+  begin
+    if TFontHelper.IsInCommonFontSizeRange(Size) then
+    begin
+      // Combo has valid value entered: update
+      CB.Tag := Size;
+      fUIChanged := True;
+    end
+    else
+    begin
+      // Font size out of range
+      TMessageBox.Error(
+        ParentForm,
+        Format(
+          sErrBadOverviewFontRange,
+          [TFontHelper.CommonFontSizes.Min, TFontHelper.CommonFontSizes.Max]
+        )
+      );
+      CB.Text := IntToStr(CB.Tag);
+    end;
+  end
+  else
+  begin
+    // Combo has invalid value: say so
+    TMessageBox.Error(ParentForm, sErrBadOverviewFontSize);
+    CB.Text := IntToStr(CB.Tag);
+  end;
 end;
 
 class function TDisplayPrefsFrame.Index: Byte;
@@ -372,9 +392,12 @@ begin
   Result := cOTSStartStates[State];
 end;
 
-procedure TDisplayPrefsFrame.PopulateFontSizeCombo;
+procedure TDisplayPrefsFrame.PopulateFontSizeCombos;
 begin
+  cbOverviewFontSize.Clear;
   TFontHelper.ListCommonFontSizes(cbOverviewFontSize.Items);
+  cbDetailFontSize.Clear;
+  TFontHelper.ListCommonFontSizes(cbDetailFontSize.Items);
 end;
 
 procedure TDisplayPrefsFrame.SelectOverviewTreeState(

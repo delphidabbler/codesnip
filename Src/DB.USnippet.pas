@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2011-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2011-2022, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Objects, records etc that encapsulate a code snippet, its data and lists of
  * code snippets.
@@ -328,9 +328,16 @@ type
       {Counts number of snippets in list.
         @return Number of snippets in list.
       }
-    function IsEmpty: Boolean; inline;
+    function IsEmpty: Boolean; overload; inline;
       {Checks if list is empty.
         @return True if list is empty, False otehrwise.
+      }
+    function IsEmpty(const UserDefined: Boolean): Boolean; overload; inline;
+      {Checks if sub-set of list from either from or not from use defined
+      database is empty.
+        @param UserDefined [in] Flags whether to check for snippets in user
+          database (True) or in main database (False).
+        @return True if required subset is empty, False if not empty.
       }
     property Items[Idx: Integer]: TSnippet read GetItem; default;
       {List of snippets}
@@ -762,6 +769,11 @@ function TSnippetList.IsEmpty: Boolean;
   }
 begin
   Result := Count = 0;
+end;
+
+function TSnippetList.IsEmpty(const UserDefined: Boolean): Boolean;
+begin
+  Result := Count(UserDefined) = 0;
 end;
 
 function TSnippetList.IsEqual(const AList: TSnippetList): Boolean;

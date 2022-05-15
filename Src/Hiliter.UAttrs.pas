@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2005-2022, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements classes that define syntax highlighter attributes along with an
  * object that provides a list of named highlighter attributes.
@@ -107,7 +107,11 @@ type
     ///  <remarks>Method of IHiliteAttrs.</remarks>
     function GetFontSize: Integer;
     ///  <summary>Sets size of highlighter font.</summary>
-    ///  <remarks>Method of IHiliteAttrs.</remarks>
+    ///  <remarks>
+    ///  <para>If font size is out of range of supported sizes then the
+    ///  highlighter font is reset to its default value.</para>
+    ///  <para>Method of IHiliteAttrs.</para>
+    ///  </remarks>
     procedure SetFontSize(const AFontSize: Integer);
     ///  <summary>Resets highlighter font name and size to default values.
     ///  </summary>
@@ -307,7 +311,10 @@ end;
 
 procedure THiliteAttrs.SetFontSize(const AFontSize: Integer);
 begin
-  fFontSize := AFontSize;
+  if TFontHelper.IsInCommonFontSizeRange(AFontSize) then
+    fFontSize := AFontSize
+  else
+    fFontSize := cDefFontSize;
 end;
 
 { THiliteElemAttrs }
