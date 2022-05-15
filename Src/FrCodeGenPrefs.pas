@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2010-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2010-2022, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements a frame that allows user to set source code generation
  * preferences.
@@ -685,7 +685,7 @@ begin
   AddMenuItem('Delphi 10.2 Tokyo', 32.0);
   AddMenuItem('Delphi 10.3 Rio', 33.0);
   AddMenuItem('Delphi 10.4 Sydney', 34.0);
-  AddMenuItem('Delphi 11 Alexandria', 35.0);
+  AddMenuItem('Delphi 11.x Alexandria', 35.0);
 end;
 
 procedure TCodeGenPrefsFrame.PreDefCompilerMenuClick(Sender: TObject);
