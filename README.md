@@ -10,7 +10,7 @@ What is more the CodeSnip 4 code base is stuck with using Delphi XE to compile i
 
 So, `belvedere` is planned to be a ground-up rebuild - a fresh start.
 
-Now, the `belvedere` branch contains all the old code - it was branched off CodeSnip 4.19.0's code base - **but** new development will take place in a new folder. Some of the old code may be used where it's suitable: it will be copied into the the new folder structure as required.
+Now, the `belvedere` branch contains all the old code - it was branched off CodeSnip 4.19.0's code base (since updated with v4.20.0 changes) - **but** new development will take place in a new folder. Some of the old code may be used where it's suitable: it will be copied into the the new folder structure as required.
 
 And will this attempt succeed where the others have failed? Who knows - I just think that it's got more of a chance than the other attempts! Regardless this is a long term project and CodeSnip 4 will continue to be developed.
 
