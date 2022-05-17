@@ -19,19 +19,22 @@ And will this attempt succeed where the others have failed? Who knows - I just t
 Initial thoughts are that CodeSnip 5 will:
 
 * Be designed to be 64 bit from the start.
-* The plan to use FMX didn't survive contact with reality for long. I want to use SynEdit, and I've just discovered that's a Windows & VCL only component, so that decides it: I'm sticking with the VCL and not looking to support platforms other than Windows in this version. ~~Use the FireMonkey framework to maximise the chance that the final program will be cross-platform - possibly Windows and Linux. **But** it will be built as Windows first. It's not planned to port it to mobile, and I don't do Mac, so that would be for someone else.~~
+* ~~Use the FireMonkey framework to maximise the chance that the final program will be cross-platform - possibly Windows and Linux. **But** it will be built as Windows first. It's not planned to port it to mobile, and I don't do Mac, so that would be for someone else.~~ **NOTE:** The plan to use FMX was dumped early on because I wanted to use SynEdit and it's VCL only!
 * Have high DPI support built in from the ground up. Not having that support in CodeSnip 4 is getting to be a big problem.
 * Support storing snippets in other languages while still providing extra facilities for Pascal code, like test compilation.
 * Switch to using SynEdit as the code editor to gain the benefit of syntax highlighted code in various languages.
 * No longer render the main display as HTML (if at all possible).
 * Finally get rid of the distinction between user-defined snippets and those downloaded from the DelphiDabbler Code Snippets Database - there will only be one database and all snippets will be editable. I'll try to retain a link back to the source of each snippet so those from the DelphiDabbler database will be remain updatable.
 * Have a completely new and extensible database format. Could be custom binary, could be SQLite, could be file based like now. But I want to get away from INI and XML files - too cumbersome and too slow.
+* Have greatly improved import / export capability, including the ability to import of the **whole** of someone else's database without the need to export it and then import it. It would be great if imported code could be tracked and updatable just like the plan for snippets from the DelphiDabbler database.
 * Use a new JSON based config file format?
 * Drop support for older OSs - may be Win10/Win11 only?
 * Drop support for legacy CodeSnip file formats from before CodeSnip 4.
-* Bring together the standard and portable versions: no more separately compiler versions. CodeSnip will probably run as a standard Windows application if installed in `%ProgramFiles%` and act as a portable application if it's installed anywhere else.
+* Bring together the standard and portable versions: no more separately compiled versions. CodeSnip will probably run as a standard Windows application if installed in `%ProgramFiles%` and act as a portable application if it's installed anywhere else.
 * Support different themes: e.g. light and dark.
 * Be more _testable_.
+
+_This list last updated 2022/05/17_
 
 There may be some code in the `pavilion` or `pagoda` branches that I can use, because they were also going in this direction.
 
