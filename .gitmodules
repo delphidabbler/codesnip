@@ -1,0 +1,3 @@
+[submodule "belvedere/src/vendor/grijjy-foundation"]
+	path = belvedere/src/vendor/grijjy-foundation
+	url = https://github.com/delphidabbler/GrijjyFoundation.git
