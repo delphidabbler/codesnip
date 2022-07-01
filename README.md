@@ -18,13 +18,13 @@ CodeSnip can import code from the DelphiDabbler [Code Snippets Database](https:/
 
 The program is available in both standard and portable editions.
 
-CodeSnip requires Windows 2000 or later and Internet Explorer 6 or later, although XP and IE 8 and later are preferred.
+CodeSnip requires Windows 2000 or later and Internet Explorer 6 or later, although XP and IE 8 and later are recommended.
 
 ## Installation
 
 The standard edition of CodeSnip is installed and removed using a standard Windows installer. Administrator privileges are required for installation.
 
-The portable edition has no installer. Simply follow the instructions in the [read me file](https://github.com/delphidabbler/codesnip/blob/master/Docs/ReadMe.txt) that is included in the download zip file.
+The portable edition has no installer. Simply follow the instructions in the [read me file](https://raw.githubusercontent.com/delphidabbler/codesnip/master/Docs/ReadMe.txt) that is included in the download zip file.
 
 ## Support
 
@@ -37,7 +37,7 @@ The following support is available CodeSnip users:
 
 There's also plenty of info available on how to compile CodeSnip from source - see below.
 
-<sup>*</sup> This link takes you to the most recent version of the read-me file -- it can change from release to release.
+> <sup>*</sup> This link takes you to the most recent version of the read-me file -- it can change from release to release.
 
 ## Source Code
 
@@ -45,7 +45,7 @@ CodeSnip's source code is maintained in the [`delphidabbler/codesnip`](https://g
 
 The [Git Flow](https://nvie.com/posts/a-successful-git-branching-model/) methodology has been adopted, with the exception of some branches that have been used in various attempts to start work on CodeSnip 5.
 
-The following branches existed as of 2022/01/01:
+The following branches existed as of 2022/07/01:
 
 * `master`: Always reflects the state of the source code as of the latest release.‡
 * `develop`: Main development branch. The head of this branch contains the latest v4 development code.
@@ -71,11 +71,11 @@ To contribute to CodeSnip 4 development please fork the repository on GitHub. Cr
 
 The license that applies to any existing file you edit will continue to apply to the edited file. Any existing license text or copyright statement **must not** be altered or removed.
 
-Any new file you contribute **must** either be licensed under the Mozilla Public License v2.0 (MPL2) or have a license compatible with the MPL2. If a license is not specified then the MPL2 will be applied to the file. You should insert a suitable copyright statement in the file.
+Any new file you contribute **must** either be licensed under the [Mozilla Public License v2.0](https://www.mozilla.org/MPL/2.0/) (MPL2) or have a license compatible with the MPL2. If a license is not specified then MPL2 will be assumed and will be applied to the file. You should insert a suitable copyright statement in the file.
 
 Any third party code used by your contributed code **must** also have a license compatible with the MPL2.
 
-> MPL2 boilerplate text, in several programming language's comment formats, can be found in the file `Docs/MPL-2.0-Boilerplate.txt`. You will need to change the name of the copyright holder.
+> MPL2 boilerplate text, in several programming language's comment formats, can be found in the file [`Docs/MPL-2.0-Boilerplate.txt`](https://raw.githubusercontent.com/delphidabbler/codesnip/master/Docs/MPL-2.0-Boilerplate.txt). You will need to change the name of the copyright holder.
 
 ### Compiling
 
@@ -87,7 +87,7 @@ CodeSnip 4 **must** be compiled with Delphi XE. See [Compiling & Source Code FAQ
 
 ## Change Log
 
-The program's current change log can be found in the file `CHANGELOG.md` in the root of the `master` branch.
+The program's current change log can be found in the file [`CHANGELOG.md`](https://github.com/delphidabbler/codesnip/blob/master/CHANGELOG.md) in the root of the `master` branch.
 
 > Note that CodeSnip v4.15.1 and earlier did not have `CHANGELOG.md`. Instead, some versions maintained a separate change log for each major version in the `Docs/ChangeLogs` directory.
 
