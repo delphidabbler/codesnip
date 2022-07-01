@@ -1172,6 +1172,14 @@ const
     'Software\Microsoft\Windows NT\CurrentVersion'
   );
 
+type
+  // Record used to map a build number to a release name
+  // Generally used in arrays
+  TBuildNameMap = record
+    Build: Integer;
+    Name: string;
+  end;
+
 const
   {
     Known windows build numbers.
@@ -1208,21 +1216,35 @@ const
 
   // Windows 10 ----------------------------------------------------------------
 
-  Win10TH1Build = 10240;        // Windows 10 TH1 - version 1507 (1st release)
-  Win10TH2Build = 10586;        // Windows 10 TH2 - version 1511
-  Win10RS1Build = 14393;        // Windows 10 RS1 - version 1607
-  Win10RS2Build = 15063;        // Windows 10 RS2 - version 1703
-  Win10RS3Build = 16299;        // Windows 10 RS3 - version 1709
-  Win10RS4Build = 17134;        // Windows 10 RS4 - version 1803
-  Win10RS5Build = 17763;        // Windows 10 RS5 - version 1809
-  Win1019H1Build = 18362;       // Windows 10 19H1 - version 1903
-  Win1019H2Build = 18363;       // Windows 10 19H2 - version 1909
-  Win1020H1Build = 19041;       // Windows 10 20H1 - version 2004
-  Win1020H2Build = 19042;       // Windows 10 20H2 - version 20H2
-  Win1021H1Build = 19043;       // Windows 10 21H1 - version 21H1
-                                //   revisions 844..964 were beta
-  Win1021H2Build = 19044;       // Windows 10 21H2 - version 21H2
-                                //   revisions 1147..1266 were previews
+  // Map of Win 10 builds from 1st release (version 1507) to version 20H2
+  Win10BuildMap: array[0..10] of TBuildNameMap = (
+    (Build: 10240; Name: 'Version 1507'),
+    (Build: 10586; Name: 'Version 1511: November Update'),
+    (Build: 14393; Name: 'Version 1607: Anniversary Update'),
+    (Build: 15063; Name: 'Version 1703: Creators Update'),
+    (Build: 16299; Name: 'Version 1709: Fall Creators Update'),
+    (Build: 17134; Name: 'Version 1803: April 2018 Update'),
+    (Build: 17763; Name: 'Version 1809: October 2018 Update'),
+    (Build: 18362; Name: 'Version 1903: May 2019 Update'),
+    (Build: 18363; Name: 'Version 1909: November 2019 Update'),
+    (Build: 19041; Name: 'Version 2004: May 2020 Update'),
+    // Note: Microsoft announced the official version name of build 19042 as
+    // '20H2', not '2010' which some had expected it to be
+    (Build: 19042; Name: 'Version 20H2: October 2020 Update')
+  );
+
+  // Additional information is available for Win 10 buulds from version 21H1,
+  // as follows:
+
+  // Windows 10 version 21H1:
+  //  * revisions 844..964 were Beta builds
+  //  * later revisions were Public Release builds
+  Win1021H1Build = 19043;
+
+  // Windows 10 version 21H2:
+  //  * revisions 1147..1266 were Preview builds
+  //  * later revisions were Public Release builds
+  Win1021H2Build = 19044;
 
   // Fast ring
   Win10FastRing: array[0..21] of Integer = (
@@ -1243,18 +1265,21 @@ const
   // Windows 11 ----------------------------------------------------------------
 
   // NOTE: Preview and beta & release versions of Windows 11 report version 10.0
-  Win11DevBuild = 21996;          // Windows 11 version Dev
-                                  //   - 10.0.21996.1 (Insider version)
-  Win11v21H2Build = 22000;        // Version depends on revision # [Rev#]:
-                                  //   Revision # 51,65,71,100,120,132,168:
-                                  //     Windows 11 version 21H2
-                                  //       - 10.0.22000.[Rev#] (Insider version)
-                                  //   Revision # 184
-                                  //     Windows 11 version 21H2
-                                  //       - 10.0.22000.184 (Beta Version)
-                                  //   Revision # 194
-                                  //     Windows 11 version 21H2
-                                  //       - ** 1st Public Release **
+
+  // Windows 11 version Dev: 10.0.21996.1 (Insider version)
+  Win11DevBuild = 21996;
+
+  // Windows 11 version 21H2:
+  //  * revisions 51,65,71,100,120,132,168 were Insider builds
+  //  * revision 184 was Beta build
+  //  * revision 194 and later were Public Release builds
+  Win11v21H2Build = 22000;
+
+  // Windows 11 version 22H2:
+  //  * revision 1 was Beta & Release Preview build
+  //  * revisions 105 & 169 were Release Preview builds
+  //  * revision 160 was Beta build
+  Win11v22H2Build = 22621;
 
   // Dev channel release - different sources give different names.
   // From what I can gather (and take this with a pinch of salt!):
@@ -1264,55 +1289,67 @@ const
   // * From build 22567 the release string changed from "Dev" to "22H"
 
   // Builds with version string "Dev"
-  Win11DevChannelDevBuilds: array[0..20] of Integer = (
-    22449, 22454, 22458, 22463, 22468,    // pre Win 11 release
+  Win11DevChannelDevBuilds: array[0..28] of Integer = (
+    // pre Win 11 release
+    22449, 22454, 22458, 22463, 22468,
+    // post Win 11 release, pre Win 11 22H2 beta release
     22471, 22478, 22483, 22489, 22494, 22499, 22504, 22509, 22518, 22523, 22526,
-    22533, 22538, 22543, 22557, 22563
+    22533, 22538, 22543, 22557, 22563,
+    // post Win 11 22H2 beta release
+    25115, 25120, 25126, 25131, 25136, 25140, 25145, 25151
   );
   // Builds with version string "22H2" in Dev channel
   Win11DevChannel22H2Builds: array[0..2] of Integer = (
     22567, 22572, 22579
   );
   // Builds with version string "22H2" in Dev & Beta channels
-  Win11DevBetaChannels22H2Builds: array[0..3] of Integer = (
-    22581, 22593, 22598, 22610
+  Win11DevBetaChannels22H2Builds: array[0..4] of Integer = (
+    22581, 22593, 22598, 22610, 22616
   );
 
   Win11FirstBuild = Win11DevBuild;  // First build number of Windows 11
 
-  // Windows 2016 Server -------------------------------------------------------
-  Win2016TP1Build = 9841;       // Win 2016 Server Technical Preview 1
-  Win2016TP2Build = 10074;      // Win 2016 Server Technical Preview 2
-  Win2016TP3Build = 10514;      // Win 2016 Server Technical Preview 3
-  Win2016TP4Build = 10586;      // Win 2016 Server Technical Preview 4
-  Win2016TP5Build = 14300;      // Win 2016 Server Technical Preview 5
-  Win2016RTMBuild = 14393;      // Win 2016 Server Release To Manufacturing
-  Win2016v1709Build = 16299;    // Win Server 2016 version 1709
-  Win2016v1803Build = 17134;    // Win Server 2016 version 1803
-  Win2016LastBuild = Win2016v1803Build; // Last build number of Win 2016 Server
-                                        // After this it's Win 2019 Server
+  // Windows server v10.0 version ----------------------------------------------
 
-  // Windows 2019 Server -------------------------------------------------------
-  // Insider Preview builds
+  // These are the Windows server versions that (with one exception) report
+  // version 10.0. There's always an exception with Windows versioning!
+
+  // Last build numbers of each "major" release before moving on to the next
+  Win2016LastBuild = 17134;
+  Win2019LastBuild = 18363;
+  WinServerLastBuild = 19042;
+
+  // Map of Windows server releases that are named straightforwardly
+  WinServerSimpleBuildMap: array[0..12] of TBuildNameMap = (
+    // Windows Server 2016
+    (Build: 10074; Name: 'Technical Preview 2'),
+    (Build: 10514; Name: 'Technical Preview 3'),
+    (Build: 10586; Name: 'Technical Preview 4'),
+    (Build: 14300; Name: 'Technical Preview 5'),
+    (Build: 14393; Name: 'Version 1607'),
+    (Build: 16299; Name: 'Version 1709'),
+    (Build: Win2016LastBuild; Name: 'Version 1803'),
+    // Windows Server 2019
+    (Build: 17763; Name: 'Version 1809'),
+    (Build: 18362; Name: 'Version 1903'),
+    (Build: Win2019LastBuild; Name: 'Version 1909'),
+    // Windows Server (no year number)
+    (Build: 19041; Name: 'Version 2004'),
+    (Build: WinServerLastBuild; Name: 'Version 20H2'),
+    // Windows Sever 2022
+    (Build: 20348; Name: 'Version 21H2')
+  );
+
+  // Windows server releases needing special handling
+
+  // Server 2016 Technical Preview 1: reports version 6.4 instead of 10.0!
+  Win2016TP1Build = 9841;
+
+  // Server 2019 Insider Preview builds: require format strings in names
   Win2019IPBuilds: array[0..9] of Integer = (
     17623, 17627, 17666, 17692, 17709, 17713, 17723, 17733, 17738, 17744
   );
-  // Release builds
-  Win2019v1809Build = 17763;    // Win Server 2019 version 1809
-  Win2019v1903Build = 18362;    // Win Server 2019 version 1903
-  Win2019v1909Build = 18363;    // Win Server 2019 version 1909
-  Win2019LastBuild = Win2019v1909Build; // Last build number of Win 2019 Server
-                                        // After this it's Windows Server
 
-  // Windows Server ------------------------------------------------------------
-  WinServerv2004Build = 19041;    // Win Server version 2004
-  WinServerv20H2Build = 19042;    // Win Server version 20H2
-  WinServerLastBuild = WinServerv20H2Build; // Last build number of Windows
-                                            // Server. After this it's Window
-                                            // 2022 Sever
-
-  // Windows 2022 Server -------------------------------------------------------
-  Win2022v21H2Build = 20348;    // Win Server 2022 version 21H2
 
 type
   // Function type of the GetNativeSystemInfo and GetSystemInfo functions
@@ -1411,9 +1448,12 @@ begin
   );
 end;
 
-// Checks if given build number matches that of the current OS.
-// Assumes VerifyVersionInfo & VerSetConditionMask APIs functions are available
-function IsBuildNumber(BuildNumber: DWORD): Boolean;
+// Checks how the OS build number compares to the given TestBuildNumber
+// according to operator Op.
+// Op must be one of VER_EQUAL, VER_GREATER, VER_GREATER_EQUAL, VER_LESS or
+// VER_LESS_EQUAL.
+// Assumes VerifyVersionInfo & VerSetConditionMask APIs functions are available.
+function TestBuildNumber(Op, TestBuildNumber: DWORD): Boolean;
 var
   OSVI: TOSVersionInfoEx;
   POSVI: POSVersionInfoEx;
@@ -1422,10 +1462,18 @@ begin
   Assert(Assigned(VerSetConditionMask) and Assigned(VerifyVersionInfo));
   FillChar(OSVI, SizeOf(OSVI), 0);
   OSVI.dwOSVersionInfoSize := SizeOf(OSVI);
-  OSVI.dwBuildNumber := BuildNumber;
+  OSVI.dwBuildNumber := TestBuildNumber;
   POSVI := @OSVI;
-  ConditionalMask := VerSetConditionMask(0, VER_BUILDNUMBER, VER_EQUAL);
+  ConditionalMask := VerSetConditionMask(0, VER_BUILDNUMBER, Op);
   Result := VerifyVersionInfo(POSVI, VER_BUILDNUMBER, ConditionalMask);
+end;
+
+// Checks if given build number matches that of the current OS.
+// Assumes VerifyVersionInfo & VerSetConditionMask APIs functions are available.
+function IsBuildNumber(BuildNumber: DWORD): Boolean;
+  {$IFDEF INLINEMETHODS}inline;{$ENDIF}
+begin
+  Result := TestBuildNumber(VER_EQUAL, BuildNumber);
 end;
 
 // Checks if any of the given build numbers match that of the current OS.
@@ -1444,6 +1492,31 @@ begin
     if IsBuildNumber(BNs[I]) then
     begin
       FoundBN := BNs[I];
+      Result := True;
+      Break;
+    end;
+  end;
+end;
+
+// Checks if any of the build numbers in the given array match that of the
+// current OS. If so the build number that was found then True is returned, and
+// the build number and it's associated text are passed back in the FoundBN and
+// FoundExtra parameters respectively. Otherwise False is returned, FoundBN is
+// set to 0 and FoundExtra is set to ''.
+function FindBuildNameAndExtraFrom(const Infos: array of TBuildNameMap;
+  var FoundBN: Integer; var FoundExtra: string): Boolean;
+var
+  I: Integer;
+begin
+  FoundBN := 0;
+  FoundExtra := '';
+  Result := False;
+  for I := Low(Infos) to High(Infos) do
+  begin
+    if IsBuildNumber(Infos[I].Build) then
+    begin
+      FoundBN := Infos[I].Build;
+      FoundExtra := Infos[I].Name;
       Result := True;
       Break;
     end;
@@ -1782,68 +1855,17 @@ begin
       begin
         case InternalMinorVersion of
           0:
-          // ** As of 2021/10/05 all releases of Windows 10 **and**
+          // ** As of 2022/06/01   all releases of Windows 10 **and**
           //    Windows 11 report major version 10 and minor version 0
+          //    Well that's helpful!!
           if (Win32ProductType <> VER_NT_DOMAIN_CONTROLLER)
             and (Win32ProductType <> VER_NT_SERVER) then
           begin
-            if IsBuildNumber(Win10TH1Build) then
+            if FindBuildNameAndExtraFrom(
+              Win10BuildMap, InternalBuildNumber, InternalExtraUpdateInfo
+            ) then
             begin
-              // First public release of Window 10
-              InternalBuildNumber := Win10TH1Build;
-              InternalExtraUpdateInfo := 'Version 1507';
-            end
-            else if IsBuildNumber(Win10TH2Build) then
-            begin
-              InternalBuildNumber := Win10TH2Build;
-              InternalExtraUpdateInfo := 'Version 1511: November Update';
-            end
-            else if IsBuildNumber(Win10RS1Build) then
-            begin
-              InternalBuildNumber := Win10RS1Build;
-              InternalExtraUpdateInfo := 'Version 1607: Anniversary Update';
-            end
-            else if IsBuildNumber(Win10RS2Build) then
-            begin
-              InternalBuildNumber := Win10RS2Build;
-              InternalExtraUpdateInfo := 'Version 1703: Creators Update';
-            end
-            else if IsBuildNumber(Win10RS3Build) then
-            begin
-              InternalBuildNumber := Win10RS3Build;
-              InternalExtraUpdateInfo := 'Version 1709: Fall Creators Update';
-            end
-            else if IsBuildNumber(Win10RS4Build) then
-            begin
-              InternalBuildNumber := Win10RS4Build;
-              InternalExtraUpdateInfo := 'Version 1803: April 2018 Update';
-            end
-            else if IsBuildNumber(Win10RS5Build) then
-            begin
-              InternalBuildNumber := Win10RS5Build;
-              InternalExtraUpdateInfo := 'Version 1809: October 2018 Update';
-            end
-            else if IsBuildNumber(Win1019H1Build) then
-            begin
-              InternalBuildNumber := Win1019H1Build;
-              InternalExtraUpdateInfo := 'Version 1903: May 2019 Update';
-            end
-            else if IsBuildNumber(Win1019H2Build) then
-            begin
-              InternalBuildNumber := Win1019H2Build;
-              InternalExtraUpdateInfo := 'Version 1909: November 2019 Update';
-            end
-            else if IsBuildNumber(Win1020H1Build) then
-            begin
-              InternalBuildNumber := Win1020H1Build;
-              InternalExtraUpdateInfo := 'Version 2004: May 2020 Update';
-            end
-            else if IsBuildNumber(Win1020H2Build) then
-            begin
-              InternalBuildNumber := Win1020H2Build;
-              // Note: Microsoft announced the official version name is '20H2',
-              //       not '2010' which some had expected it to be
-              InternalExtraUpdateInfo := 'Version 20H2: October 2020 Update';
+              // Nothing to do: required internal variables set in function call
             end
             else if IsBuildNumber(Win1021H1Build) then
             begin
@@ -1882,7 +1904,6 @@ begin
             end
             // Win 11 releases are reporting v10.0
             // Details taken from: https://tinyurl.com/usupsz4a
-            // Correct according to above web page as of 2021-09-11
             else if IsBuildNumber(Win11DevBuild) then
             begin
               InternalBuildNumber := Win11DevBuild;
@@ -1899,7 +1920,7 @@ begin
               // *** Amazingly one of them, revision 194, is the 1st public
               //     release of Win 11 -- well hidden eh?!
               InternalBuildNumber := Win11v21H2Build;
-              case InternalBuildNumber of
+              case InternalRevisionNumber of
                 194..MaxInt:
                   // Public releases of Windows 11 have build number >= 194
                   InternalExtraUpdateInfo := 'Version 21H2';
@@ -1915,7 +1936,35 @@ begin
                   );
                 else
                   InternalExtraUpdateInfo := Format(
-                    'Unknown release v10.0.%d.%d',
+                    'Version 21H2 [Unknown release v10.0.%d.%d]',
+                    [InternalBuildNumber, InternalRevisionNumber]
+                  );
+              end;
+            end
+            else if IsBuildNumber(Win11v22H2Build) then
+            begin
+              InternalBuildNumber := Win11v22H2Build;
+              // See comments with declaration of Win11v22H2Build for details
+              // of naming of revisions
+              case InternalRevisionNumber of
+                1:
+                  InternalExtraUpdateInfo := Format(
+                    'Version 22H2 [Beta & Release Preview v10.0.%d.%d]',
+                    [InternalBuildNumber, InternalRevisionNumber]
+                  );
+                105, 169:
+                  InternalExtraUpdateInfo := Format(
+                    'Version 22H2 [Release Preview v10.0.%d.%d]',
+                    [InternalBuildNumber, InternalRevisionNumber]
+                  );
+                160:
+                  InternalExtraUpdateInfo := Format(
+                    'Version 22H2 [Beta v10.0.%d.%d]',
+                    [InternalBuildNumber, InternalRevisionNumber]
+                  );
+                else
+                  InternalExtraUpdateInfo := Format(
+                    'Version 22H2 [Unknown release v10.0.%d.%d]',
                     [InternalBuildNumber, InternalRevisionNumber]
                   );
               end;
@@ -1953,92 +2002,37 @@ begin
           end
           else // Win32ProductType in [VER_NT_DOMAIN_CONTROLLER, VER_NT_SERVER]
           begin
-            // Check for Win Server 2016 technical previews.
-            // We don't check for TP1 // here because that reported version 6.4,
-            // not version 10!
-            if IsBuildNumber(Win2016TP2Build) then
+            // Check for the easy-to-handle Win Server v10. builds, i.e. the
+            // ones where Extra Update Info is just plain text.
+            if FindBuildNameAndExtraFrom(
+              WinServerSimpleBuildMap,
+              InternalBuildNumber,
+              InternalExtraUpdateInfo
+            ) then
             begin
-              InternalBuildNumber := Win2016TP2Build;
-              InternalExtraUpdateInfo := 'Technical Preview 2';
-            end
-            else if IsBuildNumber(Win2016TP3Build) then
-            begin
-              InternalBuildNumber := Win2016TP3Build;
-              InternalExtraUpdateInfo := 'Technical Preview 3';
-            end
-            else if IsBuildNumber(Win2016TP4Build) then
-            begin
-              InternalBuildNumber := Win2016TP4Build;
-              InternalExtraUpdateInfo := 'Technical Preview 4';
-            end
-            else if IsBuildNumber(Win2016TP5Build) then
-            begin
-              InternalBuildNumber := Win2016TP5Build;
-              InternalExtraUpdateInfo := 'Technical Preview 5';
-            end
-            else if IsBuildNumber(Win2016RTMBuild) then
-            begin
-              InternalBuildNumber := Win2016RTMBuild;
-              InternalExtraUpdateInfo := 'Version 1607';
-            end
-            else if IsBuildNumber(Win2016v1709Build) then
-            begin
-              InternalBuildNumber := Win2016v1709Build;
-              InternalExtraUpdateInfo := 'Version 1709';
-            end
-            else if IsBuildNumber(Win2016v1803Build) then
-            begin
-              InternalBuildNumber := Win2016v1803Build;
-              InternalExtraUpdateInfo := 'Version 1803';
+              // Nothing to do: required internal variables set in function call
             end
             else if FindBuildNumberFrom(
               Win2019IPBuilds, InternalBuildNumber
             ) then
             begin
+              // Windows 2019 Insider preview builds require build number in
+              // Extra Update Info.
               InternalExtraUpdateInfo := Format(
                 'Insider Preview Build %d', [InternalBuildNumber]
               );
             end
-            else if IsBuildNumber(Win2019v1809Build) then
-            begin
-              InternalBuildNumber := Win2019v1809Build;
-              InternalExtraUpdateInfo := 'Version 1809';
-            end
-            else if IsBuildNumber(Win2019v1903Build) then
-            begin
-              InternalBuildNumber := Win2019v1903Build;
-              InternalExtraUpdateInfo := 'Version 1903';
-            end
-            else if IsBuildNumber(Win2019v1909Build) then
-            begin
-              InternalBuildNumber := Win2019v1909Build;
-              InternalExtraUpdateInfo := 'Version 1909';
-            end
-            else if IsBuildNumber(WinServerv2004Build) then
-            begin
-              InternalBuildNumber := WinServerv2004Build;
-              InternalExtraUpdateInfo := 'Version 2004';
-            end
-            else if IsBuildNumber(WinServerv20H2Build) then
-            begin
-              InternalBuildNumber := WinServerv20H2Build;
-              InternalExtraUpdateInfo := 'Version 20H2';
-            end
-            else if IsBuildNumber(Win2022v21H2Build) then
-            begin
-              InternalBuildNumber := Win2022v21H2Build;
-              InternalExtraUpdateInfo := 'Version 21H2';
-            end;
           end;
         end;
       end;
     end;
 
     // ** If InternalBuildNumber is 0 when we get here then we failed to get it
-    //    We no longer look in registry as of SVN commit r2001, because this can
-    //    get spoofed. E.g. when running on Windows 10 TH2 registry call is
-    //    returning build number of 7600 even though regedit reveals it to be
-    //    10586 !
+    //    We no longer look in registry as of SVN commit r2001 (Git commit
+    //    d44aea3e6e0ed7bd317398252fcf862051b159f7 in ddablib/sysinfo on
+    //    GitHub), because this can get spoofed. E.g. when running on Windows 10
+    //    TH2 registry call is returning build number of 7600 even though
+    //    regedit reveals it to be 10586 !
     //    So we must now consider a build number of 0 as indicating an unknown
     //    build number.
     //    But note that some users report that their registry is returning
@@ -2725,7 +2719,7 @@ begin
             0:
               if not IsServer then
               begin
-                if InternalBuildNumber < Win11FirstBuild then
+                if TestBuildNumber(VER_LESS, Win11FirstBuild) then
                   Result := osWin10
                 else
                   // ** As of 2021-10-05 Win 11 is reporting version 10.0!
@@ -2733,11 +2727,11 @@ begin
               end
               else
               begin
-                if InternalBuildNumber <= Win2016LastBuild then
+                if TestBuildNumber(VER_LESS_EQUAL, Win2016LastBuild) then
                   Result := osWin10Svr
-                else if InternalBuildNumber <= Win2019LastBuild then
+                else if TestBuildNumber(VER_LESS_EQUAL, Win2019LastBuild) then
                   Result := osWinSvr2019
-                else if InternalBuildNumber <= WinServerLastBuild then
+                else if TestBuildNumber(VER_LESS_EQUAL, WinServerLastBuild) then
                   Result := osWinServer
                 else
                   Result := osWinSvr2022;

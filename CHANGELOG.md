@@ -10,6 +10,11 @@ This change log begins with the first ever pre-release version of _CodeSnip_. Re
 
 From v4.1.0 the version numbering has attempted to adhere to the principles of [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## Release v4.20.1 of 01 July 2022
+
+* Operating system detection code was updated to (a) fix bugs and (b) detect some Dev, Beta and Release Preview builds of Windows 11 22H2.
+* Fixed copyright date in `Docs/License.html`.
+
 ## Release v4.20.0 of 15 May 2022
 
 * Added an option to delete the user defined database.
