@@ -478,6 +478,11 @@ type
     procedure actViewTestUnitUpdate(Sender: TObject);
     ///  <summary>Displays the Welcome page in the details pane.</summary>
     procedure actWelcomeExecute(Sender: TObject);
+    ///  <summary>Handles events triggered when help system is invoked. Prevents
+    ///  exception being raised when F1 key is pressed when a menu is dropped
+    ///  down.</summary>
+    function appEventsHelp(Command: Word; Data: Integer;
+      var CallHelp: Boolean): Boolean;
     ///  <summary>Handles events triggered when a control issues a hint. The
     ///  hint is displayed in the form's status bar.</summary>
     procedure appEventsHint(Sender: TObject);
@@ -1213,6 +1218,16 @@ begin
   // initialise display
   fMainDisplayMgr.Initialise(fWindowSettings.OverviewTab);
   fMainDisplayMgr.ShowWelcomePage;
+end;
+
+function TMainForm.appEventsHelp(Command: Word; Data: Integer;
+  var CallHelp: Boolean): Boolean;
+begin
+  // Prevent Delphi Help system from interfering!
+  // This prevents exception being raised when F1 is pressed over menu items
+  // while still allowing our custom help manager to operate.
+  CallHelp := False;
+  Result := True;
 end;
 
 procedure TMainForm.appEventsHint(Sender: TObject);
