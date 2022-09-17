@@ -1,9 +1,9 @@
 {
  * This Source Code Form is subject to the terms of the Mozilla Public License,
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2001-2022, Peter Johnson (@delphidabbler).
+ * Copyright (C) 2001-2022, Peter Johnson (https://gravatar.com/delphidabbler).
  *
  * This unit contains various static classes, constants, type definitions and
  * global variables for use in providing information about the host computer and
@@ -232,7 +232,7 @@ const
   // GetProductInfo API call used with Windows Vista and later
   // ** Thanks to Laurent Pierre for providing these definitions.
   // ** Additional definitions were obtained from
-  //    http://msdn.microsoft.com/en-us/library/ms724358
+  //    https://msdn.microsoft.com/en-us/library/ms724358
   PRODUCT_BUSINESS                            = $00000006;
   PRODUCT_BUSINESS_N                          = $00000010;
   PRODUCT_CLUSTER_SERVER                      = $00000012;
@@ -324,7 +324,7 @@ const
   // These constants are required for use with GetSystemMetrics to detect
   // certain editions. GetSystemMetrics returns non-zero when passed these flags
   // if the associated edition is present.
-  // Obtained from http://msdn.microsoft.com/en-us/library/ms724385
+  // Obtained from https://msdn.microsoft.com/en-us/library/ms724385
   SM_TABLETPC       = 86;     // Detects XP Tablet Edition
   SM_MEDIACENTER    = 87;     // Detects XP Media Center Edition
   SM_STARTER        = 88;     // Detects XP Starter Edition
@@ -806,7 +806,7 @@ type
     ///  <para>WARNING: True is also returned when running in Windows 9x
     ///  compatibility mode on a Windows NT platform system, regardless of
     ///  whether the user has admin privileges or not.</para>
-    ///  <para>Based on code at http://edn.embarcadero.com/article/26752</para>
+    ///  <para>Based on a former Embarcadero article.</para>
     ///  </remarks>
     class function IsAdmin: Boolean;
 
@@ -818,7 +818,7 @@ type
     ///  earlier compatibility mode on Windows Vista or later, regardless of
     ///  whether UAC is enabled or not.</para>
     ///  <para>Based on code on Stack Overflow, answer by norgepaul, at
-    ///  http://tinyurl.com/avlztmg</para>
+    ///  https://tinyurl.com/avlztmg</para>
     ///  </remarks>
     class function IsUACActive: Boolean;
 
@@ -983,7 +983,7 @@ const
   // Map of product codes per GetProductInfo API to product names
   // ** Laurent Pierre supplied original code on which this map is based
   //    It has been modified and extended using MSDN documentation at
-  //    http://msdn.microsoft.com/en-us/library/ms724358
+  //    https://msdn.microsoft.com/en-us/library/ms724358
   cProductMap: array[1..87] of record
     Id: Cardinal; // product ID
     Name: string; // product name
@@ -1246,6 +1246,10 @@ const
   //  * later revisions were Public Release builds
   Win1021H2Build = 19044;
 
+  // Windows 10 version 22H2
+  // * revision 1865 was Release Preview build (KB5015878)
+  Win1022H2Build = 19045;
+
   // Fast ring
   Win10FastRing: array[0..21] of Integer = (
     19536, 19541, 19546, 19551, 19555, 19559, 19564, 19569, 19577, 19582, 19587,
@@ -1270,16 +1274,22 @@ const
   Win11DevBuild = 21996;
 
   // Windows 11 version 21H2:
-  //  * revisions 51,65,71,100,120,132,168 were Insider builds
-  //  * revision 184 was Beta build
-  //  * revision 194 and later were Public Release builds
+  //  * Dev channel: revs 51,65,71
+  //  * Dev & Beta channels: revs 100,120,132,160,168
+  //  * Beta & Release Preview channels: revs 176,184
+  //  * Public Release: rev 194 and later
   Win11v21H2Build = 22000;
 
-  // Windows 11 version 22H2:
-  //  * revision 1 was Beta & Release Preview build
-  //  * revisions 105 & 169 were Release Preview builds
-  //  * revision 160 was Beta build
+  // Windows 11 version 22H2
+  //
+  // Build 22631 was the original beta build.
+  //  * Beta & Release Preview channels: rev 1
+  //  * Beta channel: revs 160,290,436,440,450,575,586,590
+  //  * Release Preview channel: revs 105,169,232,317,382,457
   Win11v22H2Build = 22621;
+  // Build 22632 was added as an alternative Beta channel build as of rev 290:
+  //  * Beta channel: revs 290,436,440,450,575,586,590
+  Win11v22H2BuildAlt = 22622;
 
   // Dev channel release - different sources give different names.
   // From what I can gather (and take this with a pinch of salt!):
@@ -1289,14 +1299,15 @@ const
   // * From build 22567 the release string changed from "Dev" to "22H"
 
   // Builds with version string "Dev"
-  Win11DevChannelDevBuilds: array[0..28] of Integer = (
+  Win11DevChannelDevBuilds: array[0..36] of Integer = (
     // pre Win 11 release
     22449, 22454, 22458, 22463, 22468,
     // post Win 11 release, pre Win 11 22H2 beta release
     22471, 22478, 22483, 22489, 22494, 22499, 22504, 22509, 22518, 22523, 22526,
     22533, 22538, 22543, 22557, 22563,
     // post Win 11 22H2 beta release
-    25115, 25120, 25126, 25131, 25136, 25140, 25145, 25151
+    25115, 25120, 25126, 25131, 25136, 25140, 25145, 25151, 25158, 25163, 25169,
+    25174, 25179, 25182, 25188, 25193
   );
   // Builds with version string "22H2" in Dev channel
   Win11DevChannel22H2Builds: array[0..2] of Integer = (
@@ -1813,7 +1824,7 @@ begin
       Win32ProductType := 0;
     // NOTE: It's going to be very slow to test for all possible build numbers,
     // so I've narrowed the search down using the information at
-    // http://en.wikipedia.org/wiki/Windows_NT
+    // https://en.wikipedia.org/wiki/Windows_NT
     case InternalMajorVersion of
       6:
       begin
@@ -1884,6 +1895,13 @@ begin
                 InternalExtraUpdateInfo := InternalExtraUpdateInfo
                   + ' (preview)';
             end
+            else if IsBuildNumber(Win1022H2Build) then
+            begin
+              InternalBuildNumber := Win1022H2Build;
+              { TODO: As of 1 Aug 2022 all rev numbers are previews.
+                      Change following once this is no longer the case. }
+              InternalExtraUpdateInfo := 'Version 22H2 (preview)';
+            end
             else if FindBuildNumberFrom(
               Win10DevChannel, InternalBuildNumber
             ) then
@@ -1924,14 +1942,20 @@ begin
                 194..MaxInt:
                   // Public releases of Windows 11 have build number >= 194
                   InternalExtraUpdateInfo := 'Version 21H2';
-                51, 65, 71, 100, 120, 132, 168:
+                51, 65, 71:
                   InternalExtraUpdateInfo := Format(
-                    'Version 21H2 [Insider v10.0.%d.%d]',
+                    'Version 21H2 [Dev Channel v10.0.%d.%d]',
                     [InternalBuildNumber, InternalRevisionNumber]
                   );
-                184:
+                100, 120, 132, 160, 168:
                   InternalExtraUpdateInfo := Format(
-                    'Version 21H2 [Beta v10.0.%d.%d]',
+                    'Version 21H2 [Dev & Beta Channels v10.0.%d.%d]',
+                    [InternalBuildNumber, InternalRevisionNumber]
+                  );
+                176, 184:
+                  InternalExtraUpdateInfo := Format(
+                    'Version 21H2 '
+                      + '[Beta & Release Preview Channels v10.0.%d.%d]',
                     [InternalBuildNumber, InternalRevisionNumber]
                   );
                 else
@@ -1943,21 +1967,40 @@ begin
             end
             else if IsBuildNumber(Win11v22H2Build) then
             begin
+              // See comments with declarations of Win11v22H2Build and
+              // Win11v22H2BuildAlt for details of naming of revisions.
               InternalBuildNumber := Win11v22H2Build;
-              // See comments with declaration of Win11v22H2Build for details
-              // of naming of revisions
               case InternalRevisionNumber of
                 1:
                   InternalExtraUpdateInfo := Format(
                     'Version 22H2 [Beta & Release Preview v10.0.%d.%d]',
                     [InternalBuildNumber, InternalRevisionNumber]
                   );
-                105, 169:
+                105, 169, 232, 317, 382, 457:
                   InternalExtraUpdateInfo := Format(
                     'Version 22H2 [Release Preview v10.0.%d.%d]',
                     [InternalBuildNumber, InternalRevisionNumber]
                   );
-                160:
+                160, 290, 436, 440, 450, 575, 586, 590:
+                  InternalExtraUpdateInfo := Format(
+                    'Version 22H2 [Beta v10.0.%d.%d]',
+                    [InternalBuildNumber, InternalRevisionNumber]
+                  );
+                else
+                  InternalExtraUpdateInfo := Format(
+                    'Version 22H2 [Unknown release v10.0.%d.%d]',
+                    [InternalBuildNumber, InternalRevisionNumber]
+                  );
+              end;
+            end
+            else if IsBuildNumber(Win11v22H2BuildAlt) then
+            begin
+              // See comments with declarations of Win11v22H2Build and
+              // Win11v22H2BuildAlt for details of naming of revisions.
+              InternalBuildNumber := Win11v22H2BuildAlt;
+              // Set fallback update info for unknown revisions
+              case InternalRevisionNumber of
+                290, 436, 440, 450, 575, 586, 590:
                   InternalExtraUpdateInfo := Format(
                     'Version 22H2 [Beta v10.0.%d.%d]',
                     [InternalBuildNumber, InternalRevisionNumber]
@@ -2196,8 +2239,8 @@ begin
     osWinSvr2003, osWinSvr2003R2:
     begin
       // We check different processor architectures and act accordingly
-      // This code closely based on MS's sample code found at
-      // http://msdn2.microsoft.com/en-us/library/ms724429
+      // This code closely based on sample code by Microsoft that is no longer
+      // available
       if InternalProcessorArchitecture = PROCESSOR_ARCHITECTURE_IA64 then
       begin
         if CheckSuite(VER_SUITE_DATACENTER) then
@@ -2688,9 +2731,9 @@ begin
             3:
               // NOTE: Version 6.3 may only be reported by Windows if the
               // application is "manifested" for Windows 8.1. See
-              // http://bit.ly/MJSO8Q. Getting the OS via VerifyVersionInfo
-              // instead of GetVersion or GetVersionEx should work round this
-              // for Windows 8.1 (i.e. version 6.3).
+              // https://tinyurl.com/2s384ha4. Getting the OS via
+              // VerifyVersionInfo instead of GetVersion or GetVersionEx should
+              // work round this for Windows 8.1 (i.e. version 6.3).
               if not IsServer then
                 Result := osWin8Point1
               else
@@ -2699,7 +2742,7 @@ begin
               // Version 6.4 was used for Windows 2016 server tech preview 1.
               // This version *may* only be detected by Windows if the
               // application is "manifested" for the correct Windows version.
-              // See http://bit.ly/MJSO8Q.
+              // See https://bit.ly/MJSO8Q.
               if IsServer then
                 Result := osWin10Svr;
             else
@@ -2711,7 +2754,7 @@ begin
         begin
           // NOTE: Version 10 and later may only be reported by Windows if the
           // application is "manifested" for the correct Windows version. See
-          // http://bit.ly/MJSO8Q. Previously, getting the OS from
+          // https://bit.ly/MJSO8Q. Previously, getting the OS from
           // VerifyVersionInfo instead of GetVersion or GetVersionEx worked
           // round this, but MS deprecated this in Windows 10, reverting
           // VerifyVersionInfo to work like GetVersion. WHY????!!!!
@@ -3001,8 +3044,7 @@ end;
 
 class function TPJComputerInfo.MACAddress: string;
 type
-  // Based on code at MSDN knowledge base Q118623 article at
-  // http://support.microsoft.com/kb/q118623/}
+  // Based on former MSDN knowledge base article Q118623.
   // According to MSDN this method should fail on Windows 6.0 (Vista) and later.
   // It has been known to fail on Vista, but works on Vista Home Premium SP1!
   // It would seem that the call will succeed if there's an active network with
@@ -3252,4 +3294,3 @@ initialization
 InitPlatformIdEx;
 
 end.
-
