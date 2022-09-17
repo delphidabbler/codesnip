@@ -1,0 +1,6 @@
+# Customise GitHub Linguist
+
+# Highlight Inno Setup's .ps files as Pascal
+*.ps linguist-language=Pascal
+# Include Markdown files in stats
+*.md linguist-detectable
