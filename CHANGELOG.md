@@ -10,6 +10,12 @@ This change log begins with the first ever pre-release version of _CodeSnip_. Re
 
 From v4.1.0 the version numbering has attempted to adhere to the principles of [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## Release v4.20.2 of 04 November 2022
+
+* Fixes bug where an exception was raised when selecting a main menu item with the cursor keys then pressing F1. [issue 54]
+* Update operating system detection code to correctly detect Version 22H2 of Windows 10 & Windows 11 plus some other Windows releases on the Dev, Beta & Release channels. [issues 55, 61 & 62]
+* Fix appearance of copyright symbol in version information.
+
 ## Release v4.20.1 of 01 July 2022
 
 * Operating system detection code was updated to (a) fix bugs and (b) detect some Dev, Beta and Release Preview builds of Windows 11 22H2.
