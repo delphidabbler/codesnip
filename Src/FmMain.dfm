@@ -1174,6 +1174,7 @@ inherited MainForm: TMainForm
     end
   end
   object appEvents: TApplicationEvents
+    OnHelp = appEventsHelp
     OnHint = appEventsHint
     Left = 291
     Top = 96
