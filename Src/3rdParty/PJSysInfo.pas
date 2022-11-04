@@ -1186,13 +1186,10 @@ const
     Sources:
       https://en.wikipedia.org/wiki/List_of_Microsoft_Windows_versions
       https://en.wikipedia.org/wiki/Windows_NT
-      https://en.wikipedia.org/wiki/Windows_10_version_history
-      https://en.wikipedia.org/wiki/Windows_11_version_history
       https://en.wikipedia.org/wiki/Windows_Server
       https://en.wikipedia.org/wiki/Windows_Server_2019
       https://en.wikipedia.org/wiki/Windows_Server_2016
       https://tinyurl.com/y8tfadm2 (MS Windows Server release information)
-      https://tinyurl.com/usupsz4a (Win 11 Version Numbers & Build Versions)
       https://docs.microsoft.com/en-us/lifecycle/products/windows-server-2022
       https://tinyurl.com/yj5e72jt (MS Win 10 release info)
       https://tinyurl.com/kd3weeu7 (MS Server release info)
@@ -1282,13 +1279,12 @@ const
 
   // Windows 11 version 22H2
   //
-  // Build 22631 was the original beta build.
-  //  * Beta & Release Preview channels: rev 1
-  //  * Beta channel: revs 160,290,436,440,450,575,586,590
-  //  * Release Preview channel: revs 105,169,232,317,382,457
+  // Build 22621 was the original beta build. Same build used for releases and
+  // various other channels.
+  // See **REF1** in implementation
   Win11v22H2Build = 22621;
   // Build 22632 was added as an alternative Beta channel build as of rev 290:
-  //  * Beta channel: revs 290,436,440,450,575,586,590
+  //  * Beta channel: revs 290,436,440,450,575,586,590,598,601
   Win11v22H2BuildAlt = 22622;
 
   // Dev channel release - different sources give different names.
@@ -1299,7 +1295,7 @@ const
   // * From build 22567 the release string changed from "Dev" to "22H"
 
   // Builds with version string "Dev"
-  Win11DevChannelDevBuilds: array[0..36] of Integer = (
+  Win11DevChannelDevBuilds: array[0..43] of Integer = (
     // pre Win 11 release
     22449, 22454, 22458, 22463, 22468,
     // post Win 11 release, pre Win 11 22H2 beta release
@@ -1307,7 +1303,9 @@ const
     22533, 22538, 22543, 22557, 22563,
     // post Win 11 22H2 beta release
     25115, 25120, 25126, 25131, 25136, 25140, 25145, 25151, 25158, 25163, 25169,
-    25174, 25179, 25182, 25188, 25193
+    25174, 25179, 25182, 25188, 25193, 25197, 25201, 25206, 25211,
+    // post Win 11 22H2 release
+    25217, 25227, 25231
   );
   // Builds with version string "22H2" in Dev channel
   Win11DevChannel22H2Builds: array[0..2] of Integer = (
@@ -1317,6 +1315,8 @@ const
   Win11DevBetaChannels22H2Builds: array[0..4] of Integer = (
     22581, 22593, 22598, 22610, 22616
   );
+
+  Win11FutureComponentBetaChannelBuilds: array[0..0] of Integer = (22623);
 
   Win11FirstBuild = Win11DevBuild;  // First build number of Windows 11
 
@@ -1856,7 +1856,7 @@ begin
           // ** Tried to read this info from registry, but for some weird
           //    reason the required value is reported as non-existant by
           //    TRegistry, even though it is present in registry.
-          // ** Seems there is some kind of regitry "spoofing" going on (see
+          // ** Seems there is some kind of registry "spoofing" going on (see
           //    below.
           InternalCSDVersion := Format(
             'Service Pack %d', [Win32ServicePackMajor]
@@ -1866,7 +1866,7 @@ begin
       begin
         case InternalMinorVersion of
           0:
-          // ** As of 2022/06/01   all releases of Windows 10 **and**
+          // ** As of 2022/06/01 all releases of Windows 10 **and**
           //    Windows 11 report major version 10 and minor version 0
           //    Well that's helpful!!
           if (Win32ProductType <> VER_NT_DOMAIN_CONTROLLER)
@@ -1898,9 +1898,13 @@ begin
             else if IsBuildNumber(Win1022H2Build) then
             begin
               InternalBuildNumber := Win1022H2Build;
-              { TODO: As of 1 Aug 2022 all rev numbers are previews.
-                      Change following once this is no longer the case. }
-              InternalExtraUpdateInfo := 'Version 22H2 (preview)';
+              if IsInRange(InternalRevisionNumber, 1865, 2075) then
+                InternalExtraUpdateInfo := Format(
+                  'Version 22H2 [Release Preview v10.0.%d.%d]',
+                  [InternalBuildNumber, InternalRevisionNumber]
+                )
+              else
+                InternalExtraUpdateInfo := 'Version 22H2';
             end
             else if FindBuildNumberFrom(
               Win10DevChannel, InternalBuildNumber
@@ -1967,21 +1971,23 @@ begin
             end
             else if IsBuildNumber(Win11v22H2Build) then
             begin
-              // See comments with declarations of Win11v22H2Build and
-              // Win11v22H2BuildAlt for details of naming of revisions.
+              // **REF1**
               InternalBuildNumber := Win11v22H2Build;
               case InternalRevisionNumber of
+                876..MaxInt, 382, 521, 525, 608, 674, 675, 755:
+                  InternalExtraUpdateInfo := 'Version 22H2';
                 1:
                   InternalExtraUpdateInfo := Format(
                     'Version 22H2 [Beta & Release Preview v10.0.%d.%d]',
                     [InternalBuildNumber, InternalRevisionNumber]
                   );
-                105, 169, 232, 317, 382, 457:
+                105, 169, 232, 317, 457, 607, 754:
                   InternalExtraUpdateInfo := Format(
                     'Version 22H2 [Release Preview v10.0.%d.%d]',
                     [InternalBuildNumber, InternalRevisionNumber]
                   );
-                160, 290, 436, 440, 450, 575, 586, 590:
+                160, 290, 436, 440, 450, 575, 586, 590, 598, 601, 730, 741, 746,
+                870, 875:
                   InternalExtraUpdateInfo := Format(
                     'Version 22H2 [Beta v10.0.%d.%d]',
                     [InternalBuildNumber, InternalRevisionNumber]
@@ -2000,9 +2006,9 @@ begin
               InternalBuildNumber := Win11v22H2BuildAlt;
               // Set fallback update info for unknown revisions
               case InternalRevisionNumber of
-                290, 436, 440, 450, 575, 586, 590:
+                290, 436, 440, 450, 575, 586, 590, 598, 601:
                   InternalExtraUpdateInfo := Format(
-                    'Version 22H2 [Beta v10.0.%d.%d]',
+                    'Version 22H2 [October Component Update v10.0.%d.%d]',
                     [InternalBuildNumber, InternalRevisionNumber]
                   );
                 else
@@ -2042,6 +2048,15 @@ begin
                 [InternalBuildNumber, InternalRevisionNumber]
               );
             end
+            else if FindBuildNumberFrom(
+              Win11FutureComponentBetaChannelBuilds, InternalBuildNumber
+            ) then
+            begin
+              InternalExtraUpdateInfo := Format(
+                'Future Component Update Beta v10.0.%d.%d',
+                [InternalBuildNumber, InternalRevisionNumber]
+              );
+            end;
           end
           else // Win32ProductType in [VER_NT_DOMAIN_CONTROLLER, VER_NT_SERVER]
           begin
@@ -3294,3 +3309,4 @@ initialization
 InitPlatformIdEx;
 
 end.
+
