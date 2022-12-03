@@ -5,7 +5,7 @@ The `caboli` branch of the CodeSnip repo is where it is intended to:
 1. convert CodeSnip to compile with Delphi 11 Alexandria
 2. give the UI a major overhaul and polish.
 
-> :information_source: "Caboli" is a Welsh language word that translates into English is to Polish or to buff.
+> :information_source: "Caboli" is a Welsh language word that translates into English as to "polish" or to "buff".
 
 ## Rationale 
 
