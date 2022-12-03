@@ -3,10 +3,11 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2006-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2006-2022, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements class that extends TThemeServices with new methods and adds
- * support for multiple event handlers for the OnThemeChange event.
+ * support for multiple event handlers for the OnThemeChange event. Also updates
+ * active theme when underlying theme services detects a theme change event.
 }
 
 
@@ -19,6 +20,7 @@ interface
 uses
   // Delphi
   Classes, Windows, Graphics, Themes, Messages,
+  VCL.Styles,
   // Project
   UMultiCastEvents, UMessageWindow;
 
@@ -32,9 +34,18 @@ type
     }
   TThemeServicesEx = class(TThemeServices)
   strict private
+    const
+      // Theme style names
+      DarkModeTheme = 'Carbon';
+      LightModeTheme = 'Windows10';
+    class var
+      // Theme mode currently in use
+      fCurrentThemeMode: string;
     var
       fMessageWdw: TMessageWindow;      // Intercepts theme change messages
       fThemeChanges: TMultiCastEvents;  // Support for multi-cast events
+    // Checks if dark mode enabled (Win 10 & later)
+    class function IsDarkModeEnabled: Boolean;
     function InternalGetElementSize(
       const Details: TThemedElementDetails): TSize;
       {Gets size of a theme part in a specified state.
@@ -54,7 +65,7 @@ type
       }
   public
     constructor Create; override;
-      {Class constructor. Sets up object.
+      {Object constructor. Sets up object.
       }
     destructor Destroy; override;
       {Class destructor. Tears down object.
@@ -110,6 +121,8 @@ type
         @param Msg [in/out] Message to be handled. Left unchanged.
         @param Handled [in/out] Set to true if message is WM_WININICHANGE.
       }
+    // Set theme mode according to user preferences
+    class procedure SetAppropriateThemeMode;
   end;
 
 
@@ -125,8 +138,10 @@ implementation
 uses
   // Delphi
   SysUtils, UxTheme, ComObj,
+  System.Win.Registry,
   // Project
-  UStructs;
+  UStructs,
+  UStrUtils;
 
 
 {
@@ -186,6 +201,7 @@ procedure TThemeServicesEx.DoOnThemeChange;
   }
 begin
   inherited;  // triggers OnThemeChange event
+  SetAppropriateThemeMode;
   if Assigned(fThemeChanges) then
     fThemeChanges.TriggerEvents;
 end;
@@ -318,6 +334,31 @@ begin
   end;
 end;
 
+class function TThemeServicesEx.IsDarkModeEnabled: Boolean;
+const
+  Key   = 'Software\Microsoft\Windows\CurrentVersion\Themes\Personalize\';
+  ValueName = 'AppsUseLightTheme';
+begin
+  // Based on code taken from WindowsDarkMode.pas by Ian Barker
+  // https://github.com/checkdigits/delphidarkmode
+  // "Free software - use for any purpose including commercial use."
+  Result := False;
+  var Reg := TRegistry.Create(KEY_READ);
+  try
+    Reg.RootKey := HKEY_CURRENT_USER;
+    if Reg.KeyExists(Key) then
+      if Reg.OpenKey(Key, False) then
+      try
+        if Reg.ValueExists(ValueName) then
+          Result := Reg.ReadInteger(ValueName) = 0;
+      finally
+        Reg.CloseKey;
+      end;
+  finally
+    Reg.Free;
+  end;
+end;
+
 procedure TThemeServicesEx.RemoveChangeEventHandler(
   const Evt: TNotifyEvent);
   {Removes an event handler from list of handlers that are triggered when theme
@@ -332,6 +373,14 @@ begin
     if fThemeChanges.Count = 0 then
       FreeAndNil(fThemeChanges);
   end;
+end;
+
+class procedure TThemeServicesEx.SetAppropriateThemeMode;
+begin
+  var RequiredMode := StrIf(IsDarkModeEnabled, DarkModeTheme, LightModeTheme);
+  if (RequiredMode <> fCurrentThemeMode) and
+    TStyleManager.TrySetStyle(RequiredMode, False) then
+      fCurrentThemeMode := RequiredMode;
 end;
 
 initialization
