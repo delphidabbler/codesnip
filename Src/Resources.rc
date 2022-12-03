@@ -55,12 +55,6 @@ SPLASHIMAGE RCDATA "Res/Img/Branding/Splash.gif"
 
 
 /*
-  Program's icon
-*/
-MAINICON ICON "Res/Img/Branding/CodeSnip.ico"
-
-
-/*
   Dialog resource used to extend save dialogue box
 */
 SAVESNIPPETEXT DIALOG 0, 0, 0, 160
@@ -74,12 +68,6 @@ LANGUAGE LANG_NEUTRAL , SUBLANG_NEUTRAL
   */
   LTEXT "", 1119, 0, 0, 0, 84, SS_LEFT | WS_CHILD | NOT WS_VISIBLE | WS_GROUP
 }
-
-
-/*
-  XP and later manifest file
-*/
-1 24 "Res/Misc/CodeSnip.manifest"
 
 
 /*
