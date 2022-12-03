@@ -132,6 +132,11 @@
         <DelphiCompile Include="$(MainSource)">
             <MainSource>MainSource</MainSource>
         </DelphiCompile>
+        <DCCReference Include="UThemesEx.pas"/>
+        <DCCReference Include="UMultiCastEvents.pas"/>
+        <DCCReference Include="UMessageWindow.pas"/>
+        <DCCReference Include="UHiddenWindow.pas"/>
+        <DCCReference Include="UStructs.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
