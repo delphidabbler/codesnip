@@ -21,6 +21,7 @@ interface
 uses
   // Delphi
   Classes, ActnList, StdCtrls, Controls, ComCtrls, Menus, Buttons,
+  System.Actions,
   // 3rd party
   LVEx,
   // Project

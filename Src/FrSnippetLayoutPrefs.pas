@@ -19,6 +19,8 @@ interface
 uses
   // Delphi
   StdCtrls, ImgList, Controls, Classes, ActnList, Buttons,
+  System.ImageList,
+  System.Actions,
   // Project
   DB.USnippetKind, FrPrefsBase, UPreferences, USnippetPageStructure;
 

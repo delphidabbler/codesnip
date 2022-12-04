@@ -19,10 +19,10 @@ interface
 uses
   // Delphi
   Forms, ComCtrls, ExtCtrls, Controls, StdCtrls, Classes, ActiveX, ActnList,
-  ImgList, Generics.Collections,
+  ImgList, Generics.Collections, Menus,
   // Project
   Compilers.UGlobals, FrTitled, FrBrowserBase, FrDetailView, IntfFrameMgrs,
-  IntfNotifier, UCommandBars, UView, Menus;
+  IntfNotifier, UCommandBars, UView;
 
 type
 

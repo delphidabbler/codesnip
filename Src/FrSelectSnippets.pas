@@ -19,6 +19,7 @@ interface
 uses
   // Delphi
   ImgList, Controls, Classes, ComCtrls,
+  System.ImageList,
   // Project
   DB.UCategory, DB.USnippet, FrSelectSnippetsBase;
 

@@ -26,6 +26,8 @@ uses
   ExtCtrls,
   Classes,
   Generics.Collections,
+  ActnList,
+  System.Actions,
   // Project
   FmWizardDlg,
   FrBrowserBase,
@@ -37,7 +39,7 @@ uses
   UCSSBuilder,
   SWAG.UCommon,
   SWAG.UImporter,
-  SWAG.UReader, ActnList;
+  SWAG.UReader;
 
 
 type

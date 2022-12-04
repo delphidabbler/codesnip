@@ -27,6 +27,7 @@ uses
   ComCtrls,
   Controls,
   ExtCtrls,
+  System.Actions,
   // VCL
   FmWizardDlg,
   FrBrowserBase,

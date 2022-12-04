@@ -21,6 +21,7 @@ interface
 uses
   // Delphi
   Forms, ComCtrls, Menus, Classes, ActnList, Controls, StdCtrls, ImgList,
+  System.Actions,
   StdActns,
   // Project
   ActiveText.UMain;

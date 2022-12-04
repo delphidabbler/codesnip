@@ -20,6 +20,7 @@ uses
   // Delphi
   SysUtils, Classes, ActnList, Buttons, StdCtrls, Forms, Controls, CheckLst,
   ComCtrls, ExtCtrls, StdActns, Menus, ImgList,
+  System.Actions,
   // Project
   ActiveText.UMain, Compilers.UGlobals, DB.USnippet, FmGenericOKDlg,
   FrBrowserBase, FrFixedHTMLDlg, FrHTMLDlg, UBaseObjects, UCategoryListAdapter,

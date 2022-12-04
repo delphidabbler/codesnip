@@ -19,6 +19,7 @@ interface
 uses
   // Delphi
   ImgList, Controls, Classes, ComCtrls, StdCtrls, Forms,
+  System.ImageList,
   // Project
   UKeysHelper, UTVCheckBoxes;
 
