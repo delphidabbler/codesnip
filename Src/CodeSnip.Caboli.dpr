@@ -28,7 +28,8 @@ uses
   UKeysHelper in 'UKeysHelper.pas',
   UMenus in 'UMenus.pas',
   UClassHelpers in 'UClassHelpers.pas',
-  UHelpMgr in 'UHelpMgr.pas';
+  UHelpMgr in 'UHelpMgr.pas',
+  UI.Forms.Main in 'UI.Forms.Main.pas' {MainForm};
 
 {$R *.res}
 
@@ -36,5 +37,6 @@ begin
   TThemeServicesEx.SetAppropriateThemeMode;
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
+  Application.CreateForm(TMainForm, MainForm);
   Application.Run;
 end.
