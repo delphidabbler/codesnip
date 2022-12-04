@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2005-2022, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Class that provides information about the application.
 }
@@ -30,6 +30,8 @@ type
   public
     const CompanyName = 'DelphiDabbler';
       {Name of "company" that owns this program}
+    const CodeName = 'Caboli';
+      {Code name for the current development}
     {$IFNDEF PORTABLE}
     const ProgramName = 'CodeSnip';
     {$ELSE}
