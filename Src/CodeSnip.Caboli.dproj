@@ -137,6 +137,30 @@
         <DCCReference Include="UMessageWindow.pas"/>
         <DCCReference Include="UHiddenWindow.pas"/>
         <DCCReference Include="UStructs.pas"/>
+        <DCCReference Include="IntfAligner.pas"/>
+        <DCCReference Include="UNulFormAligner.pas"/>
+        <DCCReference Include="UAppInfo.pas"/>
+        <DCCReference Include="UBaseObjects.pas"/>
+        <DCCReference Include="USettings.pas"/>
+        <DCCReference Include="UIStringList.pas"/>
+        <DCCReference Include="IntfCommon.pas"/>
+        <DCCReference Include="UStrUtils.pas"/>
+        <DCCReference Include="UConsts.pas"/>
+        <DCCReference Include="UExceptions.pas"/>
+        <DCCReference Include="UHexUtils.pas"/>
+        <DCCReference Include="UIOUtils.pas"/>
+        <DCCReference Include="UUtils.pas"/>
+        <DCCReference Include="3rdParty\PJSysInfo.pas"/>
+        <DCCReference Include="USystemInfo.pas"/>
+        <DCCReference Include="3rdParty\PJVersionInfo.pas"/>
+        <DCCReference Include="UI.Forms.Root.pas">
+            <Form>RootForm</Form>
+        </DCCReference>
+        <DCCReference Include="UControlStateMgr.pas"/>
+        <DCCReference Include="UKeysHelper.pas"/>
+        <DCCReference Include="UMenus.pas"/>
+        <DCCReference Include="UClassHelpers.pas"/>
+        <DCCReference Include="UHelpMgr.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
