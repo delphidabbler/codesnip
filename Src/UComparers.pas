@@ -81,7 +81,7 @@ begin
   for I := 1 to Length(Value) do
   begin
     Result := (Result shl 4) + Ord(Value[I]);
-    X := Result and $F0000000;
+    X := Integer(Result and $F0000000);
     if (X <> 0) then
       Result := Result xor (X shr 24);
     Result := Result and (not X);

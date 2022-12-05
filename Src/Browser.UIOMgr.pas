@@ -78,14 +78,14 @@ type
     ///  event and passes URL and Cancel parameters to it.</summary>
     ///  <remarks>All parameters except URL and Cancel are ignored.</remarks>
     procedure NavigateHandler(Sender: TObject; const pDisp: IDispatch;
-      var URL, Flags, TargetFrameName, PostData, Headers: OleVariant;
+      const URL, Flags, TargetFrameName, PostData, Headers: OleVariant;
       var Cancel: WordBool);
     ///  <summary>Handles web browser's OnDocumentComplete method to check that
     ///  top level document has loaded.</summary>
     ///  <remarks>Only pDisp parameter is used to check if frame firing event is
     ///  top level.</remarks>
     procedure DocCompleteHandler(Sender: TObject; const pDisp: IDispatch;
-      var URL: OleVariant);
+      const URL: OleVariant);
     ///  <summary>Updates the web browser's current document from HTML read from
     ///  given stream.</summary>
     ///  <remarks>EBug raised if updated document is not valid.</remarks>
@@ -183,7 +183,7 @@ begin
 end;
 
 procedure TWBIOMgr.DocCompleteHandler(Sender: TObject; const pDisp: IDispatch;
-  var URL: OleVariant);
+  const URL: OleVariant);
 begin
   // Top level document has finished loading iff pDisp contains reference to
   // browser control's default interface.
@@ -268,7 +268,7 @@ begin
 end;
 
 procedure TWBIOMgr.NavigateHandler(Sender: TObject; const pDisp: IDispatch;
-  var URL, Flags, TargetFrameName, PostData, Headers: OleVariant;
+  const URL, Flags, TargetFrameName, PostData, Headers: OleVariant;
   var Cancel: WordBool);
 var
   DoCancel: Boolean;  // re-typing of Cancel parameter

@@ -450,7 +450,8 @@ begin
         Result := TInitialLetter.Compare(Left, Right);
       end
     ),
-    []
+    nil,
+    procedure (Item: TGroupItem) begin Item.Free; end
   );
   // NOTE: We have to read all snippets in database to get all possible initial
   // letters in case user wants to display empty letter groups. We then add

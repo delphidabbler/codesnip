@@ -553,7 +553,7 @@ end;
 
 function TActiveText.Clone: IInterface;
 begin
-  Result := Create;
+  Result := TActiveText.Create;
   (Result as IAssignable).Assign(Self);
 end;
 

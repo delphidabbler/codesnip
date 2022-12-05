@@ -281,7 +281,7 @@ begin
   Result := TIStringList.Create;
   Result.CaseSensitive := False;
   if Supports(Elem, IHTMLElement, Element) then
-    Result.Add(Element.className, ' ', False);
+    Result.Add(Element._className, ' ', False);
 end;
 
 class function THTMLDOMHelper.GetElementById(const Doc: IDispatch;

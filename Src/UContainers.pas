@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2010-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2010-2022, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Provides various generic container classes and enumerators.
 }
@@ -17,8 +17,10 @@ interface
 
 uses
   // Delphi
-  Classes,  // declare before Generics.Collections
-  Generics.Defaults, Generics.Collections;
+  System.SysUtils,
+  System.Classes,       // declare before Generics.Collections
+  Generics.Defaults,
+  Generics.Collections;
 
 type
 
@@ -476,54 +478,48 @@ type
       item that changed along with details of change}
   end;
 
-  {
-  TSortedObjectDictionary:
-    Represents an enumerable dictionary that is sorted on the key according to a
-    user defined sorting. Keys, values and key/value pairs are also accessible
-    by index. If keys and / or values are objects they may optionally be owned
-    by the dictionary and freed when removed.
-    NOTE: If this class is instantiated with Ownerships = [] then its
-    functionality is identical to TSortedDictionary. In particular the class
-    can be instantiated with both TKey and TValue as non-objects.
-  }
+  ///  <summary>Represents an enumerable dictionary that is sorted on the key
+  ///  according to a user defined sorting. Keys, values and key/value pairs are
+  ///  also accessible by index. If keys and / or values are objects they may
+  ///  optionally be owned by the dictionary and freed when removed.</summary>
+  ///  <remarks>The user must provide closures to free either keys or values
+  ///  where require. Where no such closures are provided then this class is
+  ///  functionally identical to TSortedDictionary.</remarks>
   TSortedObjectDictionary<TKey,TValue> = class(TSortedDictionary<TKey,TValue>)
   strict private
-    fOwnerships: TDictionaryOwnerships; // Value of Ownerships property
+    var
+      fFreeKeyFn: TProc<TKey>;      // closure used to free any key object
+      fFreeValueFn: TProc<TValue>;  // closure used to free any value object
   strict protected
+    ///  <summary>Triggers OnKeyNotify event for key and calls any closure the
+    ///  user provided by the user to free the key.</summary>
+    ///  <param name="Key">Key for which notification is triggered.</param>
+    ///  <param name="Action">Kind of notification: add, remove or extract.
+    ///  </param>
     procedure KeyNotify(const Key: TKey;
        Action: TCollectionNotification); override;
-      {Triggers OnKeyNotify event for key and frees key if Ownerships property
-      specifies it and key is being removed from list.
-        @param Key [in] Key for which notification triggered.
-        @param Action [in] Kind of notification: add, remove or extract.
-      }
+    ///  <summary>Triggers OnValueNotify event for value and calls any closure
+    ///  the user provided by the user to free the value.</summary>
+    ///  <param name="Value">Value for which notification is triggered.</param>
+    ///  <param name="Action">Kind of notification: add, remove or extract.
+    ///  </param>
     procedure ValueNotify(const Value: TValue;
       Action: TCollectionNotification); override;
-      {Triggers OnValueNotify event for value and frees value if Ownerships
-      property specifies it and value is being removed from list.
-        @param Value [in] Value for which notification triggered.
-        @param Action [in] Kind of notification: add, remove or extract.
-      }
   public
-    constructor Create(AOwnerships: TDictionaryOwnerships); overload;
-      {Constructs dictionary where either keys or values or both are objects
-      that are optionally owned by dictionary and uses default comparer.
-        @param AOwnerships [in] Whether keys or values are owned by dictionary.
-        @except Raises EInvalidCast if ownership is specified for a key or value
-          that is not an object.
-      }
+    ///  <summary>Constructs dictionary where either keys or values may be
+    ///  objects.</summary>
+    ///  <param name="AComparer">Object used to compare keys in dictionary.
+    ///  </param>
+    ///  <param name="FreeKeyFn">Closure called when a key is being removed from
+    ///  the dictionary. The user should free the key if it is an object. Pass
+    ///  nil if the key is not an object or doesn't need to be freed.</param>
+    ///  <param name="FreeValueFn">Closure called when a value is being removed
+    ///  from the dictionary. The user should free the value if it is an object.
+    ///  Pass nil if the value is not an object or doesn't need to be freed.
+    ///  </param>
     constructor Create(const AComparer: IComparer<TKey>;
-      AOwnerships: TDictionaryOwnerships); overload;
-      {Constructs dictionary where either keys or values or both are objects
-      that are optionally owned by dictionary and has user-specified comparer.
-        @param AComparer [in] Object used to compare objects in list.
-        @param AOwnerships [in] Whether keys or values are owned by dictionary.
-        @except Raises EInvalidCast if ownership is specified for a key or value
-          that is not an object.
-      }
-    property Ownerships: TDictionaryOwnerships read fOwnerships;
-      {Specifies whether the dictionary owns the keys and/or values if they are
-      objects}
+      const FreeKeyFn: TProc<TKey> = nil;
+      const FreeValueFn: TProc<TValue> = nil); overload;
   end;
 
 type
@@ -567,7 +563,7 @@ implementation
 
 uses
   // Project
-  SysUtils, RTTI, TypInfo;
+  RTTI, TypInfo;
 
 
 { TSortedList<T> }
@@ -1243,71 +1239,28 @@ end;
 { TSortedObjectDictionary<TKey, TValue> }
 
 constructor TSortedObjectDictionary<TKey, TValue>.Create(
-  AOwnerships: TDictionaryOwnerships);
-  {Constructs dictionary where either keys or values or both are objects that
-  are optionally owned by dictionary and uses default comparer.
-    @param AOwnerships [in] Whether keys or values are owned by dictionary.
-    @except Raises EInvalidCast if ownership is specified for a key or value
-      that is not an object.
-  }
-begin
-  Create(nil, AOwnerships);
-end;
-
-constructor TSortedObjectDictionary<TKey, TValue>.Create(
-  const AComparer: IComparer<TKey>; AOwnerships: TDictionaryOwnerships);
-  {Constructs dictionary where either keys or values or both are objects that
-  are optionally owned by dictionary and has user-specified comparer.
-    @param AComparer [in] Object used to compare objects in list.
-    @param AOwnerships [in] Whether keys or values are owned by dictionary.
-    @except Raises EInvalidCast if ownership is specified for a key or value
-      that is not an object.
-  }
-var
-  RTTICtx: TRTTIContext;  // context for accessing RTTI
+  const AComparer: IComparer<TKey>; const FreeKeyFn: TProc<TKey>;
+  const FreeValueFn: TProc<TValue>);
 begin
   Create(AComparer);
-  // Check that any key or value specified in AOwnership is actually a class
-  // type
-  RTTICtx := TRttiContext.Create;
-  try
-    if (doOwnsKeys in AOwnerships) and
-      (RTTICtx.GetType(TypeInfo(TKey)).TypeKind <> tkClass) then
-      raise EInvalidCast.Create(sKeyNotObject);
-    if (doOwnsValues in AOwnerships) and
-      (RTTICtx.GetType(TypeInfo(TValue)).TypeKind <> tkClass) then
-      raise EInvalidCast.Create(sValueNotObject);
-  finally
-    RTTICtx.Free;
-  end;
-  // Ownerships validated: record in property
-  fOwnerships := AOwnerships;
+  fFreeKeyFn := FreeKeyFn;
+  fFreeValueFn := FreeValueFn;
 end;
 
 procedure TSortedObjectDictionary<TKey, TValue>.KeyNotify(const Key: TKey;
   Action: TCollectionNotification);
-  {Triggers OnKeyNotify event for key and frees key if Ownerships property
-  specifies it and key is being removed from list.
-    @param Key [in] Key for which notification triggered.
-    @param Action [in] Kind of notification: add, remove or extract.
-  }
 begin
   inherited;
-  if (Action = cnRemoved) and (doOwnsKeys in fOwnerships) then
-    TObject(Key).Free;
+  if (Action = cnRemoved) and Assigned(fFreeKeyFn) then
+    fFreeKeyFn(Key);
 end;
 
 procedure TSortedObjectDictionary<TKey, TValue>.ValueNotify(const Value: TValue;
   Action: TCollectionNotification);
-  {Triggers OnValueNotify event for value and frees value if Ownerships property
-  specifies it and value is being removed from list.
-    @param Value [in] Value for which notification triggered.
-    @param Action [in] Kind of notification: add, remove or extract.
-  }
 begin
   inherited;
-  if (Action = cnRemoved) and (doOwnsValues in fOwnerships) then
-    TObject(Value).Free;
+  if (Action = cnRemoved) and Assigned(fFreeValueFn) then
+    fFreeValueFn(Value);
 end;
 
 { TArrayEnumerator<T> }
