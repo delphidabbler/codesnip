@@ -8,6 +8,7 @@
 *.dsk
 *.~*
 __history/
+__recovery/
 
 # Project specific directories & files
 Bin
