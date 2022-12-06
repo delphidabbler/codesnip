@@ -361,7 +361,6 @@ var
   W: TWarning;                  // each warning in list
   SortedList: TList<TWarning>;  // list of warnings sorted by compiler version
   CurrentVer: Single;           // compiler version currently being processed
-  InsideVer: Boolean;           // true if rendering warnings for a compiler ver
 const
   // values written to compiler directive, depending on warning state
   StateStrings: array[Boolean] of string = ('OFF', 'ON');
@@ -387,7 +386,6 @@ begin
 
     // Generate the source code
     CurrentVer := 0.0;
-    InsideVer := False;
 
     SB := TStringBuilder.Create;
     try
@@ -401,23 +399,21 @@ begin
       SB.AppendLine;
       SB.AppendLine('      {$LEGACYIFEND ON}');
       SB.AppendLine('    {$IFEND}');
+      var InCompilerVersionStatement := False;
       for W in SortedList do
       begin
         if not Math.SameValue(W.MinCompiler, CurrentVer) then
         begin
           // Required compiler version has changed
-          if InsideVer then
-          begin
+          if InCompilerVersionStatement then
             // We were writing warnings for previous version: close statement
             SB.AppendLine('    {$IFEND}');
-            InsideVer := False;
-          end;
-          // Create new condition for new version
+          // Create new condition for new compiler version
           SB.AppendFormat(
             '    {$IF CompilerVersion >= %.2f}', [W.MinCompiler]
           );
           SB.AppendLine;
-          InsideVer := True;
+          InCompilerVersionStatement := True;
           CurrentVer := W.MinCompiler;
         end;
         // Write directive to turn warning off
@@ -427,7 +423,7 @@ begin
         SB.AppendLine;
       end;
       // Close off any open conditional statement
-      if InsideVer then
+      if InCompilerVersionStatement then
         SB.AppendLine('    {$IFEND}');
       // Close bounding $IFDEFs
       SB.AppendLine('  {$ENDIF}');
