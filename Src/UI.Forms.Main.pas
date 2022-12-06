@@ -8,7 +8,8 @@ uses
   Vcl.ActnCtrls, Vcl.ToolWin, Vcl.ActnMan, Vcl.ActnMenus,
   Vcl.PlatformDefaultStyleActnCtrls, System.Actions, Vcl.ActnList, Vcl.StdActns,
   Vcl.BaseImageCollection, Vcl.ImageCollection, Vcl.ExtActns, Vcl.ExtCtrls,
-  System.ImageList, Vcl.ImgList, Vcl.VirtualImageList, Vcl.Menus;
+  System.ImageList, Vcl.ImgList, Vcl.VirtualImageList, Vcl.Menus, FrTitled,
+  FrOverview, FrDetail;
 
 type
   TMainForm = class(TRootForm)
@@ -109,10 +110,13 @@ type
     splitVert: TSplitter;
     pnlLeft: TPanel;
     pnlRight: TPanel;
+    frmOverview: TOverviewFrame;
+    frmDetail: TDetailFrame;
   private
     { Private declarations }
   public
-    { Public declarations }
+    {
+    OverviewFrame1: TOverviewFrame; Public declarations }
   end;
 
 var
