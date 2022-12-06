@@ -474,7 +474,6 @@ var
   CompilerRunner: TCompilerRunner;  // object that executes compiler
   CompilerOutput: TStream;          // stream that captures compiler output
 begin
-  Result := 0;  // keeps compiler quiet
   CompilerRunner := nil;
   // Create stream to capture compiler output
   CompilerOutput := TMemoryStream.Create;

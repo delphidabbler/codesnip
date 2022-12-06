@@ -99,7 +99,6 @@ function TCompilerRunner.Execute(const CommandLine, CurrentPath: string;
 var
   App: TConsoleApp; // object that manages execution of compiler
 begin
-  Result := 0;    // keeps compiler happy
   fOutStream := OutStream;
   App := TConsoleApp.Create;
   try

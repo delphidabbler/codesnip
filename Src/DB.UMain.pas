@@ -580,7 +580,6 @@ resourcestring
   // Error message
   sNameExists = 'Category %s already exists in user database';
 begin
-  Result := nil;
   TriggerEvent(evChangeBegin);
   try
     // Check if category with same id exists in user database: error if so
@@ -614,7 +613,6 @@ resourcestring
   // Error message
   sNameExists = 'Snippet "%s" already exists in user database';
 begin
-  Result := nil;  // keeps compiler happy
   TriggerEvent(evChangeBegin);
   try
     // Check if snippet with same name exists in user database: error if so
@@ -1066,7 +1064,6 @@ resourcestring
   sCantRename = 'Can''t rename snippet named %0:s to %1:s: Snippet with name '
     + '%1:s already exists in user database';
 begin
-  Result := Snippet;      // keeps compiler happy
   Assert(Snippet.UserDefined,
     ClassName + '.UpdateSnippet: Snippet is not user-defined');
   Referrers := nil;
