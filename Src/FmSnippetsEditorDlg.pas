@@ -258,7 +258,7 @@ uses
   DB.UMain, DB.USnippetKind, FmDependenciesDlg, IntfCommon, UColours, UConsts,
   UCSSUtils, UCtrlArranger, UExceptions, UFontHelper, UIStringList,
   UReservedCategories, USnippetExtraHelper, USnippetValidator, UMessageBox,
-  USnippetIDs, UStructs, UStrUtils, UTestUnitDlgMgr, UThemesEx, UUtils;
+  USnippetIDs, UStructs, UStrUtils, UTestUnitDlgMgr, UUtils;
 
 
 {$R *.dfm}
