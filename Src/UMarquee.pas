@@ -78,6 +78,9 @@ implementation
 uses
   // Delphi
   SysUtils, Messages, Controls, ExtCtrls,
+  Vcl.Themes,   // for inline expansion
+  // 3rd party
+  PJSysInfo,    // for inline expansion
   // Project
   USystemInfo, UThemesEx;
 

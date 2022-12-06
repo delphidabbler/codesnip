@@ -132,6 +132,7 @@ implementation
 
 uses
   SysUtils,
+  System.Classes,   // for inline expansion
   UExceptions, UIStringList;
 
 { TSnippetPageStructure }

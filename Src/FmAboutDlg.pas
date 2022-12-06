@@ -178,6 +178,7 @@ uses
   Windows,
   ShellAPI,
   IOUtils,
+  Vcl.Themes,   // for inline expansion
   // Project
   DB.UMain,
   FmEasterEgg,

@@ -337,6 +337,8 @@ implementation
 uses
   // Delphi
   SysUtils,
+  System.Types,   // for inline expansion
+  Vcl.Themes,     // for inline expansion
   // Project
   Browser.UControlHelper, UHTMLDOMHelper, UThemesEx, UUrlMonEx;
 

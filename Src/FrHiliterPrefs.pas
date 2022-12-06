@@ -177,6 +177,7 @@ implementation
 uses
   // Delphi
   SysUtils, ExtCtrls, Windows, Graphics, Dialogs,
+  System.Types,   // for inline expansion
   // Project
   FmPreferencesDlg, FmNewHiliterNameDlg, FmUserHiliterMgrDlg, Hiliter.UAttrs,
   IntfCommon, UCtrlArranger, UFontHelper, UIStringList, UMessageBox,

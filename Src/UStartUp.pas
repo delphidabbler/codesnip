@@ -58,6 +58,8 @@ uses
   // Project
   UAppInfo, UUtils,
   {$ENDIF}
+  // 3rd party
+  PJSysInfo,    // for inline expansion
   // Project
   FirstRun.UMain, UConsts, USystemInfo;
 

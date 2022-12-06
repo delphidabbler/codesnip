@@ -19,6 +19,7 @@ interface
 uses
   // Delphi
   XMLIntf,
+  System.Classes,   // for inline expansion
   // Project
   Compilers.UGlobals, DB.USnippetKind, UExceptions, UIStringList, UStructs,
   UXMLDocumentEx;

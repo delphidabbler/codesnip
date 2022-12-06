@@ -438,6 +438,7 @@ implementation
 uses
   // Delphi
   SysUtils, Windows,
+  System.UITypes,   // for inline expansion
   // Project
   UIStringList, UStrUtils;
 

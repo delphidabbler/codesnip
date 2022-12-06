@@ -89,6 +89,8 @@ implementation
 uses
   // Delphi
   SysUtils, Registry,
+  // 3rd party
+  PJSysInfo,      // for inline expansion
   // Project
   UIStringList, UStrUtils, USystemInfo;
 

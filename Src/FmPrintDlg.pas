@@ -76,8 +76,10 @@ uses
   // Delphi
   Printers, Graphics,
   // Project
-  FmPreferencesDlg, FrPrintingPrefs, UClassHelpers, UConsts, UMessageBox,
-  UPageSetupDlgMgr, UPrintInfo, UStructs, UStrUtils;
+  FmPreferencesDlg,
+  FrPrefsBase,    // for inline expansion
+  FrPrintingPrefs, UClassHelpers, UConsts,
+  UMessageBox, UPageSetupDlgMgr, UPrintInfo, UStructs, UStrUtils;
 
 
 {$R *.dfm}

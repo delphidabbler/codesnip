@@ -79,6 +79,8 @@ implementation
 uses
   // Delphi
   Graphics, GraphUtil,
+  System.UITypes,   // for inline expansion
+  Vcl.Themes,       // for inline expansion
   // Project
   UStructs, UThemesEx;
 

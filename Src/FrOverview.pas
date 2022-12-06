@@ -236,6 +236,7 @@ implementation
 uses
   // Delphi
   Messages,
+  System.Types,   // for inline expansion
   // Project
   UKeysHelper, UOverviewTreeBuilder;
 

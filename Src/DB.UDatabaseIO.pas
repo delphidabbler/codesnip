@@ -100,6 +100,7 @@ implementation
 uses
   // Delphi
   SysUtils,
+  System.Classes,   // for inline expansion
   // Project
   DBIO.UFileIOIntf, DBIO.UIniDataReader, DBIO.UNulDataReader, DBIO.UXMLDataIO,
   UAppInfo, UConsts, UIStringList, UReservedCategories, USnippetIDs;

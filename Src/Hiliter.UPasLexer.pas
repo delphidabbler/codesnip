@@ -18,6 +18,7 @@ interface
 uses
   // Delphi
   SysUtils, Classes, Generics.Collections,
+  System.Character, // in interface to permit inlining
   // Project
   UStringReader;
 
@@ -163,8 +164,6 @@ implementation
 
 
 uses
-  // Delphi
-  Character,
   // Project
   UComparers, UConsts, UStrUtils, UUtils;
 

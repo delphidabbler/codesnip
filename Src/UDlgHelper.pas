@@ -129,6 +129,7 @@ implementation
 uses
   // Delphi
   SysUtils, Controls, Forms, Dialogs,
+  System.Types,   // for inline expansion
   // Project
   UExceptions;
 
