@@ -61,7 +61,7 @@ end;
 
 constructor TInitialLetter.Create(ALetter: Char);
 begin
-  fLetter := TCharacter.ToUpper(ALetter);
+  fLetter := ALetter.ToUpper;
 end;
 
 class operator TInitialLetter.Equal(const L1, L2: TInitialLetter): Boolean;

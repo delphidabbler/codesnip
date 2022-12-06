@@ -694,12 +694,12 @@ begin
   NextChPos := 1;
   // Skip any white space before tag
   while (NextChPos <= Length(TagStr))
-    and TCharacter.IsWhiteSpace(TagStr[NextChPos]) do
+    and TagStr[NextChPos].IsWhiteSpace do
     Inc(NextChPos);
   // Now at start of tag name: read it up to next space or end of TagStr
   StartPos := NextChPos;
   while (NextChPos <= Length(TagStr))
-    and not TCharacter.IsWhiteSpace(TagStr[NextChPos]) do
+    and not TagStr[NextChPos].IsWhiteSpace do
     Inc(NextChPos);
   // Copy the name from the string
   Result := StrSlice(TagStr, StartPos, NextChPos - StartPos);
@@ -743,7 +743,7 @@ function TTaggedTextTagHandler.GetTagParams(const TagStr: string;
 
     // Check to see if we have any attributes
     // skip white space
-    while (NextChPos <= Len) and TCharacter.IsWhiteSpace(TagStr[NextChPos]) do
+    while (NextChPos <= Len) and TagStr[NextChPos].IsWhiteSpace do
       Inc(NextChPos);
     // check if we've reached end of tag and get out if so: no params
     if NextChPos > Len then
@@ -759,13 +759,13 @@ function TTaggedTextTagHandler.GetTagParams(const TagStr: string;
     // get attribute name
     StartPos := NextChPos;
     while (NextChPos <= Len)
-      and not TCharacter.IsWhiteSpace(TagStr[NextChPos])
+      and not TagStr[NextChPos].IsWhiteSpace
       and (TagStr[NextChPos] <> cEquals) do
       Inc(NextChPos);
     Name := StrSlice(TagStr, StartPos, NextChPos - StartPos);
 
     // skip any white space following name
-    while (NextChPos <= Len) and TCharacter.IsWhiteSpace(TagStr[NextChPos]) do
+    while (NextChPos <= Len) and TagStr[NextChPos].IsWhiteSpace do
       Inc(NextChPos);
 
     // MUST now have '=' character: skip over it if so, error if not
@@ -774,7 +774,7 @@ function TTaggedTextTagHandler.GetTagParams(const TagStr: string;
     Inc(NextChPos);
 
     // skip white space between '=' and value
-    while (NextChPos <= Len) and TCharacter.IsWhiteSpace(TagStr[NextChPos]) do
+    while (NextChPos <= Len) and TagStr[NextChPos].IsWhiteSpace do
       Inc(NextChPos);
 
     // MUST now have a quote: record it and skip over
@@ -1161,7 +1161,7 @@ begin
     Exit;
   // we are processing white space only if last char is a space: this space is
   // being handled here so any immediately following spaces must be ignored.
-  fInSpace := TCharacter.IsWhiteSpace(fCurText[Length(fCurText)]);
+  fInSpace := fCurText[Length(fCurText)].IsWhiteSpace;
 end;
 
 procedure TTaggedTextLexer.ProcessTag;

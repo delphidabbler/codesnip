@@ -213,7 +213,7 @@ uses
 
 procedure TRTFBuilder.AddControl(const Ctrl: ASCIIString);
 begin
-  Assert((Ctrl <> '') and not TCharacter.IsWhiteSpace(Char(Ctrl[Length(Ctrl)])),
+  Assert((Ctrl <> '') and not Char(Ctrl[Length(Ctrl)]).IsWhiteSpace,
     ClassName + '.AddControls: Ctrl ends in whitespace');
   AppendBody(Ctrl);
   fInControls := True;

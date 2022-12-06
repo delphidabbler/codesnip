@@ -299,21 +299,21 @@ var
 ///  Delphi identifier, after the first character.</summary>
 function IsValidIdentBodyChar(const C: Char): Boolean; inline;
 begin
-  Result := TCharacter.IsLetterOrDigit(C) or (C = '_');
+  Result := C.IsLetterOrDigit or (C = '_');
 end;
 
 ///  <summary>Checks if given character is valid as a first character of a
 ///  Delphi identifier.</summary>
 function IsValidIdentStartChar(const C: Char): Boolean; inline;
 begin
-  Result := TCharacter.IsLetter(C) or (C = '_');
+  Result := C.IsLetter or (C = '_');
 end;
 
 ///  <summary>Checks if given character is a white space character other than
 ///  EOL or EOF characters.</summary>
 function IsWhiteSpaceChar(const C: Char): Boolean; inline;
 begin
-  Result := TCharacter.IsWhiteSpace(C) and not CharInSet(C, [CR, LF, cEOF]);
+  Result := C.IsWhiteSpace and not CharInSet(C, [CR, LF, cEOF]);
 end;
 
 ///  <summary>Checks if given character is a Delphi symbol.</summary>
@@ -451,7 +451,7 @@ begin
       Result := ParseIdent
     else if IsSymbolChar(fReader.Ch) then
       Result := ParseSymbol
-    else if TCharacter.IsDigit(fReader.Ch) then
+    else if fReader.Ch.IsDigit then
       Result := ParseNumber
     else if fReader.Ch = cEOL then
       Result := ParseEOL
@@ -487,7 +487,7 @@ begin
     // now read hex digits
     ParseHex;
   end
-  else if TCharacter.IsDigit(fReader.Ch) then
+  else if fReader.Ch.IsDigit then
     // This is whole number: parse it
     ParseWholeNumber
   else
@@ -630,7 +630,7 @@ function THilitePasLexer.ParseNumber: THilitePasToken;
 var
   TempCh: Char; // temporary storage for a character read from input
 begin
-  Assert(TCharacter.IsDigit(fReader.Ch),
+  Assert(fReader.Ch.IsDigit,
     ClassName + '.ParseNumber: digit expected');
   // All numbers start with a whole number: read it
   ParseWholeNumber; // leaves current char as one immediately after number
@@ -656,7 +656,7 @@ begin
     // If we have digits after decimal point read them into token str
     // Note: there may not necessarily be digits after '.' (e.g. 2. is a valid
     // Delphi float)
-    if TCharacter.IsDigit(fReader.Ch) then
+    if fReader.Ch.IsDigit then
       ParseWholeNumber;
     Result := tkFloat;
   end;
@@ -676,7 +676,7 @@ begin
       fReader.NextChar;
     end;
     // Next comes whole number: get it
-    if TCharacter.IsDigit(fReader.Ch) then
+    if fReader.Ch.IsDigit then
     begin
       ParseWholeNumber;
       Result := tkFloat
@@ -774,9 +774,9 @@ end;
 
 function THilitePasLexer.ParseWholeNumber: THilitePasToken;
 begin
-  Assert(TCharacter.IsDigit(fReader.Ch),
+  Assert(fReader.Ch.IsDigit,
     ClassName + '.ParseWholeNumber: current char not a digit');
-  while TCharacter.IsDigit(fReader.Ch) do
+  while fReader.Ch.IsDigit do
   begin
     UpdateTokenStr;
     fReader.NextChar;

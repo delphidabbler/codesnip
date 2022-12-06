@@ -830,7 +830,7 @@ function TTextSearchFilter.Match(const Snippet: TSnippet): Boolean;
       // Convert all white space characters to spaces
       for Idx := 1 to Length(S) do
       begin
-        if TCharacter.IsWhiteSpace(S[Idx]) then
+        if S[Idx].IsWhiteSpace then
           Result[Idx] := ' '
         else
           Result[Idx] := S[Idx]

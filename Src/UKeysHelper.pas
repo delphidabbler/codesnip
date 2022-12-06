@@ -123,7 +123,7 @@ begin
     if StrContainsStr(FormatSettings.DecimalSeparator, Text) then
       Result := False;
   end
-  else if not TCharacter.IsDigit(Key) and (Key <> BACKSPACE) then
+  else if not Key.IsDigit and (Key <> BACKSPACE) then
     // Disallow any other characters other than backspace or digits
     Result := False;
   if not Result then

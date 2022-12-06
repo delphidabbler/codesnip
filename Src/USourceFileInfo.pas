@@ -179,11 +179,11 @@ begin
   fDefaultFileName := StrStripWhiteSpace(StrCapitaliseWords(Value));
   // replaces invalid Pascal identifier characters with underscore
   if (fDefaultFileName <> '')
-    and not TCharacter.IsLetter(fDefaultFileName[1])
+    and not fDefaultFileName[1].IsLetter
     and (fDefaultFileName[1] <> '_') then
     fDefaultFileName[1] := '_';
   for Idx := 2 to Length(fDefaultFileName) do
-    if not TCharacter.IsLetterOrDigit(fDefaultFileName[Idx])
+    if not fDefaultFileName[Idx].IsLetterOrDigit
       and (fDefaultFileName[Idx] <> '_') then
       fDefaultFileName[Idx] := '_';
   Assert((fDefaultFileName <> '') and IsValidIdent(fDefaultFileName),
