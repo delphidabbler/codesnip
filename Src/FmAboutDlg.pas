@@ -139,10 +139,10 @@ type
     ///  <summary>Configures form by creating owned object and custom controls
     ///  and initialising HTML frames.</summary>
     ///  <remarks>Called from ancestor class.</remarks>
-    procedure ConfigForm; override;
+    procedure CustomiseControls; override;
     ///  <summary>Arranges controls on form.</summary>
     ///  <remarks>Called from ancestor class.</remarks>
-    procedure ArrangeForm; override;
+    procedure ArrangeControls; override;
     ///  <summary>Initialises HTML frames to use required HTML templates and
     ///  resolves all template placeholders.</summary>
     procedure InitHTMLFrames;
@@ -216,7 +216,7 @@ end;
 
 { TAboutDlg }
 
-procedure TAboutDlg.ArrangeForm;
+procedure TAboutDlg.ArrangeControls;
 var
   PathTabHeight: Integer;
 begin
@@ -258,7 +258,34 @@ begin
   ViewConfigFile(TAppInfo.UserConfigFileName, sTitle);
 end;
 
-procedure TAboutDlg.ConfigForm;
+function TAboutDlg.ContribListHTML(ContribList: IStringList):
+  string;
+resourcestring
+  // Error string used when contributor file not available
+  sNoContributors = 'No contributors list available. Database may be corrupt';
+var
+  Contributor: string;          // name of a contributor
+  DivAttrs: IHTMLAttributes;    // attributes of div tag
+begin
+  Result := '';
+  if ContribList.Count > 0 then
+  begin
+    for Contributor in ContribList do
+      Result := Result
+        + THTML.CompoundTag('div', THTML.Entities(Contributor))
+        + EOL;
+  end
+  else
+  begin
+    // List couldn't be found: display warning message
+    DivAttrs := THTMLAttributes.Create('class', 'warning');
+    Result := THTML.CompoundTag(
+      'div', DivAttrs, THTML.Entities(sNoContributors)
+    );
+  end;
+end;
+
+procedure TAboutDlg.CustomiseControls;
 
   //  Creates and initialises a custom path information control with given
   //  caption, path and tab order.</summary>
@@ -296,33 +323,6 @@ begin
   btnViewUserConfig.TabOrder := btnViewAppConfig.TabOrder + 1;
   // Load content into HTML frames
   InitHTMLFrames;
-end;
-
-function TAboutDlg.ContribListHTML(ContribList: IStringList):
-  string;
-resourcestring
-  // Error string used when contributor file not available
-  sNoContributors = 'No contributors list available. Database may be corrupt';
-var
-  Contributor: string;          // name of a contributor
-  DivAttrs: IHTMLAttributes;    // attributes of div tag
-begin
-  Result := '';
-  if ContribList.Count > 0 then
-  begin
-    for Contributor in ContribList do
-      Result := Result
-        + THTML.CompoundTag('div', THTML.Entities(Contributor))
-        + EOL;
-  end
-  else
-  begin
-    // List couldn't be found: display warning message
-    DivAttrs := THTMLAttributes.Create('class', 'warning');
-    Result := THTML.CompoundTag(
-      'div', DivAttrs, THTML.Entities(sNoContributors)
-    );
-  end;
 end;
 
 class procedure TAboutDlg.Execute(AOwner: TComponent);

@@ -48,10 +48,10 @@ type
         @param Cat [in] Category to be deleted.
       }
   strict protected
-    procedure ConfigForm; override;
+    procedure CustomiseControls; override;
       {Configures form. Populates controls and supplies event handler to frame.
       }
-    procedure ArrangeForm; override;
+    procedure ArrangeControls; override;
       {Sizes and arranges frame in dialog box.
       }
     procedure UpdateOKBtn; override;
@@ -81,7 +81,7 @@ uses
 
 { TDeleteCategoryDlg }
 
-procedure TDeleteCategoryDlg.ArrangeForm;
+procedure TDeleteCategoryDlg.ArrangeControls;
   {Sizes and arranges frame in dialog box.
   }
 begin
@@ -106,7 +106,7 @@ begin
   DeleteCategory(Cat);
 end;
 
-procedure TDeleteCategoryDlg.ConfigForm;
+procedure TDeleteCategoryDlg.CustomiseControls;
   {Configures form. Sets up controls and supplies event handler to frame.
   }
 resourcestring

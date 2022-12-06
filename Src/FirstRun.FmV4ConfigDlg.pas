@@ -121,11 +121,11 @@ type
     ///  displayed yet.</remarks>
     procedure CreateParams(var Params: TCreateParams); override;
     ///  <summary>Returns instance of form aligner object.</summary>
-    function GetAligner: IFormAligner; override;
+    function Aligner: IFormAligner; override;
     ///  <summary>Arranges controls within each tab sheet.</summary>
-    procedure ArrangeForm; override;
+    procedure ArrangeControls; override;
     ///  <summary>Sets up wizard ready for display.</summary>
-    procedure ConfigForm; override;
+    procedure CustomiseControls; override;
     ///  <summary>Returns heading text of given wizard page.</summary>
     function HeadingText(const PageIdx: Integer): string; override;
     ///  <summary>Returns index of page following given page index in wizard.
@@ -175,7 +175,12 @@ uses
 
 { TFirstRunDlg }
 
-procedure TV4ConfigDlg.ArrangeForm;
+function TV4ConfigDlg.Aligner: IFormAligner;
+begin
+  Result := TAligner.Create;
+end;
+
+procedure TV4ConfigDlg.ArrangeControls;
 begin
   TCtrlArranger.SetLabelHeights(Self);
 
@@ -215,13 +220,6 @@ end;
 function TV4ConfigDlg.ConfigFileAvailable: Boolean;
 begin
   Result := fFirstRun.HaveOldUserCfgFile;
-end;
-
-procedure TV4ConfigDlg.ConfigForm;
-begin
-  inherited;
-  pcWizard.ActivePage := tsIntro;
-  fCfgChanges := [];
 end;
 
 procedure TV4ConfigDlg.CreateBulletPage(TS: TTabSheet;
@@ -282,6 +280,13 @@ begin
   Params.ExStyle := Params.ExStyle OR WS_EX_APPWINDOW;
 end;
 
+procedure TV4ConfigDlg.CustomiseControls;
+begin
+  inherited;
+  pcWizard.ActivePage := tsIntro;
+  fCfgChanges := [];
+end;
+
 function TV4ConfigDlg.DatabaseAvailable: Boolean;
 begin
   Result := fFirstRun.HaveOldUserDB;
@@ -309,11 +314,6 @@ begin
   CanClose := CurrentPage = LastPage;
   if not CanClose then
     TMessageBox.Error(Self, sCantCloseMsg);
-end;
-
-function TV4ConfigDlg.GetAligner: IFormAligner;
-begin
-  Result := TAligner.Create;
 end;
 
 function TV4ConfigDlg.GetUpdateActions: TUpdateActions;

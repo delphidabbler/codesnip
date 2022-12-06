@@ -49,8 +49,8 @@ type
       {Writes export file.
       }
   strict protected
-    procedure ConfigForm; override;
-    procedure ArrangeForm; override;
+    procedure CustomiseControls; override;
+    procedure ArrangeControls; override;
       {Aligns controls vertically where necessary to accomodate height of
       controls that depend on UI font.
       }
@@ -80,7 +80,7 @@ uses
 
 { TCodeExportDlg }
 
-procedure TCodeExportDlg.ArrangeForm;
+procedure TCodeExportDlg.ArrangeControls;
   {Aligns controls vertically where necessary to accomodate height of controls
   that depend on UI font.
   }
@@ -176,7 +176,7 @@ begin
   end;
 end;
 
-procedure TCodeExportDlg.ConfigForm;
+procedure TCodeExportDlg.CustomiseControls;
 begin
   inherited;
   frmSnippets.CanCollapse := True;

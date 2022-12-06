@@ -35,7 +35,7 @@ type
     btnCancel: TButton;
     btnOK: TButton;
   strict protected
-    procedure ArrangeForm; override;
+    procedure ArrangeControls; override;
       {Positions OK and Cancel buttons.
       }
     function ModalResultOnEsc: Integer; override;
@@ -60,7 +60,7 @@ uses
 
 { TGenericOKDlg }
 
-procedure TGenericOKDlg.ArrangeForm;
+procedure TGenericOKDlg.ArrangeControls;
   {Positions OK and Cancel buttons.
   }
 begin

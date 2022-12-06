@@ -21,7 +21,7 @@ uses
   Generics.Collections,
   // Project
   Compilers.UGlobals, DB.USnippet, FmGenericViewDlg, FrBrowserBase, FrHTMLDlg,
-  FrHTMLTpltDlg, UBaseObjects, USnippetIDs;
+  FrHTMLTpltDlg, UBaseObjects, USnippetIDs, System.Actions;
 
 
 type
@@ -100,14 +100,14 @@ type
   strict protected
     ///  <summary>Arranges controls on form.</summary>
     ///  <remarks>Called from ancestor class.</remarks>
-    procedure ArrangeForm; override;
+    procedure ArrangeControls; override;
     ///  <summary>Initialises HTML frame and sets UI font for tab set tabs.
     ///  </summary>
     ///  <remarks>Called from ancestor class.</remarks>
-    procedure ConfigForm; override;
+    procedure CustomiseControls; override;
     ///  <summary>Configures tab set and sets form's caption.</summary>
     ///  <remarks>Called from ancestor class.</remarks>
-    procedure InitForm; override;
+    procedure InitialiseControls; override;
   public
     ///  <summary>Shows a dialogue box that displays error and warning logs for
     ///  each compiler that reported errors or warnings when test compiling a
@@ -160,14 +160,14 @@ resourcestring
 
 { TCompErrorDlg }
 
-procedure TCompErrorDlg.ArrangeForm;
+procedure TCompErrorDlg.ArrangeControls;
 begin
   pnlBody.Height := GetHTMLHeight + GetTabsetHeight;
   // set size of dialogue
   inherited;
 end;
 
-procedure TCompErrorDlg.ConfigForm;
+procedure TCompErrorDlg.CustomiseControls;
 begin
   inherited;
   LoadHTML(fRequiredCompilers[0]);
@@ -227,7 +227,7 @@ begin
     Inc(Result, tsCompilers.Margins.Top + tsCompilers.Margins.Bottom);
 end;
 
-procedure TCompErrorDlg.InitForm;
+procedure TCompErrorDlg.InitialiseControls;
 var
   Compiler: ICompiler;  // references each required compiler
 begin

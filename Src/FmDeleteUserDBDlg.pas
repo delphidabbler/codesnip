@@ -35,8 +35,8 @@ type
   strict protected
     ///  <summary>Protected constructor that sets up form.</summary>
     constructor InternalCreate(AOwner: TComponent); override;
-    procedure ConfigForm; override;
-    procedure ArrangeForm; override;
+    procedure CustomiseControls; override;
+    procedure ArrangeControls; override;
     function IsValidPassword: Boolean;
   public
     class function Execute(AOwner: TComponent): Boolean;
@@ -52,7 +52,7 @@ uses
 
 {$R *.dfm}
 
-procedure TDeleteUserDBDlg.ArrangeForm;
+procedure TDeleteUserDBDlg.ArrangeControls;
 begin
   frmWarning.Height := frmWarning.DocHeight;
   edConfirm.Left := 0;
@@ -76,7 +76,7 @@ begin
   end;
 end;
 
-procedure TDeleteUserDBDlg.ConfigForm;
+procedure TDeleteUserDBDlg.CustomiseControls;
 begin
   inherited;
 //  frmWarning.OnBuildCSS := BuildCSS;

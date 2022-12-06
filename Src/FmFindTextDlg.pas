@@ -51,11 +51,11 @@ type
     fSearch: ISearch;                 // Search corresponding to criteria
     fRefinePreviousSearch: Boolean;   // Whether to refine previous search
   strict protected
-    procedure ArrangeForm; override;
+    procedure ArrangeControls; override;
       {Sizes and arrange controls in dialog box and determine size of dialog
       box.
       }
-    procedure InitForm; override;
+    procedure InitialiseControls; override;
       {Populates and initialises controls.
       }
   public
@@ -162,7 +162,7 @@ uses
 
 { TFindTextDlg }
 
-procedure TFindTextDlg.ArrangeForm;
+procedure TFindTextDlg.ArrangeControls;
   {Sizes and arrange controls in dialog box and determine size of dialog box.
   }
 begin
@@ -281,7 +281,7 @@ begin
   FreeAndNil(fSearchParams);
 end;
 
-procedure TFindTextDlg.InitForm;
+procedure TFindTextDlg.InitialiseControls;
   {Populates and initialises controls.
   }
 begin

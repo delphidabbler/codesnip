@@ -60,10 +60,10 @@ type
   strict protected
     ///  <summary>Initialises form fields and controls.</summary>
     ///  <remarks>Overridden method called from ancestor class.</remarks>
-    procedure InitForm; override;
+    procedure InitialiseControls; override;
     ///  <summary>Aligns and arranges controls.</summary>
     ///  <remarks>Overridden method called from ancestor class.</remarks>
-    procedure ArrangeForm; override;
+    procedure ArrangeControls; override;
   public
     class function Execute(const AOwner: TComponent;
       const ASnippet: TSnippet): Boolean;
@@ -84,7 +84,7 @@ uses
 
 { TDuplicateSnippetDlg }
 
-procedure TDuplicateSnippetDlg.ArrangeForm;
+procedure TDuplicateSnippetDlg.ArrangeControls;
 begin
   TCtrlArranger.SetLabelHeights(Self);
 
@@ -171,7 +171,7 @@ begin
     raise E;
 end;
 
-procedure TDuplicateSnippetDlg.InitForm;
+procedure TDuplicateSnippetDlg.InitialiseControls;
 var
   SnippetCat: TCategory;
 begin

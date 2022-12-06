@@ -1,18 +1,25 @@
 inherited SplashForm: TSplashForm
   BorderStyle = bsNone
   Caption = 'SplashForm'
-  ClientHeight = 155
-  ClientWidth = 325
+  ClientHeight = 271
+  ClientWidth = 569
   DefaultMonitor = dmMainForm
+  Font.Height = -37
   FormStyle = fsStayOnTop
   OnClose = FormClose
-  PixelsPerInch = 96
-  TextHeight = 13
+  ExplicitWidth = 569
+  ExplicitHeight = 271
+  PixelsPerInch = 168
+  TextHeight = 50
   object pbMain: TPaintBox
     Left = 0
     Top = 0
-    Width = 325
-    Height = 155
+    Width = 569
+    Height = 271
+    Margins.Left = 5
+    Margins.Top = 5
+    Margins.Right = 5
+    Margins.Bottom = 5
     Align = alClient
     OnPaint = pbMainPaint
   end

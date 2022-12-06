@@ -65,10 +65,10 @@ type
         @return Number of checked list items.
       }
   strict protected
-    procedure InitForm; override;
+    procedure InitialiseControls; override;
       {Populates and initialises controls.
       }
-    procedure ArrangeForm; override;
+    procedure ArrangeControls; override;
   public
     class function Execute(const AOwner: TComponent;
       out ASearch: ISearch; out RefineExisting: Boolean): Boolean;
@@ -172,7 +172,7 @@ const
 
 { TFindCompilerDlg }
 
-procedure TFindCompilerDlg.ArrangeForm;
+procedure TFindCompilerDlg.ArrangeControls;
 begin
   // Arrange columns horizontally
   TCtrlArranger.AlignLefts([lblCompilerVer, lbCompilerVers, btnSelectAll], 0);
@@ -353,7 +353,7 @@ begin
   fCompilers := nil;
 end;
 
-procedure TFindCompilerDlg.InitForm;
+procedure TFindCompilerDlg.InitialiseControls;
   {Populates and initialises controls.
   }
 var

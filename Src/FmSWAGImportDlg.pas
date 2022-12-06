@@ -204,10 +204,10 @@ type
     ///  <summary>Aligns and arranges controls in each tab sheet and sizes
     ///  dialog box to accomodate controls.</summary>
     ///  <remarks>Overridden method called from ancestor class.</remarks>
-    procedure ArrangeForm; override;
+    procedure ArrangeControls; override;
     ///  <summary>Initialises wizard pages that display HTML content.</summary>
     ///  <remarks>Overridden method called from ancestor class.</remarks>
-    procedure ConfigForm; override;
+    procedure CustomiseControls; override;
     ///  <summary>Returns text of heading on page indexed by PageIdx.</summary>
     ///  <remarks>Overridden method called from ancestor class.</remarks>
     function HeadingText(const PageIdx: Integer): string; override;
@@ -304,7 +304,7 @@ begin
   actDisplayPacket.Enabled := clbSelectPackets.ItemIndex >= 0;
 end;
 
-procedure TSWAGImportDlg.ArrangeForm;
+procedure TSWAGImportDlg.ArrangeControls;
 begin
   TCtrlArranger.SetLabelHeights(Self);
   // Arrange controls on tab sheets
@@ -466,7 +466,7 @@ begin
     PreviewSelectedPacket;
 end;
 
-procedure TSWAGImportDlg.ConfigForm;
+procedure TSWAGImportDlg.CustomiseControls;
 resourcestring
   sVersions = 'v%0:s to v%1:s';
 begin

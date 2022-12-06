@@ -101,9 +101,9 @@ type
     function CheckCompilerExes: Boolean;
   strict protected
     ///  <summary>Initialises form's controls.</summary>
-    procedure InitForm; override;
+    procedure InitialiseControls; override;
     ///  <summary>Sizes and aligns controls and all of its frames.</summary>
-    procedure ArrangeForm; override;
+    procedure ArrangeControls; override;
   public
     ///  <summary>Displays the dialogue box and updates given compilers object
     ///  if required.</summary>
@@ -131,7 +131,7 @@ uses
 
 { TCompilersDlg }
 
-procedure TCompilersDlg.ArrangeForm;
+procedure TCompilersDlg.ArrangeControls;
 begin
   TCtrlArranger.SetLabelHeights(Self);
   IterateFrames(
@@ -281,7 +281,7 @@ begin
   inherited;
 end;
 
-procedure TCompilersDlg.InitForm;
+procedure TCompilersDlg.InitialiseControls;
 begin
   inherited;
   fCompListMgr.Initialise;

@@ -2,24 +2,58 @@ inherited PreviewDlg: TPreviewDlg
   Left = 227
   Top = 147
   Caption = 'Preview'
-  ClientWidth = 624
+  ClientHeight = 1844
+  ClientWidth = 1101
+  Font.Height = -200
   OnClose = FormClose
-  ExplicitWidth = 630
-  ExplicitHeight = 354
-  PixelsPerInch = 96
-  TextHeight = 13
+  ExplicitWidth = 1125
+  ExplicitHeight = 1908
+  PixelsPerInch = 168
+  TextHeight = 265
+  inherited bvlBottom: TBevel
+    Left = 77
+    Top = 2777
+    Width = 3537
+    Height = 23
+    Margins.Left = 28
+    Margins.Top = 28
+    Margins.Right = 28
+    Margins.Bottom = 28
+    ExplicitLeft = 77
+    ExplicitTop = 2777
+    ExplicitWidth = 3537
+    ExplicitHeight = 23
+  end
   inherited pnlBody: TPanel
-    Width = 602
-    ExplicitWidth = 602
+    Left = 77
+    Top = 77
+    Width = 1054
+    Height = 2637
+    Margins.Left = 28
+    Margins.Top = 28
+    Margins.Right = 28
+    Margins.Bottom = 28
+    ExplicitLeft = 77
+    ExplicitTop = 77
+    ExplicitWidth = 1054
+    ExplicitHeight = 2637
     object pcViews: TPageControl
       Left = 0
       Top = 0
-      Width = 602
-      Height = 281
+      Width = 1054
+      Height = 2637
+      Margins.Left = 5
+      Margins.Top = 5
+      Margins.Right = 5
+      Margins.Bottom = 5
       Align = alClient
       Style = tsButtons
       TabOrder = 0
       object tsText: TTabSheet
+        Margins.Left = 5
+        Margins.Top = 5
+        Margins.Right = 5
+        Margins.Bottom = 5
         Caption = 'tsText'
         TabVisible = False
         inline frText: TTextPreviewFrame
@@ -27,7 +61,17 @@ inherited PreviewDlg: TPreviewDlg
           Top = 0
           Width = 594
           Height = 271
+          Margins.Left = 5
+          Margins.Top = 5
+          Margins.Right = 5
+          Margins.Bottom = 5
           Align = alClient
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -21
+          Font.Name = 'Segoe UI'
+          Font.Style = []
+          ParentFont = False
           TabOrder = 0
           TabStop = True
           ExplicitWidth = 594
@@ -47,34 +91,52 @@ inherited PreviewDlg: TPreviewDlg
         end
       end
       object tsRTF: TTabSheet
+        Margins.Left = 5
+        Margins.Top = 5
+        Margins.Right = 5
+        Margins.Bottom = 5
         Caption = 'tsRTF'
         ImageIndex = 1
         TabVisible = False
         inline frRTF: TRTFPreviewFrame
           Left = 0
           Top = 0
-          Width = 594
-          Height = 271
+          Width = 1046
+          Height = 2627
+          Margins.Left = 5
+          Margins.Top = 5
+          Margins.Right = 5
+          Margins.Bottom = 5
           Align = alClient
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -21
+          Font.Name = 'Segoe UI'
+          Font.Style = []
+          ParentFont = False
           TabOrder = 0
           TabStop = True
           ExplicitWidth = 594
-          ExplicitHeight = 271
+          ExplicitHeight = 1497
           inherited pnlView: TPanel
-            Width = 594
-            Height = 271
+            Width = 1046
+            Height = 2627
             ExplicitWidth = 594
-            ExplicitHeight = 271
+            ExplicitHeight = 1497
             inherited reView: TRichEdit
-              Width = 592
-              Height = 269
-              ExplicitWidth = 592
-              ExplicitHeight = 269
+              Width = 1044
+              Height = 2625
+              ExplicitWidth = 1044
+              ExplicitHeight = 2625
             end
           end
         end
       end
       object tsHTML: TTabSheet
+        Margins.Left = 5
+        Margins.Top = 5
+        Margins.Right = 5
+        Margins.Bottom = 5
         Caption = 'tsHTML'
         ImageIndex = 2
         TabVisible = False
@@ -83,7 +145,17 @@ inherited PreviewDlg: TPreviewDlg
           Top = 0
           Width = 594
           Height = 271
+          Margins.Left = 5
+          Margins.Top = 5
+          Margins.Right = 5
+          Margins.Bottom = 5
           Align = alClient
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -21
+          Font.Name = 'Segoe UI'
+          Font.Style = []
+          ParentFont = False
           TabOrder = 0
           TabStop = True
           ExplicitWidth = 594
@@ -111,7 +183,33 @@ inherited PreviewDlg: TPreviewDlg
     end
   end
   inherited btnHelp: TButton
+    Left = 2928
+    Top = 2851
+    Width = 702
+    Height = 236
+    Margins.Left = 28
+    Margins.Top = 28
+    Margins.Right = 28
+    Margins.Bottom = 28
     Visible = False
+    ExplicitLeft = 2928
+    ExplicitTop = 2851
+    ExplicitWidth = 702
+    ExplicitHeight = 236
+  end
+  inherited btnClose: TButton
+    Left = 711
+    Top = 931
+    Width = 229
+    Height = 77
+    Margins.Left = 9
+    Margins.Top = 9
+    Margins.Right = 9
+    Margins.Bottom = 9
+    ExplicitLeft = 711
+    ExplicitTop = 931
+    ExplicitWidth = 229
+    ExplicitHeight = 77
   end
   object mnuPreview: TPopupMenu
     Left = 32

@@ -50,17 +50,17 @@ type
       {Attempts to move backward in wizard.
       }
   strict protected
-    procedure ArrangeForm; override;
+    procedure ArrangeControls; override;
       {Positions controls and sets form size according to body panel dimensions.
       }
     function ModalResultOnEsc: Integer; override;
       {Gets modal result returned from dialog when user presses ESC key.
         @return Required modal result.
       }
-    procedure ConfigForm; override;
+    procedure CustomiseControls; override;
       {Sets correct UI default font on heading label.
       }
-    procedure InitForm; override;
+    procedure InitialiseControls; override;
       {Displays and initialises first page of wizard.
       }
     function HeadingText(const PageIdx: Integer): string; virtual; abstract;
@@ -140,7 +140,7 @@ resourcestring
 
 { TWizardDlg }
 
-procedure TWizardDlg.ArrangeForm;
+procedure TWizardDlg.ArrangeControls;
   {Positions controls and sets form size according to body panel dimensions.
   }
 begin
@@ -186,20 +186,20 @@ begin
     Close;
 end;
 
-procedure TWizardDlg.ConfigForm;
-  {Sets correct UI default font on heading label.
-  }
-begin
-  inherited;
-  TFontHelper.SetDefaultBaseFont(lblHead.Font);
-end;
-
 function TWizardDlg.CurrentPage: Integer;
   {Gets index of currently displayed page.
     @return Required index.
   }
 begin
   Result := pcWizard.ActivePageIndex;
+end;
+
+procedure TWizardDlg.CustomiseControls;
+  {Sets correct UI default font on heading label.
+  }
+begin
+  inherited;
+  TFontHelper.SetDefaultBaseFont(lblHead.Font);
 end;
 
 function TWizardDlg.FirstPage: Integer;
@@ -235,7 +235,7 @@ begin
     InitPage(NextPage(CurrentPage));
 end;
 
-procedure TWizardDlg.InitForm;
+procedure TWizardDlg.InitialiseControls;
   {Displays and initialises first page of wizard.
   }
 begin

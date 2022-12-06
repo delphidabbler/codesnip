@@ -38,7 +38,7 @@ type
     ///  <summary>Positions controls and sizes dialogue box form.</summary>
     ///  <remarks>This override positions Close button in addition to inherited
     ///  behaviour.</remarks>
-    procedure ArrangeForm; override;
+    procedure ArrangeControls; override;
   end;
 
 
@@ -57,7 +57,7 @@ uses
 
 { TGenericNonModalDlg }
 
-procedure TGenericNonModalDlg.ArrangeForm;
+procedure TGenericNonModalDlg.ArrangeControls;
 begin
   inherited;
   // Arrange Close to left of any Help button

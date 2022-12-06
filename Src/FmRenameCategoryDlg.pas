@@ -63,11 +63,11 @@ type
         @param NewDesc [in] New category description.
       }
   strict protected
-    procedure ConfigForm; override;
+    procedure CustomiseControls; override;
       {Configures form. Populates controls and supplies event handlers to
       frames.
       }
-    procedure ArrangeForm; override;
+    procedure ArrangeControls; override;
       {Sizes and arranges frames in dialog box.
       }
     procedure UpdateOKBtn; override;
@@ -99,7 +99,7 @@ uses
 
 { TRenameCategoryDlg }
 
-procedure TRenameCategoryDlg.ArrangeForm;
+procedure TRenameCategoryDlg.ArrangeControls;
   {Sizes and arranges frames in dialog box.
   }
 begin
@@ -130,7 +130,7 @@ begin
   UpdateOKBtn;
 end;
 
-procedure TRenameCategoryDlg.ConfigForm;
+procedure TRenameCategoryDlg.CustomiseControls;
   {Configures form. Populates controls and supplies event handlers to frames.
   }
 resourcestring

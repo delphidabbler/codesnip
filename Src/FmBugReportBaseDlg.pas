@@ -19,7 +19,7 @@ uses
   // Delphi
   Classes, ActnList, StdCtrls, Controls, ExtCtrls,
   // Project
-  FmGenericViewDlg;
+  FmGenericViewDlg, System.Actions;
 
 
 type
@@ -35,10 +35,10 @@ type
     procedure actBugTrackerExecute(Sender: TObject);
     procedure lblBugTrackerClick(Sender: TObject);
   strict protected
-    procedure ConfigForm; override;
+    procedure CustomiseControls; override;
       {Sets up label fonts.
       }
-    procedure ArrangeForm; override;
+    procedure ArrangeControls; override;
       {Arranges controls and sizes form to accommodate all controls.
       }
     procedure GoToTracker; virtual;
@@ -70,7 +70,7 @@ begin
   GoToTracker;
 end;
 
-procedure TBugReportBaseDlg.ArrangeForm;
+procedure TBugReportBaseDlg.ArrangeControls;
   {Arranges controls and sizes form to accommodate all controls.
   }
 begin
@@ -82,7 +82,7 @@ begin
   inherited;
 end;
 
-procedure TBugReportBaseDlg.ConfigForm;
+procedure TBugReportBaseDlg.CustomiseControls;
   {Sets up label fonts.
   }
 begin

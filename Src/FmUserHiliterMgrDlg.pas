@@ -21,7 +21,7 @@ uses
   // Delphi
   UBaseObjects, Classes, ActnList, StdCtrls, Controls, ExtCtrls,
   // Project
-  FmGenericViewDlg, Hiliter.UGlobals;
+  FmGenericViewDlg, Hiliter.UGlobals, System.Actions;
 
 
 type
@@ -64,9 +64,9 @@ type
   strict protected
     ///  <summary>Arranges controls and sets width and height of dialogue box.
     ///  </summary>
-    procedure ArrangeForm; override;
+    procedure ArrangeControls; override;
     ///  <summary>Initialise form's controls.</summary>
-    procedure InitForm; override;
+    procedure InitialiseControls; override;
   public
     ///  <summary>Displays dialogue box and passes back any selected highlighter
     ///  attributes.</summary>
@@ -133,7 +133,7 @@ begin
   actUse.Enabled := lbNames.ItemIndex >= 0;
 end;
 
-procedure TUserHiliterMgrDlg.ArrangeForm;
+procedure TUserHiliterMgrDlg.ArrangeControls;
 begin
   TCtrlArranger.AlignLefts([lblNames, lbNames], 0);
   TCtrlArranger.AlignLefts(
@@ -164,7 +164,7 @@ begin
     end;
 end;
 
-procedure TUserHiliterMgrDlg.InitForm;
+procedure TUserHiliterMgrDlg.InitialiseControls;
 var
   Names: TStringList;
   Name: string;

@@ -34,7 +34,7 @@ type
   TGenericViewDlg = class(TGenericModalDlg)
     btnClose: TButton;
   strict protected
-    procedure ArrangeForm; override;
+    procedure ArrangeControls; override;
       {Positions controls and sets form size according to body panel dimensions.
       }
     function ModalResultOnEsc: Integer; override;
@@ -57,7 +57,7 @@ uses
 
 { TGenericViewDlg }
 
-procedure TGenericViewDlg.ArrangeForm;
+procedure TGenericViewDlg.ArrangeControls;
   {Positions controls and sets form size according to body panel dimensions.
   }
 begin

@@ -67,8 +67,8 @@ type
           selected, False if main database snippets are to be selected.
       }
   strict protected
-    procedure ConfigForm; override;
-    procedure InitForm; override;
+    procedure CustomiseControls; override;
+    procedure InitialiseControls; override;
       {Initialises form. Disables User Defined button if there are no user
       defined snippets in database.
       }
@@ -175,7 +175,7 @@ begin
   SelectDB(True);
 end;
 
-procedure TSelectionSearchDlg.ConfigForm;
+procedure TSelectionSearchDlg.CustomiseControls;
 begin
   inherited;
   frmSelect.CanCollapse := True;
@@ -216,7 +216,7 @@ begin
   Screen.Cursor := crHourGlass;
 end;
 
-procedure TSelectionSearchDlg.InitForm;
+procedure TSelectionSearchDlg.InitialiseControls;
   {Initialises form. Disables User Defined button if there are no user defined
   snippets in database.
   }

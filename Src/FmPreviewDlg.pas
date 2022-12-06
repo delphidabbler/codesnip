@@ -22,7 +22,7 @@ uses
   ExtCtrls,
   // Project
   FmGenericViewDlg, FrBrowserBase, FrHTMLPreview, FrMemoPreview, FrRTFPreview,
-  FrTextPreview, UBaseObjects, UEncodings;
+  FrTextPreview, UBaseObjects, UEncodings, System.Actions;
 
 
 type
@@ -98,7 +98,7 @@ type
     class function FindParentTabSheet(const Frame: TFrame): TTabSheet;
   strict protected
     ///  <summary>Loads and displays the document being previewed.</summary>
-    procedure InitForm; override;
+    procedure InitialiseControls; override;
   public
     ///  <summary>Displays a document in preview dialog box.</summary>
     ///  <param name="AOwner">TComponent [in] Component that owns dialog box.
@@ -218,7 +218,7 @@ begin
   TabSheet := FindParentTabSheet(Frame);
 end;
 
-procedure TPreviewDlg.InitForm;
+procedure TPreviewDlg.InitialiseControls;
 var
   TabSheet: TTabSheet;  // tab sheet containing preview frame
 begin

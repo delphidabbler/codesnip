@@ -44,10 +44,10 @@ type
         @param Desc [in] Description of new category.
       }
   strict protected
-    procedure ConfigForm; override;
+    procedure CustomiseControls; override;
       {Configures form. Populates controls and supplies event handler to frame.
       }
-    procedure ArrangeForm; override;
+    procedure ArrangeControls; override;
       {Sizes and arranges frame in dialog box.
       }
     procedure UpdateOKBtn; override;
@@ -89,7 +89,7 @@ begin
   (Database as IDatabaseEdit).AddCategory(TUniqueID.Generate, Data);
 end;
 
-procedure TAddCategoryDlg.ArrangeForm;
+procedure TAddCategoryDlg.ArrangeControls;
   {Sizes and arranges frame in dialog box.
   }
 begin
@@ -107,7 +107,7 @@ begin
   AddCategory(frmDescription.Description);
 end;
 
-procedure TAddCategoryDlg.ConfigForm;
+procedure TAddCategoryDlg.CustomiseControls;
   {Configures form. Populates controls and supplies event handler to frame.
   }
 resourcestring

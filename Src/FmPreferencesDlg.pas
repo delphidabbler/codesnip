@@ -90,10 +90,10 @@ type
     function CustomHelpKeyword: string; override;
     ///  <summary>Sizes frames providing content of pages of dialog and gets
     ///  each to arrange its controls.</summary>
-    procedure ArrangeForm; override;
+    procedure ArrangeControls; override;
     ///  <summary>Displays and initialises frames used to display pages of
     ///  dialog.</summary>
-    procedure InitForm; override;
+    procedure InitialiseControls; override;
   public
     ///  <summary>Creates empty registered page frame list object.</summary>
     class constructor Create;
@@ -187,7 +187,7 @@ uses
 
 { TPreferencesDlg }
 
-procedure TPreferencesDlg.ArrangeForm;
+procedure TPreferencesDlg.ArrangeControls;
 var
   Idx: Integer;           // loops through all displayed page
   Frame: TPrefsBaseFrame; // references each preference frame
@@ -332,7 +332,7 @@ begin
   Result := MapTabSheetToPage(pcMain.ActivePage);
 end;
 
-procedure TPreferencesDlg.InitForm;
+procedure TPreferencesDlg.InitialiseControls;
 var
   TabIdx: Integer;      // loops thru tabs in page control
 begin

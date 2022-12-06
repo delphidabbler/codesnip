@@ -24,7 +24,7 @@ uses
   LVEx,
   // Project
   FmGenericNonModalDlg, Favourites.UFavourites, IntfNotifier, USnippetIDs,
-  UWindowSettings;
+  UWindowSettings, System.Actions;
 
 
 type
@@ -237,14 +237,14 @@ type
 
   strict protected
     ///  <summary>Configures some of the form's objects.</summary>
-    procedure ConfigForm; override;
+    procedure CustomiseControls; override;
 
     ///  <summary>Arranges and aligns the form's controls.</summary>
-    procedure ArrangeForm; override;
+    procedure ArrangeControls; override;
 
     ///  <summary>Initialises form's controls and restores last window position.
     ///  </summary>
-    procedure InitForm; override;
+    procedure InitialiseControls; override;
 
   public
     ///  <summary>Displays and intialises the dialogue box non-modally, or
@@ -374,7 +374,7 @@ begin
   LI.Favourite := Favourite;
 end;
 
-procedure TFavouritesDlg.ArrangeForm;
+procedure TFavouritesDlg.ArrangeControls;
 begin
   TCtrlArranger.AlignTops([fLVFavs, btnDisplay], 0);
   TCtrlArranger.AlignLefts([fLVFavs, chkNewTab], 0);
@@ -395,14 +395,6 @@ class procedure TFavouritesDlg.Close;
 begin
   if IsDisplayed then
     FreeAndNil(fInstance);
-end;
-
-procedure TFavouritesDlg.ConfigForm;
-begin
-  inherited;
-  fFavourites.AddListener(FavouritesListener);
-  TTrackBarHack(tbTransparency).OnMouseDown := TBTransparencyMouseDown;
-  TTrackBarHack(tbTransparency).OnMouseUp := TBTransparencyMouseUp;
 end;
 
 procedure TFavouritesDlg.CreateLV;
@@ -439,6 +431,14 @@ begin
     OnCustomDrawItem := LVCustomDrawItem;
     OnCustomDrawSubItem := LVCustomDrawSubItem;
   end;
+end;
+
+procedure TFavouritesDlg.CustomiseControls;
+begin
+  inherited;
+  fFavourites.AddListener(FavouritesListener);
+  TTrackBarHack(tbTransparency).OnMouseDown := TBTransparencyMouseDown;
+  TTrackBarHack(tbTransparency).OnMouseUp := TBTransparencyMouseUp;
 end;
 
 class procedure TFavouritesDlg.Display(AOwner: TComponent;
@@ -561,7 +561,7 @@ begin
   inherited;
 end;
 
-procedure TFavouritesDlg.InitForm;
+procedure TFavouritesDlg.InitialiseControls;
 begin
   inherited;
   fWindowSettings.Restore;

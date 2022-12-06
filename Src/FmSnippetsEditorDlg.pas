@@ -219,14 +219,14 @@ type
         @param Compilers [in] Object containing compilation results.
       }
   strict protected
-    procedure ArrangeForm; override;
+    procedure ArrangeControls; override;
       {Arranges controls on form and sizes it.
       }
-    procedure ConfigForm; override;
+    procedure CustomiseControls; override;
       {Configures form's controls. Sets font and colors of "link" labels. Also
       sets item height of owner draw check list boxes.
       }
-    procedure InitForm; override;
+    procedure InitialiseControls; override;
       {Performs initialisation of form fields and controls.
       }
   public
@@ -544,7 +544,7 @@ begin
     end;
 end;
 
-procedure TSnippetsEditorDlg.ArrangeForm;
+procedure TSnippetsEditorDlg.ArrangeControls;
   {Arranges controls on form and sizes it.
   }
 begin
@@ -654,22 +654,6 @@ begin
   UpdateReferences;
 end;
 
-procedure TSnippetsEditorDlg.ConfigForm;
-  {Configures form's controls. Sets font and colors of "link" labels. Also sets
-  item height of owner draw check list boxes.
-  }
-begin
-  inherited;
-  // Set colour and actions of link labels
-  lblSnippetKindHelp.Font.Color := clHelpLink;
-  TFontHelper.SetDefaultBaseFont(lblSnippetKindHelp.Font);
-  lblViewCompErrs.Font.Color := clCommandLink;
-  TFontHelper.SetDefaultBaseFont(lblViewCompErrs.Font);
-  lblViewCompErrs.Caption := actViewErrors.Caption;
-  lblViewCompErrsKey.Caption :=
-    '(' + ShortcutToText(actViewErrors.ShortCut) + ')';
-end;
-
 function TSnippetsEditorDlg.CreateTempSnippet: TSnippet;
   {Creates a temporary snippet from data entered in dialog box.
     @return Required snippet instance.
@@ -684,6 +668,22 @@ begin
   Result := (Database as IDatabaseEdit).CreateTempSnippet(
     StrTrim(edName.Text), EditData
   );
+end;
+
+procedure TSnippetsEditorDlg.CustomiseControls;
+  {Configures form's controls. Sets font and colors of "link" labels. Also sets
+  item height of owner draw check list boxes.
+  }
+begin
+  inherited;
+  // Set colour and actions of link labels
+  lblSnippetKindHelp.Font.Color := clHelpLink;
+  TFontHelper.SetDefaultBaseFont(lblSnippetKindHelp.Font);
+  lblViewCompErrs.Font.Color := clCommandLink;
+  TFontHelper.SetDefaultBaseFont(lblViewCompErrs.Font);
+  lblViewCompErrs.Caption := actViewErrors.Caption;
+  lblViewCompErrsKey.Caption :=
+    '(' + ShortcutToText(actViewErrors.ShortCut) + ')';
 end;
 
 procedure TSnippetsEditorDlg.DisplayCompileResults(const Compilers: ICompilers);
@@ -861,7 +861,7 @@ begin
   fMemoCaretPosDisplayMgr.Manage(frmExtra, lblExtraCaretPos);
 end;
 
-procedure TSnippetsEditorDlg.InitForm;
+procedure TSnippetsEditorDlg.InitialiseControls;
   {Performs initialisation of form fields and controls.
   }
 begin

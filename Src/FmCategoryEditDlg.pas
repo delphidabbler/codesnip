@@ -31,11 +31,11 @@ type
   }
   TCategoryEditDlg = class(TGenericOKDlg)
   strict protected
-    procedure ArrangeForm; override;
+    procedure ArrangeControls; override;
       {Sizes dialog box to fit its controls. Sub-classes should layout and size
       controls before calling inherited.
       }
-    procedure InitForm; override; final;
+    procedure InitialiseControls; override; final;
       {Initialises form and state of OK button. Sub-classes must override
       InitControls instead of this method.
       }
@@ -61,7 +61,7 @@ uses
 
 { TCategoryEditDlg }
 
-procedure TCategoryEditDlg.ArrangeForm;
+procedure TCategoryEditDlg.ArrangeControls;
   {Sizes dialog box to fit its controls. Sub-classes should layout and size
   controls before calling inherited.
   }
@@ -79,7 +79,7 @@ begin
   // Do nothing
 end;
 
-procedure TCategoryEditDlg.InitForm;
+procedure TCategoryEditDlg.InitialiseControls;
   {Initialises form and state of OK button. Sub-classes must override
   InitControls instead of this method.
   }

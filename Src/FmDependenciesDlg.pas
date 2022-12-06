@@ -21,7 +21,7 @@ uses
   ComCtrls, StdCtrls, Controls, ExtCtrls, Classes, Windows, ActnList,
   // Project
   DB.USnippet, FmGenericViewDlg, UBaseObjects, USearch, USnippetIDs,
-  USnippetsTVDraw;
+  USnippetsTVDraw, System.Actions;
 
 
 type
@@ -114,10 +114,10 @@ type
           untitled string.
       }
   strict protected
-    procedure ConfigForm; override;
+    procedure CustomiseControls; override;
       {Configure controls on form.
       }
-    procedure ArrangeForm; override;
+    procedure ArrangeControls; override;
       {Arranges controls on form.
       }
   public
@@ -238,7 +238,7 @@ begin
   end;
 end;
 
-procedure TDependenciesDlg.ArrangeForm;
+procedure TDependenciesDlg.ArrangeControls;
   {Arranges controls on form.
   }
 begin
@@ -270,7 +270,7 @@ begin
     tvDependencies.Align := alClient;
 end;
 
-procedure TDependenciesDlg.ConfigForm;
+procedure TDependenciesDlg.CustomiseControls;
   {Configure controls on form.
   }
 resourcestring

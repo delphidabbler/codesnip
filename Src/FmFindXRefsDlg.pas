@@ -57,13 +57,13 @@ type
       {Updates state of controls.
       }
   strict protected
-    procedure ConfigForm; override;
+    procedure CustomiseControls; override;
       {Style labels and record name of snippet in labels and checkboxes.
       }
-    procedure ArrangeForm; override;
+    procedure ArrangeControls; override;
       {Arranges components on form and rezize form as required.
       }
-    procedure InitForm; override;
+    procedure InitialiseControls; override;
       {Populates and initialises controls.
       }
   public
@@ -137,7 +137,7 @@ uses
 
 { TFindXRefsDlg }
 
-procedure TFindXRefsDlg.ArrangeForm;
+procedure TFindXRefsDlg.ArrangeControls;
   {Arranges components on form and rezize form as required.
   }
 begin
@@ -221,7 +221,7 @@ begin
   fSearch := TSearchFactory.CreateSearch(Filter);
 end;
 
-procedure TFindXRefsDlg.ConfigForm;
+procedure TFindXRefsDlg.CustomiseControls;
   {Style labels and record name of snippet in labels and checkboxes.
   }
 begin
@@ -281,7 +281,7 @@ begin
   FreeAndNil(fSearchParams);
 end;
 
-procedure TFindXRefsDlg.InitForm;
+procedure TFindXRefsDlg.InitialiseControls;
   {Populates and initialises controls.
   }
 begin

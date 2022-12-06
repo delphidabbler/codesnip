@@ -19,7 +19,7 @@ uses
   // Delphi
   ExtCtrls, Controls, Forms, Classes,
   // Project
-  Browser.UHTMLEvents, IntfAligner, FmBase, FrBrowserBase, FrEasterEgg;
+  Browser.UHTMLEvents, IntfAligner, UI.Forms.Root, FrBrowserBase, FrEasterEgg;
 
 
 type
@@ -29,7 +29,7 @@ type
     Form that hosts easter egg frame and contained HTML document. Aligns form,
     fades in and out and responds to events in HTML.
   }
-  TEasterEggForm = class(TBaseForm)
+  TEasterEggForm = class(TRootForm)
     timerReveal: TTimer;
     frmEasterEgg: TEasterEggFrame;
     procedure FormKeyPress(Sender: TObject; var Key: Char);
@@ -52,11 +52,11 @@ type
         @param EventInfo [in] Object providing information about the event.
       }
   strict protected
-    procedure InitForm; override;
+    procedure InitialiseControls; override;
       {Initialises controls on form. Loads Easter Egg frame's HTML and starts
       fade-in animation.
       }
-    function GetAligner: IFormAligner; override;
+    function Aligner: IFormAligner; override;
       {Gets object to be used to align form to owner.
         @return Required aligner.
       }
@@ -79,6 +79,11 @@ uses
 {$R *.dfm}
 
 { TEasterEggForm }
+
+function TEasterEggForm.Aligner: IFormAligner;
+begin
+  Result := TSimpleFormAligner.Create;
+end;
 
 procedure TEasterEggForm.BrowserEventHandler(Sender: TObject;
   const EventInfo: THTMLEventInfo);
@@ -139,6 +144,8 @@ begin
   TDlgHelper.SetDlgParentToOwner(Self);
   // Assign browser event handler.
   frmEasterEgg.OnHTMLEvent := BrowserEventHandler;
+  // No help available
+  DisableHelp := True;
 end;
 
 procedure TEasterEggForm.FormKeyPress(Sender: TObject; var Key: Char);
@@ -150,14 +157,6 @@ begin
   inherited;
   if Key = ESC then
     Close;
-end;
-
-function TEasterEggForm.GetAligner: IFormAligner;
-  {Gets object to be used to align form to owner.
-    @return Required aligner.
-  }
-begin
-  Result := TSimpleFormAligner.Create;
 end;
 
 procedure TEasterEggForm.HideTick(Sender: TObject);
@@ -179,7 +178,7 @@ begin
     AlphaBlendValue := AlphaBlendValue - cAlphaDelta;
 end;
 
-procedure TEasterEggForm.InitForm;
+procedure TEasterEggForm.InitialiseControls;
   {Initialises controls on form. Loads Easter Egg frame's HTML and starts
   fade-in animation.
   }

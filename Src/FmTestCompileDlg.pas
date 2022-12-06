@@ -19,7 +19,7 @@ uses
   Generics.Collections,
 
   Compilers.UGlobals, DB.USnippet, FmGenericViewDlg, UBaseObjects, UCompileMgr,
-  ULEDImageList;
+  ULEDImageList, System.Actions;
 
 type
   ///  <summary>Implements a dialogue box that test compiles a snippet and
@@ -128,10 +128,10 @@ type
   strict protected
     ///  <summary>Arranges controls on form.</summary>
     ///  <remarks>Called from ancestor class.</remarks>
-    procedure ArrangeForm; override;
+    procedure ArrangeControls; override;
     ///  <summary>Creates and configures required controls.</summary>
     ///  <remarks>Called from ancestor class.</remarks>
-    procedure ConfigForm; override;
+    procedure CustomiseControls; override;
     ///  <summary>Performs test compilation after form is displayed and displays
     ///  results.</summary>
     ///  <remarks>Called from ancestor class.</remarks>
@@ -206,7 +206,7 @@ begin
   fInitialising := False;
 end;
 
-procedure TTestCompileDlg.ArrangeForm;
+procedure TTestCompileDlg.ArrangeControls;
 const
   // Various margins, offsets and sizes
   MaxBodyPanelWidth = 760;
@@ -275,17 +275,6 @@ begin
   btnViewErrors.Top := btnHelp.Top;
 end;
 
-procedure TTestCompileDlg.ConfigForm;
-begin
-  inherited;
-  CreateCompilerCtrls;
-  // Set required label fonts and captions
-  TFontHelper.SetDefaultBaseFont(lblSnippetName.Font);
-  lblSnippetName.Font.Color :=
-    Preferences.DBHeadingColours[fSnippet.UserDefined];
-  lblSnippetName.Caption := fSnippet.DisplayName;
-end;
-
 procedure TTestCompileDlg.CreateCompilerCtrls;
 var
   Compiler: ICompiler;  // each supported compiler
@@ -302,6 +291,17 @@ begin
       fCompilerCtrlList.Add(Ctrl);
     end;
   end;
+end;
+
+procedure TTestCompileDlg.CustomiseControls;
+begin
+  inherited;
+  CreateCompilerCtrls;
+  // Set required label fonts and captions
+  TFontHelper.SetDefaultBaseFont(lblSnippetName.Font);
+  lblSnippetName.Font.Color :=
+    Preferences.DBHeadingColours[fSnippet.UserDefined];
+  lblSnippetName.Caption := fSnippet.DisplayName;
 end;
 
 procedure TTestCompileDlg.DisplayCompileResults(const Compilers: ICompilers);

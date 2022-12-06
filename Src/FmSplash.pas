@@ -19,7 +19,7 @@ uses
   // Delphi
   ExtCtrls, Classes, Controls, Forms,
   // Project
-  FmBase, IntfAligner;
+  UI.Forms.Root, IntfAligner;
 
 
 type
@@ -29,12 +29,13 @@ type
     Class that implements a splash screen that displays for a defined minimum
     amount of time.
   }
-  TSplashForm = class(TBaseForm)
+  TSplashForm = class(TRootForm)
     pbMain: TPaintBox;
     tmMinDisplay: TTimer;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure pbMainPaint(Sender: TObject);
     procedure tmMinDisplayTimer(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
   strict private
     fCloseRequested: Boolean; // Records if RequestClose method has been called
     fTimeOut: Boolean;        // Records if minimum display time has elapsed
@@ -44,7 +45,7 @@ type
       display time has elapsed.
       }
   strict protected
-    function GetAligner: IFormAligner; override;
+    function Aligner: IFormAligner; override;
       {Creates and returns reference to an object that is used to align the form
       to the owner.
         @return Required aligner object instance.
@@ -115,6 +116,11 @@ type
 
 { TSplashForm }
 
+function TSplashForm.Aligner: IFormAligner;
+begin
+  Result := TSplashAligner.Create;
+end;
+
 procedure TSplashForm.FormClose(Sender: TObject; var Action: TCloseAction);
   {Handles form's OnClose event. Frees the form object.
     @param Sender [in] Not used.
@@ -126,13 +132,11 @@ begin
   SplashForm := nil;
 end;
 
-function TSplashForm.GetAligner: IFormAligner;
-  {Creates and returns reference to an object that is used to align the form to
-  the owner.
-    @return Required aligner object instance.
-  }
+procedure TSplashForm.FormCreate(Sender: TObject);
 begin
-  Result := TSplashAligner.Create;
+  inherited;
+  // No help available
+  DisableHelp := True;
 end;
 
 procedure TSplashForm.pbMainPaint(Sender: TObject);

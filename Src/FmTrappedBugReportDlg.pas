@@ -20,7 +20,7 @@ uses
   // Delphi
   SysUtils, Classes, ActnList, ExtActns, StdCtrls, Controls, ExtCtrls,
   // Project
-  FmBugReportBaseDlg, UBaseObjects;
+  FmBugReportBaseDlg, UBaseObjects, System.Actions;
 
 
 type
@@ -47,11 +47,11 @@ type
       the clipboard ready for pasting into the bug report.
       }
   strict protected
-    procedure ConfigForm; override;
+    procedure CustomiseControls; override;
       {Configures form. Ensures correct font is used in labels and displays
       details of exception.
       }
-    procedure ArrangeForm; override;
+    procedure ArrangeControls; override;
       {Aligns and sizes of controls depending on text sizes.
       }
     procedure GoToTracker; override;
@@ -108,7 +108,7 @@ begin
     Application.Terminate;
 end;
 
-procedure TTrappedBugReportDlg.ArrangeForm;
+procedure TTrappedBugReportDlg.ArrangeControls;
   {Aligns and sizes of controls depending on text sizes.
   }
 begin
@@ -124,20 +124,6 @@ begin
   inherited;
   btnTerminate.Top := btnClose.Top;
   TCtrlArranger.MoveToLeftOf(btnClose, btnTerminate, 4);
-end;
-
-procedure TTrappedBugReportDlg.ConfigForm;
-  {Configures form. Ensures correct font is used in labels and displays details
-  of exception.
-  }
-begin
-  inherited;
-  // set required label fonts
-  TFontHelper.SetDefaultBaseFont(lblIntro.Font);
-  TFontHelper.SetDefaultBaseFont(lblBugInfo.Font);
-  TFontHelper.SetDefaultBaseFont(btnTerminate.Font);
-  // display the exception's message
-  lblBugInfo.Caption := fErrorObj.Message;
 end;
 
 procedure TTrappedBugReportDlg.CopyBugInfoToClipboard;
@@ -156,6 +142,20 @@ begin
     cBugInfo,
     [TAppInfo.ProgramFileVersion, TOSInfo.Description, fErrorObj.Message]
   );
+end;
+
+procedure TTrappedBugReportDlg.CustomiseControls;
+  {Configures form. Ensures correct font is used in labels and displays details
+  of exception.
+  }
+begin
+  inherited;
+  // set required label fonts
+  TFontHelper.SetDefaultBaseFont(lblIntro.Font);
+  TFontHelper.SetDefaultBaseFont(lblBugInfo.Font);
+  TFontHelper.SetDefaultBaseFont(btnTerminate.Font);
+  // display the exception's message
+  lblBugInfo.Caption := fErrorObj.Message;
 end;
 
 class procedure TTrappedBugReportDlg.Execute(Owner: TComponent;

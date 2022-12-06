@@ -21,7 +21,7 @@ uses
   // Delphi
   Controls, StdCtrls, Classes, ExtCtrls, Forms, Messages,
   // Project
-  FmBase, IntfAligner, UMarquee;
+  UI.Forms.Root, IntfAligner, UMarquee;
 
 
 type
@@ -31,7 +31,7 @@ type
     Implements dialog box for display when application is waiting. Dialog box
     is borderless, displays via its Caption property and shows an animation.
   }
-  TWaitDlg = class(TBaseForm)
+  TWaitDlg = class(TRootForm)
     lblCaption: TLabel;
     pnlMain: TPanel;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
@@ -45,16 +45,16 @@ type
         @var Msg [in/out] Not used.
       }
   strict protected
-    function GetAligner: IFormAligner; override;
+    function Aligner: IFormAligner; override;
       {Creates and returns reference to an object that is used to align the form
       to the owner.
         @return Required aligner object instance.
       }
-    procedure CustomiseForm; override;
+    procedure CustomiseControls; override;
       {Sizes window to fit caption text and creates and locates the marquee
       control.
       }
-    procedure InitForm; override;
+    procedure InitialiseControls; override;
       {Sets hourglass cursor and starts marquee when form is shown.
       }
   public
@@ -83,6 +83,11 @@ uses
 
 { TWaitDlg }
 
+function TWaitDlg.Aligner: IFormAligner;
+begin
+  Result := TSimpleFormAligner.Create;
+end;
+
 procedure TWaitDlg.CMTextChanged(var Msg: TMessage);
   {Triggered when form's caption is set. Displays form caption in lblCaption.
     @var Msg [in/out] Not used.
@@ -105,13 +110,14 @@ begin
   Result.fFreeOnClose := True;
 end;
 
-procedure TWaitDlg.CustomiseForm;
+procedure TWaitDlg.CustomiseControls;
   {Sizes window to fit caption text and creates and locates the marquee control.
   }
 const
   MinFormWidth = 168;
 begin
   inherited;
+  // TODO: Split some content out to FormCreate & ArrangeControls
   TFontHelper.SetDefaultBaseFont(lblCaption.Font);
   // Size window and centre label in it (pnlMain auto-sizes to window)
   Self.ClientWidth := Max(MinFormWidth, lblCaption.Width + 24);
@@ -147,18 +153,11 @@ procedure TWaitDlg.FormCreate(Sender: TObject);
 begin
   inherited;
   TDlgHelper.SetDlgParentToOwner(Self);
+  // No help available
+  DisableHelp := True;
 end;
 
-function TWaitDlg.GetAligner: IFormAligner;
-  {Creates and returns reference to an object that is used to align the form to
-  the owner.
-    @return Required aligner object instance.
-  }
-begin
-  Result := TSimpleFormAligner.Create;
-end;
-
-procedure TWaitDlg.InitForm;
+procedure TWaitDlg.InitialiseControls;
   {Sets hourglass cursor and starts marquee when form is shown.
   }
 begin

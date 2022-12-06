@@ -48,13 +48,13 @@ type
       end;
   strict protected
     ///  <summary>Returns instance of form aligner object.</summary>
-    function GetAligner: IFormAligner; override;
+    function Aligner: IFormAligner; override;
     ///  <summary>Sets form caption and loads HTML to be displayed from
     ///  resources.</summary>
-    procedure ConfigForm; override;
+    procedure CustomiseControls; override;
     ///  <summary>Sets size of the HTML section of the display and aranges other
     ///  controls around that.</summary>
-    procedure ArrangeForm; override;
+    procedure ArrangeControls; override;
     ///  <summary>Modifies window creation parameters to ensure the dialgue box
     ///  displays a button in the task bar.</summary>
     ///  <remarks>This is necessary because the dialogue box is displayed before
@@ -87,7 +87,12 @@ uses
 
 { TWhatsNewDlg }
 
-procedure TWhatsNewDlg.ArrangeForm;
+function TWhatsNewDlg.Aligner: IFormAligner;
+begin
+  Result := TAligner.Create;
+end;
+
+procedure TWhatsNewDlg.ArrangeControls;
 const
   cBodyWidth = 500;
   cBodyHeight = 450;
@@ -97,7 +102,13 @@ begin
   inherited;
 end;
 
-procedure TWhatsNewDlg.ConfigForm;
+procedure TWhatsNewDlg.CreateParams(var Params: TCreateParams);
+begin
+  inherited;
+  Params.ExStyle := Params.ExStyle OR WS_EX_APPWINDOW;
+end;
+
+procedure TWhatsNewDlg.CustomiseControls;
 resourcestring
   sDlgTitle = 'Welcome to CodeSnip v%s';
 begin
@@ -105,12 +116,6 @@ begin
   frmHTML.Initialise(
     LoadResourceAsString(HInstance, 'dlg-whatsnew.html', RT_HTML, etUTF8)
   );
-end;
-
-procedure TWhatsNewDlg.CreateParams(var Params: TCreateParams);
-begin
-  inherited;
-  Params.ExStyle := Params.ExStyle OR WS_EX_APPWINDOW;
 end;
 
 class procedure TWhatsNewDlg.Execute(AOwner: TComponent);
@@ -121,11 +126,6 @@ begin
     finally
       Free;
     end;
-end;
-
-function TWhatsNewDlg.GetAligner: IFormAligner;
-begin
-  Result := TAligner.Create;
 end;
 
 { TWhatsNewDlg.TAligner }

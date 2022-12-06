@@ -113,12 +113,12 @@ type
 
     ///  <summary>Initialises wizard pages that display HTML content.</summary>
     ///  <remarks>Overridden method called from ancestor class.</remarks>
-    procedure ConfigForm; override;
+    procedure CustomiseControls; override;
 
     ///  <summary>Aligns and arranges controls in each tab sheet and sizes
     ///  dialog box to accomodate controls.</summary>
     ///  <remarks>Overridden method called from ancestor class.</remarks>
-    procedure ArrangeForm; override;
+    procedure ArrangeControls; override;
 
     ///  <summary>Protected constructor that sets up form.</summary>
     constructor InternalCreate(AOwner: TComponent); override;
@@ -200,7 +200,7 @@ begin
   end;
 end;
 
-procedure TDBUpdateDlg.ArrangeForm;
+procedure TDBUpdateDlg.ArrangeControls;
 var
   HTMLFrameHeight: Integer;
   HTMLFrameClientWidth: Integer;
@@ -261,7 +261,14 @@ begin
   end;
 end;
 
-procedure TDBUpdateDlg.ConfigForm;
+procedure TDBUpdateDlg.CopyProgress(Sender: TObject;
+  const Percentage: Single);
+begin
+  frmProgress.Progress := Round(Percentage);
+  Application.ProcessMessages;
+end;
+
+procedure TDBUpdateDlg.CustomiseControls;
 resourcestring
   sProgressFrameDesc = 'Copying files...';
 begin
@@ -293,13 +300,6 @@ begin
   frmProgress.Visible := False;
   frmProgress.Range := TRange.Create(0, 100);
   frmProgress.Description := sProgressFrameDesc;
-end;
-
-procedure TDBUpdateDlg.CopyProgress(Sender: TObject;
-  const Percentage: Single);
-begin
-  frmProgress.Progress := Round(Percentage);
-  Application.ProcessMessages;
 end;
 
 procedure TDBUpdateDlg.DoUpdate;

@@ -1,48 +1,94 @@
 inherited TrappedBugReportDlg: TTrappedBugReportDlg
   Caption = 'Unexpected Error'
-  ExplicitHeight = 375
-  PixelsPerInch = 96
-  TextHeight = 13
+  ClientHeight = 3229
+  ClientWidth = 4512
+  Font.Height = -350
+  ExplicitWidth = 4536
+  ExplicitHeight = 3293
+  PixelsPerInch = 168
+  TextHeight = 466
+  inherited bvlBottom: TBevel
+    Left = 135
+    Top = 4860
+    Width = 6190
+    Height = 40
+    Margins.Left = 49
+    Margins.Top = 49
+    Margins.Right = 49
+    Margins.Bottom = 49
+    ExplicitLeft = 135
+    ExplicitTop = 4860
+    ExplicitWidth = 6190
+    ExplicitHeight = 40
+  end
   inherited pnlBody: TPanel
+    Left = 135
+    Top = 135
+    Width = 1375
+    Height = 4615
+    Margins.Left = 49
+    Margins.Top = 49
+    Margins.Right = 49
+    Margins.Bottom = 49
+    ExplicitLeft = 135
+    ExplicitTop = 135
+    ExplicitWidth = 1375
+    ExplicitHeight = 4615
     object lblIntro: TLabel [0]
-      Left = 4
-      Top = 4
-      Width = 309
-      Height = 13
+      Left = 7
+      Top = 7
+      Width = 527
+      Height = 23
+      Margins.Left = 5
+      Margins.Top = 5
+      Margins.Right = 5
+      Margins.Bottom = 5
       Caption = 'CodeSnip has detected the following unexpected error:'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
-      Font.Height = -11
+      Font.Height = -19
       Font.Name = 'Tahoma'
       Font.Style = [fsBold]
       ParentFont = False
     end
     object bvlBugDesc: TBevel [1]
-      Left = 4
-      Top = 19
-      Width = 441
-      Height = 34
+      Left = 7
+      Top = 33
+      Width = 772
+      Height = 60
+      Margins.Left = 5
+      Margins.Top = 5
+      Margins.Right = 5
+      Margins.Bottom = 5
       Shape = bsFrame
     end
     object lblBugInfo: TLabel [2]
-      Left = 12
-      Top = 25
-      Width = 425
-      Height = 24
+      Left = 21
+      Top = 44
+      Width = 744
+      Height = 42
+      Margins.Left = 5
+      Margins.Top = 5
+      Margins.Right = 5
+      Margins.Bottom = 5
       AutoSize = False
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clPurple
-      Font.Height = -11
+      Font.Height = -19
       Font.Name = 'Tahoma'
       Font.Style = []
       ParentFont = False
       WordWrap = True
     end
     object lblInstruct1: TLabel [3]
-      Left = 5
-      Top = 59
-      Width = 441
-      Height = 38
+      Left = 9
+      Top = 103
+      Width = 772
+      Height = 67
+      Margins.Left = 5
+      Margins.Top = 5
+      Margins.Right = 5
+      Margins.Bottom = 5
       AutoSize = False
       Caption = 
         'It will be helpful if you can take the time to report this bug u' +
@@ -51,10 +97,14 @@ inherited TrappedBugReportDlg: TTrappedBugReportDlg
       WordWrap = True
     end
     object lblInstruct2: TLabel [4]
-      Left = 4
-      Top = 91
-      Width = 441
-      Height = 46
+      Left = 7
+      Top = 159
+      Width = 772
+      Height = 81
+      Margins.Left = 5
+      Margins.Top = 5
+      Margins.Right = 5
+      Margins.Bottom = 5
       AutoSize = False
       Caption = 
         'Please use the link below to display the bug tracker and then re' +
@@ -64,10 +114,14 @@ inherited TrappedBugReportDlg: TTrappedBugReportDlg
       WordWrap = True
     end
     object lblInstruct3: TLabel [5]
-      Left = 4
-      Top = 143
-      Width = 441
-      Height = 38
+      Left = 7
+      Top = 250
+      Width = 772
+      Height = 67
+      Margins.Left = 5
+      Margins.Top = 5
+      Margins.Right = 5
+      Margins.Bottom = 5
       AutoSize = False
       Caption = 
         'CodeSnip has gathered some data about the bug that will be place' +
@@ -77,15 +131,44 @@ inherited TrappedBugReportDlg: TTrappedBugReportDlg
         'pboard is not sufficient on its own.'
       WordWrap = True
     end
+    inherited lblBugTracker: TLabel
+      Left = 12
+      Top = 784
+      Width = 318
+      Height = 40
+      Margins.Left = 9
+      Margins.Top = 9
+      Margins.Right = 9
+      Margins.Bottom = 9
+      Font.Height = -33
+      ExplicitLeft = 12
+      ExplicitTop = 784
+      ExplicitWidth = 318
+      ExplicitHeight = 40
+    end
     inherited lblBugTrackerKey: TLabel
-      Left = 116
-      ExplicitLeft = 116
+      Left = 203
+      Top = 784
+      Width = 1082
+      Height = 466
+      Margins.Left = 9
+      Margins.Top = 9
+      Margins.Right = 9
+      Margins.Bottom = 9
+      ExplicitLeft = 203
+      ExplicitTop = 784
+      ExplicitWidth = 1082
+      ExplicitHeight = 466
     end
     object lblInstruct4: TLabel
-      Left = 4
-      Top = 187
-      Width = 441
-      Height = 38
+      Left = 7
+      Top = 327
+      Width = 772
+      Height = 67
+      Margins.Left = 5
+      Margins.Top = 5
+      Margins.Right = 5
+      Margins.Bottom = 5
       AutoSize = False
       Caption = 
         'This bug may have left the program in an unstable state. You are' +
@@ -97,23 +180,51 @@ inherited TrappedBugReportDlg: TTrappedBugReportDlg
     end
   end
   inherited btnHelp: TButton
+    Left = 5124
+    Top = 4989
+    Width = 1229
+    Height = 413
+    Margins.Left = 49
+    Margins.Top = 49
+    Margins.Right = 49
+    Margins.Bottom = 49
     TabOrder = 3
+    ExplicitLeft = 5124
+    ExplicitTop = 4989
+    ExplicitWidth = 1229
+    ExplicitHeight = 413
   end
   inherited btnClose: TButton
+    Left = 1244
+    Top = 1629
+    Width = 401
+    Height = 135
+    Margins.Left = 16
+    Margins.Top = 16
+    Margins.Right = 16
+    Margins.Bottom = 16
     Caption = '&Continue'
     Default = False
     TabOrder = 2
+    ExplicitLeft = 1244
+    ExplicitTop = 1629
+    ExplicitWidth = 401
+    ExplicitHeight = 135
   end
   object btnTerminate: TButton [4]
-    Left = 64
-    Top = 304
-    Width = 135
-    Height = 25
+    Left = 112
+    Top = 532
+    Width = 236
+    Height = 44
+    Margins.Left = 5
+    Margins.Top = 5
+    Margins.Right = 5
+    Margins.Bottom = 5
     Action = actTerminate
     Default = True
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
-    Font.Height = -11
+    Font.Height = -19
     Font.Name = 'Tahoma'
     Font.Style = [fsBold]
     ParentFont = False

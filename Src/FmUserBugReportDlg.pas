@@ -19,7 +19,7 @@ uses
   // Delphi
   Classes, ActnList, ExtActns, StdCtrls, Controls, ExtCtrls,
   // Project
-  FmBugReportBaseDlg;
+  FmBugReportBaseDlg, System.Actions;
 
 
 type
@@ -33,7 +33,7 @@ type
     lblInstruct2: TLabel;
     lblInstruct3: TLabel;
   strict protected
-    procedure ArrangeForm; override;
+    procedure ArrangeControls; override;
       {Arranges labels on form.
       }
   public
@@ -58,7 +58,7 @@ uses
 
 { TUserBugReportDlg }
 
-procedure TUserBugReportDlg.ArrangeForm;
+procedure TUserBugReportDlg.ArrangeControls;
   {Arranges labels on form.
   }
 begin

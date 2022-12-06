@@ -19,7 +19,7 @@ uses
   // Delphi
   Controls, StdCtrls, ExtCtrls, Classes, ImgList, Windows,
   // Project
-  FmGenericOKDlg;
+  FmGenericOKDlg, System.ImageList;
 
 
 type
@@ -53,11 +53,11 @@ type
       {Initialises options controls to default values.
       }
   strict protected
-    procedure ArrangeForm; override;
+    procedure ArrangeControls; override;
       {Positions Page Setup button to right of window and vertically level with
       OK, Cancel and Help buttons.
       }
-    procedure InitForm; override;
+    procedure InitialiseControls; override;
       {Initialises dialog box controls.
       }
   public
@@ -85,7 +85,7 @@ uses
 
 { TPrintDlg }
 
-procedure TPrintDlg.ArrangeForm;
+procedure TPrintDlg.ArrangeControls;
   {Positions Page Setup button to right of window and vertically level with OK,
   Cancel and Help buttons.
   }
@@ -279,7 +279,7 @@ begin
   ilPrinters.LoadFromResource(RT_RCDATA, 'ACTIONIMAGES', 16, clFuchsia);
 end;
 
-procedure TPrintDlg.InitForm;
+procedure TPrintDlg.InitialiseControls;
   {Initialises dialog box controls.
   }
 begin

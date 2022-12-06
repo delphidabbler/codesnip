@@ -21,7 +21,7 @@ uses
   SysUtils, Forms, Classes, ActnList, StdCtrls, Controls, ExtCtrls,
   // Project
   FmGenericViewDlg, FrProgress, UBaseObjects,
-  UControlStateMgr, UUserDBMove;
+  UControlStateMgr, UUserDBMove, System.Actions;
 
 type
   ///  <summary>Dialogue box that is used to move the user database to a new
@@ -110,10 +110,10 @@ type
   strict protected
     ///  <summary>Sets controls with ParentFont=False to use system default
     ///  fonts, preserving font styles for those fonts that need them.</summary>
-    procedure ConfigForm; override;
+    procedure CustomiseControls; override;
     ///  <summary>Arranges form's controls and sizes the dialogue box to fit.
     ///  </summary>
-    procedure ArrangeForm; override;
+    procedure ArrangeControls; override;
   public
     ///  <summary>Displays the dialogue box aligned over the given owner
     ///  control.</summary>
@@ -180,7 +180,7 @@ begin
     and Self.Enabled;
 end;
 
-procedure TUserDataPathDlg.ArrangeForm;
+procedure TUserDataPathDlg.ArrangeControls;
 begin
   TCtrlArranger.SetLabelHeights(Self);
 
@@ -204,7 +204,18 @@ begin
   inherited;
 end;
 
-procedure TUserDataPathDlg.ConfigForm;
+procedure TUserDataPathDlg.CopyFileHandler(Sender: TObject;
+  const Percent: Byte);
+resourcestring
+  sCopying = 'Copying files...';
+begin
+  if Percent = 0 then
+    frmProgress.Description := sCopying;
+  frmProgress.Progress := Percent;
+  Application.ProcessMessages;
+end;
+
+procedure TUserDataPathDlg.CustomiseControls;
 begin
   inherited;
   TFontHelper.SetDefaultBaseFonts([
@@ -217,17 +228,6 @@ begin
   ]);
   frmProgress.Visible := False;
   frmProgress.Range := TRange.Create(0, 100);
-end;
-
-procedure TUserDataPathDlg.CopyFileHandler(Sender: TObject;
-  const Percent: Byte);
-resourcestring
-  sCopying = 'Copying files...';
-begin
-  if Percent = 0 then
-    frmProgress.Description := sCopying;
-  frmProgress.Progress := Percent;
-  Application.ProcessMessages;
 end;
 
 procedure TUserDataPathDlg.DeleteFileHandler(Sender: TObject;

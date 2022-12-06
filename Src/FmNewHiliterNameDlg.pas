@@ -48,9 +48,9 @@ type
   strict protected
     ///  <summary>Arranges controls on form and size dialogue box window to fit.
     ///  </summary>
-    procedure ArrangeForm; override;
+    procedure ArrangeControls; override;
     ///  <summary>Initialises form's controls.</summary>
-    procedure InitForm; override;
+    procedure InitialiseControls; override;
   public
     ///  <summary>Displays dialogue box and passes any entered highlighter name
     ///  back to caller.</summary>
@@ -81,7 +81,7 @@ uses
 
 { TNewHiliterNameDlg }
 
-procedure TNewHiliterNameDlg.ArrangeForm;
+procedure TNewHiliterNameDlg.ArrangeControls;
 begin
   lblNames.Top := 0;
   TCtrlArranger.MoveBelow(lblNames, cbNames, 6);
@@ -135,7 +135,7 @@ begin
     end;
 end;
 
-procedure TNewHiliterNameDlg.InitForm;
+procedure TNewHiliterNameDlg.InitialiseControls;
 begin
   inherited;
   fNames.CopyTo(cbNames.Items, True);

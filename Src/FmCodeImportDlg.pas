@@ -134,7 +134,7 @@ type
     ///  <summary>Aligns and arranges controls in each tab sheet and sizes
     ///  dialog box to accomodate controls.</summary>
     ///  <remarks>Overridden method called from ancestor class.</remarks>
-    procedure ArrangeForm; override;
+    procedure ArrangeControls; override;
     ///  <summary>Returns text of heading on page indexed by PageIdx.</summary>
     ///  <remarks>Overridden method called from ancestor class.</remarks>
     function HeadingText(const PageIdx: Integer): string; override;
@@ -225,7 +225,7 @@ begin
   edRename.Enabled := Assigned(lvImports.Selected);
 end;
 
-procedure TCodeImportDlg.ArrangeForm;
+procedure TCodeImportDlg.ArrangeControls;
 begin
   TCtrlArranger.SetLabelHeights(Self);
 

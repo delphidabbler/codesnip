@@ -53,13 +53,10 @@ type
         @return True if links found, False if not.
       }
   strict protected
-    procedure ArrangeForm; override;
+    procedure ArrangeControls; override;
       {Sizes dialogue box to fit content.
       }
-    procedure ConfigForm; override;
-      {Initialises HTML frame, loads HTML template and inserts HTML
-      representation of the active text.
-      }
+    procedure CustomiseControls; override;
   public
     class procedure Execute(const AOwner: TComponent;
       const ActiveText: IActiveText);
@@ -84,7 +81,7 @@ uses
 
 { TActiveTextPreviewDlg }
 
-procedure TActiveTextPreviewDlg.ArrangeForm;
+procedure TActiveTextPreviewDlg.ArrangeControls;
   {Sizes dialog box to fit content.
   }
 begin
@@ -92,10 +89,25 @@ begin
   inherited;
 end;
 
-procedure TActiveTextPreviewDlg.ConfigForm;
-  {Initialises HTML frame, loads HTML template and inserts HTML representation
-  of the active text.
+function TActiveTextPreviewDlg.ContainsLinks: Boolean;
+  {Checks if the active text contains any links.
+    @return True if links found, False if not.
   }
+var
+  Elem: IActiveTextElem;              // each element in active text
+  ActionElem: IActiveTextActionElem;  // ref to am action element
+begin
+  Result := False;
+  for Elem in fActiveText do
+    if Supports(Elem, IActiveTextActionElem, ActionElem) and
+      (ActionElem.Kind = ekLink) then
+    begin
+      Result := True;
+      Exit;
+    end;
+end;
+
+procedure TActiveTextPreviewDlg.CustomiseControls;
 var
   Renderer: TActiveTextHTML;
 begin
@@ -117,24 +129,6 @@ begin
   finally
     Renderer.Free;
   end;
-end;
-
-function TActiveTextPreviewDlg.ContainsLinks: Boolean;
-  {Checks if the active text contains any links.
-    @return True if links found, False if not.
-  }
-var
-  Elem: IActiveTextElem;              // each element in active text
-  ActionElem: IActiveTextActionElem;  // ref to am action element
-begin
-  Result := False;
-  for Elem in fActiveText do
-    if Supports(Elem, IActiveTextActionElem, ActionElem) and
-      (ActionElem.Kind = ekLink) then
-    begin
-      Result := True;
-      Exit;
-    end;
 end;
 
 class procedure TActiveTextPreviewDlg.Execute(const AOwner: TComponent;
