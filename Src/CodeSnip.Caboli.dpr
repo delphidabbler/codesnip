@@ -343,7 +343,18 @@ uses
   FirstRun.FmV4ConfigDlg in 'FirstRun.FmV4ConfigDlg.pas' {V4ConfigDlg},
   FirstRun.FmWhatsNew in 'FirstRun.FmWhatsNew.pas' {WhatsNewDlg};
 
-{$R *.res}
+// Include resources
+
+{$R *.res}                        // IDE generated resource file
+{$Resource ExternalObj.tlb}       // Type library file
+{$Resource HTML.res}              // HTML resources
+{$IFNDEF PORTABLE}
+{$Resource VCodeSnip.res}         // Version information resource (normal)
+{$ELSE}
+{$Resource VCodeSnipPortable.res} // Version information resource (portable)
+{$ENDIF}
+{$Resource Resources.res}         // All other resources.
+
 
 begin
   TThemeManager.ApplyCurrentTheme;
