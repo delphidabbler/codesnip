@@ -78,11 +78,12 @@ implementation
 uses
   // Delphi
   SysUtils, Messages, Controls, ExtCtrls,
-  Vcl.Themes,   // for inline expansion
+//  Vcl.Themes,   // for inline expansion
   // 3rd party
   PJSysInfo,    // for inline expansion
   // Project
-  USystemInfo, UThemesEx;
+  USystemInfo;
+  // UThemesEx;
 
 
 type
@@ -155,8 +156,9 @@ end;
 class function TMarquee.IsBuiltInMarqueeAvailable: Boolean;
 begin
   // We only use built in marquee on Vista or later when themes are enabled
-  Result := TOSInfo.IsReallyWindowsVistaOrGreater
-    and ThemeServicesEx.ThemesEnabled;
+  Result := TOSInfo.IsReallyWindowsVistaOrGreater;
+  // TODO -cThemese: Check if marquee needs extra styling
+//    and ThemeServicesEx.ThemesEnabled;
 end;
 
 { TEmulatedMarquee }

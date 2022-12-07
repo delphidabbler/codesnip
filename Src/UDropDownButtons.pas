@@ -77,7 +77,8 @@ uses
   // Delphi
   Themes,
   // Project
-  UStructs, UThemesEx;
+  UStructs;
+  //, UThemesEx;
 
 
 { TDropDownButtons }
@@ -161,25 +162,25 @@ procedure TDropDownButtons.RecreateImages;
     );
   end;
 
-  procedure GetThemedButton(const Bmp: TBitmap; const Hot: Boolean);
-    {Draws a themed button on a bitmap.
-      @param Bmp [in] Bitmap to receive drawing.
-      @param Hot [in] Whether to draw button in hot or normal state.
-    }
-  const
-    // Map of index of drop down buttons in image list to themed element
-    // representing button in normal and hot styles
-    cThemedComboBoxButtons: array[Boolean]
-      of TThemedComboBox = (tcDropDownButtonNormal, tcDropDownButtonHot);
-  var
-    BtnRect: TRect; // bounds rectangle of bitmap
-  begin
-    BtnRect := TRectEx.Create(0, 0, Bmp.Width, Bmp.Height);
-    Bmp.Canvas.FillRect(BtnRect);
-    ThemeServicesEx.DrawElement(
-      cThemedComboBoxButtons[Hot], Bmp, BtnRect
-    );
-  end;
+//  procedure GetThemedButton(const Bmp: TBitmap; const Hot: Boolean);
+//    {Draws a themed button on a bitmap.
+//      @param Bmp [in] Bitmap to receive drawing.
+//      @param Hot [in] Whether to draw button in hot or normal state.
+//    }
+//  const
+//    // Map of index of drop down buttons in image list to themed element
+//    // representing button in normal and hot styles
+//    cThemedComboBoxButtons: array[Boolean]
+//      of TThemedComboBox = (tcDropDownButtonNormal, tcDropDownButtonHot);
+//  var
+//    BtnRect: TRect; // bounds rectangle of bitmap
+//  begin
+//    BtnRect := TRectEx.Create(0, 0, Bmp.Width, Bmp.Height);
+//    Bmp.Canvas.FillRect(BtnRect);
+//    ThemeServicesEx.DrawElement(
+//      cThemedComboBoxButtons[Hot], Bmp, BtnRect
+//    );
+//  end;
   // ---------------------------------------------------------------------------
 
 const
@@ -204,10 +205,12 @@ begin
     begin
       for Hot := Low(Boolean) to High(Boolean) do
       begin
-        if ThemeServicesEx.ThemesEnabled then
-          GetThemedButton(BtnBmp, Hot)
-        else
-          GetNonThemedButton(BtnBmp, Hot);
+//        if ThemeServicesEx.ThemesEnabled then
+//          GetThemedButton(BtnBmp, Hot)
+//        else
+//          GetNonThemedButton(BtnBmp, Hot);
+        // TODO -cThemes: Check if this is needed or sufficient
+        GetNonThemedButton(BtnBmp, Hot);
         if Focussed then
         begin
           FocusRect := TRectEx.CreateBounds(

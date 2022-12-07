@@ -178,7 +178,7 @@ uses
   Windows,
   ShellAPI,
   IOUtils,
-  Vcl.Themes,   // for inline expansion
+//  Vcl.Themes,   // for inline expansion
   // Project
   DB.UMain,
   FmEasterEgg,
@@ -197,7 +197,7 @@ uses
   UMessageBox,
   UResourceUtils,
   UStrUtils,
-  UThemesEx,
+//  UThemesEx,
   UVersionInfo;
 
 {$R *.dfm}
@@ -531,8 +531,9 @@ begin
     try
       TFontHelper.SetContentFont(ContentFont);
       AddProperty(TCSS.FontProps(ContentFont));
-      if ThemeServicesEx.ThemesEnabled then
-        AddProperty(TCSS.BackgroundColorProp(ThemeServicesEx.GetTabBodyColour));
+      // TODO -cThemes: Check if tabs are OK without special styling
+//      if ThemeServicesEx.ThemesEnabled then
+//        AddProperty(TCSS.BackgroundColorProp(ThemeServicesEx.GetTabBodyColour));
       AddProperty(UCSSUtils.TCSS.MarginProp(0, 2, 6, 2));
     finally
       FreeAndNil(ContentFont);

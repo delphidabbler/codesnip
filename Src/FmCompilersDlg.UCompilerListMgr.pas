@@ -80,9 +80,10 @@ uses
   // Delphi
   Graphics, GraphUtil,
   System.UITypes,   // for inline expansion
-  Vcl.Themes,       // for inline expansion
+//  Vcl.Themes,       // for inline expansion
   // Project
-  UStructs, UThemesEx;
+  UStructs;
+  // , UThemesEx;
 
 
 { TCompilerListMgr }
@@ -167,11 +168,13 @@ begin
     // Draw highlighting (smaller than item's rectangle)
     if odFocused in State then
     begin
-      if ThemeServicesEx.ThemesEnabled then
-        LB.Canvas.Brush.Color := GetHighLightColor(clHighlight)
-      else
-        LB.Canvas.Brush.Color := clHighlight;
-      LB.Canvas.Font.Color := clHighlightText;
+//      if ThemeServicesEx.ThemesEnabled then
+//        LB.Canvas.Brush.Color := GetHighLightColor(clHighlight)
+//      else
+//        LB.Canvas.Brush.Color := clHighlight;
+//      LB.Canvas.Font.Color := clHighlightText;
+      // TODO -cThemes: Check following statement is sufficient
+      LB.Canvas.Brush.Color := GetHighLightColor(clHighlight)
     end
     else
     begin

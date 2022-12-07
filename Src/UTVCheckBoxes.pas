@@ -72,7 +72,8 @@ uses
   // Delphi
   Graphics, ImgList, Themes,
   // Project
-  UStructs, UThemesEx;
+  UStructs;
+//  , UThemesEx;
 
 
 const
@@ -120,14 +121,14 @@ function TTVCheckBoxes.GetImageSize: TSize;
   }
 
   // ---------------------------------------------------------------------------
-  function ThemedCheckBoxSize: TSize;
-    {Calculates size of a themed check box used when themes are active.
-      @return Size of check box.
-    }
-  begin
-    // We get size from theme manager (assume all check boxes same size)
-    Result := ThemeServicesEx.GetElementSize(tbCheckBoxUncheckedNormal);
-  end;
+//  function ThemedCheckBoxSize: TSize;
+//    {Calculates size of a themed check box used when themes are active.
+//      @return Size of check box.
+//    }
+//  begin
+//    // We get size from theme manager (assume all check boxes same size)
+//    Result := ThemeServicesEx.GetElementSize(tbCheckBoxUncheckedNormal);
+//  end;
 
   function NonThemedCheckBoxSize: TSize;
     {Calculates size of check box used when themes not active.
@@ -160,10 +161,12 @@ function TTVCheckBoxes.GetImageSize: TSize;
 
 begin
   inherited;
-  if ThemeServicesEx.ThemesEnabled then
-    Result := ThemedCheckBoxSize
-  else
-    Result := NonThemedCheckBoxSize;
+//  if ThemeServicesEx.ThemesEnabled then
+//    Result := ThemedCheckBoxSize
+//  else
+//    Result := NonThemedCheckBoxSize;
+  // TODO -cThemes: Check if this is sufficient for check box size
+  Result := NonThemedCheckBoxSize;
 end;
 
 class function TTVCheckBoxes.ImageIdxToCheckState(
@@ -196,43 +199,43 @@ const
   cMaskColour: TColor = clFuchsia;  // image list mask colour
 
   // ---------------------------------------------------------------------------
-  procedure LoadThemedCheckBoxes;
-    {Loads image list with check boxes used when themes are active.
-    }
-  var
-    CheckBmp: TBitmap;        // bitmap on which check boxes are drawn
-    CheckRect: TRect;         // bounds rectangle in bitmap to receive checkbox
-    TVCheck: TCheckBoxState;  // loops thru all check box states
-    Hot: Boolean;             // loops thru not-hot / hot
-  begin
-    // We use theme manager to draw check boxes on a bitmap which is then added
-    // to image list.
-    CheckBmp := TBitmap.Create;
-    try
-      // Prepare bitmap
-      CheckBmp.Width := Images.Width;
-      CheckBmp.Height := Images.Height;
-      CheckBmp.Canvas.Brush.Color := cMaskColour;
-      CheckRect := TRectEx.Create(0, 0, CheckBmp.Width, CheckBmp.Height);
-
-      // Draw normal then hot bitmaps
-      for Hot := Low(Boolean) to High(Boolean) do
-      begin
-        // Draw each check box state in normal and hot states
-        for TVCheck := Low(TCheckBoxState) to High(TCheckBoxState) do
-        begin
-          // Draw each checkbox to bitmap and add to image list
-          CheckBmp.Canvas.FillRect(CheckRect);
-          ThemeServicesEx.DrawElement(
-            cThemedCheckBoxes[TVCheck, Hot], CheckBmp, CheckRect
-          );
-          Images.AddMasked(CheckBmp, cMaskColour);
-        end;
-      end;
-    finally
-      CheckBmp.Free;
-    end;
-  end;
+//  procedure LoadThemedCheckBoxes;
+//    {Loads image list with check boxes used when themes are active.
+//    }
+//  var
+//    CheckBmp: TBitmap;        // bitmap on which check boxes are drawn
+//    CheckRect: TRect;         // bounds rectangle in bitmap to receive checkbox
+//    TVCheck: TCheckBoxState;  // loops thru all check box states
+//    Hot: Boolean;             // loops thru not-hot / hot
+//  begin
+//    // We use theme manager to draw check boxes on a bitmap which is then added
+//    // to image list.
+//    CheckBmp := TBitmap.Create;
+//    try
+//      // Prepare bitmap
+//      CheckBmp.Width := Images.Width;
+//      CheckBmp.Height := Images.Height;
+//      CheckBmp.Canvas.Brush.Color := cMaskColour;
+//      CheckRect := TRectEx.Create(0, 0, CheckBmp.Width, CheckBmp.Height);
+//
+//      // Draw normal then hot bitmaps
+//      for Hot := Low(Boolean) to High(Boolean) do
+//      begin
+//        // Draw each check box state in normal and hot states
+//        for TVCheck := Low(TCheckBoxState) to High(TCheckBoxState) do
+//        begin
+//          // Draw each checkbox to bitmap and add to image list
+//          CheckBmp.Canvas.FillRect(CheckRect);
+//          ThemeServicesEx.DrawElement(
+//            cThemedCheckBoxes[TVCheck, Hot], CheckBmp, CheckRect
+//          );
+//          Images.AddMasked(CheckBmp, cMaskColour);
+//        end;
+//      end;
+//    finally
+//      CheckBmp.Free;
+//    end;
+//  end;
 
   procedure LoadNonThemedCheckBoxes;
     {Loads image list with check boxes used when themes not active.
@@ -245,10 +248,12 @@ const
 
 begin
   // Load check boxes into image list
-  if ThemeServicesEx.ThemesEnabled then
-    LoadThemedCheckBoxes
-  else
-    LoadNonThemedCheckBoxes;
+//  if ThemeServicesEx.ThemesEnabled then
+//    LoadThemedCheckBoxes
+//  else
+//    LoadNonThemedCheckBoxes;
+  // TODO -cThemes: check if this is needed or sufficient
+  LoadNonThemedCheckBoxes;
 end;
 
 end.

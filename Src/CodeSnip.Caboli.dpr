@@ -343,7 +343,6 @@ uses
 {$R *.res}
 
 begin
-  TThemeServicesEx.SetAppropriateThemeMode;
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
   Application.CreateForm(TMainForm, MainForm);

@@ -338,9 +338,12 @@ uses
   // Delphi
   SysUtils,
   System.Types,   // for inline expansion
-  Vcl.Themes,     // for inline expansion
+//  Vcl.Themes,     // for inline expansion
   // Project
-  Browser.UControlHelper, UHTMLDOMHelper, UThemesEx, UUrlMonEx;
+  Browser.UControlHelper,
+  UHTMLDOMHelper,
+//  UThemesEx,
+  UUrlMonEx;
 
 
 function TaskAllocWideString(const S: string): PWChar;
@@ -434,7 +437,7 @@ begin
   fScrollbarStyle := sbsNormal;
   fShow3dBorder := True;
   fAllowTextSelection := True;
-  fUseThemes := ThemeServicesEx.ThemesEnabled;
+//  fUseThemes := ThemeServicesEx.ThemesEnabled;
   // Handler browser ctrl's OnEnter event to focus browser control
   fOldOnEnter := fWebBrowser.OnEnter;
   fWebBrowser.OnEnter := BrowserEnter;
@@ -524,10 +527,12 @@ var
 begin
   // Update flags depending on property values
   pInfo.dwFlags := 0;
-  if fUseThemes and ThemeServicesEx.ThemesEnabled then
-    pInfo.dwFlags := pInfo.dwFlags or DOCHOSTUIFLAG_THEME
-  else if ThemeServicesEx.ThemesAvailable then
-    pInfo.dwFlags := pInfo.dwFlags or DOCHOSTUIFLAG_NOTHEME;
+//  if fUseThemes and ThemeServicesEx.ThemesEnabled then
+//    pInfo.dwFlags := pInfo.dwFlags or DOCHOSTUIFLAG_THEME
+//  else if ThemeServicesEx.ThemesAvailable then
+//    pInfo.dwFlags := pInfo.dwFlags or DOCHOSTUIFLAG_NOTHEME;
+  // TODO -cThemes: check if we can safely assume themes as in below line
+  pInfo.dwFlags := pInfo.dwFlags or DOCHOSTUIFLAG_THEME;
   // scroll bar style
   case fScrollbarStyle of
     sbsHide:

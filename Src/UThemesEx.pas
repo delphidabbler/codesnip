@@ -387,7 +387,9 @@ initialization
 
 // Ensure Themes unit creates ThemeServices singleton as type TThemeServicesEx
 // rather than TThemeServices.
-ThemeServicesClass := TThemeServicesEx;
+// TODO -cThemes: Check OK to remove the theme registration
+//ThemeServicesClass := TThemeServicesEx;
+TStyleManager.SetStyle(TThemeServicesEx.Create);
 
 end.
 

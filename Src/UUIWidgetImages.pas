@@ -77,9 +77,9 @@ type
 implementation
 
 
-uses
-  // Project
-  UThemesEx;
+//uses
+//  // Project
+//  UThemesEx;
 
 
 { TUIWidgetImages }
@@ -100,14 +100,16 @@ begin
   fLock := TSimpleEvent.Create; // lock for protected sections: needed by Update
   fLock.SetEvent;
   Update;
-  ThemeServicesEx.AddChangeEventHandler(ThemeChangeListener);
+  // TODO -cThemes: Check if lack of event handler causes problems
+//  ThemeServicesEx.AddChangeEventHandler(ThemeChangeListener);
 end;
 
 destructor TUIWidgetImages.Destroy;
   {Object destructor. Tears down object and frees Images image list if required.
   }
 begin
-  ThemeServicesEx.RemoveChangeEventHandler(ThemeChangeListener);
+  // TODO -cThemes: See TUIWidgetImages.Create for if this needs reinstating
+//  ThemeServicesEx.RemoveChangeEventHandler(ThemeChangeListener);
   if fOwnsImages then
     fImages.Free;
   fLock.Free;
