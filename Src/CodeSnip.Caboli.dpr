@@ -337,12 +337,14 @@ uses
   FmUserHiliterMgrDlg in 'FmUserHiliterMgrDlg.pas' {UserHiliterMgrDlg},
   FmWaitDlg in 'FmWaitDlg.pas' {WaitDlg},
   FmWizardDlg in 'FmWizardDlg.pas' {WizardDlg},
+  UI.ThemeManager in 'UI.ThemeManager.pas',
   FirstRun.FmV4ConfigDlg in 'FirstRun.FmV4ConfigDlg.pas' {V4ConfigDlg},
   FirstRun.FmWhatsNew in 'FirstRun.FmWhatsNew.pas' {WhatsNewDlg};
 
 {$R *.res}
 
 begin
+  TThemeManager.ApplyCurrentTheme;
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
   Application.CreateForm(TMainForm, MainForm);

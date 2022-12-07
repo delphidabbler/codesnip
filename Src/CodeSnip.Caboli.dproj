@@ -730,13 +730,12 @@
             <Form>WizardDlg</Form>
             <FormType>dfm</FormType>
         </DCCReference>
+        <DCCReference Include="UI.ThemeManager.pas"/>
         <DCCReference Include="FirstRun.FmV4ConfigDlg.pas">
             <Form>V4ConfigDlg</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="FirstRun.FmWhatsNew.pas">
             <Form>WhatsNewDlg</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
