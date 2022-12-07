@@ -281,6 +281,13 @@ type
     property PageStructures: TSnippetPageStructures
       read GetPageStructures write SetPageStructures;
 
+    ///  <summary>Gets name of current UI theme.</summary>
+    function GetThemeName: string;
+    ///  <summary>Sets name of current UI theme.</summary>
+    procedure SetThemeName(const Name: string);
+    ///  <summary>Name of current UI theme.</summary>
+    property ThemeName: string
+      read GetThemeName write SetThemeName;
   end;
 
 
@@ -376,6 +383,8 @@ type
       ///  <summary>Information describing snippet detail page customisations.
       ///  </summary>
       fPageStructures: TSnippetPageStructures;
+      ///  <summary>Name of current UI theme.</summary
+      fThemeName: string;
     ///  <summary>Returns default font size for overview pane tree view.
     ///  </summary>
     function DefaultOverviewFontSize: Integer;
@@ -624,6 +633,13 @@ type
     ///  <remarks>Method of IAssignable</remarks>
     procedure Assign(const Src: IInterface);
 
+    ///  <summary>Gets name of current UI theme.</summary>
+    ///  <remarks>Method of IAssignable</remarks>
+    function GetThemeName: string;
+
+    ///  <summary>Sets name of current UI theme.</summary>
+    ///  <remarks>Method of IAssignable</remarks>
+    procedure SetThemeName(const Name: string);
   end;
 
 type
@@ -710,6 +726,7 @@ begin
   Self.SetCustomHiliteColours(SrcPref.CustomHiliteColours);
   Self.SetWarnings(SrcPref.Warnings);
   Self.SetPageStructures(SrcPref.PageStructures);
+  Self.fThemeName := SrcPref.ThemeName;
 end;
 
 constructor TPreferences.Create;
@@ -842,6 +859,11 @@ begin
   Result := fSourceSyntaxHilited;
 end;
 
+function TPreferences.GetThemeName: string;
+begin
+  Result := fThemeName;
+end;
+
 function TPreferences.GetTruncateSourceComments: Boolean;
 begin
   Result := fTruncateSourceComments;
@@ -961,6 +983,11 @@ begin
   fSourceSyntaxHilited := Value;
 end;
 
+procedure TPreferences.SetThemeName(const Name: string);
+begin
+  fThemeName := Name;
+end;
+
 procedure TPreferences.SetTruncateSourceComments(const Value: Boolean);
 begin
   fTruncateSourceComments := Value;
@@ -1005,6 +1032,7 @@ begin
   NewPref.CustomHiliteColours := Self.GetCustomHiliteColours;
   NewPref.Warnings := Self.GetWarnings;
   NewPref.PageStructures := Self.fPageStructures;
+  NewPref.ThemeName := Self.fThemeName;
 end;
 
 constructor TPreferencesPersist.Create;
@@ -1059,6 +1087,8 @@ begin
   fSourceCodeBGCustomColours := Storage.GetStrings(
     'SourceCodeBGCustomColourCount', 'SourceCodeBGCustomColour%d'
   );
+  // TODO: Get default theme name from TThemeManager
+  fThemeName := Storage.GetString('ThemeName', 'Light');
 
   // Read source code section
   Storage := Settings.ReadSection(ssPreferences, cSourceCode);
@@ -1144,6 +1174,7 @@ begin
     'SourceCodeBGCustomColour%d',
     fSourceCodeBGCustomColours
   );
+  Storage.SetString('ThemeName', fThemeName);
   Storage.Save;
 
   // Write source code section
