@@ -357,6 +357,7 @@ uses
 
 
 begin
+  ReportMemoryLeaksOnShutdown := DebugHook <> 0;
   TThemeManager.ApplyCurrentTheme;
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
