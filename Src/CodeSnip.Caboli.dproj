@@ -165,30 +165,25 @@
         <DCCReference Include="UHelpMgr.pas"/>
         <DCCReference Include="UI.Forms.Main.pas">
             <Form>MainForm</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="FrTitled.pas">
             <Form>TitledFrame</Form>
-            <FormType>dfm</FormType>
             <DesignClass>TFrame</DesignClass>
         </DCCReference>
         <DCCReference Include="UFontHelper.pas"/>
         <DCCReference Include="UGraphicUtils.pas"/>
         <DCCReference Include="FrRTFShowCase.pas">
             <Form>RTFShowCaseFrame</Form>
-            <FormType>dfm</FormType>
             <DesignClass>TFrame</DesignClass>
         </DCCReference>
         <DCCReference Include="UShowCaseCtrl.pas"/>
         <DCCReference Include="FrProgress.pas">
             <Form>ProgressFrame</Form>
-            <FormType>dfm</FormType>
             <DesignClass>TFrame</DesignClass>
         </DCCReference>
         <DCCReference Include="UCtrlArranger.pas"/>
         <DCCReference Include="FrPrefsBase.pas">
             <Form>PrefsBaseFrame</Form>
-            <FormType>dfm</FormType>
             <DesignClass>TFrame</DesignClass>
         </DCCReference>
         <DCCReference Include="UPreferences.pas"/>
@@ -237,32 +232,27 @@
         <DCCReference Include="UColours.pas"/>
         <DCCReference Include="FrMemoPreview.pas">
             <Form>MemoPreviewFrame</Form>
-            <FormType>dfm</FormType>
             <DesignClass>TFrame</DesignClass>
         </DCCReference>
         <DCCReference Include="IntfPreview.pas"/>
         <DCCReference Include="UMemoHelper.pas"/>
         <DCCReference Include="FrCheckedTV.pas">
             <Form>CheckedTVFrame</Form>
-            <FormType>dfm</FormType>
             <DesignClass>TFrame</DesignClass>
         </DCCReference>
         <DCCReference Include="UTVCheckBoxes.pas"/>
         <DCCReference Include="UUIWidgetImages.pas"/>
         <DCCReference Include="FrCategoryList.pas">
             <Form>CategoryListFrame</Form>
-            <FormType>dfm</FormType>
             <DesignClass>TFrame</DesignClass>
         </DCCReference>
         <DCCReference Include="UCategoryListAdapter.pas"/>
         <DCCReference Include="FrCategoryDescEdit.pas">
             <Form>CategoryDescEditFrame</Form>
-            <FormType>dfm</FormType>
             <DesignClass>TFrame</DesignClass>
         </DCCReference>
         <DCCReference Include="FrBrowserBase.pas">
             <Form>BrowserBaseFrame</Form>
-            <FormType>dfm</FormType>
             <DesignClass>TFrame</DesignClass>
         </DCCReference>
         <DCCReference Include="Browser.UController.pas"/>
@@ -284,37 +274,30 @@
         <DCCReference Include="UProtocols.pas"/>
         <DCCReference Include="FmSnippetsEditorDlg.FrActiveTextEditor.pas">
             <Form>SnippetsActiveTextEdFrame</Form>
-            <FormType>dfm</FormType>
             <DesignClass>TFrame</DesignClass>
         </DCCReference>
         <DCCReference Include="FmCompilersDlg.FrBase.pas">
             <Form>CompilersDlgBaseFrame</Form>
-            <FormType>dfm</FormType>
             <DesignClass>TFrame</DesignClass>
         </DCCReference>
         <DCCReference Include="FmCompilersDlg.FrCompiler.pas">
             <Form>CompilersDlgCompilerFrame</Form>
-            <FormType>dfm</FormType>
             <DesignClass>TFrame</DesignClass>
         </DCCReference>
         <DCCReference Include="FmCompilersDlg.FrLog.pas">
             <Form>CompilersDlgLogFrame</Form>
-            <FormType>dfm</FormType>
             <DesignClass>TFrame</DesignClass>
         </DCCReference>
         <DCCReference Include="FmCompilersDlg.FrNamespaces.pas">
             <Form>CompilersDlgNamespacesFrame</Form>
-            <FormType>dfm</FormType>
             <DesignClass>TFrame</DesignClass>
         </DCCReference>
         <DCCReference Include="FmCompilersDlg.FrSearchDirs.pas">
             <Form>CompilersDlgSearchDirsFrame</Form>
-            <FormType>dfm</FormType>
             <DesignClass>TFrame</DesignClass>
         </DCCReference>
         <DCCReference Include="FmCompilersDlg.FrSwitches.pas">
             <Form>CompilersDlgSwitchesFrame</Form>
-            <FormType>dfm</FormType>
             <DesignClass>TFrame</DesignClass>
         </DCCReference>
         <DCCReference Include="FmCompilersDlg.UBannerMgr.pas"/>
@@ -329,7 +312,6 @@
         <DCCReference Include="UOpenDialogHelper.pas"/>
         <DCCReference Include="FrOverview.pas">
             <Form>OverviewFrame</Form>
-            <FormType>dfm</FormType>
             <DesignClass>TFrame</DesignClass>
         </DCCReference>
         <DCCReference Include="IntfFrameMgrs.pas"/>
@@ -345,7 +327,6 @@
         <DCCReference Include="UGroups.pas"/>
         <DCCReference Include="FrDetailView.pas">
             <Form>DetailViewFrame</Form>
-            <FormType>dfm</FormType>
             <DesignClass>TFrame</DesignClass>
         </DCCReference>
         <DCCReference Include="UDetailPageLoader.pas"/>
@@ -381,102 +362,83 @@
         <DCCReference Include="ULinkAction.pas"/>
         <DCCReference Include="FrHTMLPreview.pas">
             <Form>HTMLPreviewFrame</Form>
-            <FormType>dfm</FormType>
             <DesignClass>TFrame</DesignClass>
         </DCCReference>
         <DCCReference Include="FrHTMLDlg.pas">
             <Form>HTMLDlgFrame</Form>
-            <FormType>dfm</FormType>
             <DesignClass>TFrame</DesignClass>
         </DCCReference>
         <DCCReference Include="UNulDropTarget.pas"/>
         <DCCReference Include="FrEasterEgg.pas">
             <Form>EasterEggFrame</Form>
-            <FormType>dfm</FormType>
             <DesignClass>TFrame</DesignClass>
         </DCCReference>
         <DCCReference Include="FirstRun.FmWhatsNew.FrHTML.pas">
             <Form>WhatsNewHTMLFrame</Form>
-            <FormType>dfm</FormType>
             <DesignClass>TFrame</DesignClass>
         </DCCReference>
         <DCCReference Include="FrCodeGenPrefs.pas">
             <Form>CodeGenPrefsFrame</Form>
-            <FormType>dfm</FormType>
             <DesignClass>TFrame</DesignClass>
         </DCCReference>
         <DCCReference Include="3rdParty\LVEx.pas"/>
         <DCCReference Include="FrDisplayPrefs.pas">
             <Form>DisplayPrefsFrame</Form>
-            <FormType>dfm</FormType>
             <DesignClass>TFrame</DesignClass>
         </DCCReference>
         <DCCReference Include="UColorBoxEx.pas"/>
         <DCCReference Include="UColorDialogEx.pas"/>
         <DCCReference Include="FrGeneralPrefs.pas">
             <Form>GeneralPrefsFrame</Form>
-            <FormType>dfm</FormType>
             <DesignClass>TFrame</DesignClass>
         </DCCReference>
         <DCCReference Include="FrHiliterPrefs.pas">
             <Form>HiliterPrefsFrame</Form>
-            <FormType>dfm</FormType>
             <DesignClass>TFrame</DesignClass>
         </DCCReference>
         <DCCReference Include="FrPrintingPrefs.pas">
             <Form>PrintingPrefsFrame</Form>
-            <FormType>dfm</FormType>
             <DesignClass>TFrame</DesignClass>
         </DCCReference>
         <DCCReference Include="FrSnippetLayoutPrefs.pas">
             <Form>SnippetLayoutPrefsFrame</Form>
-            <FormType>dfm</FormType>
             <DesignClass>TFrame</DesignClass>
         </DCCReference>
         <DCCReference Include="FrSourcePrefs.pas">
             <Form>SourcePrefsFrame</Form>
-            <FormType>dfm</FormType>
             <DesignClass>TFrame</DesignClass>
         </DCCReference>
         <DCCReference Include="Hiliter.UFileHiliter.pas"/>
         <DCCReference Include="FrDetail.pas">
             <Form>DetailFrame</Form>
-            <FormType>dfm</FormType>
             <DesignClass>TFrame</DesignClass>
         </DCCReference>
         <DCCReference Include="FrFixedHTMLDlg.pas">
             <Form>FixedHTMLDlgFrame</Form>
-            <FormType>dfm</FormType>
             <DesignClass>TFrame</DesignClass>
         </DCCReference>
         <DCCReference Include="FrHTMLTpltDlg.pas">
             <Form>HTMLTpltDlgFrame</Form>
-            <FormType>dfm</FormType>
             <DesignClass>TFrame</DesignClass>
         </DCCReference>
         <DCCReference Include="FrRTFPreview.pas">
             <Form>RTFPreviewFrame</Form>
-            <FormType>dfm</FormType>
             <DesignClass>TFrame</DesignClass>
         </DCCReference>
         <DCCReference Include="FrSelectSnippetsBase.pas">
             <Form>SelectSnippetsBaseFrame</Form>
-            <FormType>dfm</FormType>
             <DesignClass>TFrame</DesignClass>
         </DCCReference>
         <DCCReference Include="FrSelectUserSnippets.pas">
             <Form>SelectUserSnippetsFrame</Form>
-            <FormType>dfm</FormType>
             <DesignClass>TFrame</DesignClass>
         </DCCReference>
         <DCCReference Include="FrSelectSnippets.pas">
             <Form>SelectSnippetsFrame</Form>
-            <FormType>dfm</FormType>
             <DesignClass>TFrame</DesignClass>
         </DCCReference>
         <DCCReference Include="FrTextPreview.pas">
             <Form>TextPreviewFrame</Form>
-            <FormType>dfm</FormType>
             <DesignClass>TFrame</DesignClass>
         </DCCReference>
         <DCCReference Include="ActiveText.URTFRenderer.pas"/>
@@ -584,151 +546,115 @@
         <DCCReference Include="AutoGen\IntfExternalObj.pas"/>
         <DCCReference Include="FmAboutDlg.pas">
             <Form>AboutDlg</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="FmActiveTextPreviewDlg.pas">
             <Form>ActiveTextPreviewDlg</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="FmAddCategoryDlg.pas"/>
         <DCCReference Include="FmBugReportBaseDlg.pas">
             <Form>BugReportBaseDlg</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="FmCategoryEditDlg.pas">
             <Form>CategoryEditDlg</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="FmCodeExportDlg.pas">
             <Form>CodeExportDlg</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="FmCodeImportDlg.pas"/>
         <DCCReference Include="FmCompErrorDlg.pas">
             <Form>CompErrorDlg</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="FmCompilersDlg.pas">
             <Form>CompilersDlg</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="FmDBUpdateDlg.pas"/>
         <DCCReference Include="FmDeleteCategoryDlg.pas">
             <Form>DeleteCategoryDlg</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="FmDeleteUserDBDlg.pas">
             <Form>DeleteUserDBDlg</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="FmDependenciesDlg.pas">
             <Form>DependenciesDlg</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="FmDuplicateSnippetDlg.pas">
             <Form>DuplicateSnippetDlg</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="FmEasterEgg.pas">
             <Form>EasterEggForm</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="FmFavouritesDlg.pas">
             <Form>FavouritesDlg</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="FmFindCompilerDlg.pas">
             <Form>FindCompilerDlg</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="FmFindTextDlg.pas">
             <Form>FindTextDlg</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="FmFindXRefsDlg.pas">
             <Form>FindXRefsDlg</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="FmGenericDlg.pas">
             <Form>GenericDlg</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="FmGenericModalDlg.pas">
             <Form>GenericModalDlg</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="FmGenericNonModalDlg.pas">
             <Form>GenericNonModalDlg</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="FmGenericOKDlg.pas">
             <Form>GenericOKDlg</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="FmGenericViewDlg.pas">
             <Form>GenericViewDlg</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="FmNewHiliterNameDlg.pas">
             <Form>NewHiliterNameDlg</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="FmPreferencesDlg.pas">
             <Form>PreferencesDlg</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="FmPreviewDlg.pas">
             <Form>PreviewDlg</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="FmPrintDlg.pas">
             <Form>PrintDlg</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="FmRenameCategoryDlg.pas">
             <Form>RenameCategoryDlg</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="FmSelectionSearchDlg.pas">
             <Form>SelectionSearchDlg</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="FmSnippetsEditorDlg.pas">
             <Form>SnippetsEditorDlg</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="FmSplash.pas">
             <Form>SplashForm</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="FmSWAGImportDlg.pas"/>
         <DCCReference Include="FmTestCompileDlg.pas">
             <Form>TestCompileDlg</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="FmTrappedBugReportDlg.pas">
             <Form>TrappedBugReportDlg</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="FmUserBugReportDlg.pas">
             <Form>UserBugReportDlg</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="FmUserDataPathDlg.pas">
             <Form>UserDataPathDlg</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="FmUserHiliterMgrDlg.pas">
             <Form>UserHiliterMgrDlg</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="FmWaitDlg.pas">
             <Form>WaitDlg</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="FmWizardDlg.pas">
             <Form>WizardDlg</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="UI.ThemeManager.pas"/>
         <DCCReference Include="FirstRun.FmV4ConfigDlg.pas">
