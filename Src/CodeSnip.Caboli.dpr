@@ -1,5 +1,7 @@
 program CodeSnip.Caboli;
 
+{$INCLUDE CompilerChecks.inc}
+
 uses
   Vcl.Forms,
   UThemesEx in 'UThemesEx.pas',
