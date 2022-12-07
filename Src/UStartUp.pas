@@ -77,7 +77,7 @@ end;
 
 class function TStartUp.Execute: Boolean;
 resourcestring
-  sOSError = 'Windows 2000 or later is required';
+  sOSError = 'Windows 7 or later is required';
   sIEError = 'Internet Explorer v%d or later is required.';
 {$IFDEF PORTABLE}
 var
@@ -85,7 +85,7 @@ var
 {$ENDIF}
 begin
   // Check if program can be run. Exit if not.
-  if not TOSInfo.IsWinNT or not TOSInfo.CheckReportedOS(TOSInfo.Win2K) then
+  if not TOSInfo.IsWinNT or not TOSInfo.CheckReportedOS(TOSInfo.Win7) then
   begin
     ErrorMessage(sOSError);
     Exit(False);

@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2006-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2006-2022, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Static classes that provide information about the host system.
  *
@@ -62,6 +62,8 @@ type
       {Identifies Windows XP}
     const WinVista: TOSVer = (VerHi: 6; VerLo: 0);
       {Identifies Windows Vista}
+    // Identifies Windows 7
+    const Win7: TOSVer = (VerHi: 6; VerLo: 1);
     constructor Create;
       {Constructor override that prevents the class from being instantiated.
       Raises an ENoConstructException if called.
@@ -102,7 +104,7 @@ type
     const
       ///  <summary>Minimum version of Internet Explorer required to run
       ///  CodeSnip.</summary>
-      MinSupportedVersion = 6;
+      MinSupportedVersion = 8;
   public
     ///  <summary>Static class constructor: initialises class.</summary>
     class constructor Create;

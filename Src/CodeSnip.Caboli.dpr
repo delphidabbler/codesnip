@@ -361,6 +361,12 @@ begin
   TThemeManager.ApplyCurrentTheme;
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
+  if not TStartUp.Execute then
+  begin
+    Application.Terminate;
+    Exit;
+  end;
+
   Application.CreateForm(TMainForm, MainForm);
   Application.CreateForm(TSplashForm, SplashForm);
   Application.Run;
