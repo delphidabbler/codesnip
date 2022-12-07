@@ -201,7 +201,7 @@ procedure TThemeServicesEx.DoOnThemeChange;
   }
 begin
   inherited;  // triggers OnThemeChange event
-  SetAppropriateThemeMode;
+//  SetAppropriateThemeMode;
   if Assigned(fThemeChanges) then
     fThemeChanges.TriggerEvents;
 end;
