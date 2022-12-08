@@ -4,13 +4,13 @@ inherited SplashForm: TSplashForm
   ClientHeight = 271
   ClientWidth = 569
   DefaultMonitor = dmMainForm
-  Font.Height = -37
+  ParentFont = True
   FormStyle = fsStayOnTop
   OnClose = FormClose
   ExplicitWidth = 569
   ExplicitHeight = 271
   PixelsPerInch = 168
-  TextHeight = 50
+  TextHeight = 30
   object pbMain: TPaintBox
     Left = 0
     Top = 0

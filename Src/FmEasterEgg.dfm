@@ -10,7 +10,7 @@ inherited EasterEggForm: TEasterEggForm
   TransparentColor = True
   TransparentColorValue = clPurple
   UseDockManager = True
-  Font.Height = -37
+  ParentFont = True
   KeyPreview = True
   Position = poDesigned
   OnClose = FormClose
@@ -18,7 +18,7 @@ inherited EasterEggForm: TEasterEggForm
   ExplicitWidth = 949
   ExplicitHeight = 1103
   PixelsPerInch = 168
-  TextHeight = 50
+  TextHeight = 30
   inline frmEasterEgg: TEasterEggFrame
     AlignWithMargins = True
     Left = 0
@@ -60,7 +60,7 @@ inherited EasterEggForm: TEasterEggForm
         ExplicitWidth = 949
         ExplicitHeight = 1103
         ControlData = {
-          4C000000043800001D4100000000000000000000000000000000000000000000
+          4C0000000C380000244100000000000000000000000000000000000000000000
           000000004C000000000000000000000001000000E0D057007335CF11AE690800
           2B2E126208000000000000004C0000000114020000000000C000000000000046
           8000000000000000000000000000000000000000000000000000000000000000

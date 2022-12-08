@@ -1,7 +1,7 @@
 inherited CategoryEditDlg: TCategoryEditDlg
   Caption = 'CategoryEditDlg'
-  ExplicitWidth = 474
-  ExplicitHeight = 354
-  PixelsPerInch = 96
-  TextHeight = 13
+  ExplicitWidth = 979
+  ExplicitHeight = 820
+  PixelsPerInch = 168
+  TextHeight = 30
 end

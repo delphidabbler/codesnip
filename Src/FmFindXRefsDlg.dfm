@@ -1,35 +1,41 @@
 inherited FindXRefsDlg: TFindXRefsDlg
-  Left = 426
-  Top = 222
   Caption = 'Find Cross References'
-  ExplicitWidth = 474
-  ExplicitHeight = 374
-  PixelsPerInch = 96
-  TextHeight = 13
+  ExplicitWidth = 979
+  ExplicitHeight = 822
+  PixelsPerInch = 168
+  TextHeight = 30
   inherited pnlBody: TPanel
-    Width = 305
-    Height = 249
-    ExplicitWidth = 305
-    ExplicitHeight = 249
     object lblDesc: TLabel
       Left = 0
       Top = 0
-      Width = 123
-      Height = 13
+      Width = 232
+      Height = 30
+      Margins.Left = 5
+      Margins.Top = 5
+      Margins.Right = 5
+      Margins.Bottom = 5
       Caption = 'Find cross references for '
     end
     object lblSnippetName: TLabel
-      Left = 119
+      Left = 239
       Top = 0
-      Width = 73
-      Height = 13
+      Width = 148
+      Height = 30
+      Margins.Left = 5
+      Margins.Top = 5
+      Margins.Right = 5
+      Margins.Bottom = 5
       Caption = 'lblSnippetName'
     end
     object lblOverwriteSearch: TLabel
       Left = 0
-      Top = 238
-      Width = 220
-      Height = 13
+      Top = 417
+      Width = 385
+      Height = 22
+      Margins.Left = 5
+      Margins.Top = 5
+      Margins.Right = 5
+      Margins.Bottom = 5
       AutoSize = False
       Caption = 
         'NOTE: Running this cross reference search will override your exi' +
@@ -38,68 +44,92 @@ inherited FindXRefsDlg: TFindXRefsDlg
     end
     object chkRequired: TCheckBox
       Left = 0
-      Top = 28
-      Width = 305
-      Height = 17
+      Top = 49
+      Width = 534
+      Height = 30
+      Margins.Left = 5
+      Margins.Top = 5
+      Margins.Right = 5
+      Margins.Bottom = 5
       Caption = 'Search for &required snippets'
       TabOrder = 0
       OnClick = SearchCheckClick
     end
     object chkSeeAlso: TCheckBox
       Left = 0
-      Top = 114
-      Width = 305
-      Height = 17
+      Top = 200
+      Width = 534
+      Height = 29
+      Margins.Left = 5
+      Margins.Top = 5
+      Margins.Right = 5
+      Margins.Bottom = 5
       Caption = 'Search for "&see also" cross references'
       TabOrder = 3
       OnClick = SearchCheckClick
     end
     object chkIncludeSnippet: TCheckBox
       Left = 0
-      Top = 196
-      Width = 600
-      Height = 17
+      Top = 343
+      Width = 1050
+      Height = 30
+      Margins.Left = 5
+      Margins.Top = 5
+      Margins.Right = 5
+      Margins.Bottom = 5
       Caption = '&Include "%s" in search'
       TabOrder = 6
     end
     object chkRequiredRecurse: TCheckBox
-      Left = 24
-      Top = 50
-      Width = 281
-      Height = 17
+      Left = 42
+      Top = 88
+      Width = 492
+      Height = 29
+      Margins.Left = 5
+      Margins.Top = 5
+      Margins.Right = 5
+      Margins.Bottom = 5
       Caption = 'Search re&cursively'
       TabOrder = 1
     end
     object chkSeeAlsoRecurse: TCheckBox
-      Left = 24
-      Top = 136
-      Width = 281
-      Height = 17
+      Left = 42
+      Top = 238
+      Width = 492
+      Height = 30
+      Margins.Left = 5
+      Margins.Top = 5
+      Margins.Right = 5
+      Margins.Bottom = 5
       Caption = 'Search rec&ursively'
       TabOrder = 4
     end
     object chkSeeAlsoReverse: TCheckBox
       Left = 0
-      Top = 161
-      Width = 305
-      Height = 17
+      Top = 282
+      Width = 534
+      Height = 30
+      Margins.Left = 5
+      Margins.Top = 5
+      Margins.Right = 5
+      Margins.Bottom = 5
       Caption = 'Search for snippets that cross-reference this one'
       TabOrder = 5
       OnClick = SearchCheckClick
     end
     object chkRequiredReverse: TCheckBox
       Left = 0
-      Top = 74
-      Width = 305
-      Height = 17
+      Top = 130
+      Width = 534
+      Height = 29
+      Margins.Left = 5
+      Margins.Top = 5
+      Margins.Right = 5
+      Margins.Bottom = 5
       Caption = 'Search for snippets that depend on this one'
       TabOrder = 2
       OnClick = SearchCheckClick
     end
-  end
-  inherited btnCancel: TButton
-    Left = 231
-    ExplicitLeft = 231
   end
   inherited btnOK: TButton
     OnClick = btnOKClick

@@ -1,44 +1,15 @@
 inherited UserHiliterMgrDlg: TUserHiliterMgrDlg
   Caption = 'User Defined Highlighters'
-  ClientHeight = 1844
-  ClientWidth = 2561
-  Font.Height = -200
-  ExplicitWidth = 2585
-  ExplicitHeight = 1908
+  ExplicitWidth = 991
+  ExplicitHeight = 822
   PixelsPerInch = 168
-  TextHeight = 265
-  inherited bvlBottom: TBevel
-    Left = 77
-    Top = 2777
-    Width = 3537
-    Height = 23
-    Margins.Left = 28
-    Margins.Top = 28
-    Margins.Right = 28
-    Margins.Bottom = 28
-    ExplicitLeft = 77
-    ExplicitTop = 2777
-    ExplicitWidth = 3537
-    ExplicitHeight = 23
-  end
+  TextHeight = 30
   inherited pnlBody: TPanel
-    Left = 77
-    Top = 77
-    Width = 3537
-    Height = 382
-    Margins.Left = 28
-    Margins.Top = 28
-    Margins.Right = 28
-    Margins.Bottom = 28
-    ExplicitLeft = 77
-    ExplicitTop = 77
-    ExplicitWidth = 3537
-    ExplicitHeight = 382
     object lblNames: TLabel
       Left = 0
       Top = 0
-      Width = 1966
-      Height = 265
+      Width = 207
+      Height = 30
       Margins.Left = 5
       Margins.Top = 5
       Margins.Right = 5
@@ -50,13 +21,13 @@ inherited UserHiliterMgrDlg: TUserHiliterMgrDlg
       Left = 0
       Top = 54
       Width = 380
-      Height = 303
+      Height = 244
       Margins.Left = 5
       Margins.Top = 5
       Margins.Right = 5
       Margins.Bottom = 5
       IntegralHeight = True
-      ItemHeight = 23
+      ItemHeight = 30
       TabOrder = 0
       OnDblClick = lbNamesDblClick
     end
@@ -86,36 +57,10 @@ inherited UserHiliterMgrDlg: TUserHiliterMgrDlg
       TabOrder = 2
     end
   end
-  inherited btnHelp: TButton
-    Left = 2928
-    Top = 2851
-    Width = 702
-    Height = 236
-    Margins.Left = 28
-    Margins.Top = 28
-    Margins.Right = 28
-    Margins.Bottom = 28
-    ExplicitLeft = 2928
-    ExplicitTop = 2851
-    ExplicitWidth = 702
-    ExplicitHeight = 236
-  end
   inherited btnClose: TButton
-    Left = 711
-    Top = 931
-    Width = 229
-    Height = 77
-    Margins.Left = 9
-    Margins.Top = 9
-    Margins.Right = 9
-    Margins.Bottom = 9
     Caption = 'Done'
     Default = False
     ModalResult = 2
-    ExplicitLeft = 711
-    ExplicitTop = 931
-    ExplicitWidth = 229
-    ExplicitHeight = 77
   end
   object alDlg: TActionList
     Left = 152

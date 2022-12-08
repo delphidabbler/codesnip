@@ -2,32 +2,45 @@ inherited GenericDlg: TGenericDlg
   Left = 215
   Top = 123
   Caption = 'GenericDlg'
-  ClientHeight = 336
-  ClientWidth = 458
-  ExplicitWidth = 474
-  ExplicitHeight = 374
-  PixelsPerInch = 96
-  TextHeight = 13
+  ClientHeight = 762
+  ClientWidth = 991
+  ParentFont = True
+  ExplicitWidth = 1003
+  ExplicitHeight = 824
+  PixelsPerInch = 168
+  TextHeight = 30
   object bvlBottom: TBevel
-    Left = 8
-    Top = 296
-    Width = 377
-    Height = 2
+    Left = 24
+    Top = 683
+    Width = 957
+    Height = 15
+    Margins.Left = 5
+    Margins.Top = 5
+    Margins.Right = 5
+    Margins.Bottom = 5
     Shape = bsTopLine
   end
   object pnlBody: TPanel
-    Left = 8
-    Top = 8
-    Width = 377
-    Height = 281
+    Left = 14
+    Top = 14
+    Width = 957
+    Height = 631
+    Margins.Left = 5
+    Margins.Top = 5
+    Margins.Right = 5
+    Margins.Bottom = 5
     BevelOuter = bvNone
     TabOrder = 0
   end
   object btnHelp: TButton
-    Left = 312
-    Top = 304
-    Width = 75
-    Height = 25
+    Left = 840
+    Top = 708
+    Width = 131
+    Height = 44
+    Margins.Left = 5
+    Margins.Top = 5
+    Margins.Right = 5
+    Margins.Bottom = 5
     Caption = '&Help'
     TabOrder = 1
     OnClick = btnHelpClick

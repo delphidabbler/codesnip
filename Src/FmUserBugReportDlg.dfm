@@ -1,53 +1,13 @@
 inherited UserBugReportDlg: TUserBugReportDlg
   Caption = 'Report Bug Online'
-  ClientHeight = 3229
-  ClientWidth = 4512
-  Font.Height = -350
-  ExplicitWidth = 4536
-  ExplicitHeight = 3293
+  ExplicitWidth = 967
+  ExplicitHeight = 820
   PixelsPerInch = 168
-  TextHeight = 466
-  inherited bvlBottom: TBevel
-    Left = 135
-    Top = 4860
-    Width = 6190
-    Height = 40
-    Margins.Left = 49
-    Margins.Top = 49
-    Margins.Right = 49
-    Margins.Bottom = 49
-    ExplicitLeft = 135
-    ExplicitTop = 4860
-    ExplicitWidth = 6190
-    ExplicitHeight = 40
-  end
+  TextHeight = 30
   inherited pnlBody: TPanel
-    Left = 135
-    Top = 16
-    Width = 1375
-    Height = 4615
-    Margins.Left = 49
-    Margins.Top = 49
-    Margins.Right = 49
-    Margins.Bottom = 49
-    ExplicitLeft = 135
-    ExplicitTop = 16
-    ExplicitWidth = 1375
-    ExplicitHeight = 4615
     inherited lblBugTracker: TLabel
-      Left = 12
-      Top = 784
-      Width = 318
-      Height = 40
-      Margins.Left = 9
-      Margins.Top = 9
-      Margins.Right = 9
-      Margins.Bottom = 9
-      Font.Height = -33
-      ExplicitLeft = 12
-      ExplicitTop = 784
-      ExplicitWidth = 318
-      ExplicitHeight = 40
+      Top = 233
+      ExplicitTop = 233
     end
     object lblInstruct1: TLabel [1]
       Left = 7
@@ -80,22 +40,14 @@ inherited UserBugReportDlg: TUserBugReportDlg
       WordWrap = True
     end
     inherited lblBugTrackerKey: TLabel
-      Left = 319
-      Top = 784
-      Width = 1082
-      Height = 466
-      Margins.Left = 9
-      Margins.Top = 9
-      Margins.Right = 9
-      Margins.Bottom = 9
-      ExplicitLeft = 319
-      ExplicitTop = 784
-      ExplicitWidth = 1082
-      ExplicitHeight = 466
+      Left = 225
+      Top = 233
+      ExplicitLeft = 225
+      ExplicitTop = 233
     end
     object lblInstruct3: TLabel
       Left = 7
-      Top = 126
+      Top = 161
       Width = 772
       Height = 58
       Margins.Left = 5
@@ -109,32 +61,7 @@ inherited UserBugReportDlg: TUserBugReportDlg
       WordWrap = True
     end
   end
-  inherited btnHelp: TButton
-    Left = 5124
-    Top = 4989
-    Width = 1229
-    Height = 413
-    Margins.Left = 49
-    Margins.Top = 49
-    Margins.Right = 49
-    Margins.Bottom = 49
-    ExplicitLeft = 5124
-    ExplicitTop = 4989
-    ExplicitWidth = 1229
-    ExplicitHeight = 413
-  end
-  inherited btnClose: TButton
-    Left = 404
-    Top = 1629
-    Width = 401
-    Height = 135
-    Margins.Left = 16
-    Margins.Top = 16
-    Margins.Right = 16
-    Margins.Bottom = 16
-    ExplicitLeft = 404
-    ExplicitTop = 1629
-    ExplicitWidth = 401
-    ExplicitHeight = 135
+  inherited alMain: TActionList
+    Left = 36
   end
 end

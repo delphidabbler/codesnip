@@ -1,8 +1,8 @@
 object RootForm: TRootForm
   Left = 0
   Top = 0
-  ClientHeight = 770
-  ClientWidth = 1060
+  ClientHeight = 768
+  ClientWidth = 1048
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText

@@ -1,26 +1,9 @@
 inherited UserDataPathDlg: TUserDataPathDlg
   Caption = 'Move User Database'
-  ClientHeight = 1844
-  ClientWidth = 2561
-  Font.Height = -200
-  ExplicitWidth = 2585
-  ExplicitHeight = 1908
+  ExplicitWidth = 991
+  ExplicitHeight = 822
   PixelsPerInch = 168
-  TextHeight = 265
-  inherited bvlBottom: TBevel
-    Left = 77
-    Top = 2777
-    Width = 3537
-    Height = 23
-    Margins.Left = 28
-    Margins.Top = 28
-    Margins.Right = 28
-    Margins.Bottom = 28
-    ExplicitLeft = 77
-    ExplicitTop = 2777
-    ExplicitWidth = 3537
-    ExplicitHeight = 23
-  end
+  TextHeight = 30
   inherited pnlBody: TPanel
     Left = 77
     Top = 16
@@ -65,8 +48,8 @@ inherited UserDataPathDlg: TUserDataPathDlg
         ' continuing.'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
-      Font.Height = -19
-      Font.Name = 'Tahoma'
+      Font.Height = -21
+      Font.Name = 'Segoe UI'
       Font.Style = [fsBold]
       ParentFont = False
       WordWrap = True
@@ -83,16 +66,16 @@ inherited UserDataPathDlg: TUserDataPathDlg
       Caption = 'Move database to new directory'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
-      Font.Height = -19
-      Font.Name = 'Tahoma'
+      Font.Height = -21
+      Font.Name = 'Segoe UI'
       Font.Style = [fsBold]
       ParentFont = False
       TabOrder = 0
       object lblPath: TLabel
         Left = 14
         Top = 35
-        Width = 417
-        Height = 23
+        Width = 454
+        Height = 30
         Margins.Left = 5
         Margins.Top = 5
         Margins.Right = 5
@@ -101,8 +84,8 @@ inherited UserDataPathDlg: TUserDataPathDlg
         FocusControl = edPath
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
-        Font.Height = -19
-        Font.Name = 'Tahoma'
+        Font.Height = -21
+        Font.Name = 'Segoe UI'
         Font.Style = []
         ParentFont = False
       end
@@ -122,8 +105,8 @@ inherited UserDataPathDlg: TUserDataPathDlg
           ' new one will be created.'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
-        Font.Height = -19
-        Font.Name = 'Tahoma'
+        Font.Height = -21
+        Font.Name = 'Segoe UI'
         Font.Style = []
         ParentFont = False
         WordWrap = True
@@ -132,15 +115,15 @@ inherited UserDataPathDlg: TUserDataPathDlg
         Left = 14
         Top = 68
         Width = 569
-        Height = 31
+        Height = 38
         Margins.Left = 5
         Margins.Top = 5
         Margins.Right = 5
         Margins.Bottom = 5
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
-        Font.Height = -19
-        Font.Name = 'Tahoma'
+        Font.Height = -21
+        Font.Name = 'Segoe UI'
         Font.Style = []
         ParentFont = False
         TabOrder = 0
@@ -157,8 +140,8 @@ inherited UserDataPathDlg: TUserDataPathDlg
         Action = actBrowse
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
-        Font.Height = -19
-        Font.Name = 'Tahoma'
+        Font.Height = -21
+        Font.Name = 'Segoe UI'
         Font.Style = []
         ParentFont = False
         TabOrder = 1
@@ -175,8 +158,8 @@ inherited UserDataPathDlg: TUserDataPathDlg
         Action = actMove
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
-        Font.Height = -19
-        Font.Name = 'Tahoma'
+        Font.Height = -21
+        Font.Name = 'Segoe UI'
         Font.Style = []
         ParentFont = False
         TabOrder = 2
@@ -194,8 +177,8 @@ inherited UserDataPathDlg: TUserDataPathDlg
       Caption = 'Restore database to default directory'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
-      Font.Height = -19
-      Font.Name = 'Tahoma'
+      Font.Height = -21
+      Font.Name = 'Segoe UI'
       Font.Style = [fsBold]
       ParentFont = False
       TabOrder = 1
@@ -214,8 +197,8 @@ inherited UserDataPathDlg: TUserDataPathDlg
           '. This option is only available if the database has been moved.'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
-        Font.Height = -19
-        Font.Name = 'Tahoma'
+        Font.Height = -21
+        Font.Name = 'Segoe UI'
         Font.Style = []
         ParentFont = False
         WordWrap = True
@@ -232,8 +215,8 @@ inherited UserDataPathDlg: TUserDataPathDlg
         Action = actDefaultPath
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
-        Font.Height = -19
-        Font.Name = 'Tahoma'
+        Font.Height = -21
+        Font.Name = 'Segoe UI'
         Font.Style = []
         ParentFont = False
         TabOrder = 0
@@ -261,38 +244,12 @@ inherited UserDataPathDlg: TUserDataPathDlg
       ExplicitWidth = 320
       ExplicitHeight = 82
       inherited pnlBody: TPanel
+        Width = 320
         Height = 82
+        ExplicitWidth = 320
         ExplicitHeight = 82
       end
     end
-  end
-  inherited btnHelp: TButton
-    Left = 2928
-    Top = 2851
-    Width = 702
-    Height = 236
-    Margins.Left = 28
-    Margins.Top = 28
-    Margins.Right = 28
-    Margins.Bottom = 28
-    ExplicitLeft = 2928
-    ExplicitTop = 2851
-    ExplicitWidth = 702
-    ExplicitHeight = 236
-  end
-  inherited btnClose: TButton
-    Left = 711
-    Top = 931
-    Width = 229
-    Height = 77
-    Margins.Left = 9
-    Margins.Top = 9
-    Margins.Right = 9
-    Margins.Bottom = 9
-    ExplicitLeft = 711
-    ExplicitTop = 931
-    ExplicitWidth = 229
-    ExplicitHeight = 77
   end
   object alDlg: TActionList
     Left = 152

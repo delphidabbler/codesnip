@@ -1,56 +1,70 @@
 inherited FindCompilerDlg: TFindCompilerDlg
-  Left = 268
-  Top = 121
   Caption = 'Find Compiler(s)'
-  ExplicitWidth = 474
-  ExplicitHeight = 375
-  PixelsPerInch = 96
-  TextHeight = 13
+  ExplicitWidth = 979
+  ExplicitHeight = 822
+  PixelsPerInch = 168
+  TextHeight = 30
   inherited pnlBody: TPanel
-    Width = 378
-    Height = 273
-    ExplicitWidth = 378
-    ExplicitHeight = 273
     object lblCompilerVer: TLabel
       Left = 0
       Top = 0
-      Width = 50
-      Height = 13
+      Width = 97
+      Height = 30
+      Margins.Left = 5
+      Margins.Top = 5
+      Margins.Right = 5
+      Margins.Bottom = 5
       Caption = '&Compilers:'
       FocusControl = lbCompilerVers
     end
     object lblCriteria: TLabel
-      Left = 168
+      Left = 294
       Top = 0
-      Width = 39
-      Height = 13
+      Width = 71
+      Height = 30
+      Margins.Left = 5
+      Margins.Top = 5
+      Margins.Right = 5
+      Margins.Bottom = 5
       Caption = 'C&riteria:'
       FocusControl = cbCriteria
     end
     object lbCompilerVers: TCheckListBox
       Left = 0
-      Top = 19
-      Width = 154
-      Height = 186
-      OnClickCheck = lbCompilerVersClickCheck
+      Top = 33
+      Width = 270
+      Height = 304
+      Margins.Left = 5
+      Margins.Top = 5
+      Margins.Right = 5
+      Margins.Bottom = 5
       IntegralHeight = True
-      ItemHeight = 13
+      ItemHeight = 30
       TabOrder = 0
+      OnClickCheck = lbCompilerVersClickCheck
     end
     object cbCriteria: TComboBox
-      Left = 168
-      Top = 19
-      Width = 165
-      Height = 21
+      Left = 294
+      Top = 33
+      Width = 289
+      Height = 38
+      Margins.Left = 5
+      Margins.Top = 5
+      Margins.Right = 5
+      Margins.Bottom = 5
       Style = csDropDownList
       TabOrder = 3
       OnSelect = cbCriteriaSelect
     end
     object rgLogic: TRadioGroup
-      Left = 168
-      Top = 59
-      Width = 165
-      Height = 82
+      Left = 294
+      Top = 103
+      Width = 289
+      Height = 144
+      Margins.Left = 5
+      Margins.Top = 5
+      Margins.Right = 5
+      Margins.Bottom = 5
       Caption = 'Search &logic'
       ItemIndex = 1
       Items.Strings = (
@@ -61,27 +75,39 @@ inherited FindCompilerDlg: TFindCompilerDlg
     end
     object btnSelectAll: TButton
       Left = 0
-      Top = 216
-      Width = 65
-      Height = 25
+      Top = 378
+      Width = 114
+      Height = 44
+      Margins.Left = 5
+      Margins.Top = 5
+      Margins.Right = 5
+      Margins.Bottom = 5
       Caption = 'Select &All'
       TabOrder = 1
       OnClick = btnSelectAllClick
     end
     object btnClearAll: TButton
-      Left = 71
-      Top = 216
-      Width = 65
-      Height = 25
+      Left = 124
+      Top = 378
+      Width = 114
+      Height = 44
+      Margins.Left = 5
+      Margins.Top = 5
+      Margins.Right = 5
+      Margins.Bottom = 5
       Caption = 'Cl&ear All'
       TabOrder = 2
       OnClick = btnClearAllClick
     end
     object rgScope: TRadioGroup
-      Left = 168
-      Top = 159
-      Width = 165
-      Height = 82
+      Left = 294
+      Top = 278
+      Width = 289
+      Height = 144
+      Margins.Left = 5
+      Margins.Top = 5
+      Margins.Right = 5
+      Margins.Bottom = 5
       Caption = 'Search &scope'
       ItemIndex = 0
       Items.Strings = (

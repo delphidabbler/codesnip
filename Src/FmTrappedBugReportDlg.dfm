@@ -1,44 +1,15 @@
 inherited TrappedBugReportDlg: TTrappedBugReportDlg
   Caption = 'Unexpected Error'
-  ClientHeight = 3229
-  ClientWidth = 4512
-  Font.Height = -350
-  ExplicitWidth = 4536
-  ExplicitHeight = 3293
+  ClientWidth = 967
+  ExplicitHeight = 820
   PixelsPerInch = 168
-  TextHeight = 466
-  inherited bvlBottom: TBevel
-    Left = 135
-    Top = 4860
-    Width = 6190
-    Height = 40
-    Margins.Left = 49
-    Margins.Top = 49
-    Margins.Right = 49
-    Margins.Bottom = 49
-    ExplicitLeft = 135
-    ExplicitTop = 4860
-    ExplicitWidth = 6190
-    ExplicitHeight = 40
-  end
+  TextHeight = 30
   inherited pnlBody: TPanel
-    Left = 135
-    Top = 135
-    Width = 1375
-    Height = 4615
-    Margins.Left = 49
-    Margins.Top = 49
-    Margins.Right = 49
-    Margins.Bottom = 49
-    ExplicitLeft = 135
-    ExplicitTop = 135
-    ExplicitWidth = 1375
-    ExplicitHeight = 4615
     object lblIntro: TLabel [0]
       Left = 7
       Top = 7
-      Width = 527
-      Height = 23
+      Width = 545
+      Height = 30
       Margins.Left = 5
       Margins.Top = 5
       Margins.Right = 5
@@ -46,8 +17,8 @@ inherited TrappedBugReportDlg: TTrappedBugReportDlg
       Caption = 'CodeSnip has detected the following unexpected error:'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
-      Font.Height = -19
-      Font.Name = 'Tahoma'
+      Font.Height = -21
+      Font.Name = 'Segoe UI'
       Font.Style = [fsBold]
       ParentFont = False
     end
@@ -133,32 +104,15 @@ inherited TrappedBugReportDlg: TTrappedBugReportDlg
     end
     inherited lblBugTracker: TLabel
       Left = 12
-      Top = 784
-      Width = 318
-      Height = 40
-      Margins.Left = 9
-      Margins.Top = 9
-      Margins.Right = 9
-      Margins.Bottom = 9
-      Font.Height = -33
+      Top = 400
       ExplicitLeft = 12
-      ExplicitTop = 784
-      ExplicitWidth = 318
-      ExplicitHeight = 40
+      ExplicitTop = 400
     end
     inherited lblBugTrackerKey: TLabel
-      Left = 203
-      Top = 784
-      Width = 1082
-      Height = 466
-      Margins.Left = 9
-      Margins.Top = 9
-      Margins.Right = 9
-      Margins.Bottom = 9
-      ExplicitLeft = 203
-      ExplicitTop = 784
-      ExplicitWidth = 1082
-      ExplicitHeight = 466
+      Left = 231
+      Top = 400
+      ExplicitLeft = 231
+      ExplicitTop = 400
     end
     object lblInstruct4: TLabel
       Left = 7
@@ -180,36 +134,12 @@ inherited TrappedBugReportDlg: TTrappedBugReportDlg
     end
   end
   inherited btnHelp: TButton
-    Left = 5124
-    Top = 4989
-    Width = 1229
-    Height = 413
-    Margins.Left = 49
-    Margins.Top = 49
-    Margins.Right = 49
-    Margins.Bottom = 49
     TabOrder = 3
-    ExplicitLeft = 5124
-    ExplicitTop = 4989
-    ExplicitWidth = 1229
-    ExplicitHeight = 413
   end
   inherited btnClose: TButton
-    Left = 1244
-    Top = 1629
-    Width = 401
-    Height = 135
-    Margins.Left = 16
-    Margins.Top = 16
-    Margins.Right = 16
-    Margins.Bottom = 16
     Caption = '&Continue'
     Default = False
     TabOrder = 2
-    ExplicitLeft = 1244
-    ExplicitTop = 1629
-    ExplicitWidth = 401
-    ExplicitHeight = 135
   end
   object btnTerminate: TButton [4]
     Left = 112
@@ -224,8 +154,8 @@ inherited TrappedBugReportDlg: TTrappedBugReportDlg
     Default = True
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
-    Font.Height = -19
-    Font.Name = 'Tahoma'
+    Font.Height = -21
+    Font.Name = 'Segoe UI'
     Font.Style = [fsBold]
     ParentFont = False
     TabOrder = 1

@@ -1,111 +1,156 @@
 inherited SnippetsEditorDlg: TSnippetsEditorDlg
-  Left = 1097
-  Top = 525
   Caption = 'SnippetsEditorDlg'
-  ClientHeight = 578
-  ClientWidth = 738
-  Position = poDesigned
-  ExplicitWidth = 744
-  ExplicitHeight = 607
-  PixelsPerInch = 96
-  TextHeight = 13
+  ClientHeight = 946
+  ClientWidth = 1359
+  ExplicitLeft = 4
+  ExplicitTop = 4
+  ExplicitWidth = 1371
+  ExplicitHeight = 1008
+  PixelsPerInch = 168
+  TextHeight = 30
   inherited pnlBody: TPanel
-    Width = 662
-    Height = 504
-    ExplicitWidth = 662
-    ExplicitHeight = 504
+    Width = 1149
+    Height = 922
+    ExplicitWidth = 1149
+    ExplicitHeight = 922
     object pcMain: TPageControl
       Left = 0
       Top = 0
-      Width = 662
-      Height = 504
+      Width = 1149
+      Height = 922
+      Margins.Left = 5
+      Margins.Top = 5
+      Margins.Right = 5
+      Margins.Bottom = 5
       ActivePage = tsCompileResults
       Align = alClient
       TabOrder = 0
       OnChange = pcMainChange
       OnMouseDown = pcMainMouseDown
+      ExplicitWidth = 957
+      ExplicitHeight = 631
       object tsCode: TTabSheet
+        Margins.Left = 5
+        Margins.Top = 5
+        Margins.Right = 5
+        Margins.Bottom = 5
         Caption = 'Code'
         object lblDescription: TLabel
           Left = 0
-          Top = 73
-          Width = 57
-          Height = 13
+          Top = 128
+          Width = 110
+          Height = 30
+          Margins.Left = 5
+          Margins.Top = 5
+          Margins.Right = 5
+          Margins.Bottom = 5
           Caption = '&Description:'
           FocusControl = frmDescription
         end
         object lblSourceCode: TLabel
           Left = 0
-          Top = 204
-          Width = 63
-          Height = 13
+          Top = 357
+          Width = 119
+          Height = 30
+          Margins.Left = 5
+          Margins.Top = 5
+          Margins.Right = 5
+          Margins.Bottom = 5
           Caption = '&Source code:'
           FocusControl = edSourceCode
         end
         object lblName: TLabel
-          Left = 3
-          Top = 11
-          Width = 31
-          Height = 13
+          Left = 5
+          Top = 19
+          Width = 61
+          Height = 30
+          Margins.Left = 5
+          Margins.Top = 5
+          Margins.Right = 5
+          Margins.Bottom = 5
           Caption = '&Name:'
           FocusControl = edName
         end
         object lblCategories: TLabel
           Left = 0
-          Top = 183
-          Width = 49
-          Height = 13
+          Top = 320
+          Width = 88
+          Height = 30
+          Margins.Left = 5
+          Margins.Top = 5
+          Margins.Right = 5
+          Margins.Bottom = 5
           Caption = '&Category:'
           FocusControl = cbCategories
         end
         object lblSnippetKindHelp: TLabel
-          Left = 330
-          Top = 146
-          Width = 117
-          Height = 13
+          Left = 578
+          Top = 256
+          Width = 226
+          Height = 30
           Cursor = crHandPoint
+          Margins.Left = 5
+          Margins.Top = 5
+          Margins.Right = 5
+          Margins.Bottom = 5
           Caption = 'What are Snippet Kinds?'
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
-          Font.Height = -11
-          Font.Name = 'Tahoma'
+          Font.Height = -21
+          Font.Name = 'Segoe UI'
           Font.Style = [fsUnderline]
           ParentFont = False
           OnClick = lblSnippetKindHelpClick
         end
         object lblKind: TLabel
           Left = 0
-          Top = 151
-          Width = 24
-          Height = 13
+          Top = 264
+          Width = 46
+          Height = 30
+          Margins.Left = 5
+          Margins.Top = 5
+          Margins.Right = 5
+          Margins.Bottom = 5
           Caption = '&Kind:'
           FocusControl = cbKind
         end
         object lblSourceCaretPos: TLabel
-          Left = 556
-          Top = 204
-          Width = 91
-          Height = 13
+          Left = 973
+          Top = 357
+          Width = 159
+          Height = 23
+          Margins.Left = 5
+          Margins.Top = 5
+          Margins.Right = 5
+          Margins.Bottom = 5
           Alignment = taRightJustify
           AutoSize = False
           Caption = 'lblSourceCaretPos'
         end
         object lblDisplayName: TLabel
-          Left = 3
-          Top = 40
-          Width = 68
-          Height = 13
+          Left = 5
+          Top = 70
+          Width = 134
+          Height = 30
+          Margins.Left = 5
+          Margins.Top = 5
+          Margins.Right = 5
+          Margins.Bottom = 5
           Caption = 'Displa&y Name:'
           FocusControl = edDisplayName
         end
         object edSourceCode: TMemo
-          Left = 4
-          Top = 224
-          Width = 647
-          Height = 225
+          Left = 7
+          Top = 392
+          Width = 1132
+          Height = 394
+          Margins.Left = 5
+          Margins.Top = 5
+          Margins.Right = 5
+          Margins.Bottom = 5
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
-          Font.Height = -12
+          Font.Height = -21
           Font.Name = 'Courier New'
           Font.Style = []
           ParentFont = False
@@ -114,26 +159,38 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
           TabOrder = 6
         end
         object edName: TEdit
-          Left = 93
-          Top = 7
-          Width = 209
-          Height = 21
+          Left = 163
+          Top = 12
+          Width = 366
+          Height = 38
+          Margins.Left = 5
+          Margins.Top = 5
+          Margins.Right = 5
+          Margins.Bottom = 5
           PopupMenu = mnuEditCtrls
           TabOrder = 0
         end
         object cbCategories: TComboBox
-          Left = 93
-          Top = 179
-          Width = 209
-          Height = 21
+          Left = 163
+          Top = 313
+          Width = 366
+          Height = 38
+          Margins.Left = 5
+          Margins.Top = 5
+          Margins.Right = 5
+          Margins.Bottom = 5
           Style = csDropDownList
           TabOrder = 5
         end
         object cbKind: TComboBox
-          Left = 93
-          Top = 146
-          Width = 209
-          Height = 21
+          Left = 163
+          Top = 256
+          Width = 366
+          Height = 38
+          Margins.Left = 5
+          Margins.Top = 5
+          Margins.Right = 5
+          Margins.Bottom = 5
           Style = csDropDownList
           TabOrder = 4
           OnChange = cbKindChange
@@ -143,6 +200,10 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
           Top = 67
           Width = 462
           Height = 78
+          Margins.Left = 5
+          Margins.Top = 5
+          Margins.Right = 5
+          Margins.Bottom = 5
           Color = clWindow
           ParentBackground = False
           ParentColor = False
@@ -153,142 +214,206 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
           ExplicitHeight = 78
           inherited edText: TMemo
             Width = 462
-            Height = 55
+            Height = 38
             ExplicitWidth = 462
-            ExplicitHeight = 55
+            ExplicitHeight = 38
           end
           inherited tcEditMode: TTabControl
-            Top = 55
+            Top = 38
             Width = 462
-            ExplicitTop = 55
+            ExplicitTop = 38
             ExplicitWidth = 462
           end
         end
         object btnViewDescription: TButton
-          Left = 562
-          Top = 65
-          Width = 85
-          Height = 25
+          Left = 984
+          Top = 114
+          Width = 148
+          Height = 44
+          Margins.Left = 5
+          Margins.Top = 5
+          Margins.Right = 5
+          Margins.Bottom = 5
           Action = actViewDescription
           Caption = 'Previe&w...'
           TabOrder = 3
         end
         object edDisplayName: TEdit
-          Left = 93
-          Top = 34
-          Width = 298
-          Height = 21
+          Left = 163
+          Top = 60
+          Width = 521
+          Height = 38
+          Margins.Left = 5
+          Margins.Top = 5
+          Margins.Right = 5
+          Margins.Bottom = 5
           PopupMenu = mnuEditCtrls
           TabOrder = 1
         end
         object chkUseHiliter: TCheckBox
-          Left = 3
-          Top = 455
-          Width = 478
-          Height = 17
+          Left = 5
+          Top = 796
+          Width = 837
+          Height = 30
+          Margins.Left = 5
+          Margins.Top = 5
+          Margins.Right = 5
+          Margins.Bottom = 5
           Caption = 'Synta&x highlight this snippet as Pascal code'
           TabOrder = 7
         end
       end
       object tsReferences: TTabSheet
+        Margins.Left = 5
+        Margins.Top = 5
+        Margins.Right = 5
+        Margins.Bottom = 5
         Caption = 'References'
         ImageIndex = 1
         object lblXRefs: TLabel
-          Left = 3
-          Top = 3
-          Width = 87
-          Height = 13
+          Left = 5
+          Top = 5
+          Width = 159
+          Height = 30
+          Margins.Left = 5
+          Margins.Top = 5
+          Margins.Right = 5
+          Margins.Bottom = 5
           Caption = 'Cross-&references:'
           FocusControl = clbXRefs
         end
         object lblDepends: TLabel
-          Left = 228
-          Top = 3
-          Width = 71
-          Height = 13
+          Left = 399
+          Top = 5
+          Width = 136
+          Height = 30
+          Margins.Left = 5
+          Margins.Top = 5
+          Margins.Right = 5
+          Margins.Bottom = 5
           Caption = 'De&pendencies:'
           FocusControl = clbDepends
         end
         object lblUnits: TLabel
-          Left = 452
-          Top = 3
-          Width = 28
-          Height = 13
+          Left = 791
+          Top = 5
+          Width = 52
+          Height = 30
+          Margins.Left = 5
+          Margins.Top = 5
+          Margins.Right = 5
+          Margins.Bottom = 5
           Caption = '&Units:'
           FocusControl = clbUnits
         end
         object clbXRefs: TCheckListBox
-          Left = 3
-          Top = 22
-          Width = 217
-          Height = 420
+          Left = 5
+          Top = 39
+          Width = 380
+          Height = 694
+          Margins.Left = 5
+          Margins.Top = 5
+          Margins.Right = 5
+          Margins.Bottom = 5
           IntegralHeight = True
-          ItemHeight = 13
+          ItemHeight = 30
           PopupMenu = mnuXRefs
           TabOrder = 0
         end
         object clbDepends: TCheckListBox
-          Left = 228
-          Top = 22
-          Width = 217
-          Height = 420
+          Left = 399
+          Top = 39
+          Width = 380
+          Height = 694
+          Margins.Left = 5
+          Margins.Top = 5
+          Margins.Right = 5
+          Margins.Bottom = 5
           IntegralHeight = True
-          ItemHeight = 13
+          ItemHeight = 30
           PopupMenu = mnuDependencies
           TabOrder = 1
         end
         object clbUnits: TCheckListBox
-          Left = 453
-          Top = 22
-          Width = 197
-          Height = 420
+          Left = 793
+          Top = 39
+          Width = 345
+          Height = 694
+          Margins.Left = 5
+          Margins.Top = 5
+          Margins.Right = 5
+          Margins.Bottom = 5
           IntegralHeight = True
-          ItemHeight = 13
+          ItemHeight = 30
           PopupMenu = mnuUnits
           TabOrder = 2
         end
         object edUnit: TEdit
-          Left = 452
-          Top = 441
-          Width = 117
-          Height = 21
+          Left = 791
+          Top = 772
+          Width = 205
+          Height = 38
+          Margins.Left = 5
+          Margins.Top = 5
+          Margins.Right = 5
+          Margins.Bottom = 5
           PopupMenu = mnuEditCtrls
           TabOrder = 3
         end
         object btnAddUnit: TButton
-          Left = 575
-          Top = 441
-          Width = 75
-          Height = 25
+          Left = 1006
+          Top = 772
+          Width = 132
+          Height = 44
+          Margins.Left = 5
+          Margins.Top = 5
+          Margins.Right = 5
+          Margins.Bottom = 5
           Action = actAddUnit
           TabOrder = 4
         end
       end
       object tsComments: TTabSheet
+        Margins.Left = 5
+        Margins.Top = 5
+        Margins.Right = 5
+        Margins.Bottom = 5
         Caption = 'Extra Information'
         ImageIndex = 2
         object lblExtra: TLabel
-          Left = 3
-          Top = 3
-          Width = 87
-          Height = 13
+          Left = 5
+          Top = 5
+          Width = 165
+          Height = 30
+          Margins.Left = 5
+          Margins.Top = 5
+          Margins.Right = 5
+          Margins.Bottom = 5
           Caption = 'E&xtra information:'
           FocusControl = frmExtra
         end
         object lblExtraCaretPos: TLabel
-          Left = 560
-          Top = 3
-          Width = 91
-          Height = 13
+          Left = 980
+          Top = 5
+          Width = 159
+          Height = 23
+          Margins.Left = 5
+          Margins.Top = 5
+          Margins.Right = 5
+          Margins.Bottom = 5
           Alignment = taRightJustify
           AutoSize = False
           Caption = 'lblExtraCaretPos'
         end
         object btnViewExtra: TButton
-          Left = 3
-          Top = 409
-          Width = 85
-          Height = 25
+          Left = 5
+          Top = 716
+          Width = 149
+          Height = 44
+          Margins.Left = 5
+          Margins.Top = 5
+          Margins.Right = 5
+          Margins.Bottom = 5
           Action = actViewExtra
           TabOrder = 1
         end
@@ -297,6 +422,10 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
           Top = 22
           Width = 648
           Height = 381
+          Margins.Left = 5
+          Margins.Top = 5
+          Margins.Right = 5
+          Margins.Bottom = 5
           Color = clWindow
           ParentBackground = False
           ParentColor = False
@@ -307,41 +436,57 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
           ExplicitHeight = 381
           inherited edText: TMemo
             Width = 648
-            Height = 358
+            Height = 341
             ExplicitWidth = 648
-            ExplicitHeight = 358
+            ExplicitHeight = 341
           end
           inherited tcEditMode: TTabControl
-            Top = 358
+            Top = 341
             Width = 648
-            ExplicitTop = 358
+            ExplicitTop = 341
             ExplicitWidth = 648
           end
         end
       end
       object tsCompileResults: TTabSheet
+        Margins.Left = 5
+        Margins.Top = 5
+        Margins.Right = 5
+        Margins.Bottom = 5
         Caption = 'Compile Results'
         ImageIndex = 3
         object lblCompilers: TLabel
-          Left = 3
-          Top = 3
-          Width = 93
-          Height = 13
+          Left = 5
+          Top = 5
+          Width = 179
+          Height = 30
+          Margins.Left = 5
+          Margins.Top = 5
+          Margins.Right = 5
+          Margins.Bottom = 5
           Caption = 'Set &compile results:'
           FocusControl = lbCompilers
         end
         object lblCompileShortcuts: TLabel
-          Left = 203
-          Top = 3
-          Width = 46
-          Height = 13
+          Left = 355
+          Top = 5
+          Width = 87
+          Height = 30
+          Margins.Left = 5
+          Margins.Top = 5
+          Margins.Right = 5
+          Margins.Bottom = 5
           Caption = 'Shortcuts'
         end
         object lblCompResDesc: TLabel
-          Left = 3
-          Top = 401
-          Width = 186
-          Height = 60
+          Left = 5
+          Top = 702
+          Width = 326
+          Height = 105
+          Margins.Left = 5
+          Margins.Top = 5
+          Margins.Right = 5
+          Margins.Bottom = 5
           AutoSize = False
           Caption = 
             'Use the a drop down buttons to display a list of compile results' +
@@ -349,101 +494,117 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
           WordWrap = True
         end
         object lbCompilers: TListBox
-          Left = 3
-          Top = 22
-          Width = 186
-          Height = 373
+          Left = 5
+          Top = 39
+          Width = 326
+          Height = 652
+          Margins.Left = 5
+          Margins.Top = 5
+          Margins.Right = 5
+          Margins.Bottom = 5
           Style = lbOwnerDrawFixed
-          ItemHeight = 28
+          ItemHeight = 49
           TabOrder = 0
         end
         object btnSetAllSuccess: TButton
-          Left = 203
-          Top = 22
-          Width = 141
-          Height = 25
+          Left = 355
+          Top = 39
+          Width = 247
+          Height = 43
+          Margins.Left = 5
+          Margins.Top = 5
+          Margins.Right = 5
+          Margins.Bottom = 5
           Action = actSetAllSuccess
           DoubleBuffered = True
           ParentDoubleBuffered = False
           TabOrder = 1
         end
         object btnCompile: TButton
-          Left = 204
-          Top = 84
-          Width = 140
-          Height = 25
+          Left = 357
+          Top = 147
+          Width = 245
+          Height = 44
+          Margins.Left = 5
+          Margins.Top = 5
+          Margins.Right = 5
+          Margins.Bottom = 5
           Action = actCompile
           TabOrder = 3
         end
         object btnSetAllQuery: TButton
-          Left = 203
-          Top = 53
-          Width = 141
-          Height = 25
+          Left = 355
+          Top = 93
+          Width = 247
+          Height = 44
+          Margins.Left = 5
+          Margins.Top = 5
+          Margins.Right = 5
+          Margins.Bottom = 5
           Action = actSetAllQuery
           DoubleBuffered = True
           ParentDoubleBuffered = False
           TabOrder = 2
         end
         object pnlViewCompErrs: TPanel
-          Left = 203
-          Top = 115
-          Width = 238
-          Height = 72
+          Left = 355
+          Top = 201
+          Width = 417
+          Height = 126
+          Margins.Left = 5
+          Margins.Top = 5
+          Margins.Right = 5
+          Margins.Bottom = 5
           BevelOuter = bvNone
           TabOrder = 5
           object lblViewCompErrsKey: TLabel
             Left = 0
-            Top = 27
-            Width = 96
-            Height = 13
+            Top = 47
+            Width = 188
+            Height = 30
+            Margins.Left = 5
+            Margins.Top = 5
+            Margins.Right = 5
+            Margins.Bottom = 5
             Caption = 'lblViewCompErrsKey'
           end
           object lblViewCompErrs: TLabel
             Left = 0
-            Top = 8
-            Width = 78
-            Height = 13
+            Top = 14
+            Width = 155
+            Height = 30
             Cursor = crHandPoint
+            Margins.Left = 5
+            Margins.Top = 5
+            Margins.Right = 5
+            Margins.Bottom = 5
             Caption = 'lblViewCompErrs'
             Font.Charset = DEFAULT_CHARSET
             Font.Color = clWindowText
-            Font.Height = -11
-            Font.Name = 'Tahoma'
+            Font.Height = -21
+            Font.Name = 'Segoe UI'
             Font.Style = [fsUnderline]
             ParentFont = False
             OnClick = lblViewCompErrsClick
           end
         end
         object btnViewTestUnit: TButton
-          Left = 350
-          Top = 84
-          Width = 140
-          Height = 25
+          Left = 613
+          Top = 147
+          Width = 245
+          Height = 44
+          Margins.Left = 5
+          Margins.Top = 5
+          Margins.Right = 5
+          Margins.Bottom = 5
           Action = actViewTestUnit
           TabOrder = 4
         end
       end
     end
   end
-  inherited btnHelp: TButton
-    Left = 328
-    Top = 536
-    ExplicitLeft = 328
-    ExplicitTop = 536
-  end
-  inherited btnCancel: TButton
-    Left = 248
-    Top = 536
-    ExplicitLeft = 248
-    ExplicitTop = 536
-  end
   inherited btnOK: TButton
-    Left = 169
-    Top = 536
     OnClick = btnOKClick
-    ExplicitLeft = 169
-    ExplicitTop = 536
   end
   object alMain: TActionList
     Left = 146
@@ -548,8 +709,8 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
     end
   end
   object mnuEditCtrls: TPopupMenu
-    Left = 86
-    Top = 264
+    Left = 1178
+    Top = 152
     object miCut: TMenuItem
       Action = actCut
     end
@@ -573,8 +734,8 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
     end
   end
   object mnuDependencies: TPopupMenu
-    Left = 264
-    Top = 344
+    Left = 1188
+    Top = 50
     object miClearDependencies: TMenuItem
       Action = actClearDependencies
     end
@@ -583,15 +744,15 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
     end
   end
   object mnuXRefs: TPopupMenu
-    Left = 80
-    Top = 336
+    Left = 1186
+    Top = 378
     object miClearXRefs: TMenuItem
       Action = actClearXRefs
     end
   end
   object mnuUnits: TPopupMenu
-    Left = 496
-    Top = 344
+    Left = 1182
+    Top = 260
     object miClearUnits: TMenuItem
       Action = actClearUnits
     end

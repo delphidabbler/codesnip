@@ -1,10 +1,9 @@
 inherited MainForm: TMainForm
   ClientHeight = 855
   ClientWidth = 1373
-  ExplicitLeft = 4
-  ExplicitTop = 4
-  ExplicitWidth = 1397
-  ExplicitHeight = 919
+  ParentFont = True
+  ExplicitWidth = 1385
+  ExplicitHeight = 917
   PixelsPerInch = 168
   TextHeight = 30
   object MainMenuBar: TActionMainMenuBar
@@ -16,7 +15,6 @@ inherited MainForm: TMainForm
     Margins.Top = 5
     Margins.Right = 5
     Margins.Bottom = 5
-    UseSystemFont = False
     ActionManager = ActionManager
     Caption = 'MainMenuBar'
     Color = clMenuBar
@@ -24,12 +22,9 @@ inherited MainForm: TMainForm
     ColorMap.HighlightColor = clWhite
     ColorMap.BtnSelectedFont = clBlack
     ColorMap.UnusedColor = clWhite
-    Font.Charset = DEFAULT_CHARSET
-    Font.Color = clBlack
-    Font.Height = -21
-    Font.Name = 'Segoe UI'
-    Font.Style = []
+    ParentFont = True
     Spacing = 0
+    ExplicitWidth = 1361
   end
   object StatusBar: TStatusBar
     Left = 0
@@ -46,6 +41,10 @@ inherited MainForm: TMainForm
       item
         Width = 50
       end>
+    ParentFont = True
+    UseSystemFont = False
+    ExplicitTop = 816
+    ExplicitWidth = 1361
   end
   object tbarMain: TToolBar
     Left = 0
@@ -65,6 +64,7 @@ inherited MainForm: TMainForm
     ParentShowHint = False
     ShowHint = True
     TabOrder = 2
+    ExplicitWidth = 1361
     object tbSaveSnippet: TToolButton
       Left = 0
       Top = 0
@@ -297,8 +297,6 @@ inherited MainForm: TMainForm
     BevelOuter = bvNone
     BorderWidth = 2
     TabOrder = 3
-    ExplicitWidth = 1385
-    ExplicitHeight = 727
     object splitVert: TSplitter
       Left = 325
       Top = 2
@@ -325,7 +323,6 @@ inherited MainForm: TMainForm
       Align = alLeft
       BevelOuter = bvLowered
       TabOrder = 0
-      ExplicitHeight = 723
       inline frmOverview: TOverviewFrame
         Left = 1
         Top = 1
@@ -338,23 +335,35 @@ inherited MainForm: TMainForm
         Align = alClient
         TabOrder = 0
         TabStop = True
-        ExplicitLeft = -234
+        ExplicitLeft = 1
+        ExplicitTop = 1
+        ExplicitWidth = 321
+        ExplicitHeight = 719
         inherited pnlTitle: TPanel
           Width = 321
+          ExplicitWidth = 321
           inherited bvlTop: TBevel
             Width = 321
+            ExplicitWidth = 321
           end
           inherited tbarOverview: TToolBar
             Left = 227
+            Height = 40
+            ExplicitLeft = 227
           end
         end
         inherited tcDisplayStyle: TTabControl
           Width = 321
           Height = 672
+          ExplicitWidth = 321
+          ExplicitHeight = 670
           inherited tvSnippets: TTreeView
             Top = 76
             Width = 313
             Height = 592
+            ExplicitTop = 76
+            ExplicitWidth = 313
+            ExplicitHeight = 590
           end
         end
       end
@@ -371,8 +380,6 @@ inherited MainForm: TMainForm
       Align = alClient
       BevelOuter = bvLowered
       TabOrder = 1
-      ExplicitWidth = 1047
-      ExplicitHeight = 723
       inline frmDetail: TDetailFrame
         Left = 1
         Top = 1
@@ -385,32 +392,36 @@ inherited MainForm: TMainForm
         Align = alClient
         TabOrder = 0
         TabStop = True
-        ExplicitLeft = 14
-        ExplicitTop = 14
+        ExplicitLeft = 1
+        ExplicitTop = 1
+        ExplicitWidth = 1033
+        ExplicitHeight = 719
         inherited pnlTitle: TPanel
           Width = 1033
+          ExplicitWidth = 1021
           inherited bvlTop: TBevel
             Width = 1033
+            ExplicitWidth = 1033
           end
         end
         inherited frmDetailView: TDetailViewFrame
           Width = 1033
           Height = 649
           ExplicitTop = 70
-          ExplicitWidth = 557
-          ExplicitHeight = 347
+          ExplicitWidth = 1021
+          ExplicitHeight = 647
           inherited pnlBrowser: TPanel
             Width = 1033
             Height = 649
-            ExplicitWidth = 557
-            ExplicitHeight = 347
+            ExplicitWidth = 1021
+            ExplicitHeight = 647
             inherited wbBrowser: TWebBrowser
               Width = 1033
               Height = 649
-              ExplicitWidth = 557
-              ExplicitHeight = 347
+              ExplicitWidth = 1021
+              ExplicitHeight = 647
               ControlData = {
-                4C000000DE2000006E1300000000000000000000000000000000000000000000
+                4C000000023D0000542600000000000000000000000000000000000000000000
                 000000004C000000000000000000000001000000E0D057007335CF11AE690800
                 2B2E126208000000000000004C0000000114020000000000C000000000000046
                 8000000000000000000000000000000000000000000000000000000000000000
@@ -420,6 +431,7 @@ inherited MainForm: TMainForm
         end
         inherited tcViews: TTabControl
           Width = 1033
+          ExplicitWidth = 1021
         end
       end
     end

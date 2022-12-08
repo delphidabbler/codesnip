@@ -1,79 +1,96 @@
 inherited DuplicateSnippetDlg: TDuplicateSnippetDlg
   Caption = 'DuplicateSnippetDlg'
-  ExplicitWidth = 474
-  ExplicitHeight = 356
-  PixelsPerInch = 96
-  TextHeight = 13
+  ExplicitWidth = 979
+  ExplicitHeight = 822
+  PixelsPerInch = 168
+  TextHeight = 30
   inherited pnlBody: TPanel
-    Width = 222
-    Height = 185
-    ExplicitWidth = 222
-    ExplicitHeight = 185
     object lblUniqueName: TLabel
       Left = 0
       Top = 0
-      Width = 173
-      Height = 13
+      Width = 338
+      Height = 30
+      Margins.Left = 5
+      Margins.Top = 5
+      Margins.Right = 5
+      Margins.Bottom = 5
       Caption = '&Unique name for duplicated snippet:'
       FocusControl = edUniqueName
     end
     object lblCategory: TLabel
       Left = 0
-      Top = 104
-      Width = 49
-      Height = 13
+      Top = 182
+      Width = 88
+      Height = 30
+      Margins.Left = 5
+      Margins.Top = 5
+      Margins.Right = 5
+      Margins.Bottom = 5
       Caption = '&Category:'
       FocusControl = cbCategory
     end
     object lblDisplayName: TLabel
       Left = 0
-      Top = 48
-      Width = 67
-      Height = 13
+      Top = 84
+      Width = 130
+      Height = 30
+      Margins.Left = 5
+      Margins.Top = 5
+      Margins.Right = 5
+      Margins.Bottom = 5
       Caption = '&Display name:'
       FocusControl = edDisplayName
     end
     object edUniqueName: TEdit
       Left = 0
-      Top = 19
-      Width = 222
-      Height = 21
+      Top = 33
+      Width = 388
+      Height = 38
+      Margins.Left = 5
+      Margins.Top = 5
+      Margins.Right = 5
+      Margins.Bottom = 5
       Anchors = [akLeft, akTop, akRight]
       TabOrder = 0
-      ExplicitWidth = 200
     end
     object cbCategory: TComboBox
       Left = 0
-      Top = 123
-      Width = 222
-      Height = 21
+      Top = 215
+      Width = 388
+      Height = 38
+      Margins.Left = 5
+      Margins.Top = 5
+      Margins.Right = 5
+      Margins.Bottom = 5
       Style = csDropDownList
       Anchors = [akLeft, akTop, akRight]
       TabOrder = 2
     end
     object edDisplayName: TEdit
       Left = 0
-      Top = 67
-      Width = 222
-      Height = 21
+      Top = 117
+      Width = 388
+      Height = 38
+      Margins.Left = 5
+      Margins.Top = 5
+      Margins.Right = 5
+      Margins.Bottom = 5
       Anchors = [akLeft, akTop, akRight]
       TabOrder = 1
-      ExplicitWidth = 200
     end
     object chkEdit: TCheckBox
       Left = 0
-      Top = 160
-      Width = 222
-      Height = 17
+      Top = 280
+      Width = 388
+      Height = 30
+      Margins.Left = 5
+      Margins.Top = 5
+      Margins.Right = 5
+      Margins.Bottom = 5
       Anchors = [akLeft, akTop, akRight]
       Caption = '&Edit in Snippets Editor'
       TabOrder = 3
-      ExplicitWidth = 200
     end
-  end
-  inherited btnHelp: TButton
-    Left = 313
-    ExplicitLeft = 313
   end
   inherited btnOK: TButton
     OnClick = btnOKClick
