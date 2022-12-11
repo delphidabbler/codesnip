@@ -7,7 +7,7 @@
  *
  * Implements classes that render and parse Routine Extra Markup Language (REML)
  * code. This markup is used to read and store active text objects as used by
- * the Extra property of a TSnippet object. Also includes helper classes.
+ * some properties of a TSnippet object. Also includes helper classes.
 }
 
 
@@ -139,59 +139,8 @@ implementation
   It comprises plain text with limited inline and block level formatting and
   hyperlink specified by HTML like tags.
 
-  Supported tags are as follows. Unless otherwise specified, no tags may have
-  any attributes:
-
-  Inline:
-    <a href="url">xxxx</a>  - Hyperlink: must have an href attribute that
-                              specifies the link destination as a valid URL.
-                              URLs must not be URL encoded. No other attributes
-                              may be specified.
-    <strong>..</strong>     - Renders enclosed text with strong emphasis.
-    <em>..</em>             - Renders enclosed text emphasised.
-    <var>..</var>           - Renders enclosed text as a programming variable.
-    <warning>..</warning>   - Renders enclosed text as a warning.
-    <mono>..</mono>         - Renders enclosed text as mono spaced.
-
-  Block:
-    <p>..</p>               - Enclosed text is formatted as a paragraph.
-    <heading>..</heading>   - Enclosed text is formatted as a heading.
-
-  Certain characters in plain text or in attribute values must be encoded as
-  HTML-like character entities. Attribute names must not contain any of these
-  characters. The characters that must be encoded are:
-
-  Character       Entity
-  >               &gt;
-  <               &lt;
-  "               &quot;
-  &               &amp;
-  �               &copy;
-
-  No other entities are supported. Any other character can be encoded using its
-  unicode or ascii value. For example, the @ symbol (ascii 64) is encoded as
-  &#64;
-
-  Example:
-    <heading>Hello</heading>
-    <p>&quot;<strong>Hello</strong>&quot; to
-    <a href="https://example.com">you</a></p>
-
-  This example specifes a heading "Hello" followed by a single paragraph. In the
-  paragraph, "Hello" will be bold, "to" should be plain text and "you" should
-  hyperlink to "example.com".
-
-  There are two versions of REML as follows:
-  v1 - supported tags: <strong> and <a>.
-     - supported entities: &gt;, &lt, &quot;, &amp;.
-  v2 - added tags: <em>, <var>, <warning>, <mono>, <p> and <heading>.
-     - added entity: &copy;.
-
-  The implementation of active text's link element changed over time. At first
-  it supported only the http:// protocol for URLs. This limited REML v1 <a> tags
-  to using just that protocol. CodeSnip v3.0.1 added support to active text for
-  the file:// protocol. From CodeSnip v4.0 active text was extended to support
-  the https:// protocol.
+  Valid REML tags and character entities are documented in the file reml.html in
+  the Docs/Design directory.
 }
 
 
@@ -841,13 +790,42 @@ class constructor TREMLEntities.Create;
   {Class constructor. Creates map of mnemonic entities to equivalent characters.
   }
 begin
-  SetLength(fEntityMap, 5);
-  // Record all supported character entities
-  fEntityMap[0] := TREMLEntity.Create('amp',  '&');
+  SetLength(fEntityMap, 34);
+  // Supported character entities. All are optional unless otherwise stated
+  fEntityMap[0] := TREMLEntity.Create('amp', '&');   // required in REML
   fEntityMap[1] := TREMLEntity.Create('quot', DOUBLEQUOTE);
-  fEntityMap[2] := TREMLEntity.Create('gt',   '>');
-  fEntityMap[3] := TREMLEntity.Create('lt',   '<');
+  fEntityMap[2] := TREMLEntity.Create('gt', '>');
+  fEntityMap[3] := TREMLEntity.Create('lt', '<');   // required in REML
   fEntityMap[4] := TREMLEntity.Create('copy', '©');
+  fEntityMap[5] := TREMLEntity.Create('times', '×');
+  fEntityMap[6] := TREMLEntity.Create('divide', '÷');
+  fEntityMap[7] := TREMLEntity.Create('div', '÷');
+  fEntityMap[8] := TREMLEntity.Create('plusmn', '±');
+  fEntityMap[9] := TREMLEntity.Create('ne', '≠');
+  fEntityMap[10] := TREMLEntity.Create('neq', '≠');
+  fEntityMap[11] := TREMLEntity.Create('sum', '∑');
+  fEntityMap[12] := TREMLEntity.Create('infin', '∞');
+  fEntityMap[13] := TREMLEntity.Create('pound', '£');
+  fEntityMap[14] := TREMLEntity.Create('curren', '¤');
+  fEntityMap[15] := TREMLEntity.Create('yen', '¥');
+  fEntityMap[16] := TREMLEntity.Create('euro', '€');
+  fEntityMap[17] := TREMLEntity.Create('dagger', '†');
+  fEntityMap[18] := TREMLEntity.Create('ddagger', '‡');
+  fEntityMap[19] := TREMLEntity.Create('Dagger', '‡');
+  fEntityMap[20] := TREMLEntity.Create('hellip', '…');
+  fEntityMap[21] := TREMLEntity.Create('para', '¶');
+  fEntityMap[22] := TREMLEntity.Create('sect', '§');
+  fEntityMap[23] := TREMLEntity.Create('reg', '®');
+  fEntityMap[24] := TREMLEntity.Create('frac14', '¼');
+  fEntityMap[25] := TREMLEntity.Create('frac12', '½');
+  fEntityMap[26] := TREMLEntity.Create('half', '½');
+  fEntityMap[27] := TREMLEntity.Create('frac34', '¾');
+  fEntityMap[28] := TREMLEntity.Create('micro', 'µ');
+  fEntityMap[29] := TREMLEntity.Create('deg', '°');
+  fEntityMap[30] := TREMLEntity.Create('cent', '¢');
+  fEntityMap[31] := TREMLEntity.Create('laquo', '«');
+  fEntityMap[32] := TREMLEntity.Create('raquo', '»');
+  fEntityMap[33] := TREMLEntity.Create('iquest', '¿');
 end;
 
 class destructor TREMLEntities.Destroy;
