@@ -83,6 +83,12 @@ type
         @param Selector [in] Name of new selector.
         @return New empty selector object.
       }
+    function EnsureSelector(const Selector: string): TCSSSelector;
+      {Returns selector object with given name or adds a new selector with the
+      given name if no such selector exists.
+        @parm Selector [in] Name of selector.
+        @return Reference to new or pre-existing selector.
+      }
     procedure Clear;
       {Clears all selectors from style sheet and frees selector objects.
       }
@@ -202,6 +208,18 @@ destructor TCSSBuilder.Destroy;
 begin
   fSelectors.Free;    // frees selector objects in fSelectors.Values[]
   inherited;
+end;
+
+function TCSSBuilder.EnsureSelector(const Selector: string): TCSSSelector;
+  {Returns selector object with given name or adds a new selector with the given
+  name if no such selector exists.
+    @parm Selector [in] Name of selector.
+    @return Reference to new or pre-existing selector.
+  }
+begin
+  Result := GetSelector(Selector);
+  if not Assigned(Result) then
+    Result := AddSelector(Selector);
 end;
 
 function TCSSBuilder.GetSelector(const Selector: string): TCSSSelector;

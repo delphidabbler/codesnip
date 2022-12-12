@@ -112,7 +112,7 @@ tr {
   margin: 0;
 }
 
-td {
+td, th {
   padding: 4px;
   margin: 1px;
 }
@@ -120,6 +120,18 @@ td {
 table.menu {
   background-color: #ccc;
   margin-left: 1em;
+}
+
+table.bordered {
+  padding: 0;
+}
+
+table.bordered {
+  background-color: #ccc;
+}
+
+table.bordered th {
+  background-color: white;
 }
 
 table.menu td.img {
@@ -141,8 +153,13 @@ table.menu td.mainitem {
   background-color: #eee;
 }
 
-table.menu td.desc {
+table.menu td.desc,
+table.bordered td {
   background-color: white;
+}
+
+table.bordered td.centre {
+  text-align: center;
 }
 
 pre.reml,

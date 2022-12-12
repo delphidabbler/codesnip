@@ -321,8 +321,12 @@
         of plain text.
       </li>
       <li>
-        <span class="highlight">version 6:</span> Content is formatted text
+        <span class="highlight">version 6.0 to 6.10:</span> Content is formatted text
         encoded in REML markup. REML v4 is supported.
+      </li>
+      <li>
+        <span class="highlight">version 6.11 &amp; later:</span> Content is formatted text
+        encoded in REML markup. REML v5 is supported.
       </li>
     </ul>
   </dd>
@@ -465,7 +469,10 @@
               <span class="highlight">version 4:</span> supports REML v3.
             </li>
             <li>
-              <span class="highlight">versions 5 &amp; 6:</span> supports REML v4.
+              <span class="highlight">versions 5 &amp; 6.10:</span> supports REML v4.
+            </li>
+            <li>
+              <span class="highlight">version 6.11 &amp; later:</span> supports REML v5.
             </li>
           </ul>
         </li>
@@ -1007,6 +1014,12 @@
       <dd>
         Updated with CodeSnip v4.18.0 to add support for Delphi 11.x Alexandria.
       </dd>
+      <dt>
+        <em>Version 6.11 - &laquo;&laquo;TODO&raquo;&raquo;</em>
+      </dt>
+      <dd>
+        Updated with CodeSnip v&laquo;&laquo;TODO&raquo;&raquo; to add support for REML v5, which is backwards compatible with REML v4.
+      </dd>
     </dl>
   </dd>
 </dl>
@@ -1063,6 +1076,10 @@
     tag with value &quot;1&quot; had been specified.
   </li>
 </ul>
+
+<p>
+  Readers of v2 and later files may parse REML from any file version as if it were REML v5, since all versions of REML up to v5 are compatible.
+</p>
 
 <h3>
   Handling Text File Encodings

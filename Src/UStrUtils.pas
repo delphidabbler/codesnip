@@ -269,6 +269,16 @@ procedure StrArrayToStrList(const SA: array of string; const SL: TStrings);
 function StrIsEmpty(const S: string; const IgnoreWhiteSpace: Boolean = False):
   Boolean;
 
+///  <summary>Returns a string containing Count copies of character Ch.
+///  </summary>
+///  <remarks>If Count is zero then the empty string is returned.</remarks>
+function StrOfChar(const Ch: Char; const Count: Word): string;
+
+///  <summary>Returns a string of a given number of spaces.</summary>
+///  <param name="Count">Word [in] Required number of spaces.</param>
+///  <returns>string. Required number of spaces.</returns>
+///  <remarks>If Count is zero then an empty string is returned.</remarks>
+function StrOfSpaces(const Count: Word): string;
 
 implementation
 
@@ -769,7 +779,6 @@ var
   Word: UnicodeString;  // next word in input Str
   Line: UnicodeString;  // current output line
   Words: TStringList;   // list of words in input Str
-  I: Integer;           // loops thru all words in input Str
 
   // -------------------------------------------------------------------------
   ///  Adds a line of text to output, offseting line by Margin spaces
@@ -777,7 +786,7 @@ var
   begin
     if Result <> '' then    // not first line: insert new line
       Result := Result + EOL;
-    Result := Result + StringOfChar(' ', Margin) + Line;
+    Result := Result + StrOfSpaces(Margin) + Line;
   end;
   // -------------------------------------------------------------------------
 
@@ -789,9 +798,8 @@ begin
     Result := '';
     Line := '';
     // Loop for each word in Str
-    for I := 0 to Pred(Words.Count) do
+    for Word in Words do
     begin
-      Word := Words[I];
       if Length(Line) + Length(Word) + 1 <= MaxLen then
       begin
         // Word fits on current line: add it
@@ -902,6 +910,18 @@ begin
     Result := StrTrim(S) = ''
   else
     Result := S = '';
+end;
+
+function StrOfChar(const Ch: Char; const Count: Word): string;
+begin
+  if Count = 0 then
+    Exit('');
+  Result := System.StringOfChar(Ch, Count);
+end;
+
+function StrOfSpaces(const Count: Word): string;
+begin
+  Result := StrOfChar(' ', Count);
 end;
 
 end.

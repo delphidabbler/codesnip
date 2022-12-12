@@ -265,6 +265,38 @@ begin
       AddProperty(TCSS.BackgroundColorProp(clCompTblHeadBg));
       AddProperty(TCSS.FontWeightProp(cfwNormal));
     end;
+    // Set active text list classes
+    with CSSBuilder.EnsureSelector('.active-text ul') do
+    begin
+      AddProperty(TCSS.MarginProp(cssAll, 0));
+      AddProperty(TCSS.MarginProp(cssTop, 4));
+      AddProperty(TCSS.PaddingProp(cssAll, 0));
+      AddProperty(TCSS.PaddingProp(cssLeft, 24));
+      AddProperty(TCSS.ListStylePositionProp(clspOutside));
+      AddProperty(TCSS.ListStyleTypeProp(clstDisc));
+    end;
+    with CSSBuilder.EnsureSelector('.active-text ol') do
+    begin
+      AddProperty(TCSS.MarginProp(cssAll, 0));
+      AddProperty(TCSS.MarginProp(cssTop, 4));
+      AddProperty(TCSS.PaddingProp(cssAll, 0));
+      AddProperty(TCSS.PaddingProp(cssLeft, 32));
+      AddProperty(TCSS.ListStylePositionProp(clspOutside));
+      AddProperty(TCSS.ListStyleTypeProp(clstDecimal));
+    end;
+    with CSSBuilder.EnsureSelector('.active-text li') do
+    begin
+      AddProperty(TCSS.PaddingProp(cssAll, 0));
+      AddProperty(TCSS.MarginProp(cssAll, 0));
+    end;
+    with CSSBuilder.EnsureSelector('.active-text li ol') do
+      AddProperty(TCSS.MarginProp(cssTop, 0));
+    with CSSBuilder.EnsureSelector('.active-text li ul') do
+      AddProperty(TCSS.MarginProp(cssTop, 0));
+    with CSSBuilder.EnsureSelector('.active-text ul li') do
+      AddProperty(TCSS.PaddingProp(cssLeft, 8));
+    with CSSBuilder.EnsureSelector('.active-text ul li ol li') do
+      AddProperty(TCSS.PaddingProp(cssLeft, 0));
   finally
     ContentFont.Free;
     MonoFont.Free;
