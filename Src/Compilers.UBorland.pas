@@ -40,6 +40,15 @@ type
         @param RootKey [in] Given registry root key.
         @return Required root path or '' if not compiler not installed.
       }
+    ///  <summary>Gets the path to the compiler exe file if the compiler is
+    ///  registered as installed on the user's computer.</summary>
+    ///  <param name="ExePath">string [out] Set to path to compiler executable
+    ///  file. Empty string if compiler not installed.</param>
+    ///  <returns>Boolean. True if compiler is registered as installed or False
+    ///  otherwise.</returns>
+    ///  <remarks>Does not check if compiler exe is actually present, just if
+    ///  it is registered.</remarks>
+    function GetExePathIfInstalled(out ExePath: string): Boolean;
   strict protected
     function SearchDirParams: string; override;
       {One of more parameters that define any search directories to be passed
@@ -128,17 +137,11 @@ function TBorlandCompiler.DetectExeFile: Boolean;
     @return True if compiler path found, false otherwise.
   }
 var
-  InstDir: string;    // installation root directory
+  ExePath: string;
 begin
-  // try HKLM
-  InstDir := InstallPathFromReg(HKEY_LOCAL_MACHINE);
-  if InstDir = '' then
-    // in case install was for user only, try HKCU
-    InstDir := InstallPathFromReg(HKEY_CURRENT_USER);
-  if InstDir = '' then
-    Exit(False);
-  SetExecFile(IncludeTrailingPathDelimiter(InstDir) + 'Bin\DCC32.exe');
-  Result := True;
+  Result := GetExePathIfInstalled(ExePath);
+  if Result then
+    SetExecFile(ExePath);
 end;
 
 function TBorlandCompiler.GetDefaultSwitches: string;
@@ -159,6 +162,22 @@ begin
          +  '-$O+,'   // Optimization ON
          +  '-$Z1,'   // Minimum size of enum types = 1
          +  '-$P+';   // Open string params ON
+end;
+
+function TBorlandCompiler.GetExePathIfInstalled(out ExePath: string): Boolean;
+var
+  InstDir: string;
+begin
+  ExePath := '';
+  // try HKLM
+  InstDir := InstallPathFromReg(HKEY_LOCAL_MACHINE);
+  if InstDir = '' then
+    // in case install was for user only, try HKCU
+    InstDir := InstallPathFromReg(HKEY_CURRENT_USER);
+  if InstDir = '' then
+    Exit(False);
+  ExePath := TPath.Combine(InstDir, 'Bin\DCC32.exe');
+  Result := True;
 end;
 
 function TBorlandCompiler.GetID: TCompilerID;
