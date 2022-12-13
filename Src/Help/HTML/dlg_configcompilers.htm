@@ -37,12 +37,12 @@
       Compilers that are installed on the system. It is displayed using the
       <em>Tools | Configure Compilers</em> menu option. <em>CodeSnip</em> uses
       these compilers when <a href="about_compiler_checks.htm">test
-      compiling</a> routines.
+      compiling</a> snippets.
     </p>
     <p class="bordered">
       When using the standard version of CodeSnip each logged on user has their
-      their own compiler configuration, so any changes you make will not affect
-      other users. The portable edition of CodeSnip only supports one set of
+      own compiler configuration, so any changes you make will not affect other
+      users. The portable edition of CodeSnip only supports one set of
       configuration data per installation.
     </p>
     <p>
@@ -54,11 +54,14 @@
     <p>
       Selecting a compiler on the left displays information about it on the
       right hand side of the dialogue. Here you enter or edit the required
-      information on three tabs, as follows.
+      information on four or five tabs, as follows.
     </p>
     <h2>
       Compiler Tab
     </h2>
+	<h3>
+	  Compiler file name
+	</h3>
     <p>
       Enter the the full path to the compiler's executable file in the <em>Enter
       compiler executable file name</em> edit box. This must be file name of
@@ -75,8 +78,11 @@
       path to its executable file. The <em>Enter compiler executable file
       name</em> edit box is cleared.
     </p>
+	<h3>
+	  Display compiler results
+	</h3>
     <p>
-      Finally, you can choose whether the compiler is included in the table of
+      You can choose whether the compiler is included in the table of
       compile results displayed in the <a href="detail_pane.htm">Details
       Pane</a>. This is done using the <em>Display results for this compiler in
       details pane</em> check box. Tick the box to display the compiler's
@@ -97,6 +103,31 @@
       remove the <em>Compiler Results Table</em> component from the different
       kinds of snippet pages.
     </p>
+	<h3>
+	  Automatic compiler detection &amp; registration
+	</h3>
+	<p>
+	  By default <em>CodeSnip </em> will automatically detect and register
+	  installed Delphi compilers for use with the program. This can happen in
+	  two ways:
+	</p>
+	<ol>
+	  <li>
+		When the <em>Detect Delphi Compilers</em> button is clicked (see below).
+      </li>
+	  <li>
+	    Optionally, when the program starts up.
+	  </li>
+	</ol>
+	<p>
+	  You can prevent a specific Delphi compiler from being automatically
+	  registered by clearing the <em>Permit auto-detection & registration of
+	  this compiler</em> check box.
+	</p>
+	<p class="bordered">
+	  <strong>Note:</strong> This check box does not appear when the Free Pascal
+	  compiler is selected.
+	</p>
     <h2>
       Switches Tab
     </h2>
@@ -283,13 +314,23 @@
       <em>CodeSnip</em> can automatically detect the presence of Win 32 Delphi
       compilers from Delphi 2 to Delphi 11.x Alexandria. Click the <em>Detect
       Delphi Compilers</em> button to do this. Any supported installed version
-      of Delphi will be recorded. This can save considerable time and avoid
-      errors.
+      of Delphi will be recorded<sup>&dagger;</sup>. This can save considerable
+	  time and avoid errors.
     </p>
     <p>
       Free Pascal cannot be detected automatically and must be configured
       manually.
     </p>
+	<p>
+	  If the <em>Automatically register newly installed Delphi compilers at
+	  program startup</em> check box is ticked then, when it starts up,
+	  <em>CodeSnip</em> will attempt to register any known Delphi compiler that
+	  is not yet registered with Delphi<sup>&dagger;</sup>.
+	</p>
+	<p class="bordered">
+	  &dagger; Any version of Delphi for which the <em>Permit auto-detection
+	  &amp; registration of this compiler</em> check box is cleared will not be
+	  recorded.
+	</p>
   </body>
 </html>
-
