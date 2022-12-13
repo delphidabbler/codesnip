@@ -35,6 +35,8 @@ type
     var
       fId: TCompilerID;
         {Identifies compiler}
+      // Flags whether user permits compiler to be auto installed.
+      fCanAutoInstall: Boolean;
     function InstallPathFromReg(const RootKey: HKEY): string;
       {Gets compiler install root path from given registry root key, if present.
         @param RootKey [in] Given registry root key.
@@ -70,10 +72,35 @@ type
         @param Obj Compiler object to copy.
       }
     { ICompilerAutoDetect }
+    ///  <summary>Detects and records path to command line compiler exe file,
+    ///  if compiler is registered as installed.</summary>
+    ///  <returns>Boolean. True if compiler is registered as installed, False
+    ///  otherwise.</returns>
+    ///  <remarks>
+    ///  <para>Does not check if the compiler exe file actually exists.</para>
+    ///  <para>Does not set compiler exe file if compiler is not installed.
+    ///  </para>
+    ///  <para>Method of ICompilerAutoDetect.</para>
+    ///  </remarks>
     function DetectExeFile: Boolean;
-      {Detects and records path to command line compiler if present.
-        @return True if compiler path found, false otherwise.
-      }
+    ///  <summary>Checks if the compiler is installed on the user's system.
+    ///  </summary>
+    ///  <returns>Boolean. True if compiler is physically installed, False
+    ///  otherwise.</returns>
+    ///  <remarks>
+    ///  <para>Checks if compiler exe is actually present.</para>
+    ///  <para>Method of ICompilerAutoDetect.</para>
+    ///  </remarks>
+    function IsInstalled: Boolean;
+    ///  <summary>Checks if the compiler is permitted to be automatically
+    ///  installed.</summary>
+    ///  <remarks>Method of ICompilerAutoDetect.</remarks>
+    function GetCanAutoInstall: Boolean;
+    ///  <summary>Determines whether the compiler can be automatically
+    ///  installed.</summary>
+    ///  <remarks>Method of ICompilerAutoDetect.</remarks>
+    procedure SetCanAutoInstall(const Value: Boolean);
+
     { ICompiler }
     function GetDefaultSwitches: string; override;
       {Returns default command line switches for compiler.
@@ -97,7 +124,7 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Registry,
+  SysUtils, Registry, IOUtils,
   // Project
   UIStringList, UStrUtils, USystemInfo;
 
@@ -118,6 +145,7 @@ constructor TBorlandCompiler.CreateCopy(const Obj: TBorlandCompiler);
 begin
   inherited CreateCopy(Obj);
   fId := Obj.GetID;
+  fCanAutoInstall := Obj.GetCanAutoInstall;
 end;
 
 procedure TBorlandCompiler.DeleteObjFiles(const Path, Project: string);
@@ -142,6 +170,11 @@ begin
   Result := GetExePathIfInstalled(ExePath);
   if Result then
     SetExecFile(ExePath);
+end;
+
+function TBorlandCompiler.GetCanAutoInstall: Boolean;
+begin
+  Result := fCanAutoInstall;
 end;
 
 function TBorlandCompiler.GetDefaultSwitches: string;
@@ -211,6 +244,15 @@ begin
   end;
 end;
 
+function TBorlandCompiler.IsInstalled: Boolean;
+var
+  ExePath: string;
+begin
+  if not GetExePathIfInstalled(ExePath) then
+    Exit(False);
+  Result := TFile.Exists(ExePath, False);
+end;
+
 function TBorlandCompiler.SearchDirParams: string;
   {One of more parameters that define any search directories to be passed to
   compiler on command line.
@@ -226,6 +268,11 @@ begin
     + ' ' + StrQuoteSpaced('-I' + Dirs.GetText(';', False))
     + ' ' + StrQuoteSpaced('-O' + Dirs.GetText(';', False))
     + ' ' + StrQuoteSpaced('-R' + Dirs.GetText(';', False));
+end;
+
+procedure TBorlandCompiler.SetCanAutoInstall(const Value: Boolean);
+begin
+  fCanAutoInstall := Value;
 end;
 
 end.

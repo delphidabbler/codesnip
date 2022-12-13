@@ -328,6 +328,12 @@ begin
     // Load search directories
     SearchDirNames := Storage.GetStrings('SearchDirCount', 'SearchDir%d');
     Compiler.SetSearchDirs(TSearchDirs.Create(SearchDirNames.ToArray));
+
+    // Check if compiler can be auto-detected
+    if Supports(Compiler, ICompilerAutoDetect) then
+      (Compiler as ICompilerAutoDetect).SetCanAutoInstall(
+        Storage.GetBoolean('CanAutoInstall', True)
+      );
   end;
 end;
 
@@ -363,6 +369,10 @@ begin
       Storage.SetString('Namespaces', Compiler.GetRTLNamespaces);
     SearchDirNames := TIStringList.Create(Compiler.GetSearchDirs.ToStrings);
     Storage.SetStrings('SearchDirCount', 'SearchDir%d', SearchDirNames);
+    if Supports(Compiler, ICompilerAutoDetect) then
+      Storage.SetBoolean(
+        'CanAutoInstall', (Compiler as ICompilerAutoDetect).GetCanAutoInstall
+      );
     // save the data
     Storage.Save;
   end;
