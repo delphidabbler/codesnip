@@ -20,6 +20,8 @@ interface
 
 
 uses
+  // Delphi
+  Generics.Collections,
   // Project
   Compilers.UGlobals, UBaseObjects;
 
@@ -64,13 +66,18 @@ type
       }
   end;
 
+  TCompilerList = class(TList<ICompiler>)
+  public
+    constructor Create;
+  end;
+
 
 implementation
 
 
 uses
   // Delphi
-  Generics.Collections, SysUtils,
+  Generics.Defaults, SysUtils,
   // Project
   Compilers.UBDS, Compilers.UDelphi, Compilers.UFreePascal,
   Compilers.USearchDirs, IntfCommon, UConsts, UExceptions, UIStringList,
@@ -376,6 +383,20 @@ begin
     // save the data
     Storage.Save;
   end;
+end;
+
+{ TCompilerList }
+
+constructor TCompilerList.Create;
+begin
+  inherited Create(
+    TDelegatedComparer<ICompiler>.Create(
+      function (const Left, Right: ICompiler): Integer
+      begin
+        Result := Ord(Left.GetID) - Ord(Right.GetID);
+      end
+    )
+  )
 end;
 
 end.
