@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2006-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2006-2022, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Defines a class that generates CSS code to enable syntax highlighted source
  * to be displayed in HTML. CSS code uses a highlighter's attributes. Access to
@@ -82,11 +82,9 @@ var
   Elem: THiliteElement; // loops thru highlighter elements
 begin
   // Add font definition in main class
-  with CSSBuilder.AddSelector('.' + GetMainCSSClassName) do
-  begin
-    AddProperty(TCSS.FontFamilyProp(fHiliteAttrs.FontName, cfgMonoSpace));
-    AddProperty(TCSS.FontSizeProp(fHiliteAttrs.FontSize));
-  end;
+  CSSBuilder.AddSelector('.' + GetMainCSSClassName)
+    .AddProperty(TCSS.FontFamilyProp(fHiliteAttrs.FontName, cfgMonoSpace))
+    .AddProperty(TCSS.FontSizeProp(fHiliteAttrs.FontSize));
   // Add font style and colour definitions for each element
   for Elem := Low(THiliteElement) to High(THiliteElement) do
     BuildElemCSS(Elem, CSSBuilder);
@@ -105,14 +103,13 @@ begin
   // We only create CSS class if element attributes are non-nul
   if not ElemAttr.IsNul then
   begin
-    with CSSBuilder.AddSelector('.' + GetElemCSSClassName(Elem)) do
-    begin
-      if ElemAttr.ForeColor <> clNone then
-        AddProperty(TCSS.ColorProp(ElemAttr.ForeColor));
-      AddProperty(TCSS.FontWeightProp(ElemAttr.FontStyle));
-      AddProperty(TCSS.FontStyleProp(ElemAttr.FontStyle));
-      AddProperty(TCSS.TextDecorationProp(ElemAttr.FontStyle));
-    end;
+    CSSBuilder.AddSelector('.' + GetElemCSSClassName(Elem))
+      .AddProperty(TCSS.FontWeightProp(ElemAttr.FontStyle))
+      .AddProperty(TCSS.FontStyleProp(ElemAttr.FontStyle))
+      .AddProperty(TCSS.TextDecorationProp(ElemAttr.FontStyle))
+      .AddPropertyIf(
+        ElemAttr.ForeColor <> clNone, TCSS.ColorProp(ElemAttr.ForeColor)
+      );
   end;
 end;
 

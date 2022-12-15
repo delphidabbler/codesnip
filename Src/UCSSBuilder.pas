@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2005-2022, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Classes that help create and manage cascading style sheet code.
 }
@@ -46,12 +46,25 @@ type
       {Checks whether the selector is empty, i.e. contains no code.
         @return True if selector is empty and false if not.
       }
-    procedure AddProperty(const CSSProp: string);
-      {Adds a new CSS property to the selector.
-        @param CSSProp [in] CSS property to be added.
-      }
+    ///  <summary>Adds a new CSS property to the selector.</summary>
+    ///  <param name="CSSProp">string [in] Property definition.</param>
+    ///  <returns>TCSSSelector. Class instance returned to enable the method to
+    ///  be chained.</returns>
+    function AddProperty(const CSSProp: string): TCSSSelector;
+    ///  <summary>Adds a new CSS property to the selector depending on a given
+    ///  condition.</summary>
+    ///  <param name="Condition">Boolean [in] Condition that determines which
+    ///  CSS property is added.</param>
+    ///  <param name="CSSPropTrue">string [in] CSS property that is added when
+    ///  Condition is True.</param>
+    ///  <param name="CSSPropFalse">string [in] CSS property that is added when
+    ///  Condition is False.</param>
+    ///  <returns>TCSSSelector. Class instance returned to enable the method to
+    ///  be chained.</returns>
+    function AddPropertyIf(const Condition: Boolean;
+      const CSSPropTrue: string; const CSSPropFalse: string = ''): TCSSSelector;
+    ///  <summary>Name of selector.</summary>
     property Selector: string read fSelector;
-      {Name of selector}
   end;
 
   {
@@ -112,12 +125,20 @@ uses
 
 { TCSSSelector }
 
-procedure TCSSSelector.AddProperty(const CSSProp: string);
-  {Adds a new CSS property to the selector.
-    @param CSSProp [in] CSS property to be added.
-  }
+function TCSSSelector.AddProperty(const CSSProp: string): TCSSSelector;
 begin
   fProperties.Add(CSSProp);
+  Result := Self;
+end;
+
+function TCSSSelector.AddPropertyIf(const Condition: Boolean;
+  const CSSPropTrue: string; const CSSPropFalse: string): TCSSSelector;
+begin
+  if Condition then
+    AddProperty(CSSPropTrue)
+  else if CSSPropFalse <> '' then
+    AddProperty(CSSPropFalse);
+  Result := Self;
 end;
 
 function TCSSSelector.AsString: string;
