@@ -370,7 +370,8 @@ uses
   UXMLDocConsts in 'UXMLDocConsts.pas',
   UXMLDocHelper in 'UXMLDocHelper.pas',
   UXMLDocumentEx in 'UXMLDocumentEx.pas',
-  FmDeleteUserDBDlg in 'FmDeleteUserDBDlg.pas' {DeleteUserDBDlg};
+  FmDeleteUserDBDlg in 'FmDeleteUserDBDlg.pas' {DeleteUserDBDlg},
+  Compilers.UAutoDetect in 'Compilers.UAutoDetect.pas';
 
 // Include resources
 {$Resource ExternalObj.tlb}       // Type library file
