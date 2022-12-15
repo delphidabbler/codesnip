@@ -576,6 +576,7 @@
 				<Form>DeleteUserDBDlg</Form>
 			</DCCReference>
 			<DCCReference Include="Compilers.UAutoDetect.pas"/>
+			<DCCReference Include="Compilers.USettings.pas"/>
 			<None Include="CodeSnip.todo"/>
 			<BuildConfiguration Include="Base">
 				<Key>Base</Key>
