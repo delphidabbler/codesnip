@@ -45,6 +45,7 @@ type
     frmSearchDirs: TCompilersDlgSearchDirsFrame;
     tsNamespaces: TTabSheet;
     frmNamespaces: TCompilersDlgNamespacesFrame;
+    chkStartupDetection: TCheckBox;
     ///  <summary>When Auto Detect Compilers button is clicked, sets executable
     ///  program path for each installed compiler that can detect its own path.
     ///  </summary>
@@ -124,6 +125,7 @@ uses
   // Project
   Compilers.UAutoDetect,
   Compilers.UCompilers,
+  Compilers.USettings,
   IntfCommon,
   UCtrlArranger,
   UExeFileType,
@@ -147,9 +149,16 @@ begin
   );
   // size dialogue and arrange inherited controls
   inherited;
-  // arrange extra button in bottom button line
-  btnDetect.Left := pnlBody.Left;
-  btnDetect.Top := btnHelp.Top;
+  TCtrlArranger.AlignLefts([btnDetect, chkStartupDetection], pnlBody.Left);
+  // place chkStartupDetection below bevel under body panel
+  TCtrlArranger.MoveBelow(bvlBottom, chkStartupDetection, 8);
+  // push buttons below chkStartupDetection
+  TCtrlArranger.AlignTops(
+    [btnDetect, btnOK, btnCancel, btnHelp],
+    TCtrlArranger.BottomOf(chkStartupDetection, 8)
+  );
+  // stretch form height to accomodate insertion of chkStartupDetection
+  ClientHeight := TCtrlArranger.BottomOf(btnHelp, 6);
 end;
 
 procedure TCompilersDlg.btnDetectClick(Sender: TObject);
@@ -237,12 +246,15 @@ begin
   Dlg := InternalCreate(AOwner);
   try
     (Dlg.fLocalCompilers as IAssignable).Assign(ACompilers);
+    Dlg.chkStartupDetection.Checked := TCompilerSettings.PermitStartupDetection;
     Result := Dlg.ShowModal = mrOK;
     if Result then
     begin
       (ACompilers as IAssignable).Assign(Dlg.fLocalCompilers);
       Persister := TPersistCompilers.Create;
       Persister.Save(ACompilers);
+      TCompilerSettings.PermitStartupDetection :=
+        Dlg.chkStartupDetection.Checked;
     end;
   finally
     Dlg.Free;
