@@ -100,6 +100,10 @@
       <param name="Local" value="HTML\task_testcompile.htm">
       </OBJECT>
     <LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="compiler registration">
+      <param name="Local" value="HTML\task_registercompilers.htm">
+      </OBJECT>
+    <LI> <OBJECT type="text/sitemap">
       <param name="Name" value="update the database">
       <param name="Local" value="HTML\task_update.htm">
       </OBJECT>
@@ -145,6 +149,10 @@
   <LI> <OBJECT type="text/sitemap">
     <param name="Name" value="display preferences">
     <param name="Local" value="HTML\dlg_prefs_display.htm">
+    </OBJECT>
+  <LI> <OBJECT type="text/sitemap">
+    <param name="Name" value="auto-register Delphi compilers dialogue">
+    <param name="Local" value="HTML\dlg_registercompilers.htm">
     </OBJECT>
   <LI> <OBJECT type="text/sitemap">
     <param name="Name" value="download database">

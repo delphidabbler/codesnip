@@ -1,0 +1,120 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<!--
+ * This Source Code Form is subject to the terms of the Mozilla Public License,
+ * v. 2.0. If a copy of the MPL was not distributed with this file, You can
+ * obtain one at https://mozilla.org/MPL/2.0/
+ *
+ * Copyright (C) 2022, Peter Johnson (gravatar.com/delphidabbler).
+ *
+ * Hell topic describing how to register compilers with CodeSnip.
+-->
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text-html; charset=Windows-1252">
+    <title>
+      Register Compilers
+    </title>
+    <link rel="stylesheet" href="../css/codesnip.css" type="text/css">
+  </head>
+  <body>
+    <object
+      type="application/x-oleobject"
+      classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e"
+    >
+      <param name="ALink Name" value="TaskRegisterCompilers">
+    </object>
+    <h1>
+      <a name="task_registercompilers"></a>Register Compilers with
+      <em>CodeSnip</em>
+    </h1>
+    <p>
+      Before you can <a
+        href="task_testcompile.htm"
+      >test compile</a> a snippet you must first register one or more installed
+      compilers with <em>CodeSnip</em>.
+    </p>
+    <p>
+      To do this you must tell <em>CodeSnip</em> how to find the compiler and
+      configure the required options for it. There are three ways to do this:
+    </p>
+    <ol>
+      <li>
+        <p>
+          Manually configure the compiler using the <a
+            href="dlg_configcompilers.htm"
+          >Configure Compilers</a> dialogue box, accessed from the <em>Tools |
+          Configure Compilers</em> dialogue box.
+        </p>
+        <p class="bordered">
+          <strong>Note:</strong> This is the only option available for Free
+          Pascal.
+        </p>
+      </li>
+      <li>
+        <p>
+          Use the <em>Detect Delphi Compilers</em> button in the <a
+            href="dlg_configcompilers.htm"
+          >Configure Compilers</a> dialogue box. This searches for any installed
+          Delphi compilers that are not registered and registers them. Any
+		  compilers for which automatic detection has been disabled is ignored
+		  (see below).
+        </p>
+      </li>
+      <li>
+        <p>
+          By default <em>CodeSnip</em> checks for any un-registered installed
+          version of Delphi at start-up, and offers to register them by popping
+          up the <a
+            href="dlg_registercompilers.htm"
+          >Unregistered Delphi Installation(s) Detected Dialogue Box</a>.
+        </p>
+      </li>
+    </ol>
+    <h3>
+      Inhibiting Auto-Detection
+    </h3>
+    <p>
+      If you don't want <em>CodeSnip</em> to detect any new, unregistered,
+	  Delphi compilers at startup you can switch the feature off entirely from
+	  the <a
+        href="dlg_registercompilers.htm"
+      >Unregistered Delphi Installation(s) Detected Dialogue Box</a>, by ticking
+      the <em>Don't show this again</em> check box. You can do the same thing
+      from the <a
+        href="dlg_configcompilers.htm"
+      >Configure Compilers</a> dialogue box by clearing the <em>Automatically
+      register newly installed Delphi compilers at startup</em> check box.
+    </p>
+    <p>
+      Alternatively, if you don't want <em>CodeSnip</em> to automatically detect
+      one or more specific Delphi compilers you can do that in the <a
+        href="dlg_configcompilers.htm"
+      >Configure Compilers</a> dialogue box. You just need to clear the
+      <em>Permit auto-detection &amp; registration of this compiler</em> check
+      box on a selected compiler's <em>Compiler</em> tab. If you do this then
+      <em>CodeSnip</em> will not suggest registering that compiler at startup.
+	  The <a
+        href="dlg_configcompilers.htm"
+      >Configure Compilers</a> dialogue box's <em>Detect Delphi Compilers</em>
+      feature will ignore them too.
+    </p>
+    <h3>
+      (Re-)enabling Auto-Detection
+    </h3>
+    <p>
+      Global automatic detection can be enabled from the <a
+        href="dlg_configcompilers.htm"
+      >Configure Compilers</a> dialogue box by ticking the <em>Automatically
+      register newly installed Delphi compilers at startup</em> check box.
+    </p>
+    <p>
+      Individually excluded compilers can be included in automatic detection
+      again by ticking the <em>Permit auto-detection &amp; registration of this
+      compiler</em> check box on a selected compiler's <em>Compiler</em> tab in
+      the <a
+        href="dlg_configcompilers.htm"
+      >Configure Compilers</a> dialogue box.
+    </p>
+  </body>
+</html>
+

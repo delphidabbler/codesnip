@@ -164,12 +164,12 @@ type
   ///  <para>-ssWindowState - info about the size and state of various
   ///  windows</para>
   ///  <para>-ssDatabase - database customisation info</para>
-  ///  <para>-ssUpdateChecks - info about update checks</para>
+  ///  <para>-ssCompilers - info about all compilers</para>
   ///  </summary>
   TSettingsSectionId = (
     ssFindText, ssFindCompiler, ssFindXRefs, ssCompilerInfo,
     ssPreferences, ssUnits, ssDuplicateSnippet,
-    ssFavourites, ssWindowState, ssDatabase
+    ssFavourites, ssWindowState, ssDatabase, ssCompilers
   );
 
 type
@@ -540,7 +540,8 @@ const
     'DuplicateSnippet', // ssDuplicateSnippet
     'Favourites',       // ssFavourites
     'WindowState',      // ssWindowState
-    'Database'          // ssDatabase
+    'Database',         // ssDatabase
+    'Compilers'         // ssCompilers
   );
 begin
   Result := cSectionNames[Id];
@@ -750,4 +751,5 @@ begin
 end;
 
 end.
+
 

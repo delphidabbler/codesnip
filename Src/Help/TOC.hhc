@@ -133,6 +133,10 @@
       <param name="Local" value="HTML\task_testcompile.htm">
       </OBJECT>
     <LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="Register Compilers For Test Compilation">
+      <param name="Local" value="HTML\task_registercompilers.htm">
+      </OBJECT>
+    <LI> <OBJECT type="text/sitemap">
       <param name="Name" value="Customise CodeSnip">
       <param name="Local" value="HTML\task_customise.htm">
       </OBJECT>
