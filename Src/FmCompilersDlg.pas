@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2005-2022, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements a dialogue box where the user can configure the Pascal compilers
  * that are to be used by CodeSnip.
@@ -122,7 +122,12 @@ implementation
 
 uses
   // Project
-  Compilers.UCompilers, IntfCommon, UCtrlArranger, UExeFileType, UFontHelper,
+  Compilers.UAutoDetect,
+  Compilers.UCompilers,
+  IntfCommon,
+  UCtrlArranger,
+  UExeFileType,
+  UFontHelper,
   UMessageBox;
 
 
@@ -148,8 +153,6 @@ begin
 end;
 
 procedure TCompilersDlg.btnDetectClick(Sender: TObject);
-var
-  Compiler: ICompiler;  // refers to each compiler
 resourcestring
   // Text displayed in confirmation box
   sOKToDetect = 'Detected compiler file names will overwrite any existing '
@@ -159,19 +162,14 @@ begin
     Exit;
   // Record any changes to current compiler
   UpdateCurrentCompiler;
-  // Loop thru all compilers attempting to detect exe files
-  for Compiler in fLocalCompilers do
-  begin
-    if Supports(Compiler, ICompilerAutoDetect) then
+  // Register any available compilers
+  TCompilerAutoDetect.RegisterCompilers(fLocalCompilers,
+    procedure (RegisteredCompiler: ICompiler)
     begin
-      if (Compiler as ICompilerAutoDetect).DetectExeFile then
-      begin
-        // Update currently displayed compiler details
-        if Compiler.GetID = fCurCompiler.GetID then
-          UpdateEditFrames;
-      end;
-    end;
-  end;
+      if RegisteredCompiler.GetID = fCurCompiler.GetID then
+        UpdateEditFrames;
+    end
+  );
   // Redisplay compiler list and current compiler title to reflect any changes
   fCompListMgr.Refresh;
   fBannerMgr.Refresh;
@@ -234,20 +232,21 @@ class function TCompilersDlg.Execute(AOwner: TComponent;
   const ACompilers: ICompilers): Boolean;
 var
   Persister: IPersistCompilers; // object used to save object to storage
+  Dlg: TCompilersDlg;           // dialogue box instance
 begin
-  with InternalCreate(AOwner) do
-    try
-      (fLocalCompilers as IAssignable).Assign(ACompilers);
-      Result := ShowModal = mrOK;
-      if Result then
-      begin
-        (ACompilers as IAssignable).Assign(fLocalCompilers);
-        Persister := TPersistCompilers.Create;
-        Persister.Save(ACompilers);
-      end;
-    finally
-      Free;
+  Dlg := InternalCreate(AOwner);
+  try
+    (Dlg.fLocalCompilers as IAssignable).Assign(ACompilers);
+    Result := Dlg.ShowModal = mrOK;
+    if Result then
+    begin
+      (ACompilers as IAssignable).Assign(Dlg.fLocalCompilers);
+      Persister := TPersistCompilers.Create;
+      Persister.Save(ACompilers);
     end;
+  finally
+    Dlg.Free;
+  end;
 end;
 
 procedure TCompilersDlg.FormCreate(Sender: TObject);
