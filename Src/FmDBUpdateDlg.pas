@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2005-2022, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements a wizard dialogue box that handles the updating of the main
  * DelphiDabbler Code Snippets database.
@@ -254,11 +254,9 @@ procedure TDBUpdateDlg.BuildCSS(Sender: TObject;
 begin
   inherited;
   // Create .framed border style
-  with CSSBuilder.AddSelector('.framed') do
-  begin
-    AddProperty(TCSS.BorderProp(cssAll, 1, cbsSolid, clBorder));
-    AddProperty(TCSS.PaddingProp(4));
-  end;
+  CSSBuilder.AddSelector('.framed')
+    .AddProperty(TCSS.BorderProp(cssAll, 1, cbsSolid, clBorder))
+    .AddProperty(TCSS.PaddingProp(4));
 end;
 
 procedure TDBUpdateDlg.ConfigForm;

@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2005-2022, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements a frame used to display previews of HTML documents.
 }
@@ -70,8 +70,8 @@ procedure THTMLPreviewFrame.BuildCSS(const CSSBuilder: TCSSBuilder);
   }
 begin
   inherited;
-  with CSSBuilder.AddSelector('body') do
-    AddProperty(TCSS.MarginProp(cPreviewMargin));
+  CSSBuilder.AddSelector('body')
+    .AddProperty(TCSS.MarginProp(cPreviewMargin));
 end;
 
 procedure THTMLPreviewFrame.Display(const DocContent: TEncodedData);
