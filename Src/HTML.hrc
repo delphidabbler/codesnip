@@ -43,6 +43,9 @@ Res\HTML\dlg-whatsnew.html
 # delete database dialogue
 Res\HTML\dlg-dbdelete.html
 
+# auto-register new compilers dialogue
+Res\HTML\dlg-register-compilers.html
+
 
 # Detail pane pages, scripts and CSS
 # ==================================
