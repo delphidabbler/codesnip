@@ -979,6 +979,7 @@ var
   ViewItem: IView;  // view item represented by node
 begin
   ViewItem := (Node as TViewItemTreeNode).ViewItem;
+  // TODO -cBug: Exception reported as issue #70 seems to be triggered here
   Result := ViewItem.IsUserDefined;
 end;
 
