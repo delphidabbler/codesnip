@@ -116,12 +116,14 @@ type
     ///  <summary>Check for new compiler installations, get user permission to
     ///  install any that are found and register any compilers that user
     ///  selects.</summary>
+    ///  <returns>Boolean. True if any compilers were registered, False if not.
+    ///  </returns>
     ///  <remarks>
     ///  <para>Does nothing if compiler detection is disabled or if there are
     ///  no installed but unregistered compilers.</para>
     ///  <para>Should be called at program startup.</para>
     ///  </remarks>
-    procedure CheckForNewCompilerInstalls;
+    function CheckForNewCompilerInstalls: Boolean;
   end;
 
 
@@ -264,7 +266,7 @@ begin
     and SnippetView.Snippet.CanCompile;
 end;
 
-procedure TMainCompileMgr.CheckForNewCompilerInstalls;
+function TMainCompileMgr.CheckForNewCompilerInstalls: Boolean;
 var
   CandidateCompilers: TCompilerList;  // compilers available for registration
   SelectedCompilers: TCompilerList;   // compilers chosen for registration
@@ -290,7 +292,7 @@ var
       if (SelectedCompilers.IndexOf(Compiler) >= 0)
         and Compiler.IsAvailable then
       begin
-        CompList := CompList + '• ' + Compiler.GetName + EOL;
+        CompList := CompList + #$2022' ' + Compiler.GetName + EOL;
         Inc(RegCount);
       end;
     end;
@@ -313,6 +315,7 @@ var
   end;
 
 begin
+  Result := False;
   if not TCompilerSettings.PermitStartupDetection then
     Exit;
   SelectedCompilers := nil;
@@ -345,6 +348,7 @@ begin
         Persister.Save(Compilers);
         // tell user what got registered
         NotifyResults;
+        Result := True;
       end
       else
         // User didn't select a file: tell them
@@ -381,4 +385,3 @@ begin
 end;
 
 end.
-
