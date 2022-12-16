@@ -598,6 +598,7 @@ begin
       begin
         Dec(fLevel);
         Result := EOL + StrOfSpaces(IndentMult * fLevel) + Result + EOL;
+        fIsStartOfTextLine := True;
       end;
     end;
     fsOpen:
@@ -620,6 +621,14 @@ begin
         Result := EOL + StrOfSpaces(IndentMult * fLevel) + Result + EOL;
         Inc(fLevel);
         fIsStartOfTextLine := True;
+      end
+      else if TActiveTextElemCaps.DisplayStyleOf(TagElem.Kind) = dsInline then
+      begin
+        if fIsStartOfTextLine then
+        begin
+          Result := StrOfSpaces(IndentMult * fLevel) + Result;
+          fIsStartOfTextLine := False;
+        end;
       end;
     end;
   end;
