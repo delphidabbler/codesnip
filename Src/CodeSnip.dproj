@@ -575,6 +575,11 @@
 			<DCCReference Include="FmDeleteUserDBDlg.pas">
 				<Form>DeleteUserDBDlg</Form>
 			</DCCReference>
+			<DCCReference Include="Compilers.UAutoDetect.pas"/>
+			<DCCReference Include="Compilers.USettings.pas"/>
+			<DCCReference Include="FmRegisterCompilersDlg.pas">
+				<Form>RegisterCompilersDlg</Form>
+			</DCCReference>
 			<None Include="CodeSnip.todo"/>
 			<BuildConfiguration Include="Base">
 				<Key>Base</Key>

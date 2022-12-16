@@ -44,7 +44,6 @@ header {
   text-align: center;
   margin: 0.5em;
 }
-
 header nav {
   display: block;
   margin: 1em;
@@ -150,7 +149,7 @@ ul.unspaced li {
 dt {
   margin: 0;
   padding: 0;
-  font-weight: inherited;
+  font-weight: bold;
 }
 dd {
   margin: 0 0 0 2em;
@@ -171,6 +170,36 @@ section {
 section h1 {
   margin-top: 0;
   margin-bottom: 0.5em;
+}
+table {
+  border-collapse: collapse;
+}
+tr {
+  border-bottom: 1px silver solid;
+}
+th {
+  text-align: center;
+  font-weight: bold;
+  margin: 0;
+  padding: 0;
+  border-bottom: 2px silver solid;
+}
+td {
+  border-bottom: 1px silver solid;
+  margin: 0;
+  padding: 0;
+}
+td, th {
+  padding: 0.5em;
+}
+td:first-child, th:first-child {
+  border-right: 1px silver solid;
+}
+td:last-child {
+  text-align: center;
+}
+tr:nth-child(even), th {
+  background-color: #eee;
 }
 </style>
 
@@ -222,7 +251,7 @@ section h1 {
     The REML language is a SGML language similar to a greatly simplified XHTML. The are a small number of tags and character entities that can be used.
   </p>
   <aside>
-    <strong>Note:</strong> The language described here is REML v4. Earlier versions are obsolete.
+    <strong>Note:</strong> The language described here is REML v5. v4 is still in regular use in CodeSnip up to v4.20.x. Earlier versions are obsolete.
   </aside>
 
 </section>
@@ -255,19 +284,34 @@ section h1 {
     <li>
       <code class="value">&lt;heading&gt;...&lt;/heading&gt;</code> &ndash; Renders the enclosed markup as a heading.
     </li>
+    <li>
+      <code class="value">&lt;ol&gt;...&lt;/ol&gt;</code> &ndash; Renders the enclosed HTML as an ordered list. <span class="very-strong">Must</span> contain <code class="value">&lt;li&gt;...&lt;/li&gt</code> blocks and nothing else.
+    </li>
+    <li>
+      <code class="value">&lt;ul&gt;...&lt;/ul&gt;</code> &ndash; Renders the enclosed HTML as an unordered list. <span class="very-strong">Must</span> contain <code class="value">&lt;li&gt;...&lt;/li&gt</code> blocks and nothing else.
+    </li>
+    <li>
+      <code class="value">&lt;li&gt;...&lt;/li&gt;</code> &ndash; Renders the enclosed HTML as a list item. <span class="very-strong">Must</span> only be used within <code class="value">&lt;ol&gt;...&lt;/ol&gt;</code> and <code class="value">&lt;ul&gt;...&lt;/ul&gt;</code> blocks.
+    </li>
   </ul>
   <p>
     The following rules apply to the use of block level tags:
   </p>
   <ul class="unspaced">
     <li>
-      The tags <span class="very-strong">must not</span> be nested.
+      <span class="very-strong">Must</span> be matched, e.g. <code class="value">&lt;p&gt;</code> <span class="very-strong">must</span> have a matching <code class="value">&lt;/p&gt;</code>.
     </li>
     <li>
-      The tags <span class="very-strong">must</span> be matched, e.g. <code class="value">&lt;p&gt;</code> must have a matching <code class="value">&lt;/p&gt;</code>.
+      <code class="value">&lt;p&gt;...&lt;/p&gt;</code> and <code class="value">&lt;heading&gt;...&lt;/heading&gt;</code> blocks <span class="very-strong">must not</span> contain other block level tags.
     </li>
     <li>
-      All text <em>should</em> be embedded within block level tags, e.g. <code class="value">&lt;heading&gt;heading&lt;/heading&gt;&lt;p&gt;text&lt;/p&gt;</code> or simply <code class="value">&lt;p&gt;text&lt;/p&gt;</code>.
+      <code class="value">&lt;ol&gt;...&lt;/ol&gt;</code> and <code class="value">&lt;ul&gt;...&lt;/ul&gt;</code> blocks <span class="very-strong">must only</span> contain one or more <code class="value">&lt;li&gt;...&lt;/li&gt;</code> blocks.
+    </li>
+    <li>
+      <code class="value">&lt;li&gt;...&lt;/li&gt;</code> blocks <span class="very-strong">must not</span> contain <code class="value">&lt;p&gt;...&lt;/p&gt;</code>, <code class="value">&lt;heading&gt;...&lt;/heading&gt;</code> or other <code class="value">&lt;li&gt;...&lt;/li&gt;</code> blocks directly, but <em>may</em> contain <code class="value">&lt;ol&gt;...&lt;/ol&gt;</code> and <code class="value">&lt;ul&gt;...&lt;/ul&gt;</code> blocks.
+    </li>
+    <li>
+      All text <em>should</em> be embedded within <code class="value">&lt;p&gt;...&lt;/p&gt;</code>, <code class="value">&lt;heading&gt;...&lt;/heading&gt;</code> or <code class="value">&lt;li&gt;...&lt;/li&gt;</code> block level tags, e.g. <code class="value">&lt;heading&gt;heading&lt;/heading&gt;&lt;p&gt;text&lt;/p&gt;</code> or simply <code class="value">&lt;p&gt;text&lt;/p&gt;</code>.
     </li>
     <li>
       White space between blocks <span class="very-strong">must</span> be ignored.
@@ -278,7 +322,12 @@ section h1 {
   </p>
   <pre class="sample">&lt;p&gt;Hello World&lt;/p&gt;
 &lt;heading&gt;Hello&lt;/heading&gt;
-&lt;p&gt;Hello World&lt;/p&gt;</pre>
+&lt;p&gt;Hello World&lt;/p&gt;
+&lt;ol&gt;
+  &lt;li&gt;one&lt;/li&gt;
+  &lt;li&gt;two&lt;/li&gt;
+  &lt;li&gt;three&lt;/li&gt;
+&lt;/ol&gt;</pre>
   <p>
     Strictly speaking, the following example is invalid code &ndash; all occurrences of <code class="value">wrong</code> are in error because they are not contained within block tags.
   </p>
@@ -353,32 +402,146 @@ section h1 {
   </h1>
 
   <p>
-    A few symbolic character entities are supported in REML. Here is the complete list:
+    Some symbolic character entities are supported in REML. Many symbols, but not all, have analogues in the list of supported character entities in XHTML or HTML 5. Some entities have alternate symbols. Here is the complete list.
   </p>
-  <ul class="half-spaced">
-    <li>
-      <code class="value">&amp;lt;</code> for <code class="value">&lt;</code>
-    </li>
-    <li>
-      <code class="value">&amp;gt;</code> for <code class="value">&gt;</code>
-    </li>
-    <li>
-      <code class="value">&amp;quot;</code> for <code class="value">&quot;</code>
-    </li>
-    <li>
-      <code class="value">&amp;amp;</code> for <code class="value">&amp;</code>
-    </li>
-    <li>
-      <code class="value">&amp;copy;</code> for <code class="value">&copy;</code>
-    </li>
-  </ul>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Character Entity</th>
+        <th>Actual Character</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>&amp;amp;</code></td>
+        <td>&amp;</td>
+      </tr>
+      <tr>
+        <td><code>&amp;quot;</code></td>
+        <td>&quot;</td>
+      </tr>
+      <tr>
+        <td><code>&amp;gt;</code></td>
+        <td>&gt;</td>
+      </tr>
+      <tr>
+        <td><code>&amp;lt;</code></td>
+        <td>&lt;</td>
+      </tr>
+      <tr>
+        <td><code>&amp;copy;</code></td>
+        <td>©</td>
+      </tr>
+      <tr>
+        <td><code>&amp;times;</code></td>
+        <td>×</td>
+      </tr>
+      <tr>
+        <td><code>&amp;divide;</code> or <code>&amp;div;</code></td>
+        <td>÷</td>
+      </tr>
+      <tr>
+        <td><code>&amp;plusmn;</code></td>
+        <td>±</td>
+      </tr>
+      <tr>
+        <td><code>&amp;ne;</code> or <code>&amp;neq;</code></td>
+        <td>≠</td>
+      </tr>
+      <tr>
+        <td><code>&amp;sum;</code></td>
+        <td>∑</td>
+      </tr>
+      <tr>
+        <td><code>&amp;infin;</code></td>
+        <td>∞</td>
+      </tr>
+      <tr>
+        <td><code>&amp;pound;</code></td>
+        <td>£</td>
+      </tr>
+      <tr>
+        <td><code>&amp;curren;</code></td>
+        <td>¤</td>
+      </tr>
+      <tr>
+        <td><code>&amp;yen;</code></td>
+        <td>¥</td>
+      </tr>
+      <tr>
+        <td><code>&amp;euro;</code></td>
+        <td>€</td>
+      </tr>
+      <tr>
+        <td><code>&amp;cent;</code></td>
+        <td>¢</td>
+      </tr>
+      <tr>
+        <td><code>&amp;dagger;</code></td>
+        <td>†</td>
+      </tr>
+      <tr>
+        <td><code>&amp;ddagger;</code> or <code>&amp;Dagger;</code></td>
+        <td>‡</td>
+      </tr>
+      <tr>
+        <td><code>&amp;hellip;</code></td>
+        <td>…</td>
+      </tr>
+      <tr>
+        <td><code>&amp;para;</code></td>
+        <td>¶</td>
+      </tr>
+      <tr>
+        <td><code>&amp;sect;</code></td>
+        <td>§</td>
+      </tr>
+      <tr>
+        <td><code>&amp;reg;</code></td>
+        <td>®</td>
+      </tr>
+      <tr>
+        <td><code>&amp;frac14;</code></td>
+        <td>¼</td>
+      </tr>
+      <tr>
+        <td><code>&amp;frac12;</code> or <code>&amp;half;</code></td>
+        <td>½</td>
+      </tr>
+      <tr>
+        <td><code>&amp;frac34;</code></td>
+        <td>¾</td>
+      </tr>
+      <tr>
+        <td><code>&amp;micro;</code></td>
+        <td>µ</td>
+      </tr>
+      <tr>
+        <td><code>&amp;deg;</code></td>
+        <td>°</td>
+      </tr>
+      <tr>
+        <td><code>&amp;laquo;</code></td>
+        <td>«</td>
+      </tr>
+      <tr>
+        <td><code>&amp;raquo;</code></td>
+        <td>»</td>
+      </tr>
+      <tr>
+        <td><code>&amp;iquest;</code></td>
+        <td>¿</td>
+      </tr>
+    </tbody>
+  </table>
 
   <aside>
     <strong>Note:</strong> the '&lt;' and '&amp;' characters are special within the markup and cannot be used literally, even when you are just entering plain text. You <span class="very-strong">must</span> use the <code class="value">&amp;lt;</code> character entity in place of <code class="value">&lt;</code> and <code class="value">&amp;amp;</code> instead of <code class="value">&amp;</code>. For example to write <code class="value">x&lt;y</code> in REML use <code class="value">x&amp;lt;y</code> and to write <code class="value">you &amp; me</code> use <code class="value">you &amp;amp; me</code>.
   </aside>
 
   <p>
-    To express other special symbols for which there is no symbolic character entity, numeric character entities can be used. For example to display the '¶' character (Unicode <em>pilcrow sign</em>) use <code class="value">&amp;#182;</code>.
+    To express other special symbols for which there is no symbolic character entity, numeric character entities can be used. For example to display the 'Ω' character (Unicode <em>Greek capital letter Omega</em>) use <code class="value">&amp;#937;</code>.
   </p>
 
   <aside>
@@ -386,6 +549,7 @@ section h1 {
   </aside>
 
 </section>
+
 
 <section id="changes">
 
@@ -396,7 +560,7 @@ section h1 {
   </p>
 
   <p>
-    <strong>v1 of 2008/12/31</strong>
+    <strong>v1 of 2008-12-31</strong>
   </p>
 
   <p>
@@ -416,7 +580,7 @@ section h1 {
   </ul>
 
   <p>
-    <strong>v2 of 2009/06/29</strong>
+    <strong>v2 of 2009-06-29</strong>
   </p>
 
   <p>
@@ -433,7 +597,7 @@ section h1 {
   </ul>
 
   <p>
-    <strong>v3 of 2009/07/06</strong>
+    <strong>v3 of 2009-07-06</strong>
   </p>
 
   <p>
@@ -447,7 +611,7 @@ section h1 {
   </ul>
 
   <p>
-    <strong>v4 of 2011/12/31</strong>
+    <strong>v4 of 2011-12-31</strong>
   </p>
 
   <p>
@@ -460,7 +624,26 @@ section h1 {
     </li>
   </ul>
 
+  <p>
+    <strong>v5 of 2022-12-16</strong>
+  </p>
+
+  <p>
+    Introduced in CodeSnip v4.21.0
+  </p>
+
+  <ul>
+    <li>
+      Added support for lists with the <code class="value">&lt;ol&gt;</code>, <code class="value">&lt;ul&gt;</code> &amp; <code class="value">&lt;li&gt;</code> block tags.
+    </li>
+    <li>
+      Added entities: <code class="value">&amp;times;</code>, <code class="value">&amp;divide;</code>, <code class="value">&amp;div;</code> <code class="value">&amp;plusmn;</code>, <code class="value">&amp;ne;</code>, <code class="value">&amp;neq;</code>, <code class="value">&amp;sum;</code>, <code class="value">&amp;infin;</code>, <code class="value">&amp;pound;</code>, <code class="value">&amp;curren;</code>, <code class="value">&amp;yen;</code>, <code class="value">&amp;euro;</code>, <code class="value">&amp;cent;</code>, <code class="value">&amp;dagger;</code>, <code class="value">&amp;ddagger;</code>, <code class="value">&amp;Dagger;</code>, <code class="value">&amp;hellip;</code>, <code class="value">&amp;para;</code>, <code class="value">&amp;sect;</code>, <code class="value">&amp;reg;</code>, <code class="value">&amp;frac14;</code>, <code class="value">frac12</code>, <code class="value">&amp;half;</code>, <code class="value">&amp;frac34;</code>, <code class="value">&amp;micro;</code>, <code class="value">&amp;deg;</code>, <code class="value">&amp;laquo;</code>, <code class="value">&amp;raquo;</code> &amp; <code class="value">&amp;iquest;</code>.
+    </li>
+  </ul>
+
 </section>
+
+
 </body>
 
 </html>

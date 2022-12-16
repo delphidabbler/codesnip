@@ -10,6 +10,26 @@ This change log begins with the first ever pre-release version of _CodeSnip_. Re
 
 From v4.1.0 the version numbering has attempted to adhere to the principles of [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## Release v4.21.0 of 16 December 2022
+
+* Updated to support [REML version 5](https://htmlpreview.github.io/?https://github.com/delphidabbler/codesnip/blob/version-4.21.0`/Docs/Design/reml.html) in snippet description & extra information [issue #71]:
+  * Numerous new character entities supported. 
+  * New list tags: `<ol>`, `<ul>` & `<li>`.
+* Program now automatically detects new (supported) Delphi installations at startup and offers to register the compiler(s) to be used for test compiling snippets. This feature is on by default but can be turned off completely or for specifically excluded compilers [issue #19].
+* Modified Configure Compilers dialogue box:
+  * Added facility to customise automatic compiler detection on per-compiler or global basis.
+  * Changed manually triggered compiler detection to ignore excluded compilers.
+* Some refactoring [including issues #73 and #75].
+* Minor changes to program license
+  * Changed required image attribution in `Docs/License.html` [issue #63]
+  * Corrected copyright date & fix typo in licenses displayed by installer and help file [issue #65 & PR #72].
+* Bump per-user config file to version 19.
+* Documentation updates:
+  * Updated `README.md` re abandoned and new Git repo branches.
+  * Updated config file, database, export file & REML documentation re changes in this release [including issue #74].
+  * Help file updated with details of changes in this release.
+  * Updated development tool chain requirements in `Build.html`. 
+
 ## Release v4.20.2 of 04 November 2022
 
 * Fixes bug where an exception was raised when selecting a main menu item with the cursor keys then pressing F1. [issue 54]

@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2009-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2009-2022, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements a dialogue box that displays active text rendered from REML markup
  * or plain text.
@@ -214,43 +214,62 @@ procedure TActiveTextPreviewDlg.UpdateCSS(Sender: TObject;
 const
   MaxHTMLHeight = 240;  // max height of rendered HTML
 var
-  ContentFont: TFont;   // font used for #content tab
+  ContentFont: TFont;     // font used for #content tab
 begin
   ContentFont := TFont.Create;
   try
     TFontHelper.SetContentFont(ContentFont);
     // Set rendered REML container
-    with CSSBuilder.AddSelector('#content') do
-    begin
-      AddProperty(TCSS.FontProps(ContentFont));
-      AddProperty(TCSS.BackgroundColorProp(clWindow));
-      AddProperty(TCSS.PaddingProp(0, 6, 6, 6));
-      AddProperty(TCSS.MarginProp(cssTop, 6));
-      AddProperty(TCSS.BorderProp(cssAll, 1, cbsSolid, clBorder));
-      AddProperty(TCSS.OverflowProp(covAuto));
-      AddProperty(TCSS.WidthProp(cluAuto, 0));
-      // Use height instead of maxheight if IE 6 or lower
-      if TIEInfo.SupportsCSSMaxHeight then
-        AddProperty(TCSS.MaxHeightProp(MaxHTMLHeight))
-      else
-        AddProperty(TCSS.HeightProp(MaxHTMLHeight));
-    end;
-    with CSSBuilder.AddSelector('.active-text h2') do
-    begin
-      AddProperty(TCSS.MarginProp(4, 0, 0, 0));
-      AddProperty(TCSS.FontWeightProp(cfwBold));
-      AddProperty(TCSS.FontSizeProp(ContentFont.Size + 1));
-    end;
-    with CSSBuilder.AddSelector('.active-text p') do
-      AddProperty(TCSS.MarginProp(4, 0, 0, 0));
+    CSSBuilder.EnsureSelector('#content')
+      .AddProperty(TCSS.FontProps(ContentFont))
+      .AddProperty(TCSS.BackgroundColorProp(clWindow))
+      .AddProperty(TCSS.PaddingProp(0, 6, 6, 6))
+      .AddProperty(TCSS.MarginProp(cssTop, 6))
+      .AddProperty(TCSS.BorderProp(cssAll, 1, cbsSolid, clBorder))
+      .AddProperty(TCSS.OverflowProp(covAuto))
+      .AddProperty(TCSS.WidthProp(cluAuto, 0))
+      .AddPropertyIf(
+        TIEInfo.SupportsCSSMaxHeight,
+        TCSS.MaxHeightProp(MaxHTMLHeight),
+        TCSS.HeightProp(MaxHTMLHeight)
+      );
+    CSSBuilder.EnsureSelector('.active-text h2')
+      .AddProperty(TCSS.MarginProp(4, 0, 0, 0))
+      .AddProperty(TCSS.FontWeightProp(cfwBold))
+      .AddProperty(TCSS.FontSizeProp(ContentFont.Size + 1));
+    CSSBuilder.EnsureSelector('.active-text p')
+      .AddProperty(TCSS.MarginProp(4, 0, 0, 0));
     // Show or hide text about links depending on if links are present
-    with CSSBuilder.AddSelector('#linktext') do
-    begin
-      if ContainsLinks then
-        AddProperty(TCSS.DisplayProp(cdsInline))
-      else
-        AddProperty(TCSS.DisplayProp(cdsNone));
-    end;
+    CSSBuilder.EnsureSelector('#linktext')
+      .AddPropertyIf(
+        ContainsLinks, TCSS.DisplayProp(cdsInline), TCSS.DisplayProp(cdsNone)
+      );
+    // Set up lists
+    CSSBuilder.EnsureSelector('.active-text ul')
+      .AddProperty(TCSS.MarginProp(cssAll, 0))
+      .AddProperty(TCSS.MarginProp(cssTop, 4))
+      .AddProperty(TCSS.PaddingProp(cssAll, 0))
+      .AddProperty(TCSS.PaddingProp(cssLeft, 24))
+      .AddProperty(TCSS.ListStylePositionProp(clspOutside))
+      .AddProperty(TCSS.ListStyleTypeProp(clstDisc));
+    CSSBuilder.EnsureSelector('.active-text ol')
+      .AddProperty(TCSS.MarginProp(cssAll, 0))
+      .AddProperty(TCSS.MarginProp(cssTop, 4))
+      .AddProperty(TCSS.PaddingProp(cssAll, 0))
+      .AddProperty(TCSS.PaddingProp(cssLeft, 32))
+      .AddProperty(TCSS.ListStylePositionProp(clspOutside))
+      .AddProperty(TCSS.ListStyleTypeProp(clstDecimal));
+    CSSBuilder.EnsureSelector('.active-text li')
+      .AddProperty(TCSS.PaddingProp(cssAll, 0))
+      .AddProperty(TCSS.MarginProp(cssAll, 0));
+    CSSBuilder.EnsureSelector('.active-text li ol')
+      .AddProperty(TCSS.MarginProp(cssTop, 0));
+    CSSBuilder.EnsureSelector('.active-text li ul')
+      .AddProperty(TCSS.MarginProp(cssTop, 0));
+    CSSBuilder.EnsureSelector('.active-text ul li')
+      .AddProperty(TCSS.PaddingProp(cssLeft, 8));
+    CSSBuilder.EnsureSelector('.active-text ul li ol li')
+      .AddProperty(TCSS.PaddingProp(cssLeft, 0));
   finally
     ContentFont.Free;
   end;

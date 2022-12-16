@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2009-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2009-2022, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Provides objects that manage test compilation and assoicated UI, display of
  * compilation results via a callback and and compiler configuration.
@@ -91,7 +91,8 @@ type
   {
   TMainCompileMgr:
     Extended compilation manager for use with main form. Checks if a view item
-    can be compiled and also permits user to configure compilers.
+    can be compiled, permits user to configure compilers and checks for newly
+    installed compilers.
   }
   TMainCompileMgr = class(TCompileMgr)
   public
@@ -112,6 +113,17 @@ type
       properties.
         @return True if user accepts changes, False if not.
       }
+    ///  <summary>Check for new compiler installations, get user permission to
+    ///  install any that are found and register any compilers that user
+    ///  selects.</summary>
+    ///  <returns>Boolean. True if any compilers were registered, False if not.
+    ///  </returns>
+    ///  <remarks>
+    ///  <para>Does nothing if compiler detection is disabled or if there are
+    ///  no installed but unregistered compilers.</para>
+    ///  <para>Should be called at program startup.</para>
+    ///  </remarks>
+    function CheckForNewCompilerInstalls: Boolean;
   end;
 
 
@@ -121,8 +133,18 @@ implementation
 uses
   // Delphi
   SysUtils,
+  Generics.Collections,
   // Project
-  Compilers.UCompilers, DB.UMain, FmCompErrorDlg, FmCompilersDlg,
+  Compilers.UAutoDetect,
+  Compilers.UCompilers,
+  Compilers.USettings,
+  DB.UMain,
+  FmCompErrorDlg,
+  FmCompilersDlg,
+  FmRegisterCompilersDlg,
+  UConsts,
+  UMessageBox,
+  UStrUtils,
   UTestCompileUI;
 
 
@@ -244,6 +266,100 @@ begin
     and SnippetView.Snippet.CanCompile;
 end;
 
+function TMainCompileMgr.CheckForNewCompilerInstalls: Boolean;
+var
+  CandidateCompilers: TCompilerList;  // compilers available for registration
+  SelectedCompilers: TCompilerList;   // compilers chosen for registration
+  Persister: IPersistCompilers;       // object to store compiler data in config
+
+  // Display message box informing user of which compilers were registered
+  // MUST be called with non zero number of registered compilers
+  procedure NotifyResults;
+  var
+    CompList: string;     // string containing list of compilers registered
+    Compiler: ICompiler;  // each compiler
+    RegCount: Integer;    // count of compilers registered
+  resourcestring
+    sPrefixS = 'The following compiler was registered:';
+    sPrefixP = 'The following compilers were registered:';
+    sNoRegistrations = 'Unexpected error. None of the requested compilers were '
+      + 'registered.';
+  begin
+    CompList := '';
+    RegCount := 0;
+    for Compiler in Compilers do
+    begin
+      if (SelectedCompilers.IndexOf(Compiler) >= 0)
+        and Compiler.IsAvailable then
+      begin
+        CompList := CompList + #$2022' ' + Compiler.GetName + EOL;
+        Inc(RegCount);
+      end;
+    end;
+    if RegCount > 0 then
+    begin
+      CompList := StrIf(RegCount = 1, sPrefixS, sPrefixP) + EOL2 + CompList;
+      TMessageBox.Information(Owner, CompList);
+    end
+    else
+      TMessageBox.Error(Owner, sNoRegistrations);
+  end;
+
+  // Display message to user informing that no compilers were registred
+  // MUST be called only with a zero number of registered compilers
+  procedure NotifyNoRegistrations;
+  resourcestring
+    sNothingRegistered = 'No compilers were selected for registration';
+  begin
+    TMessageBox.Information(Owner, sNothingRegistered);
+  end;
+
+begin
+  Result := False;
+  if not TCompilerSettings.PermitStartupDetection then
+    Exit;
+  SelectedCompilers := nil;
+  CandidateCompilers := TCompilerList.Create;
+  try
+    SelectedCompilers := TCompilerList.Create;
+    // Build list of compilers that are installed but not registered
+    TCompilerAutoDetect.ListRegisterableCompilers(
+      Self.Compilers, CandidateCompilers
+    );
+    if CandidateCompilers.Count = 0 then
+      Exit;   // no compilers to register
+
+    // We have candidate compilers: get user to select
+    if TRegisterCompilersDlg.Execute(
+      Owner,
+      CandidateCompilers,
+      SelectedCompilers
+    ) then
+    begin
+      if SelectedCompilers.Count > 0 then
+      begin
+        // User selected one or more compilers to register
+        // register compiler(s)
+        TCompilerAutoDetect.RegisterSpecificCompilers(
+          Compilers, SelectedCompilers
+        );
+        // update config file with changes
+        Persister := TPersistCompilers.Create;
+        Persister.Save(Compilers);
+        // tell user what got registered
+        NotifyResults;
+        Result := True;
+      end
+      else
+        // User didn't select a file: tell them
+        NotifyNoRegistrations;
+    end;
+  finally
+    SelectedCompilers.Free;
+    CandidateCompilers.Free;
+  end;
+end;
+
 function TMainCompileMgr.ConfigCompilers: Boolean;
   {Displays Configure Compilers dialog to permit user to update compiler
   properties.
@@ -269,4 +385,3 @@ begin
 end;
 
 end.
-

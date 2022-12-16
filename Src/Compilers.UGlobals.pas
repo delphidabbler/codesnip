@@ -299,7 +299,7 @@ type
     property Count: Integer read GetCount;
 
     ///  <summary>Number of compilers installed on this computer and made
-    ///  available CodeSnip.</summary>
+    ///  available to CodeSnip.</summary>
     property AvailableCount: Integer read GetAvailableCount;
 
     ///  <summary>Checks if any compilers in the list are displayable.</summary>
@@ -327,6 +327,15 @@ type
     ///  <summary>Detects and records the full path of the compiler's
     ///  executable.</summary>
     function DetectExeFile: Boolean;
+    ///  <summary>Checks if the compiler is installed on the user's system.
+    ///  </summary>
+    function IsInstalled: Boolean;
+    ///  <summary>Checks if the compiler is permitted to be automatically
+    ///  installed.</summary>
+    function GetCanAutoInstall: Boolean;
+    ///  <summary>Determines whether the compiler can be automatically
+    ///  installed.</summary>
+    procedure SetCanAutoInstall(const Value: Boolean);
   end;
 
 

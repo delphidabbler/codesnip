@@ -129,7 +129,7 @@ var
 begin
   // NOTE: we use IActiveText.ToString here, because there may be text not in
   // blocks and we want to see that: usual renderer will ignore that text.
-  // However all lines are trimmed and empty blanks are ingored.
+  // However all lines are trimmed and empty blanks are ignored.
   Lines := TIStringList.Create(ActiveText.ToString, EOL, False, True);
   Result := Lines.GetText(EOL2, False); // insert blank line between paras
 end;
@@ -215,7 +215,7 @@ var
   Paragraph: string;        // each paragraph in paragraphs
 begin
   // NOTE: TSnippetExtraHelper.PlainTextToActiveText is not sufficient for use
-  // here since it ignores newlines and we want double newlines to separated
+  // here since it ignores newlines and we want double newlines to separate
   // paragraphs.
   Result := TActiveTextFactory.CreateActiveText;
   Text := StrTrim(Text);

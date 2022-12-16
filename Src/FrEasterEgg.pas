@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2009-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2009-2022, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements a frame that hosts the HTML, CSS and JavaScript used to display
  * the program's animated easter egg.
@@ -74,8 +74,8 @@ begin
   CSSFont := TFont.Create;
   try
     TFontHelper.SetContentFont(CSSFont);
-    with CSSBuilder.AddSelector('body') do
-      AddProperty(TCSS.FontProps(CSSFont));
+    CSSBuilder.AddSelector('body')
+      .AddProperty(TCSS.FontProps(CSSFont));
   finally
     FreeAndNil(CSSFont);
   end;

@@ -124,39 +124,46 @@ class function TSnippetExtraHelper.BuildActiveText(
       empty string.
   }
 
+  // Check for an opening block tag
   function IsBlockOpener(Elem: IActiveTextElem): Boolean;
   var
     ActionElem: IActiveTextActionElem;
   begin
     if not Supports(Elem, IActiveTextActionElem, ActionElem) then
       Exit(False);
-    Result := (ActionElem.DisplayStyle = dsBlock)
+    Result := (TActiveTextElemCaps.DisplayStyleOf(ActionElem.Kind) = dsBlock)
       and (ActionElem.State = fsOpen);
   end;
 
+  // Check for a closing block tag
   function IsBlockCloser(Elem: IActiveTextElem): Boolean;
   var
     ActionElem: IActiveTextActionElem;
   begin
     if not Supports(Elem, IActiveTextActionElem, ActionElem) then
       Exit(False);
-    Result := (ActionElem.DisplayStyle = dsBlock)
+    Result := (TActiveTextElemCaps.DisplayStyleOf(ActionElem.Kind) = dsBlock)
       and (ActionElem.State = fsClose);
   end;
 
-type
-  ///  <summary>Describes different parts of parsed REML code in relation to
-  ///  block tags.</summary>
-  ///  <remarks>Can be within a pair of block tags; without, i.e. not enclosed
-  ///  by block tags or in the transitional state between one and the other.
-  ///  </remarks>
-  TBlockState = (bsWithin, bsWithout, bsTransition);
+  // Embed given content in a para block and append to result, unless content is
+  // empty when do nothing.
+  procedure AddNoneEmptyParaToResult(ParaContent: IActiveText);
+  begin
+    if ParaContent.IsEmpty then
+      Exit;
+    if StrTrim(ParaContent.ToString) = '' then
+      Exit;
+    Result.AddElem(TActiveTextFactory.CreateActionElem(ekPara, fsOpen));
+    Result.Append(ParaContent);
+    Result.AddElem(TActiveTextFactory.CreateActionElem(ekPara, fsClose));
+  end;
+
 var
-  ActiveText: IActiveText;  // receives active text built from REML
-  TextElem: IActiveTextTextElem;
-  Text: string;
-  BlockState: TBlockState;  // state of current position relating to block tags
-  Elem: IActiveTextElem;    // each element in active text
+  ActiveText: IActiveText;              // receives active text built from REML
+  OutsideBlockActiveText: IActiveText;  // receives text outside of blocks
+  Elem: IActiveTextElem;                // each element in active text
+  Level: Integer;                       // depth of block levels
 begin
   Result := TActiveTextFactory.CreateActiveText;
   if REML = '' then
@@ -165,59 +172,47 @@ begin
   ActiveText := TActiveTextFactory.CreateActiveText(REML, TREMLReader.Create);
   if ActiveText.IsEmpty then
     Exit;
-  // Scan active text, inserting paragraph level block tags where the active
-  // text is not enclosed by them: this can be at the start, at the end or
-  // between existing blocks. E.g for "xxx <p>yyy</p> xxx <p>yyy</p> xxx", xxx
-  // is without any block and will be enclosed in paragraphs while yyy is within
-  // a block and will be unchanged.
-  BlockState := bsTransition;
+  // Init block level & obj used to accumulate text outside blocks
+  Level := 0;
+  OutsideBlockActiveText := TActiveTextFactory.CreateActiveText;
   for Elem in ActiveText do
   begin
     if IsBlockOpener(Elem) then
     begin
-      Assert(BlockState <> bsWithin,
-        ClassName + '.BuildActiveText: Block is nested.');
-      if BlockState = bsWithout then
-        Result.AddElem(TActiveTextFactory.CreateActionElem(ekPara, fsClose));
+      // We have block opener tag. Check for any text that preceeded a level
+      // zero block and wrap it in a paragraph before writing the block opener
+      if Level = 0 then
+      begin
+        if not OutsideBlockActiveText.IsEmpty then
+        begin
+          AddNoneEmptyParaToResult(OutsideBlockActiveText);
+          OutsideBlockActiveText := TActiveTextFactory.CreateActiveText;
+        end;
+      end;
       Result.AddElem(Elem);
-      BlockState := bsWithin;
+      Inc(Level); // drop down one level
     end
     else if IsBlockCloser(Elem) then
     begin
-      Assert(BlockState = bsWithin,
-        ClassName + '.BuildActiveText: Block closer outside block.');
-      Result.AddElem(Elem);
-      BlockState := bsTransition;
+      // Block closer
+      Dec(Level);
+      Result.AddElem(Elem); // climb up one level
     end
     else
     begin
-      if BlockState = bsTransition then
-      begin
-        if Supports(Elem, IActiveTextTextElem, TextElem) then
-        begin
-          // make sure we don't start a paragraph block if text contains only
-          // spaces
-          Text := StrTrimLeft(TextElem.Text);
-          if Text <> '' then
-          begin
-            Result.AddElem(TActiveTextFactory.CreateActionElem(ekPara, fsOpen));
-            Result.AddElem(TActiveTextFactory.CreateTextElem(Text));
-            BlockState := bsWithout;
-          end;
-        end
-        else
-        begin
-          Result.AddElem(TActiveTextFactory.CreateActionElem(ekPara, fsOpen));
-          Result.AddElem(Elem);
-          BlockState := bsWithout;
-        end;
-      end
+      // Not block opener or closer
+      // If we're outside any block, append elem to store of elems not included
+      // in blocks. If we're in a block, just add the elem to output
+      if Level = 0 then
+        OutsideBlockActiveText.AddElem(Elem)
       else
         Result.AddElem(Elem);
     end;
   end;
-  if BlockState = bsWithout then
-    Result.AddElem(TActiveTextFactory.CreateActionElem(ekPara, fsClose));
+  Assert(Level = 0, ClassName + '.BuildActiveText: Unbalanced blocks');
+  // Write any outstanding elems that occured outside a block
+  if not OutsideBlockActiveText.IsEmpty then
+    AddNoneEmptyParaToResult(OutsideBlockActiveText);
 end;
 
 class function TSnippetExtraHelper.BuildREMLMarkup(

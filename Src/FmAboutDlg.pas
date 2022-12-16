@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2005-2022, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements the program's About dialogue box.
 }
@@ -524,40 +524,36 @@ var
   ContentFont: TFont; // font used for content
 begin
   // Modify body's margin and, for themed windows, background colour
-  with CSSBuilder.Selectors['body'] do
-  begin
-    ContentFont := TFont.Create;
-    try
-      TFontHelper.SetContentFont(ContentFont);
-      AddProperty(TCSS.FontProps(ContentFont));
-      if ThemeServicesEx.ThemesEnabled then
-        AddProperty(TCSS.BackgroundColorProp(ThemeServicesEx.GetTabBodyColour));
-      AddProperty(UCSSUtils.TCSS.MarginProp(0, 2, 6, 2));
-    finally
-      FreeAndNil(ContentFont);
-    end;
+  ContentFont := TFont.Create;
+  try
+    TFontHelper.SetContentFont(ContentFont);
+    CSSBuilder.Selectors['body']
+      .AddProperty(TCSS.FontProps(ContentFont))
+      .AddProperty(UCSSUtils.TCSS.MarginProp(0, 2, 6, 2))
+      .AddPropertyIf(
+        ThemeServicesEx.ThemesEnabled,
+        TCSS.BackgroundColorProp(ThemeServicesEx.GetTabBodyColour)
+      );
+  finally
+    FreeAndNil(ContentFont);
   end;
   // Put border round scroll box
-  with CSSBuilder.AddSelector('.scrollbox') do
-    AddProperty(UCSSUtils.TCSS.BorderProp(cssAll, 1, cbsSolid, clBorder));
+  CSSBuilder.AddSelector('.scrollbox')
+    .AddProperty(UCSSUtils.TCSS.BorderProp(cssAll, 1, cbsSolid, clBorder));
   // Set colours and font style of contributors and testers headings
-  with CSSBuilder.AddSelector('.contrib-head, .tester-head') do
-  begin
-    AddProperty(TCSS.BackgroundColorProp(clBtnFace));
-    AddProperty(TCSS.ColorProp(clBtnText));
-    AddProperty(TCSS.FontWeightProp(cfwBold));
-  end;
+  CSSBuilder.AddSelector('.contrib-head, .tester-head')
+    .AddProperty(TCSS.BackgroundColorProp(clBtnFace))
+    .AddProperty(TCSS.ColorProp(clBtnText))
+    .AddProperty(TCSS.FontWeightProp(cfwBold));
 end;
 
 procedure TAboutDlg.UpdateTitleCSS(Sender: TObject;
   const CSSBuilder: TCSSBuilder);
 begin
   // Set body colour, and put border round it
-  with CSSBuilder.Selectors['body'] do
-  begin
-    AddProperty(TCSS.BackgroundColorProp(clWindow));
-    AddProperty(TCSS.PaddingProp(4));
-  end;
+  CSSBuilder.Selectors['body']
+    .AddProperty(TCSS.BackgroundColorProp(clWindow))
+    .AddProperty(TCSS.PaddingProp(4));
 end;
 
 procedure TAboutDlg.ViewConfigFile(const FileName, DlgTitle: string);

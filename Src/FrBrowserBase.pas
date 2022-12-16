@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2005-2022, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements a base class for all frames that contain a web browser control.
 }
@@ -193,76 +193,56 @@ var
   CSSFont: TFont;
 begin
   // <img> tag style: no borders
-  with CSSBuilder.AddSelector('img') do
-    AddProperty(TCSS.HideBorderProp(cssAll));
+  CSSBuilder.AddSelector('img')
+    .AddProperty(TCSS.HideBorderProp(cssAll));
 
   // Default <a> tag style: fall back links for unknown link classes.
   // Each link type is expected to define own colour as a minimum.
-  with CSSBuilder.AddSelector('a') do
-  begin
-    AddProperty(TCSS.ColorProp(clDefaultLink));
-    AddProperty(TCSS.TextDecorationProp([ctdUnderline]));
-  end;
+  CSSBuilder.AddSelector('a')
+    .AddProperty(TCSS.ColorProp(clDefaultLink))
+    .AddProperty(TCSS.TextDecorationProp([ctdUnderline]));
   // <a class="help-link"> override
-  with CSSBuilder.AddSelector('a.help-link') do
-  begin
-    AddProperty(TCSS.ColorProp(clHelpLink));
-  end;
+  CSSBuilder.AddSelector('a.help-link')
+    .AddProperty(TCSS.ColorProp(clHelpLink));
   // <a class="snippet-link"> and <a class="category-link"> overrides
-  with CSSBuilder.AddSelector('a.snippet-link, a.category-link') do
-  begin
-    AddProperty(TCSS.ColorProp(clDBLink));
-    AddProperty(TCSS.FontStyleProp(cfsItalic));
-    AddProperty(TCSS.TextDecorationProp([ctdNone]));
-  end;
-  with CSSBuilder.AddSelector('a:hover.snippet-link, a:hover.category-link') do
-  begin
-    AddProperty(TCSS.BorderProp(cssBottom, 1, cbsDotted, clDBLink));
-  end;
+  CSSBuilder.AddSelector('a.snippet-link, a.category-link')
+    .AddProperty(TCSS.ColorProp(clDBLink))
+    .AddProperty(TCSS.FontStyleProp(cfsItalic))
+    .AddProperty(TCSS.TextDecorationProp([ctdNone]));
+  CSSBuilder.AddSelector('a:hover.snippet-link, a:hover.category-link')
+    .AddProperty(TCSS.BorderProp(cssBottom, 1, cbsDotted, clDBLink));
   // <a class="command-link"> override
-  with CSSBuilder.AddSelector('a.command-link') do
-  begin
-    AddProperty(TCSS.ColorProp(clCommandLink));
-    AddProperty(TCSS.FontStyleProp(cfsItalic));
-    AddProperty(TCSS.TextDecorationProp([ctdNone]));
-  end;
-  with CSSBuilder.AddSelector('a:hover.command-link') do
-  begin
-    AddProperty(TCSS.BorderProp(cssBottom, 1, cbsDotted, clCommandLink));
-  end;
-  with CSSBuilder.AddSelector('.no-link-decoration a:hover') do
-    AddProperty(TCSS.HideBorderProp(cssBottom));
+  CSSBuilder.AddSelector('a.command-link')
+    .AddProperty(TCSS.ColorProp(clCommandLink))
+    .AddProperty(TCSS.FontStyleProp(cfsItalic))
+    .AddProperty(TCSS.TextDecorationProp([ctdNone]));
+  CSSBuilder.AddSelector('a:hover.command-link')
+    .AddProperty(TCSS.BorderProp(cssBottom, 1, cbsDotted, clCommandLink));
+  CSSBuilder.AddSelector('.no-link-decoration a:hover')
+    .AddProperty(TCSS.HideBorderProp(cssBottom));
   // <a class="external-link"> override
-  with CSSBuilder.AddSelector('a.external-link') do
-  begin
-    AddProperty(TCSS.ColorProp(clExternalLink));
-  end;
+  CSSBuilder.AddSelector('a.external-link')
+    .AddProperty(TCSS.ColorProp(clExternalLink));
 
   // <var> tag style
-  with CSSBuilder.AddSelector('var') do
-  begin
-    AddProperty(TCSS.ColorProp(clVarText));
-    AddProperty(TCSS.FontStyleProp(cfsItalic));
-  end;
+  CSSBuilder.AddSelector('var')
+    .AddProperty(TCSS.ColorProp(clVarText))
+    .AddProperty(TCSS.FontStyleProp(cfsItalic));
 
   // <code> tag style
-  with CSSBuilder.AddSelector('code') do
-  begin
-    CSSFont := TFont.Create;
-    try
-      TFontHelper.SetDefaultMonoFont(CSSFont);
-      AddProperty(TCSS.FontProps(CSSFont));
-    finally
-      CSSFont.Free;
-    end;
+  CSSFont := TFont.Create;
+  try
+    TFontHelper.SetDefaultMonoFont(CSSFont);
+    CSSBuilder.AddSelector('code')
+      .AddProperty(TCSS.FontProps(CSSFont));
+  finally
+    CSSFont.Free;
   end;
 
   // .warning class style: mainly for use inline
-  with CSSBuilder.AddSelector('.warning') do
-  begin
-    AddProperty(TCSS.ColorProp(clWarningText));
-    AddProperty(TCSS.FontWeightProp(cfwBold));
-  end;
+  CSSBuilder.AddSelector('.warning')
+    .AddProperty(TCSS.ColorProp(clWarningText))
+    .AddProperty(TCSS.FontWeightProp(cfwBold));
 end;
 
 function TBrowserBaseFrame.CanCopy: Boolean;
