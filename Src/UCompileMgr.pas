@@ -292,7 +292,7 @@ var
       if (SelectedCompilers.IndexOf(Compiler) >= 0)
         and Compiler.IsAvailable then
       begin
-        CompList := CompList + '• ' + Compiler.GetName + EOL;
+        CompList := CompList + #$2022' ' + Compiler.GetName + EOL;
         Inc(RegCount);
       end;
     end;
