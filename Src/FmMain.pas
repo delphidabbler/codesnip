@@ -1219,7 +1219,8 @@ begin
   fMainDisplayMgr.Initialise(fWindowSettings.OverviewTab);
   fMainDisplayMgr.ShowWelcomePage;
   // check for registerable Delphi compiler installations
-  fCompileMgr.CheckForNewCompilerInstalls;
+  if fCompileMgr.CheckForNewCompilerInstalls then
+    fMainDisplayMgr.Refresh;
 end;
 
 function TMainForm.appEventsHelp(Command: Word; Data: Integer;
