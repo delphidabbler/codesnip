@@ -12,7 +12,7 @@ From v4.1.0 the version numbering has attempted to adhere to the principles of [
 
 ## Release v4.21.0 of 16 December 2022
 
-* Updated to support [REML version 5](https://htmlpreview.github.io/?https://github.com/delphidabbler/codesnip/blob/version-4.21.0`/Docs/Design/reml.html) in snippet description & extra information [issue #71]:
+* Updated to support [REML version 5](https://htmlpreview.github.io/?https://github.com/delphidabbler/codesnip/blob/version-4.21.0/Docs/Design/reml.html) in snippet description & extra information [issue #71]:
   * Numerous new character entities supported. 
   * New list tags: `<ol>`, `<ul>` & `<li>`.
 * Program now automatically detects new (supported) Delphi installations at startup and offers to register the compiler(s) to be used for test compiling snippets. This feature is on by default but can be turned off completely or for specifically excluded compilers [issue #19].
