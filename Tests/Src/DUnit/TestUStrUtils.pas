@@ -1069,10 +1069,8 @@ begin
   CheckEquals(ResA, StrWrap(Text, 10, 0), 'Test 5');
   CheckEquals(ResB, StrWrap(Text, 10, 2), 'Test 6');
   CheckEquals(ResC, StrWrap(Text, 15, 0), 'Test 7');
-  CheckEquals(ResC, StrWrap(Text, 15, -2), 'Test 8');
-  CheckEquals(ResD, StrWrap(Text, 1, 0), 'Test 9');
-  CheckEquals(ResD, StrWrap(Text, 0, 0), 'Test 10');
-  CheckEquals(ResD, StrWrap(Text, -1, 0), 'Test 11');
+  CheckEquals(ResD, StrWrap(Text, 1, 0), 'Test 8');
+  CheckEquals(ResD, StrWrap(Text, 0, 0), 'Test 9');
 end;
 
 procedure TTestStrUtilsRoutines.TestStrWrap_overload2;
