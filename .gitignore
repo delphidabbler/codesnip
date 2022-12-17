@@ -10,8 +10,6 @@
 __history/
 
 # Project specific directories & files
-Bin
-Exe
-Release
+_build
 Src/CodeSnip.cfg
 Src/AutoGen/IntfExternalObj.pas

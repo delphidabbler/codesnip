@@ -2,15 +2,22 @@
 # v. 2.0. If a copy of the MPL was not distributed with this file, You can
 # obtain one at https://mozilla.org/MPL/2.0/
 #
-# Copyright (C) 2009-2021, Peter Johnson (gravatar.com/delphidabbler).
+# Copyright (C) 2009-2022, Peter Johnson (gravatar.com/delphidabbler).
 #
 # Makefile for the CodeSnip project.
 
 
-# Define macros giving relative paths to other directories from location of
-# makefile
-BIN = ..\Bin
-EXE = ..\Exe
+# Define macros relative paths to various directories relative to the repo root
+BUILD_ROOT = _build
+BIN_ROOT = $(BUILD_ROOT)\bin
+EXE_ROOT = $(BUILD_ROOT)\exe
+RELEASE_ROOT = $(BUILD_ROOT)\release
+DOCS_ROOT = Docs
+SRC_ROOT = Src
+
+# Defines macros giving directories relative to location of the Makefile
+BIN_REL = ..\$(BIN_ROOT)
+EXE_REL = ..\$(EXE_ROOT)
 
 # Check for required environment variables
 
@@ -75,11 +82,10 @@ DELPHIDEFINES =
 
 # Implicit rules
 
-# Resource files are compiled to the directory specified by BIN macro, which
-# must have been set by the caller.
+# Resource files are compiled to the directory specified by BIN_REL macro.
 .rc.res:
   @echo +++ Compiling Resource file $< +++
-  @$(BRCC32) $< -fo$(BIN)\$(@F)
+  @$(BRCC32) $< -fo$(BIN_REL)\$(@F)
 
 # Version info files are compiled by VIEd. A temporary .rc file is left behind
 .vi.rc:
@@ -104,11 +110,12 @@ config:
   @copy /Y CodeSnip.cfg.tplt CodeSnip.cfg
   # Create build folders
   @cd ..
-  @if exist Bin rmdir /S /Q Bin
-  @mkdir Bin
-  @if not exist Exe mkdir Exe
-  @if not exist Release mkdir Release
-  @cd Src
+  @if not exist $(BUILD_ROOT) mkdir $(BUILD_ROOT)
+  @if exist $(BIN_ROOT) rmdir /S /Q $(BIN_ROOT)
+  @mkdir $(BIN_ROOT)
+  @if not exist $(EXE_ROOT) mkdir $(EXE_ROOT)
+  @if not exist $(RELEASE_ROOT) mkdir $(RELEASE_ROOT)
+  @cd $(SRC_ROOT)
 
 # Builds CodeSnip pascal files and links program
 pascal: CodeSnip.exe
@@ -118,14 +125,14 @@ pascal: CodeSnip.exe
 CodeSnip.exe:
   @echo +++ Compiling Pascal +++
 !ifdef PORTABLE
-  @if exist $(EXE)\$(@F) copy $(EXE)\$(@F) $(EXE)\$(@F).bak
+  @if exist $(EXE_REL)\$(@F) copy $(EXE_REL)\$(@F) $(EXE_REL)\$(@F).bak
 !endif
   @$(DCC32) $(@B).dpr -B  $(DELPHIDEFINES)
 !ifdef PORTABLE
-  @copy $(EXE)\$(@F) $(EXE)\$(@B)-p.exe /Y
-  @del $(EXE)\$(@F)
-  @if exist $(EXE)\$(@F).bak copy $(EXE)\$(@F).bak $(EXE)\$(@F)
-  @if exist $(EXE)\$(@F).bak del $(EXE)\$(@F).bak
+  @copy $(EXE_REL)\$(@F) $(EXE_REL)\$(@B)-p.exe /Y
+  @del $(EXE_REL)\$(@F)
+  @if exist $(EXE_REL)\$(@F).bak copy $(EXE_REL)\$(@F).bak $(EXE_REL)\$(@F)
+  @if exist $(EXE_REL)\$(@F).bak del $(EXE_REL)\$(@F).bak
 !endif
 
 # Builds help file
@@ -144,16 +151,16 @@ resources: $(VERINFOFILEBASE).res Resources.res HTML.res
 # Compiles HTMLres from .hrc file
 HTML.res: HTML.hrc
   @echo +++ Compiling HTML Resource manifest file +++
-  @$(HTMLRES) -mHTML.hrc -o$(BIN)\HTML.res -r -q
+  @$(HTMLRES) -mHTML.hrc -o$(BIN_REL)\HTML.res -r -q
 
 # Compiles type library from IDL
 typelib:
-  @$(GENTLB) .\ExternalObj.ridl -D$(BIN) -TExternalObj.tlb
+  @$(GENTLB) .\ExternalObj.ridl -D$(BIN_REL) -TExternalObj.tlb
 
 # Builds setup program
 setup:
 !ifndef PORTABLE
-  @del ..\Exe\CodeSnip-Setup-*
+  @del $(EXE_REL)\CodeSnip-Setup-*
   @$(ISCC) Install\CodeSnip.iss
 !else
   @echo **** Portable build - no setup file created ****
@@ -161,17 +168,26 @@ setup:
 
 # Creates auto generated files
 autogen:
-  @$(TLIBIMP) -P+ -Ps+ -D.\AutoGen -FtIntfExternalObj $(BIN)\ExternalObj.tlb
+  @$(TLIBIMP) -P+ -Ps+ -D.\AutoGen -FtIntfExternalObj $(BIN_REL)\ExternalObj.tlb
   @if exist .\AutoGen\IntfExternalObj.dcr del .\AutoGen\IntfExternalObj.dcr
 
 # Build release files (.zip)
+# If RELEASEFILENAME is defined by caller then it is used as name of zip file
+# otherwise default zip file name is used, which depends on whether PORTABLE
+# is defined.
+# If VERSION is defined by caller then it is appended to RELEASEFILENAME,
+# separated by a dash.
 !ifndef RELEASEFILENAME
-RELEASEFILENAME = dd-codesnip
-!ifdef PORTABLE
-RELEASEFILENAME = $(RELEASEFILENAME)-portable
+!ifndef PORTABLE
+RELEASEFILENAME = codesnip-exe
+!else
+RELEASEFILENAME = codesnip-portable-exe
 !endif
 !endif
-OUTFILE = Release\$(RELEASEFILENAME).zip
+!ifdef VERSION
+RELEASEFILENAME = $(RELEASEFILENAME)-$(VERSION)
+!endif
+OUTFILE = $(RELEASE_ROOT)\$(RELEASEFILENAME).zip
 release:
   @echo ---------------------
   @echo Creating Release File
@@ -179,14 +195,14 @@ release:
   @cd ..
   -@if exist $(OUTFILE) del $(OUTFILE)
 !ifndef PORTABLE
-  @$(ZIP) -j -9 $(OUTFILE) Exe\CodeSnip-Setup-*.exe Docs\ReadMe.txt
+  @$(ZIP) -j -9 $(OUTFILE) $(EXE_ROOT)\CodeSnip-Setup-*.exe $(DOCS_ROOT)\ReadMe.txt
 !else
-  @$(ZIP) -j -9 $(OUTFILE) Exe\CodeSnip-p.exe
-  @$(ZIP) -j -9 $(OUTFILE) Exe\CodeSnip.chm
-  @$(ZIP) -j -9 $(OUTFILE) Docs\ReadMe.txt
-  @$(ZIP) -j -9 $(OUTFILE) Docs\License.html
+  @$(ZIP) -j -9 $(OUTFILE) $(EXE_ROOT)\CodeSnip-p.exe
+  @$(ZIP) -j -9 $(OUTFILE) $(EXE_ROOT)\CodeSnip.chm
+  @$(ZIP) -j -9 $(OUTFILE) $(DOCS_ROOT)\ReadMe.txt
+  @$(ZIP) -j -9 $(OUTFILE) $(DOCS_ROOT)\License.html
 !endif
-  @cd Src
+  @cd $(SRC_ROOT)
 
 # Clean up unwanted files
 clean:
@@ -200,4 +216,4 @@ clean:
   -@del /S *.tvsconfig 2>nul
   # remove __history folders
   -@for /F "usebackq" %i in (`dir /S /B /A:D ..\__history`) do @rmdir /S /Q %i
-  @cd Src
+  @cd $(SRC_ROOT)

@@ -460,8 +460,7 @@
           |
           +-- DUnit         - test source code that uses the DUnit framework</pre>
 <p>
-  If, by chance you also have <code>Bin</code>, <code>Exe</code> and / or
-  <code>Release</code> directories don't worry - all will become clear.
+  If, by chance you also have a <code>_build</code> directory don't worry - all will become clear.
   Git users may also see the usual <code>.git</code> hidden
   directory. If you have done some editing in the Delphi IDE you may also see
   occasional hidden <code>__history</code> folders.
@@ -498,18 +497,18 @@
 
 <pre>./
   |
-  +-- Bin                   - receives object files for CodeSnip
-  |
-  ...
-  |
-  +-- Exe                   - receives executable code and compiled help file
-  |
-  +-- Release               - receives release files
+  +-- _build                - contains all the build files
+  |   |
+  |   +-- bin               - receives object files for CodeSnip
+  |   |
+  |   +-- exe               - receives executable code and compiled help file
+  |   |
+  |   +-- release           - receives release files
   |
   ...</pre>
 
 <p>
-  If the <code>Bin</code> folder already existed, it will have been emptied.
+  If the <code>_build/bin</code> folder already existed, it will have been emptied.
   In addition, <code>Make</code> will have created a <code>.cfg</code> file from
   template in the <code>Src</code> folder. This <code>.cfg</code> file is needed
   for DCC32 to run correctly. The file will be ignored by Git.
@@ -625,7 +624,7 @@
 
 <p>
   The <em>CodeSnip</em> executable, named <code>CodeSnip.exe</code> will be
-  placed in the <code>Exe</code> folder.
+  placed in the <code>_build\exe</code> folder.
 </p>
 
 <h4>
@@ -640,7 +639,7 @@
 <pre class="cmd"><span class="prompt">&gt;</span> Make -DPORTABLE codesnip</pre>
 
 <p>
-  Again the executable is placed in the <code>Exe</code> folder, but this time
+  Again the executable is placed in the <code>_build/exe</code> folder, but this time
   it is named <code>CodeSnip-p.exe</code>
 </p>
 
@@ -654,13 +653,16 @@
 
 <pre class="cmd"><span class="prompt">&gt;</span> Make help</pre>
 
+<p>
+  The compiled help file will be written to the <code>_build\exe</code> folder.
+</p>
 <h3>
   Build the Setup Program
 </h3>
 
 <p>
   The setup program requires that the <em>CodeSnip</em> excutable and the
-  compiled help file are already present in the <code>Exe</code> directory.
+  compiled help file are already present in the <code>_build\exe</code> directory.
 </p>
 
 <p>
@@ -679,7 +681,7 @@
 <p>
   The setup program is named <code>CodeSnip-Setup-x.x.x.exe</code>, where
   x.x.x is the version number extracted from <em>CodeSnip</em>'s version
-  information. It is placed in the <code>Exe</code> directory.
+  information. It is placed in the <code>_build/exe</code> directory.
 </p>
 
 <p>
@@ -704,6 +706,7 @@
 
 <p>
   Make can create zip files containing all the files that are included in a release.
+  Zip files are written to the <code>_build/release</code> directory.
 </p>
 
 <h4>
@@ -723,13 +726,17 @@
 <pre class="cmd"><span class="prompt">&gt;</span> Make release</pre>
 
 <p>
-  By default the release file is named <code>dd-codesnip.zip</code>. You can
+  By default the release file is named <code>codesnip-exe.zip</code>. You can
   change this name by defining the <code>RELEASEFILENAME</code> macro or
   enviroment variable. For example, you can name the file
   <code>MyRelease.zip</code> by doing:
 </p>
 
-<pre class="cmd"><span class="prompt">&gt;</span> Make -DRELEASEFILENAME=MyRelease.zip release</pre>
+<pre class="cmd"><span class="prompt">&gt;</span> Make -DRELEASEFILENAME=MyRelease release</pre>
+
+<p>
+  Note that the <code>.zip</code> extension should not be included in the file name.
+</p>
 
 <h4>
   Portable edition
@@ -754,7 +761,11 @@
   <code>MyPortableRelease.zip</code> by doing:
 </p>
 
-<pre class="cmd"><span class="prompt">&gt;</span> Make -DPORTABLE -DRELEASEFILENAME=MyPortableRelease.zip release</pre>
+<pre class="cmd"><span class="prompt">&gt;</span> Make -DPORTABLE -DRELEASEFILENAME=MyPortableRelease release</pre>
+
+<p>
+  Once again note that the <code>.zip</code> extension should not be included in the file name.
+</p>
 
 <p class="note">
   <strong>Warning:</strong> If you are building both the standard and portable
@@ -763,6 +774,35 @@
   built release will overwrite the first.
 </p>
 
+<h4>
+  Including version numbers in zip file names
+</h4>
+
+<p>
+  A version number can be suffixed to the release zip file name by defining the <code>VERSION</code> macro.
+  This macro works with both the <code>PORTABLE</code> and <code>RELEASEFILENAME</code> macros.
+</p>
+
+<p>
+  For example to appended version number 4.22.0 to the zip file name on a standard edition build, with the default
+  file name do:
+</p>
+
+<pre class="cmd"><span class="prompt">&gt;</span> Make -DVERSION=4.22.0 release</pre>
+
+<p>
+  This will create a zip file named <code>codesnip-exe-4.22.0.zip</code>.
+</p>
+
+<p>
+  A more complex example would be to append the same version number to a portable edition build named <code>MyPortableRelease</code>. Do:
+</p>
+
+<pre class="cmd"><span class="prompt">&gt;</span> Make -DPORTABLE -DRELEASEFILENAME=MyPortableRelease -DVERSION=4.22.0 release</pre>
+
+<p>
+  This time the resulting zip file will be named <code>MyPortableRelease-4.22.0.zip</code>.
+</p>
 
 <h3>
   Build and Release Everything
@@ -784,15 +824,16 @@
 <span class="prompt">&gt;</span> Make setup
 <span class="prompt">&gt;</span> Make release</pre>
 
-<h4>
-  Portable edition
-</h4>
-
 <p>
   To perform a complete build of the portable edition of <em>CodeSnip</em> do
 </p>
 
 <pre class="cmd"><span class="prompt">&gt;</span> Make -DPORTABLE</pre>
+
+<p>
+  Note that the <code>RELEASEFILENAME</code> and <code>VERSION</code> macros that can be used for customising
+  zip file names can be used here too.
+</p>
 
 <h3>
   Clean Up

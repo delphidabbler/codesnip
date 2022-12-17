@@ -2,7 +2,7 @@
 ; v. 2.0. If a copy of the MPL was not distributed with this file, You can
 ; obtain one at https://mozilla.org/MPL/2.0/
 ;
-; Copyright (C) 2006-2021, Peter Johnson (gravatar.com/delphidabbler).
+; Copyright (C) 2006-2022, Peter Johnson (gravatar.com/delphidabbler).
 ;
 ; Install file generation script for use with Inno Setup.
 
@@ -25,10 +25,10 @@
 #define ReadMeFile "ReadMe.txt"
 #define LicenseFile "License.rtf"
 #define LicenseTextFile "License.html"
-#define OutDir SourcePath + "..\..\Exe"
+#define OutDir SourcePath + "..\..\_build\exe"
 #define SrcDocsPath SourcePath + "..\..\Docs\"
-#define SrcAssetsPath SourcePath + '\Assets\"
-#define SrcExePath SourcePath + "..\..\Exe\"
+#define SrcAssetsPath SourcePath + "\Assets\"
+#define SrcExePath SourcePath + "..\..\_build\exe\"
 #define ProgDataSubDir AppName + ".4"
 #define ExeProg SrcExePath + ExeFile
 #define AppVersion DeleteToVerStart(GetFileProductVersion(ExeProg))
