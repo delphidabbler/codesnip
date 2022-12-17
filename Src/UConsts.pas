@@ -36,6 +36,8 @@ const
   GT          = '>';    // greater-than / closing angle bracket character
   LT          = '<';    // less-than / opening angle bracket character
 
+  COPYRIGHT   = #$00A9;
+
   CRLF  = CR + LF;      // carriage return followed by line feed
   EOL   = CRLF;         // end of line character sequence for Windows systems
   EOL2  = EOL + EOL;    // 2 end of line sequences
