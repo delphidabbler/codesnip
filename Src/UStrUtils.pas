@@ -228,7 +228,7 @@ function StrSplit(const Str: UnicodeString; const Delim: UnicodeString;
 ///  offsets each line using spaces to form a left margin of size given by
 ///  Margin.</summary>
 ///  <remarks>Output lines are separated by CRLF.</remarks>
-function StrWrap(const Str: UnicodeString; const MaxLen, Margin: Integer):
+function StrWrap(const Str: UnicodeString; const MaxLen, Margin: UInt16):
   UnicodeString; overload;
 
 ///  <summary>Word wraps each paragraph of text in Paras so that each line of a
@@ -236,7 +236,7 @@ function StrWrap(const Str: UnicodeString; const MaxLen, Margin: Integer):
 ///  number of spaces gvien by Margin. Blanks lines are used to separate
 ///  output paragraphs iff SeparateParas is true.</summary>
 ///  <remarks>Output lines are separated by CRLF.</remarks>
-function StrWrap(const Paras: TStrings; const MaxLineLen, Margin: Integer;
+function StrWrap(const Paras: TStrings; const MaxLineLen, Margin: UInt16;
   const SeparateParas: Boolean): UnicodeString; overload;
 
 ///  <summary>Checks in string Str forms a valid sentence and, if not, adds a
@@ -773,7 +773,7 @@ begin
   Result := StrReplace(Result, LF, CRLF);
 end;
 
-function StrWrap(const Str: UnicodeString; const MaxLen, Margin: Integer):
+function StrWrap(const Str: UnicodeString; const MaxLen, Margin: UInt16):
   UnicodeString;
 var
   Word: UnicodeString;  // next word in input Str
@@ -823,7 +823,7 @@ begin
   end;
 end;
 
-function StrWrap(const Paras: TStrings; const MaxLineLen, Margin: Integer;
+function StrWrap(const Paras: TStrings; const MaxLineLen, Margin: UInt16;
   const SeparateParas: Boolean): UnicodeString; overload;
 var
   Para: string;
