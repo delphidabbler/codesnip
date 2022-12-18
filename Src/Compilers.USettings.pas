@@ -14,6 +14,9 @@ unit Compilers.USettings;
 interface
 
 uses
+  // Delphi
+  SysUtils,
+  // Project
   UBaseObjects,
   USettings;
 
@@ -24,7 +27,11 @@ type
     const
       AllCompilersConfigSection = ssCompilers;
       PermitStartupDetectionKey = 'PermitStartupDetection';
+      ListFPCAtTopKey = 'Lists:FPCAtTop';
+      ListDelphiOldestFirstKey = 'Lists:DelphiOldestFirst';
     class function ReadStorage: ISettingsSection;
+    class procedure DoSaveProperty(const WriteProp: TProc<ISettingsSection>);
+    class procedure SaveProperty(const Key: string; const Value: Boolean);
     class function GetPermitStartupDetection: Boolean; static;
     class procedure SetPermitStartupDetection(const Value: Boolean); static;
   public
@@ -37,6 +44,16 @@ implementation
 
 { TCompilerSettings }
 
+class procedure TCompilerSettings.DoSaveProperty(
+  const WriteProp: TProc<ISettingsSection>);
+var
+  Stg: ISettingsSection;
+begin
+  Stg := ReadStorage;
+  WriteProp(Stg);
+  Stg.Save;
+end;
+
 class function TCompilerSettings.GetPermitStartupDetection: Boolean;
 begin
   Result := ReadStorage.GetBoolean(PermitStartupDetectionKey, True);
@@ -47,14 +64,21 @@ begin
   Result := Settings.ReadSection(AllCompilersConfigSection);
 end;
 
+class procedure TCompilerSettings.SaveProperty(const Key: string;
+  const Value: Boolean);
+begin
+  DoSaveProperty(
+    procedure(Stg: ISettingsSection)
+    begin
+      Stg.SetBoolean(Key, Value)
+    end
+  );
+end;
+
 class procedure TCompilerSettings.SetPermitStartupDetection(
   const Value: Boolean);
-var
-  Stg: ISettingsSection;
 begin
-  Stg := ReadStorage;
-  Stg.SetBoolean(PermitStartupDetectionKey, Value);
-  Stg.Save;
+  SaveProperty(PermitStartupDetectionKey, Value);
 end;
 
 end.
