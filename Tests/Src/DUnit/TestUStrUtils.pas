@@ -64,7 +64,8 @@ type
     procedure TestStrJoin;
     procedure TestStrExplode;
     procedure TestStrSplit;
-    procedure TestStrWrap_overload1;
+    procedure TestStrWrap_overload1_default_param;
+    procedure TestStrWrap_overload1_no_default_param;
     procedure TestStrWrap_overload2;
     procedure TestStrMakeSentence;
     procedure TestStrIf;
@@ -1037,7 +1038,7 @@ begin
   CheckEquals(#13#10#13#10#13#10, StrWindowsLineBreaks(#10#13#13#10), 'Test 8');
 end;
 
-procedure TTestStrUtilsRoutines.TestStrWrap_overload1;
+procedure TTestStrUtilsRoutines.TestStrWrap_overload1_default_param;
 const
   Text = 'The quick brown fox jumped-over-the lazy dog.';
   //      123456789012345678901234567890123456789012345
@@ -1071,6 +1072,42 @@ begin
   CheckEquals(ResC, StrWrap(Text, 15, 0), 'Test 7');
   CheckEquals(ResD, StrWrap(Text, 1, 0), 'Test 8');
   CheckEquals(ResD, StrWrap(Text, 0, 0), 'Test 9');
+end;
+
+procedure TTestStrUtilsRoutines.TestStrWrap_overload1_no_default_param;
+const
+  Text = 'The quick brown fox jumped-over-the lazy dog.';
+  //      123456789012345678901234567890123456789012345
+  //               1         2         3         4
+  ResA = 'The quick' + EOL
+       + 'brown fox' + EOL
+       + 'jumped-over-the' + EOL
+       + 'lazy dog.';
+  ResB = '  The quick' + EOL
+       + '  brown fox' + EOL
+       + '  jumped-over-the' + EOL
+       + '  lazy dog.';
+  ResC = '    The quick' + EOL
+       + '  brown fox' + EOL
+       + '  jumped-over-the' + EOL
+       + '  lazy dog.';
+  ResD = '  The quick' + EOL
+       + '    brown fox' + EOL
+       + '    jumped-over-the' + EOL
+       + '    lazy dog.';
+
+begin
+  CheckEquals('', StrWrap('', 12, 0, 0), 'Test 1a');
+  CheckEquals('', StrWrap('', 12, 4, 2), 'Test 1b');
+  CheckEquals('', StrWrap('', 12, 4, -2), 'Test 1b');
+  CheckEquals('X', StrWrap('X', 12, 0), 'Test 2a');
+  CheckEquals('      X', StrWrap('X', 12, 4, 2), 'Test 2b');
+  CheckEquals('  X', StrWrap('X', 12, 4, -2), 'Test 2c');
+  CheckEquals('  X', StrWrap('    X', 12, 4, -2), 'Test 2c');
+  CheckEquals(ResA, StrWrap(Text, 12, 0, 0), 'Test 3a');
+  CheckEquals(ResB, StrWrap(Text, 12, 2, 0), 'Test 3b');
+  CheckEquals(ResC, StrWrap(Text, 12, 2, 2), 'Test 3b');
+  CheckEquals(ResD, StrWrap(Text, 12, 4, -2), 'Test 3b');
 end;
 
 procedure TTestStrUtilsRoutines.TestStrWrap_overload2;
