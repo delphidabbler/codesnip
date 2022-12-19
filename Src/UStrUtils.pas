@@ -226,10 +226,19 @@ function StrSplit(const Str: UnicodeString; const Delim: UnicodeString;
 
 ///  <summary>Word wraps text Str to form lines of maximum length MaxLen and
 ///  offsets each line using spaces to form a left margin of size given by
-///  Margin.</summary>
-///  <remarks>Output lines are separated by CRLF.</remarks>
-function StrWrap(const Str: UnicodeString; const MaxLen, Margin: UInt16):
-  UnicodeString; overload;
+///  Margin. The first line is offset from the margin by FirstLineOffset spaces.
+///  </summary>
+///  <remarks>
+///  <para>FirstLineOffset offsets to the left of Margin if -ve and to the right
+///  of Margin if +ve.</para>
+///  <para>If FirstLineOffset is -ve then Abs(FirstLineOffset) must be less than
+///  or equal to Margin.</para>
+///  <para>If FirstLineOffset is +ve then FirstLineOffset + Margin must fit in
+///  a UInt16.</para>
+///  <para>Output lines are separated by CRLF.</para>
+///  </remarks>
+function StrWrap(const Str: UnicodeString; const MaxLen, Margin: UInt16;
+  const FirstLineOffset: Int16 = 0): UnicodeString; overload;
 
 ///  <summary>Word wraps each paragraph of text in Paras so that each line of a
 ///  paragraph has lines of maximum length MaxLineLen and is offset by the
@@ -773,8 +782,8 @@ begin
   Result := StrReplace(Result, LF, CRLF);
 end;
 
-function StrWrap(const Str: UnicodeString; const MaxLen, Margin: UInt16):
-  UnicodeString;
+function StrWrap(const Str: UnicodeString; const MaxLen, Margin: UInt16;
+  const FirstLineOffset: Int16): UnicodeString; overload;
 var
   Word: UnicodeString;  // next word in input Str
   Line: UnicodeString;  // current output line
@@ -783,14 +792,25 @@ var
   // -------------------------------------------------------------------------
   ///  Adds a line of text to output, offseting line by Margin spaces
   procedure AddLine(const Line: string);
+  var
+    AdjustedMargin: UInt16;
   begin
+    AdjustedMargin := Margin;
     if Result <> '' then    // not first line: insert new line
-      Result := Result + EOL;
-    Result := Result + StrOfSpaces(Margin) + Line;
+      Result := Result + EOL
+    else // 1st line - adjust margin
+      AdjustedMargin := Margin + FirstLineOffset;
+    Result := Result + StrOfSpaces(AdjustedMargin) + Line;
   end;
   // -------------------------------------------------------------------------
 
 begin
+  // FirstLineOffset, if negative, must have absolute value <= Margin and
+  // FirstLineOffset, if positive, added to Margin must fit in UInt16
+  Assert((Margin + FirstLineOffset >= 0)
+    and (Margin + FirstLineOffset < High(Margin)),
+    'StrWrap: FirstLineOffset + Margin out of range'
+  );
   // Get all words in Str
   Words := TStringList.Create;
   try
