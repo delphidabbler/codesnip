@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2009-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2009-2022, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Provides a class that renders active text as HTML.
 }
@@ -17,9 +17,9 @@ interface
 
 uses
   // Delphi
-  SysUtils, Graphics, Generics.Collections,
+  SysUtils,
   // Project
-  ActiveText.UMain, UBaseObjects, UCSSBuilder, UHTMLUtils;
+  ActiveText.UMain, UHTMLUtils;
 
 
 type
@@ -65,6 +65,7 @@ type
       fBuilder: TStringBuilder;
       fInBlock: Boolean;
       fTagInfoMap: TTagInfoMap;
+      fLINestingDepth: Cardinal;
     procedure InitialiseTagInfoMap;
     procedure InitialiseRender;
     procedure RenderTextElem(Elem: IActiveTextTextElem);
@@ -84,11 +85,6 @@ type
 implementation
 
 
-uses
-  // Project
-  UColours, UCSSUtils, UFontHelper, UIStringList;
-
-
 { TActiveTextHTML }
 
 constructor TActiveTextHTML.Create;
@@ -96,6 +92,7 @@ begin
   inherited Create;
   fCSSStyles := TCSSStyles.Create;
   fBuilder := TStringBuilder.Create;
+  fLINestingDepth := 0;
   InitialiseTagInfoMap;
 end;
 
@@ -209,6 +206,8 @@ begin
   case Elem.State of
     fsOpen:
     begin
+      if Elem.Kind = ekListItem then
+        Inc(fLINestingDepth);
       fBuilder.Append(MakeOpeningTag(Elem));
       fInBlock := True;
     end;
@@ -216,13 +215,15 @@ begin
     begin
       fInBlock := False;
       fBuilder.AppendLine(MakeClosingTag(Elem));
+      if Elem.Kind = ekListItem then
+        Dec(fLINestingDepth);
     end;
   end;
 end;
 
 procedure TActiveTextHTML.RenderInlineActionElem(Elem: IActiveTextActionElem);
 begin
-  if not fInBlock then
+  if not fInBlock and (fLINestingDepth = 0) then
     Exit;
   case Elem.State of
     fsOpen:
@@ -234,7 +235,7 @@ end;
 
 procedure TActiveTextHTML.RenderTextElem(Elem: IActiveTextTextElem);
 begin
-  if not fInBlock then
+  if not fInBlock and (fLINestingDepth = 0) then
     Exit;
   fBuilder.Append(THTML.Entities(Elem.Text));
 end;
