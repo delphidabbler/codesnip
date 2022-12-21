@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2009-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2009-2022, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Defines various character, string and resource id constants.
 }
@@ -36,7 +36,8 @@ const
   GT          = '>';    // greater-than / closing angle bracket character
   LT          = '<';    // less-than / opening angle bracket character
 
-  COPYRIGHT   = #$00A9;
+  NBSP        = #$00A0; // non-breaking space
+  COPYRIGHT   = #$00A9; // copyright symbol
 
   CRLF  = CR + LF;      // carriage return followed by line feed
   EOL   = CRLF;         // end of line character sequence for Windows systems
