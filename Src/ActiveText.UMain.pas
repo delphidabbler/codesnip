@@ -175,6 +175,16 @@ type
     ///  <summary>Appends elements from another given active text object to the
     ///  current object.</summary>
     procedure Append(const ActiveText: IActiveText);
+    ///  <summary>Returns a new IActiveText instance containing just the first
+    ///  block of the current object.</summary>
+    ///  <remarks>
+    ///  <para>The first block is the content of the block level tag that starts
+    ///  the active text. If this block has child blocks (for e.g. an unordered
+    ///  list) then they are included.</para>
+    ///  <para>If the current object is empty then an empty object is returned.
+    ///  </para>
+    ///  </remarks>
+    function FirstBlock: IActiveText;
     ///  <summary>Checks if the active text object contains any elements.
     ///  </summary>
     function IsEmpty: Boolean;
@@ -474,6 +484,17 @@ type
     ///  </summary>
     ///  <remarks>Method of IActiveText.</remarks>
     procedure Append(const ActiveText: IActiveText);
+    ///  <summary>Returns a new IActiveText instance containing just the first
+    ///  block of the current object.</summary>
+    ///  <remarks>
+    ///  <para>The first block is the content of the block level tag that starts
+    ///  the active text. If this block has child blocks (for e.g. an unordered
+    ///  list) then they are included.</para>
+    ///  <para>If the current object is empty then an empty object is returned.
+    ///  </para>
+    ///  <para>Method of IActiveText.</para>
+    ///  </remarks>
+    function FirstBlock: IActiveText;
     ///  <summary>Checks if the element list is empty.</summary>
     ///  <remarks>Method of IActiveText.</remarks>
     function IsEmpty: Boolean;
@@ -717,6 +738,67 @@ destructor TActiveText.Destroy;
 begin
   fElems.Free;
   inherited;
+end;
+
+function TActiveText.FirstBlock: IActiveText;
+
+  function IsBlockWithState(Elem: IActiveTextElem; State: TActiveTextElemState):
+    Boolean;
+  var
+    ActionElem: IActiveTextActionElem;
+  begin
+    Result := False;
+    if not Supports(Elem, IActiveTextActionElem, ActionElem) then
+      Exit;
+    if TActiveTextElemCaps.DisplayStyleOf(ActionElem.Kind) <> dsBlock then
+      Exit;
+    if ActionElem.State <> State then
+      Exit;
+    Result := True;
+  end;
+
+  function IsBlockOpener(Elem: IActiveTextElem): Boolean; inline;
+  begin
+    Result := IsBlockWithState(Elem, fsOpen);
+  end;
+
+  function IsBlockCloser(Elem: IActiveTextElem): Boolean; inline;
+  begin
+    Result := IsBlockWithState(Elem, fsClose);
+  end;
+
+var
+  Depth: Cardinal;
+  Elem: IActiveTextElem;
+  Idx: Integer;
+begin
+  Result := TActiveText.Create;
+  if IsEmpty then
+    Exit;
+
+  Elem := GetElem(0);
+
+  if not IsBlockOpener(Elem) then
+  begin
+    Result.Append(Self);
+    Exit;
+  end;
+
+  Depth := 1;
+  Result.AddElem(Elem);
+  for Idx := 1 to Pred(GetCount) do
+  begin
+    Elem := GetElem(Idx);
+    Result.AddElem(Elem);
+    // NOTE: we're not checking for matching openers and closers
+    if IsBlockOpener(Elem) then
+      Inc(Depth);
+    if IsBlockCloser(Elem) then
+      Dec(Depth);
+    if Depth = 0 then
+      Break;
+  end;
+  // We're not checking for balancing block closer here either:
 end;
 
 function TActiveText.GetCount: Integer;
