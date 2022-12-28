@@ -1,14 +1,10 @@
 # Changelog
 
-This is the change log for _DelphiDabbler CodeSnip_.
+This is the change log for _DelphiDabbler CodeSnip_. It begins with the first ever pre-release version of _CodeSnip_.
 
-All notable changes to this project are documented in this file.
-
-This change log begins with the first ever pre-release version of _CodeSnip_. Releases are listed in reverse version number order.
+Releases are listed in reverse version number order.
 
 > Note that _CodeSnip_ v4 was developed in parallel with v3 for a while. As a consequence some v3 releases have later release dates than early v4 releases.
-
-From v4.1.0 the version numbering has attempted to adhere to the principles of [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Release v4.21.0 of 16 December 2022
 
