@@ -404,7 +404,7 @@ begin
       Inc(ResCount);
       // Skip past any following white space
       Inc(Idx);
-      while TCharacter.IsWhiteSpace(Str[Idx]) do
+      while (Idx <= Length(Str)) and TCharacter.IsWhiteSpace(Str[Idx]) do
         Inc(Idx);
     end
     else
