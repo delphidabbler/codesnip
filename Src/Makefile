@@ -4,13 +4,26 @@
 #
 # Copyright (C) 2009-2021, Peter Johnson (gravatar.com/delphidabbler).
 #
-# Makefile for the CodeSnip project.
+# Makefile for the CodeSnip project (Caboli development).
 
 
 # Define macros giving relative paths to other directories from location of
 # makefile
-BIN = ..\Bin
-EXE = ..\Exe
+BUILDROOT = _build
+WIN32ROOT = $(BUILDROOT)\Win32
+WIN64ROOT = $(BUILDROOT)\Win64
+DEBUG32ROOT = $(WIN32ROOT)\Debug
+DEBUG64ROOT = $(WIN64ROOT)\Debug
+BIN32ROOT = $(DEBUG32ROOT)\bin
+BIN64ROOT = $(DEBUG64ROOT)\bin
+EXE32ROOT = $(DEBUG32ROOT)\exe
+EXE64ROOT = $(DEBUG64ROOT)\exe
+RELEASEROOT = $(BUILDROOT)\release
+
+BIN = ..\$(BIN32ROOT)
+BIN64 = ..\$(BIN64ROOT)
+EXE = ..\$(EXE32ROOT)
+EXE64 = ..\$(EXE64ROOT)
 
 # Check for required environment variables
 
@@ -80,6 +93,7 @@ DELPHIDEFINES =
 .rc.res:
   @echo +++ Compiling Resource file $< +++
   @$(BRCC32) $< -fo$(BIN)\$(@F)
+  @$(BRCC32) $< -fo$(BIN64)\$(@F)
 
 # Version info files are compiled by VIEd. A temporary .rc file is left behind
 .vi.rc:
@@ -104,10 +118,21 @@ config:
   @copy /Y CodeSnip.cfg.tplt CodeSnip.cfg
   # Create build folders
   @cd ..
-  @if exist Bin rmdir /S /Q Bin
-  @mkdir Bin
-  @if not exist Exe mkdir Exe
-  @if not exist Release mkdir Release
+  @if exist $(BUILDROOT) rmdir /S /Q $(BUILDROOT)
+  #@if exist Bin rmdir /S /Q Bin
+  @mkdir $(BUILDROOT)
+  @mkdir $(WIN32ROOT)
+  @mkdir $(WIN64ROOT)
+  @mkdir $(DEBUG32ROOT)
+  @mkdir $(DEBUG64ROOT)
+  @mkdir $(BIN32ROOT)
+  @mkdir $(BIN64ROOT)
+  @mkdir $(EXE32ROOT)
+  @mkdir $(EXE64ROOT)
+  @mkdir $(RELEASEROOT)
+  #@mkdir Bin
+  #@if not exist Exe mkdir Exe
+  #@if not exist Release mkdir Release
   @cd Src
 
 # Builds CodeSnip pascal files and links program
@@ -145,10 +170,12 @@ resources: $(VERINFOFILEBASE).res Resources.res HTML.res
 HTML.res: HTML.hrc
   @echo +++ Compiling HTML Resource manifest file +++
   @$(HTMLRES) -mHTML.hrc -o$(BIN)\HTML.res -r -q
+  @$(HTMLRES) -mHTML.hrc -o$(BIN64)\HTML.res -r -q
 
 # Compiles type library from IDL
 typelib:
   @$(GENTLB) .\ExternalObj.ridl -D$(BIN) -TExternalObj.tlb
+  @$(GENTLB) .\ExternalObj.ridl -D$(BIN64) -TExternalObj.tlb
 
 # Builds setup program
 setup:
@@ -162,6 +189,7 @@ setup:
 # Creates auto generated files
 autogen:
   @$(TLIBIMP) -P+ -Ps+ -D.\AutoGen -FtIntfExternalObj $(BIN)\ExternalObj.tlb
+  @$(TLIBIMP) -P+ -Ps+ -D.\AutoGen -FtIntfExternalObj $(BIN64)\ExternalObj.tlb
   @if exist .\AutoGen\IntfExternalObj.dcr del .\AutoGen\IntfExternalObj.dcr
 
 # Build release files (.zip)
