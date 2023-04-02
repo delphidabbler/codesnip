@@ -155,7 +155,8 @@ CodeSnip.exe:
 
 # Builds help file
 help:
-  -1 @$(HHC) .\Help\CodeSnip.chm
+  -1 @$(HHC) .\Help\CodeSnip.hhp
+  @copy $(EXE)\CodeSnip.chm $(EXE64)
 
 # Compiles the resources and deletes intermediate file created by VIED
 !ifndef PORTABLE

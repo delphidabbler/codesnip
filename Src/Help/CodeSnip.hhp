@@ -8,7 +8,7 @@
 
 [OPTIONS]
 Compatibility=1.1
-Compiled file=..\..\Exe\CodeSnip.chm
+Compiled file=..\..\_build\Win32\Debug\exe\CodeSnip.chm
 Contents file=TOC.hhc
 Default topic=HTML\welcome.htm
 Display compile progress=No
