@@ -51,7 +51,7 @@ NOTIFICATION BITMAP "Res/Img/Notification.bmp"
 /*
   Splash screen image
 */
-SPLASHIMAGE RCDATA "Res/Img/Branding/Splash.gif"
+SPLASHIMAGE RCDATA "Res/Img/Branding/Splash-Caboli.gif"
 
 
 /*

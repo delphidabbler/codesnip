@@ -17,7 +17,7 @@ interface
 
 uses
   // Delphi
-  ExtCtrls, Classes, Controls, Forms,
+  ExtCtrls, Classes, Controls, Forms, GIFImg,
   // Project
   UI.Forms.Root, IntfAligner;
 
@@ -36,10 +36,12 @@ type
     procedure pbMainPaint(Sender: TObject);
     procedure tmMinDisplayTimer(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
   strict private
     fCloseRequested: Boolean; // Records if RequestClose method has been called
     fTimeOut: Boolean;        // Records if minimum display time has elapsed
     fTryToCloseLock: Integer; // Prevent simultaneous access to TryToCloseLock
+    fImage: TGIFImage;        // Splash screen image
     procedure TryToClose;
       {Closes form only if RequestClose method has been called and if minimum
       display time has elapsed.
@@ -50,6 +52,8 @@ type
       to the owner.
         @return Required aligner object instance.
       }
+    ///  <summary>Sizes form to size of splash screen image.</summary>
+    procedure ArrangeControls; override;
   public
     procedure RequestClose;
       {Requests that form should close. If minimum display time has expired form
@@ -67,7 +71,7 @@ implementation
 
 uses
   // Delphi
-  Windows, Graphics, GIFImg,
+  Windows, Graphics,
   // Project
   UAppInfo, UClassHelpers, UColours, UStructs, UWindowSettings;
 
@@ -121,6 +125,12 @@ begin
   Result := TSplashAligner.Create;
 end;
 
+procedure TSplashForm.ArrangeControls;
+begin
+  ClientWidth := fImage.Width;
+  ClientHeight := fImage.Height;
+end;
+
 procedure TSplashForm.FormClose(Sender: TObject; var Action: TCloseAction);
   {Handles form's OnClose event. Frees the form object.
     @param Sender [in] Not used.
@@ -137,26 +147,27 @@ begin
   inherited;
   // No help available
   DisableHelp := True;
+  // Create & load splash image
+  fImage := TGIFImage.Create;
+  fImage.LoadFromResource(HInstance, 'SPLASHIMAGE', RT_RCDATA);
+end;
+
+procedure TSplashForm.FormDestroy(Sender: TObject);
+begin
+  fImage.Free;
+  inherited;
 end;
 
 procedure TSplashForm.pbMainPaint(Sender: TObject);
   {Paints form's image on paint box in response to paint box's OnPaint event.
     @param Sender [in] Not used.
   }
-var
-  GIF: TGIFImage; // main splash image
 const
   cVerPos: TPoint = (X: 34; Y: 118);  // position of version info text
 begin
-  // Load and display splash screen image
-  GIF := TGIFImage.Create;
-  try
-    GIF.LoadFromResource(HInstance, 'SPLASHIMAGE', RT_RCDATA);
-    Canvas.Draw(0, 0, GIF);
-  finally
-    GIF.Free;
-  end;
+  Canvas.Draw(0, 0, fImage);
   // Draw version number with offset drop shadow
+  Canvas.Font.Size := Canvas.Font.Size - 1;
   Canvas.Brush.Style := bsClear;
   Canvas.Font.Color := clSplashShadowText;
   Canvas.TextOut(Pred(cVerPos.X), Pred(cVerPos.Y), TAppInfo.ProgramReleaseInfo);
