@@ -394,7 +394,7 @@ begin
       Inc(ResCount);
       // Skip past any following white space
       Inc(Idx);
-      while Str[Idx].IsWhiteSpace do
+      while (Idx < Length(Str)) and Str[Idx].IsWhiteSpace do
         Inc(Idx);
     end
     else
