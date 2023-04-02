@@ -12,6 +12,7 @@ object RootForm: TRootForm
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   OnKeyDown = FormKeyDown
+  OnShow = FormShow
   PixelsPerInch = 168
   TextHeight = 30
 end
