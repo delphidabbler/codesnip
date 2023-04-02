@@ -490,7 +490,6 @@
         <DCCReference Include="UHiddenRichEdit.pas"/>
         <DCCReference Include="UHistory.pas"/>
         <DCCReference Include="UHistoryMenus.pas"/>
-        <DCCReference Include="UHTMLHelp.pas"/>
         <DCCReference Include="UHTMLHelpMgr.pas"/>
         <DCCReference Include="UHTTPProtocol.pas"/>
         <DCCReference Include="UIniDataLoader.pas"/>

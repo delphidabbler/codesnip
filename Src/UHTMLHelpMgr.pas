@@ -24,7 +24,7 @@ uses
   // Delphi
   Windows,
   // Project
-  UAppInfo, UEncodings, UHTMLHelp, UHelpMgr;
+  UAppInfo, UEncodings, UHelpMgr;
 
 
 type
@@ -37,7 +37,7 @@ type
   )
   strict private
     procedure DoAppHelp(const Command: LongWord; const HelpPage: string;
-      const Data: LongWord);
+      const Data: NativeUInt);
       {Calls HtmlHelp API with specified command and parameters.
         @param Command [in] Command to send to HTML Help.
         @param HelpPage [in] Name of HTML file containing required help page
@@ -54,10 +54,27 @@ type
       }
   end;
 
+  {
+  THHAKLink:
+    Structure used to specify one or more ALink names or KLink keywords to be
+    searched for.
+  }
+  THHAKLink = packed record
+    cbStruct: Integer;    // sizeof this structure
+    fReserved: BOOL;      // must be FALSE (really!)
+    pszKeywords: LPCTSTR; // semi-colon separated keywords
+    pszUrl: LPCTSTR;      // URL to jump to if no keywords found (may be nil)
+    pszMsgText: LPCTSTR;  // MessageBox text on failure (used if pszUrl nil)
+    pszMsgTitle: LPCTSTR; // Title of any failure MessageBox
+    pszWindow: LPCTSTR;   // Window to display pszURL in
+    fIndexOnFail: BOOL;   // Displays index if keyword lookup fails.
+  end;
+
+
 { THTMLHelpMgr }
 
 procedure THTMLHelpMgr.DoAppHelp(const Command: LongWord;
-  const HelpPage: string; const Data: LongWord);
+  const HelpPage: string; const Data: NativeUInt);
   {Calls HtmlHelp API with specified command and parameters.
     @param Command [in] Command to send to HTML Help.
     @param HelpPage [in] Name of HTML file containing required help page within
@@ -98,7 +115,7 @@ begin
   ALink.pszKeywords := Pointer(StringToASCIIString(AKeyword));
   ALink.fIndexOnFail := True;
   // Display help
-  DoAppHelp(HH_ALINK_LOOKUP, '', LongWord(@ALink));
+  DoAppHelp(HH_ALINK_LOOKUP, '', DWORD_PTR(@ALink));
 end;
 
 initialization

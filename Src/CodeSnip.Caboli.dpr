@@ -245,7 +245,6 @@ uses
   UHiddenRichEdit in 'UHiddenRichEdit.pas',
   UHistory in 'UHistory.pas',
   UHistoryMenus in 'UHistoryMenus.pas',
-  UHTMLHelp in 'UHTMLHelp.pas',
   UHTMLHelpMgr in 'UHTMLHelpMgr.pas',
   UHTTPProtocol in 'UHTTPProtocol.pas',
   UIniDataLoader in 'UIniDataLoader.pas',
