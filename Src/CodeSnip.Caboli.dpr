@@ -367,7 +367,10 @@ begin
     Exit;
   end;
 
+  SplashForm := TSplashForm.Create(Application);
+  SplashForm.Show;
+  Application.ModalPopupMode := pmAuto;
+  Application.ProcessMessages;
   Application.CreateForm(TMainForm, MainForm);
-  Application.CreateForm(TSplashForm, SplashForm);
   Application.Run;
 end.
