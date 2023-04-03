@@ -46,6 +46,8 @@ type
       fPathLbl: TLabel;
       ///  <summary>Button that displays path in explorer.</summary>
       fViewBtn: TButton;
+
+      fCreating: Boolean;
     ///  <summary>Read accessor for Path property. Gets and returns value from
     ///  path label.</summary>
     function GetPath: string;
@@ -233,7 +235,7 @@ begin
   TCtrlArranger.AlignLefts([fUserDBPathGp, btnViewAppConfig]);
   TCtrlArranger.AlignRights([fUserDBPathGp, btnViewUserConfig]);
   // Set height of title frame and page control
-  pnlTitle.Height := frmTitle.DocHeight;
+  pnlTitle.Height := frmTitle.DocHeight + 2;
   pcDetail.ClientHeight :=
     pcDetail.Height - tsProgram.ClientHeight +
     Max(
@@ -594,6 +596,9 @@ resourcestring
   sViewBtnHint = 'Explore...|Display the path in Windows Explorer';
 begin
   inherited;
+  fCreating := True;  // inhibit re-arrangement each time fonts are changed
+
+  ParentFont := True;
   // Create and setup path label
   fPathLbl := TLabel.Create(Self);
   fPathLbl.Parent := Self;
@@ -606,6 +611,7 @@ begin
   fPathLbl.Caption := ' ';
   fPathLbl.Transparent := True;
   fPathLbl.ShowHint := True;
+  fPathLbl.ParentFont := True;
   // Create and setup view button
   fViewBtn := TButton.Create(Self);
   fViewBtn.Parent := Self;
@@ -615,8 +621,10 @@ begin
   fViewBtn.Caption := '...';
   fViewBtn.Hint := sViewBtnHint;
   fViewBtn.ShowHint := True;
-  // Ensure correct default font is used
-  TFontHelper.SetDefaultBaseFont(Font);
+  fViewBtn.ParentFont := True;
+
+  fCreating := False;   // re-enabled re-arrangement when fonts change
+
   // Size and arrange controls
   ReArrange;
 end;
@@ -624,7 +632,8 @@ end;
 procedure TPathInfoBox.FontChange(var Msg: TMessage);
 begin
   inherited;
-  ReArrange;
+  if not fCreating then
+    ReArrange;
 end;
 
 function TPathInfoBox.GetPath: string;
@@ -635,9 +644,9 @@ end;
 procedure TPathInfoBox.ReArrange;
 begin
   TCtrlArranger.SetLabelHeight(fPathLbl);
-  Height := Max(fPathLbl.Height, fViewBtn.Height) + 24;
+  Height := Abs(Font.Height) + Max(fPathLbl.Height, fViewBtn.Height) + 24;
   TCtrlArranger.AlignVCentres(
-    (ClientHeight - Max(fPathLbl.Height, fViewBtn.Height)) div 3 * 2,
+    (Height + Abs(Font.Height) - Max(fPathLbl.Height, fViewBtn.Height)) div 2,
     [fPathLbl, fViewBtn]
   );
   fViewBtn.Left := ClientWidth - fViewBtn.Width - 8;
