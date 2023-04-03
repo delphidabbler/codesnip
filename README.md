@@ -7,6 +7,8 @@ The `caboli` branch of the CodeSnip repo is where it is intended to:
 
 > :information_source: "Caboli" is a Welsh language word that translates into English as to "polish" or to "buff".
 
+:warning: _**This repository is experimental and could be removed or abandoneed at any time - do not rely on it.**_
+
 ## Rationale 
 
 Their have been several attempts, spanning 9 years, to create a radically different CodeSnip version 5. These plans all required a significant rewriting of the code base. All the attempts have failed because they were too ambitious. (See the `pagoda`, `pavilion` & `belvedere` branches.)
@@ -31,4 +33,14 @@ At present, any contributions should be made to the main `develop` branch, not t
 
 ## Will this branch succeed?
 
-After series of failures, its hard to say. However I think there's more chance of success this time, because this project, although requiring some significant changes, is nowhere near as ambitious as the CodeSnip 5 attempts.
+After series of failures, its hard to say. However I think there's more chance of success this time, because this project, although requiring some significant changes, is nowhere near as ambitious as the CodeSnip 5 attempts. However, there's a problem getting font scaling to work - see _Progress_ below.
+
+## Progress
+
+As of 2023-04-03 I'm focussing on:
+
+1. Getting the program to compile with Delphi 11.x and building as a 64 bit Windows target. So far so good. There are still some warning and hints to get rid of though.
+
+2. Getting the main UI to work. The main form has been rebuilt from scratch, with the main UI components being in place. There are problems in styling the web browser control to play nicely with dark mode. Not done much about that yet.
+
+3. Getting font scaling to work in the main UI and dialogue boxes for high DPI displays. All dialogue boxes have been recreated using a new folder class heirachy and label fonts have been sorted out. **BUT** font scaling is proving to be a major problem and that's where most of the effort is being spent. This is definitely the issue that may break this project.
