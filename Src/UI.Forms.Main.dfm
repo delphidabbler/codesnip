@@ -500,6 +500,7 @@ inherited MainForm: TMainForm
       Caption = 'About...'
       Hint = 'About box|Display the program'#39's about box'
       ImageIndex = 2
+      OnExecute = actAboutExecute
     end
     object actCopy: TAction
       Category = 'Edit'
@@ -588,6 +589,7 @@ inherited MainForm: TMainForm
       Category = 'Help'
       Caption = 'QuickStart Guide'
       Hint = 'QuickStart guide|Display the QuickStart help topic'
+      OnExecute = actHelpQuickStartExecute
     end
     object actCompilers: TAction
       Category = 'Tools'
@@ -601,6 +603,7 @@ inherited MainForm: TMainForm
       Category = 'Help'
       Caption = 'About Compiler Checks'
       Hint = 'About compiler checks|Display help about test-compiling snippets'
+      OnExecute = actHelpCompChecksExecute
     end
     object actHelpContents: TAction
       Category = 'Help'
@@ -608,6 +611,7 @@ inherited MainForm: TMainForm
       Hint = 'Help contents|Display the help contents page'
       ImageIndex = 1
       ShortCut = 112
+      OnExecute = actHelpContentsExecute
     end
     object actPreferences: TAction
       Category = 'Tools'
@@ -620,6 +624,7 @@ inherited MainForm: TMainForm
       Caption = 'License'
       Hint = 'View license|View a summary of the end user license agreement'
       ImageIndex = 35
+      OnExecute = actLicenseExecute
     end
     object actGitHubHome: TBrowseURL
       Category = 'Help'
@@ -1356,5 +1361,14 @@ inherited MainForm: TMainForm
     Left = 408
     Top = 650
     StyleName = 'Platform Default'
+  end
+  object ApplicationEvents: TApplicationEvents
+    OnHelp = ApplicationEventsHelp
+    Left = 368
+    Top = 240
+  end
+  object MainImageList: TImageList
+    Left = 746
+    Top = 394
   end
 end
