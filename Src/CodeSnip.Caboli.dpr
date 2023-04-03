@@ -340,7 +340,8 @@ uses
   FmWizardDlg in 'FmWizardDlg.pas' {WizardDlg},
   UI.ThemeManager in 'UI.ThemeManager.pas',
   FirstRun.FmV4ConfigDlg in 'FirstRun.FmV4ConfigDlg.pas' {V4ConfigDlg},
-  FirstRun.FmWhatsNew in 'FirstRun.FmWhatsNew.pas' {WhatsNewDlg};
+  FirstRun.FmWhatsNew in 'FirstRun.FmWhatsNew.pas' {WhatsNewDlg},
+  FmRegisterCompilersDlg in 'FmRegisterCompilersDlg.pas' {RegisterCompilersDlg};
 
 // Include resources
 

@@ -51,9 +51,9 @@ type
     procedure SetCaptions;
     procedure PopulateList;
   strict protected
-    procedure ConfigForm; override;
-    procedure InitForm; override;
-    procedure ArrangeForm; override;
+    procedure CustomiseControls; override;
+    procedure ArrangeControls; override;
+    procedure InitialiseControls; override;
     ///  <summary>Handles HTML frame's OnBuildCSS event. Adds additional CSS
     ///  required by HTML in this form.</summary>
     ///  <param name="Sender">TObject [in] Reference to object triggering event.
@@ -86,7 +86,7 @@ begin
   btnOK.Enabled := chkDontShowAgain.Checked or (CountTickedCompilers > 0);
 end;
 
-procedure TRegisterCompilersDlg.ArrangeForm;
+procedure TRegisterCompilersDlg.ArrangeControls;
 begin
   TCtrlArranger.SetLabelHeight(lblDesc);
   clbCompilers.Top := TCtrlArranger.BottomOf(lblDesc, 8);
@@ -125,13 +125,6 @@ begin
   Selector.AddProperty(TCSS.MarginProp(cssTop, 0));
 end;
 
-procedure TRegisterCompilersDlg.ConfigForm;
-begin
-  inherited;
-  frmNotes.OnBuildCSS := BuildCSS;
-  frmNotes.Initialise('dlg-register-compilers.html');
-end;
-
 function TRegisterCompilersDlg.CountTickedCompilers: Integer;
 var
   I: Integer;
@@ -140,6 +133,13 @@ begin
   for I := 0 to Pred(clbCompilers.Count) do
     if clbCompilers.Checked[I] then
       Inc(Result);
+end;
+
+procedure TRegisterCompilersDlg.CustomiseControls;
+begin
+  inherited;
+  frmNotes.OnBuildCSS := BuildCSS;
+  frmNotes.Initialise('dlg-register-compilers.html');
 end;
 
 class function TRegisterCompilersDlg.Execute(const AOwner: TComponent;
@@ -181,7 +181,7 @@ begin
   inherited;
 end;
 
-procedure TRegisterCompilersDlg.InitForm;
+procedure TRegisterCompilersDlg.InitialiseControls;
 begin
   inherited;
   SetCaptions;

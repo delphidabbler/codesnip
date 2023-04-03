@@ -662,6 +662,10 @@
         <DCCReference Include="FirstRun.FmWhatsNew.pas">
             <Form>WhatsNewDlg</Form>
         </DCCReference>
+        <DCCReference Include="FmRegisterCompilersDlg.pas">
+            <Form>RegisterCompilersDlg</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
