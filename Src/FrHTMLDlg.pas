@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2005-2022, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements a frame containing a web browser control that displays HTML
  * content that takes on the appearance of a dialogue box.
@@ -18,9 +18,16 @@ interface
 
 uses
   // Delphi
-  OleCtrls, SHDocVw, Classes, Controls, ExtCtrls, Forms,
+  OleCtrls,
+  SHDocVw,
+  Classes,
+  Controls,
+  ExtCtrls,
+  Forms,
   // Project
-  FrBrowserBase, UCSSBuilder;
+  Browser.UUIMgr,
+  FrBrowserBase,
+  UCSSBuilder;
 
 
 type
@@ -35,8 +42,11 @@ type
     fOwner: TForm;
       {Form that owns the frame. Used to set font and colours to display in
       frame's HTML }
+    function GetScrollStyle: TWBScrollbarStyle;
+    procedure SetScrollStyle(const AValue: TWBScrollbarStyle);
   strict protected
     procedure BuildCSS(const CSSBuilder: TCSSBuilder); override;
+  published
       {Generates CSS classes specific to HTML dialog boxes. This CSS is added to
       that provided by parent class.
         @param CSSBuilder [in] Object used to build the CSS code.
@@ -50,6 +60,7 @@ type
       {Calculates height of document displayed in browser.
         @return Document height in pixels.
       }
+    property ScrollStyle: TWBScrollbarStyle read GetScrollStyle write SetScrollStyle default sbsHide;
   end;
 
 
@@ -58,9 +69,11 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Graphics,
+  SysUtils,
+  Graphics,
   // Project
-  Browser.UUIMgr, UCSSUtils, UNulDropTarget;
+  UCSSUtils,
+  UNulDropTarget;
 
 
 {$R *.dfm}
@@ -80,38 +93,30 @@ begin
   // Set body style to use dialog box colour and font with no margin
   CSSFont := TFont.Create;
   try
-    with CSSBuilder.AddSelector('body') do
-    begin
-      AddProperty(TCSS.BackgroundColorProp(fOwner.Color));
-      AddProperty(TCSS.FontProps(fOwner.Font));
-      AddProperty(TCSS.MarginProp(0));
-    end;
+    CSSBuilder.AddSelector('body')
+      .AddProperty(TCSS.BackgroundColorProp(fOwner.Color))
+      .AddProperty(TCSS.FontProps(fOwner.Font))
+      .AddProperty(TCSS.MarginProp(0));
     // Sets heading margins, padding and font size
-    with CSSBuilder.AddSelector('h1') do
-    begin
-      CSSFont.Assign(Self.Font);
-      CSSFont.Size := CSSFont.Size + 2;
-      CSSFont.Style := [fsBold];
-      AddProperty(TCSS.FontProps(CSSFont));
-      AddProperty(TCSS.MarginProp(0));
-      AddProperty(TCSS.PaddingProp(0));
-    end;
+    CSSFont.Assign(Self.Font);
+    CSSFont.Size := CSSFont.Size + 2;
+    CSSFont.Style := [fsBold];
+    CSSBuilder.AddSelector('h1')
+      .AddProperty(TCSS.FontProps(CSSFont))
+      .AddProperty(TCSS.MarginProp(0))
+      .AddProperty(TCSS.PaddingProp(0));
     // Sets paragraph margins and padding
-    with CSSBuilder.AddSelector('p') do
-    begin
-      AddProperty(TCSS.MarginProp(cssTop, 6));
-      AddProperty(TCSS.MarginProp(cssBottom, 0));
-      AddProperty(TCSS.PaddingProp(0));
-    end;
-    with CSSBuilder.AddSelector('ul') do
-    begin
-      AddProperty(TCSS.MarginProp(cssTop, 6));
-      AddProperty(TCSS.MarginProp(cssBottom, 0));
-      AddProperty(TCSS.PaddingProp(0));
-    end;
+    CSSBuilder.AddSelector('p')
+      .AddProperty(TCSS.MarginProp(cssTop, 6))
+      .AddProperty(TCSS.MarginProp(cssBottom, 0))
+      .AddProperty(TCSS.PaddingProp(0));
+    CSSBuilder.AddSelector('ul')
+      .AddProperty(TCSS.MarginProp(cssTop, 6))
+      .AddProperty(TCSS.MarginProp(cssBottom, 0))
+      .AddProperty(TCSS.PaddingProp(0));
     // Sets table font info
-    with CSSBuilder.AddSelector('table') do
-      AddProperty(TCSS.FontProps(fOwner.Font));
+    CSSBuilder.AddSelector('table')
+      .AddProperty(TCSS.FontProps(fOwner.Font));
   finally
     FreeAndNil(CSSFont);
   end;
@@ -138,6 +143,17 @@ function THTMLDlgFrame.DocHeight: Integer;
   }
 begin
   Result := WBController.UIMgr.DocHeight;
+end;
+
+function THTMLDlgFrame.GetScrollStyle: TWBScrollbarStyle;
+begin
+  Result := WBController.UIMgr.ScrollbarStyle;
+end;
+
+procedure THTMLDlgFrame.SetScrollStyle(const AValue: TWBScrollbarStyle);
+begin
+  if AValue <> GetScrollStyle then
+    WBController.UIMgr.ScrollbarStyle := AValue;
 end;
 
 end.

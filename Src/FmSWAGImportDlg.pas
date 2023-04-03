@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2013-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2013-2022, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements a wizard dialogue box that lets the user select and import
  * packets from the DelphiDabbler implementation of the SWAG Pascal archive as
@@ -424,15 +424,13 @@ procedure TSWAGImportDlg.BuildCSS(Sender: TObject;
 begin
   inherited;
   // Set body text spacing
-  with CSSBuilder.Selectors['body'] do
-    AddProperty(TCSS.LineHeightProp(120));
+  CSSBuilder.Selectors['body']
+    .AddProperty(TCSS.LineHeightProp(120));
   // Create .framed border style
-  with CSSBuilder.AddSelector('.framed') do
-  begin
-    AddProperty(TCSS.BorderProp(cssAll, 1, cbsSolid, clBorder));
-    AddProperty(TCSS.PaddingProp(0, 4, 4, 4));
-    AddProperty(TCSS.MarginProp(cssTop, 4));
-  end;
+  CSSBuilder.AddSelector('.framed')
+    .AddProperty(TCSS.BorderProp(cssAll, 1, cbsSolid, clBorder))
+    .AddProperty(TCSS.PaddingProp(0, 4, 4, 4))
+    .AddProperty(TCSS.MarginProp(cssTop, 4));
 end;
 
 procedure TSWAGImportDlg.clbSelectPacketsClickCheck(Sender: TObject);
@@ -814,7 +812,7 @@ begin
       FullPacket.FileName,
       FullPacket.Title,
       FullPacket.Author,
-      StringOfChar('-', 80),
+      StrOfChar('-', 80),
       StrWindowsLineBreaks(FullPacket.SourceCode)
     ]
   );

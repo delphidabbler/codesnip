@@ -143,6 +143,7 @@ begin
     ContentFont := TFont.Create;
     TFontHelper.SetDefaultMonoFont(MonoFont);
     TFontHelper.SetContentFont(ContentFont);
+
     // Must do next two lines before changing content & mono font sizes
     DefContentFontSize := ContentFont.Size;
     DefMonoFontSize := MonoFont.Size;
@@ -150,96 +151,92 @@ begin
     MonoToContentFontRatio := DefMonoFontSize / DefContentFontSize;
     ContentFont.Size := Preferences.DetailFontSize;
     MonoFont.Size := Round(ContentFont.Size * MonoToContentFontRatio);
+
     // Set body style to use program's font and window colour
-    with CSSBuilder.AddSelector('body') do
-    begin
-      CSSFont.Assign(ContentFont);
-      AddProperty(TCSS.FontProps(CSSFont));
-      AddProperty(TCSS.BackgroundColorProp(clWindow));
-    end;
-    with CSSBuilder.Selectors['code'] do
-    begin
-      CSSFont.Assign(MonoFont);
-      AddProperty(TCSS.FontProps(CSSFont));
-    end;
+    CSSFont.Assign(ContentFont);
+    CSSBuilder.AddSelector('body')
+      .AddProperty(TCSS.FontProps(CSSFont))
+      .AddProperty(TCSS.BackgroundColorProp(clWindow));
+
+    // Set mono spaced font for <code> tags
+    CSSFont.Assign(MonoFont);
+    CSSBuilder.Selectors['code']
+      .AddProperty(TCSS.FontProps(CSSFont));
+
     // Set table to use required font
-    with CSSBuilder.AddSelector('table') do
-    begin
-      CSSFont.Assign(ContentFont);
-      AddProperty(TCSS.FontProps(CSSFont));
-      AddProperty(TCSS.BackgroundColorProp(clBorder));
-    end;
+    CSSFont.Assign(ContentFont);
+    CSSBuilder.AddSelector('table')
+      .AddProperty(TCSS.FontProps(CSSFont))
+      .AddProperty(TCSS.BackgroundColorProp(clBorder));
+
     // Set default table cell colour (must be different to table to get border)
-    with CSSBuilder.AddSelector('td') do
-      AddProperty(TCSS.BackgroundColorProp(clWindow));
+    CSSBuilder.AddSelector('td')
+      .AddProperty(TCSS.BackgroundColorProp(clWindow));
+
     // Sets H1 heading font size and border
-    with CSSBuilder.AddSelector('h1') do
-    begin
-      CSSFont.Assign(ContentFont);
-      CSSFont.Size := CSSFont.Size + Max(
-        Round(2 * ContentFontScaleFactor * CSSFont.Size), 2
-      );
-      CSSFont.Style := [fsBold];
-      AddProperty(TCSS.FontProps(CSSFont));
-      AddProperty(TCSS.BorderProp(cssBottom, 1, cbsSolid, clBorder));
-    end;
+    CSSFont.Assign(ContentFont);
+    CSSFont.Size := CSSFont.Size + Max(
+      Round(2 * ContentFontScaleFactor * CSSFont.Size), 2
+    );
+    CSSFont.Style := [fsBold];
+    CSSBuilder.AddSelector('h1')
+      .AddProperty(TCSS.FontProps(CSSFont))
+      .AddProperty(TCSS.BorderProp(cssBottom, 1, cbsSolid, clBorder));
+
     // Sets H2 heading font size and border
-    with CSSBuilder.AddSelector('h2') do
-    begin
-      CSSFont.Assign(ContentFont);
-      CSSFont.Style := [fsBold];
-      AddProperty(TCSS.FontProps(CSSFont));
-    end;
+    CSSFont.Assign(ContentFont);
+    CSSFont.Style := [fsBold];
+    CSSBuilder.AddSelector('h2')
+      .AddProperty(TCSS.FontProps(CSSFont));
+
     // Set H2 heading font for use in rendered active text
-    with CSSBuilder.AddSelector('.active-text h2') do
-    begin
-      CSSFont.Assign(ContentFont);
-      CSSFont.Style := [fsBold];
-      CSSFont.Size := CSSFont.Size + Max(
-        Round(ContentFontScaleFactor * CSSFont.Size), 1
-      );
-      AddProperty(TCSS.FontProps(CSSFont));
-    end;
+    CSSFont.Assign(ContentFont);
+    CSSFont.Style := [fsBold];
+    CSSFont.Size := CSSFont.Size + Max(
+      Round(ContentFontScaleFactor * CSSFont.Size), 1
+    );
+    CSSBuilder.AddSelector('.active-text h2')
+      .AddProperty(TCSS.FontProps(CSSFont));
+
     // Set CODE tag within H2 heading for use in rendered active text
-    with CSSBuilder.AddSelector('.active-text h2 code') do
-    begin
-      CSSFont.Assign(MonoFont);
-      CSSFont.Style := [fsBold];
-      CSSFont.Size := CSSFont.Size + Max(
-        Round(ContentFontScaleFactor * CSSFont.Size), 1
-      );
-      AddProperty(TCSS.FontProps(CSSFont));
-    end;
+    CSSFont.Assign(MonoFont);
+    CSSFont.Style := [fsBold];
+    CSSFont.Size := CSSFont.Size + Max(
+      Round(ContentFontScaleFactor * CSSFont.Size), 1
+    );
+    CSSBuilder.AddSelector('.active-text h2 code')
+      .AddProperty(TCSS.FontProps(CSSFont));
+
     // Set H2 heading font for use in rendered active text in snippet list table
-    with CSSBuilder.AddSelector('.snippet-list .active-text h2') do
-    begin
-      CSSFont.Assign(ContentFont);
-      CSSFont.Style := [fsBold];
-      AddProperty(TCSS.FontProps(CSSFont));
-    end;
-    // Set CODE within H2 heading font for use in rendered active text in
+    CSSFont.Assign(ContentFont);
+    CSSFont.Style := [fsBold];
+    CSSBuilder.AddSelector('.snippet-list .active-text h2')
+      .AddProperty(TCSS.FontProps(CSSFont));
+
+    // Set <code> within H2 heading font for use in rendered active text in
     // snippet list table
-    with CSSBuilder.AddSelector('.snippet-list .active-text h2 code') do
-    begin
-      CSSFont.Assign(MonoFont);
-      CSSFont.Style := [fsBold];
-      AddProperty(TCSS.FontProps(CSSFont));
-    end;
+    CSSFont.Assign(MonoFont);
+    CSSFont.Style := [fsBold];
+    CSSBuilder.AddSelector('.snippet-list .active-text h2 code')
+      .AddProperty(TCSS.FontProps(CSSFont));
+
     // Style of box that appears around clickable options (or actions)
-    with CSSBuilder.AddSelector('.optionbox') do
-      AddProperty(TCSS.BorderProp(cssAll, 1, cbsSolid, clBorder));
-    with CSSBuilder.AddSelector('.userdb') do
-      AddProperty(TCSS.ColorProp(Preferences.DBHeadingColours[True]));
-    with CSSBuilder.AddSelector('.maindb') do
-      AddProperty(TCSS.ColorProp(Preferences.DBHeadingColours[False]));
+    CSSBuilder.AddSelector('.optionbox')
+      .AddProperty(TCSS.BorderProp(cssAll, 1, cbsSolid, clBorder));
+
+    // Heading colours for user & main databases
+    CSSBuilder.AddSelector('.userdb')
+      .AddProperty(TCSS.ColorProp(Preferences.DBHeadingColours[True]));
+    CSSBuilder.AddSelector('.maindb')
+      .AddProperty(TCSS.ColorProp(Preferences.DBHeadingColours[False]));
+
     // Sets CSS for style of New Tab text
-    with CSSBuilder.AddSelector('#newtab') do
-    begin
-      CSSFont.Assign(ContentFont);
-      CSSFont.Size := 36 + Round(36 * ContentFontScaleFactor);
-      CSSFont.Color := clNewTabText;
-      AddProperty(TCSS.FontProps(CSSFont));
-    end;
+    CSSFont.Assign(ContentFont);
+    CSSFont.Size := 36 + Round(36 * ContentFontScaleFactor);
+    CSSFont.Color := clNewTabText;
+    CSSBuilder.AddSelector('#newtab')
+      .AddProperty(TCSS.FontProps(CSSFont));
+
     // Sets text styles and colours used by syntax highlighter
     HiliteAttrs := THiliteAttrsFactory.CreateUserAttrs;
     with THiliterCSS.Create(HiliteAttrs) do
@@ -248,23 +245,53 @@ begin
       finally
         Free;
       end;
+
     // Adjust .pas-source class to use required background colour
-    with CSSBuilder.Selectors['.' + THiliterCSS.GetMainCSSClassName] do
-    begin
-      AddProperty(TCSS.BackgroundColorProp(Preferences.SourceCodeBGcolour));
-      if TIEInfo.SupportsCSSOverflowX then
-        AddProperty(TCSS.OverflowProp(covAuto, codX));
-    end;
+    CSSBuilder.Selectors['.' + THiliterCSS.GetMainCSSClassName]
+      .AddProperty(TCSS.BackgroundColorProp(Preferences.SourceCodeBGcolour))
+      .AddPropertyIf(
+        TIEInfo.SupportsCSSOverflowX, TCSS.OverflowProp(covAuto, codX)
+      );
+
+    // Address IE peculiarities
     if TIEInfo.SupportsCSSOverflowX then
-    begin
-      with CSSBuilder.AddSelector('#compile-results') do
-        AddProperty(TCSS.OverflowProp(covAuto, codX));
-    end;
-    with CSSBuilder.AddSelector('.comptable th') do
-    begin
-      AddProperty(TCSS.BackgroundColorProp(clCompTblHeadBg));
-      AddProperty(TCSS.FontWeightProp(cfwNormal));
-    end;
+      CSSBuilder.AddSelector('#compile-results')
+        .AddProperty(TCSS.OverflowProp(covAuto, codX));
+
+    // Compiler table heading
+    CSSBuilder.AddSelector('.comptable th')
+      .AddProperty(TCSS.BackgroundColorProp(clCompTblHeadBg))
+      .AddProperty(TCSS.FontWeightProp(cfwNormal));
+
+    // Set active text list classes
+    CSSBuilder.EnsureSelector('.active-text ul')
+      .AddProperty(TCSS.MarginProp(cssAll, 0))
+      .AddProperty(TCSS.MarginProp(cssTop, 4))
+      .AddProperty(TCSS.PaddingProp(cssAll, 0))
+      .AddProperty(TCSS.PaddingProp(cssLeft, 24))
+      .AddProperty(TCSS.ListStylePositionProp(clspOutside))
+      .AddProperty(TCSS.ListStyleTypeProp(clstDisc));
+
+    // Active list styling
+    CSSBuilder.EnsureSelector('.active-text ol')
+      .AddProperty(TCSS.MarginProp(cssAll, 0))
+      .AddProperty(TCSS.MarginProp(cssTop, 4))
+      .AddProperty(TCSS.PaddingProp(cssAll, 0))
+      .AddProperty(TCSS.PaddingProp(cssLeft, 32))
+      .AddProperty(TCSS.ListStylePositionProp(clspOutside))
+      .AddProperty(TCSS.ListStyleTypeProp(clstDecimal));
+    CSSBuilder.EnsureSelector('.active-text li')
+      .AddProperty(TCSS.PaddingProp(cssAll, 0))
+      .AddProperty(TCSS.MarginProp(cssAll, 0));
+    CSSBuilder.EnsureSelector('.active-text li ol')
+      .AddProperty(TCSS.MarginProp(cssTop, 0));
+    CSSBuilder.EnsureSelector('.active-text li ul')
+      .AddProperty(TCSS.MarginProp(cssTop, 0));
+    CSSBuilder.EnsureSelector('.active-text ul li')
+      .AddProperty(TCSS.PaddingProp(cssLeft, 8));
+    CSSBuilder.EnsureSelector('.active-text ul li ol li')
+      .AddProperty(TCSS.PaddingProp(cssLeft, 0));
+
   finally
     ContentFont.Free;
     MonoFont.Free;

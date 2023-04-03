@@ -156,6 +156,32 @@ type
   );
 
 type
+  ///  <summary>Enumeration of different list markers.</summary>
+  ///  <remarks>This is not a complete list. Additional values are defined in
+  ///  CSS.</remarks>
+  TCSSListStyleType = (
+    clstNone,       // no marker
+    clstInitial,    // default marker
+    clstInherit,    // inherit from parent
+    clstDisc,       // filled circle
+    clstCircle,     // un-filled circle
+    clstSquare,     // filled square
+    clstDecimal,    // decimal number (1, 2, 3...)
+    clstDecimal0,   // decimal number padding with leading zeros (01, 02, 03...)
+    clstLowerRoman, // lower case roman numeral (i, ii, iii, iv...)
+    clstUpperRoman, // upper case roman numeral (I, II, III, IV...)
+    clstLowerAlpha, // lower case letter (a, b, c, d...)
+    clstUpperAlpha  // upper case letter (A, B, C, D...)
+  );
+
+type
+  ///  <summary>Enumeration of possible list item markers.</summary>
+  TCSSListStylePosition = (
+    clspOutside,    // list marker outside the list item
+    clspInside      // list marker inside the list item
+  );
+
+type
   ///  <summary>
   ///  Container for static methods that return CSS properties as text.
   ///  </summary>
@@ -429,6 +455,20 @@ type
     ///  <remarks>Only the percentage version of line height is supported.
     ///  </remarks>
     class function LineHeightProp(const Percentage: UInt16): string; static;
+
+    ///  <summary>Creates a CSS "list-style-type" property.</summary>
+    ///  <param name="Value">TCSSListStyleType [in] Required property value.
+    ///  </param>
+    ///  <returns>string. Required CSS property.</returns>
+    class function ListStyleTypeProp(const Value: TCSSListStyleType): string;
+      static;
+
+    ///  <summary>Creates a CSS "list-style-position" property.</summary>
+    ///  <param name="Value">TCSSListStylePosition [in] Required property value.
+    ///  </param>
+    ///  <returns>string. Required CSS property.</returns>
+    class function ListStylePositionProp(const Value: TCSSListStylePosition):
+      string; static;
   end;
 
 
@@ -639,6 +679,27 @@ end;
 class function TCSS.LineHeightProp(const Percentage: UInt16): string;
 begin
   Result := 'line-height: ' + IntToStr(Percentage) + '%';
+end;
+
+class function TCSS.ListStylePositionProp(
+  const Value: TCSSListStylePosition): string;
+const
+  Positions: array[TCSSListStylePosition] of string = ('outside', 'inside');
+begin
+  Result := 'list-style-position: ' + Positions[Value] + ';';
+end;
+
+class function TCSS.ListStyleTypeProp(const Value: TCSSListStyleType): string;
+const
+  Types: array[TCSSListStyleType] of string = (
+    'none', 'initial', 'inherit',
+    'disc', 'circle', 'square',
+    'decimal', 'decimal-leading-zero',
+    'lower-roman', 'upper-roman',
+    'lower-alpha', 'upper-alpha'
+  );
+begin
+  Result := 'list-style-type: ' + Types[Value] + ';';
 end;
 
 class function TCSS.MarginProp(const Margin: array of Integer): string;

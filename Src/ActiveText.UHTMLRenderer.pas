@@ -134,7 +134,7 @@ var
   ElemKind: TActiveTextActionElemKind;
 const
   Tags: array[TActiveTextActionElemKind] of string = (
-    'a', 'strong', 'em', 'var', 'p', 'span', 'h2', 'code'
+    'a', 'strong', 'em', 'var', 'p', 'span', 'h2', 'code', 'ul', 'ol', 'li'
   );
 begin
   NullAttrs := function(Elem: IActiveTextActionElem): IHTMLAttributes
@@ -194,7 +194,7 @@ begin
       RenderTextElem(TextElem)
     else if Supports(Elem, IActiveTextActionElem, ActionElem) then
     begin
-      if ActionElem.DisplayStyle = dsBlock then
+      if TActiveTextElemCaps.DisplayStyleOf(ActionElem.Kind) = dsBlock then
         RenderBlockActionElem(ActionElem)
       else
         RenderInlineActionElem(ActionElem);
@@ -244,7 +244,7 @@ end;
 constructor TActiveTextHTML.TCSSStyles.Create;
 const
   DefaultClasses: array[TActiveTextActionElemKind] of string = (
-    'external-link', '', '', '', '', 'warning', '', ''
+    'external-link', '', '', '', '', 'warning', '', '', '', '', ''
   );
 var
   ElemKind: TActiveTextActionElemKind;

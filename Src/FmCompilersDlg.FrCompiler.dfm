@@ -1,4 +1,7 @@
 inherited CompilersDlgCompilerFrame: TCompilersDlgCompilerFrame
+  DesignSize = (
+    362
+    235)
   object lblCompilerPath: TLabel
     Left = 4
     Top = 4
@@ -46,9 +49,17 @@ inherited CompilersDlgCompilerFrame: TCompilersDlgCompilerFrame
   object chkShowInMain: TCheckBox
     Left = 4
     Top = 88
-    Width = 273
+    Width = 320
     Height = 17
     Caption = 'Display &results for this compiler in details pane'
     TabOrder = 3
+  end
+  object chkPermitAutoDetect: TCheckBox
+    Left = 4
+    Top = 111
+    Width = 320
+    Height = 17
+    Caption = 'Permit &auto-detection && registration of this compiler'
+    TabOrder = 4
   end
 end

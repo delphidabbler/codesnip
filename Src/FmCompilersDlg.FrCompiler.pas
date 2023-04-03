@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2011-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2011-2022, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements a frame used to edit executable file name of compiler being edited
  * in TCompilersDlg.
@@ -34,6 +34,7 @@ type
     btnBrowse: TButton;
     btnClear: TButton;
     chkShowInMain: TCheckBox;
+    chkPermitAutoDetect: TCheckBox;
     ///  <summary>Displays file open dialog box and places entered file name in
     ///  compiler file name edit control.</summary>
     procedure btnBrowseClick(Sender: TObject);
@@ -98,6 +99,7 @@ begin
   );
   btnClear.Top := TCtrlArranger.BottomOf([edCompilerPath, btnBrowse], 8);
   chkShowInMain.Top := TCtrlArranger.BottomOf(btnClear, 24);
+  chkPermitAutoDetect.Top := TCtrlArranger.BottomOf(chkShowInMain, 8);
 end;
 
 procedure TCompilersDlgCompilerFrame.btnBrowseClick(Sender: TObject);
@@ -164,12 +166,22 @@ procedure TCompilersDlgCompilerFrame.Initialise;
 begin
   edCompilerPath.Text := Compiler.GetExecFile;
   chkShowInMain.Checked := Compiler.GetDisplayable;
+  chkPermitAutoDetect.Visible := Supports(Compiler, ICompilerAutoDetect);
+  if chkPermitAutoDetect.Visible then
+    chkPermitAutoDetect.Checked :=
+      (Compiler as ICompilerAutoDetect).GetCanAutoInstall
+  else
+    chkPermitAutoDetect.Checked := False;
 end;
 
 procedure TCompilersDlgCompilerFrame.UpdateCompiler;
 begin
   Compiler.SetExecFile(GetCompilerPath);
   Compiler.SetDisplayable(chkShowInMain.Checked);
+  if Supports(Compiler, ICompilerAutoDetect) then
+    (Compiler as ICompilerAutoDetect).SetCanAutoInstall(
+      chkPermitAutoDetect.Checked
+    );
 end;
 
 function TCompilersDlgCompilerFrame.ValidateFileName(const FileName: string;

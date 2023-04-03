@@ -53,6 +53,7 @@ HTML\dlg_prefs_printing.htm
 HTML\dlg_prefs_snippetlayout.htm
 HTML\dlg_prefs_sourcecode.htm
 HTML\dlg_print.htm
+HTML\dlg_registercompilers.htm
 HTML\dlg_renamecategory.htm
 HTML\dlg_restore.htm
 HTML\dlg_savehiliter.htm
@@ -101,6 +102,7 @@ HTML\task_deleteuserdb.htm
 HTML\task_export.htm
 HTML\task_generateunit.htm
 HTML\task_printroutine.htm
+HTML\task_registercompilers.htm
 HTML\task_savesnippet.htm
 HTML\task_search.htm
 HTML\task_testcompile.htm

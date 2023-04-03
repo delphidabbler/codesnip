@@ -35,11 +35,22 @@ type
     var
       fId: TCompilerID;
         {Identifies compiler}
+      // Flags whether user permits compiler to be auto installed.
+      fCanAutoInstall: Boolean;
     function InstallPathFromReg(const RootKey: HKEY): string;
       {Gets compiler install root path from given registry root key, if present.
         @param RootKey [in] Given registry root key.
         @return Required root path or '' if not compiler not installed.
       }
+    ///  <summary>Gets the path to the compiler exe file if the compiler is
+    ///  registered as installed on the user's computer.</summary>
+    ///  <param name="ExePath">string [out] Set to path to compiler executable
+    ///  file. Empty string if compiler not installed.</param>
+    ///  <returns>Boolean. True if compiler is registered as installed or False
+    ///  otherwise.</returns>
+    ///  <remarks>Does not check if compiler exe is actually present, just if
+    ///  it is registered.</remarks>
+    function GetExePathIfInstalled(out ExePath: string): Boolean;
   strict protected
     function SearchDirParams: string; override;
       {One of more parameters that define any search directories to be passed
@@ -61,10 +72,35 @@ type
         @param Obj Compiler object to copy.
       }
     { ICompilerAutoDetect }
+    ///  <summary>Detects and records path to command line compiler exe file,
+    ///  if compiler is registered as installed.</summary>
+    ///  <returns>Boolean. True if compiler is registered as installed, False
+    ///  otherwise.</returns>
+    ///  <remarks>
+    ///  <para>Does not check if the compiler exe file actually exists.</para>
+    ///  <para>Does not set compiler exe file if compiler is not installed.
+    ///  </para>
+    ///  <para>Method of ICompilerAutoDetect.</para>
+    ///  </remarks>
     function DetectExeFile: Boolean;
-      {Detects and records path to command line compiler if present.
-        @return True if compiler path found, false otherwise.
-      }
+    ///  <summary>Checks if the compiler is installed on the user's system.
+    ///  </summary>
+    ///  <returns>Boolean. True if compiler is physically installed, False
+    ///  otherwise.</returns>
+    ///  <remarks>
+    ///  <para>Checks if compiler exe is actually present.</para>
+    ///  <para>Method of ICompilerAutoDetect.</para>
+    ///  </remarks>
+    function IsInstalled: Boolean;
+    ///  <summary>Checks if the compiler is permitted to be automatically
+    ///  installed.</summary>
+    ///  <remarks>Method of ICompilerAutoDetect.</remarks>
+    function GetCanAutoInstall: Boolean;
+    ///  <summary>Determines whether the compiler can be automatically
+    ///  installed.</summary>
+    ///  <remarks>Method of ICompilerAutoDetect.</remarks>
+    procedure SetCanAutoInstall(const Value: Boolean);
+
     { ICompiler }
     function GetDefaultSwitches: string; override;
       {Returns default command line switches for compiler.
@@ -88,7 +124,7 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Registry,
+  SysUtils, Registry, IOUtils,
   // 3rd party
   PJSysInfo,      // for inline expansion
   // Project
@@ -111,6 +147,7 @@ constructor TBorlandCompiler.CreateCopy(const Obj: TBorlandCompiler);
 begin
   inherited CreateCopy(Obj);
   fId := Obj.GetID;
+  fCanAutoInstall := Obj.GetCanAutoInstall;
 end;
 
 procedure TBorlandCompiler.DeleteObjFiles(const Path, Project: string);
@@ -130,17 +167,16 @@ function TBorlandCompiler.DetectExeFile: Boolean;
     @return True if compiler path found, false otherwise.
   }
 var
-  InstDir: string;    // installation root directory
+  ExePath: string;
 begin
-  // try HKLM
-  InstDir := InstallPathFromReg(HKEY_LOCAL_MACHINE);
-  if InstDir = '' then
-    // in case install was for user only, try HKCU
-    InstDir := InstallPathFromReg(HKEY_CURRENT_USER);
-  if InstDir = '' then
-    Exit(False);
-  SetExecFile(IncludeTrailingPathDelimiter(InstDir) + 'Bin\DCC32.exe');
-  Result := True;
+  Result := GetExePathIfInstalled(ExePath);
+  if Result then
+    SetExecFile(ExePath);
+end;
+
+function TBorlandCompiler.GetCanAutoInstall: Boolean;
+begin
+  Result := fCanAutoInstall;
 end;
 
 function TBorlandCompiler.GetDefaultSwitches: string;
@@ -161,6 +197,22 @@ begin
          +  '-$O+,'   // Optimization ON
          +  '-$Z1,'   // Minimum size of enum types = 1
          +  '-$P+';   // Open string params ON
+end;
+
+function TBorlandCompiler.GetExePathIfInstalled(out ExePath: string): Boolean;
+var
+  InstDir: string;
+begin
+  ExePath := '';
+  // try HKLM
+  InstDir := InstallPathFromReg(HKEY_LOCAL_MACHINE);
+  if InstDir = '' then
+    // in case install was for user only, try HKCU
+    InstDir := InstallPathFromReg(HKEY_CURRENT_USER);
+  if InstDir = '' then
+    Exit(False);
+  ExePath := TPath.Combine(InstDir, 'Bin\DCC32.exe');
+  Result := True;
 end;
 
 function TBorlandCompiler.GetID: TCompilerID;
@@ -194,6 +246,15 @@ begin
   end;
 end;
 
+function TBorlandCompiler.IsInstalled: Boolean;
+var
+  ExePath: string;
+begin
+  if not GetExePathIfInstalled(ExePath) then
+    Exit(False);
+  Result := TFile.Exists(ExePath, False);
+end;
+
 function TBorlandCompiler.SearchDirParams: string;
   {One of more parameters that define any search directories to be passed to
   compiler on command line.
@@ -209,6 +270,11 @@ begin
     + ' ' + StrQuoteSpaced('-I' + Dirs.GetText(';', False))
     + ' ' + StrQuoteSpaced('-O' + Dirs.GetText(';', False))
     + ' ' + StrQuoteSpaced('-R' + Dirs.GetText(';', False));
+end;
+
+procedure TBorlandCompiler.SetCanAutoInstall(const Value: Boolean);
+begin
+  fCanAutoInstall := Value;
 end;
 
 end.

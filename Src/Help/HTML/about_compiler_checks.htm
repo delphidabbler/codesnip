@@ -41,7 +41,8 @@
     </h2>
     <p>
       Before <em>CodeSnip</em> can use the compilers it needs to be told about
-      them. This is done using the <a
+      them. Compilers are registered for use by <em>CodeSnip</em> This is done
+      using the <a
        href="dlg_configcompilers.htm">Configure Compilers</a> dialogue box that
       is accessed from the <em>Tools</em> menu.
     </p>
@@ -60,7 +61,26 @@
       different compiler switches and search paths.
     </p>
     <p>
-      The portable version of CodeSnip only maintains one set of compiler configuration information per installation.
+      The portable version of CodeSnip only maintains one set of compiler
+      configuration information per installation.
+    </p>
+    <h3>
+      Automatic detection of Delphi compilers
+    </h3>
+    <p>
+      By default, when <em>CodeSnip</em> starts up, it will check if there are
+      any versions of Delphi installed on the user's system that
+      <em>CodeSnip</em> could use, but that are not registered for use. Any such
+      compilers are displayed in the <a
+        href="dlg_registercompilers.htm"
+      >Unregistered Delphi Installation(s) Detected</a> dialogue box where you
+      can choose whether or not to register them.
+    </p>
+    <p>
+      It is possible to switch off automatic detection on either a global or a
+	  per compiler basis. For more information see the <a
+        href="task_registercompilers.htm"
+      >Register Compilers with <em>CodeSnip</em></a> topic.
     </p>
     <h2>
       Running the tests

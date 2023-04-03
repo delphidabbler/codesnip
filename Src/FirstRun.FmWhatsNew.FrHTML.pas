@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2020-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2020-2022, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Frame that displays HTML of "what's new" message in a TWebBrowser control.
 }
@@ -67,34 +67,24 @@ begin
   try
     TFontHelper.SetContentFont(CSSFont);
     CSSFont.Size := CSSFont.Size + 2;
-    with CSSBuilder.AddSelector('body') do
-    begin
-      AddProperty(TCSS.FontProps(CSSFont));
-      AddProperty(TCSS.MarginProp(0, 8, 0, 8));
-    end;
-    with CSSBuilder.AddSelector('.lead') do
-    begin
-      AddProperty(TCSS.FontSizeProp(CSSFont.Size + 2));
-      AddProperty(TCSS.FontWeightProp(cfwBold));
-      AddProperty(TCSS.ColorProp($233bc2));
-    end;
+    CSSBuilder.AddSelector('body')
+      .AddProperty(TCSS.FontProps(CSSFont))
+      .AddProperty(TCSS.MarginProp(0, 8, 0, 8));
+    CSSBuilder.AddSelector('.lead')
+      .AddProperty(TCSS.FontSizeProp(CSSFont.Size + 2))
+      .AddProperty(TCSS.FontWeightProp(cfwBold))
+      .AddProperty(TCSS.ColorProp($233bc2));
     // Sets paragraph margins and padding
-    with CSSBuilder.AddSelector('p') do
-    begin
-      AddProperty(TCSS.MarginProp(cssTop, 6));
-      AddProperty(TCSS.MarginProp(cssBottom, 0));
-      AddProperty(TCSS.PaddingProp(0));
-    end;
-    with CSSBuilder.AddSelector('ul') do
-    begin
-      AddProperty(TCSS.MarginProp(cssTop, 6));
-      AddProperty(TCSS.MarginProp(cssBottom, 0));
-      AddProperty(TCSS.PaddingProp(0));
-    end;
-    with CSSBuilder.AddSelector('li') do
-    begin
-      AddProperty(TCSS.MarginProp(cssTop, 6));
-    end;
+    CSSBuilder.AddSelector('p')
+      .AddProperty(TCSS.MarginProp(cssTop, 6))
+      .AddProperty(TCSS.MarginProp(cssBottom, 0))
+      .AddProperty(TCSS.PaddingProp(0));
+    CSSBuilder.AddSelector('ul')
+      .AddProperty(TCSS.MarginProp(cssTop, 6))
+      .AddProperty(TCSS.MarginProp(cssBottom, 0))
+      .AddProperty(TCSS.PaddingProp(0));
+    CSSBuilder.AddSelector('li')
+      .AddProperty(TCSS.MarginProp(cssTop, 6));
    finally
     CSSFont.Free;
   end;

@@ -235,13 +235,13 @@ inherited CompilersDlg: TCompilersDlg
     end
   end
   inherited btnHelp: TButton
-    TabOrder = 4
+    TabOrder = 5
   end
   inherited btnCancel: TButton
-    TabOrder = 3
+    TabOrder = 4
   end
   inherited btnOK: TButton
-    TabOrder = 2
+    TabOrder = 3
     OnClick = btnOKClick
   end
   object btnDetect: TButton
@@ -254,7 +254,17 @@ inherited CompilersDlg: TCompilersDlg
     Margins.Right = 5
     Margins.Bottom = 5
     Caption = '&Detect Delphi Compilers'
-    TabOrder = 1
+    TabOrder = 2
     OnClick = btnDetectClick
+  end
+  object chkStartupDetection: TCheckBox
+    Left = 8
+    Top = 336
+    Width = 417
+    Height = 17
+    Caption = 
+      'Automatically register newly installed Delphi compilers at progr' +
+      'am startup'
+    TabOrder = 1
   end
 end

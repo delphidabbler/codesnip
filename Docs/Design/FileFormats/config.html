@@ -167,7 +167,7 @@
 </p>
 
 <p>
-  There have been several versions of this file. The current one is version 18. The change to version 18 came with CodeSnip v4.20.0 and the addition of the [Prefs] section.
+  There have been several versions of this file. The current one is version 19. The change to version 19 came with CodeSnip v4.21.0 and the addition of the [Compilers] section and the <code class="key">CanAutoInstall</code> key in the [Cmp:XXX] sections.
 </p>
 
 <p>
@@ -333,7 +333,48 @@
       Each entry contains a fully specified directory path.
     </div>
   </dd>
+  <dt>
+    <code class="key">CanAutoInstall</code> (Boolean)
+  </dt>
+  <dd>
+  <div class="half-spaced">
+    Determines whether the compiler can be automatically detected and registered by CodeSnip.
+  </div>
+  <div class="half-spaced">
+    Applies to Delphi compilers only, not to Free Pascal.
+  </div>
+  </dd>
 </dl>
+
+<h4>
+  [Compilers] section
+</h4>
+
+<p>
+  This section records configuration information that applies to all, or
+  multiple, compilers.
+</p>
+
+<p>
+  Name / Value pairs:
+</p>
+
+<dl class="indent">
+  <dt>
+    <code class="key">PermitStartupDetection</code> (Boolean)
+  </dt>
+  <dd>
+    <div class="half-spaced">
+      Determines whether CodeSnip should detect, and potentially register, any
+      Delphi compilers that are installed on the user's system but not
+      registered with the program.
+    </div>
+    <div class="half-spaced">
+      Does not apply to the Free Pascal compiler.
+    </div>
+  </dd>
+</dl>
+
 
 <h4>
   [Database] section
@@ -721,7 +762,7 @@
       The version number of the config file. Incremented whenever the file format changes. If this section or this value is missing then the default value is <code class="value">1</code>.
     </div>
     <div class="half-spaced">
-      The current value is <code class="value">16</code>.
+      The current value is <code class="value">19</code>.
     </div>
   </dd>
   <dt>

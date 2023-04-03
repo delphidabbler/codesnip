@@ -20,6 +20,8 @@ interface
 
 
 uses
+  // Delphi
+  Generics.Collections,
   // Project
   Compilers.UGlobals, UBaseObjects;
 
@@ -64,13 +66,18 @@ type
       }
   end;
 
+  TCompilerList = class(TList<ICompiler>)
+  public
+    constructor Create;
+  end;
+
 
 implementation
 
 
 uses
   // Delphi
-  Generics.Collections, SysUtils,
+  Generics.Defaults, SysUtils,
   // Project
   Compilers.UBDS, Compilers.UDelphi, Compilers.UFreePascal,
   Compilers.USearchDirs, IntfCommon, UConsts, UExceptions, UIStringList,
@@ -328,6 +335,12 @@ begin
     // Load search directories
     SearchDirNames := Storage.GetStrings('SearchDirCount', 'SearchDir%d');
     Compiler.SetSearchDirs(TSearchDirs.Create(SearchDirNames.ToArray));
+
+    // Check if compiler can be auto-detected
+    if Supports(Compiler, ICompilerAutoDetect) then
+      (Compiler as ICompilerAutoDetect).SetCanAutoInstall(
+        Storage.GetBoolean('CanAutoInstall', True)
+      );
   end;
 end;
 
@@ -363,9 +376,27 @@ begin
       Storage.SetString('Namespaces', Compiler.GetRTLNamespaces);
     SearchDirNames := TIStringList.Create(Compiler.GetSearchDirs.ToStrings);
     Storage.SetStrings('SearchDirCount', 'SearchDir%d', SearchDirNames);
+    if Supports(Compiler, ICompilerAutoDetect) then
+      Storage.SetBoolean(
+        'CanAutoInstall', (Compiler as ICompilerAutoDetect).GetCanAutoInstall
+      );
     // save the data
     Storage.Save;
   end;
+end;
+
+{ TCompilerList }
+
+constructor TCompilerList.Create;
+begin
+  inherited Create(
+    TDelegatedComparer<ICompiler>.Create(
+      function (const Left, Right: ICompiler): Integer
+      begin
+        Result := Ord(Left.GetID) - Ord(Right.GetID);
+      end
+    )
+  )
 end;
 
 end.
