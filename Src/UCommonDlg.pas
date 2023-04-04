@@ -83,7 +83,8 @@ type
         @param DialogData [in/out] Contains data about dialog box. Updated with
           new hook function and reference to associated hook object.
       }
-    function CallHookFn(Wnd: HWnd; Msg: UINT; WParam, LParam: Integer): UINT;
+    function CallHookFn(Wnd: HWnd; Msg: UINT; WParam: WPARAM; LParam: LPARAM):
+      UINT_PTR;
       {Calls associated dialog hook function with the required parameters. A
       reference to the dialog function must be recorded in the OldHookFn
       property.
@@ -185,7 +186,7 @@ end;
 { TCommonDlgHook }
 
 function CallHookFunc(Fn: TCommonDlgHookFn; Wnd: HWnd; Msg: UINT;
-  WParam, LParam: Integer): UINT;
+  WParam: WPARAM; LParam: LPARAM): UINT_PTR;
   {Calls a dialog hook function with the required parameters. Must be a standard
   function, not a method.
     @param Fn [in] Hook function to be called. Must be non nil.
@@ -210,8 +211,8 @@ begin
   TDlgAligner.AlignToOwner(fDlg);
 end;
 
-function TCommonDlgHook.CallHookFn(Wnd: HWnd; Msg: UINT; WParam,
-  LParam: Integer): UINT;
+function TCommonDlgHook.CallHookFn(Wnd: HWnd; Msg: UINT; WParam: WPARAM;
+  LParam: LPARAM): UINT_PTR;
   {Calls associated dialog hook function with the required parameters. A
   reference to the dialog function must be recorded in the OldHookFn property.
     @param Wnd [in] Handle to the dialog box for which message is intended.
@@ -291,7 +292,7 @@ procedure TFileDlgHook.Initialise(var DialogData);
 begin
   OldHookFn := TOpenFilename(DialogData).lpfnHook;
   TOpenFilename(DialogData).lpfnHook := NewExplorerHook;
-  TOpenFilename(DialogData).lCustData := Integer(Self);
+  TOpenFilename(DialogData).lCustData := LPARAM(Self);
 end;
 
 class function TFileDlgHook.RecoverInstance(P: POpenFileName): TFileDlgHook;
@@ -352,7 +353,7 @@ procedure TColorDlgHook.Initialise(var DialogData);
 begin
   OldHookFn := TChooseColor(DialogData).lpfnHook;
   TChooseColor(DialogData).lpfnHook := NewCCHook;
-  TChooseColor(DialogData).lCustData := Integer(Self);
+  TChooseColor(DialogData).lCustData := LPARAM(Self);
 end;
 
 class function TColorDlgHook.RecoverInstance(P: PChooseColor): TColorDlgHook;
