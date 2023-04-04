@@ -1,4 +1,3 @@
-
 {*******************************************************}
 {                                                       }
 {             TListViewEx Version 1.0                   }
@@ -6,6 +5,8 @@
 {       Copyright (c) 1999-2009 Vadim Crits             }
 {                                                       }
 {*******************************************************}
+
+// NOTE: Modified by DelphiDabbler 2023 - see //! comments for changes
 
 unit LVEx;
 
@@ -104,7 +105,8 @@ end;
 procedure TListViewEx.LVMDeleteColumn(var Message: TMessage);
 begin
   inherited;
-  if Message.WParam = FSortColumn then
+  //! Add cast to FSortColumn to avoid widened operands warnings in Delphi 11.3
+  if Message.WParam = NativeUInt(FSortColumn) then
   begin
     FSortColumn := -1;
     FSortOrder := soNone;
