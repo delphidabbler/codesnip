@@ -439,7 +439,7 @@ var
   BufSize: Integer;
 begin
   BufSize := WideCharToMultiByte(
-    CodePage, 0, @Source, 1, @Dest[0], 0, nil, nil
+    CodePage, 0, @Source, 1, nil, 0, nil, nil
   );
   SetLength(Dest, BufSize + 1);
   if WideCharToMultiByte(
