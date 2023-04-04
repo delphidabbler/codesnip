@@ -20,6 +20,7 @@ interface
 uses
   // Delphi
   Generics.Collections,
+  System.Classes,   // for inlining
   // Project
   ActiveText.UMain, UBaseObjects, UTaggedTextLexer;
 
