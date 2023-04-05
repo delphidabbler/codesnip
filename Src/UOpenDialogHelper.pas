@@ -191,7 +191,10 @@ var
   Folder: array[0..MAX_PATH] of Char; // receives path to folder
 begin
   SendMessage(
-    GetParent(Dlg.Handle), CDM_GETFOLDERPATH, SizeOf(Folder), Integer(@Folder)
+    GetParent(Dlg.Handle),
+    CDM_GETFOLDERPATH,
+    WPARAM(SizeOf(Folder)),
+    LPARAM(@Folder)
   );
   Result := Folder;
 end;

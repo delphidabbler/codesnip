@@ -134,7 +134,7 @@ function TMemoHelper.GetRect: TRect;
     @return Required rectangle.
   }
 begin
-  fMemo.Perform(EM_GETRECT, 0, Integer(@Result));
+  fMemo.Perform(EM_GETRECT, 0, LPARAM(@Result));
 end;
 
 function TMemoHelper.LineExtent(const LineIdx: Integer): TSize;
