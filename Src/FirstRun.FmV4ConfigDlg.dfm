@@ -7,7 +7,7 @@ inherited V4ConfigDlg: TV4ConfigDlg
   OnCloseQuery = FormCloseQuery
   ExplicitWidth = 565
   ExplicitHeight = 435
-  PixelsPerInch = 96
+  PixelsPerInch = 168
   TextHeight = 13
   inherited pnlBody: TPanel
     inherited pcWizard: TPageControl

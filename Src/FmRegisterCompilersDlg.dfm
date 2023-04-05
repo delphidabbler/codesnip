@@ -3,7 +3,7 @@ inherited RegisterCompilersDlg: TRegisterCompilersDlg
   ClientHeight = 453
   ExplicitWidth = 474
   ExplicitHeight = 482
-  PixelsPerInch = 96
+  PixelsPerInch = 168
   TextHeight = 13
   inherited bvlBottom: TBevel
     Top = 403
