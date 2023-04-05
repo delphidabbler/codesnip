@@ -120,7 +120,7 @@ uses
 { TFontHelper }
 
 function MonoFontFamilyProc(PLF: PEnumLogFont; PNTM: PNewTextMetric;
-  FontType: Integer; List: TStrings): Integer; stdcall;
+  FontType: DWORD; LParam: LPARAM): Integer; stdcall;
   {EnumFontFamilies() callback function used to add mono-spaced fonts to a list.
     @param PLF [in] Structure containing info about a logical font.
     @param PNTM [in] Not used.
@@ -132,7 +132,10 @@ begin
   // with "@" (see https://tinyurl.com/6ul6rfo for details of vertical fonts).
   if ((PLF.elfLogFont.lfPitchAndFamily and $F) = FIXED_PITCH)
     and not StrStartsStr('@', PLF.elfLogFont.lfFaceName) then
+  begin
+    var List: TStrings := TStrings(LParam);
     List.Add(PLF.elfLogFont.lfFaceName);
+  end;
   Result := 1;
 end;
 
@@ -218,7 +221,8 @@ begin
   DC := GetDC(0);
   try
     // Enumerate all font families: handle each font in MonoFontFamilyProc()
-    EnumFontFamilies(DC, nil, @MonoFontFamilyProc, Integer(List));
+    { TODO: Replace obsolete EnumFontFamilies with EnumFontFamiliesEx }
+    EnumFontFamilies(DC, nil, @MonoFontFamilyProc, LPARAM(List));
   finally
     ReleaseDC(0, DC);
   end;
