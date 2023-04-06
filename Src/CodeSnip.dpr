@@ -317,7 +317,6 @@ uses
   USingleton in 'USingleton.pas',
   USnipKindListAdapter in 'USnipKindListAdapter.pas',
   USnippetAction in 'USnippetAction.pas',
-  USnippetCreditsParser in 'USnippetCreditsParser.pas',
   USnippetDoc in 'USnippetDoc.pas',
   USnippetExtraHelper in 'USnippetExtraHelper.pas',
   USnippetHTML in 'USnippetHTML.pas',

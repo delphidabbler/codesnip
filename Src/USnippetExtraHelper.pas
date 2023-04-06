@@ -29,11 +29,52 @@ type
     text and vice versa.
   }
   TSnippetExtraHelper = class(TNoConstructObject)
+  strict private
+    type
+      ///  <summary>Class that parses markup used in Credits element read from
+      ///  snippets data files. Markup is translated into active text.</summary>
+      ///  <remarks>
+      ///  <para>Generated active text IS NOT embedded in an ekDocument block.
+      ///  </para>
+      ///  <para>The Credits element may occur in main database files and v1 of
+      ///  the user database and export files.</para>
+      ///  <para>Credits markup is simple. It is just plain text with at most
+      ///  one group of text delimited by '[' and ']' characters. The text
+      ///  enclosed in brackets represents a hyperlink. The destination URL of
+      ///  the hyperlink is given by the URL parameter passed to the
+      ///  constructor.</para>
+      ///  <para>Eamples:</para>
+      ///  <para><c>Some markup without a link.</c></para>
+      ///  <para><c>Some markup with a [link].</c></para>
+      ///  </remarks>
+      TCreditsParser = class(TInterfacedObject, IActiveTextParser)
+      strict private
+        var
+          ///  <summary>URL to be used in any link contained in markup.
+          ///  </summary>
+          fURL: string;
+      public
+        ///  <summary>Object constructor. Sets up object.</summary>
+        ///  <param name="URL">string [in] URL to be used in any hyperlinks
+        ///  defined by Credit markup.</param>
+        constructor Create(const URL: string);
+        ///  <summary>Parses markup and updates active text object.</summary>
+        ///  <param name="Markup">string [in] Markup containing definition of
+        ///  active text. Must be valid Credits element markup.</param>
+        ///  <param name="ActiveText">IActiveText [in] Active text object
+        ///  updated by parser.</param>
+        ///  <remarks>
+        ///  <para>NOTE: Does not wrap generated text in any block tags,
+        ///  including top level document tags.</para>
+        ///  <para>Implements IActiveTextParser.Parse.</para>
+        ///  </remarks>
+        procedure Parse(const Markup: string; const ActiveText: IActiveText);
+      end;
   public
     class function BuildActiveText(const PrefixText, CreditsMarkup,
       URL: string): IActiveText; overload;
-      {Builds an active text object containing some plain followed by active
-      text defined by markup in the "Credits" format.
+      {Builds an active text object containing some plain text followed by
+      active text defined by markup in the "Credits" format.
         @param PrefixText [in] PrefixText text. If not empty string this is
           added as plain text before any credits markup.
         @param CreditsMarkup [in] "Credits" markup. May contain a link indicated
@@ -71,7 +112,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  UREMLDataIO, USnippetCreditsParser, UStrUtils;
+  UREMLDataIO, UStrUtils;
 
 
 { TSnippetExtraHelper }
@@ -92,6 +133,7 @@ class function TSnippetExtraHelper.BuildActiveText(const PrefixText,
 begin
   // Create new empty active text object
   Result := TActiveTextFactory.CreateActiveText;
+  Result.AddElem(TActiveTextFactory.CreateActionElem(ekDocument, fsOpen));
   if (PrefixText <> '') then
   begin
     // We have prefix text: add it to result as a paragraph containing a single
@@ -109,11 +151,12 @@ begin
     Result.Append(
       TActiveTextFactory.CreateActiveText(
         StrMakeSentence(CreditsMarkup),
-        TSnippetCreditsParser.Create(URL)
+        TCreditsParser.Create(URL)
       )
     );
     Result.AddElem(TActiveTextFactory.CreateActionElem(ekPara, fsClose));
   end;
+  Result.AddElem(TActiveTextFactory.CreateActionElem(ekDocument, fsClose));
 end;
 
 class function TSnippetExtraHelper.BuildActiveText(
@@ -123,96 +166,10 @@ class function TSnippetExtraHelper.BuildActiveText(
     @return Required active text object. Will be an empty object if REML is
       empty string.
   }
-
-  // Check for an opening block tag
-  function IsBlockOpener(Elem: IActiveTextElem): Boolean;
-  var
-    ActionElem: IActiveTextActionElem;
-  begin
-    if not Supports(Elem, IActiveTextActionElem, ActionElem) then
-      Exit(False);
-    Result := (TActiveTextElemCaps.DisplayStyleOf(ActionElem.Kind) = dsBlock)
-      and (ActionElem.State = fsOpen);
-  end;
-
-  // Check for a closing block tag
-  function IsBlockCloser(Elem: IActiveTextElem): Boolean;
-  var
-    ActionElem: IActiveTextActionElem;
-  begin
-    if not Supports(Elem, IActiveTextActionElem, ActionElem) then
-      Exit(False);
-    Result := (TActiveTextElemCaps.DisplayStyleOf(ActionElem.Kind) = dsBlock)
-      and (ActionElem.State = fsClose);
-  end;
-
-  // Embed given content in a para block and append to result, unless content is
-  // empty when do nothing.
-  procedure AddNoneEmptyParaToResult(ParaContent: IActiveText);
-  begin
-    if ParaContent.IsEmpty then
-      Exit;
-    if StrTrim(ParaContent.ToString) = '' then
-      Exit;
-    Result.AddElem(TActiveTextFactory.CreateActionElem(ekPara, fsOpen));
-    Result.Append(ParaContent);
-    Result.AddElem(TActiveTextFactory.CreateActionElem(ekPara, fsClose));
-  end;
-
-var
-  ActiveText: IActiveText;              // receives active text built from REML
-  OutsideBlockActiveText: IActiveText;  // receives text outside of blocks
-  Elem: IActiveTextElem;                // each element in active text
-  Level: Integer;                       // depth of block levels
 begin
-  Result := TActiveTextFactory.CreateActiveText;
-  if REML = '' then
-    Exit;
   // Create active text by parsing REML
-  ActiveText := TActiveTextFactory.CreateActiveText(REML, TREMLReader.Create);
-  if ActiveText.IsEmpty then
-    Exit;
-  // Init block level & obj used to accumulate text outside blocks
-  Level := 0;
-  OutsideBlockActiveText := TActiveTextFactory.CreateActiveText;
-  for Elem in ActiveText do
-  begin
-    if IsBlockOpener(Elem) then
-    begin
-      // We have block opener tag. Check for any text that preceeded a level
-      // zero block and wrap it in a paragraph before writing the block opener
-      if Level = 0 then
-      begin
-        if not OutsideBlockActiveText.IsEmpty then
-        begin
-          AddNoneEmptyParaToResult(OutsideBlockActiveText);
-          OutsideBlockActiveText := TActiveTextFactory.CreateActiveText;
-        end;
-      end;
-      Result.AddElem(Elem);
-      Inc(Level); // drop down one level
-    end
-    else if IsBlockCloser(Elem) then
-    begin
-      // Block closer
-      Dec(Level);
-      Result.AddElem(Elem); // climb up one level
-    end
-    else
-    begin
-      // Not block opener or closer
-      // If we're outside any block, append elem to store of elems not included
-      // in blocks. If we're in a block, just add the elem to output
-      if Level = 0 then
-        OutsideBlockActiveText.AddElem(Elem)
-      else
-        Result.AddElem(Elem);
-    end;
-  end;
-  Assert(Level = 0, ClassName + '.BuildActiveText: Unbalanced blocks');
-  // Write any outstanding elems that occured outside a block
-  if not OutsideBlockActiveText.IsEmpty then
-    AddNoneEmptyParaToResult(OutsideBlockActiveText);
+  // .. the REML parser returns correct document or empty object if REML=''
+  Result := TActiveTextFactory.CreateActiveText(REML, TREMLReader.Create);
 end;
 
 class function TSnippetExtraHelper.BuildREMLMarkup(
@@ -232,11 +189,105 @@ begin
   Text := StrTrim(Text);
   if Text = '' then
     Exit;
+  Result.AddElem(TActiveTextFactory.CreateActionElem(ekDocument, fsOpen));
   Result.AddElem(TActiveTextFactory.CreateActionElem(ekPara, fsOpen));
   Result.AddElem(
     TActiveTextFactory.CreateTextElem(Text)
   );
   Result.AddElem(TActiveTextFactory.CreateActionElem(ekPara, fsClose));
+  Result.AddElem(TActiveTextFactory.CreateActionElem(ekDocument, fsClose));
+end;
+
+{ TSnippetExtraHelper.TCreditsParser }
+
+constructor TSnippetExtraHelper.TCreditsParser.Create(const URL: string);
+begin
+  inherited Create;
+  fURL := URL;
+end;
+
+procedure TSnippetExtraHelper.TCreditsParser.Parse(const Markup: string;
+  const ActiveText: IActiveText);
+const
+  cOpenBracket  = '[';  // open bracket character that starts a link
+  cCloseBracket = ']';  // close bracket character that ends a link
+resourcestring
+  // Error messages
+  sUnexpectedCloser   = 'Unexpected closing bracket found';
+  sUnterminatedLink   = 'Unterminated link';
+  sEmptyLink          = 'Empty link definition';
+  sWrongBracketOrder  = 'Close bracket preceeds link open bracket';
+  sMultipleOpeners    = 'More than one open bracket is present';
+  sMultipleClosers    = 'More than one close bracket is present';
+  sNoURL              = 'No URL specified';
+var
+  OpenBracketPos: Integer;  // position of opening bracket in markup
+  CloseBracketPos: Integer; // position of closing bracket in markup
+  Prefix, Postfix: string;  // text before and after link (can be empty)
+  LinkText: string;         // link text
+begin
+  // Find open and closing brackets that delimit link text
+  OpenBracketPos := StrPos(cOpenBracket, Markup);
+  CloseBracketPos := StrPos(cCloseBracket, Markup);
+  if OpenBracketPos = 0 then
+  begin
+    // No links: plain text only
+    // check for errors
+    if CloseBracketPos > 0 then
+      raise EActiveTextParserError.Create(sUnexpectedCloser);
+    // record text element
+    ActiveText.AddElem(TActiveTextFactory.CreateTextElem(Markup));
+  end
+  else
+  begin
+    // We have a potential link
+    // check for errors
+    if CloseBracketPos = 0 then
+      raise EActiveTextParserError.Create(sUnterminatedLink);
+    if CloseBracketPos = OpenBracketPos + 1 then
+      raise EActiveTextParserError.Create(sEmptyLink);
+    if CloseBracketPos < OpenBracketPos then
+      raise EActiveTextParserError.Create(sWrongBracketOrder);
+    if StrCountDelims(cOpenBracket, Markup) > 1 then
+      raise EActiveTextParserError.Create(sMultipleOpeners);
+    if StrCountDelims(cCloseBracket, Markup) > 1 then
+      raise EActiveTextParserError.Create(sMultipleClosers);
+    // must have a URL
+    if fURL = '' then
+      raise EActiveTextParserError.Create(sNoURL);
+    // get the various components
+    LinkText := StrSlice(
+      Markup, OpenBracketPos + 1, CloseBracketPos - OpenBracketPos - 1
+    );
+    Assert(LinkText <> '',
+      ClassName + '.Parse: Link text is '' but has passed check');
+    Prefix := StrSliceLeft(Markup, OpenBracketPos - 1);
+    Postfix := StrSliceRight(Markup, Length(Markup) - CloseBracketPos);
+    // record the elements
+    if Prefix <> '' then
+      ActiveText.AddElem(TActiveTextFactory.CreateTextElem(Prefix));
+    ActiveText.AddElem(
+      TActiveTextFactory.CreateActionElem(
+        ekLink,
+        TActiveTextFactory.CreateAttrs(
+          TActiveTextAttr.Create(TActiveTextAttrNames.Link_URL, fURL)
+        ),
+        fsOpen
+      )
+    );
+    ActiveText.AddElem(TActiveTextFactory.CreateTextElem(LinkText));
+    ActiveText.AddElem(
+      TActiveTextFactory.CreateActionElem(
+        ekLink,
+        TActiveTextFactory.CreateAttrs(
+          TActiveTextAttr.Create(TActiveTextAttrNames.Link_URL, fURL)
+        ),
+        fsClose
+      )
+    );
+    if Postfix <> '' then
+      ActiveText.AddElem(TActiveTextFactory.CreateTextElem(Postfix));
+  end;
 end;
 
 end.
