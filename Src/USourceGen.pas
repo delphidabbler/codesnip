@@ -41,7 +41,7 @@ type
     ///  maximum width indented by the given number of spaces on the left,
     ///  optionally truncated to the first paragraph.</summary>
     class function FormatActiveTextCommentInner(ActiveText: IActiveText;
-      const Indent: Cardinal; const Truncate: Boolean): string;
+      const LineWidth: Cardinal; const Truncate: Boolean): string;
   public
 
     ///  <summary>Returns a description of the given comment style.</summary>
@@ -60,7 +60,7 @@ type
     ///  <returns>string.Formatted comment or empty string if Style = csNone.
     ///  </returns>
     class function FormatSnippetComment(const Style: TCommentStyle;
-      const TruncateComments: Boolean; const Text: IActiveText): string;
+      const TruncateComments: Boolean; Text: IActiveText): string;
 
     ///  <summary>Formats document's header text as a Pascal comment.</summary>
     ///  <param name="Comments">IStringList [in] List of paragraphs of header
@@ -259,9 +259,11 @@ uses
 const
   ///  <summary>Maximum number of characters on a source code line.</summary>
   cLineWidth = 80;
-const
   ///  <summary>Size of indenting used for source code, in characters.</summary>
   cIndent = 2;
+  ///  <summary>Size of indenting used for rendering comments from active text.
+  ///  </summary>
+  cCommentIndent = 4;
 
 
 type
@@ -1137,11 +1139,13 @@ begin
 end;
 
 class function TSourceComments.FormatActiveTextCommentInner(
-  ActiveText: IActiveText; const Indent: Cardinal; const Truncate: Boolean):
-  string;
+  ActiveText: IActiveText; const LineWidth: Cardinal;
+  const Truncate: Boolean): string;
 var
   Renderer: TActiveTextTextRenderer;
   ProcessedActiveText: IActiveText;
+  Lines: IStringList;
+  Line: string;
 begin
   if Truncate then
     ProcessedActiveText := ActiveText.FirstBlock
@@ -1150,9 +1154,17 @@ begin
   Renderer := TActiveTextTextRenderer.Create;
   try
     Renderer.DisplayURLs := False;
-    Result := Renderer.RenderWrapped(
-      ProcessedActiveText, cLineWidth, Indent, Indent
+    Renderer.IndentDelta := cCommentIndent;
+    Result := '';
+    Lines := TIStringList.Create(
+      Renderer.RenderWrapped(ProcessedActiveText, LineWidth, 0),
+      EOL,
+      True,
+      False
     );
+    for Line in Lines do
+      Result := Result + StringOfChar(' ', cLineWidth - LineWidth) + Line + EOL;
+    Result := StrTrimRight(Result);
   finally
     Renderer.Free;
   end;
@@ -1189,25 +1201,27 @@ begin
 end;
 
 class function TSourceComments.FormatSnippetComment(const Style: TCommentStyle;
-  const TruncateComments: Boolean; const Text: IActiveText): string;
+  const TruncateComments: Boolean; Text: IActiveText): string;
 begin
   case Style of
     csNone:
       Result := '';
     csBefore:
-      Result := '{'
-        + EOL
-        + FormatActiveTextCommentInner(Text, cIndent, TruncateComments)
-        + EOL
-        + '}';
+    begin
+      Result := '{' + EOL
+        + FormatActiveTextCommentInner(
+            Text, cLineWidth - cIndent, TruncateComments
+          )
+        + EOL + '}';
+    end;
     csAfter:
-      Result := StrOfChar(TActiveTextTextRenderer.LISpacer, cIndent)
-        + '{'
-        + EOL
-        + FormatActiveTextCommentInner(Text, 2 * cIndent, TruncateComments)
-        + EOL
-        + StrOfChar(TActiveTextTextRenderer.LISpacer, cIndent)
-        + '}';
+    begin
+      Result := StrOfChar(' ', cIndent) + '{' + EOL
+        + FormatActiveTextCommentInner(
+            Text, cLineWidth - 2 * cIndent, TruncateComments
+          )
+        + EOL + StringOfChar(' ', cIndent) + '}';
+    end;
   end;
 end;
 

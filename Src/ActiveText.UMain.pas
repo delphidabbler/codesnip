@@ -124,13 +124,15 @@ type
     ekStrong,         // text formatted as strong (inline)
     ekEm,             // text formatted as emphasised (inline)
     ekVar,            // text formatted as variable (inline)
-    ekPara,           // delimits a paragraph (block level)
+    ekPara,           // delimits a paragraph (block)
     ekWarning,        // text formatted as a warning (inline)
     ekHeading,        // delimits a heading (block level)
     ekMono,           // text formatted as mono spaced (inline)
-    ekUnorderedList,  // container for unordered lists (block level)
-    ekOrderedList,    // container for ordered list (block level)
-    ekListItem        // list item (block level)
+    ekUnorderedList,  // container for unordered lists (block)
+    ekOrderedList,    // container for ordered list (block)
+    ekListItem,       // list item (block)
+    ekBlock,          // container for unexpected text outside block (block)
+    ekDocument        // contains whole document (block)
   );
 
 type
@@ -194,6 +196,11 @@ type
     ///  elements except for "para". This can rendered in plain text with no
     ///  loss of formatting.</remarks>
     function IsPlainText: Boolean;
+    ///  <summary>Checks if the active text object is a valid active text
+    ///  document.</summary>
+    ///  <remarks>A valid document is either empty or it is surrounded by
+    ///  matching ekDocument elements.</remarks>
+    function IsValidActiveTextDocument: Boolean;
     ///  <summary>Returns element at given index in active text object's element
     ///  list.</summary>
     function GetElem(Idx: Integer): IActiveTextElem;
@@ -293,22 +300,28 @@ type
         var
           ///  <summary>Determines how element is to be displayed.</summary>
           DisplayStyle: TActiveTextDisplayStyle;
-          ///  <summary>Set of elements that may not occur inside the element.
-          ///  </summary>
-          Exclusions: TActiveTextActionElemKinds;
-          ///  <summary>Set of elements that are permitted as parents of the
-          ///  element.</summary>
-          ///  <remarks>An empty set is taken to mean any element is permitted.
-          ///  </remarks>
-          RequiredParents: TActiveTextActionElemKinds;
           ///  <summary>Specifies whether plain text can be contained within the
           ///  element.</summary>
           PermitsText: Boolean;
+          ///  <summary>Specifies the elements that are permitted as child
+          ///  elements of this element.
+          PermittedChildElems: TActiveTextActionElemKinds;
       end;
     const
       ///  <summary>Set of block level elements.</summary>
       BlockElems = [
-        ekPara, ekHeading, ekUnorderedList, ekOrderedList, ekListItem
+        ekPara, ekHeading, ekUnorderedList, ekOrderedList, ekListItem,
+        ekBlock, ekDocument
+      ];
+      ///  <summary>Set of block level elements that can directly contain text
+      ///  and inline elements.</summary>
+      TextContentBlocks = [
+        ekPara, ekHeading, ekBlock
+      ];
+      ///  <summary>Set of block level elements that can contain only blocks
+      ///  that are not container blocks.</summary>
+      ContainerBlocks = [
+        ekDocument, ekListItem
       ];
       ///  <summary>Set of inline elements.</summary>
       InlineElems = [
@@ -323,90 +336,94 @@ type
             // ekLink
             //   may contain any inline elements but no block elements
             DisplayStyle: dsInline;
-            Exclusions: BlockElems;
-            RequiredParents: [];
             PermitsText: True;
+            PermittedChildElems: InlineElems - [ekLink];
           ),
           (
             // ekStrong
             //   may contain any inline elements but no block elements
             DisplayStyle: dsInline;
-            Exclusions: BlockElems;
-            RequiredParents: [];
             PermitsText: True;
+            PermittedChildElems: InlineElems;
           ),
           (
             // ekEm
             //   may contain any inline elements but no block elements
             DisplayStyle: dsInline;
-            Exclusions: BlockElems;
-            RequiredParents: [];
             PermitsText: True;
+            PermittedChildElems: InlineElems;
           ),
           (
             // ekVar
             //   may contain any inline elements but no block elements
             DisplayStyle: dsInline;
-            Exclusions: BlockElems;
-            RequiredParents: [];
             PermitsText: True;
+            PermittedChildElems: InlineElems;
           ),
           (
             // ekPara
             //   may contain any inline elements but no block elements
             DisplayStyle: dsBlock;
-            Exclusions: BlockElems;
-            RequiredParents: [];
             PermitsText: True;
+            PermittedChildElems: InlineElems;
           ),
           (
             // ekWarning
             //   may contain any inline elements but no block elements
             DisplayStyle: dsInline;
-            Exclusions: BlockElems;
-            RequiredParents: [];
             PermitsText: True;
+            PermittedChildElems: InlineElems;
           ),
           (
             // ekHeading
             //   may contain any inline elements but no block elements
             DisplayStyle: dsBlock;
-            Exclusions: BlockElems;
-            RequiredParents: [];
             PermitsText: True;
+            PermittedChildElems: InlineElems;
           ),
           (
             // ekMono
             //   may contain any inline elements but no block elements
             DisplayStyle: dsInline;
-            Exclusions: BlockElems;
-            RequiredParents: [];
             PermitsText: True;
+            PermittedChildElems: InlineElems;
           ),
           (
             // ekUnorderedList
             //   may contain only list item elements
             DisplayStyle: dsBlock;
-            Exclusions: AllElems - [ekListItem];
-            RequiredParents: [];
-            PermitsText: False
+            PermitsText: False;
+            PermittedChildElems: [ekListItem];
           ),
           (
             // ekOrderedList
             //   may contain only list item elements
             DisplayStyle: dsBlock;
-            Exclusions: AllElems - [ekListItem];
-            RequiredParents: [];
             PermitsText: False;
+            PermittedChildElems: [ekListItem];
           ),
           (
             // ekListItem
-            //   may contain any inline or block elements except another list
-            //   item
+            //   may contain only block elements, but not itself or other
+            //   block containers
             DisplayStyle: dsBlock;
-            Exclusions: [ekListItem];
-            RequiredParents: [ekOrderedList, ekUnorderedList];
+            PermitsText: False;
+            PermittedChildElems: BlockElems - ContainerBlocks;
+          ),
+          (
+            // ekBlock
+            //   may contain any inline elements but no block elements
+            DisplayStyle: dsBlock;
             PermitsText: True;
+            PermittedChildElems: InlineElems;
+          ),
+          (
+            // ekDocument
+            //   may contain only block elements, but not itself or other
+            //   block containers
+            DisplayStyle: dsBlock;
+            PermitsText: False;
+            PermittedChildElems: BlockElems - ContainerBlocks;
           )
         );
   public
@@ -416,24 +433,10 @@ type
     ///  <summary>Checks whether the given element can contain text.</summary>
     class function CanContainText(const Elem: TActiveTextActionElemKind):
       Boolean; static;
-    ///  <summary>Checks whether the given Parent element can contain the given
-    ///  Child element.</summary>
-    class function CanContainElem(
+    ///  <summary>Checks whether the given child element is permitted as a child
+    ///  of the given parent element.</summary>
+    class function IsPermittedChildElem(
       const Parent, Child: TActiveTextActionElemKind): Boolean; static;
-    ///  <summary>Checks whether the given Parent element is required as a
-    ///  parent of the given Child element.</summary>
-    class function IsRequiredParent(
-      const Parent, Child: TActiveTextActionElemKind): Boolean; static;
-    ///  <summary>Checks whether the given element is permitted in the root of
-    ///  an active text document, i.e. outside any other block level element.
-    ///  </summary>
-    class function IsElemPermittedInRoot(const Elem: TActiveTextActionElemKind):
-      Boolean; static;
-    ///  <summary>Checks whether the given child element is excluded from being
-    ///  a child of the given parent element.</summary>
-    class function IsExcludedElem(
-      const Parent, Child: TActiveTextActionElemKind): Boolean; static;
-
   end;
 
 
@@ -444,7 +447,10 @@ uses
   // Delphi
   SysUtils,
   // Project
-  IntfCommon;
+  IntfCommon,
+  UConsts,
+  UStrUtils,
+  UUtils;
 
 
 type
@@ -507,6 +513,14 @@ type
     ///  <para>Method of IActiveText.</para>
     ///  </remarks>
     function IsPlainText: Boolean;
+    ///  <summary>Checks if the active text object is a valid active text
+    ///  document.</summary>
+    ///  <remarks>
+    ///  <para>A valid document is either empty or it is surrounded by matching
+    ///  ekDocument elements.</para>
+    ///  <para>Method of IActiveText.</para>
+    ///  </remarks>
+    function IsValidActiveTextDocument: Boolean;
     ///  <summary>Returns element at given index in element list.</summary>
     ///  <remarks>Method of IActiveText.</remarks>
     function GetElem(Idx: Integer): IActiveTextElem;
@@ -702,15 +716,43 @@ begin
 end;
 
 procedure TActiveText.Append(const ActiveText: IActiveText);
+
+  function IsDocumentElem(Elem: IActiveTextElem): Boolean;
+  var
+    ActiveElem: IActiveTextActionElem;
+  begin
+    if not Supports(Elem, IActiveTextActionElem, ActiveElem) then
+      Exit(False);
+    Result := ActiveElem.Kind = ekDocument;
+  end;
+
 var
   Elem: IActiveTextElem;  // references each element in elems
-  NewElem: IActiveTextElem;
+  SelfCopy: IActiveText;  // temporary copy of this object
 begin
+  // *** Don't call Clone or Assign here: they call backinto this method.
+
+  // Make a copy of elements of self
+  SelfCopy := TActiveText.Create;
+  for Elem in fElems do
+    SelfCopy.AddElem((Elem as IClonable).Clone as IActiveTextElem);
+
+  // Clear own elems and add document start element
+  fElems.Clear;
+  AddElem(TActiveTextFactory.CreateActionElem(ekDocument, fsOpen));
+
+  // Copy own elements back to fElems, skipping ekDocument elems
+  for Elem in SelfCopy do
+    if not IsDocumentElem(Elem) then
+      AddElem((Elem as IClonable).Clone as IActiveTextElem);
+
+  // Copy active text to be assigned, skipping its ekDocument elems
   for Elem in ActiveText do
-  begin
-    NewElem := (Elem as IClonable).Clone as IActiveTextElem;
-    AddElem(NewElem);
-  end;
+    if not IsDocumentElem(Elem) then
+      AddElem((Elem as IClonable).Clone as IActiveTextElem);
+
+  // Add closing ekDocument Elem
+  AddElem(TActiveTextFactory.CreateActionElem(ekDocument, fsClose));
 end;
 
 procedure TActiveText.Assign(const Src: IInterface);
@@ -741,64 +783,75 @@ begin
 end;
 
 function TActiveText.FirstBlock: IActiveText;
-
-  function IsBlockWithState(Elem: IActiveTextElem; State: TActiveTextElemState):
-    Boolean;
-  var
-    ActionElem: IActiveTextActionElem;
-  begin
-    Result := False;
-    if not Supports(Elem, IActiveTextActionElem, ActionElem) then
-      Exit;
-    if TActiveTextElemCaps.DisplayStyleOf(ActionElem.Kind) <> dsBlock then
-      Exit;
-    if ActionElem.State <> State then
-      Exit;
-    Result := True;
-  end;
-
-  function IsBlockOpener(Elem: IActiveTextElem): Boolean; inline;
-  begin
-    Result := IsBlockWithState(Elem, fsOpen);
-  end;
-
-  function IsBlockCloser(Elem: IActiveTextElem): Boolean; inline;
-  begin
-    Result := IsBlockWithState(Elem, fsClose);
-  end;
-
 var
-  Depth: Cardinal;
   Elem: IActiveTextElem;
+  ActionElem: IActiveTextActionElem;
+  Block: IActiveTextActionElem;
   Idx: Integer;
+  EndOfBlockFound: Boolean;
+  HasDocElems: Boolean;
+  FirstBlockIdx: Integer;
 begin
   Result := TActiveText.Create;
   if IsEmpty then
     Exit;
 
-  Elem := GetElem(0);
-
-  if not IsBlockOpener(Elem) then
+  HasDocElems := IsValidActiveTextDocument;
+  if HasDocElems then
   begin
-    Result.Append(Self);
-    Exit;
+    // We have ekDocument elements wrapping document: 1st true blue should be
+    // next element
+    if GetCount < 4 then
+      Exit;
+    FirstBlockIdx := 1;
+  end
+  else
+  begin
+    // No ekDocument elements: 1st true block is should be first element
+    if GetCount < 2 then
+      Exit;
+    FirstBlockIdx := 0;
   end;
 
-  Depth := 1;
+  // Element at FirstBlockIdx must be a valid block opening element
+  Elem := GetElem(FirstBlockIdx);
+  GetIntf(Elem, IActiveTextElem, Block);
+  if not Assigned(Block)
+    or (TActiveTextElemCaps.DisplayStyleOf(Block.Kind) <> dsBlock)
+    or (Block.State <> fsOpen) then
+    raise EBug.Create(
+      ClassName + '.FirstBlock: block opener expected after ekDocument element'
+    );
+
+  // We have required block: add document opener element and block element
+  Result.AddElem(TActiveTextFactory.CreateActionElem(ekDocument, fsOpen));
   Result.AddElem(Elem);
-  for Idx := 1 to Pred(GetCount) do
+
+  // Scan through remaining elements, copying them to output as we go. Halt when
+  // (or if) matching closing block found.
+  EndOfBlockFound := False;
+  Idx := Succ(FirstBlockIdx);
+  while Idx < Pred(GetCount) do
   begin
     Elem := GetElem(Idx);
     Result.AddElem(Elem);
-    // NOTE: we're not checking for matching openers and closers
-    if IsBlockOpener(Elem) then
-      Inc(Depth);
-    if IsBlockCloser(Elem) then
-      Dec(Depth);
-    if Depth = 0 then
+    if Supports(Elem, IActiveTextActionElem, ActionElem)
+      and (ActionElem.Kind = Block.Kind)
+      and (ActionElem.State = fsClose) then
+    begin
+      EndOfBlockFound := True;
       Break;
+    end;
+    Inc(Idx);
   end;
-  // We're not checking for balancing block closer here either:
+  // No closing block found
+  if not EndOfBlockFound then
+    raise EBug.Create(
+      ClassName + '.FirstBlock: Matching closer for first block not found'
+    );
+
+  // Add document close elem (closing block elem added in loop above)
+  Result.AddElem(TActiveTextFactory.CreateActionElem(ekDocument, fsClose));
 end;
 
 function TActiveText.GetCount: Integer;
@@ -829,10 +882,23 @@ begin
   for Elem in fElems do
   begin
     if Supports(Elem, IActiveTextActionElem, ActionElem)
-      and (ActionElem.Kind <> ekPara) then
+      and not (ActionElem.Kind in [ekPara, ekDocument]) then
       Exit(False);
   end;
   Result := True;
+end;
+
+function TActiveText.IsValidActiveTextDocument: Boolean;
+var
+  DocStartElem, DocEndElem: IActiveTextActionElem;
+begin
+  if IsEmpty then
+    Exit(True);
+  Result := (GetCount >= 2)
+    and Supports(fElems[0], IActiveTextActionElem, DocStartElem)
+    and (DocStartElem.Kind = ekDocument) and (DocStartElem.State = fsOpen)
+    and Supports(fElems[Pred(GetCount)], IActiveTextActionElem, DocEndElem)
+    and (DocEndElem.Kind = ekDocument) and (DocEndElem.State = fsClose);
 end;
 
 function TActiveText.ToString: string;
@@ -855,7 +921,7 @@ begin
         // from text at start of following block
         SB.AppendLine;
     end;
-    Result := SB.ToString;
+    Result := StrTrimRight(SB.ToString) + EOL;  // ensure single final EOL(s)
   finally
     SB.Free;
   end;
@@ -981,12 +1047,6 @@ end;
 
 { TActiveTextElemCapsMap }
 
-class function TActiveTextElemCaps.CanContainElem(const Parent,
-  Child: TActiveTextActionElemKind): Boolean;
-begin
-  Result := not (Child in Map[Parent].Exclusions);
-end;
-
 class function TActiveTextElemCaps.CanContainText(
   const Elem: TActiveTextActionElemKind): Boolean;
 begin
@@ -999,24 +1059,10 @@ begin
   Result := Map[Elem].DisplayStyle;
 end;
 
-class function TActiveTextElemCaps.IsElemPermittedInRoot(
-  const Elem: TActiveTextActionElemKind): Boolean;
-begin
-  Result := Map[Elem].RequiredParents = [];
-end;
-
-class function TActiveTextElemCaps.IsExcludedElem(const Parent,
-  Child: TActiveTextActionElemKind): Boolean;
-begin
-  Result := Child in Map[Parent].Exclusions;
-end;
-
-class function TActiveTextElemCaps.IsRequiredParent(
+class function TActiveTextElemCaps.IsPermittedChildElem(
   const Parent, Child: TActiveTextActionElemKind): Boolean;
 begin
-  if Map[Child].RequiredParents = [] then
-    Exit(True);
-  Result := Parent in Map[Child].RequiredParents;
+  Result := Child in Map[Parent].PermittedChildElems;
 end;
 
 end.

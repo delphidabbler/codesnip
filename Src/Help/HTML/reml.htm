@@ -107,14 +107,13 @@
         <code class="value">&lt;li&gt;...&lt;/li&gt;</code> blocks.
       </li>
       <li>
-        <code class="value">&lt;li&gt;...&lt;/li&gt;</code> blocks must not
-        contain
-        <code class="value">&lt;p&gt;...&lt;/p&gt;</code>,
-        <code class="value">&lt;heading&gt;...&lt;/heading&gt;</code> or other
-        <code class="value">&lt;li&gt;...&lt;/li&gt;</code> blocks directly,
-        but may contain
-        <code class="value">&lt;ol&gt;...&lt;/ol&gt;</code> and
-        <code class="value">&lt;ul&gt;...&lt;/ul&gt;</code> blocks.
+        <code class="value">&lt;li&gt;...&lt;/li&gt;</code> blocks may contain
+        <code class="value">&lt;p&gt;...&lt;/p&gt;</code> and
+        <code class="value">&lt;heading&gt;...&lt;/heading&gt;</code> blocks,
+        but it is permitted to include text and inline tags directly without
+        enclosing them one of the permitted blocks. Nested lists are permitted
+        by including further <code class="value">&lt;ul&gt;...&lt;/ul&gt;</code>
+        and <code class="value">&lt;ol&gt;...&lt;/ol&gt;</code> blocks.
       </li>
       <li>
         All text should be embedded within
@@ -132,12 +131,15 @@
     <p>
       Here is a valid example:
     </p>
-    <pre class="sample">&lt;p&gt;Hello World&lt;/p&gt;
-&lt;heading&gt;Hello&lt;/heading&gt;
+    <pre class="sample">&lt;heading&gt;Hello&lt;/heading&gt;
 &lt;p&gt;Hello World&lt;/p&gt;
 &lt;ol&gt;
   &lt;li&gt;one&lt;/li&gt;
-  &lt;li&gt;two&lt;/li&gt;
+  &lt;li&gt;&lt;p&gt;two&lt;/p&gt;&lt;/li&gt;
+  &lt;ul&gt;
+    &lt;li&gt;two A&lt;/li&gt;
+    &lt;li&gt;two B&lt;/li&gt;
+  &lt;ul&gt;
   &lt;li&gt;three&lt;/li&gt;
 &lt;/ol&gt;</pre>
           <p>
@@ -148,10 +150,8 @@
     <pre class="reml indent"><span class="hilite">blah</span>&lt;heading&gt;blah&lt;/heading&gt;<span class="hilite">blah</span>&lt;p&gt;blah&lt;/p&gt;<span class="hilite">blah</span></pre>
     <p>
       However, <em>CodeSnip</em> is quite permissive and, in many cases,
-      automatically adds
-      <code class="reml">&lt;p&gt;</code>...<code class="reml">&lt;/p&gt;</code>
-      tags for text that is not enclosed in block level tags. The above code is
-      interpreted as:
+      automatically adds block level tags for text that is not enclosed in block
+      level tags. The above code is interpreted similar ro:
     </p>
     <pre class="reml indent">&lt;p&gt;<span class="hilite">blah</span> &lt;/p&gt;
 &lt;heading&gt;blah&lt;/heading&gt;

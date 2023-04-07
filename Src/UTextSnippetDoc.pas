@@ -36,7 +36,7 @@ type
       cPageWidth = 80;
       ///  <summary>Size of a single level of indentation in characters.
       ///  </summary>
-      cIndent = 2;
+      cIndent = 4;
   strict private
     ///  <summary>Renders given active text as word-wrapped paragraphs of width
     ///  cPageWidth.</summary>
@@ -111,8 +111,9 @@ begin
   Renderer := TActiveTextTextRenderer.Create;
   try
     Renderer.DisplayURLs := True;
+    Renderer.IndentDelta := cIndent;
     fWriter.WriteLine(
-      Renderer.RenderWrapped(ActiveText, cPageWidth, 0, cIndent)
+      Renderer.RenderWrapped(ActiveText, cPageWidth, 0)
     );
   finally
     Renderer.Free;

@@ -34,11 +34,28 @@ type
   }
   TREMLReader = class(TInterfacedObject, IActiveTextParser)
   strict private
-    fLexer: TTaggedTextLexer;     // Analyses REML markup
-    // Stack of tag params for use in closing tags
-    fParamStack: TStack<TActiveTextAttr>;
-    // Stack of block level tags
-    fBlockTagStack: TStack<TActiveTextActionElemKind>;
+    type
+      TBlockTagInfo = record
+      strict private
+        var
+          fTag: TActiveTextActionElemKind;
+          fHasContent: Boolean;
+      public
+        constructor Create(ATag: TActiveTextActionElemKind);
+        property Tag: TActiveTextActionElemKind read fTag;
+        property HasContent: Boolean read fHasContent write fHasContent;
+      end;
+    var
+      fLexer: TTaggedTextLexer;     // Analyses REML markup
+      // Stack of tag params for use in closing tags
+      fParamStack: TStack<TActiveTextAttr>;
+      // Stack of block level tags with record of whether block has yet got any
+      // content.
+      fBlockTagStack: TStack<TBlockTagInfo>;
+      // Stack of all compound tags
+      fTagStack: TStack<TActiveTextActionElemKind>;
+      // Flag indicating whether parsing an implied block
+      fIsImpliedBlock: Boolean;
     function TagInfo(const TagIdx: Integer; out TagName: string;
       out TagCode: Word; out IsContainer: Boolean): Boolean;
       {Callback that provides lexer with information about supported tags. Lexer
@@ -61,6 +78,27 @@ type
         @return True if entity information was provided or False to indicate no
           more entities.
       }
+    ///  <summary>Note that block tag at top of stack has had content written to
+    ///  it.</summary>
+    procedure NoteBlockTagHasContent;
+    procedure StartElem(const AActiveText: IActiveText;
+      const AElem: TActiveTextActionElemKind);
+    procedure EndElem(const AActiveText: IActiveText;
+      const AElem: TActiveTextActionElemKind);
+    procedure StartInlineElem(const AActiveText: IActiveText;
+      const AElem: TActiveTextActionElemKind);
+    procedure EndInlineElem(const AActiveText: IActiveText;
+      const AElem: TActiveTextActionElemKind);
+    procedure StartBlockElem(const AActiveText: IActiveText;
+      const AElem: TActiveTextActionElemKind);
+    procedure EndBlockElem(const AActiveText: IActiveText;
+      const AElem: TActiveTextActionElemKind);
+    procedure StartImpliedBlockElem(const AActiveText: IActiveText);
+    procedure EndImpliedBlockElem(const AActiveText: IActiveText);
+    procedure WriteText(const AActiveText: IActiveText; const AText: string);
+    procedure ParsePlainText(const AActiveText: IActiveText);
+    procedure ParseStartTag(const AActiveText: IActiveText);
+    procedure ParseEndTag(const AActiveText: IActiveText);
   public
     constructor Create;
       {Class constructor. Sets up object.
@@ -69,12 +107,12 @@ type
       {Class destructor. Finalises object.
       }
     { IActiveTextParser method }
-    procedure Parse(const Markup: string; const ActiveText: IActiveText);
       {Parses markup and updates active text object with details.
         @param Markup [in] Markup containing definition of active text. Must be
           in format understood by parser.
         @param ActiveText [in] Active text object updated by parser.
       }
+    procedure Parse(const Markup: string; const ActiveText: IActiveText);
   end;
 
   {
@@ -295,7 +333,8 @@ begin
   inherited Create;
   fLexer := TTaggedTextLexer.Create(TagInfo, EntityInfo);
   fParamStack := TStack<TActiveTextAttr>.Create;
-  fBlockTagStack := TStack<TActiveTextActionElemKind>.Create;
+  fTagStack := TStack<TActiveTextActionElemKind>.Create;
+  fBlockTagStack := TStack<TBlockTagInfo>.Create;
 end;
 
 destructor TREMLReader.Destroy;
@@ -303,9 +342,78 @@ destructor TREMLReader.Destroy;
   }
 begin
   fBlockTagStack.Free;
+  fTagStack.Free;
   FreeAndNil(fParamStack);
   FreeAndNil(fLexer);
   inherited;
+end;
+
+procedure TREMLReader.EndBlockElem(const AActiveText: IActiveText;
+  const AElem: TActiveTextActionElemKind);
+resourcestring
+  // Error message
+  sMismatchedTag = 'Closing block tag does not match opening block tag.';
+begin
+  Assert(fBlockTagStack.Count > 0);
+  if fBlockTagStack.Peek.Tag <> AElem then
+    raise EActiveTextParserError.Create(sMismatchedTag);
+  EndElem(AActiveText, AElem);
+  fBlockTagStack.Pop;
+end;
+
+procedure TREMLReader.EndElem(const AActiveText: IActiveText;
+  const AElem: TActiveTextActionElemKind);
+var
+  ParamName: string;                  // name of a parameter
+  Attr: TActiveTextAttr;              // attributes of tag
+resourcestring
+  // Error message
+  sMismatchedTag = 'Closing tag does not match opening tag.';
+begin
+  Assert(fTagStack.Count > 0);
+  if AElem <> fTagStack.Peek then
+    raise EActiveTextParserError.Create(sMismatchedTag);
+  // Retrive any parameters and record element with any parameter
+  TREMLTags.LookupParamName(AElem, ParamName);
+  if ParamName <> '' then
+  begin
+    // We should have a param which must be stored in closing action
+    // element, but closing REML tags have no parameters. We solve this
+    // by popping the parameter value from the stack. This works because
+    // we use a stack for params and opening and closing tags are
+    // matched.
+    Assert(fParamStack.Count > 0);
+    Attr := fParamStack.Pop;
+    // Add closing action element
+    AActiveText.AddElem(
+      TActiveTextFactory.CreateActionElem(
+        AElem, TActiveTextFactory.CreateAttrs(Attr), fsClose
+      )
+    );
+  end
+  else
+  begin
+    // No parameter: simple add closing parameterless action element
+    AActiveText.AddElem(
+      TActiveTextFactory.CreateActionElem(AElem, fsClose)
+    );
+  end;
+  // Pop tag from tag stack
+  fTagStack.Pop;
+end;
+
+procedure TREMLReader.EndImpliedBlockElem(const AActiveText: IActiveText);
+begin
+  Assert(fIsImpliedBlock);
+  Assert(fBlockTagStack.Peek.Tag = ekBlock);
+  fIsImpliedBlock := False;
+  EndBlockElem(AActiveText, ekBlock);
+end;
+
+procedure TREMLReader.EndInlineElem(const AActiveText: IActiveText;
+  const AElem: TActiveTextActionElemKind);
+begin
+  EndElem(AActiveText, AElem);
 end;
 
 function TREMLReader.EntityInfo(const EntityIdx: Integer;
@@ -326,42 +434,125 @@ begin
   EntityChar := TREMLEntities.Chars[EntityIdx];
 end;
 
+procedure TREMLReader.NoteBlockTagHasContent;
+var
+  Block: TBlockTagInfo;
+begin
+  Assert(fBlockTagStack.Count > 0);
+  if fBlockTagStack.Peek.HasContent then
+    Exit;
+  Block := fBlockTagStack.Pop;
+  Block.HasContent := True;
+  fBlockTagStack.Push(Block);
+end;
+
 procedure TREMLReader.Parse(const Markup: string;
   const ActiveText: IActiveText);
-  {Parses markup and updates active text object with details.
-    @param Markup [in] Markup containing definition of active text. Must be in
-      format understood by parser.
-    @param ActiveText [in] Active text object updated by parser.
-  }
+resourcestring
+  sMismatchedTags = 'There is not a closing tag for each opening tag';
+  sBadTagType = 'Unexpected tag type';
+begin
+  Assert(Assigned(ActiveText), ClassName + '.Parse: ActiveText is nil');
+
+  // TODO: consider changing this so document tags are written
+  if Markup = '' then
+    Exit;
+
+  fBlockTagStack.Clear;
+  fTagStack.Clear;
+  fParamStack.Clear;
+  fIsImpliedBlock := False;
+
+  try
+    // Use lexer to process markup
+    fLexer.TaggedText := Markup;
+
+    StartBlockElem(ActiveText, ekDocument);
+
+    while fLexer.NextItem <> ttsEOF do
+    begin
+      case fLexer.Kind of
+        ttsText:
+          ParsePlainText(ActiveText);
+        ttsCompoundStartTag:
+          ParseStartTag(ActiveText);
+        ttsCompoundEndTag:
+          ParseEndTag(ActiveText);
+        else
+          raise EActiveTextParserError.Create(sBadTagType);
+      end;
+    end;
+
+    if fIsImpliedBlock then
+      EndImpliedBlockElem(ActiveText);
+    EndBlockElem(ActiveText, ekDocument);
+    if fBlockTagStack.Count <> 0 then
+      raise EActiveTextParserError.Create(sMismatchedTags);
+
+  except
+    // Handle exceptions: convert expected exceptions to EActiveTextParserError
+    on E: ETaggedTextLexer do
+      raise EActiveTextParserError.Create(E);
+    else
+      raise;
+  end;
+end;
+
+procedure TREMLReader.ParseEndTag(const AActiveText: IActiveText);
 var
-  ParamName: string;                  // name of a parameter
-  ParamValue: string;                 // value of a parameter
   TagId: TActiveTextActionElemKind;   // id of a tag
-  Attr: TActiveTextAttr;              // attributes of tag
+begin
+  Assert(flexer.Kind = ttsCompoundEndTag);
+  // Get tag id
+  TagId := TActiveTextActionElemKind(fLexer.TagCode);
 
-  function IsTextPermittedInParentBlock: Boolean;
+  if TActiveTextElemCaps.DisplayStyleOf(TagId) = dsBlock then
   begin
-    if fBlockTagStack.Count = 0 then
-      Exit(True);
-    Result := TActiveTextElemCaps.CanContainText(fBlockTagStack.Peek);
-  end;
+    // Closing block tag
+    if fIsImpliedBlock then
+      // An implied block is being written: close it
+      EndImpliedBlockElem(AActiveText);
+    // End read closing block
+    EndBlockElem(AActiveText, TagId)
+  end
+  else // TActiveTextElemCaps.DisplayStyleOf(TagId) = dsInline
+    // Closing inline tag: just close it
+    EndInlineElem(AActiveText, TagId);
+end;
 
-  function IsElemPermittedParentBlock(const Elem: TActiveTextActionElemKind):
-    Boolean;
+procedure TREMLReader.ParsePlainText(const AActiveText: IActiveText);
+var
+  Text: string;
+resourcestring
+  sNoTextPermitted = 'Text is not permitted in enclosing block';
+begin
+  Assert(fLexer.Kind = ttsText);
+  Text := fLexer.PlainText;
+  if TActiveTextElemCaps.CanContainText(fBlockTagStack.Peek.Tag) then
+    // Parent block accepts text: write it
+    WriteText(AActiveText, Text)
+  else if TActiveTextElemCaps.IsPermittedChildElem(
+    fBlockTagStack.Peek.Tag, ekBlock
+  ) then
   begin
-    if fBlockTagStack.Count = 0 then
-      Exit(TActiveTextElemCaps.IsElemPermittedInRoot(Elem));
-    Result := TActiveTextElemCaps.IsRequiredParent(fBlockTagStack.Peek, Elem);
-  end;
+    // Parent block can contain an ekBlock:
+    // create block if text is not strictly empty string, and add text to it
+    if not StrIsEmpty(Text) then
+    begin
+      StartImpliedBlockElem(AActiveText);
+      WriteText(AActiveText, Text);
+    end;
+  end
+  else if not StrIsEmpty(Text, True) then
+    // Unless text is just white space, report an error. We allow white space
+    // since there may be white space between tags. If there is white space we
+    // do nothing - we don't want to write white space.
+    raise EActiveTextParserError.Create(sNoTextPermitted);
+end;
 
-  function IsElemExcluded(const Elem: TActiveTextActionElemKind):
-    Boolean;
-  begin
-    if fBlockTagStack.Count = 0 then
-      Exit(False);
-    Result := TActiveTextElemCaps.IsExcludedElem(fBlockTagStack.Peek, Elem);
-  end;
-
+procedure TREMLReader.ParseStartTag(const AActiveText: IActiveText);
+var
+  TagId: TActiveTextActionElemKind;   // id of a tag
 resourcestring
   // Error message
   sErrMissingParam = 'Expected a "%0:s" parameter value in tag "%1:s"';
@@ -369,139 +560,113 @@ resourcestring
   sBadParentBlock = 'Invalid parent block for tag %0:s';
   sNoTextPermitted = 'Text is not permitted in enclosing block';
   sMismatchedCloser = 'Mismatching closing block tag %0:s';
+  sErrDocEndExpected = 'End of document expected';
 begin
-  Assert(Assigned(ActiveText), ClassName + '.Parse: ActiveText is nil');
-  fBlockTagStack.Clear;
-  try
-    // Nothing to do if there is no markup
-    if Markup = '' then
-      Exit;
-    // Use lexer to process markup
-    fLexer.TaggedText := Markup;
-    // Scan REML a token at a time
-    while fLexer.NextItem <> ttsEOF do
-    begin
-      case fLexer.Kind of
-
-        ttsText:
-        begin
-          if IsTextPermittedInParentBlock then
-          begin
-            // Plain text is allowed in parent block: add it
-            ActiveText.AddElem(
-              TActiveTextFactory.CreateTextElem(fLexer.PlainText)
-            );
-          end
-          else
-          begin
-            // Plain text not allowed in parent block: raise exception UNLESS
-            // text is only white space or empty, in which case we simply ignore
-            // the text. This is because white space will often occur after
-            // end tag of enclosed blocks
-            if not StrIsEmpty(fLexer.PlainText, True) then
-              raise EActiveTextParserError.Create(sNoTextPermitted);
-          end
-        end;
-
-        ttsCompoundStartTag:
-        begin
-          // Start of an action element
-          // Get tag id and any parameter
-          TagId := TActiveTextActionElemKind(fLexer.TagCode);
-
-          // Validate tag id
-          if IsElemExcluded(TagId) then
-            raise EActiveTextParserError.CreateFmt(
-              sErrNesting, [fLexer.TagName]
-            );
-          if not IsElemPermittedParentBlock(TagID) then
-            raise EActiveTextParserError.CreateFmt(
-              sBadParentBlock, [fLexer.TagName]
-            );
-
-          if TActiveTextElemCaps.DisplayStyleOf(TagId) = dsBlock then
-            fBlockTagStack.Push(TagId);
-          TREMLTags.LookupParamName(TagId, ParamName);
-          if ParamName <> '' then
-          begin
-            // We have a parameter: must not be empty
-            ParamValue := fLexer.TagParams.Values[ParamName];
-            if ParamValue = '' then
-              raise EActiveTextParserError.CreateFmt(
-                sErrMissingParam, [ParamName, fLexer.TagName]
-              );
-            // Record param for use by closing tag
-            Attr := TActiveTextAttr.Create(ParamName, ParamValue);
-            fParamStack.Push(Attr);
-            // Add opening action element
-            ActiveText.AddElem(
-              TActiveTextFactory.CreateActionElem(
-                TagId, TActiveTextFactory.CreateAttrs(Attr), fsOpen
-              )
-            );
-          end
-          else
-          begin
-            // No parameter: simply add opening parameterless action element
-            ActiveText.AddElem(
-              TActiveTextFactory.CreateActionElem(TagId, fsOpen)
-            );
-          end;
-        end;
-
-        ttsCompoundEndTag:
-        begin
-          // End of an action element
-          // Get elem id
-          TagId := TActiveTextActionElemKind(fLexer.TagCode);
-
-          // Validate elem
-          if TActiveTextElemCaps.DisplayStyleOf(TagId) = dsBlock then
-          begin
-            if fBlockTagStack.Peek <> TagId then
-              raise EActiveTextParserError.CreateFmt(
-                sMismatchedCloser, [fLexer.TagName]
-              );
-            fBlockTagStack.Pop;
-          end;
-
-          // Process params
-          TREMLTags.LookupParamName(TagId, ParamName);
-          if ParamName <> '' then
-          begin
-            // We should have a param which must be stored in closing action
-            // element, but closing REML tags have no parameters. We solve this
-            // by popping the parameter value from the stack. This works because
-            // we use a stack for params and opening and closing tags are
-            // matched.
-            Attr := fParamStack.Pop;
-            // Add closing action element
-            ActiveText.AddElem(
-              TActiveTextFactory.CreateActionElem(
-                TagId, TActiveTextFactory.CreateAttrs(Attr), fsClose
-              )
-            );
-          end
-          else
-          begin
-            // No parameter: simple add closing parameterless action element
-            ActiveText.AddElem(
-              TActiveTextFactory.CreateActionElem(TagId, fsClose)
-            );
-          end;
-        end;
-
-      end;
-    end;
-
-  except
-
-    // Handle exceptions: convert expected exceptions to EActiveTextParserError
-    on E: ETaggedTextLexer do
-      raise EActiveTextParserError.Create(E);
+  Assert(fLexer.Kind = ttsCompoundStartTag);
+  // Get tag id
+  TagId := TActiveTextActionElemKind(fLexer.TagCode);
+  if TActiveTextElemCaps.DisplayStyleOf(TagId) = dsBlock then
+  begin
+    // Opening block tag found
+    // If writing an implied block, close the block before processing new block
+    if fIsImpliedBlock then
+      EndImpliedBlockElem(AActiveText);
+    // Output block tag if it is valid within parent block, else error
+    if TActiveTextElemCaps.IsPermittedChildElem(
+      fBlockTagStack.Peek.Tag, TagId
+    ) then
+      StartBlockElem(AActiveText, TagId)
     else
-      raise;
+      raise EActiveTextParserError.CreateFmt(sBadParentBlock, [fLexer.TagName]);
+  end
+  else // TActiveTextElemCaps.DisplayStyleOf(TagId) = dsInline
+  begin
+    // Opeing inline tag found
+    if TActiveTextElemCaps.IsPermittedChildElem(
+        fBlockTagStack.Peek.Tag, TagId
+      ) then
+      // Tag is permitted within parent block: output it
+      StartInlineElem(AActiveText, TagId)
+    else if
+      TActiveTextElemCaps.IsPermittedChildElem(
+        fBlockTagStack.Peek.Tag, ekBlock
+      ) and
+      TActiveTextElemCaps.IsPermittedChildElem(ekBlock, TagId) then
+      begin
+        // Tag not directly permitted, but we can create an implied block iff:
+        // 1. parent block permits an ekBlock child element
+        // 2. ekBlock permits current tag as child element
+        StartImpliedBlockElem(AActiveText);
+        StartInlineElem(AActiveText, TagId);
+      end
+    else
+      // Tag not permitted in parent block: error
+      raise EActiveTextParserError.CreateFmt(sBadParentBlock, [fLexer.TagName]);
   end;
+end;
+
+procedure TREMLReader.StartBlockElem(const AActiveText: IActiveText;
+  const AElem: TActiveTextActionElemKind);
+begin
+  Assert((TActiveTextElemCaps.DisplayStyleOf(AElem) = dsBlock));
+  StartElem(AActiveText, AElem);
+  fBlockTagStack.Push(TBlockTagInfo.Create(AElem));
+end;
+
+procedure TREMLReader.StartElem(const AActiveText: IActiveText;
+  const AElem: TActiveTextActionElemKind);
+var
+  ParamName: string;                  // name of a parameter
+  ParamValue: string;                 // value of a parameter
+  Attr: TActiveTextAttr;              // attributes of tag
+resourcestring
+  // Error message
+  sErrMissingParam = 'Expected a "%0:s" parameter value in tag "%1:s"';
+begin
+  // Find any parameters and record element with any parameter
+  TREMLTags.LookupParamName(AElem, ParamName);
+  if ParamName <> '' then
+  begin
+    // We have a parameter: must not be empty
+    ParamValue := fLexer.TagParams.Values[ParamName];
+    if ParamValue = '' then
+      raise EActiveTextParserError.CreateFmt(
+        sErrMissingParam, [ParamName, fLexer.TagName]
+      );
+    // Record param for use by closing tag
+    Attr := TActiveTextAttr.Create(ParamName, ParamValue);
+    fParamStack.Push(Attr);
+    // Add opening action element
+    AActiveText.AddElem(
+      TActiveTextFactory.CreateActionElem(
+        AElem, TActiveTextFactory.CreateAttrs(Attr), fsOpen
+      )
+    );
+  end
+  else
+  begin
+    // No parameter: simply add opening parameterless opening action element
+    AActiveText.AddElem(
+      TActiveTextFactory.CreateActionElem(AElem, fsOpen)
+    );
+  end;
+  // Push tag onto tag stack
+  fTagStack.Push(AElem);
+end;
+
+procedure TREMLReader.StartImpliedBlockElem(const AActiveText: IActiveText);
+begin
+  Assert(not fIsImpliedBlock);
+  StartBlockElem(AActiveText, ekBlock);
+  fIsImpliedBlock := True;
+end;
+
+procedure TREMLReader.StartInlineElem(const AActiveText: IActiveText;
+  const AElem: TActiveTextActionElemKind);
+begin
+  Assert(TActiveTextElemCaps.DisplayStyleOf(AElem) = dsInline);
+  StartElem(AActivetext, AElem);
+  NoteBlockTagHasContent;
 end;
 
 function TREMLReader.TagInfo(const TagIdx: Integer; out TagName: string;
@@ -523,6 +688,25 @@ begin
     TagCode := Ord(TREMLTags.Ids[TagIdx]);
     IsContainer := True;
   end;
+end;
+
+procedure TREMLReader.WriteText(const AActiveText: IActiveText;
+  const AText: string);
+begin
+  // Don't write anything if text is strictly empty string
+  if not StrIsEmpty(AText) then
+  begin
+    AActiveText.AddElem(TActiveTextFactory.CreateTextElem(AText));
+    NoteBlockTagHasContent;
+  end;
+end;
+
+{ TREMLReader.TBlockTagInfo }
+
+constructor TREMLReader.TBlockTagInfo.Create(ATag: TActiveTextActionElemKind);
+begin
+  fTag := ATag;
+  fHasContent := False;
 end;
 
 { TREMLWriter }
@@ -549,30 +733,33 @@ var
   SrcLine: string;
   DestLines: IStringList;
   DestLine: string;
+  RW: TREMLWriter;
 begin
-  with InternalCreate do
-    try
-      Text := '';
-      fLevel := 0;
-      for Elem in ActiveText do
-      begin
-        if Supports(Elem, IActiveTextTextElem, TextElem) then
-          Text := Text + RenderText(TextElem)
-        else if Supports(Elem, IActiveTextActionElem, TagElem) then
-          Text := Text + RenderTag(TagElem);
-      end;
-      SrcLines := TIStringList.Create(Text, EOL, False);
-      DestLines := TIStringList.Create;
-      for SrcLine in SrcLines do
-      begin
-        DestLine := StrTrimRight(SrcLine);
-        if not StrIsEmpty(DestLine) then
-          DestLines.Add(DestLine);
-      end;
-      Result := DestLines.GetText(EOL, False);
-    finally
-      Free;
+  if ActiveText.IsEmpty then
+    Exit('');
+  RW := TREMLWriter.InternalCreate;
+  try
+    Text := '';
+    RW.fLevel := 0;
+    for Elem in ActiveText do
+    begin
+      if Supports(Elem, IActiveTextTextElem, TextElem) then
+        Text := Text + RW.RenderText(TextElem)
+      else if Supports(Elem, IActiveTextActionElem, TagElem) then
+        Text := Text + RW.RenderTag(TagElem);
     end;
+    SrcLines := TIStringList.Create(Text, EOL, False);
+    DestLines := TIStringList.Create;
+    for SrcLine in SrcLines do
+    begin
+      DestLine := StrTrimRight(SrcLine);
+      if not StrIsEmpty(DestLine) then
+        DestLines.Add(DestLine);
+    end;
+    Result := DestLines.GetText(EOL, False);
+  finally
+    RW.Free;
+  end;
 end;
 
 function TREMLWriter.RenderTag(
@@ -582,54 +769,72 @@ function TREMLWriter.RenderTag(
     @return Required REML tag.
   }
 var
-  TagName: string;    // name of tag
+  TagName: string;      // name of tag
   ParamName: string;  // name of any parameter
 begin
-  if not TREMLTags.LookupTagName(TagElem.Kind, TagName) then
-    raise EBug.CreateFmt('%s.RenderTag: Invalid REML tag id', [ClassName]);
+  TREMLTags.LookupTagName(TagElem.Kind, TagName);
   Result := '';
   TREMLTags.LookupParamName(TagElem.Kind, ParamName);
   case TagElem.State of
     fsClose:
     begin
       // closing tag
-      Result := Format('</%s>', [TagName]);
-      if TActiveTextElemCaps.DisplayStyleOf(TagElem.Kind) = dsBlock then
+      if TagName <> '' then
       begin
-        Dec(fLevel);
-        Result := EOL + StrOfSpaces(IndentMult * fLevel) + Result + EOL;
+        Result := Format('</%s>', [TagName]);
+        if TActiveTextElemCaps.DisplayStyleOf(TagElem.Kind) = dsBlock then
+        begin
+          Dec(fLevel);
+          Result := EOL + StrOfSpaces(IndentMult * fLevel) + Result + EOL;
+          fIsStartOfTextLine := True;
+        end;
+      end
+      else
+      begin
+        Result := '';
         fIsStartOfTextLine := True;
       end;
     end;
     fsOpen:
     begin
       // opening tag: may have a parameter
-      if ParamName ='' then
-        Result := Format('<%s>', [TagName])
-      else
-        // have a parameter: value must be safely encoded
-        Result := Format(
-          '<%0:s %1:s="%2:s">',
-          [
-            TagName,
-            ParamName,
-            TextToREMLText(TagElem.Attrs[TActiveTextAttrNames.Link_URL])
-          ]
-        );
-      if TActiveTextElemCaps.DisplayStyleOf(TagElem.Kind) = dsBlock then
+      if TagName <> '' then
       begin
-        Result := EOL + StrOfSpaces(IndentMult * fLevel) + Result + EOL;
-        Inc(fLevel);
-        fIsStartOfTextLine := True;
-      end
-      else if TActiveTextElemCaps.DisplayStyleOf(TagElem.Kind) = dsInline then
-      begin
-        if fIsStartOfTextLine then
+        if ParamName ='' then
+          Result := Format('<%s>', [TagName])
+        else
+          { TODO: revise to not assume parameter must be Link URL }
+          // have a parameter: value must be safely encoded
+          Result := Format(
+            '<%0:s %1:s="%2:s">',
+            [
+              TagName,
+              ParamName,
+              TextToREMLText(TagElem.Attrs[TActiveTextAttrNames.Link_URL])
+            ]
+          );
+        if TActiveTextElemCaps.DisplayStyleOf(TagElem.Kind) = dsBlock then
         begin
-          Result := StrOfSpaces(IndentMult * fLevel) + Result;
-          fIsStartOfTextLine := False;
+          Result := EOL + StrOfSpaces(IndentMult * fLevel) + Result + EOL;
+          Inc(fLevel);
+          fIsStartOfTextLine := True;
+        end
+        else if TActiveTextElemCaps.DisplayStyleOf(TagElem.Kind) = dsInline then
+        begin
+          if fIsStartOfTextLine then
+          begin
+            Result := StrOfSpaces(IndentMult * fLevel) + Result;
+            fIsStartOfTextLine := False;
+          end;
         end;
       end;
+    end
+    else
+    begin
+      if TagElem.Kind = ekBlock then
+        fIsStartOfTextLine := True;
+      // ekDocument is a no-op and there should be no other elems here
+      Result := '';
     end;
   end;
 end;
@@ -695,6 +900,9 @@ begin
   fTagMap[8] := TREMLTag.Create(ekUnorderedList, 'ul');
   fTagMap[9] := TREMLTag.Create(ekOrderedList, 'ol');
   fTagMap[10] := TREMLTag.Create(ekListItem, 'li');
+  // NOTE: ekBlock and ekDocument are not used REML
+  //   content of ekBlock is rendered as text outside any block
+  //   content of ekDocument is rendered without outputing a tag
 end;
 
 class destructor TREMLTags.Destroy;

@@ -21,23 +21,21 @@ uses
 
 type
   TActiveTextTextRenderer = class(TObject)
-  public
+  strict private
     const
       ///  <summary>Special space character used to indicate the start of a list
       ///  item.</summary>
       ///  <remarks>This special character is a necessary kludge because some
-      ///  c odethat renders active text as formatted plain text strips away
+      ///  code that renders active text as formatted plain text strips away
       ///  leading #32 characters as part of the formatting process. Therefore
       ///  indentation in list items is lost if #32 characters are used for it.
-      ///  NBSP was chosen since it should render the same as a space if calling
-      ///  code doesn't convert it.</remarks>
+      ///  NBSP was chosen since it should render the same as a space if not
+      ///  removed.</remarks>
       LISpacer = NBSP;  // Do not localise. Must be <> #32
       ///  <summary>Bullet character used when rendering unordered list items.
       ///  </summary>
       Bullet = '*';     // Do not localise. Must be <> #32 and <> LISpacer
-  strict private
-    const
-      IndentDelta = 2;
+      DefaultIndentDelta = 2;
     type
       TListKind = (lkNumber, lkBullet);
       TListState = record
@@ -60,6 +58,7 @@ type
       fIndent: UInt16;
       fInPara: Boolean;
       fInListItem: Boolean;
+      fIndentDelta: UInt8;
     function CanEmitInline: Boolean;
     procedure AppendToPara(const AText: string);
     procedure InitialiseRender;
@@ -75,9 +74,10 @@ type
     destructor Destroy; override;
     property DisplayURLs: Boolean read fDisplayURLs write fDisplayURLs
       default False;
-    function RenderWrapped(ActiveText: IActiveText; const PageWidth, LMargin,
-      ParaOffset: Cardinal; const Prefix: string = '';
-      const Suffix: string  = ''): string;
+    property IndentDelta: UInt8 read fIndentDelta write fIndentDelta
+      default DefaultIndentDelta;
+    function RenderWrapped(ActiveText: IActiveText; const PageWidth,
+      LMargin: Cardinal): string;
   end;
 
 
@@ -104,7 +104,7 @@ function TActiveTextTextRenderer.CanEmitInline: Boolean;
 begin
   if fBlocksStack.Count <= 0 then
     Exit(False);
-  Result := not (fBlocksStack.Peek in [ekOrderedList, ekUnorderedList]);
+  Result := TActiveTextElemCaps.CanContainText(fBlocksStack.Peek);
 end;
 
 constructor TActiveTextTextRenderer.Create;
@@ -122,6 +122,7 @@ begin
   fIndent := 0;
   fInPara := False;
   fInListItem := False;
+  fIndentDelta := DefaultIndentDelta;
 end;
 
 destructor TActiveTextTextRenderer.Destroy;
@@ -200,6 +201,21 @@ end;
 
 procedure TActiveTextTextRenderer.RenderBlockActionElem(
   Elem: IActiveTextActionElem);
+
+  procedure OpenListContainer(const ListKind: TListKind);
+  begin
+    if (fListStack.Count > 0) and (fInPara) then
+      OutputParagraph;
+    fListStack.Push(TListState.Create(ListKind));
+    Inc(fIndent, IndentDelta);
+  end;
+
+  procedure AddListMarker(const Marker: string);
+  begin
+    fParaBuilder.Append(Marker);
+    fParaBuilder.Append(StringOfChar(NBSP, IndentDelta - Length(Marker)));
+  end;
+
 var
   ListState: TListState;
 begin
@@ -208,22 +224,12 @@ begin
     begin
       fBlocksStack.Push(Elem.Kind);
       case Elem.Kind of
-        ekPara: {Do nothing} ;
-        ekHeading: {Do nothing} ;
+        ekPara, ekHeading, ekBlock:
+          {Do nothing} ;
         ekUnorderedList:
-        begin
-          if (fListStack.Count > 0) and (fInPara) then
-            OutputParagraph;
-          fListStack.Push(TListState.Create(lkBullet));
-          Inc(fIndent, IndentDelta);
-        end;
+          OpenListContainer(lkBullet);
         ekOrderedList:
-        begin
-          if (fListStack.Count > 0) and (fInPara) then
-            OutputParagraph;
-          fListStack.Push(TListState.Create(lkNumber));
-          Inc(fIndent, IndentDelta);
-       end;
+          OpenListContainer(lkNumber);
         ekListItem:
         begin
           // Update list number of current list
@@ -235,16 +241,9 @@ begin
           // Act depending on current list kind
           case fListStack.Peek.ListKind of
             lkNumber:
-            begin
-              // Number list: start a new numbered item, with current number
-              fParaBuilder.Append(IntToStr(fListStack.Peek.ListNumber));
-              fParaBuilder.Append(NBSP);
-            end;
+              AddListMarker(IntToStr(fListStack.Peek.ListNumber));
             lkBullet:
-            begin
-              // Bullet list: start a new bullet point
-              fParaBuilder.Append(Bullet + NBSP);
-            end;
+              AddListMarker(Bullet);
           end;
         end;
       end;
@@ -252,17 +251,9 @@ begin
     fsClose:
     begin
       case Elem.Kind of
-        ekPara:
+        ekPara, ekHeading, ekBlock:
           OutputParagraph;
-        ekHeading:
-          OutputParagraph;
-        ekUnorderedList:
-        begin
-          OutputParagraph;
-          fListStack.Pop;
-          Dec(fIndent, IndentDelta);
-        end;
-        ekOrderedList:
+        ekUnorderedList, ekOrderedList:
         begin
           OutputParagraph;
           fListStack.Pop;
@@ -315,7 +306,7 @@ begin
 end;
 
 function TActiveTextTextRenderer.RenderWrapped(ActiveText: IActiveText;
-  const PageWidth, LMargin, ParaOffset: Cardinal; const Prefix, Suffix: string):
+  const PageWidth, LMargin: Cardinal):
   string;
 var
   Paras: IStringList;
@@ -367,13 +358,13 @@ var
 
 begin
   Result := '';
-  Paras := TIStringList.Create(Prefix + Render(ActiveText) + Suffix, EOL, True);
+  Paras := TIStringList.Create(Render(ActiveText), EOL, True);
   for Para in Paras do
   begin
     if IsListItem then
     begin
-      Offset := -ParaOffset;
-      ParaIndent := CalcParaIndent + LMargin + ParaOffset;
+      Offset := -IndentDelta;
+      ParaIndent := CalcParaIndent + LMargin + IndentDelta;
     end
     else
     begin

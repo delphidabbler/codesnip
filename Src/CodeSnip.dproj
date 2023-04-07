@@ -519,7 +519,6 @@
 			<DCCReference Include="USingleton.pas"/>
 			<DCCReference Include="USnipKindListAdapter.pas"/>
 			<DCCReference Include="USnippetAction.pas"/>
-			<DCCReference Include="USnippetCreditsParser.pas"/>
 			<DCCReference Include="USnippetDoc.pas"/>
 			<DCCReference Include="USnippetExtraHelper.pas"/>
 			<DCCReference Include="USnippetHTML.pas"/>

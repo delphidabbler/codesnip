@@ -222,6 +222,7 @@ begin
   if Text = '' then
     Exit;
   Paragraphs := TIStringList.Create(Text, EOL2, False, True);
+  Result.AddElem(TActiveTextFactory.CreateActionElem(ekDocument, fsOpen));
   for Paragraph in Paragraphs do
   begin
     Result.AddElem(TActiveTextFactory.CreateActionElem(ekPara, fsOpen));
@@ -230,6 +231,7 @@ begin
     );
     Result.AddElem(TActiveTextFactory.CreateActionElem(ekPara, fsClose));
   end;
+  Result.AddElem(TActiveTextFactory.CreateActionElem(ekDocument, fsClose));
 end;
 
 procedure TSnippetsActiveTextEdFrame.Preview;
