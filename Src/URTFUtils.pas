@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2005-2022, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Utility functions used when processing RTF.
 }
@@ -66,7 +66,10 @@ type
     rcUnicodeChar,          // defines a Unicode character as signed 16bit value
     rcUnicodePair,          // introduces pair of ANSI and Unicode destinations
     rcUnicodeDest,          // introduces Unicode destination
-    rcIgnore                // denotes following control can be ignored
+    rcIgnore,               // denotes following control can be ignored
+    rcFirstLineOffset,      // first line indent in twips (relative to \li)
+    rcLeftIndent,           // left indent in twips
+    rcTabStop               // sets a tab stop in twips
   );
 
 type
@@ -193,7 +196,8 @@ const
     'rtf', 'ansi', 'ansicpg', 'deff', 'deflang', 'fonttbl', 'fprq', 'fcharset',
     'fnil', 'froman', 'fswiss', 'fmodern', 'fscript', 'fdecor', 'ftech',
     'colortbl', 'red', 'green', 'blue', 'info', 'title', 'pard', 'par', 'plain',
-    'f', 'cf', 'b', 'i', 'ul', 'fs', 'sb', 'sa', 'u', 'upr', 'ud', '*'
+    'f', 'cf', 'b', 'i', 'ul', 'fs', 'sb', 'sa', 'u', 'upr', 'ud', '*',
+    'fi', 'li', 'tx'
   );
 
 function RTFControl(const Ctrl: TRTFControl): ASCIIString;
