@@ -300,7 +300,7 @@ begin
     SnippetNode, cHighlightSource, IntToStr(Ord(Snippet.HiliteSource))
   );
   // extra info is written only if present
-  if not Snippet.Extra.IsEmpty then
+  if Snippet.Extra.HasContent then
     fXMLDoc.CreateElement(
       SnippetNode,
       cExtraNode,

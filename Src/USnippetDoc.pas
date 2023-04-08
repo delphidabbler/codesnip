@@ -177,7 +177,7 @@ begin
   RenderTitledList(sXRefListTitle, SnippetsToStrings(Snippet.XRef));
   if Snippet.Kind <> skFreeform then
     RenderCompilerInfo(sCompilers, CompilerInfo(Snippet));
-  if not Snippet.Extra.IsEmpty then
+  if Snippet.Extra.HasContent then
     RenderExtra(Snippet.Extra);
   if not Snippet.UserDefined then
     // database info written only if snippet is from main database

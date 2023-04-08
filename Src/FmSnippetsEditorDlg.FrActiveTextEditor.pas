@@ -257,7 +257,7 @@ begin
       SetEditMode(emREML)
   else
     SetEditMode(fDefaultEditMode);
-  if not Value.IsEmpty then
+  if Value.HasContent then
   begin
     case fEditMode of
       emPlainText:

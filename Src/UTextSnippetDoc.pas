@@ -154,7 +154,8 @@ end;
 
 procedure TTextSnippetDoc.RenderExtra(const ExtraText: IActiveText);
 begin
-  Assert(not ExtraText.IsEmpty, ClassName + '.RenderExtra: ExtraText is empty');
+  Assert(ExtraText.HasContent,
+    ClassName + '.RenderExtra: ExtraText has no content');
   fWriter.WriteLine;
   RenderActiveText(ExtraText);
 end;

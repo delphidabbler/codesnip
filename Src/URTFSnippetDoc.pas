@@ -398,7 +398,8 @@ procedure TRTFSnippetDoc.RenderExtra(const ExtraText: IActiveText);
 var
   RTFWriter: TActiveTextRTF;  // Object that generates RTF from active text
 begin
-  Assert(not ExtraText.IsEmpty, ClassName + '.RenderExtra: ExtraText is empty');
+  Assert(ExtraText.HasContent,
+    ClassName + '.RenderExtra: ExtraText has no content');
   RTFWriter := TActiveTextRTF.Create;
   try
     RTFWriter.ElemStyleMap := fExtraStyles;
