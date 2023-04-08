@@ -92,8 +92,8 @@ type
     ///  <param name="ReadAll">Boolean [in] Flag that indicates if the whole
     ///  stream is to be read (True) or stream is to be read from current
     ///  position (False).</param>
-    constructor Create(const AStream: TStream; const AEncoding: TEncoding;
-      const ReadAll: Boolean = False); overload;
+    constructor Create(const AStream: TStream; const ReadAll: Boolean = False);
+      overload;
     ///  <summary>Initialises record from ASCII RTF code.</summary>
     ///  <param name="ARTFCode">ASCIIString [in] ASCII string containing RTF
     ///  code.</param>
@@ -295,8 +295,7 @@ end;
 
 { TRTF }
 
-constructor TRTF.Create(const AStream: TStream; const AEncoding: TEncoding;
-  const ReadAll: Boolean);
+constructor TRTF.Create(const AStream: TStream; const ReadAll: Boolean);
 var
   ByteCount: Integer;
 begin
