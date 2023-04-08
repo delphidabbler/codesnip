@@ -123,12 +123,21 @@ end;
 procedure TTextSnippetDoc.RenderCompilerInfo(const Heading: string;
   const Info: TCompileDocInfoArray);
 var
-  Idx: Integer; // loops compiler information table
+  MaxNameLength: Integer;
+  CompilerInfo: TCompileDocInfo;
 begin
+  // Calculate length of longest compiler name
+  MaxNameLength := 0;
+  for CompilerInfo in Info do
+    if Length(CompilerInfo.Compiler) > MaxNameLength then
+      MaxNameLength := Length(CompilerInfo.Compiler);
+  // Write out compilers with results
   fWriter.WriteLine;
   fWriter.WriteLine(Heading);
-  for Idx := Low(Info) to High(Info) do
-    fWriter.WriteLine('%-20s%s', [Info[Idx].Compiler, Info[Idx].Result]);
+  for CompilerInfo in Info do
+    fWriter.WriteLine(
+      '%-*s%s', [MaxNameLength + 4, CompilerInfo.Compiler, CompilerInfo.Result]
+    );
 end;
 
 procedure TTextSnippetDoc.RenderDBInfo(const Text: string);
