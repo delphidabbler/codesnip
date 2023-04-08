@@ -190,6 +190,8 @@ type
     ///  <summary>Checks if the active text object contains any elements.
     ///  </summary>
     function IsEmpty: Boolean;
+    ///  <summary>Checks if the active text object has text content.</summary>
+    function HasContent: Boolean;
     ///  <summary>Checks if the active text object contains only plain text.
     ///  </summary>
     ///  <remarks>Plain text is considered to be active text with no action
@@ -504,6 +506,9 @@ type
     ///  <summary>Checks if the element list is empty.</summary>
     ///  <remarks>Method of IActiveText.</remarks>
     function IsEmpty: Boolean;
+    ///  <summary>Checks if the active text object has text content.</summary>
+    ///  <remarks>Method of IActiveText.</remarks>
+    function HasContent: Boolean;
     ///  <summary>Checks if the active text object contains only plain text.
     ///  </summary>
     ///  <remarks>
@@ -867,6 +872,18 @@ end;
 function TActiveText.GetEnumerator: TEnumerator<IActiveTextElem>;
 begin
   Result := fElems.GetEnumerator;
+end;
+
+function TActiveText.HasContent: Boolean;
+var
+  Elem: IActiveTextElem;
+  TextElem: IActiveTextTextElem;
+begin
+  Result := False;
+  for Elem in fElems do
+    if Supports(Elem, IActiveTextTextElem, TextElem)
+      and (TextElem.Text <> '') then
+      Exit(True);
 end;
 
 function TActiveText.IsEmpty: Boolean;
