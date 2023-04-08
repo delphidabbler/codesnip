@@ -174,7 +174,7 @@ var
   DestLines: IStringList;
   DestLine: string;
 begin
-  if ActiveText.IsEmpty then
+  if not ActiveText.HasContent then
     Exit('');
   Text := '';
   fLevel := 0;

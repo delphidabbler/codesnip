@@ -735,7 +735,7 @@ var
   DestLine: string;
   RW: TREMLWriter;
 begin
-  if ActiveText.IsEmpty then
+  if not ActiveText.HasContent then
     Exit('');
   RW := TREMLWriter.InternalCreate;
   try

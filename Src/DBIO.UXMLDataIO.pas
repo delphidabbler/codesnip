@@ -950,7 +950,7 @@ begin
     );
     fXMLDoc.CreateElement(SnippetNode, cDisplayNameNode, Props.DisplayName);
     // extra node is only written if extra property has a value
-    if not Props.Extra.IsEmpty then
+    if Props.Extra.HasContent then
     begin
       fXMLDoc.CreateElement(
         SnippetNode,
