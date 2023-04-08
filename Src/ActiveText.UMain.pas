@@ -195,8 +195,8 @@ type
     ///  <summary>Checks if the active text object contains only plain text.
     ///  </summary>
     ///  <remarks>Plain text is considered to be active text with no action
-    ///  elements except for "para". This can rendered in plain text with no
-    ///  loss of formatting.</remarks>
+    ///  elements except for "document" or "block". This can rendered in plain
+    ///  text with no loss of formatting.</remarks>
     function IsPlainText: Boolean;
     ///  <summary>Checks if the active text object is a valid active text
     ///  document.</summary>
@@ -513,8 +513,8 @@ type
     ///  </summary>
     ///  <remarks>
     ///  <para>Plain text is considered to be active text with no action
-    ///  elements except for "para". This can rendered in plain text with no
-    ///  loss of formatting.</para>
+    ///  elements except for "document" or "block". This can rendered in plain
+    ///  text with no loss of formatting.</para>
     ///  <para>Method of IActiveText.</para>
     ///  </remarks>
     function IsPlainText: Boolean;
@@ -899,7 +899,7 @@ begin
   for Elem in fElems do
   begin
     if Supports(Elem, IActiveTextActionElem, ActionElem)
-      and not (ActionElem.Kind in [ekPara, ekDocument]) then
+      and not (ActionElem.Kind in [ekBlock, ekDocument]) then
       Exit(False);
   end;
   Result := True;
