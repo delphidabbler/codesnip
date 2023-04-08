@@ -17,11 +17,9 @@ interface
 
 
 uses
-  // Delphi
-  Graphics,
   // Project
   ActiveText.UMain, ActiveText.URTFRenderer, Hiliter.UGlobals, UEncodings,
-  UIStringList, USnippetDoc, URTFBuilder, URTFStyles, URTFUtils;
+  UIStringList, USnippetDoc, URTFBuilder, URTFStyles;
 
 
 type
@@ -128,9 +126,9 @@ implementation
 
 uses
   // Delphi
-  SysUtils,
+  Graphics,
   // Project
-  Hiliter.UHiliters, UColours, UConsts, UPreferences, UStrUtils;
+  Hiliter.UHiliters, UColours, UConsts, UGraphicUtils, UPreferences;
 
 
 { TRTFSnippetDoc }
@@ -316,9 +314,35 @@ end;
 
 procedure TRTFSnippetDoc.RenderCompilerInfo(const Heading: string;
   const Info: TCompileDocInfoArray);
+
+  // Calculate length of longest compiler name, in twips, when rendered on font
+  // to be used to display them
+  function MaxCompilerNameLenInTwips: SmallInt;
+  var
+    CompilerInfo: TCompileDocInfo;  // info about each compiler
+    CompilerNames: IStringList;     // list of all compiler names
+    Font: TFont;                    // font in which compile info displayed
+  begin
+    Font := TFont.Create;
+    try
+      Font.Name := MainFontName;
+      Font.Size := ParaFontSize;
+      CompilerNames := TIStringList.Create;
+      for CompilerInfo in Info do
+        CompilerNames.Add(CompilerInfo.Compiler);
+      Result := MaxStringWidthTwips(CompilerNames.ToArray, Font);
+    finally
+      Font.Free;
+    end;
+  end;
+
 var
-  Idx: Integer; // loops compiler information table
+  CompilerInfo: TCompileDocInfo;  // info about each compiler
+  TabStop: SmallInt;              // tab stop where compile result displayed
 begin
+  // Calculate tab stop where compile results are displayed
+  TabStop := (MaxCompilerNameLenInTwips div IndentDelta) * IndentDelta + IndentDelta;
+  // Display heading
   fBuilder.SetFontStyle([fsBold]);
   fBuilder.SetParaSpacing(
     TRTFParaSpacing.Create(ParaSpacing, ParaSpacing / 3)
@@ -328,13 +352,15 @@ begin
   fBuilder.EndPara;
   fBuilder.ClearParaFormatting;
   fBuilder.SetFontSize(ParaFontSize);
-  for Idx := Low(Info) to High(Info) do
+  // Display compiler table
+  fBuilder.SetTabStops([TabStop]);
+  for CompilerInfo in Info do
   begin
-    fBuilder.AddText(Info[Idx].Compiler);
+    fBuilder.AddText(CompilerInfo.Compiler);
     fBuilder.AddText(TAB);
     fBuilder.BeginGroup;
     fBuilder.SetFontStyle([fsItalic]);
-    fBuilder.AddText(Info[Idx].Result);
+    fBuilder.AddText(CompilerInfo.Result);
     fBuilder.EndGroup;
     fBuilder.EndPara;
   end;
