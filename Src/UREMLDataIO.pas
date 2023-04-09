@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2008-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2008-2023, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements classes that render and parse Routine Extra Markup Language (REML)
  * code. This markup is used to read and store active text objects as used by
