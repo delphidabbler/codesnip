@@ -1,46 +1,51 @@
 # CodeSnip Caboli
 
-The `caboli` branch of the CodeSnip repo is where it is intended to:
+> **Branch abandoned**
+>
+> After quite some effort, the attempt to rebuild the existing CodeSnip v4 code base in the `caboli` branch has proved too problematic. Therefore the branch has been abandoned as of 2023-04-09.
+> 
+> The branch will remain in the repository, for now, in case some of its code can be salvaged for later use.
+>
+> :no_entry: Pull requests for this branch are not being accepted.
 
-1. convert CodeSnip to compile with Delphi 11 Alexandria
-2. give the UI a major overhaul and polish.
+## Rationale behind the `caboli` branch
+
+There had been several attempts, spanning 9 years, to create a radically different CodeSnip version 5. These plans all required a significant (or complete) rewrite of the existing code. All the attempts seemed to have failed because they were too ambitious. (See the `pagoda`, `pavilion` & `belvedere` branches.)
+
+In the light of this it was decided to take a less ambitious, more evolutionary, approach. The idea was to identify the most important changes proposed for CodeSnip 5 and to attempt to achieve them by starting from the existing CodeSnip 4 code base.
+
+Looking at the [wishlist of changes](https://github.com/delphidabbler/codesnip/blob/belvedere/README.md#original-plans-for-codesnip-5-belvedere) that CodeSnip 5 was supposed to include, it seemed that the one change upon which everything else depended was to switch to a modern version of Delphi.
+
+Unfortunately, it was already known that, although the CodeSnip 4 code base could be modified to compile with Delphi 11, the UI was broken in the resulting executable. Consequently the UI needed to be heavily revised so that it would work after compiling with Delphi 11. 
+
+Therefore it made sense to overhaul & modernise the UI at the same time as switching compilers. If these two goals could be acheived then the resulting code base could be used as a springboard for further developments.
+
+The `caboli` branch was created to attempt this development. It was branched from `master` as of release v4.20.2.
 
 > :information_source: "Caboli" is a Welsh language word that translates into English as to "polish" or to "buff".
 
-:warning: _**This repository is experimental and could be removed or abandoneed at any time - do not rely on it.**_
+## Failure of `caboli`
 
-## Rationale 
+Quite a lot of work was done in two main tranches between December 2022 and April 2023, with some initially encouraging results:
 
-Their have been several attempts, spanning 9 years, to create a radically different CodeSnip version 5. These plans all required a significant rewriting of the code base. All the attempts have failed because they were too ambitious. (See the `pagoda`, `pavilion` & `belvedere` branches.)
+* The CodeSnip 4 code base _was_ made to compile with Delphi 11.
+* The program's main form was rebuilt from scratch to avoid the problem of the broken UI.
+* Dialogue boxes were also adjusted.
 
-The planned change of compiler & the UI overhaul were both to be included in the the v5 release. This left CodeSnip 4 looking more and more dated and being stuck with using Delphi XE as its compiler.
+Unfortunately, as development proceeded more and more obscure bugs raised their heads, including:
 
-In the light of the failure of the ambitious attempts to rewrite the program, it seems prudent to take a more evolutionary approach to overhauling CodeSnip.
+* Memory access failures (albeit that some, but not all, of them related to conversion to 64 bit compilation).
+* Various UI alignment and font sizing problems. 
+* Font and form scaling problems on high DPI displays.
 
-Looking at the [wishlist of changes](https://github.com/delphidabbler/codesnip/blob/belvedere/README.md#original-plans-for-codesnip-5-belvedere) that CodeSnip 5 was supposed to include, it seems that the one change that is required before anything else can be implemented is the switch to a modern version of Delphi.
+It gradually became apparent that numerous bugs were hiding in the old code base and there was no obvious method of predicting where the next one would arise. Often fixing one bug would resulting in another one being found.
 
-For various historical reasons, CodeSnip 4 can only be compiled successfully with Delphi XE. With a few changes it _will_ compile with Delphi 11 Alexandria, but the UI is broken in the resulting executable.
+The conclusion was that it could take nearly as long to track down and fix these problems as it would take to rewrite the program. And at the end of the process there would be a significant probability of ending up with a program with very flaky and buggy underpinnings.
 
-Consequently the UI needs to be heavily revised so that it will work after compiling with Delphi 11. Therefore it makes sense to overhaul & modernise the UI at the same time as switching compilers.
+Wanting to avoid the [sunk cost falacy](https://dictionary.cambridge.org/dictionary/english/sunk-cost-fallacy), the decision was taken to back out before the investment in time became too great.
 
-## Development
+## Where next?
 
-All development will take place in the `caboli` branch.
+The current position is that rewriting from scratch has failed and so has adapting the old code base.
 
-`caboli` was branched from `master` as of release v4.20.2. As new releases are made to `master`, the changes will be merged into `caboli`.
-
-At present, any contributions should be made to the main `develop` branch, not to `caboli`.
-
-## Will this branch succeed?
-
-After series of failures, its hard to say. However I think there's more chance of success this time, because this project, although requiring some significant changes, is nowhere near as ambitious as the CodeSnip 5 attempts. However, there's a problem getting font scaling to work - see _Progress_ below.
-
-## Progress
-
-As of 2023-04-03 I'm focussing on:
-
-1. Getting the program to compile with Delphi 11.x and building as a 64 bit Windows target. So far so good. There are still some warning and hints to get rid of though.
-
-2. Getting the main UI to work. The main form has been rebuilt from scratch, with the main UI components being in place. There are problems in styling the web browser control to play nicely with dark mode. Not done much about that yet.
-
-3. Getting font scaling to work in the main UI and dialogue boxes for high DPI displays. All dialogue boxes have been recreated using a new folder class heirachy and label fonts have been sorted out. **BUT** font scaling is proving to be a major problem and that's where most of the effort is being spent. This is definitely the issue that may break this project.
+For now, at least, it seems that the only realistic approach is to keep on incrementally updating the v4 code base and sticking with the venerable Delphi XE.
