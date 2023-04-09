@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2012-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2012-2023, Peter Johnson (gravatar.com/delphidabbler).
  *
  * A frame that provides an editor for entering and ammending active text,
  * either as plain text or in markup.
@@ -222,6 +222,7 @@ begin
   if Text = '' then
     Exit;
   Paragraphs := TIStringList.Create(Text, EOL2, False, True);
+  Result.AddElem(TActiveTextFactory.CreateActionElem(ekDocument, fsOpen));
   for Paragraph in Paragraphs do
   begin
     Result.AddElem(TActiveTextFactory.CreateActionElem(ekPara, fsOpen));
@@ -230,6 +231,7 @@ begin
     );
     Result.AddElem(TActiveTextFactory.CreateActionElem(ekPara, fsClose));
   end;
+  Result.AddElem(TActiveTextFactory.CreateActionElem(ekDocument, fsClose));
 end;
 
 procedure TSnippetsActiveTextEdFrame.Preview;
@@ -255,7 +257,7 @@ begin
       SetEditMode(emREML)
   else
     SetEditMode(fDefaultEditMode);
-  if not Value.IsEmpty then
+  if Value.HasContent then
   begin
     case fEditMode of
       emPlainText:

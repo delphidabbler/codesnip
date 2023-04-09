@@ -16,9 +16,9 @@
 		<PropertyGroup Condition="'$(Base)'!=''">
 			<DCC_UnitAlias>WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;$(DCC_UnitAlias)</DCC_UnitAlias>
 			<DCC_SYMBOL_PLATFORM>false</DCC_SYMBOL_PLATFORM>
-			<DCC_ExeOutput>..\Exe</DCC_ExeOutput>
-			<DCC_UnitSearchPath>..\Bin;3rdParty;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
-			<DCC_DependencyCheckOutputName>..\Exe\CodeSnip.exe</DCC_DependencyCheckOutputName>
+			<DCC_ExeOutput>..\_build\exe</DCC_ExeOutput>
+			<DCC_UnitSearchPath>..\_build\bin;3rdParty;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
+			<DCC_DependencyCheckOutputName>..\_build\exe\CodeSnip.exe</DCC_DependencyCheckOutputName>
 			<DCC_CVT_WIDENING_STRING_LOST>true</DCC_CVT_WIDENING_STRING_LOST>
 			<DCC_CVT_ACHAR_TO_WCHAR>true</DCC_CVT_ACHAR_TO_WCHAR>
 			<DCC_Platform>x86</DCC_Platform>
@@ -29,7 +29,7 @@
 			<DCC_S>false</DCC_S>
 			<DCC_F>false</DCC_F>
 			<DCC_SymbolReferenceInfo>1</DCC_SymbolReferenceInfo>
-			<DCC_DcuOutput>..\Bin</DCC_DcuOutput>
+			<DCC_DcuOutput>..\_build\bin</DCC_DcuOutput>
 			<DCC_E>false</DCC_E>
 		</PropertyGroup>
 		<ItemGroup>
@@ -519,7 +519,6 @@
 			<DCCReference Include="USingleton.pas"/>
 			<DCCReference Include="USnipKindListAdapter.pas"/>
 			<DCCReference Include="USnippetAction.pas"/>
-			<DCCReference Include="USnippetCreditsParser.pas"/>
 			<DCCReference Include="USnippetDoc.pas"/>
 			<DCCReference Include="USnippetExtraHelper.pas"/>
 			<DCCReference Include="USnippetHTML.pas"/>

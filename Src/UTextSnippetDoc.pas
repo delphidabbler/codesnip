@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2009-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2009-2023, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements a class that renders a document that describes a snippet as plain
  * text.
@@ -36,13 +36,11 @@ type
       cPageWidth = 80;
       ///  <summary>Size of a single level of indentation in characters.
       ///  </summary>
-      cIndent = 2;
+      cIndent = 4;
   strict private
     ///  <summary>Renders given active text as word-wrapped paragraphs of width
-    ///  cPageWidth and given indent. Blank lines are added between paragraphs
-    ///  iff SpaceParas in True.</summary>
-    procedure RenderActiveText(ActiveText: IActiveText; const Indent: Cardinal;
-      const SpaceParas: Boolean);
+    ///  cPageWidth.</summary>
+    procedure RenderActiveText(ActiveText: IActiveText);
   strict protected
     ///  <summary>Initialises plain text document.</summary>
     procedure InitialiseDoc; override;
@@ -88,9 +86,9 @@ implementation
 
 uses
   // Delphi
-  SysUtils,
+  SysUtils, Character,
   // Project
-  ActiveText.UTextRenderer, UStrUtils;
+  ActiveText.UTextRenderer, UConsts, UStrUtils;
 
 
 { TTextSnippetDoc }
@@ -106,28 +104,17 @@ begin
   fWriter := TStringWriter.Create;
 end;
 
-procedure TTextSnippetDoc.RenderActiveText(ActiveText: IActiveText;
-  const Indent: Cardinal; const SpaceParas: Boolean);
+procedure TTextSnippetDoc.RenderActiveText(ActiveText: IActiveText);
 var
   Renderer: TActiveTextTextRenderer;
-  Lines: TStringList;
 begin
   Renderer := TActiveTextTextRenderer.Create;
   try
     Renderer.DisplayURLs := True;
-    Lines := TStringList.Create;
-    try
-      Lines.Text := Renderer.Render(ActiveText);
-      fWriter.WriteLine(
-        StrTrimRight(
-          StrWrap(
-            Lines, cPageWidth - Indent, Indent, True
-          )
-        )
-      );
-    finally
-      Lines.Free;
-    end;
+    Renderer.IndentDelta := cIndent;
+    fWriter.WriteLine(
+      Renderer.RenderWrapped(ActiveText, cPageWidth, 0)
+    );
   finally
     Renderer.Free;
   end;
@@ -136,12 +123,21 @@ end;
 procedure TTextSnippetDoc.RenderCompilerInfo(const Heading: string;
   const Info: TCompileDocInfoArray);
 var
-  Idx: Integer; // loops compiler information table
+  MaxNameLength: Integer;
+  CompilerInfo: TCompileDocInfo;
 begin
+  // Calculate length of longest compiler name
+  MaxNameLength := 0;
+  for CompilerInfo in Info do
+    if Length(CompilerInfo.Compiler) > MaxNameLength then
+      MaxNameLength := Length(CompilerInfo.Compiler);
+  // Write out compilers with results
   fWriter.WriteLine;
   fWriter.WriteLine(Heading);
-  for Idx := Low(Info) to High(Info) do
-    fWriter.WriteLine('%-20s%s', [Info[Idx].Compiler, Info[Idx].Result]);
+  for CompilerInfo in Info do
+    fWriter.WriteLine(
+      '%-*s%s', [MaxNameLength + 4, CompilerInfo.Compiler, CompilerInfo.Result]
+    );
 end;
 
 procedure TTextSnippetDoc.RenderDBInfo(const Text: string);
@@ -153,14 +149,15 @@ end;
 procedure TTextSnippetDoc.RenderDescription(const Desc: IActiveText);
 begin
   fWriter.WriteLine;
-  RenderActiveText(Desc, 0, True);
+  RenderActiveText(Desc);
 end;
 
 procedure TTextSnippetDoc.RenderExtra(const ExtraText: IActiveText);
 begin
-  Assert(not ExtraText.IsEmpty, ClassName + '.RenderExtra: ExtraText is empty');
+  Assert(ExtraText.HasContent,
+    ClassName + '.RenderExtra: ExtraText has no content');
   fWriter.WriteLine;
-  RenderActiveText(ExtraText, 0, True);
+  RenderActiveText(ExtraText);
 end;
 
 procedure TTextSnippetDoc.RenderHeading(const Heading: string;

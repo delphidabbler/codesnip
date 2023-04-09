@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2009-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2009-2023, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Provides a class that renders active text as HTML.
 }
@@ -17,9 +17,9 @@ interface
 
 uses
   // Delphi
-  SysUtils, Graphics, Generics.Collections,
+  SysUtils,
   // Project
-  ActiveText.UMain, UBaseObjects, UCSSBuilder, UHTMLUtils;
+  ActiveText.UMain, UHTMLUtils;
 
 
 type
@@ -47,7 +47,6 @@ type
       TCSSStyles = class(TObject)
       strict private
         var
-          fWrapperClass: string;
           fElemClassMap: array[TActiveTextActionElemKind] of string;
         procedure SetElemClass(ElemKind: TActiveTextActionElemKind;
           const Value: string); inline;
@@ -55,7 +54,6 @@ type
           inline;
       public
         constructor Create;
-        property WrapperClass: string read fWrapperClass write fWrapperClass;
         property ElemClasses[Kind: TActiveTextActionElemKind]: string
           read GetElemClass write SetElemClass;
       end;
@@ -63,30 +61,28 @@ type
     var
       fCSSStyles: TCSSStyles;
       fBuilder: TStringBuilder;
-      fInBlock: Boolean;
+      fLevel: Integer;
       fTagInfoMap: TTagInfoMap;
+      fIsStartOfTextLine: Boolean;
+      fLINestingDepth: Cardinal;
+    const
+      IndentMult = 2;
     procedure InitialiseTagInfoMap;
-    procedure InitialiseRender;
-    procedure RenderTextElem(Elem: IActiveTextTextElem);
-    procedure RenderBlockActionElem(Elem: IActiveTextActionElem);
-    procedure RenderInlineActionElem(Elem: IActiveTextActionElem);
-    procedure FinaliseRender;
+    function RenderTag(const TagElem: IActiveTextActionElem): string;
+    function RenderText(const TextElem: IActiveTextTextElem): string;
     function MakeOpeningTag(const Elem: IActiveTextActionElem): string;
     function MakeClosingTag(const Elem: IActiveTextActionElem): string;
   public
     constructor Create;
     destructor Destroy; override;
     function Render(ActiveText: IActiveText): string;
-    property Styles: TCSSStyles read fCSSStyles;
   end;
 
 
 implementation
 
-
 uses
-  // Project
-  UColours, UCSSUtils, UFontHelper, UIStringList;
+  UConsts, UIStringList, UStrUtils;
 
 
 { TActiveTextHTML }
@@ -96,6 +92,7 @@ begin
   inherited Create;
   fCSSStyles := TCSSStyles.Create;
   fBuilder := TStringBuilder.Create;
+  fLINestingDepth := 0;
   InitialiseTagInfoMap;
 end;
 
@@ -110,22 +107,6 @@ begin
   inherited;
 end;
 
-procedure TActiveTextHTML.FinaliseRender;
-begin
-  fBuilder.AppendLine(THTML.ClosingTag('div'));
-end;
-
-procedure TActiveTextHTML.InitialiseRender;
-var
-  WrapperClassAttr: IHTMLAttributes;
-begin
-  if fCSSStyles.WrapperClass <> '' then
-    WrapperClassAttr := THTMLAttributes.Create('class', fCSSStyles.WrapperClass)
-  else
-    WrapperClassAttr := nil;
-  fBuilder.AppendLine(THTML.OpeningTag('div', WrapperClassAttr));
-end;
-
 procedure TActiveTextHTML.InitialiseTagInfoMap;
 var
   NullAttrs: TTagInfo.TTagAttrCallback;
@@ -134,7 +115,10 @@ var
   ElemKind: TActiveTextActionElemKind;
 const
   Tags: array[TActiveTextActionElemKind] of string = (
-    'a', 'strong', 'em', 'var', 'p', 'span', 'h2', 'code', 'ul', 'ol', 'li'
+    'a' {ekLink}, 'strong' {ekStrong}, 'em' {ekEm}, 'var' {ekVar}, 'p' {ekPara},
+    'span' {ekWarning}, 'h2' {ekHeading}, 'code' {ekMono},
+    'ul' {ekUnorderedList}, 'ol' {ekUnorderedList}, 'li' {ekListItem},
+    'div' {ekBlock}, 'div' {ekDocument}
   );
 begin
   NullAttrs := function(Elem: IActiveTextActionElem): IHTMLAttributes
@@ -181,62 +165,84 @@ end;
 
 function TActiveTextHTML.Render(ActiveText: IActiveText): string;
 var
-  Elem: IActiveTextElem;
-  TextElem: IActiveTextTextElem;
-  ActionElem: IActiveTextActionElem;
+  Elem: IActiveTextElem;          // each element in active text object
+  TextElem: IActiveTextTextElem;  // an active text text element
+  TagElem: IActiveTextActionElem; // an active text action element
+  Text: string;
+  SrcLines: IStringList;
+  SrcLine: string;
+  DestLines: IStringList;
+  DestLine: string;
 begin
-  fBuilder.Clear;
-  fInBlock := False;
-  InitialiseRender;
+  if not ActiveText.HasContent then
+    Exit('');
+  Text := '';
+  fLevel := 0;
   for Elem in ActiveText do
   begin
     if Supports(Elem, IActiveTextTextElem, TextElem) then
-      RenderTextElem(TextElem)
-    else if Supports(Elem, IActiveTextActionElem, ActionElem) then
-    begin
-      if TActiveTextElemCaps.DisplayStyleOf(ActionElem.Kind) = dsBlock then
-        RenderBlockActionElem(ActionElem)
-      else
-        RenderInlineActionElem(ActionElem);
-    end;
+      Text := Text + RenderText(TextElem)
+    else if Supports(Elem, IActiveTextActionElem, TagElem) then
+      Text := Text + RenderTag(TagElem);
   end;
-  FinaliseRender;
-  Result := fBuilder.ToString;
+  SrcLines := TIStringList.Create(Text, EOL, False);
+  DestLines := TIStringList.Create;
+  for SrcLine in SrcLines do
+  begin
+    DestLine := StrTrimRight(SrcLine);
+    if not StrIsEmpty(DestLine) then
+      DestLines.Add(DestLine);
+  end;
+  Result := DestLines.GetText(EOL, False);
 end;
 
-procedure TActiveTextHTML.RenderBlockActionElem(Elem: IActiveTextActionElem);
+function TActiveTextHTML.RenderTag(const TagElem: IActiveTextActionElem):
+  string;
 begin
-  case Elem.State of
-    fsOpen:
-    begin
-      fBuilder.Append(MakeOpeningTag(Elem));
-      fInBlock := True;
-    end;
+  Result := '';
+  case TagElem.State of
     fsClose:
     begin
-      fInBlock := False;
-      fBuilder.AppendLine(MakeClosingTag(Elem));
+      Result := MakeClosingTag(TagElem);
+      if TActiveTextElemCaps.DisplayStyleOf(TagElem.Kind) = dsBlock then
+      begin
+        Dec(fLevel);
+        Result := EOL + StrOfSpaces(IndentMult * fLevel) + Result + EOL;
+        fIsStartOfTextLine := True;
+      end;
+    end;
+    fsOpen:
+    begin
+      Result := MakeOpeningTag(TagElem);
+      if TActiveTextElemCaps.DisplayStyleOf(TagElem.Kind) = dsBlock then
+      begin
+        Result := EOL + StrOfSpaces(IndentMult * fLevel) + Result + EOL;
+        Inc(fLevel);
+        fIsStartOfTextLine := True;
+      end
+      else if TActiveTextElemCaps.DisplayStyleOf(TagElem.Kind) = dsInline then
+      begin
+        if fIsStartOfTextLine then
+        begin
+          Result := StrOfSpaces(IndentMult * fLevel) + Result;
+          fIsStartOfTextLine := False;
+        end;
+      end;
     end;
   end;
 end;
 
-procedure TActiveTextHTML.RenderInlineActionElem(Elem: IActiveTextActionElem);
+function TActiveTextHTML.RenderText(const TextElem: IActiveTextTextElem):
+  string;
 begin
-  if not fInBlock then
-    Exit;
-  case Elem.State of
-    fsOpen:
-      fBuilder.Append(MakeOpeningTag(Elem));
-    fsClose:
-      fBuilder.Append(MakeClosingTag(Elem));
-  end;
-end;
-
-procedure TActiveTextHTML.RenderTextElem(Elem: IActiveTextTextElem);
-begin
-  if not fInBlock then
-    Exit;
-  fBuilder.Append(THTML.Entities(Elem.Text));
+  if fIsStartOfTextLine then
+  begin
+    Result := StrOfSpaces(IndentMult * fLevel);
+    fIsStartOfTextLine := False;
+  end
+  else
+    Result := '';
+  Result := Result + THTML.Entities(TextElem.Text);
 end;
 
 { TActiveTextHTML.TCSSStyles }
@@ -244,13 +250,15 @@ end;
 constructor TActiveTextHTML.TCSSStyles.Create;
 const
   DefaultClasses: array[TActiveTextActionElemKind] of string = (
-    'external-link', '', '', '', '', 'warning', '', '', '', '', ''
+    'external-link' {ekLink}, '' {ekStrong}, '' {ekEm}, '' {ekVar}, '' {ekPara},
+    'warning' {ekWarning}, '' {ekHeading}, '' {ekMono}, '' {ekUnorderedList},
+    '' {ekOrderedList}, '' {ekListItem}, '' {ekBlock},
+    'active-text' {ekDocument}
   );
 var
   ElemKind: TActiveTextActionElemKind;
 begin
   inherited Create;
-  fWrapperClass := 'active-text';
   for ElemKind := Low(TActiveTextActionElemKind)
     to High(TActiveTextActionElemKind) do
     SetElemClass(ElemKind, DefaultClasses[ElemKind]);

@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2009-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2009-2023, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Provides support for certain character encodings used by the program.
 }
@@ -439,7 +439,7 @@ var
   BufSize: Integer;
 begin
   BufSize := WideCharToMultiByte(
-    CodePage, 0, @Source, 1, @Dest[0], 0, nil, nil
+    CodePage, 0, @Source, 1, nil, 0, nil, nil
   );
   SetLength(Dest, BufSize + 1);
   if WideCharToMultiByte(

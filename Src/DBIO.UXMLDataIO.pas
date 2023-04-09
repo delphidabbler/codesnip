@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2008-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2008-2023, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements classes that can read and write databases stored in XML format
  * with associated source code files.
@@ -950,7 +950,7 @@ begin
     );
     fXMLDoc.CreateElement(SnippetNode, cDisplayNameNode, Props.DisplayName);
     // extra node is only written if extra property has a value
-    if not Props.Extra.IsEmpty then
+    if Props.Extra.HasContent then
     begin
       fXMLDoc.CreateElement(
         SnippetNode,

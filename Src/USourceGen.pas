@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2005-2023, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements a class that is used to generate Pascal source code containing
  * specified database snippets.
@@ -38,10 +38,10 @@ type
   TSourceComments = class(TNoConstructObject)
   strict private
     ///  <summary>Formats the given comment text into lines with a fixed
-    ///  maximum width indented by the given number of spaces on the left.
-    ///  </summary>
-    class function FormatCommentLines(const Text: string;
-      const Indent: Cardinal): string;
+    ///  maximum width indented by the given number of spaces on the left,
+    ///  optionally truncated to the first paragraph.</summary>
+    class function FormatActiveTextCommentInner(ActiveText: IActiveText;
+      const LineWidth: Cardinal; const Truncate: Boolean): string;
   public
 
     ///  <summary>Returns a description of the given comment style.</summary>
@@ -60,7 +60,7 @@ type
     ///  <returns>string.Formatted comment or empty string if Style = csNone.
     ///  </returns>
     class function FormatSnippetComment(const Style: TCommentStyle;
-      const TruncateComments: Boolean; const Text: IActiveText): string;
+      const TruncateComments: Boolean; Text: IActiveText): string;
 
     ///  <summary>Formats document's header text as a Pascal comment.</summary>
     ///  <param name="Comments">IStringList [in] List of paragraphs of header
@@ -250,7 +250,7 @@ implementation
 
 uses
   // Delphi
-  SysUtils,
+  SysUtils, Character,
   // Project
   ActiveText.UTextRenderer, DB.USnippetKind, UConsts, UExceptions, UPreferences,
   USnippetValidator, UStrUtils, UWarnings, Hiliter.UPasLexer;
@@ -259,9 +259,11 @@ uses
 const
   ///  <summary>Maximum number of characters on a source code line.</summary>
   cLineWidth = 80;
-const
   ///  <summary>Size of indenting used for source code, in characters.</summary>
   cIndent = 2;
+  ///  <summary>Size of indenting used for rendering comments from active text.
+  ///  </summary>
+  cCommentIndent = 4;
 
 
 type
@@ -272,7 +274,7 @@ type
 
     ///  <summary>Splits source code of a routine snippet into the head (routine
     ///  prototype) and body.</summary>
-    ///  <param name="Routine">TSnippet [in] Routine whose source code is to be
+    ///  <param name="Routine">TSnippet [in3] Routine whose source code is to be
     ///  split.</param>
     ///  <param name="Head">string [out] Set to routine prototype.</param>
     ///  <param name="Body">string [out] Body of routine that follows the
@@ -1136,17 +1138,35 @@ begin
   Result := sDescriptions[Style];
 end;
 
-class function TSourceComments.FormatCommentLines(const Text: string;
-  const Indent: Cardinal): string;
+class function TSourceComments.FormatActiveTextCommentInner(
+  ActiveText: IActiveText; const LineWidth: Cardinal;
+  const Truncate: Boolean): string;
 var
-  Lines: TStringList;
+  Renderer: TActiveTextTextRenderer;
+  ProcessedActiveText: IActiveText;
+  Lines: IStringList;
+  Line: string;
 begin
-  Lines := TStringList.Create;
+  if Truncate then
+    ProcessedActiveText := ActiveText.FirstBlock
+  else
+    ProcessedActiveText := ActiveText;
+  Renderer := TActiveTextTextRenderer.Create;
   try
-    Lines.Text := Text;
-    Result := StrTrimRight(StrWrap(Lines, cLineWidth - Indent, Indent, False));
+    Renderer.DisplayURLs := False;
+    Renderer.IndentDelta := cCommentIndent;
+    Result := '';
+    Lines := TIStringList.Create(
+      Renderer.RenderWrapped(ProcessedActiveText, LineWidth, 0),
+      EOL,
+      True,
+      False
+    );
+    for Line in Lines do
+      Result := Result + StringOfChar(' ', cLineWidth - LineWidth) + Line + EOL;
+    Result := StrTrimRight(Result);
   finally
-    Lines.Free;
+    Renderer.Free;
   end;
 end;
 
@@ -1156,7 +1176,7 @@ var
   Line: string;         // loops thru each line of comments & exploded comments
   Lines: IStringList;   // comments after exploding multiple wrapped lines
 const
-  cLinePrefix = ' * ';  // prefixes each comment line
+  cLinePrefix = ' * ';  // prefixes each header omment line
 begin
   // Only create comment if some comment text is provided
   if Assigned(Comments) and (Comments.Count > 0) then
@@ -1181,39 +1201,27 @@ begin
 end;
 
 class function TSourceComments.FormatSnippetComment(const Style: TCommentStyle;
-  const TruncateComments: Boolean; const Text: IActiveText): string;
-var
-  Renderer: TActiveTextTextRenderer;
-  PlainText: string;
-  Lines: IStringList;
+  const TruncateComments: Boolean; Text: IActiveText): string;
 begin
-  Renderer := TActiveTextTextRenderer.Create;
-  try
-    Renderer.DisplayURLs := False;
-    PlainText := Renderer.Render(Text);
-    if TruncateComments then
+  case Style of
+    csNone:
+      Result := '';
+    csBefore:
     begin
-      // use first non-empty paragraph of Text as comment
-      Lines := TIStringList.Create(PlainText, string(sLineBreak), False);
-      if Lines.Count > 0 then
-        PlainText := Lines[0];
+      Result := '{' + EOL
+        + FormatActiveTextCommentInner(
+            Text, cLineWidth - cIndent, TruncateComments
+          )
+        + EOL + '}';
     end;
-    case Style of
-      csNone:
-        Result := '';
-      csBefore:
-        Result := '{'
-          + EOL
-          + FormatCommentLines(PlainText, cIndent)
-          + EOL
-          + '}';
-      csAfter:
-        Result := FormatCommentLines(
-          '{' + PlainText + '}', cIndent
-        );
+    csAfter:
+    begin
+      Result := StrOfChar(' ', cIndent) + '{' + EOL
+        + FormatActiveTextCommentInner(
+            Text, cLineWidth - 2 * cIndent, TruncateComments
+          )
+        + EOL + StringOfChar(' ', cIndent) + '}';
     end;
-  finally
-    Renderer.Free;
   end;
 end;
 

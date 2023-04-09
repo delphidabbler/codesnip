@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2012-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2012-2023, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Defines structures that encapsulate RTF styling elements.
 }
@@ -88,7 +88,8 @@ type
     scFont,
     scFontSize,
     scFontStyles,
-    scColour
+    scColour,
+    scIndentDelta
   );
 
 type
@@ -97,24 +98,30 @@ type
 type
   TRTFStyle = record
   public
+    const
+      DefaultIndentDelta = 360;
     var
       ParaSpacing: TRTFParaSpacing;
       Font: TRTFFont;
       FontSize: Double;
       FontStyles: TFontStyles;
       Colour: TColor;
+      IndentDelta: SmallInt;
       Capabilities: TRTFStyleCaps;
     constructor Create(const ACapabilities: TRTFStyleCaps;
       const AParaSpacing: TRTFParaSpacing; const AFont: TRTFFont;
       const AFontSize: Double; const AFontStyles: TFontStyles;
-      const AColour: TColor); overload;
+      const AColour: TColor; const AIndentDelta: SmallInt = DefaultIndentDelta);
+      overload;
     constructor Create(const ACapabilities: TRTFStyleCaps;
       const AFont: TRTFFont; const AFontSize:
-      Double; const AFontStyles: TFontStyles; const AColour: TColor); overload;
+      Double; const AFontStyles: TFontStyles; const AColour: TColor;
+      const AIndentDelta: SmallInt = DefaultIndentDelta); overload;
     constructor Create(const AParaSpacing: TRTFParaSpacing); overload;
     class function CreateNull: TRTFStyle; static;
     function IsNull: Boolean;
     procedure MakeMonochrome;
+    function IndentLevelToTwips(const ALevel: Byte): SmallInt;
     class operator Equal(const Left, Right: TRTFStyle): Boolean;
     class operator NotEqual(const Left, Right: TRTFStyle): Boolean;
   end;
@@ -186,7 +193,7 @@ end;
 constructor TRTFStyle.Create(const ACapabilities: TRTFStyleCaps;
   const AParaSpacing: TRTFParaSpacing; const AFont: TRTFFont;
   const AFontSize: Double; const AFontStyles: TFontStyles;
-  const AColour: TColor);
+  const AColour: TColor; const AIndentDelta: SmallInt);
 begin
   Capabilities := ACapabilities;
   ParaSpacing := AParaSpacing;
@@ -194,11 +201,13 @@ begin
   FontSize := AFontSize;
   FontStyles := AFontStyles;
   Colour := AColour;
+  IndentDelta := AIndentDelta;
 end;
 
 constructor TRTFStyle.Create(const ACapabilities: TRTFStyleCaps;
   const AFont: TRTFFont; const AFontSize: Double;
-  const AFontStyles: TFontStyles; const AColour: TColor);
+  const AFontStyles: TFontStyles; const AColour: TColor;
+  const AIndentDelta: SmallInt);
 begin
   Create(
     ACapabilities - [scParaSpacing],
@@ -206,7 +215,8 @@ begin
     AFont,
     AFontSize,
     AFontStyles,
-    AColour
+    AColour,
+    AIndentDelta
   );
 end;
 
@@ -231,7 +241,19 @@ begin
     and StrSameText(Left.Font.Name, Right.Font.Name)
     and SameValue(Left.FontSize, Right.FontSize)
     and (Left.FontStyles = Right.FontStyles)
-    and (Left.Colour = Right.Colour);
+    and (Left.Colour = Right.Colour)
+    and (Left.IndentDelta = Right.IndentDelta);
+end;
+
+function TRTFStyle.IndentLevelToTwips(const ALevel: Byte): SmallInt;
+var
+  Delta: SmallInt;
+begin
+  if scIndentDelta in Capabilities then
+    Delta := IndentDelta
+  else
+    Delta := DefaultIndentDelta;
+  Result := ALevel * Delta;
 end;
 
 function TRTFStyle.IsNull: Boolean;

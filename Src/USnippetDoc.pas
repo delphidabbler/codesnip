@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2008-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2008-2023, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements an abstract base class that renders a text document that describes
  * a snippet. Should be overridden by classes that generate actual documents in
@@ -177,7 +177,7 @@ begin
   RenderTitledList(sXRefListTitle, SnippetsToStrings(Snippet.XRef));
   if Snippet.Kind <> skFreeform then
     RenderCompilerInfo(sCompilers, CompilerInfo(Snippet));
-  if not Snippet.Extra.IsEmpty then
+  if Snippet.Extra.HasContent then
     RenderExtra(Snippet.Extra);
   if not Snippet.UserDefined then
     // database info written only if snippet is from main database

@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 
 <!--
- * This file copyright (C) 2020-2021, Peter Johnson (gravatar.com/delphidabbler) and
+ * This file copyright (C) 2020-2023, Peter Johnson (gravatar.com/delphidabbler) and
  * is licensed under the MIT License: https://opensource.org/licenses/MIT
  *
  * DelphiDabbler Code Snippets Database Documentation: REML markup language
@@ -279,19 +279,19 @@ tr:nth-child(even), th {
   </p>
   <ul class="half-spaced">
     <li>
-      <code class="value">&lt;p&gt;...&lt;/p&gt;</code> &ndash; Renders the enclosed markup as a simple paragraph.
+      <code class="value">&lt;p&gt;...&lt;/p&gt;</code> &ndash; Renders the enclosed markup as a simple paragraph. 
     </li>
     <li>
       <code class="value">&lt;heading&gt;...&lt;/heading&gt;</code> &ndash; Renders the enclosed markup as a heading.
     </li>
     <li>
-      <code class="value">&lt;ol&gt;...&lt;/ol&gt;</code> &ndash; Renders the enclosed HTML as an ordered list. <span class="very-strong">Must</span> contain <code class="value">&lt;li&gt;...&lt;/li&gt</code> blocks and nothing else.
+      <code class="value">&lt;ol&gt;...&lt;/ol&gt;</code> &ndash; Renders the enclosed markup as an ordered list.
     </li>
     <li>
-      <code class="value">&lt;ul&gt;...&lt;/ul&gt;</code> &ndash; Renders the enclosed HTML as an unordered list. <span class="very-strong">Must</span> contain <code class="value">&lt;li&gt;...&lt;/li&gt</code> blocks and nothing else.
+      <code class="value">&lt;ul&gt;...&lt;/ul&gt;</code> &ndash; Renders the enclosed markup as an unordered list.
     </li>
     <li>
-      <code class="value">&lt;li&gt;...&lt;/li&gt;</code> &ndash; Renders the enclosed HTML as a list item. <span class="very-strong">Must</span> only be used within <code class="value">&lt;ol&gt;...&lt;/ol&gt;</code> and <code class="value">&lt;ul&gt;...&lt;/ul&gt;</code> blocks.
+      <code class="value">&lt;li&gt;...&lt;/li&gt;</code> &ndash; Renders the enclosed markup as a list item.
     </li>
   </ul>
   <p>
@@ -308,7 +308,7 @@ tr:nth-child(even), th {
       <code class="value">&lt;ol&gt;...&lt;/ol&gt;</code> and <code class="value">&lt;ul&gt;...&lt;/ul&gt;</code> blocks <span class="very-strong">must only</span> contain one or more <code class="value">&lt;li&gt;...&lt;/li&gt;</code> blocks.
     </li>
     <li>
-      <code class="value">&lt;li&gt;...&lt;/li&gt;</code> blocks <span class="very-strong">must not</span> contain <code class="value">&lt;p&gt;...&lt;/p&gt;</code>, <code class="value">&lt;heading&gt;...&lt;/heading&gt;</code> or other <code class="value">&lt;li&gt;...&lt;/li&gt;</code> blocks directly, but <em>may</em> contain <code class="value">&lt;ol&gt;...&lt;/ol&gt;</code> and <code class="value">&lt;ul&gt;...&lt;/ul&gt;</code> blocks.
+      <code class="value">&lt;li&gt;...&lt;/li&gt;</code> blocks <span class="very-strong">must</span> only be used within <code class="value">&lt;ol&gt;...&lt;/ol&gt;</code> and <code class="value">&lt;ul&gt;...&lt;/ul&gt;</code> blocks. <em>May</em> contain <code class="value">&lt;p&gt;...&lt;/p&gt;</code> and <code class="value">&lt;heading&gt;...&lt;/heading&gt;</code> blocks, but it is permitted to include text and inline tags directly without enclosing them one of the permitted blocks. Nested lists are permitted by including further <code class="value">&lt;ul&gt;...&lt;/ul&gt;</code> and <code class="value">&lt;ol&gt;...&lt;/ol&gt;</code> blocks.
     </li>
     <li>
       All text <em>should</em> be embedded within <code class="value">&lt;p&gt;...&lt;/p&gt;</code>, <code class="value">&lt;heading&gt;...&lt;/heading&gt;</code> or <code class="value">&lt;li&gt;...&lt;/li&gt;</code> block level tags, e.g. <code class="value">&lt;heading&gt;heading&lt;/heading&gt;&lt;p&gt;text&lt;/p&gt;</code> or simply <code class="value">&lt;p&gt;text&lt;/p&gt;</code>.
@@ -320,12 +320,15 @@ tr:nth-child(even), th {
   <p>
     Here is a valid example:
   </p>
-  <pre class="sample">&lt;p&gt;Hello World&lt;/p&gt;
-&lt;heading&gt;Hello&lt;/heading&gt;
+  <pre class="sample">&lt;heading&gt;Hello&lt;/heading&gt;
 &lt;p&gt;Hello World&lt;/p&gt;
 &lt;ol&gt;
   &lt;li&gt;one&lt;/li&gt;
-  &lt;li&gt;two&lt;/li&gt;
+  &lt;li&gt;&lt;p&gt;two&lt;/p&gt;&lt;/li&gt;
+  &lt;ul&gt;
+    &lt;li&gt;two A&lt;/li&gt;
+    &lt;li&gt;two B&lt;/li&gt;
+  &lt;ul&gt;
   &lt;li&gt;three&lt;/li&gt;
 &lt;/ol&gt;</pre>
   <p>
@@ -333,7 +336,7 @@ tr:nth-child(even), th {
   </p>
   <pre class="sample">wrong &lt;heading&gt;blah&lt;/heading&gt; wrong &lt;p&gt;blah&lt;/p&gt; wrong</pre>
   <p>
-    However interpreting code <em>may</em> interpret this permissively. If this is done the text outside blocks <span class="very-strong">must</span> be interpreted as if it was enclosed in <code class="value">&lt;p&gt;</code> and <code class="value">&lt;/p&gt;</code> tags. Therefore the above code would be interpreted as:
+    However interpreting code <em>may</em> interpret this permissively. If this is done the text outside blocks <em>should</em> be interpreted as if it was enclosed in <code class="value">&lt;p&gt;</code> and <code class="value">&lt;/p&gt;</code> tags. Therefore the above code would be interpreted as:
   </p>
   <pre class="sample">&lt;p&gt;wrong &lt;/p&gt;&lt;heading&gt;blah&lt;/heading&gt;&lt;p&gt;wrong &lt;/p&gt;&lt;p&gt;blah&lt;/p&gt;&lt;p&gt;wrong&lt;/p&gt;</pre>
   <aside>
@@ -375,13 +378,13 @@ tr:nth-child(even), th {
   </p>
   <ul class="unspaced">
     <li>
-      In-line tags <span class="very-strong">must</span> be embedded inside a block level tag. E.g. <code class="value">&lt;p&gt;one&lt;strong&gt;two&lt;/strong&gt;three&lt;/p&gt;</code>.
+      In-line tags <span class="very-strong">must</span> be embedded inside a valid block level tag. E.g. <code class="value">&lt;p&gt;one&lt;strong&gt;two&lt;/strong&gt;three&lt;/p&gt;</code>.
     </li>
     <li>
       Tags <span class="very-strong">must</span> match. E.g. <code class="value">&lt;em&gt;</code> must be matched with <code class="value">&lt;/em&gt;</code>.
     </li>
     <li>
-      Tags may be nested, providing the tags match. E.g. <code class="value">&lt;em&gt;blah &lt;var&gt;blah&lt;/var&gt;&lt;/em&gt;</code> is valid but <code class="value">&lt;em&gt;blah &lt;var&gt;blah&lt;/em&gt;&lt;/var&gt;</code> is not.
+      Tags may be nested, providing the tags are balanced. E.g. <code class="value">&lt;em&gt;blah &lt;var&gt;blah&lt;/var&gt;&lt;/em&gt;</code> is valid but <code class="value">&lt;em&gt;blah &lt;var&gt;blah&lt;/em&gt;&lt;/var&gt;</code> is not.
     </li>
   </ul>
   <p>

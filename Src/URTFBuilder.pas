@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2006-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2006-2023, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements various classes used to create content of a rich text document.
 }
@@ -179,6 +179,12 @@ type
     ///  <summary>Sets before and after spacing, in points, to be used for
     ///  subsequent paragraphs.</summary>
     procedure SetParaSpacing(const Spacing: TRTFParaSpacing);
+    ///  <summary>Sets left and first line indents, in twips to be used for
+    ///  subsequent paragraphs.</summary>
+    procedure SetIndents(const LeftIndent, FirstLineOffset: SmallInt);
+    ///  <summary>Sets tab stops, in twips, to be used for subsequent
+    ///  paragraphs.</summary>
+    procedure SetTabStops(const TabStops: array of SmallInt);
     ///  <summary>Sets paragraph and character styling for subsequent text
     ///  according to given RTF style.</summary>
     procedure ApplyStyle(const Style: TRTFStyle);
@@ -354,11 +360,30 @@ begin
     AddControl(RTFControl(rcUnderline));
 end;
 
-procedure TRTFBuilder.SetParaSpacing(const Spacing: TRTFParaSpacing);
+procedure TRTFBuilder.SetIndents(const LeftIndent, FirstLineOffset: SmallInt);
 begin
-  // Note: 20 Twips in a point
-  AddControl(RTFControl(rcSpaceBefore, FloatToInt(20 * Spacing.Before)));
-  AddControl(RTFControl(rcSpaceAfter, FloatToInt(20 * Spacing.After)));
+  AddControl(RTFControl(rcLeftIndent, LeftIndent));
+  AddControl(RTFControl(rcFirstLineOffset, FirstLineOffset));
+end;
+
+procedure TRTFBuilder.SetParaSpacing(const Spacing: TRTFParaSpacing);
+const
+  TwipsPerPoint = 20; // Note: 20 Twips in a point
+begin
+  AddControl(
+    RTFControl(rcSpaceBefore, FloatToInt(TwipsPerPoint * Spacing.Before))
+  );
+  AddControl(
+    RTFControl(rcSpaceAfter, FloatToInt(TwipsPerPoint * Spacing.After))
+  );
+end;
+
+procedure TRTFBuilder.SetTabStops(const TabStops: array of SmallInt);
+var
+  Tab: SmallInt;
+begin
+  for Tab in TabStops do
+    AddControl(RTFControl(rcTabStop, Tab));
 end;
 
 { TRTFFontTable }

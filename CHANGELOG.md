@@ -1,18 +1,40 @@
 # Changelog
 
-This is the change log for _DelphiDabbler CodeSnip_.
+This is the change log for _DelphiDabbler CodeSnip_. It begins with the first ever pre-release version of _CodeSnip_.
 
-All notable changes to this project are documented in this file.
-
-This change log begins with the first ever pre-release version of _CodeSnip_. Releases are listed in reverse version number order.
+Releases are listed in reverse version number order.
 
 > Note that _CodeSnip_ v4 was developed in parallel with v3 for a while. As a consequence some v3 releases have later release dates than early v4 releases.
 
-From v4.1.0 the version numbering has attempted to adhere to the principles of [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+## Release v4.21.1 of 09 April 2023
+
+* Completed implementation of support for [REML version 5](https://htmlpreview.github.io/?https://github.com/delphidabbler/codesnip/blob/version-4.21.0/Docs/Design/reml.html) (ommitted from v4.20.0 in error) and fixed some bugs in the original implementation [issues #81 and #82], including:
+  * Heavily revised "active text" handling code and document model to fix support for lists introduced in v4.21.0.
+  * Added support for rendering lists in plain text reports and generated source code header comments.
+  * Added support for rendering lists in Rich Text Format for use in printed information and in reports copied to the clipboard.
+  * Overhauled HTML rendering code that generates HTML for display in the UI.
+  * Heavily revised parsing and generation of REML code.
+  * Updated "active text" validation code.
+* Prevented snippets editor from stripping REML `<p>` tags [issue #103].
+* Fixed garbled copyright symbols in generated source code [issue #80].
+* Fixed bug in code that compresses multiple white space into a single space [issue #95].
+* Fixed out of range error in code that handles text encodings [issue #97].
+* Fixed broken formatting of compiler result tables in text and rich text snippet reports & print outs [issue #101].
+* Updated copyright date displayed in about box [issue #98].
+* Updated operating system detection code to detect Windows 10/11 builds released in December 2022 and Q1 2023.
+* Some refactoring [including issue #83] 
+* Changed build process to create all files in `_build` directory and to use different zip file names [issue #78].
+* Documentation changes:
+  * Updated `Build.html` to document changes in build process.
+  * Updated `CHANGELOG.md` to fix broken link [issue #76] and to remove information about semantic versioning.
+  * Removed broken links in `Docs/License.html`.
+  * Updated copyright date in various license files [including issue #96].
+  * Fixed errors and oversights in REML documentation.
+* Removed some redundant tests that were failing due to passing invalid parameters to the revised _StrWrap_ routine [issue #79].
 
 ## Release v4.21.0 of 16 December 2022
 
-* Updated to support [REML version 5](https://htmlpreview.github.io/?https://github.com/delphidabbler/codesnip/blob/version-4.21.0`/Docs/Design/reml.html) in snippet description & extra information [issue #71]:
+* Updated to support [REML version 5](https://htmlpreview.github.io/?https://github.com/delphidabbler/codesnip/blob/version-4.21.0/Docs/Design/reml.html) in snippet description & extra information [issue #71]:
   * Numerous new character entities supported. 
   * New list tags: `<ol>`, `<ul>` & `<li>`.
 * Program now automatically detects new (supported) Delphi installations at startup and offers to register the compiler(s) to be used for test compiling snippets. This feature is on by default but can be turned off completely or for specifically excluded compilers [issue #19].

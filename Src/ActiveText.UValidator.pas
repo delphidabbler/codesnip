@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2011-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2011-2023, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements a container record that provides methods to validate active text
  * object.
@@ -36,16 +36,11 @@ type
       public
         ///  <summary>Error code.</summary>
         Code: TErrorCode;
-        ///  <summary>Reference to element causing problem.</summary>
-        ///  <remarks>May be nil if error doesn't relate to an element.
-        ///  </remarks>
-        Element: IActiveTextElem;
         ///  <summary>Description of error.</summary>
         Description: string;
         ///  <summary>Constructs a record. Sets fields from parameter values.
         ///  </summary>
-        constructor Create(const ACode: TErrorCode; AElement: IActiveTextElem;
-          const ADescription: string); overload;
+        constructor Create(const ACode: TErrorCode; const ADescription: string);
       end;
   strict private
     ///  <summary>Validates given link element.</summary>
@@ -55,6 +50,14 @@ type
     ///  validation fails. Undefined if validation succeeds.</param>
     ///  <returns>Boolean. True on success or False on failure.</returns>
     class function ValidateLink(LinkElem: IActiveTextActionElem;
+      out ErrInfo: TErrorInfo): Boolean; static;
+    ///  <summary>Validates document structure.</summary>
+    ///  <param name="ActiveText">IActiveText [in] Active text to be validated.
+    ///  </param>
+    ///  <param name="ErrInfo">TErrorInfo [out] Contains error information if
+    ///  validation fails. Undefined if validation succeeds.</param>
+    ///  <returns>Boolean. True on success or False on failure.</returns>
+    class function ValidateDocumentStructure(ActiveText: IActiveText;
       out ErrInfo: TErrorInfo): Boolean; static;
   public
     ///  <summary>Validates given active text.</summary>
@@ -92,6 +95,9 @@ var
 begin
   if ActiveText.IsEmpty then
     Exit(True);
+  // Validate document structure
+  if not ValidateDocumentStructure(ActiveText, ErrInfo) then
+    Exit(False);
   // Validate elements
   for Elem in ActiveText do
   begin
@@ -113,6 +119,16 @@ var
   Dummy: TErrorInfo; // dummy error info record
 begin
   Result := Validate(ActiveText, Dummy);
+end;
+
+class function TActiveTextValidator.ValidateDocumentStructure(
+  ActiveText: IActiveText; out ErrInfo: TErrorInfo): Boolean;
+resourcestring
+  sNoDocTags = 'Document must start and end with document tags';
+begin
+  Result := ActiveText.IsValidActiveTextDocument;
+  if not Result then
+    ErrInfo := TErrorInfo.Create(errBadStructure, sNoDocTags);
 end;
 
 class function TActiveTextValidator.ValidateLink(
@@ -150,7 +166,7 @@ begin
         < Length(PI.Protocol) + PI.MinURLLength then
       begin
         ErrInfo := TErrorInfo.Create(
-          errBadLinkURL, LinkElem, Format(sURLLengthErr, [URL])
+          errBadLinkURL, Format(sURLLengthErr, [URL])
         );
         Exit(False);
       end;
@@ -160,17 +176,16 @@ begin
   // No supported protocol
   Result := False;
   ErrInfo := TErrorInfo.Create(
-    errBadLinkProtocol, LinkElem, Format(sURLProtocolErr, [URL])
+    errBadLinkProtocol, Format(sURLProtocolErr, [URL])
   );
 end;
 
 { TActiveTextValidator.TErrorInfo }
 
 constructor TActiveTextValidator.TErrorInfo.Create(const ACode: TErrorCode;
-  AElement: IActiveTextElem; const ADescription: string);
+  const ADescription: string);
 begin
   Code := ACode;
-  Element := AElement;
   Description := ADescription;
 end;
 

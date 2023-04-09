@@ -1,9 +1,9 @@
-{
+﻿{
  * This Source Code Form is subject to the terms of the Mozilla Public License,
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2006-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2006-2022, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Defines a class that manages generation, previewing and saving of a pascal
  * unit.
@@ -98,6 +98,7 @@ uses
   // Project
   DB.UMetaData,
   UAppInfo,
+  UConsts,
   UUrl,
   UUtils;
 
@@ -115,8 +116,9 @@ resourcestring
   // Error message
   sErrorMsg = 'Filename is not valid for a Pascal unit';
   // Unit header comments
-  sLicense = 'The unit is copyright � %0:s by %1:s and is licensed under '
-    + 'the %2:s.';
+  sLicense = 'The unit is copyright '
+    + COPYRIGHT
+    + ' %0:s by %1:s and is licensed under the %2:s.';
   sMainDescription = 'This unit was generated automatically. It incorporates a '
     + 'selection of source code taken from the Code Snippets Database at %0:s.';
   sGenerated = 'Generated on : %0:s.';

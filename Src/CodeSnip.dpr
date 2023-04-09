@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2022, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2005-2023, Peter Johnson (gravatar.com/delphidabbler).
  *
  * CodeSnip application project file.
 }
@@ -317,7 +317,6 @@ uses
   USingleton in 'USingleton.pas',
   USnipKindListAdapter in 'USnipKindListAdapter.pas',
   USnippetAction in 'USnippetAction.pas',
-  USnippetCreditsParser in 'USnippetCreditsParser.pas',
   USnippetDoc in 'USnippetDoc.pas',
   USnippetExtraHelper in 'USnippetExtraHelper.pas',
   USnippetHTML in 'USnippetHTML.pas',

@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2008-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2008-2023, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements a class that renders a document that describes a snippet as rich
  * text.
@@ -17,11 +17,9 @@ interface
 
 
 uses
-  // Delphi
-  Graphics,
   // Project
   ActiveText.UMain, ActiveText.URTFRenderer, Hiliter.UGlobals, UEncodings,
-  UIStringList, USnippetDoc, URTFBuilder, URTFStyles, URTFUtils;
+  UIStringList, USnippetDoc, URTFBuilder, URTFStyles;
 
 
 type
@@ -39,8 +37,11 @@ type
       fBuilder: TRTFBuilder;
       ///  <summary>Flag indicates whether to output in colour.</summary>
       fUseColour: Boolean;
-
+      ///  <summary>Styles to apply to snippet description active text.
+      ///  </summary>
       fDescStyles: TActiveTextRTFStyleMap;
+      ///  <summary>Styles to apply to snippet extra information active text.
+      ///  </summary>
       fExtraStyles: TActiveTextRTFStyleMap;
       ///  <summary>Styling applied to URLs.</summary>
       fURLStyle: TRTFStyle;
@@ -49,14 +50,24 @@ type
       MainFontName = 'Tahoma';
       ///  <summary>Name of mono font.</summary>
       MonoFontName = 'Courier New';
-      ///  <summary>Size of heading font.</summary>
-      HeadingFontSize = 16;
-      ///  <summary>Size of paragraph font.</summary>
+      ///  <summary>Size of font used for database information in points.
+      ///  </summary>
+      DBInfoFontSize = 9; // points
+      ///  <summary>Size of heading font in points.</summary>
+      HeadingFontSize = 16; // points
+      ///  <summary>Size of sub-heading font in points.</summary>
+      ///  <remarks>Used in descripton and extra active text.</remarks>
+      SubHeadingFontSize = 12;
+      ///  <summary>Size of paragraph font in points.</summary>
       ParaFontSize = 10;
       ///  <summary>Paragraph spacing in points.</summary>
-      ParaSpacing = 12.0;
-      ///  <summary>Size of font used for database information.</summary>
-      DBInfoFontSize = 9;
+      ParaSpacing = 6.0;
+      ///  <summary>Spacing for non-paragrap blocks in points.</summary>
+      NoParaBlockSpacing = 0.0;
+      ///  <summary>Spacing of list blocks in points.</summary>
+      ListSpacing = ParaSpacing;
+      ///  <summary>Step size of indents and tabs in twips.</summary>
+      IndentDelta = TRTFStyle.DefaultIndentDelta;
   strict private
     ///  <summary>Initialises RTF style used when rendering active text as RTF.
     ///  </summary>
@@ -115,9 +126,9 @@ implementation
 
 uses
   // Delphi
-  SysUtils,
+  Graphics,
   // Project
-  Hiliter.UHiliters, UColours, UConsts, UPreferences, UStrUtils;
+  Hiliter.UHiliters, UColours, UConsts, UGraphicUtils, UPreferences;
 
 
 { TRTFSnippetDoc }
@@ -167,43 +178,71 @@ begin
     [scColour], TRTFFont.CreateNull, 0.0, [], clExternalLink
   );
 
-  fExtraStyles.Add(
-     ekPara,
-     TRTFStyle.Create(
-       TRTFParaSpacing.Create(ParaSpacing, 0.0)
-     )
-  );
-  fDescStyles.Add(
-     ekPara,
-     TRTFStyle.Create(
-       TRTFParaSpacing.Create(0.0, ParaSpacing)
-     )
-  );
+  // Active text styles
 
+  // -- Active text block styles
+
+  fDescStyles.Add(
+    ekHeading,
+    TRTFStyle.Create(
+      [scParaSpacing, scFontStyles, scFontSize],
+      TRTFParaSpacing.Create(0.0, 0.0),
+      TRTFFont.CreateNull,
+      SubHeadingFontSize,
+      [fsBold],
+      clNone
+    )
+  );
   fExtraStyles.Add(
     ekHeading,
     TRTFStyle.Create(
-      [scParaSpacing, scFontStyles],
+      [scParaSpacing, scFontStyles, scFontSize],
       TRTFParaSpacing.Create(ParaSpacing, 0.0),
       TRTFFont.CreateNull,
-      0.0,
-      [fsBold],
-      clNone
-    )
-  );
-  fDescStyles.Add(
-    ekHeading,
-    TRTFStyle.Create(
-      [scParaSpacing, scFontStyles],
-      TRTFParaSpacing.Create(0.0, ParaSpacing),
-      TRTFFont.CreateNull,
-      0.0,
+      SubHeadingFontSize,
       [fsBold],
       clNone
     )
   );
 
-  fExtraStyles.Add(
+  fDescStyles.Add(
+     ekPara,
+     TRTFStyle.Create(TRTFParaSpacing.Create(ParaSpacing, 0.0))
+  );
+  fExtraStyles.Add(ekPara, fDescStyles[ekPara]);
+
+  fDescStyles.Add(
+    ekBlock,
+    TRTFStyle.Create(TRTFParaSpacing.Create(NoParaBlockSpacing, 0.0))
+  );
+  fExtraStyles.Add(ekBlock, fDescStyles[ekBlock]);
+
+  fDescStyles.Add(
+    ekUnorderedList,
+    TRTFStyle.Create(TRTFParaSpacing.Create(ListSpacing, 0.0))
+  );
+  fExtraStyles.Add(ekUnorderedList, fDescStyles[ekUnorderedList]);
+
+  fDescStyles.Add(ekOrderedList, fDescStyles[ekUnorderedList]);
+  fExtraStyles.Add(ekOrderedList, fDescStyles[ekOrderedList]);
+
+  fDescStyles.Add(
+    ekListItem,
+    TRTFStyle.Create(
+      [scIndentDelta],
+      TRTFParaSpacing.CreateNull,
+      TRTFFont.CreateNull,
+      0.0,
+      [],
+      clNone,
+      360
+    )
+  );
+  fExtraStyles.Add(ekListItem, fDescStyles[ekListItem]);
+
+  // -- Active text inline styles
+
+  fDescStyles.Add(
     ekStrong,
     TRTFStyle.Create(
       [scFontStyles],
@@ -213,9 +252,9 @@ begin
       clNone
     )
   );
-  fDescStyles.Add(ekStrong, fExtraStyles[ekStrong]);
+  fExtraStyles.Add(ekStrong, fDescStyles[ekStrong]);
 
-  fExtraStyles.Add(
+  fDescStyles.Add(
     ekEm,
     TRTFStyle.Create(
       [scFontStyles],
@@ -225,9 +264,9 @@ begin
       clNone
     )
   );
-  fDescStyles.Add(ekEm, fExtraStyles[ekEm]);
+  fExtraStyles.Add(ekEm, fDescStyles[ekEm]);
 
-  fExtraStyles.Add(
+  fDescStyles.Add(
     ekVar,
     TRTFStyle.Create(
       [scFontStyles, scColour],
@@ -237,9 +276,9 @@ begin
       clVarText
     )
   );
-  fDescStyles.Add(ekVar, fExtraStyles[ekVar]);
+  fExtraStyles.Add(ekVar, fDescStyles[ekVar]);
 
-  fExtraStyles.Add(
+  fDescStyles.Add(
     ekWarning,
     TRTFStyle.Create(
       [scFontStyles, scColour],
@@ -249,9 +288,9 @@ begin
       clWarningText
     )
   );
-  fDescStyles.Add(ekWarning, fExtraStyles[ekWarning]);
+  fExtraStyles.Add(ekWarning, fDescStyles[ekWarning]);
 
-  fExtraStyles.Add(
+  fDescStyles.Add(
     ekMono,
     TRTFStyle.Create(
       [scFont],
@@ -261,7 +300,9 @@ begin
       clNone
     )
   );
-  fDescStyles.Add(ekMono, fExtraStyles[ekMono]);
+  fExtraStyles.Add(ekMono, fDescStyles[ekMono]);
+
+  // Fixes for monochrome
 
   if not fUseColour then
   begin
@@ -273,9 +314,35 @@ end;
 
 procedure TRTFSnippetDoc.RenderCompilerInfo(const Heading: string;
   const Info: TCompileDocInfoArray);
+
+  // Calculate length of longest compiler name, in twips, when rendered on font
+  // to be used to display them
+  function MaxCompilerNameLenInTwips: SmallInt;
+  var
+    CompilerInfo: TCompileDocInfo;  // info about each compiler
+    CompilerNames: IStringList;     // list of all compiler names
+    Font: TFont;                    // font in which compile info displayed
+  begin
+    Font := TFont.Create;
+    try
+      Font.Name := MainFontName;
+      Font.Size := ParaFontSize;
+      CompilerNames := TIStringList.Create;
+      for CompilerInfo in Info do
+        CompilerNames.Add(CompilerInfo.Compiler);
+      Result := MaxStringWidthTwips(CompilerNames.ToArray, Font);
+    finally
+      Font.Free;
+    end;
+  end;
+
 var
-  Idx: Integer; // loops compiler information table
+  CompilerInfo: TCompileDocInfo;  // info about each compiler
+  TabStop: SmallInt;              // tab stop where compile result displayed
 begin
+  // Calculate tab stop where compile results are displayed
+  TabStop := (MaxCompilerNameLenInTwips div IndentDelta) * IndentDelta + IndentDelta;
+  // Display heading
   fBuilder.SetFontStyle([fsBold]);
   fBuilder.SetParaSpacing(
     TRTFParaSpacing.Create(ParaSpacing, ParaSpacing / 3)
@@ -285,13 +352,15 @@ begin
   fBuilder.EndPara;
   fBuilder.ClearParaFormatting;
   fBuilder.SetFontSize(ParaFontSize);
-  for Idx := Low(Info) to High(Info) do
+  // Display compiler table
+  fBuilder.SetTabStops([TabStop]);
+  for CompilerInfo in Info do
   begin
-    fBuilder.AddText(Info[Idx].Compiler);
+    fBuilder.AddText(CompilerInfo.Compiler);
     fBuilder.AddText(TAB);
     fBuilder.BeginGroup;
     fBuilder.SetFontStyle([fsItalic]);
-    fBuilder.AddText(Info[Idx].Result);
+    fBuilder.AddText(CompilerInfo.Result);
     fBuilder.EndGroup;
     fBuilder.EndPara;
   end;
@@ -329,7 +398,8 @@ procedure TRTFSnippetDoc.RenderExtra(const ExtraText: IActiveText);
 var
   RTFWriter: TActiveTextRTF;  // Object that generates RTF from active text
 begin
-  Assert(not ExtraText.IsEmpty, ClassName + '.RenderExtra: ExtraText is empty');
+  Assert(ExtraText.HasContent,
+    ClassName + '.RenderExtra: ExtraText has no content');
   RTFWriter := TActiveTextRTF.Create;
   try
     RTFWriter.ElemStyleMap := fExtraStyles;
@@ -356,7 +426,17 @@ end;
 procedure TRTFSnippetDoc.RenderSourceCode(const SourceCode: string);
 var
   Renderer: IHiliteRenderer;  // renders highlighted source as RTF
+resourcestring
+  sHeading = 'Source Code:';
 begin
+  fBuilder.ResetCharStyle;
+  fBuilder.SetFont(MainFontName);
+  fBuilder.SetFontSize(ParaFontSize);
+  fBuilder.SetFontStyle([fsBold]);
+  fBuilder.SetParaSpacing(TRTFParaSpacing.Create(ParaSpacing, ParaSpacing));
+  fBuilder.AddText(sHeading);
+  fBuilder.ResetCharStyle;
+  fBuilder.EndPara;
   fBuilder.ClearParaFormatting;
   Renderer := TRTFHiliteRenderer.Create(fBuilder, fHiliteAttrs);
   TSyntaxHiliter.Hilite(SourceCode, Renderer);

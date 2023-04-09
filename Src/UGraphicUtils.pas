@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2006-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2006-2023, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Utility routines used for working with graphics.
 }
@@ -17,10 +17,7 @@ interface
 
 uses
   // Delphi
-  Windows, Graphics,
-  // Project
-  UStructs;
-
+  Windows, Graphics;
 
 function CreateDisplayDC: HDC;
   {Creates a display device context.
@@ -45,6 +42,28 @@ function StringExtent(const S: string; const Font: TFont): TSize; overload;
     @return Structure containing width and height of string in pixels.
   }
 
+///  <summary>Returns width, in pixels, of the widest of the given strings when
+///  rendered a specified font.</summary>
+///  <param name="AStrings"><c>array of string</c> [in] Strings whose rendered
+///  width is to be measured.</param>
+///  <param name="AFont"><c>TFont</c> [in] Font in which strings are to be
+///  rendered.</param>
+///  <returns><c>SmallInt</c>. Width of widest string in array in pixels.
+///  </returns>
+function MaxStringWidthPx(const AStrings: array of string; const AFont: TFont):
+  SmallInt;
+
+///  <summary>Returns width, in twips, of the widest of the given strings when
+///  rendered a specified font.</summary>
+///  <param name="AStrings"><c>array of string</c> [in] Strings whose rendered
+///  width is to be measured.</param>
+///  <param name="AFont"><c>TFont</c> [in] Font in which strings are to be
+///  rendered.</param>
+///  <returns><c>SmallInt</c>. Width of widest string in array in twips.
+///  </returns>
+function MaxStringWidthTwips(const AStrings: array of string;
+  const AFont: TFont): SmallInt;
+
 function GetTextRect(const Text: string; const Canvas: TCanvas;
   const Rect: TRect; const Flags: Longint): TRect;
   {Gets rectangle of size required to display text in a specified canvas.
@@ -59,8 +78,10 @@ implementation
 
 
 uses
+  // Delphi
+  SysUtils,
   // Project
-  SysUtils;
+  UStructs;
 
 
 { Helper routines }
@@ -89,6 +110,43 @@ begin
     finally
       FreeAndNil(Canvas);
     end;
+end;
+
+///  <summary>Returns width of the widest of the given strings when rendered a
+///  specified font.</summary>
+///  <remarks>Width is calculated in pixels, but is converted to returned value
+///  by closure passed as a parameter.</remarks>
+///  <param name="AStrings"><c>array of string</c> [in] Strings whose rendered
+///  width is to be measured.</param>
+///  <param name="AFont"><c>TFont</c> [in] Font in which strings are to be
+///  rendered.</param>
+///  <param name="AConverter"><c>TFunc&lt;HDC, Integer, SmallInt&gt;</c> [in]
+///  Converter function used to convert result to required units, using the
+///  handle of the font canvas.</param>
+///  <returns><c>SmallInt</c>. Width of widest string in array in twips.
+///  </returns>
+function InternalMaxStringWidth(const AStrings: array of string;
+  const AFont: TFont; const AConverter: TFunc<HDC, Integer, SmallInt>):
+  SmallInt;
+var
+  Str: string;
+  StrWidth: Integer;
+  MaxStrWidth: Integer;
+  Canvas: TCanvas; // canvas used to measure text extent
+begin
+  MaxStrWidth := 0;
+  Canvas := CreateDisplayCanvas(AFont);
+  try
+    for Str in AStrings do
+    begin
+      StrWidth := Canvas.TextExtent(Str).cx;
+      if StrWidth > MaxStrWidth then
+        MaxStrWidth := StrWidth;
+    end;
+    Result := AConverter(Canvas.Handle, MaxStrWidth);
+  finally
+    FreeDisplayCanvas(Canvas);
+  end;
 end;
 
 { Public routines }
@@ -142,6 +200,39 @@ begin
   finally
     FreeDisplayCanvas(Canvas);
   end;
+end;
+
+function MaxStringWidthTwips(const AStrings: array of string;
+  const AFont: TFont): SmallInt;
+begin
+  Result := InternalMaxStringWidth(
+    AStrings,
+    AFont,
+    function (CanvasHandle: HDC; MaxStrWidthPx: Integer): SmallInt
+    var
+      PxPerInchX: Integer;
+    const
+      TwipsPerInch = 1440;
+    begin
+      // convert pixels to twips
+      PxPerInchX := GetDeviceCaps(CanvasHandle, LOGPIXELSX);
+      Result := SmallInt(Round(MaxStrWidthPx * TwipsPerInch / PxPerInchX));
+    end
+  );
+end;
+
+function MaxStringWidthPx(const AStrings: array of string; const AFont: TFont):
+  SmallInt;
+begin
+  Result := InternalMaxStringWidth(
+    AStrings,
+    AFont,
+    function (CanvasHandle: HDC; StrWidthPx: Integer): SmallInt
+    begin
+      // no conversion
+      Result := SmallInt(StrWidthPx);
+    end
+  );
 end;
 
 function GetTextRect(const Text: string; const Canvas: TCanvas;
