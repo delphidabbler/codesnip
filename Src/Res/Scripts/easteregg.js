@@ -13,6 +13,12 @@
 // Main function called when DOM has loaded. Runs prelinary animations up to
 // when introductory page is shown on unfolded screen
 $(document).ready(function(){
+  
+  //! Fix vulnerability using patch suggested in dependabot alert
+  //! https://github.com/delphidabbler/codesnip/security/dependabot/1 
+  jQuery.htmlPrefilter = function( html ) {
+    return html;
+  };
 
   var spt = null;  // showPrompt timeout
 
