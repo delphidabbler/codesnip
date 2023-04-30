@@ -1,20 +1,11 @@
-Licensing of CodeSnip's source and image files is on a per file basis.
+# CodeSnip License
 
-There are two ways that license information can be found:
+Executable releases of CodeSnip are released under the terms of the [Mozilla Public License 2.0](https://htmlpreview.github.io/?https://github.com/delphidabbler/codesnip/blob/master/Docs/License.html#mpl-2.0).
 
-1) By examining comments within source files. License information will be at or
-   near the beginning of the file.
+Much of CodeSnip's source code is released under the same license, although other open source licenses are also used.
 
-2) By reading any LICENSE file that exists in the same directory as the files
-   you are interested in, or if no such file exists, in a parent directory.
-   The "nearest" LICENSE file takes precedence.
+There are restrictions on using CodeSnip's branding in any independent forks of the program.
 
-   A LICENSE file is used to provide license information for source files that
-   have no (or unclear) embedded information and for images and other files that
-   do not have human-readable content.
+For definitive details see the [full license text](https://htmlpreview.github.io/?https://github.com/delphidabbler/codesnip/blob/master/Docs/License.html). 
 
-If any information is missing or incorrect please inform the author by filling
-in a bug report at https://github.com/delphidabbler/codesnip/issues
-
-If you are planning on re-using any of the CodeSnip source, detailed licensing
-information will be found in Docs/License.html.
+A copy of the full license text is included with each CodeSnip executable. The original document can be found in the file `Docs/License.html` in the [_delphidabbler/codesnip_](https://github.com/delphidabbler/codesnip) repository on GitHub.
