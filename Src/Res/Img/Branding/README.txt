@@ -1,8 +1,19 @@
-All image files in the Src/Res/Img/Branding directory are copyright
-(C) 2012-2021, Peter Johnson (gravatar.com/delphidabbler).
+About the Src/Res/Img/Branding directory
+========================================
 
-The files may not be copied or modified and may not be used in the distribution
-of derived programs without explicit permission of the copyright holder.
+If you are creating a fork of CodeSnip, or a program based on it, the
+CodeSnip license does not permit you to use the images in this directory
+in such a project.
 
-This restriction does not apply to modifications of CodeSnip that are for
-personal use that are not distributed publicly.
+To assist with this problem, alternative versions of the above images
+are provided in the `Src/Res/Img/AltBranding` directory.
+
+For more information see:
+
+*   `Src/Res/Img/AltBranding/README.txt`
+
+*   `Build.html`, specifically the "Get the Source Code" sub-section and
+    the "Conditions For Release of Modified Code" section.
+
+*   `Docs/License.html` for full details of the license restrictions
+    applying to files in this directory.
