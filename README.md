@@ -93,9 +93,11 @@ The program's current change log can be found in the file [`CHANGELOG.md`](https
 
 ## License
 
-The program's EULA, which gives full details of the license applying to the latest release, can be found in the file [`Docs\License.html`](https://htmlpreview.github.io/?https://github.com/delphidabbler/codesnip/blob/master/Docs/License.html) in the `master` branch. The license has changed between releases, so if you need to see an older one, select the appropriate `version-x.x.x` tag and read the older version of the file.
+A summary of CodeSnip's license can be found in [`LICENSE.md`](https://github.com/delphidabbler/codesnip/blob/master/LICENSE.md).
 
-Most of the original code is made available under the [Mozilla Public License v2](https://www.mozilla.org/MPL/2.0/).
+The complete license text is in [`Docs\License.html`](https://htmlpreview.github.io/?https://github.com/delphidabbler/codesnip/blob/master/Docs/License.html).
+
+> The linked files are in the `master` branch and relate to the latest release. However, the license has changed between releases, so if you need to see an older version, select the appropriate `version-x.x.x` tag to find the appropriate file.
 
 The [CodeSnip Compiling & Source Code FAQ](https://github.com/delphidabbler/codesnip-faq/blob/master/SourceCode.md) may be useful if you have any queries about re-using CodeSnip source in other projects.
 
