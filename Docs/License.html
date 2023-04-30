@@ -1,20 +1,20 @@
 ﻿<!DOCTYPE HTML>
 
 <!--
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at https://mozilla.org/MPL/2.0/
- *
  * Copyright (C) 2012-2023, Peter Johnson (gravatar.com/delphidabbler).
  *
  * CodeSnip license.
+ *
+ * This file MUST NOT be modified for use in derived programs.
+ * Display this file in a web browser and read its content for further
+ * information.
 -->
 
 <html lang="en">
 
 <head>
 
-<meta charset="UTF-8" />
+<meta charset="UTF-8">
 
 <title>
   CodeSnip License
@@ -221,6 +221,12 @@ a {
   <h1>
     Overview
   </h1>
+  <p>
+    This license applies to the standard and portable editions <em>CodeSnip</em> in executable form and to <em>CodeSnip</em>'s source code.
+  </p>
+  <p>
+    An unaltered copy of this license <strong>must</strong> be distributed with any executable or source code form of <em>CodeSnip</em>.
+  </p>
   <h2>
     Executable Program
   </h2>
@@ -237,48 +243,32 @@ a {
     <em>CodeSnip</em> as you wish.
   </p>
   <p>
-    You may also modify <em>CodeSnip</em> as you wish and you may distribute
-    copies of your modified version under the terms of the license. The only exception is that you may not use the program's branding
-    (including the names &quot;DelphiDabbler&quot; and &quot;CodeSnip&quot;, the program's icon and the splash screen), in any modification you distribute,
-    unless you have the explicit permission of the copyright holder.
+    You may also modify <em>CodeSnip</em> and you may distribute copies of your modified version under the terms of the license, with the exception that you may not use the program's branding (including the names &quot;DelphiDabbler&quot; and &quot;CodeSnip&quot;, the program's icon and the splash screen), in any modification you distribute, unless you have the explicit permission of the copyright holder.
   </p>
   <h2>
     Source Code
   </h2>
   <p>
-    All of <em>CodeSnip</em>'s original source code, including third party code,
-    is available from the <a
-      href="https://github.com/delphidabbler/codesnip"
-    ><em>CodeSnip</em> GitHub repository</a>.
+    For the purposes of this license, the term &quot;source code&quot; refers to all files that are part of the <a href="https://github.com/delphidabbler/codesnip"><em>delphidabbler/codesnip</em></a> repository on GitHub. This includes all program code, documentation and image files.
   </p>
   <p>
-    Details of the license applying to a source code file will usually be
-    included in a comment within the file itself. If this is not the case any
-    file named <kbd>LICENSE</kbd> in the same directory, or a parent directory,
-    should contain the required information.
+    Unless explicitly mentioned in the <em>Exceptions</em> sub-section below, all source files are licensed under the <a href="#mpl-2.0">Mozilla Public License 2.0</a> (MPL 2.0).
   </p>
+  <h3>
+    Exceptions
+  </h3>
   <p>
-    Most of the source code is available under the <a href="#mpl-2.0">Mozilla
-    Public License 2.0</a> (MPL 2.0). Other relevant source code licenses are
-    listed below.
+    The following licenses apply to the specified files:
   </p>
   <ul>
-    <li>
-      <div class="license-name">
-        <a href="#md5">MD5 License</a>
-      </div>
-      <div class="applies-to">
-        Applies to <kbd>Src/3rdParty/PJMD5.pas</kbd>, in addition to the <a
-          href="#mpl-2.0"
-        >Mozilla Public License 2.0</a>.
-      </div>
-    </li>
     <li>
       <div class="license-name">
         <a href="#tlistviewex">Vadim Crit's TListViewEx License</a>
       </div>
       <div class="applies-to">
-        Used by <kbd>Src/3rdParty/LVEx.pas</kbd> and
+        <kbd>Src/3rdParty/LVEx.pas</kbd>.
+      </div>
+      <div class="applies-to">
         <kbd>Src/3rdParty/LVEx.res</kbd>.
       </div>
     </li>
@@ -287,109 +277,172 @@ a {
         <a href="#jquery">jQuery License</a>
       </div>
       <div class="applies-to">
-        Used by <kbd>Src/Res/Scripts/3rdParty/jquery-1.8.0.min.js</kbd>
+        <kbd>Src/Res/Scripts/3rdParty/jquery-1.12.4.min.js</kbd>.
       </div>
     </li>
     <li>
       <div class="license-name">
-        <a href="#jquery-cycle">jQuery Cycle Lite Plugin License</a>
+        <a href="#jquery-cycle">jQuery Cycle Lite Plugin MIT License</a>
       </div>
       <div class="applies-to">
-        Used by <kbd>Src/Res/Scripts/3rdParty/jquery.cycle.lite.js</kbd>
+        <kbd>Src/Res/Scripts/3rdParty/jquery.cycle.lite.js</kbd>.
+      </div>
+      <div class="indent">
+        Note that jQuery Cycle Lite is dual licensed under the MIT or GPL license. It is used here under the MIT license.
+      </div>
+    </li>
+    <li>
+      <div class="license-name">
+        <a href="#CC-BY-SA-3.0">Creative Commons Attribution Share Alike 3.0 License</a>
+      </div>
+      <div class="applies-to">
+        All files in the <kbd>Src/Help/Images</kbd> directory.
+      </div>
+      <div class="applies-to">
+        All files in the <kbd>Src/Res/Img</kbd> directory.
+      </div>
+      <div class="applies-to">
+        All files in the <kbd>Src/Res/Img/Egg</kbd> directory.
+      </div>
+      <aside>
+        <div>
+          This license requires that the images in the above directories should be attributed. To do this
+          simply note in your documentation, about box, web page or similar that
+          the images form part of the image set for DelphiDabbler <em>CodeSnip</em>
+          and provide a link to <a
+            href="https://delphidabbler.com/software/codesnip"
+          >https://delphidabbler.com/software/codesnip</a>.
+        </div>
+      </aside>
+      <div class="indent">
+        <div>
+          Some of the image files above include copies, modifications or remixes of third-party images supplied under the following licenses:
+        </div>
+        <ul>
+          <li>
+            <div class="license-name">
+              <a href="#CC-BY-2.5">Creative Commons Attribution 2.5 License</a>
+            </div>
+            <div class="applies-to">
+              Silk Icon set v1.3.
+            </div>
+            <div class="applies-to">
+              Silk Companion 1.
+            </div>
+          </li>
+          <li>
+            <div class="license-name">
+              <a href="#CC-BY-SA-3.0">Creative Commons Attribution Share Alike 3.0
+              License</a>
+            </div>
+            <div class="applies-to">
+              Led Icon Set.
+            </div>
+            <div class="applies-to">
+              Aha-Soft 16x16 Free Application Icons.
+            </div>
+          </li>
+          <li>
+            <div class="license-name">
+              <a href="#toolbar-icons-mit">Toolbar Icons MIT License</a>
+            </div>
+            <div class="applies-to">
+              Toolbar Icons.
+            </div>
+          </li>
+        </ul>
+      </div>
+      <div class="indent">
+        Those images originally supplied under the <a href="#CC-BY-2.5">Creative Commons Attribution 2.5 License</a> and the <a href="#toolbar-icons-mit">Toolbar Icons MIT License</a> have been relicensed under the <a href="#CC-BY-SA-3.0">Creative Commons Attribution Share Alike 3.0 License</a>, as is permitted by the licenses.
+      </div>
+    </li>
+    <li>
+      <div class="license-name">
+        <a href="#cc0">CC0 1.0 Universal Public Domain Dedication</a>
+      </div>
+      <div class="applies-to">
+        All files in the <kbd>Src/Res/Img/AltBranding</kbd> directory.
+      </div>
+      <aside>
+        <div>
+          These files are provided as placeholder replacements for the identically named files in the <kbd>Src/Res/Img/Branding</kbd> directory that are not permitted to be used in derived programs (&quot;Larger Works&quot;).
+        </div>
+      </aside>
+      <div class="applies-to">
+        <kbd>Src/CodeSnip.cfg.tplt</kbd>.
+      </div>
+      <div class="applies-to">
+        <kbd>Src/CodeSnip.dproj</kbd>.
+      </div>
+      <div class="applies-to">
+        <kbd>Src/CodeSnip.groupproj</kbd>.
+      </div>
+      <div class="applies-to">
+        <kbd>Src/CodeSnip.todo</kbd>.
+      </div>
+      <div class="applies-to">
+        All files in the <kbd>Tests/Src/DUnit</kbd> directory.
+      </div>
+    </li>
+    <li>
+      <div class="license-name">
+        <a href="#ddab-exclusive">DelphiDabbler Exclusive Use License</a>
+      </div>
+      <div class="applies-to">
+        <code>Docs/License.html</code> (this file).
+      </div>
+      <div class="indent">
+        Any derived applications (&quot;Larger Works&quot;) <strong>must</strong> include a license that is compatible with the terms of this license as it relates to any of <em>CodeSnip</em>'s source code that is used in the larger work.
+      </div>
+      <div class="applies-to">
+        All files in the <kbd>Src/Res/Img/Branding</kbd> directory.
+      </div>
+      <div class="indent">
+        These files comprise the program's icon and splash screen and <strong>must not</strong> be used in, or distributed with, derived programs.
+      </div>
+      <aside>
+        <div>
+          Identically named images from the <kbd>Src/Res/Img/AltBranding</kbd> directory may be used as replacements in derived programs (&quot;Larger Works&quot;). These images may be freely modified.
+        </div>
+      </aside>
+    </li>
+    <li>
+      <div class="license-name">
+        <a href="#md5">MD5 License</a>
+      </div>
+      <div class="applies-to">
+        <kbd>Src/3rdParty/PJMD5.pas</kbd>
+      </div>
+      <div class="indent">
+        The MD5 License applies to this file <em>in addition</em> to the <a href="#mpl-2.0">Mozilla Public License 2.0</a>.
       </div>
     </li>
   </ul>
+
+  <h3>
+    Automatically generated files
+  </h3>
   <p>
-    Some 3rd party source code requires attribution. See the
-    <a href="#required-notices">Required Notices</a> section below.
-  </p>
-  <h2>
-    Images
-  </h2>
-  <p>
-    Numerous images are used in the <em>CodeSnip</em> project. Some are
-    original while others are copied or modified from third party sources.
+    Some source files are automatically generated as part of the build process. Such files are not included in the <a href="https://github.com/delphidabbler/codesnip"><em>delphidabbler/codesnip</em></a> repository.
   </p>
   <p>
-    Copies of the images are available in the <a
-      href="https://github.com/delphidabbler/codesnip"
-    ><em>CodeSnip</em> GitHub Repository</a> in the
-    <kbd>Src/Help/Images</kbd> and <kbd>Src/Res/Img</kbd> directories and
-    sub-directories. These images are licensed as follows:
+    The license that applies to these files is the same as that of the generating file. The automatically generated files are:
   </p>
   <ul>
     <li>
-      <div>
-        The program's icon and splash screen may not be copied or modified and
-        may not be used in distribution of derived programs without explicit
-        permission of the copyright holder.
-      </div>
-      <div>
-        This condition applies to all files in the
-        <kbd>Src/Res/Img/Branding</kbd> directory, all of which are original
-        work copyright &copy; 2012-2023 by <a
-          href="https://gravatar.com/delphidabbler"
-        >Peter D Johnson</a>.
-      </div>
+      <kbd>Src/CodeSnip.cfg</kbd>, generated from <kbd>CodeSnip.cfg.tplt</kbd> (<a href="#cc0">CC0</a>).
     </li>
     <li>
-      <div>
-        Images found in the <kbd>Src/Help/Images</kbd>, <kbd>Src/Res/Img</kbd>
-        and <kbd>Src/Res/Img/Egg</kbd> directories, are licensed under the
-        <a href="#CC-BY-SA-3.0">Creative Commons Attribution Share Alike 3.0
-        License</a>.
-      </div>
-      <div>
-        This license requires that the images should be attributed. To do this
-        simply note in your documentation, about box, web page or similar that
-        the icons form part of the image set for DelphiDabbler <em>CodeSnip</em>
-        and provide a link to <a
-          href="https://delphidabbler.com/software/codesnip"
-        >https://delphidabbler.com/software/codesnip</a>.
-      </div>
-      <div>
-        These images include modifications and remixes of icons supplied under
-        the following licenses:
-      </div>
-      <ul>
-        <li>
-          <div class="license-name">
-            <a href="#CC-BY-2.5">Creative Commons Attribution 2.5 License</a>
-          </div>
-          <div class="applies-to">
-            Silk Icon set v1.3
-          </div>
-          <div class="applies-to">
-            Silk Companion 1
-          </div>
-        </li>
-        <li>
-          <div class="license-name">
-            <a href="#CC-BY-SA-3.0">Creative Commons Attribution Share Alike 3.0
-            License</a>
-          </div>
-          <div class="applies-to">
-            Led Icon Set
-          </div>
-          <div class="applies-to">
-            Aha-Soft 16x16 Free Application Icons
-          </div>
-        </li>
-        <li>
-          <div class="license-name">
-            <a href="#toolbar-icons-mit">Toolbar Icons MIT License</a>
-          </div>
-          <div class="applies-to">
-            Toolbar Icons
-          </div>
-        </li>
-      </ul>
+      <kbd>Src/AutoGen/IntfExternalObj.pas</kbd>, generated from <kbd>Src/ExternalObj.ridl</kbd>  (<a href="#mpl-2.0">MPL 2.0</a>).
     </li>
   </ul>
+  <h3>
+    Attribution
+  </h3>
   <p>
-    Some 3rd party image sets require attribution. See the
-    <a href="#required-notices">Required Notices</a> section below.
+    Some 3rd party source code and image sets require attribution. Such attributions are provided in the <a href="#required-notices">Required Notices</a> section below.
   </p>
+
 </section>
 
 <section id="open-source-licenses">
@@ -832,7 +885,7 @@ a {
     Licenses&quot;, as defined by the Mozilla Public License, v. 2.0.</p>
   </blockquote>
 
-  <hr />
+  <hr>
 
   <h2 id="md5">
     MD5 License
@@ -859,7 +912,7 @@ a {
   <p>These notices must be retained in any copies of any part of this
   documentation and/or software.</p>
 
-  <hr />
+  <hr>
 
   <h2 id="tlistviewex">
     Vadim Crit's TListViewEx License
@@ -879,7 +932,7 @@ a {
     the reference to the original author.</li>
   </ol>
 
-  <hr />
+  <hr>
 
   <h2 id="jquery">
     jQuery License
@@ -908,10 +961,10 @@ a {
   ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   DEALINGS IN THE SOFTWARE.</p>
 
-  <hr />
+  <hr>
 
   <h2 id="jquery-cycle">
-    jQuery Cycle Lite Plugin License
+    jQuery Cycle Lite Plugin MIT License
   </h2>
 
   <p>Copyright 2008-2012 M. Alsup <a
@@ -937,7 +990,7 @@ a {
   ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   DEALINGS IN THE SOFTWARE.</p>
 
-  <hr />
+  <hr>
 
   <h2 id="CC-BY-SA-3.0">
     Creative Commons Attribution Share Alike 3.0 License
@@ -1333,7 +1386,7 @@ a {
   </aside>
   <!-- END CC NOTICE -->
 
-  <hr />
+  <hr>
 
   <h2 id="CC-BY-2.5">
     Creative Commons Attribution 2.5 License
@@ -1606,7 +1659,7 @@ a {
     >https://creativecommons.org/</a>.</p>
   </aside>
 
-  <hr />
+  <hr>
 
   <h2 id="toolbar-icons-mit">
     Toolbar Icons MIT License
@@ -1638,20 +1691,129 @@ a {
   ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
   DEALINGS IN THE SOFTWARE.</p>
 
+  <hr>
+
+  <h2 id="cc0">
+    CC0 1.0 Universal Public Domain Dedication
+  </h2>
+
+  <aside>
+    CREATIVE COMMONS CORPORATION IS NOT A LAW FIRM AND DOES NOT PROVIDE LEGAL SERVICES. DISTRIBUTION OF THIS DOCUMENT DOES NOT CREATE AN ATTORNEY-CLIENT RELATIONSHIP. CREATIVE COMMONS PROVIDES THIS INFORMATION ON AN "AS-IS" BASIS. CREATIVE COMMONS MAKES NO WARRANTIES REGARDING THE USE OF THIS DOCUMENT OR THE INFORMATION OR WORKS PROVIDED HEREUNDER, AND DISCLAIMS LIABILITY FOR DAMAGES RESULTING FROM THE USE OF THIS DOCUMENT OR THE INFORMATION OR WORKS PROVIDED HEREUNDER.
+  </aside>
+
+  <h3>
+    Statement of Purpose
+  </h3>
+
+  <p>
+    The laws of most jurisdictions throughout the world automatically confer exclusive Copyright and Related Rights (defined below) upon the creator and subsequent owner(s) (each and all, an "owner") of an original work of authorship and/or a database (each, a "Work").
+  </p>
+
+  <p>
+    Certain owners wish to permanently relinquish those rights to a Work for the purpose of contributing to a commons of creative, cultural and scientific works ("Commons") that the public can reliably and without fear of later claims of infringement build upon, modify, incorporate in other works, reuse and redistribute as freely as possible in any form whatsoever and for any purposes, including without limitation commercial purposes. These owners may contribute to the Commons to promote the ideal of a free culture and the further production of creative, cultural and scientific works, or to gain reputation or greater distribution for their Work in part through the use and efforts of others.
+  </p>
+
+  <p>
+    For these and/or other purposes and motivations, and without any expectation of additional consideration or compensation, the person associating CC0 with a Work (the "Affirmer"), to the extent that he or she is an owner of Copyright and Related Rights in the Work, voluntarily elects to apply CC0 to the Work and publicly distribute the Work under its terms, with knowledge of his or her Copyright and Related Rights in the Work and the meaning and intended legal effect of CC0 on those rights.
+  </p>
+
+  <p>
+    <strong>1. Copyright and Related Rights.</strong> A Work made available under CC0 may be protected by copyright and related or neighboring rights ("Copyright and Related Rights"). Copyright and Related Rights include, but are not limited to, the following:
+  </p>
+
+  <ol type="i">
+    <li>
+      the right to reproduce, adapt, distribute, perform, display, communicate, and translate a Work;
+    </li>
+    <li>
+      moral rights retained by the original author(s) and/or performer(s);
+    </li>
+    <li>
+      publicity and privacy rights pertaining to a person's image or likeness depicted in a Work;
+    </li>
+    <li>
+      rights protecting against unfair competition in regards to a Work, subject to the limitations in paragraph 4(a), below;
+    </li>
+    <li>
+      rights protecting the extraction, dissemination, use and reuse of data in a Work;
+    </li>
+    <li>
+      database rights (such as those arising under Directive 96/9/EC of the European Parliament and of the Council of 11 March 1996 on the legal protection of databases, and under any national implementation thereof, including any amended or successor version of such directive); and
+    </li>
+    <li>
+      other similar, equivalent or corresponding rights throughout the world based on applicable law or treaty, and any national implementations thereof.
+    </li>
+  </ol>
+
+  <p>
+    <strong>2. Waiver.</strong> To the greatest extent permitted by, but not in contravention of, applicable law, Affirmer hereby overtly, fully, permanently, irrevocably and unconditionally waives, abandons, and surrenders all of Affirmer's Copyright and Related Rights and associated claims and causes of action, whether now known or unknown (including existing as well as future claims and causes of action), in the Work (i) in all territories worldwide, (ii) for the maximum duration provided by applicable law or treaty (including future time extensions), (iii) in any current or future medium and for any number of copies, and (iv) for any purpose whatsoever, including without limitation commercial, advertising or promotional purposes (the "Waiver"). Affirmer makes the Waiver for the benefit of each member of the public at large and to the detriment of Affirmer's heirs and successors, fully intending that such Waiver shall not be subject to revocation, rescission, cancellation, termination, or any other legal or equitable action to disrupt the quiet enjoyment of the Work by the public as contemplated by Affirmer's express Statement of Purpose.
+  </p>
+
+  <p>
+    <strong>3. Public License Fallback.</strong> Should any part of the Waiver for any reason be judged legally invalid or ineffective under applicable law, then the Waiver shall be preserved to the maximum extent permitted taking into account Affirmer's express Statement of Purpose. In addition, to the extent the Waiver is so judged Affirmer hereby grants to each affected person a royalty-free, non transferable, non sublicensable, non exclusive, irrevocable and unconditional license to exercise Affirmer's Copyright and Related Rights in the Work (i) in all territories worldwide, (ii) for the maximum duration provided by applicable law or treaty (including future time extensions), (iii) in any current or future medium and for any number of copies, and (iv) for any purpose whatsoever, including without limitation commercial, advertising or promotional purposes (the "License"). The License shall be deemed effective as of the date CC0 was applied by Affirmer to the Work. Should any part of the License for any reason be judged legally invalid or ineffective under applicable law, such partial invalidity or ineffectiveness shall not invalidate the remainder of the License, and in such case Affirmer hereby affirms that he or she will not (i) exercise any of his or her remaining Copyright and Related Rights in the Work or (ii) assert any associated claims and causes of action with respect to the Work, in either case contrary to Affirmer's express Statement of Purpose.
+  </p>
+
+  <p>
+    <strong>4. Limitations and Disclaimers.</strong>
+  </p>
+
+  <ol type="a">
+    <li>
+      No trademark or patent rights held by Affirmer are waived, abandoned, surrendered, licensed or otherwise affected by this document.
+    </li>
+    <li>
+      Affirmer offers the Work as-is and makes no representations or warranties of any kind concerning the Work, express, implied, statutory or otherwise, including without limitation warranties of title, merchantability, fitness for a particular purpose, non infringement, or the absence of latent or other defects, accuracy, or the present or absence of errors, whether or not discoverable, all to the greatest extent permissible under applicable law.
+    </li>
+    <li>
+      Affirmer disclaims responsibility for clearing rights of other persons that may apply to the Work or any use thereof, including without limitation any person's Copyright and Related Rights in the Work. Further, Affirmer disclaims responsibility for obtaining any necessary consents, permissions or other rights required for any use of the Work.
+    </li>
+    <li>
+      Affirmer understands and acknowledges that Creative Commons is not a party to this document and has no duty or obligation with respect to this CC0 or use of the Work.
+    </li>
+  </ol>
+
 </section>
 
 <section id="proprietary-source-code">
+
   <h1>
     Proprietary Source Code
   </h1>
+
+  <h2>
+    Embarcadero
+  </h2>
+
   <p>
     <em>CodeSnip</em> is built using <em>Embarcadero Delphi XE</em>.
   </p>
+
   <p>
     Original and third party source code make calls to the proprietary Delphi
     run time library, parts of which are statically linked into the
     <em>CodeSnip</em> executable.
   </p>
+
+  <hr>
+
+  <h2 id="ddab-exclusive">
+    DelphiDabbler Exclusive Use License
+  </h2>
+
+  <p>
+    Files covered by this license are original work, copyright &copy; 2012-2023, <a href="https://gravatar.com/delphidabbler">Peter D Johnson</a>.
+  </p>
+
+  <p>
+    Such files <strong>must not</strong> be used, in either original or modified form, in any distribution of a derived program (&quot;Larger Work&quot;) without the written permission of the copyright holder. To seek to obtain such permission open an issue on the <em>CodeSnip</em> <a href="https://github.com/delphidabbler/codesnip/issues">Issue Tracker</a>.
+  </p>
+
+  <aside>
+    <p>
+      This restriction does not apply to modifications of <em>CodeSnip</em> that are for personal use only and that are not distributed publicly.
+    </p>
+  </aside>
+
 </section>
 
 <section id="required-notices">
@@ -1706,11 +1868,11 @@ a {
       >https://www.jrsoftware.org/isinfo.php</a>.
     </li>
     <li>
-      Some program icons are based on the public domain PixelBox icon collection:
+      Some images are based on the public domain PixelBox icon collection:
       <del>http://www.icojam.com/blog/?p=222</del> [link broken].
     </li>
     <li>
-      Some program icons are based on Florian Haag's Toolbar Icons set at <a
+      Some images are based on Florian Haag's Toolbar Icons set at <a
         href="https://toolbaricons.sourceforge.net/"
       >https://toolbaricons.sourceforge.net/</a>.
     </li>
