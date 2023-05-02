@@ -48,14 +48,15 @@ Installation
 ================================================================================
 
 CodeSnip requires Windows 2000 or later. It also requires MS Internet Explorer 6
-or later, but IE 8, 9 or 10 are strongly recommended.
+or later, although IE 8, 9 or 10 are strongly recommended. But note that recent
+releases have only been tested on Windows 10/11.
 
 Installing the Standard Edition
 -------------------------------
 
 You will need administrator privileges to run the setup program for the standard
 edition. If you are using a non-admin user account on Windows 2000 or XP you
-should run setup as administrator. By default Windows Vista to Windows 10 will
+should run setup as administrator. By default Windows Vista to Windows 11 will
 require an admin password if running as a standard user and setup will attempt
 to elevate the process. If UAC prompts are disabled you must run setup as
 administrator.
@@ -66,8 +67,8 @@ usual way. Uninstalling v3 or earlier after installing v4 will have no adverse
 affect on v4.
 
 CodeSnip's installation program is named codesnip-setup-4.x.x.exe, where x.x
-is the program's minor version number. The install program may be distributed in
-a zip file.
+is the program's minor version number. The install program is distributed in a
+zip file.
 
 Close any running instance of CodeSnip, run the install program then follow the
 on-screen instructions.
@@ -80,9 +81,9 @@ The installer makes the following changes to your system:
 + Files required by the uninstaller are stored in the main installation's Uninst
   sub-folder.
 
-+ The program's uninstall information is registered with the "Apps and Features"
-  (a.k.a. "Programs and Features", a.k.a. "Add / Remove Programs") control panel
-  applet.
++ The program's uninstall information is registered with the "Installed App"
+  (a.k.a. "Apps and Features", a.k.a. "Programs and Features", a.k.a. "Add /
+  Remove Programs") control panel app.
 
 + A program group may be created in the start menu (optional).
 
@@ -113,9 +114,10 @@ the program executable, the help file and various documentation files.
 
 Install the program using the following steps:
 
-1) Mount the storage medium on which you want to install CodeSnip.
+1) Mount any storage medium on which you want to install CodeSnip.
 
-2) Create a folder on the storage medium in which to copy the required files.
+2) Create a folder on the storage medium or on your computer's internal disk in
+   which to copy the required files.
 
 3) Copy the files CodeSnip-p.exe (the executable program) and CodeSnip.chm
    (the help file) into the folder you created.
@@ -143,12 +145,13 @@ Uninstallation
 Uninstalling the Standard Edition
 ---------------------------------
 
-CodeSnip can be uninstalled via "Apps and Features" (a.k.a. "Programs and
-Features", a.k.a. "Add / Remove Programs") from the Windows Control Panel or by
-choosing "Uninstall DelphiDabbler CodeSnip" from the program's start menu group.
+CodeSnip can be uninstalled via "Installed Apps" (a.k.a. "Apps and Features",
+a.k.a. "Programs and Features", a.k.a. "Add / Remove Programs") accessed from the
+Windows Control Panel or by choosing "Uninstall DelphiDabbler CodeSnip" from the
+program's start menu group.
 
 Administrator privileges will be required to uninstall CodeSnip. Windows Vista
-to Windows 10 with UAC prompts enabled will prompt for an admin password if
+to Windows 11 with UAC prompts enabled will prompt for an admin password if
 necessary.
 
 The uninstall program will delete any local copy of the online Code Snippets
@@ -205,12 +208,15 @@ Windows 32 version of Delphi (from Delphi 2 to Delphi 11.x Alexandria) and
 FreePascal, providing some simple rules are followed.
 
 When CodeSnip is first installed it knows nothing about the available compilers
-and so test compilations cannot be performed. You must tell CodeSnip about the
-available compilers by using the "Tools | Configure Compilers" menu option. The
-resulting dialogue can automatically detect all installed versions of supported
-Delphi compilers at the click of a button. Free Pascal, where installed, must be
-set up manually. The Welcome page displays a list of compilers it has been
-configured to work with.
+and so test compilations cannot be performed. If any supported Delphi compiler
+is detected when the program is first run you will be given the option of
+registering it. This does not work for Free Pascal.
+
+You can also tell CodeSnip about the available compilers by using the "Tools |
+Configure Compilers" menu option. The resulting dialogue can automatically
+detect all installed versions of supported Delphi compilers at the click of a
+button. Free Pascal, where installed, must be set up manually. The Welcome page
+displays a list of compilers it has been configured to work with.
 
 Compilers that do not use English as their output language will need further
 configuration. See the help file for information (look up "configure compilers
@@ -221,7 +227,7 @@ Each user can configure compilers differently.
 Delphi XE2 and later may need to be configured to search for required units in
 the correct namespaces. This is explained in the Add/Edit Snippet Dialogue Box
 help topic and in the FAQ at
-https://github.com/delphidabbler/codesnip-faq/blob/master/UsingCodeSnip.md#faq-1
+https://github.com/delphidabbler/codesnip-faq/blob/master/UsingCodeSnip.md#faq-7
 
 Any type of snippet other than "freeform" can be test compiled.
 
@@ -229,11 +235,8 @@ Any type of snippet other than "freeform" can be test compiled.
 Updating the Program
 ================================================================================
 
-Updates are published on:
-
-+ GitHub: https://github.com/delphidabbler/codesnip/releases
-
-+ SourceForge: https://sourceforge.net/projects/codesnip/files/
+Updates are published on GitHub. See 
+https://github.com/delphidabbler/codesnip/releases
 
 News of new updates is published on the CodeSnip Blog:
 https://codesnip-app.blogspot.com/.
@@ -324,9 +327,8 @@ If you wish to report a bug, please check the current reports on the bug
 tracker. If your bug hasn't already been reported or fixed please add a report
 using the "Add new" link on Tracker.
 
-Please note that version 4.15.1 and earlier are no longer supported, so don't
-report bugs for those versions. You should update the program first and only
-report the bug if it is still present.
+Please ensure that you have installed the latest version of CodeSnip and checked
+if the bug is still present before reporting it.
 
 
 Feedback
@@ -378,8 +380,8 @@ Thanks to:
 
 + Various contributors to the DelphiDabbler Code Snippets database. Names of
   contributors are listed in the program's About Box (use the "Help | About"
-  menu option then select the "About the Database" tab). If the list is empty
-  then updating the Code Snippets Database will download the details.
+  menu option then select the "About the Database" tab). The list will be empty
+  if the Code Snippets Database has not been installed.
 
 
 ================================================================================
