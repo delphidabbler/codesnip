@@ -1,0 +1,77 @@
+How to Install CodeSnip LE Cupola
+=================================
+
+**WARNING**: This is pre-release software. There are likely to be bugs. Please
+make sure you have a backup of your snippets files before using this program.
+
+Installation
+------------
+
+There is no installer supplied with this version of CodeSnip LE Cupola.
+Installation is done manually. It is a very simple process. Proceed as follows:
+
+1.  Unzip the .zip file you downloaded.
+
+2.  You will find two executable files. CodeSnip.Cupola.exe is a 64 bit
+    executable while CodeSnip.Cupola32.exe is 32 bit. Use CodeSnip.Cupola.exe
+    unless you are running a 32 bit version of Windows, in which case you need
+    CodeSnip.Cupola32.exe.
+    
+    **Note:** the 64 bit version is the primary one and receives more testing.
+
+3.  Create a folder somewhere on your computer's disk drive or on a writeable
+    removable drive.
+    
+    **Warning:** Do not install inside either the %ProgramFiles% or 
+    %ProgramFiles(x86)% folder.
+
+4.  Copy either CodeSnip.Cupola.exe or CodeSnip.Cupola32.exe to the chosen
+    folder.
+
+5.  Run the program by double clicking it.
+
+6.  Optionally create a shortcut to the .exe file by right clicking and dragging
+    the .exe file to your desktop then selecting "Create shortcuts here" from
+    the popup menu.
+
+Note that CodeSnip LE Cupola will create sub-directories in the folder where you
+installed it. Do not delete or rename those directories unless you are
+uninstalling the program or you may loose data.
+
+Updating
+--------
+
+If you are updating an existing installation of CodeSnip LE Cupola to a new
+version then you must overwrite the existing .exe file in the folder where you
+originally installed it. Be careful not to overwrite or delete any sub-folders
+that the previous verison of the program created or you may loose data.
+
+Uninstalling
+------------
+
+Simply delete the .exe file from the folder you originally installed it to. If
+you are sure you won't be needing your snippets again then you can safely delete
+the folder where you installed the program, along with any subfolders.
+
+**Warning**: If you want to keep your snippet data then do not delete the
+folder or its sub-folders.
+
+Moving an installation
+----------------------
+
+You can easily move the CodeSnip LE Cupola installation to another folder.
+Simply create the required folder then move the executable file along with any
+sub-folders into the new folder. You can then delete the old folder.
+
+Bugs & Feature Requests
+-----------------------
+
+If find any bugs, please report them using the CodeSnip issue tracker at
+https://github.com/delphidabbler/codesnip/issues, making sure you mention you
+are reporting a bug in CodeSnip LE Cupola and quote the program version number.
+
+To request a new feature use the same issue tracker, but state that you are
+submitting a feature request for CodeSnip LE Cupola.
+
+If you don't mention CodeSnip LE Cupola then your issue will be assumed to
+relate to the full CodeSnip 4 program!
