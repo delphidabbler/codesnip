@@ -1,106 +1,135 @@
-# CodeSnip
+# CodeSnip Cupola
 
-A code bank designed with Pascal in mind.
+## Contents
 
-* [Overview](#overview)
-* [Installation](#installation)
-* [Support](#support)
-* [Source Code](#source-code)
-* [Change Log](#change-log)
-* [License](#license)
-* [Bug Reports and Features](#bug-reports-and-features)
+1. [Overview](#overview)
+2. [Aims of `cupola`](#aims-of-cupola)
+3. [Source Code](#source-code)
+4. [Compiling](#compiling)
+5. [Contributing](#contributing)
+6. [Analysis of past failures](#analysis-of-past-failures)
+7. [Road map](#road-map)
 
-## Overview
+## Overview 
 
-CodeSnip is an open source code bank for storing and viewing your code snippets. While it can manage snippets in any source language, it is focused mainly on Pascal and Delphi code for which additional features are available.
+This is an experimental branch of CodeSnip whose purpose is to develop a "lite" version of the program with a modern UI.
 
-CodeSnip can import code from the DelphiDabbler [Code Snippets Database](https://github.com/delphidabbler/code-snippets).
+The decision to create a lite version was arrived at after [analysing the reasons](#analysis-of-past-failures) for failure of all previous attempts to create a fully fledged v5 successor to CodeSnip 4. I'm not putting a timescale on this, and neither am I optimistic that `cupola` will succeed where others have failed, but this seems to be the most realistic plan so far.
 
-The program is available in both standard and portable editions.
+## Aims of `cupola`
 
-CodeSnip requires Windows 2000 or later and Internet Explorer 6 or later, although XP and IE 8 and later are recommended.
+The following are the aims of this project:
 
-## Installation
+* To be a "lite" version of CodeSnip, providing only a subset of the features in CodeSnip 4.
+* Use all new code wherever possible.
+* Use a modern Delphi compiler instead of Delphi XE.
+* Implement high DPI support and light/dark themes.
+* Target Windows 64 as a priority, possibly with an option for a 32 bit build if demand is there.
+* Create only a single edition instead of separate standard and portable editions.
+* Only implement as much cross-compatibility with CodeSnip 4 as necessary to enable existing snippets to be imported.
+* No longer treat snippets from the DelphiDabbler Code Snippets database as read-only and distinct from the user's own snippets.
+* Permit more than one snippets database to be maintained.
+* Do not delay release until the program is feature complete: release early alpha and beta versions that incremenatally add back features.
 
-The standard edition of CodeSnip is installed and removed using a Windows installer. Administrator privileges are required for installation.
+## Source code
 
-The portable edition has no installer. Simply follow the instructions in the [read me file](https://raw.githubusercontent.com/delphidabbler/codesnip/master/Docs/ReadMe.txt) that is included in the download zip file.
+The `cupola` branch was branched from `master` as at [`version-4.21.1`](https://github.com/delphidabbler/codesnip/tree/version-4.21.1).
 
-## Support
+Because `cupola` was branched from `master`, all the existing code base is available to it. To make it easy to distinguish the `cupola` code from the existing code, all development will take place in a `cupola` sub-directory off the repo root.
 
-The following support is available to CodeSnip users:
+Even though `cupola` is aiming to use all new code where possible, it is unrealistic to believe that none of the existing code will be re-used.  However any code being considered for re-use should be carefully reviewed. If accepted, the code must be renamed into a suitable unit scope and moved into the `cupola` sub-directory. In particular, for code to be re-used it:
 
-* A comprehensive help file.
-* A [read-me file](https://raw.githubusercontent.com/delphidabbler/codesnip/master/Docs/ReadMe.txt)<sup> *</sup> that discusses installation, configuration, updating and known issues.
-* A [Using CodeSnip FAQ](https://github.com/delphidabbler/codesnip-faq/blob/master/UsingCodeSnip.md).
-* A [Blog](https://codesnip-app.blogspot.co.uk/).
+* must not dig down into the Windows API.
+* not be closely related to the GUI. 
+* be 64 bit compatible.
 
-There's also plenty of info available on how to compile CodeSnip from source - see below.
+## Compiling
 
-> <sup>*</sup> This link takes you to the most recent version of the read-me file -- it can change from release to release.
+The `cupola` source code is targetted at Delphi 11.3 Alexandria. Other Delphi compilers may be suitable, providing they have support for inline variable declarations.
 
-## Source Code
+All debug code will be compilable directly from the Delphi IDE. Unlike the original code base, it will not be necessary to perform full builds from the command line using a `Makefile`.
 
-CodeSnip's source code is maintained in the [`delphidabbler/codesnip`](https://github.com/delphidabbler/codesnip) Git repository on GitHub†.
+However, final releases will be created from a script run from the command line.
 
-The [Git Flow](https://nvie.com/posts/a-successful-git-branching-model/) methodology has been adopted, with the exception of some experimental branches.
+### Dependencies
 
-The following branches existed as of 2022/12/03:
+The build process requires that [DelphiDabbler Version Information Editor](https://delphidabbler.com/software/vied) is installed and that its installation directory is stored in the `VIEdRoot` environment variable.
 
-* [`master`](https://github.com/delphidabbler/codesnip/tree/master): Always reflects the state of the source code as of the latest release.‡ 
-* [`develop`](https://github.com/delphidabbler/codesnip/tree/develop): Main development branch. The head of this branch contains the latest v4 development code. Normal development of CodeSnip 4 takes place in `feature/xxx` branches off `develop`.
-* [`caboli`](https://github.com/delphidabbler/codesnip/tree/caboli): Experimental branch where an attempt is being made to (a) modernise the UI and (b) get the code to work properly when compiled with Delphi 11.
-* Abandoned branches:
-  * [`pagoda`](https://github.com/delphidabbler/codesnip/tree/pagoda): An abortive attempt at developing CodeSnip 5.
-  * [`pavilion`](https://github.com/delphidabbler/codesnip/tree/pavilion): Another attempt at working on CodeSnip 5 that branched off `pagoda`.
-  * [`belvedere`](https://github.com/delphidabbler/codesnip/tree/belvedere): A thiird, failed attempt to develop CodeSnip 5 as a ground up rewrite. Not related to `pagoda` & `pavilion`. 
+The release script additionally requires that [InfoZIP `zip.exe`](https://delphidabbler.com/extras/info-zip) is installed and that its installation directory is stored in the `ZipRoot` environment variable.
 
-> † Up to and including v4.13.1 the source code was kept in a Subversion repository on SourceForge. It was converted to Git in October 2015 and imported into GitHub. All releases from v3.0.0 are marked by tags in the form `version-x.x.x` where `x.x.x` is the version number. None of the Subversion branches made it through the conversion to Git, so to see a full history look at the old [SourceForge repository](https://sourceforge.net/p/codesnip/code/).
+## Contributing
 
-> ‡ All the converted Subversion code was committed to `master`, making it a copy of the old Subversion `trunk`. As such `master` contains various development commits along with numerous commits related to management of Subversion. After release 4.13.1, and the the first commit of this read-me file, `master` contains only commits relating to actual releases.
+⛔ Sorry, contributions are not being accepted to the `cupola` branch at the moment.
 
-### Contributions
+> Contributions to the main CodeSnip 4 code base in the [`develop`](https://github.com/delphidabbler/codesnip/tree/develop) branch are more than welcome. See [`CONTRIBUTING.md`](https://github.com/delphidabbler/codesnip/blob/develop/CONTRIBUTING.md) for details of how to go about this.
 
-To contribute to CodeSnip 4 development please fork the repository on GitHub. Create a feature branch off the `develop` branch. Make your changes to your feature branch then submit a pull request via GitHub.
+## Analysis of past failures
 
-:warning: **Do not create branches off `master`, always branch from `develop`.**
+There have been several attempts at creating a new major version of CodeSnip. All have failed. Each failed attempt has a code name, and a branch with the same name in CodeSnip's GitHub repository. In chronological order, they are:
 
-:no_entry: Contributions to experimental branches are not being excepted just now.
+* [`pagoda`](https://github.com/delphidabbler/codesnip/tree/pagoda)
+* [`pavilion`](https://github.com/delphidabbler/codesnip/tree/pavilion) 
+* [`belvedere`](https://github.com/delphidabbler/codesnip/tree/belvedere)
+* [`caboli`](https://github.com/delphidabbler/codesnip/tree/caboli)
 
-#### Licensing of contributions
+### `pagoda`
 
-The license that applies to any existing file you edit will continue to apply to the edited file. Any existing license text or copyright statement **must not** be altered or removed.
+The plan was to: 
 
-Any new file you contribute **must** either be licensed under the [Mozilla Public License v2.0](https://www.mozilla.org/MPL/2.0/) (MPL2) or have a license compatible with the MPL2. If a license is not specified then MPL2 will be assumed and will be applied to the file. You should insert a suitable copyright statement in the file.
+1. Generalise CodeSnip to be a code bank for several different languages instead of just Pascal, while still providing some additional support for test-compiling Pascal code.
+2. Increase the focus on the user's own code while downplaying the importance of code downloaded from the DelphiDabbler Code Snippets database.
 
-Any third party code used by your contributed code **must** also have a license compatible with the MPL2.
+The branch was based on the then-current CodeSnip code base. A _lot_ of work was done. This may have succeeded had my interest in programming not waned. The last commits were in 2014 and there things languished until 2022, when `pavilion` came along.
 
-> MPL2 boilerplate text, in several programming language's comment formats, can be found in the file [`Docs/MPL-2.0-Boilerplate.txt`](https://raw.githubusercontent.com/delphidabbler/codesnip/master/Docs/MPL-2.0-Boilerplate.txt). You will need to change the name of the copyright holder.
+### `pavilion`
 
-### Compiling
+In January 2020 it was looking likely that the web services that CodeSnip relied on would be closing, as they eventually did. This meant that all the features that relied on the web services needed to be ripped out of CodeSnip. Two approaches were considered:
 
-`master` has a file in the root directory named [`Build.html`](https://htmlpreview.github.io/?https://github.com/delphidabbler/codesnip/blob/master/Build.html) that gives detailed information about how to compile the current release of CodeSnip 4.
+1. To revise the existing code base
+2. To revisit `pagoda` and to strip the web services out of that. `pavilion` was simply a branch of `pagoda` where the work on ripping out the web services took place.
 
-There is also a [Compiling & Source Code FAQ](https://github.com/delphidabbler/codesnip-faq/blob/master/SourceCode.md).
+It became apparent that `pavilion` couldn't be finished in time for the web service closure deadline, so the 1st option was persued and `pavilion` became moribund and later abandoned.
 
-CodeSnip 4 **must** be compiled with Delphi XE. See [Compiling & Source Code FAQ 11](https://github.com/delphidabbler/codesnip-faq/blob/master/SourceCode.md#faq-11) for the reason why.
+### `belvedere`
 
-## Change Log
+1st January 2022 and optimism ran high. It was time for another attempt at CodeSnip 5.
 
-The program's current change log can be found in the file [`CHANGELOG.md`](https://github.com/delphidabbler/codesnip/blob/master/CHANGELOG.md) in the root of the `master` branch.
+The objectives were similar to `pagoda`, but even more ambitious. To and already long list of objectives were added the requirement to modernise the UI, to convert to 64 bit and switch to a more modern Delphi compiler. 
 
-> Note that CodeSnip v4.15.1 and earlier did not have `CHANGELOG.md`. Instead, some versions maintained a separate change log for each major version in the `Docs/ChangeLogs` directory.
+It was thought that the previous attempts failed because they were built on the legacy code base. So the decision was taken to build CodeSnip 5 from the ground up, using all (or mostly) new code.
 
-## License
+This proved to be much too ambitious and the project foundered.
 
-The program's EULA, which gives full details of the license applying to the latest release, can be found in the file [`Docs\License.html`](https://htmlpreview.github.io/?https://github.com/delphidabbler/codesnip/blob/master/Docs/License.html) in the `master` branch. The license has changed between releases, so if you need to see an older one, select the appropriate `version-x.x.x` tag and read the older version of the file.
+### `caboli`
 
-Most of the original code is made available under the [Mozilla Public License v2](https://www.mozilla.org/MPL/2.0/).
+By the end of 2022 it was becoming apparent that `belvedere` was going nowhere. `caboli` was proposed as a much less ambitious update: the compiler would be changed to Delphi 11 and the UI would be modernised. This would all be built on the exisiting code base, except that some of the UI code would be built from scratch (because compilation with Delphi 11 broke the UI).
 
-The [CodeSnip Compiling & Source Code FAQ](https://github.com/delphidabbler/codesnip-faq/blob/master/SourceCode.md) may be useful if you have any queries about re-using CodeSnip source in other projects.
+At first results were promising. But font scaling problems persisted and strange memory access issues started appearing.
 
-## Bug Reports and Features
+It was concluded that the old code base, going back in parts to 2005, made too many assumptions about pointer and integer sizes and was potentially hiding numerous obscure bugs.
 
-You can report bugs or request new features using the [Issues section](https://github.com/delphidabbler/codesnip/issues) of the CodeSnip GitHub project. You will need a GitHub account to do this.
+`caboli` was abandoned after 5 months because of lack of confidence in the stability of the underlying code.
 
-Please do not report bugs unless you have checked whether the bug exists in the latest version of the program.
+### Learning points
+
+There are three main learning points to be taken from the above review:
+
+1. The original code base is not reliable and doesn't lend itself to modern UI features. This indicates that the code needs to be rewritten.
+2. Rewriting the existing code base is possibly unrealistic. Evidence from other real world examples supports this conclusion.
+3. Attempts to radically change the program all at once are over-ambitious.
+
+Points 1 and 2 are conflicting, which means that there is no simple solution.
+
+`caboli` addressed points 2 and 3 by having limited goals and by re-using the old code base, but fell at point 1. `belvedere` addressed point 1 by attempting ground up rewrite but fell at point 3: over-ambition. `pagoda` and `pavillion` failed on ponts 1 and 3.
+
+It seems there is only one path that has not been taken. That is to do a ground up rewrite that avoids over-ambition.
+
+## Road map
+
+Considering the analysis above, a two stage strategy has been adopted:
+
+1. Create a feature-limited, "lite", version of CodeSnip. This should be as close as practical to being a ground up rewrite. This is `cupola`.
+
+2. If, and only if, `cupola` succeeds, create a branch off it where original CodeSnip features will be added back. This project would have code name `rotunda`.
+
+Should all go well, development of `cupola` and `rotunda` would continue in parallel and CodeSnip 4 would be retired.
