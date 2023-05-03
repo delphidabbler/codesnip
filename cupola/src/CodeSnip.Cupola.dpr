@@ -4,6 +4,7 @@ uses
   Vcl.Forms;
 
 {$R *.res}
+{$R VersionInfo.res}
 
 begin
   Application.Initialize;
