@@ -1,0 +1,48 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{A0446FC2-3126-4FBD-9C8F-82222DBDECE1}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="src\CodeSnip.Cupola.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="tests\CodeSnip.Cupola.Tests.dproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="CodeSnip_Cupola">
+        <MSBuild Projects="src\CodeSnip.Cupola.dproj"/>
+    </Target>
+    <Target Name="CodeSnip_Cupola:Clean">
+        <MSBuild Projects="src\CodeSnip.Cupola.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="CodeSnip_Cupola:Make">
+        <MSBuild Projects="src\CodeSnip.Cupola.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="CodeSnip_Cupola_Tests">
+        <MSBuild Projects="tests\CodeSnip.Cupola.Tests.dproj"/>
+    </Target>
+    <Target Name="CodeSnip_Cupola_Tests:Clean">
+        <MSBuild Projects="tests\CodeSnip.Cupola.Tests.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="CodeSnip_Cupola_Tests:Make">
+        <MSBuild Projects="tests\CodeSnip.Cupola.Tests.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="CodeSnip_Cupola;CodeSnip_Cupola_Tests"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="CodeSnip_Cupola:Clean;CodeSnip_Cupola_Tests:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="CodeSnip_Cupola:Make;CodeSnip_Cupola_Tests:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>
