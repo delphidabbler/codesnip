@@ -1,0 +1,3 @@
+[submodule "cupola/src/vendor/grijjy-foundation"]
+	path = cupola/src/vendor/grijjy-foundation
+	url = https://github.com/delphidabbler/GrijjyFoundation.git
