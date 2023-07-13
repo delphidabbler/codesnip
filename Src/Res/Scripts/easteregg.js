@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2009-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2009-2023, Peter Johnson (gravatar.com/delphidabbler).
  *
  * JavaScript code used to perform animations in program's easter egg.
  * Requires jQuery and lite version of jQuery Cycle plug-in.
@@ -13,6 +13,12 @@
 // Main function called when DOM has loaded. Runs prelinary animations up to
 // when introductory page is shown on unfolded screen
 $(document).ready(function(){
+  
+  //! Fix vulnerability using patch suggested in dependabot alert
+  //! https://github.com/delphidabbler/codesnip/security/dependabot/1 
+  jQuery.htmlPrefilter = function( html ) {
+    return html;
+  };
 
   var spt = null;  // showPrompt timeout
 

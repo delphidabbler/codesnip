@@ -2,7 +2,7 @@
 ; v. 2.0. If a copy of the MPL was not distributed with this file, You can
 ; obtain one at https://mozilla.org/MPL/2.0/
 ;
-; Copyright (C) 2008-2022, Peter Johnson (gravatar.com/delphidabbler).
+; Copyright (C) 2008-2023, Peter Johnson (gravatar.com/delphidabbler).
 ;
 ; Version information description file for CodeSnip.
 
@@ -24,7 +24,7 @@ Language=2057
 Character Set=1252
 
 [String File Info]
-Comments=<%var.license>
+Comments=<%ver.license>
 Company Name=<%ver.company>
 File Description=<%ver.description> (Standard Edition)
 File Version=<#F1>.<#F2>.<#F3> build <#F4>
@@ -41,4 +41,4 @@ Special Build=
 Identifier=
 NumRCComments=0
 ResOutputDir=
-FileVersion=1
+FileVersion=2
