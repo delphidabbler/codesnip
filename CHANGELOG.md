@@ -6,6 +6,15 @@ Releases are listed in reverse version number order.
 
 > Note that _CodeSnip_ v4 was developed in parallel with v3 for a while. As a consequence some v3 releases have later release dates than early v4 releases.
 
+## Release v4.21.2 of 13 July 2023
+
+* Removed broken links and fixed unsafe links in the About box [issue #105].
+* Fixed bug in version information files that resulted in an error in the Comments section of the version information of both editions of _CodeSnip_ [issue 106].
+* Fixed potential XSS vulnerability in JQuery code used in Easter egg [issue #107].
+* Documentation changes:
+  * Rationalised, corrected, updated and clarified licensing information. These changes affected many documentation files. [issue #108].
+  * Overhauled `README.md` and `Docs/ReadMe.txt` and created a new `CONTRIBUTING.md` file that explains how to contribute in detail [issue #104].
+
 ## Release v4.21.1 of 09 April 2023
 
 * Completed implementation of support for [REML version 5](https://htmlpreview.github.io/?https://github.com/delphidabbler/codesnip/blob/version-4.21.0/Docs/Design/reml.html) (ommitted from v4.20.0 in error) and fixed some bugs in the original implementation [issues #81 and #82], including:
