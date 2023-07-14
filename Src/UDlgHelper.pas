@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2007-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2007-2023, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements "static" classes that help to manipulate dialogue boxes:
  *  + TDlgHelper sets a dialogue box's parent window.
@@ -380,25 +380,29 @@ begin
 end;
 
 class procedure TDlgAligner.Align(const Dlg, Host: TComponent);
+var
+  Instance: TDlgAligner;
 begin
   Assert(Assigned(Dlg), ClassName + '.Align: Dlg is nil');
-  with InternalCreate(Dlg, Host) do
+  Instance := InternalCreate(Dlg, Host);
   try
-    PerformAlignment;
+    Instance.PerformAlignment;
   finally
-    Free;
+    Instance.Free;
   end;
 end;
 
 class procedure TDlgAligner.Align(const DlgHandle: THandle;
   const Host: TComponent);
+var
+  Instance: TDlgAligner;
 begin
   Assert(IsWindow(DlgHandle), ClassName + '.Align: DlgHandle is not a window');
-  with InternalCreate(DlgHandle, Host) do
+  Instance := InternalCreate(DlgHandle, Host);
   try
-    PerformAlignment;
+    Instance.PerformAlignment;
   finally
-    Free;
+    Instance.Free;
   end;
 end;
 

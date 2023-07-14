@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2009-2022, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2009-2023, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements a dialogue box that displays active text rendered from REML markup
  * or plain text.
@@ -143,14 +143,16 @@ class procedure TActiveTextPreviewDlg.Execute(const AOwner: TComponent;
     @param AOwner [in] Component that owns this dialog box.
     @param ActiveText [in] Active text to be displayed as HTML.
   }
+var
+  Dlg: TActiveTextPreviewDlg;
 begin
-  with InternalCreate(AOwner) do
-    try
-      fActiveText := ActiveText;
-      ShowModal;
-    finally
-      Free;
-    end;
+  Dlg := InternalCreate(AOwner);
+  try
+    Dlg.fActiveText := ActiveText;
+    Dlg.ShowModal;
+  finally
+    Dlg.Free;
+  end;
 end;
 
 procedure TActiveTextPreviewDlg.HTMLEventHandler(Sender: TObject;
@@ -162,6 +164,7 @@ procedure TActiveTextPreviewDlg.HTMLEventHandler(Sender: TObject;
   }
 var
   ALink: IDispatch;   // reference to the any link that was clicked
+  ProtocolHander: TProtocol;
 resourcestring
   // Button captions for choice dialog box
   sClose = 'Close';
@@ -195,12 +198,12 @@ begin
     ) = cViewLinkRes then
     begin
       // User wants to view link: use protocol handler to display it
-      with TProtocolFactory.CreateHandler(TAnchors.GetURL(ALink)) do
-        try
-          Execute;
-        finally
-          Free;
-        end;
+      ProtocolHander := TProtocolFactory.CreateHandler(TAnchors.GetURL(ALink));
+      try
+        ProtocolHander.Execute;
+      finally
+        ProtocolHander.Free;
+      end;
     end;
   end;
 end;

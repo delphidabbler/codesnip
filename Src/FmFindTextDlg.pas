@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2005-2023, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements a dialogue box that is used to select criteria for text searches.
  *
@@ -250,15 +250,17 @@ class function TFindTextDlg.Execute(const AOwner: TComponent;
     @return True if user OKs and search object created or false if user
       cancels and search object is nil.
   }
+var
+  Dlg: TFindTextDlg;
 begin
-  with InternalCreate(AOwner) do
-    try
-      Result := (ShowModal = mrOK);
-      ASearch := fSearch;
-      RefineExisting := fRefinePreviousSearch;
-    finally
-      Free;
-    end;
+  Dlg := InternalCreate(AOwner);
+  try
+    Result := (Dlg.ShowModal = mrOK);
+    ASearch := Dlg.fSearch;
+    RefineExisting := Dlg.fRefinePreviousSearch;
+  finally
+    Dlg.Free;
+  end;
 end;
 
 procedure TFindTextDlg.FormCreate(Sender: TObject);

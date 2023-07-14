@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2008-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2008-2023, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements a dialogue box that enables the user to create or edit user
  * defined snippets.
@@ -531,17 +531,19 @@ class function TSnippetsEditorDlg.AddNewSnippet(AOwner: TComponent): Boolean;
       is aligned. May be nil.
     @return True if user OKs, False if cancels.
   }
+var
+  Dlg: TSnippetsEditorDlg;
 resourcestring
   sCaption = 'Add a Snippet';   // dialog box caption
 begin
-  with InternalCreate(AOwner) do
-    try
-      Caption := sCaption;
-      fSnippet := nil;
-      Result := ShowModal = mrOK;
-    finally
-      Free;
-    end;
+  Dlg := InternalCreate(AOwner);
+  try
+    Dlg.Caption := sCaption;
+    Dlg.fSnippet := nil;
+    Result := Dlg.ShowModal = mrOK;
+  finally
+    Dlg.Free;
+  end;
 end;
 
 procedure TSnippetsEditorDlg.ArrangeForm;
@@ -710,17 +712,19 @@ class function TSnippetsEditorDlg.EditSnippet(AOwner: TComponent;
     @param Snippet [in] Reference to snippet to be edited.
     @return True if user OKs, False if cancels.
   }
+var
+  Instance: TSnippetsEditorDlg;
 resourcestring
   sCaption = 'Edit Snippet';  // dialogue box caption
 begin
-  with InternalCreate(AOwner) do
-    try
-      Caption := sCaption;
-      fSnippet := Snippet;
-      Result := ShowModal = mrOK;
-    finally
-      Free;
-    end;
+  Instance := InternalCreate(AOwner);
+  try
+    Instance.Caption := sCaption;
+    Instance.fSnippet := Snippet;
+    Result := Instance.ShowModal = mrOK;
+  finally
+    Instance.Free;
+  end;
 end;
 
 procedure TSnippetsEditorDlg.FocusCtrl(const Ctrl: TWinControl);
@@ -944,23 +948,20 @@ function TSnippetsEditorDlg.UpdateData: TSnippetEditData;
   }
 begin
   Result.Init;
-  with Result do
-  begin
-    if StrTrim(edName.Text) <> StrTrim(edDisplayName.Text) then
-      Props.DisplayName := StrTrim(edDisplayName.Text)
-    else
-      Props.DisplayName := '';
-    Props.Cat := fCatList.CatID(cbCategories.ItemIndex);
-    Props.Kind := fSnipKindList.SnippetKind(cbKind.ItemIndex);
-    (Props.Desc as IAssignable).Assign(frmDescription.ActiveText);
-    Props.SourceCode := StrTrimRight(edSourceCode.Text);
-    Props.HiliteSource := chkUseHiliter.Checked;
-    (Props.Extra as IAssignable).Assign(frmExtra.ActiveText);
-    Props.CompilerResults := fCompilersLBMgr.GetCompileResults;
-    Refs.Units := fUnitsCLBMgr.GetCheckedUnits;
-    Refs.Depends := fDependsCLBMgr.GetCheckedSnippets;
-    Refs.XRef := fXRefsCLBMgr.GetCheckedSnippets;
-  end;
+  if StrTrim(edName.Text) <> StrTrim(edDisplayName.Text) then
+    Result.Props.DisplayName := StrTrim(edDisplayName.Text)
+  else
+    Result.Props.DisplayName := '';
+  Result.Props.Cat := fCatList.CatID(cbCategories.ItemIndex);
+  Result.Props.Kind := fSnipKindList.SnippetKind(cbKind.ItemIndex);
+  (Result.Props.Desc as IAssignable).Assign(frmDescription.ActiveText);
+  Result.Props.SourceCode := StrTrimRight(edSourceCode.Text);
+  Result.Props.HiliteSource := chkUseHiliter.Checked;
+  (Result.Props.Extra as IAssignable).Assign(frmExtra.ActiveText);
+  Result.Props.CompilerResults := fCompilersLBMgr.GetCompileResults;
+  Result.Refs.Units := fUnitsCLBMgr.GetCheckedUnits;
+  Result.Refs.Depends := fDependsCLBMgr.GetCheckedSnippets;
+  Result.Refs.XRef := fXRefsCLBMgr.GetCheckedSnippets;
 end;
 
 procedure TSnippetsEditorDlg.UpdateReferences;

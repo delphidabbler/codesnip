@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2007-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2007-2023, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Defines various classes used to configure one or more command bars owned by
  * a web browser container. Command bars are UI elements used to issue commands,
@@ -246,6 +246,7 @@ var
   ImgTags: IDispatchList;   // all <img> children of parent
   ImgTag: IDispatch;        // <img> child of parent that contains required GIF
   Src: string;              // resource URL of GIF file
+  MenuImages: TGIFImageList;
 begin
   Result := -1;
   // Check if parent elem is a <div> or <span> with class "option"
@@ -267,12 +268,12 @@ begin
   // Get matching bitmap from image list: add one from GIF file if not found
   Result := -1;
   if Menu.Images is TGIFImageList then
-    with Menu.Images as TGIFImageList do
-    begin
-      Result := ImageIndex(Src);
-      if Result = -1 then
-        Result := AddGIFImage(Src);
-    end;
+  begin
+    MenuImages := Menu.Images as TGIFImageList;
+    Result := MenuImages.ImageIndex(Src);
+    if Result = -1 then
+      Result := MenuImages.AddGIFImage(Src);
+  end;
 end;
 
 procedure TWBDefaultPopupMenuWrapper.GetLinkMenuItems(const Doc: IDispatch;

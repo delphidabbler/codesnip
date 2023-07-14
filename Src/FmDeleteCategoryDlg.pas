@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2009-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2009-2023, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements a dialogue box that permits user to select and delete a user
  * defined category.
@@ -137,14 +137,16 @@ class function TDeleteCategoryDlg.Execute(AOwner: TComponent;
     @param AOwner [in] Component that owns dialog box.
     @param CatList [in] List of categories available for deletion.
   }
+var
+  Dlg: TDeleteCategoryDlg;
 begin
-  with InternalCreate(AOwner) do
-    try
-      fCategories := CatList;
-      Result := ShowModal = mrOK;
-    finally
-      Free;
-    end;
+  Dlg := InternalCreate(AOwner);
+  try
+    Dlg.fCategories := CatList;
+    Result := Dlg.ShowModal = mrOK;
+  finally
+    Dlg.Free;
+  end;
 end;
 
 procedure TDeleteCategoryDlg.SelectionChangeHandler(Sender: TObject);

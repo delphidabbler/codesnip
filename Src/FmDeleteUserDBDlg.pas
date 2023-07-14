@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2022, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2022-2023, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements a dialogue box that asks user to confirm deletion of user-defined
  * snippets database.
@@ -84,14 +84,16 @@ begin
 end;
 
 class function TDeleteUserDBDlg.Execute(AOwner: TComponent): Boolean;
+var
+  Dlg: TDeleteUserDBDlg;
 begin
-  with InternalCreate(AOwner) do
-    try
-      ShowModal;
-      Result := fPermissionGranted;
-    finally
-      Free;
-    end;
+  Dlg := InternalCreate(AOwner);
+  try
+    Dlg.ShowModal;
+    Result := Dlg.fPermissionGranted;
+  finally
+    Dlg.Free;
+  end;
 end;
 
 constructor TDeleteUserDBDlg.InternalCreate(AOwner: TComponent);

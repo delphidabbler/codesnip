@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2009-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2009-2023, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements a dialogue box that informs users how to report bugs.
 }
@@ -75,13 +75,15 @@ class procedure TUserBugReportDlg.Execute(AOwner: TComponent);
       this component if it is a form. If Owner it is nil or not a form the
       dialog is aligned over the active form.
   }
+var
+  Dlg: TUserBugReportDlg;
 begin
-  with Create(AOwner) do
-    try
-      ShowModal;
-    finally
-      Free;
-    end;
+  Dlg := Create(AOwner);
+  try
+    Dlg.ShowModal;
+  finally
+    Dlg.Free;
+  end;
 end;
 
 end.

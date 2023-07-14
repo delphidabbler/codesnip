@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2006-2022, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2006-2023, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Defines a class that manages generation, previewing and saving of a pascal
  * unit.
@@ -199,13 +199,15 @@ begin
 end;
 
 class procedure TSaveUnitMgr.Execute(const Snips: TSnippetList);
+var
+  Instance: TSaveUnitMgr;
 begin
-  with InternalCreate(Snips) do
-    try
-      DoExecute;
-    finally
-      Free;
-    end;
+  Instance := InternalCreate(Snips);
+  try
+    Instance.DoExecute;
+  finally
+    Instance.Free;
+  end;
 end;
 
 function TSaveUnitMgr.GenerateSource(const CommentStyle: TCommentStyle;

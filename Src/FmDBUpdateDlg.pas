@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2022, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2005-2023, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements a wizard dialogue box that handles the updating of the main
  * DelphiDabbler Code Snippets database.
@@ -345,14 +345,16 @@ begin
 end;
 
 class function TDBUpdateDlg.Execute(AOwner: TComponent): Boolean;
+var
+  Dlg: TDBUpdateDlg;
 begin
-  with InternalCreate(AOwner) do
-    try
-      ShowModal;
-      Result := fDataUpdated;
-    finally
-      Free;
-    end;
+  Dlg := InternalCreate(AOwner);
+  try
+    Dlg.ShowModal;
+    Result := Dlg.fDataUpdated;
+  finally
+    Dlg.Free;
+  end;
 end;
 
 procedure TDBUpdateDlg.FormCreate(Sender: TObject);

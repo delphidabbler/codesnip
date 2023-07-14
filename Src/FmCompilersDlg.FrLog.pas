@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2011-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2011-2023, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements a frame used to change log file prefixes used for a compiler being
  * edited in TCompilersDlg.
@@ -126,46 +126,43 @@ begin
   // Get reference to value editor
   ValEd := Sender as TValueListEditor;
   ValEd.Canvas.Font := ValEd.Font;
-  with ValEd.Canvas do
+  if gdFixed in State then
   begin
-    if gdFixed in State then
-    begin
-      // Set colours for fixed cells (non-editable)
-      Brush.Color := clBtnFace;
-      Font.Color := ValEd.Font.Color;
-    end
-    else
-    begin
-      // Set colours for editable cell
-      Brush.Color := ValEd.Color;
-      Font.Color := ValEd.Font.Color;
-    end;
-    // Colour the current cell
-    FillRect(Rect);
-    if gdFixed in State then
-    begin
-      // draw vertical line at right edge of fixed cell to act as border
-      Pen.Color := clBtnShadow;
-      MoveTo(Rect.Right - 1, Rect.Top);
-      LineTo(Rect.Right - 1, Rect.Bottom);
-    end;
-    // Display required text
-    TextOut(
-      Rect.Left + 2 ,
-      Rect.Top + (ValEd.RowHeights[ARow] - TextHeight('X')) div 2,
-      ValEd.Cells[ACol, ARow]
+    // Set colours for fixed cells (non-editable)
+    ValEd.Canvas.Brush.Color := clBtnFace;
+    ValEd.Canvas.Font.Color := ValEd.Font.Color;
+  end
+  else
+  begin
+    // Set colours for editable cell
+    ValEd.Canvas.Brush.Color := ValEd.Color;
+    ValEd.Canvas.Font.Color := ValEd.Font.Color;
+  end;
+  // Colour the current cell
+  ValEd.Canvas.FillRect(Rect);
+  if gdFixed in State then
+  begin
+    // draw vertical line at right edge of fixed cell to act as border
+    ValEd.Canvas.Pen.Color := clBtnShadow;
+    ValEd.Canvas.MoveTo(Rect.Right - 1, Rect.Top);
+    ValEd.Canvas.LineTo(Rect.Right - 1, Rect.Bottom);
+  end;
+  // Display required text
+  ValEd.Canvas.TextOut(
+    Rect.Left + 2 ,
+    Rect.Top + (ValEd.RowHeights[ARow] - ValEd.Canvas.TextHeight('X')) div 2,
+    ValEd.Cells[ACol, ARow]
+  );
+  if (ACol = 0) and (ValEd.Selection.Top = ARow) then
+  begin
+    // This is a fixed cell which has selected editable cell adjacent to it
+    // draw an arrow at the RHS of this cell that points to selected cell
+    ValEd.Canvas.Pen.Color := clHighlight;
+    GraphUtil.DrawArrow(
+      ValEd.Canvas,
+      sdRight,
+      Point(Rect.Right - 8, (Rect.Top + Rect.Bottom) div 2 - 4), 4
     );
-    if (ACol = 0) and (ValEd.Selection.Top = ARow) then
-    begin
-      // This is a fixed cell which has selected editable cell adjacent to it
-      // draw an arrow at the RHS of this cell that points to selected cell
-      Pen.Color := clHighlight;
-      GraphUtil.DrawArrow(
-        ValEd.Canvas,
-        sdRight,
-        Point(Rect.Right - 8, (Rect.Top + Rect.Bottom) div 2 - 4), 4
-      );
-    end;
   end;
 end;
 

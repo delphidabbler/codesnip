@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2008-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2008-2023, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements a dialogue box that gets snippets to be exported and creates an
  * export file containing the selected snippets.
@@ -189,14 +189,16 @@ class procedure TCodeExportDlg.Execute(const AOwner: TComponent;
     @param Snippet [in] Reference to a snippet to pre-select in snippets check
       list box. If nil or not user-defined then no snippet is pre-selected.
   }
+var
+  Dlg: TCodeExportDlg;
 begin
-  with InternalCreate(AOwner) do
-    try
-      SelectSnippet(Snippet);
-      ShowModal;
-    finally
-      Free;
-    end;
+  Dlg := InternalCreate(AOwner);
+  try
+    Dlg.SelectSnippet(Snippet);
+    Dlg.ShowModal;
+  finally
+    Dlg.Free;
+  end;
 end;
 
 procedure TCodeExportDlg.SelectSnippet(const Snippet: TSnippet);

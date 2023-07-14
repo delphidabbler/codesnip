@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2005-2023, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Defines a class that manages generation, previewing and saving of a code
  * snippet.
@@ -119,13 +119,15 @@ begin
 end;
 
 class procedure TSaveSnippetMgr.Execute(View: IView);
+var
+  Instance: TSaveSnippetMgr;
 begin
-  with InternalCreate(View) do
-    try
-      DoExecute;
-    finally
-      Free;
-    end;
+  Instance := InternalCreate(View);
+  try
+    Instance.DoExecute;
+  finally
+    Instance.Free;
+  end;
 end;
 
 function TSaveSnippetMgr.GenerateSource(const CommentStyle: TCommentStyle;

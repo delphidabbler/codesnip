@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2013-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2013-2023, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements a dialogue box that manages named user defined syntax
  * highlighters. It lists available named highlighters which can be selected for
@@ -152,16 +152,18 @@ end;
 
 class function TUserHiliterMgrDlg.Execute(AOwner: TComponent;
   ANamedAttrs: INamedHiliteAttrs; out ASelected: IHiliteAttrs): Boolean;
+var
+  Dlg: TUserHiliterMgrDlg;
 begin
-  with InternalCreate(AOwner) do
-    try
-      fNamedAttrs := ANamedAttrs;
-      Result := ShowModal = mrOK;
-      if Result then
-        ASelected := fSelected;
-    finally
-      Free;
-    end;
+  Dlg := InternalCreate(AOwner);
+  try
+    Dlg.fNamedAttrs := ANamedAttrs;
+    Result := Dlg.ShowModal = mrOK;
+    if Result then
+      ASelected := Dlg.fSelected;
+  finally
+    Dlg.Free;
+  end;
 end;
 
 procedure TUserHiliterMgrDlg.InitForm;

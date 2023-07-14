@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2005-2023, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Class that performs a test compilation of a snippet using all supported and
  * installed versions of Delphi and returns details of success or failure.
@@ -112,13 +112,15 @@ class function TTestCompile.Compile(const ACompilers: ICompilers;
     @return Compilation results for each supported compiler (crQuery is returned
       for each supported compiler that is not installed).
   }
+var
+  Instance: TTestCompile;
 begin
-  with InternalCreate(ACompilers, ASnippet) do
-    try
-      Result := DoCompile;
-    finally
-      Free;
-    end;
+  Instance := InternalCreate(ACompilers, ASnippet);
+  try
+    Result := Instance.DoCompile;
+  finally
+    Instance.Free;
+  end;
 end;
 
 class function TTestCompile.CompileSourceFile(const SrcFile: string;
@@ -162,13 +164,15 @@ procedure TTestCompile.GenerateSourceFile(out FileName: string);
   {Generates a source file for snippet under test.
     @param FileName [out] Name of the generated file.
   }
+var
+  TestUnit: TTestUnit;
 begin
-  with TTestUnit.Create(fSnippet) do
-    try
-      SaveUnit(FileName);
-    finally
-      Free;
-    end;
+  TestUnit := TTestUnit.Create(fSnippet);
+  try
+    TestUnit.SaveUnit(FileName);
+  finally
+    TestUnit.Free;
+  end;
 end;
 
 constructor TTestCompile.InternalCreate(const ACompilers: ICompilers;

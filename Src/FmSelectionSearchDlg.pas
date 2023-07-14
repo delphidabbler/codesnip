@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2006-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2006-2023, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements a dialogue box that enables the user to the select the snippets
  * that are to be displayed.
@@ -194,15 +194,17 @@ class function TSelectionSearchDlg.Execute(const AOwner: TComponent;
       if user cancels.
     @return True if user OKs and false if user cancels.
   }
+var
+  Dlg: TSelectionSearchDlg;
 begin
-  with InternalCreate(AOwner) do
-    try
-      SetSelectedSnippets(SelectedSnippets);
-      Result := (ShowModal = mrOK);
-      ASearch := fSearch;
-    finally
-      Free;
-    end;
+  Dlg := InternalCreate(AOwner);
+  try
+    Dlg.SetSelectedSnippets(SelectedSnippets);
+    Result := (Dlg.ShowModal = mrOK);
+    ASearch := Dlg.fSearch;
+  finally
+    Dlg.Free;
+  end;
 end;
 
 procedure TSelectionSearchDlg.FormCreate(Sender: TObject);

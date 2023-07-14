@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2013-2022, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2013-2023, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements a wizard dialogue box that lets the user select and import
  * packets from the DelphiDabbler implementation of the SWAG Pascal archive as
@@ -568,13 +568,15 @@ begin
 end;
 
 class function TSWAGImportDlg.Execute(const AOwner: TComponent): Boolean;
+var
+  Dlg: TSWAGImportDlg;
 begin
-  with InternalCreate(AOwner) do
-    try
-      Result := ShowModal = mrOK;
-    finally
-      Free;
-    end;
+  Dlg := InternalCreate(AOwner);
+  try
+    Result := Dlg.ShowModal = mrOK;
+  finally
+    Dlg.Free;
+  end;
 end;
 
 function TSWAGImportDlg.GetDirNameFromEditCtrl: string;
