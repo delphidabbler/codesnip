@@ -237,7 +237,7 @@ begin
     if not Settings.GetWdwState(Result, State) or (State = wsMaximized) then
       Result := Screen.WorkAreaRect;  // we use workarea of primary monitor
   finally
-    Free;
+    Settings.Free;
   end;
 end;
 
