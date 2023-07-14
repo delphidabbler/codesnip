@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2011-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2011-2023, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements a class that manages display of compiler names in an owner draw
  * list box.
@@ -34,6 +34,8 @@ type
     ///  <summary>Reference to managed list box.</summary>
     ///  <remarks>Must be owner draw.</remarks>
     fLB: TListBox;
+    fMapIdxToComp: TArray<TCompilerID>;
+    fMapCompToIdx: array[TCompilerID] of Integer;
     ///  <summary>List of compilers to be displayed in list box.</summary>
     fCompilers: ICompilers;
     ///  <summary>Reference to OnSelect event handler.</summary>
@@ -87,11 +89,16 @@ uses
 
 constructor TCompilerListMgr.Create(const LB: TListBox;
   const Compilers: ICompilers);
+var
+  CompID: TCompilerID;
 begin
   inherited Create;
   fLB := LB;
   fLB.OnClick := LBClickHandler;
   fLB.OnDrawItem := LBDrawItemHandler;
+  fLB.Clear;
+  for CompID := Low(TCompilerID) to High(TCompilerID) do
+    fLB.Items.Add('');
   fCompilers := Compilers;
 end;
 
@@ -103,19 +110,27 @@ end;
 
 function TCompilerListMgr.GetSelected: ICompiler;
 begin
-  Result := fCompilers[TCompilerID(fLB.ItemIndex)];
+  Result := fCompilers[fMapIdxToComp[fLB.ItemIndex]];
 end;
 
 procedure TCompilerListMgr.Initialise;
 var
   CompID: TCompilerID;  // loops thru supported compilers
+  Idx: Integer;
 begin
   inherited;
+
   // Add empty list items - one per supported compiler. Note we don't need item
   // text since we handle drawing of list items ourselves and get details from
   // compiler objects.
+  SetLength(fMapIdxToComp, Length(fMapCompToIdx));
+  Idx := High(fMapIdxToComp);
   for CompID := Low(TCompilerID) to High(TCompilerID) do
-    fLB.Items.Add('');
+  begin
+    fMapIdxToComp[Idx] := CompID;
+    fMapCompToIdx[CompID] := Idx;
+    Dec(Idx);
+  end;
   // Select first compiler in list and trigger selection event for it
   fLB.ItemIndex := 0;
   DoSelect;
@@ -139,7 +154,7 @@ begin
   ItemRect := Rect;
 
   // Compiler object associated with list item
-  Compiler := fCompilers[TCompilerID(Index)];
+  Compiler := fCompilers[fMapIdxToComp[Index]];
 
   // Use bold font if compiler available
   if Compiler.IsAvailable then
@@ -208,7 +223,7 @@ procedure TCompilerListMgr.Refresh(Compiler: ICompiler);
 var
   InvalidRect: TRectEx;
 begin
-  InvalidRect := fLB.ItemRect(Ord(Compiler.GetID));
+  InvalidRect := fLB.ItemRect(fMapCompToIdx[Compiler.GetID]);
   InvalidateRect(fLB.Handle, @InvalidRect, False);
 end;
 
