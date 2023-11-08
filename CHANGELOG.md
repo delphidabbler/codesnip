@@ -6,6 +6,17 @@ Releases are listed in reverse version number order.
 
 > Note that _CodeSnip_ v4 was developed in parallel with v3 for a while. As a consequence some v3 releases have later release dates than early v4 releases.
 
+## Release v4.22.0 of 08 November 2023
+
+* Added support for test compiling snippets with Delphi 12 Athens [issue #121].
+* Documentation changes re addition of support for Delphi 12:
+  * File format additions for config, export, user database and main database.
+  * `Docs/ReadMe.txt`.
+  * Relevant help topics.
+* Reversed order in which compilers are listed in the Configure Compilers and Find Compilers dialogue boxes so that the most recent version of Delphi is listed first [issue #51].
+* Refactored out all `with` statements from Pascal source code [issue #118].
+* Fixed error in `CHANGELOG.md` entry for release v4.21.2 [issue #120].
+
 ## Release v4.21.2 of 14 July 2023
 
 * Removed broken links and fixed unsafe links in the About box [issue #105].
