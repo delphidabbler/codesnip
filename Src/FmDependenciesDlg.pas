@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2009-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2009-2023, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements a dialogue box that displays all the dependencies and dependents
  * of a snippet.
@@ -321,43 +321,47 @@ end;
 class function TDependenciesDlg.Execute(const AOwner: TComponent;
   const Snippet: TSnippet; const Tabs: TTabIDs; const PermitSelection: Boolean;
   const AHelpKeyword: string): ISearch;
+var
+  Dlg: TDependenciesDlg;
 begin
   Assert(Tabs <> [], ClassName + '.Execute: Tabs is []');
-  with InternalCreate(AOwner) do
-    try
-      fSnippetID := Snippet.ID;
-      fDisplayName := Snippet.DisplayName;
-      fDependsList := Snippet.Depends;
-      fTabs := Tabs;
-      fCanSelect := PermitSelection;
-      HelpKeyword := AHelpKeyword;
-      if ShowModal = mrOK then
-        Result := fSearch
-      else
-        Result := nil;
-    finally
-      Free;
-    end;
+  Dlg := InternalCreate(AOwner);
+  try
+    Dlg.fSnippetID := Snippet.ID;
+    Dlg.fDisplayName := Snippet.DisplayName;
+    Dlg.fDependsList := Snippet.Depends;
+    Dlg.fTabs := Tabs;
+    Dlg.fCanSelect := PermitSelection;
+    Dlg.HelpKeyword := AHelpKeyword;
+    if Dlg.ShowModal = mrOK then
+      Result := Dlg.fSearch
+    else
+      Result := nil;
+  finally
+    Dlg.Free;
+  end;
 end;
 
 class procedure TDependenciesDlg.Execute(const AOwner: TComponent;
   const SnippetID: TSnippetID; const DisplayName: string;
   const DependsList: TSnippetList; const Tabs: TTabIDs;
   const AHelpKeyword: string);
+var
+  Dlg: TDependenciesDlg;
 begin
   Assert(Tabs <> [], ClassName + '.Execute: Tabs is []');
-  with InternalCreate(AOwner) do
-    try
-      fSnippetID := SnippetID;
-      fDisplayName := DisplayName;
-      fDependsList := DependsList;
-      fTabs := Tabs;
-      fCanSelect := False;
-      HelpKeyword := AHelpKeyword;
-      ShowModal;
-    finally
-      Free;
-    end;
+  Dlg := InternalCreate(AOwner);
+  try
+    Dlg.fSnippetID := SnippetID;
+    Dlg.fDisplayName := DisplayName;
+    Dlg.fDependsList := DependsList;
+    Dlg.fTabs := Tabs;
+    Dlg.fCanSelect := False;
+    Dlg.HelpKeyword := AHelpKeyword;
+    Dlg.ShowModal;
+  finally
+    Dlg.Free;
+  end;
 end;
 
 procedure TDependenciesDlg.FormDestroy(Sender: TObject);

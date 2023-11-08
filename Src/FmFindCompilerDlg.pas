@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2005-2023, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements a dialogue box that is used to select criteria for searches for
  * snippets that compile or don't compile with selected compilers.
@@ -55,6 +55,7 @@ type
     fSearchParams: TCompilerSearchParams; // Persistent compiler search options
     fSearch: ISearch;                     // Search entered by user
     fRefinePreviousSearch: Boolean;       // Whether to refine previous search
+    fMapIdxToComp: TArray<TCompilerID>;   // Maps list idx to comp ID of entry
 
     procedure UpdateOKBtn;
       {Updates state of OK button according to whether valid entries made in
@@ -321,15 +322,17 @@ class function TFindCompilerDlg.Execute(const AOwner: TComponent;
     @return True if user OKs and search object created or false if user
       cancels and search object is nil.
   }
+var
+  Dlg: TFindCompilerDlg;
 begin
-  with InternalCreate(AOwner) do
-    try
-      Result := (ShowModal = mrOK);
-      ASearch := fSearch;
-      RefineExisting := fRefinePreviousSearch;
-    finally
-      Free;
-    end;
+  Dlg := InternalCreate(AOwner);
+  try
+    Result := (Dlg.ShowModal = mrOK);
+    ASearch := Dlg.fSearch;
+    RefineExisting := Dlg.fRefinePreviousSearch;
+  finally
+    Dlg.Free;
+  end;
 end;
 
 procedure TFindCompilerDlg.FormCreate(Sender: TObject);
@@ -361,13 +364,25 @@ var
   Option: TCompilerSearchOption;  // loops thru possible compiler search options
   SelOption: Integer;             // selected search option
   Compiler: ICompiler;            // references each compiler
+  CompID: TCompilerID;
 begin
   inherited;
+  // Set up index map that reverses order of compilers
+  SetLength(fMapIdxToComp, fCompilers.Count);
+  Idx := High(fMapIdxToComp);
+  for CompID := Low(TCompilerID) to High(TCompilerID) do
+  begin
+    fMapIdxToComp[Idx] := CompID;
+    Dec(Idx);
+  end;
+
   // Set up list of compilers and check appropriate ones
   // we store compiler ID in listbox's Objects[] property
-  for Compiler in fCompilers do
+  // Use mapping to reverse order of compilers in list
+  for Idx := Low(fMapIdxToComp) to High(fMapIdxToComp) do
   begin
-    Idx := lbCompilerVers.Items.AddObject(
+    Compiler := fCompilers[fMapIdxToComp[Idx]];
+    lbCompilerVers.Items.AddObject(
       Compiler.GetName, TObject(Compiler.GetID)
     );
     lbCompilerVers.Checked[Idx] := Compiler.GetID in fSearchParams.Compilers;

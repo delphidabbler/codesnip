@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2005-2023, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Provides highlighter classes used to format and highlight source code in
  * various file formats. Contains a factory object and implementation of various
@@ -336,14 +336,16 @@ end;
 
 class procedure TSyntaxHiliter.Hilite(const RawCode: string;
   Renderer: IHiliteRenderer);
+var
+  Instance: TSyntaxHiliter;
 begin
   Assert(Assigned(Renderer), ClassName + '.Create: Renderer is nil');
-  with InternalCreate(Renderer) do
-    try
-      DoHilite(RawCode);
-    finally
-      Free;
-    end;
+  Instance := InternalCreate(Renderer);
+  try
+    Instance.DoHilite(RawCode);
+  finally
+    Instance.Free;
+  end;
 end;
 
 procedure TSyntaxHiliter.LineBeginHandler(Parser: THilitePasParser);

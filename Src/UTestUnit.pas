@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2006-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2006-2023, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements a class that generates Pascal units for use in test compiling
  * snippets.
@@ -79,18 +79,20 @@ begin
 end;
 
 function TTestUnit.GenerateUnitSource: string;
+var
+  Generator: TSourceGen;
 begin
   if fSnippet.Kind <> skUnit then
   begin
-    with TSourceGen.Create do
-      try
-        IncludeSnippet(fSnippet);
-        // Must use Self.UnitName below for Delphis that defined TObject.UnitName
-        // otherwise the TObject version is used.
-        Result := UnitAsString(Self.UnitName);
-      finally
-        Free;
-      end;
+    Generator := TSourceGen.Create;
+    try
+      Generator.IncludeSnippet(fSnippet);
+      // Must use Self.UnitName below for Delphis that defined TObject.UnitName
+      // otherwise the TObject version is used.
+      Result := Generator.UnitAsString(Self.UnitName);
+    finally
+      Generator.Free;
+    end;
   end
   else
     Result := fSnippet.SourceCode;

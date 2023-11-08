@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2022, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2005-2023, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements a frame that can display detailed views.
 }
@@ -129,6 +129,7 @@ var
   MonoToContentFontRatio: Single; // ratio of size of mono font to content font
   DefContentFontSize: Integer;    // default size of content font
   DefMonoFontSize: Integer;       // default size of mono font
+  HiliterCSS: THiliterCSS;
 begin
   // NOTE:
   // We only set CSS properties that may need to use system colours or fonts
@@ -239,12 +240,12 @@ begin
 
     // Sets text styles and colours used by syntax highlighter
     HiliteAttrs := THiliteAttrsFactory.CreateUserAttrs;
-    with THiliterCSS.Create(HiliteAttrs) do
-      try
-        BuildCSS(CSSBuilder);
-      finally
-        Free;
-      end;
+    HiliterCSS := THiliterCSS.Create(HiliteAttrs);
+    try
+      HiliterCSS.BuildCSS(CSSBuilder);
+    finally
+      HiliterCSS.Free;
+    end;
 
     // Adjust .pas-source class to use required background colour
     CSSBuilder.Selectors['.' + THiliterCSS.GetMainCSSClassName]

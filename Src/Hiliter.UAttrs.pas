@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2022, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2005-2023, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements classes that define syntax highlighter attributes along with an
  * object that provides a list of named highlighter attributes.
@@ -232,6 +232,7 @@ type
 procedure THiliteAttrs.Assign(const Src: IInterface);
 var
   Elem: THiliteElement; // loops thru all highlight elements
+  Attrs: IHiliteAttrs;
 begin
   if Assigned(Src) then
   begin
@@ -240,13 +241,11 @@ begin
         ClassName + '.Assign: Src does not support IHiliteAttrs'
       );
     // Src is assigned: copy its properties
-    with Src as IHiliteAttrs do
-    begin
-      Self.SetFontName(FontName);
-      Self.SetFontSize(FontSize);
-      for Elem := Low(THiliteElement) to High(THiliteElement) do
-        (Self.GetElement(Elem) as IAssignable).Assign(Elements[Elem]);
-    end;
+    Attrs := Src as IHiliteAttrs;
+    Self.SetFontName(Attrs.FontName);
+    Self.SetFontSize(Attrs.FontSize);
+    for Elem := Low(THiliteElement) to High(THiliteElement) do
+      (Self.GetElement(Elem) as IAssignable).Assign(Attrs.Elements[Elem]);
   end
   else
   begin
@@ -320,6 +319,8 @@ end;
 { THiliteElemAttrs }
 
 procedure THiliteElemAttrs.Assign(const Src: IInterface);
+var
+  ElemAttrs: IHiliteElemAttrs;
 begin
   if Assigned(Src) then
   begin
@@ -328,11 +329,9 @@ begin
         ClassName + '.Assign: Src does not support IHiliteElemAttrs'
       );
     // Src is assigned: copy its properties
-    with Src as IHiliteElemAttrs do
-    begin
-      Self.SetForeColor(ForeColor);
-      Self.SetFontStyle(FontStyle);
-    end;
+    ElemAttrs := Src as IHiliteElemAttrs;
+    Self.SetForeColor(ElemAttrs.ForeColor);
+    Self.SetFontStyle(ElemAttrs.FontStyle);
   end
   else
   begin

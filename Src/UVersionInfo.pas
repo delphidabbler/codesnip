@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2006-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2006-2023, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Provides details of the application's version information and provides a
  * record used to manipulate version numbers.
@@ -200,27 +200,31 @@ class function TVersionInfo.FileVersionNumberStr: string;
   information.
     @return Version number string in form 9.9.9.9.
   }
+var
+  VI: TPJVersionInfo;
 begin
-  with TPJVersionInfo.Create(nil) do
-    try
-      // casts TPJVersionNumber directly to string
-      Result := FileVersionNumber;
-    finally
-      Free;
-    end;
+  VI := TPJVersionInfo.Create(nil);
+  try
+    // casts TPJVersionNumber directly to string
+    Result := VI.FileVersionNumber;
+  finally
+    VI.Free;
+  end;
 end;
 
 class function TVersionInfo.ProductVerNum: TVersionNumber;
   {Product version number from fixed file information.
     @return Required version number record.
   }
+var
+  VI: TPJVersionInfo;
 begin
-  with TPJVersionInfo.Create(nil) do
-    try
-      Result := ProductVersionNumber; // implicit type cast
-    finally
-      Free;
-    end;
+  VI := TPJVersionInfo.Create(nil);
+  try
+    Result := VI.ProductVersionNumber; // implicit type cast
+  finally
+    VI.Free;
+  end;
 end;
 
 class function TVersionInfo.ProductVersionNumberStr: string;
@@ -228,14 +232,16 @@ class function TVersionInfo.ProductVersionNumberStr: string;
   information.
     @return Version number string in form 9.9.9.9.
   }
+var
+  VI: TPJVersionInfo;
 begin
-  with TPJVersionInfo.Create(nil) do
-    try
-      // casts TPJVersionNumber directly to string
-      Result := ProductVersionNumber;
-    finally
-      Free;
-    end;
+  VI := TPJVersionInfo.Create(nil);
+  try
+    // casts TPJVersionNumber directly to string
+    Result := VI.ProductVersionNumber;
+  finally
+    VI.Free;
+  end;
 end;
 
 class function TVersionInfo.ProductVersionStr: string;
@@ -243,26 +249,30 @@ class function TVersionInfo.ProductVersionStr: string;
   ProductVersionNumberStr.
     @return Product version string.
   }
+var
+  VI: TPJVersionInfo;
 begin
-  with TPJVersionInfo.Create(nil) do
-    try
-      Result := ProductVersion;
-    finally
-      Free;
-    end;
+  VI := TPJVersionInfo.Create(nil);
+  try
+    Result := VI.ProductVersion;
+  finally
+    VI.Free;
+  end;
 end;
 
 class function TVersionInfo.SpecialBuildStr: string;
   {Gets special build information from string table.
     @return Required copyright information.
   }
+var
+  VI: TPJVersionInfo;
 begin
-  with TPJVersionInfo.Create(nil) do
-    try
-      Result := SpecialBuild;
-    finally
-      Free;
-    end;
+  VI := TPJVersionInfo.Create(nil);
+  try
+    Result := VI.SpecialBuild;
+  finally
+    VI.Free;
+  end;
 end;
 
 { TVersionNumber }

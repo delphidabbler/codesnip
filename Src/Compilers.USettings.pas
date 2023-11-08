@@ -27,8 +27,6 @@ type
     const
       AllCompilersConfigSection = ssCompilers;
       PermitStartupDetectionKey = 'PermitStartupDetection';
-      ListFPCAtTopKey = 'Lists:FPCAtTop';
-      ListDelphiOldestFirstKey = 'Lists:DelphiOldestFirst';
     class function ReadStorage: ISettingsSection;
     class procedure DoSaveProperty(const WriteProp: TProc<ISettingsSection>);
     class procedure SaveProperty(const Key: string; const Value: Boolean);

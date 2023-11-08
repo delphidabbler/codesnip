@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2005-2023, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements a dialogue box that displays compiler error and warning logs.
 }
@@ -180,18 +180,19 @@ class procedure TCompErrorDlg.Execute(const AOwner: TComponent;
   const ASnippet: TSnippet; const ACompilers: ICompilers);
 var
   Compiler: ICompiler;  // each supported compiler
+  Dlg: TCompErrorDlg;
 begin
   Assert(Assigned(ACompilers), ClassName + '.Execute: ACompilers is nil');
-  with InternalCreate(AOwner) do
-    try
-      fSnippet := ASnippet;
-      for Compiler in ACompilers do
-        if Compiler.HasErrorsOrWarnings then
-          fRequiredCompilers.Add(Compiler);
-      ShowModal;
-    finally
-      Free;
-    end;
+  Dlg := InternalCreate(AOwner);
+  try
+    Dlg.fSnippet := ASnippet;
+    for Compiler in ACompilers do
+      if Compiler.HasErrorsOrWarnings then
+        Dlg.fRequiredCompilers.Add(Compiler);
+    Dlg.ShowModal;
+  finally
+    Dlg.Free;
+  end;
 end;
 
 procedure TCompErrorDlg.FormCreate(Sender: TObject);

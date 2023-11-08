@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2006-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2006-2023, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Static class that manages backups of data files. It can back up the local
  * database directory, restore the backup and delete it.
@@ -81,16 +81,18 @@ uses
 class procedure TDataBackupMgr.Backup;
   {Backs up CodeSnip data files into a single file.
   }
+var
+  FolderBackup: TFolderBackup;
 begin
   EnsureFolders(BackupDir);
   SysUtils.DeleteFile(BackupFileName);
   EnsureFolders(DataDir);
-  with TFolderBackup.Create(DataDir, BackupFileName, cBakFileID) do
-    try
-      Backup;
-    finally
-      Free;
-    end;
+  FolderBackup := TFolderBackup.Create(DataDir, BackupFileName, cBakFileID);
+  try
+    FolderBackup.Backup;
+  finally
+    FolderBackup.Free;
+  end;
 end;
 
 class function TDataBackupMgr.BackupDir: string;
@@ -147,17 +149,19 @@ class procedure TDataBackupMgr.RestoreBackup;
   {Restores back up, replacing current data files. If no backup exists the
   database directory is cleared.
   }
+var
+  FolderBackup: TFolderBackup;
 begin
   EnsureFolders(DataDir);
   DeleteFilesFromDir(DataDir);
   if BackupExists then
   begin
-    with TFolderBackup.Create(DataDir, BackupFileName, cBakFileID) do
-      try
-        Restore;
-      finally
-        Free;
-      end;
+    FolderBackup := TFolderBackup.Create(DataDir, BackupFileName, cBakFileID);
+    try
+      FolderBackup.Restore;
+    finally
+      FolderBackup.Free;
+    end;
   end;
 end;
 

@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2011-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2011-2023, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements a dialogue box which test compiles a snippet and displays the
  * results.
@@ -314,17 +314,19 @@ end;
 
 class procedure TTestCompileDlg.Execute(const AOwner: TComponent;
   const ACompileMgr: TCompileMgr; const ASnippet: TSnippet);
+var
+  Dlg: TTestCompileDlg;
 begin
   Assert(Assigned(ACompileMgr), ClassName + '.Execute: ACompileMgr is nil');
   Assert(Assigned(ASnippet), ClassName + '.Execute: ASnippet is nil');
-  with InternalCreate(AOwner) do
-    try
-      fCompileMgr := ACompileMgr;
-      fSnippet := ASnippet;
-      ShowModal;
-    finally
-      Free;
-    end;
+  Dlg := InternalCreate(AOwner);
+  try
+    Dlg.fCompileMgr := ACompileMgr;
+    Dlg.fSnippet := ASnippet;
+    Dlg.ShowModal;
+  finally
+    Dlg.Free;
+  end;
 end;
 
 procedure TTestCompileDlg.FormCreate(Sender: TObject);

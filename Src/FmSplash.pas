@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2007-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2007-2023, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements the program's splash screen.
 }
@@ -225,19 +225,20 @@ function TSplashAligner.GetMainFormBounds(const AForm: TCustomForm): TRectEx;
   }
 var
   State: TWindowState;  // window state read from storage
+  Settings: TOwnerWindowSettings;
 begin
   // We get main form's bounds from persistent storage: we have to do this since
   // the splash form may be displayed before main form is aligned.
   // If we can't read from persistent storage or form is maximized we centre
   // splash form in work area. This works because main form is also centred when
   // storage can't be read, and maximized form takes all of work area.
-  with TOwnerWindowSettings.Create(AForm) do
-    try
-      if not GetWdwState(Result, State) or (State = wsMaximized) then
-        Result := Screen.WorkAreaRect;  // we use workarea of primary monitor
-    finally
-      Free;
-    end;
+  Settings := TOwnerWindowSettings.Create(AForm);
+  try
+    if not Settings.GetWdwState(Result, State) or (State = wsMaximized) then
+      Result := Screen.WorkAreaRect;  // we use workarea of primary monitor
+  finally
+    Settings.Free;
+  end;
 end;
 
 { TOwnerWindowSettings }

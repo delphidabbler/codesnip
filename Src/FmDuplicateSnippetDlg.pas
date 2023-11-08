@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2012-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2012-2023, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements a dialogue box which can create a duplicate copy of asnippet.
 }
@@ -137,18 +137,20 @@ end;
 
 class function TDuplicateSnippetDlg.Execute(const AOwner: TComponent;
   const ASnippet: TSnippet): Boolean;
+var
+  Dlg: TDuplicateSnippetDlg;
 resourcestring
   sCaption = 'Duplicate %s';   // dialog box caption
 begin
   Assert(Assigned(ASnippet), ClassName + '.Execute: ASnippet is nil');
-  with InternalCreate(AOwner) do
-    try
-      Caption := Format(sCaption, [ASnippet.DisplayName]);
-      fSnippet := ASnippet;
-      Result := ShowModal = mrOK;
-    finally
-      Free;
-    end;
+  Dlg := InternalCreate(AOwner);
+  try
+    Dlg.Caption := Format(sCaption, [ASnippet.DisplayName]);
+    Dlg.fSnippet := ASnippet;
+    Result := Dlg.ShowModal = mrOK;
+  finally
+    Dlg.Free;
+  end;
 end;
 
 procedure TDuplicateSnippetDlg.HandleException(const E: Exception);

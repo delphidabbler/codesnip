@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2009-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2009-2023, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements a bug report dialogue box that is displayed when unexpected
  * exceptions are detected.
@@ -166,15 +166,17 @@ class procedure TTrappedBugReportDlg.Execute(Owner: TComponent;
       dialog is aligned over the active form.
     @param ErrorObj [in] Exception that caused dialog box to be displayed.
   }
+var
+  Dlg: TTrappedBugReportDlg;
 begin
   Assert(Assigned(ErrorObj), ClassName + '.Execute: ErrorObj is nil');
-  with InternalCreate(Owner) do
-    try
-      fErrorObj := ErrorObj;
-      ShowModal;
-    finally
-      Free;
-    end;
+  Dlg := InternalCreate(Owner);
+  try
+    Dlg.fErrorObj := ErrorObj;
+    Dlg.ShowModal;
+  finally
+    Dlg.Free;
+  end;
 end;
 
 procedure TTrappedBugReportDlg.GoToTracker;

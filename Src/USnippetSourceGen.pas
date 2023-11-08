@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2006-2022, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2006-2023, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements a static class that generates source code for code snippet(s)
  * contained in a routine snippet or category view.
@@ -216,13 +216,15 @@ class function TSnippetSourceGen.Generate(View: IView;
       description to first paragraph in comments.
     @return Required source code.
   }
+var
+  Instance: TSnippetSourceGen;
 begin
-  with InternalCreate(View) do
-    try
-      Result := DoGenerate(CommentStyle, TruncateComments);
-    finally
-      Free;
-    end;
+  Instance := InternalCreate(View);
+  try
+    Result := Instance.DoGenerate(CommentStyle, TruncateComments);
+  finally
+    Instance.Free;
+  end;
 end;
 
 procedure TSnippetSourceGen.Initialize(View: IView);

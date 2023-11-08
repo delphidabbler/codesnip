@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2006-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2006-2023, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements a dialogue box that is used to select criteria for searches for
  * cross referenced snippets.
@@ -250,16 +250,18 @@ class function TFindXRefsDlg.Execute(const AOwner: TComponent;
     @return True if user OKs and search object created or false if user cancels
       and search object is nil.
   }
+var
+  Dlg: TFindXRefsDlg;
 begin
   Assert(Assigned(Snippet), ClassName + '.Execute: Snippet is nil');
-  with InternalCreate(AOwner) do
-    try
-      fSnippet := Snippet;
-      Result := (ShowModal = mrOK);
-      ASearch := fSearch;
-    finally
-      Free;
-    end;
+  Dlg := InternalCreate(AOwner);
+  try
+    Dlg.fSnippet := Snippet;
+    Result := (Dlg.ShowModal = mrOK);
+    ASearch := Dlg.fSearch;
+  finally
+    Dlg.Free;
+  end;
 end;
 
 procedure TFindXRefsDlg.FormCreate(Sender: TObject);

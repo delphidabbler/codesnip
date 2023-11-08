@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2006-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2006-2023, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements a dialogue box that is used to set user preferences.
 }
@@ -265,19 +265,21 @@ end;
 class function TPreferencesDlg.Execute(AOwner: TComponent;
   const Pages: array of TPrefsFrameClass; out UpdateUI: Boolean;
   const Flags: UInt64): Boolean;
+var
+  Dlg: TPreferencesDlg;
 begin
-  with InternalCreate(AOwner) do
-    try
-      fFrameFlags := Flags;
-      CreatePages(Pages);
-      Result := ShowModal = mrOK;
-      if Result then
-        UpdateUI := fUpdateUI
-      else
-        UpdateUI := False;
-    finally
-      Free;
-    end;
+  Dlg := InternalCreate(AOwner);
+  try
+    Dlg.fFrameFlags := Flags;
+    Dlg.CreatePages(Pages);
+    Result := Dlg.ShowModal = mrOK;
+    if Result then
+      UpdateUI := Dlg.fUpdateUI
+    else
+      UpdateUI := False;
+  finally
+    Dlg.Free;
+  end;
 end;
 
 class function TPreferencesDlg.Execute(AOwner: TComponent;

@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2013-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2013-2023, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements a dialogue box that can be used to move the user database to a
  * different directory.
@@ -272,16 +272,21 @@ begin
 end;
 
 class procedure TUserDataPathDlg.Execute(AOwner: TComponent);
+{$IFNDEF PORTABLE}
+var
+  Dlg: TUserDataPathDlg;
+{$ENDIF}
 begin
   {$IFDEF PORTABLE}
   raise EBug.Create(ClassName + '.Execute: Call forbidden in portable edition');
+  {$ELSE}
+  Dlg := InternalCreate(AOwner);
+  try
+    Dlg.ShowModal
+  finally
+    Dlg.Free;
+  end;
   {$ENDIF}
-  with InternalCreate(AOwner) do
-    try
-      ShowModal
-    finally
-      Free;
-    end;
 end;
 
 procedure TUserDataPathDlg.FormCreate(Sender: TObject);

@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2007-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2007-2023, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements a class that manages printing of a document providing information
  * about certain view items.
@@ -117,15 +117,17 @@ begin
 end;
 
 class procedure TPrintMgr.Print(ViewItem: IView);
+var
+  PrintMgr: TPrintMgr;
 begin
   Assert(Assigned(ViewItem), ClassName + '.Print: ViewItem is nil');
   Assert(CanPrint(ViewItem), ClassName + '.Print: ViewItem can''t be printed');
-  with InternalCreate(ViewItem) do
-    try
-      DoPrint;
-    finally
-      Free;
-    end;
+  PrintMgr := InternalCreate(ViewItem);
+  try
+    PrintMgr.DoPrint;
+  finally
+    PrintMgr.Free;
+  end;
 end;
 
 end.

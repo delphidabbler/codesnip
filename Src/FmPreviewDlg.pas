@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2005-2023, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements a dialogue box that is used to preview or display plain text, HTML
  * and Rich text documents.
@@ -172,16 +172,18 @@ end;
 class procedure TPreviewDlg.Execute(AOwner: TComponent;
   const ADocContent: TEncodedData; const ADocType: TPreviewDocType;
   const ADlgTitle: string);
+var
+  Dlg: TPreviewDlg;
 begin
-  with InternalCreate(AOwner) do
-    try
-      fDlgTitle := ADlgTitle;
-      fDocContent := TEncodedData.Create(ADocContent);
-      fDocType := ADocType;
-      ShowModal;
-    finally
-      Free;
-    end;
+  Dlg := InternalCreate(AOwner);
+  try
+    Dlg.fDlgTitle := ADlgTitle;
+    Dlg.fDocContent := TEncodedData.Create(ADocContent);
+    Dlg.fDocType := ADocType;
+    Dlg.ShowModal;
+  finally
+    Dlg.Free;
+  end;
 end;
 
 class function TPreviewDlg.FindParentTabSheet(const Frame: TFrame): TTabSheet;
