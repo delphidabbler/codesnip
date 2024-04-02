@@ -6,6 +6,13 @@ Releases are listed in reverse version number order.
 
 > Note that _CodeSnip_ v4 was developed in parallel with v3 for a while. As a consequence some v3 releases have later release dates than early v4 releases.
 
+## Release v4.23.0 of 02 April 2024
+
+* Removed marketing names (e.g. "Athens" or "Rio") from Delphi compiler names to save space when the compiler names are displayed in the UI [issue #125].
+* Added new `&apos;` entity to REML markup language and boosted REML version to v6 as a consequence [issue #99].
+* Refactored class helper code by splitting a single monolithic unit into three more specialised units [issue #90].
+* Updated documentation and related help topic re change to REML v6.
+
 ## Release v4.22.0 of 08 November 2023
 
 * Added support for test compiling snippets with Delphi 12 Athens [issue #121].

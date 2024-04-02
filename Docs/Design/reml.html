@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 
 <!--
- * This file copyright (C) 2020-2023, Peter Johnson (gravatar.com/delphidabbler) and
+ * This file copyright (C) 2020-2024, Peter Johnson (gravatar.com/delphidabbler) and
  * is licensed under the MIT License: https://opensource.org/licenses/MIT
  *
  * DelphiDabbler Code Snippets Database Documentation: REML markup language
@@ -251,7 +251,7 @@ tr:nth-child(even), th {
     The REML language is a SGML language similar to a greatly simplified XHTML. The are a small number of tags and character entities that can be used.
   </p>
   <aside>
-    <strong>Note:</strong> The language described here is REML v5. v4 is still in regular use in CodeSnip up to v4.20.x. Earlier versions are obsolete.
+    <strong>Note:</strong> The language described here is REML v6. v4 is still in regular use in CodeSnip up to v4.20.x. Earlier versions are obsolete.
   </aside>
 
 </section>
@@ -525,6 +525,10 @@ tr:nth-child(even), th {
         <td>°</td>
       </tr>
       <tr>
+        <td><code>&amp;cent;</code></td>
+        <td>¢</td>
+      </tr>
+      <tr>
         <td><code>&amp;laquo;</code></td>
         <td>«</td>
       </tr>
@@ -535,6 +539,10 @@ tr:nth-child(even), th {
       <tr>
         <td><code>&amp;iquest;</code></td>
         <td>¿</td>
+      </tr>
+      <tr>
+        <td><code>&amp;apos;</code></td>
+        <td>'</td>
       </tr>
     </tbody>
   </table>
@@ -644,8 +652,21 @@ tr:nth-child(even), th {
     </li>
   </ul>
 
-</section>
+  <p>
+    <strong>v6 of 2024-04-02</strong>
+  </p>
 
+  <p>
+    Introduced in CodeSnip v4.23.0
+  </p>
+
+  <ul>
+    <li>
+      Added entity: <code class="value">&amp;apos;</code>.
+    </li>
+  </ul>
+  
+  </section>
 
 </body>
 

@@ -394,7 +394,7 @@
 			<DCCReference Include="UBrowseProtocol.pas"/>
 			<DCCReference Include="UCategoryAction.pas"/>
 			<DCCReference Include="UCategoryListAdapter.pas"/>
-			<DCCReference Include="UClassHelpers.pas"/>
+			<DCCReference Include="ClassHelpers.UControls.pas"/>
 			<DCCReference Include="UClipboardHelper.pas"/>
 			<DCCReference Include="UCodeImportExport.pas"/>
 			<DCCReference Include="UCodeImportMgr.pas"/>
@@ -579,6 +579,8 @@
 			<DCCReference Include="FmRegisterCompilersDlg.pas">
 				<Form>RegisterCompilersDlg</Form>
 			</DCCReference>
+			<DCCReference Include="ClassHelpers.UGraphics.pas"/>
+			<DCCReference Include="ClassHelpers.UActions.pas"/>
 			<None Include="CodeSnip.todo"/>
 			<BuildConfiguration Include="Base">
 				<Key>Base</Key>

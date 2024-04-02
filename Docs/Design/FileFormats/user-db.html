@@ -5,7 +5,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2012-2023, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2012-2024, Peter Johnson (gravatar.com/delphidabbler).
  *
  * CodeSnip File Format Documentation: User Database
 -->
@@ -325,8 +325,12 @@
         encoded in REML markup. REML v4 is supported.
       </li>
       <li>
-        <span class="highlight">version 6.11 &amp; later:</span> Content is formatted text
+        <span class="highlight">version 6.11 &amp; 6.12:</span> Content is formatted text
         encoded in REML markup. REML v5 is supported.
+      </li>
+      <li>
+        <span class="highlight">version 6.13 &amp; later:</span> Content is formatted text
+        encoded in REML markup. REML v6 is supported.
       </li>
     </ul>
   </dd>
@@ -472,7 +476,10 @@
               <span class="highlight">versions 5 &amp; 6.10:</span> supports REML v4.
             </li>
             <li>
-              <span class="highlight">version 6.11 &amp; later:</span> supports REML v5.
+              <span class="highlight">version 6.11 &amp; 6.12:</span> supports REML v5.
+            </li>
+            <li>
+              <span class="highlight">version 6.13 &amp; later:</span> supports REML v6.
             </li>
           </ul>
         </li>
@@ -1029,6 +1036,12 @@
       <dd>
         Updated in time for CodeSnip v4.22.0 to add support for Delphi 12 Athens.
       </dd>
+      <dt>
+        <em>Version 6.13 - 2 April 2024</em>
+      </dt>
+      <dd>
+        Updated with CodeSnip v4.23.0 to add support for REML v6, which is backwards compatible with REML v4.
+      </dd>
     </dl>
   </dd>
 </dl>
@@ -1087,7 +1100,7 @@
 </ul>
 
 <p>
-  Readers of v2 and later files may parse REML from any file version as if it were REML v5, since all versions of REML up to v5 are compatible.
+  Readers of v2 and later files may parse REML from any file version as if it were REML v6, since all versions of REML up to v6 are compatible.
 </p>
 
 <h3>

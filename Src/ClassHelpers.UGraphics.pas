@@ -3,41 +3,20 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2012-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2012-2024, Peter Johnson (gravatar.com/delphidabbler).
  *
- * Provides various class helpers for VCL classes.
+ * Provides class helpers for VCL image classes.
+ *
+ * Extracted from in 2024 original UClassHelpers unit (2012-2021).
 }
 
-
-unit UClassHelpers;
-
-{ TODO: Separate different helpers into their own units, within a ClassHelpers
-        scope. E.g. ClassHelpers.Controls, ClassHelper.Graphics }
+unit ClassHelpers.UGraphics;
 
 interface
 
-
 uses
   // Delphi
-  Controls, Menus, ImgList, Graphics, ActnList, GIFImg;
-
-
-type
-  ///  <summary>Class helper that adds functionality to TControl.</summary>
-  TControlHelper = class helper for TControl
-  public
-    ///  <summary>Gets reference to pop-up menu assigned to protected PopupMenu
-    ///  property.</summary>
-    function GetPopupMenu: TPopupMenu;
-    ///  <summary>Checks if protected PopupMenu property is assigned.</summary>
-    function HasPopupMenu: Boolean;
-    ///  <summary>Refreshes control's action. Any changes in action that affect
-    ///  state of control are reflected in control.</summary>
-    procedure RefreshAction;
-    ///  <summary>Refreshes all owned controls to reflect any changes in their
-    ///  associated actions.</summary>
-    procedure RefreshActions;
-  end;
+  ImgList, Graphics, GIFImg;
 
 type
   ///  <summary>Class helper that adds a method to TCustomImageList that can
@@ -63,16 +42,6 @@ type
   end;
 
 type
-  ///  <summary>Class helper that adds a method to TCustomActionList that can
-  ///  update all the actions in the list.</summary>
-  TActionListHelper = class helper for TCustomActionList
-  public
-    ///  <summary>Updates all actions in the action list by calling their Update
-    ///  methods.</summary>
-    procedure Update;
-  end;
-
-type
   ///  <summary>Class helper that adds a method to TGIFImage that adds a similar
   ///  method to one present in 3rd party TGIFImage to load an image from
   ///   resources.</summary>
@@ -87,41 +56,11 @@ type
       const ResType: PChar);
   end;
 
-
 implementation
-
 
 uses
   // Delphi
   Classes;
-
-
-{ TControlHelper }
-
-function TControlHelper.GetPopupMenu: TPopupMenu;
-begin
-  Result := PopupMenu;
-end;
-
-function TControlHelper.HasPopupMenu: Boolean;
-begin
-  Result := Assigned(PopupMenu);
-end;
-
-procedure TControlHelper.RefreshAction;
-begin
-  if Assigned(Action) then
-    ActionChange(Action, False);
-end;
-
-procedure TControlHelper.RefreshActions;
-var
-  Idx: Integer; // loops through all controls
-begin
-  for Idx := 0 to Pred(ComponentCount) do
-    if Components[Idx] is TControl then
-      (Components[Idx] as TControl).RefreshAction;
-end;
 
 { TImageListHelper }
 
@@ -181,16 +120,6 @@ begin
   end;
 end;
 
-{ TActionListHelper }
-
-procedure TActionListHelper.Update;
-var
-  Action: TContainedAction; // each action in list
-begin
-  for Action in Self do
-    Action.Update;
-end;
-
 { TGIFImageHelper }
 
 procedure TGIFImageHelper.LoadFromResource(const Module: HMODULE;
@@ -207,4 +136,3 @@ begin
 end;
 
 end.
-

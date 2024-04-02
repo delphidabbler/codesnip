@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2012-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2012-2024, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements a frame that allows user to customise appearance of different
  * kinds of snippets in main display.
@@ -84,7 +84,9 @@ uses
   // Delphi
   Windows, Graphics,
   // Project
-  FmPreferencesDlg, UClassHelpers, UCtrlArranger;
+  ClassHelpers.UControls,
+  ClassHelpers.UGraphics,
+  FmPreferencesDlg, UCtrlArranger;
 
 {$R *.dfm}
 
