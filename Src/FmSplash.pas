@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2007-2023, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2007-2024, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements the program's splash screen.
 }
@@ -68,7 +68,8 @@ uses
   // Delphi
   Windows, Graphics, GIFImg,
   // Project
-  UAppInfo, UClassHelpers, UColours, UStructs, UWindowSettings;
+  ClassHelpers.UGraphics,
+  UAppInfo, UColours, UStructs, UWindowSettings;
 
 
 {$R *.dfm}
