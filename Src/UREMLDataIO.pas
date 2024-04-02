@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2008-2023, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2008-2024, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements classes that render and parse Routine Extra Markup Language (REML)
  * code. This markup is used to read and store active text objects as used by
@@ -1035,7 +1035,7 @@ class constructor TREMLEntities.Create;
   {Class constructor. Creates map of mnemonic entities to equivalent characters.
   }
 begin
-  SetLength(fEntityMap, 34);
+  SetLength(fEntityMap, 35);
   // Supported character entities. All are optional unless otherwise stated
   // REML v1
   fEntityMap[0] := TREMLEntity.Create('amp', '&');   // required in REML
@@ -1074,6 +1074,8 @@ begin
   fEntityMap[31] := TREMLEntity.Create('laquo', '«');
   fEntityMap[32] := TREMLEntity.Create('raquo', '»');
   fEntityMap[33] := TREMLEntity.Create('iquest', '¿');
+  // REML v6
+  fEntityMap[34] := TREMLEntity.Create('apos', SINGLEQUOTE);
 end;
 
 class destructor TREMLEntities.Destroy;
