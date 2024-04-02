@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2023, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2005-2024, Peter Johnson (gravatar.com/delphidabbler).
  *
  * CodeSnip application project file.
 }
@@ -192,7 +192,7 @@ uses
   UBrowseProtocol in 'UBrowseProtocol.pas',
   UCategoryAction in 'UCategoryAction.pas',
   UCategoryListAdapter in 'UCategoryListAdapter.pas',
-  UClassHelpers in 'UClassHelpers.pas',
+  ClassHelpers.UControls in 'ClassHelpers.UControls.pas',
   UClipboardHelper in 'UClipboardHelper.pas',
   UCodeImportExport in 'UCodeImportExport.pas',
   UCodeImportMgr in 'UCodeImportMgr.pas',
@@ -372,7 +372,9 @@ uses
   FmDeleteUserDBDlg in 'FmDeleteUserDBDlg.pas' {DeleteUserDBDlg},
   Compilers.UAutoDetect in 'Compilers.UAutoDetect.pas',
   Compilers.USettings in 'Compilers.USettings.pas',
-  FmRegisterCompilersDlg in 'FmRegisterCompilersDlg.pas' {RegisterCompilersDlg};
+  FmRegisterCompilersDlg in 'FmRegisterCompilersDlg.pas' {RegisterCompilersDlg},
+  ClassHelpers.UGraphics in 'ClassHelpers.UGraphics.pas',
+  ClassHelpers.UActions in 'ClassHelpers.UActions.pas';
 
 // Include resources
 {$Resource ExternalObj.tlb}       // Type library file
