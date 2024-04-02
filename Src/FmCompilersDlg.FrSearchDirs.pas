@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2011-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2011-2024, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements a frame used to edit lists of search directories used for a
  * compiler being edited in TCompilersDlg.
@@ -109,7 +109,10 @@ uses
   // Delphi
   SysUtils, Windows, Graphics,
   // Project
-  UBrowseForFolderDlg, UClassHelpers, UCtrlArranger, UStrUtils;
+  ClassHelpers.UActions,
+  ClassHelpers.UControls,
+  ClassHelpers.UGraphics,
+  UBrowseForFolderDlg, UCtrlArranger, UStrUtils;
 
 {$R *.dfm}
 

@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2008-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2008-2024, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Image list descendant that enables representations of GIF images loaded from
  * HTML resource to be added. Resource names are mapped to image indices.
@@ -70,7 +70,7 @@ implementation
 
 uses
   // Delphi
-  GIFImg, UClassHelpers,
+  GIFImg, ClassHelpers.UGraphics,
   // Project
   UComparers;
 

@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2009-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2009-2024, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Defines a custom image list that provides a list of LED images. Image list is
  * automatically loaded from resources when class is instantiated.
@@ -55,7 +55,7 @@ implementation
 
 uses
   // Project
-  UClassHelpers;
+  ClassHelpers.UGraphics;
 
 
 {

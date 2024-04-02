@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2023, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2005-2024, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Application's main form. Handles the program's main window display and user
  * interaction.
@@ -583,9 +583,11 @@ uses
   // Delphi
   Windows, Graphics,
   // Project
+  ClassHelpers.UControls,
+  ClassHelpers.UGraphics,
   DB.UCategory, DB.UMain, DB.USnippet, FmSplash, FmTrappedBugReportDlg,
   FmWaitDlg, IntfFrameMgrs, UActionFactory, UAppInfo,
-  UClassHelpers, UCodeShareMgr, UCommandBars, UConsts, UCopyInfoMgr,
+  UCodeShareMgr, UCommandBars, UConsts, UCopyInfoMgr,
   UCopySourceMgr, UDatabaseLoader, UDatabaseLoaderUI, UDetailTabAction,
   UEditSnippetAction, UExceptions, UHelpMgr, UHistoryMenus, UKeysHelper,
   UMessageBox, UNotifier, UNulDropTarget, UPrintMgr, UQuery, USaveSnippetMgr,

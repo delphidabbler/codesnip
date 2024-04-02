@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2005-2024, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements a form that provides the ancestor of all forms in the application.
  * Provides default names for form window classes along with various operations
@@ -136,7 +136,8 @@ uses
   // Delphi
   SysUtils, Windows, Menus,
   // Project
-  UAppInfo, UBaseObjects, UClassHelpers, UFontHelper, UKeysHelper, UMenus,
+  ClassHelpers.UControls,
+  UAppInfo, UBaseObjects, UFontHelper, UKeysHelper, UMenus,
   UNulFormAligner, UStrUtils;
 
 {$R *.dfm}
