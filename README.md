@@ -24,7 +24,7 @@ CodeSnip can import code from the DelphiDabbler [Code Snippets Database](https:/
 
 The standard edition of CodeSnip is installed and removed using a Windows installer. Administrator privileges are required for installation.
 
-The portable edition has no installer. Simply follow the instructions in the [read me file](https://raw.githubusercontent.com/delphidabbler/codesnip/master/Docs/ReadMe.txt) that is included in the download.
+The portable edition has no installer. Simply follow the instructions in the [read me file](https://raw.githubusercontent.com/delphidabbler/codesnip/master/Docs/ReadMe-portable.txt) that is included in the download.
 
 The program _should_ run on Windows 2000, with Internet Explorer 6 or later, although XP and IE 8 and later are recommended. _But_ note that recent releases of CodeSnip have only been tested on Windows 10 & 11.
 
@@ -33,14 +33,14 @@ The program _should_ run on Windows 2000, with Internet Explorer 6 or later, alt
 The following support is available to CodeSnip users:
 
 * A comprehensive help file.
-* A [read-me file](https://raw.githubusercontent.com/delphidabbler/codesnip/master/Docs/ReadMe.txt) that discusses installation, configuration, updating and known issues. [^1]
+* A read-me file that discusses installation, configuration, updating and known issues. There are different versions of this file for each edition of CodeSnip: one for the [standard edition](https://raw.githubusercontent.com/delphidabbler/codesnip/master/Docs/ReadMe-standard.txt) and another for the [portable edition](https://raw.githubusercontent.com/delphidabbler/codesnip/master/Docs/ReadMe-portable.txt). [^1]
 * The [Using CodeSnip FAQ](https://github.com/delphidabbler/codesnip-faq/blob/master/UsingCodeSnip.md).
 * The [CodeSnip Blog](https://codesnip-app.blogspot.co.uk/).
 * CodeSnip's own [Web Page](https://delphidabbler.com/software/codesnip).
 
 There's also plenty of info available on how to compile CodeSnip from source - see below.
 
-> [^1]: The linked read-me file is the most recent version. It can change from release to release.
+> [^1]: The linked read-me file is the most recent version. It can change from release to release. 
 
 ## Source Code
 
