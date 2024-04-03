@@ -1,6 +1,6 @@
 ================================================================================
 
-DELPHIDABBLER CODESNIP v4 README
+DELPHIDABBLER CODESNIP v4 STANDARD EDITION README
 
 ================================================================================
 
@@ -14,30 +14,26 @@ online DelphiDabbler Code Snippets database as well as maintain a database of
 user-defined snippets.
 
 It displays details of each snippet in the database and can test-compile them
-with each installed Win32 version of Delphi from Delphi 2 to Delphi 12 Athens
-and Free Pascal.
+with each installed Win32 version of Delphi from Delphi 2 to Delphi 12.x and
+Free Pascal.
 
 Compilable Pascal units can be created that contain selected snippets.
-
-Features new to CodeSnip 4 are listed in the "What's New In CodeSnip 4" topic
-in the program's help file.
 
 
 CodeSnip Editions
 ================================================================================
 
-There are two different editions of CodeSnip 4 available:
+This document relates to the STANDARD edition of CodeSnip. This edition is
+installed on the user's computer using a standard Windows installer and which
+records its presence in the registry and stores data in the system's application
+and user data directories.
 
-+ The standard edition, which is installed on the user's computer using an
-  installer and which records its presence in the registry and stores data in
-  the system's application and user data directories.
+There is also a portable edition of the program. This edition can be run from
+any writeable removable storage medium (e.g. a USB memory stick) or from any
+folder on the computer's hard disk. It makes no changes to the host computer.
+This edition has no installer and is simply copied to the required location.
 
-+ The portable edition that can be run from any writeable removable storage
-  medium (e.g. a USB memory stick) and that makes no changes to the host
-  computer. This edition has no installer and is simply copied onto the required
-  medium.
-
-You can run both the standard and portable editions together on the same
+You can run both the portable and standard editions together on the same
 computer and even run them at the same time. However, each edition maintains its
 own settings and keeps its own copies of the snippets databases. To share user
 defined snippets you must export them from one edition and import into the
@@ -48,18 +44,14 @@ Installation
 ================================================================================
 
 CodeSnip requires Windows 2000 or later. It also requires MS Internet Explorer 6
-or later, although IE 8, 9 or 10 are strongly recommended. But note that recent
-releases have only been tested on Windows 10/11.
+or later, although IE 8, 9 or 10 are strongly recommended. Note that recent
+releases have only been tested on Windows 11.
 
-Installing the Standard Edition
--------------------------------
-
-You will need administrator privileges to run the setup program for the standard
-edition. If you are using a non-admin user account on Windows 2000 or XP you
-should run setup as administrator. By default Windows Vista to Windows 11 will
-require an admin password if running as a standard user and setup will attempt
-to elevate the process. If UAC prompts are disabled you must run setup as
-administrator.
+You will need administrator privileges to run the setup program. If you are
+using a non-admin user account on Windows 2000 or XP you should run setup as
+administrator. By default Windows Vista to Windows 11 will require admin
+privileges and setup will attempt to elevate the process if required. If UAC
+prompts are disabled you must run setup as administrator.
 
 CodeSnip v4 will install alongside any v3 or earlier release that may already be
 installed. If you want to replace the earlier version simply uninstall it in the
@@ -106,53 +98,15 @@ If you are updating to CodeSnip 4 from version 3 or earlier, CodeSnip will give
 you the option of bringing forward your old settings and / or user defined
 database. This happens the first time v4 is run for each user.
 
-Installing the Portable Edition
--------------------------------
-
-The portable edition of CodeSnip 4 is distributed in a zip file that contains
-the program executable, the help file and various documentation files.
-
-Install the program using the following steps:
-
-1) Mount any storage medium on which you want to install CodeSnip.
-
-2) Create a folder on the storage medium or on your computer's internal disk in
-   which to copy the required files.
-
-3) Copy the files CodeSnip-p.exe (the executable program) and CodeSnip.chm
-   (the help file) into the folder you created.
-
-   CodeSnip does not need the other files included in the zip file in order to
-   run, but you may find them useful. Copy them if you wish.
-
-Run the program by double clicking it. When it first runs it will create two
-sub-directories within the folder where you installed the program. These will
-be named AppData and UserData. Do not remove these directories or alter any of
-the contents. CodeSnip uses them to store configuration data along with your
-code snippets.
-
-No files are written outside the folder where you copied the files and the
-registry is not modified.
-
-** WARNING: When updating an existing portable installation with a new version
-of CodeSnip it is important that you do not change or delete the AppData and
-UserData folders. If you do this you risk loosing your settings and/or database.
-
 
 Uninstallation
 ================================================================================
 
-Uninstalling the Standard Edition
----------------------------------
+CodeSnip can be uninstalled using your version of Windows' application
+uninstaller, run from Control Panel. Alternatively you can choose "Uninstall
+DelphiDabbler CodeSnip" from the program's start menu group.
 
-CodeSnip can be uninstalled via "Installed Apps" (a.k.a. "Apps and Features",
-a.k.a. "Programs and Features", a.k.a. "Add / Remove Programs") accessed from the
-Windows Control Panel or by choosing "Uninstall DelphiDabbler CodeSnip" from the
-program's start menu group.
-
-Administrator privileges will be required to uninstall CodeSnip. Windows Vista
-to Windows 11 with UAC prompts enabled will prompt for an admin password if
-necessary.
+Administrator privileges will be required to uninstall CodeSnip.
 
 The uninstall program will delete any local copy of the online Code Snippets
 database but will leave any user defined database, configuration data and
@@ -160,16 +114,6 @@ favourites intact. To remove user defined databases and configuration data,
 delete the %AppData%\DelphiDabbler\CodeSnip.4 directory and all its contents for
 each user who ran CodeSnip. If any user has moved the user database directory
 those directories also need to be deleted.
-
-Uninstalling the Portable Edition
----------------------------------
-
-Simply delete the folder where you installed CodeSnip, with all its contents.
-
-Be aware that any snippets you have created will be lost. If you want to keep
-them for use in another CodeSnip installation either export them or back up the
-user database before deleting the folder. See the help file for details of how
-to do this.
 
 
 Downloading & Updating the Code Snippets Database
@@ -179,22 +123,19 @@ The online DelphiDabbler Code Snippets database is not installed with the
 program.
 
 CodeSnip's start-up screen shows details of any installed databases. If there is
-no copy of the online database a link is displayed that enables the database to
-be installed. This link opens the "Install or Update DelphiDabbler Snippets
-Database" wizard style dialogue box. The dialogue box explains how to download
-and install the database.
+no copy of the online database then a link is displayed that enables the
+database to be installed. This link opens the "Install or Update DelphiDabbler
+Snippets Database" wizard dialogue box. The dialogue box explains how to
+download and install the database.
 
 You can download or update the database later by opening the same dialogue box
 using the "Database | Install or Update DelphiDabbler Snippets Database" menu
 option.
 
-Standard Edition Only
----------------------
-
-When installing the standard edition, the setup program will detect if an older
-database installation is present and will give the option to carry it forward.
-When setup completes it checks for the presence of the database and puts up a
-message if it is not present.
+During installation the setup program will detect if an older database version
+is present and will give the option to carry it forward. When setup completes it
+checks for the presence of the database and puts up a message if it is not
+present.
 
 Database updates will apply to all users of the computer the next time they
 start CodeSnip.
@@ -204,7 +145,7 @@ Configuring CodeSnip to Work With Your Compilers
 ================================================================================
 
 A feature of CodeSnip is its ability to test compile snippets with any installed
-Windows 32 version of Delphi (from Delphi 2 to Delphi 12 Athens) and FreePascal,
+Windows 32 version of Delphi (from Delphi 2 to Delphi.x) and FreePascal,
 providing some simple rules are followed.
 
 When CodeSnip is first installed it knows nothing about the available compilers
@@ -235,7 +176,7 @@ Any type of snippet other than "freeform" can be test compiled.
 Updating the Program
 ================================================================================
 
-Updates are published on GitHub. See 
+Updates are published on GitHub. See
 https://github.com/delphidabbler/codesnip/releases
 
 News of new updates is published on the CodeSnip Blog:
@@ -288,7 +229,7 @@ DelphiDabbler Code Snippets Database or the user database, is used WITHOUT
 WARRANTY OF ANY KIND, either express or implied. The code is used entirely at
 the user's own risk.
 
-The snippets from the DelphiDabbler Code Snippets Database is open source. See
+The snippets from the DelphiDabbler Code Snippets Database are open source. See
 the "About The Database" tab of the About dialogue box for details of the
 applicable license. (You can display the About box from the "Help" menu.)
 
@@ -303,7 +244,8 @@ CodeSnip's source code is freely available. For details of how to obtain the
 source see the FAQ at
 https://github.com/delphidabbler/codesnip-faq/blob/master/SourceCode.md#faq-1
 
-The standard and portable editions of CodeSnip share the same source code.
+The standard edition of CodeSnip shares the same source code base with the
+portable edition.
 
 The original source code of v4 is released under the Mozilla Public license
 v2.0 (see https://www.mozilla.org/MPL/) and other open source licenses. See the
@@ -311,36 +253,15 @@ file "License.html" in the "Docs" directory of the repository for full licensing
 information.
 
 
-Bugs
+Bugs & Feature Requests
 ================================================================================
 
-Please do report any bugs you find.
+Please do report any bugs you find. Suggestions for new features are also
+welcomed.
 
-Bugs are recorded in tracker software. View the reported and fixed bugs via
-https://github.com/delphidabbler/codesnip/issues (GitHub account required).
-
-You can also access the bug tracker from CodeSnip by using the "Tools | Report
-Bug Online" menu option then following the link that appears in the resulting
-dialogue box.
-
-If you wish to report a bug, please check the current reports on the bug
-tracker. If your bug hasn't already been reported or fixed please add a report
-using the "Add new" link on Tracker.
-
-Please ensure that you have installed the latest version of CodeSnip and checked
-if the bug is still present before reporting it.
-
-
-Feedback
-================================================================================
-
-If you want to suggest new features please use the feature request tracker
-accessed from https://github.com/delphidabbler/codesnip/issues (GitHub account
-required). Please check whether anyone else has requested something similar and
-add a comment to their request if so.
-
-Always check the latest version of CodeSnip before requesting a feature just in
-case it has already been implemented!
+Both bug reports and feature requests are made using the GitHub issue tracker
+(GitHub account required). For details about using the issue tracker see
+https://github.com/delphidabbler/codesnip/blob/master/CONTRIBUTING.md#issues.
 
 
 FAQs
@@ -353,15 +274,12 @@ https://github.com/delphidabbler/codesnip-faq/blob/master/README.md
 Privacy
 ================================================================================
 
-As of v4.16.0 CodeSnip no longer stores or transmits any personally identifiable
+From v4.16.0 CodeSnip neither stores nor transmits any personally identifiable
 data.
 
-Because of this change the privacy statement that used to be provided with the
-program has been removed.
-
-Do note though that CodeSnip can display web pages via your default web
-browser, but only in response to user input. No guarantee is made about any
-personal data collected by such web pages.
+Do note though that CodeSnip can display web pages via your default web browser,
+but only in response to user input. No guarantee is made about any personal data
+collected by such web pages.
 
 
 Thanks
