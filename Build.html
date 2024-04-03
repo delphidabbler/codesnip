@@ -6,7 +6,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2009-2023, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2009-2024, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Instructions for building CodeSnip from source.
 -->
@@ -513,12 +513,14 @@
   |   +-- exe                 - receives executable code and compiled help file
   |   |
   |   +-- release             - receives release files
+  |       |
+  |       +-- ~tmp~           - store for temp files ceated in release process
   |
   ...</pre>
 
 <p>
   If the <code>_build/bin</code> folder already existed, it will have been emptied.
-  In addition, <code>Make</code> will have created a <code>.cfg</code> file from
+  In addition, <code>Make</code> will have created a <code>.cfg</code> file from a
   template in the <code>Src</code> folder. This <code>.cfg</code> file is needed
   for DCC32 to run correctly. The file will be ignored by Git.
 </p>
@@ -580,7 +582,7 @@
   You have several options:
 </p>
 
-<ul class="spaced">
+<ol class="spaced">
   <li>
     Build the <em>CodeSnip</em> Executable
   </li>
@@ -599,10 +601,10 @@
   <li>
     Clean Up.
   </li>
-</ul>
+</ol>
 
 <p>
-  Each of these options is described below. All except the last assume that
+  Each of these options is described below. All except options 5 and 6 assume that
   <code>Make config</code> has been run.
 </p>
 
@@ -648,7 +650,7 @@
 <pre class="cmd"><span class="prompt">&gt;</span> Make -DPORTABLE codesnip</pre>
 
 <p>
-  Again the executable is placed in the <code>_build/exe</code> folder, but this time
+  Again the executable is placed in the <code>_build\exe</code> folder, but this time
   it is named <code>CodeSnip-p.exe</code>
 </p>
 
@@ -665,12 +667,17 @@
 <p>
   The compiled help file will be written to the <code>_build\exe</code> folder.
 </p>
+
+<p>
+  The same help file is used for the standard and portable editions.
+</p>
+
 <h3>
   Build the Setup Program
 </h3>
 
 <p>
-  The setup program requires that the <em>CodeSnip</em> excutable and the
+  The setup program requires that the <em>CodeSnip</em> executable and the
   compiled help file are already present in the <code>_build\exe</code> directory.
 </p>
 
@@ -690,7 +697,7 @@
 <p>
   The setup program is named <code>CodeSnip-Setup-x.x.x.exe</code>, where
   x.x.x is the version number extracted from <em>CodeSnip</em>'s version
-  information. It is placed in the <code>_build/exe</code> directory.
+  information. It is placed in the <code>_build\exe</code> directory.
 </p>
 
 <p>
@@ -715,7 +722,7 @@
 
 <p>
   Make can create zip files containing all the files that are included in a release.
-  Zip files are written to the <code>_build/release</code> directory.
+  Zip files are written to the <code>_build\release</code> directory.
 </p>
 
 <h4>
@@ -724,12 +731,12 @@
 
 <p>
   The release zip file for the standard edition requires that the setup files is already
-  present in the <code>_build/exe</code> directory.
+  present in the <code>_build\exe</code> directory.
 </p>
 
 <p>
   The release file includes the setup file along with <code>ReadMe.txt</code>
-  that is automatically generated from <code>Docs/ReadMe-standard.txt</code>.
+  that is automatically generated from <code>Docs\ReadMe-standard.txt</code>.
 </p>
 
 <p>
@@ -763,9 +770,9 @@
 
 <p>
   The release file includes the portable executable file, <code>CodeSnip-p.exe</code>,
-  the help file <code>CodeSnip.chm</code>, <code>Docs/License.html</code> and
+  the help file <code>CodeSnip.chm</code>, <code>Docs\License.html</code> and
   <code>ReadMe.txt</code> that is automatically generated from
-  <code>Docs/ReadMe-portable.txt</code>.
+  <code>Docs\ReadMe-portable.txt</code>.
 </p>
 
 <p>
@@ -855,6 +862,31 @@
   zip file names can be used here too.
 </p>
 
+<p>
+  There is also a quicker way to build a release, but you must provide a version number to use it. First navigate up
+  to the repository root. Then run
+</p>
+
+<pre class="cmd"><span class="prompt">&gt;</span> Deploy 9.9.9</pre>
+
+<p>
+  where <code>9.9.9</code> is the release version number.
+</p>
+
+<p>
+  This command will build both the standard and portable executables, the help file, the standard edition setup file
+  and finally create the release zip files for both editions, with the release version number incorporated in the file names.
+</p>
+
+<p>
+  Using <code>Deploy 9.9.9</code> is the equivalent of doing:
+</p>
+
+<pre class="cmd"><span class="prompt">&gt;</span> cd Src
+<span class="prompt">&gt;</span> Make -DVERSION=9.9.9
+<span class="prompt">&gt;</span> Make -DPORTABLE -DVERSION=9.9.9
+<span class="prompt">&gt;</span> cd ..</pre>
+  
 <h3>
   Clean Up
 </h3>
