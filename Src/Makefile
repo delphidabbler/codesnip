@@ -12,12 +12,15 @@ BUILD_ROOT = _build
 BIN_ROOT = $(BUILD_ROOT)\bin
 EXE_ROOT = $(BUILD_ROOT)\exe
 RELEASE_ROOT = $(BUILD_ROOT)\release
+RELEASE_TMP_ROOT = $(RELEASE_ROOT)\~tmp~
 DOCS_ROOT = Docs
 SRC_ROOT = Src
 
 # Defines macros giving directories relative to location of the Makefile
 BIN_REL = ..\$(BIN_ROOT)
 EXE_REL = ..\$(EXE_ROOT)
+DOCS_REL = ..\$(DOCS_ROOT)
+RELEASE_TMP_REL = ..\$(RELEASE_TMP_ROOT)
 
 # Check for required environment variables
 
@@ -115,6 +118,7 @@ config:
   @mkdir $(BIN_ROOT)
   @if not exist $(EXE_ROOT) mkdir $(EXE_ROOT)
   @if not exist $(RELEASE_ROOT) mkdir $(RELEASE_ROOT)
+  @if not exist $(RELEASE_TMP_ROOT) mkdir $(RELEASE_TMP_ROOT)
   @cd $(SRC_ROOT)
 
 # Builds CodeSnip pascal files and links program
@@ -160,8 +164,10 @@ typelib:
 # Builds setup program
 setup:
 !ifndef PORTABLE
-  @del $(EXE_REL)\CodeSnip-Setup-*
+  copy $(DOCS_REL)\ReadMe-standard.txt $(RELEASE_TMP_REL)\ReadMe.txt
+  del $(EXE_REL)\CodeSnip-Setup-*
   @$(ISCC) Install\CodeSnip.iss
+  del $(RELEASE_TMP_REL)\ReadMe.txt
 !else
   @echo **** Portable build - no setup file created ****
 !endif
@@ -195,12 +201,16 @@ release:
   @cd ..
   -@if exist $(OUTFILE) del $(OUTFILE)
 !ifndef PORTABLE
-  @$(ZIP) -j -9 $(OUTFILE) $(EXE_ROOT)\CodeSnip-Setup-*.exe $(DOCS_ROOT)\ReadMe.txt
+  copy $(DOCS_ROOT)\ReadMe-standard.txt $(RELEASE_TMP_ROOT)\ReadMe.txt
+  @$(ZIP) -j -9 $(OUTFILE) $(EXE_ROOT)\CodeSnip-Setup-*.exe $(RELEASE_TMP_ROOT)\ReadMe.txt
+  del $(RELEASE_TMP_ROOT)\ReadMe.txt
 !else
+  copy $(DOCS_ROOT)\ReadMe-portable.txt $(RELEASE_TMP_ROOT)\ReadMe.txt
   @$(ZIP) -j -9 $(OUTFILE) $(EXE_ROOT)\CodeSnip-p.exe
   @$(ZIP) -j -9 $(OUTFILE) $(EXE_ROOT)\CodeSnip.chm
-  @$(ZIP) -j -9 $(OUTFILE) $(DOCS_ROOT)\ReadMe.txt
+  @$(ZIP) -j -9 $(OUTFILE) $(RELEASE_TMP_ROOT)\ReadMe.txt
   @$(ZIP) -j -9 $(OUTFILE) $(DOCS_ROOT)\License.html
+  del $(RELEASE_TMP_ROOT)\ReadMe.txt
 !endif
   @cd $(SRC_ROOT)
 
