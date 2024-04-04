@@ -36,7 +36,7 @@ type
     const ProgramName = 'CodeSnip-p';
     {$ENDIF}
       {Name of program}
-    const FullProgramName = CompanyName + ' ' + ProgramName;
+    const FullProgramName = CompanyName + ' CodeSnip';
       {Full name of program, including company name}
     const ProgramID = 'codesnip';
       {Machine readable identifier of program}
