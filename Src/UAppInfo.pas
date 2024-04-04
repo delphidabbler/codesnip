@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2005-2024, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Class that provides information about the application.
 }
@@ -36,12 +36,6 @@ type
     const ProgramName = 'CodeSnip-p';
     {$ENDIF}
       {Name of program}
-    {$IFNDEF PORTABLE}
-    const ProgramCaption = 'CodeSnip 4';
-    {$ELSE}
-    const ProgramCaption = 'CodeSnip 4 (Portable Edition)';
-    {$ENDIF}
-      {Name of program displayed in main window and task bar caption}
     const FullProgramName = CompanyName + ' ' + ProgramName;
       {Full name of program, including company name}
     const ProgramID = 'codesnip';
@@ -106,6 +100,10 @@ type
     class function ProgramFileVersion: string;
       {Gets version number of program's executable file.
         @return Version number as dotted quad.
+      }
+    class function ProgramCaption: string;
+      {Gets the program caption to be displayed in main window,
+        @return Required caption,
       }
   end;
 
@@ -212,6 +210,19 @@ class function TAppInfo.HelpFileName: string;
   }
 begin
   Result := AppExeDir + '\CodeSnip.chm';
+end;
+
+class function TAppInfo.ProgramCaption: string;
+var
+  ProductVer: TVersionNumber;
+begin
+  ProductVer := TVersionInfo.ProductVerNum;
+  Result := Format(
+    'CodeSnip v%d.%d.%d', [ProductVer.V1, ProductVer.V2, ProductVer.V3]
+  );
+  {$IFDEF PORTABLE}
+  Result := Result + ' (Portable Edition)'
+  {$ENDIF}
 end;
 
 class function TAppInfo.ProgramFileVersion: string;
