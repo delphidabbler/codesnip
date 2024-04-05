@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+
+<!--
+ * This Source Code Form is subject to the terms of the Mozilla Public License,
+ * v. 2.0. If a copy of the MPL was not distributed with this file, You can
+ * obtain one at http://mozilla.org/MPL/2.0/
+ *
+ * Copyright (C) 2013-2024, Peter Johnson (www.delphidabbler.com).
+ *
+ * CodeSnip LE File Format Documentation: Database
+ *
+ * NOTE: This document is based on Docs\Design\FileFormats\database.html from
+ *       the abandoned CodeSnip pavilion branch.
+ *       See https://tinyurl.com/39sb69ry
+-->
+
+<html lang="en">
+
+<head>
+  <meta charset='utf-8'>
+  <meta http-equiv=X-UA-Compatible content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="author" content="Peter Johnson (delphidabbler)">
+  <meta name="copyright" content="Copyright (C) 2024, Peter Johnson (https://gravatar.com/delphidabbler)">
+  <title>
+    CodeSnip LE File Format Documentation - Database
+  </title>
+  <link
+    rel="stylesheet"
+    type="text/css"
+    media="screen"
+    href="main.css"
+  >
+</head>
+
+<body>
+
+<div class="title">
+  <div class="index-link">
+    <a href="index.html">Back to Index</a>
+  </div>
+  <div>
+    DelphiDabbler CodeSnip LE
+  </div>
+  <div class="subtitle">
+    File Format Documentation
+  </div>
+  <p class="todo">
+    DRAFT
+  </p>
+  
+</div>
+
+<main>
+
+<h1>
+  Database
+</h1>
+
+<section id="contents">
+
+  <h2>
+    Contents
+  </h2>
+
+  <ul>
+    <li>
+      <a href="#introduction">Introduction</a>
+    </li>
+    <li>
+      <a href="#encoding">Encoding</a>
+    </li>
+    <li>
+      <a href="#file-format">File Format</a>
+      <ul>
+        <li>
+          <a href="#data-types">Data Types</a>
+        </li>
+        <li>
+          <a href="#summary-file-format">Summary File Format</a>
+        </li>
+        <li>
+          <a href="#snippet-file-format">Snippet File Format</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+
+</section>
+
+<section id="introduction">
+
+  <h2>
+    Introduction
+  </h2>
+
+  <p>
+    CodeSnip LE stores its database as a series of binary files in the program's database directory.
+  </p>
+
+  <p>
+    At present there is only a single version of the binary database format - version 7.
+  </p>
+
+  <p class="pullout">
+    Database versions 1 to 6 are used by CodeSnip 4. They are XML based and are <a href="legacy-user-database.html">documented elsewhere</a>. CodeSnip LE retains the ability to read, but not write, all the XML formats.
+  </p>
+
+  <p class="todo pullout">
+    QUERY: Should all 6 XML formats be supported?
+  </p>
+
+</section>
+
+<section id="encoding">
+
+  <h2>
+    Encoding
+  </h2>
+
+  <p>
+    These files are stored in binary format. Text within the binary data is encoded in UTF-8 format.
+  </p>
+
+</section>
+
+<section id="file-format">
+
+  <h2>
+    File Format
+  </h2>
+
+  <p>
+    There are two types of file in use. There is a single &quot;summary&quot; database file and a separate file for each snippet. the &quot;summary&quot; and &quot;snippet&quot; files are described separately in the sub-sections below.
+  </p>
+
+  <section id="data-types">
+
+    <h3>
+      Data Types
+    </h3>
+
+    <p>
+      There are several &quot;data types&quot; used in the files, which are as follows:
+    </p>
+
+    <dl>
+
+      <dt>
+        <kbd>UInt8</kbd>
+      </dt>
+      <dd>
+        <p>
+          Unsigned 8 bit integer value.
+        </p>
+      </dd>
+
+      <dt>
+        <kbd>UInt16</kbd>
+      </dt>
+      <dd>
+        <p>
+          Unsigned 16 bit integer value.
+        </p>
+      </dd>
+
+      <dt>
+        <kbd>UInt32</kbd>
+      </dt>
+      <dd>
+        <p>
+          Unsigned 32 bit integer value.
+        </p>
+      </dd>
+
+      <dt>
+        <kbd>SizedString</kbd>
+      </dt>
+      <dd>
+        <p>
+          This is a variable length UTF-8 string that is preceded by its length as a <kbd>UInt16</kbd>. An empty string is represented by a single <kbd>UInt16</kbd> value of <kbd class="value">0</kbd>.
+        </p>
+      </dd>
+
+      <dt>
+        <kbd>SizedLongString</kbd>
+      </dt>
+      <dd>
+        <p>
+          This is a variable length UTF-8 string that is preceded by its length as a <kbd>UInt32</kbd>. An empty string is represented by a single <kbd>UInt32</kbd> value of <kbd class="value">0</kbd>.
+        </p>
+      </dd>
+
+      <dt>
+        <kbd>StringList</kbd>
+      </dt>
+      <dd>
+        <p>
+          This is a representation of a list of <kbd>SizedString</kbd> values. It is a sequence of zero or more <kbd>SizedString</kbd> values preceded by the number of strings in the list as a <kbd>UInt32</kbd>. An empty list is represented by a single <kbd>UInt32</kbd> value of <kbd class="value">0</kbd>.
+        </p>
+      </dd>
+
+      <dt>
+        <kbd>FixedString[<em>X</em>]</kbd>
+      </dt>
+      <dd>
+        <p>
+          This is a chunk of UTF-8 text whose length is specified by <kbd><em>X</em></kbd>, which must be greater than <kbd class="value">0</kbd>.
+        </p>
+      </dd>
+
+      <dt>
+        <kbd>FixedBytes[<em>X</em>]</kbd>
+      </dt>
+      <dd>
+        <p>
+          This is a fixed size chunk of <kbd>UInt8</kbd> values whose size is specified by <kbd><em>X</em></kbd>.
+        </p>
+      </dd>
+
+      <dt>
+        <kbd>ByteArray</kbd>
+      </dt>
+      <dd>
+        <p>
+          This is a representation of a variable length array of bytes. It a sequence of zero or more <kbd>UInt8</kbd> values that is preceed by its length as a <kbd>UInt32</kbd>. An empty array is represented by a single <kbd>UInt32</kbd> value of <kbd class="value">0</kbd>.
+        </p>
+      </dd>
+
+      <dt>
+        <kbd>ByteArrayList</kbd>
+      </dt>
+      <dd>
+        <p>
+          This is a representation of a a list of <kbd>ByteArray</kbd> values. It is a sequence of zero or more <kbd>ByteArray</kbd> values preceded by the number of byte arrays in the list as a <kbd>UInt32</kbd>. An empty list is represented by a single <kbd>UInt32</kbd> value of <kbd class="value">0</kbd>.
+        </p>
+      </dd>
+
+      <dt>
+        <kbd>Markup</kbd>
+      </dt>
+      <dd>
+        <p>
+          Contains text markup. There are three fields:
+        </p>
+        <ol>
+          <li>
+            A <kbd>UInt8</kbd> value containing the type of markup. Supported values are:
+            <ul class="squashed">
+              <li>
+                <kbd class="value">0</kbd> - plain text (i.e. no markup)
+              </li>
+              <li>
+                <kbd class="value">1</kbd> - REML.
+              </li>
+              <li>
+                <kbd class="value">2</kbd> - RTF <span class="todo">[To be confirmed]</span>.
+              </li>
+            </ul>
+          </li>
+          <li>
+            A <kbd>UInt32</kbd> value containing additional information about the markup type.
+            Supported values for each markup type are:
+            <ul class="squashed">
+              <li>
+                Plain text - unused, must be <kbd class="value">0</kbd>.
+              </li>
+              <li>
+                REML - the version of REML being used. Valid values are <kbd class="value">1..6</kbd>.
+              </li>
+              <li>
+                RTF - unused, must be <kbd class="value">0</kbd>. <span class="todo">[To be confirmed]</span>.
+              </li>
+            </ul>
+          </li>
+          <li>
+            The markup content as a <kbd>SizedLongString</kbd> in the correct format.
+          </li>
+        </ol>
+        <p>
+          Empty markup is represented by an empty plain text string. This is 9 zero bytes: a <kbd>UInt8</kbd> value of <kbd class="value">0</kbd> followed by a <kbd>UInt32</kbd> value of <kbd class="value">0</kbd> followed by another <kbd>UInt32</kbd> value of <kbd class="value">0</kbd> (representing an empty <kbd>SizedLongString</kbd>).
+        </p>
+      </dd>
+
+      <dt>
+        <kbd>Date</kbd>
+      </dt>
+      <dd>
+        <p>
+          This is a UTC date in <a href="https://www.cl.cam.ac.uk/~mgk25/iso-time.html">ISO-8601 format</a> written as a <kbd>SizedString</kbd> value. The string will always have the format <kbd>YYYY-MM-DD&quot;T&quot;HH:MM:SS.XXX&quot;Z&quot;</kbd> or <kbd>YYYY-MM-DD&quot;T&quot;HH:MM:SS,XXX&quot;Z&quot;</kbd>.
+        </p>
+      </dd>
+    </dl>
+
+  </section>
+
+  <section id="summary-file-format">
+
+    <h3>
+      Summary File Format
+    </h3>
+
+    <p>
+      There is a single summary database file in the database. It is named <kbd>csdb.summary.dat</kbd>.
+    </p>
+
+    <p>
+      The file consists of a number of fields in a fixed order, as follows:
+    </p>
+
+    <dl>
+
+      <dt>
+        <em>Watermark</em> (<kbd>FixedString[45]</kbd>)
+      </dt>
+      <dd>
+        <p>
+          Identifies the file as a summary database file. The field always has the value <kbd class="value">CSDB-SUMMARY-0562C0E6F20B4C2F945D1FDEC6393C4C</kbd>.
+        </p>
+      </dd>
+
+      <dt>
+        <p>
+          <em>FileVersion</em> (<kbd>FixedString[4]</kbd>)
+        </p>
+      </dt>
+      <dd>
+        <p>
+          The version of the database as a four character string of digits. At present only version 7 is supported and the field always has the value <kbd class="value">0007</kbd>.
+        </p>
+      </dd>
+
+      <dt>
+        <em>Generator</em> (<kbd>SizedString</kbd>)
+      </dt>
+      <dd>
+        <p>
+          String that identifies the program that wrote the file. At present the only valid value is <kbd class="value">CodeSnip-LE</kbd>.
+        </p>
+      </dd>
+
+      <dt>
+        <em>GeneratorVersion</em> (<kbd>SizeString</kbd>)
+      </dt>
+      <dd>
+        <p>
+          String representation of the version number of the program that wrote the file. Must be in a valid <a href="https://semver.org/">Semantic Versioning 2.0.0</a> format.
+        </p>
+      </dd>
+
+      <dt>
+        <em>LastModificationDate</em> (<kbd>Date</kbd>)
+      </dt>
+      <dd>
+        <p>
+          Date the file was last modified.
+        </p>
+      </dd>
+
+      <dt>
+        <em>SnippetCount</em> (<kbd>UInt32</kbd>)
+      </dt>
+      <dd>
+        <p>
+          The number of snippets in the database, followed by <em>SnippetCount</em> copies of the following fields:
+        </p>
+        <dl>
+          <dt>
+            <em>ID</em> (<kbd>ByteArray</kbd>)
+          </dt>
+          <dd>
+            <p>
+              Binary representation the snippet's unique identifier.
+            </p>
+          </dd>
+          <dt>
+            <em>LastModificationDate</em> (<kbd>Date</kbd>)
+          </dt>
+          <dd>
+            <p>
+              Date the snippet was last modified.
+            </p>
+          </dd>
+        </dl>
+      </dd>
+
+      <dt>
+        <em>Tags</em> (<kbd>StringList</kbd>)
+      </dt>
+      <dd>
+        <p>
+          List of the names of all tags in the database.
+        </p>
+      </dd>
+
+    </dl>
+
+  </section>
+
+  <section id="snippet-file-format">
+    
+    <h3>
+      Snippet File Format
+    </h3>
+
+    <p>
+      There is one snippet file for each snippet in the database. The files are named <kbd>csdb.snippet.<em>ID</em>.dat</kbd> where <kbd><em>ID</em></kbd> is a string representation of the snippet's ID.
+    </p>
+
+    <p>
+      The file consists of a number of required fields in a pre-determined order, followed by the snippet's property data in any order, some of which are optional.
+    </p>
+
+    <h4>
+      Fixed Fields
+    </h4>
+
+    <p>
+      The fixed fields are as follows. They must appear in the given order.
+    </p>
+
+    <dl>
+
+      <dt>
+        <em>Watermark</em> (<kbd>FixedString[45]</kbd>)
+      </dt>
+
+      <dd>
+        <p>
+          Identifies the file as a snippet file. The field always has the value <kbd class="value">CSDB-SNIPPET-0562C0E6F20B4C2F945D1FDEC6393C4C</kbd>.
+        </p>
+      </dd>
+
+      <dt>
+        <em>FileVersion</em> (<kbd>FixedString[4]</kbd>)
+      </dt>
+      <dd>
+        <p>
+          The version of the database as a four character string of digits. At present only version 7 is supported and the field always has the value <kbd class="value">0007</kbd>.
+        </p>
+      </dd>
+
+    </dl>
+
+    <h4>
+      Property Data
+    </h4>
+
+    <p>
+      Following the fixed fields comes a list of property data. Properties can appear in any order. Some properties must be written - they are noted below. Others are optional and won't be written if they have their default values. Default values are noted for optionally written properties.
+    </p>
+
+    <p>
+      The property data is organised as follows, one record for each property:
+    </p>
+
+    <dl>
+
+      <dt>
+        <em>PropertyID</em> (<kbd>UInt8</kbd>)
+      </dt>
+      <dd>
+        <p>
+          A unique code that identifies the property. Property IDs must be in the range <kbd class="value">0x00</kbd>..<kbd class="value">0xFE</kbd>. The special value <kbd class="value">0xFF</kbd> is used to terminate the sequence of property records.
+        </p>
+      </dd>
+
+      <dt>
+        <em>PropertyData</em> (type is property dependent)
+      </dt>
+      <dd>
+        <p>
+          Data describing the property. The data is property dependant, as follows:
+        </p>
+        <dl class="indent">
+
+          <dt>
+            <em>ID</em> property
+          </dt>
+          <dd>
+            <p>
+              Binary representation the snippet's unique identifier as a <kbd>ByteArray</kbd> value.
+            </p>
+            <p>
+              <em><strong>Required.</strong> Must be unique within the database.</em>
+            </p>
+          </dd>
+
+          <dt>
+            <em>Title</em> property
+          </dt>
+          <dd>
+            <p>
+              A <kbd>SizedString</kbd> value containing the snippet's title in plain text.
+            </p>
+            <p>
+              <em><strong>Required.</strong> Must be non-empty.</em>
+            </p>
+          </dd>
+
+          <dt>
+            <em>Description</em> property
+          </dt>
+          <dd>
+            <p>
+              A <kbd>Markup</kbd> value containing the snippet's description.
+            </p>
+            <p>
+              <em>Default: empty string.</em>
+            </p>
+          </dd>
+
+          <dt>
+            <em>SourceCode</em> property
+          </dt>
+          <dd>
+            <p>
+              <kbd>SizedLongString</kbd> value containing the snippet's source code in plain text.
+            </p>
+            <p>
+              <em><strong>Required.</strong> Must be non-empty.</em>
+            </p>
+          </dd>
+
+          <dt>
+            <em>LanguageID</em> property
+          </dt>
+          <dd>
+            <p>
+              A <kbd>SizedString</kbd> value that is a text representation of the ID of the snippet's programming language, or <kbd class="value">None</kbd> for plain text.
+            </p>
+            <p>
+              <em>Default: <kbd class="value">None</kbd>.</em>
+            </p>
+            <p class="todo pullout">
+              TODO: need a list of valid language IDs
+            </p>
+          </dd>
+
+          <dt>
+            <em>Modified</em> property
+          </dt>
+          <dd>
+            <p>
+              A <kbd>Date</kbd> value that is the date the snippet was last modified. 
+            </p>
+            <p>
+              <em><strong>Required.</strong> Must be valid UTC date-time string.</em>
+            </p>
+          </dd>
+
+          <dt>
+            <em>Created</em> property
+          </dt>
+          <dd>
+            <p>
+              A <kbd>Date</kbd> value that is the date the snippet was created.
+            </p>
+            <p>
+              <em><strong>Required.</strong> Must be valid UTC date-time string.</em>
+            </p>
+          </dd>
+
+          <dt>
+            <em>RequiredModules</em> property
+          </dt>
+          <dd>
+            <p>
+              A <kbd>StringList</kbd> value containing a list of any required module names, each of which is in plain text.
+            </p>
+            <p>
+              <em>Default: empty list.</em>
+            </p>
+          </dd>
+
+          <dt>
+            <em>RequiredSnippets</em> property
+          </dt>
+          <dd>
+            <p>
+              A <kbd>ByteArrayList</kbd> value containing a list of the IDs of any required snippets. Each ID must be a valid snippet ID.
+            </p>
+            <p>
+              <em>Default: empty list.</em>
+            </p>
+          </dd>
+
+          <dt>
+            <em>XRefs</em> property
+          </dt>
+          <dd>
+            <p>
+              A <kbd>ByteArrayList</kbd> value containing a list of the IDs of any cross referenced snippets. Each ID must be a valid snippet ID.
+            </p>
+            <p>
+              <em>Default: empty list.</em>
+            </p>
+          </dd>
+
+          <dt>
+            <em>Notes</em> property
+          </dt>
+          <dd>
+            <p>
+              A <kbd>Markup</kbd> value containing additional notes about the snippet.
+            </p>
+            <p>
+              <em>Default: empty markup.</em>
+            </p>
+          </dd>
+
+          <dt>
+            <em>Format</em> property
+          </dt>
+          <dd>
+            <p>
+              A <kbd>UInt8</kbd> value containing a code that specifies the snippet's format. 
+            </p>
+            <p>
+              Valid values are:
+            </p>
+            <ul class="squashed">
+              <li>
+                <kbd class="value">0</kbd> - Freeform text or source code in any language except Pascal.
+              </li>
+              <li>
+                <kbd class="value">1</kbd> - Pascal procedure or function in standard format.
+              </li>
+              <li>
+                <kbd class="value">2</kbd> - Pascal constant definition in standard format.
+              </li>
+              <li>
+                <kbd class="value">3</kbd> - Pascal type definition in standard format.
+              </li>
+              <li>
+                <kbd class="value">4</kbd> - Complete Pascal source code unit.
+              </li>
+              <li>
+                <kbd class="value">5</kbd> - Object Pascal class or advanced record with methods.
+              </li>
+            </ul>
+            <p>
+              <em>Default: <kbd class="value">0</kbd>.</em>
+            </p>
+          </dd>
+
+          <dt>
+            <em>CompileResults</em> property
+          </dt>
+          <dd>
+            <p>
+              Records whether the snippet compiles or fails to compile on supported Pascal compilers.
+            </p>
+            <p>
+              There are two consecutive fields:
+            </p>
+            <ol>
+              <li>
+                A <kbd>StringList</kbd> containing the ID strings of compilers with which the snippet compiles successfully.
+              </li>
+              <li>
+                A <kbd>StringList</kbd> containing the ID strings of compilers with which the snippet fails to compile.
+              </li>
+            </ol>
+            <p>
+              Valid compiler ID strings are:
+            </p>
+            <ul class="squashed">
+              <li>
+                <kbd class="value">d2</kbd> - Delphi 2
+              </li>
+              <li>
+                <kbd class="value">d3</kbd> - Delphi 3
+              </li>
+              <li>
+                <kbd class="value">d4</kbd> - Delphi 4
+              </li>
+              <li>
+                <kbd class="value">d5</kbd> - Delphi 5
+              </li>
+              <li>
+                <kbd class="value">d6</kbd> - Delphi 6
+              </li>
+              <li>
+                <kbd class="value">d7</kbd> - Delphi 7
+              </li>
+              <li>
+                <kbd class="value">d2005</kbd> - Delphi 2005
+              </li>
+              <li>
+                <kbd class="value">d2006</kbd> - Delphi 2006
+              </li>
+              <li>
+                <kbd class="value">d2007</kbd> - Delphi 2007
+              </li>
+              <li>
+                <kbd class="value">d2009</kbd> - Delphi 2009
+              </li>
+              <li>
+                <kbd class="value">d2010</kbd> - Delphi 2010
+              </li>
+              <li>
+                <kbd class="value">dXE</kbd> - Delphi XE
+              </li>
+              <li>
+                <kbd class="value">dXE2</kbd> - Delphi XE2
+              </li>
+              <li>
+                <kbd class="value">dXE3</kbd> - Delphi XE3
+              </li>
+              <li>
+                <kbd class="value">dXE4</kbd> - Delphi XE4
+              </li>
+              <li>
+                <kbd class="value">dXE5</kbd> - Delphi XE5
+              </li>
+              <li>
+                <kbd class="value">dXE6</kbd> - Delphi XE6
+              </li>
+              <li>
+                <kbd class="value">dXE7</kbd> - Delphi XE7
+              </li>
+              <li>
+                <kbd class="value">dXE8</kbd> - Delphi XE8
+              </li>
+              <li>
+                <kbd class="value">d10</kbd> - Delphi 10 Seattle
+              </li>
+              <li>
+                <kbd class="value">d10.1</kbd> - Delphi 10.1 Berlin
+              </li>
+              <li>
+                <kbd class="value">d10.2</kbd> - Delphi 10.2 Tokyo
+              </li>
+              <li>
+                <kbd class="value">d10.3</kbd> - Delphi 10.3 Rio
+              </li>
+              <li>
+                <kbd class="value">d10.4</kbd> - Delphi 10.4 Sydney
+              </li>
+              <li>
+                <kbd class="value">d11</kbd> - Delphi 11.x Alexandria
+              </li>
+              <li>
+                <kbd class="value">d12</kbd> - Delphi 12.x Athens
+              </li>
+              <li>
+                <kbd class="value">fpc</kbd> - Free Pascal
+              </li>
+            </ul>
+            <p class="note">
+              All the above are Windows 32 compilers.
+            </p>
+            <p>
+              <em>Default: two empty lists.</em>
+            </p>
+          </dd>
+
+          <dt>
+            <em>Tags</em> property
+          </dt>
+          <dd>
+            <p>
+              A <kbd>StringList</kbd> value containing a list of names of the snippet's tags, each in plain text. Each tag name must be made up of valid tag characters. 
+            </p>
+            <p>
+              <em>Default: empty list.</em>
+            </p>
+          </dd>
+
+          <dt>
+            <em>TestInfo</em> property
+          </dt>
+          <dd>
+            <p>
+              Describes the testing that has been applied to a snippet.
+            </p>
+            <p>
+              There are two consecutive fields:
+            </p>
+            <ol>
+              <li>
+                <p>
+                  A <kbd>UInt8</kbd> field that describes the general level of testing. Valid values are:
+                </p>
+                <ul class="squashed">
+                  <li>
+                    <kbd class="value">0</kbd> - No testing information is available.
+                  </li>
+                  <li>
+                    <kbd class="value">1</kbd> - The snippet has not been tested.
+                  </li>
+                  <li>
+                    <kbd class="value">2</kbd> - The snippet has passed some basic, but unspecified, testing.
+                  </li>
+                  <li>
+                    <kbd class="value">3</kbd> - The snippet has passed more advanced testing. The type of testing is specified in the 2nd field.
+                  </li>
+                </ul>
+              </li>
+              <li>
+                <p>
+                  A <kbd>UInt8</kbd> field that provides additional information about advanced testing. This field is ignored unless the 1st field has value <kbd class="value">3</kbd>, in which case this field <strong>must</strong> have a value that is a non-zero bitmask of one or more of the following values:
+                </p>
+                <ul class="squashed">
+                  <li>
+                    <kbd class="value">$01</kbd> - Unit tests exist for the snippet.
+                  </li>
+                  <li>
+                    <kbd class="value">$02</kbd> - Demo code exists for the snippet.
+                  </li>
+                  <li>
+                    <kbd class="value">$80</kbd> - Other test code exists for the snippet.
+                  </li>
+                </ul>
+                <p>
+                  Note that the <em>TestURL</em> property <em>may</em> provide a URL that links to the tests specified by the above values when the 1st field has value <kbd class="value">3</kbd>.
+                </p>
+              </li>
+            </ol>
+              </li>
+            </ul>
+            <p>
+              <em>Default: two consecutive <kbd>UInt8</kbd> <kbd class="value">0</kbd> values.</em>
+            </p>
+          </dd>
+
+          <dt>
+            <em>TestURL</em> property
+          </dt>
+          <dd>
+            <p>
+              A <kbd>SizedString</kbd> value that contains a valid URL that specifies test code for the snippet.
+            </p>
+            <p>
+              <em>Default: empty string. Ignored if <em>TestInfo</em> does not have its 1st field set to <kbd class="value">3</kbd>.</em>
+            </p>
+          </dd>
+        
+          <dt>
+            <em>Starred</em> property
+          </dt>
+          <dd>
+            <p>
+              A <kbd>UInt8</kbd> representation of a Boolean value that determines if the snippet is starred. <kbd class="value">0</kbd> is interpreted as <kbd class="value">False</kbd> and any other value is interpreted as <kbd class="value">True</kbd>.
+            </p>
+            <p>
+              <em>Default: <kbd class="value">0</kbd> (i.e. <kbd class="value">False</kbd>).</em>
+            </p>
+          </dd>
+
+          <dt>
+            <em>Origin</em> property
+          </dt>
+          <dd>
+            <p class="todo pullout">
+              TODO: Need to decide whether to support this property.
+            </p>
+            <p>
+              A <kbd>UInt8</kbd> value containing a value representing the origin of the snippet. Possible values are:
+            </p>
+            <ul class="squashed">
+              <li>
+                <kbd class="value">$00</kbd> - Local: created by user.
+              </li>
+              <li>
+                <kbd class="value">$01</kbd> - Imported from an exchange package.
+              </li>
+              <li>
+                <kbd class="value">$04</kbd> - Imported from a CodeSnip 4 user database.
+              </li>
+              <li>
+                <kbd class="value">$0F</kbd> - Imported from the SWAG database
+              </li>
+              <li>
+                <kbd class="value">$FF</kbd> - Imported from a synchronised database. The Sync property will provide more information.
+              </li>
+            </ul>
+            <p>
+              <em>Default: <kbd class="value">$00</kbd>.</em>
+            </p>
+          </dd>
+
+          <dt>
+            <em>Sync</em> property
+          </dt>
+          <dd>
+            <p class="todo pullout">
+              TODO: Need to decide whether to support this property.
+            </p>
+            <p>
+              Provides information about any database with which this snippet is synchronised. 
+            </p>
+            <p>
+              There are three consecutive fields:
+            </p>
+            <ol>
+              <li>
+                <kbd>FixedBytes[16]</kbd> - a GUID that identifies the linked database
+              </li>
+              <li>
+                <kbd>ByteArray</kbd> - stores the ID of the linked snippet in the linked database. How these bytes are interpreted depends on the ID format used by the database. In the case of the DelphiDabbler Code Snippets Database, snippet IDs are Unicode strings, so the array would be the bytes of the string in UTF-8 format.
+              </li>
+              <li>
+                <kbd>Date</kbd> - the last date the snippet was updated from the linked database.
+              </li>
+            </ol>
+            <p>
+              <em>All fields <strong>required</strong> if, and only if, the <em>Origin</em> property has value <kbd class="value">$FF</kbd>. Otherwise must be omitted</em>
+            </p>
+          </dd>
+
+          <dt>
+            <em>Hash</em> property
+          </dt>
+          <dd>
+            <p>
+              <kbd>FixedBytes[32]</kbd> containing the SHA-2 hash of the snippet. All properties are hashed except for the <em>ID</em>, <em>Modified</em>, <em>Created</em>, <em>Starred</em>, <em>Origin</em>, <em>Sync</em> and <em>Hash</em> properties.
+            </p>
+            <p>
+              <em><strong>Required.</strong></em>
+            </p>
+          </dd>
+        </dl>
+      </dd>
+    </dl>
+
+  </section>
+
+</section>
+
+</main>
+
+</body>
+
+</html>
