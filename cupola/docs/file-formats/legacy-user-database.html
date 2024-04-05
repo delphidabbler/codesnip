@@ -7,306 +7,321 @@
  *
  * Copyright (C) 2012-2024, Peter Johnson (gravatar.com/delphidabbler).
  *
- * CodeSnip File Format Documentation: User Database
+ * CodeSnip File Format Documentation: Legacy User Database (as used by CodeSnip
+ * 4).
+ *
+ * NOTE: This document is based on Docs\Design\FileFormats\user-db.html from
+ *       CodeSnip 4.23.0.
+ *       See https://tinyurl.com/stv35ueu
 -->
-<html xmlns="https://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+
+<html lang="en">
 
 <head>
-
-<title>
-  CodeSnip File Format Documentation - User Database
-</title>
-
-<link
-  rel="stylesheet"
-  type="text/css"
-  media="screen"
-  href="main.css"
-/>
-
+  <meta charset='utf-8'>
+  <meta http-equiv=X-UA-Compatible content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="author" content="Peter Johnson (delphidabbler)">
+  <meta name="copyright" content="Copyright (C) 2024, Peter Johnson (https://gravatar.com/delphidabbler)">
+  <title>
+    CodeSnip LE File Format Documentation - Legacy User Database
+  </title>
+  <link
+    rel="stylesheet"
+    type="text/css"
+    media="screen"
+    href="main.css"
+  >
 </head>
 
 <body>
 
 <div class="title">
+  <div class="index-link">
+    <a href="index.html">Back to Index</a>
+  </div>
   <div>
-    DelphiDabbler CodeSnip
+    DelphiDabbler CodeSnip LE
   </div>
   <div class="subtitle">
     File Format Documentation
   </div>
 </div>
 
+<main>
+
 <h1>
-  User Database Files
+  Legacy User Database
 </h1>
 
 <section id="contents">
 
-<h2>
-  Contents
-</h2>
+  <h2>
+    Contents
+  </h2>
 
-<ul>
-  <li>
-    <a href="#intro">Introduction</a>
-  </li>
-  <li>
-    <a href="#encoding">Encoding</a>
-  </li>
-  <li>
-    <a href="#format">File Format</a>
-    <ul>
-      <li>
-        <a href="#xml-file">XML File</a>
-      </li>
-      <li>
-        <a href="#source-files">Source Files</a>
-      </li>
-    </ul>
-  </li>
-  <li>
-    <a href="#changes">Change Log</a>
-  </li>
-  <li>
-    <a href="#file-readers">Notes for File Readers</a>
-  </li>
-</ul>
+  <ul>
+    <li>
+      <a href="#introduction">Introduction</a>
+    </li>
+    <li>
+      <a href="#encoding">Encoding</a>
+    </li>
+    <li>
+      <a href="#file-format">File Format</a>
+      <ul>
+        <li>
+          <a href="#xml-file">XML File</a>
+        </li>
+        <li>
+          <a href="#source-files">Source Files</a>
+        </li>
+      </ul>
+    </li>
+    <li>
+      <a href="#changes">Change Log</a>
+    </li>
+    <li>
+      <a href="#note-for-file-readers">Notes for File Readers</a>
+    </li>
+  </ul>
 
 </section>
 
-<section id="intro">
+<section id="introduction">
 
-<h2>
-  Introduction
-</h2>
+  <h2>
+    Introduction
+  </h2>
 
-<p>
-  CodeSnip's user defined snippets database is stored in an XML file along with
-  a number of data files located in the user database directory. There is a
-  different user database for each logged on user.
-</p>
+  <p>
+    CodeSnip's user defined snippets database is stored in an XML file along with
+    a number of data files located in the user database directory. There is a
+    different user database for each logged on user.
+  </p>
 
-<p>
-  The master XML file is named <code>database.xml</code>. It contains all the
-  information about user defined snippets and categories except for the source
-  code of each snippet.
-</p>
+  <p>
+    The master XML file is named <code>database.xml</code>. It contains all the
+    information about user defined snippets and categories except for the source
+    code of each snippet.
+  </p>
 
-<p>
-  The source code for each snippet is stored in separate, sequentially numbered, <code>.dat</code> data files &ndash; one per snippet. Each source code file is referenced by the XML file.
-</p>
+  <p>
+    The source code for each snippet is stored in separate, sequentially numbered, <code>.dat</code> data files &ndash; one per snippet. Each source code file is referenced by the XML file.
+  </p>
 
-<p>
-  There have been several different versions of the XML file format. The differences between versions are explained below. Details of all the changes between versions are listed in the <a href="#changes">Change Log</a> at the end of this document
-</p>
+  <p>
+    There have been several different versions of the XML file format. The differences between versions are explained below. Details of all the changes between versions are listed in the <a href="#changes">Change Log</a> at the end of this document
+  </p>
 
 </section>
 
 <section id="encoding">
 
-<h2>
-  Encoding
-</h2>
+  <h2>
+    Encoding
+  </h2>
 
-<p>
-  CodeSnip 4 stores all user database files using UTF-8 encoding. Files are
-  saved <em>without</em> any UTF-8 preamble (BOM). The XML processing
-  instruction of <code>database.xml</code> has an &quot;encoding&quot; atrribute
-  set to &quot;UTF-8&quot;.
-</p>
+  <p>
+    CodeSnip 4 stores all user database files using UTF-8 encoding. Files are
+    saved <em>without</em> any UTF-8 preamble (BOM). The XML processing
+    instruction of <code>database.xml</code> has an &quot;encoding&quot; atrribute
+    set to &quot;UTF-8&quot;.
+  </p>
 
-<p>
-  Prior to CodeSnip v4 (and database v5) source code data files were encoded using ANSI code page 1252. The XML file was in UTF-8, but its XML processing instruction had no &quot;encoding&quot; atrribute.
-</p>
+  <p>
+    Prior to CodeSnip v4 (and database v5) source code data files were encoded using ANSI code page 1252. The XML file was in UTF-8, but its XML processing instruction had no &quot;encoding&quot; atrribute.
+  </p>
 
-<p>
-  CodeSnip v4 must be able to work with all these encodings because it may
-  inherit a copy of a user database in an earlier format.
-</p>
+  <p>
+    CodeSnip v4 must be able to work with all these encodings because it may
+    inherit a copy of a user database in an earlier format.
+  </p>
 
 </section>
 
-<section id="format">
+<section id="file-format">
 
-<h2>
-  File Format
-</h2>
+  <h2>
+    File Format
+  </h2>
 
-<h3 id="xml-file">
-  XML File
-</h3>
+  <section id="xml-file">
 
-<p>
-  There have been six different versions of the XML file formats &ndash; v1 to
-  v6. Tags from all six versions are explained below with notes describing
-  which versions a tag applies to. Where there is no note the tag is valid in
-  all versions.
-</p>
+    <h3>
+      XML File
+    </h3>
 
-<dl>
-  <dt>
-    <strong><em>XML processing instruction</em></strong>
-  </dt>
-  <dd>
-    <div class="half-spaced">
-      Attributes:
-    </div>
-    <dl class="indent">
+    <p>
+      There have been six different versions of the XML file formats &ndash; v1 to
+      v6. Tags from all six versions are explained below with notes describing
+      which versions a tag applies to. Where there is no note the tag is valid in
+      all versions.
+    </p>
+
+    <dl>
       <dt>
-        <em>version</em>
-      </dt>
-      <dd>
-        Always set to &quot;1.0&quot;
-      </dd>
-      <dt>
-        <em>encoding</em>
+        <strong><em>XML processing instruction</em></strong>
       </dt>
       <dd>
         <div class="half-spaced">
-          Character encoding used for file.
+          Attributes:
         </div>
-        <ul class="squashed">
-          <li>
-            <span class="highlight">versions 1..4:</span> Attribute not
-            provided.
-          </li>
-          <li>
-            <span class="highlight">version 5 and later:</span> Always set to
-            &quot;UTF-8&quot;.
-          </li>
-        </ul>
+        <dl class="indent">
+          <dt>
+            <em>version</em>
+          </dt>
+          <dd>
+            Always set to &quot;1.0&quot;
+          </dd>
+          <dt>
+            <em>encoding</em>
+          </dt>
+          <dd>
+            <div class="half-spaced">
+              Character encoding used for file.
+            </div>
+            <ul class="squashed">
+              <li>
+                <span class="highlight">versions 1..4:</span> Attribute not
+                provided.
+              </li>
+              <li>
+                <span class="highlight">version 5 and later:</span> Always set to
+                &quot;UTF-8&quot;.
+              </li>
+            </ul>
+          </dd>
+        </dl>
       </dd>
-    </dl>
-  </dd>
 
-  <dt>
-    <strong>codesnip-data</strong>
-  </dt>
-  <dd>
-    <div class="half-spaced">
-      Parent node for whole file. Attributes are:
-    </div>
-    <dl class="indent">
       <dt>
-        <em>watermark</em>
-      </dt>
-      <dd>
-        Identifies file as correct type &ndash; always set to
-        &quot;531257EA-1EE3-4B0F-8E46-C6E7F7140106&quot;.
-      </dd>
-      <dt>
-        <em>version</em>
-      </dt>
-      <dd>
-        Identifies major version of file. Determines which tags are valid and rules
-        concerning content. Valid versions are 1..6.
-      </dd>
-    </dl>
-  </dd>
-
-  <dt>
-    <strong>codesnip-data/categories</strong>
-  </dt>
-  <dd>
-    Contains list of all categories.
-  </dd>
-
-  <dt>
-    <strong>codesnip-data/categories/category</strong>
-  </dt>
-  <dd>
-    <div class="half-spaced">
-      Contains information about a category. Attributes are:
-    </div>
-    <dl class="indent">
-      <dt>
-        <em>id</em>
-      </dt>
-      <dd>
-        Internal (unique) id of category.
-      </dd>
-    </dl>
-  <dd>
-
-  <dt>
-    <strong>codesnip-data/categories/category/description</strong>
-  </dt>
-  <dd>
-    Description of category.
-  </dd>
-
-  <dt>
-    <strong>codesnip-data/categories/category/cat-routines</strong>
-  </dt>
-  <dd>
-    Contains list of name of all snippets in category. Omitted if there are no
-    snippets in category.
-  </dd>
-
-  <dt>
-    <strong>codesnip-data/categories/category/cat-routines/pascal-name</strong>
-  </dt>
-  <dd>
-    <div class="half-spaced">
-      Contains name of a snippet. One per each snippet in category.
-    </div>
-    <ul class="squashed">
-      <li>
-        <span class="highlight">versions 1..4:</span> Name must begin with an
-        English language letter or the underscore.
-      </li>
-      <li>
-        <span class="highlight">version 5 and later:</span> Name can begin with
-        any character that is valid as the first character of a Unicode Pascal
-        identifier.
-      </li>
-    </ul>
-  </dd>
-
-  <dt>
-    <strong>codesnip-data/routines</strong>
-  </dt>
-  <dd>
-    Contains a list of all user defined snippets.
-  </dd>
-
-  <dt>
-    <strong>codesnip-data/routines/routine</strong>
-  </dt>
-  <dd>
-    <div class="half-spaced">
-      Contains information about a snippet. One per snippet. Attribute:
-    </div>
-    <dl class="indent">
-      <dt>
-        <em>name</em>
+        <strong>codesnip-data</strong>
       </dt>
       <dd>
         <div class="half-spaced">
-          Name of snippet.
+          Parent node for whole file. Attributes are:
+        </div>
+        <dl class="indent">
+          <dt>
+            <em>watermark</em>
+          </dt>
+          <dd>
+            Identifies file as correct type &ndash; always set to
+            &quot;531257EA-1EE3-4B0F-8E46-C6E7F7140106&quot;.
+          </dd>
+          <dt>
+            <em>version</em>
+          </dt>
+          <dd>
+            Identifies major version of file. Determines which tags are valid and rules
+            concerning content. Valid versions are 1..6.
+          </dd>
+        </dl>
+      </dd>
+
+      <dt>
+        <strong>codesnip-data/categories</strong>
+      </dt>
+      <dd>
+        Contains list of all categories.
+      </dd>
+
+      <dt>
+        <strong>codesnip-data/categories/category</strong>
+      </dt>
+      <dd>
+        <div class="half-spaced">
+          Contains information about a category. Attributes are:
+        </div>
+        <dl class="indent">
+          <dt>
+            <em>id</em>
+          </dt>
+          <dd>
+            Internal (unique) id of category.
+          </dd>
+        </dl>
+      <dd>
+
+      <dt>
+        <strong>codesnip-data/categories/category/description</strong>
+      </dt>
+      <dd>
+        Description of category.
+      </dd>
+
+      <dt>
+        <strong>codesnip-data/categories/category/cat-routines</strong>
+      </dt>
+      <dd>
+        Contains list of name of all snippets in category. Omitted if there are no
+        snippets in category.
+      </dd>
+
+      <dt>
+        <strong>codesnip-data/categories/category/cat-routines/pascal-name</strong>
+      </dt>
+      <dd>
+        <div class="half-spaced">
+          Contains name of a snippet. One per each snippet in category.
         </div>
         <ul class="squashed">
           <li>
-            <span class="highlight">versions 1..4:</span> Name must begin with
-            an English language letter or the underscore.
+            <span class="highlight">versions 1..4:</span> Name must begin with an
+            English language letter or the underscore.
           </li>
           <li>
-            <span class="highlight">version 5 and later:</span> Name can begin
-            with any character that is valid as the first character of a Unicode
-            Pascal identifier.
+            <span class="highlight">version 5 and later:</span> Name can begin with
+            any character that is valid as the first character of a Unicode Pascal
+            identifier.
           </li>
         </ul>
       </dd>
-    </dl>
-  </dd>
 
-  <dt>
-    <strong>codesnip-data/routines/routine/cat-id</strong>
-  </dt>
-  <dd>
-    Id of category to which snippet belongs.
-  </dd>
+      <dt>
+        <strong>codesnip-data/routines</strong>
+      </dt>
+      <dd>
+        Contains a list of all user defined snippets.
+      </dd>
+
+      <dt>
+        <strong>codesnip-data/routines/routine</strong>
+      </dt>
+      <dd>
+        <div class="half-spaced">
+          Contains information about a snippet. One per snippet. Attribute:
+        </div>
+        <dl class="indent">
+          <dt>
+            <em>name</em>
+          </dt>
+          <dd>
+            <div class="half-spaced">
+              Name of snippet.
+            </div>
+            <ul class="squashed">
+              <li>
+                <span class="highlight">versions 1..4:</span> Name must begin with
+                an English language letter or the underscore.
+              </li>
+              <li>
+                <span class="highlight">version 5 and later:</span> Name can begin
+                with any character that is valid as the first character of a Unicode
+                Pascal identifier.
+              </li>
+            </ul>
+          </dd>
+        </dl>
+      </dd>
+
+      <dt>
+        <strong>codesnip-data/routines/routine/cat-id</strong>
+      </dt>
+      <dd>
+        Id of category to which snippet belongs.
+      </dd>
 
   <dt>
     <strong>codesnip-data/routines/routine/description</strong>
@@ -335,117 +350,117 @@
     </ul>
   </dd>
 
-  <dt>
-    <strong>codesnip-data/routines/routine/source-code</strong>
-  </dt>
-  <dd>
-    Name of file containing snippet's source code. No path information included.
-  </dd>
+      <dt>
+        <strong>codesnip-data/routines/routine/source-code</strong>
+      </dt>
+      <dd>
+        Name of file containing snippet's source code. No path information included.
+      </dd>
 
-  <dt>
-    <strong>codesnip-data/routines/routine/highlight-source</strong>
-  </dt>
-  <dd>
-    <ul class="squashed">
-      <li>
-        <span class="highlight">versions 1..5:</span> Not supported.
-      </li>
-      <li>
-        <div>
-          <span class="highlight">version 6:</span>
-        </div>
-        <div class="indent">
-          <div>
-            Flag indicating if snippet source code can be highlighted using
-            syntax highlighter. Permissible values are:
-          </div>
+      <dt>
+        <strong>codesnip-data/routines/routine/highlight-source</strong>
+      </dt>
+      <dd>
+        <ul class="squashed">
+          <li>
+            <span class="highlight">versions 1..5:</span> Not supported.
+          </li>
+          <li>
+            <div>
+              <span class="highlight">version 6:</span>
+            </div>
+            <div class="indent">
+              <div>
+                Flag indicating if snippet source code can be highlighted using
+                syntax highlighter. Permissible values are:
+              </div>
+              <ul class="squashed">
+                <li>
+                  &quot;0&quot; &ndash; do not syntax highlight source code
+                </li>
+                <li>
+                  &quot;1&quot; &ndash; syntax highlight source code
+                </li>
+              </ul>
+              <div class="half-spaced">
+                Omitting this tag is permitted. Value defaults to &quot;1&quot; in
+                this case.
+              </div>
+            </div>
+          </li>
+        </ul>
+      </dd>
+
+      <dt>
+        <strong>codesnip-data/routines/routine/display-name</strong>
+      </dt>
+      <dd>
+        <ul class="squashed">
+          <li>
+            <span class="highlight">versions 1..5:</span> Not supported.
+          </li>
+          <li>
+            <span class="highlight">version 6:</span> Display name of snippet. Can
+            contain any characters and need not be unique. Present only if snippet
+            has a display name that is different to the value of the <em>name</em>
+            attribute of the <em>codesnip-data/routines/routine</em> tag.
+          </li>
+        </ul>
+      </dd>
+
+      <dt>
+        <strong>codesnip-data/routines/routine/comments</strong>
+      </dt>
+      <dd>
+        <div class="half-spaced">
           <ul class="squashed">
             <li>
-              &quot;0&quot; &ndash; do not syntax highlight source code
+              <span class="highlight">version 1:</span> Additional comments about
+              snippets.
             </li>
             <li>
-              &quot;1&quot; &ndash; syntax highlight source code
+              <span class="highlight">version 2 and later:</span> Not supported.
             </li>
           </ul>
-          <div class="half-spaced">
-            Omitting this tag is permitted. Value defaults to &quot;1&quot; in
-            this case.
-          </div>
         </div>
-      </li>
-    </ul>
-  </dd>
+      </dd>
 
-  <dt>
-    <strong>codesnip-data/routines/routine/display-name</strong>
-  </dt>
-  <dd>
-    <ul class="squashed">
-      <li>
-        <span class="highlight">versions 1..5:</span> Not supported.
-      </li>
-      <li>
-        <span class="highlight">version 6:</span> Display name of snippet. Can
-        contain any characters and need not be unique. Present only if snippet
-        has a display name that is different to the value of the <em>name</em>
-        attribute of the <em>codesnip-data/routines/routine</em> tag.
-      </li>
-    </ul>
-  </dd>
+      <dt>
+        <strong>codesnip-data/routines/routine/credits</strong>
+      </dt>
+      <dd>
+        <div class="half-spaced">
+          <ul class="squashed">
+            <li>
+              <span class="highlight">version 1:</span> Credits for snippets. May
+              contain a single piece of text, delimited by &quot;[&quot; and
+              &quot;]&quot; that can form a hyperlink. URL for the hyperlink is
+              provided in <em>codesnip-data/routines/routine/credits-url</em>.
+            </li>
+            <li>
+              <span class="highlight">version 2 and later:</span> Not supported.
+            </li>
+          </ul>
+        </div>
+      </dd>
 
-  <dt>
-    <strong>codesnip-data/routines/routine/comments</strong>
-  </dt>
-  <dd>
-    <div class="half-spaced">
-      <ul class="squashed">
-        <li>
-          <span class="highlight">version 1:</span> Additional comments about
-          snippets.
-        </li>
-        <li>
-          <span class="highlight">version 2 and later:</span> Not supported.
-        </li>
-      </ul>
-    </div>
-  </dd>
-
-  <dt>
-    <strong>codesnip-data/routines/routine/credits</strong>
-  </dt>
-  <dd>
-    <div class="half-spaced">
-      <ul class="squashed">
-        <li>
-          <span class="highlight">version 1:</span> Credits for snippets. May
-          contain a single piece of text, delimited by &quot;[&quot; and
-          &quot;]&quot; that can form a hyperlink. URL for the hyperlink is
-          provided in <em>codesnip-data/routines/routine/credits-url</em>.
-        </li>
-        <li>
-          <span class="highlight">version 2 and later:</span> Not supported.
-        </li>
-      </ul>
-    </div>
-  </dd>
-
-  <dt>
-    <strong>codesnip-data/routines/routine/credits-url</strong>
-  </dt>
-  <dd>
-    <div class="half-spaced">
-      <ul class="squashed">
-        <li>
-          <span class="highlight">version 1:</span> URL required by
-          <em>codesnip-data/routines/routine/credits</em> tag. Present only if
-          <em>codesnip-data/routines/routine/credits</em> requires a hyperlink.
-        </li>
-        <li>
-          <span class="highlight">version 2 and later:</span> Not supported.
-        </li>
-      </ul>
-    </div>
-  </dd>
+      <dt>
+        <strong>codesnip-data/routines/routine/credits-url</strong>
+      </dt>
+      <dd>
+        <div class="half-spaced">
+          <ul class="squashed">
+            <li>
+              <span class="highlight">version 1:</span> URL required by
+              <em>codesnip-data/routines/routine/credits</em> tag. Present only if
+              <em>codesnip-data/routines/routine/credits</em> requires a hyperlink.
+            </li>
+            <li>
+              <span class="highlight">version 2 and later:</span> Not supported.
+            </li>
+          </ul>
+        </div>
+      </dd>
 
   <dt>
     <strong>codesnip-data/routines/routine/extra</strong>
@@ -487,59 +502,59 @@
     </div>
   </dd>
 
-  <dt>
-    <strong>codesnip-data/routines/routine/standard-format</strong>
-  </dt>
-  <dd>
-    <div class="half-spaced">
-      <ul class="squashed">
-        <li>
-          <span class="highlight">versions 1 and 2:</span> Flag indicating if
-          snippet is in &quot;standard format&quot;. Value of 1 indicates true
-          and 0 indicates false.
-        </li>
-        <li>
-          <span class="highlight">version 3 and later:</span> Not supported.
-        </li>
-      </ul>
-    </div>
-  </dd>
-
-  <dt>
-    <strong>codesnip-data/routines/routine/kind</strong>
-  </dt>
-  <dd>
-    <div class="half-spaced">
-      <ul class="squashed">
-        <li>
-          <span class="highlight">versions 1 and 2:</span> Not supported.
-        </li>
-        <li>
-          <span class="highlight">version 3 and later:</span> Value indicating
-          kind of snippet. Permissible values are:
+      <dt>
+        <strong>codesnip-data/routines/routine/standard-format</strong>
+      </dt>
+      <dd>
+        <div class="half-spaced">
           <ul class="squashed">
             <li>
-              <span class="highlight">versions 3 and 4:</span>
-              &quot;freeform&quot;, &quot;routine&quot;, &quot;type&quot; &amp;
-              &quot;const&quot;.
+              <span class="highlight">versions 1 and 2:</span> Flag indicating if
+              snippet is in &quot;standard format&quot;. Value of 1 indicates true
+              and 0 indicates false.
             </li>
             <li>
-              <span class="highlight">version 5 and 6:</span>
-              &quot;freeform&quot;, &quot;routine&quot;, &quot;type&quot;,
-              &quot;const&quot;, &quot;class&quot; &amp; &quot;unit&quot;.
+              <span class="highlight">version 3 and later:</span> Not supported.
             </li>
           </ul>
-        </li>
-      </ul>
-    </div>
-  </dd>
+        </div>
+      </dd>
 
-  <dt>
-    <strong>codesnip-data/routines/routine/compiler-results</strong>
-  </dt>
-  <dd>
-    Contains a list of compile results for the snippet.
-  </dd>
+      <dt>
+        <strong>codesnip-data/routines/routine/kind</strong>
+      </dt>
+      <dd>
+        <div class="half-spaced">
+          <ul class="squashed">
+            <li>
+              <span class="highlight">versions 1 and 2:</span> Not supported.
+            </li>
+            <li>
+              <span class="highlight">version 3 and later:</span> Value indicating
+              kind of snippet. Permissible values are:
+              <ul class="squashed">
+                <li>
+                  <span class="highlight">versions 3 and 4:</span>
+                  &quot;freeform&quot;, &quot;routine&quot;, &quot;type&quot; &amp;
+                  &quot;const&quot;.
+                </li>
+                <li>
+                  <span class="highlight">version 5 and 6:</span>
+                  &quot;freeform&quot;, &quot;routine&quot;, &quot;type&quot;,
+                  &quot;const&quot;, &quot;class&quot; &amp; &quot;unit&quot;.
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </dd>
+
+      <dt>
+        <strong>codesnip-data/routines/routine/compiler-results</strong>
+      </dt>
+      <dd>
+        Contains a list of compile results for the snippet.
+      </dd>
 
   <dt>
     <strong>codesnip-data/routines/routine/compiler-results/compiler-result
@@ -671,276 +686,282 @@
     </div>
   </dd>
 
-  <dt>
-    <strong>codesnip-data/routines/routine/units</strong>
-  </dt>
-  <dd>
-    List of required units.
-  </dd>
+      <dt>
+        <strong>codesnip-data/routines/routine/units</strong>
+      </dt>
+      <dd>
+        List of required units.
+      </dd>
 
-  <dt>
-    <strong>codesnip-data/routines/routine/units/pascal-name</strong>
-  </dt>
-  <dd>
-    Name of a unit within unit list.
-  </dd>
+      <dt>
+        <strong>codesnip-data/routines/routine/units/pascal-name</strong>
+      </dt>
+      <dd>
+        Name of a unit within unit list.
+      </dd>
 
-  <dt>
-    <strong>codesnip-data/routines/routine/depends</strong>
-  </dt>
-  <dd>
-    List of required snippets.
-  </dd>
+      <dt>
+        <strong>codesnip-data/routines/routine/depends</strong>
+      </dt>
+      <dd>
+        List of required snippets.
+      </dd>
 
-  <dt>
-    <strong>codesnip-data/routines/routine/depends/pascal-name</strong>
-  </dt>
-  <dd>
-    <div class="half-spaced">
-      Name of a snippet within depends list.
-    </div>
-    <ul class="squashed">
-      <li>
-        <span class="highlight">versions 1..4:</span> Name must begin with an
-        English language letter or the underscore.
-      </li>
-      <li>
-        <span class="highlight">version 5 and later:</span> Name can begin with
-        any character that is valid as the first character of a Unicode Pascal
-        identifier.
-      </li>
-    </ul>
-  </dd>
+      <dt>
+        <strong>codesnip-data/routines/routine/depends/pascal-name</strong>
+      </dt>
+      <dd>
+        <div class="half-spaced">
+          Name of a snippet within depends list.
+        </div>
+        <ul class="squashed">
+          <li>
+            <span class="highlight">versions 1..4:</span> Name must begin with an
+            English language letter or the underscore.
+          </li>
+          <li>
+            <span class="highlight">version 5 and later:</span> Name can begin with
+            any character that is valid as the first character of a Unicode Pascal
+            identifier.
+          </li>
+        </ul>
+      </dd>
 
-  <dt>
-    <strong>codesnip-data/routines/routine/xref</strong>
-  </dt>
-  <dd>
-    List of cross-referenced snippets.
-  </dd>
+      <dt>
+        <strong>codesnip-data/routines/routine/xref</strong>
+      </dt>
+      <dd>
+        List of cross-referenced snippets.
+      </dd>
 
-  <dt>
-    <strong>codesnip-data/routines/routine/xref/pascal-name</strong>
-  </dt>
-  <dd>
-    <div class="half-spaced">
-      Name of a snippet within cross-reference list.
-    </div>
-    <ul class="squashed">
-      <li>
-        <span class="highlight">versions 1..4:</span> Name must begin with an
-        English language letter or the underscore.
-      </li>
-      <li>
-        <span class="highlight">version 5 and later:</span> Name can begin with
-        any character that is valid as the first character of a Unicode Pascal
-        identifier.
-      </li>
-    </ul>
-  </dd>
-</dl>
+      <dt>
+        <strong>codesnip-data/routines/routine/xref/pascal-name</strong>
+      </dt>
+      <dd>
+        <div class="half-spaced">
+          Name of a snippet within cross-reference list.
+        </div>
+        <ul class="squashed">
+          <li>
+            <span class="highlight">versions 1..4:</span> Name must begin with an
+            English language letter or the underscore.
+          </li>
+          <li>
+            <span class="highlight">version 5 and later:</span> Name can begin with
+            any character that is valid as the first character of a Unicode Pascal
+            identifier.
+          </li>
+        </ul>
+      </dd>
+    </dl>
 
-<h3 id="source-files">
-  Source Code Files
-</h3>
+  </section>
 
-<p>
-  Source code is stored separately from the main XML file. The source code of
-  each snippet has its own file. Files are numbered sequentially and have a
-  <code>.dat</code> extension, for example <code>6.dat</code>.
-</p>
+  <section id="source-files">
 
-<p>
-  Source code files are referenced by the
-  <em>codesnip-data/routines/routine/source-code</em> tag in the database's
-  XML file.
-</p>
+    <h3>
+      Source Code Files
+    </h3>
+
+    <p>
+      Source code is stored separately from the main XML file. The source code of
+      each snippet has its own file. Files are numbered sequentially and have a
+      <code>.dat</code> extension, for example <code>6.dat</code>.
+    </p>
+
+    <p>
+      Source code files are referenced by the
+      <em>codesnip-data/routines/routine/source-code</em> tag in the database's
+      XML file.
+    </p>
+
+  </section>
 
 </section>
 
 <section id="changes">
 
-<h2>
-  Change Log
-</h2>
+  <h2>
+    Change Log
+  </h2>
 
-<p>
-  This section describes the changes between versions of the file format.
-</p>
+  <p>
+    This section describes the changes between versions of the file format.
+  </p>
 
-<p class="pullout">
-  There were small changes within versions, that probably should have been given minor version numbers - but weren't. Such minor numbers have been assigned retrospectively below in order to better explain when in-version changes actually took place.
-</p>
+  <p class="pullout">
+    There were small changes within versions, that probably should have been given minor version numbers - but weren't. Such minor numbers have been assigned retrospectively below in order to better explain when in-version changes actually took place.
+  </p>
 
-<p class="pullout">
-  File formats v4 and v5/v6 actually overlapped in the dates they were in use. This is because v4 was used by CodeSnip v3 and v5/v6 were used by CodeSnip 4. Those two versions of CodeSnip were maintained in parallel for a while.
-</p>
+  <p class="pullout">
+    File formats v4 and v5/v6 actually overlapped in the dates they were in use. This is because v4 was used by CodeSnip v3 and v5/v6 were used by CodeSnip 4. Those two versions of CodeSnip were maintained in parallel for a while.
+  </p>
 
-<dl>
-  <dt>
-    <strong>Version 1 - 15 September 2008</strong>
-  </dt>
-  <dd>
-    <p>
-      Introduced with CodeSnip v2.0.
-    </p>
-    <p>
-      Supported Delphi compilers from Delphi 2 to Delphi 2007 plus Free Pascal.
-    </p>
-    <p>
-      REML not supported.
-    </p>
-    <p>
-      Data files were ANSI text using code page 1252. The XML file was in UTF-8 format with no BOM and no XML encoding attribute.
-    </p>
-    <dl>
-      <dt>
-        <em>Version 1.1 - 11 October 2008</em>
-      </dt>
-      <dd>
-        Updated with CodeSnip v2.1 to add support for Delphi 2009.
-      </dd>
-    </dl>
-  </dd>
+  <dl>
+    <dt>
+      <strong>Version 1 - 15 September 2008</strong>
+    </dt>
+    <dd>
+      <p>
+        Introduced with CodeSnip v2.0.
+      </p>
+      <p>
+        Supported Delphi compilers from Delphi 2 to Delphi 2007 plus Free Pascal.
+      </p>
+      <p>
+        REML not supported.
+      </p>
+      <p>
+        Data files were ANSI text using code page 1252. The XML file was in UTF-8 format with no BOM and no XML encoding attribute.
+      </p>
+      <dl>
+        <dt>
+          <em>Version 1.1 - 11 October 2008</em>
+        </dt>
+        <dd>
+          Updated with CodeSnip v2.1 to add support for Delphi 2009.
+        </dd>
+      </dl>
+    </dd>
 
-  <dt>
-    <strong>Version 2 - 31 December 2008</strong>
-  </dt>
-  <dd>
-    <p>
-      Introduced with CodeSnip v2.2.5.
-    </p>
-    <p>
-      Removed following tags:
-    </p>
-    <ul class="squashed">
-      <li>
-        <em>codesnip-data/routines/routine/comments</em>
-      </li>
-      <li>
-        <em>codesnip-data/routines/routine/credits</em>
-      </li>
-      <li>
-        <em>codesnip-data/routines/routine/credits-url</em>
-      </li>
-    </ul>
-    <p>
-      Added following tag:
-    </p>
-    <ul class="squashed">
-      <li>
-        <em>codesnip-data/routines/routine/extra</em>
-      </li>
-    </ul>
-    <p>
-      The version of REML supported by the
-      <em>codesnip-data/routines/routine/extra</em> tag was v1.
-    </p>
-  </dd>
+    <dt>
+      <strong>Version 2 - 31 December 2008</strong>
+    </dt>
+    <dd>
+      <p>
+        Introduced with CodeSnip v2.2.5.
+      </p>
+      <p>
+        Removed following tags:
+      </p>
+      <ul class="squashed">
+        <li>
+          <em>codesnip-data/routines/routine/comments</em>
+        </li>
+        <li>
+          <em>codesnip-data/routines/routine/credits</em>
+        </li>
+        <li>
+          <em>codesnip-data/routines/routine/credits-url</em>
+        </li>
+      </ul>
+      <p>
+        Added following tag:
+      </p>
+      <ul class="squashed">
+        <li>
+          <em>codesnip-data/routines/routine/extra</em>
+        </li>
+      </ul>
+      <p>
+        The version of REML supported by the
+        <em>codesnip-data/routines/routine/extra</em> tag was v1.
+      </p>
+    </dd>
 
-  <dt>
-    <strong>Version 3 - 29 June 2009</strong>
-  </dt>
-  <dd>
-    <p>
-      Introduced with CodeSnip v3.0.
-    </p>
-    <p>
-      The following tag is no longer supported:
-    </p>
-    <ul class="squashed">
-      <li>
-        <em>codesnip-data/routines/routine/standard-format</em>
-      </li>
-    </ul>
-    <p>
-      The following tag was introduced:
-    </p>
-    <ul class="squashed">
-      <li>
-        <em>codesnip-data/routines/routine/kind</em>
-      </li>
-    </ul>
-    <p>
-      The version of REML supported by the
-      <em>codesnip-data/routines/routine/extra</em> tag was updated to v2.
-    </p>
-  </dd>
+    <dt>
+      <strong>Version 3 - 29 June 2009</strong>
+    </dt>
+    <dd>
+      <p>
+        Introduced with CodeSnip v3.0.
+      </p>
+      <p>
+        The following tag is no longer supported:
+      </p>
+      <ul class="squashed">
+        <li>
+          <em>codesnip-data/routines/routine/standard-format</em>
+        </li>
+      </ul>
+      <p>
+        The following tag was introduced:
+      </p>
+      <ul class="squashed">
+        <li>
+          <em>codesnip-data/routines/routine/kind</em>
+        </li>
+      </ul>
+      <p>
+        The version of REML supported by the
+        <em>codesnip-data/routines/routine/extra</em> tag was updated to v2.
+      </p>
+    </dd>
 
-  <dt>
-    <strong>Version 4 - 06 July 2009</strong>
-  </dt>
-  <dd>
-    <p>
-      Introduced with CodeSnip v3.0.1.
-    </p>
-    <p>
-      The version of REML supported by the
-      <em>codesnip-data/routines/routine/extra</em> tag was updated to v3.
-    </p>
-    <dl>
-      <dt>
-        <em>Version 4.1 - 24 September 2009</em>
-      </dt>
-      <dd>
-        Updated with CodeSnip v3.4 to add support for Delphi 2010.
-      </dd>
-      <dt>
-        <em>Version 4.2 - 23 October 2010</em>
-      </dt>
-      <dd>
-        Updated with CodeSnip v3.8.0 to add support for Delphi XE.
-      </dd>
-      <dt>
-        <em>Version 4.3 - 07 September 2011</em>
-      </dt>
-      <dd>
-        Updated with CodeSnip v3.9.0 to add support for Delphi XE2.
-      </dd>
-      <dt>
-        <em>Version 4.4 - 17 September 2012</em>
-      </dt>
-      <dd>
-        Updated with CodeSnip v3.11.0 to add support for Delphi XE3.
-      </dd>
-      <dt>
-        <em>Version 4.5 - 02 May 2013</em>
-      </dt>
-      <dd>
-        Updated with CodeSnip v3.12.0 to add support for Delphi XE4.
-      </dd>
-    </dl>
-  </dd>
+    <dt>
+      <strong>Version 4 - 06 July 2009</strong>
+    </dt>
+    <dd>
+      <p>
+        Introduced with CodeSnip v3.0.1.
+      </p>
+      <p>
+        The version of REML supported by the
+        <em>codesnip-data/routines/routine/extra</em> tag was updated to v3.
+      </p>
+      <dl>
+        <dt>
+          <em>Version 4.1 - 24 September 2009</em>
+        </dt>
+        <dd>
+          Updated with CodeSnip v3.4 to add support for Delphi 2010.
+        </dd>
+        <dt>
+          <em>Version 4.2 - 23 October 2010</em>
+        </dt>
+        <dd>
+          Updated with CodeSnip v3.8.0 to add support for Delphi XE.
+        </dd>
+        <dt>
+          <em>Version 4.3 - 07 September 2011</em>
+        </dt>
+        <dd>
+          Updated with CodeSnip v3.9.0 to add support for Delphi XE2.
+        </dd>
+        <dt>
+          <em>Version 4.4 - 17 September 2012</em>
+        </dt>
+        <dd>
+          Updated with CodeSnip v3.11.0 to add support for Delphi XE3.
+        </dd>
+        <dt>
+          <em>Version 4.5 - 02 May 2013</em>
+        </dt>
+        <dd>
+          Updated with CodeSnip v3.12.0 to add support for Delphi XE4.
+        </dd>
+      </dl>
+    </dd>
 
-  <dt>
-    <strong>Version 5 - 21 April 2012</strong>
-  </dt>
-  <dd>
-    <p>
-      Introduced with CodeSnip v4.0 alpha 2.
-    </p>
-    <p>
-      The XML file's encoding was explicitly set to &quot;UTF-8&quot; by setting
-      the encoding attribute of the XML processing instruction to this value.
-    </p>
-    <p>
-      Snippet names, wherever they occur in the XML file, can now begin with
-      any character that is a valid first character of a Unicode Pascal
-      identifier. Previously the first character of the attribute had to be one
-      of 'A'..'Z', 'a'..'z' or '_'.
-    </p>
-    <p>
-      Data files changed to use UTF-8 encoding with no BOM instead of the system
-      default encoding.
-    </p>
-    <p>
-      New &quot;class&quot and &quot;unit&quot; snippet kinds supported.
-    </p>
-    <p>
-      The version of REML supported by the
-      <em>codesnip-data/routines/routine/extra</em> tag was updated to v4.
-    </p>
-  </dd>
+    <dt>
+      <strong>Version 5 - 21 April 2012</strong>
+    </dt>
+    <dd>
+      <p>
+        Introduced with CodeSnip v4.0 alpha 2.
+      </p>
+      <p>
+        The XML file's encoding was explicitly set to &quot;UTF-8&quot; by setting
+        the encoding attribute of the XML processing instruction to this value.
+      </p>
+      <p>
+        Snippet names, wherever they occur in the XML file, can now begin with
+        any character that is a valid first character of a Unicode Pascal
+        identifier. Previously the first character of the attribute had to be one
+        of 'A'..'Z', 'a'..'z' or '_'.
+      </p>
+      <p>
+        Data files changed to use UTF-8 encoding with no BOM instead of the system
+        default encoding.
+      </p>
+      <p>
+        New &quot;class&quot and &quot;unit&quot; snippet kinds supported.
+      </p>
+      <p>
+        The version of REML supported by the
+        <em>codesnip-data/routines/routine/extra</em> tag was updated to v4.
+      </p>
+    </dd>
 
   <dt>
     <strong>Version 6 - 11 August 2012</strong>
@@ -1048,74 +1069,76 @@
 
 </section>
 
-<section id="file-readers">
+<section id="note-for-file-readers">
 
-<h2>
-  Notes for File Readers
-</h2>
+  <h2>
+    Notes for File Readers
+  </h2>
 
-<p>
-  To ensure backwards compatibility with all user database versions file reader software that works with the latest version of CodeSnip needs to be able to interpret older formats as follows.
-</p>
+  <p>
+    To ensure backwards compatibility with all user database versions file reader software that works with the latest version of CodeSnip needs to be able to interpret older formats as follows.
+  </p>
 
-<h3>
-  Handling redundant XML tags
-</h3>
+  <h3>
+    Handling redundant XML tags
+  </h3>
 
-<p>
-  Readers of version 1 files must convert the contents of the the following tags:
-</p>
+  <p>
+    Readers of version 1 files must convert the contents of the the following tags:
+  </p>
 
-<ul>
-  <li><em>codesnip-data/routines/routine/comments</em></li>
-  <li><em>codesnip-data/routines/routine/credits</em></li>
-  <li><em>codesnip-data/routines/routine/credits-url</em></li>
-</ul>
+  <ul>
+    <li><em>codesnip-data/routines/routine/comments</em></li>
+    <li><em>codesnip-data/routines/routine/credits</em></li>
+    <li><em>codesnip-data/routines/routine/credits-url</em></li>
+  </ul>
 
-<p>
-  into valid REML code that simulates the parsed content of the <em>codesnip-data/routines/routine/extra</em> tag.
-</p>
+  <p>
+    into valid REML code that simulates the parsed content of the <em>codesnip-data/routines/routine/extra</em> tag.
+  </p>
 
-<p>
-  Readers of v1 and v2 files should map a
-  <em>codesnip-data/routines/routine/standard-format</em> value of &quot;0&quot;
-  to a <em>codesnip-data/routines/routine/kind</em> value of
-  &quot;freeform&quot; and a value of &quot;1&quot; to &quot;routine&quot;.
-</p>
+  <p>
+    Readers of v1 and v2 files should map a
+    <em>codesnip-data/routines/routine/standard-format</em> value of &quot;0&quot;
+    to a <em>codesnip-data/routines/routine/kind</em> value of
+    &quot;freeform&quot; and a value of &quot;1&quot; to &quot;routine&quot;.
+  </p>
 
-<p>
-  Readers of v1 to v5 files must:
-</p>
+  <p>
+    Readers of v1 to v5 files must:
+  </p>
 
-<ul>
-  <li>
-    Convert the plain text snippet description read from
-    <em>codesnip-data/routines/routine/description</em> into the REML
-    equivalent of a single paragraph containing the description.
-  </li>
-  <li>
-    Proceed as if a <em>codesnip-data/routines/routine/highlight-source</em>
-    tag with value &quot;1&quot; had been specified.
-  </li>
-</ul>
+  <ul>
+    <li>
+      Convert the plain text snippet description read from
+      <em>codesnip-data/routines/routine/description</em> into the REML
+      equivalent of a single paragraph containing the description.
+    </li>
+    <li>
+      Proceed as if a <em>codesnip-data/routines/routine/highlight-source</em>
+      tag with value &quot;1&quot; had been specified.
+    </li>
+  </ul>
 
 <p>
   Readers of v2 and later files may parse REML from any file version as if it were REML v6, since all versions of REML up to v6 are compatible.
 </p>
 
-<h3>
-  Handling Text File Encodings
-</h3>
+  <h3>
+    Handling Text File Encodings
+  </h3>
 
-<p>
-  Readers of v1 to v4 files should interpret all source code .dat files as encoded in ANSI code page 1252 - the files were created using the default code page in the UK, which is 1252. The XML file should be assumed to be in UTF-8 format, regardless of the absence of an encoding attribute.
-</p>
+  <p>
+    Readers of v1 to v4 files should interpret all source code .dat files as encoded in ANSI code page 1252 - the files were created using the default code page in the UK, which is 1252. The XML file should be assumed to be in UTF-8 format, regardless of the absence of an encoding attribute.
+  </p>
 
-<p>
-  v5 and later files will always be encoded in UTF-8.
-</p>
+  <p>
+    v5 and later files will always be encoded in UTF-8.
+  </p>
 
 </section>
+
+</main>
 
 </body>
 
