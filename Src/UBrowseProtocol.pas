@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2009-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2009-2023, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements a abstract base class for protocol handlers that access a URL
  * using a TBrowseURL action.
@@ -67,17 +67,19 @@ function TBrowseProtocol.Execute: Boolean;
     @return True.
     @except EProtocol raised if an exception occurs in browse action.
   }
+var
+  BrowseAction: TBrowseURL;
 begin
   // We execute the resource using an action
   try
-    with TBrowseURL.Create(nil) do
-      try
-        URL := NormaliseURL(Self.URL);
-        Execute;
-        Result := True;
-      finally
-        Free;
-      end;
+    BrowseAction := TBrowseURL.Create(nil);
+    try
+      BrowseAction.URL := NormaliseURL(Self.URL);
+      BrowseAction.Execute;
+      Result := True;
+    finally
+      BrowseAction.Free;
+    end;
   except
     // any exceptions converted to EProtocol
     on E: Exception do

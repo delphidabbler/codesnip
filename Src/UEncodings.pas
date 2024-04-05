@@ -496,6 +496,7 @@ var
   UTF16BEFactoryFn: TEncodingFactoryFn;
 begin
   // Set references to appropriate encoding factory functions
+
   DefaultFactoryFn :=
     function: TEncoding begin Result := TEncoding.Default; end;
   ASCIIFactoryFn :=
@@ -508,62 +509,46 @@ begin
     function: TEncoding begin Result := TEncoding.BigEndianUnicode; end;
 
   // Populate map for all encodings
-  with fMap[etSysDefault] do
-  begin
-    CharSet := '';
-    IsAnsi := True;
-    CodePage := ULocales.DefaultAnsiCodePage;
-    FactoryFn := DefaultFactoryFn;
-  end;
-  with fMap[etASCII] do
-  begin
-    CharSet := ASCIICharSetName;
-    IsAnsi := True;
-    CodePage := ASCIICodePage;
-    FactoryFn := ASCIIFactoryFn;
-  end;
-  with fMap[etISO88591] do
-  begin
-    CharSet := ISO88591CharSetName;
-    IsAnsi := True;
-    CodePage := ISO88591CodePage;
-    FactoryFn := MBCSFactoryFn(ISO88591CodePage);
-  end;
-  with fMap[etUTF8] do
-  begin
-    CharSet := UTF8CharSetName;
-    IsAnsi := True;
-    CodePage := UTF8CodePage;
-    FactoryFn := UTF8FactoryFn;
-  end;
-  with fMap[etUnicode] do
-  begin
-    CharSet := UTF16CharSetName;
-    IsAnsi := False;
-    CodePage := 0;
-    FactoryFn := UTF16FactoryFn;
-  end;
-  with fMap[etUTF16BE] do
-  begin
-    CharSet := UTF16BECharSetName;
-    IsAnsi := False;
-    CodePage := 0;
-    FactoryFn := UTF16BEFactoryFn;
-  end;
-  with fMap[etUTF16LE] do
-  begin
-    CharSet := UTF16LECharSetName;
-    IsAnsi := False;
-    CodePage := 0;
-    FactoryFn := UTF16FactoryFn;
-  end;
-  with fMap[etWindows1252] do
-  begin
-    CharSet := Windows1252CharSetName;
-    IsAnsi := True;
-    CodePage := Windows1252CodePage;
-    FactoryFn := MBCSFactoryFn(Windows1252CodePage);
-  end;
+
+  fMap[etSysDefault].CharSet := '';
+  fMap[etSysDefault].IsAnsi := True;
+  fMap[etSysDefault].CodePage := ULocales.DefaultAnsiCodePage;
+  fMap[etSysDefault].FactoryFn := DefaultFactoryFn;
+
+  fMap[etASCII].CharSet := ASCIICharSetName;
+  fMap[etASCII].IsAnsi := True;
+  fMap[etASCII].CodePage := ASCIICodePage;
+  fMap[etASCII].FactoryFn := ASCIIFactoryFn;
+
+  fMap[etISO88591].CharSet := ISO88591CharSetName;
+  fMap[etISO88591].IsAnsi := True;
+  fMap[etISO88591].CodePage := ISO88591CodePage;
+  fMap[etISO88591].FactoryFn := MBCSFactoryFn(ISO88591CodePage);
+
+  fMap[etUTF8].CharSet := UTF8CharSetName;
+  fMap[etUTF8].IsAnsi := True;
+  fMap[etUTF8].CodePage := UTF8CodePage;
+  fMap[etUTF8].FactoryFn := UTF8FactoryFn;
+
+  fMap[etUnicode].CharSet := UTF16CharSetName;
+  fMap[etUnicode].IsAnsi := False;
+  fMap[etUnicode].CodePage := 0;
+  fMap[etUnicode].FactoryFn := UTF16FactoryFn;
+
+  fMap[etUTF16BE].CharSet := UTF16BECharSetName;
+  fMap[etUTF16BE].IsAnsi := False;
+  fMap[etUTF16BE].CodePage := 0;
+  fMap[etUTF16BE].FactoryFn := UTF16BEFactoryFn;
+
+  fMap[etUTF16LE].CharSet := UTF16LECharSetName;
+  fMap[etUTF16LE].IsAnsi := False;
+  fMap[etUTF16LE].CodePage := 0;
+  fMap[etUTF16LE].FactoryFn := UTF16FactoryFn;
+
+  fMap[etWindows1252].CharSet := Windows1252CharSetName;
+  fMap[etWindows1252].IsAnsi := True;
+  fMap[etWindows1252].CodePage := Windows1252CodePage;
+  fMap[etWindows1252].FactoryFn := MBCSFactoryFn(Windows1252CodePage);
 end;
 
 class function TEncodingHelper.DefaultCharSet: string;

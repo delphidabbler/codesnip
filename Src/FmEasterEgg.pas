@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2009-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2009-2023, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Defines a form that hosts the program's easter egg.
 }
@@ -107,13 +107,15 @@ class procedure TEasterEggForm.Execute(const AOwner: TComponent);
   {Displays easter egg modally.
     @param AOwner [in] Component that owns this form.
   }
+var
+  EggForm: TEasterEggForm;
 begin
-  with Create(AOwner) do
-    try
-      ShowModal;
-    finally
-      Free;
-    end;
+  EggForm := Create(AOwner);
+  try
+    EggForm.ShowModal;
+  finally
+    EggForm.Free;
+  end;
 end;
 
 procedure TEasterEggForm.FormClose(Sender: TObject; var Action: TCloseAction);

@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2007-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2007-2023, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements a class that provides a hidden window.
 }
@@ -82,8 +82,7 @@ procedure THiddenWindow.WndProc(var Msg: TMessage);
       processing.
   }
 begin
-  with Msg do
-    Result := DefWindowProc(Handle, Msg, WParam, LParam);
+  Msg.Result := DefWindowProc(Handle, Msg.Msg, Msg.WParam, Msg.LParam);
 end;
 
 end.

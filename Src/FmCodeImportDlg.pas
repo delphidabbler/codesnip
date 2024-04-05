@@ -1,9 +1,9 @@
-{
+﻿{
  * This Source Code Form is subject to the terms of the Mozilla Public License,
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2011-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2011-2023, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements a wizard dialogue box that handles the import of user defined
  * snippets into the database. Permits snippets from the import file to be
@@ -296,13 +296,15 @@ end;
 
 class function TCodeImportDlg.Execute(AOwner: TComponent;
   const ImportMgr: TCodeImportMgr): Boolean;
+var
+  Dlg: TCodeImportDlg;
 begin
-  with InternalCreate(AOwner, ImportMgr) do
-    try
-      Result := ShowModal = mrOK;
-    finally
-      Free;
-    end;
+  Dlg := InternalCreate(AOwner, ImportMgr);
+  try
+    Result := Dlg.ShowModal = mrOK;
+  finally
+    Dlg.Free;
+  end;
 end;
 
 function TCodeImportDlg.GetFileNameFromEditCtrl: string;

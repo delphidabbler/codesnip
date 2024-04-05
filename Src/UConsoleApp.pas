@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2006-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2006-2023, Peter Johnson (gravatar.com/delphidabbler).
  *
  * A class that encapsulates and executes a command line application and
  * optionally redirects the application's standard input, output and error.
@@ -349,17 +349,16 @@ var
 begin
   // Set up startup information structure
   FillChar(StartInfo, Sizeof(StartInfo),#0);
-  with StartInfo do
-  begin
-    cb := SizeOf(StartInfo);
-    dwFlags := STARTF_USESHOWWINDOW;
-    if (fStdIn <> 0) or (fStdOut <> 0) or (fStdErr <> 0) then
-      dwFlags := dwFlags or STARTF_USESTDHANDLES; // we are redirecting
-    hStdInput := fStdIn;                  // std handles (non-zero => redirect)
-    hStdOutput := fStdOut;
-    hStdError := fStdErr;
-    wShowWindow := cShowFlags[fVisible];  // show or hide window
-  end;
+  StartInfo.cb := SizeOf(StartInfo);
+  StartInfo.dwFlags := STARTF_USESHOWWINDOW;
+  if (fStdIn <> 0) or (fStdOut <> 0) or (fStdErr <> 0) then
+    // we are redirecting (at least one std handle is non zero)
+    StartInfo.dwFlags := StartInfo.dwFlags or STARTF_USESTDHANDLES;
+  // std handles (non-zero => redirect)
+  StartInfo.hStdInput := fStdIn;
+  StartInfo.hStdOutput := fStdOut;
+  StartInfo.hStdError := fStdErr;
+  StartInfo.wShowWindow := cShowFlags[fVisible];  // show or hide window
   // Make CmdLine parameter safe for passing to CreateProcess (Delphi 2009
   // and later). Need to ensure memory space is writeable because of issue with
   // CreateProcessW. Problem does not exist with CreateProcessA.

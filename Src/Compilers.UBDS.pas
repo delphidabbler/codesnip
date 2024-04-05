@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2006-2022, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2006-2024, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Class that controls and provides information about Borland CodeGear and
  * Embarcadero "BDS" Win32 compilers.
@@ -152,6 +152,8 @@ begin
       Result := 'D104S';
     ciD11A:
       Result := 'D11A';
+    ciD12A:
+      Result := 'D12Y';
     else
       raise EBug.Create(ClassName + '.GetIDString: Invalid ID');
   end;
@@ -170,12 +172,13 @@ resourcestring
   sDelphiXE6 = 'Delphi XE6';
   sDelphiXE7 = 'Delphi XE7';
   sDelphiXE8 = 'Delphi XE8';
-  sDelphi10S = 'Delphi 10 Seattle';
-  sDelphi101B = 'Delphi 10.1 Berlin';
-  sDelphi102T = 'Delphi 10.2 Tokyo';
-  sDelphi103R = 'Delphi 10.3 Rio';
-  sDelphi104S = 'Delphi 10.4 Sydney';
-  sDelphi11A =  'Delphi 11.x Alexandria';
+  sDelphi10S = 'Delphi 10';       // Seattle
+  sDelphi101B = 'Delphi 10.1';    // Berlin
+  sDelphi102T = 'Delphi 10.2';    // Tokyo
+  sDelphi103R = 'Delphi 10.3';    // Rio
+  sDelphi104S = 'Delphi 10.4';    // Sydney
+  sDelphi11A  = 'Delphi 11.x';    // Alexandria
+  sDelphi12A  = 'Delphi 12.x';    // Athens
 begin
   case GetID of
     ciDXE:
@@ -206,6 +209,8 @@ begin
       Result := sDelphi104S;
     ciD11A:
       Result := sDelphi11A;
+    ciD12A:
+      Result := sDelphi12A;
     else
       Result := Format(sCompilerName, [ProductVersion]);
   end;
@@ -240,6 +245,7 @@ begin
     ciD103R   : Result := '\Software\Embarcadero\BDS\20.0';
     ciD104S   : Result := '\Software\Embarcadero\BDS\21.0';
     ciD11A    : Result := '\Software\Embarcadero\BDS\22.0';
+    ciD12A    : Result := '\Software\Embarcadero\BDS\23.0';
     else raise EBug.Create(ClassName + '.InstallationRegKey: Invalid ID');
   end;
 end;

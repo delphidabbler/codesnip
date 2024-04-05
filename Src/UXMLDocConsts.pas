@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2008-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2008-2023, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Constants defined node names and attributes used in the various XML documents
  * used by CodeSnip.
@@ -68,7 +68,7 @@ const
     'd2005', 'd2006', 'd2007', 'd2009', 'd2010',
     'dXE', 'dXE2', 'dXE3', 'dDX4' {error, but in use so can't fix},
     'dXE5', 'dXE6', 'dXE7', 'dXE8',
-    'd10s', 'd101b', 'd102t', 'd103r', 'd104s', 'd11a',
+    'd10s', 'd101b', 'd102t', 'd103r', 'd104s', 'd11a', 'd12y',
     'fpc'
   );
 

@@ -5,7 +5,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2012-2022, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2012-2024, Peter Johnson (gravatar.com/delphidabbler).
  *
  * CodeSnip File Format Documentation: Export
 -->
@@ -300,8 +300,12 @@
         encoded in REML markup. REML v4 is supported.
       </li>
       <li>
-        <span class="highlight">version 7.3 and later:</span> Content is formatted text
+        <span class="highlight">version 7.3 and 7.4:</span> Content is formatted text
         encoded in REML markup. REML v5 is supported.
+      </li>
+      <li>
+        <span class="highlight">version 7.5 and later:</span> Content is formatted text
+        encoded in REML markup. REML v6 is supported.
       </li>
     </ul>
   </dd>
@@ -447,7 +451,10 @@
               <span class="highlight">versions 5 to 7.2:</span> supports REML v4.
             </li>
             <li>
-              <span class="highlight">version 7.3 &amp; later:</span> supports REML v5.
+              <span class="highlight">version 7.3 &amp; 7.4:</span> supports REML v5.
+            </li>
+            <li>
+              <span class="highlight">version 7.5 &amp; later:</span> supports REML v6.
             </li>
           </ul>
         </li>
@@ -605,6 +612,9 @@
           </li>
           <li>
             <em>d11a</em> &ndash; Delphi 11.x Alexandria compiler <span class="highlight">(v7.2 &amp; later)</span>
+          </li>
+          <li>
+            <em>d12y</em> &ndash; Delphi 12 Athens compiler <span class="highlight">(v7.4 &amp; later)</span>
           </li>
           <li>
             <em>fpc</em> &ndash; Free Pascal compiler <span class="highlight">(all versions)</span>
@@ -984,6 +994,18 @@
       <dd>
         Updated with CodeSnip v4.21.0 to add support for REML v5, which is backward compatible with REML v4.
       </dd>
+      <dt>
+        <em>Version 7.4 - 7 November 2023</em>
+      </dt>
+      <dd>
+        Updated in time for CodeSnip v4.22.0 to add support for Delphi 12 Athens.
+      </dd>
+      <dt>
+        <em>Version 7.5 - 2 April 2014</em>
+      </dt>
+      <dd>
+        Added support for REML v6, which is backward compatible with REML v4.
+      </dd>
     </dl>
   </dd>
 </dl>
@@ -1033,7 +1055,7 @@
 </p>
 
 <p>
-  Readers of v2 files and later can parse REML as v5, since all versions of REML up to v5 are backwards compatible.
+  Readers of v2 files and later can parse REML as v6, since all versions of REML up to v6 are backwards compatible.
 </p>
 
 </section>

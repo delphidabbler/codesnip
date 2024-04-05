@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2010-2022, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2010-2023, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements a frame that allows user to set source code generation
  * preferences.
@@ -480,6 +480,16 @@ begin
 end;
 
 procedure TCodeGenPrefsFrame.CreateLV;
+
+  procedure AddColumn(const ACaption: string; const AWidth: Integer);
+  var
+    Col: TListColumn;
+  begin
+    Col := fLVWarnings.Columns.Add;
+    Col.Caption := ACaption;
+    Col.Width := AWidth;
+  end;
+
 resourcestring
   // column header captions
   sSymbolColCaption = 'Symbol';
@@ -487,36 +497,21 @@ resourcestring
   sStateColCaption = 'State';
 begin
   fLVWarnings := TListViewEx.Create(Self);
-  with fLVWarnings do
-  begin
-    Parent := Self;
-    Height := 150;
-    Left := 0;
-    HideSelection := False;
-    ReadOnly := True;
-    RowSelect := True;
-    TabOrder := 2;
-    ViewStyle := vsReport;
-    SortImmediately := False;
-    with Columns.Add do
-    begin
-      Caption := sSymbolColCaption;
-      Width := 240;
-    end;
-    with Columns.Add do
-    begin
-      Caption := sMinCompilerColCaption;
-      Width := 100;
-    end;
-    with Columns.Add do
-    begin
-      Caption := sStateColCaption;
-      Width := 50;
-    end;
-    OnSelectItem := LVWarningsSelected;
-    OnCompare := LVWarningsCompare;
-    OnCreateItemClass := LVWarningsCreateItemClass;
-  end;
+  fLVWarnings.Parent := Self;
+  fLVWarnings.Height := 150;
+  fLVWarnings.Left := 0;
+  fLVWarnings.HideSelection := False;
+  fLVWarnings.ReadOnly := True;
+  fLVWarnings.RowSelect := True;
+  fLVWarnings.TabOrder := 2;
+  fLVWarnings.ViewStyle := vsReport;
+  fLVWarnings.SortImmediately := False;
+  AddColumn(sSymbolColCaption, 240);
+  AddColumn(sMinCompilerColCaption, 100);
+  AddColumn(sStateColCaption, 50);
+  fLVWarnings.OnSelectItem := LVWarningsSelected;
+  fLVWarnings.OnCompare := LVWarningsCompare;
+  fLVWarnings.OnCreateItemClass := LVWarningsCreateItemClass;
 end;
 
 procedure TCodeGenPrefsFrame.Deactivate(const Prefs: IPreferences);
@@ -686,6 +681,7 @@ begin
   AddMenuItem('Delphi 10.3 Rio', 33.0);
   AddMenuItem('Delphi 10.4 Sydney', 34.0);
   AddMenuItem('Delphi 11.x Alexandria', 35.0);
+  AddMenuItem('Delphi 12 Athens', 36.0);
 end;
 
 procedure TCodeGenPrefsFrame.PreDefCompilerMenuClick(Sender: TObject);

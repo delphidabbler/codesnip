@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2007-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2007-2023, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements an abstract base class for frames used to display previews of
  * documents using controls that descend from TCustomMemo.
@@ -141,13 +141,15 @@ end;
 procedure TMemoPreviewFrame.SetMargin;
   {Sets fixed size margin around control.
   }
+var
+  MemoHelper: TMemoHelper;
 begin
-  with TMemoHelper.Create(GetMemoCtrl) do
-    try
-      SetMargin(cPreviewMargin);
-    finally
-      Free;
-    end;
+  MemoHelper := TMemoHelper.Create(GetMemoCtrl);
+  try
+    MemoHelper.SetMargin(cPreviewMargin);
+  finally
+    MemoHelper.Free;
+  end;
 end;
 
 end.

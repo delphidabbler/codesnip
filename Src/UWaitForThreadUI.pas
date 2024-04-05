@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2006-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2006-2023, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements a class that executes a thread and displays a dialog box if thread
  * takes more than a specified time to complete.
@@ -314,14 +314,18 @@ class procedure TWaitForThreadUI.Run(const AThread: TThread;
       displayed (optional)
     @param AMinDisplayTime [in] Minimum time to display form (optional).
   }
+var
+  Instance: TWaitForThreadUI;
 begin
   Assert(Assigned(AThread), ClassName + '.Run: AThread is nil');
-  with InternalCreate(AThread, AForm, APauseBeforeDisplay, AMinDisplayTime) do
-    try
-      Execute;
-    finally
-      Free;
-    end;
+  Instance := InternalCreate(
+    AThread, AForm, APauseBeforeDisplay, AMinDisplayTime
+  );
+  try
+    Instance.Execute;
+  finally
+    Instance.Free;
+  end;
 end;
 
 procedure TWaitForThreadUI.ShowForm;

@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2006-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2006-2023, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements class that can store application settings in application wide and
  * per user persistent storage.
@@ -645,14 +645,16 @@ begin
 end;
 
 procedure TIniSettingsSection.Load;
+var
+  Ini: TIniFile;
 begin
   // Read all values from section in app's ini file to data item storage
-  with CreateIniFile do
-    try
-      ReadSectionValues(fSectionName, fValues);
-    finally
-      Free;
-    end;
+  Ini := CreateIniFile;
+  try
+    Ini.ReadSectionValues(fSectionName, fValues);
+  finally
+    Ini.Free;
+  end;
 end;
 
 function TIniSettingsSection.ParseConfigDate(const S: string): TDateTime;
@@ -674,20 +676,21 @@ end;
 procedure TIniSettingsSection.Save;
 var
   Idx: Integer; // loops thru all data items in section
+  Ini: TIniFile;
 begin
   // Open application's ini file
-  with CreateIniFile do
-    try
-      // Delete any existing section with same name
-      EraseSection(fSectionName);
-      // Write all data items to ini file section
-      for Idx := 0 to Pred(fValues.Count) do
-        WriteString(
-          fSectionName, fValues.Names[Idx], fValues.ValueFromIndex[Idx]
-        );
-    finally
-      Free;
-    end;
+  Ini := CreateIniFile;
+  try
+    // Delete any existing section with same name
+    Ini.EraseSection(fSectionName);
+    // Write all data items to ini file section
+    for Idx := 0 to Pred(fValues.Count) do
+      Ini.WriteString(
+        fSectionName, fValues.Names[Idx], fValues.ValueFromIndex[Idx]
+      );
+  finally
+    Ini.Free;
+  end;
 end;
 
 procedure TIniSettingsSection.SetBoolean(const Name: string;

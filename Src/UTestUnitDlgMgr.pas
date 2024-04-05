@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2009-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2009-2023, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements a static class that manages and displays a test unit in a dialog
  * box.
@@ -60,16 +60,17 @@ class procedure TTestUnitDlgMgr.DisplayTestUnit(const Owner: TComponent;
   }
 var
   TestUnitSource: string;   // source code of test unit
+  TestUnit: TTestUnit;
 resourcestring
   sDlgTitle = 'Test Unit for %s'; // caption of dialog box
 begin
   // Generate unit source code
-  with TTestUnit.Create(Snippet) do
-    try
-      TestUnitSource := GenerateUnitSource;
-    finally
-      Free;
-    end;
+  TestUnit := TTestUnit.Create(Snippet);
+  try
+    TestUnitSource := TestUnit.GenerateUnitSource;
+  finally
+    TestUnit.Free;
+  end;
   // Convert source to higlighted XHTML document and display it
   TPreviewDlg.Execute(
     Owner,

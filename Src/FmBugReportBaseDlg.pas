@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2009-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2009-2023, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Provides a base class and common functionality for bug report dialogue boxes.
 }
@@ -95,16 +95,18 @@ procedure TBugReportBaseDlg.GoToTracker;
   {Displays online bug tracker. Descendants should override to add extra
   functionality.
   }
+var
+  BrowseAction: TBrowseURL;
 begin
   // NOTE: Don't change actBugTracker to TBrowseURL and delete this. Subclasses
   // must be able to override this method.
-  with TBrowseURL.Create(nil) do
-    try
-      URL := TURL.CodeSnipBugTracker;
-      Execute;
-    finally
-      Free;
-    end;
+  BrowseAction := TBrowseURL.Create(nil);
+  try
+    BrowseAction.URL := TURL.CodeSnipBugTracker;
+    BrowseAction.Execute;
+  finally
+    BrowseAction.Free;
+  end;
 end;
 
 procedure TBugReportBaseDlg.lblBugTrackerClick(Sender: TObject);

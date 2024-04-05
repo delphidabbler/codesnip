@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2013-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2013-2023, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements a dialogue box that displays and manages the user's favourite
  * snippets.
@@ -406,39 +406,38 @@ begin
 end;
 
 procedure TFavouritesDlg.CreateLV;
+
+  procedure AddColumn(const ACaption: string; const AWidth: Integer);
+  var
+    Col: TListColumn;
+  begin
+    Col := fLVFavs.Columns.Add;
+    Col.Caption := ACaption;
+    Col.Width := AWidth;
+  end;
+
 resourcestring
   sSnippetName = 'Snippet';
   sLastAccessed = 'Last used';
 begin
   fLVFavs := TListViewEx.Create(Self);
-  with fLVFavs do
-  begin
-    Parent := pnlBody;
-    Height := 240;
-    Width := 360;
-    HideSelection := False;
-    ReadOnly := True;
-    RowSelect := True;
-    TabOrder := 0;
-    TabStop := True;
-    ViewStyle := vsReport;
-    SortImmediately := False;
-    with Columns.Add do
-    begin
-      Caption := sSnippetName;
-      Width := 180;
-    end;
-    with Columns.Add do
-    begin
-      Caption := sLastAccessed;
-      Width := 140;
-    end;
-    OnDblClick := LVDoubleClick;
-    OnCompare := LVFavouritesCompare;
-    OnCreateItemClass := LVFavouriteCreateItemClass;
-    OnCustomDrawItem := LVCustomDrawItem;
-    OnCustomDrawSubItem := LVCustomDrawSubItem;
-  end;
+  fLVFavs.Parent := pnlBody;
+  fLVFavs.Height := 240;
+  fLVFavs.Width := 360;
+  fLVFavs.HideSelection := False;
+  fLVFavs.ReadOnly := True;
+  fLVFavs.RowSelect := True;
+  fLVFavs.TabOrder := 0;
+  fLVFavs.TabStop := True;
+  fLVFavs.ViewStyle := vsReport;
+  fLVFavs.SortImmediately := False;
+  AddColumn(sSnippetName, 180);
+  AddColumn(sLastAccessed, 140);
+  fLVFavs.OnDblClick := LVDoubleClick;
+  fLVFavs.OnCompare := LVFavouritesCompare;
+  fLVFavs.OnCreateItemClass := LVFavouriteCreateItemClass;
+  fLVFavs.OnCustomDrawItem := LVCustomDrawItem;
+  fLVFavs.OnCustomDrawSubItem := LVCustomDrawSubItem;
 end;
 
 class procedure TFavouritesDlg.Display(AOwner: TComponent;

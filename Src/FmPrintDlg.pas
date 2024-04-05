@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2007-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2007-2024, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements a print dialogue box.
 }
@@ -76,7 +76,8 @@ uses
   // Delphi
   Printers, Graphics,
   // Project
-  FmPreferencesDlg, FrPrintingPrefs, UClassHelpers, UConsts, UMessageBox,
+  ClassHelpers.UGraphics,
+  FmPreferencesDlg, FrPrintingPrefs, UConsts, UMessageBox,
   UPageSetupDlgMgr, UPrintInfo, UStructs, UStrUtils;
 
 
@@ -264,13 +265,15 @@ class function TPrintDlg.Execute(const AOwner: TComponent): Boolean;
     @param AOwner [in] Owner of dialog box.
     @return True if user OKs dialog box and False if user cancels.
   }
+var
+  Dlg: TPrintDlg;
 begin
-  with Create(AOwner) do
-    try
-      Result := ShowModal = mrOK;
-    finally
-      Free;
-    end;
+  Dlg := Create(AOwner);
+  try
+    Result := Dlg.ShowModal = mrOK;
+  finally
+    Dlg.Free;
+  end;
 end;
 
 procedure TPrintDlg.FormCreate(Sender: TObject);

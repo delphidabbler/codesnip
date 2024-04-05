@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2005-2023, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Defines a singleton object and subsidiary classes that encapsulate the
  * snippets and categories in the CodeSnip database and user defined databases.
@@ -954,11 +954,9 @@ begin
   try
     // Load main database: MUST do this first since user database can
     // reference objects in main database
-    with TDatabaseIOFactory.CreateMainDBLoader do
-      Load(fSnippets, fCategories, Factory);
+    TDatabaseIOFactory.CreateMainDBLoader.Load(fSnippets, fCategories, Factory);
     // Load any user database
-    with TDatabaseIOFactory.CreateUserDBLoader do
-      Load(fSnippets, fCategories, Factory);
+    TDatabaseIOFactory.CreateUserDBLoader.Load(fSnippets, fCategories, Factory);
     fUpdated := False;
   except
     // If an exception occurs clear the database
@@ -984,8 +982,7 @@ begin
   // Create object that can provide required information about user database
   Provider := TUserDataProvider.Create(fSnippets, fCategories);
   // Use a writer object to write out the database
-  with TDatabaseIOFactory.CreateWriter do
-    Write(fSnippets, fCategories, Provider);
+  TDatabaseIOFactory.CreateWriter.Write(fSnippets, fCategories, Provider);
   fUpdated := False;
 end;
 

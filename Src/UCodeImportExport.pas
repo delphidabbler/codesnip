@@ -224,13 +224,15 @@ end;
 
 class function TCodeExporter.ExportSnippets(const SnipList: TSnippetList):
   TEncodedData;
+var
+  Instance: TCodeExporter;
 begin
-  with InternalCreate(SnipList) do
-    try
-      Result := Execute;
-    finally
-      Free;
-    end;
+  Instance := InternalCreate(SnipList);
+  try
+    Result := Instance.Execute;
+  finally
+    Instance.Free;
+  end;
 end;
 
 procedure TCodeExporter.HandleException(const EObj: TObject);
@@ -418,54 +420,54 @@ begin
       fSnippetInfo[Idx].Name := SnippetNode.Attributes[cSnippetNameAttr];
       fSnippetInfo[Idx].Data :=
         (Database as IDatabaseEdit).GetEditableSnippetInfo;
-      with fSnippetInfo[Idx].Data do
-      begin
-        Props.Cat := TReservedCategories.ImportsCatID;
-        Props.Desc := GetDescription(SnippetNode);
-        Props.DisplayName := TXMLDocHelper.GetSubTagText(
-          fXMLDoc, SnippetNode, cDisplayNameNode
-        );
-        Props.SourceCode := TXMLDocHelper.GetSubTagText(
-          fXMLDoc, SnippetNode, cSourceCodeTextNode
-        );
-        Props.HiliteSource := TXMLDocHelper.GetHiliteSource(
-          fXMLDoc, SnippetNode, True
-        );
-        // how we read extra property depends on version of file
-        case fVersion of
-          1:
-            Props.Extra := TSnippetExtraHelper.BuildActiveText(
+      fSnippetInfo[Idx].Data.Props.Cat := TReservedCategories.ImportsCatID;
+      fSnippetInfo[Idx].Data.Props.Desc := GetDescription(SnippetNode);
+      fSnippetInfo[Idx].Data.Props.DisplayName := TXMLDocHelper.GetSubTagText(
+        fXMLDoc, SnippetNode, cDisplayNameNode
+      );
+      fSnippetInfo[Idx].Data.Props.SourceCode := TXMLDocHelper.GetSubTagText(
+        fXMLDoc, SnippetNode, cSourceCodeTextNode
+      );
+      fSnippetInfo[Idx].Data.Props.HiliteSource := TXMLDocHelper.GetHiliteSource(
+        fXMLDoc, SnippetNode, True
+      );
+      // how we read extra property depends on version of file
+      case fVersion of
+        1:
+          fSnippetInfo[Idx].Data.Props.Extra :=
+            TSnippetExtraHelper.BuildActiveText(
               TXMLDocHelper.GetSubTagText(fXMLDoc, SnippetNode, cCommentsNode),
               TXMLDocHelper.GetSubTagText(fXMLDoc, SnippetNode, cCreditsNode),
               TXMLDocHelper.GetSubTagText(fXMLDoc, SnippetNode, cCreditsUrlNode)
             );
-          else // later versions
-            Props.Extra := TSnippetExtraHelper.BuildActiveText(
+        else // later versions
+          fSnippetInfo[Idx].Data.Props.Extra :=
+            TSnippetExtraHelper.BuildActiveText(
               TXMLDocHelper.GetSubTagText(fXMLDoc, SnippetNode, cExtraNode)
             );
-        end;
-        // how we read kind property depends on version of file
-        case fVersion of
-          1, 2:
-            // for version 1 and 2, we have StandardFormat instead of Kind:
-            // map standard format value onto a kind
-            if TXMLDocHelper.GetStandardFormat(fXMLDoc, SnippetNode, False) then
-              Props.Kind := skRoutine
-            else
-              Props.Kind := skFreeform;
-          else // later versions
-            // for later versions we have Kind value: use Freeform if missing
-            Props.Kind := TXMLDocHelper.GetSnippetKind(
-              fXMLDoc, SnippetNode, skFreeForm
-            );
-        end;
-        Props.CompilerResults := TXMLDocHelper.GetCompilerResults(
+      end;
+      // how we read kind property depends on version of file
+      case fVersion of
+        1, 2:
+          // for version 1 and 2, we have StandardFormat instead of Kind:
+          // map standard format value onto a kind
+          if TXMLDocHelper.GetStandardFormat(fXMLDoc, SnippetNode, False) then
+            fSnippetInfo[Idx].Data.Props.Kind := skRoutine
+          else
+            fSnippetInfo[Idx].Data.Props.Kind := skFreeform;
+        else // later versions
+          // for later versions we have Kind value: use Freeform if missing
+          fSnippetInfo[Idx].Data.Props.Kind := TXMLDocHelper.GetSnippetKind(
+            fXMLDoc, SnippetNode, skFreeForm
+          );
+      end;
+      fSnippetInfo[Idx].Data.Props.CompilerResults :=
+        TXMLDocHelper.GetCompilerResults(
           fXMLDoc, SnippetNode
         );
-        GetUnits(SnippetNode, Refs.Units);
-        GetDepends(SnippetNode, Refs.Depends);
-        Refs.XRef.Clear;
-      end;
+      GetUnits(SnippetNode, fSnippetInfo[Idx].Data.Refs.Units);
+      GetDepends(SnippetNode, fSnippetInfo[Idx].Data.Refs.Depends);
+      fSnippetInfo[Idx].Data.Refs.XRef.Clear;
     end;
   except
     on E: EDOMParseError do
@@ -489,16 +491,17 @@ class procedure TCodeImporter.ImportData(out SnippetInfo: TSnippetInfoList;
   const Data: TBytes);
 var
   Idx: Integer; // loops through all imported snippets
+  Instance: TCodeImporter;
 begin
-  with InternalCreate do
-    try
-      Execute(Data);
-      SetLength(SnippetInfo, Length(fSnippetInfo));
-      for Idx := Low(fSnippetInfo) to High(fSnippetInfo) do
-        SnippetInfo[Idx].Assign(fSnippetInfo[Idx]);
-    finally
-      Free;
-    end;
+  Instance := InternalCreate;
+  try
+    Instance.Execute(Data);
+    SetLength(SnippetInfo, Length(Instance.fSnippetInfo));
+    for Idx := Low(Instance.fSnippetInfo) to High(Instance.fSnippetInfo) do
+      SnippetInfo[Idx].Assign(Instance.fSnippetInfo[Idx]);
+  finally
+    Instance.Free;
+  end;
 end;
 
 constructor TCodeImporter.InternalCreate;

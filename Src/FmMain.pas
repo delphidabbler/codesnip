@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2022, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2005-2024, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Application's main form. Handles the program's main window display and user
  * interaction.
@@ -583,9 +583,11 @@ uses
   // Delphi
   Windows, Graphics,
   // Project
+  ClassHelpers.UControls,
+  ClassHelpers.UGraphics,
   DB.UCategory, DB.UMain, DB.USnippet, FmSplash, FmTrappedBugReportDlg,
   FmWaitDlg, IntfFrameMgrs, UActionFactory, UAppInfo,
-  UClassHelpers, UCodeShareMgr, UCommandBars, UConsts, UCopyInfoMgr,
+  UCodeShareMgr, UCommandBars, UConsts, UCopyInfoMgr,
   UCopySourceMgr, UDatabaseLoader, UDatabaseLoaderUI, UDetailTabAction,
   UEditSnippetAction, UExceptions, UHelpMgr, UHistoryMenus, UKeysHelper,
   UMessageBox, UNotifier, UNulDropTarget, UPrintMgr, UQuery, USaveSnippetMgr,
@@ -948,13 +950,13 @@ begin
 end;
 
 procedure TMainForm.ActOverviewTabUpdate(Sender: TObject);
+var
+  Action: TAction;
 begin
   // Action's Tag property specifies index of tab being updated
-  with Sender as TAction do
-  begin
-    Checked := fMainDisplayMgr.SelectedOverviewTab = Tag;
-    Enabled := True;
-  end;
+  Action := (Sender as TAction);
+  Action.Checked := fMainDisplayMgr.SelectedOverviewTab = Tag;
+  Action.Enabled := True;
 end;
 
 procedure TMainForm.actPreferencesExecute(Sender: TObject);
@@ -1299,14 +1301,15 @@ begin
 end;
 
 procedure TMainForm.FormDestroy(Sender: TObject);
+var
+  EditableDB: IDatabaseEdit;
 begin
   inherited;
   // Save any changes to user database
-  with Database as IDatabaseEdit do
-  begin
-    if Updated then
-      Save;
-  end;
+  EditableDB := Database as IDatabaseEdit;
+  if EditableDB.Updated then
+    EditableDB.Save;
+
   // Unhook snippets event handler
   Database.RemoveChangeEventHandler(DBChangeHandler);
   // Save window state
@@ -1344,6 +1347,8 @@ end;
 procedure TMainForm.InitForm;
 var
   WBExternal: IDispatch;        // external object of browser control
+  ActionSetter: ISetActions;
+  DetailCmdBarCfg, OverviewCmdBarCfg: ICommandBarConfig;
 begin
   try
     inherited;
@@ -1387,38 +1392,37 @@ begin
     // Create notifier object and assign actions triggered by its methods
     // note that actions created on fly are automatically freed
     fNotifier := TNotifier.Create;
-    with fNotifier as ISetActions do
-    begin
-      SetUpdateDbaseAction(actUpdateDbase);
-      SetDisplaySnippetAction(TActionFactory.CreateSnippetAction(Self));
-      SetDisplayCategoryAction(TActionFactory.CreateCategoryAction(Self));
-      SetConfigCompilersAction(actCompilers);
-      SetShowViewItemAction(
-        TActionFactory.CreateViewItemAction(Self, ActViewItemExecute)
-      );
-      SetOverviewStyleChangeActions(
-        [actViewCategorised, actViewAlphabetical, actViewSnippetKinds]
-      );
-      SetDetailPaneChangeAction(
-        TActionFactory.CreateDetailTabAction(Self, ActSelectDetailTabExecute)
-      );
-      SetEditSnippetAction(
-        TActionFactory.CreateEditSnippetAction(
-          Self, ActEditSnippetByNameExecute
-        )
-      );
-      SetNewSnippetAction(actAddSnippet);
-      SetNewsAction(actBlog);
-      SetAboutBoxAction(actAbout);
-    end;
+    ActionSetter := fNotifier as ISetActions;
+    ActionSetter.SetUpdateDbaseAction(actUpdateDbase);
+    ActionSetter.SetDisplaySnippetAction(
+      TActionFactory.CreateSnippetAction(Self)
+    );
+    ActionSetter.SetDisplayCategoryAction(
+      TActionFactory.CreateCategoryAction(Self)
+    );
+    ActionSetter.SetConfigCompilersAction(actCompilers);
+    ActionSetter.SetShowViewItemAction(
+      TActionFactory.CreateViewItemAction(Self, ActViewItemExecute)
+    );
+    ActionSetter.SetOverviewStyleChangeActions(
+      [actViewCategorised, actViewAlphabetical, actViewSnippetKinds]
+    );
+    ActionSetter.SetDetailPaneChangeAction(
+      TActionFactory.CreateDetailTabAction(Self, ActSelectDetailTabExecute)
+    );
+    ActionSetter.SetEditSnippetAction(
+      TActionFactory.CreateEditSnippetAction(
+        Self, ActEditSnippetByNameExecute
+      )
+    );
+    ActionSetter.SetNewSnippetAction(actAddSnippet);
+    ActionSetter.SetNewsAction(actBlog);
+    ActionSetter.SetAboutBoxAction(actAbout);
 
     // Customise web browser controls in Details pane
     WBExternal := TWBExternal.Create;
-    with frmDetail as IWBCustomiser do
-    begin
-      SetExternalObj(WBExternal);
-      SetDragDropHandler(TNulDropTarget.Create);
-    end;
+    (frmDetail as IWBCustomiser).SetExternalObj(WBExternal);
+    (frmDetail as IWBCustomiser).SetDragDropHandler(TNulDropTarget.Create);
 
     // Set notifier for objects that trigger notifications
     (WBExternal as ISetNotifier).SetNotifier(fNotifier);
@@ -1456,58 +1460,56 @@ begin
     );
 
     // Set up detail pane's popup menus
-    with frmDetail as ICommandBarConfig do
-    begin
+    DetailCmdBarCfg := frmDetail as ICommandBarConfig;
       // set images to use
-      SetImages(ilMain);
+    DetailCmdBarCfg.SetImages(ilMain);
       // detail view menus
-      AddAction(
-        TActionFactory.CreateLinkAction(Self),
-        [cDetailPopupMenuAnchor, cDetailPopupMenuImage]
-      );
-      AddSpacer([cDetailPopupMenuAnchor, cDetailPopupMenuImage]);
-      AddAction(actViewDependencies, cDetailPopupMenuIDs);
-      AddSpacer(cDetailPopupMenuIDs);
-      AddAction(actCopyInfo, cDetailPopupMenuIDs);
-      AddAction(actCopySnippet, cDetailPopupMenuIDs);
-      AddAction(actCopySource, cDetailPopupMenuIDs);
-      AddSpacer(cDetailPopupMenuIDs);
-      AddAction(actTestCompile, cDetailPopupMenuIDs);
-      AddSpacer(cDetailPopupMenuIDs);
-      AddAction(actSaveSnippet, cDetailPopupMenuIDs);
-      AddAction(actPrint, cDetailPopupMenuIDs);
-      AddSpacer(cDetailPopupMenuIDs);
-      AddAction(actCopy, cDetailPopupMenuTextSelect);
-      AddAction(actSelectAll, cDetailPopupMenuIDs);
-      AddSpacer(cDetailPopupMenuIDs);
-      AddAction(actCloseDetailsTab, cDetailPopupMenuIDs);
-      // tab set menu
-      AddAction(actCloseDetailsTab, cDetailTabSetPopupMenu);
-      AddAction(actCloseUnselectedDetailsTabs, cDetailTabSetPopupMenu);
-    end;
+    DetailCmdBarCfg.AddAction(
+      TActionFactory.CreateLinkAction(Self),
+      [cDetailPopupMenuAnchor, cDetailPopupMenuImage]
+    );
+    DetailCmdBarCfg.AddSpacer([cDetailPopupMenuAnchor, cDetailPopupMenuImage]);
+    DetailCmdBarCfg.AddAction(actViewDependencies, cDetailPopupMenuIDs);
+    DetailCmdBarCfg.AddSpacer(cDetailPopupMenuIDs);
+    DetailCmdBarCfg.AddAction(actCopyInfo, cDetailPopupMenuIDs);
+    DetailCmdBarCfg.AddAction(actCopySnippet, cDetailPopupMenuIDs);
+    DetailCmdBarCfg.AddAction(actCopySource, cDetailPopupMenuIDs);
+    DetailCmdBarCfg.AddSpacer(cDetailPopupMenuIDs);
+    DetailCmdBarCfg.AddAction(actTestCompile, cDetailPopupMenuIDs);
+    DetailCmdBarCfg.AddSpacer(cDetailPopupMenuIDs);
+    DetailCmdBarCfg.AddAction(actSaveSnippet, cDetailPopupMenuIDs);
+    DetailCmdBarCfg.AddAction(actPrint, cDetailPopupMenuIDs);
+    DetailCmdBarCfg.AddSpacer(cDetailPopupMenuIDs);
+    DetailCmdBarCfg.AddAction(actCopy, cDetailPopupMenuTextSelect);
+    DetailCmdBarCfg.AddAction(actSelectAll, cDetailPopupMenuIDs);
+    DetailCmdBarCfg.AddSpacer(cDetailPopupMenuIDs);
+    DetailCmdBarCfg.AddAction(actCloseDetailsTab, cDetailPopupMenuIDs);
+    // tab set menu
+    DetailCmdBarCfg.AddAction(actCloseDetailsTab, cDetailTabSetPopupMenu);
+    DetailCmdBarCfg.AddAction(
+      actCloseUnselectedDetailsTabs, cDetailTabSetPopupMenu
+    );
 
     // Set up overview pane's toolbar and popup menu
-    with frmOverview as ICommandBarConfig do
-    begin
-      SetImages(ilMain);
-      // add toolbar actions (in reverse order we want them!)
-      AddAction(actCollapseTree, cOverviewToolBar);
-      AddAction(actExpandTree, cOverviewToolBar);
-      // add popup menu actions
-      AddAction(actViewDependencies, cOverviewPopupMenu);
-      AddSpacer(cOverviewPopupMenu);
-      AddAction(actCopyInfo, cOverviewPopupMenu);
-      AddAction(actCopySnippet, cOverviewPopupMenu);
-      AddAction(actCopySource, cOverviewPopupMenu);
-      AddSpacer(cOverviewPopupMenu);
-      AddAction(actSaveSnippet, cOverviewPopupMenu);
-      AddAction(actPrint, cOverviewPopupMenu);
-      AddSpacer(cOverviewPopupMenu);
-      AddAction(actEditSnippet, cOverviewPopupMenu);
-      AddSpacer(cOverviewPopupMenu);
-      AddAction(actCollapseNode, cOverviewPopupMenu);
-      AddAction(actExpandNode, cOverviewPopupMenu);
-    end;
+    OverviewCmdBarCfg := frmOverview as ICommandBarConfig;
+    OverviewCmdBarCfg.SetImages(ilMain);
+    // add toolbar actions (in reverse order we want them!)
+    OverviewCmdBarCfg.AddAction(actCollapseTree, cOverviewToolBar);
+    OverviewCmdBarCfg.AddAction(actExpandTree, cOverviewToolBar);
+    // add popup menu actions
+    OverviewCmdBarCfg.AddAction(actViewDependencies, cOverviewPopupMenu);
+    OverviewCmdBarCfg.AddSpacer(cOverviewPopupMenu);
+    OverviewCmdBarCfg.AddAction(actCopyInfo, cOverviewPopupMenu);
+    OverviewCmdBarCfg.AddAction(actCopySnippet, cOverviewPopupMenu);
+    OverviewCmdBarCfg.AddAction(actCopySource, cOverviewPopupMenu);
+    OverviewCmdBarCfg.AddSpacer(cOverviewPopupMenu);
+    OverviewCmdBarCfg.AddAction(actSaveSnippet, cOverviewPopupMenu);
+    OverviewCmdBarCfg.AddAction(actPrint, cOverviewPopupMenu);
+    OverviewCmdBarCfg.AddSpacer(cOverviewPopupMenu);
+    OverviewCmdBarCfg.AddAction(actEditSnippet, cOverviewPopupMenu);
+    OverviewCmdBarCfg.AddSpacer(cOverviewPopupMenu);
+    OverviewCmdBarCfg.AddAction(actCollapseNode, cOverviewPopupMenu);
+    OverviewCmdBarCfg.AddAction(actExpandNode, cOverviewPopupMenu);
 
     // Create object to handle compilation and assoicated UI and dialogues
     fCompileMgr := TMainCompileMgr.Create(Self);  // auto-freed

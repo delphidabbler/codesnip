@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2013-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2013-2023, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements a dialogue box that enables the user to enter a syntax highlighter
  * name.
@@ -122,17 +122,19 @@ end;
 
 class function TNewHiliterNameDlg.Execute(Owner: TComponent;
   const Names: array of string; out NewName: string): Boolean;
+var
+  Dlg: TNewHiliterNameDlg;
 begin
-  with InternalCreate(Owner) do
-    try
-      fNames := TIStringList.Create(Names);
-      fNames.CaseSensitive := False;
-      Result := ShowModal = mrOK;
-      if Result then
-        NewName := fNewName;
-    finally
-      Free;
-    end;
+  Dlg := InternalCreate(Owner);
+  try
+    Dlg.fNames := TIStringList.Create(Names);
+    Dlg.fNames.CaseSensitive := False;
+    Result := Dlg.ShowModal = mrOK;
+    if Result then
+      NewName := Dlg.fNewName;
+  finally
+    Dlg.Free;
+  end;
 end;
 
 procedure TNewHiliterNameDlg.InitForm;

@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2020-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2020-2023, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Provides a class that reads and validates the SWAG collection's version
  * information from file.
@@ -107,13 +107,15 @@ uses
 
 class function TSWAGVersion.GetVersion(const SWAGDir: TFileName):
   TVersionNumber;
+var
+  Instance: TSWAGVersion;
 begin
-  with InternalCreate(SWAGDir) do
-    try
-      Result := ReadAndValidateVersionFile;
-    finally
-      Free;
-    end;
+  Instance := InternalCreate(SWAGDir);
+  try
+    Result := Instance.ReadAndValidateVersionFile;
+  finally
+    Instance.Free;
+  end;
 end;
 
 constructor TSWAGVersion.InternalCreate(const SWAGDir: TFileName);
@@ -158,13 +160,15 @@ begin
 end;
 
 class procedure TSWAGVersion.ValidateVersionFile(const SWAGDir: TFileName);
+var
+  Instance: TSWAGVersion;
 begin
-  with InternalCreate(SWAGDir) do
-    try
-      ReadAndValidateVersionFile;
-    finally
-      Free;
-    end;
+  Instance := InternalCreate(SWAGDir);
+  try
+    Instance.ReadAndValidateVersionFile;
+  finally
+    Instance.Free;
+  end;
 end;
 
 end.

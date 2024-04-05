@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2006-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2006-2023, Peter Johnson (gravatar.com/delphidabbler).
  *
  * Implements abstract base class for classes that manage generation, previewing
  * and saving to disk of a source code files in various formats and encodings.
@@ -244,42 +244,39 @@ resourcestring
 begin
   inherited InternalCreate;
   fSourceFileInfo := TSourceFileInfo.Create;
-  with fSourceFileInfo do
-  begin
-    FileTypeInfo[sfText] := TSourceFileTypeInfo.Create(
-      '.txt',
-      GetFileTypeDesc(sfText),
-      [
-        TSourceFileEncoding.Create(etSysDefault, sANSIDefaultEncoding),
-        TSourceFileEncoding.Create(etUTF8, sUTF8Encoding),
-        TSourceFileEncoding.Create(etUTF16LE, sUTF16LEEncoding),
-        TSourceFileEncoding.Create(etUTF16BE, sUTF16BEEncoding)
-      ]
-    );
-    FileTypeInfo[sfPascal] := TSourceFileTypeInfo.Create(
-      '.pas',
-      GetFileTypeDesc(sfPascal),
-      [
-        TSourceFileEncoding.Create(etSysDefault, sANSIDefaultEncoding),
-        TSourceFileEncoding.Create(etUTF8, sUTF8Encoding)
-      ]
-    );
-    FileTypeInfo[sfHTML] := TSourceFileTypeInfo.Create(
-      '.html',
-      GetFileTypeDesc(sfHTML),
-      [
-        TSourceFileEncoding.Create(etUTF8, sUTF8Encoding)
-      ]
-    );
-    FileTypeInfo[sfRTF] := TSourceFileTypeInfo.Create(
-      '.rtf',
-      GetFileTypeDesc(sfRTF),
-      [
-        TSourceFileEncoding.Create(etSysDefault, sANSIDefaultEncoding)
-      ]
-   );
-    DefaultFileName := GetDefaultFileName;
-  end;
+  fSourceFileInfo.FileTypeInfo[sfText] := TSourceFileTypeInfo.Create(
+    '.txt',
+    GetFileTypeDesc(sfText),
+    [
+      TSourceFileEncoding.Create(etSysDefault, sANSIDefaultEncoding),
+      TSourceFileEncoding.Create(etUTF8, sUTF8Encoding),
+      TSourceFileEncoding.Create(etUTF16LE, sUTF16LEEncoding),
+      TSourceFileEncoding.Create(etUTF16BE, sUTF16BEEncoding)
+    ]
+  );
+  fSourceFileInfo.FileTypeInfo[sfPascal] := TSourceFileTypeInfo.Create(
+    '.pas',
+    GetFileTypeDesc(sfPascal),
+    [
+      TSourceFileEncoding.Create(etSysDefault, sANSIDefaultEncoding),
+      TSourceFileEncoding.Create(etUTF8, sUTF8Encoding)
+    ]
+  );
+  fSourceFileInfo.FileTypeInfo[sfHTML] := TSourceFileTypeInfo.Create(
+    '.html',
+    GetFileTypeDesc(sfHTML),
+    [
+      TSourceFileEncoding.Create(etUTF8, sUTF8Encoding)
+    ]
+  );
+  fSourceFileInfo.FileTypeInfo[sfRTF] := TSourceFileTypeInfo.Create(
+    '.rtf',
+    GetFileTypeDesc(sfRTF),
+    [
+      TSourceFileEncoding.Create(etSysDefault, sANSIDefaultEncoding)
+    ]
+ );
+  fSourceFileInfo.DefaultFileName := GetDefaultFileName;
 
   fSaveDlg := TSaveSourceDlg.Create(nil);
   fSaveDlg.Title := GetDlgTitle;
