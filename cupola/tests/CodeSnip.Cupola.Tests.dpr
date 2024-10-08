@@ -28,7 +28,9 @@ uses
   Test.Snippets.ID in 'Test.Snippets.ID.pas',
   CSLE.Snippets.Tag in '..\src\CSLE.Snippets.Tag.pas',
   Grijjy.Collections in '..\src\vendor\grijjy-foundation\Grijjy.Collections.pas',
-  Test.Snippets.Tag in 'Test.Snippets.Tag.pas';
+  Test.Snippets.Tag in 'Test.Snippets.Tag.pas',
+  CSLE.Snippets.Format in '..\src\CSLE.Snippets.Format.pas',
+  Test.Snippets.Format in 'Test.Snippets.Format.pas';
 
 {$IFNDEF TESTINSIGHT}
 var
