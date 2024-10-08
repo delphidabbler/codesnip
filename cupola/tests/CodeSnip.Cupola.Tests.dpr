@@ -12,7 +12,9 @@ uses
   DUnitX.Loggers.Console,
   DUnitX.Loggers.Xml.NUnit,
   {$ENDIF }
-  DUnitX.TestFramework;
+  DUnitX.TestFramework,
+  CSLE.Utils.Conversions in '..\src\CSLE.Utils.Conversions.pas',
+  Test.Utils.Conversions in 'Test.Utils.Conversions.pas';
 
 {$IFNDEF TESTINSIGHT}
 var
