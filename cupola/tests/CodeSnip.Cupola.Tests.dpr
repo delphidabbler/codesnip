@@ -20,7 +20,10 @@ uses
   Test.TextData in 'Test.TextData.pas',
   CSLE.TextData in '..\src\CSLE.TextData.pas',
   CSLE.Streams.Wrapper in '..\src\CSLE.Streams.Wrapper.pas',
-  Test.Streams.Wrapper in 'Test.Streams.Wrapper.pas';
+  Test.Streams.Wrapper in 'Test.Streams.Wrapper.pas',
+  CSLE.Exceptions in '..\src\CSLE.Exceptions.pas',
+  CSLE.SourceCode.Language in '..\src\CSLE.SourceCode.Language.pas',
+  Test.SourceCode.Language in 'Test.SourceCode.Language.pas';
 
 {$IFNDEF TESTINSIGHT}
 var

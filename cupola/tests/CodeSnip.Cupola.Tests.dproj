@@ -77,6 +77,9 @@
         <DCCReference Include="..\src\CSLE.TextData.pas"/>
         <DCCReference Include="..\src\CSLE.Streams.Wrapper.pas"/>
         <DCCReference Include="Test.Streams.Wrapper.pas"/>
+        <DCCReference Include="..\src\CSLE.Exceptions.pas"/>
+        <DCCReference Include="..\src\CSLE.SourceCode.Language.pas"/>
+        <DCCReference Include="Test.SourceCode.Language.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
