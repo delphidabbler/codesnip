@@ -82,6 +82,9 @@
         <DCCReference Include="Test.SourceCode.Language.pas"/>
         <DCCReference Include="..\src\CSLE.Snippets.ID.pas"/>
         <DCCReference Include="Test.Snippets.ID.pas"/>
+        <DCCReference Include="..\src\CSLE.Snippets.Tag.pas"/>
+        <DCCReference Include="..\src\vendor\grijjy-foundation\Grijjy.Collections.pas"/>
+        <DCCReference Include="Test.Snippets.Tag.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

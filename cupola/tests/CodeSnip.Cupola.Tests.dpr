@@ -25,7 +25,10 @@ uses
   CSLE.SourceCode.Language in '..\src\CSLE.SourceCode.Language.pas',
   Test.SourceCode.Language in 'Test.SourceCode.Language.pas',
   CSLE.Snippets.ID in '..\src\CSLE.Snippets.ID.pas',
-  Test.Snippets.ID in 'Test.Snippets.ID.pas';
+  Test.Snippets.ID in 'Test.Snippets.ID.pas',
+  CSLE.Snippets.Tag in '..\src\CSLE.Snippets.Tag.pas',
+  Grijjy.Collections in '..\src\vendor\grijjy-foundation\Grijjy.Collections.pas',
+  Test.Snippets.Tag in 'Test.Snippets.Tag.pas';
 
 {$IFNDEF TESTINSIGHT}
 var
