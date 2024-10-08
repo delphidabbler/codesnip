@@ -33,7 +33,7 @@ begin
     //Tell the runner to use RTTI to find Fixtures
     runner.UseRTTI := True;
     //When true, Assertions must be made during tests;
-    runner.FailsOnNoAsserts := False;
+    runner.FailsOnNoAsserts := True;
 
     //tell the runner how we will log things
     //Log to the console window if desired
