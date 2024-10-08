@@ -80,6 +80,8 @@
         <DCCReference Include="..\src\CSLE.Exceptions.pas"/>
         <DCCReference Include="..\src\CSLE.SourceCode.Language.pas"/>
         <DCCReference Include="Test.SourceCode.Language.pas"/>
+        <DCCReference Include="..\src\CSLE.Snippets.ID.pas"/>
+        <DCCReference Include="Test.Snippets.ID.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

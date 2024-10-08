@@ -23,7 +23,9 @@ uses
   Test.Streams.Wrapper in 'Test.Streams.Wrapper.pas',
   CSLE.Exceptions in '..\src\CSLE.Exceptions.pas',
   CSLE.SourceCode.Language in '..\src\CSLE.SourceCode.Language.pas',
-  Test.SourceCode.Language in 'Test.SourceCode.Language.pas';
+  Test.SourceCode.Language in 'Test.SourceCode.Language.pas',
+  CSLE.Snippets.ID in '..\src\CSLE.Snippets.ID.pas',
+  Test.Snippets.ID in 'Test.Snippets.ID.pas';
 
 {$IFNDEF TESTINSIGHT}
 var
