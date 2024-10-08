@@ -73,6 +73,8 @@
         <DCCReference Include="Test.Utils.Conversions.pas"/>
         <DCCReference Include="Test.Utils.Dates.pas"/>
         <DCCReference Include="..\src\CSLE.Utils.Dates.pas"/>
+        <DCCReference Include="Test.TextData.pas"/>
+        <DCCReference Include="..\src\CSLE.TextData.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
