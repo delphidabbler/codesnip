@@ -35,6 +35,8 @@ The following are the aims of this project:
 
 The `cupola` branch was branched from `master` as at [`version-4.21.1`](https://github.com/delphidabbler/codesnip/tree/version-4.21.1).
 
+Subsequently the changes made in master at [`version-4.21.2`](https://github.com/delphidabbler/codesnip/tree/version-4.21.2), [`version-4.22.0`](https://github.com/delphidabbler/codesnip/tree/version-4.22.0) and [`version-4.23.0`](https://github.com/delphidabbler/codesnip/tree/version-4.23.0) have been merged into `cupola`.
+
 Because `cupola` was branched from `master`, all the existing code base is available to it. To make it easy to distinguish the `cupola` code from the existing code, all development will take place in a `cupola` sub-directory off the repo root.
 
 Even though `cupola` is aiming to use all new code where possible, it is unrealistic to believe that none of the existing code will be re-used.  However any code being considered for re-use should be carefully reviewed. If accepted, the code must be renamed into a suitable unit scope and moved into the `cupola` sub-directory. In particular, for code to be re-used it:
