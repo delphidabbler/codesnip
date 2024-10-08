@@ -75,6 +75,8 @@
         <DCCReference Include="..\src\CSLE.Utils.Dates.pas"/>
         <DCCReference Include="Test.TextData.pas"/>
         <DCCReference Include="..\src\CSLE.TextData.pas"/>
+        <DCCReference Include="..\src\CSLE.Streams.Wrapper.pas"/>
+        <DCCReference Include="Test.Streams.Wrapper.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

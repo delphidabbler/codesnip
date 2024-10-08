@@ -18,7 +18,9 @@ uses
   Test.Utils.Dates in 'Test.Utils.Dates.pas',
   CSLE.Utils.Dates in '..\src\CSLE.Utils.Dates.pas',
   Test.TextData in 'Test.TextData.pas',
-  CSLE.TextData in '..\src\CSLE.TextData.pas';
+  CSLE.TextData in '..\src\CSLE.TextData.pas',
+  CSLE.Streams.Wrapper in '..\src\CSLE.Streams.Wrapper.pas',
+  Test.Streams.Wrapper in 'Test.Streams.Wrapper.pas';
 
 {$IFNDEF TESTINSIGHT}
 var
