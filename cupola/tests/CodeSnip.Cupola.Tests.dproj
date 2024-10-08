@@ -71,6 +71,8 @@
         </DelphiCompile>
         <DCCReference Include="..\src\CSLE.Utils.Conversions.pas"/>
         <DCCReference Include="Test.Utils.Conversions.pas"/>
+        <DCCReference Include="Test.Utils.Dates.pas"/>
+        <DCCReference Include="..\src\CSLE.Utils.Dates.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

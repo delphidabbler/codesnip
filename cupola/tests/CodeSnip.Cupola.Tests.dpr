@@ -14,7 +14,9 @@ uses
   {$ENDIF }
   DUnitX.TestFramework,
   CSLE.Utils.Conversions in '..\src\CSLE.Utils.Conversions.pas',
-  Test.Utils.Conversions in 'Test.Utils.Conversions.pas';
+  Test.Utils.Conversions in 'Test.Utils.Conversions.pas',
+  Test.Utils.Dates in 'Test.Utils.Dates.pas',
+  CSLE.Utils.Dates in '..\src\CSLE.Utils.Dates.pas';
 
 {$IFNDEF TESTINSIGHT}
 var
