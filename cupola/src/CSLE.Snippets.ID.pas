@@ -78,6 +78,8 @@ type
     ///  <summary>Checks if the snippet ID is null.</summary>
     function IsNull: Boolean;
 
+    function Hash: Integer;
+
     ///  <summary>Compares the two given snippet IDs.</summary>
     ///  <remarks>Returns zero if Left is the same as Right, -ve if Left is less
     ///  than Right or +ve if Left is greater than Right.</remarks>
@@ -158,6 +160,12 @@ begin
   Result := Compare(Left, Right) = EqualsValue;
 end;
 
+function TSnippetID.Hash: Integer;
+begin
+  var Data := ToByteArray;
+  Result := THashBobJenkins.GetHashValue(Data[0], Length(Data));
+end;
+
 class operator TSnippetID.Initialize(out Dest: TSnippetID);
 begin
   SetLength(Dest.fID, 0);
@@ -199,8 +207,7 @@ end;
 
 function TSnippetID.TComparator.GetHashCode(const Value: TSnippetID): Integer;
 begin
-  var Data := Value.ToByteArray;
-  Result := THashBobJenkins.GetHashValue(Data[0], Length(Data));
+  Result := Value.Hash;
 end;
 
 end.
