@@ -30,7 +30,9 @@ uses
   Grijjy.Collections in '..\src\vendor\grijjy-foundation\Grijjy.Collections.pas',
   Test.Snippets.Tag in 'Test.Snippets.Tag.pas',
   CSLE.Snippets.Format in '..\src\CSLE.Snippets.Format.pas',
-  Test.Snippets.Format in 'Test.Snippets.Format.pas';
+  Test.Snippets.Format in 'Test.Snippets.Format.pas',
+  CSLE.Snippets.Markup in '..\src\CSLE.Snippets.Markup.pas',
+  Test.Snippets.Markup in 'Test.Snippets.Markup.pas';
 
 {$IFNDEF TESTINSIGHT}
 var
