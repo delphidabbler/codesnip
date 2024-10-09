@@ -224,6 +224,19 @@ type
     procedure NotEqual_op_returns_false_with_equal_ANSI_strings;
     [Test]
     procedure NotEqual_op_returns_false_with_equal_UTF8_strings;
+
+    [Test]
+    procedure IsEmpty_returns_false_with_non_empty_ASCII_string;
+    [Test]
+    procedure IsEmpty_returns_false_with_non_empty_ANSI_string;
+    [Test]
+    procedure IsEmpty_returns_false_with_non_empty_UTF8_string;
+    [Test]
+    procedure IsEmpty_returns_true_with_empty_ASCII_string;
+    [Test]
+    procedure IsEmpty_returns_true_with_empty_ANSI_string;
+    [Test]
+    procedure IsEmpty_returns_true_with_empty_UTF8_string;
   end;
 
 implementation
@@ -523,6 +536,42 @@ begin
   var E1 := TTextData.Create('', TTextDataType.UTF8);
   var E2 := TTextData.Create('', TTextDataType.UTF8);
   Assert.IsTrue(E1 = E2, 'E1 = E2 (empty)');
+end;
+
+procedure TTestTextData.IsEmpty_returns_false_with_non_empty_ANSI_string;
+begin
+  var T := TTextData.Create(ANSIStr, TTextDataType.ANSI);
+  Assert.IsFalse(T.IsEmpty);
+end;
+
+procedure TTestTextData.IsEmpty_returns_false_with_non_empty_ASCII_string;
+begin
+  var T := TTextData.Create(ASCIIStr, TTextDataType.ASCII);
+  Assert.IsFalse(T.IsEmpty);
+end;
+
+procedure TTestTextData.IsEmpty_returns_false_with_non_empty_UTF8_string;
+begin
+  var T := TTextData.Create(UTF8Str, TTextDataType.UTF8);
+  Assert.IsFalse(T.IsEmpty);
+end;
+
+procedure TTestTextData.IsEmpty_returns_true_with_empty_ANSI_string;
+begin
+  var T := TTextData.Create(string.Empty, TTextDataType.ANSI);
+  Assert.IsTrue(T.IsEmpty);
+end;
+
+procedure TTestTextData.IsEmpty_returns_true_with_empty_ASCII_string;
+begin
+  var T := TTextData.Create(string.Empty, TTextDataType.ASCII);
+  Assert.IsTrue(T.IsEmpty);
+end;
+
+procedure TTestTextData.IsEmpty_returns_true_with_empty_UTF8_string;
+begin
+  var T := TTextData.Create(string.Empty, TTextDataType.UTF8);
+  Assert.IsTrue(T.IsEmpty);
 end;
 
 procedure TTestTextData.NotEqual_op_returns_false_with_equal_ANSI_strings;

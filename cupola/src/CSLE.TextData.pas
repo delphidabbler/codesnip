@@ -64,6 +64,9 @@ type
     function ToASCIIString: ASCIIString;
     function ToUTF8String: UTF8String;
 
+    ///  <summary>Checks if text data has no content.</summary>
+    function IsEmpty: Boolean; inline;
+
     class function SupportsString(const ADataType: TTextDataType;
       const AStr: string): Boolean; static;
 
@@ -197,6 +200,11 @@ class operator TTextData.Initialize(out Dest: TTextData);
 begin
   SetLength(Dest.fData, 0);
   Dest.fDataType := TTextDataType.UTF8;
+end;
+
+function TTextData.IsEmpty: Boolean;
+begin
+  Result := DataLength = 0;
 end;
 
 class operator TTextData.NotEqual(const Left, Right: TTextData): Boolean;
