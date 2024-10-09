@@ -32,7 +32,9 @@ uses
   CSLE.Snippets.Format in '..\src\CSLE.Snippets.Format.pas',
   Test.Snippets.Format in 'Test.Snippets.Format.pas',
   CSLE.Snippets.Markup in '..\src\CSLE.Snippets.Markup.pas',
-  Test.Snippets.Markup in 'Test.Snippets.Markup.pas';
+  Test.Snippets.Markup in 'Test.Snippets.Markup.pas',
+  Test.Snippets.Snippet in 'Test.Snippets.Snippet.pas',
+  CSLE.Snippets.Snippet in '..\src\CSLE.Snippets.Snippet.pas';
 
 {$IFNDEF TESTINSIGHT}
 var
