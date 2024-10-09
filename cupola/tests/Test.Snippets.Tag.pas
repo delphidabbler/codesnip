@@ -232,6 +232,21 @@ type
     procedure Contains_subset_is_false_for_two_different_5_and_6_elem_sets;
 
     [Test]
+    procedure SameAs_is_true_for_two_empty_sets;
+    [Test]
+    procedure SameAs_is_true_for_identical_4_element_sets;
+    [Test]
+    procedure SameAs_is_true_when_2_element_set_compared_to_itself;
+    [Test]
+    procedure SameAs_is_false_for_overlapping_4_element_sets;
+    [Test]
+    procedure SameAs_is_false_for_2_element_and_empty_sets;
+    [Test]
+    procedure SameAs_is_false_for_2_element_subset_of_3_element_set;
+    [Test]
+    procedure SameAs_is_false_for_disjoint_3_element_sets;
+
+    [Test]
     procedure Include_new_elem_results_in_larger_set_containing_elem;
     [Test]
     procedure Include_existing_elem_results_in_unchanged_set;
@@ -927,6 +942,66 @@ procedure TTestITagSet.parameterless_ctor_create_empty_set;
 begin
   var Tags: ITagSet := TTagSet.Create;
   Assert.IsTrue(TagSetToStr(EmptySet).IsEmpty);
+end;
+
+procedure TTestITagSet.SameAs_is_false_for_2_element_and_empty_sets;
+begin
+  var T0: ITagSet := TTagSet.Create;  // empty
+  var T2: ITagSet := TTagSet.Create([TTag.Create('A'), TTag.Create('B')]);
+  // check symmetry
+  Assert.IsFalse(T0.SameAs(T2), 'T0 <> T2');
+  Assert.IsFalse(T2.SameAs(T0), 'T2 <> T0');
+end;
+
+procedure TTestITagSet.SameAs_is_false_for_2_element_subset_of_3_element_set;
+begin
+  var T2: ITagSet := TTagSet.Create([TTag.Create('A'), TTag.Create('B')]);
+  var T3: ITagSet := TTagSet.Create([TTag.Create('A'), TTag.Create('B'), TTag.Create('C')]);
+  // check symmetry
+  Assert.IsFalse(T2.SameAs(T3), 'T2 <> T3');
+  Assert.IsFalse(T3.SameAs(T2), 'T3 <> T2');
+end;
+
+procedure TTestITagSet.SameAs_is_false_for_disjoint_3_element_sets;
+begin
+  var T3a: ITagSet := TTagSet.Create([TTag.Create('A'), TTag.Create('B'), TTag.Create('C')]);
+  var T3b: ITagSet := TTagSet.Create([TTag.Create('D'), TTag.Create('E'), TTag.Create('F')]);
+  // check symmetry
+  Assert.IsFalse(T3a.SameAs(T3b), 'T3a <> T3b');
+  Assert.IsFalse(T3b.SameAs(T3a), 'T3b <> T3a');
+end;
+
+procedure TTestITagSet.SameAs_is_false_for_overlapping_4_element_sets;
+begin
+  var T4a: ITagSet := TTagSet.Create([TTag.Create('A'), TTag.Create('B'), TTag.Create('C'), TTag.Create('D')]);
+  var T4b: ITagSet := TTagSet.Create([TTag.Create('F'), TTag.Create('E'), TTag.Create('C'), TTag.Create('D')]);
+  // check symmetry
+  Assert.IsFalse(T4a.SameAs(T4b), 'T4a <> T4b');
+  Assert.IsFalse(T4b.SameAs(T4a), 'T4b <> T4a');
+end;
+
+procedure TTestITagSet.SameAs_is_true_for_identical_4_element_sets;
+begin
+  var T4a: ITagSet := TTagSet.Create([TTag.Create('A'), TTag.Create('B'), TTag.Create('C'), TTag.Create('D')]);
+  var T4b: ITagSet := TTagSet.Create([TTag.Create('A'), TTag.Create('B'), TTag.Create('C'), TTag.Create('D')]);
+  // check symmetry
+  Assert.IsTrue(T4a.SameAs(T4b), 'T4a = T4b');
+  Assert.IsTrue(T4b.SameAs(T4a), 'T4b = T4a');
+end;
+
+procedure TTestITagSet.SameAs_is_true_for_two_empty_sets;
+begin
+  var TA: ITagSet := TTagSet.Create;
+  var TB: ITagSet := TTagSet.Create;
+  // check symmetry
+  Assert.IsTrue(TA.SameAs(TB), 'TA = TB');
+  Assert.IsTrue(TB.SameAs(TA), 'TB = TA');
+end;
+
+procedure TTestITagSet.SameAs_is_true_when_2_element_set_compared_to_itself;
+begin
+  var T2: ITagSet := TTagSet.Create([TTag.Create('A'), TTag.Create('B')]);
+  Assert.IsTrue(T2.SameAs(T2), 'T2 = T2');
 end;
 
 procedure TTestITagSet.Setup;

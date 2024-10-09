@@ -80,6 +80,7 @@ type
     function GetEnumerator: TEnumerator<TTag>;
     function Contains(const ATag: TTag): Boolean; overload;
     function Contains(ASubSet: ITagSet): Boolean; overload;
+    function SameAs(ASet: ITagSet): Boolean;
     function GetCount: NativeUInt;
     function IsEmpty: Boolean;
     function Filter(const AFilterFn: TTagFilter): ITagSet;
@@ -107,6 +108,7 @@ type
     function GetEnumerator: TEnumerator<TTag>; inline;
     function Contains(const ATag: TTag): Boolean; overload;
     function Contains(ASubSet: ITagSet): Boolean; overload;
+    function SameAs(ASet: ITagSet): Boolean;
     function GetCount: NativeUInt; inline;
     function IsEmpty: Boolean; inline;
     function Filter(const AFilterFn: TTagFilter): ITagSet;
@@ -331,6 +333,13 @@ end;
 function TTagSet.IsEmpty: Boolean;
 begin
   Result := fTags.Count = 0;
+end;
+
+function TTagSet.SameAs(ASet: ITagSet): Boolean;
+begin
+  if ASet.Count <> GetCount then
+    Exit(False);
+  Result := Contains(ASet);
 end;
 
 end.
