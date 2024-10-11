@@ -91,6 +91,8 @@
         <DCCReference Include="Test.Snippets.Markup.pas"/>
         <DCCReference Include="Test.Snippets.Snippet.pas"/>
         <DCCReference Include="..\src\CSLE.Snippets.Snippet.pas"/>
+        <DCCReference Include="Test.Snippets.SnippetsTable.pas"/>
+        <DCCReference Include="..\src\CSLE.Snippets.SnippetsTable.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
@@ -124,7 +126,6 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="Win32\Debug\CodeSnip.Cupola.Tests.exe" Configuration="Debug" Class="ProjectOutput"/>
                 <DeployFile LocalName="Win32\Debug\CodeSnip.Cupola.Tests.exe" Configuration="Debug" Class="ProjectOutput"/>
                 <DeployClass Name="AdditionalDebugSymbols">
                     <Platform Name="iOSSimulator">

@@ -34,7 +34,9 @@ uses
   CSLE.Snippets.Markup in '..\src\CSLE.Snippets.Markup.pas',
   Test.Snippets.Markup in 'Test.Snippets.Markup.pas',
   Test.Snippets.Snippet in 'Test.Snippets.Snippet.pas',
-  CSLE.Snippets.Snippet in '..\src\CSLE.Snippets.Snippet.pas';
+  CSLE.Snippets.Snippet in '..\src\CSLE.Snippets.Snippet.pas',
+  Test.Snippets.SnippetsTable in 'Test.Snippets.SnippetsTable.pas',
+  CSLE.Snippets.SnippetsTable in '..\src\CSLE.Snippets.SnippetsTable.pas';
 
 {$IFNDEF TESTINSIGHT}
 var
