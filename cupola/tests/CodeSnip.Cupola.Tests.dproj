@@ -93,6 +93,8 @@
         <DCCReference Include="..\src\CSLE.Snippets.Snippet.pas"/>
         <DCCReference Include="Test.Snippets.SnippetsTable.pas"/>
         <DCCReference Include="..\src\CSLE.Snippets.SnippetsTable.pas"/>
+        <DCCReference Include="..\src\CSLE.Utils.URI.pas"/>
+        <DCCReference Include="Test.Utils.URI.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
