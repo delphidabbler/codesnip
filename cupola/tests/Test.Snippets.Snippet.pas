@@ -37,8 +37,8 @@ type
       REMLText = '<p>Alice ℅ <strong>Bob</strong> ¶ &copy;2023.</p>';
       RTFText = '\pard Alice & Bob. (c)2023.\par';
   private
-    // ** NOTE: As new properties are added to TSnippet, add a test for nullness
-    //          to the folowing test method
+    // ** NOTE: As new properties are added to TSnippet, add a test for
+    //          default-ness to the folowing test method
     procedure CheckForDefaultProperties(const S: TSnippet; const CreatedDate: TDateTime);
   public
     [Setup]
@@ -115,6 +115,9 @@ type
     [TestCase('True','True')]
     [TestCase('False','False')]
     procedure Starred_prop_get_reflects_set(AValue: Boolean);
+
+    [Test]
+    procedure TestInfo_prop_get_reflects_set;
   end;
 
 implementation
@@ -125,6 +128,7 @@ uses
   CSLE.Snippets.Format,
   CSLE.Snippets.Markup,
   CSLE.Snippets.Tag,
+  CSLE.Snippets.TestInfo,
   CSLE.SourceCode.Language, // for inlining
   CSLE.TextData,            // for inlining
   CSLE.Utils.Dates;         // for inlining
@@ -134,6 +138,10 @@ begin
   // Increase the TDateTime (i.e. Extended) equality comparison epsilon a bit to
   // allow for time difference between the above to statements being executed.
   var CreatedDateEpsilon := 5 * Extended.Epsilon;
+
+  // Create default test info record: there is no method of TSnippetTestInfo to
+  // do this check
+  var DefaultTestInfo: TSnippetTestInfo;
 
   // Check all properties except .ID have their default values
   Assert.IsTrue(S.Title.IsEmpty, '.Title is empty string');
@@ -149,6 +157,7 @@ begin
   Assert.AreEqual(TSnippetFormatID.FreeForm, S.Format, '.Format is freeform');
   Assert.IsTrue(S.Tags.IsEmpty, '.Tags is empty');
   Assert.IsFalse(S.Starred, '.Starred is false');
+  Assert.IsTrue(DefaultTestInfo = S.TestInfo, '.TestInfo has default value');
 end;
 
 procedure TTestSnippet.CreateUnique_creates_record_with_non_null_id;
@@ -371,6 +380,29 @@ end;
 
 procedure TTestSnippet.TearDown;
 begin
+end;
+
+procedure TTestSnippet.TestInfo_prop_get_reflects_set;
+begin
+  var T1 := TSnippetTestInfo.Create(TTestInfoGeneral.Basic);
+  var T2 := TSnippetTestInfo.Create(TTestInfoGeneral.Advanced);
+  var T3 := TSnippetTestInfo.Create(
+    TTestInfoGeneral.Advanced,
+    [TTestInfoAdvanced.UnitTests, TTestInfoAdvanced.DemoCode]
+  );
+  var T4 := TSnippetTestInfo.Create(
+    TTestInfoGeneral.Advanced, [TTestInfoAdvanced.UnitTests], 'http://example.com'
+  );
+  var S := TSnippet.CreateUnique;
+
+  S.TestInfo := T1;
+  Assert.IsTrue(T1 = S.TestInfo, 'T1');
+  S.TestInfo := T2;
+  Assert.IsTrue(T2 = S.TestInfo, 'T2');
+  S.TestInfo := T3;
+  Assert.IsTrue(T3 = S.TestInfo, 'T3');
+  S.TestInfo := T4;
+  Assert.IsTrue(T4 = S.TestInfo, 'T4');
 end;
 
 procedure TTestSnippet.Title_prop_get_reflects_set(const ATitle: string);

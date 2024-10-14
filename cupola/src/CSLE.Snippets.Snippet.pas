@@ -19,6 +19,7 @@ uses
   CSLE.Snippets.ID,
   CSLE.Snippets.Markup,
   CSLE.Snippets.Tag,
+  CSLE.Snippets.TestInfo,
   CSLE.SourceCode.Language,
   CSLE.Utils.Dates;
 
@@ -40,6 +41,7 @@ type
       fFormat: TSnippetFormatID;
       fTags: ITagSet;
       fStarred: Boolean;
+      fTestInfo: TSnippetTestInfo;
     procedure SetModified(const AValue: TUTCDateTime);
     procedure SetRequiredModules(const AValue: TArray<string>);
     procedure SetRequiredSnippets(const AValue: TArray<TSnippetID>);
@@ -120,8 +122,12 @@ type
     property Starred: Boolean
       read fStarred write fStarred;
 
+    ///  <summary>Provides information about how the snippet has been tested.
+    ///  </summary>
+    property TestInfo: TSnippetTestInfo
+      read fTestInfo write fTestInfo;
+
     // TODO: property CompileResults: TCompileResults
-    // TODO: property TestInfo: TSnippetTestInfo
     // TODO: property Origin: TSnippetOrigin
     // TODO: property Sync: TSnippetSync
 
@@ -161,6 +167,7 @@ begin
   Dest.fFormat := Src.fFormat;
   Dest.fTags := TTagSet.Create(Src.fTags);
   Dest.fStarred := Src.fStarred;
+  Dest.fTestInfo := Src.fTestInfo;
 end;
 
 constructor TSnippet.Create(const AID: TSnippetID);
@@ -188,6 +195,7 @@ begin
 
   var NullID: TSnippetID;   // ID initialised to Null
   var NullMarkup: TSnippetMarkup; // Markup initialised to Null (empty)
+  var NullTestInfo: TSnippetTestInfo; // TestInfo initialised to Null (empty)
 
   Dest.fID := NullID;
   Dest.fTitle := string.Empty;
@@ -203,6 +211,7 @@ begin
   Dest.fFormat := TSnippetFormatID.Freeform;
   Dest.fTags := TTagSet.Create;
   Dest.fStarred := False;
+  Dest.fTestInfo := NullTestInfo;
 end;
 
 procedure TSnippet.SetModified(const AValue: TUTCDateTime);
