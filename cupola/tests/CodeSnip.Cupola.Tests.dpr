@@ -38,7 +38,9 @@ uses
   Test.Snippets.SnippetsTable in 'Test.Snippets.SnippetsTable.pas',
   CSLE.Snippets.SnippetsTable in '..\src\CSLE.Snippets.SnippetsTable.pas',
   CSLE.Utils.URI in '..\src\CSLE.Utils.URI.pas',
-  Test.Utils.URI in 'Test.Utils.URI.pas';
+  Test.Utils.URI in 'Test.Utils.URI.pas',
+  CSLE.Snippets.TestInfo in '..\src\CSLE.Snippets.TestInfo.pas',
+  Test.Snippets.TestInfo in 'Test.Snippets.TestInfo.pas';
 
 {$IFNDEF TESTINSIGHT}
 var
