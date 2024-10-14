@@ -57,8 +57,12 @@ type
     ///  <c>Kind</c> and <c>Extra</c>.</summary>
     property Content: TTextData read fContent;
 
-    ///  <summary>Checks if markup has default, null value.</summary>
-    function IsNull: Boolean;
+    ///  <summary>Checks if the this record's properties have their default
+    ///  values.</summary>
+    ///  <remarks>The default values are those set when the record is 1st
+    ///  initialised.</remarks>
+    function IsDefault: Boolean;
+
     ///  <summary>Checks if markup has no content.</summary>
     function IsEmpty: Boolean;
 
@@ -110,16 +114,16 @@ begin
   Dest.fExtra := 0;
 end;
 
-function TSnippetMarkup.IsEmpty: Boolean;
-begin
-  Result := fContent.IsEmpty;
-end;
-
-function TSnippetMarkup.IsNull: Boolean;
+function TSnippetMarkup.IsDefault: Boolean;
 begin
   Result := (fKind = TSnippetMarkupKind.Plain)
     and fContent.IsEmpty
     and (fExtra = 0);
+end;
+
+function TSnippetMarkup.IsEmpty: Boolean;
+begin
+  Result := fContent.IsEmpty;
 end;
 
 class operator TSnippetMarkup.NotEqual(const Left,

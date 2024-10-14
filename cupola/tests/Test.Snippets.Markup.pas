@@ -81,9 +81,9 @@ type
     procedure IsEmpty_returns_false_when_content_exists;
 
     [Test]
-    procedure IsNull_returns_true_when_has_null_value;
+    procedure IsDefault_returns_true_when_props_have_default_values;
     [Test]
-    procedure IsNull_returns_false_when_has_non_null_value;
+    procedure IsDefault_returns_false_when_props_do_not_have_default_values;
   end;
 
 implementation
@@ -221,6 +221,28 @@ begin
   Assert.IsTrue(Left = Right);
 end;
 
+procedure TTestSnippetMarkup.IsDefault_returns_false_when_props_do_not_have_default_values;
+begin
+  var M1 := TSnippetMarkup.Create('', TSnippetMarkupKind.REML);
+  var M2 := TSnippetMarkup.Create(PlainText, TSnippetMarkupKind.Plain, 0);
+  var M3 := TSnippetMarkup.Create(REMLText, TSnippetMarkupKind.REML, 0);
+  var M4 := TSnippetMarkup.Create(REMLText, TSnippetMarkupKind.REML, 5);
+  var M5 := TSnippetMarkup.Create('', TSnippetMarkupKind.Plain, 1);
+  Assert.IsFalse(M1.IsDefault, 'M1');
+  Assert.IsFalse(M2.IsDefault, 'M2');
+  Assert.IsFalse(M3.IsDefault, 'M3');
+  Assert.IsFalse(M4.IsDefault, 'M4');
+  Assert.IsFalse(M5.IsDefault, 'M5');
+end;
+
+procedure TTestSnippetMarkup.IsDefault_returns_true_when_props_have_default_values;
+begin
+  var M1: TSnippetMarkup;   // should initialise to Null by default
+  var M2 := TSnippetMarkup.Create('', TSnippetMarkupKind.Plain, 0);
+  Assert.IsTrue(M1.IsDefault, 'M1');
+  Assert.IsTrue(M2.IsDefault, 'M2');
+end;
+
 procedure TTestSnippetMarkup.IsEmpty_returns_false_when_content_exists;
 begin
   var MPlain := TSnippetMarkup.Create(PlainText, TSnippetMarkupKind.Plain);
@@ -239,28 +261,6 @@ begin
   Assert.IsTrue(MPlain.IsEmpty, 'Empty: Plain');
   Assert.IsTrue(MREML.IsEmpty, 'Empty: REML');
   Assert.IsTrue(MRTF.IsEmpty, 'Empty: RTF');
-end;
-
-procedure TTestSnippetMarkup.IsNull_returns_false_when_has_non_null_value;
-begin
-  var M1 := TSnippetMarkup.Create('', TSnippetMarkupKind.REML);
-  var M2 := TSnippetMarkup.Create(PlainText, TSnippetMarkupKind.Plain, 0);
-  var M3 := TSnippetMarkup.Create(REMLText, TSnippetMarkupKind.REML, 0);
-  var M4 := TSnippetMarkup.Create(REMLText, TSnippetMarkupKind.REML, 5);
-  var M5 := TSnippetMarkup.Create('', TSnippetMarkupKind.Plain, 1);
-  Assert.IsFalse(M1.IsNull, 'M1 is not null');
-  Assert.IsFalse(M2.IsNull, 'M2 is not null');
-  Assert.IsFalse(M3.IsNull, 'M3 is not null');
-  Assert.IsFalse(M4.IsNull, 'M4 is not null');
-  Assert.IsFalse(M5.IsNull, 'M5 is not null');
-end;
-
-procedure TTestSnippetMarkup.IsNull_returns_true_when_has_null_value;
-begin
-  var M1: TSnippetMarkup;   // should initialise to Null by default
-  var M2 := TSnippetMarkup.Create('', TSnippetMarkupKind.Plain, 0);
-  Assert.IsTrue(M1.IsNull, 'M1 is null');
-  Assert.IsTrue(M2.IsNull, 'M2 is null');
 end;
 
 procedure TTestSnippetMarkup.NotEqual_op_returns_false_for_default_records;

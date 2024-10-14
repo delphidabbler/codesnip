@@ -145,7 +145,7 @@ begin
 
   // Check all properties except .ID have their default values
   Assert.IsTrue(S.Title.IsEmpty, '.Title is empty string');
-  Assert.IsTrue(S.Description.IsNull, '.Description markup is null');
+  Assert.IsTrue(S.Description.IsDefault, '.Description markup has default value');
   Assert.IsTrue(S.SourceCode.IsEmpty, '.SourceCode is empty string');
   Assert.IsTrue(S.LanguageID.IsDefault, '.LanguageID has default value');
   Assert.IsTrue(S.Modified.IsNull, '.Modifid is null');
@@ -153,7 +153,7 @@ begin
   Assert.AreEqual(0, Integer(Length(S.RequiredModules)), '.RequiredModules array is empty');
   Assert.AreEqual(0, Integer(Length(S.RequiredSnippets)), '.RequiredSnippets array is empty');
   Assert.AreEqual(0, Integer(Length(S.XRefs)), '.XRefs array is empty');
-  Assert.IsTrue(S.Notes.IsNull, '.Notes markup is null');
+  Assert.IsTrue(S.Notes.IsDefault, '.Notes markup has default value');
   Assert.AreEqual(TSnippetFormatID.FreeForm, S.Format, '.Format is freeform');
   Assert.IsTrue(S.Tags.IsEmpty, '.Tags is empty');
   Assert.IsFalse(S.Starred, '.Starred is false');
