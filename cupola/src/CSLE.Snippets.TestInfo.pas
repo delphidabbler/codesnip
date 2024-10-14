@@ -78,6 +78,12 @@ type
     ///  <c>TTestInfoGeneral.Advanced</c>.</remarks>
     property URL: string read fURL;
 
+    ///  <summary>Checks if the this record's properties have their default
+    ///  values.</summary>
+    ///  <remarks>The default values are those set when the record is 1st
+    ///  initialised.</remarks>
+    function IsDefault: Boolean;
+
     // Default ctor: creates a default test information record.
     class operator Initialize(out Dest: TSnippetTestInfo);
 
@@ -139,6 +145,12 @@ begin
   Dest.fGeneral := TTestInfoGeneral.Unknown;
   Dest.fAdvanced := [];
   Dest.fURL := string.Empty;
+end;
+
+function TSnippetTestInfo.IsDefault: Boolean;
+begin
+  var T: TSnippetTestInfo;
+  Result := Self = T;
 end;
 
 class operator TSnippetTestInfo.NotEqual(const Left,

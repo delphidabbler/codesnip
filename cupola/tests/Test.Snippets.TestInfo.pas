@@ -71,6 +71,20 @@ type
     procedure ctor_with_advanced_params_that_use_url_raises_exception_with_bad_url(const AGeneralStr, AAdvancedStr: string);
 
     [Test]
+    procedure IsDefault_returns_true_for_record_created_by_default_ctor;
+
+    [Test]
+    [TestCase('Unknown/[]','Unknown,,,True')]
+    [TestCase('None/[]','None,,,False')]
+    [TestCase('Basic/[]','Basic,,,False')]
+    [TestCase('Advanced/[]','Advanced,,,False')]
+    [TestCase('Unknown/[UnitTests]/<url>','Unknown,UnitTests,http://example.com,True')]
+    [TestCase('None/[DemoCode,OtherTests]','None,DemoCode+OtherTests,,False')]
+    [TestCase('Basic/[DemoCode,UnitTests]/<url>','Basic,DemoCode+UnitTests,http://example.com,False')]
+    [TestCase('Advanced/[DemoCode,OtherTests,UnitTests]/<url>','Advanced,DemoCode+OtherTests+UnitTests,https://example.com,False')]
+    procedure IsDefault_returns_expected_value_for_various_prop_values(const AGeneralStr, AAdvancedStr, AURL: string; const Expected: Boolean);
+
+    [Test]
     procedure props_have_expected_default_values_when_created_by_default_ctor;
 
     [Test]
@@ -236,7 +250,6 @@ end;
 
 procedure TTestSnippetTestInfo.ctor_with_only_one_param_always_succeeds(
   const AKindStr: string);
-
 begin
   Assert.WillNotRaise(
     procedure
@@ -263,6 +276,21 @@ function TTestSnippetTestInfo.GeneralTestFromStr(
   const S: string): TTestInfoGeneral;
 begin
   Result := TRttiEnumerationType.GetValue<TTestInfoGeneral>(S);
+end;
+
+procedure TTestSnippetTestInfo.IsDefault_returns_expected_value_for_various_prop_values(
+  const AGeneralStr, AAdvancedStr, AURL: string; const Expected: Boolean);
+begin
+  var General := GeneralTestFromStr(AGeneralStr);
+  var Advanced := AdvancedSetFromStr(AAdvancedStr);
+  var T := TSnippetTestInfo.Create(General, Advanced, AURL);
+  Assert.AreEqual(Expected, T.IsDefault);
+end;
+
+procedure TTestSnippetTestInfo.IsDefault_returns_true_for_record_created_by_default_ctor;
+begin
+  var T: TSnippetTestInfo;  // default ctor called here
+  Assert.IsTrue(T.IsDefault);
 end;
 
 procedure TTestSnippetTestInfo.NotEqual_op_has_expected_results(
