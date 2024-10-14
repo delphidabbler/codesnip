@@ -139,10 +139,6 @@ begin
   // allow for time difference between the above to statements being executed.
   var CreatedDateEpsilon := 5 * Extended.Epsilon;
 
-  // Create default test info record: there is no method of TSnippetTestInfo to
-  // do this check
-  var DefaultTestInfo: TSnippetTestInfo;
-
   // Check all properties except .ID have their default values
   Assert.IsTrue(S.Title.IsEmpty, '.Title is empty string');
   Assert.IsTrue(S.Description.IsDefault, '.Description markup has default value');
@@ -157,7 +153,7 @@ begin
   Assert.AreEqual(TSnippetFormatID.FreeForm, S.Format, '.Format is freeform');
   Assert.IsTrue(S.Tags.IsEmpty, '.Tags is empty');
   Assert.IsFalse(S.Starred, '.Starred is false');
-  Assert.IsTrue(DefaultTestInfo = S.TestInfo, '.TestInfo has default value');
+  Assert.IsTrue(S.TestInfo.IsDefault, '.TestInfo has default value');
 end;
 
 procedure TTestSnippet.CreateUnique_creates_record_with_non_null_id;
@@ -384,6 +380,7 @@ end;
 
 procedure TTestSnippet.TestInfo_prop_get_reflects_set;
 begin
+  var TDefault: TSnippetTestInfo;
   var T1 := TSnippetTestInfo.Create(TTestInfoGeneral.Basic);
   var T2 := TSnippetTestInfo.Create(TTestInfoGeneral.Advanced);
   var T3 := TSnippetTestInfo.Create(
@@ -395,6 +392,8 @@ begin
   );
   var S := TSnippet.CreateUnique;
 
+  S.TestInfo := TDefault;
+  Assert.IsTrue(TDefault = S.TestInfo, 'TDefault');
   S.TestInfo := T1;
   Assert.IsTrue(T1 = S.TestInfo, 'T1');
   S.TestInfo := T2;
