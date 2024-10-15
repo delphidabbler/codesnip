@@ -130,7 +130,7 @@ begin
     fAdvanced := [];
     fURL := string.Empty;
   end;
-  if not TURI.IsValidURIString(fURL, True) then
+  if not TImmutableURI.IsValidURIString(fURL, True) then
     raise ESnippetTestInfo.CreateFmt('Invalid URL: %s', [fURL]);
 end;
 
@@ -176,8 +176,8 @@ begin
     Exit(True);
   // Only if Left & Right's .General field is Advanced AND if Left and Right's
   // .Advanced property is not empty set do we compare URLs
-  var LeftURI := TURI.Create(Left.fURL, True);
-  var RightURI := TURI.Create(Right.fURL, True);
+  var LeftURI := TImmutableURI.Create(Left.fURL, True);
+  var RightURI := TImmutableURI.Create(Right.fURL, True);
   Result := LeftURI = RightURI;
 end;
 

@@ -17,7 +17,7 @@ uses
 
 type
   [TestFixture]
-  TTestTURI = class
+  TTestTImmutableURI = class
   private
     const
       SimpleURI = 'https://www.example.com';
@@ -129,8 +129,8 @@ type
       // Source of file URI format info:
       // https://en.wikipedia.org/wiki/File_URI_scheme
       // Per wikipedia, the form file:/path/to/file is acceptable and is
-      // equivalent to file:///path/to/file, but the Delphi RTL code that TURI
-      // depends upon does not support this format
+      // equivalent to file:///path/to/file, but the Delphi RTL code that
+      // TImmutableURI depends upon does not support this format
       FileURI2 = 'file://localhost/path/to/file';
       FileURI2Encoded = FileURI2;
       FileURI2Scheme = 'file';
@@ -422,116 +422,116 @@ uses
   System.Classes,
   System.Math;
 
-procedure TTestTURI.Compare_returns_correct_value_for_uri_ordering(const Left,
+procedure TTestTImmutableURI.Compare_returns_correct_value_for_uri_ordering(const Left,
   Right: string; const Expected: Integer);
 begin
-  var L := TURI.Create(Left, True);
-  var R := TURI.Create(Right, True);
-  Assert.AreEqual(Sign(Expected), Sign(TURI.Compare(L, R)));
+  var L := TImmutableURI.Create(Left, True);
+  var R := TImmutableURI.Create(Right, True);
+  Assert.AreEqual(Sign(Expected), Sign(TImmutableURI.Compare(L, R)));
 end;
 
-procedure TTestTURI.ctor_raises_exception_for_bad_uri;
+procedure TTestTImmutableURI.ctor_raises_exception_for_bad_uri;
 begin
   // Exceptions raised for bad URI string regardless of whether empty strings are permitted
   for var AllowEmptyStr: Boolean in [False, True] do
     Assert.WillRaise(
       procedure
       begin
-        var URI := TURI.Create(BadURI, AllowEmptyStr);
+        var URI := TImmutableURI.Create(BadURI, AllowEmptyStr);
       end,
       EURI
     );
 end;
 
-procedure TTestTURI.ctor_raises_exception_for_empty_string_when_not_permitted;
+procedure TTestTImmutableURI.ctor_raises_exception_for_empty_string_when_not_permitted;
 begin
   Assert.WillRaise(
     procedure
     begin
       // pass empty string when empty strings are not permitted
-      var URI := TURI.Create(string.Empty, False);
+      var URI := TImmutableURI.Create(string.Empty, False);
     end,
     EURI
   );
 end;
 
-procedure TTestTURI.ctor_succeeds_on_valid_and_empty_uri_strings_when_empty_strings_permitted(
+procedure TTestTImmutableURI.ctor_succeeds_on_valid_and_empty_uri_strings_when_empty_strings_permitted(
   const AURIStr: string);
 begin
   Assert.WillNotRaise(
     procedure
     begin
-      var URI := TURI.Create(AURIStr, True);
+      var URI := TImmutableURI.Create(AURIStr, True);
     end
   );
 end;
 
-procedure TTestTURI.ctor_succeeds_on_valid_uri_strings_when_empty_strings_not_permitted(
+procedure TTestTImmutableURI.ctor_succeeds_on_valid_uri_strings_when_empty_strings_not_permitted(
   const AURIStr: string);
 begin
   Assert.WillNotRaise(
     procedure
     begin
-      var URI := TURI.Create(AURIStr, False);
+      var URI := TImmutableURI.Create(AURIStr, False);
     end
   );
 end;
 
-procedure TTestTURI.Equals_op_returns_expected_value_for_uri_equality(
+procedure TTestTImmutableURI.Equals_op_returns_expected_value_for_uri_equality(
   const Left, Right: string; const Expected: Boolean);
 begin
-  var L := TURI.Create(Left, True);
-  var R := TURI.Create(Right, True);
+  var L := TImmutableURI.Create(Left, True);
+  var R := TImmutableURI.Create(Right, True);
   Assert.AreEqual(Expected, L = R);
 end;
 
-procedure TTestTURI.Fragment_prop_returns_expected_value(const AURIStr,
+procedure TTestTImmutableURI.Fragment_prop_returns_expected_value(const AURIStr,
   Expected: string);
 begin
-  var U := TURI.Create(AURIStr, True);
+  var U := TImmutableURI.Create(AURIStr, True);
   Assert.AreEqual(Expected, U.Fragment);
 end;
 
-procedure TTestTURI.Host_prop_returns_expected_value(const AURIStr,
+procedure TTestTImmutableURI.Host_prop_returns_expected_value(const AURIStr,
   Expected: string);
 begin
-  var U := TURI.Create(AURIStr, True);
+  var U := TImmutableURI.Create(AURIStr, True);
   Assert.AreEqual(Expected, U.Host);
 end;
 
-procedure TTestTURI.ImplictCast_op_works_with_assignment(const AURIStr, Expected: string);
+procedure TTestTImmutableURI.ImplictCast_op_works_with_assignment(const AURIStr, Expected: string);
 begin
   var UF := System.Net.URLClient.TURI.Create(AURIStr);
-  var U: TURI := UF;
+  var U: TImmutableURI := UF;
   Assert.AreEqual(UF.ToString, U.ToString, 'Check native same as foreign');
   Assert.IsFalse(U.IsEmpty, 'Check native not empty');
 end;
 
-procedure TTestTURI.IsEmpty_returns_expected_value_for_empty_and_non_empty_uris(
+procedure TTestTImmutableURI.IsEmpty_returns_expected_value_for_empty_and_non_empty_uris(
   AURIString: string; Expected: Boolean);
 begin
-  var URI := TURI.Create(AURIString, True);
+  var URI := TImmutableURI.Create(AURIString, True);
   Assert.AreEqual(Expected, URI.IsEmpty);
 end;
 
-procedure TTestTURI.IsValidURIString_returns_expected_result_depending_whether_empty_strings_permitted(
+procedure TTestTImmutableURI.IsValidURIString_returns_expected_result_depending_whether_empty_strings_permitted(
   const AURIStr: string; const APermitEmpty, Expected: Boolean);
 begin
-  Assert.AreEqual(Expected, TURI.IsValidURIString(AURIStr, APermitEmpty));
+  Assert.AreEqual(Expected, TImmutableURI.IsValidURIString(AURIStr, APermitEmpty));
 end;
 
-procedure TTestTURI.NotEquals_op_returns_expected_value_for_uri_equality(
+procedure TTestTImmutableURI.NotEquals_op_returns_expected_value_for_uri_equality(
   const Left, Right: string; const Expected: Boolean);
 begin
-  var L := TURI.Create(Left, True);
-  var R := TURI.Create(Right, True);
+  var L := TImmutableURI.Create(Left, True);
+  var R := TImmutableURI.Create(Right, True);
   Assert.AreEqual(Expected, L <> R);
 end;
 
-procedure TTestTURI.Params_prop_returns_expected_value(const AURIStr,
+procedure TTestTImmutableURI.Params_prop_returns_expected_value(const AURIStr,
   Expected: string);
 begin
-  var U := TURI.Create(AURIStr, True);
+  var U := TImmutableURI.Create(AURIStr, True);
   var Q := Expected.Split(['&']);
   var ExpectedParams := TStringList.Create;
   for var I in Q do
@@ -551,69 +551,69 @@ begin
   Assert.AreEqual(ExpectedParams, GotParams, 'Check parameter content');
 end;
 
-procedure TTestTURI.Password_prop_returns_expected_value(const AURIStr,
+procedure TTestTImmutableURI.Password_prop_returns_expected_value(const AURIStr,
   Expected: string);
 begin
-  var U := TURI.Create(AURIStr, True);
+  var U := TImmutableURI.Create(AURIStr, True);
   Assert.AreEqual(Expected, U.Password);
 end;
 
-procedure TTestTURI.Path_prop_returns_expected_value(const AURIStr,
+procedure TTestTImmutableURI.Path_prop_returns_expected_value(const AURIStr,
   Expected: string);
 begin
-  var U := TURI.Create(AURIStr, True);
+  var U := TImmutableURI.Create(AURIStr, True);
   Assert.AreEqual(Expected, U.Path);
 end;
 
-procedure TTestTURI.Port_prop_returns_expected_value(const AURIStr,
+procedure TTestTImmutableURI.Port_prop_returns_expected_value(const AURIStr,
   Expected: string);
 begin
-  var U := TURI.Create(AURIStr, True);
+  var U := TImmutableURI.Create(AURIStr, True);
   Assert.AreEqual(Expected.ToInteger, U.Port);
 end;
 
-procedure TTestTURI.Query_prop_returns_expected_value(const AURIStr,
+procedure TTestTImmutableURI.Query_prop_returns_expected_value(const AURIStr,
   Expected: string);
 begin
-  var U := TURI.Create(AURIStr, True);
+  var U := TImmutableURI.Create(AURIStr, True);
   Assert.AreEqual(Expected, U.Query);
 end;
 
-procedure TTestTURI.Scheme_prop_returns_expected_value(const AURIStr,
+procedure TTestTImmutableURI.Scheme_prop_returns_expected_value(const AURIStr,
   Expected: string);
 begin
-  var U := TURI.Create(AURIStr, True);
+  var U := TImmutableURI.Create(AURIStr, True);
   Assert.AreEqual(Expected, U.Scheme);
 end;
 
-procedure TTestTURI.Setup;
+procedure TTestTImmutableURI.Setup;
 begin
 end;
 
-procedure TTestTURI.TearDown;
+procedure TTestTImmutableURI.TearDown;
 begin
 end;
 
-procedure TTestTURI.ToString_returns_empty_string_for_empty_uri;
+procedure TTestTImmutableURI.ToString_returns_empty_string_for_empty_uri;
 begin
-  var URI := TURI.Create(string.Empty, True);
+  var URI := TImmutableURI.Create(string.Empty, True);
   Assert.AreEqual(string.Empty, URI.ToString);
 end;
 
-procedure TTestTURI.ToString_returns_URI_unchanged(const AURIStr: string; const Expected: string);
+procedure TTestTImmutableURI.ToString_returns_URI_unchanged(const AURIStr: string; const Expected: string);
 begin
-  var URI := TURI.Create(AURIStr, False);
+  var URI := TImmutableURI.Create(AURIStr, False);
   Assert.AreEqual(Expected, URI.ToString);
 end;
 
-procedure TTestTURI.Username_prop_returns_expected_value(const AURIStr,
+procedure TTestTImmutableURI.Username_prop_returns_expected_value(const AURIStr,
   Expected: string);
 begin
-  var U := TURI.Create(AURIStr, True);
+  var U := TImmutableURI.Create(AURIStr, True);
   Assert.AreEqual(Expected, U.Username);
 end;
 
 initialization
-  TDUnitX.RegisterTestFixture(TTestTURI);
+  TDUnitX.RegisterTestFixture(TTestTImmutableURI);
 
 end.

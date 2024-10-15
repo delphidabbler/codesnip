@@ -18,7 +18,7 @@ uses
   CSLE.Exceptions;
 
 type
-  TURI = record
+  TImmutableURI = record
   strict private
     var
       // Record containing URI information. Must not be accessed if fEmpty is
@@ -91,10 +91,10 @@ type
     ///  <summary>Fragment part of the URI.</summary>
     property Fragment: string read GetFragment;
 
-    ///  <summary>Compares two <c>TURI</c> records and returns a 0, -ve or +ve
-    ///  value depending on whether the <c>Left</c> is equal to, less than or
-    ///  greater than <c>Right</c>, respectively.</summary>
-    class function Compare(const Left, Right: TURI): Integer; static;
+    ///  <summary>Compares two <c>TImmutableURI</c> records and returns a 0, 
+    ///  -ve or +ve value depending on whether the <c>Left</c> is equal to, less 
+    ///  than or greater than <c>Right</c>, respectively.</summary>
+    class function Compare(const Left, Right: TImmutableURI): Integer; static;
 
     ///  <summary>Checks the validity of a given URI. An empty URI is only
     ///  considered to be valid if <c>APermitEmpty</c> is <c>True</c>.</summary>
@@ -102,9 +102,10 @@ type
       const APermitEmpty: Boolean): Boolean; static;
 
     // Operator overloads
-    class operator Equal(const Left, Right: TURI): Boolean;
-    class operator NotEqual(const Left, Right: TURI): Boolean;
-    class operator Implicit(const AURI: System.Net.URLCLient.TURI): TURI;
+    class operator Equal(const Left, Right: TImmutableURI): Boolean;
+    class operator NotEqual(const Left, Right: TImmutableURI): Boolean;
+    class operator Implicit(const AURI: System.Net.URLCLient.TURI): 
+      TImmutableURI;
   end;
 
   EURI = class(EExpected);
@@ -115,9 +116,9 @@ uses
   System.SysUtils,
   System.Types;
 
-{ TURI }
+{ TImmutableURI }
 
-class function TURI.Compare(const Left, Right: TURI): Integer;
+class function TImmutableURI.Compare(const Left, Right: TImmutableURI): Integer;
 begin
   // Deal with one or more empty URIs: empty is less than
   if Left.IsEmpty and Right.IsEmpty then
@@ -169,7 +170,8 @@ begin
   );
 end;
 
-constructor TURI.Create(const AURIStr: string; const APermitEmpty: Boolean);
+constructor TImmutableURI.Create(const AURIStr: string; 
+  const APermitEmpty: Boolean);
 begin
   fIsEmpty := AURIStr.IsEmpty;
   if fIsEmpty and not APermitEmpty then
@@ -181,12 +183,12 @@ begin
   end;
 end;
 
-class operator TURI.Equal(const Left, Right: TURI): Boolean;
+class operator TImmutableURI.Equal(const Left, Right: TImmutableURI): Boolean;
 begin
   Result := Compare(Left, Right) = 0;
 end;
 
-function TURI.GetFragment: string;
+function TImmutableURI.GetFragment: string;
 begin
   if fIsEmpty then
     Result := string.Empty
@@ -194,7 +196,7 @@ begin
     Result := fURI.Fragment;
 end;
 
-function TURI.GetHost: string;
+function TImmutableURI.GetHost: string;
 begin
   if fIsEmpty then
     Result := string.Empty
@@ -202,7 +204,7 @@ begin
     Result := fURI.Host;
 end;
 
-function TURI.GetParams: TURIParameters;
+function TImmutableURI.GetParams: TURIParameters;
 begin
   if fIsEmpty then
     SetLength(Result, 0)
@@ -210,7 +212,7 @@ begin
     Result := fURI.Params;
 end;
 
-function TURI.GetPassword: string;
+function TImmutableURI.GetPassword: string;
 begin
   if fIsEmpty then
     Result := string.Empty
@@ -218,7 +220,7 @@ begin
     Result := fURI.Password;
 end;
 
-function TURI.GetPath: string;
+function TImmutableURI.GetPath: string;
 begin
   if fIsEmpty then
     Result := string.Empty
@@ -226,7 +228,7 @@ begin
     Result := fURI.Path;
 end;
 
-function TURI.GetPort: Integer;
+function TImmutableURI.GetPort: Integer;
 begin
   if fIsEmpty then
     Result := 0
@@ -234,7 +236,7 @@ begin
     Result := fURI.Port;
 end;
 
-function TURI.GetQuery: string;
+function TImmutableURI.GetQuery: string;
 begin
   if fIsEmpty then
     Result := string.Empty
@@ -242,7 +244,7 @@ begin
     Result := fURI.Query;
 end;
 
-function TURI.GetScheme: string;
+function TImmutableURI.GetScheme: string;
 begin
   if fIsEmpty then
     Result := string.Empty
@@ -250,7 +252,7 @@ begin
     Result := fURI.Scheme;
 end;
 
-function TURI.GetUsername: string;
+function TImmutableURI.GetUsername: string;
 begin
   if fIsEmpty then
     Result := string.Empty
@@ -258,18 +260,19 @@ begin
     Result := fURI.Username;
 end;
 
-class operator TURI.Implicit(const AURI: System.Net.URLCLient.TURI): TURI;
+class operator TImmutableURI.Implicit(const AURI: System.Net.URLCLient.TURI): 
+  TImmutableURI;
 begin
   Result.fURI := AURI;
   Result.fIsEmpty := False;
 end;
 
-function TURI.IsEmpty: Boolean;
+function TImmutableURI.IsEmpty: Boolean;
 begin
   Result := fIsEmpty;
 end;
 
-class function TURI.IsValidURIString(const AURIStr: string;
+class function TImmutableURI.IsValidURIString(const AURIStr: string;
   const APermitEmpty: Boolean): Boolean;
 begin
   if AURIStr.IsEmpty then
@@ -278,12 +281,13 @@ begin
   Result := TryDeconstructURI(AURIStr, Dummy);
 end;
 
-class operator TURI.NotEqual(const Left, Right: TURI): Boolean;
+class operator TImmutableURI.NotEqual(const Left, Right: TImmutableURI): 
+  Boolean;
 begin
   Result := Compare(Left, Right) <> 0;
 end;
 
-function TURI.ToString: string;
+function TImmutableURI.ToString: string;
 begin
   if fIsEmpty then
     Result := string.Empty
@@ -291,7 +295,7 @@ begin
     Result := fURI.ToString;
 end;
 
-class function TURI.TryDeconstructURI(const AURIStr: string;
+class function TImmutableURI.TryDeconstructURI(const AURIStr: string;
   out AURI: System.Net.URLClient.TURI): Boolean;
 begin
   Result := True;
