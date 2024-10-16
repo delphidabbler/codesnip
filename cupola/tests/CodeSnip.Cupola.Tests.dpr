@@ -40,7 +40,8 @@ uses
   CSLE.Utils.URI in '..\src\CSLE.Utils.URI.pas',
   Test.Utils.URI in 'Test.Utils.URI.pas',
   CSLE.Snippets.TestInfo in '..\src\CSLE.Snippets.TestInfo.pas',
-  Test.Snippets.TestInfo in 'Test.Snippets.TestInfo.pas';
+  Test.Snippets.TestInfo in 'Test.Snippets.TestInfo.pas',
+  CSLE.Consts in '..\src\CSLE.Consts.pas';
 
 {$IFNDEF TESTINSIGHT}
 var
