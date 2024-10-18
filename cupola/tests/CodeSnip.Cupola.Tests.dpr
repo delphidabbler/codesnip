@@ -41,7 +41,9 @@ uses
   Test.Utils.URI in 'Test.Utils.URI.pas',
   CSLE.Snippets.TestInfo in '..\src\CSLE.Snippets.TestInfo.pas',
   Test.Snippets.TestInfo in 'Test.Snippets.TestInfo.pas',
-  CSLE.Consts in '..\src\CSLE.Consts.pas';
+  CSLE.Consts in '..\src\CSLE.Consts.pas',
+  CSLE.IniData in '..\src\CSLE.IniData.pas',
+  Test.IniData in 'Test.IniData.pas';
 
 {$IFNDEF TESTINSIGHT}
 var
