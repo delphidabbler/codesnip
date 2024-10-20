@@ -3,43 +3,68 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at https://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2009-2021, Peter Johnson (gravatar.com/delphidabbler).
+ * Copyright (C) 2009-2024, Peter Johnson (gravatar.com/delphidabbler).
  *
- * Provides a container for assisting with common file operations.
+ * Record with methods that groups common file operations.
+ *
+ * Copied from main CodeSnip Delphi XE source code UIOUtils units with
+ * IsEqualBytes overloaded methods were copied from routines in the UUtils unit.
+ * Modified to compile with Delphi 12 and later.
 }
 
 
-unit UIOUtils;
+unit CSLE.Utils.FileIO;
 
 
 interface
 
 
 uses
-  // Delphi
-  SysUtils, Classes, Types;
+  System.SysUtils,
+  System.Classes,
+  System.Types,
+  CSLE.Exceptions;
 
 type
-  ///  <summary>
-  ///  Container for methods that assist with common file operations.
+  ///  <summary>Container for methods that assist with common file operations.
   ///  </summary>
-  ///  <remarks>
-  ///  TFileIO is used instead of IOUtils.TFile because the assumptions TFile
-  ///  makes about the use of byte order marks with encoded text files are not
-  ///  compatible with the needs of this program.
-  ///  </remarks>
+  ///  <remarks>TFileIO is used instead of IOUtils.TFile because the assumptions
+  ///  TFile makes about the use of byte order marks with encoded text files are
+  ///  not compatible with the needs of this program.</remarks>
   TFileIO = record
   strict private
-    ///  <summary>
-    ///  Appends whole contents of a byte array to a stream.
-    ///  </summary>
+
+    ///  <summary>Test a given number of bytes from the start of two byte arrays
+    ///  for equality.</summary>
+    ///  <param name="BA1">[in] First byte array to be compared.</param>
+    ///  <param name="BA2">[in] Second byte array to be compared.</param>
+    ///  <param name="Count">[in] Number of bytes to be compared. Must
+    ///  be greater than zero.</param>
+    ///  <returns>True if the required number of bytes in the arrays are equal
+    ///  and both arrays have at least Count bytes. Otherwise False is returned.
+    ///  </returns>
+    ///  <remarks>If either BA1 or BA1 have less than Count bytes then False is
+    ///  returned, regardless of whether the arrays are equal.</remarks>
+    class function IsEqualBytes(const BA1, BA2: array of Byte;
+      const Count: Integer): Boolean; overload; static;
+
+    ///  <summary>Checks if two byte arrays are equal.</summary>
+    ///  <param name="BA1">[in] First byte array to be compared.</param>
+    ///  <param name="BA2">[in] Second byte array to be compared.</param>
+    ///  <returns>True if the two arrays are equal, False if not.</returns>
+    ///  <remarks>If both arrays are empty they are considered equal.</remarks>
+    class function IsEqualBytes(const BA1, BA2: array of Byte): Boolean;
+      overload; static;
+
+    ///  <summary>Appends whole contents of a byte array to a stream.</summary>
     class procedure BytesToStream(const Bytes: TBytes; const Stream: TStream);
       static;
-    ///  <summary>
-    ///  Copies content of a whole stream into a byte array.
-    ///  </summary>
+
+    ///  <summary>Copies content of a whole stream into a byte array.</summary>
     class function StreamToBytes(const Stream: TStream): TBytes; static;
+
   public
+
     ///  <summary>Checks if given byte array begins with the BOM of the given
     ///  encoding.</summary>
     ///  <remarks>
@@ -50,6 +75,7 @@ type
     ///  </remarks>
     class function CheckBOM(const Bytes: TBytes; const Encoding: TEncoding):
       Boolean; overload; static;
+
     ///  <summary>Checks if given stream begins with the BOM of the given
     ///  encoding.</summary>
     ///  <remarks>
@@ -62,6 +88,7 @@ type
     ///  </remarks>
     class function CheckBOM(const Stream: TStream; const Encoding: TEncoding):
       Boolean; overload; static;
+
     ///  <summary>Checks if given file begins with the BOM of the given
     ///  encoding.</summary>
     ///  <remarks>
@@ -72,18 +99,15 @@ type
     ///  </remarks>
     class function CheckBOM(const FileName: TFileName;
       const Encoding: TEncoding): Boolean; overload; static;
-    ///  <summary>
-    ///  Writes all the bytes from a byte array to a file.
-    ///  </summary>
+
+    ///  <summary>Writes all the bytes from a byte array to a file.</summary>
     ///  <param name="FileName">string [in] Name of file.</param>
     ///  <param name="Bytes">TBytes [in] Array of bytes to be written to file.
     ///  </param>
     class procedure WriteAllBytes(const FileName: string; const Bytes: TBytes);
       static;
 
-    ///  <summary>
-    ///  Writes text to a file.
-    ///  </summary>
+    ///  <summary>Writes text to a file.</summary>
     ///  <param name="FileName">string [in] Name of file.</param>
     ///  <param name="Content">string [in] Text to be written to file.</param>
     ///  <param name="Encoding">TEncoding [in] Encoding to be used for text in
@@ -94,9 +118,8 @@ type
     class procedure WriteAllText(const FileName, Content: string;
       const Encoding: TEncoding; const UseBOM: Boolean = False); static;
 
-    ///  <summary>
-    ///  Writes lines of text to a text file with lines separated by CRLF.
-    ///  </summary>
+    ///  <summary>Writes lines of text to a text file with lines separated by
+    ///  CRLF.</summary>
     ///  <param name="FileName">string [in] Name of file.</param>
     ///  <param name="Lines">array of string [in] Array of lines of text to be
     ///  written.</param>
@@ -109,16 +132,12 @@ type
       const Lines: array of string; const Encoding: TEncoding;
       const UseBOM: Boolean = False); static;
 
-    ///  <summary>
-    ///  Reads all bytes from a file into a byte array.
-    ///  </summary>
+    ///  <summary>Reads all bytes from a file into a byte array.</summary>
     ///  <param name="FileName">string [in] Name of file.</param>
     ///  <returns>TBytes array containing the file's contents.</returns>
     class function ReadAllBytes(const FileName: string): TBytes; static;
 
-    ///  <summary>
-    ///  Reads all the text from a text file.
-    ///  </summary>
+    ///  <summary>Reads all the text from a text file.</summary>
     ///  <param name="FileName">string [in] Name of file.</param>
     ///  <param name="Encoding">TEncoding [in] Text encoding used by file.
     ///  </param>
@@ -130,9 +149,7 @@ type
     class function ReadAllText(const FileName: string;
       const Encoding: TEncoding; const HasBOM: Boolean = False): string; static;
 
-    ///  <summary>
-    ///  Reads all the lines of text from a text file.
-    ///  </summary>
+    ///  <summary>Reads all the lines of text from a text file.</summary>
     ///  <param name="FileName">string [in] Name of file.</param>
     ///  <param name="Encoding">TEncoding [in] Text encoding used by file.
     ///  </param>
@@ -145,9 +162,7 @@ type
       const Encoding: TEncoding; const HasBOM: Boolean = False):
       TStringDynArray; static;
 
-    ///  <summary>
-    ///  Copies content of one file to another.
-    ///  </summary>
+    ///  <summary>Copies content of one file to another.</summary>
     ///  <param name="SrcFileName">string [in] Name of file to be copied.
     ///  </param>
     ///  <param name="DestFileName">string [in] Name of file to receive
@@ -158,22 +173,16 @@ type
   end;
 
 type
-  ///  <summary>Class of exception raised by UIOUtils code.</summary>
-  EIOUtils = class(Exception);
+  ///  <summary>Class of exception raised by TFileIO methods.</summary>
+  EFileIO = class(Exception);
 
 
 implementation
 
 
-uses
-  // Project
-  UUtils;
-
-
 resourcestring
   // Error messages
   sBadBOM = 'Preamble of file %s does not match expected encoding';
-
 
 { TFileIO }
 
@@ -186,11 +195,9 @@ end;
 
 class function TFileIO.CheckBOM(const Bytes: TBytes; const Encoding: TEncoding):
   Boolean;
-var
-  Preamble: TBytes;
 begin
   Assert(Assigned(Encoding), 'TFileIO.CheckBOM: Encoding is nil');
-  Preamble := Encoding.GetPreamble;
+  var Preamble := Encoding.GetPreamble;
   if Length(Preamble) = 0 then
     Exit(False);
   Result := IsEqualBytes(Bytes, Preamble, Length(Preamble));
@@ -198,17 +205,16 @@ end;
 
 class function TFileIO.CheckBOM(const Stream: TStream;
   const Encoding: TEncoding): Boolean;
-var
-  Bytes: TBytes;
-  Preamble: TBytes;
-  OldPos: Int64;
 begin
   Assert(Assigned(Stream), 'TFileIO.CheckBOM: Stream is nil');
   Assert(Assigned(Encoding), 'TFileIO.CheckBOM: Encoding is nil');
-  Preamble := Encoding.GetPreamble;
+  var Preamble := Encoding.GetPreamble;
+  if Length(Preamble) = 0 then
+    Exit(False);
   if Stream.Size < Length(Preamble) then
     Exit(False);
-  OldPos := Stream.Position;
+  var OldPos: Int64 := Stream.Position;
+  var Bytes: TBytes;
   SetLength(Bytes, Length(Preamble));
   Stream.Position := 0;
   Stream.ReadBuffer(Pointer(Bytes)^, Length(Preamble));
@@ -218,11 +224,9 @@ end;
 
 class function TFileIO.CheckBOM(const FileName: TFileName;
   const Encoding: TEncoding): Boolean;
-var
-  Stream: TStream;
 begin
   Assert(Assigned(Encoding), 'TFileIO.CheckBOM: Encoding is nil');
-  Stream := TFileStream.Create(FileName, fmOpenRead or fmShareDenyNone);
+  var Stream := TFileStream.Create(FileName, fmOpenRead or fmShareDenyNone);
   try
     Result := CheckBOM(Stream, Encoding);
   finally
@@ -235,11 +239,31 @@ begin
   TFileIO.WriteAllBytes(DestFileName, TFileIO.ReadAllBytes(SrcFileName));
 end;
 
-class function TFileIO.ReadAllBytes(const FileName: string): TBytes;
-var
-  FS: TFileStream;
+class function TFileIO.IsEqualBytes(const BA1, BA2: array of Byte): Boolean;
 begin
-  FS := TFileStream.Create(FileName, fmOpenRead or fmShareDenyNone);
+  if Length(BA1) <> Length(BA2) then
+    Exit(False);
+  for var I := 0 to Pred(Length(BA1)) do
+    if BA1[I] <> BA2[I] then
+      Exit(False);
+  Result := True;
+end;
+
+class function TFileIO.IsEqualBytes(const BA1, BA2: array of Byte;
+  const Count: Integer): Boolean;
+begin
+  Assert(Count > 0, 'TFileIO.IsEqualBytes: Count must be greater than zero');
+  if (Length(BA1) < Int64(Count)) or (Length(BA2) < Int64(Count)) then
+    Exit(False);
+  for var I := 0 to Pred(Count) do
+    if BA1[I] <> BA2[I] then
+      Exit(False);
+  Result := True;
+end;
+
+class function TFileIO.ReadAllBytes(const FileName: string): TBytes;
+begin
+  var FS := TFileStream.Create(FileName, fmOpenRead or fmShareDenyNone);
   try
     Result := StreamToBytes(FS);
   finally
@@ -249,16 +273,13 @@ end;
 
 class function TFileIO.ReadAllLines(const FileName: string;
   const Encoding: TEncoding; const HasBOM: Boolean): TStringDynArray;
-var
-  Lines: TStrings;
-  I: Integer;
 begin
   Assert(Assigned(Encoding), 'TFileIO.ReadAllLines: Encoding is nil');
-  Lines := TStringList.Create;
+  var Lines := TStringList.Create;
   try
     Lines.Text := ReadAllText(FileName, Encoding, HasBOM);
     SetLength(Result, Lines.Count);
-    for I := 0 to Pred(Lines.Count) do
+    for var I := 0 to Pred(Lines.Count) do
       Result[I] := Lines[I];
   finally
     Lines.Free;
@@ -267,20 +288,16 @@ end;
 
 class function TFileIO.ReadAllText(const FileName: string;
   const Encoding: TEncoding; const HasBOM: Boolean): string;
-var
-  Content: TBytes;
-  SizeOfBOM: Integer;
 begin
-  Assert(Assigned(Encoding), 'TFileIO.ReadAllBytes: Encoding is nil');
-  Content := ReadAllBytes(FileName);
+  Assert(Assigned(Encoding), 'TFileIO.ReadAllText: Encoding is nil');
+  var Content := ReadAllBytes(FileName);
+  var SizeOfBOM: Integer := 0;
   if HasBOM then
   begin
     SizeOfBOM := Length(Encoding.GetPreamble);
     if (SizeOfBOM > 0) and not CheckBOM(Content, Encoding) then
-      raise EIOUtils.CreateFmt(sBadBOM, [FileName]);
-  end
-  else
-    SizeOfBOM := 0;
+      raise EFileIO.CreateFmt(sBadBOM, [FileName]);
+  end;
   Result := Encoding.GetString(Content, SizeOfBOM, Length(Content) - SizeOfBOM);
 end;
 
@@ -294,10 +311,8 @@ end;
 
 class procedure TFileIO.WriteAllBytes(const FileName: string;
   const Bytes: TBytes);
-var
-  FS: TFileStream;
 begin
-  FS := TFileStream.Create(FileName, fmCreate);
+  var FS := TFileStream.Create(FileName, fmCreate);
   try
     BytesToStream(Bytes, FS);
   finally
@@ -308,13 +323,11 @@ end;
 class procedure TFileIO.WriteAllLines(const FileName: string;
   const Lines: array of string; const Encoding: TEncoding;
   const UseBOM: Boolean);
-var
-  Line: string;
-  SB: TStringBuilder;
 begin
-  SB := TStringBuilder.Create;
+  Assert(Assigned(Encoding), 'TFileIO.WriteAllLines: Encoding is nil');
+  var SB := TStringBuilder.Create;
   try
-    for Line in Lines do
+    for var Line in Lines do
       SB.AppendLine(Line);
     WriteAllText(FileName, SB.ToString, Encoding, UseBOM);
   finally
@@ -324,10 +337,9 @@ end;
 
 class procedure TFileIO.WriteAllText(const FileName, Content: string;
   const Encoding: TEncoding; const UseBOM: Boolean);
-var
-  FS: TFileStream;
 begin
-  FS := TFileStream.Create(FileName, fmCreate);
+  Assert(Assigned(Encoding), 'TFileIO.WriteAllText: Encoding is nil');
+  var FS := TFileStream.Create(FileName, fmCreate);
   try
     if UseBOM then
       BytesToStream(Encoding.GetPreamble, FS);

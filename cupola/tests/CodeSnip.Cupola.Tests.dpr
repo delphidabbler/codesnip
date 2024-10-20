@@ -43,7 +43,9 @@ uses
   Test.Snippets.TestInfo in 'Test.Snippets.TestInfo.pas',
   CSLE.Consts in '..\src\CSLE.Consts.pas',
   CSLE.IniData in '..\src\CSLE.IniData.pas',
-  Test.IniData in 'Test.IniData.pas';
+  Test.IniData in 'Test.IniData.pas',
+  CSLE.Utils.FileIO in '..\src\CSLE.Utils.FileIO.pas',
+  Test.Utils.FileIO in 'Test.Utils.FileIO.pas';
 
 {$IFNDEF TESTINSIGHT}
 var

@@ -102,6 +102,8 @@
         <DCCReference Include="..\src\CSLE.Consts.pas"/>
         <DCCReference Include="..\src\CSLE.IniData.pas"/>
         <DCCReference Include="Test.IniData.pas"/>
+        <DCCReference Include="..\src\CSLE.Utils.FileIO.pas"/>
+        <DCCReference Include="Test.Utils.FileIO.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
