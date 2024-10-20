@@ -174,7 +174,7 @@ begin
     Exit;
   if Length(AStr) > MaxTagStringLength then
     Exit;
-  if AStr[1] = ' ' then
+  if AStr[1].IsWhiteSpace or AStr[AStr.Length].IsWhiteSpace then
     Exit;
   for var Ch in AStr do
     if not IsValidTagChar(Ch) then
@@ -189,15 +189,27 @@ begin
   if AStr.IsEmpty then
     raise EUnexpected.Create('TTag.MakeValidTagString: AStr can''t be empty');
   SetLength(Result, Length(AStr));
-  for var I := 1 to Length(AStr) do
+  // Replace any leading white space
+  var StartIdx: Integer := 1;
+  while (StartIdx <= AStr.Length) and AStr[StartIdx].IsWhiteSpace do
+  begin
+    Result[StartIdx] := InvalidCharSubstitue;
+    Inc(StartIdx);
+  end;
+  // Replace any trailing white space
+  var EndIdx: Integer := AStr.Length;
+  while (EndIdx >= 1) and AStr[EndIdx].IsWhiteSpace do
+  begin
+    Result[EndIdx] := InvalidCharSubstitue;
+    Dec(EndIdx);
+  end;
+  for var I := StartIdx to EndIdx do
   begin
     if IsValidTagChar(AStr[I]) then
       Result[I] := AStr[I]
     else
       Result[I] := InvalidCharSubstitue;
   end;
-  if Result[1] = ' ' then
-    Result[1] := InvalidCharSubstitue;
 end;
 
 class operator TTag.NotEqual(const Left, Right: TTag): Boolean;

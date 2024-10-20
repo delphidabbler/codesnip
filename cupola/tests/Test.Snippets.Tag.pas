@@ -28,8 +28,14 @@ type
     [Test]
     [TestCase('Empty','')]
     [TestCase('Begins with space',' Foo')]
+    [TestCase('Ends with space','Foo ')]
+    [TestCase('Begins with ctrl char',#127'Foo')]
+    [TestCase('Ends with ctrl char','Foo'#127)]
     [TestCase('Invalid CRLF','Foo'#13#10'Bar')]
     [TestCase('Contains tab','Foo'#9'Bar')]
+    [TestCase('Contains ctrl char','Foo'#127'Bar')]
+    [TestCase('Single space',' ')]
+    [TestCase('Single ctrl char', #127)]
     procedure IsValidTagString_returns_false(const Str: string);
     [Test]
     [TestCase('Single letter','A')]
@@ -52,7 +58,15 @@ type
     [Test]
     [TestCase('#1','Foo'#9'Bar,Foo_Bar')]
     [TestCase('#2',#10',_')]
-    [TestCase('#3',' Foo Bar,_Foo Bar')]
+    [TestCase('#3',' Foo Bar ,_Foo Bar_')]
+    [TestCase('#4','    Alice Bob   ,____Alice Bob___')]
+    [TestCase('#5','Foo Bar ,Foo Bar_')]
+    [TestCase('#6',' Foo Bar,_Foo Bar')]
+    [TestCase('#7', ' ,_')]
+    [TestCase('#8', '   A  ,___A__')]
+    [TestCase('#9', #7',_')]
+    [TestCase('#10', 'foo'#127'bar,foo_bar')]
+
     procedure MakeValidTagString_changes_invalid_chars_to_underscores(const Str, Expected: string);
     [Test]
     procedure MakeValidTagString_raises_exception_on_empty_string;
